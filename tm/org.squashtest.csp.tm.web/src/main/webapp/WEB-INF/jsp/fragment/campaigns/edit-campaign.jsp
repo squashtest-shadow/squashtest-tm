@@ -31,9 +31,11 @@
 <%@ taglib prefix="pop" tagdir="/WEB-INF/tags/popup" %>
 <%@ taglib prefix="authz" tagdir="/WEB-INF/tags/authz" %>
 
+<f:message var="squashlocale" key="squashtm.locale" />
+
 <comp:decorate-toggle-panels />
 <comp:rich-jeditable-header />
-<comp:datepicker-manager locale="fr"/>
+<comp:datepicker-manager locale="${squashlocale}"/>
 
 <c:url var="ckeConfigUrl" value="/styles/ckeditor/ckeditor-config.js" />
 <s:url var="campaignUrl" value="/campaigns/{campId}">

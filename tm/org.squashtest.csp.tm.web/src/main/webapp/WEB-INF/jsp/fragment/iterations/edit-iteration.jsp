@@ -32,10 +32,11 @@
 <%@ taglib prefix="aggr" tagdir="/WEB-INF/tags/aggregates" %>
 <%@ taglib prefix="authz" tagdir="/WEB-INF/tags/authz" %>
 
+<f:message var="squashlocale" key="squashtm.locale" />
 <comp:decorate-toggle-panels />
 
 <comp:rich-jeditable-header />
-<comp:datepicker-manager locale="fr"/>
+<comp:datepicker-manager locale="${squashlocale}"/>
 
 <jq:execution-status-factory/> 
 
