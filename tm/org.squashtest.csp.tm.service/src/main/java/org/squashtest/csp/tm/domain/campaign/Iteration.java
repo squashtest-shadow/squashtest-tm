@@ -464,9 +464,9 @@ public class Iteration implements Attachable {
 
 			// well too bad, we have to recompute that.
 			else {
-				autoSetActualEndDate();
+				autoSetActualEndDateNoCheck();
 			}
-		} else {
+		} else if (isActualEndAuto()) {
 			setActualEndDate(null);
 		}
 
@@ -476,6 +476,15 @@ public class Iteration implements Attachable {
 		Date actualDate = getFirstExecutedTestPlanDate();
 
 		setActualStartDate(actualDate);
+	}
+
+	/***
+	 * Same method as autoSetActualEndDate but without actualEndDateUpdateAuthorization call To avoid checking
+	 * authorization twice
+	 */
+	private void autoSetActualEndDateNoCheck() {
+		Date actualDate = getLastExecutedTestPlanDate();
+		setActualEndDate(actualDate);
 	}
 
 	private void autoSetActualEndDate() {
