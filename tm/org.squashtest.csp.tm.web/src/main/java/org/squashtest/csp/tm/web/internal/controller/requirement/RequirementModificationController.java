@@ -38,7 +38,6 @@ import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.servlet.ModelAndView;
-import org.springframework.web.util.HtmlUtils;
 import org.squashtest.csp.tm.domain.Internationalizable;
 import org.squashtest.csp.tm.domain.project.Project;
 import org.squashtest.csp.tm.domain.requirement.Requirement;
@@ -52,7 +51,6 @@ import org.squashtest.csp.tm.service.RequirementModificationService;
 import org.squashtest.csp.tm.web.internal.combo.OptionTag;
 import org.squashtest.csp.tm.web.internal.model.datatable.DataTableDrawParameters;
 import org.squashtest.csp.tm.web.internal.model.datatable.DataTableModel;
-import org.squashtest.csp.tm.web.internal.model.jquery.JsonSimpleData;
 import org.squashtest.csp.tm.web.internal.model.viewmapper.DataTableMapper;
 
 @Controller
@@ -119,12 +117,13 @@ public class RequirementModificationController {
 
 	@RequestMapping(method = RequestMethod.POST, params = { "newName" })
 	public @ResponseBody
-	String rename(HttpServletResponse response, @RequestParam("newName") String newName,
+	Object rename(HttpServletResponse response, @RequestParam("newName") String newName,
 			@PathVariable long requirementId) {
 
 		requirementModService.rename(requirementId, newName);
 		LOGGER.info("RequirementModificationController : renaming " + requirementId + " as " + newName);
-		return new JsonSimpleData().addAttr("newName", HtmlUtils.htmlEscape(newName)).toString();
+		final String reNewName = new String(newName);
+		return new Object(){ public String newName = reNewName ; };
 
 	}
 

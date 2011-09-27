@@ -38,7 +38,6 @@ import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.servlet.ModelAndView;
-import org.springframework.web.util.HtmlUtils;
 import org.squashtest.csp.tm.domain.campaign.Campaign;
 import org.squashtest.csp.tm.domain.campaign.CampaignTestPlanItem;
 import org.squashtest.csp.tm.domain.project.Project;
@@ -52,7 +51,6 @@ import org.squashtest.csp.tm.web.internal.model.datatable.DataTableDrawParameter
 import org.squashtest.csp.tm.web.internal.model.datatable.DataTableFilterSorter;
 import org.squashtest.csp.tm.web.internal.model.datatable.DataTableModel;
 import org.squashtest.csp.tm.web.internal.model.datatable.DataTableModelHelper;
-import org.squashtest.csp.tm.web.internal.model.jquery.JsonSimpleData;
 import org.squashtest.csp.tm.web.internal.model.viewmapper.DataTableMapper;
 
 @Controller
@@ -120,11 +118,12 @@ public class CampaignModificationController {
 
 	@RequestMapping(method = RequestMethod.POST, params = { "newName" })
 	public @ResponseBody
-	String rename(HttpServletResponse response, @RequestParam("newName") String newName, @PathVariable long campaignId) {
+	Object rename(HttpServletResponse response, @RequestParam("newName") String newName, @PathVariable long campaignId) {
 
 		LOGGER.info("Renaming Campaign " + campaignId + " as " + newName);
 		campaignModService.rename(campaignId, newName);
-		return new JsonSimpleData().addAttr("newName", HtmlUtils.htmlEscape(newName)).toString();
+		final String reNewName = new String(newName);
+		return new Object(){ public String newName = reNewName ; };
 
 	}
 

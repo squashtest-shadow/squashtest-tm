@@ -39,7 +39,6 @@ import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.servlet.ModelAndView;
-import org.springframework.web.util.HtmlUtils;
 import org.squashtest.csp.core.service.security.PermissionEvaluationService;
 import org.squashtest.csp.tm.domain.campaign.Iteration;
 import org.squashtest.csp.tm.domain.campaign.IterationTestPlanItem;
@@ -55,7 +54,6 @@ import org.squashtest.csp.tm.web.internal.model.datatable.DataTableDrawParameter
 import org.squashtest.csp.tm.web.internal.model.datatable.DataTableFilterSorter;
 import org.squashtest.csp.tm.web.internal.model.datatable.DataTableModel;
 import org.squashtest.csp.tm.web.internal.model.datatable.DataTableModelHelper;
-import org.squashtest.csp.tm.web.internal.model.jquery.JsonSimpleData;
 import org.squashtest.csp.tm.web.internal.model.viewmapper.DataTableMapper;
 
 @Controller
@@ -131,12 +129,13 @@ public class IterationModificationController {
 
 	@RequestMapping(method = RequestMethod.POST, params = { "newName" })
 	@ResponseBody
-	public String rename(HttpServletResponse response, @RequestParam("newName") String newName,
+	public Object rename(HttpServletResponse response, @RequestParam("newName") String newName,
 			@PathVariable long iterationId) {
 
 		LOGGER.info("IterationModificationController : renaming " + iterationId + " as " + newName);
 		iterationModService.rename(iterationId, newName);
-		return new JsonSimpleData().addAttr("newName", HtmlUtils.htmlEscape(newName)).toString();
+		final String reNewName = new String(newName);
+		return new Object(){ public String newName = reNewName ; };
 
 	}
 

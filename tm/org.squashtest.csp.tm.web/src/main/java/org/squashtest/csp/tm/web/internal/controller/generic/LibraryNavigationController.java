@@ -42,13 +42,11 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.bind.annotation.ResponseStatus;
 import org.springframework.web.servlet.ModelAndView;
-import org.springframework.web.util.HtmlUtils;
 import org.squashtest.csp.tm.domain.library.Folder;
 import org.squashtest.csp.tm.domain.library.Library;
 import org.squashtest.csp.tm.domain.library.LibraryNode;
 import org.squashtest.csp.tm.service.LibraryNavigationService;
 import org.squashtest.csp.tm.service.deletion.SuppressionPreviewReport;
-import org.squashtest.csp.tm.web.internal.model.jquery.JsonSimpleData;
 import org.squashtest.csp.tm.web.internal.model.jstree.JsTreeNode;
 
 /**
@@ -164,12 +162,13 @@ public abstract class LibraryNavigationController<LIBRARY extends Library<? exte
 	@Deprecated
 	@RequestMapping(value = "/folders/{folderId}", method = RequestMethod.POST, params = { "newName" })
 	public @ResponseBody
-	String renameFolder(HttpServletResponse response, @RequestParam("newName") String newName,
+	Object renameFolder(HttpServletResponse response, @RequestParam("newName") String newName,
 			@PathVariable Long folderId) {
 
 
 		getLibraryNavigationService().renameFolder(folderId, newName);
-		return new JsonSimpleData().addAttr("newName", HtmlUtils.htmlEscape(newName)).toString();
+		final String reNewName = new String(newName);
+		return new Object(){ public String newName = reNewName ; };
 
 
 	}

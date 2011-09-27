@@ -39,7 +39,6 @@ import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.servlet.ModelAndView;
-import org.springframework.web.util.HtmlUtils;
 import org.squashtest.csp.tm.domain.attachment.Attachment;
 import org.squashtest.csp.tm.infrastructure.filter.CollectionSorting;
 import org.squashtest.csp.tm.infrastructure.filter.FilteredCollectionHolder;
@@ -47,7 +46,6 @@ import org.squashtest.csp.tm.service.AttachmentManagerService;
 import org.squashtest.csp.tm.web.internal.model.datatable.DataTableDrawParameters;
 import org.squashtest.csp.tm.web.internal.model.datatable.DataTableModel;
 import org.squashtest.csp.tm.web.internal.model.datatable.DataTableModelHelper;
-import org.squashtest.csp.tm.web.internal.model.jquery.JsonSimpleData;
 import org.squashtest.csp.tm.web.internal.model.viewmapper.DataTableMapper;
 
 @Controller
@@ -136,11 +134,12 @@ public class AttachmentManagerController {
 	
 	@RequestMapping(value="/{attachmentId}",method = RequestMethod.POST, params = { "newName" })
 	@ResponseBody
-	public String renameAttachment(HttpServletResponse response, @PathVariable long attachmentId, @RequestParam String newName) {
+	public Object renameAttachment(HttpServletResponse response, @PathVariable long attachmentId, @RequestParam String newName) {
 
 		attachmentManagerService.renameAttachment(attachmentId, newName);
 		LOGGER.info("AttachmentController : renaming attachment " + attachmentId + " as " + newName);
-		return new JsonSimpleData().addAttr("newName", HtmlUtils.htmlEscape(newName)).toString();
+		final String reNewName = new String(newName);
+		return new Object(){ public String newName = reNewName ; };
 
 	}
 

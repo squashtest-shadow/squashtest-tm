@@ -40,7 +40,6 @@ import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.servlet.ModelAndView;
-import org.springframework.web.util.HtmlUtils;
 import org.squashtest.csp.tm.domain.Internationalizable;
 import org.squashtest.csp.tm.domain.project.Project;
 import org.squashtest.csp.tm.domain.requirement.Requirement;
@@ -59,7 +58,6 @@ import org.squashtest.csp.tm.web.internal.model.datatable.DataTableDrawParameter
 import org.squashtest.csp.tm.web.internal.model.datatable.DataTableModel;
 import org.squashtest.csp.tm.web.internal.model.datatable.DataTableModelHelper;
 import org.squashtest.csp.tm.web.internal.model.datatable.DataTablePagedFilter;
-import org.squashtest.csp.tm.web.internal.model.jquery.JsonSimpleData;
 import org.squashtest.csp.tm.web.internal.model.viewmapper.DataTableMapper;
 
 @Controller
@@ -258,11 +256,12 @@ public class TestCaseModificationController {
 
 	@RequestMapping(method = RequestMethod.POST, params = { "newName" })
 	@ResponseBody
-	public String rename(HttpServletResponse response, @PathVariable long testCaseId, @RequestParam String newName) {
+	public Object rename(HttpServletResponse response, @PathVariable long testCaseId, @RequestParam String newName) {
 
 		testCaseModificationService.updateTestCaseName(testCaseId, newName);
 		LOGGER.info("TestCaseModificationController : renaming {} as {}", testCaseId, newName);
-		return new JsonSimpleData().addAttr("newName", HtmlUtils.htmlEscape(newName)).toString();
+		final String reNewName = new String(newName);
+		return new Object(){ public String newName = reNewName ; };
 
 	}
 

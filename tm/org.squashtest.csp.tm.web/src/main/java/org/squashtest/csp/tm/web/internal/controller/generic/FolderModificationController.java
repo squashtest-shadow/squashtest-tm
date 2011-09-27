@@ -29,10 +29,8 @@ import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.servlet.ModelAndView;
-import org.springframework.web.util.HtmlUtils;
 import org.squashtest.csp.tm.domain.library.Folder;
 import org.squashtest.csp.tm.service.FolderModificationService;
-import org.squashtest.csp.tm.web.internal.model.jquery.JsonSimpleData;
 
 public abstract class FolderModificationController<FOLDER extends Folder<?>> {
 	@RequestMapping(method = RequestMethod.GET)
@@ -59,11 +57,12 @@ public abstract class FolderModificationController<FOLDER extends Folder<?>> {
 
 	@RequestMapping(method = RequestMethod.POST, params = { "newName" })
 	public @ResponseBody
-	String renameFolder(HttpServletResponse response, @RequestParam("newName") String newName,
+	Object renameFolder(HttpServletResponse response, @RequestParam("newName") String newName,
 			@PathVariable long folderId) {
 
 		getFolderModificationService().renameFolder(folderId, newName);
-		return new JsonSimpleData().addAttr("newName", HtmlUtils.htmlEscape(newName)).toString();
+		final String reNewName = new String(newName);
+		return new Object(){ public String newName = reNewName ; };
 
 	}
 
