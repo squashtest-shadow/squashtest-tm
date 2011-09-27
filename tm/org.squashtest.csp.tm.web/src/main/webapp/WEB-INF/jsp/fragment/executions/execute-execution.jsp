@@ -197,7 +197,10 @@
 				.click(function(){
 					$.post('${ executeStatus }', {
 						executionStatus : "FAILURE"
-					}, setStatusFailure());					
+					}, function(){
+						setStatusFailure();
+						}
+					);
 				});		
 			}
 			
@@ -212,7 +215,10 @@
 				.click(function(){
 					$.post('${ executeStatus }', {
 						executionStatus : "SUCCESS"
-					}, setStatusSuccess());				
+					}, function(){
+						setStatusSuccess();
+						}
+					);
 				});
 				
 			}

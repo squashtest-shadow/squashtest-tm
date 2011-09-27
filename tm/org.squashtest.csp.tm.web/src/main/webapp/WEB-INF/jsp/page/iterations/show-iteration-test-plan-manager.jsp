@@ -43,7 +43,7 @@
 	<s:param name="iterId" value="${iteration.id}" />
 </s:url>
 
-
+<f:message var="unauthorizedDeletion" key="dialog.remove-testcase-association.unauthorized-deletion.message"  />
 <%-- TODO : why is that no tree-picker-layout like the rest of association interface  ? --%>
 
 <layout:tree-page-layout titleKey="squashtm"  highlightedWorkspace="campaign" isRequirementPaneSearchOn="true" linkable="test-case" isSubPaged="true">
@@ -122,7 +122,10 @@
 					var ids = getIdsOfSelectedTableRows(table);
 					
 					if (ids.length > 0) {
-						$.post('${ nonBelongingTestPlansUrl }', { testPlanIds: ids }, refreshTestPlans);
+						$.post('${ nonBelongingTestPlansUrl }', { testPlanIds: ids }, function(data){
+							refreshTestPlans();
+							checkForbiddenDeletion(data);
+						});
 					}
 					
 					$( 'tr.row_selected', table ).removeClass('row_selected');
@@ -139,8 +142,11 @@
 				$.ajax({
 					type : 'delete',
 					url : '${ removeTestPlanUrl }/' + parseTestPlanId(this),
-					dataType : 'json',
-					success : refreshTestPlans
+					dataType : 'text',
+					success : function(data){
+						refreshTestPlans();
+						checkForbiddenDeletion(data);
+					}
 				});
 			});
 			
@@ -174,7 +180,13 @@
 				});
 			
 		});
-
+			
+		//This function checks the response and inform the user if a deletion was impossible
+		function checkForbiddenDeletion(data){
+			if(data=="true"){
+				displayInformationNotification('${ unauthorizedDeletion }');
+			}
+		}
 
 		//for drag and drop test case feature
 		//row : selected row
@@ -248,7 +260,7 @@
 				var ids = new Array();
 				
 				$( rows ).each(function(index, row) {
-					if ($( row ).hasClass('row_selected')) {
+					if ($( row ).attr('class').search('selected') != -1) {
 						var data = dataTable.fnGetData(row);
 						ids.push(data[0]);
 					}
