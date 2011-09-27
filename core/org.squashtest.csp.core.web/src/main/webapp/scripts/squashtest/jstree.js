@@ -471,7 +471,7 @@ function ButtonBasedTreeNodeCopier(initObj){
 	}
 	
 	var findParentLibrary = function (nodes){
-		return nodes.is('library') ? nodes : nodes.parents(":library");
+		return nodes.is(':library') ? nodes : nodes.parents(":library");
 	}
 	
 	//public methods

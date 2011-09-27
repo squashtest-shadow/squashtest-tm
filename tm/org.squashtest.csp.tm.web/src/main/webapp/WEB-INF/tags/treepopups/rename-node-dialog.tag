@@ -38,6 +38,10 @@
 		
 		$( "#rename-node-dialog" ).bind( "dialogopen", function(event, ui) {
 			var node = $('${treeSelector}').jstree("get_selected");
+			if (! node.is(':editable')){
+				displayInformationNotification('<f:message key="dialog.label.rename-node.rejected"/>');
+				$("#rename-node-dialog").close();
+			}
 			var name = node.attr('name');
 			$("#rename-tree-node-text").val(name);
 		});
