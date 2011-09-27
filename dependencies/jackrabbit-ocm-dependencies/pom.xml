@@ -1,0 +1,110 @@
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
+	<modelVersion>4.0.0</modelVersion>
+	<parent>
+		<artifactId>squashtest-csp-dependencies</artifactId>
+		<groupId>org.squashtest.csp</groupId>
+		<version>1.0.0.RC1-SNAPSHOT</version>
+	</parent>
+
+	<groupId>org.squashtest.csp</groupId>
+	<artifactId>jackrabbit-ocm-dependencies</artifactId>
+	<version>1.0.0.RC1-SNAPSHOT</version>
+	<packaging>pom</packaging>
+
+	<name>jackrabbit-ocm-dependencies</name>
+	<description>Jackrabbit, OCM and their required dependencies</description>
+
+	<dependencies>
+		<!-- ====== JCR ====== -->
+		<dependency>
+			<groupId>javax.jcr</groupId>
+			<artifactId>org.squashtest.javax.jcr</artifactId>
+		</dependency>
+		<!-- ====== /JCR ====== -->
+
+		<!-- ====== JACKRABBIT ====== -->
+		<dependency>
+			<groupId>org.apache.jackrabbit</groupId>
+			<artifactId>org.squashtest.org.apache.jackrabbit.ocm</artifactId>
+		</dependency>
+		<dependency>
+			<groupId>org.apache.jackrabbit</groupId>
+			<artifactId>org.squashtest.org.apache.jackrabbit.core</artifactId>
+		</dependency>
+		<dependency>
+			<groupId>org.apache.jackrabbit</groupId>
+			<artifactId>jackrabbit-api</artifactId>
+		</dependency>
+		<dependency>
+			<groupId>org.apache.jackrabbit</groupId>
+			<artifactId>jackrabbit-jcr-commons</artifactId>
+		</dependency>
+		<dependency>
+			<groupId>org.apache.jackrabbit</groupId>
+			<artifactId>jackrabbit-spi</artifactId>
+		</dependency>
+		<dependency>
+			<groupId>org.apache.jackrabbit</groupId>
+			<artifactId>jackrabbit-spi-commons</artifactId>
+		</dependency>
+		<!-- ====== /JACKRABBIT ====== -->
+
+		<!-- ====== MISC REQUIRED BY JACKRABBIT ====== -->
+		<dependency>
+			<groupId>org.slf4j</groupId>
+			<artifactId>com.springsource.slf4j.org.apache.commons.logging</artifactId>
+		</dependency>
+		<dependency>
+			<groupId>org.apache.commons</groupId>
+			<artifactId>com.springsource.org.apache.commons.collections</artifactId>
+		</dependency>
+		<dependency>
+			<groupId>org.apache.commons</groupId>
+			<artifactId>com.springsource.org.apache.commons.io</artifactId>
+		</dependency>
+		<dependency>
+			<groupId>org.apache.tika</groupId>
+			<artifactId>tika-bundle</artifactId>
+		</dependency>
+		<dependency>
+			<groupId>org.apache.tika</groupId>
+			<artifactId>tika-parsers</artifactId>
+		</dependency>
+		<dependency>
+			<groupId>org.apache.tika</groupId>
+			<artifactId>tika-core</artifactId>
+		</dependency>
+		<dependency>
+			<groupId>edu.oswego.cs.concurrent</groupId>
+			<artifactId>com.springsource.edu.oswego.cs.dl.util.concurrent</artifactId>
+		</dependency>
+		<dependency>
+			<groupId>org.apache.commons</groupId>
+			<artifactId>com.springsource.org.apache.commons.dbcp</artifactId>
+		</dependency>
+		<dependency>
+			<groupId>org.apache.commons</groupId>
+			<artifactId>com.springsource.org.apache.commons.pool</artifactId>
+		</dependency>
+		<dependency>
+			<groupId>org.apache.lucene</groupId>
+			<artifactId>com.springsource.org.apache.lucene</artifactId>
+		</dependency>
+		<!-- ====== /MISC REQUIRED BY JACKRABBIT ====== -->
+
+		<!-- ====== MISC REQUIRED BY OCM ====== -->
+		<dependency>
+			<groupId>org.apache.commons</groupId>
+			<artifactId>com.springsource.org.apache.commons.beanutils</artifactId>
+		</dependency>
+		<dependency>
+			<groupId>org.apache.commons</groupId>
+			<artifactId>com.springsource.org.apache.commons.digester</artifactId>
+		</dependency>
+		<dependency>
+			<groupId>org.apache.commons</groupId>
+			<artifactId>com.springsource.org.apache.commons.lang</artifactId>
+		</dependency>
+		<!-- ====== MISC REQUIRED BY OCM ====== -->
+	</dependencies>
+</project>

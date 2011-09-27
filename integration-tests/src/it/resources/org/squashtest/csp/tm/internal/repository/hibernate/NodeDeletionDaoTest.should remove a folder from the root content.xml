@@ -1,0 +1,96 @@
+<?xml version='1.0' encoding='UTF-8'?>
+<!--
+
+        This file is part of the Squashtest platform.
+        Copyright (C) 2010 - 2011 Squashtest TM, Squashtest.org
+
+        See the NOTICE file distributed with this work for additional
+        information regarding copyright ownership.
+
+        This is free software: you can redistribute it and/or modify
+        it under the terms of the GNU Lesser General Public License as published by
+        the Free Software Foundation, either version 3 of the License, or
+        (at your option) any later version.
+
+        this software is distributed in the hope that it will be useful,
+        but WITHOUT ANY WARRANTY; without even the implied warranty of
+        MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+        GNU Lesser General Public License for more details.
+
+        You should have received a copy of the GNU Lesser General Public License
+        along with this software.  If not, see <http://www.gnu.org/licenses/>.
+
+-->
+
+<!-- 
+	That file will instanciate a complete set of entity dependencies 
+
+	That file declares only entities, not their relationships (except folder-nodes relationships).
+	
+	Additional datasets will be required to link the entities together (eg, a campaign with an iteration)
+	according to each test specifics.
+
+-->
+
+<dataset>
+
+	<!-- =============================== three libraries ============================================ -->
+	
+	
+
+	<test_case_library tcl_id="1" />
+	<requirement_library rl_id="1" />
+	<campaign_library cl_id="1" />
+	
+	<!-- =============================== one project ================================================ -->
+	
+	<project project_id="1" name="base project" active="true" created_by="IT" created_on="2011-08-08" 
+			 cl_id="1" rl_id="1" tcl_id="1"/>
+
+	
+	<test_case_library_node tcln_id="13" name="folder 2" created_by="IT" created_on="2011-08-08" />  
+
+	<test_case_folder tcln_id="13" />	
+	
+	<test_case_library_node tcln_id="11" name="folder 1" created_by="IT" created_on="2011-08-08" />  
+
+	<test_case_folder tcln_id="11" />	
+
+	
+	<!-- ============================ test case library content =======================================  -->
+	<test_case_library_content library_id="1" content_id="11" />  <!--  tc library 1 contains tcfolder 1 -->
+	<test_case_library_content library_id="1" content_id="13" />  <!--  tc library 1 contains tcfolder 1 -->
+	
+		
+
+</dataset>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+

@@ -1,0 +1,87 @@
+/**
+ *     This file is part of the Squashtest platform.
+ *     Copyright (C) 2010 - 2011 Squashtest TM, Squashtest.org
+ *
+ *     See the NOTICE file distributed with this work for additional
+ *     information regarding copyright ownership.
+ *
+ *     This is free software: you can redistribute it and/or modify
+ *     it under the terms of the GNU Lesser General Public License as published by
+ *     the Free Software Foundation, either version 3 of the License, or
+ *     (at your option) any later version.
+ *
+ *     this software is distributed in the hope that it will be useful,
+ *     but WITHOUT ANY WARRANTY; without even the implied warranty of
+ *     MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ *     GNU Lesser General Public License for more details.
+ *
+ *     You should have received a copy of the GNU Lesser General Public License
+ *     along with this software.  If not, see <http://www.gnu.org/licenses/>.
+ */
+/************************************
+ * Datatables customization classes *
+ ************************************/
+
+div.dataTables_wrapper div.ui-widget-header{
+	background: url("jquery/ui/images/ui-bg_highlight-soft_75_cccccc_1x100.png") repeat-x scroll 50% 50% #CCCCCC;
+    border: 1px solid #AAAAAA;
+    color: #222222;
+	
+}
+
+div.dataTables_wrapper th.ui-state-default, div.dataTables_wrapper td.drag-handle, td.select-handle {
+	background: url("jquery/ui/images/ui-bg_glass_75_e6e6e6_1x400.png") repeat-x scroll 50% 50% #E6E6E6;
+    border: 1px solid #D3D3D3;
+    color: #555555;
+    font-weight: normal;
+    outline: medium none;
+}
+
+
+div.dataTables_wrapper a.ui-button-icon-only[role="button"]{
+	width:1.5em;
+	height:1.5em;
+}
+
+
+
+
+div.dataTables_info {
+	float:left;
+	width:50%;	
+	font-size:0.8em;
+}
+
+
+div.dataTables_paginate {
+	float:right;
+	text-align:right;
+	font-size:0.8em;
+}
+
+
+.dataTables_paginate span.ui-button {
+	margin-left:0.05em;
+	margin-right:0.05em;
+	min-width:20px;
+	background-color:#AAAAAA;
+	border-color:#AAAAAA;
+	color:black;	
+}
+
+div.dataTables_length{
+	display:inline-block;	
+	font-size:0.8em;
+}
+
+div.dataTables_processing{
+	display:inline-block;	
+	font-size:0.8em;	
+}
+
+/* that one override the css for the <th> sorting icon class. It actually calls the jquery.blue.css icon sheet*/
+div.DataTables_sort_wrapper > span.ui-icon{
+	float:right;	
+	background-image:url("jquery/ui/images/ui-icons_a8a8a8_256x240.png");
+	
+}

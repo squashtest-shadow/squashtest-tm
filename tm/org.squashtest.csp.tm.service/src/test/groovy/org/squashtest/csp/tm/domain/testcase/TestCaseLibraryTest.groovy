@@ -1,0 +1,70 @@
+/**
+ *     This file is part of the Squashtest platform.
+ *     Copyright (C) 2010 - 2011 Squashtest TM, Squashtest.org
+ *
+ *     See the NOTICE file distributed with this work for additional
+ *     information regarding copyright ownership.
+ *
+ *     This is free software: you can redistribute it and/or modify
+ *     it under the terms of the GNU Lesser General Public License as published by
+ *     the Free Software Foundation, either version 3 of the License, or
+ *     (at your option) any later version.
+ *
+ *     this software is distributed in the hope that it will be useful,
+ *     but WITHOUT ANY WARRANTY; without even the implied warranty of
+ *     MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ *     GNU Lesser General Public License for more details.
+ *
+ *     You should have received a copy of the GNU Lesser General Public License
+ *     along with this software.  If not, see <http://www.gnu.org/licenses/>.
+ */
+package org.squashtest.csp.tm.domain.testcase
+
+import org.squashtest.csp.tm.domain.DuplicateNameException;
+import org.squashtest.csp.tm.domain.project.Project;
+import org.squashtest.csp.tm.domain.testcase.TestCase;
+import org.squashtest.csp.tm.domain.testcase.TestCaseLibrary;
+
+import spock.lang.Specification;
+
+class TestCaseLibraryTest   extends Specification {
+	TestCaseLibrary library = new TestCaseLibrary()
+
+	def "should add test case to library"() {
+		given:
+		TestCase testCase = new TestCase(name: "foo")
+
+		when:
+		library.addRootContent(testCase)
+
+		then:
+		library.rootContent.contains testCase
+	}
+
+	def "should not add test with dup name"() {
+		given:
+		TestCase testCase = new TestCase(name: "foo")
+		library.addRootContent(testCase)
+
+		when:
+		library.addRootContent(new TestCase(name: "foo"))
+
+		then:
+		thrown DuplicateNameException
+	}
+
+	def "should set project of library to newly added node"() {
+		given:
+		Project project = new Project()
+		library.project = project
+
+		and:
+		TestCaseFolder folder = new TestCaseFolder(name: "foo")
+
+		when:
+		library.addRootContent folder
+
+		then:
+		folder.project == project
+	}
+}

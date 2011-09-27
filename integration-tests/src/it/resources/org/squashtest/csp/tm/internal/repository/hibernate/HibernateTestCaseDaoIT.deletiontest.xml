@@ -1,0 +1,35 @@
+<?xml version='1.0' encoding='UTF-8'?>
+<!--
+
+        This file is part of the Squashtest platform.
+        Copyright (C) 2010 - 2011 Squashtest TM, Squashtest.org
+
+        See the NOTICE file distributed with this work for additional
+        information regarding copyright ownership.
+
+        This is free software: you can redistribute it and/or modify
+        it under the terms of the GNU Lesser General Public License as published by
+        the Free Software Foundation, either version 3 of the License, or
+        (at your option) any later version.
+
+        this software is distributed in the hope that it will be useful,
+        but WITHOUT ANY WARRANTY; without even the implied warranty of
+        MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+        GNU Lesser General Public License for more details.
+
+        You should have received a copy of the GNU Lesser General Public License
+        along with this software.  If not, see <http://www.gnu.org/licenses/>.
+
+-->
+<dataset>
+	<attachment_list attachment_list_id="1"/>
+	<issue_list issue_list_id="1" />
+	
+	<test_case_library_node tcln_id="1" name="test_case_1" created_by="IT" created_on="2011-08-03" />
+	<test_case tcln_id="1" attachment_list_id="1" version="1"/>
+	
+	<execution execution_id="1" tcln_id="1" created_by="IT" created_on="2011-08-03" name="execution-tc1" issue_list_id="1"/>
+	
+	
+
+</dataset>

@@ -1,0 +1,145 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+
+        This file is part of the Squashtest platform.
+        Copyright (C) 2010 - 2011 Squashtest TM, Squashtest.org
+
+        See the NOTICE file distributed with this work for additional
+        information regarding copyright ownership.
+
+        This is free software: you can redistribute it and/or modify
+        it under the terms of the GNU Lesser General Public License as published by
+        the Free Software Foundation, either version 3 of the License, or
+        (at your option) any later version.
+
+        this software is distributed in the hope that it will be useful,
+        but WITHOUT ANY WARRANTY; without even the implied warranty of
+        MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+        GNU Lesser General Public License for more details.
+
+        You should have received a copy of the GNU Lesser General Public License
+        along with this software.  If not, see <http://www.gnu.org/licenses/>.
+
+-->
+<beans xmlns="http://www.springframework.org/schema/beans"
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" 
+	xmlns:osgi="http://www.springframework.org/schema/osgi"
+	xmlns:osgix="http://www.springframework.org/schema/osgi-compendium"
+	xsi:schemaLocation="http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans.xsd 
+		http://www.springframework.org/schema/osgi http://www.springframework.org/schema/osgi/spring-osgi.xsd 
+		http://www.springframework.org/schema/osgi-compendium http://www.springframework.org/schema/osgi-compendium/spring-osgi-compendium.xsd">
+	<!-- definitions using elements of the osgi namespace can be included in 
+		this file. There is no requirement to keep these definitions in a separate 
+		file if you do not want to. The rationale for keeping these definitions separate 
+		is to facilitate integration testing of the bundle outside of an OSGi container -->
+		
+		
+	<bean class="org.springframework.osgi.extensions.annotation.ServiceReferenceInjectionBeanPostProcessor" />
+
+	<!-- ====== SERVICES EXPOSED BY THIS BUNDLE ====== -->
+	<osgi:service ref="squashtest.core.security.PermissionEvaluationService" 
+		interface="org.squashtest.csp.core.service.security.PermissionEvaluationService" />
+		
+	<osgi:service ref="squashtest.core.user.UserContextService" 
+		interface="org.squashtest.csp.core.service.security.UserContextService" />	
+		
+	<osgi:service ref="squashtest.core.security.PermissionEvaluator" 
+		interface="org.springframework.security.access.PermissionEvaluator" />
+		
+	<osgi:service ref="squashtest.core.security.AclService">
+		<osgi:interfaces>
+			<value>org.squashtest.csp.core.security.acls.model.ObjectAclService</value>
+			<value>org.springframework.security.acls.model.AclService</value>
+		</osgi:interfaces>
+	</osgi:service>
+		
+	<osgi:service ref="squashtest.core.security.ObjectIdentityRetrievalStrategy" 
+		interface="org.springframework.security.acls.model.ObjectIdentityRetrievalStrategy" />
+	
+	<osgi:service ref="squashtest.core.security.ObjectIdentityService" 
+		interface="org.squashtest.csp.core.service.security.ObjectIdentityService" />
+		
+	<osgi:service ref="squashtest.core.configuration.ConfigurationService" 
+		interface="org.squashtest.csp.core.service.configuration.ConfigurationService" />
+	
+	<osgi:service ref="squashtest.core.persistence.jdbc.DataSource" 
+		interface="javax.sql.DataSource" />
+
+	<!-- Bean Validation Factory -->
+	<osgi:service ref="javax.validation.ValidatorFactory" 
+		interface="javax.validation.ValidatorFactory" />
+	
+	<!-- ====== SERVICES CONSUMED BY THIS BUNDLE ====== -->
+	<!-- Looks up properties set from OSGi Config Admin Compendium -->
+	<osgix:cm-properties id="squashtest.core.datasource.jdbc.config"
+		persistent-id="org.squashtest.csp.core.datasource.jdbc.config" />
+ 		
+ 		
+ 	<!-- 
+ 		some explanations here : 
+ 		
+ 		* core.service publishes the datasource service
+ 		* tm.service consumes it, creates the SessionFactory then publishes it
+ 		* core.service consumes the SessionFactory service
+ 		
+ 		the dependencies between the beans consuming those services are acyclic.
+ 		
+ 		Unfortunately the dependencies between the bundles are cyclics : core.service and tm.service 
+ 		stay stuck in a dead lock while they are waiting each other to publish the services they need.
+ 		
+ 		There are no simple designs that would solve that problem and keep the security (centralized in core.service)
+ 		module-agnostic, as creating the SessionFactory in core.service would bring other problems.
+ 		
+ 		=======================
+ 		
+ 		The solution implemented here is weak : 
+ 		
+ 		* we set the service as optional while it's supposed to be mandatory, in order to have 
+ 		core.service starting anyway, 
+ 		
+ 		* we set the sticky flag to false, that should trigger the registration once the SessionFactory service
+ 		becomes available.  
+ 	
+ 	  -->
+ 
+	<osgi:reference id="squashtest.tm.persistence.hibernate.SessionFactory"
+		bean-name="squashtest.tm.persistence.hibernate.SessionFactory"
+		interface="org.hibernate.SessionFactory" 
+		availability="optional" 
+		sticky="false" />
+		
+		
+	<!--  
+		pretty much the same problem here. To be specific, that thing should be instanciated here in core.service.
+		the reason is that due to the rigid configuration of Spring security, we had to declare it, along with the main authentication manager, in
+		core.web. That is : 
+			- you can't delegate the authentication manager for one Spring context to a bean from another context (eg core.web and core.service)
+			  so you must declare the authentication manager in the web context.
+			- the UserDetailsService and AuthenticationManager need cross-references to each other that cannot be lazily initialized,
+			  thus forbidding asynchronous OSGI-service injection.
+		
+		Spring DM, Spring security and Hibernate really need to talk together.
+	-->
+	<osgi:reference id="squashtest.core.security.JdbcUserDetailsManager"
+		bean-name="squashtest.core.security.JdbcUserDetailsManager"
+		interface="org.springframework.security.provisioning.UserDetailsManager" 
+		availability="optional" 
+		sticky="false" />
+	
+		
+	<!--  
+		the beans handling the credentials
+	 -->
+
+	 	
+	 <osgi:service ref="squashtest.core.security.AdministratorAuthenticationService"
+	 	interface="org.squashtest.csp.core.service.security.UserAuthenticationService" 	/>	 	
+	 	
+	 		
+	 <osgi:service ref="squashtest.core.security.AdministratorAuthenticationService" 
+		interface="org.squashtest.csp.core.service.security.AdministratorAuthenticationService" />
+	 	
+	
+
+</beans>
+ 

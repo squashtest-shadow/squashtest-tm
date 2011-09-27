@@ -1,0 +1,100 @@
+/**
+ *     This file is part of the Squashtest platform.
+ *     Copyright (C) 2010 - 2011 Squashtest TM, Squashtest.org
+ *
+ *     See the NOTICE file distributed with this work for additional
+ *     information regarding copyright ownership.
+ *
+ *     This is free software: you can redistribute it and/or modify
+ *     it under the terms of the GNU Lesser General Public License as published by
+ *     the Free Software Foundation, either version 3 of the License, or
+ *     (at your option) any later version.
+ *
+ *     this software is distributed in the hope that it will be useful,
+ *     but WITHOUT ANY WARRANTY; without even the implied warranty of
+ *     MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ *     GNU Lesser General Public License for more details.
+ *
+ *     You should have received a copy of the GNU Lesser General Public License
+ *     along with this software.  If not, see <http://www.gnu.org/licenses/>.
+ */
+package org.squashtest.csp.tm.domain.bugtracker;
+
+import java.util.ArrayList;
+import java.util.Iterator;
+import java.util.List;
+
+import javax.persistence.Column;
+import javax.persistence.Entity;
+import javax.persistence.GeneratedValue;
+import javax.persistence.Id;
+import javax.persistence.OneToMany;
+
+
+@Entity
+public class IssueList {
+
+	@Id
+	@GeneratedValue
+	@Column(name = "ISSUE_LIST_ID")
+	private Long id;
+
+	/*@OneToMany(cascade = { CascadeType.ALL})
+	@JoinColumn(name = "ISSUE_LIST_ID")*/
+	@OneToMany(mappedBy="issueList")
+	private final List<Issue> issues = new ArrayList<Issue>();
+
+	public Long getId() {
+		return id;
+	}
+
+
+	public void addIssue(Issue issue) {
+		issues.add(issue);
+		issue.setIssueList(this);
+	}
+
+	public void removeIssue(Issue issue) {
+		removeIssue(issue.getId());
+	}
+
+	public void removeIssue(long issueId) {
+		Iterator<Issue> iter = issues.iterator();
+		while (iter.hasNext()) {
+			Issue at = iter.next();
+			if (at.getId() == issueId) {
+				iter.remove();
+				break;
+			}
+		}
+	}
+
+
+	public Issue findIssue(long issueId) {
+		Issue result = null;
+
+		for (Issue at : issues) {
+			if (at.getId() == issueId) {
+				result = at;
+				break;
+			}
+		}
+
+		return result;
+	}
+
+	public boolean hasIssues() {
+		return (issues.size() > 0);
+	}
+
+	public List<Issue> getAllIssues() {
+		return issues;
+	}
+
+	public int size() {
+		return getAllIssues().size();
+	}
+
+
+
+}

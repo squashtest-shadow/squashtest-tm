@@ -1,0 +1,39 @@
+<?xml version='1.0' encoding='UTF-8'?>
+<!--
+
+        This file is part of the Squashtest platform.
+        Copyright (C) 2010 - 2011 Squashtest TM, Squashtest.org
+
+        See the NOTICE file distributed with this work for additional
+        information regarding copyright ownership.
+
+        This is free software: you can redistribute it and/or modify
+        it under the terms of the GNU Lesser General Public License as published by
+        the Free Software Foundation, either version 3 of the License, or
+        (at your option) any later version.
+
+        this software is distributed in the hope that it will be useful,
+        but WITHOUT ANY WARRANTY; without even the implied warranty of
+        MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+        GNU Lesser General Public License for more details.
+
+        You should have received a copy of the GNU Lesser General Public License
+        along with this software.  If not, see <http://www.gnu.org/licenses/>.
+
+-->
+<dataset>
+	<!-- callee -->
+	<attachment_list attachment_list_id="10" />
+	<test_case_library_node tcln_id="10" name="callee" created_on="2011-01-01" created_by="dbu" />
+	<test_case tcln_id="10" version="1" attachment_list_id="10" />
+	 
+	<!-- caller -->
+	<attachment_list attachment_list_id="20" />
+	<test_case_library_node tcln_id="20" name="caller" created_on="2011-01-01" created_by="dbu" />
+	<test_case tcln_id="20" version="1" attachment_list_id="20" />
+	
+	<attachment_list attachment_list_id="200" />
+	<test_step test_step_id="200" />
+	<call_test_step test_step_id="200" called_test_case_id="10" />
+	<test_case_steps test_case_id="20" step_id="200" step_order="0" /> 
+</dataset>

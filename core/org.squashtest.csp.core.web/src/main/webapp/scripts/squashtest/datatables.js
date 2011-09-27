@@ -1,0 +1,427 @@
+/*
+ *     This file is part of the Squashtest platform.
+ *     Copyright (C) 2010 - 2011 Squashtest TM, Squashtest.org
+ *
+ *     See the NOTICE file distributed with this work for additional
+ *     information regarding copyright ownership.
+ *
+ *     This is free software: you can redistribute it and/or modify
+ *     it under the terms of the GNU Lesser General Public License as published by
+ *     the Free Software Foundation, either version 3 of the License, or
+ *     (at your option) any later version.
+ *
+ *     this software is distributed in the hope that it will be useful,
+ *     but WITHOUT ANY WARRANTY; without even the implied warranty of
+ *     MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ *     GNU Lesser General Public License for more details.
+ *
+ *     You should have received a copy of the GNU Lesser General Public License
+ *     along with this software.  If not, see <http://www.gnu.org/licenses/>.
+ */
+/**
+ * This file contains functions used by squashtest dataTables-based components.
+ * @author Gregory Fouquet
+ */
+/**
+ * Adds a delete button in the last cell of a datatables row
+ * 
+ * @param row
+ *            row where to add a delete button
+ * @param entityId
+ *            id of the entity shown by the row
+ * @param buttonTemplateId
+ *            html id of the <a> used as a template
+ */
+
+
+
+
+function addDeleteButtonToRow(row, entityId, buttonTemplateId) {
+	$('td:last', row).append($('#' + buttonTemplateId).clone()).find('a').attr(
+			'id', buttonTemplateId + ':' + entityId);
+}
+
+/**
+ * Registers event handlers to enable rangle selection in tables.
+ */
+function enableTableRangeSelection() {
+	$(window).keydown(function(evt) {
+		handleCtrlDown(evt);
+		handleShiftDown(evt);
+	}).keyup(function(evt) {
+		handleCtrlUp(evt);
+		handleShiftUp(evt);
+	});
+}
+
+/**
+ * Handler for control pressed event
+ * 
+ * @param event
+ */
+/* private */function handleCtrlDown(event) {
+	if (event.which == 17) { // ctrl
+		$(window).data('ctrlPressed', true);
+	}
+}
+/**
+ * Handler for ctrl release event
+ * 
+ * @param event
+ */
+/* private */function handleCtrlUp(event) {
+	if (event.which == 17) { // ctrl
+		$(window).data('ctrlPressed', false);
+	}
+}
+
+/**
+ * Handler for shift pressed event
+ * 
+ * @param event
+ */
+/* private */function handleShiftDown(event) {
+	// shift pressed : the last selected row will be the base of the ranged
+	// selection
+	if (event.which == 16) {
+		if (!$(window).data('shiftPressed')) { // holding shift down fires the
+			// event repeatedly so we ignore
+			// subsequent events
+			$(window).data('shiftPressed', true);
+		}
+	}
+}
+
+/**
+ * Handler for shift release event
+ * 
+ * @param event
+ */
+/* private */function handleShiftUp(event) {
+	if (event.which == 16) { // shift
+		$(window).data('shiftPressed', false);
+	}
+
+}
+
+
+
+/**
+* private to the DnD code.
+*
+* we need to fetch the rank of the first tr of the table
+* as an offset to which we'll add the position of lines we are moving around.
+*
+* @param domTable the dom table
+*
+* @returns the real index of the first row.
+*
+*/
+function getOffsetFromDomTable(domTable, fnGetRowIndex){
+
+	var dataTable = $(domTable).dataTable( {
+		"bRetrieve": true
+	});
+	
+	var firstData = dataTable.fnGetData(0);
+	
+	var position = fnGetRowIndex(firstData);
+	
+	return parseInt(position) -1;
+
+}
+
+
+
+/**
+ * Enables DnD on the given table.
+ * 
+ * @param tableId
+ *            html id of the table
+ * @param dropCallback
+ *            function called on drop. args are row and drop position.
+ * @returns
+ */
+function enableTableDragAndDrop(tableId, fnGetRowIndex, dropHandler) {
+	$('#' + tableId).tableDnD({
+		dragHandle : "drag-handle",
+		onDragStart : function(table, row) { // sounds like the "row" is
+											// actually just the drag handle
+			$(row).find('.drag-handle').addClass('ui-state-active');
+			
+			var offset = getOffsetFromDomTable(table, fnGetRowIndex);
+			
+			var index = row.parentNode.rowIndex - 1;
+			$(table).data("previousRank", index);
+			$(table).data("offset", offset);
+			
+		},
+		onDrop : function(table, row) {
+			//in this part of the code the row is a tr as expected. Uh.
+				
+			var newInd = row.rowIndex - 1;
+			var oldInd = $(table).data("previousRank");
+			var offset = $(table).data("offset");
+			if (newInd != oldInd) {
+				dropHandler(row, newInd+offset);
+			}
+		}
+		
+	});
+}
+
+function bindHover(dataTable) {
+	$('tbody tr', dataTable).live('mouseleave', function() {
+		$(this).removeClass('ui-state-highlight');
+	}).live('mouseenter', function() {
+		if (!$(this).hasClass('ui-state-row-selected')) {
+			$(this).addClass('ui-state-highlight');
+		}
+	});
+}
+/**
+ * Decorates given buttons as delete buttons
+ * 
+ * @param buttons
+ *            jquery selected objects to decorate.
+ */
+function decorateDeleteButtons(buttons) {
+	buttons.button({
+		text : false,
+		icons : {
+			primary : "ui-icon-circle-close"
+		}
+	});
+}
+
+
+
+function addClickHandlerToSelectHandle(nRow, table) {
+	$(nRow).find('.select-handle').click(function() {
+		var row = this.parentNode;
+
+		var ctrl = $(window).data('ctrlPressed');
+		var shift = $(window).data('shiftPressed');
+
+		if (!ctrl && !shift) {
+			toggleRowAndDropSelectedRange(row);
+
+		} else if (ctrl && !shift) {
+			toggleRowAndKeepSelectedRange(row);
+
+		} else if (!ctrl && shift) {
+			growSelectedRangeToRow(row, table);
+
+		} else {
+			growSelectedRangeToRow(row, table);
+
+		}
+
+		memorizeLastSelectedRow(row, table);
+
+		return true;
+	});
+}
+
+/* private */function toggleRowAndDropSelectedRange(row) {
+	$(row).toggleClass('ui-state-row-selected').removeClass(
+			'ui-state-highlight');
+	$(row).parent().find('.ui-state-row-selected').not(row).removeClass(
+			'ui-state-row-selected');
+
+}
+
+/* private */function toggleRowAndKeepSelectedRange(row) {
+	$(row).toggleClass('ui-state-row-selected').removeClass(
+			'ui-state-highlight');
+}
+
+/* private */function growSelectedRangeToRow(row, table) {
+	var rows = $("tbody tr", table);
+	var range = computeSelectionRange(row, table);
+
+	for ( var i = range[0]; i <= range[1]; i++) {
+		var r = rows[i];
+		$(r).addClass('ui-state-row-selected');
+	}
+
+	$(row).removeClass('ui-state-highlight');
+}
+/**
+ * Computes the 0-based range of row that should be selected. Note :
+ * row.rowIndex is a 1-based index.
+ * 
+ * @param row
+ * @param table
+ * @returns
+ */
+/* private */function computeSelectionRange(row, table) {
+	var baseRow = table.data("lastSelectedRow");
+	var baseIndex = baseRow ? baseRow.rowIndex : 1;
+	var currentIndex = row.rowIndex;
+
+	var rangeMin = Math.min(baseIndex, currentIndex);
+	rangeMin = Math.max(rangeMin, 1);
+
+	var rangeMax = Math.max(baseIndex, currentIndex);
+	var rows = $("tbody tr", table);
+	rangeMax = Math.min(rangeMax, rows.length);
+
+	return [ rangeMin - 1, rangeMax - 1 ];
+}
+
+/* private */function memorizeLastSelectedRow(row, table) {
+	if ($(row).hasClass('ui-state-row-selected')) {
+		$(table).data("lastSelectedRow", row);
+	}
+}
+/**
+ * saves the ids of selected rows
+ * 
+ * @param dataTable
+ * @param getRowIdCallback
+ *            function which determines the id to store from the row data.
+ */
+function saveTableSelection(dataTable, getRowIdCallback) {
+	var selectedIds = getIdsOfSelectedTableRows(dataTable, getRowIdCallback);
+	dataTable.attr('selectedIds', selectedIds);
+}
+
+/**
+ * @param dataTable
+ * @param getRowIdCallback
+ *            function(rowData) which should determine id of row.
+ * @returns {Array} of ids of selected rows
+ */
+function getIdsOfSelectedTableRows(dataTable, getRowIdCallback) {
+	var rows = dataTable.fnGetNodes();
+	var ids = new Array();
+
+	$(rows).each(function(index, row) {
+		if ($(row).hasClass('ui-state-row-selected')) {
+			var data = dataTable.fnGetData(row);
+			var id = getRowIdCallback(data)
+			if ((id!="") && (! isNaN(id))){
+				ids.push(id);
+			}
+		}
+	});
+
+	return ids;
+}
+
+function getIdsOfSelectedAssociationTableRows(dataTable, getRowIdCallback) {
+	var rows = dataTable.fnGetNodes();
+	var ids = new Array();
+
+	for(var i =0; i < rows.length ; i++){
+		var row = rows[i]; 
+		if ($(row).hasClass('ui-state-row-selected')) {
+			var data = dataTable.fnGetData(row);
+			ids.push(getRowIdCallback(data));
+		}
+	}
+	return ids;
+}
+
+function restoreTableSelection(dataTable, getRowIdCallback) {
+	var selectedIds = dataTable.attr('selectedIds');
+	if (selectedIds != null) {
+		selectTableRowsOfIds(dataTable, selectedIds, getRowIdCallback);
+	}
+	dataTable.removeAttr('selectedIds');
+}
+
+/* private */function selectTableRowsOfIds(dataTable, ids, getRowIdCallback) {
+	var rows = dataTable.fnGetNodes();
+
+	$(rows).each(function(index, row) {
+		var data = dataTable.fnGetData(row);
+		var rowId = getRowIdCallback(data);
+		if (ids.indexOf(rowId) >= 0) {
+			$(row).addClass('ui-state-row-selected');
+		}
+	});
+}
+function addHLinkToCellText(td, url) {
+	$(td).contents().filter(function() {
+		// IE doesn't define the constant Node so we'll use constant value
+		// instead of Node.TEXT_NODE
+		return this.nodeType == 3;
+	}).wrap('<a href=' + url + '></a>');
+}
+/**
+ * Adds a "manage attachment" link to the row cell(s) of class
+ * has-attachment-cell
+ * 
+ * @param row
+ *            row where to add an attachment button
+ * @param entityId
+ *            id of the entity shown by the row
+ * @param buttonTemplateId
+ *            html id of the <a> used as a template
+ */
+function addAttachmentButtonToRow(row, entityId, buttonTemplateId) {
+	var cell = $('td.has-attachment-cell', row);
+	var attCount = parseInt(cell.text());
+
+	if (attCount > 0) {
+		cell.html($('#' + buttonTemplateId).clone()).find('a').attr('id',
+				buttonTemplateId + ':' + entityId);
+	}
+}
+/**
+ * Decorates given buttons as attachment button
+ * 
+ * @param buttons
+ */
+function decorateAttachmentButtons(buttons) {
+	buttons.button({
+		text : false,
+		icons : {
+			primary : "ui-icon-link"
+		}
+	});
+}
+/**
+ * Decorates given buttons for empty attachment list
+ * 
+ * @param buttons
+ */
+function decorateEmptyAttachmentButtons(buttons) {
+	buttons.button({
+		text : false,
+		icons : {
+			primary : "ui-icon-plus"
+		}
+	});
+}
+
+
+/**
+ * Adds a "manage attachment" link to the row cell(s) of class
+ * has-attachment-cell. DoV for Depending on the Value : 
+ * the button is different whether the attachment list is empty or not
+ * 
+ * @param row
+ *            row where to add an attachment button
+ * @param attCount
+ *            number of attachments
+ * @param buttonTemplateId
+ *            html id of the <a> used as a template
+ * @param buttonTemplateEmptyId
+ *            html id of the <a> used as a template if the attachment list is empty
+ */
+function addAttachmentButtonToRowDoV(row, attCount, buttonTemplateId, buttonTemplateEmptyId) {
+	var cell = $('td.has-attachment-cell', row);
+	var entityId = cell.text();
+	
+	//no attachment count means the cell cannot be attached at all.
+	if (attCount===""){
+		cell.html('');
+	}else if (attCount > 0) {
+		cell.html($('#' + buttonTemplateId).clone()).find('a').attr('id', buttonTemplateId + ':' + entityId);
+	}else{
+		cell.html($('#' + buttonTemplateEmptyId).clone()).find('a').attr('id', buttonTemplateEmptyId + ':' + entityId);
+	}
+}

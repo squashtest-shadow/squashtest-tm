@@ -1,0 +1,144 @@
+<?xml version='1.0' encoding='UTF-8'?>
+<!--
+
+        This file is part of the Squashtest platform.
+        Copyright (C) 2010 - 2011 Squashtest TM, Squashtest.org
+
+        See the NOTICE file distributed with this work for additional
+        information regarding copyright ownership.
+
+        This is free software: you can redistribute it and/or modify
+        it under the terms of the GNU Lesser General Public License as published by
+        the Free Software Foundation, either version 3 of the License, or
+        (at your option) any later version.
+
+        this software is distributed in the hope that it will be useful,
+        but WITHOUT ANY WARRANTY; without even the implied warranty of
+        MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+        GNU Lesser General Public License for more details.
+
+        You should have received a copy of the GNU Lesser General Public License
+        along with this software.  If not, see <http://www.gnu.org/licenses/>.
+
+-->
+<dataset>
+	<!-- projects and libraries -->
+	<test_case_library tcl_id="1" />
+	<campaign_library cl_id="1" />
+	<requirement_library rl_id="1" />
+	<project project_id="1" name="project 1" active="true" created_by="groovy" created_on="2010-01-01" cl_id="1"
+		tcl_id="1" rl_id="1" />
+		
+	<test_case_library tcl_id="2" />
+	<campaign_library cl_id="2" />
+	<requirement_library rl_id="2" />
+	<project project_id="2" name="project 2" active="true" created_by="groovy" created_on="2010-01-01" cl_id="2"
+	tcl_id="2" rl_id="2" />
+
+
+	<!-- test cases -->
+	<attachment_list attachment_list_id="10" />
+	<test_case_library_node tcln_id="1" name="test case 1" created_by="dbu" created_on="2010-02-01" />
+	<test_case tcln_id="1" version="1" attachment_list_id="10" />
+	
+	<test_case_library_node tcln_id="2" name="test case 2" created_by="dbu" created_on="2010-02-01" />
+	<attachment_list attachment_list_id="20" />
+	<test_case tcln_id="2" version="1" attachment_list_id="20" />
+	
+	<test_case_library_node tcln_id="3" name="test case 3" created_by="dbu" created_on="2010-02-01" />
+	<attachment_list attachment_list_id="30" />
+	<test_case tcln_id="3" version="1" attachment_list_id="30" />
+	
+	<test_case_library_node tcln_id="4" name="test case 4" created_by="dbu" created_on="2010-02-01" />
+	<attachment_list attachment_list_id="40" />
+	<test_case tcln_id="4" version="1" attachment_list_id="40" />
+	
+	<!-- Requirement for project 1 -->
+	<attachment_list attachment_list_id="101" />
+	<requirement_library_node rln_id="101" name="101" created_on="2010-02-01" created_by="dbu" project_id="1" />
+	<requirement rln_id="101"  attachment_list_id="101" criticality="UNDEFINED" />
+	
+	<attachment_list attachment_list_id="102" />
+	<requirement_library_node rln_id="102" name="102" created_on="2010-02-01" created_by="dbu" project_id="1" />
+	<requirement rln_id="102"  attachment_list_id="102" criticality="MINOR" />
+	
+	<attachment_list attachment_list_id="103" />
+	<requirement_library_node rln_id="103" name="103" created_on="2010-02-01" created_by="dbu" project_id="1" />
+	<requirement rln_id="103"  attachment_list_id="103" criticality="UNDEFINED" />
+	
+	<attachment_list attachment_list_id="104" />
+	<requirement_library_node rln_id="104" name="104" created_on="2010-02-01" created_by="dbu" project_id="1" />
+	<requirement rln_id="104"  attachment_list_id="104" criticality="CRITICAL" />
+	
+	<attachment_list attachment_list_id="105" />
+	<requirement_library_node rln_id="105" name="105" created_on="2010-02-01" created_by="dbu" project_id="1" />
+	<requirement rln_id="105"  attachment_list_id="105" criticality="CRITICAL" />
+	
+	<attachment_list attachment_list_id="106" />
+	<requirement_library_node rln_id="106" name="106" created_on="2010-02-01" created_by="dbu" project_id="1" />
+	<requirement rln_id="106"  attachment_list_id="106" criticality="MAJOR" />
+	
+	
+	<!-- Requirement for project 2 -->
+	<attachment_list attachment_list_id="201" />
+	<requirement_library_node rln_id="201" name="201" created_on="2010-02-01" created_by="dbu" project_id="2" />
+	<requirement rln_id="201"  attachment_list_id="201" criticality="MAJOR" />
+	
+	<attachment_list attachment_list_id="202" />
+	<requirement_library_node rln_id="202" name="202" created_on="2010-02-01" created_by="dbu" project_id="2" />
+	<requirement rln_id="202"  attachment_list_id="202" criticality="UNDEFINED" />
+	
+	<attachment_list attachment_list_id="203" />
+	<requirement_library_node rln_id="203" name="203" created_on="2010-02-01" created_by="dbu" project_id="2" />
+	<requirement rln_id="203"  attachment_list_id="203" criticality="MINOR" />
+	
+	<attachment_list attachment_list_id="204" />
+	<requirement_library_node rln_id="204" name="204" created_on="2010-02-01" created_by="dbu" project_id="2" />
+	<requirement rln_id="204"  attachment_list_id="204" criticality="UNDEFINED" />
+	
+	<attachment_list attachment_list_id="205" />
+	<requirement_library_node rln_id="205" name="205" created_on="2010-02-01" created_by="dbu" project_id="2" />
+	<requirement rln_id="205"  attachment_list_id="205" criticality="CRITICAL" />
+	
+	<attachment_list attachment_list_id="206" />
+	<requirement_library_node rln_id="206" name="206" created_on="2010-02-01" created_by="dbu" project_id="2" />
+	<requirement rln_id="206"  attachment_list_id="206" criticality="UNDEFINED" />
+	
+	<attachment_list attachment_list_id="207" />
+	<requirement_library_node rln_id="207" name="207" created_on="2010-02-01" created_by="dbu" project_id="2" />
+	<requirement rln_id="207"  attachment_list_id="207" criticality="UNDEFINED" />
+	
+	<!-- Requirement Folder  -->
+	<requirement_library_node rln_id="100" name="folder 100" created_on="2010-02-01" created_by="dbu" />
+	<requirement_folder rln_id="100" />
+	<rln_relationship ancestor_id="100" descendant_id="103" />
+	<requirement_library_node rln_id="200" name="folder 200" created_on="2010-02-01" created_by="dbu" />
+	<requirement_folder rln_id="200" />
+	<rln_relationship ancestor_id="200" descendant_id="205" />
+	
+	<!-- project 1 - test case verifying requirement, req 102, 105 not verified, 101 verified twice  -->
+	<test_case_requirement_link test_case_id="1" requirement_id="101" />
+	<test_case_requirement_link test_case_id="2" requirement_id="101" />
+	<test_case_requirement_link test_case_id="3" requirement_id="103" />
+	<test_case_requirement_link test_case_id="1" requirement_id="104" />
+	<test_case_requirement_link test_case_id="1" requirement_id="106" />
+	
+	<!-- project 2 - test case verifying requirement -->
+	<test_case_requirement_link test_case_id="1" requirement_id="201" />
+	<test_case_requirement_link test_case_id="1" requirement_id="203" />
+	<test_case_requirement_link test_case_id="1" requirement_id="205" />
+	
+	
+	<!-- cleanup -->
+	<test_step/>
+	<action_test_step/>
+	<call_test_step/>
+	<test_case_steps/>
+	
+	<test_case_folder/>
+	<tcln_relationship/>
+	
+	<attachment_content/>
+	<attachment/>
+
+</dataset>

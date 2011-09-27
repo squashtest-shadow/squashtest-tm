@@ -1,0 +1,119 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+
+        This file is part of the Squashtest platform.
+        Copyright (C) 2010 - 2011 Squashtest TM, Squashtest.org
+
+        See the NOTICE file distributed with this work for additional
+        information regarding copyright ownership.
+
+        This is free software: you can redistribute it and/or modify
+        it under the terms of the GNU Lesser General Public License as published by
+        the Free Software Foundation, either version 3 of the License, or
+        (at your option) any later version.
+
+        this software is distributed in the hope that it will be useful,
+        but WITHOUT ANY WARRANTY; without even the implied warranty of
+        MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+        GNU Lesser General Public License for more details.
+
+        You should have received a copy of the GNU Lesser General Public License
+        along with this software.  If not, see <http://www.gnu.org/licenses/>.
+
+-->
+
+<beans xmlns="http://www.springframework.org/schema/beans"
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xmlns:osgi="http://www.springframework.org/schema/osgi"
+	xmlns:osgix="http://www.springframework.org/schema/osgi-compendium"
+	xsi:schemaLocation="
+		http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans.xsd
+        http://www.springframework.org/schema/osgi http://www.springframework.org/schema/osgi/spring-osgi.xsd
+        http://www.springframework.org/schema/osgi-compendium http://www.springframework.org/schema/osgi-compendium/spring-osgi-compendium.xsd">
+
+	<osgix:cm-properties id="squashtest.tm.uploadfilter.config"
+		persistent-id="org.squashtest.csp.tm.web.uploadfilter.config" />
+		
+	<osgix:cm-properties id="squashtest.tm.reporting.contentdispositionmapping"
+		persistent-id="org.squashtest.csp.tm.reporting.contentdisposition" />
+
+	<!-- Definitions using elements of the osgi namespace can be included in 
+		this file. There is no requirement to keep these definitions in a separate 
+		file if you do not want to. The rationale for keeping these definitions separate 
+		is to facilitate integration testing of the bundle outside of an OSGi container -->
+	<osgi:reference id="squashtest.tm.service.TestCaseModificationService"
+		bean-name="squashtest.tm.service.TestCaseModificationService"
+		interface="org.squashtest.csp.tm.service.TestCaseModificationService"
+		availability="mandatory" />
+
+	<osgi:reference
+		id="squashtest.tm.service.TestCaseLibraryNavigationService" 
+		bean-name="squashtest.tm.service.TestCaseLibraryNavigationService"
+		interface="org.squashtest.csp.tm.service.TestCaseLibraryNavigationService"
+		availability="mandatory" />
+
+	<osgi:reference id="squashtest.tm.service.RequirementModificationService"
+		bean-name="squashtest.tm.service.RequirementModificationService"
+		interface="org.squashtest.csp.tm.service.RequirementModificationService"
+		availability="mandatory" />
+
+	<osgi:reference
+		id="squashtest.tm.service.RequirementLibraryNavigationService"
+		bean-name="squashtest.tm.service.RequirementLibraryNavigationService"
+		interface="org.squashtest.csp.tm.service.RequirementLibraryNavigationService"
+		availability="mandatory" />
+
+	<osgi:reference id="squashtest.tm.service.CampaignModificationService"
+		bean-name="squashtest.tm.service.CampaignModificationService"
+		interface="org.squashtest.csp.tm.service.CampaignModificationService"
+		availability="mandatory" />
+
+	<osgi:reference id="squashtest.tm.service.IterationModificationService"
+		bean-name="squashtest.tm.service.IterationModificationService"
+		interface="org.squashtest.csp.tm.service.IterationModificationService"
+		availability="mandatory" />
+
+	<osgi:reference
+		id="squashtest.tm.service.CampaignLibraryNavigationService" 
+		bean-name="squashtest.tm.service.CampaignLibraryNavigationService"
+		interface="org.squashtest.csp.tm.service.CampaignLibraryNavigationService"
+		availability="mandatory" />
+
+	<osgi:reference id="squashtest.tm.service.CampaignTestPlanManagerService"
+		bean-name="squashtest.tm.service.CampaignTestPlanManagerService"
+		interface="org.squashtest.csp.tm.service.CampaignTestPlanManagerService"
+		availability="mandatory" />
+
+	<osgi:reference id="squashtest.tm.service.SearchService"
+		bean-name="squashtest.tm.service.SearchService"
+		interface="org.squashtest.csp.tm.service.SearchService"
+		availability="mandatory" />
+		
+	<osgi:reference id="squashtest.core.security.PermissionEvaluationService" 
+		bean-name="squashtest.core.security.PermissionEvaluationService" 
+		interface="org.squashtest.csp.core.service.security.PermissionEvaluationService" 
+		availability="mandatory "/>
+		
+	<!-- bug tracker services -->
+	<osgi:reference id="squashtest.tm.service.BugTrackerLocalService"
+		bean-name="squashtest.tm.service.BugTrackerLocalService" 
+		interface="org.squashtest.csp.tm.service.BugTrackerLocalService"
+		availability="mandatory" />
+		
+	<osgi:reference id="squashtest.tm.service.UserAccountService"
+		bean-name="squashtest.tm.service.UserAccountService" 
+		interface="org.squashtest.csp.tm.service.UserAccountService"
+		availability="mandatory" />
+		
+	<osgi:reference id="squashtest.tm.service.AdministrationService"
+		bean-name="squashtest.tm.service.AdministrationService" 
+		interface="org.squashtest.csp.tm.service.AdministrationService"
+		availability="mandatory" />		
+		
+	<osgi:reference id="squashtest.tm.service.CallStepManagerService"
+		bean-name="squashtest.tm.service.CallStepManagerService" 
+		interface="org.squashtest.csp.tm.service.CallStepManagerService"
+		availability="mandatory" />				
+		
+		
+</beans>

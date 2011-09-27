@@ -1,0 +1,7 @@
+Bundle-ManifestVersion: 2
+Spring-DM-Version: ${springdm.version}
+Bundle-Name: ${bundle.name}
+Bundle-SymbolicName: ${bundle.symbolicName}
+Excluded-Exports: *.internal*
+Unversioned-Imports: *
+Import-Package: javax.transaction, org.springframework.dao.support, org.springframework.aop, org.springframework.aop.framework, org.aopalliance.aop, org.springframework.transaction, javassist.util.proxy, org.apache.commons.dbcp;resolution:=optional,org.hibernate, org.hibernate.dialect, org.hibernate.proxy, org.hibernate.validator, javax.validation.constraints, org.aspectj.lang, sun.reflect, org.apache.derby.jdbc;resolution:=optional, org.h2;resolution:=optional, com.mysql.jdbc;resolution:=optional, org.springframework.security.acls.domain

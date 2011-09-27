@@ -1,0 +1,90 @@
+<?xml version='1.0' encoding='UTF-8'  ?>
+<!--
+
+        This file is part of the Squashtest platform.
+        Copyright (C) 2010 - 2011 Squashtest TM, Squashtest.org
+
+        See the NOTICE file distributed with this work for additional
+        information regarding copyright ownership.
+
+        This is free software: you can redistribute it and/or modify
+        it under the terms of the GNU Lesser General Public License as published by
+        the Free Software Foundation, either version 3 of the License, or
+        (at your option) any later version.
+
+        this software is distributed in the hope that it will be useful,
+        but WITHOUT ANY WARRANTY; without even the implied warranty of
+        MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+        GNU Lesser General Public License for more details.
+
+        You should have received a copy of the GNU Lesser General Public License
+        along with this software.  If not, see <http://www.gnu.org/licenses/>.
+
+-->
+
+<dataset>
+
+<ATTACHMENT_LIST/>
+<ATTACHMENT_CONTENT/>
+<ATTACHMENT/>
+
+
+<TEST_CASE_LIBRARY/>
+<CAMPAIGN_LIBRARY/>
+<REQUIREMENT_LIBRARY/>
+
+<PROJECT/>
+<PROJECT_FILTER/>
+<PROJECT_FILTER_ENTRY/>
+
+<TEST_CASE_LIBRARY_NODE/>
+<TEST_CASE/>
+<TEST_CASE_FOLDER/>
+<TCLN_RELATIONSHIP/>
+<TEST_CASE_LIBRARY_CONTENT/>
+
+<TEST_STEP/>
+<ACTION_TEST_STEP/>
+<CALL_TEST_STEP/>
+<TEST_CASE_STEPS/>
+
+
+<REQUIREMENT_LIBRARY_NODE/>
+<REQUIREMENT_FOLDER/>
+<REQUIREMENT/>
+
+<RLN_RELATIONSHIP/>
+<REQUIREMENT_LIBRARY_CONTENT/>
+
+
+<TEST_CASE_REQUIREMENT_LINK/>
+
+
+<ISSUE_LIST/>
+<ISSUE/>
+
+<CAMPAIGN_LIBRARY_NODE/>
+<CAMPAIGN/>
+<CAMPAIGN_FOLDER/>
+
+<CLN_RELATIONSHIP/>
+<CAMPAIGN_LIBRARY_CONTENT/>
+
+
+<ITERATION/>
+<CAMPAIGN_ITERATION/>
+
+<ITERATION_TEST_PLAN_ITEM/>
+<ITEM_TEST_PLAN_LIST/>
+
+
+<EXECUTION/>
+<ITEM_TEST_PLAN_EXECUTION />
+
+
+<EXECUTION_STEP/>
+
+<EXECUTION_EXECUTION_STEPS/>
+
+
+</dataset>

@@ -1,0 +1,93 @@
+/**
+ *     This file is part of the Squashtest platform.
+ *     Copyright (C) 2010 - 2011 Squashtest TM, Squashtest.org
+ *
+ *     See the NOTICE file distributed with this work for additional
+ *     information regarding copyright ownership.
+ *
+ *     This is free software: you can redistribute it and/or modify
+ *     it under the terms of the GNU Lesser General Public License as published by
+ *     the Free Software Foundation, either version 3 of the License, or
+ *     (at your option) any later version.
+ *
+ *     this software is distributed in the hope that it will be useful,
+ *     but WITHOUT ANY WARRANTY; without even the implied warranty of
+ *     MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ *     GNU Lesser General Public License for more details.
+ *
+ *     You should have received a copy of the GNU Lesser General Public License
+ *     along with this software.  If not, see <http://www.gnu.org/licenses/>.
+ */
+package org.squashtest.csp.tm.service;
+
+import java.util.List;
+
+import org.springframework.transaction.annotation.Transactional;
+import org.squashtest.csp.tm.domain.execution.Execution;
+import org.squashtest.csp.tm.domain.execution.ExecutionStatus;
+import org.squashtest.csp.tm.domain.execution.ExecutionStatusReport;
+import org.squashtest.csp.tm.domain.execution.ExecutionStep;
+
+
+@Transactional
+public interface ExecutionProcessingService {
+
+	Execution findExecution(Long executionId);
+
+	/**
+	 * @deprecated dead code ?
+	 * @param executionId
+	 * @return
+	 */
+	@Deprecated
+	int findExecutionRank(Long executionId);
+
+
+	ExecutionStep findExecutionStep(Long executionStepId);
+
+	/**
+	 *
+	 * @param executionId
+	 * @return the first occurence of a running or ready ExecutionStep
+	 */
+	ExecutionStep findRunningExecutionStep(Long executionId);
+
+	List<ExecutionStep> getExecutionSteps(Long executionId);
+
+
+
+	/**
+	 * Returns, for a given execution and for a given step index, the corresponding ExecutionStep
+	 * Will create the next step if the index corresponds to the one immediately following the last step, similarly to "nextExecutionStep"
+	 *
+	 * @param executionId
+	 * @param executionStepRank
+	 * @return
+	 */
+	ExecutionStep getStepAt(Long executionId, int executionStepIndex);
+
+	/***
+	 * Method which modify the execution step status<br>
+	 * It implies :<br>
+	 * * execution status update<br>
+	 * * item test plan status update<br>
+	 * * last execution date and user update for step, execution and item test plan<br>
+	 * @param executionStepId the step id
+	 * @param status the new status
+	 */
+	void setExecutionStepStatus(Long executionStepId, ExecutionStatus status);
+
+	void setExecutionStatus(Long executionId, ExecutionStatus status);
+
+	void setExecutionStatus(Long executionId, ExecutionStatusReport report);
+
+	ExecutionStatusReport getExecutionStatusReport(Long executionId);
+
+	void setExecutionStepComment(Long executionStepId, String comment);
+
+
+	int findExecutionStepRank(Long executionStepId);
+
+	int findTotalNumberSteps(Long executionId);
+
+}

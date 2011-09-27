@@ -1,0 +1,93 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+
+        This file is part of the Squashtest platform.
+        Copyright (C) 2010 - 2011 Squashtest TM, Squashtest.org
+
+        See the NOTICE file distributed with this work for additional
+        information regarding copyright ownership.
+
+        This is free software: you can redistribute it and/or modify
+        it under the terms of the GNU Lesser General Public License as published by
+        the Free Software Foundation, either version 3 of the License, or
+        (at your option) any later version.
+
+        this software is distributed in the hope that it will be useful,
+        but WITHOUT ANY WARRANTY; without even the implied warranty of
+        MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+        GNU Lesser General Public License for more details.
+
+        You should have received a copy of the GNU Lesser General Public License
+        along with this software.  If not, see <http://www.gnu.org/licenses/>.
+
+-->
+<beans xmlns="http://www.springframework.org/schema/beans"
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:p="http://www.springframework.org/schema/p"
+	xmlns:context="http://www.springframework.org/schema/context"
+	xmlns:mvc="http://www.springframework.org/schema/mvc" xmlns:aop="http://www.springframework.org/schema/aop"
+	xsi:schemaLocation="
+		http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans-3.0.xsd
+		http://www.springframework.org/schema/context http://www.springframework.org/schema/context/spring-context-3.0.xsd
+		http://www.springframework.org/schema/mvc http://www.springframework.org/schema/mvc/spring-mvc-3.0.xsd
+		http://www.springframework.org/schema/aop http://www.springframework.org/schema/aop/spring-aop-3.0.xsd">
+
+	<!-- Scans the classpath of this application for @Components to deploy as 
+		beans -->
+	<context:component-scan base-package="*" />
+	<context:property-placeholder ignore-unresolvable="true" properties-ref="squashtest.core.auth.config" />	
+		
+	<!-- Configures the @Controller programming model -->
+	<mvc:annotation-driven validator="validator" />
+
+	<bean id="validator"
+		class="org.springframework.validation.beanvalidation.CustomValidatorBean">
+		<property name="validatorFactory" ref="javax.validation.ValidatorFactory" />
+	</bean>
+
+	<!-- Injects OSGi services in Controllers -->
+	<bean
+		class="org.springframework.osgi.extensions.annotation.ServiceReferenceInjectionBeanPostProcessor" />
+
+	<!-- Resolves view names to protected .jsp resources within the /WEB-INF/jsp 
+		directory -->
+	<bean name="jspViewResolver"
+		class="org.springframework.web.servlet.view.InternalResourceViewResolver">
+		<property name="viewClass"
+			value="org.springframework.web.servlet.view.JstlView" />
+		<property name="prefix" value="/WEB-INF/jsp/" />
+		<property name="suffix" value=".jsp" />
+	</bean>
+
+	<!-- Message source for this context, loaded from localized "messages_xx" 
+		files. -->
+	<bean id="messageSource"
+		class="org.springframework.context.support.ReloadableResourceBundleMessageSource">
+		<property name="basenames">
+			<list>
+				<!-- TODO have to find something better, core is coupled to its components... -->
+				<value>/WEB-INF/messages/core/messages</value>
+				<value>/WEB-INF/messages/tm/messages</value>
+				<value>org/springframework/security/messages</value>
+			</list>
+		</property>
+	</bean>
+
+	<mvc:interceptors>
+		<bean
+			class="org.springframework.orm.hibernate3.support.OpenSessionInViewInterceptor">
+			<property name="sessionFactory"
+				ref="squashtest.tm.persistence.hibernate.SessionFactory" />
+		</bean>
+
+		<bean class="org.springframework.web.servlet.mvc.WebContentInterceptor">
+			<property name="cacheSeconds" value="0" />
+			<property name="useExpiresHeader" value="true" />
+			<property name="useCacheControlHeader" value="true" />
+			<property name="useCacheControlNoStore" value="true" />
+		</bean>
+		
+		<bean class="org.springframework.web.context.request.Log4jNestedDiagnosticContextInterceptor">
+			<property name="includeClientInfo" value="true" />
+		</bean>
+	</mvc:interceptors>
+</beans>

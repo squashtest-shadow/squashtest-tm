@@ -1,0 +1,189 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+
+        This file is part of the Squashtest platform.
+        Copyright (C) 2010 - 2011 Squashtest TM, Squashtest.org
+
+        See the NOTICE file distributed with this work for additional
+        information regarding copyright ownership.
+
+        This is free software: you can redistribute it and/or modify
+        it under the terms of the GNU Lesser General Public License as published by
+        the Free Software Foundation, either version 3 of the License, or
+        (at your option) any later version.
+
+        this software is distributed in the hope that it will be useful,
+        but WITHOUT ANY WARRANTY; without even the implied warranty of
+        MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+        GNU Lesser General Public License for more details.
+
+        You should have received a copy of the GNU Lesser General Public License
+        along with this software.  If not, see <http://www.gnu.org/licenses/>.
+
+-->
+<beans xmlns="http://www.springframework.org/schema/beans"
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:p="http://www.springframework.org/schema/p"
+	xmlns:context="http://www.springframework.org/schema/context"
+	xmlns:aop="http://www.springframework.org/schema/aop"
+	xmlns:util="http://www.springframework.org/schema/util"	
+	xsi:schemaLocation="http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans-3.0.xsd
+		http://www.springframework.org/schema/context http://www.springframework.org/schema/context/spring-context-3.0.xsd
+		http://www.springframework.org/schema/aop http://www.springframework.org/schema/aop/spring-aop-3.0.xsd
+		http://www.springframework.org/schema/util http://www.springframework.org/schema/util/spring-util-2.0.xsd">
+
+
+	<!-- 
+		FIXME : find a way to make the reports completely independent of tm.web. That is, no resource bundle, 
+	 	no JasperReportsMultiFormatView etc.
+	 -->
+
+	<!-- JasperReport BeanViewResolvers -->
+	<bean id="jasperReportsViewResolver"
+		class="org.springframework.web.servlet.view.BeanNameViewResolver">
+		<property name="order" value="1" />
+	</bean>
+	
+	<util:map id="multiFormatViewMapping">
+		<entry key="pdf" >
+			<value type="java.lang.Class">org.springframework.web.servlet.view.jasperreports.JasperReportsPdfView</value>
+		</entry>
+		<entry key="html" >
+			<value type="java.lang.Class">org.springframework.web.servlet.view.jasperreports.JasperReportsHtmlView</value>
+		</entry>
+		<entry key="xls" >
+			<value type="java.lang.Class">org.springframework.web.servlet.view.jasperreports.JasperReportsXlsView</value>
+		</entry>
+		<entry key="csv" >
+			<value type="java.lang.Class">org.springframework.web.servlet.view.jasperreports.JasperReportsCsvView</value>
+		</entry>	
+		<entry key="docx" >
+			<value type="java.lang.Class">org.squashtest.csp.tm.web.internal.infrastructure.report.JasperReportsDocxView</value>
+		</entry>
+		<entry key="ods" >
+			<value type="java.lang.Class">org.squashtest.csp.tm.web.internal.infrastructure.report.JasperReportsOdsView</value>
+		</entry>			
+	</util:map>
+	
+
+	
+	
+	<bean id="executionProgression1" class="org.springframework.web.servlet.view.jasperreports.JasperReportsMultiFormatView">
+	
+	
+		<property name="contentDispositionMappings" ref="squashtest.tm.reporting.contentdispositionmapping"/>
+		<property name="formatMappings" ref="multiFormatViewMapping" />
+	
+		<property name="url"
+			value="/WEB-INF/reports/execution-progression-view0.jasper" />
+		<property name="reportDataKey" value="data" />
+		<property name="subReportUrls">
+			<map>
+				<entry key="subReportCampaign"
+					value="/WEB-INF/reports/execution-progression-view0_campaign.jasper" />
+				<entry key="subReportIteration_0"
+					value="/WEB-INF/reports/execution-progression-view0_campaign_iterations.jasper" />
+			</map>
+		</property>
+		<property name="exporterParameters">
+			<map>
+				<entry
+					key="net.sf.jasperreports.engine.export.JRHtmlExporterParameter.ZOOM_RATIO">
+					<value type="java.lang.Float">1.4</value>
+				</entry>
+			</map>
+		</property>	
+	</bean>
+	
+	<bean id="executionProgression2"
+		class="org.springframework.web.servlet.view.jasperreports.JasperReportsMultiFormatView">
+		
+		<property name="contentDispositionMappings" ref="squashtest.tm.reporting.contentdispositionmapping"/> 
+		<property name="formatMappings" ref="multiFormatViewMapping" />
+				 
+		<property name="url"
+			value="/WEB-INF/reports/execution-progression.jasper" />
+		<property name="reportDataKey" value="data" />
+		<property name="subReportUrls">
+			<map>
+				<entry key="executionProgressionSubReport"
+					value="/WEB-INF/reports/execution-progression_campaign.jasper" />
+			</map>
+		</property>
+
+		<property name="exporterParameters">
+			<map>
+				<entry
+					key="net.sf.jasperreports.engine.export.JRHtmlExporterParameter.ZOOM_RATIO">
+					<value type="java.lang.Float">1.4</value>
+				</entry>
+			</map>
+		</property>
+	</bean>
+	
+	<bean id="requirementCoverage1" class="org.springframework.web.servlet.view.jasperreports.JasperReportsMultiFormatView">
+		<property name="contentDispositionMappings" ref="squashtest.tm.reporting.contentdispositionmapping"/> 
+		<property name="formatMappings" ref="multiFormatViewMapping" />
+				 
+		<property name="url"
+			value="/WEB-INF/reports/requirement-coverage-overview.jasper" />
+		<property name="reportDataKey" value="data" />
+		<property name="exporterParameters">
+			<map>
+				<entry
+					key="net.sf.jasperreports.engine.export.JRHtmlExporterParameter.ZOOM_RATIO">
+					<value type="java.lang.Float">1.4</value>
+				</entry>
+			</map>
+		</property>	
+	</bean>
+	
+	<bean id="requirementCoverage2" class="org.springframework.web.servlet.view.jasperreports.JasperReportsMultiFormatView">
+		<property name="contentDispositionMappings" ref="squashtest.tm.reporting.contentdispositionmapping"/> 
+		<property name="formatMappings" ref="multiFormatViewMapping" />
+				 
+		<property name="url"
+			value="/WEB-INF/reports/requirement-coverage_projects.jasper" />
+		<property name="reportDataKey" value="data" />
+		<property name="subReportUrls">
+			<map>
+				<entry key="subReportParamName"
+					value="/WEB-INF/reports/requirement-coverage_requirements.jasper" />
+			</map>
+		</property>
+		<property name="exporterParameters">
+			<map>
+				<entry
+					key="net.sf.jasperreports.engine.export.JRHtmlExporterParameter.ZOOM_RATIO">
+					<value type="java.lang.Float">1.4</value>
+				</entry>
+			</map>
+		</property>	
+	</bean>
+
+	<!-- Message source for this context, loaded from localized "messages_xx" 
+		files. -->
+	<bean id="reportMessageSource"
+		class="org.springframework.context.support.ResourceBundleMessageSource">
+		<property name="basename"
+			value="/WEB-INF/reports/messages/execution-progression" />
+	</bean>
+
+
+
+	<!-- /JasperReport BeanViewResolvers -->
+
+	<context:property-placeholder ignore-unresolvable="true" properties-ref="squashtest.tm.uploadfilter.config" />
+	
+	<bean id="multipartResolver"
+		class="org.squashtest.csp.tm.web.internal.fileuploadutils.ProgressAwareMultipartResolver">
+		<property name="maxUploadSize" value="${uploadfilter.upload.sizeLimitInBytes}" /> 
+	</bean>
+
+	<bean
+		class="org.squashtest.csp.tm.web.internal.fileuploadutils.UploadContentFilterUtil">
+		<property name="whiteList" value="${uploadfilter.fileExtensions.whitelist}" />
+	</bean>
+
+	<bean id="tmEnumServletContextExposer" class="org.squashtest.csp.tm.web.internal.filter.EnumServletContextExposer" />
+
+</beans>

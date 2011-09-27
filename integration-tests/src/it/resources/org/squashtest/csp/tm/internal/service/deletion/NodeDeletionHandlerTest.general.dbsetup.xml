@@ -1,0 +1,197 @@
+<?xml version='1.0' encoding='UTF-8'?>
+<!--
+
+        This file is part of the Squashtest platform.
+        Copyright (C) 2010 - 2011 Squashtest TM, Squashtest.org
+
+        See the NOTICE file distributed with this work for additional
+        information regarding copyright ownership.
+
+        This is free software: you can redistribute it and/or modify
+        it under the terms of the GNU Lesser General Public License as published by
+        the Free Software Foundation, either version 3 of the License, or
+        (at your option) any later version.
+
+        this software is distributed in the hope that it will be useful,
+        but WITHOUT ANY WARRANTY; without even the implied warranty of
+        MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+        GNU Lesser General Public License for more details.
+
+        You should have received a copy of the GNU Lesser General Public License
+        along with this software.  If not, see <http://www.gnu.org/licenses/>.
+
+-->
+
+<!-- 
+	That file will instanciate a complete set of entity dependencies 
+
+	That file declares only entities, not their relationships (except folder-nodes relationships).
+	
+	Additional datasets will be required to link the entities together (eg, a campaign with an iteration)
+	according to each test specifics.
+
+-->
+
+<dataset>
+
+	<!-- =============================== three libraries ============================================ -->
+	
+	
+
+	<test_case_library tcl_id="1" />
+	<requirement_library rl_id="1" />
+	<campaign_library cl_id="1" />
+	
+	<!-- =============================== one project ================================================ -->
+	
+	<project project_id="1" name="base project" active="true" created_by="IT" created_on="2011-08-08" 
+			 cl_id="1" rl_id="1" tcl_id="1"/>
+			 
+	
+	<!-- =============================== attachment-lists =========================================== -->
+	
+	<attachment_list attachment_list_id="11"  /> <!--  for test case 1 -->
+	<attachment_list attachment_list_id="12"  /> <!--  for test case 2 -->
+	<attachment_list attachment_list_id="111" /> <!--  for test steps of test case 1 -->
+	<attachment_list attachment_list_id="121" /> <!--  for test steps of test case 2 -->
+	
+	<attachment_list attachment_list_id="21" /> <!--  for requirement 1 -->
+	<attachment_list attachment_list_id="22" /> <!--  for requirement 2 -->
+	
+	<attachment_list attachment_list_id="31" /> <!--  for campaign 1 -->
+	<attachment_list attachment_list_id="32" /> <!--  for campaign 2 -->
+	
+
+	<!-- ============================ test_case_library_node ========================================== -->
+	
+	
+	<test_case_library_node tcln_id="1" name="folder1" created_by="IT" created_on="2011-08-08" />
+	<test_case_library_node tcln_id="11" name="test case 1" created_by="IT" created_on="2011-08-08" /> 
+	<test_case_library_node tcln_id="12" name="test case 2" created_by="IT" created_on="2011-08-08" />  
+	
+
+	<!-- ============================ test case folder ================================================= -->
+
+	<test_case_folder tcln_id="1" />
+	
+	<!-- ============================ test case ======================================================== -->
+	
+	<test_case tcln_id="11" version="1" attachment_list_id="11"/>
+	<test_case tcln_id="12" version="1" attachment_list_id="12"/>
+	
+	<!-- ============================ tcln_relationship ================================================ -->
+	
+	<tcln_relationship ancestor_id="1" descendant_id="11" /> <!--  tcfolder 1 contains tc1 -->
+	<tcln_relationship ancestor_id="1" descendant_id="12" /> <!--  tcfolder 1 contains t2 -->
+	
+	<!-- ============================ test case library content =======================================  -->
+	
+	<test_case_library_content library_id="1" content_id="1" />  <!--  tc library 1 contains tcfolder 1 -->
+	
+	<!-- ============================ test step ======================================================== -->
+	
+	<test_step test_step_id="111" /> <!-- test case 1 step 1  -->
+	<test_step test_step_id="112" /> <!-- test case 1 step 2  -->
+	<test_step test_step_id="121" /> <!-- test case 2 step 1  -->
+	
+	<!-- ============================ action test step ================================================= -->
+	
+	<action_test_step test_step_id="111" action="test case 1 step 1" attachment_list_id="111" />
+	<action_test_step test_step_id="121" action="test case 2 step 1" attachment_list_id="121" />
+
+	<!-- ============================ call test step ===================================================  -->
+	
+	<call_test_step test_step_id="112" called_test_case_id="12" />
+	
+	<!--  ============================ test case steps ================================================== -->
+	
+	<test_case_steps test_case_id="11" step_id="111" step_order="0" /> <!-- test case 1 step 1  -->
+	<test_case_steps test_case_id="11" step_id="112" step_order="1" /> <!-- test case 1 step 2  -->
+	<test_case_steps test_case_id="12" step_id="121" step_order="0" /> <!-- test case 2 step 1  -->
+	
+	
+	<!--  ============================ requirement library node ========================================= -->
+	
+	<requirement_library_node rln_id="2" name="requirement folder" created_by="IT" created_on="2011-08-08" /> 
+	<requirement_library_node rln_id="21" name="requirement 1" created_by="IT" created_on="2011-08-08" /> 
+	<requirement_library_node rln_id="22" name="requirement 2" created_by="IT" created_on="2011-08-08" />
+	
+	<!--  ============================ requirement folder =============================================== -->
+	
+	<requirement_folder rln_id="2" />
+	
+	<!--  ============================ requirement  ===================================================== -->
+	
+	<requirement rln_id="21" attachment_list_id="21" />
+	<requirement rln_id="22" attachment_list_id="22" />
+	
+	
+	<!--  ============================ rln relationship ================================================= -->
+	
+	<rln_relationship ancestor_id="2" descendant_id="21" />
+	<rln_relationship ancestor_id="2" descendant_id="22" />
+	
+	<!--  ============================ requirement library =============================================== -->
+	
+	<requirement_library_content library_id="1" content_id="2" />
+	
+	<!--  ============================ campaign library node ========================================= -->
+	
+	<campaign_library_node cln_id="3"  name="campaign folder" created_by="IT" created_on="2011-08-08" /> 
+	<campaign_library_node cln_id="31" name="campaign 1" created_by="IT" created_on="2011-08-08" /> 
+	<campaign_library_node cln_id="32" name="campaign 2" created_by="IT" created_on="2011-08-08" />
+	
+	<!--  ============================ campaign folder =============================================== -->
+	
+	<campaign_folder cln_id="3" />
+	
+	<!--  ============================ campaign  ===================================================== -->
+	
+	<campaign cln_id="31" attachment_list_id="31" actual_end_auto="false" actual_start_auto="false" />
+	<campaign cln_id="32" attachment_list_id="32" actual_end_auto="false" actual_start_auto="false" />
+	
+	
+	<!--  ============================ campaign relationship ================================================= -->
+	
+	
+	<cln_relationship ancestor_id="3" descendant_id="31" />
+	<cln_relationship ancestor_id="3" descendant_id="32" />
+	
+	
+	<!--  ============================ campaign library =============================================== -->
+	
+	
+	<campaign_library_content library_id="1" content_id="3" />
+	
+
+</dataset>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+

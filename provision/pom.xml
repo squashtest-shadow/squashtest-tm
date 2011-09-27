@@ -1,0 +1,756 @@
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
+	<modelVersion>4.0.0</modelVersion>
+	<parent>
+		<artifactId>squashtest-csp</artifactId>
+		<groupId>org.squashtest.csp</groupId>
+		<version>1.0.0.RC1-SNAPSHOT</version>
+	</parent>
+
+	<groupId>org.squashtest.csp</groupId>
+	<artifactId>squashtest-csp-provision</artifactId>
+	<version>1.0.0.RC1-SNAPSHOT</version>
+	<packaging>pom</packaging>
+	<name>squashtest-csp-provision</name>
+	<description>OSGi container provisioning - Used by pax:provision and
+		Eclipse</description>
+
+	<properties>
+		<master.changelog>${project.build.outputDirectory}/provision.changelog-master.xml</master.changelog>
+		<squashtest.rootDir>${project.build.directory}</squashtest.rootDir>
+		<cxf.version>2.3.3</cxf.version>
+		<!-- Default H2 database properties -->
+		<database.dialect>org.hibernate.dialect.H2Dialect</database.dialect>
+		<database.driverClassName>org.h2.Driver</database.driverClassName>
+		<database.url>jdbc:h2:${squashtest.rootDir}/dev-database/squashtest</database.url>
+		<database.user>sa</database.user>
+		<database.password>sa</database.password>
+		<database.create.user>sa</database.create.user>
+		<database.create.password>sa</database.create.password>
+		<!-- drop first and populate data -->
+		<database.dropfirst>false</database.dropfirst>
+		<database.populate.skip>false</database.populate.skip>
+	</properties>
+
+	<build>
+		<plugins>
+			<plugin>
+				<groupId>org.apache.maven.plugins</groupId>
+				<artifactId>maven-resources-plugin</artifactId>
+				<executions>
+					<execution>
+						<id>process-database-changelog</id>
+						<phase>process-resources</phase>
+						<goals>
+							<goal>copy-resources</goal>
+						</goals>
+						<configuration>
+							<resources>
+								<resource>
+									<directory>${project.basedir}/src/main/liquibase</directory>
+									<filtering>true</filtering>
+								</resource>
+							</resources>
+							<outputDirectory>${project.build.outputDirectory}</outputDirectory>
+						</configuration>
+					</execution>
+				</executions>
+			</plugin>
+			
+			<plugin>
+				<groupId>org.liquibase</groupId>
+				<artifactId>liquibase-maven-plugin</artifactId>
+				<configuration>
+					<skip>${database.populate.skip}</skip>
+				</configuration>
+				<executions>
+					<execution>
+						<id>populate-database</id>
+						<phase>process-resources</phase>
+						<goals>
+							<goal>update</goal>
+						</goals>
+						<configuration>
+							<dropFirst>${database.dropfirst}</dropFirst>
+							<changeLogFile>${master.changelog}</changeLogFile>
+							<driver>${database.driverClassName}</driver>
+							<url>${database.url}</url>
+							<username>${database.create.user}</username>
+							<password>${database.create.password}</password>
+						</configuration>
+					</execution>
+				</executions>
+			</plugin>
+			
+			
+			<!--  generate the dbdoc -->
+			<plugin>
+		        <groupId>org.codehaus.mojo</groupId>
+		        <artifactId>xml-maven-plugin</artifactId>
+		        <executions>
+		          <execution>
+		          	<phase>process-resources</phase>
+		            <goals>
+		              <goal>transform</goal>
+		            </goals>
+		          </execution>
+		        </executions>
+		        <configuration>
+		          <transformationSets>
+		            <transformationSet>
+		              <dir>${project.build.outputDirectory}/makedoc/</dir>				  
+		              <excludes>
+						<exclude>*.xsl</exclude>
+					   </excludes>
+		              <stylesheet>${project.build.outputDirectory}/makedoc/dbdoc_style.xsl</stylesheet>
+		            </transformationSet>
+		          </transformationSets>
+		        </configuration>
+		     <dependencies>
+		          	<dependency>
+		            	<groupId>net.sf.saxon</groupId>
+		           		<artifactId>saxon</artifactId>
+		            	<version>8.7</version>
+		          	</dependency>
+		        </dependencies>
+		        
+		        
+	      	</plugin>		
+			
+			<!-- clean datasource properties -->
+			<plugin>
+				<groupId>com.google.code.maven-config-processor-plugin</groupId>
+				<artifactId>maven-config-processor-plugin</artifactId>
+				<version>1.9</version>
+				<executions>
+					<execution>
+						<id>clean-database-changelog</id>
+						<phase>process-resources</phase>
+						<goals>
+							<goal>process</goal>
+						</goals>
+					</execution>
+				</executions>
+				<configuration>
+					<transformations>
+						<transformation>
+							<type>properties</type>
+							<input>${project.basedir}/target/config/services/org.squashtest.csp.core.datasource.jdbc.config.properties</input>
+							<output>config/services/org.squashtest.csp.core.datasource.jdbc.config.properties</output>
+							<config>${project.basedir}/src/tools/changeprop-processing.xml</config>
+						</transformation>
+					</transformations>
+				</configuration>
+			</plugin>
+			<!-- end clean datasource properties -->
+		</plugins>
+	</build>
+
+	<!-- Provisioning is for dev environment only -->
+	<profiles>
+		<profile>
+			<id>development</id>
+			<activation>
+				<activeByDefault>true</activeByDefault>
+				<property>
+					<name>env.type</name>
+					<value>dev</value>
+				</property>
+			</activation>
+			<build>
+				<plugins>
+					<plugin>
+						<!-- Copies dependencies into a given folder, will be used for Eclipse provisioning -->
+						<groupId>org.apache.maven.plugins</groupId>
+						<artifactId>maven-dependency-plugin</artifactId>
+						<executions>
+							<execution>
+								<id>copy-dependencies</id>
+								<phase>package</phase>
+								<goals>
+									<goal>copy-dependencies</goal>
+								</goals>
+								<configuration>
+									<outputDirectory>
+										target/bundles
+							</outputDirectory>
+									<overWriteReleases>false</overWriteReleases>
+									<overWriteSnapshots>
+										false
+							</overWriteSnapshots>
+									<overWriteIfNewer>true</overWriteIfNewer>
+									<excludeTransitive>false</excludeTransitive>
+								</configuration>
+							</execution>
+						</executions>
+					</plugin>
+
+					<plugin>
+						<groupId>org.apache.maven.plugins</groupId>
+						<artifactId>maven-resources-plugin</artifactId>
+						<executions>
+							<execution>
+								<id>copy-config-resources</id>
+								<phase>process-resources</phase>
+								<goals>
+									<goal>copy-resources</goal>
+								</goals>
+								<configuration>
+									<resources>
+										<resource>
+											<directory>${project.basedir}/src/main/config</directory>
+											<filtering>true</filtering>
+										</resource>
+									</resources>
+									<outputDirectory>${project.build.directory}/config</outputDirectory>
+								</configuration>
+							</execution>
+						</executions>
+					</plugin>
+
+					<!-- Populates provision database data -->
+					<plugin>
+						<groupId>org.liquibase</groupId>
+						<artifactId>liquibase-maven-plugin</artifactId>
+						<configuration>
+							<skip>${database.populate.skip}</skip>
+						</configuration>
+						<executions>
+							<execution>
+								<id>populate-dev-data</id>
+								<!-- this phase should be after schema generation -->
+								<phase>generate-test-resources</phase>
+								<goals>
+									<goal>update</goal>
+								</goals>
+								<configuration>
+									<dropFirst>false</dropFirst>
+									<clearCheckSums>true</clearCheckSums>
+									<changeLogFile>${project.basedir}/../database/src/main/liquibase/dev/dev.changelog-master.xml</changeLogFile>
+									<driver>${database.driverClassName}</driver>
+									<url>${database.url}</url>
+									<username>${database.create.user}</username>
+									<password>${database.create.password}</password>
+								</configuration>
+							</execution>
+						</executions>
+					</plugin>
+
+				</plugins>
+			</build>
+		</profile>
+
+		<profile>
+			<id>continuous-integration</id>
+			<activation>
+				<property>
+					<name>env.type</name>
+					<value>ci</value>
+				</property>
+			</activation>
+		</profile>
+		<profile>
+			<id>mysqlDev</id>
+			<activation>
+				<activeByDefault>false</activeByDefault>
+				<property>
+					<name>environment.type</name>
+					<value>mysqlDev</value>
+				</property>
+			</activation>
+			<properties>
+				<database.dialect>org.hibernate.dialect.MySQLDialect</database.dialect>
+				<database.driverClassName>com.mysql.jdbc.Driver</database.driverClassName>
+				<database.url>
+					jdbc:mysql://192.168.2.27:3306/squashtest_dev
+		        </database.url>
+				<database.user>squash_csp_dev</database.user>
+				<database.password>_squash_csp_dev</database.password>
+				<!-- for database generation only -->
+				<database.create.user>liquibase</database.create.user>
+				<database.create.password>_liquibase</database.create.password>
+			</properties>
+			<dependencies>
+				<dependency>
+					<groupId>com.mysql.jdbc</groupId>
+					<artifactId>com.springsource.com.mysql.jdbc</artifactId>
+				</dependency>
+			</dependencies>
+		</profile>
+	</profiles>
+
+	<dependencies>
+		<!-- ====== SQUASHTEST ====== -->
+		<!-- Squashtest core modules -->
+		<dependency>
+			<groupId>${project.groupId}</groupId>
+			<artifactId>org.squashtest.csp.core.log4j</artifactId>
+			<version>${project.version}</version>
+		</dependency>
+		<dependency>
+			<groupId>${project.groupId}</groupId>
+			<artifactId>org.squashtest.csp.core.bugtracker</artifactId>
+			<version>${project.version}</version>
+		</dependency>
+		<dependency>
+			<groupId>${project.groupId}</groupId>
+			<artifactId>org.squashtest.csp.core.web</artifactId>
+			<version>${project.version}</version>
+			<type>war</type>
+		</dependency>
+		<dependency>
+			<groupId>${project.groupId}</groupId>
+			<artifactId>org.squashtest.csp.core.service</artifactId>
+			<version>${project.version}</version>
+		</dependency>
+		<!-- Squashtest tm modules -->
+		<dependency>
+			<groupId>${project.groupId}</groupId>
+			<artifactId>org.squashtest.csp.tm.web</artifactId>
+			<version>${project.version}</version>
+			<type>war</type>
+		</dependency>
+		<dependency>
+			<groupId>${project.groupId}</groupId>
+			<artifactId>org.squashtest.csp.tm.service</artifactId>
+			<version>${project.version}</version>
+		</dependency>
+		<!-- ====== /SQUASHTEST ====== -->
+
+		<!-- ====== CONFIG ADMIN COMPENDIUM SERVICE ====== -->
+		<dependency>
+			<groupId>org.apache.felix</groupId>
+			<artifactId>org.apache.felix.configadmin</artifactId>
+		</dependency>
+		<dependency>
+			<groupId>org.ops4j.pax.confman</groupId>
+			<artifactId>pax-confman-propsloader</artifactId>
+		</dependency>
+		<!-- ====== /CONFIG ADMIN COMPENDIUM SERVICE ====== -->
+
+		<!-- ====== JEE API ====== -->
+		<dependency>
+			<groupId>javax.servlet</groupId>
+			<artifactId>com.springsource.javax.servlet</artifactId>
+		</dependency>
+		<dependency>
+			<groupId>javax.el</groupId>
+			<artifactId>com.springsource.javax.el</artifactId>
+		</dependency>
+		<dependency>
+			<groupId>javax.servlet</groupId>
+			<artifactId>com.springsource.javax.servlet.jsp</artifactId>
+		</dependency>
+		<dependency>
+			<groupId>javax.servlet</groupId>
+			<artifactId>com.springsource.javax.servlet.jsp.jstl</artifactId>
+		</dependency>
+		<!-- ====== /JEE API ====== -->
+
+		<!-- ====== JSE DI API ====== -->
+		<dependency>
+			<groupId>javax.inject</groupId>
+			<artifactId>com.springsource.javax.inject</artifactId>
+		</dependency>
+		<!-- ====== /JSE DI API ====== -->
+
+		<!-- ====== SPRING DM ====== -->
+		<dependency>
+			<groupId>org.springframework.osgi</groupId>
+			<artifactId>spring-osgi-extender</artifactId>
+		</dependency>
+		<!-- ====== /SPRING DM ====== -->
+
+		<!-- ====== SPRING DM WEB EXTENDER ====== -->
+		<dependency>
+			<groupId>org.springframework.osgi</groupId>
+			<artifactId>spring-osgi-web</artifactId>
+		</dependency>
+		<dependency>
+			<groupId>org.springframework.osgi</groupId>
+			<artifactId>spring-osgi-web-extender</artifactId>
+		</dependency>
+		<!-- Bootstraps a Jetty instance -->
+		<dependency>
+			<groupId>org.springframework.osgi</groupId>
+			<artifactId>jetty.start.osgi</artifactId>
+		</dependency>
+		<!-- Deploys wars to Jetty -->
+		<dependency>
+			<groupId>org.springframework.osgi</groupId>
+			<artifactId>jetty.web.extender.fragment.osgi</artifactId>
+		</dependency>
+		<!-- ====== /SPRING DM WEB EXTENDER ====== -->
+
+		<!-- ====== SPRING DI ====== -->
+		<!-- Required by Spring MVC -->
+		<dependency>
+			<groupId>org.springframework</groupId>
+			<artifactId>org.springframework.context.support</artifactId>
+		</dependency>
+		<!-- ====== /SPRING DI ====== -->
+
+		<!-- ====== JETTY ====== -->
+		<dependency>
+			<groupId>org.mortbay.jetty</groupId>
+			<artifactId>com.springsource.org.mortbay.jetty.server</artifactId>
+		</dependency>
+		<dependency>
+			<groupId>org.mortbay.jetty</groupId>
+			<artifactId>com.springsource.org.mortbay.util</artifactId>
+		</dependency>
+		<!-- ====== /JETTY ====== -->
+
+		<!-- ====== JSP COMPILER ====== -->
+		<dependency>
+			<groupId>org.springframework.osgi</groupId>
+			<artifactId>jasper.osgi</artifactId>
+		</dependency>
+		<dependency>
+			<groupId>org.apache.xmlcommons</groupId>
+			<artifactId>com.springsource.org.apache.xmlcommons</artifactId>
+		</dependency>
+		<!-- ====== /JSP COMPILER ====== -->
+
+		<!-- ====== SPRING MVC ====== -->
+		<dependency>
+			<groupId>org.springframework</groupId>
+			<artifactId>org.springframework.web</artifactId>
+		</dependency>
+		<dependency>
+			<groupId>org.springframework</groupId>
+			<artifactId>org.springframework.web.servlet</artifactId>
+		</dependency>
+		<dependency>
+			<groupId>org.codehaus.jackson</groupId>
+			<artifactId>com.springsource.org.codehaus.jackson</artifactId>
+		</dependency>
+		<dependency>
+			<groupId>org.codehaus.jackson</groupId>
+			<artifactId>com.springsource.org.codehaus.jackson.mapper</artifactId>
+		</dependency>
+		<dependency>
+			<groupId>org.joda</groupId>
+			<artifactId>com.springsource.org.joda.time</artifactId>
+		</dependency>
+		<!-- ====== /SPRING MVC ====== -->
+
+
+		<!-- ====== OSGI API ====== -->
+		<dependency>
+			<groupId>org.eclipse.equinox.http</groupId>
+			<artifactId>servlet</artifactId>
+		</dependency>
+		<dependency>
+			<groupId>org.eclipse.osgi</groupId>
+			<artifactId>org.eclipse.osgi</artifactId>
+		</dependency>
+		<!-- ====== /OSGI API ====== -->
+
+		<!-- ====== SPRING SECURITY ====== -->
+		<dependency>
+			<groupId>org.springframework.security</groupId>
+			<artifactId>org.springframework.security.web</artifactId>
+		</dependency>
+		<dependency>
+			<groupId>org.springframework.security</groupId>
+			<artifactId>org.springframework.security.config</artifactId>
+		</dependency>
+		<dependency>
+			<groupId>org.springframework.security</groupId>
+			<artifactId>org.springframework.security.taglibs</artifactId>
+		</dependency>
+		<dependency>
+			<groupId>org.springframework.security</groupId>
+			<artifactId>org.springframework.security.core</artifactId>
+		</dependency>
+		<dependency>
+			<groupId>org.springframework.security</groupId>
+			<artifactId>org.springframework.security.acls</artifactId>
+		</dependency>
+		<!-- ====== /SPRING SECURITY ====== -->
+
+		<!-- ====== SPRING DATA ACCESS ====== -->
+		<dependency>
+			<groupId>org.springframework</groupId>
+			<artifactId>org.springframework.transaction</artifactId>
+		</dependency>
+		<!-- ====== SPRING DATA ACCESS ====== -->
+
+		<!-- ====== URL REWRITE FILTER ====== -->
+		<dependency>
+			<groupId>org.tuckey</groupId>
+			<artifactId>com.springsource.org.tuckey.web.filters.urlrewrite</artifactId>
+		</dependency>
+		<!-- ====== URL REWRITE FILTER ====== -->
+
+		<!-- ====== JCR API ====== -->
+		<dependency>
+			<groupId>javax.jcr</groupId>
+			<artifactId>org.squashtest.javax.jcr</artifactId>
+		</dependency>
+		<!-- ====== /JCR API ====== -->
+
+		<!-- ====== JACKRABBIT ====== -->
+		<dependency>
+			<groupId>org.apache.jackrabbit</groupId>
+			<artifactId>org.squashtest.org.apache.jackrabbit.ocm</artifactId>
+		</dependency>
+		<dependency>
+			<groupId>org.apache.jackrabbit</groupId>
+			<artifactId>org.squashtest.org.apache.jackrabbit.core</artifactId>
+		</dependency>
+		<dependency>
+			<groupId>org.apache.jackrabbit</groupId>
+			<artifactId>jackrabbit-api</artifactId>
+		</dependency>
+		<dependency>
+			<groupId>org.apache.jackrabbit</groupId>
+			<artifactId>jackrabbit-jcr-commons</artifactId>
+		</dependency>
+		<dependency>
+			<groupId>org.apache.jackrabbit</groupId>
+			<artifactId>jackrabbit-spi</artifactId>
+		</dependency>
+		<dependency>
+			<groupId>org.apache.jackrabbit</groupId>
+			<artifactId>jackrabbit-spi-commons</artifactId>
+		</dependency>
+		<dependency>
+			<groupId>org.apache.commons</groupId>
+			<artifactId>com.springsource.org.apache.commons.collections</artifactId>
+		</dependency>
+		<dependency>
+			<groupId>org.apache.commons</groupId>
+			<artifactId>com.springsource.org.apache.commons.io</artifactId>
+		</dependency>
+		<dependency>
+			<groupId>org.apache.tika</groupId>
+			<artifactId>tika-bundle</artifactId>
+		</dependency>
+		<dependency>
+			<groupId>edu.oswego.cs.concurrent</groupId>
+			<artifactId>com.springsource.edu.oswego.cs.dl.util.concurrent</artifactId>
+		</dependency>
+		<dependency>
+			<groupId>org.apache.commons</groupId>
+			<artifactId>com.springsource.org.apache.commons.dbcp</artifactId>
+		</dependency>
+		<dependency>
+			<groupId>org.apache.commons</groupId>
+			<artifactId>com.springsource.org.apache.commons.pool</artifactId>
+		</dependency>
+		<dependency>
+			<groupId>org.apache.lucene</groupId>
+			<artifactId>com.springsource.org.apache.lucene</artifactId>
+		</dependency>
+		<!-- ====== JACKRABBIT ====== -->
+
+		<!-- ====== JTA ====== -->
+		<dependency>
+			<groupId>javax.transaction</groupId>
+			<artifactId>com.springsource.javax.transaction</artifactId>
+		</dependency>
+		<!-- ====== /JTA ====== -->
+
+		<!-- ====== MISC REQUIRED BY OCM ====== -->
+		<dependency>
+			<groupId>org.apache.commons</groupId>
+			<artifactId>com.springsource.org.apache.commons.beanutils</artifactId>
+		</dependency>
+		<dependency>
+			<groupId>org.apache.commons</groupId>
+			<artifactId>com.springsource.org.apache.commons.digester</artifactId>
+		</dependency>
+		<dependency>
+			<groupId>org.apache.commons</groupId>
+			<artifactId>com.springsource.org.apache.commons.lang</artifactId>
+		</dependency>
+		<!-- ====== MISC REQUIRED BY OCM ====== -->
+
+		<!-- ====== FILE UPLOADING ====== -->
+		<dependency>
+			<groupId>org.apache.commons</groupId>
+			<artifactId>com.springsource.org.apache.commons.fileupload</artifactId>
+		</dependency>
+
+		<!-- ====== /FILE UPLOADING ====== -->
+
+		<!-- ====== JASPER REPORTS ====== -->
+		<dependency>
+			<groupId>net.sf.jasperreports</groupId>
+			<artifactId>org.squashtest.net.sf.jasperreports</artifactId>
+			<version>3.7.6</version>
+		</dependency>
+
+		<dependency>
+			<groupId>org.apache.xmlbeans</groupId>
+			<artifactId>com.springsource.org.apache.xmlbeans</artifactId>
+			<version>2.4.0</version>
+		</dependency>
+
+		<dependency>
+			<groupId>org.eclipse.jdt</groupId>
+			<artifactId>com.springsource.org.eclipse.jdt.core.compiler.batch</artifactId>
+			<version>3.6.1</version>
+		</dependency>
+		<!-- ====== /JASPER REPORTS ====== -->
+
+		<!-- ====== VALIDATION ====== -->
+		<dependency>
+			<groupId>javax.validation</groupId>
+			<artifactId>com.springsource.javax.validation</artifactId>
+		</dependency>
+		<dependency>
+			<groupId>org.hibernate</groupId>
+			<artifactId>com.springsource.org.hibernate.validator</artifactId>
+		</dependency>
+		<!-- ====== /VALIDATION ====== -->
+
+		<!-- ===== ASPECTJ ===== -->
+		<dependency>
+			<groupId>org.aspectj</groupId>
+			<artifactId>com.springsource.org.aspectj.runtime</artifactId>
+		</dependency>
+		<dependency>
+			<groupId>org.aspectj</groupId>
+			<artifactId>com.springsource.org.aspectj.weaver</artifactId>
+		</dependency>
+		<!-- ===== / ASPECTJ ===== -->
+
+		<!-- ====== SQUASHTEST ====== -->
+		<dependency>
+			<groupId>${project.groupId}</groupId>
+			<artifactId>springdm-bundle-dependencies</artifactId>
+			<version>${project.version}</version>
+			<type>pom</type>
+		</dependency>
+		<dependency>
+			<groupId>${project.groupId}</groupId>
+			<artifactId>hibernate-dependencies</artifactId>
+			<version>${project.version}</version>
+			<type>pom</type>
+		</dependency>
+		<!-- ====== SQUASHTEST ====== -->
+
+		<!-- ====== SPRING JCR EXTENSION ====== -->
+<!-- 		<dependency>
+			<groupId>org.springframework</groupId>
+			<artifactId>se-jcr</artifactId>
+		</dependency> -->
+		<!-- ====== /SPRING JCR EXTENSION ====== -->
+
+		<!-- ====== FELIX ADMIN WEBCONSOLE ====== -->
+		<dependency>
+			<groupId>org.apache.felix</groupId>
+			<artifactId>org.apache.felix.webconsole</artifactId>
+		</dependency>
+		<dependency>
+			<groupId>org.apache.felix</groupId>
+			<artifactId>org.apache.felix.prefs</artifactId>
+		</dependency>
+		<dependency>
+			<groupId>org.apache.felix</groupId>
+			<artifactId>org.apache.felix.scr</artifactId>
+		</dependency>
+		<dependency>
+			<groupId>org.apache.felix</groupId>
+			<artifactId>org.apache.felix.shell</artifactId>
+		</dependency>
+		<dependency>
+			<groupId>org.ops4j.pax.web</groupId>
+			<artifactId>pax-web-service</artifactId>
+		</dependency>
+		<!-- ====== /FELIX ADMIN WEBCONSOLE ====== -->
+
+		<!-- ====== DATABASE ====== -->
+		<dependency>
+			<groupId>org.apache.derby</groupId>
+			<artifactId>derby</artifactId>
+		</dependency>
+
+		<dependency>
+			<groupId>com.h2database</groupId>
+			<artifactId>h2</artifactId>
+		</dependency>
+		<!-- ====== /DATABASE ====== -->
+
+
+
+		<!-- ====== BUGTRACKER STUFF ======= -->
+		<!-- ====== MANTIS ====== -->
+		<!-- ====== AXIS 1.4 ====== -->
+		<dependency>
+			<groupId>org.apache.axis</groupId>
+			<artifactId>com.springsource.org.apache.axis</artifactId>
+			<version>1.4.0</version>
+		</dependency>
+		<dependency>
+			<groupId>javax.wsdl</groupId>
+			<artifactId>com.springsource.javax.wsdl</artifactId>
+			<version>1.6.1</version>
+		</dependency>
+		<dependency>
+			<groupId>javax.activation</groupId>
+			<artifactId>com.springsource.javax.activation</artifactId>
+			<version>1.1.1</version>
+		</dependency>
+		<dependency>
+			<groupId>javax.jms</groupId>
+			<artifactId>com.springsource.javax.jms</artifactId>
+			<version>1.1.0</version>
+		</dependency>
+		<dependency>
+			<groupId>javax.mail</groupId>
+			<artifactId>com.springsource.javax.mail</artifactId>
+			<version>1.4.1</version>
+		</dependency>
+		<dependency>
+			<groupId>javax.xml.rpc</groupId>
+			<artifactId>com.springsource.javax.xml.rpc</artifactId>
+			<version>1.1.0</version>
+		</dependency>
+		<dependency>
+			<groupId>javax.xml.soap</groupId>
+			<artifactId>com.springsource.javax.xml.soap</artifactId>
+			<version>1.3.0</version>
+		</dependency>
+		<dependency>
+			<groupId>org.apache.commons</groupId>
+			<artifactId>com.springsource.org.apache.commons.discovery</artifactId>
+			<version>0.4.0</version>
+		</dependency>
+		<dependency>
+			<groupId>org.apache.commons</groupId>
+			<artifactId>com.springsource.org.apache.commons.logging</artifactId>
+			<version>1.1.1</version>
+		</dependency>
+		<dependency>
+			<groupId>org.apache.commons</groupId>
+			<artifactId>com.springsource.org.apache.commons.httpclient</artifactId>
+			<version>3.1.0</version>
+		</dependency>
+		<dependency>
+			<groupId>org.apache.commons</groupId>
+			<artifactId>com.springsource.org.apache.commons.codec</artifactId>
+			<version>1.4.0</version>
+		</dependency>
+		<dependency>
+			<groupId>org.apache.commons</groupId>
+			<artifactId>com.springsource.org.apache.commons.net</artifactId>
+			<version>1.4.1</version>
+		</dependency>
+		<!-- ====== /AXIS 1.4 ====== -->
+		<!-- ====== /MANTIS ====== -->
+
+		<!-- ===== HTML parsing stuffs ==== -->
+		<dependency>
+			<groupId>net.htmlparser.jericho</groupId>
+			<artifactId>org.squashtest.net.htmlparser.jericho</artifactId>
+			<version>3.1</version>
+		</dependency>
+		<!-- ===== HTML parsing stuffs ==== -->
+
+		<!-- ====== BUGTRACKER STUFF ======= -->
+	</dependencies>
+</project>

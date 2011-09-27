@@ -1,0 +1,117 @@
+<%--
+
+        This file is part of the Squashtest platform.
+        Copyright (C) 2010 - 2011 Squashtest TM, Squashtest.org
+
+        See the NOTICE file distributed with this work for additional
+        information regarding copyright ownership.
+
+        This is free software: you can redistribute it and/or modify
+        it under the terms of the GNU Lesser General Public License as published by
+        the Free Software Foundation, either version 3 of the License, or
+        (at your option) any later version.
+
+        this software is distributed in the hope that it will be useful,
+        but WITHOUT ANY WARRANTY; without even the implied warranty of
+        MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+        GNU Lesser General Public License for more details.
+
+        You should have received a copy of the GNU Lesser General Public License
+        along with this software.  If not, see <http://www.gnu.org/licenses/>.
+
+--%>
+<%@ tag body-content="empty" description="popup for item deletion in the contextual content. Made to remove a single item when displayed in the contextual content of the interface."%>
+
+<%@ taglib prefix="comp" tagdir="/WEB-INF/tags/component"%>
+<%@ taglib prefix="f" uri="http://java.sun.com/jsp/jstl/fmt"%>
+<%@ taglib prefix="jq" tagdir="/WEB-INF/tags/jquery"%>
+<%@ taglib prefix="pop" tagdir="/WEB-INF/tags/popup" %>
+
+<%@ attribute name="openedBy" description="id of the widget that will open the popup"%>
+<%@ attribute name="titleKey" description="resource key for the title of the popup." %>
+<%@ attribute name="successCallback" description="javascript callback in case of success."%>
+<%@ attribute name="simulationUrl" required="true" description="the url where to post a simulation of the deletion before actually performing it."%>
+<%@ attribute name="confirmationUrl" required="true" description="the url where to post to confirm the deletion."%>
+<%@ attribute name="itemId" required="true" description="the id of the item to be deleted"%>
+
+<%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core" %>
+
+
+<f:message var="deleteMessage" key="dialog.label.delete-nodes.label" />
+
+<%-- onLoad code --%>
+<script type="text/javascript">
+
+$(function(){
+	$( "#delete-contextual-node-dialog" ).bind( "dialogopen", function(event, ui) {
+		
+		var jqThis = $(this);
+		
+		sendContextualDeletionSimulationRequest(jqThis);			
+	
+	});
+});	
+</script>
+
+<%-- preamble --%>
+
+<script type="text/javascript">
+
+function sendContextualDeletionSimulationRequest(jqDialog){
+	
+	var url = "${simulationUrl}";	
+
+	$.post(url, {"nodeIds[]": [${itemId}] })			
+	.success(function(data){
+		var message = data + "\n\n<b>${deleteMessage}</b>";
+		jqDialog.html(message);
+	})
+	.fail(function(){
+		jqDialog.dialog("close"); <%-- the standard failure handler should kick in, no need for further treatment here. --%>
+	});
+				
+}
+
+</script>
+
+<%-- confirmation code --%>
+<script type="text/javascript">
+
+function confirmDeletion(){
+	
+	var jqDialog = $( "#delete-contextual-node-dialog" );
+	var url = "${confirmationUrl}";
+
+	$.ajax({
+		url : url+"?nodeIds[]="+${itemId},
+		dataType : "json",
+		type : 'DELETE'
+	})
+	.success(function(list){			
+		jqDialog.dialog("close");
+		<c:if test="${not empty successCallback}">
+		${successCallback}();
+		</c:if>
+	})
+	.fail();
+}
+	
+</script>
+
+
+
+<comp:popup id="delete-contextual-node-dialog" titleKey="${titleKey}" closeOnSuccess="false" openedBy="${openedBy}" isContextual="true">
+	<jsp:attribute name="buttons">
+	
+		<f:message var="label" key="tree.button.delete-node.label" />
+	
+			'${ label }': confirmDeletion,			
+		<pop:cancel-button />
+	</jsp:attribute>
+	
+	<jsp:body>
+		
+		<span id="delete-contextual-node-dialog-label"></span>
+		<br />				
+	</jsp:body>
+</comp:popup>

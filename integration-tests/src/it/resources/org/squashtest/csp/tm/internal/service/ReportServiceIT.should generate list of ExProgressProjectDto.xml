@@ -1,0 +1,86 @@
+<?xml version='1.0' encoding='UTF-8'?>
+<!--
+
+        This file is part of the Squashtest platform.
+        Copyright (C) 2010 - 2011 Squashtest TM, Squashtest.org
+
+        See the NOTICE file distributed with this work for additional
+        information regarding copyright ownership.
+
+        This is free software: you can redistribute it and/or modify
+        it under the terms of the GNU Lesser General Public License as published by
+        the Free Software Foundation, either version 3 of the License, or
+        (at your option) any later version.
+
+        this software is distributed in the hope that it will be useful,
+        but WITHOUT ANY WARRANTY; without even the implied warranty of
+        MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+        GNU Lesser General Public License for more details.
+
+        You should have received a copy of the GNU Lesser General Public License
+        along with this software.  If not, see <http://www.gnu.org/licenses/>.
+
+-->
+<dataset>
+	<!-- projects and libraries -->
+	<test_case_library tcl_id="1" />
+	<campaign_library cl_id="1" />
+	<requirement_library rl_id="1" />
+
+	<project project_id="1" name="project 1" active="true" created_by="groovy" created_on="2010-01-01" cl_id="1"
+		tcl_id="1" rl_id="1" />
+
+
+	<!-- test cases -->
+	<attachment_list attachment_list_id="10" />
+	<test_case_library_node tcln_id="1" name="test case 1" created_by="dbu" created_on="2010-02-01" />
+	<test_case tcln_id="1" version="1" attachment_list_id="10" />
+	<test_case_library_node tcln_id="2" name="test case 2" created_by="dbu" created_on="2010-02-01" />
+	<attachment_list attachment_list_id="20" />
+	<test_case tcln_id="2" version="1" attachment_list_id="20" />
+	<test_case_library_node tcln_id="3" name="test case 3" created_by="dbu" created_on="2010-02-01" />
+	<attachment_list attachment_list_id="30" />
+	<test_case tcln_id="3" version="1" attachment_list_id="30" />
+
+
+	<!-- one campaign -->
+	<attachment_list attachment_list_id="1010" />
+	<campaign_library_node cln_id="1" name="Pharos" created_on="2010-02-01" created_by="dbu"
+		project_id="1" />
+	<campaign cln_id="1" actual_end_auto="false" actual_start_auto="false" actual_start_date="2011-01-01"
+		actual_end_date="2011-01-02" scheduled_start_date="2011-01-01" scheduled_end_date="2011-01-02" attachment_list_id="1010" />
+
+	<!-- iteration 1 -->
+	<attachment_list attachment_list_id="101010" />
+	
+	<iteration name="iter - tc1" iteration_id="1" actual_end_auto="false" actual_start_auto="false"
+		actual_start_date="2011-01-01" actual_end_date="2011-01-02" scheduled_start_date="2011-01-01" scheduled_end_date="2011-01-02"
+		created_by="dbu" created_on="2010-02-01" attachment_list_id="101010" />
+	<campaign_iteration campaign_id="1" iteration_id="1" iteration_order="0" />
+
+	<!-- test plans of iteration 1 -->
+	<iteration_test_plan_item item_test_plan_id="1" execution_status="READY" tcln_id="1" created_by="dbu" created_on="2010-02-01" />
+	<item_test_plan_list iteration_id="1" item_test_plan_id="1" item_test_plan_order="0"  />
+	<iteration_test_plan_item item_test_plan_id="2" execution_status="SUCCESS" tcln_id="2" created_by="dbu"
+		created_on="2010-02-01" />
+	<item_test_plan_list iteration_id="1" item_test_plan_id="2" item_test_plan_order="1" />
+	<iteration_test_plan_item item_test_plan_id="3" execution_status="BLOQUED" tcln_id="3" created_by="dbu"
+		created_on="2010-02-01" />
+	<item_test_plan_list iteration_id="1" item_test_plan_id="3" item_test_plan_order="2" />
+
+	
+	
+	<!--  cleanup -->
+
+
+	<attachment_content/>
+	<attachment/>
+	<test_step/>
+	<action_test_step/>
+	<call_test_step/>
+	<test_case_steps/>
+	<test_case_folder/>
+	<tcln_relationship/>
+	
+
+</dataset>

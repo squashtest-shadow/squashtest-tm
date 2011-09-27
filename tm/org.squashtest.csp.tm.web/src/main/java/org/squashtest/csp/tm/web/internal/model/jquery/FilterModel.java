@@ -1,0 +1,52 @@
+/**
+ *     This file is part of the Squashtest platform.
+ *     Copyright (C) 2010 - 2011 Squashtest TM, Squashtest.org
+ *
+ *     See the NOTICE file distributed with this work for additional
+ *     information regarding copyright ownership.
+ *
+ *     This is free software: you can redistribute it and/or modify
+ *     it under the terms of the GNU Lesser General Public License as published by
+ *     the Free Software Foundation, either version 3 of the License, or
+ *     (at your option) any later version.
+ *
+ *     this software is distributed in the hope that it will be useful,
+ *     but WITHOUT ANY WARRANTY; without even the implied warranty of
+ *     MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ *     GNU Lesser General Public License for more details.
+ *
+ *     You should have received a copy of the GNU Lesser General Public License
+ *     along with this software.  If not, see <http://www.gnu.org/licenses/>.
+ */
+package org.squashtest.csp.tm.web.internal.model.jquery;
+
+/*
+ * Note : we set the NOSONAR flag on the setters for Array-type properties otherwise it rings because we don't clone them.
+ * We can reasonably ignore those warnings because that class is meant to be serialized from/to json. Of course, that assumption holds
+ * as long as no one uses that class for another purpose.
+ * 
+ * 
+ * @author bsiri
+ */
+
+public class FilterModel {
+	private Object[] projectData;
+	private Boolean enabled;
+	
+	
+	
+	public Object[] getProjectData() {
+		return projectData;
+	}
+	public void setProjectData(Object[] projectData) {
+		this.projectData = projectData; //NOSONAR
+	}
+	public Boolean isEnabled() {
+		return enabled;
+	}
+	public void setEnabled(Boolean activated) {
+		this.enabled = activated;
+	}
+	
+	
+}
