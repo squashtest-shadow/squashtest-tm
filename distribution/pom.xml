@@ -33,6 +33,10 @@
 		<h2.full.url>jdbc:h2:target/full-install-database/squash-tm</h2.full.url>
 		<distro.directory.name>squash-tm</distro.directory.name>
 		<distro.archive.name>${distro.directory.name}-${project.version}</distro.archive.name>
+		<config.database.driverClassName>org.h2.Driver</config.database.driverClassName>
+		<config.database.url>jdbc:h2:../data/squash-tm</config.database.url>
+		<config.database.username>sa</config.database.username>
+		<config.database.password>sa</config.database.password>
 	</properties>
 
 	<build>
