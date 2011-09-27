@@ -22,7 +22,7 @@
 --%>
 <%@ tag body-content="empty" description="popup for node renaming. Requires a tree to be present in the context."%>
 
-<%@ taglib prefix="comp" tagdir="/WEB-INF/tags/component"%>
+
 <%@ taglib prefix="f" uri="http://java.sun.com/jsp/jstl/fmt"%>
 <%@ taglib prefix="jq" tagdir="/WEB-INF/tags/jquery"%>
 <%@ taglib prefix="pop" tagdir="/WEB-INF/tags/popup" %>
@@ -34,22 +34,10 @@
 
 
 <script type="text/javascript">		
-	$(function(){
-		
-		$( "#rename-node-dialog" ).bind( "dialogopen", function(event, ui) {
-			var node = $('${treeSelector}').jstree("get_selected");
-			if (! node.is(':editable')){
-				displayInformationNotification('<f:message key="dialog.label.rename-node.rejected"/>');
-				$("#rename-node-dialog").close();
-			}
-			var name = node.attr('name');
-			$("#rename-tree-node-text").val(name);
-		});
-		
-	});
+
 </script>
 		
-<comp:popup id="rename-node-dialog" titleKey="dialog.rename-tree-node.title" openedBy="${openedBy}">
+<pop:popup id="rename-node-dialog" titleKey="dialog.rename-tree-node.title" openedBy="${openedBy}">
 	<jsp:attribute name="buttons">
 		<f:message var="label" key="tree.button.rename-node.label" />	
 		'${ label }': function() {
@@ -60,11 +48,23 @@
 		},
 	<pop:cancel-button />
 	</jsp:attribute>
+	<jsp:attribute name="additionalSetup">
+		open : function(){
+			var node = $('${treeSelector}').jstree("get_selected");
+			if (! node.is(':editable')){
+				<f:message key="dialog.label.rename-node.rejected" var="renameForbiddenLabel"/>
+				displayInformationNotification("${renameForbiddenLabel }");
+				$(this).dialog('close');
+			}
+			var name = node.attr('name');
+			$("#rename-tree-node-text").val(name);			
+		}
+	</jsp:attribute>
 
-	<jsp:body>
+	<jsp:attribute name="body">
 			
 		<label for="rename-tree-node-text"><f:message key="dialog.rename.label" /></label>
 		<input id="rename-tree-node-text" type="text" size="50" /> <br />
 		<comp:error-message forField="name" />		
-		</jsp:body>		
-</comp:popup>	
+	</jsp:attribute>		
+</pop:popup>	
