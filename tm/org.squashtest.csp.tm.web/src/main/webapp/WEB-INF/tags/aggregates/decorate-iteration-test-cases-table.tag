@@ -38,6 +38,8 @@
 <%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core"%>
 <%@ taglib prefix="s" uri="http://www.springframework.org/tags" %>
 <%@ taglib prefix="f" uri="http://java.sun.com/jsp/jstl/fmt" %>
+<%@ taglib prefix="authz" tagdir="/WEB-INF/tags/authz" %>
+
 
 <s:url var ="showExecutionUrl" value="/executions"/>
 
@@ -194,10 +196,10 @@
 		<c:if test="${ editable }">
 		addDeleteButtonToRow(row, getTestPlansTableRowId(data), 'delete-test-plan-button');
 		addClickHandlerToSelectHandle(row, $("#test-plans-table"));
+		addLoginListToTestPlan(row, data);
 		</c:if>
 		addHLinkToTestPlanName(row, data);
 		addIconToTestPlanName(row, data);
-		addLoginListToTestPlan(row, data);
 		addStyleToDeletedTestCaseRows(row, data);
 		return row;
 	}
@@ -222,13 +224,14 @@
 	}
 	
 
+
 	function addLoginListToTestPlan(row, data){
 		if (! isTestCaseDeleted(data)){
 			var id = getTestPlansTableRowId(data);
 			$('td:eq(5)', row).load("${assignableUsersUrl}" + "?testPlanId="+ id +"");
 		}
-		
 	}
+
 	
 	function addStyleToDeletedTestCaseRows(row, data){
 		if (isTestCaseDeleted(data)){

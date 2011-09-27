@@ -46,7 +46,7 @@
 </authz:authorized>
 
 
-<script type="text/javascript" src="${ pageContext.servletContext.contextPath }/scripts/dateformat.js"></script>
+<script type="text/javascript" src="${ pageContext.servletContext.contextPath }/scripts/thirdparties/dateformat.js"></script>
 
 
 <%-------------------------- urls ------------------------------%>
@@ -152,7 +152,6 @@
 		decorateAttachmentButtons($('.manage-attachment-button', this));
 		decorateEmptyAttachmentButtons($('.manage-attachment-button-empty', this));
 		</c:if>
-		convertDate(this);
 		convertStatus(this);
 		<c:if test="${ editable }">
 		makeEditable(this);
@@ -170,28 +169,6 @@
 	//return the number of attachment
 	function getStepsTableAttchNumber(rowData) {
 		return rowData[8];
-	}
-	
-	function convertDate(dataTable){
-		
-		//internationalize that thing later
-		var strFormat = "dd/mm/yyyy HH:MM";
-		
-		var rows=dataTable.fnGetNodes();
-		if (rows.length==0) return;
-		
-		$(rows).each(function(){
-			var col=$("td:eq(4)", this);
-			var strTime=col.html();
-			var iTime=parseInt(strTime);
-			if (! isNaN(iTime)){
-				var newDate = new Date(parseInt(iTime));
-				col.html(newDate.format(strFormat));
-			}else{
-				col.html("<f:message key="auditable-entity.never-modified.label" />");
-			}
-
-		});
 	}
 	
 	function convertStatus(dataTable){

@@ -304,7 +304,7 @@ public class CampaignModificationController {
 						getCurrentIndex(),
 						testCase.getProject().getName(),
 						testCase.getName(),
-						" ",
+						(item.getUser()!=null) ? item.getUser().getLogin() : formatNoData(locale),
 						formatExecutionMode(testCase.getExecutionMode(), locale),
 						""
 				};
@@ -350,5 +350,14 @@ public class CampaignModificationController {
 	private String formatExecutionMode(TestCaseExecutionMode mode, Locale locale) {
 		return messageSource.getMessage(mode.getI18nKey(), null, locale);
 	}
-
+	private String formatNoData(Locale locale){
+		return messageSource.getMessage("squashtm.nodata",null, locale);
+	}
+	private String formatString(String arg, Locale locale){
+		if (arg==null){
+			return formatNoData(locale);
+		} else {
+			return arg;
+		}
+	}
 }

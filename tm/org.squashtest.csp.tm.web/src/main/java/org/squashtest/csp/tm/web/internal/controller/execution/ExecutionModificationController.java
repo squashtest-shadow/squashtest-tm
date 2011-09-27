@@ -26,6 +26,8 @@ package org.squashtest.csp.tm.web.internal.controller.execution;
  *
  */
 
+import java.text.SimpleDateFormat;
+import java.util.Date;
 import java.util.List;
 import java.util.Locale;
 
@@ -106,7 +108,7 @@ public class ExecutionModificationController {
 						item.getAction(),
 						item.getExpectedResult(),
 						localizedStatus(item.getExecutionStatus(), locale),
-						item.getLastExecutedOn(),
+						formatDate(item.getLastExecutedOn(),locale),
 						item.getLastExecutedBy(),
 						item.getComment(),
 						item.getAttachmentCollection().size(),
@@ -235,6 +237,21 @@ public class ExecutionModificationController {
 
 	}
 
+	private String formatDate(Date date, Locale locale){
+		try{
+			String format = messageSource.getMessage("squashtm.dateformat", null, locale);
+			return new SimpleDateFormat(format).format(date);
+		}
+		catch(Exception anyException){
+			return formatNoData(locale);
+		}
 
+	}
+	
+
+	private String formatNoData(Locale locale){
+		return messageSource.getMessage("squashtm.nodata",null, locale);
+	}
+	
 
 }

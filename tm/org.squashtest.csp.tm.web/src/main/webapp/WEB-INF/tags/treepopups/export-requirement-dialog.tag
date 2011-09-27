@@ -32,6 +32,8 @@
 <%@ attribute name="openedBy" description="id of the widget that will open the popup"%>
 <%@ attribute name="treeSelector" description="jQuerySelector for the tree."%>
 
+<script type="text/javascript" src="${ pageContext.servletContext.contextPath }/scripts/thirdparties/dateformat.js"></script>
+
 
 <c:url var="exportFolderUrl" value="/requirement-browser/export-folder" />
 <c:url var="exportLibraryUrl" value="/requirement-browser/export-library" />
@@ -50,21 +52,17 @@
 
 </script>
 
-<comp:popup id="export-requirement-node-dialog" titleKey="dialog.export-requirement.title" openedBy="${openedBy}">
+<pop:popup id="export-requirement-node-dialog" titleKey="dialog.export-requirement.title" openedBy="${openedBy}">
 	<jsp:attribute name="buttons">
 	
 		<f:message var="label" key="dialog.export-requirement.title" />
 		'${ label }': function() {
-			var data = $("${treeSelector}").jstree("get_selected");
-			var url = "";
-			
-			if ($(data[0]).attr("rel") != "drive"){
-				url  = "${ exportFolderUrl }";
-			}else{
-				url = "${ exportLibraryUrl }";
-			}
-			if (!checkCrossProjectSelection(data)){
-				var tab = getIds(data, 3);
+			var node = $("${treeSelector}").jstree("get_selected");
+
+			var url = (node.is(':library')) ? "${ exportLibraryUrl }" : "${ exportFolderUrl }";
+
+			if (!checkCrossProjectSelection(node)){
+				var tab = getIds(node, 3);
 				var filename = $('#export-name-requirement-input').val();
 				url+="?name="+filename+"&"+customSerialize(tab,"tab[]");
 				document.location.href = url;
@@ -75,22 +73,21 @@
 		<pop:cancel-button />
 	</jsp:attribute>
 	
-	<jsp:body>
-		<script type="text/javascript">
-		$( "#export-requirement-node-dialog" ).bind( "dialogopen", function(event, ui) {
-			var now = new Date();
-			var name = "export-" + now.toLocaleString();
-			name = name.replace(/ /g, '');
-			name = name.replace(/:/g, '');
-			$("#export-name-requirement-input").val(name);
-		});
-		</script>	
+	<jsp:attribute name="additionalSetup">
+		open : function(){
+			var name = '<f:message key="requirement.export.prefix.label"/>' + new Date().format('<f:message key="requirement.export.dateformat.label"/>');
+			$("#export-name-requirement-input").val(name);		
+		}
+	
+	</jsp:attribute>
+	
+	<jsp:attribute name="body">
 		<label><f:message key="dialog.rename.label" /></label>
 		<input type="text" id="export-name-requirement-input" /><br/>
 		<select>
 			<option value="1">CSV</option>
 		</select>
-	</jsp:body>
-</comp:popup>		
+	</jsp:attribute>
+</pop:popup>		
 
 

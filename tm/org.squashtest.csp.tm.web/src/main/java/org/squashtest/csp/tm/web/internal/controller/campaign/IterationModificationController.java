@@ -41,8 +41,8 @@ import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.servlet.ModelAndView;
 import org.springframework.web.util.HtmlUtils;
 import org.squashtest.csp.core.service.security.PermissionEvaluationService;
-import org.squashtest.csp.tm.domain.campaign.IterationTestPlanItem;
 import org.squashtest.csp.tm.domain.campaign.Iteration;
+import org.squashtest.csp.tm.domain.campaign.IterationTestPlanItem;
 import org.squashtest.csp.tm.domain.execution.Execution;
 import org.squashtest.csp.tm.domain.execution.ExecutionStatus;
 import org.squashtest.csp.tm.domain.project.Project;
@@ -386,7 +386,7 @@ public class IterationModificationController {
 						testCaseName,
 						testCaseExecutionMode,
 						formatStatus(item.getExecutionStatus(), locale),
-						formatString(item.getLastExecutedBy(),locale),
+						formatString(item.getLastExecutedBy(),locale), 
 						formatDate(item.getLastExecutedOn(),locale),
 						item.isTestCaseDeleted(),
 						" "

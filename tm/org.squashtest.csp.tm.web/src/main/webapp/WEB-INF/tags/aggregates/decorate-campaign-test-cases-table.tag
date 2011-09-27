@@ -126,13 +126,13 @@
 	function testCaseTableRowCallback(row, data, displayIndex) {
 		addIdtoTestCaseRow(row, data);
 		<c:if test="${ editable }">
+		<c:if test='${assignableUsersUrl != " " }'>
+		addLoginListToTestCase(row, data);
+		</c:if>
 		addDeleteButtonToRow(row, getTestCasesTableRowId(data), 'delete-test-case-button');
 		</c:if>
 		addClickHandlerToSelectHandle(row, $("#test-cases-table"));
 		addHLinkToTestCaseName(row, data);
-		<c:if test='${assignableUsersUrl != " " }'>
-		addLoginListToTestCase(row, data);
-		</c:if>
 		return row;
 	}
 	
