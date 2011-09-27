@@ -23,7 +23,7 @@
 <%@ include file="/WEB-INF/jsp/includes.jsp" %>
 <%@ include file="/WEB-INF/jsp/header.jsp" %>
 <%@ include file="/WEB-INF/jsp/navigation.jsp" %>
-
+<%@ page language="java" contentType="text/html; charset=utf-8" pageEncoding="utf-8"%>
 <h1><fmt:message key="pageNotFound"/></h1>
 
 <%@ include file="/WEB-INF/jsp/footer.jsp" %>

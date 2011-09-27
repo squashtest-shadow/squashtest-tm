@@ -22,6 +22,7 @@
 --%>
 <%@ taglib prefix="layout" tagdir="/WEB-INF/tags/layout"  %>
 <%@ taglib prefix="comp" tagdir="/WEB-INF/tags/component" %>
+<%@ page language="java" contentType="text/html; charset=utf-8" pageEncoding="utf-8"%>
 <layout:category-page-layout resourceName="report"  categories="${categories}">
 	<jsp:attribute name="head">
 		<layout:import-requirements-stylesheet />

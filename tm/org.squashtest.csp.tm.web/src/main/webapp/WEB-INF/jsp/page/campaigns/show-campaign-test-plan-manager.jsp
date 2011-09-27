@@ -29,7 +29,7 @@
 <%@ taglib prefix="dt" tagdir="/WEB-INF/tags/datatables" %>
 <%@ taglib prefix="aggr" tagdir="/WEB-INF/tags/aggregates" %>
 <%@ taglib prefix="authz" tagdir="/WEB-INF/tags/authz" %>
-
+<%@ page language="java" contentType="text/html; charset=utf-8" pageEncoding="utf-8"%>
 <c:url var="treeBaseUrl" value="/test-case-browser"/>
 <c:url var="testCasesTableUrl" value="/campaigns/${campaign.id}/linkable-test-cases-table" />
 <c:url var="testPlanUrl" value="/campaigns/${ campaign.id }/test-cases" />

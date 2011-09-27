@@ -23,6 +23,7 @@
 <%@ taglib prefix="layout" tagdir="/WEB-INF/tags/layout"  %>
 <%@ taglib prefix="comp" tagdir="/WEB-INF/tags/component" %>
 <%@ taglib prefix="treepopup" tagdir="/WEB-INF/tags/treepopups" %>
+<%@ page language="java" contentType="text/html; charset=utf-8" pageEncoding="utf-8"%>
 <layout:workspace-page-layout resourceName="campaign">
 	<jsp:attribute name="head">
 		<layout:import-campaigns-stylesheet />

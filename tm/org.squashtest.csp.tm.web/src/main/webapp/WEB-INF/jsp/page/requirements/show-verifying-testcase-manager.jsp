@@ -27,7 +27,7 @@
 <%@ taglib prefix="comp" tagdir="/WEB-INF/tags/component"%>
 <%@ taglib prefix="dt" tagdir="/WEB-INF/tags/datatables" %>
 <%@ taglib prefix="aggr" tagdir="/WEB-INF/tags/aggregates" %>
-
+<%@ page language="java" contentType="text/html; charset=utf-8" pageEncoding="utf-8"%>
 <c:url var="treeBaseUrl" value="/test-case-browser"/>
 <c:url var="backUrl" value="/requirement-workspace/" />
 <c:url var="verifyingTestCasesTableUrl" value="/requirements/${requirement.id}/verifying-test-cases-table" />

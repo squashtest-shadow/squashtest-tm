@@ -28,7 +28,7 @@
 <%@ taglib prefix="comp" tagdir="/WEB-INF/tags/component"%>
 <%@ taglib prefix="dt" tagdir="/WEB-INF/tags/datatables" %>
 <%@ taglib prefix="s" uri="http://www.springframework.org/tags" %>
-
+<%@ page language="java" contentType="text/html; charset=utf-8" pageEncoding="utf-8"%>
 
 <c:url var="backUrl" value="/campaign-workspace/" />
 <c:url var="treeBaseUrl" value="/test-case-browser/" />

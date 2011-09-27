@@ -21,6 +21,7 @@
 
 --%>
 <%@ taglib prefix="layout" tagdir="/WEB-INF/tags/layout"  %>
+<%@ page language="java" contentType="text/html; charset=utf-8" pageEncoding="utf-8"%>
 
 <layout:workspace-page-layout resourceName="requirement" linkable="requirement">
 	<jsp:attribute name="head">

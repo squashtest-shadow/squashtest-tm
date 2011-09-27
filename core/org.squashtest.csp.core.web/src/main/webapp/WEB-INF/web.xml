@@ -153,6 +153,8 @@
 		<!-- Scriptlets are forbidden because they enable bad practices -->
 		<scripting-invalid>true</scripting-invalid>
 	</jsp-property-group>
+	
+
 
 	<welcome-file-list>
 		<welcome-file>/test-case-workspace</welcome-file>

@@ -20,7 +20,7 @@
         along with this software.  If not, see <http://www.gnu.org/licenses/>.
 
 --%>
-<%@ page language="java" contentType="text/html; charset=ISO-8859-1" pageEncoding="ISO-8859-1"%>
+<%@ page language="java" contentType="text/html; charset=utf-8" pageEncoding="utf-8"%>
 <%@ taglib tagdir="/WEB-INF/tags" prefix="sq"%>
 <%@ taglib prefix="layout" tagdir="/WEB-INF/tags/layout"%>
 <%@ taglib prefix="f" uri="http://java.sun.com/jsp/jstl/fmt"%>
@@ -30,7 +30,7 @@
 
 @params :
 	workspace : test-case | campaign | requirement
-	attachListId : id de la attachmentList qu'on va traiter. Est utilisé par le fragment appelé ci dessous
+	attachListId : id de la attachmentList qu'on va traiter. Est utilisÃ© par le fragment appelÃ© ci dessous
 
 
  --%>

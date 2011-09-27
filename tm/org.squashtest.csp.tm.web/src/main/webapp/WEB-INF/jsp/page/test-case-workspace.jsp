@@ -22,7 +22,7 @@
 --%>
 <%@ taglib prefix="layout" tagdir="/WEB-INF/tags/layout"  %>
 <%@ taglib prefix="jq" tagdir="/WEB-INF/tags/jquery" %>
-
+<%@ page language="java" contentType="text/html; charset=utf-8" pageEncoding="utf-8"%>
 <layout:workspace-page-layout resourceName="test-case">
 	<jsp:attribute name="head">
 		<layout:import-test-cases-stylesheet />
