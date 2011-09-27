@@ -1,11 +1,11 @@
 syntax: regexp
 ^.settings$
 syntax: regexp
-/.settings/
+/\.settings/
 syntax: regexp
-.project$
+\.project$
 syntax: regexp
-.classpath$
+\.classpath$
 syntax: regexp
 ^runner
 syntax: regexp
