@@ -11,7 +11,6 @@
         <requiresjdk>no</requiresjdk>
 	<javaversion>1.6</javaversion>
         <writeinstallationinformation>no</writeinstallationinformation>
-        <pack200/>
         <run-privileged condition="izpack.windowsinstall.vista|izpack.windowsinstall.7"/>
 	<summarylogfilepath>$INSTALL_PATH/install-summary.html</summarylogfilepath>
     </info>
