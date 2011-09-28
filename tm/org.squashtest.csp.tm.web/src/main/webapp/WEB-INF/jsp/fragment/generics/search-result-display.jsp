@@ -24,7 +24,8 @@
 <%@ taglib uri="http://java.sun.com/jsp/jstl/fmt" prefix="f"%>
 <%@ taglib prefix="dt" tagdir="/WEB-INF/tags/datatables" %>
 <%@ taglib prefix="comp" tagdir="/WEB-INF/tags/component" %>
-
+<?xml version="1.0" encoding="utf-8" ?>
+<%@ page language="java" contentType="text/html; charset=utf-8" pageEncoding="utf-8"%>
 <c:set var="servContext" value="${ pageContext.servletContext.contextPath }"/>
 <c:url var="objectUrl" value="${workspace}" />
 
@@ -57,7 +58,7 @@
 			<th> <f:message key="${workspace}.header.title" />s </th>
 			<c:if test="${ icon == 'Requirement' }">
 			<th> Reference </th>
-			<th> Criticalité </th>
+			<th> CriticalitÃ© </th>
 			<th> Projet </th>
 			</c:if>
 		</tr>

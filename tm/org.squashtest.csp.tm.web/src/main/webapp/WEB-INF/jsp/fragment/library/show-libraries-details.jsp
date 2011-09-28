@@ -29,7 +29,8 @@
 <%@ taglib prefix="jq" tagdir="/WEB-INF/tags/jquery"%>
 <%@ taglib prefix="comp" tagdir="/WEB-INF/tags/component"%>
 <%@ taglib prefix="pop" tagdir="/WEB-INF/tags/popup" %>
-
+<?xml version="1.0" encoding="utf-8" ?>
+<%@ page language="java" contentType="text/html; charset=utf-8" pageEncoding="utf-8"%>
 <%---------------------------- Test Case Header ------------------------------%>
 
 <div class="ui-widget-header ui-corner-all ui-state-default fragment-header" >

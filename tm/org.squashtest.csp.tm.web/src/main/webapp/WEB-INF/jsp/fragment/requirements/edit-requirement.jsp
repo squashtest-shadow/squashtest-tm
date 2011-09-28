@@ -31,7 +31,8 @@
 <%@ taglib prefix="pop" tagdir="/WEB-INF/tags/popup" %>
 <%@ taglib prefix="fn" uri="http://java.sun.com/jsp/jstl/functions" %>
 <%@ taglib prefix="authz" tagdir="/WEB-INF/tags/authz" %>
-
+<?xml version="1.0" encoding="utf-8" ?>
+<%@ page language="java" contentType="text/html; charset=utf-8" pageEncoding="utf-8"%>
 <c:url var="ckeConfigUrl" value="/styles/ckeditor/ckeditor-config.js" />
 <s:url var="requirementUrl" value="/requirements/{reqId}">
 	<s:param name="reqId" value="${requirement.id}" />

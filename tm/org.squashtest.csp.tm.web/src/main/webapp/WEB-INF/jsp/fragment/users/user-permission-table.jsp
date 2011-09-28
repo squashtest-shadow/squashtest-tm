@@ -24,7 +24,8 @@
 <%@ taglib uri="http://java.sun.com/jsp/jstl/fmt" prefix="f"%>
 <%@ taglib prefix="dt" tagdir="/WEB-INF/tags/datatables" %>
 <%@ taglib prefix="comp" tagdir="/WEB-INF/tags/component" %>
-
+<?xml version="1.0" encoding="utf-8" ?>
+<%@ page language="java" contentType="text/html; charset=utf-8" pageEncoding="utf-8"%>
 	<comp:decorate-ajax-search-table tableId="project-permission-table" >
 		<jsp:attribute name="rowCallback">addDeleteButtonCallBack</jsp:attribute>
 		<jsp:attribute name="drawCallback">refreshTableCallBack</jsp:attribute>

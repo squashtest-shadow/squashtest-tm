@@ -26,7 +26,8 @@
 <%@ taglib prefix="s" uri="http://www.springframework.org/tags" %>
 <%@ taglib prefix="sf" uri="http://www.springframework.org/tags/form" %>
 <%@ taglib prefix="authz" tagdir="/WEB-INF/tags/authz" %>
-
+<?xml version="1.0" encoding="utf-8" ?>
+<%@ page language="java" contentType="text/html; charset=utf-8" pageEncoding="utf-8"%>
 <s:url var="folderUrl" value="/${ updateUrl }/{folderId}">
 	<s:param name="folderId" value="${folder.id}" />
 </s:url>

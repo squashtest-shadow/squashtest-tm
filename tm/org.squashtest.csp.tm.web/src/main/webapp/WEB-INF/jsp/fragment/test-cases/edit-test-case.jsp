@@ -31,7 +31,8 @@
 <%@ taglib prefix="aggr" tagdir="/WEB-INF/tags/aggregates"%>
 <%@ taglib prefix="pop" tagdir="/WEB-INF/tags/popup" %>
 <%@ taglib prefix="authz" tagdir="/WEB-INF/tags/authz" %>
-
+<?xml version="1.0" encoding="utf-8" ?>
+<%@ page language="java" contentType="text/html; charset=utf-8" pageEncoding="utf-8"%>
 
 <%-- used for copy/paste of steps --%>
 <script type="text/javascript" src="${ pageContext.servletContext.contextPath }/scripts/jquery/jquery.cookie.js"></script>

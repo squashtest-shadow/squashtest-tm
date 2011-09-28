@@ -24,7 +24,8 @@
 <%@ taglib tagdir="/WEB-INF/tags/component" prefix="comp" %>
 <%@ taglib uri="http://java.sun.com/jsp/jstl/fmt" prefix="f" %>
 <%@ taglib prefix="s" uri="http://www.springframework.org/tags" %>
-
+<?xml version="1.0" encoding="utf-8" ?>
+<%@ page language="java" contentType="text/html; charset=utf-8" pageEncoding="utf-8"%>
 <link rel="stylesheet" type="text/css" href="${ pageContext.servletContext.contextPath }/styles/master.purple.css" />
 
 <s:url var="executeComment" value="/execute/{execId}/step/{stepId}">

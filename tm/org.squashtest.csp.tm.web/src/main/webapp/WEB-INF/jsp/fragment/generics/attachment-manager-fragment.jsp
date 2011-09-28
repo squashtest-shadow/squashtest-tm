@@ -29,7 +29,8 @@
 <%@ taglib prefix="sf" uri="http://www.springframework.org/tags/form"%>
 <%@ taglib prefix="aggr" tagdir="/WEB-INF/tags/aggregates"%>
 <%@ taglib prefix="pop" tagdir="/WEB-INF/tags/popup" %>
-
+<?xml version="1.0" encoding="utf-8" ?>
+<%@ page language="java" contentType="text/html; charset=utf-8" pageEncoding="utf-8"%>
 <%--
 
 @params : voir page/attachments/attachment-manager.jsp

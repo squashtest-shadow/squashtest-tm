@@ -26,7 +26,8 @@
 
 <%@ taglib prefix="s" uri="http://www.springframework.org/tags" %>
 <%@ taglib prefix="jq" tagdir="/WEB-INF/tags/jquery" %>
-
+<?xml version="1.0" encoding="utf-8" ?>
+<%@ page language="java" contentType="text/html; charset=utf-8" pageEncoding="utf-8"%>
 <s:url var="newExecutionUrl" value="/iterations/{iterId}/test-plan/{tpId}/new-execution">
 	<s:param name="iterId" value="${iterationId}" />
 	<s:param name="tpId" value="${testPlanId}" />

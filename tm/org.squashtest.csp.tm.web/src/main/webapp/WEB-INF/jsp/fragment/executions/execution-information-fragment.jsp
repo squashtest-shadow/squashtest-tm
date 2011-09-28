@@ -24,7 +24,8 @@
 <%@ taglib tagdir="/WEB-INF/tags/component" prefix="comp" %>
 <%@ taglib uri="http://java.sun.com/jsp/jstl/fmt" prefix="f" %>
 <%@ taglib tagdir="/WEB-INF/tags/jquery" prefix="jq" %>
-
+<?xml version="1.0" encoding="utf-8" ?>
+<%@ page language="java" contentType="text/html; charset=utf-8" pageEncoding="utf-8"%>
 
 
 	<div style="display:inline-block; margin-right:2em;">
