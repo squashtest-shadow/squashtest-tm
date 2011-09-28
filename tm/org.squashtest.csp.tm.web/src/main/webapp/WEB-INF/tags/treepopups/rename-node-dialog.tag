@@ -53,8 +53,8 @@
 			var node = $('${treeSelector}').jstree("get_selected");
 			if (! node.is(':editable')){
 				<f:message key="dialog.label.rename-node.rejected" var="renameForbiddenLabel"/>
-				displayInformationNotification("${renameForbiddenLabel }");
 				$(this).dialog('close');
+				displayInformationNotification("${renameForbiddenLabel }");
 			}
 			var name = node.attr('name');
 			$("#rename-tree-node-text").val(name);			

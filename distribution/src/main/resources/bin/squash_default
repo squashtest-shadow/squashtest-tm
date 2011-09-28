@@ -1,0 +1,15 @@
+# Default settings for Squash. This file is sourced by /bin/bash.
+
+# SQUASH_USER=daemon
+# SQUASH_GROUP=daemon
+# JAR_NAME="org.apache.felix.main-3.2.1.jar"
+
+# Port for HTTP connector 
+# HTTP_PORT=8080 
+
+# Extra arguments passed to JVM
+# JAVA_ARGS= 
+
+# To set on the root directory of Squash installation
+SQUASH_HOME=/home/jmbelorgane/squashtest-csp-0.20.1
+

@@ -1,0 +1,239 @@
+#!/bin/bash
+#
+# /etc/init.d/squash
+# debian-compatible squash startup script.
+#
+# Author: Jean-Marc BELORGANE (HENIX)
+#
+### BEGIN INIT INFO
+# Provides:          squash
+# Required-Start:    $remote_fs $syslog $network
+# Required-Stop:     $remote_fs $syslog $network
+# Default-Start:     2 3 4 5
+# Default-Stop:      0 1 6
+# Short-Description: Start squash at boot time
+# Description:       Controls the Squash TM service
+### END INIT INFO
+#
+# Do NOT "set -e"
+
+
+PATH=/sbin:/usr/sbin:/bin:/usr/bin    # PATH should only include /usr/* if it runs after the mountnfs.sh script
+DESC="Squash TM Service"              # Script description
+NAME=${NAME:-squash}                  # Script name
+SCRIPT_NAME="`pwd`/${NAME}"           # Script service name
+PID_DIR=/var/run/${NAME}              # PID directory
+PID_FILE=${PID_DIR}/${NAME}.pid       # PID file
+SQUASH_USER=daemon                    # User id to be invoked instead of root
+SQUASH_GROUP=daemon                   # Group id to be invoked instead of root
+SQUASH_HOME=${SQUASH_HOME:-}          # Squash home directory
+JAVA="`which java`"                   # Java location 
+REQUIRED_JAVA_VERS=1.6                # Java required version, do not configure a third digit here 
+HTTP_PORT=8080                        # Port for HTTP connector (default 8080; disable with -1)
+DAEMON=${JAVA}                        # Daemon script
+JAR_NAME="org.apache.felix.main-3.2.1.jar"
+
+# Load environments
+if [ -r /etc/default/locale ]
+then
+    . /etc/default/locale
+    export LANG LANGUAGE
+elif [ -r /etc/environment ]
+then
+    . /etc/environment
+    export LANG LANGUAGE
+fi
+
+# Read configuration variable file if it is present
+[ -r /etc/default/${NAME} ] && . /etc/default/${NAME}
+#
+DAEMON_ARGS="${JAVA_ARGS} -server -Dfelix.config.properties=file:../conf/felix.config.properties -Dfelix.system.properties=file:../conf/felix.system.properties -Djetty.port=${HTTP_PORT} -jar ${JAR_NAME}"
+
+# Tests if java exists
+JAVA_EXISTS=`${JAVA} -version 2>&1`
+if [ $? -eq 127 -o -z "${JAVA}" ]
+then
+    echo
+    echo "${NAME} : ERROR : java not found !"
+    echo "Please ensure that java is in \$PATH."
+    exit -1
+fi
+
+# Tests if the version is high enough
+NUM_REQUIRED_JAVA_VERS=`echo ${REQUIRED_JAVA_VERS} |sed 's/\./0/g'`
+JAVA_VERS=`echo ${JAVA_EXISTS} | grep version | cut -d " " -f 3  | sed 's/\"//g' | cut -d "." -f 1,2 | sed 's/\./0/g'`
+if [ ${JAVA_VERS} -lt ${NUM_REQUIRED_JAVA_VERS} ]
+then
+    echo
+    echo "${NAME} : ERROR : Your JRE does not meet the requirements !"
+    echo "Please install a new JRE, required version ${REQUIRED_JAVA_VERS}."
+    exit -2
+fi
+
+# Squash bin location
+SQUASH_BIN=`pwd`
+[ "${SQUASH_BIN}" = "/etc/init.d" ] && SQUASH_BIN="`dirname \`ls -l ${NAME} | awk '{print $NF}'\``"
+[ -s ${SQUASH_BIN}/${JAR_NAME} ] && SQUASH_HOME="`dirname ${SQUASH_BIN}`"
+if [ -z ${SQUASH_HOME} ]
+then
+    echo
+    echo "Please ensure that SQUASH_HOME variable is correctly set."
+    echo "You can define SQUASH_HOME in /etc/default/squash"
+    exit -3
+fi
+
+# Load the VERBOSE setting and other rcS variables
+. /lib/init/vars.sh
+
+# Define LSB log_* functions.
+# Depend on lsb-base (>= 3.2-14) to ensure that this file is present
+# and status_of_proc is working.
+. /lib/lsb/init-functions
+
+
+#
+# Function that checks the tcp port
+#
+check_tcp_port() 
+{
+    local service=$1
+    local assigned=$2
+    local default=$3
+
+    if [ -n "${assigned}" ]
+    then
+        port=${assigned}
+    else
+        port=${default}
+    fi
+    
+    count=`netstat --listen --numeric-ports | grep \:${port}[[:space:]] | grep -c . `
+    if [ ${count} -ne 0 ]
+    then
+        echo "${NAME} : ERROR : The selected ${service} port (${port}) seems to be in use by another program !"
+        echo "Please select another port to use for ${NAME}"
+        return 1
+    fi
+}
+
+#
+# Function that starts the daemon/service
+#
+do_start()
+{
+    # The default location is /var/run/squash/squash.pid but the parent directory needs to be created if not exists
+    if [ ! -d "${PID_DIR}" ]
+    then
+        mkdir ${PID_DIR} > /dev/null 2>&1 || true
+        chown ${SQUASH_USER}:${SQUASH_GROUP} ${PID_DIR}
+    fi
+
+    # Verify that the squash port is not already in use, winstone does not exit
+    # even for BindException
+    check_tcp_port "http" "${HTTP_PORT}" "8080" || return 1
+    
+    # Return
+    #   0 if daemon has been started
+    #   1 if daemon was already running
+    #   2 if daemon could not be started
+    start-stop-daemon --start --quiet --pidfile ${PID_FILE} --background --make-pidfile -c ${SQUASH_USER} --test --exec ${DAEMON} > /dev/null \
+        || return 1
+    start-stop-daemon --start --quiet --pidfile ${PID_FILE} --background --make-pidfile -c ${SQUASH_USER} --chdir ${SQUASH_HOME}/bin --exec ${DAEMON} -- \
+        ${DAEMON_ARGS} \
+        || return 2
+    chown ${SQUASH_USER}:${SQUASH_GROUP} ${PID_FILE}
+
+    # Add code here, if necessary, that waits for the process to be ready
+    # to handle requests from services started subsequently which depend
+    # on this one.  As a last resort, sleep for some time.
+}
+
+#
+# Function that stops the daemon/service
+#
+do_stop()
+{
+    # Return
+    #   0 if daemon has been stopped
+    #   1 if daemon was already stopped
+    #   2 if daemon could not be stopped
+    #   other if a failure occurred
+    start-stop-daemon --stop --quiet --retry=TERM/30/KILL/5 --pidfile ${PID_FILE} #--name ${NAME}
+    RETVAL="$?"
+    [ "$RETVAL" = 2 ] && return 2
+
+    # Wait for children to finish too if this is a daemon that forks
+    # and if the daemon is only ever run from this initscript.
+    # If the above conditions are not satisfied then add some other code
+    # that waits for the process to drop all resources that could be
+    # needed by services started subsequently.  A last resort is to
+    # sleep for some time.
+    start-stop-daemon --stop --quiet --oknodo --retry=0/30/KILL/5 --exec ${DAEMON}
+    [ "$?" = 2 ] && return 2
+
+    # Many daemons don't delete their pidfiles when they exit.
+    rm -f ${PID_FILE}
+    return "$RETVAL"
+}
+
+# Make sure we run as root
+if [ `id -u` -ne 0 ]
+then
+    echo "${NAME} : ERROR : The ${NAME} init script can only be run as root !";
+    exit 1;
+fi
+
+
+#
+# Main processing
+#
+case "$1" in
+    start)
+        [ "${VERBOSE}" != no ] && log_daemon_msg "Starting ${DESC}" "${NAME}"
+        do_start
+        case "$?" in
+            0|1) [ "${VERBOSE}" != no ] && log_end_msg 0 
+                 ;;
+            2)   [ "${VERBOSE}" != no ] && log_end_msg 1 
+                 ;;
+        esac
+        ;;
+
+    stop)
+        [ "${VERBOSE}" != no ] && log_daemon_msg "Stopping ${DESC}" "${NAME}"
+        do_stop
+        case "$?" in
+            0|1) [ "${VERBOSE}" != no ] && log_end_msg 0 
+                 ;;
+            2)   [ "${VERBOSE}" != no ] && log_end_msg 1 
+                 ;;
+        esac
+        ;;
+
+    status)
+        status_of_proc "${DAEMON}" "${NAME}" && exit 0 || exit $?
+        ;;
+
+    restart)
+        [ "${VERBOSE}" != no ] && log_daemon_msg "Restarting ${DESC}" "${NAME}"
+        do_stop
+        case "$?" in
+            0|1) do_start
+                 case "$?" in
+                     0) log_end_msg 0 ;;
+                     1) log_end_msg 1 ;; # Old process is still running
+                     *) log_end_msg 1 ;; # Failed to start
+                 esac
+                 ;;
+            *)   # Failed to stop
+                 log_end_msg 1
+                 ;;
+        esac
+        ;;
+
+    *)
+        echo "Usage: ${SCRIPT_NAME} {start|stop|status|restart}" >&2
+        exit 3
+        ;;
+esac
+
