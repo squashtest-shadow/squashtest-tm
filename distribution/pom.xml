@@ -3,14 +3,15 @@
 	xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
 	<modelVersion>4.0.0</modelVersion>
 	<parent>
-		<artifactId>squashtest-csp</artifactId>
+		<artifactId>squashtest-parent-pom</artifactId>
 		<groupId>org.squashtest.csp</groupId>
 		<version>1.0.0.RC1-SNAPSHOT</version>
+		<relativePath>../parent-pom</relativePath>
 	</parent>
 	<groupId>org.squashtest.csp</groupId>
 	<artifactId>squashtest-csp-distribution</artifactId>
 	<version>1.0.0.RC1-SNAPSHOT</version>
-	<name>squashtest-csp-distribution</name>
+	<name>squashtest-tm-distribution</name>
 	<description>Squashtest CSP - Distribution assembly module
 	</description>
 	<packaging>pom</packaging>
@@ -37,6 +38,11 @@
 		<config.database.url>jdbc:h2:../data/squash-tm</config.database.url>
 		<config.database.username>sa</config.database.username>
 		<config.database.password>sa</config.database.password>
+		<izpack-compiler.version>4.3.4</izpack-compiler.version>
+		<izpack-plugin.version>1.0-alpha-5</izpack-plugin.version>
+		<izpack.resources.outputDirectory>${project.build.directory}/izpack-resources</izpack.resources.outputDirectory>
+		<izpack.licence.path>${project.build.directory}/maven-shared-archive-resources/META-INF/COPYING.txt</izpack.licence.path>
+		<izpack.distro.directory>${project.build.directory}/${distro.archive.name}/${distro.directory.name}</izpack.distro.directory>
 	</properties>
 
 	<build>
@@ -70,15 +76,60 @@
 				</executions>
 			</plugin>
 
+<plugin>
+          <groupId>org.codehaus.izpack</groupId>
+          <artifactId>izpack-maven-plugin</artifactId>
+          <version>${izpack-plugin.version}</version>
+          <executions>
+            <execution>
+              <phase>package</phase>
+              <goals>
+                <goal>izpack</goal>
+              </goals>
+              <configuration>
+		      <descriptor>${izpack.resources.outputDirectory}/install.xml</descriptor>
+		      <fileExtension>exe</fileExtension>
+			<kind>installer</kind>
+			<installerFile>${project.build.directory}/${distro.directory.name}-${project.version}-installer.exe</installerFile>
+              </configuration>
+            </execution>
+          </executions>
+          <dependencies>
+            <dependency>
+              <groupId>org.codehaus.izpack</groupId>
+              <artifactId>izpack-standalone-compiler</artifactId>
+	      <version>${izpack-compiler.version}</version>
+            </dependency>
+          </dependencies>
+        </plugin>
+			
 			<plugin>
 				<!-- resources are not processed for pom projects -->
 				<groupId>org.apache.maven.plugins</groupId>
 				<artifactId>maven-resources-plugin</artifactId>
 				<executions>
 					<execution>
+					<id>resources</id>
 					<goals>
 						<goal>resources</goal>
 					</goals>
+				</execution>
+					<execution>
+					<id>izpack-resources</id>
+					<phase>process-resources</phase>
+					<goals>
+						<goal>copy-resources</goal>
+					</goals>
+					<configuration>
+						<escapeWindowsPaths>false</escapeWindowsPaths>
+						<resources>
+			<resource>
+				<directory>${project.basedir}/src/main/izpack</directory>
+				<filtering>true</filtering>
+			</resource>
+						</resources>
+						<outputDirectory>${izpack.resources.outputDirectory}</outputDirectory>
+					</configuration>
 				</execution>
 				</executions>
 			</plugin>
@@ -464,8 +515,6 @@
 			<groupId>org.springframework.osgi</groupId>
 			<artifactId>jasper.osgi</artifactId>
 		</dependency>
-		<!-- dependency> <groupId>org.apache.xmlcommons</groupId> <artifactId>com.springsource.org.apache.xmlcommons</artifactId> 
-			</dependency -->
 		<!-- ====== /JSP COMPILER ====== -->
 
 		<!-- ====== FILE UPLOAD ====== -->
@@ -692,5 +741,11 @@
 			<artifactId>org.squashtest.net.sf.jasperreports</artifactId>
 		</dependency>
 		<!-- ===== /JASPER REPORTS ===== -->
+      <dependency>
+        <groupId>org.codehaus.izpack</groupId>
+        <artifactId>izpack-standalone-compiler</artifactId>
+	<version>${izpack-compiler.version}</version>
+	<scope>provided</scope>
+      </dependency>
 	</dependencies>
 </project>

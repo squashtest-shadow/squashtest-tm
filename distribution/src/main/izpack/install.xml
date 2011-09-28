@@ -1,0 +1,55 @@
+<?xml version="1.0" encoding="iso-8859-1" standalone="yes"?>
+<installation version="1.0">
+    <info>
+	    <appname>Squash-TM</appname>
+	<appversion>${project.version}</appversion>
+        <authors>
+            <author email="contact@squashtest.org" name="Squashtest"/>
+        </authors>
+        <url>http://www.squashtest.org/</url>
+        <uninstaller name="Uninstaller.jar" write="yes"/>
+        <requiresjdk>no</requiresjdk>
+	<javaversion>1.6</javaversion>
+        <writeinstallationinformation>no</writeinstallationinformation>
+        <pack200/>
+        <run-privileged condition="izpack.windowsinstall.vista|izpack.windowsinstall.7"/>
+	<summarylogfilepath>$INSTALL_PATH/install-summary.html</summarylogfilepath>
+    </info>
+    <guiprefs height="480" resizable="no" width="640">
+        <modifier key="useFlags" value="yes"/>
+        <modifier key="langDisplayType" value="default"/>
+    </guiprefs>
+    <locale>
+        <langpack iso3="fra"/>
+        <langpack iso3="eng"/>
+    </locale>
+    <resources>
+	    <res id="LicencePanel.licence" parse="yes" src="${izpack.licence.path}"/>
+	    <res id="shortcutSpec.xml" src="${izpack.resources.outputDirectory}/squash-tm-shortcut-spec.xml"/>
+	    <res id="installer.langsel.img" src="${izpack.resources.outputDirectory}/logos/logo-squash-tm-150.png"/>
+	    <res id="Installer.image" src="${izpack.resources.outputDirectory}/logos/logo_squash_77_290.png"/>
+	    <res id="TargetPanel.dir" src="${izpack.resources.outputDirectory}/TargetPanel.dir.txt" />
+    </resources>
+    <panels>
+        <panel classname="CheckedHelloPanel"/>
+        <panel classname="LicencePanel"/>
+        <panel classname="TargetPanel"/>
+        <panel classname="InstallPanel"/>
+        <panel classname="ShortcutPanel"/>
+        <panel classname="SimpleFinishPanel"/>
+    </panels>
+    <variables>
+        <variable name="DesktopShortcutCheckboxEnabled" value="true"/>
+    </variables>
+    <packs>
+        <pack name="Squash-TM" preselected="yes" required="yes">
+            <description/>
+            <fileset override="update"
+		    dir="${izpack.distro.directory}" targetdir="$INSTALL_PATH/" includes="**/*.*"/>
+            <fileset override="update"
+		    dir="${izpack.resources.outputDirectory}" targetdir="$INSTALL_PATH/" includes="**/logos/*.*"/>
+        </pack>
+    </packs>
+    <native name="ShellLink.dll" type="izpack"/>
+    <native name="ShellLink_x64.dll" type="izpack"/>
+</installation>

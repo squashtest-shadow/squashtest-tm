@@ -1,0 +1,13 @@
+<?xml version="1.0" encoding="UTF-8" standalone="yes"?>
+<shortcuts>
+    <skipIfNotSupported/>
+    <programGroup defaultName="Squash-TM" location="applications"/>
+    <shortcut applications="no" desktop="no"
+        iconFile="$INSTALL_PATH/logos/logo-squash-tm-150.ico"
+        iconIndex="0" initialState="normal" name="Squash-TM"
+        programGroup="yes" startMenu="no" startup="no" desktop="yes"
+        target="$INSTALL_PATH/bin/startup.bat" workingDirectory="$INSTALL_PATH/bin"/>
+    <shortcut applications="no" desktop="no" initialState="noShow"
+        name="Uninstaller" programGroup="yes" startMenu="no"
+        startup="no" target="$INSTALL_PATH/Uninstaller/Uninstaller.jar"/>
+</shortcuts>
