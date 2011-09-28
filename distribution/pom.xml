@@ -90,7 +90,7 @@
 		      <descriptor>${izpack.resources.outputDirectory}/install.xml</descriptor>
 		      <fileExtension>exe</fileExtension>
 			<kind>installer</kind>
-			<installerFile>${project.build.directory}/${distro.directory.name}-${project.version}-installer.exe</installerFile>
+			<installerFile>${project.build.directory}/${distro.directory.name}-${project.version}-installer</installerFile>
               </configuration>
             </execution>
           </executions>
