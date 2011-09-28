@@ -34,6 +34,9 @@ import javax.servlet.ServletOutputStream;
 import javax.servlet.http.HttpServletResponse;
 import javax.validation.Valid;
 
+import net.htmlparser.jericho.Renderer;
+import net.htmlparser.jericho.Segment;
+import net.htmlparser.jericho.Source;
 import net.sf.jasperreports.engine.JRExporterParameter;
 import net.sf.jasperreports.engine.JRParameter;
 import net.sf.jasperreports.engine.export.JRCsvExporterParameter;
@@ -83,10 +86,10 @@ LibraryNavigationController<RequirementLibrary, RequirementFolder, RequirementLi
 
 	@Inject
 	private JasperReportsServiceImpl jrServices;
-	
+
 
 	private RequirementLibraryNavigationService requirementLibraryNavigationService;
-	
+
 	private static final int EOF = -1;
 
 	@ServiceReference
@@ -173,77 +176,81 @@ LibraryNavigationController<RequirementLibrary, RequirementFolder, RequirementLi
 	}
 
 
-	
-	
+
+
 	@RequestMapping(value="/export-folder", method=RequestMethod.GET)
 	public
-	@ResponseBody void exportRequirements(@RequestParam("tab[]") List<Long> ids, 
+	@ResponseBody void exportRequirements(@RequestParam("tab[]") List<Long> ids,
 								   @RequestParam("name") String filename,	HttpServletResponse response, Locale locale ){
 		List<ExportRequirementData> dataSource = requirementLibraryNavigationService.findRequirementsToExportFromFolder(ids);
-		
+
 		printExport(dataSource, filename, response, locale);
 
 	}
-	
+
 	@RequestMapping(value="/export-library", method=RequestMethod.GET)
 	public
-	@ResponseBody void exportLibrary(@RequestParam("tab[]") List<Long> libraryIds, 
+	@ResponseBody void exportLibrary(@RequestParam("tab[]") List<Long> libraryIds,
 							  @RequestParam("name") String filename, HttpServletResponse response, Locale locale){
-		
-		
-		
+
+
+
 		List<ExportRequirementData> dataSource = requirementLibraryNavigationService.findRequirementsToExportFromLibrary(libraryIds);
-		
+
 		printExport(dataSource, filename, response, locale);
-		
+
 	}
-	
+
 	protected void printExport(List<ExportRequirementData> dataSource, String filename, HttpServletResponse response, Locale locale){
 		try{
 			//it seems JasperReports doesn't like '\n' and the likes so we'll HTML-encode that first.
 			//that solution is quite weak though.
 			for (ExportRequirementData data : dataSource){
 				char replacer = ' ';
-				String encoded = data.getDescription().replace('\n', replacer).replace('\t', replacer);
+				Source htmlSource = new Source(data.getDescription());
+				Segment htmlSegment = new Segment(htmlSource, 0, data.getDescription().length());
+				Renderer htmlRend = new Renderer(htmlSegment);
+				String encoded = htmlRend.toString().replace('\n', replacer).replace('\t', replacer)
+						.replace('\r', replacer);
 				data.setDescription(encoded);
 			}
-			
-			
+
+
 			//report generation parameters
 			Map<String, Object> reportParameter = new HashMap<String, Object>();
 			reportParameter.put(JRParameter.REPORT_LOCALE, locale);
-			
-			
+
+
 			// exporter parameters
 			//TODO : defining an export parameter specific to csv while in the future we could export to other formats
 			//is unsatisfying. Find something else.
 			Map<JRExporterParameter,Object> exportParameter = new HashMap<JRExporterParameter, Object>();
-			exportParameter.put(JRCsvExporterParameter.FIELD_DELIMITER, ";"); 
+			exportParameter.put(JRCsvExporterParameter.FIELD_DELIMITER, ";");
 			exportParameter.put(JRExporterParameter.CHARACTER_ENCODING, "ISO-8859-1");
-			
+
 			InputStream jsStream = Thread.currentThread().getContextClassLoader().getResourceAsStream("/WEB-INF/reports/requirement-export.jasper");
 			InputStream reportStream = jrServices.getReportAsStream(jsStream, "csv", dataSource, reportParameter, exportParameter);
-			
+
 			//print it.
 			ServletOutputStream servletStream= response.getOutputStream();
-			
+
 			response.setContentType("application/octet-stream");
 			response.setHeader("Content-Disposition", "attachment; filename="+filename+".csv");
-	
+
 			flushStreams(reportStream, servletStream);
-			
+
 			reportStream.close();
-			servletStream.close();			
-			
+			servletStream.close();
+
 		}catch(IOException ioe){
 			throw new RuntimeException(ioe);
 		}
-		
-			
+
+
 	}
-	
+
 	/* ********************************** private stuffs ******************************* */
-	
+
 	private void flushStreams(InputStream inStream, ServletOutputStream outStream) throws IOException{
 		int readByte;
 
