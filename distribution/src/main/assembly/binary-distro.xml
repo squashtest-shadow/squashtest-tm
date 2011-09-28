@@ -47,6 +47,7 @@
 			</includes>
 			<excludes>
 				<exclude>org.apache.felix:${felix.artifactId}</exclude>
+				<exclude>org.codehaus.izpack:*</exclude>
 				<exclude>*:*:pom:*</exclude>
 			</excludes>
 			<useTransitiveDependencies>false</useTransitiveDependencies>
