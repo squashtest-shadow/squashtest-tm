@@ -423,7 +423,7 @@ div.tree-filter-reminder-div{
 
 div#tree-panel-left {
 	height: 100%;
-	width : 270px;
+	width : 300px;
 	border-right: 1px solid #CCCCCC;
 	z-index: 0;
 }
