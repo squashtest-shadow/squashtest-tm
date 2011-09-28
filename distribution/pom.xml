@@ -129,6 +129,10 @@
 			</resource>
 						</resources>
 						<outputDirectory>${izpack.resources.outputDirectory}</outputDirectory>
+          <nonFilteredFileExtensions>
+            <nonFilteredFileExtension>ico</nonFilteredFileExtension>
+          </nonFilteredFileExtensions>
+						
 					</configuration>
 				</execution>
 				</executions>
@@ -745,7 +749,6 @@
         <groupId>org.codehaus.izpack</groupId>
         <artifactId>izpack-standalone-compiler</artifactId>
 	<version>${izpack-compiler.version}</version>
-	<scope>provided</scope>
       </dependency>
 	</dependencies>
 </project>
