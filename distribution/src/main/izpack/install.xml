@@ -46,7 +46,7 @@
             <fileset override="update"
 		    dir="${izpack.distro.directory}" targetdir="$INSTALL_PATH/" includes="**/*.*"/>
             <fileset override="update"
-		    dir="${izpack.resources.outputDirectory}" targetdir="$INSTALL_PATH/" includes="**/logos/*.*"/>
+		    dir="${izpack.resources.outputDirectory}" targetdir="$INSTALL_PATH/" includes="**/*.*"/>
         </pack>
     </packs>
     <native name="ShellLink.dll" type="izpack"/>
