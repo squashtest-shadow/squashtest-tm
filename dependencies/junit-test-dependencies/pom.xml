@@ -3,11 +3,11 @@
 	<parent>
 		<artifactId>squashtest-csp-dependencies</artifactId>
 		<groupId>org.squashtest.csp</groupId>
-		<version>1.0.0.RELEASE</version>
+		<version>1.0.1.RELEASE-SNAPSHOT</version>
 	</parent>
 	<groupId>org.squashtest.csp</groupId>
 	<artifactId>junit-test-dependencies</artifactId>
-	<version>1.0.0.RELEASE</version>
+	<version>1.0.1.RELEASE-SNAPSHOT</version>
 	<packaging>pom</packaging>
 	<name>junit-test-dependencies</name>
 	<description>Dependencies for vanilla java unit tests</description>

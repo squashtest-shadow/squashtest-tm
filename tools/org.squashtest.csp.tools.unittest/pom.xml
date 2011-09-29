@@ -4,11 +4,11 @@
 	<parent>
 		<artifactId>squashtest-csp-tools</artifactId>
 		<groupId>org.squashtest.csp</groupId>
-		<version>1.0.0.RELEASE</version>
+		<version>1.0.1.RELEASE-SNAPSHOT</version>
 	</parent>
 	<groupId>org.squashtest.csp</groupId>
 	<artifactId>org.squashtest.csp.tools.unittest</artifactId>
-	<version>1.0.0.RELEASE</version>
+	<version>1.0.1.RELEASE-SNAPSHOT</version>
 	<name>Squashtest CSP - Tools module - Unit tests library</name>
 	<description>Library  of classes used for unit-testing other Squashtest components</description>
 

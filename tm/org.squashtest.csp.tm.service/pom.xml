@@ -4,11 +4,11 @@
 	<parent>
 		<artifactId>squashtest-csp-tm</artifactId>
 		<groupId>org.squashtest.csp</groupId>
-		<version>1.0.0.RELEASE</version>
+		<version>1.0.1.RELEASE-SNAPSHOT</version>
 	</parent>
 	<groupId>org.squashtest.csp</groupId>
 	<artifactId>org.squashtest.csp.tm.service</artifactId>
-	<version>1.0.0.RELEASE</version>
+	<version>1.0.1.RELEASE-SNAPSHOT</version>
 	<name>Squashtest CSP - Test Management module - Service component</name>
 	<properties>
 		<bundle.name>${project.artifactId}</bundle.name>
