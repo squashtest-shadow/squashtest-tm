@@ -10,7 +10,7 @@
         <uninstaller name="Uninstaller.jar" write="yes"/>
         <requiresjdk>no</requiresjdk>
 	<javaversion>1.6</javaversion>
-        <writeinstallationinformation>no</writeinstallationinformation>
+        <writeinstallationinformation>yes</writeinstallationinformation>
         <run-privileged condition="izpack.windowsinstall.vista|izpack.windowsinstall.7"/>
 	<summarylogfilepath>$INSTALL_PATH/install-summary.html</summarylogfilepath>
     </info>
