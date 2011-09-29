@@ -20,6 +20,8 @@
  */
 package org.squashtest.csp.tm.internal.repository;
 
+import java.util.List;
+
 import org.squashtest.csp.tm.domain.testcase.TestStep;
 
 public interface TestStepDao {
@@ -29,5 +31,7 @@ public interface TestStepDao {
 	void removeById(Long testStepId);
 
 	<STEP extends TestStep> void persist(STEP testStep);
+	
+	List<TestStep> findListById(List<Long> testStepIds);
 
 }

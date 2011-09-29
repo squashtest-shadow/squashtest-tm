@@ -60,8 +60,11 @@ public interface TestCaseModificationService {
 
 	void updateTestStepExpectedResult(long testStepId, String newExpectedResult);
 
+	@Deprecated
 	void changeTestStepPosition(long testCaseId, long testStepId, int newStepPosition);
 
+	void changeTestStepsPosition(long testCaseId, int newPosition, List<Long> stepIds);
+	
 	void removeStepFromTestCase(long testCaseId, long testStepId);
 
 	void removeListOfSteps(long testCaseId, List<Long> testStepIds);

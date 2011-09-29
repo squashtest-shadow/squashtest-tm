@@ -24,8 +24,10 @@ import java.util.List;
 import java.util.ListIterator;
 
 import org.hibernate.Hibernate;
+import org.hibernate.Query;
 import org.hibernate.Session;
 import org.hibernate.criterion.Restrictions;
+import org.hibernate.type.LongType;
 import org.springframework.stereotype.Repository;
 import org.squashtest.csp.tm.domain.testcase.TestCase;
 import org.squashtest.csp.tm.domain.testcase.TestStep;
@@ -95,6 +97,23 @@ public class HibernateTestStepDao extends HibernateDao<TestStep> implements Test
 		}
 	}
 
+	
+	@Override
+	public List<TestStep> findListById(final List<Long> testStepIds){
+		SetQueryParametersCallback callback = new SetQueryParametersCallback() {
+			
+			@Override
+			public void setQueryParameters(Query query) {
+				query.setParameterList("testStepIds", testStepIds, LongType.INSTANCE);
+				
+			}
+			
+		};
+		
+		return executeListNamedQuery("testStep.findListById", callback);
+		
+	}
+	
 
 
 

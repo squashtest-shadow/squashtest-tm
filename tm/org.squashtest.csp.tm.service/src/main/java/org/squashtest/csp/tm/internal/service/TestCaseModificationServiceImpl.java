@@ -149,6 +149,7 @@ public class TestCaseModificationServiceImpl implements TestCaseModificationServ
 	}
 
 	@Override
+	@Deprecated
 	@PreAuthorize("hasPermission(#testCaseId, 'org.squashtest.csp.tm.domain.testcase.TestCase' , 'WRITE') or hasRole('ROLE_ADMIN')")
 	public void changeTestStepPosition(long testCaseId, long testStepId, int newStepPosition) {
 		TestCase testCase = testCaseDao.findById(testCaseId);
@@ -161,6 +162,19 @@ public class TestCaseModificationServiceImpl implements TestCaseModificationServ
 		}
 
 		testCase.moveStep(index, newStepPosition);
+	}
+	
+	@Override
+	@PreAuthorize("hasPermission(#testCaseId, 'org.squashtest.csp.tm.domain.testcase.TestCase' , 'WRITE') or hasRole('ROLE_ADMIN')")
+	public void changeTestStepsPosition(long testCaseId, int newPosition, List<Long> stepIds){
+		
+		TestCase testCase = testCaseDao.findById(testCaseId);
+		List<TestStep> steps = testStepDao.findListById(stepIds);
+		
+		testCase.moveSteps(newPosition, steps);
+		
+		
+		
 	}
 
 	@Override

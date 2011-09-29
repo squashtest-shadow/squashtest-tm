@@ -94,6 +94,63 @@ class TestCaseTest extends Specification {
 		testCase.steps == [step2, step0, step1, step3]
 	}
 
+	def "should move a list of steps to a lesser index"(){
+		
+		given :
+			def step0 = new ActionTestStep(action:"0")
+			def step1 = new ActionTestStep(action:"1")
+			def step2 = new ActionTestStep(action:"2")
+			def step3 = new ActionTestStep(action:"3")
+	
+			testCase.steps << step0
+			testCase.steps << step1
+			testCase.steps << step2
+			testCase.steps << step3
+		
+
+			def tomove = [step2, step3]	
+			def position = 1
+			def result = [step0, step2, step3, step1]
+			
+			
+		when :
+		
+			testCase.moveSteps(position, tomove);
+		
+		then :
+			testCase.steps == result
+		
+	}
+	
+	
+	
+	def "should move a list of steps to a greater index"(){
+		
+		given :
+			def step0 = new ActionTestStep(action:"0")
+			def step1 = new ActionTestStep(action:"1")
+			def step2 = new ActionTestStep(action:"2")
+			def step3 = new ActionTestStep(action:"3")
+	
+			testCase.steps << step0
+			testCase.steps << step1
+			testCase.steps << step2
+			testCase.steps << step3
+
+
+			def tomove = [step0, step1]
+			def position = 3;
+			def result = [step2, step3, step0, step1]
+			
+		when :
+			testCase.moveSteps(position, tomove)
+		
+		then :
+			testCase.steps == result
+		
+		
+	}
+	
 	def "should add a verified requirement"() {
 		given:
 		Requirement r = new Requirement()
