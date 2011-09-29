@@ -136,6 +136,10 @@ function getOffsetFromDomTable(domTable, fnGetRowIndex){
 /**
  * Enables DnD on the given table.
  * 
+ * Note : we calculate the 'offset' because the first displayed element is not necessarily the first item of the table.
+ * 			For instance, if we are displaying page 3 and drop our rows at the top of the table view, the drop index is not 0
+ * 			but (3*pagesize);
+ * 
  * @param tableId
  *            html id of the table
  * @param dropCallback
@@ -145,25 +149,25 @@ function getOffsetFromDomTable(domTable, fnGetRowIndex){
 function enableTableDragAndDrop(tableId, fnGetRowIndex, dropHandler) {
 	$('#' + tableId).tableDnD({
 		dragHandle : "drag-handle",
-		onDragStart : function(table, row) { // sounds like the "row" is
-											// actually just the drag handle
-			$(row).find('.drag-handle').addClass('ui-state-active');
+		onDragStart : function(table, rows) { //remember that we are using our modified dnd : rows is a jQuery object 
+			
+			rows.find('.drag-handle').addClass('ui-state-active');
 			
 			var offset = getOffsetFromDomTable(table, fnGetRowIndex);
 			
-			var index = row.parentNode.rowIndex - 1;
+			var index = rows.parentNode.rowIndex - 1;
 			$(table).data("previousRank", index);
 			$(table).data("offset", offset);
 			
 		},
-		onDrop : function(table, row) {
-			//in this part of the code the row is a tr as expected. Uh.
+		
+		onDrop : function(table, rows) { //again, that is now a jQuery object
 				
-			var newInd = row.rowIndex - 1;
+			var newInd = $(rows).first().rowIndex - 1;
 			var oldInd = $(table).data("previousRank");
 			var offset = $(table).data("offset");
 			if (newInd != oldInd) {
-				dropHandler(row, newInd+offset);
+				dropHandler(rows, newInd+offset);
 			}
 		}
 		

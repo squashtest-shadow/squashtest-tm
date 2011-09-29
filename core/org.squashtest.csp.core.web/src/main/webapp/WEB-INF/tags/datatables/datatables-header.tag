@@ -26,7 +26,7 @@
 <script type="text/javascript" src="${ pageContext.servletContext.contextPath }/scripts/datatables/jquery.dataTables.js"></script>
 <script type="text/javascript" src="${ pageContext.servletContext.contextPath }/scripts/jquery/jquery.tablednd_0_5.js"></script>
 <script type="text/javascript" src="${ pageContext.servletContext.contextPath }/scripts/squashtest/datatables.js"></script>
-<%--<script type="text/javascript" src="http://localhost/scripts/jquery.squashtm.tableDnD.ext.js"></script> --%>
+<script type="text/javascript" src="http://localhost/scripts/jquery.squashtm.tableDnD.ext.js"></script> 
 <script type="text/javascript">
 	$(function() {
 		enableTableRangeSelection();

@@ -165,8 +165,9 @@
 		return rowData[10];
 	}
 
-	function stepDropHandler(row, dropPosition) {
-		$.post('${ updateStepUrl }' + parseStepId(row), { newIndex : dropPosition }, function() {
+	function stepDropHandler(rows, dropPosition) {
+		var stepIds = $(rows).collect(function(elt){return elt.id.split(':')[1];});
+		$.post('${ updateStepUrl }', { newIndex : dropPosition, stepIds : stepIds }, function() {
 			refreshSteps();
 		});
 	}
