@@ -3,11 +3,11 @@
 	<parent>
 		<artifactId>squashtest-csp-dependencies</artifactId>
 		<groupId>org.squashtest.csp</groupId>
-		<version>1.0.0.RC1</version>
+		<version>1.0.0.RELEASE-SNAPSHOT</version>
 	</parent>
 	<groupId>org.squashtest.csp</groupId>
 	<artifactId>springdm-bundle-dependencies</artifactId>
-	<version>1.0.0.RC1</version>
+	<version>1.0.0.RELEASE-SNAPSHOT</version>
 	<packaging>pom</packaging>
 	<name>springdm-bundle-dependencies</name>
 	<description>Defines dependencies for a SpringDM based OSGi bundle</description>
