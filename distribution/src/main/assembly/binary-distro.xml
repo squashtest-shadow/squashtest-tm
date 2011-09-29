@@ -101,16 +101,29 @@
 	</moduleSets>
 	
 	<fileSets>
+		<!-- 
 		<fileSet>
 			<directory>src/main/resources/bin</directory>
 			<filtered>true</filtered>
 			<outputDirectory>bin</outputDirectory>
 		</fileSet>
 		<fileSet>
+			<
 			<directory>src/main/resources/conf</directory>
 			<filtered>true</filtered>
 			<outputDirectory>conf</outputDirectory>
 		</fileSet>
+		-->
+		<fileSet>
+			<directory>src/main/resources</directory>
+			<filtered>true</filtered>
+			<excludes>
+				<exclude>
+					equinox/				
+				</exclude>
+			</excludes>
+			<outputDirectory>.</outputDirectory>
+		</fileSet>		
 		<fileSet>
 			<directory>${project.build.directory}/data</directory>
 			<outputDirectory>data</outputDirectory>

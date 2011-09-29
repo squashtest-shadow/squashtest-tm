@@ -1,0 +1,51 @@
+Squash TM readme.txt
+=================================
+
+I] Pré requis
+
+- java : version 6 ou supérieure
+- Navigateur internet : Internet Explorer 8+, Mozilla Firefox 3.6+ ou Chrome 14+
+
+=================================
+
+II.A] Exécutable Windows : 
+
+- double cliquer sur l’installeur et suivez les instructions pour installer Squash TM.
+- cliquer sur l'icône raccourci pour lancer Squash.
+- patienter le temps que l’application s’initialise.
+- ouvrir un navigateur et accédez à Squash TM via l'URL : ‘http://localhost:8080/squash/’.
+- compte administrateur : admin/admin.
+
+II.B] Archive tgz/tgz : 
+
+- décompresser l’archive  et  déplacer le contenu à l’emplacement souhaité.
+- aller dans bin/ et exécuter startup.bat (Windows) ou startup.sh (Linux/Mac).
+- patienter le temps que l’application s’initialise.
+- ouvrir un navigateur et accédez à Squash TM via l'URL : ‘http://localhost:8080/squash/’.
+- compte administrateur : admin/admin.
+
+
+=================================
+
+
+IV] Optionnel : Utilisation d'une base MySQL
+
+Squash Test Manager est livré par défaut avec une base de donnée H2 embarquée. 
+
+Pour utiliser une base MySQL externe : 
+
+- créer une base de donnée pour l'application et un utilisateur applicatif ayant les droits insert/update/delete sur cette base.
+- modifier la configuration de MySQL ('my.cnf') : ajoutez ou modifier 'default-storage-engine = InnoDB' 
+- créer la structure avec le script 'database-scripts/mysql-full-install.sql’. 
+
+- Modifier les fichiers de paramétrage Squash suivants :
+
+	* 'conf/services/org.squashtest.csp.core.datasource.jdbc.config.properties' :
+		datasource.db.driverClassName=com.mysql.jdbc.Driver
+		datasource.db.url=<chaine_de_connexion  sur le modèle jdbc:mysql://<host>[:<port>]/<db name>  >
+		datasource.db.username=<login_user_applicatif>
+		datasource.db.password=<password_user_applicatif>
+
+	* 'conf/services/org.squashtest.csp.tm.hibernate.config.properties' :
+		hibernate.dialect=org.hibernate.dialect.MySQLDialect
+
