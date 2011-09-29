@@ -3,12 +3,12 @@
 	<parent>
 		<artifactId>squashtest-csp-dependencies</artifactId>
 		<groupId>org.squashtest.csp</groupId>
-		<version>1.0.0.RELEASE-SNAPSHOT</version>
+		<version>1.0.0.RELEASE</version>
 	</parent>
 
 	<groupId>org.squashtest.csp</groupId>
 	<artifactId>spock-test-dependencies</artifactId>
-	<version>1.0.0.RELEASE-SNAPSHOT</version>
+	<version>1.0.0.RELEASE</version>
 	<packaging>pom</packaging>
 	<name>spock-test-dependencies</name>
 	<description>Defines dependencies for Spock-based tests.</description>
