@@ -11,5 +11,5 @@
 # JAVA_ARGS= 
 
 # To set on the root directory of Squash installation
-SQUASH_HOME=/home/jmbelorgane/squashtest-csp-0.20.1
+SQUASH_HOME=/home/johndoe/squashtest-tm-1.0.0.RELEASE
 

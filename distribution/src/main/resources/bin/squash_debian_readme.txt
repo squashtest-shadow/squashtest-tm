@@ -7,7 +7,7 @@
 		- A renommer en squash (mv squash_default squash).
 		- Contient la variable SQUASH_HOME qui doit être obligatoirement initialisée avec le chemin
 		  où sera installée l'application : squash.
-		  Ex: SQUASH_HOME=/home/jmbelorgane/squashtest-csp-0.20.1 (au dessus de ./bin)
+		  Ex: SQUASH_HOME=/home/johndoe/squashtest-csp-0.20.1 (au dessus de ./bin)
 		- Contient également certaines variables (en commentaire), définies par défaut dans
 		  le script shell de lancement de squash, mais qui peuvent être surchargées si nécessaire.
 		  Ex: HTTP_PORT = 2603 (sans le # devant) 
@@ -29,8 +29,8 @@
 	En étant connecté : root
 	- Dans le répertoire /etc/init.d, créer un lien symbolique "squash" pointant sur l'emplacement physique
 	  du script shell de lancement de squash.
-	  Ex:Si SQUASH_HOME=/home/jmbelorgane/squashtest-csp-0.20.1 (définie dans /etc/default/squash)
-	  ln -s /home/jmbelorgane/squashtest-csp-0.20.1/bin/squash
+	  Ex:Si SQUASH_HOME=/home/johndoe/squashtest-tm-1.0.0.RELEASE (définie dans /etc/default/squash)
+	  ln -s /home/johndoe/squashtest-tm-1.0.0.RELEASE/bin/squash
 	- Pour démarrer le service squash au lancement de la machine :
 	  update_rc.d squash defaults
 
