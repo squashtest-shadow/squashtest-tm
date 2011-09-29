@@ -36,4 +36,11 @@
 			<column name="VALUE" type="java.sql.Types.VARCHAR(32000)" remarks="Configuration value" />
 		</createTable>
 	</changeSet>
+	<changeSet id="core-0.20.0.02" author="gfouquet">
+		<comment>Default welcome message</comment>
+		<insert tableName="CORE_CONFIG">
+			<column name="STR_KEY" value="WELCOME_MESSAGE"/>
+			<column name="VALUE" value=""/>
+		</insert>
+	</changeSet>
 </databaseChangeLog>
