@@ -353,6 +353,8 @@
 						<exclude>**/src/test/liquibase/**/*.sql</exclude>
 						<!-- IzPack files -->
 						<exclude>**/izpack/**/*.*</exclude>
+						<!-- m2e generated files -->
+						<exclude>**/pom.properties</exclude>
 					</excludes>
 					<mapping>
 						<tag>DYNASCRIPT_STYLE</tag>
