@@ -110,7 +110,7 @@ public class HibernateTestStepDao extends HibernateDao<TestStep> implements Test
 			
 		};
 		
-		return executeListNamedQuery("testStep.findListById", callback);
+		return executeListNamedQuery("testStep.findOrderedListById", callback);
 		
 	}
 	

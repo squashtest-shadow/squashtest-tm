@@ -173,8 +173,6 @@ public class TestCaseModificationServiceImpl implements TestCaseModificationServ
 		
 		testCase.moveSteps(newPosition, steps);
 		
-		
-		
 	}
 
 	@Override

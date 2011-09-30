@@ -208,6 +208,14 @@ public class TestCaseModificationController {
 		LOGGER.trace("test case " + testCaseId + ": step " + stepId + " moved to " + newIndex);
 
 	}
+	
+	@RequestMapping(value = "/steps/move", method = RequestMethod.POST, params = {"newIndex","stepIds[]" })
+	@ResponseBody
+	public void changeStepsIndex(@RequestParam("stepIds[]") List<Long> stepIds, @RequestParam int newIndex, @PathVariable long testCaseId) {
+
+		testCaseModificationService.changeTestStepsPosition(testCaseId, newIndex, stepIds);
+
+	}	
 
 	@RequestMapping(value = "/steps/{stepId}", method = RequestMethod.DELETE)
 	@ResponseBody

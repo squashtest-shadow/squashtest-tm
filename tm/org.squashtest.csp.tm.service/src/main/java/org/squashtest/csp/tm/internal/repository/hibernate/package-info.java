@@ -130,7 +130,7 @@
 		//Queries on TestStep
 		@NamedQuery(name = "testStep.findParentNode", query = "select testcase from TestCase as testcase join testcase.steps tcSteps where tcSteps.id= :childId "),
 		@NamedQuery(name = "testStep.findAllByParentId", query = "select step.id from TestCase testCase join testCase.steps step where testCase.id in (:testCaseIds)"),
-		@NamedQuery(name = "testStep.findListById", query = "from TestStep where id in (:testStepIds)"),
+		@NamedQuery(name = "testStep.findOrderedListById", query = "select step from TestCase testCase inner join testCase.steps step where step.id in (:testStepIds) order by index(step)"),
 		
 		
 		//Queries on CampaignTestPlanItem

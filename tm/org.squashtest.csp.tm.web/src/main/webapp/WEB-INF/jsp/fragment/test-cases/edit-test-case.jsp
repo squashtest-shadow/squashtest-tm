@@ -167,7 +167,7 @@
 
 	function stepDropHandler(rows, dropPosition) {
 		var stepIds = $(rows).collect(function(elt){return elt.id.split(':')[1];});
-		$.post('${ updateStepUrl }', { newIndex : dropPosition, stepIds : stepIds }, function() {
+		$.post('${ updateStepUrl }/move', { newIndex : dropPosition, stepIds : stepIds }, function() {
 			refreshSteps();
 		});
 	}

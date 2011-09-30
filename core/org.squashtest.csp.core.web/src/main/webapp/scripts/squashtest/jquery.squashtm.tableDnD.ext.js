@@ -19,89 +19,57 @@
  *     along with this software.  If not, see <http://www.gnu.org/licenses/>.
  */
 
+ /**
+  * Customization of jquery.tableDnD.js by Denis Howlett, credits to his original work.
+  * 
+  * The current extension add the support for multiline dnd. The modifications are the following : 
+  * 
+  * <ol>
+  *	  <li>the .dragoObject is now a jQuery variable, holding all rows having the class ui-state-row-selected<li>
+  *	  <li>jQuery.tableDnD.makeDraggable will call config.onDragStart with that new .dragObject.
+  *	  		It does so whether configured to use a draghandle or not (the original plugin didn't). </li> 
+  *	  <li>it uses explicitly the class "nodrop" to prevent dropping in the middle of the selected lines</li>
+  *	  <li>a method adaptDragObject was added to the plugin and aims to adapt the new .dragObject (a jQuery object) to the old one
+  *	   	(a regular javascript object), so that the rest of the plugin can use it normally.</li>
+  * </ol>
+  */ 
+ /* 
+  * Note : the original plugin sometimes checks if the current line is equal to .dragObject. That comparison now always fails safely.
+  */
+
 /*
-jQuery.tableDnD.mousemove = function(ev) {
-    if (jQuery.tableDnD.dragObject == null) {
-        return;
-    }
+ * Todo : possibly remove the makeDraggable part and just overwrite the mousedown event handler on the tr's it attached to them
+ * 
+ */
+  
 
-    var dragObj = jQuery(jQuery.tableDnD.dragObject);
-    var config = jQuery.tableDnD.currentTable.tableDnDConfig;
-    var mousePos = jQuery.tableDnD.mouseCoords(ev);
-    var y = mousePos.y - jQuery.tableDnD.mouseOffset.y;
-    //auto scroll the window
-    var yOffset = window.pageYOffset;
- 	if (document.all) {
-        // Windows version
-        //yOffset=document.body.scrollTop;
-        if (typeof document.compatMode != 'undefined' &&
-             document.compatMode != 'BackCompat') {
-           yOffset = document.documentElement.scrollTop;
-        }
-        else if (typeof document.body != 'undefined') {
-           yOffset=document.body.scrollTop;
-        }
+jQuery.tableDnD.adaptDragObject = function(allRows){
+	//they all hopefully have the same parent
+	var delegateParentNode= allRows.first().parent();			
 
-    }
-	    
-	if (mousePos.y-yOffset < config.scrollAmount) {
-    	window.scrollBy(0, -config.scrollAmount);
-    } else {
-        var windowHeight = window.innerHeight ? window.innerHeight
-                : document.documentElement.clientHeight ? document.documentElement.clientHeight : document.body.clientHeight;
-        if (windowHeight-(mousePos.y-yOffset) < config.scrollAmount) {
-            window.scrollBy(0, config.scrollAmount);
-        }
-    }
+	delegateParentNode.insertBefore = function(jqElts, where){
 
-
-    if (y != jQuery.tableDnD.oldY) {
-        // work out if we're going up or down...
-        var movingDown = y > jQuery.tableDnD.oldY;
-        // update the old value
-        jQuery.tableDnD.oldY = y;
-        // update the style to show we're dragging
-		if (config.onDragClass) {
-			dragObj.addClass(config.onDragClass);
-		} else {
-            dragObj.css(config.onDragStyle);
-		}
-        // If we're over a row then move the dragged row to there so that the user sees the
-        // effect dynamically
-        var currentRow = jQuery.tableDnD.findDropTargetRow(dragObj, y);
-        if (currentRow) {
-            // TODO worry about what happens when there are multiple TBODIES
-			
-			if (movingDown && jQuery.tableDnD.dragObject != currentRow) {
-				var toInsert = jQuery.tableDnD.dragObject;
-				for (var i=toInsert.length-1;i>=0;i--){
-					jQuery.tableDnD.dragObject.parentNode.insertBefore(toInsert[i], currentRow.nextSibling);
-				}
-			} else if (! movingDown && jQuery.tableDnD.dragObject != currentRow) {
-				var toInsert = jQuery.tableDnD.dragObject;
-				for (var i=0;i<toInsert.length;i++){
-					jQuery.tableDnD.dragObject.parentNode.insertBefore(toInsert[i], currentRow);
-				}
+		//check 1 : if target is defined then we insert our elements before it, else we insert at the end of this 
+		//(thus mimicking the regular insertBefore in javascript)
+		if (where){
+			//check : the target (where) must have the same parent or nothing should happen
+			//note : remember that contains() is a $.fn extensions to cope with .is() of jQuery 1.5 (the one in jq 1.6 is way better)
+			if (this.children().contains(where)){
+				jqElts.insertBefore(where);
 			}
-			
-        }
-    }
+		}
+		
+		else {		
+			this.append(jqElts);
+		}
 
-    return false;
-}
-
-
-// initializer
-
-function setDraggedRowsUp(allRows){
-	
-	var delegateParentNode= allRows[0].parentNode;				
-	
-	//TODO : override delegateParentNode.insertBefore()
+		
+	}
 	
 	allRows.parentNode = delegateParentNode;	
 	return allRows;
 }
+
 
 
 jQuery.tableDnD.makeDraggable = function(table) {
@@ -115,19 +83,22 @@ jQuery.tableDnD.makeDraggable = function(table) {
 			// The cell is bound to "this"
             jQuery(this).mousedown(function(ev) {
          	
-				var allRows = $("tr.nodrop", table);    
+				var allRows = $(".ui-state-row-selected", table).add(this.parentNode);
+				allRows.addClass('nodrop');	
 				
-                jQuery.tableDnD.dragObject = setDraggedRowsUp(allRows);
+                jQuery.tableDnD.dragObject = jQuery.tableDnD.adaptDragObject(allRows);
                 jQuery.tableDnD.currentTable = table;
+				
                 jQuery.tableDnD.mouseOffset = jQuery.tableDnD.getMouseOffset(this, ev);
                 if (config.onDragStart) {
                     // Call the onDrop method if there is one
-                    config.onDragStart(table, this);
+                    config.onDragStart(table, allRows);
                 }
                 return false;
             });
-		})
+		});
 	} else {
+	
 		// For backwards compatibility, we add the event to the whole row
         var rows = jQuery("tr", table); // get all the rows as a wrapped set
         rows.each(function() {
@@ -136,15 +107,15 @@ jQuery.tableDnD.makeDraggable = function(table) {
 			if (! row.hasClass("nodrag")) {
                 row.mousedown(function(ev) {
                     if (ev.target.tagName == "TD") {
-                    	var allRows = $("tr.nodrop", table);      
-                    	allRows.parentNode = allRows[0].parentNode;         	      		
+                    	var allRows = $(".ui-state-row-selected", table);   
+						allRows.addClass('nodrop');						
                 		
-                        jQuery.tableDnD.dragObject = allRows;
+                        jQuery.tableDnD.dragObject = jQuery.tableDnD.adaptDragObject(allRows);
                         jQuery.tableDnD.currentTable = table;
                         jQuery.tableDnD.mouseOffset = jQuery.tableDnD.getMouseOffset(this, ev);
                         if (config.onDragStart) {
                             // Call the onDrop method if there is one
-                            config.onDragStart(table, this);
+                            config.onDragStart(table, allRows);
                         }
                         return false;
                     }
@@ -153,4 +124,12 @@ jQuery.tableDnD.makeDraggable = function(table) {
 		});
 	}
 }
-*/
+
+var tableDnDoldMouseUp = jQuery.tableDnD.mouseup;
+
+jQuery.tableDnD.mouseup = function(event){
+	if (jQuery.tableDnD.dragObject){
+		jQuery.tableDnD.dragObject.removeClass('nodrop');
+	}
+	tableDnDoldMouseUp.call(this,event);
+}

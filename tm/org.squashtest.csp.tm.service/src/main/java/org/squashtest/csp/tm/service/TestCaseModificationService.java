@@ -63,6 +63,14 @@ public interface TestCaseModificationService {
 	@Deprecated
 	void changeTestStepPosition(long testCaseId, long testStepId, int newStepPosition);
 
+	
+	/**
+	 * Will move a list of steps to a new position.
+	 * 
+	 * @param testCaseId the id of the test case
+	 * @param newPosition the position we want the first element of movedSteps to be once the operation is complete
+	 * @param movedSteps the list of steps to move, sorted by rank among each others.
+	 */
 	void changeTestStepsPosition(long testCaseId, int newPosition, List<Long> stepIds);
 	
 	void removeStepFromTestCase(long testCaseId, long testStepId);

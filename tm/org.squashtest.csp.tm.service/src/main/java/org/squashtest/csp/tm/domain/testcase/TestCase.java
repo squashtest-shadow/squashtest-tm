@@ -121,14 +121,16 @@ public class TestCase extends TestCaseLibraryNode implements Attachable {
 		getSteps().add(newIndex, step);
 	}
 	
-	//warning : we assume that the steps in movedSteps are already sorted by rank.
+	/**
+	 * Will move a list of steps to a new position.
+	 * 
+	 * @param newIndex the position we want the first element of movedSteps to be once the operation is complete
+	 * @param movedSteps the list of steps to move, sorted by rank among each others.
+	 */
 	public void moveSteps(int newIndex, List<TestStep> movedSteps){
 		if (! steps.isEmpty()){
-			int firstStepIndex =  steps.indexOf(movedSteps.get(0));
-			int newPosition = (firstStepIndex < newIndex) ? newIndex - movedSteps.size() +1 : newIndex;
-				
-			getSteps().removeAll(movedSteps);
-			getSteps().addAll(newPosition, movedSteps);
+			steps.removeAll(movedSteps);
+			steps.addAll(newIndex, movedSteps);				
 		}
 	}
 

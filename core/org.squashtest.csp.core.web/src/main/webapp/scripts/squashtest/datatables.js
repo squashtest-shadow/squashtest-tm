@@ -155,7 +155,7 @@ function enableTableDragAndDrop(tableId, fnGetRowIndex, dropHandler) {
 			
 			var offset = getOffsetFromDomTable(table, fnGetRowIndex);
 			
-			var index = rows.parentNode.rowIndex - 1;
+			var index = rows.get(0).rowIndex - 1;
 			$(table).data("previousRank", index);
 			$(table).data("offset", offset);
 			
@@ -163,7 +163,7 @@ function enableTableDragAndDrop(tableId, fnGetRowIndex, dropHandler) {
 		
 		onDrop : function(table, rows) { //again, that is now a jQuery object
 				
-			var newInd = $(rows).first().rowIndex - 1;
+			var newInd = rows.get(0).rowIndex - 1;
 			var oldInd = $(table).data("previousRank");
 			var offset = $(table).data("offset");
 			if (newInd != oldInd) {

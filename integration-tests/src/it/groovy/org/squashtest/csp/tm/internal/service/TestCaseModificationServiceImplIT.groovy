@@ -28,8 +28,6 @@ package org.squashtest.csp.tm.internal.service
 
 import javax.inject.Inject;
 
-import org.springframework.test.context.ContextConfiguration;
-import org.springframework.test.context.transaction.TransactionConfiguration;
 import org.squashtest.csp.tm.domain.DuplicateNameException;
 import org.squashtest.csp.tm.domain.testcase.TestCase;
 import org.squashtest.csp.tm.domain.testcase.TestCaseExecutionMode;
@@ -38,9 +36,7 @@ import org.squashtest.csp.tm.domain.testcase.ActionTestStep;
 import org.squashtest.csp.tm.service.TestCaseLibrariesCrudService;
 import org.squashtest.csp.tm.service.TestCaseLibraryNavigationService;
 import org.squashtest.csp.tm.service.TestCaseModificationService;
-import org.unitils.dbunit.annotation.DataSet;
 
-import spock.unitils.UnitilsSupport;
 
 class TestCaseModificationServiceImplIT extends HibernateServiceSpecification {
 
@@ -278,6 +274,60 @@ class TestCaseModificationServiceImplIT extends HibernateServiceSpecification {
 		then :
 		list[1].id == tstep3.id
 		list[2].id == tstep2.id
+	}
+	
+	def "should move a couple of steps to position #2"(){
+		
+		given :
+			def step1 = new ActionTestStep("first step", "first result")
+			def step2 = new ActionTestStep("second step", "second result")
+			def step3 = new ActionTestStep("third step", "third result")
+			def step4 = new ActionTestStep("fourth step", "fourth result")
+			def step5 = new ActionTestStep("fifth step", "fifth result")
+			def step6 = new ActionTestStep("sixth step", "sixth result")
+		
+		and :
+			service.addActionTestStep(testCaseId, step1)
+			service.addActionTestStep(testCaseId, step2)
+			service.addActionTestStep(testCaseId, step3)
+			service.addActionTestStep(testCaseId, step4)
+			service.addActionTestStep(testCaseId, step5)
+			service.addActionTestStep(testCaseId, step6)
+		when :
+		
+
+			service.changeTestStepsPosition(testCaseId, 1, [step4, step5].collect{it.id})
+			def reTc = service.findTestCaseWithSteps (testCaseId)
+			
+		then :
+			reTc.getSteps().collect{it.id} == [step1, step4, step5, step2, step3, step6].collect{it.id}
+			
+		
+	}
+	
+	def "should move the three first steps at last position"(){
+		given :
+			def step1 = new ActionTestStep("first step", "first result")
+			def step2 = new ActionTestStep("second step", "second result")
+			def step3 = new ActionTestStep("third step", "third result")
+			def step4 = new ActionTestStep("fourth step", "fourth result")
+			def step5 = new ActionTestStep("fifth step", "fifth result")
+			def step6 = new ActionTestStep("sixth step", "sixth result")
+
+		and :
+			service.addActionTestStep(testCaseId, step1)
+			service.addActionTestStep(testCaseId, step2)
+			service.addActionTestStep(testCaseId, step3)
+			service.addActionTestStep(testCaseId, step4)
+			service.addActionTestStep(testCaseId, step5)
+			service.addActionTestStep(testCaseId, step6)
+			
+		when :
+			service.changeTestStepsPosition(testCaseId, 3, [step1, step2, step3].collect{it.id})
+			def reTc = service.findTestCaseWithSteps (testCaseId)
+		
+		then :
+			reTc.getSteps().collect{it.id} == [step4, step5, step6, step1, step2, step3].collect{it.id}
 	}
 
 

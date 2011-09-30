@@ -65,6 +65,19 @@ var squashtm ;
 		
 	}
 	
+	$.fn.contains = function(domElt){
+		var vThis  = this.collect(function(e){return e;});
+		
+		for (var e in vThis){
+			if (vThis[e] === domElt){
+				return true;
+			}
+		}
+		
+		return false;
+		
+	}
+	
 
 	
 	/*

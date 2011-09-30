@@ -22,11 +22,8 @@
 package org.squashtest.csp.tm.domain.testcase
 
 import org.squashtest.csp.tm.domain.UnknownEntityException;
-import org.squashtest.csp.tm.domain.attachment.Attachment;
 import org.squashtest.csp.tm.domain.requirement.Requirement;
-import org.squashtest.csp.tools.unittest.reflection.ReflectionCategory;
 
-import java.util.Set;
 
 import spock.lang.Specification;
 
@@ -61,7 +58,7 @@ class TestCaseTest extends Specification {
 		def step0 = new ActionTestStep(action:"0")
 		def step1 = new ActionTestStep(action:"1")
 		def step2 = new ActionTestStep(action:"2")
-		def step3 = new ActionTestStep(action:"3")
+		def step3 = new ActionTestStep( action:"3")
 
 		testCase.steps << step0
 		testCase.steps << step1
@@ -101,6 +98,7 @@ class TestCaseTest extends Specification {
 			def step1 = new ActionTestStep(action:"1")
 			def step2 = new ActionTestStep(action:"2")
 			def step3 = new ActionTestStep(action:"3")
+
 	
 			testCase.steps << step0
 			testCase.steps << step1
@@ -118,19 +116,20 @@ class TestCaseTest extends Specification {
 			testCase.moveSteps(position, tomove);
 		
 		then :
-			testCase.steps == result
+			testCase.steps.collect{it.action} == result.collect{it.action}
 		
 	}
 	
 	
 	
-	def "should move a list of steps to a greater index"(){
+	def "should move a list of steps to a last position"(){
 		
 		given :
-			def step0 = new ActionTestStep(action:"0")
-			def step1 = new ActionTestStep(action:"1")
-			def step2 = new ActionTestStep(action:"2")
-			def step3 = new ActionTestStep(action:"3")
+			def step0 = new ActionTestStep( action:"0")
+			def step1 = new ActionTestStep( action:"1")
+			def step2 = new ActionTestStep( action:"2")
+			def step3 = new ActionTestStep( action:"3")
+
 	
 			testCase.steps << step0
 			testCase.steps << step1
@@ -139,14 +138,14 @@ class TestCaseTest extends Specification {
 
 
 			def tomove = [step0, step1]
-			def position = 3;
+			def position = 2;
 			def result = [step2, step3, step0, step1]
 			
 		when :
 			testCase.moveSteps(position, tomove)
 		
 		then :
-			testCase.steps == result
+			testCase.steps.collect{it.action} == result.collect{it.action}
 		
 		
 	}
