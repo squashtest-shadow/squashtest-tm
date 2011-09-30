@@ -1,5 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
 	<modelVersion>4.0.0</modelVersion>
 
 	<groupId>org.squashtest.csp</groupId>
@@ -193,10 +194,10 @@
 					<artifactId>maven-resources-plugin</artifactId>
 					<version>2.5</version>
 					<configuration>
-          <nonFilteredFileExtensions>
-            <nonFilteredFileExtension>ico</nonFilteredFileExtension>
-    </nonFilteredFileExtensions>
-    					</configuration>
+						<nonFilteredFileExtensions>
+							<nonFilteredFileExtension>ico</nonFilteredFileExtension>
+						</nonFilteredFileExtensions>
+					</configuration>
 				</plugin>
 				<plugin>
 					<groupId>org.codehaus.mojo</groupId>
@@ -268,6 +269,12 @@
 					<artifactId>maven-license-plugin</artifactId>
 					<version>1.9.0</version>
 				</plugin>
+
+				<plugin>
+					<groupId>org.apache.maven.plugins</groupId>
+					<artifactId>maven-assembly-plugin</artifactId>
+					<version>2.2.1</version>
+				</plugin>
 			</plugins>
 		</pluginManagement>
 
@@ -280,13 +287,14 @@
 					<provision>
 						<param>--platform=equinox</param>
 						<param>
-							--system-packages=com.sun.org.apache.xalan.internal.res,com.sun.org.apache.xml.internal.utils,com.sun.org.apache.xpath.internal,com.sun.org.apache.xpath.internal.jaxp,com.sun.org.apache.xpath.internal.objects					
+							--system-packages=com.sun.org.apache.xalan.internal.res,com.sun.org.apache.xml.internal.utils,com.sun.org.apache.xpath.internal,com.sun.org.apache.xpath.internal.jaxp,com.sun.org.apache.xpath.internal.objects
 						</param>
 						<param>--vmOptions="-Dbundles.configuration.location=${project.basedir}/provision/target/config"</param>
 					</provision>
 				</configuration>
 				<executions>
-					<!-- | uncomment to auto-generate IDE files <execution> <id>ide-support</id> <goals> <goal>eclipse</goal> </goals> </execution> -->
+					<!-- | uncomment to auto-generate IDE files <execution> <id>ide-support</id> 
+						<goals> <goal>eclipse</goal> </goals> </execution> -->
 				</executions>
 			</plugin>
 
@@ -300,7 +308,8 @@
 					<strictCheck>true</strictCheck>
 					<header>tools/tools-resources/src/main/resources/licenses/header.txt</header>
 					<validHeaders>
-						<!-- <validHeader>tools/tools-resources/src/main/resources/supported-licenses/datatables-header.txt</validHeader> <validHeader>tools/tools-resources/src/main/resources/supported-licenses/jquery-header.txt</validHeader> -->
+						<!-- <validHeader>tools/tools-resources/src/main/resources/supported-licenses/datatables-header.txt</validHeader> 
+							<validHeader>tools/tools-resources/src/main/resources/supported-licenses/jquery-header.txt</validHeader> -->
 					</validHeaders>
 					<properties>
 						<license.yearSpan>${project.inceptionYear} - 2011</license.yearSpan>
@@ -1284,7 +1293,8 @@
 			</properties>
 		</profile>
 
-		<!-- This profile aims to run acceptance tests without compilation and units tests (if possible) -->
+		<!-- This profile aims to run acceptance tests without compilation and 
+			units tests (if possible) -->
 		<profile>
 			<id>acceptance-tests</id>
 
@@ -1299,7 +1309,8 @@
 			</modules>
 		</profile>
 		<profile>
-			<!-- When activated, this profile copies files required by Eclipse PDE to launch the bundles -->
+			<!-- When activated, this profile copies files required by Eclipse PDE 
+				to launch the bundles -->
 			<id>eclipse</id>
 			<activation>
 				<file>
