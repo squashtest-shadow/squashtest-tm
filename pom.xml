@@ -351,6 +351,7 @@
 						<exclude>**/felix.*.properties</exclude>
 						<!-- SQL files used by liquibase, breaks on mysql import when licensed -->
 						<exclude>**/src/test/liquibase/**/*.sql</exclude>
+						<exclude>**/src/main/liquibase/**/*.sql</exclude>
 						<!-- IzPack files -->
 						<exclude>**/izpack/**/*.*</exclude>
 						<!-- m2e generated files -->
