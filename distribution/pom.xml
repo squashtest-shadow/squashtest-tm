@@ -1,5 +1,6 @@
 <?xml version="1.0"?>
-<project xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd"
+<project
+	xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd"
 	xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
 	<modelVersion>4.0.0</modelVersion>
 	<parent>
@@ -8,9 +9,7 @@
 		<version>1.0.1.RELEASE-SNAPSHOT</version>
 		<relativePath>../parent-pom</relativePath>
 	</parent>
-	<groupId>org.squashtest.csp</groupId>
 	<artifactId>squashtest-csp-distribution</artifactId>
-	<version>1.0.1.RELEASE-SNAPSHOT</version>
 	<name>squashtest-tm-distribution</name>
 	<description>Squashtest CSP - Distribution assembly module
 	</description>
@@ -22,6 +21,7 @@
 		<upgrade.0.17.0.changelog>${project.build.outputDirectory}/distribution.changelog-upgrade-to-0.17.0.xml</upgrade.0.17.0.changelog>
 		<upgrade.0.20.0.changelog>${project.build.outputDirectory}/distribution.changelog-upgrade-to-0.20.0.xml</upgrade.0.20.0.changelog>
 		<upgrade.0.23.0.changelog>${project.build.outputDirectory}/distribution.changelog-upgrade-to-0.23.0.xml</upgrade.0.23.0.changelog>
+		<distributed-db.changelog>${project.build.outputDirectory}/distributed-db.changelog.xml</distributed-db.changelog>
 		<felix.artifactId>org.apache.felix.main</felix.artifactId>
 		<felix.version>3.2.1</felix.version>
 		<felix.gogo.version>0.6.1</felix.gogo.version>
@@ -57,7 +57,6 @@
 			<plugin>
 				<groupId>org.apache.maven.plugins</groupId>
 				<artifactId>maven-assembly-plugin</artifactId>
-				<version>2.2.1</version>
 				<executions>
 					<execution>
 						<id>assemble-standalone-distro</id>
@@ -76,61 +75,61 @@
 				</executions>
 			</plugin>
 
-<plugin>
-          <groupId>org.codehaus.izpack</groupId>
-          <artifactId>izpack-maven-plugin</artifactId>
-          <version>${izpack-plugin.version}</version>
-          <executions>
-            <execution>
-              <phase>package</phase>
-              <goals>
-                <goal>izpack</goal>
-              </goals>
-              <configuration>
-		      <descriptor>${izpack.resources.outputDirectory}/install.xml</descriptor>
-		      <fileExtension>exe</fileExtension>
-			<kind>installer</kind>
-			<installerFile>${project.build.directory}/${distro.directory.name}-${project.version}-installer</installerFile>
-              </configuration>
-            </execution>
-          </executions>
-          <dependencies>
-            <dependency>
-              <groupId>org.codehaus.izpack</groupId>
-              <artifactId>izpack-standalone-compiler</artifactId>
-	      <version>${izpack-compiler.version}</version>
-            </dependency>
-          </dependencies>
-        </plugin>
-			
+			<plugin>
+				<groupId>org.codehaus.izpack</groupId>
+				<artifactId>izpack-maven-plugin</artifactId>
+				<version>${izpack-plugin.version}</version>
+				<executions>
+					<execution>
+						<phase>package</phase>
+						<goals>
+							<goal>izpack</goal>
+						</goals>
+						<configuration>
+							<descriptor>${izpack.resources.outputDirectory}/install.xml</descriptor>
+							<fileExtension>exe</fileExtension>
+							<kind>installer</kind>
+							<installerFile>${project.build.directory}/${distro.directory.name}-${project.version}-installer</installerFile>
+						</configuration>
+					</execution>
+				</executions>
+				<dependencies>
+					<dependency>
+						<groupId>org.codehaus.izpack</groupId>
+						<artifactId>izpack-standalone-compiler</artifactId>
+						<version>${izpack-compiler.version}</version>
+					</dependency>
+				</dependencies>
+			</plugin>
+
 			<plugin>
 				<!-- resources are not processed for pom projects -->
 				<groupId>org.apache.maven.plugins</groupId>
 				<artifactId>maven-resources-plugin</artifactId>
 				<executions>
 					<execution>
-					<id>resources</id>
-					<goals>
-						<goal>resources</goal>
-					</goals>
-				</execution>
+						<id>resources</id>
+						<goals>
+							<goal>resources</goal>
+						</goals>
+					</execution>
 					<execution>
-					<id>izpack-resources</id>
-					<phase>process-resources</phase>
-					<goals>
-						<goal>copy-resources</goal>
-					</goals>
-					<configuration>
-						<escapeWindowsPaths>false</escapeWindowsPaths>
-						<resources>
-			<resource>
-				<directory>${project.basedir}/src/main/izpack</directory>
-				<filtering>true</filtering>
-			</resource>
-						</resources>
-						<outputDirectory>${izpack.resources.outputDirectory}</outputDirectory>
-					</configuration>
-				</execution>
+						<id>izpack-resources</id>
+						<phase>process-resources</phase>
+						<goals>
+							<goal>copy-resources</goal>
+						</goals>
+						<configuration>
+							<escapeWindowsPaths>false</escapeWindowsPaths>
+							<resources>
+								<resource>
+									<directory>${project.basedir}/src/main/izpack</directory>
+									<filtering>true</filtering>
+								</resource>
+							</resources>
+							<outputDirectory>${izpack.resources.outputDirectory}</outputDirectory>
+						</configuration>
+					</execution>
 				</executions>
 			</plugin>
 
@@ -191,7 +190,7 @@
 							<migrationSqlOutputFile>${database.script.directory}/h2-upgrade-to-0.20.0.sql</migrationSqlOutputFile>
 						</configuration>
 					</execution>
-					
+
 					<execution>
 						<id>generate-h2-0.23.0-script</id>
 						<phase>prepare-package</phase>
@@ -207,7 +206,7 @@
 							<password>sa</password>
 							<migrationSqlOutputFile>${database.script.directory}/h2-upgrade-to-0.23.0.sql</migrationSqlOutputFile>
 						</configuration>
-					</execution>					
+					</execution>
 
 					<execution>
 						<id>generate-h2-full-install-script</id>
@@ -227,25 +226,25 @@
 					</execution>
 
 					<execution>
-						<id>generate-h2-full-install-database-and-script</id>
+						<id>generate-h2-full-install-database</id>
 						<phase>prepare-package</phase>
 						<goals>
 							<goal>update</goal>
 						</goals>
 						<configuration>
 							<dropFirst>true</dropFirst>
-							<changeLogFile>${master.changelog}</changeLogFile>
+							<changeLogFile>${distributed-db.changelog}</changeLogFile>
 							<driver>org.h2.Driver</driver>
 							<url>jdbc:h2:target/data/squash-tm</url>
 							<username>sa</username>
 							<password>sa</password>
-							<migrationSqlOutputFile>${database.script.directory}/h2-full-install.sql</migrationSqlOutputFile>
 						</configuration>
 					</execution>
 				</executions>
 			</plugin>
 
-			<!-- We need to drop DBCHANGELOG tables otherwise they wont appear in generated DB scripts -->
+			<!-- We need to drop DBCHANGELOG tables otherwise they wont appear in 
+				generated DB scripts -->
 			<plugin>
 				<groupId>org.codehaus.mojo</groupId>
 				<artifactId>sql-maven-plugin</artifactId>
@@ -277,7 +276,8 @@
 						<configuration>
 							<sqlCommand>
 								drop table if exists DATABASECHANGELOGLOCK;
-								drop table if exists DATABASECHANGELOG;
+								drop table
+								if exists DATABASECHANGELOG;
 							</sqlCommand>
 						</configuration>
 					</execution>
@@ -312,9 +312,10 @@
 					</execution>
 				</executions>
 			</plugin>
-		
 
-			<!-- We need to drop DBCHANGELOG tables AGAIN otherwise they wont appear in generated DB scripts -->
+
+			<!-- We need to drop DBCHANGELOG tables AGAIN otherwise they wont appear 
+				in generated DB scripts -->
 			<plugin>
 				<groupId>org.codehaus.mojo</groupId>
 				<artifactId>sql-maven-plugin</artifactId>
@@ -346,7 +347,8 @@
 						<configuration>
 							<sqlCommand>
 								drop table if exists DATABASECHANGELOGLOCK;
-								drop table if exists DATABASECHANGELOG;
+								drop table
+								if exists DATABASECHANGELOG;
 							</sqlCommand>
 						</configuration>
 					</execution>
@@ -413,7 +415,7 @@
 							<migrationSqlOutputFile>${database.script.directory}/mysql-upgrade-to-0.20.0.sql</migrationSqlOutputFile>
 						</configuration>
 					</execution>
-					
+
 					<execution>
 						<id>generate-mysql-0.23.0-script</id>
 						<phase>prepare-package</phase>
@@ -429,7 +431,7 @@
 							<password>${liquibase.mysql.password}</password>
 							<migrationSqlOutputFile>${database.script.directory}/mysql-upgrade-to-0.23.0.sql</migrationSqlOutputFile>
 						</configuration>
-					</execution>					
+					</execution>
 				</executions>
 			</plugin>
 		</plugins>
@@ -597,12 +599,10 @@
 		<dependency>
 			<groupId>org.codehaus.jackson</groupId>
 			<artifactId>com.springsource.org.codehaus.jackson.mapper</artifactId>
-			<version>1.4.3</version>
-		</dependency>
+			</dependency>
 		<dependency>
 			<groupId>org.codehaus.jackson</groupId>
 			<artifactId>com.springsource.org.codehaus.jackson</artifactId>
-			<version>1.4.3</version>
 		</dependency>
 		<dependency>
 			<groupId>org.joda</groupId>
@@ -669,7 +669,6 @@
 		<dependency>
 			<groupId>org.apache.xmlcommons</groupId>
 			<artifactId>com.springsource.org.apache.xmlcommons</artifactId>
-			<version>1.3.4</version>
 			<scope>runtime</scope>
 		</dependency>
 		<!-- ====== /XML PARSER ====== -->
@@ -726,12 +725,10 @@
 		<dependency>
 			<groupId>org.aspectj</groupId>
 			<artifactId>com.springsource.org.aspectj.runtime</artifactId>
-			<version>${aspectj.version}</version>
 		</dependency>
 		<dependency>
 			<groupId>org.aspectj</groupId>
 			<artifactId>com.springsource.org.aspectj.weaver</artifactId>
-			<version>${aspectj.version}</version>
 		</dependency>
 		<!-- ===== / ASPECTJ ===== -->
 
@@ -741,11 +738,11 @@
 			<artifactId>org.squashtest.net.sf.jasperreports</artifactId>
 		</dependency>
 		<!-- ===== /JASPER REPORTS ===== -->
-      <dependency>
-        <groupId>org.codehaus.izpack</groupId>
-        <artifactId>izpack-standalone-compiler</artifactId>
-	<version>${izpack-compiler.version}</version>
-	<scope>test</scope>
-      </dependency>
+		<dependency>
+			<groupId>org.codehaus.izpack</groupId>
+			<artifactId>izpack-standalone-compiler</artifactId>
+			<version>${izpack-compiler.version}</version>
+			<scope>test</scope>
+		</dependency>
 	</dependencies>
 </project>
