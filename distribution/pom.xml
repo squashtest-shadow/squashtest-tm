@@ -53,7 +53,7 @@
 				<filtering>true</filtering>
 			</resource>
 		</resources>
-
+		
 		<plugins>
 			<plugin>
 				<groupId>org.apache.maven.plugins</groupId>
@@ -249,7 +249,7 @@
 			<plugin>
 				<groupId>org.codehaus.mojo</groupId>
 				<artifactId>sql-maven-plugin</artifactId>
-				<version>1.4</version>
+				<version>1.5</version>
 
 				<dependencies>
 					<!-- Apparently, the driver hosted by springsource cannot be downloaded -->
@@ -261,6 +261,8 @@
 				</dependencies>
 
 				<configuration>
+					<!-- When project packaging is pom, execution of this plugin is skipped AND the skip property is overridden to false. Thank God, we can override the overriding using <forceMojoExecution> -->
+					<forceMojoExecution>true</forceMojoExecution>
 					<driver>com.mysql.jdbc.Driver</driver>
 					<url>${liquibase.mysql.url}</url>
 					<username>${liquibase.mysql.username}</username>
@@ -319,7 +321,7 @@
 			<plugin>
 				<groupId>org.codehaus.mojo</groupId>
 				<artifactId>sql-maven-plugin</artifactId>
-				<version>1.4</version>
+				<version>1.5</version>
 
 				<dependencies>
 					<!-- Apparently, the driver hosted by springsource cannot be downloaded -->
@@ -331,6 +333,7 @@
 				</dependencies>
 
 				<configuration>
+					<forceMojoExecution>true</forceMojoExecution>
 					<driver>com.mysql.jdbc.Driver</driver>
 					<url>${liquibase.mysql.url}</url>
 					<username>${liquibase.mysql.username}</username>
