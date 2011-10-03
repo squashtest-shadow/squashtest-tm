@@ -4,11 +4,11 @@
 	<parent>
 		<artifactId>squashtest-csp-core</artifactId>
 		<groupId>org.squashtest.csp</groupId>
-		<version>1.0.1.RELEASE-SNAPSHOT</version>
+		<version>1.0.1.RELEASE</version>
 	</parent>
 	<groupId>org.squashtest.csp</groupId>
 	<artifactId>org.squashtest.csp.core.jetty.start.osgi</artifactId>
-	<version>1.0.1.RELEASE-SNAPSHOT</version>
+	<version>1.0.1.RELEASE</version>
 	<name>org.squashtest.csp.core.jetty.start.osgi</name>
 	<url>http://maven.apache.org</url>
 	<properties>
