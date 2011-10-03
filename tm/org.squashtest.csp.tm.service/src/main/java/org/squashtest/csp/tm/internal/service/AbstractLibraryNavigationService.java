@@ -22,6 +22,8 @@ package org.squashtest.csp.tm.internal.service;
 
 import java.util.LinkedList;
 import java.util.List;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
 import org.springframework.osgi.extensions.annotation.ServiceReference;
 import org.springframework.security.access.AccessDeniedException;
@@ -346,7 +348,7 @@ implements LibraryNavigationService<LIBRARY, FOLDER, NODE> {
 			String newName;
 			
 			if (!destinationFolder.isContentNameAvailable(tempName)){
-				List<String> copiesNames = getFolderDao().findNamesInFolderStartingWith(destinationId, tempName + "-Copie");
+				List<String> copiesNames = getFolderDao().findNamesInFolderStartingWith(destinationId, tempName);
 				int newCopy = generateUniqueCopyNumber(copiesNames);
 				newName = tempName + "-Copie" + newCopy;
 			}
@@ -394,7 +396,7 @@ implements LibraryNavigationService<LIBRARY, FOLDER, NODE> {
 			String newName;
 			
 			if (!destinationLibrary.isContentNameAvailable(tempName)){
-				List<String> copiesNames = getFolderDao().findNamesInLibraryStartingWith(destinationId, tempName + "-Copie");
+				List<String> copiesNames = getFolderDao().findNamesInLibraryStartingWith(destinationId, tempName );
 				int newCopy = generateUniqueCopyNumber(copiesNames);
 				newName = tempName + "-Copie" + newCopy;
 			}
@@ -420,19 +422,23 @@ implements LibraryNavigationService<LIBRARY, FOLDER, NODE> {
 	
 	public int generateUniqueCopyNumber(List<String> copiesNames){
 		
-		int lastCopy = 1;
+		int lastCopy = 0;
+		//we want to match one or more digits following the first instance of substring -Copie
+		Pattern pattern = Pattern.compile("-Copie(\\d+)");
 	
 		for (String copyName : copiesNames) {
 			
-			String copyNum = copyName
-					.substring(copyName.indexOf("-Copie") + 6);
-			if(copyNum.indexOf("-Copie") != -1){
-				copyNum = copyNum
-				.substring(copyNum.indexOf("-Copie") + 6);
+			Matcher matcher = pattern.matcher(copyName);
+			
+			if (matcher.find()){
+								
+				String copyNum = matcher.group(1);
+
+				if (lastCopy < Integer.parseInt(copyNum)) {
+					lastCopy = Integer.parseInt(copyNum);
+				}			
 			}
-			if (lastCopy < Integer.parseInt(copyNum)) {
-				lastCopy = Integer.parseInt(copyNum);
-			}
+
 		}
 		
 		int newCopy = lastCopy + 1;
