@@ -18,6 +18,8 @@
 @REM     You should have received a copy of the GNU Lesser General Public License
 @REM     along with this software.  If not, see <http://www.gnu.org/licenses/>.
 @REM
+
+
 start javaw -jar squash-launcher.jar
 java -Dfelix.config.properties=file:../conf/felix.config.properties -Dfelix.system.properties=file:../conf/felix.system.properties -jar org.apache.felix.main-3.2.1.jar 
 
