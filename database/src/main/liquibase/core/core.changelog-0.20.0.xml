@@ -38,9 +38,10 @@
 	</changeSet>
 	<changeSet id="core-0.20.0.02" author="gfouquet">
 		<comment>Default welcome message</comment>
-		<insert tableName="CORE_CONFIG">
-			<column name="STR_KEY" value="WELCOME_MESSAGE"/>
-			<column name="VALUE" value=""/>
-		</insert>
+		<sql>
+			<![CDATA[
+				insert into CORE_CONFIG (STR_KEY, VALUE) values ('WELCOME_MESSAGE', '<p><span style="color:#ff0000;">The administrator default login is <strong>admin/admin</strong> (you can change this password in the &quot;<em>My account (admin)</em>&quot; menu).</span></p><p>Go to the &quot;<em>Administration&quot;</em> menu (in the upper right corner) to create new users and projects, or change this default home message.</p><p>&nbsp;</p>');
+			]]> 
+		</sql>
 	</changeSet>
 </databaseChangeLog>
