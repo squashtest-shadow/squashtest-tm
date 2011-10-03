@@ -277,8 +277,7 @@
 						<configuration>
 							<sqlCommand>
 								drop table if exists DATABASECHANGELOGLOCK;
-								drop table
-								if exists DATABASECHANGELOG;
+								drop table if exists DATABASECHANGELOG;
 							</sqlCommand>
 						</configuration>
 					</execution>
@@ -348,8 +347,7 @@
 						<configuration>
 							<sqlCommand>
 								drop table if exists DATABASECHANGELOGLOCK;
-								drop table
-								if exists DATABASECHANGELOG;
+								drop table if exists DATABASECHANGELOG;
 							</sqlCommand>
 						</configuration>
 					</execution>
