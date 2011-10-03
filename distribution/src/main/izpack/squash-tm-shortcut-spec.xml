@@ -3,7 +3,7 @@
     <skipIfNotSupported/>
     <programGroup defaultName="Squash-TM" location="applications"/>
     <shortcut applications="no" desktop="yes"
-        iconFile="$INSTALL_PATH/logos/logo-squash-tm-32.ico"
+        iconFile="$INSTALL_PATH/logos/logo-squash-tm-64.ico"
         iconIndex="0" initialState="normal" name="Squash-TM"
         programGroup="yes" startMenu="no" startup="no" 
         target="$INSTALL_PATH/bin/launcher.bat" workingDirectory="$INSTALL_PATH/bin"/>
