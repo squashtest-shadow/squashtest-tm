@@ -260,7 +260,7 @@
 				</dependencies>
 
 				<configuration>
-					<driver>.jdbc.Driver</driver>
+					<driver>com.mysql.jdbc.Driver</driver>
 					<url>${liquibase.mysql.url}</url>
 					<username>${liquibase.mysql.username}</username>
 					<password>${liquibase.mysql.password}</password>
