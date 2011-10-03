@@ -6,7 +6,7 @@
         iconFile="$INSTALL_PATH/logos/logo-squash-tm-32.ico"
         iconIndex="0" initialState="normal" name="Squash-TM"
         programGroup="yes" startMenu="no" startup="no" 
-        target="$INSTALL_PATH/bin/startup.bat" workingDirectory="$INSTALL_PATH/bin"/>
+        target="$INSTALL_PATH/bin/launcher.bat" workingDirectory="$INSTALL_PATH/bin"/>
     <shortcut applications="no" desktop="no" initialState="noShow"
         name="Uninstaller" programGroup="yes" startMenu="no"
         startup="no" target="$INSTALL_PATH/Uninstaller/Uninstaller.jar"/>
