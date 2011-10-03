@@ -43,6 +43,7 @@
 		<izpack.resources.outputDirectory>${project.build.directory}/izpack-resources</izpack.resources.outputDirectory>
 		<izpack.licence.path>${project.build.directory}/maven-shared-archive-resources/META-INF/COPYING.txt</izpack.licence.path>
 		<izpack.distro.directory>${project.build.directory}/${distro.archive.name}/${distro.directory.name}</izpack.distro.directory>
+		<squash.launcher.name>squash-launcher.jar</squash.launcher.name>
 	</properties>
 
 	<build>
@@ -567,6 +568,11 @@
 		<dependency>
 			<groupId>${project.groupId}</groupId>
 			<artifactId>org.squashtest.csp.core.service</artifactId>
+			<version>${project.version}</version>
+		</dependency>
+		<dependency>
+			<groupId>${project.groupId}</groupId>
+			<artifactId>squashtest-csp-launcher</artifactId>
 			<version>${project.version}</version>
 		</dependency>
 		<!-- Squashtest tm modules -->

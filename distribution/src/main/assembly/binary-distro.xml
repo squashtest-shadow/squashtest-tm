@@ -41,6 +41,13 @@
 			</includes>
 		</dependencySet>
 		<dependencySet>
+			<outputDirectory>bin</outputDirectory>
+			<includes>
+				<include>org.squashtest.csp:squashtest-csp-launcher</include>
+			</includes>
+			<outputFileNameMapping>${squash.launcher.name}</outputFileNameMapping>
+		</dependencySet>
+		<dependencySet>
 			<outputDirectory>bundles</outputDirectory>
 			<includes>
 				<include>*:*:jar</include>
@@ -68,6 +75,7 @@
 			</includes>
 			<excludes>
 				<exclude>org.apache.felix:${felix.artifactId}</exclude>
+				<exclude>org.squashtest.csp:squashtest-csp-launcher</exclude>
 			</excludes>
 			<useTransitiveDependencies>false</useTransitiveDependencies>
 			<scope>provided</scope>
