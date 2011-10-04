@@ -4,12 +4,12 @@
 	<parent>
 		<artifactId>squashtest-csp</artifactId>
 		<groupId>org.squashtest.csp</groupId>
-		<version>1.0.1.RELEASE-SNAPSHOT</version>
+		<version>1.1.0.RELEASE-SNAPSHOT</version>
 	</parent>
 
 	<groupId>org.squashtest.csp</groupId>
 	<artifactId>squashtest-integration-tests</artifactId>
-	<version>1.0.1.RELEASE-SNAPSHOT</version>
+	<version>1.1.0.RELEASE-SNAPSHOT</version>
 	<packaging>pom</packaging>
 	<name>Squashtest CSP - Integration tests module</name>
 

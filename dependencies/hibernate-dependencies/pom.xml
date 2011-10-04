@@ -3,11 +3,11 @@
 	<parent>
 		<artifactId>squashtest-csp-dependencies</artifactId>
 		<groupId>org.squashtest.csp</groupId>
-		<version>1.0.1.RELEASE-SNAPSHOT</version>
+		<version>1.1.0.RELEASE-SNAPSHOT</version>
 	</parent>
 	<groupId>org.squashtest.csp</groupId>
 	<artifactId>hibernate-dependencies</artifactId>
-	<version>1.0.1.RELEASE-SNAPSHOT</version>
+	<version>1.1.0.RELEASE-SNAPSHOT</version>
 	<packaging>pom</packaging>
 	<name>hibernate-dependencies</name>
 	<description>Dependencies for Hivbernate with Spring integration. Does
