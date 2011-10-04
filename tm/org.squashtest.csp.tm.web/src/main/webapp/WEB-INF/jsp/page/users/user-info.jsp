@@ -20,8 +20,7 @@
         along with this software.  If not, see <http://www.gnu.org/licenses/>.
 
 --%>
-<link rel="stylesheet" type="text/css"
-	href="${ pageContext.servletContext.contextPath }/styles/master.blue.css" />
+
 <%@ taglib uri="http://java.sun.com/jsp/jstl/core" prefix="c"%>
 <%@ taglib uri="http://java.sun.com/jsp/jstl/fmt" prefix="f"%>
 <%@ taglib tagdir="/WEB-INF/tags/jquery" prefix="jq"%>
@@ -70,7 +69,7 @@
 	</jsp:attribute>
 	
 	<jsp:attribute name="informationContent">
-		<div id="user-info-pane">
+
 		<%---------------------------- Test Case Header ------------------------------%>
 
 		<script type="text/javascript">
@@ -179,6 +178,7 @@
 				$("#permission-popup").load("${permissionPopupUrl}");
 			}
 		</script>
+		
 
 	
 		<div id="user-login-div"
@@ -202,6 +202,10 @@
 			<div style="clear: both;"></div>
 
 		</div>
+	
+		<div class="fragment-body" >
+	
+	
 		<div>
 			<comp:general-information-panel auditableEntity="${user}" />
 		</div>
@@ -311,6 +315,7 @@
 				</div>
 			</jsp:body>
 		</comp:popup>
+	</div>
 	<comp:decorate-buttons />
 	<comp:decorate-toggle-panels/>
 	</jsp:attribute>

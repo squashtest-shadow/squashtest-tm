@@ -129,6 +129,8 @@
 				
 			</script>
 			
+			<div class="fragment-body">
+			
 			<div id="users-table-pane">
 	
 				
@@ -267,6 +269,7 @@
 			</table>
 		</jsp:body>
 	</comp:popup>
+	</div>
 	<comp:decorate-buttons />
 	</jsp:attribute>
 </layout:info-page-layout>

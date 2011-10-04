@@ -91,7 +91,8 @@
 		* modified by
 
  -->
- <br/>
+
+<div class="fragment-body">
 <input style="float: right;" type="button" value='<f:message key="project.button.add.label" />' id="new-project-button"/>
 
 				<dt:datatables-header />
@@ -161,5 +162,6 @@
 				</table>
 			</jsp:body>
 </comp:popup>
+</div>
 </jsp:attribute>
 </layout:info-page-layout>
