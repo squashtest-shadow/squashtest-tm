@@ -114,131 +114,50 @@
 		return tabId;
 	}
 	
-	function checkMove(m){
-		var object = m.o;
-		var dest = m.np;
-		var src = m.op;
-		
-		//check if the node is draggable first
-		if (! $(object).is(':editable')){
-			return false;
-		}
-		
 	
-		//check if the src and dest are within the same project. If they aren't themselve a drive we
-		//need to look for them.
-		var srcDrive =  $(src).is(':library') ? $(src) : $(src).parents(':library');
-		var destDrive = $(dest).is(':library') ? $(dest) : $(dest).parents(':library');
+	
+	
+	function updateTreebuttons(strOperations){
+		var availableOperations = ["create-folder", "create-file", "create-resource", "rename", "delete", "copy", "paste"];
+		var i;
+		var buttonName="";
+		var disabled=false;
 		
-		if ((srcDrive==null) || (destDrive==null)){
-			return false;
-		}
-		
-		if (srcDrive.attr('resid')!=destDrive.attr('resid')){
-			return false;
-		}
-		
-		//in case we are moving an iteration, check the destination is 
-		//of type campaign
-		
-		if ( ($(object).is(':iteration')) && (! $(dest).is(':file')) ){
-			return false;
-		}
-		
-		//if the object is an iteration, the destination must be the same campaign
-		if($(object).is(':iteration') && $(src).attr('resid') != $(dest).attr('resid')){
-			return false;
-		}
-		//prevent iteration copy
-		if($(object).is(':iteration') && isCtrlClicked == true){
-			return false;
-		}
-		
-		return true;			
+		for (i=0;i<availableOperations.length;i++){
+			var operation = availableOperations[i];
+			
+			//which button is to be treated now
+			switch(operation){
+				case "create-folder" : buttonName = "#new-folder-tree-button"; break;
+				case "create-file" : buttonName = "#new-leaf-tree-button"; break;
+				case "create-resource" : buttonName = "#new-resource-tree-button"; break;
+				case "rename" : buttonName = "#rename-node-tree-button"; break;
+				case "delete" : buttonName = "#delete-node-tree-button"; break;
+				case "copy" : buttonName = "#copy-node-tree-button"; break;
+				case "paste" : buttonName = "#paste-node-tree-button"; break;
+			}
+			
+			//which value : depends on if it is specified in the param array
+			disabled = (strOperations.match(operation)) ? false : true;
+			
+			$(buttonName).button( "option", "disabled", disabled);	
+			
+		}		
 		
 	}
-	
-	
-	
-	function updateTreeToolbar(){
 		
-		//this function will set the 'disabled' attribute of all our buttons. 
-
-
-		var enableButtons = function(strOpList){
-			
-			var availableOperations = ["create-folder", "create-file", "create-resource", "rename", "delete", "copy", "paste"];
-			var i;
-			var buttonName="";
-			var disabled=false;
-			
-			for (i=0;i<availableOperations.length;i++){
-				var operation = availableOperations[i];
-				
-				//which button is to be treated now
-				switch(operation){
-					case "create-folder" : buttonName = "#new-folder-tree-button"; break;
-					case "create-file" : buttonName = "#new-leaf-tree-button"; break;
-					case "create-resource" : buttonName = "#new-resource-tree-button"; break;
-					case "rename" : buttonName = "#rename-node-tree-button"; break;
-					case "delete" : buttonName = "#delete-node-tree-button"; break;
-					case "copy" : buttonName = "#copy-node-tree-button"; break;
-					case "paste" : buttonName = "#paste-node-tree-button"; break;
-				}
-				
-				//which value : depends on if it is specified in the param array
-				disabled = (strOpList.match(operation)) ? false : true;
-				
-				$(buttonName).button( "option", "disabled", disabled);	
-				
-			}
-		}
-
-		var selectedNodes = $('#tree').jstree('get_selected');		
 		
-		//tha variable will be set to true if at least one selected node is not editable.
-		var noEdit = (selectedNodes.not(":editable").length > 0);
-		
-		//case 1 : not editable : no operations allowed. 
-		if (noEdit){
-			enableButtons("");
-		}
-		//case 2 : more than one item selected : no operations allowed except deletion and copy if the nodes aren't libraries
-		else if (selectedNodes.length != 1){
-			var operations = (! selectedNodes.is(":library")) ? "delete copy" : "";
-		
-			enableButtons(operations);
-		}
-		//case 3 : one item is selected, button activation depend on their nature.
-		else{
-			switch(selectedNodes.attr('rel')){			
-				case "drive" :
-					enableButtons("create-folder create-file paste");
-					break;
-				
-				case "folder" :
-					enableButtons("create-folder create-file rename delete copy paste");
-					break;
-					
-				case "file" :
-					enableButtons("create-resource rename delete copy");
-					break;
-					
-				case "resource" : 
-					enableButtons("rename delete");
-					break;
-			
-			}
-		}
-				
-	}
-	
-	//This method checks if we can move the object is the dest folder
-	//returns true if it's ok to move the object
+	/*
+	  This method checks if we can move the object is the dest folder returns true if it's ok to move the object note that contrary to 
+	  treeCheckDnd(moveObject), that code is called only for "move", not "copy" operations, and thus is not part of the aforementioned function.
+	  
+	  A second reasons is that we don't want to forbid the operation a-priori : we cancel it a-posteriori. Thus, the user will know
+	  why the operation could not be performed instead of wondering why the hell he cannot move the bloody node.	  
+	 */
 	function checkMoveIsAuthorized(data){
 		var dest = data.rslt.np;
 		var object = data.rslt.o;
-		//check if there's an element with the same name in the dest folder
+		//checks if there's an element with the same name in the dest folder
 		//get all the children nodes
 		elInDest = dest.children("ul").children("li");
 		okToGo = true;
@@ -269,12 +188,14 @@
 		.bind("select_node.jstree", function(event, data){
 			
 			unselectNonSiblings(data.rslt.obj, $('#${id}'));
-			updateTreeToolbar();
-
+			operations = getTreeAllowedOperations('#${id}');
+			updateTreebuttons(operations);
+			
 			return true;
 		})
 		.bind("deselect_node.jstree", function(event, data){
-			updateTreeToolbar();
+			operations = getTreeAllowedOperations('#${id}');
+			updateTreebuttons(operations);
 			return true;
 		})		
 		<%-- 
@@ -423,7 +344,7 @@
 				},
 				"crrm": {
 					"move" : {
-						"check_move" : checkMove
+						"check_move" : treeCheckDnd
 							
 					} 
 				}, 

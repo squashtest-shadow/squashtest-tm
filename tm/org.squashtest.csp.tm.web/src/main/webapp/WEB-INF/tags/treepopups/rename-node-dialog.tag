@@ -32,10 +32,6 @@
 <%@ attribute name="successCallback" description="javascript callback in case of success."%>
 
 
-
-<script type="text/javascript">		
-
-</script>
 		
 <pop:popup id="rename-node-dialog" titleKey="dialog.rename-tree-node.title" openedBy="${openedBy}">
 	<jsp:attribute name="buttons">
@@ -51,13 +47,16 @@
 	<jsp:attribute name="additionalSetup">
 		open : function(){
 			var node = $('${treeSelector}').jstree("get_selected");
-			if (! node.is(':editable')){
+			var operations = getTreeAllowedOperations('${treeSelector}');
+			if (! operations.match("rename") ){
 				<f:message key="dialog.label.rename-node.rejected" var="renameForbiddenLabel"/>
 				$(this).dialog('close');
 				displayInformationNotification("${renameForbiddenLabel }");
 			}
-			var name = node.attr('name');
-			$("#rename-tree-node-text").val(name);			
+			else{
+				var name = node.attr('name');
+				$("#rename-tree-node-text").val(name);
+			}			
 		}
 	</jsp:attribute>
 

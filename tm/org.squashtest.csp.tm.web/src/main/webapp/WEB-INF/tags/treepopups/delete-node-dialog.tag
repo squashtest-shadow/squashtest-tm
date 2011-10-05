@@ -88,9 +88,6 @@ function areNodesIterations(vNodes){
 	return vNodes.is(":iteration");
 }
 
-function areNodesEditables(vNodes){
-	return vNodes.is(":editable");
-}
 
 //returns a deferred
 function initDeleteNodeDialog(jqDialog){
@@ -104,10 +101,9 @@ function initDeleteNodeDialog(jqDialog){
 	var rawNodes = $('${treeSelector}').jstree("get_selected");
 	var vNodes = toLiNodes(rawNodes);			
 	
-	<%-- check : are the selected node all editables ? --%>
-	var check = areNodesEditables(vNodes);
+	var operations = getTreeAllowedOperations('${treeSelector}');
 	
-	if (check==true){
+	if (operations.match("delete")){
 		jqDialog.data("vNodes", vNodes);		
 		
 		var areIterations = areNodesIterations(vNodes);
@@ -141,9 +137,6 @@ function sendDeletionSimulationRequest(jqDialog){
 	});
 				
 }
-
-
-			
 </script>
 
 

@@ -131,7 +131,7 @@ function clearContextualContent(targetSelector){
 	$(targetSelector).empty();		
 }
 
-
+/* ***************************  post new nodes operations ********************************************** */
 /**
  * Post new contents to the url determined by the selected node of a tree and
  * creates a new node with returned JSON data.
@@ -202,7 +202,7 @@ function postNewTreeContent(treeId, contentDiscriminator, postParameters) {
 		.then(openNode);
 	}
 
-	/* ********** actual code. JQuery really made it simpler, yeah. ****************** */
+	/* ********** actual code. ****************** */
 	
 	if (isOpen != true){
 		openNode()			//first call will make the node load if necessary. 
@@ -213,6 +213,60 @@ function postNewTreeContent(treeId, contentDiscriminator, postParameters) {
 	}
 
 }
+
+/* **************************** check move section **************************************** */
+
+function treeCheckDnd(m){
+	
+	var object = m.o;
+	var dest = m.np;
+	var src = m.op;
+	
+	var jqSrc = $(src);
+	var jqDest = $(dest);
+	var jqObject = $(object);
+	
+	//check if the node is draggable first
+	if (! jqObject.is(':editable')){
+		return false;
+	}
+	
+
+	//check if the src and dest are within the same project. If they aren't themselve a drive we
+	//need to look for them.
+	var srcDrive =  jqSrc.is(':library') ? jqSrc : jqSrc.parents(':library');
+	var destDrive = jqDest.is(':library') ? jqDest : jqDest.parents(':library');
+	
+	if ((srcDrive==null) || (destDrive==null)){
+		return false;
+	}
+	
+	if (srcDrive.attr('resid')!=destDrive.attr('resid')){
+		return false;
+	}
+	
+	//in case we are moving an iteration, check the destination is 
+	//of type campaign
+	
+	if ( ($(object).is(':iteration')) && (! $(dest).is(':file')) ){
+		return false;
+	}
+	
+	//if the object is an iteration, the destination must be the same campaign
+	if(jqObject.is(':iteration') && jqSrc.attr('resid') != jqDest.attr('resid')){
+		return false;
+	}
+	//prevent iteration copy
+	if(jqObject.is(':iteration') && isCtrlClicked == true){
+		return false;
+	}
+	
+	return true;			
+	
+}
+
+
+
 
 /* ***************************** node copy section **************************************** */
 
@@ -352,6 +406,8 @@ function moveNode(data, url){
 }
 
 
+/* ******************************* leaf URL management code ************************************* */ 
+
 /**
  * Returns the url where to GET the content (ie children) of a node. This url
  * should return JSON tree nodes.
@@ -446,8 +502,55 @@ function cancelMultipleClickEvent(clickEvent) {
 	}
 }
 	
+/* ****************************** allowed operations ********************************************** */
+
+	function getTreeAllowedOperations(treeSelector){
+
+		var selectedNodes = $(treeSelector).jstree('get_selected');		
+		
+		var operations = "";
+		
+		//tha variable will be set to true if at least one selected node is not editable.
+		var noEdit = (selectedNodes.not(":editable").length > 0);
+		
+		//case 1 : not editable : no operations allowed. 
+		if (noEdit){
+			operations = "";
+		}
+		//case 2 : more than one item selected : no operations allowed except deletion and copy if the nodes aren't libraries
+		else if (selectedNodes.length != 1){
+			operations = (! selectedNodes.is(":library")) ? "delete copy" : "";
+		}
+		//case 3 : one item is selected, button activation depend on their nature.
+		else{
+			switch(selectedNodes.attr('rel')){			
+				case "drive" :
+					operations="create-folder create-file paste";
+					break;
+				
+				case "folder" :
+					operations="create-folder create-file rename delete copy paste";
+					break;
+					
+				case "file" :
+					operations="create-resource rename delete copy";
+					break;
+					
+				case "resource" : 
+					operations="rename delete";
+					break;
+			
+			}
+		}
+		
+		return operations;
+				
+	}
+
+
 	
 /* ****************************** other tree-related objects ************************************** */
+
 
 function ButtonBasedTreeNodeCopier(initObj){
 	
@@ -519,3 +622,7 @@ function ButtonBasedTreeNodeCopier(initObj){
 	$(this.pasteSelector).click($.proxy(this.pasteNodesFromCookie, this));
 	
 }
+
+
+
+
