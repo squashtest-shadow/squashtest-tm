@@ -65,7 +65,7 @@ public class ExProgressTestPlanDto {
 	}
 	
 	public ExProgressTestPlanDto fillBasicInfo(IterationTestPlanItem testPlan){
-		this.testCaseName=testPlan.getLabel();
+		this.testCaseName=( testPlan.isTestCaseDeleted() ) ? null : testPlan.getReferencedTestCase().getName();
 		this.executionStatus=testPlan.getExecutionStatus();
 		return this;
 	}
