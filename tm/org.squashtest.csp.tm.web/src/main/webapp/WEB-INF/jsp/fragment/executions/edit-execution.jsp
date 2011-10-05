@@ -207,31 +207,19 @@
 	
 	function turnToEditable(jqOColumn,strTarget,iid){
 		
-		var content =$(jqOColumn).html();
-		var tdId = "esTable"+strTarget+"-"+iid;
-		<%--$(jqOColumn).html("<div id=\""+tdId+"\">"+content+"</div>");--%>
-		$(jqOColumn).html(content);
-		
 		var stUrl = "${ executionStepsUrl }/" + iid+"/"+strTarget; 
 		
-		<%--$( "#"+tdId ).editable(  stUrl, {--%>
-		$(jqOColumn).editable( stUrl, {
-			type: 'ckeditor',												//this input type isn't standard, refers to jquery.jeditable.ckeditor.js
-			ckeditor : { customConfig : '${ ckeConfigUrl }', language: '<f:message key="rich-edit.language.value" />' },				//same comment
-			rows: 10, 
-			cols: 80,
+		var settings = {
+			url : stUrl,
+			ckeditor : { customConfig : '${ ckeConfigUrl }', language: '<f:message key="rich-edit.language.value" />' },
 			placeholder: '<f:message key="rich-edit.placeholder" />',
 			submit: '<f:message key="rich-edit.button.ok.label" />',
 			cancel: '<f:message key="rich-edit.button.cancel.label" />',
-			onblur : function(){},											//this disable the onBlur handler, which would close the jeditable 
-																			//when clicking in the rich editor (since it considers the click as 
-																			//out of the editing zone)
-			callback : function(value, settings){},
-			indicator : '<img src="${ pageContext.servletContext.contextPath }/images/indicator.gif" alt="processing..." />' 
-			
-		});		
-		
+			indicator : '<img src="${ pageContext.servletContext.contextPath }/images/indicator.gif" alt="processing..." />' 	
+		};
+		squashtm.jeditable.richEditable.call(jqOColumn.get(0), settings);	
 	}
+	
 	<%-- manage attachment button --%>
 	$(function() {
 		$('#execution-execution-steps-table .has-attachment-cell a').live('click', function() {

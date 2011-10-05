@@ -263,11 +263,7 @@
 	}
 	
 	function turnToEditable(jqOColumn,strTarget,iid){
-		
-		var content =jqOColumn.html();
-		var tdId = "tsTable"+strTarget+"-"+iid;
-		jqOColumn.html(content);
-		
+
 		var stUrl = "${ updateStepUrl }" + iid+"/"+strTarget; 
 		
 		var settings = {
