@@ -36,24 +36,20 @@
 <c:url var="ckeWelcomeMessageConfigUrl" value="/styles/ckeditor/welcome-message-ckeditor-config.js" />
 
 <script type="text/javascript">
-
 	$(function() {
-		$( '#${componentId}' ).editable( '${ targetUrl }', {
-			type: 'ckeditor',												//this input type isn't standard, refers to jquery.jeditable.ckeditor.js
+		
+		var settings = {
+			url : '${ targetUrl }',
 			ckeditor : <c:choose> <c:when test="${ not empty welcome}"> { customConfig : '${ ckeWelcomeMessageConfigUrl }', language: '<f:message key="rich-edit.language.value" />' } </c:when>
 			<c:otherwise> { customConfig : '${ ckeConfigUrl }', language: '<f:message key="rich-edit.language.value" />' } </c:otherwise> </c:choose>,				//same comment
-			rows:10, 
-			cols: 80,
 			placeholder: '<f:message key="rich-edit.placeholder" />',
 			submit: '<f:message key="rich-edit.button.ok.label" />',
-			cancel: '<f:message key="rich-edit.button.cancel.label" />',
-			onblur : function(){},											//this disable the onBlur handler, which would close the jeditable 
-																			//when clicking in the rich editor (since it considers the click as 
-																			//out of the editing zone)
-			<c:if test="${ not empty submitCallback }" >callback : function(value, settings){${submitCallback}(value, settings);},</c:if>
-			indicator : '<img src="${ pageContext.servletContext.contextPath }/images/indicator.gif" alt="processing..." />' 
-			
-		});
+			cancel: '<f:message key="rich-edit.button.cancel.label" />',	
+			indicator : '<img src="${ pageContext.servletContext.contextPath }/images/indicator.gif" alt="processing..." />'
+								
+		}
+		
+		squashtm.jeditable.richEditable.call( document.getElementById('${componentId}'), settings);	
 	})
 	
 </script>
