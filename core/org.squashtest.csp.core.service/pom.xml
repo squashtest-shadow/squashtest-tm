@@ -6,9 +6,7 @@
 		<groupId>org.squashtest.csp</groupId>
 		<version>1.1.0.RELEASE-SNAPSHOT</version>
 	</parent>
-	<groupId>org.squashtest.csp</groupId>
 	<artifactId>org.squashtest.csp.core.service</artifactId>
-	<version>1.1.0.RELEASE-SNAPSHOT</version>
 	<name>Squashtest CSP - Core module - Service component</name>
 	<properties>
 		<bundle.name>${project.artifactId}</bundle.name>
@@ -23,7 +21,6 @@
 			<artifactId>springdm-bundle-dependencies</artifactId>
 			<version>${project.version}</version>
 			<type>pom</type>
-			<scope>import</scope>
 		</dependency>
 		<dependency>
 			<groupId>${project.groupId}</groupId>
@@ -37,7 +34,6 @@
 			<artifactId>hibernate-dependencies</artifactId>
 			<version>${project.version}</version>
 			<type>pom</type>
-			<scope>import</scope>
 		</dependency>
 		<!-- ====== /DEPENDENCY POMS ====== -->
 
@@ -74,7 +70,6 @@
 		<dependency>
 			<groupId>org.springframework</groupId>
 			<artifactId>org.springframework.transaction</artifactId>
-			<version>${spring.version}</version>
 			<scope>compile</scope>
 		</dependency>
 		<dependency>
@@ -94,13 +89,6 @@
 			<artifactId>org.springframework.test</artifactId>
 		</dependency>
 		<!-- ====== /SPRING INTEGRATION TEST SUPPORT ====== -->
-
-		<!-- ====== SPOCK-SPRING-TEST BRIDGE ====== -->
-		<dependency>
-			<groupId>org.spockframework</groupId>
-			<artifactId>spock-spring</artifactId>
-		</dependency>
-		<!-- ====== /SPOCK-SPRING-TEST BRIDGE ====== -->
 
 		<!-- ====== CONNECTION POOL ====== -->
 		<dependency>
@@ -124,7 +112,6 @@
 		<dependency>
 			<groupId>com.h2database</groupId>
 			<artifactId>h2</artifactId>
-			<version>1.2.144</version>
 		</dependency>
 		<!-- ====== /SOME DATABASE ====== -->
 

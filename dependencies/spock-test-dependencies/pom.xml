@@ -6,9 +6,7 @@
 		<version>1.1.0.RELEASE-SNAPSHOT</version>
 	</parent>
 
-	<groupId>org.squashtest.csp</groupId>
 	<artifactId>spock-test-dependencies</artifactId>
-	<version>1.1.0.RELEASE-SNAPSHOT</version>
 	<packaging>pom</packaging>
 	<name>spock-test-dependencies</name>
 	<description>Defines dependencies for Spock-based tests.</description>
@@ -18,12 +16,15 @@
 		<dependency>
 			<groupId>junit</groupId>
 			<artifactId>junit</artifactId>
+			<scope>compile</scope>
 		</dependency>
 		<dependency>
 			<groupId>org.hamcrest</groupId>
 			<artifactId>hamcrest-all</artifactId>
+			<scope>compile</scope>
 		</dependency>
 		<!-- ====== /JUNIT ====== -->
+		
 		<!-- ====== SPOCK TESTS ====== -->
 		<dependency>
 			<groupId>org.spockframework</groupId>
@@ -39,10 +40,10 @@
 		<dependency>
 			<groupId>org.objenesis</groupId>
 			<artifactId>objenesis</artifactId>
-			<version>1.2</version>
 			<scope>compile</scope>
 		</dependency>
 		<!-- ====== /SPOCK TESTS ====== -->
+		
 		<!-- ====== GROOVY ====== -->
 		<dependency>
 			<groupId>org.codehaus.groovy</groupId>
