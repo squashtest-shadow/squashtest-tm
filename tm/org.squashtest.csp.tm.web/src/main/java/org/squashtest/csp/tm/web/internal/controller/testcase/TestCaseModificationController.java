@@ -419,18 +419,6 @@ public class TestCaseModificationController {
 
 	/* ********************************** localization stuffs ****************************** */
 
-	/***
-	 * Method which returns criticality in the chosen language
-	 *
-	 * @param criticity
-	 *            the criticality
-	 * @param locale
-	 *            the locale with the chosen language
-	 * @return the criticality in the chosen language
-	 */
-	private String formatCriticality(RequirementCriticality criticality, Locale locale) {
-		return internationalize(criticality, locale);
-	}
 
 	private String internationalize(Internationalizable internationalizable, Locale locale) {
 		return messageSource.getMessage(internationalizable.getI18nKey(), null, locale);

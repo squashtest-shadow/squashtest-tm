@@ -20,7 +20,6 @@
  */
 package org.squashtest.csp.tm.web.internal.controller.campaign;
 
-import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
@@ -235,23 +234,7 @@ public class IterationTestPlanManagerController {
 
 	}
 
-	private String formatString(String arg, Locale locale) {
-		if (arg == null) {
-			return formatNoData(locale);
-		} else {
-			return arg;
-		}
-	}
 
-	private String formatDate(Date date, Locale locale) {
-		try {
-			String format = messageSource.getMessage("squashtm.dateformat", null, locale);
-			return new SimpleDateFormat(format).format(date);
-		} catch (Exception anyException) {
-			return formatNoData(locale);
-		}
-
-	}
 
 	private String formatNoData(Locale locale) {
 		return messageSource.getMessage("squashtm.nodata", null, locale);
@@ -266,40 +249,7 @@ public class IterationTestPlanManagerController {
 		return messageSource.getMessage(mode.getI18nKey(), null, locale);
 	}
 
-	private String formatStatus(ExecutionStatus status, Locale locale) {
 
-		String toReturn;
-
-		// TODO add a "localization key" property to status and remove this switch
-		switch (status) {
-		// FIXME BLOCKED !!
-		case BLOQUED:
-			toReturn = messageSource.getMessage("execution.combo.BLOQUED.label", null, locale);
-			break;
-
-		case FAILURE:
-			toReturn = messageSource.getMessage("execution.combo.FAILURE.label", null, locale);
-			break;
-
-		case SUCCESS:
-			toReturn = messageSource.getMessage("execution.combo.SUCCESS.label", null, locale);
-			break;
-
-		case RUNNING:
-			toReturn = messageSource.getMessage("execution.combo.RUNNING.label", null, locale);
-			break;
-
-		case READY:
-			toReturn = messageSource.getMessage("execution.combo.READY.label", null, locale);
-			break;
-
-		default:
-			toReturn = "unknown";
-			break;
-		}
-
-		return toReturn;
-	}
 
 	private CollectionSorting createCollectionSorting(final DataTableDrawParameters params, DataTableMapper mapper) {
 		CollectionSorting filter = new DataTableFilterSorter(params, mapper);

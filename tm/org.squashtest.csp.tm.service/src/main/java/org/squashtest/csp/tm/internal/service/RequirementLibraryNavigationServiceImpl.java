@@ -93,14 +93,6 @@ RequirementLibraryNavigationService {
 	}
 
 
-
-	private Requirement createCopyRequirement(long requirementId) {
-		Requirement original = requirementDao.findById(requirementId);
-		Requirement clone = original.createCopy();
-		return clone;
-	}
-
-
 	@Override
 	@PreAuthorize("hasPermission(#libraryId, 'org.squashtest.csp.tm.domain.requirement.RequirementLibrary' , 'WRITE') " +
 			"or hasRole('ROLE_ADMIN')")			

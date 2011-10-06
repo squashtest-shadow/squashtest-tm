@@ -352,11 +352,5 @@ public class CampaignModificationController {
 	private String formatNoData(Locale locale){
 		return messageSource.getMessage("squashtm.nodata",null, locale);
 	}
-	private String formatString(String arg, Locale locale){
-		if (arg==null){
-			return formatNoData(locale);
-		} else {
-			return arg;
-		}
-	}
+
 }
