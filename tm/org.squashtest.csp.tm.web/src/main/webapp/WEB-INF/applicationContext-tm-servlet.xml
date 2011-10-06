@@ -177,6 +177,7 @@
 	<bean id="multipartResolver"
 		class="org.squashtest.csp.tm.web.internal.fileuploadutils.ProgressAwareMultipartResolver">
 		<property name="maxUploadSize" value="${uploadfilter.upload.sizeLimitInBytes}" /> 
+		<property name="defaultEncoding" value="UTF-8" />
 	</bean>
 
 	<bean

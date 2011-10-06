@@ -103,7 +103,7 @@
 		.ajaxSubmit({}) will not treat server response status, will not fire error handlers, and returns a fake xhr object.
 		It wont accept specific response data type so we must parse html, strip the tags and parse json ourselves.
 		
-		The only solution to process the response is to analyse it's content to infer it's status.	
+		The only solution to process the response is to analyse the content to infer the status.	
 	--%>
 	function attachmentSubmit(ticket){
 		$("#add-attachment-form").ajaxSubmit({
