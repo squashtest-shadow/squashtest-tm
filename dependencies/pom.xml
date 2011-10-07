@@ -14,7 +14,6 @@
   <modules>
   	<module>springdm-bundle-dependencies</module>
   	<module>spock-test-dependencies</module>
-  	<module>junit-test-dependencies</module>
   	<module>hibernate-dependencies</module>
   </modules>
 </project>
