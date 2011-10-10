@@ -20,6 +20,7 @@
  */
 package org.squashtest.csp.tm.internal.repository.hibernate;
 
+import java.util.Collections;
 import java.util.LinkedList;
 import java.util.List;
 
@@ -75,13 +76,19 @@ public class HibernateUserDao extends HibernateEntityDao<User> implements UserDa
 
 	@Override
 	public List<User> findUsersByLoginList(final List<String> idList) {
-		SetQueryParametersCallback setParams = new SetQueryParametersCallback() {
-
-			@Override
-			public void setQueryParameters(Query query) {
-				query.setParameterList("userIds", idList);
-			}
-		};
-		return executeListNamedQuery("user.findUsersByLoginList", setParams);
+		
+		if (idList.isEmpty()){
+			return Collections.emptyList();
+		}else{
+		
+			SetQueryParametersCallback setParams = new SetQueryParametersCallback() {
+	
+				@Override
+				public void setQueryParameters(Query query) {
+					query.setParameterList("userIds", idList);
+				}
+			};
+			return executeListNamedQuery("user.findUsersByLoginList", setParams);
+		}
 	}
 }
