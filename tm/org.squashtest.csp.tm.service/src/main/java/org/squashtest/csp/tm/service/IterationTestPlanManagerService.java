@@ -23,8 +23,8 @@ package org.squashtest.csp.tm.service;
 import java.util.Date;
 import java.util.List;
 
-import org.squashtest.csp.tm.domain.campaign.IterationTestPlanItem;
 import org.squashtest.csp.tm.domain.campaign.Iteration;
+import org.squashtest.csp.tm.domain.campaign.IterationTestPlanItem;
 import org.squashtest.csp.tm.domain.testcase.TestCase;
 import org.squashtest.csp.tm.domain.testcase.TestCaseLibrary;
 import org.squashtest.csp.tm.domain.users.User;
@@ -99,12 +99,12 @@ public interface IterationTestPlanManagerService {
 
 
 	/**
-	 * Get Users with Write Access for a TestPlan.
+	 * Get Users with Write Access for an Iteration and its TestPlan.
 	 *
 	 * @param testCaseId
 	 * @param campaignId
 	 */
-	List <User> findAssignableUserForTestPlan(List<Long> testPlanId, long iterationId);
+	List <User> findAssignableUserForTestPlan(long iterationId);
 
 	/**
 	 * Assign User with Write Access to a TestPlan item.

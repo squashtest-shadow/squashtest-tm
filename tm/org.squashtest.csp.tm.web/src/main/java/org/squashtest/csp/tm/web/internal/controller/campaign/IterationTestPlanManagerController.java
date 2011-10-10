@@ -152,7 +152,7 @@ public class IterationTestPlanManagerController {
 	ModelAndView getAssignUserForIterationTestPlanItem(@RequestParam("testPlanId") long testPlanId, @PathVariable long iterationId,	final Locale locale) {
 		List<Long> ids = new ArrayList<Long>();
 		ids.add(testPlanId);
-		List<User> usersList =  iterationTestPlanManagerService.findAssignableUserForTestPlan(ids, iterationId);
+		List<User> usersList =  iterationTestPlanManagerService.findAssignableUserForTestPlan(iterationId);
 		IterationTestPlanItem itp = iterationTestPlanManagerService.findTestPlanItem(iterationId, testPlanId);
 
 		ModelAndView mav = new ModelAndView("fragment/generics/test-plan-combo-box");
@@ -173,9 +173,9 @@ public class IterationTestPlanManagerController {
 
 	@RequestMapping(value = "/iterations/{iterationId}/batch-assignable-user", method = RequestMethod.GET)
 	public
-	ModelAndView getAssignUserForIterationTestPlanItems(@RequestParam(TESTPLANS_IDS_REQUEST_PARAM) List<Long> testPlanIds, @PathVariable long iterationId, final Locale locale) {
+	ModelAndView getAssignUserForIterationTestPlanItems(@PathVariable long iterationId, final Locale locale) {
 
-		List<User> userList =  iterationTestPlanManagerService.findAssignableUserForTestPlan(testPlanIds, iterationId);
+		List<User> userList =  iterationTestPlanManagerService.findAssignableUserForTestPlan(iterationId);
 		ModelAndView mav = new ModelAndView("fragment/generics/test-plan-combo-box");
 		mav.addObject("usersList", userList);
 		mav.addObject("selectIdentitier", "comboUsersList");

@@ -438,7 +438,7 @@
 					var ids = getIdsOfSelectedTableRows(table, getTestPlansTableRowId);
 
 					if (ids.length > 0) {
-						var comboBox = $.get("${batchAssignableUsersUrl}", { testPlanIds: ids }, function(){
+						var comboBox = $.get("${batchAssignableUsersUrl}", false, function(){
 							$("#comboBox-div").html("${confirmMessage}");
 							$("#comboBox-div").append(comboBox.responseText);
 							$("#comboBox-div").show();

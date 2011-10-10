@@ -21,7 +21,6 @@
 package org.squashtest.csp.tm.internal.service;
 
 import java.util.ArrayList;
-import java.util.Collections;
 import java.util.Date;
 import java.util.List;
 
@@ -255,32 +254,21 @@ public class IterationTestPlanManagerServiceImpl implements IterationTestPlanMan
 	}
 
 	@Override
-	public List<User> findAssignableUserForTestPlan(List<Long> testPlanIds,	long iterationId) {
+	public List<User> findAssignableUserForTestPlan(long iterationId) {
 
 		Iteration iteration = iterationDao.findById(iterationId);
 
 		List<ObjectIdentity> entityRefs = new ArrayList<ObjectIdentity>();
 
-		for (Long tpId : testPlanIds) {
-			IterationTestPlanItem itp = iteration.getTestPlan(tpId);
-			if (! itp.isTestCaseDeleted()){
-				ObjectIdentity oid = objIdRetrievalStrategy.getObjectIdentity(itp.getReferencedTestCase());
-				entityRefs.add(oid);
-			}
-		}
+		ObjectIdentity oid = objIdRetrievalStrategy.getObjectIdentity(iteration);
+		entityRefs.add(oid);
 
-		if (! entityRefs.isEmpty()){
-			List<String> loginList = aclService.findUsersWithWritePermission(entityRefs);
-			List<User> usersList = new ArrayList<User>();
-			if (!loginList.isEmpty()) {
-				usersList = userDao.findUsersByLoginList(loginList);
-			}
 
-			return usersList;
-		}
-		else{
-			return Collections.emptyList();
-		}
+		List<String> loginList = aclService.findUsersWithWritePermission(entityRefs);
+		List<User> usersList = userDao.findUsersByLoginList(loginList);
+
+		return usersList;
+
 
 	}
 
@@ -288,16 +276,12 @@ public class IterationTestPlanManagerServiceImpl implements IterationTestPlanMan
 	public void assignUserToTestPlanItem(Long testPlanId, long iterationId,
 			Long userId) {
 		Iteration iteration = iterationDao.findById(iterationId);
-		if (userId == 0){
-			IterationTestPlanItem itp = iteration.getTestPlan(testPlanId);
-			itp.setUser(null);
-			return;
-		}
-		User user = userDao.findById(userId);
+		User user = (userId==0) ? null : userDao.findById(userId);
+		
 		IterationTestPlanItem itp = iteration.getTestPlan(testPlanId);
-		itp.setUser(user);
-
-
+		if (! itp.isTestCaseDeleted()){
+			itp.setUser(user);
+		}
 	}
 
 	@Override
