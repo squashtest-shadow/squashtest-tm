@@ -62,8 +62,6 @@ public class CampaignModificationServiceImpl implements CampaignModificationServ
 		campaign.setDescription(newDescription);
 	}
 
-
-
 	@Override
 	@PostAuthorize("hasPermission(returnObject,'READ') or hasRole('ROLE_ADMIN')")
 	public Campaign findById(long campaignId) {
@@ -134,5 +132,4 @@ public class CampaignModificationServiceImpl implements CampaignModificationServ
 		long count = campaignDao.countTestPlanById(campaignId);
 		return new FilteredCollectionHolder<List<CampaignTestPlanItem>>(count, tcs);
 	}
-
 }

@@ -49,11 +49,6 @@ RequirementModificationService {
 	@Inject
 	@Named("squashtest.tm.service.internal.RequirementManagementService")
 	private NodeManagementService<Requirement, RequirementLibraryNode, RequirementFolder> requirementManagementService;
-
-	
-	@Inject
-	private RequirementNodeDeletionHandler deletionHandler;
-	
 	
 	public RequirementModificationServiceImpl(){
 		super();
@@ -65,8 +60,6 @@ RequirementModificationService {
 		Requirement req = requirementDao.findById(reqId);
 		req.setDescription(newDescription);
 	}
-
-
 
 	@Override
 	@PostAuthorize("hasPermission(returnObject,'READ') or hasRole('ROLE_ADMIN')")	
@@ -85,7 +78,6 @@ RequirementModificationService {
 	public List<TestCase> findVerifyingTestCasesByRequirementId(long requirementId) {
 		return requirementDao.findAllVerifyingTestCasesById(requirementId);
 	}
-
 
 	@Override
 	@PreAuthorize("hasPermission(#requirementId, 'org.squashtest.csp.tm.domain.requirement.Requirement', 'READ') or hasRole('ROLE_ADMIN')")
@@ -109,5 +101,4 @@ RequirementModificationService {
 		Requirement requirement = requirementDao.findById(requirementId);
 		requirement.setReference(reference);
 	}
-
 }
