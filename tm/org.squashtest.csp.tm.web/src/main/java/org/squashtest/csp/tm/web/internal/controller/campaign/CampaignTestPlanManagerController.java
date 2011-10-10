@@ -20,7 +20,6 @@
  */
 package org.squashtest.csp.tm.web.internal.controller.campaign;
 
-import java.util.ArrayList;
 import java.util.List;
 
 import javax.inject.Inject;
@@ -111,9 +110,7 @@ public class CampaignTestPlanManagerController {
 	@RequestMapping(value = "/campaigns/{campaignId}/assignable-user", method = RequestMethod.GET)
 	public 
 	ModelAndView getAssignUserForCampaignTestPlanItem(@RequestParam long testCaseId, @PathVariable long campaignId) {
-		List<Long> ids = new ArrayList<Long>();
-		ids.add(testCaseId);
-		List<User> usersList =  campaignTestPlanManagerService.findAssignableUserForTestPlan(ids, campaignId);
+		List<User> usersList =  campaignTestPlanManagerService.findAssignableUserForTestPlan(campaignId);
 		CampaignTestPlanItem itp = campaignTestPlanManagerService.findTestPlanItemByTestCaseId(campaignId, testCaseId);
 		
 		ModelAndView mav = new ModelAndView("fragment/generics/test-plan-combo-box");
@@ -134,13 +131,8 @@ public class CampaignTestPlanManagerController {
 
 	@RequestMapping(value = "/campaigns/{campaignId}/batch-assignable-user", method = RequestMethod.GET)
 	public 
-	ModelAndView getAssignUserForCampaignTestPlanItems(@RequestParam(TESTCASES_IDS_REQUEST_PARAM) List<Long> testCaseIds, @PathVariable long campaignId) {
-		
-		List<Long> ids = new ArrayList<Long>();
-		for (long testCaseId : testCaseIds) {
-			ids.add(testCaseId);
-		}
-		List<User> userList =  campaignTestPlanManagerService.findAssignableUserForTestPlan(ids, campaignId);
+	ModelAndView getAssignUserForCampaignTestPlanItems(@PathVariable long campaignId) {
+		List<User> userList =  campaignTestPlanManagerService.findAssignableUserForTestPlan(campaignId);
 		ModelAndView mav = new ModelAndView("fragment/generics/test-plan-combo-box");
 		mav.addObject("usersList", userList);
 		mav.addObject("selectIdentitier", "comboUsersList");

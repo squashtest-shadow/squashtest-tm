@@ -24,7 +24,6 @@ import java.util.List;
 
 import org.squashtest.csp.tm.domain.campaign.Campaign;
 import org.squashtest.csp.tm.domain.campaign.CampaignTestPlanItem;
-import org.squashtest.csp.tm.domain.campaign.IterationTestPlanItem;
 import org.squashtest.csp.tm.domain.testcase.TestCaseLibrary;
 import org.squashtest.csp.tm.domain.users.User;
 
@@ -70,12 +69,12 @@ public interface CampaignTestPlanManagerService {
 	void removeTestCaseFromCampaign(Long testCaseId, long campaignId);
 	
 	/**
-	 * Get Users with Write Access for a TestPlan.
+	 * Get Users with Write Access for a campaign and his test plans.
 	 * 
 	 * @param testCaseId
 	 * @param campaignId
 	 */
-	List <User> findAssignableUserForTestPlan(List<Long> testCaseId, long campaignId);
+	List <User> findAssignableUserForTestPlan(long campaignId);
 	
 	/**
 	 * Get Users with Write Access for a TestPlan.

@@ -36,8 +36,6 @@ import org.springframework.transaction.annotation.Transactional;
 import org.squashtest.csp.core.security.acls.model.ObjectAclService;
 import org.squashtest.csp.tm.domain.campaign.Campaign;
 import org.squashtest.csp.tm.domain.campaign.CampaignTestPlanItem;
-import org.squashtest.csp.tm.domain.campaign.IterationTestPlanItem;
-import org.squashtest.csp.tm.domain.campaign.Iteration;
 import org.squashtest.csp.tm.domain.projectfilter.ProjectFilter;
 import org.squashtest.csp.tm.domain.testcase.TestCase;
 import org.squashtest.csp.tm.domain.testcase.TestCaseLibrary;
@@ -204,14 +202,14 @@ public class CampaignTestPlanManagerServiceImpl implements CampaignTestPlanManag
 	}
 	
 	@Override
-	public List<User> findAssignableUserForTestPlan(List<Long> testCaseIds, long campaignId) {
+	public List<User> findAssignableUserForTestPlan(long campaignId) {
 		
-		List<TestCase> testCases = testCaseDao.findAllByIdList(testCaseIds);
+		Campaign campaign = campaignDao.findById(campaignId);
+		
 		List<ObjectIdentity> entityRefs = new ArrayList<ObjectIdentity>();
-		for (TestCase testCase : testCases) {
-			ObjectIdentity oid = objIdRetrievalStrategy.getObjectIdentity(testCase);
-			entityRefs.add(oid);
-		}
+		ObjectIdentity oid = objIdRetrievalStrategy.getObjectIdentity(campaign);
+		entityRefs.add(oid);
+
 		List<String> loginList = aclService.findUsersWithWritePermission(entityRefs);
 		List<User> usersList = userDao.findUsersByLoginList(loginList);
 		return usersList;

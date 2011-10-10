@@ -398,7 +398,7 @@
 					var table = $( '#test-cases-table' ).dataTable();
 					var ids = getIdsOfSelectedTableRows(table, getTestCasesTableRowId);
 					if (ids.length > 0) {
-						var comboBox = $.get("${batchAssignableUsersUrl}", { testCasesIds: ids }, function(){
+						var comboBox = $.get("${batchAssignableUsersUrl}", false, function(){
 							$("#comboBox-div").html("${confirmMessage}");
 							$("#comboBox-div").append(comboBox.responseText);
 							$("#comboBox-div").show();
