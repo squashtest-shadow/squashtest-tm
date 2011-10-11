@@ -29,10 +29,10 @@ import org.squashtest.csp.tm.internal.repository.CampaignLibraryDao;
 
 import spock.lang.Specification;
 
-class CampaignModificationServiceImplTest extends Specification {
+class CustomCampaignModificationServiceImplTest extends Specification {
 
 
-	CampaignModificationServiceImpl service = new CampaignModificationServiceImpl()
+	CustomCampaignModificationServiceImpl service = new CustomCampaignModificationServiceImpl()
 
 	CampaignDao campaignDao = Mock()
 
@@ -51,58 +51,4 @@ class CampaignModificationServiceImplTest extends Specification {
 		obj == campaign;
 	}
 
-	def "should update a campaign description"(){
-		given :
-		Campaign campaign = new Campaign(name:"mycampaign", description:"Mike");
-		campaignDao.findById(10L) >> campaign
-		when :
-		service.updateDescription(10L, "Bob")
-
-		then :
-		campaign.description == "Bob"
-	}
-
-	def "should set the scheduled start date"(){
-		given :
-		Campaign campaign = Mock();
-		campaignDao.findById(10) >> campaign
-		when :
-		service.setScheduledStartDate(10,new Date())
-
-		then :
-		1 * campaign.setScheduledStartDate(_)
-	}
-
-	def "should set the scheduled end date"(){
-		given :
-		Campaign campaign = Mock();
-		campaignDao.findById(10) >> campaign
-		when :
-		service.setScheduledEndDate(10,  new Date())
-
-		then :
-		1 * campaign.setScheduledEndDate(_)
-	}
-
-	def "should set the actual start date"(){
-		given :
-		Campaign campaign = Mock();
-		campaignDao.findById(10) >> campaign
-		when :
-		service.setActualStartDate(10,  new Date())
-
-		then :
-		1 * campaign.setActualStartDate( _)
-	}
-
-	def "should set the actual end date"(){
-		given :
-		Campaign campaign = Mock();
-		campaignDao.findById(10) >> campaign
-		when :
-		service.setActualEndDate(10, new Date())
-
-		then :
-		1 * campaign.setActualEndDate(_)
-	}
 }

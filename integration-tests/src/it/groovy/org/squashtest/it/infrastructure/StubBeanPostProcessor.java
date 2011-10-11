@@ -30,7 +30,6 @@ package org.squashtest.it.infrastructure;
  * @bsiri
  */
 
-
 import java.lang.reflect.Method;
 import java.util.Arrays;
 import java.util.LinkedList;
@@ -38,68 +37,48 @@ import java.util.List;
 
 import javax.inject.Inject;
 
-import org.osgi.framework.BundleContext;
 import org.springframework.beans.BeansException;
-import org.springframework.beans.factory.BeanClassLoaderAware;
 import org.springframework.beans.factory.BeanFactory;
-import org.springframework.beans.factory.BeanFactoryAware;
 import org.springframework.beans.factory.FactoryBean;
 import org.springframework.beans.factory.NoSuchBeanDefinitionException;
-import org.springframework.beans.factory.config.InstantiationAwareBeanPostProcessorAdapter;
+import org.springframework.beans.factory.config.BeanPostProcessor;
+import org.springframework.context.ApplicationListener;
+import org.springframework.context.event.ContextRefreshedEvent;
 import org.springframework.core.annotation.AnnotationUtils;
-import org.springframework.osgi.context.BundleContextAware;
 import org.springframework.osgi.extensions.annotation.ServiceReference;
 import org.springframework.util.ReflectionUtils;
 
+public class StubBeanPostProcessor implements BeanPostProcessor, ApplicationListener<ContextRefreshedEvent> {
 
-public class StubBeanPostProcessor extends
-		InstantiationAwareBeanPostProcessorAdapter implements
-		BundleContextAware, BeanFactoryAware, BeanClassLoaderAware {
-
-	private BeanFactory beanFactory;
-	
 	@Inject
-	private SquashITProxyUtil proxyUtils ;
+	private BeanFactory beanFactory;
 
-	@Override
-	public void setBeanClassLoader(ClassLoader classLoader) {
-		// TODO Auto-generated method stub
-		
-	}
-
-	@Override
-	public void setBeanFactory(BeanFactory beanFactory) throws BeansException {
-		this.beanFactory=beanFactory;		
-	}
-
-	@Override
-	public void setBundleContext(BundleContext bundleContext) {
-		// TODO Auto-generated method stub
-		
-	}
-
+	@Inject
+	private SquashITProxyUtil proxyUtils;
 
 	@Override
 	public Object postProcessAfterInitialization(final Object bean, final String beanName) throws BeansException {
-		Object target;
-	
-		
-		if (!(bean instanceof FactoryBean) && beanFactory.containsBean(/*BeanFactory.FACTORY_BEAN_PREFIX +*/ beanName)) {
-		
-				//is it a damn proxy ?
-				if (proxyUtils.isProxySupported(bean)){
-					target=proxyUtils.getTarget(bean);
-				}
-				else{
-					target=bean;
-				}
-			
-				injectServices(target, beanName);
-			}
+		if (!(bean instanceof FactoryBean)
+				&& beanFactory.containsBean(/* BeanFactory.FACTORY_BEAN_PREFIX + */beanName)) {
+
+			injectServiceReferenceStubs(bean);
+		}
 		return bean;
 	}
 
-	private void injectServices(final Object bean, final String beanName){
+	private void injectServiceReferenceStubs(final Object bean) {
+		Object target;
+		// is it a damn proxy ?
+		if (proxyUtils.isProxySupported(bean)) {
+			target = proxyUtils.getTarget(bean);
+		} else {
+			target = bean;
+		}
+
+		injectServices(target);
+	}
+
+	private void injectServices(final Object bean) {
 		ReflectionUtils.doWithMethods(bean.getClass(), new ReflectionUtils.MethodCallback() {
 
 			@Override
@@ -108,71 +87,76 @@ public class StubBeanPostProcessor extends
 				if (s != null && method.getParameterTypes().length == 1) {
 					try {
 						method.invoke(bean, getService(method, s));
-					}
-					catch (Exception e) {
+					} catch (Exception e) {
 						throw new IllegalArgumentException("Error processing service annotation", e);
 					}
 				}
 			}
-		});		
+		});
 	}
-		
-	
+
 	/*
 	 * if two matching services are found, we'll get the one annotated with @Stub
-	 * 
 	 */
-		
-	private Object getService(Method setter, ServiceReference reference){
-		Class<?>[] parameterTypes = setter.getParameterTypes();	
-		Class<?> serviceClass= parameterTypes[0];
-		
-		//prick your fingers here
-		try{
+
+	private Object getService(Method setter, ServiceReference reference) {
+		Class<?>[] parameterTypes = setter.getParameterTypes();
+		Class<?> serviceClass = parameterTypes[0];
+
+		// prick your fingers here
+		try {
 			return beanFactory.getBean(serviceClass);
-		}catch(NoSuchBeanDefinitionException exception){
+		} catch (NoSuchBeanDefinitionException exception) {
 			String[] beanNames = parseMultipleBeanException(exception);
 			return findStubService(beanNames);
 		}
-		
-		
+
 	}
-	
-	private Object findStubService(String[] beanNames){
-		for (String name : beanNames){
+
+	private Object findStubService(String[] beanNames) {
+		for (String name : beanNames) {
 			Object candidate = beanFactory.getBean(name);
-			
-			if (candidate.getClass().getAnnotation(Stub.class)!=null){
+
+			if (candidate.getClass().getAnnotation(Stub.class) != null) {
 				return candidate;
 			}
 		}
-		
+
 		return null;
-		
+
 	}
-	
-	
-	
-	private String[] parseMultipleBeanException(NoSuchBeanDefinitionException exception){
+
+	private String[] parseMultipleBeanException(NoSuchBeanDefinitionException exception) {
 		String[] errorMessage = exception.getMessage().split(" ");
 		List<String> splitMessage = new LinkedList<String>();
-		
+
 		List<String> beanNames = new LinkedList<String>();
-		
-		for (String str : errorMessage){
+
+		for (String str : errorMessage) {
 			splitMessage.addAll(Arrays.asList(str.split(",")));
 		}
-		
-		//a bean name is valid if the beanFactory contains it.
-		for (String word : splitMessage){
-			if (beanFactory.containsBean(word)) beanNames.add(word);
+
+		// a bean name is valid if the beanFactory contains it.
+		for (String word : splitMessage) {
+			if (beanFactory.containsBean(word))
+				beanNames.add(word);
 		}
-		
+
 		return beanNames.toArray(new String[0]);
-		
-		
+
 	}
-	
-	
+
+	@Override
+	public Object postProcessBeforeInitialization(Object bean, String beanName) throws BeansException {
+		// NOOP
+		return bean;
+	}
+
+	@Override
+	public void onApplicationEvent(ContextRefreshedEvent event) {
+		// ugly hardcoding because wont work otherwise...
+		Object bean = beanFactory.getBean("squashtest.tm.service.internal.CampaignManagementService");
+		injectServiceReferenceStubs(bean);
+	}
 
 }

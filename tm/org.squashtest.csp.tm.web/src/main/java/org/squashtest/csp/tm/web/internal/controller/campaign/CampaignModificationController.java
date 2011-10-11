@@ -110,7 +110,7 @@ public class CampaignModificationController {
 	public @ResponseBody
 	String updateDescription(@RequestParam("value") String newDescription, @PathVariable long campaignId) {
 
-		campaignModService.updateDescription(campaignId, newDescription);
+		campaignModService.changeDescription(campaignId, newDescription);
 		LOGGER.trace("Campaign " + campaignId + ": updated description to " + newDescription);
 		return newDescription;
 
@@ -192,7 +192,7 @@ public class CampaignModificationController {
 		LOGGER.info("Setting scheduled start date for campaign " + campaignId
 				+ ", new date : " + newScheduledStart);
 
-		campaignModService.setScheduledStartDate(campaignId, newScheduledStart);
+		campaignModService.changeScheduledStartDate(campaignId, newScheduledStart);
 
 		return toReturn;
 
@@ -209,7 +209,7 @@ public class CampaignModificationController {
 		LOGGER.info("Setting scheduled start date for campaign " + campaignId
 				+ ", new date : " + newScheduledEnd);
 
-		campaignModService.setScheduledEndDate(campaignId, newScheduledEnd);
+		campaignModService.changeScheduledEndDate(campaignId, newScheduledEnd);
 
 		return toReturn;
 
@@ -228,7 +228,7 @@ public class CampaignModificationController {
 		LOGGER.info("Setting scheduled start date for campaign " + campaignId
 				+ ", new date : " + newActualStart);
 
-		campaignModService.setActualStartDate(campaignId, newActualStart);
+		campaignModService.changeActualStartDate(campaignId, newActualStart);
 
 		return toReturn;
 
@@ -245,7 +245,7 @@ public class CampaignModificationController {
 		LOGGER.info("Setting scheduled start date for campaign " + campaignId
 				+ ", new date : " + newActualEnd);
 
-		campaignModService.setActualEndDate(campaignId, newActualEnd);
+		campaignModService.changeActualEndDate(campaignId, newActualEnd);
 
 		return toReturn;
 
@@ -259,7 +259,7 @@ public class CampaignModificationController {
 		LOGGER.info("Autosetting actual start date for campaign " + campaignId
 				+ ", new value " + auto.toString());
 
-		campaignModService.setActualStartAuto(campaignId, auto);
+		campaignModService.changeActualStartAuto(campaignId, auto);
 		Campaign campaign = campaignModService.findById(campaignId);
 
 		String toreturn = dateToStr(campaign.getActualStartDate());
@@ -274,7 +274,7 @@ public class CampaignModificationController {
 		LOGGER.info("CampaignModificationController : autosetting actual end date for campaign " + campaignId
 				+ ", new value " + auto.toString());
 
-		campaignModService.setActualEndAuto(campaignId, auto);
+		campaignModService.changeActualEndAuto(campaignId, auto);
 		Campaign campaign = campaignModService.findById(campaignId);
 
 		String toreturn = dateToStr(campaign.getActualEndDate());

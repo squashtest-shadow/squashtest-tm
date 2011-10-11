@@ -21,18 +21,22 @@
         along with this software.  If not, see <http://www.gnu.org/licenses/>.
 
 -->
-<beans xmlns="http://www.springframework.org/schema/beans" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
-	xmlns:util="http://www.springframework.org/schema/util" xmlns:security="http://www.springframework.org/schema/security"
+<beans xmlns="http://www.springframework.org/schema/beans"
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:util="http://www.springframework.org/schema/util"
+	xmlns:security="http://www.springframework.org/schema/security"
 	xsi:schemaLocation="http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans-3.0.xsd
 		http://www.springframework.org/schema/util http://www.springframework.org/schema/util/spring-util-3.0.xsd
 		http://www.springframework.org/schema/security http://www.springframework.org/schema/security/spring-security-3.0.xsd">
 
-	<security:global-method-security secured-annotations="enabled" pre-post-annotations="enabled"
-		access-decision-manager-ref="squashtest.core.security.AclDecisionManager" order="2">
+	<security:global-method-security
+		secured-annotations="enabled" pre-post-annotations="enabled"
+		access-decision-manager-ref="squashtest.core.security.AclDecisionManager"
+		order="2">
 		<security:expression-handler ref="expressionHandler" />
 	</security:global-method-security>
 
-	<bean class="org.springframework.security.access.vote.AffirmativeBased" id="squashtest.core.security.AclDecisionManager">
+	<bean class="org.springframework.security.access.vote.AffirmativeBased"
+		id="squashtest.core.security.AclDecisionManager">
 		<property name="decisionVoters">
 			<list>
 				<ref bean="preInvocationAuthorizationAdviceVoter" />
@@ -40,20 +44,39 @@
 		</property>
 		<property name="allowIfAllAbstainDecisions" value="true" />
 	</bean>
-	
-	<bean class="org.springframework.security.access.prepost.PreInvocationAuthorizationAdviceVoter"
-			id="preInvocationAuthorizationAdviceVoter">	
-	 	<constructor-arg><ref bean="preInvocationAdvice"/></constructor-arg>		  
-	</bean>
-	
-	
-	<bean class="org.springframework.security.access.expression.method.ExpressionBasedPreInvocationAdvice"
-	id="preInvocationAdvice">
-		<property name="expressionHandler" ref="expressionHandler"/>
+
+	<bean
+		class="org.springframework.security.access.prepost.PreInvocationAuthorizationAdviceVoter"
+		id="preInvocationAuthorizationAdviceVoter">
+		<constructor-arg>
+			<ref bean="preInvocationAdvice" />
+		</constructor-arg>
 	</bean>
 
-	<bean id="expressionHandler" class="org.springframework.security.access.expression.method.DefaultMethodSecurityExpressionHandler">
+
+	<bean
+		class="org.springframework.security.access.expression.method.ExpressionBasedPreInvocationAdvice"
+		id="preInvocationAdvice">
+		<property name="expressionHandler" ref="expressionHandler" />
+	</bean>
+
+	<bean id="expressionHandler"
+		class="org.springframework.security.access.expression.method.DefaultMethodSecurityExpressionHandler">
 		<property name="permissionEvaluator" ref="squashtest.core.security.PermissionEvaluator" />
+		<property name="parameterNameDiscoverer">
+			<!-- We use 2 param name discovery strategies : the standard one and a "arg0, arg1" fallback -->
+			<bean
+				class="org.squashtest.csp.core.infrastructure.spring.CompositeDelegatingParameterNameDiscoverer">
+				<constructor-arg>
+					<list>
+						<bean
+							class="org.springframework.core.LocalVariableTableParameterNameDiscoverer" />
+						<bean
+							class="org.squashtest.csp.core.infrastructure.spring.ArgumentPositionParameterNameDiscoverer" />
+					</list>
+				</constructor-arg>
+			</bean>
+		</property>
 	</bean>
 
 </beans>

@@ -21,36 +21,38 @@
 package org.squashtest.csp.tm.service;
 
 import java.util.Date;
-import java.util.List;
 
-import org.squashtest.csp.tm.domain.campaign.Campaign;
-import org.squashtest.csp.tm.domain.campaign.CampaignTestPlanItem;
-import org.squashtest.csp.tm.infrastructure.filter.CollectionSorting;
-import org.squashtest.csp.tm.infrastructure.filter.FilteredCollectionHolder;
+import org.springframework.security.access.prepost.PreAuthorize;
+import org.springframework.transaction.annotation.Transactional;
 
-public interface CampaignModificationService {
+@Transactional
+public interface CampaignModificationService extends CustomCampaignModificationService {
 
-	Campaign findById(long campaignId);
+	@PreAuthorize("hasPermission(#arg0, 'org.squashtest.csp.tm.domain.campaign.Campaign' ,'WRITE') "
+			+ "or hasRole('ROLE_ADMIN')")
+	void changeDescription(long campaignId, String newDescription);
 
-	void updateDescription(long campaignId, String newDescription);
+	@PreAuthorize("hasPermission(#arg0, 'org.squashtest.csp.tm.domain.campaign.Campaign' ,'WRITE') "
+			+ "or hasRole('ROLE_ADMIN')")
+	void changeScheduledStartDate(long campaignId, Date scheduledStart);
 
-	void rename(long campaignId, String newName);
+	@PreAuthorize("hasPermission(#arg0, 'org.squashtest.csp.tm.domain.campaign.Campaign' ,'WRITE') "
+			+ "or hasRole('ROLE_ADMIN')")
+	void changeScheduledEndDate(long campaignId, Date scheduledEnd);
 
-	void setScheduledStartDate(long campaignId, Date scheduledStart);
+	@PreAuthorize("hasPermission(#arg0, 'org.squashtest.csp.tm.domain.campaign.Campaign' ,'WRITE') "
+			+ "or hasRole('ROLE_ADMIN')")
+	void changeActualStartDate(long campaignId, Date actualStart);
 
-	void setScheduledEndDate(long campaignId, Date scheduledEnd);
+	@PreAuthorize("hasPermission(#arg0, 'org.squashtest.csp.tm.domain.campaign.Campaign' ,'WRITE') "
+			+ "or hasRole('ROLE_ADMIN')")
+	void changeActualEndDate(long campaignId, Date actualEnd);
 
-	void setActualStartDate(long campaignId, Date actualStart);
+	@PreAuthorize("hasPermission(#arg0, 'org.squashtest.csp.tm.domain.campaign.Campaign' ,'WRITE') "
+			+ "or hasRole('ROLE_ADMIN')")
+	void changeActualStartAuto(long campaignId, boolean isAuto);
 
-	void setActualEndDate(long campaignId, Date actualEnd);
-
-	void setActualStartAuto(long campaignId, boolean isAuto);
-
-	void setActualEndAuto(long campaignId, boolean isAuto);
-
-	FilteredCollectionHolder<List<CampaignTestPlanItem>> findTestPlanByCampaignId(
-			long campaignId, CollectionSorting filter);
-
-	/**** Todo : CampaignIterations, User and Attachment lists ***/
-
+	@PreAuthorize("hasPermission(#arg0, 'org.squashtest.csp.tm.domain.campaign.Campaign' ,'WRITE') "
+			+ "or hasRole('ROLE_ADMIN')")
+	void changeActualEndAuto(long campaignId, boolean isAuto);
 }

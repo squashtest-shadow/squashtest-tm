@@ -35,6 +35,7 @@ import java.util.Iterator;
 import javax.inject.Inject;
 
 
+import org.springframework.transaction.annotation.Transactional;
 import org.squashtest.csp.tm.domain.DuplicateNameException;
 import org.squashtest.csp.tm.domain.campaign.Campaign;
 import org.squashtest.csp.tm.domain.campaign.CampaignFolder;
@@ -47,7 +48,7 @@ import org.squashtest.csp.tm.service.IterationModificationService;
 
 
 
-
+@Transactional
 class CampaignModificationServiceIT extends HibernateServiceSpecification {
 	@Inject
 	private CampaignModificationService service
@@ -140,7 +141,7 @@ class CampaignModificationServiceIT extends HibernateServiceSpecification {
 		Date myDate = calendar.getTime();
 
 		when :
-		service.setScheduledStartDate(campId, myDate)
+		service.changeScheduledStartDate(campId, myDate)
 		def obj=service.findById(campId)
 
 		then :
@@ -154,7 +155,7 @@ class CampaignModificationServiceIT extends HibernateServiceSpecification {
 		Date myDate = calendar.getTime();
 
 		when :
-		service.setScheduledEndDate(campId, myDate)
+		service.changeScheduledEndDate(campId, myDate)
 		def obj=service.findById(campId)
 
 		then :
@@ -168,7 +169,7 @@ class CampaignModificationServiceIT extends HibernateServiceSpecification {
 		Date myDate = calendar.getTime();
 
 		when :
-		service.setActualStartDate(campId, myDate)
+		service.changeActualStartDate(campId, myDate)
 		def obj=service.findById(campId)
 
 		then :
@@ -182,7 +183,7 @@ class CampaignModificationServiceIT extends HibernateServiceSpecification {
 		Date myDate = calendar.getTime();
 
 		when :
-		service.setActualEndDate(campId, myDate)
+		service.changeActualEndDate(campId, myDate)
 		def obj=service.findById(campId)
 
 		then :

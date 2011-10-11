@@ -28,25 +28,16 @@
 	  	http://www.springframework.org/schema/context http://www.springframework.org/schema/context/spring-context-3.0.xsd
 	">
 	
-
+	<!--  infrastructure to mock Spring DM -->
+	<bean class="org.squashtest.it.infrastructure.AopSquashProxyUtil" />
+	<bean class="org.squashtest.it.infrastructure.StubBeanPostProcessor" lazy-init="false" />
 
 	<context:component-scan  base-package="org.squashtest.csp.tm.internal" />
 	<context:component-scan base-package="org.squashtest.csp.core.security" />
 
-	
-	
-	<!--  infrastructure to mock Spring DM -->
-	<bean class="org.squashtest.it.infrastructure.AopSquashProxyUtil" />
-	<bean class="org.squashtest.it.infrastructure.StubBeanPostProcessor" />
-
-		
 	<!--  stubs  -->
-		
 	<bean id="bugTrackerService" class="org.squashtest.csp.core.bugtracker.service.StubBugTrackerService" primary="true"/>
-
 	<bean class="org.squashtest.csp.core.service.security.StubUserContextService" primary="true"/> 
-
 	<bean class="org.squashtest.csp.core.service.security.StubPermissionEvaluationService" primary="true"/>
-
 	<bean class="org.squashtest.csp.core.service.security.StubObjectIdentityService" primary="true"/>
 </beans>

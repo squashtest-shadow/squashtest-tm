@@ -20,6 +20,8 @@
  */
 package org.squashtest.csp.tm.internal.service;
 
+import javax.annotation.PostConstruct;
+
 import org.springframework.osgi.extensions.annotation.ServiceReference;
 import org.springframework.security.access.AccessDeniedException;
 import org.springframework.security.access.prepost.PostAuthorize;
@@ -190,7 +192,6 @@ public class GenericNodeManagementService<MANAGED extends LibraryNode, NODE exte
 		public Object getObject() {
 			return domainObject;
 		}
-
 	}
 
 	private void checkPermission(SecurityCheckableObject... checkableObjects) {
@@ -201,5 +202,4 @@ public class GenericNodeManagementService<MANAGED extends LibraryNode, NODE exte
 			}
 		}
 	}
-
 }

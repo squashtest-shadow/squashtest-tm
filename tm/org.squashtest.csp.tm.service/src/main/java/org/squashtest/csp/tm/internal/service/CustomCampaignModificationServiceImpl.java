@@ -20,7 +20,6 @@
  */
 package org.squashtest.csp.tm.internal.service;
 
-import java.util.Date;
 import java.util.List;
 
 import javax.inject.Inject;
@@ -37,11 +36,11 @@ import org.squashtest.csp.tm.domain.campaign.CampaignTestPlanItem;
 import org.squashtest.csp.tm.infrastructure.filter.CollectionSorting;
 import org.squashtest.csp.tm.infrastructure.filter.FilteredCollectionHolder;
 import org.squashtest.csp.tm.internal.repository.CampaignDao;
-import org.squashtest.csp.tm.service.CampaignModificationService;
+import org.squashtest.csp.tm.service.CustomCampaignModificationService;
 
-@Service("squashtest.tm.service.CampaignModificationService")
+@Service("CustomCampaignModificationService")
 @Transactional
-public class CampaignModificationServiceImpl implements CampaignModificationService {
+public class CustomCampaignModificationServiceImpl implements CustomCampaignModificationService {
 
 	@Inject
 	private CampaignDao campaignDao;
@@ -50,16 +49,8 @@ public class CampaignModificationServiceImpl implements CampaignModificationServ
 	@Named("squashtest.tm.service.internal.CampaignManagementService")
 	private NodeManagementService<Campaign, CampaignLibraryNode, CampaignFolder> campaignManagementService;
 
-	public CampaignModificationServiceImpl() {
+	public CustomCampaignModificationServiceImpl() {
 		super();
-	}
-
-	@Override
-	@PreAuthorize("hasPermission(#campaignId, 'org.squashtest.csp.tm.domain.campaign.Campaign' ,'WRITE') " +
-			"or hasRole('ROLE_ADMIN')")
-	public void updateDescription(long campaignId, String newDescription) {
-		Campaign campaign = campaignDao.findById(campaignId);
-		campaign.setDescription(newDescription);
 	}
 
 	@Override
@@ -73,54 +64,6 @@ public class CampaignModificationServiceImpl implements CampaignModificationServ
 			"or hasRole('ROLE_ADMIN')")
 	public void rename(long campaignId, String newName) {
 		campaignManagementService.renameNode(campaignId, newName);
-	}
-
-	@Override
-	@PreAuthorize("hasPermission(#campaignId, 'org.squashtest.csp.tm.domain.campaign.Campaign' ,'WRITE') " +
-			"or hasRole('ROLE_ADMIN')")
-	public void setScheduledStartDate(long campaignId, Date scheduledStart) {
-		Campaign campaign = campaignDao.findById(campaignId);
-		campaign.setScheduledStartDate(scheduledStart);
-	}
-
-	@Override
-	@PreAuthorize("hasPermission(#campaignId, 'org.squashtest.csp.tm.domain.campaign.Campaign' ,'WRITE') " +
-			"or hasRole('ROLE_ADMIN')")
-	public void setScheduledEndDate(long campaignId, Date scheduledEnd) {
-		Campaign campaign = campaignDao.findById(campaignId);
-		campaign.setScheduledEndDate(scheduledEnd);
-	}
-
-	@Override
-	@PreAuthorize("hasPermission(#campaignId, 'org.squashtest.csp.tm.domain.campaign.Campaign' ,'WRITE') " +
-		"or hasRole('ROLE_ADMIN')")
-	public void setActualStartDate(long campaignId, Date actualStart) {
-		Campaign campaign = campaignDao.findById(campaignId);
-		campaign.setActualStartDate(actualStart);
-	}
-
-	@Override
-	@PreAuthorize("hasPermission(#campaignId, 'org.squashtest.csp.tm.domain.campaign.Campaign' ,'WRITE') " +
-		"or hasRole('ROLE_ADMIN')")
-	public void setActualEndDate(long campaignId, Date actualEnd) {
-		Campaign campaign = campaignDao.findById(campaignId);
-		campaign.setActualEndDate(actualEnd);
-	}
-
-	@Override
-	@PreAuthorize("hasPermission(#campaignId, 'org.squashtest.csp.tm.domain.campaign.Campaign' ,'WRITE') " +
-			"or hasRole('ROLE_ADMIN')")
-	public void setActualStartAuto(long campaignId, boolean isAuto) {
-		Campaign campaign = campaignDao.findById(campaignId);
-		campaign.setActualStartAuto(isAuto);
-	}
-
-	@Override
-	@PreAuthorize("hasPermission(#campaignId, 'org.squashtest.csp.tm.domain.campaign.Campaign' ,'WRITE') " +
-		"or hasRole('ROLE_ADMIN')")
-	public void setActualEndAuto(long campaignId, boolean isAuto) {
-		Campaign campaign = campaignDao.findById(campaignId);
-		campaign.setActualEndAuto(isAuto);
 	}
 
 	@Override

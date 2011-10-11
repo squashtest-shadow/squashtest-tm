@@ -7,11 +7,9 @@
 		<version>1.1.0.RELEASE-SNAPSHOT</version>
 	</parent>
 
-	<groupId>org.squashtest.csp</groupId>
 	<artifactId>squashtest-integration-tests</artifactId>
-	<version>1.1.0.RELEASE-SNAPSHOT</version>
 	<packaging>pom</packaging>
-	<name>Squashtest CSP - Integration tests module</name>
+	<name>Squashtest TM - Integration tests module</name>
 
 	<properties>
 		<!-- On Jenkins server these relative paths are not interpreted in the same way by liquibase and the datasource. These 
