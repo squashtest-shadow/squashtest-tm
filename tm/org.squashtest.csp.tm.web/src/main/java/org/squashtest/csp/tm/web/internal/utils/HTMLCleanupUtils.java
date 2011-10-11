@@ -20,8 +20,11 @@
  */
 package org.squashtest.csp.tm.web.internal.utils;
 
+import net.htmlparser.jericho.HTMLElementName;
+import net.htmlparser.jericho.OutputDocument;
 import net.htmlparser.jericho.Segment;
 import net.htmlparser.jericho.Source;
+import net.htmlparser.jericho.Tag;
 import net.htmlparser.jericho.TextExtractor;
 
 public final class HTMLCleanupUtils {
@@ -35,6 +38,21 @@ public final class HTMLCleanupUtils {
 		TextExtractor extractor = new TextExtractor(new Segment(new Source(html), 0, html.length()));
 	
 		return extractor.toString();
+	}
+	
+	public static String stripJavascript(String html){
+
+		Source source = new Source(html);
+		OutputDocument output = new OutputDocument(source);
+		
+		for (Tag tag : source.getAllStartTags()){
+			if (tag.getName().equals(HTMLElementName.SCRIPT)){
+				output.remove(tag.getElement());
+			}
+		}
+		
+		return output.toString();
+
 	}
 	
 }
