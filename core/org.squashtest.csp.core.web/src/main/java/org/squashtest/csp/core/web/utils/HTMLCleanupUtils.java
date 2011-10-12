@@ -18,7 +18,7 @@
  *     You should have received a copy of the GNU Lesser General Public License
  *     along with this software.  If not, see <http://www.gnu.org/licenses/>.
  */
-package org.squashtest.csp.tm.web.internal.utils;
+package org.squashtest.csp.core.web.utils;
 
 import net.htmlparser.jericho.HTMLElementName;
 import net.htmlparser.jericho.OutputDocument;
@@ -27,12 +27,15 @@ import net.htmlparser.jericho.Source;
 import net.htmlparser.jericho.Tag;
 import net.htmlparser.jericho.TextExtractor;
 
+import org.springframework.web.util.HtmlUtils;
+
 public final class HTMLCleanupUtils {
 	
 	private HTMLCleanupUtils(){
 		
 	}
 
+	//todo : better parsing / formatting for a better looking plain text ?  
 	public static String htmlToText(String html){
 		
 		TextExtractor extractor = new TextExtractor(new Segment(new Source(html), 0, html.length()));
@@ -40,8 +43,15 @@ public final class HTMLCleanupUtils {
 		return extractor.toString();
 	}
 	
+	/* note : Unescape is idempotent when applied on unescaped data. We use that trick to prevent double html encoding*/ 
+	public static String forceHtmlEscape(String html){
+		String unescaped = HtmlUtils.htmlUnescape(html);	
+		return HtmlUtils.htmlEscape(unescaped);
+	}
+	
+	/* naive implementation, needs numerous improvements */
 	public static String stripJavascript(String html){
-
+		
 		Source source = new Source(html);
 		OutputDocument output = new OutputDocument(source);
 		
@@ -52,7 +62,6 @@ public final class HTMLCleanupUtils {
 		}
 		
 		return output.toString();
-
 	}
-	
+
 }

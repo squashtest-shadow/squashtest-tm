@@ -83,7 +83,10 @@
 		
 		<access-denied-handler ref="accessDeniedHandler" />
 		
+		<custom-filter ref="htmlSanitizationFilter" position="LAST"/>
+		
 	</http>
+	
 	
 	<beans:bean id="exceptionTranslationFilter" class="org.springframework.security.web.access.ExceptionTranslationFilter">
 	  <beans:property name="authenticationEntryPoint" ref="authenticationProcessingFilterEntryPoint"/>
@@ -94,7 +97,7 @@
 		<beans:property name="justUseSavedRequestOnGet" value="true"/>
 		<beans:property name="loginFormUrl" value="/login.jsp" />
 	</beans:bean>
-	
+
 	
 	<beans:bean id="accessDeniedHandler" class="org.squashtest.csp.core.internal.security.web.authentication.MyAccessDeniedHandler" >
 	  <beans:property name="errorPage" value="/squash/accessDenied"/>
@@ -105,7 +108,7 @@
 	 	<beans:property name="forceHttps" value="${authentication.application.forcehttps}" />
 	</beans:bean>
 	
-	
+	<beans:bean id="htmlSanitizationFilter" class="org.squashtest.csp.core.web.internal.filter.HtmlSanitizationFilter"/>	
 	
 	<authentication-manager
 		alias="squashtest.core.security.AuthenticationManager">

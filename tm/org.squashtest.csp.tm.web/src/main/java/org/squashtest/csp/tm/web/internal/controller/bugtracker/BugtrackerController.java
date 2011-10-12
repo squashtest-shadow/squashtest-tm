@@ -52,6 +52,7 @@ import org.squashtest.csp.core.bugtracker.domain.Priority;
 import org.squashtest.csp.core.bugtracker.domain.User;
 import org.squashtest.csp.core.bugtracker.domain.Version;
 import org.squashtest.csp.core.bugtracker.spi.BugTrackerInterfaceDescriptor;
+import org.squashtest.csp.core.web.utils.HTMLCleanupUtils;
 import org.squashtest.csp.tm.domain.bugtracker.BugTrackerStatus;
 import org.squashtest.csp.tm.domain.bugtracker.Bugged;
 import org.squashtest.csp.tm.domain.bugtracker.IssueOwnership;
@@ -70,7 +71,6 @@ import org.squashtest.csp.tm.web.internal.model.datatable.DataTableModel;
 import org.squashtest.csp.tm.web.internal.model.datatable.DataTableModelHelper;
 import org.squashtest.csp.tm.web.internal.model.jquery.IssueModel;
 import org.squashtest.csp.tm.web.internal.model.jquery.JsonSimpleData;
-import org.squashtest.csp.tm.web.internal.utils.HTMLCleanupUtils;
 
 @Controller
 @RequestMapping("/bugtracker")

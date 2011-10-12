@@ -39,6 +39,14 @@
 			<artifactId>org.squashtest.csp.core.bugtracker</artifactId>
 			<version>${project.version}</version>
 		</dependency>
+		
+		<dependency>
+			<groupId>${project.groupId}</groupId>
+			<artifactId>org.squashtest.csp.core.web</artifactId>
+			<version>${project.version}</version>
+			<classifier>classes</classifier>
+			<scope>provided</scope>
+		</dependency>		
 
 		<dependency>
 			<groupId>${project.groupId}</groupId>
@@ -47,6 +55,7 @@
 			<type>pom</type>
 			<scope>test</scope>
 		</dependency>
+		
 		<dependency>
 			<groupId>${project.groupId}</groupId>
 			<artifactId>org.squashtest.csp.tools.unittest</artifactId>
@@ -297,7 +306,8 @@
 							net.sf.jasperreports.engine.export,
 							<!-- some dependency needs the commons.lang version 2.5.0, however it is already used and exported as 2.4 in other 
 								bundles -->
-							org.apache.commons.lang;version="${commons.lang.version}"
+							org.apache.commons.lang;version="${commons.lang.version}",
+							org.squashtest.csp.core.web.utils; version="${project.version}"
 						</Import-Package>
 					</instructions>
 					<supportedProjectTypes>
