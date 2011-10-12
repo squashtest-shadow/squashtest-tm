@@ -936,9 +936,9 @@ div#user-account-password-panel > div > * {
 
 
 /*---  Here we define manually drag and drop icons because we use themeroller plugin instead of theme plugin  ----*/
-#vakata-dragged ins {
+/*#vakata-dragged ins {
 	background: transparent !important;
-}
+}*/
 
 #vakata-dragged .jstree-ok {
 	background: url("../images/Button_Exec_Passed.png") 0px 0px no-repeat
@@ -952,6 +952,10 @@ div#user-account-password-panel > div > * {
 
 #jstree-marker {
 	background: url("../images/bureau.gif") !important;
+}
+
+a.jstree-loading .jstree-icon{
+	background : url("../images/ajax-loader-16x16.gif") !important;
 }
 
 
