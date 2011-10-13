@@ -52,5 +52,7 @@ public interface Folder<NODE extends LibraryNode> extends LibraryNode {
 	void removeContent(NODE contentToRemove) throws NullArgumentException;
 
 	boolean isContentNameAvailable(String name);
+	
+	boolean hasContent();
 
 }

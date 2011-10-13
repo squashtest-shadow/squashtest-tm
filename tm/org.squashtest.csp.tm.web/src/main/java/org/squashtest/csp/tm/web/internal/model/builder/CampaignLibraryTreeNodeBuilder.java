@@ -53,13 +53,16 @@ CampaignLibraryNodeVisitor {
 	@Override
 	public void visit(CampaignFolder folder) {
 		addFolderAttributes("campaign-folders");
+		State state = (folder.hasContent() ? State.closed : State.leaf);
+		getBuiltNode().setState(state);
 	}
 
 	@Override
 	public void visit(Campaign campaign) {
 		treeNode.addAttr("rel", "file");
 		treeNode.addAttr("resType", "campaigns");
-		treeNode.setState(State.closed);
+		State state = (campaign.hasIterations() ? State.closed : State.leaf);
+		getBuiltNode().setState(state);
 	}
 
 }

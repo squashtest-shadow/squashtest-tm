@@ -105,4 +105,8 @@ public class RequirementLibrary extends GenericLibrary<RequirementLibraryNode>
 	}
 	
 
+	@Override
+	public boolean hasContent() {
+		return (rootContent.size()>0);
+	}
 }

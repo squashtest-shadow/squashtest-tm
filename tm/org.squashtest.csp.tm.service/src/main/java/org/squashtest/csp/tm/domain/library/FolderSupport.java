@@ -100,5 +100,9 @@ public class FolderSupport<NODE extends LibraryNode> {
 		}
 		return thisProject == null || !thisProject.equals(thatProject);
 	}
+	
+	public boolean hasContent(){
+		return (folder.getContent().size()>0);
+	}
 
 }

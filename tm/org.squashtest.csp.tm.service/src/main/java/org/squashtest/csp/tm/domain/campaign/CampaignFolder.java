@@ -105,4 +105,9 @@ public class CampaignFolder extends CampaignLibraryNode implements Folder<Campai
 		folderSupport.notifyAssociatedProjectWasSet(former, project);
 
 	}
+
+	@Override
+	public boolean hasContent() {
+		return folderSupport.hasContent();
+	}
 }

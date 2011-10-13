@@ -47,5 +47,7 @@ public interface Library<NODE extends LibraryNode> extends ProjectResource, Self
 	boolean isContentNameAvailable(String name);
 
 	void removeRootContent(NODE node);
+	
+	boolean hasContent();
 
 }

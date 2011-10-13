@@ -25,7 +25,6 @@ import org.squashtest.csp.tools.unittest.reflection.ReflectionCategory;
 import org.squashtest.csp.tm.domain.requirement.Requirement;
 import org.squashtest.csp.tm.domain.requirement.RequirementFolder;
 import org.squashtest.csp.tm.domain.requirement.RequirementLibraryNode;
-import org.squashtest.csp.tm.internal.service.NodeManagementService;
 import org.squashtest.csp.tm.web.internal.model.jstree.JsTreeNode.State;
 
 import spock.lang.Specification;
@@ -50,7 +49,7 @@ class RequirementLibraryTreeNodeBuilderTest extends Specification {
 		res.attr['resId'] == "${node.id}"
 		res.attr['rel'] == "folder"
 		res.attr['resType'] == "requirement-folders"
-		res.state == State.closed
+		res.state == State.leaf
 	}
 	def "should build a Requirement node"() {
 		given:
@@ -70,4 +69,32 @@ class RequirementLibraryTreeNodeBuilderTest extends Specification {
 		res.attr['rel'] == "file"
 		res.state == State.leaf
 	}
+	
+	def "should build a folder with leaf state"(){
+		given :
+			RequirementFolder node = new RequirementFolder(name:"folder")
+			
+		when :
+			def res = builder.setNode(node).build()
+		
+		then :
+			res.state == State.leaf
+		
+	}
+	
+	def "should build a folder with closed state"(){
+		given :
+			RequirementFolder node = new RequirementFolder(name:"folder")
+			node.addContent(new RequirementFolder());
+		
+		when :
+			def res = builder.setNode(node).build()
+		
+		then :
+			res.state == State.closed
+		
+	}
+	
+	
+	
 }

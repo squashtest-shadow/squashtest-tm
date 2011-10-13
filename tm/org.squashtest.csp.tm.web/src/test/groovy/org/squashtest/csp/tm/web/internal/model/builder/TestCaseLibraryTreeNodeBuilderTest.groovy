@@ -68,6 +68,32 @@ class TestCaseLibraryTreeNodeBuilderTest extends Specification {
 		res.attr['resId'] == "${node.id}"
 		res.attr['rel'] == "folder"
 		res.attr['resType'] == "test-case-folders"
-		res.state == State.closed
+		res.state == State.leaf
 	}
+	
+	def "should build a folder with leaf state"(){
+		given :
+			TestCaseFolder node = new TestCaseFolder(name:"folder")
+			
+		when :
+			def res = builder.setNode(node).build()
+		
+		then :
+			res.state == State.leaf
+		
+	}
+	
+	def "should build a folder with closed state"(){
+		given :
+			TestCaseFolder node = new TestCaseFolder(name:"folder")
+			node.addContent(new TestCaseFolder());
+		
+		when :
+			def res = builder.setNode(node).build()
+		
+		then :
+			res.state == State.closed
+		
+	}
+	
 }

@@ -100,7 +100,11 @@ public class TestCaseLibrary extends GenericLibrary<TestCaseLibraryNode> impleme
 	public String getClassName() {
 		return TestCaseLibrary.CLASS_NAME;
 	}
-	
+
+	@Override
+	public boolean hasContent() {
+		return (rootContent.size()>0);
+	}
 	
 
 }

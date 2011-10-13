@@ -30,6 +30,7 @@ import org.squashtest.csp.tm.domain.testcase.TestCaseFolder;
 import org.squashtest.csp.tm.domain.testcase.TestCaseLibraryNode;
 import org.squashtest.csp.tm.domain.testcase.TestCaseLibraryNodeVisitor;
 import org.squashtest.csp.tm.web.internal.model.jstree.JsTreeNode;
+import org.squashtest.csp.tm.web.internal.model.jstree.JsTreeNode.State;
 
 /**
  * Builds a {@link JsTreeNode} from a {@link TestCaseLibraryNode}. Can be reused in the same thread.
@@ -54,6 +55,8 @@ public class TestCaseLibraryTreeNodeBuilder extends LibraryTreeNodeBuilder<TestC
 	@Override
 	public void visit(TestCaseFolder visited) {
 		addFolderAttributes("test-case-folders");
+		State state = (visited.hasContent() ? State.closed : State.leaf);
+		getBuiltNode().setState(state);
 	}
 
 	@Override

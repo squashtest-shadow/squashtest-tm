@@ -158,6 +158,10 @@ class DummyFolder  extends DummyNode  implements Folder<DummyNode>{
 	@Override
 	DummyFolder createCopy(){
 	}
+	@Override
+	boolean hasContent(){
+		return true;		
+	}
 }
 class DummyNode implements LibraryNode {
 	Long getId() {
@@ -213,4 +217,10 @@ class DummyLibrary implements Library<DummyNode> {
 	String getClassName(){
 		return "org.squashtest.csp.tm.web.internal.controller.generic.DummyLibrary";
 	}
+	
+	@Override
+	boolean hasContent(){
+		return true;	
+	}
 }
+

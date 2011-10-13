@@ -20,6 +20,7 @@
  */
 package org.squashtest.csp.tm.web.internal.model.builder
 
+
 import org.squashtest.csp.core.service.security.PermissionEvaluationService;
 import org.squashtest.csp.tools.unittest.reflection.ReflectionCategory;
 import org.squashtest.csp.tm.domain.campaign.Campaign;
@@ -47,7 +48,7 @@ class CampaignLibraryTreeNodeBuilderTest extends Specification {
 		res.attr['resId'] == "${node.id}"
 		res.attr['rel'] == "folder"
 		res.attr['resType'] == "campaign-folders"
-		res.state == State.closed
+		res.state == State.leaf
 	}
 	def "should build a Campaign node"() {
 		given:
@@ -65,6 +66,32 @@ class CampaignLibraryTreeNodeBuilderTest extends Specification {
 		res.attr['resId'] == "${node.id}"
 		res.attr['resType'] == "campaigns"
 		res.attr['rel'] == "file"
-		res.state == State.closed
+		res.state == State.leaf
 	}
+	
+	def "should build a folder with leaf state"(){
+		given :
+			CampaignFolder node = new CampaignFolder(name:"folder") 
+			
+		when :
+			def res = builder.setNode(node).build()
+		
+		then :
+			res.state == State.leaf
+		
+	}
+	
+	def "should build a folder with closed state"(){
+		given :
+			CampaignFolder node = new CampaignFolder(name:"folder") 
+			node.addContent(new CampaignFolder());
+		
+		when :
+			def res = builder.setNode(node).build()
+		
+		then :
+			res.state == State.closed
+		
+	}
+	
 }

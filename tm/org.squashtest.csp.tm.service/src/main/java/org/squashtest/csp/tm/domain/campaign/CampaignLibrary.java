@@ -105,4 +105,9 @@ public class CampaignLibrary extends GenericLibrary<CampaignLibraryNode> impleme
 		return CampaignLibrary.CLASS_NAME;
 	}
 
+	@Override
+	public boolean hasContent() {
+		return (rootContent.size()>0);
+	}
+
 }

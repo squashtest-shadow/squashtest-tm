@@ -30,6 +30,7 @@ import org.squashtest.csp.tm.domain.requirement.RequirementFolder;
 import org.squashtest.csp.tm.domain.requirement.RequirementLibraryNode;
 import org.squashtest.csp.tm.domain.requirement.RequirementLibraryNodeVisitor;
 import org.squashtest.csp.tm.web.internal.model.jstree.JsTreeNode;
+import org.squashtest.csp.tm.web.internal.model.jstree.JsTreeNode.State;
 
 @Component
 @Scope("prototype")
@@ -50,6 +51,8 @@ public class RequirementLibraryTreeNodeBuilder extends LibraryTreeNodeBuilder<Re
 	@Override
 	public void visit(RequirementFolder folder) {
 		addFolderAttributes("requirement-folders");
+		State state = (folder.hasContent() ? State.closed : State.leaf);
+		getBuiltNode().setState(state);
 
 	}
 

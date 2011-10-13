@@ -98,4 +98,9 @@ public class RequirementFolder extends RequirementLibraryNode implements Folder<
 		folderSupport.notifyAssociatedProjectWasSet(former, project);
 
 	}
+	
+	@Override
+	public boolean hasContent() {
+		return folderSupport.hasContent();
+	}
 }

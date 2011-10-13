@@ -339,4 +339,8 @@ public class Campaign extends CampaignLibraryNode implements Attachable {
 	public boolean testPlanContains(@NotNull TestCase tc) {
 		return (findTestPlanItem(tc) != null);
 	}
+	
+	public boolean hasIterations(){
+		return (iterations.size()>0);
+	}
 }

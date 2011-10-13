@@ -121,5 +121,10 @@ public class TestCaseFolder extends TestCaseLibraryNode implements Folder<TestCa
 	public String getClassName() {
 		return TestCaseFolder.CLASS_NAME;
 	}
+	
+	@Override
+	public boolean hasContent() {
+		return folderSupport.hasContent();
+	}
 
 }
