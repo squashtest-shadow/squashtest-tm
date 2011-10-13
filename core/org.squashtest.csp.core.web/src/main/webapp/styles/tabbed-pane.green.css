@@ -24,10 +24,11 @@ div#tabbed-pane li.ui-tabs-selected{
     border: 1px solid #ACDD4A;
 }
 
+/*
 div#tree-pane li[rel="drive"] > a{
 	border: 1px solid #2E2E2E;
 }
 
 div#tree-pane li[rel="drive"] > .jstree-clicked  {
  	border: 1px solid #ACDD4A;
- }
+ }*/

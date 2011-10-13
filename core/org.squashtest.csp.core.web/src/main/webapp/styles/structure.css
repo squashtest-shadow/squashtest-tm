@@ -489,92 +489,6 @@ div#search-result .library {
 }
 
 
-/* ------------------------------------------*/
-/* ------>>> Custom jstree themes <<<--------*/
-/* ------------------------------------------*/
-.ui-squashtest-tree-inactive {
-	color: black;
-	background: transparent;
-	border: none;
-}
-
-li[rel] a.ui-state-default {
-	font-weight: bold;
-}
-
-li[rel="drive"] > a {
-	width:88%;
-	background: #2E2E2E;
-	-moz-border-radius: 8px; -webkit-border-radius: 8px; border-radius: 8px;
-	color:white;
-	border: 1px solid #2e2e2e;
-}
-
-li[rel="drive"] > a.filter-enabled {
-	width:88%;
-	background: #2E2E2E;
-	-moz-border-radius: 8px; -webkit-border-radius: 8px; border-radius: 8px;
-	color : #B9121B;
-	border: 1px solid #2e2e2e;
-}
-
-div#tree.jstree-0 li[rel="drive"][editable="false"] > a > .jstree-icon, div#linkable-requirements-tree.jstree-0 li[rel="drive"][editable="false"] > a > .jstree-icon,
-div#linkable-test-cases-tree.jstree-0 li[rel="drive"][editable="false"] > a > .jstree-icon {
-	background-image: url("../images/eye.png");
-}
-
-div#tree.jstree-0 li[rel="drive"][editable="true"] > a > .jstree-icon, div#linkable-requirements-tree.jstree-0 li[rel="drive"][editable="true"] > a > .jstree-icon,
-div#linkable-test-cases-tree.jstree-0 li[rel="drive"][editable="true"] > a > .jstree-icon {
-	background-image: url("../images/pencil.png");
-}
-
-li[rel="file"][editable="false"] a, li[rel="folder"][editable="false"] a, li[rel="resource"][editable="false"] a {
-	color: gray;
-}
-
-li[rel] a {
-	margin-top: 2px;
-}
-
-div#tree-pane li a.ui-state-default, div#tree-pane li a.ui-state-active{
-	 border: none;
-}
-
-div#tree-pane li a.ui-state-default, div#tree-pane li a.ui-state-active{
-	 border: none;
-}
-
-div#tree-pane li a.ui-state-default, div#tree-pane li a.ui-state-active{
-	 border: none;
-}
-
-
-
-/*
-
-.jstree li.jstree-open > ins{	
-	background-image: url("jquery/jstree/d.png");
-	background-position: -72px 0;	
-}
-
-.jstree li.jstree-closed > ins{	
-	background-image: url("jquery/jstree/d.png");
-	background-position: -54px 0;		
-}
-
-
-.jstree li.jstree-leaf{
-	background-image: url("jquery/jstree/d.png");
-	background-repeat: repeat-y;
-	background-position: -90px 0;
-	
-}
-
-.jstree li.jstree-leaf > ins{
-	background-image: url("jquery/jstree/d.png");
-    background-position: -36px 0;		
-}
-*/
 
 /* ------------------------------------------*/
 /* ---------->>> Categoy panel <<<-----------*/
@@ -939,7 +853,7 @@ div#user-account-password-panel > div > * {
 /*#vakata-dragged ins {
 	background: transparent !important;
 }*/
-
+/*
 #vakata-dragged .jstree-ok {
 	background: url("../images/Button_Exec_Passed.png") 0px 0px no-repeat
 		!important;
@@ -957,7 +871,7 @@ div#user-account-password-panel > div > * {
 a.jstree-loading .jstree-icon{
 	background : url("../images/ajax-loader-16x16.gif") !important;
 }
-
+*/
 
 
 .display-table{
@@ -978,16 +892,7 @@ a.jstree-loading .jstree-icon{
 	padding-right : 10px;
 }
 
-/* too bad, that one is not crossplateform */
-/*
-.ellipsis{
-	text-overflow:ellipsis;
-	-o-text-overflow:ellipsis;
-	-ms-text-overflow:ellipsis;
-	-moz-binding:url(assets/xml/ellipsis.xml#ellipsis);
-}
-*/
-	
+
 .smallfonts{
 	font-size:0.8em;	
 }

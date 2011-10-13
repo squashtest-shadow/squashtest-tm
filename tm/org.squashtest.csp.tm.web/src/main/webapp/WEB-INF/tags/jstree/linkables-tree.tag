@@ -43,9 +43,6 @@
 		if (jsondata!=null){
 			initLinkableTree(jsondata);
 		}
-		
-		
-		
 	});
 	</c:if>
 	
@@ -83,7 +80,7 @@
 			toggleEventTargetIfNode(event, $(this));
 		})
 		.jstree({ 
-				"plugins" : ["json_data", "sort", "themeroller", "types", "cookies", "ui"],
+				"plugins" : ["json_data", "sort", "themes", "types", "cookies", "ui", "squash"],
 				"json_data" : { 
 					"data" : jsonData, 
 					"ajax" : {
@@ -126,9 +123,6 @@
 						},
 						"drive" : {
 							"valid_children" : [ "file", "folder" ],
-							"select_node": function(anchor) {
-								<%-- $( '#${ id }' ).jstree('toggle_node', anchor); --%>
-							},
 							"icon" : {
 								"image" : tree_icons.drive_icon
 							}
@@ -136,17 +130,21 @@
 					}
 				},
 				"core" : { 
-					"initially_open" : [ "${ selectedNode.attr['id'] }" ] 
+					"initially_open" : [ "${ selectedNode.attr['id'] }" ], 
+					"animation" : 0
 				}, 
 				"ui": {
 					select_multiple_modifier: "on"
-				}, 
-				"themeroller" : {
-					"item" : "ui-squashtest-tree-inactive",
-					"item_h" : "ui-state-active",
-					"item_a" : "ui-state-default"
+				},				
+				"themes" : {
+					"theme" : "squashtest",
+					"dots" : true,
+					"icons" : true,
+					"url" : "${ pageContext.servletContext.contextPath }/styles/squashtree.css"					
+				},
+				"squash" : {
 					
-				}				
+				}			
 				
 			});
 	};

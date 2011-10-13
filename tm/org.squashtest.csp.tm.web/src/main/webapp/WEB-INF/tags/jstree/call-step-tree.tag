@@ -72,6 +72,7 @@
 	}
 
 	function loadContextualContentIfRequired(node, selResourceUrl) {
+		clearContextualContent("#contextual-content");
 		<jq:get-load urlExpression="selResourceUrl" targetSelector="#contextual-content" />;
 	}		
 
@@ -105,17 +106,13 @@
 		})
 		.bind("select_node.jstree", function(event, data){
 			unselectNonSiblings(data.rslt.obj, $('#tree'));
-			$('.is-contextual').each(function(){			
-					$(this).dialog("destroy").remove(); 
-			});
-			$("#contextual-content").empty();
 			return true;
 		})
 		.bind("dblclick.jstree", function(event) {
 			toggleEventTargetIfNode(event, $(this));
 		})
 		.jstree({ 
-			"plugins" : ["json_data", "sort", "themeroller", "types", "cookies", "ui"],
+			"plugins" : ["json_data", "sort", "themes", "types", "cookies", "ui", "squash"],
 			"json_data" : { 
 				"data" : ${ json:serialize(rootModel) }, 
 				"ajax" : {
@@ -163,25 +160,27 @@
 							"image" : tree_icons.folder_icon
 						}
 					},
+					"core" : { 
+						"animation" : 0
+					}, 
 					"ui" : {
 						select_multiple_modifier: false
 					},
 					"drive" : {
 						"valid_children" : [ "file", "folder" ],
-						"select_node": function(node) {
-							selectDrive(liNode(node));
-							return true;
-						},
 						"icon" : {
 							"image" : tree_icons.drive_icon
 						}
 					}
 				}
+			},	
+			"themes" : {
+				"theme" : "squashtest",
+				"dots" : true,
+				"icons" : true,
+				"url" : "${ pageContext.servletContext.contextPath }/styles/squashtree.css"					
 			},
-			"themeroller" : {
-				"item" : "ui-squashtest-tree-inactive",
-				"item_h" : "ui-state-active",
-				"item_a" : "ui-state-default"
+			"squash" : {
 				
 			}				
 			

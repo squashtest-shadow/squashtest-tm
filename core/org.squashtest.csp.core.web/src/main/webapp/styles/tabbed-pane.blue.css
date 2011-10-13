@@ -25,7 +25,7 @@ div#tabbed-pane li.ui-tabs-selected{
 }
 
 
-
+/*
 div#tree-pane li[rel="drive"] > a {
 	border: 1px solid #2E2E2E;
 }
@@ -33,3 +33,4 @@ div#tree-pane li[rel="drive"] > a {
 div#tree-pane li[rel="drive"] > .jstree-clicked {
  	border: 1px solid #77D5F7;
  }
+ */

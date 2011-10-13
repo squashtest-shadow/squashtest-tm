@@ -188,13 +188,13 @@
 		.bind("select_node.jstree", function(event, data){
 			
 			unselectNonSiblings(data.rslt.obj, $('#${id}'));
-			operations = getTreeAllowedOperations('#${id}');
+			operations = data.inst.allowedOperations();
 			updateTreebuttons(operations);
 			
 			return true;
 		})
 		.bind("deselect_node.jstree", function(event, data){
-			operations = getTreeAllowedOperations('#${id}');
+			operations = data.inst.allowedOperations();
 			updateTreebuttons(operations);
 			return true;
 		})		
@@ -242,8 +242,7 @@
 		})
 		.jstree({ 
 				<%-- cookie plugin should be defined after ui otherwise tree select state wont be restored --%>	
-				<%-- "plugins" : ["json_data", "ui", "types", "sort", "crrm", "hotkeys", "dnd", "cookies", "themes" ], --%>				
-				"plugins" : ["json_data", "ui", "types", "sort", "crrm", "hotkeys", "dnd", "cookies", "themeroller"], 
+				"plugins" : ["json_data", "ui", "types", "sort", "crrm", "hotkeys", "dnd", "cookies", "themes", "squash" ], 			
 				
 				"json_data" : { 
 					"data" : ${ json:serialize(rootModel) }, 
@@ -341,6 +340,7 @@
 				"core" : { 
 					<%-- do not uncomment otherwise tree is closed on page refresh --%>
 					//"initially_open" : [ "${ selectedNode.attr['id'] }" ] 
+					"animation" : 0
 				},
 				"crrm": {
 					"move" : {
@@ -406,23 +406,15 @@
 							
 				},
 				
-				<%-- 
 				"themes" : {
 					"theme" : "squashtest",
 					"dots" : true,
 					"icons" : true,
-					"url" : "/squash/styles/jquery/jstree/style.css"
-					
+					"url" : "${ pageContext.servletContext.contextPath }/styles/squashtree.css"					
 				},
-				--%>
-				"themeroller" : {
-					"item" : "ui-squashtest-tree-inactive",
-					"item_h" : "ui-state-active",
-					"item_a" : "ui-state-default",
-					"opened" : "ui-icon-circlesmall-minus", 
-					"closed" : "ui-icon-circlesmall-plus"
-				} 
-				
+				"squash" : {
+					
+				}
 			});
 	});
 </script>

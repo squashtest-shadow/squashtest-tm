@@ -98,10 +98,11 @@ function initDeleteNodeDialog(jqDialog){
 	jqDialog.data("vNodes", null);			
 	
 	<%-- store the selected nodes. --%> 
-	var rawNodes = $('${treeSelector}').jstree("get_selected");
+	var tree = $('${treeSelector}');
+	var rawNodes = tree.jstree("get_selected");
 	var vNodes = toLiNodes(rawNodes);			
 	
-	var operations = getTreeAllowedOperations('${treeSelector}');
+	var operations = tree.jstree("allowedOperations");
 	
 	if (operations.match("delete")){
 		jqDialog.data("vNodes", vNodes);		

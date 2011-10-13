@@ -52,7 +52,7 @@
 					<td> ${object.id}</td>
 					<td id="searchnode-${object.class.simpleName}Library-${object.project.id}" class="searched-project non-tree" style="border: none;"> 
 						<a style="color: white; text-decoration: none; border: none;" href="#">
-							<img class="search-image" src="${servContext}/images/root.png">
+							<img class="search-image" src="${servContext}/images/root.png"/>
 							<span class="search-text">${object.project.name}</span>
 						</a>
 					</td> 

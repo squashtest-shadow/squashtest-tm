@@ -26,6 +26,7 @@
 <%@ taglib prefix="f" uri="http://java.sun.com/jsp/jstl/fmt"%>
 <%@ taglib prefix="jq" tagdir="/WEB-INF/tags/jquery"%>
 <%@ taglib prefix="pop" tagdir="/WEB-INF/tags/popup" %>
+<%@ taglib prefix="comp" tagdir="/WEB-INF/tags/component"%>
 
 <%@ attribute name="openedBy" description="id of the widget that will open the popup"%>
 <%@ attribute name="treeSelector" description="jQuerySelector for the tree."%>
@@ -46,8 +47,9 @@
 	</jsp:attribute>
 	<jsp:attribute name="additionalSetup">
 		open : function(){
-			var node = $('${treeSelector}').jstree("get_selected");
-			var operations = getTreeAllowedOperations('${treeSelector}');
+			var tree = $('${treeSelector}');
+			var node = tree.jstree("get_selected");
+			var operations = tree.jstree('allowedOperations');
 			if (! operations.match("rename") ){
 				<f:message key="dialog.label.rename-node.rejected" var="renameForbiddenLabel"/>
 				$(this).dialog('close');

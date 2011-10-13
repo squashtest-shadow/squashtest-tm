@@ -21,7 +21,7 @@
 /**
  * Common functions for JsTree manipulation
  * 
- * @author Gregory Fouquet
+ * @author Gregory Fouquet, Benoît Siri
  */
 
  
@@ -33,9 +33,6 @@
  * @param targetSelector 
  *			a jQuery selector being the handle to the contextual content div.
  */
-
-
-
 
 (function($){
 	/*
@@ -116,11 +113,77 @@
 			
 	}
 	
+	
+	/*
+	 * squash tree plugin
+	 */
+	 $.jstree.plugin("squash",{
+		__init : function(){
+			//that section is copy/pasta from the original themeroller plugin, kudos mate.
+			var s = this._get_settings().squash;
+			this.get_container()
+				.addClass("ui-widget-content")
+				.delegate("a","mouseenter.jstree", function () {
+					$(this).addClass(s.item_h);
+				})
+				.delegate("a","mouseleave.jstree", function () {
+					$(this).removeClass(s.item_h);
+				})
+				.bind("select_node.jstree", $.proxy(function (e, data) {
+						data.rslt.obj.children("a").addClass(s.item_a);
+					}, this))
+				.bind("deselect_node.jstree deselect_all.jstree", $.proxy(function (e, data) {
+						this.get_container()
+							.find("." + s.item_a).removeClass(s.item_a).end()
+							.find(".jstree-clicked").addClass(s.item_a);
+					}, this));	
+		},
+		_fn : {
+			allowedOperations : function(){
+				var selectedNodes = this.get_selected();					
+				var operations = "";				
+				//that variable will be set to true if at least one selected node is not editable.
+				var noEdit = (selectedNodes.not(":editable").length > 0);
+				
+				//case 1 : not editable : no operations allowed. 
+				if (noEdit){
+					operations = "";
+				}
+				//case 2 : more than one item selected : no operations allowed except deletion and copy if the nodes aren't libraries
+				else if (selectedNodes.length != 1){
+					operations = (! selectedNodes.is(":library")) ? "delete copy" : "";
+				}
+				//case 3 : one item is selected, button activation depend on their nature.
+				else{
+					switch(selectedNodes.attr('rel')){			
+						case "drive" :
+							operations="create-folder create-file paste";
+							break;
+						
+						case "folder" :
+							operations="create-folder create-file rename delete copy paste";
+							break;
+							
+						case "file" :
+							operations="create-resource rename delete copy";
+							break;
+							
+						case "resource" : 
+							operations="rename delete";
+							break;
+					}
+				}
+				return operations;			
+			}		
+		},
+		defaults : {
+			"item_h" : "ui-state-active",
+			"item_a" : "ui-state-default"			
+		}
+	 });
+
 
 })(jQuery);
-
-
-
 
 
 function clearContextualContent(targetSelector){
@@ -502,52 +565,6 @@ function cancelMultipleClickEvent(clickEvent) {
 	}
 }
 	
-/* ****************************** allowed operations ********************************************** */
-
-	function getTreeAllowedOperations(treeSelector){
-
-		var selectedNodes = $(treeSelector).jstree('get_selected');		
-		
-		var operations = "";
-		
-		//tha variable will be set to true if at least one selected node is not editable.
-		var noEdit = (selectedNodes.not(":editable").length > 0);
-		
-		//case 1 : not editable : no operations allowed. 
-		if (noEdit){
-			operations = "";
-		}
-		//case 2 : more than one item selected : no operations allowed except deletion and copy if the nodes aren't libraries
-		else if (selectedNodes.length != 1){
-			operations = (! selectedNodes.is(":library")) ? "delete copy" : "";
-		}
-		//case 3 : one item is selected, button activation depend on their nature.
-		else{
-			switch(selectedNodes.attr('rel')){			
-				case "drive" :
-					operations="create-folder create-file paste";
-					break;
-				
-				case "folder" :
-					operations="create-folder create-file rename delete copy paste";
-					break;
-					
-				case "file" :
-					operations="create-resource rename delete copy";
-					break;
-					
-				case "resource" : 
-					operations="rename delete";
-					break;
-			
-			}
-		}
-		
-		return operations;
-				
-	}
-
-
 	
 /* ****************************** other tree-related objects ************************************** */
 
@@ -622,7 +639,3 @@ function ButtonBasedTreeNodeCopier(initObj){
 	$(this.pasteSelector).click($.proxy(this.pasteNodesFromCookie, this));
 	
 }
-
-
-
-
