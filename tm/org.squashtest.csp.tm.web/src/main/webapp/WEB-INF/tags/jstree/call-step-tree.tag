@@ -101,15 +101,9 @@
 		};
 
 		$("#tree")
-		.bind('click.jstree', function(event, data) {
-			cancelMultipleClickEvent(event);
-		})
 		.bind("select_node.jstree", function(event, data){
 			unselectNonSiblings(data.rslt.obj, $('#tree'));
 			return true;
-		})
-		.bind("dblclick.jstree", function(event) {
-			toggleEventTargetIfNode(event, $(this));
 		})
 		.jstree({ 
 			"plugins" : ["json_data", "sort", "themes", "types", "cookies", "ui", "squash"],

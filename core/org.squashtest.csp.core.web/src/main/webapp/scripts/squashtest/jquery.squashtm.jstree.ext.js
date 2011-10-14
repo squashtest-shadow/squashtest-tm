@@ -136,7 +136,15 @@
 						this.get_container()
 							.find("." + s.item_a).removeClass(s.item_a).end()
 							.find(".jstree-clicked").addClass(s.item_a);
-					}, this));	
+					}, this))
+					
+				//now the Squash specific handlers.				
+				.bind('click.jstree', function(event, data) {
+					cancelMultipleClickEvent(event);
+				})
+				.bind("dblclick.jstree", function(event) {
+					toggleEventTargetIfNode(event, $(this));
+				})
 		},
 		_fn : {
 			allowedOperations : function(){
@@ -279,6 +287,11 @@ function postNewTreeContent(treeId, contentDiscriminator, postParameters) {
 
 /* **************************** check move section **************************************** */
 
+/*
+ * Will check if a dnd move is legal. Note that this check is preemptive, contrarily to checkMoveIsAuthorized
+ * which needs to post-check. 
+ *
+ */
 function treeCheckDnd(m){
 	
 	var object = m.o;
@@ -328,7 +341,33 @@ function treeCheckDnd(m){
 	
 }
 
-
+		
+		
+	/*
+	  This method checks if we can move the object is the dest folder returns true if it's ok to move the object note that contrary to 
+	  treeCheckDnd(moveObject), that code is called only for "move", not "copy" operations, and thus is not part of the aforementioned function.
+	  
+	  A second reasons is that we don't want to forbid the operation a-priori : we cancel it a-posteriori. Thus, the user will know
+	  why the operation could not be performed instead of wondering why the hell he cannot move the bloody node.	  
+	 */
+	function checkMoveIsAuthorized(data){
+		var dest = data.rslt.np;
+		var object = data.rslt.o;
+		//checks if there's an element with the same name in the dest folder
+		//get all the children nodes
+		elInDest = dest.children("ul").children("li");
+		okToGo = true;
+		//compare object name and type to each children attributes
+		elInDest.each(function(index, element){
+			if(object.attr('name') == $(element).attr('name') 
+					&& object.attr('id') != $(element).attr('id')){
+				//detect if there's a similar element in the container 
+				//(check the id not to compare the object with itself)
+				okToGo = false;
+			}
+		});
+		return okToGo;
+	}
 
 
 /* ***************************** node copy section **************************************** */

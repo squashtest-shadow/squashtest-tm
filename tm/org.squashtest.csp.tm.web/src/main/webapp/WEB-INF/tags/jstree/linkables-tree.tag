@@ -73,12 +73,6 @@
 		</c:if>
 		
 		$("#${ id }")
-		.bind('click.jstree', function(event, data) {
-			cancelMultipleClickEvent(event);			
-		})
-		.bind("dblclick.jstree", function(event) {
-			toggleEventTargetIfNode(event, $(this));
-		})
 		.jstree({ 
 				"plugins" : ["json_data", "sort", "themes", "types", "cookies", "ui", "squash"],
 				"json_data" : { 

@@ -31,7 +31,7 @@ li[rel="drive"] > a.filter-enabled {	width:88%;	background: #2E2E2E;	-moz-border
 li[rel="drive"][editable="false"] > a > .jstree-icon {	background-image: url("../images/eye.png");	vertical-align : middle;}
 li[rel="drive"][editable="true"] > a > .jstree-icon {	background-image: url("../images/pencil.png");	vertical-align : middle;}
 li[rel="file"][editable="false"] a, li[rel="folder"][editable="false"] a, li[rel="resource"][editable="false"] a {	color: gray;}
-li[editable="false"] a .jstree-clicked, li[rel="folder"][editable="false"] a.jstree-hovered {	color: #FFFFFF;}
+li[editable="false"] a.jstree-clicked, li[rel="folder"][editable="false"] a.jstree-hovered {	color: #FFFFFF;}
 
 div#tree-pane li a.ui-state-default, div#tree-pane li a.ui-state-active{	 border: none;}
 
