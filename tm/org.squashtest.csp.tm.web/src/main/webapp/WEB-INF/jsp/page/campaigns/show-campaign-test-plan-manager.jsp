@@ -55,48 +55,23 @@
 			batchRemoveButtonId="remove-items-button" nonBelongingTestCasesUrl="${ nonBelongingTestCasesUrl }" testCaseDetailsBaseUrl="${ testCaseDetailsBaseUrl }" editable="${editable}"/>
 		
 		<script type="text/javascript">
-		selection = new Array();
-
 			
-			function storeSelection(){
-				$('a.ui-squashtest-tree-inactive').live('click', function(){
-					node = $(this).parent("li");
-					if ($(node).attr('rel') != "drive")
-					{
-						if($(this).hasClass("jstree-clicked")){
-							if ($(node).attr('rel') == "file"){
-								selection.push($(node).attr('resid'));
-							}else{
-								selection.push(-$(node).attr('resid'))
-							}
-						}else{
-							for(var i = 0; i <selection.length; i++){
-								if(selection[i] == $(node).attr('resid') || selection[i] == -$(node).attr('resid')){
-									for(var j = i; j <selection.length; j++){
-										selection[j] = selection[j + 1];
-									}
-									selection.pop();
-								}
-							}
-						}
-					}
-				});
-			}
-			
+			//todo : get that wtf thing straight. 
+			//each panel (tree, search tc, search by req) should define a method getSelected()
+			//the present function should only call the one belonging to the currently selected panel.
 			function getTestCasesIds(){
 				var tab =  new Array();
 				var selected = $( "#tabbed-pane" ).tabs('option', 'selected');
 				var tree = $( '#linkable-test-cases-tree' );
 				if (selected == 0){
-					tree.jstree('get_selected').each(function(index, node){
-						if ($( node ).attr('resType') == 'test-cases') {
-							tab.push($( node ).attr('resId'));
-						}
-					});
+					tab = tree.jstree('get_selected')
+						  .not(':library')
+						  .collect(function(elt){return $(e).attr('resid');});
 				}
-				if (selected == 1){
-					var table = $( '#search-result-datatable' ).dataTable();
-					tab = getIdsOfSelectedAssociationTableRows(table, getTestCasesTableRowId);
+				else{
+					//that line is especially wtf, see seach-panel.tag and search-panel-by-requirement.tag
+					//to understand what I mean.
+					tab = getIdSelection();
 				}
 				return tab;
 			}
@@ -105,38 +80,23 @@
 			
 			$(function() {
 
-				storeSelection();
 				<%-- back button --%>
 				
 				$("#back").button().click(function(){
-					//document.location.href="${referer}";
 					history.back();
 				});
 				
 				<%-- test-case addition --%>
 				$( '#add-items-button' ).click(function() {
-					<%--
-					var tree = $( '#linkable-test-cases-tree' );
-					var ids = new Array();
-					
-					ids = getTestCasesIds();
-					--%>
 					
 					var tree = $( '#linkable-test-cases-tree' );
-					var ids = selection;
-					//tabs selection
-					if(selectedTab != 0){
-						ids = getIdSelection();
-					}
+					var ids = getTestCasesIds();
 					if (ids.length > 0) {
 						$.post('${ testPlanUrl }', { testCasesIds: ids}, refreshTestCases);
 					}
-					tree.jstree('deselect_all');
-					//reset the multiple selection fields
+					tree.jstree('deselect_all'); //todo : each panel should define that method too.
 					firstIndex = null;
 					lastIndex = null;
-					//clear selection
-					selection = [];
 				});
 			});
 		</script>

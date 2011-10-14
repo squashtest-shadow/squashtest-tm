@@ -74,7 +74,7 @@
 		
 		$("#${ id }")
 		.jstree({ 
-				"plugins" : ["json_data", "sort", "themes", "types", "cookies", "ui", "squash"],
+				"plugins" : ["json_data", "sort", "themes", "types", "cookies", "ui", "squash", "treepicker"],
 				"json_data" : { 
 					"data" : jsonData, 
 					"ajax" : {
