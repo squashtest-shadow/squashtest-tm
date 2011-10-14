@@ -16,7 +16,7 @@
 		Eclipse</description>
 
 	<properties>
-		<master.changelog>${project.build.outputDirectory}/provision.changelog-master.xml</master.changelog>
+		<master.changelog>${project.build.directory}/maven-shared-archive-resources/global.changelog-master.xml</master.changelog>
 		<squashtest.rootDir>${project.build.directory}</squashtest.rootDir>
 		<cxf.version>2.3.3</cxf.version>
 		<!-- Default H2 database properties -->
@@ -33,25 +33,27 @@
 	</properties>
 
 	<build>
+		<resources>
+			<resource>
+				<directory>src/main/liquibase</directory>
+				<filtering>true</filtering>
+			</resource>
+		</resources>
+
 		<plugins>
 			<plugin>
 				<groupId>org.apache.maven.plugins</groupId>
-				<artifactId>maven-resources-plugin</artifactId>
+				<artifactId>maven-remote-resources-plugin</artifactId>
 				<executions>
 					<execution>
-						<id>process-database-changelog</id>
-						<phase>process-resources</phase>
+						<phase>generate-resources</phase>
 						<goals>
-							<goal>copy-resources</goal>
+							<goal>process</goal>
 						</goals>
 						<configuration>
-							<resources>
-								<resource>
-									<directory>${project.basedir}/src/main/liquibase</directory>
-									<filtering>true</filtering>
-								</resource>
-							</resources>
-							<outputDirectory>${project.build.outputDirectory}</outputDirectory>
+							<resourceBundles>
+								<resourceBundle>org.squashtest.csp:squashtest-tm-database:${project.version}</resourceBundle>
+							</resourceBundles>
 						</configuration>
 					</execution>
 				</executions>
@@ -81,42 +83,42 @@
 					</execution>
 				</executions>
 			</plugin>
-			
-			
-			<!--  generate the dbdoc -->
+
+
+			<!-- generate the dbdoc -->
 			<plugin>
-		        <groupId>org.codehaus.mojo</groupId>
-		        <artifactId>xml-maven-plugin</artifactId>
-		        <executions>
-		          <execution>
-		          	<phase>process-resources</phase>
-		            <goals>
-		              <goal>transform</goal>
-		            </goals>
-		          </execution>
-		        </executions>
-		        <configuration>
-		          <transformationSets>
-		            <transformationSet>
-		              <dir>${project.build.outputDirectory}/makedoc/</dir>				  
-		              <excludes>
-						<exclude>*.xsl</exclude>
-					   </excludes>
-		              <stylesheet>${project.build.outputDirectory}/makedoc/dbdoc_style.xsl</stylesheet>
-		            </transformationSet>
-		          </transformationSets>
-		        </configuration>
-		     <dependencies>
-		          	<dependency>
-		            	<groupId>net.sf.saxon</groupId>
-		           		<artifactId>saxon</artifactId>
-		            	<version>8.7</version>
-		          	</dependency>
-		        </dependencies>
-		        
-		        
-	      	</plugin>		
-			
+				<groupId>org.codehaus.mojo</groupId>
+				<artifactId>xml-maven-plugin</artifactId>
+				<executions>
+					<execution>
+						<phase>process-resources</phase>
+						<goals>
+							<goal>transform</goal>
+						</goals>
+					</execution>
+				</executions>
+				<configuration>
+					<transformationSets>
+						<transformationSet>
+							<dir>${project.build.outputDirectory}/makedoc/</dir>
+							<excludes>
+								<exclude>*.xsl</exclude>
+							</excludes>
+							<stylesheet>${project.build.outputDirectory}/makedoc/dbdoc_style.xsl</stylesheet>
+						</transformationSet>
+					</transformationSets>
+				</configuration>
+				<dependencies>
+					<dependency>
+						<groupId>net.sf.saxon</groupId>
+						<artifactId>saxon</artifactId>
+						<version>8.7</version>
+					</dependency>
+				</dependencies>
+
+
+			</plugin>
+
 			<!-- clean datasource properties -->
 			<plugin>
 				<groupId>com.google.code.maven-config-processor-plugin</groupId>
@@ -160,7 +162,8 @@
 			<build>
 				<plugins>
 					<plugin>
-						<!-- Copies dependencies into a given folder, will be used for Eclipse provisioning -->
+						<!-- Copies dependencies into a given folder, will be used for Eclipse 
+							provisioning -->
 						<groupId>org.apache.maven.plugins</groupId>
 						<artifactId>maven-dependency-plugin</artifactId>
 						<executions>
@@ -282,26 +285,30 @@
 	<dependencies>
 		<!-- ====== SQUASHTEST ====== -->
 		<!-- Squashtest core modules -->
-		<dependency>
+	 	<dependency>
 			<groupId>${project.groupId}</groupId>
 			<artifactId>org.squashtest.csp.core.log4j</artifactId>
 			<version>${project.version}</version>
+			<scope>provided</scope>
 		</dependency>
 		<dependency>
 			<groupId>${project.groupId}</groupId>
 			<artifactId>org.squashtest.csp.core.bugtracker</artifactId>
 			<version>${project.version}</version>
+			<scope>provided</scope>
 		</dependency>
 		<dependency>
 			<groupId>${project.groupId}</groupId>
 			<artifactId>org.squashtest.csp.core.web</artifactId>
 			<version>${project.version}</version>
 			<type>war</type>
+			<scope>provided</scope>
 		</dependency>
 		<dependency>
 			<groupId>${project.groupId}</groupId>
 			<artifactId>org.squashtest.csp.core.service</artifactId>
 			<version>${project.version}</version>
+			<scope>provided</scope>
 		</dependency>
 		<!-- Squashtest tm modules -->
 		<dependency>
@@ -309,11 +316,13 @@
 			<artifactId>org.squashtest.csp.tm.web</artifactId>
 			<version>${project.version}</version>
 			<type>war</type>
+			<scope>provided</scope>
 		</dependency>
 		<dependency>
 			<groupId>${project.groupId}</groupId>
 			<artifactId>org.squashtest.csp.tm.service</artifactId>
 			<version>${project.version}</version>
+			<scope>provided</scope>
 		</dependency>
 		<!-- ====== /SQUASHTEST ====== -->
 
@@ -484,89 +493,12 @@
 		</dependency>
 		<!-- ====== URL REWRITE FILTER ====== -->
 
-		<!-- ====== JCR API ====== -->
-		<dependency>
-			<groupId>javax.jcr</groupId>
-			<artifactId>org.squashtest.javax.jcr</artifactId>
-		</dependency>
-		<!-- ====== /JCR API ====== -->
-
-		<!-- ====== JACKRABBIT ====== -->
-		<dependency>
-			<groupId>org.apache.jackrabbit</groupId>
-			<artifactId>org.squashtest.org.apache.jackrabbit.ocm</artifactId>
-		</dependency>
-		<dependency>
-			<groupId>org.apache.jackrabbit</groupId>
-			<artifactId>org.squashtest.org.apache.jackrabbit.core</artifactId>
-		</dependency>
-		<dependency>
-			<groupId>org.apache.jackrabbit</groupId>
-			<artifactId>jackrabbit-api</artifactId>
-		</dependency>
-		<dependency>
-			<groupId>org.apache.jackrabbit</groupId>
-			<artifactId>jackrabbit-jcr-commons</artifactId>
-		</dependency>
-		<dependency>
-			<groupId>org.apache.jackrabbit</groupId>
-			<artifactId>jackrabbit-spi</artifactId>
-		</dependency>
-		<dependency>
-			<groupId>org.apache.jackrabbit</groupId>
-			<artifactId>jackrabbit-spi-commons</artifactId>
-		</dependency>
-		<dependency>
-			<groupId>org.apache.commons</groupId>
-			<artifactId>com.springsource.org.apache.commons.collections</artifactId>
-		</dependency>
-		<dependency>
-			<groupId>org.apache.commons</groupId>
-			<artifactId>com.springsource.org.apache.commons.io</artifactId>
-		</dependency>
-		<dependency>
-			<groupId>org.apache.tika</groupId>
-			<artifactId>tika-bundle</artifactId>
-		</dependency>
-		<dependency>
-			<groupId>edu.oswego.cs.concurrent</groupId>
-			<artifactId>com.springsource.edu.oswego.cs.dl.util.concurrent</artifactId>
-		</dependency>
-		<dependency>
-			<groupId>org.apache.commons</groupId>
-			<artifactId>com.springsource.org.apache.commons.dbcp</artifactId>
-		</dependency>
-		<dependency>
-			<groupId>org.apache.commons</groupId>
-			<artifactId>com.springsource.org.apache.commons.pool</artifactId>
-		</dependency>
-		<dependency>
-			<groupId>org.apache.lucene</groupId>
-			<artifactId>com.springsource.org.apache.lucene</artifactId>
-		</dependency>
-		<!-- ====== JACKRABBIT ====== -->
-
 		<!-- ====== JTA ====== -->
 		<dependency>
 			<groupId>javax.transaction</groupId>
 			<artifactId>com.springsource.javax.transaction</artifactId>
 		</dependency>
 		<!-- ====== /JTA ====== -->
-
-		<!-- ====== MISC REQUIRED BY OCM ====== -->
-		<dependency>
-			<groupId>org.apache.commons</groupId>
-			<artifactId>com.springsource.org.apache.commons.beanutils</artifactId>
-		</dependency>
-		<dependency>
-			<groupId>org.apache.commons</groupId>
-			<artifactId>com.springsource.org.apache.commons.digester</artifactId>
-		</dependency>
-		<dependency>
-			<groupId>org.apache.commons</groupId>
-			<artifactId>com.springsource.org.apache.commons.lang</artifactId>
-		</dependency>
-		<!-- ====== MISC REQUIRED BY OCM ====== -->
 
 		<!-- ====== FILE UPLOADING ====== -->
 		<dependency>
@@ -633,42 +565,7 @@
 		</dependency>
 		<!-- ====== SQUASHTEST ====== -->
 
-		<!-- ====== SPRING JCR EXTENSION ====== -->
-<!-- 		<dependency>
-			<groupId>org.springframework</groupId>
-			<artifactId>se-jcr</artifactId>
-		</dependency> -->
-		<!-- ====== /SPRING JCR EXTENSION ====== -->
-
-		<!-- ====== FELIX ADMIN WEBCONSOLE ====== -->
-		<dependency>
-			<groupId>org.apache.felix</groupId>
-			<artifactId>org.apache.felix.webconsole</artifactId>
-		</dependency>
-		<dependency>
-			<groupId>org.apache.felix</groupId>
-			<artifactId>org.apache.felix.prefs</artifactId>
-		</dependency>
-		<dependency>
-			<groupId>org.apache.felix</groupId>
-			<artifactId>org.apache.felix.scr</artifactId>
-		</dependency>
-		<dependency>
-			<groupId>org.apache.felix</groupId>
-			<artifactId>org.apache.felix.shell</artifactId>
-		</dependency>
-		<dependency>
-			<groupId>org.ops4j.pax.web</groupId>
-			<artifactId>pax-web-service</artifactId>
-		</dependency>
-		<!-- ====== /FELIX ADMIN WEBCONSOLE ====== -->
-
 		<!-- ====== DATABASE ====== -->
-		<dependency>
-			<groupId>org.apache.derby</groupId>
-			<artifactId>derby</artifactId>
-		</dependency>
-
 		<dependency>
 			<groupId>com.h2database</groupId>
 			<artifactId>h2</artifactId>

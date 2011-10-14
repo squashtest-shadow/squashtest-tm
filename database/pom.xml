@@ -4,15 +4,13 @@
 	<parent>
 		<artifactId>squashtest-csp</artifactId>
 		<groupId>org.squashtest.csp</groupId>
-		<version>1.0.0.RC1-SNAPSHOT</version>
+		<version>1.1.0.RELEASE-SNAPSHOT</version>
 	</parent>
-	<groupId>org.squashtest.csp</groupId>
-	<artifactId>squashtest-csp-database</artifactId>
-	<version>1.0.1.RELEASE-SNAPSHOT</version>
-	<packaging>pom</packaging>
-	<name>squashtest-csp-database</name>
-	<description>Squashtest CSP - Database definition</description>
-
+	<artifactId>squashtest-tm-database</artifactId>
+	<packaging>jar</packaging>
+	<name>squashtest-tm-database</name>
+	<description>Squash TM - Database definition</description>
+	
 	<dependencies>
 		<dependency>
 			<groupId>com.h2database</groupId>
@@ -49,6 +47,26 @@
 		</testResources>
 
 		<plugins>
+			<plugin>
+				<groupId>org.apache.maven.plugins</groupId>
+				<artifactId>maven-remote-resources-plugin</artifactId>
+				<executions>
+					<execution>
+						<goals>
+							<goal>bundle</goal>
+						</goals>
+						<configuration>
+							<!-- non-standard resource location requires configuration -->
+							<resourcesDirectory>src/main/liquibase</resourcesDirectory>
+							<!-- included resources *inside* the resource directory -->
+							<includes>
+								<include>**/*.xml</include>
+							</includes>
+						</configuration>
+					</execution>
+				</executions>
+			</plugin>
+
 			<plugin>
 				<groupId>org.apache.maven.plugins</groupId>
 				<artifactId>maven-resources-plugin</artifactId>
@@ -96,7 +114,7 @@
 	</build>
 	<profiles>
 		<profile>
-			<id>integration</id>
+			<id>acceptance-tests</id>
 			<activation>
 				<property>
 					<name>stage</name>

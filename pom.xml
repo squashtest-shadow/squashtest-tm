@@ -1284,6 +1284,7 @@
 		<module>tools</module>
 		<module>parent-pom</module>
 		<module>dependencies</module>
+		<module>database</module>
 		<module>core</module>
 		<module>tm</module>
 	</modules>
