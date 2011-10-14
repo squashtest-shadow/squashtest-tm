@@ -21,6 +21,8 @@
 package org.squashtest.csp.tm.internal.service;
 
 import java.util.ArrayList;
+import java.util.Collections;
+import java.util.Comparator;
 import java.util.List;
 
 import javax.inject.Inject;
@@ -44,6 +46,7 @@ import org.squashtest.csp.tm.domain.users.User;
 import org.squashtest.csp.tm.internal.infrastructure.strategy.LibrarySelectionStrategy;
 import org.squashtest.csp.tm.internal.repository.CampaignDao;
 import org.squashtest.csp.tm.internal.repository.CampaignTestPlanItemDao;
+import org.squashtest.csp.tm.internal.repository.LibraryNodeDao;
 import org.squashtest.csp.tm.internal.repository.TestCaseDao;
 import org.squashtest.csp.tm.internal.repository.TestCaseFolderDao;
 import org.squashtest.csp.tm.internal.repository.TestCaseLibraryDao;
@@ -69,6 +72,10 @@ public class CampaignTestPlanManagerServiceImpl implements CampaignTestPlanManag
 
 	@Inject
 	private TestCaseFolderDao folderDao;
+	
+	@Inject
+	@Qualifier("squashtest.tm.repository.TestCaseLibraryNodeDao")
+	private LibraryNodeDao<TestCaseLibraryNode> testCaseLibraryNodeDao;
 	
 	@Inject
 	private ObjectAclService aclService;
@@ -108,26 +115,36 @@ public class CampaignTestPlanManagerServiceImpl implements CampaignTestPlanManag
 
 	@Override
 	@PostAuthorize("hasPermission(#campaignId, 'org.squashtest.csp.tm.domain.campaign.Campaign', 'WRITE') or hasRole('ROLE_ADMIN')")
-	public void addTestCasesToCampaignTestPlan(List<Long> testCasesIds, long campaignId) {
+	public void addTestCasesToCampaignTestPlan(final List<Long> testCasesIds, long campaignId) {
+		
+			
+		//nodes are returned unsorted
+		List<TestCaseLibraryNode> nodes= testCaseLibraryNodeDao.findAllById(testCasesIds);
+		
+		//now we resort them according to the order in which the testcaseids were given
+		Collections.sort(nodes, new Comparator<TestCaseLibraryNode>() {
+			@Override
+			public int compare(TestCaseLibraryNode o1, TestCaseLibraryNode o2) {
+				return testCasesIds.indexOf(o1.getId()) - testCasesIds.indexOf(o2);
+			}
+		});
 
-		List<TestCase> tcs = new ArrayList<TestCase>();
-
-		// TODO (put three letters acronym here) !! Apparently, there are folders ids in the list which have been turned
-		// into negative numbers.. these should have been sorted by controller and passed in separate arrays.
-		for (Long tcId : testCasesIds) {
-			if (tcId > 0) {
-				TestCase testCase = testCaseDao.findById(tcId);
-				tcs.add(testCase);
-			} else {
-				tcs.addAll(addFolderContent(Math.abs(tcId)));
+		List<TestCase> testCases = new TestCaseNodeWalker().walk(nodes);
+		
+		Campaign campaign = campaignDao.findById(campaignId);
+		
+		for (TestCase testCase : testCases){
+			if (! campaign.testPlanContains(testCase)){
+				campaign.addToTestPlan(new CampaignTestPlanItem(testCase));
 			}
 		}
-
-		if (!tcs.isEmpty()) {
-			addTestCasesToCampaignTestPlan(campaignId, tcs);
-		}
+		
+		
 
 	}
+	
+	
+	
 
 	private void addTestCasesToCampaignTestPlan(long campaignId, List<TestCase> testCases) {
 		Campaign camp = campaignDao.findById(campaignId);
@@ -145,30 +162,6 @@ public class CampaignTestPlanManagerServiceImpl implements CampaignTestPlanManag
 		}
 	}
 
-	private List<TestCase> addFolderContent(long folderId) {
-		List<TestCase> resultList = new ArrayList<TestCase>();
-		List<Long> folderIds = new ArrayList<Long>();
-		folderIds.add(0, 1L);
-		int i = 0;
-
-		List<TestCaseLibraryNode> folderContent = folderDao.findAllContentById(folderId);
-
-		do {
-			folderIds.remove(i);
-			for (TestCaseLibraryNode node : folderContent) {
-				if (node.getClassSimpleName() == "TestCaseFolder") {
-					folderIds.add(node.getId());
-				} else {
-					resultList.add((TestCase) node);
-				}
-			}
-			if (!folderIds.isEmpty()) {
-				folderContent = folderDao.findAllContentById(folderIds.get(i));
-			}
-		} while (!folderIds.isEmpty());
-
-		return resultList;
-	}
 
 	@Override
 	@PostAuthorize("hasPermission(#campaignId, 'org.squashtest.csp.tm.domain.campaign.Campaign', 'WRITE') or hasRole('ROLE_ADMIN')")
@@ -257,5 +250,8 @@ public class CampaignTestPlanManagerServiceImpl implements CampaignTestPlanManag
 		CampaignTestPlanItem itp = campaign.findTestPlanItem(testCase);
 		return itp;
 	}
+	
+
+	
 
 }

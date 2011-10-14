@@ -20,6 +20,11 @@
  */
 package org.squashtest.csp.tm.internal.repository.hibernate;
 
+import java.util.Collections;
+import java.util.List;
+
+import org.hibernate.Criteria;
+import org.hibernate.criterion.Restrictions;
 import org.squashtest.csp.tm.internal.repository.EntityDao;
 
 public class HibernateEntityDao<ENTITY_TYPE> extends HibernateDao<ENTITY_TYPE> implements EntityDao<ENTITY_TYPE> {
@@ -28,7 +33,26 @@ public class HibernateEntityDao<ENTITY_TYPE> extends HibernateDao<ENTITY_TYPE> i
 	public final ENTITY_TYPE findById(long id) {
 		return getEntity(id);
 	}
+	
+	@Override
+	public List<ENTITY_TYPE> findAllById(List<Long> ids){
+		if (ids.isEmpty()){
+			return Collections.emptyList();
+		}
+		else{
+			Criteria criteria = currentSession().createCriteria(entityType)
+							.add(Restrictions.in(getIdPropertyName(), ids));
+		
+			return criteria.list();
+		}
+	}
+	
+	@Override
+	public String getIdPropertyName(){
+		return "id";
+	}
 
+ 
 	@Override
 	public final void persist(ENTITY_TYPE transientEntity) {
 		persistEntity(transientEntity);
@@ -43,4 +67,6 @@ public class HibernateEntityDao<ENTITY_TYPE> extends HibernateDao<ENTITY_TYPE> i
 	public final void flush(){
 		currentSession().flush();
 	}
+
+
 }
