@@ -32,12 +32,11 @@ import org.squashtest.csp.core.service.configuration.ConfigurationService;
 @Transactional
 public class ConfigurationServiceImpl implements ConfigurationService {
 	
-	String insertKeySql = "insert into CORE_CONFIG (STR_KEY, VALUE) values (?, ?)";
-	String deleteKeySql = "delete from CORE_CONFIG where STR_KEY = ?";
-	String findValueByKey = "select VALUE from CORE_CONFIG where STR_KEY = ?";
-	String updateKeySql = "update CORE_CONFIG set VALUE = ? where STR_KEY = ?";
+	private static final String INSERT_KEY_SQL = "insert into CORE_CONFIG (STR_KEY, VALUE) values (?, ?)";
+	private static final String FIND_VALUE_BY_KEY_SQL = "select VALUE from CORE_CONFIG where STR_KEY = ?";
+	private static final String UPDATE_KEY_SQL = "update CORE_CONFIG set VALUE = ? where STR_KEY = ?";
 	
-	SessionFactory sessionFactory;
+	private SessionFactory sessionFactory;
 	
 	
 	@ServiceReference
@@ -48,7 +47,7 @@ public class ConfigurationServiceImpl implements ConfigurationService {
 	@Override
 	public void createNewConfiguration(String key, String value) {
 		Session session = sessionFactory.getCurrentSession();
-		Query sqlQuery = session.createSQLQuery(insertKeySql);
+		Query sqlQuery = session.createSQLQuery(INSERT_KEY_SQL);
 		sqlQuery.setString(0, key);
 		sqlQuery.setString(1, value);
 		sqlQuery.executeUpdate();
@@ -62,7 +61,7 @@ public class ConfigurationServiceImpl implements ConfigurationService {
 	@Override
 	public void updateConfiguration(String key, String value) {
 		Session session = sessionFactory.getCurrentSession();
-		Query sqlQuery = session.createSQLQuery(updateKeySql);
+		Query sqlQuery = session.createSQLQuery(UPDATE_KEY_SQL);
 		sqlQuery.setString(0, value);
 		sqlQuery.setString(1, key);
 		sqlQuery.executeUpdate();
@@ -72,7 +71,7 @@ public class ConfigurationServiceImpl implements ConfigurationService {
 	@Override
 	public String findConfiguration(String key) {
 		Session session = sessionFactory.getCurrentSession();
-		Query sqlQuery = session.createSQLQuery(findValueByKey);
+		Query sqlQuery = session.createSQLQuery(FIND_VALUE_BY_KEY_SQL);
 		sqlQuery.setParameter(0, key);
 		Object value = sqlQuery.uniqueResult();
 		if (value == null){

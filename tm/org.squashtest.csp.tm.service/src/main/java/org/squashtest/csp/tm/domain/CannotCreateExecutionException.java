@@ -26,7 +26,7 @@ public class CannotCreateExecutionException extends ActionException {
 	 * 
 	 */
 	private static final long serialVersionUID = 7668234787125033427L;
-	private final String errorMessageKey = "squashtm.action.exception.cannotcreateexecution.label";
+	private static final String ERROR_MESSAGE_KEY = "squashtm.action.exception.cannotcreateexecution.label";
 	
 	
 	public CannotCreateExecutionException(Exception ex){
@@ -43,7 +43,7 @@ public class CannotCreateExecutionException extends ActionException {
 	
 	@Override
 	public String getI18nKey() {
-		return errorMessageKey;
+		return ERROR_MESSAGE_KEY;
 	}
 	
 }

@@ -117,14 +117,12 @@ public class SearchServiceImpl implements SearchService {
 	 * @return the completed test case list
 	 */
 	private List<TestCase> findCallingTestCase(List<TestCase> originalList) {
-		// Initiate the list to get the calling tc
-		List<TestCase> callingTestCasesList = new ArrayList<TestCase>();
 		// Initiate the filtered list with tc to add
 		List<TestCase> testCaseToAddList = new ArrayList<TestCase>();
 		// browse the original tc list
 		for (TestCase currentTestCase : originalList) {
 			// find calling test cases
-			callingTestCasesList = testCaseDao.findAllCallingTestCases(currentTestCase.getId(), null);
+			List<TestCase>  callingTestCasesList = testCaseDao.findAllCallingTestCases(currentTestCase.getId(), null);
 			for (TestCase callingTestcase : callingTestCasesList) {
 				// add the new tc, avoid duplicates
 				if (!originalList.contains(callingTestcase)) {

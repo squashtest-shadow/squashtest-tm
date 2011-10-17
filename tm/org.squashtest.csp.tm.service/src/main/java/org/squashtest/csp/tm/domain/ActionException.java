@@ -26,7 +26,7 @@ public class ActionException extends RuntimeException implements Internationaliz
 	 * 
 	 */
 	private static final long serialVersionUID = -7715263070633043453L;
-	private final String genericActionExceptionKey = "squashtm.action.exception.label";
+	private static final String GENERIC_ACTION_EXCEPTION_KEY = "squashtm.action.exception.label";
 
 	
 	public ActionException(){
@@ -43,7 +43,7 @@ public class ActionException extends RuntimeException implements Internationaliz
 
 	@Override
 	public String getI18nKey() {
-		return genericActionExceptionKey;
+		return GENERIC_ACTION_EXCEPTION_KEY;
 	}
 
 }

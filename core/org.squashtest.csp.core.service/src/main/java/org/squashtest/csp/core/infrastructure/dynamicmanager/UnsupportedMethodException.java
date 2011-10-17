@@ -21,7 +21,6 @@
 package org.squashtest.csp.core.infrastructure.dynamicmanager;
 
 import java.lang.reflect.Method;
-import java.util.Arrays;
 
 /**
  * Indicates a Dynamic Manager is not able to handle a specific method call.
@@ -36,13 +35,8 @@ public class UnsupportedMethodException extends RuntimeException {
 	 */
 	private static final long serialVersionUID = -971438788310348625L;
 
-	private final Method method;
-	private final Object[] args;
-
 	public UnsupportedMethodException(Method method, Object[] args) {
 		super(createMessage(method, args));
-		this.method = method;
-		this.args = Arrays.copyOf(args, args.length);
 	}
 
 	private static String createMessage(Method method, Object[] args) {
@@ -58,12 +52,5 @@ public class UnsupportedMethodException extends RuntimeException {
 		return sb.toString();
 	}
 
-	public Method getMethod() {
-		return method;
-	}
-
-	public Object[] getArgs() {
-		return args;
-	}
 
 }
