@@ -66,7 +66,7 @@
 				if (selected == 0){
 					tab = tree.jstree('get_selected')
 						  .not(':library')
-						  .collect(function(elt){return $(e).attr('resid');});
+						  .collect(function(elt){return $(elt).attr('resid');});
 				}
 				else{
 					//that line is especially wtf, see seach-panel.tag and search-panel-by-requirement.tag

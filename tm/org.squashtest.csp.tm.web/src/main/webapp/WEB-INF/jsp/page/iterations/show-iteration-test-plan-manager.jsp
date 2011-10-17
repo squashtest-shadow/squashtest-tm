@@ -33,7 +33,7 @@
 <c:url var="backUrl" value="/campaign-workspace/" />
 <c:url var="treeBaseUrl" value="/test-case-browser/" />
 <c:url var="testPlansTableUrl" value="/iterations/${iteration.id}/test-cases" />
-<c:url var="testCasesUrl" value="/iterations/${ iteration.id }/test-cases" />
+<c:url var="testPlanUrl" value="/iterations/${ iteration.id }/test-cases" />
 <c:url var="removeTestPlanUrl" value="/iterations/${ iteration.id }/test-plan" />
 <c:url var="nonBelongingTestPlansUrl" value="/iterations/${ iteration.id }/non-belonging-test-cases" />
 
@@ -135,7 +135,7 @@
 				if (selected == 0){
 					tab = tree.jstree('get_selected')
 						  .not(':library')
-						  .collect(function(elt){return $(e).attr('resid');});
+						  .collect(function(elt){return $(elt).attr('resid');});
 				}
 				else{
 					//that line is especially wtf, see seach-panel.tag and search-panel-by-requirement.tag
@@ -149,7 +149,7 @@
 					var tree = $( '#linkable-test-cases-tree' );
 					var ids = getTestCasesIds();
 					if (ids.length > 0) {
-						$.post('${ testPlanUrl }', { testCasesIds: ids}, refreshTestCases);
+						$.post('${ testPlanUrl }', { testCasesIds: ids}, refreshTestPlans);
 					}
 					tree.jstree('deselect_all'); //todo : each panel should define that method too.
 					firstIndex = null;
