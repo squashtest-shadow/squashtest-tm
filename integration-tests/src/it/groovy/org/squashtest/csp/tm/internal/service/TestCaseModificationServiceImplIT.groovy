@@ -122,7 +122,7 @@ class TestCaseModificationServiceImplIT extends HibernateServiceSpecification {
 		given :
 		def newName = "new name"
 		when :
-		service.updateTestCaseName(testCaseId, newName);
+		service.rename(testCaseId, newName);
 		def testcase = service.findTestCaseById(testCaseId)
 		then :
 		testcase!=null
@@ -141,7 +141,7 @@ class TestCaseModificationServiceImplIT extends HibernateServiceSpecification {
 
 		when :
 		navService.addTestCaseToFolder(folderId,newtc)
-		service.updateTestCaseName(newtc.id, newName)
+		service.rename(newtc.id, newName)
 		def renewtc = service.findTestCaseById(newtc.id)
 		then :
 		renewtc!=null
@@ -160,7 +160,7 @@ class TestCaseModificationServiceImplIT extends HibernateServiceSpecification {
 
 		when :
 		navService.addTestCaseToFolder(folderId, newtc  )
-		service.updateTestCaseName(newtc.id, newName)
+		service.rename(newtc.id, newName)
 		then :
 		thrown(DuplicateNameException)
 	}

@@ -51,7 +51,7 @@ public interface CustomTestCaseModificationService {
 	FilteredCollectionHolder<List<TestStep>> findStepsByTestCaseIdFiltered(long testCaseId,
 			CollectionFilter filter);
 
-	void updateTestCaseName(long testCaseId, String newName);
+	void rename(long testCaseId, String newName);
 
 	TestStep addActionTestStep(long parentTestCaseId, ActionTestStep newTestStep);
 

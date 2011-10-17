@@ -266,7 +266,7 @@ public class TestCaseModificationController {
 	@ResponseBody
 	public Object rename(HttpServletResponse response, @PathVariable long testCaseId, @RequestParam String newName) {
 
-		testCaseModificationService.updateTestCaseName(testCaseId, newName);
+		testCaseModificationService.rename(testCaseId, newName);
 		LOGGER.info("TestCaseModificationController : renaming {} as {}", testCaseId, newName);
 		final String reNewName = new String(newName);
 		return new Object(){ public String newName = reNewName ; };
