@@ -48,7 +48,6 @@ import org.squashtest.csp.tm.internal.repository.CampaignDao;
 import org.squashtest.csp.tm.internal.repository.CampaignTestPlanItemDao;
 import org.squashtest.csp.tm.internal.repository.LibraryNodeDao;
 import org.squashtest.csp.tm.internal.repository.TestCaseDao;
-import org.squashtest.csp.tm.internal.repository.TestCaseFolderDao;
 import org.squashtest.csp.tm.internal.repository.TestCaseLibraryDao;
 import org.squashtest.csp.tm.internal.repository.UserDao;
 import org.squashtest.csp.tm.service.CampaignTestPlanManagerService;
@@ -69,9 +68,6 @@ public class CampaignTestPlanManagerServiceImpl implements CampaignTestPlanManag
 
 	@Inject
 	private ProjectFilterModificationService projectFilterModificationService;
-
-	@Inject
-	private TestCaseFolderDao folderDao;
 	
 	@Inject
 	@Qualifier("squashtest.tm.repository.TestCaseLibraryNodeDao")
@@ -117,7 +113,6 @@ public class CampaignTestPlanManagerServiceImpl implements CampaignTestPlanManag
 	@PostAuthorize("hasPermission(#campaignId, 'org.squashtest.csp.tm.domain.campaign.Campaign', 'WRITE') or hasRole('ROLE_ADMIN')")
 	public void addTestCasesToCampaignTestPlan(final List<Long> testCasesIds, long campaignId) {
 		
-			
 		//nodes are returned unsorted
 		List<TestCaseLibraryNode> nodes= testCaseLibraryNodeDao.findAllById(testCasesIds);
 		
@@ -135,32 +130,15 @@ public class CampaignTestPlanManagerServiceImpl implements CampaignTestPlanManag
 		
 		for (TestCase testCase : testCases){
 			if (! campaign.testPlanContains(testCase)){
-				campaign.addToTestPlan(new CampaignTestPlanItem(testCase));
+				CampaignTestPlanItem itp = new CampaignTestPlanItem(testCase);
+				campaignTestPlanItemDao.persist(itp);				
+				campaign.addToTestPlan(itp);
 			}
 		}
-		
-		
 
 	}
 	
-	
-	
 
-	private void addTestCasesToCampaignTestPlan(long campaignId, List<TestCase> testCases) {
-		Campaign camp = campaignDao.findById(campaignId);
-		for (TestCase testCase : testCases) {
-			addTestCaseToCampaignTestPlan(camp, testCase);
-		}
-	}
-
-	private void addTestCaseToCampaignTestPlan(Campaign campaign, TestCase testCase) {
-		if (!campaign.testPlanContains(testCase)) {
-			CampaignTestPlanItem itemTestPlan = new CampaignTestPlanItem(testCase);
-			
-			campaignTestPlanItemDao.persist(itemTestPlan);
-			campaign.addToTestPlan(itemTestPlan);
-		}
-	}
 
 
 	@Override

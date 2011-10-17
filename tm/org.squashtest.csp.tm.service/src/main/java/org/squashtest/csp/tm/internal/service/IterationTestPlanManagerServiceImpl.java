@@ -21,6 +21,8 @@
 package org.squashtest.csp.tm.internal.service;
 
 import java.util.ArrayList;
+import java.util.Collections;
+import java.util.Comparator;
 import java.util.Date;
 import java.util.List;
 
@@ -37,7 +39,6 @@ import org.springframework.security.acls.model.ObjectIdentityRetrievalStrategy;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.squashtest.csp.core.security.acls.model.ObjectAclService;
-import org.squashtest.csp.core.service.security.UserContextService;
 import org.squashtest.csp.tm.domain.campaign.Iteration;
 import org.squashtest.csp.tm.domain.campaign.IterationTestPlanItem;
 import org.squashtest.csp.tm.domain.projectfilter.ProjectFilter;
@@ -50,8 +51,7 @@ import org.squashtest.csp.tm.infrastructure.filter.FilteredCollectionHolder;
 import org.squashtest.csp.tm.internal.infrastructure.strategy.LibrarySelectionStrategy;
 import org.squashtest.csp.tm.internal.repository.ItemTestPlanDao;
 import org.squashtest.csp.tm.internal.repository.IterationDao;
-import org.squashtest.csp.tm.internal.repository.TestCaseDao;
-import org.squashtest.csp.tm.internal.repository.TestCaseFolderDao;
+import org.squashtest.csp.tm.internal.repository.LibraryNodeDao;
 import org.squashtest.csp.tm.internal.repository.TestCaseLibraryDao;
 import org.squashtest.csp.tm.internal.repository.UserDao;
 import org.squashtest.csp.tm.service.IterationModificationService;
@@ -67,12 +67,6 @@ public class IterationTestPlanManagerServiceImpl implements IterationTestPlanMan
 	private IterationModificationService delegateService;
 
 	@Inject
-	private UserContextService userContextService;
-
-	@Inject
-	private TestCaseDao testCaseDao;
-
-	@Inject
 	private TestCaseLibraryDao testCaseLibraryDao;
 
 	@Inject
@@ -81,14 +75,16 @@ public class IterationTestPlanManagerServiceImpl implements IterationTestPlanMan
 	@Inject
 	private ItemTestPlanDao itemTestPlanDao;
 
-	@Inject
-	private TestCaseFolderDao folderDao;
 
 	@Inject
 	private ObjectAclService aclService;
 
 	@Inject
 	private UserDao userDao;
+	
+	@Inject
+	@Qualifier("squashtest.tm.repository.TestCaseLibraryNodeDao")
+	private LibraryNodeDao<TestCaseLibraryNode> testCaseLibraryNodeDao;	
 
 	@Inject
 	private ProjectFilterModificationService projectFilterModificationService;
@@ -135,62 +131,35 @@ public class IterationTestPlanManagerServiceImpl implements IterationTestPlanMan
 	@Override
 	@PreAuthorize("hasPermission(#iterationId, 'org.squashtest.csp.tm.domain.campaign.Iteration', 'WRITE') "
 			+ "or hasRole('ROLE_ADMIN')")
-	public void addTestCasesToIteration(List<Long> objectsIds, long iterationId) {
-		List<TestCase> tcs  = new ArrayList<TestCase>();
-
-		for (Long tcId : objectsIds) {
-			if (tcId > 0){
-				TestCase testCase = testCaseDao.findById(tcId);
-				tcs.add(testCase);
+	public void addTestCasesToIteration(final List<Long> objectsIds, long iterationId) {
+	
+		//nodes are returned unsorted
+		List<TestCaseLibraryNode> nodes= testCaseLibraryNodeDao.findAllById(objectsIds);
+		
+		//now we resort them according to the order in which the testcaseids were given
+		Collections.sort(nodes, new Comparator<TestCaseLibraryNode>() {
+			@Override
+			public int compare(TestCaseLibraryNode o1, TestCaseLibraryNode o2) {
+				return objectsIds.indexOf(o1.getId()) - objectsIds.indexOf(o2);
 			}
-			else{
-				tcs.addAll(addFolderContent(Math.abs(tcId)));
-			}
-		}
+		});
 
-		if (!tcs.isEmpty()) {
-
-			Iteration it = iterationDao.findById(iterationId);
-
-			for (TestCase testCase : tcs) {
-				//do not persist new ItemTestPlan's if that is not necessary. Let's check first
-				//if the test case was already planned.
-				if (! it.isTestCasePlanned(testCase)){
-					IterationTestPlanItem itp = new IterationTestPlanItem(testCase);
-					itemTestPlanDao.persist(itp);
-					it.addTestPlan(itp);
-				}
+		List<TestCase> testCases = new TestCaseNodeWalker().walk(nodes);
+		
+		Iteration iteration = iterationDao.findById(iterationId);
+		
+		for (TestCase testCase : testCases){
+			if (! iteration.isTestCasePlanned(testCase)){
+				IterationTestPlanItem itp = new IterationTestPlanItem(testCase);
+				itemTestPlanDao.persist(itp);
+				iteration.addTestPlan(itp);
 			}
 		}
+		
 	}
-
-	// TODO : if still using recursive algorithms, linearize them.
-	private List<TestCase> addFolderContent(long folderId){
-		List<TestCase> resultList = new ArrayList<TestCase>();
-		List<Long> folderIds = new ArrayList<Long>();
-		folderIds.add(0, 1L);
-		int i = 0;
-
-		List<TestCaseLibraryNode> folderContent = folderDao.findAllContentById(folderId);
-
-		do {
-			folderIds.remove(i);
-			for (TestCaseLibraryNode node : folderContent) {
-				if (node.getClassSimpleName() == "TestCaseFolder"){
-					folderIds.add(node.getId());
-				}
-				else{
-					resultList.add((TestCase) node);
-				}
-			}
-			if (!folderIds.isEmpty()){
-				folderContent = folderDao.findAllContentById(folderIds.get(i));
-			}
-		}while (!folderIds.isEmpty());
-
-		return resultList;
-	}
-
+	
+	
+	
 	@Override
 	@PreAuthorize("hasPermission(#iterationId, 'org.squashtest.csp.tm.domain.campaign.Iteration', 'WRITE') "
 			+ "or hasRole('ROLE_ADMIN')")
