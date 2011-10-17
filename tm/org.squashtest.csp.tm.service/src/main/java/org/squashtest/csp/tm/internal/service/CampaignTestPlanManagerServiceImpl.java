@@ -120,7 +120,7 @@ public class CampaignTestPlanManagerServiceImpl implements CampaignTestPlanManag
 		Collections.sort(nodes, new Comparator<TestCaseLibraryNode>() {
 			@Override
 			public int compare(TestCaseLibraryNode o1, TestCaseLibraryNode o2) {
-				return testCasesIds.indexOf(o1.getId()) - testCasesIds.indexOf(o2);
+				return testCasesIds.indexOf(o1.getId()) - testCasesIds.indexOf(o2.getId());
 			}
 		});
 

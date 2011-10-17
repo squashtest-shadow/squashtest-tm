@@ -20,15 +20,19 @@
  */
 package org.squashtest.csp.tm.internal.service
 
+
+
 import org.squashtest.csp.tm.domain.campaign.Campaign;
 import org.squashtest.csp.tm.domain.campaign.CampaignTestPlanItem
 import org.squashtest.csp.tm.domain.projectfilter.ProjectFilter
 import org.squashtest.csp.tm.domain.testcase.TestCase;
+import org.squashtest.csp.tm.domain.testcase.TestCaseFolder 
 import org.squashtest.csp.tm.domain.testcase.TestCaseLibrary;
 import org.squashtest.csp.tm.domain.testcase.TestCaseLibraryNode
 import org.squashtest.csp.tm.internal.infrastructure.strategy.LibrarySelectionStrategy;
 import org.squashtest.csp.tm.internal.repository.CampaignDao;
 import org.squashtest.csp.tm.internal.repository.CampaignTestPlanItemDao;
+import org.squashtest.csp.tm.internal.repository.LibraryNodeDao 
 import org.squashtest.csp.tm.internal.repository.TestCaseDao;
 import org.squashtest.csp.tm.internal.repository.TestCaseLibraryDao;
 
@@ -39,6 +43,7 @@ class CampaignTestPlanManagerServiceImplTest extends Specification {
 	CampaignTestPlanManagerServiceImpl service = new CampaignTestPlanManagerServiceImpl()
 	TestCaseDao testCaseDao = Mock()
 	TestCaseLibraryDao testCaseLibraryDao = Mock()
+	LibraryNodeDao<TestCaseLibraryNode> nodeDao = Mock();
 	CampaignDao campaignDao = Mock()
 	CampaignTestPlanItemDao itemDao = Mock()
 	ProjectFilterModificationServiceImpl projectFilterModificationService = Mock()
@@ -51,6 +56,7 @@ class CampaignTestPlanManagerServiceImplTest extends Specification {
 		service.projectFilterModificationService = projectFilterModificationService
 		service.libraryStrategy = libraryStrategy
 		service.campaignTestPlanItemDao = itemDao
+		service.testCaseLibraryNodeDao = nodeDao;
 	}
 
 	def "should find campaign by id"(){
@@ -90,12 +96,12 @@ class CampaignTestPlanManagerServiceImplTest extends Specification {
 		campaignDao.findById(10) >> camp
 
 		and: "some test cases"
-		TestCase tc1 = Mock()
-		tc1.getId() >> 1L
-		TestCase tc3 = Mock()
-		tc3.getId() >> 3L
-		testCaseDao.findById(1L) >> tc1
-		testCaseDao.findById(3L) >> tc3
+		def tc1 = new MockTC(1L)
+		def tc3 = new MockTC(3L)
+
+		
+		and : "the dao"
+		nodeDao.findAllById([1L, 3L]) >> [tc1, tc3]
 
 		when: "the test cases are added to the campaign"
 		service.addTestCasesToCampaignTestPlan([1L, 3L], 10)
@@ -103,8 +109,43 @@ class CampaignTestPlanManagerServiceImplTest extends Specification {
 
 		then: "the campaign contains the test cases added"
 		camp.getTestPlan().size() == 2
-		camp.getTestPlan().get(0).getReferencedTestCase().equals(tc1)
-		camp.getTestPlan().get(1).getReferencedTestCase().equals(tc3)
+		def refered1 = camp.getTestPlan().get(0).getReferencedTestCase()
+		def refered3 = camp.getTestPlan().get(1).getReferencedTestCase()
+		refered1 == tc1
+		refered3 == tc3
+	}
+	
+	
+	def "should reccursively add a list of test cases to a campaign"() {
+		given: "a campaign"
+			Campaign camp = new Campaign()
+			campaignDao.findById(10) >> camp
+			
+		and : "a bunch of folders and testcases"
+			def folder1 = new MockTCF(1L, "f1")
+			def folder2 = new MockTCF(2L, "f2")
+			def tc1 = new MockTC(3L, "tc1")
+			def tc2 = new MockTC(4L, "tc2")
+			def tc3 = new MockTC(5L, "tc3")
+			
+			folder1.addContent(tc1)
+			folder1.addContent(folder2)
+			folder2.addContent(tc2)
+			
+			nodeDao.findAllById([1L, 5L]) >> [tc3, folder1] //note that we reversed the order here to test the sorting
+		
+		when: "the test cases are added to the campaign"
+			service.addTestCasesToCampaignTestPlan([1L, 5L], 10)
+		
+		then :	
+			def collected = camp.getTestPlan().collect{it.referencedTestCase} ;
+			/*we'll test here that :
+				the content of collected states that tc3 is positioned last,
+				collected contains tc1 and tc2 in an undefined order in first position (since the content of a folder is a Set)
+			*/
+			collected[0..1] == [tc1, tc2] || [tc2, tc1]
+			collected[2] == tc3
+	
 	}
 
 	def "should remove a list of test cases from a campaign"() {
@@ -177,9 +218,8 @@ class CampaignTestPlanManagerServiceImplTest extends Specification {
 		campaignDao.findById(10) >> camp
 
 		and: "a test case"
-		TestCase tc1 = Mock()
-		tc1.getId() >> 1L
-		testCaseDao.findById(1L) >> tc1
+		def tc1 = new MockTC(1L)
+		nodeDao.findAllById([1L]) >> [tc1]
 
 		when: "the test cases are added to the campaign"
 		service.addTestCasesToCampaignTestPlan([1L], 10)
@@ -188,11 +228,11 @@ class CampaignTestPlanManagerServiceImplTest extends Specification {
 		1 * itemDao.persist(_)
 	}
 
+	
 	def "should not persist items already in the test plan"() {
 		given: "a test case"
-		TestCase tc1 = Mock()
-		tc1.getId() >> 1L
-		testCaseDao.findById(1L) >> tc1
+		def tc1 = new MockTC(1L) 
+		nodeDao.findAllById([1L]) >> [tc1]
 
 		and: "a campaign with the test case in its test plan"
 		Campaign camp = new Campaign()
@@ -208,4 +248,34 @@ class CampaignTestPlanManagerServiceImplTest extends Specification {
 		then:
 		0 * itemDao.persist(_)
 	}
+	
+	class MockTC extends TestCase{
+		Long overId;
+		MockTC(Long id){
+			overId = id;
+			name="don't care"
+		}
+		MockTC(Long id, String name){
+			this(id);
+			this.name=name;
+		}
+		public Long getId(){return overId;}
+		public void setId(Long newId){overId=newId;}
+		
+	}
+	
+	class MockTCF extends TestCaseFolder{
+		Long overId;
+		MockTCF(Long id){
+			overId = id;
+			name="don't care"
+		}
+		MockTCF(Long id, String name){
+			this(id);
+			this.name=name;
+		}
+		public Long getId(){return overId;}
+		public void setId(Long newId){overId=newId;}
+	}
+	
 }

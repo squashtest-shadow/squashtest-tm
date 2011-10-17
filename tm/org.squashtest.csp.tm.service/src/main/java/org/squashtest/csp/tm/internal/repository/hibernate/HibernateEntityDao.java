@@ -41,7 +41,7 @@ public class HibernateEntityDao<ENTITY_TYPE> extends HibernateDao<ENTITY_TYPE> i
 		}
 		else{
 			Criteria criteria = currentSession().createCriteria(entityType)
-							.add(Restrictions.in(getIdPropertyName(), ids));
+							.add(Restrictions.in(getIdPropertyName(), ids.toArray()));
 		
 			return criteria.list();
 		}

@@ -141,7 +141,7 @@ public class IterationTestPlanManagerServiceImpl implements IterationTestPlanMan
 		Collections.sort(nodes, new Comparator<TestCaseLibraryNode>() {
 			@Override
 			public int compare(TestCaseLibraryNode o1, TestCaseLibraryNode o2) {
-				return objectsIds.indexOf(o1.getId()) - objectsIds.indexOf(o2);
+				return objectsIds.indexOf(o1.getId()) - objectsIds.indexOf(o2.getId());
 			}
 		});
 
