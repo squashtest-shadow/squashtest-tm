@@ -21,7 +21,10 @@
 
 package org.squashtest.csp.tm.internal.service
 
+import org.junit.runner.RunWith;
+import org.spockframework.runtime.Sputnik;
 import org.springframework.transaction.annotation.Transactional;
+import org.squashtest.csp.tm.service.CustomRequirementModificationService;
 import org.squashtest.csp.tm.service.RequirementModificationService;
 import org.squashtest.csp.tm.domain.DuplicateNameException;
 import org.squashtest.csp.tm.domain.requirement.RequirementCriticality;
@@ -37,13 +40,13 @@ import javax.inject.Inject;
 
 @UnitilsSupport
 @Transactional
+@RunWith(Sputnik)
 class RequirementModificationServiceIT extends DbunitServiceSpecification {
-
 
 	@Inject
 	RequirementModificationService modService;
 
-	private int requirementId = 10
+	long requirementId = 10
 
 	@DataSet("RequirementModificationServiceIT.should successfully rename a requirement.xml")
 	def "should successfully rename a requirement"(){
@@ -60,11 +63,10 @@ class RequirementModificationServiceIT extends DbunitServiceSpecification {
 		
 	}
 
-
 	@DataSet("RequirementModificationServiceIT.should change requirement criticality.xml")
 	def "should change requirement criticality"(){
 		when:
-		modService.updateRequirementCriticality (requirementId, RequirementCriticality.CRITICAL)
+		modService.changeCriticality (requirementId, RequirementCriticality.CRITICAL)
 		def requirement = modService.find(requirementId)
 
 		then:
@@ -77,7 +79,7 @@ class RequirementModificationServiceIT extends DbunitServiceSpecification {
 		def reference = "something"
 
 		when:
-		modService.updateRequirementReference(requirementId, reference)
+		modService.changeReference(requirementId, reference)
 		def requirement = modService.find(requirementId)
 
 		then:

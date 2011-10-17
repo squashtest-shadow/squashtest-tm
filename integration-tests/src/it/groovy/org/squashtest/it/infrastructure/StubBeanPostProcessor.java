@@ -157,6 +157,9 @@ public class StubBeanPostProcessor implements BeanPostProcessor, ApplicationList
 		// ugly hardcoding because wont work otherwise...
 		Object bean = beanFactory.getBean("squashtest.tm.service.internal.CampaignManagementService");
 		injectServiceReferenceStubs(bean);
+
+		bean = beanFactory.getBean("squashtest.tm.service.internal.RequirementManagementService");
+		injectServiceReferenceStubs(bean);
 	}
 
 }

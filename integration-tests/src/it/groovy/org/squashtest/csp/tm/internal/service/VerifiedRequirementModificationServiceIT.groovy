@@ -34,10 +34,10 @@ import org.squashtest.csp.tm.domain.testcase.TestCase;
 import org.squashtest.csp.tm.domain.testcase.TestCaseFolder;
 import org.squashtest.csp.tm.infrastructure.filter.CollectionSorting;
 import org.squashtest.csp.tm.infrastructure.filter.FilteredCollectionHolder;
+import org.squashtest.csp.tm.service.CustomRequirementModificationService;
 import org.squashtest.csp.tm.service.ProjectManagerService;
 import org.squashtest.csp.tm.service.RequirementLibrariesCrudService;
 import org.squashtest.csp.tm.service.RequirementLibraryNavigationService;
-import org.squashtest.csp.tm.service.RequirementModificationService;
 import org.squashtest.csp.tm.service.TestCaseLibrariesCrudService;
 import org.squashtest.csp.tm.service.TestCaseLibraryNavigationService;
 import org.squashtest.csp.tm.service.TestCaseModificationService;
@@ -57,7 +57,7 @@ class VerifiedRequirementModificationServiceIT extends HibernateServiceSpecifica
 	private TestCaseLibrariesCrudService tcCrudService
 
 	@Inject
-	RequirementModificationService reqModService;
+	CustomRequirementModificationService reqModService;
 
 	@Inject
 	RequirementLibraryNavigationService reqNavService;

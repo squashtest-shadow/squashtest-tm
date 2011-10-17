@@ -72,12 +72,18 @@
 		<property name="folderDao" ref="hibernateTestCaseFolderDao" />
 		<property name="libraryDao" ref="hibernateTestCaseLibraryDao" />
 	</bean>
+
 	<bean id="squashtest.tm.service.internal.RequirementManagementService" class="org.squashtest.csp.tm.internal.service.GenericNodeManagementService">
 		<property name="nodeDao" ref="hibernateRequirementDao" />
 		<property name="folderDao" ref="hibernateRequirementFolderDao" />
 		<property name="libraryDao" ref="hibernateRequirementLibraryDao" />
 	</bean>
 	
+	<bean id="squashtest.tm.service.RequirementModificationService" class="org.squashtest.csp.core.infrastructure.dynamicmanager.DynamicManagerFactoryBean">
+		<property name="managerType" value="org.squashtest.csp.tm.service.RequirementModificationService" />
+		<property name="entityType" value="org.squashtest.csp.tm.domain.requirement.Requirement" />
+	</bean>
+
 	<bean id="squashtest.tm.service.internal.CampaignManagementService" class="org.squashtest.csp.tm.internal.service.GenericNodeManagementService">
 		<property name="nodeDao" ref="hibernateCampaignDao" />
 		<property name="folderDao" ref="hibernateCampaignFolderDao" />

@@ -18,23 +18,33 @@
  *     You should have received a copy of the GNU Lesser General Public License
  *     along with this software.  If not, see <http://www.gnu.org/licenses/>.
  */
+
 package org.squashtest.csp.tm.service;
 
+import java.util.List;
 
-import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.transaction.annotation.Transactional;
-import org.squashtest.csp.tm.domain.requirement.RequirementCriticality;
+import org.squashtest.csp.tm.domain.requirement.Requirement;
+import org.squashtest.csp.tm.domain.testcase.TestCase;
+import org.squashtest.csp.tm.infrastructure.filter.CollectionSorting;
+import org.squashtest.csp.tm.infrastructure.filter.FilteredCollectionHolder;
 
+/**
+ * @author Gregory Fouquet
+ * 
+ */
 @Transactional
-public interface RequirementModificationService extends CustomRequirementModificationService {
+public interface CustomRequirementModificationService {
+	@Transactional(readOnly = true)
+	Requirement find(long reqId);
 
-	@PreAuthorize("hasPermission(#arg0, 'org.squashtest.csp.tm.domain.requirement.Requirement','WRITE') or hasRole('ROLE_ADMIN')")		
-	void changeDescription(long requirementId, String newDescription);
+	void rename(long reqId, String newName);
 
-	@PreAuthorize("hasPermission(#arg0, 'org.squashtest.csp.tm.domain.requirement.Requirement', 'WRITE') or hasRole('ROLE_ADMIN')")
-	void changeCriticality(long requirementId, RequirementCriticality criticality);
-	
-	@PreAuthorize("hasPermission(#arg0, 'org.squashtest.csp.tm.domain.requirement.Requirement', 'WRITE') or hasRole('ROLE_ADMIN')")
-	void changeReference(long requirementId, String reference);
+	@Transactional(readOnly = true)
+	List<TestCase> findVerifyingTestCasesByRequirementId(long requirementId);
+
+	@Transactional(readOnly = true)
+	FilteredCollectionHolder<List<TestCase>> findVerifyingTestCasesByRequirementId(long requirementId,
+			CollectionSorting filter);
 
 }

@@ -29,19 +29,18 @@ import org.springframework.security.access.prepost.PostAuthorize;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.stereotype.Service;
 import org.squashtest.csp.tm.domain.requirement.Requirement;
-import org.squashtest.csp.tm.domain.requirement.RequirementCriticality;
 import org.squashtest.csp.tm.domain.requirement.RequirementFolder;
 import org.squashtest.csp.tm.domain.requirement.RequirementLibraryNode;
 import org.squashtest.csp.tm.domain.testcase.TestCase;
 import org.squashtest.csp.tm.infrastructure.filter.CollectionSorting;
 import org.squashtest.csp.tm.infrastructure.filter.FilteredCollectionHolder;
 import org.squashtest.csp.tm.internal.repository.RequirementDao;
-import org.squashtest.csp.tm.service.RequirementModificationService;
+import org.squashtest.csp.tm.service.CustomRequirementModificationService;
 
 
-@Service("squashtest.tm.service.RequirementModificationService")
-public class RequirementModificationServiceImpl implements
-RequirementModificationService {
+@Service("CustomRequirementModificationService")
+public class CustomRequirementModificationServiceImpl implements
+CustomRequirementModificationService {
 
 	@Inject
 	private RequirementDao requirementDao;
@@ -50,15 +49,8 @@ RequirementModificationService {
 	@Named("squashtest.tm.service.internal.RequirementManagementService")
 	private NodeManagementService<Requirement, RequirementLibraryNode, RequirementFolder> requirementManagementService;
 	
-	public RequirementModificationServiceImpl(){
+	public CustomRequirementModificationServiceImpl(){
 		super();
-	}
-
-	@Override
-	@PreAuthorize("hasPermission(#reqId, 'org.squashtest.csp.tm.domain.requirement.Requirement','WRITE') or hasRole('ROLE_ADMIN')")		
-	public void updateDescription(long reqId, String newDescription) {
-		Requirement req = requirementDao.findById(reqId);
-		req.setDescription(newDescription);
 	}
 
 	@Override
@@ -86,19 +78,5 @@ RequirementModificationService {
 		List<TestCase> tcs = requirementDao.findAllVerifyingTestCasesByIdFiltered(requirementId, filter);
 		long count = requirementDao.countVerifyingTestCasesById(requirementId);
 		return new FilteredCollectionHolder<List<TestCase>>(count, tcs);
-	}
-
-	@Override
-	@PreAuthorize("hasPermission(#requirementId, 'org.squashtest.csp.tm.domain.requirement.Requirement', 'WRITE') or hasRole('ROLE_ADMIN')")
-	public void updateRequirementCriticality(long requirementId, RequirementCriticality criticality) {
-		Requirement requirement = requirementDao.findById(requirementId);
-		requirement.setCriticality(criticality);
-	}
-
-	@Override
-	@PreAuthorize("hasPermission(#requirementId, 'org.squashtest.csp.tm.domain.requirement.Requirement', 'WRITE') or hasRole('ROLE_ADMIN')")
-	public void updateRequirementReference(long requirementId, String reference) {
-		Requirement requirement = requirementDao.findById(requirementId);
-		requirement.setReference(reference);
 	}
 }

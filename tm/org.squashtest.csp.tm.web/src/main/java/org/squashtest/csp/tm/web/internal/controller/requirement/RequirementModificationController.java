@@ -109,7 +109,7 @@ public class RequirementModificationController {
 	public @ResponseBody
 	String updateDescription(@RequestParam("value") String newDescription, @PathVariable long requirementId) {
 
-		requirementModService.updateDescription(requirementId, newDescription);
+		requirementModService.changeDescription(requirementId, newDescription);
 		LOGGER.trace("requirement " + requirementId + ": updated description to " + newDescription);
 		return newDescription;
 
@@ -212,14 +212,14 @@ public class RequirementModificationController {
 	@ResponseBody
 	public void updateCriticality(@RequestParam String requirementCriticality, @PathVariable long requirementId){
 		RequirementCriticality criticality = RequirementCriticality.valueOf(requirementCriticality);
-		requirementModService.updateRequirementCriticality(requirementId, criticality);
+		requirementModService.changeCriticality(requirementId, criticality);
 		LOGGER.debug("Requirement {} : requirement criticality changed, new value : {}", requirementId, criticality.name());
 	}
 
 	@RequestMapping(method = RequestMethod.POST, params = { "id=requirement-reference", "value" })
 	@ResponseBody
 	String updateReference(@RequestParam("value") String requirementReference, @PathVariable long requirementId) {
-		requirementModService.updateRequirementReference(requirementId, requirementReference.trim());
+		requirementModService.changeReference(requirementId, requirementReference.trim());
 		LOGGER.debug("Requirement {} : requirement reference changed, new value : {}", requirementId,
 				requirementReference);
 		return requirementReference;

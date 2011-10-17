@@ -62,18 +62,11 @@ class CampaignModificationServiceIT extends HibernateServiceSpecification {
 	@Inject
 	private IterationModificationService iterService
 	
-	
-	
-
-
 	private int campId=-1;
 	private int testCaseId=-1;
 	private int folderId = -1;
 
 	def setup(){
-		
-		
-		
 		libcrud.addLibrary();
 
 		def libList= libcrud.findAllLibraries()
@@ -89,16 +82,13 @@ class CampaignModificationServiceIT extends HibernateServiceSpecification {
 
 		folderId = folder.id;
 		campId= campaign.id;
-		
-		
-		
-		
 	}
 
 	def "should not accept a rename to empty string"(){
 		given :
 		def campaign = new Campaign(name:"campa");
 		navService.addCampaignToCampaignFolder(folderId, campaign)
+		
 		when :
 		try{
 			service.rename(campaign.id, "")
