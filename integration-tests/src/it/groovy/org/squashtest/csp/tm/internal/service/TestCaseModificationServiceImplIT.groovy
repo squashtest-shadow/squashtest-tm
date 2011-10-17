@@ -171,7 +171,7 @@ class TestCaseModificationServiceImplIT extends HibernateServiceSpecification {
 		given :
 		def tcNewDesc = "the new desc"
 		when :
-		service.updateTestCaseDescription(testCaseId, tcNewDesc)
+		service.changeDescription(testCaseId, tcNewDesc)
 		def tc = service.findTestCaseById(testCaseId)
 
 		then :
@@ -185,7 +185,7 @@ class TestCaseModificationServiceImplIT extends HibernateServiceSpecification {
 		def newExecMode = TestCaseExecutionMode.AUTOMATED
 
 		when :
-		service.updateTestCaseExecutionMode(testCaseId, newExecMode)
+		service.changeExecutionMode(testCaseId, newExecMode)
 		def tc = service.findTestCaseById(testCaseId)
 
 		then :

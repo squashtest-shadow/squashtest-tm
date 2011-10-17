@@ -33,12 +33,10 @@ import org.slf4j.LoggerFactory;
 import org.springframework.security.access.prepost.PostAuthorize;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.stereotype.Service;
-import org.springframework.transaction.annotation.Transactional;
 import org.squashtest.csp.tm.domain.DuplicateNameException;
 import org.squashtest.csp.tm.domain.requirement.Requirement;
 import org.squashtest.csp.tm.domain.testcase.ActionTestStep;
 import org.squashtest.csp.tm.domain.testcase.TestCase;
-import org.squashtest.csp.tm.domain.testcase.TestCaseExecutionMode;
 import org.squashtest.csp.tm.domain.testcase.TestCaseFolder;
 import org.squashtest.csp.tm.domain.testcase.TestCaseLibraryNode;
 import org.squashtest.csp.tm.domain.testcase.TestStep;
@@ -49,17 +47,16 @@ import org.squashtest.csp.tm.internal.repository.RequirementDao;
 import org.squashtest.csp.tm.internal.repository.TestCaseDao;
 import org.squashtest.csp.tm.internal.repository.TestStepDao;
 import org.squashtest.csp.tm.service.CallStepManagerService;
-import org.squashtest.csp.tm.service.TestCaseModificationService;
+import org.squashtest.csp.tm.service.CustomTestCaseModificationService;
 import org.squashtest.csp.tm.service.VerifiedRequirement;
 
 /**
  * @author Gregory Fouquet
  *
  */
-@Service("squashtest.tm.service.TestCaseModificationService")
-@Transactional
-public class TestCaseModificationServiceImpl implements TestCaseModificationService {
-	private static final Logger LOGGER = LoggerFactory.getLogger(TestCaseModificationServiceImpl.class);
+@Service("CustomTestCaseModificationService")
+public class CustomTestCaseModificationServiceImpl implements CustomTestCaseModificationService {
+	private static final Logger LOGGER = LoggerFactory.getLogger(CustomTestCaseModificationServiceImpl.class);
 
 	@Inject
 	private TestCaseDao testCaseDao;
@@ -87,20 +84,6 @@ public class TestCaseModificationServiceImpl implements TestCaseModificationServ
 	@PreAuthorize("hasPermission(#testCaseId, 'org.squashtest.csp.tm.domain.testcase.TestCase' , 'WRITE') or hasRole('ROLE_ADMIN')")
 	public void updateTestCaseName(long testCaseId, String newName) throws DuplicateNameException {
 		testCaseManagementService.renameNode(testCaseId, newName);
-	}
-
-	@Override
-	@PreAuthorize("hasPermission(#testCaseId, 'org.squashtest.csp.tm.domain.testcase.TestCase' , 'WRITE') or hasRole('ROLE_ADMIN')")
-	public void updateTestCaseDescription(long testCaseId, String newDescription) {
-		TestCase testCase = testCaseDao.findById(testCaseId);
-		testCase.setDescription(newDescription);
-	}
-
-	@Override
-	@PreAuthorize("hasPermission(#testCaseId, 'org.squashtest.csp.tm.domain.testcase.TestCase' , 'WRITE') or hasRole('ROLE_ADMIN')")
-	public void updateTestCaseExecutionMode(long testCaseId, TestCaseExecutionMode mode) {
-		TestCase testCase = testCaseDao.findById(testCaseId);
-		testCase.setExecutionMode(mode);
 	}
 
 	@Override

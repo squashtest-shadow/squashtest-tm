@@ -170,7 +170,7 @@ public class TestCaseModificationController {
 	@ResponseBody
 	public void updateExecutionMode(@RequestParam String executionMode, @PathVariable long testCaseId) {
 		TestCaseExecutionMode mode = TestCaseExecutionMode.valueOf(executionMode);
-		testCaseModificationService.updateTestCaseExecutionMode(testCaseId, mode);
+		testCaseModificationService.changeExecutionMode(testCaseId, mode);
 		LOGGER.trace("test case {} : execution mode changed, new mode is {}", testCaseId, mode.name());
 	}
 
@@ -256,7 +256,7 @@ public class TestCaseModificationController {
 	@ResponseBody
 	public String updateDescription(@RequestParam("value") String testCaseDescription, @PathVariable long testCaseId) {
 
-		testCaseModificationService.updateTestCaseDescription(testCaseId, testCaseDescription);
+		testCaseModificationService.changeDescription(testCaseId, testCaseDescription);
 		LOGGER.trace("test case " + testCaseId + ": updated description to " + testCaseDescription);
 
 		return testCaseDescription;

@@ -20,101 +20,17 @@
  */
 package org.squashtest.csp.tm.service;
 
-import java.util.List;
 
-import org.squashtest.csp.tm.domain.requirement.Requirement;
-import org.squashtest.csp.tm.domain.testcase.ActionTestStep;
-import org.squashtest.csp.tm.domain.testcase.TestCase;
+import org.springframework.security.access.prepost.PreAuthorize;
+import org.springframework.transaction.annotation.Transactional;
 import org.squashtest.csp.tm.domain.testcase.TestCaseExecutionMode;
-import org.squashtest.csp.tm.domain.testcase.TestStep;
-import org.squashtest.csp.tm.infrastructure.filter.CollectionFilter;
-import org.squashtest.csp.tm.infrastructure.filter.CollectionSorting;
-import org.squashtest.csp.tm.infrastructure.filter.FilteredCollectionHolder;
 
-public interface TestCaseModificationService {
+@Transactional
+public interface TestCaseModificationService extends CustomTestCaseModificationService {
+	@PreAuthorize("hasPermission(#arg0, 'org.squashtest.csp.tm.domain.testcase.TestCase' , 'WRITE') or hasRole('ROLE_ADMIN')")
+	void changeDescription(long testCaseId, String newDescription);
 
-	/* *************** TestCase section **************************** */
-
-	TestCase findTestCaseById(long testCaseId);
-
-	TestCase findTestCaseWithSteps(long testCaseId);
-
-	List<TestStep> findStepsByTestCaseId(long testCaseId);
-
-	FilteredCollectionHolder<List<TestStep>> findStepsByTestCaseIdFiltered(long testCaseId, CollectionFilter filter);
-
-	void updateTestCaseName(long testCaseId, String newName);
-
-	void updateTestCaseDescription(long testCaseId, String newDescription);
-
-	void updateTestCaseExecutionMode(long testCaseId, TestCaseExecutionMode mode);
-
-
-	
-	
-	/* *************** TestStep section ***************************** */
-
-	TestStep addActionTestStep(long parentTestCaseId, ActionTestStep newTestStep);
-	
-	void updateTestStepAction(long testStepId, String newAction);
-
-	void updateTestStepExpectedResult(long testStepId, String newExpectedResult);
-
-	@Deprecated
-	void changeTestStepPosition(long testCaseId, long testStepId, int newStepPosition);
-
-	
-	/**
-	 * Will move a list of steps to a new position.
-	 * 
-	 * @param testCaseId the id of the test case
-	 * @param newPosition the position we want the first element of movedSteps to be once the operation is complete
-	 * @param movedSteps the list of steps to move, sorted by rank among each others.
-	 */
-	void changeTestStepsPosition(long testCaseId, int newPosition, List<Long> stepIds);
-	
-	void removeStepFromTestCase(long testCaseId, long testStepId);
-
-	void removeListOfSteps(long testCaseId, List<Long> testStepIds);
-
-	/**
-	 * Returns the filtered list of {@link Requirement}s directly verified by a test case.
-	 *
-	 * @param testCaseId
-	 * @param filter
-	 * @return
-	 */
-	
-
-	FilteredCollectionHolder<List<Requirement>> findAllDirectlyVerifiedRequirementsByTestCaseId(long testCaseId,
-			CollectionSorting filter);
-
-	FilteredCollectionHolder<List<VerifiedRequirement>> findAllVerifiedRequirementsByTestCaseId(long testCaseId,
-			CollectionSorting sorting);
-	
-	/**
-	 * That method returns the list of test cases having at least one CallTestStep directly calling the 
-	 * test case identified by testCaseId. The list is wrapped in a FilteredCollectionHolder, that contains
-	 * meta informations regarding the filtering, as usual.
-	 *  
-	 * @param testCaseId the Id of the called test case.
-	 * @param sorting the sorting parameters.
-	 * @return a non null but possibly empty FilteredCollectionHolder wrapping the list of first-level calling test cases.
-	 */
-	FilteredCollectionHolder<List<TestCase>> findCallingTestCases(long testCaseId, CollectionSorting sorting);
-
-	/**
-	 * will insert a test step into a test case script, possibly after a step (the position), given their Ids. If no
-	 * position is provided, it defaults to the first position.
-	 *
-	 * @param testCaseId
-	 *            the id of the test case.
-	 * @param idToCopyAfter
-	 *            the id of the step after which we'll insert the copy of a step, may be null.
-	 * @param copiedTestStepId
-	 *            the id of the testStep to copy.
-	 *
-	 */
-	void pasteCopiedTestStep(Long testCaseId, Long idToCopyAfter, Long copiedTestStepId);
+	@PreAuthorize("hasPermission(#arg0, 'org.squashtest.csp.tm.domain.testcase.TestCase' , 'WRITE') or hasRole('ROLE_ADMIN')")
+	void changeExecutionMode(long testCaseId, TestCaseExecutionMode mode);
 
 }

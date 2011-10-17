@@ -73,6 +73,11 @@
 		<property name="libraryDao" ref="hibernateTestCaseLibraryDao" />
 	</bean>
 
+	<bean id="squashtest.tm.service.TestCaseModificationService" class="org.squashtest.csp.core.infrastructure.dynamicmanager.DynamicManagerFactoryBean">
+		<property name="managerType" value="org.squashtest.csp.tm.service.TestCaseModificationService" />
+		<property name="entityType" value="org.squashtest.csp.tm.domain.testcase.TestCase" />
+	</bean>
+
 	<bean id="squashtest.tm.service.internal.RequirementManagementService" class="org.squashtest.csp.tm.internal.service.GenericNodeManagementService">
 		<property name="nodeDao" ref="hibernateRequirementDao" />
 		<property name="folderDao" ref="hibernateRequirementFolderDao" />

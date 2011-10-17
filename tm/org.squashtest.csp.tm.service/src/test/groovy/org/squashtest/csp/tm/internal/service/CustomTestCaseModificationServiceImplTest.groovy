@@ -33,8 +33,8 @@ import org.squashtest.csp.tm.service.CallStepManagerService;
 
 import spock.lang.Specification;
 
-class TestCaseModificationServiceImplTest extends Specification {
-	TestCaseModificationServiceImpl service = new TestCaseModificationServiceImpl()
+class CustomTestCaseModificationServiceImplTest extends Specification {
+	CustomTestCaseModificationServiceImpl service = new CustomTestCaseModificationServiceImpl()
 	TestCaseDao testCaseDao = Mock()
 	TestStepDao testStepDao = Mock()
 	RequirementDao requirementDao = Mock()
@@ -43,7 +43,6 @@ class TestCaseModificationServiceImplTest extends Specification {
 	TestCaseNodeDeletionHandler deletionHandler = Mock()
 
 	def setup() {
-
 		service.testCaseDao = testCaseDao
 		service.testStepDao = testStepDao
 		service.testCaseManagementService = testCaseManagementService
@@ -67,18 +66,6 @@ class TestCaseModificationServiceImplTest extends Specification {
 		then:
 		testCase.steps == [step]
 		1 * testStepDao.persist(step)
-	}
-
-	def "should find test case and change its execution mode"() {
-		given:
-		def testCase = new TestCase()
-		testCaseDao.findById(10) >> testCase
-
-		when:
-		service.updateTestCaseExecutionMode(10, TestCaseExecutionMode.AUTOMATED)
-
-		then:
-		testCase.executionMode == TestCaseExecutionMode.AUTOMATED
 	}
 
 	def "should find test case and change its step index"() {
@@ -117,18 +104,6 @@ class TestCaseModificationServiceImplTest extends Specification {
 
 		then:
 		1 * deletionHandler.deleteStep(testCase, tstep)
-	}
-
-	def "should find test case and update its description"() {
-		given:
-		TestCase testCase = Mock()
-		testCaseDao.findById(10) >> testCase
-
-		when:
-		service.updateTestCaseDescription(10, "new description")
-
-		then:
-		1 * testCase.setDescription("new description")
 	}
 
 	def "should return the first 2 verified requirements"() {
