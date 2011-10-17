@@ -48,4 +48,6 @@ public interface DummyManager extends CustomDummyManager  {
 	void changeUnsupportedMethod(long id, String arg, Object otherArg);
 	
 	void changeShoes(long id, String shoes);
+	
+	void changeCool(long id, boolean isCool);
 }

@@ -117,6 +117,7 @@ class DynamicManagerFactoryBeanTest extends Specification{
 		then:
 		thrown UnsupportedMethodException
 	}
+
 	def "should fetch dummy entity by id and change its shoes"() {
 		given:
 		DummyEntity dummy = new DummyEntity(id: 10L, shoes: "creepers")
@@ -130,6 +131,19 @@ class DynamicManagerFactoryBeanTest extends Specification{
 		dummy.shoes == "dm's"
 	}
 
+	def "should fetch dummy entity by id and change its coolness"() {
+		given:
+		DummyEntity dummy = new DummyEntity(id: 10L, cool: false)
+		currentSession.load(DummyEntity, 10L) >> dummy
+
+		when:
+		factory.initializeFactory()
+		factory.object.changeCool(10L, true)
+
+		then:
+		dummy.isCool()
+	}
+	
 	def "should lookup the delegate manager in spring factory"() {
 		given:
 		CustomDummyManager delegateManager = Mock()

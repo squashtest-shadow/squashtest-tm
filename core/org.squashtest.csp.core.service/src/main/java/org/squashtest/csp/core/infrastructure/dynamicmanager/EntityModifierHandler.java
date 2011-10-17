@@ -29,6 +29,7 @@ import javax.validation.constraints.NotNull;
 
 import org.hibernate.SessionFactory;
 import org.springframework.util.ReflectionUtils;
+import org.squashtest.csp.core.infrastructure.lang.PrimitiveTypeUtils;
 
 /**
  * {@link InvocationHandler} which handles proxy calls which should modify an entity. These calls should have a
@@ -83,20 +84,52 @@ class EntityModifierHandler<ENTITY> implements DynamicManagerInvocationHandler {
 
 	@SuppressWarnings("unchecked")
 	@Override
-	public Object invoke(Object proxy, Method method, Object[] args) throws Throwable {
-		Matcher m = ENTITY_MODIFIER_SERVICE_PATTERN.matcher(method.getName());
-		m.find();
-
+	public Object invoke(Object proxy, Method method, Object[] args) throws Throwable { // NOSONAR : I dont choose what
+																						// JDK interfaces throw
 		ENTITY entity = (ENTITY) sessionFactory.getCurrentSession().load(entityType, (Long) args[0]);
 
-		String prop = m.group(1);
-		Method setter = ReflectionUtils.findMethod(entityType, "set" + prop, args[1].getClass());
-
-		if (setter == null) {
-			throw new NoSuchMethodException();
-		}
-
+		String prop = extractModifiedPropertyName(method);
+		Method setter = findSetter(prop, args[1]);
 		return setter.invoke(entity, args[1]);
 	}
 
+	private String extractModifiedPropertyName(Method method) {
+		Matcher m = ENTITY_MODIFIER_SERVICE_PATTERN.matcher(method.getName());
+		m.find();
+		String prop = m.group(1);
+		return prop;
+	}
+
+	private Method findSetter(String property, Object arg) throws NoSuchMethodException {
+		String setterName = "set" + property;
+		Class<?> argClass = arg.getClass();
+
+		Method setter = ReflectionUtils.findMethod(entityType, setterName, argClass);
+
+		if (setter == null) {
+			setter = findPrimitiveTypeSetter(setterName, argClass);
+		}
+
+		if (setter == null) {
+			throw new NoSuchMethodException("void " + entityType.getName() + '.' + setterName + '('
+					+ argClass.getName() + ')');
+		}
+
+		return setter;
+	}
+
+	/**
+	 * @param property
+	 * @param argClass
+	 * @return
+	 */
+	private Method findPrimitiveTypeSetter(String setterName, Class<?> argClass) {
+		if (PrimitiveTypeUtils.isPrimitiveWrapper(argClass)) {
+			Class<?> primitiveClass = PrimitiveTypeUtils.wrapperToPrimitive(argClass);
+
+			return ReflectionUtils.findMethod(entityType, setterName, primitiveClass);
+		}
+
+		return null;
+	}
 }

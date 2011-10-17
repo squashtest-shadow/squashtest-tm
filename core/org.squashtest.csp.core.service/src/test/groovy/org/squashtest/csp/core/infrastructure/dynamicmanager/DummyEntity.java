@@ -42,6 +42,8 @@ package org.squashtest.csp.core.infrastructure.dynamicmanager;
 
 public class DummyEntity extends DummySuperclass {
 	private Long id;
+	
+	private boolean cool;
 
 	public void setId(Long id) {
 		this.id = id;
@@ -57,6 +59,20 @@ public class DummyEntity extends DummySuperclass {
 
 	public Long getId() {
 		return id;
+	}
+
+	/**
+	 * @param cool the cool to set
+	 */
+	public void setCool(boolean cool) {
+		this.cool = cool;
+	}
+
+	/**
+	 * @return the cool
+	 */
+	public boolean isCool() {
+		return cool;
 	}
 
 	private String style;

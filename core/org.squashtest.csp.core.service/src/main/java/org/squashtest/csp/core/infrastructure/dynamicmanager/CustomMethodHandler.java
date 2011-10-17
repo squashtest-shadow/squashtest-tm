@@ -39,7 +39,7 @@ class CustomMethodHandler implements DynamicManagerInvocationHandler {
 	}
 
 	@Override
-	public Object invoke(Object proxy, Method method, Object[] args) throws Throwable {
+	public Object invoke(Object proxy, Method method, Object[] args) throws Throwable { // NOSONAR : I dont choose what JDK interfaces throw
 		return method.invoke(customManager, args);
 	}
 

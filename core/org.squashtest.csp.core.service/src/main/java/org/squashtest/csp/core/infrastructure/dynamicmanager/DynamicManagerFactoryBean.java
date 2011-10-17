@@ -84,7 +84,7 @@ import org.springframework.beans.factory.FactoryBean;
  */
 public class DynamicManagerFactoryBean<MANAGER, ENTITY> implements FactoryBean<MANAGER> {
 	private class CompositeInvocationHandler implements InvocationHandler {
-		public Object invoke(Object proxy, Method method, Object[] args) throws Throwable {
+		public Object invoke(Object proxy, Method method, Object[] args) throws Throwable { // NOSONAR : I dont choose what JDK interfaces throw
 			try {
 				return doInvoke(proxy, method, args);
 
