@@ -114,15 +114,31 @@
 	}
 	
 
+
 	
 	/*
 	 * squash tree plugin
 	 */
 	 $.jstree.plugin("squash",{
 		__init : function(){
-			//that section is copy/pasta from the original themeroller plugin, kudos mate.
+			
+			var tree= this;
 			var s = this._get_settings().squash;
-			this.get_container()
+			tree.data.squash.timeout=s.timeout;
+			
+			var container = this.get_container();
+			
+			//we need that handler to be bound first 
+			//note that we are bound to 'click' and not 'click.jstree'. That detail matters 
+			//in the handler just below.
+			container.bindFirst("live", function(){
+				container.delegate("a",'click', function(event, data) {
+					handleNodeClicks(tree, event);
+				});
+			});
+			
+			container
+				//that section is copy/pasta from the original themeroller plugin, kudos mate.
 				.addClass("ui-widget-content")
 				.delegate("a","mouseenter.jstree", function () {
 					$(this).addClass(s.item_h);
@@ -139,15 +155,7 @@
 							.find("." + s.item_a).removeClass(s.item_a).end()
 							.find(".jstree-clicked").addClass(s.item_a);
 						return true;
-					}, this))
-					
-				//now the Squash specific handlers.				
-				.bind('click.jstree', function(event, data) {
-					cancelMultipleClickEvent(event);
-				})
-				.bind("dblclick.jstree", function(event) {
-					toggleEventTargetIfNode(event, $(this));
-				});
+					}, this));
 		},
 		_fn : {
 			allowedOperations : function(){
@@ -189,7 +197,8 @@
 		},
 		defaults : {
 			"item_h" : "ui-state-active",
-			"item_a" : "ui-state-default"			
+			"item_a" : "ui-state-default",
+			"timeout" : 500
 		}
 	 });
 
@@ -224,7 +233,9 @@
 	 
 	 
 	 });
+	
 })(jQuery);
+
 
 
 function clearContextualContent(targetSelector){
@@ -580,20 +591,6 @@ function storeSelectedNodeUrls(treeId, selResourceUrl, selNodeContentUrl,
 	tree.data('selectedNodeContentUrl', selNodeContentUrl);
 	tree.data('selectedResourceId', selResourceId);
 }
-/**
- * Gets the event target and if it is a node of the given tree, toggles it.
- * 
- * @param event
- * @param tree
- *            jquery-selected tree
- */
-function toggleEventTargetIfNode(event, tree) {
-	var target = $(event.target);
-
-	if (target.is('a')) {
-		$(tree).jstree('toggle_node', target.parent());
-	}
-}
 
 /**
  * Unselects the nodes of the given tree which are not siblings of the given li
@@ -624,19 +621,53 @@ function unselectNonSiblings(liNode, tree) {
 function findSelectedNodes(tree) {
 	return tree.find('.jstree-clicked').parent('li');
 }
+
+/* *************************** node click behaviour ********************* */
+
+
 /**
- * Cancels a tree click event if it is the second or more in a row. For example,
- * a double click triggers a dblclick event and 2 click events. Usually we
- * dont want to process the click event twice.
- * 
- * @param clickEvent
- */
-function cancelMultipleClickEvent(clickEvent) {
-	if (clickEvent.detail > 1) {
-		clickEvent.stopImmediatePropagation();
-	}
-}
+ * Behaviour of a node when clicked. There are two possible paths : 
+ *  1) the node is not a container (files, resources) : 
+ *				a/ allow first click, 
+ *				b/ cancel other clicks
+ *  2) the node is a container (libraries, folders, campaigns) : 
+ * 				a/ first click : start a timer. If the timer is not canceled, let the event propagate. 
+ *              b/ other clicks : toggle the node and stop event propagation.
+ *
+ * Basically we'll stop the event propagation everytime except for case 1-a. The case 2-a actually do not let the event
+ * propagate : it fires a new 'click.jstree' event instead. The reason for this is because the following handler is bound
+ * to 'click' and we don't want it to be called again.
+ *
+ * @params : 
+ *  - tree : the tree instance
+ *  - clickEvent : the click event.
+ *
+ */ 
+ function handleNodeClicks(tree, event){
+	var target = $(event.target);
+	var node = target.parent();
 	
+	if (node.is(':library') || node.is(':folder') || node.attr('restype') == "campaigns"){
+		event.stopImmediatePropagation();
+		
+		if (event.detail == 1){
+			tree.data.squash.clicktimer = setTimeout(function(){		
+				target.trigger('click.jstree');
+			},tree.data.squash.timeout);
+		}
+		else{
+			clearTimeout(tree.data.squash.clicktimer);
+			tree.toggle_node(node);
+		}
+	}
+	else{
+		if (event.detail > 1) {
+			event.stopImmediatePropagation();
+		}	
+	}
+ }
+
+
 	
 /* ****************************** other tree-related objects ************************************** */
 

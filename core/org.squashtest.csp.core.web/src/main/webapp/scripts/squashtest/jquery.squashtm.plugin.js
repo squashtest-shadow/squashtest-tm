@@ -78,7 +78,16 @@ var squashtm ;
 		
 	}
 	
-
+	
+	
+	$.fn.bindFirst = function(event, closure){
+		var handlers = this.data('events')[event];
+		this.data('events')[event]=[];
+		closure();
+		for (var i in handlers){
+			this.data('events')[event].push(handlers[i]);
+		};		
+	}
 	
 	/*
 		Squash TM domain name : variable $.fn.squashtm
