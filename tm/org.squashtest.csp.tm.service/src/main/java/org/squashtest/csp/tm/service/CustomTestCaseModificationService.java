@@ -39,7 +39,7 @@ import org.squashtest.csp.tm.infrastructure.filter.FilteredCollectionHolder;
 @Transactional
 public interface CustomTestCaseModificationService {
 	@Transactional(readOnly = true)
-	TestCase findTestCaseById(long testCaseId);
+	TestCase findById(long testCaseId);
 
 	@Transactional(readOnly = true)
 	TestCase findTestCaseWithSteps(long testCaseId);

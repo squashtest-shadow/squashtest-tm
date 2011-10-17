@@ -138,7 +138,7 @@ class TestCaseModificationControllerTest extends Specification {
 		List<ActionTestStep> steps = new ArrayList<ActionTestStep>();
 		tc.getSteps() >> steps
 		long tcId=15
-		testCaseModificationService.findTestCaseById(tcId) >> tc
+		testCaseModificationService.findById(tcId) >> tc
 
 		when:
 		ModelAndView res = controller.showTestCase (tcId, null, null)
@@ -245,7 +245,7 @@ class TestCaseModificationControllerTest extends Specification {
 	def "should return general info fragment"() {
 		given:
 		TestCase testCase = Mock()
-		testCaseModificationService.findTestCaseById(10) >> testCase
+		testCaseModificationService.findById(10) >> testCase
 
 		when:
 		ModelAndView mav = controller.refreshGeneralInfos(10)

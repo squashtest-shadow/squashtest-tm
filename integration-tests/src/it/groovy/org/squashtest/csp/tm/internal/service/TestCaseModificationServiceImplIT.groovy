@@ -123,7 +123,7 @@ class TestCaseModificationServiceImplIT extends HibernateServiceSpecification {
 		def newName = "new name"
 		when :
 		service.rename(testCaseId, newName);
-		def testcase = service.findTestCaseById(testCaseId)
+		def testcase = service.findById(testCaseId)
 		then :
 		testcase!=null
 		testcase.id == testCaseId
@@ -142,7 +142,7 @@ class TestCaseModificationServiceImplIT extends HibernateServiceSpecification {
 		when :
 		navService.addTestCaseToFolder(folderId,newtc)
 		service.rename(newtc.id, newName)
-		def renewtc = service.findTestCaseById(newtc.id)
+		def renewtc = service.findById(newtc.id)
 		then :
 		renewtc!=null
 		renewtc.id == newtc.id
@@ -172,7 +172,7 @@ class TestCaseModificationServiceImplIT extends HibernateServiceSpecification {
 		def tcNewDesc = "the new desc"
 		when :
 		service.changeDescription(testCaseId, tcNewDesc)
-		def tc = service.findTestCaseById(testCaseId)
+		def tc = service.findById(testCaseId)
 
 		then :
 		tc.description == tcNewDesc
@@ -186,7 +186,7 @@ class TestCaseModificationServiceImplIT extends HibernateServiceSpecification {
 
 		when :
 		service.changeExecutionMode(testCaseId, newExecMode)
-		def tc = service.findTestCaseById(testCaseId)
+		def tc = service.findById(testCaseId)
 
 		then :
 		tc.executionMode == newExecMode
@@ -358,7 +358,7 @@ class TestCaseModificationServiceImplIT extends HibernateServiceSpecification {
 	def "should allow to create a second test case having the same name than a previously removed test case"(){
 
 		given :
-		def tc = service.findTestCaseById(testCaseId);
+		def tc = service.findById(testCaseId);
 
 		def tc2 = new TestCase();
 		tc2.name = tc.name;

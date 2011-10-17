@@ -88,7 +88,7 @@ public class CustomTestCaseModificationServiceImpl implements CustomTestCaseModi
 
 	@Override
 	@PreAuthorize("hasPermission(#testCaseId, 'org.squashtest.csp.tm.domain.testcase.TestCase' , 'READ') or hasRole('ROLE_ADMIN')")
-	public TestCase findTestCaseById(long testCaseId) {
+	public TestCase findById(long testCaseId) {
 		return testCaseDao.findById(testCaseId);
 	}
 

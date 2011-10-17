@@ -99,7 +99,7 @@ public class TestCaseModificationController {
 	@RequestMapping(method = RequestMethod.GET)
 	public final ModelAndView showTestCase(@PathVariable long testCaseId, @RequestParam(required=false, value="edit-mode") Boolean editable, Locale locale) {
 		
-		TestCase testCase = testCaseModificationService.findTestCaseById(testCaseId);
+		TestCase testCase = testCaseModificationService.findById(testCaseId);
 
 		ModelAndView mav = new ModelAndView("fragment/test-cases/edit-test-case");
 		populateModelWithTestCaseEditionData(mav, testCase, locale);
@@ -278,7 +278,7 @@ public class TestCaseModificationController {
 
 		ModelAndView mav = new ModelAndView("fragment/generics/general-information-fragment");
 
-		TestCase testCase = testCaseModificationService.findTestCaseById(testCaseId);
+		TestCase testCase = testCaseModificationService.findById(testCaseId);
 
 		if (testCase == null) {
 			testCase = createNotFoundTestCase();

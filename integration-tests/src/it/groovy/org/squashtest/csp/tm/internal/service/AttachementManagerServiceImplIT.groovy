@@ -85,8 +85,8 @@ class AttachmentManagerServiceImplIT extends HibernateServiceSpecification {
 
 
 		when :
-		def attachListId = service.findTestCaseById(testCaseId).getAttachmentCollectionId();
-		def attachList = service.findTestCaseById(testCaseId).getAttachmentCollection();
+		def attachListId = service.findById(testCaseId).getAttachmentCollectionId();
+		def attachList = service.findById(testCaseId).getAttachmentCollection();
 
 		then :
 		attachList != null
@@ -269,12 +269,12 @@ class AttachmentManagerServiceImplIT extends HibernateServiceSpecification {
 
 		when :
 		// works because method marked transactional ! it should throw a lazy ex because fetch does not initialize attachments !
-		TestCase testCase = service.findTestCaseById(testCaseId);
+		TestCase testCase = service.findById(testCaseId);
 		def shouldBeFalse = testCase.hasAttachments();
 
 		attachService.addAttachment(attachListId, attachment);
 
-		TestCase testCase2 = service.findTestCaseById(testCaseId);
+		TestCase testCase2 = service.findById(testCaseId);
 		def shouldBeTrue = testCase2.hasAttachments();
 
 
