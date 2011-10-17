@@ -52,7 +52,7 @@ class RequirementModificationServiceIT extends DbunitServiceSpecification {
 	def "should successfully rename a requirement"(){
 		when :
 		modService.rename(requirementId, "new req");
-		def rereq = modService.find(requirementId);
+		def rereq = modService.findById(requirementId);
 
 
 		then :
@@ -67,7 +67,7 @@ class RequirementModificationServiceIT extends DbunitServiceSpecification {
 	def "should change requirement criticality"(){
 		when:
 		modService.changeCriticality (requirementId, RequirementCriticality.CRITICAL)
-		def requirement = modService.find(requirementId)
+		def requirement = modService.findById(requirementId)
 
 		then:
 		requirement.criticality == RequirementCriticality.CRITICAL
@@ -80,7 +80,7 @@ class RequirementModificationServiceIT extends DbunitServiceSpecification {
 
 		when:
 		modService.changeReference(requirementId, reference)
-		def requirement = modService.find(requirementId)
+		def requirement = modService.findById(requirementId)
 
 		then:
 		requirement.reference == reference

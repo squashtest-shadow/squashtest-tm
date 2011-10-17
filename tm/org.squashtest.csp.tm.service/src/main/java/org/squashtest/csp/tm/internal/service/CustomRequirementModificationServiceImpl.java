@@ -55,7 +55,7 @@ CustomRequirementModificationService {
 
 	@Override
 	@PostAuthorize("hasPermission(returnObject,'READ') or hasRole('ROLE_ADMIN')")	
-	public Requirement find(long reqId) {
+	public Requirement findById(long reqId) {
 		return requirementDao.findById(reqId);
 	}
 

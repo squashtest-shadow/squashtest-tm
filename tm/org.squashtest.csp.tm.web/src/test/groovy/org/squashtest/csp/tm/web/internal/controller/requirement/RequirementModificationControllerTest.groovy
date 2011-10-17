@@ -42,7 +42,7 @@ class RequirementModificationControllerTest extends Specification {
 		given:
 		Requirement req = Mock(Requirement.class)
 		long reqId=15
-		requirementModificationService.find(15) >> req
+		requirementModificationService.findById(15) >> req
 		
 		when:
 		ModelAndView res = controller.showRequirement(reqId, null)

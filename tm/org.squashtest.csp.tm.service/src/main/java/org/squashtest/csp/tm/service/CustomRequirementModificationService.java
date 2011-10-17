@@ -36,7 +36,7 @@ import org.squashtest.csp.tm.infrastructure.filter.FilteredCollectionHolder;
 @Transactional
 public interface CustomRequirementModificationService {
 	@Transactional(readOnly = true)
-	Requirement find(long reqId);
+	Requirement findById(long reqId);
 
 	void rename(long reqId, String newName);
 

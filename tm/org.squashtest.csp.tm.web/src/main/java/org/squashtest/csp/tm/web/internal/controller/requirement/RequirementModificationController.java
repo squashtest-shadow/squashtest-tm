@@ -83,7 +83,7 @@ public class RequirementModificationController {
 	@RequestMapping(value = "/info", method = RequestMethod.GET)
 	public ModelAndView showRequirementInfo(@PathVariable long requirementId, Locale locale) {
 
-		Requirement requirement = requirementModService.find(requirementId);
+		Requirement requirement = requirementModService.findById(requirementId);
 
 		ModelAndView mav = new ModelAndView("page/requirement-libraries/show-requirement");
 
@@ -96,7 +96,7 @@ public class RequirementModificationController {
 	// will return the fragment only
 	@RequestMapping(method = RequestMethod.GET)
 	public ModelAndView showRequirement(@PathVariable long requirementId, Locale locale) {
-		Requirement requirement = requirementModService.find(requirementId);
+		Requirement requirement = requirementModService.findById(requirementId);
 
 		ModelAndView mav = new ModelAndView("fragment/requirements/edit-requirement");
 		mav.addObject("requirement", requirement);
@@ -133,7 +133,7 @@ public class RequirementModificationController {
 
 		ModelAndView mav = new ModelAndView("fragment/generics/general-information-fragment");
 
-		Requirement requirement = requirementModService.find(requirementId);
+		Requirement requirement = requirementModService.findById(requirementId);
 
 		mav.addObject("auditableEntity", requirement);
 		mav.addObject("entityContextUrl", "/requirements/" + requirementId);
