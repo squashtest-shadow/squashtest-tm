@@ -105,6 +105,7 @@ public class IterationTestPlanManagerServiceImpl implements IterationTestPlanMan
 		this.objIdRetrievalStrategy = objectIdentityRetrievalStrategy;
 	}
 
+	// FIXME : security
 	@Override
 	public Iteration findIteration(long iterationId) {
 		return iterationDao.findById(iterationId);
@@ -241,6 +242,7 @@ public class IterationTestPlanManagerServiceImpl implements IterationTestPlanMan
 
 	}
 
+	// FIXME : security
 	@Override
 	public void assignUserToTestPlanItem(Long testPlanId, long iterationId,
 			Long userId) {
@@ -253,6 +255,7 @@ public class IterationTestPlanManagerServiceImpl implements IterationTestPlanMan
 		}
 	}
 
+	// FIXME : security
 	@Override
 	public void assignUserToTestPlanItems(List<Long> testPlanIds,
 			long iterationId, Long userId) {
@@ -270,6 +273,7 @@ public class IterationTestPlanManagerServiceImpl implements IterationTestPlanMan
 
 	}
 
+	// FIXME : security
 	@Override
 	public IterationTestPlanItem findTestPlanItemByTestCaseId(long iterationId, long testCaseId) {
 		Iteration iteration = iterationDao.findById(iterationId);
@@ -277,6 +281,7 @@ public class IterationTestPlanManagerServiceImpl implements IterationTestPlanMan
 		return itp;
 	}
 
+	// FIXME : security
 	@Override
 	public IterationTestPlanItem findTestPlanItem(Long iterationId, Long itemTestPlanId) {
 		Iteration iteration = iterationDao.findById(iterationId);
