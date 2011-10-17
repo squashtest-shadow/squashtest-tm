@@ -37,8 +37,8 @@ import org.squashtest.csp.tm.internal.repository.TestCaseDao
 import spock.lang.Specification
 
 
-class IterationModificationServiceImplTest extends Specification {
-	IterationModificationServiceImpl service = new IterationModificationServiceImpl()
+class CustomIterationModificationServiceImplTest extends Specification {
+	CustomIterationModificationServiceImpl service = new CustomIterationModificationServiceImpl()
 	ExecutionDao execDao = Mock();
 	ExecutionStepDao execStepDao = Mock();
 

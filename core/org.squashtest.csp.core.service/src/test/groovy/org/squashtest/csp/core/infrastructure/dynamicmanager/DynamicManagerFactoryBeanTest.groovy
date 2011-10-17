@@ -131,7 +131,7 @@ class DynamicManagerFactoryBeanTest extends Specification{
 		dummy.shoes == "dm's"
 	}
 
-	def "should fetch dummy entity by id and change its coolness"() {
+	def "should fetch dummy entity by id and change its boolean coolness"() {
 		given:
 		DummyEntity dummy = new DummyEntity(id: 10L, cool: false)
 		currentSession.load(DummyEntity, 10L) >> dummy

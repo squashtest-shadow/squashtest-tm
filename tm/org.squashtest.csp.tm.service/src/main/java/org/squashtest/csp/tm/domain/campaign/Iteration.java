@@ -264,10 +264,6 @@ public class Iteration implements Attachable {
 
 	}
 
-
-
-
-
 	public Long getId() {
 		return id;
 	}

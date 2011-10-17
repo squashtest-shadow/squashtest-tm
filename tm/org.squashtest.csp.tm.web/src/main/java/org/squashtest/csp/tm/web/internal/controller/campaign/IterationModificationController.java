@@ -72,19 +72,16 @@ public class IterationModificationController {
 		this.iterationModService = iterationModificationService;
 	}
 
-
 	@Inject
 	private MessageSource messageSource;
 
-	private final DataTableMapper testPlanMapper = new DataTableMapper("unused", IterationTestPlanItem.class, TestCase.class, Project.class)
-													.initMapping(8)
-													.mapAttribute(Project.class, 2, "name", String.class)
-													.mapAttribute(TestCase.class, 3, "name", String.class)
-													.mapAttribute(TestCase.class, 4, "executionMode",TestCaseExecutionMode.class)
-													.mapAttribute(IterationTestPlanItem.class, 5,"executionStatus", ExecutionStatus.class)
-													.mapAttribute(IterationTestPlanItem.class, 6, "lastExecutedBy", String.class)
-													.mapAttribute(IterationTestPlanItem.class, 7, "lastExecutedOn", Date.class);
-
+	private final DataTableMapper testPlanMapper = new DataTableMapper("unused", IterationTestPlanItem.class,
+			TestCase.class, Project.class).initMapping(8).mapAttribute(Project.class, 2, "name", String.class)
+			.mapAttribute(TestCase.class, 3, "name", String.class)
+			.mapAttribute(TestCase.class, 4, "executionMode", TestCaseExecutionMode.class)
+			.mapAttribute(IterationTestPlanItem.class, 5, "executionStatus", ExecutionStatus.class)
+			.mapAttribute(IterationTestPlanItem.class, 6, "lastExecutedBy", String.class)
+			.mapAttribute(IterationTestPlanItem.class, 7, "lastExecutedOn", Date.class);
 
 	@RequestMapping(method = RequestMethod.GET)
 	public ModelAndView showIteration(@PathVariable long iterationId) {
@@ -121,7 +118,7 @@ public class IterationModificationController {
 	@ResponseBody
 	public String updateDescription(@RequestParam("value") String newDescription, @PathVariable long iterationId) {
 
-		iterationModService.updateDescription(iterationId, newDescription);
+		iterationModService.changeDescription(iterationId, newDescription);
 		LOGGER.trace("Iteration " + iterationId + ": updated description to " + newDescription);
 		return newDescription;
 
@@ -134,8 +131,10 @@ public class IterationModificationController {
 
 		LOGGER.info("IterationModificationController : renaming " + iterationId + " as " + newName);
 		iterationModService.rename(iterationId, newName);
-		final String reNewName = new String(newName);
-		return new Object(){ public String newName = reNewName ; };
+		final String reNewName = newName;
+		return new Object() {
+			public String newName = reNewName;
+		};
 
 	}
 
@@ -169,7 +168,7 @@ public class IterationModificationController {
 	/**
 	 * returns null if the string is empty, or a date otherwise. No check regarding the actual content of strDate.
 	 */
-	private Date strToDate(String strDate){
+	private Date strToDate(String strDate) {
 		Date newDate = null;
 
 		if (strDate.length() > 0) {
@@ -180,14 +179,13 @@ public class IterationModificationController {
 		return newDate;
 	}
 
-	private String dateToStr(Date date){
-		if (date != null){
+	private String dateToStr(Date date) {
+		if (date != null) {
 			return Long.valueOf(date.getTime()).toString();
-		}else{
+		} else {
 			return "";
 		}
 	}
-
 
 	@RequestMapping(value = "/planning", params = { "scheduledStart" })
 	public @ResponseBody
@@ -197,12 +195,10 @@ public class IterationModificationController {
 		Date newScheduledStart = strToDate(strDate);
 		String toReturn = dateToStr(newScheduledStart);
 
-
 		LOGGER.info("IterationModificationController : setting scheduled start date for iteration " + iterationId
-				+ ", new date : "+newScheduledStart);
+				+ ", new date : " + newScheduledStart);
 
-
-	iterationModService.setScheduledStartDate(iterationId, newScheduledStart);
+		iterationModService.changeScheduledStartDate(iterationId, newScheduledStart);
 
 		return toReturn;
 
@@ -210,18 +206,16 @@ public class IterationModificationController {
 
 	@RequestMapping(value = "/planning", params = { "scheduledEnd" })
 	@ResponseBody
-	String setScheduledEnd(HttpServletResponse response, @PathVariable long iterationId,
+	public String setScheduledEnd(HttpServletResponse response, @PathVariable long iterationId,
 			@RequestParam(value = "scheduledEnd") String strDate) {
 
 		Date newScheduledEnd = strToDate(strDate);
 		String toReturn = dateToStr(newScheduledEnd);
 
-
 		LOGGER.info("IterationModificationController : setting scheduled start date for iteration " + iterationId
-				+ ", new date : "+newScheduledEnd);
+				+ ", new date : " + newScheduledEnd);
 
-
-		iterationModService.setScheduledEndDate(iterationId, newScheduledEnd);
+		iterationModService.changeScheduledEndDate(iterationId, newScheduledEnd);
 
 		return toReturn;
 
@@ -231,18 +225,16 @@ public class IterationModificationController {
 
 	@RequestMapping(value = "/planning", params = { "actualStart" })
 	@ResponseBody
-	String setActualStart(HttpServletResponse response, @PathVariable long iterationId,
+	public String setActualStart(HttpServletResponse response, @PathVariable long iterationId,
 			@RequestParam(value = "actualStart") String strDate) {
 
 		Date newActualStart = strToDate(strDate);
 		String toReturn = dateToStr(newActualStart);
 
-
 		LOGGER.info("IterationModificationController : setting scheduled start date for iteration " + iterationId
-				+ ", new date : "+newActualStart);
+				+ ", new date : " + newActualStart);
 
-
-		iterationModService.setActualStartDate(iterationId, newActualStart);
+		iterationModService.changeActualStartDate(iterationId, newActualStart);
 
 		return toReturn;
 
@@ -250,18 +242,16 @@ public class IterationModificationController {
 
 	@RequestMapping(value = "/planning", params = { "actualEnd" })
 	@ResponseBody
-	String setActualEnd(HttpServletResponse response, @PathVariable long iterationId,
+	public String setActualEnd(HttpServletResponse response, @PathVariable long iterationId,
 			@RequestParam(value = "actualEnd") String strDate) {
 
 		Date newActualEnd = strToDate(strDate);
 		String toReturn = dateToStr(newActualEnd);
 
-
 		LOGGER.info("IterationModificationController : setting scheduled start date for iteration " + iterationId
-				+ ", new date : "+newActualEnd);
+				+ ", new date : " + newActualEnd);
 
-
-		iterationModService.setActualEndDate(iterationId, newActualEnd);
+		iterationModService.changeActualEndDate(iterationId, newActualEnd);
 
 		return toReturn;
 
@@ -269,32 +259,31 @@ public class IterationModificationController {
 
 	@RequestMapping(value = "/planning", params = { "setActualStartAuto" })
 	@ResponseBody
-	String setActualStartAuto(HttpServletResponse response, @PathVariable long iterationId,
-			@RequestParam(value = "setActualStartAuto") Boolean auto) {
+	public String setActualStartAuto(HttpServletResponse response, @PathVariable long iterationId,
+			@RequestParam(value = "setActualStartAuto") boolean auto) {
 
 		LOGGER.info("IterationModificationController : autosetting actual start date for iteration " + iterationId
-				+ ", new value " + auto.toString());
+				+ ", new value " + auto);
 
-		iterationModService.setActualStartAuto(iterationId, auto);
+		iterationModService.changeActualStartAuto(iterationId, auto);
 		Iteration iteration = iterationModService.findById(iterationId);
 
-		String toreturn=dateToStr(iteration.getActualStartDate());
+		String toreturn = dateToStr(iteration.getActualStartDate());
 
 		return toreturn;
 	}
 
-
 	@RequestMapping(value = "/planning", params = { "setActualEndAuto" })
 	@ResponseBody
-	String setActualEndAuto(HttpServletResponse response, @PathVariable long iterationId,
-			@RequestParam(value = "setActualEndAuto") Boolean auto) {
-			LOGGER.info("IterationModificationController : autosetting actual end date for campaign " + iterationId
-					+ ", new value " + auto.toString());
+	public String setActualEndAuto(HttpServletResponse response, @PathVariable long iterationId,
+			@RequestParam(value = "setActualEndAuto") boolean auto) {
+		LOGGER.info("IterationModificationController : autosetting actual end date for campaign " + iterationId
+				+ ", new value " + auto);
 
-		iterationModService.setActualEndAuto(iterationId, auto);
+		iterationModService.changeActualEndAuto(iterationId, auto);
 		Iteration iteration = iterationModService.findById(iterationId);
 
-		String toreturn=dateToStr(iteration.getActualEndDate());
+		String toreturn = dateToStr(iteration.getActualEndDate());
 
 		return toreturn;
 
@@ -304,28 +293,32 @@ public class IterationModificationController {
 
 	/***
 	 * Method called when you drag a test case and change its position in the selected iteration
-	 * @param testPlanId the test case to move
-	 * @param newIndex the new test case position
-	 * @param iterationId the iteration at which the test case is attached
+	 * 
+	 * @param testPlanId
+	 *            the test case to move
+	 * @param newIndex
+	 *            the new test case position
+	 * @param iterationId
+	 *            the iteration at which the test case is attached
 	 */
 	@RequestMapping(value = "/test-case/{testPlanId}", method = RequestMethod.POST, params = "newIndex")
 	@ResponseBody
-	public void changeTestPlanIndex(@PathVariable long testPlanId, @RequestParam int newIndex, @PathVariable long iterationId)
-	{
+	public void changeTestPlanIndex(@PathVariable long testPlanId, @RequestParam int newIndex,
+			@PathVariable long iterationId) {
 		iterationModService.changeTestPlanPosition(iterationId, testPlanId, newIndex);
 		if (LOGGER.isTraceEnabled()) {
-		LOGGER.trace("iteration: " + iterationId + " test plan: " + testPlanId + " moved to " + newIndex );
+			LOGGER.trace("iteration: " + iterationId + " test plan: " + testPlanId + " moved to " + newIndex);
 		}
 	}
 
-	//returns the ID of the newly created execution
-	@RequestMapping(value = "/test-plan/{testPlanId}/new-execution", method = RequestMethod.POST )
+	// returns the ID of the newly created execution
+	@RequestMapping(value = "/test-plan/{testPlanId}/new-execution", method = RequestMethod.POST)
 	public @ResponseBody
 	String addExecution(@PathVariable("testPlanId") Long testPlanId, @PathVariable("iterationId") Long iterationId) {
 		iterationModService.addExecution(iterationId, testPlanId);
 		List<Execution> executionList = iterationModService.findExecutionsByTestPlan(iterationId, testPlanId);
 
-		return executionList.get(executionList.size()-1).getId().toString();
+		return executionList.get(executionList.size() - 1).getId().toString();
 
 	}
 
@@ -348,55 +341,44 @@ public class IterationModificationController {
 
 	}
 
-
-
 	@RequestMapping(value = "/test-plan", params = "sEcho")
 	public @ResponseBody
-	DataTableModel getTestPlanModel(@PathVariable Long iterationId, final DataTableDrawParameters params, final Locale locale) {
+	DataTableModel getTestPlanModel(@PathVariable Long iterationId, final DataTableDrawParameters params,
+			final Locale locale) {
 
 		CollectionSorting filter = createCollectionSorting(params, testPlanMapper);
 
-		FilteredCollectionHolder<List<IterationTestPlanItem>> holder = iterationModService.findIterationTestPlan(iterationId, filter);
+		FilteredCollectionHolder<List<IterationTestPlanItem>> holder = iterationModService.findIterationTestPlan(
+				iterationId, filter);
 
 		return new DataTableModelHelper<IterationTestPlanItem>() {
 			@Override
 			public Object[] buildItemData(IterationTestPlanItem item) {
-				
+
 				String projectName;
 				String testCaseName;
 				String testCaseExecutionMode;
-				
-				if (item.isTestCaseDeleted()){
-					projectName=formatNoData(locale);
-					testCaseName=formatDeleted(locale);
-					testCaseExecutionMode=formatNoData(locale);
-				}
-				else{
-					projectName=item.getReferencedTestCase().getProject().getName();
-					testCaseName=item.getReferencedTestCase().getName();
+
+				if (item.isTestCaseDeleted()) {
+					projectName = formatNoData(locale);
+					testCaseName = formatDeleted(locale);
+					testCaseExecutionMode = formatNoData(locale);
+				} else {
+					projectName = item.getReferencedTestCase().getProject().getName();
+					testCaseName = item.getReferencedTestCase().getName();
 					testCaseExecutionMode = formatExecutionMode(item.getReferencedTestCase().getExecutionMode(), locale);
 				}
-				
-				
-				return new Object[]{
-						item.getId(),
-						getCurrentIndex(),
-						projectName,
-						testCaseName,
-						testCaseExecutionMode,
-						formatStatus(item.getExecutionStatus(), locale),
-						formatString(item.getLastExecutedBy(),locale), 
-						formatDate(item.getLastExecutedOn(),locale),
-						item.isTestCaseDeleted(),
-						" "
+
+				return new Object[] { item.getId(), getCurrentIndex(), projectName, testCaseName,
+						testCaseExecutionMode, formatStatus(item.getExecutionStatus(), locale),
+						formatString(item.getLastExecutedBy(), locale), formatDate(item.getLastExecutedOn(), locale),
+						item.isTestCaseDeleted(), " "
 
 				};
 			}
-		}.buildDataModel(holder, filter.getFirstItemIndex()+1, params.getsEcho());
-
+		}.buildDataModel(holder, filter.getFirstItemIndex() + 1, params.getsEcho());
 
 	}
-
 
 	/* ************** private stuffs are below ********************** */
 
@@ -405,71 +387,65 @@ public class IterationModificationController {
 		return filter;
 	}
 
+	/* ***************** data formatter *************************** */
 
-	/* ***************** data formatter ****************************/
-
-
-
-	private String formatString(String arg, Locale locale){
-		if (arg==null){
+	private String formatString(String arg, Locale locale) {
+		if (arg == null) {
 			return formatNoData(locale);
 		} else {
 			return arg;
 		}
 	}
 
-	private String formatDate(Date date, Locale locale){
-		try{
+	private String formatDate(Date date, Locale locale) {
+		try {
 			String format = messageSource.getMessage("squashtm.dateformat", null, locale);
 			return new SimpleDateFormat(format).format(date);
-		}
-		catch(Exception anyException){
+		} catch (Exception anyException) {
 			return formatNoData(locale);
 		}
 
 	}
-	
 
-
-	private String formatNoData(Locale locale){
-		return messageSource.getMessage("squashtm.nodata",null, locale);
+	private String formatNoData(Locale locale) {
+		return messageSource.getMessage("squashtm.nodata", null, locale);
 	}
-	
-	private String formatDeleted(Locale locale){
+
+	private String formatDeleted(Locale locale) {
 		return messageSource.getMessage("squashtm.itemdeleted", null, locale);
 	}
 
-	private String formatExecutionMode(TestCaseExecutionMode mode, Locale locale){
+	private String formatExecutionMode(TestCaseExecutionMode mode, Locale locale) {
 		return messageSource.getMessage(mode.getI18nKey(), null, locale);
 	}
 
-	private String formatStatus(ExecutionStatus status, Locale locale){
+	private String formatStatus(ExecutionStatus status, Locale locale) {
 		String toReturn;
 
-		switch(status){
-			case BLOQUED :
-				toReturn=messageSource.getMessage("execution.combo.BLOQUED.label", null, locale);
-				break;
+		switch (status) {
+		case BLOQUED:
+			toReturn = messageSource.getMessage("execution.combo.BLOQUED.label", null, locale);
+			break;
 
-			case FAILURE :
-				toReturn=messageSource.getMessage("execution.combo.FAILURE.label", null, locale);
-				break;
+		case FAILURE:
+			toReturn = messageSource.getMessage("execution.combo.FAILURE.label", null, locale);
+			break;
 
-			case SUCCESS :
-				toReturn=messageSource.getMessage("execution.combo.SUCCESS.label", null, locale);
-				break;
+		case SUCCESS:
+			toReturn = messageSource.getMessage("execution.combo.SUCCESS.label", null, locale);
+			break;
 
-			case RUNNING :
-				toReturn=messageSource.getMessage("execution.combo.RUNNING.label", null, locale);
-				break;
+		case RUNNING:
+			toReturn = messageSource.getMessage("execution.combo.RUNNING.label", null, locale);
+			break;
 
-			case READY :
-				toReturn=messageSource.getMessage("execution.combo.READY.label", null, locale);
-				break;
+		case READY:
+			toReturn = messageSource.getMessage("execution.combo.READY.label", null, locale);
+			break;
 
-			default :
-				toReturn= "unknown";
-				break;
+		default:
+			toReturn = "unknown";
+			break;
 		}
 
 		return toReturn;

@@ -20,8 +20,6 @@
  */
 package org.squashtest.csp.tm.internal.service;
 
-
-import java.util.Date;
 import java.util.List;
 
 import javax.inject.Inject;
@@ -35,8 +33,8 @@ import org.squashtest.csp.tm.domain.CannotCreateExecutionException;
 import org.squashtest.csp.tm.domain.attachment.Attachment;
 import org.squashtest.csp.tm.domain.campaign.Campaign;
 import org.squashtest.csp.tm.domain.campaign.CampaignTestPlanItem;
-import org.squashtest.csp.tm.domain.campaign.IterationTestPlanItem;
 import org.squashtest.csp.tm.domain.campaign.Iteration;
+import org.squashtest.csp.tm.domain.campaign.IterationTestPlanItem;
 import org.squashtest.csp.tm.domain.execution.Execution;
 import org.squashtest.csp.tm.domain.execution.ExecutionStep;
 import org.squashtest.csp.tm.domain.testcase.TestCase;
@@ -48,12 +46,12 @@ import org.squashtest.csp.tm.internal.repository.ExecutionDao;
 import org.squashtest.csp.tm.internal.repository.ExecutionStepDao;
 import org.squashtest.csp.tm.internal.repository.ItemTestPlanDao;
 import org.squashtest.csp.tm.internal.repository.IterationDao;
-import org.squashtest.csp.tm.service.IterationModificationService;
+import org.squashtest.csp.tm.service.CustomIterationModificationService;
 import org.squashtest.csp.tm.service.deletion.SuppressionPreviewReport;
 
-@Service("squashtest.tm.service.IterationModificationService")
-public class IterationModificationServiceImpl implements IterationModificationService {
-	private static final Logger LOGGER = LoggerFactory.getLogger(IterationModificationServiceImpl.class);
+@Service("CustomIterationModificationService")
+public class CustomIterationModificationServiceImpl implements CustomIterationModificationService {
+	private static final Logger LOGGER = LoggerFactory.getLogger(CustomIterationModificationServiceImpl.class);
 	@Inject
 	private CampaignDao campaignDao;
 	@Inject
@@ -64,22 +62,21 @@ public class IterationModificationServiceImpl implements IterationModificationSe
 	private ItemTestPlanDao testPlanDao;
 	@Inject
 	private ExecutionStepDao executionStepDao;
-	
+
 	@Inject
 	private CampaignNodeDeletionHandler deletionHandler;
 
-
 	@Override
-	@PreAuthorize("hasPermission(#campaignId, 'org.squashtest.csp.tm.domain.campaign.Campaign', 'WRITE') " +
-			"or hasRole('ROLE_ADMIN')")
+	@PreAuthorize("hasPermission(#campaignId, 'org.squashtest.csp.tm.domain.campaign.Campaign', 'WRITE') "
+			+ "or hasRole('ROLE_ADMIN')")
 	public int addIterationToCampaign(Iteration iteration, long campaignId) {
 		Campaign campaign = campaignDao.findById(campaignId);
 
-		//copy the campaign test plan in the iteration
+		// copy the campaign test plan in the iteration
 
 		List<CampaignTestPlanItem> tcList = campaign.getTestPlan();
 
-		for (CampaignTestPlanItem tc : tcList){
+		for (CampaignTestPlanItem tc : tcList) {
 			IterationTestPlanItem iterTP = new IterationTestPlanItem(tc);
 			testPlanDao.persist(iterTP);
 			iteration.addTestPlan(iterTP);
@@ -91,31 +88,22 @@ public class IterationModificationServiceImpl implements IterationModificationSe
 	}
 
 	@Override
-	@PreAuthorize("hasPermission(#campaignId, 'org.squashtest.csp.tm.domain.campaign.Campaign', 'READ') " +
-			"or hasRole('ROLE_ADMIN')")
+	@PreAuthorize("hasPermission(#campaignId, 'org.squashtest.csp.tm.domain.campaign.Campaign', 'READ') "
+			+ "or hasRole('ROLE_ADMIN')")
 	public List<Iteration> findIterationsByCampaignId(long campaignId) {
 		return campaignDao.findByIdWithInitializedIterations(campaignId).getIterations();
 	}
 
 	@Override
-	@PostAuthorize("hasPermission(returnObject, 'READ') " +
-			"or hasRole('ROLE_ADMIN')")
-	public Iteration findById(Long iterationId) {
+	@PostAuthorize("hasPermission(returnObject, 'READ') " + "or hasRole('ROLE_ADMIN')")
+	public Iteration findById(long iterationId) {
 		return iterationDao.findById(iterationId);
 	}
 
 	@Override
-	@PreAuthorize("hasPermission(#iterationId, 'org.squashtest.csp.tm.domain.campaign.Iteration', 'WRITE') " +
-	"or hasRole('ROLE_ADMIN')")
-	public void updateDescription(Long iterationId, String newDescription) {
-		Iteration iteration = iterationDao.findById(iterationId);
-		iteration.setDescription(newDescription);
-	}
-
-	@Override
-	@PreAuthorize("hasPermission(#iterationId, 'org.squashtest.csp.tm.domain.campaign.Iteration', 'WRITE') " +
-	"or hasRole('ROLE_ADMIN')")
-	public String delete(Long iterationId) {
+	@PreAuthorize("hasPermission(#iterationId, 'org.squashtest.csp.tm.domain.campaign.Iteration', 'WRITE') "
+			+ "or hasRole('ROLE_ADMIN')")
+	public String delete(long iterationId) {
 		Iteration iteration = iterationDao.findById(iterationId);
 		if (iteration == null) {
 			return "ko";
@@ -129,83 +117,33 @@ public class IterationModificationServiceImpl implements IterationModificationSe
 	}
 
 	@Override
-	@PreAuthorize("hasPermission(#iterationId, 'org.squashtest.csp.tm.domain.campaign.Iteration', 'WRITE') " +
-	"or hasRole('ROLE_ADMIN')")
-	public void rename(Long iterationId, String newName) {
+	@PreAuthorize("hasPermission(#iterationId, 'org.squashtest.csp.tm.domain.campaign.Iteration', 'WRITE') "
+			+ "or hasRole('ROLE_ADMIN')")
+	public void rename(long iterationId, String newName) {
 		Iteration iteration = iterationDao.findById(iterationId);
 
 		iteration.setName(newName);
 	}
 
+	// FIXME : should be secured with a permission 'EXECUTION' when it's done
 	@Override
-	@PreAuthorize("hasPermission(#iterationId, 'org.squashtest.csp.tm.domain.campaign.Iteration', 'WRITE') " +
-	"or hasRole('ROLE_ADMIN')")
-	public void setScheduledStartDate(Long iterationId, Date scheduledStart) {
-		Iteration iteration = iterationDao.findById(iterationId);
-		iteration.setScheduledStartDate(scheduledStart);
-	}
+	@PreAuthorize("hasPermission(#iterationId, 'org.squashtest.csp.tm.domain.campaign.Iteration', 'WRITE') "
+			+ "or hasRole('ROLE_ADMIN')")
+	public void addExecution(long iterationId, long testPlanId) {
 
-	@Override
-	@PreAuthorize("hasPermission(#iterationId, 'org.squashtest.csp.tm.domain.campaign.Iteration', 'WRITE') " +
-	"or hasRole('ROLE_ADMIN')")
-	public void setScheduledEndDate(Long iterationId, Date scheduledEnd) {
-		Iteration iteration = iterationDao.findById(iterationId);
-		iteration.setScheduledEndDate(scheduledEnd);
-	}
-
-	@Override
-	@PreAuthorize("hasPermission(#iterationId, 'org.squashtest.csp.tm.domain.campaign.Iteration', 'WRITE') " +
-	"or hasRole('ROLE_ADMIN')")
-	public void setActualStartDate(Long iterationId, Date actualStart) {
-		Iteration iteration = iterationDao.findById(iterationId);
-		iteration.setActualStartDate(actualStart);
-	}
-
-	@Override
-	@PreAuthorize("hasPermission(#iterationId, 'org.squashtest.csp.tm.domain.campaign.Iteration', 'WRITE') " +
-	"or hasRole('ROLE_ADMIN')")
-	public void setActualEndDate(Long iterationId, Date actualEnd) {
-		Iteration iteration = iterationDao.findById(iterationId);
-		iteration.setActualEndDate(actualEnd);
-	}
-
-	@Override
-	@PreAuthorize("hasPermission(#iterationId, 'org.squashtest.csp.tm.domain.campaign.Iteration', 'WRITE') " +
-	"or hasRole('ROLE_ADMIN')")
-	public void setActualStartAuto(Long iterationId, boolean isAuto) {
-		Iteration iteration = iterationDao.findById(iterationId);
-		iteration.setActualStartAuto(isAuto);
-	}
-
-	@Override
-	@PreAuthorize("hasPermission(#iterationId, 'org.squashtest.csp.tm.domain.campaign.Iteration', 'WRITE') " +
-	"or hasRole('ROLE_ADMIN')")
-	public void setActualEndAuto(Long iterationId, boolean isAuto) {
-		Iteration iteration = iterationDao.findById(iterationId);
-		iteration.setActualEndAuto(isAuto);
-	}
-
-
-
-	//FIXME : should be secured with a permission 'EXECUTION' when it's done
-	@Override
-	@PreAuthorize("hasPermission(#iterationId, 'org.squashtest.csp.tm.domain.campaign.Iteration', 'WRITE') " +
-		"or hasRole('ROLE_ADMIN')")
-	public void addExecution(Long iterationId, Long testPlanId) {
-		
 		Iteration iteration = iterationDao.findAndInit(iterationId);
 		IterationTestPlanItem testPlan = iteration.getTestPlan(testPlanId);
-		
+
 		if (testPlan.isTestCaseDeleted()) {
 			throw new CannotCreateExecutionException();
 		}
-		
+
 		TestCase testCase = testPlan.getReferencedTestCase();
 
 		Execution execution = new Execution(testCase);
 
-		//copy the steps
-		for (TestStep step : testCase.getSteps()){
+		// copy the steps
+		for (TestStep step : testCase.getSteps()) {
 			List<ExecutionStep> execList = step.getExecutionStep();
 			for (ExecutionStep executionStep : execList) {
 				executionStepDao.persist(executionStep);
@@ -213,8 +151,8 @@ public class IterationModificationServiceImpl implements IterationModificationSe
 			}
 		}
 
-		//copy the attachments
-		for (Attachment tcAttach : testCase.getAllAttachments()){
+		// copy the attachments
+		for (Attachment tcAttach : testCase.getAllAttachments()) {
 			Attachment clone = tcAttach.hardCopy();
 			execution.getAttachmentCollection().addAttachment(clone);
 		}
@@ -227,68 +165,66 @@ public class IterationModificationServiceImpl implements IterationModificationSe
 
 	/****
 	 * Method which change the index of test case in the selected iteration
-	 * @param iterationId the iteration at which the test case is attached
-	 * @param testCaseId the test case to move
-	 * @param newTestCasePosition the test case new position
+	 * 
+	 * @param iterationId
+	 *            the iteration at which the test case is attached
+	 * @param testCaseId
+	 *            the test case to move
+	 * @param newTestCasePosition
+	 *            the test case new position
 	 */
 	@Override
-	@PreAuthorize("hasPermission(#iterationId, 'org.squashtest.csp.tm.domain.campaign.Iteration', 'WRITE') " +
-			"or hasRole('ROLE_ADMIN')")
-	public void changeTestPlanPosition(Long iterationId, Long testPlanId,
-			int newTestPlanPosition) {
-		
+	@PreAuthorize("hasPermission(#iterationId, 'org.squashtest.csp.tm.domain.campaign.Iteration', 'WRITE') "
+			+ "or hasRole('ROLE_ADMIN')")
+	public void changeTestPlanPosition(long iterationId, long testPlanId, int newTestPlanPosition) {
+
 		Iteration iteration = iterationDao.findById(iterationId);
-		
+
 		int currentPosition = iteration.findTestPlanInIteration(testPlanId);
-		
-		if(LOGGER.isDebugEnabled())
-		{
-			LOGGER.debug("**************** change test case order : old index = " + currentPosition + ",new index : " + newTestPlanPosition);
-		}	
-		
+
+		if (LOGGER.isDebugEnabled()) {
+			LOGGER.debug("**************** change test case order : old index = " + currentPosition + ",new index : "
+					+ newTestPlanPosition);
+		}
+
 		iteration.moveTestPlan(currentPosition, newTestPlanPosition);
-		
 
 	}
 
 	@Override
-	@PreAuthorize("hasPermission(#iterationId, 'org.squashtest.csp.tm.domain.campaign.Iteration', 'READ') " +
-				"or hasRole('ROLE_ADMIN')")
-	public List<Execution> findAllExecutions(Long iterationId){
+	@PreAuthorize("hasPermission(#iterationId, 'org.squashtest.csp.tm.domain.campaign.Iteration', 'READ') "
+			+ "or hasRole('ROLE_ADMIN')")
+	public List<Execution> findAllExecutions(long iterationId) {
 		return iterationDao.findOrderedExecutionsByIterationId(iterationId);
 
 	}
 
-
 	@Override
-	@PreAuthorize("hasPermission(#iterationId, 'org.squashtest.csp.tm.domain.campaign.Iteration', 'READ') " +
-				"or hasRole('ROLE_ADMIN')")
-	public List<Execution> findExecutionsByTestPlan(Long iterationId, Long testPlanId){
+	@PreAuthorize("hasPermission(#iterationId, 'org.squashtest.csp.tm.domain.campaign.Iteration', 'READ') "
+			+ "or hasRole('ROLE_ADMIN')")
+	public List<Execution> findExecutionsByTestPlan(long iterationId, long testPlanId) {
 		return iterationDao.findOrderedExecutionsByIterationAndTestPlan(iterationId, testPlanId);
-
 
 	}
 
 	@Override
-	@PreAuthorize("hasPermission(#iterationId, 'org.squashtest.csp.tm.domain.campaign.Iteration', 'READ') " +
-				"or hasRole('ROLE_ADMIN')")
-	public List<TestCase> findPlannedTestCases(Long iterationId) {
+	@PreAuthorize("hasPermission(#iterationId, 'org.squashtest.csp.tm.domain.campaign.Iteration', 'READ') "
+			+ "or hasRole('ROLE_ADMIN')")
+	public List<TestCase> findPlannedTestCases(long iterationId) {
 		Iteration iteration = iterationDao.findById(iterationId);
 		return iteration.getPlannedTestCase();
 	}
 
 	@Override
-	@PreAuthorize("hasPermission(#iterationId, 'org.squashtest.csp.tm.domain.campaign.Iteration', 'READ') " +
-				"or hasRole('ROLE_ADMIN')")
-	public FilteredCollectionHolder<List<IterationTestPlanItem>> findIterationTestPlan(
-			Long iterationId, CollectionSorting filter) {
+	@PreAuthorize("hasPermission(#iterationId, 'org.squashtest.csp.tm.domain.campaign.Iteration', 'READ') "
+			+ "or hasRole('ROLE_ADMIN')")
+	public FilteredCollectionHolder<List<IterationTestPlanItem>> findIterationTestPlan(long iterationId,
+			CollectionSorting filter) {
 		List<IterationTestPlanItem> testPlan = iterationDao.findTestPlanFiltered(iterationId, filter);
 		long count = iterationDao.countTestPlans(iterationId);
 		return new FilteredCollectionHolder<List<IterationTestPlanItem>>(count, testPlan);
 	}
 
-	
-	
 	@Override
 	public List<SuppressionPreviewReport> simulateDeletion(List<Long> targetIds) {
 		return deletionHandler.simulateIterationDeletion(targetIds);

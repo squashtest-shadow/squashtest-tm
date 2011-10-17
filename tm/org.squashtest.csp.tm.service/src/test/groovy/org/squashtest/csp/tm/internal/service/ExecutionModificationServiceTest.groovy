@@ -42,7 +42,7 @@ public class ExecutionModificationServiceTest extends Specification {
 
 	ExecutionModificationServiceImpl service = new ExecutionModificationServiceImpl();
 	ExecutionProcessingServiceImpl procservice = new ExecutionProcessingServiceImpl();
-	IterationModificationServiceImpl iterService = new IterationModificationServiceImpl();
+	CustomIterationModificationServiceImpl iterService = new CustomIterationModificationServiceImpl();
 
 	ExecutionDao execDao = Mock();
 	ExecutionStepDao execStepDao = Mock();
