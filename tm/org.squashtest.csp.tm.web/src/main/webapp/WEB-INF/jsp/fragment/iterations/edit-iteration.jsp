@@ -181,7 +181,7 @@
 <div class="ui-widget-header ui-state-default ui-corner-all fragment-header">
 	<div style="float:left;height:100%;">	
 		<h2>
-			<label for="iteration-name"><f:message key="iteration.header.title" /></label><a id="iteration-name" href="${ iterationUrl }/info"><c:out value="${ iteration.name }" escapeXml="true"/></a>
+			<span><f:message key="iteration.header.title" />&nbsp;:&nbsp;</span><a id="iteration-name" href="${ iterationUrl }/info"><c:out value="${ iteration.name }" escapeXml="true"/></a>
 		</h2>
 	</div>
 	

@@ -214,7 +214,7 @@
 </c:if>
 
 <div style="float: left; height: 100%;">
-<h2><label for="report-name"><f:message key="report.header.title" /></label><a href="${infoReportUrl}">${reportName} (${reportType})</a></h2>
+<h2><span><f:message key="report.header.title" />&nbsp;:&nbsp;</span><a href="${infoReportUrl}">${reportName} (${reportType})</a></h2>
 </div>
 
 <c:if test="${param.hasBackButton}">

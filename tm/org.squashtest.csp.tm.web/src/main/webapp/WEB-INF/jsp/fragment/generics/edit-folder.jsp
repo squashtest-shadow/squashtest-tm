@@ -49,7 +49,7 @@
 <comp:decorate-toggle-panels />
 <div class="ui-widget-header ui-corner-all ui-state-default fragment-header">
 	<h2>
-		<label for="folder-name"><f:message key="folder.title" /></label><span id="folder-name"><c:out value="${ folder.name }" escapeXml="true"/></span>
+		<span><f:message key="folder.title" />&nbsp;:&nbsp;</span><span id="folder-name"><c:out value="${ folder.name }" escapeXml="true"/></span>
 	</h2>
 </div>
 <c:if test="${ editable }">

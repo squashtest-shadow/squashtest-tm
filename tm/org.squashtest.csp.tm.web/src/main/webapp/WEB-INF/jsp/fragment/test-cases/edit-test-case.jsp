@@ -452,7 +452,7 @@
 <div id="test-case-name-div" class="ui-widget-header ui-corner-all ui-state-default fragment-header">
 
 <div style="float: left; height: 100%;">
-<h2><label for="test-case-name"><f:message key="test-case.header.title" /></label><a id="test-case-name" href="${ testCaseUrl }/info"><c:out
+<h2><span><f:message key="test-case.header.title" />&nbsp;:&nbsp;</span><a id="test-case-name" href="${ testCaseUrl }/info"><c:out
 	value="${ testCase.name }" escapeXml="true" /></a></h2>
 </div>
 

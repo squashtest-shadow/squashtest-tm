@@ -64,7 +64,7 @@
 <div class="ui-widget-header ui-corner-all ui-state-default fragment-header">
 	<div style="float:left;height:100%;">	
 		<h2>
-			<label for="requirement-name" ><f:message key="requirement.header.title" /></label>
+			<span><f:message key="requirement.header.title" />&nbsp;:&nbsp;</span>
 			<c:set var="completeRequirementName" value="${ requirement.name }" />
 			<c:if test="${not empty requirement.reference && fn:length(requirement.reference) > 0}" >
 				<c:set var="completeRequirementName" value='${ requirement.reference } - ${ requirement.name }' />

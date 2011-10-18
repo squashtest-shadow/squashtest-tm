@@ -143,7 +143,7 @@
 
 	<div style="float:left;height:100%;">
 		<h2>
-			<label for="campaign-name"><f:message key="campaign.header.title" /></label><a id="campaign-name" href="${ campaignUrl }/info"><c:out value="${ campaign.name }" escapeXml="true"/></a>
+			<span ><f:message key="campaign.header.title" />&nbsp;:&nbsp;</span><a id="campaign-name" href="${ campaignUrl }/info"><c:out value="${ campaign.name }" escapeXml="true"/></a>
 		</h2>
 	</div>
 	

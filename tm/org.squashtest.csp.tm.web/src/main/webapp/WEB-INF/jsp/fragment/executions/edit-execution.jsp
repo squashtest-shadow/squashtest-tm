@@ -247,7 +247,7 @@
 
 	<div style="float:left;height:100%;">
 		<h2>
-			<label for="execution-name"><f:message key="execution.execute.header.title" /></label><a id="execution-name" href="${ executionUrl }/info">&#35;<c:out value="${executionRank} - ${ execution.name }" escapeXml="true"/></a>
+			<span><f:message key="execution.execute.header.title" />&nbsp;:&nbsp;</span><a id="execution-name" href="${ executionUrl }/info">&#35;<c:out value="${executionRank} - ${ execution.name }" escapeXml="true"/></a>
 		</h2>
 	</div>
 	<c:if test="${param.hasBackButton}">

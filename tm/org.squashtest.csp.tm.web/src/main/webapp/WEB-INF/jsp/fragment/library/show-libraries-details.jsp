@@ -35,7 +35,7 @@
 
 <div class="ui-widget-header ui-corner-all ui-state-default fragment-header" >
 
-<h2><label for="library-name"><f:message key="library.header.title" /></label><a id="library-name" href="#"><c:out
+<h2><span><f:message key="library.header.title" />&nbsp;:&nbsp;</span><a id="library-name" href="#"><c:out
 	value="${ library.project.name }" escapeXml="true" /></a></h2>
 
 </div>
