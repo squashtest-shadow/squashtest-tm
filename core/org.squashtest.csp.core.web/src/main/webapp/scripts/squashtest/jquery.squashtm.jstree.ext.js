@@ -125,15 +125,35 @@
 			var tree= this;
 			var s = this._get_settings().squash;
 			tree.data.squash.timeout=s.timeout;
+			tree.data.squash.isie=false;
 			
 			var container = this.get_container();
 			
-			//we need that handler to be bound first 
-			//note that we are bound to 'click' and not 'click.jstree'. That detail matters 
-			//in the handler just below.
+			/* we need our handlers to be bound first 
+			 * note that we are bound to 'click' and not 'click.jstree'. That detail matters 
+			 * in the handler just below.
+			 */
+
+			/* note about click events and browsers specificities :
+			 * 	- ff, chrome : 2 clicks fire 2 click and 1 dblclick event. both event objects have a property .detail
+			 *  - ie 8 : fire click and dblclick alternately.
+			 *
+			 * considering the discrepencies between those behavior the node click handling will branch wrt event.detail.
+			 * FF and Chrome will simply use a clickhandler, while ie 8 will use both a click and a dblclick handler.
+			 *
+			 */
 			container.bindFirst("live", function(){
+			
 				container.delegate("a",'click', function(event, data) {
-					handleNodeClicks(tree, event);
+					if (event.detail && event.detail>1){
+						event.stopImmediatePropagation();		//cancel the multiple click event for ff and chrome
+					}else{
+						handleNodeClick(tree, event);
+					}
+				});
+				
+				container.delegate('a', 'dblclick ', function(event,data){
+					handleNodeDblClick(tree, event);
 				});
 			});
 			
@@ -238,6 +258,62 @@
 
 
 
+
+
+/* *************************** node click behaviour ********************* */
+
+
+/**
+ * Behaviour of a node when clicked or double clicked There are two possible paths : 
+ *  1) the node is not a container (files, resources) : 
+ *				a/ click events : proceed, 
+ *				b/ double click event (and further click event) : cancel that event and let the first one complete.
+ *  2) the node is a container (libraries, folders, campaigns) : 
+ * 				a/ click event : start a timer. If the timer is not canceled, fire a specific click.jstree event.
+ *              b/  double click event (and further click event) : toggle the node and stop event propagation.
+ *
+ * Basically we'll stop the event propagation everytime except for case 1-a. The case 2-a actually do not let the event
+ * propagate : it fires a new 'click.jstree' event instead. The reason for this is because the following handler is bound
+ * to 'click' and we don't want it to be called again.
+ *
+ * cases 1-a and 2-a are treated in handleNodeClick, while 1-b and 2-b are treated in handleNodeDblClick. 
+ *
+ * @params : 
+ *  - tree : the tree instance
+ *  - clickEvent : the click event.
+ *
+ */ 
+ 
+ /* 
+  * here we want to delay the event for folders, libraries and campaign (waiting for a possible dblclick), while letting
+  * the event through for the other kind of nodes.
+  */
+ function handleNodeClick(tree, event){
+	var target = $(event.target);
+	var node = target.parent();
+	
+	if (node.is(':library') || node.is(':folder') || node.attr('restype') == "campaigns"){
+		event.stopImmediatePropagation();
+	
+		tree.data.squash.clicktimer = setTimeout(function(){	
+			target.trigger('click.jstree');
+		},tree.data.squash.timeout);
+	}
+ }
+ 
+ /* 
+  * here we handle dblclicks. basically we don't want the event to be processed twice, except for containers
+  * that will toggle their open-close status.
+  */
+ function handleNodeDblClick(tree, event){
+	var target = $(event.target);
+	var node = target.parent();
+	
+	event.stopImmediatePropagation();
+	clearTimeout(tree.data.squash.clicktimer);
+	tree.toggle_node(node);			
+}
+
 function clearContextualContent(targetSelector){
 	$('.is-contextual').each(function(){
 		//todo : kill the damn ckeditor instances				
@@ -245,6 +321,10 @@ function clearContextualContent(targetSelector){
 	});
 	$(targetSelector).empty();		
 }
+
+
+
+
 
 /* ***************************  post new nodes operations ********************************************** */
 /**
@@ -621,52 +701,6 @@ function unselectNonSiblings(liNode, tree) {
 function findSelectedNodes(tree) {
 	return tree.find('.jstree-clicked').parent('li');
 }
-
-/* *************************** node click behaviour ********************* */
-
-
-/**
- * Behaviour of a node when clicked. There are two possible paths : 
- *  1) the node is not a container (files, resources) : 
- *				a/ allow first click, 
- *				b/ cancel other clicks
- *  2) the node is a container (libraries, folders, campaigns) : 
- * 				a/ first click : start a timer. If the timer is not canceled, let the event propagate. 
- *              b/ other clicks : toggle the node and stop event propagation.
- *
- * Basically we'll stop the event propagation everytime except for case 1-a. The case 2-a actually do not let the event
- * propagate : it fires a new 'click.jstree' event instead. The reason for this is because the following handler is bound
- * to 'click' and we don't want it to be called again.
- *
- * @params : 
- *  - tree : the tree instance
- *  - clickEvent : the click event.
- *
- */ 
- function handleNodeClicks(tree, event){
-	var target = $(event.target);
-	var node = target.parent();
-	
-	if (node.is(':library') || node.is(':folder') || node.attr('restype') == "campaigns"){
-		event.stopImmediatePropagation();
-		
-		if (event.detail == 1){
-			tree.data.squash.clicktimer = setTimeout(function(){		
-				target.trigger('click.jstree');
-			},tree.data.squash.timeout);
-		}
-		else{
-			clearTimeout(tree.data.squash.clicktimer);
-			tree.toggle_node(node);
-		}
-	}
-	else{
-		if (event.detail > 1) {
-			event.stopImmediatePropagation();
-		}	
-	}
- }
-
 
 	
 /* ****************************** other tree-related objects ************************************** */
