@@ -61,7 +61,7 @@
 		<jsp:invoke fragment="head"/>
 		
 		<%-- css override is needed in case of a sub page. --%>
-		
+		<link rel="stylesheet" type="text/css" href="${ pageContext.servletContext.contextPath }/styles/structure.override.css" />
 		<link rel="stylesheet" type="text/css" href="${ pageContext.servletContext.contextPath }/styles/structure.subpageoverride.css" />
 			
 	</jsp:attribute>

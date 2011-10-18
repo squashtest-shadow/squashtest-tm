@@ -29,9 +29,11 @@
 <%@ taglib prefix="comp" tagdir="/WEB-INF/tags/component"%>
 <%@ taglib prefix="pop" tagdir="/WEB-INF/tags/popup" %>
 
-<layout:info-page-layout titleKey="workspace.home.title">
+<layout:info-page-layout titleKey="workspace.home.title" highlightedWorkspace="home">
 	<jsp:attribute  name="head">	
 		<link rel="stylesheet" type="text/css" href="${ pageContext.servletContext.contextPath }/styles/master.blue.css" />	
+		<link rel="stylesheet" type="text/css" href="${ pageContext.servletContext.contextPath }/styles/structure.override.css" />	
+		
 	</jsp:attribute>
 	
 	<jsp:attribute name="titlePane">

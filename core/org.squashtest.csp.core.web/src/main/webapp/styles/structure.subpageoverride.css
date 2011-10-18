@@ -30,16 +30,6 @@
 /* ----->>> sub-page structural styles overrides <<<--------*/
 /* ---------------------------------------------------------*/
 
-html, body{
-	background-image : none;
-	background-color: #393834;	
-}
-
-div#navigation{
-	background-image : none;	
-}
-
-
 .sub-page{
 	bottom : 1.5cm;
 	left : 0.2cm;

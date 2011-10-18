@@ -846,34 +846,6 @@ div#user-account-password-panel > div > * {
 }
 
 
-
-
-
-/*---  Here we define manually drag and drop icons because we use themeroller plugin instead of theme plugin  ----*/
-/*#vakata-dragged ins {
-	background: transparent !important;
-}*/
-/*
-#vakata-dragged .jstree-ok {
-	background: url("../images/Button_Exec_Passed.png") 0px 0px no-repeat
-		!important;
-}
-
-#vakata-dragged .jstree-invalid {
-	background: url("../images/Button_Exec_Failed.png") 0px 0px no-repeat
-		!important;
-}
-
-#jstree-marker {
-	background: url("../images/bureau.gif") !important;
-}
-
-a.jstree-loading .jstree-icon{
-	background : url("../images/ajax-loader-16x16.gif") !important;
-}
-*/
-
-
 .display-table{
 	display:table;	
 }
@@ -905,11 +877,24 @@ a.jstree-loading .jstree-icon{
 /* ------->>> PAGE LAYOUT WITH UP NAVIGATION BAR<<<---------*/
 	
 /* ---------------------------------------------------------*/
+
+
+#login-form-button-pane{
+	text-align:center;
+	padding: 0.3em 0em 0.5em 0em;
+}
+
+
+/* it was supposed to be a vertical align but that quick fix is just as fine.*/
+.nav-up-layout .snap-right img{
+	margin-top:4px;	
+}
+
 .nav-up-layout #nav-bar {
 	position: absolute;
 	min-width: 100%;
 	height: 1cm;
-	background-color: #393834;
+	background-image: url("../images/fond_nav_rotate.gif");
 	margin-bottom: 0.4cm;
 }
 

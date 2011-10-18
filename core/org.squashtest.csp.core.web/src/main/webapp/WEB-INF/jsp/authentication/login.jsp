@@ -42,6 +42,7 @@
 				$('auth-error').fadeIn('slow');
 			});
 		</script>
+
 	</head>
 	<body class="nav-up-layout">
 		<div id="nav-bar" class="ui-helper-clearfix">
@@ -89,8 +90,8 @@
 						</table>
 					</div>
 				
-					<div id="login-form-button-pane" class="ui-dialog-buttonpane ui-widget-content ui-helper-clearfix">
-						<div id="login-form-button-set" class="ui-dialog-buttonset snap-right">
+					<div id="login-form-button-pane" class="ui-dialog-buttonpane  ui-widget-content ui-helper-clearfix">
+						<div id="login-form-button-set" >
 							<s:message var="submitLabel" code="dialog.authentication.button.submit.label" />
 							<input type="submit" value="${ submitLabel }" class="button" />
 						</div>
@@ -109,6 +110,21 @@
 		
 		
 		<div id="footer">
+		
+			<script type="text/javascript">
+				$(function(){
+					$('body').keydown(function(event){
+						var e;
+						if (event.which !="") { e = event.which; }
+						else if (event.charCode != "") { e = event.charCode; }
+						else if (event.keyCode != "") { e = event.keyCode; }
+						
+						if (e==13){
+							$('#login-form-button-set input').click();
+						}
+					});
+				});
+			</script>		
 		</div>
 	</body>
 </html>
