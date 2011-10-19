@@ -1,3 +1,4 @@
+
 /**
  *     This file is part of the Squashtest platform.
  *     Copyright (C) 2010 - 2011 Squashtest TM, Squashtest.org
@@ -19,30 +20,26 @@
  *     along with this software.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-package org.squashtest.csp.tm.service;
+package org.squashtest.csp.tm.service
 
-import org.apache.axis.holders.SchemaHolder;
-import org.hibernate.SessionFactory;
-import org.hibernate.classic.Session;
-import org.junit.runner.RunWith;
-import org.spockframework.runtime.Sputnik;
-import org.squashtest.csp.core.infrastructure.dynamicmanager.DynamicManagerFactoryBean;
-import org.squashtest.csp.tm.domain.campaign.Campaign;
-import java.util.Date;
+import org.squashtest.csp.tm.domain.campaign.Iteration;
+
 import java.util.List;
 
 import spock.lang.Shared;
-import spock.lang.Specification;
 
+import java.util.Date;
+
+import org.springframework.security.access.prepost.PreAuthorize;
+import org.squashtest.csp.tm.domain.campaign.Iteration;
 
 /**
  * @author Gregory Fouquet
  *
  */
-@RunWith(Sputnik)
-class CampaignModificationDynamicServiceTest extends DynamicManagerInterfaceSpecification {
-	@Shared Class entityType = Campaign
-	@Shared Class managerType = CampaignModificationService
+class IterationModificationDynamicServiceTest extends DynamicManagerInterfaceSpecification {
+	@Shared Class entityType = Iteration
+	@Shared Class managerType = IterationModificationService
 	
 	@Shared List changeServiceCalls = [{ service ->
 				service.changeDescription(10L, "foo")
