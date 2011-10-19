@@ -32,7 +32,7 @@
 <%@ attribute name="openedBy" description="id of the widget that will open the popup"%>
 <%@ attribute name="treeSelector" description="jQuerySelector for the tree."%>
 
-<script type="text/javascript" src="${ pageContext.servletContext.contextPath }/scripts/thirdparties/dateformat.js"></script>
+<script type="text/javascript" src="${ pageContext.servletContext.contextPath }/scripts/jquery/jquery.dateformat.js"></script>
 
 
 <c:url var="exportFolderUrl" value="/requirement-browser/export-folder" />

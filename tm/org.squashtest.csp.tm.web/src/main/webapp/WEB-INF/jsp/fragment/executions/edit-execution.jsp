@@ -46,7 +46,7 @@
 </authz:authorized>
 
 
-<script type="text/javascript" src="${ pageContext.servletContext.contextPath }/scripts/thirdparties/dateformat.js"></script>
+<script type="text/javascript" src="${ pageContext.servletContext.contextPath }/scripts/jquery/jquery.dateformat.js"></script>
 
 
 <%-------------------------- urls ------------------------------%>
