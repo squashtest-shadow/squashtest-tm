@@ -128,19 +128,23 @@
 			
 			//which button is to be treated now
 			switch(operation){
-				case "create-folder" : buttonName = "#new-folder-tree-button"; break;
-				case "create-file" : buttonName = "#new-leaf-tree-button"; break;
-				case "create-resource" : buttonName = "#new-resource-tree-button"; break;
-				case "rename" : buttonName = "#rename-node-tree-button"; break;
+				case "create-folder" : buttonName = "folderButton"; break;
+				case "create-file" :   buttonName = "fileButton"; break;
+				case "create-resource" : buttonName = "resourceButton"; break;
+			/*	case "rename" : buttonName = "#rename-node-tree-button"; break;
 				case "delete" : buttonName = "#delete-node-tree-button"; break;
 				case "copy" : buttonName = "#copy-node-tree-button"; break;
-				case "paste" : buttonName = "#paste-node-tree-button"; break;
+				case "paste" : buttonName = "#paste-node-tree-button"; break;*/
 			}
 			
-			//which value : depends on if it is specified in the param array
-			disabled = (strOperations.match(operation)) ? false : true;
-			
-			$(buttonName).button( "option", "disabled", disabled);	
+			button=squashtm.treemenu.create.buttons[buttonName];
+			if (button){
+				if (strOperations.match(operation)){
+					button.enable();
+				}else{
+					button.disable();
+				}
+			}
 			
 		}		
 		

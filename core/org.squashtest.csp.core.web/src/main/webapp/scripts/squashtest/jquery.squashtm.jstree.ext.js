@@ -253,6 +253,20 @@
 	 
 	 
 	 });
+	 
+	 
+	 /*
+	  * definition of the treemenu buttons. 
+	  * Parameter : 
+	  * 	- content : the selector of the content.
+	  * 	- params : a map association <getterName, buttonSelector>.
+	  */
+	 $.fn.treeMenu = function(params){
+		 this.menu({
+			 content : 
+		 });
+	 }
+	 
 	
 })(jQuery);
 
@@ -776,3 +790,4 @@ function ButtonBasedTreeNodeCopier(initObj){
 	$(this.pasteSelector).click($.proxy(this.pasteNodesFromCookie, this));
 	
 }
+

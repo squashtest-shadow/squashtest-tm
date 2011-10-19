@@ -6,6 +6,16 @@ Date:		September 2008
 
 /* REQUIRED STYLES - the menus will only render correctly with these rules */	
 
+.fg-button { clear:left; margin:0 4px 40px 20px; padding: .4em 1em; text-decoration:none !important; cursor:pointer; position: relative; text-align: center; zoom: 1; }
+.fg-button .ui-icon { position: absolute; top: 50%; margin-top: -8px; left: 50%; margin-left: -8px; }
+a.fg-button { float:left;  }
+button.fg-button { width:auto; overflow:visible; } /* removes extra button width in IE */
+.fg-button-icon-right { padding-right: 2.1em; }
+.fg-button-icon-right .ui-icon { left: auto; right: .2em; margin-left: 0; }
+.menu-disabled{ font-style:italic; color : slightgray;}
+
+
+
 .fg-menu-container { position: absolute; top:0; left:-999px; padding: .4em;  overflow: hidden; }
 .fg-menu-container.fg-menu-flyout { overflow: visible; }
 
