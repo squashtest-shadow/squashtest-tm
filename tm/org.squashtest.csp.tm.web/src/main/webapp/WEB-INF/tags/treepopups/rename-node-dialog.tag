@@ -28,13 +28,13 @@
 <%@ taglib prefix="pop" tagdir="/WEB-INF/tags/popup" %>
 <%@ taglib prefix="comp" tagdir="/WEB-INF/tags/component"%>
 
-<%@ attribute name="openedBy" description="id of the widget that will open the popup"%>
+
 <%@ attribute name="treeSelector" description="jQuerySelector for the tree."%>
 <%@ attribute name="successCallback" description="javascript callback in case of success."%>
-
+<%@ attribute name="treeNodeButton" required="true" description="the javascript button that will open the dialog" %>
 
 		
-<pop:popup id="rename-node-dialog" titleKey="dialog.rename-tree-node.title" openedBy="${openedBy}">
+<pop:popup id="rename-node-dialog" titleKey="dialog.rename-tree-node.title" >
 	<jsp:attribute name="buttons">
 		<f:message var="label" key="tree.button.rename-node.label" />	
 		'${ label }': function() {
@@ -69,3 +69,14 @@
 		<comp:error-message forField="name" />		
 	</jsp:attribute>		
 </pop:popup>	
+
+<script type="text/javascript">
+	$(function(){		
+		${treeNodeButton}.click(function(){
+			$('#rename-node-dialog').dialog('open');
+			return false;		
+		});		
+	});
+
+
+</script>

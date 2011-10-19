@@ -27,10 +27,11 @@
 <%@ taglib prefix="jq" tagdir="/WEB-INF/tags/jquery"%>
 <%@ taglib prefix="pop" tagdir="/WEB-INF/tags/popup" %>
 
-<%@ attribute name="openedBy" description="id of the widget that will open the popup"%>
+
 <%@ attribute name="treeSelector" description="jQuerySelector for the tree."%>
 <%@ attribute name="successCallback" description="javascript callback in case of success."%>
 <%@ attribute name="resourceName" required="true" %>
+<%@ attribute name="treeNodeButton" required="true" description="the javascript button that will open the dialog" %>
 
 <%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core" %>
 
@@ -47,8 +48,8 @@
 
 $(function(){
 
-	
-	$( "#delete-node-dialog" ).bind( "dialogopen", function(event, ui) {
+	var dialog=$( "#delete-node-dialog" );
+	dialog.bind( "dialogopen", function(event, ui) {
 		
 		var jqThis = $(this);
 		
@@ -61,6 +62,13 @@ $(function(){
 		});
 	
 	});
+	
+	
+	${treeNodeButton}.click(function(){
+			dialog.dialog('open');
+			return false;		
+	});
+		
 	
 });	
 
@@ -249,7 +257,7 @@ function findPrevNode(vIds, bWereIterations){
 </script>	
 
 
-<comp:popup id="delete-node-dialog" titleKey="dialog.delete-tree-node.title" closeOnSuccess="false" openedBy="${openedBy}">
+<pop:popup id="delete-node-dialog" titleKey="dialog.delete-tree-node.title" closeOnSuccess="false" >
 	<jsp:attribute name="buttons">
 	
 		<f:message var="label" key="tree.button.delete-node.label" />
@@ -258,9 +266,9 @@ function findPrevNode(vIds, bWereIterations){
 		<pop:cancel-button />
 	</jsp:attribute>
 	
-	<jsp:body>
+	<jsp:attribute name="body">
 		
 		<span id="delete-node-dialog-label"></span>
 		<br />				
-	</jsp:body>
-</comp:popup>
+	</jsp:attribute>
+</pop:popup>

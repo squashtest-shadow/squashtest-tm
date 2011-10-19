@@ -103,14 +103,6 @@ $(function() {
 	);
 
 	<c:choose>
-	<c:when test="${ openedBy == 'export-link' }" >
-	$( "#${ openedBy }" ).live('click',
-		function(){
-			$( "#${id}" ).dialog( "open" );
-			return false;
-		}
-	);
-	</c:when>
 	<c:otherwise>
 	$( "#${ openedBy }" ).bind(
 		'click',

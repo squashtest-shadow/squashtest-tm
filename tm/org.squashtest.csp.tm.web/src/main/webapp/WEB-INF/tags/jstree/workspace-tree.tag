@@ -131,10 +131,10 @@
 				case "create-folder" : buttonName = "folderButton"; break;
 				case "create-file" :   buttonName = "fileButton"; break;
 				case "create-resource" : buttonName = "resourceButton"; break;
-			/*	case "rename" : buttonName = "#rename-node-tree-button"; break;
-				case "delete" : buttonName = "#delete-node-tree-button"; break;
-				case "copy" : buttonName = "#copy-node-tree-button"; break;
-				case "paste" : buttonName = "#paste-node-tree-button"; break;*/
+				case "rename" : buttonName = "renameButton"; break;
+				case "delete" : buttonName = "deleteButton"; break;
+				case "copy" : buttonName = "copyButton"; break;
+				case "paste" : buttonName = "pasteButton"; break;
 			}
 			
 			button=squashtm.treemenu.create.buttons[buttonName];
@@ -349,13 +349,13 @@
 							},
 					"ctrl+c" : function(){
 								<%-- requires that an instance of ButtonBasedTreeNodeCopier instance exists, see copy-paste-node.tag --%>
-								if (buttonBasedTreeNodeCopier){
-									buttonBasedTreeNodeCopier.copyNodesToCookie();
+								if (squashtm.treeMenu.treeNodeCopier){
+									squashtm.treeMenu.treeNodeCopier.copyNodesToCookie();
 								}
 							},
 					"ctrl+v" : function(){
-								if (buttonBasedTreeNodeCopier){
-									buttonBasedTreeNodeCopier.pasteNodesFromCookie();
+								if (squashtm.treeMenu.treeNodeCopier){
+									squashtm.treeMenu.treeNodeCopier.pasteNodesFromCookie();
 								}						
 							},
 							

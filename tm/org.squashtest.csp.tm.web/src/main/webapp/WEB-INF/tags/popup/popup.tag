@@ -22,7 +22,7 @@
 --%>
 <%@ tag description="A dialog popup. The body of this tag contains the HTML body of the dialog. 
 	Buttons and their bound actions are defined through a fragment passed as the 'buttons' attribute" body-content="empty" %>
-<%@ attribute name="openedBy" required="true" description="id of the button which opens the dialog" %>
+<%@ attribute name="openedBy" description="id of the button which opens the dialog" %>
 <%@ attribute name="id" required="true" description="id of the popup" %>
 <%@ attribute name="titleKey" %>
 <%@ attribute name="isContextual" required="false" description="if set, this popup will be added a class to show it belongs to the contextual panel"%>
@@ -50,7 +50,9 @@ $(function() {
 	var params = {
 		selector : "#${id}",
 		title : "${title}",
+		<c:if test="${not empty openedBy}">
 		openedBy : "#${openedBy}",
+		</c:if>
 		<c:if test="${not empty isContextual and isContextual}">
 		isContextual : true,
 		</c:if>

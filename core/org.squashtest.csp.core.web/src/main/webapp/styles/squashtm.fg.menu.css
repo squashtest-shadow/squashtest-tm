@@ -12,7 +12,7 @@ a.fg-button { float:left;  }
 button.fg-button { width:auto; overflow:visible; } /* removes extra button width in IE */
 .fg-button-icon-right { padding-right: 2.1em; }
 .fg-button-icon-right .ui-icon { left: auto; right: .2em; margin-left: 0; }
-.menu-disabled{ font-style:italic; color : slightgray;}
+li[role='menuitem'] a.menu-disabled{ font-style:italic; color : lightgray;}
 
 
 

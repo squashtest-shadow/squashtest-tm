@@ -29,8 +29,9 @@
 <%@ taglib prefix="pop" tagdir="/WEB-INF/tags/popup" %>
 <%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core"%>
 
-<%@ attribute name="openedBy" description="id of the widget that will open the popup"%>
+
 <%@ attribute name="treeSelector" description="jQuerySelector for the tree."%>
+
 
 <script type="text/javascript" src="${ pageContext.servletContext.contextPath }/scripts/jquery/jquery.dateformat.js"></script>
 
@@ -52,7 +53,7 @@
 
 </script>
 
-<pop:popup id="export-requirement-node-dialog" titleKey="dialog.export-requirement.title" openedBy="${openedBy}">
+<pop:popup id="export-requirement-node-dialog" titleKey="dialog.export-requirement.title" openedBy="export-link" >
 	<jsp:attribute name="buttons">
 	
 		<f:message var="label" key="dialog.export-requirement.title" />

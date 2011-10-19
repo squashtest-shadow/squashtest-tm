@@ -175,16 +175,16 @@
 	</jsp:attribute>
 
 	<jsp:attribute name="footer">
-		<treepopup:add-nameable-node-dialog resourceName="folder" />
-		<treepopup:add-nameable-node-dialog resourceName="${ resourceName }" />
-		<treepopup:rename-node-dialog treeSelector="#tree"  openedBy="rename-node-tree-button" successCallback="rename_from_tree_sucess"/>
-		<treepopup:delete-node-dialog treeSelector="#tree"  openedBy="delete-node-tree-button" resourceName="${resourceName}"/>
+		<treepopup:add-nameable-node-dialog resourceName="folder" treeNodeButton="squashtm.treemenu.create.buttons['folderButton']"/>
+		<treepopup:add-nameable-node-dialog resourceName="${ resourceName }"  treeNodeButton="squashtm.treemenu.create.buttons['fileButton']"/>
+		<treepopup:rename-node-dialog treeSelector="#tree" successCallback="rename_from_tree_sucess" treeNodeButton="squashtm.treemenu.create.buttons['renameButton']"/>
+		<treepopup:delete-node-dialog treeSelector="#tree" resourceName="${resourceName}" treeNodeButton="squashtm.treemenu.create.buttons['deleteButton']"/>
 
-		<treepopup:copy-paste-node 	  treeSelector="#tree" copySelector="#copy-node-tree-button" pasteSelector="#paste-node-tree-button" resourceName="${resourceName}"
-								      errorMessageKey="tree.button.copy-node.error"/>
+		<treepopup:copy-paste-node 	  treeSelector="#tree" resourceName="${resourceName}" errorMessageKey="tree.button.copy-node.error" 
+										treeNodeButtonCopy="squashtm.treemenu.create.buttons['copyButton']" treeNodeButtonPaste="squashtm.treemenu.create.buttons['pasteButton']"/>
 		 
 		<c:if test="${ resourceName == 'requirement' }">		
-			<treepopup:export-requirement-dialog treeSelector="#tree"  openedBy="export-link" />			
+			<treepopup:export-requirement-dialog treeSelector="#tree"  />			
 		</c:if>
 
 		<jsp:invoke fragment="footer" />		

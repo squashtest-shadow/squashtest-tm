@@ -27,11 +27,11 @@
 <%@ taglib prefix="f" uri="http://java.sun.com/jsp/jstl/fmt"%>	
 <%@ taglib prefix="s" uri="http://www.springframework.org/tags"%>
 	
-<%@ attribute name="copySelector" description="jquery selector of the copy button" %>
-<%@ attribute name="pasteSelector" description="jquery selector of the paste button" %>
 <%@ attribute name="treeSelector" description="jquery selector of the tree instance" %>
 <%@ attribute name="errorMessageKey" description="message key for error popups" %>
 <%@ attribute name="resourceName" description="name of the resource being processed (test-case etc)" %>
+<%@ attribute name="treeNodeButtonCopy" required="true" description="the javascript button that will trigger a copy" %>
+<%@ attribute name="treeNodeButtonPaste" required="true" description="the javascript button that will trigger the paste" %>
 
 <s:url var="copyUrl" value="/{workspace}-browser/copy">
 	<s:param name="workspace" value="${resourceName}" />
@@ -40,16 +40,20 @@
 <f:message var="errorMessage" key="${errorMessageKey}"/>
 
 <script type="text/javascript" >
-	
-	var buttonBasedTreeNodeCopier;
 
 	$(function(){
-		buttonBasedTreeNodeCopier = new ButtonBasedTreeNodeCopier({copySelector : "${copySelector}",
-																   pasteSelector : "${pasteSelector}",	
-																   treeSelector : "${treeSelector}",
-																   errMessage : "${errorMessage}",
-																   url : "${copyUrl}"
-																  });		
+		squashtm.treemenu.treeNodeCopier = new TreeNodeCopier({treeSelector : "${treeSelector}",
+											 errMessage : "${errorMessage}",
+											 url : "${copyUrl}"
+										});		
+		
+		${treeNodeButtonCopy}.click(function(){
+			squashtm.treemenu.treeNodeCopier.copyNodesToCookie();
+		});
+		
+		${treeNodeButtonPaste}.click(function(){
+			squashtm.treemenu.treeNodeCopier.pasteNodesFromCookie();
+		});		
 	});
 
 </script>	
