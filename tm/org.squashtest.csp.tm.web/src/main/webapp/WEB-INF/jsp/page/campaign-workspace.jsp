@@ -30,6 +30,6 @@
 	</jsp:attribute>
 	
 	<jsp:attribute name="footer">
-		<treepopup:add-nameable-node-dialog resourceName="iteration" treeNodeButton="squashtm.treemenu.create.buttons['resourceButton']" />
+		<treepopup:add-nameable-node-dialog resourceName="iteration" treeNodeButton="squashtm.treemenu.create.buttons['create-resource']" />
 	</jsp:attribute>
 </layout:workspace-page-layout>

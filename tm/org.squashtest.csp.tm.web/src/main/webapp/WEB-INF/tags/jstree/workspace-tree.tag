@@ -118,35 +118,16 @@
 	
 	
 	function updateTreebuttons(strOperations){
-		var availableOperations = ["create-folder", "create-file", "create-resource", "rename", "delete", "copy", "paste"];
-		var i;
-		var buttonName="";
-		var disabled=false;
-		
-		for (i=0;i<availableOperations.length;i++){
-			var operation = availableOperations[i];
-			
-			//which button is to be treated now
-			switch(operation){
-				case "create-folder" : buttonName = "folderButton"; break;
-				case "create-file" :   buttonName = "fileButton"; break;
-				case "create-resource" : buttonName = "resourceButton"; break;
-				case "rename" : buttonName = "renameButton"; break;
-				case "delete" : buttonName = "deleteButton"; break;
-				case "copy" : buttonName = "copyButton"; break;
-				case "paste" : buttonName = "pasteButton"; break;
-			}
-			
-			button=squashtm.treemenu.create.buttons[buttonName];
-			if (button){
+		for (var menu in squashtm.treemenu){
+			for (var operation in squashtm.treemenu[menu].buttons){
 				if (strOperations.match(operation)){
-					button.enable();
-				}else{
-					button.disable();
+					squashtm.treemenu[menu].buttons[operation].enable();
+				}
+				else{
+					squashtm.treemenu[menu].buttons[operation].disable();
 				}
 			}
-			
-		}		
+		}
 		
 	}
 

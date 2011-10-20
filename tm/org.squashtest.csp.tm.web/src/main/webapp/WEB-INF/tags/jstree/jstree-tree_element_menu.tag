@@ -26,12 +26,18 @@
 <%@ attribute name="workspace" required="false" %>
 <%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core" %>
 <%@ taglib prefix="fmt" uri="http://java.sun.com/jsp/jstl/fmt" %>
+	
+	
+<%--<a id="tree-create-button" href="#tree-create-menu" class="fg-button fg-button-icon-right ui-widget ui-state-default ui-corner-all" > 
+<%--<span class="ui-icon ui-icon-triangle-1-s"></span> create(warning)</a>--%>
+
 
 <div id="tree_element_menu" class="tree-top-toolbar">
-	<a id="tree-create-button" href="#tree-create-menu" class="fg-button fg-button-icon-right ui-widget ui-state-default ui-corner-all" >
-	<span class="ui-icon ui-icon-triangle-1-s"></span>create(warning)
-	</a>
-	<div class="not-displayed">
+	<a id="tree-create-button" href="#tree-create-menu" class="button">create(warning)</a>
+	<a id="tree-action-button" href="#tree-action-menu" class="button" >actions(warning)</a> 
+	
+	
+	<div class="not-displayed" >
 	<div id="tree-create-menu" >
 	<ul>
 		<li><a class="new-folder-tree-button menu-disabled" href="#"><fmt:message key="tree.button.new-folder.label" />...</a></li>
@@ -43,10 +49,8 @@
 	</div>
 	</div>
 	
-	<a id="tree-action-button" href="#tree-action-menu" class="fg-button fg-button-icon-right ui-widget ui-state-default ui-corner-all" >
-	<span class="ui-icon ui-icon-triangle-1-s"></span>actions(warning)
-	</a>
-	<div class="not-displayed">
+
+	<div class="not-displayed" >
 	<div id="tree-action-menu" >
 	<ul>
 		<li><a class="copy-node-tree-button menu-disabled" href="#"><fmt:message key="tree.button.copy-node.label" /></a></li>
@@ -64,11 +68,25 @@
 	$(function(){
 		squashtm.treemenu = {};
 		
+		
+		var initButton = function(bSelector, cssIcon){
+			$(bSelector).button({
+				disabled : false,
+				text : false,
+				icons : {
+					primary : cssIcon
+				}
+			});
+		};
+
+		initButton("#tree-create-button", "ui-icon ui-icon-plusthick");
+		initButton("#tree-action-button", "ui-icon-arrowreturnthick-1-e");		
+		
 		var createOption = {
-			"folderButton" : ".new-folder-tree-button",
-			"fileButton" : ".new-leaf-tree-button"
+			"create-folder" : ".new-folder-tree-button",
+			"create-file" : ".new-leaf-tree-button"
 			<c:if test="${ not empty newResourceButtonMessage }">
-			,"resourceButton" : ".new-resource-tree-button"
+			,"create-resource" : ".new-resource-tree-button"
 			</c:if>
 		};
 		
@@ -76,20 +94,24 @@
 		
 		
 		var actionOption = {
-				"copyButton" : ".copy-node-tree-button",
-				"pasteButton" : ".paste-node-tree-button",
-				"renameButton" : ".rename-node-tree-button",
-				"deleteButton" : ".delete-node-tree-button"
+				"copy" : ".copy-node-tree-button",
+				"paste" : ".paste-node-tree-button",
+				"rename" : ".rename-node-tree-button",
+				"delete" : ".delete-node-tree-button"
 			};
 			
 		squashtm.treemenu.action = $('#tree-action-button').treeMenu("#tree-action-menu", actionOption);
 
+
+		
 	});
 
 </script>
 
 
 <%--
+ui-icon-arrowreturnthick-1-e
+
 	<button id="new-folder-tree-button"><fmt:message key="tree.button.new-folder.label" />...</button>
 	<button id="new-leaf-tree-button"><fmt:message key="${newLeafButtonMessage}" />...</button>
 	<c:if test="${ not empty newResourceButtonMessage }">

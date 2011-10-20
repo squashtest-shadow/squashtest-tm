@@ -102,8 +102,7 @@ $(function() {
 		}
 	);
 
-	<c:choose>
-	<c:otherwise>
+
 	$( "#${ openedBy }" ).bind(
 		'click',
 		function(){
@@ -111,8 +110,7 @@ $(function() {
 			return false;
 		}
 	);
-	</c:otherwise>
-	</c:choose>
+
 	
 });
 </script>

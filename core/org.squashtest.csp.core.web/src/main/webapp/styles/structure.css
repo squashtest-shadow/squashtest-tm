@@ -418,7 +418,7 @@ div#tree_element_menu, .tree-top-toolbar {
 	width : 100%; 
 }
 
-div#tree_element_menu > button.ui-button{
+div#tree_element_menu > button.ui-button, div#tree_element_menu > a.ui-button{
 	height: 2em;
 	width: 2em;
 }
