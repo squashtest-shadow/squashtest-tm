@@ -330,13 +330,13 @@
 							},
 					"ctrl+c" : function(){
 								<%-- requires that an instance of ButtonBasedTreeNodeCopier instance exists, see copy-paste-node.tag --%>
-								if (squashtm.treeMenu.treeNodeCopier){
-									squashtm.treeMenu.treeNodeCopier.copyNodesToCookie();
+								if (squashtm.treemenu.treeNodeCopier){
+									squashtm.treemenu.treeNodeCopier.copyNodesToCookie();
 								}
 							},
 					"ctrl+v" : function(){
-								if (squashtm.treeMenu.treeNodeCopier){
-									squashtm.treeMenu.treeNodeCopier.pasteNodesFromCookie();
+								if (squashtm.treemenu.treeNodeCopier){
+									squashtm.treemenu.treeNodeCopier.pasteNodesFromCookie();
 								}						
 							},
 							

@@ -184,13 +184,13 @@
 				//that variable will be set to true if at least one selected node is not editable.
 				var noEdit = (selectedNodes.not(":editable").length > 0);
 				
-				//case 1 : not editable : no operations allowed. 
-				if (noEdit){
+				//case 1 : not nodes, or not editable nodes : no operations allowed. 
+				if (selectedNodes.length==0 || noEdit){
 					operations = "";
 				}
-				//case 2 : more than one item selected : no operations allowed except deletion and copy if the nodes aren't libraries
+				//case 2 : more than one item selected : deletion and copy if the nodes aren't libraries
 				else if (selectedNodes.length != 1){
-					operations = (! selectedNodes.is(":library")) ? "delete copy" : "";
+					operations = (! selectedNodes.is(":library")) ? "delete copy " : "";
 				}
 				//case 3 : one item is selected, button activation depend on their nature.
 				else{
@@ -258,14 +258,44 @@
 	 /*
 	  * definition of the treemenu buttons. 
 	  * Parameter : 
-	  * 	- content : the selector of the content.
-	  * 	- params : a map association <getterName, buttonSelector>.
+	  * 	- contentSelector : the selector of the content.
+	  * 	- params : a map association <buttonPropertyName, buttonSelector>.
+	  * 
+	  * Note 1 : the way the menu was implemented forces us to ugly things and should need refactor once it's included in the trunk of jQuery UI.
+	  * Note 2 : I had no choice but modifying jquery.fg.menu.js directly, specifically the methods showMenu() and kill(), due to the careless managment of
+	  * event unbinding.
 	  */
-	 $.fn.treeMenu = function(params){
-		 this.menu({
-			 content : 
+	
+	 $.fn.treeMenu = function(contentSelector, params){
+	  	 this.menu({
+			 content : $(contentSelector).html(),
+			 showSpeed : 0
+			
 		 });
+		 
+		 //ugly thing here. The widget is lazily created and we don't want that if we want to bind our events on the menu item.
+		 //so we force creation and hide it right away.
+		 var menu = allUIMenus[allUIMenus.length-1];
+		 menu.create();
+		 menu.kill();
+		 
+		 this.buttons = {};
+		 
+		 for (var getter in params){
+			//menu.create did create a clone of the content which class is fg-menu-container. We'll be looking at the item we want to bind
+			//in the cloned content.
+			var selector=".fg-menu-container "+params[getter];
+			var button = $(selector);
+			button.enable = function(){$(this).removeClass('menu-disabled');};
+			button.disable = function(){$(this).addClass('menu-disabled');};
+			button.click(function(event){event.preventDefault(); if ($(this).is('.menu-disabled')) event.stopImmediatePropagation();});
+			
+			this.buttons[getter] = button;
+		 }
+		 
+		 return this;  
 	 }
+	 
 	 
 	
 })(jQuery);
@@ -306,7 +336,9 @@
 	var target = $(event.target);
 	var node = target.parent();
 	
+	
 	if (node.is(':library') || node.is(':folder') || node.attr('restype') == "campaigns"){
+		if (event.ctrlKey) return true;
 		event.stopImmediatePropagation();
 	
 		tree.data.squash.clicktimer = setTimeout(function(){	
@@ -720,11 +752,9 @@ function findSelectedNodes(tree) {
 /* ****************************** other tree-related objects ************************************** */
 
 
-function ButtonBasedTreeNodeCopier(initObj){
+function TreeNodeCopier(initObj){
 	
 	//properties
-	this.copySelector=initObj.copySelector;
-	this.pasteSelector=initObj.pasteSelector;
 	this.tree = $.jstree._reference(initObj.treeSelector);
 	this.errMessage= initObj.errMessage;
 	this.url= initObj.url;
@@ -785,9 +815,6 @@ function ButtonBasedTreeNodeCopier(initObj){
 		}
 	
 	}		
-	
-	$(this.copySelector).click($.proxy(this.copyNodesToCookie, this));
-	$(this.pasteSelector).click($.proxy(this.pasteNodesFromCookie, this));
 	
 }
 
