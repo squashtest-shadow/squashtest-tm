@@ -138,19 +138,18 @@
 
 	<comp:toggle-panel titleKey="requirement.panel.general-informations.title" isContextual="true" open="true" >
 		<jsp:attribute name="body">
-			<table id="edit-requirement-table">
-				<tr>
-					<td><label for="requirement-description"><f:message key="requirement.description.label" /></label></td>
-					<td><div id="requirement-description">${ requirement.description }</div><br></td>
-				</tr>
-				<tr>
-					<td><label for="requirement-reference"><f:message key="requirement.reference.label" /></label></td>
-					<td><div id="requirement-reference">${ requirement.reference }</div><br></td>
-				</tr>
-				<tr>
-					<td><label for="requirement-criticality"><f:message key="requirement.criticality.combo.label" /></label></td>
-					<td>
-						<div id="requirement-criticality">
+			<div id="edit-requirement-table" class="display-table">
+				<div class="display-table-row">
+					<label for="requirement-description" class="display-table-cell"><f:message key="requirement.description.label" /></label>
+					<div class="display-table-cell" id="requirement-description">${ requirement.description }</div>
+				</div>
+				<div class="display-table-row">
+					<label class="display-table-cell"  for="requirement-reference"><f:message key="requirement.reference.label" /></label>
+					<div class="display-table-cell"  id="requirement-reference">${ requirement.reference }</div>
+				</div>
+				<div class="display-table-row">
+					<label for="requirement-criticality" class="display-table-cell"><f:message key="requirement.criticality.combo.label" /></label>
+					<div id="requirement-criticality" class="display-table-cell">
 							<authz:authorized hasRole="ROLE_ADMIN" hasPermission="WRITE" domainObject="${ requirement }">
 								<script type="text/javascript">
 									$(function(){
@@ -173,9 +172,8 @@
 								<s:message code="requirement.criticality.${ requirement.criticality }" />
 							</authz:notAuthorized>
 						</div>
-					</td>
-				</tr>
-			</table>
+				</div>
+			</div>
 		</jsp:attribute>
 	</comp:toggle-panel>
 

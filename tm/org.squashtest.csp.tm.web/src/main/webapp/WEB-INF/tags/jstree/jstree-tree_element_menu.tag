@@ -33,8 +33,8 @@
 
 
 <div id="tree_element_menu" class="tree-top-toolbar">
-	<a id="tree-create-button" href="#tree-create-menu" class="button">create(warning)</a>
-	<a id="tree-action-button" href="#tree-action-menu" class="button" >actions(warning)</a> 
+	<a id="tree-create-button" href="#tree-create-menu" class="button"><fmt:message key="squashtm.treemenu.create.label"/>...</a>
+	<a id="tree-action-button" href="#tree-action-menu" class="button" ><fmt:message key="squashtm.treemenu.action.label"/>...</a> 
 	
 	
 	<div class="not-displayed" >
