@@ -28,6 +28,7 @@ import org.squashtest.csp.tm.service.RequirementModificationService;
 import spock.lang.Specification;
 
 
+
 class RequirementModificationControllerTest extends Specification {
 	RequirementModificationController controller = new RequirementModificationController()
 	RequirementModificationService requirementModificationService= Mock()
@@ -52,4 +53,6 @@ class RequirementModificationControllerTest extends Specification {
 		res.modelMap['requirement'] == req
 	}
 
+	
+	
 }

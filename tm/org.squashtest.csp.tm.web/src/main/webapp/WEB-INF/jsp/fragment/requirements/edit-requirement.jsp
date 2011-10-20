@@ -149,24 +149,10 @@
 				</div>
 				<div class="display-table-row">
 					<label for="requirement-criticality" class="display-table-cell"><f:message key="requirement.criticality.combo.label" /></label>
-					<div id="requirement-criticality" class="display-table-cell">
+					<div class="display-table-cell">
 							<authz:authorized hasRole="ROLE_ADMIN" hasPermission="WRITE" domainObject="${ requirement }">
-								<script type="text/javascript">
-									$(function(){
-										$('#requirement-criticality-combo').change(function(success){
-											$.post('${ requirementUrl }', {
-												requirementCriticality : $(this).val()
-											});
-										});
-									});
-								</script>
-								<sf:form commandName="requirement" method="POST">
-									<sf:select path="criticality" id="requirement-criticality-combo"
-										cssClass="combobox" >
-									<sf:options items="${ criticalityList }" itemLabel="label"
-											itemValue="value" />
-									</sf:select>
-								</sf:form>
+							<div id="requirement-criticality"><s:message code="requirement.criticality.${ requirement.criticality }" /></div>
+							<comp:select-jeditable componentId="requirement-criticality" jsonData="${criticalityList}" targetUrl="${requirementUrl}" />
 							</authz:authorized>
 							<authz:notAuthorized hasRole="ROLE_ADMIN" hasPermission="WRITE" domainObject="${ requirement }">
 								<s:message code="requirement.criticality.${ requirement.criticality }" />

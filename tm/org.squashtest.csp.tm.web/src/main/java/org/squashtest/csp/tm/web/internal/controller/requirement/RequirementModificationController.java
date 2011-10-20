@@ -20,9 +20,11 @@
  */
 package org.squashtest.csp.tm.web.internal.controller.requirement;
 
-import java.util.ArrayList;
+import java.util.Comparator;
 import java.util.List;
 import java.util.Locale;
+import java.util.SortedMap;
+import java.util.TreeMap;
 
 import javax.inject.Inject;
 import javax.servlet.http.HttpServletResponse;
@@ -38,6 +40,7 @@ import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.servlet.ModelAndView;
+import org.springframework.web.util.HtmlUtils;
 import org.squashtest.csp.tm.domain.Internationalizable;
 import org.squashtest.csp.tm.domain.project.Project;
 import org.squashtest.csp.tm.domain.requirement.Requirement;
@@ -48,7 +51,7 @@ import org.squashtest.csp.tm.infrastructure.filter.CollectionFilter;
 import org.squashtest.csp.tm.infrastructure.filter.CollectionSorting;
 import org.squashtest.csp.tm.infrastructure.filter.FilteredCollectionHolder;
 import org.squashtest.csp.tm.service.RequirementModificationService;
-import org.squashtest.csp.tm.web.internal.combo.OptionTag;
+import org.squashtest.csp.tm.web.internal.helper.JsonHelper;
 import org.squashtest.csp.tm.web.internal.model.datatable.DataTableDrawParameters;
 import org.squashtest.csp.tm.web.internal.model.datatable.DataTableModel;
 import org.squashtest.csp.tm.web.internal.model.viewmapper.DataTableMapper;
@@ -89,7 +92,7 @@ public class RequirementModificationController {
 
 		mav.addObject("requirement", requirement);
 
-		mav.addObject("criticalityList", initCriticitySelectionList(locale));
+		mav.addObject("criticalityList", initCriticitySelectionList(locale, requirement.getCriticality()));
 		return mav;
 	}
 
@@ -101,7 +104,7 @@ public class RequirementModificationController {
 		ModelAndView mav = new ModelAndView("fragment/requirements/edit-requirement");
 		mav.addObject("requirement", requirement);
 		//build criticality list
-		mav.addObject("criticalityList", initCriticitySelectionList(locale));
+		mav.addObject("criticalityList", initCriticitySelectionList(locale, requirement.getCriticality()));
 		return mav;
 	}
 
@@ -208,12 +211,13 @@ public class RequirementModificationController {
 		return internationalize(mode, locale);
 	}
 
-	@RequestMapping(method = RequestMethod.POST, params = "requirementCriticality")
+	@RequestMapping(method = RequestMethod.POST, params = {"id=requirement-criticality","value"})
 	@ResponseBody
-	public void updateCriticality(@RequestParam String requirementCriticality, @PathVariable long requirementId){
-		RequirementCriticality criticality = RequirementCriticality.valueOf(requirementCriticality);
+	public String updateCriticality(@RequestParam("value") String value, @PathVariable long requirementId, Locale locale){
+		RequirementCriticality criticality = RequirementCriticality.valueOf(value);
 		requirementModService.changeCriticality(requirementId, criticality);
 		LOGGER.debug("Requirement {} : requirement criticality changed, new value : {}", requirementId, criticality.name());
+		return HtmlUtils.htmlEscape(formatCriticality(criticality, locale));
 	}
 
 	@RequestMapping(method = RequestMethod.POST, params = { "id=requirement-reference", "value" })
@@ -226,17 +230,45 @@ public class RequirementModificationController {
 	}
 
 	/***
-	 * Method which returns the criticality select options in the chosen language
+	 * Method which returns the criticality select options in the chosen language.
+	 * The output is formatted in json and meant to be used for a select input.
 	 * @param locale the Locale
 	 * @return an optionTag list with label and value
 	 */
-	private List<OptionTag> initCriticitySelectionList(Locale locale)
+	private String initCriticitySelectionList(Locale locale, RequirementCriticality selected)
 	{
-		List<OptionTag> toReturn = new ArrayList<OptionTag>();
-		for (RequirementCriticality criticality : RequirementCriticality.values()) {
-			toReturn.add(new OptionTag(formatCriticality(criticality, locale), criticality.toString()));
+		try{
+			SortedMap<String, String> map = new TreeMap<String, String>(new Comparator<String>() {
+				@Override
+				public int compare(String o1, String o2) {
+					RequirementCriticality r1, r2;
+				
+					try{
+						r1 = RequirementCriticality.valueOf(o1);
+					}catch(IllegalArgumentException iae){
+						return 1;
+					}
+					try{
+						r2 = RequirementCriticality.valueOf(o2);
+					}catch(IllegalArgumentException iae){
+						return -1;
+					}
+					
+					return (int)(r1.getLevel() - r2.getLevel());
+					
+				}
+			});
+
+			for (RequirementCriticality criticality : RequirementCriticality.values()) {
+				String translated = formatCriticality(criticality, locale);
+				map.put(criticality.toString(), translated);
+			}
+			map.put("selected", selected.toString());
+			
+			return JsonHelper.serialize(map);	
+		}catch(Exception e){
+			throw new RuntimeException(e);
 		}
-		return toReturn;
 	}
 
 	/***
