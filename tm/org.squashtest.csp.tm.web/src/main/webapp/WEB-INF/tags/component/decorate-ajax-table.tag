@@ -64,7 +64,7 @@
 <c:if test="${ not empty rowCallback }">"fnRowCallback": <jsp:invoke fragment="rowCallback"/>,</c:if>
 <c:if test="${ not empty drawCallback }">"fnDrawCallback" : <jsp:invoke fragment="drawCallback"/>,</c:if>				
 
-			"sDom" : 't<lirp>',
+			"sDom" : 't<"dataTables_footer"lirp>',
 			"aoColumnDefs": [
 				<jsp:invoke fragment="columnDefs" />
 			] 

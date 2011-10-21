@@ -43,7 +43,9 @@ div.dataTables_wrapper a.ui-button-icon-only[role="button"]{
 	height:1.5em;
 }
 
-
+div.dataTables_footer{
+	color:#555555	
+}
 
 
 div.dataTables_length  {
