@@ -11,7 +11,6 @@
  *     (at your option) any later version.
  *
  *     this software is distributed in the hope that it will be useful,
- *     but WITHOUT ANY WARRANTY; without even the implied warranty of
  *     MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
  *     GNU Lesser General Public License for more details.
  *
@@ -22,6 +21,123 @@
  * This file contains functions used by squashtest dataTables-based components.
  * @author Gregory Fouquet
  */
+ 
+ /*
+  * squashtm datatable pagination plugin.
+  * Based on the ExtJS style plugin by Zach Curtis (http://zachariahtimothy.wordpress.com/) and simplified according to our needs.
+  *
+  * @author bsiri. 
+  *
+  */
+ 
+ (function($){
+	 $.fn.dataTableExt.oPagination.iFullNumbersShowPages=1;
+ 
+	 $.fn.dataTableExt.oPagination.squash = {
+		/*
+		* Function: oPagination.squash.fnInit
+		* Purpose:  Initalise dom elements required for pagination with a list of the pages
+		* Returns:  -
+		* Inputs:   object:oSettings - dataTables settings object
+		*           node:nPaging - the DIV which contains this pagination control
+		*           function:fnCallbackDraw - draw function which must be called on update
+		*/
+		"fnInit": function (oSettings, nPaging, fnCallbackDraw) {
+			
+			var initButton = function(object, cssClass){
+				object.button({
+					text : false,
+					icons: {
+						primary: cssClass
+					}
+				});
+			}
+
+			var nFirst = $('<span />', { 'class': 'paginate_button first' });
+			var nPrevious = $('<span />', { 'class': 'paginate_button previous' });
+			var nNext = $('<span />', { 'class': 'paginate_button next' });
+			var nLast = $('<span />', { 'class': 'paginate_button last' });
+			var nPageTxt = $("<span />", { text: '1' });
+
+			$(nPaging)
+				.append(nFirst)
+				.append(nPrevious)
+				.append(nPageTxt)
+				.append(nNext)
+				.append(nLast);
+				
+			initButton(nFirst, "ui-icon-seek-first");
+			initButton(nPrevious, "ui-icon-seek-prev");
+			initButton(nNext, "ui-icon-seek-next");
+			initButton(nLast, "ui-icon-seek-end");
+				
+			nFirst.click(function () {
+				oSettings.oApi._fnPageChange(oSettings, "first");
+				fnCallbackDraw(oSettings);
+				nPageTxt.text(parseInt(oSettings._iDisplayEnd / oSettings._iDisplayLength, 10)+1);
+			}).bind('selectstart', function () { return false; });
+
+			nPrevious.click(function () {
+				oSettings.oApi._fnPageChange(oSettings, "previous");
+				fnCallbackDraw(oSettings);
+				nPageTxt.text(parseInt(oSettings._iDisplayEnd / oSettings._iDisplayLength, 10)+1);
+			}).bind('selectstart', function () { return false; });
+
+			nNext.click(function () {
+				oSettings.oApi._fnPageChange(oSettings, "next");
+				fnCallbackDraw(oSettings);
+				nPageTxt.text(parseInt(oSettings._iDisplayEnd / oSettings._iDisplayLength, 10)+1);
+			}).bind('selectstart', function () { return false; });
+
+			nLast.click(function () {
+				oSettings.oApi._fnPageChange(oSettings, "last");
+				fnCallbackDraw(oSettings);
+				nPageTxt.text(parseInt(oSettings._iDisplayEnd / oSettings._iDisplayLength, 10)+1);
+			}).bind('selectstart', function () { return false; });
+
+			
+		},
+
+		/*
+		* Function: oPagination.extStyle.fnUpdate
+		* Purpose:  Update the list of page buttons shows
+		* Returns:  -
+		* Inputs:   object:oSettings - dataTables settings object
+		*           function:fnCallbackDraw - draw function which must be called on update
+		*/
+		"fnUpdate": function (oSettings, fnCallbackDraw) {
+			if (!oSettings.aanFeatures.p) {
+				return;
+			}
+
+			/* Loop over each instance of the pager */
+			var an = oSettings.aanFeatures.p;
+			for (var i = 0, iLen = an.length; i < iLen; i++) {
+				//var buttons = an[i].getElementsByTagName('span');
+				var buttons = $(an[i]).find('span.paginate_button');
+				if (oSettings._iDisplayStart === 0) {
+					buttons.eq(0).button("option", "disabled", true);
+					buttons.eq(1).button("option", "disabled", true);
+				}
+				else {
+					buttons.eq(0).button("option", "disabled", false);
+					buttons.eq(1).button("option", "disabled", false);
+				}
+
+				if (oSettings.fnDisplayEnd() == oSettings.fnRecordsDisplay()) {
+					buttons.eq(2).button("option", "disabled", true);
+					buttons.eq(3).button("option", "disabled", true);
+				}
+				else {
+					buttons.eq(2).button("option", "disabled", false);
+					buttons.eq(3).button("option", "disabled", false);
+				}
+			}
+		}
+	};
+})(jQuery); 
+ 
+ 
 /**
  * Adds a delete button in the last cell of a datatables row
  * 
@@ -32,9 +148,6 @@
  * @param buttonTemplateId
  *            html id of the <a> used as a template
  */
-
-
-
 
 function addDeleteButtonToRow(row, entityId, buttonTemplateId) {
 	$('td:last', row).append($('#' + buttonTemplateId).clone()).find('a').attr(
@@ -400,7 +513,6 @@ function decorateEmptyAttachmentButtons(buttons) {
 		}
 	});
 }
-
 
 /**
  * Adds a "manage attachment" link to the row cell(s) of class

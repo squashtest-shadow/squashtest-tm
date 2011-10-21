@@ -23,6 +23,7 @@ package org.squashtest.csp.tm.web.internal.controller.requirement;
 import org.springframework.context.MessageSource;
 import org.springframework.web.servlet.ModelAndView;
 import org.squashtest.csp.tm.domain.requirement.Requirement;
+import org.squashtest.csp.tm.domain.requirement.RequirementCriticality;
 import org.squashtest.csp.tm.service.RequirementModificationService;
 
 import spock.lang.Specification;
@@ -42,6 +43,7 @@ class RequirementModificationControllerTest extends Specification {
 	def "should return requirement page fragment"() {
 		given:
 		Requirement req = Mock(Requirement.class)
+		req.getCriticality() >> RequirementCriticality.UNDEFINED
 		long reqId=15
 		requirementModificationService.findById(15) >> req
 		

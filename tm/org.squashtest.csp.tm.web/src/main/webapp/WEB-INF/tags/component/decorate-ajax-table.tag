@@ -54,16 +54,17 @@
 			"bAutoWidth": false,
 			"bFilter": false,
 			"bPaginate": ${ not empty paginate and paginate },
-			"sPaginationType": "full_numbers",
+			"sPaginationType": "squash",
+			"iDisplayLength": 50,
 			"bProcessing": true,
 			"bServerSide": true,
 			"sAjaxSource": '${ url }', 
 
 <c:if test="${ not empty initialSort}">"aaSorting": <jsp:invoke fragment="initialSort"/>,  </c:if>
 <c:if test="${ not empty rowCallback }">"fnRowCallback": <jsp:invoke fragment="rowCallback"/>,</c:if>
-<c:if test="${ not empty drawCallback }">"fnDrawCallback": <jsp:invoke fragment="drawCallback"/>,</c:if>
-<%-- <c:if test="${ not empty dom }">"sDom": '<jsp:invoke fragment="dom"/>',</c:if> --%>
-			"sDom" : '<r>t<<l><ip>>',
+<c:if test="${ not empty drawCallback }">"fnDrawCallback" : <jsp:invoke fragment="drawCallback"/>,</c:if>				
+
+			"sDom" : 't<lirp>',
 			"aoColumnDefs": [
 				<jsp:invoke fragment="columnDefs" />
 			] 

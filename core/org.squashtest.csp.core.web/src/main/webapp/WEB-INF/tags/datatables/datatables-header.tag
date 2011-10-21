@@ -25,7 +25,7 @@
 <%@ tag body-content="empty" description="dataTables library imports. SHOULD BE IMPORTED BEFORE DATATABLE USAGE" %>
 <script type="text/javascript" src="${ pageContext.servletContext.contextPath }/scripts/datatables/jquery.dataTables.js"></script>
 <script type="text/javascript" src="${ pageContext.servletContext.contextPath }/scripts/jquery/jquery.tablednd_0_5.js"></script>
-<script type="text/javascript" src="${ pageContext.servletContext.contextPath }/scripts/squashtest/datatables.js"></script>
+<script type="text/javascript" src="${ pageContext.servletContext.contextPath }/scripts/squashtest/jquery.squashtm.datatables.js"></script>
 <script type="text/javascript" src="${ pageContext.servletContext.contextPath }/scripts/squashtest/jquery.squashtm.tableDnD.ext.js"></script> 
 <script type="text/javascript">
 	$(function() {

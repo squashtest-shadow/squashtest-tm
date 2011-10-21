@@ -122,9 +122,8 @@ public class HtmlSanitizationFilter implements Filter {
 		}
 
 		@Override
-		//I'm overlooking that one, chances that we'll be looking for html containing javascript are low.
 		public boolean containsValue(Object value) {
-			return containsValue(value);
+			return wrappedMap.containsValue(value);
 		}
 
 		@Override

@@ -46,14 +46,23 @@ div.dataTables_wrapper a.ui-button-icon-only[role="button"]{
 
 
 
-div.dataTables_info {
+div.dataTables_length  {
 	float:left;
-	width:50%;	
 	font-size:0.8em;
+	margin-right:2em;
+}
+
+div.dataTables_info, div.dataTables_processing{
+	
+	float : left;
+	font-size : 0.8em;
+	margin-right:2em;
+	margin-top:0.2em;	
 }
 
 
-div.dataTables_paginate {
+
+div.dataTables_paginate{
 	float:right;
 	text-align:right;
 	font-size:0.8em;
@@ -63,21 +72,9 @@ div.dataTables_paginate {
 .dataTables_paginate span.ui-button {
 	margin-left:0.05em;
 	margin-right:0.05em;
-	min-width:20px;
-	background-color:#AAAAAA;
-	border-color:#AAAAAA;
-	color:black;	
 }
 
-div.dataTables_length{
-	display:inline-block;	
-	font-size:0.8em;
-}
 
-div.dataTables_processing{
-	display:inline-block;	
-	font-size:0.8em;	
-}
 
 /* that one override the css for the <th> sorting icon class. It actually calls the jquery.blue.css icon sheet*/
 div.DataTables_sort_wrapper > span.ui-icon{
