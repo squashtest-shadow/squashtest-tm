@@ -30,11 +30,11 @@
 
 <%-------------------------- status------------------------------%>
 
-<f:message var="statusBloqued" key="execution.combo.BLOQUED.label" />
-<f:message var="statusFailure" key="execution.combo.FAILURE.label" />
-<f:message var="statusSuccess" key="execution.combo.SUCCESS.label" />
-<f:message var="statusRunning" key="execution.combo.RUNNING.label" />
-<f:message var="statusReady" key="execution.combo.READY.label" />
+<f:message var="statusBloqued" key="execution.execution-status.BLOQUED" />
+<f:message var="statusFailure" key="execution.execution-status.FAILURE" />
+<f:message var="statusSuccess" key="execution.execution-status.SUCCESS" />
+<f:message var="statusRunning" key="execution.execution-status.RUNNING" />
+<f:message var="statusReady" key="execution.execution-status.READY" />
 
 <%-------------------------- /status-----------------------------%>
 

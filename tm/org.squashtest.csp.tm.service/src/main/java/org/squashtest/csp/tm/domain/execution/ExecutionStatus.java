@@ -20,6 +20,8 @@
  */
 package org.squashtest.csp.tm.domain.execution;
 
+import org.squashtest.csp.tm.domain.Internationalizable;
+
 /**
  *
  * This class declare the 5 executions status.
@@ -59,7 +61,7 @@ package org.squashtest.csp.tm.domain.execution;
  * Note 2 : check the method computeNewStatus for the simplest statement about what this thing compute
  */
 
-public enum ExecutionStatus {
+public enum ExecutionStatus implements Internationalizable {
 	// FIXME ENGLISH IS "BLOCKED", DONT SPREAD THE ERROR, FIX IT INSTEAD !
 	BLOQUED() {
 		@Override
@@ -127,6 +129,8 @@ public enum ExecutionStatus {
 			return newStatus;
 		}
 	};
+
+	private static final String I18N_KEY_ROOT = "execution.execution-status.";
 
 	/*
 	 * those fields exists only for code semantics since this class is a complete mess. It's for the same purpose than a
@@ -307,4 +311,8 @@ public enum ExecutionStatus {
 		return isNoneOf(ExecutionStatus.RUNNING, ExecutionStatus.READY);
 	}
 
+	@Override
+	public String getI18nKey() {
+		return I18N_KEY_ROOT + name();
+	}
 }

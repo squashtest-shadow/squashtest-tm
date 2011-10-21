@@ -168,3 +168,6 @@ syntax: regexp
 ^core/launcher/META-INF/NOTICE.txt$
 syntax: regexp
 ^core/org\.squashtest\.csp\.core\.jetty\.start\.osgi/META-INF/MANIFEST\.MF$
+syntax: glob
+distribution/META-INF/NOTICE.txt
+distribution/META-INF/COPYING.txt

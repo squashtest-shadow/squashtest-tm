@@ -66,7 +66,7 @@
 </td>
 <td>
 		<c:forEach items="${ executions }" var="execution">
-			<span style="display:block; color: ${textcolor} font-style:italic;"><f:message key="execution.combo.${execution.executionStatus}.label"/></span>
+			<span style="display:block; color: ${textcolor} font-style:italic;"><f:message key="execution.execution-status.${execution.executionStatus}"/></span>
 		</c:forEach>
 	
 </td>
@@ -105,18 +105,3 @@
 <td>
 
 </td>
-<%--
-<script type="text/javascript" >
-$(function() {
-	$('#${testPlanId}').click(function() {
-		var tcId = ${testPlanId};
-		var url="${newIterationUrl}/new-execution";
-		var url2='${newIterationUrl}/test-case-executions/${testPlanId}';
-		$.post(url,{ testPlanId:tcId }, function(execId) {			
-			document.location.href="${showExecutionUrl}/"+execId;
-			
-		});
-	});
-});
-</script>
- --%>

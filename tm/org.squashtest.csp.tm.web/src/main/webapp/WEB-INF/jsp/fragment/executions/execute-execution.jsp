@@ -284,7 +284,7 @@
 		</script> 
 
 	<div id="execute-header">
-		<!--  I know, table as a layout. But damn. -->
+		<%--  I know, table as a layout. But damn. --%>
 		<table>
 			<tr>
 				<td style="text-align:left;"><button id="execute-stop-button" ><f:message key="execute.header.button.stop.title" /></button></td>
@@ -296,11 +296,10 @@
 					<td style="text-align:right;">
 						<label id="evaluation-label-status"><f:message key="execute.header.status.label" /></label>
 						<select id="execution-status-combo" name="executionStatus" class="execution-status-combo-class">
-							<option value="BLOQUED" class="executions-status-bloqued-icon"><f:message key="execution.combo.BLOQUED.label" /></option>
-							<option value="FAILURE" class="executions-status-failure-icon"><f:message key="execution.combo.FAILURE.label" /></option>
-							<option value="SUCCESS" class="executions-status-success-icon"><f:message key="execution.combo.SUCCESS.label" /></option>
-					<!-- <option value="RUNNING" class="executions-status-running-icon"><f:message key="execution.combo.RUNNING.label" /></option>  -->		
-							<option value="READY" class="executions-status-ready-icon"><f:message key="execution.combo.READY.label" /></option>
+							<option value="BLOQUED" class="executions-status-bloqued-icon"><f:message key="execution.execution-status.BLOQUED" /></option>
+							<option value="FAILURE" class="executions-status-failure-icon"><f:message key="execution.execution-status.FAILURE" /></option>
+							<option value="SUCCESS" class="executions-status-success-icon"><f:message key="execution.execution-status.SUCCESS" /></option>
+							<option value="READY" class="executions-status-ready-icon"><f:message key="execution.execution-status.READY" /></option>
 						</select >				
 						<button id="execute-fail-button"><f:message key="execute.header.button.failure.title" /></button>
 						<button id="execute-success-button"><f:message key="execute.header.button.passed.title" /></button>

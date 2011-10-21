@@ -65,13 +65,10 @@ public class CampaignModificationController {
 	@Inject
 	private MessageSource messageSource;
 
-
 	private final DataTableMapper testPlanMapper = new DataTableMapper("irrelevant", TestCase.class, Project.class)
-											.initMapping(5)
-											.mapAttribute(Project.class, 2,  "name", String.class)
-											.mapAttribute(TestCase.class, 3, "name", String.class)
-											.mapAttribute(TestCase.class, 4, "executionMode", TestCaseExecutionMode.class);
-
+			.initMapping(5).mapAttribute(Project.class, 2, "name", String.class)
+			.mapAttribute(TestCase.class, 3, "name", String.class)
+			.mapAttribute(TestCase.class, 4, "executionMode", TestCaseExecutionMode.class);
 
 	@ServiceReference
 	public void setIterationModificationService(IterationModificationService iterationModificationService) {
@@ -100,7 +97,7 @@ public class CampaignModificationController {
 	@RequestMapping(method = RequestMethod.GET)
 	public ModelAndView showCampaign(@PathVariable long campaignId) {
 		Campaign campaign = campaignModService.findById(campaignId);
-		
+
 		ModelAndView mav = new ModelAndView("fragment/campaigns/edit-campaign");
 		mav.addObject("campaign", campaign);
 
@@ -120,30 +117,28 @@ public class CampaignModificationController {
 	@RequestMapping(method = RequestMethod.POST, params = { "newName" })
 	public @ResponseBody
 	Object rename(HttpServletResponse response, @RequestParam("newName") String newName, @PathVariable long campaignId) {
-
 		LOGGER.info("Renaming Campaign " + campaignId + " as " + newName);
+		
 		campaignModService.rename(campaignId, newName);
-		final String reNewName = new String(newName);
-		return new Object(){ public String newName = reNewName ; };
+		final String reNewName = newName;
+		return new Object() {
+			public String newName = reNewName; // NOSONAR : field is actually read by JSON marshaller
+		}; 
 
 	}
-
 
 	@RequestMapping(value = "/remove-campaigns", method = RequestMethod.POST, params = "isIteration=1")
 	@ResponseBody
 	public String removeIterations(@RequestParam("tab[]") String[] data) {
 		String retour = "";
 		for (int i = 0; i < data.length; i++) {
-			LOGGER.info("Deleting Iteration " + data[i] + " Long : "
-					+ (Long.parseLong(data[i])));
+			LOGGER.info("Deleting Iteration " + data[i] + " Long : " + (Long.parseLong(data[i])));
 			retour = iterationModService.delete(Long.parseLong(data[i]));
 			LOGGER.info("Deleting Iteration " + data[i]);
 		}
 		return retour;
 
 	}
-
-	
 
 	@RequestMapping(value = "/general", method = RequestMethod.GET)
 	public ModelAndView refreshGeneralInfos(@PathVariable long libraryId, @PathVariable long campaignId) {
@@ -179,8 +174,7 @@ public class CampaignModificationController {
 		Date newScheduledStart = strToDate(strDate);
 		String toReturn = dateToStr(newScheduledStart);
 
-		LOGGER.info("Setting scheduled start date for campaign " + campaignId
-				+ ", new date : " + newScheduledStart);
+		LOGGER.info("Setting scheduled start date for campaign " + campaignId + ", new date : " + newScheduledStart);
 
 		campaignModService.changeScheduledStartDate(campaignId, newScheduledStart);
 
@@ -196,8 +190,7 @@ public class CampaignModificationController {
 		Date newScheduledEnd = strToDate(strDate);
 		String toReturn = dateToStr(newScheduledEnd);
 
-		LOGGER.info("Setting scheduled start date for campaign " + campaignId
-				+ ", new date : " + newScheduledEnd);
+		LOGGER.info("Setting scheduled start date for campaign " + campaignId + ", new date : " + newScheduledEnd);
 
 		campaignModService.changeScheduledEndDate(campaignId, newScheduledEnd);
 
@@ -215,8 +208,7 @@ public class CampaignModificationController {
 		Date newActualStart = strToDate(strDate);
 		String toReturn = dateToStr(newActualStart);
 
-		LOGGER.info("Setting scheduled start date for campaign " + campaignId
-				+ ", new date : " + newActualStart);
+		LOGGER.info("Setting scheduled start date for campaign " + campaignId + ", new date : " + newActualStart);
 
 		campaignModService.changeActualStartDate(campaignId, newActualStart);
 
@@ -232,8 +224,7 @@ public class CampaignModificationController {
 		Date newActualEnd = strToDate(strDate);
 		String toReturn = dateToStr(newActualEnd);
 
-		LOGGER.info("Setting scheduled start date for campaign " + campaignId
-				+ ", new date : " + newActualEnd);
+		LOGGER.info("Setting scheduled start date for campaign " + campaignId + ", new date : " + newActualEnd);
 
 		campaignModService.changeActualEndDate(campaignId, newActualEnd);
 
@@ -246,8 +237,7 @@ public class CampaignModificationController {
 	String setActualStartAuto(HttpServletResponse response, @PathVariable long campaignId,
 			@RequestParam(value = "setActualStartAuto") Boolean auto) {
 
-		LOGGER.info("Autosetting actual start date for campaign " + campaignId
-				+ ", new value " + auto.toString());
+		LOGGER.info("Autosetting actual start date for campaign " + campaignId + ", new value " + auto.toString());
 
 		campaignModService.changeActualStartAuto(campaignId, auto);
 		Campaign campaign = campaignModService.findById(campaignId);
@@ -281,24 +271,19 @@ public class CampaignModificationController {
 			final DataTableDrawParameters params, final Locale locale) {
 		CollectionSorting filter = createCollectionSorting(params, testPlanMapper);
 
-		FilteredCollectionHolder<List<CampaignTestPlanItem>> holder = campaignModService
-														.findTestPlanByCampaignId(campaignId, filter);
+		FilteredCollectionHolder<List<CampaignTestPlanItem>> holder = campaignModService.findTestPlanByCampaignId(
+				campaignId, filter);
 
 		return new DataTableModelHelper<CampaignTestPlanItem>() {
 			@Override
 			public Object[] buildItemData(CampaignTestPlanItem item) {
 				TestCase testCase = item.getReferencedTestCase();
-				return new Object[]{
-						testCase.getId(),
-						getCurrentIndex(),
-						testCase.getProject().getName(),
+				return new Object[] { testCase.getId(), getCurrentIndex(), testCase.getProject().getName(),
 						testCase.getName(),
-						(item.getUser()!=null) ? item.getUser().getLogin() : formatNoData(locale),
-						formatExecutionMode(testCase.getExecutionMode(), locale),
-						""
-				};
+						(item.getUser() != null) ? item.getUser().getLogin() : formatNoData(locale),
+						formatExecutionMode(testCase.getExecutionMode(), locale), "" };
 			}
-		}.buildDataModel(holder, filter.getFirstItemIndex()+1, params.getsEcho());
+		}.buildDataModel(holder, filter.getFirstItemIndex() + 1, params.getsEcho());
 	}
 
 	@RequestMapping(value = "/linkable-test-cases-table", params = "sEcho")
@@ -307,40 +292,31 @@ public class CampaignModificationController {
 			final DataTableDrawParameters params, final Locale locale) {
 		CollectionSorting filter = createCollectionSorting(params, testPlanMapper);
 
-		FilteredCollectionHolder<List<CampaignTestPlanItem>> holder = campaignModService
-														.findTestPlanByCampaignId(campaignId, filter);
+		FilteredCollectionHolder<List<CampaignTestPlanItem>> holder = campaignModService.findTestPlanByCampaignId(
+				campaignId, filter);
 
 		return new DataTableModelHelper<CampaignTestPlanItem>() {
 			@Override
 			public Object[] buildItemData(CampaignTestPlanItem item) {
 				TestCase testCase = item.getReferencedTestCase();
-				return new Object[]{
-						testCase.getId(),
-						getCurrentIndex(),
-						testCase.getProject().getName(),
-						testCase.getName(),
-						formatExecutionMode(testCase.getExecutionMode(), locale),
-						""
-				};
+				return new Object[] { testCase.getId(), getCurrentIndex(), testCase.getProject().getName(),
+						testCase.getName(), formatExecutionMode(testCase.getExecutionMode(), locale), "" };
 			}
-		}.buildDataModel(holder, filter.getFirstItemIndex()+1, params.getsEcho());
+		}.buildDataModel(holder, filter.getFirstItemIndex() + 1, params.getsEcho());
 	}
-
 
 	private CollectionSorting createCollectionSorting(final DataTableDrawParameters params, DataTableMapper mapper) {
 		return new DataTableFilterSorter(params, mapper);
 	}
 
-
-
 	/* ************************************** formatting code ****************************** */
-
 
 	private String formatExecutionMode(TestCaseExecutionMode mode, Locale locale) {
 		return messageSource.getMessage(mode.getI18nKey(), null, locale);
 	}
-	private String formatNoData(Locale locale){
-		return messageSource.getMessage("squashtm.nodata",null, locale);
+
+	private String formatNoData(Locale locale) {
+		return messageSource.getMessage("squashtm.nodata", null, locale);
 	}
 
 }

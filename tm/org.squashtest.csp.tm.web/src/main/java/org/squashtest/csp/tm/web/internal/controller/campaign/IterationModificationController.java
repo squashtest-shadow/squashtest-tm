@@ -134,7 +134,7 @@ public class IterationModificationController {
 		iterationModService.rename(iterationId, newName);
 		final String reNewName = newName;
 		return new Object() {
-			public String newName = reNewName;
+			public String newName = reNewName; // NOSONAR : field is actually read by JSON marshaller
 		};
 
 	}
@@ -410,35 +410,7 @@ public class IterationModificationController {
 	}
 
 	private String formatStatus(ExecutionStatus status, Locale locale) {
-		String toReturn;
-
-		switch (status) {
-		case BLOQUED:
-			toReturn = messageSource.getMessage("execution.combo.BLOQUED.label", null, locale);
-			break;
-
-		case FAILURE:
-			toReturn = messageSource.getMessage("execution.combo.FAILURE.label", null, locale);
-			break;
-
-		case SUCCESS:
-			toReturn = messageSource.getMessage("execution.combo.SUCCESS.label", null, locale);
-			break;
-
-		case RUNNING:
-			toReturn = messageSource.getMessage("execution.combo.RUNNING.label", null, locale);
-			break;
-
-		case READY:
-			toReturn = messageSource.getMessage("execution.combo.READY.label", null, locale);
-			break;
-
-		default:
-			toReturn = "unknown";
-			break;
-		}
-
-		return toReturn;
+		return messageSource.getMessage(status.getI18nKey(), null, locale);
 	}
 
 }

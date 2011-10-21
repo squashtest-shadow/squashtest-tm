@@ -139,37 +139,7 @@ public class ExecutionModificationController {
 
 
 	private String localizedStatus(ExecutionStatus status, Locale locale){
-
-		String toReturn;
-
-		// TODO add a "localization key" property to status and remove this switch
-		switch(status){
-			case BLOQUED :
-				toReturn=messageSource.getMessage("execution.combo.BLOQUED.label", null, locale);
-				break;
-
-			case FAILURE :
-				toReturn=messageSource.getMessage("execution.combo.FAILURE.label", null, locale);
-				break;
-
-			case SUCCESS :
-				toReturn=messageSource.getMessage("execution.combo.SUCCESS.label", null, locale);
-				break;
-
-			case RUNNING :
-				toReturn=messageSource.getMessage("execution.combo.RUNNING.label", null, locale);
-				break;
-
-			case READY :
-				toReturn=messageSource.getMessage("execution.combo.READY.label", null, locale);
-				break;
-
-			default :
-				toReturn="unknown";
-				break;
-		}
-
-		return toReturn;
+		return messageSource.getMessage(status.getI18nKey(), null, locale);
 	}
 
 	// will return the iteration in a full page
