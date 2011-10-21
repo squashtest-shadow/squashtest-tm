@@ -53,7 +53,7 @@ import org.osgi.framework.ServiceRegistration;
 public class Activator implements BundleActivator {
 
 	/** logger */
-	private static final Logger log = Log.getLogger(Activator.class.getName());
+	private static final Logger LOGGER = Log.getLogger(Activator.class.getName());
 
 	/** default configuration present in the activator bundle */
 	private static final String DEFAULT_CONFIG_LOCATION = "/etc/default-jetty.xml";
@@ -93,16 +93,16 @@ public class Activator implements BundleActivator {
 		URL xmlConfiguration = new File(context.getProperty(CONFIGURATION_LOCATION) + EXTERNAL_CONFIG_LOCATION).toURI()
 				.toURL();
 
-		if (xmlConfiguration != null) {
-			log.info("Using custom XML configuration " + xmlConfiguration, null, null);
+		if (xmlConfiguration != null) { // NOSONAR : code inherited / adapted from Spring DM
+			LOGGER.info("Using custom XML configuration " + xmlConfiguration, null, null);
 		} else {
 			xmlConfiguration = bundle.getResource(DEFAULT_CONFIG_LOCATION);
 			if (xmlConfiguration == null) {
-				log.warn("No XML configuration found; bailing out...", null, null);
+				LOGGER.warn("No XML configuration found; bailing out...", null, null);
 				throw new IllegalArgumentException("Cannot find a suitable jetty configuration at "
 						+ USER_CONFIG_LOCATION + " or " + DEFAULT_CONFIG_LOCATION);
 			} else {
-				log.info("Using default XML configuration " + xmlConfiguration, null, null);
+				LOGGER.info("Using default XML configuration " + xmlConfiguration, null, null);
 			}
 		}
 
@@ -114,7 +114,7 @@ public class Activator implements BundleActivator {
 
 			@Override
 			public void run() {
-				log.info("Starting Jetty " + Server.getVersion() + " ...", null, null);
+				LOGGER.info("Starting Jetty " + Server.getVersion() + " ...", null, null);
 
 				// create logging directory first
 				createLoggingDirectory();
@@ -128,8 +128,8 @@ public class Activator implements BundleActivator {
 					// current.setContextClassLoader(cl);
 					// reset CCL
 					current.setContextClassLoader(null);
-					if (log.isDebugEnabled()) {
-						log.debug("Reading Jetty config " + config.toString(), null, null);
+					if (LOGGER.isDebugEnabled()) {
+						LOGGER.debug("Reading Jetty config " + config.toString(), null, null);
 					}
 
 					xmlConfig = new XmlConfiguration(config);
@@ -140,17 +140,17 @@ public class Activator implements BundleActivator {
 					}
 					server = (Server) root;
 					server.start();
-					log.info("Succesfully started Jetty " + Server.getVersion(), null, null);
+					LOGGER.info("Succesfully started Jetty " + Server.getVersion(), null, null);
 
 					// publish server as an OSGi service
 					registration = publishServerAsAService(server);
 
-					log.info("Published Jetty " + Server.getVersion() + " as an OSGi service", null, null);
+					LOGGER.info("Published Jetty " + Server.getVersion() + " as an OSGi service", null, null);
 
 					server.join();
 				} catch (Exception ex) {
 					String msg = "Cannot start Jetty " + Server.getVersion();
-					log.warn(msg, ex);
+					LOGGER.warn(msg, ex);
 					throw new RuntimeException(msg, ex);
 				} finally {
 					current.setContextClassLoader(old);
@@ -165,7 +165,7 @@ public class Activator implements BundleActivator {
 	public void stop(BundleContext context) throws Exception {
 		// unpublish service first
 		registration.unregister();
-		log.info("Unpublished Jetty " + Server.getVersion() + " OSGi service", null, null);
+		LOGGER.info("Unpublished Jetty " + Server.getVersion() + " OSGi service", null, null);
 
 		// default startup procedure
 		//ClassLoader cl = Activator.class.getClassLoader();
@@ -173,14 +173,14 @@ public class Activator implements BundleActivator {
 		ClassLoader old = current.getContextClassLoader();
 
 		try {
-			log.info("Stopping Jetty " + Server.getVersion() + " ...", null, null);
+			LOGGER.info("Stopping Jetty " + Server.getVersion() + " ...", null, null);
 			// current.setContextClassLoader(cl);
 			// reset CCL
 			current.setContextClassLoader(null);
 			server.stop();
-			log.info("Succesfully stopped Jetty " + Server.getVersion() + " ...", null, null);
+			LOGGER.info("Succesfully stopped Jetty " + Server.getVersion() + " ...", null, null);
 		} catch (Exception ex) {
-			log.warn("Cannot stop Jetty " + Server.getVersion(), ex);
+			LOGGER.warn("Cannot stop Jetty " + Server.getVersion(), ex);
 			throw ex;
 		} finally {
 			current.setContextClassLoader(old);
@@ -213,9 +213,9 @@ public class Activator implements BundleActivator {
 			}
 			String path = logs.getCanonicalPath();
 			System.setProperty("jetty.logs", path);
-			log.info("Created Jetty logging folder " + path, null, null);
+			LOGGER.info("Created Jetty logging folder " + path, null, null);
 		} catch (IOException ex) {
-			log.warn("Cannot create logging folder", ex);
+			LOGGER.warn("Cannot create logging folder", ex);
 		}
 
 	}

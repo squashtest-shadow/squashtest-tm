@@ -20,8 +20,6 @@
  */
 package org.squashtest.csp.tm.internal.service;
 
-import javax.annotation.PostConstruct;
-
 import org.springframework.osgi.extensions.annotation.ServiceReference;
 import org.springframework.security.access.AccessDeniedException;
 import org.springframework.security.access.prepost.PostAuthorize;

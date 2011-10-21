@@ -21,15 +21,20 @@
 package org.squashtest.csp.core.log4j;
 
 import java.io.File;
+import java.io.FileNotFoundException;
 import java.io.FileReader;
+import java.io.IOException;
 import java.util.Properties;
 
 import org.apache.log4j.PropertyConfigurator;
 import org.osgi.framework.BundleActivator;
 import org.osgi.framework.BundleContext;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 public class Activator implements BundleActivator {
-
+	
+	private static final Logger LOGGER = LoggerFactory.getLogger(Activator.class);
 	/***
 	 * Name of the global variable to get properties location
 	 */
@@ -45,11 +50,35 @@ public class Activator implements BundleActivator {
 	 */
 	@Override
 	public void start(BundleContext context) throws Exception {
-		FileReader in = new FileReader(new File(context.getProperty(CONFIGURATION_LOCATION)
-				+ LOG_PROPERTIES_FILE_LOCATION));
-		Properties props = new Properties();
-		props.load(in);
+		Properties props;
+		FileReader in = null; 
+		
+		try {
+			in = new FileReader(new File(context.getProperty(CONFIGURATION_LOCATION) + LOG_PROPERTIES_FILE_LOCATION));
+			props = new Properties();
+			props.load(in);
+			
+		} catch (FileNotFoundException e) {
+			LOGGER.error(e.getMessage(), e);
+			throw e;
+			
+		} catch (IOException e) {
+			LOGGER.error(e.getMessage(), e);
+			closeWithoutFailure(in);
+			throw e;
+			
+		}
 		PropertyConfigurator.configure(props);
+	}
+
+	private void closeWithoutFailure(FileReader in) {
+		try {
+			if (in != null) {
+				in.close();
+			}
+		} catch (IOException e) {
+			LOGGER.warn(e.getMessage(), e);
+		}
 	}
 
 	@Override

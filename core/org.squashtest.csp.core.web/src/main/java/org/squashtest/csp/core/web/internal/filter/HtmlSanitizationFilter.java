@@ -96,7 +96,7 @@ public class HtmlSanitizationFilter implements Filter {
 		}
 		
 		@Override
-		public Map getParameterMap() {
+		public Map<?, ?> getParameterMap() {
 			return wrapper;
 		}
 		

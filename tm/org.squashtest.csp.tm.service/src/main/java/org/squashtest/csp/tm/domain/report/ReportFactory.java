@@ -25,53 +25,50 @@ import java.util.List;
 import java.util.ListIterator;
 
 /**
- *
- *  This class is the front-end to which a service needs to talk to register or find a report category.
- *
- *  You can basically think of it like for a repository, except that it doesn't read the ReportCategories and Reports
- *  directly, something else must load them then register them against the ReportFactory. Each ReportCategory and Report,
- *  once registered, are assigned an id. The user can query for a specific ReportCategory or Report based on its id,
- *  or get the whole list on demand. More about the id later.
- *
- *  This singleton factory manages ReportCategories just like the ReportCategories manage the Reports :
- *  like beans. Like the bean they are, each ReportCategory and Report should be instanciated and
- *  registered only once. By default this is ensured by Spring IoC using @Component and @Resource annotations.
- *  A third party program can use the method  addCategory() to register a new ReportCategory instance, however it
- *  falls under its responsibilities to ensure that each ReportCategory and Report are instanciated only once.
- *
- *  When a ReportCategory is registered against the ReportFactory, the ReportFactory assigns it an id.
- *  As expected this id is meant to uniquely identify the said ReportCategory or Report, within the same application run.
- *  However the implementation doesn't garantee that the ReportCategories or Reports will have exactly the same id between
- *  different application run.
- *
- *  When a ReportCategory is unregistered the id doesn't become available again.
- *
- *
+ * 
+ * This class is the front-end to which a service needs to talk to register or find a report category.
+ * 
+ * You can basically think of it like for a repository, except that it doesn't read the ReportCategories and Reports
+ * directly, something else must load them then register them against the ReportFactory. Each ReportCategory and Report,
+ * once registered, are assigned an id. The user can query for a specific ReportCategory or Report based on its id, or
+ * get the whole list on demand. More about the id later.
+ * 
+ * This singleton factory manages ReportCategories just like the ReportCategories manage the Reports : like beans. Like
+ * the bean they are, each ReportCategory and Report should be instanciated and registered only once. By default this is
+ * ensured by Spring IoC using @Component and @Resource annotations. A third party program can use the method
+ * addCategory() to register a new ReportCategory instance, however it falls under its responsibilities to ensure that
+ * each ReportCategory and Report are instanciated only once.
+ * 
+ * When a ReportCategory is registered against the ReportFactory, the ReportFactory assigns it an id. As expected this
+ * id is meant to uniquely identify the said ReportCategory or Report, within the same application run. However the
+ * implementation doesn't garantee that the ReportCategories or Reports will have exactly the same id between different
+ * application run.
+ * 
+ * When a ReportCategory is unregistered the id doesn't become available again.
+ * 
+ * 
  * @author bsiri
- *
+ * 
  */
 
 public final class ReportFactory {
 
-
 	private static ReportFactory instance = null;
 
-	private static List<ReportCategory> categories=new LinkedList<ReportCategory>();
+	private static List<ReportCategory> categories = new LinkedList<ReportCategory>();
 
-	private static Integer idCategoryCounter=0;
+	private static Integer idCategoryCounter = 0;
 
-
-	private ReportFactory(){
-
+	private ReportFactory() {
 
 	}
 
 	/**
 	 * @return the runnning instance of the ReportFactory
 	 */
-	public static  ReportFactory getInstance(){
-		if (instance==null){
-			instance=new ReportFactory();
+	public static synchronized ReportFactory getInstance() {
+		if (instance == null) {
+			instance = new ReportFactory();
 		}
 
 		return instance;
@@ -82,40 +79,41 @@ public final class ReportFactory {
 	 */
 	/*
 	 * FIXME : make that immutable !
-	 *
 	 */
-	public List<ReportCategory> getAllReportCategories(){
+	public List<ReportCategory> getAllReportCategories() {
 		return categories;
 	}
 
 	/**
 	 * register a new ReportCategory
-	 *
-	 * @param category : a newly created instance of ReportCategory
+	 * 
+	 * @param category
+	 *            : a newly created instance of ReportCategory
 	 */
-	public static void addCategory(ReportCategory category){
+	public static void addCategory(ReportCategory category) {
 		registerCategory(category);
 		categories.add(category);
 	}
 
 	/**
 	 * remove a ReportCategory from the list of registered ReportCategory
-	 *
-	 * @param category : a previously registered ReportCategory to unregister.
+	 * 
+	 * @param category
+	 *            : a previously registered ReportCategory to unregister.
 	 */
-	public static void removeCategory(ReportCategory category){
+	public static void removeCategory(ReportCategory category) {
 		removeCategory(category.getId());
 	}
 
-
 	/**
 	 * remove a ReportCategory from the list of registered ReportCategory
-	 *
-	 * @param categoryId : the id of the said category.
+	 * 
+	 * @param categoryId
+	 *            : the id of the said category.
 	 */
-	public static void removeCategory(Integer categoryId){
+	public static void removeCategory(Integer categoryId) {
 		ListIterator<ReportCategory> iterator = categories.listIterator();
-		while (iterator.hasNext()){
+		while (iterator.hasNext()) {
 			ReportCategory category = iterator.next();
 			if (category.getId().equals(categoryId)) {
 				iterator.remove();
@@ -126,41 +124,42 @@ public final class ReportFactory {
 
 	/**
 	 * Will unregister a Report from its ReportCategory
-	 *
-	 * @param report : a previously registered Report to unregister
+	 * 
+	 * @param report
+	 *            : a previously registered Report to unregister
 	 */
-	public static void removeReport(Report report){
+	public static void removeReport(Report report) {
 		removeReport(report.getId());
 	}
 
 	/**
 	 * Will unregister a Report from its ReportCategory
-	 *
-	 * @param reportId : the id of the said Report
+	 * 
+	 * @param reportId
+	 *            : the id of the said Report
 	 */
-	public static void removeReport(Integer reportId){
-		for (ReportCategory category : categories){
+	public static void removeReport(Integer reportId) {
+		for (ReportCategory category : categories) {
 			category.removeReport(reportId);
 		}
 	}
 
 	/*
 	 * this method attach an id to the category being registered
-	 *
 	 */
-	private static void registerCategory(ReportCategory category){
+	private static void registerCategory(ReportCategory category) {
 		category.setId(idCategoryCounter++);
 	}
 
 	/**
-	 * Will return the bean instance of the ReportCategory referred to
-	 * with this id.
-	 *
-	 * @param id the numeric id of the bean
+	 * Will return the bean instance of the ReportCategory referred to with this id.
+	 * 
+	 * @param id
+	 *            the numeric id of the bean
 	 * @return the bean if the id have been found, null otherwise.
 	 */
-	public ReportCategory findCategoryById(Integer id){
-		for (ReportCategory category : categories){
+	public ReportCategory findCategoryById(Integer id) {
+		for (ReportCategory category : categories) {
 			if (category.getId().equals(id)) {
 				return category;
 			}
@@ -169,17 +168,17 @@ public final class ReportFactory {
 	}
 
 	/**
-	 * Will return the bean instance of the Report referred to
-	 * with this id.
-	 *
-	 * @param reportId  the numeric id of the bean
+	 * Will return the bean instance of the Report referred to with this id.
+	 * 
+	 * @param reportId
+	 *            the numeric id of the bean
 	 * @return the bean if the id have been found, null otherwise.
 	 */
-	public Report findReportById(Integer reportId){
+	public Report findReportById(Integer reportId) {
 		Report report = null;
-		for (ReportCategory category : categories){
-			report=category.findReportById(reportId);
-			if (report!=null) {
+		for (ReportCategory category : categories) {
+			report = category.findReportById(reportId);
+			if (report != null) {
 				return report;
 			}
 		}

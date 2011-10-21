@@ -26,6 +26,7 @@ import java.util.HashMap;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
+import java.util.Map.Entry;
 
 import org.hibernate.Query;
 import org.hibernate.SQLQuery;
@@ -130,10 +131,11 @@ public class HibernateTestCaseDeletionDao extends HibernateDeletionDao implement
 			
 			Map<Integer, List<Long>> mapOffsets = buildMapOfOffsetAndIds(pairIdOffset);
 			
-			for (Integer offset : mapOffsets.keySet()){
+				for(Entry<Integer, List<Long>>
+						offsetEntry : mapOffsets.entrySet()) {
 				Query query = getSession().createSQLQuery(NativeQueries.testCase_sql_updateCallingCampaignItemTestPlan);
-				query.setParameter("offset", offset, IntegerType.INSTANCE);
-				query.setParameterList("ctpiIds", mapOffsets.get(offset), LongType.INSTANCE);
+				query.setParameter("offset", offsetEntry.getKey(), IntegerType.INSTANCE);
+				query.setParameterList("ctpiIds", offsetEntry.getValue(), LongType.INSTANCE);
 				query.executeUpdate();
 			}
 			
