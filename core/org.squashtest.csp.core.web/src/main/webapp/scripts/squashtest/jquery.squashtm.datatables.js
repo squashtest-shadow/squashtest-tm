@@ -307,7 +307,7 @@ function decorateDeleteButtons(buttons) {
 	buttons.button({
 		text : false,
 		icons : {
-			primary : "ui-icon-circle-close"
+			primary : "ui-icon-minus"
 		}
 	});
 }

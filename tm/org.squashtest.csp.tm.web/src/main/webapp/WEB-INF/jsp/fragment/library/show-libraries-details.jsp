@@ -42,13 +42,12 @@
 
 <div class="fragment-body">
 
-<comp:toggle-panel titleKey="generics.description.title" isContextual="true" open="true">
+<comp:toggle-panel id="library-description-panel" titleKey="generics.description.title" isContextual="true" open="true">
 
 	<jsp:attribute name="body">
-		<div id="test-case-description" >${ library.project.description }</div>
+		<div id="library-description" >${ library.project.description }</div>
 	</jsp:attribute>
 </comp:toggle-panel> 
-<comp:decorate-toggle-panels />
 <comp:decorate-buttons />
 </div>
 

@@ -35,7 +35,6 @@
 	currently associated to the corresponding entity, and the bug report form, the dialog that will submit new ones.
 
 	required in the surrounding context of that jsp : 
-		- <comp:decorate-toggle-panels />
 		- <comp:decorate-buttons />
 
 
@@ -126,7 +125,7 @@
 
 <%-- /init section for issue-panel-knownissues-div --%>
 
-<comp:toggle-panel titleKey="issue.panel.title" isContextual="true" open="true"  >
+<comp:toggle-panel id="issue-panel" titleKey="issue.panel.title" isContextual="true" open="true"  >
 	<jsp:attribute name="panelButtons">
 	<c:if test="${ editable }">
 		<f:message var="issueReportOpenButtonLabel" key="issue.button.opendialog.label" />
@@ -336,12 +335,7 @@ check that in the next <script></script> tags
 		$("#issue-report-dialog-openbutton").click(checkAndReportIssue);
 		</c:if>
 		$("#issue-login-button").click(bugTrackerLogin);
-		
 
-		<%-- manual decoration of the toggle panel --%>
-		
-		var bugPanel = $("#issue-panel-known-issue-table-div").parents(".toggle-panel");
-		decorateTogglePanel(bugPanel);
 																						
 	});	
 	

@@ -88,7 +88,7 @@
 <div id="outer-category-frame">
 	<c:forEach var="category" items="${categories}">
 		<f:message var="categName" key="${category.resourceKeyName}"/>
-		<comp:toggle-panel title="${categName}" open="true">
+		<comp:toggle-panel id="${category.resourceKeyName}" title="${categName}" open="true">
 				<jsp:attribute name="body">
 					<div id="category-panel-${category.id}" class="category-panel">
 						

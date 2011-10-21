@@ -48,7 +48,7 @@
 	
 	<jsp:attribute name="informationContent">	
 	
-		<comp:decorate-toggle-panels />
+
 		<comp:decorate-buttons />
 	
 		<script type="text/javascript">
@@ -91,7 +91,7 @@
 
 			<comp:simple-jeditable  targetUrl="${userAccountUrl}" componentId="user-account-email" />
 	
-			<comp:toggle-panel  titleKey="user.account.basicinfo.label" open="true">
+			<comp:toggle-panel id="basic-info-panel" titleKey="user.account.basicinfo.label" open="true">
 
 			
 				<jsp:attribute name="body">

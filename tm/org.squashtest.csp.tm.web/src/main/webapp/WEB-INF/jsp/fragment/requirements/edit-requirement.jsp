@@ -136,7 +136,7 @@
 		<comp:simple-jeditable targetUrl="${ requirementUrl }" componentId="requirement-reference" submitCallback="updateReferenceInTitle" maxLength="20" />
 	</authz:authorized>
 
-	<comp:toggle-panel titleKey="requirement.panel.general-informations.title" isContextual="true" open="true" >
+	<comp:toggle-panel id="requirement-information-panel" titleKey="requirement.panel.general-informations.title" isContextual="true" open="true" >
 		<jsp:attribute name="body">
 			<div id="edit-requirement-table" class="display-table">
 				<div class="display-table-row">
@@ -172,7 +172,7 @@
 		});
 	</script>
 
-	<comp:toggle-panel titleKey="requirement.verifying_test-case.panel.title" open="true">
+	<comp:toggle-panel id="verifying-requirement-panel" titleKey="requirement.verifying_test-case.panel.title" open="true">
 		<jsp:attribute name="panelButtons">
 			<authz:authorized hasRole="ROLE_ADMIN" hasPermission="WRITE" domainObject="${ requirement }">
 				<f:message var="associateLabel" key="requirement.verifying_test-case.manage.button.label"/>
@@ -207,7 +207,7 @@
 
 	</authz:authorized>
 </div>
-<comp:decorate-toggle-panels />
+
 <comp:decorate-buttons />
 
 <script type="text/javascript">

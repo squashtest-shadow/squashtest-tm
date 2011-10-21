@@ -51,7 +51,7 @@
 	
 	<layout:common-head />		
 	<layout:_common-script-import />		
-	<comp:decorate-toggle-panels />
+
 	<comp:rich-jeditable-header />	
 	<layout:_handle-ajax-errors />
 	
@@ -255,13 +255,13 @@
 			</div>
 		</div>
 		
-		<comp:toggle-panel titleKey="execute.panel.action.title" isContextual="true" open="true">
+		<comp:toggle-panel id="execution-action-panel" titleKey="execute.panel.action.title" isContextual="true" open="true">
 			<jsp:attribute name="body">
 				<div id="execution-action" >${executionStep.action}</div>
 			</jsp:attribute>
 		</comp:toggle-panel>
 		
-		<comp:toggle-panel titleKey="execute.panel.expected-result.title" isContextual="true" open="true">
+		<comp:toggle-panel id="execution-expected-result-panel" titleKey="execute.panel.expected-result.title" isContextual="true" open="true">
 			<jsp:attribute name="body">
 				<div id="execution-expected-result" >${executionStep.expectedResult}</div>
 			</jsp:attribute>
@@ -273,7 +273,7 @@
 				<comp:rich-jeditable targetUrl="${executeComment}" componentId="execution-comment" 
 				submitCallback="refreshExecStepInfos"/>
 	
-				<comp:toggle-panel titleKey="execute.panel.comment.title" isContextual="true" open="true">
+				<comp:toggle-panel id="execution-comment-panel" titleKey="execute.panel.comment.title" isContextual="true" open="true">
 					<jsp:attribute name="body">
 						<div id="execution-comment" >${executionStep.comment}</div>
 					</jsp:attribute>

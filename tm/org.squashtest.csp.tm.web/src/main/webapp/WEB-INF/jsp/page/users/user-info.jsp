@@ -221,7 +221,7 @@
 		<comp:simple-jeditable targetUrl="${ userUrl }"
 			componentId="user-email" />
 
-		<comp:toggle-panel titleKey="user.info.panel.title" isContextual="true" open="true">
+		<comp:toggle-panel id="user-info-panel" titleKey="user.info.panel.title" isContextual="true" open="true">
 
 			<jsp:attribute name="body">
 				<table id="user-infos-table">
@@ -275,7 +275,7 @@
 		<br />
 		<f:message key="dialog.add-permission.title" var="addButtonTitle" />
 		
-		<comp:toggle-panel titleKey="user.project-rights.title.label" isContextual="true" open="true">
+		<comp:toggle-panel id="project-permission-panel" titleKey="user.project-rights.title.label" isContextual="true" open="true">
 			<jsp:attribute name="panelButtons">
 				<input id="add-permission-button" title="${addButtonTitle}" type="button" value="+"/>
 			</jsp:attribute>
@@ -317,6 +317,5 @@
 		</comp:popup>
 	</div>
 	<comp:decorate-buttons />
-	<comp:decorate-toggle-panels/>
 	</jsp:attribute>
 </layout:info-page-layout>

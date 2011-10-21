@@ -21,10 +21,9 @@
 
 --%>
 <%@ tag body-content="empty" %>
+
 <script type="text/javascript">
-
-
-	$(function(){
+	/*$(function(){
 		var togglePanels = $('.toggle-panel');
 		
 		if (togglePanels.length>0){
@@ -35,13 +34,12 @@
 		}
 		
 	});
-
-	function decorateTogglePanel(panel){
+	
+function(){
 		//look
-		panel.addClass( "ui-accordion ui-widget ui-helper-reset ui-accordion-icons" );
 		
-		
-		var panelHead = panel.find('h3');
+		this.addClass( "ui-accordion ui-widget ui-helper-reset ui-accordion-icons" );
+		var panelHead = this.find('h3');
 		panelHead.addClass( "ui-accordion-header ui-helper-reset ui-state-default ui-state-hover ui-state-active ui-corner-top" );
 
 		var collapsedPanelHead = panelHead.not( ".open" );
@@ -51,39 +49,41 @@
 		collapsedPanelHead.next().hide();
 		
 		// behaviour
-		
-		//stop event propagation
-		panelHead.find(":button, .button").click(function(){return false;});
-		
-		$.fn.toggleTgPanelControls = function (){
-			var isActive = $(this).hasClass("ui-state-active");
+		var toggleControl = function (){
+			var isActive = this.hasClass("ui-state-active");
 			
 			//the following line is for debug only. Remove that when done.
-			var inputs=$(this).find(":button, .button");
-			
+			var inputs=this.find(":button, .button");			
 			
 			if ( isActive == true ){
-				$(this).find(":button, .button").button("option","disabled",true);
-				/*it's going to be deactivated so we set the enable thing to true*/
-
+				this.find(":button, .button").button("option","disabled",true);
 			}
 			else{
-				$(this).find(":button, .button").button("option","disabled",false);
-				/*see comment above*/
-				
+				this.find(":button, .button").button("option","disabled",false);				
 			}
 			
 		};
 		
-		panelHead.click(function() {
+		panelHead.click(function(event) {
 			//prevent the stuck bug, bug #9
+			event.stopImmediatePropagation();
 			var isTriggered = $(this).next().hasClass("ui-effects-wrapper");
 			if (isTriggered == true ) return;
 			
-			$( this ).next().toggle( 'blind', 500 );
-			$( this ).toggleTgPanelControls();
-			$( this ).toggleClass( "ui-state-active ui-corner-top ui-corner-all" );
-			return false;
-		});
-	}
+			this.next().toggle( 'blind', 500 );
+			
+			toggleControl.call(this);
+			
+			this.toggleClass( "ui-state-active ui-corner-top ui-corner-all" );
+		});		
+		
+		this.toggle = function(){
+			panelHead.click();
+		}
+		
+		return this;
+		
+	}	
+	
+	*/
 </script>

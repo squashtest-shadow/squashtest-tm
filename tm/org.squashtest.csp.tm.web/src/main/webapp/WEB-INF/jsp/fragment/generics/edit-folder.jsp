@@ -46,7 +46,7 @@
 	}
 </script>
 
-<comp:decorate-toggle-panels />
+
 <div class="ui-widget-header ui-corner-all ui-state-default fragment-header">
 	<h2>
 		<span><f:message key="folder.title" />&nbsp;:&nbsp;</span><span id="folder-name"><c:out value="${ folder.name }" escapeXml="true"/></span>
@@ -57,7 +57,7 @@
 	targetUrl="${ folderUrl }" componentId="folder-description" />
 </c:if>
 <div class="fragment-body">
-	<comp:toggle-panel titleKey="folder.description.label" isContextual="true" open="true">
+	<comp:toggle-panel id="folder-description-panel" titleKey="folder.description.label" isContextual="true" open="true">
 		<jsp:attribute name="body">
 			<div id="folder-description">${ folder.description }</div>
 		</jsp:attribute>

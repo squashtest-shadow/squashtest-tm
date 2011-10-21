@@ -341,7 +341,7 @@ check the init function in the javascript above to find the real binding.
 <%---------------------------------Attachments table ------------------------------------------------%>
 
 
-<comp:toggle-panel titleKey="attachment.manager.table.title" isContextual="true" open="true" >
+<comp:toggle-panel id="attachment-table-panel" titleKey="attachment.manager.table.title" isContextual="true" open="true" >
 	<jsp:attribute name="panelButtons">	
 		<f:message var="renameAttachment" key="attachment.button.rename.label" />
 		<input type="button" value="${renameAttachment}" id="rename-attachment-button" class="button" />
@@ -386,5 +386,5 @@ check the init function in the javascript above to find the real binding.
 
 
 </div>
-<comp:decorate-toggle-panels />
+
 <comp:decorate-buttons />

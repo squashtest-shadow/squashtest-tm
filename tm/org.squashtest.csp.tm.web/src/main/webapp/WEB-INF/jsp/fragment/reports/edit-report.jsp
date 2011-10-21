@@ -230,7 +230,7 @@
 
 <div class="fragment-body">
 
-	<comp:toggle-panel isContextual="true" titleKey="report.criteria.panel.title" open="true">
+	<comp:toggle-panel id="report-criteria-panel" isContextual="true" titleKey="report.criteria.panel.title" open="true">
 		<jsp:attribute name="body">
 		
 		
@@ -283,7 +283,7 @@
 		
 </div>
 
-<comp:decorate-toggle-panels />
+
 <comp:decorate-buttons />
 
 <%-- post initialization javascript stuffs --%>

@@ -519,8 +519,7 @@
 <comp:rich-jeditable
 	targetUrl="${ testCaseUrl }" componentId="test-case-description" />
 </c:if>
-<comp:toggle-panel titleKey="generics.description.title" isContextual="true" open="true">
-
+<comp:toggle-panel id="test-case-description-panel" titleKey="generics.description.title" isContextual="true" open="true">
 	<jsp:attribute name="body">
 		<div id="test-case-description" >${ testCase.description }</div>
 	</jsp:attribute>
@@ -540,7 +539,7 @@
 </script>
 
 
-<comp:toggle-panel
+<comp:toggle-panel id="test-case-steps-panel"
 	titleKey="test-case.steps.table.title" open="true" isContextual="true">
 	<jsp:attribute name="panelButtons">
 	<c:if test="${ editable }">		
@@ -613,7 +612,7 @@
 	});
 </script> 
 
-<comp:toggle-panel titleKey="test-case.verified_requirements.panel.title" isContextual="true" open="true">
+<comp:toggle-panel id="verified-requirements-panel" titleKey="test-case.verified_requirements.panel.title" isContextual="true" open="true">
 	<jsp:attribute name="panelButtons">
 	<c:if test="${ editable }">
 		<f:message var="associateLabel" key="test-case.verified_requirements.manage.button.label" />
@@ -649,7 +648,7 @@
 
 </script>
 
-<comp:toggle-panel titleKey="test-case.calling-test-cases.panel.title" isContextual="true" open="true">
+<comp:toggle-panel id="calling-test-case-panel" titleKey="test-case.calling-test-cases.panel.title" isContextual="true" open="true">
 
 	
 	<jsp:attribute name="body">
@@ -703,7 +702,7 @@
 
 
 </div>
-<comp:decorate-toggle-panels />
+
 <comp:decorate-buttons />
 
 <script type="text/javascript">

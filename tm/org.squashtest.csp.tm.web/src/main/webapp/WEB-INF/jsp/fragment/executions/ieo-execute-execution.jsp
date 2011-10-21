@@ -38,7 +38,7 @@
 	
 	<layout:common-head />		
 	<layout:_common-script-import />		
-	<comp:decorate-toggle-panels />
+
 	<comp:rich-jeditable-header />	
 	<layout:_handle-ajax-errors />
 	<script type="text/javascript" src="${ pageContext.servletContext.contextPath }/scripts/jquery/jquery.cookie.js"></script>

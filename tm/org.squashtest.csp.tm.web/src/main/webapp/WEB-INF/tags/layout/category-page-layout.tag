@@ -46,7 +46,6 @@
 		<title><f:message key="${ titleKey }"/></title>
 		<layout:common-head />		
 		<layout:_common-script-import />
-		<comp:decorate-toggle-panels/>
 		<jsp:invoke fragment="head" />
 	</head>
 	<body>

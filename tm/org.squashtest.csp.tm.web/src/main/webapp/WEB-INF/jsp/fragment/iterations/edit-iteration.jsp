@@ -33,7 +33,6 @@
 <%@ taglib prefix="authz" tagdir="/WEB-INF/tags/authz" %>
 
 <f:message var="squashlocale" key="squashtm.locale" />
-<comp:decorate-toggle-panels />
 
 <comp:rich-jeditable-header />
 <comp:datepicker-manager locale="${squashlocale}"/>
@@ -250,14 +249,14 @@
 
 
 
-<comp:toggle-panel titleKey="generics.description.title" isContextual="true" open="true">
+<comp:toggle-panel id="iteration-description-panel" titleKey="generics.description.title" isContextual="true" open="true">
 	<jsp:attribute name="body">
 		<div id="iteration-description" >${ iteration.description }</div>
 	</jsp:attribute>
 </comp:toggle-panel>
 
 
-<comp:toggle-panel titleKey="campaign.planning.panel.title" isContextual="true" open="true">
+<comp:toggle-panel id="datepicker-panel" titleKey="campaign.planning.panel.title" isContextual="true" open="true">
 	<jsp:attribute name="body">
 	<div class="datepicker-panel">
 
@@ -326,7 +325,7 @@
 <%-- ------------------ test plan ------------------------------ --%>
 
 
-<comp:toggle-panel titleKey="campaign.test-plan.panel.title" open="true" isContextual="true">
+<comp:toggle-panel id="test-plan-panel" titleKey="campaign.test-plan.panel.title" open="true" isContextual="true">
 	<jsp:attribute name="panelButtons">
 		<c:if test="${ editable }">
 			<f:message var="associateLabel" key="campaign.test-plan.manage.button.label"/>

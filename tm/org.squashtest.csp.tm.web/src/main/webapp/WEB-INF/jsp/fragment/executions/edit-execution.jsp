@@ -34,7 +34,7 @@
 <%@ taglib prefix="f" uri="http://java.sun.com/jsp/jstl/fmt" %>
 <%@ taglib prefix="authz" tagdir="/WEB-INF/tags/authz" %>
 
-<comp:decorate-toggle-panels />
+
 <comp:rich-jeditable-header />
 <dt:datatables-header />
 <jq:execution-status-factory/> 
@@ -295,7 +295,7 @@
 </c:if>
 
 <f:message var="executionComment" key="execution.description.panel.title"/>
-<comp:toggle-panel title="${executionComment}" isContextual="true"  open="false">
+<comp:toggle-panel id="execution-description-panel" title="${executionComment}" isContextual="true"  open="false">
 	<jsp:attribute name="body">
 		<div id="execution-description" >${ execution.description }</div>
 	</jsp:attribute>
@@ -303,7 +303,7 @@
 
 <%-------------------------execution step summary status---------------------------------------%>
 
-<comp:toggle-panel titleKey="executions.execution-steps-summary.panel.title" isContextual="true" open="true">
+<comp:toggle-panel id="execution-steps-panel" titleKey="executions.execution-steps-summary.panel.title" isContextual="true" open="true">
 	<jsp:attribute name="body">
 		<comp:decorate-ajax-table url="${executionStepsUrl}" tableId="execution-execution-steps-table" paginate="true">		
 			<jsp:attribute name="drawCallback">execStepTableDrawCallback</jsp:attribute>
