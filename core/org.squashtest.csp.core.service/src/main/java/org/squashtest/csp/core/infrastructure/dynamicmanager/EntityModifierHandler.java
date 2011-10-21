@@ -89,7 +89,7 @@ class EntityModifierHandler<ENTITY> implements DynamicManagerInvocationHandler {
 		ENTITY entity = (ENTITY) sessionFactory.getCurrentSession().load(entityType, (Long) args[0]);
 
 		String prop = extractModifiedPropertyName(method);
-		Method setter = findSetter(prop, args[1]);
+		Method setter = findSetter(prop, method.getParameterTypes()[1]);
 		return setter.invoke(entity, args[1]);
 	}
 
@@ -100,19 +100,18 @@ class EntityModifierHandler<ENTITY> implements DynamicManagerInvocationHandler {
 		return prop;
 	}
 
-	private Method findSetter(String property, Object arg) throws NoSuchMethodException {
+	private Method findSetter(String property, Class<?> paramType) throws NoSuchMethodException {
 		String setterName = "set" + property;
-		Class<?> argClass = arg.getClass();
 
-		Method setter = ReflectionUtils.findMethod(entityType, setterName, argClass);
+		Method setter = ReflectionUtils.findMethod(entityType, setterName, paramType);
 
 		if (setter == null) {
-			setter = findPrimitiveTypeSetter(setterName, argClass);
+			setter = findPrimitiveTypeSetter(setterName, paramType);
 		}
 
 		if (setter == null) {
 			throw new NoSuchMethodException("void " + entityType.getName() + '.' + setterName + '('
-					+ argClass.getName() + ')');
+					+ paramType.getName() + ')');
 		}
 
 		return setter;
@@ -120,12 +119,12 @@ class EntityModifierHandler<ENTITY> implements DynamicManagerInvocationHandler {
 
 	/**
 	 * @param property
-	 * @param argClass
+	 * @param paramType
 	 * @return
 	 */
-	private Method findPrimitiveTypeSetter(String setterName, Class<?> argClass) {
-		if (PrimitiveTypeUtils.isPrimitiveWrapper(argClass)) {
-			Class<?> primitiveClass = PrimitiveTypeUtils.wrapperToPrimitive(argClass);
+	private Method findPrimitiveTypeSetter(String setterName, Class<?> paramType) {
+		if (PrimitiveTypeUtils.isPrimitiveWrapper(paramType)) {
+			Class<?> primitiveClass = PrimitiveTypeUtils.wrapperToPrimitive(paramType);
 
 			return ReflectionUtils.findMethod(entityType, setterName, primitiveClass);
 		}

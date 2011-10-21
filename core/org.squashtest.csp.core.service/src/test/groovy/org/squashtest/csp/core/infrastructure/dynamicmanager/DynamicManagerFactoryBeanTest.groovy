@@ -156,4 +156,17 @@ class DynamicManagerFactoryBeanTest extends Specification{
 		thrown IllegalArgumentException
 	}
 
+	def "should fetch dummy entity by id and nullify its style"() {
+		given:
+		DummyEntity dummy = new DummyEntity(id: 10L, style: "mod")
+		currentSession.load(DummyEntity, 10L) >> dummy
+
+		when:
+		factory.initializeFactory()
+		factory.object.changeStyle(10L, null)
+
+		then:
+		dummy.style == null
+	}
+
 }
