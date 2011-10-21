@@ -55,6 +55,7 @@ import org.squashtest.csp.tm.web.internal.model.datatable.DataTableFilterSorter;
 import org.squashtest.csp.tm.web.internal.model.datatable.DataTableModel;
 import org.squashtest.csp.tm.web.internal.model.datatable.DataTableModelHelper;
 import org.squashtest.csp.tm.web.internal.model.viewmapper.DataTableMapper;
+import org.squashtest.csp.tm.web.internal.utils.DateUtils;
 
 @Controller
 @RequestMapping("/iterations/{iterationId}")
@@ -169,22 +170,11 @@ public class IterationModificationController {
 	 * returns null if the string is empty, or a date otherwise. No check regarding the actual content of strDate.
 	 */
 	private Date strToDate(String strDate) {
-		Date newDate = null;
-
-		if (strDate.length() > 0) {
-			Long millisecs = Long.valueOf(strDate);
-			newDate = new Date(millisecs);
-		}
-
-		return newDate;
+		return DateUtils.millisecondsToDate(strDate);
 	}
 
 	private String dateToStr(Date date) {
-		if (date != null) {
-			return Long.valueOf(date.getTime()).toString();
-		} else {
-			return "";
-		}
+		return DateUtils.dateToMillisecondsAsString(date);
 	}
 
 	@RequestMapping(value = "/planning", params = { "scheduledStart" })
