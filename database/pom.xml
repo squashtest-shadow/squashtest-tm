@@ -1,5 +1,6 @@
 <?xml version="1.0"?>
-<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
 	<modelVersion>4.0.0</modelVersion>
 	<parent>
 		<artifactId>squashtest-csp</artifactId>
@@ -10,7 +11,7 @@
 	<packaging>jar</packaging>
 	<name>squashtest-tm-database</name>
 	<description>Squash TM - Database definition</description>
-	
+
 	<dependencies>
 		<dependency>
 			<groupId>com.h2database</groupId>
@@ -39,7 +40,7 @@
 				<directory>src/main/script</directory>
 			</resource>
 		</resources>
-		
+
 		<testResources>
 			<testResource>
 				<directory>src/test/liquibase</directory>
@@ -108,6 +109,40 @@
 							<password>sa</password>
 						</configuration>
 					</execution>
+
+					<!-- Performs data migration in H2 -->
+					<execution>
+						<id>test-h2-data-migration</id>
+						<phase>integration-test</phase>
+						<goals>
+							<goal>update</goal>
+						</goals>
+						<configuration>
+							<dropFirst>true</dropFirst>
+							<changeLogFile>${migration-test.changelog}</changeLogFile>
+							<driver>org.h2.Driver</driver>
+							<url>jdbc:h2:target/database/data-migration</url>
+							<username>sa</username>
+							<password>sa</password>
+						</configuration>
+					</execution>
+
+					<!-- Performs incremental updates in h2 -->
+					<execution>
+						<id>test-h2-incremental-updates</id>
+						<phase>integration-test</phase>
+						<goals>
+							<goal>update</goal>
+						</goals>
+						<configuration>
+							<dropFirst>true</dropFirst>
+							<changeLogFile>${incremental.updates.changelog}</changeLogFile>
+							<driver>org.h2.Driver</driver>
+							<url>jdbc:h2:target/database/data-migration</url>
+							<username>sa</username>
+							<password>sa</password>
+						</configuration>
+					</execution>
 				</executions>
 			</plugin>
 		</plugins>
@@ -145,23 +180,6 @@
 								</configuration>
 							</execution>
 
-							<!-- Performs data migration in H2 -->
-							<execution>
-								<id>test-h2-data-migration</id>
-								<phase>integration-test</phase>
-								<goals>
-									<goal>update</goal>
-								</goals>
-								<configuration>
-									<dropFirst>true</dropFirst>
-									<changeLogFile>${migration-test.changelog}</changeLogFile>
-									<driver>org.h2.Driver</driver>
-									<url>jdbc:h2:target/database/data-migration</url>
-									<username>sa</username>
-									<password>sa</password>
-								</configuration>
-							</execution>
-
 							<!-- Performs data migration in MySQL -->
 							<execution>
 								<id>test-mysql-data-migration</id>
@@ -177,23 +195,6 @@
 									<url>${liquibase.mysql.url}</url>
 									<username>${liquibase.mysql.username}</username>
 									<password>${liquibase.mysql.password}</password>
-								</configuration>
-							</execution>
-							
-							<!-- Performs incremental updates -->
-							<execution>
-								<id>test-h2-incremental-updates</id>
-								<phase>integration-test</phase>
-								<goals>
-									<goal>update</goal>
-								</goals>
-								<configuration>
-									<dropFirst>true</dropFirst>
-									<changeLogFile>${incremental.updates.changelog}</changeLogFile>
-									<driver>org.h2.Driver</driver>
-									<url>jdbc:h2:target/database/data-migration</url>
-									<username>sa</username>
-									<password>sa</password>
 								</configuration>
 							</execution>
 						</executions>
