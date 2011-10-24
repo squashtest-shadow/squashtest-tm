@@ -59,7 +59,16 @@
 			"bProcessing": true,
 			"bServerSide": true,
 			"sAjaxSource": '${ url }', 
-
+			/* 
+			 * For some reasons when the DOM is modified around the table 
+			 * (ie because of jQuery.wrap()) the datatable constructor is called again.
+			 * 
+			 * To prevent annoying warning messages we must set the bRetrieve flag to true. That flag says that
+			 * if an instance of dataTable for this DOM table exists, it will be returned.
+			 *
+			 * This fix seems to work for the implementation of DataTables v 1.7.3 and jQuery 1.5.2.
+			 */
+			"bRetrieve" : true,				
 <c:if test="${ not empty initialSort}">"aaSorting": <jsp:invoke fragment="initialSort"/>,  </c:if>
 <c:if test="${ not empty rowCallback }">"fnRowCallback": <jsp:invoke fragment="rowCallback"/>,</c:if>
 <c:if test="${ not empty drawCallback }">"fnDrawCallback" : <jsp:invoke fragment="drawCallback"/>,</c:if>				
