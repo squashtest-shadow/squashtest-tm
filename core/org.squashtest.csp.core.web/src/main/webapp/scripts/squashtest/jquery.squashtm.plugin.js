@@ -127,34 +127,55 @@ var squashtm ;
 						modal : true,
 						width : 600,
 						title : "default popup",
-						position : ['center', 100],
-						open : function(){
-							squashtm.popup.cleanup.call(target);
-						}, 
-						close: function(){
-							squashtm.popup.cleanup.call(target);
-						},
-						
-						create : function(){
-							target.find('textarea').each(function(){
-								var jqT = $(this);
-								if (settings.isContextual){
-									jqT.addClass('is-contextual');
-								}
-								jqT.ckeditor(function(){}, 
-									{
-										//in this context 'this' is the defaults object
-										//the following properties will appear
-										//once we merged with the user-provided settings
-										customConfig : settings.ckeditor.styleUrl || "/styles/ckeditor/ckeditor-config.js", 
-										language : settings.ckeditor.lang || "en"
-									}
-								);
-							});				
-						}						
+						position : ['center', 100]
 					}
 					
+					//merge the settings into the defaults;
 					$.extend(true,defaults, settings);
+					
+					//add default open, close and create behaviour. The user defined callbacks will be invoked as a last operation if any.
+					var userOpen = defaults.open;
+					var userClose = defaults.close;
+					var userCreate = defaults.create;
+					
+					defaults.open = function(){
+						//cleanup
+						squashtm.popup.cleanup.call(target);
+						//forcible styling of the buttons
+						var buttons=target.eq(0).next().find('button');
+						buttons.filter(':last').addClass('ui-state-active');
+						buttons.filter(':first').removeClass('ui-state-active');
+						//user code
+						if (userOpen!=undefined) userOpen.call(this);
+					};
+					
+					defaults.close = function(){
+						//cleanup
+						squashtm.popup.cleanup.call(target);							
+						//usercode
+						if (userClose!=undefined) userClose.call(this);
+					};
+					
+					defaults.create = function(){
+						target.find('textarea').each(function(){
+							var jqT = $(this);
+							if (settings.isContextual){
+								jqT.addClass('is-contextual');
+							}
+							jqT.ckeditor(function(){}, 
+								{
+									//in this context 'this' is the defaults object
+									//the following properties will appear
+									//once we merged with the user-provided settings
+									customConfig : settings.ckeditor.styleUrl || "/styles/ckeditor/ckeditor-config.js", 
+									language : settings.ckeditor.lang || "en"
+								}
+							);
+						});		
+						if (userCreate!=undefined) userCreate.call(this);
+					};
+
+					//popup invokation
 					target.dialog(defaults);
 					
 					if (settings.closeOnSuccess===undefined || settings.closeOnSuccess){
@@ -162,16 +183,11 @@ var squashtm ;
 							if (target.dialog('isOpen')===true) target.dialog('close');
 						});
 					}
-					
+
 					target.keypress(function(event){
 						if (event.which == '13') {
-							var buttons=target.dialog("option", "buttons" );
-							var firstOne;
-							for (var property in buttons){
-								firstOne=buttons[property];
-								break;
-							}
-							$(firstOne).click();
+							var buttonPane=target.eq(0).next();
+							buttonPane.find('button').filter(':first').click();
 						}
 					});
 					
