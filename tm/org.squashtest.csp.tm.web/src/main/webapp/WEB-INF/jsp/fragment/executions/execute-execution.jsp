@@ -295,12 +295,7 @@
 				</td>
 					<td style="text-align:right;">
 						<label id="evaluation-label-status"><f:message key="execute.header.status.label" /></label>
-						<select id="execution-status-combo" name="executionStatus" class="execution-status-combo-class">
-							<option value="BLOCKED" class="executions-status-bloqued-icon"><f:message key="execution.execution-status.BLOCKED" /></option>
-							<option value="FAILURE" class="executions-status-failure-icon"><f:message key="execution.execution-status.FAILURE" /></option>
-							<option value="SUCCESS" class="executions-status-success-icon"><f:message key="execution.execution-status.SUCCESS" /></option>
-							<option value="READY" class="executions-status-ready-icon"><f:message key="execution.execution-status.READY" /></option>
-						</select >				
+						<comp:execution-status-combo name="executionStatus" id="execution-status-combo" />
 						<button id="execute-fail-button"><f:message key="execute.header.button.failure.title" /></button>
 						<button id="execute-success-button"><f:message key="execute.header.button.passed.title" /></button>
 					</td>
