@@ -275,7 +275,7 @@
 			indicator : '<img src="${ pageContext.servletContext.contextPath }/images/indicator.gif" alt="processing..." />' 
 				
 		};		
-		squashtm.jeditable.richEditable.call(jqOColumn.get(0), settings);
+		jqOColumn.richEditable(settings);
 	
 	}
 	

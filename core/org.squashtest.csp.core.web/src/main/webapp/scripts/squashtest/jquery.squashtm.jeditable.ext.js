@@ -49,7 +49,12 @@
 	
 	*/
 	
-	squashtm.jeditable = {
+	$.widget('ui.richEditable', {
+	
+		_bindLinks : function(){
+			this.bindLinks.call(this.element);
+		},
+		
 		bindLinks : function(){
 			var elts = $('a', this);
 			
@@ -58,36 +63,36 @@
 				document.location.href=this.href;
 				event.stopPropagation();
 				return false;
-			});
+			});					
+		},
+	
+		options: {
+			type : 'ckeditor',
+			rows : 10,
+			cols : 80,
+			onblur : function(){},
+			callback : function(result, settings){
+				//'this' in this context is the div itself
+				$.ui.richEditable.prototype.bindLinks.call(this);
+			}		
 		},
 		
-		richEditable : function(customSettings){					
-			//bind already existing links
-			squashtm.jeditable.bindLinks.call(this);
-		
-			//settings
-			var defSettings = {
-				type : 'ckeditor',
-				rows : 10,
-				cols : 80,
-				onblur : function(){},
-				callback : function(result, settings){
-					//'this' in this context is the div itself
-					squashtm.jeditable.bindLinks.call(this);
-				},
-				
-			};
-			
-			//merge the settings and create the object
-			$.extend(true,defSettings, customSettings);
-			$(this).editable(customSettings.url, defSettings);
+		_init : function(){
+			var self = this;
+			var element = this.element;
+			element.editable(this.options.url, this.options);
+			this._bindLinks();
 			
 			//hook the reset so that we bind links there too.
-			var oldReset = this.reset;
-			this.reset = function(){
+			//unfortunately we cannot simply define the reset method in jquery.jeditable.ckeditor.js because jeditable calls the 
+			//callback in an place useless to us.
+			var domElement = element.get(0);
+			var oldReset = domElement.reset;
+			domElement.reset = function(){
 				oldReset.call(this);
-				squashtm.jeditable.bindLinks.call(this);		
-			}		
-		}		
-	};
+				self._bindLinks();		
+			}					
+		}
+	
+	});
 })(jQuery);

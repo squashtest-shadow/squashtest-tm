@@ -27,4 +27,3 @@
 <script type="text/javascript" src="${ pageContext.servletContext.contextPath }/scripts/jquery/jquery.jeditable.ckeditor.js"></script>
 <script type="text/javascript" src="${ pageContext.servletContext.contextPath }/scripts/squashtest/jquery.squashtm.jeditable.ext.js"></script>
 
-

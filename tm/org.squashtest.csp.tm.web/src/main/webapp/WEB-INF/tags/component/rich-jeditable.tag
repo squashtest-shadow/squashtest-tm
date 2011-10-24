@@ -20,7 +20,7 @@
         along with this software.  If not, see <http://www.gnu.org/licenses/>.
 
 --%>
-<%-- call rich-editable-init first --%>
+
 <%@ tag language="java" pageEncoding="ISO-8859-1"%>
 
 <%@ attribute name="targetUrl" required="true" %>
@@ -49,7 +49,7 @@
 								
 		}
 		
-		squashtm.jeditable.richEditable.call( document.getElementById('${componentId}'), settings);	
+		$('#${componentId}').richEditable(settings);
 	})
 	
 </script>
