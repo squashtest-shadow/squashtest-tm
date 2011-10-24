@@ -64,7 +64,7 @@
 	<iteration_test_plan_item item_test_plan_id="2" execution_status="SUCCESS" tcln_id="2" created_by="dbu"
 		created_on="2010-02-01" />
 	<item_test_plan_list iteration_id="1" item_test_plan_id="2" item_test_plan_order="1" />
-	<iteration_test_plan_item item_test_plan_id="3" execution_status="BLOQUED" tcln_id="3" created_by="dbu"
+	<iteration_test_plan_item item_test_plan_id="3" execution_status="BLOCKED" tcln_id="3" created_by="dbu"
 		created_on="2010-02-01" />
 	<item_test_plan_list iteration_id="1" item_test_plan_id="3" item_test_plan_order="2" />
 

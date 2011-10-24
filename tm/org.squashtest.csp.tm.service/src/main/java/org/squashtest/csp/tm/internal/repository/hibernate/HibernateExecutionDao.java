@@ -123,7 +123,7 @@ public class HibernateExecutionDao extends HibernateEntityDao<Execution> impleme
 			statusMap.put(status.name(), result);
 		}
 
-		report.setBloqued(statusMap.get(ExecutionStatus.BLOQUED.name()));
+		report.setBloqued(statusMap.get(ExecutionStatus.BLOCKED.name()));
 		report.setFailure(statusMap.get(ExecutionStatus.FAILURE.name()));
 		report.setSuccess(statusMap.get(ExecutionStatus.SUCCESS.name()));
 		report.setRunning(statusMap.get(ExecutionStatus.RUNNING.name()));

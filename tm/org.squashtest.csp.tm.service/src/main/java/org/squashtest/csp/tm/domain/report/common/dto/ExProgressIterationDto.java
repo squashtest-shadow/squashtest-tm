@@ -229,7 +229,7 @@ public class ExProgressIterationDto {
 			switch(testPlan.getExecutionStatus()){
 			case READY : 	ready++;	break;
 			case RUNNING : 	running++;	break;
-			case BLOQUED : 	bloqued++;	break;
+			case BLOCKED : 	bloqued++;	break;
 			case FAILURE : 	failure++;	break;
 			case SUCCESS : 	success++; break;
 			}

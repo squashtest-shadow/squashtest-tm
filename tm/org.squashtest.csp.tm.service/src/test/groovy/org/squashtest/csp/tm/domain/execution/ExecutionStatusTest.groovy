@@ -42,7 +42,7 @@ class ExecutionStatusTest extends Specification {
 		
 		where: 
 		status  | key
-		BLOQUED | "execution.execution-status.BLOQUED"
+		BLOCKED | "execution.execution-status.BLOCKED"
 		FAILURE | "execution.execution-status.FAILURE"
 		SUCCESS | "execution.execution-status.SUCCESS"
 		RUNNING | "execution.execution-status.RUNNING"

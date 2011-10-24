@@ -30,7 +30,7 @@
 
 <%-------------------------- status------------------------------%>
 
-<f:message var="statusBloqued" key="execution.execution-status.BLOQUED" />
+<f:message var="statusBloqued" key="execution.execution-status.BLOCKED" />
 <f:message var="statusFailure" key="execution.execution-status.FAILURE" />
 <f:message var="statusSuccess" key="execution.execution-status.SUCCESS" />
 <f:message var="statusRunning" key="execution.execution-status.RUNNING" />
@@ -110,7 +110,7 @@
 			var imagePath="${ pageContext.servletContext.contextPath }/images/";
 			
 			switch(status){
-				case "BLOQUED" : 
+				case "BLOCKED" : 
 					status=new ExecutionStatus("${statusBloqued}", imagePath+"Icon_Yellow.png") ;
 					break;
 				

@@ -249,7 +249,7 @@ class ExecutionModificationServiceIT extends HibernateServiceSpecification {
 	 then :
 	 status = ExecutionStatus.READY;
 	 }
-	 def "should return execution status BLOQUED"(){
+	 def "should return execution status BLOCKED"(){
 	 given :
 	 iterService.addExecution(iterationId, testPlanId);
 	 def execList = iterService.findAllExecutions(iterationId)
@@ -261,7 +261,7 @@ class ExecutionModificationServiceIT extends HibernateServiceSpecification {
 	 executionSteps << procservice.nextExecutionStep(execution.id)
 	 executionSteps << procservice.nextExecutionStep(execution.id)
 	 executionSteps << procservice.nextExecutionStep(execution.id)
-	 procservice.setExecutionStepStatus(executionSteps.get(2).getId(), ExecutionStatus.BLOQUED)
+	 procservice.setExecutionStepStatus(executionSteps.get(2).getId(), ExecutionStatus.BLOCKED)
 	 Execution execution2 = execService.findAndInitExecution(execution.id)
 	 def status = execution2.getExecutionStatus();
 	 then :
@@ -380,7 +380,7 @@ class ExecutionModificationServiceIT extends HibernateServiceSpecification {
 		report.ready==5;
 	}
 
-	def "should set an execution status for an execution to BLOQUED"(){
+	def "should set an execution status for an execution to BLOCKED"(){
 		given :
 		iterService.addExecution(iterationId, testPlanId);
 		def execList = iterService.findAllExecutions(iterationId)
@@ -395,7 +395,7 @@ class ExecutionModificationServiceIT extends HibernateServiceSpecification {
 
 
 		then :
-		reExec.executionStatus == ExecutionStatus.BLOQUED;
+		reExec.executionStatus == ExecutionStatus.BLOCKED;
 	}
 
 	def "should set an execution status for an execution to FAILURE"(){
@@ -471,7 +471,7 @@ class ExecutionModificationServiceIT extends HibernateServiceSpecification {
 	}
 
 
-	def "should update executionStep status and accordingly update the status of its parent execution to BLOQUED"(){
+	def "should update executionStep status and accordingly update the status of its parent execution to BLOCKED"(){
 
 		given :
 		iterService.addExecution(iterationId, testPlanId)
@@ -487,12 +487,12 @@ class ExecutionModificationServiceIT extends HibernateServiceSpecification {
 
 		when :
 		ExecutionStep toBlock = listSteps.get(2);
-		procservice.setExecutionStepStatus(toBlock.getId(), ExecutionStatus.BLOQUED)
+		procservice.setExecutionStepStatus(toBlock.getId(), ExecutionStatus.BLOCKED)
 
 		Execution exec = execService.findExecution(execution.id)
 
 		then :
-		exec.getExecutionStatus() == ExecutionStatus.BLOQUED;
+		exec.getExecutionStatus() == ExecutionStatus.BLOCKED;
 	}
 
 	def "should update executionStep status and accordingly update the status of its parent execution to FAILURE"(){
@@ -593,7 +593,7 @@ class ExecutionModificationServiceIT extends HibernateServiceSpecification {
 	}
 
 
-	def "after step update, execution status should swap from BLOQUED to RUNNING"(){
+	def "after step update, execution status should swap from BLOCKED to RUNNING"(){
 
 		given :
 
@@ -606,7 +606,7 @@ class ExecutionModificationServiceIT extends HibernateServiceSpecification {
 
 		when :
 		def blocked = listSteps.get(1)
-		procservice.setExecutionStepStatus(blocked.id, ExecutionStatus.BLOQUED);
+		procservice.setExecutionStepStatus(blocked.id, ExecutionStatus.BLOCKED);
 
 		def blockedExec = execService.findExecution(execution.id)
 
@@ -616,11 +616,11 @@ class ExecutionModificationServiceIT extends HibernateServiceSpecification {
 
 
 		then :
-		blockedExec.executionStatus == ExecutionStatus.BLOQUED
+		blockedExec.executionStatus == ExecutionStatus.BLOCKED
 		runningExec.executionStatus == ExecutionStatus.RUNNING;
 	}
 
-	def "after step update, execution status should swap from BLOQUED to READY"(){
+	def "after step update, execution status should swap from BLOCKED to READY"(){
 
 		given :
 
@@ -633,7 +633,7 @@ class ExecutionModificationServiceIT extends HibernateServiceSpecification {
 
 		when :
 		def blocked = listSteps.get(1)
-		procservice.setExecutionStepStatus(blocked.id, ExecutionStatus.BLOQUED);
+		procservice.setExecutionStepStatus(blocked.id, ExecutionStatus.BLOCKED);
 
 		def blockedExec = execService.findExecution(execution.id)
 
@@ -643,11 +643,11 @@ class ExecutionModificationServiceIT extends HibernateServiceSpecification {
 
 
 		then :
-		blockedExec.executionStatus == ExecutionStatus.BLOQUED
+		blockedExec.executionStatus == ExecutionStatus.BLOCKED
 		readyExec.executionStatus == ExecutionStatus.READY;
 	}
 
-	def "after step update, execution status should stay BLOQUED"(){
+	def "after step update, execution status should stay BLOCKED"(){
 
 		given :
 
@@ -660,10 +660,10 @@ class ExecutionModificationServiceIT extends HibernateServiceSpecification {
 
 		when :
 		def blocked = listSteps.get(1)
-		procservice.setExecutionStepStatus(blocked.id, ExecutionStatus.BLOQUED);
+		procservice.setExecutionStepStatus(blocked.id, ExecutionStatus.BLOCKED);
 
 		def blocked2 = listSteps.get(2)
-		procservice.setExecutionStepStatus(blocked2.id, ExecutionStatus.BLOQUED);
+		procservice.setExecutionStepStatus(blocked2.id, ExecutionStatus.BLOCKED);
 
 		def blockedExec = execService.findExecution(execution.id)
 
@@ -673,12 +673,12 @@ class ExecutionModificationServiceIT extends HibernateServiceSpecification {
 
 
 		then :
-		blockedExec.executionStatus == ExecutionStatus.BLOQUED
-		stillBlockedExec.executionStatus == ExecutionStatus.BLOQUED;
+		blockedExec.executionStatus == ExecutionStatus.BLOCKED
+		stillBlockedExec.executionStatus == ExecutionStatus.BLOCKED;
 	}
 
 
-	def "after step update, execution status should swap from BLOQUED to FAILURE"(){
+	def "after step update, execution status should swap from BLOCKED to FAILURE"(){
 
 		given :
 
@@ -691,7 +691,7 @@ class ExecutionModificationServiceIT extends HibernateServiceSpecification {
 
 		when :
 		def blocked = listSteps.get(1)
-		procservice.setExecutionStepStatus(blocked.id, ExecutionStatus.BLOQUED);
+		procservice.setExecutionStepStatus(blocked.id, ExecutionStatus.BLOCKED);
 
 		def blocked2 = listSteps.get(2)
 		procservice.setExecutionStepStatus(blocked2.id, ExecutionStatus.FAILURE);
@@ -704,11 +704,11 @@ class ExecutionModificationServiceIT extends HibernateServiceSpecification {
 
 
 		then :
-		blockedExec.executionStatus == ExecutionStatus.BLOQUED
+		blockedExec.executionStatus == ExecutionStatus.BLOCKED
 		failureExec.executionStatus == ExecutionStatus.FAILURE;
 	}
 
-	def "after step update, execution status should swap from BLOQUED to SUCCESS"(){
+	def "after step update, execution status should swap from BLOCKED to SUCCESS"(){
 		given :
 
 		iterService.addExecution(iterationId, testPlanId)
@@ -725,7 +725,7 @@ class ExecutionModificationServiceIT extends HibernateServiceSpecification {
 
 
 		def blocked = listSteps.get(1)
-		procservice.setExecutionStepStatus(blocked.id, ExecutionStatus.BLOQUED);
+		procservice.setExecutionStepStatus(blocked.id, ExecutionStatus.BLOCKED);
 
 		def blockedExec = execService.findExecution(execution.id)
 
@@ -735,7 +735,7 @@ class ExecutionModificationServiceIT extends HibernateServiceSpecification {
 
 
 		then :
-		blockedExec.executionStatus == ExecutionStatus.BLOQUED
+		blockedExec.executionStatus == ExecutionStatus.BLOCKED
 		successExec.executionStatus == ExecutionStatus.SUCCESS;
 	}
 
@@ -866,7 +866,7 @@ class ExecutionModificationServiceIT extends HibernateServiceSpecification {
 
 		def status0 = testPlan.getExecutionStatus();
 
-		exec1.setExecutionStatus(ExecutionStatus.BLOQUED)
+		exec1.setExecutionStatus(ExecutionStatus.BLOCKED)
 		def status1 = testPlan.getExecutionStatus();
 
 		//the last execution will impose it's status to the itemTestPlan
@@ -876,7 +876,7 @@ class ExecutionModificationServiceIT extends HibernateServiceSpecification {
 		def status2 = testPlan.getExecutionStatus();
 
 
-		exec2.setExecutionStatus(ExecutionStatus.BLOQUED)
+		exec2.setExecutionStatus(ExecutionStatus.BLOCKED)
 		def status3 = testPlan.getExecutionStatus();
 
 		then :

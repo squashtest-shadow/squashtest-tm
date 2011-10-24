@@ -56,17 +56,16 @@ import org.squashtest.csp.tm.domain.Internationalizable;
  *
  * see the various tests to see what they do represent.
  *
- * Note 1 : the checks wont test impossible states like formerStepStatus = BLOQUED and formerExecStatus = SUCCESS.
+ * Note 1 : the checks wont test impossible states like formerStepStatus = BLOCKED and formerExecStatus = SUCCESS.
  *
  * Note 2 : check the method computeNewStatus for the simplest statement about what this thing compute
  */
 
 public enum ExecutionStatus implements Internationalizable {
-	// FIXME ENGLISH IS "BLOCKED", DONT SPREAD THE ERROR, FIX IT INSTEAD !
-	BLOQUED() {
+	BLOCKED() {
 		@Override
 		protected ExecutionStatus resolveStatus(ExecutionStatus formerExecutionStatus, ExecutionStatus formerStepStatus) {
-			return ExecutionStatus.BLOQUED;
+			return ExecutionStatus.BLOCKED;
 		}
 	},
 
@@ -190,7 +189,7 @@ public enum ExecutionStatus implements Internationalizable {
 		ExecutionStatus newStatus = ExecutionStatus.READY;
 
 		if (report.getBloqued() > 0) {
-			newStatus = ExecutionStatus.BLOQUED;
+			newStatus = ExecutionStatus.BLOCKED;
 		} else if (report.getFailure() > 0) {
 			newStatus = ExecutionStatus.FAILURE;
 		} else if (report.areAllSuccess()) {
@@ -223,7 +222,7 @@ public enum ExecutionStatus implements Internationalizable {
 		// if the former execution status was bloqued and the former step status wasn't bloqued, the execution will stay
 		// bloqued
 		else if (wontUnlockBloquedExecution(formerExecutionStatus, formerStepStatus)) {
-			newStatus = ExecutionStatus.BLOQUED;
+			newStatus = ExecutionStatus.BLOCKED;
 		} else {
 			newStatus = isAmbiguous;
 		}
@@ -271,11 +270,11 @@ public enum ExecutionStatus implements Internationalizable {
 	}
 
 	protected boolean wontUnlockBloquedExecution(ExecutionStatus formerExecutionStatus, ExecutionStatus formerStepStatus) {
-		return (formerExecutionStatus == ExecutionStatus.BLOQUED && formerStepStatus != ExecutionStatus.BLOQUED);
+		return (formerExecutionStatus == ExecutionStatus.BLOCKED && formerStepStatus != ExecutionStatus.BLOCKED);
 	}
 
 	protected boolean mayUnlockBloquedExecution(ExecutionStatus formerStepStatus) {
-		return (this != ExecutionStatus.BLOQUED && formerStepStatus == ExecutionStatus.BLOQUED);
+		return (this != ExecutionStatus.BLOCKED && formerStepStatus == ExecutionStatus.BLOCKED);
 	}
 
 	// here we test if the former step status is the former execution status : this step was maybe the only one
