@@ -46,7 +46,18 @@ import org.squashtest.csp.core.web.utils.HTMLCleanupUtils;
  * 
  * 
  */
-public class HtmlSanitizationFilter implements Filter {
+public class RequestSanitizationFilter implements Filter {
+	
+	private String defaultEncoding="utf-8";
+	
+	public void setDefaultEncoding(String encoding){
+		this.defaultEncoding=encoding;
+	}
+	
+	public String getDefaultEncoding(){
+		return defaultEncoding;
+	}
+	
 
 	@Override
 	public void init(FilterConfig filterConfig) throws ServletException {
@@ -64,6 +75,10 @@ public class HtmlSanitizationFilter implements Filter {
 	@Override
 	public void doFilter(ServletRequest request, ServletResponse response,
 			FilterChain chain) throws IOException, ServletException {
+		
+		if (request.getCharacterEncoding()==null){
+			request.setCharacterEncoding(defaultEncoding);
+		}
 		
 		if (HttpServletRequest.class.isAssignableFrom(request.getClass())){
 			chain.doFilter(new HtmlSafeRequestWrapper((HttpServletRequest)request), response);
