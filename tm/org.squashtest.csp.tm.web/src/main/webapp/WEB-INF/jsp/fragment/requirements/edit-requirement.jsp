@@ -258,7 +258,8 @@
 		/* renaming after reference update */
 		function updateReferenceInTitle(reference){
 			//update hidden reference
-			$('#requirement-raw-reference').html(reference);
+			var jqRawRef = $('#requirement-raw-reference');
+			jqRawRef.html(reference);
 			var newName = "";
 			if(reference.length > 0)
 				{

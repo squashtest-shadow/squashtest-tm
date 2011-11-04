@@ -21,7 +21,7 @@
 
 --%>
 <%-- call rich-editable-init first --%>
-<%@ tag language="java" pageEncoding="ISO-8859-1"%>
+<%@ tag language="java" pageEncoding="utf-8"%>
 
 <%@ attribute name="targetUrl" required="true" %>
 <%@ attribute name="componentId" required="true" %>
@@ -37,7 +37,6 @@
 	$(function() {
 		$( '#${componentId}' ).editable( '${ targetUrl }', {
 			type: 'text',												//this input type isn't standard, refers to jquery.jeditable.ckeditor.js
-			ckeditor : { customConfig : '${ ckeConfigUrl }', language: '<f:message key="rich-edit.language.value" />' },				//same comment 
 			cols: 80,
 			max_size: 20,
 			placeholder: '<f:message key="rich-edit.placeholder" />',
@@ -47,11 +46,15 @@
 			maxlength: ${ maxLength },
 			</c:if>
 			onblur : function(){},											//this disable the onBlur handler, which would close the jeditable 
-																			//when clicking in the rich editor (since it considers the click as
-
-			
+																			//when clicking in the rich editor (since it considers the click as			
 																			//out of the editing zone)
-			<c:if test="${ not empty submitCallback }" >callback : function(value, settings){${submitCallback}(value, settings);},</c:if>
+			ajaxoptions : {
+				dataType : 'text'
+			},
+			callback : function(value, settings){
+				$( '#${componentId}' ).text(value);
+				<c:if test="${ not empty submitCallback }">${submitCallback}(value, settings);</c:if>
+			},
 			indicator : '<img src="${ pageContext.servletContext.contextPath }/images/indicator.gif" alt="processing..." />' 
 			
 		});

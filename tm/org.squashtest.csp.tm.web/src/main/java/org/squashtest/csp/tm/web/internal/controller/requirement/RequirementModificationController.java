@@ -232,8 +232,13 @@ public class RequirementModificationController {
 	/***
 	 * Method which returns the criticality select options in the chosen language.
 	 * The output is formatted in json and meant to be used for a select input.
-	 * @param locale the Locale
+	 * That list is sorted according to the RequirementCriticality level. @param locale the Locale
 	 * @return an optionTag list with label and value
+	 */
+	/*
+	 * Since we also need to include which item is "selected", one
+	 * don't want to sort "selected" (since it's not a RequirementCriticality value). 
+	 * This is why we expect exceptions in the comparison below.
 	 */
 	private String initCriticitySelectionList(Locale locale, RequirementCriticality selected)
 	{
