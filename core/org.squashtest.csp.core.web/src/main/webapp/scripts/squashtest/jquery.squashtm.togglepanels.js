@@ -32,12 +32,12 @@
 		
 		_create : function(){
 			var widget=this;
-			
-			var wrapper = $('<div/>', {class:"toggle-panel ui-accordion ui-widget ui-helper-reset ui-accordion-icons"});
-			var panelHead = $('<h3/>', {class:"ui-accordion-header ui-helper-reset ui-state-default ui-state-hover ui-state-active ui-corner-top"});
-			var titlepanel = $('<div/>', {style:"overflow:hidden;"});
+					
+			var wrapper = $('<div/>', {'class':"toggle-panel ui-accordion ui-widget ui-helper-reset ui-accordion-icons"});
+			var panelHead = $('<h3/>', {'class':"ui-accordion-header ui-helper-reset ui-state-default ui-state-hover ui-state-active ui-corner-top"});
+			var titlepanel = $('<div/>', {'style':"overflow:hidden;"});
 			var snapleft = $('<div class="snap-left"><a class="tg-link" href="#"></a></div>');
-			var snapright = $('<div/>', {class:"snap-right"});			
+			var snapright = $('<div/>', {'class':"snap-right"});			
 			this.element.addClass("ui-accordion-content ui-helper-reset ui-widget-content ui-corner-bottom ui-accordion-content-active");				
 		
 			titlepanel.append(snapleft);

@@ -24,4 +24,5 @@
 <script type="text/javascript" src="${ pageContext.servletContext.contextPath }/scripts/jquery/jquery-ui-1.8.13.custom.min.js"></script>
 <script type="text/javascript" src="${ pageContext.servletContext.contextPath }/scripts/squashtest/jquery.squashtm.plugin.js"></script> 
 <%--<script type="text/javascript" src="http://localhost/scripts/jquery.squashtm.plugin.js"></script>--%>
-<script type="text/javascript" src="${ pageContext.servletContext.contextPath }/scripts/squashtest/jquery.squashtm.togglepanels.js"></script>
+<script type="text/javascript" src="${ pageContext.servletContext.contextPath }/scripts/squashtest/jquery.squashtm.togglepanels.js"></script>  
+<%--<script type="text/javascript" src="http://localhost/scripts/jquery.squashtm.togglepanels.js"></script>--%>
