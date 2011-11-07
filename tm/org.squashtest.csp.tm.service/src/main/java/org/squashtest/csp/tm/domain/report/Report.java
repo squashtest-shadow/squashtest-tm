@@ -26,7 +26,7 @@ import org.squashtest.csp.tm.domain.report.view.ReportViewCatalog;
 
 
 /**
- *  A Report is functionally the main concept of the Report API. However it's not exactly the most technical hard to 
+ * <p> A Report is functionally the main concept of the Report API. However it's not exactly the most technical hard to 
  *  implement.
  *  
  *  A Report belongs to a ReportCategory, to which it must register to (more on that later), and is of a ReportType.
@@ -36,30 +36,31 @@ import org.squashtest.csp.tm.domain.report.view.ReportViewCatalog;
  *  searched for in a MessageSource. 
  *  
  *  A Report is registered to a ReportCategory, is of a ReportType, and must be provided with a ReportQueryFactory 
- *  (that will generate a query corresponding to fill that Report).
+ *  (that will generate a query corresponding to fill that Report).</p>
  *  
- *  FIXME
- *  In this version the description is not yet localized.
+ *  <p><strong>FIXME</strong>
+ *  In this version the description is not yet localized.</p>
  *  
  *  
- *  Implementing a Report :
- *  =======================
+ *  <h4>Implementing a Report :</h4>
+ *  <hr>
  *  
- *  To implement a report you need : 
- *    - to set the key and the description in an init section or via the constructor, 
- *    - implement the method setReportType(),
- *    - implement the method setReportCategory() (that must call the said ReportCategory.addReport() method),
- *    - call those two setters with the right instances of ReportType and ReportCategory.
- *    
- *   You may also set a particular ReportQueryFactory at constructor time but you also can let it injected via 
- *   the IoC engine (if you have one). 
+ *  <p>To implement a report you need : 
+ *  <ul> 
+ *    <li>to set the key and the description in an init section or via the constructor,</li> 
+ *    <li>implement the method setReportType(),</li>
+ *    <li>implement the method setReportCategory() (that must call the said ReportCategory.addReport() method),</li>
+ *    <li>call those two setters with the right instances of ReportType and ReportCategory.</li>
+ *   </ul></p>
+ *  <p> You may also set a particular ReportQueryFactory at constructor time but you also can let it injected via 
+ *   the IoC engine (if you have one).</p> 
  *   
- *   Likewise, you can set up its view catalog at construction time.
+ *   <p>Likewise, you can set up its view catalog at construction time.</p>
  *   
- *   NOTE : the reason why you need to implement the setReportCategory() and setReportType() is that you may
+ *   <p><strong>NOTE :</strong> the reason why you need to implement the setReportCategory() and setReportType() is that you may
  *   then add an @Resource annotation on it. The container will this automagically call the setter at
  *   construction time and will feed it with the resource you named (the real instances of ReportType or ReportCategory)
- *    
+ *    </p>
  * 
  * 
  * @author bsiri

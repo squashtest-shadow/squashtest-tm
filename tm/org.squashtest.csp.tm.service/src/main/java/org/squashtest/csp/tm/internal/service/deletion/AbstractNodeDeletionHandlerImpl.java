@@ -33,7 +33,19 @@ import org.squashtest.csp.tm.internal.repository.FolderDao;
 import org.squashtest.csp.tm.internal.service.NodeDeletionHandler;
 import org.squashtest.csp.tm.service.deletion.SuppressionPreviewReport;
 
-
+/**
+ * 
+ * <p> This class is a abstract and generic implementation of NodeDeletionHandler that implements a few basic rules. Regardless of the end domain object (TestCase, Campaign etc) the basic 
+ * rules are :<ul>
+ * 	<li>both of the interface methods require a computation</li>
+ * 	<li>a folder is not removable if at least itself or one of its children is not removable. </li>
+ * </ul>
+ * 
+ * @author bsiri
+ *
+ * @param <NODE>
+ * @param <FOLDER>
+ */
 
 public abstract class AbstractNodeDeletionHandlerImpl<NODE extends LibraryNode, FOLDER extends Folder<NODE>>
 		implements NodeDeletionHandler<NODE, FOLDER>{
@@ -170,7 +182,7 @@ public abstract class AbstractNodeDeletionHandlerImpl<NODE extends LibraryNode, 
 
 
 	/**
-	 * will forcibly delete the nodes identified by the ids parameter.
+	 * will forcibly delete the nodes identified by the ids parameter. Hopefully, those nodes were all identified as legit.
 	 *
 	 * @param ids
 	 */
