@@ -35,24 +35,38 @@ import org.squashtest.csp.tm.service.deletion.SuppressionPreviewReport;
 
 /**
  * 
- * <p> This class is a abstract and generic implementation of NodeDeletionHandler that implements a few basic rules. Regardless of the end domain object (TestCase, Campaign etc) the basic 
- * rules are :<ul>
- * 	<li>both of the interface methods require a computation</li>
- * 	<li>a folder is not removable if at least itself or one of its children is not removable. </li>
+ * <p> This class is a abstract and generic implementation of NodeDeletionHandler that implements a few basic rules. Regardless of the end domain object (TestCase, Campaign etc) the common 
+ * rules are :
+ * <ul>
+ * 	<li>both methods must cover the children of the selected nodes,</li>
+ * 	<li>a folder is not removable if at least itself or one of its children is not removable (now the details of what is a non removable children is still to be implemented by subclasses).</li>
  * </ul>
+ * 
+ * 	Basically this class covers the tasks related to the directory structure (subtree coverage and detection of locked folders) by implementing those two features. On the other hand subclasses 
+ * must determine, by implementing {@link #diagnoseSuppression(List)} and {@link #detectLockedNodes(List)}, which nodes are locked for other reasons. See the documentations of the subclasses 
+ * for more informations.
+ * </p> 
  * 
  * @author bsiri
  *
- * @param <NODE>
- * @param <FOLDER>
+ * @param <NODE> a kind of LibraryNode
+ * @param <FOLDER> the corresponding Folder
  */
 
 public abstract class AbstractNodeDeletionHandlerImpl<NODE extends LibraryNode, FOLDER extends Folder<NODE>>
 		implements NodeDeletionHandler<NODE, FOLDER>{
 
+	/**
+	 * The implemention should return which FolderDao to use depending on the end domain object.
+	 * 
+	 * @return an appropriate FolderDao.
+	 */
 	protected abstract FolderDao<FOLDER, NODE> getFolderDao();
 
 
+	/**
+	 * {@link NodeDeletionHandler#simulateDeletion(List)}
+	 */
 	@Override
 	public List<SuppressionPreviewReport> simulateDeletion(List<Long> targetIds){
 		List<Long> nodeIds = findNodeHierarchy(targetIds);
@@ -60,10 +74,7 @@ public abstract class AbstractNodeDeletionHandlerImpl<NODE extends LibraryNode, 
 	}
 
 	/**
-	 * will perform the actual deletion and return the list of the nodes that were eventually deleted
-	 *
-	 * @param targetIds
-	 * @return the ids of the nodes actually deleted
+	 * {@link NodeDeletionHandler#deleteNodes(List)}
 	 */
 	@Override
 	public List<Long> deleteNodes(List<Long> targetIds){
@@ -79,7 +90,7 @@ public abstract class AbstractNodeDeletionHandlerImpl<NODE extends LibraryNode, 
 		List<Long> lockedNodeIds = detectLockedNodes(candidateNodeIds);
 
 		//phase 3 : resolve which folders are locked with respect to the locked content.
-		tree.markNodesAsLocked(lockedNodeIds);
+		tree.markLockedNodes(lockedNodeIds);
 		tree.resolveLockedFolders();
 
 
@@ -94,10 +105,13 @@ public abstract class AbstractNodeDeletionHandlerImpl<NODE extends LibraryNode, 
 
 
 	/**
-	 * returns the node hierarchy as a list of pairs. Each pair is an array of long (node ids) such as [ parent.id, child.id ].
+	 * <p>Accepts a list of ids and returns themselves and their children as a list of pairs, each pair being an array of long (node ids) such as [ parent.id, child.id ].
+	 * see {@link FolderDao#findPairedContentForList(List)} for details. The nodes input nodes will be paired with null (no parents), and the leaves will be be paired with null (for children). 
+	 * Obviously, only folders have children. 
+	 * </p> 
 	 *
-	 * @param rootNodesIds the ids from which we start the hierarchy
-	 * @return the list of pairs of id described above.
+	 * @param rootNodesIds the ids defining the upper level of the hierarchy.
+	 * @return the rootNodeIds and the ids of their children, paired together as described above.
 	 */
 	@SuppressWarnings("unchecked")
 	protected List<Long[]> findPairedNodeHierarchy(List<Long> rootNodeIds){
@@ -133,6 +147,12 @@ public abstract class AbstractNodeDeletionHandlerImpl<NODE extends LibraryNode, 
 		return nodeHierarchy;
 	}
 
+	/**
+	 * <p>Accepts a list of node ids and returns themselves and their children as a list.</p>
+	 * 
+	 * @param rootNodeIds rootNodesIds the ids defining the upper level of the hierarchy.
+	 * @return the rootNodeIds and the ids of their children.
+	 */
 	protected List<Long> findNodeHierarchy(List<Long> rootNodeIds){
 		if (rootNodeIds.isEmpty()) {
 			return Collections.emptyList();
@@ -158,33 +178,33 @@ public abstract class AbstractNodeDeletionHandlerImpl<NODE extends LibraryNode, 
 	}
 
 
+	
+	/**
+	 * <p> Given a list of node ids, returns a sublist corresponding to the ids of the nodes which cannot be deleted according to the specs. The input list includes all the nodes 
+	 * and their children in the directory structure. The implementation is responsible to fetch any other dependencies needed for the completion of its task. The implementation is not required
+	 * to resolve which folders are locked : this abstract class will handle that on the basis of the returned value. </p>
+	 *
+	 * @param nodeIds all the node ids.
+	 * @return the sublist of node ids that should NOT be deleted.
+	 */
+	protected abstract List<Long> detectLockedNodes(List<Long> nodeIds);
+	
 
 	/**
-	 * given the node ids, should return a report of the consequences of the suppression asked by the caller.
-	 * For instance : impossible suppressions, linked slave data and such.
+	 * <p>Given their ids, that method should check the nodes and actually report the informations as specified in {@link NodeDeletionHandler#simulateDeletion(List)}. 
+	 * See {@link #detectLockedNodes(List)} for details regarding the input list.</p>
 	 *
-	 * @param nodeIds
+	 * @param nodeIds the complete list of the nodes involved in that report.
 	 * @return a list of reports summarizing in human readable format what will happen.
 	 */
 	protected abstract List<SuppressionPreviewReport> diagnoseSuppression(List<Long> nodeIds);
 
-	/**
-	 * given a list of node ids, returns a sublist corresponding to the ids of the nodes which
-	 * cannot be deleted according to the specs.
-	 *
-	 * You do not have to worry about folders, the abstract handler will infer the consequences on the
-	 * hierarchy later.
-	 *
-	 * @param nodeIds
-	 * @return the sublist of node ids that should be deleted.
-	 */
-	protected abstract List<Long> detectLockedNodes(List<Long> nodeIds);
-
 
 	/**
-	 * will forcibly delete the nodes identified by the ids parameter. Hopefully, those nodes were all identified as legit.
+	 * Will delete the nodes identified by the ids parameter. Those nodes have been identified as legal for deletion and the implementation should only care of deleting them and 
+	 * unbinding them from the rest of the domain.
 	 *
-	 * @param ids
+	 * @param ids the doomed node ids.
 	 */
 	protected abstract void batchDeleteNodes(List<Long> ids);
 

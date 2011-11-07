@@ -82,7 +82,7 @@ class LockedFolderInferenceTree extends LibraryTree<LockedFolderInferenceTree.No
 	 * @param nodeKeys
 	 * @param isDeletable
 	 */
-	public void markNodesAsLocked(List<Long> nodeKeys){
+	public void markLockedNodes(List<Long> nodeKeys){
 		List<Node> toUpdate = new LinkedList<Node>();
 		
 		for (Long key : nodeKeys){

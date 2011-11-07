@@ -121,7 +121,7 @@ class LockedFolderInferenceTreeTest extends Specification {
 		
 		
 		when :
-			tree.markNodesAsLocked([32l , 22l ])
+			tree.markLockedNodes([32l , 22l ])
 			tree.resolveLockedFolders();
 		
 		
