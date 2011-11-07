@@ -40,6 +40,7 @@ import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.servlet.ModelAndView;
+import org.springframework.web.util.HtmlUtils;
 import org.squashtest.csp.core.security.acls.PermissionGroup;
 import org.squashtest.csp.tm.domain.audit.AuditableMixin;
 import org.squashtest.csp.tm.domain.project.Project;
@@ -142,28 +143,28 @@ public class UserAdministrationController {
 	@ResponseBody
 	public String updateLogin(@RequestParam("value") String userLogin, @PathVariable long userId) {
 		adminService.modifyUserLogin(userId, userLogin);
-		return userLogin;
+		return HtmlUtils.htmlEscape(userLogin);
 	}
 	
 	@RequestMapping(value = "/{userId}" ,method = RequestMethod.POST, params = { "id=user-first-name", "value" })
 	@ResponseBody
 	public String updateFirstName(@RequestParam("value") String firstName, @PathVariable long userId) {
 		adminService.modifyUserFirstName(userId, firstName);
-		return firstName;
+		return HtmlUtils.htmlEscape(firstName);
 	}
 	
 	@RequestMapping(value = "/{userId}" ,method = RequestMethod.POST, params = { "id=user-last-name", "value" })
 	@ResponseBody
 	public String updateLastName(@RequestParam("value") String lastName, @PathVariable long userId) {
 		adminService.modifyUserLastName(userId, lastName);
-		return lastName;
+		return HtmlUtils.htmlEscape(lastName);
 	}
 	
 	@RequestMapping(value = "/{userId}" ,method = RequestMethod.POST, params = { "id=user-email", "value" })
 	@ResponseBody
 	public String updateEmail(@RequestParam("value") String email, @PathVariable long userId) {
 		adminService.modifyUserEmail(userId, email);
-		return email;
+		return HtmlUtils.htmlEscape(email);
 	}
 	
 	//*********************************************************************************

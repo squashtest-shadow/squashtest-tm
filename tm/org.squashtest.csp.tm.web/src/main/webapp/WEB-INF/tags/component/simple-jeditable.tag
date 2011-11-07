@@ -48,13 +48,12 @@
 			onblur : function(){},											//this disable the onBlur handler, which would close the jeditable 
 																			//when clicking in the rich editor (since it considers the click as			
 																			//out of the editing zone)
-			ajaxoptions : {
-				dataType : 'text'
-			},
+			
+			<c:if test="${ not empty submitCallback }">
 			callback : function(value, settings){
-				$( '#${componentId}' ).text(value);
-				<c:if test="${ not empty submitCallback }">${submitCallback}(value, settings);</c:if>
+				${submitCallback}(value, settings);
 			},
+			</c:if>
 			indicator : '<img src="${ pageContext.servletContext.contextPath }/images/indicator.gif" alt="processing..." />' 
 			
 		});

@@ -256,14 +256,16 @@
 		}
 		
 		/* renaming after reference update */
+		/* args : reference : the html-escaped reference*/
 		function updateReferenceInTitle(reference){
 			//update hidden reference
 			var jqRawRef = $('#requirement-raw-reference');
 			jqRawRef.html(reference);
+			var escaped = jqRawRef.text();
 			var newName = "";
 			if(reference.length > 0)
 				{
-					newName += reference + " - ";
+					newName += escaped + " - ";
 				}
 			newName += $('#requirement-raw-name').text();
 			//update name

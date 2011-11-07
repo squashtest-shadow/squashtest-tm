@@ -18,6 +18,26 @@
  *     You should have received a copy of the GNU Lesser General Public License
  *     along with this software.  If not, see <http://www.gnu.org/licenses/>.
  */
+
+/**
+ * <p>This interface describes the contract for handlers responsible for deleting domain objects. Deleting an object is not straight forward
+ * since one have to deal with the relationships among them, eg a TestCase and a Requirement being bound together. As a consequence the application must perform 
+ * several checks beforehand in order to decide the actual course of action. </p> 
+ * 
+ * <p>As of Squash TM version 1.0, the specifications are the following :
+ * <ol>
+ * 	<li>A user requesting the removal of one or several entities, </li>
+ *  <li>Depending on which relationships might be broken by removing one or several domain objects the operation might be allowed, allowed with a warning or denied.</li>
+ *  <li>Batch removal is not atomic, eg when a subset of the operations are allowed while a second subset is denied, then the first subset will be processed anyway.</li>
+ * </ol>
+ * </p>
+ * 
+ * 
+ * 
+ * 
+ * 
+ */
+
 package org.squashtest.csp.tm.internal.service;
 
 import java.util.List;

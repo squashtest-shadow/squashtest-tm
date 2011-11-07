@@ -46,7 +46,7 @@ import org.squashtest.csp.core.web.utils.HTMLCleanupUtils;
  * 
  * 
  */
-public class RequestSanitizationFilter implements Filter {
+public class HtmlSanitizationFilter implements Filter {
 
 
 	@Override

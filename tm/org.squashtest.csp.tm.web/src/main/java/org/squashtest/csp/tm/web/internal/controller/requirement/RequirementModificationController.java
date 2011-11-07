@@ -20,6 +20,7 @@
  */
 package org.squashtest.csp.tm.web.internal.controller.requirement;
 
+import java.io.UnsupportedEncodingException;
 import java.util.Comparator;
 import java.util.List;
 import java.util.Locale;
@@ -222,11 +223,11 @@ public class RequirementModificationController {
 
 	@RequestMapping(method = RequestMethod.POST, params = { "id=requirement-reference", "value" })
 	@ResponseBody
-	String updateReference(@RequestParam("value") String requirementReference, @PathVariable long requirementId) {
+	String updateReference(@RequestParam("value") String requirementReference, @PathVariable long requirementId) throws UnsupportedEncodingException {
 		requirementModService.changeReference(requirementId, requirementReference.trim());
 		LOGGER.debug("Requirement {} : requirement reference changed, new value : {}", requirementId,
 				requirementReference);
-		return requirementReference;
+		return HtmlUtils.htmlEscape(requirementReference);
 	}
 
 	/***

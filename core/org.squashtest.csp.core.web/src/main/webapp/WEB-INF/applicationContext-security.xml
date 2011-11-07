@@ -108,7 +108,7 @@
 	 	<beans:property name="forceHttps" value="${authentication.application.forcehttps}" />
 	</beans:bean>
 	
-	<beans:bean id="htmlSanitizationFilter" class="org.squashtest.csp.core.web.internal.filter.HtmlSanitizationFilter"/>>	
+	<beans:bean id="htmlSanitizationFilter" class="org.squashtest.csp.core.web.internal.filter.HtmlSanitizationFilter"/>
 	
 	<authentication-manager
 		alias="squashtest.core.security.AuthenticationManager">
