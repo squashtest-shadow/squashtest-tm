@@ -25,7 +25,13 @@ import java.util.Locale;
 import org.springframework.context.MessageSource;
 
 
-
+/**
+ * <p>A SuppressionPreviewReport is an object that can deliver a localized information (given a MessageSource and a Locale), used in the context of entity removal (hence the name). It is 
+ * filled by the system in response of simulating the deletion <p>   
+ * 
+ * @author bsiri
+ *
+ */
 public interface SuppressionPreviewReport  {
 	
 	String toString(MessageSource source, Locale locale);

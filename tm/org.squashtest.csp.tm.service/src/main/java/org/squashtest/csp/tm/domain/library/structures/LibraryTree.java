@@ -23,7 +23,6 @@ package org.squashtest.csp.tm.domain.library.structures;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.HashMap;
-import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
 import java.util.NoSuchElementException;
@@ -33,33 +32,71 @@ import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.collections.Transformer;
 
 
-/**
- * That tree has the following specifics : 
+
+/*
+ * TODO : the current implementation is reaching its limits. Only few cases are implemented for now, but on the long run we may have to 
+ * implement one specific solution for each of them, unless we make a more generic solution.
  * 
- *  - This is a layered tree. The layer n is the collection of nodes of depth n. So you can ask for all the nodes
- * of a particular layer.
- *  - There may be more than one node at layer 0. ie, the root(s). 
- *  - A node in layer n has a father in layer n-1, except for layer 0
- *  - The order of two nodes within the same layer is undefined. So that tree implements a weak order
+ * Basically detecting a network of locked nodes means :
+ * 
+ * 1) build the network of entities that are relevant for the current problem, 
+ * 2) mark the first locked node (seeds),
+ * 3) propagate to other nodes (the meaning of propagation may vary from one problem to another).
+ * 
+ * So instead of using things like trees and graphs and tons of variations of these let's think of a generic and configurable class. That will be useful
+ * the day we'll need to chain the results of multiple instances to resolve complex dependencies. 
+ */
+
+
+/**
+ * <p>
+ * This tree can have multiple roots and internally its structure is layered. The details are :
+ * <ul>
+ *  <li> This is a layered tree : the layer <i>n</i> is the collection of nodes of depth <i>n</i>. Just like nodes, layers can be accessed via the proper methods. </li>
+ *  <li> There may be more than one node at layer 0. ie, the root(s), </li>
+ *  <li> The parent of a node of layer <i>n</i> belongs to layer <i>n-1</i>, except for layer 0, </li>
+ *  <li> The order of two nodes within the same layer is undefined (weak ordering). </li>
+ * </ul>
  *  
- *  Note that in this simple implementation only the addition of nodes is allowed.
+ * The implementation is simple because its only purpose is to provide a structure to store data in. The structure is the very goal here so its not supposed to be structurally modified or
+ * rebalanced : its built once and for all.  
+ * 
+ * @see TreeNode
+ * </p>
+ *  
+ *  @author bsiri
  */
 
 public class  LibraryTree<T extends TreeNode<T>>{
 	
 	protected final Map<Integer, List<T>> layers = new HashMap<Integer, List<T>>();
 	
+	
+	/**
+	 * Given an integer, returns the layer at the corresponding depth in the tree. That integer must be comprised within the acceptable bounds of that tree, ie 0 and {@link #getDepth()}.
+	 * The layer is returned as a list of nodes.
+	 * 
+	 * @param depth the depth of the layer we want an access to.
+	 * @return the layer as a list of nodes.
+	 * @throws IndexOutOfBoundsException
+	 */
 	public List<T> getLayer(Integer depth){
 		
 		if (depth<0) throw new IndexOutOfBoundsException("Below lower bound : "+depth);
 		if (depth > Collections.max(layers.keySet())) throw new IndexOutOfBoundsException("Above upper bound : "+depth);
-
 		
 		return layers.get(depth);		
 		
 	}
 	
-
+	/**
+	 * Given a TreeNodePair (see documentation of the inner class for details), will add the child node to the tree. 
+	 * If the child node have no parents it will be added to layer 0 (ie, new root). 
+	 * Else, the child node will belong to the layer following its parent's layer.
+	 * 
+	 * @param newPair a TreeNodePair with informations regarding parent and child node included.
+	 * @throws NoSuchElementException if a parent node cannot be found.
+	 */
 	public void addNode(TreeNodePair newPair){
 		
 		T parent = getNode(newPair.getParentKey());
@@ -85,6 +122,12 @@ public class  LibraryTree<T extends TreeNode<T>>{
 		
 	}
 	
+	/**
+	 * Same than {@link #addNode(TreeNodePair)}, but the TreeNodePair parameter will be built using the parameter provided here.
+	 * 
+	 * @param parentKey the key designating the parent node.
+	 * @param childNode the child we want eventually to insert.
+	 */
 	public void  addNode(Long parentKey, T childNode){
 		addNode(new TreeNodePair(parentKey, childNode));		
 	}
@@ -92,10 +135,11 @@ public class  LibraryTree<T extends TreeNode<T>>{
 
 	
 	/**
-	 * the parameter is a list of TreeNodePair, that associate a child node with the key of its parent. 
-	 * The list may be unsorted, since that method will sort them first. Unsorted means that you doesn't 
-	 * have to take care of the node declaration order.
+	 * Accepts a list of TreeNodePair and will add all the nodes in that list (see TreeNodePair and TreeNode). Such list can be called a flat tree and passing one to this method 
+	 * is a convenient way for tree initialization. 
+	 * You do not need to pass the TreeNodePairs in any order : the method will take care of inserting them in the correct order (ie parents before children). 
 	 * 
+	 * @see {@link #sortData(List)}, TreeNode, TreeNodePair 
 	 * 
 	 * @param unsortedData the flat representation of the tree.
 	 */
@@ -112,28 +156,28 @@ public class  LibraryTree<T extends TreeNode<T>>{
 	
 	/**
 	 * 
-	 * Sorting algorithms that will sort the data such as data for child nodes will be inserted after the data for the parent node.
+	 * <p>This method accepts a list of TreeNodePair and returns the sorted version of that list. Sorting means here that nodes will be grouped by layers and the layer will be ordered.</p>
 	 * 
-	 * The TreeNodePair pairs the key of the parent node with all the data of the child node. 
-	 * 
-	 * we do not sort by comparing pairs of nodes, we sort them such as (looping over TreeNodePair d) :
-	 *  - if there are no pair x such as d.parent == x.child.key (d's parent is not part of the output list), then d.child is inserted first.
-	 *  - if there is a node x such as d.parent == x.child.key (d's parent is part of the output list) then d is inserted at position(x)+1
-	 *  
-	 *  x is taken from the output list.
-	 *  
-	 *  Note : the output implements a weak order. ie if two data have the same key their belong to the same layer of the tree, but their precise order within that layer is 
+	 * <p>
+	 * 	For each TreeNodePair <i>d</i> from the input list:
+	 * <ul>
+	 *  <li>if there are no pair <i>x</i> such as <i>d.parent</i> == <i>x.child.key</i> (<i>d</i>'s parent is not part of the output list), then <i>d</i>.child is inserted first</li>
+	 *  <li>if there is a node <i>x</i> such as <i>d</i>.parent == <i>x</i>.child.key (<i>d</i>'s parent is part of the output list) then <i>d</i> is inserted at position(<i>x</i>)+1</li>
+	 * </ul>  
+	 * <i>x</i> is taken from the output list. Note : the output implements a weak order. ie if two data have the same key their belong to the same layer of the tree, but their precise order within that layer is 
 	 *  undefined.
+	 *  
+	 * </p>
 	 * 
-	 * @param unsortedData
-	 * @return
+	 * @param unsortedData an unsorted list of TreeNodePair
+	 * @return the sorted list of TreeNodePair
+	 * @see TreeNode, TreeNodePair.
 	 */
 	protected List<TreeNodePair> sortData(List<TreeNodePair> unsortedData){
 		List<TreeNodePair> sortedList = new ArrayList<TreeNodePair>(unsortedData.size());
 		
 		//the list below will hold lists of all keys (node identifier) we treated. Since those keys are our main comparators it's a good idea to keep a shorthand on them.
 		List<Long> insertedNodes = new ArrayList<Long>(unsortedData.size());
-		
 		
 		for (TreeNodePair data : unsortedData){
 			//the following statement is true if the data has a parent in the output list
@@ -151,7 +195,15 @@ public class  LibraryTree<T extends TreeNode<T>>{
 	}
 	
 	
-	
+	/**
+	 * 
+	 * Accepts a identifier - aka key - and returns the corresponding node if found.
+	 * 
+	 * @param key the key identifying a node
+	 * @return the node if found
+	 * @throws NoSuchElementException if the node was not found.
+	 * 
+	 */
 	public T getNode(Long key){
 		
 		if (key == null) return null;
@@ -165,13 +217,14 @@ public class  LibraryTree<T extends TreeNode<T>>{
 	}
 	
 
-	
-	
 	/**
-	 * that method will apply a closure on all nodes, with the following rules ;
-	 * - layer n+1 will be treated before layer n
-	 * - all nodes within a given layer will be applied the closure regardless their ordering. 
 	 * 
+	 * <p>Accepts a {@link Closure} that will be applied on the nodes using bottom-up exploration. The method will walk up the tree :
+	 * <ul> 
+	 *  <li>layer <i>n+1</i> will be treated before layer <i>n</i> (reverse order)</li>
+	 *  <li>nodes within a given layer will be treated regardless their ordering</li>
+	 * </ul> 
+	 * </p>
 	 * @param closure code to apply on the nodes.
 	 */
 	public void doBottomUp(Closure closure){
@@ -186,6 +239,16 @@ public class  LibraryTree<T extends TreeNode<T>>{
 	
 	
 
+	/**
+	 * <p>
+	 * Accepts a {@link Closure} that will be applied on the nodes using top-down exploration. The method will walk down the tree : 
+	 * <ul>
+	 * 	<li>the layer <i>n</i> will be treated before layer <i>n+1</i> (natural order)</li>
+	 *  <li>nodes within a given layer will be treated regardless their ordering</li>
+	 * </ul>
+	 * </p>
+	 * @param closure code to apply on the nodes.
+	 */
 	public void doTopDown(Closure closure){
 		Integer layerIndex = 0;
 
@@ -199,9 +262,15 @@ public class  LibraryTree<T extends TreeNode<T>>{
 	
 	
 	/**
-	 * for each node, if its key one of the provided data, the node will be updated with those new data.
+	 * <p>
+	 * Accepts a list of TreeNodes and use their data to update existing nodes data. The TreeNodes of the input list are merely carrying informations : the key property will identify 
+	 * actual nodes in the tree and the rest of their data will be used to update the found nodes. 
+	 * </p>
+	 * <p>The particulars of how data will be merged depends on how the TreeNodes implement {@link TreeNode#updateWith(TreeNode)}.</p>
+	 * 
+	 * @throws NoSuchElementException if one of the node was not found.
 	 */
-	public  void merge(List<T> mergeData){
+	public void merge(List<T> mergeData){
 	
 		for (T data : mergeData){
 			T node = getNode(data.getKey());
@@ -211,29 +280,26 @@ public class  LibraryTree<T extends TreeNode<T>>{
 	}
 	
 	/**
-	 * That method will return a weakly-sorted list (by depth) of the result of a closure applied on each nodes.
+	 * <p>
+	 * That method will gather arbitrary informations on every single nodes and return the list of the gathered informations. What will be gathered and how it is done is defined in the 
+	 * {@link Transformer} parameter. The tree will be processed top-down, ie, walked down (see {@link #doTopDown(Closure)}).
+	 * </p>
 	 * 
-	 * @param <X>
-	 * @param transformer
-	 * @return
-	 */
-	
+	 * @param <X> the type of the data returned by the transformer.
+	 * @param transformer the code to be applied over all the nodes.
+	 * @return the list of the gathered data.
+	 */	
 	@SuppressWarnings("unchecked")
 	public <X> List<X> collect(Transformer transformer){
-		
-		List<T> result = new LinkedList<T>();
-		
-		//doing so theoretically ensure that the nodes are sorted by depth
-		for (List<T> layer : layers.values()) result.addAll(layer);
 		
 		return new ArrayList<X>(CollectionUtils.collect(getAllNodes(), transformer));	
 				
 	}
 	
 	/**
-	 * short hand for #collect with a Transformer returning the data.key for each nodes.
+	 * <p>short hand for {@link #collect(Transformer)} with a Transformer returning the data.key for each nodes.</p>
 	 * 
-	 * @return just what I said.
+	 * @return the list of the node keys.
 	 */
 	public List<Long> collectKeys(){
 		return collect(new Transformer() {		
@@ -246,7 +312,9 @@ public class  LibraryTree<T extends TreeNode<T>>{
 	}
 	
 
-	
+	/**
+	 * @return all the nodes.
+	 */
 	public List<T> getAllNodes(){
 		List<T> result = new ArrayList<T>();
 		for (List<T> layer : layers.values()){
@@ -254,7 +322,12 @@ public class  LibraryTree<T extends TreeNode<T>>{
 		}
 		return result;
 	}
+
 	
+	/**
+	 * return the depth of the tree, ie how many layers does the tree count.
+	 * @return the depth.
+	 */
 	public int getDepth(){
 		return Collections.max(layers.keySet())+1;
 	}
@@ -262,6 +335,7 @@ public class  LibraryTree<T extends TreeNode<T>>{
 	
 	/* ******************************** scaffolding stuffs ******************************* */
 	
+
 	protected T createNewNode(T parent, int depth, T newNode){
 		newNode.setParent(parent);
 		newNode.setDepth(depth);
@@ -271,7 +345,13 @@ public class  LibraryTree<T extends TreeNode<T>>{
 	
 
 	
-	
+	/**
+	 * A TreeNodePair is a scaffolding class which is mainly used when initializing a tree. It simply pairs a child treeNode with the key of its parent. A child node having a null parent
+	 * will be considered as a root node.
+	 * 
+	 * @author bsiri
+	 *
+	 */
 	public class TreeNodePair{
 		private Long parentKey;
 		private T child;
@@ -302,11 +382,24 @@ public class  LibraryTree<T extends TreeNode<T>>{
 	}
 
 	
-	//factories
+	/**
+	 * Returns a new instance of a TreeNodePair. Basically the same thing than calling TreeNodePair constructors, that method exists mainly for semantic reasons (it guarantees that the 
+	 * returned TreeNodePair instance is compatible with the tree (regarding generic types). 
+	 * 
+	 * @return a new instance of a TreeNodePair.
+	 */
 	public TreeNodePair newPair(){
 		return new TreeNodePair();
 	}
 	
+	
+	/**
+	 * An initializing version of {@link #newPair()}.
+	 * 
+	 * @param parentKey the identifier of the parent node. 
+	 * @param child the child node.
+	 * @return an initialized instance of TreeNodePair.
+	 */
 	public TreeNodePair newPair(Long parentKey, T child){
 		return new TreeNodePair(parentKey, child);
 	}
