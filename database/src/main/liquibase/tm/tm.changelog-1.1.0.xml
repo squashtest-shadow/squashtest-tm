@@ -50,5 +50,14 @@
 			<where>EXECUTION_STATUS='BLOQUED'</where>
 		</update>
 	</changeSet>
+	
+	<changeSet id="tm-1.1.0.04" author="bsiri">
+		<comment>Adds a status to the requirements</comment>
+		<addColumn tableName="REQUIREMENT" >
+			<column name="REQUIREMENT_STATUS" type="java.sql.Types.VARCHAR(255)" 
+			value="WORK_IN_PROGRESS" defaultValue="WORK_IN_PROGRESS" />
+		</addColumn>	
+	</changeSet>
+	
 </databaseChangeLog>
  
