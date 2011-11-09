@@ -25,15 +25,24 @@ import java.util.ArrayList;
 import java.util.List;
 
 /**
- * note : the depth starts at 0. See LibraryTree for the rest of the documentation.
+ * 
+ * <p>Please read also {@link LibraryTree}.</p>
+ * 
+ * <p>
+ *  TreeNode is the type of node used by a LibraryTree. A TreeNode maintains informations regarding its position in the tree, ie its parent node, its layer/depth etc. Each node is identified
+ *  by a key, that will be used to identify each node uniquely. While that class does not override equals/hashCode using the key as the sole criteria, it proposes instead a method
+ *  ({@link #isSame(TreeNode)} for that.
+ * </p>
+ * 
+ * <p>
+ *  Subclasses of TreeNode should be genericized <i>Enum</i>-style, i.e. generics of themselves, and implement {@link #updateWith(TreeNode)}.
+ * </p>
  * 
  * 
  * @author bsiri
  *
- * @param <T> 
+ * @param <T> the type of the actual subclass.
  */
-
-
 
 public abstract class TreeNode<T extends TreeNode<T>> {
 	
@@ -45,6 +54,10 @@ public abstract class TreeNode<T extends TreeNode<T>> {
 	private Long key;
 	
 	
+	/**
+	 * 
+	 * @return the children nodes of this node.
+	 */
 	public List<T> getChildren(){
 		return children ;
 	}
@@ -81,16 +94,23 @@ public abstract class TreeNode<T extends TreeNode<T>> {
 	public void setKey(Long key) {
 		this.key = key;
 	}
-
+	
+	/**
+	 * 
+	 * @return the depth of that node, i.e. the layer depth it belongs to.
+	 */
 	int getDepth(){
 		return depth;
 	}
+	
 	
 	void setDepth(int depth){
 		this.depth=depth;
 	}
 
-	
+	/**
+	 * @return the list of the ancestors of this node, from its parent to the ancestor root node (they come in reverse order). 
+	 */
 	List<T> getHierarchy(){
 		List<T> result = new ArrayList<T>();
 		
@@ -106,6 +126,9 @@ public abstract class TreeNode<T extends TreeNode<T>> {
 	}
 	
 	
+	/**
+	 * Resets and recomputes the depth of the node from scratch.
+	 */
 	void recomputeDepth(){
 		depth = getHierarchy().size() - 1;
 	}
@@ -115,7 +138,11 @@ public abstract class TreeNode<T extends TreeNode<T>> {
 		this.parent=parent;
 	}
 
-	
+	/**
+	 * Adds a child to this node and wire their properties accordingly.	
+	 * 
+	 * @param child the new child.
+	 */
 	void addChild(T child){
 		child.setParent((T)this);
 		child.setTree(tree);
@@ -123,15 +150,19 @@ public abstract class TreeNode<T extends TreeNode<T>> {
 		children.add(child);
 	}
 	
+	
+	/**
+	 * <p>
+	 * That method tells if two nodes refer to the same node. Two nodes are considered as same if their keys are equal regardless of their
+	 * other properties. A node compared to null is considered different. Two node having null keys are considered as same, thought that feature is
+	 * not used in theory.
+	 * </p>
+	 * 
+	 * @param node
+	 * @return
+	 */
 	public boolean isSame(T node){
 		boolean result;
-		
-		/*
-		if (node == null) return false;
-		if ((key==null) && (node.getKey()!=null)) return false;
-		if ((key==null) && (node.getKey())==null) return true;
-		return key.equals(node.getKey());
-		*/
 		
 		if (node==null){
 			result=false;
