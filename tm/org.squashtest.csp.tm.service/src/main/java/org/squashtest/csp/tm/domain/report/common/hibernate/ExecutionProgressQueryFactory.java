@@ -20,7 +20,8 @@
  */
 package org.squashtest.csp.tm.domain.report.common.hibernate;
 
-import javax.annotation.Resource;
+import javax.inject.Inject;
+import javax.inject.Named;
 
 import org.springframework.stereotype.Component;
 import org.squashtest.csp.tm.domain.report.Report;
@@ -41,7 +42,7 @@ public class ExecutionProgressQueryFactory implements
 	}
 
 	@Override
-	@Resource(name="reportExecutionProgressFollowUp")
+	@Inject @Named("reportExecutionProgressFollowUp")
 	public void setReport(Report report) {
 		report.setQueryFactory(this);
 	}

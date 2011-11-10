@@ -20,7 +20,8 @@
  */
 package org.squashtest.csp.tm.domain.report.common.hibernate;
 
-import javax.annotation.Resource;
+import javax.inject.Inject;
+import javax.inject.Named;
 
 import org.springframework.stereotype.Component;
 import org.squashtest.csp.tm.domain.report.Report;
@@ -36,7 +37,7 @@ public class RequirementCoverageByTestsQueryFactory implements ReportQueryFactor
 	}
 
 	@Override
-	@Resource(name = "reportRequirementCoverageByTests")
+	@Inject @Named("reportRequirementCoverageByTests")
 	public void setReport(Report report) {
 		report.setQueryFactory(this);
 	}

@@ -20,7 +20,8 @@
  */
 package org.squashtest.csp.tm.domain.report.common;
 
-import javax.annotation.Resource;
+import javax.inject.Inject;
+import javax.inject.Named;
 
 import org.springframework.stereotype.Component;
 import org.squashtest.csp.tm.domain.report.Report;
@@ -33,19 +34,18 @@ import org.squashtest.csp.tm.domain.report.view.ReportViewCatalog;
 public class ReportExecutionProgressFollowUp extends Report {
 	
 	{
-
 		resourceKeyDescription="squashtest.report.report.executionprogressfollowup.description";
 		resourceKeyName="squashtest.report.report.executionprogressfollowup.name";
 		initViewCatalog();
 	}
 
-	@Resource(name="reportTypeProgressFollowUp")
+	@Inject @Named("reportTypeProgressFollowUp")
 	@Override
 	protected void setReportType(ReportType reportType) {
 		this.reportType=reportType;
 	}
 
-	@Resource(name="categoryExecutionPhase")
+	@Inject @Named("categoryExecutionPhase")
 	@Override
 	protected void setReportCategory(ReportCategory reportCategory) {
 		this.reportCategory=reportCategory;

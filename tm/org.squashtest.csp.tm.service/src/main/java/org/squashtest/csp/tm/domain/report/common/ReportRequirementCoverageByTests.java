@@ -20,7 +20,8 @@
  */
 package org.squashtest.csp.tm.domain.report.common;
 
-import javax.annotation.Resource;
+import javax.inject.Inject;
+import javax.inject.Named;
 
 import org.springframework.stereotype.Component;
 import org.squashtest.csp.tm.domain.report.Report;
@@ -39,13 +40,13 @@ public class ReportRequirementCoverageByTests extends Report {
 		initViewCatalog();
 	}
 
-	@Resource(name = "reportTypeProgressFollowUp")
+	@Inject @Named("reportTypeProgressFollowUp")
 	@Override
 	protected void setReportType(ReportType reportType) {
 		this.reportType = reportType;
 	}
 
-	@Resource(name = "categoryPreparationPhase")
+	@Inject @Named("categoryPreparationPhase")
 	@Override
 	protected void setReportCategory(ReportCategory reportCategory) {
 		this.reportCategory = reportCategory;
