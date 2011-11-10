@@ -133,8 +133,8 @@ public class RequirementModificationController {
 
 		requirementModService.rename(requirementId, newName);
 		LOGGER.info("RequirementModificationController : renaming " + requirementId + " as " + newName);
-		final String reNewName = new String(newName);
-		return new Object(){ public String newName = reNewName ; };
+		final String reNewName = newName;
+		return new Object(){ public String newName = reNewName ; }; // NOSONAR : "Unread field" is actually used by json marshaller 
 
 	}
 

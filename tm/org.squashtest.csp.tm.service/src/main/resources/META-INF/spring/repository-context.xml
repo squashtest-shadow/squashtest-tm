@@ -90,7 +90,6 @@
 				
 				<value>org.squashtest.csp.tm.domain.users.User</value>
 				<value>org.squashtest.csp.tm.domain.users.UsersGroup</value>
-				
 			</list>
 		</property>
 		<property name="namingStrategy">

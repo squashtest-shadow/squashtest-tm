@@ -134,6 +134,7 @@
 			<column name="QUALIFIED_NAME" value="squashtest.authz.group.core.Admin" />
 		</insert>
 
+		<!-- LAST_INSERT_ID is MySQL syntax. H2 1.2 apparently understands it, H2 1.3 does not. So do not upgrade H2. -->
 		<insert tableName="CORE_GROUP_AUTHORITY">
 			<column name="GROUP_ID" valueComputed="LAST_INSERT_ID()" />
 			<column name="AUTHORITY" value="ROLE_ADMIN" />
