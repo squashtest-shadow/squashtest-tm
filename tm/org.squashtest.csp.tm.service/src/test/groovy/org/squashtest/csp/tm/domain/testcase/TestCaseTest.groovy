@@ -26,6 +26,7 @@ import org.squashtest.csp.tm.domain.requirement.Requirement;
 
 
 import spock.lang.Specification;
+import spock.lang.Unroll;
 
 class TestCaseTest extends Specification {
 	TestCase testCase = new TestCase();
@@ -202,5 +203,55 @@ class TestCaseTest extends Specification {
 
 		then:
 		thrown(UnknownEntityException)
+	}
+	
+	@Unroll("copy of test case should have the same '#propName' property")
+	def "copy of a test case should have the same simple properties"() {
+		given:
+		TestCase source = new TestCase()
+		source[propName] = propValue 
+		
+		when: 
+		def copy = source.createCopy()
+
+		then:
+		copy[propName] == source[propName]
+		
+		where:
+		propName        | propValue
+		"name"          | "foo"
+		"description"   | "bar"
+		"executionMode" | TestCaseExecutionMode.AUTOMATED
+		"weight"        | TestCaseWeight.HIGH
+	}
+	
+	def "copy of a test case should have the same steps"() {
+		given:
+		TestCase source = new TestCase()
+		ActionTestStep sourceStep = new ActionTestStep(action: "fingerpoke opponent", expectedResult: "win the belt")
+		source.steps << sourceStep
+		
+		when: 
+		def copy = source.createCopy()
+
+		then:
+		copy.steps.size() == 1
+		copy.steps[0].action == sourceStep.action
+		copy.steps[0].expectedResult == sourceStep.expectedResult
+		!copy.steps[0].is(sourceStep)
+		
+	}
+	
+	def "copy of a test case should verify the same requirements"() {
+		given:
+		TestCase source = new TestCase()
+		Requirement req = new Requirement(name: "")
+		source.addVerifiedRequirement req
+		
+		when: 
+		def copy = source.createCopy()
+
+		then:
+		copy.verifiedRequirements == source.verifiedRequirements
 	}
 }

@@ -20,6 +20,8 @@
  */
 package org.squashtest.csp.tm.domain.testcase;
 
+import static org.squashtest.csp.tm.domain.testcase.TestCaseWeight.*;
+
 import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.List;
@@ -53,14 +55,13 @@ import org.squashtest.csp.tm.domain.requirement.Requirement;
 @Entity
 @PrimaryKeyJoinColumn(name = "TCLN_ID")
 public class TestCase extends TestCaseLibraryNode implements Attachable {
-	@Basic(optional = false)
-	@Column(updatable = false)
-	private final int version = 1;
-
 	private static final String CLASS_NAME = "org.squashtest.csp.tm.domain.testcase.TestCase";
 	private static final String SIMPLE_CLASS_NAME = "TestCase";
 
-	@Enumerated(EnumType.STRING)
+	@Column(updatable = false)
+	private final int version = 1;
+
+	@Enumerated(EnumType.STRING) @Basic(optional=false)
 	private TestCaseExecutionMode executionMode = TestCaseExecutionMode.MANUAL;
 
 	@OneToMany(cascade = { CascadeType.PERSIST, CascadeType.MERGE })
@@ -72,17 +73,21 @@ public class TestCase extends TestCaseLibraryNode implements Attachable {
 	 * Collection of {@link Requirement}s which are verified by this {@link TestCase}
 	 */
 	@ManyToMany
-	/*
-	 * @Filter(name="filter.entity.deleted", condition =
-	 * "RLN_ID in (select rln.RLN_ID from REQUIREMENT_LIBRARY_NODE rln " + " where rln.DELETED_ON is null) " )
-	 */
 	@JoinTable(name = "TEST_CASE_REQUIREMENT_LINK", joinColumns = @JoinColumn(name = "TEST_CASE_ID"), inverseJoinColumns = @JoinColumn(name = "REQUIREMENT_ID"))
 	private final Set<Requirement> verifiedRequirements = new HashSet<Requirement>();
 
 	@OneToOne(cascade = { CascadeType.PERSIST, CascadeType.MERGE })
 	@JoinColumn(name = "ATTACHMENT_LIST_ID")
 	private final AttachmentList attachmentCollection = new AttachmentList();
-
+	
+	@Enumerated(EnumType.STRING) @Basic(optional=false)
+	private TestCaseWeight weight = LOW;
+	
+	/**
+	 * Should the weight be automatically computed. 
+	 */
+	private boolean weightAuto = false;
+	
 	public TestCase() {
 		super();
 	}
@@ -103,8 +108,7 @@ public class TestCase extends TestCaseLibraryNode implements Attachable {
 		return steps;
 	}
 
-	// why is that a template method ?
-	public <STEP extends TestStep> void addStep(@NotNull STEP step) {
+	public void addStep(@NotNull TestStep step) {
 		getSteps().add(step);
 	}
 
@@ -186,25 +190,39 @@ public class TestCase extends TestCaseLibraryNode implements Attachable {
 	@Override
 	public TestCase createCopy() {
 		TestCase copy = new TestCase();
-		copy.setName(this.getName());
-		copy.setDescription(this.getDescription());
-		copy.setExecutionMode(this.getExecutionMode());
-
-		for (Requirement requirement : this.verifiedRequirements) {
-			copy.addVerifiedRequirement(requirement);
-		}
-
-		for (TestStep testStep : this.steps) {
-			copy.addStep(testStep.createCopy());
-		}
-
-		for (Attachment tcAttach : this.getAttachmentCollection().getAllAttachments()) {
-			Attachment atCopy = tcAttach.hardCopy();
-			copy.getAttachmentCollection().addAttachment(atCopy);
-		}
-
+		copy.setSimplePropertiesUsing(this);
+		copy.addCopiesOfSteps(this);
+		copy.addCopiesOfAttachments(this);
+		copy.verifiesRequirementsVerifiedBy(this);
 		copy.notifyAssociatedWithProject(this.getProject());
+
 		return copy;
+	}
+
+	private void addCopiesOfAttachments(TestCase source) {
+		for (Attachment tcAttach : source.getAttachmentCollection().getAllAttachments()) {
+			Attachment atCopy = tcAttach.hardCopy();
+			this.getAttachmentCollection().addAttachment(atCopy);
+		}
+	}
+
+	private void addCopiesOfSteps(TestCase source) {
+		for (TestStep testStep : source.getSteps()) {
+			this.addStep(testStep.createCopy());
+		}
+	}
+
+	private void verifiesRequirementsVerifiedBy(TestCase source) {
+		for (Requirement requirement : source.verifiedRequirements) {
+			this.addVerifiedRequirement(requirement);
+		}
+	}
+
+	private void setSimplePropertiesUsing(TestCase source) {
+		this.setName(source.getName());
+		this.setDescription(source.getDescription());
+		this.executionMode = source.getExecutionMode();
+		this.weight = source.getWeight();
 	}
 
 	public int getPositionOfStep(long stepId) throws UnknownEntityException {
@@ -226,4 +244,33 @@ public class TestCase extends TestCaseLibraryNode implements Attachable {
 	public String getClassName() {
 		return TestCase.CLASS_NAME;
 	}
+	
+	/**
+	 * @return the weight
+	 */
+	public TestCaseWeight getWeight() {
+		return weight;
+	}
+
+	/**
+	 * @param weight the weight to set
+	 */
+	public void setWeight(@NotNull TestCaseWeight weight) {
+		this.weight = weight;
+	}
+
+	/**
+	 * @return the weightAuto
+	 */
+	public boolean isWeightAuto() {
+		return weightAuto;
+	}
+
+	/**
+	 * @param weightAuto the weightAuto to set
+	 */
+	public void setWeightAuto(boolean weightAuto) {
+		this.weightAuto = weightAuto;
+	}
+
 }

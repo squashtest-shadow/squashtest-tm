@@ -55,9 +55,26 @@
 		<comment>Adds a status to the requirements</comment>
 		<addColumn tableName="REQUIREMENT" >
 			<column name="REQUIREMENT_STATUS" type="java.sql.Types.VARCHAR(255)" 
-			value="WORK_IN_PROGRESS" defaultValue="WORK_IN_PROGRESS" />
+			defaultValue="WORK_IN_PROGRESS" />
 		</addColumn>	
 	</changeSet>
 	
+	<changeSet id="tm-1.1.0.05" author="gfouquet">
+		<comment>Adds a weight to test cases</comment>
+		<addColumn tableName="TEST_CASE" >
+			<column name="WEIGHT" type="VARCHAR(20)" defaultValue="LOW" remarks="The weight of the test case">
+				<constraints nullable="false"/>
+			</column>
+		</addColumn>	
+	</changeSet>
+
+	<changeSet id="tm-1.1.0.06" author="gfouquet">
+		<comment>Adds a auto compute weight property to test cases</comment>
+		<addColumn tableName="TEST_CASE" >
+			<column name="AUTO_WEIGHT" type="BOOLEAN" defaultValue="false" remarks="Should the weight be automatically computed">
+				<constraints nullable="false"/>
+			</column>
+		</addColumn>	
+	</changeSet>
 </databaseChangeLog>
  
