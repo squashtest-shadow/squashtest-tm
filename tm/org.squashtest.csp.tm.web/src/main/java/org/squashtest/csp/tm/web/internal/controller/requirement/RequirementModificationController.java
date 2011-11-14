@@ -295,7 +295,7 @@ public class RequirementModificationController {
 		SortedMap<String, String> map = new TreeMap<String, String>(RequirementStatus.stringComparator());
 		
 		for (RequirementStatus iterStatus : status.getAvailableNextStatus()){
-			map.put(status.toString(), internationalize(status, locale));
+			map.put(iterStatus.toString(), internationalize(iterStatus, locale));
 		}
 		map.put("selected", status.toString());
 		

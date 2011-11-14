@@ -25,6 +25,7 @@ import org.springframework.context.MessageSource
 import org.springframework.web.servlet.ModelAndView
 import org.squashtest.csp.tm.domain.requirement.Requirement
 import org.squashtest.csp.tm.domain.requirement.RequirementCriticality
+import org.squashtest.csp.tm.domain.requirement.RequirementStatus
 import org.squashtest.csp.tm.service.RequirementModificationService
 
 import spock.lang.Specification
@@ -45,6 +46,7 @@ class RequirementModificationControllerTest extends Specification {
 		given:
 		Requirement req = Mock(Requirement.class)
 		req.getCriticality() >> RequirementCriticality.UNDEFINED
+		req.getStatus() >> RequirementStatus.WORK_IN_PROGRESS
 		long reqId=15
 		requirementModificationService.findById(15) >> req
 		

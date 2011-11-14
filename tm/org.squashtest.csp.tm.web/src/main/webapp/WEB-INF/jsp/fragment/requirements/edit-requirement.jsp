@@ -165,7 +165,7 @@
 					<div class="display-table-cell">
 						<authz:authorized hasRole="ROLE_ADMIN" hasPermission="WRITE" domainObject="${ requirement }">
 						<div id="requirement-status"><s:message code="requirement.status.${ requirement.status }" /></div>
-						<comp:reloadableselect-jeditable componentId="requirement-status" jsonContentUrl="${getStatusComboContent}" targetUrl="${requirementUrl}" />
+						<comp:select-jeditable componentId="requirement-status" jsonUrl="${getStatusComboContent}" targetUrl="${requirementUrl}" />
 						</authz:authorized>
 						<authz:notAuthorized hasRole="ROLE_ADMIN" hasPermission="WRITE" domainObject="${ requirement }">
 							<s:message code="requirement.status.${ requirement.status }" />

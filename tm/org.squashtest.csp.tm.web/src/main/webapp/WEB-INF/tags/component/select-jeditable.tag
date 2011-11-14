@@ -26,7 +26,10 @@
 <%@ attribute name="targetUrl" required="true" %>
 <%@ attribute name="componentId" required="true" %>
 <%@ attribute name="submitCallback" required="false" %>
-<%@ attribute name="jsonData" required="true" description="json formated data displayed in the select" %>
+<%@ attribute name="jsonData" required="false" description="string representing the json formated data displayed in the select. Either jsonData or 
+															jsonUrl must be defined." %>
+<%@ attribute name="jsonUrl" required="false" description="url where to fetch json formated data displayed in the select. Either jsonData or 
+															jsonUrl must be defined." %>
 
 <%@ taglib uri="http://java.sun.com/jsp/jstl/core" prefix="c" %>
 <%@ taglib prefix="f" uri="http://java.sun.com/jsp/jstl/fmt" %>
@@ -43,7 +46,8 @@
 			onblur : 'submit',					
 			<c:if test="${ not empty submitCallback }" >callback : function(value, settings){${submitCallback}(value, settings);},</c:if>
 			indicator : '<img src="${ pageContext.servletContext.contextPath }/images/indicator.gif" alt="processing..." />',
-			data : '${jsonData}'
+			<c:if test="${not empty jsonData}">data : '${jsonData}'</c:if>
+			<c:if test="${not empty jsonUrl}">loadurl : '${jsonUrl}'</c:if>
 			
 		});
 	})
