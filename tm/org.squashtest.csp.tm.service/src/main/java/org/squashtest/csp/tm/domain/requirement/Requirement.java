@@ -25,6 +25,7 @@ import java.util.Set;
 
 import javax.persistence.Basic;
 import javax.persistence.CascadeType;
+import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.EnumType;
 import javax.persistence.Enumerated;
@@ -67,6 +68,7 @@ public class Requirement extends RequirementLibraryNode implements Attachable {
 	private RequirementCriticality criticality = RequirementCriticality.UNDEFINED;
 
 	@Enumerated(EnumType.STRING)
+	@Column(name = "REQUIREMENT_STATUS")
 	private RequirementStatus status = RequirementStatus.WORK_IN_PROGRESS;
 	
 	@OneToOne(cascade = { CascadeType.ALL }, orphanRemoval=true)
