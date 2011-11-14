@@ -21,29 +21,28 @@
 
 package org.squashtest.csp.tm.domain.testcase;
 
-import org.squashtest.csp.tm.domain.Internationalizable;
+import static org.squashtest.csp.tm.domain.testcase.TestCaseImportance.*;
+import spock.lang.Specification;
+import spock.lang.Unroll;
 
 /**
- * 
  * @author Gregory Fouquet
  *
  */
-public enum TestCaseWeight implements Internationalizable, Comparable<TestCaseWeight> {
-	VERY_HIGH(1), HIGH(2), MEDIUM(3), LOW(4);
-	
-	private static final String I18N_KEY_ROOT = "test-case.weight.";
-
-	private final int value;
-	
-	private TestCaseWeight(int value) {
-		this.value = value;
-	}
-
-	/** (non-Javadoc)
-	 * @see org.squashtest.csp.tm.domain.Internationalizable#getI18nKey()
-	 */
-	@Override
-	public String getI18nKey() {
-		return I18N_KEY_ROOT + this.name();
+class TestCaseWeightTest extends Specification {
+	@Unroll("i18n key of #status should be '#key'")
+	def "should return i18n key"() {
+		when:
+		def actualKey = status.i18nKey
+		
+		then:
+		actualKey == key
+		
+		where:
+		status    | key
+		LOW       | "test-case.importance.LOW"
+		MEDIUM    | "test-case.importance.MEDIUM"
+		HIGH      | "test-case.importance.HIGH"
+		VERY_HIGH | "test-case.importance.VERY_HIGH"
 	}
 }

@@ -24,7 +24,6 @@ package org.squashtest.csp.tm.domain.testcase
 import org.squashtest.csp.tm.domain.UnknownEntityException;
 import org.squashtest.csp.tm.domain.requirement.Requirement;
 
-
 import spock.lang.Specification;
 import spock.lang.Unroll;
 
@@ -222,7 +221,7 @@ class TestCaseTest extends Specification {
 		"name"          | "foo"
 		"description"   | "bar"
 		"executionMode" | TestCaseExecutionMode.AUTOMATED
-		"weight"        | TestCaseWeight.HIGH
+		"importance"    | TestCaseImportance.HIGH
 	}
 	
 	def "copy of a test case should have the same steps"() {

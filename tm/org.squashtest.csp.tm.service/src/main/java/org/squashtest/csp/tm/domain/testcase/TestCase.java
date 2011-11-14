@@ -20,7 +20,7 @@
  */
 package org.squashtest.csp.tm.domain.testcase;
 
-import static org.squashtest.csp.tm.domain.testcase.TestCaseWeight.*;
+import static org.squashtest.csp.tm.domain.testcase.TestCaseImportance.*;
 
 import java.util.ArrayList;
 import java.util.HashSet;
@@ -81,12 +81,12 @@ public class TestCase extends TestCaseLibraryNode implements Attachable {
 	private final AttachmentList attachmentCollection = new AttachmentList();
 	
 	@Enumerated(EnumType.STRING) @Basic(optional=false)
-	private TestCaseWeight weight = LOW;
+	private TestCaseImportance importance = LOW;
 	
 	/**
-	 * Should the weight be automatically computed. 
+	 * Should the importance be automatically computed. 
 	 */
-	private boolean weightAuto = false;
+	private boolean importanceAuto = false;
 	
 	public TestCase() {
 		super();
@@ -222,7 +222,7 @@ public class TestCase extends TestCaseLibraryNode implements Attachable {
 		this.setName(source.getName());
 		this.setDescription(source.getDescription());
 		this.executionMode = source.getExecutionMode();
-		this.weight = source.getWeight();
+		this.importance = source.getImportance();
 	}
 
 	public int getPositionOfStep(long stepId) throws UnknownEntityException {
@@ -248,29 +248,29 @@ public class TestCase extends TestCaseLibraryNode implements Attachable {
 	/**
 	 * @return the weight
 	 */
-	public TestCaseWeight getWeight() {
-		return weight;
+	public TestCaseImportance getImportance() {
+		return importance;
 	}
 
 	/**
 	 * @param weight the weight to set
 	 */
-	public void setWeight(@NotNull TestCaseWeight weight) {
-		this.weight = weight;
+	public void setImportance(@NotNull TestCaseImportance weight) {
+		this.importance = weight;
 	}
 
 	/**
 	 * @return the weightAuto
 	 */
-	public boolean isWeightAuto() {
-		return weightAuto;
+	public boolean isImportanceAuto() {
+		return importanceAuto;
 	}
 
 	/**
-	 * @param weightAuto the weightAuto to set
+	 * @param importanceAuto the importanceAuto to set
 	 */
-	public void setWeightAuto(boolean weightAuto) {
-		this.weightAuto = weightAuto;
+	public void setImportanceAuto(boolean importanceAuto) {
+		this.importanceAuto = importanceAuto;
 	}
 
 }
