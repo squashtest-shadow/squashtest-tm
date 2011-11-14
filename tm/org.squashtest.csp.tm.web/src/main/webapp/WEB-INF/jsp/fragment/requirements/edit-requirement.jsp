@@ -49,6 +49,7 @@
 <c:url var="workspaceUrl" value="/requirement-workspace/#" />
 <s:url var="simulateDeletionUrl" value="/requirement-browser/delete-nodes/simulate" />
 <s:url var="confirmDeletionUrl" value="/requirement-browser/delete-nodes/confirm" />
+<s:url var="getStatusComboContent" value="/requirements/${requirement.id}/next-status" />
 
 
 
@@ -150,15 +151,27 @@
 				<div class="display-table-row">
 					<label for="requirement-criticality" class="display-table-cell"><f:message key="requirement.criticality.combo.label" /></label>
 					<div class="display-table-cell">
-							<authz:authorized hasRole="ROLE_ADMIN" hasPermission="WRITE" domainObject="${ requirement }">
-							<div id="requirement-criticality"><s:message code="requirement.criticality.${ requirement.criticality }" /></div>
-							<comp:select-jeditable componentId="requirement-criticality" jsonData="${criticalityList}" targetUrl="${requirementUrl}" />
-							</authz:authorized>
-							<authz:notAuthorized hasRole="ROLE_ADMIN" hasPermission="WRITE" domainObject="${ requirement }">
-								<s:message code="requirement.criticality.${ requirement.criticality }" />
-							</authz:notAuthorized>
-						</div>
+						<authz:authorized hasRole="ROLE_ADMIN" hasPermission="WRITE" domainObject="${ requirement }">
+						<div id="requirement-criticality"><s:message code="requirement.criticality.${ requirement.criticality }" /></div>
+						<comp:select-jeditable componentId="requirement-criticality" jsonData="${criticalityList}" targetUrl="${requirementUrl}" />
+						</authz:authorized>
+						<authz:notAuthorized hasRole="ROLE_ADMIN" hasPermission="WRITE" domainObject="${ requirement }">
+							<s:message code="requirement.criticality.${ requirement.criticality }" />
+						</authz:notAuthorized>
+					</div>				
 				</div>
+				<div class="display-table-row">
+					<label for="requirement-status" class="display-table-cell"><f:message key="requirement.status.combo.label" /></label>
+					<div class="display-table-cell">
+						<authz:authorized hasRole="ROLE_ADMIN" hasPermission="WRITE" domainObject="${ requirement }">
+						<div id="requirement-status"><s:message code="requirement.status.${ requirement.status }" /></div>
+						<comp:reloadableselect-jeditable componentId="requirement-status" jsonContentUrl="${getStatusComboContent}" targetUrl="${requirementUrl}" />
+						</authz:authorized>
+						<authz:notAuthorized hasRole="ROLE_ADMIN" hasPermission="WRITE" domainObject="${ requirement }">
+							<s:message code="requirement.status.${ requirement.status }" />
+						</authz:notAuthorized>
+					</div>				
+				</div>				
 			</div>
 		</jsp:attribute>
 	</comp:toggle-panel>
@@ -293,5 +306,6 @@
 			</c:otherwise>
 			</c:choose>				
 		}
+
 	</authz:authorized>
 </script>

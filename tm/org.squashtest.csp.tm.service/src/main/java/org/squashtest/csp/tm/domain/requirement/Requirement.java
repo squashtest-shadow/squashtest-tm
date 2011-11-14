@@ -66,7 +66,9 @@ public class Requirement extends RequirementLibraryNode implements Attachable {
 	@Enumerated(EnumType.STRING)
 	private RequirementCriticality criticality = RequirementCriticality.UNDEFINED;
 
-
+	@Enumerated(EnumType.STRING)
+	private RequirementStatus status = RequirementStatus.WORK_IN_PROGRESS;
+	
 	@OneToOne(cascade = { CascadeType.ALL }, orphanRemoval=true)
 	@JoinColumn(name = "ATTACHMENT_LIST_ID")
 	private final AttachmentList attachmentCollection = new AttachmentList();
@@ -172,6 +174,14 @@ public class Requirement extends RequirementLibraryNode implements Attachable {
 	 */
 	public void setCriticality(RequirementCriticality criticality) {
 		this.criticality = criticality;
+	}
+	
+	public void setStatus(RequirementStatus status){
+		this.status=status;
+	}
+	
+	public RequirementStatus getStatus(){
+		return status;
 	}
 
 }

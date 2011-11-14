@@ -21,7 +21,6 @@
 package org.squashtest.csp.tm.web.internal.controller.requirement;
 
 import java.io.UnsupportedEncodingException;
-import java.util.Comparator;
 import java.util.List;
 import java.util.Locale;
 import java.util.SortedMap;
@@ -46,6 +45,7 @@ import org.squashtest.csp.tm.domain.Internationalizable;
 import org.squashtest.csp.tm.domain.project.Project;
 import org.squashtest.csp.tm.domain.requirement.Requirement;
 import org.squashtest.csp.tm.domain.requirement.RequirementCriticality;
+import org.squashtest.csp.tm.domain.requirement.RequirementStatus;
 import org.squashtest.csp.tm.domain.testcase.TestCase;
 import org.squashtest.csp.tm.domain.testcase.TestCaseExecutionMode;
 import org.squashtest.csp.tm.infrastructure.filter.CollectionFilter;
@@ -93,7 +93,10 @@ public class RequirementModificationController {
 
 		mav.addObject("requirement", requirement);
 
-		mav.addObject("criticalityList", initCriticitySelectionList(locale, requirement.getCriticality()));
+		//build criticality list
+		SortedMap<String, String> criticalities = initCriticitySelectionList(locale, requirement.getCriticality()); 
+		mav.addObject("criticalityList", jsonify(criticalities));
+		
 		return mav;
 	}
 
@@ -104,8 +107,11 @@ public class RequirementModificationController {
 
 		ModelAndView mav = new ModelAndView("fragment/requirements/edit-requirement");
 		mav.addObject("requirement", requirement);
+		
 		//build criticality list
-		mav.addObject("criticalityList", initCriticitySelectionList(locale, requirement.getCriticality()));
+		SortedMap<String, String> criticalities =initCriticitySelectionList(locale, requirement.getCriticality()); 
+		mav.addObject("criticalityList", jsonify(criticalities));
+		
 		return mav;
 	}
 
@@ -118,6 +124,7 @@ public class RequirementModificationController {
 		return newDescription;
 
 	}
+	
 
 	@RequestMapping(method = RequestMethod.POST, params = { "newName" })
 	public @ResponseBody
@@ -220,6 +227,26 @@ public class RequirementModificationController {
 		LOGGER.debug("Requirement {} : requirement criticality changed, new value : {}", requirementId, criticality.name());
 		return HtmlUtils.htmlEscape(formatCriticality(criticality, locale));
 	}
+	
+
+	@RequestMapping(method = RequestMethod.POST, params = {"id=requirement-status", "value"})
+	@ResponseBody
+	public String updateStatus(@RequestParam("value") String value, @PathVariable long requirementId, Locale locale){
+		RequirementStatus status = RequirementStatus.valueOf(value);
+		requirementModService.changeStatus(requirementId, status);
+		LOGGER.debug("Requirement {} : requirement status changed, new value : {}", requirementId, status.name());
+		return HtmlUtils.htmlEscape(internationalize(status, locale));
+	}
+	
+	@RequestMapping(method = RequestMethod.GET, value="/next-status")
+	@ResponseBody
+	public SortedMap<String, String> getNextStatusList(Locale locale, @PathVariable long requirementId){
+		Requirement requirement = requirementModService.findById(requirementId);
+		RequirementStatus status = requirement.getStatus();
+		SortedMap<String, String> statuses = initStatusSelectionList(locale, status);
+		return statuses;		
+	}
+	
 
 	@RequestMapping(method = RequestMethod.POST, params = { "id=requirement-reference", "value" })
 	@ResponseBody
@@ -234,47 +261,46 @@ public class RequirementModificationController {
 	 * Method which returns the criticality select options in the chosen language.
 	 * The output is formatted in json and meant to be used for a select input.
 	 * That list is sorted according to the RequirementCriticality level. @param locale the Locale
-	 * @return an optionTag list with label and value
+	 * @return a map representing the available options. 
 	 */
 	/*
 	 * Since we also need to include which item is "selected", one
 	 * don't want to sort "selected" (since it's not a RequirementCriticality value). 
 	 * This is why we expect exceptions in the comparison below.
 	 */
-	private String initCriticitySelectionList(Locale locale, RequirementCriticality selected)
+	private SortedMap<String, String> initCriticitySelectionList(Locale locale, RequirementCriticality selected)
 	{
-		try{
-			SortedMap<String, String> map = new TreeMap<String, String>(new Comparator<String>() {
-				@Override
-				public int compare(String o1, String o2) {
-					RequirementCriticality r1, r2;
-				
-					try{
-						r1 = RequirementCriticality.valueOf(o1);
-					}catch(IllegalArgumentException iae){
-						return 1;
-					}
-					try{
-						r2 = RequirementCriticality.valueOf(o2);
-					}catch(IllegalArgumentException iae){
-						return -1;
-					}
-					
-					return (int)(r1.getLevel() - r2.getLevel());
-					
-				}
-			});
+		
+		SortedMap<String, String> map = new TreeMap<String, String>(RequirementCriticality.stringComparator());
 
-			for (RequirementCriticality criticality : RequirementCriticality.values()) {
-				String translated = formatCriticality(criticality, locale);
-				map.put(criticality.toString(), translated);
-			}
-			map.put("selected", selected.toString());
-			
-			return JsonHelper.serialize(map);	
-		}catch(Exception e){
-			throw new RuntimeException(e);
+		for (RequirementCriticality criticality : RequirementCriticality.values()) {
+			String translated = formatCriticality(criticality, locale);
+			map.put(criticality.toString(), translated);
 		}
+		map.put("selected", selected.toString());
+		
+		return map;	
+
+	}
+	
+	/**
+	 * The change status combobox is filtered and only proposes the status to which it is legal to switch to. That method will generate a map
+	 * for that purpose. Pretty much like {@link #initCriticitySelectionList(Locale, RequirementCriticality)};
+	 * 
+	 * @param locale
+	 * @param status
+	 * @return
+	 */
+	private SortedMap<String, String> initStatusSelectionList(Locale locale, RequirementStatus status){
+		SortedMap<String, String> map = new TreeMap<String, String>(RequirementStatus.stringComparator());
+		
+		for (RequirementStatus iterStatus : status.getAvailableNextStatus()){
+			map.put(status.toString(), internationalize(status, locale));
+		}
+		map.put("selected", status.toString());
+		
+		return map;
+		
 	}
 
 	/***
@@ -292,6 +318,14 @@ public class RequirementModificationController {
 
 	private String internationalize(Internationalizable internationalizable, Locale locale) {
 		return messageSource.getMessage(internationalizable.getI18nKey(), null, locale);
+	}
+	
+	private String jsonify(Object toSerialize){
+		try{
+			return JsonHelper.serialize(toSerialize);
+		}catch(Exception e){
+			throw new RuntimeException(e);
+		}
 	}
 
 }

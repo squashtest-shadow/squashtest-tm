@@ -21,12 +21,13 @@
 
 package org.squashtest.csp.tm.service
 
-import java.util.List;
+import java.util.List
 
-import org.squashtest.csp.tm.domain.requirement.Requirement;
-import org.squashtest.csp.tm.domain.requirement.RequirementCriticality;
+import org.squashtest.csp.tm.domain.requirement.Requirement
+import org.squashtest.csp.tm.domain.requirement.RequirementCriticality
+import org.squashtest.csp.tm.domain.requirement.RequirementStatus
 
-import spock.lang.Shared;
+import spock.lang.Shared
 
 /**
  * @author Gregory
@@ -42,6 +43,8 @@ class RequirementModificationDynamicServiceTest extends DynamicManagerInterfaceS
 			it.changeCriticality(10L, RequirementCriticality.MINOR)
 		},{
 			it.changeReference(10L, "bar")
+		},{
+			it.changeStatus(10L, RequirementStatus.WORK_IN_PROGRESS)
 		} ]
 
 }

@@ -34,6 +34,47 @@
         return(input);
 	}
 	
+	//reloadable combobox
+	$.editable.addInputType('reloadableSelect', {
+        element : function(settings, original) {
+            var select = $('<select />');
+            $(this).append(select);
+            return(select);
+        },
+        content : function(data, settings, original) {
+            
+        	/* we need to fetch the options from the server first */
+        	var jqThis = $(this);
+        	
+        	$.ajax({
+        		url : settings.reloadurl,
+        		type : 'GET',
+        		dataType : 'json'
+        	})
+        	.success(function(json){
+        	
+	          for (var key in json) {
+	                if (!json.hasOwnProperty(key)) {
+	                    continue;
+	                }
+	                if ('selected' == key) {
+	                    continue;
+	                } 
+	                var option = $('<option />').val(key).append(json[key]);
+	                $('select', this).append(option);    
+	            }                    
+	            /* Loop option again to set selected. IE needed this... */ 
+	            $('select', this).children().each(function() {
+	                if ($(this).val() == json['selected'] || 
+	                    $(this).text() == $.trim(original.revert)) {
+	                        $(this).attr('selected', 'selected');
+	                }
+	            });
+            });
+        }
+	
+	});
+	
 
 
 	/*

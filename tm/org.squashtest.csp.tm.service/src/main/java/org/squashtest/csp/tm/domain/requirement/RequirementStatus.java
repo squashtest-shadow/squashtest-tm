@@ -1,5 +1,26 @@
+/**
+ *     This file is part of the Squashtest platform.
+ *     Copyright (C) 2010 - 2011 Squashtest TM, Squashtest.org
+ *
+ *     See the NOTICE file distributed with this work for additional
+ *     information regarding copyright ownership.
+ *
+ *     This is free software: you can redistribute it and/or modify
+ *     it under the terms of the GNU Lesser General Public License as published by
+ *     the Free Software Foundation, either version 3 of the License, or
+ *     (at your option) any later version.
+ *
+ *     this software is distributed in the hope that it will be useful,
+ *     but WITHOUT ANY WARRANTY; without even the implied warranty of
+ *     MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ *     GNU Lesser General Public License for more details.
+ *
+ *     You should have received a copy of the GNU Lesser General Public License
+ *     along with this software.  If not, see <http://www.gnu.org/licenses/>.
+ */
 package org.squashtest.csp.tm.domain.requirement;
 
+import java.util.Comparator;
 import java.util.Set;
 import java.util.TreeSet;
 
@@ -91,15 +112,61 @@ public enum RequirementStatus implements Internationalizable{
 		return I18N_KEY_ROOT + name();
 	}
 	
+	/**
+	 * the set of the available status transition. As for 1.1.0 and until further notice, should also include <i>this</i>
+	 * @return the availableTransition.
+	 */
 	public abstract Set<RequirementStatus> getAvailableNextStatus();
+	
+	/**
+	 * tells whether this status allows the owner to be updated. 
+	 * 
+	 * @return yay or nay.
+	 */
 	public abstract boolean allowsUpdate();
+	
+	/**
+	 * tells whether the status could be changed regardless of {@link #allowsUpdate()};
+	 * 
+	 * @return yay or nay.
+	 */
 	public abstract boolean allowsStatusUpdate();
 	
 	
-	private static Set<RequirementStatus> defaultAvailableSet(){
+	protected Set<RequirementStatus> defaultAvailableSet(){
 		Set<RequirementStatus> next = new TreeSet<RequirementStatus>();
-		next.add(RequirementStatus.OBSOLETE);
+		if (RequirementStatus.OBSOLETE != this) next.add(RequirementStatus.OBSOLETE);
+		next.add(this);
 		return next;
+	}
+	
+	
+	public static StringComparator stringComparator(){
+		return new StringComparator();
+	}
+	
+	/**
+	 *  inner class used to sort RequirementStatus over their string representation.
+	 *  In case we have to sort stringified statuses with other arbitrary strings, stringified statuses will have a 
+	 *  lower rank than other strings. 
+	 */
+	private static class StringComparator implements Comparator<String>{
+		@Override
+		public int compare(String o1, String o2) {
+			RequirementStatus s1, s2;
+			try{
+				 s1 = RequirementStatus.valueOf(o1);
+			}catch(IllegalArgumentException iae){
+				return 1;
+			}
+			try{
+				 s2 = RequirementStatus.valueOf(o2);
+			}catch(IllegalArgumentException iae){
+				return -1;
+			}			
+			
+			return s1.compareTo(s2);
+		}
 	}
 	
 }

@@ -24,6 +24,7 @@ package org.squashtest.csp.tm.service;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.transaction.annotation.Transactional;
 import org.squashtest.csp.tm.domain.requirement.RequirementCriticality;
+import org.squashtest.csp.tm.domain.requirement.RequirementStatus;
 
 @Transactional
 public interface RequirementModificationService extends CustomRequirementModificationService {
@@ -36,5 +37,8 @@ public interface RequirementModificationService extends CustomRequirementModific
 	
 	@PreAuthorize("hasPermission(#arg0, 'org.squashtest.csp.tm.domain.requirement.Requirement', 'WRITE') or hasRole('ROLE_ADMIN')")
 	void changeReference(long requirementId, String reference);
+	
+	@PreAuthorize("hasPermission(#arg0, 'org.squashtest.csp.tm.domain.requirement.Requirement', 'WRITE') or hasRole('ROLE_ADMIN')")
+	void changeStatus(long requirementId, RequirementStatus status);	
 
 }
