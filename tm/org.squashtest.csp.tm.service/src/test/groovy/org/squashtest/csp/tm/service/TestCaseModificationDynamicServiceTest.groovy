@@ -25,6 +25,8 @@ package org.squashtest.csp.tm.service;
 import java.util.List;
 import org.squashtest.csp.tm.domain.testcase.TestCase;
 import org.squashtest.csp.tm.domain.testcase.TestCaseExecutionMode;
+import org.squashtest.csp.tm.domain.testcase.TestCaseImportance;
+
 import spock.lang.Shared;
 
 /**
@@ -39,5 +41,9 @@ class TestCaseModificationDynamicServiceTest extends DynamicManagerInterfaceSpec
 			it.changeDescription(10L, "foo")
 		}, {
 			it.changeExecutionMode(10L, TestCaseExecutionMode.MANUAL)
+		}, {
+			it.changeImportance(10L, TestCaseImportance.HIGH)
+		}, {
+			it.changeImportanceAuto(10L, true)
 		}]
 }
