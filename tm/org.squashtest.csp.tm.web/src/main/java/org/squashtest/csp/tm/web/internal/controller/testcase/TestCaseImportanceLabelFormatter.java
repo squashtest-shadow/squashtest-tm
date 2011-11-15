@@ -26,6 +26,7 @@ import java.util.Locale;
 import javax.inject.Inject;
 import javax.validation.constraints.NotNull;
 
+import org.apache.commons.lang.StringEscapeUtils;
 import org.springframework.context.MessageSource;
 import org.springframework.context.annotation.Scope;
 import org.springframework.stereotype.Component;
@@ -74,7 +75,8 @@ public class TestCaseImportanceLabelFormatter implements LabelFormatter<TestCase
 	 */
 	@Override
 	public String formatLabel(TestCaseImportance toFormat) {
-		return toFormat.getLevel() + " - " + messageSource.getMessage(toFormat.getI18nKey(), null, locale);
+		String label = toFormat.getLevel() + " - " + messageSource.getMessage(toFormat.getI18nKey(), null, locale); 
+		return StringEscapeUtils.escapeHtml(label);
 	}
 
 }

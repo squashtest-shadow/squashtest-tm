@@ -60,4 +60,14 @@ class TestCaseImportanceLabelFormatterTest extends Specification {
 		MEDIUM    | "3 - test-case.importance.MEDIUM"
 		LOW       | "4 - test-case.importance.LOW"
 	}
+	def "should encode html entities"() {
+		given:
+		messageSource.getMessage(_, _,_) >> { "môdits àccents" }
+		
+		when:
+		def res = formatter.formatLabel(VERY_HIGH)
+		
+		then:
+		res == "1 - m&ocirc;dits &agrave;ccents"		
+	}
 }
