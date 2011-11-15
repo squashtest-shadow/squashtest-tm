@@ -71,7 +71,7 @@
 	<changeSet id="tm-1.1.0.06" author="gfouquet">
 		<comment>Adds a auto compute importance property to test cases</comment>
 		<addColumn tableName="TEST_CASE" >
-			<column name="IMPORTANCE_AUTO" type="BOOLEAN" defaultValue="false" remarks="Should the importance be automatically computed">
+			<column name="IMPORTANCE_AUTO" type="BOOLEAN" defaultValueBoolean="false" remarks="Should the importance be automatically computed">
 				<constraints nullable="false"/>
 			</column>
 		</addColumn>	
