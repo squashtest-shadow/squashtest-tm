@@ -88,7 +88,4 @@
 	<!-- the following is an heresy imposed by multi security contexts across OSGI bundles.-->
 	<osgi:service ref="squashtest.core.security.JdbcUserDetailsManager" 
 		interface="org.springframework.security.provisioning.UserDetailsManager" />
-		
-	
-	
 </beans>

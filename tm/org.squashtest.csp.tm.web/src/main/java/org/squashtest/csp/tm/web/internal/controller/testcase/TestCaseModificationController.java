@@ -25,6 +25,7 @@ import java.util.List;
 import java.util.Locale;
 
 import javax.inject.Inject;
+import javax.inject.Provider;
 import javax.servlet.http.HttpServletResponse;
 import javax.validation.Valid;
 
@@ -47,6 +48,7 @@ import org.squashtest.csp.tm.domain.requirement.RequirementCriticality;
 import org.squashtest.csp.tm.domain.testcase.ActionTestStep;
 import org.squashtest.csp.tm.domain.testcase.TestCase;
 import org.squashtest.csp.tm.domain.testcase.TestCaseExecutionMode;
+import org.squashtest.csp.tm.domain.testcase.TestCaseImportance;
 import org.squashtest.csp.tm.domain.testcase.TestStep;
 import org.squashtest.csp.tm.infrastructure.filter.CollectionFilter;
 import org.squashtest.csp.tm.infrastructure.filter.CollectionSorting;
@@ -65,52 +67,48 @@ import org.squashtest.csp.tm.web.internal.model.viewmapper.DataTableMapper;
 public class TestCaseModificationController {
 	private static final Logger LOGGER = LoggerFactory.getLogger(TestCaseModificationController.class);
 
-	private TestCaseModificationService testCaseModificationService;
+	private final DataTableMapper verifiedReqMapper = new DataTableMapper("verified-requirement", Requirement.class,
+			Project.class).initMapping(7).mapAttribute(Project.class, 2, "name", String.class)
+			.mapAttribute(Requirement.class, 3, "reference", String.class)
+			.mapAttribute(Requirement.class, 4, "name", String.class)
+			.mapAttribute(Requirement.class, 5, "criticality", RequirementCriticality.class);
+	
+	private final DataTableMapper referencingTestCaseMapper = new DataTableMapper("referencing-test-cases",
+			TestCase.class, Project.class).initMapping(5).mapAttribute(Project.class, 2, "name", String.class)
+			.mapAttribute(TestCase.class, 3, "name", String.class)
+			.mapAttribute(TestCase.class, 4, "executionMode", TestCaseExecutionMode.class);
 
+	private TestCaseModificationService testCaseModificationService;
 
 	@Inject
 	private MessageSource messageSource;
 
+	@Inject
+	private Provider<TestCaseImportanceJeditableComboDataBuilder> importanceComboBuilderProvider;
+	
+	@Inject private Provider<TestCaseImportanceLabelFormatter> importanceLabelFormatterProvider;  
 	
 	@ServiceReference
 	public void setTestCaseModificationService(TestCaseModificationService testCaseModificationService) {
 		this.testCaseModificationService = testCaseModificationService;
 	}
-	
-
-	private final DataTableMapper verifiedReqMapper = new DataTableMapper("verified-requirement", Requirement.class,
-			Project.class).initMapping(7)
-			.mapAttribute(Project.class, 2, "name", String.class)
-			.mapAttribute(Requirement.class, 3, "reference", String.class)
-			.mapAttribute(Requirement.class, 4, "name", String.class)
-			.mapAttribute(Requirement.class, 5, "criticality", RequirementCriticality.class);
-
-	
-	
-	private final DataTableMapper referencingTestCaseMapper 
-			= new DataTableMapper("referencing-test-cases", TestCase.class, Project.class)
-				.initMapping(5)
-				.mapAttribute(Project.class, 2, "name", String.class)
-				.mapAttribute(TestCase.class, 3, "name", String.class)
-				.mapAttribute(TestCase.class, 4, "executionMode", TestCaseExecutionMode.class);
-	
-	
-	
-	@RequestMapping(method = RequestMethod.GET)
-	public final ModelAndView showTestCase(@PathVariable long testCaseId, @RequestParam(required=false, value="edit-mode") Boolean editable, Locale locale) {
 		
-		TestCase testCase = testCaseModificationService.findById(testCaseId);
 
+	@RequestMapping(method = RequestMethod.GET)
+	public final ModelAndView showTestCase(@PathVariable long testCaseId,
+			@RequestParam(required = false, value = "edit-mode") Boolean editable, Locale locale) {
 		ModelAndView mav = new ModelAndView("fragment/test-cases/edit-test-case");
+
+		TestCase testCase = testCaseModificationService.findById(testCaseId);
 		populateModelWithTestCaseEditionData(mav, testCase, locale);
 
-		if (editable!=null){
+		if (editable != null) {
 			mav.addObject("editable", editable);
 		}
-		
+
 		return mav;
 	}
-	
+
 	@RequestMapping(value = "/info", method = RequestMethod.GET)
 	public ModelAndView showTestCaseInfo(@PathVariable long testCaseId, Locale locale) {
 
@@ -119,17 +117,10 @@ public class TestCaseModificationController {
 		ModelAndView mav = new ModelAndView("page/test-case-libraries/show-test-case");
 
 		TestCase testCase = testCaseModificationService.findTestCaseWithSteps(testCaseId);
-
-		if (testCase == null) {
-			testCase = createNotFoundTestCase();
-		}
-
 		populateModelWithTestCaseEditionData(mav, testCase, locale);
 
 		return mav;
-	}	
-	
-	
+	}
 
 	private void populateModelWithTestCaseEditionData(ModelAndView mav, TestCase testCase, Locale locale) {
 		// Convert execution mode with local parameter
@@ -142,6 +133,15 @@ public class TestCaseModificationController {
 		}
 		mav.addObject("testCase", testCase);
 		mav.addObject("executionModes", executionModes);
+		mav.addObject("testCaseImportanceComboJson", buildImportanceComboData(testCase, locale));
+		mav.addObject("testCaseImportanceLabel", formatImportance(testCase.getImportance(), locale));
+
+	}
+
+	private String buildImportanceComboData(TestCase testCase, Locale locale) {
+		return importanceComboBuilderProvider.get()
+			.useLocale(locale)
+			.buildMarshalled();
 	}
 
 	private String formatExecutionMode(TestCaseExecutionMode mode, Locale locale) {
@@ -164,17 +164,14 @@ public class TestCaseModificationController {
 				filter.getFirstItemIndex() + 1, params.getsEcho());
 
 	}
-	
-	
+
 	@RequestMapping(method = RequestMethod.POST, params = "executionMode")
 	@ResponseBody
-	public void updateExecutionMode(@RequestParam String executionMode, @PathVariable long testCaseId) {
+	public void changeExecutionMode(@RequestParam String executionMode, @PathVariable long testCaseId) {
 		TestCaseExecutionMode mode = TestCaseExecutionMode.valueOf(executionMode);
 		testCaseModificationService.changeExecutionMode(testCaseId, mode);
 		LOGGER.trace("test case {} : execution mode changed, new mode is {}", testCaseId, mode.name());
 	}
-
-
 
 	@RequestMapping(value = "/steps/add", method = RequestMethod.POST, params = { "action", "expectedResult" })
 	@ResponseBody
@@ -186,7 +183,6 @@ public class TestCaseModificationController {
 		LOGGER.trace("test case " + testCaseId + ": step added, action : " + step.getAction() + ", expected result : "
 				+ step.getExpectedResult());
 	}
-	
 
 	@RequestMapping(value = "/steps/paste", method = RequestMethod.POST, params = { "copiedStepId[]" })
 	@ResponseBody
@@ -208,14 +204,15 @@ public class TestCaseModificationController {
 		LOGGER.trace("test case " + testCaseId + ": step " + stepId + " moved to " + newIndex);
 
 	}
-	
-	@RequestMapping(value = "/steps/move", method = RequestMethod.POST, params = {"newIndex","stepIds[]" })
+
+	@RequestMapping(value = "/steps/move", method = RequestMethod.POST, params = { "newIndex", "stepIds[]" })
 	@ResponseBody
-	public void changeStepsIndex(@RequestParam("stepIds[]") List<Long> stepIds, @RequestParam int newIndex, @PathVariable long testCaseId) {
+	public void changeStepsIndex(@RequestParam("stepIds[]") List<Long> stepIds, @RequestParam int newIndex,
+			@PathVariable long testCaseId) {
 
 		testCaseModificationService.changeTestStepsPosition(testCaseId, newIndex, stepIds);
 
-	}	
+	}
 
 	@RequestMapping(value = "/steps/{stepId}", method = RequestMethod.DELETE)
 	@ResponseBody
@@ -227,7 +224,7 @@ public class TestCaseModificationController {
 
 	@RequestMapping(value = "/steps/{stepId}/action", method = RequestMethod.POST, params = { "id", "value" })
 	@ResponseBody
-	public String updateStepAction(@PathVariable long stepId, @RequestParam("value") String newAction) {
+	public String changeStepAction(@PathVariable long stepId, @RequestParam("value") String newAction) {
 		testCaseModificationService.updateTestStepAction(stepId, newAction);
 		LOGGER.trace("TestCaseModificationController : updated action for step {}", stepId);
 		return newAction;
@@ -235,7 +232,7 @@ public class TestCaseModificationController {
 
 	@RequestMapping(value = "/steps/{stepId}/result", method = RequestMethod.POST, params = { "id", "value" })
 	@ResponseBody
-	public String updateStepDescription(@PathVariable long stepId, @RequestParam("value") String newResult) {
+	public String changeStepDescription(@PathVariable long stepId, @RequestParam("value") String newResult) {
 		testCaseModificationService.updateTestStepExpectedResult(stepId, newResult);
 		LOGGER.trace("TestCaseModificationController : updated action for step {}", stepId);
 		return newResult;
@@ -249,17 +246,29 @@ public class TestCaseModificationController {
 		LOGGER.trace("TestCaseModificationController : removed a list of steps");
 	}
 
-
-
-
 	@RequestMapping(method = RequestMethod.POST, params = { "id=test-case-description", "value" })
 	@ResponseBody
-	public String updateDescription(@RequestParam("value") String testCaseDescription, @PathVariable long testCaseId) {
+	public String changeDescription(@RequestParam("value") String testCaseDescription, @PathVariable long testCaseId) {
 
 		testCaseModificationService.changeDescription(testCaseId, testCaseDescription);
-		LOGGER.trace("test case " + testCaseId + ": updated description to " + testCaseDescription);
+		if (LOGGER.isTraceEnabled()) {
+			LOGGER.trace("test case " + testCaseId + ": updated description to " + testCaseDescription);
+		}
 
 		return testCaseDescription;
+	}
+
+	@ResponseBody
+	@RequestMapping(method = RequestMethod.POST, params = { "id=test-case-importance", "value" })
+	public String changeImportance(@PathVariable long testCaseId, @RequestParam("value") TestCaseImportance importance, Locale locale) {
+		testCaseModificationService.changeImportance(testCaseId, importance);
+		
+		return formatImportance(importance, locale);
+	}
+
+
+	private String formatImportance(TestCaseImportance importance, Locale locale) {
+		return importanceLabelFormatterProvider.get().useLocale(locale).formatLabel(importance);
 	}
 
 	@RequestMapping(method = RequestMethod.POST, params = { "newName" })
@@ -268,8 +277,10 @@ public class TestCaseModificationController {
 
 		testCaseModificationService.rename(testCaseId, newName);
 		LOGGER.info("TestCaseModificationController : renaming {} as {}", testCaseId, newName);
-		final String reNewName = new String(newName);
-		return new Object(){ public String newName = reNewName ; };
+		final String reNewName = newName;
+		return new Object() {
+			public String newName = reNewName; // NOSONAR unreadable field actually read by JSON marshaller.
+		};
 
 	}
 
@@ -290,8 +301,8 @@ public class TestCaseModificationController {
 		return mav;
 	}
 
-	//FIXME : a not found test case is an exception, now that we have a decent Exception manager we should remove that
-	//workaround.
+	// FIXME : a not found test case is an exception, now that we have a decent Exception manager we should remove that
+	// workaround.
 	@Deprecated
 	private TestCase createNotFoundTestCase() {
 		TestCase testCase;
@@ -314,22 +325,14 @@ public class TestCaseModificationController {
 		return new DataTableModelHelper<VerifiedRequirement>() {
 			@Override
 			public Object[] buildItemData(VerifiedRequirement item) {
-				return new Object[] { 
-						item.getId(), 
-						getCurrentIndex(), 
-						item.getProject().getName(),
-						item.getReference(), 
-						item.getName(), 
-						internationalize(item.getCriticality(), locale),
-						"",
-						item.isDirectVerification()
-				};
+				return new Object[] { item.getId(), getCurrentIndex(), item.getProject().getName(),
+						item.getReference(), item.getName(), internationalize(item.getCriticality(), locale), "",
+						item.isDirectVerification() };
 			}
 		}.buildDataModel(holder, filter.getFirstItemIndex() + 1, params.getsEcho());
 
 	}
-	
-	
+
 	@RequestMapping(value = "/verified-requirements-table", params = "sEcho")
 	@ResponseBody
 	public DataTableModel getVerifiedRequirementsTableModel(@PathVariable long testCaseId,
@@ -338,28 +341,30 @@ public class TestCaseModificationController {
 		CollectionSorting filter = createCollectionFilter(params, verifiedReqMapper);
 
 		FilteredCollectionHolder<List<Requirement>> holder = testCaseModificationService
-					.findAllDirectlyVerifiedRequirementsByTestCaseId(testCaseId, filter);
-				//.findDirectlyVerifiedRequirementsByTestCaseId(testCaseId, filter);
+				.findAllDirectlyVerifiedRequirementsByTestCaseId(testCaseId, filter);
+		// .findDirectlyVerifiedRequirementsByTestCaseId(testCaseId, filter);
 
 		return new DataTableModelHelper<Requirement>() {
 			@Override
 			public Object[] buildItemData(Requirement item) {
-				return new Object[] { 
-						item.getId(), 
-						getCurrentIndex(), 
-						item.getProject().getName(),
-						item.getReference(), 
-						item.getName(), 
-						internationalize(item.getCriticality(), locale),
-						"",
-						true //the target table requires a column "isDirectlyVerified". So we provide it.
+				return new Object[] { item.getId(), getCurrentIndex(), item.getProject().getName(),
+						item.getReference(), item.getName(), internationalize(item.getCriticality(), locale), "", true // the
+																														// target
+																														// table
+																														// requires
+																														// a
+																														// column
+																														// "isDirectlyVerified".
+																														// So
+																														// we
+																														// provide
+																														// it.
 				};
 			}
 		}.buildDataModel(holder, filter.getFirstItemIndex() + 1, params.getsEcho());
 
-	}	
-	
-	
+	}
+
 	@RequestMapping(value = "/calling-test-case-table", params = "sEcho")
 	@ResponseBody
 	public DataTableModel getCallingTestCaseTableModel(@PathVariable long testCaseId, DataTableDrawParameters params,
@@ -369,23 +374,18 @@ public class TestCaseModificationController {
 
 		CollectionSorting filter = createCollectionFilter(params, referencingTestCaseMapper);
 
-		FilteredCollectionHolder<List<TestCase>> holder = testCaseModificationService.findCallingTestCases(testCaseId, filter);
+		FilteredCollectionHolder<List<TestCase>> holder = testCaseModificationService.findCallingTestCases(testCaseId,
+				filter);
 
 		return new DataTableModelHelper<TestCase>() {
 			@Override
 			public Object[] buildItemData(TestCase item) {
-				return new Object[] { item.getId(), 
-										getCurrentIndex(), 
-										item.getProject().getName(),
-										item.getName(), 
-										internationalize(item.getExecutionMode(), locale)
-				};
+				return new Object[] { item.getId(), getCurrentIndex(), item.getProject().getName(), item.getName(),
+						internationalize(item.getExecutionMode(), locale) };
 			}
-		}.buildDataModel(holder, filter.getFirstItemIndex() + 1, params.getsEcho());	
+		}.buildDataModel(holder, filter.getFirstItemIndex() + 1, params.getsEcho());
 
-	}	
-	
-	
+	}
 
 	private CollectionSorting createCollectionFilter(final DataTableDrawParameters params,
 			final DataTableMapper dtMapper) {
@@ -418,7 +418,6 @@ public class TestCaseModificationController {
 	}
 
 	/* ********************************** localization stuffs ****************************** */
-
 
 	private String internationalize(Internationalizable internationalizable, Locale locale) {
 		return messageSource.getMessage(internationalizable.getI18nKey(), null, locale);

@@ -18,42 +18,69 @@
  *     You should have received a copy of the GNU Lesser General Public License
  *     along with this software.  If not, see <http://www.gnu.org/licenses/>.
  */
+package org.squashtest.csp.tm.web.internal.controller.testcase;
 
-package org.squashtest.csp.tm.web.internal.controller.testcase
-
-import org.springframework.context.MessageSource
+import org.springframework.context.MessageSource;
 import org.springframework.web.servlet.ModelAndView;
 
-import javax.servlet.http.HttpServletRequest
+import javax.inject.Provider;
+import javax.servlet.http.HttpServletRequest;
 
 import org.squashtest.csp.tm.service.TestCaseModificationService;
 import org.squashtest.csp.tm.web.internal.model.datatable.DataTableDrawParameters;
 import org.squashtest.csp.tm.web.internal.model.datatable.DataTableModelHelper;
 import org.squashtest.csp.tm.web.internal.model.viewmapper.DataTableMapper;
-import org.squashtest.csp.tm.domain.attachment.AttachmentList
+import org.squashtest.csp.tm.domain.attachment.AttachmentList;
 import org.squashtest.csp.tm.domain.project.Project;
 import org.squashtest.csp.tm.domain.requirement.Requirement;
 import org.squashtest.csp.tm.domain.testcase.TestCase
+import org.squashtest.csp.tm.domain.testcase.TestCaseImportance;
 import org.squashtest.csp.tm.domain.testcase.TestStep;
 
-import spock.lang.Specification
-import org.squashtest.csp.tm.domain.testcase.ActionTestStep
+import spock.lang.Specification;
+import org.squashtest.csp.tm.domain.testcase.ActionTestStep;
 import org.squashtest.csp.tm.infrastructure.filter.FilteredCollectionHolder;
 import org.squashtest.csp.tools.unittest.reflection.ReflectionCategory;
 
 class TestCaseModificationControllerTest extends Specification {
 	TestCaseModificationController controller = new TestCaseModificationController()
+	
 	TestCaseModificationService testCaseModificationService = Mock()
 	HttpServletRequest request = Mock()
 	MessageSource messageSource = Mock()
+	
+	TestCaseImportanceJeditableComboDataBuilder importanceComboBuilder = Mock()
+	Provider<TestCaseImportanceJeditableComboDataBuilder> importanceComboBuilderProvider = Mock()
 
-	def setup() {
+	TestCaseImportanceLabelFormatter importanceLabelFormatter = Mock()
+	Provider<TestCaseImportanceLabelFormatter> importanceLabelFormatterProvider = Mock()
+
+		def setup() {
 		controller.testCaseModificationService = testCaseModificationService
 		request.getCharacterEncoding() >> "ISO-8859-1"
 		controller.messageSource = messageSource
+
+		setupImportanceComboBuilder()
+		controller.importanceComboBuilderProvider = importanceComboBuilderProvider
+
+		setupImportanceLabelFormatter()		
+		controller.importanceLabelFormatterProvider = importanceLabelFormatterProvider
 	}
 
-	def "should build table model for test case steps"() {
+	def setupImportanceComboBuilder() {
+		importanceComboBuilder.useLocale(_) >> importanceComboBuilder
+		importanceComboBuilder.selectItem(_) >> importanceComboBuilder
+
+		importanceComboBuilderProvider.get() >> importanceComboBuilder
+	}
+
+	def setupImportanceLabelFormatter() {
+		importanceLabelFormatter.useLocale(_) >> importanceLabelFormatter
+
+		importanceLabelFormatterProvider.get() >> importanceLabelFormatter
+	}
+
+		def "should build table model for test case steps"() {
 		given:
 		AttachmentList al = Mock()
 		al.size() >> 1
@@ -65,7 +92,6 @@ class TestCaseModificationControllerTest extends Specification {
 			TestStep.set field: "id", of: step1, to: 1L
 			ActionTestStep.set field: "attachmentList", of: step1, to: al
 		}
-
 
 		and:
 		ActionTestStep step2 = new ActionTestStep(action: "a2", expectedResult: "r2")
@@ -83,7 +109,7 @@ class TestCaseModificationControllerTest extends Specification {
 		and:
 		DataTableDrawParameters params = new DataTableDrawParameters();
 		params.setiDisplayLength(10);
-		params.setiDisplayStart(0);
+		params.setiDisplayStart(0)
 		params.setsEcho("echo");
 
 
@@ -215,8 +241,6 @@ class TestCaseModificationControllerTest extends Specification {
 				"bar",
 				"foo",
 				""
-
-
 			]
 		]
 	}
@@ -256,6 +280,39 @@ class TestCaseModificationControllerTest extends Specification {
 		mav.modelMap['auditableEntity'] == testCase
 	}
 
+	def "when showing a test case, should put importance data in the model"() {
+		given:
+		TestCase testCase = Mock()
+		testCase.importance >> TestCaseImportance.HIGH
+		testCaseModificationService.findTestCaseWithSteps(10) >> testCase
+		
+		and:
+		importanceComboBuilder.buildMarshalled() >> "akemashite omedetô"
 
+		when:
+		ModelAndView mav = controller.showTestCaseInfo(10, Locale.JAPANESE)
+
+		then:
+		1 * importanceComboBuilder.useLocale(Locale.JAPANESE) >> importanceComboBuilder
+		0 * importanceComboBuilder.selectItem(TestCaseImportance.HIGH) >> importanceComboBuilder
+		mav.modelMap['testCaseImportanceComboJson'] == "akemashite omedetô"
+	}
+	
+	def "when showing a test case, should put test case importance laben in the model"() {
+		given:
+		TestCase testCase = Mock()
+		testCase.importance >> TestCaseImportance.HIGH
+		testCaseModificationService.findTestCaseWithSteps(10) >> testCase
+		
+		and:
+		importanceLabelFormatter.formatLabel(TestCaseImportance.HIGH) >> "takai"
+
+		when:
+		ModelAndView mav = controller.showTestCaseInfo(10, Locale.JAPANESE)
+
+		then:
+		1 * importanceLabelFormatter.useLocale(Locale.JAPANESE) >> importanceLabelFormatter
+		mav.modelMap['testCaseImportanceLabel'] == "takai"
+	}
 
 }

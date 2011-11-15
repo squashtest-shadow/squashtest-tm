@@ -499,7 +499,7 @@
 
 <div id="test-case-toolbar" class="toolbar-class ui-corner-all">
 <div class="toolbar-information-panel">
-<comp:general-information-panel auditableEntity="${testCase}" entityUrl="${ testCaseUrl }" />
+<comp:general-information-panel auditableEntity="${ testCase }" entityUrl="${ testCaseUrl }" />
 
 
 <%-- There used to be an execution mode combobox right here. Search SCM if needed again --%>
@@ -516,12 +516,24 @@
 
 <%----------------------------------- Description -----------------------------------------------%>
 <c:if test="${ editable }">
-<comp:rich-jeditable
-	targetUrl="${ testCaseUrl }" componentId="test-case-description" />
+	<comp:rich-jeditable targetUrl="${ testCaseUrl }" componentId="test-case-description" />
+	<comp:select-jeditable componentId="test-case-importance" jsonData="${ testCaseImportanceComboJson }" targetUrl="${ testCaseUrl }" />
 </c:if>
+
 <comp:toggle-panel id="test-case-description-panel" titleKey="generics.description.title" isContextual="true" open="true">
 	<jsp:attribute name="body">
-		<div id="test-case-description" >${ testCase.description }</div>
+		<div id="test-case-description-table" class="display-table">
+			<div class="display-table-row">
+				<label for="test-case-description" class="display-table-cell"><f:message key="test-case.description.label" /></label>
+				<div class="display-table-cell" id="test-case-description" >${ testCase.description }</div>
+			</div>
+			<div class="display-table-row">
+				<label for="test-case-importance" class="display-table-cell"><f:message key="test-case.importance.combo.label" /></label>
+				<div class="display-table-cell">
+					<div id="test-case-importance">${ testCaseImportanceLabel }</div>
+				</div>
+			</div>
+		</div>
 	</jsp:attribute>
 </comp:toggle-panel> 
 

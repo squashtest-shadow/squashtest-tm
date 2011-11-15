@@ -209,30 +209,11 @@
 		bean-name="squashtest.core.security.PermissionEvaluationService"
 		interface="org.squashtest.csp.core.service.security.PermissionEvaluationService" availability="mandatory" />		
 
-		
-
 	<!-- Validation services -->
 	<osgi:reference id="javax.validation.ValidatorFactory"
 		bean-name="javax.validation.ValidatorFactory" 
 		interface="javax.validation.ValidatorFactory" availability="mandatory" />
 		
-		
-
-		
-<!-- deprecated ? 
- 		
-		<osgi:service ref="squashtest.tm.service.TestCaseLibrariesCrudService"
-		interface="org.squashtest.csp.tm.service.TestCaseLibrariesCrudService" />
-
-		
-		<osgi:service ref="squashtest.tm.service.RequirementLibrariesCrudService"
-		interface="org.squashtest.csp.tm.service.RequirementLibrariesCrudService" />
-
-		<osgi:service ref="squashtest.tm.service.CampaignLibrariesCrudService"
-		interface="org.squashtest.csp.tm.service.CampaignLibrariesCrudService" />
-
--->		
-		
-		
-		
+	<osgi:service ref="squashtest.tm.domain.TestCaseImportanceLevelComparator" 
+		interface="org.squashtest.csp.tm.domain.testcase.TestCaseImportanceLevelComparator" />
 </beans>

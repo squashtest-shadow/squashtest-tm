@@ -38,7 +38,7 @@
 <script type="text/javascript">
 
 	$(function() {
-		$( '#${componentId}' ).editable( '${ targetUrl }', {
+		$( '#${ componentId }' ).editable( '${ targetUrl }', {
 			type: 'select',	
 			placeholder: '<f:message key="rich-edit.placeholder" />',
 			submit: false,

@@ -156,6 +156,10 @@ public class EnumJeditableComboDataBuilder<T extends Enum<?>> {
 	}
 
 	/**
+	 * /!\ if no <code>selectedItem</code> is indicated, the widget will perform a selection using its label when in
+	 * unediting state. This behaviour is usually sufficient. On the other hand, adding a selected item induces boundary
+	 * effects when the combobox model is not fetched when switching to editing state (ie widget is build with a 'data'
+	 * attribute instead of a 'loadurl' attribute).
 	 * 
 	 * @param selectedItem
 	 *            The item to select. Can be <code>null</code>.
