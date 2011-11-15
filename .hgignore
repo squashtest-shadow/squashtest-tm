@@ -169,5 +169,9 @@ syntax: regexp
 syntax: regexp
 ^core/org\.squashtest\.csp\.core\.jetty\.start\.osgi/META-INF/MANIFEST\.MF$
 syntax: glob
+syntax: regexp
+^.metadata/.*$
+syntax: regexp
+^.*build.properties$
 distribution/META-INF/NOTICE.txt
 distribution/META-INF/COPYING.txt
