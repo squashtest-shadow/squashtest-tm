@@ -243,8 +243,7 @@ public class RequirementModificationController {
 	public SortedMap<String, String> getNextStatusList(Locale locale, @PathVariable long requirementId){
 		Requirement requirement = requirementModService.findById(requirementId);
 		RequirementStatus status = requirement.getStatus();
-		SortedMap<String, String> statuses = initStatusSelectionList(locale, status);
-		return statuses;		
+		return initStatusSelectionList(locale, status);
 	}
 	
 

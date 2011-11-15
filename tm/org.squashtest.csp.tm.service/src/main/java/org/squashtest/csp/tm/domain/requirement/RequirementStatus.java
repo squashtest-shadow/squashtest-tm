@@ -90,8 +90,7 @@ public enum RequirementStatus implements Internationalizable{
 	OBSOLETE(){
 		@Override
 		public Set<RequirementStatus> getAvailableNextStatus() {
-			Set<RequirementStatus> next = defaultAvailableSet();
-			return next;
+			return defaultAvailableSet();
 		}
 
 		@Override
