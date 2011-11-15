@@ -263,11 +263,6 @@ public class RequirementModificationController {
 	 * That list is sorted according to the RequirementCriticality level. @param locale the Locale
 	 * @return a map representing the available options. 
 	 */
-	/*
-	 * Since we also need to include which item is "selected", one
-	 * don't want to sort "selected" (since it's not a RequirementCriticality value). 
-	 * This is why we expect exceptions in the comparison below.
-	 */
 	private SortedMap<String, String> initCriticitySelectionList(Locale locale, RequirementCriticality selected)
 	{
 		
@@ -277,7 +272,9 @@ public class RequirementModificationController {
 			String translated = formatCriticality(criticality, locale);
 			map.put(criticality.toString(), translated);
 		}
-		map.put("selected", selected.toString());
+		
+		//we don't want to use the attribute 'selected' here because it induces wrong behaviors under FF or IE when editing the same
+		//combobox multiple times.	
 		
 		return map;	
 
@@ -297,6 +294,8 @@ public class RequirementModificationController {
 		for (RequirementStatus iterStatus : status.getAvailableNextStatus()){
 			map.put(iterStatus.toString(), internationalize(iterStatus, locale));
 		}
+		
+		//here we use the 'selected' attribute since it's reloaded for each use of the combobox anyway. 
 		map.put("selected", status.toString());
 		
 		return map;

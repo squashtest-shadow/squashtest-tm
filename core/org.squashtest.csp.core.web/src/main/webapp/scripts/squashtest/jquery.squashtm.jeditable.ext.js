@@ -86,6 +86,8 @@
 			//hook the reset so that we bind links there too.
 			//unfortunately we cannot simply define the reset method in jquery.jeditable.ckeditor.js because jeditable calls the 
 			//callback in an place useless to us.
+			
+			//todo : make the reset thing available for all input types.
 			var domElement = element.get(0);
 			var oldReset = domElement.reset;
 			domElement.reset = function(){

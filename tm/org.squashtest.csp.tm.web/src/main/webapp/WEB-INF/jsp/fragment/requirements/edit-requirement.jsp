@@ -62,6 +62,83 @@
 
 
 
+<%-- 
+	Code managing the status of a requirement. It is a handler for the 'onsubmit' of a jeditable (see documentation for details).
+
+	It will ask the user, if he chooses to change the requirement status to 'Obsolete', to confirm.
+	Because a jQuery dialog will not stop the execution of javascript we have to code in an unnatural way. 
+	Basically this function will be called twice : first to invoked the dialog, second to read its response.	
+	
+	Here is how it works : 
+	
+		- if any status but 'obsolete' is selected, return true.
+		- if 'obsolete' is selected and 'summoned' is false, sets 'summmoned' to true, summons the dialog and return false.
+		- if 'obsolete' is selected and 'summoned' is true, sets 'summoned' to false and read 'confirm' :
+			* 'confirm' is false : reset the widget then return false.
+			* 'confirm' is true : send the information then return true
+		
+	note : Since summoning a dialog will not stop the rest of the code from executing, the second case returns false to ensure that the handler terminates quickly while the dialog
+	is still executed.
+	
+	'summoned' and 'confirm' are attributes of the dialog #requirement-status-confirm-dialog. When summoned the dialog will set 'confirm' 
+	according to the user response and submit the select again. This will in turn call that hook again, which will eventually read the user response and then only decide whether 
+	the user input will be sent or not.
+	
+	See also the code in #requirement-status-confirm-dialog for details. 
+--%>
+<script type="text/javascript">
+		
+		function statusSelect(settings, widget){
+			//first check if 'obsolete' is selected
+			var selected = $(this.find('select')).val();
+			
+			var toReturn=true;
+			
+			if ("OBSOLETE" == selected){
+				var jqDialog = $('#requirement-status-confirm-dialog');
+				var summoned = jqDialog.data('summoned');
+				
+				if (! summoned){
+					statusObsoleteSummonDialog(this, jqDialog);
+					toReturn=false;
+				}
+				else{	
+					jqDialog.data('summoned', false);
+					toReturn = statusObsoleteReadDialog(widget, jqDialog);			
+				}
+			}else{
+				toReturn=true;
+			}
+			
+			return toReturn;
+		}
+			
+		function statusObsoleteSummonDialog(form, jqDialog){
+			jqDialog.data('summoned', true);
+			jqDialog.data('callMeBack', form);
+			jqDialog.dialog('open');			
+		}
+		
+		//reset the 'summoned' flag and the widget if needed
+		function statusObsoleteReadDialog(widget, jqDialog){
+			var response = jqDialog.data('confirm');
+			if (false==response){
+				$(widget).html(widget.revert);
+				widget.editing  = false;	
+			}	
+			return response;
+		}
+		
+		
+		function statusSelectCallback(){
+			document.location.reload();
+		}
+		
+		
+</script>
+
+
+
 <div class="ui-widget-header ui-corner-all ui-state-default fragment-header">
 	<div style="float:left;height:100%;">	
 		<h2>
@@ -165,16 +242,47 @@
 					<div class="display-table-cell">
 						<authz:authorized hasRole="ROLE_ADMIN" hasPermission="WRITE" domainObject="${ requirement }">
 						<div id="requirement-status"><s:message code="requirement.status.${ requirement.status }" /></div>
-						<comp:select-jeditable componentId="requirement-status" jsonUrl="${getStatusComboContent}" targetUrl="${requirementUrl}" />
+						<comp:select-jeditable componentId="requirement-status" jsonUrl="${getStatusComboContent}" 
+												targetUrl="${requirementUrl}"	
+												onSubmit="statusSelect" submitCallback="statusSelectCallback"/>
 						</authz:authorized>
 						<authz:notAuthorized hasRole="ROLE_ADMIN" hasPermission="WRITE" domainObject="${ requirement }">
 							<s:message code="requirement.status.${ requirement.status }" />
 						</authz:notAuthorized>
-					</div>				
+					</div>		
+
+							
 				</div>				
 			</div>
 		</jsp:attribute>
 	</comp:toggle-panel>
+	
+	<%------------------------------- confirm new status if set to obsolete ---------------------%>
+		
+	<pop:popup id="requirement-status-confirm-dialog" closeOnSuccess="false" titleKey="dialog.requirement.status.confirm.title" isContextual="true" >
+		<jsp:attribute name="buttons">
+			<f:message var="confirmLabel" key="dialog.button.confirm" />
+			<f:message var="cancelLabel" key="dialog.button.cancel.label"/>
+				'${confirmLabel}' : function(){
+					var jqDiag = $(this);
+					jqDiag.dialog( 'close' );
+					jqDiag.data("confirm", true);
+					var form = jqDiag.data('callMeBack');
+					form.submit();
+				},
+				
+				'${ cancelLabel }': function() {
+					var jqDiag = $(this);
+					jqDiag.dialog( 'close' );
+					jqDiag.data("confirm", false);
+					var form = jqDiag.data('callMeBack');
+					form.submit();
+				}
+		</jsp:attribute>
+		<jsp:attribute name="body">
+			<span><f:message key="dialog.requirement.status.confirm.text"/></span>
+		</jsp:attribute>					
+	</pop:popup>
 
 	<%--------------------------- verifying TestCase section ------------------------------------%>
 	<script type="text/javascript">
@@ -307,5 +415,7 @@
 			</c:choose>				
 		}
 
-	</authz:authorized>
+		</authz:authorized>
 </script>
+
+

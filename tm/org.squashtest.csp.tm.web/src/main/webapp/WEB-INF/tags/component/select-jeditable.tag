@@ -30,6 +30,10 @@
 															jsonUrl must be defined." %>
 <%@ attribute name="jsonUrl" required="false" description="url where to fetch json formated data displayed in the select. Either jsonData or 
 															jsonUrl must be defined." %>
+															
+															
+<%@ attribute name="onSubmit" required="false" description="javascript function that will be executed before the data are submitted. 
+															Accepts : settings, original. Returns : true, false. this : the widget." %>
 
 <%@ taglib uri="http://java.sun.com/jsp/jstl/core" prefix="c" %>
 <%@ taglib prefix="f" uri="http://java.sun.com/jsp/jstl/fmt" %>
@@ -41,13 +45,14 @@
 		$( '#${ componentId }' ).editable( '${ targetUrl }', {
 			type: 'select',	
 			placeholder: '<f:message key="rich-edit.placeholder" />',
-			submit: false,
-			cancel: false,
+			submit: '<f:message key="rich-edit.button.ok.label" />',
+			cancel: '<f:message key="rich-edit.button.cancel.label" />',	
 			onblur : 'submit',					
 			<c:if test="${ not empty submitCallback }" >callback : function(value, settings){${submitCallback}(value, settings);},</c:if>
+			<c:if test="${not empty jsonData}">data : '${jsonData}',</c:if>
+			<c:if test="${not empty jsonUrl}">loadurl : '${jsonUrl}',</c:if>
+			<c:if test="${not empty onSubmit}">onsubmit : ${onSubmit},</c:if>
 			indicator : '<img src="${ pageContext.servletContext.contextPath }/images/indicator.gif" alt="processing..." />',
-			<c:if test="${not empty jsonData}">data : '${jsonData}'</c:if>
-			<c:if test="${not empty jsonUrl}">loadurl : '${jsonUrl}'</c:if>
 			
 		});
 	})
