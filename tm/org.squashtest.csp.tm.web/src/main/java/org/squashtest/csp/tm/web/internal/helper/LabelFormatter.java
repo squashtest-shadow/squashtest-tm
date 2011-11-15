@@ -18,24 +18,32 @@
  *     You should have received a copy of the GNU Lesser General Public License
  *     along with this software.  If not, see <http://www.gnu.org/licenses/>.
  */
+
 package org.squashtest.csp.tm.web.internal.helper;
 
-import java.io.IOException;
+import java.util.Locale;
 
-import org.codehaus.jackson.map.ObjectMapper;
+import javax.validation.constraints.NotNull;
 
-public final class JsonHelper {
-	private static final ObjectMapper OBJECT_MAPPER = new ObjectMapper();
+/**
+ * @author Gregory
+ * 
+ */
+public interface LabelFormatter<T> {
+	/**
+	 * Indicates that, from now on, the given locale should be used.
+	 * 
+	 * @param locale
+	 *            should not be <code>null</code>
+	 * @return this object for method chaining purposes.
+	 */
+	LabelFormatter<T> useLocale(@NotNull Locale locale);
 
-	private JsonHelper() {
-		super();
-	}
-
-	public static String serialize(Object value) throws JsonMarshallerException {
-		try {
-			return OBJECT_MAPPER.writeValueAsString(value);
-		} catch (IOException e) {
-			throw new JsonMarshallerException(e);
-		}
-	}
+	/**
+	 * 
+	 * @param toFormat
+	 *            object we want to create a formatted label. Should not be null.
+	 * @return the formatted label.
+	 */
+	String formatLabel(@NotNull T toFormat);
 }

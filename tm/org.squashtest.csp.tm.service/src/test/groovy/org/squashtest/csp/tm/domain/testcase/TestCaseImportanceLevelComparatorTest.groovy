@@ -18,24 +18,41 @@
  *     You should have received a copy of the GNU Lesser General Public License
  *     along with this software.  If not, see <http://www.gnu.org/licenses/>.
  */
-package org.squashtest.csp.tm.web.internal.helper;
 
-import java.io.IOException;
+package org.squashtest.csp.tm.domain.testcase;
 
-import org.codehaus.jackson.map.ObjectMapper;
+import static org.squashtest.csp.tm.domain.testcase.TestCaseImportance.*;
+import spock.lang.Specification;
+import spock.lang.Unroll;
 
-public final class JsonHelper {
-	private static final ObjectMapper OBJECT_MAPPER = new ObjectMapper();
-
-	private JsonHelper() {
-		super();
+/**
+ * @author Gregory Fouquet
+ *
+ */
+class TestCaseImportanceLevelComparatorTest extends Specification {
+	TestCaseImportanceLevelComparator comparator = new TestCaseImportanceLevelComparator()
+	
+	@Unroll("#higher should be lower than #lower")
+	def "high priority should be smaller than low priority"() {
+		when:
+		def res = comparator.compare(higher, lower)
+		
+		then:
+		res < 0
+		
+		where:
+		higher    | lower
+		VERY_HIGH | HIGH
+		HIGH      | MEDIUM
+		MEDIUM    | LOW
 	}
 
-	public static String serialize(Object value) throws JsonMarshallerException {
-		try {
-			return OBJECT_MAPPER.writeValueAsString(value);
-		} catch (IOException e) {
-			throw new JsonMarshallerException(e);
-		}
-	}
+	def "null should be smaller than anything"() {
+		expect:
+		comparator.compare(null, VERY_HIGH) < 0
+	}	
+	def "anything should be greater than null"() {
+		expect:
+		comparator.compare(VERY_HIGH, null) > 0
+	}	
 }

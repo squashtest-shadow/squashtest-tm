@@ -18,24 +18,28 @@
  *     You should have received a copy of the GNU Lesser General Public License
  *     along with this software.  If not, see <http://www.gnu.org/licenses/>.
  */
+
 package org.squashtest.csp.tm.web.internal.helper;
 
 import java.io.IOException;
 
-import org.codehaus.jackson.map.ObjectMapper;
+/**
+ * Indicates the Json marshaller (ie Jackson) threw an unchecked exception.
+ * 
+ * @author Gregory Fouquet
+ * 
+ */
+public class JsonMarshallerException extends RuntimeException {
 
-public final class JsonHelper {
-	private static final ObjectMapper OBJECT_MAPPER = new ObjectMapper();
+	/**
+	 * 
+	 */
+	private static final long serialVersionUID = 2391838169581694495L;
 
-	private JsonHelper() {
-		super();
-	}
-
-	public static String serialize(Object value) throws JsonMarshallerException {
-		try {
-			return OBJECT_MAPPER.writeValueAsString(value);
-		} catch (IOException e) {
-			throw new JsonMarshallerException(e);
-		}
+	/**
+	 * @param e
+	 */
+	public JsonMarshallerException(IOException e) {
+		super(e);
 	}
 }

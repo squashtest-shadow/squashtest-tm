@@ -33,10 +33,10 @@ public enum TestCaseImportance implements Internationalizable, Comparable<TestCa
 	
 	private static final String I18N_KEY_ROOT = "test-case.importance.";
 
-	private final int value;
+	private final int level;
 	
 	private TestCaseImportance(int value) {
-		this.value = value;
+		this.level = value;
 	}
 
 	/** (non-Javadoc)
@@ -45,5 +45,12 @@ public enum TestCaseImportance implements Internationalizable, Comparable<TestCa
 	@Override
 	public String getI18nKey() {
 		return I18N_KEY_ROOT + this.name();
+	}
+
+	/**
+	 * @return the level
+	 */
+	public int getLevel() {
+		return level;
 	}
 }

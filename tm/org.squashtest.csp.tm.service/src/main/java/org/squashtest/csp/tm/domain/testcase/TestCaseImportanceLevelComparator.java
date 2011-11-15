@@ -18,24 +18,42 @@
  *     You should have received a copy of the GNU Lesser General Public License
  *     along with this software.  If not, see <http://www.gnu.org/licenses/>.
  */
-package org.squashtest.csp.tm.web.internal.helper;
 
-import java.io.IOException;
+package org.squashtest.csp.tm.domain.testcase;
 
-import org.codehaus.jackson.map.ObjectMapper;
+import java.util.Comparator;
 
-public final class JsonHelper {
-	private static final ObjectMapper OBJECT_MAPPER = new ObjectMapper();
+import org.springframework.stereotype.Component;
 
-	private JsonHelper() {
-		super();
+/**
+ * Compares 2 {@link TestCaseImportance} using their {@link TestCaseImportance#getLevel()} property. The smaller the
+ * level, the higher the importance.
+ * 
+ * @author Gregory Fouquet
+ * 
+ */
+@Component("squashtest.tm.domain.TestCaseImportanceLevelComparator")
+public class TestCaseImportanceLevelComparator implements Comparator<TestCaseImportance> {
+
+	/**
+	 * (non-Javadoc)
+	 * 
+	 * @see java.util.Comparator#compare(java.lang.Object, java.lang.Object)
+	 */
+	@Override
+	public int compare(TestCaseImportance o1, TestCaseImportance o2) {
+		int level1 = computeLevel(o1);
+		int level2 = computeLevel(o2);
+
+		return level1 - level2;
 	}
 
-	public static String serialize(Object value) throws JsonMarshallerException {
-		try {
-			return OBJECT_MAPPER.writeValueAsString(value);
-		} catch (IOException e) {
-			throw new JsonMarshallerException(e);
-		}
+	/**
+	 * @param o2
+	 * @return
+	 */
+	private int computeLevel(TestCaseImportance importance) {
+		return importance == null ? 0 : importance.getLevel();
 	}
+
 }
