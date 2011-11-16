@@ -168,4 +168,12 @@ public enum RequirementStatus implements Internationalizable{
 		}
 	}
 	
+	/**
+	 * will check if the transition from this status to new status is legal
+	 * @return true if it's okay
+	 */
+	public boolean  isTransitionLegal(RequirementStatus newStatus){
+		return this.getAvailableNextStatus().contains(newStatus);
+	}
+	
 }

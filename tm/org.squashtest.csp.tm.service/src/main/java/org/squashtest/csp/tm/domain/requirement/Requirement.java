@@ -35,6 +35,7 @@ import javax.persistence.OneToOne;
 import javax.persistence.PrimaryKeyJoinColumn;
 import javax.validation.constraints.NotNull;
 
+import org.squashtest.csp.tm.domain.IllegalRequirementModificationException;
 import org.squashtest.csp.tm.domain.attachment.Attachable;
 import org.squashtest.csp.tm.domain.attachment.Attachment;
 import org.squashtest.csp.tm.domain.attachment.AttachmentList;
@@ -43,7 +44,8 @@ import org.squashtest.csp.tm.domain.testcase.TestCase;
 /**
  * Entity requirement
  *
- *
+ * Note that much of its setters will throw an IllegalRequirementModificationException if a modification is attempted while the 
+ * status does not allow it.
  *
  * @author bsiri
  *
@@ -80,13 +82,26 @@ public class Requirement extends RequirementLibraryNode implements Attachable {
 	}
 
 	public Requirement(String name, String description) {
-		super(name, description);
+		status=RequirementStatus.WORK_IN_PROGRESS;
+		setName(name);
+		setDescription(description);
+	}
+	
+	@Override
+	public void setName(String name){
+		checkAccess();
+		super.setName(name);
+	}
+	
+	@Override
+	public void setDescription(String description){
+		checkAccess();
+		super.setDescription(description);
 	}
 
 	@Override
 	public void accept(RequirementLibraryNodeVisitor visitor) {
 		visitor.visit(this);
-
 	}
 
 	public Set<TestCase> getVerifyingTestCase() {
@@ -94,11 +109,13 @@ public class Requirement extends RequirementLibraryNode implements Attachable {
 	}
 
 	public void addVerifyingTestCase(@NotNull TestCase testcase) {
+		checkAccess();
 		getVerifyingTestCase().add(testcase);
 		testcase.getVerifiedRequirements().add(this);
 	}
 
 	public void removeVerifyingTestCase(@NotNull TestCase testcase) {
+		checkAccess();
 		getVerifyingTestCase().remove(testcase);
 		testcase.removeVerifiedRequirement(this);
 	}
@@ -120,7 +137,6 @@ public class Requirement extends RequirementLibraryNode implements Attachable {
 
 	@Override
 	public int getNbAttachments() {
-
 		return getAttachmentCollection().size();
 	}
 
@@ -138,12 +154,14 @@ public class Requirement extends RequirementLibraryNode implements Attachable {
 	 * @param reference
 	 */
 	public void setReference(String reference) {
+		checkAccess();
 		this.reference = reference;
 	}
 
 	@Override
 	public Requirement createCopy() {
 		Requirement clone = new Requirement();
+		clone.setStatus(RequirementStatus.WORK_IN_PROGRESS);
 
 		clone.setName(this.getName());
 		clone.setDescription(this.getDescription());
@@ -175,15 +193,32 @@ public class Requirement extends RequirementLibraryNode implements Attachable {
 	 * @param criticality
 	 */
 	public void setCriticality(RequirementCriticality criticality) {
+		checkAccess();
 		this.criticality = criticality;
 	}
 	
 	public void setStatus(RequirementStatus status){
+		checkStatusAccess(status);
 		this.status=status;
 	}
 	
 	public RequirementStatus getStatus(){
 		return status;
 	}
+	
+	private void checkAccess(){
+		if (! status.getAllowsUpdate()){
+			throw new IllegalRequirementModificationException();
+		}
+	}
+	
+	private void checkStatusAccess(RequirementStatus newStatus){
+		if (  (! status.getAllowsStatusUpdate())	|| 
+			  (! status.isTransitionLegal(newStatus)) 
+		 	){
+			throw new IllegalRequirementModificationException();
+		}
+	}
+	
 
 }

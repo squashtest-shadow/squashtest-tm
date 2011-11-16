@@ -21,11 +21,13 @@
 package org.squashtest.csp.tm.hibernate.mapping.requirement
 
 
-import org.hibernate.Hibernate;
-import org.hibernate.JDBCException;
-import org.squashtest.csp.tm.domain.requirement.Requirement;
-import org.squashtest.csp.tm.domain.testcase.TestCase;
-import org.squashtest.csp.tm.hibernate.mapping.HibernateMappingSpecification;
+import org.hibernate.Hibernate
+import org.hibernate.JDBCException
+import org.squashtest.csp.tm.domain.IllegalRequirementModificationException
+import org.squashtest.csp.tm.domain.requirement.Requirement
+import org.squashtest.csp.tm.domain.requirement.RequirementStatus
+import org.squashtest.csp.tm.domain.testcase.TestCase
+import org.squashtest.csp.tm.hibernate.mapping.HibernateMappingSpecification
 
 class RequirementMappingIT extends HibernateMappingSpecification {
 	
@@ -50,6 +52,24 @@ class RequirementMappingIT extends HibernateMappingSpecification {
 		
 		cleanup :
 		deleteFixture requirement
+	}
+	
+	def "hibernate should bypass the setters and successfuly load a requirement with status obsolete"(){
+		
+		given :
+		def requirement = new Requirement("req 2", "this is an obsolete requirement");
+		requirement.setStatus(RequirementStatus.OBSOLETE)
+		
+		when :
+		persistFixture requirement
+		def refetch = doInTransaction({session -> session.get(Requirement, requirement.id)});		
+		
+		then :
+			notThrown IllegalRequirementModificationException
+			refetch.name =="req 2"
+			refetch.description == "this is an obsolete requirement"
+			refetch.status == RequirementStatus.OBSOLETE
+		
 	}
 	
 	
