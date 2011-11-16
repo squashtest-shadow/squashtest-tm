@@ -65,7 +65,7 @@ public class IssueModel {
 
 
 	public void setPriorities(Object[] priorities) {
-		this.priorities = priorities; //NOSONAR
+		this.priorities = priorities; //NOSONAR that class is used in one specific case and could barely be used elsewhere. In this sole usecase the arrays will never be modified.
 	}
 
 
@@ -75,8 +75,8 @@ public class IssueModel {
 
 
 	public void setUsers(Object[] users) {
-		this.users = users; //NOSONAR
-	}
+		this.users = users; //NOSONAR that class is used in one specific case and could barely be used elsewhere. In this sole usecase the arrays will never be modified.
+		}
 
 
 	public String getDefaultDescription() {
@@ -92,16 +92,16 @@ public class IssueModel {
 	}
 
 	public void setVersions(Object[] versions) {
-		this.versions = versions; //NOSONAR
-	}
+		this.versions = versions; //NOSONAR that class is used in one specific case and could barely be used elsewhere. In this sole usecase the arrays will never be modified.
+		}
 
 	public Object[] getCategories() {
 		return categories;
 	}
 
 	public void setCategories(Object[] categories) {
-		this.categories = categories; //NOSONAR
-	}
+		this.categories = categories; //NOSONAR that class is used in one specific case and could barely be used elsewhere. In this sole usecase the arrays will never be modified.
+		}
 
 
 	public String getProjectId() {
