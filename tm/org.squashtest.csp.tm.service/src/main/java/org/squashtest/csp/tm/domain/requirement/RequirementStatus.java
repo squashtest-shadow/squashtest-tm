@@ -37,12 +37,12 @@ public enum RequirementStatus implements Internationalizable{
 		}
 
 		@Override
-		public boolean allowsUpdate() {
+		public boolean getAllowsUpdate() {
 			return true;
 		}
 
 		@Override
-		public boolean allowsStatusUpdate() {
+		public boolean getAllowsStatusUpdate() {
 			return true;
 		}
 	},
@@ -57,12 +57,12 @@ public enum RequirementStatus implements Internationalizable{
 		}
 
 		@Override
-		public boolean allowsUpdate() {
+		public boolean getAllowsUpdate() {
 			return true;
 		}
 
 		@Override
-		public boolean allowsStatusUpdate() {
+		public boolean getAllowsStatusUpdate() {
 			return true;
 		}
 	},
@@ -77,12 +77,12 @@ public enum RequirementStatus implements Internationalizable{
 		}
 
 		@Override
-		public boolean allowsUpdate() {
+		public boolean getAllowsUpdate() {
 			return false;
 		}
 
 		@Override
-		public boolean allowsStatusUpdate() {
+		public boolean getAllowsStatusUpdate() {
 			return true;
 		}
 	},
@@ -94,12 +94,12 @@ public enum RequirementStatus implements Internationalizable{
 		}
 
 		@Override
-		public boolean allowsUpdate() {
+		public boolean getAllowsUpdate() {
 			return false;
 		}
 
 		@Override
-		public boolean allowsStatusUpdate() {
+		public boolean getAllowsStatusUpdate() {
 			return false;
 		}
 	};
@@ -122,14 +122,14 @@ public enum RequirementStatus implements Internationalizable{
 	 * 
 	 * @return yay or nay.
 	 */
-	public abstract boolean allowsUpdate();
+	public abstract boolean getAllowsUpdate();
 	
 	/**
-	 * tells whether the status could be changed regardless of {@link #allowsUpdate()};
+	 * tells whether the status could be changed regardless of {@link #getAllowsUpdate()};
 	 * 
 	 * @return yay or nay.
 	 */
-	public abstract boolean allowsStatusUpdate();
+	public abstract boolean getAllowsStatusUpdate();
 	
 	
 	protected Set<RequirementStatus> defaultAvailableSet(){

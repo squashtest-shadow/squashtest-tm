@@ -31,8 +31,12 @@
 <%@ taglib prefix="pop" tagdir="/WEB-INF/tags/popup" %>
 <%@ taglib prefix="fn" uri="http://java.sun.com/jsp/jstl/functions" %>
 <%@ taglib prefix="authz" tagdir="/WEB-INF/tags/authz" %>
+
+
 <?xml version="1.0" encoding="utf-8" ?>
 <%@ page language="java" contentType="text/html; charset=utf-8" pageEncoding="utf-8"%>
+
+
 <c:url var="ckeConfigUrl" value="/styles/ckeditor/ckeditor-config.js" />
 <s:url var="requirementUrl" value="/requirements/{reqId}">
 	<s:param name="reqId" value="${requirement.id}" />
@@ -54,10 +58,26 @@
 
 
 <%-- ----------------------------------- Authorization ----------------------------------------------%>
+<%-- 
+that page won't be editable if 
+   * the user don't have the correct permission,
+   * the requirement status doesn't allow it.
+
+ --%>
+ 
+<c:set var="user_authorized" value="${false}" />
 <c:set var="editable" value="${ false }" /> 
+<c:set var="status_editable" value="${false }" />
 <authz:authorized hasRole="ROLE_ADMIN" hasPermission="WRITE" domainObject="${ requirement }">
-	<c:set var="editable" value="${ true }" /> 
+	<c:set var="user_authorized" value="${ true }" /> 
 </authz:authorized>
+<c:if test="${user_authorized && requirement.status.allowsUpdate}">
+	<c:set var="editable" value="${true}"/>
+</c:if>
+<c:if test="${user_authorized && requirement.status.allowsStatusUpdate}">
+	<c:set var="status_editable" value="${true }"/>
+</c:if>
+
 <%-- ----------------------------------- Init ----------------------------------------------%>
 
 
@@ -72,7 +92,7 @@
 	Here is how it works : 
 	
 		- if any status but 'obsolete' is selected, return true.
-		- if 'obsolete' is selected and 'summoned' is false, sets 'summmoned' to true, summons the dialog and return false.
+		- if 'obsolete' is selected and 'summoned' is false, sets 'summoned' to true, summons the dialog and return false.
 		- if 'obsolete' is selected and 'summoned' is true, sets 'summoned' to false and read 'confirm' :
 			* 'confirm' is false : reset the widget then return false.
 			* 'confirm' is true : send the information then return true
@@ -86,6 +106,8 @@
 	
 	See also the code in #requirement-status-confirm-dialog for details. 
 --%>
+
+<c:if test="${status_editable}">
 <script type="text/javascript">
 		
 		function statusSelect(settings, widget){
@@ -136,7 +158,7 @@
 		
 		
 </script>
-
+</c:if>
 
 
 <div class="ui-widget-header ui-corner-all ui-state-default fragment-header">
@@ -157,7 +179,7 @@
 	
 	<div style="clear:both;"></div>	
 
-	<authz:authorized hasRole="ROLE_ADMIN" hasPermission="WRITE" domainObject="${ requirement }">
+	<c:if test="${editable }">
 		<comp:popup id="rename-requirement-dialog" titleKey="dialog.rename-requirement.title" 
 			isContextual="true" openedBy="rename-requirement-button">
 			<jsp:attribute name="buttons">
@@ -188,7 +210,7 @@
 				<comp:error-message forField="name"/>
 			</jsp:body>
 		</comp:popup>
-	</authz:authorized>		
+	</c:if>		
 </div>
 
 <div class="fragment-body">
@@ -197,22 +219,22 @@
 			<comp:general-information-panel auditableEntity="${requirement}" entityUrl="${ requirementUrl }" />
 		</div>
 
-		<authz:authorized hasRole="ROLE_ADMIN" hasPermission="WRITE" domainObject="${ requirement }">
+		<c:if test="${editable }">
 			<div class="toolbar-button-panel">
 				<input type="button" value='<f:message key="requirement.button.rename.label" />' id="rename-requirement-button" class="button"/> 
 				<input type="button" value='<f:message key="requirement.button.remove.label" />' id="delete-requirement-button" class="button"/>		
 			</div>	
-		</authz:authorized>
+		</c:if>
 
 		<div style="clear:both;"></div>			
 	</div>
 
-	<authz:authorized hasRole="ROLE_ADMIN" hasPermission="WRITE" domainObject="${ requirement }">
+	<c:if test="${editable }">
 		<comp:rich-jeditable targetUrl="${ requirementUrl }" componentId="requirement-description" />
 		<%-- make requirement-reference editable --%>
 		<%-- TODO put at end of page, maybe componentize --%>
 		<comp:simple-jeditable targetUrl="${ requirementUrl }" componentId="requirement-reference" submitCallback="updateReferenceInTitle" maxLength="20" />
-	</authz:authorized>
+	</c:if>
 
 	<comp:toggle-panel id="requirement-information-panel" titleKey="requirement.panel.general-informations.title" isContextual="true" open="true" >
 		<jsp:attribute name="body">
@@ -228,27 +250,31 @@
 				<div class="display-table-row">
 					<label for="requirement-criticality" class="display-table-cell"><f:message key="requirement.criticality.combo.label" /></label>
 					<div class="display-table-cell">
-						<authz:authorized hasRole="ROLE_ADMIN" hasPermission="WRITE" domainObject="${ requirement }">
+						<c:choose>
+						<c:when test="${editable }">
 						<div id="requirement-criticality"><s:message code="requirement.criticality.${ requirement.criticality }" /></div>
 						<comp:select-jeditable componentId="requirement-criticality" jsonData="${criticalityList}" targetUrl="${requirementUrl}" />
-						</authz:authorized>
-						<authz:notAuthorized hasRole="ROLE_ADMIN" hasPermission="WRITE" domainObject="${ requirement }">
+						</c:when>
+						<c:otherwise>
 							<s:message code="requirement.criticality.${ requirement.criticality }" />
-						</authz:notAuthorized>
+						</c:otherwise>
+						</c:choose>
 					</div>				
 				</div>
 				<div class="display-table-row">
 					<label for="requirement-status" class="display-table-cell"><f:message key="requirement.status.combo.label" /></label>
 					<div class="display-table-cell">
-						<authz:authorized hasRole="ROLE_ADMIN" hasPermission="WRITE" domainObject="${ requirement }">
+						<c:choose>
+						<c:when test="${status_editable}">
 						<div id="requirement-status"><s:message code="requirement.status.${ requirement.status }" /></div>
 						<comp:select-jeditable componentId="requirement-status" jsonUrl="${getStatusComboContent}" 
 												targetUrl="${requirementUrl}"	
 												onSubmit="statusSelect" submitCallback="statusSelectCallback"/>
-						</authz:authorized>
-						<authz:notAuthorized hasRole="ROLE_ADMIN" hasPermission="WRITE" domainObject="${ requirement }">
+						</c:when>
+						<c:otherwise>
 							<s:message code="requirement.status.${ requirement.status }" />
-						</authz:notAuthorized>
+						</c:otherwise>
+						</c:choose>
 					</div>		
 
 							
@@ -258,7 +284,7 @@
 	</comp:toggle-panel>
 	
 	<%------------------------------- confirm new status if set to obsolete ---------------------%>
-		
+	<c:if test="${status_editable}">
 	<pop:popup id="requirement-status-confirm-dialog" closeOnSuccess="false" titleKey="dialog.requirement.status.confirm.title" isContextual="true" >
 		<jsp:attribute name="buttons">
 			<f:message var="confirmLabel" key="dialog.button.confirm" />
@@ -283,6 +309,7 @@
 			<span><f:message key="dialog.requirement.status.confirm.text"/></span>
 		</jsp:attribute>					
 	</pop:popup>
+	</c:if>
 
 	<%--------------------------- verifying TestCase section ------------------------------------%>
 	<script type="text/javascript">
@@ -295,13 +322,13 @@
 
 	<comp:toggle-panel id="verifying-requirement-panel" titleKey="requirement.verifying_test-case.panel.title" open="true">
 		<jsp:attribute name="panelButtons">
-			<authz:authorized hasRole="ROLE_ADMIN" hasPermission="WRITE" domainObject="${ requirement }">
+			<c:if test="${editable}">
 				<f:message var="associateLabel" key="requirement.verifying_test-case.manage.button.label"/>
 				<f:message var="removeLabel" key="test-case.verified_requirement_item.remove.button.label"/>
 				
 				<input id="verifying-test-case-button" type="button" value="${associateLabel}"/>
 				<input id="remove-verifying-test-case-button" type="button" class="button" value="${removeLabel}"/>
-			</authz:authorized>
+			</c:if>
 		</jsp:attribute>
 	
 		<jsp:attribute name="body">
@@ -314,19 +341,19 @@
 
 <%------------------------------ Attachments bloc ---------------------------------------------%> 
 
-	<authz:authorized hasRole="ROLE_ADMIN" hasPermission="WRITE" domainObject="${ requirement }">
+	<c:if test="${editable}">
 		<c:set var="editable" value="${ true }" />
-	</authz:authorized>
+	</c:if>
 	<comp:attachment-bloc entity="${requirement}" workspaceName="requirement" editable="${ editable }" />
 	
 	<%--------------------------- Deletion confirmation popup -------------------------------------%>
-	<authz:authorized hasRole="ROLE_ADMIN" hasPermission="WRITE" domainObject="${ requirement }">
+	<c:if test="${editable}">
 	
 	<comp:delete-contextual-node-dialog simulationUrl="${simulateDeletionUrl}" confirmationUrl="${confirmDeletionUrl}" 
 			itemId="${requirement.id}" successCallback="deleteRequirementSuccess" openedBy="delete-requirement-button" titleKey="dialog.delete-requirement.title"/>
 	
 
-	</authz:authorized>
+	</c:if>
 </div>
 
 <comp:decorate-buttons />
@@ -351,7 +378,7 @@
 		return toReturn;
 	}
 
-	<authz:authorized hasRole="ROLE_ADMIN" hasPermission="WRITE" domainObject="${ requirement }">
+	<c:if test="${editable}">
 		/* renaming success handler */
 		function renameRequirementSuccess(data){
 			//Compose the real name
@@ -415,7 +442,7 @@
 			</c:choose>				
 		}
 
-		</authz:authorized>
+		</c:if>
 </script>
 
 

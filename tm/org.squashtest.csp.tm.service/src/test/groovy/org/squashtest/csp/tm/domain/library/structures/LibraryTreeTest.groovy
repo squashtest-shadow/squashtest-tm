@@ -20,12 +20,12 @@
  */
 package org.squashtest.csp.tm.domain.library.structures
 
-import java.util.NoSuchElementException;
+import java.util.NoSuchElementException
 
-import org.apache.commons.collections.Transformer;
-import org.squashtest.csp.tm.domain.library.structures.LibraryTree.TreeNodePair;
+import org.apache.commons.collections.Transformer
+import org.squashtest.csp.tm.domain.library.structures.LibraryTree.TreeNodePair
 
-import spock.lang.Specification;
+import spock.lang.Specification
 
 class LibraryTreeTest extends Specification{
 
@@ -33,6 +33,10 @@ class LibraryTreeTest extends Specification{
 	//default groovy collections for the [] notation is an implementation of List. But I have specific needs for Long[], hence the
 	//scaffolding code here
 
+	
+	def setupSpec(){
+		LibraryTree.metaClass.toListOfPair = { List arg -> return toListOfPair(delegate, arg)  }
+	}
 	
 	protected List<TreeNodePair> toListOfPair(LibraryTree<SubTreeNode> tree, List<List<Long>> l){
 				
@@ -358,10 +362,7 @@ class LibraryTreeTest extends Specification{
 	
 	def "should sort a list of data (see comments of LibraryTree#sortData)"(){
 		
-		given :
-			LibraryTree.metaClass.toListOfPair = { List arg -> return toListOfPair(delegate, arg)  }
-		
-		and : 
+		given : 
 			def tree = initBigTree()
 		
 			def sortedData = tree.toListOfPair([[null, 1], [1, 11], [11, 21], [1, 12],  [11, 22], [12, 23]])
@@ -386,9 +387,6 @@ class LibraryTreeTest extends Specification{
 	
 	def "should build a tree using a list of unsorted data (see LibraryTree#sortData comments for explanation)"(){
 		given :
-			LibraryTree.metaClass.toListOfPair = { List arg -> return toListOfPair(delegate, arg)  }
-		
-		and : 
 			def tree = new LibraryTree();
 			
 		and :
