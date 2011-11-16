@@ -81,7 +81,7 @@
 	 </changeSet>
 
 	 <changeSet id="tm-0.19.0.03" author="ramoussou">
-		<preConditions onError="CONTINUE" onFail="CONTINUE" onSqlOutput="FAIL" >
+		<preConditions onError="CONTINUE" onFail="CONTINUE" onSqlOutput="TEST">
 			<dbms type="h2"/>
 		</preConditions>
 		<comment>Calculate and insert and add Not null constraint on order for Campaign Test Plan For H2</comment>
@@ -110,7 +110,7 @@
 	 </changeSet>
 	
 	 <changeSet id="tm-0.19.0.04" author="ramoussou">
-		<preConditions onError="CONTINUE" onFail="CONTINUE" >
+		<preConditions onError="CONTINUE" onFail="CONTINUE" onSqlOutput="TEST">
 		<dbms type="mysql"/>
 		</preConditions>
 		<comment> Calculate and insert and add Not null constraint on order for Campaign Test Plan for myssql </comment>

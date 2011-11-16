@@ -1532,7 +1532,7 @@
 
  -->
 	<changeSet author="bsiri" id="tm-0.14.0.42">
-		<preConditions onError="CONTINUE" onFail="CONTINUE" onSqlOutput="FAIL">
+		<preConditions onError="CONTINUE" onFail="CONTINUE" onSqlOutput="TEST">
 			<dbms type="h2" />
 		</preConditions>
 		<sql>
@@ -1541,7 +1541,7 @@
 	</changeSet>         
 
 	<changeSet id="tm-0.14.0.43" author="xpr">
-		<preConditions onError="CONTINUE" onFail="CONTINUE" onSqlOutput="FAIL">
+		<preConditions onError="CONTINUE" onFail="CONTINUE" onSqlOutput="TEST">
 		<dbms type="mysql"/>
 		</preConditions>
 		<sql>
