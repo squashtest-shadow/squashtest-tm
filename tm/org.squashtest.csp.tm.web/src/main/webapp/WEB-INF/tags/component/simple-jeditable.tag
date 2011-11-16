@@ -54,7 +54,7 @@
 				${submitCallback}(value, settings);
 			},
 			</c:if>
-			indicator : '<img src="${ pageContext.servletContext.contextPath }/images/indicator.gif" alt="processing..." />' 
+			indicator : '<img src="${ pageContext.servletContext.contextPath }/scripts/jquery/indicator.gif" alt="processing..." />' 
 			
 		});
 	})

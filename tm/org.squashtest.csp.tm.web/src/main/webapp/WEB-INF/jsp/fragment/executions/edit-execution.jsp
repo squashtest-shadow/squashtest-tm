@@ -215,7 +215,7 @@
 			placeholder: '<f:message key="rich-edit.placeholder" />',
 			submit: '<f:message key="rich-edit.button.ok.label" />',
 			cancel: '<f:message key="rich-edit.button.cancel.label" />',
-			indicator : '<img src="${ pageContext.servletContext.contextPath }/images/indicator.gif" alt="processing..." />' 	
+			indicator : '<img src="${ pageContext.servletContext.contextPath }/scripts/jquery/indicator.gif" alt="processing..." />' 	
 		};
 		jqOColumn.richEditable(settings);	
 	}
