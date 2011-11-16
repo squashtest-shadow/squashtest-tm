@@ -36,6 +36,14 @@ import spock.unitils.UnitilsSupport;
 @Transactional
 class HibernateTestCaseDaoIT extends DbunitDaoSpecification {
 	@Inject TestCaseDao testCaseDao
+	
+	def setupSpec() {
+		List.metaClass.containsSameIdentifiers << { ids ->
+			assert delegate.size() == ids.size()
+			assert (delegate.collect { it.id }).containsAll(ids)
+			true
+		}
+	}
 
 	@DataSet("HibernateTestCaseDaoIT.should find filtered steps by test case id.xml")
 	def "should find filtered steps by test case id"() {
@@ -301,10 +309,10 @@ class HibernateTestCaseDaoIT extends DbunitDaoSpecification {
 		def res = testCaseDao.findAllByRequirement(req, false);
 
 		then:
-		res.size() == 3
-		res.collect { it.id } == [202, 102, 103]
+		res.containsSameIdentifiers([202L, 102L, 103L])
 	}
 
+	// XXX There are no projects in the dataset, I think we test sweet FA.
 	@DataSet("HibernateTestCaseDaoIT.should find test cases by requirement name token project ordered.xml")
 	def "should find test cases by requirement name token project ordered"() {
 		given:
@@ -316,8 +324,7 @@ class HibernateTestCaseDaoIT extends DbunitDaoSpecification {
 		def res = testCaseDao.findAllByRequirement(req, true);
 
 		then:
-		res.size() == 3
-		res.collect { it.id } == [202, 102, 103]
+		res.containsSameIdentifiers([202L, 102L, 103L])
 	}
 
 	@DataSet("HibernateTestCaseDaoIT.should find test cases by requirement reference token.xml")
@@ -331,8 +338,7 @@ class HibernateTestCaseDaoIT extends DbunitDaoSpecification {
 		def res = testCaseDao.findAllByRequirement(req, false);
 
 		then:
-		res.size() == 3
-		res.collect { it.id } == [202, 102, 103]
+		res.containsSameIdentifiers([202L, 102L, 103L])
 	}
 
 	@DataSet("HibernateTestCaseDaoIT.should find test cases by requirement reference and name token.xml")
