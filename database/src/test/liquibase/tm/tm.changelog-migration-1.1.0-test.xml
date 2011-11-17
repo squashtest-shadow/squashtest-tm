@@ -25,7 +25,7 @@
 	xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog 
      http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-2.0.xsd">
    
-	
+	<include file="tm.data-0.23.0.xml" relativeToChangelogFile="true" />
 	<include file="../../../main/liquibase/tm/tm.changelog-1.1.0.xml" relativeToChangelogFile="true" />
 	
 	<changeSet id="1.1.0.check-no-BLOQUED-in-executions" author="gfouquet">
@@ -53,5 +53,21 @@
 	 		</sqlCheck>
 		</preConditions>
 		<comment>We check that there there are no more 'BLOQUED' status in Iteration test plan item</comment>
+	</changeSet>
+	
+	<changeSet id="1.1.0.check-import-existing-requirement-event_audit" author="bsiri">
+		<preConditions>
+			<sqlCheck expectedResult="0">
+				select count(rae.event_id) - count(r.rln_id) from REQUIREMENT_AUDIT_EVENT rae, REQUIREMENT r;
+			</sqlCheck>
+		</preConditions>	
+	</changeSet>
+	
+	<changeSet id="1.1.0.check-import-existing-requirement-event_create" author="bsiri">
+		<preConditions>
+			<sqlCheck expectedResult="0">
+				select count(rae.event_id) - count(rc.event_id) from REQUIREMENT_AUDIT_EVENT rae, REQUIREMENT_CREATION rc;
+			</sqlCheck>
+		</preConditions>	
 	</changeSet>
 </databaseChangeLog>
