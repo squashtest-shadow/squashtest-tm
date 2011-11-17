@@ -171,7 +171,7 @@
 	
 	</changeSet>
 	
-	<!-- 
+	
 	<changeSet id="tm-1.1.0-s25-04" author="bsiri">
 		<comment>
 			Will immediately update the tables with the create_events of existing requirements.
@@ -180,11 +180,11 @@
 		</comment>
 		<sql>
 			insert into AUDIT_EVENT (entity_id, event_date, author) 
-			select r.rln_id, rln.created_on, rln.created_by 
+			<!-- select r.rln_id, rln.created_on, rln.created_by  --> 
 			from REQUIREMENT_LIBRARY_NODE as rln, REQUIREMENT as r 
 			where r.rln_id=rln.rln_id;		
 		</sql>
 	</changeSet>
-	 -->
+
 </databaseChangeLog>
  
