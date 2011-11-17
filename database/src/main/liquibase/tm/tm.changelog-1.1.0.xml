@@ -172,7 +172,7 @@
 	</changeSet>
 	
 	
-	<changeSet id="tm-1.1.0-s25-04" author="bsiri">
+	<changeSet id="tm-1.1.0-s25.05" author="bsiri">
 		<comment>
 			Will immediately update the tables with the create_events of existing requirements.
 			Note : if you read the code below carefully and wonder why we use REQUIREMENT and REQUIREMENT_LIBRARY_NODE instead of the 
@@ -180,9 +180,11 @@
 		</comment>
 		<sql>
 			insert into AUDIT_EVENT (entity_id, event_date, author) 
-			<!-- select r.rln_id, rln.created_on, rln.created_by  --> 
+			select r.rln_id, rln.created_on, rln.created_by  
 			from REQUIREMENT_LIBRARY_NODE as rln, REQUIREMENT as r 
 			where r.rln_id=rln.rln_id;		
+			
+			insert into EVENT_CREATE (event_id) select event_id from EVENT_AUDIT;
 		</sql>
 	</changeSet>
 
