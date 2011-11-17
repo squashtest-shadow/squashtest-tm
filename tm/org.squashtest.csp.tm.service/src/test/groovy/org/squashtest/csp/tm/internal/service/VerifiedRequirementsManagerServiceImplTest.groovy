@@ -29,6 +29,7 @@ import org.squashtest.csp.tm.internal.repository.RequirementDao;
 import org.squashtest.csp.tm.internal.repository.RequirementLibraryDao;
 import org.squashtest.csp.tm.internal.repository.TestCaseDao;
 import org.squashtest.csp.tm.internal.repository.TestCaseLibraryDao;
+import org.squashtest.csp.tools.unittest.reflection.ReflectionCategory;
 
 import spock.lang.Specification;
 
@@ -82,8 +83,14 @@ class VerifiedRequirementsManagerServiceImplTest extends Specification {
 		testCaseDao.findById(10) >> testCase
 		
 		and: 
-		Requirement req5 = Mock()
-		Requirement req15 = Mock() 
+		Requirement req5 = new Requirement()
+		Requirement req15 = new Requirement()
+		
+		use (ReflectionCategory) {
+			RequirementLibraryNode.set field: "id", of: req5, to: 5L
+			RequirementLibraryNode.set field: "id", of: req15, to: 15L
+		}
+		 
 		requirementDao.findAllByIdList([5, 15]) >> [req5, req15]
 		
 		when:
@@ -96,10 +103,13 @@ class VerifiedRequirementsManagerServiceImplTest extends Specification {
 	
 	def "should remove requirements from test case's verified requirements"() {
 		given: "some requirements"
-		Requirement req5 = Mock()
-		req5.id >> 5
-		Requirement req15 = Mock()
-		req15.id >> 15
+		Requirement req5 = new Requirement()
+		Requirement req15 = new Requirement()
+		
+		use (ReflectionCategory) {
+			RequirementLibraryNode.set field: "id", of: req5, to: 5L
+			RequirementLibraryNode.set field: "id", of: req15, to: 15L
+		}
 		requirementDao.findAllByIdList([15]) >> [req15]
 		
 		and: " a test case which verifies these requirements"

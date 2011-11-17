@@ -37,12 +37,17 @@ public enum RequirementStatus implements Internationalizable{
 		}
 
 		@Override
-		public boolean getAllowsUpdate() {
+		public boolean isRequirementModifiable() {
 			return true;
 		}
 
 		@Override
 		public boolean getAllowsStatusUpdate() {
+			return true;
+		}
+
+		@Override
+		public boolean isRequirementLinkable() {
 			return true;
 		}
 	},
@@ -57,12 +62,17 @@ public enum RequirementStatus implements Internationalizable{
 		}
 
 		@Override
-		public boolean getAllowsUpdate() {
+		public boolean isRequirementModifiable() {
 			return true;
 		}
 
 		@Override
 		public boolean getAllowsStatusUpdate() {
+			return true;
+		}
+
+		@Override
+		public boolean isRequirementLinkable() {
 			return true;
 		}
 	},
@@ -77,12 +87,17 @@ public enum RequirementStatus implements Internationalizable{
 		}
 
 		@Override
-		public boolean getAllowsUpdate() {
+		public boolean isRequirementModifiable() {
 			return false;
 		}
 
 		@Override
 		public boolean getAllowsStatusUpdate() {
+			return true;
+		}
+
+		@Override
+		public boolean isRequirementLinkable() {
 			return true;
 		}
 	},
@@ -94,12 +109,17 @@ public enum RequirementStatus implements Internationalizable{
 		}
 
 		@Override
-		public boolean getAllowsUpdate() {
+		public boolean isRequirementModifiable() {
 			return false;
 		}
 
 		@Override
 		public boolean getAllowsStatusUpdate() {
+			return false;
+		}
+
+		@Override
+		public boolean isRequirementLinkable() {
 			return false;
 		}
 	};
@@ -118,18 +138,24 @@ public enum RequirementStatus implements Internationalizable{
 	public abstract Set<RequirementStatus> getAvailableNextStatus();
 	
 	/**
-	 * tells whether this status allows the owner to be updated. 
+	 * tells whether this status allows the owner to be modified, i.e. its intrinsic properties can be changed.
 	 * 
 	 * @return yay or nay.
 	 */
-	public abstract boolean getAllowsUpdate();
+	public abstract boolean isRequirementModifiable();
 	
 	/**
-	 * tells whether the status could be changed regardless of {@link #getAllowsUpdate()};
+	 * tells whether the status could be changed regardless of {@link #isRequirementModifiable()};
 	 * 
 	 * @return yay or nay.
 	 */
 	public abstract boolean getAllowsStatusUpdate();
+	
+	/**
+	 * 
+	 * @return the owning Requirement can be (un)linked to Test Cases
+	 */
+	public abstract boolean isRequirementLinkable();
 	
 	
 	protected Set<RequirementStatus> defaultAvailableSet(){

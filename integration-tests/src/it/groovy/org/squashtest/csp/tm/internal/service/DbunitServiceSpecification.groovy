@@ -45,25 +45,4 @@ abstract class DbunitServiceSpecification extends Specification {
 		return sessionFactory.getCurrentSession();
 	}
 
-//
-//
-//		def cleanup(){
-//
-//			URL url =this.getClass().getResource("dbunit.cleanup.xml");
-//	
-//			File file = new File(url.toURI());
-//	
-//			IDataSet dataSet = new FlatXmlDataSet(file);
-//			dataSet.getTableNames();
-//	
-//			DeleteDataSetLoadStrategy deleter = new DeleteDataSetLoadStrategy();
-//	
-//			deleter.delete(getSession(), dataSet)
-//	
-//
-//	
-//		}
-
-
-
 }

@@ -21,30 +21,25 @@
 package org.squashtest.csp.tm.domain;
 
 /**
- * Thrown when trying to delete a TestCase that is called by another TestCase.
- *
+ * A Requirement was bound to be verified by a new TestCase while it is not
+ * linkable.
+ * 
  * @author Gregory Fouquet
- *
+ * 
  */
-public class NotDeletableException extends ActionException {
+public class RequirementNotLinkableException extends ActionException {
 
-	private static final long serialVersionUID = -2560628563913390771L;
-	private static final String NOT_DELETABLE_MESSAGE_KEY =  "squashtm.action.exception.notdeletable.label";
-
-	private final long testCaseId;
-
-	public NotDeletableException(long testCaseId) {
-		super("Cannot delete TestCase[id:" + testCaseId + "] because it is called by another TestCase");
-		this.testCaseId = testCaseId;
-	}
-
-	public long getTestCaseId() {
-		return testCaseId;
-	}
+	/**
+	 * 
+	 */
+	private static final long serialVersionUID = -8966011219923689657L;
 	
+	/**
+	 * @see org.squashtest.csp.tm.domain.ActionException#getI18nKey()
+	 */
 	@Override
 	public String getI18nKey() {
-		return NOT_DELETABLE_MESSAGE_KEY;
-	}	
+		return "squashtm.action.exception.RequirementNotLinkableException.label";
+	}
 
 }

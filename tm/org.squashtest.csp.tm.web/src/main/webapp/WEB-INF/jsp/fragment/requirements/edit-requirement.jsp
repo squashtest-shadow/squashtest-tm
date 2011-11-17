@@ -69,9 +69,10 @@ that page won't be editable if
 <c:set var="editable" value="${ false }" /> 
 <c:set var="status_editable" value="${false }" />
 <authz:authorized hasRole="ROLE_ADMIN" hasPermission="WRITE" domainObject="${ requirement }">
-	<c:set var="user_authorized" value="${ true }" /> 
+	<c:set var="user_authorized" value="${ true }" />
+	<c:set var="linkable" value="${ requirement.linkable }" />
 </authz:authorized>
-<c:if test="${user_authorized && requirement.status.allowsUpdate}">
+<c:if test="${user_authorized && requirement.modifiable}">
 	<c:set var="editable" value="${true}"/>
 </c:if>
 <c:if test="${user_authorized && requirement.status.allowsStatusUpdate}">
@@ -322,28 +323,25 @@ that page won't be editable if
 
 	<comp:toggle-panel id="verifying-requirement-panel" titleKey="requirement.verifying_test-case.panel.title" open="true">
 		<jsp:attribute name="panelButtons">
-			<c:if test="${editable}">
+			<c:if test="${ linkable }">
 				<f:message var="associateLabel" key="requirement.verifying_test-case.manage.button.label"/>
 				<f:message var="removeLabel" key="test-case.verified_requirement_item.remove.button.label"/>
 				
-				<input id="verifying-test-case-button" type="button" value="${associateLabel}"/>
+				<input id="verifying-test-case-button" type="button" class="button" value="${associateLabel}"/>
 				<input id="remove-verifying-test-case-button" type="button" class="button" value="${removeLabel}"/>
 			</c:if>
 		</jsp:attribute>
-	
+
 		<jsp:attribute name="body">
 			<aggr:decorate-verifying-test-cases-table nonVerifyingTestCasesUrl="${ nonVerifyingTestCasesUrl }" tableModelUrl="${ getVerifyingTestCaseUrl }" 
 				verifyingTestCasesUrl="${ verifyingTestCasesUrl }" batchRemoveButtonId="remove-verifying-test-case-button"
-				testCaseDetailsBaseUrl="${ testCaseDetailsBaseUrl }" editable="${ editable }" />
+				testCaseDetailsBaseUrl="${ testCaseDetailsBaseUrl }" editable="${ linkable }" />
 			<aggr:verifying-test-cases-table />
 		</jsp:attribute>
 	</comp:toggle-panel>
 
 <%------------------------------ Attachments bloc ---------------------------------------------%> 
 
-	<c:if test="${editable}">
-		<c:set var="editable" value="${ true }" />
-	</c:if>
 	<comp:attachment-bloc entity="${requirement}" workspaceName="requirement" editable="${ editable }" />
 	
 	<%--------------------------- Deletion confirmation popup -------------------------------------%>

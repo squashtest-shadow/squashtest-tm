@@ -36,6 +36,7 @@ import javax.persistence.PrimaryKeyJoinColumn;
 import javax.validation.constraints.NotNull;
 
 import org.squashtest.csp.tm.domain.IllegalRequirementModificationException;
+import org.squashtest.csp.tm.domain.RequirementNotLinkableException;
 import org.squashtest.csp.tm.domain.attachment.Attachable;
 import org.squashtest.csp.tm.domain.attachment.Attachment;
 import org.squashtest.csp.tm.domain.attachment.AttachmentList;
@@ -43,12 +44,12 @@ import org.squashtest.csp.tm.domain.testcase.TestCase;
 
 /**
  * Entity requirement
- *
- * Note that much of its setters will throw an IllegalRequirementModificationException if a modification is attempted while the 
- * status does not allow it.
- *
+ * 
+ * Note that much of its setters will throw an IllegalRequirementModificationException if a modification is attempted
+ * while the status does not allow it.
+ * 
  * @author bsiri
- *
+ * 
  */
 
 @Entity
@@ -57,7 +58,7 @@ public class Requirement extends RequirementLibraryNode implements Attachable {
 	/**
 	 * Collection of {@link Test Cases} verifying by this {@link Requirement}
 	 */
-	@ManyToMany(mappedBy = "verifiedRequirements", cascade = {CascadeType.ALL})
+	@ManyToMany(mappedBy = "verifiedRequirements", cascade = { CascadeType.ALL })
 	private final Set<TestCase> verifyingTestCases = new HashSet<TestCase>();
 
 	/***
@@ -72,8 +73,8 @@ public class Requirement extends RequirementLibraryNode implements Attachable {
 	@Enumerated(EnumType.STRING)
 	@Column(name = "REQUIREMENT_STATUS")
 	private RequirementStatus status = RequirementStatus.WORK_IN_PROGRESS;
-	
-	@OneToOne(cascade = { CascadeType.ALL }, orphanRemoval=true)
+
+	@OneToOne(cascade = { CascadeType.ALL }, orphanRemoval = true)
 	@JoinColumn(name = "ATTACHMENT_LIST_ID")
 	private final AttachmentList attachmentCollection = new AttachmentList();
 
@@ -82,20 +83,20 @@ public class Requirement extends RequirementLibraryNode implements Attachable {
 	}
 
 	public Requirement(String name, String description) {
-		status=RequirementStatus.WORK_IN_PROGRESS;
+		status = RequirementStatus.WORK_IN_PROGRESS;
 		setName(name);
 		setDescription(description);
 	}
-	
+
 	@Override
-	public void setName(String name){
-		checkAccess();
+	public void setName(String name) {
+		checkModifiable();
 		super.setName(name);
 	}
-	
+
 	@Override
-	public void setDescription(String description){
-		checkAccess();
+	public void setDescription(String description) {
+		checkModifiable();
 		super.setDescription(description);
 	}
 
@@ -104,20 +105,31 @@ public class Requirement extends RequirementLibraryNode implements Attachable {
 		visitor.visit(this);
 	}
 
+	/**
+	 * TODO /!\ using this collection short-circuits the "associable" status check. It should be uset for read-only
+	 * purposes !
+	 * 
+	 */
 	public Set<TestCase> getVerifyingTestCase() {
 		return verifyingTestCases;
 	}
 
-	public void addVerifyingTestCase(@NotNull TestCase testcase) {
-		checkAccess();
+	public void addVerifyingTestCase(@NotNull TestCase testcase) throws RequirementNotLinkableException {
+		checkLinkable();
 		getVerifyingTestCase().add(testcase);
 		testcase.getVerifiedRequirements().add(this);
 	}
 
-	public void removeVerifyingTestCase(@NotNull TestCase testcase) {
-		checkAccess();
+	public void removeVerifyingTestCase(@NotNull TestCase testcase) throws RequirementNotLinkableException {
+		checkLinkable();
 		getVerifyingTestCase().remove(testcase);
-		testcase.removeVerifiedRequirement(this);
+		testcase.getVerifiedRequirements().remove(this);
+	}
+
+	private void checkLinkable() {
+		if (!status.isRequirementLinkable()) {
+			throw new RequirementNotLinkableException();
+		}
 	}
 
 	@Override
@@ -131,15 +143,14 @@ public class Requirement extends RequirementLibraryNode implements Attachable {
 	}
 
 	@Override
-	public boolean hasAttachments(){
-		return (getNbAttachments()>0);
+	public boolean hasAttachments() {
+		return (getNbAttachments() > 0);
 	}
 
 	@Override
 	public int getNbAttachments() {
 		return getAttachmentCollection().size();
 	}
-
 
 	/***
 	 * @return the reference of the requirement
@@ -150,11 +161,11 @@ public class Requirement extends RequirementLibraryNode implements Attachable {
 
 	/***
 	 * Set the requirement reference
-	 *
+	 * 
 	 * @param reference
 	 */
 	public void setReference(String reference) {
-		checkAccess();
+		checkModifiable();
 		this.reference = reference;
 	}
 
@@ -175,8 +186,8 @@ public class Requirement extends RequirementLibraryNode implements Attachable {
 		for (Attachment tcAttach : this.getAttachmentCollection().getAllAttachments()) {
 			Attachment atCopy = tcAttach.hardCopy();
 			clone.getAttachmentCollection().addAttachment(atCopy);
-		}		
-		
+		}
+
 		clone.notifyAssociatedWithProject(this.getProject());
 		return clone;
 	}
@@ -190,35 +201,52 @@ public class Requirement extends RequirementLibraryNode implements Attachable {
 
 	/***
 	 * Set the requirement criticality
+	 * 
 	 * @param criticality
 	 */
 	public void setCriticality(RequirementCriticality criticality) {
-		checkAccess();
+		checkModifiable();
 		this.criticality = criticality;
 	}
-	
-	public void setStatus(RequirementStatus status){
+
+	public void setStatus(RequirementStatus status) {
 		checkStatusAccess(status);
-		this.status=status;
+		this.status = status;
 	}
-	
-	public RequirementStatus getStatus(){
+
+	public RequirementStatus getStatus() {
 		return status;
 	}
-	
-	private void checkAccess(){
-		if (! status.getAllowsUpdate()){
+
+	private void checkModifiable() {
+		if (!status.isRequirementModifiable()) {
 			throw new IllegalRequirementModificationException();
 		}
 	}
-	
-	private void checkStatusAccess(RequirementStatus newStatus){
-		if (  (! status.getAllowsStatusUpdate())	|| 
-			  (! status.isTransitionLegal(newStatus)) 
-		 	){
+
+	private void checkStatusAccess(RequirementStatus newStatus) {
+		if ((!status.getAllowsStatusUpdate()) || (!status.isTransitionLegal(newStatus))) {
 			throw new IllegalRequirementModificationException();
 		}
 	}
-	
+
+	/**
+	 * 
+	 * @return <code>true</code> if this requirement can be (un)linked by new verifying testcases
+	 */
+	public boolean isLinkable() {
+		return getStatus().isRequirementLinkable();
+	}
+
+	/**
+	 * Tells if this requirement's "intrinsic" properties can be modified. The following are not considered as
+	 * "intrinsic" properties" : {@link #verifyingTestCases} are governed by the {@link #isLinkable()} state,
+	 * {@link #status} is governed by itself.
+	 * 
+	 * @return <code>true</code> if this requirement's properties can be modified.
+	 */
+	public boolean isModifiable() {
+		return getStatus().isRequirementModifiable();
+	}
 
 }

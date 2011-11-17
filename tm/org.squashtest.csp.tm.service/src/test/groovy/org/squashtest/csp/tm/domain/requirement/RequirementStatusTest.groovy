@@ -27,7 +27,7 @@ import spock.lang.Unroll
 class RequirementStatusTest extends Specification {
 
 	
-	@Unroll("specifications for next available status for #status")
+	@Unroll("next statuses of #status should be #expectedSet")
 	def "correctedness of next available status"(){
 		expect :
 			expectedSet == status.getAvailableNextStatus();
@@ -41,29 +41,43 @@ class RequirementStatusTest extends Specification {
 			
 	}
 	
-	@Unroll("specification legal transitions for #status")
-	def "correctedness of status transitions"(){
-		
-		expect :
-			RequirementStatus.each{
-				if (it in allowedTransitions){
-					true == status.isTransitionLegal(it);
-				} 				
-				else{
-					false == status.isTransitionLegal(it);
-				}
-			}
-		
-		where :
-		status				|	allowedTransitions										
-		WORK_IN_PROGRESS  	|	[ OBSOLETE, WORK_IN_PROGRESS, UNDER_REVIEW ] 			
-		UNDER_REVIEW		|	[ OBSOLETE, UNDER_REVIEW, APPROVED, WORK_IN_PROGRESS ] 
-		APPROVED			|	[ OBSOLETE, APPROVED, UNDER_REVIEW, WORK_IN_PROGRESS ] 	
-		OBSOLETE			|	[ OBSOLETE ]										
-		
-	}
-
+	// FIXME l'assertion est le resultat de allowedTransitions.each { ... } soit le retour de la dernière itéeration !
 	
+//	@Unroll("transitions from #status to #allowedTransitions should be legal")
+//	def "transitions from #status to #allowedTransitions should be legal"(){
+//		
+//		expect :
+//			allowedTransitions.each{
+//				status.isTransitionLegal(it);
+//			}
+//		
+//		where :
+//		status				|	allowedTransitions										
+//		WORK_IN_PROGRESS  	|	[ OBSOLETE, WORK_IN_PROGRESS, UNDER_REVIEW ] 			
+//		UNDER_REVIEW		|	[ OBSOLETE, UNDER_REVIEW, APPROVED, WORK_IN_PROGRESS ] 
+//		APPROVED			|	[ OBSOLETE, APPROVED, UNDER_REVIEW, WORK_IN_PROGRESS ] 	
+//		OBSOLETE			|	[ OBSOLETE ]										
+//	}
+//
+//	@Unroll("transitions from #status to something other than #allowedTransitions should not be legal")
+//	def "transitions from #status to something other than #allowedTransitions should not be legal"(){
+//		given: 
+//		def unallowedTransitions = RequirementStatus.values().toList()
+//		unallowedTransitions.removeAll(allowedTransitions)
+//		
+//		expect :
+//			unallowedTransitions.each {
+//				!status.isTransitionLegal(it)
+//			}
+//		
+//		where :
+//		status				|	allowedTransitions
+//		WORK_IN_PROGRESS  	|	[ OBSOLETE, WORK_IN_PROGRESS, UNDER_REVIEW ]
+//		UNDER_REVIEW		|	[ OBSOLETE, UNDER_REVIEW, APPROVED, WORK_IN_PROGRESS ]
+//		APPROVED			|	[ OBSOLETE, APPROVED, UNDER_REVIEW, WORK_IN_PROGRESS ]
+//		OBSOLETE			|	[ OBSOLETE ]
+//	}
+
 	@Unroll("specifications for the i18n key for #status")
 	def "correctedness of the i18n"(){
 		expect :
@@ -77,11 +91,11 @@ class RequirementStatusTest extends Specification {
 			OBSOLETE			|	"requirement.status.OBSOLETE"
 	}
 	
-	@Unroll("specifications for update allowance for #status ")
+	@Unroll("requirement modifiable state should be #expected for status #status")
 	def "correctedness of update allowance"(){
 		
 		expect :
-			expected == status.getAllowsUpdate()
+			expected == status.requirementModifiable
 			
 		where :
 			status				|	expected
@@ -106,4 +120,18 @@ class RequirementStatusTest extends Specification {
 			OBSOLETE			|	false
 	}
 	
+	@Unroll("requirement linkable state should be #linkable for status #status")
+	def "requirement linkable state should be #linkable for status #status"(){
+		
+		expect :
+			status.requirementLinkable == linkable
+			
+		where :
+			status				|	linkable
+			WORK_IN_PROGRESS	|	true
+			UNDER_REVIEW		|	true
+			APPROVED			|	true
+			OBSOLETE			|	false
+	}
+
 }

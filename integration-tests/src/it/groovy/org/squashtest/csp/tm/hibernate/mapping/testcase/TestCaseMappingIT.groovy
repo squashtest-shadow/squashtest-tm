@@ -215,9 +215,14 @@ class TestCaseMappingIT extends HibernateMappingSpecification {
 
 		cleanup:
 		doInTransaction({
-			it.get(TestCase, tc.id).verifiedRequirements.clear()
+			def tcc = it.get(TestCase, tc.id)
+			def rr = it.get(Requirement, r.id)
+
+			tcc.verifiedRequirements.clear()
+			it.delete tcc
+
+			it.delete rr
 		})
-		deleteFixture r, tc
 	}
 
 	def "should retrieve test cases with a creator"(){

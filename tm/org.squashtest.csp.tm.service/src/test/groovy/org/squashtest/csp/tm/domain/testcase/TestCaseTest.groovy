@@ -21,8 +21,11 @@
 
 package org.squashtest.csp.tm.domain.testcase
 
+import org.squashtest.csp.tm.domain.RequirementNotLinkableException;
 import org.squashtest.csp.tm.domain.UnknownEntityException;
 import org.squashtest.csp.tm.domain.requirement.Requirement;
+import org.squashtest.csp.tm.domain.requirement.RequirementStatus;
+import org.squashtest.csp.tools.unittest.reflection.ReflectionCategory;
 
 import spock.lang.Specification;
 import spock.lang.Unroll;
@@ -252,5 +255,65 @@ class TestCaseTest extends Specification {
 
 		then:
 		copy.verifiedRequirements == source.verifiedRequirements
+	}
+	
+	def "when verifying a requirement, the requirement should also be verified by the test case"() {
+		given:
+		TestCase tc = new TestCase()
+		
+		and:
+		Requirement req = new Requirement()
+		
+		when:
+		tc.addVerifiedRequirement req
+		
+		then:
+		req.verifyingTestCases.contains tc
+	}
+	
+	def "should not be able to verify an obsolete requirement"() {
+		given:
+		TestCase tc = new TestCase()
+		
+		and:
+		Requirement req = new Requirement(status: RequirementStatus.OBSOLETE)
+		
+		when:
+		tc.addVerifiedRequirement req
+		
+		then:
+		thrown(RequirementNotLinkableException)
+	}
+	
+	def "when unverifying a requirement, the requirement should also not be verified by the test case"() {
+		given:
+		TestCase tc = new TestCase()
+		
+		and:
+		Requirement req = new Requirement()
+		tc.verifiedRequirements << req
+		req.verifyingTestCases << tc
+
+		when:
+		tc.removeVerifiedRequirement req
+		
+		then:
+		!req.verifyingTestCases.contains(tc)
+	}
+
+		def "should not be able to unverify an obsolete requirement"() {
+		given:
+		TestCase tc = new TestCase()
+		
+		and:
+		Requirement req = new Requirement(status: RequirementStatus.OBSOLETE)
+		tc.verifiedRequirements << req
+		req.verifyingTestCases << tc
+		
+		when:
+		tc.removeVerifiedRequirement req
+		
+		then:
+		thrown(RequirementNotLinkableException)
 	}
 }

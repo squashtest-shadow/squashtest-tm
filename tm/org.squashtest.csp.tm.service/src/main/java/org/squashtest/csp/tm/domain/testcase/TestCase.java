@@ -155,11 +155,11 @@ public class TestCase extends TestCaseLibraryNode implements Attachable {
 	 *            requirement to add, should not be null.
 	 */
 	public void addVerifiedRequirement(@NotNull Requirement requirement) {
-		getVerifiedRequirements().add(requirement);
+		requirement.addVerifyingTestCase(this);
 	}
 
 	public void removeVerifiedRequirement(@NotNull Requirement requirement) {
-		getVerifiedRequirements().remove(requirement);
+		requirement.removeVerifyingTestCase(this);
 	}
 
 	@Override
