@@ -70,4 +70,30 @@
 			</sqlCheck>
 		</preConditions>	
 	</changeSet>
+	
+	<changeSet id="1.1.0.imported-event-matches-requirements" author="bsiri">
+		<preConditions>
+			<sqlCheck expectedResult="0">
+				select count(r.rln_id) - count(r2.rln_id)
+				from REQUIREMENT r, REQUIREMENT r2, REQUIREMENT_LIBRARY_NODE rln, REQUIREMENT_AUDIT_EVENT rae
+				where r2.rln_id = rln.rln_id  
+				and r2.rln_id = rae.requirement_id
+				and rln.created_on = rae.event_date
+				and rln.created_by = rae.author
+			</sqlCheck>		
+		</preConditions>
+	
+	</changeSet>
+	
+	<changeSet id="1.1.0.create-event-matches-event" author="bsiri">
+		<preConditions>
+			<sqlCheck expectedResult="0">
+				select count(rae.event_id) - count(rc.event_id)
+				from REQUIREMENT_AUDIT_EVENT rae, REQUIREMENT_AUDIT_EVENT rae2, REQUIREMENT_CREATION rc
+				where rc.event_id = rae2.event_id
+			</sqlCheck>		
+		</preConditions>
+	
+	</changeSet>	
+	
 </databaseChangeLog>
