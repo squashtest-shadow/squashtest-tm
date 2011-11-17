@@ -90,7 +90,7 @@
 				<constraints primaryKey="true" nullable="false"/>				
 			</column>
 			
-			<column name="ENTITY_ID" type="java.sql.Types.VARCHAR(255)" remarks="the ID of the target entity. As for 1.1.0 and until further notice, the target is always a requirement.">
+			<column name="ENTITY_ID" type="BIGINT" remarks="the ID of the target entity. As for 1.1.0 and until further notice, the target is always a requirement.">
 				<constraints  nullable="false" 
 				foreignKeyName="fk_audit_event_requirement" references="REQUIREMENT(RLN_ID)" />	
 			</column>
