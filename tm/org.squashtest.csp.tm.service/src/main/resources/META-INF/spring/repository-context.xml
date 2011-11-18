@@ -90,6 +90,11 @@
 				
 				<value>org.squashtest.csp.tm.domain.users.User</value>
 				<value>org.squashtest.csp.tm.domain.users.UsersGroup</value>
+				
+				<value>org.squashtest.csp.tm.domain.event.RequirementAuditEvent</value>
+				<value>org.squashtest.csp.tm.domain.event.RequirementCreation</value>
+				<value>org.squashtest.csp.tm.domain.event.RequirementPropertyChange</value>
+				<value>org.squashtest.csp.tm.domain.event.RequirementLargePropertyChange</value>
 			</list>
 		</property>
 		<property name="namingStrategy">
