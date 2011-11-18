@@ -34,16 +34,20 @@ import org.squashtest.csp.tm.domain.requirement.Requirement;
 @PrimaryKeyJoinColumn(name = "EVENT_ID")
 public class RequirementPropertyChange extends RequirementAuditEvent {
 
-	private final String propertyName;
+	private String propertyName;
 	
-	private final String oldValue;
+	private String oldValue;
 	
-	private final String newValue;
+	private String newValue;
 	
 	
-	public RequirementPropertyChange(Long id, Requirement requirement,
+	public RequirementPropertyChange(){
+		super();
+	}
+	
+	public RequirementPropertyChange(Requirement requirement,
 			String author, String propertyName, String oldValue, String newValue) {
-		super(id, requirement, author);
+		super(requirement, author);
 		this.propertyName=propertyName;
 		this.oldValue=oldValue;
 		this.newValue=newValue;

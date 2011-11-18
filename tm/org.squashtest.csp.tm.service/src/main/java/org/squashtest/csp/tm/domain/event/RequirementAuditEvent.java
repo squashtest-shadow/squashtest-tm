@@ -42,18 +42,18 @@ public abstract class RequirementAuditEvent {
 	@Id
 	@GeneratedValue
 	@Column(name = "EVENT_ID")
-	private final Long id;
+	private Long id;
 	
 	@ManyToOne
 	@JoinColumn(name = "REQUIREMENT_ID")
-	private final Requirement requirement;
+	private Requirement requirement;
 	
 	@Temporal(TemporalType.TIMESTAMP)
 	@Column(name = "EVENT_DATE")
-	private final Date date;
+	private Date date;
 	
 
-	private final String author;
+	private String author;
 
 
 	public Long getId() {
@@ -75,10 +75,12 @@ public abstract class RequirementAuditEvent {
 		return author;
 	}
 
-
-	public RequirementAuditEvent(Long id, Requirement requirement, String author) {
+	public RequirementAuditEvent(){
 		super();
-		this.id = id;
+	}
+
+	public RequirementAuditEvent(Requirement requirement, String author) {
+		super();
 		this.requirement = requirement;
 		this.author = author;
 		this.date = new Date();

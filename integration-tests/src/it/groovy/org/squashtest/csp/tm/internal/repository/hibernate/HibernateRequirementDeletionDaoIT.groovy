@@ -18,10 +18,26 @@
  *     You should have received a copy of the GNU Lesser General Public License
  *     along with this software.  If not, see <http://www.gnu.org/licenses/>.
  */
-package org.squashtest.csp.tm.domain.event;
+package org.squashtest.csp.tm.internal.repository.hibernate
 
-public interface RequirementAuditor {
+import javax.inject.Inject
+
+import org.spockframework.util.NotThreadSafe
+import org.springframework.transaction.annotation.Transactional
+import org.squashtest.csp.tm.internal.repository.RequirementDeletionDao
+
+import spock.unitils.UnitilsSupport
+
+@NotThreadSafe
+@UnitilsSupport
+@Transactional
+class HibernateRequirementDeletionDaoIT extends DbunitDaoSpecification {
+
 	
-	void notify(RequirementAuditEvent event);
-
+	@Inject
+	private RequirementDeletionDao deletionDao;
+	
+	
+	//TODO
+	
 }

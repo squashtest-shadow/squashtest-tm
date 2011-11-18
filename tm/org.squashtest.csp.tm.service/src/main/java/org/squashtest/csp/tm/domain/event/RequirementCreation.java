@@ -34,8 +34,13 @@ import org.squashtest.csp.tm.domain.requirement.Requirement;
 @PrimaryKeyJoinColumn(name = "EVENT_ID")
 public class RequirementCreation extends RequirementAuditEvent {
 
-	public RequirementCreation(Long id, Requirement requirement, String author) {
-		super(id, requirement, author);
+	
+	public RequirementCreation(){
+		super();
+	}
+	
+	public RequirementCreation(Requirement requirement, String author) {
+		super(requirement, author);
 	}
 
 	@Override
