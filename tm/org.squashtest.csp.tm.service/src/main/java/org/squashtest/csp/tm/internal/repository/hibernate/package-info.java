@@ -166,6 +166,10 @@
 		@NamedQuery(name = "user.findUsersByLoginList", query = "from User fetch all properties where login in (:userIds)"),
 		@NamedQuery(name = "user.findUserByLogin", query = "from User fetch all properties where login = :userLogin"),
 
+		//Queries on RequirementAuditEvent
+		@NamedQuery(name = "requirementAuditEvent.findAllByRequirementId", query = "from RequirementAuditEvent rae join rae.requirement r where r.id = :requirementId order by rae.date"),
+		@NamedQuery(name = "requirementAuditEvent.findAllByRequirementIdList", query = "from RequirementAuditEvent rae join rae.requirement r where r.id in (:requirementIds) order by r.id, rae.date"),
+		
 		/* ********************************************** batch deletion-related queries **************************************************** */
 
 		@NamedQuery(name = "testCase.findAllAttachmentLists", query ="select testCase.attachmentCollection.id from TestCase testCase where testCase.id in (:testCaseIds)"),
@@ -180,7 +184,7 @@
 		@NamedQuery(name = "testCase.removeAllActionSteps", query = "delete ActionTestStep ats where ats.id in (:stepIds)"),	
 
 		@NamedQuery(name = "requirement.findAllAttachmentLists", query ="select requirement.attachmentCollection.id from Requirement requirement where requirement.id in (:requirementIds)"),
-		@NamedQuery(name = "requirementAuditEvent.findAllByRequirementId", query = "from RequirementAuditEvent rae join rae.requirement r where r.id = :requirementId")
+		@NamedQuery(name = "requirementDeletionDao.deleteRequirementAuditEvent", query="delete RequirementAuditEvent rae where rae.id in (:eventIds)")
 
 })
 package org.squashtest.csp.tm.internal.repository.hibernate;
