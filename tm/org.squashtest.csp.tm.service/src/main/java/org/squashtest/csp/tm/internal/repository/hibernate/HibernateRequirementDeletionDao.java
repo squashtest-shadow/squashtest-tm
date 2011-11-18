@@ -21,11 +21,15 @@
 package org.squashtest.csp.tm.internal.repository.hibernate;
 
 import java.util.Collections;
+import java.util.LinkedList;
 import java.util.List;
 
+import org.apache.commons.collections.CollectionUtils;
+import org.apache.commons.collections.Transformer;
 import org.hibernate.Query;
 import org.hibernate.type.LongType;
 import org.springframework.stereotype.Repository;
+import org.squashtest.csp.tm.domain.event.RequirementAuditEvent;
 import org.squashtest.csp.tm.internal.repository.RequirementDeletionDao;
 
 @Repository
@@ -42,24 +46,13 @@ public class HibernateRequirementDeletionDao extends HibernateDeletionDao
 			query.setParameterList("descIds", entityIds, LongType.INSTANCE);
 			query.executeUpdate();
 			
-			query=getSession().createSQLQuery(NativeQueries.requirement_sql_removeFromLibrary);
-			query.setParameterList("requirementIds", entityIds, LongType.INSTANCE);
-			query.executeUpdate();	
+			executeDeleteSQLQuery(NativeQueries.requirement_sql_removeFromLibrary, "requirementIds", entityIds);
 			
-			query = getSession().createSQLQuery(
-					NativeQueries.requirementFolder_sql_remove);
-			query.setParameterList("nodeIds", entityIds, new LongType());
-			query.executeUpdate();
+			executeDeleteSQLQuery(NativeQueries.requirementFolder_sql_remove, "nodeIds", entityIds);
 
-			query = getSession().createSQLQuery(
-					NativeQueries.requirement_sql_remove);
-			query.setParameterList("nodeIds", entityIds, new LongType());
-			query.executeUpdate();
+			executeDeleteSQLQuery(NativeQueries.requirement_sql_remove, "nodeIds", entityIds);
 
-			query = getSession().createSQLQuery(
-					NativeQueries.requirementLibraryNode_sql_remove);
-			query.setParameterList("nodeIds", entityIds, new LongType());
-			query.executeUpdate();
+			executeDeleteSQLQuery(NativeQueries.requirementLibraryNode_sql_remove, "nodeIds", entityIds);			
 		}
 	}
 
@@ -76,14 +69,36 @@ public class HibernateRequirementDeletionDao extends HibernateDeletionDao
 
 	
 	@Override
-	public void removeFromVerifiedTRequirementLists(List<Long> requirementIds) {
+	public void removeFromVerifiedRequirementLists(List<Long> requirementIds) {
 		if (! requirementIds.isEmpty()){
-			Query query = getSession().createSQLQuery(NativeQueries.requirement_sql_removeFromVerifiedRequirementLists);
-			query.setParameterList("requirementIds", requirementIds, LongType.INSTANCE);
-			query.executeUpdate();
-			
+			executeDeleteSQLQuery(NativeQueries.requirement_sql_removeFromVerifiedRequirementLists, "requirementIds", requirementIds);
 		}
 		
 	}
+
+	@Override
+	public void deleteRequirementAuditEvents(List<Long> requirementIds) {
+		if (! requirementIds.isEmpty()){
+			//we borrow the following from RequirementAuditDao
+			List<RequirementAuditEvent> events = executeSelectNamedQuery("requirementAuditEvent.findAllByRequirementIdList", "requirementIds", requirementIds);
+			List<Long> evtsIds = collectIds(events);
+			executeDeleteNamedQuery("requirementDeletionDao.deleteRequirementAuditEvent", "eventIds", evtsIds);
+		}
+		
+	}
+	
+	
+	@SuppressWarnings("unchecked")
+	private List<Long> collectIds(List<RequirementAuditEvent> events){
+		return new LinkedList<Long>(CollectionUtils.collect(events, new Transformer() {
+			
+			@Override
+			public Object transform(Object input) {
+				return ((RequirementAuditEvent)input).getId();
+			}
+		}));
+	}
+	
+
 
 }

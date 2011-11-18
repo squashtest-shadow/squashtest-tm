@@ -18,7 +18,31 @@ public class HibernateRequirementAuditEventDao extends
 		return executeListNamedQuery("requirementAuditEvent.findAllByRequirementId", callback);
 	}
 	
+
+
+	@Override
+	public List<RequirementAuditEvent> findAllByRequirementId(List<Long> requirementIds) {
+		SetQueryParametersCallback callback = new EventByRequirementListCallback(requirementIds);
+		return executeListNamedQuery("requirementAuditEvent.findAllByRequirementIdList", callback);
+	}
+
+
 	
+	private class EventByRequirementListCallback implements SetQueryParametersCallback{
+		
+		private final List<Long> requirementIdsList;
+		
+		public EventByRequirementListCallback(final List<Long> ids){
+			requirementIdsList=ids;
+		}
+		
+		@Override
+		public void setQueryParameters(Query query) {
+			query.setParameter("requirementIds", requirementIdsList);
+		}
+		
+		
+	}
 	
 	private class EventByRequirementCallback implements SetQueryParametersCallback{
 		
@@ -33,5 +57,7 @@ public class HibernateRequirementAuditEventDao extends
 			query.setParameter("requirementId", requirementId);			
 		}
 	}
+	
+	
 
 }

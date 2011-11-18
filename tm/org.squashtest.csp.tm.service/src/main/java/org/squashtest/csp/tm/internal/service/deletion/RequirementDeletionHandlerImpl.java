@@ -90,7 +90,9 @@ public class RequirementDeletionHandlerImpl extends
 			
 			List<Long> requirementAttachmentIds = deletionDao.findRequirementAttachmentListIds(ids);
 			
-			deletionDao.removeFromVerifiedTRequirementLists(ids);
+			deletionDao.removeFromVerifiedRequirementLists(ids);
+			
+			deletionDao.deleteRequirementAuditEvents(ids);
 			
 			deletionDao.removeEntities(ids);
 			

@@ -24,6 +24,7 @@ import java.util.List;
 
 public interface RequirementDeletionDao extends DeletionDao {
 	List<Long> findRequirementAttachmentListIds(List<Long> requirementIds);
-	void removeFromVerifiedTRequirementLists(List<Long> requirementIds);
+	void removeFromVerifiedRequirementLists(List<Long> requirementIds);
+	void deleteRequirementAuditEvents(List<Long> requirementIds);
 		
 }

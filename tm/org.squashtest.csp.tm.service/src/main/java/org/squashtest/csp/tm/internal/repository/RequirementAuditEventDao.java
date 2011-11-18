@@ -6,5 +6,6 @@ import org.squashtest.csp.tm.domain.event.RequirementAuditEvent;
 
 public interface RequirementAuditEventDao extends EntityDao<RequirementAuditEvent>{
 
-	List<RequirementAuditEvent> findAllByRequirementId(Long requirementId);
+	List<RequirementAuditEvent> findAllByRequirementId(Long requirementId);	
+	List<RequirementAuditEvent> findAllByRequirementId(List<Long> requirementIds);
 }
