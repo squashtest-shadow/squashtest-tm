@@ -49,7 +49,6 @@ public abstract class RequirementAuditEvent {
 	private Requirement requirement;
 	
 	@Temporal(TemporalType.TIMESTAMP)
-	@Column(name = "EVENT_DATE")
 	private Date date;
 	
 
