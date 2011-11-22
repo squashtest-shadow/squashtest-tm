@@ -18,22 +18,11 @@
  *     You should have received a copy of the GNU Lesser General Public License
  *     along with this software.  If not, see <http://www.gnu.org/licenses/>.
  */
-package org.squashtest.csp.tm.domain.event;
+package org.squashtest.csp.tm.internal.service.event;
 
-import javax.inject.Inject;
+import org.squashtest.csp.tm.domain.event.RequirementAuditEvent;
 
-import org.springframework.stereotype.Component;
-import org.squashtest.csp.tm.internal.repository.RequirementAuditEventDao;
+public interface RequirementAuditor {
+	void notify(RequirementAuditEvent event);
 
-
-@Component
-public class RequirementAuditorImpl implements RequirementAuditor {
-
-	@Inject
-	private RequirementAuditEventDao eventDao;
-	
-	@Override
-	public void notify(RequirementAuditEvent event){
-		eventDao.persist(event);
-	}
 }

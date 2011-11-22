@@ -44,7 +44,7 @@ public class RequirementCreation extends RequirementAuditEvent {
 	}
 
 	@Override
-	void accept(RequirementAuditEventVisitor visitor) {
+	public void accept(RequirementAuditEventVisitor visitor) {
 		visitor.visit(this);
 	}	
 }
