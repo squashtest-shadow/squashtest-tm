@@ -32,6 +32,7 @@ import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
 import javax.persistence.Temporal;
 import javax.persistence.TemporalType;
+import javax.validation.constraints.NotNull;
 
 import org.squashtest.csp.tm.domain.requirement.Requirement;
 
@@ -46,12 +47,14 @@ public abstract class RequirementAuditEvent {
 	
 	@ManyToOne
 	@JoinColumn(name = "REQUIREMENT_ID")
+	@NotNull
 	private Requirement requirement;
 	
 	@Temporal(TemporalType.TIMESTAMP)
+	@NotNull
 	private Date date;
 	
-
+	@NotNull
 	private String author;
 
 
@@ -86,7 +89,7 @@ public abstract class RequirementAuditEvent {
 	}
 
 	
-	abstract void accept(RequirementAuditEventVisitor visitor);
+	public abstract void accept(RequirementAuditEventVisitor visitor);
 	
 	
 }

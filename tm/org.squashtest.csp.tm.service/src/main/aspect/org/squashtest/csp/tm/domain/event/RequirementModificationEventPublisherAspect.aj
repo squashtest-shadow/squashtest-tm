@@ -33,6 +33,7 @@ import org.springframework.beans.BeanUtils;
 import org.springframework.util.ReflectionUtils;
 import org.squashtest.csp.core.service.security.UserContextService;
 import org.squashtest.csp.tm.domain.requirement.Requirement;
+import org.squashtest.csp.tm.internal.service.event.RequirementAuditor;
 
 /**
  * This aspect advises a Requirement to raise an event when a Requirement's

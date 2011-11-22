@@ -25,6 +25,7 @@ import javax.persistence.Entity;
 import javax.persistence.FetchType;
 import javax.persistence.Lob;
 import javax.persistence.PrimaryKeyJoinColumn;
+import javax.validation.constraints.NotNull;
 
 import org.apache.commons.lang.ObjectUtils;
 import org.squashtest.csp.tm.domain.requirement.Requirement;
@@ -38,7 +39,7 @@ import org.squashtest.csp.tm.domain.requirement.Requirement;
  */
 @Entity
 @PrimaryKeyJoinColumn(name = "EVENT_ID")
-public class RequirementLargePropertyChange extends RequirementAuditEvent {
+public class RequirementLargePropertyChange extends RequirementAuditEvent implements RequirementModification {
 	public static RequirementPropertyChangeEventBuilder<RequirementLargePropertyChange> builder() {
 		return new Builder(); 
 	}
@@ -57,6 +58,7 @@ public class RequirementLargePropertyChange extends RequirementAuditEvent {
 		
 	}
 
+	@NotNull
 	private String propertyName;
 	
 	@Lob
@@ -77,7 +79,7 @@ public class RequirementLargePropertyChange extends RequirementAuditEvent {
 		super(requirement, author);
 	}
 
-
+	@Override
 	public String getPropertyName() {
 		return propertyName;
 	}
@@ -93,7 +95,7 @@ public class RequirementLargePropertyChange extends RequirementAuditEvent {
 	}
 	
 	@Override
-	void accept(RequirementAuditEventVisitor visitor) {
+	public void accept(RequirementAuditEventVisitor visitor) {
 		visitor.visit(this);
 	}
 

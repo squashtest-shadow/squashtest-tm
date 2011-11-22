@@ -27,6 +27,7 @@ import org.squashtest.csp.tm.domain.requirement.Requirement;
 import org.squashtest.csp.tm.domain.requirement.RequirementCriticality;
 import org.squashtest.csp.tm.domain.requirement.RequirementLibraryNode;
 import org.squashtest.csp.tm.domain.requirement.RequirementStatus;
+import org.squashtest.csp.tm.internal.service.event.RequirementAuditor;
 import org.squashtest.csp.tools.unittest.reflection.ReflectionCategory;
 
 import spock.lang.Specification;

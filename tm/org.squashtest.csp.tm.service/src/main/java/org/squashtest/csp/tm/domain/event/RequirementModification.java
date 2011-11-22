@@ -20,8 +20,26 @@
  */
 package org.squashtest.csp.tm.domain.event;
 
-public interface RequirementAuditor {
-	
-	void notify(RequirementAuditEvent event);
+import org.squashtest.csp.tm.domain.requirement.Requirement;
+
+/**
+ * Interface of an event which notifies the modification of a
+ * {@link Requirement}.
+ * 
+ * @author Gregory Fouquet
+ * 
+ */
+public interface RequirementModification {
+	/**
+	 * 
+	 * @return the modified event. Should never return <code>null</code>
+	 */
+	Requirement getRequirement();
+
+	/**
+	 * 
+	 * @return the modified property, should never return <code>null</code>
+	 */
+	String getPropertyName();
 
 }
