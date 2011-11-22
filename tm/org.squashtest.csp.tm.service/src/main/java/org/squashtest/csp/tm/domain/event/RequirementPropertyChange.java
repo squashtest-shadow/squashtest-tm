@@ -23,6 +23,7 @@ package org.squashtest.csp.tm.domain.event;
 import javax.persistence.Entity;
 import javax.persistence.PrimaryKeyJoinColumn;
 
+import org.apache.commons.lang.ObjectUtils;
 import org.squashtest.csp.tm.domain.requirement.Requirement;
 /**
  * Will log when the value of a property of a requirement changed.
@@ -33,6 +34,23 @@ import org.squashtest.csp.tm.domain.requirement.Requirement;
 @Entity
 @PrimaryKeyJoinColumn(name = "EVENT_ID")
 public class RequirementPropertyChange extends RequirementAuditEvent {
+	public static RequirementPropertyChangeEventBuilder<RequirementPropertyChange> builder() {
+		return new Builder(); 
+	}
+	
+	private static class Builder extends AbstractRequirementPropertyChangeEventBuilder<RequirementPropertyChange> {
+
+		@Override
+		public RequirementPropertyChange build() {
+			RequirementPropertyChange event = new RequirementPropertyChange(eventSource, author);
+			event.propertyName = modifiedProperty;
+			event.oldValue = ObjectUtils.toString(oldValue);
+			event.newValue = ObjectUtils.toString(newValue);
+					
+			return event;
+		}
+		
+	}
 
 	private String propertyName;
 	
@@ -40,19 +58,14 @@ public class RequirementPropertyChange extends RequirementAuditEvent {
 	
 	private String newValue;
 	
-	
-	public RequirementPropertyChange(){
+	public RequirementPropertyChange() {
 		super();
 	}
-	
-	public RequirementPropertyChange(Requirement requirement,
-			String author, String propertyName, String oldValue, String newValue) {
-		super(requirement, author);
-		this.propertyName=propertyName;
-		this.oldValue=oldValue;
-		this.newValue=newValue;
-	}
 
+	public RequirementPropertyChange(Requirement requirement,
+			String author) {
+		super(requirement, author);
+	}
 
 	public String getPropertyName() {
 		return propertyName;
@@ -72,5 +85,5 @@ public class RequirementPropertyChange extends RequirementAuditEvent {
 	void accept(RequirementAuditEventVisitor visitor) {
 		visitor.visit(this);
 	}
-
+	
 }
