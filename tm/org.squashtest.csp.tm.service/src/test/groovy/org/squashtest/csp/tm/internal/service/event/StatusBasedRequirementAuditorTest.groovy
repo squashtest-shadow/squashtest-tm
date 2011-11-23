@@ -133,4 +133,5 @@ class StatusBasedRequirementAuditorTest extends Specification {
 		"description"   | RequirementStatus.WORK_IN_PROGRESS
 		"criticality"   | RequirementStatus.WORK_IN_PROGRESS
 	}
+	
 }

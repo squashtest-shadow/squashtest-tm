@@ -52,6 +52,7 @@ public abstract class RequirementAuditEvent {
 	
 	@Temporal(TemporalType.TIMESTAMP)
 	@NotNull
+	@Column(name = "EVENT_DATE")
 	private Date date;
 	
 	@NotNull
