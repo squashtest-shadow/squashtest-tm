@@ -34,20 +34,20 @@ public class HibernateEntityDao<ENTITY_TYPE> extends HibernateDao<ENTITY_TYPE> i
 		return getEntity(id);
 	}
 	
+	@SuppressWarnings("unchecked")
 	@Override
 	public List<ENTITY_TYPE> findAllById(List<Long> ids){
-		if (ids.isEmpty()){
+		if (ids.isEmpty()) {
 			return Collections.emptyList();
-		}
-		else{
-			Criteria criteria = currentSession().createCriteria(entityType)
-							.add(Restrictions.in(getIdPropertyName(), ids.toArray()));
-		
+		} else {
+			Criteria criteria = currentSession()
+				.createCriteria(entityType)
+				.add(Restrictions.in(getIdPropertyName(), ids.toArray()));
+
 			return criteria.list();
 		}
 	}
 	
-	@Override
 	public String getIdPropertyName(){
 		return "id";
 	}

@@ -31,9 +31,7 @@ import org.apache.commons.lang.WordUtils;
 import org.aspectj.lang.JoinPoint;
 import org.springframework.beans.BeanUtils;
 import org.springframework.util.ReflectionUtils;
-import org.squashtest.csp.core.service.security.UserContextService;
 import org.squashtest.csp.tm.domain.requirement.Requirement;
-import org.squashtest.csp.tm.internal.service.event.RequirementAuditor;
 
 /**
  * This aspect advises a Requirement to raise an event when a Requirement's
@@ -42,28 +40,7 @@ import org.squashtest.csp.tm.internal.service.event.RequirementAuditor;
  * @author Gregory Fouquet
  * 
  */
-public aspect RequirementModificationEventPublisherAspect {
-	@Inject
-	private RequirementAuditor auditor;
-	
-	@Inject
-	private UserContextService userContext;
-
-	public UserContextService getUserContext() {
-		return userContext;
-	}
-
-	public void setUserContext(UserContextService userContext) {
-		this.userContext = userContext;
-	}
-
-	public RequirementAuditor getAuditor() {
-		return auditor;
-	}
-
-	public void setAuditor(RequirementAuditor auditor) {
-		this.auditor = auditor;
-	}
+public aspect RequirementModificationEventPublisherAspect extends AbstractRequirementEventPublisher {
 
 	private pointcut executeLargePropertySetter() : execution(public void org.squashtest.csp.tm.domain.requirement.Requirement.setDescription(*));
 
@@ -109,14 +86,14 @@ public aspect RequirementModificationEventPublisherAspect {
 				.setAuthor(currentUser())
 				.build();
 		
-		auditor.notify(event);
+		publish(event);
 	}
 
 	private Object readOldValue(Requirement req, String propertyName) {
 		Method propertyGetter = null;
 		try {
-			propertyGetter = Requirement.class.getMethod("get"
-					+ WordUtils.capitalize(propertyName));
+			propertyGetter = Requirement.class.getMethod("get" + WordUtils.capitalize(propertyName));
+			
 		} catch (NoSuchMethodException e) {
 			ReflectionUtils.handleReflectionException(e);
 		}
@@ -126,19 +103,9 @@ public aspect RequirementModificationEventPublisherAspect {
 
 	private String extractModifiedPropertyName(JoinPoint setterJoinPoint) {
 		String methodName = setterJoinPoint.getSignature().getName();
-		String propertyName = methodName.substring(3); // method is assumed to
-														// be "setXxx"
+		String propertyName = methodName.substring(3); // method is assumed to be "setXxx"
 
 		return WordUtils.uncapitalize(propertyName);
-	}
-
-	/**
-	 * 
-	 * @return <code>true</code> if the aspect is enabled and should raise
-	 *         events.
-	 */
-	private boolean aspectIsEnabled() {
-		return auditor != null;
 	}
 
 	/**
@@ -176,15 +143,7 @@ public aspect RequirementModificationEventPublisherAspect {
 				.setAuthor(currentUser())
 				.build();
 		
-		auditor.notify(event);
-	}
-	
-	private String currentUser() {
-		if (userContext != null) {
-			return userContext.getUsername();
-		} else {
-			return "unknown";
-		}
+		publish(event);
 	}
 	
 	private boolean eventsAreEnabled(Requirement req) {

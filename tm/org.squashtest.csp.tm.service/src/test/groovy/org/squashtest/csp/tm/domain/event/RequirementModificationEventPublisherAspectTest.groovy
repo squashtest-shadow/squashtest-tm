@@ -40,8 +40,11 @@ class RequirementModificationEventPublisherAspectTest extends Specification {
 	def event
 	
 	def setup() {
-		RequirementModificationEventPublisherAspect.aspectOf().auditor = auditor
-		RequirementModificationEventPublisherAspect.aspectOf().userContext = userContext
+		use (ReflectionCategory) {
+			def aspect = RequirementModificationEventPublisherAspect.aspectOf()
+			AbstractRequirementEventPublisher.set field: "auditor", of: aspect, to: auditor 
+			AbstractRequirementEventPublisher.set field: "userContext", of: aspect, to: userContext
+		}
 		userContext.username >> "peter parker"
 	}
  
@@ -94,9 +97,12 @@ class RequirementModificationEventPublisherAspectTest extends Specification {
 		"status"      | Requirement        | RequirementStatus.UNDER_REVIEW 
 	}
 
-		def "uninitialized auditor should not break requirements usage"() {
+	def "uninitialized auditor should not break requirements usage"() {
 		given:
-		RequirementModificationEventPublisherAspect.aspectOf().auditor = null
+		use (ReflectionCategory) {
+			def aspect = RequirementModificationEventPublisherAspect.aspectOf()
+			AbstractRequirementEventPublisher.set field: "auditor", of: aspect, to: null 
+		}
 
 		and:		
 		
@@ -116,9 +122,12 @@ class RequirementModificationEventPublisherAspectTest extends Specification {
 			event instanceof RequirementLargePropertyChange
 		}
 	
-		def "uninitialized user context should not generate 'unknown' event author"() {
+		def "uninitialized user context should generate 'unknown' event author"() {
 			given:
-			RequirementModificationEventPublisherAspect.aspectOf().userContext = null
+		use (ReflectionCategory) {
+			def aspect = RequirementModificationEventPublisherAspect.aspectOf()
+			AbstractRequirementEventPublisher.set field: "userContext", of: aspect, to: null
+		}
 	
 			when:
 			persistentRequirement.name = "bar"
