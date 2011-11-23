@@ -4,12 +4,12 @@
 	<parent>
 		<artifactId>squashtest-csp</artifactId>
 		<groupId>org.squashtest.csp</groupId>
-		<version>1.1.0.IT24-SNAPSHOT</version>
+		<version>1.1.0.IT25-SNAPSHOT</version>
 	</parent>
 
 	<groupId>org.squashtest.csp</groupId>
 	<artifactId>squashtest-csp-provision</artifactId>
-	<version>1.1.0.IT24-SNAPSHOT</version>
+	<version>1.1.0.IT25-SNAPSHOT</version>
 	<packaging>pom</packaging>
 	<name>squashtest-csp-provision</name>
 	<description>OSGi container provisioning - Used by pax:provision and
