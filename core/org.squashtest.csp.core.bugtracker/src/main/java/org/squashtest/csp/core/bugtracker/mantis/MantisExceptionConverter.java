@@ -23,6 +23,7 @@ package org.squashtest.csp.core.bugtracker.mantis;
 import java.rmi.RemoteException;
 import java.util.Locale;
 
+import javax.annotation.PostConstruct;
 import javax.inject.Inject;
 
 import org.springframework.context.MessageSource;
@@ -34,12 +35,12 @@ import org.squashtest.csp.core.bugtracker.core.BugTrackerRemoteException;
 /**
  * that class will convert a Mantis RemoteException to a BugTrackerRemoteException.
  * 
- * It's goal is to :
+ * Its goal is to :
  * 	- provide a more detailed message for an user,
  *  - internationalize it,
  * 
  * @author bsiri
- *
+ * @reviewed-on 2011/11/23
  */
 
 /*
@@ -51,6 +52,19 @@ import org.squashtest.csp.core.bugtracker.core.BugTrackerRemoteException;
  */
 @Component("squashtest.core.bugtracker.BugTrackerExceptionConverter")
 public class MantisExceptionConverter {
+	private interface MantisMessageKeys {
+		String WRONG_CREDENTIAL = "squashtest.csp.tm.bugtracker.exception.mantis.mantismessage.accessdenied";
+		String MANDATORY_SUMMARY_REQUIRED = "squashtest.csp.tm.bugtracker.exception.mantis.mantismessage.summary.mandatory";
+		String MANDATORY_DESCRIPTION_REQUIRED = "squashtest.csp.tm.bugtracker.exception.mantis.mantismessage.description.mandatory";		
+	}
+	
+	private interface SquashMessageKeys {
+		String WRONG_CREDENTIAL = "squashtest.csp.tm.bugtracker.exception.mantis.squashmessage.accessdenied";
+		String MANDATORY_SUMMARY_REQUIRED = "squashtest.csp.tm.bugtracker.exception.mantis.squashmessage.summary.mandatory";
+		String MANDATORY_DESCRIPTION_REQUIRED = "squashtest.csp.tm.bugtracker.exception.mantis.squashmessage.description.mandatory";
+		
+		String UNKNOWN_EXCEPTION = "squashtest.csp.tm.bugtracker.exception.mantis.squashmessage.unknownexception";
+	}
 
 	private final ThreadLocal<Locale> threadLocalLocale = new ThreadLocal<Locale>();
 	
@@ -58,32 +72,13 @@ public class MantisExceptionConverter {
 	@Inject 
 	private MessageSource messageSource;
 	
-	private boolean initialized=false;
-
 
 	/* *************** keys that should match the Mantis error messages. Their initial values will hopefully match 
 	 * the error messages if the key wasn't found in the message source. ********************* */
-	private String strWrongCredentialsMantisMessage="Access Denied";
-	private String strMandatorySummaryRequiredMantisMessage="Mandatory field \'summary\'";
-	private String strMandatoryDescriptionRequiredMantisMessage="Mandatory field \'description\'";
+	private String wrongCredentialsMantisMessage = "Access Denied";
+	private String mandatorySummaryRequiredMantisMessage = "Mandatory field \'summary\'";
+	private String mandatoryDescriptionRequiredMantisMessage = "Mandatory field \'description\'";	
 	
-	
-	/* ***** keys for the message source to fetch the mantis messages ************************* */
-	
-	private final String strWrongCredentialsMantisKey = "squashtest.csp.tm.bugtracker.exception.mantis.mantismessage.accessdenied";
-	private final String strMandatorySummaryRequiredMantisKey = "squashtest.csp.tm.bugtracker.exception.mantis.mantismessage.summary.mandatory";
-	private final String strMandatoryDescriptionRequiredMantisKey = "squashtest.csp.tm.bugtracker.exception.mantis.mantismessage.description.mandatory";
-
-	/* ***** keys for the message source to fetch an internationalized version **************** */
-	
-	private final String strWrongCredentialsSquashKey = "squashtest.csp.tm.bugtracker.exception.mantis.squashmessage.accessdenied";
-	private final String strMandatorySummaryRequiredSquashKey = "squashtest.csp.tm.bugtracker.exception.mantis.squashmessage.summary.mandatory";
-	private final String strMandatoryDescriptionRequiredSquashKey = "squashtest.csp.tm.bugtracker.exception.mantis.squashmessage.description.mandatory";
-	
-	private final String strUnkownExceptionSquashKey = "squashtest.csp.tm.bugtracker.exception.mantis.squashmessage.unknownexception";
-	
-	
-
 	
 	public MantisExceptionConverter(){
 		threadLocalLocale.set(null);
@@ -102,13 +97,7 @@ public class MantisExceptionConverter {
 	
 	public BugTrackerRemoteException convertException(RemoteException remoteException){
 		
-		BugTrackerRemoteException exception;
-		
-		if (! initialized) {
-			init();
-		}
-		
-		exception = setIfAccessDenied(remoteException);
+		BugTrackerRemoteException exception = setIfAccessDenied(remoteException);
 		
 		if (exception == null){
 			exception = setIfMandatorySummaryNotSet(remoteException);
@@ -119,8 +108,8 @@ public class MantisExceptionConverter {
 		if (exception == null){
 			exception = setUnknownException(remoteException);
 		}		
-		return exception;
 		
+		return exception;
 	}
 	
 	
@@ -139,23 +128,19 @@ public class MantisExceptionConverter {
 	 * 
 	 * as a developper, you should feed that constructor with more labels when you meet uncovered RemoteExceptions
 	 */
-	private void init(){
+	@PostConstruct
+	public void init(){
 		Locale locale = Locale.getDefault();
 		
-		strWrongCredentialsMantisMessage = messageSource.getMessage(strWrongCredentialsMantisKey, null, strWrongCredentialsMantisMessage,locale);
-		strMandatorySummaryRequiredMantisMessage = messageSource.getMessage(strMandatorySummaryRequiredMantisKey, null, strMandatorySummaryRequiredMantisMessage, locale);
-		strMandatoryDescriptionRequiredMantisMessage = messageSource.getMessage(strMandatoryDescriptionRequiredMantisKey, null, strMandatoryDescriptionRequiredMantisMessage, locale);
-		
-		
-		initialized=true;
+		wrongCredentialsMantisMessage = messageSource.getMessage(MantisMessageKeys.WRONG_CREDENTIAL, null, wrongCredentialsMantisMessage,locale);
+		mandatorySummaryRequiredMantisMessage = messageSource.getMessage(MantisMessageKeys.MANDATORY_SUMMARY_REQUIRED, null, mandatorySummaryRequiredMantisMessage, locale);
+		mandatoryDescriptionRequiredMantisMessage = messageSource.getMessage(MantisMessageKeys.MANDATORY_DESCRIPTION_REQUIRED, null, mandatoryDescriptionRequiredMantisMessage, locale);
 	}
-	
-	
 	
 	private BugTrackerRemoteException setIfAccessDenied(RemoteException remoteException){
 		String message = remoteException.getMessage();
-		if (message.equals(strWrongCredentialsMantisMessage )){
-			String translation = messageSource.getMessage(strWrongCredentialsSquashKey, null, threadLocalLocale.get());
+		if (message.equals(wrongCredentialsMantisMessage )){
+			String translation = messageSource.getMessage(SquashMessageKeys.WRONG_CREDENTIAL, null, threadLocalLocale.get());
 			return new BugTrackerNoCredentialsException(translation, remoteException);
 		}
 		return null;
@@ -163,8 +148,8 @@ public class MantisExceptionConverter {
 	
 	private BugTrackerRemoteException setIfMandatorySummaryNotSet(RemoteException remoteException){
 		String message = remoteException.getMessage();
-		if (message.contains(strMandatorySummaryRequiredMantisMessage )){
-			String translation = messageSource.getMessage(strMandatorySummaryRequiredSquashKey, null, threadLocalLocale.get());
+		if (message.contains(mandatorySummaryRequiredMantisMessage )){
+			String translation = messageSource.getMessage(SquashMessageKeys.MANDATORY_SUMMARY_REQUIRED, null, threadLocalLocale.get());
 			return new BugTrackerRemoteException(translation, remoteException);
 		}
 		return null;		
@@ -172,17 +157,15 @@ public class MantisExceptionConverter {
 	
 	private BugTrackerRemoteException setIfMandatoryDescriptionNotSet(RemoteException remoteException){
 		String message = remoteException.getMessage();
-		if (message.contains(strMandatoryDescriptionRequiredMantisMessage )){
-			String translation = messageSource.getMessage(strMandatoryDescriptionRequiredSquashKey, null, threadLocalLocale.get());
+		if (message.contains(mandatoryDescriptionRequiredMantisMessage )){
+			String translation = messageSource.getMessage(SquashMessageKeys.MANDATORY_DESCRIPTION_REQUIRED, null, threadLocalLocale.get());
 			return new BugTrackerRemoteException(translation, remoteException);
 		}
 		return null;		
 	}	
 	
-	
-	
 	private BugTrackerRemoteException setUnknownException(RemoteException remoteException){
-		String translation = messageSource.getMessage(strUnkownExceptionSquashKey, null, threadLocalLocale.get());
+		String translation = messageSource.getMessage(SquashMessageKeys.UNKNOWN_EXCEPTION, null, threadLocalLocale.get());
 		return new BugTrackerRemoteException(translation+remoteException.getMessage(), remoteException );
 	}
 	

@@ -45,6 +45,7 @@ import org.squashtest.csp.core.bugtracker.net.AuthenticationCredentials;
  * Provides a soap client to a mantis bugtracker
  *
  * @author Gregory Fouquet
+ * @reviewed-on 2011/11/23
  *
  */
 public class MantisAxis1SoapClient {
