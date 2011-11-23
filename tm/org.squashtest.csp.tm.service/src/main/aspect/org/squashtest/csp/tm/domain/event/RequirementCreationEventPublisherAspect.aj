@@ -18,21 +18,29 @@
  *     You should have received a copy of the GNU Lesser General Public License
  *     along with this software.  If not, see <http://www.gnu.org/licenses/>.
  */
-package org.squashtest.csp.tm.internal.repository;
 
-import java.util.List;
+package org.squashtest.csp.tm.domain.event;
 
+import javax.inject.Inject;
 
-public interface EntityDao<ENTITY_TYPE> {
-	ENTITY_TYPE findById(long id);
+import org.squashtest.csp.tm.domain.requirement.Requirement;
+import org.squashtest.csp.tm.internal.repository.RequirementDao;
+import org.squashtest.csp.tm.internal.service.event.RequirementAuditor;
+
+/**
+ * This aspect advises a Requirement's state change from transient to persistent and raises a creation event.
+ * 
+ * @author Gregory Fouquet
+ * 
+ */
+public aspect RequirementCreationEventPublisherAspect extends AbstractRequirementEventPublisher {
 	
-	List<ENTITY_TYPE> findAllById(List<Long> id);
-
-	void persist(ENTITY_TYPE transientEntity);
-
-	void remove(ENTITY_TYPE entity);
+	private pointcut executeRequirementPersister() : execution(public void org.squashtest.csp.tm.internal.repository.RequirementDao.persist(org.squashtest.csp.tm.domain.requirement.Requirement));
 	
-	// FIXME hibernate should not appear in dao interface. 
-	@Deprecated
-	void flush();
+	after(Requirement requirement) : executeRequirementPersister() && args(requirement) {
+		if (aspectIsEnabled()) {
+			RequirementCreation event = new RequirementCreation(requirement, currentUser());
+			publish(event);
+		}
+	}
 }
