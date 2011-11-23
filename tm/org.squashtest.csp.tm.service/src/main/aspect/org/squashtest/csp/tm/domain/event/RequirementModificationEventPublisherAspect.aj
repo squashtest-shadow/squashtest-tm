@@ -78,7 +78,7 @@ public aspect RequirementModificationEventPublisherAspect {
 	 * @param newValue
 	 */
 	void around(Requirement req, Object newValue) : executeSimplePropertySetter() && target(req) && args(newValue) {
-		if (aspectIsEnabled()) {
+		if (eventsAreEnabled(req)) {
 			String propertyName = extractModifiedPropertyName(thisJoinPoint);
 			Object oldValue = readOldValue(req, propertyName);
 
@@ -150,7 +150,7 @@ public aspect RequirementModificationEventPublisherAspect {
 	 * @param newValue
 	 */
 	void around(Requirement req, Object newValue) : executeLargePropertySetter() && target(req) && args(newValue) {
-		if (aspectIsEnabled()) {
+		if (eventsAreEnabled(req)) {
 			String propertyName = extractModifiedPropertyName(thisJoinPoint);
 			Object oldValue = readOldValue(req, propertyName);
 
@@ -185,5 +185,13 @@ public aspect RequirementModificationEventPublisherAspect {
 		} else {
 			return "unknown";
 		}
+	}
+	
+	private boolean eventsAreEnabled(Requirement req) {
+		return aspectIsEnabled() && requirementIsPersistent(req);
+	}
+	
+	private boolean requirementIsPersistent(Requirement req) {
+		return req.getId() != null;
 	}
 }

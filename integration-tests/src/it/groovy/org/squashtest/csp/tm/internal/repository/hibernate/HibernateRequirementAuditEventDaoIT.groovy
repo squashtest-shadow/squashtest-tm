@@ -72,7 +72,13 @@ class HibernateRequirementAuditEventDaoIT extends DbunitDaoSpecification {
 			def requirement = getSession().load(Requirement.class, 1l);
 			
 		when :
-			def pptChangeEvent = new RequirementPropertyChange(requirement, requirement.createdBy, "property", "oldValue", "newValue");
+			RequirementPropertyChange pptChangeEvent = RequirementPropertyChange.builder()
+				.setSource(requirement)
+				.setAuthor(requirement.createdBy)
+				.setModifiedProperty("property")
+				.setOldValue("oldValue")
+				.setNewValue("newValue")
+				.build()
 			eventDao.persist(pptChangeEvent);
 			
 			getSession().evict(pptChangeEvent);
@@ -95,7 +101,13 @@ class HibernateRequirementAuditEventDaoIT extends DbunitDaoSpecification {
 			def requirement = getSession().load(Requirement.class, 1l);
 			
 		when :
-			def pptChangeEvent = new RequirementLargePropertyChange(requirement, requirement.createdBy, "property", "oldValue", "newValue");
+			def pptChangeEvent = RequirementLargePropertyChange.builder()
+				.setSource(requirement)
+				.setAuthor(requirement.createdBy)
+				.setModifiedProperty("property")
+				.setOldValue("oldValue")
+				.setNewValue("newValue")
+				.build()
 			eventDao.persist(pptChangeEvent);
 			
 			getSession().evict(pptChangeEvent);

@@ -36,6 +36,8 @@ import spock.lang.Unroll;
 class RequirementModificationEventPublisherAspectTest extends Specification {
 	RequirementAuditor auditor = Mock()
 	UserContextService userContext = Mock()
+	Requirement persistentRequirement = persistentRequirement()
+	def event
 	
 	def setup() {
 		RequirementModificationEventPublisherAspect.aspectOf().auditor = auditor
@@ -46,21 +48,19 @@ class RequirementModificationEventPublisherAspectTest extends Specification {
 	@Unroll("Should raise a property change event when property #propertyName is changed from #initialValue to #newValue")
 	def "should raise a property change event when requirement property is changed"() {
 		given:
-		def event
-		Requirement req = new Requirement()
 		use(ReflectionCategory) {
-			propertyClass.set field: propertyName, of: req, to: initialValue
+			propertyClass.set field: propertyName, of: persistentRequirement, to: initialValue
 		}
 		
 		when:
-		req[propertyName] = newValue
+		persistentRequirement[propertyName] = newValue
 		
 		then:
 		1 * auditor.notify({ event = it })
 		event.propertyName == propertyName
 		event.oldValue == initialValue.toString()
 		event.newValue == newValue.toString()
-		event.requirement == req
+		event.requirement == persistentRequirement
 		event.author == "peter parker"
 		
 		where:
@@ -75,13 +75,12 @@ class RequirementModificationEventPublisherAspectTest extends Specification {
 	@Unroll("Should not raise a property change event when property #propertyName is changed from #initialValue to #initialValue")
 	def "should not raise an event when requirement property is not changed"() {
 		given:
-		Requirement req = new Requirement()
 		use(ReflectionCategory) {
-			propertyClass.set field: propertyName, of: req, to: initialValue
+			propertyClass.set field: propertyName, of: persistentRequirement, to: initialValue
 		}
 		
 		when:
-		req[propertyName] = initialValue
+		persistentRequirement[propertyName] = initialValue
 		
 		then:
 		0 * auditor.notify(_)
@@ -100,24 +99,17 @@ class RequirementModificationEventPublisherAspectTest extends Specification {
 		RequirementModificationEventPublisherAspect.aspectOf().auditor = null
 
 		and:		
-		Requirement req = new Requirement()
 		
 		when:
-		req.name = "bar"
+		persistentRequirement.name = "bar"
 		
 		then:
 		notThrown(NullPointerException)
 	}
 		
 		def "should raise a lager property change event when description is modified"() {
-			given:
-			Requirement req = new Requirement()
-			
-			and: 
-			def event
-			
 			when:
-			req.description = "foo"
+			persistentRequirement.description = "foo"
 			
 			then:
 			1 *	auditor.notify({event = it})
@@ -128,17 +120,40 @@ class RequirementModificationEventPublisherAspectTest extends Specification {
 			given:
 			RequirementModificationEventPublisherAspect.aspectOf().userContext = null
 	
-			and:
-			Requirement req = new Requirement()
-			def event
-			
 			when:
-			req.name = "bar"
+			persistentRequirement.name = "bar"
 			
 			then:
 			notThrown(NullPointerException)
 			1 * auditor.notify({ event = it })
 			event.author == "unknown"
 		}
+
+		@Unroll("Should not raise a #propertyName property change event when requirement is in transient state")
+		def "should not raise an event when requirement is in transient state"() {
+			given:
+			Requirement transientRequirement = new Requirement()
+			
+			when:
+			transientRequirement[propertyName] = initialValue
+			
+			then:
+			0 * auditor.notify(_)
 	
+			where:
+			propertyName  | propertyClass      | initialValue
+			"name"        | GenericLibraryNode | "foo"
+			"reference"   | Requirement        | "foo"
+			"description" | GenericLibraryNode | "foo"
+			"criticality" | Requirement        | RequirementCriticality.MAJOR
+			"status"      | Requirement        | RequirementStatus.UNDER_REVIEW
+		}
+		
+		def persistentRequirement() {
+			Requirement req = new Requirement()
+			use (ReflectionCategory) {
+				RequirementLibraryNode.set field: "id", of: req, to: 10L
+			}
+			return req
+		}
 }
