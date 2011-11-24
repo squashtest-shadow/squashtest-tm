@@ -35,8 +35,8 @@
 
 	<context:component-scan base-package="*" />
 	
-	<bean id="requirementModificationEventPublisherAspect" class="org.squashtest.csp.tm.domain.event.RequirementModificationEventPublisherAspect" factory-method="aspectOf">
-	</bean>
+	<bean id="requirementCreationEventPublisherAspect" class="org.squashtest.csp.tm.domain.event.RequirementCreationEventPublisherAspect" factory-method="aspectOf" />
+	<bean id="requirementModificationEventPublisherAspect" class="org.squashtest.csp.tm.domain.event.RequirementModificationEventPublisherAspect" factory-method="aspectOf" />
 
 	<!-- ====== BEAN VALIDATION ====== -->
 	<bean id="validatorFactory" class="org.squashtest.csp.core.validation.ValidatorFactoryBean"

@@ -166,7 +166,7 @@
 			</testResource>
 		</testResources>
 
-		<testSourceDirectory>src/test/groovy</testSourceDirectory>
+ 		<testSourceDirectory>src/test/groovy</testSourceDirectory>
 
 		<plugins>
 			<plugin>

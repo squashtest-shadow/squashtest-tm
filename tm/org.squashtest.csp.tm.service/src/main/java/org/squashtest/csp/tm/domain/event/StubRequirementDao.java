@@ -36,49 +36,7 @@ import org.squashtest.csp.tm.internal.repository.RequirementDao;
  * @author Gregory Fouquet
  *
  */
-public class StubRequirementDao implements RequirementDao {
-
-	/**
-	 * @see org.squashtest.csp.tm.internal.repository.EntityDao#findById(long)
-	 */
-	@Override
-	public Requirement findById(long id) {
-		return null;
-	}
-
-	/**
-	 * @see org.squashtest.csp.tm.internal.repository.EntityDao#findAllById(java.util.List)
-	 */
-	@Override
-	public List<Requirement> findAllById(List<Long> id) {
-		return null;
-	}
-
-	/**
-	 * @see org.squashtest.csp.tm.internal.repository.EntityDao#persist(java.lang.Object)
-	 */
-	@Override
-	public void persist(Requirement transientEntity) {
-		// NOOP
-
-	}
-
-	/**
-	 * @see org.squashtest.csp.tm.internal.repository.EntityDao#remove(java.lang.Object)
-	 */
-	@Override
-	public void remove(Requirement entity) {
-		// NOOP
-
-	}
-
-	/**
-	 * @see org.squashtest.csp.tm.internal.repository.EntityDao#flush()
-	 */
-	@Override
-	public void flush() {
-		// NOOP
-	}
+public class StubRequirementDao extends StubEntityDao<Requirement> implements RequirementDao {
 
 	/**
 	 * @see org.squashtest.csp.tm.internal.repository.RequirementDao#findAllByIdList(java.util.List)

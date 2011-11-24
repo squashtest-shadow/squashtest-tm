@@ -20,11 +20,8 @@
  */
 package org.squashtest.csp.tm.domain.event;
 
-import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
-
 import javax.inject.Inject;
-
 import org.apache.commons.lang.ObjectUtils;
 import org.apache.commons.lang.StringUtils;
 import org.apache.commons.lang.WordUtils;
@@ -32,6 +29,8 @@ import org.aspectj.lang.JoinPoint;
 import org.springframework.beans.BeanUtils;
 import org.springframework.util.ReflectionUtils;
 import org.squashtest.csp.tm.domain.requirement.Requirement;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 /**
  * This aspect advises a Requirement to raise an event when a Requirement's
@@ -41,6 +40,7 @@ import org.squashtest.csp.tm.domain.requirement.Requirement;
  * 
  */
 public aspect RequirementModificationEventPublisherAspect extends AbstractRequirementEventPublisher {
+	private static final Logger LOGGER = LoggerFactory.getLogger(RequirementModificationEventPublisherAspect.class);
 
 	private pointcut executeLargePropertySetter() : execution(public void org.squashtest.csp.tm.domain.requirement.Requirement.setDescription(*));
 
@@ -87,6 +87,8 @@ public aspect RequirementModificationEventPublisherAspect extends AbstractRequir
 				.build();
 		
 		publish(event);
+		
+		LOGGER.trace("Simple property change event raised");
 	}
 
 	private Object readOldValue(Requirement req, String propertyName) {
@@ -144,6 +146,8 @@ public aspect RequirementModificationEventPublisherAspect extends AbstractRequir
 				.build();
 		
 		publish(event);
+
+		LOGGER.trace("Large property change event raised");
 	}
 	
 	private boolean eventsAreEnabled(Requirement req) {

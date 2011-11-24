@@ -22,6 +22,8 @@ package org.squashtest.csp.tm.internal.service.event;
 
 import javax.inject.Inject;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.squashtest.csp.tm.domain.event.RequirementAuditEvent;
@@ -43,7 +45,9 @@ import org.squashtest.csp.tm.internal.repository.RequirementAuditEventDao;
 @Service
 public class StatusBasedRequirementAuditor implements RequirementAuditor,
 		RequirementAuditEventVisitor {
-
+	
+	private static final Logger LOGGER = LoggerFactory.getLogger(StatusBasedRequirementAuditor.class);
+	
 	@Inject
 	private RequirementAuditEventDao eventDao;
 
@@ -56,15 +60,29 @@ public class StatusBasedRequirementAuditor implements RequirementAuditor,
 	@Override
 	public void visit(RequirementCreation event) {
 		eventDao.persist(event);
+		logEvent(event);
 
+	}
+
+	private void logEvent(RequirementCreation event) {
+		if (LOGGER.isTraceEnabled()) {
+			LOGGER.trace("Requirement was created");
+		}
 	}
 
 	@Override
 	public void visit(RequirementPropertyChange event) {
 		if (shouldAuditModification(event)) {
 			eventDao.persist(event);
+			logEvent(event);
 		}
 
+	}
+
+	private void logEvent(RequirementModification event) {
+		if (LOGGER.isTraceEnabled()) {
+			LOGGER.trace("Requirement was modified");
+		}
 	}
 
 	private boolean shouldAuditModification(RequirementModification event) {
@@ -78,6 +96,7 @@ public class StatusBasedRequirementAuditor implements RequirementAuditor,
 	public void visit(RequirementLargePropertyChange event) {
 		if (shouldAuditModification(event)) {
 			eventDao.persist(event);
+			logEvent(event);
 		}
 	}
 }

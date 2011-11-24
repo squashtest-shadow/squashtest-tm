@@ -23,6 +23,8 @@ package org.squashtest.csp.tm.domain.event;
 
 import javax.inject.Inject;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.squashtest.csp.tm.domain.requirement.Requirement;
 import org.squashtest.csp.tm.internal.repository.RequirementDao;
 import org.squashtest.csp.tm.internal.service.event.RequirementAuditor;
@@ -34,13 +36,15 @@ import org.squashtest.csp.tm.internal.service.event.RequirementAuditor;
  * 
  */
 public aspect RequirementCreationEventPublisherAspect extends AbstractRequirementEventPublisher {
+	private static final Logger LOGGER = LoggerFactory.getLogger(RequirementCreationEventPublisherAspect.class);
 	
-	private pointcut executeRequirementPersister() : execution(public void org.squashtest.csp.tm.internal.repository.RequirementDao.persist(org.squashtest.csp.tm.domain.requirement.Requirement));
+	private pointcut executeRequirementPersister(RequirementDao dao, Requirement requirement) : execution(public void org.squashtest.csp.tm.internal.repository.EntityDao+.persist(Object)) && target(dao) && args(requirement);
 	
-	after(Requirement requirement) : executeRequirementPersister() && args(requirement) {
+	after(RequirementDao dao, Requirement requirement) : executeRequirementPersister(dao, requirement) {
 		if (aspectIsEnabled()) {
 			RequirementCreation event = new RequirementCreation(requirement, currentUser());
 			publish(event);
+			LOGGER.trace("Creation event raised");
 		}
 	}
 }

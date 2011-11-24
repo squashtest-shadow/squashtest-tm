@@ -55,7 +55,7 @@
 		<tika.version>0.6</tika.version>
 		<groovy.version>1.7.10</groovy.version>
 		<spock.version>0.5-groovy-1.7</spock.version>
-		<groovy-eclipse-compiler.version>2.5.1-1</groovy-eclipse-compiler.version>
+		<groovy-eclipse-compiler.version>2.5.2-01</groovy-eclipse-compiler.version>
 		<dwr.version>3.0.0.M1</dwr.version>
 		<jackson.version>1.4.3</jackson.version>
 		<liquibase.version>2.0.1</liquibase.version>
