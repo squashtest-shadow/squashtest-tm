@@ -23,6 +23,7 @@ package org.squashtest.csp.core.infrastructure.dynamicmanager;
 import org.hibernate.SessionFactory;
 import org.hibernate.classic.Session;
 import org.springframework.beans.factory.BeanFactory;
+import org.squashtest.csp.tools.unittest.reflection.ReflectionCategory;
 
 import spock.lang.Specification;
 
@@ -34,18 +35,17 @@ class DynamicManagerFactoryBeanTest extends Specification{
 
 	def setup() {
 		sessionFactory.getCurrentSession() >> currentSession
-		factory.sessionFactory = sessionFactory
-
-		factory.entityType = DummyEntity
-
-		factory.managerType = DummyManager
-
-		factory.beanFactory = beanFactory
+		
+		use(ReflectionCategory) {
+			DynamicManagerFactoryBean.set field: "sessionFactory", of: factory, to: sessionFactory
+			DynamicManagerFactoryBean.set field: "entityType", of: factory, to: DummyEntity
+			AbstractDynamicComponentFactoryBean.set field: "componentType", of: factory, to: DummyManager
+			AbstractDynamicComponentFactoryBean.set field: "beanFactory", of: factory, to: beanFactory
+		}
 	}
 
 	def "factory should create a unique dynamic DummyManager"() {
 		when:
-		factory.managerType = DummyManager
 		factory.initializeFactory()
 
 		then:
@@ -79,7 +79,7 @@ class DynamicManagerFactoryBeanTest extends Specification{
 	def "should delegate methods of manager's superinterface"() {
 		given:
 		CustomDummyManager delegateManager = Mock()
-		factory.customManager = delegateManager
+		factory.customComponent = delegateManager
 
 		when:
 		factory.initializeFactory()
@@ -130,7 +130,7 @@ class DynamicManagerFactoryBeanTest extends Specification{
 		beanFactory.getBean("CustomDummyManager") >> delegateManager
 
 		and:
-		factory.lookupCustomManager = true
+		factory.lookupCustomComponent = true
 
 		when:
 		factory.initializeFactory()

@@ -30,7 +30,7 @@ import javax.validation.constraints.NotNull;
  * @author Gregory Fouquet
  * 
  */
-class CustomMethodHandler implements DynamicManagerInvocationHandler {
+class CustomMethodHandler implements DynamicComponentInvocationHandler {
 	private final Object customManager;
 
 	public CustomMethodHandler(@NotNull Object customManager) {

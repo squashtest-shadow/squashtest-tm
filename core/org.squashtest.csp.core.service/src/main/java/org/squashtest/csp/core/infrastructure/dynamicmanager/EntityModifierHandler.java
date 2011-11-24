@@ -39,7 +39,7 @@ import org.squashtest.csp.core.infrastructure.lang.PrimitiveTypeUtils;
  * @author Gregory Fouquet
  * 
  */
-class EntityModifierHandler<ENTITY> implements DynamicManagerInvocationHandler {
+class EntityModifierHandler<ENTITY> implements DynamicComponentInvocationHandler {
 	/**
 	 * Pattern used to process service method which modify entities.
 	 */

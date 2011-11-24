@@ -24,11 +24,11 @@ import java.lang.reflect.InvocationHandler;
 import java.lang.reflect.Method;
 
 /**
- * Interface for a {@link InvocationHandler} object used by a Dynamic Manager
+ * Interface for a {@link InvocationHandler} object used by a Dynamic Component
  * @author Gregory Fouquet
- * @see DynamicManagerFactoryBean
+ * @see AbstractDynamicComponentFactoryBean
  */
-interface DynamicManagerInvocationHandler extends InvocationHandler {
+interface DynamicComponentInvocationHandler extends InvocationHandler {
 	/**
 	 * @param method
 	 *            method candidate to handling. should not be null.
