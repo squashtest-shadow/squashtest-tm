@@ -49,7 +49,7 @@ class DeleteEntityHandler<ENTITY> extends Object implements DynamicComponentInvo
 	 * Performs an entity fetch using {@link #entityType} and the first arg as the entity id.
 	 */
 	@Override
-	public Object invoke(Object proxy, Method method, Object[] args) throws Throwable {
+	public Object invoke(Object proxy, Method method, Object[] args) { 
 		sessionFactory.getCurrentSession().delete(args[0]);
 		return null;
 	}

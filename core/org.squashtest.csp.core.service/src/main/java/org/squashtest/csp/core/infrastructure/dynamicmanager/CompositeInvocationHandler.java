@@ -53,8 +53,7 @@ class CompositeInvocationHandler implements InvocationHandler {
 	 * 
 	 * {@link #equals(Object)} invocation is never delegated and performs a proxy reference check.
 	 */
-	public Object invoke(Object proxy, Method method, Object[] args) throws Throwable { // NOSONAR : I dont choose
-																						// what JDK interfaces throw
+	public Object invoke(Object proxy, Method method, Object[] args) throws Throwable { // NOSONAR : I dont choose what JDK interfaces throw
 		try {
 			return doInvoke(proxy, method, args);
 
@@ -65,7 +64,7 @@ class CompositeInvocationHandler implements InvocationHandler {
 		}
 	}
 
-	private Object doInvoke(Object proxy, Method method, Object[] args) throws Throwable {
+	private Object doInvoke(Object proxy, Method method, Object[] args) throws Throwable { // NOSONAR : I dont choose what JDK interfaces throw
 		if (isEqualsInvoked(method)) {
 			return proxyEquals(proxy, args[0]);
 		}
@@ -80,7 +79,7 @@ class CompositeInvocationHandler implements InvocationHandler {
 	}
 
 	private Object proxyEquals(Object thisProxy, Object thatProxy) {
-		return thisProxy == thatProxy;
+		return thisProxy == thatProxy; // NOSONAR We DO want to compare instances
 	}
 
 	private boolean isEqualsInvoked(Method method) {

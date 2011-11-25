@@ -21,6 +21,7 @@
 
 package org.squashtest.csp.core.infrastructure.dynamicmanager;
 
+import java.lang.reflect.InvocationHandler;
 import java.lang.reflect.Method;
 import java.util.Collection;
 
@@ -31,17 +32,21 @@ import org.hibernate.Session;
 import org.hibernate.SessionFactory;
 
 /**
+ * This {@link InvocationHandler} looks up a hibernate named query which name matches <code>EntityType.methodName</code>
  * @author Gregory Fouquet
  * 
  * @param <ENTITY>
  */
 abstract class AbstractNamedQueryFinderHandler<ENTITY> implements DynamicComponentInvocationHandler {
 	private final SessionFactory sessionFactory;
+	/**
+	 * This property is prepended to the invoked method's name for query lookup. 
+	 */
 	private final String queryNamespace;
 
 	/**
 	 * @param sessionFactory
-	 * @param queryNamespace
+	 * @param entityType this class's simple name will be used as this object's {@link #queryNamespace}
 	 */
 	public AbstractNamedQueryFinderHandler(@NotNull Class<ENTITY> entityType, @NotNull SessionFactory sessionFactory) {
 		super();
@@ -54,7 +59,7 @@ abstract class AbstractNamedQueryFinderHandler<ENTITY> implements DynamicCompone
 	 * may be a <code>null</code> value.
 	 */
 	@Override
-	public final Object invoke(Object proxy, Method method, Object[] args) throws Throwable {
+	public final Object invoke(Object proxy, Method method, Object[] args) { 
 		Query query = lookupNamedQuery(method);
 		setQueryParameters(query, args);
 

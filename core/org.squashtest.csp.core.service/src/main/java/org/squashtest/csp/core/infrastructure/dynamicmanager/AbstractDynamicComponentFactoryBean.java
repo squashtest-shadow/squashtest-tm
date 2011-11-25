@@ -48,19 +48,19 @@ public abstract class AbstractDynamicComponentFactoryBean<COMPONENT> implements 
 	private BeanFactory beanFactory;
 
 	/**
-	 * Type of Manager service interface which should be instanciated. Should be initialized.
+	 * Type of Manager service interface which should be instanciated. Should be configured by Spring.
 	 */
 	private Class<COMPONENT> componentType;
 
 	/**
 	 * Should this factory lookup a custom manager in Spring's bean factory. Looked up type is the *FIRST*
-	 * superinterface of the dynamic manager type.
+	 * superinterface of the dynamic manager type. Can be configured by Spring.
 	 */
 	private boolean lookupCustomComponent = true;
 
 	/**
 	 * Custom manager, should either be intialized to handle custom services which cannot be adressed by dynamic methods
-	 * or {@link #lookupCustomComponent} should be set to true.
+	 * or {@link #lookupCustomComponent} should be set to true. 
 	 */
 	private Object customComponent;
 
@@ -88,7 +88,7 @@ public abstract class AbstractDynamicComponentFactoryBean<COMPONENT> implements 
 	}
 
 	@Override
-	public final synchronized COMPONENT getObject() throws Exception {
+	public final synchronized COMPONENT getObject() {
 		return proxy;
 	}
 

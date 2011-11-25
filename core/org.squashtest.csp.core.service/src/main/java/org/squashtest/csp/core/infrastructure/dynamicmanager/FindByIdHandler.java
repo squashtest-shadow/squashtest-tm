@@ -32,7 +32,7 @@ import org.hibernate.SessionFactory;
  * @author Gregory Fouquet
  * 
  */
-public class FindByIdHandler<ENTITY> implements DynamicComponentInvocationHandler {
+public class FindByIdHandler<ENTITY> implements DynamicComponentInvocationHandler { // NOSONAR : I dont choose what JDK interfaces throw
 	private final Class<ENTITY> entityType;
 	private final SessionFactory sessionFactory;
 
@@ -51,7 +51,7 @@ public class FindByIdHandler<ENTITY> implements DynamicComponentInvocationHandle
 	 */
 	@SuppressWarnings("unchecked")
 	@Override
-	public Object invoke(Object proxy, Method method, Object[] args) throws Throwable {
+	public Object invoke(Object proxy, Method method, Object[] args) {
 		return 	(ENTITY) sessionFactory.getCurrentSession().load(entityType, (Long) args[0]);
 	}
 
