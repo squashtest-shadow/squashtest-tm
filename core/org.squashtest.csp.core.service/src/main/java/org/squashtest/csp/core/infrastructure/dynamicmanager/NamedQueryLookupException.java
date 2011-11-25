@@ -18,16 +18,27 @@
  *     You should have received a copy of the GNU Lesser General Public License
  *     along with this software.  If not, see <http://www.gnu.org/licenses/>.
  */
-package org.squashtest.csp.tm.internal.repository;
 
-import java.util.List;
+package org.squashtest.csp.core.infrastructure.dynamicmanager;
 
-import org.squashtest.csp.tm.domain.event.RequirementAuditEvent;
+/**
+ * Thrown when we tried to run a hinernate named query but it could not be found.
+ * 
+ * @author Gregory Fouquet
+ * 
+ */
+public class NamedQueryLookupException extends RuntimeException {
 
-public interface RequirementAuditEventDao {
-	void persist(RequirementAuditEvent event);
-	
-	List<RequirementAuditEvent> findAllByRequirementIdOrderedByDate(long requirementId);
+	/**
+	 * 
+	 */
+	private static final long serialVersionUID = 1513973491187671450L;
 
-//	List<RequirementAuditEvent> findAllByRequirementIds(List<Long> requirementIds);
+	/**
+	 * @param message
+	 */
+	public NamedQueryLookupException(String queryName) {
+		super("Could not find query named '" + queryName + '\'');
+	}
+
 }

@@ -24,24 +24,21 @@ import java.util.List;
 
 import org.hibernate.Query;
 import org.hibernate.type.LongType;
-import org.springframework.stereotype.Repository;
 import org.squashtest.csp.tm.domain.event.RequirementAuditEvent;
 import org.squashtest.csp.tm.internal.repository.RequirementAuditEventDao;
 
-@Repository
 public class HibernateRequirementAuditEventDao extends
 		HibernateEntityDao<RequirementAuditEvent> implements RequirementAuditEventDao {
 
 
 	@Override
-	public List<RequirementAuditEvent> findAllByRequirementId(Long requirementId) {
+	public List<RequirementAuditEvent> findAllByRequirementIdOrderedByDate(long requirementId) {
 		SetQueryParametersCallback callback = new EventByRequirementCallback(requirementId);
 		return executeListNamedQuery("requirementAuditEvent.findAllByRequirementId", callback);
 	}
 	
 
 
-	@Override
 	public List<RequirementAuditEvent> findAllByRequirementIds(List<Long> requirementIds) {
 		SetQueryParametersCallback callback = new EventByRequirementListCallback(requirementIds);
 		return executeListNamedQuery("requirementAuditEvent.findAllByRequirementIdList", callback);

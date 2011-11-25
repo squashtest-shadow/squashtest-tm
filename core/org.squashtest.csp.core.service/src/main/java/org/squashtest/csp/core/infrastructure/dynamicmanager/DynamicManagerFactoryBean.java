@@ -88,9 +88,21 @@ public class DynamicManagerFactoryBean<MANAGER, ENTITY> extends AbstractDynamicC
 	 */
 	private Class<ENTITY> entityType;
 
+	/**
+	 * @param entityType the entityType to set
+	 */
+	public void setEntityType(Class<ENTITY> entityType) {
+		this.entityType = entityType;
+	}
+
 	protected List<DynamicComponentInvocationHandler> createInvocationHandlers() {
-		List<DynamicComponentInvocationHandler> handlers =  new ArrayList<DynamicComponentInvocationHandler>(1);
+		List<DynamicComponentInvocationHandler> handlers =  new ArrayList<DynamicComponentInvocationHandler>(4);
+		
 		handlers.add(new EntityModifierHandler<ENTITY>(sessionFactory, entityType));
+		handlers.add(new FindByIdHandler<ENTITY>(entityType, sessionFactory));
+		handlers.add(new NamedQueryEntityFinderHandler<ENTITY>(entityType, sessionFactory));
+		handlers.add(new NamedQueryListOfEntitiesFinderHandler<ENTITY>(entityType, sessionFactory));
+		
 		return handlers;
 	}
 

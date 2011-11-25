@@ -103,7 +103,7 @@ public abstract class AbstractDynamicComponentFactoryBean<COMPONENT> implements 
 	private void initializeComponentInvocationHandler() {
 		if (componentInvocationHandler == null) {
 			List<DynamicComponentInvocationHandler> invocationHandlers = new ArrayList<DynamicComponentInvocationHandler>();
-			addCustomManagerHandler(invocationHandlers); // IT MUST BE THE FIRST !
+			addCustomcomponentHandler(invocationHandlers); // IT MUST BE THE FIRST !
 			invocationHandlers.addAll(createInvocationHandlers());
 
 			componentInvocationHandler = new CompositeInvocationHandler(invocationHandlers);
@@ -116,7 +116,7 @@ public abstract class AbstractDynamicComponentFactoryBean<COMPONENT> implements 
 	 * Adds a handler which delegates to cistom manager if necessary. It must be the first handler to be added to the
 	 * list / processed !
 	 */
-	private void addCustomManagerHandler(List<DynamicComponentInvocationHandler> handlers) {
+	private void addCustomcomponentHandler(List<DynamicComponentInvocationHandler> handlers) {
 		initializeCustomManager();
 
 		if (customComponent != null) {
@@ -125,10 +125,21 @@ public abstract class AbstractDynamicComponentFactoryBean<COMPONENT> implements 
 	}
 
 	private void initializeCustomManager() {
+		if(cannotDetermineCustomComponentType()) {
+			return;
+		}
+		
 		if (customComponent == null && lookupCustomComponent) {
 			String customManagerName = componentType.getInterfaces()[0].getSimpleName();
 			customComponent = beanFactory.getBean(customManagerName);
 		}
+	}
+
+	/**
+	 * @return
+	 */
+	private boolean cannotDetermineCustomComponentType() {
+		return componentType.getInterfaces().length == 0;
 	}
 
 	@Override

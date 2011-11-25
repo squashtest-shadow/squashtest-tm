@@ -175,7 +175,7 @@ class DynamicDaoFactoryBeanTest extends Specification {
 		List res = factory.object.findAllBySuperpowers([
 			"wall crawling",
 			"amazing strength"
-		] as List)
+		])
 
 		then:
 		thrown(UnsupportedMethodException)

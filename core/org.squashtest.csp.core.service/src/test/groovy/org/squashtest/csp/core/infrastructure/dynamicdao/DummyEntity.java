@@ -18,16 +18,13 @@
  *     You should have received a copy of the GNU Lesser General Public License
  *     along with this software.  If not, see <http://www.gnu.org/licenses/>.
  */
-package org.squashtest.csp.tm.internal.repository;
 
-import java.util.List;
+package org.squashtest.csp.core.infrastructure.dynamicdao;
 
-import org.squashtest.csp.tm.domain.event.RequirementAuditEvent;
+/**
+ * @author Gregory
+ *
+ */
+public class DummyEntity {
 
-public interface RequirementAuditEventDao {
-	void persist(RequirementAuditEvent event);
-	
-	List<RequirementAuditEvent> findAllByRequirementIdOrderedByDate(long requirementId);
-
-//	List<RequirementAuditEvent> findAllByRequirementIds(List<Long> requirementIds);
 }

@@ -20,6 +20,8 @@
  */
 package org.squashtest.csp.core.infrastructure.dynamicmanager;
 
+
+import org.hibernate.Query;
 import org.hibernate.SessionFactory;
 import org.hibernate.classic.Session;
 import org.springframework.beans.factory.BeanFactory;
@@ -167,6 +169,57 @@ class DynamicManagerFactoryBeanTest extends Specification{
 
 		then:
 		dummy.style == null
+	}
+	
+	def "should dynamically find an entity by its id"() {
+		given:
+		DummyEntity entity = new DummyEntity()
+		currentSession.load(DummyEntity, 10L) >> entity
+
+		when:
+		factory.initializeFactory()
+		def res = factory.object.findById(10L)
+
+		then:
+		res == entity
+	}
+
+	def "finder method should trigger an entity named query"() {
+		given:
+		Query query = Mock()
+		currentSession.getNamedQuery("DummyEntity.findByNameAndSuperpower") >> query
+
+		and:
+		DummyEntity entity = new DummyEntity()
+		query.uniqueResult() >> entity
+
+		when:
+		factory.initializeFactory()
+		def res = factory.object.findByNameAndSuperpower("summers", "optic blasts")
+
+		then:
+		1 * query.setParameter(0, "summers")
+		1 * query.setParameter(1, "optic blasts")
+		res == entity
+	}
+
+	def "finder method should trigger an entity list named query"() {
+		given:
+		Query query = Mock()
+		currentSession.getNamedQuery("DummyEntity.findAllByNameAndSuperpower") >> query
+
+		and:
+		DummyEntity entity = new DummyEntity()
+		query.list() >> [entity]
+
+		when:
+		factory.initializeFactory()
+		List res = factory.object.findAllByNameAndSuperpower("summers", "optic blasts")
+
+		then:
+		1 * query.setParameter(0, "summers")
+		1 * query.setParameter(1, "optic blasts")
+		res == [entity]
 	}
 
 }

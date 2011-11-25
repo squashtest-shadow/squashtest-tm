@@ -48,8 +48,8 @@ abstract class DynamicManagerInterfaceSpecification extends Specification {
 	DynamicManagerFactoryBean factory = new DynamicManagerFactoryBean()
 
 	def setup() {
-		factory.lookupCustomManager = false
-		factory.managerType = managerType
+		factory.lookupCustomComponent = false
+		factory.componentType = managerType
 		factory.entityType = entityType
 
 		Session session = Mock()

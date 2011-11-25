@@ -40,14 +40,24 @@
  */
 package org.squashtest.csp.core.infrastructure.dynamicmanager;
 
-public interface DummyManager extends CustomDummyManager  {
+import java.util.List;
+
+public interface DummyManager extends CustomDummyManager {
 	void changeStyle(long id, String style);
-	
+
 	String talkGibberish(long id, String seed);
-	
+
 	void changeUnsupportedMethod(long id, String arg, Object otherArg);
-	
+
 	void changeShoes(long id, String shoes);
-	
+
 	void changeCool(long id, boolean isCool);
+
+	DummyEntity findByNameAndSuperpower(String name, String superpower);
+
+	List<DummyEntity> findAllByNameAndSuperpower(String name, String superpower);
+
+	List<DummyEntity> findAllBySuperpowers(List<String> superpowers);
+
+	DummyEntity findById(long id);
 }

@@ -61,6 +61,7 @@
 		<property name="folderDao" ref="hibernateTestCaseFolderDao" />
 		<property name="libraryDao" ref="hibernateTestCaseLibraryDao" />
 	</bean>
+	
 	<bean id="squashtest.tm.service.RequirementFolderModificationService" class="org.squashtest.csp.tm.internal.service.GenericFolderModificationService">
 		<property name="folderDao" ref="hibernateRequirementFolderDao" />
 		<property name="libraryDao" ref="hibernateRequirementLibraryDao" />
@@ -76,8 +77,9 @@
 		<property name="libraryDao" ref="hibernateTestCaseLibraryDao" />
 	</bean>
 
+	<!--  Dynamic managers -->
 	<bean id="squashtest.tm.service.TestCaseModificationService" class="org.squashtest.csp.core.infrastructure.dynamicmanager.DynamicManagerFactoryBean">
-		<property name="managerType" value="org.squashtest.csp.tm.service.TestCaseModificationService" />
+		<property name="componentType" value="org.squashtest.csp.tm.service.TestCaseModificationService" />
 		<property name="entityType" value="org.squashtest.csp.tm.domain.testcase.TestCase" />
 	</bean>
 
@@ -88,7 +90,7 @@
 	</bean>
 	
 	<bean id="squashtest.tm.service.RequirementModificationService" class="org.squashtest.csp.core.infrastructure.dynamicmanager.DynamicManagerFactoryBean">
-		<property name="managerType" value="org.squashtest.csp.tm.service.RequirementModificationService" />
+		<property name="componentType" value="org.squashtest.csp.tm.service.RequirementModificationService" />
 		<property name="entityType" value="org.squashtest.csp.tm.domain.requirement.Requirement" />
 	</bean>
 
@@ -99,14 +101,13 @@
 	</bean>
 	
 	<bean id="squashtest.tm.service.CampaignModificationService" class="org.squashtest.csp.core.infrastructure.dynamicmanager.DynamicManagerFactoryBean">
-		<property name="managerType" value="org.squashtest.csp.tm.service.CampaignModificationService" />
+		<property name="componentType" value="org.squashtest.csp.tm.service.CampaignModificationService" />
 		<property name="entityType" value="org.squashtest.csp.tm.domain.campaign.Campaign" />
 	</bean>
 	
 	<bean id="squashtest.tm.service.IterationModificationService" class="org.squashtest.csp.core.infrastructure.dynamicmanager.DynamicManagerFactoryBean">
-		<property name="managerType" value="org.squashtest.csp.tm.service.IterationModificationService" />
+		<property name="componentType" value="org.squashtest.csp.tm.service.IterationModificationService" />
 		<property name="entityType" value="org.squashtest.csp.tm.domain.campaign.Iteration" />
 	</bean>
-	
 </beans>
 
