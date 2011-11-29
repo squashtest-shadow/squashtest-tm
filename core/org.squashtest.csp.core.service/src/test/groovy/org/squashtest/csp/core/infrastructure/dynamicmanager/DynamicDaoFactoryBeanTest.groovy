@@ -215,7 +215,7 @@ class DynamicDaoFactoryBeanTest extends Specification {
 		and:
 		Paging paging = Mock()
 		paging.getFirstItemIndex() >> 10
-		paging.getMaxNumberOfItems() >> 100
+		paging.getPageSize() >> 100
 		
 		and:
 		DummyEntity entity = new DummyEntity()

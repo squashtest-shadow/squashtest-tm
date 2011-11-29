@@ -133,7 +133,7 @@ class HibernateRequirementAuditEventDaoIT extends DbunitDaoSpecification {
 
 		and:
 		Paging paging = Mock()
-		paging.getMaxNumberOfItems() >> 10
+		paging.getPageSize() >> 10
 		paging.getFirstItemIndex() >> 0
 
 		when :
@@ -171,7 +171,7 @@ class HibernateRequirementAuditEventDaoIT extends DbunitDaoSpecification {
 
 		and:
 		Paging paging = Mock()
-		paging.getMaxNumberOfItems() >> 2
+		paging.getPageSize() >> 2
 		paging.getFirstItemIndex() >> 1
 
 		when :
@@ -181,7 +181,20 @@ class HibernateRequirementAuditEventDaoIT extends DbunitDaoSpecification {
 		events.collect { it.id } == [ 14L, 12L ]
 	}
 
-	//	@DataSet("HibernateRequirementAuditEventDaoIT.should fetch lists of events.xml")
+	@DataSet("HibernateRequirementAuditEventDaoIT.should fetch lists of events.xml")
+	def "should count events for a requirement"(){
+		given :
+		def requirementId=1L
+
+		when :
+		def res = eventDao.countByRequirementId(1L)
+		
+
+		then :
+		res == 4
+	}
+
+		//	@DataSet("HibernateRequirementAuditEventDaoIT.should fetch lists of events.xml")
 	//	def "should fetch a list of event for a list of requirements, sorted by date and requirement"(){
 	//
 	//		given :

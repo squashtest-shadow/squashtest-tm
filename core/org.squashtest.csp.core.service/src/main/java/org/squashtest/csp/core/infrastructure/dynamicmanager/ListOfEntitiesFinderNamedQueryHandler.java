@@ -22,39 +22,32 @@
 package org.squashtest.csp.core.infrastructure.dynamicmanager;
 
 import java.lang.reflect.Method;
-
-import javax.validation.constraints.NotNull;
+import java.util.List;
 
 import org.hibernate.Query;
 import org.hibernate.SessionFactory;
 
 /**
- * This {@link DynamicComponentInvocationHandler} handles any method of signature <code>ENTITY find*(..)</code> by
- * looking up a Hibernate Named Query which name matches the method's name and returning its results.
+ * This {@link DynamicComponentInvocationHandler} handles any method which signature matches
+ * <code>List findAll*(..)</code> by looking up a Hibernate Named Query which name matches the method's name and
+ * returning its results.
  * 
  * @author Gregory Fouquet
  * 
  */
-class NamedQueryEntityFinderHandler<ENTITY> extends AbstractNamedQueryFinderHandler<ENTITY> {
-	private final Class<ENTITY> entityType;
+class ListOfEntitiesFinderNamedQueryHandler<ENTITY> extends
+		AbstractNamedQueryHandler<ENTITY> {
 
 	/**
-	 * @param sessionFactory
 	 * @param entityType
-	 * @param queryNamespace
+	 * @param sessionFactory
 	 */
-	public NamedQueryEntityFinderHandler(Class<ENTITY> entityType, @NotNull SessionFactory sessionFactory) {
+	public ListOfEntitiesFinderNamedQueryHandler(Class<ENTITY> entityType, SessionFactory sessionFactory) {
 		super(entityType, sessionFactory);
-		this.entityType = entityType;
-	}
-
-	@Override
-	protected Object executeQuery(Query query) {
-		return query.uniqueResult();
 	}
 
 	/**
-	 * handles any method which returns an ENTITY
+	 * handles invocation of methods which return a List of ENTITY
 	 */
 	@Override
 	public boolean canHandle(Method method) {
@@ -65,16 +58,21 @@ class NamedQueryEntityFinderHandler<ENTITY> extends AbstractNamedQueryFinderHand
 	 * @param method
 	 * @return
 	 */
+	private boolean matchesHandledMethodName(Method method) {
+		return method.getName().startsWith("findAll");
+	}
+
 	private boolean matchesHandledReturnType(Method method) {
-		return entityType.equals(method.getReturnType());
+		Class<?> returnType = method.getReturnType();
+		return List.class.isAssignableFrom(returnType);
 	}
 
 	/**
-	 * @param method
-	 * @return
+	 * @see org.squashtest.csp.core.infrastructure.dynamicmanager.AbstractFinderNamedQueryHandler#executeQuery(org.hibernate.Query)
 	 */
-	private boolean matchesHandledMethodName(Method method) {
-		return method.getName().startsWith("find");
+	@Override
+	protected Object executeQuery(Query query) {
+		return query.list();
 	}
 
 }

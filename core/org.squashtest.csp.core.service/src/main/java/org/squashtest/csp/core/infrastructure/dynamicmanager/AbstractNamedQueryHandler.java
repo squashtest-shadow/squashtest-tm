@@ -39,7 +39,7 @@ import org.squashtest.csp.core.infrastructure.collection.Paging;
  * 
  * @param <ENTITY>
  */
-abstract class AbstractNamedQueryFinderHandler<ENTITY> implements DynamicComponentInvocationHandler {
+abstract class AbstractNamedQueryHandler<ENTITY> implements DynamicComponentInvocationHandler {
 	private final SessionFactory sessionFactory;
 	/**
 	 * This property is prepended to the invoked method's name for query lookup.
@@ -51,7 +51,7 @@ abstract class AbstractNamedQueryFinderHandler<ENTITY> implements DynamicCompone
 	 * @param entityType
 	 *            this class's simple name will be used as this object's {@link #queryNamespace}
 	 */
-	public AbstractNamedQueryFinderHandler(@NotNull Class<ENTITY> entityType, @NotNull SessionFactory sessionFactory) {
+	public AbstractNamedQueryHandler(@NotNull Class<ENTITY> entityType, @NotNull SessionFactory sessionFactory) {
 		super();
 		this.sessionFactory = sessionFactory;
 		this.queryNamespace = entityType.getSimpleName();
@@ -79,7 +79,7 @@ abstract class AbstractNamedQueryFinderHandler<ENTITY> implements DynamicCompone
 		if (pagedQuery(args)) {
 			Paging paging = (Paging) lastArg(args);
 			query.setFirstResult(paging.getFirstItemIndex());
-			query.setMaxResults(paging.getMaxNumberOfItems());
+			query.setMaxResults(paging.getPageSize());
 		}
 	}
 
