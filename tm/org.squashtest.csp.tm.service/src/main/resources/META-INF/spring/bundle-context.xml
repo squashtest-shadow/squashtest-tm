@@ -109,5 +109,10 @@
 		<property name="componentType" value="org.squashtest.csp.tm.service.IterationModificationService" />
 		<property name="entityType" value="org.squashtest.csp.tm.domain.campaign.Iteration" />
 	</bean>
+
+	<bean id="squashtest.tm.service.audit.RequirementAuditTrailService" class="org.squashtest.csp.core.infrastructure.dynamicmanager.DynamicManagerFactoryBean">
+		<property name="componentType" value="org.squashtest.csp.tm.service.audit.RequirementAuditTrailService" />
+		<property name="entityType" value="org.squashtest.csp.tm.domain.event.RequirementAuditEvent" />
+	</bean>
 </beans>
 

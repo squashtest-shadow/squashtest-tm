@@ -18,17 +18,22 @@
  *     You should have received a copy of the GNU Lesser General Public License
  *     along with this software.  If not, see <http://www.gnu.org/licenses/>.
  */
-package org.squashtest.csp.tm.internal.repository;
+
+package org.squashtest.csp.tm.service.audit;
 
 import java.util.List;
 
+import org.springframework.transaction.annotation.Transactional;
 import org.squashtest.csp.core.infrastructure.collection.Paging;
 import org.squashtest.csp.tm.domain.event.RequirementAuditEvent;
 
-public interface RequirementAuditEventDao {
-	void persist(RequirementAuditEvent event);
-	
+/**
+ * Service for accessing a Requirement's audit trail (ie the Requirement's audit events).
+ * 
+ * @author Gregory Fouquet
+ * 
+ */
+@Transactional(readOnly = true)
+public interface RequirementAuditTrailService {
 	List<RequirementAuditEvent> findAllByRequirementIdOrderedByDate(long requirementId, Paging paging);
-
-//	List<RequirementAuditEvent> findAllByRequirementIds(List<Long> requirementIds);
 }

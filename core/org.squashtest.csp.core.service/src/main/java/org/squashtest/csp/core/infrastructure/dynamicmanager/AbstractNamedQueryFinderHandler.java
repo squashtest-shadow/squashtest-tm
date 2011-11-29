@@ -30,9 +30,11 @@ import javax.validation.constraints.NotNull;
 import org.hibernate.Query;
 import org.hibernate.Session;
 import org.hibernate.SessionFactory;
+import org.squashtest.csp.core.infrastructure.collection.Paging;
 
 /**
  * This {@link InvocationHandler} looks up a hibernate named query which name matches <code>EntityType.methodName</code>
+ * 
  * @author Gregory Fouquet
  * 
  * @param <ENTITY>
@@ -40,13 +42,14 @@ import org.hibernate.SessionFactory;
 abstract class AbstractNamedQueryFinderHandler<ENTITY> implements DynamicComponentInvocationHandler {
 	private final SessionFactory sessionFactory;
 	/**
-	 * This property is prepended to the invoked method's name for query lookup. 
+	 * This property is prepended to the invoked method's name for query lookup.
 	 */
 	private final String queryNamespace;
 
 	/**
 	 * @param sessionFactory
-	 * @param entityType this class's simple name will be used as this object's {@link #queryNamespace}
+	 * @param entityType
+	 *            this class's simple name will be used as this object's {@link #queryNamespace}
 	 */
 	public AbstractNamedQueryFinderHandler(@NotNull Class<ENTITY> entityType, @NotNull SessionFactory sessionFactory) {
 		super();
@@ -59,19 +62,45 @@ abstract class AbstractNamedQueryFinderHandler<ENTITY> implements DynamicCompone
 	 * may be a <code>null</code> value.
 	 */
 	@Override
-	public final Object invoke(Object proxy, Method method, Object[] args) { 
+	public final Object invoke(Object proxy, Method method, Object[] args) {
 		Query query = lookupNamedQuery(method);
-		setQueryParameters(query, args);
+
+		processPaging(query, args);
+		processQueryParameters(query, args);
 
 		return executeQuery(query);
 	}
 
+	/**
+	 * @param query
+	 * @param args
+	 */
+	private void processPaging(Query query, Object[] args) {
+		if (pagedQuery(args)) {
+			Paging paging = (Paging) lastArg(args);
+			query.setFirstResult(paging.getFirstItemIndex());
+			query.setMaxResults(paging.getMaxNumberOfItems());
+		}
+	}
+
+	private boolean pagedQuery(Object[] args) {
+		return lastArg(args) instanceof Paging;
+	}
+
+	private Object lastArg(Object[] args) {
+		return args[args.length - 1];
+	}
+
 	protected abstract Object executeQuery(Query query);
 
-	private void setQueryParameters(Query query, Object[] args) {
-		for (int i = 0; i < args.length; i++) {
-			query.setParameter(i, args[i]);
+	private void processQueryParameters(Query query, Object[] args) {
+		int lastArgIndex = pagedQuery(args) ? args.length - 1 : args.length;
+
+		for (int i = 0; i < lastArgIndex; i++) {
+			Object arg = args[i];
+			query.setParameter(i, arg);
 		}
+
 	}
 
 	private Query lookupNamedQuery(Method method) {
@@ -107,12 +136,12 @@ abstract class AbstractNamedQueryFinderHandler<ENTITY> implements DynamicCompone
 	 * @return
 	 */
 	private boolean noCollectionParam(Method method) {
-		for(Class<?> paramType : method.getParameterTypes()) {
+		for (Class<?> paramType : method.getParameterTypes()) {
 			if (Collection.class.isAssignableFrom(paramType)) {
 				return false;
 			}
 		}
-		
+
 		return true;
 	}
 

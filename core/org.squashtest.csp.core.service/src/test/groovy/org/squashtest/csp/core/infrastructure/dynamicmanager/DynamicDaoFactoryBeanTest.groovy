@@ -26,6 +26,7 @@ import org.hibernate.SessionFactory;
 import org.hibernate.classic.Session;
 import org.springframework.beans.factory.BeanFactory;
 import org.springframework.mock.web.portlet.MockActionRequest;
+import org.squashtest.csp.core.infrastructure.collection.Paging;
 import org.squashtest.csp.core.infrastructure.dynamicdao.CustomDummyDao;
 import org.squashtest.csp.core.infrastructure.dynamicdao.DummyDao;
 import org.squashtest.csp.core.infrastructure.dynamicdao.DummyEntity;
@@ -205,4 +206,31 @@ class DynamicDaoFactoryBeanTest extends Specification {
 		then:
 		2 * currentSession.delete((Object) entity)
 	}
+	
+	def "finder method should trigger an paged entity named query"() {
+		given:
+		Query query = Mock()
+		currentSession.getNamedQuery("DummyEntity.findBySuperpowerPaged") >> query
+
+		and:
+		Paging paging = Mock()
+		paging.getFirstItemIndex() >> 10
+		paging.getMaxNumberOfItems() >> 100
+		
+		and:
+		DummyEntity entity = new DummyEntity()
+		query.uniqueResult() >> entity
+
+		when:
+		factory.initializeFactory()
+		def res = factory.object.findBySuperpowerPaged("master of magnetism", paging)
+
+		then:
+		1 * query.setParameter(0, "master of magnetism")
+		1 * query.setFirstResult(10)
+		1 * query.setMaxResults(100)
+		res == entity
+	}
+
+
 }

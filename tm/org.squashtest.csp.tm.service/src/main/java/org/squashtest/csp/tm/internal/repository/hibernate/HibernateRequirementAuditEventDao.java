@@ -22,60 +22,64 @@ package org.squashtest.csp.tm.internal.repository.hibernate;
 
 import java.util.List;
 
+import javax.validation.constraints.NotNull;
+
 import org.hibernate.Query;
 import org.hibernate.type.LongType;
+import org.springframework.stereotype.Service;
 import org.squashtest.csp.tm.domain.event.RequirementAuditEvent;
+import org.squashtest.csp.tm.infrastructure.filter.CollectionFilter;
 import org.squashtest.csp.tm.internal.repository.RequirementAuditEventDao;
+import org.squashtest.csp.tm.service.audit.RequirementAuditTrailService;
 
-public class HibernateRequirementAuditEventDao extends
-		HibernateEntityDao<RequirementAuditEvent> implements RequirementAuditEventDao {
+public class HibernateRequirementAuditEventDao extends HibernateEntityDao<RequirementAuditEvent> {
 
-
-	@Override
 	public List<RequirementAuditEvent> findAllByRequirementIdOrderedByDate(long requirementId) {
 		SetQueryParametersCallback callback = new EventByRequirementCallback(requirementId);
 		return executeListNamedQuery("requirementAuditEvent.findAllByRequirementId", callback);
 	}
-	
-
 
 	public List<RequirementAuditEvent> findAllByRequirementIds(List<Long> requirementIds) {
 		SetQueryParametersCallback callback = new EventByRequirementListCallback(requirementIds);
 		return executeListNamedQuery("requirementAuditEvent.findAllByRequirementIdList", callback);
 	}
 
+	private class EventByRequirementListCallback implements SetQueryParametersCallback {
 
-	
-	private class EventByRequirementListCallback implements SetQueryParametersCallback{
-		
 		private final List<Long> requirementIdsList;
-		
-		public EventByRequirementListCallback(final List<Long> ids){
-			requirementIdsList=ids;
+
+		public EventByRequirementListCallback(final List<Long> ids) {
+			requirementIdsList = ids;
 		}
-		
+
 		@Override
 		public void setQueryParameters(Query query) {
 			query.setParameterList("requirementIds", requirementIdsList, LongType.INSTANCE);
 		}
-		
-		
+
 	}
-	
-	private class EventByRequirementCallback implements SetQueryParametersCallback{
-		
+
+	private class EventByRequirementCallback implements SetQueryParametersCallback {
+
 		private final Long requirementId;
-		
+
 		public EventByRequirementCallback(final Long id) {
 			requirementId = id;
 		}
-		
+
 		@Override
 		public void setQueryParameters(Query query) {
-			query.setParameter("requirementId", requirementId);			
+			query.setParameter("requirementId", requirementId);
 		}
 	}
-	
-	
+
+	/**
+	 * @see org.squashtest.csp.tm.service.audit.RequirementAuditTrailService#findAllByRequirementIdOrderedByDate(long,
+	 *      org.squashtest.csp.tm.infrastructure.filter.CollectionFilter)
+	 */
+	public List<RequirementAuditEvent> findAllByRequirementIdOrderedByDate(long requirementId,
+			@NotNull CollectionFilter filter) {
+		return executeListNamedQuery("requirementAuditEvent.findAllByRequirementIdOrderedByDate");
+	}
 
 }

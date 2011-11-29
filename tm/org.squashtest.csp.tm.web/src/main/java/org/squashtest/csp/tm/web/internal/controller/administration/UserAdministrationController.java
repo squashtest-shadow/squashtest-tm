@@ -60,6 +60,37 @@ import org.squashtest.csp.tm.web.internal.model.datatable.DataTablePagedFilter;
 @RequestMapping("/users")
 public class UserAdministrationController {
 
+	/**
+	 * Builds datatable model for users table
+	 */
+	private class UserDataTableModelBuilder extends DataTableModelHelper<User> {
+		/**
+		 * 
+		 */
+		private final Locale locale;
+
+		/**
+		 * @param locale
+		 */
+		private UserDataTableModelBuilder(Locale locale) {
+			this.locale = locale;
+		}
+
+		@Override
+		public Object[] buildItemData(User item) {
+			AuditableMixin newP = (AuditableMixin) item;
+			return new Object[] { item.getId(),
+					getCurrentIndex(),
+					item.getLogin(),
+					item.getFirstName(),
+					item.getLastName(),
+					item.getEmail(),
+					formatDate(newP.getCreatedOn(), locale),
+					formatString(newP.getCreatedBy(), locale),
+					formatDate(newP.getLastModifiedOn(), locale),
+					formatString(newP.getLastModifiedBy(), locale)};
+		}
+	}
 	private static final Logger LOGGER = LoggerFactory.getLogger(UserAdministrationController.class);
 	
 	private AdministrationService adminService;
@@ -102,22 +133,7 @@ public class UserAdministrationController {
 		FilteredCollectionHolder<List<User>> holder = adminService.findAllUsersFiltered(filter);
 		
 		
-		return new DataTableModelHelper<User>(){
-			@Override
-			public Object[] buildItemData(User item) {
-				AuditableMixin newP = (AuditableMixin) item;
-				return new Object[] { item.getId(),
-						getCurrentIndex(),
-						item.getLogin(),
-						item.getFirstName(),
-						item.getLastName(),
-						item.getEmail(),
-						formatDate(newP.getCreatedOn(), locale),
-						formatString(newP.getCreatedBy(), locale),
-						formatDate(newP.getLastModifiedOn(), locale),
-						formatString(newP.getLastModifiedBy(), locale)};
-			}
-		}.buildDataModel(holder, filter.getFirstItemIndex()+1, params.getsEcho());
+		return new UserDataTableModelBuilder(locale).buildDataModel(holder, filter.getFirstItemIndex()+1, params.getsEcho());
 	}
 	
 	private CollectionFilter createCollectionFilter(final DataTableDrawParameters params) {

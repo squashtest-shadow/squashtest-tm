@@ -24,17 +24,19 @@ import java.lang.reflect.ParameterizedType;
 import java.util.List;
 
 import javax.inject.Inject;
+import javax.validation.constraints.NotNull;
 
 import org.hibernate.Query;
 import org.hibernate.Session;
 import org.hibernate.SessionFactory;
+import org.squashtest.csp.tm.infrastructure.filter.CollectionFilter;
 
 /**
  * To implement an Hibernate DAO, subclass this class, annotate it with @Repository and work with the Hibernate session
  * provided by {@link #currentSession()}
- *
+ * 
  * @author Gregory Fouquet
- *
+ * 
  */
 public abstract class HibernateDao<ENTITY_TYPE> {
 	protected final Class<ENTITY_TYPE> entityType;
@@ -64,7 +66,7 @@ public abstract class HibernateDao<ENTITY_TYPE> {
 
 	/**
 	 * Executes a no-args named query which returns a list of entities.
-	 *
+	 * 
 	 * @param <R>
 	 * @param queryName
 	 * @return
@@ -76,7 +78,7 @@ public abstract class HibernateDao<ENTITY_TYPE> {
 
 	/**
 	 * Executes a named query with parameters. The parameters should be set by the callback object.
-	 *
+	 * 
 	 * @param <R>
 	 * @param queryName
 	 * @param setParams
@@ -93,8 +95,32 @@ public abstract class HibernateDao<ENTITY_TYPE> {
 	}
 
 	/**
+	 * Executes a named query with parameters. The parameters should be set by the callback object.
+	 * 
+	 * @param <R>
+	 * @param queryName
+	 * @param queryParam
+	 *            unique param of the query
+	 * @param filter
+	 *            collection filter used to restrict the number of results.
+	 * @return
+	 */
+	@SuppressWarnings("unchecked")
+	protected final <R> List<R> executeListNamedQuery(@NotNull String queryName, @NotNull Object queryParam,
+			@NotNull CollectionFilter filter) {
+		Session session = currentSession();
+
+		Query q = session.getNamedQuery(queryName);
+		q.setParameter(0, queryParam);
+		q.setFirstResult(filter.getFirstItemIndex());
+		q.setMaxResults(filter.getMaxNumberOfItems());
+
+		return q.list();
+	}
+
+	/**
 	 * Runs a named query which returns a single entity / tuple / scalar and which accepts a unique parameter.
-	 *
+	 * 
 	 * @param <R>
 	 * @param queryName
 	 *            name of the query, should not be null

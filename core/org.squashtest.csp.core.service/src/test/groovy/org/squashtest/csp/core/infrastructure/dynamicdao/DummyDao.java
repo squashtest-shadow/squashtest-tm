@@ -23,6 +23,8 @@ package org.squashtest.csp.core.infrastructure.dynamicdao;
 
 import java.util.List;
 
+import org.squashtest.csp.core.infrastructure.collection.Paging;
+
 /**
  * @author Gregory Fouquet
  *
@@ -32,6 +34,8 @@ public interface DummyDao extends CustomDummyDao {
 	
 	DummyEntity findByNameAndSuperpower(String name, String superpower);
 	
+	DummyEntity findBySuperpowerPaged(String superpower, Paging paging);
+
 	List<DummyEntity> findAllByNameAndSuperpower(String name, String superpower);
 	
 	void delete(DummyEntity entity);

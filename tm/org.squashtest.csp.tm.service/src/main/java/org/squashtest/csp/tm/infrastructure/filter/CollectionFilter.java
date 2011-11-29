@@ -20,26 +20,28 @@
  */
 package org.squashtest.csp.tm.infrastructure.filter;
 
+import org.squashtest.csp.core.infrastructure.collection.Paging;
+
 /**
  * Defines a filter to apply when querying for a collection.
  * 
  * @author Gregory Fouquet
  * 
  */
-public interface CollectionFilter {
+public interface CollectionFilter extends Paging {
 
 	/**
 	 * The 0-based index of the first returned item.
 	 * 
 	 * @return
 	 */
-	public abstract int getFirstItemIndex();
+	int getFirstItemIndex();
 
 	/**
 	 * The max number of items in the returned collection.
 	 * 
 	 * @return
 	 */
-	public abstract int getMaxNumberOfItems();
+	int getMaxNumberOfItems();
 
 }
