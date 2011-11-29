@@ -167,6 +167,10 @@ class BugTrackerLocalServiceIT_Disabled extends DbunitServiceSpecification  {
 				   return 10;
 			   }
 
+			   public int getPageSize(){
+				   return 10;
+			   }
+			   
 			   String getSortedAttribute(){
 				   return "Issue.id";
 			   }
@@ -210,7 +214,11 @@ class BugTrackerLocalServiceIT_Disabled extends DbunitServiceSpecification  {
 			   public int getMaxNumberOfItems(){
 				   return 10;
 			   }
-
+	
+			   public int getPageSize(){
+				   return 10;
+			   }
+	
 			   String getSortedAttribute(){
 				   return "Issue.id";
 			   }

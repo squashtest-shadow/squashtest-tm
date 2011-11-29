@@ -18,32 +18,36 @@
  *     You should have received a copy of the GNU Lesser General Public License
  *     along with this software.  If not, see <http://www.gnu.org/licenses/>.
  */
-package org.squashtest.csp.tm.infrastructure.filter;
+
+package org.squashtest.csp.tm.web.internal.model.datatable;
 
 import org.squashtest.csp.core.infrastructure.collection.Paging;
 
 /**
- * Defines a filter to apply when querying for a collection.
- * 
- * Consider using the {@link Paging} api define in core module instead.
+ * This class adapts a {@link DataTableDrawParameters} object into a {@link Paging}.
  * 
  * @author Gregory Fouquet
  * 
  */
-public interface CollectionFilter extends Paging {
+public class DataTableDrawParametersPagingAdapter implements Paging {
+
+	private final DataTableDrawParameters params;
 
 	/**
-	 * The 0-based index of the first returned item.
-	 * 
-	 * @return
+	 * @param drawParams
 	 */
-	int getFirstItemIndex();
+	public DataTableDrawParametersPagingAdapter(DataTableDrawParameters drawParams) {
+		params = drawParams;
+	}
 
-	/**
-	 * The max number of items in the returned collection.
-	 * 
-	 * @return
-	 */
-	int getMaxNumberOfItems();
+	@Override
+	public int getPageSize() {
+		return params.getiDisplayLength();
+	}
+
+	@Override
+	public int getFirstItemIndex() {
+		return params.getiDisplayStart();
+	}
 
 }

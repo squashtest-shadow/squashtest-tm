@@ -431,6 +431,11 @@ public class BugtrackerController {
 			public String getSortedAttribute() {
 				return "Issue.id";
 			}
+
+			@Override
+			public int getPageSize() {
+				return getMaxNumberOfItems();
+			}
 		};
 	}
 

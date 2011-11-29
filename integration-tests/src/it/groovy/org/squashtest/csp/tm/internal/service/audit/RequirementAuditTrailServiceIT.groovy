@@ -1,3 +1,4 @@
+
 /**
  *     This file is part of the Squashtest platform.
  *     Copyright (C) 2010 - 2011 Squashtest TM, Squashtest.org
@@ -32,6 +33,7 @@ import org.squashtest.csp.tm.domain.event.RequirementAuditEvent;
 import org.squashtest.csp.tm.internal.service.DbunitServiceSpecification;
 import org.squashtest.csp.tm.service.audit.RequirementAuditTrailService;
 import org.unitils.dbunit.annotation.DataSet;
+import org.squashtest.csp.core.infrastructure.collection.PagedCollectionHolder;
 
 import spock.unitils.UnitilsSupport;
 
@@ -48,18 +50,20 @@ class RequirementAuditTrailServiceIT extends DbunitServiceSpecification {
 	@DataSet("RequirementAuditTrailServiceIT.should fetch lists of events.xml")
 	def "should fetch list of event for a requirement sorted by date"(){
 		given :
-			def requirementId=1L
+		def requirementId=1L
 			
 		and:
 		Paging paging = Mock()
 		paging.getFirstItemIndex() >> 1
-		paging.getMaxNumberOfItems() >> 2
+		paging.getPageSize() >> 2
 		
 		when :
-			List<RequirementAuditEvent> events = service.findAllByRequirementIdOrderedByDate(requirementId, paging);
+		PagedCollectionHolder paged = service.findAllByRequirementIdOrderedByDate(requirementId, paging);
 		
 		then :
-		events.collect { it.id } == [14L, 12L]
+		paged.items.collect { it.id } == [14L, 12L]
+		paged.firstItemIndex == 1
+		paged.totalNumberOfItems == 4
 	}
 
 }

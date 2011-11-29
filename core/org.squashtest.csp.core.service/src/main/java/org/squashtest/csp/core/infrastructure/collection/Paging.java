@@ -18,19 +18,15 @@
  *     You should have received a copy of the GNU Lesser General Public License
  *     along with this software.  If not, see <http://www.gnu.org/licenses/>.
  */
-package org.squashtest.csp.tm.infrastructure.filter;
 
-import org.squashtest.csp.core.infrastructure.collection.Paging;
+package org.squashtest.csp.core.infrastructure.collection;
 
 /**
- * Defines a filter to apply when querying for a collection.
- * 
- * Consider using the {@link Paging} api define in core module instead.
- * 
+ * Defines a paging to apply when querying for a collection.
  * @author Gregory Fouquet
- * 
+ *
  */
-public interface CollectionFilter extends Paging {
+public interface Paging {
 
 	/**
 	 * The 0-based index of the first returned item.
@@ -40,10 +36,10 @@ public interface CollectionFilter extends Paging {
 	int getFirstItemIndex();
 
 	/**
-	 * The max number of items in the returned collection.
+	 * The size of a page ie the max number of items in the returned collection.
 	 * 
 	 * @return
 	 */
-	int getMaxNumberOfItems();
+	int getPageSize();
 
 }

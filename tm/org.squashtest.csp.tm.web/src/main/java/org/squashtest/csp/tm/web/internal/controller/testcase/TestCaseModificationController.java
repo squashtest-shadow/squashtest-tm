@@ -72,7 +72,7 @@ public class TestCaseModificationController {
 			.mapAttribute(Requirement.class, 3, "reference", String.class)
 			.mapAttribute(Requirement.class, 4, "name", String.class)
 			.mapAttribute(Requirement.class, 5, "criticality", RequirementCriticality.class);
-	
+
 	private final DataTableMapper referencingTestCaseMapper = new DataTableMapper("referencing-test-cases",
 			TestCase.class, Project.class).initMapping(5).mapAttribute(Project.class, 2, "name", String.class)
 			.mapAttribute(TestCase.class, 3, "name", String.class)
@@ -85,14 +85,14 @@ public class TestCaseModificationController {
 
 	@Inject
 	private Provider<TestCaseImportanceJeditableComboDataBuilder> importanceComboBuilderProvider;
-	
-	@Inject private Provider<TestCaseImportanceLabelFormatter> importanceLabelFormatterProvider;  
-	
+
+	@Inject
+	private Provider<TestCaseImportanceLabelFormatter> importanceLabelFormatterProvider;
+
 	@ServiceReference
 	public void setTestCaseModificationService(TestCaseModificationService testCaseModificationService) {
 		this.testCaseModificationService = testCaseModificationService;
 	}
-		
 
 	@RequestMapping(method = RequestMethod.GET)
 	public final ModelAndView showTestCase(@PathVariable long testCaseId,
@@ -139,9 +139,7 @@ public class TestCaseModificationController {
 	}
 
 	private String buildImportanceComboData(TestCase testCase, Locale locale) {
-		return importanceComboBuilderProvider.get()
-			.useLocale(locale)
-			.buildMarshalled();
+		return importanceComboBuilderProvider.get().useLocale(locale).buildMarshalled();
 	}
 
 	private String formatExecutionMode(TestCaseExecutionMode mode, Locale locale) {
@@ -260,12 +258,12 @@ public class TestCaseModificationController {
 
 	@ResponseBody
 	@RequestMapping(method = RequestMethod.POST, params = { "id=test-case-importance", "value" })
-	public String changeImportance(@PathVariable long testCaseId, @RequestParam("value") TestCaseImportance importance, Locale locale) {
+	public String changeImportance(@PathVariable long testCaseId, @RequestParam("value") TestCaseImportance importance,
+			Locale locale) {
 		testCaseModificationService.changeImportance(testCaseId, importance);
-		
+
 		return formatImportance(importance, locale);
 	}
-
 
 	private String formatImportance(TestCaseImportance importance, Locale locale) {
 		return importanceLabelFormatterProvider.get().useLocale(locale).formatLabel(importance);
@@ -408,6 +406,11 @@ public class TestCaseModificationController {
 			@Override
 			public String getSortingOrder() {
 				return params.getsSortDir_0();
+			}
+
+			@Override
+			public int getPageSize() {
+				return getMaxNumberOfItems();
 			}
 		};
 		return filter;

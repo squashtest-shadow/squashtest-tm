@@ -211,6 +211,10 @@ public class RequirementModificationController {
 			public String getSortingOrder() {
 				return params.getsSortDir_0();
 			}
+			@Override
+			public int getPageSize() {
+				return getMaxNumberOfItems();
+			}
 		};
 		return filter;
 	}

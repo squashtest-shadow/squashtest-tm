@@ -44,4 +44,12 @@ public final class DataTablePagedFilter implements CollectionFilter {
 	public int getFirstItemIndex() {
 		return params.getiDisplayStart();
 	}
+
+	/**
+	 * @see org.squashtest.csp.core.infrastructure.collection.Paging#getPageSize()
+	 */
+	@Override
+	public int getPageSize() {
+		return getMaxNumberOfItems();
+	}
 }

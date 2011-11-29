@@ -134,6 +134,11 @@ class HibernateTestCaseDaoIT extends DbunitDaoSpecification {
 			}
 
 			@Override
+			public int getPageSize() {
+				return 0;
+			}
+
+						@Override
 			public String getSortingOrder() {
 				return "asc";
 			}

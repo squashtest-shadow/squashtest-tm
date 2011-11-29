@@ -138,8 +138,8 @@ public class AttachmentManagerController {
 
 		attachmentManagerService.renameAttachment(attachmentId, newName);
 		LOGGER.info("AttachmentController : renaming attachment " + attachmentId + " as " + newName);
-		final String reNewName = new String(newName);
-		return new Object(){ public String newName = reNewName ; };
+		final String reNewName = newName;
+		return new Object(){ public String newName = reNewName ; }; // NOSONAR actually read by json marshaller
 
 	}
 
@@ -179,6 +179,10 @@ public class AttachmentManagerController {
 			@Override
 			public String getSortingOrder(){
 				return params.getsSortDir_0();
+			}
+			@Override
+			public int getPageSize() {
+				return getMaxNumberOfItems();
 			}
 		};
 		return filter;

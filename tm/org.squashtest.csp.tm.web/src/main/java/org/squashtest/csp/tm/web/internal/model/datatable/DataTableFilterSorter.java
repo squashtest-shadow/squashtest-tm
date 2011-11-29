@@ -20,29 +20,22 @@
  */
 package org.squashtest.csp.tm.web.internal.model.datatable;
 
+import javax.validation.constraints.NotNull;
+
 import org.squashtest.csp.tm.infrastructure.filter.CollectionSorting;
 import org.squashtest.csp.tm.web.internal.model.viewmapper.DataTableMapper;
 
-public class DataTableFilterSorter implements CollectionSorting {
+public class DataTableFilterSorter extends DataTableDrawParametersPagingAdapter implements CollectionSorting {
 	
-	private DataTableDrawParameters params;
-	private DataTableMapper mapper;
+	private final DataTableDrawParameters params;
+	private final DataTableMapper mapper;
 
-	public DataTableFilterSorter(DataTableDrawParameters params, DataTableMapper mapper){
-		this.params=params;
+	public DataTableFilterSorter(@NotNull DataTableDrawParameters params, @NotNull DataTableMapper mapper){
+		super(params);
+		this.params = params;
 		this.mapper=mapper;
 	}
 	
-	@Override
-	public int getMaxNumberOfItems() {
-		return params.getiDisplayLength();
-	}
-
-	@Override
-	public int getFirstItemIndex() {
-		return params.getiDisplayStart();
-	}
-
 	@Override
 	public String getSortedAttribute() {
 		return mapper.pathAt(params.getiSortCol_0());
@@ -51,6 +44,14 @@ public class DataTableFilterSorter implements CollectionSorting {
 	@Override
 	public String getSortingOrder() {
 		return params.getsSortDir_0();
+	}
+
+	/**
+	 * @see org.squashtest.csp.tm.infrastructure.filter.CollectionFilter#getMaxNumberOfItems()
+	 */
+	@Override
+	public int getMaxNumberOfItems() {
+		return getPageSize();
 	}
 
 }

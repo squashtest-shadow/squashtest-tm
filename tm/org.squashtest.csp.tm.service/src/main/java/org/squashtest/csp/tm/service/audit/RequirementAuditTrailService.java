@@ -24,6 +24,7 @@ package org.squashtest.csp.tm.service.audit;
 import java.util.List;
 
 import org.springframework.transaction.annotation.Transactional;
+import org.squashtest.csp.core.infrastructure.collection.PagedCollectionHolder;
 import org.squashtest.csp.core.infrastructure.collection.Paging;
 import org.squashtest.csp.tm.domain.event.RequirementAuditEvent;
 
@@ -35,5 +36,5 @@ import org.squashtest.csp.tm.domain.event.RequirementAuditEvent;
  */
 @Transactional(readOnly = true)
 public interface RequirementAuditTrailService {
-	List<RequirementAuditEvent> findAllByRequirementIdOrderedByDate(long requirementId, Paging paging);
+	PagedCollectionHolder<List<RequirementAuditEvent>> findAllByRequirementIdOrderedByDate(long requirementId, Paging paging);
 }
