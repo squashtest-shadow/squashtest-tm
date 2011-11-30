@@ -23,3 +23,5 @@ package org.squashtest.csp.tm.domain.report.common.dto;
 public enum ReqCoverageByTestStatType {
 	TOTAL, TOTAL_VERIFIED, CRITICAL, CRITICAL_VERIFIED, MAJOR, MAJOR_VERIFIED, MINOR, MINOR_VERIFIED, UNDEFINED, UNDEFINED_VERIFIED
 }
+//TODO ajouter method convert(reqCriticaity) minor-> minor
+//TODO ajouter methode convertVerified(name) name _> name_VERIFIED

@@ -39,8 +39,14 @@ import org.squashtest.csp.tm.domain.report.query.hibernate.ReportCriterion;
 import org.squashtest.csp.tm.domain.requirement.Requirement;
 import org.squashtest.csp.tm.domain.requirement.RequirementFolder;
 
+/**
+ * 
+ * Manage hibernate query to get the requirements covered by a given test-case
+ * 
+ * @author bsiri
+ * @reviewed-on 2011-11-30
+ */
 public class HibernateRequirementCoverageByTestsQuery extends HibernateReportQuery {
-
 	/***
 	 * The rates default value
 	 */
@@ -70,6 +76,7 @@ public class HibernateRequirementCoverageByTestsQuery extends HibernateReportQue
 		return null;
 	}
 
+	@SuppressWarnings("unchecked")
 	@Override
 	public List<?> doInSession(Session session) {
 
@@ -131,18 +138,46 @@ public class HibernateRequirementCoverageByTestsQuery extends HibernateReportQue
 		return results;
 	}
 
-
 	@SuppressWarnings("unchecked")
 	@Override
 	public List<?> convertToDto(List<?> rawData) {
-		
-		//a bit of cleaning first.
-		List<Object[]> filteredData = filterUnwantedDataOut((List<Object[]>)rawData);
+		// a bit of cleaning first.
+		List<Object[]> filteredData = filterUnwantedDataOut((List<Object[]>) rawData);
+		// Browse data
+		Map<Long, ReqCoverageByTestProjectDto> projectList = populateRequirementDtosAndUpdateProjectStatistics(filteredData);
+		// Create projectTotals to calculate... Totals
+		ReqCoverageByTestProjectDto projectTotals = createProjectDto(TOTAL_PROJECT_NAME);
+		// Now that we have all requirement numbers, we can update projectDto rates
+		calculateProjectsCoverageRates(projectList, projectTotals);
+		// update projectTotals rates
+		calculateProjectCoverageRates(projectTotals);
+		// add it to the list. We only need the sorted Map values...
+		List<ReqCoverageByTestProjectDto> toReturn = new ArrayList<ReqCoverageByTestProjectDto>(projectList.values());
 
+		toReturn.add(projectTotals);
+
+		return toReturn;
+	}
+
+	private void calculateProjectsCoverageRates(Map<Long, ReqCoverageByTestProjectDto> projectList,
+			ReqCoverageByTestProjectDto projectTotals) {
+		for (ReqCoverageByTestProjectDto project : projectList.values()) {
+			// Update current project rate
+			calculateProjectCoverageRates(project);
+			// update projectTotals
+			projectTotals.increaseTotals(project.getTotalRequirementNumber(),
+					project.getTotalVerifiedRequirementNumber(), project.getCriticalRequirementNumber(),
+					project.getCriticalVerifiedRequirementNumber(), project.getMajorRequirementNumber(),
+					project.getMajorVerifiedRequirementNumber(), project.getMinorRequirementNumber(),
+					project.getMinorVerifiedRequirementNumber(), project.getUndefinedRequirementNumber(),
+					project.getUndefinedVerifiedRequirementNumber());
+		}
+	}
+
+	private Map<Long, ReqCoverageByTestProjectDto> populateRequirementDtosAndUpdateProjectStatistics(
+			List<Object[]> filteredData) {
 		// First initiate the projectDTO map, project id is the key
 		Map<Long, ReqCoverageByTestProjectDto> projectList = new HashMap<Long, ReqCoverageByTestProjectDto>();
-
-		// Browse data
 		for (Object[] objects : filteredData) {
 			// Current project
 			ReqCoverageByTestProjectDto currentProject;
@@ -155,69 +190,67 @@ public class HibernateRequirementCoverageByTestsQuery extends HibernateReportQue
 			// Create the requirementSingle
 			ReqCoverageByTestRequirementSingleDto requirementSingleDto = createRequirementSingleDto(requirement, folder);
 
-			// check if the project is not here
-			if (!projectList.containsKey(projectId)) {
-				// Create the projectDto...
-				currentProject = new ReqCoverageByTestProjectDto();
-				currentProject.setProjectName(requirement.getProject().getName());
-				// add to the Map
-				projectList.put(projectId, currentProject);
-			} else {
-				// ... or find it
-				currentProject = projectList.get(projectId);
-			}
+			currentProject = findProjectDto(projectList, requirement, projectId);
 			// add the requirement
 			currentProject.addRequirement(requirementSingleDto);
 			// update statistics and the project in the Map
 			updateProjectStatistics(currentProject, requirementSingleDto);
 		}
-
-		// Create projectTotals to calculate... Totals
-		ReqCoverageByTestProjectDto projectTotals = new ReqCoverageByTestProjectDto();
-		projectTotals.setProjectName(TOTAL_PROJECT_NAME);
-
-		// Now that we have all requirement numbers, we can update projectDto rates
-		for (ReqCoverageByTestProjectDto project : projectList.values()) {
-			// Update current project rate
-			calculateProjectRates(project);
-			// update projectTotals
-			projectTotals.increaseTotals(project.getTotalRequirementNumber(),
-					project.getTotalVerifiedRequirementNumber(),
-					project.getCriticalRequirementNumber(), project.getCriticalVerifiedRequirementNumber(),
-					project.getMajorRequirementNumber(), project.getMajorVerifiedRequirementNumber(),
-					project.getMinorRequirementNumber(), project.getMinorVerifiedRequirementNumber(),
-					project.getUndefinedRequirementNumber(), project.getUndefinedVerifiedRequirementNumber());
-		}
-		// update projectTotals rates
-		calculateProjectRates(projectTotals);
-		// add it to the list. We only need the sorted Map values...
-		List<ReqCoverageByTestProjectDto> toReturn = new ArrayList<ReqCoverageByTestProjectDto>(projectList.values());
-		
-
-		toReturn.add(projectTotals);
-
-		return toReturn;
+		return projectList;
 	}
-	
-	
-	
-	protected List<Object[]> filterUnwantedDataOut(List<Object[]> list){
+
+	/**
+	 * check if the project is not here and create if necessary
+	 * 
+	 * @param projectList
+	 * @param requirement
+	 * @param projectId
+	 * @return
+	 */
+	private ReqCoverageByTestProjectDto findProjectDto(Map<Long, ReqCoverageByTestProjectDto> projectList,
+			Requirement requirement, Long projectId) {
+		ReqCoverageByTestProjectDto currentProject;
+		if (!projectList.containsKey(projectId)) {
+			currentProject = createProjectDto(requirement);
+			// add to the Map
+			projectList.put(projectId, currentProject);
+		} else {
+			// ... or find it
+			currentProject = projectList.get(projectId);
+		}
+		return currentProject;
+	}
+
+	private ReqCoverageByTestProjectDto createProjectDto(Requirement requirement) {
+		String projectName = requirement.getProject().getName();
+		return createProjectDto(projectName);
+	}
+
+	private ReqCoverageByTestProjectDto createProjectDto(String projectName) {
+		ReqCoverageByTestProjectDto currentProject;
+		// Create the projectDto...
+		currentProject = new ReqCoverageByTestProjectDto();
+		currentProject.setProjectName(projectName);
+		return currentProject;
+	}
+
+	protected List<Object[]> filterUnwantedDataOut(List<Object[]> list) {
 		List<Object[]> toReturn = new LinkedList<Object[]>();
-		
-		for (Object[] array : list){
-			Requirement requirement = (Requirement)array[0];
-			if (getDataFilteringService().isFullyAllowed(requirement)){
+
+		for (Object[] array : list) {
+			Requirement requirement = (Requirement) array[0];
+			if (getDataFilteringService().isFullyAllowed(requirement)) {
 				toReturn.add(array);
 			}
 		}
-		
+
 		return toReturn;
 	}
 
 	/***
 	 * This method create a new ReqCoverageByTestRequirementSingleDto with informations from requirement and the name of
 	 * the requirement folder if it exists
-	 *
+	 * 
 	 * @param requirement
 	 *            the requirement
 	 * @param folder
@@ -239,7 +272,7 @@ public class HibernateRequirementCoverageByTestsQuery extends HibernateReportQue
 
 	/***
 	 * This method update the projectDto statistics
-	 *
+	 * 
 	 * @param project
 	 * @param requirementSingleDto
 	 */
@@ -248,10 +281,11 @@ public class HibernateRequirementCoverageByTestsQuery extends HibernateReportQue
 		project.incrementNumber(ReqCoverageByTestStatType.TOTAL);
 		// if verified by testCase
 		boolean isVerifiedByTestCase = false;
-		if (requirementSingleDto.getAssociatedTestCaseNumber() > 0) {
+		if (requirementSingleDto.hasAssociatedTestCases()) {
 			isVerifiedByTestCase = true;
 			project.incrementNumber(ReqCoverageByTestStatType.TOTAL_VERIFIED);
 		}
+		// TODO replace swich by RCBST.convertVerified and convert
 		switch (requirementSingleDto.getCriticality()) {
 		case CRITICAL:
 			project.incrementNumber(ReqCoverageByTestStatType.CRITICAL);
@@ -286,11 +320,11 @@ public class HibernateRequirementCoverageByTestsQuery extends HibernateReportQue
 
 	/***
 	 * Method which sets all project's rates
-	 *
+	 * 
 	 * @param givenProject
 	 *            the project to modify
 	 */
-	private void calculateProjectRates(ReqCoverageByTestProjectDto givenProject) {
+	private void calculateProjectCoverageRates(ReqCoverageByTestProjectDto givenProject) {
 		// Global rate
 		givenProject.setGlobalRequirementCoverage(caluculateAndRoundRate(
 				givenProject.getTotalVerifiedRequirementNumber(), givenProject.getTotalRequirementNumber()));
@@ -310,7 +344,7 @@ public class HibernateRequirementCoverageByTestsQuery extends HibernateReportQue
 
 	/***
 	 * This method returns the rate calculated from the given values
-	 *
+	 * 
 	 * @param verifiedNumber
 	 *            the number of verified requirements
 	 * @param totalNumber
@@ -326,6 +360,5 @@ public class HibernateRequirementCoverageByTestsQuery extends HibernateReportQue
 		result = Math.floor(result + 0.5);
 		return result.byteValue();
 	}
-	
 
 }

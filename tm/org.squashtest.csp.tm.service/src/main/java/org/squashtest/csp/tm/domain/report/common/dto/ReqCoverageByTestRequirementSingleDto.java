@@ -85,5 +85,9 @@ public class ReqCoverageByTestRequirementSingleDto {
 	public void setAssociatedTestCaseNumber(int associatedTestCaseNumber) {
 		this.associatedTestCaseNumber = associatedTestCaseNumber;
 	}
+	
+	public boolean hasAssociatedTestCases(){
+		return getAssociatedTestCaseNumber() > 0;
+	}
 
 }
