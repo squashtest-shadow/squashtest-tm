@@ -19,26 +19,18 @@
  *     along with this software.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-package org.squashtest.csp.tm.web.internal.controller.administration;
+package org.squashtest.csp.core.infrastructure.collection;
 
-import org.squashtest.csp.tm.domain.event.RequirementAuditEvent;
-import org.squashtest.csp.tm.web.internal.model.datatable.DataTableModelHelper;
+import java.util.Collection;
 
 /**
- * Builder for datatable model showing {@link RequirementAuditEvent} objects.
- * 
  * @author Gregory Fouquet
  * 
  */
-public class RequirementAuditEventTableModelBuilder extends DataTableModelHelper<RequirementAuditEvent> {
+public interface PagedCollectionHolder<COLLECTION extends Collection<?>> {
+	long getFirstItemIndex();
 
-	/**
-	 * @see org.squashtest.csp.tm.web.internal.model.datatable.DataTableModelHelper#buildItemData(java.lang.Object)
-	 */
-	@Override
-	protected Object[] buildItemData(RequirementAuditEvent item) {
-		// TODO Auto-generated method stub
-		return null;
-	}
+	long getTotalNumberOfItems();
 
+	COLLECTION getPagedItems();
 }

@@ -19,7 +19,7 @@
  *     along with this software.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-package org.squashtest.csp.tm.web.internal.controller.administration;
+package org.squashtest.csp.tm.web.internal.controller.audittrail;
 
 import java.util.List;
 import java.util.Locale;
@@ -29,6 +29,7 @@ import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.ResponseBody;
+import org.squashtest.csp.core.infrastructure.collection.PagedCollectionHolder;
 import org.squashtest.csp.tm.domain.event.RequirementAuditEvent;
 import org.squashtest.csp.tm.service.audit.RequirementAuditTrailService;
 import org.squashtest.csp.tm.web.internal.model.datatable.DataTableDrawParameters;
@@ -57,7 +58,7 @@ public class RequirementAuditTrailController {
 	@ResponseBody
 	public DataTableModel getEventsTableModel(@PathVariable long requirementId, DataTableDrawParameters drawParams,
 			Locale locale) {
-		List<RequirementAuditEvent> auditTrail = auditTrailService.findAllByRequirementIdOrderedByDate(requirementId,
+		PagedCollectionHolder<List<RequirementAuditEvent>> auditTrail = auditTrailService.findAllByRequirementIdOrderedByDate(requirementId,
 				new DataTableDrawParametersPagingAdapter(drawParams));
 
 		return null;

@@ -19,9 +19,7 @@
  *     along with this software.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-package org.squashtest.csp.tm.web.internal.controller.administration;
-
-import static org.junit.Assert.*;
+package org.squashtest.csp.tm.web.internal.controller.audittrail;
 
 import org.squashtest.csp.tm.domain.event.RequirementCreation;
 import org.squashtest.csp.tm.service.audit.RequirementAuditTrailService;

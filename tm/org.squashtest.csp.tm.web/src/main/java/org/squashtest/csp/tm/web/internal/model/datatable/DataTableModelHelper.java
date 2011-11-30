@@ -23,34 +23,56 @@ package org.squashtest.csp.tm.web.internal.model.datatable;
 import java.util.Collection;
 import java.util.List;
 
+import org.squashtest.csp.core.infrastructure.collection.PagedCollectionHolder;
 import org.squashtest.csp.tm.infrastructure.filter.FilteredCollectionHolder;
 
 public abstract class DataTableModelHelper<X> {
 
-	private int currentIndex = 0;
+	private long currentIndex = 0;
 
 	public DataTableModel buildDataModel(FilteredCollectionHolder<List<X>> holder, int startIndex, String sEcho) {
 
 		currentIndex = startIndex;
 
-		DataTableModel model = new DataTableModel(sEcho);
 		Collection<X> collectionX = holder.getFilteredCollection();
 
-		for (X itemX : collectionX) {
+		DataTableModel model = createModelFromItems(sEcho, collectionX);
 
-			Object[] itemData = buildItemData(itemX);
+		model.displayRowsFromTotalOf(holder.getUnfilteredResultCount());
+
+		return model;
+
+	}
+
+	public DataTableModel buildDataModel(PagedCollectionHolder<List<X>> holder, String sEcho) {
+
+		currentIndex = holder.getFirstItemIndex() + 1;
+
+		Collection<X> pagedItems = holder.getPagedItems();
+
+		DataTableModel model = createModelFromItems(sEcho, pagedItems);
+
+		model.displayRowsFromTotalOf(holder.getTotalNumberOfItems());
+
+		return model;
+
+	}
+
+	private DataTableModel createModelFromItems(String sEcho, Collection<X> pagedItems) {
+		DataTableModel model = new DataTableModel(sEcho);
+
+		for (X item : pagedItems) {
+
+			Object[] itemData = buildItemData(item);
 
 			model.addRow(itemData);
 
 			currentIndex++;
 		}
-
-		model.displayRowsFromTotalOf(holder.getUnfilteredResultCount());
 		return model;
-
 	}
 
-	public int getCurrentIndex() {
+	public long getCurrentIndex() {
 		return currentIndex;
 	}
 

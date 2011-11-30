@@ -26,9 +26,9 @@ import java.util.List;
 import javax.inject.Inject;
 
 import org.springframework.stereotype.Service;
-import org.squashtest.csp.core.infrastructure.collection.PagedCollection;
+import org.squashtest.csp.core.infrastructure.collection.PagedCollectionHolder;
 import org.squashtest.csp.core.infrastructure.collection.Paging;
-import org.squashtest.csp.core.infrastructure.collection.PagingBackedPagedCollection;
+import org.squashtest.csp.core.infrastructure.collection.PagingBackedPagedCollectionHolder;
 import org.squashtest.csp.tm.domain.event.RequirementAuditEvent;
 import org.squashtest.csp.tm.internal.repository.RequirementAuditEventDao;
 import org.squashtest.csp.tm.service.audit.RequirementAuditTrailService;
@@ -37,7 +37,7 @@ import org.squashtest.csp.tm.service.audit.RequirementAuditTrailService;
  * @author Gregory Fouquet
  * 
  */
-@Service
+@Service("squashtest.tm.service.audit.RequirementAuditTrailService")
 public class RequirementAuditTrailServiceImpl implements RequirementAuditTrailService {
 	@Inject
 	private RequirementAuditEventDao auditEventDao;
@@ -47,13 +47,13 @@ public class RequirementAuditTrailServiceImpl implements RequirementAuditTrailSe
 	 *      org.squashtest.csp.core.infrastructure.collection.Paging)
 	 */
 	@Override
-	public PagedCollection<List<RequirementAuditEvent>> findAllByRequirementIdOrderedByDate(long requirementId,
+	public PagedCollectionHolder<List<RequirementAuditEvent>> findAllByRequirementIdOrderedByDate(long requirementId,
 			Paging paging) {
 		
 		List<RequirementAuditEvent> pagedEvents = auditEventDao.findAllByRequirementIdOrderedByDate(requirementId, paging);
 		long nbOfEvents = auditEventDao.countByRequirementId(requirementId);
 		
-		return new PagingBackedPagedCollection<List<RequirementAuditEvent>>(paging, nbOfEvents, pagedEvents);
+		return new PagingBackedPagedCollectionHolder<List<RequirementAuditEvent>>(paging, nbOfEvents, pagedEvents);
 	}
 
 }

@@ -63,7 +63,7 @@ public class RequirementPropertyChange extends RequirementAuditEvent implements 
 		super();
 	}
 
-	public RequirementPropertyChange(Requirement requirement,
+	private RequirementPropertyChange(Requirement requirement,
 			String author) {
 		super(requirement, author);
 	}
