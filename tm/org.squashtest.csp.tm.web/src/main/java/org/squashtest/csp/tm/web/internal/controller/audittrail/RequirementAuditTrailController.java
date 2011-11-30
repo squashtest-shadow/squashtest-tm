@@ -24,6 +24,9 @@ package org.squashtest.csp.tm.web.internal.controller.audittrail;
 import java.util.List;
 import java.util.Locale;
 
+import javax.inject.Inject;
+
+import org.springframework.context.MessageSource;
 import org.springframework.osgi.extensions.annotation.ServiceReference;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -37,6 +40,9 @@ import org.squashtest.csp.tm.web.internal.model.datatable.DataTableDrawParameter
 import org.squashtest.csp.tm.web.internal.model.datatable.DataTableModel;
 
 /**
+ * This controller handles requests related to a requirement's audit trail (ie its collection of
+ * {@link RequirementAuditEvent})
+ * 
  * @author Gregory Fouquet
  * 
  */
@@ -44,6 +50,8 @@ import org.squashtest.csp.tm.web.internal.model.datatable.DataTableModel;
 @RequestMapping("/audit-trail/requirement/{requirementId}")
 public class RequirementAuditTrailController {
 	private RequirementAuditTrailService auditTrailService;
+	@Inject
+	private MessageSource messageSource;
 
 	/**
 	 * @param auditTrailService
@@ -58,9 +66,13 @@ public class RequirementAuditTrailController {
 	@ResponseBody
 	public DataTableModel getEventsTableModel(@PathVariable long requirementId, DataTableDrawParameters drawParams,
 			Locale locale) {
-		PagedCollectionHolder<List<RequirementAuditEvent>> auditTrail = auditTrailService.findAllByRequirementIdOrderedByDate(requirementId,
-				new DataTableDrawParametersPagingAdapter(drawParams));
+		PagedCollectionHolder<List<RequirementAuditEvent>> auditTrail = auditTrailService
+				.findAllByRequirementIdOrderedByDate(requirementId,
+						new DataTableDrawParametersPagingAdapter(drawParams));
 
-		return null;
+		RequirementAuditEventTableModelBuilder builder = new RequirementAuditEventTableModelBuilder(locale,
+				messageSource);
+
+		return builder.buildDataModel(auditTrail, drawParams.getsEcho());
 	}
 }

@@ -1,3 +1,4 @@
+
 /**
  *     This file is part of the Squashtest platform.
  *     Copyright (C) 2010 - 2011 Squashtest TM, Squashtest.org
@@ -21,12 +22,15 @@
 
 package org.squashtest.csp.tm.web.internal.controller.audittrail;
 
-import org.squashtest.csp.tm.domain.event.RequirementCreation;
-import org.squashtest.csp.tm.service.audit.RequirementAuditTrailService;
-import org.squashtest.csp.tm.web.internal.model.datatable.DataTableDrawParameters;
-import org.squashtest.csp.tm.web.internal.model.datatable.DataTableModel;
+import org.apache.poi.hssf.record.formula.functions.T
+import org.springframework.context.MessageSource
+import org.squashtest.csp.core.infrastructure.collection.PagedCollectionHolder
+import org.squashtest.csp.tm.domain.event.RequirementCreation
+import org.squashtest.csp.tm.service.audit.RequirementAuditTrailService
+import org.squashtest.csp.tm.web.internal.model.datatable.DataTableDrawParameters
+import org.squashtest.csp.tm.web.internal.model.datatable.DataTableModel
 
-import spock.lang.Specification;
+import spock.lang.Specification
 
 /**
  * @author Gregory Fouquet
@@ -35,20 +39,24 @@ import spock.lang.Specification;
 class RequirementAuditTrailControllerTest extends Specification {
 	RequirementAuditTrailController controller = new RequirementAuditTrailController()
 	RequirementAuditTrailService requirementAuditTrailService = Mock()
+	MessageSource messageSource = Mock()
 
 	def setup() {
 		controller.auditTrailService = requirementAuditTrailService
+		controller.messageSource = messageSource
 	}
 
-	def ""() {
+	def "should return an audit event table model for the requested requirement"() {
 		given:
 		Locale locale = Locale.JAPANESE
 		DataTableDrawParameters drawParams = Mock()
 
 		and:
 		RequirementCreation event = Mock()
-		requirementAuditTrailService.findAllByRequirementIdOrderedByDate(10L, _) >> [event]
-		
+		PagedCollectionHolder holder = Mock()
+		holder.pagedItems >> [event]
+		requirementAuditTrailService.findAllByRequirementIdOrderedByDate(10L, _) >> holder
+
 		when:
 		DataTableModel model =  controller.getEventsTableModel(10L, drawParams, locale)
 
