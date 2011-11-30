@@ -23,6 +23,7 @@
 <%@ tag description="Table which fetches its data through Ajax, no pagination, no filter. SHOULD BE PUT BEFORE THE DECORATED TABLE"  %>
 <%@ attribute name="tableId" required="true" %>
 <%@ attribute name="paginate" %>
+<%@ attribute name="displayLength" type="java.lang.Long" description="The nb of rows shown by the table. Default is 50" %>
 <%@ attribute name="url" required="true" description="Url used to populate the table" %>
 <%@ attribute name="rowCallback"  fragment="true" description="Javascript function name or inlined function to be called when a row is created. Default is no function. Definition of row buttons should go there." %>
 <%@ attribute name="drawCallback"  fragment="true" description="Javascript function name or inlined function to be called when table is redrawn. DnD activation should go there" %>
@@ -33,6 +34,8 @@
 
 <%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core" %>
 <%@ taglib prefix="f" uri="http://java.sun.com/jsp/jstl/fmt" %>
+
+<c:if test="${ empty displayLength }"><c:set var="displayLength" value="50" /></c:if>
 
 <script type="text/javascript">
 	$(function() {
@@ -55,7 +58,7 @@
 			"bFilter": false,
 			"bPaginate": ${ not empty paginate and paginate },
 			"sPaginationType": "squash",
-			"iDisplayLength": 50,
+			"iDisplayLength": ${ displayLength },
 			"bProcessing": true,
 			"bServerSide": true,
 			"sAjaxSource": '${ url }', 

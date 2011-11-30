@@ -344,6 +344,44 @@ that page won't be editable if
 
 	<comp:attachment-bloc entity="${requirement}" workspaceName="requirement" editable="${ editable }" />
 	
+	<%-- AUDIT TRAIL --%>
+	<c:url var="requirementAuditTrailTableModelUrl" value="/audit-trail/requirement/${requirement.id}/events-table" />
+	<comp:toggle-panel id="requirement-audit-trail-panel" titleKey="audit-trail.requirement.panel.title" open="false">
+		<jsp:attribute name="body">
+			<comp:decorate-ajax-table url="${ requirementAuditTrailTableModelUrl }" tableId="requirement-audit-trail-table" paginate="true" displayLength="10">
+				<jsp:attribute name="columnDefs">
+					<dt:column-definition targets="0,1,2" visible="true" />
+					<dt:column-definition targets="3" visible="false" />
+					<dt:column-definition targets="4" visible="false" lastDef="true" />
+				</jsp:attribute>
+			</comp:decorate-ajax-table>
+			<div>
+				<table id="requirement-audit-trail-table">
+					<thead>
+						<tr>
+							<th><f:message key="audit-trail.requirement.table.col-header.date.label" /></th>
+							<th><f:message key="audit-trail.requirement.table.col-header.author.label" /></th>
+							<th><f:message key="audit-trail.requirement.table.col-header.event.label" /></th>
+							<th>&nbsp;</th>
+							<th>&nbsp;</th>
+						</tr>
+					</thead>
+					<tbody><%-- Will be populated through ajax --%></tbody>
+				</table>
+			</div> 
+		</jsp:attribute>
+	</comp:toggle-panel>
+	<script type="text/javascript">
+		$(function() {
+			$( "#requirement-audit-trail-table" ).ajaxSuccess(function(event, xrh, settings) {
+				if (settings.type == 'POST') {
+					$( this ).dataTable().fnDraw(false);
+				}
+			});
+		});
+	</script>
+	<%-- /AUDIT TRAIL --%>
+
 	<%--------------------------- Deletion confirmation popup -------------------------------------%>
 	<c:if test="${editable}">
 	

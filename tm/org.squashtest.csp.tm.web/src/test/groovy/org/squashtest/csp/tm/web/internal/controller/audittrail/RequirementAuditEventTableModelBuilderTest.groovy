@@ -35,7 +35,7 @@ import org.squashtest.csp.tools.unittest.reflection.ReflectionCategory;
 
 import spock.lang.Specification
 /**
- * @author Gregory
+ * @author Gregory Fouquet
  *
  */
 class RequirementAuditEventTableModelBuilderTest extends Specification {
@@ -48,7 +48,7 @@ class RequirementAuditEventTableModelBuilderTest extends Specification {
 		given:
 		Requirement req = Mock()
 		RequirementCreation event = new RequirementCreation(req, "chris jericho")
-		setId(event)
+		setIdAndDate(event)
 
 		and:
 		PagedCollectionHolder paged = pagedCollection(event)
@@ -62,6 +62,8 @@ class RequirementAuditEventTableModelBuilderTest extends Specification {
 		then:
 		model.getAaData() == [
 			[
+				"31/12/2011 23h55",
+				"chris jericho",
 				"Cr&eacute;ation",
 				"creation",
 				"10"
@@ -80,7 +82,7 @@ class RequirementAuditEventTableModelBuilderTest extends Specification {
 				.setNewValue("astonishing")
 				.build()
 
-		setId(event)
+		setIdAndDate(event)
 
 		and:
 		PagedCollectionHolder paged = pagedCollection(event)
@@ -94,6 +96,8 @@ class RequirementAuditEventTableModelBuilderTest extends Specification {
 		then:
 		model.getAaData() == [
 			[
+				"31/12/2011 23h55",
+				"peter parker",
 				"Modification de reference : 'amazing' -&gt; 'astonishing'",
 				"simple-prop",
 				"10"
@@ -112,7 +116,7 @@ class RequirementAuditEventTableModelBuilderTest extends Specification {
 				.setNewValue("astonishing")
 				.build()
 
-		setId(event)
+		setIdAndDate(event)
 
 		and:
 		PagedCollectionHolder paged = pagedCollection(event)
@@ -127,6 +131,8 @@ class RequirementAuditEventTableModelBuilderTest extends Specification {
 		then:
 		model.getAaData() == [
 			[
+				"31/12/2011 23h55",
+				"peter parker",
 				"Modification de la description",
 				"fat-prop",
 				"10"
@@ -134,9 +140,12 @@ class RequirementAuditEventTableModelBuilderTest extends Specification {
 		]
 	}
 
-	def setId(def event) {
+	def setIdAndDate(def event) {
 		use(ReflectionCategory) {
 			RequirementAuditEvent.set field: "id", of: event, to: 10L
+			
+			Calendar cal = new GregorianCalendar(2011, Calendar.DECEMBER, 31, 23, 55, 00, 00)
+			RequirementAuditEvent.set field: "date", of: event, to: cal.time
 		}
 	}
 
@@ -160,7 +169,7 @@ class RequirementAuditEventTableModelBuilderTest extends Specification {
 				.setNewValue("APPROVED")
 				.build()
 
-		setId(event)
+		setIdAndDate(event)
 
 		and:
 		PagedCollectionHolder paged = Mock()
@@ -179,6 +188,8 @@ class RequirementAuditEventTableModelBuilderTest extends Specification {
 		then:
 		model.getAaData() == [
 			[
+				"31/12/2011 23h55",
+				"peter parker",
 				"Modification du status : 'Obsol&egrave;te' -&gt; 'Approuv&eacute;'",
 				"simple-prop",
 				"10"

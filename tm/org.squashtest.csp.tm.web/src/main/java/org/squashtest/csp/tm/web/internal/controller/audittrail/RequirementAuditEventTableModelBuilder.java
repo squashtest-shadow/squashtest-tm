@@ -26,6 +26,7 @@ import java.util.Locale;
 
 import javax.validation.constraints.NotNull;
 
+import org.apache.commons.lang.time.DateFormatUtils;
 import org.springframework.context.MessageSource;
 import org.springframework.util.ReflectionUtils;
 import org.springframework.web.util.HtmlUtils;
@@ -34,6 +35,7 @@ import org.squashtest.csp.tm.domain.event.RequirementAuditEvent;
 import org.squashtest.csp.tm.domain.event.RequirementAuditEventVisitor;
 import org.squashtest.csp.tm.domain.event.RequirementCreation;
 import org.squashtest.csp.tm.domain.event.RequirementLargePropertyChange;
+import org.squashtest.csp.tm.domain.event.RequirementModification;
 import org.squashtest.csp.tm.domain.event.RequirementPropertyChange;
 import org.squashtest.csp.tm.domain.requirement.Requirement;
 import org.squashtest.csp.tm.web.internal.model.datatable.DataTableModelHelper;
@@ -97,9 +99,12 @@ public class RequirementAuditEventTableModelBuilder extends DataTableModelHelper
 	public void visit(RequirementPropertyChange event) {
 		Object[] args = buildMessageArgs(event);
 
-		String message = messageSource.getMessage("audit-trail.requirement.modification." + event.getPropertyName()
-				+ ".label", args, locale);
+		String message = messageSource.getMessage(buildPropertyChangeMessageKey(event), args, locale);
 		populateCurrentItemData(message, "simple-prop", event);
+	}
+
+	private String buildPropertyChangeMessageKey(RequirementModification event) {
+		return "audit-trail.requirement.property-change." + event.getPropertyName() + ".label";
 	}
 
 	private Object[] buildMessageArgs(RequirementPropertyChange event) {
@@ -142,15 +147,16 @@ public class RequirementAuditEventTableModelBuilder extends DataTableModelHelper
 	 */
 	@Override
 	public void visit(RequirementLargePropertyChange event) {
-		String message = messageSource.getMessage("audit-trail.requirement.modification." + event.getPropertyName()
-				+ ".label", null, locale);
+		String message = messageSource.getMessage(buildPropertyChangeMessageKey(event), null, locale);
 		populateCurrentItemData(message, "fat-prop", event);
 
 	}
 
 	private void populateCurrentItemData(String message, String eventType, RequirementAuditEvent event) {
+		String formattedDate = DateFormatUtils.format(event.getDate(), "dd/MM/yyyy HH'h'mm");
+		String escapedAuthor = HtmlUtils.htmlEscape(event.getAuthor());
 		String escapedMessage = HtmlUtils.htmlEscape(message);
 
-		currentItemData = new Object[] { escapedMessage, eventType, String.valueOf(event.getId()) };
+		currentItemData = new Object[] { formattedDate, escapedAuthor, escapedMessage, eventType, String.valueOf(event.getId()) };
 	}
 }

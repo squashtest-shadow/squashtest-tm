@@ -147,6 +147,8 @@
 	<osgi:service ref="squashtest.tm.service.ProjectsPermissionManagementService"
 		interface="org.squashtest.csp.tm.service.ProjectsPermissionManagementService" />
 		
+	<osgi:service ref="squashtest.tm.service.audit.RequirementAuditTrailService"
+		interface="org.squashtest.csp.tm.service.audit.RequirementAuditTrailService" />
 
 	<!-- ====== SERVICES CONSUMED BY THIS BUNDLE ====== -->
 	<!--  Jdbc Datasource -->
