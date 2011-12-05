@@ -4,7 +4,7 @@
 	<parent>
 		<artifactId>squashtest-csp-core</artifactId>
 		<groupId>org.squashtest.csp</groupId>
-		<version>1.1.0.IT25-SNAPSHOT</version>
+		<version>1.1.0.IT25</version>
 	</parent>
 	<artifactId>org.squashtest.csp.core.bugtracker</artifactId>
 	<name>Squashtest CSP - Core module - Bug Tracker connection component</name>
@@ -288,7 +288,7 @@
 										</goals>
 									</pluginExecutionFilter>
 									<action>
-										<ignore></ignore>
+										<ignore />
 									</action>
 								</pluginExecution>
 								<pluginExecution>
@@ -308,7 +308,7 @@
 										</goals>
 									</pluginExecutionFilter>
 									<action>
-										<ignore></ignore>
+										<ignore />
 									</action>
 								</pluginExecution>
 							</pluginExecutions>
