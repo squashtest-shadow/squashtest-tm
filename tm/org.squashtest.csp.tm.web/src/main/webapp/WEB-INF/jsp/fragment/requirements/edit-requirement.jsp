@@ -115,22 +115,21 @@ that page won't be editable if
 			//first check if 'obsolete' is selected
 			var selected = $(this.find('select')).val();
 			
-			var toReturn=true;
+			var toReturn = true;
 			
-			if ("OBSOLETE" == selected){
+			if ("OBSOLETE" == selected) {
 				var jqDialog = $('#requirement-status-confirm-dialog');
 				var summoned = jqDialog.data('summoned');
 				
-				if (! summoned){
+				if (! summoned) {
 					statusObsoleteSummonDialog(this, jqDialog);
 					toReturn=false;
-				}
-				else{	
+				} else {	
 					jqDialog.data('summoned', false);
 					toReturn = statusObsoleteReadDialog(widget, jqDialog);			
 				}
-			}else{
-				toReturn=true;
+			} else {
+				toReturn = true;
 			}
 			
 			return toReturn;
@@ -145,7 +144,7 @@ that page won't be editable if
 		//reset the 'summoned' flag and the widget if needed
 		function statusObsoleteReadDialog(widget, jqDialog){
 			var response = jqDialog.data('confirm');
-			if (false==response){
+			if (false==response) {
 				$(widget).html(widget.revert);
 				widget.editing  = false;	
 			}	
@@ -374,7 +373,8 @@ that page won't be editable if
 	<script type="text/javascript">
 		$(function() {
 			$( "#requirement-audit-trail-table" ).ajaxSuccess(function(event, xrh, settings) {
-				if (settings.type == 'POST') {
+				if (settings.type == 'POST' && !settings.data.match(/requirement-status/g)) {
+					<%-- We refresh tble on POSTs which do not uptate requirement status (these ones already refresh the whole page --%>
 					$( this ).dataTable().fnDraw(false);
 				}
 			});
