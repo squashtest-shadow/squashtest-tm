@@ -382,6 +382,30 @@ that page won't be editable if
 	</script>
 	<%-- /AUDIT TRAIL --%>
 
+	<%-- AUDIT EVENT DETAILS --%>	
+	<f:message var="auditEventDetailsDialogTitle" key="audit-trail.requirement.property-change.description.label" />	
+	<div id="audit-event-details-dialog" class="hidden popup-dialog" title="${ auditEventDetailsDialogTitle }">
+		<div class="display-tabl²e">
+			<div>
+				<label for="audit-event-old-value"><f:message key="audit-trail.requirement.property-change.old-value.label" /></label>
+				<span id="audit-event-old-value">old value</span>
+			</div>
+			<div class="display-table-row">
+				<label for="audit-event-new-value"><f:message key="audit-trail.requirement.property-change.new-value.label" /></label>
+				<span id="audit-event-new-value">new value</span>
+			</div>
+			<f:message var="auditEventDetailsOkLabel" key="dialog.button.ok.label" />
+			<input type="button" value="${ auditEventDetailsOkLabel }" />
+		</div>
+	</div>
+	<script type="text/javascript">
+	$(function() {
+		$( "#audit-event-details-dialog" ).messageDialog();
+		<%-- $( "#audit-event-details-dialog" ).messageDialog("open"); --%>		
+	});
+	</script>
+	<%-- /AUDIT EVENT DETAILS --%>	
+
 	<%--------------------------- Deletion confirmation popup -------------------------------------%>
 	<c:if test="${editable}">
 	

@@ -853,11 +853,11 @@ div#user-account-password-panel > div > * {
 }
 
 
-.display-table{
+.display-table {
 	display:table;	
 }
 
-.display-table-row{
+.display-table-row, .display-table > div {
 	display:table-row;	
 	height:auto;
 	padding-top:5px;
@@ -865,18 +865,17 @@ div#user-account-password-panel > div > * {
 	text-align:left;
 }
 
-.display-table-cell{
+.display-table-cell, .display-table > div > div, .display-table > div > label, .display-table > div > span {
 	display : table-cell;
 	padding-left : 10px;
 	padding-right : 10px;
 }
 
-
-.smallfonts{
+.smallfonts {
 	font-size:0.8em;	
 }
 
-.space{
+.space {
 	margin-top: 1.6em;	
 }
 
