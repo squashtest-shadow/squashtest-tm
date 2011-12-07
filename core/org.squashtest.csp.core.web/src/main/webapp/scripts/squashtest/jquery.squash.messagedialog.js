@@ -1,0 +1,108 @@
+/*
+ *     This file is part of the Squashtest platform.
+ *     Copyright (C) 2010 - 2011 Squashtest TM, Squashtest.org
+ *
+ *     See the NOTICE file distributed with this work for additional
+ *     information regarding copyright ownership.
+ *
+ *     This is free software: you can redistribute it and/or modify
+ *     it under the terms of the GNU Lesser General Public License as published by
+ *     the Free Software Foundation, either version 3 of the License, or
+ *     (at your option) any later version.
+ *
+ *     this software is distributed in the hope that it will be useful,
+ *     but WITHOUT ANY WARRANTY; without even the implied warranty of
+ *     MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ *     GNU Lesser General Public License for more details.
+ *
+ *     You should have received a copy of the GNU Lesser General Public License
+ *     along with this software.  If not, see <http://www.gnu.org/licenses/>.
+ */
+/**
+ * MessageDialog widget.
+ * A message dialog is a preconfigured modal dialog which shows a message and only has a close button.
+ * 
+ * If the div used to generate the dialog contains an <input type="button" /> element, its value is used as the massage dialog's ok button.
+ * 
+ * @author Gregory Fouquet
+ */
+(function($) {
+	$.widget( "squash.messageDialog", $.ui.dialog, { 
+		options : {
+			autoOpen : false,
+			resizable : false,
+			modal : true,
+			width : 600,
+			position : [ 'center', 100 ],
+			closeOnEscape : true,
+			closeOnEnter : true,
+			buttons : [{ 
+				text: "Ok", 
+			    click: function() { $(this).messageDialog("close"); } 
+			}]
+		},
+
+		_create : function() {
+			// we need to invoke prototype creation
+			$.ui.dialog.prototype._create.apply(this);
+
+			var self = this;
+
+			self.uiDialog
+				.addClass("popup-dialog")
+				// allow closing by pressing the enter key
+				.keydown( function(event) {
+					if (self.options.closeOnEnter
+							&& !event .isDefaultPrevented()
+							&& event.keyCode
+							&& event.keyCode === $.ui.keyCode.ENTER) {
+						self.close(event);
+						event.preventDefault();
+					}
+				});
+			
+			
+			
+		},
+
+		_createButtons : function(buttons) {
+			var self = this;
+			var okButton = $("input:button", self.element);
+			
+			if (okButton.length) {
+				var okLabel = okButton[0].value;
+				buttons[0].text = okLabel;
+			}
+
+			$.ui.dialog.prototype._createButtons.apply(this, arguments);
+			
+			okButton.remove()
+		},
+
+		_setOption : function(key, value) {
+			// In jQuery UI 1.8, you have to manually invoke the
+			// _setOption method from the base widget
+			$.Widget.prototype._setOption.apply(this, arguments);
+		},
+
+		_trigger : function(type, event, data) {
+			if (type == 'open') {
+				var self = this;
+
+				if (self.overlay) {
+					// allow closing by pressing the enter key
+					$(document).bind('keydown.dialog-overlay', function(event) {
+						if (self.options.closeOnEnter
+								&& !event .isDefaultPrevented()
+								&& event.keyCode
+								&& event.keyCode === $.ui.keyCode.ENTER) {
+
+							self.close(event);
+							event .preventDefault();
+						}
+					});
+				}
+			}
+		}
+	});
+}(jQuery));	

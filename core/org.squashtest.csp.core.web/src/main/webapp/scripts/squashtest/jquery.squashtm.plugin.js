@@ -163,6 +163,7 @@ var squashtm ;
 								jqT.addClass('is-contextual');
 							}
 							jqT.ckeditor(function(){}, 
+									
 								{
 									//in this context 'this' is the defaults object
 									//the following properties will appear

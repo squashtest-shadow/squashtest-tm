@@ -160,9 +160,7 @@
 		var clone = this.itemTemplate.clone(true).generateId();
 		var jqClone = clone.uploadItem(this);
 		this.append(jqClone);
-		
 	}
-	
 	
 	function attachementClear(){
 		this.empty();
