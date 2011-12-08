@@ -61,7 +61,7 @@ class RequirementAuditTrailServiceIT extends DbunitServiceSpecification {
 		PagedCollectionHolder paged = service.findAllByRequirementIdOrderedByDate(requirementId, paging);
 		
 		then :
-		paged.items.collect { it.id } == [14L, 12L]
+		paged.items.collect { it.id } == [ 12L , 14L]
 		paged.firstItemIndex == 1
 		paged.totalNumberOfItems == 4
 	}

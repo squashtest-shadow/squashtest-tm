@@ -144,23 +144,27 @@ class HibernateRequirementAuditEventDaoIT extends DbunitDaoSpecification {
 
 
 		events*.date == [
-			parse("2010-02-01"),
-			parse("2010-04-02"),
+			parse("2010-08-04"),
 			parse("2010-06-03"),
-			parse("2010-08-04")
+			parse("2010-04-02"),
+			parse("2010-02-01")
+			
+			
+			
 		]
+		
 		events*.author == [
-			"creator 1",
-			"editor 11",
+			"editor 13",
 			"editor 12",
-			"editor 13"
+			"editor 11",
+			"creator 1"
 		]
 
 		events*.class == [
-			RequirementCreation.class,
+			RequirementLargePropertyChange.class,
 			RequirementPropertyChange.class,
 			RequirementPropertyChange.class,
-			RequirementLargePropertyChange.class
+			RequirementCreation.class
 		]
 	}
 
@@ -178,7 +182,7 @@ class HibernateRequirementAuditEventDaoIT extends DbunitDaoSpecification {
 		List<RequirementAuditEvent> events = eventDao.findAllByRequirementIdOrderedByDate(requirementId, paging);
 
 		then :
-		events.collect { it.id } == [ 14L, 12L ]
+		events.collect { it.id } == [ 12L, 14L ]
 	}
 
 	@DataSet("HibernateRequirementAuditEventDaoIT.should fetch lists of events.xml")

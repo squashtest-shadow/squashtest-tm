@@ -109,7 +109,7 @@ public class RequirementModificationController {
 		mav.addObject("requirement", requirement);
 		
 		//build criticality list
-		SortedMap<String, String> criticalities =initCriticitySelectionList(locale, requirement.getCriticality()); 
+		SortedMap<String, String> criticalities = initCriticitySelectionList(locale, requirement.getCriticality()); 
 		mav.addObject("criticalityList", jsonify(criticalities));
 		
 		return mav;

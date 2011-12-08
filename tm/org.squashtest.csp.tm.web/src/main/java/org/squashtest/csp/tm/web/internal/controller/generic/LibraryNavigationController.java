@@ -162,12 +162,12 @@ public abstract class LibraryNavigationController<LIBRARY extends Library<? exte
 	@Deprecated
 	@RequestMapping(value = "/folders/{folderId}", method = RequestMethod.POST, params = { "newName" })
 	public @ResponseBody
-	Object renameFolder(HttpServletResponse response, @RequestParam("newName") String newName,
+	Object renameFolder(@RequestParam("newName") String newName,
 			@PathVariable Long folderId) {
 
 
 		getLibraryNavigationService().renameFolder(folderId, newName);
-		final String reNewName = new String(newName);
+		final String reNewName = newName;
 		return new Object(){ public String newName = reNewName ; };
 
 

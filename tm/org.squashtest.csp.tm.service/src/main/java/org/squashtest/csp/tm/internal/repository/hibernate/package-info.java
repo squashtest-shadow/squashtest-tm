@@ -167,9 +167,9 @@
 		@NamedQuery(name = "user.findUserByLogin", query = "from User fetch all properties where login = :userLogin"),
 
 		//Queries on RequirementAuditEvent
-		@NamedQuery(name = "RequirementAuditEvent.findAllByRequirementIdOrderedByDate", query = "select rae from RequirementAuditEvent rae join rae.requirement r where r.id = ? order by rae.date"),
+		@NamedQuery(name = "RequirementAuditEvent.findAllByRequirementIdOrderedByDate", query = "select rae from RequirementAuditEvent rae join rae.requirement r where r.id = ? order by rae.date desc"),
 		@NamedQuery(name = "RequirementAuditEvent.countByRequirementId", query = "select count(rae) from RequirementAuditEvent rae join rae.requirement r where r.id = ?"),
-		@NamedQuery(name = "requirementAuditEvent.findAllByRequirementIds", query = "select rae from RequirementAuditEvent rae inner join rae.requirement r where r.id in (:ids) order by rae.requirement, rae.date"),
+		@NamedQuery(name = "requirementAuditEvent.findAllByRequirementIds", query = "select rae from RequirementAuditEvent rae inner join rae.requirement r where r.id in (:ids) order by rae.requirement asc, rae.date desc"),
 		
 		/* ********************************************** batch deletion-related queries **************************************************** */
 
