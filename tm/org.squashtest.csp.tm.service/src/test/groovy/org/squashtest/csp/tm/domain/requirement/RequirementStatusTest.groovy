@@ -40,7 +40,19 @@ class RequirementStatusTest extends Specification {
 			OBSOLETE			|	[ OBSOLETE ] as Set
 			
 	}
-	
+	@Unroll("next disabled statuses of #status should be #expectedSet")
+	def "correctedness of next disabled status"(){
+		expect :
+			expectedSet == status.getDisabledStatus();
+		
+		where :
+			status				|	expectedSet
+			WORK_IN_PROGRESS  	|	[ APPROVED ] as Set
+			UNDER_REVIEW		|	[ ] as Set
+			APPROVED			|	[ ] as Set
+			OBSOLETE			|	[ APPROVED, UNDER_REVIEW, WORK_IN_PROGRESS ] as Set
+			
+	}
 	// FIXME l'assertion est le resultat de allowedTransitions.each { ... } soit le retour de la dernière itéeration !
 	
 //	@Unroll("transitions from #status to #allowedTransitions should be legal")
