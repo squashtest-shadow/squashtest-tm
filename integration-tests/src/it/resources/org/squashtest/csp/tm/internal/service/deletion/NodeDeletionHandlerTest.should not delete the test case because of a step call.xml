@@ -54,7 +54,7 @@
 	
 	<!--  ============================ test case steps ================================================== -->
 	
-	<test_case_steps test_case_id="11" step_id="112" step_order="1" /> <!-- test case 1 step 2  -->
+	<test_case_steps test_case_id="11" step_id="112" step_order="0" /> <!-- test case 1 step 2  -->
 	
 	
 	<!--  cleanup  -->

@@ -26,6 +26,7 @@ import org.hibernate.Query;
 import org.hibernate.type.LongType
 import org.spockframework.util.NotThreadSafe;
 import org.springframework.transaction.annotation.Transactional;
+import org.squashtest.csp.tm.domain.testcase.CallTestStep;
 import org.squashtest.csp.tm.domain.testcase.TestCase;
 import org.squashtest.csp.tm.domain.testcase.TestCaseFolder
 import org.squashtest.csp.tm.domain.testcase.TestCaseLibrary
@@ -62,6 +63,7 @@ public class TestCaseNodeDeletionHandlerIT extends DbunitServiceSpecification {
 
 		then :
 		! result.contains(12l)
+		result == []
 	}
 
 	@DataSet("NodeDeletionHandlerTest.should delete the test case and cascade to its steps.xml")
@@ -76,6 +78,8 @@ public class TestCaseNodeDeletionHandlerIT extends DbunitServiceSpecification {
 		! found(TestCase.class, 11l)
 		! found(TestStep.class, 111l)
 		! found(TestStep.class, 112l)
+		! found(CallTestStep.class, 112l)
+		found (TestCase.class, 12l)
 	}
 
 
