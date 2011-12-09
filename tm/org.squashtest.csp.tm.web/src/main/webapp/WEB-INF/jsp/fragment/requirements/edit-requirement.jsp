@@ -20,9 +20,9 @@
         along with this software.  If not, see <http://www.gnu.org/licenses/>.
 
 --%>
-<%@ taglib uri="http://java.sun.com/jsp/jstl/core" prefix="c" %>
-<%@ taglib tagdir="/WEB-INF/tags/jquery" prefix="jq" %>
-<%@ taglib tagdir="/WEB-INF/tags/component" prefix="comp" %>
+<%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core" %>
+<%@ taglib prefix="jq" tagdir="/WEB-INF/tags/jquery" %>
+<%@ taglib prefix="comp" tagdir="/WEB-INF/tags/component" %>
 <%@ taglib prefix="s" uri="http://www.springframework.org/tags" %>
 <%@ taglib prefix="f" uri="http://java.sun.com/jsp/jstl/fmt" %>
 <%@ taglib prefix="sf" uri="http://www.springframework.org/tags/form" %>
@@ -49,8 +49,6 @@
 <s:url var="simulateDeletionUrl" value="/requirement-browser/delete-nodes/simulate" />
 <s:url var="confirmDeletionUrl" value="/requirement-browser/delete-nodes/confirm" />
 <s:url var="getStatusComboContent" value="/requirements/${requirement.id}/next-status" />
-
-
 
 <%-- ----------------------------------- Authorization ----------------------------------------------%>
 <%-- 
@@ -104,15 +102,21 @@ that page won't be editable if
 --%>
 
 <c:if test="${status_editable}">
+<f:message var="StatusNotAllowedMessage" key='requirement.status.notAllowed' />
 <script type="text/javascript">
 		
 		function statusSelect(settings, widget){
+			
 			//first check if 'obsolete' is selected
 			var selected = $(this.find('select')).val();
 			
 			var toReturn = true;
 			
-			if ("OBSOLETE" == selected) {
+			if (isDisabled(selected)){
+				toReturn=false;
+				alert("${StatusNotAllowedMessage}");
+			}
+			else if ("OBSOLETE" == selected) {
 				var jqDialog = $('#requirement-status-confirm-dialog');
 				var summoned = jqDialog.data('summoned');
 				
@@ -130,6 +134,10 @@ that page won't be editable if
 			return toReturn;
 		}
 			
+		function isDisabled(selected){
+			return (selected.search(new RegExp("disabled.*"))!=-1);
+		}
+		
 		function statusObsoleteSummonDialog(form, jqDialog){
 			jqDialog.data('summoned', true);
 			jqDialog.data('callMeBack', form);
@@ -272,7 +280,6 @@ that page won't be editable if
 						</c:choose>
 					</div>		
 
-							
 				</div>				
 			</div>
 		</jsp:attribute>
@@ -334,11 +341,11 @@ that page won't be editable if
 		</jsp:attribute>
 	</comp:toggle-panel>
 
-<%------------------------------ Attachments bloc ---------------------------------------------%> 
+<%----------------------------------------------------- Attachments bloc ------------------------------------------------------------%> 
 
 	<comp:attachment-bloc entity="${requirement}" workspaceName="requirement" editable="${ editable }" />
 	
-	<%-- AUDIT TRAIL --%>
+<%-----------------------------------------------------------AUDIT TRAIL ----------------------------------------------------------------%>
 	<script type="text/javascript">
 		function getAuditTrailTableRowId(rowData) {
 			return rowData[4];	

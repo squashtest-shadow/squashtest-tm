@@ -297,10 +297,13 @@ public class RequirementModificationController {
 		for (RequirementStatus iterStatus : status.getAvailableNextStatus()){
 			map.put(iterStatus.toString(), internationalize(iterStatus, locale));
 		}
-		
+		//here other status are added with the value "disabled."+"iterStatus
+		for (RequirementStatus disabledStatus : status.getDisabledStatus()){
+			map.put("disabled."+disabledStatus.toString(), internationalize(disabledStatus, locale));
+		}
 		//here we use the 'selected' attribute since it's reloaded for each use of the combobox anyway. 
 		map.put("selected", status.toString());
-		
+	
 		return map;
 		
 	}

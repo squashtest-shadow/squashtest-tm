@@ -21,7 +21,10 @@
 package org.squashtest.csp.tm.domain.requirement;
 
 import java.util.Comparator;
+import java.util.Map;
 import java.util.Set;
+import java.util.SortedMap;
+import java.util.TreeMap;
 import java.util.TreeSet;
 
 import org.squashtest.csp.tm.domain.Internationalizable;
@@ -50,6 +53,11 @@ public enum RequirementStatus implements Internationalizable{
 		public boolean isRequirementLinkable() {
 			return true;
 		}
+
+		@Override
+		public Set<RequirementStatus> getDisabledStatus() {
+			 return returnDisabledStatus();
+		}
 	},
 	
 	UNDER_REVIEW(){
@@ -74,6 +82,10 @@ public enum RequirementStatus implements Internationalizable{
 		@Override
 		public boolean isRequirementLinkable() {
 			return true;
+		}
+		@Override
+		public Set<RequirementStatus> getDisabledStatus() {
+			return returnDisabledStatus();
 		}
 	},
 	
@@ -100,6 +112,10 @@ public enum RequirementStatus implements Internationalizable{
 		public boolean isRequirementLinkable() {
 			return true;
 		}
+		@Override
+		public Set<RequirementStatus> getDisabledStatus() {
+			return returnDisabledStatus();
+		}
 	},
 	
 	OBSOLETE(){
@@ -121,6 +137,11 @@ public enum RequirementStatus implements Internationalizable{
 		@Override
 		public boolean isRequirementLinkable() {
 			return false;
+		}
+
+		@Override
+		public Set<RequirementStatus> getDisabledStatus() {
+			return returnDisabledStatus();
 		}
 	};
 	
@@ -178,6 +199,8 @@ public enum RequirementStatus implements Internationalizable{
 	private static class StringComparator implements Comparator<String>{
 		@Override
 		public int compare(String o1, String o2) {
+			o1 = removeDisableString(o1);
+			o2 = removeDisableString(o2);
 			RequirementStatus s1, s2;
 			try{
 				 s1 = RequirementStatus.valueOf(o1);
@@ -192,6 +215,14 @@ public enum RequirementStatus implements Internationalizable{
 			
 			return s1.compareTo(s2);
 		}
+
+		private String removeDisableString(String o) {
+			String disabled = "disabled.";
+			if(o.startsWith(disabled)){
+				o = o.substring(disabled.length());
+			}
+			return o;
+		}
 	}
 	
 	/**
@@ -201,5 +232,23 @@ public enum RequirementStatus implements Internationalizable{
 	public boolean  isTransitionLegal(RequirementStatus newStatus){
 		return this.getAvailableNextStatus().contains(newStatus);
 	}
+	
+	/**
+	 * the set of the NON-available status transition. As for 1.1.0 and until further notice, should NOT include <i>this</i>
+	 * @return the NON-availableTransition.
+	 */
+	public abstract Set<RequirementStatus> getDisabledStatus();
+	
+	protected Set<RequirementStatus> returnDisabledStatus() {
+		Set<RequirementStatus> disabledStatus= new TreeSet<RequirementStatus>();
+		for(RequirementStatus next : RequirementStatus.values()){
+			if(!this.isTransitionLegal(next)) {
+				disabledStatus.add(next);
+			}
+		}
+		return disabledStatus;
+	}
+
+	
 	
 }
