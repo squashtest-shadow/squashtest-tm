@@ -33,7 +33,9 @@ import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.ResponseBody;
 import org.squashtest.csp.core.infrastructure.collection.PagedCollectionHolder;
+import org.squashtest.csp.tm.domain.event.ChangedProperty;
 import org.squashtest.csp.tm.domain.event.RequirementAuditEvent;
+import org.squashtest.csp.tm.domain.event.RequirementLargePropertyChange;
 import org.squashtest.csp.tm.service.audit.RequirementAuditTrailService;
 import org.squashtest.csp.tm.web.internal.model.datatable.DataTableDrawParameters;
 import org.squashtest.csp.tm.web.internal.model.datatable.DataTableDrawParametersPagingAdapter;
@@ -47,7 +49,7 @@ import org.squashtest.csp.tm.web.internal.model.datatable.DataTableModel;
  * 
  */
 @Controller
-@RequestMapping("/audit-trail/requirement/{requirementId}")
+@RequestMapping("/audit-trail/requirements")
 public class RequirementAuditTrailController {
 	private RequirementAuditTrailService auditTrailService;
 	@Inject
@@ -62,7 +64,7 @@ public class RequirementAuditTrailController {
 		this.auditTrailService = auditTrailService;
 	}
 
-	@RequestMapping(value = "events-table", params = "sEcho")
+	@RequestMapping(value = "{requirementId}/events-table", params = "sEcho")
 	@ResponseBody
 	public DataTableModel getEventsTableModel(@PathVariable long requirementId, DataTableDrawParameters drawParams,
 			Locale locale) {
@@ -74,5 +76,12 @@ public class RequirementAuditTrailController {
 				messageSource);
 
 		return builder.buildDataModel(auditTrail, drawParams.getsEcho());
+	}
+	
+	@RequestMapping(value="fat-prop-change-events/{eventId}") @ResponseBody
+	public ChangedProperty getLargePropertyChangeEvent(@PathVariable long eventId) {
+		final RequirementLargePropertyChange event = auditTrailService.findLargePropertyChangeById(eventId);
+		
+		return new ChangedPropertyJsonDecorator(event);
 	}
 }

@@ -39,7 +39,7 @@ import org.squashtest.csp.tm.domain.requirement.Requirement;
  */
 @Entity
 @PrimaryKeyJoinColumn(name = "EVENT_ID")
-public class RequirementLargePropertyChange extends RequirementAuditEvent implements RequirementModification {
+public class RequirementLargePropertyChange extends RequirementAuditEvent implements RequirementModification, ChangedProperty {
 	public static RequirementPropertyChangeEventBuilder<RequirementLargePropertyChange> builder() {
 		return new Builder(); 
 	}

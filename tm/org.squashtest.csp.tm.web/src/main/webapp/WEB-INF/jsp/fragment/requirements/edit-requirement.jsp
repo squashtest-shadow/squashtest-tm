@@ -348,29 +348,32 @@ that page won't be editable if
 			if (data[3] == 'fat-prop') {
 				var eventId = getAuditTrailTableRowId(data);
 				
-				var proto = $('#show-audit-event-details-template').clone();
+				var proto = $( '#show-audit-event-details-template' ).clone();
 				proto.removeClass('not-displayed')
-					.find( 'a' ).attr( 'id', 'show-audit-event-detail:' + eventId )
-					.click(function() {
-						var dialog = $( "#audit-event-details-dialog" );
-						$( "#audit-event-old-value", dialog ).text(eventId + ' clicked - old');
-						$( "#audit-event-new-value", dialog ).text(eventId + ' clicked - new');
-						dialog.messageDialog("open");
-					/*	$.getJSON('/audit-trail/req/events/id', function(data, textStatus, xhr) {
-							var dialog = $( "#audit-event-details-dialog" );
-							$( "#audit-event-old-value", dialog ).text(data.oldValue);
-							$( "#audit-event-new-value", dialog ).text(data.newValue);
-							dialog.messageDialog("open");
-						}); */
-					});
+					.find( 'a' )
+						.attr( 'id', 'show-audit-event-detail:' + eventId )
+						.click(function() {
+							showPropChangeEventDetails(eventId);
+						});
 				
 				$( ':nth-child(3)', row ).append( proto ); //nth-child is 1-based !
 			}
 	
 			return row;
-		}	
+		}
+		
+		function showPropChangeEventDetails(eventId) {
+			var urlRoot = "${ pageContext.servletContext.contextPath }/audit-trail/requirements/fat-prop-change-events/";
+			
+			$.getJSON( urlRoot + eventId, function(data, textStatus, xhr) {
+				var dialog = $( "#audit-event-details-dialog" );
+				$( "#audit-event-old-value", dialog ).text(eventId + ' clicked - old');
+				$( "#audit-event-new-value", dialog ).text(eventId + ' clicked - new');
+				dialog.messageDialog("open");
+			});
+		}
 	</script>
-	<c:url var="requirementAuditTrailTableModelUrl" value="/audit-trail/requirement/${requirement.id}/events-table" />
+	<c:url var="requirementAuditTrailTableModelUrl" value="/audit-trail/requirements/${requirement.id}/events-table" />
 	<comp:toggle-panel id="requirement-audit-trail-panel" titleKey="audit-trail.requirement.panel.title" open="false">
 		<jsp:attribute name="body">
 			<comp:decorate-ajax-table url="${ requirementAuditTrailTableModelUrl }" tableId="requirement-audit-trail-table" paginate="true" displayLength="10">

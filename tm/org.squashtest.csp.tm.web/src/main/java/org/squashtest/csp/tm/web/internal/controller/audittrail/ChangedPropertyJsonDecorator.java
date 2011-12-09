@@ -19,26 +19,44 @@
  *     along with this software.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-package org.squashtest.csp.tm.service.audit;
+package org.squashtest.csp.tm.web.internal.controller.audittrail;
 
-import java.util.List;
+import javax.validation.constraints.NotNull;
 
-import org.springframework.transaction.annotation.Transactional;
-import org.squashtest.csp.core.infrastructure.collection.PagedCollectionHolder;
-import org.squashtest.csp.core.infrastructure.collection.Paging;
-import org.squashtest.csp.tm.domain.event.RequirementAuditEvent;
-import org.squashtest.csp.tm.domain.event.RequirementLargePropertyChange;
+import org.codehaus.jackson.annotate.JsonIgnore;
+import org.squashtest.csp.tm.domain.event.ChangedProperty;
 
 /**
- * Service for accessing a Requirement's audit trail (ie the Requirement's audit events).
+ * Decorates a {@link ChangedProperty} so that it can be serialized using Jackson.
  * 
  * @author Gregory Fouquet
  * 
  */
-@Transactional(readOnly = true)
-public interface RequirementAuditTrailService {
-	RequirementLargePropertyChange findLargePropertyChangeById(long eventId);
-	
-	PagedCollectionHolder<List<RequirementAuditEvent>> findAllByRequirementIdOrderedByDate(long requirementId, Paging paging);
+public class ChangedPropertyJsonDecorator implements ChangedProperty {
+	/**
+	 * @param changedProperty
+	 */
+	public ChangedPropertyJsonDecorator(@NotNull ChangedProperty changedProperty) {
+		super();
+		this.changedProperty = changedProperty;
+	}
+
+	@JsonIgnore
+	private final ChangedProperty changedProperty;
+
+	@Override
+	public String getPropertyName() {
+		return changedProperty.getPropertyName();
+	}
+
+	@Override
+	public String getOldValue() {
+		return changedProperty.getOldValue();
+	}
+
+	@Override
+	public String getNewValue() {
+		return changedProperty.getNewValue();
+	}
 
 }

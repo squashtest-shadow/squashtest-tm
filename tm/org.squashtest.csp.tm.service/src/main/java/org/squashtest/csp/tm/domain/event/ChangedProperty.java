@@ -19,26 +19,16 @@
  *     along with this software.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-package org.squashtest.csp.tm.service.audit;
-
-import java.util.List;
-
-import org.springframework.transaction.annotation.Transactional;
-import org.squashtest.csp.core.infrastructure.collection.PagedCollectionHolder;
-import org.squashtest.csp.core.infrastructure.collection.Paging;
-import org.squashtest.csp.tm.domain.event.RequirementAuditEvent;
-import org.squashtest.csp.tm.domain.event.RequirementLargePropertyChange;
+package org.squashtest.csp.tm.domain.event;
 
 /**
- * Service for accessing a Requirement's audit trail (ie the Requirement's audit events).
- * 
  * @author Gregory Fouquet
  * 
  */
-@Transactional(readOnly = true)
-public interface RequirementAuditTrailService {
-	RequirementLargePropertyChange findLargePropertyChangeById(long eventId);
-	
-	PagedCollectionHolder<List<RequirementAuditEvent>> findAllByRequirementIdOrderedByDate(long requirementId, Paging paging);
+public interface ChangedProperty {
+	String getPropertyName();
 
+	String getOldValue();
+
+	String getNewValue();
 }

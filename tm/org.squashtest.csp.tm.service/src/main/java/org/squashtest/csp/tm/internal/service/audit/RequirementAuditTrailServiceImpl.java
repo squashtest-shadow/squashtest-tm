@@ -25,11 +25,13 @@ import java.util.List;
 
 import javax.inject.Inject;
 
+import org.hibernate.SessionFactory;
 import org.springframework.stereotype.Service;
 import org.squashtest.csp.core.infrastructure.collection.PagedCollectionHolder;
 import org.squashtest.csp.core.infrastructure.collection.Paging;
 import org.squashtest.csp.core.infrastructure.collection.PagingBackedPagedCollectionHolder;
 import org.squashtest.csp.tm.domain.event.RequirementAuditEvent;
+import org.squashtest.csp.tm.domain.event.RequirementLargePropertyChange;
 import org.squashtest.csp.tm.internal.repository.RequirementAuditEventDao;
 import org.squashtest.csp.tm.service.audit.RequirementAuditTrailService;
 
@@ -41,6 +43,8 @@ import org.squashtest.csp.tm.service.audit.RequirementAuditTrailService;
 public class RequirementAuditTrailServiceImpl implements RequirementAuditTrailService {
 	@Inject
 	private RequirementAuditEventDao auditEventDao;
+	
+	@Inject private SessionFactory sessionFactory;
 
 	/**
 	 * @see org.squashtest.csp.tm.service.audit.RequirementAuditTrailService#findAllByRequirementIdOrderedByDate(long,
@@ -54,6 +58,14 @@ public class RequirementAuditTrailServiceImpl implements RequirementAuditTrailSe
 		long nbOfEvents = auditEventDao.countByRequirementId(requirementId);
 		
 		return new PagingBackedPagedCollectionHolder<List<RequirementAuditEvent>>(paging, nbOfEvents, pagedEvents);
+	}
+
+	/**
+	 * @see org.squashtest.csp.tm.service.audit.RequirementAuditTrailService#findLargePropertyChangeById(long)
+	 */
+	@Override
+	public RequirementLargePropertyChange findLargePropertyChangeById(long eventId) {
+		return (RequirementLargePropertyChange) sessionFactory.getCurrentSession().load(RequirementLargePropertyChange.class, eventId);
 	}
 
 }
