@@ -36,8 +36,8 @@
 		
 <pop:popup id="rename-node-dialog" titleKey="dialog.rename-tree-node.title" >
 	<jsp:attribute name="buttons">
-		<f:message var="label" key="tree.button.rename-node.label" />	
-		'${ label }': function() {
+		<f:message var="label" key="dialog.rename.confirm.label" />	
+		"${ label }": function() {
 			var url = $('${treeSelector}').data('selectedResourceUrl');
 			<jq:ajaxcall url="url" dataType="json" httpMethod="POST" useData="true" successHandler="${successCallback}">
 				<jq:params-bindings newName="#rename-tree-node-text" />

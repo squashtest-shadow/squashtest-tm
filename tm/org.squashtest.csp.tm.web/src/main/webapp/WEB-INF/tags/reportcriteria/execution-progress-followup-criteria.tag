@@ -73,8 +73,8 @@
 	
 </script>
 
-
-<comp:datepicker-manager locale="fr"/>
+<f:message var="squashlocale" key="squashtm.locale" />
+<comp:datepicker-manager locale="${squashlocale}"/>
 <div>
 	<div class="datepicker-panel">
 		<table class="datepicker-table">
