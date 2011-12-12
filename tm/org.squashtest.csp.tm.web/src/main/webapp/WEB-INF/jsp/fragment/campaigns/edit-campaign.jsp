@@ -295,8 +295,8 @@
 			<f:message var="associateLabel" key="campaign.test-plan.manage.button.label"/>
 			<f:message var="removeLabel" key="campaign.test-plan.remove.button.label"/>
 			<f:message var="assignLabel" key="campaign.test-plan.assign.button.label"/>
-			<input id="test-case-button" type="button" value="${associateLabel}"/>
-			<input id="remove-test-case-button" type="button" value="${removeLabel}"/>
+			<input id="test-case-button" type="button" value="${associateLabel}" class="button"/>
+			<input id="remove-test-case-button" type="button" value="${removeLabel}" class="button"/>
 			<input id="assign-test-case-button" type="button" value="${assignLabel}" class="button"/>
 		</c:if>
 	</jsp:attribute>
