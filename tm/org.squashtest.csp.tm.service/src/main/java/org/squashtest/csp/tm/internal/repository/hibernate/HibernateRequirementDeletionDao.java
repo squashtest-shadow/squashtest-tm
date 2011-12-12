@@ -80,10 +80,13 @@ public class HibernateRequirementDeletionDao extends HibernateDeletionDao
 	public void deleteRequirementAuditEvents(List<Long> requirementIds) {
 		if (! requirementIds.isEmpty()){
 			//we borrow the following from RequirementAuditDao
-			List<RequirementAuditEvent> events = executeSelectNamedQuery("requirementAuditEvent.findAllByRequirementIdList", "requirementIds", requirementIds);
+			List<RequirementAuditEvent> events = executeSelectNamedQuery("requirementAuditEvent.findAllByRequirementIds", "ids", requirementIds);
 			List<Long> evtsIds = collectIds(events);
+			//check added by mpagnon (to avoid case when delete requirements folders)
+			if(! evtsIds.isEmpty()){
 			executeDeleteNamedQuery("requirementDeletionDao.deleteRequirementAuditEvent", "eventIds", evtsIds);
-		}
+			}
+			}
 		
 	}
 	
