@@ -117,6 +117,7 @@ function Menu(caller, options){
 		container.parent().hide();	
 		menu.menuOpen = false;
 		$(document).unbind('click', killAllMenus);
+		//this is where I modified the script, to make sure it wont unbind handlers set by ther widgets.
 		$(document).unbind('keydown', keydownHandler);
 	};
 	
