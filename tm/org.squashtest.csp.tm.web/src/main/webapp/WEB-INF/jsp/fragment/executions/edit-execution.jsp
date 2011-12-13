@@ -23,9 +23,9 @@
 <?xml version="1.0" encoding="utf-8" ?>
 <%@ page language="java" contentType="text/html; charset=utf-8" pageEncoding="utf-8"%>
 
-<%@ taglib uri="http://java.sun.com/jsp/jstl/core" prefix="c" %>
-<%@ taglib tagdir="/WEB-INF/tags/jquery" prefix="jq" %>
-<%@ taglib tagdir="/WEB-INF/tags/component" prefix="comp" %>
+<%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core" %>
+<%@ taglib prefix="jq" tagdir="/WEB-INF/tags/jquery" %>
+<%@ taglib prefix="comp" tagdir="/WEB-INF/tags/component" %>
 <%@ taglib prefix="s" uri="http://www.springframework.org/tags" %>
 <%@ taglib prefix="f" uri="http://java.sun.com/jsp/jstl/fmt" %>
 <%@ taglib prefix="aggr" tagdir="/WEB-INF/tags/aggregates" %>
@@ -250,12 +250,12 @@
 			<span><f:message key="execution.execute.header.title" />&nbsp;:&nbsp;</span><a id="execution-name" href="${ executionUrl }/info">&#35;<c:out value="${executionRank} - ${ execution.name }" escapeXml="true"/></a>
 		</h2>
 	</div>
-	<c:if test="${param.hasBackButton}">
+	
 		<div style="float:right;">
 			<f:message var="back" key="fragment.edit.header.button.back" />
-			<input id="back" type="button" value="${ back }" />
+			<input id="back" type="button" value="${ back }" class="button" />
 		</div>	
-	</c:if>
+	
 	
 	<div style="clear:both;"></div>
 </div>
