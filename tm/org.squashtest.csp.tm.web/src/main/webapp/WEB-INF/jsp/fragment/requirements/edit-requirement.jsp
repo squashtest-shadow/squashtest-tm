@@ -374,8 +374,8 @@ that page won't be editable if
 			
 			$.getJSON( urlRoot + eventId, function(data, textStatus, xhr) {
 				var dialog = $( "#audit-event-details-dialog" );
-				$( "#audit-event-old-value", dialog ).text(eventId + ' clicked - old');
-				$( "#audit-event-new-value", dialog ).text(eventId + ' clicked - new');
+				$( "#audit-event-old-value", dialog ).html(data.oldValue);
+				$( "#audit-event-new-value", dialog ).html(data.newValue);
 				dialog.messageDialog("open");
 			});
 		}
