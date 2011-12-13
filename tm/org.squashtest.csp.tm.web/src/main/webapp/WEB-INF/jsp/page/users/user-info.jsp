@@ -277,7 +277,7 @@
 		
 		<comp:toggle-panel id="project-permission-panel" titleKey="user.project-rights.title.label" isContextual="true" open="true">
 			<jsp:attribute name="panelButtons">
-				<input id="add-permission-button" title="${addButtonTitle}" type="button" value="+"/>
+				<input id="add-permission-button" title="${addButtonTitle}" type="button" value="+" class="button"/>
 			</jsp:attribute>
 			
 			<jsp:attribute name="body">

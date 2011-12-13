@@ -25,14 +25,14 @@
     
 <%@ taglib prefix="f" uri="http://java.sun.com/jsp/jstl/fmt" %>
 <%@ taglib prefix="pop" tagdir="/WEB-INF/tags/popup" %>
-<%@ taglib uri="http://java.sun.com/jsp/jstl/fmt" prefix="f"%>
-<%@ taglib uri="http://java.sun.com/jsp/jstl/core" prefix="c"%>
+<%@ taglib prefix="f" uri="http://java.sun.com/jsp/jstl/fmt" %>
+<%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core" %>
 <%@ taglib prefix="s" uri="http://www.springframework.org/tags"%>
-<%@ taglib tagdir="/WEB-INF/tags/component" prefix="comp"%>
+<%@ taglib prefix="comp" tagdir="/WEB-INF/tags/component" %>
 <%@ taglib prefix="layout" tagdir="/WEB-INF/tags/layout"%>
 
 
-
+<f:message var="userAccountPasswordLabel" key='user.account.password.label'/>
 <c:url var="userAccountUrl" value="/user-account/update" />
 
 <layout:info-page-layout titleKey="dialog.settings.account.title" highlightedWorkspace="home">
@@ -47,8 +47,6 @@
 	</jsp:attribute>
 	
 	<jsp:attribute name="informationContent">	
-	
-
 		<comp:decorate-buttons />
 	
 		<script type="text/javascript">
@@ -80,7 +78,7 @@
 				</h2>
 			</div>
 			<div style="float: right;"><f:message var="back" key="fragment.edit.header.button.back" /> 
-				<input id="back" type="button" value="${ back }" />
+				<input id="back" type="button" value="${ back }" class="button"/>
 			</div>
 	
 			<div style="clear: both;"></div>
@@ -92,7 +90,6 @@
 			<comp:simple-jeditable  targetUrl="${userAccountUrl}" componentId="user-account-email" />
 	
 			<comp:toggle-panel id="basic-info-panel" titleKey="user.account.basicinfo.label" open="true">
-
 			
 				<jsp:attribute name="body">
 					
@@ -112,7 +109,7 @@
 						<span id="user-account-email">${user.email}</span>
 					</div>
 					
-					<input type="button" class="button" id="change-password-button" value="<f:message key='user.account.password.label'/>"/>									
+					<input type="button" id="change-password-button" value="${ userAccountPasswordLabel }" class="button" />									
 													
 				</jsp:attribute>
 			</comp:toggle-panel>			
