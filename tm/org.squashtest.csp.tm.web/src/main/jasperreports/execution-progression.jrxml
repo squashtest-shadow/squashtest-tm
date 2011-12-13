@@ -146,7 +146,7 @@
 	</field>
 	<sortField name="name"/>
 	<columnHeader>
-		<band height="20" splitType="Stretch">
+		<band height="20">
 			<componentElement>
 				<reportElement key="table 2" style="table 2" x="0" y="0" width="736" height="20"/>
 				<jr:table xmlns:jr="http://jasperreports.sourceforge.net/jasperreports/components" xsi:schemaLocation="http://jasperreports.sourceforge.net/jasperreports/components http://jasperreports.sourceforge.net/xsd/components.xsd">
