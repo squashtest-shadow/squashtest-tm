@@ -173,7 +173,7 @@
 		
 		/* ********************************************** batch deletion-related queries **************************************************** */
 
-		@NamedQuery(name = "testCase.findAllAttachmentLists", query ="select testCase.attachmentCollection.id from TestCase testCase where testCase.id in (:testCaseIds)"),
+		@NamedQuery(name = "testCase.findAllAttachmentLists", query ="select testCase.attachmentList.id from TestCase testCase where testCase.id in (:testCaseIds)"),
 		@NamedQuery(name = "testStep.findAllAttachmentLists", query ="select step.attachmentList.id from ActionTestStep step where step.id in (:testStepIds)"),
 
 		@NamedQuery(name = "attachment.removeContents", query = "delete AttachmentContent ac where ac.id in (:contentIds)"),
@@ -184,7 +184,7 @@
 		@NamedQuery(name = "testCase.removeAllCallSteps", query = "delete CallTestStep cts where  cts.id in (:stepIds)"),	
 		@NamedQuery(name = "testCase.removeAllActionSteps", query = "delete ActionTestStep ats where ats.id in (:stepIds)"),	
 
-		@NamedQuery(name = "requirement.findAllAttachmentLists", query ="select requirement.attachmentCollection.id from Requirement requirement where requirement.id in (:requirementIds)"),
+		@NamedQuery(name = "requirement.findAllAttachmentLists", query ="select requirement.attachmentList.id from Requirement requirement where requirement.id in (:requirementIds)"),
 		@NamedQuery(name = "requirementDeletionDao.deleteRequirementAuditEvent", query="delete RequirementAuditEvent rae where rae.id in (:eventIds)")
 
 })

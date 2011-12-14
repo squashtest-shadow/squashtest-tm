@@ -23,17 +23,11 @@ package org.squashtest.csp.tm.domain.attachment;
 /**
  * Interface for objects which can hold attachments.
  */
-public interface Attachable {
-
-	// TODO should be attachmentlist
-	AttachmentList getAttachmentCollection();
-
-	// TODO should be attachments
-	boolean hasAttachments();
-
-	// TODO should be attachmentListId
-	Long getAttachmentCollectionId();
-
-	@Deprecated
-	int getNbAttachments();
+public interface AttachmentHolder {
+	/**
+	 * Should return the container for this object's attachments. Should never return <code>null</code>.
+	 * 
+	 * @return the {@link AttachmentList} of this object.
+	 */
+	AttachmentList getAttachmentList();
 }

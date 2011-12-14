@@ -41,7 +41,7 @@ import javax.persistence.Temporal;
 import javax.persistence.TemporalType;
 
 import org.hibernate.annotations.Formula;
-import org.squashtest.csp.tm.domain.attachment.Attachable;
+import org.squashtest.csp.tm.domain.attachment.AttachmentHolder;
 import org.squashtest.csp.tm.domain.attachment.AttachmentList;
 import org.squashtest.csp.tm.domain.audit.Auditable;
 import org.squashtest.csp.tm.domain.bugtracker.Bugged;
@@ -54,7 +54,7 @@ import org.squashtest.csp.tm.domain.testcase.TestStepVisitor;
 
 @Entity
 @Auditable
-public class ExecutionStep implements Attachable, Bugged, TestStepVisitor {
+public class ExecutionStep implements AttachmentHolder, Bugged, TestStepVisitor {
 	@Id
 	@GeneratedValue
 	@Column(name = "EXECUTION_STEP_ID")
@@ -94,7 +94,7 @@ public class ExecutionStep implements Attachable, Bugged, TestStepVisitor {
 	/* attachment attributes */
 	@OneToOne(cascade = { CascadeType.PERSIST, CascadeType.MERGE })
 	@JoinColumn(name = "ATTACHMENT_LIST_ID")
-	private final AttachmentList attachmentCollection = new AttachmentList();
+	private final AttachmentList attachmentList = new AttachmentList();
 
 	/* issues attributes */
 
@@ -182,23 +182,8 @@ public class ExecutionStep implements Attachable, Bugged, TestStepVisitor {
 	/* ********************* interface Attachable impl ****************** */
 
 	@Override
-	public Long getAttachmentCollectionId() {
-		return attachmentCollection.getId();
-	}
-
-	@Override
-	public AttachmentList getAttachmentCollection() {
-		return attachmentCollection;
-	}
-
-	@Override
-	public boolean hasAttachments() {
-		return attachmentCollection.hasAttachments();
-	}
-
-	@Override
-	public int getNbAttachments() {
-		return getAttachmentCollection().size();
+	public AttachmentList getAttachmentList() {
+		return attachmentList;
 	}
 
 	/* *** issues code *** */

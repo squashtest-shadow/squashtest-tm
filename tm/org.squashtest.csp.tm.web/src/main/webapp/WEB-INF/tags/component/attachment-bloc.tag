@@ -34,15 +34,15 @@
 
 
 <s:url var="attachmentsList" value="/attach-list/{listId}/attachments/display">
-	<s:param name="listId" value="${entity.attachmentCollectionId}"></s:param>
+	<s:param name="listId" value="${entity.attachmentList.id}"></s:param>
 </s:url>
 
 <s:url var="uploadAttachmentUrl" value="/attach-list/{listId}/attachments/upload">
-	<s:param name="listId" value="${entity.attachmentCollectionId}"></s:param>
+	<s:param name="listId" value="${entity.attachmentList.id}"></s:param>
 </s:url>
 
 <s:url var="attachmentManagerUrl" value="/attach-list/{listId}/attachments/manager">
-	<s:param name="listId" value="${entity.attachmentCollectionId}"></s:param>
+	<s:param name="listId" value="${entity.attachmentList.id}"></s:param>
 	<s:param name="workspace" value="${workspaceName}" ></s:param>
 </s:url>
 
@@ -71,7 +71,7 @@
 		
 	</script>
 
-<comp:toggle-panel id="attachment-panel" titleKey="attachment.panel.title" isContextual="true" open="${entity.nbAttachments>0}">
+<comp:toggle-panel id="attachment-panel" titleKey="attachment.panel.title" isContextual="true" open="${ entity.attachmentList.notEmpty }">
 	<jsp:attribute name="panelButtons">
 		<c:if test="${ editable }">
 			<f:message var="uploadAttachment" key="attachment.button.upload.label" />

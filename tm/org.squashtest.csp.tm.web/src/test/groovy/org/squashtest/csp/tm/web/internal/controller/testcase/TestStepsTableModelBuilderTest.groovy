@@ -43,7 +43,7 @@ class TestStepsTableModelBuilderTest extends Specification {
 
 		use(ReflectionCategory) {
 			TestStep.set field: 'id', of: step, to: 10L
-			AttachmentList.set field: 'id', of: step.attachmentCollection, to: 100L
+			AttachmentList.set field: 'id', of: step.attachmentList, to: 100L
 		}
 
 		when:
@@ -53,12 +53,12 @@ class TestStepsTableModelBuilderTest extends Specification {
 		data[0] == ""
 		data[1] == stepIndex
 		data[2] == step.id
-		data[3] == step.attachmentCollection.id
+		data[3] == step.attachmentList.id
 		data[4] == step.action
 		data[5] == step.expectedResult
 		data[6] == ""
 		data[7] == ""
-		data[8] == step.attachmentCollection.size()
+		data[8] == step.attachmentList.size()
 		data[9] == "action"
 		data[10] == null
 	}

@@ -32,7 +32,7 @@ class TestStepTest extends Specification {
 
 
 		then:
-		!testStep.hasAttachments()
+		!testStep.attachmentList.hasAttachments()
 	}
 
 	def "step should say it has attachments"() {
@@ -41,9 +41,9 @@ class TestStepTest extends Specification {
 
 		when:
 		Attachment att = new Attachment()
-		testStep.getAttachmentCollection().addAttachment att
+		testStep.getAttachmentList().addAttachment att
 
 		then:
-		testStep.hasAttachments()
+		testStep.attachmentList.hasAttachments()
 	}
 }

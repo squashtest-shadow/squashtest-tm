@@ -81,9 +81,16 @@ public class AttachmentList {
 	}
 
 	public boolean hasAttachments() {
-		return (attachments.size() > 0);
+		return !attachments.isEmpty();
 	}
-
+	
+	/**
+	 * Identical to {@link #hasAttachments()} but can be reached through EL...
+	 * @return
+	 */
+	public boolean isNotEmpty() {
+		return hasAttachments();
+	}
 	public Set<Attachment> getAllAttachments() {
 		return attachments;
 	}

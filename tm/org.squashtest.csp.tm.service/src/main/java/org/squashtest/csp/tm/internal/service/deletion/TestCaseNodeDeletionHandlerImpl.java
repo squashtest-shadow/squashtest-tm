@@ -175,7 +175,7 @@ public class TestCaseNodeDeletionHandlerImpl extends
 
 
 	private void deleteActionStep(ActionTestStep step){
-		deletionDao.removeAttachmentList(step.getAttachmentCollection());
+		deletionDao.removeAttachmentList(step.getAttachmentList());
 		deletionDao.removeEntity(step);
 	}
 

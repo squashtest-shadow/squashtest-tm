@@ -36,14 +36,14 @@ import javax.persistence.OrderColumn;
 import javax.persistence.PrimaryKeyJoinColumn;
 import javax.validation.constraints.NotNull;
 
-import org.squashtest.csp.tm.domain.attachment.Attachable;
 import org.squashtest.csp.tm.domain.attachment.Attachment;
+import org.squashtest.csp.tm.domain.attachment.AttachmentHolder;
 import org.squashtest.csp.tm.domain.attachment.AttachmentList;
 import org.squashtest.csp.tm.domain.testcase.TestCase;
 
 @Entity
 @PrimaryKeyJoinColumn(name = "CLN_ID")
-public class Campaign extends CampaignLibraryNode implements Attachable {
+public class Campaign extends CampaignLibraryNode implements AttachmentHolder {
 	@Embedded
 	private ScheduledTimePeriod scheduledPeriod = new ScheduledTimePeriod();
 	@Embedded
@@ -61,7 +61,7 @@ public class Campaign extends CampaignLibraryNode implements Attachable {
 
 	@OneToOne(cascade = { CascadeType.PERSIST, CascadeType.MERGE })
 	@JoinColumn(name = "ATTACHMENT_LIST_ID")
-	private final AttachmentList attachmentCollection = new AttachmentList();
+	private final AttachmentList attachmentList = new AttachmentList();
 
 	public Campaign() {
 		super();
@@ -207,23 +207,8 @@ public class Campaign extends CampaignLibraryNode implements Attachable {
 	}
 
 	@Override
-	public Long getAttachmentCollectionId() {
-		return attachmentCollection.getId();
-	}
-
-	@Override
-	public AttachmentList getAttachmentCollection() {
-		return attachmentCollection;
-	}
-
-	@Override
-	public boolean hasAttachments() {
-		return (getNbAttachments() > 0);
-	}
-
-	@Override
-	public int getNbAttachments() {
-		return getAttachmentCollection().size();
+	public AttachmentList getAttachmentList() {
+		return attachmentList;
 	}
 
 	@Override
@@ -241,9 +226,9 @@ public class Campaign extends CampaignLibraryNode implements Attachable {
 		}
 
 
-		for (Attachment tcAttach : this.getAttachmentCollection().getAllAttachments()) {
+		for (Attachment tcAttach : this.getAttachmentList().getAllAttachments()) {
 			Attachment atCopy = tcAttach.hardCopy();
-			copy.getAttachmentCollection().addAttachment(atCopy);
+			copy.getAttachmentList().addAttachment(atCopy);
 		}
 
 		for (CampaignTestPlanItem itemTestPlan : this.getTestPlan()) {

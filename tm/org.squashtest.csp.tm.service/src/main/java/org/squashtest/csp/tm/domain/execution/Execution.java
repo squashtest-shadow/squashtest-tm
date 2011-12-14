@@ -45,7 +45,7 @@ import javax.persistence.TemporalType;
 import javax.validation.constraints.NotNull;
 
 import org.hibernate.annotations.Formula;
-import org.squashtest.csp.tm.domain.attachment.Attachable;
+import org.squashtest.csp.tm.domain.attachment.AttachmentHolder;
 import org.squashtest.csp.tm.domain.attachment.AttachmentList;
 import org.squashtest.csp.tm.domain.audit.Auditable;
 import org.squashtest.csp.tm.domain.bugtracker.Bugged;
@@ -57,7 +57,7 @@ import org.squashtest.csp.tm.domain.testcase.TestCaseExecutionMode;
 
 @Auditable
 @Entity
-public class Execution implements Attachable, Bugged {
+public class Execution implements AttachmentHolder, Bugged {
 
 	@Id
 	@GeneratedValue
@@ -104,7 +104,7 @@ public class Execution implements Attachable, Bugged {
 
 	@OneToOne(cascade = { CascadeType.PERSIST, CascadeType.MERGE } )
 	@JoinColumn(name = "ATTACHMENT_LIST_ID")
-	private final AttachmentList attachmentCollection = new AttachmentList();
+	private final AttachmentList attachmentList = new AttachmentList();
 	/* ***********************   / attachement attributes ************************ */
 
 
@@ -215,28 +215,10 @@ public class Execution implements Attachable, Bugged {
 
 
 	/* *************** Attachable implementation ****************** */
-
 	@Override
-	public Long getAttachmentCollectionId() {
-		return attachmentCollection.getId();
+	public AttachmentList getAttachmentList() {
+		return attachmentList;
 	}
-
-
-	@Override
-	public AttachmentList getAttachmentCollection() {
-		return attachmentCollection;
-	}
-
-	@Override
-	public boolean hasAttachments(){
-		return attachmentCollection.hasAttachments();
-	}
-
-	@Override
-	public int getNbAttachments() {
-		return getAttachmentCollection().size();
-	}
-
 
 	public IterationTestPlanItem getTestPlan(){
 		return testPlan;

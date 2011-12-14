@@ -154,7 +154,7 @@ public class CampaignDeletionHandlerImpl extends
 		//saving the attachment list for later.
 		List<AttachmentList> attachLists = new LinkedList<AttachmentList>();
 		for (Campaign campaign : campaigns){
-			attachLists.add(campaign.getAttachmentCollection());
+			attachLists.add(campaign.getAttachmentList());
 		}
 		
 		
@@ -203,7 +203,7 @@ public class CampaignDeletionHandlerImpl extends
 	public void deleteExecution(Execution execution) {
 		
 		deleteIssues(execution);
-		deletionDao.removeAttachmentList(execution.getAttachmentCollection());
+		deletionDao.removeAttachmentList(execution.getAttachmentList());
 		
 		deleteExecSteps(execution);
 		execution.getTestPlan().removeExecution(execution); 
@@ -260,7 +260,7 @@ public class CampaignDeletionHandlerImpl extends
 	private void _deleteIterations(List<Iteration> iterations){
 		for (Iteration iteration : iterations){
 			_deleteIterationTestPlan(iteration.getTestPlans());			
-			deletionDao.removeAttachmentList(iteration.getAttachmentCollection());
+			deletionDao.removeAttachmentList(iteration.getAttachmentList());
 			//iteration.getCampaign().removeIteration(iteration);
 			deletionDao.removeEntity(iteration);
 		}
@@ -291,7 +291,7 @@ public class CampaignDeletionHandlerImpl extends
 		for (Execution execution : executions ){
 			deleteIssues(execution);
 			
-			deletionDao.removeAttachmentList(execution.getAttachmentCollection());
+			deletionDao.removeAttachmentList(execution.getAttachmentList());
 			
 			deleteExecSteps(execution);
 			deletionDao.removeEntity(execution);
@@ -308,7 +308,7 @@ public class CampaignDeletionHandlerImpl extends
 	public void deleteExecSteps(Execution execution){
 				
 		for (ExecutionStep step : execution.getSteps()){
-			deletionDao.removeAttachmentList(step.getAttachmentCollection());
+			deletionDao.removeAttachmentList(step.getAttachmentList());
 			
 			deleteIssues(step);
 			

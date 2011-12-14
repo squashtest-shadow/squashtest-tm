@@ -32,14 +32,14 @@ import javax.persistence.OneToOne;
 import javax.persistence.PrimaryKeyJoinColumn;
 
 import org.hibernate.validator.constraints.NotBlank;
-import org.squashtest.csp.tm.domain.attachment.Attachable;
+import org.squashtest.csp.tm.domain.attachment.AttachmentHolder;
 import org.squashtest.csp.tm.domain.attachment.Attachment;
 import org.squashtest.csp.tm.domain.attachment.AttachmentList;
 import org.squashtest.csp.tm.domain.execution.ExecutionStep;
 
 @Entity
 @PrimaryKeyJoinColumn(name = "TEST_STEP_ID")
-public class ActionTestStep extends TestStep implements Attachable {
+public class ActionTestStep extends TestStep implements AttachmentHolder {
 	@Lob
 	@Basic(optional = false)
 	private String action;
@@ -85,9 +85,9 @@ public class ActionTestStep extends TestStep implements Attachable {
 		newTestStep.expectedResult = this.expectedResult;
 
 		// copy the attachments
-		for (Attachment tcAttach : this.getAttachmentCollection().getAllAttachments()) {
+		for (Attachment tcAttach : this.getAttachmentList().getAllAttachments()) {
 			Attachment clone = tcAttach.hardCopy();
-			newTestStep.getAttachmentCollection().addAttachment(clone);
+			newTestStep.getAttachmentList().addAttachment(clone);
 		}
 
 		return newTestStep;
@@ -100,25 +100,10 @@ public class ActionTestStep extends TestStep implements Attachable {
 	}
 
 	@Override
-	public Long getAttachmentCollectionId() {
-		return attachmentList.getId();
-	}
-
-	@Override
-	public AttachmentList getAttachmentCollection() {
+	public AttachmentList getAttachmentList() {
 		return attachmentList;
 	}
 
-	@Override
-	public boolean hasAttachments() {
-		return getAttachmentCollection().hasAttachments();
-	}
-
-	@Override
-	public int getNbAttachments() {
-		return getAttachmentCollection().size();
-	}
-	
 	@Override
 	public List<ExecutionStep> getExecutionStep(){
 		List<ExecutionStep> returnList = new ArrayList<ExecutionStep>();

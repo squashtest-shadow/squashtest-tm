@@ -37,7 +37,7 @@ import javax.validation.constraints.NotNull;
 
 import org.squashtest.csp.tm.domain.IllegalRequirementModificationException;
 import org.squashtest.csp.tm.domain.RequirementNotLinkableException;
-import org.squashtest.csp.tm.domain.attachment.Attachable;
+import org.squashtest.csp.tm.domain.attachment.AttachmentHolder;
 import org.squashtest.csp.tm.domain.attachment.Attachment;
 import org.squashtest.csp.tm.domain.attachment.AttachmentList;
 import org.squashtest.csp.tm.domain.testcase.TestCase;
@@ -54,7 +54,7 @@ import org.squashtest.csp.tm.domain.testcase.TestCase;
 
 @Entity
 @PrimaryKeyJoinColumn(name = "RLN_ID")
-public class Requirement extends RequirementLibraryNode implements Attachable {
+public class Requirement extends RequirementLibraryNode implements AttachmentHolder {
 	/**
 	 * Collection of {@link Test Cases} verifying by this {@link Requirement}
 	 */
@@ -76,7 +76,7 @@ public class Requirement extends RequirementLibraryNode implements Attachable {
 
 	@OneToOne(cascade = { CascadeType.ALL }, orphanRemoval = true)
 	@JoinColumn(name = "ATTACHMENT_LIST_ID")
-	private final AttachmentList attachmentCollection = new AttachmentList();
+	private final AttachmentList attachmentList = new AttachmentList();
 
 	public Requirement() {
 		super();
@@ -133,23 +133,8 @@ public class Requirement extends RequirementLibraryNode implements Attachable {
 	}
 
 	@Override
-	public Long getAttachmentCollectionId() {
-		return attachmentCollection.getId();
-	}
-
-	@Override
-	public AttachmentList getAttachmentCollection() {
-		return attachmentCollection;
-	}
-
-	@Override
-	public boolean hasAttachments() {
-		return (getNbAttachments() > 0);
-	}
-
-	@Override
-	public int getNbAttachments() {
-		return getAttachmentCollection().size();
+	public AttachmentList getAttachmentList() {
+		return attachmentList;
 	}
 
 	/***
@@ -183,9 +168,9 @@ public class Requirement extends RequirementLibraryNode implements Attachable {
 			clone.addVerifyingTestCase(testCase);
 		}
 
-		for (Attachment tcAttach : this.getAttachmentCollection().getAllAttachments()) {
+		for (Attachment tcAttach : this.getAttachmentList().getAllAttachments()) {
 			Attachment atCopy = tcAttach.hardCopy();
-			clone.getAttachmentCollection().addAttachment(atCopy);
+			clone.getAttachmentList().addAttachment(atCopy);
 		}
 
 		clone.notifyAssociatedWithProject(this.getProject());

@@ -46,7 +46,7 @@ import javax.validation.constraints.NotNull;
 import org.hibernate.validator.constraints.NotBlank;
 import org.squashtest.csp.core.security.annotation.AclConstrainedObject;
 import org.squashtest.csp.tm.domain.UnknownEntityException;
-import org.squashtest.csp.tm.domain.attachment.Attachable;
+import org.squashtest.csp.tm.domain.attachment.AttachmentHolder;
 import org.squashtest.csp.tm.domain.attachment.AttachmentList;
 import org.squashtest.csp.tm.domain.audit.Auditable;
 import org.squashtest.csp.tm.domain.execution.Execution;
@@ -57,7 +57,7 @@ import org.squashtest.csp.tm.domain.testcase.TestCase;
 @Auditable
 @Entity
 @SoftDeletable
-public class Iteration implements Attachable {
+public class Iteration implements AttachmentHolder {
 	@Id
 	@GeneratedValue
 	@Column(name = "ITERATION_ID")
@@ -108,7 +108,7 @@ public class Iteration implements Attachable {
 
 	@OneToOne(cascade = { CascadeType.PERSIST, CascadeType.MERGE } )
 	@JoinColumn(name = "ATTACHMENT_LIST_ID")
-	private final AttachmentList attachmentCollection = new AttachmentList();
+	private final AttachmentList attachmentList = new AttachmentList();
 	/* ***********************   / attachment attributes ************************ */
 
 	public List<IterationTestPlanItem> getTestPlans(){
@@ -401,25 +401,9 @@ public class Iteration implements Attachable {
 	/* *************** Attachable implementation ****************** */
 
 	@Override
-	public Long getAttachmentCollectionId() {
-		return attachmentCollection.getId();
+	public AttachmentList getAttachmentList() {
+		return attachmentList;
 	}
-
-	@Override
-	public AttachmentList getAttachmentCollection() {
-		return attachmentCollection;
-	}
-
-	@Override
-	public boolean hasAttachments() {
-		return attachmentCollection.hasAttachments();
-	}
-
-	@Override
-	public int getNbAttachments() {
-		return getAttachmentCollection().size();
-	}
-
 
 	@AclConstrainedObject
 	public Project getProject(){

@@ -111,8 +111,8 @@ public class ExecutionModificationController {
 						formatDate(item.getLastExecutedOn(),locale),
 						item.getLastExecutedBy(),
 						item.getComment(),
-						item.getAttachmentCollection().size(),
-						item.getAttachmentCollectionId()
+						item.getAttachmentList().size(),
+						item.getAttachmentList().getId()
 						};
 			}
 		}.buildDataModel(holder, filter.getFirstItemIndex()+1, params.getsEcho());

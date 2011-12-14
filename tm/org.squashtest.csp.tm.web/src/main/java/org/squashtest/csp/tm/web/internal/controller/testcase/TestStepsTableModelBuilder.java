@@ -61,12 +61,12 @@ class TestStepsTableModelBuilder extends DataTableModelHelper<TestStep> implemen
 				"", 
 				getCurrentIndex(), 
 				visited.getId(), 
-				visited.getAttachmentCollectionId(),
+				visited.getAttachmentList().getId(),
 				visited.getAction(), 
 				visited.getExpectedResult(), 
 				"",
 				"",
-				visited.getAttachmentCollection().size(),
+				visited.getAttachmentList().size(),
 				"action",
 				null
 		};

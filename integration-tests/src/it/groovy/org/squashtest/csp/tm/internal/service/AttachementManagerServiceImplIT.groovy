@@ -75,18 +75,18 @@ class AttachmentManagerServiceImplIT extends HibernateServiceSpecification {
 
 		folderId = folder.id;
 		testCaseId= testCase.id;
-		attachListId = testCase.getAttachmentCollectionId();
+		attachListId = testCase.attachmentList.id;
 	}
 
 
 
-	def "should create an AttachmentCollection along with a TestCase"(){
+	def "should create an AttachmentList along with a TestCase"(){
 		given :
 
 
 		when :
-		def attachListId = service.findById(testCaseId).getAttachmentCollectionId();
-		def attachList = service.findById(testCaseId).getAttachmentCollection();
+		def attachListId = service.findById(testCaseId).attachmentList.id;
+		def attachList = service.findById(testCaseId).getAttachmentList();
 
 		then :
 		attachList != null
@@ -266,53 +266,19 @@ class AttachmentManagerServiceImplIT extends HibernateServiceSpecification {
 
 		attachment.setContent(content);
 
-
 		when :
 		// works because method marked transactional ! it should throw a lazy ex because fetch does not initialize attachments !
 		TestCase testCase = service.findById(testCaseId);
-		def shouldBeFalse = testCase.hasAttachments();
+		def shouldBeFalse = testCase.attachmentList.hasAttachments()
 
 		attachService.addAttachment(attachListId, attachment);
 
 		TestCase testCase2 = service.findById(testCaseId);
-		def shouldBeTrue = testCase2.hasAttachments();
-
+		def shouldBeTrue = testCase2.attachmentList.hasAttachments()
 
 		then :
 		shouldBeFalse == false;
 		shouldBeTrue == true;
 	}
 
-
-
-	/* 
-	 * note about that test : even if we refetch from the service the AttachmentContent, it's still the same instance
-	 * of the original InputStream, maybe due to Hibernate cache because the transaction is open all the way.
-	 * 
-	 * Until it's fixed this test will fail. Hopefully in real situation the thing behave well because the 
-	 * transaction is opened or closed when appropriate.
-	 */
-	/*
-	 def "should clone an attachment"(){
-	 given :
-	 Attachment attachment = new Attachment("attachment.doc");
-	 attachment.setType();
-	 byte[] bytes = randomBytes(3)
-	 AttachmentContent content = new AttachmentContent()
-	 InputStream stream = new ByteArrayInputStream(bytes);
-	 content.setContent(stream);
-	 attachment.setContent(content);
-	 attachService.addAttachment(attachListId, attachment);
-	 when :
-	 Attachment reattach = attachment.clone();
-	 attachService.addAttachment(attachListId, reattach)
-	 then :
-	 InputStream restream = attachService.getAttachmentContent(reattach.id);
-	 //damn reset
-	 restream.reset();
-	 byte[] res = new byte[3]
-	 restream.read(res,0,3)
-	 res == bytes
-	 }
-	 */
 }

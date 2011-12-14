@@ -43,7 +43,7 @@ import javax.persistence.PrimaryKeyJoinColumn;
 import javax.validation.constraints.NotNull;
 
 import org.squashtest.csp.tm.domain.UnknownEntityException;
-import org.squashtest.csp.tm.domain.attachment.Attachable;
+import org.squashtest.csp.tm.domain.attachment.AttachmentHolder;
 import org.squashtest.csp.tm.domain.attachment.Attachment;
 import org.squashtest.csp.tm.domain.attachment.AttachmentList;
 import org.squashtest.csp.tm.domain.requirement.Requirement;
@@ -54,7 +54,7 @@ import org.squashtest.csp.tm.domain.requirement.Requirement;
  */
 @Entity
 @PrimaryKeyJoinColumn(name = "TCLN_ID")
-public class TestCase extends TestCaseLibraryNode implements Attachable {
+public class TestCase extends TestCaseLibraryNode implements AttachmentHolder {
 	private static final String CLASS_NAME = "org.squashtest.csp.tm.domain.testcase.TestCase";
 	private static final String SIMPLE_CLASS_NAME = "TestCase";
 
@@ -78,7 +78,7 @@ public class TestCase extends TestCaseLibraryNode implements Attachable {
 
 	@OneToOne(cascade = { CascadeType.PERSIST, CascadeType.MERGE })
 	@JoinColumn(name = "ATTACHMENT_LIST_ID")
-	private final AttachmentList attachmentCollection = new AttachmentList();
+	private final AttachmentList attachmentList = new AttachmentList();
 	
 	@Enumerated(EnumType.STRING) @Basic(optional=false)
 	private TestCaseImportance importance = LOW;
@@ -163,28 +163,12 @@ public class TestCase extends TestCaseLibraryNode implements Attachable {
 	}
 
 	@Override
-	public Long getAttachmentCollectionId() {
-		return attachmentCollection.getId();
-	}
-
-	@Override
-	public AttachmentList getAttachmentCollection() {
-		return attachmentCollection;
-	}
-
-	@Override
-	public boolean hasAttachments() {
-		return getAttachmentCollection().hasAttachments();
-	}
-
-	@Override
-	public int getNbAttachments() {
-
-		return getAttachmentCollection().size();
+	public AttachmentList getAttachmentList() {
+		return attachmentList;
 	}
 
 	public Set<Attachment> getAllAttachments() {
-		return attachmentCollection.getAllAttachments();
+		return attachmentList.getAllAttachments();
 	}
 
 	@Override
@@ -200,9 +184,9 @@ public class TestCase extends TestCaseLibraryNode implements Attachable {
 	}
 
 	private void addCopiesOfAttachments(TestCase source) {
-		for (Attachment tcAttach : source.getAttachmentCollection().getAllAttachments()) {
+		for (Attachment tcAttach : source.getAttachmentList().getAllAttachments()) {
 			Attachment atCopy = tcAttach.hardCopy();
-			this.getAttachmentCollection().addAttachment(atCopy);
+			this.getAttachmentList().addAttachment(atCopy);
 		}
 	}
 

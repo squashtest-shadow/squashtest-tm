@@ -154,7 +154,7 @@ public class CustomIterationModificationServiceImpl implements CustomIterationMo
 		// copy the attachments
 		for (Attachment tcAttach : testCase.getAllAttachments()) {
 			Attachment clone = tcAttach.hardCopy();
-			execution.getAttachmentCollection().addAttachment(clone);
+			execution.getAttachmentList().addAttachment(clone);
 		}
 
 		executionDao.persist(execution);
