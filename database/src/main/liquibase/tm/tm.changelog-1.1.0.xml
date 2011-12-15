@@ -176,8 +176,38 @@
 			);
 		</sql>
 	</changeSet>
+	
+	<changeSet id="tm-1.1.0.11" author="gfouquet">
+		<comment>Test Cases now cover Requirements versions. We create a new association table and populate it from TEST_CASE_REQUIREMENT_LINK</comment>
+		<createTable tableName="TEST_CASE_VERIFIED_REQUIREMENT_VERSION">
+			<column name="VERIFIED_REQ_VERSION_ID" type="BIGINT" remarks="FK to the verified requirement">
+				<constraints references="REQUIREMENT_VERSION(REQ_VERSION_ID)" foreignKeyName="fk_verified_req_version" />
+			</column>
+			
+			<column name="VERIFYING_TEST_CASE_ID" type="BIGINT" remarks="FK to the verifying test case">
+				<constraints references="TEST_CASE(TCLN_ID)" foreignKeyName="fk_verifying_test_case" />
+			</column>
+			
+		</createTable>
+		<sql>
+			insert into TEST_CASE_VERIFIED_REQUIREMENT_VERSION (VERIFYING_TEST_CASE_ID, VERIFIED_REQ_VERSION_ID)
+			select TEST_CASE_ID, REQ_VERSION_ID
+			from TEST_CASE_REQUIREMENT_LINK tcrl
+			inner join REQUIREMENT_VERSION rv on rv.REQUIREMENT_ID = tcrl.REQUIREMENT_ID
+		</sql>
+		<addNotNullConstraint tableName="TEST_CASE_VERIFIED_REQUIREMENT_VERSION" columnName="VERIFIED_REQ_VERSION_ID" columnDataType="BIGINT(20)"/>
+		<addNotNullConstraint tableName="TEST_CASE_VERIFIED_REQUIREMENT_VERSION" columnName="VERIFYING_TEST_CASE_ID" columnDataType="BIGINT(20)"/>
+		<addUniqueConstraint tableName="TEST_CASE_VERIFIED_REQUIREMENT_VERSION" columnNames="VERIFIED_REQ_VERSION_ID, VERIFYING_TEST_CASE_ID" constraintName="uc_tc_verifies_req_version"/>
+	</changeSet>
 
-	<changeSet id="tm-1.1.0.11" author="bsiri">
+	<changeSet id="tm-1.1.0.12" author="gfouquet">
+		<comment>Trashes the now useless TEST_CASE_REQUIREMENT_LINK table</comment>
+		<dropForeignKeyConstraint baseTableName="TEST_CASE_REQUIREMENT_LINK" constraintName="fk_tc_req_tc"/>
+		<dropForeignKeyConstraint baseTableName="TEST_CASE_REQUIREMENT_LINK" constraintName="fk_tc_req_req"/>
+		<dropTable tableName="TEST_CASE_REQUIREMENT_LINK"/>
+	</changeSet>
+
+	<changeSet id="tm-1.1.0.12" author="bsiri">
 		<comment>This table is the main table of the event logging system, in other words the history of a business entity. As for Squash TM
 		version 1.1.0 and until further notice, we log here requirement modifications only. It may grows to log other entities in the future, ie test cases.
 		Note : the application will fill this table itself, since we don't want triggers in the database.
@@ -205,7 +235,7 @@
 		</createTable>
 	</changeSet>
 	
-	<changeSet id="tm-1.1.0.12" author="bsiri">
+	<changeSet id="tm-1.1.0.13" author="bsiri">
 		<comment>It is a child table of REQUIREMENT_AUDIT_EVENT. This table exists for the sole purpose of qualifying a given event in a creation event, as such its content is empty (the sheer presence
 		of an entry in this table is sufficient)</comment>
 		<createTable tableName="REQUIREMENT_CREATION">
@@ -219,7 +249,7 @@
 	</changeSet>
 	
 	
-	<changeSet id="tm-1.1.0.13" author="bsiri">
+	<changeSet id="tm-1.1.0.14" author="bsiri">
 		<comment>
 			This is a child table of REQUIREMENT_AUDIT_EVENT. This table will log updates on the target entity. Not every operations will be logged. 
 			Note 1 : As for version 1.1.0 and until further notice for the sake of simplicity we log both the former and the new value. It may change in the future.
@@ -243,7 +273,7 @@
 	
 	</changeSet>
 	
-	<changeSet id="tm-1.1.0.14" author="bsiri">
+	<changeSet id="tm-1.1.0.15" author="bsiri">
 		<comment>
 			This is a child table of REQUIREMENT_AUDIT_EVENT. This table will log updates on the target entity. Not every operations will be logged. 
 			Note 1 : As for version 1.1.0 and until further notice for the sake of simplicity we log both the former and the new value. It may change in the future.
@@ -267,7 +297,7 @@
 	
 	</changeSet>
 	
-	<changeSet id="tm-1.1.0.15" author="bsiri">
+	<changeSet id="tm-1.1.0.16" author="bsiri">
 		<comment>
 			Will immediately update the tables with the create_events of existing requirements.
 			Note : if you read the code below carefully and wonder why we use REQUIREMENT and REQUIREMENT_LIBRARY_NODE instead of the 
@@ -283,7 +313,7 @@
 		</sql>
 	</changeSet>
 	
-	<changeSet id="tm-1.1.0.16" author="gfouquet">
+	<changeSet id="tm-1.1.0.17" author="gfouquet">
 		<comment>
 			Remove obsolete columns from REQUIREMENT and REQUIREMENT_LIBRARY_NODE table. 
 			Data is now in REQUIREMENT_VERSION and REQUIREMENT_FOLDER tables.
