@@ -119,10 +119,15 @@ div#slider {
 
 div#tabbed-pane .tab {
 	font-size: 10px;
-	background: url("jquery/ui/images/ui-bg_gloss-wave_45_2b2b2b_500x100.png") repeat-x scroll 50% 50% #2B2B2B;
-	border: 1px solid #2E2E2E;
+	
 }
-
+ul.ui-tabs-nav li.ui-state-default.ui-corner-top{
+	background: url("jquery/ui/images/ui-bg_gloss-wave_45_2b2b2b_500x100.png") repeat-x scroll 50% 50% #2B2B2B;
+    border-color: #2E2E2E;
+}
+ul.ui-tabs-nav li.ui-state-default.ui-corner-top.ui-state-hover{
+    background: url("jquery/ui/images/ui-bg_glass_75_2b2b2b_1x400.png") repeat-x scroll 50% 50% #2B2B2B;
+}
 
 div#tabbed-pane > ul {
 	border: 0;

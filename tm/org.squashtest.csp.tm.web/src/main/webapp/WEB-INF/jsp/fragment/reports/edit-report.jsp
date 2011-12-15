@@ -20,12 +20,12 @@
         along with this software.  If not, see <http://www.gnu.org/licenses/>.
 
 --%>
-<%@ taglib uri="http://java.sun.com/jsp/jstl/core" prefix="c"%>
-<%@ taglib uri="http://java.sun.com/jsp/jstl/fmt" prefix="f"%>
-<%@ taglib tagdir="/WEB-INF/tags/jquery" prefix="jq"%>
+<%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core" %>
+<%@ taglib prefix="f" uri="http://java.sun.com/jsp/jstl/fmt" %>
+<%@ taglib prefix="jq" tagdir="/WEB-INF/tags/jquery" %>
 <%@ taglib prefix="s" uri="http://www.springframework.org/tags"%>
 <%@ taglib prefix="f" uri="http://java.sun.com/jsp/jstl/fmt" %>
-<%@ taglib tagdir="/WEB-INF/tags/component" prefix="comp"%>
+<%@ taglib prefix="comp" tagdir="/WEB-INF/tags/component" %>
 <%@ taglib prefix="dt" tagdir="/WEB-INF/tags/datatables"%>
 <%@ taglib prefix="sf" uri="http://www.springframework.org/tags/form"%>
 <%@ taglib prefix="aggr" tagdir="/WEB-INF/tags/aggregates"%>
@@ -290,15 +290,17 @@
 
 <script type="text/javascript">
 	$(function(){
-		$("#view-tabed-panel").tabs();
-		$("#view-tabed-panel").tabs("select",${report.viewCatalog.defaultViewIndex});
-		$("#view-tabed-panel").data("selected",${report.viewCatalog.defaultViewIndex});
-		
-		//now bind an event
-		$("#view-tabed-panel").bind( "tabsselect", function(event, ui) {
-			$("#view-tabed-panel").data("selected",ui.index);
-			loadReport();
+		var tabPanel=$("#view-tabed-panel");
+		tabPanel.tabs({
+				select: function(event, ui){
+					tabPanel.data("selected",ui.index);
+					loadReport();
+				}
 		});
+		
+		tabPanel.tabs("select",${report.viewCatalog.defaultViewIndex});
+		tabPanel.data("selected",${report.viewCatalog.defaultViewIndex});
+
 	});
 
 

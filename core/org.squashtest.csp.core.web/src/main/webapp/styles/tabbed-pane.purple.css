@@ -18,10 +18,11 @@
  *     You should have received a copy of the GNU Lesser General Public License
  *     along with this software.  If not, see <http://www.gnu.org/licenses/>.
  */
-div#tabbed-pane li.ui-tabs-selected{
-	font-size: 10px;
+ 
+
+ul.ui-tabs-nav li.ui-state-default.ui-corner-top.ui-tabs-selected.ui-state-active, ul.ui-tabs-nav li.ui-state-default.ui-corner-top.ui-tabs-selected.ui-state-active.ui-state-hover{
 	background: url("jquery/ui/images/ui-bg_glass_45_5e287b_1x400.png") repeat-x scroll 50% 50% #5E287B;
-    border: 1px solid #982BD4;
+    border-color: #982BD4;
 }
 
 /*

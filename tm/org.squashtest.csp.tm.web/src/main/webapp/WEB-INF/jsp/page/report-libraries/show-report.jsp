@@ -21,12 +21,13 @@
 
 --%>
 <%@ page language="java" contentType="text/html; charset=utf-8" pageEncoding="utf-8"%>
-<%@ taglib tagdir="/WEB-INF/tags" prefix="sq"%>
+<%@ taglib prefix="sq" tagdir="/WEB-INF/tags" %>
 <%@ taglib prefix="layout" tagdir="/WEB-INF/tags/layout"%>
 <%@ taglib prefix="f" uri="http://java.sun.com/jsp/jstl/fmt"%>
 <layout:info-page-layout titleKey="squashtm.library.requirement.title" highlightedWorkspace="report">
 	<jsp:attribute name="head">	
 		<link rel="stylesheet" type="text/css" href="${ pageContext.servletContext.contextPath }/styles/master.blue.css" />
+		<link rel="stylesheet" type="text/css" href="${ pageContext.servletContext.contextPath }/styles/tabbed-pane.blue.css" />
 	</jsp:attribute>
 	<jsp:attribute name="titlePane">
 		<h2><f:message key="squashtm.library.test-case.title" /></h2>	

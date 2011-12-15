@@ -492,22 +492,7 @@ button.ui-button::-moz-focus-inner { border: 0; padding: 0; } /* reset extra pad
 .ui-tabs .ui-tabs-nav li a, .ui-tabs.ui-tabs-collapsible .ui-tabs-nav li.ui-tabs-selected a { cursor: pointer; } /* first selector in group seems obsolete, but required to overcome bug in Opera applying cursor: text overall if defined elsewhere... */
 .ui-tabs .ui-tabs-panel { display: block; border-width: 0; padding: 1em 1.4em; background: none; }
 .ui-tabs .ui-tabs-hide { display: none !important; }
-/* bloc added by mpagnon */
-ul.ui-tabs-nav li.ui-state-default.ui-corner-top{
-background: url("images/ui-bg_gloss-wave_45_2b2b2b_500x100.png") repeat-x scroll 50% 50% #2B2B2B;
-    border: 1px solid #2E2E2E;
-    color: #FFFFFF;
-    font-weight: normal;
-}
 
-ul.ui-tabs-nav li.ui-state-default.ui-corner-top.ui-tabs-selected.ui-state-active{
-    background: url("images/ui-bg_glass_45_0078ae_1x400.png") repeat-x scroll 50% 50% #0078AE;
-    border: 1px solid #77D5F7;
-    color: #FFFFFF;
-    font-weight: normal;
-
-}
-/* end bloc added by mpagnon */
 
 
 /*
