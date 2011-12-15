@@ -34,75 +34,97 @@ import org.springframework.web.servlet.view.AbstractView;
 import org.springframework.web.servlet.view.json.MappingJacksonJsonView;
 import org.squashtest.csp.tm.domain.ActionException;
 
+/**
+ * This handler will format ActionExceptions and subclasses in order to raise a popup clientside and display an
+ * exception. This is a complementary system to @HandlerDomainExceptionResolver. The difference here is that in this
+ * case the treatment client-side will open a generic popup and display the error text in it.
+ * 
+ * @author bsiri
+ * @reviewed-on 2011-12-15
+ */
+
+/*
+ * TODO : inject the message source, the locale, and return a pre-formatted message instead of the raw i18n key.
+ * 
+ * modify the jsps accordingly when it's done
+ */
 
 @Component
-public class HandlerActionExceptionResolver extends   AbstractHandlerExceptionResolver {
-	private static final String JSON_MIME_TYPE = "application/json";
-	private static final String TEXT_MIME_TYPE = "text/plain";
-	
-	public HandlerActionExceptionResolver(){
+public class HandlerActionExceptionResolver extends AbstractHandlerExceptionResolver {
+
+	public HandlerActionExceptionResolver() {
 		super();
 	}
-	
 
 	@Override
 	protected ModelAndView doResolveException(HttpServletRequest request, HttpServletResponse response, Object handler,
 			Exception ex) {
-		
-		if (exceptionIsHandled(ex)){
-		
-			
-			if (clientAcceptsMIME(request, JSON_MIME_TYPE)) {
-				response.setStatus(HttpServletResponse.SC_PRECONDITION_FAILED);	
-				ActionValidationErrorModel error = new ActionValidationErrorModel(ex);
-	
-				return new ModelAndView(new MappingJacksonJsonView(), "actionValidationError", error);
-			}
-			
-			else if (clientAcceptsMIME(request, TEXT_MIME_TYPE)){
-				response.setStatus(HttpServletResponse.SC_PRECONDITION_FAILED);
-				
-				String error = ex.getClass().getSimpleName()+":"+ex.getMessage();
-				
-				AbstractView view = new AbstractView() {
-					
-					@Override
-					protected void renderMergedOutputModel(Map<String, Object> model,
-							HttpServletRequest request, HttpServletResponse response)
-							throws Exception {
-						for (Object obj : model.values()){
-							response.getOutputStream().write(obj.toString().getBytes());
-							response.getOutputStream().write('\n');
-						}
-						
-					}
-				};
-				
-				return new ModelAndView(view,"actionValidationError",error);
-				
-			}
+
+		if (exceptionIsHandled(ex)) {
+			return handleException(request, response, ex);
 		}
 
 		return null;
 	}
 
+	private ModelAndView handleException(HttpServletRequest request, HttpServletResponse response, Exception ex) {
+		if (clientAcceptsMIME(request, MimeType.APPLICATION_JSON)) {
+			return formatJsonResponse(response, ex);
+		}
 
-	
+		else if (clientAcceptsMIME(request, MimeType.TEXT_PLAIN)) {
+			return formatPlainTextResponse(response, ex);
+
+		}
+
+		return null;
+	}
+
+	private ModelAndView formatPlainTextResponse(HttpServletResponse response, Exception ex) {
+		response.setStatus(HttpServletResponse.SC_PRECONDITION_FAILED);
+
+		String error = ex.getClass().getSimpleName() + ':' + ex.getMessage();
+
+		AbstractView view = new PlainTextView();
+
+		return new ModelAndView(view, "actionValidationError", error);
+	}
+
+	private ModelAndView formatJsonResponse(HttpServletResponse response, Exception ex) {
+		response.setStatus(HttpServletResponse.SC_PRECONDITION_FAILED);
+		ActionValidationErrorModel error = new ActionValidationErrorModel(ex);
+
+		return new ModelAndView(new MappingJacksonJsonView(), "actionValidationError", error);
+	}
+
 	private boolean exceptionIsHandled(Exception ex) {
 		return ex instanceof ActionException;
 	}
 
-	
 	@SuppressWarnings("unchecked")
-	private boolean clientAcceptsMIME(HttpServletRequest request, String mimeType) {
+	private boolean clientAcceptsMIME(HttpServletRequest request, MimeType type) {
 		Enumeration<String> e = request.getHeaders("Accept");
 
 		while (e.hasMoreElements()) {
 			String header = e.nextElement();
-			if (StringUtils.containsIgnoreCase(StringUtils.trimToEmpty(header), mimeType)) {
+			if (StringUtils.containsIgnoreCase(StringUtils.trimToEmpty(header), type.requestHeaderValue())) {
 				return true;
 			}
 		}
 		return false;
 	}
+
+	/* **************** inner class ***************** */
+	private static class PlainTextView extends AbstractView {
+
+		@Override
+		protected void renderMergedOutputModel(Map<String, Object> model, HttpServletRequest request,
+				HttpServletResponse response) throws Exception {
+			for (Object obj : model.values()) {
+				response.getOutputStream().write(obj.toString().getBytes());
+				response.getOutputStream().write('\n');
+			}
+
+		}
+	};
 }

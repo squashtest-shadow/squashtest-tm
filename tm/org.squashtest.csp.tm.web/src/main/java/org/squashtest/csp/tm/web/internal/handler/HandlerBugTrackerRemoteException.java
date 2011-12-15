@@ -38,7 +38,6 @@ import org.squashtest.csp.core.bugtracker.core.BugTrackerRemoteException;
 @Component
 public class HandlerBugTrackerRemoteException extends AbstractHandlerExceptionResolver {
 
-	private static final String JSON_MIME_TYPE = "application/json";
 
 	@Override
 	protected ModelAndView doResolveException(HttpServletRequest request, HttpServletResponse response, Object handler,
@@ -73,7 +72,7 @@ public class HandlerBugTrackerRemoteException extends AbstractHandlerExceptionRe
 
 		while (e.hasMoreElements()) {
 			String header = e.nextElement();
-			if (StringUtils.containsIgnoreCase(StringUtils.trimToEmpty(header), JSON_MIME_TYPE)) {
+			if (StringUtils.containsIgnoreCase(StringUtils.trimToEmpty(header), MimeType.APPLICATION_JSON.requestHeaderValue())) {
 				return true;
 			}
 		}

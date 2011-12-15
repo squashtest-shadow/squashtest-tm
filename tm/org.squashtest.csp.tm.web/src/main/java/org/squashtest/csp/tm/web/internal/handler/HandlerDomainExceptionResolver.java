@@ -39,8 +39,6 @@ import org.squashtest.csp.tm.domain.DomainException;
 public class HandlerDomainExceptionResolver extends
 		AbstractHandlerExceptionResolver {
 
-	
-	private static final String JSON_MIME_TYPE = "application/json";
 
 	
 	public HandlerDomainExceptionResolver() {
@@ -84,7 +82,7 @@ public class HandlerDomainExceptionResolver extends
 
 		while (e.hasMoreElements()) {
 			String header = e.nextElement();
-			if (StringUtils.containsIgnoreCase(StringUtils.trimToEmpty(header), JSON_MIME_TYPE)) {
+			if (StringUtils.containsIgnoreCase(StringUtils.trimToEmpty(header), MimeType.APPLICATION_JSON.requestHeaderValue())) {
 				return true;
 			}
 		}

@@ -39,10 +39,6 @@ public class HandlerMaxUploadSizeException extends
 		AbstractHandlerExceptionResolver {
 
 
-	private static final String JSON_MIME_TYPE = "application/json";
-	private static final String TEXT_MIME_TYPE = "text/html";
-	private static final String ANYTHING_MIME_TYPE = "*/*";
-
 	
 	public HandlerMaxUploadSizeException() {
 		super();
@@ -59,14 +55,14 @@ public class HandlerMaxUploadSizeException extends
 			MaxUploadSizeExceededException mex = (MaxUploadSizeExceededException) ex; // NOSONAR Type was checked earlier
 			
 			
-			if (clientAcceptsMIME(request, JSON_MIME_TYPE)){
+			if (clientAcceptsMIME(request, MimeType.APPLICATION_JSON)){
 				return handleAsJson(mex);
 			}
-			else if (clientAcceptsMIME(request, TEXT_MIME_TYPE)){
+			else if (clientAcceptsMIME(request, MimeType.TEXT_PLAIN)){
 				return handleAsText(mex);
 			}
 			//special delivery for IE
-			else if (clientAcceptsMIME(request, ANYTHING_MIME_TYPE)){
+			else if (clientAcceptsMIME(request, MimeType.ANYTHING)){
 				return handleAsText(mex);
 			}
 		}
@@ -106,12 +102,12 @@ public class HandlerMaxUploadSizeException extends
 
 	
 	@SuppressWarnings("unchecked")
-	private boolean clientAcceptsMIME(HttpServletRequest request, String mimeType) {
+	private boolean clientAcceptsMIME(HttpServletRequest request, MimeType type) {
 		Enumeration<String> e = request.getHeaders("Accept");
 
 		while (e.hasMoreElements()) {
 			String header = e.nextElement();
-			if (StringUtils.containsIgnoreCase(StringUtils.trimToEmpty(header), mimeType)) {
+			if (StringUtils.containsIgnoreCase(StringUtils.trimToEmpty(header), type.requestHeaderValue())) {
 				return true;
 			}
 		}

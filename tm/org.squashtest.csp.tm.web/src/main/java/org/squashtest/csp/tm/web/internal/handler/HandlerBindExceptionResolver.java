@@ -50,7 +50,6 @@ import org.springframework.web.servlet.view.json.MappingJacksonJsonView;
 @Component
 public class HandlerBindExceptionResolver extends AbstractHandlerExceptionResolver {
 
-	private static final String JSON_MIME_TYPE = "application/json";
 
 	public HandlerBindExceptionResolver() {
 		super();
@@ -92,7 +91,7 @@ public class HandlerBindExceptionResolver extends AbstractHandlerExceptionResolv
 
 		while (e.hasMoreElements()) {
 			String header = e.nextElement();
-			if (StringUtils.containsIgnoreCase(StringUtils.trimToEmpty(header), JSON_MIME_TYPE)) {
+			if (StringUtils.containsIgnoreCase(StringUtils.trimToEmpty(header), MimeType.APPLICATION_JSON.requestHeaderValue())) {
 				return true;
 			}
 		}
