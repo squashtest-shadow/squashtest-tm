@@ -437,8 +437,8 @@
 			<column name="NAME" type="java.sql.Types.VARCHAR(255)" remarks="Le nom/label de l'element en question.">
 				<constraints nullable="false" />
 			</column>
-			<column name="CREATED_BY" type="java.sql.Types.VARCHAR(50)" remarks="nom du createur de ce cas de test.">
 
+			<column name="CREATED_BY" type="java.sql.Types.VARCHAR(50)" remarks="nom du createur de ce cas de test.">
 				<constraints nullable="false" />
 			</column>
 			<column name="CREATED_ON" type="DATETIME"

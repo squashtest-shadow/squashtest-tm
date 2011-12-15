@@ -196,5 +196,23 @@
 		</insert>
 	</changeSet>
 
+	<changeSet id="tm-1.1.0.13" author="gfouquet">
+		<comment>Pushes requirement folder data down to REQUIREMENT_FOLDER table</comment>
+		<addColumn tableName="REQUIREMENT_FOLDER" >
+			<column name="NAME" type="VARCHAR(255)" remarks="Le nom/label de l'element en question." />
+
+			<column name="DESCRIPTION" type="CLOB" defaultValue="NULL"
+				remarks="Une description associee a cet element. Devrait etre un champ texte long ou un clob." />
+		</addColumn>
+		<sql>
+			update REQUIREMENT_FOLDER rf 
+			set NAME = (select rln.NAME from REQUIREMENT_LIBRARY_NODE rln where rln.RLN_ID = rf.RLN_ID);
+		</sql>
+		<sql>
+			update REQUIREMENT_FOLDER rf 
+			set DESCRIPTION = (select rln.DESCRIPTION from REQUIREMENT_LIBRARY_NODE rln where rln.RLN_ID = rf.RLN_ID);
+		</sql>
+		<addNotNullConstraint tableName="REQUIREMENT_FOLDER" columnName="NAME" columnDataType="VARCHAR(255)"/>
+	</changeSet>
 </databaseChangeLog>
  

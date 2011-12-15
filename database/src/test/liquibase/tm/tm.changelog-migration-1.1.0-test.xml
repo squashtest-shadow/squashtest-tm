@@ -26,6 +26,23 @@
      http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-2.0.xsd">
    
 	<include file="tm.data-0.23.0.xml" relativeToChangelogFile="true" />
+	
+	<changeSet id="1.1.0.save-requirement-folders-before-versionning" author="gfouquet">
+		<comment>We save requirement folders data</comment>
+		<sql>
+			CREATE TEMPORARY TABLE `OLD_REQ_FOLDER` (
+				`FOLDER_ID` BIGINT(20) NULL DEFAULT NULL,
+				`NAME` VARCHAR(255) NULL DEFAULT NULL,
+				`DESCRIPTION` TEXT NULL DEFAULT NULL
+			);		
+		</sql>
+		<sql>
+			insert into OLD_REQ_FOLDER (FOLDER_ID, NAME, DESCRIPTION) 
+			select f.RLN_ID, NAME, DESCRIPTION from REQUIREMENT_LIBRARY_NODE n 
+			inner join REQUIREMENT_FOLDER f on f.RLN_ID = n.RLN_ID;
+		</sql>
+	</changeSet>
+	
 	<include file="../../../main/liquibase/tm/tm.changelog-1.1.0.xml" relativeToChangelogFile="true" />
 	
 	<changeSet id="1.1.0.check-no-BLOQUED-in-executions" author="gfouquet">
@@ -94,6 +111,22 @@
 			</sqlCheck>		
 		</preConditions>
 	
-	</changeSet>	
+	</changeSet>
+	
+	<changeSet id="1.1.0.check-requirement-folder-data-pushed-down" author="gfouquet">
+		<preConditions>
+			<sqlCheck expectedResult="0">
+				select count(*)
+				from OLD_REQ_FOLDER orf
+				where not exists (
+					select 1  from REQUIREMENT_FOLDER f
+						where f.RLN_ID = orf.FOLDER_ID
+						and f.NAME = orf.NAME
+						and f.DESCRIPTION = orf.DESCRIPTION
+				);
+	 		</sqlCheck>
+		</preConditions>
+		<comment>We check folder data was push down to REQUIREMENT_FOLDER table</comment>
+	</changeSet>
 	
 </databaseChangeLog>
