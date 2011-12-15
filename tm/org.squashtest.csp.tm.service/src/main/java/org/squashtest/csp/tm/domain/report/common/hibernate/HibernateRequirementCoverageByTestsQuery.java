@@ -263,7 +263,8 @@ public class HibernateRequirementCoverageByTestsQuery extends HibernateReportQue
 		requirementSingleDto.setLabel(requirement.getName());
 		requirementSingleDto.setReference(requirement.getReference());
 		requirementSingleDto.setCriticality(requirement.getCriticality());
-		requirementSingleDto.setAssociatedTestCaseNumber(requirement.getVerifyingTestCase().size());
+		// XXX RequirementVersion
+//		requirementSingleDto.setAssociatedTestCaseNumber(requirement.getVerifyingTestCase().size());
 		if (folder != null) {
 			requirementSingleDto.setFolder(folder.getName());
 		}

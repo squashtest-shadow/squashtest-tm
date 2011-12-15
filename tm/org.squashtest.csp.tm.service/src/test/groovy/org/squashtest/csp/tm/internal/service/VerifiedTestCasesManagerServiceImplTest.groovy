@@ -86,45 +86,47 @@ class VerifiedTestCasesManagerServiceImplTest extends Specification {
 
 	def "should add TestCase to test case's verified requirements"() {
 		given:
-		Requirement requirement = new Requirement()
-		requirementDao.findById(10) >> requirement
+		RequirementVersion requirement = new RequirementVersion()
+		// XXX RequirementVersion
+//		requirementDao.findById(10) >> requirement
 
 		and:
-		TestCase req5 = new TestCase()
-		req5.id >> 5
-		TestCase req15 = new TestCase()
-		req5.id >> 15
-		nodeDao.findAllById([5, 15]) >> [req5, req15]
+		TestCase tc5 = new TestCase()
+		tc5.id >> 5
+		TestCase tc15 = new TestCase()
+		tc5.id >> 15
+		testCaseDao.findAllByIdList([5, 15]) >> [tc5, tc15]
 
 		when:
 		service.addVerifyingTestCasesToRequirement([5, 15], 10)
 
 		then:
-		requirement.getVerifyingTestCase().containsAll([req5, req15])
-		[req5, req15].containsAll(requirement.getVerifyingTestCase())
+		requirement.getVerifyingTestCases().containsAll([tc5, tc15])
+		[tc5, tc15].containsAll(requirement.getVerifyingTestCases())
 	}
 
 	def "should remove requirements from test case's verified requirements"() {
 		given: "some requirements"
-		TestCase req5 = new TestCase()
-		req5.id >> 5
-		TestCase req15 = new TestCase()
-		req15.id >> 15
-		testCaseDao.findAllByIdList([15]) >> [req15]
+		TestCase tc5 = new TestCase()
+		tc5.id >> 5
+		TestCase tc15 = new TestCase()
+		tc15.id >> 15
+		testCaseDao.findAllByIdList([15]) >> [tc15]
 
 		and: " a test case which verifies these requirements"
-		Requirement requirement = new Requirement()
-		requirement.addVerifyingTestCase req5
-		requirement.addVerifyingTestCase req15
-		requirementDao.findById(10) >> requirement
+		RequirementVersion requirement = new RequirementVersion()
+		requirement.addVerifyingTestCase tc5
+		requirement.addVerifyingTestCase tc15
+		// XXX RequirementVersion
+//		requirementDao.findById(10) >> requirement
 
 		when:
 		service.removeVerifyingTestCasesFromRequirement([15], 10)
 
 		then:
-		requirement.getVerifyingTestCase().containsAll([req5])
-		[req5].containsAll(requirement.getVerifyingTestCase())
-		print req5
+		requirement.getVerifyingTestCases().containsAll([tc5])
+		[tc5].containsAll(requirement.getVerifyingTestCases())
+		print tc5
 	}
 
 	def "should remove single requirement from test case's verified requirements"() {
@@ -134,15 +136,16 @@ class VerifiedTestCasesManagerServiceImplTest extends Specification {
 		testCaseDao.findById(5) >> tq
 
 		and: " a test case which verifies this requirements"
-		Requirement requirement = new Requirement()
+		RequirementVersion requirement = new RequirementVersion()
 		requirement.id >> 10
 		requirement.addVerifyingTestCase tq
-		requirementDao.findById(10) >> requirement
+		// XXX RequirementVersion
+//		requirementDao.findById(10) >> requirement
 
 		when:
 		service.removeVerifyingTestCaseFromRequirement(10, 5)
 
 		then:
-		requirement.getVerifyingTestCase().size() == 0
+		requirement.getVerifyingTestCases().size() == 0
 	}
 }

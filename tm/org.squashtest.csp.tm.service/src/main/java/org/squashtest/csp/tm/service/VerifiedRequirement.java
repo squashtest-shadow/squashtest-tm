@@ -25,6 +25,7 @@ import javax.validation.constraints.NotNull;
 import org.squashtest.csp.tm.domain.project.Project;
 import org.squashtest.csp.tm.domain.requirement.Requirement;
 import org.squashtest.csp.tm.domain.requirement.RequirementCriticality;
+import org.squashtest.csp.tm.domain.requirement.RequirementVersion;
 
 /**
  * Partial view of a {@link Requirement} verified by some test case.
@@ -33,21 +34,21 @@ import org.squashtest.csp.tm.domain.requirement.RequirementCriticality;
  *
  */
 public class VerifiedRequirement {
-	private final Requirement decoratedRequirement;
+	private final RequirementVersion decoratedRequirement;
 	/**
 	 * In the context of a given test case, the test case directly verifies this requirement (ie not through a test case
 	 * call).
 	 */
 	private final boolean directVerification;
 
-	public VerifiedRequirement(@NotNull Requirement decoratedRequirement, boolean directVerification) {
+	public VerifiedRequirement(@NotNull RequirementVersion decoratedRequirement, boolean directVerification) {
 		super();
 		this.decoratedRequirement = decoratedRequirement;
 		this.directVerification = directVerification;
 	}
 
 	public Project getProject() {
-		return decoratedRequirement.getProject();
+		return decoratedRequirement.getRequirement().getProject();
 	}
 
 	public String getName() {

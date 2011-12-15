@@ -18,97 +18,125 @@
  *     You should have received a copy of the GNU Lesser General Public License
  *     along with this software.  If not, see <http://www.gnu.org/licenses/>.
  */
+
 package org.squashtest.csp.tm.domain.requirement;
 
+import java.util.Collections;
 import java.util.HashSet;
 import java.util.Set;
 
-import javax.persistence.Basic;
 import javax.persistence.CascadeType;
 import javax.persistence.Column;
-import javax.persistence.Entity;
 import javax.persistence.EnumType;
 import javax.persistence.Enumerated;
+import javax.persistence.GeneratedValue;
+import javax.persistence.Id;
 import javax.persistence.JoinColumn;
+import javax.persistence.Lob;
 import javax.persistence.ManyToMany;
+import javax.persistence.ManyToOne;
 import javax.persistence.OneToOne;
-import javax.persistence.PrimaryKeyJoinColumn;
 import javax.validation.constraints.NotNull;
 
+import org.hibernate.validator.constraints.NotBlank;
 import org.squashtest.csp.tm.domain.IllegalRequirementModificationException;
 import org.squashtest.csp.tm.domain.RequirementNotLinkableException;
 import org.squashtest.csp.tm.domain.attachment.AttachmentHolder;
-import org.squashtest.csp.tm.domain.attachment.Attachment;
 import org.squashtest.csp.tm.domain.attachment.AttachmentList;
 import org.squashtest.csp.tm.domain.testcase.TestCase;
 
 /**
- * Entity requirement
+ * Represents a version of a requirement.
  * 
- * Note that much of its setters will throw an IllegalRequirementModificationException if a modification is attempted
- * while the status does not allow it.
- * 
- * @author bsiri
+ * @author Gregory Fouquet
  * 
  */
+public class RequirementVersion implements AttachmentHolder {
+	@Id
+	@GeneratedValue
+	@Column(name = "REQ_VERSION_ID")
+	private Long id;
 
-@Entity
-@PrimaryKeyJoinColumn(name = "RLN_ID")
-public class Requirement extends RequirementLibraryNode implements AttachmentHolder {
+	@NotBlank
+	private String name;
+
+	@Lob
+	private String description;
+
+	/**
+	 * Collection of {@link Test Cases} verifying by this {@link Requirement}
+	 */
+	@NotNull
+	@ManyToMany(mappedBy = "verifiedRequirements", cascade = { CascadeType.ALL })
+	private final Set<TestCase> verifyingTestCases = new HashSet<TestCase>();
 
 	/***
 	 * The requirement reference
 	 */
-	@Basic(optional = true)
 	private String reference;
 
+	@NotNull
 	@Enumerated(EnumType.STRING)
 	private RequirementCriticality criticality = RequirementCriticality.UNDEFINED;
 
+	@NotNull
 	@Enumerated(EnumType.STRING)
 	@Column(name = "REQUIREMENT_STATUS")
 	private RequirementStatus status = RequirementStatus.WORK_IN_PROGRESS;
 
+	@NotNull
 	@OneToOne(cascade = { CascadeType.ALL }, orphanRemoval = true)
 	@JoinColumn(name = "ATTACHMENT_LIST_ID")
 	private final AttachmentList attachmentList = new AttachmentList();
+	
+	@NotNull
+	@ManyToOne(cascade = { CascadeType.PERSIST, CascadeType.MERGE })
+	@JoinColumn(name = "REQUIREMENT_ID", updatable = false)
+	private Requirement requirement;
+	
+	private int versionNumber = 1;
 
-	public Requirement() {
+	public RequirementVersion() {
 		super();
 	}
 
-	public Requirement(String name, String description) {
-		status = RequirementStatus.WORK_IN_PROGRESS;
-		setName(name);
-		setDescription(description);
+	/**
+	 * @see org.squashtest.csp.tm.domain.attachment.AttachmentHolder#getAttachmentList()
+	 */
+	@Override
+	public AttachmentList getAttachmentList() {
+		return attachmentList;
 	}
 
-	@Override
 	public void setName(String name) {
 		checkModifiable();
-		super.setName(name);
+		this.name = name;
 	}
 
-	@Override
 	public void setDescription(String description) {
 		checkModifiable();
-		super.setDescription(description);
+		this.description = description;
 	}
 
-	@Override
-	public void accept(RequirementLibraryNodeVisitor visitor) {
-		visitor.visit(this);
+	/**
+	 * Returns an UNMODIFIABLE VIEW of the verifying test cases.
+	 */
+	public Set<TestCase> getVerifyingTestCases() {
+		return Collections.unmodifiableSet(verifyingTestCases);
+	}
+
+	public void addVerifyingTestCase(@NotNull TestCase testCase) throws RequirementNotLinkableException {
+		testCase.addVerifiedRequirement(this);
+	}
+
+	public void removeVerifyingTestCase(@NotNull TestCase testCase) throws RequirementNotLinkableException {
+		testCase.removeVerifiedRequirement(this);
 	}
 
 	private void checkLinkable() {
 		if (!status.isRequirementLinkable()) {
 			throw new RequirementNotLinkableException();
 		}
-	}
-
-	@Override
-	public AttachmentList getAttachmentList() {
-		return attachmentList;
 	}
 
 	/***
@@ -126,29 +154,6 @@ public class Requirement extends RequirementLibraryNode implements AttachmentHol
 	public void setReference(String reference) {
 		checkModifiable();
 		this.reference = reference;
-	}
-
-	@Override
-	public Requirement createCopy() {
-		Requirement clone = new Requirement();
-		clone.setStatus(RequirementStatus.WORK_IN_PROGRESS);
-
-		clone.setName(this.getName());
-		clone.setDescription(this.getDescription());
-		clone.setReference(this.getReference());
-		clone.setCriticality(this.getCriticality());
-// XXX RequirementVersion
-//		for (TestCase testCase : this.verifyingTestCases) {
-//			clone.addVerifyingTestCase(testCase);
-//		}
-
-		for (Attachment tcAttach : this.getAttachmentList().getAllAttachments()) {
-			Attachment atCopy = tcAttach.hardCopy();
-			clone.getAttachmentList().addAttachment(atCopy);
-		}
-
-		clone.notifyAssociatedWithProject(this.getProject());
-		return clone;
 	}
 
 	/***
@@ -208,4 +213,49 @@ public class Requirement extends RequirementLibraryNode implements AttachmentHol
 		return getStatus().isRequirementModifiable();
 	}
 
+	/**
+	 * @return the id
+	 */
+	public Long getId() {
+		return id;
+	}
+
+	/**
+	 * @return the name
+	 */
+	public String getName() {
+		return name;
+	}
+
+	/**
+	 * @return the description
+	 */
+	public String getDescription() {
+		return description;
+	}
+	
+	public void notifyVerifiedBy(@NotNull TestCase testCase) {
+		checkLinkable();
+		verifyingTestCases.add(testCase);
+		
+	}
+	
+	public void notifyNoLongerVerifiedBy(@NotNull TestCase testCase) {
+		checkLinkable();
+		verifyingTestCases.remove(testCase);
+		
+	}
+	/**
+	 * @return the requirement
+	 */
+	public Requirement getRequirement() {
+		return requirement;
+	}
+
+	/**
+	 * @return the versionNumber
+	 */
+	public int getVersionNumber() {
+		return versionNumber;
+	}
 }

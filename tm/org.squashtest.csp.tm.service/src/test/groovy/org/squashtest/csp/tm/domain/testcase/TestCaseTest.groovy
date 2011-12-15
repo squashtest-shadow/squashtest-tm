@@ -23,7 +23,7 @@ package org.squashtest.csp.tm.domain.testcase
 
 import org.squashtest.csp.tm.domain.RequirementNotLinkableException;
 import org.squashtest.csp.tm.domain.UnknownEntityException;
-import org.squashtest.csp.tm.domain.requirement.Requirement;
+import org.squashtest.csp.tm.domain.requirement.RequirementVersion;
 import org.squashtest.csp.tm.domain.requirement.RequirementStatus;
 import org.squashtest.csp.tools.unittest.reflection.ReflectionCategory;
 
@@ -155,7 +155,7 @@ class TestCaseTest extends Specification {
 	
 	def "should add a verified requirement"() {
 		given:
-		Requirement r = new Requirement()
+		RequirementVersion r = new RequirementVersion()
 
 		when:
 		testCase.addVerifiedRequirement(r)
@@ -166,8 +166,10 @@ class TestCaseTest extends Specification {
 
 	def "should remove a verified requirement"() {
 		given:
-		Requirement r = new Requirement()
-		testCase.verifiedRequirements.add r
+		RequirementVersion r = new RequirementVersion()
+		use (ReflectionCategory) {
+			TestCase.set field: "verifiedRequirements", of: testCase, to: ([r] as Set)
+		}
 
 		when:
 		testCase.removeVerifiedRequirement(r)
@@ -247,7 +249,7 @@ class TestCaseTest extends Specification {
 	def "copy of a test case should verify the same requirements"() {
 		given:
 		TestCase source = new TestCase()
-		Requirement req = new Requirement(name: "")
+		RequirementVersion req = new RequirementVersion(name: "")
 		source.addVerifiedRequirement req
 		
 		when: 
@@ -262,7 +264,7 @@ class TestCaseTest extends Specification {
 		TestCase tc = new TestCase()
 		
 		and:
-		Requirement req = new Requirement()
+		RequirementVersion req = new RequirementVersion()
 		
 		when:
 		tc.addVerifiedRequirement req
@@ -276,7 +278,7 @@ class TestCaseTest extends Specification {
 		TestCase tc = new TestCase()
 		
 		and:
-		Requirement req = new Requirement(status: RequirementStatus.OBSOLETE)
+		RequirementVersion req = new RequirementVersion(status: RequirementStatus.OBSOLETE)
 		
 		when:
 		tc.addVerifiedRequirement req
@@ -290,9 +292,11 @@ class TestCaseTest extends Specification {
 		TestCase tc = new TestCase()
 		
 		and:
-		Requirement req = new Requirement()
-		tc.verifiedRequirements << req
-		req.verifyingTestCases << tc
+		RequirementVersion req = new RequirementVersion()
+		use (ReflectionCategory) {
+			RequirementVersion.set field: "verifyingTestCases", of: req, to: [tc] as Set 
+			TestCase.set field: "verifiedRequirements", of: tc, to: [req] as Set
+		}
 
 		when:
 		tc.removeVerifiedRequirement req
@@ -306,9 +310,11 @@ class TestCaseTest extends Specification {
 		TestCase tc = new TestCase()
 		
 		and:
-		Requirement req = new Requirement(status: RequirementStatus.OBSOLETE)
-		tc.verifiedRequirements << req
-		req.verifyingTestCases << tc
+		RequirementVersion req = new RequirementVersion(status: RequirementStatus.OBSOLETE)
+		use (ReflectionCategory) {
+			RequirementVersion.set field: "verifyingTestCases", of: req, to: [tc] as Set 
+			TestCase.set field: "verifiedRequirements", of: tc, to: [req] as Set
+		}
 		
 		when:
 		tc.removeVerifiedRequirement req

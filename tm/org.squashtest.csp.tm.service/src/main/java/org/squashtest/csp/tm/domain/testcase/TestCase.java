@@ -23,6 +23,7 @@ package org.squashtest.csp.tm.domain.testcase;
 import static org.squashtest.csp.tm.domain.testcase.TestCaseImportance.*;
 
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
@@ -47,10 +48,11 @@ import org.squashtest.csp.tm.domain.attachment.AttachmentHolder;
 import org.squashtest.csp.tm.domain.attachment.Attachment;
 import org.squashtest.csp.tm.domain.attachment.AttachmentList;
 import org.squashtest.csp.tm.domain.requirement.Requirement;
+import org.squashtest.csp.tm.domain.requirement.RequirementVersion;
 
 /**
  * @author Gregory Fouquet
- *
+ * 
  */
 @Entity
 @PrimaryKeyJoinColumn(name = "TCLN_ID")
@@ -61,7 +63,8 @@ public class TestCase extends TestCaseLibraryNode implements AttachmentHolder {
 	@Column(updatable = false)
 	private final int version = 1;
 
-	@Enumerated(EnumType.STRING) @Basic(optional=false)
+	@Enumerated(EnumType.STRING)
+	@Basic(optional = false)
 	private TestCaseExecutionMode executionMode = TestCaseExecutionMode.MANUAL;
 
 	@OneToMany(cascade = { CascadeType.PERSIST, CascadeType.MERGE })
@@ -70,24 +73,25 @@ public class TestCase extends TestCaseLibraryNode implements AttachmentHolder {
 	private final List<TestStep> steps = new ArrayList<TestStep>();
 
 	/**
-	 * Collection of {@link Requirement}s which are verified by this {@link TestCase}
+	 * Collection of {@link RequirementVersion}s which are verified by this {@link TestCase}
 	 */
 	@ManyToMany
-	@JoinTable(name = "TEST_CASE_REQUIREMENT_LINK", joinColumns = @JoinColumn(name = "TEST_CASE_ID"), inverseJoinColumns = @JoinColumn(name = "REQUIREMENT_ID"))
-	private final Set<Requirement> verifiedRequirements = new HashSet<Requirement>();
+	@JoinTable(name = "TEST_CASE_VERIFIED_REQUIREMENT", joinColumns = @JoinColumn(name = "TEST_CASE_ID"), inverseJoinColumns = @JoinColumn(name = "REQ_VERSION_ID"))
+	private final Set<RequirementVersion> verifiedRequirements = new HashSet<RequirementVersion>();
 
 	@OneToOne(cascade = { CascadeType.PERSIST, CascadeType.MERGE })
 	@JoinColumn(name = "ATTACHMENT_LIST_ID")
 	private final AttachmentList attachmentList = new AttachmentList();
-	
-	@Enumerated(EnumType.STRING) @Basic(optional=false)
+
+	@Enumerated(EnumType.STRING)
+	@Basic(optional = false)
 	private TestCaseImportance importance = LOW;
-	
+
 	/**
-	 * Should the importance be automatically computed. 
+	 * Should the importance be automatically computed.
 	 */
 	private boolean importanceAuto = false;
-	
+
 	public TestCase() {
 		super();
 	}
@@ -124,22 +128,28 @@ public class TestCase extends TestCaseLibraryNode implements AttachmentHolder {
 		getSteps().remove(stepIndex);
 		getSteps().add(newIndex, step);
 	}
-	
+
 	/**
 	 * Will move a list of steps to a new position.
 	 * 
-	 * @param newIndex the position we want the first element of movedSteps to be once the operation is complete
-	 * @param movedSteps the list of steps to move, sorted by rank among each others.
+	 * @param newIndex
+	 *            the position we want the first element of movedSteps to be once the operation is complete
+	 * @param movedSteps
+	 *            the list of steps to move, sorted by rank among each others.
 	 */
-	public void moveSteps(int newIndex, List<TestStep> movedSteps){
-		if (! steps.isEmpty()){
+	public void moveSteps(int newIndex, List<TestStep> movedSteps) {
+		if (!steps.isEmpty()) {
 			steps.removeAll(movedSteps);
-			steps.addAll(newIndex, movedSteps);				
+			steps.addAll(newIndex, movedSteps);
 		}
 	}
 
-	public Set<Requirement> getVerifiedRequirements() {
-		return verifiedRequirements;
+	/**
+	 * 
+	 * @return UNMODIFIABLE VIEW of verified requirements.
+	 */
+	public Set<RequirementVersion> getVerifiedRequirements() {
+		return Collections.unmodifiableSet(verifiedRequirements);
 	}
 
 	@Override
@@ -150,16 +160,18 @@ public class TestCase extends TestCaseLibraryNode implements AttachmentHolder {
 
 	/**
 	 * Adds a {@link Requirement} verified by this {@link TestCase}
-	 *
+	 * 
 	 * @param requirement
 	 *            requirement to add, should not be null.
 	 */
-	public void addVerifiedRequirement(@NotNull Requirement requirement) {
-		requirement.addVerifyingTestCase(this);
+	public void addVerifiedRequirement(@NotNull RequirementVersion requirement) {
+		requirement.notifyVerifiedBy(this);
+		verifiedRequirements.add(requirement);
 	}
 
-	public void removeVerifiedRequirement(@NotNull Requirement requirement) {
-		requirement.removeVerifyingTestCase(this);
+	public void removeVerifiedRequirement(@NotNull RequirementVersion requirement) {
+		requirement.notifyNoLongerVerifiedBy(this);
+		verifiedRequirements.remove(requirement);
 	}
 
 	@Override
@@ -197,7 +209,7 @@ public class TestCase extends TestCaseLibraryNode implements AttachmentHolder {
 	}
 
 	private void verifiesRequirementsVerifiedBy(TestCase source) {
-		for (Requirement requirement : source.verifiedRequirements) {
+		for (RequirementVersion requirement : source.verifiedRequirements) {
 			this.addVerifiedRequirement(requirement);
 		}
 	}
@@ -228,7 +240,7 @@ public class TestCase extends TestCaseLibraryNode implements AttachmentHolder {
 	public String getClassName() {
 		return TestCase.CLASS_NAME;
 	}
-	
+
 	/**
 	 * @return the weight
 	 */
@@ -237,7 +249,8 @@ public class TestCase extends TestCaseLibraryNode implements AttachmentHolder {
 	}
 
 	/**
-	 * @param weight the weight to set
+	 * @param weight
+	 *            the weight to set
 	 */
 	public void setImportance(@NotNull TestCaseImportance weight) {
 		this.importance = weight;
@@ -251,7 +264,8 @@ public class TestCase extends TestCaseLibraryNode implements AttachmentHolder {
 	}
 
 	/**
-	 * @param importanceAuto the importanceAuto to set
+	 * @param importanceAuto
+	 *            the importanceAuto to set
 	 */
 	public void setImportanceAuto(boolean importanceAuto) {
 		this.importanceAuto = importanceAuto;

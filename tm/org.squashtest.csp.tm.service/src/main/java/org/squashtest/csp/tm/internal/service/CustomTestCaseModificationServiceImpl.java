@@ -22,6 +22,7 @@ package org.squashtest.csp.tm.internal.service;
 
 import java.util.ArrayList;
 import java.util.Collection;
+import java.util.Collections;
 import java.util.List;
 import java.util.Set;
 
@@ -274,14 +275,15 @@ public class CustomTestCaseModificationServiceImpl implements CustomTestCaseModi
 
 		TestCase mainTestCase = testCaseDao.findById(testCaseId);
 
-		List<VerifiedRequirement> verifiedReqs = buildVerifiedRequirementList(mainTestCase.getVerifiedRequirements(), verified );
+//		List<VerifiedRequirement> verifiedReqs = buildVerifiedRequirementList(mainTestCase.getVerifiedRequirements(), verified );
 
 		long verifiedCount = requirementDao.countRequirementsVerifiedByTestCases(calleesIds);
 		if (LOGGER.isDebugEnabled()) {
 			LOGGER.debug("Total count of verified requirements : " + verifiedCount);
 		}
 
-		return new FilteredCollectionHolder<List<VerifiedRequirement>>(verifiedCount, verifiedReqs);
+//		return new FilteredCollectionHolder<List<VerifiedRequirement>>(verifiedCount, verifiedReqs);
+		return new FilteredCollectionHolder<List<VerifiedRequirement>>(verifiedCount, Collections.<VerifiedRequirement>emptyList());
 	}
 
 	
@@ -295,7 +297,7 @@ public class CustomTestCaseModificationServiceImpl implements CustomTestCaseModi
 		for (Requirement req : verified) {
 			boolean directlyVerified = directlyVerifiedList.contains(req) ;
 			
-			toReturn.add(new VerifiedRequirement(req, directlyVerified));
+//			toReturn.add(new VerifiedRequirement(req, directlyVerified));
 		}		
 		
 		return toReturn;

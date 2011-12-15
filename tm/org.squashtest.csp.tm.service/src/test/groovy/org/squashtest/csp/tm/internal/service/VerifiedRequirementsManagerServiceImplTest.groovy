@@ -23,6 +23,7 @@ import org.squashtest.csp.tm.domain.projectfilter.ProjectFilter;
 import org.squashtest.csp.tm.domain.requirement.Requirement;
 import org.squashtest.csp.tm.domain.requirement.RequirementLibrary;
 import org.squashtest.csp.tm.domain.requirement.RequirementLibraryNode;
+import org.squashtest.csp.tm.domain.requirement.RequirementVersion;
 import org.squashtest.csp.tm.domain.testcase.TestCase;
 import org.squashtest.csp.tm.internal.infrastructure.strategy.LibrarySelectionStrategy;
 import org.squashtest.csp.tm.internal.repository.LibraryNodeDao;
@@ -106,12 +107,12 @@ class VerifiedRequirementsManagerServiceImplTest extends Specification {
 	
 	def "should remove requirements from test case's verified requirements"() {
 		given: "some requirements"
-		Requirement req5 = new Requirement()
-		Requirement req15 = new Requirement()
+		RequirementVersion req5 = new RequirementVersion()
+		RequirementVersion req15 = new RequirementVersion()
 		
 		use (ReflectionCategory) {
-			RequirementLibraryNode.set field: "id", of: req5, to: 5L
-			RequirementLibraryNode.set field: "id", of: req15, to: 15L
+			RequirementVersion.set field: "id", of: req5, to: 5L
+			RequirementVersion.set field: "id", of: req15, to: 15L
 		}
 		requirementDao.findAllByIdList([15]) >> [req15]
 		
@@ -131,7 +132,7 @@ class VerifiedRequirementsManagerServiceImplTest extends Specification {
 	
 	def "should remove single requirement from test case's verified requirements"() {
 		given: "a requirement"
-		Requirement req = Mock()
+		RequirementVersion req = Mock()
 		req.id >> 5
 		requirementDao.findById(5) >> req
 		

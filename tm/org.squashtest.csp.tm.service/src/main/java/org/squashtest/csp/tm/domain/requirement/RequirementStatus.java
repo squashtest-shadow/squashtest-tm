@@ -35,7 +35,7 @@ public enum RequirementStatus implements Internationalizable {
 			next.add(UNDER_REVIEW);
 			return next;
 		}
-
+		
 		@Override
 		public boolean isRequirementModifiable() {
 			return true;

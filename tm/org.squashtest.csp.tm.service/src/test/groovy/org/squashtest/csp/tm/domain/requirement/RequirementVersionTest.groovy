@@ -18,39 +18,41 @@
  *     You should have received a copy of the GNU Lesser General Public License
  *     along with this software.  If not, see <http://www.gnu.org/licenses/>.
  */
+
 package org.squashtest.csp.tm.domain.requirement
 
 import static org.squashtest.csp.tm.domain.requirement.RequirementStatus.*
 
-import org.squashtest.csp.tm.domain.IllegalRequirementModificationException
+import org.squashtest.csp.tm.domain.IllegalRequirementModificationException;
 import org.squashtest.csp.tm.domain.RequirementNotLinkableException;
-import org.squashtest.csp.tm.domain.testcase.TestCase
+import org.squashtest.csp.tm.domain.testcase.TestCase;
 
-import spock.lang.Shared
-import spock.lang.Specification
-import spock.lang.Unroll
+import spock.lang.Specification;
+import spock.lang.Unroll;
 
-class RequirementTest extends Specification {
-
-	Requirement requirement;
+/**
+ * @author Gregory 
+ *
+ */
+class RequirementVersionTest extends Specification {
+	RequirementVersion requirementVersion = new RequirementVersion(name:"req", description:"this is a req");
 	
 	@Unroll("should allow modification of property '#property' for status WORK_IN_PROGRESS")
 	def "should allow modification for status WORK_IN_PROGRESS"(){
 		
 		given :
-			Requirement requirement = new Requirement("test req", "this is a test req")
-			requirement.setStatus(WORK_IN_PROGRESS)
+			requirementVersion.setStatus(WORK_IN_PROGRESS)
 		
 		when :
-			requirement[property] = valueToSet
+			requirementVersion[property] = valueToSet
 		
-		then :	
+		then :
 		notThrown(IllegalRequirementModificationException)
 			
 		where :
 			property      | valueToSet
 			"name"        | "toto"
-			"description" | "successful test"   
+			"description" | "successful test"
 			"reference"   | "blahblah"
 			"criticality" | RequirementCriticality.MAJOR
 			
@@ -60,19 +62,18 @@ class RequirementTest extends Specification {
 	def "should allow modification for status UNDER_REVIEW"(){
 		
 		given :
-			Requirement requirement = new Requirement("test req", "this is a test req")
-			requirement.setStatus(UNDER_REVIEW)
+			requirementVersion.setStatus(UNDER_REVIEW)
 		
 		when :
-			requirement[property] = valueToSet
+			requirementVersion[property] = valueToSet
 		
-		then :	
+		then :
 		notThrown(IllegalRequirementModificationException)
 			
 		where :
 			property      | valueToSet
 			"name"        | "toto"
-			"description" | "successful test"   
+			"description" | "successful test"
 			"reference"   | "blahblah"
 			"criticality" | RequirementCriticality.MAJOR
 			
@@ -83,20 +84,19 @@ class RequirementTest extends Specification {
 	def "should not allow modification for status APPROVED"(){
 		
 		given :
-			Requirement requirement = new Requirement("test req", "this is a test req")
-			requirement.setStatus(UNDER_REVIEW)//needed because of the workflow
-			requirement.setStatus(APPROVED)
+			requirementVersion.setStatus(UNDER_REVIEW)//needed because of the workflow
+			requirementVersion.setStatus(APPROVED)
 		
 		when :
-			requirement[property] = valueToSet
+			requirementVersion[property] = valueToSet
 		
-		then :	
+		then :
 		thrown(IllegalRequirementModificationException)
 			
 		where :
 			property      | valueToSet
 			"name"        | "toto"
-			"description" | "successful test"   
+			"description" | "successful test"
 			"reference"   | "blahblah"
 			"criticality" | RequirementCriticality.MAJOR
 			
@@ -107,11 +107,10 @@ class RequirementTest extends Specification {
 	def "should not allow modification for status OBSOLETE"(){
 		
 		given :
-			Requirement requirement = new Requirement("test req", "this is a test req")
-			requirement.setStatus(OBSOLETE)
+			requirementVersion.setStatus(OBSOLETE)
 		
 		when :
-			requirement[property] = valueToSet
+			requirementVersion[property] = valueToSet
 		
 		then :
 			thrown(IllegalRequirementModificationException)
@@ -119,15 +118,67 @@ class RequirementTest extends Specification {
 		where :
 			property      | valueToSet
 			"name"        | "toto"
-			"description" | "successful test"   
+			"description" | "successful test"
 			"reference"   | "blahblah"
 			"criticality" | RequirementCriticality.MAJOR
 			
 	}
 	
+	@Unroll("should allow verification of a test case for #status ")
+	def "non obsolete requirements should allow verification of a test case"() {
+		given :
+			def tc = new TestCase(name:"tc", description:"tc")
+			RequirementVersion requirementVersion = prepareRequirement(status)
+		when :
+			requirementVersion.addVerifyingTestCase(tc)
+		then :
+			notThrown(IllegalRequirementModificationException)
+			
+		where :
+			status << [ WORK_IN_PROGRESS, UNDER_REVIEW, APPROVED ]
+	}
+	
+	@Unroll("should allow removal of a test case for #status ")
+	def "non obsolete requirements should allow removal of a test case "() {
+		given :
+			def tc = new TestCase(name:"tc", description:"tc")
+			RequirementVersion requirementVersion = prepareRequirement(status, tc)
+		when :
+			requirementVersion.removeVerifyingTestCase(tc)
+		then :
+			notThrown(IllegalRequirementModificationException)
+			
+		where :
+			status << [ WORK_IN_PROGRESS, UNDER_REVIEW, APPROVED ]
+	}
+	
+	def "obsolete requirements should not allow verification of a test case"() {
+		given :
+			def tc = new TestCase(name:"tc", description:"tc")
+			RequirementVersion requirementVersion = prepareRequirement(OBSOLETE)
+			
+		when :
+			requirementVersion.addVerifyingTestCase(tc)
+			
+		then :
+			thrown(RequirementNotLinkableException)
+	}
+	
+	def "obsolete requirements should not allow removal of a test case "() {
+		given :
+			def tc = new TestCase(name:"tc", description:"tc")
+			RequirementVersion requirementVersion = prepareRequirement(OBSOLETE, tc)
+			
+		when :
+			requirementVersion.removeVerifyingTestCase(tc)
+			
+		then :
+			thrown(RequirementNotLinkableException)
+	}
+	
 	@Unroll("should allow status change when current status is #status")
 	def "should allow status change"() {
-		given : 
+		given :
 			def req = prepareRequirement(status)
 		when :
 			req.setStatus(status)
@@ -163,9 +214,9 @@ class RequirementTest extends Specification {
 			
 		where :
 			status				|	availableStatuses
-			WORK_IN_PROGRESS  	|	[ OBSOLETE, WORK_IN_PROGRESS, UNDER_REVIEW ] 
+			WORK_IN_PROGRESS  	|	[ OBSOLETE, WORK_IN_PROGRESS, UNDER_REVIEW ]
 			UNDER_REVIEW		|	[ OBSOLETE, UNDER_REVIEW, APPROVED, WORK_IN_PROGRESS ]
-			APPROVED			|	[ OBSOLETE, APPROVED, UNDER_REVIEW, WORK_IN_PROGRESS ] 
+			APPROVED			|	[ OBSOLETE, APPROVED, UNDER_REVIEW, WORK_IN_PROGRESS ]
 			
 	}
 	
@@ -196,8 +247,8 @@ class RequirementTest extends Specification {
 	}
 	
 	//that (naive) method builds requirements with initial status that could bypass the workflow.
-	private Requirement prepareRequirement(RequirementStatus status){
-		def req = new Requirement(name:"req", description:"this is a req");
+	private RequirementVersion prepareRequirement(RequirementStatus status){
+		def req = new RequirementVersion(name:"req", description:"this is a req");
 		
 		for (iterStatus in RequirementStatus.values()) {
 			req.status = iterStatus;
@@ -210,8 +261,8 @@ class RequirementTest extends Specification {
 	}
 	
 	//same
-	private Requirement prepareRequirement(RequirementStatus status, TestCase testCase){
-		def req = new Requirement(name:"req", description:"this is a req");
+	private RequirementVersion prepareRequirement(RequirementStatus status, TestCase testCase){
+		def req = new RequirementVersion(name:"req", description:"this is a req");
 			req.addVerifyingTestCase(testCase)
 		
 		for (iterStatus in RequirementStatus.values()){
@@ -222,5 +273,21 @@ class RequirementTest extends Specification {
 		}
 		
 		return req;
+	}
+
+	def "when verified by a test case, the test case should also veryfy the requirementVersion"() {
+		given:
+		TestCase tc = new TestCase()
+		
+		when:
+		requirementVersion.addVerifyingTestCase tc
+		
+		then:
+		tc.verifiedRequirements.contains requirementVersion
+	}
+	
+	def "requirement version should have an attachment list"() {
+		expect:
+		requirementVersion.attachmentList != null
 	}
 }

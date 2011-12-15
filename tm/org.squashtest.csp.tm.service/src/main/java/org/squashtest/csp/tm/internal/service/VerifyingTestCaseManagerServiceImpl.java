@@ -97,7 +97,8 @@ public class VerifyingTestCaseManagerServiceImpl implements VerifyingTestCaseMan
 			Requirement requirement = requirementDao.findById(requirementId);
 
 			for (TestCase testcase : testCases) {
-				requirement.addVerifyingTestCase(testcase);
+				// XXX RequirementVersion
+//				requirement.addVerifyingTestCase(testcase);
 			}
 		}
 	}
@@ -112,7 +113,8 @@ public class VerifyingTestCaseManagerServiceImpl implements VerifyingTestCaseMan
 			Requirement requirement = requirementDao.findById(requirementId);
 
 			for (TestCase testcase : tcs) {
-				requirement.removeVerifyingTestCase(testcase);
+				// XXX RequirementVersion
+//				requirement.removeVerifyingTestCase(testcase);
 			}
 		}
 
@@ -125,7 +127,8 @@ public class VerifyingTestCaseManagerServiceImpl implements VerifyingTestCaseMan
 		Requirement req = requirementDao.findById(requirementId);
 		TestCase testCase = testCaseDao.findById(testCaseId);
 
-		req.removeVerifyingTestCase(testCase);
+		// XXX RequirementVersion
+//		req.removeVerifyingTestCase(testCase);
 
 	}
 
