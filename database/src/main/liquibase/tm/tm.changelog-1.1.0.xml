@@ -182,8 +182,9 @@
 			insert into REQUIREMENT_AUDIT_EVENT (requirement_id, event_date, author) 
 			select r.rln_id, rln.created_on, rln.created_by  
 			from REQUIREMENT_LIBRARY_NODE as rln, REQUIREMENT as r 
-			where r.rln_id=rln.rln_id;		
-			
+			where r.rln_id=rln.rln_id;
+		</sql>
+		<sql>			
 			insert into REQUIREMENT_CREATION (event_id) select event_id from REQUIREMENT_AUDIT_EVENT;
 		</sql>
 	</changeSet>
@@ -213,6 +214,68 @@
 			set DESCRIPTION = (select rln.DESCRIPTION from REQUIREMENT_LIBRARY_NODE rln where rln.RLN_ID = rf.RLN_ID);
 		</sql>
 		<addNotNullConstraint tableName="REQUIREMENT_FOLDER" columnName="NAME" columnDataType="VARCHAR(255)"/>
+	</changeSet>
+
+	<changeSet id="tm-1.1.0.14" author="gfouquet">
+		<comment>Creates REQUIREMENT_VERSION table in which we store the versions of requirements</comment>
+		
+		<createTable tableName="REQUIREMENT_VERSION">
+			<column name="REQ_VERSION_ID" type="BIGINT" autoIncrement="true" remarks="generated surrogate key">
+				<constraints primaryKey="true" nullable="false" />
+			</column>
+
+			<column name="REQUIREMENT_ID" type="BIGINT" remarks="FK to the requirement">
+				<constraints nullable="false" references="REQUIREMENT(RLN_ID)" foreignKeyName="fk_requirement_version_requirement" />
+			</column>
+
+			<column name="NAME" type="VARCHAR(255)" remarks="Requirement's name">
+				<constraints nullable="false" />
+			</column>
+
+			<column name="DESCRIPTION" type="CLOB" defaultValue="NULL" remarks="Requirement's description" />
+
+			<column name="REFERENCE" type="VARCHAR(20)" remarks="The requirement's reference" />
+
+			<column name="VERSION_NUMBER" type="INT" defaultValueNumeric="1" remarks="This requirement's version number" />
+
+			<column name="CRITICALITY" type="VARCHAR(50)"
+				remarks="Requirement criticality. Althought this field is a variable character, the data will be the text representation of an enumeration"
+				defaultValue="UNDEFINED">
+				<constraints nullable="false" />
+			</column>
+
+			<column name="STATUS" type="VARCHAR(50)" defaultValue="WORK_IN_PROGRESS">
+				<constraints nullable="false" />
+			</column>
+
+			<column name="ATTACHMENT_LIST_ID" type="BIGINT" remarks="FK to a requirement's list of attachments">
+				<constraints nullable="false" references="ATTACHMENT_LIST(ATTACHMENT_LIST_ID)" foreignKeyName="fk_requirement_version_attachment_list" />
+			</column>
+			
+			<column name="CREATED_BY" type="VARCHAR(50)" remarks="Who created this requirement's version">
+				<constraints nullable="false" />
+			</column>
+			
+			<column name="CREATED_ON" type="DATETIME" remarks="When this requirement's version was created">
+				<constraints nullable="false" />
+			</column>
+			
+			<column name="LAST_MODIFIED_BY" type="VARCHAR(50)" defaultValue="NULL" remarks="Who modified this requirement's version last" />
+
+			<column name="LAST_MODIFIED_ON" type="DATETIME" defaultValue="NULL" remarks="When this requirement's version was last modified" />
+		</createTable>
+	</changeSet>
+	
+	<changeSet id="tm-1.1.0.15" author="gfouquet">
+		<comment>Migrates requirement data into REQUIREMENT_VERSION table</comment>
+		<sql>
+			insert into REQUIREMENT_VERSION 
+				(REQUIREMENT_ID, NAME, DESCRIPTION, REFERENCE, CRITICALITY, STATUS, ATTACHMENT_LIST_ID, CREATED_BY, CREATED_ON, LAST_MODIFIED_BY, LAST_MODIFIED_ON) 
+			select r.RLN_ID, NAME, DESCRIPTION, REFERENCE, CRITICALITY, REQUIREMENT_STATUS, ATTACHMENT_LIST_ID, CREATED_BY, CREATED_ON, LAST_MODIFIED_BY, LAST_MODIFIED_ON
+			from REQUIREMENT_LIBRARY_NODE n
+			inner join REQUIREMENT r on n.RLN_Id = r.RLN_ID
+			where n.DELETED_ON is null;
+		</sql>		
 	</changeSet>
 </databaseChangeLog>
  

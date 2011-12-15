@@ -43,6 +43,27 @@
 		</sql>
 	</changeSet>
 	
+	<changeSet id="1.1.0.save-requirements-before-versionning" author="gfouquet">
+		<comment>We save requirement data. Note : there is no status in requirement table at this point</comment>
+		<sql>
+			CREATE TEMPORARY TABLE `OLD_REQ` (
+				`REQUIREMENT_ID` BIGINT(20) NULL DEFAULT NULL,
+				`NAME` VARCHAR(255) NULL DEFAULT NULL,
+				`DESCRIPTION` TEXT NULL DEFAULT NULL,
+				`REFERENCE` VARCHAR(20) NULL DEFAULT NULL,
+				`CRITICALITY` VARCHAR(255) NULL DEFAULT NULL,
+				`ATT_LIST_ID` BIGINT(20) NULL DEFAULT NULL
+			);		
+		</sql>
+		<sql>
+			insert into OLD_REQ (REQUIREMENT_ID, NAME, DESCRIPTION, REFERENCE, CRITICALITY, ATT_LIST_ID) 
+			select r.RLN_ID, NAME, DESCRIPTION, REFERENCE, CRITICALITY, ATTACHMENT_LIST_ID 
+			from REQUIREMENT_LIBRARY_NODE n 
+			inner join REQUIREMENT r on r.RLN_ID = n.RLN_ID
+			where n.DELETED_ON is null;
+		</sql>
+	</changeSet>
+
 	<include file="../../../main/liquibase/tm/tm.changelog-1.1.0.xml" relativeToChangelogFile="true" />
 	
 	<changeSet id="1.1.0.check-no-BLOQUED-in-executions" author="gfouquet">
@@ -127,6 +148,27 @@
 	 		</sqlCheck>
 		</preConditions>
 		<comment>We check folder data was push down to REQUIREMENT_FOLDER table</comment>
+	</changeSet>
+
+	<changeSet id="1.1.0.check-requirement-data-migrated" author="gfouquet">
+		<preConditions>
+			<sqlCheck expectedResult="0">
+				select count(*)
+				from OLD_REQ or
+				where not exists (
+					select 1  from REQUIREMENT_VERSION rv
+						where rv.REQUIREMENT_ID = or.REQUIREMENT_ID
+						and rv.NAME = or.NAME
+						and rv.DESCRIPTION = or.DESCRIPTION
+						and rv.CRITICALITY = or.CRITICALITY
+						and (rv.REFERENCE = or.REFERENCE) or (rv.REFERENCE is null and or.REFERENCE is null)
+						and rv.ATTACHMENT_LIST_ID = or.ATT_LIST_ID
+						and rv.STATUS is not null
+						and rv.VERSION_NUMBER = 1
+				);
+	 		</sqlCheck>
+		</preConditions>
+		<comment>We check requirement data was migrated into REQUIREMENT_VERSION table</comment>
 	</changeSet>
 	
 </databaseChangeLog>
