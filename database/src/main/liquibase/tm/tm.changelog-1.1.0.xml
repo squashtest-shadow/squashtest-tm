@@ -144,6 +144,8 @@
 
 			<column name="LAST_MODIFIED_ON" type="DATETIME" defaultValue="NULL" remarks="When this requirement's version was last modified" />
 		</createTable>
+		
+		<addUniqueConstraint tableName="REQUIREMENT_VERSION" columnNames="REQUIREMENT_ID, VERSION_NUMBER" constraintName="cu_version_of_requirement"/>
 	</changeSet>
 	
 	<changeSet id="tm-1.1.0.09" author="gfouquet">
