@@ -130,6 +130,23 @@
 		<comment>We check requirement data was migrated into REQUIREMENT_VERSION table</comment>
 	</changeSet>
 	
+	<changeSet id="1.1.0.check-requirement-latest-version-was-set" author="gfouquet">
+		<preConditions>
+			<sqlCheck expectedResult="0">
+				select count(*)
+				from REQUIREMENT r
+				inner join REQUIREMENT_LIBRARY_NODE n on n.RLN_ID = r.RLN_ID
+				where not exists (
+					select 1  from REQUIREMENT_VERSION rv
+						where rv.REQ_VERSION_ID = r.LATEST_VERSION_ID
+						and rv.REQUIREMENT_ID = r.RLN_ID
+				)
+				and DELETED_ON is null;
+	 		</sqlCheck>
+		</preConditions>
+		<comment>We check requirement data was migrated into REQUIREMENT_VERSION table</comment>
+	</changeSet>
+
 	<changeSet id="1.1.0.check-import-existing-requirement-event_audit" author="bsiri">
 		<preConditions>
 			<sqlCheck expectedResult="0">
