@@ -20,33 +20,22 @@
  */
 package org.squashtest.csp.tm.domain.requirement;
 
-import java.util.HashSet;
-import java.util.Set;
-
-import javax.persistence.Basic;
 import javax.persistence.CascadeType;
-import javax.persistence.Column;
 import javax.persistence.Entity;
-import javax.persistence.EnumType;
-import javax.persistence.Enumerated;
 import javax.persistence.JoinColumn;
-import javax.persistence.ManyToMany;
 import javax.persistence.OneToOne;
 import javax.persistence.PrimaryKeyJoinColumn;
-import javax.validation.constraints.NotNull;
 
-import org.squashtest.csp.tm.domain.IllegalRequirementModificationException;
-import org.squashtest.csp.tm.domain.RequirementNotLinkableException;
-import org.squashtest.csp.tm.domain.attachment.AttachmentHolder;
 import org.squashtest.csp.tm.domain.attachment.Attachment;
+import org.squashtest.csp.tm.domain.attachment.AttachmentHolder;
 import org.squashtest.csp.tm.domain.attachment.AttachmentList;
-import org.squashtest.csp.tm.domain.testcase.TestCase;
 
 /**
  * Entity requirement
  * 
- * Note that much of its setters will throw an IllegalRequirementModificationException if a modification is attempted
- * while the status does not allow it.
+ * Note that much of its setters will throw an
+ * IllegalRequirementModificationException if a modification is attempted while
+ * the status does not allow it.
  * 
  * @author bsiri
  * 
@@ -54,45 +43,24 @@ import org.squashtest.csp.tm.domain.testcase.TestCase;
 
 @Entity
 @PrimaryKeyJoinColumn(name = "RLN_ID")
-public class Requirement extends RequirementLibraryNode implements AttachmentHolder {
-
-	/***
-	 * The requirement reference
-	 */
-	@Basic(optional = true)
-	private String reference;
-
-	@Enumerated(EnumType.STRING)
-	private RequirementCriticality criticality = RequirementCriticality.UNDEFINED;
-
-	@Enumerated(EnumType.STRING)
-	@Column(name = "REQUIREMENT_STATUS")
-	private RequirementStatus status = RequirementStatus.WORK_IN_PROGRESS;
-
-	@OneToOne(cascade = { CascadeType.ALL }, orphanRemoval = true)
-	@JoinColumn(name = "ATTACHMENT_LIST_ID")
-	private final AttachmentList attachmentList = new AttachmentList();
+public class Requirement extends RequirementLibraryNode implements
+		AttachmentHolder {
+	@OneToOne(cascade = { CascadeType.PERSIST, CascadeType.MERGE })
+	@JoinColumn(name = "LATEST_VERSION_ID")
+	private RequirementVersion latestVersion;
 
 	public Requirement() {
 		super();
 	}
 
-	public Requirement(String name, String description) {
-		status = RequirementStatus.WORK_IN_PROGRESS;
-		setName(name);
-		setDescription(description);
-	}
-
 	@Override
 	public void setName(String name) {
-		checkModifiable();
-		super.setName(name);
+		latestVersion.setName(name);
 	}
 
 	@Override
 	public void setDescription(String description) {
-		checkModifiable();
-		super.setDescription(description);
+		latestVersion.setDescription(description);
 	}
 
 	@Override
@@ -100,22 +68,16 @@ public class Requirement extends RequirementLibraryNode implements AttachmentHol
 		visitor.visit(this);
 	}
 
-	private void checkLinkable() {
-		if (!status.isRequirementLinkable()) {
-			throw new RequirementNotLinkableException();
-		}
-	}
-
 	@Override
 	public AttachmentList getAttachmentList() {
-		return attachmentList;
+		return latestVersion.getAttachmentList();
 	}
 
 	/***
 	 * @return the reference of the requirement
 	 */
 	public String getReference() {
-		return reference;
+		return latestVersion.getReference();
 	}
 
 	/***
@@ -124,8 +86,7 @@ public class Requirement extends RequirementLibraryNode implements AttachmentHol
 	 * @param reference
 	 */
 	public void setReference(String reference) {
-		checkModifiable();
-		this.reference = reference;
+		latestVersion.setReference(reference);
 	}
 
 	@Override
@@ -137,10 +98,10 @@ public class Requirement extends RequirementLibraryNode implements AttachmentHol
 		clone.setDescription(this.getDescription());
 		clone.setReference(this.getReference());
 		clone.setCriticality(this.getCriticality());
-// XXX RequirementVersion
-//		for (TestCase testCase : this.verifyingTestCases) {
-//			clone.addVerifyingTestCase(testCase);
-//		}
+		// XXX RequirementVersion
+		// for (TestCase testCase : this.verifyingTestCases) {
+		// clone.addVerifyingTestCase(testCase);
+		// }
 
 		for (Attachment tcAttach : this.getAttachmentList().getAllAttachments()) {
 			Attachment atCopy = tcAttach.hardCopy();
@@ -155,7 +116,7 @@ public class Requirement extends RequirementLibraryNode implements AttachmentHol
 	 * @return the requirement criticality
 	 */
 	public RequirementCriticality getCriticality() {
-		return criticality;
+		return latestVersion.getCriticality();
 	}
 
 	/***
@@ -164,45 +125,34 @@ public class Requirement extends RequirementLibraryNode implements AttachmentHol
 	 * @param criticality
 	 */
 	public void setCriticality(RequirementCriticality criticality) {
-		checkModifiable();
-		this.criticality = criticality;
+		latestVersion.setCriticality(criticality);
 	}
 
 	public void setStatus(RequirementStatus status) {
-		checkStatusAccess(status);
-		this.status = status;
+		latestVersion.setStatus(status);
 	}
 
 	public RequirementStatus getStatus() {
-		return status;
-	}
-
-	private void checkModifiable() {
-		if (!status.isRequirementModifiable()) {
-			throw new IllegalRequirementModificationException();
-		}
-	}
-
-	private void checkStatusAccess(RequirementStatus newStatus) {
-		if ((!status.getAllowsStatusUpdate()) || (!status.isTransitionLegal(newStatus))) {
-			throw new IllegalRequirementModificationException();
-		}
+		return latestVersion.getStatus();
 	}
 
 	/**
 	 * 
-	 * @return <code>true</code> if this requirement can be (un)linked by new verifying testcases
+	 * @return <code>true</code> if this requirement can be (un)linked by new
+	 *         verifying testcases
 	 */
 	public boolean isLinkable() {
 		return getStatus().isRequirementLinkable();
 	}
 
 	/**
-	 * Tells if this requirement's "intrinsic" properties can be modified. The following are not considered as
-	 * "intrinsic" properties" : {@link #verifyingTestCases} are governed by the {@link #isLinkable()} state,
-	 * {@link #status} is governed by itself.
+	 * Tells if this requirement's "intrinsic" properties can be modified. The
+	 * following are not considered as "intrinsic" properties" :
+	 * {@link #verifyingTestCases} are governed by the {@link #isLinkable()}
+	 * state, {@link #status} is governed by itself.
 	 * 
-	 * @return <code>true</code> if this requirement's properties can be modified.
+	 * @return <code>true</code> if this requirement's properties can be
+	 *         modified.
 	 */
 	public boolean isModifiable() {
 		return getStatus().isRequirementModifiable();

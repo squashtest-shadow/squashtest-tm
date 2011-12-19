@@ -1,5 +1,8 @@
 syntax: regexp
 ^.settings$
+cnf$
+core/org.squashtest.csp.core.jetty.start.osgi/META-INF$
+src/META-INF$
 syntax: regexp
 /\.settings/
 syntax: regexp
@@ -104,19 +107,9 @@ syntax: regexp
 syntax: regexp
 ^tm/org\.squashtest\.csp\.tm\.repository\.dbdriver/META-INF/MANIFEST\.MF$
 syntax: regexp
-^tm/org\.squashtest\.csp\.tm\.repository\.dbdriver/build\.properties$
+build\.properties$
 syntax: regexp
 ^core/build\.properties$
-syntax: regexp
-^dependencies/spock-test-dependencies/build\.properties$
-syntax: regexp
-^dependencies/spock-test-dependencies/build\.properties$
-syntax: regexp
-^tm/build\.properties$
-syntax: regexp
-^provision/build\.properties$
-syntax: regexp
-^dependencies/spock-test-dependencies/build\.properties$
 syntax: regexp
 ^tm/org\.squashtest\.csp\.tm\.service/WEB-INF$
 syntax: regexp
@@ -139,10 +132,6 @@ syntax: regexp
 syntax: regexp
 ^core/org\.squashtest\.csp\.core\.web/WEB-INF$
 syntax: regexp
-^core/org\.squashtest\.csp\.core\.bugtracker/build\.properties$
-syntax: regexp
-^core/org\.squashtest\.csp\.core\.web/build\.properties$
-syntax: regexp
 ^core/org\.squashtest\.csp\.core\.web/images$
 syntax: regexp
 ^core/org\.squashtest\.csp\.core\.web/scripts$
@@ -161,17 +150,16 @@ syntax: regexp
 syntax: regexp
 ^core/org\.squashtest\.csp\.core\.jetty\.start\.osgi/META-INF/NOTICE\.txt$
 syntax: regexp
-^core/org\.squashtest\.csp\.core\.jetty\.start\.osgi/build\.properties$
-syntax: regexp
 ^core/launcher/META-INF/COPYING.txt$
 syntax: regexp
 ^core/launcher/META-INF/NOTICE.txt$
 syntax: regexp
 ^core/org\.squashtest\.csp\.core\.jetty\.start\.osgi/META-INF/MANIFEST\.MF$
-syntax: glob
+syntax: regexp
+build/classes$
 syntax: regexp
 ^.metadata/.*$
-syntax: regexp
-^.*build.properties$
 distribution/META-INF/NOTICE.txt
 distribution/META-INF/COPYING.txt
+syntax: regexp
+bnd.bnd$
