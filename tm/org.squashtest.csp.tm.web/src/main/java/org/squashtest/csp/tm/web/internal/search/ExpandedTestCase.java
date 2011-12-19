@@ -23,8 +23,8 @@ package org.squashtest.csp.tm.web.internal.search;
 import java.util.Collection;
 
 import org.squashtest.csp.tm.domain.project.Project;
-import org.squashtest.csp.tm.domain.requirement.Requirement;
 import org.squashtest.csp.tm.domain.requirement.RequirementCriticality;
+import org.squashtest.csp.tm.domain.requirement.RequirementVersion;
 import org.squashtest.csp.tm.domain.testcase.TestCase;
 
 /***
@@ -82,8 +82,9 @@ public class ExpandedTestCase {
 	private RequirementCriticality calculateMaxCriticality() {
 		// Each level is represented by a number. O is the lowest one
 		int level = 0;
+// XXX RequirementVersion
 		// check if there's a stronger criticality and if this criticality is part of the ones selected for the research
-		for (Requirement requirement : this.testCase.getVerifiedRequirements()) {
+		for (RequirementVersion requirement : this.testCase.getVerifiedRequirements()) {
 			if (requirement.getCriticality().getLevel() > level
 					&& (selectedCriticalities.isEmpty() || selectedCriticalities.contains(requirement.getCriticality()))) {
 				level = (int) requirement.getCriticality().getLevel();

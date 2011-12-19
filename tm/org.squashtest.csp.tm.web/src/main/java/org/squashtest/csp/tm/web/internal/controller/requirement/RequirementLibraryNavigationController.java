@@ -59,6 +59,7 @@ import org.squashtest.csp.tm.domain.requirement.Requirement;
 import org.squashtest.csp.tm.domain.requirement.RequirementFolder;
 import org.squashtest.csp.tm.domain.requirement.RequirementLibrary;
 import org.squashtest.csp.tm.domain.requirement.RequirementLibraryNode;
+import org.squashtest.csp.tm.domain.requirement.RequirementVersion;
 import org.squashtest.csp.tm.service.LibraryNavigationService;
 import org.squashtest.csp.tm.service.RequirementLibraryNavigationService;
 import org.squashtest.csp.tm.web.internal.controller.generic.LibraryNavigationController;
@@ -69,14 +70,14 @@ import org.squashtest.csp.tm.web.internal.report.services.JasperReportsServiceIm
 
 /**
  * Controller which processes requests related to navigation in a {@link RequirementLibrary}.
- *
+ * 
  * @author Gregory Fouquet
- *
+ * 
  */
 @Controller
 @RequestMapping(value = "/requirement-browser")
 public class RequirementLibraryNavigationController extends
-LibraryNavigationController<RequirementLibrary, RequirementFolder, RequirementLibraryNode> {
+		LibraryNavigationController<RequirementLibrary, RequirementFolder, RequirementLibraryNode> {
 	private static final Logger LOGGER = LoggerFactory.getLogger(RequirementLibraryNavigationController.class);
 
 	@Inject
@@ -86,7 +87,6 @@ LibraryNavigationController<RequirementLibrary, RequirementFolder, RequirementLi
 
 	@Inject
 	private JasperReportsServiceImpl jrServices;
-
 
 	private RequirementLibraryNavigationService requirementLibraryNavigationService;
 
@@ -102,35 +102,33 @@ LibraryNavigationController<RequirementLibrary, RequirementFolder, RequirementLi
 	@ResponseStatus(HttpStatus.CREATED)
 	public @ResponseBody
 	JsTreeNode addNewRequirementToLibraryRootContent(@PathVariable long libraryId,
-			@Valid @ModelAttribute("add-requirement") Requirement newRequirement) {
+			@Valid @ModelAttribute("add-requirement") RequirementVersion firstVersion) {
 
-		requirementLibraryNavigationService.addRequirementToRequirementLibrary(
-				libraryId, newRequirement);
+		requirementLibraryNavigationService.addRequirementToRequirementLibrary(libraryId, firstVersion);
 
 		if (LOGGER.isDebugEnabled()) {
 			LOGGER.debug("RequirementCreationController : creation of a new requirement, name : "
-					+ newRequirement.getName() + ", description : " + newRequirement.getDescription());
+					+ firstVersion.getName() + ", description : " + firstVersion.getDescription());
 		}
 
-		return createTreeNodeFromLibraryNode(newRequirement);
+		return createTreeNodeFromLibraryNode(firstVersion.getRequirement());
 
 	}
 
 	@RequestMapping(value = "/folders/{folderId}/content/new-requirement", method = RequestMethod.POST)
 	public @ResponseBody
 	JsTreeNode addNewRequirementToFolderContent(@PathVariable long folderId,
-			@Valid @ModelAttribute("add-requirement") Requirement newRequirement) {
+			@Valid @ModelAttribute("add-requirement") RequirementVersion firstVersion) {
 
-		requirementLibraryNavigationService.addRequirementToRequirementFolder(
-				folderId, newRequirement);
+		requirementLibraryNavigationService.addRequirementToRequirementFolder(folderId, firstVersion);
 
 		if (LOGGER.isDebugEnabled()) {
 			LOGGER.debug("RequirementCreationController : creation of a new requirement, name : "
-					+ newRequirement.getName() + ", description : " + newRequirement.getDescription() + " in folder "
+					+ firstVersion.getName() + ", description : " + firstVersion.getDescription() + " in folder "
 					+ folderId);
 		}
 
-		return createTreeNodeFromLibraryNode(newRequirement);
+		return createTreeNodeFromLibraryNode(firstVersion.getRequirement());
 
 	}
 
@@ -175,37 +173,35 @@ LibraryNavigationController<RequirementLibrary, RequirementFolder, RequirementLi
 		return "page/requirement-libraries/show-requirement-library";
 	}
 
-
-
-
-	@RequestMapping(value="/export-folder", method=RequestMethod.GET)
-	public
-	@ResponseBody void exportRequirements(@RequestParam("tab[]") List<Long> ids,
-								   @RequestParam("name") String filename,	HttpServletResponse response, Locale locale ){
-		List<ExportRequirementData> dataSource = requirementLibraryNavigationService.findRequirementsToExportFromFolder(ids);
+	@RequestMapping(value = "/export-folder", method = RequestMethod.GET)
+	public @ResponseBody
+	void exportRequirements(@RequestParam("tab[]") List<Long> ids, @RequestParam("name") String filename,
+			HttpServletResponse response, Locale locale) {
+		List<ExportRequirementData> dataSource = requirementLibraryNavigationService
+				.findRequirementsToExportFromFolder(ids);
 
 		printExport(dataSource, filename, response, locale);
 
 	}
 
-	@RequestMapping(value="/export-library", method=RequestMethod.GET)
-	public
-	@ResponseBody void exportLibrary(@RequestParam("tab[]") List<Long> libraryIds,
-							  @RequestParam("name") String filename, HttpServletResponse response, Locale locale){
+	@RequestMapping(value = "/export-library", method = RequestMethod.GET)
+	public @ResponseBody
+	void exportLibrary(@RequestParam("tab[]") List<Long> libraryIds, @RequestParam("name") String filename,
+			HttpServletResponse response, Locale locale) {
 
-
-
-		List<ExportRequirementData> dataSource = requirementLibraryNavigationService.findRequirementsToExportFromLibrary(libraryIds);
+		List<ExportRequirementData> dataSource = requirementLibraryNavigationService
+				.findRequirementsToExportFromLibrary(libraryIds);
 
 		printExport(dataSource, filename, response, locale);
 
 	}
 
-	protected void printExport(List<ExportRequirementData> dataSource, String filename, HttpServletResponse response, Locale locale){
-		try{
-			//it seems JasperReports doesn't like '\n' and the likes so we'll HTML-encode that first.
-			//that solution is quite weak though.
-			for (ExportRequirementData data : dataSource){
+	protected void printExport(List<ExportRequirementData> dataSource, String filename, HttpServletResponse response,
+			Locale locale) {
+		try {
+			// it seems JasperReports doesn't like '\n' and the likes so we'll HTML-encode that first.
+			// that solution is quite weak though.
+			for (ExportRequirementData data : dataSource) {
 				char replacer = ' ';
 				Source htmlSource = new Source(data.getDescription());
 				Segment htmlSegment = new Segment(htmlSource, 0, data.getDescription().length());
@@ -215,43 +211,42 @@ LibraryNavigationController<RequirementLibrary, RequirementFolder, RequirementLi
 				data.setDescription(encoded);
 			}
 
-
-			//report generation parameters
+			// report generation parameters
 			Map<String, Object> reportParameter = new HashMap<String, Object>();
 			reportParameter.put(JRParameter.REPORT_LOCALE, locale);
 
-
 			// exporter parameters
-			//TODO : defining an export parameter specific to csv while in the future we could export to other formats
-			//is unsatisfying. Find something else.
-			Map<JRExporterParameter,Object> exportParameter = new HashMap<JRExporterParameter, Object>();
+			// TODO : defining an export parameter specific to csv while in the future we could export to other formats
+			// is unsatisfying. Find something else.
+			Map<JRExporterParameter, Object> exportParameter = new HashMap<JRExporterParameter, Object>();
 			exportParameter.put(JRCsvExporterParameter.FIELD_DELIMITER, ";");
 			exportParameter.put(JRExporterParameter.CHARACTER_ENCODING, "ISO-8859-1");
 
-			InputStream jsStream = Thread.currentThread().getContextClassLoader().getResourceAsStream("/WEB-INF/reports/requirement-export.jasper");
-			InputStream reportStream = jrServices.getReportAsStream(jsStream, "csv", dataSource, reportParameter, exportParameter);
+			InputStream jsStream = Thread.currentThread().getContextClassLoader()
+					.getResourceAsStream("/WEB-INF/reports/requirement-export.jasper");
+			InputStream reportStream = jrServices.getReportAsStream(jsStream, "csv", dataSource, reportParameter,
+					exportParameter);
 
-			//print it.
-			ServletOutputStream servletStream= response.getOutputStream();
+			// print it.
+			ServletOutputStream servletStream = response.getOutputStream();
 
 			response.setContentType("application/octet-stream");
-			response.setHeader("Content-Disposition", "attachment; filename="+filename+".csv");
+			response.setHeader("Content-Disposition", "attachment; filename=" + filename + ".csv");
 
 			flushStreams(reportStream, servletStream);
 
 			reportStream.close();
 			servletStream.close();
 
-		}catch(IOException ioe){
+		} catch (IOException ioe) {
 			throw new RuntimeException(ioe);
 		}
-
 
 	}
 
 	/* ********************************** private stuffs ******************************* */
 
-	private void flushStreams(InputStream inStream, ServletOutputStream outStream) throws IOException{
+	private void flushStreams(InputStream inStream, ServletOutputStream outStream) throws IOException {
 		int readByte;
 
 		do {

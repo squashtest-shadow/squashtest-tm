@@ -30,6 +30,8 @@ import org.squashtest.csp.tm.service.deletion.SuppressionPreviewReport;
 /**
  * Defines common methods for a library navigation service, mainly library access and folder manipulation.
  * 
+ * TODO Move all methods which modify a folder's content to another service 
+ * 
  * @author Gregory Fouquet
  * 
  */

@@ -372,6 +372,7 @@ implements LibraryNavigationService<LIBRARY, FOLDER, NODE> {
 	}
 	
 
+	@SuppressWarnings("unchecked")
 	@Override
 	public List<NODE> copyNodesToLibrary(long destinationId, Long[] targetId){
 		
@@ -446,6 +447,7 @@ implements LibraryNavigationService<LIBRARY, FOLDER, NODE> {
 		return newCopy;
 	}
 	
+	@SuppressWarnings("unchecked")
 	public FOLDER createCopyFolder(long folderId){
 		FOLDER original = getFolderDao().findById(folderId);
 		FOLDER clone = (FOLDER) original.createCopy();

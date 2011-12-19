@@ -59,11 +59,16 @@ class RequirementFolderTest extends Specification {
 
 	def "should not add node with duplicate name"() {
 		given:
-		Requirement req = new Requirement(name: "foo")
-		folder.addContent(req)
+		Requirement existing = Mock()
+		existing.name >> "foo"
+		folder.addContent(existing)
+		
+		and: 
+		Requirement candidate = Mock()
+		candidate.name >> "foo"
 
 		when:
-		folder.addContent(new Requirement(name: "foo"))
+		folder.addContent(candidate)
 
 		then:
 		thrown DuplicateNameException
@@ -74,7 +79,7 @@ class RequirementFolderTest extends Specification {
 		Project project = new Project()
 
 		use(ReflectionCategory) {
-			GenericLibraryNode.set field: "project", of: folder, to: project
+			RequirementLibraryNode.set field: "project", of: folder, to: project
 		}
 
 		and:

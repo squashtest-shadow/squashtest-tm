@@ -30,6 +30,7 @@ import org.squashtest.csp.tm.domain.requirement.Requirement;
 import org.squashtest.csp.tm.domain.requirement.RequirementFolder;
 import org.squashtest.csp.tm.domain.requirement.RequirementLibrary;
 import org.squashtest.csp.tm.domain.requirement.RequirementLibraryNode;
+import org.squashtest.csp.tm.domain.requirement.RequirementVersion;
 import org.squashtest.csp.tm.internal.service.RequirementLibraryNavigationServiceImpl;
 import org.squashtest.csp.tm.service.RequirementLibraryNavigationService;
 import org.squashtest.csp.tm.web.internal.model.builder.DriveNodeBuilder;
@@ -89,16 +90,17 @@ class RequirementLibraryNavigationControllerTest  extends Specification {
 
 	def "should add requirement to root of library and return requirement node model"() {
 		given:
-		Requirement req = new Requirement(name: "new req") // we need the real thing because of visitor pattern
+		RequirementVersion firstVersion = new RequirementVersion(name: "new req") // we need the real thing because of visitor pattern
+		Requirement req = new Requirement(firstVersion)
 		use (ReflectionCategory) {
 			RequirementLibraryNode.set field: "id", of: req, to: 100L
 		}
 
 		when:
-		JsTreeNode res = controller.addNewRequirementToLibraryRootContent(100, req)
+		JsTreeNode res = controller.addNewRequirementToLibraryRootContent(100, firstVersion)
 
 		then:
-		1 * requirementLibraryNavigationService.addRequirementToRequirementLibrary(100, req)
+		1 * requirementLibraryNavigationService.addRequirementToRequirementLibrary(100, firstVersion)
 		res.title == "new req"
 		res.attr['resId'] == "100"
 		res.attr['rel'] == "file"

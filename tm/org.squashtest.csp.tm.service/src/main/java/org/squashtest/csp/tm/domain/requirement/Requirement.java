@@ -25,6 +25,7 @@ import javax.persistence.Entity;
 import javax.persistence.JoinColumn;
 import javax.persistence.OneToOne;
 import javax.persistence.PrimaryKeyJoinColumn;
+import javax.validation.constraints.NotNull;
 
 import org.squashtest.csp.tm.domain.attachment.Attachment;
 import org.squashtest.csp.tm.domain.attachment.AttachmentHolder;
@@ -49,8 +50,16 @@ public class Requirement extends RequirementLibraryNode implements
 	@JoinColumn(name = "LATEST_VERSION_ID")
 	private RequirementVersion latestVersion;
 
-	public Requirement() {
+	private Requirement() {
 		super();
+	}
+	/**
+	 * Creates a new requirement which "latest version" is the given {@link RequirementVersion}
+	 * @param version 
+	 */
+	public Requirement(@NotNull RequirementVersion version) {
+		latestVersion = version;
+		latestVersion.setRequirement(this);
 	}
 
 	@Override
@@ -156,6 +165,14 @@ public class Requirement extends RequirementLibraryNode implements
 	 */
 	public boolean isModifiable() {
 		return getStatus().isRequirementModifiable();
+	}
+	@Override
+	public String getName() {
+		return latestVersion.getName();
+	}
+	@Override
+	public String getDescription() {
+		return latestVersion.getDescription();
 	}
 
 }

@@ -27,11 +27,13 @@ import javax.persistence.CascadeType;
 import javax.persistence.Entity;
 import javax.persistence.JoinColumn;
 import javax.persistence.JoinTable;
+import javax.persistence.Lob;
 import javax.persistence.OneToMany;
 import javax.persistence.PrimaryKeyJoinColumn;
 import javax.persistence.Transient;
 
 import org.apache.commons.lang.NullArgumentException;
+import org.hibernate.validator.constraints.NotBlank;
 import org.squashtest.csp.tm.domain.library.Folder;
 import org.squashtest.csp.tm.domain.library.FolderSupport;
 import org.squashtest.csp.tm.domain.project.Project;
@@ -48,6 +50,12 @@ public class RequirementFolder extends RequirementLibraryNode implements Folder<
 	@OneToMany(cascade = { CascadeType.PERSIST, CascadeType.MERGE, CascadeType.REMOVE })
 	@JoinTable(name = "RLN_RELATIONSHIP", joinColumns = @JoinColumn(name = "ANCESTOR_ID"), inverseJoinColumns = @JoinColumn(name = "DESCENDANT_ID"))
 	private final Set<RequirementLibraryNode> content = new HashSet<RequirementLibraryNode>();
+
+	@NotBlank
+	private String name;
+
+	@Lob
+	private String description;
 
 	@Override
 	public Set<RequirementLibraryNode> getContent() {
@@ -103,4 +111,24 @@ public class RequirementFolder extends RequirementLibraryNode implements Folder<
 	public boolean hasContent() {
 		return folderSupport.hasContent();
 	}
+
+	@Override
+	public void setName(String name) {
+		this.name = name;
+	}
+
+	public void setDescription(String description) {
+		this.description = description;
+	}
+
+	@Override
+	public String getName() {
+		return this.name;
+	}
+
+	@Override
+	public String getDescription() {
+		return this.description;
+	}
+
 }

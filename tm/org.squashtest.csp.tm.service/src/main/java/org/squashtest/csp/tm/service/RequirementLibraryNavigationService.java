@@ -22,28 +22,26 @@ package org.squashtest.csp.tm.service;
 
 import java.util.List;
 
+import javax.validation.constraints.NotNull;
+
 import org.squashtest.csp.tm.domain.requirement.ExportRequirementData;
 import org.squashtest.csp.tm.domain.requirement.Requirement;
 import org.squashtest.csp.tm.domain.requirement.RequirementFolder;
 import org.squashtest.csp.tm.domain.requirement.RequirementLibrary;
 import org.squashtest.csp.tm.domain.requirement.RequirementLibraryNode;
+import org.squashtest.csp.tm.domain.requirement.RequirementVersion;
 
 public interface RequirementLibraryNavigationService extends
-LibraryNavigationService<RequirementLibrary, RequirementFolder, RequirementLibraryNode> {
+		LibraryNavigationService<RequirementLibrary, RequirementFolder, RequirementLibraryNode> {
 
-	void addRequirementToRequirementLibrary(long libraryId,
-			Requirement newRequirement);
+	void addRequirementToRequirementLibrary(long libraryId, @NotNull RequirementVersion newRequirement);
 
-	void addRequirementToRequirementFolder(long folderId,
-			Requirement newRequirement);
-
+	void addRequirementToRequirementFolder(long folderId, @NotNull RequirementVersion newRequirement);
 
 	Requirement findRequirement(long reqId);
 
+	List<ExportRequirementData> findRequirementsToExportFromLibrary(@NotNull List<Long> libraryIds);
 
-	
-	List<ExportRequirementData> findRequirementsToExportFromLibrary(List<Long> libraryIds);
-	
-	List<ExportRequirementData> findRequirementsToExportFromFolder(List<Long> folderIds);
+	List<ExportRequirementData> findRequirementsToExportFromFolder(@NotNull List<Long> folderIds);
 
 }

@@ -25,6 +25,7 @@ import org.squashtest.csp.tm.domain.DuplicateNameException;
 import org.squashtest.csp.tm.domain.requirement.Requirement;
 import org.squashtest.csp.tm.domain.requirement.RequirementFolder;
 import org.squashtest.csp.tm.domain.requirement.RequirementLibrary;
+import org.squashtest.csp.tm.domain.requirement.RequirementVersion;
 import org.squashtest.csp.tm.internal.repository.RequirementDao;
 import org.squashtest.csp.tm.internal.repository.RequirementFolderDao;
 import org.squashtest.csp.tm.internal.repository.RequirementLibraryDao;
@@ -94,16 +95,17 @@ class RequirementLibraryNavigationServiceImplTest extends Specification {
 		given :
 		RequirementLibrary lib = Mock(RequirementLibrary)
 		requirementLibraryDao.findById(1) >> lib
-		def req = new Requirement(name:"name")
-
+		
+		and:
+		def req = new RequirementVersion(name:"name")
 		lib.isContentNameAvailable(req.name) >> true
 
 		when :
 		service.addRequirementToRequirementLibrary(1, req)
 
 		then :
-		1 * lib.addRootContent(req)
-		1 * requirementDao.persist (req)
+		1 * lib.addRootContent({ it.latestVersion == req })
+		1 * requirementDao.persist ({ it.latestVersion == req })
 	}
 
 
@@ -112,16 +114,17 @@ class RequirementLibraryNavigationServiceImplTest extends Specification {
 		given :
 		RequirementFolder folder = Mock(RequirementFolder)
 		requirementFolderDao.findById(1) >> folder
-		def req = new Requirement(name:"name")
-
+		
+		and: 
+		def req = new RequirementVersion(name:"name")
 		folder.isContentNameAvailable(req.name) >> true
 
 		when :
 		service.addRequirementToRequirementFolder(1, req)
 
 		then :
-		1 * folder.addContent(req)
-		1 * requirementDao.persist (req)
+		1 * folder.addContent({ it.latestVersion == req })
+		1 * requirementDao.persist ({ it.latestVersion == req })
 	}
 
 	def "should raise a duplicate name"(){
@@ -129,8 +132,9 @@ class RequirementLibraryNavigationServiceImplTest extends Specification {
 		given :
 		RequirementLibrary lib = Mock(RequirementLibrary)
 		requirementLibraryDao.findById(1) >> lib
-		def req = new Requirement(name:"name")
 
+		and: 
+		def req = new RequirementVersion(name:"name")
 		lib.isContentNameAvailable(req.name) >> false
 
 		when :

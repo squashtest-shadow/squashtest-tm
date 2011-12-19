@@ -88,12 +88,12 @@ public class RequirementVersion implements AttachmentHolder {
 	@OneToOne(cascade = { CascadeType.ALL }, orphanRemoval = true)
 	@JoinColumn(name = "ATTACHMENT_LIST_ID")
 	private final AttachmentList attachmentList = new AttachmentList();
-	
+
 	@NotNull
 	@ManyToOne(cascade = { CascadeType.PERSIST, CascadeType.MERGE })
 	@JoinColumn(name = "REQUIREMENT_ID", updatable = false)
 	private Requirement requirement;
-	
+
 	private int versionNumber = 1;
 
 	public RequirementVersion() {
@@ -233,18 +233,19 @@ public class RequirementVersion implements AttachmentHolder {
 	public String getDescription() {
 		return description;
 	}
-	
+
 	public void notifyVerifiedBy(@NotNull TestCase testCase) {
 		checkLinkable();
 		verifyingTestCases.add(testCase);
-		
+
 	}
-	
+
 	public void notifyNoLongerVerifiedBy(@NotNull TestCase testCase) {
 		checkLinkable();
 		verifyingTestCases.remove(testCase);
-		
+
 	}
+
 	/**
 	 * @return the requirement
 	 */
@@ -258,4 +259,14 @@ public class RequirementVersion implements AttachmentHolder {
 	public int getVersionNumber() {
 		return versionNumber;
 	}
+
+	/**
+	 * Should be used once before this entity is persisted by the requirement to which this version is added.
+	 * 
+	 * @param requirement
+	 */
+	/* package-private */void setRequirement(Requirement requirement) {
+		this.requirement = requirement;
+	}
+
 }

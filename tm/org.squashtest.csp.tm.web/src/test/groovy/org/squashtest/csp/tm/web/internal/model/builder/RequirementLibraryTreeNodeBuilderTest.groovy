@@ -25,6 +25,7 @@ import org.squashtest.csp.tools.unittest.reflection.ReflectionCategory;
 import org.squashtest.csp.tm.domain.requirement.Requirement;
 import org.squashtest.csp.tm.domain.requirement.RequirementFolder;
 import org.squashtest.csp.tm.domain.requirement.RequirementLibraryNode;
+import org.squashtest.csp.tm.domain.requirement.RequirementVersion;
 import org.squashtest.csp.tm.web.internal.model.jstree.JsTreeNode.State;
 
 import spock.lang.Specification;
@@ -53,7 +54,8 @@ class RequirementLibraryTreeNodeBuilderTest extends Specification {
 	}
 	def "should build a Requirement node"() {
 		given:
-		Requirement node  = new Requirement(name: "r", reference: "ref")
+		RequirementVersion version = new RequirementVersion(name: "r", reference: "ref")
+		Requirement node  = new Requirement(version)
 
 		use (ReflectionCategory) {
 			RequirementLibraryNode.set field: "id", of: node, to: 10L

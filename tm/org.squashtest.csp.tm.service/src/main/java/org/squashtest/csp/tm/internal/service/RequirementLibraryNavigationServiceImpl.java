@@ -23,6 +23,7 @@ package org.squashtest.csp.tm.internal.service;
 import java.util.List;
 
 import javax.inject.Inject;
+import javax.validation.constraints.NotNull;
 
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.security.access.prepost.PostAuthorize;
@@ -35,6 +36,7 @@ import org.squashtest.csp.tm.domain.requirement.Requirement;
 import org.squashtest.csp.tm.domain.requirement.RequirementFolder;
 import org.squashtest.csp.tm.domain.requirement.RequirementLibrary;
 import org.squashtest.csp.tm.domain.requirement.RequirementLibraryNode;
+import org.squashtest.csp.tm.domain.requirement.RequirementVersion;
 import org.squashtest.csp.tm.internal.repository.LibraryNodeDao;
 import org.squashtest.csp.tm.internal.repository.RequirementDao;
 import org.squashtest.csp.tm.internal.repository.RequirementFolderDao;
@@ -44,32 +46,28 @@ import org.squashtest.csp.tm.service.RequirementLibraryNavigationService;
 @Service("squashtest.tm.service.RequirementLibraryNavigationService")
 @Transactional
 public class RequirementLibraryNavigationServiceImpl extends
-AbstractLibraryNavigationService<RequirementLibrary, RequirementFolder, RequirementLibraryNode> implements
-RequirementLibraryNavigationService {
+		AbstractLibraryNavigationService<RequirementLibrary, RequirementFolder, RequirementLibraryNode> implements
+		RequirementLibraryNavigationService {
 	@Inject
 	private RequirementLibraryDao requirementLibraryDao;
 
 	@Inject
 	private RequirementFolderDao requirementFolderDao;
-	
+
 	@Inject
 	@Qualifier("squashtest.tm.repository.RequirementLibraryNodeDao")
 	private LibraryNodeDao<RequirementLibraryNode> requirementLibraryNodeDao;
 
 	@Inject
 	private RequirementDao requirementDao;
-	
-	
+
 	@Inject
 	private RequirementNodeDeletionHandler deletionHandler;
 
-	
 	@Override
 	protected NodeDeletionHandler<RequirementLibraryNode, RequirementFolder> getDeletionHandler() {
 		return deletionHandler;
 	}
-
-	
 
 	@Override
 	@PostAuthorize("hasPermission(returnObject,'READ') or hasRole('ROLE_ADMIN')")
@@ -86,61 +84,58 @@ RequirementLibraryNavigationService {
 	protected final RequirementFolderDao getFolderDao() {
 		return requirementFolderDao;
 	}
-	
+
 	@Override
-	protected final LibraryNodeDao<RequirementLibraryNode> getLibraryNodeDao(){
+	protected final LibraryNodeDao<RequirementLibraryNode> getLibraryNodeDao() {
 		return requirementLibraryNodeDao;
 	}
 
-
 	@Override
-	@PreAuthorize("hasPermission(#libraryId, 'org.squashtest.csp.tm.domain.requirement.RequirementLibrary' , 'WRITE') " +
-			"or hasRole('ROLE_ADMIN')")			
-	public void addRequirementToRequirementLibrary(long libraryId,
-			Requirement newRequirement) {
-
+	@PreAuthorize("hasPermission(#libraryId, 'org.squashtest.csp.tm.domain.requirement.RequirementLibrary' , 'WRITE') "
+			+ "or hasRole('ROLE_ADMIN')")
+	public void addRequirementToRequirementLibrary(long libraryId, @NotNull RequirementVersion firstVersion) {
 		RequirementLibrary library = requirementLibraryDao.findById(libraryId);
 
-		if (!library.isContentNameAvailable(newRequirement.getName())) {
-			throw new DuplicateNameException(newRequirement.getName(),
-					newRequirement.getName());
+		if (!library.isContentNameAvailable(firstVersion.getName())) {
+			throw new DuplicateNameException(firstVersion.getName(), firstVersion.getName());
 		}
+		
+		Requirement newReq = createRequirement(firstVersion);
 
-		library.addRootContent(newRequirement);
-		requirementDao.persist(newRequirement);
+		library.addRootContent(newReq);
+		requirementDao.persist(newReq);
 	}
 
-	
+	private Requirement createRequirement(RequirementVersion firstVersion) {
+		return new Requirement(firstVersion);
+	}
+
 	@Override
-	@PreAuthorize("hasPermission(#folderId, 'org.squashtest.csp.tm.domain.requirement.RequirementFolder' , 'WRITE') " +
-			"or hasRole('ROLE_ADMIN')")				
-	public void addRequirementToRequirementFolder(long folderId,
-			Requirement newRequirement) {
+	@PreAuthorize("hasPermission(#folderId, 'org.squashtest.csp.tm.domain.requirement.RequirementFolder' , 'WRITE') "
+			+ "or hasRole('ROLE_ADMIN')")
+	public void addRequirementToRequirementFolder(long folderId, @NotNull RequirementVersion firstVersion) {
 		RequirementFolder folder = requirementFolderDao.findById(folderId);
 
-		if (!folder.isContentNameAvailable(newRequirement.getName())) {
-			throw new DuplicateNameException(newRequirement.getName(),
-					newRequirement.getName());
+		if (!folder.isContentNameAvailable(firstVersion.getName())) {
+			throw new DuplicateNameException(firstVersion.getName(), firstVersion.getName());
 		}
 
-		folder.addContent(newRequirement);
-		requirementDao.persist(newRequirement);
+		Requirement newReq = createRequirement(firstVersion);
+
+		folder.addContent(newReq);
+		requirementDao.persist(newReq);
 	}
 
-	
 	@Override
-	public List <ExportRequirementData> findRequirementsToExportFromLibrary(List<Long> libraryIds) {
-		List <ExportRequirementData> list = requirementDao.findRequirementToExportFromLibrary(libraryIds);
+	public List<ExportRequirementData> findRequirementsToExportFromLibrary(List<Long> libraryIds) {
+		List<ExportRequirementData> list = requirementDao.findRequirementToExportFromLibrary(libraryIds);
 		return list;
 	}
 
 	@Override
 	public List<ExportRequirementData> findRequirementsToExportFromFolder(List<Long> folderIds) {
-		List <ExportRequirementData> list = requirementDao.findRequirementToExportFromFolder(folderIds);
+		List<ExportRequirementData> list = requirementDao.findRequirementToExportFromFolder(folderIds);
 		return list;
 	}
-
-
-	
 
 }
