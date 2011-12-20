@@ -28,22 +28,23 @@ import javax.persistence.PrimaryKeyJoinColumn;
 import javax.validation.constraints.NotNull;
 
 import org.apache.commons.lang.ObjectUtils;
-import org.squashtest.csp.tm.domain.requirement.Requirement;
+import org.squashtest.csp.tm.domain.requirement.RequirementVersion;
 
 /**
- * Will log when the value of a property of a requirement changed.
- * For technical reasons and optimization, that class logs only large properties (typically CLOBS), the other ones will be logged in a sister class : 
- * RequirementPropertyChange 
- *  
+ * Will log when the value of a property of a requirement changed. For technical reasons and optimization, that class
+ * logs only large properties (typically CLOBS), the other ones will be logged in a sister class :
+ * RequirementPropertyChange
+ * 
  * @author bsiri
  */
 @Entity
 @PrimaryKeyJoinColumn(name = "EVENT_ID")
-public class RequirementLargePropertyChange extends RequirementAuditEvent implements RequirementModification, ChangedProperty {
+public class RequirementLargePropertyChange extends RequirementAuditEvent implements RequirementVersionModification,
+		ChangedProperty {
 	public static RequirementPropertyChangeEventBuilder<RequirementLargePropertyChange> builder() {
-		return new Builder(); 
+		return new Builder();
 	}
-	
+
 	private static class Builder extends AbstractRequirementPropertyChangeEventBuilder<RequirementLargePropertyChange> {
 
 		@Override
@@ -52,31 +53,29 @@ public class RequirementLargePropertyChange extends RequirementAuditEvent implem
 			event.propertyName = modifiedProperty;
 			event.oldValue = ObjectUtils.toString(oldValue);
 			event.newValue = ObjectUtils.toString(newValue);
-					
+
 			return event;
 		}
-		
+
 	}
 
 	@NotNull
 	private String propertyName;
-	
+
 	@Lob
 	@Basic(fetch = FetchType.LAZY)
 	private String oldValue;
-	
+
 	@Lob
 	@Basic(fetch = FetchType.LAZY)
 	private String newValue;
-	
-	
-	public RequirementLargePropertyChange(){
+
+	public RequirementLargePropertyChange() {
 		super();
 	}
-	
-	public RequirementLargePropertyChange(Requirement requirement,
-			String author) {
-		super(requirement, author);
+
+	public RequirementLargePropertyChange(RequirementVersion requirementVersion, String author) {
+		super(requirementVersion, author);
 	}
 
 	@Override
@@ -84,16 +83,14 @@ public class RequirementLargePropertyChange extends RequirementAuditEvent implem
 		return propertyName;
 	}
 
-
 	public String getOldValue() {
 		return oldValue;
 	}
 
-
 	public String getNewValue() {
 		return newValue;
 	}
-	
+
 	@Override
 	public void accept(RequirementAuditEventVisitor visitor) {
 		visitor.visit(this);

@@ -22,14 +22,14 @@ package org.squashtest.csp.tm.domain.event;
 
 import javax.validation.constraints.NotNull;
 
-import org.squashtest.csp.tm.domain.requirement.Requirement;
+import org.squashtest.csp.tm.domain.requirement.RequirementVersion;
 
-abstract class AbstractRequirementPropertyChangeEventBuilder<EVENT extends RequirementAuditEvent>
-		implements RequirementPropertyChangeEventBuilder<EVENT> {
+abstract class AbstractRequirementPropertyChangeEventBuilder<EVENT extends RequirementAuditEvent> implements
+		RequirementPropertyChangeEventBuilder<EVENT> {
 	protected Object oldValue;
 	protected Object newValue;
 	protected String modifiedProperty;
-	protected Requirement eventSource;
+	protected RequirementVersion eventSource;
 	protected String author;
 
 	@Override
@@ -45,22 +45,19 @@ abstract class AbstractRequirementPropertyChangeEventBuilder<EVENT extends Requi
 	}
 
 	@Override
-	public RequirementPropertyChangeEventBuilder<EVENT> setModifiedProperty(
-			@NotNull String propertyName) {
+	public RequirementPropertyChangeEventBuilder<EVENT> setModifiedProperty(@NotNull String propertyName) {
 		modifiedProperty = propertyName;
 		return this;
 	}
 
 	@Override
-	public RequirementPropertyChangeEventBuilder<EVENT> setSource(
-			@NotNull Requirement requirement) {
-		eventSource = requirement;
+	public RequirementPropertyChangeEventBuilder<EVENT> setSource(@NotNull RequirementVersion requirementVersion) {
+		eventSource = requirementVersion;
 		return this;
 	}
 
 	@Override
-	public RequirementPropertyChangeEventBuilder<EVENT> setAuthor(
-			@NotNull String author) {
+	public RequirementPropertyChangeEventBuilder<EVENT> setAuthor(@NotNull String author) {
 		this.author = author;
 		return this;
 	}

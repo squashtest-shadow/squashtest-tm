@@ -21,25 +21,26 @@
 package org.squashtest.csp.tm.domain.event;
 
 import org.squashtest.csp.tm.domain.requirement.Requirement;
+import org.squashtest.csp.tm.domain.requirement.RequirementVersion;
 
 import spock.lang.Specification;
 
 class RequirementPropertyChangeTest extends Specification {
 	def "should build a property change event"() {
 		given:
-		Requirement r = new Requirement();
+		RequirementVersion rv = new RequirementVersion()
 		
 		when:
 		RequirementPropertyChange event = RequirementPropertyChange.builder()
 			.setModifiedProperty("name")
 			.setOldValue("foo")
 			.setNewValue("bar")
-			.setSource(r)
+			.setSource(rv)
 			.setAuthor("proust")
 			.build()
 			
 		then:
-		event.requirement == r
+		event.requirementVersion == rv
 		event.oldValue == "foo"
 		event.newValue == "bar"
 		event.propertyName == "name"
@@ -48,18 +49,18 @@ class RequirementPropertyChangeTest extends Specification {
 
 		def "should build event with null values"() {
 		given:
-		Requirement r = new Requirement();
+		RequirementVersion rv = new RequirementVersion()
 		
 		when:
 		RequirementPropertyChange event = RequirementPropertyChange.builder()
 			.setModifiedProperty("name")
-			.setSource(r)
+			.setSource(rv)
 			.setAuthor("proust")
 			.build()
 			
 		then:
 		notThrown(NullPointerException)
-		event.requirement == r
+		event.requirementVersion == rv
 		event.oldValue == ""
 		event.newValue == ""
 		event.propertyName == "name"

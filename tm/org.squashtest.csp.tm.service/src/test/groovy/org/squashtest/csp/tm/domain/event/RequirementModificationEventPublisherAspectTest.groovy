@@ -27,6 +27,7 @@ import org.squashtest.csp.tm.domain.requirement.Requirement;
 import org.squashtest.csp.tm.domain.requirement.RequirementCriticality;
 import org.squashtest.csp.tm.domain.requirement.RequirementLibraryNode;
 import org.squashtest.csp.tm.domain.requirement.RequirementStatus;
+import org.squashtest.csp.tm.domain.requirement.RequirementVersion;
 import org.squashtest.csp.tm.internal.service.event.RequirementAuditor;
 import org.squashtest.csp.tools.unittest.reflection.ReflectionCategory;
 
@@ -36,7 +37,7 @@ import spock.lang.Unroll;
 class RequirementModificationEventPublisherAspectTest extends Specification {
 	RequirementAuditor auditor = Mock()
 	UserContextService userContext = Mock()
-	Requirement persistentRequirement = persistentRequirement()
+	RequirementVersion persistentRequirement = persistentRequirementVersion()
 	def event
 	
 	def setup() {
@@ -63,16 +64,16 @@ class RequirementModificationEventPublisherAspectTest extends Specification {
 		event.propertyName == propertyName
 		event.oldValue == initialValue.toString()
 		event.newValue == newValue.toString()
-		event.requirement == persistentRequirement
+		event.requirementVersion == persistentRequirement
 		event.author == "peter parker"
 		
 		where:
 		propertyName  | propertyClass      | initialValue                   | newValue
-		"name"        | GenericLibraryNode | "foo"                          | "bar"
-		"reference"   | Requirement        | "foo"                          | "bar"
-		"description" | GenericLibraryNode | "foo"                          | "bar"
-		"criticality" | Requirement        | RequirementCriticality.MAJOR   | RequirementCriticality.MINOR
-		"status"      | Requirement        | RequirementStatus.UNDER_REVIEW | RequirementStatus.APPROVED
+		"name"        | RequirementVersion | "foo"                          | "bar"
+		"reference"   | RequirementVersion | "foo"                          | "bar"
+		"description" | RequirementVersion | "foo"                          | "bar"
+		"criticality" | RequirementVersion | RequirementCriticality.MAJOR   | RequirementCriticality.MINOR
+		"status"      | RequirementVersion | RequirementStatus.UNDER_REVIEW | RequirementStatus.APPROVED
 	}
 	
 	@Unroll("Should not raise a property change event when property #propertyName is changed from #initialValue to #initialValue")
@@ -90,11 +91,11 @@ class RequirementModificationEventPublisherAspectTest extends Specification {
 
 		where:
 		propertyName  | propertyClass      | initialValue                   
-		"name"        | GenericLibraryNode | "foo"                          
-		"reference"   | Requirement        | "foo"                          
-		"description" | GenericLibraryNode | "foo"                          
-		"criticality" | Requirement        | RequirementCriticality.MAJOR   
-		"status"      | Requirement        | RequirementStatus.UNDER_REVIEW 
+		"name"        | RequirementVersion | "foo"                          
+		"reference"   | RequirementVersion | "foo"                          
+		"description" | RequirementVersion | "foo"                          
+		"criticality" | RequirementVersion | RequirementCriticality.MAJOR   
+		"status"      | RequirementVersion | RequirementStatus.UNDER_REVIEW 
 	}
 
 	def "uninitialized auditor should not break requirements usage"() {
@@ -141,7 +142,7 @@ class RequirementModificationEventPublisherAspectTest extends Specification {
 		@Unroll("Should not raise a #propertyName property change event when requirement is in transient state")
 		def "should not raise an event when requirement is in transient state"() {
 			given:
-			Requirement transientRequirement = new Requirement()
+			RequirementVersion transientRequirement = new RequirementVersion()
 			
 			when:
 			transientRequirement[propertyName] = initialValue
@@ -151,17 +152,17 @@ class RequirementModificationEventPublisherAspectTest extends Specification {
 	
 			where:
 			propertyName  | propertyClass      | initialValue
-			"name"        | GenericLibraryNode | "foo"
-			"reference"   | Requirement        | "foo"
-			"description" | GenericLibraryNode | "foo"
-			"criticality" | Requirement        | RequirementCriticality.MAJOR
-			"status"      | Requirement        | RequirementStatus.UNDER_REVIEW
+			"name"        | RequirementVersion | "foo"
+			"reference"   | RequirementVersion | "foo"
+			"description" | RequirementVersion | "foo"
+			"criticality" | RequirementVersion | RequirementCriticality.MAJOR
+			"status"      | RequirementVersion | RequirementStatus.UNDER_REVIEW
 		}
 		
-		def persistentRequirement() {
-			Requirement req = new Requirement()
+		def persistentRequirementVersion() {
+			RequirementVersion req = new RequirementVersion()
 			use (ReflectionCategory) {
-				RequirementLibraryNode.set field: "id", of: req, to: 10L
+				RequirementVersion.set field: "id", of: req, to: 10L
 			}
 			return req
 		}

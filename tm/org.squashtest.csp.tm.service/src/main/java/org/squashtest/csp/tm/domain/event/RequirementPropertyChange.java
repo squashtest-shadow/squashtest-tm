@@ -25,20 +25,22 @@ import javax.persistence.PrimaryKeyJoinColumn;
 import javax.validation.constraints.NotNull;
 
 import org.apache.commons.lang.ObjectUtils;
-import org.squashtest.csp.tm.domain.requirement.Requirement;
+import org.squashtest.csp.tm.domain.requirement.RequirementVersion;
+
 /**
- * Will log when the value of a property of a requirement changed.
- * For technical reasons and optimization, large properties (typically CLOBS) will be logged in a sister class : RequirementLargePropertyChange 
- *  
+ * Will log when the value of a property of a requirement changed. For technical reasons and optimization, large
+ * properties (typically CLOBS) will be logged in a sister class : RequirementLargePropertyChange
+ * 
  * @author bsiri
  */
 @Entity
 @PrimaryKeyJoinColumn(name = "EVENT_ID")
-public class RequirementPropertyChange extends RequirementAuditEvent implements RequirementModification, ChangedProperty {
+public class RequirementPropertyChange extends RequirementAuditEvent implements RequirementVersionModification,
+		ChangedProperty {
 	public static RequirementPropertyChangeEventBuilder<RequirementPropertyChange> builder() {
-		return new Builder(); 
+		return new Builder();
 	}
-	
+
 	private static class Builder extends AbstractRequirementPropertyChangeEventBuilder<RequirementPropertyChange> {
 
 		@Override
@@ -47,48 +49,46 @@ public class RequirementPropertyChange extends RequirementAuditEvent implements 
 			event.propertyName = modifiedProperty;
 			event.oldValue = ObjectUtils.toString(oldValue);
 			event.newValue = ObjectUtils.toString(newValue);
-					
+
 			return event;
 		}
-		
+
 	}
+
 	@NotNull
 	private String propertyName;
-	
+
 	private String oldValue;
-	
+
 	private String newValue;
-	
+
 	public RequirementPropertyChange() {
 		super();
 	}
 
-	private RequirementPropertyChange(Requirement requirement,
-			String author) {
-		super(requirement, author);
+	private RequirementPropertyChange(RequirementVersion requirementVersion, String author) {
+		super(requirementVersion, author);
 	}
 
 	/**
-	 * @see org.squashtest.csp.tm.domain.event.RequirementModification#getPropertyName()
+	 * @see org.squashtest.csp.tm.domain.event.RequirementVersionModification#getPropertyName()
 	 */
 	@Override
 	public String getPropertyName() {
 		return propertyName;
 	}
 
-
 	public String getOldValue() {
 		return oldValue;
 	}
 
-
 	public String getNewValue() {
 		return newValue;
 	}
-	
+
 	@Override
 	public void accept(RequirementAuditEventVisitor visitor) {
 		visitor.visit(this);
 	}
-	
+
 }

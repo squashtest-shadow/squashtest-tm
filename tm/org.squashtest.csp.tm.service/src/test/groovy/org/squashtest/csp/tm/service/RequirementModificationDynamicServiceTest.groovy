@@ -26,6 +26,7 @@ import java.util.List
 import org.squashtest.csp.tm.domain.requirement.Requirement
 import org.squashtest.csp.tm.domain.requirement.RequirementCriticality
 import org.squashtest.csp.tm.domain.requirement.RequirementStatus
+import org.squashtest.csp.tm.domain.requirement.RequirementVersion;
 
 import spock.lang.Shared
 
@@ -47,4 +48,7 @@ class RequirementModificationDynamicServiceTest extends DynamicManagerInterfaceS
 			it.changeStatus(10L, RequirementStatus.WORK_IN_PROGRESS)
 		} ]
 
+	def entityInstance() {
+		new Requirement(new RequirementVersion())
+	}
 }

@@ -42,7 +42,7 @@ public aspect RequirementCreationEventPublisherAspect extends AbstractRequiremen
 	
 	after(RequirementDao dao, Requirement requirement) : executeRequirementPersister(dao, requirement) {
 		if (aspectIsEnabled()) {
-			RequirementCreation event = new RequirementCreation(requirement, currentUser());
+			RequirementCreation event = new RequirementCreation(requirement.getLatestVersion(), currentUser());
 			publish(event);
 			LOGGER.trace("Creation event raised");
 		}

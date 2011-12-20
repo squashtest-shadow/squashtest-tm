@@ -30,7 +30,7 @@ import org.squashtest.csp.tm.domain.event.RequirementAuditEvent;
 import org.squashtest.csp.tm.domain.event.RequirementAuditEventVisitor;
 import org.squashtest.csp.tm.domain.event.RequirementCreation;
 import org.squashtest.csp.tm.domain.event.RequirementLargePropertyChange;
-import org.squashtest.csp.tm.domain.event.RequirementModification;
+import org.squashtest.csp.tm.domain.event.RequirementVersionModification;
 import org.squashtest.csp.tm.domain.event.RequirementPropertyChange;
 import org.squashtest.csp.tm.domain.requirement.RequirementStatus;
 import org.squashtest.csp.tm.internal.repository.RequirementAuditEventDao;
@@ -79,17 +79,17 @@ public class StatusBasedRequirementAuditor implements RequirementAuditor,
 
 	}
 
-	private void logEvent(RequirementModification event) {
+	private void logEvent(RequirementVersionModification event) {
 		if (LOGGER.isTraceEnabled()) {
 			LOGGER.trace("Requirement was modified");
 		}
 	}
 
-	private boolean shouldAuditModification(RequirementModification event) {
+	private boolean shouldAuditModification(RequirementVersionModification event) {
 		if ("status".equals(event.getPropertyName())) {
 			return true;
 		}
-		return RequirementStatus.UNDER_REVIEW.equals(event.getRequirement().getStatus());
+		return RequirementStatus.UNDER_REVIEW.equals(event.getRequirementVersion().getStatus());
 	}
 
 	@Override

@@ -27,8 +27,8 @@ import org.squashtest.csp.tm.domain.event.RequirementAuditEvent;
 import org.squashtest.csp.tm.domain.event.RequirementCreation
 import org.squashtest.csp.tm.domain.event.RequirementLargePropertyChange;
 import org.squashtest.csp.tm.domain.event.RequirementPropertyChange;
-import org.squashtest.csp.tm.domain.requirement.Requirement
 import org.squashtest.csp.tm.domain.requirement.RequirementStatus;
+import org.squashtest.csp.tm.domain.requirement.RequirementVersion;
 import org.squashtest.csp.tm.web.internal.helper.LabelFormatter;
 import org.squashtest.csp.tm.web.internal.model.datatable.DataTableModel;
 import org.squashtest.csp.tools.unittest.reflection.ReflectionCategory;
@@ -46,7 +46,7 @@ class RequirementAuditEventTableModelBuilderTest extends Specification {
 
 	def "should build item for RequirementCreation event"() {
 		given:
-		Requirement req = Mock()
+		RequirementVersion req = Mock()
 		RequirementCreation event = new RequirementCreation(req, "chris jericho")
 		setIdAndDate(event)
 
@@ -73,7 +73,7 @@ class RequirementAuditEventTableModelBuilderTest extends Specification {
 
 	def "should build item for Requirement small property change event"() {
 		given:
-		Requirement req = Mock()
+		RequirementVersion req = Mock()
 		RequirementPropertyChange event = RequirementPropertyChange.builder()
 				.setModifiedProperty("reference")
 				.setSource(req)
@@ -107,7 +107,7 @@ class RequirementAuditEventTableModelBuilderTest extends Specification {
 
 	def "should build item for Requirement fat property change event"() {
 		given:
-		Requirement req = Mock()
+		RequirementVersion req = Mock()
 		RequirementLargePropertyChange event = RequirementLargePropertyChange.builder()
 				.setModifiedProperty("description")
 				.setSource(req)
@@ -160,7 +160,7 @@ class RequirementAuditEventTableModelBuilderTest extends Specification {
 
 	def "should build item for Requirement status property change event"() {
 		given:
-		Requirement req = Mock()
+		RequirementVersion req = Mock()
 		RequirementPropertyChange event = RequirementPropertyChange.builder()
 				.setModifiedProperty("status")
 				.setSource(req)

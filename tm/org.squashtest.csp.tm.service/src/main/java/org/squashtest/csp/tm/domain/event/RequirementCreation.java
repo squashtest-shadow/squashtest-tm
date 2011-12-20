@@ -23,7 +23,7 @@ package org.squashtest.csp.tm.domain.event;
 import javax.persistence.Entity;
 import javax.persistence.PrimaryKeyJoinColumn;
 
-import org.squashtest.csp.tm.domain.requirement.Requirement;
+import org.squashtest.csp.tm.domain.requirement.RequirementVersion;
 
 /**
  * That class simply extends RequirementAuditEvent. Indeed, the additional information here is the type itself.  
@@ -39,8 +39,8 @@ public class RequirementCreation extends RequirementAuditEvent {
 		super();
 	}
 	
-	public RequirementCreation(Requirement requirement, String author) {
-		super(requirement, author);
+	public RequirementCreation(RequirementVersion requirementVersion, String author) {
+		super(requirementVersion, author);
 	}
 
 	@Override

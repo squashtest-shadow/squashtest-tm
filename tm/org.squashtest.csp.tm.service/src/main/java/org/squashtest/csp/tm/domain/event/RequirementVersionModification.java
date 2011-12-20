@@ -21,6 +21,7 @@
 package org.squashtest.csp.tm.domain.event;
 
 import org.squashtest.csp.tm.domain.requirement.Requirement;
+import org.squashtest.csp.tm.domain.requirement.RequirementVersion;
 
 /**
  * Interface of an event which notifies the modification of a
@@ -29,12 +30,12 @@ import org.squashtest.csp.tm.domain.requirement.Requirement;
  * @author Gregory Fouquet
  * 
  */
-public interface RequirementModification {
+public interface RequirementVersionModification {
 	/**
 	 * 
 	 * @return the modified event. Should never return <code>null</code>
 	 */
-	Requirement getRequirement();
+	RequirementVersion getRequirementVersion();
 
 	/**
 	 * 

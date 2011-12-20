@@ -28,7 +28,7 @@ import org.apache.commons.lang.WordUtils;
 import org.aspectj.lang.JoinPoint;
 import org.springframework.beans.BeanUtils;
 import org.springframework.util.ReflectionUtils;
-import org.squashtest.csp.tm.domain.requirement.Requirement;
+import org.squashtest.csp.tm.domain.requirement.RequirementVersion;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -42,9 +42,9 @@ import org.slf4j.LoggerFactory;
 public aspect RequirementModificationEventPublisherAspect extends AbstractRequirementEventPublisher {
 	private static final Logger LOGGER = LoggerFactory.getLogger(RequirementModificationEventPublisherAspect.class);
 
-	private pointcut executeLargePropertySetter() : execution(public void org.squashtest.csp.tm.domain.requirement.Requirement.setDescription(*));
+	private pointcut executeLargePropertySetter() : execution(public void org.squashtest.csp.tm.domain.requirement.RequirementVersion.setDescription(*));
 
-	private pointcut executeSimplePropertySetter() : execution(public void org.squashtest.csp.tm.domain.requirement.Requirement.set*(*)) && !executeLargePropertySetter();
+	private pointcut executeSimplePropertySetter() : execution(public void org.squashtest.csp.tm.domain.requirement.RequirementVersion.set*(*)) && !executeLargePropertySetter();
 
 	/**
 	 * Advises setters of a Requirement and raises an modification event after
@@ -54,7 +54,7 @@ public aspect RequirementModificationEventPublisherAspect extends AbstractRequir
 	 * @param req
 	 * @param newValue
 	 */
-	void around(Requirement req, Object newValue) : executeSimplePropertySetter() && target(req) && args(newValue) {
+	void around(RequirementVersion req, Object newValue) : executeSimplePropertySetter() && target(req) && args(newValue) {
 		if (eventsAreEnabled(req)) {
 			String propertyName = extractModifiedPropertyName(thisJoinPoint);
 			Object oldValue = readOldValue(req, propertyName);
@@ -76,7 +76,7 @@ public aspect RequirementModificationEventPublisherAspect extends AbstractRequir
 				ObjectUtils.toString(newValue));
 	}
 
-	private void raiseSimplePropertyEvent(Requirement req, String propertyName,
+	private void raiseSimplePropertyEvent(RequirementVersion req, String propertyName,
 			Object oldValue, Object newValue) {
 		RequirementPropertyChange event = RequirementPropertyChange.builder()
 				.setSource(req)
@@ -91,10 +91,10 @@ public aspect RequirementModificationEventPublisherAspect extends AbstractRequir
 		LOGGER.trace("Simple property change event raised");
 	}
 
-	private Object readOldValue(Requirement req, String propertyName) {
+	private Object readOldValue(RequirementVersion req, String propertyName) {
 		Method propertyGetter = null;
 		try {
-			propertyGetter = Requirement.class.getMethod("get" + WordUtils.capitalize(propertyName));
+			propertyGetter = RequirementVersion.class.getMethod("get" + WordUtils.capitalize(propertyName));
 			
 		} catch (NoSuchMethodException e) {
 			ReflectionUtils.handleReflectionException(e);
@@ -118,7 +118,7 @@ public aspect RequirementModificationEventPublisherAspect extends AbstractRequir
 	 * @param req
 	 * @param newValue
 	 */
-	void around(Requirement req, Object newValue) : executeLargePropertySetter() && target(req) && args(newValue) {
+	void around(RequirementVersion req, Object newValue) : executeLargePropertySetter() && target(req) && args(newValue) {
 		if (eventsAreEnabled(req)) {
 			String propertyName = extractModifiedPropertyName(thisJoinPoint);
 			Object oldValue = readOldValue(req, propertyName);
@@ -135,7 +135,7 @@ public aspect RequirementModificationEventPublisherAspect extends AbstractRequir
 		}
 	}	
 	
-	private void raiseLargePropertyEvent(Requirement req, String propertyName,
+	private void raiseLargePropertyEvent(RequirementVersion req, String propertyName,
 			Object oldValue, Object newValue) {
 		RequirementLargePropertyChange event = RequirementLargePropertyChange.builder()
 				.setSource(req)
@@ -150,11 +150,11 @@ public aspect RequirementModificationEventPublisherAspect extends AbstractRequir
 		LOGGER.trace("Large property change event raised");
 	}
 	
-	private boolean eventsAreEnabled(Requirement req) {
+	private boolean eventsAreEnabled(RequirementVersion req) {
 		return aspectIsEnabled() && requirementIsPersistent(req);
 	}
 	
-	private boolean requirementIsPersistent(Requirement req) {
+	private boolean requirementIsPersistent(RequirementVersion req) {
 		return req.getId() != null;
 	}
 }

@@ -25,7 +25,7 @@ import spock.lang.Specification;
 
 import org.squashtest.csp.core.service.security.UserContextService;
 import org.squashtest.csp.tm.domain.requirement.Requirement;
-import org.squashtest.csp.tm.internal.service.CampaignTestPlanManagerServiceImplTest.MockTC;
+import org.squashtest.csp.tm.domain.requirement.RequirementVersion;
 import org.squashtest.csp.tm.internal.service.event.RequirementAuditor;
 import org.squashtest.csp.tm.internal.repository.RequirementDao;
 import org.squashtest.csp.tools.unittest.reflection.ReflectionCategory;
@@ -52,7 +52,7 @@ class RequirementCreationEventPublisherAspectTest extends Specification {
 	
 	def "should raise event when requirement is persisted"() {
 		given:
-		Requirement requirement = new Requirement()
+		Requirement requirement = new Requirement(new RequirementVersion())
 		
 		when:
 		dao.persist requirement
@@ -60,7 +60,7 @@ class RequirementCreationEventPublisherAspectTest extends Specification {
 		then:
 		1 * auditor.notify({event = it})
 		event instanceof RequirementCreation
-		event.requirement == requirement
+		event.requirementVersion == requirement.latestVersion
 		event.author == "bruce dickinson"
 	}
 	

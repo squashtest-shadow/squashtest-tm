@@ -175,4 +175,7 @@ public class Requirement extends RequirementLibraryNode implements
 		return latestVersion.getDescription();
 	}
 
+	public RequirementVersion getLatestVersion() {
+		return latestVersion;
+	}
 }

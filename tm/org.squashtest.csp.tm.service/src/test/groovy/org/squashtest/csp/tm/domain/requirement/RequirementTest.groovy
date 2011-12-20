@@ -32,13 +32,11 @@ import spock.lang.Unroll
 
 class RequirementTest extends Specification {
 
-	Requirement requirement;
+	Requirement requirement = new Requirement(new RequirementVersion(name: "test req", description: "this is a test req"))
 	
 	@Unroll("should allow modification of property '#property' for status WORK_IN_PROGRESS")
 	def "should allow modification for status WORK_IN_PROGRESS"(){
-		
 		given :
-			Requirement requirement = new Requirement("test req", "this is a test req")
 			requirement.setStatus(WORK_IN_PROGRESS)
 		
 		when :
@@ -60,7 +58,6 @@ class RequirementTest extends Specification {
 	def "should allow modification for status UNDER_REVIEW"(){
 		
 		given :
-			Requirement requirement = new Requirement("test req", "this is a test req")
 			requirement.setStatus(UNDER_REVIEW)
 		
 		when :
@@ -83,7 +80,6 @@ class RequirementTest extends Specification {
 	def "should not allow modification for status APPROVED"(){
 		
 		given :
-			Requirement requirement = new Requirement("test req", "this is a test req")
 			requirement.setStatus(UNDER_REVIEW)//needed because of the workflow
 			requirement.setStatus(APPROVED)
 		
@@ -107,7 +103,6 @@ class RequirementTest extends Specification {
 	def "should not allow modification for status OBSOLETE"(){
 		
 		given :
-			Requirement requirement = new Requirement("test req", "this is a test req")
 			requirement.setStatus(OBSOLETE)
 		
 		when :
@@ -197,7 +192,7 @@ class RequirementTest extends Specification {
 	
 	//that (naive) method builds requirements with initial status that could bypass the workflow.
 	private Requirement prepareRequirement(RequirementStatus status){
-		def req = new Requirement(name:"req", description:"this is a req");
+		def req = new Requirement(new RequirementVersion(name:"req", description:"this is a req"));
 		
 		for (iterStatus in RequirementStatus.values()) {
 			req.status = iterStatus;
@@ -211,7 +206,7 @@ class RequirementTest extends Specification {
 	
 	//same
 	private Requirement prepareRequirement(RequirementStatus status, TestCase testCase){
-		def req = new Requirement(name:"req", description:"this is a req");
+		def req = new Requirement(new RequirementVersion(name:"req", description:"this is a req"));
 			req.addVerifyingTestCase(testCase)
 		
 		for (iterStatus in RequirementStatus.values()){

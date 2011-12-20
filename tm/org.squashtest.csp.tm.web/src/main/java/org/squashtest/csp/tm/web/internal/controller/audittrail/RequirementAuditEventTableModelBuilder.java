@@ -35,9 +35,9 @@ import org.squashtest.csp.tm.domain.event.RequirementAuditEvent;
 import org.squashtest.csp.tm.domain.event.RequirementAuditEventVisitor;
 import org.squashtest.csp.tm.domain.event.RequirementCreation;
 import org.squashtest.csp.tm.domain.event.RequirementLargePropertyChange;
-import org.squashtest.csp.tm.domain.event.RequirementModification;
 import org.squashtest.csp.tm.domain.event.RequirementPropertyChange;
-import org.squashtest.csp.tm.domain.requirement.Requirement;
+import org.squashtest.csp.tm.domain.event.RequirementVersionModification;
+import org.squashtest.csp.tm.domain.requirement.RequirementVersion;
 import org.squashtest.csp.tm.web.internal.model.datatable.DataTableModelHelper;
 
 /**
@@ -103,7 +103,7 @@ public class RequirementAuditEventTableModelBuilder extends DataTableModelHelper
 		populateCurrentItemData(message, "simple-prop", event);
 	}
 
-	private String buildPropertyChangeMessageKey(RequirementModification event) {
+	private String buildPropertyChangeMessageKey(RequirementVersionModification event) {
 		return "audit-trail.requirement.property-change." + event.getPropertyName() + ".label";
 	}
 
@@ -116,7 +116,7 @@ public class RequirementAuditEventTableModelBuilder extends DataTableModelHelper
 	}
 
 	private boolean propertyIsEnumeratedAndInternationalizable(RequirementPropertyChange event) {
-		Field field = ReflectionUtils.findField(Requirement.class, event.getPropertyName());
+		Field field = ReflectionUtils.findField(RequirementVersion.class, event.getPropertyName());
 		Class<?> fieldType = field.getType();
 
 		return Enum.class.isAssignableFrom(fieldType) && Internationalizable.class.isAssignableFrom(fieldType);
@@ -127,7 +127,7 @@ public class RequirementAuditEventTableModelBuilder extends DataTableModelHelper
 	}
 
 	private Object[] buildMessageArgsForI18nableEnumProperty(RequirementPropertyChange event) {
-		Field enumField = ReflectionUtils.findField(Requirement.class, event.getPropertyName());
+		Field enumField = ReflectionUtils.findField(RequirementVersion.class, event.getPropertyName());
 		Class<?> enumType = enumField.getType();
 
 		String oldValueLabel = retrieveEnumI18ndLabel(enumType, event.getOldValue());
@@ -136,7 +136,7 @@ public class RequirementAuditEventTableModelBuilder extends DataTableModelHelper
 		return new Object[] { oldValueLabel, newValueLabel };
 	}
 
-	@SuppressWarnings({ "rawtypes", "unchecked" })
+	@SuppressWarnings("rawtypes")
 	private String retrieveEnumI18ndLabel(Class enumType, String stringValue) {
 		Internationalizable enumValue = Enum.valueOf(enumType, stringValue);
 		return messageSource.getMessage(enumValue.getI18nKey(), null, locale);

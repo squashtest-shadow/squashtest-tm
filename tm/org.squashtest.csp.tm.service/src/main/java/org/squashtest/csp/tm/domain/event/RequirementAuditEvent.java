@@ -34,7 +34,7 @@ import javax.persistence.Temporal;
 import javax.persistence.TemporalType;
 import javax.validation.constraints.NotNull;
 
-import org.squashtest.csp.tm.domain.requirement.Requirement;
+import org.squashtest.csp.tm.domain.requirement.RequirementVersion;
 
 @Entity
 @Inheritance(strategy = InheritanceType.JOINED)
@@ -46,9 +46,9 @@ public abstract class RequirementAuditEvent {
 	private Long id;
 	
 	@ManyToOne
-	@JoinColumn(name = "REQUIREMENT_ID")
+	@JoinColumn(name = "REQ_VERSION_ID")
 	@NotNull
-	private Requirement requirement;
+	private RequirementVersion requirementVersion;
 	
 	@Temporal(TemporalType.TIMESTAMP)
 	@NotNull
@@ -64,8 +64,8 @@ public abstract class RequirementAuditEvent {
 	}
 
 
-	public Requirement getRequirement() {
-		return requirement;
+	public RequirementVersion getRequirementVersion() {
+		return requirementVersion;
 	}
 
 
@@ -82,9 +82,9 @@ public abstract class RequirementAuditEvent {
 		super();
 	}
 
-	public RequirementAuditEvent(Requirement requirement, String author) {
+	public RequirementAuditEvent(RequirementVersion requirementVersion, String author) {
 		super();
-		this.requirement = requirement;
+		this.requirementVersion = requirementVersion;
 		this.author = author;
 		this.date = new Date();
 	}

@@ -25,6 +25,7 @@ import org.squashtest.csp.tm.domain.event.RequirementCreation;
 import org.squashtest.csp.tm.domain.event.RequirementPropertyChange;
 import org.squashtest.csp.tm.domain.requirement.Requirement;
 import org.squashtest.csp.tm.domain.requirement.RequirementStatus;
+import org.squashtest.csp.tm.domain.requirement.RequirementVersion;
 import org.squashtest.csp.tm.internal.repository.RequirementAuditEventDao;
 import org.squashtest.csp.tools.unittest.reflection.ReflectionCategory;
 
@@ -77,7 +78,7 @@ class StatusBasedRequirementAuditorTest extends Specification {
 	@Unroll("should audit #changedProperty property change of an 'under review' requirement")
 	def "should audit any property change of an 'under review' requirement"() {
 		given:
-		Requirement req = Mock()
+		RequirementVersion req = Mock()
 		req.status >> RequirementStatus.UNDER_REVIEW
 		
 		and:
@@ -85,7 +86,7 @@ class StatusBasedRequirementAuditorTest extends Specification {
 		
 		use (ReflectionCategory) {
 			RequirementPropertyChange.set field: "propertyName", of: event, to: changedProperty
-			RequirementAuditEvent.set field: "requirement", of: event, to: req
+			RequirementAuditEvent.set field: "requirementVersion", of: event, to: req
 		}
 		
 		when:
@@ -101,7 +102,7 @@ class StatusBasedRequirementAuditorTest extends Specification {
 	@Unroll("should not audit #changedProperty property change of a requirement not under review")
 	def "should not audit any property change of a requirement not under review"() {
 		given:
-		Requirement req = Mock()
+		RequirementVersion req = Mock()
 		req.status >> requirementStatus
 		
 		and:
@@ -109,7 +110,7 @@ class StatusBasedRequirementAuditorTest extends Specification {
 		
 		use (ReflectionCategory) {
 			RequirementPropertyChange.set field: "propertyName", of: event, to: changedProperty
-			RequirementAuditEvent.set field: "requirement", of: event, to: req
+			RequirementAuditEvent.set field: "requirementVersion", of: event, to: req
 		}
 		
 		when:

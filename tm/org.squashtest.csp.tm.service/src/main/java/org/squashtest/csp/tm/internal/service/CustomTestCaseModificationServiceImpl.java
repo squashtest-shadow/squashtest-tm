@@ -275,6 +275,7 @@ public class CustomTestCaseModificationServiceImpl implements CustomTestCaseModi
 
 		TestCase mainTestCase = testCaseDao.findById(testCaseId);
 
+		// XXX RequirementVersion
 //		List<VerifiedRequirement> verifiedReqs = buildVerifiedRequirementList(mainTestCase.getVerifiedRequirements(), verified );
 
 		long verifiedCount = requirementDao.countRequirementsVerifiedByTestCases(calleesIds);
@@ -297,6 +298,7 @@ public class CustomTestCaseModificationServiceImpl implements CustomTestCaseModi
 		for (Requirement req : verified) {
 			boolean directlyVerified = directlyVerifiedList.contains(req) ;
 			
+			// XXX RequirementVersion
 //			toReturn.add(new VerifiedRequirement(req, directlyVerified));
 		}		
 		

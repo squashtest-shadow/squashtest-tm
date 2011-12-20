@@ -53,13 +53,17 @@ abstract class DynamicManagerInterfaceSpecification extends Specification {
 		factory.entityType = entityType
 
 		Session session = Mock()
-		session.load(entityType, _) >> entityType.newInstance()
+		session.load(entityType, _) >> entityInstance()
 
 		SessionFactory sessionFactory = Mock()
 		sessionFactory.currentSession >> session
 		factory.sessionFactory = sessionFactory
 
 		factory.initializeFactory()
+	}
+	
+	def entityInstance() {
+		entityType.newInstance()
 	}
 
 	@Unroll

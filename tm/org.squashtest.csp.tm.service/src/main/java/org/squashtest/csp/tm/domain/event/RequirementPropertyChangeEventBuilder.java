@@ -22,13 +22,13 @@ package org.squashtest.csp.tm.domain.event;
 
 import javax.validation.constraints.NotNull;
 
-import org.squashtest.csp.tm.domain.requirement.Requirement;
+import org.squashtest.csp.tm.domain.requirement.RequirementVersion;
 
 public interface RequirementPropertyChangeEventBuilder<EVENT extends RequirementAuditEvent> {
 	RequirementPropertyChangeEventBuilder<EVENT> setOldValue(Object value);
 	RequirementPropertyChangeEventBuilder<EVENT> setNewValue(Object value);
 	RequirementPropertyChangeEventBuilder<EVENT> setModifiedProperty(@NotNull String propertyName);
-	RequirementPropertyChangeEventBuilder<EVENT> setSource(@NotNull Requirement requirement);
+	RequirementPropertyChangeEventBuilder<EVENT> setSource(@NotNull RequirementVersion requirementVersion);
 	RequirementPropertyChangeEventBuilder<EVENT> setAuthor(@NotNull String author);
 	EVENT build();
 }
