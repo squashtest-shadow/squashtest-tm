@@ -142,11 +142,11 @@
 
 		$("#${ id }")
 		.bind("select_node.jstree", function(event, data){
-			
-			unselectNonSiblings(data.rslt.obj, $('#${id}'));
+			// 	unselectNonSiblings(data.rslt.obj, $('#${id}'));
+			// is replaced by : 
+			unselectDescendantsAndOtherProjectsSelections(data.rslt.obj, $('#${id}'));
 			operations = data.inst.allowedOperations();
 			updateTreebuttons(operations);
-			
 			return true;
 		})
 		.bind("deselect_node.jstree", function(event, data){

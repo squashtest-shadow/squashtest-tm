@@ -158,7 +158,7 @@
 			});
 			
 			container
-				//that section is copy/pasta from the original themeroller plugin, kudos mate.
+				//that section is copied/pasted from the original themeroller plugin, kudos mate.
 				.addClass("ui-widget-content")
 				.delegate("a","mouseenter.jstree", function () {
 					$(this).addClass(s.item_h);
@@ -188,7 +188,7 @@
 				if (selectedNodes.length==0 || noEdit){
 					operations = "";
 				}
-				//case 2 : more than one item selected : deletion and copy if the nodes aren't libraries
+				//case 2 : more than one item selected : deletion and copy if nodes group does not include a library
 				else if (selectedNodes.length != 1){
 					operations = (! selectedNodes.is(":library")) ? "delete copy " : "";
 				}
@@ -261,7 +261,7 @@
 	  * 	- contentSelector : the selector of the content.
 	  * 	- params : a map association <buttonPropertyName, buttonSelector>.
 	  * 
-	  * Note 1 : the way the menu was implemented forces us to ugly things and should need refactor once it's included in the trunk of jQuery UI.
+	  * Note 1 : the way the menu was implemented forces us to ugly things and should need refactoring once it's included in the trunk of jQuery UI.
 	  * Note 2 : I had no choice but modifying jquery.fg.menu.js directly, specifically the methods showMenu() and kill(), due to the careless managment of
 	  * event unbinding.
 	  */
@@ -432,6 +432,7 @@ function postNewTreeContent(treeId, contentDiscriminator, postParameters) {
 	
 	var selectNode = function(){
 		tree.jstree('select_node', newNode);
+		unselectFather(newNode, $('#' + treeId));
 		openNode(); 	//yes, we need to repoen it. This is required if the newly added node is the first node that the parent contains.
 	}
 
@@ -719,8 +720,7 @@ function storeSelectedNodeUrls(treeId, selResourceUrl, selNodeContentUrl,
 }
 
 /**
- * Unselects the nodes of the given tree which are not siblings of the given li
- * node.
+ * Unselects the nodes of the given tree which are not siblings of the given liNode.
  * 
  * @param liNode
  * @param tree
@@ -742,6 +742,66 @@ function unselectNonSiblings(liNode, tree) {
 			tree.jstree('deselect_node', element);
 		});
 	}
+}
+/**
+ * Unselects the node of the given tree that is the father of the given liNode.
+ * 
+ * @param liNode
+ * @param tree
+ */
+function unselectFather(liNode, tree){
+	var parent = liNode.parents('li:first');
+	tree.jstree('deselect_node', parent);
+}
+
+function unselectDescendantsAndOtherProjectsSelections(liNode, tree){
+	var previouslySelected = findSelectedNodes(tree);
+	if (previouslySelected.length > 0) {
+		var descendants = unselectDescendants(liNode, tree);
+		previouslySelected = $(previouslySelected).not(descendants);
+		if(previouslySelected.length > 0){
+			unselectOtherProjectsSelections(liNode, tree, previouslySelected);
+		}
+	}
+}
+/**
+ * Unselects the nodes of the given tree which are descendants of the given liNode.
+ * 
+ * @param liNode
+ * @param tree
+ */
+function unselectDescendants(liNode, tree){
+	var descendants = $(liNode).find('li');
+		
+	if(descendants.length > 0 ){
+		$(descendants).each(function(index, element) {
+			tree.jstree('deselect_node', element);
+		});
+	}
+	return descendants;
+}
+/**
+ * Unselects the nodes of the given tree which are not descendants of the same project as the given liNode.
+ * 
+ * @param liNode
+ * @param tree
+ * @param previouslySelected
+ */
+function unselectOtherProjectsSelections(liNode, tree, previouslySelected){
+	var libraryOfSelectedNode ;
+	if($(liNode).is('[rel|="drive"]')){
+		libraryOfSelectedNode = $(liNode)[0];
+	 }else{
+		libraryOfSelectedNode = $(liNode).parents('[rel|="drive"]')[0];
+	}
+	var libraryOfSelectedNodeDescendants = $(libraryOfSelectedNode).find('li');
+	libraryOfSelectedNodeDescendants.push(libraryOfSelectedNode);
+	
+	var nodesToUnselect = previouslySelected.not(libraryOfSelectedNodeDescendants);
+	$(nodesToUnselect).each(function(index, element) {
+			tree.jstree('deselect_node', element);
+	});
+	
 }
 
 function findSelectedNodes(tree) {
