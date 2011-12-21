@@ -36,6 +36,9 @@ import org.squashtest.csp.core.bugtracker.domain.BugTracker;
 public class PropertiesBugTrackerFactoryBean implements FactoryBean<BugTracker>, InitializingBean {
 	private static final String BUG_TRACKER_URL_KEY = "squashtest.bugtracker.url";
 	private static final String BUG_TRACKER_KIND_KEY = "squashtest.bugtracker.kind";
+	
+	private static final String BUG_TRACKER_UNDEFINED_KIND = "none";
+	private static final String BUG_TRACKER_UNDEFINED_URL = "none";
 
 	private Properties bugTrackerProperties;
 	private BugTracker bugTracker = BugTracker.NOT_DEFINED;
@@ -64,10 +67,20 @@ public class PropertiesBugTrackerFactoryBean implements FactoryBean<BugTracker>,
 		if (bugTrackerProperties != null) {
 			String kind = bugTrackerProperties.getProperty(BUG_TRACKER_KIND_KEY);
 			String url = bugTrackerProperties.getProperty(BUG_TRACKER_URL_KEY);
-
-			BugTracker bt = new BugTracker(url, kind);
-			bugTracker = bt;
+			
+			if (isNullBugTracker(kind, url)){
+				bugTracker=BugTracker.NOT_DEFINED;
+			}else{
+				BugTracker bt = new BugTracker(url, kind);
+				bugTracker = bt;
+			}
+		}else{
+			bugTracker=BugTracker.NOT_DEFINED;
 		}
+	}
+	
+	private boolean isNullBugTracker(String kind, String url){
+		return kind.equals(BUG_TRACKER_UNDEFINED_KIND) && url.equals(BUG_TRACKER_UNDEFINED_URL);
 	}
 
 }

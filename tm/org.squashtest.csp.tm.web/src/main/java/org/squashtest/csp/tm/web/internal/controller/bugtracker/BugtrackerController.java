@@ -354,7 +354,7 @@ public class BugtrackerController {
 		BugTrackerStatus status = checkStatus();
 
 		if (status == BugTrackerStatus.BUGTRACKER_UNDEFINED) {
-			return null;
+			return new ModelAndView("fragment/issues/bugtracker-panel-empty");
 		} else {
 
 			BugTrackerInterfaceDescriptor descriptor = bugTrackerLocalService.getInterfaceDescriptor();
