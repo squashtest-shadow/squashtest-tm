@@ -222,7 +222,7 @@
 							<url>${h2.full.url}</url>
 							<username>sa</username>
 							<password>sa</password>
-							<migrationSqlOutputFile>${database.script.directory}/h2-full-install.sql</migrationSqlOutputFile>
+							<migrationSqlOutputFile>${database.script.directory}/h2-full-install-version-${project.version}.sql</migrationSqlOutputFile>
 						</configuration>
 					</execution>
 
@@ -309,7 +309,7 @@
 							<url>${liquibase.mysql.url}</url>
 							<username>${liquibase.mysql.username}</username>
 							<password>${liquibase.mysql.password}</password>
-							<migrationSqlOutputFile>${database.script.directory}/mysql-full-install.sql</migrationSqlOutputFile>
+							<migrationSqlOutputFile>${database.script.directory}/mysql-full-install-version-${project.version}.sql</migrationSqlOutputFile>
 						</configuration>
 					</execution>
 				</executions>
