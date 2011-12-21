@@ -190,4 +190,10 @@
 		<param-name>squashTMVersion</param-name>
 		<param-value>${project.version}</param-value>
 	</context-param>
+	
+	<context-param>
+		<param-name>stage</param-name>
+		<param-value>${project.stage}</param-value><!--  ensure that the values are DEV or RELEASE -->
+	</context-param>	
+	 
 </web-app>

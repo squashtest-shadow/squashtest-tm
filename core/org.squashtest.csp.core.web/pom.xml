@@ -20,6 +20,7 @@
 		<bundle.contextPath>squash</bundle.contextPath>
 
 		<logger.urlRewriteFilter>DEBUG</logger.urlRewriteFilter>
+		<project.stage>RELEASE</project.stage> <!--  overridable by activating the profile development -->
 	</properties>
 
 	<dependencies>
@@ -422,6 +423,9 @@
 					<value>dev</value>
 				</property>
 			</activation>
+			<properties>
+				<project.stage>DEV</project.stage>
+			</properties>
 		</profile>
 	</profiles>
 </project>

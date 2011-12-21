@@ -20,8 +20,22 @@
         along with this software.  If not, see <http://www.gnu.org/licenses/>.
 
 --%>
+
+
+<%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core"%>
+
+<c:choose>
+<c:when test="${initParam['stage'] == 'RELEASE'}">
 <script type="text/javascript" src="${ pageContext.servletContext.contextPath }/scripts/jquery/jquery-1.5.2.min.js"></script>
 <script type="text/javascript" src="${ pageContext.servletContext.contextPath }/scripts/jquery/jquery-ui-1.8.13.custom.min.js"></script>
+</c:when>
+<c:otherwise>
+<script type="text/javascript" src="${ pageContext.servletContext.contextPath }/scripts/jquery/jquery-1.5.2-dev.js"></script>
+<script type="text/javascript" src="${ pageContext.servletContext.contextPath }/scripts/jquery/jquery-ui-1.8.13.all.dev.js"></script>
+</c:otherwise>
+</c:choose>
+
+
 <script type="text/javascript" src="${ pageContext.servletContext.contextPath }/scripts/squashtest/jquery.squashtm.plugin.js"></script> 
 <%--<script type="text/javascript" src="http://localhost/scripts/jquery.squashtm.plugin.js"></script>--%>
 <script type="text/javascript" src="${ pageContext.servletContext.contextPath }/scripts/squashtest/jquery.squashtm.togglepanels.js"></script> 
