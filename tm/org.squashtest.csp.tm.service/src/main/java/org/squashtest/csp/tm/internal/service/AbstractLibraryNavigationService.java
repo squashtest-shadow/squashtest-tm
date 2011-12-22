@@ -20,11 +20,16 @@
  */
 package org.squashtest.csp.tm.internal.service;
 
+import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.LinkedList;
 import java.util.List;
+import java.util.Map;
+import java.util.Map.Entry;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
+import org.apache.commons.lang.NullArgumentException;
 import org.springframework.osgi.extensions.annotation.ServiceReference;
 import org.springframework.security.access.AccessDeniedException;
 import org.springframework.security.access.prepost.PostFilter;
@@ -200,13 +205,10 @@ implements LibraryNavigationService<LIBRARY, FOLDER, NODE> {
 
 	/* ********************** move operations *************************** */
 	
-	private void removeFromLibrary(LIBRARY library, Long[] targetIds){
+	private void removeFromLibrary(LIBRARY library, NODE node){
 		try{
-			for (Long id : targetIds){
-				NODE node = getLibraryNodeDao().findById(id);
 				library.removeRootContent(node);
-			}
-		}catch(DuplicateNameException dne){
+		}catch(NullArgumentException dne){
 			throw new CannotMoveNodeException();
 		}
 	}
@@ -222,11 +224,9 @@ implements LibraryNavigationService<LIBRARY, FOLDER, NODE> {
 		}
 	}	
 	
-	private void removeFromFolder(FOLDER folder, Long[] targetIds){
-		for (Long id : targetIds){
-			NODE node = getLibraryNodeDao().findById(id);
+	private void removeFromFolder(FOLDER folder, NODE node){
 			folder.removeContent(node);
-		}
+		
 	}
 	
 	private void addNodesToFolder(FOLDER folder, Long[] targetIds){
@@ -249,32 +249,25 @@ implements LibraryNavigationService<LIBRARY, FOLDER, NODE> {
 		
 		//fetch
 		FOLDER destinationFolder = getFolderDao().findById(destinationId);
-		
-		
-		//security check		
-		NODE item1 = getLibraryNodeDao().findById(targetIds[0]);		
-		LIBRARY parentLib = getLibraryDao().findByRootContent(item1);
-		FOLDER parentFolder = getFolderDao().findByContent(item1);
-		
-		Object parentObject = (parentLib!=null) ? parentLib : parentFolder;
-		
+		Map<NODE, Object> nodesAndTheirParents = new HashMap<NODE, Object>();
+
+		//security check	
 		for (Long id : targetIds){
 			NODE node = getLibraryNodeDao().findById(id);
+			LIBRARY parentLib = getLibraryDao().findByRootContent(node);
+			
+			Object parentObject = (parentLib!=null) ? parentLib :  getFolderDao().findByContent(node);
+			
 			checkPermission(new SecurityCheckableObject(destinationFolder, "WRITE"),
 			new SecurityCheckableObject(parentObject, "WRITE"),
-			new SecurityCheckableObject(node, "READ"));					
-		}		
+			new SecurityCheckableObject(node, "READ"));	
 			
-		//proceed
-		if (parentLib!=null){
-			removeFromLibrary(parentLib, targetIds);
-		}
-		else{
-			removeFromFolder(parentFolder, targetIds);
-		}
+			nodesAndTheirParents.put(node, parentObject);
+			
+		}		
+		removeNodesFromTheirParents(nodesAndTheirParents);
 		
 		getFolderDao().flush();
-		
 		addNodesToFolder(destinationFolder, targetIds);
 
 	}
@@ -290,33 +283,41 @@ implements LibraryNavigationService<LIBRARY, FOLDER, NODE> {
 		
 		//fetch
 		LIBRARY destinationLibrary = getLibraryDao().findById(destinationId);
-		
+		Map<NODE, Object> nodesAndTheirParents = new HashMap<NODE, Object>();
 		
 		//security check		
-		NODE item1 = getLibraryNodeDao().findById(targetIds[0]);		
-		LIBRARY parentLib = getLibraryDao().findByRootContent(item1);
-		FOLDER parentFolder = getFolderDao().findByContent(item1);
-		
-		Object parentObject = (parentLib!=null) ? parentLib : parentFolder;
-		
 		for (Long id : targetIds){
 			NODE node = getLibraryNodeDao().findById(id);
+			LIBRARY parentLib = getLibraryDao().findByRootContent(node);
+			Object parentObject = (parentLib!=null) ? parentLib :  getFolderDao().findByContent(node);
+			
 			checkPermission(new SecurityCheckableObject(destinationLibrary, "WRITE"),
 			new SecurityCheckableObject(parentObject, "WRITE"),
-			new SecurityCheckableObject(node, "READ"));					
+			new SecurityCheckableObject(node, "READ"));			
+			
+			nodesAndTheirParents.put(node, parentObject);
 		}		
 			
 		//proceed
-		if (parentLib!=null){
-			removeFromLibrary(parentLib, targetIds);
-		}
-		else{
-			removeFromFolder(parentFolder, targetIds);
-		}
+		removeNodesFromTheirParents(nodesAndTheirParents);
 		
 		getFolderDao().flush();
 		
 		addNodesToLibrary(destinationLibrary, targetIds);		
+	}
+
+	private void removeNodesFromTheirParents(
+			Map<NODE, Object> nodesAndTheirParents) {
+		for (Entry<NODE, Object>  nodeAndItsParent : nodesAndTheirParents.entrySet()){
+			NODE node = nodeAndItsParent.getKey();
+			try {
+				LIBRARY parentLib = (LIBRARY) nodeAndItsParent.getValue();
+				removeFromLibrary(parentLib, node);
+			} catch (Exception e) {
+				FOLDER parentFolder = (FOLDER) nodeAndItsParent.getValue();
+				removeFromFolder(parentFolder, node);
+			}
+		}
 	}
 	
 
