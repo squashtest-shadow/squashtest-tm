@@ -110,12 +110,12 @@
 		@NamedQuery(name = "testCase.findTestCasesHavingCaller", query = "select ctc.id from CallTestStep s join s.calledTestCase ctc where ctc.id in (:testCasesIds) group by ctc having count(s) > 0"),
 		@NamedQuery(name = "testCase.findAllTestCasesIdsCalledByTestCase", query = "select called.id from TestCase caller join caller.steps step join step.calledTestCase called where caller.id = :testCaseId and step.class = CallTestStep"),
 		@NamedQuery(name = "testCase.findAllTestCasesIdsCalledByTestCases", query = "select distinct called.id from TestCase caller join caller.steps step join step.calledTestCase called where caller.id in (:testCasesIds) and step.class = CallTestStep"),
-
 		//the two next ones are to be used together. The second one assumes that the calledIds are actually not called and wont check it again. 
 		//Look for this query in HibernateTestCaseDao for more details.
 		@NamedQuery(name = "testCase.findTestCasesHavingCallerDetails", query = "select distinct caller.id, caller.name, called.id, called.name from TestCase caller join caller.steps steps join steps.calledTestCase called where steps.class = CallTestStep and called.id in (:testCaseIds) group by caller, called"),
 		@NamedQuery(name = "testCase.findTestCasesHavingNoCallerDetails", query = "select nullif(1,1), nullif(1,1), called.id, called.name from TestCase called where called.id in (:nonCalledIds)"),
-
+		@NamedQuery(name = "testCase.findCalledTestCaseOfCallSteps", query = "select distinct called.id from CallTestStep callStep join callStep.calledTestCase called where callStep.id in (:testStepsIds)"),
+		
 		//Queries on Campaign
 		@NamedQuery(name = "campaign.findNamesInCampaignStartingWith", query = "select i.name from Campaign c join c.iterations i where c.id = :containerId and i.name like :nameStart"),
 		@NamedQuery(name = "campaign.findNamesInFolderStartingWith", query = "select c.name from CampaignFolder f join f.content c where f.id = :containerId and c.name like :nameStart"),

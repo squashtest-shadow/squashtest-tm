@@ -52,6 +52,7 @@ import org.squashtest.csp.tm.domain.testcase.TestStep;
 import org.squashtest.csp.tm.infrastructure.filter.CollectionFilter;
 import org.squashtest.csp.tm.infrastructure.filter.CollectionSorting;
 import org.squashtest.csp.tm.infrastructure.filter.FilteredCollectionHolder;
+import org.squashtest.csp.tm.service.CallStepManagerService;
 import org.squashtest.csp.tm.service.TestCaseModificationService;
 import org.squashtest.csp.tm.service.VerifiedRequirement;
 import org.squashtest.csp.tm.web.internal.combo.OptionTag;
@@ -72,7 +73,9 @@ public class TestCaseModificationController {
 
 	@Inject
 	private MessageSource messageSource;
-
+	
+	@Inject 
+	private CallStepManagerService callStepManager ; 
 	
 	@ServiceReference
 	public void setTestCaseModificationService(TestCaseModificationService testCaseModificationService) {
@@ -194,7 +197,9 @@ public class TestCaseModificationController {
 	@ResponseBody
 	public void pasteStep(@RequestParam("copiedStepId[]") String[] copiedStepId,
 			@RequestParam(value = "indexToCopy", required = false) Long positionId, @PathVariable long testCaseId) {
-
+		
+		callStepManager.checkForCyclicStepCallBeforePaste( testCaseId, copiedStepId);
+		
 		for (int i = copiedStepId.length - 1; i >= 0; i--) {
 			String id = copiedStepId[i];
 			testCaseModificationService.pasteCopiedTestStep(testCaseId, positionId, Long.parseLong(id));

@@ -22,6 +22,7 @@ package org.squashtest.csp.tm.internal.repository;
 
 import java.util.Collection;
 import java.util.List;
+import java.util.Set;
 
 import org.squashtest.csp.tm.domain.requirement.Requirement;
 import org.squashtest.csp.tm.domain.requirement.RequirementSearchCriteria;
@@ -31,6 +32,7 @@ import org.squashtest.csp.tm.domain.testcase.TestCaseLibraryNode;
 import org.squashtest.csp.tm.domain.testcase.TestStep;
 import org.squashtest.csp.tm.infrastructure.filter.CollectionFilter;
 import org.squashtest.csp.tm.infrastructure.filter.CollectionSorting;
+import org.squashtest.csp.tm.service.CallStepManagerService;
 
 public interface TestCaseDao extends EntityDao<TestCase> {
 
@@ -139,7 +141,6 @@ public interface TestCaseDao extends EntityDao<TestCase> {
 	 */
 	List<Long> findAllTestCasesIdsCalledByTestCases(List<Long> testCasesIds);
 
-
 	/**
 	 * returns the ids of all the test cases having at least one call test step referencing the given test case.
 	 *
@@ -159,5 +160,14 @@ public interface TestCaseDao extends EntityDao<TestCase> {
 	 * @return the list of test case (order by project if specified)
 	 */
 	List<TestCase> findAllByRequirement(RequirementSearchCriteria criteria, boolean isProjectOrdered);
+	
+	/**
+	 * Returns the test cases ids first called by the call steps found in the list of given test steps ids.
+	 * Note: only first level called test case are returned. To get the whole test case tree you should use {@linkplain CallStepManagerService#getTestCaseCallTree(Long)}.
+	 * 
+	 * @param testStepsIds
+	 * @return the list of test case ids called by test steps
+	 */
+	List<Long> findCalledTestCaseOfCallSteps(List<Long> testStepsIds);
 
 }
