@@ -184,8 +184,7 @@
 		@NamedQuery(name = "testCase.removeAllCallSteps", query = "delete CallTestStep cts where  cts.id in (:stepIds)"),	
 		@NamedQuery(name = "testCase.removeAllActionSteps", query = "delete ActionTestStep ats where ats.id in (:stepIds)"),	
 
-		@NamedQuery(name = "requirement.findAllAttachmentLists", query ="select requirement.attachmentList.id from Requirement requirement where requirement.id in (:requirementIds)"),
-		@NamedQuery(name = "requirementDeletionDao.deleteRequirementAuditEvent", query="delete RequirementAuditEvent rae where rae.id in (:eventIds)")
+		@NamedQuery(name = "requirement.findAllAttachmentLists", query ="select requirement.attachmentList.id from Requirement requirement where requirement.id in (:requirementIds)")
 
 })
 package org.squashtest.csp.tm.internal.repository.hibernate;

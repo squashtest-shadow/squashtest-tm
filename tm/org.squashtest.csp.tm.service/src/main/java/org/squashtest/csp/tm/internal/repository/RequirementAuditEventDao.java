@@ -32,5 +32,4 @@ public interface RequirementAuditEventDao {
 
 	long countByRequirementId(long requirementId);
 
-	// List<RequirementAuditEvent> findAllByRequirementIds(List<Long> requirementIds);
 }

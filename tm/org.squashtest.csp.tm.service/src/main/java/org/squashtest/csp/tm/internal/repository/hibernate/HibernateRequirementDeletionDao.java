@@ -81,12 +81,15 @@ public class HibernateRequirementDeletionDao extends HibernateDeletionDao
 		if (! requirementIds.isEmpty()){
 			//we borrow the following from RequirementAuditDao
 			List<RequirementAuditEvent> events = executeSelectNamedQuery("requirementAuditEvent.findAllByRequirementIds", "ids", requirementIds);
-			List<Long> evtsIds = collectIds(events);
-			//check added by mpagnon (to avoid case when delete requirements folders)
-			if(! evtsIds.isEmpty()){
-			executeDeleteNamedQuery("requirementDeletionDao.deleteRequirementAuditEvent", "eventIds", evtsIds);
+			
+			//because Hibernate sucks so much at polymorphic bulk delete, we're going to remove 
+			//them one by one.
+			for (RequirementAuditEvent event : events){
+				removeEntity(event);				
 			}
-			}
+			
+			flush();
+		}
 		
 	}
 	
