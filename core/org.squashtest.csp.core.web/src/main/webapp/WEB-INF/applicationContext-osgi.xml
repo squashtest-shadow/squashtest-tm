@@ -74,18 +74,15 @@
 		availability="mandatory" />
 	
 	
-	<!--  
+	<!--  for use by the authentication manager, using a OSGIProxyUserDetailsService -->
 	<osgi:reference id="squashtest.core.security.JdbcUserDetailsManager"
 		bean-name="squashtest.core.security.JdbcUserDetailsManager"
 		interface="org.springframework.security.provisioning.JdbcUserDetailsManager"
-		availability="mandatory"/>
-	-->		
+		availability="mandatory">
+	</osgi:reference>
+	
 
 	<osgix:cm-properties id="squashtest.core.auth.config"
 		persistent-id="org.squashtest.csp.core.auth.config" />	
-		
-		
-	<!-- the following is an heresy imposed by multi security contexts across OSGI bundles.-->
-	<osgi:service ref="squashtest.core.security.JdbcUserDetailsManager" 
-		interface="org.springframework.security.provisioning.UserDetailsManager" />
+
 </beans>
