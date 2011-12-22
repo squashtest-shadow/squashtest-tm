@@ -1,12 +1,12 @@
 package org.squashtest.csp.core.internal.security.web.authentication;
 
 import org.springframework.dao.DataAccessException;
-import org.springframework.osgi.extensions.annotation.ServiceReference;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.security.provisioning.JdbcUserDetailsManager;
+import org.springframework.security.provisioning.UserDetailsManager;
 
 /**
  * <p>
@@ -30,30 +30,48 @@ import org.springframework.security.provisioning.JdbcUserDetailsManager;
 public class OSGIProxyUserDetailsService implements UserDetailsService {
 
 	
-	private JdbcUserDetailsManager delegate;
+	private JdbcUserDetailsManager jdbcManager;
+	private UserDetailsManager genericManager;
 	private AuthenticationManager manager;
 	
 	
-	//the two following methods are coupled somehow. The operation is ugly but the logic is simple.
+	/*
+	 * the two following methods are coupled somehow. The operation is ugly but the logic is simple.
+	 */
+	
 	public void setAuthenticationManager(AuthenticationManager manager){
 		this.manager=manager;
-		if (delegate != null){
-			delegate.setAuthenticationManager(manager);
+		if (jdbcManager != null){
+			jdbcManager.setAuthenticationManager(manager);
 		}
 	}
 	
-	@ServiceReference
 	public void setJdbcUserDetailsManager(JdbcUserDetailsManager service){
-		this.delegate=service;
+		this.jdbcManager=service;
 		if (manager!=null){
-			delegate.setAuthenticationManager(manager); 
+			jdbcManager.setAuthenticationManager(manager); 
 		}
 	}
+	
+	//that method and the one above allows to register multiple manager depending on what will be available
+	//in the context
+	public void setUserDetailsManager(UserDetailsManager manager){
+		this.genericManager=manager;
+	}
+	
 	
 	@Override
 	public UserDetails loadUserByUsername(String username)
 			throws UsernameNotFoundException, DataAccessException {
-		return delegate.loadUserByUsername(username);
+		return getManager().loadUserByUsername(username);
+	}
+	
+	private UserDetailsManager getManager(){
+		if (jdbcManager!=null){
+			return jdbcManager;
+		}else{
+			return genericManager;
+		}
 	}
 
 }
