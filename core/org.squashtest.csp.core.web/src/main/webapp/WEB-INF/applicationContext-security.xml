@@ -31,7 +31,7 @@
 		http://www.springframework.org/schema/context http://www.springframework.org/schema/context/spring-context-3.0.xsd
 		http://www.springframework.org/schema/security http://www.springframework.org/schema/security/spring-security-3.0.xsd">
 
-	<http auto-config="true" use-expressions="true" entry-point-ref="authenticationProcessingFilterEntryPoint"   >
+	<http  auto-config="true" use-expressions="true" entry-point-ref="authenticationProcessingFilterEntryPoint"   >
 		<!-- Login page config -->
 		<intercept-url pattern="/login" access="permitAll" />
 
@@ -69,9 +69,9 @@
 		 -->
 			
 		<!--  images and stuff dont need authentication -->
-		<intercept-url pattern="/images/**" access="permitAll" />
-		<intercept-url pattern="/styles/**" access="permitAll" />
-		<intercept-url pattern="/scripts/**" access="permitAll" />
+		<intercept-url pattern="/images/**" filters="none" />
+		<intercept-url pattern="/styles/**" filters="none" />
+		<intercept-url pattern="/scripts/**" filters="none"/>
 		
 		<!-- One must log in to access the application -->
 		<intercept-url pattern="/**" access="isAuthenticated()" />
