@@ -20,6 +20,7 @@
  */
 package org.squashtest.csp.tm.internal.service;
 
+import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
@@ -108,7 +109,6 @@ public class CallStepManagerServiceImpl implements CallStepManagerService{
 		ProjectFilter pf = projectFilterModificationService.findProjectFilterByUserLogin();
 		return pf.getActivated() ? libraryStrategy.getSpecificLibraries(pf.getProjects()) : testCaseLibraryDao
 				.findAll();
-
 	}
 	
 
@@ -143,5 +143,39 @@ public class CallStepManagerServiceImpl implements CallStepManagerService{
 		return testCaseDao.findAllCallingTestCases(testCaseId, sorting);
 	}
 	
+	@Override
+	@PreAuthorize("hasPermission(#destinationTestCaseId, 'org.squashtest.csp.tm.domain.testcase.TestCase' , 'READ') or hasRole('ROLE_ADMIN')")
+	public void checkForCyclicStepCallBeforePaste(
+			long destinationTestCaseId, String[] pastedStepId) {
+		List<Long> firstCallTestCasesIds = findFirstCalledTestCasesIds(pastedStepId);
+		//1> check that first called test cases are not the destination one. 
+		if (firstCallTestCasesIds.contains(destinationTestCaseId)){ 
+			throw new CyclicStepCallException();
+		}
+		//2> check that each first called test case doesn't have the destination one in it's callTree 
+		for (Long testCaseId : firstCallTestCasesIds) {
+			Set<Long> callTree = getTestCaseCallTree(testCaseId);
+			if (callTree.contains(destinationTestCaseId)){
+				throw new CyclicStepCallException();
+			}
+		}
+	
+	}
+
+
+	private List<Long> findFirstCalledTestCasesIds(String[] copiedStepId) {
+		List<Long> copiedStepIds = parseLong(copiedStepId);
+		List<Long> firstCalledTestCases = testCaseDao.findCalledTestCaseOfCallSteps(copiedStepIds);
+		return firstCalledTestCases;
+	}
+
+
+	private List<Long> parseLong(String[] stringArray) {
+		List<Long> longList = new ArrayList<Long>();
+		for (int i = 0; i < stringArray.length; i++) {
+			longList.add(Long.parseLong(stringArray[i]));
+		}
+		return longList;
+	}
 	
 }

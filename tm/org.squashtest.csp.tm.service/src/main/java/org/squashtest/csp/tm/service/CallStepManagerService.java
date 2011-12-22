@@ -23,6 +23,8 @@ package org.squashtest.csp.tm.service;
 import java.util.List;
 import java.util.Set;
 
+import org.springframework.transaction.annotation.Transactional;
+import org.squashtest.csp.tm.domain.CyclicStepCallException;
 import org.squashtest.csp.tm.domain.testcase.TestCase;
 import org.squashtest.csp.tm.domain.testcase.TestCaseLibrary;
 import org.squashtest.csp.tm.infrastructure.filter.CollectionSorting;
@@ -67,5 +69,14 @@ public interface CallStepManagerService {
 	 * @return a non null but possibly empty list of test cases calling the argument test case (first level only)
 	 */
 	List<TestCase> findCallingTestCases(long testCaseId, CollectionSorting sorting);	
+	
+	/**
+	 * Used to check if the destination test case id is found in the calling tree of the pasted steps
+	 * if so : a {@linkplain CyclicStepCallException} is thrown.
+	 * 
+	 * @param testCaseId
+	 * @param copiedStepId
+	 */
+	void checkForCyclicStepCallBeforePaste(long destinationTestCaseId, String[] pastedStepsIds);
 	
 }

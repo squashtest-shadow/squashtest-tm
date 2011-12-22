@@ -27,6 +27,7 @@ import java.util.LinkedList;
 import java.util.List;
 import java.util.ListIterator;
 import java.util.Map;
+import java.util.Set;
 
 import org.apache.commons.collections.CollectionUtils;
 import org.hibernate.Criteria;
@@ -453,6 +454,14 @@ public class HibernateTestCaseDao extends HibernateEntityDao<TestCase> implement
 			requirementHql.append(" order by tc.project");
 		}
 		return requirementHql.toString();
+	}
+
+	@SuppressWarnings("unchecked")
+	@Override
+	public List<Long> findCalledTestCaseOfCallSteps(List<Long> testStepsIds) {
+		Query query = currentSession().getNamedQuery("testCase.findCalledTestCaseOfCallSteps");
+		query.setParameterList("testStepsIds", testStepsIds);
+		return query.list();
 	}
 
 

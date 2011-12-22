@@ -44,6 +44,13 @@ class CallStepManagerServiceIT extends DbunitServiceSpecification {
 	private TestCaseModificationService testCaseService;
 	
 	
+	def setupSpec(){
+		Collection.metaClass.matches ={ arg ->
+			delegate.containsAll(arg) && arg.containsAll(delegate)
+		}
+	}
+	
+	
 	@DataSet("CallStepManagerServiceIT.dataset.xml")
 	def "should return the test case call tree of a test case"(){
 
@@ -96,12 +103,33 @@ class CallStepManagerServiceIT extends DbunitServiceSpecification {
 			
 		
 		then :
-			callTree.containsAll (expectedTree)		
+			callTree.matches (expectedTree)		
 		
 	}
 	
+	@DataSet("CallStepManagerServiceIT.dataset.xml")
+	def "should throw CyclicStepCallException because the destination test case is somewhere in the test case call tree of the pasted steps"(){
+		given :
+			def pastedStepsIds = ['11','1000', '101'] as String[]
+			def destinationTestCaseid = 32L
+		when :
+			callStepService.checkForCyclicStepCallBeforePaste(destinationTestCaseid, pastedStepsIds)
+			
+		then :
+			thrown(CyclicStepCallException);
+	}
+	
+	@DataSet("CallStepManagerServiceIT.dataset.xml")
+	def "should throw CyclicStepCallException because the destination test case is called by one of the pasted steps"(){
+		given :
+			def pastedStepsIds = ['32','1000'] as String[]
+			def destinationTestCaseid = 32L
+		when :
+			callStepService.checkForCyclicStepCallBeforePaste(destinationTestCaseid, pastedStepsIds)
+			
+		then :
+			thrown(CyclicStepCallException);
+	}
 
-	
-	
 
 }

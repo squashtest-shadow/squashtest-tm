@@ -298,7 +298,7 @@ class TestCaseModificationControllerTest extends Specification {
 		mav.modelMap['testCaseImportanceComboJson'] == "akemashite omedetô"
 	}
 	
-	def "when showing a test case, should put test case importance laben in the model"() {
+	def "when showing a test case, should put test case importance label in the model"() {
 		given:
 		TestCase testCase = Mock()
 		testCase.importance >> TestCaseImportance.HIGH
