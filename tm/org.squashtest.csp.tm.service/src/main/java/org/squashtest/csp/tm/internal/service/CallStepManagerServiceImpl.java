@@ -119,10 +119,11 @@ public class CallStepManagerServiceImpl implements CallStepManagerService{
 		
 		Set<Long> calleesIds = new HashSet<Long>();
 		List<Long> prevCalleesIds = testCaseDao.findAllTestCasesIdsCalledByTestCase(rootTcId);
-		
 		if (LOGGER.isTraceEnabled()) {
 			LOGGER.trace("TestCase directly calls " + prevCalleesIds);
 		}
+		
+		prevCalleesIds.remove(rootTcId);//added to prevent infinite cycle in case of inconsistent data
 		
 		while (!prevCalleesIds.isEmpty()) {
 			calleesIds.addAll(prevCalleesIds);
@@ -131,6 +132,7 @@ public class CallStepManagerServiceImpl implements CallStepManagerService{
 			if (LOGGER.isTraceEnabled()) {
 				LOGGER.trace("TestCase indirectly calls " + prevCalleesIds);
 			}
+			prevCalleesIds.remove(rootTcId);//added to prevent infinite cycle in case of inconsistent data
 		}
 		
 		return calleesIds;
