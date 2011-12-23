@@ -81,6 +81,7 @@
 	}
 
 	function loadContextualContentIfRequired(node, selNodeUrl) {
+		if(isCtrlClicked == true)return;
 		clearContextualContent("#contextual-content");
 		<jq:get-load urlExpression="selNodeUrl" targetSelector="#contextual-content" />;
 	}

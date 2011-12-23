@@ -37,6 +37,8 @@
 <f:message var="libraryName" key="${ libraryNodeTitleKey }" />
 
 <script type="text/javascript">
+	
+
 	function selectLibrary(node) {		
 		var selResourceUrl = nodeResourceUrl('${ resourceUrlRoot }',  node);
 		var selNodeContentUrl = nodeContentUrl('${ libraryUrl }', node);
@@ -70,8 +72,11 @@
 	}
 
 	function loadContextualContentIfRequired(node, selResourceUrl) {
+		if(isCtrlClicked == true)return;
+		
 		clearContextualContent("#contextual-content");
 		<jq:get-load urlExpression="selResourceUrl" targetSelector="#contextual-content" />;
+		
 	}
 </script>
 

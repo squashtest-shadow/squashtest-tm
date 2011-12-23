@@ -55,7 +55,7 @@
 <script type="text/javascript">
 	
 	//
-	//prevent iteration copy, first step, check if ctrl was clicked. For the moment, could not find a simpler way...
+	// prevent iteration copy, first step, check if ctrl was clicked. For the moment, could not find a simpler way...
 	var isCtrlClicked = false;
 	
 	$(document).keydown(function(e){
@@ -64,6 +64,7 @@
 			isCtrlClicked = true;
 		}
 	});
+	
 	$(document).keyup(function(e){
 		isCtrlClicked = false;
 	});
@@ -113,7 +114,6 @@
 		} 
 		return tabId;
 	}
-	
 	
 	
 	
