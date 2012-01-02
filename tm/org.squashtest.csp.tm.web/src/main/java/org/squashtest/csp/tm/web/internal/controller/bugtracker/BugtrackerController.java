@@ -21,9 +21,11 @@
 package org.squashtest.csp.tm.web.internal.controller.bugtracker;
 
 import java.net.URL;
+import java.util.HashMap;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Locale;
+import java.util.Map;
 
 import javax.inject.Inject;
 import javax.servlet.ServletException;
@@ -70,7 +72,6 @@ import org.squashtest.csp.tm.web.internal.model.datatable.DataTableDrawParameter
 import org.squashtest.csp.tm.web.internal.model.datatable.DataTableModel;
 import org.squashtest.csp.tm.web.internal.model.datatable.DataTableModelHelper;
 import org.squashtest.csp.tm.web.internal.model.jquery.IssueModel;
-import org.squashtest.csp.tm.web.internal.model.jquery.JsonSimpleData;
 
 @Controller
 @RequestMapping("/bugtracker")
@@ -190,7 +191,7 @@ public class BugtrackerController {
 	 */
 	@RequestMapping(value = EXECUTION_STEP_TYPE + "/{stepId}/bug-report", method = RequestMethod.POST)
 	@ResponseBody
-	public String postExecStepIssueReport(@PathVariable("stepId") Long stepId, @ModelAttribute BTIssue jsonIssue) {
+	public Object postExecStepIssueReport(@PathVariable("stepId") Long stepId, @ModelAttribute BTIssue jsonIssue) {
 		LOGGER.trace("BugTrackerController: posting a new issue for execution-step " + stepId);
 
 		Bugged entity = bugTrackerLocalService.findBuggedEntity(stepId, ExecutionStep.class);
@@ -287,7 +288,7 @@ public class BugtrackerController {
 	 */
 	@RequestMapping(value = EXECUTION_TYPE + "/{execId}/bug-report", method = RequestMethod.POST)
 	@ResponseBody
-	public String postExecIssueReport(@PathVariable("execId") Long execId, @ModelAttribute BTIssue jsonIssue) {
+	public Object postExecIssueReport(@PathVariable("execId") Long execId, @ModelAttribute BTIssue jsonIssue) {
 		LOGGER.trace("BugTrackerController: posting a new issue for execution-step " + execId);
 
 		Bugged entity = bugTrackerLocalService.findBuggedEntity(execId, Execution.class);
@@ -299,29 +300,36 @@ public class BugtrackerController {
 
 	@RequestMapping(value = "/credentials", method = RequestMethod.POST, params = { "login", "password" })
 	public @ResponseBody
-	String setCredendials(@RequestParam("login") String login, @RequestParam("password") String password) {
+	Map<String, String> setCredendials(@RequestParam("login") String login, @RequestParam("password") String password) {
 
 		bugTrackerLocalService.setCredentials(login, password);
 
-		return new JsonSimpleData().addAttr("status", "ok").toString();
+		Map<String, String> map = new HashMap<String, String>();
+		map.put("status", "ok");
+		return map;
+		
+		
 	}
 
 	@RequestMapping(value = "/check", method = RequestMethod.GET)
 	public @ResponseBody
-	String checkOperationReady() {
+	Object checkOperationReady() {
 		return jsonStatus();
 	}
 
 	// FIXME : check first if a bugtracker is defined and if the credentials are set
-	private String processIssue(BTIssue issue, Bugged entity) {
+	private Map<String, String> processIssue(BTIssue issue, Bugged entity) {
 
 		BTIssue cleanIssue = cleanHtmlFromIssue(issue);
 
-		BTIssue postedIssue = bugTrackerLocalService.createIssue(entity, cleanIssue);
-		URL issueUrl = bugTrackerLocalService.getIssueUrl(postedIssue.getId());
+		final BTIssue postedIssue = bugTrackerLocalService.createIssue(entity, cleanIssue);
+		final URL issueUrl = bugTrackerLocalService.getIssueUrl(postedIssue.getId());
+		
+		Map<String, String> result = new HashMap<String, String>();
+		result.put("url", issueUrl.toString());
+		result.put("issueId", postedIssue.getId());
 
-		return new JsonSimpleData().addAttr("url", issueUrl.toString()).addAttr("issueId", postedIssue.getId())
-				.toString();
+		return result;
 	}
 
 	/* ********* generates a json model for an issue ******* */
@@ -394,20 +402,22 @@ public class BugtrackerController {
 		return bugTrackerLocalService.checkBugTrackerStatus();
 	}
 
-	private String jsonStatus() {
-		JsonSimpleData jsonStatus = new JsonSimpleData();
+	private Object jsonStatus() {
+		String strStatus=null;
 
 		BugTrackerStatus status = checkStatus();
 
 		if (status == BugTrackerStatus.BUGTRACKER_READY) {
-			jsonStatus.addAttr("status", "ready");
+			strStatus = "ready";
 		} else if (status == BugTrackerStatus.BUGTRACKER_NEEDS_CREDENTIALS) {
-			jsonStatus.addAttr("status", "needs_credentials");
+			strStatus ="needs_credentials";
 		} else {
-			jsonStatus.addAttr("status", "bt_undefined");
+			strStatus = "bt_undefined";
 		}
 
-		return jsonStatus.toString();
+		Map<String, String> result = new HashMap<String, String>();
+		result.put("status", strStatus);
+		return result;
 	}
 
 	private CollectionSorting createCollectionSorting(final DataTableDrawParameters params) {

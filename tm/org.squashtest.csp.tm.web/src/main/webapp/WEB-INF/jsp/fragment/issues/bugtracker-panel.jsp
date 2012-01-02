@@ -77,6 +77,7 @@
 		var issueUrl= json.url;
 		var issueId= json.issueId;
 		$("#issue-url").attr("href",issueUrl);
+		$("#issue-url").attr("target","_blank");
 		$("#issue-url").html(issueUrl);
 		setMessageIssueId(issueId); 
 		$("#issue-panel-bugcreated-area").fadeIn('slow').delay(20000).fadeOut('slow');	
