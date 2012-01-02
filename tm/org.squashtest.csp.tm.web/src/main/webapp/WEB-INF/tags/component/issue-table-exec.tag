@@ -73,7 +73,7 @@
 	function addHLinkToIdRow(row, data){
 		var td = $(row).find("td:eq(0)");
 		var url = getIssueTableRowUrl(data);
-		addHLinkToCellText(td, url);
+		addHLinkToCellText(td, url, true);
 	}
 	
 	

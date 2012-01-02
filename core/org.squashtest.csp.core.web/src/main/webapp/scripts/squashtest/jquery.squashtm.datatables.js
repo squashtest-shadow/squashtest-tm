@@ -461,12 +461,19 @@ function restoreTableSelection(dataTable, getRowIdCallback) {
 		}
 	});
 }
-function addHLinkToCellText(td, url) {
+function addHLinkToCellText(td, url, isOpenInTab) {
+	
+	var link = $('<a></a>');
+	link.attr('href', url);
+	if (isOpenInTab) {
+		link.attr('target', '_blank');
+	}
+	
 	$(td).contents().filter(function() {
 		// IE doesn't define the constant Node so we'll use constant value
 		// instead of Node.TEXT_NODE
 		return this.nodeType == 3;
-	}).wrap('<a href=' + url + '></a>');
+	}).wrap(link);
 }
 /**
  * Adds a "manage attachment" link to the row cell(s) of class
