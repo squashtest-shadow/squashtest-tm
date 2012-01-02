@@ -421,7 +421,7 @@ that page won't be editable if
 	<script type="text/javascript">
 		$(function() {
 			$( "#requirement-audit-trail-table" ).ajaxSuccess(function(event, xrh, settings) {
-				if (settings.type == 'POST' && !settings.data.match(/requirement-status/g)) {
+				if (settings.type == 'POST' && (!settings.data || ! settings.data.match(/requirement-status/g))) {
 					<%-- We refresh tble on POSTs which do not uptate requirement status (these ones already refresh the whole page --%>
 					$( this ).dataTable().fnDraw(false);
 				}
