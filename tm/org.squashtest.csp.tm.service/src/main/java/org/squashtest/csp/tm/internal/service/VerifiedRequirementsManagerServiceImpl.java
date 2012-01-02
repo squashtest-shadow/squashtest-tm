@@ -20,6 +20,8 @@
  */
 package org.squashtest.csp.tm.internal.service;
 
+import java.util.Collections;
+import java.util.Comparator;
 import java.util.List;
 
 import javax.inject.Inject;
@@ -35,6 +37,7 @@ import org.squashtest.csp.tm.domain.requirement.RequirementLibrary;
 import org.squashtest.csp.tm.domain.requirement.RequirementLibraryNode;
 import org.squashtest.csp.tm.domain.testcase.TestCase;
 import org.squashtest.csp.tm.internal.infrastructure.strategy.LibrarySelectionStrategy;
+import org.squashtest.csp.tm.internal.repository.LibraryNodeDao;
 import org.squashtest.csp.tm.internal.repository.RequirementDao;
 import org.squashtest.csp.tm.internal.repository.RequirementLibraryDao;
 import org.squashtest.csp.tm.internal.repository.TestCaseDao;
@@ -55,7 +58,9 @@ public class VerifiedRequirementsManagerServiceImpl implements VerifiedRequireme
 	@Inject
 	@Qualifier("squashtest.tm.service.RequirementLibrarySelectionStrategy")
 	private LibrarySelectionStrategy<RequirementLibrary, RequirementLibraryNode> libraryStrategy;
-
+	@Inject
+	@Qualifier("squashtest.tm.repository.RequirementLibraryNodeDao")
+	private LibraryNodeDao<RequirementLibraryNode> requirementLibraryNodeDao;
 	@Override
 	public TestCase findTestCase(long testCaseId) {
 		return testCaseDao.findById(testCaseId);
@@ -71,13 +76,24 @@ public class VerifiedRequirementsManagerServiceImpl implements VerifiedRequireme
 
 	@Override
 	@PreAuthorize("hasPermission(#testCaseId, 'org.squashtest.csp.tm.domain.testcase.TestCase' , 'WRITE') or hasRole('ROLE_ADMIN')")
-	public void addVerifiedRequirementsToTestCase(List<Long> requirementsIds, long testCaseId) {
-		List<Requirement> reqs = requirementDao.findAllByIdList(requirementsIds);
+	public void addVerifiedRequirementsToTestCase(final List<Long> requirementsIds, long testCaseId) {
+		
+		//nodes are returned unsorted
+		List<RequirementLibraryNode> nodes= requirementLibraryNodeDao.findAllById(requirementsIds);
+		
+		//now we resort them according to the order in which the requirementsIds were given
+		Collections.sort(nodes, new Comparator<RequirementLibraryNode>() {
+			@Override
+			public int compare(RequirementLibraryNode o1, RequirementLibraryNode o2) {
+				return requirementsIds.indexOf(o1.getId()) - requirementsIds.indexOf(o2.getId());
+			}
+		});
 
-		if (!reqs.isEmpty()) {
+		List<Requirement> requirements = new RequirementNodeWalker().walk(nodes);
+		if (!requirements.isEmpty()) {
 			TestCase testCase = testCaseDao.findById(testCaseId);
 
-			for (Requirement requirement : reqs) {
+			for (Requirement requirement : requirements) {
 				testCase.addVerifiedRequirement(requirement);
 			}
 		}

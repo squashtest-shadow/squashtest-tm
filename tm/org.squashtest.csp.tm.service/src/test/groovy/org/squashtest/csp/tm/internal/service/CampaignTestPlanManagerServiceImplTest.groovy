@@ -43,7 +43,7 @@ class CampaignTestPlanManagerServiceImplTest extends Specification {
 	CampaignTestPlanManagerServiceImpl service = new CampaignTestPlanManagerServiceImpl()
 	TestCaseDao testCaseDao = Mock()
 	TestCaseLibraryDao testCaseLibraryDao = Mock()
-	LibraryNodeDao<TestCaseLibraryNode> nodeDao = Mock();
+	LibraryNodeDao<TestCaseLibraryNode> nodeDao = Mock()
 	CampaignDao campaignDao = Mock()
 	CampaignTestPlanItemDao itemDao = Mock()
 	ProjectFilterModificationServiceImpl projectFilterModificationService = Mock()
@@ -56,7 +56,7 @@ class CampaignTestPlanManagerServiceImplTest extends Specification {
 		service.projectFilterModificationService = projectFilterModificationService
 		service.libraryStrategy = libraryStrategy
 		service.campaignTestPlanItemDao = itemDao
-		service.testCaseLibraryNodeDao = nodeDao;
+		service.testCaseLibraryNodeDao = nodeDao
 	}
 
 	def "should find campaign by id"(){

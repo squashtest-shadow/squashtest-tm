@@ -55,11 +55,9 @@
 				var selected = $( "#tabbed-pane" ).tabs('option', 'selected');
 				var tree = $( '#linkable-requirements-tree' );
 				if (selected == 0){
-					tree.jstree('get_selected').each(function(index, node){
-						if ($( node ).attr('resType') == 'requirements') {
-							tab.push($( node ).attr('resId'));
-						}
-					});
+					tab = tree.jstree('get_selected')
+						  .not(':library')
+						  .collect(function(elt){return $(elt).attr('resid');});
 				}
 				if (selected == 1){
 					var table = $( '#search-result-datatable' ).dataTable();

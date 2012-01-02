@@ -20,6 +20,8 @@
  */
 package org.squashtest.csp.tm.internal.service;
 
+import java.util.Collections;
+import java.util.Comparator;
 import java.util.List;
 
 import javax.inject.Inject;
@@ -34,6 +36,7 @@ import org.squashtest.csp.tm.domain.testcase.TestCase;
 import org.squashtest.csp.tm.domain.testcase.TestCaseLibrary;
 import org.squashtest.csp.tm.domain.testcase.TestCaseLibraryNode;
 import org.squashtest.csp.tm.internal.infrastructure.strategy.LibrarySelectionStrategy;
+import org.squashtest.csp.tm.internal.repository.LibraryNodeDao;
 import org.squashtest.csp.tm.internal.repository.RequirementDao;
 import org.squashtest.csp.tm.internal.repository.TestCaseDao;
 import org.squashtest.csp.tm.internal.repository.TestCaseLibraryDao;
@@ -55,6 +58,10 @@ public class VerifyingTestCaseManagerServiceImpl implements VerifyingTestCaseMan
 	@Inject
 	@Qualifier("squashtest.tm.service.TestCaseLibrarySelectionStrategy")
 	private LibrarySelectionStrategy<TestCaseLibrary, TestCaseLibraryNode> libraryStrategy;
+	@Inject
+	@Qualifier("squashtest.tm.repository.TestCaseLibraryNodeDao")
+	private LibraryNodeDao<TestCaseLibraryNode> testCaseLibraryNodeDao;
+	
 
 	@Override
 	public Requirement findRequirement(long requirementId) {
@@ -71,14 +78,25 @@ public class VerifyingTestCaseManagerServiceImpl implements VerifyingTestCaseMan
 
 	@Override
 	@PostFilter("hasPermission(#requirementId, 'org.squashtest.csp.tm.domain.requirement.Requirement', 'WRITE') or hasRole('ROLE_ADMIN')")	
-	public void addVerifyingTestCasesToRequirement(List<Long> testCasesIds, long requirementId) {
+	public void addVerifyingTestCasesToRequirement(final List<Long> testCasesIds, long requirementId) {
+		//nodes are returned unsorted
+		List<TestCaseLibraryNode> nodes= testCaseLibraryNodeDao.findAllById(testCasesIds);
+		
+		//now we resort them according to the order in which the testcaseids were given
+		Collections.sort(nodes, new Comparator<TestCaseLibraryNode>() {
+			@Override
+			public int compare(TestCaseLibraryNode o1, TestCaseLibraryNode o2) {
+				return testCasesIds.indexOf(o1.getId()) - testCasesIds.indexOf(o2.getId());
+			}
+		});
 
-		List<TestCase> tcs = testCaseDao.findAllByIdList(testCasesIds);
+		List<TestCase> testCases = new TestCaseNodeWalker().walk(nodes);
+	
 
-		if (!tcs.isEmpty()) {
+		if (!testCases.isEmpty()) {
 			Requirement requirement = requirementDao.findById(requirementId);
 
-			for (TestCase testcase : tcs) {
+			for (TestCase testcase : testCases) {
 				requirement.addVerifyingTestCase(testcase);
 			}
 		}

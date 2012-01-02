@@ -57,11 +57,9 @@
 				var selected = $( "#tabbed-pane" ).tabs('option', 'selected');
 				var tree = $( '#linkable-test-cases-tree' );
 				if (selected == 0){
-					tree.jstree('get_selected').each(function(index, node){
-						if ($( node ).attr('resType') == 'test-cases') {
-							tab.push($( node ).attr('resId'));
-						}
-					});
+					tab = tree.jstree('get_selected')
+						  .not(':library')
+						  .collect(function(elt){return $(elt).attr('resid');});
 				}
 				if (selected == 1){
 					var table = $( '#search-result-datatable' ).dataTable();

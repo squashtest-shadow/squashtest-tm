@@ -25,6 +25,7 @@ import org.squashtest.csp.tm.domain.requirement.RequirementLibrary;
 import org.squashtest.csp.tm.domain.requirement.RequirementLibraryNode;
 import org.squashtest.csp.tm.domain.testcase.TestCase;
 import org.squashtest.csp.tm.internal.infrastructure.strategy.LibrarySelectionStrategy;
+import org.squashtest.csp.tm.internal.repository.LibraryNodeDao;
 import org.squashtest.csp.tm.internal.repository.RequirementDao;
 import org.squashtest.csp.tm.internal.repository.RequirementLibraryDao;
 import org.squashtest.csp.tm.internal.repository.TestCaseDao;
@@ -38,6 +39,7 @@ class VerifiedRequirementsManagerServiceImplTest extends Specification {
 	TestCaseDao testCaseDao = Mock()
 	RequirementLibraryDao requirementLibraryDao = Mock() 
 	RequirementDao requirementDao = Mock() 
+	LibraryNodeDao<RequirementLibraryNode> nodeDao = Mock()
 	ProjectFilterModificationServiceImpl projectFilterModificationService = Mock()
 	LibrarySelectionStrategy<RequirementLibrary, RequirementLibraryNode> libraryStrategy = Mock()
 	
@@ -47,6 +49,7 @@ class VerifiedRequirementsManagerServiceImplTest extends Specification {
 		service.requirementDao = requirementDao
 		service.projectFilterModificationService = projectFilterModificationService
 		service.libraryStrategy = libraryStrategy
+		service.requirementLibraryNodeDao = nodeDao
 	}
 	
 	def "should find test case by id"() {
@@ -91,7 +94,7 @@ class VerifiedRequirementsManagerServiceImplTest extends Specification {
 			RequirementLibraryNode.set field: "id", of: req15, to: 15L
 		}
 		 
-		requirementDao.findAllByIdList([5, 15]) >> [req5, req15]
+		nodeDao.findAllById([5, 15]) >> [req5, req15]
 		
 		when:
 		service.addVerifiedRequirementsToTestCase([5, 15], 10)
