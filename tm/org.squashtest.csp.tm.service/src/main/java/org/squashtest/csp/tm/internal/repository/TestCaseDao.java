@@ -132,7 +132,8 @@ public interface TestCaseDao extends EntityDao<TestCase> {
 	 * @return
 	 */
 	List<Long> findAllTestCasesIdsCalledByTestCase(long testCaseId);
-
+	List<Long> findDistinctTestCasesIdsCalledByTestCase(Long testCaseId);
+	
 	/**
 	 * Finds all the ids of the test cases called by a given list of test cases.
 	 *
@@ -140,7 +141,7 @@ public interface TestCaseDao extends EntityDao<TestCase> {
 	 * @return
 	 */
 	List<Long> findAllTestCasesIdsCalledByTestCases(List<Long> testCasesIds);
-
+	
 	/**
 	 * returns the ids of all the test cases having at least one call test step referencing the given test case.
 	 *
@@ -169,5 +170,7 @@ public interface TestCaseDao extends EntityDao<TestCase> {
 	 * @return the list of test case ids called by test steps
 	 */
 	List<Long> findCalledTestCaseOfCallSteps(List<Long> testStepsIds);
+
+
 
 }

@@ -45,7 +45,7 @@
 
 <f:message var="cannotCreateExecutionException" key="squashtm.action.exception.cannotcreateexecution.label" />
 <f:message var="unauthorizedDeletion" key="dialog.remove-testcase-association.unauthorized-deletion.message"  />
-
+<f:message var="cyclicStepCallException" key="squashtm.action.exception.cyclicstepcallexception.label" />
 <script type="text/javascript">
 	$(function() {
 		<%-- single test-plan removal --%>
@@ -142,6 +142,10 @@
 				if (json != null && json.actionValidationError != null){
 					if (json.actionValidationError.exception === "CannotCreateExecutionException"){						
 						displayInformationNotification("${cannotCreateExecutionException}");					
+					}
+					else
+					if(json.actionValidationError.exception === "CyclicStepCallException"){
+						displayInformationNotification("${cyclicStepCallException}");
 					}
 				}
 		});

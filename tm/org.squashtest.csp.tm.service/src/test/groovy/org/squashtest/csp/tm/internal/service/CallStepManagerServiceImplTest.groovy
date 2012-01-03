@@ -56,7 +56,7 @@ class CallStepManagerServiceImplTest extends Specification {
 			def secondLevel = [4l, 5l]
 			def thirdLevel = []
 			
-			testCaseDao.findAllTestCasesIdsCalledByTestCase ( 1l ) 		   >>  firstLevel
+			testCaseDao.findDistinctTestCasesIdsCalledByTestCase ( 1l ) 		   >>  firstLevel
 			testCaseDao.findAllTestCasesIdsCalledByTestCases ( firstLevel ) >>  secondLevel
 			testCaseDao.findAllTestCasesIdsCalledByTestCases ( secondLevel ) >>  thirdLevel
 			
@@ -89,7 +89,7 @@ class CallStepManagerServiceImplTest extends Specification {
 			def secondLevel = [5l, 1l]
 			def thirdLevel = []
 			
-			testCaseDao.findAllTestCasesIdsCalledByTestCase ( 2l ) 		   >>  firstLevel
+			testCaseDao.findDistinctTestCasesIdsCalledByTestCase ( 2l ) 		   >>  firstLevel
 			testCaseDao.findAllTestCasesIdsCalledByTestCases ( firstLevel ) >>  secondLevel
 			testCaseDao.findAllTestCasesIdsCalledByTestCases ( secondLevel ) >>  thirdLevel
 				
@@ -118,7 +118,7 @@ class CallStepManagerServiceImplTest extends Specification {
 			def secondLevel = [5l, 6l]
 			def thirdLevel = []
 			
-			testCaseDao.findAllTestCasesIdsCalledByTestCase ( 2l ) 		   >>  firstLevel
+			testCaseDao.findDistinctTestCasesIdsCalledByTestCase ( 2l ) 		   >>  firstLevel
 			testCaseDao.findAllTestCasesIdsCalledByTestCases ( firstLevel ) >>  secondLevel
 			testCaseDao.findAllTestCasesIdsCalledByTestCases ( secondLevel ) >>  thirdLevel
 			

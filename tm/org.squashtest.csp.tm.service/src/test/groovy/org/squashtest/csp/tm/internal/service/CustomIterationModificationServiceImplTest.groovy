@@ -33,6 +33,7 @@ import org.squashtest.csp.tm.internal.repository.ExecutionStepDao
 import org.squashtest.csp.tm.internal.repository.ItemTestPlanDao
 import org.squashtest.csp.tm.internal.repository.IterationDao
 import org.squashtest.csp.tm.internal.repository.TestCaseDao
+import org.squashtest.csp.tm.service.CallStepManagerService;
 
 import spock.lang.Specification
 
@@ -46,6 +47,7 @@ class CustomIterationModificationServiceImplTest extends Specification {
 	CampaignDao campaignDao= Mock();
 	IterationDao iterationDao= Mock();
 	TestCaseDao testCaseDao= Mock();
+	CallStepManagerService callStepManager= Mock();
 
 	def setup() {
 		service.executionDao=execDao;
@@ -53,6 +55,7 @@ class CustomIterationModificationServiceImplTest extends Specification {
 		service.campaignDao=campaignDao;
 		service.testPlanDao=testPlanDao;
 		service.iterationDao=iterationDao;
+		service.callStepManager= callStepManager;
 	}
 
 	def "should add iteration to campaign"() {

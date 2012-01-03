@@ -46,6 +46,7 @@ import org.squashtest.csp.tm.internal.repository.ExecutionDao;
 import org.squashtest.csp.tm.internal.repository.ExecutionStepDao;
 import org.squashtest.csp.tm.internal.repository.ItemTestPlanDao;
 import org.squashtest.csp.tm.internal.repository.IterationDao;
+import org.squashtest.csp.tm.service.CallStepManagerService;
 import org.squashtest.csp.tm.service.CustomIterationModificationService;
 import org.squashtest.csp.tm.service.deletion.SuppressionPreviewReport;
 
@@ -62,6 +63,8 @@ public class CustomIterationModificationServiceImpl implements CustomIterationMo
 	private ItemTestPlanDao testPlanDao;
 	@Inject
 	private ExecutionStepDao executionStepDao;
+	@Inject 
+	private CallStepManagerService callStepManager ; 
 
 	@Inject
 	private CampaignNodeDeletionHandler deletionHandler;
@@ -139,7 +142,9 @@ public class CustomIterationModificationServiceImpl implements CustomIterationMo
 		}
 
 		TestCase testCase = testPlan.getReferencedTestCase();
-
+		//TODO test
+		callStepManager.checkForCyclicStepCallBeforeExecutionCreation(testCase.getId());
+		
 		Execution execution = new Execution(testCase);
 
 		// copy the steps
