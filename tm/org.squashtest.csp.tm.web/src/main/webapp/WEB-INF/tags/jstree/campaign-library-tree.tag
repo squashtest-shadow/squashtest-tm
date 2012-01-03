@@ -33,7 +33,7 @@
 <%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core" %>
 
 <c:set var="resourceUrlRoot" value="${ pageContext.servletContext.contextPath }" />
-<tree:jstree-tree_element_menu newLeafButtonMessage="${ newLeafLabelKey }" newResourceButtonMessage="tree.button.new-iteration.label"/>
+<tree:jstree-tree_element_menu workspace="${workspace}" newLeafButtonMessage="${ newLeafLabelKey }" newResourceButtonMessage="tree.button.new-iteration.label"/>
 <f:message var="libraryName" key="${ libraryNodeTitleKey }" />
 <script type="text/javascript">
 	function selectLibrary(node) {

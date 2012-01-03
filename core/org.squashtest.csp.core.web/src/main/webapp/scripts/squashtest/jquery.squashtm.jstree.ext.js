@@ -196,7 +196,7 @@
 				else{
 					switch(selectedNodes.attr('rel')){			
 						case "drive" :
-							operations="create-folder create-file paste";
+							operations="create-folder create-file paste import";
 							break;
 						
 						case "folder" :
