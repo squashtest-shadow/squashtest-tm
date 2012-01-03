@@ -187,6 +187,10 @@
 		<c:if test="${ resourceName == 'requirement' }">		
 			<treepopup:export-requirement-dialog treeSelector="#tree"  />			
 		</c:if>
+		<c:if test="${ resourceName == 'test-case' }">
+			<treepopup:import-excel-dialog treeSelector="#tree" workspace="${resourceName}"  
+			treeNodeButton="squashtm.treemenu.import.buttons['import-excel']"/>
+		</c:if>
 
 		<jsp:invoke fragment="footer" />		
 	</jsp:attribute>

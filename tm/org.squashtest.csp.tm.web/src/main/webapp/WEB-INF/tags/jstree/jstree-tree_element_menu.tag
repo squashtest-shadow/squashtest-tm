@@ -121,7 +121,7 @@
 		initButton("#tree-import-button", "ui-icon-cart");		
 		
 		var importOption = {
-			"import" : ".import-excel-tree-button"
+			"import-excel" : ".import-excel-tree-button"
 		};
 		
 		squashtm.treemenu.import = $('#tree-import-button').treeMenu('#tree-import-menu', importOption);
