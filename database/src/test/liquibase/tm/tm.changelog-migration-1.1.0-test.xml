@@ -137,7 +137,7 @@
 						and rv.CRITICALITY = or.CRITICALITY
 						and (rv.REFERENCE = or.REFERENCE) or (rv.REFERENCE is null and or.REFERENCE is null)
 						and rv.ATTACHMENT_LIST_ID = or.ATT_LIST_ID
-						and rv.STATUS is not null
+						and rv.REQUIREMENT_STATUS is not null
 						and rv.VERSION_NUMBER = 1
 				);
 	 		</sqlCheck>

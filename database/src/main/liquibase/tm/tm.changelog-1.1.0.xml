@@ -104,8 +104,8 @@
 				<constraints primaryKey="true" nullable="false" />
 			</column>
 
-			<column name="REQUIREMENT_ID" type="BIGINT" remarks="FK to the requirement">
-				<constraints nullable="false" references="REQUIREMENT(RLN_ID)" foreignKeyName="fk_requirement_version_requirement" />
+			<column name="REQUIREMENT_ID" type="BIGINT" remarks="FK to the requirement. Should not be null but is nullable because of cyclic association REQ - REQ_VER">
+				<constraints nullable="true" references="REQUIREMENT(RLN_ID)" foreignKeyName="fk_requirement_version_requirement" />
 			</column>
 
 			<column name="NAME" type="VARCHAR(255)" remarks="Requirement's name">
@@ -118,13 +118,12 @@
 
 			<column name="VERSION_NUMBER" type="INT" defaultValueNumeric="1" remarks="This requirement's version number" />
 
-			<column name="CRITICALITY" type="VARCHAR(50)"
-				remarks="Requirement criticality. Althought this field is a variable character, the data will be the text representation of an enumeration"
-				defaultValue="UNDEFINED">
+			<column name="CRITICALITY" type="VARCHAR(50)" defaultValue="UNDEFINED"
+				remarks="Requirement criticality. Althought this field is a variable character, the data will be the text representation of an enumeration">
 				<constraints nullable="false" />
 			</column>
 
-			<column name="STATUS" type="VARCHAR(50)" defaultValue="WORK_IN_PROGRESS">
+			<column name="REQUIREMENT_STATUS" type="VARCHAR(50)" defaultValue="WORK_IN_PROGRESS">
 				<constraints nullable="false" />
 			</column>
 

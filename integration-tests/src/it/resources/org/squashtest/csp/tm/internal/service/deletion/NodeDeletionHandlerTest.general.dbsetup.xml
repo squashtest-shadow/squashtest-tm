@@ -112,13 +112,13 @@
 	
 	<!--  ============================ requirement library node ========================================= -->
 	
-	<requirement_library_node rln_id="2" name="requirement folder" created_by="IT" created_on="2011-08-08" /> 
+	<requirement_library_node rln_id="2" created_by="IT" created_on="2011-08-08" /> 
 	<requirement_library_node rln_id="21" name="requirement 1" created_by="IT" created_on="2011-08-08" /> 
 	<requirement_library_node rln_id="22" name="requirement 2" created_by="IT" created_on="2011-08-08" />
 	
 	<!--  ============================ requirement folder =============================================== -->
 	
-	<requirement_folder rln_id="2" />
+	<requirement_folder rln_id="2" name="requirement folder" />
 	
 	<!--  ============================ requirement  ===================================================== -->
 	

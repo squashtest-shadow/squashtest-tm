@@ -27,6 +27,7 @@ import java.util.Set;
 
 import javax.persistence.CascadeType;
 import javax.persistence.Column;
+import javax.persistence.Entity;
 import javax.persistence.EnumType;
 import javax.persistence.Enumerated;
 import javax.persistence.GeneratedValue;
@@ -43,6 +44,7 @@ import org.squashtest.csp.tm.domain.IllegalRequirementModificationException;
 import org.squashtest.csp.tm.domain.RequirementNotLinkableException;
 import org.squashtest.csp.tm.domain.attachment.AttachmentHolder;
 import org.squashtest.csp.tm.domain.attachment.AttachmentList;
+import org.squashtest.csp.tm.domain.audit.Auditable;
 import org.squashtest.csp.tm.domain.testcase.TestCase;
 
 /**
@@ -51,6 +53,8 @@ import org.squashtest.csp.tm.domain.testcase.TestCase;
  * @author Gregory Fouquet
  * 
  */
+@Entity
+@Auditable
 public class RequirementVersion implements AttachmentHolder {
 	@Id
 	@GeneratedValue

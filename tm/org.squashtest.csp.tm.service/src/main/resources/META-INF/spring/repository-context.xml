@@ -58,6 +58,7 @@
 
 				<value>org.squashtest.csp.tm.domain.requirement.RequirementLibrary</value>
 				<value>org.squashtest.csp.tm.domain.requirement.Requirement</value>
+				<value>org.squashtest.csp.tm.domain.requirement.RequirementVersion</value>
 				<value>org.squashtest.csp.tm.domain.requirement.RequirementLibraryNode</value>
 				<value>org.squashtest.csp.tm.domain.requirement.RequirementFolder</value>
 

@@ -69,9 +69,11 @@
 		// Queries on a Requirement
 		@NamedQuery(name = "requirement.findNamesInFolderStartingWith", query = "select c.name from RequirementFolder f join f.content c where f.id = :containerId and c.name like :nameStart"),
 		@NamedQuery(name = "requirement.findNamesInLibraryStartingWith", query = "select c.name from RequirementLibrary l join l.rootContent c where l.id = :containerId and c.name like :nameStart"),
-		@NamedQuery(name = "requirement.findAllByIdList", query = "from Requirement r where id in (:requirementsIds) order by r.name asc"),
-		@NamedQuery(name = "requirement.findAllVerifyingTestCasesById", query = "select tc from Requirement r join r.verifyingTestCases tc fetch all properties where r.id = :requirementId order by tc.name asc"),
-		@NamedQuery(name = "requirement.countVerifyingTestCasesById", query = "select count(tc) from Requirement r join r.verifyingTestCases tc where r.id = :requirementId"),
+		@NamedQuery(name = "requirement.findAllByIdList", query = "from Requirement r where id in (:requirementsIds) order by r.latestVersion.name asc"),
+		// XXX RequirementVersion
+		@NamedQuery(name = "requirement.findAllVerifyingTestCasesById", query = "select tc from RequirementVersion r join r.verifyingTestCases tc fetch all properties where r.id = :requirementId order by tc.name asc"),
+		// XXX RequirementVersion
+		@NamedQuery(name = "requirement.countVerifyingTestCasesById", query = "select count(tc) from RequirementVersion r join r.verifyingTestCases tc where r.id = :requirementId"),
 		@NamedQuery(name = "requirement.findRequirementByName", query = "from RequirementLibraryNode r where r.name like :requirementName order by r.name asc"),
 		@NamedQuery(name = "requirement.findRequirementExportData", query = "select r, rf.name from RequirementFolder rf join rf.content r where r.id in (:rIds)"),
 		@NamedQuery(name = "requirement.findRequirementInExportData", query = "select r.id from Requirement r where r.id in (:rIds)"),
@@ -168,9 +170,12 @@
 		@NamedQuery(name = "user.findUserByLogin", query = "from User fetch all properties where login = :userLogin"),
 
 		//Queries on RequirementAuditEvent
-		@NamedQuery(name = "RequirementAuditEvent.findAllByRequirementIdOrderedByDate", query = "select rae from RequirementAuditEvent rae join rae.requirement r where r.id = ? order by rae.date desc"),
-		@NamedQuery(name = "RequirementAuditEvent.countByRequirementId", query = "select count(rae) from RequirementAuditEvent rae join rae.requirement r where r.id = ?"),
-		@NamedQuery(name = "requirementAuditEvent.findAllByRequirementIds", query = "select rae from RequirementAuditEvent rae inner join rae.requirement r where r.id in (:ids) order by rae.requirement asc, rae.date desc"),
+		// XXX RequirementVersion
+		@NamedQuery(name = "RequirementAuditEvent.findAllByRequirementIdOrderedByDate", query = "select rae from RequirementAuditEvent rae join rae.requirementVersion r where r.id = ? order by rae.date desc"),
+		// XXX RequirementVersion
+		@NamedQuery(name = "RequirementAuditEvent.countByRequirementId", query = "select count(rae) from RequirementAuditEvent rae join rae.requirementVersion r where r.id = ?"),
+		// XXX RequirementVersion
+		@NamedQuery(name = "requirementAuditEvent.findAllByRequirementIds", query = "select rae from RequirementAuditEvent rae inner join rae.requirementVersion r where r.id in (:ids) order by rae.requirementVersion asc, rae.date desc"),
 		
 		/* ********************************************** batch deletion-related queries **************************************************** */
 
@@ -185,7 +190,8 @@
 		@NamedQuery(name = "testCase.removeAllCallSteps", query = "delete CallTestStep cts where  cts.id in (:stepIds)"),	
 		@NamedQuery(name = "testCase.removeAllActionSteps", query = "delete ActionTestStep ats where ats.id in (:stepIds)"),	
 
-		@NamedQuery(name = "requirement.findAllAttachmentLists", query ="select requirement.attachmentList.id from Requirement requirement where requirement.id in (:requirementIds)")
+		@NamedQuery(name = "requirement.findAllAttachmentLists", query ="select v.attachmentList.id from Requirement r join r.latestVersion v where r.id in (:requirementIds)"),
+		@NamedQuery(name = "requirementDeletionDao.deleteRequirementAuditEvent", query="delete RequirementAuditEvent rae where rae.id in (:eventIds)")
 
 })
 package org.squashtest.csp.tm.internal.repository.hibernate;

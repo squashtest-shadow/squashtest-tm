@@ -109,24 +109,24 @@
 	<requirement rln_id="207"  attachment_list_id="207" criticality="UNDEFINED" />
 	
 	<!-- Requirement Folder  -->
-	<requirement_library_node rln_id="100" name="folder 100" created_on="2010-02-01" created_by="dbu" />
-	<requirement_folder rln_id="100" />
+	<requirement_library_node rln_id="100" created_on="2010-02-01" created_by="dbu" />
+	<requirement_folder rln_id="100" name="folder 100" />
 	<rln_relationship ancestor_id="100" descendant_id="103" />
-	<requirement_library_node rln_id="200" name="folder 200" created_on="2010-02-01" created_by="dbu" />
-	<requirement_folder rln_id="200" />
+	<requirement_library_node rln_id="200" created_on="2010-02-01" created_by="dbu" />
+	<requirement_folder rln_id="200" name="folder 200" />
 	<rln_relationship ancestor_id="200" descendant_id="205" />
 	
 	<!-- project 1 - test case verifying requirement, req 102, 105 not verified, 101 verified twice  -->
-	<test_case_requirement_link test_case_id="1" requirement_id="101" />
-	<test_case_requirement_link test_case_id="2" requirement_id="101" />
-	<test_case_requirement_link test_case_id="3" requirement_id="103" />
-	<test_case_requirement_link test_case_id="1" requirement_id="104" />
-	<test_case_requirement_link test_case_id="1" requirement_id="106" />
+	<test_case_verified_requirement_version verifying_test_case_id="1" verified_req_version_id="101" />
+	<test_case_verified_requirement_version verifying_test_case_id="2" verified_req_version_id="101" />
+	<test_case_verified_requirement_version verifying_test_case_id="3" verified_req_version_id="103" />
+	<test_case_verified_requirement_version verifying_test_case_id="1" verified_req_version_id="104" />
+	<test_case_verified_requirement_version verifying_test_case_id="1" verified_req_version_id="106" />
 	
 	<!-- project 2 - test case verifying requirement -->
-	<test_case_requirement_link test_case_id="1" requirement_id="201" />
-	<test_case_requirement_link test_case_id="1" requirement_id="203" />
-	<test_case_requirement_link test_case_id="1" requirement_id="205" />
+	<test_case_verified_requirement_version verifying_test_case_id="1" verified_req_version_id="201" />
+	<test_case_verified_requirement_version verifying_test_case_id="1" verified_req_version_id="203" />
+	<test_case_verified_requirement_version verifying_test_case_id="1" verified_req_version_id="205" />
 	
 	
 	<!-- cleanup -->

@@ -30,6 +30,7 @@ import org.hibernate.SessionFactory;
 import org.squashtest.csp.tm.domain.campaign.IterationTestPlanItem;
 import org.squashtest.csp.tm.domain.execution.Execution;
 import org.squashtest.csp.tm.domain.requirement.Requirement;
+import org.squashtest.csp.tm.domain.requirement.RequirementVersion;
 import org.squashtest.csp.tm.domain.testcase.TestCaseExecutionMode;
 import org.squashtest.csp.tm.domain.testcase.TestCase;
 import org.squashtest.csp.tm.domain.testcase.TestCaseLibraryNode;
@@ -199,7 +200,7 @@ class TestCaseMappingIT extends HibernateMappingSpecification {
 		persistFixture tc
 
 		and:
-		Requirement r = new Requirement(name: "link")
+		Requirement r = new Requirement(new RequirementVersion(name: "link"))
 		persistFixture r
 
 		when:
@@ -218,7 +219,7 @@ class TestCaseMappingIT extends HibernateMappingSpecification {
 			def tcc = it.get(TestCase, tc.id)
 			def rr = it.get(Requirement, r.id)
 
-			tcc.verifiedRequirements.clear()
+			tcc.removeVerifiedRequirement rr
 			it.delete tcc
 
 			it.delete rr
@@ -283,7 +284,7 @@ class TestCaseMappingIT extends HibernateMappingSpecification {
 
 	def "should persist a test case verifying an existing requirement"() {
 		given:
-		Requirement req = new Requirement(name: "req")
+		Requirement req = new Requirement(new RequirementVersion(name: "req"))
 		persistFixture req
 
 		and:

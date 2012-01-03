@@ -27,6 +27,7 @@ import org.hibernate.SessionFactory;
 import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.transaction.TransactionConfiguration;
 import org.springframework.transaction.annotation.Transactional;
+import org.unitils.database.util.TransactionMode;
 
 import spock.lang.Specification;
 

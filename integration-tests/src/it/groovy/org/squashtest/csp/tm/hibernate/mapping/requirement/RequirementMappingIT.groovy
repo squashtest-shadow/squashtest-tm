@@ -26,6 +26,7 @@ import org.hibernate.JDBCException
 import org.squashtest.csp.tm.domain.IllegalRequirementModificationException
 import org.squashtest.csp.tm.domain.requirement.Requirement
 import org.squashtest.csp.tm.domain.requirement.RequirementStatus
+import org.squashtest.csp.tm.domain.requirement.RequirementVersion;
 import org.squashtest.csp.tm.domain.testcase.TestCase
 import org.squashtest.csp.tm.hibernate.mapping.HibernateMappingSpecification
 
@@ -34,7 +35,8 @@ class RequirementMappingIT extends HibernateMappingSpecification {
 	
 	def "should persist a new Requirement"(){
 		given :
-		def requirement = new Requirement("req 1", "this is a new requirement")
+		def version = new RequirementVersion(name: "req 1", description: "this is a new requirement")
+		def requirement = new Requirement(version)
 		
 		when :
 		persistFixture requirement
@@ -57,7 +59,8 @@ class RequirementMappingIT extends HibernateMappingSpecification {
 	def "hibernate should bypass the setters and successfuly load a requirement with status obsolete"(){
 		
 		given :
-		def requirement = new Requirement("req 2", "this is an obsolete requirement");
+		def version = new RequirementVersion(name: "req 2", description: "this is an obsolete requirement")
+		def requirement = new Requirement(version)
 		requirement.setStatus(RequirementStatus.OBSOLETE)
 		
 		when :
@@ -75,7 +78,7 @@ class RequirementMappingIT extends HibernateMappingSpecification {
 	
 	def "should not persist a nameless requirement"(){
 		given :
-		def requirement = new Requirement()
+		def requirement = new Requirement(new RequirementVersion())
 		
 		when :
 		persistFixture requirement
@@ -86,7 +89,8 @@ class RequirementMappingIT extends HibernateMappingSpecification {
 	
 	def "sould add a test case to the requirements verified test Cases"() {
 		given:
-		Requirement req = new Requirement(name: "req")
+		def version = new RequirementVersion(name: "req")
+		Requirement req = new Requirement(version)
 		persistFixture req
 		and : 
 		TestCase tc = new TestCase(name: "tc")

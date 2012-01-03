@@ -30,7 +30,7 @@
 
 <dataset>
 
-	<test_case_requirement_link test_case_id="11" requirement_id="21" />
-	<test_case_requirement_link test_case_id="12" requirement_id="21" />	
+	<test_case_verified_requirement_version verifying_test_case_id="11" verified_req_version_id="21" />
+	<test_case_verified_requirement_version verifying_test_case_id="12" verified_req_version_id="21" />	
 	
 </dataset>

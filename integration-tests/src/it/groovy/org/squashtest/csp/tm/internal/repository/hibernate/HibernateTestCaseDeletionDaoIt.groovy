@@ -173,7 +173,7 @@ class HibernateTestCaseDeletionDaoIT extends DbunitDaoSpecification{
 	
 
 
-	@DataSet(value=["NodeDeletionDaoTest.paired testcase requirement.xml"])
+	@DataSet("NodeDeletionDaoTest.paired testcase requirement.xml")
 	def "should cascade-disassociate a pair of testcase and requirement"(){
 		
 		when :

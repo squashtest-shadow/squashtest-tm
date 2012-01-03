@@ -52,58 +52,59 @@ import org.squashtest.csp.tm.service.ProjectFilterModificationService;
 
 @Service("squashtest.tm.service.CallStepManagerService")
 @Transactional
-public class CallStepManagerServiceImpl implements CallStepManagerService{
+public class CallStepManagerServiceImpl implements CallStepManagerService {
 	private static final Logger LOGGER = LoggerFactory.getLogger(CallStepManagerServiceImpl.class);
-	
+
 	@Inject
 	private TestCaseDao testCaseDao;
-	
-	@Inject 
+
+	@Inject
 	private TestStepDao testStepDao;
-	
 
 	@Inject
 	private TestCaseLibraryDao testCaseLibraryDao;
-	
+
 	@Inject
 	private ProjectFilterModificationService projectFilterModificationService;
 
-
 	@Inject
 	@Qualifier("squashtest.tm.service.TestCaseLibrarySelectionStrategy")
-	private LibrarySelectionStrategy<TestCaseLibrary, TestCaseLibraryNode> libraryStrategy;	
+	private LibrarySelectionStrategy<TestCaseLibrary, TestCaseLibraryNode> libraryStrategy;
 
 	@Override
-	@PreAuthorize("(hasPermission(#parentTestCaseId, 'org.squashtest.csp.tm.domain.testcase.TestCase' , 'WRITE') " +
-				   "and hasPermission(#calledTestCaseId, 'org.squashtest.csp.tm.domain.testcase.TestCase' , 'READ')) " +
-				   "or hasRole('ROLE_ADMIN')")
-	public void addCallTestStep(long parentTestCaseId, long calledTestCaseId){
-		
-		if (parentTestCaseId == calledTestCaseId) throw new CyclicStepCallException();
-		
+	@PreAuthorize("(hasPermission(#parentTestCaseId, 'org.squashtest.csp.tm.domain.testcase.TestCase' , 'WRITE') "
+			+ "and hasPermission(#calledTestCaseId, 'org.squashtest.csp.tm.domain.testcase.TestCase' , 'READ')) "
+			+ "or hasRole('ROLE_ADMIN')")
+	public void addCallTestStep(long parentTestCaseId, long calledTestCaseId) {
+
+		if (parentTestCaseId == calledTestCaseId) {
+			throw new CyclicStepCallException();
+		}
+
 		Set<Long> callTree = getTestCaseCallTree(calledTestCaseId);
-		if (callTree.contains(parentTestCaseId)) throw new CyclicStepCallException();
 		
+		if (callTree.contains(parentTestCaseId)) {
+			throw new CyclicStepCallException();
+		}
+
 		TestCase parentTestCase = testCaseDao.findById(parentTestCaseId);
 		TestCase calledTestCase = testCaseDao.findById(calledTestCaseId);
-		
+
 		CallTestStep newStep = new CallTestStep();
 		newStep.setCalledTestCase(calledTestCase);
-		
+
 		testStepDao.persist(newStep);
-		
+
 		parentTestCase.addStep(newStep);
-		
+
 	}
 
-	
 	@Override
-	@PreAuthorize("hasPermission(#testCaseId, 'org.squashtest.csp.tm.domain.testcase.TestCase' , 'READ')" +
-	" or hasRole('ROLE_ADMIN')	")
+	@PreAuthorize("hasPermission(#testCaseId, 'org.squashtest.csp.tm.domain.testcase.TestCase' , 'READ')"
+			+ " or hasRole('ROLE_ADMIN')	")
 	public TestCase findTestCase(long testCaseId) {
 		return testCaseDao.findById(testCaseId);
 	}
-	
 
 	@Override
 	@PostFilter("hasPermission(filterObject, 'READ') or hasRole('ROLE_ADMIN')")
@@ -111,14 +112,14 @@ public class CallStepManagerServiceImpl implements CallStepManagerService{
 		ProjectFilter pf = projectFilterModificationService.findProjectFilterByUserLogin();
 		return pf.getActivated() ? libraryStrategy.getSpecificLibraries(pf.getProjects()) : testCaseLibraryDao
 				.findAll();
+
 	}
-	
 
 	@Override
-	@PreAuthorize("hasPermission(#rootTcId, 'org.squashtest.csp.tm.domain.testcase.TestCase' , 'READ')" +
-					" or hasRole('ROLE_ADMIN')	")
-	public  Set<Long> getTestCaseCallTree(Long rootTcId){
-		
+	@PreAuthorize("hasPermission(#rootTcId, 'org.squashtest.csp.tm.domain.testcase.TestCase' , 'READ')"
+			+ " or hasRole('ROLE_ADMIN')	")
+	public Set<Long> getTestCaseCallTree(Long rootTcId) {
+
 		Set<Long> calleesIds = new HashSet<Long>();
 		List<Long> prevCalleesIds = testCaseDao.findDistinctTestCasesIdsCalledByTestCase(rootTcId);
 		if (LOGGER.isTraceEnabled()) {
@@ -128,22 +129,22 @@ public class CallStepManagerServiceImpl implements CallStepManagerService{
 		prevCalleesIds.remove(rootTcId);//added to prevent infinite cycle in case of inconsistent data
 		
 		while (!prevCalleesIds.isEmpty()) {
+			// FIXME a tester avant correction : boucle infinie quand il y a un cycle dans les appels de cas de test
 			calleesIds.addAll(prevCalleesIds);
 			prevCalleesIds = testCaseDao.findAllTestCasesIdsCalledByTestCases(prevCalleesIds);
-			
+
 			if (LOGGER.isTraceEnabled()) {
 				LOGGER.trace("TestCase #"+rootTcId+" indirectly calls " + prevCalleesIds);
 			}
 			prevCalleesIds.remove(rootTcId);//added to prevent infinite cycle in case of inconsistent data
 		}
-		
+
 		return calleesIds;
-	
+
 	}
-	
-	
+
 	@Override
-	public List<TestCase> findCallingTestCases(long testCaseId, CollectionSorting sorting){
+	public List<TestCase> findCallingTestCases(long testCaseId, CollectionSorting sorting) {
 		return testCaseDao.findAllCallingTestCases(testCaseId, sorting);
 	}
 	

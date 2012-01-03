@@ -59,27 +59,27 @@
 	
 	<test_case_library_content/>
 	
-	
-	<requirement_library_node rln_id="2" name="requirement folder" created_by="IT" created_on="2011-08-08" /> 
-	<requirement_library_node rln_id="21" name="requirement 1" created_by="IT" created_on="2011-08-08" /> 
-	<requirement_library_node rln_id="22" name="requirement 2" created_by="IT" created_on="2011-08-08" />
+	<requirement_library_node rln_id="2" created_by="IT" created_on="2011-08-08" /> 
+	<requirement_library_node rln_id="21" created_by="IT" created_on="2011-08-08" /> 
+	<requirement_library_node rln_id="22" created_by="IT" created_on="2011-08-08" />
 	
 	<!--  ============================ requirement folder =============================================== -->
 	
-	<requirement_folder rln_id="2" />
+	<requirement_folder rln_id="2" name="requirement folder" />
 	
 	<!--  ============================ requirement  ===================================================== -->
 	
-	<requirement rln_id="21" attachment_list_id="21" />
-	<requirement rln_id="22" attachment_list_id="22" />
-	
+	<requirement_version req_version_id="21" requirement_id="21" attachment_list_id="21" name="requirement 1" created_by="IT" created_on="2011-08-08" />
+	<requirement rln_id="21" latest_version_id="21" />
+	<requirement_version req_version_id="22" requirement_id="22" attachment_list_id="22" name="requirement 2" created_by="IT" created_on="2011-08-08" />
+	<requirement rln_id="22" latest_version_id="22" />
 	
 	<!--  ============================ rln relationship ================================================= -->
 	
 	<rln_relationship ancestor_id="2" descendant_id="21" />
 	<rln_relationship ancestor_id="2" descendant_id="22" />
 	
-	<test_case_requirement_link test_case_id="11" requirement_id="21" />
-	<test_case_requirement_link test_case_id="12" requirement_id="21" />	
+	<test_case_verified_requirement_version verifying_test_case_id="11" verified_req_version_id="21" />
+	<test_case_verified_requirement_version verifying_test_case_id="12" verified_req_version_id="21" />	
 	
 </dataset>

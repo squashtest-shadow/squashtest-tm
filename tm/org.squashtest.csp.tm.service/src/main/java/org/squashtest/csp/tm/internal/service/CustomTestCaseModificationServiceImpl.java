@@ -53,7 +53,7 @@ import org.squashtest.csp.tm.service.VerifiedRequirement;
 
 /**
  * @author Gregory Fouquet
- *
+ * 
  */
 @Service("CustomTestCaseModificationService")
 public class CustomTestCaseModificationServiceImpl implements CustomTestCaseModificationService {
@@ -71,13 +71,12 @@ public class CustomTestCaseModificationServiceImpl implements CustomTestCaseModi
 
 	@Inject
 	private RequirementDao requirementDao;
-	
-	@Inject 
+
+	@Inject
 	private CallStepManagerService callStepManagerService;
-	
+
 	@Inject
 	private TestCaseNodeDeletionHandler deletionHandler;
-	
 
 	/* *************** TestCase section ***************************** */
 
@@ -115,8 +114,6 @@ public class CustomTestCaseModificationServiceImpl implements CustomTestCaseModi
 
 		return newTestStep;
 	}
-	
-	
 
 	@Override
 	@PreAuthorize("hasPermission(#testStepId, 'org.squashtest.csp.tm.domain.testcase.TestStep' , 'WRITE') or hasRole('ROLE_ADMIN')")
@@ -139,7 +136,6 @@ public class CustomTestCaseModificationServiceImpl implements CustomTestCaseModi
 		TestCase testCase = testCaseDao.findById(testCaseId);
 		int index = findTestStepInTestCase(testCase, testStepId);
 
-
 		if (LOGGER.isDebugEnabled()) {
 			LOGGER.debug("**************** change step order : old index = " + index + ",new index : "
 					+ newStepPosition);
@@ -147,16 +143,16 @@ public class CustomTestCaseModificationServiceImpl implements CustomTestCaseModi
 
 		testCase.moveStep(index, newStepPosition);
 	}
-	
+
 	@Override
 	@PreAuthorize("hasPermission(#testCaseId, 'org.squashtest.csp.tm.domain.testcase.TestCase' , 'WRITE') or hasRole('ROLE_ADMIN')")
-	public void changeTestStepsPosition(long testCaseId, int newPosition, List<Long> stepIds){
-		
+	public void changeTestStepsPosition(long testCaseId, int newPosition, List<Long> stepIds) {
+
 		TestCase testCase = testCaseDao.findById(testCaseId);
 		List<TestStep> steps = testStepDao.findListById(stepIds);
-		
+
 		testCase.moveSteps(newPosition, steps);
-		
+
 	}
 
 	@Override
@@ -169,14 +165,12 @@ public class CustomTestCaseModificationServiceImpl implements CustomTestCaseModi
 
 	/*
 	 * given a TestCase, will search for a TestStep in the steps list (identified with its testStepId)
-	 *
+	 * 
 	 * returns : the index if found, -1 if not found or if the provided TestCase is null
 	 */
 	private int findTestStepInTestCase(TestCase testCase, long testStepId) {
 		return testCase.getPositionOfStep(testStepId);
 	}
-
-
 
 	@Override
 	@PostAuthorize("hasPermission(returnObject, 'READ') or hasRole('ROLE_ADMIN')")
@@ -186,21 +180,21 @@ public class CustomTestCaseModificationServiceImpl implements CustomTestCaseModi
 
 	/*
 	 * regarding the @PreAuthorize for the verified requirements :
-	 *
+	 * 
 	 * I prefer to show all the requirements that the test case refers to even if some of those requirements belongs to
 	 * a project the current user cannot "read", rather post filtering it.
-	 *
+	 * 
 	 * The reason for that is that such policy is impractical for the same problem in the context of Iteration-TestCase
 	 * associations : filtering the test cases wouldn't make much sense and would lead to partial executions of a
 	 * campaign.
-	 *
+	 * 
 	 * Henceforth the same policy applies to other cases of possible inter-project associations (like
 	 * TestCase-Requirement associations in the present case), for the sake of coherence.
-	 *
+	 * 
 	 * @author bsiri
-	 *
+	 * 
 	 * (non-Javadoc)
-	 *
+	 * 
 	 * @see org.squashtest.csp.tm.service.TestCaseModificationService#findVerifiedRequirementsByTestCaseId(long,
 	 * org.squashtest.csp.tm.infrastructure.filter.CollectionSorting)
 	 */
@@ -217,12 +211,12 @@ public class CustomTestCaseModificationServiceImpl implements CustomTestCaseModi
 	@PreAuthorize("hasPermission(#testCaseId, 'org.squashtest.csp.tm.domain.testcase.TestCase' , 'WRITE') or hasRole('ROLE_ADMIN')")
 	public void removeListOfSteps(long testCaseId, List<Long> testStepIds) {
 		TestCase testCase = testCaseDao.findById(testCaseId);
-		
-		for (Long id : testStepIds){
+
+		for (Long id : testStepIds) {
 			TestStep step = testStepDao.findById(id);
 			deletionHandler.deleteStep(testCase, step);
 		}
-	
+
 	}
 
 	@Override
@@ -238,6 +232,7 @@ public class CustomTestCaseModificationServiceImpl implements CustomTestCaseModi
 	@PreAuthorize("hasPermission(#testCaseId, 'org.squashtest.csp.tm.domain.testcase.TestCase' , 'WRITE') or hasRole('ROLE_ADMIN')")
 	public void pasteCopiedTestStep(Long testCaseId, Long idToCopyAfter, Long copiedTestStepId) {
 		TestStep original = testStepDao.findById(copiedTestStepId);
+		// FIXME il faut vérifier un éventuel cycle !
 		TestStep copyStep = original.createCopy();
 
 		testStepDao.persist(copyStep);
@@ -255,15 +250,13 @@ public class CustomTestCaseModificationServiceImpl implements CustomTestCaseModi
 		testCase.addStep(index, copyStep);
 	}
 
-
-
 	@Override
 	public FilteredCollectionHolder<List<VerifiedRequirement>> findAllVerifiedRequirementsByTestCaseId(long testCaseId,
 			CollectionSorting sorting) {
 		if (LOGGER.isDebugEnabled()) {
 			LOGGER.debug("Looking for verified requirements of TestCase[id: " + testCaseId + ']');
 		}
-		
+
 		Set<Long> calleesIds = callStepManagerService.getTestCaseCallTree(testCaseId);
 
 		calleesIds.add(testCaseId);
@@ -276,46 +269,44 @@ public class CustomTestCaseModificationServiceImpl implements CustomTestCaseModi
 		TestCase mainTestCase = testCaseDao.findById(testCaseId);
 
 		// XXX RequirementVersion
-//		List<VerifiedRequirement> verifiedReqs = buildVerifiedRequirementList(mainTestCase.getVerifiedRequirements(), verified );
+		// List<VerifiedRequirement> verifiedReqs = buildVerifiedRequirementList(mainTestCase.getVerifiedRequirements(),
+		// verified );
 
 		long verifiedCount = requirementDao.countRequirementsVerifiedByTestCases(calleesIds);
 		if (LOGGER.isDebugEnabled()) {
 			LOGGER.debug("Total count of verified requirements : " + verifiedCount);
 		}
 
-//		return new FilteredCollectionHolder<List<VerifiedRequirement>>(verifiedCount, verifiedReqs);
-		return new FilteredCollectionHolder<List<VerifiedRequirement>>(verifiedCount, Collections.<VerifiedRequirement>emptyList());
+		// return new FilteredCollectionHolder<List<VerifiedRequirement>>(verifiedCount, verifiedReqs);
+		return new FilteredCollectionHolder<List<VerifiedRequirement>>(verifiedCount,
+				Collections.<VerifiedRequirement> emptyList());
 	}
 
-	
 	/*
 	 * 
 	 */
-	private List<VerifiedRequirement> buildVerifiedRequirementList(final Collection<Requirement> directlyVerifiedList, List<Requirement> verified){
-		
+	private List<VerifiedRequirement> buildVerifiedRequirementList(final Collection<Requirement> directlyVerifiedList,
+			List<Requirement> verified) {
+
 		List<VerifiedRequirement> toReturn = new ArrayList<VerifiedRequirement>(verified.size());
 
 		for (Requirement req : verified) {
-			boolean directlyVerified = directlyVerifiedList.contains(req) ;
-			
+			boolean directlyVerified = directlyVerifiedList.contains(req);
+
 			// XXX RequirementVersion
-//			toReturn.add(new VerifiedRequirement(req, directlyVerified));
-		}		
-		
+			// toReturn.add(new VerifiedRequirement(req, directlyVerified));
+		}
+
 		return toReturn;
 	}
-	
-	
+
 	@Override
-	public FilteredCollectionHolder<List<TestCase>> findCallingTestCases(
-			long testCaseId, CollectionSorting sorting) {
-		
+	public FilteredCollectionHolder<List<TestCase>> findCallingTestCases(long testCaseId, CollectionSorting sorting) {
+
 		List<TestCase> callers = callStepManagerService.findCallingTestCases(testCaseId, sorting);
 		Long countCallers = testCaseDao.countCallingTestSteps(testCaseId);
 		return new FilteredCollectionHolder<List<TestCase>>(countCallers, callers);
-		
+
 	}
-	
-	
 
 }

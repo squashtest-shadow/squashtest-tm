@@ -26,6 +26,7 @@ import org.hibernate.Session;
 import org.hibernate.exception.GenericJDBCException;
 import org.squashtest.csp.tm.domain.requirement.Requirement 
 import org.squashtest.csp.tm.domain.requirement.RequirementFolder;
+import org.squashtest.csp.tm.domain.requirement.RequirementVersion;
 import org.squashtest.csp.tm.hibernate.mapping.HibernateMappingSpecification;
 
 class RequirementFolderMappingIT extends HibernateMappingSpecification {
@@ -91,9 +92,9 @@ class RequirementFolderMappingIT extends HibernateMappingSpecification {
 	def "should not retrieve deleted requirements"(){
 		given :
 		RequirementFolder refolder = new RequirementFolder(name: "ref")
-		def req1 = new Requirement(name: "req1")
-		def req2 = new Requirement(name: "req2")
-		def req3 = new Requirement(name: "req3")
+		def req1 = new Requirement(new RequirementVersion(name: "req1"))
+		def req2 = new Requirement(new RequirementVersion(name: "req2"))
+		def req3 = new Requirement(new RequirementVersion(name: "req3"))
 		
 		refolder.addContent req1
 		refolder.addContent req2

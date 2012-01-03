@@ -20,17 +20,17 @@
  */
 package org.squashtest.csp.tm.internal.repository.hibernate;
 
-import javax.inject.Inject;
+import javax.inject.Inject
 
-import org.springframework.transaction.annotation.Transactional;
-import org.squashtest.csp.tm.domain.requirement.RequirementCriticality;
+import org.springframework.transaction.annotation.Transactional
+import org.squashtest.csp.tm.domain.requirement.RequirementCriticality
 import org.squashtest.csp.tm.domain.requirement.RequirementSearchCriteria
-import org.squashtest.csp.tm.infrastructure.filter.CollectionFilter;
-import org.squashtest.csp.tm.infrastructure.filter.CollectionSorting;
-import org.squashtest.csp.tm.internal.repository.TestCaseDao;
-import org.unitils.dbunit.annotation.DataSet;
+import org.squashtest.csp.tm.infrastructure.filter.CollectionFilter
+import org.squashtest.csp.tm.infrastructure.filter.CollectionSorting
+import org.squashtest.csp.tm.internal.repository.TestCaseDao
+import org.unitils.dbunit.annotation.DataSet
 
-import spock.unitils.UnitilsSupport;
+import spock.unitils.UnitilsSupport
 
 @UnitilsSupport
 @Transactional
@@ -312,21 +312,6 @@ class HibernateTestCaseDaoIT extends DbunitDaoSpecification {
 
 		when:
 		def res = testCaseDao.findAllByRequirement(req, false);
-
-		then:
-		res.containsSameIdentifiers([202L, 102L, 103L])
-	}
-
-	// XXX There are no projects in the dataset, I think we test sweet FA.
-	@DataSet("HibernateTestCaseDaoIT.should find test cases by requirement name token project ordered.xml")
-	def "should find test cases by requirement name token project ordered"() {
-		given:
-		RequirementSearchCriteria req = Mock()
-		req.name >> "token"
-		req.criticalities >> []
-
-		when:
-		def res = testCaseDao.findAllByRequirement(req, true);
 
 		then:
 		res.containsSameIdentifiers([202L, 102L, 103L])

@@ -23,14 +23,17 @@
 -->
 <dataset>
 	<ATTACHMENT_LIST ATTACHMENT_LIST_id="10" />
-	<requirement_library_node rln_id="10" name="req 10" created_on="2010-02-01" created_by="dbu" />
-	<requirement rln_id="10"  ATTACHMENT_LIST_ID="10" criticality="UNDEFINED" />
+	<requirement_version req_version_id="10" name="req 10" created_on="2010-02-01" created_by="dbu" criticality="UNDEFINED" ATTACHMENT_LIST_ID="10" /> 
+	<requirement_library_node rln_id="10" created_on="2010-02-01" created_by="dbu" />
+	<requirement rln_id="10" latest_version_id="10" />
 
 	<ATTACHMENT_LIST ATTACHMENT_LIST_id="20" />
-	<requirement_library_node rln_id="20" name="req 20" created_on="2010-02-01" created_by="dbu" />
-	<requirement rln_id="20" ATTACHMENT_LIST_ID="20" criticality="MINOR" />
+	<requirement_version req_version_id="20" name="req 20" created_on="2010-02-01" created_by="dbu" criticality="MINOR" ATTACHMENT_LIST_ID="20" /> 
+	<requirement_library_node rln_id="20" created_on="2010-02-01" created_by="dbu" />
+	<requirement rln_id="20" latest_version_id="20" />
 
 	<ATTACHMENT_LIST ATTACHMENT_LIST_id="30" />
-	<requirement_library_node rln_id="30" name="req 30" created_on="2010-02-01" created_by="dbu" />
-	<requirement rln_id="30" ATTACHMENT_LIST_ID="30" criticality="MAJOR" />
+	<requirement_version req_version_id="30" name="req 30" created_on="2010-02-01" created_by="dbu" criticality="MAJOR" ATTACHMENT_LIST_ID="30" /> 
+	<requirement_library_node rln_id="30" created_on="2010-02-01" created_by="dbu" />
+	<requirement rln_id="30" latest_version_id="30" />
 </dataset>
