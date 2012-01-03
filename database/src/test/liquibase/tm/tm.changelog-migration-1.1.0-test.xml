@@ -38,8 +38,10 @@
 		</sql>
 		<sql>
 			insert into OLD_REQ_FOLDER (FOLDER_ID, NAME, DESCRIPTION) 
-			select f.RLN_ID, NAME, DESCRIPTION from REQUIREMENT_LIBRARY_NODE n 
-			inner join REQUIREMENT_FOLDER f on f.RLN_ID = n.RLN_ID;
+			select f.RLN_ID, NAME, DESCRIPTION 
+			from REQUIREMENT_LIBRARY_NODE n 
+			inner join REQUIREMENT_FOLDER f on f.RLN_ID = n.RLN_ID
+			where n.DELETED_ON is null; 
 		</sql>
 	</changeSet>
 	
@@ -108,16 +110,18 @@
 		<comment>We check that there there are no more 'BLOQUED' status in Iteration test plan item</comment>
 	</changeSet>
 	
-	<changeSet id="1.1.0.check-requirement-folder-data-pushed-down" author="gfouquet">
+	<changeSet id="1.1.0.check-requirement-folder-data-migrated" author="gfouquet">
 		<preConditions>
 			<sqlCheck expectedResult="0">
 				select count(*)
 				from OLD_REQ_FOLDER orf
 				where not exists (
-					select 1  from REQUIREMENT_FOLDER f
-						where f.RLN_ID = orf.FOLDER_ID
-						and f.NAME = orf.NAME
-						and f.DESCRIPTION = orf.DESCRIPTION
+					select 1  from SIMPLE_RESOURCE sr
+						inner join RESOURCE r on r.RES_ID = sr.RES_ID
+						inner join REQUIREMENT_FOLDER rf on rf.RES_ID = sr.RES_ID
+						where rf.RLN_ID = orf.FOLDER_ID
+						and r.NAME = orf.NAME
+						and r.DESCRIPTION = orf.DESCRIPTION
 				);
 	 		</sqlCheck>
 		</preConditions>
@@ -131,9 +135,10 @@
 				from OLD_REQ or
 				where not exists (
 					select 1  from REQUIREMENT_VERSION rv
+						inner join RESOURCE res on res.RES_ID = rv.RES_ID
 						where rv.REQUIREMENT_ID = or.REQUIREMENT_ID
-						and rv.NAME = or.NAME
-						and rv.DESCRIPTION = or.DESCRIPTION
+						and res.NAME = or.NAME
+						and res.DESCRIPTION = or.DESCRIPTION
 						and rv.CRITICALITY = or.CRITICALITY
 						and (rv.REFERENCE = or.REFERENCE) or (rv.REFERENCE is null and or.REFERENCE is null)
 						and rv.ATTACHMENT_LIST_ID = or.ATT_LIST_ID
@@ -153,7 +158,7 @@
 				inner join REQUIREMENT_LIBRARY_NODE n on n.RLN_ID = r.RLN_ID
 				where not exists (
 					select 1  from REQUIREMENT_VERSION rv
-						where rv.REQ_VERSION_ID = r.LATEST_VERSION_ID
+						where rv.RES_ID = r.LATEST_VERSION_ID
 						and rv.REQUIREMENT_ID = r.RLN_ID
 				)
 				and DELETED_ON is null;
@@ -170,7 +175,7 @@
 				where not exists (
 					select 1  from REQUIREMENT_VERIFICATION rv
 					inner join REQUIREMENT_VERSION ver on rv.REQUIREMENT_ID = ver.REQUIREMENT_ID
-					where vrv.VERIFIED_REQ_VERSION_ID = ver.REQ_VERSION_ID
+					where vrv.VERIFIED_REQ_VERSION_ID = ver.RES_ID
 					and vrv.VERIFYING_TEST_CASE_ID = rv.TEST_CASE_ID
 				);
 	 		</sqlCheck>
@@ -181,7 +186,7 @@
 	<changeSet id="1.1.0.check-import-existing-requirement-event_audit" author="bsiri">
 		<preConditions>
 			<sqlCheck expectedResult="0">
-				select count(rae.event_id) - count(r.req_version_id) from REQUIREMENT_AUDIT_EVENT rae, REQUIREMENT_VERSION r;
+				select count(rae.event_id) - count(r.res_id) from REQUIREMENT_AUDIT_EVENT rae, REQUIREMENT_VERSION r;
 			</sqlCheck>
 		</preConditions>	
 	</changeSet>
@@ -197,11 +202,12 @@
 	<changeSet id="1.1.0.imported-event-matches-requirements" author="bsiri">
 		<preConditions>
 			<sqlCheck expectedResult="0">
-				select count(r.req_version_id) - count(r2.req_version_id)
-				from REQUIREMENT_VERSION r, REQUIREMENT_VERSION r2, REQUIREMENT_AUDIT_EVENT rae
-				where r2.req_version_id = rae.req_version_id
-				and r2.created_on = rae.event_date
-				and r2.created_by = rae.author
+				select count(r.res_id) - count(r2.res_id)
+				from REQUIREMENT_VERSION r, REQUIREMENT_VERSION r2, RESOURCE res2, REQUIREMENT_AUDIT_EVENT rae
+				where r2.res_id = rae.req_version_id
+				and res2.res_id = r2.res_id
+				and res2.created_on = rae.event_date
+				and res2.created_by = rae.author
 			</sqlCheck>		
 		</preConditions>
 	</changeSet>
