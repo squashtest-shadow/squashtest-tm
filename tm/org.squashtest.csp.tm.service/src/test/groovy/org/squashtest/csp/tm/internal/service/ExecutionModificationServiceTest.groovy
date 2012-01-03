@@ -35,6 +35,7 @@ import org.squashtest.csp.tm.internal.repository.ExecutionStepDao;
 import org.squashtest.csp.tm.internal.repository.ItemTestPlanDao;
 import org.squashtest.csp.tm.internal.repository.IterationDao;
 import org.squashtest.csp.tm.internal.repository.TestCaseDao;
+import org.squashtest.csp.tm.service.CallStepManagerService;
 
 import spock.lang.Specification;
 
@@ -52,6 +53,7 @@ public class ExecutionModificationServiceTest extends Specification {
 	IterationDao iterationDao= Mock();
 	TestCaseDao testCaseDao= Mock();
 
+	CallStepManagerService callStepManager = Mock();
 
 	def setup(){
 		service.executionDao = execDao;
@@ -65,6 +67,7 @@ public class ExecutionModificationServiceTest extends Specification {
 		iterService.campaignDao=campaignDao;
 		iterService.testPlanDao=testPlanDao;
 		iterService.iterationDao=iterationDao;
+		iterService.callStepManager=callStepManager;
 	}
 
 	def "should create an execution with all steps"(){
@@ -93,7 +96,7 @@ public class ExecutionModificationServiceTest extends Specification {
 
 		iterationDao.findAndInit(1) >> iteration
 		iterationDao.findOrderedExecutionsByIterationId(1) >> iteration.getExecutions();
-
+		
 		when :
 		iterService.addExecution(1, 1)
 

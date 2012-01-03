@@ -79,4 +79,14 @@ public interface CallStepManagerService {
 	 */
 	void checkForCyclicStepCallBeforePaste(long destinationTestCaseId, String[] pastedStepsIds);
 	
+	/**
+	 * Used to check if the testPlan call tree is not cyclic before creating it's execution
+	 * This method is used to prevent infinite cycle in case of bugged data. 
+	 * 
+	 * if so :  a {@linkplain CyclicStepCallException} is thrown.
+	 * 
+	 * @param testPlanId
+	 */
+	void checkForCyclicStepCallBeforeExecutionCreation(Long testPlanId);
+	
 }

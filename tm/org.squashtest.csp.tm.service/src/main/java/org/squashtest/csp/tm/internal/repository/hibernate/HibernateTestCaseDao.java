@@ -280,6 +280,11 @@ public class HibernateTestCaseDao extends HibernateEntityDao<TestCase> implement
 	public List<Long> findAllTestCasesIdsCalledByTestCase(long testCaseId) {
 		return executeListNamedQuery("testCase.findAllTestCasesIdsCalledByTestCase", new SetIdParameter(testCaseId));
 	}
+	
+	@Override
+	public List<Long> findDistinctTestCasesIdsCalledByTestCase(Long testCaseId) {
+		return executeListNamedQuery("testCase.findDistinctTestCasesIdsCalledByTestCase", new SetIdParameter(testCaseId));
+	}
 
 	@SuppressWarnings("unchecked")
 	@Override
@@ -463,6 +468,7 @@ public class HibernateTestCaseDao extends HibernateEntityDao<TestCase> implement
 		query.setParameterList("testStepsIds", testStepsIds);
 		return query.list();
 	}
+
 
 
 
