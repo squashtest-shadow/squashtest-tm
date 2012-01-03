@@ -44,18 +44,27 @@
 <s:url var="importUrl" value="/${workspace}-browser/import"/>
 
 
-<pop:popup id="import-excel-dialog" titleKey="dialog.import-excel.title" >
+<pop:popup id="import-excel-dialog" titleKey="dialog.import-excel.title" closeOnSuccess="false">
 	<jsp:attribute name="buttons">
 		<f:message var="label" key="dialog.import.confirm.label" />	
 		"${ label }": function() {
-			importExcelFeedbackPopup.reset();
+			importExcelFeedbackPopup.initSubmission();
 		},
 		<pop:cancel-button />
 	</jsp:attribute>
 	
 	<jsp:attribute name="additionalSetup">
 		open : function(){
+			importExcelFeedbackPopup.reset();
 			
+			var selected = $("${treeSelector}").jstree("get_selected");
+			var projectNode = liNode(selected);
+			
+			var projectName = projectNode.attr('title');
+			var projectId = projectNode.attr('resId');
+			
+			$("#import-excel-dialog-parametrization .import-project-name-span").text(projectName);
+			$("#import-excel-dialog-parametrization input[type='hidden']").val(projectId);
 		}	
 	</jsp:attribute>
 
@@ -111,7 +120,9 @@
 				selector : "#import-excel-dialog-summary"			
 			},
 			
-			dumpPanel : "#import-excel-dialog-dump"
+			dumpPanel : {
+				selector : "#import-excel-dialog-dump"	
+			}
 				
 				
 		};

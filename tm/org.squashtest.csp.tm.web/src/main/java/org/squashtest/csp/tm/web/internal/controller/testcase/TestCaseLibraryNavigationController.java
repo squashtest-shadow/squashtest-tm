@@ -36,6 +36,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
+import org.springframework.web.multipart.MultipartFile;
 import org.springframework.web.servlet.ModelAndView;
 import org.squashtest.csp.tm.domain.testcase.TestCase;
 import org.squashtest.csp.tm.domain.testcase.TestCaseFolder;
@@ -129,6 +130,12 @@ public class TestCaseLibraryNavigationController extends
 	@Override
 	protected String getShowLibraryViewName() {
 		return "page/test-case-libraries/show-test-case-library";
+	}
+	
+	
+	@RequestMapping(value="/import", method = RequestMethod.POST,  params = "upload-ticket")
+	public @ResponseBody String importArchive(@RequestParam("archive") MultipartFile archive, @RequestParam("projectId") Long projectId){
+		return "{ \"status\" : \"ok\"}"; 
 	}
 
 }
