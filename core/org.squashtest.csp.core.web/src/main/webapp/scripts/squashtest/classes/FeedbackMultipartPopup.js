@@ -18,18 +18,19 @@
  *     You should have received a copy of the GNU Lesser General Public License
  *     along with this software.  If not, see <http://www.gnu.org/licenses/>.
  */
- 
 /**
 
 <p>A FeedbackMultipartPopup is an object complementary to the regular jQuery.dialog. Its purpose is to enrich the submission of
 multipart form data, which can be long to upload, and of which the user might appreciate to be informed of the progression.</p>
 
-<p>A FeebackMultipartPopup accepts a single popup which contains three panels (divs) : </p>
+<p>A FeebackMultipartPopup accepts a single popup which contains three panels (divs) :
 <ul>
 	<li>the parametrization, typically where the file browser is</li>
 	<li>the progression, which contains a "please wait" thing and a progress bar</li>
 	<li>the summary, that proposes a view of the overall operation (status, warnings etc) after completion.</li>
 </ul>
+An three buttons : confirm, ok, cancel, having css classes set using the class constant defined at the end of the file.
+</p>
 
 <p>
 	The parametrization panel must contain a form, enctype multipart/form-data and method POST.
@@ -56,7 +57,10 @@ function FeedbackMultipartPopup(settings){
 	this.progressPanel = settings.progressPanel;
 	this.summaryPanel = settings.summaryPanel;
 	this.dumpPanel = settings.dumpPanel;
+	
+	//internal state
 	this.ticket=0;
+	this.state = undefined;
 	
 	/* ************* basic methods ************************ */
 	
@@ -67,7 +71,23 @@ function FeedbackMultipartPopup(settings){
 			this.summaryPanel.panel = $(this.summaryPanel.selector);
 			this.dumpPanel.panel = $(this.dumpPanel.selector);
 		}
-	}
+	};
+	
+	this.getButtonPane = function(){
+		return this.popup.eq(0).next()
+	};
+	
+	this.getConfirmButton = function(){
+		return this.getButtonPane().find("button."+FeedbackMultipartPopup.CONFIRM_CLASS);
+	};
+	
+	this.getOkButton = function(){		
+		return this.getButtonPane().find("button."+FeedbackMultipartPopup.OK_CLASS);
+	};
+	
+	this.getCancelButton = function(){
+		return this.getButtonPane().find("button."+FeedbackMultipartPopup.CANCEL_CLASS);
+	};
 	
 	this.reset = function(){
 	
@@ -88,39 +108,62 @@ function FeedbackMultipartPopup(settings){
 	};
 	
 	this.showParametrization = function(){
+	
 		this.parametrizationPanel.panel.removeClass("not-displayed");
 		this.progressPanel.panel.addClass("not-displayed");
 		this.summaryPanel.panel.addClass("not-displayed");
+
+		this.getConfirmButton().removeClass("not-displayed");
+		this.getCancelButton().removeClass("not-displayed");			
+		this.getOkButton().addClass("not-displayed");
 		
 		// todo : kill the poll process associated to the progress panel
+		this.state = "parametrization";
+		
 	};
 	
 	this.showProgress = function(){
+	
 		this.parametrizationPanel.panel.addClass("not-displayed");
 		this.progressPanel.panel.removeClass("not-displayed");
 		this.summaryPanel.panel.addClass("not-displayed");	
 		
+		this.getConfirmButton().addClass("not-displayed");
+		this.getCancelButton().removeClass("not-displayed");			
+		this.getOkButton().addClass("not-displayed");
+		
 		//todo : start the poll process associated to the progress panel
+		
+		this.state = "progress";
+		
 	};
 	
 	this.showSummary = function(){
+	
 		this.parametrizationPanel.panel.addClass("not-displayed");
 		this.progressPanel.panel.addClass("not-displayed");
 		this.summaryPanel.panel.removeClass("not-displayed");	
 		
+		this.getConfirmButton().addClass("not-displayed");
+		this.getCancelButton().addClass("not-displayed");			
+		this.getOkButton().removeClass("not-displayed");
+		
 		// todo : kill the poll process associated to the progress panel
+	
+		this.state = "summary";
+		
 	};
 
 	
 	/* ********************* main code : operations and transitions ****************************** */
 	
-	this.initSubmission = function(){
+	this.submit = function(){
 		//todo and please use Deferred.done() to set the ticket and perform the following
 		this.showProgress();
-		this.submit();
+		this.doSubmit();
 	};
 	
-	this.submit = function(){
+	this.doSubmit = function(){
 		var self =  this;
 		var form = $("form", this.parametrizationPanel.panel);
 		form.ajaxSubmit({
@@ -137,7 +180,38 @@ function FeedbackMultipartPopup(settings){
 		this.showSummary();
 		
 		//todo : build the summary using the xhr response, possibly by calling a client-defined callback.
-	}
+	};
+	
+	this.cancel = function(){
+		if (this.state == "progress"){
+			this.cancelPoll();
+			//we must also kill the submit itself, alas killing other pending ajax requests.
+			if (window.stop !== undefined){
+				window.stop();	
+			}else{
+				/*
+					IE-specific instruction document.execCommand("Stop"); wont prevent the file to be fully uploaded because it doesn't kill
+					the socket, so we'll be even more blunt
+				*/
+				document.location.reload();
+			}
+		}
+		this.popup.dialog("close");
+	};
+	
+	this.cancelPoll = function(){
+		//todo
+	};
+	
+	this.startPoll = function(){
+		//todo
+	};
 	
 	return this;
 }
+
+/* ******************** Class constants *********************** */
+
+FeedbackMultipartPopup.CONFIRM_CLASS = "confirm-button-class"
+FeedbackMultipartPopup.CANCEL_CLASS = "cancel-button-class"
+FeedbackMultipartPopup.OK_CLASS = "ok-button-class"

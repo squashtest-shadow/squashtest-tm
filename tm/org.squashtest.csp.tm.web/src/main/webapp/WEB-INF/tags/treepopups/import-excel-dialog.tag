@@ -39,7 +39,7 @@
 <%@ attribute name="workspace" required="true" description="the workspace (or nature) of the elements to import." %>
 
 <script type="text/javascript" src="${ pageContext.servletContext.contextPath }/scripts/jquery/jquery.form.js"></script>
-<script type="text/javascript" src="http://localhost/scripts/FeedbackMultipartPopup.js"></script>
+<script type="text/javascript" src="${ pageContext.servletContext.contextPath }/scripts/squashtest/classes/FeedbackMultipartPopup.js"></script>
 
 <s:url var="importUrl" value="/${workspace}-browser/import/upload"/>
 
@@ -50,19 +50,19 @@
 		<f:message var="cancelLabel" key="dialog.button.cancel.label"/>
 		{
 			text : "${confirmLabel}",
-			class : FeedbackMultipartPopup.CONFIRM_CLASS,
-			click : function(){importExcelFeedbackPopup.initSubmission();}
+			"class" : FeedbackMultipartPopup.CONFIRM_CLASS,
+			click : function(){importExcelFeedbackPopup.submit();}
 		},
 		{
 			text : "Ok", <!--  todo : make it i18n -->
-			class : FeedbackMultipartPopup.OK_CLASS,
-			click : function(){alert("todo");}
+			"class" : FeedbackMultipartPopup.OK_CLASS,
+			click : function(){$("#import-excel-dialog").dialog("close");}
 		
 		},
 		{
 			text : "${cancelLabel}",
-			class : FeedbackMultipartPopup.CANCEL_CLASS,
-			click : function(){alert("todo");}			
+			"class" : FeedbackMultipartPopup.CANCEL_CLASS,
+			click : function(){importExcelFeedbackPopup.cancel();}			
 		}
 	</jsp:attribute>
 	

@@ -124,7 +124,7 @@
 			"import-excel" : ".import-excel-tree-button"
 		};
 		
-		squashtm.treemenu.import = $('#tree-import-button').treeMenu('#tree-import-menu', importOption);
+		squashtm.treemenu.importer = $('#tree-import-button').treeMenu('#tree-import-menu', importOption);
 		
 		</c:if>
 		
