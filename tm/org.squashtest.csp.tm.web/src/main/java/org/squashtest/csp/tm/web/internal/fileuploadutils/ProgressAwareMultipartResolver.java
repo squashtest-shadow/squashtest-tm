@@ -70,6 +70,7 @@ public class ProgressAwareMultipartResolver extends CommonsMultipartResolver {
 		}
 	}
 
+	
 	@SuppressWarnings("unchecked")
 	private MultipartHttpServletRequest createMultipartHttpServletRequest(HttpServletRequest request, String encoding,
 			FileUpload fileUpload) throws FileUploadException {

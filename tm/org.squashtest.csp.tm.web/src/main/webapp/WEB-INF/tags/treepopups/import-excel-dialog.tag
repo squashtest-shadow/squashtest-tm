@@ -41,7 +41,7 @@
 <script type="text/javascript" src="${ pageContext.servletContext.contextPath }/scripts/jquery/jquery.form.js"></script>
 <script type="text/javascript" src="http://localhost/scripts/FeedbackMultipartPopup.js"></script>
 
-<s:url var="importUrl" value="/${workspace}-browser/import"/>
+<s:url var="importUrl" value="/${workspace}-browser/import/upload"/>
 
 
 <pop:popup id="import-excel-dialog" titleKey="dialog.import-excel.title" closeOnSuccess="false">

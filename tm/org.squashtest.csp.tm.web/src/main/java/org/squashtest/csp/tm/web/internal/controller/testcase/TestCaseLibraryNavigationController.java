@@ -133,7 +133,7 @@ public class TestCaseLibraryNavigationController extends
 	}
 	
 	
-	@RequestMapping(value="/import", method = RequestMethod.POST,  params = "upload-ticket")
+	@RequestMapping(value="/import/upload", method = RequestMethod.POST,  params = "upload-ticket")
 	public @ResponseBody String importArchive(@RequestParam("archive") MultipartFile archive, @RequestParam("projectId") Long projectId){
 		return "{ \"status\" : \"ok\"}"; 
 	}
