@@ -18,7 +18,7 @@
  *     You should have received a copy of the GNU Lesser General Public License
  *     along with this software.  If not, see <http://www.gnu.org/licenses/>.
  */
-package org.squashtest.csp.tm.domain.requirement;
+package org.squashtest.csp.tm.domain.resource;
 
 import javax.persistence.Column;
 import javax.persistence.Entity;
@@ -26,65 +26,50 @@ import javax.persistence.GeneratedValue;
 import javax.persistence.Id;
 import javax.persistence.Inheritance;
 import javax.persistence.InheritanceType;
-import javax.persistence.JoinColumn;
-import javax.persistence.ManyToOne;
+import javax.persistence.Lob;
 
+import org.hibernate.validator.constraints.NotBlank;
 import org.squashtest.csp.tm.domain.audit.Auditable;
-import org.squashtest.csp.tm.domain.library.LibraryNode;
-import org.squashtest.csp.tm.domain.project.Project;
-import org.squashtest.csp.tm.domain.resource.Resource;
-import org.squashtest.csp.tm.domain.softdelete.SoftDeletable;
 
+/**
+ * A Resource is the actual "things" which are organized in a library tree.
+ * 
+ * @author Gregory Fouquet
+ * 
+ */
 @Entity
 @Inheritance(strategy = InheritanceType.JOINED)
 @Auditable
-@SoftDeletable
-public abstract class RequirementLibraryNode<RESOURCE extends Resource> implements LibraryNode {
+public abstract class Resource {
 	@Id
 	@GeneratedValue
-	@Column(name = "RLN_ID")
+	@Column(name = "RES_ID")
 	private Long id;
 
-	@ManyToOne
-	@JoinColumn(name = "PROJECT_ID")
-	private Project project;
+	@NotBlank
+	private String name;
 
-	@Override
-	public Project getProject() {
-		return project;
-	}
+	@Lob
+	private String description;
 
-	/**
-	 * Notifies this object it is now a resource of the given project.
-	 *
-	 * @param project
-	 */
-	@Override
-	public void notifyAssociatedWithProject(Project project) {
-		this.project = project;
-
-	}
-
-	public RequirementLibraryNode() {
-		super();
-	}
-
-	public RequirementLibraryNode(String name, String description) {
-		setName(name);
-		setDescription(description);
-	}
-
-	@Override
 	public Long getId() {
 		return id;
 	}
-	
-	/**
-	 * Implementors should ask the visitor to visit this object.
-	 * 
-	 * @param visitor
-	 */
-	public abstract void accept(RequirementLibraryNodeVisitor visitor);
 
-	public abstract RESOURCE getResource();
+	public String getName() {
+		return this.name;
+	}
+
+	public void setName(String name) {
+		this.name = name;
+	}
+
+	public String getDescription() {
+		return this.description;
+	}
+
+	public void setDescription(String description) {
+		this.description = description;
+	}
+
 }

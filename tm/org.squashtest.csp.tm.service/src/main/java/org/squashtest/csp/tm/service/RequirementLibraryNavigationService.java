@@ -31,6 +31,7 @@ import org.squashtest.csp.tm.domain.requirement.RequirementLibrary;
 import org.squashtest.csp.tm.domain.requirement.RequirementLibraryNode;
 import org.squashtest.csp.tm.domain.requirement.RequirementVersion;
 
+@SuppressWarnings("rawtypes")
 public interface RequirementLibraryNavigationService extends
 		LibraryNavigationService<RequirementLibrary, RequirementFolder, RequirementLibraryNode> {
 

@@ -58,10 +58,13 @@
 
 				<value>org.squashtest.csp.tm.domain.requirement.RequirementLibrary</value>
 				<value>org.squashtest.csp.tm.domain.requirement.Requirement</value>
-				<value>org.squashtest.csp.tm.domain.requirement.RequirementVersion</value>
 				<value>org.squashtest.csp.tm.domain.requirement.RequirementLibraryNode</value>
 				<value>org.squashtest.csp.tm.domain.requirement.RequirementFolder</value>
 
+				<value>org.squashtest.csp.tm.domain.resource.Resource</value>
+				<value>org.squashtest.csp.tm.domain.resource.SimpleResource</value>
+				<value>org.squashtest.csp.tm.domain.requirement.RequirementVersion</value>
+				
 				<value>org.squashtest.csp.tm.domain.campaign.CampaignLibrary</value>
 				<value>org.squashtest.csp.tm.domain.campaign.Campaign</value>
 				<value>org.squashtest.csp.tm.domain.campaign.CampaignLibraryNode</value>

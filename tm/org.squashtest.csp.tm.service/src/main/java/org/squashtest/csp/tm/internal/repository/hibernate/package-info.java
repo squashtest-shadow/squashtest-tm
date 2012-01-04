@@ -60,22 +60,22 @@
 		@NamedQuery(name = "testCaseFolder.findAllFolders", query = "from TestCaseFolder folder where folder.id in (:folderIds)"),
 
 		// Queries on a RequirementFolder
-		@NamedQuery(name = "requirementFolder.findNamesInFolderStartingWith", query = "select c.name from RequirementFolder f join f.content c where f.id = :containerId and c.name like :nameStart"),
-		@NamedQuery(name = "requirementFolder.findNamesInLibraryStartingWith", query = "select c.name from RequirementLibrary l join l.rootContent c where l.id = :containerId and c.name like :nameStart"),
+		@NamedQuery(name = "requirementFolder.findNamesInFolderStartingWith", query = "select c.resource.name from RequirementFolder f join f.content c where f.id = :containerId and c.resource.name like :nameStart"),
+		@NamedQuery(name = "requirementFolder.findNamesInLibraryStartingWith", query = "select c.resource.name from RequirementLibrary l join l.rootContent c where l.id = :containerId and c.resource.name like :nameStart"),
 		@NamedQuery(name = "requirementFolder.findAllContentById", query = "select f.content from RequirementFolder f where f.id = :folderId"),
 		@NamedQuery(name = "requirementFolder.findByContent", query = "from RequirementFolder where :content in elements(content)"),
 		@NamedQuery(name = "requirementFolder.findAllFolders", query = "from RequirementFolder folder where folder.id in (:folderIds)"),
 
 		// Queries on a Requirement
-		@NamedQuery(name = "requirement.findNamesInFolderStartingWith", query = "select c.name from RequirementFolder f join f.content c where f.id = :containerId and c.name like :nameStart"),
-		@NamedQuery(name = "requirement.findNamesInLibraryStartingWith", query = "select c.name from RequirementLibrary l join l.rootContent c where l.id = :containerId and c.name like :nameStart"),
-		@NamedQuery(name = "requirement.findAllByIdList", query = "from Requirement r where id in (:requirementsIds) order by r.latestVersion.name asc"),
+		@NamedQuery(name = "requirement.findNamesInFolderStartingWith", query = "select c.resource.name from RequirementFolder f join f.content c where f.id = :containerId and c.resource.name like :nameStart"),
+		@NamedQuery(name = "requirement.findNamesInLibraryStartingWith", query = "select c.resource.name from RequirementLibrary l join l.rootContent c where l.id = :containerId and c.resource.name like :nameStart"),
+		@NamedQuery(name = "requirement.findAllByIdList", query = "from Requirement r where id in (:requirementsIds) order by r.resource.name asc"),
 		// XXX RequirementVersion
 		@NamedQuery(name = "requirement.findAllVerifyingTestCasesById", query = "select tc from RequirementVersion r join r.verifyingTestCases tc fetch all properties where r.id = :requirementId order by tc.name asc"),
 		// XXX RequirementVersion
 		@NamedQuery(name = "requirement.countVerifyingTestCasesById", query = "select count(tc) from RequirementVersion r join r.verifyingTestCases tc where r.id = :requirementId"),
-		@NamedQuery(name = "requirement.findRequirementByName", query = "from RequirementLibraryNode r where r.name like :requirementName order by r.name asc"),
-		@NamedQuery(name = "requirement.findRequirementExportData", query = "select r, rf.name from RequirementFolder rf join rf.content r where r.id in (:rIds)"),
+		@NamedQuery(name = "requirement.findRequirementByName", query = "from RequirementLibraryNode r where r.resource.name like :requirementName order by r.resource.name asc"),
+		@NamedQuery(name = "requirement.findRequirementExportData", query = "select r, rf.resource.name from RequirementFolder rf join rf.content r where r.id in (:rIds)"),
 		@NamedQuery(name = "requirement.findRequirementInExportData", query = "select r.id from Requirement r where r.id in (:rIds)"),
 		@NamedQuery(name = "requirement.findRootContentRequirement", query = "select r from RequirementLibrary rl join rl.rootContent r where r.id in (:paramIds) and r in (from Requirement)"),
 		@NamedQuery(name = "requirement.findRootContentExportData", query = "select r from RequirementLibrary rl join rl.rootContent r where rl.id in (:libIds) and r in (from Requirement)"),
@@ -190,7 +190,7 @@
 		@NamedQuery(name = "testCase.removeAllCallSteps", query = "delete CallTestStep cts where  cts.id in (:stepIds)"),	
 		@NamedQuery(name = "testCase.removeAllActionSteps", query = "delete ActionTestStep ats where ats.id in (:stepIds)"),	
 
-		@NamedQuery(name = "requirement.findAllAttachmentLists", query ="select v.attachmentList.id from Requirement r join r.latestVersion v where r.id in (:requirementIds)"),
+		@NamedQuery(name = "requirement.findAllAttachmentLists", query ="select v.attachmentList.id from Requirement r join r.resource v where r.id in (:requirementIds)"),
 		@NamedQuery(name = "requirementDeletionDao.deleteRequirementAuditEvent", query="delete RequirementAuditEvent rae where rae.id in (:eventIds)")
 
 })

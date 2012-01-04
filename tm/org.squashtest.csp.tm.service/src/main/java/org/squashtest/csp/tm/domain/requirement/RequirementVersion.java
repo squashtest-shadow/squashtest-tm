@@ -30,21 +30,18 @@ import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.EnumType;
 import javax.persistence.Enumerated;
-import javax.persistence.GeneratedValue;
-import javax.persistence.Id;
 import javax.persistence.JoinColumn;
-import javax.persistence.Lob;
 import javax.persistence.ManyToMany;
 import javax.persistence.ManyToOne;
 import javax.persistence.OneToOne;
+import javax.persistence.PrimaryKeyJoinColumn;
 import javax.validation.constraints.NotNull;
 
-import org.hibernate.validator.constraints.NotBlank;
 import org.squashtest.csp.tm.domain.IllegalRequirementModificationException;
 import org.squashtest.csp.tm.domain.RequirementNotLinkableException;
 import org.squashtest.csp.tm.domain.attachment.AttachmentHolder;
 import org.squashtest.csp.tm.domain.attachment.AttachmentList;
-import org.squashtest.csp.tm.domain.audit.Auditable;
+import org.squashtest.csp.tm.domain.resource.Resource;
 import org.squashtest.csp.tm.domain.testcase.TestCase;
 
 /**
@@ -54,19 +51,8 @@ import org.squashtest.csp.tm.domain.testcase.TestCase;
  * 
  */
 @Entity
-@Auditable
-public class RequirementVersion implements AttachmentHolder {
-	@Id
-	@GeneratedValue
-	@Column(name = "REQ_VERSION_ID")
-	private Long id;
-
-	@NotBlank
-	private String name;
-
-	@Lob
-	private String description;
-
+@PrimaryKeyJoinColumn(name = "RES_ID")
+public class RequirementVersion extends Resource implements AttachmentHolder {
 	/**
 	 * Collection of {@link Test Cases} verifying by this {@link Requirement}
 	 */
@@ -114,12 +100,12 @@ public class RequirementVersion implements AttachmentHolder {
 
 	public void setName(String name) {
 		checkModifiable();
-		this.name = name;
+		super.setName(name);
 	}
 
 	public void setDescription(String description) {
 		checkModifiable();
-		this.description = description;
+		super.setDescription(description);
 	}
 
 	/**
@@ -215,27 +201,6 @@ public class RequirementVersion implements AttachmentHolder {
 	 */
 	public boolean isModifiable() {
 		return getStatus().isRequirementModifiable();
-	}
-
-	/**
-	 * @return the id
-	 */
-	public Long getId() {
-		return id;
-	}
-
-	/**
-	 * @return the name
-	 */
-	public String getName() {
-		return name;
-	}
-
-	/**
-	 * @return the description
-	 */
-	public String getDescription() {
-		return description;
 	}
 
 	public void notifyVerifiedBy(@NotNull TestCase testCase) {

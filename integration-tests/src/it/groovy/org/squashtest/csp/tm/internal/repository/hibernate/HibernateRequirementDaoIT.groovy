@@ -22,6 +22,7 @@ package org.squashtest.csp.tm.internal.repository.hibernate
 
 import javax.inject.Inject;
 
+import org.springframework.transaction.annotation.Transactional;
 import org.squashtest.csp.tm.domain.requirement.RequirementCriticality;
 import org.squashtest.csp.tm.domain.requirement.RequirementSearchCriteria;
 import org.squashtest.csp.tm.domain.requirement.VerificationCriterion;
@@ -32,6 +33,7 @@ import org.unitils.dbunit.annotation.DataSet;
 import spock.unitils.UnitilsSupport;
 
 @UnitilsSupport
+@Transactional
 class HibernateRequirementDaoIT extends DbunitDaoSpecification {
 	@Inject RequirementDao requirementDao
 

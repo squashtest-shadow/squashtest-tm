@@ -28,6 +28,7 @@ import org.squashtest.csp.tm.domain.project.Project;
 import org.squashtest.csp.tm.domain.requirement.RequirementLibrary;
 import org.squashtest.csp.tm.domain.requirement.RequirementLibraryNode;
 
+@SuppressWarnings("rawtypes")
 @Component("squashtest.tm.service.RequirementLibrarySelectionStrategy")
 public class RequirementLibrarySelectionStrategyImpl implements LibrarySelectionStrategy<RequirementLibrary, RequirementLibraryNode> {
 

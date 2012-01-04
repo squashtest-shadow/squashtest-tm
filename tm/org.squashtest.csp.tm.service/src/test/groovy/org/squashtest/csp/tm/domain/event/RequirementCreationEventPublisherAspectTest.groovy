@@ -60,7 +60,7 @@ class RequirementCreationEventPublisherAspectTest extends Specification {
 		then:
 		1 * auditor.notify({event = it})
 		event instanceof RequirementCreation
-		event.requirementVersion == requirement.latestVersion
+		event.requirementVersion == requirement.resource
 		event.author == "bruce dickinson"
 	}
 	

@@ -18,26 +18,19 @@
  *     You should have received a copy of the GNU Lesser General Public License
  *     along with this software.  If not, see <http://www.gnu.org/licenses/>.
  */
-package org.squashtest.csp.tm.internal.repository.hibernate;
+package org.squashtest.csp.tm.domain.resource;
 
-import java.util.List;
+import javax.persistence.Entity;
+import javax.persistence.PrimaryKeyJoinColumn;
 
-import org.springframework.stereotype.Repository;
-import org.squashtest.csp.tm.domain.library.NodeReference;
-import org.squashtest.csp.tm.domain.requirement.RequirementLibrary;
-import org.squashtest.csp.tm.domain.requirement.RequirementLibraryNode;
-import org.squashtest.csp.tm.internal.repository.RequirementLibraryDao;
+/**
+ * A simple resource, with no extra attributes.
+ * 
+ * @author Gregory Fouquet
+ * 
+ */
+@Entity
+@PrimaryKeyJoinColumn(name = "RES_ID")
+public class SimpleResource extends Resource {
 
-@SuppressWarnings("rawtypes")
-@Repository
-public class HibernateRequirementLibraryDao extends HibernateLibraryDao<RequirementLibrary, RequirementLibraryNode>
-implements RequirementLibraryDao {
-
-	@Override
-	public void persist(RequirementLibrary requirementLibrary) {
-		persistEntity(requirementLibrary);
-
-	}
-
-	
 }

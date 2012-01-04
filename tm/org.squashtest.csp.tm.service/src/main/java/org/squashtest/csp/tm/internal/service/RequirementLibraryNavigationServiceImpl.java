@@ -43,6 +43,7 @@ import org.squashtest.csp.tm.internal.repository.RequirementFolderDao;
 import org.squashtest.csp.tm.internal.repository.RequirementLibraryDao;
 import org.squashtest.csp.tm.service.RequirementLibraryNavigationService;
 
+@SuppressWarnings("rawtypes")
 @Service("squashtest.tm.service.RequirementLibraryNavigationService")
 @Transactional
 public class RequirementLibraryNavigationServiceImpl extends

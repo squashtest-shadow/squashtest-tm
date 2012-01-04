@@ -38,6 +38,7 @@ import org.squashtest.csp.tm.domain.library.Library;
 import org.squashtest.csp.tm.domain.project.GenericLibrary;
 import org.squashtest.csp.tm.domain.project.Project;
 
+@SuppressWarnings("rawtypes")
 @Entity
 public class RequirementLibrary extends GenericLibrary<RequirementLibraryNode>
 		implements Library<RequirementLibraryNode> {

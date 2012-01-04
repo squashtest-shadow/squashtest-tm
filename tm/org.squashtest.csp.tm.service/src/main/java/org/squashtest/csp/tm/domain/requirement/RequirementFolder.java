@@ -27,20 +27,22 @@ import javax.persistence.CascadeType;
 import javax.persistence.Entity;
 import javax.persistence.JoinColumn;
 import javax.persistence.JoinTable;
-import javax.persistence.Lob;
 import javax.persistence.OneToMany;
+import javax.persistence.OneToOne;
 import javax.persistence.PrimaryKeyJoinColumn;
 import javax.persistence.Transient;
+import javax.validation.constraints.NotNull;
 
 import org.apache.commons.lang.NullArgumentException;
-import org.hibernate.validator.constraints.NotBlank;
 import org.squashtest.csp.tm.domain.library.Folder;
 import org.squashtest.csp.tm.domain.library.FolderSupport;
 import org.squashtest.csp.tm.domain.project.Project;
+import org.squashtest.csp.tm.domain.resource.SimpleResource;
 
+@SuppressWarnings("rawtypes")
 @Entity
 @PrimaryKeyJoinColumn(name = "RLN_ID")
-public class RequirementFolder extends RequirementLibraryNode implements Folder<RequirementLibraryNode> {
+public class RequirementFolder extends RequirementLibraryNode<SimpleResource> implements Folder<RequirementLibraryNode> {
 	/**
 	 * Delegate implementation of folder responsibilities.
 	 */
@@ -51,11 +53,14 @@ public class RequirementFolder extends RequirementLibraryNode implements Folder<
 	@JoinTable(name = "RLN_RELATIONSHIP", joinColumns = @JoinColumn(name = "ANCESTOR_ID"), inverseJoinColumns = @JoinColumn(name = "DESCENDANT_ID"))
 	private final Set<RequirementLibraryNode> content = new HashSet<RequirementLibraryNode>();
 
-	@NotBlank
-	private String name;
-
-	@Lob
-	private String description;
+	@OneToOne(cascade = { CascadeType.ALL })
+	@NotNull
+	@JoinColumn(name="RES_ID", updatable = false)
+	private SimpleResource resource;
+	
+	public RequirementFolder() {
+		resource = new SimpleResource();
+	}
 
 	@Override
 	public Set<RequirementLibraryNode> getContent() {
@@ -91,7 +96,7 @@ public class RequirementFolder extends RequirementLibraryNode implements Folder<
 		newFolder.setName(getName());
 		newFolder.setDescription(getDescription());
 		for (RequirementLibraryNode node : this.content) {
-			RequirementLibraryNode newNode = node.createCopy();
+			RequirementLibraryNode newNode = (RequirementLibraryNode) node.createCopy();
 			newFolder.addContent(newNode);
 		}
 
@@ -114,21 +119,26 @@ public class RequirementFolder extends RequirementLibraryNode implements Folder<
 
 	@Override
 	public void setName(String name) {
-		this.name = name;
+		resource.setName(name);
 	}
 
 	public void setDescription(String description) {
-		this.description = description;
+		resource.setDescription(description);
 	}
 
 	@Override
 	public String getName() {
-		return this.name;
+		return resource.getName();
 	}
 
 	@Override
 	public String getDescription() {
-		return this.description;
+		return resource.getDescription();
+	}
+
+	@Override
+	public SimpleResource getResource() {
+		return resource;
 	}
 
 }

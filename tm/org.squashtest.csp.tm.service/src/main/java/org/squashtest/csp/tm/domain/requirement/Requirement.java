@@ -34,9 +34,8 @@ import org.squashtest.csp.tm.domain.attachment.AttachmentList;
 /**
  * Entity requirement
  * 
- * Note that much of its setters will throw an
- * IllegalRequirementModificationException if a modification is attempted while
- * the status does not allow it.
+ * Note that much of its setters will throw an IllegalRequirementModificationException if a modification is attempted
+ * while the status does not allow it.
  * 
  * @author bsiri
  * 
@@ -44,32 +43,36 @@ import org.squashtest.csp.tm.domain.attachment.AttachmentList;
 
 @Entity
 @PrimaryKeyJoinColumn(name = "RLN_ID")
-public class Requirement extends RequirementLibraryNode implements
-		AttachmentHolder {
+public class Requirement extends RequirementLibraryNode<RequirementVersion> implements AttachmentHolder {
+	/**
+	 * The resource of this requirement is the latest version of the requirement.
+	 */
 	@OneToOne(cascade = { CascadeType.PERSIST, CascadeType.MERGE })
 	@JoinColumn(name = "LATEST_VERSION_ID")
-	private RequirementVersion latestVersion;
+	private RequirementVersion resource;
 
 	private Requirement() {
 		super();
 	}
+
 	/**
 	 * Creates a new requirement which "latest version" is the given {@link RequirementVersion}
-	 * @param version 
+	 * 
+	 * @param version
 	 */
 	public Requirement(@NotNull RequirementVersion version) {
-		latestVersion = version;
-		latestVersion.setRequirement(this);
+		resource = version;
+		resource.setRequirement(this);
 	}
 
 	@Override
 	public void setName(String name) {
-		latestVersion.setName(name);
+		resource.setName(name);
 	}
 
 	@Override
 	public void setDescription(String description) {
-		latestVersion.setDescription(description);
+		resource.setDescription(description);
 	}
 
 	@Override
@@ -79,14 +82,14 @@ public class Requirement extends RequirementLibraryNode implements
 
 	@Override
 	public AttachmentList getAttachmentList() {
-		return latestVersion.getAttachmentList();
+		return resource.getAttachmentList();
 	}
 
 	/***
 	 * @return the reference of the requirement
 	 */
 	public String getReference() {
-		return latestVersion.getReference();
+		return resource.getReference();
 	}
 
 	/***
@@ -95,7 +98,7 @@ public class Requirement extends RequirementLibraryNode implements
 	 * @param reference
 	 */
 	public void setReference(String reference) {
-		latestVersion.setReference(reference);
+		resource.setReference(reference);
 	}
 
 	@Override
@@ -125,7 +128,7 @@ public class Requirement extends RequirementLibraryNode implements
 	 * @return the requirement criticality
 	 */
 	public RequirementCriticality getCriticality() {
-		return latestVersion.getCriticality();
+		return resource.getCriticality();
 	}
 
 	/***
@@ -134,48 +137,52 @@ public class Requirement extends RequirementLibraryNode implements
 	 * @param criticality
 	 */
 	public void setCriticality(RequirementCriticality criticality) {
-		latestVersion.setCriticality(criticality);
+		resource.setCriticality(criticality);
 	}
 
 	public void setStatus(RequirementStatus status) {
-		latestVersion.setStatus(status);
+		resource.setStatus(status);
 	}
 
 	public RequirementStatus getStatus() {
-		return latestVersion.getStatus();
+		return resource.getStatus();
 	}
 
 	/**
 	 * 
-	 * @return <code>true</code> if this requirement can be (un)linked by new
-	 *         verifying testcases
+	 * @return <code>true</code> if this requirement can be (un)linked by new verifying testcases
 	 */
 	public boolean isLinkable() {
 		return getStatus().isRequirementLinkable();
 	}
 
 	/**
-	 * Tells if this requirement's "intrinsic" properties can be modified. The
-	 * following are not considered as "intrinsic" properties" :
-	 * {@link #verifyingTestCases} are governed by the {@link #isLinkable()}
-	 * state, {@link #status} is governed by itself.
+	 * Tells if this requirement's "intrinsic" properties can be modified. The following are not considered as
+	 * "intrinsic" properties" : {@link #verifyingTestCases} are governed by the {@link #isLinkable()} state,
+	 * {@link #status} is governed by itself.
 	 * 
-	 * @return <code>true</code> if this requirement's properties can be
-	 *         modified.
+	 * @return <code>true</code> if this requirement's properties can be modified.
 	 */
 	public boolean isModifiable() {
 		return getStatus().isRequirementModifiable();
 	}
+
 	@Override
 	public String getName() {
-		return latestVersion.getName();
+		return resource.getName();
 	}
+
 	@Override
 	public String getDescription() {
-		return latestVersion.getDescription();
+		return resource.getDescription();
 	}
 
 	public RequirementVersion getLatestVersion() {
-		return latestVersion;
+		return resource;
+	}
+
+	@Override
+	public RequirementVersion getResource() {
+		return resource;
 	}
 }

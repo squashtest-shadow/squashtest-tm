@@ -23,6 +23,7 @@ package org.squashtest.csp.tm.internal.repository;
 import org.squashtest.csp.tm.domain.requirement.RequirementLibrary;
 import org.squashtest.csp.tm.domain.requirement.RequirementLibraryNode;
 
+@SuppressWarnings("rawtypes")
 public interface RequirementLibraryDao extends LibraryDao<RequirementLibrary, RequirementLibraryNode> {
 
 	void persist(RequirementLibrary library);
