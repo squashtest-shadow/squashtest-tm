@@ -4,11 +4,11 @@
 	<parent>
 		<artifactId>squashtest-csp-core</artifactId>
 		<groupId>org.squashtest.csp</groupId>
-		<version>1.0.2.RELEASE-SNAPSHOT</version>
+		<version>1.0.2.RELEASE</version>
 	</parent>
 	<groupId>org.squashtest.csp</groupId>
 	<artifactId>org.squashtest.csp.core.service</artifactId>
-	<version>1.0.2.RELEASE-SNAPSHOT</version>
+	<version>1.0.2.RELEASE</version>
 	<name>Squashtest CSP - Core module - Service component</name>
 	<properties>
 		<bundle.name>${project.artifactId}</bundle.name>
