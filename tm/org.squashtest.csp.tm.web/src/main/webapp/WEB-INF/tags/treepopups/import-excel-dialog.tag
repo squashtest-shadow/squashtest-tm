@@ -44,13 +44,26 @@
 <s:url var="importUrl" value="/${workspace}-browser/import/upload"/>
 
 
-<pop:popup id="import-excel-dialog" titleKey="dialog.import-excel.title" closeOnSuccess="false">
-	<jsp:attribute name="buttons">
-		<f:message var="label" key="dialog.import.confirm.label" />	
-		"${ label }": function() {
-			importExcelFeedbackPopup.initSubmission();
+<pop:popup id="import-excel-dialog" titleKey="dialog.import-excel.title" isContextual="false"  closeOnSuccess="false">
+	<jsp:attribute name="buttonsArray">	
+		<f:message var="confirmLabel" key="dialog.import.confirm.label" />	
+		<f:message var="cancelLabel" key="dialog.button.cancel.label"/>
+		{
+			text : "${confirmLabel}",
+			class : FeedbackMultipartPopup.CONFIRM_CLASS,
+			click : function(){importExcelFeedbackPopup.initSubmission();}
 		},
-		<pop:cancel-button />
+		{
+			text : "Ok", <!--  todo : make it i18n -->
+			class : FeedbackMultipartPopup.OK_CLASS,
+			click : function(){alert("todo");}
+		
+		},
+		{
+			text : "${cancelLabel}",
+			class : FeedbackMultipartPopup.CANCEL_CLASS,
+			click : function(){alert("todo");}			
+		}
 	</jsp:attribute>
 	
 	<jsp:attribute name="additionalSetup">

@@ -819,7 +819,7 @@ div#user-account-password-panel > div > * {
 }
 
 .not-displayed {
-	display: none;
+	display: none ! important;
 }
 
 .centered {

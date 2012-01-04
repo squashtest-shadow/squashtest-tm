@@ -27,7 +27,8 @@
 <%@ attribute name="titleKey" %>
 <%@ attribute name="isContextual" required="false" description="if set, this popup will be added a class to show it belongs to the contextual panel"%>
 <%@ attribute name="body" fragment="true" required="true" description="body of this dialog" %>
-<%@ attribute name="buttons" fragment="true" required="true" description="buttons definitions of this dialog" %>
+<%@ attribute name="buttons" fragment="true" required="false" description="buttons definitions of this dialog, defined as object" %>
+<%@ attribute name="buttonsArray" fragment="true" required="false" description="buttons definitions of this dialog, defined as array. See jQuery documentation to understand the difference." %>
 <%@ attribute name="closeOnSuccess" description="Closes the popup on ajax request success. Default is true." %>
 
 <%@ attribute name="additionalSetup" required="false" fragment="true" 
@@ -63,9 +64,21 @@ $(function() {
 			styleUrl : "${ckeConfigUrl}",
 			lang : "${ckeLang}"
 		},
+		
+		<%--  
+			button settings using fragments. Buttons can also be defined as additionalSetup.
+		 --%>
+		<c:if test="${not empty buttons}">
 		buttons: {
 			<jsp:invoke fragment="buttons" />
 		}
+		</c:if>
+		<c:if test="${not empty buttonsArray}">
+		buttons : [
+			<jsp:invoke fragment="buttonsArray" />           
+		]
+		</c:if>
+		
 		<c:if test="${not empty additionalSetup}">
 		,
 		<jsp:invoke fragment="additionalSetup"/>
