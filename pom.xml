@@ -4,7 +4,7 @@
 
 	<groupId>org.squashtest.csp</groupId>
 	<artifactId>squashtest-csp</artifactId>
-	<version>1.0.2.RELEASE</version>
+	<version>1.0.3.RELEASE-SNAPSHOT</version>
 	<packaging>pom</packaging>
 
 	<name>squashtest-csp</name>
