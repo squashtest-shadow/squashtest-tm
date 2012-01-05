@@ -84,6 +84,9 @@
 	<jsp:attribute name="body">
 		<div id="import-excel-dialog-parametrization">
 			<div>
+				<span><f:message key="dialog.import.filetype.message"/></span>
+			</div>
+			<div style="margin-top:1em;margin-bottom:1em;">
 				<form id="import-excel-form" action="${importUrl}" method="POST" enctype="multipart/form-data">
 					<input type="hidden" name="projectId"/>
 					<input type="file" name="archive" size="40" />
