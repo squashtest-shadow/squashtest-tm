@@ -149,6 +149,14 @@
 			<scope>compile</scope>
 		</dependency>
 		<!-- ===== /Convenient tools ====== -->
+		
+		<!-- ============= apache poi ================ -->
+		<dependency>
+			<groupId>org.apache.poi</groupId>
+			<artifactId>org.squashtest.org.apache.poi</artifactId>
+			<version>3.7</version>
+		</dependency>
+		<!-- ============= /apache poi ================ -->
 	</dependencies>
 
 	<build>
@@ -162,7 +170,7 @@
 		<testResources>
 			<testResource>
 				<directory>${project.basedir}/src/test/resources</directory>
-				<filtering>true</filtering>
+				<filtering>false</filtering>
 			</testResource>
 		</testResources>
 

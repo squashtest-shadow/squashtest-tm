@@ -655,13 +655,12 @@
 		<!-- ===== HTML parsing stuffs ==== -->
 		
 		<!-- ====== apache poi ============ -->
-		<!-- uncomment the day we actually use it 
 		<dependency>
 			<groupId>org.apache.poi</groupId>
 			<artifactId>org.squashtest.org.apache.poi</artifactId>
 			<version>3.7</version>			
 		</dependency>
-		 -->
+		 
 		<!-- ====== /apache poi ============ -->
 
 		<!-- ====== BUGTRACKER STUFF ======= -->
