@@ -22,29 +22,27 @@
 
 -->
 <dataset>
-	<requirement_library_node rln_id="1" created_on="2010-02-01" created_by="dbu" />
-	<requirement_folder rln_id="1" name="a folder" />
+  <resource created_by="dbu" created_on="2012-01-02" res_id="1" name="a folder"/>
+  <simple_resource res_id="1"/>
+  <requirement_library_node created_by="dbu" rln_id="1" created_on="2010-02-01"/>
+  <requirement_folder rln_id="1" res_id="1"/>
 
+  <attachment_list attachment_list_id="10"/>
+  <resource res_id="10" name="req 1" created_on="2012-01-02" created_by="dbu"/>
+  <requirement_version attachment_list_id="10" res_id="10" reference="a reference"/>
+  <requirement_library_node created_by="dbu" rln_id="10" created_on="2010-02-01"/>
+  <requirement rln_id="10" latest_version_id="10"/>
+  <rln_relationship descendant_id="10" ancestor_id="1"/>
 
-	<attachment_list attachment_list_id="10" />
-	<requirement_version req_version_id="10" requirement_id="10" name="req 1" created_on="2010-02-01" created_by="dbu" attachment_list_id="10" reference="a reference" />
-	<requirement_library_node rln_id="10" created_on="2010-02-01" created_by="dbu" />
-	<requirement rln_id="10" latest_version_id="10" />
-	<rln_relationship ancestor_id="1" descendant_id="10" />
-
-	<!--  cleanup -->
-	
-	<test_case_library_node/>
-	<test_case/>
-	<test_case_folder/>
-	<tcln_relationship/>
-	<test_case_library_content/>
-	<test_step/>
-	<action_test_step/>
-	<call_test_step/>
-	<test_case_steps/>
-	
-	<attachment_content/>
-	<attachment/>
-	
+  <test_case_library_node/>
+  <test_case/>
+  <test_case_folder/>
+  <tcln_relationship/>
+  <test_case_library_content/>
+  <test_step/>
+  <action_test_step/>
+  <call_test_step/>
+  <test_case_steps/>
+  <attachment_content/>
+  <attachment/>
 </dataset>

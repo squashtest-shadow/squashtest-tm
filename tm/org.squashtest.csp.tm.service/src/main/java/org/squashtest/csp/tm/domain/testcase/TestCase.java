@@ -76,7 +76,7 @@ public class TestCase extends TestCaseLibraryNode implements AttachmentHolder {
 	 * Collection of {@link RequirementVersion}s which are verified by this {@link TestCase}
 	 */
 	@ManyToMany
-	@JoinTable(name = "TEST_CASE_VERIFIED_REQUIREMENT", joinColumns = @JoinColumn(name = "TEST_CASE_ID"), inverseJoinColumns = @JoinColumn(name = "REQ_VERSION_ID"))
+	@JoinTable(name = "TEST_CASE_VERIFIED_REQUIREMENT_VERSION", joinColumns = @JoinColumn(name = "VERIFYING_TEST_CASE_ID"), inverseJoinColumns = @JoinColumn(name = "VERIFIED_REQ_VERSION_ID"))
 	private final Set<RequirementVersion> verifiedRequirements = new HashSet<RequirementVersion>();
 
 	@OneToOne(cascade = { CascadeType.PERSIST, CascadeType.MERGE })

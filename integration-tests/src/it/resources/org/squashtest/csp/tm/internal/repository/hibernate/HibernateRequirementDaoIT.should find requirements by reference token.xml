@@ -1,34 +1,14 @@
-<?xml version='1.0' encoding='UTF-8'?>
-<!--
-
-        This file is part of the Squashtest platform.
-        Copyright (C) 2010 - 2011 Squashtest TM, Squashtest.org
-
-        See the NOTICE file distributed with this work for additional
-        information regarding copyright ownership.
-
-        This is free software: you can redistribute it and/or modify
-        it under the terms of the GNU Lesser General Public License as published by
-        the Free Software Foundation, either version 3 of the License, or
-        (at your option) any later version.
-
-        this software is distributed in the hope that it will be useful,
-        but WITHOUT ANY WARRANTY; without even the implied warranty of
-        MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
-        GNU Lesser General Public License for more details.
-
-        You should have received a copy of the GNU Lesser General Public License
-        along with this software.  If not, see <http://www.gnu.org/licenses/>.
-
--->
+<?xml version="1.0" encoding="UTF-8"?>
 <dataset>
-	<ATTACHMENT_LIST ATTACHMENT_LIST_id="10" />
-	<requirement_version req_version_id="10" name="req 10" reference="before token after" created_on="2010-02-01" created_by="dbu" ATTACHMENT_LIST_ID="10" /> 
-	<requirement_library_node rln_id="10" created_on="2010-02-01" created_by="dbu" />
-	<requirement rln_id="10" latest_version_id="10" />
-
-	<ATTACHMENT_LIST ATTACHMENT_LIST_id="20" />
-	<requirement_version req_version_id="20" name="req 20" reference="ref 20" created_on="2010-02-01" created_by="dbu" ATTACHMENT_LIST_ID="20" /> 
-	<requirement_library_node rln_id="20" created_on="2010-02-01" created_by="dbu" />
-	<requirement rln_id="20" latest_version_id="20" />
+  <ATTACHMENT_LIST ATTACHMENT_LIST_id="10"/>
+  <resource res_id="10" name="req 10" created_on="2012-01-02" created_by="dbu"/>
+  <requirement_version res_id="10" reference="before token after" ATTACHMENT_LIST_ID="10"/>
+  <requirement_library_node created_by="dbu" rln_id="10" created_on="2010-02-01"/>
+  <requirement rln_id="10" latest_version_id="10"/>
+  
+  <ATTACHMENT_LIST ATTACHMENT_LIST_id="20"/>
+  <resource res_id="20" name="req 20" created_on="2012-01-02" created_by="dbu"/>
+  <requirement_version res_id="20" reference="ref 20" ATTACHMENT_LIST_ID="20"/>
+  <requirement_library_node created_by="dbu" rln_id="20" created_on="2010-02-01"/>
+  <requirement rln_id="20" latest_version_id="20"/>
 </dataset>

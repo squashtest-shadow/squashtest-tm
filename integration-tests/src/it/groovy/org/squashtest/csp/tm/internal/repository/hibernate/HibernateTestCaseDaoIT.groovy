@@ -344,7 +344,7 @@ class HibernateTestCaseDaoIT extends DbunitDaoSpecification {
 
 		then:
 		res.size() == 2
-		res.collect { it.id } == [103, 102]
+		res.containsSameIdentifiers([103L, 102L])
 	}
 
 	@DataSet("HibernateTestCaseDaoIT.should find test cases by requirement criticalities.xml")
@@ -361,7 +361,7 @@ class HibernateTestCaseDaoIT extends DbunitDaoSpecification {
 
 		then:
 		res.size() == 3
-		res.collect { it.id } == [302, 103, 102]
+		res.containsSameIdentifiers([302L, 103L, 102L])
 	}
 
 

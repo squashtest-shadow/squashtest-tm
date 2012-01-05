@@ -191,31 +191,6 @@ class CampaignLibraryNavigationServiceIT extends DbunitServiceSpecification {
 		])
 	}
 
-
-
-	def "should rename a folder"(){
-		given :
-		def folder2 = new CampaignFolder(name:"Bob")
-		navService.addFolderToLibrary(libId, folder2)
-		when :
-		navService.renameFolder(folder2.id, "Mike")
-		def refolder = navService.findFolder(folder2.id)
-		then :
-		refolder.name == "Mike"
-	}
-
-
-	def "should not rename a folder"(){
-		given :
-		def folder2 = new CampaignFolder(name:"Bob")
-		navService.addFolderToLibrary(libId, folder2)
-		when :
-		navService.renameFolder(folder2.id, "folder") //same as the one in the setup() clause
-		then :
-		thrown(DuplicateNameException)
-
-	}
-
 	def "should add campaign to campaign folder and fetch it back"(){
 		given :
 		def campaign = new Campaign(name:"new campaign", description:"test campaign")

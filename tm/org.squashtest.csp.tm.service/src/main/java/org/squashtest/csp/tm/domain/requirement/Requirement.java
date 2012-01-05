@@ -51,7 +51,7 @@ public class Requirement extends RequirementLibraryNode<RequirementVersion> impl
 	@JoinColumn(name = "LATEST_VERSION_ID")
 	private RequirementVersion resource;
 
-	private Requirement() {
+	protected Requirement() {
 		super();
 	}
 

@@ -27,6 +27,7 @@ import org.springframework.transaction.annotation.Transactional
 import org.squashtest.csp.core.infrastructure.collection.Paging;
 import org.squashtest.csp.tm.domain.event.*
 import org.squashtest.csp.tm.domain.requirement.Requirement
+import org.squashtest.csp.tm.domain.requirement.RequirementVersion;
 import org.squashtest.csp.tm.internal.repository.RequirementAuditEventDao
 import org.unitils.dbunit.annotation.DataSet
 
@@ -50,7 +51,7 @@ class HibernateRequirementAuditEventDaoIT extends DbunitDaoSpecification {
 	@DataSet("HibernateRequirementAuditEventDaoIT.should persist various events.xml")
 	def "should persist a RequirementCreation event"(){
 		given :
-		def requirement = getSession().load(Requirement.class, 1l);
+		RequirementVersion requirement = getSession().load(RequirementVersion.class, 1l);
 
 		when :
 		def createEvent = new RequirementCreation(requirement, requirement.createdBy);
@@ -58,19 +59,19 @@ class HibernateRequirementAuditEventDaoIT extends DbunitDaoSpecification {
 
 		getSession().evict(createEvent);
 
-		def revent = getSession().createQuery("from RequirementCreation rc where rc.requirement=:req")
+		def revent = getSession().createQuery("from RequirementCreation rc where rc.requirementVersion=:req")
 				.setParameter("req", requirement)
 				.uniqueResult();
 
 		then :
 		revent.id != null
-		revent.requirement == requirement
+		revent.requirementVersion == requirement
 	}
 
 	@DataSet("HibernateRequirementAuditEventDaoIT.should persist various events.xml")
 	def "should persist a RequirementPropertyChange event"(){
 		given :
-		def requirement = getSession().load(Requirement.class, 1l);
+		RequirementVersion requirement = getSession().load(RequirementVersion.class, 1l);
 
 		when :
 		RequirementPropertyChange pptChangeEvent = RequirementPropertyChange.builder()
@@ -84,13 +85,13 @@ class HibernateRequirementAuditEventDaoIT extends DbunitDaoSpecification {
 
 		getSession().evict(pptChangeEvent);
 
-		def revent = getSession().createQuery("from RequirementPropertyChange rpc where rpc.requirement=:req")
+		def revent = getSession().createQuery("from RequirementPropertyChange rpc where rpc.requirementVersion=:req")
 				.setParameter("req", requirement)
 				.uniqueResult();
 
 		then :
 		revent.id != null
-		revent.requirement == requirement
+		revent.requirementVersion == requirement
 		revent.propertyName == "property"
 		revent.oldValue == "oldValue"
 		revent.newValue == "newValue"
@@ -99,7 +100,7 @@ class HibernateRequirementAuditEventDaoIT extends DbunitDaoSpecification {
 	@DataSet("HibernateRequirementAuditEventDaoIT.should persist various events.xml")
 	def "should persist a RequirementLargeProperty event"(){
 		given :
-		def requirement = getSession().load(Requirement.class, 1l);
+		RequirementVersion requirement = getSession().load(RequirementVersion.class, 1l);
 
 		when :
 		def pptChangeEvent = RequirementLargePropertyChange.builder()
@@ -113,13 +114,13 @@ class HibernateRequirementAuditEventDaoIT extends DbunitDaoSpecification {
 
 		getSession().evict(pptChangeEvent);
 
-		def revent = getSession().createQuery("from RequirementLargePropertyChange rpc where rpc.requirement=:req")
+		def revent = getSession().createQuery("from RequirementLargePropertyChange rpc where rpc.requirementVersion=:req")
 				.setParameter("req", requirement)
 				.uniqueResult();
 
 		then :
 		revent.id != null
-		revent.requirement == requirement
+		revent.requirementVersion == requirement
 		revent.propertyName == "property"
 		revent.oldValue == "oldValue"
 		revent.newValue == "newValue"
@@ -197,53 +198,6 @@ class HibernateRequirementAuditEventDaoIT extends DbunitDaoSpecification {
 		then :
 		res == 4
 	}
-
-		//	@DataSet("HibernateRequirementAuditEventDaoIT.should fetch lists of events.xml")
-	//	def "should fetch a list of event for a list of requirements, sorted by date and requirement"(){
-	//
-	//		given :
-	//			List ids = new ArrayList()
-	//			ids << 1L
-	//			ids << 2L
-	//
-	//		when :
-	//			def events = eventDao.findAllByRequirementIds(ids)
-	//
-	//			def eventsR1 = events.findAll { it.requirement.id==1L }
-	//			def eventsR2 = events.findAll { it.requirement.id==2L }
-	//
-	//		then :
-	//			//9 events...
-	//			events.size() == 9
-	//
-	//			//...dispatched as follow
-	//			eventsR1.size() == 4
-	//			eventsR2.size() == 5
-	//
-	//
-	//			//the events are contiguous
-	//			events[0..3]*.requirement.id == [].init(4, 1l) && events[4..8].requirement.id == [].init(5, 2l)
-	//
-	//			//content check
-	//			eventsR1*.date == [ parse("2010-02-01"),parse("2010-04-02"), parse("2010-06-03"), parse("2010-08-04") ]
-	//			eventsR1*.author == ["creator 1", "editor 11", "editor 12", "editor 13"]
-	//			eventsR1*.class == [RequirementCreation.class,
-	//				RequirementPropertyChange.class,
-	//				RequirementPropertyChange.class,
-	//				RequirementLargePropertyChange.class]
-	//
-	//
-	//			eventsR2*.author == ["creator 2", "editor 21", "editor 22", "editor 23", "editor 24"]
-	//			eventsR2*.date == [ parse("2010-01-01"),parse("2010-03-02"), parse("2010-05-03"), parse("2010-07-04"), parse("2010-09-05") ]
-	//			eventsR2*.class == [RequirementCreation.class,
-	//				RequirementLargePropertyChange.class,
-	//				RequirementPropertyChange.class,
-	//				RequirementLargePropertyChange.class,
-	//				RequirementPropertyChange.class,]
-	//
-	//
-	//	}
-
 
 	//the method parse looks deprecated for java.util.Date, but the actual Date class is provided by the Groovy JDK
 	private Date parse(String arg){

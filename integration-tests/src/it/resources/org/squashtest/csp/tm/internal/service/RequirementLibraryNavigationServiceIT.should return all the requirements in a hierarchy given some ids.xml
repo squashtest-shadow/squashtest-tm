@@ -22,47 +22,55 @@
 
 -->
 <dataset>
-	<requirement_library rl_id="20" />
-	<project project_id="50" name="projet1" active="true" created_on="2010-02-01" created_by="dbu" rl_id="20"/>
-	<requirement_library_node rln_id="1" created_on="2010-02-01" created_by="dbu" />
-	<requirement_folder rln_id="1" name="folder" />
+  <requirement_library rl_id="20"/>
+  <project created_by="dbu" rl_id="20" created_on="2010-02-01" project_id="50" name="projet1" active="true"/>
+  
+  <resource created_by="dbu" created_on="2012-01-02" res_id="1" name="folder"/>
+  <simple_resource res_id="1"/>
+  <requirement_library_node created_by="dbu" rln_id="1" created_on="2010-02-01"/>
+  <requirement_folder rln_id="1" res_id="1"/>
 
+  <attachment_list attachment_list_id="10"/>
+  <attachment_list attachment_list_id="15"/>
+  <attachment_list attachment_list_id="11"/>
+  
+  <resource res_id="10" name="1req" created_on="2012-01-02" created_by="dbu"/>
+  <requirement_version attachment_list_id="10" res_id="10"/>
+  <requirement_library_node created_by="dbu" rln_id="10" created_on="2010-02-01" project_id="50"/>
+  <requirement rln_id="10" latest_version_id="10"/>
 
-	<attachment_list attachment_list_id="10" />
-	<attachment_list attachment_list_id="15" />
-	<attachment_list attachment_list_id="11" />
-	<requirement_version req_version_id="10" name="1req" created_on="2010-02-01" created_by="dbu" attachment_list_id="10" />
-	<requirement_library_node rln_id="10" created_on="2010-02-01" created_by="dbu" project_id="50" />
-	<requirement_library_node rln_id="100" created_on="2010-02-01" created_by="dbu" project_id="50" />
-	<requirement_version req_version_id="200" name="req2" created_on="2010-02-01" created_by="dbu" project_id="50" attachment_list_id="15" />
-	<requirement_library_node rln_id="200" created_on="2010-02-01" created_by="dbu" project_id="50" />
-	<requirement_version req_version_id="250" name="req3" created_on="2010-02-01" created_by="dbu" project_id="50"  attachment_list_id="11" />
-	<requirement_library_node rln_id="250" created_on="2010-02-01" created_by="dbu" project_id="50" />
-		
-	<requirement_folder rln_id="100" name="subfolder" />
-	<requirement rln_id="10" latest_version_id="10" />
-	<requirement rln_id="200" latest_version_id="200" />
-	<requirement rln_id="250" latest_version_id="250" />
-	
-	<rln_relationship ancestor_id="1" descendant_id="10" />
-	<rln_relationship ancestor_id="1" descendant_id="100" />
-	<rln_relationship ancestor_id="100" descendant_id="200" />
-	<requirement_library_content library_id="20" content_id="250" />
-	<requirement_library_content library_id="20" content_id="1" />
-	
-	
-	
-	<test_case_library_node/>
-	<test_case/>
-	<test_case_folder/>
-	<tcln_relationship/>
-	<test_case_library_content/>
-	<test_step/>
-	<action_test_step/>
-	<call_test_step/>
-	<test_case_steps/>
-	<attachment_content/>
-	<attachment/>
-	
-	
+  <requirement_library_node created_by="dbu" rln_id="100" created_on="2010-02-01" project_id="50"/>
+  
+  <resource res_id="200" name="req2" created_on="2012-01-02" created_by="dbu"/>
+  <requirement_version attachment_list_id="15" res_id="200"/>
+  <requirement_library_node created_by="dbu" rln_id="200" created_on="2010-02-01" project_id="50"/>
+  
+  <resource created_by="dbu" created_on="2012-01-02" res_id="100" name="subfolder"/>
+  <simple_resource res_id="100"/>
+  <requirement_folder rln_id="100" res_id="100"/>
+  <requirement rln_id="200" latest_version_id="200"/>
+
+  <resource res_id="250" name="req3" created_on="2012-01-02" created_by="dbu"/>
+  <requirement_version attachment_list_id="11" res_id="250"/>
+  <requirement_library_node created_by="dbu" rln_id="250" created_on="2010-02-01" project_id="50"/>
+  <requirement rln_id="250" latest_version_id="250"/>
+
+  <rln_relationship descendant_id="10" ancestor_id="1"/>
+  <rln_relationship descendant_id="100" ancestor_id="1"/>
+  <rln_relationship descendant_id="200" ancestor_id="100"/>
+
+  <requirement_library_content content_id="250" library_id="20"/>
+  <requirement_library_content content_id="1" library_id="20"/>
+  
+  <test_case_library_node/>
+  <test_case/>
+  <test_case_folder/>
+  <tcln_relationship/>
+  <test_case_library_content/>
+  <test_step/>
+  <action_test_step/>
+  <call_test_step/>
+  <test_case_steps/>
+  <attachment_content/>
+  <attachment/>
 </dataset>

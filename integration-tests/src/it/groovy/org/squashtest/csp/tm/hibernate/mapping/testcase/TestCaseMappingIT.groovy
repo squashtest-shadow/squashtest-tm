@@ -194,7 +194,7 @@ class TestCaseMappingIT extends HibernateMappingSpecification {
 		deleteFixture tc, s1, s2
 	}
 
-	def "should add a Requirement verified by a TestCase"() {
+	def "should add a Requirement Version verified by a TestCase"() {
 		given:
 		TestCase tc = new TestCase(name: "link")
 		persistFixture tc
@@ -205,7 +205,7 @@ class TestCaseMappingIT extends HibernateMappingSpecification {
 
 		when:
 		doInTransaction({
-			it.get(TestCase, tc.id).addVerifiedRequirement(r)
+			it.get(TestCase, tc.id).addVerifiedRequirement(r.latestVersion)
 		})
 		TestCase res = doInTransaction ({
 			it.createQuery("from TestCase tc left join fetch tc.verifiedRequirements where tc.id = " + tc.id).uniqueResult()
@@ -219,7 +219,7 @@ class TestCaseMappingIT extends HibernateMappingSpecification {
 			def tcc = it.get(TestCase, tc.id)
 			def rr = it.get(Requirement, r.id)
 
-			tcc.removeVerifiedRequirement rr
+			tcc.removeVerifiedRequirement rr.latestVersion
 			it.delete tcc
 
 			it.delete rr
@@ -282,7 +282,7 @@ class TestCaseMappingIT extends HibernateMappingSpecification {
 		deleteFixture e1, e2, itp, tc
 	}
 
-	def "should persist a test case verifying an existing requirement"() {
+	def "should persist a test case verifying an existing requirement version"() {
 		given:
 		Requirement req = new Requirement(new RequirementVersion(name: "req"))
 		persistFixture req
@@ -297,7 +297,7 @@ class TestCaseMappingIT extends HibernateMappingSpecification {
 			sessionFactory.doInSession {
 				Requirement r = it.get(Requirement, req.id)
 				r.description = "bar"
-				r.addVerifyingTestCase(tc)
+				r.latestVersion.addVerifyingTestCase(tc)
 				//				tc.addVerifiedRequirement r
 				it.persist tc
 			}
@@ -319,7 +319,7 @@ class TestCaseMappingIT extends HibernateMappingSpecification {
 		cleanup:
 		use (HibernateOperationCategory) {
 			sessionFactory.doInSession {
-				it.createSQLQuery("delete from test_case_requirement_link where requirement_id = :param").setParameter("param", req.id).executeUpdate();
+				it.createSQLQuery("delete from test_case_verified_requirement_version where verified_req_version_id = :param").setParameter("param", req.id).executeUpdate();
 			}
 		}
 		

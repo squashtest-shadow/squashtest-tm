@@ -24,62 +24,52 @@
 
 
 <dataset>
-	<attachment_list attachment_list_id="22" /> <!--  for requirement 2 -->
-	
-	<attachment_list attachment_list_id="21" /> <!--  for requirement 1 -->
-	<attachment_list attachment_list_id="11"  /> <!--  for test case 1 -->
-	<attachment_list attachment_list_id="12"  /> <!--  for test case 2 -->
-		
-	<test_case_library_node tcln_id="1" name="folder1" created_by="IT" created_on="2011-08-08" />
-	<test_case_library_node tcln_id="11" name="test case 1" created_by="IT" created_on="2011-08-08" /> 
-	<test_case_library_node tcln_id="12" name="test case 2" created_by="IT" created_on="2011-08-08" />  
-	
-	<test_case_library_node tcln_id="13" name="folder 2" created_by="IT" created_on="2011-08-08" />  
-
-	<!-- ============================ test case folder ================================================= -->
-
-	<test_case_folder tcln_id="1" />
-	<test_case_folder tcln_id="13" />	
-	
-	<!-- ============================ test case ======================================================== -->
-	
-	<test_case tcln_id="11" version="1" attachment_list_id="11"/>
-	<test_case tcln_id="12" version="1" attachment_list_id="12"/>
-	
-	
-	<test_step/>
-	<action_test_step/>
-	<call_test_step/>
-	<test_case_steps/> <!-- test case 2 step 1  -->
-	
-	<!-- ============================ tcln_relationship ================================================ -->
-	
-	<tcln_relationship ancestor_id="1" descendant_id="11" /> <!--  tcfolder 1 contains tc1 -->
-	<tcln_relationship ancestor_id="1" descendant_id="12" /> <!--  tcfolder 1 contains t2 -->
-	
-	<test_case_library_content/>
-	
-	<requirement_library_node rln_id="2" created_by="IT" created_on="2011-08-08" /> 
-	<requirement_library_node rln_id="21" created_by="IT" created_on="2011-08-08" /> 
-	<requirement_library_node rln_id="22" created_by="IT" created_on="2011-08-08" />
-	
-	<!--  ============================ requirement folder =============================================== -->
-	
-	<requirement_folder rln_id="2" name="requirement folder" />
-	
-	<!--  ============================ requirement  ===================================================== -->
-	
-	<requirement_version req_version_id="21" requirement_id="21" attachment_list_id="21" name="requirement 1" created_by="IT" created_on="2011-08-08" />
-	<requirement rln_id="21" latest_version_id="21" />
-	<requirement_version req_version_id="22" requirement_id="22" attachment_list_id="22" name="requirement 2" created_by="IT" created_on="2011-08-08" />
-	<requirement rln_id="22" latest_version_id="22" />
-	
-	<!--  ============================ rln relationship ================================================= -->
-	
-	<rln_relationship ancestor_id="2" descendant_id="21" />
-	<rln_relationship ancestor_id="2" descendant_id="22" />
-	
-	<test_case_verified_requirement_version verifying_test_case_id="11" verified_req_version_id="21" />
-	<test_case_verified_requirement_version verifying_test_case_id="12" verified_req_version_id="21" />	
-	
+  <attachment_list attachment_list_id="22"/>
+  <attachment_list attachment_list_id="21"/>
+  <attachment_list attachment_list_id="11"/>
+  <attachment_list attachment_list_id="12"/>
+  
+  <test_case_library_node created_by="IT" tcln_id="1" created_on="2011-08-08" name="folder1"/>
+  <test_case_library_node created_by="IT" tcln_id="11" created_on="2011-08-08" name="test case 1"/>
+  <test_case_library_node created_by="IT" tcln_id="12" created_on="2011-08-08" name="test case 2"/>
+  <test_case_library_node created_by="IT" tcln_id="13" created_on="2011-08-08" name="folder 2"/>
+  
+  <test_case_folder tcln_id="1"/>
+  <test_case_folder tcln_id="13"/>
+  
+  <test_case tcln_id="11" attachment_list_id="11" version="1"/>
+  <test_case tcln_id="12" attachment_list_id="12" version="1"/>
+  
+  <test_step/>
+  <action_test_step/>
+  <call_test_step/>
+  <test_case_steps/>
+  
+  <tcln_relationship descendant_id="11" ancestor_id="1"/>
+  <tcln_relationship descendant_id="12" ancestor_id="1"/>
+  
+  <test_case_library_content/>
+  
+  <requirement_library_node created_by="IT" rln_id="2" created_on="2011-08-08"/>
+  <requirement_library_node created_by="IT" rln_id="21" created_on="2011-08-08"/>
+  <requirement_library_node created_by="IT" rln_id="22" created_on="2011-08-08"/>
+  
+  <resource created_by="dbu" created_on="2012-01-02" res_id="2" name="requirement folder"/>
+  <simple_resource res_id="2"/>
+  <requirement_folder rln_id="2" res_id="2"/>
+  
+  <resource res_id="21" name="requirement 1" created_on="2012-01-02" created_by="dbu"/>
+  <requirement_version attachment_list_id="21" res_id="21" />
+  <requirement rln_id="21" latest_version_id="21"/>
+  
+  <resource res_id="22" name="requirement 2" created_on="2012-01-02" created_by="dbu"/>
+  <requirement_version attachment_list_id="22" res_id="22" />
+  <requirement rln_id="22" latest_version_id="22"/>
+  
+  <rln_relationship descendant_id="21" ancestor_id="2"/>
+  <rln_relationship descendant_id="22" ancestor_id="2"/>
+  
+  <test_case_verified_requirement_version verifying_test_case_id="11" verified_req_version_id="21"/>
+  <test_case_verified_requirement_version verifying_test_case_id="12" verified_req_version_id="21"/>
+  
 </dataset>

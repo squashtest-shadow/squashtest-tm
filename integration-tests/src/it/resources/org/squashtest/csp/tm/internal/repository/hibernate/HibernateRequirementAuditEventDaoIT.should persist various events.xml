@@ -23,6 +23,6 @@
 -->
 <dataset>
 	<attachment_list attachment_list_id="1" />
-	<requirement_library_node rln_id="1" name="requirement" created_on="2010-02-01" created_by="dbu" />
-	<requirement rln_id="1" attachment_list_id="1"/>
+	<resource res_id="1" name="requirement" created_on="2010-02-01" created_by="dbu"/>
+	<requirement_version res_id="1" attachment_list_id="1"/>
 </dataset>

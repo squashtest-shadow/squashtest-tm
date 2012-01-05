@@ -34,6 +34,7 @@ import org.hibernate.Criteria;
 import org.hibernate.Hibernate;
 import org.hibernate.Query;
 import org.hibernate.Session;
+import org.hibernate.criterion.DetachedCriteria;
 import org.hibernate.criterion.MatchMode;
 import org.hibernate.criterion.Order;
 import org.hibernate.criterion.Restrictions;
@@ -52,9 +53,9 @@ import org.squashtest.csp.tm.internal.repository.TestCaseDao;
 
 /**
  * DAO for org.squashtest.csp.tm.domain.testcase.TestCase
- *
+ * 
  * @author bsiri
- *
+ * 
  */
 
 @Repository
@@ -63,13 +64,6 @@ public class HibernateTestCaseDao extends HibernateEntityDao<TestCase> implement
 	 * "Standard" name for a query parameter representing a test case id.
 	 */
 	private static final String TEST_CASE_ID_PARAM_NAME = "testCaseId";
-
-	/***
-	 * Names for parameters for the search of test case by requirement
-	 */
-	private static final String BY_REQ_REFERENCE_PARAM_NAME = "rReference";
-	private static final String BY_REQ_NAME_PARAM_NAME = "rName";
-	private static final String BY_REQ_CRITICALITY_PARAM_NAME = "rCriticality";
 
 	private static class SetIdParameter implements SetQueryParametersCallback {
 		private final long testCaseId;
@@ -280,10 +274,11 @@ public class HibernateTestCaseDao extends HibernateEntityDao<TestCase> implement
 	public List<Long> findAllTestCasesIdsCalledByTestCase(long testCaseId) {
 		return executeListNamedQuery("testCase.findAllTestCasesIdsCalledByTestCase", new SetIdParameter(testCaseId));
 	}
-	
+
 	@Override
 	public List<Long> findDistinctTestCasesIdsCalledByTestCase(Long testCaseId) {
-		return executeListNamedQuery("testCase.findDistinctTestCasesIdsCalledByTestCase", new SetIdParameter(testCaseId));
+		return executeListNamedQuery("testCase.findDistinctTestCasesIdsCalledByTestCase",
+				new SetIdParameter(testCaseId));
 	}
 
 	@SuppressWarnings("unchecked")
@@ -293,7 +288,6 @@ public class HibernateTestCaseDao extends HibernateEntityDao<TestCase> implement
 		query.setParameterList("testCasesIds", testCasesIds);
 		return query.list();
 	}
-
 
 	@Override
 	@SuppressWarnings("unchecked")
@@ -331,7 +325,6 @@ public class HibernateTestCaseDao extends HibernateEntityDao<TestCase> implement
 			return Collections.emptyList();
 		}
 
-
 		// the easy part : fetch the informations for those who are called
 		SetQueryParametersCallback firstQueryCallback = new SetQueryParametersCallback() {
 			@Override
@@ -341,13 +334,15 @@ public class HibernateTestCaseDao extends HibernateEntityDao<TestCase> implement
 			}
 		};
 
-		List<Object[]> calledDetails =  executeListNamedQuery("testCase.findTestCasesHavingCallerDetails", firstQueryCallback);
+		List<Object[]> calledDetails = executeListNamedQuery("testCase.findTestCasesHavingCallerDetails",
+				firstQueryCallback);
 
-		//now we must fetch the same informations for those who aren't, so we can emulate the right outer join we need
-		//first, get the ids that aren't part of the result. If we already got them all, no need for additional queries.
+		// now we must fetch the same informations for those who aren't, so we can emulate the right outer join we need
+		// first, get the ids that aren't part of the result. If we already got them all, no need for additional
+		// queries.
 		List<Long> calledIds = getCalledDetailsIds(calledDetails);
 
-		if (calledIds.size()==testCaseIds.size()){
+		if (calledIds.size() == testCaseIds.size()) {
 			return calledDetails;
 		}
 
@@ -362,12 +357,12 @@ public class HibernateTestCaseDao extends HibernateEntityDao<TestCase> implement
 			}
 		};
 
-		List<Object[]> nonCalledDetails = executeListNamedQuery("testCase.findTestCasesHavingNoCallerDetails", secondQueryCallback);
+		List<Object[]> nonCalledDetails = executeListNamedQuery("testCase.findTestCasesHavingNoCallerDetails",
+				secondQueryCallback);
 
-		//now we can return
+		// now we can return
 		calledDetails.addAll(nonCalledDetails);
 		return calledDetails;
-
 
 	}
 
@@ -377,8 +372,8 @@ public class HibernateTestCaseDao extends HibernateEntityDao<TestCase> implement
 		for (Object[] called : calledDetails) {
 			Object item = called[2];
 
-			if (! calledIds.contains(item)){
-				calledIds.add((Long)item);
+			if (!calledIds.contains(item)) {
+				calledIds.add((Long) item);
 			}
 		}
 		return calledIds;
@@ -388,77 +383,31 @@ public class HibernateTestCaseDao extends HibernateEntityDao<TestCase> implement
 	@Override
 	public List<TestCase> findAllByRequirement(RequirementSearchCriteria criteria, boolean isProjectOrdered) {
 
-		Query query = currentSession().createQuery(generateByRequirementQuery(criteria, isProjectOrdered));
-		// set parameters
-		if (criteria.getName() != null) {
-			query.setParameter(BY_REQ_NAME_PARAM_NAME, "%" + criteria.getName() + "%");
-		}
-		if (criteria.getReference() != null) {
-			query.setParameter(BY_REQ_REFERENCE_PARAM_NAME, "%" + criteria.getReference() + "%");
+		DetachedCriteria crit = createFindAllByRequirementCriteria(criteria);
+
+		if (isProjectOrdered) {
+			crit.addOrder(Order.asc("project"));
 		}
 
-		if (!criteria.getCriticalities().isEmpty()) {
-			int number = 1;
-			for (RequirementCriticality c : criteria.getCriticalities()) {
-				query.setParameter(BY_REQ_CRITICALITY_PARAM_NAME + number, c);
-				number++;
-			}
-		}
-
-		return query.list();
+		return crit.getExecutableCriteria(currentSession()).list();
 	}
 
-	/***
-	 * Method which generate the hql query with the specified parameters
-	 *
-	 * @param criteria
-	 *            the query criteria
-	 * @param isProjectOrdered
-	 *            if true, results are ordered by project
-	 * @return the query (String)
-	 */
-	private String generateByRequirementQuery(RequirementSearchCriteria criteria, boolean isProjectOrdered) {
-		// Compose the request
-		StringBuilder requirementHql = new StringBuilder(
-				"select distinct tc from Requirement r join r.verifyingTestCases tc fetch all properties where r.id in (select req.id from Requirement req where ");
+	private DetachedCriteria createFindAllByRequirementCriteria(RequirementSearchCriteria criteria) {
+		DetachedCriteria crit = DetachedCriteria.forClass(TestCase.class);
+		crit.setResultTransformer(Criteria.DISTINCT_ROOT_ENTITY);
+		DetachedCriteria reqCrit = crit.createCriteria("verifiedRequirements");
 
-		boolean isPreviousParam = false;
 		if (criteria.getName() != null) {
-			requirementHql.append(" req.name like :");
-			requirementHql.append(BY_REQ_NAME_PARAM_NAME);
-			isPreviousParam = true;
+			reqCrit.add(Restrictions.ilike("name", criteria.getName(), MatchMode.ANYWHERE));
 		}
+
 		if (criteria.getReference() != null) {
-			if (isPreviousParam) {
-				requirementHql.append(" and");
-			} else {
-				isPreviousParam = true;
-			}
-			requirementHql.append(" req.reference like :");
-			requirementHql.append(BY_REQ_REFERENCE_PARAM_NAME);
+			reqCrit.add(Restrictions.ilike("reference", criteria.getReference(), MatchMode.ANYWHERE));
 		}
 		if (!criteria.getCriticalities().isEmpty()) {
-			if (isPreviousParam) {
-				requirementHql.append(" and");
-			}
-			requirementHql.append(" req.criticality in (");
-			int total = criteria.getCriticalities().size();
-			for (int number = 1; number <= total; number++) {
-				requirementHql.append(":" + BY_REQ_CRITICALITY_PARAM_NAME + number);
-				if (number < total) {
-					requirementHql.append(", ");
-				}
-			}
-			requirementHql.append(")");
+			reqCrit.add(Restrictions.in("criticality", criteria.getCriticalities()));
 		}
-		// end of the request
-		requirementHql.append(")");
-
-		// order by
-		if (isProjectOrdered) {
-			requirementHql.append(" order by tc.project");
-		}
-		return requirementHql.toString();
+		return crit;
 	}
 
 	@SuppressWarnings("unchecked")
@@ -468,8 +417,5 @@ public class HibernateTestCaseDao extends HibernateEntityDao<TestCase> implement
 		query.setParameterList("testStepsIds", testStepsIds);
 		return query.list();
 	}
-
-
-
 
 }

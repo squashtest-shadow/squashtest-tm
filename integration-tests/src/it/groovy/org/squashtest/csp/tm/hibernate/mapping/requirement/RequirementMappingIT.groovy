@@ -87,7 +87,7 @@ class RequirementMappingIT extends HibernateMappingSpecification {
 		thrown (JDBCException)
 	}
 	
-	def "sould add a test case to the requirements verified test Cases"() {
+	def "should add a test case to the requirements verified test Cases"() {
 		given:
 		def version = new RequirementVersion(name: "req")
 		Requirement req = new Requirement(version)
@@ -100,16 +100,18 @@ class RequirementMappingIT extends HibernateMappingSpecification {
 		doInTransaction {
 			Requirement req2 = it.get(Requirement, req.id)
 			TestCase tc2 = it.get(TestCase, tc.id)
-			req2.addVerifyingTestCase tc2
+			req2.latestVersion.addVerifyingTestCase tc2
 		}
+		
 		Requirement rq = doInTransaction {
 			Requirement rqs = it.get(Requirement, req.id)
-			Hibernate.initialize(rqs.verifyingTestCase)
+			// initializes the collection. Hibernate.initialize cannot be used because getVerifyingTestCases() dont return the actual persistent collection.
+			rqs.latestVersion.verifyingTestCases.size()
 			return rqs
 		}
 		
 		then :
-		rq.getVerifyingTestCase().size() == 1
+		rq.latestVersion.verifyingTestCases.size() == 1
 	}
 	
 }

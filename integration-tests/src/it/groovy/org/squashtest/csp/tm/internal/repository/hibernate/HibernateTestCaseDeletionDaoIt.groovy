@@ -40,6 +40,7 @@ import org.squashtest.csp.tm.domain.testcase.TestCase;
 import org.squashtest.csp.tm.domain.testcase.TestCaseFolder 
 import org.squashtest.csp.tm.domain.testcase.TestCaseLibrary 
 import org.squashtest.csp.tm.internal.repository.TestCaseDeletionDao 
+import org.squashtest.csp.tools.unittest.assertions.CollectionAssertions;
 import org.unitils.dbunit.annotation.DataSet 
 import org.unitils.dbunit.datasetloadstrategy.impl.CleanInsertLoadStrategy 
 
@@ -55,6 +56,10 @@ class HibernateTestCaseDeletionDaoIT extends DbunitDaoSpecification{
 
 	@Inject
 	private TestCaseDeletionDao deletionDao;
+	
+	def setup() {
+		CollectionAssertions.declareContainsExactlyIds()
+	}
 
 
 
@@ -103,8 +108,7 @@ class HibernateTestCaseDeletionDaoIT extends DbunitDaoSpecification{
 			!found("test_case", "tcln_id", 11l)
 			
 
-			folder.content.size() == 1
-			folder.content.collect {it.id } == [12l]
+			folder.content.containsExactlyIds([12l])
 			
 			
 		
@@ -123,8 +127,7 @@ class HibernateTestCaseDeletionDaoIT extends DbunitDaoSpecification{
 			def library = findEntity(TestCaseLibrary.class, 1l)
 		
 		then : 
-			library.rootContent.size() == 1
-			library.rootContent.collect {it.id } == [11l]
+			library.rootContent.containsExactlyIds([11l])
 			
 	}
 	
@@ -135,7 +138,7 @@ class HibernateTestCaseDeletionDaoIT extends DbunitDaoSpecification{
 		when :
 			def tc = findEntity(TestCase.class, 11l)
 		then:
-			tc.steps.collect{it.id} == [111l, 112l]
+			tc.steps.containsExactlyIds([111l, 112l])
 		
 	
 	}
@@ -187,13 +190,8 @@ class HibernateTestCaseDeletionDaoIT extends DbunitDaoSpecification{
 		
 		then :
 		
-			found ("test_case", "tcln_id", 12l)
-			
-			requirement.verifyingTestCases.size() == 1
-			requirement.verifyingTestCases.collect {it.id} == [12l]
-			
-
-		
+			found ("test_case", "tcln_id", 12l)			
+			requirement.latestVersion.verifyingTestCases.containsExactlyIds([12L])
 	}
 	
 
@@ -248,8 +246,8 @@ class HibernateTestCaseDeletionDaoIT extends DbunitDaoSpecification{
 			it1.testPlans.size() == 2
 			it2.testPlans.size() == 3
 			
-			it1.testPlans.collect { it.id } == [14l, 11l]  
-			it2.testPlans.collect { it.id } == [21l, 22l, 24l]
+			it1.testPlans.containsExactlyIds([14l, 11l])  
+			it2.testPlans.containsExactlyIds([21l, 22l, 24l])
 			
 			def randomItp = findEntity(IterationTestPlanItem.class, 11l)
 			randomItp.referencedTestCase.id == 1l
@@ -310,9 +308,9 @@ class HibernateTestCaseDeletionDaoIT extends DbunitDaoSpecification{
 			c2.testPlan.size() ==2
 			c3.testPlan.size() ==2
 			
-			c1.testPlan.collect{it.id} == [11l, 14l]
-			c2.testPlan.collect{it.id} == [24l, 21l]
-			c3.testPlan.collect{it.id} == [31l, 34l]
+			c1.testPlan.containsExactlyIds([11l, 14l])
+			c2.testPlan.containsExactlyIds([24l, 21l])
+			c3.testPlan.containsExactlyIds([31l, 34l])
 			
 		
 		

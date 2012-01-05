@@ -22,33 +22,30 @@
 
 -->
 <dataset>
-	<ATTACHMENT_LIST ATTACHMENT_LIST_id="101" />
-	<requirement_version req_version_id="101" attachment_list_id="101" name="requirement foo 101" created_on="2010-02-01" created_by="dbu" reference="before token after"  /> 
-	<requirement_library_node rln_id="101" created_on="2010-02-01" created_by="dbu" />
-	<requirement rln_id="101" latest_version_id="101" />
-	
-	<ATTACHMENT_LIST ATTACHMENT_LIST_id="102" />
-	<test_case_library_node tcln_id="102" name="tc 102" created_on="2011-01-01" created_by="dbu" />
-	<test_case tcln_id="102" version="1" attachment_list_id="102" />
-	
-	<ATTACHMENT_LIST ATTACHMENT_LIST_id="103" />
-	<test_case_library_node tcln_id="103" name="tc 103" created_on="2011-01-01" created_by="dbu" />
-	<test_case tcln_id="103" version="1" attachment_list_id="103" />
-	
-	<test_case_verified_requirement_version verifying_test_case_id="102" verified_req_version_id="101" />
-	<test_case_verified_requirement_version verifying_test_case_id="103" verified_req_version_id="101" />
-	
-	
-	<ATTACHMENT_LIST ATTACHMENT_LIST_id="201" />
-	<requirement_version req_version_id="201" attachment_list_id="201" name="requirement 201" created_on="2010-02-01" created_by="dbu" reference="before token after"  /> 
-	<requirement_library_node rln_id="201" created_on="2010-02-01" created_by="dbu" />
-	<requirement rln_id="201" latest_version_id="201" />
-	
-	<ATTACHMENT_LIST ATTACHMENT_LIST_id="202" />
-	<test_case_library_node tcln_id="202" name="tc 202" created_on="2011-01-01" created_by="dbu" />
-	<test_case tcln_id="202" version="1" attachment_list_id="202" />
-	
-	
-	<test_case_verified_requirement_version verifying_test_case_id="202" verified_req_version_id="201" />
-	
+  <ATTACHMENT_LIST ATTACHMENT_LIST_id="101"/>
+  <resource res_id="101" name="requirement foo 101" created_on="2012-01-02" created_by="dbu"/>
+  <requirement_version attachment_list_id="101" res_id="101" reference="before token after"/>
+  <requirement_library_node created_by="dbu" rln_id="101" created_on="2010-02-01"/>
+  <requirement rln_id="101" latest_version_id="101"/>
+  
+  <ATTACHMENT_LIST ATTACHMENT_LIST_id="102"/>
+  <test_case_library_node created_by="dbu" tcln_id="102" created_on="2011-01-01" name="tc 102"/>
+  <test_case tcln_id="102" attachment_list_id="102" version="1"/>
+  
+  <ATTACHMENT_LIST ATTACHMENT_LIST_id="103"/>
+  <test_case_library_node created_by="dbu" tcln_id="103" created_on="2011-01-01" name="tc 103"/>
+  <test_case tcln_id="103" attachment_list_id="103" version="1"/>
+  <test_case_verified_requirement_version verifying_test_case_id="102" verified_req_version_id="101"/>
+  <test_case_verified_requirement_version verifying_test_case_id="103" verified_req_version_id="101"/>
+  
+  <ATTACHMENT_LIST ATTACHMENT_LIST_id="201"/>
+  <resource res_id="201" name="requirement 201" created_on="2012-01-02" created_by="dbu"/>
+  <requirement_version attachment_list_id="201" res_id="201" reference="before token after"/>
+  <requirement_library_node created_by="dbu" rln_id="201" created_on="2010-02-01"/>
+  <requirement rln_id="201" latest_version_id="201"/>
+  
+  <ATTACHMENT_LIST ATTACHMENT_LIST_id="202"/>
+  <test_case_library_node created_by="dbu" tcln_id="202" created_on="2011-01-01" name="tc 202"/>
+  <test_case tcln_id="202" attachment_list_id="202" version="1"/>
+  <test_case_verified_requirement_version verifying_test_case_id="202" verified_req_version_id="201"/>
 </dataset>

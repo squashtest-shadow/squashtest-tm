@@ -40,7 +40,6 @@ import javax.inject.Inject;
 
 @UnitilsSupport
 @Transactional
-@RunWith(Sputnik)
 class RequirementModificationServiceIT extends DbunitServiceSpecification {
 
 	@Inject

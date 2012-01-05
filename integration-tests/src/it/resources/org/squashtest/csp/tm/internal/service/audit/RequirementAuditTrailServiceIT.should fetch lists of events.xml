@@ -22,54 +22,41 @@
 
 -->
 <dataset>
-	<!--  definition of the requirements -->
+  <attachment_list attachment_list_id="1"/>
+  <resource res_id="1" name="requirement 1" created_on="2012-01-02" created_by="dbu"/>
+  <requirement_version attachment_list_id="1" res_id="1"/>
+  <requirement_library_node created_by="creator 1" rln_id="1" created_on="2010-02-01"/>
+  <requirement rln_id="1" latest_version_id="1"/>
+  
+  <resource res_id="2" name="requirement 1" created_on="2012-01-02" created_by="dbu"/>
+  <requirement_version attachment_list_id="1" res_id="2"/>
+  <requirement_library_node created_by="creator 2" rln_id="2" created_on="2010-01-01"/>
+  <requirement rln_id="2"/>
 
-	<attachment_list attachment_list_id="1" />
-	
-	<requirement_version req_version_id="1" name="requirement 1" created_on="2010-02-01" created_by="creator 1" attachment_list_id="1" />
-	<requirement_library_node rln_id="1" created_on="2010-02-01" created_by="creator 1" />
-	<requirement rln_id="1" attachment_list_id="1"/>
-	
-	<requirement_version req_version_id="2" name="requirement 1" created_on="2010-01-01" created_by="creator 2" attachment_list_id="1" />
-	<requirement_library_node rln_id="2" created_on="2010-01-01" created_by="creator 2" />
-	<requirement rln_id="2" />
-	
-	
-	
-	
-	<!--  now history for requirement 1-->
-	<!--  the events are declared here by, but are not ordered by date. The app should sort them by date.-->
-	
-	<requirement_audit_event event_id="11" req_version_id="1" event_date="2010-02-01" author="creator 1"/>
-	<requirement_creation event_id="11"/>
-	
-	<requirement_audit_event event_id="12" req_version_id="1" event_date="2010-06-03" author="editor 12"/>
-	<requirement_property_change event_id="12" new_value="NX-1" property_name="reference"/>
-	
-	<requirement_audit_event event_id="13" req_version_id="1" event_date="2010-08-04" author="editor 13"/>
-	<requirement_large_property_change event_id="13" new_value="description for requirement 1" property_name="description"/>	
-	
-	<requirement_audit_event event_id="14" req_version_id="1" event_date="2010-04-02" author="editor 11"/>
-	<requirement_property_change event_id="14" old_value="UNDEFINED" new_value="MAJOR" property_name="citicality"/>
-	
-	
-	<!--  now history for requirement 2 -->
-	<!--  that requirement was created before requirement 1, and updates where intertwined with it. When
-	asked to load all events for multiple requirements, it should group them by requirement and sort them by date.-->
-	
-	<requirement_audit_event event_id="21" req_version_id="2" event_date="2010-01-01" author="creator 2"/>
-	<requirement_creation event_id="21"/>
-	
-	<requirement_audit_event event_id="22" req_version_id="2" event_date="2010-05-03" author="editor 22"/>
-	<requirement_property_change event_id="22" new_value="NX-1" property_name="reference"/>
-	
-	<requirement_audit_event event_id="23" req_version_id="2" event_date="2010-09-05" author="editor 24"/>
-	<requirement_property_change event_id="23" old_value="UNDEFINED" new_value="MAJOR" property_name="citicality"/>
-	
-	<requirement_audit_event event_id="24" req_version_id="2" event_date="2010-07-04" author="editor 23"/>
-	<requirement_large_property_change event_id="24" new_value="description for requirement 1" property_name="description"/>		
-	
-	<requirement_audit_event event_id="25" req_version_id="2" event_date="2010-03-02" author="editor 21"/>
-	<requirement_large_property_change event_id="25" new_value="description for requirement 1" property_name="description"/>			
-	
+  <requirement_audit_event author="creator 1" event_date="2010-02-01" event_id="11" req_version_id="1"/>
+  <requirement_creation event_id="11"/>
+  
+  <requirement_audit_event author="editor 12" event_date="2010-06-03" event_id="12" req_version_id="1"/>
+  <requirement_property_change new_value="NX-1" property_name="reference" event_id="12"/>
+  
+  <requirement_audit_event author="editor 13" event_date="2010-08-04" event_id="13" req_version_id="1"/>
+  <requirement_large_property_change new_value="description for requirement 1" property_name="description" event_id="13"/>
+ 
+  <requirement_audit_event author="editor 11" event_date="2010-04-02" event_id="14" req_version_id="1"/>
+  <requirement_property_change new_value="MAJOR" property_name="citicality" old_value="UNDEFINED" event_id="14"/>
+
+  <requirement_audit_event author="creator 2" event_date="2010-01-01" event_id="21" req_version_id="2"/>
+  <requirement_creation event_id="21"/>
+ 
+  <requirement_audit_event author="editor 22" event_date="2010-05-03" event_id="22" req_version_id="2"/>
+  <requirement_property_change new_value="NX-1" property_name="reference" event_id="22"/>
+
+  <requirement_audit_event author="editor 24" event_date="2010-09-05" event_id="23" req_version_id="2"/>
+  <requirement_property_change new_value="MAJOR" property_name="citicality" old_value="UNDEFINED" event_id="23"/>
+
+  <requirement_audit_event author="editor 23" event_date="2010-07-04" event_id="24" req_version_id="2"/>
+  <requirement_large_property_change new_value="description for requirement 1" property_name="description" event_id="24"/>
+
+  <requirement_audit_event author="editor 21" event_date="2010-03-02" event_id="25" req_version_id="2"/>
+  <requirement_large_property_change new_value="description for requirement 1" property_name="description" event_id="25"/>
 </dataset>
