@@ -24,6 +24,7 @@ import java.util.List;
 
 import org.squashtest.csp.tm.domain.library.Library;
 import org.squashtest.csp.tm.domain.library.LibraryNode;
+import org.squashtest.csp.tm.domain.library.NodeReference;
 
 /**
  * Defines a DAO for {@link Library} entities.
@@ -36,6 +37,7 @@ import org.squashtest.csp.tm.domain.library.LibraryNode;
  *            Type of the {@link LibraryNode} entities contained by the library.
  */
 public interface LibraryDao<LIBRARY extends Library<? extends NODE>, NODE extends LibraryNode> {
+	
 	List<LIBRARY> findAll();
 
 	List<NODE> findAllRootContentById(long libraryId);
@@ -49,5 +51,13 @@ public interface LibraryDao<LIBRARY extends Library<? extends NODE>, NODE extend
 	 * @return
 	 */
 	LIBRARY findByRootContent(NODE node);
+	
 
+	
+	List<NodeReference> findRootContentReferences(Long libraryId);
+	
+	List<NodeReference> findFolderContentReferences(Long folderId);
+
+	
+	
 }

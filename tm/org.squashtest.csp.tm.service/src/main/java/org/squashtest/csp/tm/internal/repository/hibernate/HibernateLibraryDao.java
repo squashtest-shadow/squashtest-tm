@@ -20,12 +20,14 @@
  */
 package org.squashtest.csp.tm.internal.repository.hibernate;
 
+import java.util.ArrayList;
 import java.util.List;
 
 import org.apache.commons.lang.WordUtils;
 import org.hibernate.Query;
 import org.squashtest.csp.tm.domain.library.Library;
 import org.squashtest.csp.tm.domain.library.LibraryNode;
+import org.squashtest.csp.tm.domain.library.NodeReference;
 import org.squashtest.csp.tm.internal.repository.LibraryDao;
 
 /**
@@ -51,7 +53,7 @@ HibernateDao<LIBRARY> implements LibraryDao<LIBRARY, NODE> {
 	}
 
 	/**
-	 * Finds the library root content. Template methode which invokes a named query named
+	 * Finds the library root content. Template method which invokes a named query named
 	 * "{libraryUnquilifiedClassName}.findAllRootContentById" with a parameter named "libraryId"
 	 */
 	@Override
@@ -76,6 +78,7 @@ HibernateDao<LIBRARY> implements LibraryDao<LIBRARY, NODE> {
 		return executeListNamedQuery(entityClassName + ".findAll");
 	}
 
+	
 	@Override
 	public LIBRARY findByRootContent(final NODE node) {
 		SetQueryParametersCallback callback = new SetQueryParametersCallback() {
@@ -90,5 +93,31 @@ HibernateDao<LIBRARY> implements LibraryDao<LIBRARY, NODE> {
 
 		return (LIBRARY) executeEntityNamedQuery(entityClassName + ".findByRootContent", callback);
 	}
+	
+	
+	
+	protected List<NodeReference> getReferencesFrom(final String queryName, final String paramName, final Long id){		
+		
+		SetQueryParametersCallback callback = new SetQueryParametersCallback() {
+			@Override
+			public void setQueryParameters(Query query) {
+				query.setParameter(paramName, id);
+			}
+		};		
+		
+		List<Object[]> data = executeListNamedQuery(queryName, callback);
+		
+		List<NodeReference> refs = new ArrayList<NodeReference>();
+		
+		for (Object[] d : data){
+			NodeReference ref = new NodeReference(d);
+			refs.add(ref);
+		}
+		
+		return refs;
+	}
+	
+
+
 
 }

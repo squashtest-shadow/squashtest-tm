@@ -21,15 +21,15 @@
 
 package org.squashtest.csp.tm.internal.repository.hibernate;
 
-import javax.inject.Inject;
+import static org.junit.Assert.*
 
-import org.springframework.transaction.annotation.Transactional;
-import org.squashtest.csp.tm.domain.testcase.TestCaseFolder;
-import org.squashtest.csp.tm.domain.testcase.TestCaseLibrary;
-import org.squashtest.csp.tm.domain.testcase.TestCase;
-import org.squashtest.csp.tm.internal.repository.TestCaseLibraryDao;
+import javax.inject.Inject
 
-import static org.junit.Assert.*;
+import org.springframework.transaction.annotation.Transactional
+import org.squashtest.csp.tm.domain.testcase.TestCase
+import org.squashtest.csp.tm.domain.testcase.TestCaseFolder
+import org.squashtest.csp.tm.domain.testcase.TestCaseLibrary
+import org.squashtest.csp.tm.internal.repository.TestCaseLibraryDao
 
 @Transactional
 class HibernateTestCaseLibraryDaoIT extends HibernateDaoSpecification {
@@ -72,5 +72,55 @@ class HibernateTestCaseLibraryDaoIT extends HibernateDaoSpecification {
 
 		cleanup:
 		deleteFixture lib
+	}
+	
+	
+	def "should find the NodeReferences of a library content"(){
+		
+		setup :
+		
+			TestCaseLibrary lib  = new TestCaseLibrary();
+	
+			TestCase tc = new TestCase(name:"tc")
+			lib.addRootContent tc
+	
+			TestCaseFolder f = new TestCaseFolder(name:"f")
+			lib.addRootContent f
+	
+			persistFixture lib
+			
+		when :
+			
+			def res = dao.findRootContentReferences(lib.id)
+			
+		then :
+			res*.name.containsAll(["tc", "f"])
+			
+	}
+	
+	def "should find the NodeReferences of a folder content"(){
+		
+		setup :
+			
+			TestCaseLibrary lib  = new TestCaseLibrary();
+		
+			TestCaseFolder f = new TestCaseFolder(name:"f")
+			lib.addRootContent f
+			
+			TestCaseFolder fa = new TestCaseFolder(name:"fa")
+			TestCase fb = new TestCase(name:"fb")
+			
+			f.addContent fa
+			f.addContent fb
+			
+			persistFixture lib
+		
+		when :
+			def res = dao.findFolderContentReferences([f.id])
+			
+					
+		then :	
+			res*.name.containsAll(["fa", "fb"])	
+	
 	}
 }

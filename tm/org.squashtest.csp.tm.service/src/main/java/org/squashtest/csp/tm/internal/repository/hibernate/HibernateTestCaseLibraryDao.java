@@ -20,7 +20,10 @@
  */
 package org.squashtest.csp.tm.internal.repository.hibernate;
 
+import java.util.List;
+
 import org.springframework.stereotype.Repository;
+import org.squashtest.csp.tm.domain.library.NodeReference;
 import org.squashtest.csp.tm.domain.testcase.TestCaseLibrary;
 import org.squashtest.csp.tm.domain.testcase.TestCaseLibraryNode;
 import org.squashtest.csp.tm.internal.repository.TestCaseLibraryDao;
@@ -31,7 +34,18 @@ public class HibernateTestCaseLibraryDao extends HibernateLibraryDao<TestCaseLib
 	public void persist(TestCaseLibrary testCaseLibrary) {
 		persistEntity(testCaseLibrary);
 	}
+
 	
+	@Override
+	public List<NodeReference> findRootContentReferences(final Long libraryId) {
+		return getReferencesFrom("testCaseLibrary.findRootContentReferences", "libraryId", libraryId);		
+	}
+
+	@Override
+	public List<NodeReference> findFolderContentReferences(final Long folderId) {
+		return getReferencesFrom("testCaseLibrary.findContentReferences", "folderId", folderId);	
+	}
+
 
 
 

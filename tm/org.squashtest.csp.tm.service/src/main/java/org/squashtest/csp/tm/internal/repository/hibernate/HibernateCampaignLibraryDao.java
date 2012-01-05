@@ -20,9 +20,12 @@
  */
 package org.squashtest.csp.tm.internal.repository.hibernate;
 
+import java.util.List;
+
 import org.springframework.stereotype.Repository;
 import org.squashtest.csp.tm.domain.campaign.CampaignLibrary;
 import org.squashtest.csp.tm.domain.campaign.CampaignLibraryNode;
+import org.squashtest.csp.tm.domain.library.NodeReference;
 import org.squashtest.csp.tm.internal.repository.CampaignLibraryDao;
 
 @Repository
@@ -32,6 +35,16 @@ public class HibernateCampaignLibraryDao extends HibernateLibraryDao<CampaignLib
 	@Override
 	public void persist(CampaignLibrary library) {
 		persistEntity(library);		
+	}
+
+	@Override
+	public List<NodeReference> findRootContentReferences(final Long libraryId) {
+		return getReferencesFrom("campaignLibrary.findRootContentReferences", "libraryId", libraryId);		
+	}
+
+	@Override
+	public List<NodeReference> findFolderContentReferences(final Long folderId) {
+		return getReferencesFrom("campaignLibrary.findContentReferences", "folderId", folderId);	
 	}
 
 
