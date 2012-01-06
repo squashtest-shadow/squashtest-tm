@@ -660,6 +660,13 @@
 			<artifactId>org.squashtest.org.apache.poi</artifactId>
 			<version>3.7</version>			
 		</dependency>
+		
+		<!--  ======= junit (for weirdos than need junit at runtime)======== -->
+		<dependency>
+		    <groupId>org.junit</groupId>
+		    <artifactId>com.springsource.org.junit</artifactId>
+		    <version>4.5.0</version>
+		</dependency>		
 		 
 		<!-- ====== /apache poi ============ -->
 
