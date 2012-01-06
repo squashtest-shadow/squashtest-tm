@@ -1,4 +1,5 @@
-package org.squashtest.csp.tm.internal.utils.zip
+
+package org.squashtest.csp.tm.internal.utils.archive.impl
 
 import org.apache.poi.hssf.record.formula.functions.T
 import org.apache.poi.ss.usermodel.Workbook
@@ -19,11 +20,12 @@ class ZipReaderTest extends Specification{
 		
 		when :
 			def names = []
-			
-			while(
-				reader.selectNextEntry()){;
-				names << [ reader.getName(), reader.getShortName(), reader.getParent(), reader.isFile() ]
+			def entry;
+			while(reader.hasNext()){
+				entry = reader.next();
+				names << [ entry.getName(), entry.getShortName(), entry.getParent(), entry.isFile() ]
 			}
+
 		
 		then :
 			names.containsAll([
@@ -47,9 +49,11 @@ class ZipReaderTest extends Specification{
 			
 		when :
 			def books = [];
-			while(reader.selectNextEntry()){
-				if (reader.isFile()){
-					Workbook workbook = WorkbookFactory.create(reader.getEntryAsStream());
+			def entry;
+			while(reader.hasNext()){
+				entry = reader.next();
+				if (entry.isFile()){
+					Workbook workbook = WorkbookFactory.create(entry.getStream());
 					books << workbook
 				}
 			}

@@ -1,4 +1,4 @@
-package org.squashtest.csp.tm.internal.utils.zip;
+package org.squashtest.csp.tm.internal.utils.archive.impl;
 
 /**
  * thrown when a zip archive cannot be read (or maybe the file is no zip archive)

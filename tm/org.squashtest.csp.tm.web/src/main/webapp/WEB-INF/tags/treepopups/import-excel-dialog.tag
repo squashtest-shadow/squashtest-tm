@@ -89,7 +89,7 @@
 			<div style="margin-top:1em;margin-bottom:1em;">
 				<form id="import-excel-form" action="${importUrl}" method="POST" enctype="multipart/form-data">
 					<input type="hidden" name="projectId"/>
-					<input type="file" name="archive" size="40" />
+					<input type="file" name="archive" size="40" accept="application/zip"/>
 				</form>
 			
 			</div>
