@@ -53,11 +53,6 @@ public interface LibraryDao<LIBRARY extends Library<? extends NODE>, NODE extend
 	LIBRARY findByRootContent(NODE node);
 	
 
-	
-	List<NodeReference> findRootContentReferences(Long libraryId);
-	
-	List<NodeReference> findFolderContentReferences(Long folderId);
 
-	
 	
 }

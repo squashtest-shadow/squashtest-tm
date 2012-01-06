@@ -28,22 +28,16 @@
 		@NamedQuery(name = "testCaseLibrary.findAllRootContentById", query = "select l.rootContent from TestCaseLibrary l where l.id = :libraryId"),
 		@NamedQuery(name = "testCaseLibrary.findAll", query = "from TestCaseLibrary fetch all properties"),
 		@NamedQuery(name = "testCaseLibrary.findByRootContent", query = "from TestCaseLibrary where :content in elements(rootContent)"),
-		@NamedQuery(name = "testCaseLibrary.findRootContentReferences", query = "select rc.id, rc.name from TestCaseLibrary as tcl join tcl.rootContent as rc where tcl.id = :libraryId"),
-		@NamedQuery(name = "testCaseLibrary.findContentReferences", query = "select c.id, c.name from TestCaseFolder as tcf join tcf.content as c where tcf.id = :folderId"),
 
 		// Queries on RequirementLibrary
 		@NamedQuery(name = "requirementLibrary.findAll", query = "from RequirementLibrary fetch all properties"),
 		@NamedQuery(name = "requirementLibrary.findAllRootContentById", query = "select l.rootContent from RequirementLibrary l where l.id = :libraryId"),
 		@NamedQuery(name = "requirementLibrary.findByRootContent", query = "from RequirementLibrary where :content in elements(rootContent)"),
-		@NamedQuery(name = "requirementLibrary.findRootContentReferences", query = "select rc.id, rc.name from RequirementLibrary as rl join rl.rootContent as rc where rl.id = :libraryId"),
-		@NamedQuery(name = "requirementLibrary.findContentReferences", query = "select c.id, c.name from RequirementFolder as rf join rf.content as c where rf.id = :folderId"),
 		
 		// Queries on CampaignLibrary
 		@NamedQuery(name = "campaignLibrary.findAll", query = "from CampaignLibrary fetch all properties"),
 		@NamedQuery(name = "campaignLibrary.findAllRootContentById", query = "select l.rootContent from CampaignLibrary l where l.id = :libraryId"),
 		@NamedQuery(name = "campaignLibrary.findByRootContent", query = "from CampaignLibrary where :content in elements(rootContent)"),
-		@NamedQuery(name = "campaignLibrary.findRootContentReferences", query = "select rc.id, rc.name from CampaignLibrary as cl join cl.rootContent as rc where cl.id = :libraryId"),
-		@NamedQuery(name = "campaignLibrary.findContentReferences", query = "select c.id, c.name from CampaignFolder as cf join cf.content as c where cf.id = :folderId"),
 
 		// Queries on TestCaseLibraryNode
 		@NamedQuery(name = "testCaseLibraryNode.findParentLibraryIfExists", query = "select lib from TestCaseLibrary as lib join lib.rootContent lcontent where lcontent.id= :libraryNodeId "),

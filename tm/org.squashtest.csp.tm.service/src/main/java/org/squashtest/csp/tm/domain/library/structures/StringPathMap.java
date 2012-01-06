@@ -8,24 +8,22 @@ import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
 
-import org.squashtest.csp.tm.domain.library.NodeReference;
-
-public class StringPathMap {
+public class StringPathMap<T> {
 	
-	private Map<String, NodeReference> map = new HashMap<String, NodeReference>();
+	private Map<String, T> map = new HashMap<String, T>();
 
 	
-	public void put(String path, NodeReference ref){
+	public void put(String path, T ref){
 		map.put(path, ref);
 	}
 	
-	public NodeReference findReference(String path){
+	public T getMappedElement(String path){
 		return map.get(path);
 	}
 	
-	public String getPath(NodeReference needle){
-		for (Entry<String, NodeReference> entry: map.entrySet()){
-			NodeReference ref = entry.getValue();
+	public String getPath(T needle){
+		for (Entry<String, T> entry: map.entrySet()){
+			T ref = entry.getValue();
 			if (ref.equals(needle)){
 				return entry.getKey();
 			}
@@ -63,7 +61,7 @@ public class StringPathMap {
 	 * "/", which means the root of course.
 	 * 
 	 */
-	public List<String> tokenizePath(String path){
+	public static List<String> tokenizePath(String path){
 		List<String> tokens = new LinkedList<String>();
 	
 		String[] toks = path.split("/");

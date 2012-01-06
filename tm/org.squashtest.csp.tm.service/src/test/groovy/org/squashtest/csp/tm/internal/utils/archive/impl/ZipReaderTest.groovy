@@ -28,13 +28,16 @@ class ZipReaderTest extends Specification{
 
 		
 		then :
-			names.containsAll([
-					["/test1.xlsx", "test1.xlsx", "/", true],
-					["/test2.xlsx", "test2.xlsx", "/", true],
-					["/folder", "folder", "/", false],
-					["/folder/test3.xlsx", "test3.xlsx", "/folder", true]
+			def res = names.collect{[ it[0], it[1],  it[3] ]}
+			res.containsAll([
+					["/test1.xlsx", "test1.xlsx", true],
+					["/test2.xlsx", "test2.xlsx", true],
+					["/folder", "folder",  false],
+					["/folder/test3.xlsx", "test3.xlsx",  true]
 				
 				])
+			
+			names.collect{it[2].getName()}.containsAll([ "/", "/", "/folder", "/"]) 
 	}
 
 	

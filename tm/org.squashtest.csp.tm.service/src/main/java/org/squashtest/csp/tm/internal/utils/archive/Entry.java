@@ -24,12 +24,16 @@ public interface Entry {
 	
 	public String getShortName();
 	
-	public String getParent();
+	public Entry getParent();
 	
 	public boolean isDirectory();
 	
 	public boolean isFile();
 	
+	/**
+	 * must return null if it's a directory, otherwise must return the stream
+	 * @return
+	 */
 	public InputStream getStream();
 
 }

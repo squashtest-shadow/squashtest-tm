@@ -36,16 +36,6 @@ public class HibernateTestCaseLibraryDao extends HibernateLibraryDao<TestCaseLib
 	}
 
 	
-	@Override
-	public List<NodeReference> findRootContentReferences(final Long libraryId) {
-		return getReferencesFrom("testCaseLibrary.findRootContentReferences", "libraryId", libraryId);		
-	}
-
-	@Override
-	public List<NodeReference> findFolderContentReferences(final Long folderId) {
-		return getReferencesFrom("testCaseLibrary.findContentReferences", "folderId", folderId);	
-	}
-
 
 
 

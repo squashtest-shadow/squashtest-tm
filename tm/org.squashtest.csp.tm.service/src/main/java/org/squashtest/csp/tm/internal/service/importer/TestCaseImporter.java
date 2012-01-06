@@ -1,5 +1,6 @@
 package org.squashtest.csp.tm.internal.service.importer;
 
+import java.io.File;
 import java.io.InputStream;
 import java.util.List;
 
@@ -8,7 +9,9 @@ import javax.inject.Inject;
 import org.springframework.stereotype.Component;
 import org.squashtest.csp.tm.domain.library.NodeReference;
 import org.squashtest.csp.tm.domain.library.structures.StringPathMap;
+import org.squashtest.csp.tm.domain.testcase.TestCaseFolder;
 import org.squashtest.csp.tm.domain.testcase.TestCaseLibrary;
+import org.squashtest.csp.tm.domain.testcase.TestCaseLibraryNode;
 import org.squashtest.csp.tm.internal.repository.TestCaseLibraryDao;
 import org.squashtest.csp.tm.internal.utils.archive.ArchiveReader;
 import org.squashtest.csp.tm.internal.utils.archive.ArchiveReaderFactory;
@@ -21,9 +24,6 @@ import org.squashtest.csp.tm.service.importer.ImportSummary;
 public class TestCaseImporter {
 
 	@Inject
-	private TestCaseLibraryDao dao;
-	
-	@Inject
 	private TestCaseLibraryNavigationService service;
 	
 	@Inject
@@ -31,72 +31,110 @@ public class TestCaseImporter {
 	
 	
 	public ImportSummary importExcelTestCases(InputStream archiveStream, Long libraryId){
-		
-		//init
-		StringPathMap pathMap = initPathMap(libraryId);
-		
+
 		ArchiveReader reader = factory.createReader(archiveStream);
 		
-		while(reader.hasNext()){
+		//convert the archive content to detached Squash entities
+		
+		HierarchyCreator creator = new HierarchyCreator();
+		creator.setArchiveReader(reader);
+		creator.create();
+		
+		TestCaseFolder root = creator.getResult();
+		ImportSummaryImpl summary = creator.getSummary();
+		
+		//second TODO merge with the actual database content
+		return null;
+	}
+	
+	
+	/* ************ private workers ************************* */
+	
+	
+	private static class HierarchyCreator{
+		
+		
+		private ArchiveReader reader;
+		private StringPathMap<TestCaseLibraryNode> pathMap = new StringPathMap<TestCaseLibraryNode>();
+		
+		
+		private ImportSummaryImpl summary = new ImportSummaryImpl();
+		private TestCaseFolder root;
+		
+		
+		public HierarchyCreator(){
+			root = new TestCaseFolder();
+			root.setName("/");
 			
-			Entry entry = reader.next();
+			pathMap.put("/", root);
+		}
+		
+		public HierarchyCreator(ArchiveReader reader){
+			super();
+			this.reader=reader;
+		}
+		
+		public void setArchiveReader(ArchiveReader reader){
+			this.reader = reader;
+		}
+		
+		public ImportSummaryImpl getSummary(){
+			return summary;
+		}
+		
+		public TestCaseFolder getResult(){
+			return root;
+		}
+		
+		public void create(){
 			
-			if (entry.isDirectory()){
+			while(reader.hasNext()){
+				
+				Entry entry = reader.next();
+
+				
+				if (entry.isDirectory()){
+					createFolder(entry);
+				}else{
+					createTestCase(entry);
+				}
 				
 			}
-			
-			
-		}
-
-		//now, uh... FIXME.
-		return null;
-		
-	}
-	
-	/**
-	 * 
-	 * <ol>
-	 * 	<li>That method will find the reference of a node given its path in the StringPathMap.</li>
-	 * 	<li>In particular of 1/ : if the node is unknown, this node and all its unknown parents will be loaded from the 
-	 *   database and added to the map.</li>
-	 * 	<li>In particular of 2/ : if this node or its unknown parents cannot be found in the database they will be 
-	 * 		created as TestCaseFolders.</li>
-	 * 
-	 * </ol> 
-	 * 
-	 * <p>Eventually returns a NodeReference corresponding to the given path.</p>
-	 * 
-	 * @return
-	 */
-	private NodeReference findOrCreateParent(StringPathMap map, String path){
-		return null;
-		
-	}
-	
-	/**
-	 * Will return a path map populated with the root content of the given test case library.
-	 * 
-	 * @param libraryId
-	 * @return
-	 */
-	private StringPathMap initPathMap(Long libraryId){
-		
-		StringPathMap map = new StringPathMap();
-		
-		TestCaseLibrary library = dao.findById(libraryId);
-		NodeReference libReference = new NodeReference(library.getId(), "/");
-		map.put("/", libReference);
-		
-		
-		List<NodeReference> rootContent = dao.findRootContentReferences(libraryId);
-		
-		
-		for (NodeReference ref : rootContent){
-			map.put("/"+ref.getName(), ref);
 		}
 		
-		return map;
+		/**
+		 * will chain-create folders if path elements do not exist.
+		 * 
+		 * @param path
+		 */
+		private void createFolder(Entry entry){
+			TestCaseLibraryNode isFound = pathMap.getMappedElement(entry.getName());
+			
+			if (isFound != null){
+				return;
+			}else{
+				Entry parentEntry = entry.getParent();
+				
+				//create the parent recursively if needed. Of course the root MUST be found at some point.
+				createFolder(parentEntry);
+				
+				TestCaseFolder parent = (TestCaseFolder) pathMap.getMappedElement(parentEntry.getName());
+				
+				TestCaseFolder newFolder = new TestCaseFolder();
+				newFolder.setName(entry.getName());
+				parent.addContent(newFolder);
+				
+				pathMap.put(entry.getName(), newFolder);
+			}
+		}
+		
+		
+		private void createTestCase(Entry entry){
+			
+		}
+		
+		
+		
 	}
-	
 	
 }

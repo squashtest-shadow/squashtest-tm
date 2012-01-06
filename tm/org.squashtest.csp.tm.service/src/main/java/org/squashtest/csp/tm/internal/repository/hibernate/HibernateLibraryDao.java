@@ -95,28 +95,7 @@ HibernateDao<LIBRARY> implements LibraryDao<LIBRARY, NODE> {
 	}
 	
 	
-	
-	protected List<NodeReference> getReferencesFrom(final String queryName, final String paramName, final Long id){		
-		
-		SetQueryParametersCallback callback = new SetQueryParametersCallback() {
-			@Override
-			public void setQueryParameters(Query query) {
-				query.setParameter(paramName, id);
-			}
-		};		
-		
-		List<Object[]> data = executeListNamedQuery(queryName, callback);
-		
-		List<NodeReference> refs = new ArrayList<NodeReference>();
-		
-		for (Object[] d : data){
-			NodeReference ref = new NodeReference(d);
-			refs.add(ref);
-		}
-		
-		return refs;
-	}
-	
+
 
 
 

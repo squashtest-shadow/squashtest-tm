@@ -37,15 +37,6 @@ public class HibernateCampaignLibraryDao extends HibernateLibraryDao<CampaignLib
 		persistEntity(library);		
 	}
 
-	@Override
-	public List<NodeReference> findRootContentReferences(final Long libraryId) {
-		return getReferencesFrom("campaignLibrary.findRootContentReferences", "libraryId", libraryId);		
-	}
-
-	@Override
-	public List<NodeReference> findFolderContentReferences(final Long folderId) {
-		return getReferencesFrom("campaignLibrary.findContentReferences", "folderId", folderId);	
-	}
 
 
 

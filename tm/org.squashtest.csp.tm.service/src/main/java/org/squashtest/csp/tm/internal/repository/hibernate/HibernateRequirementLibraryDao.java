@@ -39,13 +39,4 @@ implements RequirementLibraryDao {
 	}
 
 	
-	@Override
-	public List<NodeReference> findRootContentReferences(final Long libraryId) {
-		return getReferencesFrom("requirementLibrary.findRootContentReferences", "libraryId", libraryId);		
-	}
-
-	@Override
-	public List<NodeReference> findFolderContentReferences(final Long folderId) {
-		return getReferencesFrom("requirementLibrary.findContentReferences", "folderId", folderId);	
-	}
 }

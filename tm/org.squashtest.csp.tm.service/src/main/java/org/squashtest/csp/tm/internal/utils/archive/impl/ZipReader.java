@@ -44,17 +44,23 @@ public class ZipReader implements ArchiveReader {
 	private static class ZipReaderEntry implements Entry{
 		
 		private ZipInputStream zipStream;
-		private ZipEntry entry;
+		private String name;
+		private boolean isDirectory;
+		
+		private ZipReaderEntry(ZipInputStream stream, String name, boolean isDirectory){
+			this.zipStream = stream;
+			this.name = stripSuffix(name);
+			this.isDirectory=isDirectory;
+		}
 		
 		private ZipReaderEntry(ZipInputStream stream, ZipEntry entry){
-			this.zipStream=stream;
-			this.entry = entry;
+			this(stream, "/"+entry.getName(), entry.isDirectory());
 		}
 
 
 		@Override
 		public String getName(){
-			return "/"+strippedName();
+			return name;
 		}
 		
 		@Override
@@ -63,35 +69,50 @@ public class ZipReader implements ArchiveReader {
 		}
 		
 		@Override
-		public String getParent(){
-			return "/"+strippedName().replaceAll("/?[^/]*$", "");
+		public Entry getParent(){
+			return new ZipReaderEntry(null, getParentString(), true);
+		}
+		
+		
+		//the parent of the root is itself
+		private String getParentString(){
+			String res = getName().replaceAll("/[^/]*$", "");
+			if (res.equals("")){
+				res = "/";
+			}
+			return res;
 		}
 
 		@Override
 		public boolean isDirectory(){
-			return entry.isDirectory();
+			return isDirectory;
 		}
 		
 		@Override
 		public boolean isFile(){
-			return (! entry.isDirectory());
+			return (! isDirectory);
 		}
 		
 
 		@Override
 		public InputStream getStream() {
-			return new UnclosableStream(zipStream);
+			if (isFile()){
+				return new UnclosableStream(zipStream);
+			}else{
+				return null;
+			}
 		}
+
 		
-		
-		private String strippedName(){
-			return stripSuffix(entry.getName());
-		}
-		
-		private String stripSuffix(String original){
-			return (original.charAt(original.length()-1)=='/') ? 
+		private String stripSuffix(String original){			
+			String res = (original.charAt(original.length()-1)=='/') ? 
 					original.substring(0, original.length()-1) 
-					: original;  
+					: original;
+					
+			if (res.equals("")){
+				res = "/";
+			}
+			return res;
 		}
 		
 	}
