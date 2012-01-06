@@ -49,7 +49,7 @@ public class StringPathMap {
 		}else{
 			List<String> children = new LinkedList<String>();
 			for (String p : map.keySet()){
-				if (p.matches("^"+path+"/[^/]*$")){
+				if (p.matches("^"+path+"/?[^/]+$")){
 					children.add(p);
 				}
 			}
@@ -70,6 +70,7 @@ public class StringPathMap {
 		
 		tokens.add("/");
 		tokens.addAll(Arrays.asList(toks));
+		tokens.remove("");
 		return tokens;
 	}
 	
