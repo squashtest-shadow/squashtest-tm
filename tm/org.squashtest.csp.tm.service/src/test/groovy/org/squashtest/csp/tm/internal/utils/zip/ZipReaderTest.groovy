@@ -9,7 +9,7 @@ import spock.lang.Specification
 
 class ZipReaderTest extends Specification{
 	
-	def "should browser zip"(){
+	def "should browse zip and bring names"(){
 		
 		given :
 			InputStream stream = this.getClass().getClassLoader().getResourceAsStream("binaries/xls.zip");
@@ -22,19 +22,21 @@ class ZipReaderTest extends Specification{
 			
 			while(
 				reader.selectNextEntry()){;
-				names << [ reader.getName(), reader.isFile() ]
+				names << [ reader.getName(), reader.getShortName(), reader.getParent(), reader.isFile() ]
 			}
 		
 		then :
 			names.containsAll([
-					["test1.xlsx", true],
-					["test2.xlsx", true],
-					["folder", false],
-					["folder/test3.xlsx", true]
+					["/test1.xlsx", "test1.xlsx", "/", true],
+					["/test2.xlsx", "test2.xlsx", "/", true],
+					["/folder", "folder", "/", false],
+					["/folder/test3.xlsx", "test3.xlsx", "/folder", true]
 				
 				])
 	}
+
 	
+
 	
 	def "should create valid workbook"(){
 		given :

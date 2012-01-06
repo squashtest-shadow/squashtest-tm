@@ -151,11 +151,11 @@
 		<!-- ===== /Convenient tools ====== -->
 		
 		<!-- ============= apache poi ================ -->
-		<dependency>
+ 		<dependency>
 			<groupId>org.apache.poi</groupId>
 			<artifactId>org.squashtest.org.apache.poi</artifactId>
 			<version>3.7</version>
-		</dependency>
+		</dependency> 
 		<!-- ============= /apache poi ================ -->
 	</dependencies>
 

@@ -5,6 +5,9 @@ import java.io.InputStream;
 import java.util.zip.ZipEntry;
 import java.util.zip.ZipInputStream;
 
+/*
+ * TODO : make an interface for it.
+ */
 public class ZipReader {
 	
 	private ZipInputStream zipStream;
@@ -37,10 +40,8 @@ public class ZipReader {
 		return (! currentEntry.isDirectory());
 	}
 	
-	public String getName(){
-		//todo : ensure that the name is cropped from the suffix (folders are suffixed with /)
-		return stripSuffix(currentEntry.getName());
-	}
+	/* ****************** stream methods ****************** */
+	
 	
 	public void close(){
 		try{
@@ -55,11 +56,32 @@ public class ZipReader {
 		return new UnclosableStream(zipStream);
 	}
 
+	
+	/* ***************** naming methods ******************* */
+	
+	private String strippedName(){
+		return stripSuffix(currentEntry.getName());
+	}
+	
+	public String getName(){
+		return "/"+strippedName();
+	}
+	
+	public String getShortName(){
+		return getName().replaceAll(".*/", "");
+	}
+	
+	public String getParent(){
+		return "/"+strippedName().replaceAll("/?[^/]*$", "");
+	}
+
 	private String stripSuffix(String original){
 		return (original.charAt(original.length()-1)=='/') ? 
 				original.substring(0, original.length()-1) 
 				: original;  
 	}
+	
+	/* ****************** extra ***************************** */
 	
 	public static class UnclosableStream extends InputStream{
 
@@ -81,40 +103,5 @@ public class ZipReader {
 		
 	}
 	
-	/*
-	
-	public static void copyDirFromStream(InputStream inStream, File output) throws IOException{
-		ZipInputStream zipStream = new ZipInputStream(inStream);
-		ZipEntry entry;
-		
-		while((entry=zipStream.getNextEntry())!=null){
-			File next= new File(output, entry.getName());
-			
-			if (entry.isDirectory()){
-				if (!next.exists()){
-					next.mkdirs();
-				}
-			}else{
-				next.createNewFile();
-				
-				byte[] buffer = new byte[2048];
-				PrintStream outStream = new PrintStream(next);
-				int nb;
-				
-				while((nb=zipStream.read(buffer, 0, 2048))!=-1){
-					outStream.write(buffer, 0, nb);
-				}
-				
-				outStream.flush();
-				outStream.close();
-				
-			}
-		}
-		
-		zipStream.close();
-		
-	}
-	*/
-
 	
 }
