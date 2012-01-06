@@ -73,7 +73,7 @@
 			var selected = $("${treeSelector}").jstree("get_selected");
 			var projectNode = liNode(selected);
 			
-			var projectName = projectNode.attr('title');
+			var projectName = $("a:first", projectNode).text().replace(/^ */,''); //ie can't trim
 			var projectId = projectNode.attr('resId');
 			
 			$("#import-excel-dialog-parametrization .import-project-name-span").text(projectName);
