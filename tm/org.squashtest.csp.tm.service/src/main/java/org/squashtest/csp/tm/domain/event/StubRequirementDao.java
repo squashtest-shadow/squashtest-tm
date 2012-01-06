@@ -118,21 +118,4 @@ public class StubRequirementDao extends StubEntityDao<Requirement> implements Re
 		return null;
 	}
 
-	/**
-	 * @see org.squashtest.csp.tm.internal.repository.RequirementDao#findAllRequirementsVerifiedByTestCases(java.util.Collection, org.squashtest.csp.tm.infrastructure.filter.CollectionSorting)
-	 */
-	@Override
-	public List<Requirement> findAllRequirementsVerifiedByTestCases(Collection<Long> verifiersIds,
-			CollectionSorting sorting) {
-		return null;
-	}
-
-	/**
-	 * @see org.squashtest.csp.tm.internal.repository.RequirementDao#countRequirementsVerifiedByTestCases(java.util.Collection)
-	 */
-	@Override
-	public long countRequirementsVerifiedByTestCases(Collection<Long> verifiersIds) {
-		return 0;
-	}
-
 }

@@ -41,6 +41,8 @@ import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.servlet.ModelAndView;
+import org.squashtest.csp.core.infrastructure.collection.PagedCollectionHolder;
+import org.squashtest.csp.core.infrastructure.collection.PagingAndSorting;
 import org.squashtest.csp.tm.domain.Internationalizable;
 import org.squashtest.csp.tm.domain.project.Project;
 import org.squashtest.csp.tm.domain.requirement.Requirement;
@@ -58,6 +60,8 @@ import org.squashtest.csp.tm.service.TestCaseModificationService;
 import org.squashtest.csp.tm.service.VerifiedRequirement;
 import org.squashtest.csp.tm.web.internal.combo.OptionTag;
 import org.squashtest.csp.tm.web.internal.model.datatable.DataTableDrawParameters;
+import org.squashtest.csp.tm.web.internal.model.datatable.DataTableMapperCollectionSortingAdapter;
+import org.squashtest.csp.tm.web.internal.model.datatable.DataTableMapperPagingAndSortingAdapter;
 import org.squashtest.csp.tm.web.internal.model.datatable.DataTableModel;
 import org.squashtest.csp.tm.web.internal.model.datatable.DataTableModelHelper;
 import org.squashtest.csp.tm.web.internal.model.datatable.DataTablePagedFilter;
@@ -321,10 +325,10 @@ public class TestCaseModificationController {
 	public DataTableModel getAllVerifiedRequirementsTableModel(@PathVariable long testCaseId,
 			final DataTableDrawParameters params, final Locale locale) {
 
-		CollectionSorting filter = createCollectionFilter(params, verifiedReqMapper);
+		PagingAndSorting pas = createPagingAndSorting(params, verifiedReqMapper);
 
-		FilteredCollectionHolder<List<VerifiedRequirement>> holder = testCaseModificationService
-				.findAllVerifiedRequirementsByTestCaseId(testCaseId, filter);
+		PagedCollectionHolder<List<VerifiedRequirement>> holder = testCaseModificationService
+				.findAllVerifiedRequirementsByTestCaseId(testCaseId, pas);
 
 		return new DataTableModelHelper<VerifiedRequirement>() {
 			@Override
@@ -333,8 +337,12 @@ public class TestCaseModificationController {
 						item.getReference(), item.getName(), internationalize(item.getCriticality(), locale), "",
 						item.isDirectVerification() };
 			}
-		}.buildDataModel(holder, filter.getFirstItemIndex() + 1, params.getsEcho());
+		}.buildDataModel(holder, params.getsEcho());
 
+	}
+
+	private PagingAndSorting createPagingAndSorting(DataTableDrawParameters params, DataTableMapper mapper) {
+		return new DataTableMapperPagingAndSortingAdapter(params, mapper);
 	}
 
 	@RequestMapping(value = "/verified-requirements-table", params = "sEcho")
@@ -393,33 +401,7 @@ public class TestCaseModificationController {
 
 	private CollectionSorting createCollectionFilter(final DataTableDrawParameters params,
 			final DataTableMapper dtMapper) {
-		CollectionSorting filter = new CollectionSorting() {
-			@Override
-			public int getMaxNumberOfItems() {
-				return params.getiDisplayLength();
-			}
-
-			@Override
-			public int getFirstItemIndex() {
-				return params.getiDisplayStart();
-			}
-
-			@Override
-			public String getSortedAttribute() {
-				return dtMapper.pathAt(params.getiSortCol_0());
-			}
-
-			@Override
-			public String getSortingOrder() {
-				return params.getsSortDir_0();
-			}
-
-			@Override
-			public int getPageSize() {
-				return getMaxNumberOfItems();
-			}
-		};
-		return filter;
+		return new DataTableMapperCollectionSortingAdapter(params, dtMapper);
 	}
 
 	private CollectionFilter createCollectionFilter(final DataTableDrawParameters params) {

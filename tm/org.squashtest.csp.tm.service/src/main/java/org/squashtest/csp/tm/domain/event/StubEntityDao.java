@@ -40,10 +40,10 @@ class StubEntityDao<ENTITY> implements EntityDao<ENTITY> {
 	}
 
 	/**
-	 * @see org.squashtest.csp.tm.internal.repository.EntityDao#findAllById(java.util.List)
+	 * @see org.squashtest.csp.tm.internal.repository.EntityDao#findAllByIdList(java.util.List)
 	 */
 	@Override
-	public List<ENTITY> findAllById(List<Long> id) {
+	public List<ENTITY> findAllByIdList(List<Long> id) {
 		return null;
 	}
 

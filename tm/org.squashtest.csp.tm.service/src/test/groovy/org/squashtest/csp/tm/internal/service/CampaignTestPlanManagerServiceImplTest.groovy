@@ -101,7 +101,7 @@ class CampaignTestPlanManagerServiceImplTest extends Specification {
 
 		
 		and : "the dao"
-		nodeDao.findAllById([1L, 3L]) >> [tc1, tc3]
+		nodeDao.findAllByIdList([1L, 3L]) >> [tc1, tc3]
 
 		when: "the test cases are added to the campaign"
 		service.addTestCasesToCampaignTestPlan([1L, 3L], 10)
@@ -132,7 +132,7 @@ class CampaignTestPlanManagerServiceImplTest extends Specification {
 			folder1.addContent(folder2)
 			folder2.addContent(tc2)
 			
-			nodeDao.findAllById([1L, 5L]) >> [tc3, folder1] //note that we reversed the order here to test the sorting
+			nodeDao.findAllByIdList([1L, 5L]) >> [tc3, folder1] //note that we reversed the order here to test the sorting
 		
 		when: "the test cases are added to the campaign"
 			service.addTestCasesToCampaignTestPlan([1L, 5L], 10)
@@ -219,7 +219,7 @@ class CampaignTestPlanManagerServiceImplTest extends Specification {
 
 		and: "a test case"
 		def tc1 = new MockTC(1L)
-		nodeDao.findAllById([1L]) >> [tc1]
+		nodeDao.findAllByIdList([1L]) >> [tc1]
 
 		when: "the test cases are added to the campaign"
 		service.addTestCasesToCampaignTestPlan([1L], 10)
@@ -232,7 +232,7 @@ class CampaignTestPlanManagerServiceImplTest extends Specification {
 	def "should not persist items already in the test plan"() {
 		given: "a test case"
 		def tc1 = new MockTC(1L) 
-		nodeDao.findAllById([1L]) >> [tc1]
+		nodeDao.findAllByIdList([1L]) >> [tc1]
 
 		and: "a campaign with the test case in its test plan"
 		Campaign camp = new Campaign()

@@ -25,9 +25,9 @@ import java.util.List;
 
 public interface EntityDao<ENTITY_TYPE> {
 	ENTITY_TYPE findById(long id);
-	
-	List<ENTITY_TYPE> findAllById(List<Long> id);
 
+	List<ENTITY_TYPE> findAllByIdList(List<Long> id);
+	
 	void persist(ENTITY_TYPE transientEntity);
 	
 	void persist(List<ENTITY_TYPE> transientEntities);

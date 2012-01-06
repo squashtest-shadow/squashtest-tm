@@ -79,7 +79,6 @@
 		@NamedQuery(name = "requirement.findRequirementInExportData", query = "select r.id from Requirement r where r.id in (:rIds)"),
 		@NamedQuery(name = "requirement.findRootContentRequirement", query = "select r from RequirementLibrary rl join rl.rootContent r where r.id in (:paramIds) and r in (from Requirement)"),
 		@NamedQuery(name = "requirement.findRootContentExportData", query = "select r from RequirementLibrary rl join rl.rootContent r where rl.id in (:libIds) and r in (from Requirement)"),
-		@NamedQuery(name = "requirement.countRequirementsVerifiedByTestCases", query = "select count(distinct r) from TestCase tc join tc.verifiedRequirements r where tc.id in (:verifiersIds)"),
 		@NamedQuery(name = "requirement.findAllRootContent", query = "select r.id from RequirementLibraryNode r where r.project.id in (:rIds)"),
 
 		// Queries on CampaignFolder
@@ -176,6 +175,9 @@
 		@NamedQuery(name = "RequirementAuditEvent.countByRequirementId", query = "select count(rae) from RequirementAuditEvent rae join rae.requirementVersion r where r.id = ?"),
 		// XXX RequirementVersion
 		@NamedQuery(name = "requirementAuditEvent.findAllByRequirementIds", query = "select rae from RequirementAuditEvent rae inner join rae.requirementVersion r where r.id in (:ids) order by rae.requirementVersion asc, rae.date desc"),
+		
+		@NamedQuery(name = "requirementVersion.countVerifiedByTestCases", query = "select count(distinct r) from TestCase tc join tc.verifiedRequirements r where tc.id in (:verifiersIds)"),
+
 		
 		/* ********************************************** batch deletion-related queries **************************************************** */
 

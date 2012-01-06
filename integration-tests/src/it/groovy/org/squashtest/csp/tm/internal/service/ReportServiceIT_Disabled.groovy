@@ -38,7 +38,7 @@ import spock.unitils.UnitilsSupport;
 @NotThreadSafe
 @UnitilsSupport
 @Transactional
-class ReportServiceIT extends DbunitServiceSpecification {
+class ReportServiceIT_Disabled extends DbunitServiceSpecification {
 
 	@Inject
 	private ReportService reportService;

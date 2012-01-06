@@ -35,11 +35,12 @@ import org.squashtest.csp.tm.domain.projectfilter.ProjectFilter;
 import org.squashtest.csp.tm.domain.requirement.Requirement;
 import org.squashtest.csp.tm.domain.requirement.RequirementLibrary;
 import org.squashtest.csp.tm.domain.requirement.RequirementLibraryNode;
+import org.squashtest.csp.tm.domain.requirement.RequirementVersion;
 import org.squashtest.csp.tm.domain.testcase.TestCase;
 import org.squashtest.csp.tm.internal.infrastructure.strategy.LibrarySelectionStrategy;
 import org.squashtest.csp.tm.internal.repository.LibraryNodeDao;
-import org.squashtest.csp.tm.internal.repository.RequirementDao;
 import org.squashtest.csp.tm.internal.repository.RequirementLibraryDao;
+import org.squashtest.csp.tm.internal.repository.RequirementVersionDao;
 import org.squashtest.csp.tm.internal.repository.TestCaseDao;
 import org.squashtest.csp.tm.service.ProjectFilterModificationService;
 import org.squashtest.csp.tm.service.VerifiedRequirementsManagerService;
@@ -49,18 +50,26 @@ import org.squashtest.csp.tm.service.VerifiedRequirementsManagerService;
 public class VerifiedRequirementsManagerServiceImpl implements VerifiedRequirementsManagerService {
 	@Inject
 	private TestCaseDao testCaseDao;
+
 	@Inject
 	private RequirementLibraryDao requirementLibraryDao;
+
 	@Inject
-	private RequirementDao requirementDao;
+	private RequirementVersionDao requirementVersionDao;
+
 	@Inject
 	private ProjectFilterModificationService projectFilterModificationService;
+
+	@SuppressWarnings("rawtypes")
 	@Inject
 	@Qualifier("squashtest.tm.service.RequirementLibrarySelectionStrategy")
 	private LibrarySelectionStrategy<RequirementLibrary, RequirementLibraryNode> libraryStrategy;
+
+	@SuppressWarnings("rawtypes")
 	@Inject
 	@Qualifier("squashtest.tm.repository.RequirementLibraryNodeDao")
 	private LibraryNodeDao<RequirementLibraryNode> requirementLibraryNodeDao;
+
 	@Override
 	public TestCase findTestCase(long testCaseId) {
 		return testCaseDao.findById(testCaseId);
@@ -74,52 +83,54 @@ public class VerifiedRequirementsManagerServiceImpl implements VerifiedRequireme
 				.findAll();
 	}
 
+	@SuppressWarnings("rawtypes")
 	@Override
 	@PreAuthorize("hasPermission(#testCaseId, 'org.squashtest.csp.tm.domain.testcase.TestCase' , 'WRITE') or hasRole('ROLE_ADMIN')")
 	public void addVerifiedRequirementsToTestCase(final List<Long> requirementsIds, long testCaseId) {
-//		
-//		//nodes are returned unsorted
-//		List<RequirementLibraryNode> nodes= requirementLibraryNodeDao.findAllById(requirementsIds);
-//		
-//		//now we resort them according to the order in which the requirementsIds were given
-//		Collections.sort(nodes, new Comparator<RequirementLibraryNode>() {
-//			@Override
-//			public int compare(RequirementLibraryNode o1, RequirementLibraryNode o2) {
-//				return requirementsIds.indexOf(o1.getId()) - requirementsIds.indexOf(o2.getId());
-//			}
-//		});
-//
-//		List<Requirement> requirements = new RequirementNodeWalker().walk(nodes);
-//		if (!requirements.isEmpty()) {
-//			TestCase testCase = testCaseDao.findById(testCaseId);
-//
-//			for (Requirement requirement : requirements) {
-//				testCase.addVerifiedRequirement(requirement);
-//			}
-//		}
+		// nodes are returned unsorted
+		List<RequirementLibraryNode> nodes = requirementLibraryNodeDao.findAllByIdList(requirementsIds);
+
+		if (!nodes.isEmpty()) {
+			// now we resort them according to the order in which the requirementsIds were given
+			Collections.sort(nodes, new Comparator<RequirementLibraryNode>() {
+				@Override
+				public int compare(RequirementLibraryNode o1, RequirementLibraryNode o2) {
+					return requirementsIds.indexOf(o1.getId()) - requirementsIds.indexOf(o2.getId());
+				}
+			});
+
+			List<Requirement> requirements = new RequirementNodeWalker().walk(nodes);
+			if (!requirements.isEmpty()) {
+				TestCase testCase = testCaseDao.findById(testCaseId);
+
+				for (Requirement requirement : requirements) {
+					testCase.addVerifiedRequirement(requirement.getLatestVersion());
+				}
+			}
+		}
 	}
 
 	@Override
 	@PreAuthorize("hasPermission(#testCaseId, 'org.squashtest.csp.tm.domain.testcase.TestCase' , 'WRITE') or hasRole('ROLE_ADMIN')")
 	public void removeVerifiedRequirementsFromTestCase(List<Long> requirementsIds, long testCaseId) {
-//		List<Requirement> reqs = requirementDao.findAllByIdList(requirementsIds);
-//
-//		if (!reqs.isEmpty()) {
-//			TestCase testCase = testCaseDao.findById(testCaseId);
-//
-//			for (Requirement requirement : reqs) {
-//				testCase.removeVerifiedRequirement(requirement);
-//			}
-//		}
+		List<RequirementVersion> reqs = requirementVersionDao.findAllByIdList(requirementsIds);
+
+		if (!reqs.isEmpty()) {
+			TestCase testCase = testCaseDao.findById(testCaseId);
+
+			for (RequirementVersion requirement : reqs) {
+				testCase.removeVerifiedRequirement(requirement);
+			}
+		}
 	}
 
 	@Override
 	@PreAuthorize("hasPermission(#testCaseId, 'org.squashtest.csp.tm.domain.testcase.TestCase' , 'WRITE') or hasRole('ROLE_ADMIN')")
 	public void removeVerifiedRequirementFromTestCase(long requirementId, long testCaseId) {
-//		Requirement req = requirementDao.findById(requirementId);
-//
-//		TestCase testCase = testCaseDao.findById(testCaseId);
-//		testCase.removeVerifiedRequirement(req);
+		RequirementVersion req = requirementVersionDao.findById(requirementId);
+
+		TestCase testCase = testCaseDao.findById(testCaseId);
+		testCase.removeVerifiedRequirement(req);
 	}
 
 }

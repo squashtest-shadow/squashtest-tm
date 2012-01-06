@@ -162,7 +162,7 @@ public class HibernateCampaignDao extends HibernateEntityDao<Campaign> implement
 
 	
 	@Override
-	public List<Campaign> findAllById(List<Long> campaignIds) {
+	public List<Campaign> findAllByIdList(List<Long> campaignIds) {
 		if (campaignIds.isEmpty()){
 			return Collections.emptyList();
 		}else{

@@ -36,34 +36,41 @@ import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.servlet.ModelAndView;
 import org.squashtest.csp.tm.domain.requirement.Requirement;
 import org.squashtest.csp.tm.domain.testcase.TestCaseLibrary;
+import org.squashtest.csp.tm.service.RequirementModificationService;
 import org.squashtest.csp.tm.service.VerifyingTestCaseManagerService;
 import org.squashtest.csp.tm.web.internal.model.builder.DriveNodeBuilder;
 import org.squashtest.csp.tm.web.internal.model.jstree.JsTreeNode;
 
 /**
  * Controller for verified requirements management page.
- *
+ * 
  * @author Gregory Fouquet
- *
+ * 
  */
 @Controller
 public class VerifyingTestCaseManagerController {
 	private static final String TESTCASES_IDS_REQUEST_PARAM = "testCasesIds[]";
 
-	@Inject private Provider<DriveNodeBuilder> driveNodeBuilder;
+	@Inject
+	private Provider<DriveNodeBuilder> driveNodeBuilder;
 
-	private VerifyingTestCaseManagerService verifyingTestCaseManagerService;
+	private VerifyingTestCaseManagerService verifyingTestCaseManager;
+	private RequirementModificationService requirementFinder;
 
 	@ServiceReference
-	public void setVerifyingTestCaseManagerService(
-			VerifyingTestCaseManagerService verifyingTestCaseManagerService) {
-		this.verifyingTestCaseManagerService = verifyingTestCaseManagerService;
+	public void setVerifyingTestCaseManager(VerifyingTestCaseManagerService verifyingTestCaseManagerService) {
+		this.verifyingTestCaseManager = verifyingTestCaseManagerService;
+	}
+
+	@ServiceReference
+	public void setRequirementFinder(RequirementModificationService requirementFinderService) {
+		this.requirementFinder = requirementFinderService;
 	}
 
 	@RequestMapping(value = "/requirements/{requirementId}/verifying-test-cases-manager", method = RequestMethod.GET)
 	public ModelAndView showManager(@PathVariable long requirementId) {
-		Requirement requirement = verifyingTestCaseManagerService.findRequirement(requirementId);
-		List<TestCaseLibrary> linkableLibraries = verifyingTestCaseManagerService.findLinkableTestCaseLibraries();
+		Requirement requirement = requirementFinder.findById(requirementId);
+		List<TestCaseLibrary> linkableLibraries = verifyingTestCaseManager.findLinkableTestCaseLibraries();
 
 		List<JsTreeNode> linkableLibrariesModel = createLinkableLibrariesModel(linkableLibraries);
 
@@ -89,19 +96,19 @@ public class VerifyingTestCaseManagerController {
 	public @ResponseBody
 	void addVerifyingTestCasesToRequirement(@RequestParam(TESTCASES_IDS_REQUEST_PARAM) List<Long> testCasesIds,
 			@PathVariable long requirementId) {
-		verifyingTestCaseManagerService.addVerifyingTestCasesToRequirement(testCasesIds, requirementId);
+		verifyingTestCaseManager.addVerifyingTestCasesToRequirement(testCasesIds, requirementId);
 	}
 
 	@RequestMapping(value = "/requirements/{requirementId}/non-verifying-test-cases", method = RequestMethod.POST, params = TESTCASES_IDS_REQUEST_PARAM)
 	public @ResponseBody
 	void removeVerifyingTestCasesFromRequirement(@RequestParam(TESTCASES_IDS_REQUEST_PARAM) List<Long> testCasesIds,
 			@PathVariable long requirementId) {
-		verifyingTestCaseManagerService.removeVerifyingTestCasesFromRequirement(testCasesIds, requirementId);
+		verifyingTestCaseManager.removeVerifyingTestCasesFromRequirement(testCasesIds, requirementId);
 	}
 
 	@RequestMapping(value = "/requirements/{requirementId}/verifying-test-cases/{testCaseId}", method = RequestMethod.DELETE)
 	public @ResponseBody
 	void removeVerifyingTestCaseFromRequirement(@PathVariable long testCaseId, @PathVariable long requirementId) {
-		verifyingTestCaseManagerService.removeVerifyingTestCaseFromRequirement(requirementId, testCaseId);
+		verifyingTestCaseManager.removeVerifyingTestCaseFromRequirement(requirementId, testCaseId);
 	}
 }

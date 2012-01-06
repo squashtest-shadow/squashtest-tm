@@ -44,7 +44,9 @@ import org.squashtest.csp.tm.domain.requirement.ExportRequirementData;
 import org.squashtest.csp.tm.domain.requirement.Requirement;
 import org.squashtest.csp.tm.domain.requirement.RequirementLibraryNode;
 import org.squashtest.csp.tm.domain.requirement.RequirementSearchCriteria;
+import org.squashtest.csp.tm.domain.requirement.RequirementVersion;
 import org.squashtest.csp.tm.domain.requirement.VerificationCriterion;
+import org.squashtest.csp.tm.domain.resource.Resource;
 import org.squashtest.csp.tm.domain.testcase.TestCase;
 import org.squashtest.csp.tm.infrastructure.filter.CollectionSorting;
 import org.squashtest.csp.tm.internal.repository.RequirementDao;
@@ -58,11 +60,11 @@ public class HibernateRequirementDao extends HibernateEntityDao<Requirement> imp
 
 	static {
 		HIBERNATE_RESTRICTION_BY_VERIFICATION_CRITERION.put(VerificationCriterion.ANY, new Object[] {
-				RequirementLibraryNode.class, null }); // yeah, it's a null.
+				Resource.class, null }); // yeah, it's a null.
 		HIBERNATE_RESTRICTION_BY_VERIFICATION_CRITERION.put(VerificationCriterion.SHOULD_BE_VERIFIED, new Object[] {
-				Requirement.class, Restrictions.isNotEmpty("verifyingTestCases") });
+				RequirementVersion.class, Restrictions.isNotEmpty("verifyingTestCases") });
 		HIBERNATE_RESTRICTION_BY_VERIFICATION_CRITERION.put(VerificationCriterion.SHOULD_NOT_BE_VERIFIED, new Object[] {
-				Requirement.class, Restrictions.isEmpty("verifyingTestCases") });
+				RequirementVersion.class, Restrictions.isEmpty("verifyingTestCases") });
 
 	}
 
@@ -159,27 +161,28 @@ public class HibernateRequirementDao extends HibernateEntityDao<Requirement> imp
 		return executeListNamedQuery("requirement.findNamesInLibraryStartingWith", callBack);
 	}
 
-	@SuppressWarnings("unchecked")
+	@SuppressWarnings({ "rawtypes", "unchecked" })
 	@Override
 	public List<RequirementLibraryNode> findAllBySearchCriteria(RequirementSearchCriteria searchCriteria) {
 		DetachedCriteria crit = createCriteria(searchCriteria);
 
-		crit.addOrder(Order.asc("name"));
+		crit.addOrder(Order.asc("res.name"));
 
 		return crit.getExecutableCriteria(currentSession()).list();
 	}
 
 	private DetachedCriteria createCriteria(RequirementSearchCriteria searchCriteria) {
-		DetachedCriteria versionCriteria = DetachedCriteria.forClass(getCriteriaClass(searchCriteria));
+		DetachedCriteria versionCriteria = DetachedCriteria.forClass(RequirementLibraryNode.class);
+		versionCriteria.createCriteria("resource", "res");
 
 		if (StringUtils.isNotBlank(searchCriteria.getName())) {
-			versionCriteria.add(Restrictions.ilike("name", searchCriteria.getName(), MatchMode.ANYWHERE));
+			versionCriteria.add(Restrictions.ilike("res.name", searchCriteria.getName(), MatchMode.ANYWHERE));
 		}
 		if (StringUtils.isNotBlank(searchCriteria.getReference())) {
-			versionCriteria.add(Restrictions.ilike("reference", searchCriteria.getReference(), MatchMode.ANYWHERE));
+			versionCriteria.add(Restrictions.ilike("res.reference", searchCriteria.getReference(), MatchMode.ANYWHERE));
 		}
 		if (!searchCriteria.getCriticalities().isEmpty()) {
-			versionCriteria.add(Restrictions.in("criticality", searchCriteria.getCriticalities()));
+			versionCriteria.add(Restrictions.in("res.criticality", searchCriteria.getCriticalities()));
 		}
 
 		addVerificationRestriction(searchCriteria, versionCriteria);
@@ -373,38 +376,4 @@ public class HibernateRequirementDao extends HibernateEntityDao<Requirement> imp
 		return folderContent;
 	}
 	
-	@SuppressWarnings("unchecked")
-	@Override
-	public List<Requirement> findAllRequirementsVerifiedByTestCases(Collection<Long> verifiersIds,
-			CollectionSorting sorting) {
-		
-		if (! verifiersIds.isEmpty()){
-		
-			String hql = "select Requirement from TestCase as TestCase join TestCase.verifiedRequirements Requirement " +
-					    "left join Requirement.project as Project where TestCase.id in (:verifiersIds) group by Requirement ";
-			
-			String orderBy = " order by " + sorting.getSortedAttribute() + ' ' + sorting.getSortingOrder();
-	
-			Query query = currentSession().createQuery(hql + orderBy);
-			query.setParameterList("verifiersIds", verifiersIds);
-	
-			query.setMaxResults(sorting.getMaxNumberOfItems());
-			query.setFirstResult(sorting.getFirstItemIndex());
-	
-			return query.list();
-		}else{
-			return Collections.emptyList();
-		}
-	}
-
-	@Override
-	public long countRequirementsVerifiedByTestCases(Collection<Long> verifiersIds) {
-		if (! verifiersIds.isEmpty()){
-			Query query = currentSession().getNamedQuery("requirement.countRequirementsVerifiedByTestCases");
-			query.setParameterList("verifiersIds", verifiersIds);
-			return (Long) query.uniqueResult();
-		}else{
-			return 0;
-		}
-	}
 }

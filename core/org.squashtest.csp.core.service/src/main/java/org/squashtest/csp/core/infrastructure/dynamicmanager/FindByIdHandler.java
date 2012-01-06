@@ -23,36 +23,35 @@ package org.squashtest.csp.core.infrastructure.dynamicmanager;
 
 import java.lang.reflect.Method;
 
+import javax.persistence.Entity;
 import javax.validation.constraints.NotNull;
 
 import org.hibernate.SessionFactory;
+import org.springframework.core.annotation.AnnotationUtils;
 
 /**
- * {@link DynamicComponentInvocationHandler} which handles <code>ENTITY findById(long id)</code> method.
+ * {@link DynamicComponentInvocationHandler} which handles <code>@Entity findById(long id)</code> method. Fetches an entity using its id.
  * @author Gregory Fouquet
  * 
  */
-public class FindByIdHandler<ENTITY> implements DynamicComponentInvocationHandler { // NOSONAR : I dont choose what JDK interfaces throw
-	private final Class<ENTITY> entityType;
+public class FindByIdHandler implements DynamicComponentInvocationHandler { // NOSONAR : I dont choose what JDK interfaces throw
 	private final SessionFactory sessionFactory;
 
 	/**
 	 * @param entityType
 	 * @param sessionFactory
 	 */
-	public FindByIdHandler(@NotNull Class<ENTITY> entityType, @NotNull SessionFactory sessionFactory) {
+	public FindByIdHandler(@NotNull SessionFactory sessionFactory) {
 		super();
-		this.entityType = entityType;
 		this.sessionFactory = sessionFactory;
 	}
 
 	/**
 	 * Performs an entity fetch using {@link #entityType} and the first arg as the entity id. 
 	 */
-	@SuppressWarnings("unchecked")
 	@Override
 	public Object invoke(Object proxy, Method method, Object[] args) {
-		return 	(ENTITY) sessionFactory.getCurrentSession().load(entityType, (Long) args[0]);
+		return sessionFactory.getCurrentSession().load(method.getReturnType(), (Long) args[0]);
 	}
 
 	/**
@@ -74,7 +73,7 @@ public class FindByIdHandler<ENTITY> implements DynamicComponentInvocationHandle
 	}
 
 	private boolean methodReturnTypeMatchesMethodPattern(Method method) {
-		return entityType.equals(method.getReturnType());
+		return AnnotationUtils.findAnnotation(method.getReturnType(), Entity.class) != null;
 	}
 
 }

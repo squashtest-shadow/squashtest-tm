@@ -55,6 +55,5 @@ public interface CampaignDao extends EntityDao<Campaign> {
 	 */
 	List<CampaignLibraryNode> findAllByNameContaining(String tokenInName, boolean groupByProject);
 	
-	List<Campaign> findAllById(List<Long> campaignIds);
-
+	List<Campaign> findAllByIdList(List<Long> campaignIds);
 }

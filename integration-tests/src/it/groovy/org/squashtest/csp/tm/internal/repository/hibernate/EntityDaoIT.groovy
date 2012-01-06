@@ -47,7 +47,7 @@ class EntityDaoIT extends DbunitDaoSpecification {
 	def "should find a list of entity"(){
 	
 		when :
-			def res = entityDao.findAllById([ 1L, 3L, 4L, 6L ])
+			def res = entityDao.findAllByIdList([ 1L, 3L, 4L, 6L ])
 		
 		then :
 			res.size() == 4

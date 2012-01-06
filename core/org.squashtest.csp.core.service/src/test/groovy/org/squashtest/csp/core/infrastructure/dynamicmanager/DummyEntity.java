@@ -40,6 +40,9 @@
  */
 package org.squashtest.csp.core.infrastructure.dynamicmanager;
 
+import javax.persistence.Entity;
+
+@Entity
 public class DummyEntity extends DummySuperclass {
 	private Long id;
 	

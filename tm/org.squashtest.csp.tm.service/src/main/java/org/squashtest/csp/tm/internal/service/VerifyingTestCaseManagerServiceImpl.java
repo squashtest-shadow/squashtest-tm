@@ -31,13 +31,13 @@ import org.springframework.security.access.prepost.PostFilter;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.squashtest.csp.tm.domain.projectfilter.ProjectFilter;
-import org.squashtest.csp.tm.domain.requirement.Requirement;
+import org.squashtest.csp.tm.domain.requirement.RequirementVersion;
 import org.squashtest.csp.tm.domain.testcase.TestCase;
 import org.squashtest.csp.tm.domain.testcase.TestCaseLibrary;
 import org.squashtest.csp.tm.domain.testcase.TestCaseLibraryNode;
 import org.squashtest.csp.tm.internal.infrastructure.strategy.LibrarySelectionStrategy;
 import org.squashtest.csp.tm.internal.repository.LibraryNodeDao;
-import org.squashtest.csp.tm.internal.repository.RequirementDao;
+import org.squashtest.csp.tm.internal.repository.RequirementVersionDao;
 import org.squashtest.csp.tm.internal.repository.TestCaseDao;
 import org.squashtest.csp.tm.internal.repository.TestCaseLibraryDao;
 import org.squashtest.csp.tm.service.ProjectFilterModificationService;
@@ -52,7 +52,7 @@ public class VerifyingTestCaseManagerServiceImpl implements VerifyingTestCaseMan
 	@Inject
 	private TestCaseLibraryDao testCaseLibraryDao;
 	@Inject
-	private RequirementDao requirementDao;
+	private RequirementVersionDao requirementVersionDao;
 	@Inject
 	private ProjectFilterModificationService projectFilterModificationService;
 	@Inject
@@ -61,12 +61,6 @@ public class VerifyingTestCaseManagerServiceImpl implements VerifyingTestCaseMan
 	@Inject
 	@Qualifier("squashtest.tm.repository.TestCaseLibraryNodeDao")
 	private LibraryNodeDao<TestCaseLibraryNode> testCaseLibraryNodeDao;
-	
-
-	@Override
-	public Requirement findRequirement(long requirementId) {
-		return requirementDao.findById(requirementId);
-	}
 
 	@Override
 	@PostFilter("hasPermission(filterObject, 'READ') or hasRole('ROLE_ADMIN')")
@@ -80,7 +74,7 @@ public class VerifyingTestCaseManagerServiceImpl implements VerifyingTestCaseMan
 	@PostFilter("hasPermission(#requirementId, 'org.squashtest.csp.tm.domain.requirement.Requirement', 'WRITE') or hasRole('ROLE_ADMIN')")	
 	public void addVerifyingTestCasesToRequirement(final List<Long> testCasesIds, long requirementId) {
 		//nodes are returned unsorted
-		List<TestCaseLibraryNode> nodes= testCaseLibraryNodeDao.findAllById(testCasesIds);
+		List<TestCaseLibraryNode> nodes= testCaseLibraryNodeDao.findAllByIdList(testCasesIds);
 		
 		//now we resort them according to the order in which the testcaseids were given
 		Collections.sort(nodes, new Comparator<TestCaseLibraryNode>() {
@@ -94,42 +88,38 @@ public class VerifyingTestCaseManagerServiceImpl implements VerifyingTestCaseMan
 	
 
 		if (!testCases.isEmpty()) {
-			Requirement requirement = requirementDao.findById(requirementId);
+			RequirementVersion requirementVersion = requirementVersionDao.findById(requirementId);
 
 			for (TestCase testcase : testCases) {
-				// XXX RequirementVersion
-//				requirement.addVerifyingTestCase(testcase);
+				requirementVersion.addVerifyingTestCase(testcase);
 			}
 		}
 	}
 
 	@Override
-	@PostFilter("hasPermission(#requirementId, 'org.squashtest.csp.tm.domain.requirement.Requirement', 'WRITE') or hasRole('ROLE_ADMIN')")	
+	@PostFilter("hasPermission(#requirementId, 'org.squashtest.csp.tm.domain.requirement.RequirementVersion', 'WRITE') or hasRole('ROLE_ADMIN')")
 	public void removeVerifyingTestCasesFromRequirement(List<Long> testCasesIds, long requirementId) {
 
-		List<TestCase> tcs = testCaseDao.findAllByIdList(testCasesIds);
+		List<TestCase> testCases = testCaseDao.findAllByIdList(testCasesIds);
 
-		if (!tcs.isEmpty()) {
-			Requirement requirement = requirementDao.findById(requirementId);
+		if (!testCases.isEmpty()) {
+			RequirementVersion requirementVersion = requirementVersionDao.findById(requirementId);
 
-			for (TestCase testcase : tcs) {
-				// XXX RequirementVersion
-//				requirement.removeVerifyingTestCase(testcase);
+			for (TestCase testCase : testCases) {
+				requirementVersion.removeVerifyingTestCase(testCase);
 			}
 		}
 
 	}
 
 	@Override
-	@PostFilter("hasPermission(#requirementId, 'org.squashtest.csp.tm.domain.requirement.Requirement', 'WRITE') or hasRole('ROLE_ADMIN')")	
+	@PostFilter("hasPermission(#requirementId, 'org.squashtest.csp.tm.domain.requirement.RequirementVersion', 'WRITE') or hasRole('ROLE_ADMIN')")
 	public void removeVerifyingTestCaseFromRequirement(long requirementId, long testCaseId) {
 
-		Requirement req = requirementDao.findById(requirementId);
+		RequirementVersion req = requirementVersionDao.findById(requirementId);
 		TestCase testCase = testCaseDao.findById(testCaseId);
 
-		// XXX RequirementVersion
-//		req.removeVerifyingTestCase(testCase);
-
+		req.removeVerifyingTestCase(testCase);
 	}
 
 }

@@ -28,8 +28,9 @@ import org.squashtest.csp.core.infrastructure.collection.Paging;
  * Consider using the {@link Paging} api define in core module instead.
  * 
  * @author Gregory Fouquet
- * 
+ * @deprecated use {@link Paging} instead 
  */
+
 public interface CollectionFilter extends Paging {
 
 	/**

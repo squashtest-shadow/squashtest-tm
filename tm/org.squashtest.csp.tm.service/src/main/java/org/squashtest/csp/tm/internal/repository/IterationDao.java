@@ -53,6 +53,6 @@ public interface IterationDao extends EntityDao<Iteration>{
 	
 	long countTestPlans(Long iterationId);
 	
-	List<Iteration> findAllById(List<Long> iterationIds);
+	List<Iteration> findAllByIdList(List<Long> iterationIds);
 	
 }

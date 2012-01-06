@@ -114,7 +114,7 @@ public class CampaignTestPlanManagerServiceImpl implements CampaignTestPlanManag
 	public void addTestCasesToCampaignTestPlan(final List<Long> testCasesIds, long campaignId) {
 		
 		//nodes are returned unsorted
-		List<TestCaseLibraryNode> nodes= testCaseLibraryNodeDao.findAllById(testCasesIds);
+		List<TestCaseLibraryNode> nodes= testCaseLibraryNodeDao.findAllByIdList(testCasesIds);
 		
 		//now we resort them according to the order in which the testcaseids were given
 		Collections.sort(nodes, new Comparator<TestCaseLibraryNode>() {

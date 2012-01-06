@@ -90,7 +90,8 @@ public class DynamicDaoFactoryBean<DAO, ENTITY> extends AbstractDynamicComponent
 		
 		handlers.add(new PersistEntityHandler<ENTITY>(entityType, sessionFactory));
 		handlers.add(new DeleteEntityHandler<ENTITY>(entityType, sessionFactory));
-		handlers.add(new FindByIdHandler<ENTITY>(entityType, sessionFactory));
+		handlers.add(new FindByIdHandler(sessionFactory));
+		handlers.add(new FindAllByIdListHandler<ENTITY>(entityType, sessionFactory));
 		handlers.add(new ListOfEntitiesFinderNamedQueryHandler<ENTITY>(entityType, sessionFactory));
 		handlers.add(new EntityFinderNamedQueryHandler<ENTITY>(entityType, sessionFactory));
 		handlers.add(new CountNamedQueryHandler<ENTITY>(entityType, sessionFactory));

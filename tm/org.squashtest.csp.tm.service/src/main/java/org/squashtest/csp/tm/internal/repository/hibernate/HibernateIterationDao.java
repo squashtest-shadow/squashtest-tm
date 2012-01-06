@@ -169,7 +169,7 @@ public class HibernateIterationDao extends HibernateEntityDao<Iteration> impleme
 	}
 
 	@Override
-	public List<Iteration> findAllById(List<Long> iterationIds) {
+	public List<Iteration> findAllByIdList(List<Long> iterationIds) {
 		if (iterationIds.isEmpty()){
 			return Collections.emptyList();
 		}else{

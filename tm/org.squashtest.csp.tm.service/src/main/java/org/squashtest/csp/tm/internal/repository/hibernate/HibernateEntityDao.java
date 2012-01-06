@@ -36,7 +36,7 @@ public class HibernateEntityDao<ENTITY_TYPE> extends HibernateDao<ENTITY_TYPE> i
 	
 	@SuppressWarnings("unchecked")
 	@Override
-	public List<ENTITY_TYPE> findAllById(List<Long> ids){
+	public List<ENTITY_TYPE> findAllByIdList(List<Long> ids){
 		if (ids.isEmpty()) {
 			return Collections.emptyList();
 		} else {

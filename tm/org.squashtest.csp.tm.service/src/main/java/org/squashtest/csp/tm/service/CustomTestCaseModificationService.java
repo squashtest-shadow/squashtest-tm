@@ -24,6 +24,8 @@ package org.squashtest.csp.tm.service;
 import java.util.List;
 
 import org.springframework.transaction.annotation.Transactional;
+import org.squashtest.csp.core.infrastructure.collection.PagedCollectionHolder;
+import org.squashtest.csp.core.infrastructure.collection.PagingAndSorting;
 import org.squashtest.csp.tm.domain.requirement.Requirement;
 import org.squashtest.csp.tm.domain.testcase.ActionTestStep;
 import org.squashtest.csp.tm.domain.testcase.TestCase;
@@ -88,8 +90,8 @@ public interface CustomTestCaseModificationService {
 			long testCaseId, CollectionSorting filter);
 
 	@Transactional(readOnly = true)
-	FilteredCollectionHolder<List<VerifiedRequirement>> findAllVerifiedRequirementsByTestCaseId(
-			long testCaseId, CollectionSorting sorting);
+	PagedCollectionHolder<List<VerifiedRequirement>> findAllVerifiedRequirementsByTestCaseId(
+			long testCaseId, PagingAndSorting pas);
 
 	/**
 	 * That method returns the list of test cases having at least one CallTestStep directly calling the 

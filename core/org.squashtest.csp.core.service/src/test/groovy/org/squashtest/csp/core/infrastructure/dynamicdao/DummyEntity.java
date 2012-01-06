@@ -21,10 +21,13 @@
 
 package org.squashtest.csp.core.infrastructure.dynamicdao;
 
+import javax.persistence.Entity;
+
 /**
  * @author Gregory
  *
  */
+@Entity
 public class DummyEntity {
 
 }

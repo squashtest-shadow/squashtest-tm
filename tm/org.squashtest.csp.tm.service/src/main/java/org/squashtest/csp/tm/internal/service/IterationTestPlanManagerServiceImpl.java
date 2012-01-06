@@ -135,7 +135,7 @@ public class IterationTestPlanManagerServiceImpl implements IterationTestPlanMan
 	public void addTestCasesToIteration(final List<Long> objectsIds, long iterationId) {
 	
 		//nodes are returned unsorted
-		List<TestCaseLibraryNode> nodes= testCaseLibraryNodeDao.findAllById(objectsIds);
+		List<TestCaseLibraryNode> nodes= testCaseLibraryNodeDao.findAllByIdList(objectsIds);
 		
 		//now we resort them according to the order in which the testcaseids were given
 		Collections.sort(nodes, new Comparator<TestCaseLibraryNode>() {

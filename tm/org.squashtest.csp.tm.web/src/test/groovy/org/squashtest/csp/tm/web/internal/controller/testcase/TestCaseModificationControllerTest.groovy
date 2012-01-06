@@ -26,6 +26,7 @@ import org.springframework.web.servlet.ModelAndView;
 import javax.inject.Provider;
 import javax.servlet.http.HttpServletRequest;
 
+import org.squashtest.csp.core.infrastructure.collection.PagedCollectionHolder;
 import org.squashtest.csp.tm.service.TestCaseModificationService;
 import org.squashtest.csp.tm.web.internal.model.datatable.DataTableDrawParameters;
 import org.squashtest.csp.tm.web.internal.model.datatable.DataTableModelHelper;
@@ -179,8 +180,8 @@ class TestCaseModificationControllerTest extends Specification {
 		DataTableDrawParameters request = new DataTableDrawParameters(sEcho: "echo", iDisplayStart: 0, iDisplayLength: 100)
 
 		and:
-		FilteredCollectionHolder holder = Mock()
-		holder.filteredCollection >> []
+		PagedCollectionHolder holder = Mock()
+		holder.pagedItems >> []
 		testCaseModificationService.findAllVerifiedRequirementsByTestCaseId(10, _) >> holder
 
 		when:
@@ -287,7 +288,7 @@ class TestCaseModificationControllerTest extends Specification {
 		testCaseModificationService.findTestCaseWithSteps(10) >> testCase
 		
 		and:
-		importanceComboBuilder.buildMarshalled() >> "akemashite omedetô"
+		importanceComboBuilder.buildMarshalled() >> "akemashite omedetï¿½"
 
 		when:
 		ModelAndView mav = controller.showTestCaseInfo(10, Locale.JAPANESE)
@@ -295,7 +296,7 @@ class TestCaseModificationControllerTest extends Specification {
 		then:
 		1 * importanceComboBuilder.useLocale(Locale.JAPANESE) >> importanceComboBuilder
 		0 * importanceComboBuilder.selectItem(TestCaseImportance.HIGH) >> importanceComboBuilder
-		mav.modelMap['testCaseImportanceComboJson'] == "akemashite omedetô"
+		mav.modelMap['testCaseImportanceComboJson'] == "akemashite omedetï¿½"
 	}
 	
 	def "when showing a test case, should put test case importance label in the model"() {

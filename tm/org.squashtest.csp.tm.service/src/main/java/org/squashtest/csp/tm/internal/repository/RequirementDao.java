@@ -20,7 +20,6 @@
  */
 package org.squashtest.csp.tm.internal.repository;
 
-import java.util.Collection;
 import java.util.List;
 
 import org.squashtest.csp.tm.domain.requirement.ExportRequirementData;
@@ -57,20 +56,4 @@ public interface RequirementDao extends EntityDao<Requirement> {
 	
 	List<ExportRequirementData> findRequirementToExportFromLibrary(List<Long> folderIds);
 	
-	/**
-	 * Returns paged and sorted collection of requirements verified by any of the given verifiers.
-	 *
-	 * @param verifiersIds
-	 * @param sorting
-	 * @return
-	 */
-	List<Requirement> findAllRequirementsVerifiedByTestCases(Collection<Long> verifiersIds, CollectionSorting sorting);
-
-	/**
-	 * Counts the number of requirements verified by any of the given verifiers.
-	 *
-	 * @param verifiersIds
-	 * @return
-	 */
-	long countRequirementsVerifiedByTestCases(Collection<Long> verifiersIds);
 }

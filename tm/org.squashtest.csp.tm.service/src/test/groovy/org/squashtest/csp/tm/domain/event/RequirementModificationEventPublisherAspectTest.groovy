@@ -28,6 +28,7 @@ import org.squashtest.csp.tm.domain.requirement.RequirementCriticality;
 import org.squashtest.csp.tm.domain.requirement.RequirementLibraryNode;
 import org.squashtest.csp.tm.domain.requirement.RequirementStatus;
 import org.squashtest.csp.tm.domain.requirement.RequirementVersion;
+import org.squashtest.csp.tm.domain.resource.Resource;
 import org.squashtest.csp.tm.internal.service.event.RequirementAuditor;
 import org.squashtest.csp.tools.unittest.reflection.ReflectionCategory;
 
@@ -69,9 +70,9 @@ class RequirementModificationEventPublisherAspectTest extends Specification {
 		
 		where:
 		propertyName  | propertyClass      | initialValue                   | newValue
-		"name"        | RequirementVersion | "foo"                          | "bar"
+		"name"        | Resource           | "foo"                          | "bar"
 		"reference"   | RequirementVersion | "foo"                          | "bar"
-		"description" | RequirementVersion | "foo"                          | "bar"
+		"description" | Resource           | "foo"                          | "bar"
 		"criticality" | RequirementVersion | RequirementCriticality.MAJOR   | RequirementCriticality.MINOR
 		"status"      | RequirementVersion | RequirementStatus.UNDER_REVIEW | RequirementStatus.APPROVED
 	}
@@ -91,9 +92,9 @@ class RequirementModificationEventPublisherAspectTest extends Specification {
 
 		where:
 		propertyName  | propertyClass      | initialValue                   
-		"name"        | RequirementVersion | "foo"                          
+		"name"        | Resource           | "foo"                          
 		"reference"   | RequirementVersion | "foo"                          
-		"description" | RequirementVersion | "foo"                          
+		"description" | Resource           | "foo"                          
 		"criticality" | RequirementVersion | RequirementCriticality.MAJOR   
 		"status"      | RequirementVersion | RequirementStatus.UNDER_REVIEW 
 	}
@@ -152,9 +153,9 @@ class RequirementModificationEventPublisherAspectTest extends Specification {
 	
 			where:
 			propertyName  | propertyClass      | initialValue
-			"name"        | RequirementVersion | "foo"
+			"name"        | Resource           | "foo"
 			"reference"   | RequirementVersion | "foo"
-			"description" | RequirementVersion | "foo"
+			"description" | Resource           | "foo"
 			"criticality" | RequirementVersion | RequirementCriticality.MAJOR
 			"status"      | RequirementVersion | RequirementStatus.UNDER_REVIEW
 		}
@@ -162,7 +163,7 @@ class RequirementModificationEventPublisherAspectTest extends Specification {
 		def persistentRequirementVersion() {
 			RequirementVersion req = new RequirementVersion()
 			use (ReflectionCategory) {
-				RequirementVersion.set field: "id", of: req, to: 10L
+				Resource.set field: "id", of: req, to: 10L
 			}
 			return req
 		}

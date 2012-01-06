@@ -10,7 +10,7 @@ class CollectionAssertions {
 
 	private static def assertContainsExactly(def actual, def expected) {
 		assert actual.containsAll(expected)
-		assert actual.size() == expected.size()
+		assert expected.containsAll(actual)
 	}
 
 	static def declareContainsExactlyIds() {

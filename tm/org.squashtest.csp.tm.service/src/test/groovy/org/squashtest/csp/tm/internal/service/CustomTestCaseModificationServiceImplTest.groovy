@@ -20,15 +20,20 @@
  */
 package org.squashtest.csp.tm.internal.service
 
+import org.squashtest.csp.core.infrastructure.collection.PagedCollectionHolder;
+import org.squashtest.csp.core.infrastructure.collection.PagingAndSorting;
 import org.squashtest.csp.tm.domain.requirement.Requirement;
+import org.squashtest.csp.tm.domain.requirement.RequirementVersion;
 import org.squashtest.csp.tm.domain.testcase.TestCaseExecutionMode;
 import org.squashtest.csp.tm.domain.testcase.TestCase;
 import org.squashtest.csp.tm.domain.testcase.ActionTestStep;
 import org.squashtest.csp.tm.infrastructure.filter.CollectionSorting;
 import org.squashtest.csp.tm.internal.repository.RequirementDao;
+import org.squashtest.csp.tm.internal.repository.RequirementVersionDao;
 import org.squashtest.csp.tm.internal.repository.TestCaseDao;
 import org.squashtest.csp.tm.internal.repository.TestStepDao;
 import org.squashtest.csp.tm.service.CallStepManagerService;
+import org.squashtest.csp.tools.unittest.assertions.CollectionAssertions;
 
 
 import spock.lang.Specification;
@@ -37,19 +42,21 @@ class CustomTestCaseModificationServiceImplTest extends Specification {
 	CustomTestCaseModificationServiceImpl service = new CustomTestCaseModificationServiceImpl()
 	TestCaseDao testCaseDao = Mock()
 	TestStepDao testStepDao = Mock()
-	RequirementDao requirementDao = Mock()
+	RequirementVersionDao requirementVersionDao = Mock()
 	GenericNodeManagementService testCaseManagementService = Mock()
 	CallStepManagerService callStepManagerService = Mock()
 	TestCaseNodeDeletionHandler deletionHandler = Mock()
 
 	def setup() {
+		CollectionAssertions.declareContainsExactlyIds()
+		CollectionAssertions.declareContainsExactly()
+
 		service.testCaseDao = testCaseDao
 		service.testStepDao = testStepDao
 		service.testCaseManagementService = testCaseManagementService
-		service.requirementDao = requirementDao
+		service.requirementVersionDao = requirementVersionDao
 		service.callStepManagerService = callStepManagerService
 		service.deletionHandler = deletionHandler;
-		
 	}
 
 	def "should find test case and add a step"() {
@@ -98,7 +105,7 @@ class CustomTestCaseModificationServiceImplTest extends Specification {
 		and:
 		ActionTestStep tstep = Mock()
 		testStepDao.findById(20) >> tstep
-		
+
 		when:
 		service.removeStepFromTestCase(10, 20)
 
@@ -165,37 +172,37 @@ class CustomTestCaseModificationServiceImplTest extends Specification {
 
 	def "should find directly verified requiremnts in verified list"() {
 		given: "sorting directives"
-		CollectionSorting sorting = Mock()
+		PagingAndSorting sorting = Mock()
 
 		and: "the looked up test case with 1 verified requirement"
 		TestCase testCase = Mock()
 		testCaseDao.findById(10L) >> testCase
 
-		Requirement directlyVerified = Mock()
+		RequirementVersion directlyVerified = Mock()
 		directlyVerified.id >> 100L
 
 		testCase.getVerifiedRequirements() >> [directlyVerified]
 
 
 		and:
-		requirementDao.findAllRequirementsVerifiedByTestCases({ [10L].containsAll(it) }, _) >> [directlyVerified]
-		
-		
+		requirementVersionDao.findAllVerifiedByTestCases({ [10L].containsAll(it) }, _) >> [directlyVerified]
+
+
 		and : "the looked up test case calls no test case"
 		callStepManagerService.getTestCaseCallTree(_) >> [];
 
-		
+
 		when:
-		def verifieds = service.findAllVerifiedRequirementsByTestCaseId(10l, sorting)
+		PagedCollectionHolder verifieds = service.findAllVerifiedRequirementsByTestCaseId(10L, sorting)
 
 		then:
-		verifieds.getFilteredCollection().collect { it.id } == [100L]
-		verifieds.getFilteredCollection().collect { it.directVerification } == [true]
+		verifieds.pagedItems.containsExactlyIds([100L])
+		verifieds.pagedItems.collect { it.directVerification } == [true]
 	}
 
 	def "should find 1st level indirectly verified requiremnts in verified list"() {
 		given: "sorting directives"
-		CollectionSorting sorting = Mock()
+		PagingAndSorting sorting = Mock()
 
 		and: "the looked up test case with no verified requirement"
 		TestCase testCase = Mock()
@@ -203,32 +210,32 @@ class CustomTestCaseModificationServiceImplTest extends Specification {
 
 		testCase.getVerifiedRequirements() >> []
 
-		
+
 		and : "the looked up test case calls a test case"
 		long callee = 20L
 		callStepManagerService.getTestCaseCallTree(_) >> [callee];
-		
-		
+
+
 		and: "the callee verifies a requiremnt"
-		Requirement verified = Mock()
+		RequirementVersion verified = Mock()
 		verified.id >> 100L
-		requirementDao.findAllRequirementsVerifiedByTestCases({[10L, 20L].containsAll(it) }, _) >> [verified]
-		
+		requirementVersionDao.findAllVerifiedByTestCases({[10L, 20L].containsAll(it) }, _) >> [verified]
+
 
 
 		when:
-		def verifieds = service.findAllVerifiedRequirementsByTestCaseId(10, sorting)
+		PagedCollectionHolder verifieds = service.findAllVerifiedRequirementsByTestCaseId(10, sorting)
 
 		then:
-		verifieds.getFilteredCollection().collect { it.id } == [100L]
-		verifieds.getFilteredCollection().collect { it.directVerification } == [false]
+		verifieds.pagedItems.containsExactlyIds([100L])
+		verifieds.pagedItems.collect { it.directVerification } == [false]
 	}
 
-	
-	
+
+
 	def "should find 2nd level indirectly verified requiremnts in verified list"() {
 		given: "sorting directives"
-		CollectionSorting sorting = Mock()
+		PagingAndSorting sorting = Mock()
 
 		and: "the looked up test case with no verified requirement"
 		TestCase testCase = Mock()
@@ -237,32 +244,35 @@ class CustomTestCaseModificationServiceImplTest extends Specification {
 		testCase.getVerifiedRequirements() >> []
 
 
-		
+
 		and : "the looked up test case calls a test case that calls a test case (L2)"
 		long firstLevelCallee = 20L
 		long secondLevelCallee = 30L
-		callStepManagerService.getTestCaseCallTree(_) >> [firstLevelCallee, secondLevelCallee];
-		
-		
+		callStepManagerService.getTestCaseCallTree(_) >> [
+			firstLevelCallee,
+			secondLevelCallee
+		];
+
+
 
 		and: "the L2 callee verifies a requiremnt"
-		Requirement verified = Mock()
+		RequirementVersion verified = Mock()
 		verified.id >> 100L
-		requirementDao.findAllRequirementsVerifiedByTestCases({[10L, 20L, 30L].containsAll(it) }, _) >> [verified]
+		requirementVersionDao.findAllVerifiedByTestCases({[10L, 20L, 30L].containsAll(it) }, _) >> [verified]
 
 		when:
-		def verifieds = service.findAllVerifiedRequirementsByTestCaseId(10, sorting)
+		PagedCollectionHolder verifieds = service.findAllVerifiedRequirementsByTestCaseId(10, sorting)
 
 		then:
-		verifieds.getFilteredCollection().collect { it.id } == [100L]
-		verifieds.getFilteredCollection().collect { it.directVerification } == [false]
+		verifieds.pagedItems.containsExactlyIds([100L])
+		verifieds.pagedItems.collect { it.directVerification } == [false]
 	}
 
-	
-	
+
+
 	def "should count verified requiremnts in verified list"() {
 		given: "sorting directives"
-		CollectionSorting sorting = Mock()
+		PagingAndSorting sorting = Mock()
 
 		and: "the looked up test case"
 		TestCase testCase = Mock()
@@ -274,19 +284,14 @@ class CustomTestCaseModificationServiceImplTest extends Specification {
 		callStepManagerService.getTestCaseCallTree(10L) >> []
 
 		and:
-		requirementDao.findAllRequirementsVerifiedByTestCases({ [10L].containsAll(it) }, _) >> []
+		requirementVersionDao.findAllVerifiedByTestCases({ [10L].containsAll(it) }, _) >> []
 
 		and:
-		requirementDao.countRequirementsVerifiedByTestCases({ [10L].containsAll(it) }) >> 666
+		requirementVersionDao.countVerifiedByTestCases({ [10L].containsAll(it) }) >> 666
 		when:
-		def verifieds = service.findAllVerifiedRequirementsByTestCaseId(10, sorting)
+		PagedCollectionHolder verifieds = service.findAllVerifiedRequirementsByTestCaseId(10, sorting)
 
 		then:
-		verifieds.getUnfilteredResultCount() == 666
+		verifieds.totalNumberOfItems == 666
 	}
-	
-	
-	
-
-	
 }

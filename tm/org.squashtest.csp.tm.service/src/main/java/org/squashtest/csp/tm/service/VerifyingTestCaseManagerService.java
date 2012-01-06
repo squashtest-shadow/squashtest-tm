@@ -22,7 +22,6 @@ package org.squashtest.csp.tm.service;
 
 import java.util.List;
 
-import org.squashtest.csp.tm.domain.requirement.Requirement;
 import org.squashtest.csp.tm.domain.requirement.RequirementLibrary;
 import org.squashtest.csp.tm.domain.testcase.TestCaseLibrary;
 
@@ -36,8 +35,6 @@ import org.squashtest.csp.tm.domain.testcase.TestCaseLibrary;
  * 
  */
 public interface VerifyingTestCaseManagerService {
-
-	Requirement findRequirement(long requirementId);
 
 	/**
 	 * Returns the collection of {@link RequirementLibrary}s which Requirements can be linked by a {@link TestCase}

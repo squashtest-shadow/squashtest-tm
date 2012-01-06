@@ -24,16 +24,20 @@ package org.squashtest.csp.tm.internal.service
 
 import org.squashtest.csp.tm.domain.projectfilter.ProjectFilter;
 import org.squashtest.csp.tm.domain.requirement.Requirement;
+import org.squashtest.csp.tm.domain.requirement.RequirementVersion;
 import org.squashtest.csp.tm.domain.testcase.TestCase;
 import org.squashtest.csp.tm.domain.testcase.TestCaseLibrary;
 import org.squashtest.csp.tm.domain.testcase.TestCaseLibraryNode;
 import org.squashtest.csp.tm.internal.infrastructure.strategy.LibrarySelectionStrategy;
 import org.squashtest.csp.tm.internal.repository.LibraryNodeDao;
 import org.squashtest.csp.tm.internal.repository.RequirementDao;
+import org.squashtest.csp.tm.internal.repository.RequirementLibraryDao;
+import org.squashtest.csp.tm.internal.repository.RequirementVersionDao;
 import org.squashtest.csp.tm.internal.repository.TestCaseDao;
 import org.squashtest.csp.tm.internal.repository.TestCaseLibraryDao;
 import org.squashtest.csp.tm.internal.service.VerifyingTestCaseManagerServiceImpl;
 import org.squashtest.csp.tm.service.VerifyingTestCaseManagerService;
+import org.squashtest.csp.tools.unittest.assertions.CollectionAssertions;
 
 import spock.lang.Specification;
 
@@ -42,30 +46,21 @@ class VerifiedTestCasesManagerServiceImplTest extends Specification {
 	VerifyingTestCaseManagerService service = new VerifyingTestCaseManagerServiceImpl()
 	TestCaseDao testCaseDao = Mock()
 	TestCaseLibraryDao testCaseLibraryDao = Mock()
-	RequirementDao requirementDao = Mock()
+	RequirementVersionDao requirementVersionDao = Mock()
+	LibraryNodeDao testCaseLibraryNodeDao = Mock()
 	ProjectFilterModificationServiceImpl projectFilterModificationService = Mock()
 	LibrarySelectionStrategy<TestCaseLibrary, TestCaseLibraryNode> libraryStrategy = Mock()
 	LibraryNodeDao<TestCaseLibraryNode> nodeDao = Mock();
 
 	def setup() {
+		CollectionAssertions.declareContainsExactly()
+
 		service.testCaseDao = testCaseDao
 		service.testCaseLibraryDao = testCaseLibraryDao
-		service.requirementDao = requirementDao
+		service.requirementVersionDao = requirementVersionDao
 		service.projectFilterModificationService = projectFilterModificationService
 		service.libraryStrategy = libraryStrategy
-		service.testCaseLibraryNodeDao = nodeDao;
-	}
-
-	def "should find requirement by id"() {
-		given:
-		Requirement requirement = Mock()
-		requirementDao.findById(10L) >> requirement
-
-		when:
-		def res = service.findRequirement(10L)
-
-		then:
-		res == requirement
+		service.testCaseLibraryNodeDao = testCaseLibraryNodeDao
 	}
 
 	def "should find libraries of linkable test Case"() {
@@ -86,23 +81,21 @@ class VerifiedTestCasesManagerServiceImplTest extends Specification {
 
 	def "should add TestCase to test case's verified requirements"() {
 		given:
-		RequirementVersion requirement = new RequirementVersion()
-		// XXX RequirementVersion
-//		requirementDao.findById(10) >> requirement
-
+		RequirementVersion requirementVersion = new RequirementVersion()
+		requirementVersionDao.findById(10) >> requirementVersion
+		
 		and:
 		TestCase tc5 = new TestCase()
 		tc5.id >> 5
 		TestCase tc15 = new TestCase()
 		tc5.id >> 15
-		testCaseDao.findAllByIdList([5, 15]) >> [tc5, tc15]
+		testCaseLibraryNodeDao.findAllByIdList([5, 15]) >> [tc5, tc15]
 
 		when:
 		service.addVerifyingTestCasesToRequirement([5, 15], 10)
 
 		then:
-		requirement.getVerifyingTestCases().containsAll([tc5, tc15])
-		[tc5, tc15].containsAll(requirement.getVerifyingTestCases())
+		requirementVersion.verifyingTestCases.containsExactly([tc5, tc15])
 	}
 
 	def "should remove requirements from test case's verified requirements"() {
@@ -114,19 +107,16 @@ class VerifiedTestCasesManagerServiceImplTest extends Specification {
 		testCaseDao.findAllByIdList([15]) >> [tc15]
 
 		and: " a test case which verifies these requirements"
-		RequirementVersion requirement = new RequirementVersion()
-		requirement.addVerifyingTestCase tc5
-		requirement.addVerifyingTestCase tc15
-		// XXX RequirementVersion
-//		requirementDao.findById(10) >> requirement
+		RequirementVersion rv = new RequirementVersion()
+		rv.addVerifyingTestCase tc5
+		rv.addVerifyingTestCase tc15
+		requirementVersionDao.findById(10) >> rv
 
 		when:
 		service.removeVerifyingTestCasesFromRequirement([15], 10)
 
 		then:
-		requirement.getVerifyingTestCases().containsAll([tc5])
-		[tc5].containsAll(requirement.getVerifyingTestCases())
-		print tc5
+		rv.verifyingTestCases.containsExactly([tc5])
 	}
 
 	def "should remove single requirement from test case's verified requirements"() {
@@ -136,16 +126,15 @@ class VerifiedTestCasesManagerServiceImplTest extends Specification {
 		testCaseDao.findById(5) >> tq
 
 		and: " a test case which verifies this requirements"
-		RequirementVersion requirement = new RequirementVersion()
-		requirement.id >> 10
-		requirement.addVerifyingTestCase tq
-		// XXX RequirementVersion
-//		requirementDao.findById(10) >> requirement
+		RequirementVersion rv = new RequirementVersion()
+		rv.id >> 10
+		rv.addVerifyingTestCase tq
+		requirementVersionDao.findById(10) >> rv
 
 		when:
 		service.removeVerifyingTestCaseFromRequirement(10, 5)
 
 		then:
-		requirement.getVerifyingTestCases().size() == 0
+		rv.verifyingTestCases.size() == 0
 	}
 }

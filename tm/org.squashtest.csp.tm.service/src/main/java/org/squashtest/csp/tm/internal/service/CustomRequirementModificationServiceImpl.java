@@ -45,6 +45,7 @@ CustomRequirementModificationService {
 	@Inject
 	private RequirementDao requirementDao;
 
+	@SuppressWarnings("rawtypes")
 	@Inject
 	@Named("squashtest.tm.service.internal.RequirementManagementService")
 	private NodeManagementService<Requirement, RequirementLibraryNode, RequirementFolder> requirementManagementService;
