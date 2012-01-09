@@ -45,7 +45,7 @@ public class TestCaseImporter {
 	@Inject
 	private ArchiveReaderFactory factory;
 	
-	@Inject
+	//@Inject
 	private ExcelTestCaseParser parser;
 	
 	
