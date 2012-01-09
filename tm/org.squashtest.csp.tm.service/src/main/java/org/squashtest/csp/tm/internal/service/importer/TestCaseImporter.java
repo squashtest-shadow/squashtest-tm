@@ -1,18 +1,14 @@
 package org.squashtest.csp.tm.internal.service.importer;
 
-import java.io.File;
 import java.io.InputStream;
-import java.util.List;
 
 import javax.inject.Inject;
 
 import org.springframework.stereotype.Component;
-import org.squashtest.csp.tm.domain.library.NodeReference;
 import org.squashtest.csp.tm.domain.library.structures.StringPathMap;
+import org.squashtest.csp.tm.domain.testcase.TestCase;
 import org.squashtest.csp.tm.domain.testcase.TestCaseFolder;
-import org.squashtest.csp.tm.domain.testcase.TestCaseLibrary;
 import org.squashtest.csp.tm.domain.testcase.TestCaseLibraryNode;
-import org.squashtest.csp.tm.internal.repository.TestCaseLibraryDao;
 import org.squashtest.csp.tm.internal.utils.archive.ArchiveReader;
 import org.squashtest.csp.tm.internal.utils.archive.ArchiveReaderFactory;
 import org.squashtest.csp.tm.internal.utils.archive.Entry;
@@ -29,21 +25,27 @@ public class TestCaseImporter {
 	@Inject
 	private ArchiveReaderFactory factory;
 	
+	@Inject
+	private ExcelTestCaseParser parser;
+	
 	
 	public ImportSummary importExcelTestCases(InputStream archiveStream, Long libraryId){
 
 		ArchiveReader reader = factory.createReader(archiveStream);
 		
-		//convert the archive content to detached Squash entities
+		/* phase 1 : convert the content of the archive into Squash entities */
 		
 		HierarchyCreator creator = new HierarchyCreator();
 		creator.setArchiveReader(reader);
+		creator.setParser(parser);
+		
 		creator.create();
 		
-		TestCaseFolder root = creator.getResult();
+		TestCaseFolder root = creator.getNodes();
 		ImportSummaryImpl summary = creator.getSummary();
 		
-		//second TODO merge with the actual database content
+		/* phase 2 : merge with the actual database content */
+		
 		return null;
 	}
 	
@@ -55,6 +57,8 @@ public class TestCaseImporter {
 		
 		
 		private ArchiveReader reader;
+		private ExcelTestCaseParser parser;
+		
 		private StringPathMap<TestCaseLibraryNode> pathMap = new StringPathMap<TestCaseLibraryNode>();
 		
 		
@@ -68,21 +72,22 @@ public class TestCaseImporter {
 			
 			pathMap.put("/", root);
 		}
-		
-		public HierarchyCreator(ArchiveReader reader){
-			super();
-			this.reader=reader;
-		}
+
 		
 		public void setArchiveReader(ArchiveReader reader){
 			this.reader = reader;
+		}
+		
+		public void setParser(ExcelTestCaseParser parser){
+			this.parser = parser;
 		}
 		
 		public ImportSummaryImpl getSummary(){
 			return summary;
 		}
 		
-		public TestCaseFolder getResult(){
+		
+		public TestCaseFolder getNodes(){
 			return root;
 		}
 		
@@ -93,43 +98,63 @@ public class TestCaseImporter {
 				Entry entry = reader.next();
 
 				
-				if (entry.isDirectory()){
-					createFolder(entry);
-				}else{
-					createTestCase(entry);
+				if (entry.isDirectory()){					
+					findOrCreateFolder(entry);					
+				}else{					
+					createTestCase(entry);					
 				}
 				
 			}
 		}
 		
 		/**
-		 * will chain-create folders if path elements do not exist.
+		 * will chain-create folders if path elements do not exist. Will also store the path in a map
+		 * for faster reference later.
 		 * 
 		 * @param path
 		 */
-		private void createFolder(Entry entry){
-			TestCaseLibraryNode isFound = pathMap.getMappedElement(entry.getName());
+		private TestCaseFolder findOrCreateFolder(Entry entry){
+			TestCaseFolder isFound = (TestCaseFolder)pathMap.getMappedElement(entry.getName());
 			
 			if (isFound != null){
-				return;
+				
+				return isFound;
+				
 			}else{
-				Entry parentEntry = entry.getParent();
-				
-				//create the parent recursively if needed. Of course the root MUST be found at some point.
-				createFolder(parentEntry);
-				
-				TestCaseFolder parent = (TestCaseFolder) pathMap.getMappedElement(parentEntry.getName());
+				TestCaseFolder parent = findOrCreateFolder(entry.getParent());
 				
 				TestCaseFolder newFolder = new TestCaseFolder();
-				newFolder.setName(entry.getName());
+				newFolder.setName(entry.getShortName());
 				parent.addContent(newFolder);
 				
 				pathMap.put(entry.getName(), newFolder);
+				
+				return newFolder;
 			}
 		}
 		
 		
+		/**
+		 * will chain-create folders if the parents does not exit, create the test case, and store the path in 
+		 * a map for faster reference later.
+		 * @param entry
+		 */
 		private void createTestCase(Entry entry){
+			try{
+				//create the test case
+				TestCase testCase = parser.parseFile(entry.getStream(), summary);
+				testCase.setName(entry.getShortName());
+				
+				//find or create the parent folder
+				TestCaseFolder parent = findOrCreateFolder(entry.getParent());
+				
+				parent.addContent(testCase);
+				
+				pathMap.put(entry.getName(), testCase);
+				
+			}catch(SheetCorruptedException ex){
+				summary.incrFailures();
+			}
 			
 		}
 		
