@@ -15,14 +15,7 @@
   <ATTACHMENT_LIST ATTACHMENT_LIST_id="20"/>
   <resource res_id="20" name="req 2" created_on="2012-01-02" created_by="dbu"/>
   <requirement_version attachment_list_id="20" res_id="20" reference="before token after"/>
-  <requirement_library_node created_by="dbu" rln_id="20" created_on="2010-02-01"/>
+  <requirement_library_node created_by="dbu" rln_id="20" created_on="2010-02-01" deleted_on="2012-01-02"/>
   <requirement rln_id="20" latest_version_id="20"/>
   <rln_relationship descendant_id="20" ancestor_id="1"/>
-
-  <ATTACHMENT_LIST ATTACHMENT_LIST_id="30"/>
-  <resource res_id="30" name="req 3" created_on="2012-01-02" created_by="dbu"/>
-  <requirement_version attachment_list_id="30" res_id="30" reference="before token after"/>
-  <requirement_library_node created_by="dbu" rln_id="30" created_on="2010-02-01"/>
-  <requirement rln_id="30" latest_version_id="30"/>
-  <rln_relationship descendant_id="30" ancestor_id="1"/>
 </dataset>

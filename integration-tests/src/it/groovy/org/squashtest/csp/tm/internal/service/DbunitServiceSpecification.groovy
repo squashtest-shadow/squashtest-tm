@@ -34,7 +34,7 @@ import spock.lang.Specification;
  * Subclasses should be annotated @UnitilsSupport
  */
 @ContextConfiguration(["classpath:service/dependencies-scan-context.xml", "classpath:unitils-datasource-context.xml", "classpath*:META-INF/**/bundle-context.xml", "classpath*:META-INF/**/repository-context.xml"])
-@TransactionConfiguration(transactionManager = "squashtest.tm.hibernate.TransactionManager")
+@TransactionConfiguration(transactionManager = "squashtest.tm.hibernate.TransactionManager", defaultRollback = true)
 abstract class DbunitServiceSpecification extends Specification {
 
 

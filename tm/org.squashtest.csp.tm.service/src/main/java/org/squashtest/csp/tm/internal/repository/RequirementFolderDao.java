@@ -23,5 +23,6 @@ package org.squashtest.csp.tm.internal.repository;
 import org.squashtest.csp.tm.domain.requirement.RequirementFolder;
 import org.squashtest.csp.tm.domain.requirement.RequirementLibraryNode;
 
+@SuppressWarnings("rawtypes")
 public interface RequirementFolderDao extends FolderDao<RequirementFolder, RequirementLibraryNode> {
 }

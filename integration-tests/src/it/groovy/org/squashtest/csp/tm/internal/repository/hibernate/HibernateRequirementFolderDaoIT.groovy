@@ -29,6 +29,7 @@ import org.squashtest.csp.tm.domain.requirement.Requirement;
 import org.squashtest.csp.tm.domain.requirement.RequirementFolder;
 import org.squashtest.csp.tm.internal.repository.RequirementDao;
 import org.squashtest.csp.tm.internal.repository.RequirementFolderDao;
+import org.squashtest.csp.tools.unittest.assertions.CollectionAssertions;
 import org.unitils.dbunit.annotation.DataSet;
 
 import spock.unitils.UnitilsSupport;
@@ -41,29 +42,20 @@ class HibernateRequirementFolderDaoIT extends DbunitDaoSpecification {
 	RequirementFolderDao folderDao
 
 	@Inject RequirementDao requirementDao
-
+	
 	@DataSet("HibernateRequirementFolderDaoIT.should not retrieve deleted content.xml")
 	def "should not retrieve deleted content"(){
-		given:
-		// nothing special
-
 		when :
 		List content = folderDao.findAllContentById(1);
 
 		then :
-		content.size() == 2
-		(content.collect { it.name }).containsAll(["req 1", "req 3"])
+		(content.collect { it.name }).containsAll(["req 1"])
+		content.size() == 1
 	}
 
 	@DataSet("HibernateRequirementFolderDaoIT.should not retrieve deleted folder.xml")
 	def "should not retrieve deleted folder"(){
-		given:
-		// nothing special
-
 		when :
-		def f = folderDao.findById(1)
-		requirementDao.remove f
-
 		def res = folderDao.findById(1)
 
 		then :

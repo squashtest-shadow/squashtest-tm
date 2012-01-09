@@ -34,7 +34,7 @@ import spock.unitils.UnitilsSupport;
 
 @UnitilsSupport
 @Transactional
-class HibernateRequirementDaoIT extends DbunitDaoSpecification {
+class HibernateRequirementDaoIT_Disabled extends DbunitDaoSpecification {
 	@Inject RequirementDao requirementDao
 
 	@DataSet("HibernateRequirementDaoIT.should find requirements by name token.xml")

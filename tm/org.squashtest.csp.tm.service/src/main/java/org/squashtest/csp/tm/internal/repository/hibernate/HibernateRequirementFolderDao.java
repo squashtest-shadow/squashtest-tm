@@ -35,6 +35,7 @@ import org.squashtest.csp.tm.internal.repository.RequirementFolderDao;
 @Repository
 public class HibernateRequirementFolderDao extends HibernateEntityDao<RequirementFolder> implements
 RequirementFolderDao {
+	@SuppressWarnings("rawtypes")
 	@Override
 	public List<RequirementLibraryNode> findAllContentById(final long folderId) {
 		SetQueryParametersCallback setParams = new SetQueryParametersCallback() {
@@ -49,6 +50,7 @@ RequirementFolderDao {
 
 	}
 
+	@SuppressWarnings("rawtypes")
 	@Override
 	public RequirementFolder findByContent(final RequirementLibraryNode node) {
 		SetQueryParametersCallback callback = new SetQueryParametersCallback() {
@@ -94,6 +96,7 @@ RequirementFolderDao {
 
 	
 
+	@SuppressWarnings("unchecked")
 	@Override
 	public List<Long[]> findPairedContentForList(final List<Long> ids) {
 
@@ -111,6 +114,7 @@ RequirementFolderDao {
 	}
 
 	
+	@SuppressWarnings("unchecked")
 	@Override
 	public List<Long> findContentForList(List<Long> ids) {
 		if (ids.size()==0) return Collections.emptyList();
