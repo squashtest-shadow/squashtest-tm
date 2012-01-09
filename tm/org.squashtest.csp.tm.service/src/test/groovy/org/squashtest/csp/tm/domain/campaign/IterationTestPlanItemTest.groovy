@@ -23,6 +23,7 @@ package org.squashtest.csp.tm.domain.campaign;
 import org.squashtest.csp.tm.domain.execution.Execution;
 import org.squashtest.csp.tm.domain.execution.ExecutionStatus;
 import org.squashtest.csp.tm.domain.testcase.TestCase;
+import org.squashtest.csp.tm.domain.users.User
 
 import spock.lang.Specification;
 
@@ -52,7 +53,7 @@ public class IterationTestPlanItemTest extends Specification {
 		then:
 		copy.executions.isEmpty()
 	}
-
+	
 	def "copy of a test plan item should reference the same test case"() {
 		when:
 		IterationTestPlanItem copy = copySource.createCopy()
@@ -67,6 +68,16 @@ public class IterationTestPlanItemTest extends Specification {
 
 		then:
 		copy.label == copySource.label
+	}
+	def "copy of a test plan item should copy the assigned user"() {
+		given: 
+		User user = new User()
+		copySource.setUser(user)
+		when:
+		IterationTestPlanItem copy = copySource.createCopy()
+
+		then:
+		copy.user == copySource.getUser();
 	}
 
 	def "should copying a  test plan item should not modify the source"() {

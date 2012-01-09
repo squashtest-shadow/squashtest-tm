@@ -72,5 +72,14 @@ class StubEntityDao<ENTITY> implements EntityDao<ENTITY> {
 		// NOOP
 
 	}
+	
+	/**
+	 * @see org.squashtest.csp.tm.internal.repository.EntityDao#persist(List)
+	 */
+	@Override
+	public void persist(List<ENTITY> transientEntities) {
+		// NOOP
+		
+	}
 
 }

@@ -20,7 +20,11 @@
  */
 package org.squashtest.csp.tm.domain.campaign
 
+import org.h2.util.New;
 import java.text.SimpleDateFormat
+import org.squashtest.csp.tm.domain.attachment.Attachment
+import org.squashtest.csp.tm.domain.attachment.AttachmentContent;
+import org.squashtest.csp.tm.domain.attachment.AttachmentList
 import org.squashtest.csp.tm.domain.execution.Execution
 import org.squashtest.csp.tm.domain.execution.ExecutionStatus;
 import org.squashtest.csp.tm.domain.testcase.TestCase;
@@ -31,7 +35,82 @@ import spock.lang.Specification;
 class IterationTest extends Specification {
 
 
+	Iteration copySource = new Iteration(
+											description: "description",
+											name: "name",
+											campaign: Mock(Campaign)
+										)
 
+	
+	def "copy of an Iteration should copy it's name and description"() {
+		when:
+		Iteration copy = copySource.createCopy()
+
+		then:
+		copy.getDescription() == copySource.getDescription()
+		copy.getName() == copySource.getName()
+	}
+	def "copy of an Iteration should copy it's planning infos"() {
+		given:
+		SimpleDateFormat format = new SimpleDateFormat("dd/MM/yyyy")
+		
+		Date expectedStart = format.parse("01/01/2001")
+		Date actualStart = format.parse("04/04/2002")
+		Date actualEnd = format.parse("05/05/2003")
+	
+		copySource.setScheduledStartDate(expectedStart)
+		copySource.setActualStartAuto(false)
+		copySource.setActualStartDate(actualStart)
+		copySource.setActualEndAuto(true)
+		copySource.setActualEndDate(actualEnd)
+		
+		when:
+		Iteration copy = copySource.createCopy()
+
+		then:
+		copy.getScheduledStartDate().equals(expectedStart)
+		copy.getScheduledEndDate() == null
+		copy.isActualStartAuto() == copySource.isActualStartAuto()
+		copy.getActualStartDate().equals(actualStart)
+		copy.isActualEndAuto() == copySource.isActualEndAuto()
+		copy.getActualEndDate() == null
+		
+		copy.getName() == copySource.getName()
+	}
+	def "copy of an Iteration should copy it's test plan withoud deleted testCases"() {
+		given: 
+		TestCase tc1 = new TestCase()
+		IterationTestPlanItem testPlanItem = new IterationTestPlanItem()
+		testPlanItem.setReferencedTestCase(tc1)
+		IterationTestPlanItem testPlanItemWithoutTestCase = new IterationTestPlanItem()
+		
+		copySource.addTestPlan(testPlanItem)
+		copySource.addTestPlan(testPlanItemWithoutTestCase)
+		
+		when:
+		Iteration copy = copySource.createCopy()
+
+		then:
+		copy.getTestPlans().size() == 1
+		copy.getTestPlans().get(0).getReferencedTestCase() == tc1
+	}
+	def "copy of an Iteration should copy it's attachments"() {
+		given: 
+		Attachment attach = Mock(Attachment)
+		Attachment attachCopy = new Attachment()
+		attach.hardCopy() >> attachCopy
+		copySource.getAttachmentList().addAttachment(attach)
+		
+		when:
+		Iteration copy = copySource.createCopy()
+		AttachmentList attList = copy.getAttachmentList()
+		Set<Attachment> list = attList.getAllAttachments();
+		
+		then:
+		list.size() == 1
+		list.asList() == [attachCopy] 
+	}
+	
 	def "should add a test plan"(){
 
 		given :
@@ -47,7 +126,7 @@ class IterationTest extends Specification {
 		iteration.addTestPlan(testplan);
 
 		then :
-		iteration.getTestPlans().size()==1;
+		iteration.getTestPlans().size()==1
 		iteration.getTestPlans().get(0).getLabel()=="testCase1"
 	}
 
@@ -57,17 +136,17 @@ class IterationTest extends Specification {
 		TestCase testCase = Mock()
 		testCase.getId() >> 1
 		testCase.getName() >> "testCase1"
-		testCase.getExecutionMode() >> TestCaseExecutionMode.MANUAL;
+		testCase.getExecutionMode() >> TestCaseExecutionMode.MANUAL
 
 		TestCase testCase2 = Mock()
 		testCase2.getId() >> 2
 		testCase2.getName() >> "testCase2"
-		testCase2.getExecutionMode() >> TestCaseExecutionMode.MANUAL;
+		testCase2.getExecutionMode() >> TestCaseExecutionMode.MANUAL
 
 
 		Iteration iteration = new Iteration();
 		iteration.addTestPlan(new IterationTestPlanItem (testCase))
-		iteration.addTestPlan(new IterationTestPlanItem (testCase2));
+		iteration.addTestPlan(new IterationTestPlanItem (testCase2))
 
 		when :
 		List<Execution> listExec = iteration.getExecutions()
@@ -83,7 +162,7 @@ class IterationTest extends Specification {
 		TestCase testCase = Mock()
 		testCase.getId() >> 1
 		testCase.getName() >> "testCase1"
-		testCase.getExecutionMode() >> TestCaseExecutionMode.MANUAL;
+		testCase.getExecutionMode() >> TestCaseExecutionMode.MANUAL
 
 		and :
 
@@ -126,7 +205,9 @@ class IterationTest extends Specification {
 		listTP.size()==1;
 		listTP.get(0).getExecutions().size()==2;
 		list == [execution1, execution2];
-		list.collect{ it.name } == ["testCase1", "testCase1"];
+		list.collect{
+			it.name
+		} == ["testCase1", "testCase1"];
 	}
 
 

@@ -39,8 +39,11 @@ var squashtm ;
 		file : function(a){
 			return $(a).is("[rel='file']") ;
 		},
+		campaign : function(a){
+			return $(a).is("[rel='file'][restype='campaigns']")
+		},
 		node : function(a){
-			return $(a).is("[rel='folder']") || $(a).is("[rel='file']");
+			return $(a).is("[rel='folder']") || $(a).is("[rel='file']") ;
 		},
 		iteration : function(a){
 			return $(a).is("[rel='resource']");

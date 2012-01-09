@@ -46,6 +46,7 @@ import javax.validation.constraints.NotNull;
 import org.hibernate.validator.constraints.NotBlank;
 import org.squashtest.csp.core.security.annotation.AclConstrainedObject;
 import org.squashtest.csp.tm.domain.UnknownEntityException;
+import org.squashtest.csp.tm.domain.attachment.Attachment;
 import org.squashtest.csp.tm.domain.attachment.AttachmentHolder;
 import org.squashtest.csp.tm.domain.attachment.AttachmentList;
 import org.squashtest.csp.tm.domain.audit.Auditable;
@@ -309,22 +310,30 @@ public class Iteration implements AttachmentHolder {
 	public Iteration createCopy() {
 		Iteration clone = new Iteration();
 		clone.setName(this.getName());
+		clone.setDescription(this.getDescription());
+		clone.setActualEndAuto(this.isActualEndAuto());
+		clone.setActualStartAuto(this.isActualStartAuto());
+		
 		if (this.getScheduledStartDate() != null) {
 			clone.setScheduledStartDate((Date) this.getScheduledStartDate().clone());
 		}
 		if (this.getScheduledEndDate() != null) {
 			clone.setScheduledEndDate((Date) this.getScheduledEndDate().clone());
 		}
-		if (this.getScheduledEndDate() != null) {
+		if (this.getActualStartDate() != null && !this.isActualStartAuto()) {
 			clone.setActualStartDate((Date) this.getActualStartDate().clone());
 		}
 
-		if (this.getScheduledEndDate() != null) {
+		if (this.getActualEndDate() != null && !this.isActualEndAuto()) {
 			clone.setActualEndDate((Date) this.getActualEndDate().clone());
 		}
 
 		for (IterationTestPlanItem itemTestPlan : testPlans) {
-			clone.addTestPlan(itemTestPlan.createCopy());
+				clone.addTestPlan(itemTestPlan.createCopy());
+		}
+		for (Attachment attach : this.getAttachmentList().getAllAttachments()){
+			Attachment copyAttach = attach.hardCopy();
+			clone.getAttachmentList().addAttachment(copyAttach);
 		}
 
 		return clone;

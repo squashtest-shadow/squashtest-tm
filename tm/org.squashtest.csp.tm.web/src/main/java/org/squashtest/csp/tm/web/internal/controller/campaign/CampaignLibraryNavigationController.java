@@ -185,6 +185,23 @@ LibraryNavigationController<CampaignLibrary, CampaignFolder, CampaignLibraryNode
 
 		return res;
 	}
+	private @ResponseBody
+	List<JsTreeNode> createCopiedIterationsModel(
+			List<Iteration> newIterations, int nextIterationNumber) {
+		
+		List<JsTreeNode> res = new ArrayList<JsTreeNode>();
+		
+		for (Iteration iteration : newIterations) {
+			res.add(createIterationTreeNode(iteration, nextIterationNumber));
+			nextIterationNumber ++;
+		}
+
+		return res;
+	}
+
+
+
+
 
 	@RequestMapping(value="/campaign-tree", method=RequestMethod.GET)
 	public @ResponseBody List<JsTreeNode> getRootModel(){
@@ -227,5 +244,23 @@ LibraryNavigationController<CampaignLibrary, CampaignFolder, CampaignLibraryNode
 		
 		return campaignLibraryNavigationService.deleteIterations(nodeIds);	
 	}
+	
+	@RequestMapping(value="/copyIteration", method= RequestMethod.POST)
+	public @ResponseBody List<JsTreeNode> copyIterations(@RequestParam("object-ids[]") Long[] iterationsIds, 
+							  @RequestParam("destination-id") long campaignId, 
+							  @RequestParam("destination-type") String destType,
+							  @RequestParam("next-iteration-number") int nextIterationNumber){
+		List<Iteration> iterationsList;
+		
+		if (destType.equals("campaign")){
+			iterationsList = campaignLibraryNavigationService.copyIterationsToCampaign(campaignId, iterationsIds);
+		}
+		else{
+			throw new IllegalArgumentException("copy nodes : cannot paste iterations to : "+destType);
+		}
+		return createCopiedIterationsModel(iterationsList, nextIterationNumber);
+	}
+	
+	
 
 }

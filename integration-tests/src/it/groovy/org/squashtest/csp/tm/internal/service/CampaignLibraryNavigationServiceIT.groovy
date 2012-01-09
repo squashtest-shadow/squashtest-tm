@@ -24,7 +24,11 @@ import java.util.List;
 
 import javax.inject.Inject;
 
+import org.apache.tools.ant.taskdefs.Copy;
+import org.junit.runner.RunWith;
+import org.spockframework.runtime.Sputnik;
 import org.spockframework.util.NotThreadSafe;
+import org.springframework.transaction.annotation.Transactional;
 import org.squashtest.csp.tm.domain.DuplicateNameException;
 import org.squashtest.csp.tm.domain.campaign.Campaign;
 import org.squashtest.csp.tm.domain.campaign.CampaignFolder;
@@ -32,9 +36,14 @@ import org.squashtest.csp.tm.domain.campaign.CampaignLibraryNode;
 import org.squashtest.csp.tm.domain.campaign.Iteration;
 import org.squashtest.csp.tm.service.CampaignLibrariesCrudService;
 import org.squashtest.csp.tm.service.CampaignLibraryNavigationService;
+import org.unitils.dbunit.annotation.DataSet;
 
-@NotThreadSafe
-class CampaignLibraryNavigationServiceIT extends HibernateServiceSpecification {
+import spock.unitils.UnitilsSupport;
+
+@UnitilsSupport
+@Transactional
+@RunWith(Sputnik)
+class CampaignLibraryNavigationServiceIT extends DbunitServiceSpecification {
 
 
 	@Inject
@@ -51,12 +60,9 @@ class CampaignLibraryNavigationServiceIT extends HibernateServiceSpecification {
 
 	def setup(){
 
-
-
 		libcrud.addLibrary();
 
 		def libList= libcrud.findAllLibraries()
-
 
 		def lib = libList.get(libList.size()-1);
 
@@ -80,7 +86,7 @@ class CampaignLibraryNavigationServiceIT extends HibernateServiceSpecification {
 		then :
 		thrown (RuntimeException)
 	}
-
+	
 	def "should not persist a nameless iteration"(){
 		given :
 		Campaign camp = new Campaign(name:"cp")
@@ -273,10 +279,6 @@ class CampaignLibraryNavigationServiceIT extends HibernateServiceSpecification {
 		obj.description=="the first campaign"
 	}
 
-
-
-
-
 	def "should get a clone of the campaign" (){
 		given:
 		def campa = new Campaign(name: "campaign 2", description: "the first campaign")
@@ -292,5 +294,22 @@ class CampaignLibraryNavigationServiceIT extends HibernateServiceSpecification {
 		then:
 		res.testPlan.collect { it.referencedTestCase } == campa.testPlan.collect { it.referencedTestCase }
 		res.iterations == []
+	}
+	
+	@DataSet("CampaignLibraryNavigationServiceIT.should copy paste iterations to campaign.xml")
+	def "should copy paste iterations to campaign"(){
+		given:
+		Long[] iterationList = [1L,2L] 
+		Long targetCampaignId = 11L
+		
+		when: 
+		
+		List<Iteration> iterations = navService.copyIterationsToCampaign(targetCampaignId , iterationList )
+		
+		then: 
+		iterations.size() == 2
+		iterations.get(0).name == "iter - tc1"
+		
+		
 	}
 }

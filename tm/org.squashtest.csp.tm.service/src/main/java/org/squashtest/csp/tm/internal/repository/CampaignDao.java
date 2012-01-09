@@ -41,7 +41,9 @@ public interface CampaignDao extends EntityDao<Campaign> {
 
 	List<String> findNamesInCampaignStartingWith(long campaignId,
 			String nameStart);
-
+	
+	List<String> findAllNamesInCampaign(long campaignId);
+	
 	List<Campaign> findAllCampaign();
 
 	/**
@@ -54,4 +56,5 @@ public interface CampaignDao extends EntityDao<Campaign> {
 	List<CampaignLibraryNode> findAllByNameContaining(String tokenInName, boolean groupByProject);
 	
 	List<Campaign> findAllById(List<Long> campaignIds);
+
 }

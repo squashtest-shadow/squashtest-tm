@@ -53,6 +53,10 @@ LibraryNavigationService<CampaignLibrary, CampaignFolder, CampaignLibraryNode> {
 	List<Iteration> findIterationsByCampaignId(long campaignId);
 
 	int copyIterationToCampaign(long campaignId, long iterationId);
+	
+
+	List<Iteration> copyIterationsToCampaign(long campaignId,
+			Long[] iterationsIds);
 
 	int moveIterationToNewCampaign(long newCampaignId, long oldCampaignId,
 			long iterationId);
@@ -82,6 +86,5 @@ LibraryNavigationService<CampaignLibrary, CampaignFolder, CampaignLibraryNode> {
 	 * @return
 	 */
 	List<Long> deleteIterations(List<Long> targetIds);
-	
-	
+
 }

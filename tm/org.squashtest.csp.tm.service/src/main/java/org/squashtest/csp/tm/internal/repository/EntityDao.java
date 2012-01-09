@@ -29,6 +29,8 @@ public interface EntityDao<ENTITY_TYPE> {
 	List<ENTITY_TYPE> findAllById(List<Long> id);
 
 	void persist(ENTITY_TYPE transientEntity);
+	
+	void persist(List<ENTITY_TYPE> transientEntities);
 
 	void remove(ENTITY_TYPE entity);
 	

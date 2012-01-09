@@ -227,6 +227,7 @@ public class IterationTestPlanItem {
 		copy.setExecutionStatus(ExecutionStatus.READY);
 		copy.setLabel(this.label);
 		copy.setReferencedTestCase(this.referencedTestCase);
+		copy.setUser(this.user);
 		return copy;
 	}
 

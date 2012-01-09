@@ -178,6 +178,7 @@
 					}, this));
 		},
 		_fn : {
+			
 			allowedOperations : function(){
 				var selectedNodes = this.get_selected();					
 				var operations = "";				
@@ -189,32 +190,50 @@
 					operations = "";
 				}
 				//case 2 : more than one item selected : deletion and copy if nodes group does not include a library
+				//case 2bis : an iteration is selected with another type of node : copy is not possible. 
 				else if (selectedNodes.length != 1){
-					operations = (! selectedNodes.is(":library")) ? "delete copy " : "";
-				}
-				//case 3 : one item is selected, button activation depend on their nature.
-				else{
-					switch(selectedNodes.attr('rel')){			
-						case "drive" :
-							operations="create-folder create-file paste import-excel";
-							break;
-						
-						case "folder" :
-							operations="create-folder create-file rename delete copy paste";
-							break;
-							
-						case "file" :
-							operations="create-resource rename delete copy";
-							break;
-							
-						case "resource" : 
-							operations="rename delete";
-							break;
+					operations = "";
+					if(!selectedNodes.is(":library")){
+						operations = "delete copy ";
+						if(selectedNodes.is(":iteration") && selectedNodes.is(":node")){
+							operations = "delete ";
+						}
 					}
 				}
+				
+				else{
+					//case 3 : one item is selected: button activation depend on their nature.
+					
+						switch(selectedNodes.attr('rel')){			
+							case "drive" :
+							operations="create-folder create-file import-excel";
+								//  the copied items are not iterations only 
+								if($.cookie('squash-copy-iterations-only') == "0"){ operations += "paste";}
+								break;
+							
+							case "folder" :
+								operations="create-folder create-file rename delete copy ";
+								// the copied items are not iterations only 
+								if($.cookie('squash-copy-iterations-only') == "0"){ operations += "paste";}
+								break;
+								
+							case "file" :
+								operations="create-resource rename delete copy";
+								//case 5 : a campaign is selected paste is active if the copied steps are iterations only
+								if(selectedNodes.is(":campaign") && $.cookie('squash-copy-iterations-only') == "1"){ operations += "paste";}
+								break;
+								
+							case "resource" : 
+								operations="rename delete copy";
+								break;
+						}
+					
+				}
+			
 				return operations;			
 			}		
 		},
+			
 		defaults : {
 			"item_h" : "ui-state-active",
 			"item_a" : "ui-state-default",
@@ -843,6 +862,10 @@ function TreeNodeCopier(initObj){
 		var libraryId = library.attr('resid');
 		$.cookie('squash-copy-nodes-ids', ids.toString());			
 		$.cookie('squash-copy-library-id', libraryId);
+		$.cookie('squash-copy-iterations-only', "0");
+		if(nodes.filter(':iteration').length == nodes.length){
+			$.cookie('squash-copy-iterations-only', "1");
+		}
 		
 	}
 	
@@ -853,25 +876,44 @@ function TreeNodeCopier(initObj){
 		
 		var target = this.tree.get_selected();
 		
-		if (target.length!=1 || (! target.is(':editable')) || (! checkSameProject(target))){
+		if ( target.length!=1 || (! target.is(':editable')) || (! checkSameProject(target))){
 			displayError.call(this);
 		}
+		
 		else{
-							
+			if(!this.tree.is_open(target)){this.tree.open_node(target);}
+			var destinationType = "folder";
+			if(isRoot(target)){
+				destinationType = "library";
+			}
 			//here we mimick the move_object used by moveNode, describe earlier in the file
 			var copyData = {
 				inst : this.tree,
 				sendData : {
 					"object-ids" : ids,
 					"destination-id" : target.attr('resid'),
-					"destination-type" : isRoot(target) ? "library" : "folder"						
+					"destination-type" : destinationType
 				},
 				newParent : target
 			}
+			//if the destination is a campaign the request will not be the same
+			if(target.is(':campaign')){
+				this.url = initObj.urlIteration ;
+				var iterations = this.tree._get_children(target) ;
+				copyData = {
+						inst : this.tree,
+						sendData : {
+							"object-ids" : ids,
+							"destination-id" : target.attr('resid'),
+							"destination-type" : "campaign",
+							"next-iteration-number" : iterations.length
+						},
+						newParent : target
+					}
+			}				
 			
 			//then we send it to the copy routine
-			copyNode(copyData, this.url)
-			.fail(function(){this.tree.refresh();});
+			copyNode(copyData, this.url).fail(function(){this.tree.refresh();});
 		}
 	
 	}		

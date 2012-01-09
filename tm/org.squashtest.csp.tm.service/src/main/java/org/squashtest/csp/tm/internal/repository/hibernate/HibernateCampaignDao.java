@@ -111,6 +111,18 @@ public class HibernateCampaignDao extends HibernateEntityDao<Campaign> implement
 	}
 
 	@Override
+	public List<String> findAllNamesInCampaign(final long campaignId) {
+		SetQueryParametersCallback newCallBack1 = new SetQueryParametersCallback() {
+
+			@Override
+			public void setQueryParameters(Query query) {
+				query.setParameter("containerId", campaignId);
+			}
+		};
+		return executeListNamedQuery("campaign.findAllNamesInCampaign", newCallBack1);
+	}
+
+	@Override
 	public List<String> findNamesInLibraryStartingWith(final long libraryId,
 			final String nameStart) {
 		SetQueryParametersCallback newCallBack1 = new SetQueryParametersCallback() {
@@ -159,4 +171,6 @@ public class HibernateCampaignDao extends HibernateEntityDao<Campaign> implement
 			return query.list();
 		}
 	}
+
+
 }

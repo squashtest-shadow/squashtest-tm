@@ -36,7 +36,9 @@
 <s:url var="copyUrl" value="/{workspace}-browser/copy">
 	<s:param name="workspace" value="${resourceName}" />
 </s:url>
-
+<s:url var="copyIterationUrl" value="/{workspace}-browser/copyIteration">
+	<s:param name="workspace" value="${resourceName}" />
+</s:url>
 <f:message var="errorMessage" key="${errorMessageKey}"/>
 
 <script type="text/javascript" >
@@ -44,7 +46,8 @@
 	$(function(){
 		squashtm.treemenu.treeNodeCopier = new TreeNodeCopier({treeSelector : "${treeSelector}",
 											 errMessage : "${errorMessage}",
-											 url : "${copyUrl}"
+											 url : "${copyUrl}",
+											 urlIteration : "${copyIterationUrl}"
 										});		
 		
 		${treeNodeButtonCopy}.click(function(){
