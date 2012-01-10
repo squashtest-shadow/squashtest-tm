@@ -18,38 +18,40 @@
  *     You should have received a copy of the GNU Lesser General Public License
  *     along with this software.  If not, see <http://www.gnu.org/licenses/>.
  */
-package org.squashtest.csp.tm.domain.library;
 
-import org.squashtest.csp.core.domain.Identified;
-import org.squashtest.csp.tm.domain.project.ProjectResource;
+package org.squashtest.csp.core.domain;
+
+import static org.junit.Assert.*;
+import spock.lang.Specification;
+import spock.lang.Unroll;
 
 /**
- * Interface for a content node of a library.
- *
- * @author Gregory Fouquet
+ * @author Gregory
  *
  */
-public interface LibraryNode extends ProjectResource, Identified {
-	/**
-	 * @return Name of this node.
-	 */
-	String getName();
-
-	/**
-	 *
-	 * @param name
-	 *            The name of this node. Should not be blank or null.
-	 */
-	void setName(String name);
-
-	/***
-	 *
-	 * @param newDescription
-	 *            the new node description
-	 */
-	void setDescription(String newDescription);
-
-	String getDescription();
-
-	LibraryNode createCopy();
+class IdentifiedComparatorTest extends Specification {
+	@Unroll("#id1.id is bigger than #id2.id should be #bigger")
+	def "should compare identified objects"() {
+		expect: 
+		(IdentifiedComparator.instance.compare(id1, id2) > 0) == bigger
+		
+		where: 
+		id1               | id2                | bigger
+		new Id()          | new Id(ident: 1L)  | false
+		new Id(ident: 1L) | new Id()           | true
+		new Id(ident: 1L) | new Id(ident: 2L)  | false
+		new Id(ident: 2L) | new Id(ident: 1L)  | true
+		
+	}
+	
 }
+
+class Id implements Identified {
+	public Long ident
+	
+	public Long getId() {
+		return ident
+	}
+}
+
+

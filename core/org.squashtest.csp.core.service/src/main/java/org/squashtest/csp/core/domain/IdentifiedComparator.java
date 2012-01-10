@@ -18,38 +18,36 @@
  *     You should have received a copy of the GNU Lesser General Public License
  *     along with this software.  If not, see <http://www.gnu.org/licenses/>.
  */
-package org.squashtest.csp.tm.domain.library;
 
-import org.squashtest.csp.core.domain.Identified;
-import org.squashtest.csp.tm.domain.project.ProjectResource;
+package org.squashtest.csp.core.domain;
+
+import java.util.Comparator;
 
 /**
- * Interface for a content node of a library.
- *
+ * compares {@link Identified} objects using their id.
+ * 
  * @author Gregory Fouquet
- *
+ * 
  */
-public interface LibraryNode extends ProjectResource, Identified {
+public class IdentifiedComparator extends Object implements Comparator<Identified> {
+	private static final IdentifiedComparator INSTANCE = new IdentifiedComparator();
+	
+	public static IdentifiedComparator getInstance() {
+		return INSTANCE;
+	}
+	
 	/**
-	 * @return Name of this node.
+	 * @see java.util.Comparator#compare(java.lang.Object, java.lang.Object)
 	 */
-	String getName();
+	@Override
+	public int compare(Identified o1, Identified o2) {
+		if (o1.getId() == null) {
+			return o2.getId() == null ? 0: -1;
+		}
+		if (o2.getId() == null) {
+			return 1;
+		}
+		return o1.getId().compareTo(o2.getId());
+	}
 
-	/**
-	 *
-	 * @param name
-	 *            The name of this node. Should not be blank or null.
-	 */
-	void setName(String name);
-
-	/***
-	 *
-	 * @param newDescription
-	 *            the new node description
-	 */
-	void setDescription(String newDescription);
-
-	String getDescription();
-
-	LibraryNode createCopy();
 }

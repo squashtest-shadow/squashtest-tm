@@ -18,38 +18,13 @@
  *     You should have received a copy of the GNU Lesser General Public License
  *     along with this software.  If not, see <http://www.gnu.org/licenses/>.
  */
-package org.squashtest.csp.tm.domain.library;
 
-import org.squashtest.csp.core.domain.Identified;
-import org.squashtest.csp.tm.domain.project.ProjectResource;
+package org.squashtest.csp.core.domain;
 
 /**
- * Interface for a content node of a library.
- *
  * @author Gregory Fouquet
  *
  */
-public interface LibraryNode extends ProjectResource, Identified {
-	/**
-	 * @return Name of this node.
-	 */
-	String getName();
-
-	/**
-	 *
-	 * @param name
-	 *            The name of this node. Should not be blank or null.
-	 */
-	void setName(String name);
-
-	/***
-	 *
-	 * @param newDescription
-	 *            the new node description
-	 */
-	void setDescription(String newDescription);
-
-	String getDescription();
-
-	LibraryNode createCopy();
+public interface Identified {
+	Long getId();
 }

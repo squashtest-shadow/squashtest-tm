@@ -30,6 +30,7 @@ import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.security.access.prepost.PostFilter;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+import org.squashtest.csp.core.domain.IdentifiedComparator;
 import org.squashtest.csp.tm.domain.projectfilter.ProjectFilter;
 import org.squashtest.csp.tm.domain.requirement.RequirementVersion;
 import org.squashtest.csp.tm.domain.testcase.TestCase;
@@ -77,12 +78,7 @@ public class VerifyingTestCaseManagerServiceImpl implements VerifyingTestCaseMan
 		List<TestCaseLibraryNode> nodes= testCaseLibraryNodeDao.findAllByIdList(testCasesIds);
 		
 		//now we resort them according to the order in which the testcaseids were given
-		Collections.sort(nodes, new Comparator<TestCaseLibraryNode>() {
-			@Override
-			public int compare(TestCaseLibraryNode o1, TestCaseLibraryNode o2) {
-				return testCasesIds.indexOf(o1.getId()) - testCasesIds.indexOf(o2.getId());
-			}
-		});
+		Collections.sort(nodes, IdentifiedComparator.getInstance());
 
 		List<TestCase> testCases = new TestCaseNodeWalker().walk(nodes);
 	

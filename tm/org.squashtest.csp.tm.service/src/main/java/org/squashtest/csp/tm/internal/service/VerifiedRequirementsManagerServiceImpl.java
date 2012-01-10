@@ -21,7 +21,6 @@
 package org.squashtest.csp.tm.internal.service;
 
 import java.util.Collections;
-import java.util.Comparator;
 import java.util.List;
 
 import javax.inject.Inject;
@@ -31,6 +30,7 @@ import org.springframework.security.access.prepost.PostFilter;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+import org.squashtest.csp.core.domain.IdentifiedComparator;
 import org.squashtest.csp.tm.domain.projectfilter.ProjectFilter;
 import org.squashtest.csp.tm.domain.requirement.Requirement;
 import org.squashtest.csp.tm.domain.requirement.RequirementLibrary;
@@ -92,12 +92,7 @@ public class VerifiedRequirementsManagerServiceImpl implements VerifiedRequireme
 
 		if (!nodes.isEmpty()) {
 			// now we resort them according to the order in which the requirementsIds were given
-			Collections.sort(nodes, new Comparator<RequirementLibraryNode>() {
-				@Override
-				public int compare(RequirementLibraryNode o1, RequirementLibraryNode o2) {
-					return requirementsIds.indexOf(o1.getId()) - requirementsIds.indexOf(o2.getId());
-				}
-			});
+			Collections.sort(nodes, IdentifiedComparator.getInstance());
 
 			List<Requirement> requirements = new RequirementNodeWalker().walk(nodes);
 			if (!requirements.isEmpty()) {
