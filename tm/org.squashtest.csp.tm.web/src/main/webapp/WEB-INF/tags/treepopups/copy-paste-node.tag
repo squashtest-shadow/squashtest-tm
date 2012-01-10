@@ -28,7 +28,6 @@
 <%@ taglib prefix="s" uri="http://www.springframework.org/tags"%>
 	
 <%@ attribute name="treeSelector" description="jquery selector of the tree instance" %>
-<%@ attribute name="errorMessageKey" description="message key for error popups" %>
 <%@ attribute name="resourceName" description="name of the resource being processed (test-case etc)" %>
 <%@ attribute name="treeNodeButtonCopy" required="true" description="the javascript button that will trigger a copy" %>
 <%@ attribute name="treeNodeButtonPaste" required="true" description="the javascript button that will trigger the paste" %>
@@ -39,13 +38,21 @@
 <s:url var="copyIterationUrl" value="/{workspace}-browser/copyIteration">
 	<s:param name="workspace" value="${resourceName}" />
 </s:url>
-<f:message var="errorMessage" key="${errorMessageKey}"/>
 
+<f:message var="errorMessage" key="tree.button.copy-node.error"/>
+<f:message var="pasteNotHere" key="tree.button.copy-node.error.pastenothere"/>
+<f:message var="pasteIterationNotHere" key="tree.button.copy-node.error.pasteiterationnothere"/>
+<f:message var="pasteNotSameProject" key="tree.button.copy-node.error.pastenotsameproject"/>
+<f:message var="notOneEditable" key="tree.button.copy-node.error.notOneEditable"/>
 <script type="text/javascript" >
 
 	$(function(){
 		squashtm.treemenu.treeNodeCopier = new TreeNodeCopier({treeSelector : "${treeSelector}",
 											 errMessage : "${errorMessage}",
+											 pasteNotSameProject : "${pasteNotSameProject}",											 pasteNotHere :"${pasteNotHere}",
+											 pasteIterationNotHere :"${pasteIterationNotHere}",
+											 pasteNotHere :"${pasteNotHere}",
+											 notOneEditable :"${notOneEditable}",
 											 url : "${copyUrl}",
 											 urlIteration : "${copyIterationUrl}"
 										});		

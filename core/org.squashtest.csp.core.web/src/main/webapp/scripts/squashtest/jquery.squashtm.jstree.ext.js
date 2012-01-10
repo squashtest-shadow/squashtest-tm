@@ -126,7 +126,6 @@
 			var s = this._get_settings().squash;
 			tree.data.squash.timeout=s.timeout;
 			tree.data.squash.isie=false;
-			
 			var container = this.get_container();
 			
 			/* we need our handlers to be bound first 
@@ -178,58 +177,108 @@
 					}, this));
 		},
 		_fn : {
+			selectionIsEditable : function(selectedNodes){
 			
-			allowedOperations : function(){
-				var selectedNodes = this.get_selected();					
-				var operations = "";				
 				//that variable will be set to true if at least one selected node is not editable.
 				var noEdit = (selectedNodes.not(":editable").length > 0);
-				
-				//case 1 : not nodes, or not editable nodes : no operations allowed. 
-				if (selectedNodes.length==0 || noEdit){
-					operations = "";
+				//selection is not editable if no node is selected or one node of the selection is not editable
+				if( noEdit ) return "noEdit";
+				else if(selectedNodes.length == 0) return "noNodeSelected";
+				else return "OK";
+			},
+			selectionIsOneEditableNode : function(selectedNodes){
+				//true if only one node is selected and is editable
+				if(!selectedNodes.not(":editable").length > 0
+						&& selectedNodes.length == 1) return "OK";
+				else return "notOneEditable";
+			},
+			selectionIsDeletable : function(selectedNodes){
+				//all nodes are deletables excepted project libraries
+				var isEdit = this.selectionIsEditable(selectedNodes);
+				if(isEdit != "OK") return isEdit;
+				else if ( selectedNodes.is(":library"))return "nodeleteLibrary";
+				else return "OK" ;
+			},
+			selectionIsCopyable : function(selectedNodes){
+				// all nodes except libraries are copyable 
+				// if iterations are selected with other nodes type the selection is not copyable
+				var isEdit = this.selectionIsEditable(selectedNodes);
+				if(isEdit != "OK") return isEdit;
+				else if	( selectedNodes.is(":library")) return "noCopyLibrary";
+				else if (selectedNodes.is(":iteration") && selectedNodes.is(":node")) return "noCopyIteration+Other";
+				else return "OK";
+			},
+			selectionIsCreateFolderAndCreateFileAllowed : function(selectedNodes){
+				//need only one node selected
+				var isOneEdit = this.selectionIsOneEditableNode(selectedNodes);
+				if(isOneEdit != "OK") return isOneEdit;
+				// only libraries and folders are allowed for creation of folder and files 
+				else if (selectedNodes.attr('rel') ==  "drive" || selectedNodes.attr('rel') ==  "folder"){
+						return "OK";
+					}
+					else return "createFolderFileNotHere";
+			},
+			selectionIsImportExcelAllowed : function(selectedNodes){
+				//need only one node selected
+				var isOneEdit = this.selectionIsOneEditableNode(selectedNodes);
+				if(isOneEdit != "OK") return isOneEdit;
+				//the import of excel is allowed only for a library
+				else if (selectedNodes.attr('rel') ==  "drive"){
+					return "OK";
 				}
-				//case 2 : more than one item selected : deletion and copy if nodes group does not include a library
-				//case 2bis : an iteration is selected with another type of node : copy is not possible. 
-				else if (selectedNodes.length != 1){
-					operations = "";
-					if(!selectedNodes.is(":library")){
-						operations = "delete copy ";
-						if(selectedNodes.is(":iteration") && selectedNodes.is(":node")){
-							operations = "delete ";
-						}
+				else return "importNotHere";
+			},
+			selectionIsCreateResourceAllowed : function(selectedNodes){
+				//need only one node selected
+				var isOneEdit = this.selectionIsOneEditableNode(selectedNodes);
+				if(isOneEdit != "OK") return isOneEdit;
+				//creation of resource is allowed only for files
+				else if (selectedNodes.attr('rel') ==  "file") return "OK";
+				else return "createResNotHere"
+			},
+			selectionIsRenamable : function(selectedNodes){
+				//need only one node selected
+				var isOneEdit = this.selectionIsOneEditableNode(selectedNodes);
+				if(isOneEdit != "OK") return isOneEdit;
+				else if	(selectedNodes.attr('rel') ==  "drive") return "noRenameLib";
+				//rename allowed for nodes other than libraries
+				else return "OK";
+			},
+			selectionIsPasteAllowed : function(selectedNodes){
+				
+				//need only one node selected
+				var isOneEdit = this.selectionIsOneEditableNode(selectedNodes);
+				if(isOneEdit != "OK") return isOneEdit;
+				else{ 
+					//paste allowed for library and folder if the copied items are not iterations
+					if($.cookie('squash-copy-iterations-only') == "0"){
+						if(selectedNodes.attr('rel') ==  "drive" || selectedNodes.attr('rel') ==  "folder"){return "OK";}
+						else{return "pasteNotHere";}
+					}
+					//paste allowed for campaign if the copied items are iterations
+					else{
+						if(selectedNodes.is(":campaign")){return "OK";}
+						else{return "pasteIterationNotHere";}
+					}
+					
+				}
+						
+			},
+			allowedOperations : function(){
+			var selectedNodes = this.get_selected();
+				var operations = "";			
+				if(!this.selectionIsEditable(selectedNodes) == "OK") return operations; 
+				else{ 
+					if(this.selectionIsDeletable(selectedNodes) == "OK") operations += "delete ";
+					if(this.selectionIsCopyable(selectedNodes) == "OK")  operations += "copy ";
+					if(this.selectionIsOneEditableNode(selectedNodes) == "OK"){
+						if(this.selectionIsCreateFolderAndCreateFileAllowed(selectedNodes) == "OK")  operations += "create-folder create-file ";
+						if(this.selectionIsImportExcelAllowed(selectedNodes) == "OK") operations += "import-excel ";
+						if(this.selectionIsCreateResourceAllowed(selectedNodes) == "OK") operations += "create-resource ";
+						if(this.selectionIsRenamable(selectedNodes) == "OK") operations += "rename ";
+						if(this.selectionIsPasteAllowed(selectedNodes) == "OK") operations += "paste ";
 					}
 				}
-				
-				else{
-					//case 3 : one item is selected: button activation depend on their nature.
-					
-						switch(selectedNodes.attr('rel')){			
-							case "drive" :
-							operations="create-folder create-file import-excel";
-								//  the copied items are not iterations only 
-								if($.cookie('squash-copy-iterations-only') == "0"){ operations += "paste";}
-								break;
-							
-							case "folder" :
-								operations="create-folder create-file rename delete copy ";
-								// the copied items are not iterations only 
-								if($.cookie('squash-copy-iterations-only') == "0"){ operations += "paste";}
-								break;
-								
-							case "file" :
-								operations="create-resource rename delete copy";
-								//case 5 : a campaign is selected paste is active if the copied steps are iterations only
-								if(selectedNodes.is(":campaign") && $.cookie('squash-copy-iterations-only') == "1"){ operations += "paste";}
-								break;
-								
-							case "resource" : 
-								operations="rename delete copy";
-								break;
-						}
-					
-				}
-			
 				return operations;			
 			}		
 		},
@@ -875,45 +924,59 @@ function TreeNodeCopier(initObj){
 		if (! ids) return;
 		
 		var target = this.tree.get_selected();
-		
-		if ( target.length!=1 || (! target.is(':editable')) || (! checkSameProject(target))){
+		var pasteAllowed = this.tree.selectionIsPasteAllowed(target);
+		if (!checkSameProject(target)){
+			this.errMessage = initObj.pasteNotSameProject;
 			displayError.call(this);
 		}
-		
-		else{
-			if(!this.tree.is_open(target)){this.tree.open_node(target);}
-			var destinationType = "folder";
-			if(isRoot(target)){
-				destinationType = "library";
-			}
-			//here we mimick the move_object used by moveNode, describe earlier in the file
-			var copyData = {
-				inst : this.tree,
-				sendData : {
-					"object-ids" : ids,
-					"destination-id" : target.attr('resid'),
-					"destination-type" : destinationType
-				},
-				newParent : target
-			}
-			//if the destination is a campaign the request will not be the same
-			if(target.is(':campaign')){
-				this.url = initObj.urlIteration ;
-				var iterations = this.tree._get_children(target) ;
-				copyData = {
-						inst : this.tree,
-						sendData : {
-							"object-ids" : ids,
-							"destination-id" : target.attr('resid'),
-							"destination-type" : "campaign",
-							"next-iteration-number" : iterations.length
-						},
-						newParent : target
+		else{ 
+			if (pasteAllowed != "OK"){
+				if(pasteAllowed == "notOneEditable"){
+					this.errMessage =  initObj.notOneEditable;
+				}
+				else{ 
+					if(pasteAllowed == "pasteIterationNotHere"){ this.errMessage =  initObj.pasteIterationNotHere;}
+					else{ 
+						if(pasteAllowed == "pasteNotHere") this.errMessage =  initObj.pasteNotHere;
+						}
 					}
-			}				
-			
-			//then we send it to the copy routine
-			copyNode(copyData, this.url).fail(function(){this.tree.refresh();});
+				displayError.call(this);
+			}
+			else{
+				if(!this.tree.is_open(target)){this.tree.open_node(target);}
+				var destinationType = "folder";
+				if(isRoot(target)){
+					destinationType = "library";
+				}
+				//here we mimick the move_object used by moveNode, describe earlier in the file
+				var copyData = {
+					inst : this.tree,
+					sendData : {
+						"object-ids" : ids,
+						"destination-id" : target.attr('resid'),
+						"destination-type" : destinationType
+					},
+					newParent : target
+				}
+				//if the destination is a campaign the request will not be the same
+				if(target.is(':campaign')){
+					this.url = initObj.urlIteration ;
+					var iterations = this.tree._get_children(target) ;
+					copyData = {
+							inst : this.tree,
+							sendData : {
+								"object-ids" : ids,
+								"destination-id" : target.attr('resid'),
+								"destination-type" : "campaign",
+								"next-iteration-number" : iterations.length
+							},
+							newParent : target
+						}
+				}				
+				
+				//then we send it to the copy routine
+				copyNode(copyData, this.url).fail(function(){this.tree.refresh();});
+			}
 		}
 	
 	}		

@@ -181,7 +181,7 @@
 		<treepopup:rename-node-dialog treeSelector="#tree" successCallback="rename_from_tree_sucess" treeNodeButton="squashtm.treemenu.action.buttons['rename']"/>
 		<treepopup:delete-node-dialog treeSelector="#tree" resourceName="${resourceName}" treeNodeButton="squashtm.treemenu.action.buttons['delete']"/>
 
-		<treepopup:copy-paste-node 	  treeSelector="#tree" resourceName="${resourceName}" errorMessageKey="tree.button.copy-node.error" 
+		<treepopup:copy-paste-node 	  treeSelector="#tree" resourceName="${resourceName}" 
 										treeNodeButtonCopy="squashtm.treemenu.action.buttons['copy']" treeNodeButtonPaste="squashtm.treemenu.action.buttons['paste']"/>
 
 		<c:if test="${ resourceName == 'requirement' }">		
