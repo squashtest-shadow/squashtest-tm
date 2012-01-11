@@ -22,6 +22,7 @@ package org.squashtest.csp.tm.service
 
 import org.squashtest.csp.core.service.security.PermissionEvaluationService 
 import org.squashtest.csp.tm.domain.DuplicateNameException;
+import org.squashtest.csp.tm.domain.requirement.NewRequirementVersionDto;
 import org.squashtest.csp.tm.domain.requirement.Requirement;
 import org.squashtest.csp.tm.domain.requirement.RequirementFolder;
 import org.squashtest.csp.tm.domain.requirement.RequirementLibrary;
@@ -41,6 +42,13 @@ class RequirementLibraryNavigationServiceImplTest extends Specification {
 	PermissionEvaluationService permissionService = Mock();
 
 	def setup() {
+		NewRequirementVersionDto.metaClass.sameAs = { 
+			it.name == delegate.name && 
+			it.description == delegate.description && 
+			it.criticality &&
+			it.reference == delegate.reference
+		}
+		
 		service.requirementLibraryDao = requirementLibraryDao
 		service.requirementFolderDao = requirementFolderDao
 		service.requirementDao = requirementDao
@@ -97,15 +105,16 @@ class RequirementLibraryNavigationServiceImplTest extends Specification {
 		requirementLibraryDao.findById(1) >> lib
 		
 		and:
-		def req = new RequirementVersion(name:"name")
+		def req = new NewRequirementVersionDto(name:"name", description: "desc", reference: "ref")
 		lib.isContentNameAvailable(req.name) >> true
-
+		
 		when :
-		service.addRequirementToRequirementLibrary(1, req)
+		def res = service.addRequirementToRequirementLibrary(1, req)
 
 		then :
-		1 * lib.addRootContent({ it.latestVersion == req })
-		1 * requirementDao.persist ({ it.latestVersion == req })
+		1 * lib.addRootContent({ req.sameAs it.latestVersion })
+		1 * requirementDao.persist ({ req.sameAs it.latestVersion })
+		req.sameAs res
 	}
 
 
@@ -116,15 +125,16 @@ class RequirementLibraryNavigationServiceImplTest extends Specification {
 		requirementFolderDao.findById(1) >> folder
 		
 		and: 
-		def req = new RequirementVersion(name:"name")
+		def req = new NewRequirementVersionDto(name:"name")
 		folder.isContentNameAvailable(req.name) >> true
 
 		when :
-		service.addRequirementToRequirementFolder(1, req)
+		def res = service.addRequirementToRequirementFolder(1, req)
 
 		then :
-		1 * folder.addContent({ it.latestVersion == req })
-		1 * requirementDao.persist ({ it.latestVersion == req })
+		1 * folder.addContent({ req.sameAs it.latestVersion })
+		1 * requirementDao.persist ({ req.sameAs it.latestVersion })
+		req.sameAs res
 	}
 
 	def "should raise a duplicate name"(){
@@ -134,7 +144,7 @@ class RequirementLibraryNavigationServiceImplTest extends Specification {
 		requirementLibraryDao.findById(1) >> lib
 
 		and: 
-		def req = new RequirementVersion(name:"name")
+		def req = new NewRequirementVersionDto(name:"name")
 		lib.isContentNameAvailable(req.name) >> false
 
 		when :

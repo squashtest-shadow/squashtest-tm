@@ -55,11 +55,11 @@ import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.bind.annotation.ResponseStatus;
 import org.springframework.web.servlet.ModelAndView;
 import org.squashtest.csp.tm.domain.requirement.ExportRequirementData;
+import org.squashtest.csp.tm.domain.requirement.NewRequirementVersionDto;
 import org.squashtest.csp.tm.domain.requirement.Requirement;
 import org.squashtest.csp.tm.domain.requirement.RequirementFolder;
 import org.squashtest.csp.tm.domain.requirement.RequirementLibrary;
 import org.squashtest.csp.tm.domain.requirement.RequirementLibraryNode;
-import org.squashtest.csp.tm.domain.requirement.RequirementVersion;
 import org.squashtest.csp.tm.service.LibraryNavigationService;
 import org.squashtest.csp.tm.service.RequirementLibraryNavigationService;
 import org.squashtest.csp.tm.web.internal.controller.generic.LibraryNavigationController;
@@ -74,6 +74,7 @@ import org.squashtest.csp.tm.web.internal.report.services.JasperReportsServiceIm
  * @author Gregory Fouquet
  * 
  */
+@SuppressWarnings("rawtypes")
 @Controller
 @RequestMapping(value = "/requirement-browser")
 public class RequirementLibraryNavigationController extends
@@ -102,25 +103,25 @@ public class RequirementLibraryNavigationController extends
 	@ResponseStatus(HttpStatus.CREATED)
 	public @ResponseBody
 	JsTreeNode addNewRequirementToLibraryRootContent(@PathVariable long libraryId,
-			@Valid @ModelAttribute("add-requirement") RequirementVersion firstVersion) {
+			@Valid @ModelAttribute("add-requirement") NewRequirementVersionDto firstVersion) {
 
-		requirementLibraryNavigationService.addRequirementToRequirementLibrary(libraryId, firstVersion);
+		Requirement req = requirementLibraryNavigationService.addRequirementToRequirementLibrary(libraryId, firstVersion);
 
 		if (LOGGER.isDebugEnabled()) {
 			LOGGER.debug("RequirementCreationController : creation of a new requirement, name : "
 					+ firstVersion.getName() + ", description : " + firstVersion.getDescription());
 		}
 
-		return createTreeNodeFromLibraryNode(firstVersion.getRequirement());
+		return createTreeNodeFromLibraryNode(req);
 
 	}
 
 	@RequestMapping(value = "/folders/{folderId}/content/new-requirement", method = RequestMethod.POST)
 	public @ResponseBody
 	JsTreeNode addNewRequirementToFolderContent(@PathVariable long folderId,
-			@Valid @ModelAttribute("add-requirement") RequirementVersion firstVersion) {
+			@Valid @ModelAttribute("add-requirement") NewRequirementVersionDto firstVersion) {
 
-		requirementLibraryNavigationService.addRequirementToRequirementFolder(folderId, firstVersion);
+		Requirement req = requirementLibraryNavigationService.addRequirementToRequirementFolder(folderId, firstVersion);
 
 		if (LOGGER.isDebugEnabled()) {
 			LOGGER.debug("RequirementCreationController : creation of a new requirement, name : "
@@ -128,7 +129,7 @@ public class RequirementLibraryNavigationController extends
 					+ folderId);
 		}
 
-		return createTreeNodeFromLibraryNode(firstVersion.getRequirement());
+		return createTreeNodeFromLibraryNode(req);
 
 	}
 

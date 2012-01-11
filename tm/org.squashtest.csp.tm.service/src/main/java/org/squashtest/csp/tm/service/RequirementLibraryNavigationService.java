@@ -25,19 +25,19 @@ import java.util.List;
 import javax.validation.constraints.NotNull;
 
 import org.squashtest.csp.tm.domain.requirement.ExportRequirementData;
+import org.squashtest.csp.tm.domain.requirement.NewRequirementVersionDto;
 import org.squashtest.csp.tm.domain.requirement.Requirement;
 import org.squashtest.csp.tm.domain.requirement.RequirementFolder;
 import org.squashtest.csp.tm.domain.requirement.RequirementLibrary;
 import org.squashtest.csp.tm.domain.requirement.RequirementLibraryNode;
-import org.squashtest.csp.tm.domain.requirement.RequirementVersion;
 
 @SuppressWarnings("rawtypes")
 public interface RequirementLibraryNavigationService extends
 		LibraryNavigationService<RequirementLibrary, RequirementFolder, RequirementLibraryNode> {
 
-	void addRequirementToRequirementLibrary(long libraryId, @NotNull RequirementVersion newRequirement);
+	Requirement addRequirementToRequirementLibrary(long libraryId, @NotNull NewRequirementVersionDto newRequirement);
 
-	void addRequirementToRequirementFolder(long folderId, @NotNull RequirementVersion newRequirement);
+	Requirement addRequirementToRequirementFolder(long folderId, @NotNull NewRequirementVersionDto newRequirement);
 
 	Requirement findRequirement(long reqId);
 

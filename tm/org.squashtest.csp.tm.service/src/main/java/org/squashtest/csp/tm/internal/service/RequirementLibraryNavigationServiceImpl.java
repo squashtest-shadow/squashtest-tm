@@ -32,11 +32,11 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.squashtest.csp.tm.domain.DuplicateNameException;
 import org.squashtest.csp.tm.domain.requirement.ExportRequirementData;
+import org.squashtest.csp.tm.domain.requirement.NewRequirementVersionDto;
 import org.squashtest.csp.tm.domain.requirement.Requirement;
 import org.squashtest.csp.tm.domain.requirement.RequirementFolder;
 import org.squashtest.csp.tm.domain.requirement.RequirementLibrary;
 import org.squashtest.csp.tm.domain.requirement.RequirementLibraryNode;
-import org.squashtest.csp.tm.domain.requirement.RequirementVersion;
 import org.squashtest.csp.tm.internal.repository.LibraryNodeDao;
 import org.squashtest.csp.tm.internal.repository.RequirementDao;
 import org.squashtest.csp.tm.internal.repository.RequirementFolderDao;
@@ -94,27 +94,29 @@ public class RequirementLibraryNavigationServiceImpl extends
 	@Override
 	@PreAuthorize("hasPermission(#libraryId, 'org.squashtest.csp.tm.domain.requirement.RequirementLibrary' , 'WRITE') "
 			+ "or hasRole('ROLE_ADMIN')")
-	public void addRequirementToRequirementLibrary(long libraryId, @NotNull RequirementVersion firstVersion) {
+	public Requirement addRequirementToRequirementLibrary(long libraryId, @NotNull NewRequirementVersionDto newVersion) {
 		RequirementLibrary library = requirementLibraryDao.findById(libraryId);
 
-		if (!library.isContentNameAvailable(firstVersion.getName())) {
-			throw new DuplicateNameException(firstVersion.getName(), firstVersion.getName());
+		if (!library.isContentNameAvailable(newVersion.getName())) {
+			throw new DuplicateNameException(newVersion.getName(), newVersion.getName());
 		}
 		
-		Requirement newReq = createRequirement(firstVersion);
+		Requirement newReq = createRequirement(newVersion);
 
 		library.addRootContent(newReq);
 		requirementDao.persist(newReq);
+		
+		return newReq;
 	}
 
-	private Requirement createRequirement(RequirementVersion firstVersion) {
-		return new Requirement(firstVersion);
+	private Requirement createRequirement(NewRequirementVersionDto newVersionData) {
+		return new Requirement(newVersionData.toRequirementVersion());
 	}
 
 	@Override
 	@PreAuthorize("hasPermission(#folderId, 'org.squashtest.csp.tm.domain.requirement.RequirementFolder' , 'WRITE') "
 			+ "or hasRole('ROLE_ADMIN')")
-	public void addRequirementToRequirementFolder(long folderId, @NotNull RequirementVersion firstVersion) {
+	public Requirement addRequirementToRequirementFolder(long folderId, @NotNull NewRequirementVersionDto firstVersion) {
 		RequirementFolder folder = requirementFolderDao.findById(folderId);
 
 		if (!folder.isContentNameAvailable(firstVersion.getName())) {
@@ -125,6 +127,8 @@ public class RequirementLibraryNavigationServiceImpl extends
 
 		folder.addContent(newReq);
 		requirementDao.persist(newReq);
+
+		return newReq;
 	}
 
 	@Override
