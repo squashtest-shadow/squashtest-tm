@@ -21,17 +21,18 @@
 package org.squashtest.csp.tm.internal.service.importer;
 
 import java.io.InputStream;
+import java.util.List;
 
 import javax.inject.Inject;
 
 import org.springframework.stereotype.Component;
-import org.squashtest.csp.tm.domain.library.structures.StringPathMap;
 import org.squashtest.csp.tm.domain.testcase.TestCase;
 import org.squashtest.csp.tm.domain.testcase.TestCaseFolder;
+import org.squashtest.csp.tm.domain.testcase.TestCaseLibrary;
 import org.squashtest.csp.tm.domain.testcase.TestCaseLibraryNode;
+import org.squashtest.csp.tm.domain.testcase.TestCaseLibraryNodeVisitor;
 import org.squashtest.csp.tm.internal.utils.archive.ArchiveReader;
 import org.squashtest.csp.tm.internal.utils.archive.ArchiveReaderFactory;
-import org.squashtest.csp.tm.internal.utils.archive.Entry;
 import org.squashtest.csp.tm.service.TestCaseLibraryNavigationService;
 import org.squashtest.csp.tm.service.importer.ImportSummary;
 
@@ -51,7 +52,9 @@ public class TestCaseImporter {
 	
 	public ImportSummary importExcelTestCases(InputStream archiveStream, Long libraryId){
 
+		
 		ArchiveReader reader = factory.createReader(archiveStream);
+		ImportSummaryImpl summary = new ImportSummaryImpl();
 		
 		/* phase 1 : convert the content of the archive into Squash entities */
 		
@@ -62,124 +65,17 @@ public class TestCaseImporter {
 		creator.create();
 		
 		TestCaseFolder root = creator.getNodes();
-		ImportSummaryImpl summary = creator.getSummary();
+		summary.add(creator.getSummary());
+		
 		
 		/* phase 2 : merge with the actual database content */
 		
+		TestCaseLibrary library = service.findLibrary(libraryId);		
+
 		return null;
 	}
-	
-	
-	/* ************ private workers ************************* */
-	
-	
-	private static class HierarchyCreator{
-		
-		
-		private ArchiveReader reader;
-		private ExcelTestCaseParser parser;
-		
-		private StringPathMap<TestCaseLibraryNode> pathMap = new StringPathMap<TestCaseLibraryNode>();
-		
-		
-		private ImportSummaryImpl summary = new ImportSummaryImpl();
-		private TestCaseFolder root;
-		
-		
-		public HierarchyCreator(){
-			root = new TestCaseFolder();
-			root.setName("/");
-			
-			pathMap.put("/", root);
-		}
 
-		
-		public void setArchiveReader(ArchiveReader reader){
-			this.reader = reader;
-		}
-		
-		public void setParser(ExcelTestCaseParser parser){
-			this.parser = parser;
-		}
-		
-		public ImportSummaryImpl getSummary(){
-			return summary;
-		}
-		
-		
-		public TestCaseFolder getNodes(){
-			return root;
-		}
-		
-		public void create(){
-			
-			while(reader.hasNext()){
-				
-				Entry entry = reader.next();
 
-				
-				if (entry.isDirectory()){					
-					findOrCreateFolder(entry);					
-				}else{					
-					createTestCase(entry);					
-				}
-				
-			}
-		}
-		
-		/**
-		 * will chain-create folders if path elements do not exist. Will also store the path in a map
-		 * for faster reference later.
-		 * 
-		 * @param path
-		 */
-		private TestCaseFolder findOrCreateFolder(Entry entry){
-			TestCaseFolder isFound = (TestCaseFolder)pathMap.getMappedElement(entry.getName());
-			
-			if (isFound != null){
-				
-				return isFound;
-				
-			}else{
-				TestCaseFolder parent = findOrCreateFolder(entry.getParent());
-				
-				TestCaseFolder newFolder = new TestCaseFolder();
-				newFolder.setName(entry.getShortName());
-				parent.addContent(newFolder);
-				
-				pathMap.put(entry.getName(), newFolder);
-				
-				return newFolder;
-			}
-		}
-		
-		
-		/**
-		 * will chain-create folders if the parents does not exit, create the test case, and store the path in 
-		 * a map for faster reference later.
-		 * @param entry
-		 */
-		private void createTestCase(Entry entry){
-			try{
-				//create the test case
-				TestCase testCase = parser.parseFile(entry.getStream(), summary);
-				testCase.setName(entry.getShortName());
-				
-				//find or create the parent folder
-				TestCaseFolder parent = findOrCreateFolder(entry.getParent());
-				
-				parent.addContent(testCase);
-				
-				pathMap.put(entry.getName(), testCase);
-				
-			}catch(SheetCorruptedException ex){
-				summary.incrFailures();
-			}
-			
-		}
-		
-		
-		
-	}
+	
 	
 }

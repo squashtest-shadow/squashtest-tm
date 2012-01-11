@@ -32,12 +32,12 @@ import org.squashtest.csp.tm.internal.utils.archive.impl.ZipReader.ZipReaderEntr
 import spock.lang.Specification;
 
 
-class TestCaseImporter_HierarchyCreatorTest extends Specification {
+class HierarchyCreatorTest extends Specification {
 
 	def "should find an existing folder"(){
 		
 		given :
-			def importer = new TestCaseImporter.HierarchyCreator();
+			def importer = new HierarchyCreator();
 			
 		and :
 			def folder = Mock(TestCaseFolder)
@@ -59,7 +59,7 @@ class TestCaseImporter_HierarchyCreatorTest extends Specification {
 	def "should recursively create missing parent folders"(){
 		
 		given :
-			def importer = new TestCaseImporter.HierarchyCreator();
+			def importer = new HierarchyCreator();
 			
 			
 		and :
@@ -91,7 +91,7 @@ class TestCaseImporter_HierarchyCreatorTest extends Specification {
 	def "should create a test case"(){
 		
 		given :		
-			def importer = new TestCaseImporter.HierarchyCreator();
+			def importer = new HierarchyCreator();
 			def parser = Mock(ExcelTestCaseParser)
 			importer.setParser(parser)
 			

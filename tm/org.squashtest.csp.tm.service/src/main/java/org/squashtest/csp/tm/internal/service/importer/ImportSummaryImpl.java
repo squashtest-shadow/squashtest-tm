@@ -49,6 +49,22 @@ public class ImportSummaryImpl implements ImportSummary {
 		failures++;
 	}
 	
+	public void addToTotalTestCases(int delta){
+		totalTestCases+=delta;
+	}
+	
+	public void addToSuccess(int delta){
+		success+=delta;
+	}
+	
+	public void addToWarnings(int delta){
+		warnings+=delta;
+	}
+	
+	public void addToFailures(int delta){
+		failures+=delta;
+	}
+	
 	@Override
 	public int getTotalTestCases() {
 		return totalTestCases;
@@ -69,6 +85,13 @@ public class ImportSummaryImpl implements ImportSummary {
 		return failures;
 	}
 
+	@Override
+	public void add(ImportSummary summary){
+		addToTotalTestCases(summary.getTotalTestCases());
+		addToSuccess(summary.getSuccess());
+		addToWarnings(summary.getWarnings());
+		addToFailures(summary.getFailures());
+	}
 	
 
 }

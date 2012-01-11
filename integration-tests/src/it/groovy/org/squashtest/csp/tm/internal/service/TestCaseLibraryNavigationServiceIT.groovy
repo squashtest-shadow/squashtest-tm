@@ -60,6 +60,81 @@ class TestCaseLibraryNavigationServiceIT extends HibernateServiceSpecification {
 		testCaseId= testCase.id;
 	}
 
+	
+	def "should  persist a small hierarchy"(){
+		
+		given :
+		
+			def tc1 = new TestCase(name:"tc1")
+			def f1 = new TestCaseFolder(name:"f1")
+			def f2 = new TestCaseFolder(name:"f2")
+			
+			def tc11 = new TestCase(name:"tc11")
+			def f12 = new TestCaseFolder(name:"f12")
+			
+			def tc21 = new TestCase(name:"tc21")
+			def tc22 = new TestCase(name:"tc22")
+			
+			def tc121 = new TestCase(name:"tc121")
+			
+			f1.addContent(tc11)
+			f1.addContent(f12)
+			f12.addContent(tc121)
+			
+			f2.addContent(tc21)
+			f2.addContent(tc22)
+			
+		and :
+			def libList= libcrud.findAllLibraries()	
+			def lib = libList.get(libList.size()-1);
+			
+		when :
+			navService.addTestCaseToLibrary(lib.id, tc1)
+			navService.addFolderToLibrary(lib.id, f1)
+			navService.addFolderToLibrary(lib.id, f2)
+			
+			
+				
+		then :
+			tc1.id != null
+			f1.id != null
+			f2.id != null
+			tc11.id != null
+			f12.id != null
+			tc21.id != null
+			tc22.id != null
+			tc121.id != null
+			
+	}
+	
+	
+	def "should persist a truckload of new test cases with ease"(){
+		
+		given :
+			def folder = new TestCaseFolder(name:"main folder");
+			
+		and :
+			def tcs = []
+			
+			200.times{
+				def tc = new TestCase(name:"test case $it");
+				tcs << tc
+				folder.addContent(tc) 
+			}
+
+		and :
+			def libList= libcrud.findAllLibraries()
+			def lib = libList.get(libList.size()-1);
+			
+		when :
+			navService.addFolderToLibrary(lib.id, folder)
+
+		then :
+			folder.id != null
+			
+			tcs*.id.collect{it==null}		
+	}
+	
 
 	def "should find test case by id"(){
 		given :

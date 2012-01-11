@@ -25,4 +25,8 @@ public interface ImportSummary {
 	int getSuccess();
 	int getWarnings();
 	int getFailures();
+	/**
+	 * adds the result of an import summary to this import summary 
+	 */
+	void add(ImportSummary summary);
 }
