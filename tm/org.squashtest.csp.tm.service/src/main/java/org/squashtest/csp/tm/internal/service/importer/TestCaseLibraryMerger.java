@@ -345,7 +345,7 @@ class TestCaseLibraryMerger {
 	
 	private static TestCaseLibraryNode getByName(Collection<TestCaseLibraryNode> hayStack, String needle){
 		for (TestCaseLibraryNode node : hayStack ){
-			if (node.equals(needle)){
+			if (node.getName().equals(needle)){
 				return node;
 			}
 		}

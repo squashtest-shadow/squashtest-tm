@@ -70,9 +70,15 @@ public class TestCaseImporter {
 		
 		/* phase 2 : merge with the actual database content */
 		
-		TestCaseLibrary library = service.findLibrary(libraryId);		
+		TestCaseLibrary library = service.findLibrary(libraryId);	
+		
+		TestCaseLibraryMerger merger = new TestCaseLibraryMerger();
+		merger.setLibraryService(service);
+		merger.mergeIntoLibrary(library, root);
+		
+		summary.add(merger.getSummary());
 
-		return null;
+		return summary;
 	}
 
 
