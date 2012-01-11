@@ -208,7 +208,7 @@
 				else if (selectedNodes.is(":iteration") && selectedNodes.is(":node")) return "noCopyIteration+Other";
 				else return "OK";
 			},
-			selectionIsCreateFolderAndCreateFileAllowed : function(selectedNodes){
+			selectionIsCreateFolderAllowed : function(selectedNodes){
 				//need only one node selected
 				var isOneEdit = this.selectionIsOneEditableNode(selectedNodes);
 				if(isOneEdit != "OK") return isOneEdit;
@@ -216,7 +216,23 @@
 				else if (selectedNodes.attr('rel') ==  "drive" || selectedNodes.attr('rel') ==  "folder"){
 						return "OK";
 					}
-					else return "createFolderFileNotHere";
+					else return "createFolderNotHere";
+			},
+			selectionIsCreateFileAllowed : function(selectedNodes){
+				//need only one node selected
+				var isOneEdit = this.selectionIsOneEditableNode(selectedNodes);
+				if(isOneEdit != "OK") {
+					return isOneEdit;
+				
+				}else {
+					// only libraries and folders are allowed for creation of folder and files 
+					var nodeAttr = selectedNodes.attr('rel');
+					if (nodeAttr ==  "drive" || nodeAttr ==  "folder" || nodeAttr ==  "file" ){
+				
+						return "OK";
+					}
+					else return "createFileNotHere";
+				}
 			},
 			selectionIsImportExcelAllowed : function(selectedNodes){
 				//need only one node selected
@@ -233,7 +249,7 @@
 				var isOneEdit = this.selectionIsOneEditableNode(selectedNodes);
 				if(isOneEdit != "OK") return isOneEdit;
 				//creation of resource is allowed only for files
-				else if (selectedNodes.attr('rel') ==  "file") return "OK";
+				else if (selectedNodes.attr('rel') ==  "file" || selectedNodes.attr('rel') ==  "resource") return "OK";
 				else return "createResNotHere"
 			},
 			selectionIsRenamable : function(selectedNodes){
@@ -272,7 +288,8 @@
 					if(this.selectionIsDeletable(selectedNodes) == "OK") operations += "delete ";
 					if(this.selectionIsCopyable(selectedNodes) == "OK")  operations += "copy ";
 					if(this.selectionIsOneEditableNode(selectedNodes) == "OK"){
-						if(this.selectionIsCreateFolderAndCreateFileAllowed(selectedNodes) == "OK")  operations += "create-folder create-file ";
+						if(this.selectionIsCreateFolderAllowed(selectedNodes) == "OK")  operations += "create-folder ";
+						if(this.selectionIsCreateFileAllowed(selectedNodes) == "OK")  operations += "create-file ";
 						if(this.selectionIsImportExcelAllowed(selectedNodes) == "OK") operations += "import-excel ";
 						if(this.selectionIsCreateResourceAllowed(selectedNodes) == "OK") operations += "create-resource ";
 						if(this.selectionIsRenamable(selectedNodes) == "OK") operations += "rename ";
@@ -458,9 +475,26 @@ function postNewTreeContent(treeId, contentDiscriminator, postParameters) {
 	/* **************** variables init ****************** */
 
 	var tree = $('#' + treeId);
+	
 	var newNode = null;
 	var url = tree.data('selectedNodeContentUrl') + '/' + contentDiscriminator;
 	var currentNode = tree.jstree("get_selected");
+	var origNode = currentNode;
+	
+	//this part is used to create a brother file when a file is selected 
+	if(currentNode.is(":file")&&contentDiscriminator!= "new-iteration"){
+		currentNode = $(currentNode).parent("ul").parent("li");
+		if(currentNode.is(":library ")){selectLibrary(currentNode, true);}
+		else{if(currentNode.is(":folder ")){selectFolder(currentNode, true);}}
+		url = tree.data('selectedNodeContentUrl') + '/' + contentDiscriminator;
+	}else{
+	//this part is used to create a sister iteration when an iteration is selected
+		if(currentNode.is(":iteration") && contentDiscriminator == "new-iteration"){
+			currentNode = $(currentNode).parent("ul").parent("li");
+			selectFile(currentNode, true);
+			url = tree.data('selectedNodeContentUrl') + '/' + contentDiscriminator;
+		}
+	}
 	
 	var isOpen = tree.jstree('is_open', currentNode);
 	
@@ -489,7 +523,7 @@ function postNewTreeContent(treeId, contentDiscriminator, postParameters) {
 	var addNode = function(data){
 		var defer = $.Deferred();
 		newNode = tree.jstree('create_node',
-			currentNode,
+			currentNode, 
 			'last',
 			data,
 			defer.resolve,
@@ -500,7 +534,8 @@ function postNewTreeContent(treeId, contentDiscriminator, postParameters) {
 	
 	var selectNode = function(){
 		tree.jstree('select_node', newNode);
-		unselectFather(newNode, $('#' + treeId));
+		tree.jstree('deselect_node', origNode);
+		//unselectFather(newNode, $('#' + treeId));
 		openNode(); 	//yes, we need to repoen it. This is required if the newly added node is the first node that the parent contains.
 	}
 
@@ -571,9 +606,9 @@ function treeCheckDnd(m){
 	if(jqObject.is(':iteration') && jqSrc.attr('resid') != jqDest.attr('resid')){
 		return false;
 	}
-	//prevent iteration copy
+	//allow iteration copy
 	if(jqObject.is(':iteration') && isCtrlClicked == true){
-		return false;
+		return true;
 	}
 	
 	return true;			

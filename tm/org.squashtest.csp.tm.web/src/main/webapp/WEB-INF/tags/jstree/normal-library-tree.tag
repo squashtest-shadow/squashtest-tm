@@ -38,42 +38,47 @@
 
 <script type="text/javascript">
 	
-
-	function selectLibrary(node) {		
+	
+	function selectLibrary(node, skipLoad) {		
 		var selResourceUrl = nodeResourceUrl('${ resourceUrlRoot }',  node);
 		var selNodeContentUrl = nodeContentUrl('${ libraryUrl }', node);
 		var selResourceId = node.attr('id');
 	
 		setTreeData(selResourceUrl, selNodeContentUrl, selResourceId);
+		if(skipLoad)return;
 		loadContextualContentIfRequired(node, selResourceUrl);
 	}
-	function selectFolder(node) {	
+	function selectFolder(node, skipLoad) {	
 		
 		var selResourceUrl = nodeResourceUrl('${ resourceUrlRoot }',  node);
 		var selNodeContentUrl = nodeContentUrl('${ libraryUrl }', node);
 		var selResourceId = node.attr('id');
 		
 		setTreeData(selResourceUrl, selNodeContentUrl, selResourceId);
+		if(skipLoad)return;
 		loadContextualContentIfRequired(node, selResourceUrl);
 	}
 	
-	function selectFile(node) {		
+	function selectFile(node, skipLoad) {		
 		
 		var selResourceUrl = nodeResourceUrl('${ resourceUrlRoot }',  node);
 		var selNodeContentUrl = null;
 		var selResourceId = node.attr('id');
 		
 		setTreeData(selResourceUrl, selNodeContentUrl, selResourceId);
+		if(skipLoad)return;
 		loadContextualContentIfRequired(node, selResourceUrl);
 	}
 
 	function setTreeData(selResourceUrl, selNodeContentUrl, selResourceId) {
 		storeSelectedNodeUrls('tree', selResourceUrl, selNodeContentUrl, selResourceId);
 	}
-
+	
 	function loadContextualContentIfRequired(node, selResourceUrl) {
-		if(isCtrlClicked == true)return;
+		if(isCtrlClicked == true ){
 		
+			return;
+		}
 		clearContextualContent("#contextual-content");
 		<jq:get-load urlExpression="selResourceUrl" targetSelector="#contextual-content" />;
 		
