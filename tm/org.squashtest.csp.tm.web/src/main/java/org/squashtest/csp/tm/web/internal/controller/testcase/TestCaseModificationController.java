@@ -47,6 +47,7 @@ import org.squashtest.csp.tm.domain.Internationalizable;
 import org.squashtest.csp.tm.domain.project.Project;
 import org.squashtest.csp.tm.domain.requirement.Requirement;
 import org.squashtest.csp.tm.domain.requirement.RequirementCriticality;
+import org.squashtest.csp.tm.domain.requirement.RequirementVersion;
 import org.squashtest.csp.tm.domain.testcase.ActionTestStep;
 import org.squashtest.csp.tm.domain.testcase.TestCase;
 import org.squashtest.csp.tm.domain.testcase.TestCaseExecutionMode;
@@ -72,11 +73,11 @@ import org.squashtest.csp.tm.web.internal.model.viewmapper.DataTableMapper;
 public class TestCaseModificationController {
 	private static final Logger LOGGER = LoggerFactory.getLogger(TestCaseModificationController.class);
 
-	private final DataTableMapper verifiedReqMapper = new DataTableMapper("verified-requirement", Requirement.class,
+	private final DataTableMapper verifiedReqMapper = new DataTableMapper("verified-requirement", RequirementVersion.class,
 			Project.class).initMapping(7).mapAttribute(Project.class, 2, "name", String.class)
-			.mapAttribute(Requirement.class, 3, "reference", String.class)
-			.mapAttribute(Requirement.class, 4, "name", String.class)
-			.mapAttribute(Requirement.class, 5, "criticality", RequirementCriticality.class);
+			.mapAttribute(RequirementVersion.class, 3, "reference", String.class)
+			.mapAttribute(RequirementVersion.class, 4, "name", String.class)
+			.mapAttribute(RequirementVersion.class, 5, "criticality", RequirementCriticality.class);
 
 	private final DataTableMapper referencingTestCaseMapper = new DataTableMapper("referencing-test-cases",
 			TestCase.class, Project.class).initMapping(5).mapAttribute(Project.class, 2, "name", String.class)
@@ -350,16 +351,15 @@ public class TestCaseModificationController {
 	public DataTableModel getVerifiedRequirementsTableModel(@PathVariable long testCaseId,
 			final DataTableDrawParameters params, final Locale locale) {
 
-		CollectionSorting filter = createCollectionFilter(params, verifiedReqMapper);
+		PagingAndSorting filter = new DataTableMapperPagingAndSortingAdapter(params, verifiedReqMapper);
 
-		FilteredCollectionHolder<List<Requirement>> holder = testCaseModificationService
+		PagedCollectionHolder<List<RequirementVersion>> holder = testCaseModificationService
 				.findAllDirectlyVerifiedRequirementsByTestCaseId(testCaseId, filter);
-		// .findDirectlyVerifiedRequirementsByTestCaseId(testCaseId, filter);
 
-		return new DataTableModelHelper<Requirement>() {
+		return new DataTableModelHelper<RequirementVersion>() {
 			@Override
-			public Object[] buildItemData(Requirement item) {
-				return new Object[] { item.getId(), getCurrentIndex(), item.getProject().getName(),
+			public Object[] buildItemData(RequirementVersion item) {
+				return new Object[] { item.getId(), getCurrentIndex(), item.getRequirement().getProject().getName(),
 						item.getReference(), item.getName(), internationalize(item.getCriticality(), locale), "", true // the
 																														// target
 																														// table
@@ -373,7 +373,7 @@ public class TestCaseModificationController {
 																														// it.
 				};
 			}
-		}.buildDataModel(holder, filter.getFirstItemIndex() + 1, params.getsEcho());
+		}.buildDataModel(holder, params.getsEcho());
 
 	}
 

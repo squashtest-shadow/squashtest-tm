@@ -43,4 +43,13 @@ public interface CustomRequirementVersionDao {
 	 */
 	long countVerifiedByTestCases(Collection<Long> verifiersIds);
 
+	/**
+	 * Returns paged and sorted collection of requirement versions verified by the test case of given id.
+	 *
+	 * @param verifierId
+	 * @param sorting
+	 * @return
+	 */
+	List<RequirementVersion> findAllVerifiedByTestCase(long verifierId, PagingAndSorting sorting);
+
 }

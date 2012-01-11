@@ -20,14 +20,10 @@
  */
 package org.squashtest.csp.tm.internal.repository.hibernate;
 
-import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.LinkedList;
 import java.util.List;
-import java.util.ListIterator;
-import java.util.Map;
-import java.util.Set;
 
 import org.apache.commons.collections.CollectionUtils;
 import org.hibernate.Criteria;
@@ -40,8 +36,6 @@ import org.hibernate.criterion.Order;
 import org.hibernate.criterion.Restrictions;
 import org.hibernate.type.LongType;
 import org.springframework.stereotype.Repository;
-import org.squashtest.csp.tm.domain.requirement.Requirement;
-import org.squashtest.csp.tm.domain.requirement.RequirementCriticality;
 import org.squashtest.csp.tm.domain.requirement.RequirementSearchCriteria;
 import org.squashtest.csp.tm.domain.testcase.ActionTestStep;
 import org.squashtest.csp.tm.domain.testcase.TestCase;
@@ -106,51 +100,6 @@ public class HibernateTestCaseDao extends HibernateEntityDao<TestCase> implement
 
 	private SetQueryParametersCallback idParameter(final long testCaseId) {
 		return new SetIdParameter(testCaseId);
-	}
-
-	@SuppressWarnings("unchecked")
-	@Override
-	public List<Requirement> findAllDirectlyVerifiedRequirementsByIdFiltered(final long testCaseId,
-			final CollectionSorting filter) {
-
-		Session session = currentSession();
-
-		String sortedAttribute = filter.getSortedAttribute();
-		String order = filter.getSortingOrder();
-
-		Criteria crit = session.createCriteria(TestCase.class).add(Restrictions.eq("id", testCaseId))
-				.createAlias("verifiedRequirements", "Requirement").createAlias("Requirement.project", "Project")
-				.setResultTransformer(Criteria.ALIAS_TO_ENTITY_MAP);
-
-		/* add ordering */
-		if (sortedAttribute != null) {
-			if (order.equals("asc")) {
-				crit.addOrder(Order.asc(sortedAttribute).ignoreCase());
-			} else {
-				crit.addOrder(Order.desc(sortedAttribute).ignoreCase());
-			}
-		}
-
-		/* result range */
-		crit.setFirstResult(filter.getFirstItemIndex());
-		crit.setMaxResults(filter.getMaxNumberOfItems());
-
-		List<Map<String, ?>> rawResult = crit.list();
-
-		List<Requirement> reqs = new ArrayList<Requirement>();
-		ListIterator<Map<String, ?>> iter = rawResult.listIterator();
-		while (iter.hasNext()) {
-			Map<String, ?> map = iter.next();
-			reqs.add((Requirement) map.get("Requirement"));
-		}
-
-		return reqs;
-
-	}
-
-	@Override
-	public long countVerifiedRequirementsById(long testCaseId) {
-		return (Long) executeEntityNamedQuery("testCase.countVerifiedRequirementsById", idParameter(testCaseId));
 	}
 
 	@Override

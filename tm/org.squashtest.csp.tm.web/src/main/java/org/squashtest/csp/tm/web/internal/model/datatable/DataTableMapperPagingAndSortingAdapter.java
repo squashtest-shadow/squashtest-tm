@@ -45,7 +45,7 @@ public class DataTableMapperPagingAndSortingAdapter extends DataTableDrawParamet
 	}
 
 	@Override
-	public SortOrder getSortingOrder() {
+	public SortOrder getSortOrder() {
 		return SortOrder.coerceFromCode(params.getsSortDir_0());
 	}
 

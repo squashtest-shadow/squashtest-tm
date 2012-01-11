@@ -32,6 +32,8 @@ import org.squashtest.csp.tm.domain.requirement.RequirementVersion;
 public interface RequirementVersionDao extends CustomRequirementVersionDao {
 	List<RequirementVersion> findAllByIdList(Collection<Long> ids);
 
-	RequirementVersion findById(long requirementId); 
+	RequirementVersion findById(long requirementId);
+
+	long countVerifiedByTestCase(long testCaseId); 
 
 }

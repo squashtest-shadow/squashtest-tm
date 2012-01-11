@@ -64,8 +64,6 @@ public class RequirementModificationController {
 
 	private RequirementModificationService requirementModService;
 
-
-
 	@ServiceReference
 	public void setRequirementModificationService(RequirementModificationService service) {
 		requirementModService = service;

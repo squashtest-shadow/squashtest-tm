@@ -23,12 +23,16 @@ package org.squashtest.csp.tm.internal.repository.hibernate;
 import javax.inject.Inject
 
 import org.springframework.transaction.annotation.Transactional
+import org.squashtest.csp.core.infrastructure.collection.PagingAndSorting;
 import org.squashtest.csp.tm.domain.requirement.RequirementCriticality
 import org.squashtest.csp.tm.domain.requirement.RequirementSearchCriteria
 import org.squashtest.csp.tm.infrastructure.filter.CollectionFilter
 import org.squashtest.csp.tm.infrastructure.filter.CollectionSorting
 import org.squashtest.csp.tm.internal.repository.TestCaseDao
+import org.squashtest.csp.tools.unittest.assertions.ListAssertions;
 import org.unitils.dbunit.annotation.DataSet
+import org.squashtest.csp.core.infrastructure.collection.PagingAndSorting;
+import org.squashtest.csp.core.infrastructure.collection.SortOrder;
 
 import spock.unitils.UnitilsSupport
 
@@ -43,6 +47,8 @@ class HibernateTestCaseDaoIT extends DbunitDaoSpecification {
 			assert (delegate.collect { it.id }).containsAll(ids)
 			true
 		}
+		
+		ListAssertions.declareIdsEqual() 
 	}
 
 	@DataSet("HibernateTestCaseDaoIT.should find filtered steps by test case id.xml")
@@ -302,7 +308,6 @@ class HibernateTestCaseDaoIT extends DbunitDaoSpecification {
 
 	}
 
-
 	@DataSet("HibernateTestCaseDaoIT.should find test cases by requirement name token.xml")
 	def "should find test cases by requirement name token"() {
 		given:
@@ -363,7 +368,4 @@ class HibernateTestCaseDaoIT extends DbunitDaoSpecification {
 		res.size() == 3
 		res.containsSameIdentifiers([302L, 103L, 102L])
 	}
-
-
-
 }

@@ -22,7 +22,6 @@ package org.squashtest.csp.tm.internal.service;
 
 import java.util.ArrayList;
 import java.util.Collection;
-import java.util.Collections;
 import java.util.List;
 import java.util.Set;
 
@@ -38,7 +37,6 @@ import org.squashtest.csp.core.infrastructure.collection.PagedCollectionHolder;
 import org.squashtest.csp.core.infrastructure.collection.PagingAndSorting;
 import org.squashtest.csp.core.infrastructure.collection.PagingBackedPagedCollectionHolder;
 import org.squashtest.csp.tm.domain.DuplicateNameException;
-import org.squashtest.csp.tm.domain.requirement.Requirement;
 import org.squashtest.csp.tm.domain.requirement.RequirementVersion;
 import org.squashtest.csp.tm.domain.testcase.ActionTestStep;
 import org.squashtest.csp.tm.domain.testcase.TestCase;
@@ -48,7 +46,6 @@ import org.squashtest.csp.tm.domain.testcase.TestStep;
 import org.squashtest.csp.tm.infrastructure.filter.CollectionFilter;
 import org.squashtest.csp.tm.infrastructure.filter.CollectionSorting;
 import org.squashtest.csp.tm.infrastructure.filter.FilteredCollectionHolder;
-import org.squashtest.csp.tm.internal.repository.RequirementDao;
 import org.squashtest.csp.tm.internal.repository.RequirementVersionDao;
 import org.squashtest.csp.tm.internal.repository.TestCaseDao;
 import org.squashtest.csp.tm.internal.repository.TestStepDao;
@@ -75,7 +72,7 @@ public class CustomTestCaseModificationServiceImpl implements CustomTestCaseModi
 	private NodeManagementService<TestCase, TestCaseLibraryNode, TestCaseFolder> testCaseManagementService;
 
 	@Inject
-	private RequirementVersionDao requirementVersionDao; 
+	private RequirementVersionDao requirementVersionDao;
 
 	@Inject
 	private CallStepManagerService callStepManagerService;
@@ -205,11 +202,11 @@ public class CustomTestCaseModificationServiceImpl implements CustomTestCaseModi
 	 */
 	@Override
 	@PreAuthorize("hasPermission(#testCaseId, 'org.squashtest.csp.tm.domain.testcase.TestCase' , 'READ') or hasRole('ROLE_ADMIN')")
-	public FilteredCollectionHolder<List<Requirement>> findAllDirectlyVerifiedRequirementsByTestCaseId(long testCaseId,
-			CollectionSorting filter) {
-		List<Requirement> reqs = testCaseDao.findAllDirectlyVerifiedRequirementsByIdFiltered(testCaseId, filter);
-		long count = testCaseDao.countVerifiedRequirementsById(testCaseId);
-		return new FilteredCollectionHolder<List<Requirement>>(count, reqs);
+	public PagedCollectionHolder<List<RequirementVersion>> findAllDirectlyVerifiedRequirementsByTestCaseId(
+			long testCaseId, PagingAndSorting pas) {
+		List<RequirementVersion> verifiedReqs = requirementVersionDao.findAllVerifiedByTestCase(testCaseId, pas);
+		long verifiedCount = requirementVersionDao.countVerifiedByTestCase(testCaseId);
+		return new PagingBackedPagedCollectionHolder<List<RequirementVersion>>(pas, verifiedCount, verifiedReqs);
 	}
 
 	@Override
@@ -273,30 +270,29 @@ public class CustomTestCaseModificationServiceImpl implements CustomTestCaseModi
 
 		TestCase mainTestCase = testCaseDao.findById(testCaseId);
 
-		 List<VerifiedRequirement> verifiedReqs = buildVerifiedRequirementList(mainTestCase.getVerifiedRequirements(),
-		 verified );
+		List<VerifiedRequirement> verifiedReqs = buildVerifiedRequirementList(mainTestCase.getVerifiedRequirements(),
+				verified);
 
 		long verifiedCount = requirementVersionDao.countVerifiedByTestCases(calleesIds);
 		if (LOGGER.isDebugEnabled()) {
 			LOGGER.debug("Total count of verified requirements : " + verifiedCount);
 		}
 
-		return new PagingBackedPagedCollectionHolder<List<VerifiedRequirement>>(pas, verifiedCount,
-				verifiedReqs);
+		return new PagingBackedPagedCollectionHolder<List<VerifiedRequirement>>(pas, verifiedCount, verifiedReqs);
 	}
 
 	/*
 	 * 
 	 */
-	private List<VerifiedRequirement> buildVerifiedRequirementList(final Collection<RequirementVersion> directlyVerifiedList,
-			List<RequirementVersion> verified) {
+	private List<VerifiedRequirement> buildVerifiedRequirementList(
+			final Collection<RequirementVersion> directlyVerifiedList, List<RequirementVersion> verified) {
 
 		List<VerifiedRequirement> toReturn = new ArrayList<VerifiedRequirement>(verified.size());
 
 		for (RequirementVersion req : verified) {
 			boolean directlyVerified = directlyVerifiedList.contains(req);
 
-			 toReturn.add(new VerifiedRequirement(req, directlyVerified));
+			toReturn.add(new VerifiedRequirement(req, directlyVerified));
 		}
 
 		return toReturn;

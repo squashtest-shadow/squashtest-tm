@@ -26,7 +26,7 @@ import java.util.List;
 import org.springframework.transaction.annotation.Transactional;
 import org.squashtest.csp.core.infrastructure.collection.PagedCollectionHolder;
 import org.squashtest.csp.core.infrastructure.collection.PagingAndSorting;
-import org.squashtest.csp.tm.domain.requirement.Requirement;
+import org.squashtest.csp.tm.domain.requirement.RequirementVersion;
 import org.squashtest.csp.tm.domain.testcase.ActionTestStep;
 import org.squashtest.csp.tm.domain.testcase.TestCase;
 import org.squashtest.csp.tm.domain.testcase.TestStep;
@@ -36,7 +36,7 @@ import org.squashtest.csp.tm.infrastructure.filter.FilteredCollectionHolder;
 
 /**
  * @author Gregory Fouquet
- *
+ * 
  */
 @Transactional
 public interface CustomTestCaseModificationService {
@@ -50,8 +50,7 @@ public interface CustomTestCaseModificationService {
 	List<TestStep> findStepsByTestCaseId(long testCaseId);
 
 	@Transactional(readOnly = true)
-	FilteredCollectionHolder<List<TestStep>> findStepsByTestCaseIdFiltered(long testCaseId,
-			CollectionFilter filter);
+	FilteredCollectionHolder<List<TestStep>> findStepsByTestCaseIdFiltered(long testCaseId, CollectionFilter filter);
 
 	void rename(long testCaseId, String newName);
 
@@ -67,9 +66,12 @@ public interface CustomTestCaseModificationService {
 	/**
 	 * Will move a list of steps to a new position.
 	 * 
-	 * @param testCaseId the id of the test case
-	 * @param newPosition the position we want the first element of movedSteps to be once the operation is complete
-	 * @param movedSteps the list of steps to move, sorted by rank among each others.
+	 * @param testCaseId
+	 *            the id of the test case
+	 * @param newPosition
+	 *            the position we want the first element of movedSteps to be once the operation is complete
+	 * @param movedSteps
+	 *            the list of steps to move, sorted by rank among each others.
 	 */
 	void changeTestStepsPosition(long testCaseId, int newPosition, List<Long> stepIds);
 
@@ -78,45 +80,53 @@ public interface CustomTestCaseModificationService {
 	void removeListOfSteps(long testCaseId, List<Long> testStepIds);
 
 	/**
-	 * Returns the filtered list of {@link Requirement}s directly verified by a test case.
-	 *
+	 * Returns the filtered list of {@link RequirementVersion}s directly verified by a test case.
+	 * 
 	 * @param testCaseId
 	 * @param filter
 	 * @return
 	 */
-
 	@Transactional(readOnly = true)
-	FilteredCollectionHolder<List<Requirement>> findAllDirectlyVerifiedRequirementsByTestCaseId(
-			long testCaseId, CollectionSorting filter);
-
-	@Transactional(readOnly = true)
-	PagedCollectionHolder<List<VerifiedRequirement>> findAllVerifiedRequirementsByTestCaseId(
-			long testCaseId, PagingAndSorting pas);
+	PagedCollectionHolder<List<RequirementVersion>> findAllDirectlyVerifiedRequirementsByTestCaseId(long testCaseId,
+			PagingAndSorting pas);
 
 	/**
-	 * That method returns the list of test cases having at least one CallTestStep directly calling the 
-	 * test case identified by testCaseId. The list is wrapped in a FilteredCollectionHolder, that contains
-	 * meta informations regarding the filtering, as usual.
-	 *  
-	 * @param testCaseId the Id of the called test case.
-	 * @param sorting the sorting parameters.
-	 * @return a non null but possibly empty FilteredCollectionHolder wrapping the list of first-level calling test cases.
+	 * @deprecated not used ?
+	 * @param testCaseId
+	 * @param pas
+	 * @return
+	 */
+	@Deprecated
+	@Transactional(readOnly = true)
+	PagedCollectionHolder<List<VerifiedRequirement>> findAllVerifiedRequirementsByTestCaseId(long testCaseId,
+			PagingAndSorting pas);
+
+	/**
+	 * That method returns the list of test cases having at least one CallTestStep directly calling the test case
+	 * identified by testCaseId. The list is wrapped in a FilteredCollectionHolder, that contains meta informations
+	 * regarding the filtering, as usual.
+	 * 
+	 * @param testCaseId
+	 *            the Id of the called test case.
+	 * @param sorting
+	 *            the sorting parameters.
+	 * @return a non null but possibly empty FilteredCollectionHolder wrapping the list of first-level calling test
+	 *         cases.
 	 */
 	@Transactional(readOnly = true)
-	FilteredCollectionHolder<List<TestCase>> findCallingTestCases(long testCaseId,
-			CollectionSorting sorting);
+	FilteredCollectionHolder<List<TestCase>> findCallingTestCases(long testCaseId, CollectionSorting sorting);
 
 	/**
 	 * will insert a test step into a test case script, possibly after a step (the position), given their Ids. If no
 	 * position is provided, it defaults to the first position.
-	 *
+	 * 
 	 * @param testCaseId
 	 *            the id of the test case.
 	 * @param idToCopyAfter
 	 *            the id of the step after which we'll insert the copy of a step, may be null.
 	 * @param copiedTestStepId
 	 *            the id of the testStep to copy.
-	 *
+	 * 
 	 */
 	void pasteCopiedTestStep(Long testCaseId, Long idToCopyAfter, Long copiedTestStepId);
 

@@ -37,16 +37,17 @@ import org.squashtest.csp.core.infrastructure.hibernate.PagingUtils;
 import org.squashtest.csp.core.infrastructure.hibernate.SortingUtils;
 import org.squashtest.csp.tm.domain.requirement.RequirementVersion;
 import org.squashtest.csp.tm.internal.repository.CustomRequirementVersionDao;
+
 /**
  * 
  * @author Gregory Fouquet
- *
+ * 
  */
 @Repository("CustomRequirementVersionDao")
 public class HibernateRequirementVersionDao implements CustomRequirementVersionDao {
 	@Inject
 	private SessionFactory sessionFactory;
-	
+
 	@SuppressWarnings("unchecked")
 	@Override
 	public List<RequirementVersion> findAllVerifiedByTestCases(Collection<Long> verifiersIds,
@@ -54,24 +55,31 @@ public class HibernateRequirementVersionDao implements CustomRequirementVersionD
 		if (verifiersIds.isEmpty()) {
 			return Collections.emptyList();
 		}
-		
+
+		Criteria crit = createFindAllVerifiedCriteria(pagingAndSorting);
+
+		crit.add(Restrictions.in("TestCase.id", verifiersIds)).setResultTransformer(Criteria.DISTINCT_ROOT_ENTITY);
+
+		return crit.list();
+	}
+
+	private Criteria createFindAllVerifiedCriteria(PagingAndSorting pagingAndSorting) {
 		Criteria crit = currentSession().createCriteria(RequirementVersion.class, "RequirementVersion");
+		crit.createAlias("requirement", "Requirement", Criteria.LEFT_JOIN);
 		crit.createAlias("verifyingTestCases", "TestCase");
 		crit.createAlias("requirement.project", "Project", Criteria.LEFT_JOIN);
-		crit.add(Restrictions.in("TestCase.id", verifiersIds)).setResultTransformer(Criteria.DISTINCT_ROOT_ENTITY);
-		
+
 		PagingUtils.addPaging(crit, pagingAndSorting);
 		SortingUtils.addOrder(crit, pagingAndSorting);
-		
-		return crit.list();
+		return crit;
 	}
 
 	@Override
 	public long countVerifiedByTestCases(Collection<Long> verifiersIds) {
-		if (verifiersIds.isEmpty()){
+		if (verifiersIds.isEmpty()) {
 			return 0;
 		}
-		
+
 		Query query = currentSession().getNamedQuery("requirementVersion.countVerifiedByTestCases");
 		query.setParameterList("verifiersIds", verifiersIds);
 		return (Long) query.uniqueResult();
@@ -79,6 +87,20 @@ public class HibernateRequirementVersionDao implements CustomRequirementVersionD
 
 	private Session currentSession() {
 		return sessionFactory.getCurrentSession();
+	}
+
+	/**
+	 * @see org.squashtest.csp.tm.internal.repository.CustomRequirementVersionDao#findAllVerifiedByTestCase(long,
+	 *      org.squashtest.csp.core.infrastructure.collection.PagingAndSorting)
+	 */
+	@SuppressWarnings("unchecked")
+	@Override
+	public List<RequirementVersion> findAllVerifiedByTestCase(long verifierId, PagingAndSorting pas) {
+		Criteria crit = createFindAllVerifiedCriteria(pas);
+
+		crit.add(Restrictions.eq("TestCase.id", Long.valueOf(verifierId)));
+
+		return crit.list();
 	}
 
 }

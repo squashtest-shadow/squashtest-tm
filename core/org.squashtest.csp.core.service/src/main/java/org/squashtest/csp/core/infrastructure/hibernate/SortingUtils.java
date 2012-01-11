@@ -42,7 +42,7 @@ public final class SortingUtils {
 	 * @param sorting
 	 */
 	public static void addOrder(Criteria criteria, Sorting sorting) {
-		switch (sorting.getSortingOrder()) {
+		switch (sorting.getSortOrder()) {
 		case ASCENDING:
 			criteria.addOrder(Order.asc(sorting.getSortedAttribute()));
 			break;

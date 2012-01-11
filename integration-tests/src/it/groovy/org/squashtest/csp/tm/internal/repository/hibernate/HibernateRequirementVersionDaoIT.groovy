@@ -27,6 +27,7 @@ import org.squashtest.csp.core.infrastructure.collection.PagingAndSorting;
 import org.squashtest.csp.core.infrastructure.collection.SortOrder;
 import org.squashtest.csp.tm.internal.repository.RequirementVersionDao;
 import org.squashtest.csp.tools.unittest.assertions.CollectionAssertions;
+import org.squashtest.csp.tools.unittest.assertions.ListAssertions;
 import org.unitils.dbunit.annotation.DataSet;
 
 import spock.unitils.UnitilsSupport;
@@ -37,6 +38,7 @@ class HibernateRequirementVersionDaoIT extends DbunitDaoSpecification {
 	
 	def setup() {
 		CollectionAssertions.declareContainsExactlyIds()
+		ListAssertions.declareIdsEqual();
 	}
 
 	@DataSet("HibernateRequirementVersionDaoIT.should count requirements verified by list of test cases.xml")
@@ -45,7 +47,7 @@ class HibernateRequirementVersionDaoIT extends DbunitDaoSpecification {
 		sorting.firstItemIndex >> 0
 		sorting.pageSize >> 10
 		sorting.sortedAttribute >> "RequirementVersion.id"
-		sorting.sortingOrder >> SortOrder.ASCENDING
+		sorting.sortOrder >> SortOrder.ASCENDING
 
 		when:
 		def reqs = versionDao.findAllVerifiedByTestCases([100L, 200L], sorting)
@@ -59,7 +61,7 @@ class HibernateRequirementVersionDaoIT extends DbunitDaoSpecification {
 		sorting.firstItemIndex >> 0
 		sorting.pageSize >> 10
 		sorting.sortedAttribute >> "RequirementVersion.name"
-		sorting.sortingOrder >> SortOrder.DESCENDING
+		sorting.sortOrder >> SortOrder.DESCENDING
 
 		when:
 		def reqs = versionDao.findAllVerifiedByTestCases([100L, 200L], sorting)
@@ -74,7 +76,7 @@ class HibernateRequirementVersionDaoIT extends DbunitDaoSpecification {
 		sorting.firstItemIndex >> 1
 		sorting.pageSize >> 1
 		sorting.sortedAttribute >> "RequirementVersion.id"
-		sorting.sortingOrder >> SortOrder.ASCENDING
+		sorting.sortOrder >> SortOrder.ASCENDING
 
 		when:
 		def reqs = versionDao.findAllVerifiedByTestCases([100L, 200L], sorting)
@@ -99,5 +101,31 @@ class HibernateRequirementVersionDaoIT extends DbunitDaoSpecification {
 		
 		then: 
 		res.containsExactlyIds([10L, 20L])
+	}
+	
+	
+	@DataSet("HibernateTestCaseDaoIT.should find requirement versions directly verified by a test case sorted by name.xml")
+	def "should find requirement versions directly verified by a test case sorted by name"() {
+		given:
+		PagingAndSorting pas = Mock()
+		pas.firstItemIndex >> 0
+		pas.pageSize >> 10
+		pas.sortedAttribute >> "RequirementVersion.name"
+		pas.sortOrder >> SortOrder.ASCENDING
+		
+		when:
+		def res = versionDao.findAllVerifiedByTestCase(100, pas)
+		
+		then:
+		res.idsEqual([20L, 10L])
+	}
+
+		@DataSet("HibernateTestCaseDaoIT.should find requirement versions directly verified by a test case sorted by name.xml")
+	def "should count requirements verified by a test case"() {
+		when:
+		def count = versionDao.countVerifiedByTestCase(100)
+
+		then:
+		count == 2
 	}
 }

@@ -19,8 +19,18 @@
  *     along with this software.  If not, see <http://www.gnu.org/licenses/>.
  */
 package org.squashtest.csp.tools.unittest.assertions
-
-class CollectionAssertions {
+/**
+ * This helper class declares various methods on Collection objects which can be used as assertions in unit tests. 
+ * 
+ * @author Gregory Fouquet
+ *
+ */
+final class CollectionAssertions {
+	private CollectionAssertions() {}
+	/**
+	 * declares a containsExactly(Collection) method Collection objects which checks both collections exactly have the same content. 
+	 * @return
+	 */
 	static def declareContainsExactly() {
 		Collection.metaClass.containsExactly { Collection expected ->
 			assertContainsExactly(delegate, expected);
@@ -32,7 +42,10 @@ class CollectionAssertions {
 		assert actual.containsAll(expected)
 		assert expected.containsAll(actual)
 	}
-
+	/**
+	 * declares a containsExactly(Collection) method Collection objects which collects the id property of collection items and checks they exactly match the given list of id.
+	 * @return
+	 */
 	static def declareContainsExactlyIds() {
 		Collection.metaClass.containsExactlyIds { Collection expected ->
 			def ids = delegate.collect { it.id }

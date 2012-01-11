@@ -227,8 +227,6 @@ class TestCaseModificationControllerTest extends Specification {
 		] as DataTableModelHelper<Requirement>;
 
 
-		//def helper =new DataTableModelHelperReqImpl();
-
 		def res = helper.buildDataModel(holder, 1,"echo");
 
 		then:

@@ -115,12 +115,12 @@ class CustomTestCaseModificationServiceImplTest extends Specification {
 
 	def "should return the first 2 verified requirements"() {
 		given:
-		CollectionSorting filter = Mock()
+		PagingAndSorting filter = Mock()
 		filter.getFirstItemIndex() >> 0
-		filter.getMaxNumberOfItems() >> 2
+		filter.getPageSize() >> 2
 
 		and:
-		testCaseDao.findAllDirectlyVerifiedRequirementsByIdFiltered(10, filter) >> [
+		requirementVersionDao.findAllVerifiedByTestCase(10, filter) >> [
 			Mock(Requirement),
 			Mock(Requirement)
 		]
@@ -129,23 +129,23 @@ class CustomTestCaseModificationServiceImplTest extends Specification {
 		def res = service.findAllDirectlyVerifiedRequirementsByTestCaseId(10, filter)
 
 		then:
-		res.filteredCollection.size() == 2
+		res.pagedItems.size() == 2
 	}
 
 	def "should tell that unfiltered result size is 5"() {
 		given:
-		CollectionSorting filter = Mock()
+		PagingAndSorting filter = Mock()
 		filter.getFirstItemIndex() >> 0
-		filter.getMaxNumberOfItems() >> 2
+		filter.getPageSize() >> 2
 
 		and:
-		testCaseDao.countVerifiedRequirementsById(10) >> 5
+		requirementVersionDao.countVerifiedByTestCase(10) >> 5
 
 		when:
-		def res = service.findAllDirectlyVerifiedRequirementsByTestCaseId(10, filter)
+		PagedCollectionHolder res = service.findAllDirectlyVerifiedRequirementsByTestCaseId(10, filter)
 
 		then:
-		res.unfilteredResultCount == 5
+		res.totalNumberOfItems == 5
 	}
 
 	def "should copy and insert a Test Step a a specific position"(){

@@ -45,7 +45,7 @@ public class DataTableMapperCollectionSortingAdapter implements CollectionSortin
 	}
 
 	public String getSortingOrder() {
-		return delegate.getSortingOrder().getCode();
+		return delegate.getSortOrder().getCode();
 	}
 
 	public int getFirstItemIndex() {

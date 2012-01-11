@@ -177,6 +177,7 @@
 		@NamedQuery(name = "requirementAuditEvent.findAllByRequirementIds", query = "select rae from RequirementAuditEvent rae inner join rae.requirementVersion r where r.id in (:ids) order by rae.requirementVersion asc, rae.date desc"),
 		
 		@NamedQuery(name = "requirementVersion.countVerifiedByTestCases", query = "select count(distinct r) from TestCase tc join tc.verifiedRequirements r where tc.id in (:verifiersIds)"),
+		@NamedQuery(name = "RequirementVersion.countVerifiedByTestCase", query = "select count(r) from TestCase tc join tc.verifiedRequirements r where tc.id = ?"),
 
 		
 		/* ********************************************** batch deletion-related queries **************************************************** */

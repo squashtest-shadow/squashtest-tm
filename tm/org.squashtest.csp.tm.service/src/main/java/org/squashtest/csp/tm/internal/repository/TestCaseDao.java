@@ -22,9 +22,7 @@ package org.squashtest.csp.tm.internal.repository;
 
 import java.util.Collection;
 import java.util.List;
-import java.util.Set;
 
-import org.squashtest.csp.tm.domain.requirement.Requirement;
 import org.squashtest.csp.tm.domain.requirement.RequirementSearchCriteria;
 import org.squashtest.csp.tm.domain.testcase.ActionTestStep;
 import org.squashtest.csp.tm.domain.testcase.TestCase;
@@ -39,24 +37,6 @@ public interface TestCaseDao extends EntityDao<TestCase> {
 	TestCase findAndInit(Long testCaseId);
 
 	List<ActionTestStep> getTestCaseSteps(Long testCaseId);
-
-	/**
-	 * Returns the initialized list of requirements verified by a test case. The list is filtered accorfing to the
-	 * {@link CollectionSorting} object.
-	 *
-	 * @param testCaseId
-	 * @param filter
-	 * @return
-	 */
-	List<Requirement> findAllDirectlyVerifiedRequirementsByIdFiltered(long testCaseId, CollectionSorting filter);
-
-	/**
-	 * Returns the number of Requirements verified by a test case.
-	 *
-	 * @param testCaseId
-	 * @return
-	 */
-	long countVerifiedRequirementsById(long testCaseId);
 
 	List<TestCase> findAllByIdList(final List<Long> testCaseIds);
 
