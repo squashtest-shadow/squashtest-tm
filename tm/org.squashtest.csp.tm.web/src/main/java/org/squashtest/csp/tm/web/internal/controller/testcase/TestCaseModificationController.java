@@ -73,8 +73,9 @@ import org.squashtest.csp.tm.web.internal.model.viewmapper.DataTableMapper;
 public class TestCaseModificationController {
 	private static final Logger LOGGER = LoggerFactory.getLogger(TestCaseModificationController.class);
 
-	private final DataTableMapper verifiedReqMapper = new DataTableMapper("verified-requirement", RequirementVersion.class,
-			Project.class).initMapping(7).mapAttribute(Project.class, 2, "name", String.class)
+	private final DataTableMapper verifiedReqMapper = new DataTableMapper("verified-requirement",
+			RequirementVersion.class, Project.class).initMapping(7)
+			.mapAttribute(Project.class, 2, "name", String.class)
 			.mapAttribute(RequirementVersion.class, 3, "reference", String.class)
 			.mapAttribute(RequirementVersion.class, 4, "name", String.class)
 			.mapAttribute(RequirementVersion.class, 5, "criticality", RequirementCriticality.class);
@@ -94,9 +95,9 @@ public class TestCaseModificationController {
 
 	@Inject
 	private Provider<TestCaseImportanceLabelFormatter> importanceLabelFormatterProvider;
-	
-	@Inject 
-	private CallStepManagerService callStepManager ; 
+
+	@Inject
+	private CallStepManagerService callStepManager;
 
 	@ServiceReference
 	public void setTestCaseModificationService(TestCaseModificationService testCaseModificationService) {
@@ -195,9 +196,9 @@ public class TestCaseModificationController {
 	@ResponseBody
 	public void pasteStep(@RequestParam("copiedStepId[]") String[] copiedStepId,
 			@RequestParam(value = "indexToCopy", required = false) Long positionId, @PathVariable long testCaseId) {
-		
-		callStepManager.checkForCyclicStepCallBeforePaste( testCaseId, copiedStepId);
-		
+
+		callStepManager.checkForCyclicStepCallBeforePaste(testCaseId, copiedStepId);
+
 		for (int i = copiedStepId.length - 1; i >= 0; i--) {
 			String id = copiedStepId[i];
 			testCaseModificationService.pasteCopiedTestStep(testCaseId, positionId, Long.parseLong(id));
