@@ -1,3 +1,23 @@
+/**
+ *     This file is part of the Squashtest platform.
+ *     Copyright (C) 2010 - 2011 Squashtest TM, Squashtest.org
+ *
+ *     See the NOTICE file distributed with this work for additional
+ *     information regarding copyright ownership.
+ *
+ *     This is free software: you can redistribute it and/or modify
+ *     it under the terms of the GNU Lesser General Public License as published by
+ *     the Free Software Foundation, either version 3 of the License, or
+ *     (at your option) any later version.
+ *
+ *     this software is distributed in the hope that it will be useful,
+ *     but WITHOUT ANY WARRANTY; without even the implied warranty of
+ *     MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ *     GNU Lesser General Public License for more details.
+ *
+ *     You should have received a copy of the GNU Lesser General Public License
+ *     along with this software.  If not, see <http://www.gnu.org/licenses/>.
+ */
 package org.squashtest.csp.tm.internal.service.importer;
 
 import java.util.Collection;
@@ -6,7 +26,6 @@ import java.util.List;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
-import javax.mail.search.NotTerm;
 
 import org.squashtest.csp.tm.domain.testcase.TestCase;
 import org.squashtest.csp.tm.domain.testcase.TestCaseFolder;
@@ -80,6 +99,7 @@ class TestCaseLibraryMerger {
 	}
 	
 	public TestCaseLibraryMerger(TestCaseLibraryNavigationService service){
+		this();
 		this.service=service;
 	}
 	
@@ -93,6 +113,8 @@ class TestCaseLibraryMerger {
 		return summary;
 	}
 	
+	private NodeMerger merger = new NodeMerger();
+	
 	
 	/**
 	 * the Library is the root of the hierarchy, and that's where we're importing our data. the data that couldn't be added to the root of the library
@@ -104,7 +126,6 @@ class TestCaseLibraryMerger {
 	public void mergeIntoLibrary(TestCaseLibrary dest, TestCaseFolder src){
 		
 		//phase 1 : add the content of the root of the library
-		NodeMerger merger = new NodeMerger();
 		merger.setMergingContext(this);
 		merger.setDestination(dest);
 		
@@ -114,6 +135,9 @@ class TestCaseLibraryMerger {
 		
 		//phase 2 : if some source folder already exists, then no need to persist it, but we must merge its content instead with the content of the 
 		//corresponding persistent entity.
+		
+		//important : do not replace the while loop with a for or foreach : 
+		//nonTreated may/should be modified during treatment 
 		FolderPair pair;
 		
 		while(! nonTreated.isEmpty()){
@@ -129,8 +153,6 @@ class TestCaseLibraryMerger {
 		}
 		
 	}
-	
-
 
 	
 	/* ******************************** private classes ************************************ */
@@ -155,8 +177,8 @@ class TestCaseLibraryMerger {
 		
 		protected TestCaseLibraryMerger context;
 		
-		protected TestCaseLibrary parentLibrary ;
-		protected TestCaseFolder parentFolder;
+		protected TestCaseLibrary destLibrary ;
+		protected TestCaseFolder destFolder;
 
 		
 		public void setMergingContext(TestCaseLibraryMerger merger){
@@ -164,48 +186,48 @@ class TestCaseLibraryMerger {
 		}
 		
 		public void setDestination(TestCaseLibrary library){
-			this.parentLibrary=library;
-			this.parentFolder=null;
+			this.destLibrary=library;
+			this.destFolder=null;
 		}
 		
 		public void setDestination(TestCaseFolder folder){
-			this.parentFolder=folder;
-			this.parentLibrary=null;
+			this.destFolder=folder;
+			this.destLibrary=null;
 		}
 		
 		
 		protected Collection<TestCaseLibraryNode> getDestinationContent(){
-			if (parentLibrary!=null){
-				return parentLibrary.getRootContent();
+			if (destLibrary!=null){
+				return destLibrary.getRootContent();
 			}else{
-				return parentFolder.getContent();
+				return destFolder.getContent();
 			}
 		}
 		
 		
 		protected void persistTestCase(TestCase tc){
-			if (parentLibrary!=null){
-				context.service.addTestCaseToLibrary(parentLibrary.getId(), tc);
+			if (destLibrary!=null){
+				context.service.addTestCaseToLibrary(destLibrary.getId(), tc);
 			}else{
-				context.service.addTestCaseToFolder(parentFolder.getId(), tc);
+				context.service.addTestCaseToFolder(destFolder.getId(), tc);
 			}			
 		}
 		
 		protected void persistFolder(TestCaseFolder folder){
-			if (parentLibrary!=null){
-				context.service.addFolderToLibrary(parentLibrary.getId(), folder);
+			if (destLibrary!=null){
+				context.service.addFolderToLibrary(destLibrary.getId(), folder);
 			}else{
-				context.service.addFolderToFolder(parentFolder.getId(), folder);
+				context.service.addFolderToFolder(destFolder.getId(), folder);
 			}					
 		}
 		
 		protected void applyConfigurationTo(DestinationManager otherManager){
 			otherManager.setMergingContext(context);
 			
-			if (parentLibrary!=null){
-				otherManager.setDestination(parentLibrary);
+			if (destLibrary!=null){
+				otherManager.setDestination(destLibrary);
 			}else{
-				otherManager.setDestination(parentFolder);
+				otherManager.setDestination(destFolder);
 			}	
 		}
 		
@@ -217,11 +239,11 @@ class TestCaseLibraryMerger {
 	
 	private static class NodeMerger extends DestinationManager implements TestCaseLibraryNodeVisitor{
 
+		private TestCaseMerger tcMerger= new TestCaseMerger();
+		private FolderMerger fMerger = new FolderMerger();
 
 		@Override
 		public void visit(TestCase visited) {
-			TestCaseMerger tcMerger = new TestCaseMerger();
-			
 			applyConfigurationTo(tcMerger);
 			tcMerger.setTransientTestCase(visited);
 			
@@ -231,8 +253,6 @@ class TestCaseLibraryMerger {
 		
 		@Override
 		public void visit(TestCaseFolder visited) {
-			FolderMerger fMerger = new FolderMerger();
-			
 			applyConfigurationTo(fMerger);
 			fMerger.setTransientFolder(visited);		
 			
