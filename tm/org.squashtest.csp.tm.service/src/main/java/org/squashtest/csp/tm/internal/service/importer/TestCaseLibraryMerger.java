@@ -104,7 +104,8 @@ class TestCaseLibraryMerger {
 	public void mergeIntoLibrary(TestCaseLibrary dest, TestCaseFolder src){
 		
 		//phase 1 : add the content of the root of the library
-		Merger merger = new Merger(this);
+		NodeMerger merger = new NodeMerger();
+		merger.setMergingContext(this);
 		merger.setDestination(dest);
 		
 		for (TestCaseLibraryNode node : src.getContent()){
@@ -127,9 +128,6 @@ class TestCaseLibraryMerger {
 			
 		}
 		
-				
-		
-		
 	}
 	
 
@@ -148,18 +146,21 @@ class TestCaseLibraryMerger {
 		
 	}
 	
+
+	/*
+	 * This class is an adapter to help with the API differences between Libraries and Folders  
+	 */
 	
-	
-	private static class Merger implements TestCaseLibraryNodeVisitor{
+	private static class DestinationManager {
 		
-		TestCaseLibraryMerger context;
+		protected TestCaseLibraryMerger context;
 		
-		TestCaseLibrary parentLibrary ;
-		TestCaseFolder parentFolder;
+		protected TestCaseLibrary parentLibrary ;
+		protected TestCaseFolder parentFolder;
+
 		
-		
-		public Merger(TestCaseLibraryMerger merger){
-			this.context = merger;
+		public void setMergingContext(TestCaseLibraryMerger merger){
+			this.context=merger;
 		}
 		
 		public void setDestination(TestCaseLibrary library){
@@ -173,37 +174,7 @@ class TestCaseLibraryMerger {
 		}
 		
 		
-		@Override
-		public void visit(TestCase visited) {
-			Collection<String> names = collectNames(getDestinationContent());
-			
-			if (names.contains(visited.getName())){
-				String newName = generateUniqueName(names, visited.getName());
-				visited.setName(newName);
-				context.summary.incrWarnings();				
-			}
-			
-			persistTestCase(visited);
-			
-		}
-		
-		@Override
-		public void visit(TestCaseFolder visited) {
-			FolderNameConflictResolver resolver = new FolderNameConflictResolver(context, visited);
-			
-			if (parentLibrary!=null){
-				resolver.uses(parentLibrary);
-			}else{
-				resolver.uses(parentFolder);
-			}
-			
-			resolver.resolve();
-		}
-		
-		
-		
-		
-		private Collection<TestCaseLibraryNode> getDestinationContent(){
+		protected Collection<TestCaseLibraryNode> getDestinationContent(){
 			if (parentLibrary!=null){
 				return parentLibrary.getRootContent();
 			}else{
@@ -212,91 +183,136 @@ class TestCaseLibraryMerger {
 		}
 		
 		
-		private void persistTestCase(TestCase tc){
+		protected void persistTestCase(TestCase tc){
 			if (parentLibrary!=null){
 				context.service.addTestCaseToLibrary(parentLibrary.getId(), tc);
 			}else{
 				context.service.addTestCaseToFolder(parentFolder.getId(), tc);
 			}			
 		}
+		
+		protected void persistFolder(TestCaseFolder folder){
+			if (parentLibrary!=null){
+				context.service.addFolderToLibrary(parentLibrary.getId(), folder);
+			}else{
+				context.service.addFolderToFolder(parentFolder.getId(), folder);
+			}					
+		}
+		
+		protected void applyConfigurationTo(DestinationManager otherManager){
+			otherManager.setMergingContext(context);
+			
+			if (parentLibrary!=null){
+				otherManager.setDestination(parentLibrary);
+			}else{
+				otherManager.setDestination(parentFolder);
+			}	
+		}
+		
+		
 	}
 	
 	
 	
 	
-	private static class FolderNameConflictResolver implements TestCaseLibraryNodeVisitor{
-		
-		TestCaseLibraryMerger context;
-		TestCaseFolder transientFolder;
-		
-		TestCaseLibrary parentPersistentLibrary=null;
-		TestCaseFolder parentPersistentFolder=null;
+	private static class NodeMerger extends DestinationManager implements TestCaseLibraryNodeVisitor{
 
-		public FolderNameConflictResolver(TestCaseLibraryMerger merger, TestCaseFolder transientFolder){
-			this.context=merger;
-			this.transientFolder=transientFolder;			
-		}
-		
-		public void uses(TestCaseLibrary lib){
-			parentPersistentLibrary=lib;
-			parentPersistentFolder=null;
+
+		@Override
+		public void visit(TestCase visited) {
+			TestCaseMerger tcMerger = new TestCaseMerger();
+			
+			applyConfigurationTo(tcMerger);
+			tcMerger.setTransientTestCase(visited);
+			
+			tcMerger.merge();
 			
 		}
 		
-		public void uses(TestCaseFolder fold){
-			parentPersistentFolder=fold;
-			parentPersistentLibrary=null;
+		@Override
+		public void visit(TestCaseFolder visited) {
+			FolderMerger fMerger = new FolderMerger();
+			
+			applyConfigurationTo(fMerger);
+			fMerger.setTransientFolder(visited);		
+			
+			fMerger.merge();
 		}
 		
-		public void resolve(){
+		
+	}
+	
+	
+	private static class TestCaseMerger extends DestinationManager{
+		
+		private TestCase toMerge;
+		
+		public void setTransientTestCase(TestCase tc){
+			toMerge=tc;
+		}
+
+	
+		public void merge(){
+			Collection<String> names = collectNames(getDestinationContent());
 			
-			TestCaseLibraryNode conflictingNode = getByName(getPersistentChildren(), transientFolder.getName());			
+			if (names.contains(toMerge.getName())){
+				String newName = generateUniqueName(names, toMerge.getName());
+				toMerge.setName(newName);
+				context.summary.incrWarnings();				
+			}
 			
-			conflictingNode.accept(this);
+			persistTestCase(toMerge);
+		}
+		
+	}
+
+	
+	private static class FolderMerger extends DestinationManager implements TestCaseLibraryNodeVisitor{
+		
+		private TestCaseFolder toMerge;
+
+
+		public void setTransientFolder(TestCaseFolder folder){
+			this.toMerge=folder;
+		}
+		
+		public void merge(){
 			
+			Collection<String> names = collectNames(getDestinationContent());
+			
+			if (names.contains(toMerge.getName())){
+				TestCaseLibraryNode conflictingNode = getByName(getDestinationContent(), toMerge.getName());	
+				conflictingNode.accept(this);
+			}
+			else{
+				persistFolder(toMerge);
+			}
+					
 		}
 		
 		//in the case of a conflict with an existing test case we have to rename the transient folder then persist it
 		@Override
 		public void visit(TestCase persisted) {
-			Collection<String> allNames = collectNames(getPersistentChildren());
+			Collection<String> allNames = collectNames(getDestinationContent());
 			
-			String newName = generateUniqueName(allNames, transientFolder.getName());
-			transientFolder.setName(newName);
+			String newName = generateUniqueName(allNames, toMerge.getName());
+			toMerge.setName(newName);
 			
 			context.summary.incrWarnings();
 			
-			persistFolder();
+			persistFolder(toMerge);
 			
 		}
 		
 		
-		//in the case of a conflict with an existing folder, then we don't want to rename and persist the transient folder : we want to 
-		//persist its children into the persistent one.
+		//in the case of a conflict with an existing folder it's fine : we don't have to persist it.
+		//However we must handle the transient content and merge them in turn : we notify the context that it must now merge it.
 		@Override
 		public void visit(TestCaseFolder persisted) {
-			FolderPair pair = new FolderPair(persisted, transientFolder);
+			FolderPair pair = new FolderPair(persisted, toMerge);
 			context.nonTreated.add(pair);
 		}
-		
-		
-		
-		private Collection<TestCaseLibraryNode> getPersistentChildren(){
-			if (parentPersistentLibrary!=null){
-				return parentPersistentLibrary.getRootContent();
-			}else{
-				return parentPersistentFolder.getContent();
-			}
-		}
-		
-		
-		private void persistFolder(){
-			if (parentPersistentLibrary!=null){
-				context.service.addFolderToLibrary(parentPersistentLibrary.getId(), transientFolder);
-			}else{
-				context.service.addFolderToFolder(parentPersistentFolder.getId(), transientFolder);
-			}			
-		}
+
 	}
 	 
 		

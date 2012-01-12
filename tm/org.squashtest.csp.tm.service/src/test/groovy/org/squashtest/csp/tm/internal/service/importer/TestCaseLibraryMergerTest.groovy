@@ -3,6 +3,7 @@ package org.squashtest.csp.tm.internal.service.importer
 import org.squashtest.csp.tm.domain.testcase.TestCase;
 import org.squashtest.csp.tm.domain.testcase.TestCaseFolder;
 import org.squashtest.csp.tm.domain.testcase.TestCaseLibrary;
+import org.squashtest.csp.tm.internal.service.importer.TestCaseLibraryMerger.DestinationManager;
 import org.squashtest.csp.tm.service.TestCaseLibraryNavigationService;
 
 import spock.lang.Specification;
@@ -11,6 +12,8 @@ import spock.lang.Specification;
 
 class TestCaseLibraryMergerTest extends Specification {
 
+	/* ************ static methods ************************ */
+	
 	def "should collect the names of a collection of nodes"(){
 		
 		given :
@@ -83,10 +86,13 @@ class TestCaseLibraryMergerTest extends Specification {
 	}
 	
 	
-	def "a merger should find the destination content regardless of which is the destination"(){
+	/* ***************************** DestinationManager test ********************************** */
+	
+	def "a destination manager should find the destination content regardless of which is the destination"(){
 		given :
-			def superMerger = Mock(TestCaseLibraryMerger)
-			def subMerger = new TestCaseLibraryMerger.Merger(superMerger)
+			def context = Mock(TestCaseLibraryMerger)
+			def destManager = new DestinationManager();
+			destManager.setMergingContext(context);
 			
 		and :
 			def expectationFolder = ["folder", "result"]
@@ -100,11 +106,11 @@ class TestCaseLibraryMergerTest extends Specification {
 			library.getRootContent() >> expectationLibrary
 		
 		when :
-			subMerger.setDestination(library)
-			def resLib = subMerger.getDestinationContent()
+			destManager.setDestination(library)
+			def resLib = destManager.getDestinationContent()
 			
-			subMerger.setDestination(folder)
-			def resFolder = subMerger.getDestinationContent()
+			destManager.setDestination(folder)
+			def resFolder = destManager.getDestinationContent()
 		
 		then :
 			resLib.containsAll(expectationLibrary)
@@ -113,36 +119,132 @@ class TestCaseLibraryMergerTest extends Specification {
 	}
 	
 	
-	def "a merger should persist a test case in the correct destination"(){
+	def "a destination manager know how to persist a test case in a folder"(){
 		
 		given :
-			def superMerger = new TestCaseLibraryMerger()
-			def subMerger = new TestCaseLibraryMerger.Merger(superMerger)
+		
+			def context = new TestCaseLibraryMerger()
+			def destManager = new DestinationManager()
+			destManager.setMergingContext(context);
 		
 		and :
 		
 			def folder = Mock(TestCaseFolder)
 			folder.getId() >> 5l
 			
-			subMerger.setDestination(folder)
+			destManager.setDestination(folder)
 	
 			def mtc = Mock(TestCase)
 				
 		and :	
 			
+			def service = Mock(TestCaseLibraryNavigationService)			
+			context.setLibraryService(service)
+			
+		when :
+		
+			destManager.persistTestCase(mtc)
+			
+		then :
+		
+			1 * service.addTestCaseToFolder(5l, mtc)
+	}
+	
+	
+	def "a destination manager know how to persist a test case in a library"(){
+		
+		given :
+		
+			def context = new TestCaseLibraryMerger()
+			def destManager = new DestinationManager()
+			destManager.setMergingContext(context);
+		
+		and :
+		
+			def library = Mock(TestCaseLibrary)
+			library.getId() >> 1l
+			
+			destManager.setDestination(library)
+	
+			def mtc = Mock(TestCase)
+				
+		and :
+			
 			def service = Mock(TestCaseLibraryNavigationService)
-			
-			superMerger.setLibraryService(service)
-			
+			context.setLibraryService(service)		
 	
 			
 		when :
-			subMerger.persistTestCase(mtc)
+		
+			destManager.persistTestCase(mtc)
 			
 		then :
-			1 * service.addTestCaseToFolder(5l, mtc)
-			
 		
+			1 * service.addTestCaseToLibrary(1l, mtc)
+	}
+	
+	def "a destination manager know how to persist a folder in a folder"(){
+		
+		given :
+		
+			def context = new TestCaseLibraryMerger()
+			def destManager = new DestinationManager()
+			destManager.setMergingContext(context);
+		
+		and :
+		
+			def folder = Mock(TestCaseFolder)
+			folder.getId() >> 5l
+			
+			destManager.setDestination(folder)
+	
+			def mf = Mock(TestCaseFolder)
+				
+		and :
+			
+			def service = Mock(TestCaseLibraryNavigationService)
+			context.setLibraryService(service)
+			
+		when :
+		
+			destManager.persistFolder(mf)
+			
+		then :
+		
+			1 * service.addFolderToFolder(5l, mf)
+	}
+	
+	
+	def "a destination manager know how to persist a folder in a library"(){
+		
+		given :
+		
+			def context = new TestCaseLibraryMerger()
+			def destManager = new DestinationManager()
+			destManager.setMergingContext(context);
+		
+		and :
+		
+			def library = Mock(TestCaseLibrary)
+			library.getId() >> 1l
+			
+			destManager.setDestination(library)
+	
+			def mf = Mock(TestCaseFolder)
+				
+		and :
+			
+			def service = Mock(TestCaseLibraryNavigationService)
+			context.setLibraryService(service)
+	
+			
+		when :
+		
+			destManager.persistFolder(mf)
+			
+		then :
+		
+			1 * service.addFolderToLibrary(1l, mf)
 	}
 	
 }
