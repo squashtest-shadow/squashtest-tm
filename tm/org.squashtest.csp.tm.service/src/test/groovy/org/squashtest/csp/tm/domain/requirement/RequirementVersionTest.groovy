@@ -25,7 +25,10 @@ import static org.squashtest.csp.tm.domain.requirement.RequirementStatus.*
 
 import org.squashtest.csp.tm.domain.IllegalRequirementModificationException;
 import org.squashtest.csp.tm.domain.RequirementNotLinkableException;
+import org.squashtest.csp.tm.domain.attachment.Attachment;
 import org.squashtest.csp.tm.domain.testcase.TestCase;
+import org.squashtest.csp.tools.unittest.assertions.CollectionAssertions;
+import org.squashtest.csp.tools.unittest.reflection.ReflectionCategory;
 
 import spock.lang.Specification;
 import spock.lang.Unroll;
@@ -36,258 +39,329 @@ import spock.lang.Unroll;
  */
 class RequirementVersionTest extends Specification {
 	RequirementVersion requirementVersion = new RequirementVersion(name:"req", description:"this is a req");
-	
-	@Unroll("should allow modification of property '#property' for status WORK_IN_PROGRESS")
-	def "should allow modification for status WORK_IN_PROGRESS"(){
-		
-		given :
-			requirementVersion.setStatus(WORK_IN_PROGRESS)
-		
-		when :
-			requirementVersion[property] = valueToSet
-		
-		then :
-		notThrown(IllegalRequirementModificationException)
-			
-		where :
-			property      | valueToSet
-			"name"        | "toto"
-			"description" | "successful test"
-			"reference"   | "blahblah"
-			"criticality" | RequirementCriticality.MAJOR
-			
-	}
-	
-	@Unroll("should allow modification of property '#property' for status UNDER_REVIEW")
-	def "should allow modification for status UNDER_REVIEW"(){
-		
-		given :
-			requirementVersion.setStatus(UNDER_REVIEW)
-		
-		when :
-			requirementVersion[property] = valueToSet
-		
-		then :
-		notThrown(IllegalRequirementModificationException)
-			
-		where :
-			property      | valueToSet
-			"name"        | "toto"
-			"description" | "successful test"
-			"reference"   | "blahblah"
-			"criticality" | RequirementCriticality.MAJOR
-			
-	}
-	
-	
-	@Unroll("should not allow modification of property '#property' for status APPROVED")
-	def "should not allow modification for status APPROVED"(){
-		
-		given :
-			requirementVersion.setStatus(UNDER_REVIEW)//needed because of the workflow
-			requirementVersion.setStatus(APPROVED)
-		
-		when :
-			requirementVersion[property] = valueToSet
-		
-		then :
-		thrown(IllegalRequirementModificationException)
-			
-		where :
-			property      | valueToSet
-			"name"        | "toto"
-			"description" | "successful test"
-			"reference"   | "blahblah"
-			"criticality" | RequirementCriticality.MAJOR
-			
+
+	def setup() {
+		CollectionAssertions.declareContainsExactly()
 	}
 
-	
+	@Unroll("should allow modification of property '#property' for status WORK_IN_PROGRESS")
+	def "should allow modification for status WORK_IN_PROGRESS"(){
+		given :
+		requirementVersion.setStatus(WORK_IN_PROGRESS)
+
+		when :
+		requirementVersion[property] = valueToSet
+
+		then :
+		notThrown(IllegalRequirementModificationException)
+
+		where :
+		property      | valueToSet
+		"name"        | "toto"
+		"description" | "successful test"
+		"reference"   | "blahblah"
+		"criticality" | RequirementCriticality.MAJOR
+	}
+
+	@Unroll("should allow modification of property '#property' for status UNDER_REVIEW")
+	def "should allow modification for status UNDER_REVIEW"(){
+
+		given :
+		requirementVersion.setStatus(UNDER_REVIEW)
+
+		when :
+		requirementVersion[property] = valueToSet
+
+		then :
+		notThrown(IllegalRequirementModificationException)
+
+		where :
+		property      | valueToSet
+		"name"        | "toto"
+		"description" | "successful test"
+		"reference"   | "blahblah"
+		"criticality" | RequirementCriticality.MAJOR
+	}
+
+
+	@Unroll("should not allow modification of property '#property' for status APPROVED")
+	def "should not allow modification for status APPROVED"(){
+
+		given :
+		requirementVersion.setStatus(UNDER_REVIEW)//needed because of the workflow
+		requirementVersion.setStatus(APPROVED)
+
+		when :
+		requirementVersion[property] = valueToSet
+
+		then :
+		thrown(IllegalRequirementModificationException)
+
+		where :
+		property      | valueToSet
+		"name"        | "toto"
+		"description" | "successful test"
+		"reference"   | "blahblah"
+		"criticality" | RequirementCriticality.MAJOR
+
+	}
+
+
 	@Unroll("should not allow modification of property '#property' for status OBSOLETE")
 	def "should not allow modification for status OBSOLETE"(){
-		
+
 		given :
-			requirementVersion.setStatus(OBSOLETE)
-		
+		requirementVersion.setStatus(OBSOLETE)
+
 		when :
-			requirementVersion[property] = valueToSet
-		
+		requirementVersion[property] = valueToSet
+
 		then :
-			thrown(IllegalRequirementModificationException)
-			
+		thrown(IllegalRequirementModificationException)
+
 		where :
-			property      | valueToSet
-			"name"        | "toto"
-			"description" | "successful test"
-			"reference"   | "blahblah"
-			"criticality" | RequirementCriticality.MAJOR
-			
+		property      | valueToSet
+		"name"        | "toto"
+		"description" | "successful test"
+		"reference"   | "blahblah"
+		"criticality" | RequirementCriticality.MAJOR
 	}
-	
+
 	@Unroll("should allow verification of a test case for #status ")
 	def "non obsolete requirements should allow verification of a test case"() {
 		given :
-			def tc = new TestCase(name:"tc", description:"tc")
-			RequirementVersion requirementVersion = prepareRequirement(status)
+		def tc = new TestCase(name:"tc", description:"tc")
+		RequirementVersion requirementVersion = prepareRequirement(status)
 		when :
-			requirementVersion.addVerifyingTestCase(tc)
+		requirementVersion.addVerifyingTestCase(tc)
 		then :
-			notThrown(IllegalRequirementModificationException)
-			
+		notThrown(IllegalRequirementModificationException)
+
 		where :
-			status << [ WORK_IN_PROGRESS, UNDER_REVIEW, APPROVED ]
+		status << [
+			WORK_IN_PROGRESS,
+			UNDER_REVIEW,
+			APPROVED
+		]
 	}
-	
+
 	@Unroll("should allow removal of a test case for #status ")
 	def "non obsolete requirements should allow removal of a test case "() {
 		given :
-			def tc = new TestCase(name:"tc", description:"tc")
-			RequirementVersion requirementVersion = prepareRequirement(status, tc)
+		def tc = new TestCase(name:"tc", description:"tc")
+		RequirementVersion requirementVersion = prepareRequirement(status, tc)
 		when :
-			requirementVersion.removeVerifyingTestCase(tc)
+		requirementVersion.removeVerifyingTestCase(tc)
 		then :
-			notThrown(IllegalRequirementModificationException)
-			
+		notThrown(IllegalRequirementModificationException)
+
 		where :
-			status << [ WORK_IN_PROGRESS, UNDER_REVIEW, APPROVED ]
+		status << [
+			WORK_IN_PROGRESS,
+			UNDER_REVIEW,
+			APPROVED
+		]
 	}
-	
+
 	def "obsolete requirements should not allow verification of a test case"() {
 		given :
-			def tc = new TestCase(name:"tc", description:"tc")
-			RequirementVersion requirementVersion = prepareRequirement(OBSOLETE)
-			
+		def tc = new TestCase(name:"tc", description:"tc")
+		RequirementVersion requirementVersion = prepareRequirement(OBSOLETE)
+
 		when :
-			requirementVersion.addVerifyingTestCase(tc)
-			
+		requirementVersion.addVerifyingTestCase(tc)
+
 		then :
-			thrown(RequirementNotLinkableException)
+		thrown(RequirementNotLinkableException)
 	}
-	
+
 	def "obsolete requirements should not allow removal of a test case "() {
 		given :
-			def tc = new TestCase(name:"tc", description:"tc")
-			RequirementVersion requirementVersion = prepareRequirement(OBSOLETE, tc)
-			
+		def tc = new TestCase(name:"tc", description:"tc")
+		RequirementVersion requirementVersion = prepareRequirement(OBSOLETE, tc)
+
 		when :
-			requirementVersion.removeVerifyingTestCase(tc)
-			
+		requirementVersion.removeVerifyingTestCase(tc)
+
 		then :
-			thrown(RequirementNotLinkableException)
+		thrown(RequirementNotLinkableException)
 	}
-	
+
 	@Unroll("should allow status change when current status is #status")
 	def "should allow status change"() {
 		given :
-			def req = prepareRequirement(status)
+		def req = prepareRequirement(status)
 		when :
-			req.setStatus(status)
+		req.setStatus(status)
 		then :
-			notThrown(IllegalRequirementModificationException)
+		notThrown(IllegalRequirementModificationException)
 		where :
-			status << [WORK_IN_PROGRESS, UNDER_REVIEW, APPROVED]
+		status << [
+			WORK_IN_PROGRESS,
+			UNDER_REVIEW,
+			APPROVED
+		]
 	}
-	
+
 	def "should not allow status change for OBSOLETE"(){
 		given :
-			def req = prepareRequirement(OBSOLETE)
+		def req = prepareRequirement(OBSOLETE)
 		when :
-			req.setStatus(OBSOLETE)
+		req.setStatus(OBSOLETE)
 		then :
-			thrown(IllegalRequirementModificationException)
+		thrown(IllegalRequirementModificationException)
 	}
-	
-	
+
+
 	@Unroll("the following workflow transition for #status are legal : #availableStatuses")
 	def "check workflow legal"(){
-		
+
 		when :
-			def arrayResult = [];
-			for (tester in availableStatuses){
-				def req = prepareRequirement(status)
-				req.setStatus(tester)
-				arrayResult << req.getStatus()
-			}
-			
+		def arrayResult = [];
+		for (tester in availableStatuses){
+			def req = prepareRequirement(status)
+			req.setStatus(tester)
+			arrayResult << req.getStatus()
+		}
+
 		then :
-			arrayResult  == availableStatuses
-			
+		arrayResult  == availableStatuses
+
 		where :
-			status				|	availableStatuses
-			WORK_IN_PROGRESS  	|	[ OBSOLETE, WORK_IN_PROGRESS, UNDER_REVIEW ]
-			UNDER_REVIEW		|	[ OBSOLETE, UNDER_REVIEW, APPROVED, WORK_IN_PROGRESS ]
-			APPROVED			|	[ OBSOLETE, APPROVED, UNDER_REVIEW, WORK_IN_PROGRESS ]
-			
+		status				|	availableStatuses
+		WORK_IN_PROGRESS  	|	[
+			OBSOLETE,
+			WORK_IN_PROGRESS,
+			UNDER_REVIEW
+		]
+		UNDER_REVIEW		|	[
+			OBSOLETE,
+			UNDER_REVIEW,
+			APPROVED,
+			WORK_IN_PROGRESS
+		]
+		APPROVED			|	[
+			OBSOLETE,
+			APPROVED,
+			UNDER_REVIEW,
+			WORK_IN_PROGRESS
+		]
 	}
-	
+
 	@Unroll("the following workflow transition for #status are not legal : #illegalStatuses")
 	def "check workflow illegal"(){
-		
+
 		when :
-			def arrayResult = [];
-			for (tester in illegalStatuses){
-				def req = prepareRequirement(status)
-				try{
-					req.setStatus(tester)
-				}catch(IllegalRequirementModificationException){
-					arrayResult << tester
-				}
+		def arrayResult = [];
+		for (tester in illegalStatuses){
+			def req = prepareRequirement(status)
+			try{
+				req.setStatus(tester)
+			}catch(IllegalRequirementModificationException){
+				arrayResult << tester
 			}
-			
+		}
+
 		then :
-			arrayResult  == illegalStatuses
-			
+		arrayResult  == illegalStatuses
+
 		where :
-			status				|	illegalStatuses
-			WORK_IN_PROGRESS  	|	[ APPROVED ]
-			UNDER_REVIEW		|	[  ]
-			APPROVED			|	[  ]
-			OBSOLETE			|	[ WORK_IN_PROGRESS, UNDER_REVIEW, APPROVED, OBSOLETE ]
-			
+		status				|	illegalStatuses
+		WORK_IN_PROGRESS  	|	[APPROVED]
+		UNDER_REVIEW		|	[]
+		APPROVED			|	[]
+		OBSOLETE			|	[
+			WORK_IN_PROGRESS,
+			UNDER_REVIEW,
+			APPROVED,
+			OBSOLETE
+		]
 	}
-	
+
 	//that (naive) method builds requirements with initial status that could bypass the workflow.
 	private RequirementVersion prepareRequirement(RequirementStatus status){
 		def req = new RequirementVersion(name:"req", description:"this is a req");
-		
+
 		for (iterStatus in RequirementStatus.values()) {
 			req.status = iterStatus;
 			if (iterStatus == status) {
 				break;
 			}
 		}
-		
+
 		return req;
 	}
-	
+
 	//same
 	private RequirementVersion prepareRequirement(RequirementStatus status, TestCase testCase){
 		def req = new RequirementVersion(name:"req", description:"this is a req");
-			req.addVerifyingTestCase(testCase)
-		
+		req.addVerifyingTestCase(testCase)
+
 		for (iterStatus in RequirementStatus.values()){
 			req.status = iterStatus;
 			if (iterStatus == status) {
 				break;
 			}
 		}
-		
+
 		return req;
 	}
 
 	def "when verified by a test case, the test case should also veryfy the requirementVersion"() {
 		given:
 		TestCase tc = new TestCase()
-		
+
 		when:
 		requirementVersion.addVerifyingTestCase tc
-		
+
 		then:
 		tc.verifiedRequirements.contains requirementVersion
 	}
-	
+
 	def "requirement version should have an attachment list"() {
 		expect:
 		requirementVersion.attachmentList != null
+	}
+
+	def "should create a 'pastable' copy"() {
+		given:
+		RequirementVersion source = new RequirementVersion()
+		source.name = "source name"
+		source.description = "source description"
+		source.reference = "source reference"
+		source.versionNumber = 10
+		use (ReflectionCategory) {
+			// reflection on fields to override workflow
+			RequirementVersion.set field: "status", of: source, to: RequirementStatus.APPROVED 
+			RequirementVersion.set field: "criticality", of: source, to: RequirementCriticality.MAJOR 
+		}
+
+		Requirement   req = new Requirement(source);
+
+		and:
+		TestCase verifying = new TestCase()
+		source.addVerifyingTestCase verifying
+
+		and:
+		Attachment attachment = new Attachment()
+		source.attachmentList.addAttachment attachment
+		
+		when:
+		RequirementVersion copy = source.createPastableCopy()
+
+		then:
+		copy.name == source.name
+		copy.description == source.description
+		copy.status == RequirementStatus.WORK_IN_PROGRESS
+		copy.reference == source.reference
+		copy.criticality == source.criticality
+		copy.requirement == null
+		copy.versionNumber == source.versionNumber
+
+		copy.verifyingTestCases.containsExactly([verifying])
+		verifying.verifiedRequirements.containsExactly([source, copy])
+
+		copy.attachmentList.allAttachments.size() == 1
+		!copy.attachmentList.allAttachments.contains(attachment)
 	}
 }

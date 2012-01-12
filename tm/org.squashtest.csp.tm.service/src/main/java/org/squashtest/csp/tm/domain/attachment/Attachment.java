@@ -23,7 +23,6 @@ package org.squashtest.csp.tm.domain.attachment;
 import java.util.Date;
 import java.util.Locale;
 
-import javax.persistence.Basic;
 import javax.persistence.CascadeType;
 import javax.persistence.Column;
 import javax.persistence.Entity;
@@ -41,7 +40,6 @@ import org.hibernate.validator.constraints.NotEmpty;
 
 @Entity
 public class Attachment {
-
 	private static final float MEGA_BYTE = 1048576.000f;
 
 	@Id
@@ -49,20 +47,29 @@ public class Attachment {
 	@Column(name = "ATTACHMENT_ID")
 	private Long id;
 
-	@Basic(optional = false)
 	@NotEmpty
 	@Valid
 	private String name;
 
-	@Basic
 	private String type;
 
-	@Basic
 	private Long size = 0L;
 
 	@OneToOne(fetch = FetchType.LAZY, cascade = { CascadeType.PERSIST, CascadeType.MERGE, CascadeType.REMOVE }, optional = true)
 	@JoinColumn(name = "CONTENT_ID")
 	private AttachmentContent content;
+
+	public Attachment() {
+		super();
+	}
+
+	public Attachment(String name) {
+		setName(name);
+	}
+
+	public Long getId() {
+		return id;
+	}
 
 	public AttachmentContent getContent() {
 		return content;
@@ -77,7 +84,7 @@ public class Attachment {
 
 	/**
 	 * @return the full name of the file (including extension)
-	 *
+	 * 
 	 */
 
 	public String getName() {
@@ -86,7 +93,7 @@ public class Attachment {
 
 	/**
 	 * sets the full name (including extensions). The file type will be set on the fly.
-	 *
+	 * 
 	 * @param String
 	 *            name
 	 */
@@ -97,7 +104,7 @@ public class Attachment {
 
 	/**
 	 * When dealing with name this is the one you want most of the time
-	 *
+	 * 
 	 * @return the filename without extension
 	 */
 	@NotBlank
@@ -108,7 +115,7 @@ public class Attachment {
 
 	/**
 	 * When dealing with names this is the one you want most of the time
-	 *
+	 * 
 	 * @param shortName
 	 *            represents the filename without extension
 	 */
@@ -120,9 +127,11 @@ public class Attachment {
 		this.type = strType;
 	}
 
-	public final void setType() {
-		int position = name.lastIndexOf('.');
-		type = name.substring(position + 1);
+	private void setType() {
+		if (name != null) {
+			int position = name.lastIndexOf('.');
+			type = name.substring(position + 1);
+		}
 	}
 
 	public final String getType() {
@@ -155,33 +164,22 @@ public class Attachment {
 		return String.format(locale, "%.2f", megaSize);
 	}
 
-	public Attachment() {
-
-	}
-
-	public Attachment(String name) {
-		setName(name);
-	}
-
-	public Long getId() {
-		return id;
-	}
-
 	/**
 	 * will perform a deep copy of this Attachment. All attributes will be duplicated including the content.
-	 *
+	 * 
 	 * Note : the properties 'id' and 'addedOn' won't be duplicated and will be automatically set by the system.
-	 *
+	 * 
 	 */
 	public Attachment hardCopy() {
 		Attachment clone = new Attachment();
 
 		clone.setName(this.getName());
-		clone.setShortName(this.getShortName());
 		clone.setSize(this.getSize());
 		clone.setType(this.getType());
 		clone.setAddedOn(new Date());
-		clone.setContent(this.getContent().hardCopy());
+		if (this.getContent() != null) {
+			clone.setContent(this.getContent().hardCopy());
+		}
 
 		return clone;
 	}

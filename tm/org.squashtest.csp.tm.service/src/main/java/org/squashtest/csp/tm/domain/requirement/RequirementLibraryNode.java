@@ -87,4 +87,7 @@ public abstract class RequirementLibraryNode<RESOURCE extends Resource> implemen
 	public abstract void accept(RequirementLibraryNodeVisitor visitor);
 
 	public abstract RESOURCE getResource();
+	
+	@Override
+	public abstract RequirementLibraryNode<RESOURCE> createPastableCopy();
 }

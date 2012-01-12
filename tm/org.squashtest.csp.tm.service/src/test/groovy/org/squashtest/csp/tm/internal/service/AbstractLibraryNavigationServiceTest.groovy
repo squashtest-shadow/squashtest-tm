@@ -62,7 +62,7 @@ class AbstractLibraryNavigationServiceTest extends Specification {
 		given :
 			TestCase tcOrig = Mock();
 			tcOrig.getName() >> "test case okay";
-			tcOrig.createCopy() >> new TestCase(name:"test case okay");
+			tcOrig.createPastableCopy() >> new TestCase(name:"test case okay");
 		
 			and : "the folder"
 			TestCaseFolder folder = new TestCaseFolder();
@@ -92,9 +92,7 @@ class AbstractLibraryNavigationServiceTest extends Specification {
 		
 		given : "the test case and it's copy"
 		
-			TestCase tcOrig = Mock();
-			tcOrig.getName() >> "NX_OHNOZ";
-			tcOrig.createCopy() >> new TestCase();
+			TestCase tcOrig = new TestCase(name: "NX_OHNOZ")
 			
 		and : "the folder"
 			TestCaseFolder folder = Mock();
@@ -119,11 +117,9 @@ class AbstractLibraryNavigationServiceTest extends Specification {
 	
 	
 	def "should copy a node and rename it as the 1000th copy"(){
-		given : "the test case and it's copy"
-		
-			TestCase tcOrig = Mock();
-			tcOrig.getName() >> "NX_OHNOZ";
-			tcOrig.createCopy() >> new TestCase();
+		given : "the test case and it's copy"		
+			TestCase tcOrig = new TestCase(name: "NX_OHNOZ")
+			
 			
 		and : "the folder"
 			TestCaseFolder folder = Mock();
@@ -137,7 +133,7 @@ class AbstractLibraryNavigationServiceTest extends Specification {
 		
 		
 		when :
-			def result = service.copyNodesToFolder(2l, 1l)
+			def result = service.copyNodesToFolder(2L, 1L)
 		
 		
 		then :
@@ -148,10 +144,7 @@ class AbstractLibraryNavigationServiceTest extends Specification {
 	
 	def "should copy a node and rename it as the 2th copy"(){
 		given : "the test case and it's copy"
-		
-			TestCase tcOrig = Mock();
-			tcOrig.getName() >> "NX_OHNOZ";
-			tcOrig.createCopy() >> new TestCase();
+			TestCase tcOrig = new TestCase(name: "NX_OHNOZ")
 			
 		and : "the folder"
 			TestCaseFolder folder = Mock();
@@ -175,10 +168,7 @@ class AbstractLibraryNavigationServiceTest extends Specification {
 	
 	def "should copy a node and not rename despite copies are present since the original name is available anyway"(){
 		given : "the test case and it's copy"
-		
-			TestCase tcOrig = Mock();
-			tcOrig.getName() >> "NX_OHNOZ";
-			tcOrig.createCopy() >> new TestCase();
+			TestCase tcOrig = new TestCase(name: "NX_OHNOZ")
 			
 		and : "the folder"
 			TestCaseFolder folder = new TestCaseFolder();

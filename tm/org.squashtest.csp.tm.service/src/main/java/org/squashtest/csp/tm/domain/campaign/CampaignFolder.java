@@ -83,14 +83,14 @@ public class CampaignFolder extends CampaignLibraryNode implements Folder<Campai
 	}
 
 	@Override
-	public CampaignFolder createCopy() {
+	public CampaignFolder createPastableCopy() {
 
 		CampaignFolder newFolder = new CampaignFolder();
 		newFolder.setName(getName());
 		newFolder.setDescription(getDescription());
 
 		for (CampaignLibraryNode node : this.content) {
-			CampaignLibraryNode newNode = node.createCopy();
+			CampaignLibraryNode newNode = node.createPastableCopy();
 			newFolder.addContent(newNode);
 		}
 

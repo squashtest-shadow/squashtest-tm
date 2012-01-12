@@ -156,7 +156,7 @@ class DummyFolder  extends DummyNode  implements Folder<DummyNode>{
 	void removeContent(LibraryNode node){
 	}
 	@Override
-	DummyFolder createCopy(){
+	DummyFolder createPastableCopy(){
 	}
 	@Override
 	boolean hasContent(){
@@ -182,7 +182,7 @@ class DummyNode implements LibraryNode {
 	void notifyAssociatedWithProject(Project project) {
 	}
 	@Override
-	LibraryNode createCopy(){
+	LibraryNode createPastableCopy(){
 		return null;
 	}
 }
@@ -221,6 +221,9 @@ class DummyLibrary implements Library<DummyNode> {
 	@Override
 	boolean hasContent(){
 		return true;	
+	}
+	@Override
+	public void addContent(DummyNode contentToAdd) throws DuplicateNameException, NullArgumentException {
 	}
 }
 

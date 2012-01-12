@@ -29,9 +29,9 @@ import org.squashtest.csp.tm.domain.library.LibraryNode;
 
 /**
  * Abstract superclass of {@link Library} implementations based on generics.
- *
+ * 
  * @author Gregory Fouquet
- *
+ * 
  * @param <NODE>
  *            The type of nodes this library contains.
  */
@@ -67,13 +67,19 @@ public abstract class GenericLibrary<NODE extends LibraryNode> implements Librar
 
 	/**
 	 * checks that content name has not been already given. Throws exception otherwise.
-	 *
+	 * 
 	 * @param candidateContent
 	 */
 	private void checkContentNameAvailable(NODE candidateContent) throws DuplicateNameException {
 		if (!isContentNameAvailable(candidateContent.getName())) {
 			throw new DuplicateNameException(candidateContent.getName(), candidateContent.getName());
 		}
+	}
+
+	@Override
+	public void addContent(NODE contentToAdd) throws DuplicateNameException, NullArgumentException {
+		addRootContent(contentToAdd);
+
 	}
 
 }

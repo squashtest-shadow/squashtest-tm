@@ -91,12 +91,13 @@ public class RequirementFolder extends RequirementLibraryNode<SimpleResource> im
 	}
 
 	@Override
-	public RequirementFolder createCopy() {
+	public RequirementFolder createPastableCopy() {
 		RequirementFolder newFolder = new RequirementFolder();
 		newFolder.setName(getName());
 		newFolder.setDescription(getDescription());
+		
 		for (RequirementLibraryNode node : this.content) {
-			RequirementLibraryNode newNode = (RequirementLibraryNode) node.createCopy();
+			RequirementLibraryNode newNode = (RequirementLibraryNode) node.createPastableCopy();
 			newFolder.addContent(newNode);
 		}
 

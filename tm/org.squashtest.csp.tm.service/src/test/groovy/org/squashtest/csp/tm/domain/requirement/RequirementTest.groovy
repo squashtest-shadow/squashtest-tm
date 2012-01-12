@@ -24,7 +24,10 @@ import static org.squashtest.csp.tm.domain.requirement.RequirementStatus.*
 
 import org.squashtest.csp.tm.domain.IllegalRequirementModificationException
 import org.squashtest.csp.tm.domain.RequirementNotLinkableException;
+import org.squashtest.csp.tm.domain.attachment.Attachment;
+import org.squashtest.csp.tm.domain.project.Project;
 import org.squashtest.csp.tm.domain.testcase.TestCase
+import org.squashtest.csp.tools.unittest.reflection.ReflectionCategory;
 
 import spock.lang.Shared
 import spock.lang.Specification
@@ -217,5 +220,55 @@ class RequirementTest extends Specification {
 		}
 		
 		return req;
+	}
+	
+	def "should create a 'pastable' copy"() {
+		given:
+		RequirementVersion ver = new RequirementVersion(name: "ver")
+		Requirement source = new Requirement(ver);
+
+		and:
+		Project project = new Project()
+		source.notifyAssociatedWithProject(project);
+
+		when:
+		Requirement copy = source.createPastableCopy()
+
+		then:
+		copy.project == source.project
+
+		copy.resource.name == "ver" 
+		copy.resource != ver
+		
+		
+		copy.versions.size() == 1
+		copy.versions.contains(copy.resource)
+	}
+
+	def "'pastable' copy should not have obsolete versions"() {
+		given:
+		RequirementVersion ver = new RequirementVersion(name: "ver")
+		Requirement source = new Requirement(ver);
+
+		and:
+		RequirementVersion obsolete = new RequirementVersion(name: "obsolete")
+		use(ReflectionCategory) {
+			RequirementVersion.set field: "status", of: obsolete, to: RequirementStatus.OBSOLETE
+		}
+		source.versions << obsolete
+		
+		and:
+		RequirementVersion old = new RequirementVersion(name: "old")
+		source.versions << old
+
+		when:
+		Requirement copy = source.createPastableCopy()
+
+		then:
+		copy.resource.name == "ver" 
+		copy.resource != ver
+				
+		copy.versions.size() == 2
+		copy.versions.collect({ it.name }).containsAll(["ver", "old"])
 	}
 }

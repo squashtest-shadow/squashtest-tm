@@ -27,7 +27,7 @@ import org.squashtest.csp.tm.domain.DuplicateNameException;
 import org.squashtest.csp.tm.domain.SelfClassAware;
 import org.squashtest.csp.tm.domain.project.ProjectResource;
 
-public interface Library<NODE extends LibraryNode> extends ProjectResource, SelfClassAware{
+public interface Library<NODE extends LibraryNode> extends ProjectResource, SelfClassAware, NodeContainer<NODE> {
 	Long getId();
 
 	Set<NODE> getRootContent();
@@ -43,8 +43,6 @@ public interface Library<NODE extends LibraryNode> extends ProjectResource, Self
 	 *             if there is content with the same name
 	 */
 	void addRootContent(NODE node);
-
-	boolean isContentNameAvailable(String name);
 
 	void removeRootContent(NODE node);
 	

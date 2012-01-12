@@ -23,6 +23,7 @@ package org.squashtest.csp.tm.internal.repository;
 import java.util.Collection;
 import java.util.List;
 
+import org.squashtest.csp.tm.domain.requirement.Requirement;
 import org.squashtest.csp.tm.domain.requirement.RequirementVersion;
 /**
  * 
@@ -34,6 +35,8 @@ public interface RequirementVersionDao extends CustomRequirementVersionDao {
 
 	RequirementVersion findById(long requirementId);
 
-	long countVerifiedByTestCase(long testCaseId); 
+	long countVerifiedByTestCase(long testCaseId);
+
+	List<RequirementVersion> findAllByRequirement(Requirement node); 
 
 }

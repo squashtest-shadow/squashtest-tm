@@ -100,12 +100,12 @@ public class RequirementLibraryNavigationServiceImpl extends
 		if (!library.isContentNameAvailable(newVersion.getName())) {
 			throw new DuplicateNameException(newVersion.getName(), newVersion.getName());
 		}
-		
+
 		Requirement newReq = createRequirement(newVersion);
 
 		library.addRootContent(newReq);
 		requirementDao.persist(newReq);
-		
+
 		return newReq;
 	}
 

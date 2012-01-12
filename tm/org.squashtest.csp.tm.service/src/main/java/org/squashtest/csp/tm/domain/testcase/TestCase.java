@@ -184,7 +184,7 @@ public class TestCase extends TestCaseLibraryNode implements AttachmentHolder {
 	}
 
 	@Override
-	public TestCase createCopy() {
+	public TestCase createPastableCopy() {
 		TestCase copy = new TestCase();
 		copy.setSimplePropertiesUsing(this);
 		copy.addCopiesOfSteps(this);

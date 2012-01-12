@@ -105,6 +105,6 @@ class DummyNode implements LibraryNode {
 	void notifyAssociatedWithProject(Project project){
 	}
 	@Override
-	LibraryNode createCopy(){
+	LibraryNode createPastableCopy(){
 	}
 }

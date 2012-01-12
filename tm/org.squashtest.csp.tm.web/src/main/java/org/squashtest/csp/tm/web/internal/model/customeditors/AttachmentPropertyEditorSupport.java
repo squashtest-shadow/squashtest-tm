@@ -29,7 +29,7 @@ import org.springframework.web.multipart.MultipartFile;
 import org.squashtest.csp.tm.domain.attachment.Attachment;
 import org.squashtest.csp.tm.domain.attachment.AttachmentContent;
 
-public class AttachmentPropertyEditorSupport extends PropertyEditorSupport {	
+public class AttachmentPropertyEditorSupport extends PropertyEditorSupport {
 
 	@Override
 	public void setValue(Object value) {
@@ -41,25 +41,22 @@ public class AttachmentPropertyEditorSupport extends PropertyEditorSupport {
 				content.setContent(multipartFile.getInputStream());
 				attachment.setContent(content);
 				attachment.setSize(multipartFile.getSize());
-				
+
 				super.setValue(attachment);
-			}
-			catch (IOException ex) {
+			} catch (IOException ex) {
 				throw new IllegalArgumentException("Cannot read contents of multipart file", ex);
 			}
-			
-		}
-		else if (value instanceof byte[]) {
+
+		} else if (value instanceof byte[]) {
 			Attachment attachment = new Attachment();
 			AttachmentContent content = new AttachmentContent();
-			content.setContent(new ByteArrayInputStream((byte[])value));
+			content.setContent(new ByteArrayInputStream((byte[]) value));
 			attachment.setContent(content);
 			super.setValue(attachment);
-		}
-		else {
+		} else {
 			if (value == null) {
 				super.setValue(null);
-			} else{
+			} else {
 				Attachment attachment = new Attachment();
 				AttachmentContent content = new AttachmentContent();
 				content.setContent(new ByteArrayInputStream(value.toString().getBytes()));
@@ -68,31 +65,29 @@ public class AttachmentPropertyEditorSupport extends PropertyEditorSupport {
 			}
 		}
 
-
 	}
-	
+
 	@Override
 	public String getAsText() {
 		InputStream value = (InputStream) getValue();
 		return (value != null ? value.toString() : "");
 	}
-	
+
 	@Override
-	public void setAsText(String text){		
+	public void setAsText(String text) {
 	}
-	
-	//own method
-	public static Attachment makeAttachment(MultipartFile file){
-		try{
+
+	// own method
+	public static Attachment makeAttachment(MultipartFile file) {
+		try {
 			Attachment attachment = new Attachment(file.getOriginalFilename());
 			AttachmentContent content = new AttachmentContent();
 			content.setContent(file.getInputStream());
 			attachment.setContent(content);
 			attachment.setSize(file.getSize());
-			
+
 			return attachment;
-		}
-		catch (IOException ex) {
+		} catch (IOException ex) {
 			throw new IllegalArgumentException("Cannot read contents of multipart file", ex);
 		}
 	}

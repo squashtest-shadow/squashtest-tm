@@ -20,14 +20,18 @@
  */
 package org.squashtest.csp.tm.domain.requirement;
 
+import java.util.ArrayList;
+import java.util.List;
+
 import javax.persistence.CascadeType;
 import javax.persistence.Entity;
 import javax.persistence.JoinColumn;
+import javax.persistence.OneToMany;
 import javax.persistence.OneToOne;
+import javax.persistence.OrderBy;
 import javax.persistence.PrimaryKeyJoinColumn;
 import javax.validation.constraints.NotNull;
 
-import org.squashtest.csp.tm.domain.attachment.Attachment;
 import org.squashtest.csp.tm.domain.attachment.AttachmentHolder;
 import org.squashtest.csp.tm.domain.attachment.AttachmentList;
 
@@ -47,9 +51,14 @@ public class Requirement extends RequirementLibraryNode<RequirementVersion> impl
 	/**
 	 * The resource of this requirement is the latest version of the requirement.
 	 */
-	@OneToOne(cascade = { CascadeType.PERSIST, CascadeType.MERGE })
+	@OneToOne(cascade = { CascadeType.ALL })
 	@JoinColumn(name = "LATEST_VERSION_ID")
 	private RequirementVersion resource;
+	
+	@OneToMany(cascade = { CascadeType.ALL }, mappedBy = "requirement")
+	@OrderBy("versionNumber DESC")
+	private List<RequirementVersion> versions = new ArrayList<RequirementVersion>();
+	
 
 	protected Requirement() {
 		super();
@@ -62,6 +71,11 @@ public class Requirement extends RequirementLibraryNode<RequirementVersion> impl
 	 */
 	public Requirement(@NotNull RequirementVersion version) {
 		resource = version;
+		addVersion(version);
+	}
+
+	private void addVersion(RequirementVersion version) {
+		versions.add(version);
 		resource.setRequirement(this);
 	}
 
@@ -101,27 +115,28 @@ public class Requirement extends RequirementLibraryNode<RequirementVersion> impl
 		resource.setReference(reference);
 	}
 
+	/**
+	 * Creates a copy usable in a copy / paste operation. The copy is associated to no version, it should be done by the
+	 * caller (the latest version might not be eligible for copy / paste).
+	 */
 	@Override
-	public Requirement createCopy() {
-		Requirement clone = new Requirement();
-		clone.setStatus(RequirementStatus.WORK_IN_PROGRESS);
-
-		clone.setName(this.getName());
-		clone.setDescription(this.getDescription());
-		clone.setReference(this.getReference());
-		clone.setCriticality(this.getCriticality());
-		// XXX RequirementVersion
-		// for (TestCase testCase : this.verifyingTestCases) {
-		// clone.addVerifyingTestCase(testCase);
-		// }
-
-		for (Attachment tcAttach : this.getAttachmentList().getAllAttachments()) {
-			Attachment atCopy = tcAttach.hardCopy();
-			clone.getAttachmentList().addAttachment(atCopy);
+	public Requirement createPastableCopy() {
+		RequirementVersion latestVersionCopy = getLatestVersion().createPastableCopy();
+		Requirement copy = new Requirement(latestVersionCopy);
+		
+		for (RequirementVersion sourceVersion : this.versions) {
+			if (isNotLatestVersion(sourceVersion) && sourceVersion.isNotObsolete()) {
+				RequirementVersion copyVersion = sourceVersion.createPastableCopy();
+				copy.addVersion(copyVersion);
+			}
 		}
 
-		clone.notifyAssociatedWithProject(this.getProject());
-		return clone;
+		copy.notifyAssociatedWithProject(this.getProject());
+		return copy;
+	}
+
+	private boolean isNotLatestVersion(RequirementVersion sourceVersion) {
+		return !getLatestVersion().equals(sourceVersion);
 	}
 
 	/***

@@ -298,7 +298,6 @@ class TestCaseMappingIT extends HibernateMappingSpecification {
 				Requirement r = it.get(Requirement, req.id)
 				r.description = "bar"
 				r.latestVersion.addVerifyingTestCase(tc)
-				//				tc.addVerifiedRequirement r
 				it.persist tc
 			}
 		}
@@ -319,10 +318,11 @@ class TestCaseMappingIT extends HibernateMappingSpecification {
 		cleanup:
 		use (HibernateOperationCategory) {
 			sessionFactory.doInSession {
-				it.createSQLQuery("delete from test_case_verified_requirement_version where verified_req_version_id = :param").setParameter("param", req.id).executeUpdate();
+				Requirement r = it.get(Requirement, req.id)
+				TestCase ttcc = it.get(TestCase, tc.id)
+				r.latestVersion.removeVerifyingTestCase(ttcc)
 			}
 		}
-		
 		
 		deleteFixture req, tc, s
 	}

@@ -39,6 +39,7 @@ import javax.validation.constraints.NotNull;
 
 import org.squashtest.csp.tm.domain.IllegalRequirementModificationException;
 import org.squashtest.csp.tm.domain.RequirementNotLinkableException;
+import org.squashtest.csp.tm.domain.attachment.Attachment;
 import org.squashtest.csp.tm.domain.attachment.AttachmentHolder;
 import org.squashtest.csp.tm.domain.attachment.AttachmentList;
 import org.squashtest.csp.tm.domain.resource.Resource;
@@ -238,4 +239,27 @@ public class RequirementVersion extends Resource implements AttachmentHolder {
 		this.requirement = requirement;
 	}
 
+	/* package-private */RequirementVersion createPastableCopy() {
+		RequirementVersion copy = new RequirementVersion();
+		copy.setName(this.getName());
+		copy.setDescription(this.getDescription());
+		copy.criticality = this.criticality;
+		copy.reference = this.reference;
+		copy.versionNumber = this.versionNumber;
+		copy.requirement = null;
+
+		for (TestCase verifying : this.verifyingTestCases) {
+			copy.addVerifyingTestCase(verifying);
+		}
+
+		for (Attachment attachment : this.attachmentList.getAllAttachments()) {
+			copy.attachmentList.addAttachment(attachment.hardCopy());
+		}
+
+		return copy;
+	}
+
+	public boolean isNotObsolete() {
+		return !RequirementStatus.OBSOLETE.equals(status);
+	}
 }

@@ -107,4 +107,20 @@ class RequirementFolderTest extends Specification {
 		then:
 		content.project == project
 	}
+	
+	def "should create a 'pastable' copy"() {
+		given: 
+		RequirementFolder folder = new RequirementFolder(name: "foo", description: "bar")
+		
+		when:
+		def res = folder.createPastableCopy()
+		
+
+		then:
+		res.name == folder.name
+		res.description == folder.description
+		res.resource != null
+		res.resource.name == folder.name
+	}
+
 }

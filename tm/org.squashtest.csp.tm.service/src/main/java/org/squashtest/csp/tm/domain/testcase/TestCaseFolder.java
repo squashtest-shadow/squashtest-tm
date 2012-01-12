@@ -88,12 +88,12 @@ public class TestCaseFolder extends TestCaseLibraryNode implements Folder<TestCa
 
 	
 	@Override
-	public TestCaseFolder createCopy() {
+	public TestCaseFolder createPastableCopy() {
 		TestCaseFolder newFolder = new TestCaseFolder();
 		newFolder.setName(getName());
 		newFolder.setDescription(getDescription());
 		for (TestCaseLibraryNode node : this.content) {
-			TestCaseLibraryNode newNode = node.createCopy();
+			TestCaseLibraryNode newNode = node.createPastableCopy();
 			newFolder.addContent(newNode);
 		}
 

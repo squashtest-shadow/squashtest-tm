@@ -212,7 +212,7 @@ public class Campaign extends CampaignLibraryNode implements AttachmentHolder {
 	}
 
 	@Override
-	public Campaign createCopy() {
+	public Campaign createPastableCopy() {
 		Campaign copy = new Campaign();
 		copy.setName(this.getName());
 		copy.setDescription(this.getDescription());

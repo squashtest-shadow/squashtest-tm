@@ -65,6 +65,6 @@ public abstract class CampaignLibraryNode extends GenericLibraryNode {
 	public abstract void accept(CampaignLibraryNodeVisitor visitor);
 
 	@Override
-	public abstract CampaignLibraryNode createCopy();
+	public abstract CampaignLibraryNode createPastableCopy();
 
 }

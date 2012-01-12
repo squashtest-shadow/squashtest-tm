@@ -51,5 +51,5 @@ public interface LibraryNode extends ProjectResource, Identified {
 
 	String getDescription();
 
-	LibraryNode createCopy();
+	LibraryNode createPastableCopy();
 }

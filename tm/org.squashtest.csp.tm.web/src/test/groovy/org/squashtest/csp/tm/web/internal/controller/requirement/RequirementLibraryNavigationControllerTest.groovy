@@ -26,6 +26,7 @@ import javax.inject.Provider;
 import org.springframework.web.servlet.ModelAndView;
 import org.squashtest.csp.core.service.security.PermissionEvaluationService;
 import org.squashtest.csp.tools.unittest.reflection.ReflectionCategory;
+import org.squashtest.csp.tm.domain.requirement.NewRequirementVersionDto;
 import org.squashtest.csp.tm.domain.requirement.Requirement;
 import org.squashtest.csp.tm.domain.requirement.RequirementFolder;
 import org.squashtest.csp.tm.domain.requirement.RequirementLibrary;
@@ -90,8 +91,8 @@ class RequirementLibraryNavigationControllerTest  extends Specification {
 
 	def "should add requirement to root of library and return requirement node model"() {
 		given:
-		RequirementVersion firstVersion = new RequirementVersion(name: "new req") // we need the real thing because of visitor pattern
-		Requirement req = new Requirement(firstVersion)
+		NewRequirementVersionDto firstVersion = new NewRequirementVersionDto(name: "new req")
+		Requirement req = new Requirement(new RequirementVersion(name: "new req"))
 		use (ReflectionCategory) {
 			RequirementLibraryNode.set field: "id", of: req, to: 100L
 		}
@@ -100,7 +101,7 @@ class RequirementLibraryNavigationControllerTest  extends Specification {
 		JsTreeNode res = controller.addNewRequirementToLibraryRootContent(100, firstVersion)
 
 		then:
-		1 * requirementLibraryNavigationService.addRequirementToRequirementLibrary(100, firstVersion)
+		1 * requirementLibraryNavigationService.addRequirementToRequirementLibrary(100, firstVersion) >> req
 		res.title == "new req"
 		res.attr['resId'] == "100"
 		res.attr['rel'] == "file"

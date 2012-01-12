@@ -23,7 +23,6 @@ package org.squashtest.csp.tm.domain.library;
 import java.util.Set;
 
 import org.apache.commons.lang.NullArgumentException;
-import org.squashtest.csp.tm.domain.DuplicateNameException;
 
 /**
  * Interface of a Library folder.
@@ -33,7 +32,7 @@ import org.squashtest.csp.tm.domain.DuplicateNameException;
  * @param <T>
  *            Type of nodes
  */
-public interface Folder<NODE extends LibraryNode> extends LibraryNode {
+public interface Folder<NODE extends LibraryNode> extends LibraryNode, NodeContainer<NODE> {
 	/**
 	 * Returrns the content of this folder.
 	 * 
@@ -41,18 +40,8 @@ public interface Folder<NODE extends LibraryNode> extends LibraryNode {
 	 */
 	Set<NODE> getContent();
 
-	/**
-	 * Adds new content to this folder. Should refuse to add null content, should refuse to add content with duplicate
-	 * name.
-	 * 
-	 * @param contentToAdd
-	 */
-	void addContent(NODE contentToAdd) throws DuplicateNameException, NullArgumentException;
-
 	void removeContent(NODE contentToRemove) throws NullArgumentException;
 
-	boolean isContentNameAvailable(String name);
-	
 	boolean hasContent();
 
 }

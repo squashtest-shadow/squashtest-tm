@@ -31,7 +31,6 @@ import org.squashtest.csp.tm.domain.testcase.TestCase;
 import org.squashtest.csp.tm.domain.testcase.TestCaseFolder;
 import org.squashtest.csp.tm.domain.testcase.TestCaseLibrary;
 import org.squashtest.csp.tm.domain.testcase.TestCaseLibraryNode;
-import org.squashtest.csp.tm.internal.repository.AttachmentListDao;
 import org.squashtest.csp.tm.internal.repository.FolderDao;
 import org.squashtest.csp.tm.internal.repository.LibraryDao;
 import org.squashtest.csp.tm.internal.repository.LibraryNodeDao;
@@ -55,10 +54,6 @@ TestCaseLibraryNavigationService {
 
 	@Inject
 	private TestCaseDao testCaseDao;
-
-	@Inject
-	private AttachmentListDao attachListDao;
-
 	
 	@Inject
 	private TestCaseNodeDeletionHandler deletionHandler;
@@ -83,9 +78,6 @@ TestCaseLibraryNavigationService {
 	protected final LibraryNodeDao<TestCaseLibraryNode> getLibraryNodeDao(){
 		return testCaseLibraryNodeDao;
 	}
-
-
-
 
 	@Override
 	@PreAuthorize("hasPermission(#testCaseId, 'org.squashtest.csp.tm.domain.testcase.TestCase' , 'READ') or hasRole('ROLE_ADMIN')")
@@ -125,6 +117,5 @@ TestCaseLibraryNavigationService {
 		}
 
 	}
-
 
 }

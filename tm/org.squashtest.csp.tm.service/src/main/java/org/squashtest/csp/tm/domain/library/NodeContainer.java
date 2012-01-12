@@ -20,6 +20,25 @@
  */
 package org.squashtest.csp.tm.domain.library;
 
-public interface LibraryContent<T> {
+import org.apache.commons.lang.NullArgumentException;
+import org.squashtest.csp.tm.domain.DuplicateNameException;
+
+/**
+ * Interface for an object which contains library node objects.
+ * 
+ * @author Gregory Fouquet
+ * 
+ * @param <NODE>
+ */
+public interface NodeContainer<NODE extends LibraryNode> {
+	/**
+	 * Adds new content to this folder. Should refuse to add null content, should refuse to add content with duplicate
+	 * name.
+	 * 
+	 * @param contentToAdd
+	 */
+	void addContent(NODE contentToAdd) throws DuplicateNameException, NullArgumentException;
+
+	boolean isContentNameAvailable(String name);
 
 }

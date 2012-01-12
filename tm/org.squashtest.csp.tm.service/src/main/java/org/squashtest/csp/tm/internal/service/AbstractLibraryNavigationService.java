@@ -22,7 +22,6 @@ package org.squashtest.csp.tm.internal.service;
 
 import java.util.ArrayList;
 import java.util.HashMap;
-import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
@@ -40,6 +39,7 @@ import org.squashtest.csp.tm.domain.DuplicateNameException;
 import org.squashtest.csp.tm.domain.library.Folder;
 import org.squashtest.csp.tm.domain.library.Library;
 import org.squashtest.csp.tm.domain.library.LibraryNode;
+import org.squashtest.csp.tm.domain.library.NodeContainer;
 import org.squashtest.csp.tm.internal.repository.FolderDao;
 import org.squashtest.csp.tm.internal.repository.LibraryDao;
 import org.squashtest.csp.tm.internal.repository.LibraryNodeDao;
@@ -56,47 +56,114 @@ import org.squashtest.csp.tm.service.deletion.SuppressionPreviewReport;
  * @param <NODE>
  */
 
-
-
 /*
- * Security Implementation note :  
+ * Security Implementation note :
  * 
- * this is sad but we can't use the annotations here. We would need the actual type 
- * of the entities we need to check instead of the generics. So we'll call the PermissionEvaluationService explicitly
- * once we've fetched the entities ourselves.
+ * this is sad but we can't use the annotations here. We would need the actual type of the entities we need to check
+ * instead of the generics. So we'll call the PermissionEvaluationService explicitly once we've fetched the entities
+ * ourselves.
  * 
  * 
  * @author bsiri
  */
 
 /*
- * Note : about methods moving entities from source to destinations : 
+ * Note : about methods moving entities from source to destinations :
  * 
- * Basically such operations need to be performed in a precise order, that is : 1) remove the entity from the source collection and 
- * 2) insert it in the new one.
- *  
- * However Hibernate performs batch updates in the wrong order, ie it inserts new data before deleting the former ones, 
- * thus violating many unique constraints DB side. So we explicitly flush the session between the removal and the insertion. 
+ * Basically such operations need to be performed in a precise order, that is : 1) remove the entity from the source
+ * collection and 2) insert it in the new one.
+ * 
+ * However Hibernate performs batch updates in the wrong order, ie it inserts new data before deleting the former ones,
+ * thus violating many unique constraints DB side. So we explicitly flush the session between the removal and the
+ * insertion.
  * 
  * 
  * @author bsiri
  */
 
 /*
- * Note regarding type safety when calling checkPermission(SecurityCheckableObject...) : see bug 
- * at http://bugs.sun.com/bugdatabase/view_bug.do?bug_id=6227971 
+ * Note regarding type safety when calling checkPermission(SecurityCheckableObject...) : see bug at
+ * http://bugs.sun.com/bugdatabase/view_bug.do?bug_id=6227971
  * 
  * @author bsiri
  */
-
 
 @Transactional
 public abstract class AbstractLibraryNavigationService<LIBRARY extends Library<NODE>, FOLDER extends Folder<NODE>, NODE extends LibraryNode>
-implements LibraryNavigationService<LIBRARY, FOLDER, NODE> {
-	
+		implements LibraryNavigationService<LIBRARY, FOLDER, NODE> {
+	private abstract class PasteStrategy<CONTAINER extends NodeContainer<NODE>> {
+		@SuppressWarnings("unchecked")
+		public List<NODE> pasteNodes(long containerId, Long[] sourceNodesIds) {
+			// fetch
+			CONTAINER container = findContainerById(containerId);
+
+			// check. Note : we wont recursively check for the whole hierarchy as it's supposed to have the same
+			// identity holder
+			for (Long id : sourceNodesIds) {
+				NODE node = getLibraryNodeDao().findById(id);
+				checkPermission(new SecurityCheckableObject(container, "WRITE"), new SecurityCheckableObject(
+						node, "READ"));
+			}
+
+			// proceed
+			List<NODE> nodeList = new ArrayList<NODE>(sourceNodesIds.length);
+
+			for (Long id : sourceNodesIds) {
+				NODE node = getLibraryNodeDao().findById(id);
+				
+				String tempName = node.getName();
+				String newName = tempName;
+
+				if (!container.isContentNameAvailable(tempName)) {
+					List<String> copiesNames = findNamesInContainerStartingWith(containerId, tempName);
+					int newCopy = generateUniqueCopyNumber(copiesNames);
+					newName = tempName + "-Copie" + newCopy;
+				}
+
+				NODE copy = createPastableCopy(node);
+				copy.setName(newName);
+				getLibraryNodeDao().persist(copy);
+
+				container.addContent(copy);
+				nodeList.add(copy);
+
+			}
+
+			return nodeList;
+		}
+		
+		protected abstract CONTAINER findContainerById(long id);
+		protected abstract List<String> findNamesInContainerStartingWith(long containerId, String tempName);
+
+	}
 
 	private PermissionEvaluationService permissionService;
-	
+
+	private final PasteStrategy<FOLDER> pasteToFolderStrategy = new PasteStrategy<FOLDER>() {
+
+		@Override
+		protected FOLDER findContainerById(long id) {
+			return getFolderDao().findById(id);
+		}
+
+		@Override
+		protected List<String> findNamesInContainerStartingWith(long containerId, String token) {
+			return getFolderDao().findNamesInFolderStartingWith(containerId, token);
+		}
+	};
+
+	private final PasteStrategy<LIBRARY> pasteToLibraryStrategy = new PasteStrategy<LIBRARY>() {
+
+		@Override
+		protected LIBRARY findContainerById(long id) {
+			return getLibraryDao().findById(id);
+		}
+
+		@Override
+		protected List<String> findNamesInContainerStartingWith(long containerId, String token) {
+			return getFolderDao().findNamesInLibraryStartingWith(containerId, token);
+		}
+	};
 
 	@ServiceReference
 	public void setPermissionService(PermissionEvaluationService permissionService) {
@@ -104,10 +171,12 @@ implements LibraryNavigationService<LIBRARY, FOLDER, NODE> {
 	}
 
 	protected abstract FolderDao<FOLDER, NODE> getFolderDao();
+
 	protected abstract LibraryDao<LIBRARY, NODE> getLibraryDao();
+
 	protected abstract LibraryNodeDao<NODE> getLibraryNodeDao();
+
 	protected abstract NodeDeletionHandler<NODE, FOLDER> getDeletionHandler();
-	
 
 	public AbstractLibraryNavigationService() {
 		super();
@@ -127,38 +196,34 @@ implements LibraryNavigationService<LIBRARY, FOLDER, NODE> {
 
 	@Override
 	public final LIBRARY findLibrary(long libraryId) {
-		//fetch
+		// fetch
 		LIBRARY library = getLibraryDao().findById(libraryId);
-		//check
+		// check
 		checkPermission(new SecurityCheckableObject(library, "READ"));
-		//proceed
+		// proceed
 		return library;
 	}
-	
-	
+
 	@Override
 	public final FOLDER findFolder(long folderId) {
-		//fetch
+		// fetch
 		FOLDER folder = getFolderDao().findById(folderId);
-		//check
+		// check
 		checkPermission(new SecurityCheckableObject(folder, "READ"));
-		//proceed
+		// proceed
 		return getFolderDao().findById(folderId);
 	}
-
-	
-
 
 	@Deprecated
 	@SuppressWarnings("unchecked")
 	@Override
 	public final void renameFolder(long folderId, String newName) {
-		//fetch
+		// fetch
 		FOLDER folder = getFolderDao().findById(folderId);
-		//check
+		// check
 		checkPermission(new SecurityCheckableObject(folder, "WRITE"));
-		
-		//proceed
+
+		// proceed
 		LIBRARY library = getLibraryDao().findByRootContent((NODE) folder);
 
 		if (library != null) {
@@ -179,12 +244,12 @@ implements LibraryNavigationService<LIBRARY, FOLDER, NODE> {
 	@Override
 	@SuppressWarnings("unchecked")
 	public final void addFolderToLibrary(long destinationId, FOLDER newFolder) {
-		//fetch
+		// fetch
 		LIBRARY container = getLibraryDao().findById(destinationId);
-		//check
+		// check
 		checkPermission(new SecurityCheckableObject(container, "WRITE"));
-		
-		//proceed
+
+		// proceed
 		container.addRootContent((NODE) newFolder);
 		getFolderDao().persist(newFolder);
 	}
@@ -192,123 +257,113 @@ implements LibraryNavigationService<LIBRARY, FOLDER, NODE> {
 	@Override
 	@SuppressWarnings("unchecked")
 	public final void addFolderToFolder(long destinationId, FOLDER newFolder) {
-		//fetch
+		// fetch
 		FOLDER container = getFolderDao().findById(destinationId);
-		//check
+		// check
 		checkPermission(new SecurityCheckableObject(container, "WRITE"));
-		
+
 		container.addContent((NODE) newFolder);
 		getFolderDao().persist(newFolder);
 
 	}
-	
 
 	/* ********************** move operations *************************** */
-	
-	private void removeFromLibrary(LIBRARY library, NODE node){
-		try{
-				library.removeRootContent(node);
-		}catch(NullArgumentException dne){
+
+	private void removeFromLibrary(LIBRARY library, NODE node) {
+		try {
+			library.removeRootContent(node);
+		} catch (NullArgumentException dne) {
 			throw new CannotMoveNodeException();
 		}
 	}
-	
-	private void addNodesToLibrary(LIBRARY library, Long[] targetIds){
-		try{
-			for (Long id : targetIds){
+
+	private void addNodesToLibrary(LIBRARY library, Long[] targetIds) {
+		try {
+			for (Long id : targetIds) {
 				NODE node = getLibraryNodeDao().findById(id);
 				library.addRootContent(node);
-			}	
-		}catch(DuplicateNameException dne){
+			}
+		} catch (DuplicateNameException dne) {
 			throw new CannotMoveNodeException();
 		}
-	}	
-	
-	private void removeFromFolder(FOLDER folder, NODE node){
-			folder.removeContent(node);
-		
 	}
-	
-	private void addNodesToFolder(FOLDER folder, Long[] targetIds){
-		for (Long id : targetIds){
+
+	private void removeFromFolder(FOLDER folder, NODE node) {
+		folder.removeContent(node);
+
+	}
+
+	private void addNodesToFolder(FOLDER folder, Long[] targetIds) {
+		for (Long id : targetIds) {
 			NODE node = getLibraryNodeDao().findById(id);
 			folder.addContent(node);
-		}	
+		}
 	}
-		
-	
-	
-	
-	
-	@Override
-	public void modeNodesToFolder(long destinationId, Long[] targetIds){
 
-		if (targetIds.length==0){
+	@Override
+	public void modeNodesToFolder(long destinationId, Long[] targetIds) {
+
+		if (targetIds.length == 0) {
 			return;
 		}
-		
-		//fetch
+
+		// fetch
 		FOLDER destinationFolder = getFolderDao().findById(destinationId);
 		Map<NODE, Object> nodesAndTheirParents = new HashMap<NODE, Object>();
 
-		//security check	
-		for (Long id : targetIds){
+		// security check
+		for (Long id : targetIds) {
 			NODE node = getLibraryNodeDao().findById(id);
 			LIBRARY parentLib = getLibraryDao().findByRootContent(node);
-			
-			Object parentObject = (parentLib!=null) ? parentLib :  getFolderDao().findByContent(node);
-			
-			checkPermission(new SecurityCheckableObject(destinationFolder, "WRITE"),
-			new SecurityCheckableObject(parentObject, "WRITE"),
-			new SecurityCheckableObject(node, "READ"));	
-			
+
+			Object parentObject = (parentLib != null) ? parentLib : getFolderDao().findByContent(node);
+
+			checkPermission(new SecurityCheckableObject(destinationFolder, "WRITE"), new SecurityCheckableObject(
+					parentObject, "WRITE"), new SecurityCheckableObject(node, "READ"));
+
 			nodesAndTheirParents.put(node, parentObject);
-			
-		}		
+
+		}
 		removeNodesFromTheirParents(nodesAndTheirParents);
-		
+
 		getFolderDao().flush();
 		addNodesToFolder(destinationFolder, targetIds);
 
 	}
-	
-	
 
 	@Override
-	public void moveNodesToLibrary(long destinationId, Long[] targetIds){
+	public void moveNodesToLibrary(long destinationId, Long[] targetIds) {
 
-		if (targetIds.length==0){
+		if (targetIds.length == 0) {
 			return;
 		}
-		
-		//fetch
+
+		// fetch
 		LIBRARY destinationLibrary = getLibraryDao().findById(destinationId);
 		Map<NODE, Object> nodesAndTheirParents = new HashMap<NODE, Object>();
-		
-		//security check		
-		for (Long id : targetIds){
+
+		// security check
+		for (Long id : targetIds) {
 			NODE node = getLibraryNodeDao().findById(id);
 			LIBRARY parentLib = getLibraryDao().findByRootContent(node);
-			Object parentObject = (parentLib!=null) ? parentLib :  getFolderDao().findByContent(node);
-			
-			checkPermission(new SecurityCheckableObject(destinationLibrary, "WRITE"),
-			new SecurityCheckableObject(parentObject, "WRITE"),
-			new SecurityCheckableObject(node, "READ"));			
-			
+			Object parentObject = (parentLib != null) ? parentLib : getFolderDao().findByContent(node);
+
+			checkPermission(new SecurityCheckableObject(destinationLibrary, "WRITE"), new SecurityCheckableObject(
+					parentObject, "WRITE"), new SecurityCheckableObject(node, "READ"));
+
 			nodesAndTheirParents.put(node, parentObject);
-		}		
-			
-		//proceed
+		}
+
+		// proceed
 		removeNodesFromTheirParents(nodesAndTheirParents);
-		
+
 		getFolderDao().flush();
-		
-		addNodesToLibrary(destinationLibrary, targetIds);		
+
+		addNodesToLibrary(destinationLibrary, targetIds);
 	}
 
-	private void removeNodesFromTheirParents(
-			Map<NODE, Object> nodesAndTheirParents) {
-		for (Entry<NODE, Object>  nodeAndItsParent : nodesAndTheirParents.entrySet()){
+	private void removeNodesFromTheirParents(Map<NODE, Object> nodesAndTheirParents) {
+		for (Entry<NODE, Object> nodeAndItsParent : nodesAndTheirParents.entrySet()) {
 			NODE node = nodeAndItsParent.getKey();
 			try {
 				LIBRARY parentLib = (LIBRARY) nodeAndItsParent.getValue();
@@ -319,145 +374,53 @@ implements LibraryNavigationService<LIBRARY, FOLDER, NODE> {
 			}
 		}
 	}
-	
 
-/* ********************************* copy operations ****************************** */
+	/* ********************************* copy operations ****************************** */
 
-	
 	@Override
-	public List<NODE> copyNodesToFolder(long destinationId, Long[] targetId){
-		
-		//fetch
-		FOLDER destinationFolder = getFolderDao().findById(destinationId);
-		
-		//check. Note : we wont recursively check for the whole hierarchy as it's supposed to have the same 
-		//identity holder
-		for (Long id : targetId){
-			NODE node = getLibraryNodeDao().findById(id);
-			checkPermission(new SecurityCheckableObject(destinationFolder, "WRITE"), 
-							new SecurityCheckableObject(node, "READ"));					
-		}
-		
-		
-		//proceed
-		List<NODE> nodeList= new LinkedList<NODE>();
-		
-		for (Long id : targetId){
-			NODE node = getLibraryNodeDao().findById(id);
-			
-			String tempName = node.getName();
-			String newName;
-			
-			if (!destinationFolder.isContentNameAvailable(tempName)){
-				List<String> copiesNames = getFolderDao().findNamesInFolderStartingWith(destinationId, tempName);
-				int newCopy = generateUniqueCopyNumber(copiesNames);
-				newName = tempName + "-Copie" + newCopy;
-			}
-			else{
-				newName = tempName;
-			}
-		
-			NODE newNode = (NODE)node.createCopy(); 	//well either a cast either make all our librarynode interface complex generics Enum style.
-			newNode.setName(newName);				
-		
-			getLibraryNodeDao().persist(newNode);
-			destinationFolder.addContent(newNode);
-			nodeList.add(newNode);
-			
-			
-		}
-		
-		return nodeList;
-		
+	public List<NODE> copyNodesToFolder(long destinationId, Long[] targetId) {
+		return pasteToFolderStrategy.pasteNodes(destinationId, targetId);
 	}
-	
 
-	@SuppressWarnings("unchecked")
 	@Override
-	public List<NODE> copyNodesToLibrary(long destinationId, Long[] targetId){
-		
-		//fetch
-		LIBRARY destinationLibrary = getLibraryDao().findById(destinationId);
-		
-		//check. Note : we wont recursively check for the whole hierarchy as it's supposed to have the same 
-		//identity holder
-		for (Long id : targetId){
-			NODE node = getLibraryNodeDao().findById(id);
-			checkPermission(new SecurityCheckableObject(destinationLibrary, "WRITE"),
-					new SecurityCheckableObject(node, "READ"));				
-		}
-		
-		
-		//proceed
-		List<NODE> nodeList= new LinkedList<NODE>();
-		
-		for (Long id : targetId){
-			NODE node = getLibraryNodeDao().findById(id);
-		
-			String tempName = node.getName();
-			String newName;
-			
-			if (!destinationLibrary.isContentNameAvailable(tempName)){
-				List<String> copiesNames = getFolderDao().findNamesInLibraryStartingWith(destinationId, tempName );
-				int newCopy = generateUniqueCopyNumber(copiesNames);
-				newName = tempName + "-Copie" + newCopy;
-			}
-			else{
-				newName=tempName;
-			}
+	public List<NODE> copyNodesToLibrary(long destinationId, Long[] targetId) {
+		return pasteToLibraryStrategy.pasteNodes(destinationId, targetId);
+	}
 
-			NODE newNode = (NODE)node.createCopy(); 	//well either a cast either make all our librarynode interface complex generics Enum style.						
-			newNode.setName(newName);			
-			
-			getLibraryNodeDao().persist(newNode);
-			destinationLibrary.addRootContent(newNode);
-			nodeList.add(newNode);
-			
-			
-		}
-		
-		return nodeList;
-		
-	}	
-	
-	
-	
-	public int generateUniqueCopyNumber(List<String> copiesNames){
-		
+	public int generateUniqueCopyNumber(List<String> copiesNames) {
+
 		int lastCopy = 0;
-		//we want to match one or more digits following the first instance of substring -Copie
+		// we want to match one or more digits following the first instance of substring -Copie
 		Pattern pattern = Pattern.compile("-Copie(\\d+)");
-	
+
 		for (String copyName : copiesNames) {
-			
+
 			Matcher matcher = pattern.matcher(copyName);
-			
-			if (matcher.find()){
-								
+
+			if (matcher.find()) {
+
 				String copyNum = matcher.group(1);
 
 				if (lastCopy < Integer.parseInt(copyNum)) {
 					lastCopy = Integer.parseInt(copyNum);
-				}			
+				}
 			}
 
 		}
-		
+
 		int newCopy = lastCopy + 1;
 		return newCopy;
 	}
-	
+
 	@SuppressWarnings("unchecked")
-	public FOLDER createCopyFolder(long folderId){
+	public FOLDER createCopyFolder(long folderId) {
 		FOLDER original = getFolderDao().findById(folderId);
-		FOLDER clone = (FOLDER) original.createCopy();
+		FOLDER clone = (FOLDER) original.createPastableCopy();
 		return clone;
 	}
-	
 
-	
-    /* ***************************** deletion operations *************************** */
-	
+	/* ***************************** deletion operations *************************** */
+
 	@Override
 	public List<SuppressionPreviewReport> simulateDeletion(List<Long> targetIds) {
 		return getDeletionHandler().simulateDeletion(targetIds);
@@ -465,118 +428,117 @@ implements LibraryNavigationService<LIBRARY, FOLDER, NODE> {
 
 	@Override
 	public List<Long> deleteNodes(List<Long> targetIds) {
-		
-		//check. Note : we wont recursively check for the whole hierarchy as it's supposed to have the same 
-		//identity holder
-		for (Long id : targetIds){
+
+		// check. Note : we wont recursively check for the whole hierarchy as it's supposed to have the same
+		// identity holder
+		for (Long id : targetIds) {
 			NODE node = getLibraryNodeDao().findById(id);
-			checkPermission(new SecurityCheckableObject(node, "WRITE"));				
-		}		
-		
+			checkPermission(new SecurityCheckableObject(node, "WRITE"));
+		}
+
 		return getDeletionHandler().deleteNodes(targetIds);
 	}
-	
 
-	
-	
-	
 	/* ************************* private stuffs ************************* */
-	
+
 	/* **** manual security checks **** */
 
-	
 	/* that class is just a wrapper that associate an id, a kind of node, and a permission. */
-	private class SecurityCheckableItem{
+	private class SecurityCheckableItem {
 		private static final String FOLDER = "folder";
 		private static final String LIBRARY = "library";
-		
+
 		private final long domainObjectId;
 		private String domainObjectKind; // which should be one of the two above
 		private final String permission;
-		
-		public SecurityCheckableItem(long domainObjectId,
-				String domainObjectKind, String permission) {
+
+		public SecurityCheckableItem(long domainObjectId, String domainObjectKind, String permission) {
 			super();
 			this.domainObjectId = domainObjectId;
 			setKind(domainObjectKind);
 			this.domainObjectKind = domainObjectKind;
 			this.permission = permission;
 		}
-		
-		private void setKind(String kind){
-			if (! (kind.equals(SecurityCheckableItem.FOLDER)) 
-					|| kind.equals(SecurityCheckableItem.LIBRARY)){
-				throw new RuntimeException("(dev note : AbstracLibraryNavigationService : manual security checks aren't correctly configured");			
+
+		private void setKind(String kind) {
+			if (!(kind.equals(SecurityCheckableItem.FOLDER)) || kind.equals(SecurityCheckableItem.LIBRARY)) {
+				throw new RuntimeException(
+						"(dev note : AbstracLibraryNavigationService : manual security checks aren't correctly configured");
 			}
-			domainObjectKind=kind;
+			domainObjectKind = kind;
 		}
-		
+
 		public long getId() {
 			return domainObjectId;
 		}
+
 		public String getKind() {
 			return domainObjectKind;
 		}
+
 		public String getPermission() {
 			return permission;
 		}
-		
-		
+
 	}
-	
+
 	/* **that class just performs the same, using a domainObject directly */
-	private class SecurityCheckableObject{
+	private class SecurityCheckableObject {
 		private final Object domainObject;
 		private final String permission;
-		private SecurityCheckableObject(Object domainObject, String permission){
-			this.domainObject=domainObject;
+
+		private SecurityCheckableObject(Object domainObject, String permission) {
+			this.domainObject = domainObject;
 			this.permission = permission;
 		}
-		public String getPermission(){
+
+		public String getPermission() {
 			return permission;
 		}
-		public Object getObject(){
+
+		public Object getObject() {
 			return domainObject;
 		}
-		
+
 	}
-	
-	
+
 	/*
 	 * given a list of SecurityCheckableItem, that method will throw an AccessDeniedException if at least one of them
 	 * doesn't pass the security check. It's basically a logical AND between all the required conditions.
 	 * 
-	 * In case of success the method returns nothing and the calling method can proceed normally, if it fails an exception
-	 * is raised and will join the natural workflow of an AccessDeniedException.
-	 * 
-	 * 
+	 * In case of success the method returns nothing and the calling method can proceed normally, if it fails an
+	 * exception is raised and will join the natural workflow of an AccessDeniedException.
 	 */
 	private void checkPermission(SecurityCheckableItem... securityCheckableItems) throws AccessDeniedException {
-		
-		for (SecurityCheckableItem item : securityCheckableItems){
-			
+
+		for (SecurityCheckableItem item : securityCheckableItems) {
+
 			Object domainObject;
-			
-			if (item.getKind().equals(SecurityCheckableItem.FOLDER)){
+
+			if (item.getKind().equals(SecurityCheckableItem.FOLDER)) {
 				domainObject = getFolderDao().findById(item.getId());
-			}
-			else {
+			} else {
 				domainObject = getLibraryDao().findById(item.getId());
 			}
-			
-			if (! permissionService.hasRoleOrPermissionOnObject("ROLE_ADMIN", item.getPermission() , domainObject)){
+
+			if (!permissionService.hasRoleOrPermissionOnObject("ROLE_ADMIN", item.getPermission(), domainObject)) {
 				throw new AccessDeniedException("Access is denied");
 			}
 		}
 	}
-	
-	private void checkPermission(SecurityCheckableObject... checkableObjects){
-		for (SecurityCheckableObject object : checkableObjects){
-			if (! permissionService.hasRoleOrPermissionOnObject("ROLE_ADMIN", object.getPermission() , object.getObject())){
+
+	private void checkPermission(SecurityCheckableObject... checkableObjects) {
+		for (SecurityCheckableObject object : checkableObjects) {
+			if (!permissionService
+					.hasRoleOrPermissionOnObject("ROLE_ADMIN", object.getPermission(), object.getObject())) {
 				throw new AccessDeniedException("Access is denied");
-			} 
+			}
 		}
 	}
-	
+
+	@SuppressWarnings("unchecked")
+	protected NODE createPastableCopy(NODE node) {
+		return (NODE) node.createPastableCopy();
+	}
 
 }

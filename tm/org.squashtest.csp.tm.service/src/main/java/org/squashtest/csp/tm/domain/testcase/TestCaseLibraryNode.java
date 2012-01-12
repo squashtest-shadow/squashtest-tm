@@ -60,7 +60,7 @@ public abstract class TestCaseLibraryNode extends GenericLibraryNode implements 
 	public abstract void accept(TestCaseLibraryNodeVisitor visitor);
 
 	@Override
-	public abstract TestCaseLibraryNode createCopy();
+	public abstract TestCaseLibraryNode createPastableCopy();
 
 	@Override
 	public int hashCode() {
