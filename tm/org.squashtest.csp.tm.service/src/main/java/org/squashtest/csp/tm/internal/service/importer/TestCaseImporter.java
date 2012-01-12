@@ -21,18 +21,15 @@
 package org.squashtest.csp.tm.internal.service.importer;
 
 import java.io.InputStream;
-import java.util.List;
 
 import javax.inject.Inject;
 
 import org.springframework.stereotype.Component;
-import org.squashtest.csp.tm.domain.testcase.TestCase;
 import org.squashtest.csp.tm.domain.testcase.TestCaseFolder;
 import org.squashtest.csp.tm.domain.testcase.TestCaseLibrary;
-import org.squashtest.csp.tm.domain.testcase.TestCaseLibraryNode;
-import org.squashtest.csp.tm.domain.testcase.TestCaseLibraryNodeVisitor;
 import org.squashtest.csp.tm.internal.utils.archive.ArchiveReader;
 import org.squashtest.csp.tm.internal.utils.archive.ArchiveReaderFactory;
+import org.squashtest.csp.tm.internal.utils.archive.impl.ArchiveReaderFactoryImpl;
 import org.squashtest.csp.tm.service.TestCaseLibraryNavigationService;
 import org.squashtest.csp.tm.service.importer.ImportSummary;
 
@@ -43,16 +40,14 @@ public class TestCaseImporter {
 	@Inject
 	private TestCaseLibraryNavigationService service;
 	
-	@Inject
-	private ArchiveReaderFactory factory;
 	
-	//@Inject
-	private ExcelTestCaseParser parser;
+	private ArchiveReaderFactory factory = new ArchiveReaderFactoryImpl();
+	
+	private ExcelTestCaseParser parser = new ExcelTestCaseParserImpl();
 	
 	
 	public ImportSummary importExcelTestCases(InputStream archiveStream, Long libraryId){
-
-		
+	
 		ArchiveReader reader = factory.createReader(archiveStream);
 		ImportSummaryImpl summary = new ImportSummaryImpl();
 		
@@ -77,7 +72,8 @@ public class TestCaseImporter {
 		merger.mergeIntoLibrary(library, root);
 		
 		summary.add(merger.getSummary());
-
+		
+		
 		return summary;
 	}
 

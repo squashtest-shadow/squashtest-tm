@@ -76,6 +76,8 @@ import org.squashtest.csp.tm.service.importer.ImportSummary;
  * 		</ul>
  * </ul>
  * 
+ * Regarding the summary, may increment failures and warning, but not total test cases nor success. 
+ * 
  * @author bsiri
  *
  */
@@ -282,6 +284,7 @@ class TestCaseLibraryMerger {
 			}
 			
 			persistTestCase(toMerge);
+			
 		}
 		
 	}

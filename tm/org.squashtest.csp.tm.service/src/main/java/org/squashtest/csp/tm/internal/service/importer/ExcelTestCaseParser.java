@@ -30,4 +30,6 @@ interface ExcelTestCaseParser {
 	TestCase parseFile(Workbook workbook, ImportSummaryImpl summary) throws SheetCorruptedException;
 	
 	TestCase parseFile(InputStream stream, ImportSummaryImpl summary) throws SheetCorruptedException;
+	
+	String stripFileExtension(String fullName);
 }

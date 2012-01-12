@@ -27,6 +27,14 @@ import org.squashtest.csp.tm.domain.testcase.TestCaseLibraryNode;
 import org.squashtest.csp.tm.internal.utils.archive.ArchiveReader;
 import org.squashtest.csp.tm.internal.utils.archive.Entry;
 
+/**
+ * Must read an archive and make test cases from the files it includes.
+ * 
+ * regarding the summary : may increment total test cases, warnings and failures, but not success.
+ * 
+ * @author bsiri
+ *
+ */
 class HierarchyCreator{
 	
 	
@@ -114,10 +122,12 @@ class HierarchyCreator{
 	 * @param entry
 	 */
 	private void createTestCase(Entry entry){
-		try{
+		try{			
+			summary.incrTotal();
+			
 			//create the test case
 			TestCase testCase = parser.parseFile(entry.getStream(), summary);
-			testCase.setName(entry.getShortName());
+			testCase.setName(stripExtension(entry.getShortName()));
 			
 			//find or create the parent folder
 			TestCaseFolder parent = findOrCreateFolder(entry.getParent());
@@ -130,6 +140,10 @@ class HierarchyCreator{
 			summary.incrFailures();
 		}
 		
+	}
+	
+	private String stripExtension(String withExtension){
+		return parser.stripFileExtension(withExtension);
 	}
 	
 	

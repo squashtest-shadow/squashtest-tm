@@ -67,6 +67,7 @@ public class ZipReader implements ArchiveReader {
 		private String name;
 		private boolean isDirectory;
 		
+		
 		private ZipReaderEntry(ZipInputStream stream, String name, boolean isDirectory){
 			this.zipStream = stream;
 			this.name = stripSuffix(name);

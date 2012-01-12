@@ -93,6 +93,7 @@ class HierarchyCreatorTest extends Specification {
 		given :		
 			def importer = new HierarchyCreator();
 			def parser = Mock(ExcelTestCaseParser)
+			parser.stripFileExtension("peebles.xlsx") >> "peebles"
 			importer.setParser(parser)
 			
 		and :
@@ -101,7 +102,7 @@ class HierarchyCreatorTest extends Specification {
 		
 		
 		and :
-			def entry = new ZipReaderEntry(Mock(ZipInputStream), "/melvin/van/peebles", false);
+			def entry = new ZipReaderEntry(Mock(ZipInputStream), "/melvin/van/peebles.xlsx", false);
 			
 		and : 
 			def parent = new TestCaseFolder()
@@ -115,7 +116,7 @@ class HierarchyCreatorTest extends Specification {
 			importer.createTestCase(entry)
 		
 		then :
-			def tc = importer.pathMap.getMappedElement("/melvin/van/peebles")
+			def tc = importer.pathMap.getMappedElement("/melvin/van/peebles.xlsx")
 			tc instanceof TestCase
 			tc.getName() == "peebles"
 			
