@@ -41,6 +41,8 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.servlet.ModelAndView;
 import org.springframework.web.util.HtmlUtils;
+import org.squashtest.csp.core.infrastructure.collection.PagedCollectionHolder;
+import org.squashtest.csp.core.infrastructure.collection.PagingAndSorting;
 import org.squashtest.csp.tm.domain.Internationalizable;
 import org.squashtest.csp.tm.domain.project.Project;
 import org.squashtest.csp.tm.domain.requirement.Requirement;
@@ -48,12 +50,10 @@ import org.squashtest.csp.tm.domain.requirement.RequirementCriticality;
 import org.squashtest.csp.tm.domain.requirement.RequirementStatus;
 import org.squashtest.csp.tm.domain.testcase.TestCase;
 import org.squashtest.csp.tm.domain.testcase.TestCaseExecutionMode;
-import org.squashtest.csp.tm.infrastructure.filter.CollectionFilter;
-import org.squashtest.csp.tm.infrastructure.filter.CollectionSorting;
-import org.squashtest.csp.tm.infrastructure.filter.FilteredCollectionHolder;
 import org.squashtest.csp.tm.service.RequirementModificationService;
 import org.squashtest.csp.tm.web.internal.helper.JsonHelper;
 import org.squashtest.csp.tm.web.internal.model.datatable.DataTableDrawParameters;
+import org.squashtest.csp.tm.web.internal.model.datatable.DataTableMapperPagingAndSortingAdapter;
 import org.squashtest.csp.tm.web.internal.model.datatable.DataTableModel;
 import org.squashtest.csp.tm.web.internal.model.viewmapper.DataTableMapper;
 
@@ -75,11 +75,10 @@ public class RequirementModificationController {
 	/*
 	 * in case the advanced one fails, uncomment and use this mapper instead
 	 */
-	private final DataTableMapper verifyingTcMapper = new DataTableMapper("verifying-test-cases", TestCase.class, Project.class)
-													.initMapping(5)
-													.mapAttribute(Project.class, 2, "name", String.class)
-													.mapAttribute(TestCase.class, 3, "name", String.class)
-													.mapAttribute(TestCase.class, 4, "executionMode", TestCaseExecutionMode.class);
+	private final DataTableMapper verifyingTcMapper = new DataTableMapper("verifying-test-cases", TestCase.class,
+			Project.class).initMapping(5).mapAttribute(Project.class, 2, "name", String.class)
+			.mapAttribute(TestCase.class, 3, "name", String.class)
+			.mapAttribute(TestCase.class, 4, "executionMode", TestCaseExecutionMode.class);
 
 	// will return the Requirement in a full page
 	@RequestMapping(value = "/info", method = RequestMethod.GET)
@@ -91,10 +90,10 @@ public class RequirementModificationController {
 
 		mav.addObject("requirement", requirement);
 
-		//build criticality list
-		SortedMap<String, String> criticalities = initCriticitySelectionList(locale, requirement.getCriticality()); 
+		// build criticality list
+		SortedMap<String, String> criticalities = initCriticitySelectionList(locale, requirement.getCriticality());
 		mav.addObject("criticalityList", jsonify(criticalities));
-		
+
 		return mav;
 	}
 
@@ -105,11 +104,11 @@ public class RequirementModificationController {
 
 		ModelAndView mav = new ModelAndView("fragment/requirements/edit-requirement");
 		mav.addObject("requirement", requirement);
-		
-		//build criticality list
-		SortedMap<String, String> criticalities = initCriticitySelectionList(locale, requirement.getCriticality()); 
+
+		// build criticality list
+		SortedMap<String, String> criticalities = initCriticitySelectionList(locale, requirement.getCriticality());
 		mav.addObject("criticalityList", jsonify(criticalities));
-		
+
 		return mav;
 	}
 
@@ -122,7 +121,6 @@ public class RequirementModificationController {
 		return newDescription;
 
 	}
-	
 
 	@RequestMapping(method = RequestMethod.POST, params = { "newName" })
 	public @ResponseBody
@@ -132,10 +130,11 @@ public class RequirementModificationController {
 		requirementModService.rename(requirementId, newName);
 		LOGGER.info("RequirementModificationController : renaming " + requirementId + " as " + newName);
 		final String reNewName = newName;
-		return new Object(){ public String newName = reNewName ; }; // NOSONAR : "Unread field" is actually used by json marshaller 
+		return new Object() {
+			public String newName = reNewName; // NOSONAR : "Unread field" is actually used by json marshaller
+		}; 
 
 	}
-
 
 	@RequestMapping(value = "/general", method = RequestMethod.GET)
 	public ModelAndView refreshGeneralInfos(@PathVariable long requirementId) {
@@ -150,23 +149,22 @@ public class RequirementModificationController {
 		return mav;
 	}
 
-	private DataTableModel buildVerifyingTestCasesTableModel(FilteredCollectionHolder<List<TestCase>> holder,
-			CollectionFilter filter,
-			String sEcho,
-			Locale locale) {
+	private DataTableModel buildVerifyingTestCasesTableModel(PagedCollectionHolder<List<TestCase>> holder,
+			String sEcho, Locale locale) {
 		DataTableModel model = new DataTableModel(sEcho);
 		String type = "";
-		List<TestCase> testCases = holder.getFilteredCollection();
+		List<TestCase> testCases = holder.getPagedItems();
 
 		for (int i = 0; i < testCases.size(); i++) {
 			TestCase tc = testCases.get(i);
 
-			type=formatExecutionMode(tc.getExecutionMode(), locale);
+			type = formatExecutionMode(tc.getExecutionMode(), locale);
 
-			model.addRow(new Object[] { tc.getId(), filter.getFirstItemIndex()+ i+1,  tc.getProject().getName(), tc.getName(), type, "" });
+			model.addRow(new Object[] { tc.getId(), holder.getFirstItemIndex() + i + 1, tc.getProject().getName(),
+					tc.getName(), type, "" });
 		}
 
-		model.displayRowsFromTotalOf(holder.getUnfilteredResultCount());
+		model.displayRowsFromTotalOf(holder.getTotalNumberOfItems());
 		return model;
 	}
 
@@ -174,84 +172,54 @@ public class RequirementModificationController {
 	public @ResponseBody
 	DataTableModel getVerifiedTestCasesTableModel(@PathVariable("requirementId") long requirementId,
 			final DataTableDrawParameters params, Locale locale) {
-		CollectionSorting filter = createCollectionFilter(params, verifyingTcMapper);
+		PagingAndSorting filter = new DataTableMapperPagingAndSortingAdapter(params, verifyingTcMapper);
 
 		if (LOGGER.isTraceEnabled()) {
 			LOGGER.trace("ReqModController : filterin " + params.getsSortDir_0() + " for "
 					+ verifyingTcMapper.pathAt(params.getiSortCol_0()));
 		}
 
-		FilteredCollectionHolder<List<TestCase>> holder = requirementModService.findVerifyingTestCasesByRequirementId(
+		PagedCollectionHolder<List<TestCase>> holder = requirementModService.findVerifyingTestCasesByRequirementId(
 				requirementId, filter);
 
-		return buildVerifyingTestCasesTableModel(holder, filter, params.getsEcho(), locale);
+		return buildVerifyingTestCasesTableModel(holder, params.getsEcho(), locale);
 	}
 
-	private CollectionSorting createCollectionFilter(final DataTableDrawParameters params,
-			final DataTableMapper dtMapper) {
-		CollectionSorting filter = new CollectionSorting() {
-			@Override
-			public int getMaxNumberOfItems() {
-				return params.getiDisplayLength();
-			}
-
-			@Override
-			public int getFirstItemIndex() {
-				return params.getiDisplayStart();
-			}
-
-			@Override
-			public String getSortedAttribute() {
-				return dtMapper.pathAt(params.getiSortCol_0());
-			}
-
-			@Override
-			public String getSortingOrder() {
-				return params.getsSortDir_0();
-			}
-			@Override
-			public int getPageSize() {
-				return getMaxNumberOfItems();
-			}
-		};
-		return filter;
-	}
-
-	private String formatExecutionMode(TestCaseExecutionMode mode, Locale locale){
+	private String formatExecutionMode(TestCaseExecutionMode mode, Locale locale) {
 		return internationalize(mode, locale);
 	}
 
-	@RequestMapping(method = RequestMethod.POST, params = {"id=requirement-criticality","value"})
+	@RequestMapping(method = RequestMethod.POST, params = { "id=requirement-criticality", "value" })
 	@ResponseBody
-	public String updateCriticality(@RequestParam("value") String value, @PathVariable long requirementId, Locale locale){
+	public String updateCriticality(@RequestParam("value") String value, @PathVariable long requirementId, Locale locale) {
 		RequirementCriticality criticality = RequirementCriticality.valueOf(value);
 		requirementModService.changeCriticality(requirementId, criticality);
-		LOGGER.debug("Requirement {} : requirement criticality changed, new value : {}", requirementId, criticality.name());
+		LOGGER.debug("Requirement {} : requirement criticality changed, new value : {}", requirementId,
+				criticality.name());
 		return HtmlUtils.htmlEscape(formatCriticality(criticality, locale));
 	}
-	
 
-	@RequestMapping(method = RequestMethod.POST, params = {"id=requirement-status", "value"})
+	@RequestMapping(method = RequestMethod.POST, params = { "id=requirement-status", "value" })
 	@ResponseBody
-	public String updateStatus(@RequestParam("value") String value, @PathVariable long requirementId, Locale locale){
+	public String updateStatus(@RequestParam("value") String value, @PathVariable long requirementId, Locale locale) {
 		RequirementStatus status = RequirementStatus.valueOf(value);
 		requirementModService.changeStatus(requirementId, status);
 		LOGGER.debug("Requirement {} : requirement status changed, new value : {}", requirementId, status.name());
 		return HtmlUtils.htmlEscape(internationalize(status, locale));
 	}
-	
-	@RequestMapping(method = RequestMethod.GET, value="/next-status")
+
+	@RequestMapping(method = RequestMethod.GET, value = "/next-status")
 	@ResponseBody
-	public SortedMap<String, String> getNextStatusList(Locale locale, @PathVariable long requirementId){
+	public SortedMap<String, String> getNextStatusList(Locale locale, @PathVariable long requirementId) {
 		Requirement requirement = requirementModService.findById(requirementId);
 		RequirementStatus status = requirement.getStatus();
 		return initStatusSelectionList(locale, status);
 	}
-	
 
 	@RequestMapping(method = RequestMethod.POST, params = { "id=requirement-reference", "value" })
 	@ResponseBody
-	String updateReference(@RequestParam("value") String requirementReference, @PathVariable long requirementId) throws UnsupportedEncodingException {
+	String updateReference(@RequestParam("value") String requirementReference, @PathVariable long requirementId)
+			throws UnsupportedEncodingException {
 		requirementModService.changeReference(requirementId, requirementReference.trim());
 		LOGGER.debug("Requirement {} : requirement reference changed, new value : {}", requirementId,
 				requirementReference);
@@ -259,56 +227,58 @@ public class RequirementModificationController {
 	}
 
 	/***
-	 * Method which returns the criticality select options in the chosen language.
-	 * The output is formatted in json and meant to be used for a select input.
-	 * That list is sorted according to the RequirementCriticality level. @param locale the Locale
-	 * @return a map representing the available options. 
+	 * Method which returns the criticality select options in the chosen language. The output is formatted in json and
+	 * meant to be used for a select input. That list is sorted according to the RequirementCriticality level. @param
+	 * locale the Locale
+	 * 
+	 * @return a map representing the available options.
 	 */
-	private SortedMap<String, String> initCriticitySelectionList(Locale locale, RequirementCriticality selected)
-	{
-		
+	private SortedMap<String, String> initCriticitySelectionList(Locale locale, RequirementCriticality selected) {
+
 		SortedMap<String, String> map = new TreeMap<String, String>(RequirementCriticality.stringComparator());
 
 		for (RequirementCriticality criticality : RequirementCriticality.values()) {
 			String translated = formatCriticality(criticality, locale);
 			map.put(criticality.toString(), translated);
 		}
-		
-		//we don't want to use the attribute 'selected' here because it induces wrong behaviors under FF or IE when editing the same
-		//combobox multiple times.	
-		
-		return map;	
+
+		// we don't want to use the attribute 'selected' here because it induces wrong behaviors under FF or IE when
+		// editing the same
+		// combobox multiple times.
+
+		return map;
 
 	}
-	
+
 	/**
-	 * The change status combobox is filtered and only proposes the status to which it is legal to switch to. That method will generate a map
-	 * for that purpose. Pretty much like {@link #initCriticitySelectionList(Locale, RequirementCriticality)};
+	 * The change status combobox is filtered and only proposes the status to which it is legal to switch to. That
+	 * method will generate a map for that purpose. Pretty much like
+	 * {@link #initCriticitySelectionList(Locale, RequirementCriticality)};
 	 * 
 	 * @param locale
 	 * @param status
 	 * @return
 	 */
-	private SortedMap<String, String> initStatusSelectionList(Locale locale, RequirementStatus status){
+	private SortedMap<String, String> initStatusSelectionList(Locale locale, RequirementStatus status) {
 		SortedMap<String, String> map = new TreeMap<String, String>(RequirementStatus.stringComparator());
-		
-		for (RequirementStatus iterStatus : status.getAvailableNextStatus()){
+
+		for (RequirementStatus iterStatus : status.getAvailableNextStatus()) {
 			map.put(iterStatus.toString(), internationalize(iterStatus, locale));
 		}
-		//here other status are added with the value "disabled."+"iterStatus
-		for (RequirementStatus disabledStatus : status.getDisabledStatus()){
-			map.put("disabled."+disabledStatus.toString(), internationalize(disabledStatus, locale));
+		// here other status are added with the value "disabled."+"iterStatus
+		for (RequirementStatus disabledStatus : status.getDisabledStatus()) {
+			map.put("disabled." + disabledStatus.toString(), internationalize(disabledStatus, locale));
 		}
-		//here we use the 'selected' attribute since it's reloaded for each use of the combobox anyway. 
+		// here we use the 'selected' attribute since it's reloaded for each use of the combobox anyway.
 		map.put("selected", status.toString());
-	
+
 		return map;
-		
+
 	}
 
 	/***
 	 * Method which returns criticality in the chosen language
-	 *
+	 * 
 	 * @param criticality
 	 *            the criticality
 	 * @param locale
@@ -322,9 +292,9 @@ public class RequirementModificationController {
 	private String internationalize(Internationalizable internationalizable, Locale locale) {
 		return messageSource.getMessage(internationalizable.getI18nKey(), null, locale);
 	}
-	
-	private String jsonify(Object toSerialize){
-			return JsonHelper.serialize(toSerialize);
+
+	private String jsonify(Object toSerialize) {
+		return JsonHelper.serialize(toSerialize);
 	}
 
 }

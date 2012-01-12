@@ -23,6 +23,7 @@ package org.squashtest.csp.tm.internal.repository;
 import java.util.Collection;
 import java.util.List;
 
+import org.squashtest.csp.core.infrastructure.collection.PagingAndSorting;
 import org.squashtest.csp.tm.domain.requirement.RequirementSearchCriteria;
 import org.squashtest.csp.tm.domain.testcase.ActionTestStep;
 import org.squashtest.csp.tm.domain.testcase.TestCase;
@@ -151,6 +152,20 @@ public interface TestCaseDao extends EntityDao<TestCase> {
 	 */
 	List<Long> findCalledTestCaseOfCallSteps(List<Long> testStepsIds);
 
+	/**
+	 * Returns paged and sorted collection of test cases verifying the requirement version of given id.
+	 *
+	 * @param verifierId
+	 * @param sorting
+	 * @return
+	 */
+	List<TestCase> findAllByVerifiedRequirementVersion(long verifiedId, PagingAndSorting sorting);
+
+	/**
+	 * @param id
+	 * @return
+	 */
+	long countByVerifiedRequirementVersion(long verifiedId);
 
 
 }

@@ -21,15 +21,12 @@
 
 package org.squashtest.csp.tm.domain.event;
 
-import java.util.Collection;
 import java.util.List;
 
 import org.squashtest.csp.tm.domain.requirement.ExportRequirementData;
 import org.squashtest.csp.tm.domain.requirement.Requirement;
 import org.squashtest.csp.tm.domain.requirement.RequirementLibraryNode;
 import org.squashtest.csp.tm.domain.requirement.RequirementSearchCriteria;
-import org.squashtest.csp.tm.domain.testcase.TestCase;
-import org.squashtest.csp.tm.infrastructure.filter.CollectionSorting;
 import org.squashtest.csp.tm.internal.repository.RequirementDao;
 
 /**
@@ -44,30 +41,6 @@ public class StubRequirementDao extends StubEntityDao<Requirement> implements Re
 	@Override
 	public List<Requirement> findAllByIdList(List<Long> requirementsIds) {
 		return null;
-	}
-
-	/**
-	 * @see org.squashtest.csp.tm.internal.repository.RequirementDao#findAllVerifyingTestCasesById(long)
-	 */
-	@Override
-	public List<TestCase> findAllVerifyingTestCasesById(long requirementId) {
-		return null;
-	}
-
-	/**
-	 * @see org.squashtest.csp.tm.internal.repository.RequirementDao#findAllVerifyingTestCasesByIdFiltered(long, org.squashtest.csp.tm.infrastructure.filter.CollectionSorting)
-	 */
-	@Override
-	public List<TestCase> findAllVerifyingTestCasesByIdFiltered(long requirementId, CollectionSorting filter) {
-		return null;
-	}
-
-	/**
-	 * @see org.squashtest.csp.tm.internal.repository.RequirementDao#countVerifyingTestCasesById(long)
-	 */
-	@Override
-	public long countVerifyingTestCasesById(long requirementId) {
-		return 0;
 	}
 
 	/**

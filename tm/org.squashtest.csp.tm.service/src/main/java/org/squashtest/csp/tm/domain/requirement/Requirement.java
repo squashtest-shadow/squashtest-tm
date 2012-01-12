@@ -55,7 +55,7 @@ public class Requirement extends RequirementLibraryNode<RequirementVersion> impl
 	@JoinColumn(name = "LATEST_VERSION_ID")
 	private RequirementVersion resource;
 	
-	@OneToMany(cascade = { CascadeType.ALL }, mappedBy = "requirement")
+	@OneToMany(mappedBy = "requirement", cascade = { CascadeType.ALL })
 	@OrderBy("versionNumber DESC")
 	private List<RequirementVersion> versions = new ArrayList<RequirementVersion>();
 	

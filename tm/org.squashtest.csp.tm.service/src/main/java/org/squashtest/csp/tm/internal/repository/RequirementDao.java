@@ -26,8 +26,6 @@ import org.squashtest.csp.tm.domain.requirement.ExportRequirementData;
 import org.squashtest.csp.tm.domain.requirement.Requirement;
 import org.squashtest.csp.tm.domain.requirement.RequirementLibraryNode;
 import org.squashtest.csp.tm.domain.requirement.RequirementSearchCriteria;
-import org.squashtest.csp.tm.domain.testcase.TestCase;
-import org.squashtest.csp.tm.infrastructure.filter.CollectionSorting;
 
 public interface RequirementDao extends EntityDao<Requirement> {
 	/**
@@ -38,18 +36,14 @@ public interface RequirementDao extends EntityDao<Requirement> {
 	 */
 	List<Requirement> findAllByIdList(List<Long> requirementsIds);
 
-	List<TestCase> findAllVerifyingTestCasesById(long requirementId);
-
-	List<TestCase> findAllVerifyingTestCasesByIdFiltered(long requirementId, CollectionSorting filter);
-
-	long countVerifyingTestCasesById(long requirementId);
-
 	List<String> findNamesInFolderStartingWith(long folderId, String nameStart);
 
 	List<String> findNamesInLibraryStartingWith(long libraryId, String nameStart);
 
+	@SuppressWarnings("rawtypes")
 	List<RequirementLibraryNode> findAllBySearchCriteria(RequirementSearchCriteria criteria);
 
+	@SuppressWarnings("rawtypes")
 	List<RequirementLibraryNode> findAllBySearchCriteriaOrderByProject(RequirementSearchCriteria criteria);
 
 	List<ExportRequirementData> findRequirementToExportFromFolder(List<Long> folderIds);

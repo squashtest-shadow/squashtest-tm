@@ -22,15 +22,12 @@ package org.squashtest.csp.tm.internal.repository.hibernate;
 
 import java.math.BigInteger;
 import java.util.ArrayList;
-import java.util.Collection;
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
-import java.util.ListIterator;
 import java.util.Map;
 
 import org.apache.commons.lang.StringUtils;
-import org.hibernate.Criteria;
 import org.hibernate.Query;
 import org.hibernate.Session;
 import org.hibernate.criterion.Criterion;
@@ -47,14 +44,10 @@ import org.squashtest.csp.tm.domain.requirement.RequirementSearchCriteria;
 import org.squashtest.csp.tm.domain.requirement.RequirementVersion;
 import org.squashtest.csp.tm.domain.requirement.VerificationCriterion;
 import org.squashtest.csp.tm.domain.resource.Resource;
-import org.squashtest.csp.tm.domain.testcase.TestCase;
-import org.squashtest.csp.tm.infrastructure.filter.CollectionSorting;
 import org.squashtest.csp.tm.internal.repository.RequirementDao;
 
 @Repository
 public class HibernateRequirementDao extends HibernateEntityDao<Requirement> implements RequirementDao {
-	private static final String REQUIREMENT_ID_PARAM_NAME = "requirementId";
-
 	private static final Map<VerificationCriterion, Object[]> HIBERNATE_RESTRICTION_BY_VERIFICATION_CRITERION = new HashMap<VerificationCriterion, Object[]>(
 			VerificationCriterion.values().length);
 
@@ -82,57 +75,6 @@ public class HibernateRequirementDao extends HibernateEntityDao<Requirement> imp
 			return Collections.emptyList();
 		}
 
-	}
-
-	@Override
-	public List<TestCase> findAllVerifyingTestCasesById(long requirementId) {
-		return executeListNamedQuery("requirement.findAllVerifyingTestCasesById", idParameter(requirementId));
-	}
-
-	@SuppressWarnings("unchecked")
-	@Override
-	public List<TestCase> findAllVerifyingTestCasesByIdFiltered(final long requirementId, final CollectionSorting filter) {
-		Session session = currentSession();
-
-		String sortedAttribute = filter.getSortedAttribute();
-		String order = filter.getSortingOrder();
-
-		Criteria crit = session.createCriteria(Requirement.class).add(Restrictions.eq("id", requirementId))
-				.createAlias("verifyingTestCases", "TestCase").createAlias("TestCase.project", "Project")
-				.setResultTransformer(Criteria.ALIAS_TO_ENTITY_MAP);
-
-		/* add ordering */
-		if (sortedAttribute != null) {
-			if (order.equals("asc")) {
-				crit.addOrder(Order.asc(sortedAttribute).ignoreCase());
-			} else {
-				crit.addOrder(Order.desc(sortedAttribute).ignoreCase());
-			}
-		}
-
-		/* result range */
-		crit.setFirstResult(filter.getFirstItemIndex());
-		crit.setMaxResults(filter.getMaxNumberOfItems());
-
-		List<Map<String, ?>> rawResult = crit.list();
-
-		List<TestCase> testCases = new ArrayList<TestCase>();
-		ListIterator<Map<String, ?>> iter = rawResult.listIterator();
-		while (iter.hasNext()) {
-			Map<String, ?> map = iter.next();
-			testCases.add((TestCase) map.get("TestCase"));
-		}
-
-		return testCases;
-	}
-
-	@Override
-	public long countVerifyingTestCasesById(long requirementId) {
-		return (Long) executeEntityNamedQuery("requirement.countVerifyingTestCasesById", idParameter(requirementId));
-	}
-
-	private SetQueryParametersCallback idParameter(long requirementId) {
-		return new SetIdParameter(REQUIREMENT_ID_PARAM_NAME, requirementId);
 	}
 
 	@Override

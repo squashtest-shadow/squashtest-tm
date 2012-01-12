@@ -70,10 +70,6 @@
 		@NamedQuery(name = "requirement.findNamesInFolderStartingWith", query = "select c.resource.name from RequirementFolder f join f.content c where f.id = :containerId and c.resource.name like :nameStart"),
 		@NamedQuery(name = "requirement.findNamesInLibraryStartingWith", query = "select c.resource.name from RequirementLibrary l join l.rootContent c where l.id = :containerId and c.resource.name like :nameStart"),
 		@NamedQuery(name = "requirement.findAllByIdList", query = "from Requirement r where id in (:requirementsIds) order by r.resource.name asc"),
-		// XXX RequirementVersion
-		@NamedQuery(name = "requirement.findAllVerifyingTestCasesById", query = "select tc from RequirementVersion r join r.verifyingTestCases tc fetch all properties where r.id = :requirementId order by tc.name asc"),
-		// XXX RequirementVersion
-		@NamedQuery(name = "requirement.countVerifyingTestCasesById", query = "select count(tc) from RequirementVersion r join r.verifyingTestCases tc where r.id = :requirementId"),
 		@NamedQuery(name = "requirement.findRequirementByName", query = "from RequirementLibraryNode r where r.resource.name like :requirementName order by r.resource.name asc"),
 		@NamedQuery(name = "requirement.findRequirementExportData", query = "select r, rf.resource.name from RequirementFolder rf join rf.content r where r.id in (:rIds)"),
 		@NamedQuery(name = "requirement.findRequirementInExportData", query = "select r.id from Requirement r where r.id in (:rIds)"),
@@ -102,8 +98,6 @@
 		@NamedQuery(name = "testCase.findAllByIdListNonOrdered", query = "from TestCase tc where id in (:testCasesIds)"),
 		@NamedQuery(name = "testCase.findAllTestSteps", query = "select tcase.steps from TestCase tcase where tcase.id= :testCaseId"),
 		@NamedQuery(name = "testCase.findById", query = "from TestCase tc left join fetch tc.steps left join fetch tc.verifiedRequirements where tc.id = :testCaseId"),
-		@NamedQuery(name = "testCase.findAllVerifiedRequirementsById", query = "select r from TestCase tc join tc.verifiedRequirements r fetch all properties where tc.id = :testCaseId order by r.name asc"),
-		@NamedQuery(name = "testCase.countVerifiedRequirementsById", query = "select count(r) from TestCase tc join tc.verifiedRequirements r where tc.id = :testCaseId"),
 		@NamedQuery(name = "testCase.findByIdWithInitializedSteps", query = "from TestCase tc left join fetch tc.steps s left join fetch s.attachmentList al left join fetch al.attachments where tc.id = :testCaseId"),
 		@NamedQuery(name = "testCase.findTestCaseByName", query = "from TestCaseLibraryNode tc where tc.name like :testCaseName order by tc.name asc"),
 		@NamedQuery(name = "testCase.findAllStepsByIdFiltered", query = "select s from TestCase tc join tc.steps s where tc.id = :testCaseId and index(s) between :firstIndex and :lastIndex order by index(s)"),
@@ -117,6 +111,8 @@
 		@NamedQuery(name = "testCase.findTestCasesHavingCallerDetails", query = "select distinct caller.id, caller.name, called.id, called.name from TestCase caller join caller.steps steps join steps.calledTestCase called where steps.class = CallTestStep and called.id in (:testCaseIds) group by caller, called"),
 		@NamedQuery(name = "testCase.findTestCasesHavingNoCallerDetails", query = "select nullif(1,1), nullif(1,1), called.id, called.name from TestCase called where called.id in (:nonCalledIds)"),
 		@NamedQuery(name = "testCase.findCalledTestCaseOfCallSteps", query = "select distinct called.id from CallTestStep callStep join callStep.calledTestCase called where callStep.id in (:testStepsIds)"),
+		@NamedQuery(name = "testCase.countByVerifiedRequirementVersion", query = "select count(tc) from TestCase tc join tc.verifiedRequirements vr where vr.id = :verifiedId"),
+		
 		
 		//Queries on Campaign
 		@NamedQuery(name = "campaign.findNamesInCampaignStartingWith", query = "select i.name from Campaign c join c.iterations i where c.id = :containerId and i.name like :nameStart"),

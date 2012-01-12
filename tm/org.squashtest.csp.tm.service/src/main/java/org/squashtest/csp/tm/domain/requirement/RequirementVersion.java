@@ -82,7 +82,7 @@ public class RequirementVersion extends Resource implements AttachmentHolder {
 
 	@NotNull
 	@ManyToOne(cascade = { CascadeType.PERSIST, CascadeType.MERGE })
-	@JoinColumn(name = "REQUIREMENT_ID", updatable = false)
+	@JoinColumn(name = "REQUIREMENT_ID")
 	private Requirement requirement;
 
 	private int versionNumber = 1;

@@ -28,13 +28,15 @@ import javax.inject.Named;
 import org.springframework.security.access.prepost.PostAuthorize;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.stereotype.Service;
+import org.squashtest.csp.core.infrastructure.collection.PagedCollectionHolder;
+import org.squashtest.csp.core.infrastructure.collection.PagingAndSorting;
+import org.squashtest.csp.core.infrastructure.collection.PagingBackedPagedCollectionHolder;
 import org.squashtest.csp.tm.domain.requirement.Requirement;
 import org.squashtest.csp.tm.domain.requirement.RequirementFolder;
 import org.squashtest.csp.tm.domain.requirement.RequirementLibraryNode;
 import org.squashtest.csp.tm.domain.testcase.TestCase;
-import org.squashtest.csp.tm.infrastructure.filter.CollectionSorting;
-import org.squashtest.csp.tm.infrastructure.filter.FilteredCollectionHolder;
 import org.squashtest.csp.tm.internal.repository.RequirementDao;
+import org.squashtest.csp.tm.internal.repository.TestCaseDao;
 import org.squashtest.csp.tm.service.CustomRequirementModificationService;
 
 
@@ -44,6 +46,8 @@ CustomRequirementModificationService {
 
 	@Inject
 	private RequirementDao requirementDao;
+	
+	@Inject private TestCaseDao testCaseDao;
 
 	@SuppressWarnings("rawtypes")
 	@Inject
@@ -68,16 +72,13 @@ CustomRequirementModificationService {
 
 	@Override
 	@PreAuthorize("hasPermission(#requirementId, 'org.squashtest.csp.tm.domain.requirement.Requirement', 'READ') or hasRole('ROLE_ADMIN')")
-	public List<TestCase> findVerifyingTestCasesByRequirementId(long requirementId) {
-		return requirementDao.findAllVerifyingTestCasesById(requirementId);
-	}
-
-	@Override
-	@PreAuthorize("hasPermission(#requirementId, 'org.squashtest.csp.tm.domain.requirement.Requirement', 'READ') or hasRole('ROLE_ADMIN')")
-	public FilteredCollectionHolder<List<TestCase>> findVerifyingTestCasesByRequirementId(
-			long requirementId, CollectionSorting filter) {
-		List<TestCase> tcs = requirementDao.findAllVerifyingTestCasesByIdFiltered(requirementId, filter);
-		long count = requirementDao.countVerifyingTestCasesById(requirementId);
-		return new FilteredCollectionHolder<List<TestCase>>(count, tcs);
+	public PagedCollectionHolder<List<TestCase>> findVerifyingTestCasesByRequirementId(
+			long requirementId, PagingAndSorting pagingAndSorting) {
+		Requirement req = requirementDao.findById(requirementId);
+		List<TestCase> verifiers = testCaseDao.findAllByVerifiedRequirementVersion(req.getLatestVersion().getId(), pagingAndSorting);
+		
+		long verifiersCount = testCaseDao.countByVerifiedRequirementVersion(req.getLatestVersion().getId());
+		
+		return new PagingBackedPagedCollectionHolder<List<TestCase>>(pagingAndSorting, verifiersCount, verifiers);
 	}
 }

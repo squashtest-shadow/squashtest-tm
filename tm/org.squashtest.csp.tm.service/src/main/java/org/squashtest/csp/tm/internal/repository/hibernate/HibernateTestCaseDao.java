@@ -36,6 +36,9 @@ import org.hibernate.criterion.Order;
 import org.hibernate.criterion.Restrictions;
 import org.hibernate.type.LongType;
 import org.springframework.stereotype.Repository;
+import org.squashtest.csp.core.infrastructure.collection.PagingAndSorting;
+import org.squashtest.csp.core.infrastructure.hibernate.PagingUtils;
+import org.squashtest.csp.core.infrastructure.hibernate.SortingUtils;
 import org.squashtest.csp.tm.domain.requirement.RequirementSearchCriteria;
 import org.squashtest.csp.tm.domain.testcase.ActionTestStep;
 import org.squashtest.csp.tm.domain.testcase.TestCase;
@@ -365,6 +368,51 @@ public class HibernateTestCaseDao extends HibernateEntityDao<TestCase> implement
 		Query query = currentSession().getNamedQuery("testCase.findCalledTestCaseOfCallSteps");
 		query.setParameterList("testStepsIds", testStepsIds);
 		return query.list();
+	}
+
+	/*
+	 * (non-Javadoc)
+	 * 
+	 * @see org.squashtest.csp.tm.internal.repository.TestCaseDao#findAllVerifyingRequirementVersion(long,
+	 * org.squashtest.csp.core.infrastructure.collection.PagingAndSorting)
+	 */
+	@SuppressWarnings("unchecked")
+	@Override
+	public List<TestCase> findAllByVerifiedRequirementVersion(long verifiedId, PagingAndSorting sorting) {
+		Criteria crit = createFindAllVerifyingCriteria(sorting);
+
+		crit.add(Restrictions.eq("RequirementVersion.id", Long.valueOf(verifiedId)));
+
+		return crit.list();
+	}
+
+	/**
+	 * @param sorting
+	 * @return
+	 */
+	private Criteria createFindAllVerifyingCriteria(PagingAndSorting sorting) {
+		Criteria crit = currentSession().createCriteria(TestCase.class, "TestCase");
+		crit.createAlias("verifiedRequirements", "RequirementVersion");
+		crit.createAlias("verifiedRequirements.requirement", "Requirement", Criteria.LEFT_JOIN);
+		crit.createAlias("project", "Project", Criteria.LEFT_JOIN);
+
+		PagingUtils.addPaging(crit, sorting);
+		SortingUtils.addOrder(crit, sorting);
+		return crit;
+	}
+
+	/**
+	 * @see org.squashtest.csp.tm.internal.repository.TestCaseDao#countByVerifiedRequirementVersion(long)
+	 */
+	@Override
+	public long countByVerifiedRequirementVersion(final long verifiedId) {
+		return (Long) executeEntityNamedQuery("testCase.countByVerifiedRequirementVersion", new SetQueryParametersCallback() {
+			@Override
+			public void setQueryParameters(Query query) {
+				query.setLong("verifiedId", verifiedId);
+				
+			}
+		});
 	}
 
 }

@@ -24,10 +24,10 @@ package org.squashtest.csp.tm.service;
 import java.util.List;
 
 import org.springframework.transaction.annotation.Transactional;
+import org.squashtest.csp.core.infrastructure.collection.PagedCollectionHolder;
+import org.squashtest.csp.core.infrastructure.collection.PagingAndSorting;
 import org.squashtest.csp.tm.domain.requirement.Requirement;
 import org.squashtest.csp.tm.domain.testcase.TestCase;
-import org.squashtest.csp.tm.infrastructure.filter.CollectionSorting;
-import org.squashtest.csp.tm.infrastructure.filter.FilteredCollectionHolder;
 
 /**
  * @author Gregory Fouquet
@@ -40,11 +40,13 @@ public interface CustomRequirementModificationService {
 
 	void rename(long reqId, String newName);
 
+	/**
+	 * @param requirementId
+	 * @param pagingAndSorting
+	 * @return
+	 */
 	@Transactional(readOnly = true)
-	List<TestCase> findVerifyingTestCasesByRequirementId(long requirementId);
-
-	@Transactional(readOnly = true)
-	FilteredCollectionHolder<List<TestCase>> findVerifyingTestCasesByRequirementId(long requirementId,
-			CollectionSorting filter);
+	PagedCollectionHolder<List<TestCase>> findVerifyingTestCasesByRequirementId(long requirementId,
+			PagingAndSorting pagingAndSorting);
 
 }
