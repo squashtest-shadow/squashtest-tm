@@ -78,7 +78,7 @@ div.toggle-panel input{
 the div stops displaying a useless scrollbar (that thing autoresize with content anyway)*/
 div.toggle-panel  div.ui-accordion-content{
 	padding: 0.7em 0.7em;	
-	overflow : hidden; 
+	overflow : auto; 
 }
 
 div.execute-fragment-body div.toggle-panel  div.ui-accordion-content{

@@ -8,4 +8,8 @@ CKEDITOR.editorConfig = function( config ){
 		['JustifyLeft','JustifyCenter','JustifyRight'],  
 		['TextColor','Font','FontSize'],
 		];  
+	config.height = '10em';
+	config.resize_minHeight = 	175;
+	config.resize_dir = 'vertical';
+	config.removePlugins = 'elementspath';
 }

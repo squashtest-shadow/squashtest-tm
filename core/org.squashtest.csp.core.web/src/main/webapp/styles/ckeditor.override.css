@@ -25,12 +25,8 @@ span.cke_wrapper.cke_ltr {
 	background-color:#DDDDDD;	
 }
 
-td.cke_bottom div.cke_path, td.cke_bottom div.cke_resizer {
-	visibility : hidden;	
-}
 
 td.cke_contents {
-	height:10em !important;	
 	width:100;
 }
 
