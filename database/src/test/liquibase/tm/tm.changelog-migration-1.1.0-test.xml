@@ -132,16 +132,16 @@
 		<preConditions>
 			<sqlCheck expectedResult="0">
 				select count(*)
-				from OLD_REQ or
+				from OLD_REQ old
 				where not exists (
 					select 1  from REQUIREMENT_VERSION rv
 						inner join RESOURCE res on res.RES_ID = rv.RES_ID
-						where rv.REQUIREMENT_ID = or.REQUIREMENT_ID
-						and res.NAME = or.NAME
-						and res.DESCRIPTION = or.DESCRIPTION
-						and rv.CRITICALITY = or.CRITICALITY
-						and (rv.REFERENCE = or.REFERENCE) or (rv.REFERENCE is null and or.REFERENCE is null)
-						and rv.ATTACHMENT_LIST_ID = or.ATT_LIST_ID
+						where rv.REQUIREMENT_ID = old.REQUIREMENT_ID
+						and res.NAME = old.NAME
+						and res.DESCRIPTION = old.DESCRIPTION
+						and rv.CRITICALITY = old.CRITICALITY
+						and (rv.REFERENCE = old.REFERENCE) or (rv.REFERENCE is null and old.REFERENCE is null)
+						and rv.ATTACHMENT_LIST_ID = old.ATT_LIST_ID
 						and rv.REQUIREMENT_STATUS is not null
 						and rv.VERSION_NUMBER = 1
 				);
