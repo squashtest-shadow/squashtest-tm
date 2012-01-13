@@ -20,6 +20,8 @@
  */
 package org.squashtest.csp.tm.web.internal.controller.testcase;
 
+import java.io.IOException;
+import java.io.InputStream;
 import java.util.Arrays;
 
 import javax.inject.Inject;
@@ -44,6 +46,7 @@ import org.squashtest.csp.tm.domain.testcase.TestCaseLibrary;
 import org.squashtest.csp.tm.domain.testcase.TestCaseLibraryNode;
 import org.squashtest.csp.tm.service.LibraryNavigationService;
 import org.squashtest.csp.tm.service.TestCaseLibraryNavigationService;
+import org.squashtest.csp.tm.service.importer.ImportSummary;
 import org.squashtest.csp.tm.web.internal.controller.generic.LibraryNavigationController;
 import org.squashtest.csp.tm.web.internal.model.builder.DriveNodeBuilder;
 import org.squashtest.csp.tm.web.internal.model.builder.TestCaseLibraryTreeNodeBuilder;
@@ -135,10 +138,17 @@ public class TestCaseLibraryNavigationController extends
 	
 	
 	@RequestMapping(value="/import/upload", method = RequestMethod.POST,  params = "upload-ticket")
-	public @ResponseBody String importArchive(@RequestParam("archive") MultipartFile archive, 
-			@RequestParam("projectId") Long projectId, @RequestParam("encoding") String encoding){
-		return "{ \"status\" : \"ok\"}"; 
+	public @ResponseBody ImportSummary importArchive(@RequestParam("archive") MultipartFile archive, 
+			@RequestParam("projectId") Long projectId, @RequestParam("zipEncoding") String encoding) throws IOException{
+		
+		InputStream stream = archive.getInputStream();
+		
+		return testCaseLibraryNavigationService.importExcelTestCase(stream, projectId, encoding);
+		
+		
 	}
+	
+	
 
 }
 

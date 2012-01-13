@@ -36,6 +36,9 @@ import org.squashtest.csp.tm.service.importer.ImportSummary;
 
 @Component
 public class TestCaseImporter {
+	
+	private final static String DEFAULT_ENCODING= "Cp858";
+	public static final String  DEFAULT_ENCODING_KEY = "default";
 
 	@Inject
 	private TestCaseLibraryNavigationService service;
@@ -47,8 +50,11 @@ public class TestCaseImporter {
 	
 	
 	public ImportSummary importExcelTestCases(InputStream archiveStream, Long libraryId, String encoding){
+		
+		String finalEncoding = (encoding.equals(DEFAULT_ENCODING_KEY)) ? DEFAULT_ENCODING : encoding;
 	
-		ArchiveReader reader = factory.createReader(archiveStream, encoding);
+		ArchiveReader reader = factory.createReader(archiveStream, finalEncoding);
+		
 		ImportSummaryImpl summary = new ImportSummaryImpl();
 		
 		/* phase 1 : convert the content of the archive into Squash entities */
@@ -66,6 +72,7 @@ public class TestCaseImporter {
 		/* phase 2 : merge with the actual database content */
 		
 		TestCaseLibrary library = service.findLibrary(libraryId);	
+		
 		
 		TestCaseLibraryMerger merger = new TestCaseLibraryMerger();
 		merger.setLibraryService(service);

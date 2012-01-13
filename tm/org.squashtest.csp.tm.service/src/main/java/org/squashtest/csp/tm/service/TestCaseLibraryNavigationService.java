@@ -20,10 +20,13 @@
  */
 package org.squashtest.csp.tm.service;
 
+import java.io.InputStream;
+
 import org.squashtest.csp.tm.domain.testcase.TestCase;
 import org.squashtest.csp.tm.domain.testcase.TestCaseFolder;
 import org.squashtest.csp.tm.domain.testcase.TestCaseLibrary;
 import org.squashtest.csp.tm.domain.testcase.TestCaseLibraryNode;
+import org.squashtest.csp.tm.service.importer.ImportSummary;
 
 /**
  * Service for navigation in a TestCase library use case.
@@ -41,5 +44,15 @@ LibraryNavigationService<TestCaseLibrary, TestCaseFolder, TestCaseLibraryNode> {
 
 	void addTestCaseToFolder(long folderId, TestCase testCase);
 
+	/**
+	 * Accepts a stream to a .zip file containing regular folders or excel files and nothing else. Will
+	 * convert the test cases from excel to squash.
+	 * 
+	 * @param archiveStream
+	 * @param libraryId the identifier of the library we are importing test cases into.
+	 * @param encoding the encoding
+	 * @return a summary of the operations.
+	 */
+	ImportSummary importExcelTestCase(InputStream archiveStream, long libraryId, String encoding);
 	
 }

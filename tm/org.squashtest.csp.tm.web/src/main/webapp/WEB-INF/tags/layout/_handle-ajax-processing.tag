@@ -23,6 +23,7 @@
 <%@ tag language="java" pageEncoding="ISO-8859-1"%>
 <script type="text/javascript">
 	$(function (){
+		$("#ajax-processing-indicator").hide();
 		$(document).ajaxStart( function(){
 			$("#ajax-processing-indicator").show();
 		})		

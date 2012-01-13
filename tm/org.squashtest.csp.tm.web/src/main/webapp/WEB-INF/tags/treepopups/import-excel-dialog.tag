@@ -90,6 +90,15 @@
 				<form id="import-excel-form" action="${importUrl}" method="POST" enctype="multipart/form-data">
 					<input type="hidden" name="projectId"/>
 					<input type="file" name="archive" size="40" accept="application/zip"/>
+					
+					<!--  todo : make a better layout -->
+					<br/> 
+					<span>selectionner encoding a internationaliser</span>
+					<select name="zipEncoding">
+						<option value="default">defaut à internationaliser</option>
+						<option value="Cp858">Windows</option>
+						<option value="UTF8">UTF-8</option>
+					</select>
 				</form>
 			
 			</div>

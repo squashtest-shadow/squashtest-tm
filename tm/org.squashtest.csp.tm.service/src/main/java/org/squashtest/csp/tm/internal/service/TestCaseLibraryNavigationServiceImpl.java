@@ -20,6 +20,8 @@
  */
 package org.squashtest.csp.tm.internal.service;
 
+import java.io.InputStream;
+
 import javax.inject.Inject;
 
 import org.springframework.beans.factory.annotation.Qualifier;
@@ -37,7 +39,9 @@ import org.squashtest.csp.tm.internal.repository.LibraryNodeDao;
 import org.squashtest.csp.tm.internal.repository.TestCaseDao;
 import org.squashtest.csp.tm.internal.repository.TestCaseFolderDao;
 import org.squashtest.csp.tm.internal.repository.TestCaseLibraryDao;
+import org.squashtest.csp.tm.internal.service.importer.TestCaseImporter;
 import org.squashtest.csp.tm.service.TestCaseLibraryNavigationService;
+import org.squashtest.csp.tm.service.importer.ImportSummary;
 
 @Service("squashtest.tm.service.TestCaseLibraryNavigationService")
 @Transactional
@@ -54,6 +58,11 @@ TestCaseLibraryNavigationService {
 
 	@Inject
 	private TestCaseDao testCaseDao;
+
+	
+	@Inject
+	private TestCaseImporter testCaseImporter;
+
 	
 	@Inject
 	private TestCaseNodeDeletionHandler deletionHandler;
@@ -116,6 +125,14 @@ TestCaseLibraryNavigationService {
 			testCaseDao.persist(testCase);
 		}
 
+	}
+	
+	@Override
+	@PreAuthorize("hasPermission(#libraryId, 'org.squashtest.csp.tm.domain.testcase.TestCaseLibrary', 'WRITE')")
+	public ImportSummary importExcelTestCase(InputStream archiveStream,
+			long libraryId, String encoding) {
+		
+		return testCaseImporter.importExcelTestCases(archiveStream, libraryId, encoding);
 	}
 
 }
