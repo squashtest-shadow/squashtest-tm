@@ -128,7 +128,7 @@
 					"animation" : 0
 				}, 
 				"ui": {
-					select_multiple_modifier: "on"
+					select_multiple_modifier: "ctrl"
 				},				
 				"themes" : {
 					"theme" : "squashtest",
