@@ -1270,6 +1270,12 @@
 				Releases</name>
 			<url>http://repository.springsource.com/maven/bundles/release</url>
 		</pluginRepository>
+		
+		<pluginRepository>
+			<id>squashtest-release</id>
+			<name>SquashTest release repository</name>
+			<url>http://repo.squashtest.org/maven2/releases</url>
+		</pluginRepository>
 
 		<pluginRepository>
 			<id>com.springsource.repository.bundles.milestone</id>
