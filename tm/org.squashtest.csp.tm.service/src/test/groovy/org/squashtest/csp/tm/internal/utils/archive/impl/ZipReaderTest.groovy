@@ -36,7 +36,7 @@ class ZipReaderTest extends Specification{
 			InputStream stream = this.getClass().getClassLoader().getResourceAsStream("binaries/xls.zip");
 		
 		and : 
-			def reader = new ZipReader(stream)
+			def reader = new ZipReader(stream, "UTF8")
 		
 		when :
 			def names = []
@@ -68,7 +68,7 @@ class ZipReaderTest extends Specification{
 			InputStream stream = this.getClass().getClassLoader().getResourceAsStream("binaries/xls.zip");
 		
 		and :
-			def reader = new ZipReader(stream)
+			def reader = new ZipReader(stream, "UTF8")
 			
 		when :
 			def books = [];

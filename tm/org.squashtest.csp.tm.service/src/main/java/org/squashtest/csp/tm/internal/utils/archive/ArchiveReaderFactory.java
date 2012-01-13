@@ -24,6 +24,6 @@ import java.io.InputStream;
 
 public interface ArchiveReaderFactory {
 
-	ArchiveReader createReader(InputStream stream);
+	ArchiveReader createReader(InputStream stream, String encoding);
 	
 }

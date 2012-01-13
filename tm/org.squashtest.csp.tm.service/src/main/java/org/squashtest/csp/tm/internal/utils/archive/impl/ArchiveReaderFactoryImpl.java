@@ -30,8 +30,8 @@ import org.squashtest.csp.tm.internal.utils.archive.ArchiveReaderFactory;
 public class ArchiveReaderFactoryImpl implements ArchiveReaderFactory {
 
 	@Override
-	public ArchiveReader createReader(InputStream stream) {
-		return new ZipReader(stream);
+	public ArchiveReader createReader(InputStream stream, String encoding) {
+		return new ZipReader(stream, encoding);
 	}
 
 }

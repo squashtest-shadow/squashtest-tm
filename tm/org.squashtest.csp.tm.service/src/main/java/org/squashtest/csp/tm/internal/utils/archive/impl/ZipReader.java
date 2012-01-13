@@ -22,9 +22,9 @@ package org.squashtest.csp.tm.internal.utils.archive.impl;
 
 import java.io.IOException;
 import java.io.InputStream;
-import java.util.zip.ZipEntry;
-import java.util.zip.ZipInputStream;
 
+import org.apache.commons.compress.archivers.ArchiveEntry;
+import org.apache.commons.compress.archivers.zip.ZipArchiveInputStream;
 import org.squashtest.csp.tm.internal.utils.archive.ArchiveReader;
 import org.squashtest.csp.tm.internal.utils.archive.Entry;
 
@@ -33,20 +33,29 @@ import org.squashtest.csp.tm.internal.utils.archive.Entry;
  */
 public class ZipReader implements ArchiveReader {
 	
-	private ZipInputStream zipStream;
 	
-	
+	private ZipArchiveInputStream zipStream;
+	private String encoding = "UTF8";
+
 	private ZipReaderEntry currentEntry;
 	private ZipReaderEntry nextEntry;
 	
 	
-	public ZipReader(InputStream stream){
+	public ZipReader(InputStream stream, String encoding){
+		setEncoding(encoding);
 		setStream(stream);
 	}
 	
 	@Override
+	public void setEncoding(String encoding){
+		this.encoding=encoding;
+	}
+	
+
+	//todo : make the encoding configurable one day
+	@Override
 	public void setStream(InputStream stream){
-		zipStream = new ZipInputStream(stream);
+		zipStream = new ZipArchiveInputStream(stream, encoding, false);
 	}
 
 	@Override
@@ -63,18 +72,18 @@ public class ZipReader implements ArchiveReader {
 	
 	private static class ZipReaderEntry implements Entry{
 		
-		private ZipInputStream zipStream;
+		private InputStream zipStream;
 		private String name;
 		private boolean isDirectory;
 		
 		
-		private ZipReaderEntry(ZipInputStream stream, String name, boolean isDirectory){
+		private ZipReaderEntry(InputStream stream, String name, boolean isDirectory){
 			this.zipStream = stream;
 			this.name = stripSuffix(name);
 			this.isDirectory=isDirectory;
 		}
 		
-		private ZipReaderEntry(ZipInputStream stream, ZipEntry entry){
+		private ZipReaderEntry(InputStream stream, ArchiveEntry entry){
 			this(stream, "/"+entry.getName(), entry.isDirectory());
 		}
 
@@ -186,7 +195,7 @@ public class ZipReader implements ArchiveReader {
 	
 	private void readNext(){
 		try{
-			ZipEntry entry = zipStream.getNextEntry();
+			ArchiveEntry entry = zipStream.getNextEntry();
 			if (entry!=null){
 				nextEntry= new ZipReaderEntry(zipStream, entry);
 			}else{

@@ -46,9 +46,9 @@ public class TestCaseImporter {
 	private ExcelTestCaseParser parser = new ExcelTestCaseParserImpl();
 	
 	
-	public ImportSummary importExcelTestCases(InputStream archiveStream, Long libraryId){
+	public ImportSummary importExcelTestCases(InputStream archiveStream, Long libraryId, String encoding){
 	
-		ArchiveReader reader = factory.createReader(archiveStream);
+		ArchiveReader reader = factory.createReader(archiveStream, encoding);
 		ImportSummaryImpl summary = new ImportSummaryImpl();
 		
 		/* phase 1 : convert the content of the archive into Squash entities */

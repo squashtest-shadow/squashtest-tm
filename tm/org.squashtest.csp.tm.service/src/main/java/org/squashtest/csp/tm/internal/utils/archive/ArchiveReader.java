@@ -26,6 +26,7 @@ import java.util.Iterator;
 public interface ArchiveReader extends Iterator<Entry>{
 
 	void setStream(InputStream archiveStream);
+	void setEncoding(String encoding);
 	void close();
 	
 }

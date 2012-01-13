@@ -127,6 +127,7 @@ public class TestCaseLibraryNavigationController extends
 		return mav;
 	}
 
+	
 	@Override
 	protected String getShowLibraryViewName() {
 		return "page/test-case-libraries/show-test-case-library";
@@ -135,7 +136,7 @@ public class TestCaseLibraryNavigationController extends
 	
 	@RequestMapping(value="/import/upload", method = RequestMethod.POST,  params = "upload-ticket")
 	public @ResponseBody String importArchive(@RequestParam("archive") MultipartFile archive, 
-			@RequestParam("projectId") Long projectId){
+			@RequestParam("projectId") Long projectId, @RequestParam("encoding") String encoding){
 		return "{ \"status\" : \"ok\"}"; 
 	}
 

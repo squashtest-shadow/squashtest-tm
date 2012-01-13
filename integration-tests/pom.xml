@@ -397,6 +397,9 @@
 			<artifactId>com.springsource.javax.inject</artifactId>
 		</dependency>
 		<!-- ====== /JSE DI API ====== -->
+		
+		
+		
 	</dependencies>
 
 	<profiles>
