@@ -52,8 +52,8 @@ public class HibernateRequirementDao extends HibernateEntityDao<Requirement> imp
 			VerificationCriterion.values().length);
 
 	static {
-		HIBERNATE_RESTRICTION_BY_VERIFICATION_CRITERION.put(VerificationCriterion.ANY, new Object[] {
-				Resource.class, null }); // yeah, it's a null.
+		HIBERNATE_RESTRICTION_BY_VERIFICATION_CRITERION.put(VerificationCriterion.ANY, new Object[] { Resource.class,
+				null }); // yeah, it's a null.
 		HIBERNATE_RESTRICTION_BY_VERIFICATION_CRITERION.put(VerificationCriterion.SHOULD_BE_VERIFIED, new Object[] {
 				RequirementVersion.class, Restrictions.isNotEmpty("verifyingTestCases") });
 		HIBERNATE_RESTRICTION_BY_VERIFICATION_CRITERION.put(VerificationCriterion.SHOULD_NOT_BE_VERIFIED, new Object[] {
@@ -63,7 +63,7 @@ public class HibernateRequirementDao extends HibernateEntityDao<Requirement> imp
 
 	@Override
 	public List<Requirement> findAllByIdList(final List<Long> requirementsIds) {
-		if (! requirementsIds.isEmpty()){
+		if (!requirementsIds.isEmpty()) {
 			SetQueryParametersCallback setParams = new SetQueryParametersCallback() {
 				@Override
 				public void setQueryParameters(Query query) {
@@ -71,8 +71,10 @@ public class HibernateRequirementDao extends HibernateEntityDao<Requirement> imp
 				}
 			};
 			return executeListNamedQuery("requirement.findAllByIdList", setParams);
-		}else{
+
+		} else {
 			return Collections.emptyList();
+
 		}
 
 	}
@@ -100,6 +102,7 @@ public class HibernateRequirementDao extends HibernateEntityDao<Requirement> imp
 				query.setParameter("nameStart", nameStart + "%");
 			}
 		};
+
 		return executeListNamedQuery("requirement.findNamesInLibraryStartingWith", callBack);
 	}
 
@@ -146,7 +149,7 @@ public class HibernateRequirementDao extends HibernateEntityDao<Requirement> imp
 		}
 	}
 
-	@SuppressWarnings("unchecked")
+	@SuppressWarnings({ "unchecked", "rawtypes" })
 	@Override
 	public List<RequirementLibraryNode> findAllBySearchCriteriaOrderByProject(RequirementSearchCriteria searchCriteria) {
 		DetachedCriteria crit = createCriteria(searchCriteria);
@@ -159,42 +162,43 @@ public class HibernateRequirementDao extends HibernateEntityDao<Requirement> imp
 
 	@Override
 	public List<ExportRequirementData> findRequirementToExportFromFolder(List<Long> params) {
-		if (! params.isEmpty()){
-			
-			List <Object[]> listObject;
+		if (!params.isEmpty()) {
+
+			List<Object[]> listObject;
 			List<Long> listReqNodeId;
 			List<Long> reqIds;
 
-			List<Object> rootReqs = findRootContentRequirement(params); 
+			List<Object> rootReqs = findRootContentRequirement(params);
 			listReqNodeId = findRequirementIds(params);
-			if ( listReqNodeId == null || listReqNodeId.isEmpty()) {
-				return   formatExportResult(addRootContentToExportData(rootReqs, new ArrayList<Object[]>()));
+			if (listReqNodeId == null || listReqNodeId.isEmpty()) {
+				return formatExportResult(addRootContentToExportData(rootReqs, new ArrayList<Object[]>()));
 			}
 			reqIds = findAllRequirementInExportData(listReqNodeId);
 			listObject = findRequirementExportData(reqIds);
-	
-			if (!rootReqs.isEmpty()){
+
+			if (!rootReqs.isEmpty()) {
 				listObject = addRootContentToExportData(rootReqs, listObject);
 			}
-			List<ExportRequirementData> exportList = formatExportResult(listObject);
-			return exportList;
-		}else{
+
+			return formatExportResult(listObject);
+
+		} else {
 			return Collections.emptyList();
+
 		}
 	}
-	
+
 	@SuppressWarnings("unchecked")
 	private List<Long> findRequirementIds(List<Long> params) {
-		if (! params.isEmpty()){
+		if (!params.isEmpty()) {
 			Session session = currentSession();
 			String sql = "select DESCENDANT_ID from RLN_RELATIONSHIP where ANCESTOR_ID in (:list)";
-	
-			
+
 			List<BigInteger> list;
 			List<Long> result = new ArrayList<Long>();
-			result.addAll(params);	//the inputs are also part of the output.
+			result.addAll(params); // the inputs are also part of the output.
 			List<Long> local = params;
-			
+
 			do {
 				Query sqlQuery = session.createSQLQuery(sql);
 				sqlQuery.setParameterList("list", local, new LongType());
@@ -206,93 +210,93 @@ public class HibernateRequirementDao extends HibernateEntityDao<Requirement> imp
 						result.add(bint.longValue());
 					}
 				}
-			}
-			while (!list.isEmpty());
-			if (result.isEmpty()){
+			} while (!list.isEmpty());
+			if (result.isEmpty()) {
 				return null;
 			}
-			return result;		
-		}else{
+			return result;
+
+		} else {
 			return Collections.emptyList();
+
 		}
-		
-		
+
 	}
-	
+
 	private List<Object[]> findRequirementExportData(final List<Long> requirementIds) {
-		if (!requirementIds.isEmpty()){
+		if (!requirementIds.isEmpty()) {
 			SetQueryParametersCallback newCallBack1 = new SetQueryParametersCallback() {
 				@Override
 				public void setQueryParameters(Query query) {
 					query.setParameterList("rIds", requirementIds, new LongType());
 				}
 			};
-			
-			List<Object[]> resultList = executeListNamedQuery("requirement.findRequirementExportData", newCallBack1);
-			return resultList;
-		}else{
+
+			return executeListNamedQuery("requirement.findRequirementExportData", newCallBack1);
+
+		} else {
 			return Collections.emptyList();
 		}
 	}
-	
+
 	private List<Long> findAllRequirementInExportData(final List<Long> requirementIds) {
-		if (!requirementIds.isEmpty()){
+		if (!requirementIds.isEmpty()) {
 			SetQueryParametersCallback newCallBack1 = new SetQueryParametersCallback() {
 				@Override
 				public void setQueryParameters(Query query) {
 					query.setParameterList("rIds", requirementIds, new LongType());
 				}
 			};
-			
+
 			List<Object> resultList = executeListNamedQuery("requirement.findRequirementInExportData", newCallBack1);
-			List<Long> reqIds = new ArrayList<Long>();
+			List<Long> reqIds = new ArrayList<Long>(resultList.size());
+
 			for (Object obj : resultList) {
 				reqIds.add(Long.parseLong(obj.toString()));
 			}
 			return reqIds;
-		}else{
+		} else {
 			return Collections.emptyList();
 		}
 	}
-	
-	private List<ExportRequirementData> formatExportResult(List<Object[]> list){
-		if (!list.isEmpty()){
+
+	private List<ExportRequirementData> formatExportResult(List<Object[]> list) {
+		if (!list.isEmpty()) {
 			List<ExportRequirementData> exportList = new ArrayList<ExportRequirementData>();
-			
-			for (Object[] tuple : list){
+
+			for (Object[] tuple : list) {
 				Requirement req = (Requirement) tuple[0];
 				String folder = (String) tuple[1];
 				ExportRequirementData erd = new ExportRequirementData(req, folder);
 				exportList.add(erd);
 			}
-	
+
 			return exportList;
-		}else{
+		} else {
 			return Collections.emptyList();
 		}
 	}
-	
-	private List<Object> findRootContentRequirement (final List<Long> params){
-		if (! params.isEmpty()){
+
+	private List<Object> findRootContentRequirement(final List<Long> params) {
+		if (!params.isEmpty()) {
 			SetQueryParametersCallback newCallBack1 = new SetQueryParametersCallback() {
 				@Override
 				public void setQueryParameters(Query query) {
 					query.setParameterList("paramIds", params, new LongType());
 				}
 			};
-			List<Object> resultList = executeListNamedQuery("requirement.findRootContentRequirement", newCallBack1);
-			return resultList;
-		}else{
+			return executeListNamedQuery("requirement.findRootContentRequirement", newCallBack1);
+
+		} else {
 			return Collections.emptyList();
+
 		}
 	}
 
-	
 	@Override
-	public List<ExportRequirementData> findRequirementToExportFromLibrary(
-		 final List<Long> libIds) {
-		
-		if (! libIds.isEmpty()){
+	public List<ExportRequirementData> findRequirementToExportFromLibrary(final List<Long> libIds) {
+
+		if (!libIds.isEmpty()) {
 			SetQueryParametersCallback newCallBack1 = new SetQueryParametersCallback() {
 				@Override
 				public void setQueryParameters(Query query) {
@@ -300,22 +304,20 @@ public class HibernateRequirementDao extends HibernateEntityDao<Requirement> imp
 				}
 			};
 			List<Long> result = executeListNamedQuery("requirement.findAllRootContent", newCallBack1);
-			
+
 			return findRequirementToExportFromFolder(result);
-		}else{
+		} else {
 			return Collections.emptyList();
 		}
 	}
-	
 
-	
-	private List <Object[]> addRootContentToExportData(List<Object> rootRequirement, List<Object[]> folderContent){
-		for(Object obj : rootRequirement){
+	private List<Object[]> addRootContentToExportData(List<Object> rootRequirement, List<Object[]> folderContent) {
+		for (Object obj : rootRequirement) {
 			Requirement objReq = (Requirement) obj;
-			Object[] tab = {objReq, objReq.getProject().getName()};
+			Object[] tab = { objReq, objReq.getProject().getName() };
 			folderContent.add(tab);
 		}
 		return folderContent;
 	}
-	
+
 }

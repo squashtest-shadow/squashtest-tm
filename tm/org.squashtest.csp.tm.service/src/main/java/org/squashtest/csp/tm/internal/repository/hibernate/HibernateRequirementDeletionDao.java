@@ -21,11 +21,8 @@
 package org.squashtest.csp.tm.internal.repository.hibernate;
 
 import java.util.Collections;
-import java.util.LinkedList;
 import java.util.List;
 
-import org.apache.commons.collections.CollectionUtils;
-import org.apache.commons.collections.Transformer;
 import org.hibernate.Query;
 import org.hibernate.type.LongType;
 import org.springframework.stereotype.Repository;
@@ -56,6 +53,7 @@ public class HibernateRequirementDeletionDao extends HibernateDeletionDao
 		}
 	}
 
+	@SuppressWarnings("unchecked")
 	@Override
 	public List<Long> findRequirementAttachmentListIds(List<Long> requirementIds) {
 		if (! requirementIds.isEmpty()){
@@ -93,18 +91,4 @@ public class HibernateRequirementDeletionDao extends HibernateDeletionDao
 		
 	}
 	
-	
-	@SuppressWarnings("unchecked")
-	private List<Long> collectIds(List<RequirementAuditEvent> events){
-		return new LinkedList<Long>(CollectionUtils.collect(events, new Transformer() {
-			
-			@Override
-			public Object transform(Object input) {
-				return ((RequirementAuditEvent)input).getId();
-			}
-		}));
-	}
-	
-
-
 }

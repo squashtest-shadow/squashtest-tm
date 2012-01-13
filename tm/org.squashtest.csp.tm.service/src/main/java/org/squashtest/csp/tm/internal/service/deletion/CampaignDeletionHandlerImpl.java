@@ -114,20 +114,6 @@ public class CampaignDeletionHandlerImpl extends
 		
 	}
 	
-	private List<Long> detectLockedIterations(List<Long> candidateIterationIds){
-		
-		//TODO : implement the specs when they are ready. Default is "no lock detected".
-		return Collections.emptyList();
-	}
-	
-	private List<Long> detectLockedExecutions(List<Long> candidateExecutionIds){
-		
-		//TODO : implement the specs when they are ready. Default is "no lock detected".
-		return Collections.emptyList();		
-	}
-	
-	
-	
 	/* *********************************************************************************
 	 * 								deletion section
 	 * 
@@ -139,8 +125,6 @@ public class CampaignDeletionHandlerImpl extends
 	 * 		- improve code efficiency.  
 	 *  
 	 *  ****************************************************************************** */
-
-
 
 	@Override
 	/*
@@ -158,7 +142,7 @@ public class CampaignDeletionHandlerImpl extends
 		}
 		
 		
-		_deleteCampaignContent(campaigns);
+		deleteCampaignContent(campaigns);
 		
 		/*
 		 * a flush is needed at this point  because all operations above where performed by Hibernate,
@@ -191,7 +175,7 @@ public class CampaignDeletionHandlerImpl extends
 			iteration.getCampaign().removeIteration(iteration);
 		}
 		
-		_deleteIterations(iterations);
+		doDeleteIterations(iterations);
 		
 		return targetIds;
 		
@@ -227,13 +211,13 @@ public class CampaignDeletionHandlerImpl extends
 	 * 
 	 */	
 	
-	private void _deleteCampaignContent(List<Campaign> campaigns){
+	private void deleteCampaignContent(List<Campaign> campaigns){
 		
 		for (Campaign campaign : campaigns){
-			_deleteCampaignTestPlan(campaign.getTestPlan());
+			deleteCampaignTestPlan(campaign.getTestPlan());
 			campaign.getTestPlan().clear();
 			
-			_deleteIterations(campaign.getIterations());
+			doDeleteIterations(campaign.getIterations());
 			campaign.getIterations().clear();
 			
 		}
@@ -241,7 +225,7 @@ public class CampaignDeletionHandlerImpl extends
 	}
 	
 	
-	private void _deleteCampaignTestPlan(List<CampaignTestPlanItem> itemList){
+	private void deleteCampaignTestPlan(List<CampaignTestPlanItem> itemList){
 		for (CampaignTestPlanItem item : itemList){
 			deletionDao.removeEntity(item);
 		}
@@ -257,9 +241,9 @@ public class CampaignDeletionHandlerImpl extends
 	 *  - remove itself from repository.
 	 */	
 	
-	private void _deleteIterations(List<Iteration> iterations){
+	private void doDeleteIterations(List<Iteration> iterations){
 		for (Iteration iteration : iterations){
-			_deleteIterationTestPlan(iteration.getTestPlans());			
+			deleteIterationTestPlan(iteration.getTestPlans());			
 			deletionDao.removeAttachmentList(iteration.getAttachmentList());
 			//iteration.getCampaign().removeIteration(iteration);
 			deletionDao.removeEntity(iteration);
@@ -273,9 +257,9 @@ public class CampaignDeletionHandlerImpl extends
 	 *  - remove itself.
 	 * 
 	 */
-	private void _deleteIterationTestPlan(List<IterationTestPlanItem> testPlans){
+	private void deleteIterationTestPlan(List<IterationTestPlanItem> testPlans){
 		for (IterationTestPlanItem testPlan : testPlans){
-			_deleteExecutions(testPlan.getExecutions());
+			deleteExecutions(testPlan.getExecutions());
 			deletionDao.removeEntity(testPlan);
 		}	
 	}
@@ -287,7 +271,7 @@ public class CampaignDeletionHandlerImpl extends
 	/*
 	 *  
 	 */
-	public void _deleteExecutions(List<Execution> executions){
+	public void deleteExecutions(List<Execution> executions){
 		for (Execution execution : executions ){
 			deleteIssues(execution);
 			

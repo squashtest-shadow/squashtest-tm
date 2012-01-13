@@ -194,6 +194,7 @@ public abstract class AbstractLibraryNavigationService<LIBRARY extends Library<N
 		return getFolderDao().findAllContentById(folderId);
 	}
 
+	@SuppressWarnings("unchecked")
 	@Override
 	public final LIBRARY findLibrary(long libraryId) {
 		// fetch
@@ -204,6 +205,7 @@ public abstract class AbstractLibraryNavigationService<LIBRARY extends Library<N
 		return library;
 	}
 
+	@SuppressWarnings("unchecked")
 	@Override
 	public final FOLDER findFolder(long folderId) {
 		// fetch
@@ -300,6 +302,7 @@ public abstract class AbstractLibraryNavigationService<LIBRARY extends Library<N
 		}
 	}
 
+	@SuppressWarnings("unchecked")
 	@Override
 	public void modeNodesToFolder(long destinationId, Long[] targetIds) {
 
@@ -331,6 +334,7 @@ public abstract class AbstractLibraryNavigationService<LIBRARY extends Library<N
 
 	}
 
+	@SuppressWarnings("unchecked")
 	@Override
 	public void moveNodesToLibrary(long destinationId, Long[] targetIds) {
 
@@ -362,6 +366,7 @@ public abstract class AbstractLibraryNavigationService<LIBRARY extends Library<N
 		addNodesToLibrary(destinationLibrary, targetIds);
 	}
 
+	@SuppressWarnings("unchecked")
 	private void removeNodesFromTheirParents(Map<NODE, Object> nodesAndTheirParents) {
 		for (Entry<NODE, Object> nodeAndItsParent : nodesAndTheirParents.entrySet()) {
 			NODE node = nodeAndItsParent.getKey();
@@ -426,6 +431,7 @@ public abstract class AbstractLibraryNavigationService<LIBRARY extends Library<N
 		return getDeletionHandler().simulateDeletion(targetIds);
 	}
 
+	@SuppressWarnings("unchecked")
 	@Override
 	public List<Long> deleteNodes(List<Long> targetIds) {
 
@@ -440,47 +446,6 @@ public abstract class AbstractLibraryNavigationService<LIBRARY extends Library<N
 	}
 
 	/* ************************* private stuffs ************************* */
-
-	/* **** manual security checks **** */
-
-	/* that class is just a wrapper that associate an id, a kind of node, and a permission. */
-	private class SecurityCheckableItem {
-		private static final String FOLDER = "folder";
-		private static final String LIBRARY = "library";
-
-		private final long domainObjectId;
-		private String domainObjectKind; // which should be one of the two above
-		private final String permission;
-
-		public SecurityCheckableItem(long domainObjectId, String domainObjectKind, String permission) {
-			super();
-			this.domainObjectId = domainObjectId;
-			setKind(domainObjectKind);
-			this.domainObjectKind = domainObjectKind;
-			this.permission = permission;
-		}
-
-		private void setKind(String kind) {
-			if (!(kind.equals(SecurityCheckableItem.FOLDER)) || kind.equals(SecurityCheckableItem.LIBRARY)) {
-				throw new RuntimeException(
-						"(dev note : AbstracLibraryNavigationService : manual security checks aren't correctly configured");
-			}
-			domainObjectKind = kind;
-		}
-
-		public long getId() {
-			return domainObjectId;
-		}
-
-		public String getKind() {
-			return domainObjectKind;
-		}
-
-		public String getPermission() {
-			return permission;
-		}
-
-	}
 
 	/* **that class just performs the same, using a domainObject directly */
 	private class SecurityCheckableObject {
@@ -500,31 +465,6 @@ public abstract class AbstractLibraryNavigationService<LIBRARY extends Library<N
 			return domainObject;
 		}
 
-	}
-
-	/*
-	 * given a list of SecurityCheckableItem, that method will throw an AccessDeniedException if at least one of them
-	 * doesn't pass the security check. It's basically a logical AND between all the required conditions.
-	 * 
-	 * In case of success the method returns nothing and the calling method can proceed normally, if it fails an
-	 * exception is raised and will join the natural workflow of an AccessDeniedException.
-	 */
-	private void checkPermission(SecurityCheckableItem... securityCheckableItems) throws AccessDeniedException {
-
-		for (SecurityCheckableItem item : securityCheckableItems) {
-
-			Object domainObject;
-
-			if (item.getKind().equals(SecurityCheckableItem.FOLDER)) {
-				domainObject = getFolderDao().findById(item.getId());
-			} else {
-				domainObject = getLibraryDao().findById(item.getId());
-			}
-
-			if (!permissionService.hasRoleOrPermissionOnObject("ROLE_ADMIN", item.getPermission(), domainObject)) {
-				throw new AccessDeniedException("Access is denied");
-			}
-		}
 	}
 
 	private void checkPermission(SecurityCheckableObject... checkableObjects) {

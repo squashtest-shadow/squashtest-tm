@@ -26,7 +26,7 @@ package org.squashtest.csp.tm.web.internal.model.datatable;
  * @author Gregory Fouquet
  *
  */
-// NOSONAR
+// NOSONAR names have to match JSON structure  
 public class DataTableDrawParameters {
 	private int iDisplayStart;
 	private int iDisplayLength;
@@ -36,11 +36,11 @@ public class DataTableDrawParameters {
 
 
 
-	public int getiDisplayStart() {
+	public int getiDisplayStart() { // NOSONAR names have to match JSON structure
 		return iDisplayStart;
 	}
 
-	public void setiDisplayStart(int iDisplayStart) {
+	public void setiDisplayStart(int iDisplayStart) { // NOSONAR names have to match JSON structure
 		this.iDisplayStart = iDisplayStart;
 	}
 
@@ -48,31 +48,31 @@ public class DataTableDrawParameters {
 		return iDisplayLength;
 	}
 
-	public void setiDisplayLength(int iDisplayLength) {
+	public void setiDisplayLength(int iDisplayLength) { // NOSONAR names have to match JSON structure
 		this.iDisplayLength = iDisplayLength;
 	}
 
-	public String getsEcho() {
+	public String getsEcho() { // NOSONAR names have to match JSON structure
 		return sEcho;
 	}
 
-	public void setsEcho(String sEcho) {
+	public void setsEcho(String sEcho) { // NOSONAR names have to match JSON structure
 		this.sEcho = sEcho;
 	}
 
-	public int getiSortCol_0() {
+	public int getiSortCol_0() { // NOSONAR names have to match JSON structure
 		return iSortCol_0;
 	}
 
-	public void setiSortCol_0(int iSortCol_0) {
+	public void setiSortCol_0(int iSortCol_0) { // NOSONAR names have to match JSON structure
 		this.iSortCol_0 = iSortCol_0;
 	}
 
-	public String getsSortDir_0() {
+	public String getsSortDir_0() { // NOSONAR names have to match JSON structure
 		return sSortDir_0;
 	}
 
-	public void setsSortDir_0(String sSortDir_0) {
+	public void setsSortDir_0(String sSortDir_0) { // NOSONAR names have to match JSON structure
 		this.sSortDir_0 = sSortDir_0;
 	}
 }

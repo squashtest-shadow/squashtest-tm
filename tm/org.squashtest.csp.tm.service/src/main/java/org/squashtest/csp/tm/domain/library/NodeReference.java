@@ -25,15 +25,14 @@ package org.squashtest.csp.tm.domain.library;
  * 
  * 
  * @author bsiri
- *
+ * 
  */
 public class NodeReference {
-	
+
 	private Long id;
 	private String name;
 	private boolean directory;
-	
-	
+
 	public Long getId() {
 		return id;
 	}
@@ -41,8 +40,8 @@ public class NodeReference {
 	public String getName() {
 		return name;
 	}
-	
-	public boolean isDirectory(){
+
+	public boolean isDirectory() {
 		return directory;
 	}
 
@@ -52,14 +51,13 @@ public class NodeReference {
 		this.name = name;
 		this.directory = isDirectory;
 	}
-	
-	
+
 	/**
 	 * this one accepts an object array formatted as { Long, String, Boolean }
 	 * 
 	 * @param rawData
 	 */
-	public NodeReference(Object[] rawData){
+	public NodeReference(Object[] rawData) {
 		super();
 		this.id = (Long) rawData[0];
 		this.name = (String) rawData[1];
@@ -67,7 +65,7 @@ public class NodeReference {
 	}
 
 	@Override
-	public int hashCode() {
+	public int hashCode() { // NOSONAR generated code
 		final int prime = 31;
 		int result = 1;
 		result = prime * result + (directory ? 1231 : 1237);
@@ -77,7 +75,7 @@ public class NodeReference {
 	}
 
 	@Override
-	public boolean equals(Object obj) {
+	public boolean equals(Object obj) { // NOSONAR generated code
 		if (this == obj)
 			return true;
 		if (obj == null)
@@ -100,8 +98,4 @@ public class NodeReference {
 		return true;
 	}
 
-
-	
-
-	
 }
