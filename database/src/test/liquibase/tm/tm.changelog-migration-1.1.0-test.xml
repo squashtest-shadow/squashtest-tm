@@ -158,7 +158,7 @@
 				inner join REQUIREMENT_LIBRARY_NODE n on n.RLN_ID = r.RLN_ID
 				where not exists (
 					select 1  from REQUIREMENT_VERSION rv
-						where rv.RES_ID = r.LATEST_VERSION_ID
+						where rv.RES_ID = r.CURRENT_VERSION_ID
 						and rv.REQUIREMENT_ID = r.RLN_ID
 				)
 				and DELETED_ON is null;

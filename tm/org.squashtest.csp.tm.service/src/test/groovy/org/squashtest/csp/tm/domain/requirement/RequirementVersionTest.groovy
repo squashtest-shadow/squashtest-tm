@@ -352,7 +352,7 @@ class RequirementVersionTest extends Specification {
 		then:
 		copy.name == source.name
 		copy.description == source.description
-		copy.status == RequirementStatus.WORK_IN_PROGRESS
+		copy.status == source.status
 		copy.reference == source.reference
 		copy.criticality == source.criticality
 		copy.requirement == null
@@ -363,5 +363,46 @@ class RequirementVersionTest extends Specification {
 
 		copy.attachmentList.allAttachments.size() == 1
 		!copy.attachmentList.allAttachments.contains(attachment)
+	}
+	
+	def "should create next version"() {
+		given:
+		RequirementVersion previousVersion = new RequirementVersion()
+		previousVersion.name = "source name"
+		previousVersion.description = "source description"
+		previousVersion.reference = "source reference"
+		previousVersion.versionNumber = 10
+		use (ReflectionCategory) {
+			// reflection on fields to override workflow
+			RequirementVersion.set field: "status", of: previousVersion, to: RequirementStatus.APPROVED 
+			RequirementVersion.set field: "criticality", of: previousVersion, to: RequirementCriticality.MAJOR 
+		}
+
+		Requirement   req = new Requirement(previousVersion)
+
+		and:
+		TestCase verifying = new TestCase()
+		previousVersion.addVerifyingTestCase verifying
+
+		and:
+		Attachment attachment = new Attachment()
+		previousVersion.attachmentList.addAttachment attachment
+		
+		when:
+		RequirementVersion nextVersion = previousVersion.createNextVersion()
+
+		then:
+		nextVersion.name == previousVersion.name
+		nextVersion.description == previousVersion.description
+		nextVersion.status == RequirementStatus.WORK_IN_PROGRESS
+		nextVersion.reference == previousVersion.reference
+		nextVersion.criticality == previousVersion.criticality
+		nextVersion.requirement == null
+		nextVersion.versionNumber == previousVersion.versionNumber + 1
+
+		nextVersion.verifyingTestCases.size() == 0
+
+		nextVersion.attachmentList.allAttachments.size() == 1
+		!nextVersion.attachmentList.allAttachments.contains(attachment)
 	}
 }

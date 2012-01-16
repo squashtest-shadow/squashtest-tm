@@ -271,4 +271,12 @@ class RequirementTest extends Specification {
 		copy.versions.size() == 2
 		copy.versions.collect({ it.name }).containsAll(["ver", "old"])
 	}
+	
+	def "should increase the current version"() {
+		given: 
+		when:
+		null
+		then:
+		false
+	}
 }

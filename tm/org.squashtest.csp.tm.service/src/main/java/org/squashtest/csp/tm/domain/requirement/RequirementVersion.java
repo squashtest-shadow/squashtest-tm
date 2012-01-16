@@ -62,7 +62,7 @@ public class RequirementVersion extends Resource implements AttachmentHolder {
 	private final Set<TestCase> verifyingTestCases = new HashSet<TestCase>();
 
 	/***
-	 * The requirement reference
+	 * The requirement reference. It should usually be set by the Requirement.
 	 */
 	private String reference;
 
@@ -240,11 +240,8 @@ public class RequirementVersion extends Resource implements AttachmentHolder {
 	}
 
 	/* package-private */RequirementVersion createPastableCopy() {
-		RequirementVersion copy = new RequirementVersion();
-		copy.setName(this.getName());
-		copy.setDescription(this.getDescription());
-		copy.criticality = this.criticality;
-		copy.reference = this.reference;
+		RequirementVersion copy = createBaselineCopy();
+		copy.status = this.status;
 		copy.versionNumber = this.versionNumber;
 		copy.requirement = null;
 
@@ -252,14 +249,43 @@ public class RequirementVersion extends Resource implements AttachmentHolder {
 			copy.addVerifyingTestCase(verifying);
 		}
 
+		attachCopiesOfAttachmentsTo(copy);
+
+		return copy;
+	}
+
+	private void attachCopiesOfAttachmentsTo(RequirementVersion copy) {
 		for (Attachment attachment : this.attachmentList.getAllAttachments()) {
 			copy.attachmentList.addAttachment(attachment.hardCopy());
 		}
+	}
 
+	private RequirementVersion createBaselineCopy() {
+		RequirementVersion copy = new RequirementVersion();
+		copy.setName(this.getName());
+		copy.setDescription(this.getDescription());
+		copy.criticality = this.criticality;
+		copy.reference = this.reference;
 		return copy;
 	}
 
 	public boolean isNotObsolete() {
 		return !RequirementStatus.OBSOLETE.equals(status);
+	}
+
+	/**
+	 * Creates a {@link RequirementVersion} to be used as the one right after this RequirementVersion.
+	 * 
+	 * @return
+	 */
+	/* package-private */RequirementVersion createNextVersion() {
+		RequirementVersion nextVersion = createBaselineCopy();
+		nextVersion.status = RequirementStatus.WORK_IN_PROGRESS;
+		nextVersion.versionNumber = this.versionNumber + 1;
+		nextVersion.requirement = null;
+		
+		attachCopiesOfAttachmentsTo(nextVersion);
+		
+		return nextVersion;
 	}
 }

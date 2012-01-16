@@ -52,7 +52,7 @@ public class Requirement extends RequirementLibraryNode<RequirementVersion> impl
 	 * The resource of this requirement is the latest version of the requirement.
 	 */
 	@OneToOne(cascade = { CascadeType.ALL })
-	@JoinColumn(name = "LATEST_VERSION_ID")
+	@JoinColumn(name = "CURRENT_VERSION_ID")
 	private RequirementVersion resource;
 	
 	@OneToMany(mappedBy = "requirement", cascade = { CascadeType.ALL })
@@ -121,7 +121,7 @@ public class Requirement extends RequirementLibraryNode<RequirementVersion> impl
 	 */
 	@Override
 	public Requirement createPastableCopy() {
-		RequirementVersion latestVersionCopy = getLatestVersion().createPastableCopy();
+		RequirementVersion latestVersionCopy = getCurrentVersion().createPastableCopy();
 		Requirement copy = new Requirement(latestVersionCopy);
 		
 		for (RequirementVersion sourceVersion : this.versions) {
@@ -136,7 +136,7 @@ public class Requirement extends RequirementLibraryNode<RequirementVersion> impl
 	}
 
 	private boolean isNotLatestVersion(RequirementVersion sourceVersion) {
-		return !getLatestVersion().equals(sourceVersion);
+		return !getCurrentVersion().equals(sourceVersion);
 	}
 
 	/***
@@ -192,7 +192,7 @@ public class Requirement extends RequirementLibraryNode<RequirementVersion> impl
 		return resource.getDescription();
 	}
 
-	public RequirementVersion getLatestVersion() {
+	public RequirementVersion getCurrentVersion() {
 		return resource;
 	}
 

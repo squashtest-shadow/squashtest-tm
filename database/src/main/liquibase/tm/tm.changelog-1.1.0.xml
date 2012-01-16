@@ -203,14 +203,14 @@
 		<comment>Adds the 'latest version' relationship between REQUIREMENT and REQUIREMENT_VERSION tables</comment>
 
 		<addColumn tableName="REQUIREMENT">
-			<column name="LATEST_VERSION_ID" type="BIGINT(20)" remarks="FK to REQUIREMENT_VERSION linking to the requirement's latest version. Should not be null but the column is nullable because of cyclic relationship between the tables.">
+			<column name="CURRENT_VERSION_ID" type="BIGINT(20)" remarks="FK to REQUIREMENT_VERSION linking to the requirement's latest version. Should not be null but the column is nullable because of cyclic relationship between the tables.">
 				<constraints foreignKeyName="fk_requirement_latest_version" references="REQUIREMENT_VERSION(RES_ID)" nullable="true" />					
 			</column>
 		</addColumn>
 		
 		<sql>
 			update REQUIREMENT r
-			set LATEST_VERSION_ID = (
+			set CURRENT_VERSION_ID = (
 				select RES_ID 
 				from REQUIREMENT_VERSION rv 
 				where rv.REQUIREMENT_ID = r.RLN_ID

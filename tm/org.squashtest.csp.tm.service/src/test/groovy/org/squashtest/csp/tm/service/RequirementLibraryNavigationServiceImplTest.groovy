@@ -112,8 +112,8 @@ class RequirementLibraryNavigationServiceImplTest extends Specification {
 		def res = service.addRequirementToRequirementLibrary(1, req)
 
 		then :
-		1 * lib.addRootContent({ req.sameAs it.latestVersion })
-		1 * requirementDao.persist ({ req.sameAs it.latestVersion })
+		1 * lib.addRootContent({ req.sameAs it.currentVersion })
+		1 * requirementDao.persist ({ req.sameAs it.currentVersion })
 		req.sameAs res
 	}
 
@@ -132,8 +132,8 @@ class RequirementLibraryNavigationServiceImplTest extends Specification {
 		def res = service.addRequirementToRequirementFolder(1, req)
 
 		then :
-		1 * folder.addContent({ req.sameAs it.latestVersion })
-		1 * requirementDao.persist ({ req.sameAs it.latestVersion })
+		1 * folder.addContent({ req.sameAs it.currentVersion })
+		1 * requirementDao.persist ({ req.sameAs it.currentVersion })
 		req.sameAs res
 	}
 

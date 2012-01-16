@@ -26,7 +26,7 @@
   <resource res_id="101" name="requirement foo 101" created_on="2012-01-02" created_by="dbu"/>
   <requirement_version attachment_list_id="101" res_id="101" reference="before token after"/>
   <requirement_library_node created_by="dbu" rln_id="101" created_on="2010-02-01"/>
-  <requirement rln_id="101" latest_version_id="101"/>
+  <requirement rln_id="101" current_version_id="101"/>
   
   <ATTACHMENT_LIST ATTACHMENT_LIST_id="102"/>
   <test_case_library_node created_by="dbu" tcln_id="102" created_on="2011-01-01" name="tc 102"/>
@@ -42,7 +42,7 @@
   <resource res_id="201" name="requirement 201" created_on="2012-01-02" created_by="dbu"/>
   <requirement_version attachment_list_id="201" res_id="201" reference="before token after"/>
   <requirement_library_node created_by="dbu" rln_id="201" created_on="2010-02-01"/>
-  <requirement rln_id="201" latest_version_id="201"/>
+  <requirement rln_id="201" current_version_id="201"/>
   
   <ATTACHMENT_LIST ATTACHMENT_LIST_id="202"/>
   <test_case_library_node created_by="dbu" tcln_id="202" created_on="2011-01-01" name="tc 202"/>

@@ -26,7 +26,7 @@
   <resource res_id="10" name="" created_on="2012-01-02" created_by="dbu"/>
   <requirement_version attachment_list_id="10" res_id="10"/>
   <requirement_library_node created_by="dbu" rln_id="10" created_on="2010-02-01"/>
-  <requirement rln_id="10" latest_version_id="10"/>
+  <requirement rln_id="10" current_version_id="10"/>
 
   <ATTACHMENT_LIST ATTACHMENT_LIST_id="100"/>
   <test_case_library_node created_by="dbu" tcln_id="10" created_on="2010-02-01" name=""/>
@@ -37,5 +37,5 @@
   <resource res_id="20" name="" created_on="2012-01-02" created_by="dbu"/>
   <requirement_version attachment_list_id="20" res_id="20"/>
   <requirement_library_node created_by="dbu" rln_id="20" created_on="2010-02-01"/>
-  <requirement rln_id="20" latest_version_id="20"/>
+  <requirement rln_id="20" current_version_id="20"/>
 </dataset>

@@ -37,7 +37,7 @@
   <resource res_id="10" name="1req" created_on="2012-01-02" created_by="dbu"/>
   <requirement_version attachment_list_id="10" res_id="10"/>
   <requirement_library_node created_by="dbu" rln_id="10" created_on="2010-02-01" project_id="50"/>
-  <requirement rln_id="10" latest_version_id="10"/>
+  <requirement rln_id="10" current_version_id="10"/>
 
   <requirement_library_node created_by="dbu" rln_id="100" created_on="2010-02-01" project_id="50"/>
   
@@ -48,12 +48,12 @@
   <resource created_by="dbu" created_on="2012-01-02" res_id="100" name="subfolder"/>
   <simple_resource res_id="100"/>
   <requirement_folder rln_id="100" res_id="100"/>
-  <requirement rln_id="200" latest_version_id="200"/>
+  <requirement rln_id="200" current_version_id="200"/>
 
   <resource res_id="250" name="req3" created_on="2012-01-02" created_by="dbu"/>
   <requirement_version attachment_list_id="11" res_id="250"/>
   <requirement_library_node created_by="dbu" rln_id="250" created_on="2010-02-01" project_id="50"/>
-  <requirement rln_id="250" latest_version_id="250"/>
+  <requirement rln_id="250" current_version_id="250"/>
 
   <rln_relationship descendant_id="10" ancestor_id="1"/>
   <rln_relationship descendant_id="100" ancestor_id="1"/>

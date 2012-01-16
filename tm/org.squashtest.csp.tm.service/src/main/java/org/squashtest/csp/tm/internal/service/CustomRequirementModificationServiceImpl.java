@@ -75,9 +75,9 @@ CustomRequirementModificationService {
 	public PagedCollectionHolder<List<TestCase>> findVerifyingTestCasesByRequirementId(
 			long requirementId, PagingAndSorting pagingAndSorting) {
 		Requirement req = requirementDao.findById(requirementId);
-		List<TestCase> verifiers = testCaseDao.findAllByVerifiedRequirementVersion(req.getLatestVersion().getId(), pagingAndSorting);
+		List<TestCase> verifiers = testCaseDao.findAllByVerifiedRequirementVersion(req.getCurrentVersion().getId(), pagingAndSorting);
 		
-		long verifiersCount = testCaseDao.countByVerifiedRequirementVersion(req.getLatestVersion().getId());
+		long verifiersCount = testCaseDao.countByVerifiedRequirementVersion(req.getCurrentVersion().getId());
 		
 		return new PagingBackedPagedCollectionHolder<List<TestCase>>(pagingAndSorting, verifiersCount, verifiers);
 	}
