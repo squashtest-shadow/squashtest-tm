@@ -1333,9 +1333,6 @@
 					<exists>${basedir}\.project</exists>
 				</file>
 			</activation>
-			<modules>
-				<module>provision</module>
-			</modules>
 		</profile>
 	</profiles>
 

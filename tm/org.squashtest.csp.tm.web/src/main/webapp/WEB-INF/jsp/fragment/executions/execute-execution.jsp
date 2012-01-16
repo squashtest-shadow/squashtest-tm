@@ -101,13 +101,28 @@
 	
 		<script type="text/javascript">
 		
+			window.onunload = test;
+		
+			function test(){
+				closePopupAndRefreshParent();
+			}
+			
+			function closePopupAndRefreshParent(){
+				window.opener.location.href = window.opener.location.href;
+				if (window.opener.progressWindow)
+				{
+					window.opener.progressWindow.close();
+				}
+				window.close();
+			}
+		
 			function refreshExecStepInfos(){
 				$("#execution-information-fragment").load("${executeThis}/general");
 			}
 		
 			function testComplete(){
 				alert( "${ completedMessage }" );
-				window.close();
+				closePopupAndRefreshParent();
 			}
 		
 			function navigateNext(){
@@ -181,7 +196,7 @@
 					} 
 				})
 				.click(function(){
-					window.close();
+					closePopupAndRefreshParent();
 				});
 				
 			}
