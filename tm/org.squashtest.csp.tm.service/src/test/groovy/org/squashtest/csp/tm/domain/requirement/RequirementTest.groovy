@@ -243,6 +243,7 @@ class RequirementTest extends Specification {
 		
 		copy.versions.size() == 1
 		copy.versions.contains(copy.resource)
+		copy.versions*.requirement == [copy]
 	}
 
 	def "'pastable' copy should not have obsolete versions"() {
@@ -269,14 +270,22 @@ class RequirementTest extends Specification {
 		copy.resource != ver
 				
 		copy.versions.size() == 2
-		copy.versions.collect({ it.name }).containsAll(["ver", "old"])
+		copy.versions*.name.containsAll(["ver", "old"])
+		copy.versions*.requirement == [copy, copy]
 	}
 	
 	def "should increase the current version"() {
-		given: 
+		given:
+		RequirementVersion ver = new RequirementVersion(name: "ver")
+		Requirement req = new Requirement(ver);
+
 		when:
-		null
+		req.increaseVersion();
+
 		then:
-		false
+		req.currentVersion != ver
+		req.currentVersion.requirement == req
+		req.versions.size() == 2
+		req.versions[1] == ver
 	}
 }

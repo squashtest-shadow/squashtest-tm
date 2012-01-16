@@ -76,7 +76,7 @@ public class Requirement extends RequirementLibraryNode<RequirementVersion> impl
 
 	private void addVersion(RequirementVersion version) {
 		versions.add(version);
-		resource.setRequirement(this);
+		version.setRequirement(this);
 	}
 
 	@Override
@@ -199,5 +199,13 @@ public class Requirement extends RequirementLibraryNode<RequirementVersion> impl
 	@Override
 	public RequirementVersion getResource() {
 		return resource;
+	}
+	
+	public void increaseVersion() {
+		RequirementVersion previous = resource;
+		RequirementVersion next = previous.createNextVersion();
+		resource = next;
+		versions.add(0, next);
+		next.setRequirement(this);
 	}
 }
