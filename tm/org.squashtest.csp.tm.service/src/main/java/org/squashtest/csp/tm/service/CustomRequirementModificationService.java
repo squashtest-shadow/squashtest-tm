@@ -49,4 +49,11 @@ public interface CustomRequirementModificationService {
 	PagedCollectionHolder<List<TestCase>> findVerifyingTestCasesByRequirementId(long requirementId,
 			PagingAndSorting pagingAndSorting);
 
+	/**
+	 * Increase the current version of the given requirement.
+	 * 
+	 * @param requirementId
+	 */
+	void createNewVersion(long requirementId);
+
 }

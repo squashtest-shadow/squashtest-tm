@@ -28,7 +28,6 @@ import org.squashtest.csp.tm.domain.requirement.RequirementStatus;
 
 @Transactional
 public interface RequirementModificationService extends CustomRequirementModificationService {
-
 	@PreAuthorize("hasPermission(#arg0, 'org.squashtest.csp.tm.domain.requirement.Requirement','WRITE') or hasRole('ROLE_ADMIN')")		
 	void changeDescription(long requirementId, String newDescription);
 

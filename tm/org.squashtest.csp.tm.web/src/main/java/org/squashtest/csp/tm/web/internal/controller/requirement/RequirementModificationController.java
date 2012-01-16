@@ -129,10 +129,8 @@ public class RequirementModificationController {
 
 		requirementModService.rename(requirementId, newName);
 		LOGGER.info("RequirementModificationController : renaming " + requirementId + " as " + newName);
-		final String reNewName = newName;
 		return new Object() {
-			public String newName = reNewName; // NOSONAR : "Unread field" is actually used by json marshaller
-		}; 
+		};
 
 	}
 
@@ -226,6 +224,12 @@ public class RequirementModificationController {
 		return HtmlUtils.htmlEscape(requirementReference);
 	}
 
+	@RequestMapping(value = "new-version", method = RequestMethod.POST)
+	@ResponseBody
+	public void createNewVersion(long requirementId) {
+		requirementModService.createNewVersion(requirementId);
+	}
+
 	/***
 	 * Method which returns the criticality select options in the chosen language. The output is formatted in json and
 	 * meant to be used for a select input. That list is sorted according to the RequirementCriticality level. @param
@@ -243,8 +247,7 @@ public class RequirementModificationController {
 		}
 
 		// we don't want to use the attribute 'selected' here because it induces wrong behaviors under FF or IE when
-		// editing the same
-		// combobox multiple times.
+		// editing the same combobox multiple times.
 
 		return map;
 

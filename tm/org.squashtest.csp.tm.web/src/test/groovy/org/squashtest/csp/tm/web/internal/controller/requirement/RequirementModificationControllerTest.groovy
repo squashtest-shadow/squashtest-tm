@@ -36,12 +36,12 @@ class RequirementModificationControllerTest extends Specification {
 	RequirementModificationController controller = new RequirementModificationController()
 	RequirementModificationService requirementModificationService= Mock()
 	MessageSource messageSource = Mock()
-	
+
 	def setup() {
-		controller.requirementModificationService = requirementModificationService 
+		controller.requirementModificationService = requirementModificationService
 		controller.messageSource = messageSource
-	} 
-	
+	}
+
 	def "should return requirement page fragment"() {
 		given:
 		Requirement req = Mock(Requirement.class)
@@ -49,15 +49,20 @@ class RequirementModificationControllerTest extends Specification {
 		req.getStatus() >> RequirementStatus.WORK_IN_PROGRESS
 		long reqId=15
 		requirementModificationService.findById(15) >> req
-		
+
 		when:
 		ModelAndView res = controller.showRequirement(reqId, null)
-		
+
 		then:
 		res.viewName == "fragment/requirements/edit-requirement"
 		res.modelMap['requirement'] == req
 	}
 
-	
-	
+	def "should ask to create new version"() {
+		when:
+		controller.createNewVersion(10L)
+
+		then:
+		requirementModificationService.createNewVersion(10L)
+	}
 }

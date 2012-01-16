@@ -21,24 +21,24 @@
 package org.squashtest.csp.tm.hibernate.mapping.testcase
 
 
-import java.util.Date;
+import java.util.Date
 
+import org.apache.poi.hssf.record.formula.functions.T
+import org.hibernate.JDBCException
+import org.hibernate.Session
+import org.hibernate.SessionFactory
+import org.squashtest.csp.tm.domain.campaign.IterationTestPlanItem
+import org.squashtest.csp.tm.domain.execution.Execution
+import org.squashtest.csp.tm.domain.requirement.Requirement
+import org.squashtest.csp.tm.domain.requirement.RequirementVersion
+import org.squashtest.csp.tm.domain.testcase.ActionTestStep
+import org.squashtest.csp.tm.domain.testcase.TestCase
+import org.squashtest.csp.tm.domain.testcase.TestCaseExecutionMode
+import org.squashtest.csp.tm.domain.testcase.TestCaseLibraryNode
+import org.squashtest.csp.tm.hibernate.mapping.HibernateMappingSpecification
+import org.squashtest.csp.tools.unittest.hibernate.HibernateOperationCategory
 
-import org.hibernate.JDBCException;
-import org.hibernate.Session;
-import org.hibernate.SessionFactory;
-import org.squashtest.csp.tm.domain.campaign.IterationTestPlanItem;
-import org.squashtest.csp.tm.domain.execution.Execution;
-import org.squashtest.csp.tm.domain.requirement.Requirement;
-import org.squashtest.csp.tm.domain.requirement.RequirementVersion;
-import org.squashtest.csp.tm.domain.testcase.TestCaseExecutionMode;
-import org.squashtest.csp.tm.domain.testcase.TestCase;
-import org.squashtest.csp.tm.domain.testcase.TestCaseLibraryNode;
-import org.squashtest.csp.tm.domain.testcase.ActionTestStep;
-import org.squashtest.csp.tm.hibernate.mapping.HibernateMappingSpecification;
-import org.squashtest.csp.tools.unittest.hibernate.HibernateOperationCategory;
-
-import spock.lang.Unroll;
+import spock.lang.Unroll
 
 class TestCaseMappingIT extends HibernateMappingSpecification {
 
@@ -205,7 +205,7 @@ class TestCaseMappingIT extends HibernateMappingSpecification {
 
 		when:
 		doInTransaction({
-			it.get(TestCase, tc.id).addVerifiedRequirement(r.latestVersion)
+			it.get(TestCase, tc.id).addVerifiedRequirement(r.currentVersion)
 		})
 		TestCase res = doInTransaction ({
 			it.createQuery("from TestCase tc left join fetch tc.verifiedRequirements where tc.id = " + tc.id).uniqueResult()
@@ -219,7 +219,7 @@ class TestCaseMappingIT extends HibernateMappingSpecification {
 			def tcc = it.get(TestCase, tc.id)
 			def rr = it.get(Requirement, r.id)
 
-			tcc.removeVerifiedRequirement rr.latestVersion
+			tcc.removeVerifiedRequirement rr.currentVersion
 			it.delete tcc
 
 			it.delete rr
@@ -297,7 +297,7 @@ class TestCaseMappingIT extends HibernateMappingSpecification {
 			sessionFactory.doInSession {
 				Requirement r = it.get(Requirement, req.id)
 				r.description = "bar"
-				r.latestVersion.addVerifyingTestCase(tc)
+				r.currentVersion.addVerifyingTestCase(tc)
 				it.persist tc
 			}
 		}
@@ -320,10 +320,10 @@ class TestCaseMappingIT extends HibernateMappingSpecification {
 			sessionFactory.doInSession {
 				Requirement r = it.get(Requirement, req.id)
 				TestCase ttcc = it.get(TestCase, tc.id)
-				r.latestVersion.removeVerifyingTestCase(ttcc)
+				r.currentVersion.removeVerifyingTestCase(ttcc)
 			}
 		}
-		
+
 		deleteFixture req, tc, s
 	}
 }

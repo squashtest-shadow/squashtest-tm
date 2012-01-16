@@ -138,7 +138,6 @@ class RequirementLibraryNavigationServiceImplTest extends Specification {
 	}
 
 	def "should raise a duplicate name"(){
-
 		given :
 		RequirementLibrary lib = Mock(RequirementLibrary)
 		requirementLibraryDao.findById(1) >> lib
@@ -152,6 +151,7 @@ class RequirementLibraryNavigationServiceImplTest extends Specification {
 
 		then :
 		thrown(DuplicateNameException)
+		
 	}
 
 	def "should find library"() {
