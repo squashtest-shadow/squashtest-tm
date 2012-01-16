@@ -139,11 +139,11 @@ public class TestCaseLibraryNavigationController extends
 	
 	@RequestMapping(value="/import/upload", method = RequestMethod.POST,  params = "upload-ticket")
 	public @ResponseBody ImportSummary importArchive(@RequestParam("archive") MultipartFile archive, 
-			@RequestParam("projectId") Long projectId, @RequestParam("zipEncoding") String encoding) throws IOException{
+			@RequestParam("projectId") Long projectId, @RequestParam("zipEncoding") String zipEncoding) throws IOException{
 		
 		InputStream stream = archive.getInputStream();
 		
-		return testCaseLibraryNavigationService.importExcelTestCase(stream, projectId, encoding);
+		return testCaseLibraryNavigationService.importExcelTestCase(stream, projectId, zipEncoding);
 		
 		
 	}

@@ -95,7 +95,6 @@
 					<br/> 
 					<span>selectionner encoding a internationaliser</span>
 					<select name="zipEncoding">
-						<option value="default">defaut à internationaliser</option>
 						<option value="Cp858">Windows</option>
 						<option value="UTF8">UTF-8</option>
 					</select>
