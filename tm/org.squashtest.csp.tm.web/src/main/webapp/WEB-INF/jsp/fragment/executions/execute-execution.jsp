@@ -104,16 +104,15 @@
 			window.onunload = test;
 		
 			function test(){
-				closePopupAndRefreshParent();
+				refreshParent();
 			}
 			
-			function closePopupAndRefreshParent(){
+			function refreshParent(){
 				window.opener.location.href = window.opener.location.href;
 				if (window.opener.progressWindow)
 				{
 					window.opener.progressWindow.close();
 				}
-				window.close();
 			}
 		
 			function refreshExecStepInfos(){
@@ -122,7 +121,8 @@
 		
 			function testComplete(){
 				alert( "${ completedMessage }" );
-				closePopupAndRefreshParent();
+				refreshParent();
+				window.close();
 			}
 		
 			function navigateNext(){
@@ -144,8 +144,7 @@
 					<c:otherwise>
 				document.location.href="${executePrevious}";						
 					</c:otherwise>
-			</c:choose>			
-	
+				</c:choose>
 			}
 			
 			function initNextButton(){
@@ -196,7 +195,8 @@
 					} 
 				})
 				.click(function(){
-					closePopupAndRefreshParent();
+					refreshParent();
+					window.close();
 				});
 				
 			}
