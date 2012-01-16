@@ -26,6 +26,14 @@ import org.apache.poi.ss.usermodel.Workbook;
 import org.squashtest.csp.tm.domain.testcase.TestCase;
 
 interface ExcelTestCaseParser {
+	
+
+	public static final String DESCRIPTION_TAG = "Description";
+	public static final String IMPORTANCE_TAG = "Importance";
+	public static final String CREATED_ON_TAG = "Created_on";
+	public static final String CREATED_BY_TAG = "Created_by";
+	public static final String PREREQUISITE_TAG = "Prerequisite";
+	public static final String ACTION_STEP_TAG = "Action_step";
 
 	TestCase parseFile(Workbook workbook, ImportSummaryImpl summary) throws SheetCorruptedException;
 	

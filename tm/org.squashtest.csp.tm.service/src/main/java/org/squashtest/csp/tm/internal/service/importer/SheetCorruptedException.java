@@ -27,6 +27,26 @@ public class SheetCorruptedException extends RuntimeException {
 	 */
 	private static final long serialVersionUID = -7715538440055669474L;
 
+	public SheetCorruptedException() {
+		super();
+		// TODO Auto-generated constructor stub
+	}
+
+	public SheetCorruptedException(String arg0, Throwable arg1) {
+		super(arg0, arg1);
+		// TODO Auto-generated constructor stub
+	}
+
+	public SheetCorruptedException(String arg0) {
+		super(arg0);
+		// TODO Auto-generated constructor stub
+	}
+
+	public SheetCorruptedException(Throwable arg0) {
+		super(arg0);
+		// TODO Auto-generated constructor stub
+	}
+
 	
 	
 }
