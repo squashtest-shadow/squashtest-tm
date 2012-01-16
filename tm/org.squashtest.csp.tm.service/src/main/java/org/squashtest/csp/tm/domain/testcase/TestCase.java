@@ -24,6 +24,7 @@ import static org.squashtest.csp.tm.domain.testcase.TestCaseImportance.*;
 
 import java.util.ArrayList;
 import java.util.Collections;
+import java.util.Date;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
@@ -47,6 +48,8 @@ import org.squashtest.csp.tm.domain.UnknownEntityException;
 import org.squashtest.csp.tm.domain.attachment.AttachmentHolder;
 import org.squashtest.csp.tm.domain.attachment.Attachment;
 import org.squashtest.csp.tm.domain.attachment.AttachmentList;
+import org.squashtest.csp.tm.domain.audit.AuditableMixin;
+import org.squashtest.csp.tm.domain.audit.AuditableSupport;
 import org.squashtest.csp.tm.domain.requirement.Requirement;
 import org.squashtest.csp.tm.domain.requirement.RequirementVersion;
 
@@ -92,6 +95,15 @@ public class TestCase extends TestCaseLibraryNode implements AttachmentHolder {
 	 */
 	private boolean importanceAuto = false;
 
+	
+	public TestCase(Date createdOn, String createdBy){
+		AuditableMixin audit = ((AuditableMixin)this);
+		
+		audit.setCreatedOn(createdOn);
+		audit.setCreatedBy(createdBy);
+	}
+	
+	
 	public TestCase() {
 		super();
 	}

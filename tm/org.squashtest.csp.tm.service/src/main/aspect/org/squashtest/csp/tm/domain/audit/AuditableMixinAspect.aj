@@ -50,7 +50,7 @@ public aspect AuditableMixinAspect {
 	public Date AuditableMixin.getCreatedOn() {
 		return this.getAudit().getCreatedOn();
 	}
-
+	
 	public String AuditableMixin.getCreatedBy() {
 		return this.getAudit().getCreatedBy();
 	}
@@ -62,6 +62,24 @@ public aspect AuditableMixinAspect {
 	public String AuditableMixin.getLastModifiedBy() {
 		return this.getAudit().getLastModifiedBy();
 	}
+	
+	public void AuditableMixin.setCreatedBy(String createdBy) {
+		this.getAudit().setCreatedBy(createdBy);
+	}
+
+	public void AuditableMixin.setCreatedOn(Date createdOn) {
+		this.getAudit().setCreatedOn(createdOn);
+	}
+
+	public void AuditableMixin.setLastModifiedBy(String lastModifiedBy) {
+		this.getAudit().setLastModifiedBy(lastModifiedBy);
+	}
+
+	public void AuditableMixin.setLastModifiedOn(Date lastModifiedOn) {
+		this.getAudit().setLastModifiedOn(lastModifiedOn);
+	}	
+	
+	
 	
 	@Embedded @Access(AccessType.PROPERTY)
 	public AuditableSupport AuditableMixin.getAudit() {

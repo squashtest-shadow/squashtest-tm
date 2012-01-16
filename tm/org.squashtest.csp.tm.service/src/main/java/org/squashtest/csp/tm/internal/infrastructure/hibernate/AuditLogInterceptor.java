@@ -90,8 +90,15 @@ public class AuditLogInterceptor extends EmptyInterceptor {
 	private void logCreationData(Object entity, Object[] state) {
 		try {
 			AuditableSupport audit = findAudit(state);
-			audit.setCreatedBy(getCurrentUser());
-			audit.setCreatedOn(new Date());
+			
+			//one sets defaults only if they aren't provided at creation time
+			if ( (audit.getCreatedBy() ==null) && (audit.getCreatedOn()==null)){
+				
+				audit.setCreatedBy(getCurrentUser());
+				audit.setCreatedOn(new Date());
+				
+			}
+			
 		} catch (IllegalArgumentException e) {
 			throw new IllegalArgumentException("Non Auditable entity is : " + entity, e);
 		}

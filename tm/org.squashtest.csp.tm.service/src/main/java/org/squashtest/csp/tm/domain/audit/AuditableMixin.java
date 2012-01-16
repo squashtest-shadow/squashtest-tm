@@ -29,11 +29,22 @@ import java.util.Date;
  * 
  */
 public interface AuditableMixin {
+	
 	Date getCreatedOn();
-
+	
 	String getCreatedBy();
 
 	Date getLastModifiedOn();
 
 	String getLastModifiedBy();
+	
+	
+	void setCreatedBy(String createdBy);
+
+	void setCreatedOn(Date createdOn);
+
+	void setLastModifiedBy(String lastModifiedBy);
+
+	void setLastModifiedOn(Date lastModifiedOn);
+		
 }
