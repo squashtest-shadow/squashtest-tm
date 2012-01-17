@@ -107,15 +107,16 @@ function FeedbackMultipartPopup(settings){
 		this.showParametrization();
 	};
 	
-	this.showParametrization = function(){
 	
-		this.parametrizationPanel.panel.removeClass("not-displayed");
-		this.progressPanel.panel.addClass("not-displayed");
-		this.summaryPanel.panel.addClass("not-displayed");
+	this.showParametrization = function(){
+		
+		this.parametrizationPanel.panel.show();
+		this.progressPanel.panel.hide();
+		this.summaryPanel.panel.hide();
 
-		this.getConfirmButton().removeClass("not-displayed");
-		this.getCancelButton().removeClass("not-displayed");			
-		this.getOkButton().addClass("not-displayed");
+		this.getConfirmButton().show();
+		this.getCancelButton().show();			
+		this.getOkButton().hide();
 		
 		// todo : kill the poll process associated to the progress panel
 		this.state = "parametrization";
@@ -124,13 +125,13 @@ function FeedbackMultipartPopup(settings){
 	
 	this.showProgress = function(){
 	
-		this.parametrizationPanel.panel.addClass("not-displayed");
-		this.progressPanel.panel.removeClass("not-displayed");
-		this.summaryPanel.panel.addClass("not-displayed");	
+		this.parametrizationPanel.panel.hide();
+		this.progressPanel.panel.show();
+		this.summaryPanel.panel.hide();	
 		
-		this.getConfirmButton().addClass("not-displayed");
-		this.getCancelButton().removeClass("not-displayed");			
-		this.getOkButton().addClass("not-displayed");
+		this.getConfirmButton().hide();
+		this.getCancelButton().show();			
+		this.getOkButton().hide();
 		
 		//todo : start the poll process associated to the progress panel
 		
@@ -140,19 +141,20 @@ function FeedbackMultipartPopup(settings){
 	
 	this.showSummary = function(){
 	
-		this.parametrizationPanel.panel.addClass("not-displayed");
-		this.progressPanel.panel.addClass("not-displayed");
-		this.summaryPanel.panel.removeClass("not-displayed");	
+		this.parametrizationPanel.panel.hide();
+		this.progressPanel.panel.hide();
+		this.summaryPanel.panel.show();	
 		
-		this.getConfirmButton().addClass("not-displayed");
-		this.getCancelButton().addClass("not-displayed");			
-		this.getOkButton().removeClass("not-displayed");
+		this.getConfirmButton().hide();
+		this.getCancelButton().hide();			
+		this.getOkButton().show();
 		
 		// todo : kill the poll process associated to the progress panel
 	
 		this.state = "summary";
 		
 	};
+
 
 	
 	/* ********************* main code : operations and transitions ****************************** */

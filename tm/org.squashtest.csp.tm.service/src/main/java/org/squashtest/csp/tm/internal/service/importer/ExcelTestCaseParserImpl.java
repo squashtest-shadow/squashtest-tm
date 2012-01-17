@@ -76,7 +76,7 @@ public class ExcelTestCaseParserImpl implements ExcelTestCaseParser{
 		
 		Sheet sheet = workbook.getSheetAt(0);
 		
-		for (int r=0;r<sheet.getLastRowNum(); r++){
+		for (int r=0;r<=sheet.getLastRowNum(); r++){
 			Row row = sheet.getRow(r);
 			parseRow(row, pseudoTestCase, summary);
 		}
@@ -103,53 +103,43 @@ public class ExcelTestCaseParserImpl implements ExcelTestCaseParser{
 	
 		if (validateRow(row)){
 		
-			Cell firstCell = row.getCell(0);
-			Cell secondCell = row.getCell(1);
+			Cell cell1 = row.getCell(0);
+			Cell cell2 = row.getCell(1);
 			
-			String firstCellContent = firstCell.getStringCellValue();
-			String secondCellContent = secondCell.getStringCellValue();
+			String str1 = cell1.getStringCellValue();
+			String str2 = cell2.getStringCellValue();
 			
-			if (firstCellContent.equals(DESCRIPTION_TAG)){				
+			if (str1.equals(DESCRIPTION_TAG)){				
 				
-				String[] desc = new String[2];
-				desc[0] = firstCellContent;
-				desc[1] = secondCellContent;
+				String[] desc = pairedString(str1, str2);				
 				pseudoTestCase.descriptionElements.add(0,desc);
 				
+			}else if (str1.equals(IMPORTANCE_TAG)){		
 				
-			}else if (firstCellContent.equals(IMPORTANCE_TAG)){		
+				pseudoTestCase.importance=str2;		
 				
-				pseudoTestCase.importance=secondCellContent;		
+			}else if (str1.equals(CREATED_ON_TAG)){
 				
-			}else if (firstCellContent.equals(CREATED_ON_TAG)){
+				pseudoTestCase.createdOn=str2;
 				
-				pseudoTestCase.createdOn=secondCellContent;
+			}else if (str1.equals(CREATED_BY_TAG)){
 				
-			}else if (firstCellContent.equals(CREATED_BY_TAG)){
+				pseudoTestCase.createdBy=str2;
 				
-				pseudoTestCase.createdBy=secondCellContent;
+			}else if (str1.equals(PREREQUISITE_TAG)){
 				
-			}else if (firstCellContent.equals(PREREQUISITE_TAG)){
+				pseudoTestCase.prerequisite=str2;
 				
-				pseudoTestCase.prerequisite=secondCellContent;
+			}else if (str1.equals(ACTION_STEP_TAG)){
+								
+				String str3 = row.getCell(2).getStringCellValue();
 				
-			}else if (firstCellContent.equals(ACTION_STEP_TAG)){
-				
-				String[] stepInfo = new String[2];
-				
-				String thirdCellContent = row.getCell(2).getStringCellValue();
-				
-				stepInfo[0]=secondCellContent;
-				stepInfo[1]=thirdCellContent;
-				
+				String[] stepInfo = pairedString(str2, str3);
 				pseudoTestCase.stepElements.add(stepInfo);
 				
 			}else{
-				
-				String[] descAddition = new String[2];
-				descAddition[0] = firstCellContent;
-				descAddition[1] = secondCellContent;
-				
+								
+				String[] descAddition = pairedString(str1, str2);
 				pseudoTestCase.descriptionElements.add(descAddition);
 			}
 		}
@@ -157,15 +147,22 @@ public class ExcelTestCaseParserImpl implements ExcelTestCaseParser{
 		
 	}
 	
+	private String[] pairedString(String index0, String index1){
+		String[] pair = new String[2];
+		pair[0]=index0;
+		pair[1]=index1;
+		return pair;		
+	}
 	
 	private TestCase generateTestCase(PseudoTestCase pseudoTestCase, ImportSummaryImpl summary){
 		
 		TestCase testCase = new TestCase();
 		
+		
 		if ( (pseudoTestCase.createdOn!=null) && (pseudoTestCase.createdBy!=null)){
 			
 			try{
-				Date createdDate = new SimpleDateFormat("dd/mm/yyyy").parse(pseudoTestCase.createdOn);
+				Date createdDate = new SimpleDateFormat("dd/MM/yyyy").parse(pseudoTestCase.createdOn);
 				testCase = new TestCase(createdDate, pseudoTestCase.createdBy);	
 				
 			}catch(ParseException ex){
@@ -192,7 +189,7 @@ public class ExcelTestCaseParserImpl implements ExcelTestCaseParser{
 			
 			logger.warn(ex.getMessage());
 			summary.incrWarnings();
-			testCase.setImportance(TestCaseImportance.MEDIUM);
+			testCase.setImportance(TestCaseImportance.defaultValue());
 		}
 		
 		
@@ -256,6 +253,7 @@ public class ExcelTestCaseParserImpl implements ExcelTestCaseParser{
 			ActionTestStep step = new ActionTestStep();
 			step.setAction("<p>"+pseudoStep[0]+"</p>");
 			step.setExpectedResult("<p>"+pseudoStep[1]+"</p>");			
+			steps.add(step);
 		}
 		
 		return steps;
@@ -271,17 +269,35 @@ public class ExcelTestCaseParserImpl implements ExcelTestCaseParser{
 	 */
 	private boolean validateRow(Row row){
 		
+		boolean validated = true;
+		
+		//spec 1 : the row must not be null
+		if (row==null){
+			validated=false;
+		}
+		//spec 2 : just two cells where they are expected, 3 in the case of an action step
+		else if ( ! ( (validateRegularRow(row)) || (validateStepRow(row)) )){
+			validated=false;			
+		}
+		
+		return validated;
+		
+	}
+	
+	
+	private boolean validateRegularRow(Row row){
 		int lastCell = row.getLastCellNum();
 		int nbCell = row.getPhysicalNumberOfCells();
-		String fCellContent = row.getCell(0).getStringCellValue();
+		return ((lastCell==2) && (nbCell==2));
+	}
+	
+	private boolean validateStepRow(Row row){
+		int lastCell = row.getLastCellNum();
+		int nbCell = row.getPhysicalNumberOfCells();
 		
-		if ((lastCell==1) && (nbCell==2)){
-			return true;
-		}else if ((fCellContent.equals(ACTION_STEP_TAG)) && (lastCell==2) && (nbCell==3) ){
-			return true;
-		}else{
-			return false;
-		}
+		String content = (row.getCell(0) !=null) ? row.getCell(0).getStringCellValue() : "";
+		
+		return ((content.equals(ACTION_STEP_TAG)) && (lastCell==3) && (nbCell==3) );
 		
 	}
 

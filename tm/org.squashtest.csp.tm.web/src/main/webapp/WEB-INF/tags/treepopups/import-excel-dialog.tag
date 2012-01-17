@@ -20,8 +20,7 @@
         along with this software.  If not, see <http://www.gnu.org/licenses/>.
 
 --%>
-<%@ tag body-content="empty"
-	description="javascript handling the copy and paste of nodes in the tree"%>
+<%@ tag body-content="empty" description="javascript handling the copy and paste of nodes in the tree"%>
 	
 
 <%@ taglib prefix="f" uri="http://java.sun.com/jsp/jstl/fmt"%>	
@@ -39,7 +38,9 @@
 <%@ attribute name="workspace" required="true" description="the workspace (or nature) of the elements to import." %>
 
 <script type="text/javascript" src="${ pageContext.servletContext.contextPath }/scripts/jquery/jquery.form.js"></script>
-<script type="text/javascript" src="${ pageContext.servletContext.contextPath }/scripts/squashtest/classes/FeedbackMultipartPopup.js"></script>
+<script type="text/javascript" src="${ pageContext.servletContext.contextPath }/scripts/squashtest/classes/FeedbackMultipartPopup.js"></script> 
+<%--<script type="text/javascript" src="http://localhost/scripts/FeedbackMultipartPopup.js"></script> --%>
+
 
 <s:url var="importUrl" value="/${workspace}-browser/import/upload"/>
 

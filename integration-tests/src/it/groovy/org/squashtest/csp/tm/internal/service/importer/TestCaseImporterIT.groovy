@@ -21,6 +21,7 @@
 package org.squashtest.csp.tm.internal.service.importer
 
 import java.nio.charset.Charset;
+import java.text.SimpleDateFormat;
 
 import javax.inject.Inject;
 
@@ -29,6 +30,7 @@ import org.apache.commons.lang.CharSet;
 import org.apache.xml.serialize.Encodings;
 import org.springframework.transaction.annotation.Transactional;
 import org.squashtest.csp.tm.domain.testcase.TestCaseFolder;
+import org.squashtest.csp.tm.domain.testcase.TestCaseImportance;
 import org.squashtest.csp.tm.internal.service.DbunitServiceSpecification;
 import org.squashtest.csp.tm.service.TestCaseLibraryNavigationService;
 import org.unitils.dbunit.annotation.DataSet;
@@ -69,7 +71,7 @@ class TestCaseImporterIT extends DbunitServiceSpecification {
 		then :
 			summary.getTotalTestCases() == 13
 			summary.getSuccess()  == 13
-			summary.getWarnings() == 0
+			summary.getWarnings() == 12
 			summary.getFailures() == 0
 	
 			def rContent = service.findLibrary(1l).rootContent
@@ -120,7 +122,7 @@ class TestCaseImporterIT extends DbunitServiceSpecification {
 		then :
 			summary.getTotalTestCases() == 13
 			summary.getSuccess()  == 13
-			summary.getWarnings() == 4
+			summary.getWarnings() == 16
 			summary.getFailures() == 0
 	
 			def rContent = service.findLibrary(2l).rootContent
@@ -138,7 +140,33 @@ class TestCaseImporterIT extends DbunitServiceSpecification {
 									"activer robot étage 2", "activer robot étage 3", "cas limite - blocage robot", "vérifier l'erreur d'alignement"] as Set
 	}
 		
-
+	
+	@DataSet("TestCaseImporterIT.setup.xml")
+	def "should parse a test case successfully"(){
+		
+		given :
+			
+			InputStream stream = this.getClass().getClassLoader().getResourceAsStream("import/import-cas-test.zip")
+		
+		when :
+			
+			def summary = importer.importExcelTestCases(stream, 1l, "Cp858")
+			def rContent = service.findLibrary(1l).rootContent
+			def testcase = rContent.find{it.name=="prerequis"}
+			
+		then :
+		
+			def formatedCreation = new SimpleDateFormat("dd/MM/yyyy").parse("19/06/2009")
+			testcase.createdOn.equals(formatedCreation)
+			testcase.createdBy.equals("achantrel")
+			
+			testcase.description.contains("Domain")
+			testcase.description.contains("Sub Domain")
+			
+			testcase.importance == TestCaseImportance.MEDIUM;
+			
+		
+	}
 	
 	/*
 	def "test multiple encodings"(){

@@ -50,7 +50,13 @@ public enum TestCaseImportance implements Internationalizable, Comparable<TestCa
 	/**
 	 * @return the level
 	 */
-	public int getLevel() {
+	public int getLevel() {	
 		return level;
 	}
+	
+	public static TestCaseImportance defaultValue(){
+		return MEDIUM;
+	}
+	
+
 }
