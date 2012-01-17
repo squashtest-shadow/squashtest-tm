@@ -83,7 +83,7 @@
 		<s:param name="ieo" value="true"/>
 	</s:url>
 	
-	<s:url var="executeMenuPrevious" value="/execute/{execId}/step/{stepIndex/menu">
+	<s:url var="executeMenuPrevious" value="/execute/{execId}/step/{stepIndex}/menu">
 		<s:param name="execId" value="${execution.id}" />
 		<s:param name="stepIndex" value="${executionStep.executionStepOrder-1}" />
 		<s:param name="ieo" value="true"/>

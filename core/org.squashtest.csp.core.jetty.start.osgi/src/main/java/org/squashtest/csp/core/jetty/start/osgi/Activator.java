@@ -64,6 +64,11 @@ public class Activator implements BundleActivator {
 	private static String CONFIGURATION_LOCATION = "bundles.configuration.location";
 
 	/***
+	 * Name of the global variable to get logs location
+	 */
+	private static String LOGS_LOCATION = "jetty.logs.location";
+	
+	/***
 	 * The name of the external config file
 	 */
 	private static String EXTERNAL_CONFIG_LOCATION = "/services/squash-jetty.xml";
@@ -117,7 +122,7 @@ public class Activator implements BundleActivator {
 				LOGGER.info("Starting Jetty " + Server.getVersion() + " ...", null, null);
 
 				// create logging directory first
-				createLoggingDirectory();
+				createLoggingDirectory(bundleContext);
 
 				// default startup procedure
 				//ClassLoader cl = Activator.class.getClassLoader();
@@ -205,9 +210,18 @@ public class Activator implements BundleActivator {
 		return bundleContext.registerService(classes, server, props);
 	}
 
-	private void createLoggingDirectory() {
+	private void createLoggingDirectory(BundleContext context) {
 		try {
-			File logs = new File(".", "logs");
+			File logs = null; 
+			String logsLocation = context.getProperty(LOGS_LOCATION);
+			if (logsLocation == null){
+				logs = new File(".", "logs");
+			} else if ("".equals(logsLocation)){
+				logs = new File(".", "logs");
+			} else {
+				logs = new File(logsLocation, "logs");
+			}
+			
 			if (!logs.exists()) {
 				logs.mkdir();
 			}
