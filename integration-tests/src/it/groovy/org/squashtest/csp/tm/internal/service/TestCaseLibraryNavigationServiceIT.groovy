@@ -132,7 +132,7 @@ class TestCaseLibraryNavigationServiceIT extends HibernateServiceSpecification {
 		then :
 			folder.id != null
 			
-			tcs*.id.collect{it==null}		
+			tcs.findAll{it.id==null}.size() ==0
 	}
 	
 

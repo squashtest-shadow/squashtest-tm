@@ -42,6 +42,15 @@ import org.squashtest.csp.tm.domain.testcase.TestCase;
 import org.squashtest.csp.tm.domain.testcase.TestCaseImportance;
 import org.squashtest.csp.tm.domain.testcase.TestStep;
 
+
+/*
+ * TODO : 1) move remaining methods to PseudoTestCase (parseRow etc)
+ * 		  2) make the description a list of description
+ * 		  2')separate the list of description from the list of additionalDescription
+ * 		  3) make the prerequesite a list of prerequesites
+ * 
+ * 
+ */
 public class ExcelTestCaseParserImpl implements ExcelTestCaseParser{
 	
 	private static final Logger logger = LoggerFactory.getLogger(ExcelTestCaseParserImpl.class); 
@@ -52,7 +61,6 @@ public class ExcelTestCaseParserImpl implements ExcelTestCaseParser{
 			throws SheetCorruptedException {
 		
 		try {
-			
 			Workbook workbook = WorkbookFactory.create(stream);
 			
 			return parseFile(workbook, summary);
@@ -78,7 +86,7 @@ public class ExcelTestCaseParserImpl implements ExcelTestCaseParser{
 		
 		for (int r=0;r<=sheet.getLastRowNum(); r++){
 			Row row = sheet.getRow(r);
-			parseRow(row, pseudoTestCase, summary);
+			parseRow(row, pseudoTestCase);
 		}
 		
 		TestCase testCase = generateTestCase(pseudoTestCase, summary);
@@ -99,7 +107,7 @@ public class ExcelTestCaseParserImpl implements ExcelTestCaseParser{
 	
 	
 	
-	private void parseRow(Row row, PseudoTestCase pseudoTestCase, ImportSummaryImpl summary){
+	private void parseRow(Row row, PseudoTestCase pseudoTestCase){
 	
 		if (validateRow(row)){
 		
@@ -176,13 +184,13 @@ public class ExcelTestCaseParserImpl implements ExcelTestCaseParser{
 		
 		
 		//the description
-		String desc = formatDescription(pseudoTestCase);
+		String desc = pseudoTestCase.formatDescription();
 		testCase.setDescription(desc);
 		
 		//the importance
 		try{
 			
-			TestCaseImportance importance = formatImportance(pseudoTestCase);
+			TestCaseImportance importance = pseudoTestCase.formatImportance();
 			testCase.setImportance(importance);
 			
 		}catch(IllegalArgumentException ex){
@@ -194,7 +202,7 @@ public class ExcelTestCaseParserImpl implements ExcelTestCaseParser{
 		
 		
 		//test steps
-		List<TestStep> steps = formatSteps(pseudoTestCase);
+		List<TestStep> steps = pseudoTestCase.formatSteps();
 		
 		for (TestStep step : steps){
 			testCase.addStep(step);
@@ -206,59 +214,7 @@ public class ExcelTestCaseParserImpl implements ExcelTestCaseParser{
 		return testCase;
 	}
 	
-	/* ***************************** formatters *********************************** */
-	
-	private String formatDescription(PseudoTestCase testCase){
-		
-		StringBuilder builder = new StringBuilder();
-		
-		ArrayList<String[]> elements = testCase.descriptionElements;
-		
-		if (elements.size()>0){
-			//appending the description
-			builder.append("<p>").append(elements.get(0)[1]).append("</p>");
-		}
-		
-		//appending supplementary material if any;
-		
-		if (elements.size()>1){
-			
-			builder.append("<hr>");
-			builder.append("<ul>");
-			
-			for (int i=1;i<elements.size();i++){
-				String[] elt = elements.get(i);
-				builder.append("<li>").append("<b>"+elt[0]+" :</b> ").append(elt[1]).append("</li>");
-			}
-			
-			builder.append("</ul>");
-			
-		}
-		
-		return builder.toString();
-		
-	}
-	
-	
-	private TestCaseImportance formatImportance(PseudoTestCase testCase){
-		return TestCaseImportance.valueOf(testCase.importance);		
-	}
-	
-	
-	private List<TestStep> formatSteps(PseudoTestCase testCase){
-		
-		List<TestStep> steps = new LinkedList<TestStep>();
-		
-		for (String[] pseudoStep : testCase.stepElements){
-			ActionTestStep step = new ActionTestStep();
-			step.setAction("<p>"+pseudoStep[0]+"</p>");
-			step.setExpectedResult("<p>"+pseudoStep[1]+"</p>");			
-			steps.add(step);
-		}
-		
-		return steps;
-		
-	}
+
 	
 	
 	/**
@@ -291,6 +247,7 @@ public class ExcelTestCaseParserImpl implements ExcelTestCaseParser{
 		return ((lastCell==2) && (nbCell==2));
 	}
 	
+	
 	private boolean validateStepRow(Row row){
 		int lastCell = row.getLastCellNum();
 		int nbCell = row.getPhysicalNumberOfCells();
@@ -318,6 +275,61 @@ public class ExcelTestCaseParserImpl implements ExcelTestCaseParser{
 		String prerequisite = "";
 		
 		LinkedList<String[]> stepElements = new LinkedList<String[]>();
+		
+		
+		/* ***************************** formatters *********************************** */
+		
+		private String formatDescription(){
+			
+			StringBuilder builder = new StringBuilder();
+			
+			ArrayList<String[]> elements = descriptionElements;
+			
+			if (elements.size()>0){
+				//appending the description
+				builder.append("<p>").append(elements.get(0)[1]).append("</p>");
+			}
+			
+			//appending supplementary material if any;
+			
+			if (elements.size()>1){
+				
+				builder.append("<hr/>");
+				builder.append("<ul>");
+				
+				for (int i=1;i<elements.size();i++){
+					String[] elt = elements.get(i);
+					builder.append("<li>").append("<b>"+elt[0]+" :</b> ").append(elt[1]).append("</li>");
+				}
+				
+				builder.append("</ul>");
+				
+			}
+			
+			return builder.toString();
+			
+		}
+		
+		
+		private TestCaseImportance formatImportance(){
+			return TestCaseImportance.valueOf(importance);		
+		}
+		
+		
+		private List<TestStep> formatSteps(){
+			
+			List<TestStep> steps = new LinkedList<TestStep>();
+			
+			for (String[] pseudoStep : stepElements){
+				ActionTestStep step = new ActionTestStep();
+				step.setAction("<p>"+pseudoStep[0]+"</p>");
+				step.setExpectedResult("<p>"+pseudoStep[1]+"</p>");			
+				steps.add(step);
+			}
+			
+			return steps;
+			
+		}
 		
 	}
 	
