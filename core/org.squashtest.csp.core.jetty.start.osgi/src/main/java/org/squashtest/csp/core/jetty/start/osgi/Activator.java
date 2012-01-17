@@ -219,16 +219,21 @@ public class Activator implements BundleActivator {
 			} else if ("".equals(logsLocation)){
 				logs = new File(".", "logs");
 			} else {
-				logs = new File(logsLocation, "logs");
+				logs = new File(logsLocation);
 			}
-			
+			boolean dirCreated = true;
 			if (!logs.exists()) {
-				logs.mkdir();
+				dirCreated = logs.mkdirs();
 			}
-			String path = logs.getCanonicalPath();
-			System.setProperty("jetty.logs", path);
-			LOGGER.info("Created Jetty logging folder " + path, null, null);
+			if (dirCreated){
+				String path = logs.getCanonicalPath();
+				System.setProperty("jetty.logs", path);
+				LOGGER.info("Created Jetty logging folder " + path, null, null);
+			} else {
+				throw new IOException("Cannot create Jetty logging folder\n" + logsLocation);
+			}
 		} catch (IOException ex) {
+			ex.printStackTrace();
 			LOGGER.warn("Cannot create logging folder", ex);
 		}
 
