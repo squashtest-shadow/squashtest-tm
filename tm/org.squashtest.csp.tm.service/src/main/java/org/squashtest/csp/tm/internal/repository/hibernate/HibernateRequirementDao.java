@@ -26,6 +26,7 @@ import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
 
 import org.apache.commons.lang.StringUtils;
 import org.hibernate.Query;
@@ -39,6 +40,7 @@ import org.hibernate.type.LongType;
 import org.springframework.stereotype.Repository;
 import org.squashtest.csp.tm.domain.requirement.ExportRequirementData;
 import org.squashtest.csp.tm.domain.requirement.Requirement;
+import org.squashtest.csp.tm.domain.requirement.RequirementCriticality;
 import org.squashtest.csp.tm.domain.requirement.RequirementLibraryNode;
 import org.squashtest.csp.tm.domain.requirement.RequirementSearchCriteria;
 import org.squashtest.csp.tm.domain.requirement.RequirementVersion;
@@ -320,4 +322,29 @@ public class HibernateRequirementDao extends HibernateEntityDao<Requirement> imp
 		return folderContent;
 	}
 
+		}
+	}
+
+	@SuppressWarnings("unchecked")
+	@Override
+	public List<RequirementCriticality> findDistinctRequirementsCriticalitiesVerifiedByTestCases(
+			Set<Long> testCasesIds) {
+		if (! testCasesIds.isEmpty()){
+			Query query = currentSession().getNamedQuery("requirement.findDistinctRequirementsCriticalitiesVerifiedByTestCases");
+			query.setParameterList("testCasesIds", testCasesIds);
+			return query.list();
+		}else{
+			return Collections.emptyList();
+		}
+	}
+
+	@SuppressWarnings("unchecked")
+	@Override
+	public List<RequirementCriticality> findDistinctRequirementsCriticalities(List<Long> requirementsIds) {
+		if(! requirementsIds.isEmpty()){
+			Query query = currentSession().getNamedQuery("requirement.findDistinctRequirementsCriticalities");
+			query.setParameterList("requirementsIds", requirementsIds);
+			return query.list();
+		}else{
+			return Collections.emptyList();
 }

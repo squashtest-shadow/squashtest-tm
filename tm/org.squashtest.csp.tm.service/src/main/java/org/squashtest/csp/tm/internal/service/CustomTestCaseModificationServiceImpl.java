@@ -38,6 +38,7 @@ import org.squashtest.csp.core.infrastructure.collection.PagingAndSorting;
 import org.squashtest.csp.core.infrastructure.collection.PagingBackedPagedCollectionHolder;
 import org.squashtest.csp.tm.domain.DuplicateNameException;
 import org.squashtest.csp.tm.domain.requirement.RequirementVersion;
+import org.squashtest.csp.tm.domain.requirement.RequirementCriticality;
 import org.squashtest.csp.tm.domain.testcase.ActionTestStep;
 import org.squashtest.csp.tm.domain.testcase.TestCase;
 import org.squashtest.csp.tm.domain.testcase.TestCaseFolder;
@@ -51,6 +52,7 @@ import org.squashtest.csp.tm.internal.repository.TestCaseDao;
 import org.squashtest.csp.tm.internal.repository.TestStepDao;
 import org.squashtest.csp.tm.service.CallStepManagerService;
 import org.squashtest.csp.tm.service.CustomTestCaseModificationService;
+import org.squashtest.csp.tm.service.TestCaseImportanceManagerService;
 import org.squashtest.csp.tm.service.VerifiedRequirement;
 
 /**
@@ -63,7 +65,10 @@ public class CustomTestCaseModificationServiceImpl implements CustomTestCaseModi
 
 	@Inject
 	private TestCaseDao testCaseDao;
-
+	
+	@Inject
+	private TestCaseImportanceManagerService testCaseImportanceManagerService;
+	
 	@Inject
 	private TestStepDao testStepDao;
 
@@ -251,7 +256,7 @@ public class CustomTestCaseModificationServiceImpl implements CustomTestCaseModi
 
 		testCase.addStep(index, copyStep);
 	}
-
+	
 	@Override
 	public PagedCollectionHolder<List<VerifiedRequirement>> findAllVerifiedRequirementsByTestCaseId(long testCaseId,
 			PagingAndSorting pas) {
@@ -305,6 +310,13 @@ public class CustomTestCaseModificationServiceImpl implements CustomTestCaseModi
 		Long countCallers = testCaseDao.countCallingTestSteps(testCaseId);
 		return new FilteredCollectionHolder<List<TestCase>>(countCallers, callers);
 
+	}
+
+	@Override
+	public void customChangeImportanceAuto(long testCaseId, boolean auto) {
+		TestCase testCase = testCaseDao.findById(testCaseId);
+		testCase.setImportanceAuto(auto);
+		testCaseImportanceManagerService.changeImportanceIfIsAuto(testCaseId);
 	}
 
 }

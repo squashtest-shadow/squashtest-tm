@@ -51,6 +51,7 @@ import org.squashtest.csp.tm.domain.requirement.RequirementStatus;
 import org.squashtest.csp.tm.domain.testcase.TestCase;
 import org.squashtest.csp.tm.domain.testcase.TestCaseExecutionMode;
 import org.squashtest.csp.tm.service.RequirementModificationService;
+import org.squashtest.csp.tm.service.TestCaseModificationService;
 import org.squashtest.csp.tm.web.internal.helper.JsonHelper;
 import org.squashtest.csp.tm.web.internal.model.datatable.DataTableDrawParameters;
 import org.squashtest.csp.tm.web.internal.model.datatable.DataTableMapperPagingAndSortingAdapter;
@@ -191,7 +192,7 @@ public class RequirementModificationController {
 	@ResponseBody
 	public String updateCriticality(@RequestParam("value") String value, @PathVariable long requirementId, Locale locale) {
 		RequirementCriticality criticality = RequirementCriticality.valueOf(value);
-		requirementModService.changeCriticality(requirementId, criticality);
+		requirementModService.customChangeCriticality(requirementId, criticality);
 		LOGGER.debug("Requirement {} : requirement criticality changed, new value : {}", requirementId,
 				criticality.name());
 		return HtmlUtils.htmlEscape(formatCriticality(criticality, locale));

@@ -21,11 +21,11 @@
 package org.squashtest.csp.tm.domain.requirement;
 
 import java.util.Comparator;
-
+import java.util.List;
 import org.squashtest.csp.tm.domain.Level;
 
 public enum RequirementCriticality implements Level {
-	MINOR(1), MAJOR(2), CRITICAL(3), UNDEFINED(0);
+	MINOR(2), MAJOR(1), CRITICAL(0), UNDEFINED(3);
 
 	private static final String I18N_KEY_ROOT = "requirement.criticality.";
 	private final int level;
@@ -80,5 +80,15 @@ public enum RequirementCriticality implements Level {
 			
 			return s1.compareTo(s2);
 		}
+	}
+
+	public static RequirementCriticality findStrongestCriticality(List<RequirementCriticality> requirementCriticalities) {
+		RequirementCriticality strongestRequirementCriticality = requirementCriticalities.get(0);
+		for (RequirementCriticality requirementCriticality : requirementCriticalities) {
+			if (strongestRequirementCriticality.getLevel() > requirementCriticality.getLevel()) {
+				strongestRequirementCriticality = requirementCriticality; 
+			}
+		}
+		return strongestRequirementCriticality;
 	}
 }

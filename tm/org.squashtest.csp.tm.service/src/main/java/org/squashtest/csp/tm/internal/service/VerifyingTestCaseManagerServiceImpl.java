@@ -42,6 +42,7 @@ import org.squashtest.csp.tm.internal.repository.RequirementVersionDao;
 import org.squashtest.csp.tm.internal.repository.TestCaseDao;
 import org.squashtest.csp.tm.internal.repository.TestCaseLibraryDao;
 import org.squashtest.csp.tm.service.ProjectFilterModificationService;
+import org.squashtest.csp.tm.service.TestCaseImportanceManagerService;
 import org.squashtest.csp.tm.service.VerifyingTestCaseManagerService;
 
 @Service("squashtest.tm.service.VerifyingTestCaseManagerService")
@@ -54,6 +55,9 @@ public class VerifyingTestCaseManagerServiceImpl implements VerifyingTestCaseMan
 	private TestCaseLibraryDao testCaseLibraryDao;
 	@Inject
 	private RequirementVersionDao requirementVersionDao;
+	@Inject
+	private TestCaseImportanceManagerService testCaseImportanceManagerService;
+	
 	@Inject
 	private ProjectFilterModificationService projectFilterModificationService;
 	@Inject
@@ -89,6 +93,7 @@ public class VerifyingTestCaseManagerServiceImpl implements VerifyingTestCaseMan
 			for (TestCase testcase : testCases) {
 				requirementVersion.addVerifyingTestCase(testcase);
 			}
+			testCaseImportanceManagerService.changeImportanceIfRelationsAddedToReq(testCases, requirement);
 		}
 	}
 

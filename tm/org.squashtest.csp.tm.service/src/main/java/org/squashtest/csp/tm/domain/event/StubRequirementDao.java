@@ -22,9 +22,11 @@
 package org.squashtest.csp.tm.domain.event;
 
 import java.util.List;
+import java.util.Set;
 
 import org.squashtest.csp.tm.domain.requirement.ExportRequirementData;
 import org.squashtest.csp.tm.domain.requirement.Requirement;
+import org.squashtest.csp.tm.domain.requirement.RequirementCriticality;
 import org.squashtest.csp.tm.domain.requirement.RequirementLibraryNode;
 import org.squashtest.csp.tm.domain.requirement.RequirementSearchCriteria;
 import org.squashtest.csp.tm.internal.repository.RequirementDao;
@@ -91,4 +93,20 @@ public class StubRequirementDao extends StubEntityDao<Requirement> implements Re
 		return null;
 	}
 
+	}
+	/**
+	 * @see org.squashtest.csp.tm.internal.repository.RequirementDao#findDistinctRequirementsCriticalitiesVerifiedByTestCases(java.util.List)
+	 */
+	@Override
+	public List<RequirementCriticality> findDistinctRequirementsCriticalitiesVerifiedByTestCases(
+			Set<Long> testCasesIds) {
+		return null;
+	}
+	/**
+	 * @see org.squashtest.csp.tm.internal.repository.RequirementDao#findDistinctRequirementsCriticalities(java.util.List)
+	 */
+	@Override
+	public List<RequirementCriticality> findDistinctRequirementsCriticalities(List<Long> requirementsIds) {
+		
+		return null;
 }

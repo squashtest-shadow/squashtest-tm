@@ -36,6 +36,8 @@ import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.servlet.ModelAndView;
 import org.squashtest.csp.tm.domain.requirement.RequirementLibrary;
 import org.squashtest.csp.tm.domain.testcase.TestCase;
+import org.squashtest.csp.tm.domain.testcase.TestCaseImportance;
+import org.squashtest.csp.tm.service.TestCaseModificationService;
 import org.squashtest.csp.tm.service.VerifiedRequirementsManagerService;
 import org.squashtest.csp.tm.web.internal.model.builder.DriveNodeBuilder;
 import org.squashtest.csp.tm.web.internal.model.jstree.JsTreeNode;
@@ -53,7 +55,8 @@ public class VerifiedRequirementsManagerController {
 	@Inject private Provider<DriveNodeBuilder> driveNodeBuilder;
 	
 	private VerifiedRequirementsManagerService verifiedRequirementsManagerService;
-
+	
+	
 	@ServiceReference
 	public void setVerifiedRequirementsManagerService(
 			VerifiedRequirementsManagerService verifiedRequirementsManagerService) {
@@ -91,6 +94,7 @@ public class VerifiedRequirementsManagerController {
 	void addVerifiedRequirementsToTestCase(@RequestParam(REQUIREMENTS_IDS_REQUEST_PARAM) List<Long> requirementsIds,
 			@PathVariable long testCaseId) {
 		verifiedRequirementsManagerService.addVerifiedRequirementsToTestCase(requirementsIds, testCaseId);
+		
 	}
 
 	@RequestMapping(value = "/test-cases/{testCaseId}/non-verified-requirements", method = RequestMethod.POST, params = REQUIREMENTS_IDS_REQUEST_PARAM)
@@ -98,11 +102,13 @@ public class VerifiedRequirementsManagerController {
 	void removeVerifiedRequirementsFromTestCase(
 			@RequestParam(REQUIREMENTS_IDS_REQUEST_PARAM) List<Long> requirementsIds, @PathVariable long testCaseId) {
 		verifiedRequirementsManagerService.removeVerifiedRequirementsFromTestCase(requirementsIds, testCaseId);
+		
 	}
 
 	@RequestMapping(value = "/test-cases/{testCaseId}/verified-requirements/{requirementId}", method = RequestMethod.DELETE)
 	public @ResponseBody
 	void removeVerifiedRequirementFromTestCase(@PathVariable long requirementId, @PathVariable long testCaseId) {
 		verifiedRequirementsManagerService.removeVerifiedRequirementFromTestCase(requirementId, testCaseId);
+		
 	}
 }

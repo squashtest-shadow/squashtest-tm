@@ -33,17 +33,21 @@ import org.squashtest.csp.core.infrastructure.collection.PagedCollectionHolder;
 import org.squashtest.csp.core.infrastructure.collection.PagingAndSorting;
 import org.squashtest.csp.core.infrastructure.collection.PagingBackedPagedCollectionHolder;
 import org.squashtest.csp.tm.domain.requirement.Requirement;
+import org.squashtest.csp.tm.domain.requirement.RequirementCriticality;
 import org.squashtest.csp.tm.domain.requirement.RequirementFolder;
 import org.squashtest.csp.tm.domain.requirement.RequirementLibraryNode;
 import org.squashtest.csp.tm.domain.testcase.TestCase;
 import org.squashtest.csp.tm.internal.repository.RequirementDao;
 import org.squashtest.csp.tm.internal.repository.TestCaseDao;
 import org.squashtest.csp.tm.service.CustomRequirementModificationService;
+import org.squashtest.csp.tm.service.TestCaseImportanceManagerService;
 
 @Service("CustomRequirementModificationService")
 public class CustomRequirementModificationServiceImpl implements CustomRequirementModificationService {
 	@Inject
 	private RequirementDao requirementDao;
+	@Inject
+	private TestCaseImportanceManagerService testCaseImportanceManagerService;
 
 	@Inject
 	private TestCaseDao testCaseDao;
@@ -91,5 +95,14 @@ public class CustomRequirementModificationServiceImpl implements CustomRequireme
 		Requirement req = requirementDao.findById(requirementId);
 		req.increaseVersion();
 		sessionFactory.getCurrentSession().persist(req.getCurrentVersion());
+	}
+	@Override
+	public void customChangeCriticality(long requirementId,
+			RequirementCriticality criticality) {
+		Requirement requirement = findById(requirementId);
+		RequirementCriticality oldCriticality = requirement.getCriticality();
+		requirement.setCriticality(criticality);
+		testCaseImportanceManagerService.changeImportanceIfRequirementCriticalityChanged(requirementId, oldCriticality);
+		
 	}
 }

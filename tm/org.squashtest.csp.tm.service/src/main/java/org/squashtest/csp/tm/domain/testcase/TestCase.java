@@ -281,6 +281,12 @@ public class TestCase extends TestCaseLibraryNode implements AttachmentHolder {
 	 */
 	public void setImportanceAuto(boolean importanceAuto) {
 		this.importanceAuto = importanceAuto;
+		if(importanceAuto){
+			//The calculation of importance when auto is on is not done here because it needs
+			// to know the call-steps associated requirements. 
+		}
 	}
+
+	
 
 }

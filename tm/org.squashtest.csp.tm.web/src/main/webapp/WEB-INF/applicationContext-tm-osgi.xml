@@ -113,7 +113,9 @@
 	<osgi:reference id="squashtest.tm.service.CallStepManagerService"
 		bean-name="squashtest.tm.service.CallStepManagerService" 
 		interface="org.squashtest.csp.tm.service.CallStepManagerService"
-		availability="mandatory" />				
+		availability="mandatory" />			
+	
+			
 		
 		
 </beans>

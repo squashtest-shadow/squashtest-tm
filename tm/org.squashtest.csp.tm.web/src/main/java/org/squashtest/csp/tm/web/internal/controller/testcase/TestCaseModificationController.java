@@ -85,7 +85,7 @@ public class TestCaseModificationController {
 			TestCase.class, Project.class).initMapping(5).mapAttribute(Project.class, 2, "name", String.class)
 			.mapAttribute(TestCase.class, 3, "name", String.class)
 			.mapAttribute(TestCase.class, 4, "executionMode", TestCaseExecutionMode.class);
-
+	
 	private TestCaseModificationService testCaseModificationService;
 
 	@Inject
@@ -99,7 +99,7 @@ public class TestCaseModificationController {
 
 	@Inject
 	private CallStepManagerService callStepManager;
-
+	
 	@ServiceReference
 	public void setTestCaseModificationService(TestCaseModificationService testCaseModificationService) {
 		this.testCaseModificationService = testCaseModificationService;
@@ -146,7 +146,7 @@ public class TestCaseModificationController {
 		mav.addObject("executionModes", executionModes);
 		mav.addObject("testCaseImportanceComboJson", buildImportanceComboData(testCase, locale));
 		mav.addObject("testCaseImportanceLabel", formatImportance(testCase.getImportance(), locale));
-
+		
 	}
 
 	private String buildImportanceComboData(TestCase testCase, Locale locale) {
@@ -281,7 +281,16 @@ public class TestCaseModificationController {
 	private String formatImportance(TestCaseImportance importance, Locale locale) {
 		return importanceLabelFormatterProvider.get().useLocale(locale).formatLabel(importance);
 	}
-
+	
+	@RequestMapping(value = "/importanceAuto", method = RequestMethod.POST, params = { "importanceAuto" })
+	@ResponseBody
+	public String changeImportanceAuto(HttpServletResponse response, @PathVariable long testCaseId,
+			@RequestParam(value = "importanceAuto") boolean auto , 	Locale locale) {
+		testCaseModificationService.customChangeImportanceAuto(testCaseId, auto);
+		TestCase testCase = testCaseModificationService.findById(testCaseId);
+		return  formatImportance(testCase.getImportance(), locale);
+	}
+	
 	@RequestMapping(method = RequestMethod.POST, params = { "newName" })
 	@ResponseBody
 	public Object rename(HttpServletResponse response, @PathVariable long testCaseId, @RequestParam String newName) {
@@ -363,17 +372,7 @@ public class TestCaseModificationController {
 			public Object[] buildItemData(RequirementVersion item) {
 				return new Object[] { item.getId(), getCurrentIndex(), item.getRequirement().getProject().getName(),
 						item.getReference(), item.getName(), internationalize(item.getCriticality(), locale), "", true // the
-																														// target
-																														// table
-																														// requires
-																														// a
-																														// column
-																														// "isDirectlyVerified".
-																														// So
-																														// we
-																														// provide
-																														// it.
-				};
+					};
 			}
 		}.buildDataModel(holder, params.getsEcho());
 

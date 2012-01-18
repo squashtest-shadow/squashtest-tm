@@ -43,6 +43,7 @@ import org.squashtest.csp.tm.internal.repository.RequirementLibraryDao;
 import org.squashtest.csp.tm.internal.repository.RequirementVersionDao;
 import org.squashtest.csp.tm.internal.repository.TestCaseDao;
 import org.squashtest.csp.tm.service.ProjectFilterModificationService;
+import org.squashtest.csp.tm.service.TestCaseImportanceManagerService;
 import org.squashtest.csp.tm.service.VerifiedRequirementsManagerService;
 
 @Service("squashtest.tm.service.VerifiedRequirementsManagerService")
@@ -56,8 +57,9 @@ public class VerifiedRequirementsManagerServiceImpl implements VerifiedRequireme
 
 	@Inject
 	private RequirementVersionDao requirementVersionDao;
-
 	@Inject
+	private TestCaseImportanceManagerService testCaseImportanceManagerService;
+		@Inject
 	private ProjectFilterModificationService projectFilterModificationService;
 
 	@SuppressWarnings("rawtypes")
@@ -102,6 +104,7 @@ public class VerifiedRequirementsManagerServiceImpl implements VerifiedRequireme
 					testCase.addVerifiedRequirement(requirement.getCurrentVersion());
 				}
 			}
+			testCaseImportanceManagerService.changeImportanceIfRelationsAddedToTestCases(requirements, testCase);
 		}
 	}
 

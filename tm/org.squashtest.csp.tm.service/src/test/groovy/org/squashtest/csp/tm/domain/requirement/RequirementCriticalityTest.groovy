@@ -20,7 +20,9 @@
  */
 package org.squashtest.csp.tm.domain.requirement
 
-import spock.lang.Specification;
+import org.apache.poi.hssf.record.formula.functions.T
+
+import spock.lang.Specification
 
 class RequirementCriticalityTest extends Specification {
 	def "should convert level into criticality"() {
@@ -28,7 +30,7 @@ class RequirementCriticalityTest extends Specification {
 		def crit = RequirementCriticality.valueOf(2)
 
 		then:
-		crit == RequirementCriticality.MAJOR
+		crit == RequirementCriticality.MINOR
 	}
 	def "should throw exception on unknown levels"() {
 		when:

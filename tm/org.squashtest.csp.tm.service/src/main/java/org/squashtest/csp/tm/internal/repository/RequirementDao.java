@@ -21,9 +21,11 @@
 package org.squashtest.csp.tm.internal.repository;
 
 import java.util.List;
+import java.util.Set;
 
 import org.squashtest.csp.tm.domain.requirement.ExportRequirementData;
 import org.squashtest.csp.tm.domain.requirement.Requirement;
+import org.squashtest.csp.tm.domain.requirement.RequirementCriticality;
 import org.squashtest.csp.tm.domain.requirement.RequirementLibraryNode;
 import org.squashtest.csp.tm.domain.requirement.RequirementSearchCriteria;
 
@@ -35,7 +37,12 @@ public interface RequirementDao extends EntityDao<Requirement> {
 	 * @return
 	 */
 	List<Requirement> findAllByIdList(List<Long> requirementsIds);
-
+	/**
+	 * return all the test case directly verifying the requirement <br>
+	 * 
+	 * @param requirementId
+	 * @return list of directly associated test-cases
+	 */
 	List<String> findNamesInFolderStartingWith(long folderId, String nameStart);
 
 	List<String> findNamesInLibraryStartingWith(long libraryId, String nameStart);
@@ -50,4 +57,20 @@ public interface RequirementDao extends EntityDao<Requirement> {
 	
 	List<ExportRequirementData> findRequirementToExportFromLibrary(List<Long> folderIds);
 	
+	
+	/**
+	 * Returns collection of distinct requirements criticalities verified by any of the given verifiers.
+	 *
+	 * @param verifiersIds
+	 * @return unsorted collection of distinct requirements criticalities verified by any of the given verifiers.
+	 */
+	List<RequirementCriticality> findDistinctRequirementsCriticalitiesVerifiedByTestCases(
+			Set<Long> testCasesIds);
+	/**
+	 * returns the list of distinct requirementCriticalities found for all requirementsIds
+	 * 
+	 * @param requirementsIds
+	 * @return
+	 */
+	List<RequirementCriticality> findDistinctRequirementsCriticalities(List<Long> requirementsIds);
 }

@@ -22,24 +22,24 @@ package org.squashtest.csp.tm.internal.service
 
 
 
-import org.squashtest.csp.tm.domain.projectfilter.ProjectFilter;
-import org.squashtest.csp.tm.domain.requirement.Requirement;
+import org.apache.poi.hssf.record.formula.functions.T
+import org.squashtest.csp.tm.domain.projectfilter.ProjectFilter
+import org.squashtest.csp.tm.domain.requirement.Requirement
 import org.squashtest.csp.tm.domain.requirement.RequirementVersion;
-import org.squashtest.csp.tm.domain.testcase.TestCase;
-import org.squashtest.csp.tm.domain.testcase.TestCaseLibrary;
-import org.squashtest.csp.tm.domain.testcase.TestCaseLibraryNode;
-import org.squashtest.csp.tm.internal.infrastructure.strategy.LibrarySelectionStrategy;
-import org.squashtest.csp.tm.internal.repository.LibraryNodeDao;
-import org.squashtest.csp.tm.internal.repository.RequirementDao;
+import org.squashtest.csp.tm.domain.testcase.TestCase
+import org.squashtest.csp.tm.domain.testcase.TestCaseLibrary
+import org.squashtest.csp.tm.domain.testcase.TestCaseLibraryNode
+import org.squashtest.csp.tm.internal.infrastructure.strategy.LibrarySelectionStrategy
+import org.squashtest.csp.tm.internal.repository.LibraryNodeDao
+import org.squashtest.csp.tm.internal.repository.RequirementDao
 import org.squashtest.csp.tm.internal.repository.RequirementLibraryDao;
 import org.squashtest.csp.tm.internal.repository.RequirementVersionDao;
 import org.squashtest.csp.tm.internal.repository.TestCaseDao;
 import org.squashtest.csp.tm.internal.repository.TestCaseLibraryDao;
 import org.squashtest.csp.tm.internal.service.VerifyingTestCaseManagerServiceImpl;
 import org.squashtest.csp.tm.service.VerifyingTestCaseManagerService;
-import org.squashtest.csp.tools.unittest.assertions.CollectionAssertions;
 
-import spock.lang.Specification;
+import spock.lang.Specification
 
 class VerifiedTestCasesManagerServiceImplTest extends Specification {
 
@@ -51,6 +51,7 @@ class VerifiedTestCasesManagerServiceImplTest extends Specification {
 	ProjectFilterModificationServiceImpl projectFilterModificationService = Mock()
 	LibrarySelectionStrategy<TestCaseLibrary, TestCaseLibraryNode> libraryStrategy = Mock()
 	LibraryNodeDao<TestCaseLibraryNode> nodeDao = Mock();
+	TestCaseImportanceManagerServiceImpl testCaseImportanceServiceImpl = Mock();
 
 	def setup() {
 		CollectionAssertions.declareContainsExactly()
@@ -61,6 +62,7 @@ class VerifiedTestCasesManagerServiceImplTest extends Specification {
 		service.projectFilterModificationService = projectFilterModificationService
 		service.libraryStrategy = libraryStrategy
 		service.testCaseLibraryNodeDao = testCaseLibraryNodeDao
+		service.testCaseImportanceManagerService = testCaseImportanceServiceImpl
 	}
 
 	def "should find libraries of linkable test Case"() {

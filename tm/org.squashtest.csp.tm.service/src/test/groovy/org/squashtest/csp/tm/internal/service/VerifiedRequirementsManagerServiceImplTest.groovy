@@ -20,24 +20,25 @@
  */
 package org.squashtest.csp.tm.internal.service;
 
-import org.squashtest.csp.tm.domain.projectfilter.ProjectFilter;
-import org.squashtest.csp.tm.domain.requirement.Requirement;
-import org.squashtest.csp.tm.domain.requirement.RequirementLibrary;
-import org.squashtest.csp.tm.domain.requirement.RequirementLibraryNode;
+import org.squashtest.csp.tm.domain.projectfilter.ProjectFilter
+import org.squashtest.csp.tm.domain.requirement.Requirement
+import org.squashtest.csp.tm.domain.requirement.RequirementLibrary
+import org.squashtest.csp.tm.domain.requirement.RequirementLibraryNode
 import org.squashtest.csp.tm.domain.requirement.RequirementVersion;
 import org.squashtest.csp.tm.domain.resource.Resource;
-import org.squashtest.csp.tm.domain.testcase.TestCase;
-import org.squashtest.csp.tm.internal.infrastructure.strategy.LibrarySelectionStrategy;
-import org.squashtest.csp.tm.internal.repository.LibraryNodeDao;
-import org.squashtest.csp.tm.internal.repository.RequirementDao;
-import org.squashtest.csp.tm.internal.repository.RequirementLibraryDao;
+import org.squashtest.csp.tm.domain.testcase.TestCase
+import org.squashtest.csp.tm.internal.infrastructure.strategy.LibrarySelectionStrategy
+import org.squashtest.csp.tm.internal.repository.LibraryNodeDao
+import org.squashtest.csp.tm.internal.repository.RequirementDao
+import org.squashtest.csp.tm.internal.repository.RequirementLibraryDao
+import org.squashtest.csp.tools.unittest.reflection.ReflectionCategory
 import org.squashtest.csp.tm.internal.repository.RequirementVersionDao;
 import org.squashtest.csp.tm.internal.repository.TestCaseDao;
 import org.squashtest.csp.tm.internal.repository.TestCaseLibraryDao;
 import org.squashtest.csp.tools.unittest.assertions.CollectionAssertions;
 import org.squashtest.csp.tools.unittest.reflection.ReflectionCategory;
 
-import spock.lang.Specification;
+import spock.lang.Specification
 
 class VerifiedRequirementsManagerServiceImplTest extends Specification {
 	VerifiedRequirementsManagerServiceImpl service = new VerifiedRequirementsManagerServiceImpl()
@@ -45,6 +46,7 @@ class VerifiedRequirementsManagerServiceImplTest extends Specification {
 	RequirementLibraryDao requirementLibraryDao = Mock()
 	RequirementVersionDao requirementVersionDao = Mock()
 	LibraryNodeDao<RequirementLibraryNode> nodeDao = Mock()
+	TestCaseImportanceManagerServiceImpl testCaseImportanceManagerService = Mock()
 	ProjectFilterModificationServiceImpl projectFilterModificationService = Mock()
 	LibrarySelectionStrategy<RequirementLibrary, RequirementLibraryNode> libraryStrategy = Mock()
 
@@ -57,6 +59,7 @@ class VerifiedRequirementsManagerServiceImplTest extends Specification {
 		service.projectFilterModificationService = projectFilterModificationService
 		service.libraryStrategy = libraryStrategy
 		service.requirementLibraryNodeDao = nodeDao
+		service.testCaseImportanceManagerService = testCaseImportanceManagerService
 	}
 
 	def "should find test case by id"() {

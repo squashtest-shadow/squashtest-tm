@@ -46,7 +46,7 @@ import org.squashtest.csp.tm.domain.testcase.TestCaseLibraryNodeVisitor;
 public class TestCaseNodeWalker implements TestCaseLibraryNodeVisitor{
 
 
-	List<TestCase> outputList ;
+	private List<TestCase> outputList ;
 			
 	public TestCaseNodeWalker(){
 		outputList = new LinkedList<TestCase>();

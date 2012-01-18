@@ -27,6 +27,7 @@ import org.springframework.transaction.annotation.Transactional;
 import org.squashtest.csp.core.infrastructure.collection.PagedCollectionHolder;
 import org.squashtest.csp.core.infrastructure.collection.PagingAndSorting;
 import org.squashtest.csp.tm.domain.requirement.Requirement;
+import org.squashtest.csp.tm.domain.requirement.RequirementCriticality;
 import org.squashtest.csp.tm.domain.testcase.TestCase;
 
 /**
@@ -48,12 +49,20 @@ public interface CustomRequirementModificationService {
 	@Transactional(readOnly = true)
 	PagedCollectionHolder<List<TestCase>> findVerifyingTestCasesByRequirementId(long requirementId,
 			PagingAndSorting pagingAndSorting);
-
+	
 	/**
 	 * Increase the current version of the given requirement.
 	 * 
 	 * @param requirementId
+	 * 
 	 */
 	void createNewVersion(long requirementId);
-
+	/**
+	 * will change the requirement criticality and update the importance of any associated TestCase with importanceAuto == true.<br>
+	 * (even through call steps) 
+	 *
+	 * @param requirementId
+	 * @param criticality
+	 */
+	void customChangeCriticality(long requirementId, RequirementCriticality criticality);
 }

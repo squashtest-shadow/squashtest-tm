@@ -58,12 +58,10 @@ TestCaseLibraryNavigationService {
 
 	@Inject
 	private TestCaseDao testCaseDao;
-
+	
 	
 	@Inject
 	private TestCaseImporter testCaseImporter;
-
-	
 	@Inject
 	private TestCaseNodeDeletionHandler deletionHandler;
 

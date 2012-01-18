@@ -22,7 +22,9 @@
 package org.squashtest.csp.tm.domain.testcase;
 
 import org.squashtest.csp.tm.domain.Level;
-
+import java.util.Arrays;
+import java.util.List;
+import org.squashtest.csp.tm.domain.requirement.RequirementCriticality;
 /**
  * 
  * @author Gregory Fouquet
@@ -34,6 +36,7 @@ public enum TestCaseImportance implements Level {
 	private static final String I18N_KEY_ROOT = "test-case.importance.";
 
 	private final int level;
+	private static TestCaseImportanceLevelComparator levelComparator = new TestCaseImportanceLevelComparator();
 	
 	private TestCaseImportance(int value) {
 		this.level = value;
@@ -58,6 +61,69 @@ public enum TestCaseImportance implements Level {
 	public static TestCaseImportance defaultValue(){
 		return MEDIUM;
 	}
+	
+
+
+	/**
+	 * 
+	 * @param rCriticalities a list of requirement criticalities
+	 * @return the deduced test case importance
+	 */
+	public static TestCaseImportance deduceTestCaseImportance(
+			List<RequirementCriticality> rCriticalities) {
+
+		TestCaseImportance importance = TestCaseImportance.LOW;
+		if (!rCriticalities.isEmpty()) {
+			if (rCriticalities.contains(RequirementCriticality.CRITICAL)) {
+				importance = TestCaseImportance.HIGH;
+			} else {
+				if (rCriticalities.contains(RequirementCriticality.MAJOR)) {
+					importance = TestCaseImportance.MEDIUM;
+				}
+			}
+		}
+		return importance;
+	}
+	
+	/**
+	 * will deduce the new TestCase importance when a new RequirementCriticality has been added to the associated RequirementCriticality list of the TestCase. 
+	 * @param newCriticality the new requirement criticality that might change the importance
+	 * 
+	 * @param oldImportance the ancient importance of the test case
+	 * @return the new importace if it has changed. 
+	 */
+	public  TestCaseImportance deduceNewImporanceWhenAddCriticality (RequirementCriticality newCriticality){
+		TestCaseImportance importance = deduceTestCaseImportance(Arrays.asList(newCriticality));
+		TestCaseImportance newImportance = this;
+		if(levelComparator.compare(importance, this) < 0){
+			newImportance = importance;
+		}
+		return newImportance;
+	}
+	
+	/**
+	 * will check if the change of criticality of the associated requirement can change the auto-computed testCase importance (this)
+	 * 
+	 * @param oldRequirementCriticality
+	 * @param newCriticality
+	 * @return true if the auto-computed test case importance will change after the requirement criticality changes. 
+	 */
+	public boolean changeOfCriticalityCanChangeImportanceAuto(
+			RequirementCriticality oldRequirementCriticality,
+			RequirementCriticality newCriticality) {
+		TestCaseImportance oldCriticalityImp = deduceTestCaseImportance(Arrays.asList(oldRequirementCriticality));
+		TestCaseImportance newCriticaltyImp = deduceTestCaseImportance(Arrays.asList(newCriticality));
+		boolean canChange = true;
+		if(levelComparator.compare(this, oldCriticalityImp) < 0 && levelComparator.compare(this, newCriticaltyImp) < 0){
+			canChange = false;
+		}
+		return canChange;
+	}
+
+	
+
+	
+	
 	
 
 }

@@ -75,6 +75,8 @@
 		@NamedQuery(name = "requirement.findRequirementInExportData", query = "select r.id from Requirement r where r.id in (:rIds)"),
 		@NamedQuery(name = "requirement.findRootContentRequirement", query = "select r from RequirementLibrary rl join rl.rootContent r where r.id in (:paramIds) and r in (from Requirement)"),
 		@NamedQuery(name = "requirement.findRootContentExportData", query = "select r from RequirementLibrary rl join rl.rootContent r where rl.id in (:libIds) and r in (from Requirement)"),
+		@NamedQuery(name = "requirement.findDistinctRequirementsCriticalitiesVerifiedByTestCases", query = "select distinct r.criticality from TestCase as tc join tc.verifiedRequirements r where tc.id in (:testCasesIds) "),
+		@NamedQuery(name = "requirement.findDistinctRequirementsCriticalities", query = "select distinct r.criticality from Requirement as r  where r.id in (:requirementsIds) "),
 		@NamedQuery(name = "requirement.findAllRootContent", query = "select r.id from RequirementLibraryNode r where r.project.id in (:rIds)"),
 
 		// Queries on CampaignFolder

@@ -37,6 +37,7 @@ import org.springframework.web.servlet.ModelAndView;
 import org.squashtest.csp.tm.domain.requirement.Requirement;
 import org.squashtest.csp.tm.domain.testcase.TestCaseLibrary;
 import org.squashtest.csp.tm.service.RequirementModificationService;
+import org.squashtest.csp.tm.service.TestCaseModificationService;
 import org.squashtest.csp.tm.service.VerifyingTestCaseManagerService;
 import org.squashtest.csp.tm.web.internal.model.builder.DriveNodeBuilder;
 import org.squashtest.csp.tm.web.internal.model.jstree.JsTreeNode;
@@ -56,7 +57,7 @@ public class VerifyingTestCaseManagerController {
 
 	private VerifyingTestCaseManagerService verifyingTestCaseManager;
 	private RequirementModificationService requirementFinder;
-
+	
 	@ServiceReference
 	public void setVerifyingTestCaseManager(VerifyingTestCaseManagerService verifyingTestCaseManagerService) {
 		this.verifyingTestCaseManager = verifyingTestCaseManagerService;
@@ -97,6 +98,7 @@ public class VerifyingTestCaseManagerController {
 	void addVerifyingTestCasesToRequirement(@RequestParam(TESTCASES_IDS_REQUEST_PARAM) List<Long> testCasesIds,
 			@PathVariable long requirementId) {
 		verifyingTestCaseManager.addVerifyingTestCasesToRequirement(testCasesIds, requirementId);
+		
 	}
 
 	@RequestMapping(value = "/requirements/{requirementId}/non-verifying-test-cases", method = RequestMethod.POST, params = TESTCASES_IDS_REQUEST_PARAM)
@@ -104,6 +106,7 @@ public class VerifyingTestCaseManagerController {
 	void removeVerifyingTestCasesFromRequirement(@RequestParam(TESTCASES_IDS_REQUEST_PARAM) List<Long> testCasesIds,
 			@PathVariable long requirementId) {
 		verifyingTestCaseManager.removeVerifyingTestCasesFromRequirement(testCasesIds, requirementId);
+		
 	}
 
 	@RequestMapping(value = "/requirements/{requirementId}/verifying-test-cases/{testCaseId}", method = RequestMethod.DELETE)

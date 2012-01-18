@@ -80,12 +80,12 @@ public class ExpandedTestCase {
 	 * @return
 	 */
 	private RequirementCriticality calculateMaxCriticality() {
-		// Each level is represented by a number. O is the lowest one
-		int level = 0;
+		// Each level is represented by a number. 3 is the lowest one
+		int level = 3;
 
 		// check if there's a stronger criticality and if this criticality is part of the ones selected for the research
 		for (RequirementVersion requirement : this.testCase.getVerifiedRequirements()) {
-			if (requirement.getCriticality().getLevel() > level
+			if (requirement.getCriticality().getLevel() < level
 					&& (selectedCriticalities.isEmpty() || selectedCriticalities.contains(requirement.getCriticality()))) {
 				level = (int) requirement.getCriticality().getLevel();
 			}

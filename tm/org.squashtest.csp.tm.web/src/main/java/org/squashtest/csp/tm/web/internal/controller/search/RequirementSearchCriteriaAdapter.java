@@ -42,11 +42,12 @@ public class RequirementSearchCriteriaAdapter implements RequirementSearchCriter
 	public RequirementSearchCriteriaAdapter(RequirementSearchParams params, boolean[] criticalitiesSelection) {
 		super();
 		this.params = params;
-
-		for (int i = 0; i < criticalitiesSelection.length; i++) {
-			if (criticalitiesSelection[i]) {
+		int j=0;
+		for (int i = criticalitiesSelection.length -1 ; i >= 0; i--) {
+			if (criticalitiesSelection[j]) {
 				criticalities.add(RequirementCriticality.valueOf(i));
 			}
+			j++;
 		}
 	}
 

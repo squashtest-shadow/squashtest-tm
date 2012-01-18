@@ -1,0 +1,90 @@
+<%--
+
+        This file is part of the Squashtest platform.
+        Copyright (C) 2010 - 2011 Squashtest TM, Squashtest.org
+
+        See the NOTICE file distributed with this work for additional
+        information regarding copyright ownership.
+
+        This is free software: you can redistribute it and/or modify
+        it under the terms of the GNU Lesser General Public License as published by
+        the Free Software Foundation, either version 3 of the License, or
+        (at your option) any later version.
+
+        this software is distributed in the hope that it will be useful,
+        but WITHOUT ANY WARRANTY; without even the implied warranty of
+        MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+        GNU Lesser General Public License for more details.
+
+        You should have received a copy of the GNU Lesser General Public License
+        along with this software.  If not, see <http://www.gnu.org/licenses/>.
+
+--%>
+
+<%@ tag language="java" pageEncoding="ISO-8859-1"%>
+
+<%@ attribute name="associatedSelectJeditableId" required="true"%>
+<%@ attribute name="isAuto" required="true"%>
+<%@ attribute name="url" required="true"%>
+<%@ attribute name="paramName" required="true" description="the name of the parameter being posted"%>
+<%-- <%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core"  %> --%>
+<%-- <%@ taglib prefix="f" uri="http://java.sun.com/jsp/jstl/fmt" %> --%>
+
+<input type="checkbox" id="${associatedSelectJeditableId}-auto"
+	style="vertical-align: top; position: relative;" />
+auto set
+
+<script type="text/javascript">
+	$(function() {
+		//ici du code pour associer la combobox avec la checkbox
+		var sel_checkbx = $('#${associatedSelectJeditableId}-auto');
+		
+		sel_checkbx.attr('checked', ${isAuto});
+		
+		if (sel_checkbx.attr('checked')){
+			sel_setAutoMode();
+		}
+		
+		sel_checkbx.change(function(){
+			var sel_isAuto = $(this).attr('checked');
+			if (sel_isAuto){
+				sel_setAutoMode();
+			}else{
+				sel_setManualMode();
+			}
+			sel_postState(this,sel_isAuto);
+		});		
+		
+		function sel_setAutoMode(){
+			$('#${associatedSelectJeditableId}').editable('disable');
+		};
+		function sel_setManualMode(){
+			$('#${associatedSelectJeditableId}').editable('enable');
+		};
+		
+		function sel_postState(checkbx, isAuto){
+			$.ajax({
+				type : 'POST',
+				data : "${paramName}"+"="+isAuto.toString(),
+				success : function(importance){sel_postStateSuccess(importance,  isAuto);},
+				error : function(){sel_postStateFailed();},
+				dataType : "text",
+				url : '${url}'			
+			});		
+		};
+		function sel_postStateSuccess(importance, isAuto){
+			if (isAuto){
+				sel_postStateIsAutoSuccess(importance);
+			}
+		};
+		function sel_postStateIsAutoSuccess(importance){
+			$("#${associatedSelectJeditableId}").html(importance);	
+		};
+		function sel_postStateFailed(){
+			alert("error while posting state");
+			
+		};
+
+	})
+	
+</script>

@@ -20,17 +20,18 @@
         along with this software.  If not, see <http://www.gnu.org/licenses/>.
 
 --%>
-<%@ taglib uri="http://java.sun.com/jsp/jstl/core" prefix="c"%>
-<%@ taglib uri="http://java.sun.com/jsp/jstl/fmt" prefix="f"%>
-<%@ taglib tagdir="/WEB-INF/tags/jquery" prefix="jq"%>
-<%@ taglib prefix="s" uri="http://www.springframework.org/tags"%>
+<%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core" %>
 <%@ taglib prefix="f" uri="http://java.sun.com/jsp/jstl/fmt" %>
-<%@ taglib tagdir="/WEB-INF/tags/component" prefix="comp"%>
-<%@ taglib prefix="dt" tagdir="/WEB-INF/tags/datatables"%>
-<%@ taglib prefix="sf" uri="http://www.springframework.org/tags/form"%>
-<%@ taglib prefix="aggr" tagdir="/WEB-INF/tags/aggregates"%>
+<%@ taglib prefix="jq" tagdir="/WEB-INF/tags/jquery" %>
+<%@ taglib prefix="s" uri="http://www.springframework.org/tags" %>
+<%@ taglib prefix="f" uri="http://java.sun.com/jsp/jstl/fmt" %>
+<%@ taglib prefix="comp" tagdir="/WEB-INF/tags/component" %>
+<%@ taglib prefix="dt" tagdir="/WEB-INF/tags/datatables" %>
+<%@ taglib prefix="sf" uri="http://www.springframework.org/tags/form" %>
+<%@ taglib prefix="aggr" tagdir="/WEB-INF/tags/aggregates" %>
 <%@ taglib prefix="pop" tagdir="/WEB-INF/tags/popup" %>
 <%@ taglib prefix="authz" tagdir="/WEB-INF/tags/authz" %>
+
 <?xml version="1.0" encoding="utf-8" ?>
 <%@ page language="java" contentType="text/html; charset=utf-8" pageEncoding="utf-8"%>
 
@@ -42,6 +43,7 @@
 <%------------------------------------- URLs ----------------------------------------------%>
 
 <c:url var="ckeConfigUrl" value="/styles/ckeditor/ckeditor-config.js" />
+
 <s:url var="testCaseUrl" value="/test-cases/{tcId}">
 	<s:param name="tcId" value="${testCase.id}" />
 </s:url>
@@ -54,11 +56,13 @@
 <s:url var="addStepUrl" value="/test-cases/{tcId}/steps/add">
 	<s:param name="tcId" value="${testCase.id}" />
 </s:url>
-<c:url var="verifiedRequirementsTableUrl"
-	value="/test-cases/${testCase.id}/all-verified-requirements-table" />
+
+<c:url var="verifiedRequirementsTableUrl" value="/test-cases/${testCase.id}/all-verified-requirements-table" />
+
 <s:url var="updateStepUrl" value="/test-cases/{tcId}/steps/">
 	<s:param name="tcId" value="${testCase.id}" />
 </s:url>
+
 <s:url var="verifiedReqsManagerUrl" value="/test-cases/${ testCase.id }/verified-requirements-manager" />
 
 <c:url var="verifiedRequirementsUrl" value="/test-cases/${ testCase.id }/verified-requirements" />
@@ -66,8 +70,7 @@
 
 <s:url var="callStepManagerUrl" value="/test-cases/${ testCase.id }/call" />
 
-<s:url var="stepAttachmentManagerUrl" value="/attach-list/">
-</s:url>
+<s:url var="stepAttachmentManagerUrl" value="/attach-list/" />
 
 <s:url var="callingtestCasesTableUrl" value="/test-cases/${testCase.id}/calling-test-case-table" />
 
@@ -75,8 +78,9 @@
 <s:url var="simulateDeletionUrl" value="/test-case-browser/delete-nodes/simulate" />
 <s:url var="confirmDeletionUrl" value="/test-case-browser/delete-nodes/confirm" />
 
-<f:message var="cyclicCallError"  key="subpage.test-case.callstep.error.cycle.label" />
-
+<s:url var="importanceAutoUrl" value="/test-cases/{tcId}/importanceAuto">
+	<s:param name="tcId" value="${testCase.id}" />
+</s:url>
 <%-- ----------------------------------- Authorization ----------------------------------------------%>
 
 <%-- 
@@ -92,6 +96,7 @@
  
 <%-- ----------------------------------- Init ----------------------------------------------%>
 
+<f:message var="cyclicCallError"  key="subpage.test-case.callstep.error.cycle.label" />
 
 <script type="text/javascript">
 	<%-- STEPS TABLE --%>
@@ -539,7 +544,12 @@
 			<div class="display-table-row">
 				<label for="test-case-importance" class="display-table-cell"><f:message key="test-case.importance.combo.label" /></label>
 				<div class="display-table-cell">
-					<div id="test-case-importance">${ testCaseImportanceLabel }</div>
+					<span id="test-case-importance">${ testCaseImportanceLabel }</span>
+					<c:if test="${ editable }">
+					<comp:select-jeditable-auto associatedSelectJeditableId="test-case-importance" url="${ importanceAutoUrl }" isAuto="${ testCase.importanceAuto }" paramName="importanceAuto"/>
+					</c:if>
+					
+					
 				</div>
 			</div>
 		</div>

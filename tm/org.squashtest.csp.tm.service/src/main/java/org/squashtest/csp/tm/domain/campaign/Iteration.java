@@ -77,56 +77,55 @@ public class Iteration implements AttachmentHolder {
 	private final ActualTimePeriod actualPeriod = new ActualTimePeriod();
 
 	/*
-	 *  read http://docs.redhat.com/docs/en-US/JBoss_Enterprise_Web_Platform/5/html/Hibernate_Annotations_Reference_Guide/entity-mapping-association-collection-onetomany.html
-	 *
-	 * "To map a bidirectional one to many, with the one-to-many side as the owning side, you have to remove
-	 * the mappedBy element and set the many to one @JoinColumn as insertable and updatable to false.
-	 * This solution is obviously not optimized and will produce some additional UPDATE statements."
-	 *
-	 * The reason for this is because Hibernate doesn't support the correct mapping
-	 * (using mappingBy and @OrderColumns). The solution used here is only a workaround.
-	 *
-	 *  See bug HHH-5390 for a concise discussion about this.
-	 *
+	 * read http://docs.redhat.com/docs/en-US/JBoss_Enterprise_Web_Platform/5/html
+	 * /Hibernate_Annotations_Reference_Guide /entity-mapping-association-collection-onetomany.html
+	 * 
+	 * "To map a bidirectional one to many, with the one-to-many side as the owning side, you have to remove the
+	 * mappedBy element and set the many to one @JoinColumn as insertable and updatable to false. This solution is
+	 * obviously not optimized and will produce some additional UPDATE statements."
+	 * 
+	 * The reason for this is because Hibernate doesn't support the correct mapping (using mappingBy and @OrderColumns).
+	 * The solution used here is only a workaround.
+	 * 
+	 * See bug HHH-5390 for a concise discussion about this.
 	 */
 
 	@ManyToOne
-	@JoinTable(name = "CAMPAIGN_ITERATION",
-			joinColumns = @JoinColumn(name = "ITERATION_ID", updatable=false, insertable=false),
-			inverseJoinColumns = @JoinColumn(name = "CAMPAIGN_ID",updatable=false, insertable=false))
+	@JoinTable(name = "CAMPAIGN_ITERATION", joinColumns = @JoinColumn(name = "ITERATION_ID", updatable = false, insertable = false), inverseJoinColumns = @JoinColumn(name = "CAMPAIGN_ID", updatable = false, insertable = false))
 	private Campaign campaign;
-
-
 
 	@OneToMany(cascade = { CascadeType.PERSIST, CascadeType.MERGE })
 	@OrderColumn(name = "ITEM_TEST_PLAN_ORDER")
-	// FIXME TEST_PLAN might be a little more appropriate than ITEM_TEST_PLAN_LIST...
+	// FIXME TEST_PLAN might be a little more appropriate than
+	// ITEM_TEST_PLAN_LIST...
 	@JoinTable(name = "ITEM_TEST_PLAN_LIST", joinColumns = @JoinColumn(name = "ITERATION_ID"), inverseJoinColumns = @JoinColumn(name = "ITEM_TEST_PLAN_ID"))
-	// FIXME Should be testPlan. Also include the hql named queries and criteria queries.
+	// FIXME Should be testPlan. Also include the hql named queries and criteria
+	// queries.
 	private final List<IterationTestPlanItem> testPlans = new ArrayList<IterationTestPlanItem>();
 
 	/* *********************** attachment attributes ************************ */
 
-	@OneToOne(cascade = { CascadeType.PERSIST, CascadeType.MERGE } )
+	@OneToOne(cascade = { CascadeType.PERSIST, CascadeType.MERGE })
 	@JoinColumn(name = "ATTACHMENT_LIST_ID")
 	private final AttachmentList attachmentList = new AttachmentList();
-	/* ***********************   / attachment attributes ************************ */
 
-	public List<IterationTestPlanItem> getTestPlans(){
+	/* *********************** / attachment attributes ************************ */
+
+	public List<IterationTestPlanItem> getTestPlans() {
 		return testPlans;
 	}
 
-
 	/**
-	 * That method will add an Execution to the iteration. In order to detect which IterationTestPlanItem
-	 * we will attach that Execution to, the Execution must be referencing at TestCase prior calling that method
-	 * (ie execution.getReferencedTestCase() must not return null), or no operation will be performed.
-	 *
+	 * That method will add an Execution to the iteration. In order to detect which IterationTestPlanItem we will attach
+	 * that Execution to, the Execution must be referencing at TestCase prior calling that method (ie
+	 * execution.getReferencedTestCase() must not return null), or no operation will be performed.
+	 * 
 	 * @param execution
 	 */
 	public void addExecution(@NotNull Execution execution) {
-		// look for the test case. if not already included it will create a test plan for it.
-		if (execution.getReferencedTestCase()==null) {
+		// look for the test case. if not already included it will create a test
+		// plan for it.
+		if (execution.getReferencedTestCase() == null) {
 			return;
 		}
 		IterationTestPlanItem testplan = getTestPlanForTestCaseId(execution.getReferencedTestCase().getId());
@@ -147,7 +146,7 @@ public class Iteration implements AttachmentHolder {
 
 	// adds only if not already referenced
 	public void addTestPlan(@NotNull IterationTestPlanItem testPlan) {
-		if (testPlan.getReferencedTestCase()==null) {
+		if (testPlan.getReferencedTestCase() == null) {
 			return;
 		}
 		IterationTestPlanItem localTestPlan = getTestPlanForTestCaseId(testPlan.getReferencedTestCase().getId());
@@ -186,12 +185,12 @@ public class Iteration implements AttachmentHolder {
 		return this.name;
 	}
 
-	public Campaign getCampaign(){
+	public Campaign getCampaign() {
 		return campaign;
 	}
 
-	void setCampaign(Campaign campaign){
-		this.campaign=campaign;
+	void setCampaign(Campaign campaign) {
+		this.campaign = campaign;
 	}
 
 	public void setDescription(String description) {
@@ -220,7 +219,7 @@ public class Iteration implements AttachmentHolder {
 
 	public void setActualStartDate(Date startDate) {
 		actualPeriod.setActualStartDate(startDate);
-		if (getCampaign()!=null){
+		if (getCampaign() != null) {
 			getCampaign().updateActualStart(startDate);
 		}
 	}
@@ -231,7 +230,7 @@ public class Iteration implements AttachmentHolder {
 
 	public void setActualEndDate(Date endDate) {
 		actualPeriod.setActualEndDate(endDate);
-		if (getCampaign()!=null){
+		if (getCampaign() != null) {
 			getCampaign().updateActualEnd(endDate);
 		}
 	}
@@ -270,7 +269,8 @@ public class Iteration implements AttachmentHolder {
 	}
 
 	private ScheduledTimePeriod getScheduledPeriod() {
-		// Hibernate workaround : when STP fields are null, component is set to null
+		// Hibernate workaround : when STP fields are null, component is set to
+		// null
 		if (scheduledPeriod == null) {
 			scheduledPeriod = new ScheduledTimePeriod();
 		}
@@ -281,17 +281,16 @@ public class Iteration implements AttachmentHolder {
 	// returns null otherwhise
 	public IterationTestPlanItem getTestPlanForTestCaseId(Long testCaseId) {
 		for (IterationTestPlanItem iterTestPlan : testPlans) {
-			if ((! iterTestPlan.isTestCaseDeleted())
-					&& (iterTestPlan.getReferencedTestCase().getId().equals(testCaseId)))
-			{
+			if ((!iterTestPlan.isTestCaseDeleted())
+					&& (iterTestPlan.getReferencedTestCase().getId().equals(testCaseId))) {
 				return iterTestPlan;
 			}
 		}
 		return null;
 	}
 
-	public IterationTestPlanItem getTestPlan(Long testPlanId){
-		for (IterationTestPlanItem iterTestPlan : testPlans){
+	public IterationTestPlanItem getTestPlan(Long testPlanId) {
+		for (IterationTestPlanItem iterTestPlan : testPlans) {
 			if (iterTestPlan.getId().equals(testPlanId)) {
 				return iterTestPlan;
 			}
@@ -311,9 +310,29 @@ public class Iteration implements AttachmentHolder {
 		Iteration clone = new Iteration();
 		clone.setName(this.getName());
 		clone.setDescription(this.getDescription());
+		copyPlanning(clone);
+
+		for (IterationTestPlanItem itemTestPlan : testPlans) {
+			clone.addTestPlan(itemTestPlan.createCopy());
+		}
+		for (Attachment attach : this.getAttachmentList().getAllAttachments()) {
+			Attachment copyAttach = attach.hardCopy();
+			clone.getAttachmentList().addAttachment(copyAttach);
+		}
+
+		return clone;
+	}
+
+	/**
+	 * copy planning info: <br>
+	 * if actual end/start is auto => don't copy the actual date.
+	 * 
+	 * @param clone
+	 */
+	private void copyPlanning(Iteration clone) {
 		clone.setActualEndAuto(this.isActualEndAuto());
 		clone.setActualStartAuto(this.isActualStartAuto());
-		
+
 		if (this.getScheduledStartDate() != null) {
 			clone.setScheduledStartDate((Date) this.getScheduledStartDate().clone());
 		}
@@ -327,33 +346,24 @@ public class Iteration implements AttachmentHolder {
 		if (this.getActualEndDate() != null && !this.isActualEndAuto()) {
 			clone.setActualEndDate((Date) this.getActualEndDate().clone());
 		}
-
-		for (IterationTestPlanItem itemTestPlan : testPlans) {
-				clone.addTestPlan(itemTestPlan.createCopy());
-		}
-		for (Attachment attach : this.getAttachmentList().getAllAttachments()){
-			Attachment copyAttach = attach.hardCopy();
-			clone.getAttachmentList().addAttachment(copyAttach);
-		}
-
-		return clone;
 	}
 
 	/***
 	 * Method which returns the position of a test case in the current iteration
-	 *
+	 * 
 	 * @param testCaseId
 	 *            the id of the test case we're looking for
 	 * @return the position of the test case (int)
-	 * @throws UnknownEntityException if not found.
+	 * @throws UnknownEntityException
+	 *             if not found.
 	 */
 	public int findTestCaseInIteration(Long testCaseId) {
 		ListIterator<IterationTestPlanItem> iterator = testPlans.listIterator();
 		while (iterator.hasNext()) {
 			IterationTestPlanItem itemTestPlan = iterator.next();
 
-			if ((! itemTestPlan.isTestCaseDeleted()) && (itemTestPlan.getReferencedTestCase().getId().equals(testCaseId)))
-			{
+			if ((!itemTestPlan.isTestCaseDeleted())
+					&& (itemTestPlan.getReferencedTestCase().getId().equals(testCaseId))) {
 				return iterator.previousIndex();
 			}
 		}
@@ -364,14 +374,14 @@ public class Iteration implements AttachmentHolder {
 
 	/***
 	 * Method which returns the position of an item test plan in the current iteration
-	 *
+	 * 
 	 * @param testPlanId
 	 *            the id of the test plan we're looking for
-	 * @return the position of the test plan  (int)
-	 * @throws UnknownEntityException if not found.
+	 * @return the position of the test plan (int)
+	 * @throws UnknownEntityException
+	 *             if not found.
 	 */
 	public int findTestPlanInIteration(Long testPlanId) {
-
 
 		ListIterator<IterationTestPlanItem> iterator = testPlans.listIterator();
 		while (iterator.hasNext()) {
@@ -389,23 +399,21 @@ public class Iteration implements AttachmentHolder {
 
 	/***
 	 * Method which sets a test case at a new position
-	 *
+	 * 
 	 * @param currentPosition
 	 *            the current position
 	 * @param newPosition
 	 *            the new position
 	 */
 	public void moveTestPlan(int currentPosition, int newPosition) {
-		if (currentPosition==newPosition){
-			return ;
+		if (currentPosition == newPosition) {
+			return;
 		}
-
 
 		IterationTestPlanItem testCaseToMove = testPlans.get(currentPosition);
 		testPlans.remove(currentPosition);
 		testPlans.add(newPosition, testCaseToMove);
 	}
-
 
 	/* *************** Attachable implementation ****************** */
 
@@ -415,7 +423,7 @@ public class Iteration implements AttachmentHolder {
 	}
 
 	@AclConstrainedObject
-	public Project getProject(){
+	public Project getProject() {
 		return campaign.getProject();
 	}
 
@@ -423,27 +431,23 @@ public class Iteration implements AttachmentHolder {
 
 	/**
 	 * If the iteration have autodates set, they will be updated accordingly.
-	 *
+	 * 
 	 * @param newItemTestPlanDate
 	 */
-	public void updateAutoDates(Date newItemTestPlanDate){
+	public void updateAutoDates(Date newItemTestPlanDate) {
 
-		if (isActualStartAuto() ){
-			//if we're lucky we can save a heavier computation
-			if (getActualStartDate()==null){
-				setActualStartDate(newItemTestPlanDate);
-			}
-			else if ( (newItemTestPlanDate!=null) && (getActualStartDate().compareTo(newItemTestPlanDate)>0) ){
-				setActualStartDate(newItemTestPlanDate);
-			}
-
-			//well too bad, we have to recompute that.
-			else{
-				autoSetActualStartDate();
-			}
+		if (isActualStartAuto()) {
+			updateAutoDatesAcutalStart(newItemTestPlanDate);
 		}
 		// check also if the end end can be updated
-		if (actualEndDateUpdateAuthorization() == true && isActualEndAuto() == true) {
+		if (isActualEndAuto()) {
+			updateAutoDatesActualEnd(newItemTestPlanDate);
+		}
+
+	}
+
+	private void updateAutoDatesActualEnd(Date newItemTestPlanDate) {
+		if (actualEndDateUpdateAuthorization()) {
 			// if we're lucky we can save a heavier computation
 			if (getActualEndDate() == null) {
 				setActualEndDate(newItemTestPlanDate);
@@ -455,10 +459,23 @@ public class Iteration implements AttachmentHolder {
 			else {
 				autoSetActualEndDateNoCheck();
 			}
-		} else if (isActualEndAuto()) {
+		} else {
 			setActualEndDate(null);
 		}
+	}
 
+	private void updateAutoDatesAcutalStart(Date newItemTestPlanDate) {
+		// if we're lucky we can save a heavier computation
+		if (getActualStartDate() == null) {
+			setActualStartDate(newItemTestPlanDate);
+		} else if ((newItemTestPlanDate != null) && (getActualStartDate().compareTo(newItemTestPlanDate) > 0)) {
+			setActualStartDate(newItemTestPlanDate);
+		}
+
+		// well too bad, we have to recompute that.
+		else {
+			autoSetActualStartDate();
+		}
 	}
 
 	private void autoSetActualStartDate() {
@@ -486,7 +503,7 @@ public class Iteration implements AttachmentHolder {
 	/***
 	 * This methods browses testPlans and checks if at least one testPlanItem has RUNNING or READY for execution status.
 	 * If this is the case, the actualEndDate should not be set
-	 *
+	 * 
 	 * @return false if the date should not be set
 	 */
 	private boolean actualEndDateUpdateAuthorization() {
@@ -499,29 +516,24 @@ public class Iteration implements AttachmentHolder {
 		return toReturn;
 	}
 
-
-	private Date getFirstExecutedTestPlanDate(){
-		if (getTestPlans().size()==0){
+	private Date getFirstExecutedTestPlanDate() {
+		if (getTestPlans().size() == 0) {
 			return null;
-		}
-		else{
+		} else {
 			IterationTestPlanItem firstTestPlan = Collections.min(getTestPlans(),
 					CascadingAutoDateComparatorBuilder.buildTestPlanFirstDateSorter());
 			return firstTestPlan.getLastExecutedOn();
 		}
 	}
 
-	private Date getLastExecutedTestPlanDate(){
-		if (getTestPlans().size()==0){
+	private Date getLastExecutedTestPlanDate() {
+		if (getTestPlans().size() == 0) {
 			return null;
-		}
-		else{
+		} else {
 			IterationTestPlanItem lastTestPlan = Collections.max(getTestPlans(),
 					CascadingAutoDateComparatorBuilder.buildTestPlanLastDateSorter());
 			return lastTestPlan.getLastExecutedOn();
 		}
 	}
-
-
 
 }
