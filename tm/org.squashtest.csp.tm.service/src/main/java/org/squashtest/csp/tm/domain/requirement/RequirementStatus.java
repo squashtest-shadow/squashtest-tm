@@ -24,11 +24,11 @@ import java.util.Comparator;
 import java.util.Set;
 import java.util.TreeSet;
 
-import org.squashtest.csp.tm.domain.Internationalizable;
+import org.squashtest.csp.tm.domain.Level;
 
-public enum RequirementStatus implements Internationalizable {
+public enum RequirementStatus implements Level {
 
-	WORK_IN_PROGRESS() {
+	WORK_IN_PROGRESS(1) {
 		@Override
 		public Set<RequirementStatus> getAvailableNextStatus() {
 			Set<RequirementStatus> next = defaultAvailableSet();
@@ -57,7 +57,7 @@ public enum RequirementStatus implements Internationalizable {
 		}
 	},
 
-	UNDER_REVIEW() {
+	UNDER_REVIEW(2) {
 		@Override
 		public Set<RequirementStatus> getAvailableNextStatus() {
 			Set<RequirementStatus> next = defaultAvailableSet();
@@ -87,7 +87,7 @@ public enum RequirementStatus implements Internationalizable {
 		}
 	},
 
-	APPROVED() {
+	APPROVED(3) {
 		@Override
 		public Set<RequirementStatus> getAvailableNextStatus() {
 			Set<RequirementStatus> next = defaultAvailableSet();
@@ -117,7 +117,7 @@ public enum RequirementStatus implements Internationalizable {
 		}
 	},
 
-	OBSOLETE() {
+	OBSOLETE(4) {
 		@Override
 		public Set<RequirementStatus> getAvailableNextStatus() {
 			return defaultAvailableSet();
@@ -146,9 +146,17 @@ public enum RequirementStatus implements Internationalizable {
 
 	private static final String I18N_KEY_ROOT = "requirement.status.";
 
+	private final int level;
+
+	private RequirementStatus(int level) {
+		this.level = level;
+	}
+	/**
+	 * @see org.squashtest.csp.tm.domain.Level#getLevel()
+	 */
 	@Override
-	public String getI18nKey() {
-		return I18N_KEY_ROOT + name();
+	public int getLevel() {
+		return level;
 	}
 	
 	/**
@@ -190,7 +198,10 @@ public enum RequirementStatus implements Internationalizable {
 	public static StringComparator stringComparator() {
 		return new StringComparator();
 	}
-
+	@Override
+	public String getI18nKey() {
+		return I18N_KEY_ROOT + name();
+	}
 	/**
 	 * inner class used to sort RequirementStatus over their string representation. In case we have to sort stringified
 	 * statuses with other arbitrary strings, stringified statuses will have a lower rank than other strings.

@@ -19,7 +19,7 @@
  *     along with this software.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-package org.squashtest.csp.tm.web.internal.controller.testcase;
+package org.squashtest.csp.tm.web.internal.helper;
 
 import java.util.Locale;
 
@@ -30,11 +30,10 @@ import org.apache.commons.lang.StringEscapeUtils;
 import org.springframework.context.MessageSource;
 import org.springframework.context.annotation.Scope;
 import org.springframework.stereotype.Component;
-import org.squashtest.csp.tm.domain.testcase.TestCaseImportance;
-import org.squashtest.csp.tm.web.internal.helper.LabelFormatter;
+import org.squashtest.csp.tm.domain.Level;
 
 /**
- * Formats {@link TestCaseImportance} items so that they are displayed in a combobox as
+ * Formats {@link Level} items so that they are displayed in a combobox as
  * <code>"<item level> - <localized item message>"</code>
  * 
  * Objects of this class are not thread-safe
@@ -44,39 +43,37 @@ import org.squashtest.csp.tm.web.internal.helper.LabelFormatter;
  */
 @Component
 @Scope("prototype")
-public class TestCaseImportanceLabelFormatter implements LabelFormatter<TestCaseImportance> {
-	private final MessageSource messageSource;
-	private Locale locale = Locale.getDefault();
+public class LevelLabelFormatter<LEVEL extends Level> implements LabelFormatter<LEVEL> {
+		private final MessageSource messageSource;
+		private Locale locale = Locale.getDefault();
 
-	/**
-	 * @param messageSource
-	 */
-	@Inject
-	public TestCaseImportanceLabelFormatter(@NotNull MessageSource messageSource) {
-		super();
-		this.messageSource = messageSource;
+		/**
+		 * @param messageSource
+		 */
+		@Inject
+		public LevelLabelFormatter(@NotNull MessageSource messageSource) {
+			super();
+			this.messageSource = messageSource;
+		}
+
+		/**
+		 * 
+		 * @see org.squashtest.csp.tm.web.internal.helper.LabelFormatter#useLocale(java.util.Locale)
+		 */
+		@Override
+		public LabelFormatter<LEVEL> useLocale(Locale locale) {
+			this.locale = locale;
+			return this;
+		}
+
+		/**
+		 * 
+		 * @see org.squashtest.csp.tm.web.internal.helper.LabelFormatter#formatLabel(java.lang.Object)
+		 */
+		@Override
+		public String formatLabel(LEVEL toFormat) {
+			String label = toFormat.getLevel() + " - " + messageSource.getMessage(toFormat.getI18nKey(), null, locale); 
+			return StringEscapeUtils.escapeHtml(label);
+		}
+
 	}
-
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see org.squashtest.csp.tm.web.internal.helper.LabelFormatter#useLocale(java.util.Locale)
-	 */
-	@Override
-	public LabelFormatter<TestCaseImportance> useLocale(Locale locale) {
-		this.locale = locale;
-		return this;
-	}
-
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see org.squashtest.csp.tm.web.internal.helper.LabelFormatter#formatLabel(java.lang.Object)
-	 */
-	@Override
-	public String formatLabel(TestCaseImportance toFormat) {
-		String label = toFormat.getLevel() + " - " + messageSource.getMessage(toFormat.getI18nKey(), null, locale); 
-		return StringEscapeUtils.escapeHtml(label);
-	}
-
-}

@@ -24,7 +24,9 @@ package org.squashtest.csp.tm.web.internal.controller.testcase;
 import static org.squashtest.csp.tm.domain.testcase.TestCaseImportance.*;
 
 import org.springframework.context.MessageSource;
+import org.squashtest.csp.tm.domain.testcase.TestCaseImportance;
 import org.squashtest.csp.tm.web.internal.helper.LabelFormatter;
+import org.squashtest.csp.tm.web.internal.helper.LevelLabelFormatter;
 
 import spock.lang.Specification;
 import spock.lang.Unroll;
@@ -37,7 +39,7 @@ import spock.lang.Unroll;
 class TestCaseImportanceLabelFormatterTest extends Specification {
 	Locale locale = Locale.FRENCH
 	MessageSource messageSource = Mock()
-	TestCaseImportanceLabelFormatter formatter = new TestCaseImportanceLabelFormatter(messageSource)
+	LevelLabelFormatter<TestCaseImportance> formatter = new LevelLabelFormatter<TestCaseImportance>(messageSource)
 		
 	@Unroll("#item should be formatted as '#expectedLabel'")
 	def "TestCaseImportance item should be formatted as '<item level> - <localized item message>'"() {

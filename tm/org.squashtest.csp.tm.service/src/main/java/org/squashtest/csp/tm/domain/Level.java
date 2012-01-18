@@ -19,45 +19,14 @@
  *     along with this software.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-package org.squashtest.csp.tm.domain.testcase;
-
-import org.squashtest.csp.tm.domain.Level;
+package org.squashtest.csp.tm.domain;
 
 /**
+ * Something (more specifically an enum) which can be organized using a level and which is also internationalizable.
  * 
  * @author Gregory Fouquet
- *
+ * 
  */
-public enum TestCaseImportance implements Level {
-	VERY_HIGH(1), HIGH(2), MEDIUM(3), LOW(4);
-	
-	private static final String I18N_KEY_ROOT = "test-case.importance.";
-
-	private final int level;
-	
-	private TestCaseImportance(int value) {
-		this.level = value;
-	}
-
-	/** (non-Javadoc)
-	 * @see org.squashtest.csp.tm.domain.Internationalizable#getI18nKey()
-	 */
-	@Override
-	public String getI18nKey() {
-		return I18N_KEY_ROOT + this.name();
-	}
-
-	/**
-	 * @return the level
-	 */
-	@Override
-	public int getLevel() {	
-		return level;
-	}
-	
-	public static TestCaseImportance defaultValue(){
-		return MEDIUM;
-	}
-	
-
+public interface Level extends Internationalizable {
+	int getLevel();
 }

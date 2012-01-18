@@ -60,6 +60,7 @@ import org.squashtest.csp.tm.service.CallStepManagerService;
 import org.squashtest.csp.tm.service.TestCaseModificationService;
 import org.squashtest.csp.tm.service.VerifiedRequirement;
 import org.squashtest.csp.tm.web.internal.combo.OptionTag;
+import org.squashtest.csp.tm.web.internal.helper.LevelLabelFormatter;
 import org.squashtest.csp.tm.web.internal.model.datatable.DataTableDrawParameters;
 import org.squashtest.csp.tm.web.internal.model.datatable.DataTableMapperCollectionSortingAdapter;
 import org.squashtest.csp.tm.web.internal.model.datatable.DataTableMapperPagingAndSortingAdapter;
@@ -94,7 +95,7 @@ public class TestCaseModificationController {
 	private Provider<TestCaseImportanceJeditableComboDataBuilder> importanceComboBuilderProvider;
 
 	@Inject
-	private Provider<TestCaseImportanceLabelFormatter> importanceLabelFormatterProvider;
+	private Provider<LevelLabelFormatter<TestCaseImportance>> importanceLabelFormatterProvider;
 
 	@Inject
 	private CallStepManagerService callStepManager;

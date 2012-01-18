@@ -28,6 +28,7 @@ import javax.servlet.http.HttpServletRequest;
 
 import org.squashtest.csp.core.infrastructure.collection.PagedCollectionHolder;
 import org.squashtest.csp.tm.service.TestCaseModificationService;
+import org.squashtest.csp.tm.web.internal.helper.LevelLabelFormatter;
 import org.squashtest.csp.tm.web.internal.model.datatable.DataTableDrawParameters;
 import org.squashtest.csp.tm.web.internal.model.datatable.DataTableModelHelper;
 import org.squashtest.csp.tm.web.internal.model.viewmapper.DataTableMapper;
@@ -53,8 +54,8 @@ class TestCaseModificationControllerTest extends Specification {
 	TestCaseImportanceJeditableComboDataBuilder importanceComboBuilder = Mock()
 	Provider<TestCaseImportanceJeditableComboDataBuilder> importanceComboBuilderProvider = Mock()
 
-	TestCaseImportanceLabelFormatter importanceLabelFormatter = Mock()
-	Provider<TestCaseImportanceLabelFormatter> importanceLabelFormatterProvider = Mock()
+	LevelLabelFormatter importanceLabelFormatter = Mock()
+	Provider<LevelLabelFormatter> importanceLabelFormatterProvider = Mock()
 
 		def setup() {
 		controller.testCaseModificationService = testCaseModificationService

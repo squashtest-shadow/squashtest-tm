@@ -22,9 +22,9 @@ package org.squashtest.csp.tm.domain.requirement;
 
 import java.util.Comparator;
 
-import org.squashtest.csp.tm.domain.Internationalizable;
+import org.squashtest.csp.tm.domain.Level;
 
-public enum RequirementCriticality implements Internationalizable {
+public enum RequirementCriticality implements Level {
 	MINOR(1), MAJOR(2), CRITICAL(3), UNDEFINED(0);
 
 	private static final String I18N_KEY_ROOT = "requirement.criticality.";
@@ -34,7 +34,7 @@ public enum RequirementCriticality implements Internationalizable {
 		this.level = level;
 	}
 
-	public long getLevel() {
+	public int getLevel() {
 		return level;
 	}
 

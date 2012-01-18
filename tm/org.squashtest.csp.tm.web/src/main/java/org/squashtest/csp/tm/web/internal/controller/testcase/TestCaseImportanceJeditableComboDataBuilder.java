@@ -28,6 +28,7 @@ import org.springframework.osgi.extensions.annotation.ServiceReference;
 import org.springframework.stereotype.Component;
 import org.squashtest.csp.tm.domain.testcase.TestCaseImportance;
 import org.squashtest.csp.tm.domain.testcase.TestCaseImportanceLevelComparator;
+import org.squashtest.csp.tm.web.internal.helper.LevelLabelFormatter;
 import org.squashtest.csp.tm.web.internal.model.builder.EnumJeditableComboDataBuilder;
 
 /**
@@ -50,7 +51,7 @@ public class TestCaseImportanceJeditableComboDataBuilder extends EnumJeditableCo
 	}
 
 	@Inject
-	public void setLabelFormatter(TestCaseImportanceLabelFormatter formatter) {
+	public void setLabelFormatter(LevelLabelFormatter<TestCaseImportance> formatter) {
 		super.setLabelFormatter(formatter);
 	}
 
