@@ -43,7 +43,7 @@ import org.squashtest.csp.tm.domain.Level;
  */
 @Component
 @Scope("prototype")
-public class LevelLabelFormatter<LEVEL extends Level> implements LabelFormatter<LEVEL> {
+public class LevelLabelFormatter implements LabelFormatter<Level> {
 		private final MessageSource messageSource;
 		private Locale locale = Locale.getDefault();
 
@@ -61,7 +61,7 @@ public class LevelLabelFormatter<LEVEL extends Level> implements LabelFormatter<
 		 * @see org.squashtest.csp.tm.web.internal.helper.LabelFormatter#useLocale(java.util.Locale)
 		 */
 		@Override
-		public LabelFormatter<LEVEL> useLocale(Locale locale) {
+		public LabelFormatter<Level> useLocale(Locale locale) {
 			this.locale = locale;
 			return this;
 		}
@@ -71,7 +71,7 @@ public class LevelLabelFormatter<LEVEL extends Level> implements LabelFormatter<
 		 * @see org.squashtest.csp.tm.web.internal.helper.LabelFormatter#formatLabel(java.lang.Object)
 		 */
 		@Override
-		public String formatLabel(LEVEL toFormat) {
+		public String formatLabel(Level toFormat) {
 			String label = toFormat.getLevel() + " - " + messageSource.getMessage(toFormat.getI18nKey(), null, locale); 
 			return StringEscapeUtils.escapeHtml(label);
 		}

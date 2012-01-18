@@ -95,7 +95,7 @@ public class TestCaseModificationController {
 	private Provider<TestCaseImportanceJeditableComboDataBuilder> importanceComboBuilderProvider;
 
 	@Inject
-	private Provider<LevelLabelFormatter<TestCaseImportance>> importanceLabelFormatterProvider;
+	private Provider<LevelLabelFormatter> importanceLabelFormatterProvider;
 
 	@Inject
 	private CallStepManagerService callStepManager;

@@ -51,7 +51,7 @@ public class TestCaseImportanceJeditableComboDataBuilder extends EnumJeditableCo
 	}
 
 	@Inject
-	public void setLabelFormatter(LevelLabelFormatter<TestCaseImportance> formatter) {
+	public void setLabelFormatter(LevelLabelFormatter formatter) {
 		super.setLabelFormatter(formatter);
 	}
 

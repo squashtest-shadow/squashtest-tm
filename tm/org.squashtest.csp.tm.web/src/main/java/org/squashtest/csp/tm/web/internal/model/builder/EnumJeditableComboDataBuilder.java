@@ -66,7 +66,7 @@ public class EnumJeditableComboDataBuilder<T extends Enum<?>> {
 	/**
 	 * The required formatter which produces item labels. Should be injected.
 	 */
-	private LabelFormatter<T> labelFormatter;
+	private LabelFormatter<? super T> labelFormatter;
 	/**
 	 * The optional selected item.
 	 */
@@ -94,7 +94,7 @@ public class EnumJeditableComboDataBuilder<T extends Enum<?>> {
 	 * @param formatter
 	 *            the formatter to set
 	 */
-	public void setLabelFormatter(LabelFormatter<T> formatter) {
+	public void setLabelFormatter(LabelFormatter<? super T> formatter) {
 		this.labelFormatter = formatter;
 	}
 
