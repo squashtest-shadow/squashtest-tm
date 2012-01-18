@@ -42,10 +42,19 @@ An three buttons : confirm, ok, cancel, having css classes set using the class c
 	<li>parametrizationPanel : a javascript object configuring the parametrization phase
 		<ul>
 			<li>selector : the selector that will give the jQuery object that represents the parametrisation panel</li>
+			<li>submitUrl : the url where to upload the form</li>
 		</ul>
 	</li>
-	<li>progressPanel : a javascript object configuring the progress upload phase.</li>
-	//TODO : complete this
+	<li>progressPanel : a javascript object configuring the progress upload phase.
+		<ul>
+			<li>selector : the selector that will give the jQuery object that represents the progress upload panel</li>
+		</ul>	
+	</li>
+	<li>summaryPanel : a javascript object configuring the summary phase :
+		<ul>
+			<li>builder : a function accepting the result of the ajax request as a json object and returning the content of the summary panel as a jQuery object.</li>
+		</ul>
+	</li>
 </ul>
 *
 */
@@ -72,6 +81,8 @@ function FeedbackMultipartPopup(settings){
 			this.dumpPanel.panel = $(this.dumpPanel.selector);
 		}
 	};
+	
+
 	
 	this.getButtonPane = function(){
 		return this.popup.eq(0).next()
@@ -107,9 +118,8 @@ function FeedbackMultipartPopup(settings){
 		this.showParametrization();
 	};
 	
-	
 	this.showParametrization = function(){
-		
+	
 		this.parametrizationPanel.panel.show();
 		this.progressPanel.panel.hide();
 		this.summaryPanel.panel.hide();
@@ -155,7 +165,6 @@ function FeedbackMultipartPopup(settings){
 		
 	};
 
-
 	
 	/* ********************* main code : operations and transitions ****************************** */
 	
@@ -173,15 +182,30 @@ function FeedbackMultipartPopup(settings){
 			dataType : "text",
 			success : function(){},
 			error : function(){},
-			complete : function(jqXHR){this.xhr = jqXHR; self.displaySummary();},
+			complete : function(jqXHR){
+				self.xhr = jqXHR; 
+				self.displaySummary();
+			},
 			target : this.dumpPanel.panel.attr('id')
 		});
 	};
 	
+	
+	var stripWrapper = function(xhr){
+		var jqXHR = $(xhr.responseText);
+		return jqXHR.html();
+	}
+	
 	this.displaySummary = function(){
+	
+		var json = $.parseJSON(stripWrapper(this.xhr));
+		
+		var content = this.summaryPanel.builder(json);
+		this.summaryPanel.panel.html('');
+		this.summaryPanel.panel.prepend(content);
+	
 		this.showSummary();
 		
-		//todo : build the summary using the xhr response, possibly by calling a client-defined callback.
 	};
 	
 	this.cancel = function(){

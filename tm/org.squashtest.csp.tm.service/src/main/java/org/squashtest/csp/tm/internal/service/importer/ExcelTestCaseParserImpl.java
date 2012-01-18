@@ -48,6 +48,7 @@ import org.squashtest.csp.tm.domain.testcase.TestStep;
  * 		  2) make the description a list of description
  * 		  2')separate the list of description from the list of additionalDescription
  * 		  3) make the prerequesite a list of prerequesites
+ * 		  4) remplacer les balises <b></b> par des <strong></strong> dans la génération des supplément de description
  * 
  * 
  */

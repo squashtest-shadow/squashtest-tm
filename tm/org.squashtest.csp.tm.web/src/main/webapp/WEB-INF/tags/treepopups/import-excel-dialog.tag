@@ -39,11 +39,16 @@
 
 <script type="text/javascript" src="${ pageContext.servletContext.contextPath }/scripts/jquery/jquery.form.js"></script>
 <script type="text/javascript" src="${ pageContext.servletContext.contextPath }/scripts/squashtest/classes/FeedbackMultipartPopup.js"></script> 
-<%--<script type="text/javascript" src="http://localhost/scripts/FeedbackMultipartPopup.js"></script> --%>
+<%--<script type="text/javascript" src="http://localhost/scripts/FeedbackMultipartPopup.js"></script> --%> 
 
 
 <s:url var="importUrl" value="/${workspace}-browser/import/upload"/>
 
+<%-- 
+	Note : as long as this popup is open if and only if exactly one drive node is selected, the following code is safe.
+	if not, consider checking the results of $(tree).jstree("get_selected");
+
+ --%>
 
 <pop:popup id="import-excel-dialog" titleKey="dialog.import-excel.title" isContextual="false"  closeOnSuccess="false">
 	<jsp:attribute name="buttonsArray">	
@@ -52,12 +57,18 @@
 		{
 			text : "${confirmLabel}",
 			"class" : FeedbackMultipartPopup.CONFIRM_CLASS,
-			click : function(){importExcelFeedbackPopup.submit();}
+			click : function(){	importExcelFeedbackPopup.submit();}
 		},
 		{
 			text : "Ok", <!--  todo : make it i18n -->
 			"class" : FeedbackMultipartPopup.OK_CLASS,
-			click : function(){$("#import-excel-dialog").dialog("close");}
+			click : function(){
+				$("#import-excel-dialog").dialog("close");
+				var tree = $("${treeSelector}");
+				var projectNode = tree.jstree("get_selected");
+				tree.jstree("refresh", projectNode);
+				tree.jstree("open_node", project_node, false, true);
+			}
 		
 		},
 		{
@@ -124,12 +135,46 @@
 
 </pop:popup>
 
+<f:message var="nbTotalLabel" key="dialog.import.test-case.total.label"/>
+<f:message var="nbWarningsLabel" key="dialog.import.test-case.warnings.label"/>
+<f:message var="nbSuccessLabel" key="dialog.import.test-case.success.label"/>
+<f:message var="nbFailuresLabel" key="dialog.import.test-case.failures.label"/>
 <script type="text/javascript">
 
+
 	var importExcelFeedbackPopup = null;
+	
+
+	function importSummaryBuilder(response){
+			
+		var mainDiv=$("<div/>");
+		
+		var spanTotal=$("<span/>", {"style":"display : block;"});
+		spanTotal.text("${nbTotalLabel} "+response.totalTestCases);
+		spanTotal.appendTo(mainDiv);
+		
+		var spanSuccess=$("<span/>", {"style":"display : block;"});
+		spanSuccess.text("${nbSuccessLabel} "+response.success);
+		spanSuccess.appendTo(mainDiv);		
+		
+		var spanWarnings=$("<span/>", {"style":"display : block;"});
+		spanWarnings.text("${nbWarningsLabel} "+response.warnings);
+		spanWarnings.appendTo(mainDiv);	
+		
+		var spanFailures=$("<span/>", {"style":"display : block;"});
+		spanFailures.text("${nbFailuresLabel} "+response.failures);
+		spanFailures.appendTo(mainDiv);			
+	
+		return mainDiv;
+	
+	}
+	
+	
+	
 	$(function(){		
 		
 		var settings = {
+				
 			popup : $("#import-excel-dialog"),
 			
 			parametrizationPanel : {
@@ -142,13 +187,13 @@
 			},
 			
 			summaryPanel : {
-				selector : "#import-excel-dialog-summary"			
+				selector : "#import-excel-dialog-summary",
+				builder : importSummaryBuilder
 			},
 			
 			dumpPanel : {
 				selector : "#import-excel-dialog-dump"	
 			}
-				
 				
 		};
 		
@@ -160,4 +205,6 @@
 			return false;		
 		});		
 	});
+	
+	
 </script>

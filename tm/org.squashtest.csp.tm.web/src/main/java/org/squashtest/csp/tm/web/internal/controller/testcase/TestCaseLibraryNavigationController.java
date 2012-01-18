@@ -143,8 +143,7 @@ public class TestCaseLibraryNavigationController extends
 		
 		InputStream stream = archive.getInputStream();
 		
-		return testCaseLibraryNavigationService.importExcelTestCase(stream, projectId, zipEncoding);
-		
+		return testCaseLibraryNavigationService.importExcelTestCase(stream, projectId, zipEncoding);	
 		
 	}
 	

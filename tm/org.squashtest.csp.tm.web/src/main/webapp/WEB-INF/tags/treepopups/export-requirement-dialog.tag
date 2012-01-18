@@ -78,15 +78,15 @@
 
 	<jsp:attribute name="additionalSetup">
 		open : function(){
-		var selection = $("${treeSelector}").jstree("get_selected");
-		if(selection.length){
-			var name = '<f:message key="requirement.export.prefix.label" />' + new Date().format('<f:message
-			key="requirement.export.dateformat.label" />');
-			$("#export-name-requirement-input").val(name);
+			var selection = $("${treeSelector}").jstree("get_selected");
+			if(selection.length){
+				var name = '<f:message key="requirement.export.prefix.label" />' + new Date().format('<f:message
+				key="requirement.export.dateformat.label" />');
+				$("#export-name-requirement-input").val(name);
 			}
-		else{
-			alert("<f:message key="requirement.export.no.node.selected.message" />");
-			$("#export-requirement-node-dialog").dialog("close");
+			else{
+				alert("<f:message key="requirement.export.no.node.selected.message" />");
+				$("#export-requirement-node-dialog").dialog("close");
 			}		
 		}
 	
