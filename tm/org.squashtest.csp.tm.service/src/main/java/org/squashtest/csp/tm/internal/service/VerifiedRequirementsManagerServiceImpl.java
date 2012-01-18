@@ -20,6 +20,7 @@
  */
 package org.squashtest.csp.tm.internal.service;
 
+import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
 
@@ -119,6 +120,8 @@ public class VerifiedRequirementsManagerServiceImpl implements VerifiedRequireme
 			for (RequirementVersion requirement : reqs) {
 				testCase.removeVerifiedRequirement(requirement);
 			}
+			testCaseImportanceManagerService
+					.changeImportanceIfRelationsRemovedFromTestCase(requirementsIds, testCaseId);
 		}
 	}
 
@@ -129,6 +132,8 @@ public class VerifiedRequirementsManagerServiceImpl implements VerifiedRequireme
 
 		TestCase testCase = testCaseDao.findById(testCaseId);
 		testCase.removeVerifiedRequirement(req);
+		testCaseImportanceManagerService.changeImportanceIfRelationsRemovedFromTestCase(Arrays.asList(requirementId),
+				testCaseId);
 	}
 
 }

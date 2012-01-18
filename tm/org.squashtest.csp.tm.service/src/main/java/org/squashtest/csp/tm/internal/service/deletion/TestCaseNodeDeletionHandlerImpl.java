@@ -39,14 +39,14 @@ import org.squashtest.csp.tm.internal.repository.TestCaseDeletionDao;
 import org.squashtest.csp.tm.internal.repository.TestCaseFolderDao;
 import org.squashtest.csp.tm.internal.service.TestCaseNodeDeletionHandler;
 import org.squashtest.csp.tm.internal.service.deletion.LockedFileInferenceGraph.Node;
+import org.squashtest.csp.tm.service.TestCaseImportanceManagerService;
 import org.squashtest.csp.tm.service.deletion.AffectedEntitiesPreviewReport;
 import org.squashtest.csp.tm.service.deletion.NotDeletablePreviewReport;
 import org.squashtest.csp.tm.service.deletion.SuppressionPreviewReport;
 
 @Component("squashtest.tm.service.deletion.TestCaseNodeDeletionHandler")
 public class TestCaseNodeDeletionHandlerImpl extends
-		AbstractNodeDeletionHandlerImpl<TestCaseLibraryNode, TestCaseFolder>
-		implements TestCaseNodeDeletionHandler {
+		AbstractNodeDeletionHandlerImpl<TestCaseLibraryNode, TestCaseFolder> implements TestCaseNodeDeletionHandler {
 
 	@Inject
 	private TestCaseFolderDao folderDao;
@@ -56,19 +56,21 @@ public class TestCaseNodeDeletionHandlerImpl extends
 
 	@Inject
 	private TestCaseDeletionDao deletionDao;
+	@Inject
+	private TestCaseImportanceManagerService testCaseImportanceManagerService;
 
 	@Override
 	protected FolderDao<TestCaseFolder, TestCaseLibraryNode> getFolderDao() {
 		return folderDao;
 	}
 
-
-	/* ************************************ AbstractNodeDeletionHandlerImpl impl ***************************************** */
-
+	/*
+	 * ************************************ AbstractNodeDeletionHandlerImpl impl
+	 * *****************************************
+	 */
 
 	@Override
-	protected List<SuppressionPreviewReport> diagnoseSuppression(
-			List<Long> nodeIds) {
+	protected List<SuppressionPreviewReport> diagnoseSuppression(List<Long> nodeIds) {
 		List<SuppressionPreviewReport> preview = new LinkedList<SuppressionPreviewReport>();
 
 		preview.add(previewLockedNodes(nodeIds));
@@ -79,7 +81,6 @@ public class TestCaseNodeDeletionHandlerImpl extends
 		return preview;
 	}
 
-
 	@Override
 	protected List<Long> detectLockedNodes(final List<Long> nodeIds) {
 
@@ -89,7 +90,7 @@ public class TestCaseNodeDeletionHandlerImpl extends
 
 		List<Long> lockedCandidateIds = new ArrayList<Long>();
 
-		for (Node node : lockedCandidates){
+		for (Node node : lockedCandidates) {
 			lockedCandidateIds.add(node.getKey());
 		}
 
@@ -97,13 +98,14 @@ public class TestCaseNodeDeletionHandlerImpl extends
 
 	}
 
-
 	@Override
 	/*
-	 * Will batch-remove some TestCaseLibraryNodes. Since we may have to delete lots of nested entities we cannot afford to use Hibernate orm abilities : you don't want one fetch-query per
-	 * entity or the DB admin from hell will eat you.
-	 *
-	 * Note : We only need to take care of the attachments and steps, the rest will cascade thanks to the ON CASCADE clauses in the other tables.
+	 * Will batch-remove some TestCaseLibraryNodes. Since we may have to delete lots of nested entities we cannot afford
+	 * to use Hibernate orm abilities : you don't want one fetch-query per entity or the DB admin from hell will eat
+	 * you.
+	 * 
+	 * Note : We only need to take care of the attachments and steps, the rest will cascade thanks to the ON CASCADE
+	 * clauses in the other tables.
 	 */
 	protected void batchDeleteNodes(List<Long> ids) {
 		if (!ids.isEmpty()) {
@@ -112,47 +114,35 @@ public class TestCaseNodeDeletionHandlerImpl extends
 			List<Long> testCaseAttachmentIds = deletionDao.findTestCaseAttachmentListIds(ids);
 			List<Long> testStepAttachmentIds = deletionDao.findTestStepAttachmentListIds(stepIds);
 
-
-			
 			deletionDao.removeCallingCampaignItemTestPlan(ids);
 			deletionDao.removeOrSetNullCallingIterationItemTestPlan(ids);
-			
+
 			deletionDao.setNullCallingExecutions(ids);
 			deletionDao.setNullCallingExecutionSteps(stepIds);
-			
+
 			deletionDao.removeFromVerifyingTestCaseLists(ids);
 
 			deletionDao.removeAllSteps(stepIds);
 			deletionDao.removeEntities(ids);
-			
+
 			// We merge the list for
 			// test cases and test step first so that
 			// we can make one only one query against the database.
 			testCaseAttachmentIds.addAll(testStepAttachmentIds);
 			deletionDao.removeAttachmentsLists(testCaseAttachmentIds);
 
-
 			// supprimer les associations Parent - Enfant ici
-
 
 		}
 	}
 
-
 	/* ************************ TestCaseNodeDeletionHandler impl ***************************** */
 
-
-
-
 	/*
-	 * deleting a test step means :
-	 *  - delete its attachments,
-	 *  - delete itself.
-	 *
+	 * deleting a test step means : - delete its attachments, - delete itself.
 	 */
 	@Override
 	public void deleteStep(TestCase owner, TestStep step) {
-
 
 		int index = owner.getPositionOfStep(step.getId());
 
@@ -161,50 +151,45 @@ public class TestCaseNodeDeletionHandlerImpl extends
 		}
 
 		owner.getSteps().remove(index);
-		
-		List<Long> stepId= new LinkedList<Long>();
+
+		List<Long> stepId = new LinkedList<Long>();
 		stepId.add(step.getId());
 		deletionDao.setNullCallingExecutionSteps(stepId);
 
 		if (step instanceof ActionTestStep) {
-			deleteActionStep((ActionTestStep)step);
+			deleteActionStep((ActionTestStep) step);
 		} else if (step instanceof CallTestStep) {
-			deleteCallStep((CallTestStep)step);
+			CallTestStep callTestStep = (CallTestStep) step;
+			deleteCallStep(callTestStep);
+			testCaseImportanceManagerService.changeImportanceIfCallStepRemoved(callTestStep.getCalledTestCase(), owner);
 		}
 	}
 
-
-	private void deleteActionStep(ActionTestStep step){
+	private void deleteActionStep(ActionTestStep step) {
 		deletionDao.removeAttachmentList(step.getAttachmentList());
 		deletionDao.removeEntity(step);
 	}
 
-	private void deleteCallStep(CallTestStep step){
+	private void deleteCallStep(CallTestStep step) {
 		deletionDao.removeEntity(step);
 	}
-
-
-
 
 	/* ************************ privates stuffs ************************ */
 
 	/*
-	 * note : the supposedly 'private' methods are labelled as 'protected'
-	 * instead, so that reflexive-based test-frameworks (such as Groovy+Spock)
-	 * can access them.
+	 * note : the supposedly 'private' methods are labelled as 'protected' instead, so that reflexive-based
+	 * test-frameworks (such as Groovy+Spock) can access them.
 	 */
 
 	/*
-	 * a node will be deletable if :
-	 * 	- it has no deletion-related constraints,
-	 *  - the node has constraints but they are being deleted too.
+	 * a node will be deletable if : - it has no deletion-related constraints, - the node has constraints but they are
+	 * being deleted too.
 	 */
 	protected NotDeletablePreviewReport previewLockedNodes(List<Long> nodeIds) {
 
 		NotDeletablePreviewReport report = new NotDeletablePreviewReport();
 
 		LockedFileInferenceGraph graph = initLockGraph(nodeIds);
-
 
 		// when nonDeletableData is not empty, some of those nodes belongs to
 		// the deletion request itself
@@ -225,11 +210,7 @@ public class TestCaseNodeDeletionHandlerImpl extends
 		return report;
 	}
 
-
-
-
-	protected AffectedEntitiesPreviewReport previewAffectedNodes(
-			List<Long> nodeIds) {
+	protected AffectedEntitiesPreviewReport previewAffectedNodes(List<Long> nodeIds) {
 		AffectedEntitiesPreviewReport report = new AffectedEntitiesPreviewReport();
 
 		// FIXME
@@ -238,10 +219,9 @@ public class TestCaseNodeDeletionHandlerImpl extends
 	}
 
 	/**
-	 * See
-	 * {@link TestCaseDao#findTestCasesHavingCallerDetails(java.util.Collection)}
-	 * for more information regarding that mysterious Object[]
-	 *
+	 * See {@link TestCaseDao#findTestCasesHavingCallerDetails(java.util.Collection)} for more information regarding
+	 * that mysterious Object[]
+	 * 
 	 */
 	protected List<Object[]> getAllCallerCalledPairs(List<Long> calledIds) {
 
@@ -250,17 +230,15 @@ public class TestCaseNodeDeletionHandlerImpl extends
 		List<Long> currentCalled = new LinkedList<Long>(calledIds);
 
 		while (!currentCalled.isEmpty()) {
-			List<Object[]> currentPair = leafDao
-					.findTestCasesHavingCallerDetails(currentCalled);
+			List<Object[]> currentPair = leafDao.findTestCasesHavingCallerDetails(currentCalled);
 
 			result.addAll(currentPair);
 
 			/*
-			 * collect the caller ids in the currentPair for the next loop, with
-			 * the following restrictions : 1) if a caller id is not null, 2) if
-			 * that id ( x[0] ) wasn't part of the previous query (ie, treated
-			 * already) 3) if that id wasn't already included,
-			 *
+			 * collect the caller ids in the currentPair for the next loop, with the following restrictions : 1) if a
+			 * caller id is not null, 2) if that id ( x[0] ) wasn't part of the previous query (ie, treated already) 3)
+			 * if that id wasn't already included,
+			 * 
 			 * then we can add that id.
 			 */
 
@@ -268,8 +246,7 @@ public class TestCaseNodeDeletionHandlerImpl extends
 
 			for (Object[] item : currentPair) {
 				Object key = item[0];
-				if ((key != null) && (!currentCalled.contains(key))
-						&& (!nextCalled.contains(key))) {
+				if ((key != null) && (!currentCalled.contains(key)) && (!nextCalled.contains(key))) {
 					nextCalled.add((Long) item[0]);
 				}
 			}
@@ -282,23 +259,20 @@ public class TestCaseNodeDeletionHandlerImpl extends
 
 	}
 
+	protected LockedFileInferenceGraph initLockGraph(List<Long> candidatesId) {
 
-	protected LockedFileInferenceGraph initLockGraph(List<Long> candidatesId){
-
-		//phase 1 : get the test case call dependencies
+		// phase 1 : get the test case call dependencies
 		List<Object[]> callGraphDetails = getAllCallerCalledPairs(candidatesId);
 
-
-		//phase 2 : build the graph of dependencies and resolve the locks.
+		// phase 2 : build the graph of dependencies and resolve the locks.
 		LockedFileInferenceGraph graph = new LockedFileInferenceGraph();
 		graph.build(callGraphDetails);
 
 		graph.setCandidatesToDeletion(candidatesId);
 		graph.resolveLockedFiles();
 
-		//job done, let's return the result
+		// job done, let's return the result
 		return graph;
 	}
-
 
 }

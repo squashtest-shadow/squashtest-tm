@@ -22,6 +22,7 @@ package org.squashtest.csp.tm.domain.requirement;
 
 import java.util.Comparator;
 import java.util.List;
+
 import org.squashtest.csp.tm.domain.Level;
 
 public enum RequirementCriticality implements Level {
@@ -52,41 +53,41 @@ public enum RequirementCriticality implements Level {
 	public String getI18nKey() {
 		return I18N_KEY_ROOT + name();
 	}
-	
-	
-	public static StringComparator stringComparator(){
+
+	public static StringComparator stringComparator() {
 		return new StringComparator();
 	}
-	
+
 	/**
-	 *  inner class used to sort RequirementCriticalities over their string representation.
-	 *  In case we have to sort stringified criticalities with other arbitrary strings, stringified 
-	 *  criticalities will have a lower rank than other strings. 
+	 * inner class used to sort RequirementCriticalities over their string representation. In case we have to sort
+	 * stringified criticalities with other arbitrary strings, stringified criticalities will have a lower rank than
+	 * other strings.
 	 */
-	private static class StringComparator implements Comparator<String>{
+	private static class StringComparator implements Comparator<String> {
 		@Override
 		public int compare(String o1, String o2) {
 			RequirementCriticality s1, s2;
-			try{
-				 s1 = RequirementCriticality.valueOf(o1);
-			}catch(IllegalArgumentException iae){
+			try {
+				s1 = RequirementCriticality.valueOf(o1);
+			} catch (IllegalArgumentException iae) {
 				return 1;
 			}
-			try{
-				 s2 = RequirementCriticality.valueOf(o2);
-			}catch(IllegalArgumentException iae){
+			try {
+				s2 = RequirementCriticality.valueOf(o2);
+			} catch (IllegalArgumentException iae) {
 				return -1;
-			}			
-			
+			}
+
 			return s1.compareTo(s2);
 		}
 	}
 
 	public static RequirementCriticality findStrongestCriticality(List<RequirementCriticality> requirementCriticalities) {
+
 		RequirementCriticality strongestRequirementCriticality = requirementCriticalities.get(0);
 		for (RequirementCriticality requirementCriticality : requirementCriticalities) {
 			if (strongestRequirementCriticality.getLevel() > requirementCriticality.getLevel()) {
-				strongestRequirementCriticality = requirementCriticality; 
+				strongestRequirementCriticality = requirementCriticality;
 			}
 		}
 		return strongestRequirementCriticality;

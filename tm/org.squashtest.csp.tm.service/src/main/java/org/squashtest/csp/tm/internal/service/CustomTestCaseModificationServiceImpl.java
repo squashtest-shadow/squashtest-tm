@@ -38,8 +38,8 @@ import org.squashtest.csp.core.infrastructure.collection.PagingAndSorting;
 import org.squashtest.csp.core.infrastructure.collection.PagingBackedPagedCollectionHolder;
 import org.squashtest.csp.tm.domain.DuplicateNameException;
 import org.squashtest.csp.tm.domain.requirement.RequirementVersion;
-import org.squashtest.csp.tm.domain.requirement.RequirementCriticality;
 import org.squashtest.csp.tm.domain.testcase.ActionTestStep;
+import org.squashtest.csp.tm.domain.testcase.CallTestStep;
 import org.squashtest.csp.tm.domain.testcase.TestCase;
 import org.squashtest.csp.tm.domain.testcase.TestCaseFolder;
 import org.squashtest.csp.tm.domain.testcase.TestCaseLibraryNode;
@@ -65,10 +65,10 @@ public class CustomTestCaseModificationServiceImpl implements CustomTestCaseModi
 
 	@Inject
 	private TestCaseDao testCaseDao;
-	
+
 	@Inject
 	private TestCaseImportanceManagerService testCaseImportanceManagerService;
-	
+
 	@Inject
 	private TestStepDao testStepDao;
 
@@ -255,8 +255,18 @@ public class CustomTestCaseModificationServiceImpl implements CustomTestCaseModi
 		}
 
 		testCase.addStep(index, copyStep);
+
+		if (!testCase.getSteps().contains(original)) {
+			updateImportanceIfCallStep(testCase, copyStep);
+		}
+
 	}
-	
+	private void updateImportanceIfCallStep(TestCase parentTestCase, TestStep copyStep) {
+		if (copyStep instanceof CallTestStep) {
+			TestCase called = ((CallTestStep) copyStep).getCalledTestCase();
+			testCaseImportanceManagerService.changeImportanceIfCallStepAddedToTestCases(called, parentTestCase);
+		}
+	}
 	@Override
 	public PagedCollectionHolder<List<VerifiedRequirement>> findAllVerifiedRequirementsByTestCaseId(long testCaseId,
 			PagingAndSorting pas) {

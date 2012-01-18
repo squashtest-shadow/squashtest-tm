@@ -34,9 +34,7 @@ import org.springframework.security.access.prepost.PostFilter;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
-import org.squashtest.csp.tm.domain.CannotCreateExecutionException;
 import org.squashtest.csp.tm.domain.CyclicStepCallException;
-import org.squashtest.csp.tm.domain.campaign.IterationTestPlanItem;
 import org.squashtest.csp.tm.domain.projectfilter.ProjectFilter;
 import org.squashtest.csp.tm.domain.testcase.CallTestStep;
 import org.squashtest.csp.tm.domain.testcase.TestCase;
@@ -49,6 +47,7 @@ import org.squashtest.csp.tm.internal.repository.TestCaseLibraryDao;
 import org.squashtest.csp.tm.internal.repository.TestStepDao;
 import org.squashtest.csp.tm.service.CallStepManagerService;
 import org.squashtest.csp.tm.service.ProjectFilterModificationService;
+import org.squashtest.csp.tm.service.TestCaseImportanceManagerService;
 
 @Service("squashtest.tm.service.CallStepManagerService")
 @Transactional
@@ -67,6 +66,8 @@ public class CallStepManagerServiceImpl implements CallStepManagerService {
 	@Inject
 	private ProjectFilterModificationService projectFilterModificationService;
 
+	@Inject
+	private TestCaseImportanceManagerService testCaseImportanceManagerService;
 	@Inject
 	@Qualifier("squashtest.tm.service.TestCaseLibrarySelectionStrategy")
 	private LibrarySelectionStrategy<TestCaseLibrary, TestCaseLibraryNode> libraryStrategy;
@@ -97,6 +98,7 @@ public class CallStepManagerServiceImpl implements CallStepManagerService {
 
 		parentTestCase.addStep(newStep);
 
+		testCaseImportanceManagerService.changeImportanceIfCallStepAddedToTestCases(calledTestCase, parentTestCase);
 	}
 
 	@Override
@@ -114,7 +116,6 @@ public class CallStepManagerServiceImpl implements CallStepManagerService {
 				.findAll();
 
 	}
-
 	@Override
 	@PreAuthorize("hasPermission(#rootTcId, 'org.squashtest.csp.tm.domain.testcase.TestCase' , 'READ')"
 			+ " or hasRole('ROLE_ADMIN')	")
@@ -123,20 +124,20 @@ public class CallStepManagerServiceImpl implements CallStepManagerService {
 		Set<Long> calleesIds = new HashSet<Long>();
 		List<Long> prevCalleesIds = testCaseDao.findDistinctTestCasesIdsCalledByTestCase(rootTcId);
 		if (LOGGER.isTraceEnabled()) {
-			LOGGER.trace("TestCase #"+rootTcId+" directly calls " + prevCalleesIds);
+			LOGGER.trace("TestCase #" + rootTcId + " directly calls " + prevCalleesIds);
 		}
-		
-		prevCalleesIds.remove(rootTcId);//added to prevent infinite cycle in case of inconsistent data
-		
+
+		prevCalleesIds.remove(rootTcId);// added to prevent infinite cycle in case of inconsistent data
+
 		while (!prevCalleesIds.isEmpty()) {
 			// FIXME a tester avant correction : boucle infinie quand il y a un cycle dans les appels de cas de test
 			calleesIds.addAll(prevCalleesIds);
 			prevCalleesIds = testCaseDao.findAllTestCasesIdsCalledByTestCases(prevCalleesIds);
 
 			if (LOGGER.isTraceEnabled()) {
-				LOGGER.trace("TestCase #"+rootTcId+" indirectly calls " + prevCalleesIds);
+				LOGGER.trace("TestCase #" + rootTcId + " indirectly calls " + prevCalleesIds);
 			}
-			prevCalleesIds.remove(rootTcId);//added to prevent infinite cycle in case of inconsistent data
+			prevCalleesIds.remove(rootTcId);// added to prevent infinite cycle in case of inconsistent data
 		}
 
 		return calleesIds;
@@ -147,33 +148,30 @@ public class CallStepManagerServiceImpl implements CallStepManagerService {
 	public List<TestCase> findCallingTestCases(long testCaseId, CollectionSorting sorting) {
 		return testCaseDao.findAllCallingTestCases(testCaseId, sorting);
 	}
-	
+
 	@Override
 	@PreAuthorize("hasPermission(#destinationTestCaseId, 'org.squashtest.csp.tm.domain.testcase.TestCase' , 'READ') or hasRole('ROLE_ADMIN')")
-	public void checkForCyclicStepCallBeforePaste(
-			long destinationTestCaseId, String[] pastedStepId) {
+	public void checkForCyclicStepCallBeforePaste(long destinationTestCaseId, String[] pastedStepId) {
 		List<Long> firstCalledTestCasesIds = findFirstCalledTestCasesIds(pastedStepId);
-		//1> check that first called test cases are not the destination one. 
-		if (firstCalledTestCasesIds.contains(destinationTestCaseId)){ 
+		// 1> check that first called test cases are not the destination one.
+		if (firstCalledTestCasesIds.contains(destinationTestCaseId)) {
 			throw new CyclicStepCallException();
 		}
-		//2> check that each first called test case doesn't have the destination one in it's callTree 
+		// 2> check that each first called test case doesn't have the destination one in it's callTree
 		for (Long testCaseId : firstCalledTestCasesIds) {
 			Set<Long> callTree = getTestCaseCallTree(testCaseId);
-			if (callTree.contains(destinationTestCaseId)){
+			if (callTree.contains(destinationTestCaseId)) {
 				throw new CyclicStepCallException();
 			}
 		}
-	
-	}
 
+	}
 
 	private List<Long> findFirstCalledTestCasesIds(String[] copiedStepId) {
 		List<Long> copiedStepIds = parseLong(copiedStepId);
 		List<Long> firstCalledTestCases = testCaseDao.findCalledTestCaseOfCallSteps(copiedStepIds);
 		return firstCalledTestCases;
 	}
-
 
 	private List<Long> parseLong(String[] stringArray) {
 		List<Long> longList = new ArrayList<Long>();
@@ -183,23 +181,20 @@ public class CallStepManagerServiceImpl implements CallStepManagerService {
 		return longList;
 	}
 
-
 	@Override
 	public void checkForCyclicStepCallBeforeExecutionCreation(Long rootTestCaseId) {
 		List<Long> firstCalledTestCasesIds = testCaseDao.findDistinctTestCasesIdsCalledByTestCase(rootTestCaseId);
 		// 1> find first called test cases and check they are not the parent one
-		if (firstCalledTestCasesIds.contains(rootTestCaseId)){ 
+		if (firstCalledTestCasesIds.contains(rootTestCaseId)) {
 			throw new CyclicStepCallException();
 		}
-		//2> check that each first called test case doesn't have the destination one in it's callTree 
+		// 2> check that each first called test case doesn't have the destination one in it's callTree
 		for (Long testCaseId : firstCalledTestCasesIds) {
 			Set<Long> callTree = getTestCaseCallTree(testCaseId);
-			if (callTree.contains(rootTestCaseId)){
+			if (callTree.contains(rootTestCaseId)) {
 				throw new CyclicStepCallException();
 			}
-		} 
+		}
 	}
 
-
-	
 }

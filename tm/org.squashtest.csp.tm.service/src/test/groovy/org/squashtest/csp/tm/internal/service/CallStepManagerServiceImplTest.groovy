@@ -20,15 +20,16 @@
  */
 package org.squashtest.csp.tm.internal.service
 
-import org.squashtest.csp.tm.domain.CyclicStepCallException 
-import org.squashtest.csp.tm.domain.testcase.CallTestStep;
-import org.squashtest.csp.tm.domain.testcase.TestCase;
-import org.squashtest.csp.tm.internal.repository.TestCaseDao;
-import org.squashtest.csp.tm.internal.repository.TestCaseLibraryDao;
-import org.squashtest.csp.tm.internal.repository.TestStepDao;
-import org.squashtest.csp.tm.service.ProjectFilterModificationService 
+import org.apache.poi.hssf.record.formula.functions.T
+import org.squashtest.csp.tm.domain.CyclicStepCallException
+import org.squashtest.csp.tm.domain.testcase.CallTestStep
+import org.squashtest.csp.tm.domain.testcase.TestCase
+import org.squashtest.csp.tm.internal.repository.TestCaseDao
+import org.squashtest.csp.tm.internal.repository.TestCaseLibraryDao
+import org.squashtest.csp.tm.internal.repository.TestStepDao
+import org.squashtest.csp.tm.service.ProjectFilterModificationService
 
-import spock.lang.Specification;
+import spock.lang.Specification
 
 class CallStepManagerServiceImplTest extends Specification {
 
@@ -37,101 +38,94 @@ class CallStepManagerServiceImplTest extends Specification {
 	TestStepDao testStepDao = Mock()
 	TestCaseLibraryDao testCaseLibraryDao = Mock()
 	ProjectFilterModificationService filterService = Mock();
-	
-	
+	TestCaseImportanceManagerServiceImpl testCaseImportanceManagerServiceImpl = Mock();
+
+
 	def setup(){
 		service.testCaseDao = testCaseDao;
 		service.testStepDao = testStepDao;
 		service.testCaseLibraryDao = testCaseLibraryDao;
-		
-		
+		service.testCaseImportanceManagerService = testCaseImportanceManagerServiceImpl
 	}
-	
-	
-	
+
+
+
 	def "should return the test case call tree of a test case"(){
-		
+
 		given :
-			def firstLevel = [2l, 3l]
-			def secondLevel = [4l, 5l]
-			def thirdLevel = []
-			
-			testCaseDao.findDistinctTestCasesIdsCalledByTestCase ( 1l ) 		   >>  firstLevel
-			testCaseDao.findAllTestCasesIdsCalledByTestCases ( firstLevel ) >>  secondLevel
-			testCaseDao.findAllTestCasesIdsCalledByTestCases ( secondLevel ) >>  thirdLevel
-			
+		def firstLevel = [2l, 3l]
+		def secondLevel = [4l, 5l]
+		def thirdLevel = []
+
+		testCaseDao.findDistinctTestCasesIdsCalledByTestCase ( 1l ) 		   >>  firstLevel
+		testCaseDao.findAllTestCasesIdsCalledByTestCases ( firstLevel ) >>  secondLevel
+		testCaseDao.findAllTestCasesIdsCalledByTestCases ( secondLevel ) >>  thirdLevel
+
 		when :
-			def callTree = service.getTestCaseCallTree(1l)		
-		
+		def callTree = service.getTestCaseCallTree(1l)
+
 		then :
-		
-			callTree.containsAll(firstLevel + secondLevel)
-		
+
+		callTree.containsAll(firstLevel + secondLevel)
 	}
-	
-	
+
+
 	def "should deny step call creation because the caller and calling test cases are the same"(){
-	
+
 		when :
-			service.addCallTestStep(1l, 1l);
-			
+		service.addCallTestStep(1l, 1l);
+
 		then :
-			thrown(CyclicStepCallException);
-	
+		thrown(CyclicStepCallException);
 	}
-	
-	
+
+
 	def "should deny step call creation because the caller is somewhere in the test case call tree of the called test case"(){
-		
+
 		given :
-			
-			def firstLevel = [3l, 4l]
-			def secondLevel = [5l, 1l]
-			def thirdLevel = []
-			
-			testCaseDao.findDistinctTestCasesIdsCalledByTestCase ( 2l ) 		   >>  firstLevel
-			testCaseDao.findAllTestCasesIdsCalledByTestCases ( firstLevel ) >>  secondLevel
-			testCaseDao.findAllTestCasesIdsCalledByTestCases ( secondLevel ) >>  thirdLevel
-				
+
+		def firstLevel = [3l, 4l]
+		def secondLevel = [5l, 1l]
+		def thirdLevel = []
+
+		testCaseDao.findDistinctTestCasesIdsCalledByTestCase ( 2l ) 		   >>  firstLevel
+		testCaseDao.findAllTestCasesIdsCalledByTestCases ( firstLevel ) >>  secondLevel
+		testCaseDao.findAllTestCasesIdsCalledByTestCases ( secondLevel ) >>  thirdLevel
+
 		when :
-		
-			service.addCallTestStep(1l, 2l);
+
+		service.addCallTestStep(1l, 2l);
 
 		then :
-			thrown(CyclicStepCallException);
-		
-	
+		thrown(CyclicStepCallException);
 	}
-	
+
 	def "should successfully create a call step"(){
-		
-		given : "linked test cases definition"
-			
-			TestCase caller = Mock();
-			TestCase called = Mock();
-			
-			testCaseDao.findById(1l) >> caller;
-			testCaseDao.findById(2l) >> called;
-			
-		and : "acyclic test case call tree"
-			def firstLevel = [3l, 4l]
-			def secondLevel = [5l, 6l]
-			def thirdLevel = []
-			
-			testCaseDao.findDistinctTestCasesIdsCalledByTestCase ( 2l ) 		   >>  firstLevel
-			testCaseDao.findAllTestCasesIdsCalledByTestCases ( firstLevel ) >>  secondLevel
-			testCaseDao.findAllTestCasesIdsCalledByTestCases ( secondLevel ) >>  thirdLevel
-			
-		
-		when :
-			service.addCallTestStep(1l, 2l)
-				
-		then :
-			1 * caller.addStep( { it.calledTestCase  == called && it instanceof CallTestStep});
-			
-			1 * testStepDao.persist (_ )
 
-	
+		given : "linked test cases definition"
+
+		TestCase caller = Mock();
+		TestCase called = Mock();
+
+		testCaseDao.findById(1l) >> caller;
+		testCaseDao.findById(2l) >> called;
+
+		and : "acyclic test case call tree"
+		def firstLevel = [3l, 4l]
+		def secondLevel = [5l, 6l]
+		def thirdLevel = []
+
+		testCaseDao.findDistinctTestCasesIdsCalledByTestCase ( 2l ) 		   >>  firstLevel
+		testCaseDao.findAllTestCasesIdsCalledByTestCases ( firstLevel ) >>  secondLevel
+		testCaseDao.findAllTestCasesIdsCalledByTestCases ( secondLevel ) >>  thirdLevel
+
+
+		when :
+		service.addCallTestStep(1l, 2l)
+
+		then :
+		1 * caller.addStep( { it.calledTestCase  == called && it instanceof CallTestStep});
+
+		1 * testStepDao.persist (_ )
 	}
-	
 }

@@ -20,6 +20,7 @@
  */
 package org.squashtest.csp.tm.internal.service;
 
+import java.util.Arrays;
 import java.util.Collections;
 import java.util.Comparator;
 import java.util.List;
@@ -76,16 +77,15 @@ public class VerifyingTestCaseManagerServiceImpl implements VerifyingTestCaseMan
 	}
 
 	@Override
-	@PostFilter("hasPermission(#requirementId, 'org.squashtest.csp.tm.domain.requirement.Requirement', 'WRITE') or hasRole('ROLE_ADMIN')")	
+	@PostFilter("hasPermission(#requirementId, 'org.squashtest.csp.tm.domain.requirement.Requirement', 'WRITE') or hasRole('ROLE_ADMIN')")
 	public void addVerifyingTestCasesToRequirement(final List<Long> testCasesIds, long requirementId) {
-		//nodes are returned unsorted
+		// nodes are returned unsorted
 		List<TestCaseLibraryNode> nodes= testCaseLibraryNodeDao.findAllByIdList(testCasesIds);
-		
-		//now we resort them according to the order in which the testcaseids were given
+
+		// now we resort them according to the order in which the testcaseids were given
 		Collections.sort(nodes, IdentifiedComparator.getInstance());
 
 		List<TestCase> testCases = new TestCaseNodeWalker().walk(nodes);
-	
 
 		if (!testCases.isEmpty()) {
 			RequirementVersion requirementVersion = requirementVersionDao.findById(requirementId);
@@ -109,6 +109,7 @@ public class VerifyingTestCaseManagerServiceImpl implements VerifyingTestCaseMan
 			for (TestCase testCase : testCases) {
 				requirementVersion.removeVerifyingTestCase(testCase);
 			}
+			testCaseImportanceManagerService.changeImportanceIfRelationsRemovedFromReq(testCasesIds, requirementId);
 		}
 
 	}
@@ -121,6 +122,8 @@ public class VerifyingTestCaseManagerServiceImpl implements VerifyingTestCaseMan
 		TestCase testCase = testCaseDao.findById(testCaseId);
 
 		req.removeVerifyingTestCase(testCase);
+		testCaseImportanceManagerService.changeImportanceIfRelationsRemovedFromReq(Arrays.asList(testCaseId),
+				requirementId);
 	}
 
 }
