@@ -123,7 +123,7 @@ class TestCaseImporterIT extends DbunitServiceSpecification {
 			summary.getTotal() == 13
 			summary.getSuccess()  == 13
 			summary.getModified() == 12
-			summary.getRenammed() == 4
+			summary.getRenamed() == 4
 			summary.getFailures() == 0
 	
 			def rContent = service.findLibrary(2l).rootContent

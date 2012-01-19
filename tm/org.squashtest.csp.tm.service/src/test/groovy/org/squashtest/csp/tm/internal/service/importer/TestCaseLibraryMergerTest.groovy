@@ -338,7 +338,7 @@ class TestCaseLibraryMergerTest extends Specification {
 		then :
 			1 * service.addTestCaseToLibrary(2l, transTC)
 			1 * transTC.setName("node 2-import1")
-			context.summary.renammed == 1
+			context.summary.renamed == 1
 		
 		
 	}
@@ -371,7 +371,7 @@ class TestCaseLibraryMergerTest extends Specification {
 		then :
 			1 * service.addTestCaseToLibrary(2l, transTC)
 			0 * transTC.setName(_)
-			context.summary.renammed == 0
+			context.summary.renamed == 0
 		
 	}
 	
@@ -406,7 +406,7 @@ class TestCaseLibraryMergerTest extends Specification {
 		then :
 			1 * service.addFolderToLibrary(2l, transF)
 			0 * transF.setName(_)
-			context.summary.renammed == 0
+			context.summary.renamed == 0
 				
 	}
 	
@@ -480,7 +480,7 @@ class TestCaseLibraryMergerTest extends Specification {
 			merger.visit(Mock(TestCase))
 		
 		then :
-			context.summary.renammed == 1
+			context.summary.renamed == 1
 			1 * service.addFolderToLibrary(2l, transF)
 			1 * transF.setName("node 5-import1")
 		
