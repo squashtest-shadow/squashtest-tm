@@ -69,9 +69,9 @@ class TestCaseImporterIT extends DbunitServiceSpecification {
 			def summary = importer.importExcelTestCases(stream, 1l, "Cp858")
 		
 		then :
-			summary.getTotalTestCases() == 13
+			summary.getTotal() == 13
 			summary.getSuccess()  == 13
-			summary.getWarnings() == 12
+			summary.getModified() == 12
 			summary.getFailures() == 0
 	
 			def rContent = service.findLibrary(1l).rootContent
@@ -120,9 +120,10 @@ class TestCaseImporterIT extends DbunitServiceSpecification {
 			def summary = importer.importExcelTestCases(stream, 2l, "Cp858")
 		
 		then :
-			summary.getTotalTestCases() == 13
+			summary.getTotal() == 13
 			summary.getSuccess()  == 13
-			summary.getWarnings() == 16
+			summary.getModified() == 12
+			summary.getRenammed() == 4
 			summary.getFailures() == 0
 	
 			def rContent = service.findLibrary(2l).rootContent

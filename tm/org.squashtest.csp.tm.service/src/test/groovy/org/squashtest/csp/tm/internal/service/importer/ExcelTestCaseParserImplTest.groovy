@@ -241,7 +241,7 @@ class ExcelTestCaseParserImplTest extends Specification {
 		then :
 			res.createdOn == null
 			res.createdBy == null
-			summary.warnings == 1
+			summary.modified == 1
 		
 	}
 	
@@ -267,7 +267,7 @@ class ExcelTestCaseParserImplTest extends Specification {
 			res.steps.size()==1
 			res.description.contains("yeeeah")
 			res.importance == TestCaseImportance.VERY_HIGH;
-			summary.warnings == 0
+			summary.modified == 0
 	}
 	
 	
@@ -293,7 +293,7 @@ class ExcelTestCaseParserImplTest extends Specification {
 			res.steps.size()==1
 			res.description.contains("yeeeah")
 			res.importance == TestCaseImportance.MEDIUM;
-			summary.warnings == 2
+			summary.modified == 2
 			
 		
 	}

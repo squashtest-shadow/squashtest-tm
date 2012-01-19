@@ -176,7 +176,7 @@ public class ExcelTestCaseParserImpl implements ExcelTestCaseParser{
 				
 			}catch(ParseException ex){
 				logger.warn(ex.getMessage());
-				summary.incrWarnings();
+				summary.incrModified();
 				testCase = new TestCase();
 			}
 			
@@ -197,7 +197,7 @@ public class ExcelTestCaseParserImpl implements ExcelTestCaseParser{
 		}catch(IllegalArgumentException ex){
 			
 			logger.warn(ex.getMessage());
-			summary.incrWarnings();
+			summary.incrModified();
 			testCase.setImportance(TestCaseImportance.defaultValue());
 		}
 		

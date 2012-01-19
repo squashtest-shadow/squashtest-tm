@@ -217,3 +217,18 @@ the display:block trick will implicitly add that property */
 	display:none;	
 }
 
+/*******************************
+	misc
+********************************/
+
+span.span-red{
+	color : red;	
+}
+
+span.span-bold{
+	font-weight:bold;	
+}
+
+span.span-green{
+	color : green;	
+}

@@ -24,54 +24,62 @@ import org.squashtest.csp.tm.service.importer.ImportSummary;
 
 public class ImportSummaryImpl implements ImportSummary {
 
-	private int totalTestCases=0;
-	private int success=0;
-	private int warnings=0;
+	private int total=0;
+	private int renamed=0;
+	private int modified=0;
 	private int failures=0;
 	
 	public ImportSummaryImpl(){
 		
 	}
-
+	
 	public void incrTotal(){
-		totalTestCases++;
+		total++;
 	}
 	
-	
-	public void incrWarnings(){
-		warnings++;
+	public void incrRenamed(){
+		renamed++;
 	}
 	
 	public void incrFailures(){
 		failures++;
 	}
 	
-	public void addToTotalTestCases(int delta){
-		totalTestCases+=delta;
+	public void incrModified(){
+		modified++;
 	}
-	
-	
-	public void addToWarnings(int delta){
-		warnings+=delta;
-	}
-	
-	public void addToFailures(int delta){
-		failures+=delta;
-	}
-	
+
 	@Override
-	public int getTotalTestCases() {
-		return totalTestCases;
+	public int getTotal() {
+		return total;
+	}
+
+	public void setTotal(int total) {
+		this.total = total;
 	}
 
 	@Override
 	public int getSuccess() {
-		return totalTestCases - failures;
+		return total - failures;
+	}
+
+
+	@Override
+	public int getRenamed() {
+		return renamed;
+	}
+
+	public void setRenammed(int renammed) {
+		this.renamed = renammed;
 	}
 
 	@Override
-	public int getWarnings() {
-		return warnings;
+	public int getModified() {
+		return modified;
+	}
+
+	public void setModified(int modified) {
+		this.modified = modified;
 	}
 
 	@Override
@@ -79,12 +87,20 @@ public class ImportSummaryImpl implements ImportSummary {
 		return failures;
 	}
 
-	@Override
-	public void add(ImportSummary summary){
-		addToTotalTestCases(summary.getTotalTestCases());
-		addToWarnings(summary.getWarnings());
-		addToFailures(summary.getFailures());
+	public void setFailures(int failures) {
+		this.failures = failures;
 	}
+
+	@Override
+	public void add(ImportSummary summary) {
+		this.total+=summary.getTotal();
+		this.failures+=summary.getFailures();
+		this.modified+=summary.getModified();
+		this.renamed+=summary.getRenamed();
+		
+	}
+
+	
 	
 
 }

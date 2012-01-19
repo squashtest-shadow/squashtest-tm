@@ -108,7 +108,7 @@
 					<br/> 
 					<label><f:message key="dialog.import.encoding.label"/></label>
 					<select name="zipEncoding">
-						<option value="Cp858">Windows</option>
+						<option value="Cp858">Windows <f:message key="dialog.import.encoding.default"/></option>
 						<option value="UTF8">UTF-8</option>
 					</select>
 				</form>
@@ -126,17 +126,25 @@
 		
 		<div id="import-excel-dialog-summary">
 			<div>
-				<span><f:message key="dialog.import.test-case.total.label"/></span><span class="total-import"></span>
+				<span><f:message key="dialog.import-excel.test-case.total"/></span><span class="total-import span-bold"></span>
 			</div>
 			<div>
-				<span><f:message key="dialog.import.test-case.success.label"/></span><span class="success-import"></span>
+				<span><f:message key="dialog.import-excel.test-case.success"/></span><span class="success-import span-bold span-green"></span>
 			</div>
 			<div>
-				<span><f:message key="dialog.import.test-case.warnings.label"/></span><span class="warnings-import"></span>
-			</div>
-			<div>
-				<span><f:message key="dialog.import.test-case.failures.label"/></span><span class="failures-import"></span>
+				<span><f:message key="dialog.import-excel.test-case.failed"/></span><span class="failures-import span-bold"></span>
 			</div>			
+			
+			
+			<div class="import-excel-dialog-note">
+				
+				<hr/>
+				<span>Notes : </span>
+				<ul>
+					<li class="import-excel-dialog-renamed"><span><f:message key="dialog.import-excel.test-case.warnings.renamed"/></span></li>
+					<li class="import-excel-dialog-modified"><span><f:message key="dialog.import-excel.test-case.warnings.modified"/></span></li>	
+				</ul>		
+			</div>
 		</div>
 		
 		<div id="import-excel-dialog-dump">
@@ -157,10 +165,37 @@
 	function importSummaryBuilder(response){
 			
 		var panel = $("#import-excel-dialog-summary");
-		$(".total-import", panel).text(response.totalTestCases);
+		
+		//basic infos		
+		$(".total-import", panel).text(response.total);
 		$(".success-import", panel).text(response.success);
-		$(".warnings-import", panel).text(response.warnings);
-		$(".failures-import", panel).text(response.failures);
+		
+		var failSpan = $(".failures-import", panel).text(response.failures);
+		if (response.failures==0){
+			failSpan.removeClass("span-red");
+		}else{
+			failSpan.addClass("span-red");
+		}
+		
+		//notes
+		if ((response.renamed==0) && (response.modified==0)){
+			$(".import-excel-dialog-note", panel).hide();
+		}else{
+			$(".import-excel-dialog-note", panel).show();
+			
+			if (response.renamed>0){
+				$(".import-excel-dialog-renamed", panel).show();
+			}else{
+				$(".import-excel-dialog-renamed", panel).hide();
+			}
+
+			if (response.modified>0){
+				$(".import-excel-dialog-modified", panel).show();
+			}else{
+				$(".import-excel-dialog-modified", panel).hide();
+			}
+		}
+		
 		
 	}
 	

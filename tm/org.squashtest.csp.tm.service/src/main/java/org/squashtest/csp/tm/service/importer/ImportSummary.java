@@ -21,10 +21,11 @@
 package org.squashtest.csp.tm.service.importer;
 
 public interface ImportSummary {
-	int getTotalTestCases();
-	int getSuccess();
-	int getWarnings();
-	int getFailures();
+	int getTotal(); 		//total test cases read in the archive
+	int getSuccess();		//total test cases successfully imported
+	int getRenamed();		//total test cases or folders that were renammed
+	int getModified();		//total test cases modifications due to incorrect/incomplete data
+	int getFailures();		//total test cases that could not be imported
 	/**
 	 * adds the result of an import summary to this import summary 
 	 */

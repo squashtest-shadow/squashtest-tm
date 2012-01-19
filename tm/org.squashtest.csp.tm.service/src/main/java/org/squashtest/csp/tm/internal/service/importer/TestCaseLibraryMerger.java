@@ -280,7 +280,7 @@ class TestCaseLibraryMerger {
 			if (names.contains(toMerge.getName())){
 				String newName = generateUniqueName(names, toMerge.getName());
 				toMerge.setName(newName);
-				context.summary.incrWarnings();				
+				context.summary.incrRenamed();				
 			}
 			
 			persistTestCase(toMerge);
@@ -321,7 +321,7 @@ class TestCaseLibraryMerger {
 			String newName = generateUniqueName(allNames, toMerge.getName());
 			toMerge.setName(newName);
 			
-			context.summary.incrWarnings();
+			context.summary.incrRenamed();
 			
 			persistFolder(toMerge);
 			
