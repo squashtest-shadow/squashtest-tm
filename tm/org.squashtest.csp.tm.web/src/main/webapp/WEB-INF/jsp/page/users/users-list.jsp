@@ -139,6 +139,7 @@
 				<f:message var="back" key="fragment.edit.header.button.back" /> 
 				<input id="back" type="button" value="${ back }" />
 				</div>
+				<div style="clear:both"></div>
 				
 					<table id="users-list-table">
 						<thead>
