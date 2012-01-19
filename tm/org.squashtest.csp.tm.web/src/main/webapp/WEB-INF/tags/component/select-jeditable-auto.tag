@@ -27,6 +27,7 @@
 <%@ attribute name="isAuto" required="true"%>
 <%@ attribute name="url" required="true"%>
 <%@ attribute name="paramName" required="true" description="the name of the parameter being posted"%>
+
 <%-- <%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core"  %> --%>
 <%-- <%@ taglib prefix="f" uri="http://java.sun.com/jsp/jstl/fmt" %> --%>
 
@@ -66,19 +67,19 @@ auto set
 			$.ajax({
 				type : 'POST',
 				data : "${paramName}"+"="+isAuto.toString(),
-				success : function(importance){sel_postStateSuccess(importance,  isAuto);},
+				success : function(deducedValue){sel_postStateSuccess(deducedValue,  isAuto);},
 				error : function(){sel_postStateFailed();},
 				dataType : "text",
 				url : '${url}'			
 			});		
 		};
-		function sel_postStateSuccess(importance, isAuto){
+		function sel_postStateSuccess(deducedValue, isAuto){
 			if (isAuto){
-				sel_postStateIsAutoSuccess(importance);
+				sel_postStateIsAutoSuccess(deducedValue);
 			}
 		};
-		function sel_postStateIsAutoSuccess(importance){
-			$("#${associatedSelectJeditableId}").html(importance);	
+		function sel_postStateIsAutoSuccess(deducedValue){
+			$("#${associatedSelectJeditableId}").html(deducedValue);	
 		};
 		function sel_postStateFailed(){
 			alert("error while posting state");

@@ -28,6 +28,7 @@
 <%@ attribute name="batchRemoveButtonId" required="true"
 	description="html id of button for batch removal of requirements"%>
 <%@ attribute name="editable" type="java.lang.Boolean" description="Right to edit content. Default to false." %>
+<%@ attribute name="updateImportanceMethod" required="false" description="name of the method used to update the importance of the test case when deleting requirement associations" %>
 <%@ taglib uri="http://java.sun.com/jsp/jstl/fmt" prefix="f"%>
 	
 <%@ taglib prefix="comp" tagdir="/WEB-INF/tags/component"%>
@@ -46,7 +47,10 @@
 				type : 'delete',
 				url : '${ verifiedRequirementsUrl }/' + parseRequirementId(this),
 				dataType : 'json',
-				success : refreshVerifiedRequirements
+				success : function(){
+					refreshVerifiedRequirements();
+					<c:if test="${ not empty updateImportanceMethod }" >${ updateImportanceMethod }();</c:if>
+				   }
 			});
 		});
 		
@@ -63,7 +67,9 @@
 			}
 			
 			if (ids.length > 0) {
-				$.post('${ nonVerifiedRequirementsUrl }', { requirementsIds: ids }, refreshVerifiedRequirements);
+				$.post('${ nonVerifiedRequirementsUrl }', { requirementsIds: ids }, refreshVerifiedRequirements)
+				<c:if test="${ not empty updateImportanceMethod }" >.success(function(){${ updateImportanceMethod }();})</c:if>
+				;
 			}
 		});
 		

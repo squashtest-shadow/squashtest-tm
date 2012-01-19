@@ -77,7 +77,9 @@
 <c:url var="workspaceUrl" value="/test-case-workspace/#" />
 <s:url var="simulateDeletionUrl" value="/test-case-browser/delete-nodes/simulate" />
 <s:url var="confirmDeletionUrl" value="/test-case-browser/delete-nodes/confirm" />
-
+<s:url var="getImportance" value="/test-cases/{tcId}/importance">
+	<s:param name="tcId" value="${testCase.id}" />
+</s:url>
 <s:url var="importanceAutoUrl" value="/test-cases/{tcId}/importanceAuto">
 	<s:param name="tcId" value="${testCase.id}" />
 </s:url>
@@ -183,7 +185,11 @@
 		saveTableSelection(dataTable, getStepsTableRowId); 
 		dataTable.fnDraw();
 	}
-
+	function refreshStepsAndImportance(){
+		refreshSteps();
+		refreshTCImportance();
+		
+	}
 	function objSteps(id, rank) {
 		this.id = id;
 		this.rank = rank;
@@ -218,7 +224,7 @@
 					removedStepIds : removeids
 				},
 				url : "${testCaseUrl}/removed-steps",
-				success: refreshSteps 
+				success: refreshStepsAndImportance
 
 			});
 
@@ -349,8 +355,8 @@
 			type : 'POST',
 			data : data,
 			url : "${testCaseUrl}/steps/paste",
-			success: refreshSteps,
-			dataType : "json"
+			dataType : "json", 
+			success: refreshStepsAndImportance
 		}).fail(copyPasteFail);
 	}
 	function copyPasteFail(jqXHR, textStatus, errorThrown){
@@ -423,7 +429,7 @@
 		
 			var bCaller = $.data(this,"opener");
 			var url = "${ updateStepUrl }" + parseStepId(bCaller); 
-			<jq:ajaxcall url="url" dataType='json' httpMethod="DELETE" successHandler="refreshSteps">					
+			<jq:ajaxcall url="url" dataType='json' httpMethod="DELETE" successHandler="refreshStepsAndImportance">					
 			</jq:ajaxcall>					
 		},			
 		<pop:cancel-button />
@@ -555,6 +561,24 @@
 		</div>
 	</jsp:attribute>
 </comp:toggle-panel> 
+<script>
+	function refreshTCImportance(){
+		$.ajax({
+			type : 'GET',
+			data : {},
+			success : function(importance){refreshTCImportanceSuccess(importance);},
+			error : function(){refreshTCImportanceFail();},
+			dataType : "text",
+			url : '${getImportance}'			
+		});	
+	}
+	function refreshTCImportanceSuccess(importance){
+		$("#test-case-importance").html(importance);	
+	}
+	function refreshTCImportanceFail(){
+		alert("fail to refresh importance");
+	}
+</script>
 
 <%----------------------------------- Test Step Table -----------------------------------------------%> 
 
@@ -656,7 +680,7 @@
 	<jsp:attribute name="body">
 		<aggr:decorate-verified-requirements-table tableModelUrl="${ verifiedRequirementsTableUrl }"
 			verifiedRequirementsUrl="${ verifiedRequirementsUrl }" batchRemoveButtonId="remove-verified-requirements-button"
-			nonVerifiedRequirementsUrl="${ nonVerifiedRequirementsUrl }" editable="${ editable }" />
+			nonVerifiedRequirementsUrl="${ nonVerifiedRequirementsUrl }" editable="${ editable }" updateImportanceMethod="refreshTCImportance" />
 		<aggr:verified-requirements-table />
 	</jsp:attribute>
 </comp:toggle-panel> 

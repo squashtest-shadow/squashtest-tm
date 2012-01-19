@@ -277,10 +277,7 @@ public class TestCaseModificationController {
 
 		return formatImportance(importance, locale);
 	}
-
-	private String formatImportance(TestCaseImportance importance, Locale locale) {
-		return importanceLabelFormatterProvider.get().useLocale(locale).formatLabel(importance);
-	}
+	
 	
 	@RequestMapping(value = "/importanceAuto", method = RequestMethod.POST, params = { "importanceAuto" })
 	@ResponseBody
@@ -303,7 +300,18 @@ public class TestCaseModificationController {
 		};
 
 	}
-
+	@ResponseBody
+	@RequestMapping(value = "/importance", method = RequestMethod.GET)
+	public String getImportance(@PathVariable long testCaseId,
+			Locale locale) {
+		TestCase testCase = testCaseModificationService.findById(testCaseId);
+		TestCaseImportance importance = testCase.getImportance();
+		return formatImportance(importance, locale);
+	}
+	private String formatImportance(TestCaseImportance importance, Locale locale) {
+		return importanceLabelFormatterProvider.get().useLocale(locale).formatLabel(importance);
+	}
+	
 	@RequestMapping(value = "/general", method = RequestMethod.GET)
 	public ModelAndView refreshGeneralInfos(@PathVariable long testCaseId) {
 
