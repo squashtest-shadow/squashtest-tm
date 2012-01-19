@@ -64,6 +64,10 @@ public class NativeQueries {
 	public static final String testStep_sql_removeTestSteps = "delete from TEST_STEP where test_step_id in (:testStepIds)";
 
 	
+	public static final String requirement_version_findIdsFrom_requirements = "select req_v.RES_ID from requirement_version req_v where req_v.REQUIREMENT_ID in (:requirementIds)";
+	public static final String requirement_set_null_requirement_version = "update requirement req set req.LATEST_VERSION_ID = null where req.RLN_ID in (:requirementIds);";
+	public static final String requirement_version_sql_remove = "delete from REQUIREMENT_VERSION where RES_ID in (:requirementVersionIds)";
+	public static final String resource_sql_remove = "delete from RESOURCE where RES_ID in (:requirementVersionIds)";
 	public static final String requirement_sql_remove = "delete from REQUIREMENT where rln_id in (:nodeIds)";
 	public static final String requirementLibraryNode_sql_remove = "delete from REQUIREMENT_LIBRARY_NODE where rln_id in (:nodeIds)";
 	public static final String requirementFolder_sql_remove = "delete from REQUIREMENT_FOLDER where rln_id in (:nodeIds)";
@@ -149,5 +153,8 @@ public class NativeQueries {
 	
 	public static final String testCase_sql_removeTestStepFromList = "delete from TEST_CASE_STEPS where step_id in (:testStepIds)";
 	
-	public static final String requirement_sql_removeFromVerifiedRequirementLists = "delete from TEST_CASE_VERIFIED_REQUIREMENT_VERSION where verified_req_version_id in (:requirementIds)";
+	public static final String requirement_sql_removeFromVerifiedRequirementLists = " delete from TEST_CASE_VERIFIED_REQUIREMENT_VERSION " +
+																					" where VERIFIED_REQ_VERSION_ID in ( " + 
+																						" select req_v.RES_ID from requirement_version req_v where req_v.REQUIREMENT_ID in (:requirementIds) " +
+																					")";
 }

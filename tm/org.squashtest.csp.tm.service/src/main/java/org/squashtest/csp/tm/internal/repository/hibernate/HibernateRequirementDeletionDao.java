@@ -20,6 +20,8 @@
  */
 package org.squashtest.csp.tm.internal.repository.hibernate;
 
+import java.math.BigInteger;
+import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 
@@ -46,10 +48,28 @@ public class HibernateRequirementDeletionDao extends HibernateDeletionDao
 			executeDeleteSQLQuery(NativeQueries.requirement_sql_removeFromLibrary, "requirementIds", entityIds);
 			
 			executeDeleteSQLQuery(NativeQueries.requirementFolder_sql_remove, "nodeIds", entityIds);
+			
+			//Retrieval of the requirement_versions linked to the wanted requirements
+			List<BigInteger> requirementVersionIdsBigInt = executeSelectSQLQuery(NativeQueries.requirement_version_findIdsFrom_requirements, "requirementIds", entityIds);
+			
+			List<Long> requirementVersionIds = new ArrayList<Long>();
+			for (BigInteger bigIntId : requirementVersionIdsBigInt) {
+				requirementVersionIds.add(bigIntId.longValue());
+			}
+			
+			//Removal of the reference of the requirement_versions in the wanted requirements
+			executeDeleteSQLQuery(NativeQueries.requirement_set_null_requirement_version, "requirementIds", entityIds);
+			
+			//We now can remove the requirement versions
+			executeDeleteSQLQuery(NativeQueries.requirement_version_sql_remove, "requirementVersionIds", requirementVersionIds);
 
+			//as well as the resource
+			executeDeleteSQLQuery(NativeQueries.resource_sql_remove, "requirementVersionIds", requirementVersionIds);
+			
+			//and finally the wanted requirements
 			executeDeleteSQLQuery(NativeQueries.requirement_sql_remove, "nodeIds", entityIds);
 
-			executeDeleteSQLQuery(NativeQueries.requirementLibraryNode_sql_remove, "nodeIds", entityIds);			
+			executeDeleteSQLQuery(NativeQueries.requirementLibraryNode_sql_remove, "nodeIds", entityIds);
 		}
 	}
 
