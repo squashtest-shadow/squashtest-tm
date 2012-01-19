@@ -33,7 +33,7 @@
 		@NamedQuery(name = "requirementLibrary.findAll", query = "from RequirementLibrary fetch all properties"),
 		@NamedQuery(name = "requirementLibrary.findAllRootContentById", query = "select l.rootContent from RequirementLibrary l where l.id = :libraryId"),
 		@NamedQuery(name = "requirementLibrary.findByRootContent", query = "from RequirementLibrary where :content in elements(rootContent)"),
-		
+
 		// Queries on CampaignLibrary
 		@NamedQuery(name = "campaignLibrary.findAll", query = "from CampaignLibrary fetch all properties"),
 		@NamedQuery(name = "campaignLibrary.findAllRootContentById", query = "select l.rootContent from CampaignLibrary l where l.id = :libraryId"),
@@ -75,8 +75,6 @@
 		@NamedQuery(name = "requirement.findRequirementInExportData", query = "select r.id from Requirement r where r.id in (:rIds)"),
 		@NamedQuery(name = "requirement.findRootContentRequirement", query = "select r from RequirementLibrary rl join rl.rootContent r where r.id in (:paramIds) and r in (from Requirement)"),
 		@NamedQuery(name = "requirement.findRootContentExportData", query = "select r from RequirementLibrary rl join rl.rootContent r where rl.id in (:libIds) and r in (from Requirement)"),
-		@NamedQuery(name = "requirement.findDistinctRequirementsCriticalitiesVerifiedByTestCases", query = "select distinct r.criticality from TestCase as tc join tc.verifiedRequirements r where tc.id in (:testCasesIds) "),
-		@NamedQuery(name = "requirement.findDistinctRequirementsCriticalities", query = "select distinct r.criticality from Requirement as r  where r.id in (:requirementsIds) "),
 		@NamedQuery(name = "requirement.findAllRootContent", query = "select r.id from RequirementLibraryNode r where r.project.id in (:rIds)"),
 
 		// Queries on CampaignFolder
@@ -114,8 +112,7 @@
 		@NamedQuery(name = "testCase.findTestCasesHavingNoCallerDetails", query = "select nullif(1,1), nullif(1,1), called.id, called.name from TestCase called where called.id in (:nonCalledIds)"),
 		@NamedQuery(name = "testCase.findCalledTestCaseOfCallSteps", query = "select distinct called.id from CallTestStep callStep join callStep.calledTestCase called where callStep.id in (:testStepsIds)"),
 		@NamedQuery(name = "testCase.countByVerifiedRequirementVersion", query = "select count(tc) from TestCase tc join tc.verifiedRequirements vr where vr.id = :verifiedId"),
-		
-		
+		@NamedQuery(name = "testCase.findUnsortedAllByVerifiedRequirementVersion", query = "select tc from TestCase tc join tc.verifiedRequirements vr where vr.id = :requirementVersionId"),
 		//Queries on Campaign
 		@NamedQuery(name = "campaign.findNamesInCampaignStartingWith", query = "select i.name from Campaign c join c.iterations i where c.id = :containerId and i.name like :nameStart"),
 		@NamedQuery(name = "campaign.findAllNamesInCampaign", query = "select i.name from Campaign c join c.iterations i where c.id = :containerId "),
@@ -131,8 +128,7 @@
 		@NamedQuery(name = "testStep.findParentNode", query = "select testcase from TestCase as testcase join testcase.steps tcSteps where tcSteps.id= :childId "),
 		@NamedQuery(name = "testStep.findAllByParentId", query = "select step.id from TestCase testCase join testCase.steps step where testCase.id in (:testCaseIds)"),
 		@NamedQuery(name = "testStep.findOrderedListById", query = "select step from TestCase testCase inner join testCase.steps step where step.id in (:testStepIds) order by index(step)"),
-		
-		
+
 		//Queries on CampaignTestPlanItem
 		@NamedQuery(name = "campaignTestPlanItem.findAllByIdList", query = "from CampaignTestPlanItem tp where tp.id in (:testPlanIds)"),
 
@@ -173,26 +169,27 @@
 		@NamedQuery(name = "RequirementAuditEvent.countByRequirementId", query = "select count(rae) from RequirementAuditEvent rae join rae.requirementVersion r where r.id = ?"),
 		// XXX RequirementVersion
 		@NamedQuery(name = "requirementAuditEvent.findAllByRequirementIds", query = "select rae from RequirementAuditEvent rae inner join rae.requirementVersion r where r.id in (:ids) order by rae.requirementVersion asc, rae.date desc"),
-		
+
 		@NamedQuery(name = "requirementVersion.countVerifiedByTestCases", query = "select count(distinct r) from TestCase tc join tc.verifiedRequirements r where tc.id in (:verifiersIds)"),
 		@NamedQuery(name = "RequirementVersion.countVerifiedByTestCase", query = "select count(r) from TestCase tc join tc.verifiedRequirements r where tc.id = ?"),
+		@NamedQuery(name = "requirementVersion.findDistinctRequirementsCriticalitiesVerifiedByTestCases", query = "select distinct r.criticality from TestCase tc join tc.verifiedRequirements r where tc.id in (:testCasesIds) "),
+		@NamedQuery(name = "requirementVersion.findDistinctRequirementsCriticalities", query = "select distinct r.criticality from RequirementVersion as r  where r.id in (:requirementsIds) "),
 
-		
 		/* ********************************************** batch deletion-related queries **************************************************** */
 
-		@NamedQuery(name = "testCase.findAllAttachmentLists", query ="select testCase.attachmentList.id from TestCase testCase where testCase.id in (:testCaseIds)"),
-		@NamedQuery(name = "testStep.findAllAttachmentLists", query ="select step.attachmentList.id from ActionTestStep step where step.id in (:testStepIds)"),
+		@NamedQuery(name = "testCase.findAllAttachmentLists", query = "select testCase.attachmentList.id from TestCase testCase where testCase.id in (:testCaseIds)"),
+		@NamedQuery(name = "testStep.findAllAttachmentLists", query = "select step.attachmentList.id from ActionTestStep step where step.id in (:testStepIds)"),
 
 		@NamedQuery(name = "attachment.removeContents", query = "delete AttachmentContent ac where ac.id in (:contentIds)"),
 		@NamedQuery(name = "attachment.removeAttachments", query = "delete Attachment at where at.id in (:attachIds)"),
 		@NamedQuery(name = "attachment.deleteAttachmentLists", query = "delete AttachmentList al where al.id in (:listIds)"),
 
 		@NamedQuery(name = "testCase.findAllSteps", query = "select step.id from TestCase testCase join testCase.steps step where testCase.id in (:testCaseIds)"),
-		@NamedQuery(name = "testCase.removeAllCallSteps", query = "delete CallTestStep cts where  cts.id in (:stepIds)"),	
-		@NamedQuery(name = "testCase.removeAllActionSteps", query = "delete ActionTestStep ats where ats.id in (:stepIds)"),	
+		@NamedQuery(name = "testCase.removeAllCallSteps", query = "delete CallTestStep cts where  cts.id in (:stepIds)"),
+		@NamedQuery(name = "testCase.removeAllActionSteps", query = "delete ActionTestStep ats where ats.id in (:stepIds)"),
 
-		@NamedQuery(name = "requirement.findAllAttachmentLists", query ="select v.attachmentList.id from Requirement r join r.resource v where r.id in (:requirementIds)"),
-		@NamedQuery(name = "requirementDeletionDao.deleteRequirementAuditEvent", query="delete RequirementAuditEvent rae where rae.id in (:eventIds)")
+		@NamedQuery(name = "requirement.findAllAttachmentLists", query = "select v.attachmentList.id from Requirement r join r.resource v where r.id in (:requirementIds)"),
+		@NamedQuery(name = "requirementDeletionDao.deleteRequirementAuditEvent", query = "delete RequirementAuditEvent rae where rae.id in (:eventIds)")
 
 })
 package org.squashtest.csp.tm.internal.repository.hibernate;

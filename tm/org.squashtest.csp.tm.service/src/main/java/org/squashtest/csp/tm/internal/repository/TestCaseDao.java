@@ -53,7 +53,7 @@ public interface TestCaseDao extends EntityDao<TestCase> {
 
 	/**
 	 * Finds all {@link TestCaseLibraryNode} which name contains the given token.
-	 *
+	 * 
 	 * @param tokenInName
 	 * @param groupByProject
 	 * @return
@@ -62,7 +62,7 @@ public interface TestCaseDao extends EntityDao<TestCase> {
 
 	/***
 	 * This method returns the test step's associated TestCase
-	 *
+	 * 
 	 * @param testStepId
 	 *            the test step id
 	 * @return the associated test Case
@@ -71,70 +71,70 @@ public interface TestCaseDao extends EntityDao<TestCase> {
 
 	/**
 	 * Counts the calling test steps of a test case
-	 *
+	 * 
 	 * @param testCaseId
 	 * @return
 	 */
 	long countCallingTestSteps(long testCaseId);
 
-
 	/**
-	 * Given a list of test case ids, returns a sublist of the test case ids. An id will be included in the output
-	 * list if at least one test case calls the given test case.
-	 *
-	 * @param  testCaseIds the list of test case ids under inquiry.
+	 * Given a list of test case ids, returns a sublist of the test case ids. An id will be included in the output list
+	 * if at least one test case calls the given test case.
+	 * 
+	 * @param testCaseIds
+	 *            the list of test case ids under inquiry.
 	 * @return a sublist of the input list, with test cases never called filtered out.
 	 */
 	List<Long> findTestCasesHavingCaller(Collection<Long> testCasesIds);
-	
-	
+
 	/**
 	 * Given a list of test case ids, returns a list of the following structure :
 	 * 
-	 *  	- caller id (null if no match),
-	 *  	- caller name (null if no match), 
-	 *  	- called id,
-	 *  	- called name
+	 * - caller id (null if no match), - caller name (null if no match), - called id, - called name
 	 * 
 	 * 
 	 * 
 	 * Note that only first-level callers will be included if found, additional invokations will be needed to fetch all
 	 * the hierarchy.
 	 * 
-	 * @param  testCaseIds the list of test case ids under inquiry.
-	 * @return a structure described just like above. 
+	 * @param testCaseIds
+	 *            the list of test case ids under inquiry.
+	 * @return a structure described just like above.
 	 */
 	List<Object[]> findTestCasesHavingCallerDetails(Collection<Long> testCaseIds);
 
 	/**
 	 * Finds all the ids of the test cases called by a given test case.
-	 *
+	 * 
 	 * @param testCaseId
 	 * @return
 	 */
 	List<Long> findAllTestCasesIdsCalledByTestCase(long testCaseId);
+
 	List<Long> findDistinctTestCasesIdsCalledByTestCase(Long testCaseId);
-	
+
 	/**
 	 * Finds all the ids of the test cases called by a given list of test cases.
-	 *
+	 * 
 	 * @param testCaseId
 	 * @return
 	 */
 	List<Long> findAllTestCasesIdsCalledByTestCases(List<Long> testCasesIds);
-	
+
 	/**
 	 * returns the ids of all the test cases having at least one call test step referencing the given test case.
-	 *
-	 * @param testCaseId the id of the test case.
-	 * @param sorting the sorting attributes and the like.
+	 * 
+	 * @param testCaseId
+	 *            the id of the test case.
+	 * @param sorting
+	 *            the sorting attributes and the like.
 	 * @return the list of test cases having at least one call step calling the input test case.
 	 */
 	List<TestCase> findAllCallingTestCases(long testCaseId, CollectionSorting sorting);
 
 	/***
 	 * Returns the test cases associated with at least a requirement that meets the criteria
-	 *
+	 * 
 	 * @param criteria
 	 *            the requirement search criteria
 	 * @param isProjectOrdered
@@ -142,10 +142,11 @@ public interface TestCaseDao extends EntityDao<TestCase> {
 	 * @return the list of test case (order by project if specified)
 	 */
 	List<TestCase> findAllByRequirement(RequirementSearchCriteria criteria, boolean isProjectOrdered);
-	
+
 	/**
-	 * Returns the test cases ids first called by the call steps found in the list of given test steps ids.
-	 * Note: only first level called test case are returned. To get the whole test case tree you should use {@linkplain CallStepManagerService#getTestCaseCallTree(Long)}.
+	 * Returns the test cases ids first called by the call steps found in the list of given test steps ids. Note: only
+	 * first level called test case are returned. To get the whole test case tree you should use
+	 * {@linkplain CallStepManagerService#getTestCaseCallTree(Long)}.
 	 * 
 	 * @param testStepsIds
 	 * @return the list of test case ids called by test steps
@@ -154,7 +155,7 @@ public interface TestCaseDao extends EntityDao<TestCase> {
 
 	/**
 	 * Returns paged and sorted collection of test cases verifying the requirement version of given id.
-	 *
+	 * 
 	 * @param verifierId
 	 * @param sorting
 	 * @return
@@ -167,5 +168,12 @@ public interface TestCaseDao extends EntityDao<TestCase> {
 	 */
 	long countByVerifiedRequirementVersion(long verifiedId);
 
+	/**
+	 * Returns unsorted collection of test cases verifying the requirement version of given id.
+	 * 
+	 * @param requirementId
+	 * @return
+	 */
+	List<TestCase> findUnsortedAllByVerifiedRequirementVersion(long requirementId);
 
 }

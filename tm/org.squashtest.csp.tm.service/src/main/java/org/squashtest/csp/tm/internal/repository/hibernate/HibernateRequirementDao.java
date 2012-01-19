@@ -47,6 +47,7 @@ import org.squashtest.csp.tm.domain.requirement.RequirementVersion;
 import org.squashtest.csp.tm.domain.requirement.VerificationCriterion;
 import org.squashtest.csp.tm.domain.resource.Resource;
 import org.squashtest.csp.tm.internal.repository.RequirementDao;
+import org.squashtest.csp.tm.domain.testcase.TestCase;
 
 @Repository
 public class HibernateRequirementDao extends HibernateEntityDao<Requirement> implements RequirementDao {
@@ -56,6 +57,7 @@ public class HibernateRequirementDao extends HibernateEntityDao<Requirement> imp
 	static {
 		HIBERNATE_RESTRICTION_BY_VERIFICATION_CRITERION.put(VerificationCriterion.ANY, new Object[] { Resource.class,
 				null }); // yeah, it's a null.
+
 		HIBERNATE_RESTRICTION_BY_VERIFICATION_CRITERION.put(VerificationCriterion.SHOULD_BE_VERIFIED, new Object[] {
 				RequirementVersion.class, Restrictions.isNotEmpty("verifyingTestCases") });
 		HIBERNATE_RESTRICTION_BY_VERIFICATION_CRITERION.put(VerificationCriterion.SHOULD_NOT_BE_VERIFIED, new Object[] {
@@ -322,18 +324,15 @@ public class HibernateRequirementDao extends HibernateEntityDao<Requirement> imp
 		return folderContent;
 	}
 
-		}
-	}
-
 	@SuppressWarnings("unchecked")
 	@Override
-	public List<RequirementCriticality> findDistinctRequirementsCriticalitiesVerifiedByTestCases(
-			Set<Long> testCasesIds) {
-		if (! testCasesIds.isEmpty()){
-			Query query = currentSession().getNamedQuery("requirement.findDistinctRequirementsCriticalitiesVerifiedByTestCases");
+	public List<RequirementCriticality> findDistinctRequirementsCriticalitiesVerifiedByTestCases(Set<Long> testCasesIds) {
+		if (!testCasesIds.isEmpty()) {
+			Query query = currentSession().getNamedQuery(
+					"requirementVersion.findDistinctRequirementsCriticalitiesVerifiedByTestCases");
 			query.setParameterList("testCasesIds", testCasesIds);
 			return query.list();
-		}else{
+		} else {
 			return Collections.emptyList();
 		}
 	}
@@ -341,10 +340,13 @@ public class HibernateRequirementDao extends HibernateEntityDao<Requirement> imp
 	@SuppressWarnings("unchecked")
 	@Override
 	public List<RequirementCriticality> findDistinctRequirementsCriticalities(List<Long> requirementsIds) {
-		if(! requirementsIds.isEmpty()){
-			Query query = currentSession().getNamedQuery("requirement.findDistinctRequirementsCriticalities");
+		if (!requirementsIds.isEmpty()) {
+			Query query = currentSession().getNamedQuery("requirementVersion.findDistinctRequirementsCriticalities");
 			query.setParameterList("requirementsIds", requirementsIds);
 			return query.list();
-		}else{
+		} else {
 			return Collections.emptyList();
+		}
+	}
+
 }

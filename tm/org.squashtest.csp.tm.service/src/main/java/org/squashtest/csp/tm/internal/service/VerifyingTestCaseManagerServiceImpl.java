@@ -22,7 +22,6 @@ package org.squashtest.csp.tm.internal.service;
 
 import java.util.Arrays;
 import java.util.Collections;
-import java.util.Comparator;
 import java.util.List;
 
 import javax.inject.Inject;
@@ -58,7 +57,7 @@ public class VerifyingTestCaseManagerServiceImpl implements VerifyingTestCaseMan
 	private RequirementVersionDao requirementVersionDao;
 	@Inject
 	private TestCaseImportanceManagerService testCaseImportanceManagerService;
-	
+
 	@Inject
 	private ProjectFilterModificationService projectFilterModificationService;
 	@Inject
@@ -80,20 +79,20 @@ public class VerifyingTestCaseManagerServiceImpl implements VerifyingTestCaseMan
 	@PostFilter("hasPermission(#requirementId, 'org.squashtest.csp.tm.domain.requirement.Requirement', 'WRITE') or hasRole('ROLE_ADMIN')")
 	public void addVerifyingTestCasesToRequirement(final List<Long> testCasesIds, long requirementId) {
 		// nodes are returned unsorted
-		List<TestCaseLibraryNode> nodes= testCaseLibraryNodeDao.findAllByIdList(testCasesIds);
+		List<TestCaseLibraryNode> nodes = testCaseLibraryNodeDao.findAllByIdList(testCasesIds);
 
 		// now we resort them according to the order in which the testcaseids were given
 		Collections.sort(nodes, IdentifiedComparator.getInstance());
 
 		List<TestCase> testCases = new TestCaseNodeWalker().walk(nodes);
+		RequirementVersion requirementVersion = requirementVersionDao.findById(requirementId);
 
 		if (!testCases.isEmpty()) {
-			RequirementVersion requirementVersion = requirementVersionDao.findById(requirementId);
 
 			for (TestCase testcase : testCases) {
 				requirementVersion.addVerifyingTestCase(testcase);
 			}
-			testCaseImportanceManagerService.changeImportanceIfRelationsAddedToReq(testCases, requirement);
+			testCaseImportanceManagerService.changeImportanceIfRelationsAddedToReq(testCases, requirementVersion);
 		}
 	}
 

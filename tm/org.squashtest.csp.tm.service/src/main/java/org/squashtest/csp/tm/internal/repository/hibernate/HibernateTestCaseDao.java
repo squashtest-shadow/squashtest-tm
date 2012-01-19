@@ -406,13 +406,22 @@ public class HibernateTestCaseDao extends HibernateEntityDao<TestCase> implement
 	 */
 	@Override
 	public long countByVerifiedRequirementVersion(final long verifiedId) {
-		return (Long) executeEntityNamedQuery("testCase.countByVerifiedRequirementVersion", new SetQueryParametersCallback() {
-			@Override
-			public void setQueryParameters(Query query) {
-				query.setLong("verifiedId", verifiedId);
-				
-			}
-		});
+		return (Long) executeEntityNamedQuery("testCase.countByVerifiedRequirementVersion",
+				new SetQueryParametersCallback() {
+					@Override
+					public void setQueryParameters(Query query) {
+						query.setLong("verifiedId", verifiedId);
+
+					}
+				});
+	}
+
+	@SuppressWarnings("unchecked")
+	@Override
+	public List<TestCase> findUnsortedAllByVerifiedRequirementVersion(long requirementVersionId) {
+		Query query = currentSession().getNamedQuery("testCase.findUnsortedAllByVerifiedRequirementVersion");
+		query.setParameter("requirementVersionId", requirementVersionId);
+		return query.list();
 	}
 
 }

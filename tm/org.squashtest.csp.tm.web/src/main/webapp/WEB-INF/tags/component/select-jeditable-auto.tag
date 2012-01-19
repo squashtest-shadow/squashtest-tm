@@ -49,9 +49,11 @@ auto set
 		sel_checkbx.change(function(){
 			var sel_isAuto = $(this).attr('checked');
 			if (sel_isAuto){
+				$('#${associatedSelectJeditableId}').find("[type='cancel']").trigger('click');
 				sel_setAutoMode();
 			}else{
 				sel_setManualMode();
+				$('#${associatedSelectJeditableId}').trigger('click');
 			}
 			sel_postState(this,sel_isAuto);
 		});		

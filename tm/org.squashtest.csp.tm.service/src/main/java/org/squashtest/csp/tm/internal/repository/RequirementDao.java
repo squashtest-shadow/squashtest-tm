@@ -32,11 +32,12 @@ import org.squashtest.csp.tm.domain.requirement.RequirementSearchCriteria;
 public interface RequirementDao extends EntityDao<Requirement> {
 	/**
 	 * returns all the requirements matching the given ids.
-	 *
+	 * 
 	 * @param requirementsIds
 	 * @return
 	 */
 	List<Requirement> findAllByIdList(List<Long> requirementsIds);
+
 	/**
 	 * return all the test case directly verifying the requirement <br>
 	 * 
@@ -54,18 +55,17 @@ public interface RequirementDao extends EntityDao<Requirement> {
 	List<RequirementLibraryNode> findAllBySearchCriteriaOrderByProject(RequirementSearchCriteria criteria);
 
 	List<ExportRequirementData> findRequirementToExportFromFolder(List<Long> folderIds);
-	
+
 	List<ExportRequirementData> findRequirementToExportFromLibrary(List<Long> folderIds);
-	
-	
+
 	/**
 	 * Returns collection of distinct requirements criticalities verified by any of the given verifiers.
-	 *
+	 * 
 	 * @param verifiersIds
 	 * @return unsorted collection of distinct requirements criticalities verified by any of the given verifiers.
 	 */
-	List<RequirementCriticality> findDistinctRequirementsCriticalitiesVerifiedByTestCases(
-			Set<Long> testCasesIds);
+	List<RequirementCriticality> findDistinctRequirementsCriticalitiesVerifiedByTestCases(Set<Long> testCasesIds);
+
 	/**
 	 * returns the list of distinct requirementCriticalities found for all requirementsIds
 	 * 
@@ -73,4 +73,5 @@ public interface RequirementDao extends EntityDao<Requirement> {
 	 * @return
 	 */
 	List<RequirementCriticality> findDistinctRequirementsCriticalities(List<Long> requirementsIds);
+
 }

@@ -25,6 +25,7 @@ import java.util.List;
 import org.springframework.transaction.annotation.Transactional;
 import org.squashtest.csp.tm.domain.requirement.Requirement;
 import org.squashtest.csp.tm.domain.requirement.RequirementCriticality;
+import org.squashtest.csp.tm.domain.requirement.RequirementVersion;
 import org.squashtest.csp.tm.domain.testcase.TestCase;
 
 @Transactional
@@ -44,9 +45,9 @@ public interface TestCaseImportanceManagerService {
 	 * 
 	 * @param testCases
 	 *            list of test-cases added to the requirement
-	 * @param requirement
+	 * @param requirementVersion
 	 */
-	void changeImportanceIfRelationsAddedToReq(List<TestCase> testCases, Requirement requirement);
+	void changeImportanceIfRelationsAddedToReq(List<TestCase> testCases, RequirementVersion requirementVersion);
 
 	/**
 	 * will compute and update the importance of the test-case if it's importance is auto <br>
@@ -56,7 +57,7 @@ public interface TestCaseImportanceManagerService {
 	 *            list of requirements added to the test-case
 	 * @param testCase
 	 */
-	void changeImportanceIfRelationsAddedToTestCases(List<Requirement> requirements, TestCase testCase);
+	void changeImportanceIfRelationsAddedToTestCases(List<RequirementVersion> requirementVersions, TestCase testCase);
 
 	/**
 	 * will compute and update the importance of the test-cases if their importance is auto<br>
@@ -66,7 +67,7 @@ public interface TestCaseImportanceManagerService {
 	 * @param testCasesIds
 	 * @param requirementId
 	 */
-	void changeImportanceIfRelationsRemovedFromReq(List<Long> testCasesIds, long requirementId);
+	void changeImportanceIfRelationsRemovedFromReq(List<Long> testCasesIds, long requirementVersionId);
 
 	/**
 	 * will compute and update the importance of the test-case if it's importance is auto <br>
@@ -75,7 +76,7 @@ public interface TestCaseImportanceManagerService {
 	 * @param requirementsIds
 	 * @param testCaseId
 	 */
-	void changeImportanceIfRelationsRemovedFromTestCase(List<Long> requirementsIds, long testCaseId);
+	void changeImportanceIfRelationsRemovedFromTestCase(List<Long> requirementVersionsIds, long testCaseId);
 
 	/**
 	 * will update the importance of any directly associated test-case if it's importanceAuto = true. <br>
@@ -85,7 +86,7 @@ public interface TestCaseImportanceManagerService {
 	 * @param requirementId
 	 * @param oldRequirementCriticality
 	 */
-	void changeImportanceIfRequirementCriticalityChanged(long requirementId,
+	void changeImportanceIfRequirementCriticalityChanged(long requirementVersionId,
 			RequirementCriticality oldRequirementCriticality);
 
 	/**

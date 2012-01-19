@@ -33,7 +33,7 @@ import org.squashtest.csp.tm.internal.repository.RequirementDao;
 
 /**
  * @author Gregory Fouquet
- *
+ * 
  */
 public class StubRequirementDao extends StubEntityDao<Requirement> implements RequirementDao {
 
@@ -46,7 +46,8 @@ public class StubRequirementDao extends StubEntityDao<Requirement> implements Re
 	}
 
 	/**
-	 * @see org.squashtest.csp.tm.internal.repository.RequirementDao#findNamesInFolderStartingWith(long, java.lang.String)
+	 * @see org.squashtest.csp.tm.internal.repository.RequirementDao#findNamesInFolderStartingWith(long,
+	 *      java.lang.String)
 	 */
 	@Override
 	public List<String> findNamesInFolderStartingWith(long folderId, String nameStart) {
@@ -54,7 +55,8 @@ public class StubRequirementDao extends StubEntityDao<Requirement> implements Re
 	}
 
 	/**
-	 * @see org.squashtest.csp.tm.internal.repository.RequirementDao#findNamesInLibraryStartingWith(long, java.lang.String)
+	 * @see org.squashtest.csp.tm.internal.repository.RequirementDao#findNamesInLibraryStartingWith(long,
+	 *      java.lang.String)
 	 */
 	@Override
 	public List<String> findNamesInLibraryStartingWith(long libraryId, String nameStart) {
@@ -93,20 +95,21 @@ public class StubRequirementDao extends StubEntityDao<Requirement> implements Re
 		return null;
 	}
 
-	}
 	/**
 	 * @see org.squashtest.csp.tm.internal.repository.RequirementDao#findDistinctRequirementsCriticalitiesVerifiedByTestCases(java.util.List)
 	 */
 	@Override
-	public List<RequirementCriticality> findDistinctRequirementsCriticalitiesVerifiedByTestCases(
-			Set<Long> testCasesIds) {
+	public List<RequirementCriticality> findDistinctRequirementsCriticalitiesVerifiedByTestCases(Set<Long> testCasesIds) {
 		return null;
 	}
+
 	/**
 	 * @see org.squashtest.csp.tm.internal.repository.RequirementDao#findDistinctRequirementsCriticalities(java.util.List)
 	 */
 	@Override
 	public List<RequirementCriticality> findDistinctRequirementsCriticalities(List<Long> requirementsIds) {
-		
+
 		return null;
+	}
+
 }

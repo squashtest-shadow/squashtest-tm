@@ -20,6 +20,7 @@
  */
 package org.squashtest.csp.tm.internal.service;
 
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
@@ -60,7 +61,7 @@ public class VerifiedRequirementsManagerServiceImpl implements VerifiedRequireme
 	private RequirementVersionDao requirementVersionDao;
 	@Inject
 	private TestCaseImportanceManagerService testCaseImportanceManagerService;
-		@Inject
+	@Inject
 	private ProjectFilterModificationService projectFilterModificationService;
 
 	@SuppressWarnings("rawtypes")
@@ -98,15 +99,23 @@ public class VerifiedRequirementsManagerServiceImpl implements VerifiedRequireme
 			Collections.sort(nodes, IdentifiedComparator.getInstance());
 
 			List<Requirement> requirements = new RequirementNodeWalker().walk(nodes);
+			TestCase testCase = testCaseDao.findById(testCaseId);
 			if (!requirements.isEmpty()) {
-				TestCase testCase = testCaseDao.findById(testCaseId);
-
 				for (Requirement requirement : requirements) {
 					testCase.addVerifiedRequirement(requirement.getCurrentVersion());
 				}
 			}
-			testCaseImportanceManagerService.changeImportanceIfRelationsAddedToTestCases(requirements, testCase);
+			List<RequirementVersion> requirementVersions = extractVersions(requirements);
+			testCaseImportanceManagerService.changeImportanceIfRelationsAddedToTestCases(requirementVersions, testCase);
 		}
+	}
+
+	private List<RequirementVersion> extractVersions(List<Requirement> requirements) {
+		List<RequirementVersion> rvs = new ArrayList<RequirementVersion>(requirements.size());
+		for (Requirement requirement : requirements) {
+			rvs.add(requirement.getResource());
+		}
+		return rvs;
 	}
 
 	@Override

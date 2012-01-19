@@ -25,10 +25,11 @@ import java.util.List;
 
 import org.squashtest.csp.tm.domain.requirement.Requirement;
 import org.squashtest.csp.tm.domain.requirement.RequirementVersion;
+
 /**
  * 
  * @author Gregory Fouquet
- *
+ * 
  */
 public interface RequirementVersionDao extends CustomRequirementVersionDao {
 	List<RequirementVersion> findAllByIdList(Collection<Long> ids);
@@ -37,6 +38,6 @@ public interface RequirementVersionDao extends CustomRequirementVersionDao {
 
 	long countVerifiedByTestCase(long testCaseId);
 
-	List<RequirementVersion> findAllByRequirement(Requirement node); 
+	List<RequirementVersion> findAllByRequirement(Requirement node);
 
 }
