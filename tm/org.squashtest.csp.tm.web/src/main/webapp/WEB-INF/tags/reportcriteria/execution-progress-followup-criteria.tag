@@ -144,7 +144,7 @@
 	openedBy="report-select-campaign-button" closeOnSuccess="false">
 	<jsp:attribute name="buttons">
 	
-		<f:message var="label" key="dialog.button.confirm" />
+		<f:message var="label" key="dialog.button.confirm.label" />
 
 		'${ label }': function() {
 			var selectedIds = getSelectedCampaignIds();

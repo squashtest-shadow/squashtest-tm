@@ -436,7 +436,7 @@
 	openedBy="delete-step-button">
 	<jsp:attribute name="buttons">
 				
-				<f:message var="yesLabel" key="dialog.button.confirm" />
+				<f:message var="yesLabel" key="dialog.button.confirm.label" />
 				
 				'${ yesLabel }' : function(){
 						$("#delete-all-steps-dialog").data("answer","yes");

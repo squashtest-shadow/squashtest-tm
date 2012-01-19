@@ -31,6 +31,7 @@
 <%@ taglib prefix="pop" tagdir="/WEB-INF/tags/popup" %>
 <%@ taglib prefix="fn" uri="http://java.sun.com/jsp/jstl/functions" %>
 <%@ taglib prefix="authz" tagdir="/WEB-INF/tags/authz" %>
+<%@ taglib prefix="input" tagdir="/WEB-INF/tags/input" %>
 
 <c:url var="ckeConfigUrl" value="/styles/ckeditor/ckeditor-config.js" />
 <s:url var="requirementUrl" value="/requirements/{reqId}">
@@ -179,7 +180,6 @@ that page won't be editable if
 		</h2>
 	</div>
 
-	
 	<div style="clear:both;"></div>	
 
 	<c:if test="${editable }">
@@ -213,6 +213,34 @@ that page won't be editable if
 				<comp:error-message forField="name"/>
 			</jsp:body>
 		</comp:popup>
+		
+		<%-- NEW VERSION POPUP --%>	
+		<f:message var="confirmNewVersionDialogTitle" key="requirement.new-version.confirm-dialog.title" />	
+		<div id="confirm-new-version-dialog" class="not-displayed popup-dialog" title="${ confirmNewVersionDialogTitle }">
+			<strong><f:message key="requirement.new-version.confirm-dialog.label" /></strong>
+			<input:ok />
+			<input:cancel />
+		</div>
+		<s:url var="createNewVersionUrl" value="/requirements/${requirement.id}/versions/new" />
+		<script type="text/javascript">
+			$(function() {
+				var confirmHandler = function() {
+					$.post( "${ createNewVersionUrl }", function() {
+						document.location.reload(true);
+					} );
+				};
+				
+				var dialog = $( "#confirm-new-version-dialog" );
+				dialog.confirmDialog({confirm: confirmHandler});
+				
+				$( "#new-version-button" ).bind( "click", function() {
+					dialog.confirmDialog( "open" );
+					return false;
+				});
+				
+			});
+		</script>
+		<%-- /NEW VERSION POPUP --%>			
 	</c:if>		
 </div>
 
@@ -226,6 +254,7 @@ that page won't be editable if
 			<div class="toolbar-button-panel">
 				<input type="button" value='<f:message key="requirement.button.rename.label" />' id="rename-requirement-button" class="button"/> 
 				<input type="button" value='<f:message key="requirement.button.remove.label" />' id="delete-requirement-button" class="button"/>		
+				<input type="button" value='<f:message key="requirement.button.new-version.label" />' id="new-version-button" class="button"/>		
 			</div>	
 		</c:if>
 
@@ -242,6 +271,10 @@ that page won't be editable if
 	<comp:toggle-panel id="requirement-information-panel" titleKey="requirement.panel.general-informations.title" isContextual="true" open="true" >
 		<jsp:attribute name="body">
 			<div id="edit-requirement-table" class="display-table">
+				<div>
+					<label for="requirement-version-number"><f:message key="requirement-version.version-number.label" /></label>
+					<div id="requirement-version-number">${ requirement.currentVersion.versionNumber }</div>
+				</div>
 				<div class="display-table-row">
 					<label for="requirement-description" class="display-table-cell"><f:message key="requirement.description.label" /></label>
 					<div class="display-table-cell" id="requirement-description">${ requirement.description }</div>
@@ -289,7 +322,7 @@ that page won't be editable if
 	<c:if test="${status_editable}">
 	<pop:popup id="requirement-status-confirm-dialog" closeOnSuccess="false" titleKey="dialog.requirement.status.confirm.title" isContextual="true" >
 		<jsp:attribute name="buttons">
-			<f:message var="confirmLabel" key="dialog.button.confirm" />
+			<f:message var="confirmLabel" key="dialog.button.confirm.label" />
 			<f:message var="cancelLabel" key="dialog.button.cancel.label"/>
 				'${confirmLabel}' : function(){
 					var jqDiag = $(this);
@@ -421,8 +454,10 @@ that page won't be editable if
 	<script type="text/javascript">
 		$(function() {
 			$( "#requirement-audit-trail-table" ).ajaxSuccess(function(event, xrh, settings) {
-				if (settings.type == 'POST' && (!settings.data || ! settings.data.match(/requirement-status/g))) {
-					<%-- We refresh tble on POSTs which do not uptate requirement status (these ones already refresh the whole page --%>
+				if (settings.type == 'POST' 
+						&& !(settings.data && settings.data.match(/requirement-status/g))
+						&& !settings.url.match(/versions\/new$/g)) {
+					<%-- We refresh tble on POSTs which do not uptate requirement status or create a new version (these ones already refresh the whole page) --%>
 					$( this ).dataTable().fnDraw(false);
 				}
 			});
@@ -442,14 +477,12 @@ that page won't be editable if
 				<label for="audit-event-new-value"><f:message key="audit-trail.requirement.property-change.new-value.label" /></label>
 				<span id="audit-event-new-value">new value</span>
 			</div>
-			<f:message var="auditEventDetailsOkLabel" key="dialog.button.ok.label" />
-			<input type="button" value="${ auditEventDetailsOkLabel }" />
+			<input:ok />
 		</div>
 	</div>
 	<script type="text/javascript">
 		$(function() {
 			$( "#audit-event-details-dialog" ).messageDialog();
-			<!-- $( "#audit-event-details-dialog" ).messageDialog("open"); -->		
 		});
 	</script>
 	<%-- /AUDIT EVENT DETAILS --%>	

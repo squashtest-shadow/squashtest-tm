@@ -51,7 +51,7 @@
 
 <pop:popup closeOnSuccess="false" titleKey="dialog.settings.filter.title" id="${divId}" openedBy="${openedBy}">
 	<jsp:attribute name="buttons" >
-		<f:message var="confirmLabel" key="dialog.button.confirm" />
+		<f:message var="confirmLabel" key="dialog.button.confirm.label" />
 		'${ confirmLabel }': function() {
 			sendNewFilter();
 			<c:if test="${not empty successCallback}">${successCallback}();</c:if>		

@@ -81,7 +81,7 @@
 	<input type="button" class="button" id="report-select-project-button" name="projectIdsButton" value="${selectProjectButton}" style="display:inline-block;"/>
 	<pop:popup id="report-select-project-popup" openedBy="report-select-project-button" closeOnSuccess="false" isContextual="true" titleKey="dialog.report.requirementcoverage.selectproject.title">
 		<jsp:attribute name="buttons">
-			<f:message var="confirmLabel" key="dialog.button.confirm" />
+			<f:message var="confirmLabel" key="dialog.button.confirm.label" />
 			'${ confirmLabel }': function() {
 				refreshProjectSelection();
 				$("#report-select-project-popup").dialog("close");

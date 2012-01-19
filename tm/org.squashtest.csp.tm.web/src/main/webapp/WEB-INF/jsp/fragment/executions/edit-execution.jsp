@@ -383,7 +383,7 @@
 
 isContextual="true" openedBy="delete-execution-button">
 	<jsp:attribute name="buttons">
-		<f:message var="label" key="dialog.button.confirm" />
+		<f:message var="label" key="dialog.button.confirm.label" />
 		'${ label }': function() {
 			var url = "${executionUrl}";
 			<jq:ajaxcall 

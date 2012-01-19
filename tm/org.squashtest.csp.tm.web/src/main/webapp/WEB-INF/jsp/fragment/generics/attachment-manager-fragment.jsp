@@ -265,7 +265,7 @@
 <pop:popup id="delete-attachment-dialog" titleKey="dialog.attachment.remove.title" isContextual="true"
 	openedBy="delete-attachment-button">
 	<jsp:attribute name="buttons">
-		<f:message var="label" key="dialog.button.confirm" />
+		<f:message var="label" key="dialog.button.confirm.label" />
 
 		'${ label }': function() {
 		

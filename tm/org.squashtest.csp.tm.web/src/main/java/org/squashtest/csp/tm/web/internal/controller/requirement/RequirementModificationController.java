@@ -224,9 +224,9 @@ public class RequirementModificationController {
 		return HtmlUtils.htmlEscape(requirementReference);
 	}
 
-	@RequestMapping(value = "new-version", method = RequestMethod.POST)
+	@RequestMapping(value = "/versions/new", method = RequestMethod.POST)
 	@ResponseBody
-	public void createNewVersion(long requirementId) {
+	public void createNewVersion(@PathVariable long requirementId) {
 		requirementModService.createNewVersion(requirementId);
 	}
 
