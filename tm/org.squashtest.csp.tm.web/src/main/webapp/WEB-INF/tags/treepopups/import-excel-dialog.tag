@@ -38,8 +38,8 @@
 <%@ attribute name="workspace" required="true" description="the workspace (or nature) of the elements to import." %>
 
 <script type="text/javascript" src="${ pageContext.servletContext.contextPath }/scripts/jquery/jquery.form.js"></script>
-<script type="text/javascript" src="${ pageContext.servletContext.contextPath }/scripts/squashtest/classes/FeedbackMultipartPopup.js"></script> 
-<%--<script type="text/javascript" src="http://localhost/scripts/FeedbackMultipartPopup.js"></script> --%> 
+<script type="text/javascript" src="${ pageContext.servletContext.contextPath }/scripts/squashtest/classes/FeedbackMultipartPopup.js"></script>  
+<%-- <script type="text/javascript" src="http://localhost/scripts/FeedbackMultipartPopup.js"></script> --%>
 
 
 <s:url var="importUrl" value="/${workspace}-browser/import/upload"/>
@@ -49,6 +49,7 @@
 	if not, consider checking the results of $(tree).jstree("get_selected");
 
  --%>
+
 
 <pop:popup id="import-excel-dialog" titleKey="dialog.import-excel.title" isContextual="false"  closeOnSuccess="false">
 	<jsp:attribute name="buttonsArray">	
@@ -67,7 +68,7 @@
 				var tree = $("${treeSelector}");
 				var projectNode = tree.jstree("get_selected");
 				tree.jstree("refresh", projectNode);
-				tree.jstree("open_node", project_node, false, true);
+				tree.jstree("open_node", projectNode, false, true);
 			}
 		
 		},
@@ -105,7 +106,7 @@
 					
 					<!--  todo : make a better layout -->
 					<br/> 
-					<span>selectionner encoding a internationaliser</span>
+					<label><f:message key="dialog.import.encoding.label"/></label>
 					<select name="zipEncoding">
 						<option value="Cp858">Windows</option>
 						<option value="UTF8">UTF-8</option>
@@ -124,7 +125,18 @@
 		</div>
 		
 		<div id="import-excel-dialog-summary">
-			done
+			<div>
+				<span><f:message key="dialog.import.test-case.total.label"/></span><span class="total-import"></span>
+			</div>
+			<div>
+				<span><f:message key="dialog.import.test-case.success.label"/></span><span class="success-import"></span>
+			</div>
+			<div>
+				<span><f:message key="dialog.import.test-case.warnings.label"/></span><span class="warnings-import"></span>
+			</div>
+			<div>
+				<span><f:message key="dialog.import.test-case.failures.label"/></span><span class="failures-import"></span>
+			</div>			
 		</div>
 		
 		<div id="import-excel-dialog-dump">
@@ -135,10 +147,7 @@
 
 </pop:popup>
 
-<f:message var="nbTotalLabel" key="dialog.import.test-case.total.label"/>
-<f:message var="nbWarningsLabel" key="dialog.import.test-case.warnings.label"/>
-<f:message var="nbSuccessLabel" key="dialog.import.test-case.success.label"/>
-<f:message var="nbFailuresLabel" key="dialog.import.test-case.failures.label"/>
+
 <script type="text/javascript">
 
 
@@ -147,26 +156,12 @@
 
 	function importSummaryBuilder(response){
 			
-		var mainDiv=$("<div/>");
+		var panel = $("#import-excel-dialog-summary");
+		$(".total-import", panel).text(response.totalTestCases);
+		$(".success-import", panel).text(response.success);
+		$(".warnings-import", panel).text(response.warnings);
+		$(".failures-import", panel).text(response.failures);
 		
-		var spanTotal=$("<span/>", {"style":"display : block;"});
-		spanTotal.text("${nbTotalLabel} "+response.totalTestCases);
-		spanTotal.appendTo(mainDiv);
-		
-		var spanSuccess=$("<span/>", {"style":"display : block;"});
-		spanSuccess.text("${nbSuccessLabel} "+response.success);
-		spanSuccess.appendTo(mainDiv);		
-		
-		var spanWarnings=$("<span/>", {"style":"display : block;"});
-		spanWarnings.text("${nbWarningsLabel} "+response.warnings);
-		spanWarnings.appendTo(mainDiv);	
-		
-		var spanFailures=$("<span/>", {"style":"display : block;"});
-		spanFailures.text("${nbFailuresLabel} "+response.failures);
-		spanFailures.appendTo(mainDiv);			
-	
-		return mainDiv;
-	
 	}
 	
 	

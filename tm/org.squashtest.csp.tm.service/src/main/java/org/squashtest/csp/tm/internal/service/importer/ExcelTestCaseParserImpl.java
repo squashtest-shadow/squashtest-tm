@@ -300,7 +300,7 @@ public class ExcelTestCaseParserImpl implements ExcelTestCaseParser{
 				
 				for (int i=1;i<elements.size();i++){
 					String[] elt = elements.get(i);
-					builder.append("<li>").append("<b>"+elt[0]+" :</b> ").append(elt[1]).append("</li>");
+					builder.append("<li>").append("<strong>"+elt[0]+" :</strong> ").append(elt[1]).append("</li>");
 				}
 				
 				builder.append("</ul>");

@@ -52,7 +52,7 @@ An three buttons : confirm, ok, cancel, having css classes set using the class c
 	</li>
 	<li>summaryPanel : a javascript object configuring the summary phase :
 		<ul>
-			<li>builder : a function accepting the result of the ajax request as a json object and returning the content of the summary panel as a jQuery object.</li>
+			<li>builder : a function accepting the result of the ajax request as a json object, that will fill the summary panel.</li>
 		</ul>
 	</li>
 </ul>
@@ -179,7 +179,7 @@ function FeedbackMultipartPopup(settings){
 		var form = $("form", this.parametrizationPanel.panel);
 		form.ajaxSubmit({
 			url : this.parametrizationPanel.submitUrl+"?upload-ticket="+this.ticket,
-			dataType : "text",
+			dataType : "json",
 			success : function(){},
 			error : function(){},
 			complete : function(jqXHR){
@@ -190,19 +190,13 @@ function FeedbackMultipartPopup(settings){
 		});
 	};
 	
-	
-	var stripWrapper = function(xhr){
-		var jqXHR = $(xhr.responseText);
-		return jqXHR.html();
-	}
+
 	
 	this.displaySummary = function(){
 	
-		var json = $.parseJSON(stripWrapper(this.xhr));
+		var json = $.parseJSON(this.xhr.responseText);		
 		
-		var content = this.summaryPanel.builder(json);
-		this.summaryPanel.panel.html('');
-		this.summaryPanel.panel.prepend(content);
+		this.summaryPanel.builder(json);
 	
 		this.showSummary();
 		

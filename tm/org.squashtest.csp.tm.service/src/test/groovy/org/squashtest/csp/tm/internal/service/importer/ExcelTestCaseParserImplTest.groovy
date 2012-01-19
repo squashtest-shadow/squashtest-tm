@@ -518,7 +518,7 @@ class ExcelTestCaseParserImplTest extends Specification {
 	
 	/* ****************************** PseudoTestCaseTest ******************************** */
 	
-	def "should format a list of steps"(){
+	def "at a list of steps"(){
 		
 		given :
 		
@@ -545,8 +545,8 @@ class ExcelTestCaseParserImplTest extends Specification {
 			
 	}
 	
-	@Unroll("should format into TestCaseImportance.#importance")
-	def "should format importance"(){
+	@Unroll("at into TestCaseImportance.#importance")
+	def "at importance"(){
 		
 		expect :
 			ptc.formatImportance() == importance
@@ -575,7 +575,7 @@ class ExcelTestCaseParserImplTest extends Specification {
 	}
 	
 	
-	def "should format an empty description"(){
+	def "at an empty description"(){
 		
 		given :
 			def ptc = new PseudoTestCase()
@@ -589,7 +589,7 @@ class ExcelTestCaseParserImplTest extends Specification {
 	
 	}
 	
-	def "should format a single description"(){
+	def "at a single description"(){
 		
 		given :
 			def ptc = new PseudoTestCase();
@@ -603,7 +603,7 @@ class ExcelTestCaseParserImplTest extends Specification {
 
 	}
 	
-	def "should format a description with additional elements"(){
+	def "at a description with additional elements"(){
 		
 		
 		given :
@@ -617,8 +617,8 @@ class ExcelTestCaseParserImplTest extends Specification {
 		
 		then :
 			def expected ="<p>that's a fine description</p><hr/><ul>"+
-						  "<li><b>additional 1 :</b> that additional sentence is relevant</li>"+
-						  "<li><b>additional 2 :</b> that one too</li></ul>" 
+						  "<li><strong>additional 1 :</strong> that additional sentence is relevant</li>"+
+						  "<li><strong>additional 2 :</strong> that one too</li></ul>" 
 			res == expected
 			
 		
