@@ -33,7 +33,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 /**
- * This aspect advises a Requirement to raise an event when a Requirement's
+ * This aspect advises a RequirementVersion to raise an event when a RequirementVersion's
  * intrinsic property is modified.
  * 
  * @author Gregory Fouquet

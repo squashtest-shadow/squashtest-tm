@@ -56,7 +56,7 @@ class RequirementAuditTrailControllerTest extends Specification {
 		RequirementCreation event = Mock()
 		PagedCollectionHolder holder = Mock()
 		holder.pagedItems >> [event]
-		requirementAuditTrailService.findAllByRequirementIdOrderedByDate(10L, _) >> holder
+		requirementAuditTrailService.findAllByRequirementVersionIdOrderedByDate(10L, _) >> holder
 
 		when:
 		DataTableModel model =  controller.getEventsTableModel(10L, drawParams, locale)

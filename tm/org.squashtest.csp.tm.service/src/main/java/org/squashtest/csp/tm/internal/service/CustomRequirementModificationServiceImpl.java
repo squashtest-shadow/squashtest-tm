@@ -96,13 +96,14 @@ public class CustomRequirementModificationServiceImpl implements CustomRequireme
 		req.increaseVersion();
 		sessionFactory.getCurrentSession().persist(req.getCurrentVersion());
 	}
+
 	@Override
-	public void customChangeCriticality(long requirementId,
-			RequirementCriticality criticality) {
+	@PreAuthorize("hasPermission(#requirementId, 'org.squashtest.csp.tm.domain.requirement.Requirement', 'WRITE') or hasRole('ROLE_ADMIN')")
+	public void changeCriticality(long requirementId, RequirementCriticality criticality) {
 		Requirement requirement = findById(requirementId);
 		RequirementCriticality oldCriticality = requirement.getCriticality();
 		requirement.setCriticality(criticality);
 		testCaseImportanceManagerService.changeImportanceIfRequirementCriticalityChanged(requirementId, oldCriticality);
-		
+
 	}
 }

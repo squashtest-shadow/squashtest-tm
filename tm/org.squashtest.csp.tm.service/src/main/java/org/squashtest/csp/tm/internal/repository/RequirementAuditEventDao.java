@@ -28,8 +28,8 @@ import org.squashtest.csp.tm.domain.event.RequirementAuditEvent;
 public interface RequirementAuditEventDao {
 	void persist(RequirementAuditEvent event);
 
-	List<RequirementAuditEvent> findAllByRequirementIdOrderedByDate(long requirementId, Paging paging);
+	List<RequirementAuditEvent> findAllByRequirementVersionIdOrderedByDate(long requirementVersionId, Paging paging);
 
-	long countByRequirementId(long requirementId);
+	long countByRequirementVersionId(long requirementVersionId);
 
 }

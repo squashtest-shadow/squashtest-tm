@@ -58,7 +58,7 @@ class RequirementAuditTrailServiceIT extends DbunitServiceSpecification {
 		paging.getPageSize() >> 2
 		
 		when :
-		PagedCollectionHolder paged = service.findAllByRequirementIdOrderedByDate(requirementId, paging);
+		PagedCollectionHolder paged = service.findAllByRequirementVersionIdOrderedByDate(requirementId, paging);
 		
 		then :
 		paged.items.collect { it.id } == [ 12L , 14L]

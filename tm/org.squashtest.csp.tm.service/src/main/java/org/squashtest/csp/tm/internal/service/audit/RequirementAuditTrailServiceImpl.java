@@ -47,15 +47,15 @@ public class RequirementAuditTrailServiceImpl implements RequirementAuditTrailSe
 	@Inject private SessionFactory sessionFactory;
 
 	/**
-	 * @see org.squashtest.csp.tm.service.audit.RequirementAuditTrailService#findAllByRequirementIdOrderedByDate(long,
+	 * @see org.squashtest.csp.tm.service.audit.RequirementAuditTrailService#findAllByRequirementVersionIdOrderedByDate(long,
 	 *      org.squashtest.csp.core.infrastructure.collection.Paging)
 	 */
 	@Override
-	public PagedCollectionHolder<List<RequirementAuditEvent>> findAllByRequirementIdOrderedByDate(long requirementId,
+	public PagedCollectionHolder<List<RequirementAuditEvent>> findAllByRequirementVersionIdOrderedByDate(long requirementVersionId,
 			Paging paging) {
 		
-		List<RequirementAuditEvent> pagedEvents = auditEventDao.findAllByRequirementIdOrderedByDate(requirementId, paging);
-		long nbOfEvents = auditEventDao.countByRequirementId(requirementId);
+		List<RequirementAuditEvent> pagedEvents = auditEventDao.findAllByRequirementVersionIdOrderedByDate(requirementVersionId, paging);
+		long nbOfEvents = auditEventDao.countByRequirementVersionId(requirementVersionId);
 		
 		return new PagingBackedPagedCollectionHolder<List<RequirementAuditEvent>>(paging, nbOfEvents, pagedEvents);
 	}

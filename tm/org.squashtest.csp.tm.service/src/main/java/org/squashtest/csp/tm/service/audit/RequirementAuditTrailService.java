@@ -39,6 +39,6 @@ import org.squashtest.csp.tm.domain.event.RequirementLargePropertyChange;
 public interface RequirementAuditTrailService {
 	RequirementLargePropertyChange findLargePropertyChangeById(long eventId);
 	
-	PagedCollectionHolder<List<RequirementAuditEvent>> findAllByRequirementIdOrderedByDate(long requirementId, Paging paging);
+	PagedCollectionHolder<List<RequirementAuditEvent>> findAllByRequirementVersionIdOrderedByDate(long requirementVersionId, Paging paging);
 
 }

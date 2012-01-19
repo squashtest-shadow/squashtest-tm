@@ -48,13 +48,13 @@ class RequirementAuditTrailServiceImplTest extends Specification {
 		
 		and:
 		def events = [new RequirementCreation(), new RequirementCreation()] 
-		dao.findAllByRequirementIdOrderedByDate(10L, paging) >> events
+		dao.findAllByRequirementVersionIdOrderedByDate(10L, paging) >> events
 		
 		and:
-		dao.countByRequirementId(10L) >> 20L
+		dao.countByRequirementVersionId(10L) >> 20L
 		
 		when:
-		def res = service.findAllByRequirementIdOrderedByDate(10L, paging)
+		def res = service.findAllByRequirementVersionIdOrderedByDate(10L, paging)
 		
 		then:
 		res.items == events

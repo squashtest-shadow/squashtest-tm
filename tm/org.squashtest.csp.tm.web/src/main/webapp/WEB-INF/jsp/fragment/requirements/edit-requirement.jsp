@@ -403,7 +403,7 @@ that page won't be editable if
 		}
 		
 		function showPropChangeEventDetails(eventId) {
-			var urlRoot = "${ pageContext.servletContext.contextPath }/audit-trail/requirements/fat-prop-change-events/";
+			var urlRoot = "${ pageContext.servletContext.contextPath }/audit-trail/requirement-versions/fat-prop-change-events/";
 			
 			$.getJSON( urlRoot + eventId, function(data, textStatus, xhr) {
 				var dialog = $( "#audit-event-details-dialog" );
@@ -413,7 +413,7 @@ that page won't be editable if
 			});
 		}
 	</script>
-	<c:url var="requirementAuditTrailTableModelUrl" value="/audit-trail/requirements/${requirement.id}/events-table" />
+	<c:url var="requirementAuditTrailTableModelUrl" value="/audit-trail/requirement-versions/${requirement.currentVersion.id}/events-table" />
 	<comp:toggle-panel id="requirement-audit-trail-panel" titleKey="audit-trail.requirement.panel.title" open="false">
 		<jsp:attribute name="body">
 			<comp:decorate-ajax-table url="${ requirementAuditTrailTableModelUrl }" tableId="requirement-audit-trail-table" paginate="true" displayLength="10">

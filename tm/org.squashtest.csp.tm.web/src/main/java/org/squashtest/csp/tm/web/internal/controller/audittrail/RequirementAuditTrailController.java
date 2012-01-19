@@ -49,7 +49,7 @@ import org.squashtest.csp.tm.web.internal.model.datatable.DataTableModel;
  * 
  */
 @Controller
-@RequestMapping("/audit-trail/requirements")
+@RequestMapping("/audit-trail/requirement-versions")
 public class RequirementAuditTrailController {
 	private RequirementAuditTrailService auditTrailService;
 	@Inject
@@ -64,12 +64,12 @@ public class RequirementAuditTrailController {
 		this.auditTrailService = auditTrailService;
 	}
 
-	@RequestMapping(value = "{requirementId}/events-table", params = "sEcho")
+	@RequestMapping(value = "{requirementVersionId}/events-table", params = "sEcho")
 	@ResponseBody
-	public DataTableModel getEventsTableModel(@PathVariable long requirementId, DataTableDrawParameters drawParams,
+	public DataTableModel getEventsTableModel(@PathVariable long requirementVersionId, DataTableDrawParameters drawParams,
 			Locale locale) {
 		PagedCollectionHolder<List<RequirementAuditEvent>> auditTrail = auditTrailService
-				.findAllByRequirementIdOrderedByDate(requirementId,
+				.findAllByRequirementVersionIdOrderedByDate(requirementVersionId,
 						new DataTableDrawParametersPagingAdapter(drawParams));
 
 		RequirementAuditEventTableModelBuilder builder = new RequirementAuditEventTableModelBuilder(locale,

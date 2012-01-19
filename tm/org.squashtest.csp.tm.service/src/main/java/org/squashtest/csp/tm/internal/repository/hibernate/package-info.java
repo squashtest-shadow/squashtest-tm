@@ -164,9 +164,9 @@
 
 		//Queries on RequirementAuditEvent
 		// XXX RequirementVersion
-		@NamedQuery(name = "RequirementAuditEvent.findAllByRequirementIdOrderedByDate", query = "select rae from RequirementAuditEvent rae join rae.requirementVersion r where r.id = ? order by rae.date desc"),
+		@NamedQuery(name = "RequirementAuditEvent.findAllByRequirementVersionIdOrderedByDate", query = "select rae from RequirementAuditEvent rae join rae.requirementVersion r where r.id = ? order by rae.date desc"),
 		// XXX RequirementVersion
-		@NamedQuery(name = "RequirementAuditEvent.countByRequirementId", query = "select count(rae) from RequirementAuditEvent rae join rae.requirementVersion r where r.id = ?"),
+		@NamedQuery(name = "RequirementAuditEvent.countByRequirementVersionId", query = "select count(rae) from RequirementAuditEvent rae join rae.requirementVersion r where r.id = ?"),
 		// XXX RequirementVersion
 		@NamedQuery(name = "requirementAuditEvent.findAllByRequirementVersionIds", query = "select rae from RequirementAuditEvent rae inner join rae.requirementVersion r where r.id in (:ids) order by rae.requirementVersion asc, rae.date desc"),
 		@NamedQuery(name = "requirementAuditEvent.findAllByRequirementIds", query = "select rae from RequirementAuditEvent rae inner join rae.requirementVersion rv where rv.requirement.id in (:ids) order by rae.requirementVersion asc, rae.date desc"),
@@ -189,7 +189,7 @@
 		@NamedQuery(name = "testCase.removeAllCallSteps", query = "delete CallTestStep cts where  cts.id in (:stepIds)"),
 		@NamedQuery(name = "testCase.removeAllActionSteps", query = "delete ActionTestStep ats where ats.id in (:stepIds)"),
 
-		@NamedQuery(name = "requirement.findAllAttachmentLists", query ="select v.attachmentList.id from RequirementVersion v where v.requirement.id in (:requirementIds)"),
+		@NamedQuery(name = "requirement.findAllAttachmentLists", query = "select v.attachmentList.id from RequirementVersion v where v.requirement.id in (:requirementIds)"),
 		@NamedQuery(name = "requirementDeletionDao.deleteRequirementAuditEvent", query = "delete RequirementAuditEvent rae where rae.id in (:eventIds)")
 
 })

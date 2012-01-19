@@ -26,11 +26,13 @@ import javax.inject.Inject;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.squashtest.csp.tm.domain.requirement.Requirement;
+import org.squashtest.csp.tm.domain.requirement.RequirementVersion;
 import org.squashtest.csp.tm.internal.repository.RequirementDao;
 import org.squashtest.csp.tm.internal.service.event.RequirementAuditor;
+import org.hibernate.Session;
 
 /**
- * This aspect advises a Requirement's state change from transient to persistent and raises a creation event.
+ * This aspect advises a RequirementVersion's state change from transient to persistent and raises a creation event.
  * 
  * @author Gregory Fouquet
  * 
@@ -39,10 +41,19 @@ public aspect RequirementCreationEventPublisherAspect extends AbstractRequiremen
 	private static final Logger LOGGER = LoggerFactory.getLogger(RequirementCreationEventPublisherAspect.class);
 	
 	private pointcut executeRequirementPersister(RequirementDao dao, Requirement requirement) : execution(public void org.squashtest.csp.tm.internal.repository.EntityDao+.persist(Object)) && target(dao) && args(requirement);
+	private pointcut callRequirementVersionPersister(Session session, RequirementVersion requirementVersion) : call(public void org.hibernate.Session+.persist(Object)) && target(session) && args(requirementVersion);
 	
 	after(RequirementDao dao, Requirement requirement) : executeRequirementPersister(dao, requirement) {
 		if (aspectIsEnabled()) {
 			RequirementCreation event = new RequirementCreation(requirement.getCurrentVersion(), currentUser());
+			publish(event);
+			LOGGER.trace("Creation event raised");
+		}
+	}
+	
+	after(Session session, RequirementVersion requirementVersion) : callRequirementVersionPersister(session, requirementVersion) {
+		if (aspectIsEnabled()) {
+			RequirementCreation event = new RequirementCreation(requirementVersion, currentUser());
 			publish(event);
 			LOGGER.trace("Creation event raised");
 		}

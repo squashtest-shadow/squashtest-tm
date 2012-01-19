@@ -138,7 +138,7 @@ class HibernateRequirementAuditEventDaoIT extends DbunitDaoSpecification {
 		paging.getFirstItemIndex() >> 0
 
 		when :
-		List<RequirementAuditEvent> events = eventDao.findAllByRequirementIdOrderedByDate(requirementId, paging);
+		List<RequirementAuditEvent> events = eventDao.findAllByRequirementVersionIdOrderedByDate(requirementId, paging);
 
 		then :
 		events.size()==4
@@ -180,7 +180,7 @@ class HibernateRequirementAuditEventDaoIT extends DbunitDaoSpecification {
 		paging.getFirstItemIndex() >> 1
 
 		when :
-		List<RequirementAuditEvent> events = eventDao.findAllByRequirementIdOrderedByDate(requirementId, paging);
+		List<RequirementAuditEvent> events = eventDao.findAllByRequirementVersionIdOrderedByDate(requirementId, paging);
 
 		then :
 		events.collect { it.id } == [ 12L, 14L ]
@@ -192,7 +192,7 @@ class HibernateRequirementAuditEventDaoIT extends DbunitDaoSpecification {
 		def requirementId=1L
 
 		when :
-		def res = eventDao.countByRequirementId(1L)
+		def res = eventDao.countByRequirementVersionId(1L)
 		
 
 		then :

@@ -192,7 +192,7 @@ public class RequirementModificationController {
 	@ResponseBody
 	public String updateCriticality(@RequestParam("value") String value, @PathVariable long requirementId, Locale locale) {
 		RequirementCriticality criticality = RequirementCriticality.valueOf(value);
-		requirementModService.customChangeCriticality(requirementId, criticality);
+		requirementModService.changeCriticality(requirementId, criticality);
 		LOGGER.debug("Requirement {} : requirement criticality changed, new value : {}", requirementId,
 				criticality.name());
 		return HtmlUtils.htmlEscape(formatCriticality(criticality, locale));

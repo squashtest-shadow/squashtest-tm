@@ -20,7 +20,7 @@
  */
 package org.squashtest.csp.tm.domain.testcase;
 
-import static org.squashtest.csp.tm.domain.testcase.TestCaseImportance.*;
+import static org.squashtest.csp.tm.domain.testcase.TestCaseImportance.LOW;
 
 import java.util.ArrayList;
 import java.util.Collections;
@@ -45,11 +45,10 @@ import javax.persistence.PrimaryKeyJoinColumn;
 import javax.validation.constraints.NotNull;
 
 import org.squashtest.csp.tm.domain.UnknownEntityException;
-import org.squashtest.csp.tm.domain.attachment.AttachmentHolder;
 import org.squashtest.csp.tm.domain.attachment.Attachment;
+import org.squashtest.csp.tm.domain.attachment.AttachmentHolder;
 import org.squashtest.csp.tm.domain.attachment.AttachmentList;
 import org.squashtest.csp.tm.domain.audit.AuditableMixin;
-import org.squashtest.csp.tm.domain.audit.AuditableSupport;
 import org.squashtest.csp.tm.domain.requirement.Requirement;
 import org.squashtest.csp.tm.domain.requirement.RequirementVersion;
 

@@ -64,5 +64,5 @@ public interface CustomRequirementModificationService {
 	 * @param requirementId
 	 * @param criticality
 	 */
-	void customChangeCriticality(long requirementId, RequirementCriticality criticality);
+	void changeCriticality(long requirementId, RequirementCriticality criticality);
 }
