@@ -51,8 +51,7 @@ public class H2DbSupport extends DbSupport {
 	public Set<String> getTableNames() {
 		return getSQLHandler().getItemsAsStringSet(
 				"select TABLE_NAME from " + "INFORMATION_SCHEMA.TABLES where TABLE_TYPE = 'TABLE' AND "
-						+ "TABLE_SCHEMA = '" + getSchemaName() + "'"); // NOSONAR mind your own business, it's not
-																		// production code
+						+ "TABLE_SCHEMA = '" + getSchemaName() + "'"); // NOSONAR mind-your-own-business,-it's-not-production-code
 	}
 
 	/**
@@ -66,8 +65,7 @@ public class H2DbSupport extends DbSupport {
 	public Set<String> getColumnNames(String tableName) {
 		return getSQLHandler().getItemsAsStringSet(
 				"select COLUMN_NAME from " + "INFORMATION_SCHEMA.COLUMNS where TABLE_NAME = '" + tableName
-						+ "' AND TABLE_SCHEMA = '" + getSchemaName() + "'"); // NOSONAR mind your own business, it's not
-																				// production code
+						+ "' AND TABLE_SCHEMA = '" + getSchemaName() + "'"); // NOSONAR mind-your-own-business,-it's-not-production-code
 	}
 
 	/**
@@ -81,13 +79,7 @@ public class H2DbSupport extends DbSupport {
 	public Set<String> getIdentityColumnNames(String tableName) {
 		return getSQLHandler().getItemsAsStringSet(
 				"select COLUMN_NAME from " + "INFORMATION_SCHEMA.INDEXES where PRIMARY_KEY = 'TRUE' AND "
-						+ "TABLE_NAME = '" + tableName + "' AND TABLE_SCHEMA = '" + getSchemaName() + "'"); // NOSONAR
-																											// mind your
-																											// own
-																											// business,
-																											// it's not
-																											// production
-																											// code
+						+ "TABLE_NAME = '" + tableName + "' AND TABLE_SCHEMA = '" + getSchemaName() + "'"); // NOSONAR mind-your-own-business,-it's-not-production-code
 	}
 
 	/**
@@ -98,15 +90,7 @@ public class H2DbSupport extends DbSupport {
 	@Override
 	public Set<String> getViewNames() {
 		return getSQLHandler().getItemsAsStringSet(
-				"select TABLE_NAME from " + "INFORMATION_SCHEMA.VIEWS WHERE TABLE_SCHEMA = '" + getSchemaName() + "'"); // NOSONAR
-																														// mind
-																														// your
-																														// own
-																														// business,
-																														// it's
-																														// not
-																														// production
-																														// code
+				"select TABLE_NAME from " + "INFORMATION_SCHEMA.VIEWS WHERE TABLE_SCHEMA = '" + getSchemaName() + "'"); // NOSONAR mind-your-own-business,-it's-not-production-code
 	}
 
 	/**
@@ -146,9 +130,7 @@ public class H2DbSupport extends DbSupport {
 	public long getSequenceValue(String sequenceName) {
 		return getSQLHandler().getItemAsLong(
 				"select CURRENT_VALUE from " + "INFORMATION_SCHEMA.SEQUENCES where SEQUENCE_SCHEMA = '"
-						+ getSchemaName() + "' and SEQUENCE_NAME = '" + sequenceName + "'"); // NOSONAR mind your own
-																								// business, it's not
-																								// production code
+						+ getSchemaName() + "' and SEQUENCE_NAME = '" + sequenceName + "'"); // NOSONAR mind-your-own-business,-it's-not-production-code
 	}
 
 	/**
@@ -162,15 +144,7 @@ public class H2DbSupport extends DbSupport {
 	@Override
 	public void incrementSequenceToValue(String sequenceName, long newSequenceValue) {
 		getSQLHandler()
-				.executeUpdate("alter sequence " + qualified(sequenceName) + " restart with " + newSequenceValue); // NOSONAR
-																													// mind
-																													// your
-																													// own
-																													// business,
-																													// it's
-																													// not
-																													// production
-																													// code
+				.executeUpdate("alter sequence " + qualified(sequenceName) + " restart with " + newSequenceValue); // NOSONAR mind-your-own-business,-it's-not-production-code
 	}
 
 	/**
@@ -187,7 +161,7 @@ public class H2DbSupport extends DbSupport {
 	public void incrementIdentityColumnToValue(String tableName, String identityColumnName, long identityValue) {
 		getSQLHandler().executeUpdate(
 				"alter table " + qualified(tableName) + " alter column " + quoted(identityColumnName)
-						+ " RESTART WITH " + identityValue); // NOSONAR mind your own business, it's not production code
+						+ " RESTART WITH " + identityValue); // NOSONAR mind-your-own-business,-it's-not-production-code
 	}
 
 	/**
@@ -222,20 +196,12 @@ public class H2DbSupport extends DbSupport {
 
 			resultSet = queryStatement.executeQuery("select TABLE_NAME, "
 					+ "CONSTRAINT_NAME from INFORMATION_SCHEMA.CONSTRAINTS where "
-					+ "CONSTRAINT_TYPE IN ('CHECK', 'UNIQUE') AND CONSTRAINT_SCHEMA " + "= '" + getSchemaName() + "'"); // NOSONAR
-																														// mind
-																														// your
-																														// own
-																														// business,
-																														// it's
-																														// not
-																														// production
-																														// code
+					+ "CONSTRAINT_TYPE IN ('CHECK', 'UNIQUE') AND CONSTRAINT_SCHEMA " + "= '" + getSchemaName() + "'"); // NOSONAR mind-your-own-business,-it's-not-production-code
 			while (resultSet.next()) {
 				String tableName = resultSet.getString("TABLE_NAME");
 				String constraintName = resultSet.getString("CONSTRAINT_NAME");
 				alterStatement.executeUpdate("alter table " + qualified(tableName) + " drop constraint "
-						+ quoted(constraintName)); // NOSONAR mind your own business, it's not production code
+						+ quoted(constraintName)); // NOSONAR mind-your-own business,-it's-not-production-code
 			}
 		} catch (Exception e) {
 			throw new UnitilsException("Error while disabling check and unique " + "constraints on schema "
@@ -266,13 +232,13 @@ public class H2DbSupport extends DbSupport {
 					+ "AND NOT EXISTS (select COLUMN_NAME "
 					+ "from INFORMATION_SCHEMA.INDEXES pk where pk.TABLE_NAME = "
 					+ "col.TABLE_NAME and pk.COLUMN_NAME = col.COLUMN_NAME and " + "pk.TABLE_SCHEMA = '"
-					+ getSchemaName() + "' AND pk.PRIMARY_KEY = TRUE)"); // NOSONAR mind your own business, it's not
-																			// production code
+					+ getSchemaName() + "' AND pk.PRIMARY_KEY = TRUE)"); // NOSONAR mind-your-own
+																			// business,-it's-not-production-code
 			while (resultSet.next()) {
 				String tableName = resultSet.getString("TABLE_NAME");
 				String columnName = resultSet.getString("COLUMN_NAME");
 				alterStatement.executeUpdate("alter table " + qualified(tableName) + " alter column "
-						+ quoted(columnName) + " set null"); // NOSONAR mind your own business, it's not production code
+						+ quoted(columnName) + " set null"); // NOSONAR mind-your-own business,-it's-not-production-code
 			}
 		} catch (Exception e) {
 			throw new UnitilsException("Error while disabling not null " + "constraints on schema " + getSchemaName(),
