@@ -32,4 +32,12 @@ public interface WorkspaceService<LIBRARY extends Library<? extends LibraryNode>
 	 * @return
 	 */
 	List<LIBRARY> findAllLibraries();
+	
+	/**
+	 * unfiltered version of the above. With sec filters, but no user filters.
+	 * 
+	 * @return
+	 */
+	
+	List<LIBRARY> findAllLibrariesUnfiltered();
 }

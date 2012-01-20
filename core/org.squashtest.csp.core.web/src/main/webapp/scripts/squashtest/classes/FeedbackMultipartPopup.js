@@ -69,8 +69,10 @@ function FeedbackMultipartPopup(settings){
 						return this[name].panel;
 					}, self);
 	
-	var showPanel = $.proxy(function(name){
-						$.each(this.allPanels, function(i,v){v.hide(); });
+	var showPanel = $.proxy(function(name){						
+						$.each(this.allPanels, function(i,v){
+							v.hide(); 
+						});
 						findMainPanel(name).show();
 					}, self);
 	
@@ -104,13 +106,14 @@ function FeedbackMultipartPopup(settings){
 	
 		var fileUploads = $("."+FeedbackMultipartPopup.PARAMETRIZATION+" input[type='file']", this.popup);
 		
+		var self = this;
 		var validated = true;
 		
 		fileUploads.each(function(i,v){			
 			var fileName = v.value;
 			
-			$.each(this.parametrization.extensions, function(i,v){
-				if (! fileName.match(v+"$")){
+			$.each(self.parametrization.extensions, function(i,v){
+				if (! fileName.match("."+v+"$")){
 					validated=false;
 				}
 			});
@@ -120,7 +123,7 @@ function FeedbackMultipartPopup(settings){
 		if (validated){
 			this.setState(FeedbackMultipartPopup.CONFIRM);
 		}else{
-			this.displayError(this.parametrization.errorMessage);
+			displayError(this.parametrization.errorMessage);
 			this.setState(FeedbackMultipartPopup.ERROR);
 		}
 	
@@ -192,7 +195,7 @@ function FeedbackMultipartPopup(settings){
 	
 	var buildProgressionPanel = $.proxy(function(){
 				this.progression = {};
-				this.progression.panel = $("<div/>",  {'class' : 'progression'} )
+				this.progression.panel = $("<div/>",  {'class' : 'progression'} );
 				this.progression.panel.append("<span>please wait and internationalize</span>");	
 
 				this.popup.append(this.progression.panel);		
@@ -206,10 +209,10 @@ function FeedbackMultipartPopup(settings){
 				this.error = {};
 				this.error.panel = $("<div/>", {'class' : 'error-display'} );
 				
-				var errorButton = $("<button type='button' class='button' value='Ok'/>");
-				errorButton.addClass(FeedbackMultipartPopup.ERROR_CLASS);
+				var errorButton = $("<button type='button' class='button'>");
+				errorButton.addClass(FeedbackMultipartPopup.ERROR);
 				getButtonPane().prepend(errorButton);		
-				errorButton.button().click(function(){
+				errorButton.button({'label' : 'Ok'}).click(function(){
 					localSelf.setState(FeedbackMultipartPopup.PARAMETRIZATION);}
 				);
 				

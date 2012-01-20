@@ -63,16 +63,16 @@
 		},
 		{		
 			text : "${okLabel}",
-			"class" : FeedbackMultipartPopup.CONFIRM,
+			"class" : FeedbackMultipartPopup.SUMMARY,
 			click : function(){
 				$("#import-excel-dialog").dialog("close");
 			}
 		},
 		{
 			text : "${okLabel}",
-			"class" : FeedbackMultipartPopup.SUMMARY,
+			"class" : CONFIRM,
 			click : function(){
-				$("#import-excel-dialog").dialog("close");
+				importExcelFeedbackPopup.submit();
 			}
 		
 		},
@@ -94,22 +94,25 @@
 			
 			<div style="margin-top:1em;margin-bottom:1em;">
 				<form action="${importUrl}" method="POST" enctype="multipart/form-data" class="display-table">
-					<label><f:message key="dialog.import.filetype.message"/></label>
-					<input type="file" name="archive" size="20" accept="application/zip" />
-					
-					<!--  todo : make a better layout -->
-					<br/> 
-					<label><f:message key="dialog.import.encoding.label"/></label>
-					<select name="zipEncoding">
-						<option value="Cp858">Windows <f:message key="dialog.import.encoding.default"/></option>
-						<option value="UTF8">UTF-8</option>
-					</select>
+
+					<div class="display-table-row">
+						<div class="display-table-cell"><label><f:message key="dialog.import.filetype.message"/></label></div>
+						<div class="display-table-cell"><input type="file" name="archive" size="20" accept="application/zip" /></div>
+					</div>
+					<div class="display-table-row">
+						<div class="display-table-cell"><label><f:message key="dialog.import.encoding.label"/></label></div>
+						<div class="display-table-cell"><select name="zipEncoding">
+							<option value="Cp858">Windows <f:message key="dialog.import.encoding.default"/></option>
+							<option value="UTF8">UTF-8</option>
+						</select></div>
+					</div>
+
 				</form>
 			
 			</div>
 		</div>
 		
-		<div class="confirmation">
+		<div class="confirm">
 			todo
 		
 		</div>

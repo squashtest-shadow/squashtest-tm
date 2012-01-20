@@ -59,6 +59,12 @@ WorkspaceService<LIBRARY> {
 		ProjectFilter pf = projectFilterModificationService.findProjectFilterByUserLogin();
 		return pf.getActivated()==true?libraryStrategy.getSpecificLibraries(pf.getProjects()):libraryDao.findAll();
 	}
+	
+	@Override
+	@PostFilter("hasPermission(filterObject, 'READ') or hasRole('ROLE_ADMIN')")
+	public List<LIBRARY> findAllLibrariesUnfiltered() {
+		return libraryDao.findAll();
+	}
 
 	public final void setLibraryDao(LibraryDao<LIBRARY, NODE> libraryDao) {
 		this.libraryDao = libraryDao;

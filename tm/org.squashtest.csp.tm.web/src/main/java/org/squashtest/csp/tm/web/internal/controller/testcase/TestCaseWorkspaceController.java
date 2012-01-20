@@ -20,12 +20,18 @@
  */
 package org.squashtest.csp.tm.web.internal.controller.testcase;
 
+import java.util.List;
+
 import org.springframework.osgi.extensions.annotation.ServiceReference;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestMethod;
+import org.springframework.web.servlet.ModelAndView;
 import org.squashtest.csp.tm.domain.testcase.TestCaseLibrary;
 import org.squashtest.csp.tm.service.WorkspaceService;
 import org.squashtest.csp.tm.web.internal.controller.generic.WorkspaceController;
+import org.squashtest.csp.tm.web.internal.model.builder.JsTreeNodeListBuilder;
+import org.squashtest.csp.tm.web.internal.model.jstree.JsTreeNode;
 
 @Controller
 @RequestMapping("/test-case-workspace")
@@ -46,4 +52,17 @@ public class TestCaseWorkspaceController extends WorkspaceController<TestCaseLib
 	protected String getWorkspaceViewName() {
 		return "page/test-case-workspace";
 	}
+	
+	@Override
+	@RequestMapping(method = RequestMethod.GET)
+	public ModelAndView showWorkspace() {
+
+		ModelAndView mav = super.showWorkspace();
+		List<TestCaseLibrary> allLibraries = workspaceService.findAllLibrariesUnfiltered();
+		mav.addObject("libraries", allLibraries);
+		
+		return mav;
+	}
+	
+
 }
