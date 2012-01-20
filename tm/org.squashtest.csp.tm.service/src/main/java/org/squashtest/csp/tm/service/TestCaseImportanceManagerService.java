@@ -57,7 +57,7 @@ public interface TestCaseImportanceManagerService {
 	 *            list of requirements added to the test-case
 	 * @param testCase
 	 */
-	void changeImportanceIfRelationsAddedToTestCases(List<RequirementVersion> requirementVersions, TestCase testCase);
+	void changeImportanceIfRelationsAddedToTestCase(List<RequirementVersion> requirementVersions, TestCase testCase);
 
 	/**
 	 * will compute and update the importance of the test-cases if their importance is auto<br>

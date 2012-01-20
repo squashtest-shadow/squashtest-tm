@@ -58,15 +58,13 @@ public enum TestCaseImportance implements Level {
 	 * @return the level
 	 */
 	@Override
-	public int getLevel() {	
+	public int getLevel() {
 		return level;
 	}
-	
-	public static TestCaseImportance defaultValue(){
+
+	public static TestCaseImportance defaultValue() {
 		return MEDIUM;
 	}
-	
-
 
 	/**
 	 * 
@@ -122,7 +120,8 @@ public enum TestCaseImportance implements Level {
 		TestCaseImportance oldCriticalityImp = deduceTestCaseImportance(Arrays.asList(oldRequirementCriticality));
 		TestCaseImportance newCriticaltyImp = deduceTestCaseImportance(Arrays.asList(newCriticality));
 		boolean canChange = true;
-		if (levelComparator.compare(this, oldCriticalityImp) < 0 && levelComparator.compare(this, newCriticaltyImp) < 0) {
+		if (levelComparator.compare(this, oldCriticalityImp) < 0
+				&& levelComparator.compare(this, newCriticaltyImp) <= 0) {
 			canChange = false;
 		}
 		return canChange;

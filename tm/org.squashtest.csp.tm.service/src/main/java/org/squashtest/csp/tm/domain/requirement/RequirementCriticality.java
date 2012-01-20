@@ -83,13 +83,16 @@ public enum RequirementCriticality implements Level {
 	}
 
 	public static RequirementCriticality findStrongestCriticality(List<RequirementCriticality> requirementCriticalities) {
-
-		RequirementCriticality strongestRequirementCriticality = requirementCriticalities.get(0);
-		for (RequirementCriticality requirementCriticality : requirementCriticalities) {
-			if (strongestRequirementCriticality.getLevel() > requirementCriticality.getLevel()) {
-				strongestRequirementCriticality = requirementCriticality;
+		if (!requirementCriticalities.isEmpty()) {
+			RequirementCriticality strongestRequirementCriticality = requirementCriticalities.get(0);
+			for (RequirementCriticality requirementCriticality : requirementCriticalities) {
+				if (strongestRequirementCriticality.getLevel() > requirementCriticality.getLevel()) {
+					strongestRequirementCriticality = requirementCriticality;
+				}
 			}
+			return strongestRequirementCriticality;
+		} else {
+			return null;
 		}
-		return strongestRequirementCriticality;
 	}
 }

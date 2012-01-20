@@ -106,7 +106,7 @@ public class VerifiedRequirementsManagerServiceImpl implements VerifiedRequireme
 				}
 			}
 			List<RequirementVersion> requirementVersions = extractVersions(requirements);
-			testCaseImportanceManagerService.changeImportanceIfRelationsAddedToTestCases(requirementVersions, testCase);
+			testCaseImportanceManagerService.changeImportanceIfRelationsAddedToTestCase(requirementVersions, testCase);
 		}
 	}
 

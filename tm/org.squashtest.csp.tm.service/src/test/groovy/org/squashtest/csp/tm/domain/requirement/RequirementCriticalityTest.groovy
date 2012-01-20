@@ -22,6 +22,8 @@ package org.squashtest.csp.tm.domain.requirement
 
 import org.apache.poi.hssf.record.formula.functions.T
 
+import static org.squashtest.csp.tm.domain.requirement.RequirementCriticality.*
+
 import spock.lang.Specification
 
 class RequirementCriticalityTest extends Specification {
@@ -30,7 +32,7 @@ class RequirementCriticalityTest extends Specification {
 		def crit = RequirementCriticality.valueOf(2)
 
 		then:
-		crit == RequirementCriticality.MINOR
+		crit == MINOR
 	}
 	def "should throw exception on unknown levels"() {
 		when:
@@ -38,5 +40,12 @@ class RequirementCriticalityTest extends Specification {
 
 		then:
 		thrown(IllegalArgumentException)
+	}
+	def "should find strongest criticality"(){
+		List<RequirementCriticality> requirementCriticalities = Arrays.asList (MAJOR, MINOR, CRITICAL, UNDEFINED, MAJOR)
+		when:
+		RequirementCriticality stongest = RequirementCriticality.findStrongestCriticality (requirementCriticalities)
+		then:
+		stongest == CRITICAL
 	}
 }

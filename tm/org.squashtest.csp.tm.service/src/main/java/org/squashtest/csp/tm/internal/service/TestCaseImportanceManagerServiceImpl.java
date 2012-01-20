@@ -87,6 +87,9 @@ public class TestCaseImportanceManagerServiceImpl implements TestCaseImportanceM
 		return importance;
 	}
 
+	/**
+	 * @see org.squashtest.csp.tm.service.TestCaseImportanceManagerService#changeImportanceIfIsAuto(long)
+	 */
 	@Override
 	public void changeImportanceIfIsAuto(long testCaseId) {
 		TestCase testCase = testCaseDao.findById(testCaseId);
@@ -96,6 +99,10 @@ public class TestCaseImportanceManagerServiceImpl implements TestCaseImportanceM
 		}
 	}
 
+	/**
+	 * @see org.squashtest.csp.tm.service.TestCaseImportanceManagerService#changeImportanceIfRelationsAddedToReq(List,
+	 *      RequirementVersion)
+	 */
 	@Override
 	public void changeImportanceIfRelationsAddedToReq(List<TestCase> testCases, RequirementVersion requirementVersion) {
 		RequirementCriticality requirementCriticality = requirementVersion.getCriticality();
@@ -104,8 +111,12 @@ public class TestCaseImportanceManagerServiceImpl implements TestCaseImportanceM
 		}
 	}
 
+	/**
+	 * @see org.squashtest.csp.tm.service.TestCaseImportanceManagerService#changeImportanceIfRelationsAddedToTestCases(List,
+	 *      TestCase)
+	 */
 	@Override
-	public void changeImportanceIfRelationsAddedToTestCases(List<RequirementVersion> requirementVersions,
+	public void changeImportanceIfRelationsAddedToTestCase(List<RequirementVersion> requirementVersions,
 			TestCase testCase) {
 		if (!requirementVersions.isEmpty()) {
 			List<RequirementCriticality> requirementCriticalities = extractCriticalities(requirementVersions);
@@ -145,6 +156,10 @@ public class TestCaseImportanceManagerServiceImpl implements TestCaseImportanceM
 
 	}
 
+	/**
+	 * @see org.squashtest.csp.tm.service.TestCaseImportanceManagerService#changeImportanceIfRelationsRemovedFromReq(List,
+	 *      long)
+	 */
 	@Override
 	public void changeImportanceIfRelationsRemovedFromReq(List<Long> testCasesIds, long requirementVersionId) {
 		RequirementVersion requirementVersion = requirementVersionDao.findById(requirementVersionId);
@@ -187,6 +202,10 @@ public class TestCaseImportanceManagerServiceImpl implements TestCaseImportanceM
 		return testCases;
 	}
 
+	/**
+	 * @see org.squashtest.csp.tm.service.TestCaseImportanceManagerService#changeImportanceIfRelationsRemovedFromTestCase(List,
+	 *      long)
+	 */
 	@Override
 	public void changeImportanceIfRelationsRemovedFromTestCase(List<Long> requirementsVersionIds, long testCaseId) {
 		if (!requirementsVersionIds.isEmpty()) {
@@ -198,6 +217,10 @@ public class TestCaseImportanceManagerServiceImpl implements TestCaseImportanceM
 		}
 	}
 
+	/**
+	 * @see org.squashtest.csp.tm.service.TestCaseImportanceManagerService#changeImportanceIfRequirementCriticalityChanged(long,
+	 *      RequirementCriticality)
+	 */
 	@Override
 	public void changeImportanceIfRequirementCriticalityChanged(long requirementVersionId,
 			RequirementCriticality oldRequirementCriticality) {
@@ -244,6 +267,10 @@ public class TestCaseImportanceManagerServiceImpl implements TestCaseImportanceM
 		}
 	}
 
+	/**
+	 * @see org.squashtest.csp.tm.service.TestCaseImportanceManagerService#changeImportanceIfCallStepAddedToTestCases(TestCase,
+	 *      TestCase)
+	 */
 	@Override
 	public void changeImportanceIfCallStepAddedToTestCases(TestCase calledTestCase, TestCase parentTestCase) {
 		List<RequirementCriticality> rCriticalities = findAllDistinctRequirementsCriticalityByTestCaseId(calledTestCase
@@ -255,6 +282,10 @@ public class TestCaseImportanceManagerServiceImpl implements TestCaseImportanceM
 		}
 	}
 
+	/**
+	 * @see org.squashtest.csp.tm.service.TestCaseImportanceManagerService#changeImportanceIfCallStepRemoved(TestCase,
+	 *      TestCase)
+	 */
 	@Override
 	public void changeImportanceIfCallStepRemoved(TestCase calledTestCase, TestCase parentTestCase) {
 		List<RequirementCriticality> rCriticalities = findAllDistinctRequirementsCriticalityByTestCaseId(calledTestCase
