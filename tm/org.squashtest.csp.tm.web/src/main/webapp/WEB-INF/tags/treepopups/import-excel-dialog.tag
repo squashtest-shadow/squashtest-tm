@@ -38,8 +38,8 @@
 <%@ attribute name="workspace" required="true" description="the workspace (or nature) of the elements to import." %>
 
 <script type="text/javascript" src="${ pageContext.servletContext.contextPath }/scripts/jquery/jquery.form.js"></script>
-<script type="text/javascript" src="${ pageContext.servletContext.contextPath }/scripts/squashtest/classes/FeedbackMultipartPopup.js"></script>  
-<%-- <script type="text/javascript" src="http://localhost/scripts/FeedbackMultipartPopup.js"></script> --%>
+<%-- <script type="text/javascript" src="${ pageContext.servletContext.contextPath }/scripts/squashtest/classes/FeedbackMultipartPopup.js"></script> --%>  
+<script type="text/javascript" src="http://localhost/scripts/FeedbackMultipartPopup.js"></script>
 
 
 <s:url var="importUrl" value="/${workspace}-browser/import/upload"/>
@@ -55,26 +55,30 @@
 	<jsp:attribute name="buttonsArray">	
 		<f:message var="confirmLabel" key="dialog.import.confirm.label" />	
 		<f:message var="cancelLabel" key="dialog.button.cancel.label"/>
+		<f:message var="okLabel" key="dialog.button.ok.label"/>
 		{
 			text : "${confirmLabel}",
-			"class" : FeedbackMultipartPopup.CONFIRM_CLASS,
-			click : function(){	importExcelFeedbackPopup.submit();}
+			"class" : FeedbackMultipartPopup.PARAMETRIZATION,
+			click : function(){	importExcelFeedbackPopup.validate();}
 		},
-		{
-			text : "Ok", <!--  todo : make it i18n -->
-			"class" : FeedbackMultipartPopup.OK_CLASS,
+		{		
+			text : "${okLabel}",
+			"class" : FeedbackMultipartPopup.CONFIRM,
 			click : function(){
 				$("#import-excel-dialog").dialog("close");
-				var tree = $("${treeSelector}");
-				var projectNode = tree.jstree("get_selected");
-				tree.jstree("refresh", projectNode);
-				tree.jstree("open_node", projectNode, false, true);
+			}
+		},
+		{
+			text : "${okLabel}",
+			"class" : FeedbackMultipartPopup.SUMMARY,
+			click : function(){
+				$("#import-excel-dialog").dialog("close");
 			}
 		
 		},
 		{
 			text : "${cancelLabel}",
-			"class" : FeedbackMultipartPopup.CANCEL_CLASS,
+			"class" : FeedbackMultipartPopup.PROGRESSION+" "+FeedbackMultipartPopup.PARAMETRIZATION,
 			click : function(){importExcelFeedbackPopup.cancel();}			
 		}
 	</jsp:attribute>
@@ -82,27 +86,16 @@
 	<jsp:attribute name="additionalSetup">
 		open : function(){
 			importExcelFeedbackPopup.reset();
-			
-			var selected = $("${treeSelector}").jstree("get_selected");
-			var projectNode = liNode(selected);
-			
-			var projectName = $("a:first", projectNode).text().replace(/^ */,''); //ie can't trim
-			var projectId = projectNode.attr('resId');
-			
-			$("#import-excel-dialog-parametrization .import-project-name-span").text(projectName);
-			$("#import-excel-dialog-parametrization input[type='hidden']").val(projectId);
 		}	
 	</jsp:attribute>
 
 	<jsp:attribute name="body">
-		<div id="import-excel-dialog-parametrization">
-			<div>
-				<span><f:message key="dialog.import.filetype.message"/></span>
-			</div>
+		<div class="parametrization">
+			
 			<div style="margin-top:1em;margin-bottom:1em;">
-				<form id="import-excel-form" action="${importUrl}" method="POST" enctype="multipart/form-data">
-					<input type="hidden" name="projectId"/>
-					<input type="file" name="archive" size="40" accept="application/zip"/>
+				<form action="${importUrl}" method="POST" enctype="multipart/form-data" class="display-table">
+					<label><f:message key="dialog.import.filetype.message"/></label>
+					<input type="file" name="archive" size="20" accept="application/zip" />
 					
 					<!--  todo : make a better layout -->
 					<br/> 
@@ -114,17 +107,14 @@
 				</form>
 			
 			</div>
-			<div>
-				<span><f:message key="dialog.import.project.label"/></span>
-				<span class="import-project-name-span" style="font-weight:bold;"></span>
-			</div>	
 		</div>
 		
-		<div id="import-excel-dialog-progession">
-			please wait
+		<div class="confirmation">
+			todo
+		
 		</div>
 		
-		<div id="import-excel-dialog-summary">
+		<div class="summary">
 			<div>
 				<span><f:message key="dialog.import-excel.test-case.total"/></span><span class="total-import span-bold"></span>
 			</div>
@@ -139,7 +129,7 @@
 			<div class="import-excel-dialog-note">
 				
 				<hr/>
-				<span>Notes : </span>
+				<span><f:message key="dialog.import.summary.notes.label"/></span>
 				<ul>
 					<li class="import-excel-dialog-renamed"><span><f:message key="dialog.import-excel.test-case.warnings.renamed"/></span></li>
 					<li class="import-excel-dialog-modified"><span><f:message key="dialog.import-excel.test-case.warnings.modified"/></span></li>	
@@ -147,35 +137,28 @@
 			</div>
 		</div>
 		
-		<div id="import-excel-dialog-dump">
-		
-		</div>
-		
 	</jsp:attribute>	
 
 </pop:popup>
 
 
+<f:message var="wrongFileMessage" key="dialog.import.wrongfile" />
 <script type="text/javascript">
 
 
 	var importExcelFeedbackPopup = null;
 	
-
+	
 	function importSummaryBuilder(response){
 			
 		var panel = $("#import-excel-dialog-summary");
 		
-		//basic infos		
+		//basic infos			
 		$(".total-import", panel).text(response.total);
 		$(".success-import", panel).text(response.success);
 		
 		var failSpan = $(".failures-import", panel).text(response.failures);
-		if (response.failures==0){
-			failSpan.removeClass("span-red");
-		}else{
-			failSpan.addClass("span-red");
-		}
+		(response.failures==0) ? failSpan.removeClass("span-red") : failSpan.addClass("span-red");
 		
 		//notes
 		if ((response.renamed==0) && (response.modified==0)){
@@ -183,19 +166,13 @@
 		}else{
 			$(".import-excel-dialog-note", panel).show();
 			
-			if (response.renamed>0){
-				$(".import-excel-dialog-renamed", panel).show();
-			}else{
-				$(".import-excel-dialog-renamed", panel).hide();
-			}
+			var renamedDialog = $(".import-excel-dialog-renamed", panel);
+			(response.renamed>0) ? renamedDialog.show() : renamedDialog.hide();
 
-			if (response.modified>0){
-				$(".import-excel-dialog-modified", panel).show();
-			}else{
-				$(".import-excel-dialog-modified", panel).hide();
-			}
+			var modifiedDialog = $(".import-excel-dialog-modified", panel);
+			(response.modified>0) ? modifiedDialog.show() : modifiedDialog.hide();
+			
 		}
-		
 		
 	}
 	
@@ -207,22 +184,14 @@
 				
 			popup : $("#import-excel-dialog"),
 			
-			parametrizationPanel : {
-				selector : "#import-excel-dialog-parametrization",
-				submitUrl : "${importUrl}"
+			parametrization : {
+				submitUrl : "${importUrl}",
+				extensions : [ "zip" ],
+				errorMessage : "${wrongFileMessage} zip"
 			},
 			
-			progressPanel : {
-				selector : "#import-excel-dialog-progession"
-			},
-			
-			summaryPanel : {
-				selector : "#import-excel-dialog-summary",
+			summary : {
 				builder : importSummaryBuilder
-			},
-			
-			dumpPanel : {
-				selector : "#import-excel-dialog-dump"	
 			}
 				
 		};

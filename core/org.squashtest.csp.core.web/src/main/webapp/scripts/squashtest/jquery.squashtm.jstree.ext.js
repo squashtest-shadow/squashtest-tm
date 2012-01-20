@@ -21,7 +21,7 @@
 /**
  * Common functions for JsTree manipulation
  * 
- * @author Gregory Fouquet, Benoît Siri
+ * @author Gregory Fouquet, Benoï¿½t Siri
  */
 
  
@@ -280,8 +280,9 @@
 				}
 						
 			},
+			
 			allowedOperations : function(){
-			var selectedNodes = this.get_selected();
+				var selectedNodes = this.get_selected();
 				var operations = "";			
 				if(!this.selectionIsEditable(selectedNodes) == "OK") return operations; 
 				else{ 
@@ -297,7 +298,17 @@
 					}
 				}
 				return operations;			
-			}		
+			},
+			
+			refresh_selected : function(){
+				var selected = this.get_selected();
+				var iter;
+				for (iter in selected){
+					this.refresh(projectNode);
+				}
+			}
+			
+			
 		},
 			
 		defaults : {

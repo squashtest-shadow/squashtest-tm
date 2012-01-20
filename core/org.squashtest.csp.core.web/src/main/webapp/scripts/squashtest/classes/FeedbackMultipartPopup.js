@@ -18,175 +18,133 @@
  *     You should have received a copy of the GNU Lesser General Public License
  *     along with this software.  If not, see <http://www.gnu.org/licenses/>.
  */
+
 /**
+
 
 <p>A FeedbackMultipartPopup is an object complementary to the regular jQuery.dialog. Its purpose is to enrich the submission of
 multipart form data, which can be long to upload, and of which the user might appreciate to be informed of the progression.</p>
 
-<p>A FeebackMultipartPopup accepts a single popup which contains three panels (divs) :
-<ul>
-	<li>the parametrization, typically where the file browser is</li>
-	<li>the progression, which contains a "please wait" thing and a progress bar</li>
-	<li>the summary, that proposes a view of the overall operation (status, warnings etc) after completion.</li>
-</ul>
-An three buttons : confirm, ok, cancel, having css classes set using the class constant defined at the end of the file.
-</p>
+TODO : redo the documentation
 
-<p>
-	The parametrization panel must contain a form, enctype multipart/form-data and method POST.
-</p>
-
-<p>settings : </p>
-<ul>
-	<li>popup : the jQuery object that represent the dialog (not the widget itself).</li>
-	<li>parametrizationPanel : a javascript object configuring the parametrization phase
-		<ul>
-			<li>selector : the selector that will give the jQuery object that represents the parametrisation panel</li>
-			<li>submitUrl : the url where to upload the form</li>
-		</ul>
-	</li>
-	<li>progressPanel : a javascript object configuring the progress upload phase.
-		<ul>
-			<li>selector : the selector that will give the jQuery object that represents the progress upload panel</li>
-		</ul>	
-	</li>
-	<li>summaryPanel : a javascript object configuring the summary phase :
-		<ul>
-			<li>builder : a function accepting the result of the ajax request as a json object, that will fill the summary panel.</li>
-		</ul>
-	</li>
-</ul>
 *
 */
 function FeedbackMultipartPopup(settings){
 
-	this.jqueryfied=false;
+	/* ***************** attributes ******************************* */
+	
 	this.popup = settings.popup;
-	this.parametrizationPanel = settings.parametrizationPanel;
-	this.progressPanel = settings.progressPanel;
-	this.summaryPanel = settings.summaryPanel;
-	this.dumpPanel = settings.dumpPanel;
+	
+	this.parametrization = settings.parametrization;
+	this.summary = settings.summary;
+	
 	
 	//internal state
 	this.ticket=0;
 	this.state = undefined;
 	
-	/* ************* basic methods ************************ */
-	
-	this.jqueryfy = function(){
-		if (! this.jqueryfied){
-			this.parametrizationPanel.panel = $(this.parametrizationPanel.selector);
-			this.progressPanel.panel = $(this.progressPanel.selector);
-			this.summaryPanel.panel = $(this.summaryPanel.selector);
-			this.dumpPanel.panel = $(this.dumpPanel.selector);
-		}
-	};
-	
+		
+	/* *****************private methods *************************** */
 
+	var self=this;
+	var getButtonPane = $.proxy(function(){
+						return this.popup.eq(0).next().find(".ui-dialog-buttonset");
+					}, self);
 	
-	this.getButtonPane = function(){
-		return this.popup.eq(0).next()
-	};
+	var getButtons = $.proxy(function(className){
+						var buttons = getButtonPane().find("button."+className);
+						return buttons;
+					}, self);
 	
-	this.getConfirmButton = function(){
-		return this.getButtonPane().find("button."+FeedbackMultipartPopup.CONFIRM_CLASS);
-	};
+	var showButtons = $.proxy(function(className){
+						var allButtons = getButtonPane().find("button");
+						var selectedButtons = allButtons.filter("."+className);
+						
+						allButtons.hide();
+						selectedButtons.show();
+						
+					}, self);
+
+	var findMainPanel = $.proxy(function(name){
+						return this[name].panel;
+					}, self);
 	
-	this.getOkButton = function(){		
-		return this.getButtonPane().find("button."+FeedbackMultipartPopup.OK_CLASS);
-	};
+	var showPanel = $.proxy(function(name){
+						$.each(this.allPanels, function(i,v){v.hide(); });
+						findMainPanel(name).show();
+					}, self);
 	
-	this.getCancelButton = function(){
-		return this.getButtonPane().find("button."+FeedbackMultipartPopup.CANCEL_CLASS);
-	};
+	var displayError = $.proxy(function(message){
+						var erPanel = findMainPanel(FeedbackMultipartPopup.ERROR);
+						var spMessage = $("<span/>", { "text" : message });
+						erPanel.empty();
+						erPanel.append(spMessage);
+					}, self);
+	
+	/* ********************** public methods ************************* */
 	
 	this.reset = function(){
 	
-		this.jqueryfy();
-		
-		//the following should be done once and for all :
-		this.dumpPanel.panel.addClass("not-displayed");
-	
-		//init
-		this.ticket=0;
-		
-		var paramPanel = this.parametrizationPanel.panel;
+		var paramPanel = this.parametrization.panel;
 		paramPanel.find('input').val('');
 		
-		//do stuff
-		
-		this.showParametrization();
+		this.setState(FeedbackMultipartPopup.PARAMETRIZATION);
 	};
 	
-	this.showParametrization = function(){
 	
-		this.parametrizationPanel.panel.show();
-		this.progressPanel.panel.hide();
-		this.summaryPanel.panel.hide();
-
-		this.getConfirmButton().show();
-		this.getCancelButton().show();			
-		this.getOkButton().hide();
-		
-		// todo : kill the poll process associated to the progress panel
-		this.state = "parametrization";
-		
+	
+	this.setState = function(stateName){
+		showPanel(stateName);
+		showButtons(stateName);
+		this.state = stateName;		
 	};
 	
-	this.showProgress = function(){
 	
-		this.parametrizationPanel.panel.hide();
-		this.progressPanel.panel.show();
-		this.summaryPanel.panel.hide();	
-		
-		this.getConfirmButton().hide();
-		this.getCancelButton().show();			
-		this.getOkButton().hide();
-		
-		//todo : start the poll process associated to the progress panel
-		
-		this.state = "progress";
-		
-	};
+	this.validate = function(){
 	
-	this.showSummary = function(){
-	
-		this.parametrizationPanel.panel.hide();
-		this.progressPanel.panel.hide();
-		this.summaryPanel.panel.show();	
+		var fileUploads = $("."+FeedbackMultipartPopup.PARAMETRIZATION+" input[type='file']", this.popup);
 		
-		this.getConfirmButton().hide();
-		this.getCancelButton().hide();			
-		this.getOkButton().show();
+		var validated = true;
 		
-		// todo : kill the poll process associated to the progress panel
-	
-		this.state = "summary";
+		fileUploads.each(function(i,v){			
+			var fileName = v.value;
+			
+			$.each(this.parametrization.extensions, function(i,v){
+				if (! fileName.match(v+"$")){
+					validated=false;
+				}
+			});
+			
+		});
 		
-	};
-
+		if (validated){
+			this.setState(FeedbackMultipartPopup.CONFIRM);
+		}else{
+			this.displayError(this.parametrization.errorMessage);
+			this.setState(FeedbackMultipartPopup.ERROR);
+		}
 	
-	/* ********************* main code : operations and transitions ****************************** */
+	}
 	
 	this.submit = function(){
 		//todo and please use Deferred.done() to set the ticket and perform the following
-		this.showProgress();
+		this.setState(FeedbackMultipartPopup.PROGRESSION);
 		this.doSubmit();
 	};
 	
 	this.doSubmit = function(){
-		var self =  this;
-		var form = $("form", this.parametrizationPanel.panel);
+		var localSelf =  this;
+		var form = $("form", this.parametrization.panel);
 		form.ajaxSubmit({
-			url : this.parametrizationPanel.submitUrl+"?upload-ticket="+this.ticket,
+			url : this.parametrization.submitUrl+"?upload-ticket="+this.ticket,
 			dataType : "json",
 			success : function(){},
 			error : function(){},
 			complete : function(jqXHR){
-				self.xhr = jqXHR; 
-				self.displaySummary();
+				localSelf.xhr = jqXHR; 
+				localSelf.displaySummary();
 			},
-			target : this.dumpPanel.panel.attr('id')
+			target : this.dump.panel.attr('id')
 		});
 	};
 	
@@ -196,14 +154,14 @@ function FeedbackMultipartPopup(settings){
 	
 		var json = $.parseJSON(this.xhr.responseText);		
 		
-		this.summaryPanel.builder(json);
+		this.summary.builder(json);
 	
-		this.showSummary();
+		this.setState(FeedbackMultipartPopup.SUMMARY);
 		
 	};
 	
 	this.cancel = function(){
-		if (this.state == "progress"){
+		if (this.state == "progression"){
 			this.cancelPoll();
 			//we must also kill the submit itself, alas killing other pending ajax requests.
 			if (window.stop !== undefined){
@@ -227,11 +185,72 @@ function FeedbackMultipartPopup(settings){
 		//todo
 	};
 	
+	
+/* **************************************************************
+						CONSTRUCTION					
+************************************************************** */
+	
+	var buildProgressionPanel = $.proxy(function(){
+				this.progression = {};
+				this.progression.panel = $("<div/>",  {'class' : 'progression'} )
+				this.progression.panel.append("<span>please wait and internationalize</span>");	
+
+				this.popup.append(this.progression.panel);		
+				this.allPanels.push(this.progression.panel);
+			}, self);
+	
+	
+	var buildErrorPanel = $.proxy(function(){
+				var localSelf = this;
+			
+				this.error = {};
+				this.error.panel = $("<div/>", {'class' : 'error-display'} );
+				
+				var errorButton = $("<button type='button' class='button' value='Ok'/>");
+				errorButton.addClass(FeedbackMultipartPopup.ERROR_CLASS);
+				getButtonPane().prepend(errorButton);		
+				errorButton.button().click(function(){
+					localSelf.setState(FeedbackMultipartPopup.PARAMETRIZATION);}
+				);
+				
+				this.popup.append(this.error.panel);		
+				this.allPanels.push(this.error.panel);
+			}, self);
+	
+	
+	var buildDumpPanel = $.proxy(function(){	
+				this.dump = {};
+				this.dump.panel = $("<div/>", { 'id' : 'excel-dump', 'class' : 'dump'} );
+				this.dump.panel.hide();		
+				
+				this.popup.append(this.dump.panel);
+			}, self);
+	
+	//the actual construction takes place now
+	
+	this.allPanels = [];
+	
+	this.confirmation = {};
+	
+	this.parametrization.panel = $("."+FeedbackMultipartPopup.PARAMETRIZATION, this.popup);
+	this.confirmation.panel = $("."+FeedbackMultipartPopup.CONFIRM, this.popup);
+	this.summary.panel =  $("."+FeedbackMultipartPopup.SUMMARY, this.popup);
+	
+	this.allPanels.push(this.parametrization.panel);
+	this.allPanels.push(this.summary.panel);
+	this.allPanels.push(this.confirmation.panel);
+	
+	buildProgressionPanel();
+	buildErrorPanel();
+	buildDumpPanel();
+		
 	return this;
 }
 
 /* ******************** Class constants *********************** */
 
-FeedbackMultipartPopup.CONFIRM_CLASS = "confirm-button-class"
-FeedbackMultipartPopup.CANCEL_CLASS = "cancel-button-class"
-FeedbackMultipartPopup.OK_CLASS = "ok-button-class"
+FeedbackMultipartPopup.PARAMETRIZATION = "parametrization"
+FeedbackMultipartPopup.CONFIRM = "confirm"
+FeedbackMultipartPopup.ERROR = "error"
+FeedbackMultipartPopup.PROGRESSION = "progression"
+FeedbackMultipartPopup.SUMMARY = "summary"
