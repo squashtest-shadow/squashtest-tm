@@ -68,7 +68,7 @@
 	<div class="not-displayed" >
 	<div id="tree-import-menu" >
 	<ul>
-		<li><a class="import-excel-tree-button menu-disabled" href="#"><fmt:message key="tree.button.import-excel.label" /></a></li>
+		<li><a class="import-excel-tree-button" href="#"><fmt:message key="tree.button.import-excel.label" /></a></li>
 	</ul>
 	</div>
 	</div>	

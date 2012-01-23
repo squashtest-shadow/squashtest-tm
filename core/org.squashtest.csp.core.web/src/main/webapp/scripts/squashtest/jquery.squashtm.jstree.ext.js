@@ -234,16 +234,6 @@
 					else return "createFileNotHere";
 				}
 			},
-			selectionIsImportExcelAllowed : function(selectedNodes){
-				//need only one node selected
-				var isOneEdit = this.selectionIsOneEditableNode(selectedNodes);
-				if(isOneEdit != "OK") return isOneEdit;
-				//the import of excel is allowed only for a library
-				else if (selectedNodes.attr('rel') ==  "drive"){
-					return "OK";
-				}
-				else return "importNotHere";
-			},
 			selectionIsCreateResourceAllowed : function(selectedNodes){
 				//need only one node selected
 				var isOneEdit = this.selectionIsOneEditableNode(selectedNodes);
@@ -283,7 +273,7 @@
 			
 			allowedOperations : function(){
 				var selectedNodes = this.get_selected();
-				var operations = "";			
+				var operations = "import-excel ";		//one can always import excel files
 				if(!this.selectionIsEditable(selectedNodes) == "OK") return operations; 
 				else{ 
 					if(this.selectionIsDeletable(selectedNodes) == "OK") operations += "delete ";
@@ -291,7 +281,6 @@
 					if(this.selectionIsOneEditableNode(selectedNodes) == "OK"){
 						if(this.selectionIsCreateFolderAllowed(selectedNodes) == "OK")  operations += "create-folder ";
 						if(this.selectionIsCreateFileAllowed(selectedNodes) == "OK")  operations += "create-file ";
-						if(this.selectionIsImportExcelAllowed(selectedNodes) == "OK") operations += "import-excel ";
 						if(this.selectionIsCreateResourceAllowed(selectedNodes) == "OK") operations += "create-resource ";
 						if(this.selectionIsRenamable(selectedNodes) == "OK") operations += "rename ";
 						if(this.selectionIsPasteAllowed(selectedNodes) == "OK") operations += "paste ";

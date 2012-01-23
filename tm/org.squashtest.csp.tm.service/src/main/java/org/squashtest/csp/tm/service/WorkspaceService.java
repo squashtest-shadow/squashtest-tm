@@ -34,10 +34,10 @@ public interface WorkspaceService<LIBRARY extends Library<? extends LibraryNode>
 	List<LIBRARY> findAllLibraries();
 	
 	/**
-	 * unfiltered version of the above. With sec filters, but no user filters.
+	 * Returns all libraries that the user may edit.
 	 * 
 	 * @return
 	 */
 	
-	List<LIBRARY> findAllLibrariesUnfiltered();
+	List<LIBRARY> findAllEditableLibraries();
 }

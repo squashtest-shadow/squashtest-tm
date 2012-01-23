@@ -61,8 +61,8 @@ WorkspaceService<LIBRARY> {
 	}
 	
 	@Override
-	@PostFilter("hasPermission(filterObject, 'READ') or hasRole('ROLE_ADMIN')")
-	public List<LIBRARY> findAllLibrariesUnfiltered() {
+	@PostFilter("hasPermission(filterObject, 'WRITE') or hasRole('ROLE_ADMIN')")
+	public List<LIBRARY> findAllEditableLibraries() {
 		return libraryDao.findAll();
 	}
 

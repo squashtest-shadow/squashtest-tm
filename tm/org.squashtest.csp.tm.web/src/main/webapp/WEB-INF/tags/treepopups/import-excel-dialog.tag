@@ -25,17 +25,17 @@
 
 <%@ taglib prefix="f" uri="http://java.sun.com/jsp/jstl/fmt"%>	
 <%@ taglib prefix="s" uri="http://www.springframework.org/tags"%>
+<%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core"%>
 
 
 <%@ taglib prefix="comp" tagdir="/WEB-INF/tags/component"%>
-<%@ taglib prefix="f" uri="http://java.sun.com/jsp/jstl/fmt"%>
-<%@ taglib prefix="jq" tagdir="/WEB-INF/tags/jquery"%>
 <%@ taglib prefix="pop" tagdir="/WEB-INF/tags/popup" %>
 
 	
-<%@ attribute name="treeSelector" required="true" description="jquery selector of the tree instance" %>
-<%@ attribute name="treeNodeButton" required="true" description="the javascript button that will open the dialog" %>
-<%@ attribute name="workspace" required="true" description="the workspace (or nature) of the elements to import." %>
+<%@ attribute name="treeSelector" 		required="true" description="jquery selector of the tree instance" %>
+<%@ attribute name="treeNodeButton"		required="true" description="the javascript button that will open the dialog" %>
+<%@ attribute name="workspace" 			required="true" description="the workspace (or nature) of the elements to import." %>
+<%@ attribute name="targetLibraries" 	required="true" description="the potential target libraries for upload." type="java.lang.Object" %>
 
 <script type="text/javascript" src="${ pageContext.servletContext.contextPath }/scripts/jquery/jquery.form.js"></script>
 <%-- <script type="text/javascript" src="${ pageContext.servletContext.contextPath }/scripts/squashtest/classes/FeedbackMultipartPopup.js"></script> --%>  
@@ -70,7 +70,7 @@
 		},
 		{
 			text : "${okLabel}",
-			"class" : CONFIRM,
+			"class" : FeedbackMultipartPopup.CONFIRM,
 			click : function(){
 				importExcelFeedbackPopup.submit();
 			}
@@ -78,7 +78,7 @@
 		},
 		{
 			text : "${cancelLabel}",
-			"class" : FeedbackMultipartPopup.PROGRESSION+" "+FeedbackMultipartPopup.PARAMETRIZATION,
+			"class" : FeedbackMultipartPopup.PROGRESSION+" "+FeedbackMultipartPopup.PARAMETRIZATION+" "+FeedbackMultipartPopup.CONFIRM,
 			click : function(){importExcelFeedbackPopup.cancel();}			
 		}
 	</jsp:attribute>
@@ -95,6 +95,18 @@
 			<div style="margin-top:1em;margin-bottom:1em;">
 				<form action="${importUrl}" method="POST" enctype="multipart/form-data" class="display-table">
 
+					<div class="display-table-row">
+						<div class="display-table-cell"><label><f:message key="dialog.import.project.message"/></label></div>
+						<div class="display-table-cell">
+							<select name="projectId">
+								<c:forEach items="${targetLibraries}" var="lib" varStatus="status" >
+								<%-- ugly tag-defined attribute nested right here, don't let your eyes dangle --%>
+								<option value="${lib.id}" <c:if test="${status.first}">selected="yes"</c:if>>${lib.project.name}</option>
+								</c:forEach>
+							</select>
+						
+						</div>
+					</div>
 					<div class="display-table-row">
 						<div class="display-table-cell"><label><f:message key="dialog.import.filetype.message"/></label></div>
 						<div class="display-table-cell"><input type="file" name="archive" size="20" accept="application/zip" /></div>

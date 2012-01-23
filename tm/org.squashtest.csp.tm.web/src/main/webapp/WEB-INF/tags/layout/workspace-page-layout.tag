@@ -189,7 +189,7 @@
 		</c:if>
 		<c:if test="${ resourceName == 'test-case' }">
 			<treepopup:import-excel-dialog treeSelector="#tree" workspace="${resourceName}"  
-			treeNodeButton="squashtm.treemenu.importer.buttons['import-excel']"/>
+			treeNodeButton="squashtm.treemenu.importer.buttons['import-excel']" targetLibraries="${editableLibraries}"/>
 		</c:if>
 
 		<jsp:invoke fragment="footer" />		
