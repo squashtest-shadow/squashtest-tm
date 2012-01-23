@@ -38,8 +38,8 @@
 <%@ attribute name="targetLibraries" 	required="true" description="the potential target libraries for upload." type="java.lang.Object" %>
 
 <script type="text/javascript" src="${ pageContext.servletContext.contextPath }/scripts/jquery/jquery.form.js"></script>
-<%-- <script type="text/javascript" src="${ pageContext.servletContext.contextPath }/scripts/squashtest/classes/FeedbackMultipartPopup.js"></script> --%>  
-<script type="text/javascript" src="http://localhost/scripts/FeedbackMultipartPopup.js"></script>
+ <script type="text/javascript" src="${ pageContext.servletContext.contextPath }/scripts/squashtest/classes/FeedbackMultipartPopup.js"></script>  
+<%-- <script type="text/javascript" src="http://localhost/scripts/FeedbackMultipartPopup.js"></script>  --%>
 
 
 <s:url var="importUrl" value="/${workspace}-browser/import/upload"/>
