@@ -20,11 +20,21 @@
  */
 package org.squashtest.csp.tm.internal.repository.hibernate
 
+import java.util.List;
+
 import javax.inject.Inject
 
 import org.spockframework.util.NotThreadSafe
 import org.springframework.transaction.annotation.Transactional
+import org.hibernate.Query
 import org.squashtest.csp.tm.internal.repository.RequirementDeletionDao
+import org.squashtest.csp.tm.internal.repository.RequirementVersionDao
+import org.squashtest.csp.tm.internal.repository.RequirementDao
+import org.squashtest.csp.tm.internal.repository.AttachmentListDao
+import org.squashtest.csp.tools.unittest.assertions.CollectionAssertions
+import org.squashtest.csp.tools.unittest.assertions.ListAssertions
+import org.unitils.dbunit.annotation.DataSet
+import org.unitils.dbunit.datasetloadstrategy.impl.CleanInsertLoadStrategy
 
 import spock.unitils.UnitilsSupport
 
@@ -32,12 +42,95 @@ import spock.unitils.UnitilsSupport
 @UnitilsSupport
 @Transactional
 class HibernateRequirementDeletionDaoIT extends DbunitDaoSpecification {
+	@Inject RequirementVersionDao versionDao
+	@Inject RequirementDao requirementDao
+	@Inject RequirementDeletionDao deletionDao
+	@Inject AttachmentListDao attachmentListDao
+	
+	def setup() {
+		CollectionAssertions.declareContainsExactlyIds()
+		CollectionAssertions.declareContainsExactly()
+		ListAssertions.declareIdsEqual();
+	}
+	
+	@DataSet("HibernateRequirementVersionDaoIT.should delete all requirements versions by requirement id.xml")
+	def "should delete all requirements versions by requirement id"() {
+		given:
+		//we associate the current version to the requirements
+		String sql = "update requirement set current_version_id = :ver_id where rln_id = :id";
+		Query query = getSession().createSQLQuery(sql);
+		query.setParameter("id", 10);
+		query.setParameter("ver_id", 15);
+		query.executeUpdate();
+		query.setParameter("id", 20);
+		query.setParameter("ver_id", 25);
+		query.executeUpdate();
+		query.setParameter("id", 30);
+		query.setParameter("ver_id", 30);
+		query.executeUpdate();
+		query.setParameter("id", 40);
+		query.setParameter("ver_id", 40);
+		query.executeUpdate();
+		getSession().flush();
 
-	
-	@Inject
-	private RequirementDeletionDao deletionDao;
-	
-	
-	//TODO
+		when:
+		//remove
+		List<Long> requirementAttachmentIds = deletionDao.findRequirementAttachmentListIds([10L, 30L]);
+		
+		deletionDao.removeFromVerifiedRequirementLists([10L, 30L])
+		
+		deletionDao.deleteRequirementAuditEvents([10L, 30L])
+		
+		deletionDao.removeEntities([10L, 30L])
+		
+		deletionDao.removeAttachmentsLists(requirementAttachmentIds)
+		
+		//then find all
+		def resReqVers = versionDao.findAllByIdList([10L, 11L, 12L, 13L, 14L, 15L, 20L, 21L, 22L, 23L, 24L, 25L, 30L, 40L])
+		def resReq = requirementDao.findAllByIdList([10L, 20L, 30L, 40L])
+		
+		String sql_select_resource = "select res_id from resource where res_id in (10, 11, 12, 13, 14, 15, 20, 21, 22, 23, 24, 25, 30, 40)";
+		Query query_select_resource = getSession().createSQLQuery(sql_select_resource);
+		def resources = query_select_resource.list()
+		
+		def resAttachList = attachmentListDao.findAllByIdList([10L, 11L, 12L, 13L, 14L, 15L, 20L, 21L, 22L, 23L, 24L, 25L, 30L, 40L])
+		
+		String sql_select_librairy_node = "select rln_id from requirement_library_node where rln_id in (10, 20, 30, 40)";
+		Query query_select_librairy_node = getSession().createSQLQuery(sql_select_librairy_node);
+		def resLibrairy_node = query_select_librairy_node.list()
+		
+		String sql_select_test_case_verified_req_vers = "select verified_req_version_id from test_case_verified_requirement_version where verified_req_version_id in (15, 25, 30, 40)";
+		Query query_select_test_case_verified_req_vers = getSession().createSQLQuery(sql_select_test_case_verified_req_vers);
+		def resTestCaseVerifiedReqVers = query_select_test_case_verified_req_vers.list()
+		
+		String sql_select_requirement_audit_event = "select event_id from requirement_audit_event where event_id in (10, 11, 12, 13, 14, 15, 20, 21, 22, 23, 24, 25, 30, 40)";
+		Query query_select_requirement_audit_event = getSession().createSQLQuery(sql_select_requirement_audit_event);
+		def resRequirementAuditEvent = query_select_requirement_audit_event.list()
+		
+		String sql_select_requirement_creation = "select event_id from requirement_creation where event_id in (10, 20, 30, 40)";
+		Query query_select_requirement_creation = getSession().createSQLQuery(sql_select_requirement_creation);
+		def resRequirementCreation = query_select_requirement_creation.list()
+		
+		String sql_select_requirement_property_change = "select event_id from requirement_property_change where event_id in (12, 13, 21, 22, 23)";
+		Query query_select_requirement_property_change = getSession().createSQLQuery(sql_select_requirement_property_change);
+		def resRequirementPropertyChange = query_select_requirement_property_change.list()
+		
+		String sql_select_requirement_large_property_change = "select event_id from requirement_large_property_change where event_id in (11, 14, 15, 24, 25)";
+		Query query_select_requirement_large_property_change = getSession().createSQLQuery(sql_select_requirement_large_property_change);
+		def resRequirementLargePropertyChange = query_select_requirement_large_property_change.list()
+		
+		//should remain only the elements not linked to the removed requirements
+		then:
+		resReqVers.containsExactlyIds([20L, 21L, 22L, 23L, 24L, 25L, 40L])
+		resReq.containsExactlyIds([20L, 40L])
+		resources.containsExactly([20G, 21G, 22G, 23G, 24G, 25G, 40G])
+		resAttachList.containsExactlyIds([20L, 21L, 22L, 23L, 24L, 25L, 40L])
+		resLibrairy_node.containsExactly([20G, 40G])
+		resTestCaseVerifiedReqVers.containsExactly([25G, 40G])
+		resRequirementAuditEvent.containsExactly([20G, 21G, 22G, 23G, 24G, 25G, 40G])
+		resRequirementCreation.containsExactly([20G, 40G])
+		resRequirementPropertyChange.containsExactly([21G, 22G, 23G])
+		resRequirementLargePropertyChange.containsExactly([24G, 25G])
+	}
 	
 }

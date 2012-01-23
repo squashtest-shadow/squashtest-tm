@@ -23,9 +23,11 @@ package org.squashtest.csp.tm.internal.repository.hibernate
 import javax.inject.Inject;
 
 import org.springframework.transaction.annotation.Transactional;
+import org.hibernate.Query
 import org.squashtest.csp.core.infrastructure.collection.PagingAndSorting;
 import org.squashtest.csp.core.infrastructure.collection.SortOrder;
 import org.squashtest.csp.tm.internal.repository.RequirementVersionDao;
+import org.squashtest.csp.tm.internal.repository.RequirementDeletionDao;
 import org.squashtest.csp.tools.unittest.assertions.CollectionAssertions;
 import org.squashtest.csp.tools.unittest.assertions.ListAssertions;
 import org.unitils.dbunit.annotation.DataSet;
@@ -35,6 +37,7 @@ import spock.unitils.UnitilsSupport;
 @UnitilsSupport
 class HibernateRequirementVersionDaoIT extends DbunitDaoSpecification {
 	@Inject RequirementVersionDao versionDao
+	@Inject RequirementDeletionDao deletionDao
 	
 	def setup() {
 		CollectionAssertions.declareContainsExactlyIds()
@@ -102,7 +105,6 @@ class HibernateRequirementVersionDaoIT extends DbunitDaoSpecification {
 		then: 
 		res.containsExactlyIds([10L, 20L])
 	}
-	
 	
 	@DataSet("HibernateTestCaseDaoIT.should find requirement versions directly verified by a test case sorted by name.xml")
 	def "should find requirement versions directly verified by a test case sorted by name"() {

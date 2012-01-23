@@ -65,7 +65,7 @@ public class NativeQueries {
 
 	
 	public static final String requirement_version_findIdsFrom_requirements = "select req_v.RES_ID from requirement_version req_v where req_v.REQUIREMENT_ID in (:requirementIds)";
-	public static final String requirement_set_null_requirement_version = "update requirement req set req.LATEST_VERSION_ID = null where req.RLN_ID in (:requirementIds);";
+	public static final String requirement_set_null_requirement_version = "update requirement req set req.CURRENT_VERSION_ID = null where req.RLN_ID in (:requirementIds);";
 	public static final String requirement_version_sql_remove = "delete from REQUIREMENT_VERSION where RES_ID in (:requirementVersionIds)";
 	public static final String resource_sql_remove = "delete from RESOURCE where RES_ID in (:requirementVersionIds)";
 	public static final String requirement_sql_remove = "delete from REQUIREMENT where rln_id in (:nodeIds)";

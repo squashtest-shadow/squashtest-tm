@@ -1,0 +1,118 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+
+        This file is part of the Squashtest platform.
+        Copyright (C) 2010 - 2011 Squashtest TM, Squashtest.org
+
+        See the NOTICE file distributed with this work for additional
+        information regarding copyright ownership.
+
+        This is free software: you can redistribute it and/or modify
+        it under the terms of the GNU Lesser General Public License as published by
+        the Free Software Foundation, either version 3 of the License, or
+        (at your option) any later version.
+
+        this software is distributed in the hope that it will be useful,
+        but WITHOUT ANY WARRANTY; without even the implied warranty of
+        MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+        GNU Lesser General Public License for more details.
+
+        You should have received a copy of the GNU Lesser General Public License
+        along with this software.  If not, see <http://www.gnu.org/licenses/>.
+
+-->
+<dataset>
+  <attachment_list attachment_list_id="10"/>
+  <attachment_list attachment_list_id="11"/>
+  <attachment_list attachment_list_id="12"/>
+  <attachment_list attachment_list_id="13"/>
+  <attachment_list attachment_list_id="14"/>
+  <attachment_list attachment_list_id="15"/>
+  <resource res_id="10" name="10" created_on="2012-01-02" created_by="dbu"/>
+  <resource res_id="11" name="10" created_on="2012-01-02" created_by="dbu"/>
+  <resource res_id="12" name="10" created_on="2012-01-02" created_by="dbu"/>
+  <resource res_id="13" name="10" created_on="2012-01-02" created_by="dbu"/>
+  <resource res_id="14" name="10" created_on="2012-01-02" created_by="dbu"/>
+  <resource res_id="15" name="10" created_on="2012-01-02" created_by="dbu"/>
+  <requirement_library_node rln_id="10" created_on="2012-01-02" created_by="dbu"/>
+  <requirement rln_id="10"/>
+  <requirement_version attachment_list_id="10" res_id="10" requirement_id="10" version_number="1"/>
+  <requirement_version attachment_list_id="11" res_id="11" requirement_id="10" version_number="2"/>
+  <requirement_version attachment_list_id="12" res_id="12" requirement_id="10" version_number="3"/>
+  <requirement_version attachment_list_id="13" res_id="13" requirement_id="10" version_number="4"/>
+  <requirement_version attachment_list_id="14" res_id="14" requirement_id="10" version_number="5"/>
+  <requirement_version attachment_list_id="15" res_id="15" requirement_id="10" version_number="6"/>
+  <requirement_audit_event event_id="10" req_version_id="10" event_date="2012-01-02" author="dbu"/>
+  <requirement_audit_event event_id="11" req_version_id="11" event_date="2012-01-02" author="dbu"/>
+  <requirement_audit_event event_id="12" req_version_id="12" event_date="2012-01-02" author="dbu"/>
+  <requirement_audit_event event_id="13" req_version_id="13" event_date="2012-01-02" author="dbu"/>
+  <requirement_audit_event event_id="14" req_version_id="14" event_date="2012-01-02" author="dbu"/>
+  <requirement_audit_event event_id="15" req_version_id="15" event_date="2012-01-02" author="dbu"/>
+  <requirement_creation event_id="10"/>
+  <requirement_property_change event_id="12"/>
+  <requirement_property_change event_id="13"/>
+  <requirement_large_property_change event_id="11"/>
+  <requirement_large_property_change event_id="14"/>
+  <requirement_large_property_change event_id="15"/>
+  
+  <attachment_list attachment_list_id="20"/>
+  <attachment_list attachment_list_id="21"/>
+  <attachment_list attachment_list_id="22"/>
+  <attachment_list attachment_list_id="23"/>
+  <attachment_list attachment_list_id="24"/>
+  <attachment_list attachment_list_id="25"/>
+  <resource res_id="20" name="20" created_on="2012-01-02" created_by="dbu"/>
+  <resource res_id="21" name="20" created_on="2012-01-02" created_by="dbu"/>
+  <resource res_id="22" name="20" created_on="2012-01-02" created_by="dbu"/>
+  <resource res_id="23" name="20" created_on="2012-01-02" created_by="dbu"/>
+  <resource res_id="24" name="20" created_on="2012-01-02" created_by="dbu"/>
+  <resource res_id="25" name="20" created_on="2012-01-02" created_by="dbu"/>
+  <requirement_library_node rln_id="20" created_on="2012-01-02" created_by="dbu"/>
+  <requirement rln_id="20"/>
+  <requirement_version attachment_list_id="20" res_id="20" requirement_id="20" version_number="1"/>
+  <requirement_version attachment_list_id="21" res_id="21" requirement_id="20" version_number="2"/>
+  <requirement_version attachment_list_id="22" res_id="22" requirement_id="20" version_number="3"/>
+  <requirement_version attachment_list_id="23" res_id="23" requirement_id="20" version_number="4"/>
+  <requirement_version attachment_list_id="24" res_id="24" requirement_id="20" version_number="5"/>
+  <requirement_version attachment_list_id="25" res_id="25" requirement_id="20" version_number="6"/>
+  <requirement_audit_event event_id="20" req_version_id="20" event_date="2012-01-02" author="dbu"/>
+  <requirement_audit_event event_id="21" req_version_id="21" event_date="2012-01-02" author="dbu"/>
+  <requirement_audit_event event_id="22" req_version_id="22" event_date="2012-01-02" author="dbu"/>
+  <requirement_audit_event event_id="23" req_version_id="23" event_date="2012-01-02" author="dbu"/>
+  <requirement_audit_event event_id="24" req_version_id="24" event_date="2012-01-02" author="dbu"/>
+  <requirement_audit_event event_id="25" req_version_id="25" event_date="2012-01-02" author="dbu"/>
+  <requirement_creation event_id="20"/>
+  <requirement_property_change event_id="21"/>
+  <requirement_property_change event_id="22"/>
+  <requirement_property_change event_id="23"/>
+  <requirement_large_property_change event_id="24"/>
+  <requirement_large_property_change event_id="25"/>
+
+  <attachment_list attachment_list_id="30"/>
+  <resource res_id="30" name="30" created_on="2012-01-02" created_by="dbu"/>
+  <requirement_library_node rln_id="30" created_on="2012-01-02" created_by="dbu"/>
+  <requirement rln_id="30"/>
+  <requirement_version attachment_list_id="30" res_id="30" requirement_id="30" version_number="1"/>
+  <requirement_audit_event event_id="30" req_version_id="30" event_date="2012-01-02" author="dbu"/>
+  <requirement_creation event_id="30"/>
+
+  <attachment_list attachment_list_id="40"/>
+  <resource res_id="40" name="40" created_on="2012-01-02" created_by="dbu"/>
+  <requirement_library_node rln_id="40" created_on="2012-01-02" created_by="dbu"/>
+  <requirement rln_id="40"/>
+  <requirement_version attachment_list_id="40" res_id="40" requirement_id="40" version_number="1"/>
+  <requirement_audit_event event_id="40" req_version_id="40" event_date="2012-01-02" author="dbu"/>
+  <requirement_creation event_id="40"/>
+  
+  <attachment_list attachment_list_id="100"/>
+  <test_case_library_node created_by="dbu" tcln_id="100" created_on="2010-02-01" name=""/>
+  <test_case tcln_id="100" attachment_list_id="100" version="1"/>
+  <test_case_verified_requirement_version verifying_test_case_id="100" verified_req_version_id="15"/>
+  <test_case_verified_requirement_version verifying_test_case_id="100" verified_req_version_id="25"/>
+
+  <attachment_list attachment_list_id="200"/>
+  <test_case_library_node created_by="dbu" tcln_id="200" created_on="2010-02-01" name=""/>
+  <test_case tcln_id="200" attachment_list_id="200" version="1"/>
+  <test_case_verified_requirement_version verifying_test_case_id="200" verified_req_version_id="30"/>
+  <test_case_verified_requirement_version verifying_test_case_id="200" verified_req_version_id="40"/>
+</dataset>
