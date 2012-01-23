@@ -23,6 +23,7 @@ package org.squashtest.csp.tm.internal.service.importer;
 import java.io.InputStream;
 
 import org.apache.poi.ss.usermodel.Workbook;
+import org.squashtest.csp.tm.domain.SheetCorruptedException;
 import org.squashtest.csp.tm.domain.testcase.TestCase;
 
 interface ExcelTestCaseParser {

@@ -38,8 +38,8 @@
 <%@ attribute name="targetLibraries" 	required="true" description="the potential target libraries for upload." type="java.lang.Object" %>
 
 <script type="text/javascript" src="${ pageContext.servletContext.contextPath }/scripts/jquery/jquery.form.js"></script>
-<script type="text/javascript" src="${ pageContext.servletContext.contextPath }/scripts/squashtest/classes/FeedbackMultipartPopup.js"></script> 
-<%--  <script type="text/javascript" src="http://localhost/scripts/FeedbackMultipartPopup.js"></script> --%>  
+<script type="text/javascript" src="${ pageContext.servletContext.contextPath }/scripts/squashtest/classes/FeedbackMultipartPopup.js"></script>    
+<%--  <script type="text/javascript" src="http://localhost/scripts/FeedbackMultipartPopup.js"></script> --%> 
 
 
 <s:url var="importUrl" value="/${workspace}-browser/import/upload"/>
@@ -150,6 +150,11 @@
 			<span style="display:block"><f:message key="dialog.import.confirm.message"/></span>
 		</div>
 		
+		<div class="progression" style="vertical-align:middle;">
+ 			<img src="${ pageContext.servletContext.contextPath }/images/ajax-loader.gif" />
+			<span style="font-size:1.5em;"><f:message key="squashtm.processing"/></span>			
+		</div>
+		
 		<div class="summary">
 			<div>
 				<span><f:message key="dialog.import-excel.test-case.total"/></span><span class="total-import span-bold"></span>
@@ -212,6 +217,18 @@
 		
 	}
 	
+	function importHandleErrors(json){
+		//handling max size errors;
+		if ('maxSize' in json){
+			var errorMessage = "<f:message key='dialog.import.error.sizeexceeded'/>"
+			var size = json.maxSize / 1000000;
+			
+			return errorMessage+size.toFixed(3)+' <f:message key="squashtm.megabyte.label"/>';
+		}else{
+			return null;
+		}
+	}
+	
 	
 	
 	$(function(){		
@@ -228,7 +245,9 @@
 			
 			summary : {
 				builder : importSummaryBuilder
-			}
+			}, 
+			
+			errorHandler : importHandleErrors
 				
 		};
 		

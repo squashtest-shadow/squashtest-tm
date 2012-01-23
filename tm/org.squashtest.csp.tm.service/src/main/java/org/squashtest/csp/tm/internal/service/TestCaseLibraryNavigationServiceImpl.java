@@ -129,7 +129,7 @@ TestCaseLibraryNavigationService {
 	@PreAuthorize("hasPermission(#libraryId, 'org.squashtest.csp.tm.domain.testcase.TestCaseLibrary', 'WRITE')")
 	public ImportSummary importExcelTestCase(InputStream archiveStream,
 			long libraryId, String encoding) {
-		
+
 		return testCaseImporter.importExcelTestCases(archiveStream, libraryId, encoding);
 	}
 

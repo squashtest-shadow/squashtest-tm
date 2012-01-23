@@ -35,6 +35,7 @@ will be identified as such if they use the corresponding css classes : 'parametr
 
 <ul>
 	<li>popup : the jQuery object representing the dialog (not the widget)</li>
+	<li>errorHandler : a javascript function accepting a javascript object (the json response). Must return null if no error were parsed, or the mssage to display if an error occured.</li>
 	<li> parametrization : an object defined as follow : 
 		<ul>
 		<li>submitUrl : the url where to submit.</li>
@@ -62,6 +63,7 @@ function FeedbackMultipartPopup(settings){
 	
 	this.parametrization = settings.parametrization;
 	this.summary = settings.summary;
+	this.errorHandler = settings.errorHandler;
 	
 	
 	//internal state
@@ -182,9 +184,16 @@ function FeedbackMultipartPopup(settings){
 	
 		var json = $.parseJSON(this.xhr.responseText);		
 		
-		this.summary.builder(json);
-	
-		this.setState(FeedbackMultipartPopup.SUMMARY);
+		var errorMessage = this.errorHandler(json);
+		
+		if (errorMessage===null){	
+			this.summary.builder(json);		
+			this.setState(FeedbackMultipartPopup.SUMMARY);
+		}else{
+			displayError(errorMessage);
+			this.setState(FeedbackMultipartPopup.ERROR);			
+		}
+			
 		
 	};
 	
@@ -217,16 +226,7 @@ function FeedbackMultipartPopup(settings){
 /* **************************************************************
 						CONSTRUCTION					
 ************************************************************** */
-	
-	var buildProgressionPanel = $.proxy(function(){
-				this.progression = {};
-				this.progression.panel = $("<div/>",  {'class' : 'progression'} );
-				this.progression.panel.append("<span>please wait and internationalize</span>");	
 
-				this.popup.append(this.progression.panel);		
-				this.allPanels.push(this.progression.panel);
-			}, self);
-	
 	
 	var buildErrorPanel = $.proxy(function(){
 				var localSelf = this;
@@ -258,17 +258,19 @@ function FeedbackMultipartPopup(settings){
 	
 	this.allPanels = [];
 	
-	this.confirm = {};
+	this.confirm = {};	
+	this.progression = {};
 	
 	this.parametrization.panel = $("."+FeedbackMultipartPopup.PARAMETRIZATION, this.popup);
 	this.confirm.panel = $("."+FeedbackMultipartPopup.CONFIRM, this.popup);
+	this.progression.panel = $("."+FeedbackMultipartPopup.PROGRESSION, this.popup);
 	this.summary.panel =  $("."+FeedbackMultipartPopup.SUMMARY, this.popup);
 	
 	this.allPanels.push(this.parametrization.panel);
 	this.allPanels.push(this.summary.panel);
+	this.allPanels.push(this.progression.panel);
 	this.allPanels.push(this.confirm.panel);
 	
-	buildProgressionPanel();
 	buildErrorPanel();
 	buildDumpPanel();
 		

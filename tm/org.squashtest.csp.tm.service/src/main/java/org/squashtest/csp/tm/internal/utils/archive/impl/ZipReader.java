@@ -25,6 +25,7 @@ import java.io.InputStream;
 
 import org.apache.commons.compress.archivers.ArchiveEntry;
 import org.apache.commons.compress.archivers.zip.ZipArchiveInputStream;
+import org.squashtest.csp.tm.domain.ZipCorruptedException;
 import org.squashtest.csp.tm.internal.utils.archive.ArchiveReader;
 import org.squashtest.csp.tm.internal.utils.archive.Entry;
 

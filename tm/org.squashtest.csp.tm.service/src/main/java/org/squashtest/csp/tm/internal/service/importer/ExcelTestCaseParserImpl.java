@@ -37,6 +37,7 @@ import org.apache.poi.ss.usermodel.Workbook;
 import org.apache.poi.ss.usermodel.WorkbookFactory;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.squashtest.csp.tm.domain.SheetCorruptedException;
 import org.squashtest.csp.tm.domain.testcase.ActionTestStep;
 import org.squashtest.csp.tm.domain.testcase.TestCase;
 import org.squashtest.csp.tm.domain.testcase.TestCaseImportance;

@@ -118,14 +118,7 @@
 	
 	function formatToMegabyte(lMaxSize){
 		var mb = lMaxSize / 1048576;
-		var strMb = mb.toString();
-		var dotOffset = strMb.indexOf(".");
-		
-		if (dotOffset != -1){
-			return strMb.substr(0, dotOffset+3);
-		}else{
-			return strMb;
-		}
+		return mb.toFixed(3);
 	}
 	
 	

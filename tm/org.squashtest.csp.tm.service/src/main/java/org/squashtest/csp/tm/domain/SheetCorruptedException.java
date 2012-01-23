@@ -18,35 +18,42 @@
  *     You should have received a copy of the GNU Lesser General Public License
  *     along with this software.  If not, see <http://www.gnu.org/licenses/>.
  */
-package org.squashtest.csp.tm.internal.service.importer;
+package org.squashtest.csp.tm.domain;
 
-public class SheetCorruptedException extends RuntimeException {
+public class SheetCorruptedException extends ActionException {
 
 	/**
 	 * 
 	 */
 	private static final long serialVersionUID = -7715538440055669474L;
+	private final String sheetCorruptedMessageKey = "squashtm.action.exception.sheetcorrupted.label";
+	
 
 	public SheetCorruptedException() {
 		super();
-		// TODO Auto-generated constructor stub
-	}
-
-	public SheetCorruptedException(String arg0, Throwable arg1) {
-		super(arg0, arg1);
-		// TODO Auto-generated constructor stub
 	}
 
 	public SheetCorruptedException(String arg0) {
 		super(arg0);
-		// TODO Auto-generated constructor stub
+	}
+
+
+	public SheetCorruptedException(Exception ex) {
+		super(ex);
+	}
+
+	public SheetCorruptedException(String arg0, Throwable arg1) {
+		super(arg0, arg1);
 	}
 
 	public SheetCorruptedException(Throwable arg0) {
 		super(arg0);
-		// TODO Auto-generated constructor stub
 	}
 
+	@Override
+	public String getI18nKey() {
+		return sheetCorruptedMessageKey;
+	}
 	
 	
 }

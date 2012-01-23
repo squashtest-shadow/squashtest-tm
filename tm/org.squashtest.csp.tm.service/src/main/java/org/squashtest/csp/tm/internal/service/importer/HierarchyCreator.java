@@ -20,6 +20,7 @@
  */
 package org.squashtest.csp.tm.internal.service.importer;
 
+import org.squashtest.csp.tm.domain.SheetCorruptedException;
 import org.squashtest.csp.tm.domain.library.structures.StringPathMap;
 import org.squashtest.csp.tm.domain.testcase.TestCase;
 import org.squashtest.csp.tm.domain.testcase.TestCaseFolder;

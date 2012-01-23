@@ -37,6 +37,14 @@ public class ActionException extends RuntimeException implements Internationaliz
 		super(ex);
 	}
 	
+	public ActionException(String arg0, Throwable arg1) {
+		super(arg0, arg1);
+	}
+
+	public ActionException(Throwable arg0) {
+		super(arg0);
+	}
+
 	public ActionException(String message){
 		super(message);
 	}

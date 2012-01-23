@@ -18,7 +18,7 @@
  *     You should have received a copy of the GNU Lesser General Public License
  *     along with this software.  If not, see <http://www.gnu.org/licenses/>.
  */
-package org.squashtest.csp.tm.internal.utils.archive.impl;
+package org.squashtest.csp.tm.domain;
 
 /**
  * thrown when a zip archive cannot be read (or maybe the file is no zip archive)
@@ -26,18 +26,22 @@ package org.squashtest.csp.tm.internal.utils.archive.impl;
  * @author bsiri
  *
  */
-public class ZipCorruptedException extends RuntimeException {
+public class ZipCorruptedException extends ActionException {
 
 	/**
 	 * 
 	 */
 	private static final long serialVersionUID = 9015267434405584486L;
+	private final String zipCorruptedMessageKey = "squashtm.action.exception.zipcorrupted.label";
 
 	
 	public ZipCorruptedException(Throwable arg0) {
 		super(arg0);
 	}
 	
-	
+	@Override
+	public String getI18nKey() {
+		return zipCorruptedMessageKey;
+	}
 
 }
