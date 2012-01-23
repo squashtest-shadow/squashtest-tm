@@ -198,6 +198,25 @@ the display:block trick will implicitly add that property */
 
 
 /******************************
+	import section
+******************************/
+
+
+.confirm-div {
+	margin-bottom:1em;	
+}
+
+.confirm-div span{
+	font-weight : bold;
+	display:block;	
+}
+
+.confirm-div label{
+	display:block;
+	font-size : 1.1em;		
+}
+
+/******************************
 	issue section
 *******************************/
 

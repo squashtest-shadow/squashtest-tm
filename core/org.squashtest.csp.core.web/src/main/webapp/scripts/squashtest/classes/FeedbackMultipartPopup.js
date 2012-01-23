@@ -25,7 +25,32 @@
 <p>A FeedbackMultipartPopup is an object complementary to the regular jQuery.dialog. Its purpose is to enrich the submission of
 multipart form data, which can be long to upload, and of which the user might appreciate to be informed of the progression.</p>
 
-TODO : redo the documentation
+<p>popup layout definition :
+
+the bulk of the popup consists of several divs : parametrization, confirm and summary. Each of them
+will be identified as such if they use the corresponding css classes : 'parametrization', 'confirm' and 'summary' classes.
+</p>
+
+<p>configuration : the object setting is made of :
+
+<ul>
+	<li>popup : the jQuery object representing the dialog (not the widget)</li>
+	<li> parametrization : an object defined as follow : 
+		<ul>
+		<li>submitUrl : the url where to submit.</li>
+		<li>extensions : the autorized extensions for file uploads.</li>	
+		<li>errorMessage : the error message to display if validation fails.</li>
+		</ul>
+	</li>
+	<li>summary : an object defined as follow : 
+		<ul>
+		<li>builder : a javascript function accepting a javascript object (the json response of the form sumbission) to help with the construction of the summary before it is displayed;</li>
+		</ul>
+	</li>
+	
+</ul>
+
+
 
 *
 */
@@ -233,15 +258,15 @@ function FeedbackMultipartPopup(settings){
 	
 	this.allPanels = [];
 	
-	this.confirmation = {};
+	this.confirm = {};
 	
 	this.parametrization.panel = $("."+FeedbackMultipartPopup.PARAMETRIZATION, this.popup);
-	this.confirmation.panel = $("."+FeedbackMultipartPopup.CONFIRM, this.popup);
+	this.confirm.panel = $("."+FeedbackMultipartPopup.CONFIRM, this.popup);
 	this.summary.panel =  $("."+FeedbackMultipartPopup.SUMMARY, this.popup);
 	
 	this.allPanels.push(this.parametrization.panel);
 	this.allPanels.push(this.summary.panel);
-	this.allPanels.push(this.confirmation.panel);
+	this.allPanels.push(this.confirm.panel);
 	
 	buildProgressionPanel();
 	buildErrorPanel();

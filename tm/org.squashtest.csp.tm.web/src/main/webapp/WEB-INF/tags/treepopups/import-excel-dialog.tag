@@ -38,8 +38,8 @@
 <%@ attribute name="targetLibraries" 	required="true" description="the potential target libraries for upload." type="java.lang.Object" %>
 
 <script type="text/javascript" src="${ pageContext.servletContext.contextPath }/scripts/jquery/jquery.form.js"></script>
- <script type="text/javascript" src="${ pageContext.servletContext.contextPath }/scripts/squashtest/classes/FeedbackMultipartPopup.js"></script>  
-<%-- <script type="text/javascript" src="http://localhost/scripts/FeedbackMultipartPopup.js"></script>  --%>
+<script type="text/javascript" src="${ pageContext.servletContext.contextPath }/scripts/squashtest/classes/FeedbackMultipartPopup.js"></script> 
+<%--  <script type="text/javascript" src="http://localhost/scripts/FeedbackMultipartPopup.js"></script> --%>  
 
 
 <s:url var="importUrl" value="/${workspace}-browser/import/upload"/>
@@ -65,7 +65,16 @@
 			text : "${okLabel}",
 			"class" : FeedbackMultipartPopup.SUMMARY,
 			click : function(){
-				$("#import-excel-dialog").dialog("close");
+				var thisDialog = $("#import-excel-dialog");
+				thisDialog.dialog("close");
+				
+				var jqTree = $("${treeSelector}");
+				var projectId = thisDialog.find("select[name='projectId']").val();
+				var node =jqTree.find("li:library[resid='"+projectId+"']");
+				
+				if (node.size()>0){
+					jqTree.jstree("refresh", node);
+				}
 			}
 		},
 		{
@@ -98,9 +107,10 @@
 					<div class="display-table-row">
 						<div class="display-table-cell"><label><f:message key="dialog.import.project.message"/></label></div>
 						<div class="display-table-cell">
-							<select name="projectId">
+							<select name="projectId" 
+								onchange="var projectname = $(':selected', this).text(); $('#import-excel-dialog .confirm-project').text(projectname);">
 								<c:forEach items="${targetLibraries}" var="lib" varStatus="status" >
-								<%-- ugly tag-defined attribute nested right here, don't let your eyes dangle --%>
+								<%-- warning : c tag nested in another c tag --%>
 								<option value="${lib.id}" <c:if test="${status.first}">selected="yes"</c:if>>${lib.project.name}</option>
 								</c:forEach>
 							</select>
@@ -109,7 +119,10 @@
 					</div>
 					<div class="display-table-row">
 						<div class="display-table-cell"><label><f:message key="dialog.import.filetype.message"/></label></div>
-						<div class="display-table-cell"><input type="file" name="archive" size="20" accept="application/zip" /></div>
+						<div class="display-table-cell">
+							<input type="file" name="archive" size="20" accept="application/zip" 
+							onchange="var filename = /([^\\]+)$/.exec(this.value)[1]; $('#import-excel-dialog .confirm-file').text(filename);"/>
+						</div>
 					</div>
 					<div class="display-table-row">
 						<div class="display-table-cell"><label><f:message key="dialog.import.encoding.label"/></label></div>
@@ -125,8 +138,16 @@
 		</div>
 		
 		<div class="confirm">
-			todo
-		
+			<div class="confirm-div">
+				<label class="confirm-label"><f:message key="dialog.import.file.confirm"/></label>
+				<span class="confirm-span confirm-file"></span>
+			</div>
+			<div class="confirm-div">
+				<label class="confirm-label"><f:message key="dialog.import.project.confirm"/></label>
+				<span class="confirm-span confirm-project"><c:out value="${targetLibraries[0].project.name}"/></span>
+			</div>
+			
+			<span style="display:block"><f:message key="dialog.import.confirm.message"/></span>
 		</div>
 		
 		<div class="summary">
@@ -166,14 +187,14 @@
 	
 	function importSummaryBuilder(response){
 			
-		var panel = $("#import-excel-dialog-summary");
+		var panel = $("#import-excel-dialog .summary");
 		
 		//basic infos			
 		$(".total-import", panel).text(response.total);
 		$(".success-import", panel).text(response.success);
 		
 		var failSpan = $(".failures-import", panel).text(response.failures);
-		(response.failures==0) ? failSpan.removeClass("span-red") : failSpan.addClass("span-red");
+		if (response.failures==0){ failSpan.removeClass("span-red"); }else{	failSpan.addClass("span-red"); }
 		
 		//notes
 		if ((response.renamed==0) && (response.modified==0)){
@@ -182,10 +203,10 @@
 			$(".import-excel-dialog-note", panel).show();
 			
 			var renamedDialog = $(".import-excel-dialog-renamed", panel);
-			(response.renamed>0) ? renamedDialog.show() : renamedDialog.hide();
+			if (response.renamed>0) { renamedDialog.show(); } else { renamedDialog.hide(); }
 
 			var modifiedDialog = $(".import-excel-dialog-modified", panel);
-			(response.modified>0) ? modifiedDialog.show() : modifiedDialog.hide();
+			if (response.modified>0) { modifiedDialog.show(); } else { modifiedDialog.hide(); }
 			
 		}
 		
