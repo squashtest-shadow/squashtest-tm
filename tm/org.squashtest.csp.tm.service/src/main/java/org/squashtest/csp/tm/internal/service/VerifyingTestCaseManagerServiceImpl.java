@@ -28,9 +28,13 @@ import javax.inject.Inject;
 
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.security.access.prepost.PostFilter;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.squashtest.csp.core.domain.IdentifiedComparator;
+import org.squashtest.csp.core.infrastructure.collection.PagedCollectionHolder;
+import org.squashtest.csp.core.infrastructure.collection.PagingAndSorting;
+import org.squashtest.csp.core.infrastructure.collection.PagingBackedPagedCollectionHolder;
 import org.squashtest.csp.tm.domain.projectfilter.ProjectFilter;
 import org.squashtest.csp.tm.domain.requirement.RequirementVersion;
 import org.squashtest.csp.tm.domain.testcase.TestCase;
@@ -76,8 +80,8 @@ public class VerifyingTestCaseManagerServiceImpl implements VerifyingTestCaseMan
 	}
 
 	@Override
-	@PostFilter("hasPermission(#requirementId, 'org.squashtest.csp.tm.domain.requirement.Requirement', 'WRITE') or hasRole('ROLE_ADMIN')")
-	public void addVerifyingTestCasesToRequirement(final List<Long> testCasesIds, long requirementId) {
+	@PreAuthorize("hasPermission(#requirementVersionId, 'org.squashtest.csp.tm.domain.requirement.RequirementVersion', 'WRITE') or hasRole('ROLE_ADMIN')")
+	public void addVerifyingTestCasesToRequirementVersion(final List<Long> testCasesIds, long requirementVersionId) {
 		// nodes are returned unsorted
 		List<TestCaseLibraryNode> nodes = testCaseLibraryNodeDao.findAllByIdList(testCasesIds);
 
@@ -85,9 +89,9 @@ public class VerifyingTestCaseManagerServiceImpl implements VerifyingTestCaseMan
 		Collections.sort(nodes, IdentifiedComparator.getInstance());
 
 		List<TestCase> testCases = new TestCaseNodeWalker().walk(nodes);
-		RequirementVersion requirementVersion = requirementVersionDao.findById(requirementId);
 
 		if (!testCases.isEmpty()) {
+			RequirementVersion requirementVersion = requirementVersionDao.findById(requirementVersionId);
 
 			for (TestCase testcase : testCases) {
 				requirementVersion.addVerifyingTestCase(testcase);
@@ -97,32 +101,42 @@ public class VerifyingTestCaseManagerServiceImpl implements VerifyingTestCaseMan
 	}
 
 	@Override
-	@PostFilter("hasPermission(#requirementId, 'org.squashtest.csp.tm.domain.requirement.RequirementVersion', 'WRITE') or hasRole('ROLE_ADMIN')")
-	public void removeVerifyingTestCasesFromRequirement(List<Long> testCasesIds, long requirementId) {
+	@PreAuthorize("hasPermission(#requirementVersionId, 'org.squashtest.csp.tm.domain.requirement.RequirementVersion', 'WRITE') or hasRole('ROLE_ADMIN')")
+	public void removeVerifyingTestCasesFromRequirementVersion(List<Long> testCasesIds, long requirementVersionId) {
 
 		List<TestCase> testCases = testCaseDao.findAllByIdList(testCasesIds);
 
 		if (!testCases.isEmpty()) {
-			RequirementVersion requirementVersion = requirementVersionDao.findById(requirementId);
+			RequirementVersion requirementVersion = requirementVersionDao.findById(requirementVersionId);
 
 			for (TestCase testCase : testCases) {
 				requirementVersion.removeVerifyingTestCase(testCase);
 			}
-			testCaseImportanceManagerService.changeImportanceIfRelationsRemovedFromReq(testCasesIds, requirementId);
+			testCaseImportanceManagerService.changeImportanceIfRelationsRemovedFromReq(testCasesIds, requirementVersionId);
 		}
-
 	}
 
 	@Override
-	@PostFilter("hasPermission(#requirementId, 'org.squashtest.csp.tm.domain.requirement.RequirementVersion', 'WRITE') or hasRole('ROLE_ADMIN')")
-	public void removeVerifyingTestCaseFromRequirement(long requirementId, long testCaseId) {
+	@PreAuthorize("hasPermission(#requirementVersionId, 'org.squashtest.csp.tm.domain.requirement.RequirementVersion', 'WRITE') or hasRole('ROLE_ADMIN')")
+	public void removeVerifyingTestCaseFromRequirementVersion(long testCaseId, long requirementVersionId) {
 
-		RequirementVersion req = requirementVersionDao.findById(requirementId);
+		RequirementVersion req = requirementVersionDao.findById(requirementVersionId);
 		TestCase testCase = testCaseDao.findById(testCaseId);
 
 		req.removeVerifyingTestCase(testCase);
 		testCaseImportanceManagerService.changeImportanceIfRelationsRemovedFromReq(Arrays.asList(testCaseId),
-				requirementId);
+				requirementVersionId);
+	}
+
+	@Override
+	public PagedCollectionHolder<List<TestCase>> findAllByRequirementVersion(long requirementVersionId,
+			PagingAndSorting pagingAndSorting) {
+		List<TestCase> verifiers = testCaseDao.findAllByVerifiedRequirementVersion(requirementVersionId,
+				pagingAndSorting);
+
+		long verifiersCount = testCaseDao.countByVerifiedRequirementVersion(requirementVersionId);
+
+		return new PagingBackedPagedCollectionHolder<List<TestCase>>(pagingAndSorting, verifiersCount, verifiers);
 	}
 
 }

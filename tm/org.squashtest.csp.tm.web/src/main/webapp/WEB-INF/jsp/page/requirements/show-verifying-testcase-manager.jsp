@@ -30,9 +30,9 @@
 <%@ page language="java" contentType="text/html; charset=utf-8" pageEncoding="utf-8"%>
 <c:url var="treeBaseUrl" value="/test-case-browser"/>
 <c:url var="backUrl" value="/requirement-workspace/" />
-<c:url var="verifyingTestCasesTableUrl" value="/requirements/${requirement.id}/verifying-test-cases-table" />
-<c:url var="verifyingTestCasesUrl" value="/requirements/${ requirement.id }/verifying-test-cases" />
-<c:url var="nonVerifyingTestCasesUrl" value="/requirements/${ requirement.id }/non-verifying-test-cases" />
+<c:url var="verifyingTestCasesTableUrl" value="/requirement-versions/${ requirementVersion.id }/verifying-test-cases/table" />
+<c:url var="verifyingTestCasesUrl" value="/requirement-versions/${ requirementVersion.id }/verifying-test-cases" />
+<c:url var="nonVerifyingTestCasesUrl" value="/requirement-versions/${ requirementVersion.id }/non-verifying-test-cases" />
 <c:url var="testCaseDetailsBaseUrl" value="/test-cases" />
 
 <layout:tree-picker-layout removeLabelKey="association_interface.remove.button.label" 
@@ -50,7 +50,6 @@
 		
 		<script type="text/javascript">
 			<%-- tree population callbacks --%>
-
 			
 			function getTestCasesIds(){
 				var tab =  new Array();
@@ -67,8 +66,6 @@
 				}
 				return tab;
 			}
-			
-			
 			
 			$(function() {
 				

@@ -54,11 +54,10 @@ public class Requirement extends RequirementLibraryNode<RequirementVersion> impl
 	@OneToOne(cascade = { CascadeType.ALL })
 	@JoinColumn(name = "CURRENT_VERSION_ID")
 	private RequirementVersion resource;
-	
+
 	@OneToMany(mappedBy = "requirement", cascade = { CascadeType.ALL })
 	@OrderBy("versionNumber DESC")
 	private List<RequirementVersion> versions = new ArrayList<RequirementVersion>();
-	
 
 	protected Requirement() {
 		super();
@@ -123,7 +122,7 @@ public class Requirement extends RequirementLibraryNode<RequirementVersion> impl
 	public Requirement createPastableCopy() {
 		RequirementVersion latestVersionCopy = getCurrentVersion().createPastableCopy();
 		Requirement copy = new Requirement(latestVersionCopy);
-		
+
 		for (RequirementVersion sourceVersion : this.versions) {
 			if (isNotLatestVersion(sourceVersion) && sourceVersion.isNotObsolete()) {
 				RequirementVersion copyVersion = sourceVersion.createPastableCopy();
@@ -200,7 +199,7 @@ public class Requirement extends RequirementLibraryNode<RequirementVersion> impl
 	public RequirementVersion getResource() {
 		return resource;
 	}
-	
+
 	public void increaseVersion() {
 		RequirementVersion previous = resource;
 		RequirementVersion next = previous.createNextVersion();

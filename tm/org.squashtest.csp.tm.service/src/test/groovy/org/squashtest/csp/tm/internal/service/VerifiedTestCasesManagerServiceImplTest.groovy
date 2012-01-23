@@ -90,7 +90,7 @@ class VerifiedTestCasesManagerServiceImplTest extends Specification {
 		testCaseLibraryNodeDao.findAllByIdList([5, 15]) >> [tc5, tc15]
 
 		when:
-		service.addVerifyingTestCasesToRequirement([5, 15], 10)
+		service.addVerifyingTestCasesToRequirementVersion([5, 15], 10)
 
 		then:
 		requirementVersion.verifyingTestCases.containsExactly([tc5, tc15])
@@ -111,7 +111,7 @@ class VerifiedTestCasesManagerServiceImplTest extends Specification {
 		requirementVersionDao.findById(10) >> rv
 
 		when:
-		service.removeVerifyingTestCasesFromRequirement([15], 10)
+		service.removeVerifyingTestCasesFromRequirementVersion([15], 10)
 
 		then:
 		rv.verifyingTestCases.containsExactly([tc5])
@@ -130,7 +130,7 @@ class VerifiedTestCasesManagerServiceImplTest extends Specification {
 		requirementVersionDao.findById(10) >> rv
 
 		when:
-		service.removeVerifyingTestCaseFromRequirement(10, 5)
+		service.removeVerifyingTestCaseFromRequirementVersion(5, 10)
 
 		then:
 		rv.verifyingTestCases.size() == 0

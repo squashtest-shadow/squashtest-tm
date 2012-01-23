@@ -20,8 +20,6 @@
  */
 package org.squashtest.csp.tm.internal.service;
 
-import java.util.List;
-
 import javax.inject.Inject;
 import javax.inject.Named;
 
@@ -29,16 +27,11 @@ import org.hibernate.SessionFactory;
 import org.springframework.security.access.prepost.PostAuthorize;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.stereotype.Service;
-import org.squashtest.csp.core.infrastructure.collection.PagedCollectionHolder;
-import org.squashtest.csp.core.infrastructure.collection.PagingAndSorting;
-import org.squashtest.csp.core.infrastructure.collection.PagingBackedPagedCollectionHolder;
 import org.squashtest.csp.tm.domain.requirement.Requirement;
 import org.squashtest.csp.tm.domain.requirement.RequirementCriticality;
 import org.squashtest.csp.tm.domain.requirement.RequirementFolder;
 import org.squashtest.csp.tm.domain.requirement.RequirementLibraryNode;
-import org.squashtest.csp.tm.domain.testcase.TestCase;
 import org.squashtest.csp.tm.internal.repository.RequirementDao;
-import org.squashtest.csp.tm.internal.repository.TestCaseDao;
 import org.squashtest.csp.tm.service.CustomRequirementModificationService;
 import org.squashtest.csp.tm.service.TestCaseImportanceManagerService;
 
@@ -48,9 +41,6 @@ public class CustomRequirementModificationServiceImpl implements CustomRequireme
 	private RequirementDao requirementDao;
 	@Inject
 	private TestCaseImportanceManagerService testCaseImportanceManagerService;
-
-	@Inject
-	private TestCaseDao testCaseDao;
 
 	@Inject
 	private SessionFactory sessionFactory;
@@ -74,19 +64,6 @@ public class CustomRequirementModificationServiceImpl implements CustomRequireme
 	@PreAuthorize("hasPermission(#reqId, 'org.squashtest.csp.tm.domain.requirement.Requirement', 'WRITE') or hasRole('ROLE_ADMIN')")
 	public void rename(long reqId, String newName) {
 		requirementManagementService.renameNode(reqId, newName);
-	}
-
-	@Override
-	@PreAuthorize("hasPermission(#requirementId, 'org.squashtest.csp.tm.domain.requirement.Requirement', 'READ') or hasRole('ROLE_ADMIN')")
-	public PagedCollectionHolder<List<TestCase>> findVerifyingTestCasesByRequirementId(long requirementId,
-			PagingAndSorting pagingAndSorting) {
-		Requirement req = requirementDao.findById(requirementId);
-		List<TestCase> verifiers = testCaseDao.findAllByVerifiedRequirementVersion(req.getCurrentVersion().getId(),
-				pagingAndSorting);
-
-		long verifiersCount = testCaseDao.countByVerifiedRequirementVersion(req.getCurrentVersion().getId());
-
-		return new PagingBackedPagedCollectionHolder<List<TestCase>>(pagingAndSorting, verifiersCount, verifiers);
 	}
 
 	@Override

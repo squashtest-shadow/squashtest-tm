@@ -21,7 +21,6 @@
 package org.squashtest.csp.tm.web.internal.controller.requirement;
 
 import java.io.UnsupportedEncodingException;
-import java.util.List;
 import java.util.Locale;
 import java.util.SortedMap;
 import java.util.TreeMap;
@@ -41,22 +40,13 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.servlet.ModelAndView;
 import org.springframework.web.util.HtmlUtils;
-import org.squashtest.csp.core.infrastructure.collection.PagedCollectionHolder;
-import org.squashtest.csp.core.infrastructure.collection.PagingAndSorting;
 import org.squashtest.csp.tm.domain.Internationalizable;
-import org.squashtest.csp.tm.domain.project.Project;
 import org.squashtest.csp.tm.domain.requirement.Requirement;
 import org.squashtest.csp.tm.domain.requirement.RequirementCriticality;
 import org.squashtest.csp.tm.domain.requirement.RequirementStatus;
-import org.squashtest.csp.tm.domain.testcase.TestCase;
-import org.squashtest.csp.tm.domain.testcase.TestCaseExecutionMode;
 import org.squashtest.csp.tm.service.RequirementModificationService;
 import org.squashtest.csp.tm.service.TestCaseModificationService;
 import org.squashtest.csp.tm.web.internal.helper.JsonHelper;
-import org.squashtest.csp.tm.web.internal.model.datatable.DataTableDrawParameters;
-import org.squashtest.csp.tm.web.internal.model.datatable.DataTableMapperPagingAndSortingAdapter;
-import org.squashtest.csp.tm.web.internal.model.datatable.DataTableModel;
-import org.squashtest.csp.tm.web.internal.model.viewmapper.DataTableMapper;
 
 @Controller
 @RequestMapping("/requirements/{requirementId}")
@@ -72,14 +62,6 @@ public class RequirementModificationController {
 
 	@Inject
 	private MessageSource messageSource;
-
-	/*
-	 * in case the advanced one fails, uncomment and use this mapper instead
-	 */
-	private final DataTableMapper verifyingTcMapper = new DataTableMapper("verifying-test-cases", TestCase.class,
-			Project.class).initMapping(5).mapAttribute(Project.class, 2, "name", String.class)
-			.mapAttribute(TestCase.class, 3, "name", String.class)
-			.mapAttribute(TestCase.class, 4, "executionMode", TestCaseExecutionMode.class);
 
 	// will return the Requirement in a full page
 	@RequestMapping(value = "/info", method = RequestMethod.GET)
@@ -146,46 +128,6 @@ public class RequirementModificationController {
 		mav.addObject("entityContextUrl", "/requirements/" + requirementId);
 
 		return mav;
-	}
-
-	private DataTableModel buildVerifyingTestCasesTableModel(PagedCollectionHolder<List<TestCase>> holder,
-			String sEcho, Locale locale) {
-		DataTableModel model = new DataTableModel(sEcho);
-		String type = "";
-		List<TestCase> testCases = holder.getPagedItems();
-
-		for (int i = 0; i < testCases.size(); i++) {
-			TestCase tc = testCases.get(i);
-
-			type = formatExecutionMode(tc.getExecutionMode(), locale);
-
-			model.addRow(new Object[] { tc.getId(), holder.getFirstItemIndex() + i + 1, tc.getProject().getName(),
-					tc.getName(), type, "" });
-		}
-
-		model.displayRowsFromTotalOf(holder.getTotalNumberOfItems());
-		return model;
-	}
-
-	@RequestMapping(value = "/verifying-test-cases-table", params = "sEcho")
-	public @ResponseBody
-	DataTableModel getVerifiedTestCasesTableModel(@PathVariable("requirementId") long requirementId,
-			final DataTableDrawParameters params, Locale locale) {
-		PagingAndSorting filter = new DataTableMapperPagingAndSortingAdapter(params, verifyingTcMapper);
-
-		if (LOGGER.isTraceEnabled()) {
-			LOGGER.trace("ReqModController : filterin " + params.getsSortDir_0() + " for "
-					+ verifyingTcMapper.pathAt(params.getiSortCol_0()));
-		}
-
-		PagedCollectionHolder<List<TestCase>> holder = requirementModService.findVerifyingTestCasesByRequirementId(
-				requirementId, filter);
-
-		return buildVerifyingTestCasesTableModel(holder, params.getsEcho(), locale);
-	}
-
-	private String formatExecutionMode(TestCaseExecutionMode mode, Locale locale) {
-		return internationalize(mode, locale);
 	}
 
 	@RequestMapping(method = RequestMethod.POST, params = { "id=requirement-criticality", "value" })

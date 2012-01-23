@@ -18,36 +18,14 @@
  *     You should have received a copy of the GNU Lesser General Public License
  *     along with this software.  If not, see <http://www.gnu.org/licenses/>.
  */
-
 package org.squashtest.csp.tm.service;
 
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.transaction.annotation.Transactional;
-import org.squashtest.csp.tm.domain.requirement.Requirement;
-import org.squashtest.csp.tm.domain.requirement.RequirementCriticality;
+import org.squashtest.csp.tm.domain.requirement.RequirementVersion;
 
-/**
- * @author Gregory Fouquet
- * 
- */
-@Transactional
-public interface CustomRequirementModificationService {
-	@Transactional(readOnly = true)
-	Requirement findById(long reqId);
-
-	void rename(long reqId, String newName);
-
-	/**
-	 * Increase the current version of the given requirement.
-	 * 
-	 * @param requirementId
-	 */
-	void createNewVersion(long requirementId);
-	/**
-	 * will change the requirement criticality and update the importance of any associated TestCase with importanceAuto == true.<br>
-	 * (even through call steps) 
-	 *
-	 * @param requirementId
-	 * @param criticality
-	 */
-	void changeCriticality(long requirementId, RequirementCriticality criticality);
+@Transactional(readOnly = true)
+public interface RequirementVersionManagerService {
+	@PreAuthorize("hasPermission(#arg0, 'org.squashtest.csp.tm.domain.requirement.RequirementVersion','READ') or hasRole('ROLE_ADMIN')")
+	RequirementVersion findById(long requirementVersionId);
 }

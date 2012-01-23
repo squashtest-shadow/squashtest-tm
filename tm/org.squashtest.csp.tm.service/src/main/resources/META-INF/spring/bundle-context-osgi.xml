@@ -42,7 +42,7 @@
 	<!-- ========= Bugtracker ============= -->
 	<osgi:service ref="squashtest.core.bugtracker.BugTrackerContextHolder"
 		interface="org.squashtest.csp.core.bugtracker.service.BugTrackerContextHolder" />
-	
+
 	<osgi:service ref="squashtest.tm.service.BugTrackerLocalService"
 		interface="org.squashtest.csp.tm.service.BugTrackerLocalService" />
 
@@ -149,9 +149,10 @@
 		
 	<osgi:service ref="squashtest.tm.service.audit.RequirementAuditTrailService"
 		interface="org.squashtest.csp.tm.service.audit.RequirementAuditTrailService" />
-		
-	
-		
+
+	<osgi:service ref="squashtest.tm.service.RequirementVersionManagerService"
+		interface="org.squashtest.csp.tm.service.RequirementVersionManagerService" />
+
 	<!-- ====== SERVICES CONSUMED BY THIS BUNDLE ====== -->
 	<!--  Jdbc Datasource -->
 	<osgi:reference id="squashtest.core.persistence.jdbc.DataSource"

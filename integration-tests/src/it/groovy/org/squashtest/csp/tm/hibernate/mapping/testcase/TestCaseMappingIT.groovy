@@ -226,7 +226,52 @@ class TestCaseMappingIT extends HibernateMappingSpecification {
 		})
 	}
 
-	def "should retrieve test cases with a creator"(){
+	def "should remove a Requirement Version verified by a TestCase"() {
+		given:
+		TestCase tc = new TestCase(name: "link")
+		persistFixture tc
+
+		and:
+		Requirement r = new Requirement(new RequirementVersion(name: "link"))
+		persistFixture r
+
+		and:
+		doInTransaction({
+			it.get(TestCase, tc.id).addVerifiedRequirement(r.currentVersion)
+		})
+		
+		when:
+		doInTransaction({
+			TestCase tcc = it.load(TestCase, tc.id)
+			RequirementVersion rvv = it.load(RequirementVersion, r.currentVersion.id)
+			tcc.removeVerifiedRequirement(rvv)
+		})
+
+		
+		def actualTC = {
+			doInTransaction ({
+				def res = it.load(TestCase, tc.id)
+				res.verifiedRequirements.size()
+				return res
+		})
+		}
+
+		then:
+		actualTC().verifiedRequirements.size() == 0
+
+		cleanup:
+		doInTransaction({
+			def tcc = it.get(TestCase, tc.id)
+			def rr = it.get(Requirement, r.id)
+
+			tcc.removeVerifiedRequirement rr.currentVersion
+			it.delete tcc
+
+			it.delete rr
+		})
+	}
+
+		def "should retrieve test cases with a creator"(){
 
 		given: "a test case"
 		TestCase tc = new TestCase(name: "with creator")

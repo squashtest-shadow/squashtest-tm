@@ -37,12 +37,12 @@
 <s:url var="requirementUrl" value="/requirements/{reqId}">
 	<s:param name="reqId" value="${requirement.id}" />
 </s:url>
-<s:url var="getVerifyingTestCaseUrl" value="/requirements/${requirement.id}/verifying-test-cases-table" />
+<s:url var="getVerifyingTestCaseUrl" value="/requirement-versions/${requirement.currentVersion.id}/verifying-test-cases/table" />
 
-<s:url var="verifyingTCManagerUrl" value="/requirements/${ requirement.id }/verifying-test-cases-manager" /> 
+<s:url var="verifyingTCManagerUrl" value="/requirement-versions/${ requirement.currentVersion.id }/verifying-test-cases/manager" /> 
 
-<c:url var="verifyingTestCasesUrl" value="/requirements/${ requirement.id }/verifying-test-cases" />
-<c:url var="nonVerifyingTestCasesUrl" value="/requirements/${ requirement.id }/non-verifying-test-cases" />
+<c:url var="verifyingTestCasesUrl" value="/requirement-versions/${ requirement.currentVersion.id }/verifying-test-cases" />
+<c:url var="nonVerifyingTestCasesUrl" value="/requirement-versions/${ requirement.currentVersion.id }/non-verifying-test-cases" />
 <c:url var="testCaseDetailsBaseUrl" value="/test-cases" />
 
 
@@ -189,12 +189,7 @@ that page won't be editable if
 				<f:message var="label" key="dialog.rename-requirement.title" />
 				'${ label }': function() {
 					var url = "${ requirementUrl }";
-					<jq:ajaxcall 
-						url="url"
-						dataType="json"
-						httpMethod="POST"
-						useData="true"
-						successHandler="renameRequirementSuccess"		>		
+					<jq:ajaxcall  url="url" dataType="json" httpMethod="POST" useData="true" successHandler="renameRequirementSuccess">		
 						<jq:params-bindings newName="#rename-requirement-input" />
 					</jq:ajaxcall>					
 				},			
@@ -361,8 +356,8 @@ that page won't be editable if
 				<f:message var="associateLabel" key="requirement.verifying_test-case.manage.button.label"/>
 				<f:message var="removeLabel" key="test-case.verified_requirement_item.remove.button.label"/>
 				
-				<input id="verifying-test-case-button" type="button" class="button" value="${associateLabel}"/>
-				<input id="remove-verifying-test-case-button" type="button" class="button" value="${removeLabel}"/>
+				<input id="verifying-test-case-button" type="button" class="button" value="${ associateLabel }"/>
+				<input id="remove-verifying-test-case-button" type="button" class="button" value="${ removeLabel }"/>
 			</c:if>
 		</jsp:attribute>
 

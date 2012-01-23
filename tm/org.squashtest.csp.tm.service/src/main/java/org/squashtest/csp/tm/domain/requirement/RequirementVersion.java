@@ -37,6 +37,7 @@ import javax.persistence.OneToOne;
 import javax.persistence.PrimaryKeyJoinColumn;
 import javax.validation.constraints.NotNull;
 
+import org.squashtest.csp.core.security.annotation.InheritsAcls;
 import org.squashtest.csp.tm.domain.IllegalRequirementModificationException;
 import org.squashtest.csp.tm.domain.RequirementNotLinkableException;
 import org.squashtest.csp.tm.domain.attachment.Attachment;
@@ -53,12 +54,13 @@ import org.squashtest.csp.tm.domain.testcase.TestCase;
  */
 @Entity
 @PrimaryKeyJoinColumn(name = "RES_ID")
+@InheritsAcls(constrainedClass = Requirement.class, collectionName = "versions")
 public class RequirementVersion extends Resource implements AttachmentHolder {
 	/**
 	 * Collection of {@link Test Cases} verifying by this {@link Requirement}
 	 */
 	@NotNull
-	@ManyToMany(mappedBy = "verifiedRequirements", cascade = { CascadeType.ALL })
+	@ManyToMany(mappedBy = "verifiedRequirements")
 	private final Set<TestCase> verifyingTestCases = new HashSet<TestCase>();
 
 	/***
@@ -99,11 +101,13 @@ public class RequirementVersion extends Resource implements AttachmentHolder {
 		return attachmentList;
 	}
 
+	@Override
 	public void setName(String name) {
 		checkModifiable();
 		super.setName(name);
 	}
 
+	@Override
 	public void setDescription(String description) {
 		checkModifiable();
 		super.setDescription(description);
@@ -283,9 +287,9 @@ public class RequirementVersion extends Resource implements AttachmentHolder {
 		nextVersion.status = RequirementStatus.WORK_IN_PROGRESS;
 		nextVersion.versionNumber = this.versionNumber + 1;
 		nextVersion.requirement = null;
-		
+
 		attachCopiesOfAttachmentsTo(nextVersion);
-		
+
 		return nextVersion;
 	}
 }

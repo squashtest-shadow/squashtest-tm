@@ -22,11 +22,12 @@ package org.squashtest.csp.tm.service;
 
 import java.util.List;
 
+import org.springframework.transaction.annotation.Transactional;
+import org.squashtest.csp.core.infrastructure.collection.PagedCollectionHolder;
+import org.squashtest.csp.core.infrastructure.collection.PagingAndSorting;
 import org.squashtest.csp.tm.domain.requirement.RequirementLibrary;
+import org.squashtest.csp.tm.domain.testcase.TestCase;
 import org.squashtest.csp.tm.domain.testcase.TestCaseLibrary;
-
-
-
 
 /**
  * Service for management of Requirements verified by a {@link TestCase}
@@ -46,10 +47,11 @@ public interface VerifyingTestCaseManagerService {
 	/**
 	 * Adds a list of requirements to the ones verified by a test case. If a requirement is already verified, nothing
 	 * special happens.
+	 * 
 	 * @param requirementsIds
 	 * @param testCaseId
 	 */
-	void addVerifyingTestCasesToRequirement(List<Long> testCaseIds, long requirementId);
+	void addVerifyingTestCasesToRequirementVersion(List<Long> testCaseIds, long requirementVersionId);
 
 	/**
 	 * Removes a list of requirements from the ones verified by a test case. If a requirement is not verified by the
@@ -58,7 +60,7 @@ public interface VerifyingTestCaseManagerService {
 	 * @param testCaseId
 	 * @param requirementsIds
 	 */
-	void removeVerifyingTestCasesFromRequirement(List<Long> testCaseIds, long requirementId);
+	void removeVerifyingTestCasesFromRequirementVersion(List<Long> testCaseIds, long requirementVersionId);
 
 	/**
 	 * Removes a requirement from the ones verified by a test case. If the requirement was not previously verified by
@@ -67,5 +69,15 @@ public interface VerifyingTestCaseManagerService {
 	 * @param testCaseId
 	 * @param requirementsIds
 	 */
-	void removeVerifyingTestCaseFromRequirement(long requirementId, long testCaseId);
+	void removeVerifyingTestCaseFromRequirementVersion(long testCaseId, long requirementVersionId);
+
+	/**
+	 * @param requirementId
+	 * @param pagingAndSorting
+	 * @return
+	 */
+	@Transactional(readOnly = true)
+	PagedCollectionHolder<List<TestCase>> findAllByRequirementVersion(long requirementId,
+			PagingAndSorting pagingAndSorting);
+
 }
