@@ -73,6 +73,9 @@ public class ExcelTestCaseParserImpl implements ExcelTestCaseParser{
 		} catch (IOException e) {
 			logger.warn(e.getMessage());
 			throw new SheetCorruptedException(e);
+		} catch(IllegalArgumentException e){
+			logger.warn(e.getMessage());
+			throw new SheetCorruptedException(e);			
 		}
 		
 	}
