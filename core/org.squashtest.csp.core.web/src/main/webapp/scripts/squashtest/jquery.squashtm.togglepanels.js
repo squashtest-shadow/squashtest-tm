@@ -34,7 +34,7 @@
 			var widget=this;
 					
 			var wrapper = $('<div/>', {'class':"toggle-panel ui-accordion ui-widget ui-helper-reset ui-accordion-icons"});
-			var panelHead = $('<h3/>', {'class':"ui-accordion-header ui-helper-reset ui-state-default ui-state-hover ui-state-active ui-corner-top"});
+			var panelHead = $('<h3/>', {'class':"ui-accordion-header ui-helper-reset ui-state-default ui-state-focus ui-corner-top"});
 			var titlepanel = $('<div/>', {'style':"overflow:hidden;"});
 			var snapleft = $('<div class="snap-left"><a class="tg-link" href="#"></a></div>');
 			var snapright = $('<div/>', {'class':"snap-right"});			
@@ -62,7 +62,7 @@
 				panelHead.addClass('tg-open');
 			}else{
 				this.element.hide();
-				panelHead.toggleClass('ui-state-active ui-corner-top ui-corner-all');
+				panelHead.toggleClass('ui-state-focus ui-state-active ui-corner-top ui-corner-all');
 			}		
 			
 			panelHead.find(".snap-left a").text(settings.title);				
@@ -79,11 +79,12 @@
 			var panelHead = this.prev();
 			
 			if (! panelHead.length){
-				return; 	//if the head is not found, that's usually because the body was detached due to the animating sequence. Sorry for this but the 			(:animated) selector wouldn't work
+				return; 	//if the head is not found, that's usually because the body was detached due to the animating sequence. Sorry for this but the 			
+				//(:animated) selector wouldn't work
 			}
 			
 			this.toggle('blind', 500);			
-			panelHead.toggleClass( "ui-state-active ui-corner-top ui-corner-all tg-open" );
+			panelHead.toggleClass( "ui-state-focus ui-state-active ui-corner-top ui-corner-all tg-open" );
 			
 			//now disable the buttons. 
 			var disabled = (panelHead.hasClass('tg-open')) ? false : true;
