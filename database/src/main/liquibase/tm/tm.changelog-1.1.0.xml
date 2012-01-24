@@ -341,8 +341,6 @@
 	<changeSet id="tm-1.1.0.19" author="bsiri">
 		<comment>
 			Will immediately update the tables with the create_events of existing requirements.
-			Note : if you read the code below carefully and wonder why we use REQUIREMENT and REQUIREMENT_LIBRARY_NODE instead of the 
-			late one alone, that's because mysql would complain because of foreign keys. 
 		</comment>
 		<sql>
 			insert into REQUIREMENT_AUDIT_EVENT (REQ_VERSION_ID, EVENT_DATE, AUTHOR) 
@@ -369,5 +367,77 @@
 		<dropColumn tableName="REQUIREMENT_LIBRARY_NODE" columnName="NAME"/>
 		<dropColumn tableName="REQUIREMENT_LIBRARY_NODE" columnName="DESCRIPTION"/>
 	</changeSet>
+	
+	
+	<!--  ====================================== TEST SUITE ====================================== -->
+	
+	<changeSet id="tm-1.1.0.22" author="bsiri">
+		<comment>
+			Add the table TEST_SUITE. A TEST_SUITE is basically a view on a subset of ITERATION_TEST_PLAN_ITEMs. 
+		</comment>
+		
+		<createTable tableName="TEST_SUITE">
+			<column name="ID" type="BIGINT" >
+				<constraints primaryKey="true" nullable="false" primaryKeyName="PK_TEST_SUITE" />
+			</column>
+			<column name="NAME" type="java.sql.Types.VARCHAR(100)" />
+			<column name="DESCRIPTION" type="CLOB" defaultValue="" />			
+		</createTable>
+	</changeSet>
+	
+	<changeSet id="tm-1.1.0.23" author="bsiri" >
+		<comment>
+			Association table between ITERATION and TEST_SUITE. Like in many other places here, the purpose of this association table is not to model a n-n cardinality between ITERATION and 
+			TEST_SUITE, but 1-n. We thus gain performance at the expense of the model quality.
+		</comment>
+		
+		<createTable tableName="ITERATION_TEST_SUITE">
+			<column name="ITERATION_ID" type="BIGINT">
+				<constraints nullable="false" references="ITERATION(ITERATION_ID)" 
+				foreignKeyName="fk_iteration_test_suite_iteration"/>
+			</column>
+			<column name="TEST_SUITE_ID" type="BIGINT">
+				<constraints nullable="false" references="TEST_SUITE(ID)"
+				foreignKeyName="fk_iteration_test_suite_suite" unique="true"/>
+			</column>
+		</createTable>
+		
+		<createIndex tableName="ITERATION_TEST_SUITE" indexName="dx_iteration_test_suite_iteration">
+			<column name="ITERATION_ID"/>
+		</createIndex>	
+	
+		<createIndex tableName="ITERATION_TEST_SUITE" indexName="dx_iteration_test_suite_suite">
+			<column name="TEST_SUITE_ID"/>
+		</createIndex>				
+	</changeSet>
+
+	<changeSet id="tm-1.1.0.24" author="bsiri" >
+		<comment>
+			Association table between TEST_SUITE and ITERATION_TEST_PLAN_ITEM. Like in many other places here, 
+			the purpose of this association table is not to model a n-n cardinality between TEST_SUITE 
+			and ITERATION_TEST_PLAN_ITEM, but 1-n. 
+			We thus gain performance at the expense of the model quality.
+		</comment>
+		
+		<createTable tableName="TEST_SUITE_ITEM">
+			<column name="TEST_SUITE_ID" type="BIGINT">
+				<constraints nullable="false" references="TEST_SUITE(ID)"
+				foreignKeyName="fk_test_suite_item_suite" />
+			</column>
+			<column name="ITEM_ID" type="BIGINT">
+				<constraints nullable="false" references="ITERATION_TEST_PLAN_ITEM(ITEM_TEST_PLAN_ID)"
+				foreignKeyName="fk_test_suite_item_item" unique="true" />
+			</column>
+		</createTable>
+		
+		<createIndex tableName="TEST_SUITE_ITEM" indexName="dx_test_suite_item_suite">
+			<column name="TEST_SUITE_ID"/>
+		</createIndex>	
+	
+		<createIndex tableName="TEST_SUITE_ITEM" indexName="dx_test_suite_item_item">
+			<column name="ITEM_ID"/>
+		</createIndex>				
+	</changeSet>
+	
 </databaseChangeLog>
  
