@@ -24,6 +24,8 @@ package org.squashtest.csp.tm.internal.service
 
 import org.squashtest.csp.tm.domain.projectfilter.ProjectFilter
 import org.squashtest.csp.tm.domain.requirement.RequirementVersion
+import org.squashtest.csp.tm.domain.requirement.Requirement;
+import org.squashtest.csp.tm.domain.requirement.RequirementVersion
 import org.squashtest.csp.tm.domain.testcase.TestCase
 import org.squashtest.csp.tm.domain.testcase.TestCaseLibrary
 import org.squashtest.csp.tm.domain.testcase.TestCaseLibraryNode
@@ -32,6 +34,8 @@ import org.squashtest.csp.tm.internal.repository.LibraryNodeDao
 import org.squashtest.csp.tm.internal.repository.RequirementVersionDao
 import org.squashtest.csp.tm.internal.repository.TestCaseDao
 import org.squashtest.csp.tm.internal.repository.TestCaseLibraryDao
+import org.squashtest.csp.tm.service.VerifyingTestCaseManagerService
+import org.squashtest.csp.tools.unittest.assertions.CollectionAssertions
 import org.squashtest.csp.tm.service.VerifyingTestCaseManagerService
 import org.squashtest.csp.tools.unittest.assertions.CollectionAssertions
 
@@ -90,10 +94,35 @@ class VerifiedTestCasesManagerServiceImplTest extends Specification {
 		testCaseLibraryNodeDao.findAllByIdList([5, 15]) >> [tc5, tc15]
 
 		when:
-		service.addVerifyingTestCasesToRequirementVersion([5, 15], 10)
+		def rejected = service.addVerifyingTestCasesToRequirementVersion([5, 15], 10)
 
 		then:
 		requirementVersion.verifyingTestCases.containsExactly([tc5, tc15])
+		rejected == []
+	}
+
+	def "should not add TestCase to test case's verified requirements"() {
+		given:
+		RequirementVersion requirementVersion = new RequirementVersion()
+		requirementVersionDao.findById(10) >> requirementVersion
+
+		and:
+		TestCase tc5 = new TestCase()
+		tc5.id >> 5
+		testCaseLibraryNodeDao.findAllByIdList([5]) >> [tc5]
+
+		and:
+		def requirement = new Requirement(requirementVersion)
+		requirement.increaseVersion()
+		def verifiedVersion = requirement.currentVersion
+		tc5.addVerifiedRequirement verifiedVersion
+
+		when:
+		def rejected = service.addVerifyingTestCasesToRequirementVersion([5], 10)
+
+		then:
+		requirementVersion.verifyingTestCases.containsExactly([])
+		rejected*.verifyingTestCase == [tc5]
 	}
 
 	def "should remove requirements from test case's verified requirements"() {

@@ -39,6 +39,7 @@ import javax.validation.constraints.NotNull;
 
 import org.squashtest.csp.core.security.annotation.InheritsAcls;
 import org.squashtest.csp.tm.domain.IllegalRequirementModificationException;
+import org.squashtest.csp.tm.domain.RequirementAlreadyVerifiedException;
 import org.squashtest.csp.tm.domain.RequirementNotLinkableException;
 import org.squashtest.csp.tm.domain.attachment.Attachment;
 import org.squashtest.csp.tm.domain.attachment.AttachmentHolder;
@@ -120,7 +121,15 @@ public class RequirementVersion extends Resource implements AttachmentHolder {
 		return Collections.unmodifiableSet(verifyingTestCases);
 	}
 
-	public void addVerifyingTestCase(@NotNull TestCase testCase) throws RequirementNotLinkableException {
+	/**
+	 * 
+	 * @param testCase
+	 * @throws RequirementNotLinkableException
+	 * @throws RequirementAlreadyVerifiedException
+	 *             if another version of the same requirement is already verified by this test case.
+	 */
+	public void addVerifyingTestCase(@NotNull TestCase testCase) throws RequirementNotLinkableException,
+			RequirementAlreadyVerifiedException {
 		testCase.addVerifiedRequirement(this);
 	}
 
@@ -250,7 +259,7 @@ public class RequirementVersion extends Resource implements AttachmentHolder {
 		copy.requirement = null;
 
 		for (TestCase verifying : this.verifyingTestCases) {
-			copy.addVerifyingTestCase(verifying);
+			verifying.addCopyOfVerifiedRequirement(copy);
 		}
 
 		attachCopiesOfAttachmentsTo(copy);

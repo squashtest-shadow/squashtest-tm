@@ -122,15 +122,17 @@ class VerifiedRequirementsManagerServiceImplTest extends Specification {
 	def "should remove requirements from test case's verified requirements"() {
 		given: "some requirements"
 		RequirementVersion req5 = new RequirementVersion()
+		new Requirement(req5)
 		RequirementVersion req15 = new RequirementVersion()
-
+		new Requirement(req15)
+		
 		use (ReflectionCategory) {
 			Resource.set field: "id", of: req5, to: 5L
 			Resource.set field: "id", of: req15, to: 15L
 		}
 		requirementVersionDao.findAllByIdList([15]) >> [req15]
 
-		and: " a test case which verifies these requirements"
+		and: "a test case which verifies these requirements"
 		TestCase testCase = new TestCase()
 		testCase.addVerifiedRequirement req5
 		testCase.addVerifiedRequirement req15

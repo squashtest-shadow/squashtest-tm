@@ -68,11 +68,19 @@
 			}
 			
 			$(function() {
+				$( "#add-summary-dialog" ).messageDialog();
 				
 				<%-- verifying test-case addition --%>
-				$("#back").button().click(function(){
+				$("#back").button().click(function() {
 					document.location.href="${backUrl}";
 				});
+				
+				var addHandler = function(data) {
+					if (data && data.hasRejections) {
+						$( "#add-summary-dialog" ).messageDialog("open");
+					}
+					refreshVerifyingTestCases();
+				};
 				
 				$( '#add-items-button' ).click(function() {
 					var tree = $( '#linkable-test-cases-tree' );
@@ -81,7 +89,7 @@
 					ids = getTestCasesIds();
 					
 					if (ids.length > 0) {
-						$.post('${ verifyingTestCasesUrl }', { testCasesIds: ids}, refreshVerifyingTestCases);
+						$.post('${ verifyingTestCasesUrl }', { testCasesIds: ids}, addHandler);
 					}
 					tree.jstree('deselect_all');
 				});
@@ -105,11 +113,14 @@
 
 	<jsp:attribute name="tablePane">
 		<aggr:verifying-test-cases-table />
+		<div id="add-summary-dialog" class="not-displayed" title="<f:message key='requirement-version.verifying-test-case.rejection-dialog.title' />">
+			<f:message key="requirement-version.verifying-test-case.rejection-dialog.message" />
+		</div>
 	</jsp:attribute>
 
 
 	<jsp:attribute name="subPageTitle">
-		<h2>${requirement.name}&nbsp;:&nbsp;<f:message key="squashtm.library.verifying-test-cases.title" /></h2>
+		<h2>${requirementVersion.name}&nbsp;:&nbsp;<f:message key="squashtm.library.verifying-test-cases.title" /></h2>
 	</jsp:attribute>
 	
 	<jsp:attribute name="subPageButtons">

@@ -24,12 +24,14 @@ import static org.junit.Assert.*
 
 import javax.inject.Provider
 
-import org.apache.poi.hssf.record.formula.functions.T
 import org.springframework.context.MessageSource
 import org.springframework.ui.ExtendedModelMap
 import org.springframework.ui.Model
 import org.squashtest.csp.core.service.security.PermissionEvaluationService
+import org.squashtest.csp.tm.domain.RequirementAlreadyVerifiedException
+import org.squashtest.csp.tm.domain.requirement.Requirement
 import org.squashtest.csp.tm.domain.requirement.RequirementVersion
+import org.squashtest.csp.tm.domain.testcase.TestCase
 import org.squashtest.csp.tm.service.RequirementVersionManagerService
 import org.squashtest.csp.tm.service.VerifyingTestCaseManagerService
 import org.squashtest.csp.tm.web.internal.model.builder.DriveNodeBuilder
@@ -75,6 +77,7 @@ class VerifyingTestCaseManagerControllerTest extends Specification {
 		model.asMap()['requirementVersion'] == requirementVersion
 		model.asMap()['linkableLibrariesModel'] == []
 	}
+
 	def "should return manager view name"() {
 		given:
 		requirementVersionManager.findById(10L) >> Mock(RequirementVersion)
@@ -85,5 +88,21 @@ class VerifyingTestCaseManagerControllerTest extends Specification {
 
 		then:
 		view == "page/requirements/show-verifying-testcase-manager"
+	}
+
+	def "should return rapport of test cases which could not be added"() {
+		given:
+		TestCase tc = Mock()
+		tc.id >> 2
+		RequirementVersion req = Mock()
+		RequirementAlreadyVerifiedException ex = new RequirementAlreadyVerifiedException(req, tc)
+		verifyingTestCaseManager.addVerifyingTestCasesToRequirementVersion([1, 2], 10) >> [ex]
+
+		when:
+		def res = controller.addVerifyingTestCasesToRequirement([1, 2], 10)
+
+		then:
+		res.hasRejections
+		res.rejections*.id == [2]
 	}
 }

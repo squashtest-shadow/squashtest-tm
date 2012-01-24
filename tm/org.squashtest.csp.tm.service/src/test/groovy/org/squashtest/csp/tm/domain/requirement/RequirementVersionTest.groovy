@@ -405,4 +405,5 @@ class RequirementVersionTest extends Specification {
 		nextVersion.attachmentList.allAttachments.size() == 1
 		!nextVersion.attachmentList.allAttachments.contains(attachment)
 	}
+	
 }

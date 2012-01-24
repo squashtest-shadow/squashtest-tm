@@ -44,6 +44,7 @@ import javax.persistence.OrderColumn;
 import javax.persistence.PrimaryKeyJoinColumn;
 import javax.validation.constraints.NotNull;
 
+import org.squashtest.csp.tm.domain.RequirementAlreadyVerifiedException;
 import org.squashtest.csp.tm.domain.UnknownEntityException;
 import org.squashtest.csp.tm.domain.attachment.Attachment;
 import org.squashtest.csp.tm.domain.attachment.AttachmentHolder;
@@ -94,15 +95,13 @@ public class TestCase extends TestCaseLibraryNode implements AttachmentHolder {
 	 */
 	private boolean importanceAuto = false;
 
-	
-	public TestCase(Date createdOn, String createdBy){
-		AuditableMixin audit = ((AuditableMixin)this);
-		
+	public TestCase(Date createdOn, String createdBy) {
+		AuditableMixin audit = ((AuditableMixin) this);
+
 		audit.setCreatedOn(createdOn);
 		audit.setCreatedBy(createdBy);
 	}
-	
-	
+
 	public TestCase() {
 		super();
 	}
@@ -170,14 +169,54 @@ public class TestCase extends TestCaseLibraryNode implements AttachmentHolder {
 	}
 
 	/**
-	 * Adds a {@link Requirement} verified by this {@link TestCase}
+	 * Adds a {@link RequirementVersion} verified by this {@link TestCase}
 	 * 
-	 * @param requirement
+	 * @param requirementVersion
 	 *            requirement to add, should not be null.
+	 * @throws RequirementAlreadyVerifiedException
+	 *             if this test case already verifies another version of the same requirment
 	 */
-	public void addVerifiedRequirement(@NotNull RequirementVersion requirement) {
-		requirement.notifyVerifiedBy(this);
-		verifiedRequirements.add(requirement);
+	public void addVerifiedRequirement(@NotNull RequirementVersion requirementVersion)
+			throws RequirementAlreadyVerifiedException {
+		checkRequirementNotVerified(requirementVersion);
+		forceAddVerifiedRequirement(requirementVersion);
+	}
+
+	/**
+	 * This should be used when making a copy of a {@link RequirementVersion} to have the copy verified by this
+	 * {@link TestCase}.
+	 * 
+	 * When making a copy of a requirement, we cannot use {@link #addVerifiedRequirement(RequirementVersion)} because of
+	 * the single requirment check.
+	 * 
+	 * @param requirementVersionCopy
+	 *            a copy of an existing requirement version. It should not have a requirement yet.
+	 */
+	public void addCopyOfVerifiedRequirement(RequirementVersion requirementVersionCopy) {
+		if (requirementVersionCopy.getRequirement() != null) {
+			throw new IllegalArgumentException("RequirementVersion should not be associated to a requirement yet");
+		}
+
+		forceAddVerifiedRequirement(requirementVersionCopy);
+	}
+
+	private void forceAddVerifiedRequirement(RequirementVersion requirementVersionCopy) {
+		requirementVersionCopy.notifyVerifiedBy(this);
+		verifiedRequirements.add(requirementVersionCopy);
+	}
+
+	/**
+	 * @param version
+	 */
+	private void checkRequirementNotVerified(RequirementVersion version) {
+		Requirement req = version.getRequirement();
+
+		for (RequirementVersion verified : verifiedRequirements) {
+			if (req.equals(verified.getRequirement())) {
+				throw new RequirementAlreadyVerifiedException(version, this);
+			}
+		}
+
 	}
 
 	public void removeVerifiedRequirement(@NotNull RequirementVersion requirement) {

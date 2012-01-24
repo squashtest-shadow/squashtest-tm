@@ -20,11 +20,13 @@
  */
 package org.squashtest.csp.tm.service;
 
+import java.util.Collection;
 import java.util.List;
 
 import org.springframework.transaction.annotation.Transactional;
 import org.squashtest.csp.core.infrastructure.collection.PagedCollectionHolder;
 import org.squashtest.csp.core.infrastructure.collection.PagingAndSorting;
+import org.squashtest.csp.tm.domain.RequirementAlreadyVerifiedException;
 import org.squashtest.csp.tm.domain.requirement.RequirementLibrary;
 import org.squashtest.csp.tm.domain.testcase.TestCase;
 import org.squashtest.csp.tm.domain.testcase.TestCaseLibrary;
@@ -50,8 +52,10 @@ public interface VerifyingTestCaseManagerService {
 	 * 
 	 * @param requirementsIds
 	 * @param testCaseId
+	 * @return test cases which could not be added.
 	 */
-	void addVerifyingTestCasesToRequirementVersion(List<Long> testCaseIds, long requirementVersionId);
+	Collection<RequirementAlreadyVerifiedException> addVerifyingTestCasesToRequirementVersion(List<Long> testCaseIds,
+			long requirementVersionId);
 
 	/**
 	 * Removes a list of requirements from the ones verified by a test case. If a requirement is not verified by the

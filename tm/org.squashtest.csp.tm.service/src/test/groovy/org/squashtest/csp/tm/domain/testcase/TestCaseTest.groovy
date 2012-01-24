@@ -21,8 +21,10 @@
 
 package org.squashtest.csp.tm.domain.testcase
 
+import org.squashtest.csp.tm.domain.RequirementAlreadyVerifiedException;
 import org.squashtest.csp.tm.domain.RequirementNotLinkableException;
 import org.squashtest.csp.tm.domain.UnknownEntityException;
+import org.squashtest.csp.tm.domain.requirement.Requirement;
 import org.squashtest.csp.tm.domain.requirement.RequirementVersion;
 import org.squashtest.csp.tm.domain.requirement.RequirementStatus;
 import org.squashtest.csp.tools.unittest.reflection.ReflectionCategory;
@@ -95,64 +97,69 @@ class TestCaseTest extends Specification {
 	}
 
 	def "should move a list of steps to a lesser index"(){
-		
+
 		given :
-			def step0 = new ActionTestStep(action:"0")
-			def step1 = new ActionTestStep(action:"1")
-			def step2 = new ActionTestStep(action:"2")
-			def step3 = new ActionTestStep(action:"3")
+		def step0 = new ActionTestStep(action:"0")
+		def step1 = new ActionTestStep(action:"1")
+		def step2 = new ActionTestStep(action:"2")
+		def step3 = new ActionTestStep(action:"3")
 
-	
-			testCase.steps << step0
-			testCase.steps << step1
-			testCase.steps << step2
-			testCase.steps << step3
-		
 
-			def tomove = [step2, step3]	
-			def position = 1
-			def result = [step0, step2, step3, step1]
-			
-			
+		testCase.steps << step0
+		testCase.steps << step1
+		testCase.steps << step2
+		testCase.steps << step3
+
+
+		def tomove = [step2, step3]
+		def position = 1
+		def result = [step0, step2, step3, step1]
+
+
 		when :
-		
-			testCase.moveSteps(position, tomove);
-		
+
+		testCase.moveSteps(position, tomove);
+
 		then :
-			testCase.steps.collect{it.action} == result.collect{it.action}
-		
+		testCase.steps.collect{
+			it.action
+		} == result.collect{
+			it.action
+		}
 	}
-	
-	
-	
+
+
+
 	def "should move a list of steps to a last position"(){
-		
+
 		given :
-			def step0 = new ActionTestStep( action:"0")
-			def step1 = new ActionTestStep( action:"1")
-			def step2 = new ActionTestStep( action:"2")
-			def step3 = new ActionTestStep( action:"3")
-
-	
-			testCase.steps << step0
-			testCase.steps << step1
-			testCase.steps << step2
-			testCase.steps << step3
+		def step0 = new ActionTestStep( action:"0")
+		def step1 = new ActionTestStep( action:"1")
+		def step2 = new ActionTestStep( action:"2")
+		def step3 = new ActionTestStep( action:"3")
 
 
-			def tomove = [step0, step1]
-			def position = 2;
-			def result = [step2, step3, step0, step1]
-			
+		testCase.steps << step0
+		testCase.steps << step1
+		testCase.steps << step2
+		testCase.steps << step3
+
+
+		def tomove = [step0, step1]
+		def position = 2;
+		def result = [step2, step3, step0, step1]
+
 		when :
-			testCase.moveSteps(position, tomove)
-		
+		testCase.moveSteps(position, tomove)
+
 		then :
-			testCase.steps.collect{it.action} == result.collect{it.action}
-		
-		
+		testCase.steps.collect{
+			it.action
+		} == result.collect{
+			it.action
+		}
 	}
-	
+
 	def "should add a verified requirement"() {
 		given:
 		RequirementVersion r = new RequirementVersion()
@@ -168,7 +175,7 @@ class TestCaseTest extends Specification {
 		given:
 		RequirementVersion r = new RequirementVersion()
 		use (ReflectionCategory) {
-			TestCase.set field: "verifiedRequirements", of: testCase, to: ([r] as Set)
+			TestCase.set field: "verifiedRequirements", of: testCase, to: ([r]as Set)
 		}
 
 		when:
@@ -208,19 +215,19 @@ class TestCaseTest extends Specification {
 		then:
 		thrown(UnknownEntityException)
 	}
-	
+
 	@Unroll("copy of test case should have the same '#propName' property")
 	def "copy of a test case should have the same simple properties"() {
 		given:
 		TestCase source = new TestCase()
-		source[propName] = propValue 
-		
-		when: 
+		source[propName] = propValue
+
+		when:
 		def copy = source.createPastableCopy()
 
 		then:
 		copy[propName] == source[propName]
-		
+
 		where:
 		propName        | propValue
 		"name"          | "foo"
@@ -228,14 +235,14 @@ class TestCaseTest extends Specification {
 		"executionMode" | TestCaseExecutionMode.AUTOMATED
 		"importance"    | TestCaseImportance.HIGH
 	}
-	
+
 	def "copy of a test case should have the same steps"() {
 		given:
 		TestCase source = new TestCase()
 		ActionTestStep sourceStep = new ActionTestStep(action: "fingerpoke opponent", expectedResult: "win the belt")
 		source.steps << sourceStep
-		
-		when: 
+
+		when:
 		def copy = source.createPastableCopy()
 
 		then:
@@ -243,83 +250,97 @@ class TestCaseTest extends Specification {
 		copy.steps[0].action == sourceStep.action
 		copy.steps[0].expectedResult == sourceStep.expectedResult
 		!copy.steps[0].is(sourceStep)
-		
 	}
-	
+
 	def "copy of a test case should verify the same requirements"() {
 		given:
 		TestCase source = new TestCase()
 		RequirementVersion req = new RequirementVersion(name: "")
 		source.addVerifiedRequirement req
-		
-		when: 
+
+		when:
 		def copy = source.createPastableCopy()
 
 		then:
 		copy.verifiedRequirements == source.verifiedRequirements
 	}
-	
+
 	def "when verifying a requirement, the requirement should also be verified by the test case"() {
 		given:
 		TestCase tc = new TestCase()
-		
+
 		and:
 		RequirementVersion req = new RequirementVersion()
-		
+
 		when:
 		tc.addVerifiedRequirement req
-		
+
 		then:
 		req.verifyingTestCases.contains tc
 	}
-	
+
 	def "should not be able to verify an obsolete requirement"() {
 		given:
 		TestCase tc = new TestCase()
-		
+
 		and:
 		RequirementVersion req = new RequirementVersion(status: RequirementStatus.OBSOLETE)
-		
+
 		when:
 		tc.addVerifiedRequirement req
-		
+
 		then:
 		thrown(RequirementNotLinkableException)
 	}
-	
+
 	def "when unverifying a requirement, the requirement should also not be verified by the test case"() {
 		given:
 		TestCase tc = new TestCase()
-		
+
 		and:
 		RequirementVersion req = new RequirementVersion()
 		use (ReflectionCategory) {
-			RequirementVersion.set field: "verifyingTestCases", of: req, to: [tc] as Set 
-			TestCase.set field: "verifiedRequirements", of: tc, to: [req] as Set
+			RequirementVersion.set field: "verifyingTestCases", of: req, to: [tc]as Set
+			TestCase.set field: "verifiedRequirements", of: tc, to: [req]as Set
 		}
 
 		when:
 		tc.removeVerifiedRequirement req
-		
+
 		then:
 		!req.verifyingTestCases.contains(tc)
 	}
 
-		def "should not be able to unverify an obsolete requirement"() {
+	def "should not be able to unverify an obsolete requirement"() {
 		given:
 		TestCase tc = new TestCase()
-		
+
 		and:
 		RequirementVersion req = new RequirementVersion(status: RequirementStatus.OBSOLETE)
 		use (ReflectionCategory) {
-			RequirementVersion.set field: "verifyingTestCases", of: req, to: [tc] as Set 
-			TestCase.set field: "verifiedRequirements", of: tc, to: [req] as Set
+			RequirementVersion.set field: "verifyingTestCases", of: req, to: [tc]as Set
+			TestCase.set field: "verifiedRequirements", of: tc, to: [req]as Set
 		}
-		
+
 		when:
 		tc.removeVerifiedRequirement req
-		
+
 		then:
 		thrown(RequirementNotLinkableException)
+	}
+
+	def "should not verify 2 versions of same requirement"() {
+		given:
+		Requirement req = new Requirement(new RequirementVersion())
+		testCase.addVerifiedRequirement(req.currentVersion)
+		
+		and:
+		req.increaseVersion()
+		
+		when:
+		testCase.addVerifiedRequirement(req.currentVersion)
+		
+		then:
+		thrown(RequirementAlreadyVerifiedException)
 	}
 }
