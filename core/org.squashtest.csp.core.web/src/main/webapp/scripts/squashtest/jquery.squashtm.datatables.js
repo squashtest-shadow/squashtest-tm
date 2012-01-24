@@ -159,7 +159,7 @@ function addDeleteButtonToRow(row, entityId, buttonTemplateId) {
  * Registers event handlers to enable rangle selection in tables.
  */
 function enableTableRangeSelection() {
-	$(window).keydown(function(evt) {
+	$(document).keydown(function(evt) {
 		handleCtrlDown(evt);
 		handleShiftDown(evt);
 	}).keyup(function(evt) {
@@ -336,9 +336,23 @@ function addClickHandlerToSelectHandle(nRow, table) {
 		}
 
 		memorizeLastSelectedRow(row, table);
+		clearRangeSelection();
 
 		return true;
 	});
+}
+
+
+/*
+that method programatically remove the highlight due to native range selection.
+*/
+function clearRangeSelection(){
+	if (window.getSelection) {
+		window.getSelection().removeAllRanges();
+	}
+	else if (document.selection) { // should come last; Opera!
+		document.selection.empty();
+	}
 }
 
 /* private */function toggleRowAndDropSelectedRange(row) {
