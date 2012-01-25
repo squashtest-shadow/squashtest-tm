@@ -37,11 +37,13 @@ import javax.persistence.EnumType;
 import javax.persistence.Enumerated;
 import javax.persistence.JoinColumn;
 import javax.persistence.JoinTable;
+import javax.persistence.Lob;
 import javax.persistence.ManyToMany;
 import javax.persistence.OneToMany;
 import javax.persistence.OneToOne;
 import javax.persistence.OrderColumn;
 import javax.persistence.PrimaryKeyJoinColumn;
+import javax.persistence.Transient;
 import javax.validation.constraints.NotNull;
 
 import org.squashtest.csp.tm.domain.RequirementAlreadyVerifiedException;
@@ -65,6 +67,9 @@ public class TestCase extends TestCaseLibraryNode implements AttachmentHolder {
 
 	@Column(updatable = false)
 	private final int version = 1;
+	
+	@Lob
+	private String prerequisite = "";
 
 	@Enumerated(EnumType.STRING)
 	@Basic(optional = false)
@@ -110,6 +115,10 @@ public class TestCase extends TestCaseLibraryNode implements AttachmentHolder {
 		return version;
 	}
 
+	public String getPrerequisite() {
+		return prerequisite;
+	}
+	
 	public void setExecutionMode(TestCaseExecutionMode exectionMode) {
 		this.executionMode = exectionMode;
 	}
@@ -304,6 +313,14 @@ public class TestCase extends TestCaseLibraryNode implements AttachmentHolder {
 	 */
 	public void setImportance(@NotNull TestCaseImportance weight) {
 		this.importance = weight;
+	}
+	
+	/**
+	 * @param prerequisite
+	 *            the prerequisite to set
+	 */
+	public void setPrerequisite(@NotNull String prerequisite) {
+		this.prerequisite = prerequisite;
 	}
 
 	/**

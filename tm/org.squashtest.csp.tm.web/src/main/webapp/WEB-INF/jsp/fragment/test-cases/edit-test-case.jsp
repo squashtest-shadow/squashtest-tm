@@ -580,6 +580,22 @@
 	}
 </script>
 
+<%----------------------------------- Prerequisites -----------------------------------------------%>
+<c:if test="${ editable }">
+	<comp:rich-jeditable targetUrl="${ testCaseUrl }" componentId="test-case-prerequisite" />
+</c:if>
+
+<comp:toggle-panel id="test-case-prerequisite-panel" titleKey="generics.prerequisite.title" isContextual="true" open="${ not empty testCase.prerequisite }">
+	<jsp:attribute name="body">
+		<div id="test-case-prerequisite-table" class="display-table">
+			<div class="display-table-row">
+				<%--<label for="test-case-description" class="display-table-cell"><f:message key="test-case.prerequisite.label" /></label>--%>
+				<div class="display-table-cell" id="test-case-prerequisite" >${ testCase.prerequisite }</div>
+			</div>
+		</div>
+	</jsp:attribute>
+</comp:toggle-panel> 
+
 <%----------------------------------- Test Step Table -----------------------------------------------%> 
 
 <script type="text/javascript">

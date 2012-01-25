@@ -368,8 +368,18 @@
 		<dropColumn tableName="REQUIREMENT_LIBRARY_NODE" columnName="DESCRIPTION"/>
 	</changeSet>
 	
+	<changeSet id="tm-1.1.0.21" author="fogaillard">
+		<comment>
+			Add Prerequisite collumn to the test_case table
+		</comment>
+		<addColumn tableName="TEST_CASE" >
+			<column name="PREREQUISITE" type="CLOB" defaultValue="" remarks="the prerequisite for a test_case">
+				<constraints nullable="false"/>
+			</column>
+		</addColumn>
+	</changeSet>
 	
-	<!--  ====================================== TEST SUITE ====================================== -->
+<!--  ====================================== TEST SUITE ====================================== -->
 	
 	<changeSet id="tm-1.1.0.22" author="bsiri">
 		<comment>
@@ -438,6 +448,6 @@
 			<column name="ITEM_ID"/>
 		</createIndex>				
 	</changeSet>
-	
+
 </databaseChangeLog>
  

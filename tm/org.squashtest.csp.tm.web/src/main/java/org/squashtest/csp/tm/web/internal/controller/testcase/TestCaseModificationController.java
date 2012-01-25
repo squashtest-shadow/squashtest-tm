@@ -288,6 +288,18 @@ public class TestCaseModificationController {
 		return  formatImportance(testCase.getImportance(), locale);
 	}
 	
+	@RequestMapping(method = RequestMethod.POST, params = { "id=test-case-prerequisite", "value" })
+	@ResponseBody
+	public String changePrerequisite(@RequestParam("value") String testCasePrerequisite, @PathVariable long testCaseId) {
+
+		testCaseModificationService.changePrerequisite(testCaseId, testCasePrerequisite);
+		if (LOGGER.isTraceEnabled()) {
+			LOGGER.trace("test case " + testCaseId + ": updated prerequisite to " + testCasePrerequisite);
+		}
+
+		return testCasePrerequisite;
+	}
+	
 	@RequestMapping(method = RequestMethod.POST, params = { "newName" })
 	@ResponseBody
 	public Object rename(HttpServletResponse response, @PathVariable long testCaseId, @RequestParam String newName) {
