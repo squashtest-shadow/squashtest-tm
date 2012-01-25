@@ -46,6 +46,7 @@ import javax.persistence.PrimaryKeyJoinColumn;
 import javax.persistence.Transient;
 import javax.validation.constraints.NotNull;
 
+import org.squashtest.csp.tm.domain.NoVerifiableRequirementVersionException;
 import org.squashtest.csp.tm.domain.RequirementAlreadyVerifiedException;
 import org.squashtest.csp.tm.domain.UnknownEntityException;
 import org.squashtest.csp.tm.domain.attachment.Attachment;
@@ -57,7 +58,7 @@ import org.squashtest.csp.tm.domain.requirement.RequirementVersion;
 
 /**
  * @author Gregory Fouquet
- * 
+ *
  */
 @Entity
 @PrimaryKeyJoinColumn(name = "TCLN_ID")
@@ -150,7 +151,7 @@ public class TestCase extends TestCaseLibraryNode implements AttachmentHolder {
 
 	/**
 	 * Will move a list of steps to a new position.
-	 * 
+	 *
 	 * @param newIndex
 	 *            the position we want the first element of movedSteps to be once the operation is complete
 	 * @param movedSteps
@@ -164,7 +165,7 @@ public class TestCase extends TestCaseLibraryNode implements AttachmentHolder {
 	}
 
 	/**
-	 * 
+	 *
 	 * @return UNMODIFIABLE VIEW of verified requirements.
 	 */
 	public Set<RequirementVersion> getVerifiedRequirementVersions() {
@@ -179,7 +180,7 @@ public class TestCase extends TestCaseLibraryNode implements AttachmentHolder {
 
 	/**
 	 * Adds a {@link RequirementVersion} verified by this {@link TestCase}
-	 * 
+	 *
 	 * @param requirementVersion
 	 *            requirement to add, should not be null.
 	 * @throws RequirementAlreadyVerifiedException
@@ -194,10 +195,10 @@ public class TestCase extends TestCaseLibraryNode implements AttachmentHolder {
 	/**
 	 * This should be used when making a copy of a {@link RequirementVersion} to have the copy verified by this
 	 * {@link TestCase}.
-	 * 
-	 * When making a copy of a requirement, we cannot use {@link #addVerifiedRequirementVersion(RequirementVersion)} because of
-	 * the single requirment check.
-	 * 
+	 *
+	 * When making a copy of a requirement, we cannot use {@link #addVerifiedRequirementVersion(RequirementVersion)}
+	 * because of the single requirment check.
+	 *
 	 * @param requirementVersionCopy
 	 *            a copy of an existing requirement version. It should not have a requirement yet.
 	 */
@@ -336,12 +337,25 @@ public class TestCase extends TestCaseLibraryNode implements AttachmentHolder {
 	 */
 	public void setImportanceAuto(boolean importanceAuto) {
 		this.importanceAuto = importanceAuto;
-		if(importanceAuto){
-			//The calculation of importance when auto is on is not done here because it needs
-			// to know the call-steps associated requirements. 
+		if (importanceAuto) {
+			// The calculation of importance when auto is on is not done here because it needs
+			// to know the call-steps associated requirements.
 		}
 	}
 
-	
+	/**
+	 * This test case verifies the given requirement using its default verifiable version.
+	 *
+	 * @param requirement
+	 * @throws NoVerifiableRequirementVersionException
+	 *             when there is no suitable version to be added
+	 * @throws RequirementAlreadyVerifiedException
+	 *             when this test case already verifies some version of the requirement.
+	 */
+	public void addVerifiedRequirement(@NotNull Requirement requirement)
+			throws NoVerifiableRequirementVersionException, RequirementAlreadyVerifiedException {
+		RequirementVersion candidate = requirement.getDefaultVerifiableVersion();
+		addVerifiedRequirementVersion(candidate);
+	}
 
 }

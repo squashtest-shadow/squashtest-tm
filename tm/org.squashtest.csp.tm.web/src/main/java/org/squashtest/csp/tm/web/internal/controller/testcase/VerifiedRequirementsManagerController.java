@@ -36,8 +36,6 @@ import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.servlet.ModelAndView;
 import org.squashtest.csp.tm.domain.requirement.RequirementLibrary;
 import org.squashtest.csp.tm.domain.testcase.TestCase;
-import org.squashtest.csp.tm.domain.testcase.TestCaseImportance;
-import org.squashtest.csp.tm.service.TestCaseModificationService;
 import org.squashtest.csp.tm.service.VerifiedRequirementsManagerService;
 import org.squashtest.csp.tm.web.internal.model.builder.DriveNodeBuilder;
 import org.squashtest.csp.tm.web.internal.model.jstree.JsTreeNode;
@@ -51,12 +49,12 @@ import org.squashtest.csp.tm.web.internal.model.jstree.JsTreeNode;
 @Controller
 public class VerifiedRequirementsManagerController {
 	private static final String REQUIREMENTS_IDS = "requirementsIds[]";
-	
-	@Inject private Provider<DriveNodeBuilder> driveNodeBuilder;
-	
+
+	@Inject
+	private Provider<DriveNodeBuilder> driveNodeBuilder;
+
 	private VerifiedRequirementsManagerService verifiedRequirementsManagerService;
-	
-	
+
 	@ServiceReference
 	public void setVerifiedRequirementsManagerService(
 			VerifiedRequirementsManagerService verifiedRequirementsManagerService) {
@@ -67,7 +65,7 @@ public class VerifiedRequirementsManagerController {
 	public ModelAndView showManager(@PathVariable long testCaseId) {
 		TestCase testCase = verifiedRequirementsManagerService.findTestCase(testCaseId);
 		List<RequirementLibrary> linkableLibraries = verifiedRequirementsManagerService
-		.findLinkableRequirementLibraries();
+				.findLinkableRequirementLibraries();
 
 		List<JsTreeNode> linkableLibrariesModel = createLinkableLibrariesModel(linkableLibraries);
 
@@ -94,21 +92,21 @@ public class VerifiedRequirementsManagerController {
 	void addVerifiedRequirementsToTestCase(@RequestParam(REQUIREMENTS_IDS) List<Long> requirementsIds,
 			@PathVariable long testCaseId) {
 		verifiedRequirementsManagerService.addVerifiedRequirementsToTestCase(requirementsIds, testCaseId);
-		
+
 	}
 
 	@RequestMapping(value = "/test-cases/{testCaseId}/non-verified-requirements", method = RequestMethod.POST, params = REQUIREMENTS_IDS)
 	public @ResponseBody
-	void removeVerifiedRequirementsFromTestCase(
-			@RequestParam(REQUIREMENTS_IDS) List<Long> requirementsIds, @PathVariable long testCaseId) {
+	void removeVerifiedRequirementsFromTestCase(@RequestParam(REQUIREMENTS_IDS) List<Long> requirementsIds,
+			@PathVariable long testCaseId) {
 		verifiedRequirementsManagerService.removeVerifiedRequirementsFromTestCase(requirementsIds, testCaseId);
-		
+
 	}
 
 	@RequestMapping(value = "/test-cases/{testCaseId}/verified-requirements/{requirementId}", method = RequestMethod.DELETE)
 	public @ResponseBody
 	void removeVerifiedRequirementFromTestCase(@PathVariable long requirementId, @PathVariable long testCaseId) {
 		verifiedRequirementsManagerService.removeVerifiedRequirementFromTestCase(requirementId, testCaseId);
-		
+
 	}
 }

@@ -32,8 +32,11 @@ import javax.persistence.OrderBy;
 import javax.persistence.PrimaryKeyJoinColumn;
 import javax.validation.constraints.NotNull;
 
+import org.squashtest.csp.tm.domain.NoVerifiableRequirementVersionException;
 import org.squashtest.csp.tm.domain.attachment.AttachmentHolder;
 import org.squashtest.csp.tm.domain.attachment.AttachmentList;
+
+import static org.squashtest.csp.tm.domain.requirement.RequirementStatus.*;
 
 /**
  * Entity requirement
@@ -207,4 +210,44 @@ public class Requirement extends RequirementLibraryNode<RequirementVersion> impl
 		versions.add(0, next);
 		next.setRequirement(this);
 	}
+
+	/**
+	 * returns this requirement's version which should be linked to a test case by default.
+	 * 
+	 * @return
+	 */
+	public RequirementVersion getDefaultVerifiableVersion() {
+		RequirementVersion verifiable = findLatestApprovedVersion();
+
+		if (verifiable == null) {
+			verifiable = findLatestNonObsoleteVersion();
+		}
+
+		if (verifiable == null) {
+			throw new NoVerifiableRequirementVersionException(this);
+		}
+
+		return verifiable;
+	}
+
+	private RequirementVersion findLatestApprovedVersion() {
+		for (RequirementVersion version : versions) {
+			if (APPROVED.equals(version.getStatus())) {
+				return version;
+			}
+		}
+
+		return null;
+	}
+
+	private RequirementVersion findLatestNonObsoleteVersion() {
+		for (RequirementVersion version : versions) {
+			if (version.isNotObsolete()) {
+				return version;
+			}
+		}
+
+		return null;
+	}
+
 }

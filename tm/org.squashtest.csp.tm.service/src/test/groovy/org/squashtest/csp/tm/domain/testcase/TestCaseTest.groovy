@@ -21,19 +21,21 @@
 
 package org.squashtest.csp.tm.domain.testcase
 
-import org.squashtest.csp.tm.domain.RequirementAlreadyVerifiedException;
-import org.squashtest.csp.tm.domain.RequirementNotLinkableException;
-import org.squashtest.csp.tm.domain.UnknownEntityException;
-import org.squashtest.csp.tm.domain.requirement.Requirement;
-import org.squashtest.csp.tm.domain.requirement.RequirementVersion;
-import org.squashtest.csp.tm.domain.requirement.RequirementStatus;
-import org.squashtest.csp.tools.unittest.reflection.ReflectionCategory;
+import javax.swing.plaf.basic.BasicFileChooserUI.ApproveSelectionAction
 
-import spock.lang.Specification;
-import spock.lang.Unroll;
+import org.squashtest.csp.tm.domain.RequirementAlreadyVerifiedException
+import org.squashtest.csp.tm.domain.RequirementNotLinkableException
+import org.squashtest.csp.tm.domain.UnknownEntityException
+import org.squashtest.csp.tm.domain.requirement.Requirement
+import org.squashtest.csp.tm.domain.requirement.RequirementVersion
+import org.squashtest.csp.tm.domain.requirement.RequirementStatus
+import org.squashtest.csp.tools.unittest.reflection.ReflectionCategory
+
+import spock.lang.Specification
+import spock.lang.Unroll
 
 class TestCaseTest extends Specification {
-	TestCase testCase = new TestCase();
+	TestCase testCase = new TestCase()
 
 	def "should add a step at the end of the list"() {
 		given:
@@ -118,7 +120,7 @@ class TestCaseTest extends Specification {
 
 		when :
 
-		testCase.moveSteps(position, tomove);
+		testCase.moveSteps(position, tomove)
 
 		then :
 		testCase.steps.collect{ it.action } == result.collect{ it.action }
@@ -142,7 +144,7 @@ class TestCaseTest extends Specification {
 
 
 		def tomove = [step0, step1]
-		def position = 2;
+		def position = 2
 		def result = [step2, step3, step0, step1]
 
 		when :
@@ -334,5 +336,18 @@ class TestCaseTest extends Specification {
 
 		then:
 		thrown(RequirementAlreadyVerifiedException)
+	}
+
+	def "should verify the default verifiable version"() {
+		given:
+		Requirement req = Mock()
+		RequirementVersion verifiableVersion = Mock()
+		req.defaultVerifiableVersion >> verifiableVersion
+
+		when:
+		testCase.addVerifiedRequirement(req)
+
+		then:
+		testCase.verifiedRequirementVersions == [verifiableVersion]
 	}
 }
