@@ -20,6 +20,8 @@
  */
 package org.squashtest.csp.tm.web.internal.controller.requirement;
 
+import static org.squashtest.csp.tm.web.internal.helper.JEditablePostParams.VALUE;
+
 import java.io.UnsupportedEncodingException;
 import java.util.Locale;
 import java.util.SortedMap;
@@ -45,12 +47,12 @@ import org.squashtest.csp.tm.domain.requirement.Requirement;
 import org.squashtest.csp.tm.domain.requirement.RequirementCriticality;
 import org.squashtest.csp.tm.domain.requirement.RequirementStatus;
 import org.squashtest.csp.tm.service.RequirementModificationService;
-import org.squashtest.csp.tm.service.TestCaseModificationService;
 import org.squashtest.csp.tm.web.internal.helper.JsonHelper;
 
 @Controller
 @RequestMapping("/requirements/{requirementId}")
 public class RequirementModificationController {
+
 	private static final Logger LOGGER = LoggerFactory.getLogger(RequirementModificationController.class);
 
 	private RequirementModificationService requirementModService;
@@ -95,9 +97,9 @@ public class RequirementModificationController {
 		return mav;
 	}
 
-	@RequestMapping(method = RequestMethod.POST, params = { "id=requirement-description", "value" })
+	@RequestMapping(method = RequestMethod.POST, params = { "id=requirement-description", VALUE })
 	public @ResponseBody
-	String updateDescription(@RequestParam("value") String newDescription, @PathVariable long requirementId) {
+	String updateDescription(@RequestParam(VALUE) String newDescription, @PathVariable long requirementId) {
 
 		requirementModService.changeDescription(requirementId, newDescription);
 		LOGGER.trace("requirement " + requirementId + ": updated description to " + newDescription);
@@ -130,9 +132,9 @@ public class RequirementModificationController {
 		return mav;
 	}
 
-	@RequestMapping(method = RequestMethod.POST, params = { "id=requirement-criticality", "value" })
+	@RequestMapping(method = RequestMethod.POST, params = { "id=requirement-criticality", VALUE })
 	@ResponseBody
-	public String updateCriticality(@RequestParam("value") String value, @PathVariable long requirementId, Locale locale) {
+	public String updateCriticality(@RequestParam(VALUE) String value, @PathVariable long requirementId, Locale locale) {
 		RequirementCriticality criticality = RequirementCriticality.valueOf(value);
 		requirementModService.changeCriticality(requirementId, criticality);
 		LOGGER.debug("Requirement {} : requirement criticality changed, new value : {}", requirementId,
@@ -140,9 +142,9 @@ public class RequirementModificationController {
 		return HtmlUtils.htmlEscape(formatCriticality(criticality, locale));
 	}
 
-	@RequestMapping(method = RequestMethod.POST, params = { "id=requirement-status", "value" })
+	@RequestMapping(method = RequestMethod.POST, params = { "id=requirement-status", VALUE })
 	@ResponseBody
-	public String updateStatus(@RequestParam("value") String value, @PathVariable long requirementId, Locale locale) {
+	public String updateStatus(@RequestParam(VALUE) String value, @PathVariable long requirementId, Locale locale) {
 		RequirementStatus status = RequirementStatus.valueOf(value);
 		requirementModService.changeStatus(requirementId, status);
 		LOGGER.debug("Requirement {} : requirement status changed, new value : {}", requirementId, status.name());
@@ -157,9 +159,9 @@ public class RequirementModificationController {
 		return initStatusSelectionList(locale, status);
 	}
 
-	@RequestMapping(method = RequestMethod.POST, params = { "id=requirement-reference", "value" })
+	@RequestMapping(method = RequestMethod.POST, params = { "id=requirement-reference", VALUE })
 	@ResponseBody
-	String updateReference(@RequestParam("value") String requirementReference, @PathVariable long requirementId)
+	String updateReference(@RequestParam(VALUE) String requirementReference, @PathVariable long requirementId)
 			throws UnsupportedEncodingException {
 		requirementModService.changeReference(requirementId, requirementReference.trim());
 		LOGGER.debug("Requirement {} : requirement reference changed, new value : {}", requirementId,

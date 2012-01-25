@@ -40,9 +40,9 @@ import org.squashtest.csp.core.security.annotation.InheritsAcls;
 /**
  * This {@link ObjectIdentityRetrievalStrategy} checks if an entity should inherit ACLs from another entity. If so, the
  * object identity will be retrieved from the "constrained" object.
- *
+ * 
  * @author Gregory Fouquet
- *
+ * 
  */
 @Component("squashtest.core.security.ObjectIdentityRetrievalStrategy")
 public class InheritableAclsObjectIdentityRetrievalStrategy implements ObjectIdentityRetrievalStrategy {
@@ -60,7 +60,7 @@ public class InheritableAclsObjectIdentityRetrievalStrategy implements ObjectIde
 		}
 
 		@Override
-		public int hashCode() {
+		public int hashCode() { // NOSONAR generated code
 			final int prime = 31;
 			int result = 1;
 			result = prime * result + ((heir == null) ? 0 : heir.hashCode());
@@ -69,7 +69,7 @@ public class InheritableAclsObjectIdentityRetrievalStrategy implements ObjectIde
 		}
 
 		@Override
-		public boolean equals(Object obj) {
+		public boolean equals(Object obj) { // NOSONAR generated code
 			if (this == obj) {
 				return true;
 			}

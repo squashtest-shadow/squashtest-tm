@@ -100,7 +100,7 @@ public class HibernateCampaignFolderDao extends HibernateEntityDao<CampaignFolde
 		if (ids.size()==0) return Collections.emptyList();
 		
 		
-		SQLQuery query = currentSession().createSQLQuery(NativeQueries.campaignFolder_sql_findPairedContentForFolders);		
+		SQLQuery query = currentSession().createSQLQuery(NativeQueries.CAMPAIGN_FOLDER_SQL_FIND_PAIRED_CONTENT_FOR_FOLDERS);		
 		query.setParameterList("folderIds", ids, LongType.INSTANCE);
 		query.addScalar("ancestor_id", LongType.INSTANCE);
 		query.addScalar("descendant_id", LongType.INSTANCE);
@@ -116,7 +116,7 @@ public class HibernateCampaignFolderDao extends HibernateEntityDao<CampaignFolde
 		if (ids.size()==0) return Collections.emptyList();
 		
 		
-		SQLQuery query = currentSession().createSQLQuery(NativeQueries.campaignFolder_sql_findContentForFolder);		
+		SQLQuery query = currentSession().createSQLQuery(NativeQueries.CAMPAIGN_FOLDER_SQL_FIND_CONTENT_FOR_FOLDER);		
 		query.setParameterList("folderIds", ids, LongType.INSTANCE);
 		query.addScalar("descendant_id", LongType.INSTANCE);
 		

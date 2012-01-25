@@ -103,7 +103,7 @@ RequirementFolderDao {
 		if (ids.size()==0) return Collections.emptyList();
 		
 		
-		SQLQuery query = currentSession().createSQLQuery(NativeQueries.requirementFolder_sql_findPairedContentForFolders);		
+		SQLQuery query = currentSession().createSQLQuery(NativeQueries.REQUIREMENT_FOLDER_SQL_FIND_PAIRED_COTENT_FOR_FOLDERS);		
 		query.setParameterList("folderIds", ids, LongType.INSTANCE);
 		query.addScalar("ancestor_id", LongType.INSTANCE);
 		query.addScalar("descendant_id", LongType.INSTANCE);
@@ -120,7 +120,7 @@ RequirementFolderDao {
 		if (ids.size()==0) return Collections.emptyList();
 		
 		
-		SQLQuery query = currentSession().createSQLQuery(NativeQueries.requirementFolder_sql_findContentForFolder);		
+		SQLQuery query = currentSession().createSQLQuery(NativeQueries.REQUIREMENT_FOLDER_SQL_FIND_CONTENT_FOR_FOLDER);		
 		query.setParameterList("folderIds", ids, LongType.INSTANCE);
 		query.addScalar("descendant_id", LongType.INSTANCE);
 		

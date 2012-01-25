@@ -32,83 +32,95 @@ import org.squashtest.csp.tm.domain.event.RequirementAuditEvent;
 import org.squashtest.csp.tm.internal.repository.RequirementDeletionDao;
 
 @Repository
-public class HibernateRequirementDeletionDao extends HibernateDeletionDao
-		implements RequirementDeletionDao {
+public class HibernateRequirementDeletionDao extends HibernateDeletionDao implements RequirementDeletionDao {
 
-	
+	private static final String NODE_IDS = "nodeIds";
+	private static final String REQUIREMENT_VERSION_IDS = "requirementVersionIds";
+	private static final String REQUIREMENT_IDS = "requirementIds";
+
 	@Override
 	public void removeEntities(List<Long> entityIds) {
 		if (!entityIds.isEmpty()) {
-			
-			Query query=getSession().createSQLQuery(NativeQueries.requirement_sql_removeFromFolder);
-			query.setParameterList("ancIds", entityIds, LongType.INSTANCE);
-			query.setParameterList("descIds", entityIds, LongType.INSTANCE);
-			query.executeUpdate();
-			
-			executeDeleteSQLQuery(NativeQueries.requirement_sql_removeFromLibrary, "requirementIds", entityIds);
-			
-			executeDeleteSQLQuery(NativeQueries.requirementFolder_sql_remove, "nodeIds", entityIds);
-			
-			//Retrieval of the requirement_versions linked to the wanted requirements
-			List<BigInteger> requirementVersionIdsBigInt = executeSelectSQLQuery(NativeQueries.requirement_version_findIdsFrom_requirements, "requirementIds", entityIds);
-			
-			List<Long> requirementVersionIds = new ArrayList<Long>();
-			for (BigInteger bigIntId : requirementVersionIdsBigInt) {
-				requirementVersionIds.add(bigIntId.longValue());
-			}
-			
-			//Removal of the reference of the requirement_versions in the wanted requirements
-			executeDeleteSQLQuery(NativeQueries.requirement_set_null_requirement_version, "requirementIds", entityIds);
-			
-			//We now can remove the requirement versions
-			executeDeleteSQLQuery(NativeQueries.requirement_version_sql_remove, "requirementVersionIds", requirementVersionIds);
+			removeNodesFromFolders(entityIds);
+			executeDeleteSQLQuery(NativeQueries.REQUIREMENT_SQL_REMOVE_FROM_LIBRARY, REQUIREMENT_IDS, entityIds);
+			executeDeleteSQLQuery(NativeQueries.REQUIREMENT_FOLDER_SQL_REMOVE, NODE_IDS, entityIds);
 
-			//as well as the resource
-			executeDeleteSQLQuery(NativeQueries.resource_sql_remove, "requirementVersionIds", requirementVersionIds);
-			
-			//and finally the wanted requirements
-			executeDeleteSQLQuery(NativeQueries.requirement_sql_remove, "nodeIds", entityIds);
+			// Retrieval of the requirement_versions linked to the wanted requirements
+			List<Long> requirementVersionIds = findAllVersionsIdsFromRequirements(entityIds);
 
-			executeDeleteSQLQuery(NativeQueries.requirementLibraryNode_sql_remove, "nodeIds", entityIds);
+			// Removal of the reference of the requirement_versions in the wanted requirements
+			executeDeleteSQLQuery(NativeQueries.requirement_set_null_requirement_version, REQUIREMENT_IDS, entityIds);
+
+			// We now can remove the requirement versions
+			executeDeleteSQLQuery(NativeQueries.requirement_version_sql_remove, REQUIREMENT_VERSION_IDS,
+					requirementVersionIds);
+
+			// as well as the resource
+			executeDeleteSQLQuery(NativeQueries.resource_sql_remove, REQUIREMENT_VERSION_IDS, requirementVersionIds);
+
+			// and finally the wanted requirements
+			executeDeleteSQLQuery(NativeQueries.requirement_sql_remove, NODE_IDS, entityIds);
+
+			executeDeleteSQLQuery(NativeQueries.requirementLibraryNode_sql_remove, NODE_IDS, entityIds);
 		}
+	}
+
+	private List<Long> findAllVersionsIdsFromRequirements(List<Long> entityIds) {
+		List<BigInteger> requirementVersionIdsBigInt = executeSelectSQLQuery(
+				NativeQueries.REQUIREMENT_VERSION_FIND_ID_FROM_REQUIREMENT, REQUIREMENT_IDS, entityIds);
+
+		List<Long> requirementVersionIds = new ArrayList<Long>();
+
+		for (BigInteger bigIntId : requirementVersionIdsBigInt) {
+			requirementVersionIds.add(bigIntId.longValue());
+		}
+
+		return requirementVersionIds;
+	}
+
+	private void removeNodesFromFolders(List<Long> entityIds) {
+		Query query = getSession().createSQLQuery(NativeQueries.REQUIREMENT_SQL_REMOVE_FROM_FOLDER);
+		query.setParameterList("ancIds", entityIds, LongType.INSTANCE);
+		query.setParameterList("descIds", entityIds, LongType.INSTANCE);
+		query.executeUpdate();
 	}
 
 	@SuppressWarnings("unchecked")
 	@Override
 	public List<Long> findRequirementAttachmentListIds(List<Long> requirementIds) {
-		if (! requirementIds.isEmpty()){
-			Query query = getSession().getNamedQuery(
-					"requirement.findAllAttachmentLists");
-			query.setParameterList("requirementIds", requirementIds);
+		if (!requirementIds.isEmpty()) {
+			Query query = getSession().getNamedQuery("requirement.findAllAttachmentLists");
+			query.setParameterList(REQUIREMENT_IDS, requirementIds);
 			return query.list();
 		}
 		return Collections.emptyList();
 	}
 
-	
 	@Override
 	public void removeFromVerifiedRequirementLists(List<Long> requirementIds) {
-		if (! requirementIds.isEmpty()){
-			executeDeleteSQLQuery(NativeQueries.requirement_sql_removeFromVerifiedRequirementLists, "requirementIds", requirementIds);
+		if (!requirementIds.isEmpty()) {
+			executeDeleteSQLQuery(NativeQueries.requirement_sql_removeFromVerifiedRequirementLists, REQUIREMENT_IDS,
+					requirementIds);
 		}
-		
+
 	}
 
 	@Override
 	public void deleteRequirementAuditEvents(List<Long> requirementIds) {
-		if (! requirementIds.isEmpty()){
-			//we borrow the following from RequirementAuditDao
-			List<RequirementAuditEvent> events = executeSelectNamedQuery("requirementAuditEvent.findAllByRequirementIds", "ids", requirementIds);
-			
-			//because Hibernate sucks so much at polymorphic bulk delete, we're going to remove 
-			//them one by one.
-			for (RequirementAuditEvent event : events){
-				removeEntity(event);				
+		if (!requirementIds.isEmpty()) {
+			// we borrow the following from RequirementAuditDao
+			List<RequirementAuditEvent> events = executeSelectNamedQuery(
+					"requirementAuditEvent.findAllByRequirementIds", "ids", requirementIds);
+
+			// because Hibernate sucks so much at polymorphic bulk delete, we're going to remove
+			// them one by one.
+			for (RequirementAuditEvent event : events) {
+				removeEntity(event);
 			}
-			
+
 			flush();
 		}
-		
+
 	}
-	
+
 }

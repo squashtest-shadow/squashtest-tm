@@ -19,20 +19,16 @@
  *     along with this software.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-package org.squashtest.csp.tm.web.internal.model;
+package org.squashtest.csp.tm.web.internal.helper;
 
 /**
  * @author Gregory Fouquet
  * 
  */
-public class EntitySummary {
-	public final long id; // NOSONAR its a constant, no accessor required
-
-	/**
-	 * @param id
-	 */
-	public EntitySummary(long id) {
+public final class JEditablePostParams {
+	private JEditablePostParams() {
 		super();
-		this.id = id;
 	}
+
+	public static final String VALUE = "value";
 }

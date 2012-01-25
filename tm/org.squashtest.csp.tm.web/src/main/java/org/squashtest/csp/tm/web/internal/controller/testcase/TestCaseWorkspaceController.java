@@ -30,15 +30,13 @@ import org.springframework.web.servlet.ModelAndView;
 import org.squashtest.csp.tm.domain.testcase.TestCaseLibrary;
 import org.squashtest.csp.tm.service.WorkspaceService;
 import org.squashtest.csp.tm.web.internal.controller.generic.WorkspaceController;
-import org.squashtest.csp.tm.web.internal.model.builder.JsTreeNodeListBuilder;
-import org.squashtest.csp.tm.web.internal.model.jstree.JsTreeNode;
 
 @Controller
 @RequestMapping("/test-case-workspace")
 public class TestCaseWorkspaceController extends WorkspaceController<TestCaseLibrary> {
 	private WorkspaceService<TestCaseLibrary> workspaceService;
 
-	@ServiceReference(serviceBeanName="squashtest.tm.service.TestCasesWorkspaceService")
+	@ServiceReference(serviceBeanName = "squashtest.tm.service.TestCasesWorkspaceService")
 	public final void setWorkspaceService(WorkspaceService<TestCaseLibrary> testCaseWorkspaceService) {
 		this.workspaceService = testCaseWorkspaceService;
 	}
@@ -52,7 +50,7 @@ public class TestCaseWorkspaceController extends WorkspaceController<TestCaseLib
 	protected String getWorkspaceViewName() {
 		return "page/test-case-workspace";
 	}
-	
+
 	@Override
 	@RequestMapping(method = RequestMethod.GET)
 	public ModelAndView showWorkspace() {
@@ -60,9 +58,8 @@ public class TestCaseWorkspaceController extends WorkspaceController<TestCaseLib
 		ModelAndView mav = super.showWorkspace();
 		List<TestCaseLibrary> libraries = workspaceService.findAllEditableLibraries();
 		mav.addObject("editableLibraries", libraries);
-		
+
 		return mav;
 	}
-	
 
 }
