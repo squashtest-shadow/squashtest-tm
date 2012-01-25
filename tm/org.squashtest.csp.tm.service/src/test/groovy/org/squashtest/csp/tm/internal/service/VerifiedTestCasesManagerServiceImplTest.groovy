@@ -115,7 +115,7 @@ class VerifiedTestCasesManagerServiceImplTest extends Specification {
 		def requirement = new Requirement(requirementVersion)
 		requirement.increaseVersion()
 		def verifiedVersion = requirement.currentVersion
-		tc5.addVerifiedRequirement verifiedVersion
+		tc5.addVerifiedRequirementVersion verifiedVersion
 
 		when:
 		def rejected = service.addVerifyingTestCasesToRequirementVersion([5], 10)

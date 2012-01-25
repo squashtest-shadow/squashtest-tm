@@ -347,7 +347,7 @@ public class HibernateTestCaseDao extends HibernateEntityDao<TestCase> implement
 	private DetachedCriteria createFindAllByRequirementCriteria(RequirementSearchCriteria criteria) {
 		DetachedCriteria crit = DetachedCriteria.forClass(TestCase.class);
 		crit.setResultTransformer(Criteria.DISTINCT_ROOT_ENTITY);
-		DetachedCriteria reqCrit = crit.createCriteria("verifiedRequirements");
+		DetachedCriteria reqCrit = crit.createCriteria("verifiedRequirementVersions");
 
 		if (criteria.getName() != null) {
 			reqCrit.add(Restrictions.ilike("name", criteria.getName(), MatchMode.ANYWHERE));
@@ -392,8 +392,8 @@ public class HibernateTestCaseDao extends HibernateEntityDao<TestCase> implement
 	 */
 	private Criteria createFindAllVerifyingCriteria(PagingAndSorting sorting) {
 		Criteria crit = currentSession().createCriteria(TestCase.class, "TestCase");
-		crit.createAlias("verifiedRequirements", "RequirementVersion");
-		crit.createAlias("verifiedRequirements.requirement", "Requirement", Criteria.LEFT_JOIN);
+		crit.createAlias("verifiedRequirementVersions", "RequirementVersion");
+		crit.createAlias("verifiedRequirementVersions.requirement", "Requirement", Criteria.LEFT_JOIN);
 		crit.createAlias("project", "Project", Criteria.LEFT_JOIN);
 
 		PagingUtils.addPaging(crit, sorting);

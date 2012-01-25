@@ -84,7 +84,7 @@ public class ExpandedTestCase {
 		int level = 3;
 
 		// check if there's a stronger criticality and if this criticality is part of the ones selected for the research
-		for (RequirementVersion requirement : this.testCase.getVerifiedRequirements()) {
+		for (RequirementVersion requirement : this.testCase.getVerifiedRequirementVersions()) {
 			if (requirement.getCriticality().getLevel() < level
 					&& (selectedCriticalities.isEmpty() || selectedCriticalities.contains(requirement.getCriticality()))) {
 				level = (int) requirement.getCriticality().getLevel();

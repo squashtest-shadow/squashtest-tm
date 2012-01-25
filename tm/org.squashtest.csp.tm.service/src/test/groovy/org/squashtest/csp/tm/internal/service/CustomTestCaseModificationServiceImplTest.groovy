@@ -181,7 +181,7 @@ class CustomTestCaseModificationServiceImplTest extends Specification {
 		RequirementVersion directlyVerified = Mock()
 		directlyVerified.id >> 100L
 
-		testCase.getVerifiedRequirements() >> [directlyVerified]
+		testCase.getVerifiedRequirementVersions() >> [directlyVerified]
 
 
 		and:
@@ -208,7 +208,7 @@ class CustomTestCaseModificationServiceImplTest extends Specification {
 		TestCase testCase = Mock()
 		testCaseDao.findById(10L) >> testCase
 
-		testCase.getVerifiedRequirements() >> []
+		testCase.getVerifiedRequirementVersions() >> []
 
 
 		and : "the looked up test case calls a test case"
@@ -241,7 +241,7 @@ class CustomTestCaseModificationServiceImplTest extends Specification {
 		TestCase testCase = Mock()
 		testCaseDao.findById(10L) >> testCase
 
-		testCase.getVerifiedRequirements() >> []
+		testCase.getVerifiedRequirementVersions() >> []
 
 
 
@@ -278,7 +278,7 @@ class CustomTestCaseModificationServiceImplTest extends Specification {
 		TestCase testCase = Mock()
 		testCaseDao.findById(10L) >> testCase
 
-		testCase.getVerifiedRequirements() >> []
+		testCase.getVerifiedRequirementVersions() >> []
 
 		and: "the looked up test case calls no test case"
 		callStepManagerService.getTestCaseCallTree(10L) >> []

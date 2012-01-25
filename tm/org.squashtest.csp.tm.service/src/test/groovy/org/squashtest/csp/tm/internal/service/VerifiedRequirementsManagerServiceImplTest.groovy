@@ -116,7 +116,7 @@ class VerifiedRequirementsManagerServiceImplTest extends Specification {
 		service.addVerifiedRequirementsToTestCase([5, 15], 10)
 
 		then:
-		testCase.verifiedRequirements.containsExactly([rv5, rv15])
+		testCase.verifiedRequirementVersions.containsExactly([rv5, rv15])
 	}
 
 	def "should remove requirements from test case's verified requirements"() {
@@ -134,15 +134,15 @@ class VerifiedRequirementsManagerServiceImplTest extends Specification {
 
 		and: "a test case which verifies these requirements"
 		TestCase testCase = new TestCase()
-		testCase.addVerifiedRequirement req5
-		testCase.addVerifiedRequirement req15
+		testCase.addVerifiedRequirementVersion req5
+		testCase.addVerifiedRequirementVersion req15
 		testCaseDao.findById(10) >> testCase
 
 		when:
 		service.removeVerifiedRequirementsFromTestCase([15], 10)
 
 		then:
-		testCase.verifiedRequirements.containsExactly([req5])
+		testCase.verifiedRequirementVersions.containsExactly([req5])
 	}
 
 	def "should remove single requirement from test case's verified requirements"() {
@@ -153,13 +153,13 @@ class VerifiedRequirementsManagerServiceImplTest extends Specification {
 
 		and: " a test case which verifies this requirements"
 		TestCase testCase = new TestCase()
-		testCase.addVerifiedRequirement req
+		testCase.addVerifiedRequirementVersion req
 		testCaseDao.findById(10) >> testCase
 
 		when:
 		service.removeVerifiedRequirementFromTestCase(5, 10)
 
 		then:
-		testCase.verifiedRequirements.size() == 0
+		testCase.verifiedRequirementVersions.size() == 0
 	}
 }

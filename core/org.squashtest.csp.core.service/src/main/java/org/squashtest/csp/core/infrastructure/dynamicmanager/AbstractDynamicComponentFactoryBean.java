@@ -29,6 +29,8 @@ import java.util.List;
 import javax.annotation.PostConstruct;
 import javax.inject.Inject;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.BeanFactory;
 import org.springframework.beans.factory.FactoryBean;
 
@@ -36,7 +38,8 @@ import org.springframework.beans.factory.FactoryBean;
  * This class is an abstract Spring bean factory for "dynamic components". A "dynamic component" is a Spring managed
  * singleton (@Component) defined by its interface and which behaviour is dynamically determined by this interface.
  * 
- * For example, a "dynamic manager" would define a <code>void changeXxx(entityId, newValue)</code>. This method would fetch an entity from a predetermined type and change its <code>xxx</code> property to <code>newValue</code>. 
+ * For example, a "dynamic manager" would define a <code>void changeXxx(entityId, newValue)</code>. This method would
+ * fetch an entity from a predetermined type and change its <code>xxx</code> property to <code>newValue</code>.
  * 
  * @author Gregory Fouquet
  * 
@@ -44,6 +47,8 @@ import org.springframework.beans.factory.FactoryBean;
  * @param <ENTITY>
  */
 public abstract class AbstractDynamicComponentFactoryBean<COMPONENT> implements FactoryBean<COMPONENT> {
+	private static final Logger LOGGER = LoggerFactory.getLogger(AbstractDynamicComponentFactoryBean.class);
+
 	@Inject
 	private BeanFactory beanFactory;
 
@@ -60,7 +65,7 @@ public abstract class AbstractDynamicComponentFactoryBean<COMPONENT> implements 
 
 	/**
 	 * Custom manager, should either be intialized to handle custom services which cannot be adressed by dynamic methods
-	 * or {@link #lookupCustomComponent} should be set to true. 
+	 * or {@link #lookupCustomComponent} should be set to true.
 	 */
 	private Object customComponent;
 
@@ -83,8 +88,10 @@ public abstract class AbstractDynamicComponentFactoryBean<COMPONENT> implements 
 
 	@PostConstruct
 	protected final void initializeFactory() {
+		LOGGER.info("Initializing Dynamic component of type " + componentType.getSimpleName());
 		initializeComponentInvocationHandler();
 		initializeComponentProxy();
+		LOGGER.info("Dynamic component is initialized");
 	}
 
 	@Override
@@ -101,6 +108,8 @@ public abstract class AbstractDynamicComponentFactoryBean<COMPONENT> implements 
 	}
 
 	private void initializeComponentInvocationHandler() {
+		LOGGER.debug("Initializing invocation handlers");
+
 		if (componentInvocationHandler == null) {
 			List<DynamicComponentInvocationHandler> invocationHandlers = new ArrayList<DynamicComponentInvocationHandler>();
 			addCustomcomponentHandler(invocationHandlers); // IT MUST BE THE FIRST !
@@ -125,13 +134,21 @@ public abstract class AbstractDynamicComponentFactoryBean<COMPONENT> implements 
 	}
 
 	private void initializeCustomManager() {
-		if(cannotDetermineCustomComponentType()) {
-			return;
-		}
+		LOGGER.debug("Initializing custom component");
 		
 		if (customComponent == null && lookupCustomComponent) {
+			if (cannotDetermineCustomComponentType()) {
+				LOGGER.info("No custom component type could be found in Dynamic component "
+						+ componentType.getSimpleName());
+				return;
+			}
+
+			LOGGER.trace("Looking up for custom component");
+			
 			String customManagerName = componentType.getInterfaces()[0].getSimpleName();
 			customComponent = beanFactory.getBean(customManagerName);
+			
+			LOGGER.debug("Lookup found a custom component named : " + customManagerName);
 		}
 	}
 

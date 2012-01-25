@@ -121,11 +121,7 @@ class TestCaseTest extends Specification {
 		testCase.moveSteps(position, tomove);
 
 		then :
-		testCase.steps.collect{
-			it.action
-		} == result.collect{
-			it.action
-		}
+		testCase.steps.collect{ it.action } == result.collect{ it.action }
 	}
 
 
@@ -153,11 +149,7 @@ class TestCaseTest extends Specification {
 		testCase.moveSteps(position, tomove)
 
 		then :
-		testCase.steps.collect{
-			it.action
-		} == result.collect{
-			it.action
-		}
+		testCase.steps.collect{ it.action } == result.collect{ it.action }
 	}
 
 	def "should add a verified requirement"() {
@@ -165,24 +157,24 @@ class TestCaseTest extends Specification {
 		RequirementVersion r = new RequirementVersion()
 
 		when:
-		testCase.addVerifiedRequirement(r)
+		testCase.addVerifiedRequirementVersion(r)
 
 		then:
-		testCase.verifiedRequirements.contains r
+		testCase.verifiedRequirementVersions.contains r
 	}
 
 	def "should remove a verified requirement"() {
 		given:
 		RequirementVersion r = new RequirementVersion()
 		use (ReflectionCategory) {
-			TestCase.set field: "verifiedRequirements", of: testCase, to: ([r]as Set)
+			TestCase.set field: "verifiedRequirementVersions", of: testCase, to: ([r]as Set)
 		}
 
 		when:
 		testCase.removeVerifiedRequirement(r)
 
 		then:
-		!testCase.verifiedRequirements.contains(r)
+		!testCase.verifiedRequirementVersions.contains(r)
 	}
 
 	def "should return position of step"() {
@@ -256,13 +248,13 @@ class TestCaseTest extends Specification {
 		given:
 		TestCase source = new TestCase()
 		RequirementVersion req = new RequirementVersion(name: "")
-		source.addVerifiedRequirement req
+		source.addVerifiedRequirementVersion req
 
 		when:
 		def copy = source.createPastableCopy()
 
 		then:
-		copy.verifiedRequirements == source.verifiedRequirements
+		copy.verifiedRequirementVersions == source.verifiedRequirementVersions
 	}
 
 	def "when verifying a requirement, the requirement should also be verified by the test case"() {
@@ -273,7 +265,7 @@ class TestCaseTest extends Specification {
 		RequirementVersion req = new RequirementVersion()
 
 		when:
-		tc.addVerifiedRequirement req
+		tc.addVerifiedRequirementVersion req
 
 		then:
 		req.verifyingTestCases.contains tc
@@ -287,7 +279,7 @@ class TestCaseTest extends Specification {
 		RequirementVersion req = new RequirementVersion(status: RequirementStatus.OBSOLETE)
 
 		when:
-		tc.addVerifiedRequirement req
+		tc.addVerifiedRequirementVersion req
 
 		then:
 		thrown(RequirementNotLinkableException)
@@ -301,7 +293,7 @@ class TestCaseTest extends Specification {
 		RequirementVersion req = new RequirementVersion()
 		use (ReflectionCategory) {
 			RequirementVersion.set field: "verifyingTestCases", of: req, to: [tc]as Set
-			TestCase.set field: "verifiedRequirements", of: tc, to: [req]as Set
+			TestCase.set field: "verifiedRequirementVersions", of: tc, to: [req]as Set
 		}
 
 		when:
@@ -319,7 +311,7 @@ class TestCaseTest extends Specification {
 		RequirementVersion req = new RequirementVersion(status: RequirementStatus.OBSOLETE)
 		use (ReflectionCategory) {
 			RequirementVersion.set field: "verifyingTestCases", of: req, to: [tc]as Set
-			TestCase.set field: "verifiedRequirements", of: tc, to: [req]as Set
+			TestCase.set field: "verifiedRequirementVersions", of: tc, to: [req]as Set
 		}
 
 		when:
@@ -332,14 +324,14 @@ class TestCaseTest extends Specification {
 	def "should not verify 2 versions of same requirement"() {
 		given:
 		Requirement req = new Requirement(new RequirementVersion())
-		testCase.addVerifiedRequirement(req.currentVersion)
-		
+		testCase.addVerifiedRequirementVersion(req.currentVersion)
+
 		and:
 		req.increaseVersion()
-		
+
 		when:
-		testCase.addVerifiedRequirement(req.currentVersion)
-		
+		testCase.addVerifiedRequirementVersion(req.currentVersion)
+
 		then:
 		thrown(RequirementAlreadyVerifiedException)
 	}

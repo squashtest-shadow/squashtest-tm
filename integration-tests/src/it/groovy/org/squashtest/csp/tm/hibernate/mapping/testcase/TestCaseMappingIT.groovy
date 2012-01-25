@@ -208,7 +208,7 @@ class TestCaseMappingIT extends HibernateMappingSpecification {
 			it.get(TestCase, tc.id).addVerifiedRequirement(r.currentVersion)
 		})
 		TestCase res = doInTransaction ({
-			it.createQuery("from TestCase tc left join fetch tc.verifiedRequirements where tc.id = " + tc.id).uniqueResult()
+			it.createQuery("from TestCase tc left join fetch tc.verifiedRequirementVersions where tc.id = " + tc.id).uniqueResult()
 		})
 
 		then:
@@ -350,7 +350,7 @@ class TestCaseMappingIT extends HibernateMappingSpecification {
 		def res = {
 			use (HibernateOperationCategory) {
 				sessionFactory.doInSession {
-					it.createQuery("select tc from TestCase tc join fetch tc.steps join fetch tc.verifiedRequirements where tc.id = $tc.id").uniqueResult()
+					it.createQuery("select tc from TestCase tc join fetch tc.steps join fetch tc.verifiedRequirementVersions where tc.id = $tc.id").uniqueResult()
 				}
 			}
 		}

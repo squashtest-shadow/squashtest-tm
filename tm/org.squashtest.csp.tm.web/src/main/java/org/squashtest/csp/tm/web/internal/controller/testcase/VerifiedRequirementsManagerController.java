@@ -50,7 +50,7 @@ import org.squashtest.csp.tm.web.internal.model.jstree.JsTreeNode;
  */
 @Controller
 public class VerifiedRequirementsManagerController {
-	private static final String REQUIREMENTS_IDS_REQUEST_PARAM = "requirementsIds[]";
+	private static final String REQUIREMENTS_IDS = "requirementsIds[]";
 	
 	@Inject private Provider<DriveNodeBuilder> driveNodeBuilder;
 	
@@ -89,18 +89,18 @@ public class VerifiedRequirementsManagerController {
 		return linkableLibrariesModel;
 	}
 
-	@RequestMapping(value = "/test-cases/{testCaseId}/verified-requirements", method = RequestMethod.POST, params = REQUIREMENTS_IDS_REQUEST_PARAM)
+	@RequestMapping(value = "/test-cases/{testCaseId}/verified-requirements", method = RequestMethod.POST, params = REQUIREMENTS_IDS)
 	public @ResponseBody
-	void addVerifiedRequirementsToTestCase(@RequestParam(REQUIREMENTS_IDS_REQUEST_PARAM) List<Long> requirementsIds,
+	void addVerifiedRequirementsToTestCase(@RequestParam(REQUIREMENTS_IDS) List<Long> requirementsIds,
 			@PathVariable long testCaseId) {
 		verifiedRequirementsManagerService.addVerifiedRequirementsToTestCase(requirementsIds, testCaseId);
 		
 	}
 
-	@RequestMapping(value = "/test-cases/{testCaseId}/non-verified-requirements", method = RequestMethod.POST, params = REQUIREMENTS_IDS_REQUEST_PARAM)
+	@RequestMapping(value = "/test-cases/{testCaseId}/non-verified-requirements", method = RequestMethod.POST, params = REQUIREMENTS_IDS)
 	public @ResponseBody
 	void removeVerifiedRequirementsFromTestCase(
-			@RequestParam(REQUIREMENTS_IDS_REQUEST_PARAM) List<Long> requirementsIds, @PathVariable long testCaseId) {
+			@RequestParam(REQUIREMENTS_IDS) List<Long> requirementsIds, @PathVariable long testCaseId) {
 		verifiedRequirementsManagerService.removeVerifiedRequirementsFromTestCase(requirementsIds, testCaseId);
 		
 	}

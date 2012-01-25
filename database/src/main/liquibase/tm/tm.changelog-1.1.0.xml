@@ -204,7 +204,7 @@
 
 		<addColumn tableName="REQUIREMENT">
 			<column name="CURRENT_VERSION_ID" type="BIGINT(20)" remarks="FK to REQUIREMENT_VERSION linking to the requirement's latest version. Should not be null but the column is nullable because of cyclic relationship between the tables.">
-				<constraints foreignKeyName="fk_requirement_latest_version" references="REQUIREMENT_VERSION(RES_ID)" nullable="true" />					
+				<constraints foreignKeyName="fk_requirement_current_version" references="REQUIREMENT_VERSION(RES_ID)" nullable="true" />					
 			</column>
 		</addColumn>
 		

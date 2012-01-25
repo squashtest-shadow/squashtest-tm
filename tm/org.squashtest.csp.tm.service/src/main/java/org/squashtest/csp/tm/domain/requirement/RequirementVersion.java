@@ -61,7 +61,7 @@ public class RequirementVersion extends Resource implements AttachmentHolder {
 	 * Collection of {@link Test Cases} verifying by this {@link Requirement}
 	 */
 	@NotNull
-	@ManyToMany(mappedBy = "verifiedRequirements")
+	@ManyToMany(mappedBy = "verifiedRequirementVersions")
 	private final Set<TestCase> verifyingTestCases = new HashSet<TestCase>();
 
 	/***
@@ -130,7 +130,7 @@ public class RequirementVersion extends Resource implements AttachmentHolder {
 	 */
 	public void addVerifyingTestCase(@NotNull TestCase testCase) throws RequirementNotLinkableException,
 			RequirementAlreadyVerifiedException {
-		testCase.addVerifiedRequirement(this);
+		testCase.addVerifiedRequirementVersion(this);
 	}
 
 	public void removeVerifyingTestCase(@NotNull TestCase testCase) throws RequirementNotLinkableException {
@@ -259,7 +259,7 @@ public class RequirementVersion extends Resource implements AttachmentHolder {
 		copy.requirement = null;
 
 		for (TestCase verifying : this.verifyingTestCases) {
-			verifying.addCopyOfVerifiedRequirement(copy);
+			verifying.addCopyOfVerifiedRequirementVersion(copy);
 		}
 
 		attachCopiesOfAttachmentsTo(copy);

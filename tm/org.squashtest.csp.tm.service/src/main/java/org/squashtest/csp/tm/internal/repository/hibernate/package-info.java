@@ -97,7 +97,7 @@
 		@NamedQuery(name = "testCase.findAllByIdList", query = "from TestCase tc where id in (:testCasesIds) order by tc.name asc"),
 		@NamedQuery(name = "testCase.findAllByIdListNonOrdered", query = "from TestCase tc where id in (:testCasesIds)"),
 		@NamedQuery(name = "testCase.findAllTestSteps", query = "select tcase.steps from TestCase tcase where tcase.id= :testCaseId"),
-		@NamedQuery(name = "testCase.findById", query = "from TestCase tc left join fetch tc.steps left join fetch tc.verifiedRequirements where tc.id = :testCaseId"),
+		@NamedQuery(name = "testCase.findById", query = "from TestCase tc left join fetch tc.steps left join fetch tc.verifiedRequirementVersions where tc.id = :testCaseId"),
 		@NamedQuery(name = "testCase.findByIdWithInitializedSteps", query = "from TestCase tc left join fetch tc.steps s left join fetch s.attachmentList al left join fetch al.attachments where tc.id = :testCaseId"),
 		@NamedQuery(name = "testCase.findTestCaseByName", query = "from TestCaseLibraryNode tc where tc.name like :testCaseName order by tc.name asc"),
 		@NamedQuery(name = "testCase.findAllStepsByIdFiltered", query = "select s from TestCase tc join tc.steps s where tc.id = :testCaseId and index(s) between :firstIndex and :lastIndex order by index(s)"),
@@ -111,8 +111,8 @@
 		@NamedQuery(name = "testCase.findTestCasesHavingCallerDetails", query = "select distinct caller.id, caller.name, called.id, called.name from TestCase caller join caller.steps steps join steps.calledTestCase called where steps.class = CallTestStep and called.id in (:testCaseIds) group by caller, called"),
 		@NamedQuery(name = "testCase.findTestCasesHavingNoCallerDetails", query = "select nullif(1,1), nullif(1,1), called.id, called.name from TestCase called where called.id in (:nonCalledIds)"),
 		@NamedQuery(name = "testCase.findCalledTestCaseOfCallSteps", query = "select distinct called.id from CallTestStep callStep join callStep.calledTestCase called where callStep.id in (:testStepsIds)"),
-		@NamedQuery(name = "testCase.countByVerifiedRequirementVersion", query = "select count(tc) from TestCase tc join tc.verifiedRequirements vr where vr.id = :verifiedId"),
-		@NamedQuery(name = "testCase.findUnsortedAllByVerifiedRequirementVersion", query = "select tc from TestCase tc join tc.verifiedRequirements vr where vr.id = :requirementVersionId"),
+		@NamedQuery(name = "testCase.countByVerifiedRequirementVersion", query = "select count(tc) from TestCase tc join tc.verifiedRequirementVersions vr where vr.id = :verifiedId"),
+		@NamedQuery(name = "testCase.findUnsortedAllByVerifiedRequirementVersion", query = "select tc from TestCase tc join tc.verifiedRequirementVersions vr where vr.id = :requirementVersionId"),
 		//Queries on Campaign
 		@NamedQuery(name = "campaign.findNamesInCampaignStartingWith", query = "select i.name from Campaign c join c.iterations i where c.id = :containerId and i.name like :nameStart"),
 		@NamedQuery(name = "campaign.findAllNamesInCampaign", query = "select i.name from Campaign c join c.iterations i where c.id = :containerId "),
@@ -171,9 +171,9 @@
 		@NamedQuery(name = "requirementAuditEvent.findAllByRequirementVersionIds", query = "select rae from RequirementAuditEvent rae inner join rae.requirementVersion r where r.id in (:ids) order by rae.requirementVersion asc, rae.date desc"),
 		@NamedQuery(name = "requirementAuditEvent.findAllByRequirementIds", query = "select rae from RequirementAuditEvent rae inner join rae.requirementVersion rv where rv.requirement.id in (:ids) order by rae.requirementVersion asc, rae.date desc"),
 
-		@NamedQuery(name = "requirementVersion.countVerifiedByTestCases", query = "select count(distinct r) from TestCase tc join tc.verifiedRequirements r where tc.id in (:verifiersIds)"),
-		@NamedQuery(name = "RequirementVersion.countVerifiedByTestCase", query = "select count(r) from TestCase tc join tc.verifiedRequirements r where tc.id = ?"),
-		@NamedQuery(name = "requirementVersion.findDistinctRequirementsCriticalitiesVerifiedByTestCases", query = "select distinct r.criticality from TestCase tc join tc.verifiedRequirements r where tc.id in (:testCasesIds) "),
+		@NamedQuery(name = "requirementVersion.countVerifiedByTestCases", query = "select count(distinct r) from TestCase tc join tc.verifiedRequirementVersions r where tc.id in (:verifiersIds)"),
+		@NamedQuery(name = "RequirementVersion.countVerifiedByTestCase", query = "select count(r) from TestCase tc join tc.verifiedRequirementVersions r where tc.id = ?"),
+		@NamedQuery(name = "requirementVersion.findDistinctRequirementsCriticalitiesVerifiedByTestCases", query = "select distinct r.criticality from TestCase tc join tc.verifiedRequirementVersions r where tc.id in (:testCasesIds) "),
 		@NamedQuery(name = "requirementVersion.findDistinctRequirementsCriticalities", query = "select distinct r.criticality from RequirementVersion as r  where r.id in (:requirementsIds) "),
 
 		/* ********************************************** batch deletion-related queries **************************************************** */

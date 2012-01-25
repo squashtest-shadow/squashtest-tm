@@ -85,7 +85,7 @@ public class TestCase extends TestCaseLibraryNode implements AttachmentHolder {
 	 */
 	@ManyToMany
 	@JoinTable(name = "TEST_CASE_VERIFIED_REQUIREMENT_VERSION", joinColumns = @JoinColumn(name = "VERIFYING_TEST_CASE_ID"), inverseJoinColumns = @JoinColumn(name = "VERIFIED_REQ_VERSION_ID"))
-	private final Set<RequirementVersion> verifiedRequirements = new HashSet<RequirementVersion>();
+	private final Set<RequirementVersion> verifiedRequirementVersions = new HashSet<RequirementVersion>();
 
 	@OneToOne(cascade = { CascadeType.PERSIST, CascadeType.MERGE })
 	@JoinColumn(name = "ATTACHMENT_LIST_ID")
@@ -167,8 +167,8 @@ public class TestCase extends TestCaseLibraryNode implements AttachmentHolder {
 	 * 
 	 * @return UNMODIFIABLE VIEW of verified requirements.
 	 */
-	public Set<RequirementVersion> getVerifiedRequirements() {
-		return Collections.unmodifiableSet(verifiedRequirements);
+	public Set<RequirementVersion> getVerifiedRequirementVersions() {
+		return Collections.unmodifiableSet(verifiedRequirementVersions);
 	}
 
 	@Override
@@ -185,7 +185,7 @@ public class TestCase extends TestCaseLibraryNode implements AttachmentHolder {
 	 * @throws RequirementAlreadyVerifiedException
 	 *             if this test case already verifies another version of the same requirment
 	 */
-	public void addVerifiedRequirement(@NotNull RequirementVersion requirementVersion)
+	public void addVerifiedRequirementVersion(@NotNull RequirementVersion requirementVersion)
 			throws RequirementAlreadyVerifiedException {
 		checkRequirementNotVerified(requirementVersion);
 		forceAddVerifiedRequirement(requirementVersion);
@@ -195,13 +195,13 @@ public class TestCase extends TestCaseLibraryNode implements AttachmentHolder {
 	 * This should be used when making a copy of a {@link RequirementVersion} to have the copy verified by this
 	 * {@link TestCase}.
 	 * 
-	 * When making a copy of a requirement, we cannot use {@link #addVerifiedRequirement(RequirementVersion)} because of
+	 * When making a copy of a requirement, we cannot use {@link #addVerifiedRequirementVersion(RequirementVersion)} because of
 	 * the single requirment check.
 	 * 
 	 * @param requirementVersionCopy
 	 *            a copy of an existing requirement version. It should not have a requirement yet.
 	 */
-	public void addCopyOfVerifiedRequirement(RequirementVersion requirementVersionCopy) {
+	public void addCopyOfVerifiedRequirementVersion(RequirementVersion requirementVersionCopy) {
 		if (requirementVersionCopy.getRequirement() != null) {
 			throw new IllegalArgumentException("RequirementVersion should not be associated to a requirement yet");
 		}
@@ -211,7 +211,7 @@ public class TestCase extends TestCaseLibraryNode implements AttachmentHolder {
 
 	private void forceAddVerifiedRequirement(RequirementVersion requirementVersionCopy) {
 		requirementVersionCopy.notifyVerifiedBy(this);
-		verifiedRequirements.add(requirementVersionCopy);
+		verifiedRequirementVersions.add(requirementVersionCopy);
 	}
 
 	/**
@@ -220,7 +220,7 @@ public class TestCase extends TestCaseLibraryNode implements AttachmentHolder {
 	private void checkRequirementNotVerified(RequirementVersion version) {
 		Requirement req = version.getRequirement();
 
-		for (RequirementVersion verified : verifiedRequirements) {
+		for (RequirementVersion verified : verifiedRequirementVersions) {
 			if (req.equals(verified.getRequirement())) {
 				throw new RequirementAlreadyVerifiedException(version, this);
 			}
@@ -230,7 +230,7 @@ public class TestCase extends TestCaseLibraryNode implements AttachmentHolder {
 
 	public void removeVerifiedRequirement(@NotNull RequirementVersion requirement) {
 		requirement.notifyNoLongerVerifiedBy(this);
-		verifiedRequirements.remove(requirement);
+		verifiedRequirementVersions.remove(requirement);
 	}
 
 	@Override
@@ -268,8 +268,8 @@ public class TestCase extends TestCaseLibraryNode implements AttachmentHolder {
 	}
 
 	private void verifiesRequirementsVerifiedBy(TestCase source) {
-		for (RequirementVersion requirement : source.verifiedRequirements) {
-			this.addVerifiedRequirement(requirement);
+		for (RequirementVersion requirement : source.verifiedRequirementVersions) {
+			this.addVerifiedRequirementVersion(requirement);
 		}
 	}
 

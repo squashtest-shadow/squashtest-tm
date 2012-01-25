@@ -285,7 +285,7 @@ public class CustomTestCaseModificationServiceImpl implements CustomTestCaseModi
 
 		TestCase mainTestCase = testCaseDao.findById(testCaseId);
 
-		List<VerifiedRequirement> verifiedReqs = buildVerifiedRequirementList(mainTestCase.getVerifiedRequirements(),
+		List<VerifiedRequirement> verifiedReqs = buildVerifiedRequirementList(mainTestCase.getVerifiedRequirementVersions(),
 				verified);
 
 		long verifiedCount = requirementVersionDao.countVerifiedByTestCases(calleesIds);

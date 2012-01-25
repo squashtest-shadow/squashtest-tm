@@ -34,7 +34,7 @@ import spock.lang.Specification;
 import spock.lang.Unroll;
 
 /**
- * @author Gregory 
+ * @author Gregory
  *
  */
 class RequirementVersionTest extends Specification {
@@ -315,7 +315,7 @@ class RequirementVersionTest extends Specification {
 		requirementVersion.addVerifyingTestCase tc
 
 		then:
-		tc.verifiedRequirements.contains requirementVersion
+		tc.verifiedRequirementVersions.contains requirementVersion
 	}
 
 	def "requirement version should have an attachment list"() {
@@ -332,8 +332,8 @@ class RequirementVersionTest extends Specification {
 		source.versionNumber = 10
 		use (ReflectionCategory) {
 			// reflection on fields to override workflow
-			RequirementVersion.set field: "status", of: source, to: RequirementStatus.APPROVED 
-			RequirementVersion.set field: "criticality", of: source, to: RequirementCriticality.MAJOR 
+			RequirementVersion.set field: "status", of: source, to: RequirementStatus.APPROVED
+			RequirementVersion.set field: "criticality", of: source, to: RequirementCriticality.MAJOR
 		}
 
 		Requirement   req = new Requirement(source);
@@ -345,7 +345,7 @@ class RequirementVersionTest extends Specification {
 		and:
 		Attachment attachment = new Attachment()
 		source.attachmentList.addAttachment attachment
-		
+
 		when:
 		RequirementVersion copy = source.createPastableCopy()
 
@@ -359,12 +359,12 @@ class RequirementVersionTest extends Specification {
 		copy.versionNumber == source.versionNumber
 
 		copy.verifyingTestCases.containsExactly([verifying])
-		verifying.verifiedRequirements.containsExactly([source, copy])
+		verifying.verifiedRequirementVersions.containsExactly([source, copy])
 
 		copy.attachmentList.allAttachments.size() == 1
 		!copy.attachmentList.allAttachments.contains(attachment)
 	}
-	
+
 	def "should create next version"() {
 		given:
 		RequirementVersion previousVersion = new RequirementVersion()
@@ -374,8 +374,8 @@ class RequirementVersionTest extends Specification {
 		previousVersion.versionNumber = 10
 		use (ReflectionCategory) {
 			// reflection on fields to override workflow
-			RequirementVersion.set field: "status", of: previousVersion, to: RequirementStatus.APPROVED 
-			RequirementVersion.set field: "criticality", of: previousVersion, to: RequirementCriticality.MAJOR 
+			RequirementVersion.set field: "status", of: previousVersion, to: RequirementStatus.APPROVED
+			RequirementVersion.set field: "criticality", of: previousVersion, to: RequirementCriticality.MAJOR
 		}
 
 		Requirement   req = new Requirement(previousVersion)
@@ -387,7 +387,7 @@ class RequirementVersionTest extends Specification {
 		and:
 		Attachment attachment = new Attachment()
 		previousVersion.attachmentList.addAttachment attachment
-		
+
 		when:
 		RequirementVersion nextVersion = previousVersion.createNextVersion()
 
@@ -405,5 +405,5 @@ class RequirementVersionTest extends Specification {
 		nextVersion.attachmentList.allAttachments.size() == 1
 		!nextVersion.attachmentList.allAttachments.contains(attachment)
 	}
-	
+
 }

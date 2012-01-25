@@ -102,7 +102,7 @@ public class VerifiedRequirementsManagerServiceImpl implements VerifiedRequireme
 			TestCase testCase = testCaseDao.findById(testCaseId);
 			if (!requirements.isEmpty()) {
 				for (Requirement requirement : requirements) {
-					testCase.addVerifiedRequirement(requirement.getCurrentVersion());
+					testCase.addVerifiedRequirementVersion(requirement.getCurrentVersion());
 				}
 			}
 			List<RequirementVersion> requirementVersions = extractVersions(requirements);
