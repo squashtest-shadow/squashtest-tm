@@ -373,9 +373,7 @@
 			Add Prerequisite collumn to the test_case table
 		</comment>
 		<addColumn tableName="TEST_CASE" >
-			<column name="PREREQUISITE" type="CLOB" defaultValue="" remarks="the prerequisite for a test_case">
-				<constraints nullable="false"/>
-			</column>
+			<column name="PREREQUISITE" type="CLOB" defaultValue="NULL" remarks="the prerequisite for a test_case"/>
 		</addColumn>
 	</changeSet>
 	
