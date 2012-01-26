@@ -26,6 +26,7 @@ import java.util.List;
 import org.springframework.transaction.annotation.Transactional;
 import org.squashtest.csp.tm.domain.campaign.Iteration;
 import org.squashtest.csp.tm.domain.campaign.IterationTestPlanItem;
+import org.squashtest.csp.tm.domain.campaign.TestSuite;
 import org.squashtest.csp.tm.domain.execution.Execution;
 import org.squashtest.csp.tm.domain.testcase.TestCase;
 import org.squashtest.csp.tm.infrastructure.filter.CollectionSorting;
@@ -93,5 +94,7 @@ public interface CustomIterationModificationService {
 	 * @return
 	 */
 	List<Long> deleteNodes(List<Long> targetIds);
+
+	void addTestSuite(long iterationId, TestSuite suite);
 
 }

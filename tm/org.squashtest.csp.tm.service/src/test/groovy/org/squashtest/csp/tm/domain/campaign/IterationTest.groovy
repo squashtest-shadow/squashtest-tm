@@ -22,6 +22,8 @@ package org.squashtest.csp.tm.domain.campaign
 
 import org.h2.util.New;
 import java.text.SimpleDateFormat
+
+import org.squashtest.csp.tm.domain.DuplicateNameException;
 import org.squashtest.csp.tm.domain.attachment.Attachment
 import org.squashtest.csp.tm.domain.attachment.AttachmentContent;
 import org.squashtest.csp.tm.domain.attachment.AttachmentList
@@ -467,5 +469,54 @@ class IterationTest extends Specification {
 
 		then :
 		iteration.actualEndDate == null
+	}
+	
+	def "should tell that the suite name is available"(){
+		given :
+			Iteration iteration = new Iteration();
+			iteration.testSuites = [new TestSuite(name:"suite1"), new TestSuite(name:"suite2")] as Set
+			
+		when :
+			def res =iteration.checkSuiteNameAvailable("suite3")
+		then :
+			res == true;
+	}
+	
+	def "should tell that the suite name is not available"(){
+		given :
+			Iteration iteration = new Iteration();
+			iteration.testSuites = [new TestSuite(name:"suite1"), new TestSuite(name:"suite2")] as Set
+			
+		when :
+			def res =iteration.checkSuiteNameAvailable("suite2")
+		then :
+			res == false;
+	}
+	
+	def "should add a suite to an iteration"(){
+		given :
+			Iteration iteration = new Iteration();
+			iteration.testSuites = [new TestSuite(name:"suite1"), new TestSuite(name:"suite2")] as Set
+			
+		when :
+			def suite = new TestSuite(name:"suite3")
+			iteration.addTestSuite(suite)
+		then :
+			iteration.testSuites.contains(suite)
+		
+	}
+	
+	
+	def "should rant because the iteration already have a suite with same name"(){
+		given :
+			Iteration iteration = new Iteration();
+			iteration.testSuites = [new TestSuite(name:"suite1"), new TestSuite(name:"suite2")] as Set
+			
+		when :
+			def suite = new TestSuite(name:"suite2")
+			iteration.addTestSuite(suite)
+		then :
+			thrown DuplicateNameException
+		
 	}
 }

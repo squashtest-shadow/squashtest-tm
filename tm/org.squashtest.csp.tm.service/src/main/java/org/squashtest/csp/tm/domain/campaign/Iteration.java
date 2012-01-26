@@ -23,9 +23,12 @@ package org.squashtest.csp.tm.domain.campaign;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Date;
+import java.util.HashSet;
+import java.util.Iterator;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.ListIterator;
+import java.util.Set;
 
 import javax.persistence.Basic;
 import javax.persistence.CascadeType;
@@ -43,8 +46,10 @@ import javax.persistence.OneToOne;
 import javax.persistence.OrderColumn;
 import javax.validation.constraints.NotNull;
 
+import org.hibernate.annotations.Cascade;
 import org.hibernate.validator.constraints.NotBlank;
 import org.squashtest.csp.core.security.annotation.AclConstrainedObject;
+import org.squashtest.csp.tm.domain.DuplicateNameException;
 import org.squashtest.csp.tm.domain.UnknownEntityException;
 import org.squashtest.csp.tm.domain.attachment.Attachment;
 import org.squashtest.csp.tm.domain.attachment.AttachmentHolder;
@@ -94,13 +99,12 @@ public class Iteration implements AttachmentHolder {
 	@JoinTable(name = "CAMPAIGN_ITERATION", joinColumns = @JoinColumn(name = "ITERATION_ID", updatable = false, insertable = false), inverseJoinColumns = @JoinColumn(name = "CAMPAIGN_ID", updatable = false, insertable = false))
 	private Campaign campaign;
 
+	/* 
+		FIXME TEST_PLAN might be a little more appropriate. Don't forget to fix the hql/criteria queries as well
+	*/
 	@OneToMany(cascade = { CascadeType.PERSIST, CascadeType.MERGE })
 	@OrderColumn(name = "ITEM_TEST_PLAN_ORDER")
-	// FIXME TEST_PLAN might be a little more appropriate than
-	// ITEM_TEST_PLAN_LIST...
 	@JoinTable(name = "ITEM_TEST_PLAN_LIST", joinColumns = @JoinColumn(name = "ITERATION_ID"), inverseJoinColumns = @JoinColumn(name = "ITEM_TEST_PLAN_ID"))
-	// FIXME Should be testPlan. Also include the hql named queries and criteria
-	// queries.
 	private final List<IterationTestPlanItem> testPlans = new ArrayList<IterationTestPlanItem>();
 
 	/* *********************** attachment attributes ************************ */
@@ -108,12 +112,16 @@ public class Iteration implements AttachmentHolder {
 	@OneToOne(cascade = { CascadeType.PERSIST, CascadeType.MERGE })
 	@JoinColumn(name = "ATTACHMENT_LIST_ID")
 	private final AttachmentList attachmentList = new AttachmentList();
+	
 
-	/* *********************** / attachment attributes ************************ */
+	/* *********************** Test suites ********************************** */
+	
+	@OneToMany(cascade = { CascadeType.ALL })
+	@JoinTable(name = "ITERATION_TEST_SUITE", joinColumns = @JoinColumn(name = "ITERATION_ID"), inverseJoinColumns = @JoinColumn(name = "TEST_SUITE_ID"))
+	private Set<TestSuite> testSuites = new HashSet<TestSuite>();
 
-	public List<IterationTestPlanItem> getTestPlans() {
-		return testPlans;
-	}
+	
+	/* ********************************************* METHODS ********************************************** */
 
 	/**
 	 * That method will add an Execution to the iteration. In order to detect which IterationTestPlanItem we will attach
@@ -136,35 +144,6 @@ public class Iteration implements AttachmentHolder {
 
 	}
 
-	public List<TestCase> getPlannedTestCase() {
-		List<TestCase> list = new LinkedList<TestCase>();
-		for (IterationTestPlanItem iterTestPlan : testPlans) {
-			list.add(iterTestPlan.getReferencedTestCase());
-		}
-		return list;
-	}
-
-	// adds only if not already referenced
-	public void addTestPlan(@NotNull IterationTestPlanItem testPlan) {
-		if (testPlan.getReferencedTestCase() == null) {
-			return;
-		}
-		IterationTestPlanItem localTestPlan = getTestPlanForTestCaseId(testPlan.getReferencedTestCase().getId());
-
-		if (localTestPlan == null) {
-			testPlans.add(testPlan);
-		}
-
-	}
-
-	public void removeTestPlan(@NotNull IterationTestPlanItem testPlan) {
-		IterationTestPlanItem localTestPlan = getTestPlan(testPlan.getId());
-
-		if (localTestPlan != null) {
-			testPlans.remove(testPlan);
-		}
-
-	}
 
 	// flattened list of the executions
 	public List<Execution> getExecutions() {
@@ -277,17 +256,6 @@ public class Iteration implements AttachmentHolder {
 		return scheduledPeriod;
 	}
 
-	// get a test plan if the provided test case is part of it
-	// returns null otherwhise
-	public IterationTestPlanItem getTestPlanForTestCaseId(Long testCaseId) {
-		for (IterationTestPlanItem iterTestPlan : testPlans) {
-			if ((!iterTestPlan.isTestCaseDeleted())
-					&& (iterTestPlan.getReferencedTestCase().getId().equals(testCaseId))) {
-				return iterTestPlan;
-			}
-		}
-		return null;
-	}
 
 	public IterationTestPlanItem getTestPlan(Long testPlanId) {
 		for (IterationTestPlanItem iterTestPlan : testPlans) {
@@ -296,14 +264,6 @@ public class Iteration implements AttachmentHolder {
 			}
 		}
 		throw new UnknownEntityException(testPlanId, IterationTestPlanItem.class);
-	}
-
-	public boolean isTestCasePlanned(Long testCaseId) {
-		return (getTestPlanForTestCaseId(testCaseId) != null);
-	}
-
-	public boolean isTestCasePlanned(TestCase testCase) {
-		return isTestCasePlanned(testCase.getId());
 	}
 
 	public Iteration createCopy() {
@@ -347,7 +307,50 @@ public class Iteration implements AttachmentHolder {
 			clone.setActualEndDate((Date) this.getActualEndDate().clone());
 		}
 	}
+	
+	
+	
+	/* **************************************** TEST PLAN **************************************************** */
+	
+	public List<IterationTestPlanItem> getTestPlans() {
+		return testPlans;
+	}
 
+	
+
+	public List<TestCase> getPlannedTestCase() {
+		List<TestCase> list = new LinkedList<TestCase>();
+		for (IterationTestPlanItem iterTestPlan : testPlans) {
+			list.add(iterTestPlan.getReferencedTestCase());
+		}
+		return list;
+	}
+
+
+	public void removeTestPlan(@NotNull IterationTestPlanItem testPlan) {
+		IterationTestPlanItem localTestPlan = getTestPlan(testPlan.getId());
+
+		if (localTestPlan != null) {
+			testPlans.remove(testPlan);
+		}
+
+	}
+	
+
+	// adds only if not already referenced
+	public void addTestPlan(@NotNull IterationTestPlanItem testPlan) {
+		if (testPlan.getReferencedTestCase() == null) {
+			return;
+		}
+		IterationTestPlanItem localTestPlan = getTestPlanForTestCaseId(testPlan.getReferencedTestCase().getId());
+
+		if (localTestPlan == null) {
+			testPlans.add(testPlan);
+		}
+
+	}
+	
+	
 	/***
 	 * Method which returns the position of a test case in the current iteration
 	 * 
@@ -414,8 +417,53 @@ public class Iteration implements AttachmentHolder {
 		testPlans.remove(currentPosition);
 		testPlans.add(newPosition, testCaseToMove);
 	}
+	
 
-	/* *************** Attachable implementation ****************** */
+	public boolean isTestCasePlanned(Long testCaseId) {
+		return (getTestPlanForTestCaseId(testCaseId) != null);
+	}
+
+	public boolean isTestCasePlanned(TestCase testCase) {
+		return isTestCasePlanned(testCase.getId());
+	}
+
+
+	// get a test plan if the provided test case is part of it
+	// returns null otherwise
+	public IterationTestPlanItem getTestPlanForTestCaseId(Long testCaseId) {
+		for (IterationTestPlanItem iterTestPlan : testPlans) {
+			if ((!iterTestPlan.isTestCaseDeleted())
+					&& (iterTestPlan.getReferencedTestCase().getId().equals(testCaseId))) {
+				return iterTestPlan;
+			}
+		}
+		return null;
+	}
+	
+	
+	/* ********************************************** TEST SUITE ********************************************************* */
+	
+	public Set<TestSuite> getTestSuites(){
+		return testSuites;
+	}
+	
+	public void addTestSuite(TestSuite suite){
+		if (! checkSuiteNameAvailable(suite.getName())){
+			throw new DuplicateNameException("cannot add suite to iteration "+getName()+" : suite named "+suite.getName()+" already exists");
+		}
+		testSuites.add(suite);
+	}
+	
+	private boolean checkSuiteNameAvailable(String name){
+		for (TestSuite suite : testSuites){
+			if (suite.getName().equals(name)){
+				return false;
+			}
+		}
+		return true;
+	}
+
+	/* ********************************************** Attachable implementation ****************************************** */
 
 	@Override
 	public AttachmentList getAttachmentList() {
@@ -427,7 +475,7 @@ public class Iteration implements AttachmentHolder {
 		return campaign.getProject();
 	}
 
-	/* ******** dates autosetting code ***** */
+	/* *********************************************** dates autosetting code ******************************************** */
 
 	/**
 	 * If the iteration have autodates set, they will be updated accordingly.

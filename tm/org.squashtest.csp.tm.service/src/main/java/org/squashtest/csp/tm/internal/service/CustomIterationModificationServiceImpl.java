@@ -35,6 +35,7 @@ import org.squashtest.csp.tm.domain.campaign.Campaign;
 import org.squashtest.csp.tm.domain.campaign.CampaignTestPlanItem;
 import org.squashtest.csp.tm.domain.campaign.Iteration;
 import org.squashtest.csp.tm.domain.campaign.IterationTestPlanItem;
+import org.squashtest.csp.tm.domain.campaign.TestSuite;
 import org.squashtest.csp.tm.domain.execution.Execution;
 import org.squashtest.csp.tm.domain.execution.ExecutionStep;
 import org.squashtest.csp.tm.domain.testcase.TestCase;
@@ -46,6 +47,7 @@ import org.squashtest.csp.tm.internal.repository.ExecutionDao;
 import org.squashtest.csp.tm.internal.repository.ExecutionStepDao;
 import org.squashtest.csp.tm.internal.repository.ItemTestPlanDao;
 import org.squashtest.csp.tm.internal.repository.IterationDao;
+import org.squashtest.csp.tm.internal.repository.TestSuiteDao;
 import org.squashtest.csp.tm.service.CallStepManagerService;
 import org.squashtest.csp.tm.service.CustomIterationModificationService;
 import org.squashtest.csp.tm.service.deletion.SuppressionPreviewReport;
@@ -57,6 +59,8 @@ public class CustomIterationModificationServiceImpl implements CustomIterationMo
 	private CampaignDao campaignDao;
 	@Inject
 	private IterationDao iterationDao;
+	@Inject 
+	private TestSuiteDao suiteDao;	
 	@Inject
 	private ExecutionDao executionDao;
 	@Inject
@@ -238,5 +242,14 @@ public class CustomIterationModificationServiceImpl implements CustomIterationMo
 	@Override
 	public List<Long> deleteNodes(List<Long> targetIds) {
 		return deletionHandler.deleteIterations(targetIds);
+	}
+
+	@Override
+	@PreAuthorize("hasPermission(#iterationId, 'org.squashtest.csp.tm.domain.campaign.Iteration', 'WRITE') "
+			+ "or hasRole('ROLE_ADMIN')")
+	public void addTestSuite(long iterationId, TestSuite suite) {
+		suiteDao.persist(suite);
+		Iteration iteration = iterationDao.findAndInit(iterationId);
+		iteration.addTestSuite(suite);
 	}
 }
