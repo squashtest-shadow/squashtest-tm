@@ -40,7 +40,7 @@ import javax.validation.constraints.NotNull;
 import org.squashtest.csp.core.security.annotation.InheritsAcls;
 import org.squashtest.csp.tm.domain.IllegalRequirementModificationException;
 import org.squashtest.csp.tm.domain.RequirementAlreadyVerifiedException;
-import org.squashtest.csp.tm.domain.RequirementNotLinkableException;
+import org.squashtest.csp.tm.domain.RequirementVersionNotLinkableException;
 import org.squashtest.csp.tm.domain.attachment.Attachment;
 import org.squashtest.csp.tm.domain.attachment.AttachmentHolder;
 import org.squashtest.csp.tm.domain.attachment.AttachmentList;
@@ -49,9 +49,9 @@ import org.squashtest.csp.tm.domain.testcase.TestCase;
 
 /**
  * Represents a version of a requirement.
- * 
+ *
  * @author Gregory Fouquet
- * 
+ *
  */
 @Entity
 @PrimaryKeyJoinColumn(name = "RES_ID")
@@ -122,24 +122,24 @@ public class RequirementVersion extends Resource implements AttachmentHolder {
 	}
 
 	/**
-	 * 
+	 *
 	 * @param testCase
-	 * @throws RequirementNotLinkableException
+	 * @throws RequirementVersionNotLinkableException
 	 * @throws RequirementAlreadyVerifiedException
 	 *             if another version of the same requirement is already verified by this test case.
 	 */
-	public void addVerifyingTestCase(@NotNull TestCase testCase) throws RequirementNotLinkableException,
+	public void addVerifyingTestCase(@NotNull TestCase testCase) throws RequirementVersionNotLinkableException,
 			RequirementAlreadyVerifiedException {
 		testCase.addVerifiedRequirementVersion(this);
 	}
 
-	public void removeVerifyingTestCase(@NotNull TestCase testCase) throws RequirementNotLinkableException {
+	public void removeVerifyingTestCase(@NotNull TestCase testCase) throws RequirementVersionNotLinkableException {
 		testCase.removeVerifiedRequirement(this);
 	}
 
 	private void checkLinkable() {
 		if (!status.isRequirementLinkable()) {
-			throw new RequirementNotLinkableException();
+			throw new RequirementVersionNotLinkableException(this);
 		}
 	}
 
@@ -152,7 +152,7 @@ public class RequirementVersion extends Resource implements AttachmentHolder {
 
 	/***
 	 * Set the requirement reference
-	 * 
+	 *
 	 * @param reference
 	 */
 	public void setReference(String reference) {
@@ -169,7 +169,7 @@ public class RequirementVersion extends Resource implements AttachmentHolder {
 
 	/***
 	 * Set the requirement criticality
-	 * 
+	 *
 	 * @param criticality
 	 */
 	public void setCriticality(RequirementCriticality criticality) {
@@ -199,7 +199,7 @@ public class RequirementVersion extends Resource implements AttachmentHolder {
 	}
 
 	/**
-	 * 
+	 *
 	 * @return <code>true</code> if this requirement can be (un)linked by new verifying testcases
 	 */
 	public boolean isLinkable() {
@@ -210,7 +210,7 @@ public class RequirementVersion extends Resource implements AttachmentHolder {
 	 * Tells if this requirement's "intrinsic" properties can be modified. The following are not considered as
 	 * "intrinsic" properties" : {@link #verifyingTestCases} are governed by the {@link #isLinkable()} state,
 	 * {@link #status} is governed by itself.
-	 * 
+	 *
 	 * @return <code>true</code> if this requirement's properties can be modified.
 	 */
 	public boolean isModifiable() {
@@ -245,7 +245,7 @@ public class RequirementVersion extends Resource implements AttachmentHolder {
 
 	/**
 	 * Should be used once before this entity is persisted by the requirement to which this version is added.
-	 * 
+	 *
 	 * @param requirement
 	 */
 	/* package-private */void setRequirement(Requirement requirement) {
@@ -288,7 +288,7 @@ public class RequirementVersion extends Resource implements AttachmentHolder {
 
 	/**
 	 * Creates a {@link RequirementVersion} to be used as the one right after this RequirementVersion.
-	 * 
+	 *
 	 * @return
 	 */
 	/* package-private */RequirementVersion createNextVersion() {

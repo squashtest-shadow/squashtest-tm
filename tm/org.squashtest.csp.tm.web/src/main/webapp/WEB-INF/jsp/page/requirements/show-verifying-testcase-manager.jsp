@@ -74,11 +74,33 @@
 				$("#back").button().click(function() {
 					document.location.href="${backUrl}";
 				});
+
+				var summaryMessages = {
+					alreadyVerifiedRejections: "<f:message key='requirement-version.verifying-test-case.already-verified-rejection' />",
+					notLinkableRejections: "<f:message key='requirement-version.verifying-test-case.not-linkable-rejection' />"
+				};
+				
+				var showAddSummary = function(summary) {
+					if (summary) {
+						var summaryRoot = $( "#add-summary-dialog > ul" );
+						summaryRoot.empty();
+						
+						for(rejectionType in summary) {
+							var message = summaryMessages[rejectionType];
+							
+							if (message) {
+								summaryRoot.append('<li>' + message + '</li>');
+							}
+						}
+						
+						if (summaryRoot.children().length > 0) {
+							$( "#add-summary-dialog" ).messageDialog("open");
+						}
+					}					
+				};
 				
 				var addHandler = function(data) {
-					if (data && data.hasRejections) {
-						$( "#add-summary-dialog" ).messageDialog("open");
-					}
+					showAddSummary(data);
 					refreshVerifyingTestCases();
 				};
 				
@@ -113,8 +135,8 @@
 
 	<jsp:attribute name="tablePane">
 		<aggr:verifying-test-cases-table />
-		<div id="add-summary-dialog" class="not-displayed" title="<f:message key='requirement-version.verifying-test-case.rejection-dialog.title' />">
-			<f:message key="requirement-version.verifying-test-case.rejection-dialog.message" />
+		<div id="add-summary-dialog" class="not-displayed" title="<f:message key='requirement-version.verifying-test-case.add-summary-dialog.title' />">
+			<ul><li>summary message here</li></ul>
 		</div>
 	</jsp:attribute>
 

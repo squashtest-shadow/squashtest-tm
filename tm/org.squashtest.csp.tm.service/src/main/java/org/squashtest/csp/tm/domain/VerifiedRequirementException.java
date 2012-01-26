@@ -19,36 +19,20 @@
  *     along with this software.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-package org.squashtest.csp.tm.web.internal.model;
-
-import java.util.ArrayList;
-import java.util.List;
+package org.squashtest.csp.tm.domain;
 
 /**
- * Generic report after an action has been processed.
- * 
+ * Exception thrown while doing a verified requirement related operation
+ *
  * @author Gregory Fouquet
- * 
+ *
  */
-public class BatchActionSummary {
-	private boolean hasRejections;
+public abstract class VerifiedRequirementException extends RuntimeException {
 
-	private List<EntitySummary> rejections = new ArrayList<EntitySummary>();
+	/**
+	 *
+	 */
+	private static final long serialVersionUID = -1907623035129595748L;
 
-	public BatchActionSummary() {
-		super();
-	}
-
-	public void addRejectedEntity(long id) {
-		rejections.add(new EntitySummary(id));
-		hasRejections = true;
-	}
-
-	public boolean isHasRejections() {
-		return hasRejections;
-	}
-
-	public List<EntitySummary> getRejections() {
-		return rejections;
-	}
+	public abstract String getShortName();
 }

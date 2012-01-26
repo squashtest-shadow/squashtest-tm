@@ -28,11 +28,11 @@ import org.squashtest.csp.tm.domain.testcase.TestCase;
 
 /**
  * @author Gregory Fouquet
- * 
+ *
  */
-public class RequirementAlreadyVerifiedException extends RuntimeException {
+public class RequirementAlreadyVerifiedException extends VerifiedRequirementException {
 	/**
-	 * 
+	 *
 	 */
 	private static final long serialVersionUID = -3470201668146454658L;
 	/**
@@ -62,5 +62,15 @@ public class RequirementAlreadyVerifiedException extends RuntimeException {
 	 */
 	public TestCase getVerifyingTestCase() {
 		return verifyingTestCase;
+	}
+
+	/*
+	 * (non-Javadoc)
+	 * 
+	 * @see org.squashtest.csp.tm.domain.VerifiedRequirementException#getShortName()
+	 */
+	@Override
+	public String getShortName() {
+		return "requirement-already-verified";
 	}
 }

@@ -24,7 +24,7 @@ package org.squashtest.csp.tm.domain.requirement
 import static org.squashtest.csp.tm.domain.requirement.RequirementStatus.*
 
 import org.squashtest.csp.tm.domain.IllegalRequirementModificationException;
-import org.squashtest.csp.tm.domain.RequirementNotLinkableException;
+import org.squashtest.csp.tm.domain.RequirementVersionNotLinkableException;
 import org.squashtest.csp.tm.domain.attachment.Attachment;
 import org.squashtest.csp.tm.domain.testcase.TestCase;
 import org.squashtest.csp.tools.unittest.assertions.CollectionAssertions;
@@ -172,7 +172,7 @@ class RequirementVersionTest extends Specification {
 		requirementVersion.addVerifyingTestCase(tc)
 
 		then :
-		thrown(RequirementNotLinkableException)
+		thrown(RequirementVersionNotLinkableException)
 	}
 
 	def "obsolete requirements should not allow removal of a test case "() {
@@ -184,7 +184,7 @@ class RequirementVersionTest extends Specification {
 		requirementVersion.removeVerifyingTestCase(tc)
 
 		then :
-		thrown(RequirementNotLinkableException)
+		thrown(RequirementVersionNotLinkableException)
 	}
 
 	@Unroll("should allow status change when current status is #status")

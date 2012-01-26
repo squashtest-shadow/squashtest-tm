@@ -24,6 +24,7 @@ import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
 import java.util.Locale;
+import java.util.Map;
 
 import javax.inject.Inject;
 import javax.inject.Provider;
@@ -41,7 +42,7 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
 import org.squashtest.csp.core.infrastructure.collection.PagedCollectionHolder;
 import org.squashtest.csp.core.infrastructure.collection.PagingAndSorting;
-import org.squashtest.csp.tm.domain.RequirementAlreadyVerifiedException;
+import org.squashtest.csp.tm.domain.VerifiedRequirementException;
 import org.squashtest.csp.tm.domain.project.Project;
 import org.squashtest.csp.tm.domain.requirement.RequirementVersion;
 import org.squashtest.csp.tm.domain.testcase.TestCase;
@@ -49,7 +50,7 @@ import org.squashtest.csp.tm.domain.testcase.TestCaseExecutionMode;
 import org.squashtest.csp.tm.domain.testcase.TestCaseLibrary;
 import org.squashtest.csp.tm.service.RequirementVersionManagerService;
 import org.squashtest.csp.tm.service.VerifyingTestCaseManagerService;
-import org.squashtest.csp.tm.web.internal.model.BatchActionSummary;
+import org.squashtest.csp.tm.web.internal.helper.VerifiedRequirementActionSummaryBuilder;
 import org.squashtest.csp.tm.web.internal.model.builder.DriveNodeBuilder;
 import org.squashtest.csp.tm.web.internal.model.datatable.DataTableDrawParameters;
 import org.squashtest.csp.tm.web.internal.model.datatable.DataTableMapperPagingAndSortingAdapter;
@@ -59,9 +60,9 @@ import org.squashtest.csp.tm.web.internal.model.viewmapper.DataTableMapper;
 
 /**
  * Controller for verified requirements management page.
- * 
+ *
  * @author Gregory Fouquet
- * 
+ *
  */
 @Controller
 public class VerifyingTestCaseManagerController {
@@ -119,21 +120,17 @@ public class VerifyingTestCaseManagerController {
 
 	@RequestMapping(value = "/requirement-versions/{requirementVersionId}/verifying-test-cases", method = RequestMethod.POST, params = TESTCASES_IDS_REQUEST_PARAM)
 	public @ResponseBody
-	BatchActionSummary addVerifyingTestCasesToRequirement(
+	Map<String, Object> addVerifyingTestCasesToRequirement(
 			@RequestParam(TESTCASES_IDS_REQUEST_PARAM) List<Long> testCasesIds, @PathVariable long requirementVersionId) {
 
-		Collection<RequirementAlreadyVerifiedException> rejections = verifyingTestCaseManager
+		Collection<VerifiedRequirementException> rejections = verifyingTestCaseManager
 				.addVerifyingTestCasesToRequirementVersion(testCasesIds, requirementVersionId);
 
 		return buildSummary(rejections);
 	}
 
-	private BatchActionSummary buildSummary(Collection<RequirementAlreadyVerifiedException> rejections) {
-		BatchActionSummary summary = new BatchActionSummary();
-		for (RequirementAlreadyVerifiedException rejection : rejections) {
-			summary.addRejectedEntity(rejection.getVerifyingTestCase().getId());
-		}
-		return summary;
+	private Map<String, Object> buildSummary(Collection<VerifiedRequirementException> rejections) {
+		return VerifiedRequirementActionSummaryBuilder.buildAddActionSummary(rejections);
 	}
 
 	@RequestMapping(value = "/requirement-versions/{requirementVersionId}/non-verifying-test-cases", method = RequestMethod.POST, params = TESTCASES_IDS_REQUEST_PARAM)

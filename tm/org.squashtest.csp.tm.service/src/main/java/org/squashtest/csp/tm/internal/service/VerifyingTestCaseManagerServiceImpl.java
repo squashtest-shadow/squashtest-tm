@@ -38,6 +38,7 @@ import org.squashtest.csp.core.infrastructure.collection.PagedCollectionHolder;
 import org.squashtest.csp.core.infrastructure.collection.PagingAndSorting;
 import org.squashtest.csp.core.infrastructure.collection.PagingBackedPagedCollectionHolder;
 import org.squashtest.csp.tm.domain.RequirementAlreadyVerifiedException;
+import org.squashtest.csp.tm.domain.VerifiedRequirementException;
 import org.squashtest.csp.tm.domain.projectfilter.ProjectFilter;
 import org.squashtest.csp.tm.domain.requirement.RequirementVersion;
 import org.squashtest.csp.tm.domain.testcase.TestCase;
@@ -84,8 +85,8 @@ public class VerifyingTestCaseManagerServiceImpl implements VerifyingTestCaseMan
 
 	@Override
 	@PreAuthorize("hasPermission(#requirementVersionId, 'org.squashtest.csp.tm.domain.requirement.RequirementVersion', 'WRITE') or hasRole('ROLE_ADMIN')")
-	public Collection<RequirementAlreadyVerifiedException> addVerifyingTestCasesToRequirementVersion(
-			List<Long> testCasesIds, long requirementVersionId) {
+	public Collection<VerifiedRequirementException> addVerifyingTestCasesToRequirementVersion(List<Long> testCasesIds,
+			long requirementVersionId) {
 		// nodes are returned unsorted
 		List<TestCaseLibraryNode> nodes = testCaseLibraryNodeDao.findAllByIdList(testCasesIds);
 
@@ -101,12 +102,11 @@ public class VerifyingTestCaseManagerServiceImpl implements VerifyingTestCaseMan
 		return Collections.emptyList();
 	}
 
-	private Collection<RequirementAlreadyVerifiedException> doAddVerifyingTestCasesToRequirementVersion(
+	private Collection<VerifiedRequirementException> doAddVerifyingTestCasesToRequirementVersion(
 			List<TestCase> testCases, long requirementVersionId) {
 		RequirementVersion requirementVersion = requirementVersionDao.findById(requirementVersionId);
 
-		List<RequirementAlreadyVerifiedException> rejections = new ArrayList<RequirementAlreadyVerifiedException>(
-				testCases.size());
+		List<VerifiedRequirementException> rejections = new ArrayList<VerifiedRequirementException>(testCases.size());
 
 		for (TestCase testCase : testCases) {
 			try {
@@ -132,7 +132,8 @@ public class VerifyingTestCaseManagerServiceImpl implements VerifyingTestCaseMan
 			for (TestCase testCase : testCases) {
 				requirementVersion.removeVerifyingTestCase(testCase);
 			}
-			testCaseImportanceManagerService.changeImportanceIfRelationsRemovedFromReq(testCasesIds, requirementVersionId);
+			testCaseImportanceManagerService.changeImportanceIfRelationsRemovedFromReq(testCasesIds,
+					requirementVersionId);
 		}
 	}
 

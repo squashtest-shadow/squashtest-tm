@@ -20,26 +20,44 @@
  */
 package org.squashtest.csp.tm.domain;
 
-/**
- * A Requirement was bound to be verified by a new TestCase while it is not
- * linkable.
- * 
- * @author Gregory Fouquet
- * 
- */
-public class RequirementNotLinkableException extends ActionException {
+import javax.validation.constraints.NotNull;
 
+import org.squashtest.csp.tm.domain.requirement.RequirementVersion;
+
+/**
+ * A Requirement was bound to be verified by a new TestCase while it is not linkable.
+ *
+ * @author Gregory Fouquet
+ *
+ */
+public class RequirementVersionNotLinkableException extends VerifiedRequirementException {
 	/**
-	 * 
+	 *
 	 */
 	private static final long serialVersionUID = -8966011219923689657L;
-	
+
+	private final RequirementVersion notLinkableRequirement;
+
 	/**
-	 * @see org.squashtest.csp.tm.domain.ActionException#getI18nKey()
+	 * @param notLinkableRequirement
+	 */
+	public RequirementVersionNotLinkableException(@NotNull RequirementVersion notLinkableRequirement) {
+		super();
+		this.notLinkableRequirement = notLinkableRequirement;
+	}
+
+	public RequirementVersion getNotLinkableRequirement() {
+		return notLinkableRequirement;
+	}
+
+	/*
+	 * (non-Javadoc)
+	 * 
+	 * @see org.squashtest.csp.tm.domain.VerifiedRequirementException#getShortName()
 	 */
 	@Override
-	public String getI18nKey() {
-		return "squashtm.action.exception.RequirementNotLinkableException.label";
+	public String getShortName() {
+		return "version-not-linkable";
 	}
 
 }

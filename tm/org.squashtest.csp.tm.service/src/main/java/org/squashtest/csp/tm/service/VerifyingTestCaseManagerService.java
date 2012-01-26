@@ -26,22 +26,22 @@ import java.util.List;
 import org.springframework.transaction.annotation.Transactional;
 import org.squashtest.csp.core.infrastructure.collection.PagedCollectionHolder;
 import org.squashtest.csp.core.infrastructure.collection.PagingAndSorting;
-import org.squashtest.csp.tm.domain.RequirementAlreadyVerifiedException;
+import org.squashtest.csp.tm.domain.VerifiedRequirementException;
 import org.squashtest.csp.tm.domain.requirement.RequirementLibrary;
 import org.squashtest.csp.tm.domain.testcase.TestCase;
 import org.squashtest.csp.tm.domain.testcase.TestCaseLibrary;
 
 /**
  * Service for management of Requirements verified by a {@link TestCase}
- * 
+ *
  * @author Gregory Fouquet
- * 
+ *
  */
 public interface VerifyingTestCaseManagerService {
 
 	/**
 	 * Returns the collection of {@link RequirementLibrary}s which Requirements can be linked by a {@link TestCase}
-	 * 
+	 *
 	 * @return
 	 */
 	List<TestCaseLibrary> findLinkableTestCaseLibraries();
@@ -49,18 +49,18 @@ public interface VerifyingTestCaseManagerService {
 	/**
 	 * Adds a list of requirements to the ones verified by a test case. If a requirement is already verified, nothing
 	 * special happens.
-	 * 
+	 *
 	 * @param requirementsIds
 	 * @param testCaseId
 	 * @return test cases which could not be added.
 	 */
-	Collection<RequirementAlreadyVerifiedException> addVerifyingTestCasesToRequirementVersion(List<Long> testCaseIds,
+	Collection<VerifiedRequirementException> addVerifyingTestCasesToRequirementVersion(List<Long> testCaseIds,
 			long requirementVersionId);
 
 	/**
 	 * Removes a list of requirements from the ones verified by a test case. If a requirement is not verified by the
 	 * test case, nothing special happens.
-	 * 
+	 *
 	 * @param testCaseId
 	 * @param requirementsIds
 	 */
@@ -69,7 +69,7 @@ public interface VerifyingTestCaseManagerService {
 	/**
 	 * Removes a requirement from the ones verified by a test case. If the requirement was not previously verified by
 	 * the test case, nothing special happens.
-	 * 
+	 *
 	 * @param testCaseId
 	 * @param requirementsIds
 	 */

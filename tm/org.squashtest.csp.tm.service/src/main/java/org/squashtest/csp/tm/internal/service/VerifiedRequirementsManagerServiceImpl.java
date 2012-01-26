@@ -22,6 +22,7 @@ package org.squashtest.csp.tm.internal.service;
 
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Collection;
 import java.util.Collections;
 import java.util.List;
 
@@ -32,7 +33,7 @@ import org.springframework.security.access.prepost.PostFilter;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
-import org.squashtest.csp.core.domain.IdentifiedComparator;
+import org.squashtest.csp.tm.domain.VerifiedRequirementException;
 import org.squashtest.csp.tm.domain.projectfilter.ProjectFilter;
 import org.squashtest.csp.tm.domain.requirement.Requirement;
 import org.squashtest.csp.tm.domain.requirement.RequirementLibrary;
@@ -59,8 +60,10 @@ public class VerifiedRequirementsManagerServiceImpl implements VerifiedRequireme
 
 	@Inject
 	private RequirementVersionDao requirementVersionDao;
+
 	@Inject
 	private TestCaseImportanceManagerService testCaseImportanceManagerService;
+
 	@Inject
 	private ProjectFilterModificationService projectFilterModificationService;
 
@@ -90,24 +93,47 @@ public class VerifiedRequirementsManagerServiceImpl implements VerifiedRequireme
 	@SuppressWarnings("rawtypes")
 	@Override
 	@PreAuthorize("hasPermission(#testCaseId, 'org.squashtest.csp.tm.domain.testcase.TestCase' , 'WRITE') or hasRole('ROLE_ADMIN')")
-	public void addVerifiedRequirementsToTestCase(final List<Long> requirementsIds, long testCaseId) {
-		// nodes are returned unsorted
+	public Collection<VerifiedRequirementException> addVerifiedRequirementsToTestCase(final List<Long> requirementsIds,
+			long testCaseId) {
 		List<RequirementLibraryNode> nodes = requirementLibraryNodeDao.findAllByIdList(requirementsIds);
 
 		if (!nodes.isEmpty()) {
-			// now we resort them according to the order in which the requirementsIds were given
-			Collections.sort(nodes, IdentifiedComparator.getInstance());
-
-			List<Requirement> requirements = new RequirementNodeWalker().walk(nodes);
-			TestCase testCase = testCaseDao.findById(testCaseId);
-			if (!requirements.isEmpty()) {
-				for (Requirement requirement : requirements) {
-					testCase.addVerifiedRequirementVersion(requirement.getCurrentVersion());
-				}
-			}
-			List<RequirementVersion> requirementVersions = extractVersions(requirements);
-			testCaseImportanceManagerService.changeImportanceIfRelationsAddedToTestCase(requirementVersions, testCase);
+			return doAddVerifiedRequirementsToTestCase(nodes, testCaseId);
 		}
+
+		return Collections.emptyList();
+	}
+
+	@SuppressWarnings("rawtypes")
+	private Collection<VerifiedRequirementException> doAddVerifiedRequirementsToTestCase(
+			List<RequirementLibraryNode> nodes, long testCaseId) {
+		List<Requirement> requirements = new RequirementNodeWalker().walk(nodes);
+		TestCase testCase = testCaseDao.findById(testCaseId);
+
+		if (!requirements.isEmpty()) {
+			return doAddVerifiedRequirementsToTestCase(requirements, testCase);
+		}
+
+		return Collections.emptyList();
+	}
+
+	private Collection<VerifiedRequirementException> doAddVerifiedRequirementsToTestCase(
+			List<Requirement> requirements, TestCase testCase) {
+		Collection<VerifiedRequirementException> rejections = new ArrayList<VerifiedRequirementException>(
+				requirements.size());
+
+		for (Requirement requirement : requirements) {
+			try {
+				testCase.addVerifiedRequirement(requirement);
+			} catch (VerifiedRequirementException ex) {
+				rejections.add(ex);
+			}
+		}
+
+		List<RequirementVersion> requirementVersions = extractVersions(requirements);
+		testCaseImportanceManagerService.changeImportanceIfRelationsAddedToTestCase(requirementVersions, testCase);
+
+		return rejections;
 	}
 
 	private List<RequirementVersion> extractVersions(List<Requirement> requirements) {

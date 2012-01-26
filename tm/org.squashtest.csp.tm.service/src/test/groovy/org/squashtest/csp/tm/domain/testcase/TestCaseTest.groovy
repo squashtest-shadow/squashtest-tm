@@ -24,11 +24,12 @@ package org.squashtest.csp.tm.domain.testcase
 import javax.swing.plaf.basic.BasicFileChooserUI.ApproveSelectionAction
 
 import org.squashtest.csp.tm.domain.RequirementAlreadyVerifiedException
-import org.squashtest.csp.tm.domain.RequirementNotLinkableException
+import org.squashtest.csp.tm.domain.RequirementVersionNotLinkableException
 import org.squashtest.csp.tm.domain.UnknownEntityException
 import org.squashtest.csp.tm.domain.requirement.Requirement
 import org.squashtest.csp.tm.domain.requirement.RequirementVersion
 import org.squashtest.csp.tm.domain.requirement.RequirementStatus
+import org.squashtest.csp.tools.unittest.assertions.CollectionAssertions
 import org.squashtest.csp.tools.unittest.reflection.ReflectionCategory
 
 import spock.lang.Specification
@@ -36,6 +37,10 @@ import spock.lang.Unroll
 
 class TestCaseTest extends Specification {
 	TestCase testCase = new TestCase()
+
+	def setup() {
+		CollectionAssertions.declareContainsExactly()
+	}
 
 	def "should add a step at the end of the list"() {
 		given:
@@ -284,7 +289,7 @@ class TestCaseTest extends Specification {
 		tc.addVerifiedRequirementVersion req
 
 		then:
-		thrown(RequirementNotLinkableException)
+		thrown(RequirementVersionNotLinkableException)
 	}
 
 	def "when unverifying a requirement, the requirement should also not be verified by the test case"() {
@@ -320,7 +325,7 @@ class TestCaseTest extends Specification {
 		tc.removeVerifiedRequirement req
 
 		then:
-		thrown(RequirementNotLinkableException)
+		thrown(RequirementVersionNotLinkableException)
 	}
 
 	def "should not verify 2 versions of same requirement"() {
@@ -348,6 +353,6 @@ class TestCaseTest extends Specification {
 		testCase.addVerifiedRequirement(req)
 
 		then:
-		testCase.verifiedRequirementVersions == [verifiableVersion]
+		testCase.verifiedRequirementVersions.containsExactly([verifiableVersion])
 	}
 }

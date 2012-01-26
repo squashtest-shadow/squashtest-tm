@@ -19,17 +19,21 @@
  *     along with this software.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-package org.squashtest.csp.tm.web.internal.controller.testcase;
+package org.squashtest.csp.tm.web.internal.controller.testcase
 
-import javax.inject.Provider;
+import javax.inject.Provider
 
-import org.squashtest.csp.core.service.security.PermissionEvaluationService;
-import org.squashtest.csp.tm.domain.project.Project;
-import org.squashtest.csp.tm.domain.requirement.RequirementLibrary;
-import org.squashtest.csp.tm.domain.testcase.TestCase;
-import org.squashtest.csp.tm.service.VerifiedRequirementsManagerService;
-import org.squashtest.csp.tm.web.internal.model.builder.DriveNodeBuilder;
-import spock.lang.Specification;
+import org.springframework.ui.ExtendedModelMap
+import org.springframework.ui.Model
+import org.squashtest.csp.core.service.security.PermissionEvaluationService
+import org.squashtest.csp.tm.domain.NoVerifiableRequirementVersionException
+import org.squashtest.csp.tm.domain.project.Project
+import org.squashtest.csp.tm.domain.requirement.Requirement
+import org.squashtest.csp.tm.domain.requirement.RequirementLibrary
+import org.squashtest.csp.tm.domain.testcase.TestCase
+import org.squashtest.csp.tm.service.VerifiedRequirementsManagerService
+import org.squashtest.csp.tm.web.internal.model.builder.DriveNodeBuilder
+import spock.lang.Specification
 
 
 class VerifiedRequirementsManagerControllerTest extends Specification{
@@ -48,10 +52,10 @@ class VerifiedRequirementsManagerControllerTest extends Specification{
 		verifiedRequirementsManagerService.findLinkableRequirementLibraries() >> []
 
 		when:
-		def res = controller.showManager(20L)
+		def res = controller.showManager(20L, Mock(Model))
 
 		then:
-		res.viewName == "page/test-cases/show-verified-requirements-manager"
+		res == "page/test-cases/show-verified-requirements-manager"
 	}
 
 	def "should populate manager page with test case and requirement libraries model"() {
@@ -66,12 +70,15 @@ class VerifiedRequirementsManagerControllerTest extends Specification{
 		lib.project >> project
 		verifiedRequirementsManagerService.findLinkableRequirementLibraries() >> [lib]
 
+		and:
+		def model = new ExtendedModelMap()
+
 		when:
-		def res = controller.showManager(20L)
+		def res = controller.showManager(20L, model)
 
 		then:
-		res.model['testCase'] == testCase
-		res.model['linkableLibrariesModel'] != null
+		model['testCase'] == testCase
+		model['linkableLibrariesModel'] != null
 	}
 
 	def "should add requirements to verified requirements of test case"() {
@@ -79,7 +86,7 @@ class VerifiedRequirementsManagerControllerTest extends Specification{
 		controller.addVerifiedRequirementsToTestCase([5, 15], 10)
 
 		then:
-		1 * verifiedRequirementsManagerService.addVerifiedRequirementsToTestCase([5, 15], 10)
+		1 * verifiedRequirementsManagerService.addVerifiedRequirementsToTestCase([5, 15], 10) >> []
 	}
 
 	def "should remove requirements to verified requirements of test case"() {
@@ -96,5 +103,18 @@ class VerifiedRequirementsManagerControllerTest extends Specification{
 
 		then:
 		1 * verifiedRequirementsManagerService.removeVerifiedRequirementFromTestCase(20, 10)
+	}
+
+	def "should return rapport of requirements which could not be added"() {
+		given:
+		Requirement req = Mock()
+		NoVerifiableRequirementVersionException ex = new NoVerifiableRequirementVersionException(req)
+		verifiedRequirementsManagerService.addVerifiedRequirementsToTestCase([5, 15], 10) >> [ex]
+
+		when:
+		def res = controller.addVerifiedRequirementsToTestCase([5, 15], 10)
+
+		then:
+		res.noVerifiableVersionRejections
 	}
 }

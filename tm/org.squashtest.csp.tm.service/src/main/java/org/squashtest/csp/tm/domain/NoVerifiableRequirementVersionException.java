@@ -27,14 +27,14 @@ import org.squashtest.csp.tm.domain.requirement.Requirement;
 
 /**
  * Indicates no version of a requirement which matche the rules to be verified by a test case could be found.
- * 
+ *
  * @author Gregory Fouquet
- * 
+ *
  */
-public class NoVerifiableRequirementVersionException extends RuntimeException {
+public class NoVerifiableRequirementVersionException extends VerifiedRequirementException {
 
 	/**
-	 * 
+	 *
 	 */
 	private static final long serialVersionUID = -3773133805010002843L;
 
@@ -50,5 +50,15 @@ public class NoVerifiableRequirementVersionException extends RuntimeException {
 
 	public Requirement getRequirement() {
 		return requirement;
+	}
+
+	/*
+	 * (non-Javadoc)
+	 * 
+	 * @see org.squashtest.csp.tm.domain.VerifiedRequirementException#getShortName()
+	 */
+	@Override
+	public String getShortName() {
+		return "no-verifiable-requirement-version";
 	}
 }

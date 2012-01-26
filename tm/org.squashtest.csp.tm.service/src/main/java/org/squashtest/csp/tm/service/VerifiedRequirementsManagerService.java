@@ -20,16 +20,18 @@
  */
 package org.squashtest.csp.tm.service;
 
+import java.util.Collection;
 import java.util.List;
 
+import org.squashtest.csp.tm.domain.VerifiedRequirementException;
 import org.squashtest.csp.tm.domain.requirement.RequirementLibrary;
 import org.squashtest.csp.tm.domain.testcase.TestCase;
 
 /**
  * Service for management of Requirements verified by a {@link TestCase}
- * 
+ *
  * @author Gregory Fouquet
- * 
+ *
  */
 public interface VerifiedRequirementsManagerService {
 
@@ -37,7 +39,7 @@ public interface VerifiedRequirementsManagerService {
 
 	/**
 	 * Returns the collection of {@link RequirementLibrary}s which Requirements can be linked by a {@link TestCase}
-	 * 
+	 *
 	 * @return
 	 */
 	List<RequirementLibrary> findLinkableRequirementLibraries();
@@ -45,15 +47,18 @@ public interface VerifiedRequirementsManagerService {
 	/**
 	 * Adds a list of requirements to the ones verified by a test case. If a requirement is already verified, nothing
 	 * special happens.
+	 *
 	 * @param requirementsIds
 	 * @param testCaseId
+	 * @return
 	 */
-	void addVerifiedRequirementsToTestCase(List<Long> requirementsIds, long testCaseId);
+	Collection<VerifiedRequirementException> addVerifiedRequirementsToTestCase(List<Long> requirementsIds,
+			long testCaseId);
 
 	/**
 	 * Removes a list of requirements from the ones verified by a test case. If a requirement is not verified by the
 	 * test case, nothing special happens.
-	 * 
+	 *
 	 * @param testCaseId
 	 * @param requirementsIds
 	 */
@@ -62,7 +67,7 @@ public interface VerifiedRequirementsManagerService {
 	/**
 	 * Removes a requirement from the ones verified by a test case. If the requirement was not previously verified by
 	 * the test case, nothing special happens.
-	 * 
+	 *
 	 * @param testCaseId
 	 * @param requirementsIds
 	 */

@@ -70,8 +70,38 @@
 			
 			
 			$(function() {
-
+				$( "#add-summary-dialog" ).messageDialog();
 				
+				var summaryMessages = {
+					alreadyVerifiedRejections: "<f:message key='test-case.verified-requirement-version.already-verified-rejection' />",
+					notLinkableRejections: "<f:message key='requirement-version.verifying-test-case.not-linkable-rejection' />",
+					noVerifiableVersionRejections: "<f:message key='test-case.verified-requirement-version.no-verifiable-version-rejection' />" 
+				};
+					
+				var showAddSummary = function(summary) {
+					if (summary) {
+						var summaryRoot = $( "#add-summary-dialog > ul" );
+						summaryRoot.empty();
+						
+						for(rejectionType in summary) {
+							var message = summaryMessages[rejectionType];
+							
+							if (message) {
+								summaryRoot.append('<li>' + message + '</li>');
+							}
+						}
+						
+						if (summaryRoot.children().length > 0) {
+							$( "#add-summary-dialog" ).messageDialog("open");
+						}
+					}					
+				};
+				
+				var addHandler = function(data) {
+					showAddSummary(data);
+					refreshVerifiedRequirements();
+				};
+					
 				<%-- verified requirements addition --%>
 				$( '#add-items-button' ).click(function() {
 					var tree = $( '#linkable-requirements-tree' );
@@ -79,7 +109,7 @@
 					ids = getRequirementsIds()
 			
 					if (ids.length > 0) {
-						$.post('${ verifiedRequirementsUrl }', { requirementsIds: ids}, refreshVerifiedRequirements);
+						$.post('${ verifiedRequirementsUrl }', { requirementsIds: ids}, addHandler);
 					}
 					tree.jstree('deselect_all');
 				});				
@@ -114,6 +144,9 @@
 	
 	<jsp:attribute name="tablePane">
 		<aggr:verified-requirements-table/>
+		<div id="add-summary-dialog" class="not-displayed" title="<f:message key='test-case.verified-requirement-version.add-summary-dialog.title' />">
+			<ul><li>summary message here</li></ul>
+		</div>
 	</jsp:attribute>
 </layout:tree-picker-layout>
 

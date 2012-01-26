@@ -24,7 +24,7 @@ import static org.squashtest.csp.tm.domain.requirement.RequirementStatus.*
 
 import org.squashtest.csp.tm.domain.IllegalRequirementModificationException
 import org.squashtest.csp.tm.domain.NoVerifiableRequirementVersionException;
-import org.squashtest.csp.tm.domain.RequirementNotLinkableException;
+import org.squashtest.csp.tm.domain.RequirementVersionNotLinkableException;
 import org.squashtest.csp.tm.domain.attachment.Attachment;
 import org.squashtest.csp.tm.domain.project.Project;
 import org.squashtest.csp.tm.domain.testcase.TestCase

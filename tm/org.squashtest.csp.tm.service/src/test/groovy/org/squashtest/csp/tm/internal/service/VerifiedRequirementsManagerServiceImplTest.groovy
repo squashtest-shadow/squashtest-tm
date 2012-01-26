@@ -18,25 +18,26 @@
  *     You should have received a copy of the GNU Lesser General Public License
  *     along with this software.  If not, see <http://www.gnu.org/licenses/>.
  */
-package org.squashtest.csp.tm.internal.service;
+package org.squashtest.csp.tm.internal.service
 
 import org.squashtest.csp.tm.domain.projectfilter.ProjectFilter
 import org.squashtest.csp.tm.domain.requirement.Requirement
 import org.squashtest.csp.tm.domain.requirement.RequirementLibrary
 import org.squashtest.csp.tm.domain.requirement.RequirementLibraryNode
-import org.squashtest.csp.tm.domain.requirement.RequirementVersion;
-import org.squashtest.csp.tm.domain.resource.Resource;
+import org.squashtest.csp.tm.domain.requirement.RequirementStatus
+import org.squashtest.csp.tm.domain.requirement.RequirementVersion
+import org.squashtest.csp.tm.domain.resource.Resource
 import org.squashtest.csp.tm.domain.testcase.TestCase
 import org.squashtest.csp.tm.internal.infrastructure.strategy.LibrarySelectionStrategy
 import org.squashtest.csp.tm.internal.repository.LibraryNodeDao
 import org.squashtest.csp.tm.internal.repository.RequirementDao
 import org.squashtest.csp.tm.internal.repository.RequirementLibraryDao
 import org.squashtest.csp.tools.unittest.reflection.ReflectionCategory
-import org.squashtest.csp.tm.internal.repository.RequirementVersionDao;
-import org.squashtest.csp.tm.internal.repository.TestCaseDao;
-import org.squashtest.csp.tm.internal.repository.TestCaseLibraryDao;
-import org.squashtest.csp.tools.unittest.assertions.CollectionAssertions;
-import org.squashtest.csp.tools.unittest.reflection.ReflectionCategory;
+import org.squashtest.csp.tm.internal.repository.RequirementVersionDao
+import org.squashtest.csp.tm.internal.repository.TestCaseDao
+import org.squashtest.csp.tm.internal.repository.TestCaseLibraryDao
+import org.squashtest.csp.tools.unittest.assertions.CollectionAssertions
+import org.squashtest.csp.tools.unittest.reflection.ReflectionCategory
 
 import spock.lang.Specification
 
@@ -77,7 +78,7 @@ class VerifiedRequirementsManagerServiceImplTest extends Specification {
 	def "should find libraries of linkable requirements"() {
 		given:
 		RequirementLibrary lib = Mock()
-		ProjectFilter pf = new ProjectFilter();
+		ProjectFilter pf = new ProjectFilter()
 		pf.setActivated(false)
 		projectFilterModificationService.findProjectFilterByUserLogin() >> pf
 		requirementLibraryDao.findAll() >> [lib]
@@ -119,13 +120,43 @@ class VerifiedRequirementsManagerServiceImplTest extends Specification {
 		testCase.verifiedRequirementVersions.containsExactly([rv5, rv15])
 	}
 
+	def "should not add requirements with no verifiable version to test case's verified requirements"() {
+		given:
+		TestCase testCase = new TestCase()
+		testCaseDao.findById(10) >> testCase
+
+		and:
+		RequirementVersion rv5 = new RequirementVersion()
+		RequirementVersion rv15 = new RequirementVersion()
+
+
+		use (ReflectionCategory) {
+			Resource.set field: "id", of: rv5, to: 5L
+			RequirementVersion.set field: "status", of: rv5, to: RequirementStatus.OBSOLETE
+			Resource.set field: "id", of: rv15, to: 15L
+		}
+
+		requirementVersionDao.findAllByIdList([5, 15]) >> [rv5, rv15]
+
+		and:
+		Requirement req5 = new Requirement(rv5)
+		Requirement req15 = new Requirement(rv15)
+		nodeDao.findAllByIdList([5, 15]) >> [req5, req15]
+
+		when:
+		service.addVerifiedRequirementsToTestCase([5, 15], 10)
+
+		then:
+		testCase.verifiedRequirementVersions.containsExactly([rv15])
+	}
+
 	def "should remove requirements from test case's verified requirements"() {
 		given: "some requirements"
 		RequirementVersion req5 = new RequirementVersion()
 		new Requirement(req5)
 		RequirementVersion req15 = new RequirementVersion()
 		new Requirement(req15)
-		
+
 		use (ReflectionCategory) {
 			Resource.set field: "id", of: req5, to: 5L
 			Resource.set field: "id", of: req15, to: 15L
