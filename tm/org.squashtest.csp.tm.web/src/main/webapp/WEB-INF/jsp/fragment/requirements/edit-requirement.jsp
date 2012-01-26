@@ -59,19 +59,12 @@ that page won't be editable if
 
  --%>
  
-<c:set var="user_authorized" value="${false}" />
-<c:set var="editable" value="${ false }" /> 
-<c:set var="status_editable" value="${false }" />
 <authz:authorized hasRole="ROLE_ADMIN" hasPermission="WRITE" domainObject="${ requirement }">
 	<c:set var="user_authorized" value="${ true }" />
 	<c:set var="linkable" value="${ requirement.linkable }" />
 </authz:authorized>
-<c:if test="${user_authorized && requirement.modifiable}">
-	<c:set var="editable" value="${true}"/>
-</c:if>
-<c:if test="${user_authorized && requirement.status.allowsStatusUpdate}">
-	<c:set var="status_editable" value="${true }"/>
-</c:if>
+<c:set var="editable" value="${ user_authorized && requirement.modifiable }"/>
+<c:set var="status_editable" value="${ user_authorized && requirement.status.allowsStatusUpdate }"/>
 
 <%-- ----------------------------------- Init ----------------------------------------------%>
 
@@ -182,7 +175,7 @@ that page won't be editable if
 
 	<div style="clear:both;"></div>	
 
-	<c:if test="${editable }">
+	<c:if test="${ editable }">
 		<comp:popup id="rename-requirement-dialog" titleKey="dialog.rename-requirement.title" 
 			isContextual="true" openedBy="rename-requirement-button">
 			<jsp:attribute name="buttons">
@@ -208,7 +201,8 @@ that page won't be editable if
 				<comp:error-message forField="name"/>
 			</jsp:body>
 		</comp:popup>
-		
+	</c:if>
+	<c:if test="${ user_authorized }">
 		<%-- NEW VERSION POPUP --%>	
 		<f:message var="confirmNewVersionDialogTitle" key="requirement.new-version.confirm-dialog.title" />	
 		<div id="confirm-new-version-dialog" class="not-displayed popup-dialog" title="${ confirmNewVersionDialogTitle }">
