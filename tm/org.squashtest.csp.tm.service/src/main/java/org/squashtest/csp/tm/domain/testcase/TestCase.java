@@ -229,7 +229,7 @@ public class TestCase extends TestCaseLibraryNode implements AttachmentHolder {
 
 	}
 
-	public void removeVerifiedRequirement(@NotNull RequirementVersion requirement) {
+	public void removeVerifiedRequirementVersion(@NotNull RequirementVersion requirement) {
 		requirement.notifyNoLongerVerifiedBy(this);
 		verifiedRequirementVersions.remove(requirement);
 	}

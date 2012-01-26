@@ -178,7 +178,7 @@ class TestCaseTest extends Specification {
 		}
 
 		when:
-		testCase.removeVerifiedRequirement(r)
+		testCase.removeVerifiedRequirementVersion(r)
 
 		then:
 		!testCase.verifiedRequirementVersions.contains(r)
@@ -304,7 +304,7 @@ class TestCaseTest extends Specification {
 		}
 
 		when:
-		tc.removeVerifiedRequirement req
+		tc.removeVerifiedRequirementVersion req
 
 		then:
 		!req.verifyingTestCases.contains(tc)
@@ -322,7 +322,7 @@ class TestCaseTest extends Specification {
 		}
 
 		when:
-		tc.removeVerifiedRequirement req
+		tc.removeVerifiedRequirementVersion req
 
 		then:
 		thrown(RequirementVersionNotLinkableException)

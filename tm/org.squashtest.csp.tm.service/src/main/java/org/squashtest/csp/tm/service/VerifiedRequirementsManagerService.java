@@ -23,23 +23,24 @@ package org.squashtest.csp.tm.service;
 import java.util.Collection;
 import java.util.List;
 
+import org.springframework.transaction.annotation.Transactional;
+import org.squashtest.csp.core.infrastructure.collection.PagedCollectionHolder;
+import org.squashtest.csp.core.infrastructure.collection.PagingAndSorting;
 import org.squashtest.csp.tm.domain.VerifiedRequirementException;
 import org.squashtest.csp.tm.domain.requirement.RequirementLibrary;
+import org.squashtest.csp.tm.domain.requirement.RequirementVersion;
 import org.squashtest.csp.tm.domain.testcase.TestCase;
 
 /**
  * Service for management of Requirements verified by a {@link TestCase}
- *
+ * 
  * @author Gregory Fouquet
- *
+ * 
  */
 public interface VerifiedRequirementsManagerService {
-
-	TestCase findTestCase(long testCaseId);
-
 	/**
 	 * Returns the collection of {@link RequirementLibrary}s which Requirements can be linked by a {@link TestCase}
-	 *
+	 * 
 	 * @return
 	 */
 	List<RequirementLibrary> findLinkableRequirementLibraries();
@@ -47,7 +48,7 @@ public interface VerifiedRequirementsManagerService {
 	/**
 	 * Adds a list of requirements to the ones verified by a test case. If a requirement is already verified, nothing
 	 * special happens.
-	 *
+	 * 
 	 * @param requirementsIds
 	 * @param testCaseId
 	 * @return
@@ -58,18 +59,30 @@ public interface VerifiedRequirementsManagerService {
 	/**
 	 * Removes a list of requirements from the ones verified by a test case. If a requirement is not verified by the
 	 * test case, nothing special happens.
-	 *
+	 * 
 	 * @param testCaseId
-	 * @param requirementsIds
+	 * @param requirementVersionsIds
 	 */
-	void removeVerifiedRequirementsFromTestCase(List<Long> requirementsIds, long testCaseId);
+	void removeVerifiedRequirementVersionsFromTestCase(List<Long> requirementVersionsIds, long testCaseId);
 
 	/**
 	 * Removes a requirement from the ones verified by a test case. If the requirement was not previously verified by
 	 * the test case, nothing special happens.
-	 *
+	 * 
 	 * @param testCaseId
 	 * @param requirementsIds
 	 */
-	void removeVerifiedRequirementFromTestCase(long requirementId, long testCaseId);
+	void removeVerifiedRequirementVersionFromTestCase(long requirementVersionId, long testCaseId);
+
+	/**
+	 * Returns the filtered list of {@link RequirementVersion}s directly verified by a test case.
+	 * 
+	 * @param testCaseId
+	 * @param filter
+	 * @return
+	 */
+	@Transactional(readOnly = true)
+	PagedCollectionHolder<List<RequirementVersion>> findAllDirectlyVerifiedRequirementsByTestCaseId(long testCaseId,
+			PagingAndSorting pas);
+
 }

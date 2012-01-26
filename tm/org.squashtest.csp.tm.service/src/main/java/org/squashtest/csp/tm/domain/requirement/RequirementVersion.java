@@ -134,7 +134,7 @@ public class RequirementVersion extends Resource implements AttachmentHolder {
 	}
 
 	public void removeVerifyingTestCase(@NotNull TestCase testCase) throws RequirementVersionNotLinkableException {
-		testCase.removeVerifiedRequirement(this);
+		testCase.removeVerifiedRequirementVersion(this);
 	}
 
 	private void checkLinkable() {

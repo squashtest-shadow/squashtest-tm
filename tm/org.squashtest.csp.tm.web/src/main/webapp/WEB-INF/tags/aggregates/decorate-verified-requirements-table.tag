@@ -67,7 +67,7 @@
 			}
 			
 			if (ids.length > 0) {
-				$.post('${ nonVerifiedRequirementsUrl }', { requirementsIds: ids }, refreshVerifiedRequirements)
+				$.post('${ nonVerifiedRequirementsUrl }', { requirementVersionsIds: ids }, refreshVerifiedRequirements)
 				<c:if test="${ not empty updateImportanceMethod }" >.success(function(){${ updateImportanceMethod }();})</c:if>
 				;
 			}

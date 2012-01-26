@@ -33,6 +33,9 @@ import org.springframework.security.access.prepost.PostFilter;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+import org.squashtest.csp.core.infrastructure.collection.PagedCollectionHolder;
+import org.squashtest.csp.core.infrastructure.collection.PagingAndSorting;
+import org.squashtest.csp.core.infrastructure.collection.PagingBackedPagedCollectionHolder;
 import org.squashtest.csp.tm.domain.VerifiedRequirementException;
 import org.squashtest.csp.tm.domain.projectfilter.ProjectFilter;
 import org.squashtest.csp.tm.domain.requirement.Requirement;
@@ -78,11 +81,6 @@ public class VerifiedRequirementsManagerServiceImpl implements VerifiedRequireme
 	private LibraryNodeDao<RequirementLibraryNode> requirementLibraryNodeDao;
 
 	@Override
-	public TestCase findTestCase(long testCaseId) {
-		return testCaseDao.findById(testCaseId);
-	}
-
-	@Override
 	@PostFilter("hasPermission(filterObject, 'READ') or hasRole('ROLE_ADMIN')")
 	public List<RequirementLibrary> findLinkableRequirementLibraries() {
 		ProjectFilter pf = projectFilterModificationService.findProjectFilterByUserLogin();
@@ -93,7 +91,7 @@ public class VerifiedRequirementsManagerServiceImpl implements VerifiedRequireme
 	@SuppressWarnings("rawtypes")
 	@Override
 	@PreAuthorize("hasPermission(#testCaseId, 'org.squashtest.csp.tm.domain.testcase.TestCase' , 'WRITE') or hasRole('ROLE_ADMIN')")
-	public Collection<VerifiedRequirementException> addVerifiedRequirementsToTestCase(final List<Long> requirementsIds,
+	public Collection<VerifiedRequirementException> addVerifiedRequirementsToTestCase(List<Long> requirementsIds,
 			long testCaseId) {
 		List<RequirementLibraryNode> nodes = requirementLibraryNodeDao.findAllByIdList(requirementsIds);
 
@@ -146,15 +144,16 @@ public class VerifiedRequirementsManagerServiceImpl implements VerifiedRequireme
 
 	@Override
 	@PreAuthorize("hasPermission(#testCaseId, 'org.squashtest.csp.tm.domain.testcase.TestCase' , 'WRITE') or hasRole('ROLE_ADMIN')")
-	public void removeVerifiedRequirementsFromTestCase(List<Long> requirementsIds, long testCaseId) {
+	public void removeVerifiedRequirementVersionsFromTestCase(List<Long> requirementsIds, long testCaseId) {
 		List<RequirementVersion> reqs = requirementVersionDao.findAllByIdList(requirementsIds);
 
 		if (!reqs.isEmpty()) {
 			TestCase testCase = testCaseDao.findById(testCaseId);
 
 			for (RequirementVersion requirement : reqs) {
-				testCase.removeVerifiedRequirement(requirement);
+				testCase.removeVerifiedRequirementVersion(requirement);
 			}
+			
 			testCaseImportanceManagerService
 					.changeImportanceIfRelationsRemovedFromTestCase(requirementsIds, testCaseId);
 		}
@@ -162,13 +161,43 @@ public class VerifiedRequirementsManagerServiceImpl implements VerifiedRequireme
 
 	@Override
 	@PreAuthorize("hasPermission(#testCaseId, 'org.squashtest.csp.tm.domain.testcase.TestCase' , 'WRITE') or hasRole('ROLE_ADMIN')")
-	public void removeVerifiedRequirementFromTestCase(long requirementId, long testCaseId) {
+	public void removeVerifiedRequirementVersionFromTestCase(long requirementId, long testCaseId) {
 		RequirementVersion req = requirementVersionDao.findById(requirementId);
-
 		TestCase testCase = testCaseDao.findById(testCaseId);
-		testCase.removeVerifiedRequirement(req);
+		
+		testCase.removeVerifiedRequirementVersion(req);
+		
 		testCaseImportanceManagerService.changeImportanceIfRelationsRemovedFromTestCase(Arrays.asList(requirementId),
 				testCaseId);
+	}
+
+	/*
+	 * regarding the @PreAuthorize for the verified requirements :
+	 * 
+	 * I prefer to show all the requirements that the test case refers to even if some of those requirements belongs to
+	 * a project the current user cannot "read", rather post filtering it.
+	 * 
+	 * The reason for that is that such policy is impractical for the same problem in the context of Iteration-TestCase
+	 * associations : filtering the test cases wouldn't make much sense and would lead to partial executions of a
+	 * campaign.
+	 * 
+	 * Henceforth the same policy applies to other cases of possible inter-project associations (like
+	 * TestCase-Requirement associations in the present case), for the sake of coherence.
+	 * 
+	 * @author bsiri
+	 * 
+	 * (non-Javadoc)
+	 * 
+	 * @see org.squashtest.csp.tm.service.TestCaseModificationService#findVerifiedRequirementsByTestCaseId(long,
+	 * org.squashtest.csp.tm.infrastructure.filter.CollectionSorting)
+	 */
+	@Override
+	@PreAuthorize("hasPermission(#testCaseId, 'org.squashtest.csp.tm.domain.testcase.TestCase' , 'READ') or hasRole('ROLE_ADMIN')")
+	public PagedCollectionHolder<List<RequirementVersion>> findAllDirectlyVerifiedRequirementsByTestCaseId(
+			long testCaseId, PagingAndSorting pas) {
+		List<RequirementVersion> verifiedReqs = requirementVersionDao.findAllVerifiedByTestCase(testCaseId, pas);
+		long verifiedCount = requirementVersionDao.countVerifiedByTestCase(testCaseId);
+		return new PagingBackedPagedCollectionHolder<List<RequirementVersion>>(pas, verifiedCount, verifiedReqs);
 	}
 
 }

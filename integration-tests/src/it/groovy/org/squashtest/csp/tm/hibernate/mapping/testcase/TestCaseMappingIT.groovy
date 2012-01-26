@@ -91,7 +91,7 @@ class TestCaseMappingIT extends HibernateMappingSpecification {
 		def step2 = new ActionTestStep(action: "step2")
 		def step3 = new ActionTestStep(action: "step3")
 
-		def testCase = new TestCase(name: "with steps");
+		def testCase = new TestCase(name: "with steps")
 		testCase.steps << step1
 		testCase.steps << step2
 		testCase.steps << step3
@@ -205,21 +205,21 @@ class TestCaseMappingIT extends HibernateMappingSpecification {
 
 		when:
 		doInTransaction({
-			it.get(TestCase, tc.id).addVerifiedRequirement(r.currentVersion)
+			it.get(TestCase, tc.id).addVerifiedRequirementVersion(r.currentVersion)
 		})
 		TestCase res = doInTransaction ({
 			it.createQuery("from TestCase tc left join fetch tc.verifiedRequirementVersions where tc.id = " + tc.id).uniqueResult()
 		})
 
 		then:
-		res.verifiedRequirements.size() == 1
+		res.verifiedRequirementVersions.size() == 1
 
 		cleanup:
 		doInTransaction({
 			def tcc = it.get(TestCase, tc.id)
 			def rr = it.get(Requirement, r.id)
 
-			tcc.removeVerifiedRequirement rr.currentVersion
+			tcc.removeVerifiedRequirementVersion rr.currentVersion
 			it.delete tcc
 
 			it.delete rr
@@ -237,41 +237,41 @@ class TestCaseMappingIT extends HibernateMappingSpecification {
 
 		and:
 		doInTransaction({
-			it.get(TestCase, tc.id).addVerifiedRequirement(r.currentVersion)
+			it.get(TestCase, tc.id).addVerifiedRequirementVersion(r.currentVersion)
 		})
-		
+
 		when:
 		doInTransaction({
 			TestCase tcc = it.load(TestCase, tc.id)
 			RequirementVersion rvv = it.load(RequirementVersion, r.currentVersion.id)
-			tcc.removeVerifiedRequirement(rvv)
+			tcc.removeVerifiedRequirementVersion(rvv)
 		})
 
-		
+
 		def actualTC = {
 			doInTransaction ({
 				def res = it.load(TestCase, tc.id)
-				res.verifiedRequirements.size()
+				res.verifiedRequirementVersions.size()
 				return res
-		})
+			})
 		}
 
 		then:
-		actualTC().verifiedRequirements.size() == 0
+		actualTC().verifiedRequirementVersions.size() == 0
 
 		cleanup:
 		doInTransaction({
 			def tcc = it.get(TestCase, tc.id)
 			def rr = it.get(Requirement, r.id)
 
-			tcc.removeVerifiedRequirement rr.currentVersion
+			tcc.removeVerifiedRequirementVersion rr.currentVersion
 			it.delete tcc
 
 			it.delete rr
 		})
 	}
 
-		def "should retrieve test cases with a creator"(){
+	def "should retrieve test cases with a creator"(){
 
 		given: "a test case"
 		TestCase tc = new TestCase(name: "with creator")
@@ -358,7 +358,7 @@ class TestCaseMappingIT extends HibernateMappingSpecification {
 		then:
 		res() != null
 		res().steps.size() == 1
-		res().verifiedRequirements.size() == 1
+		res().verifiedRequirementVersions.size() == 1
 
 		cleanup:
 		use (HibernateOperationCategory) {

@@ -20,23 +20,23 @@
  */
 package org.squashtest.csp.tm.internal.service
 
-import org.squashtest.csp.core.infrastructure.collection.PagedCollectionHolder;
-import org.squashtest.csp.core.infrastructure.collection.PagingAndSorting;
-import org.squashtest.csp.tm.domain.requirement.Requirement;
-import org.squashtest.csp.tm.domain.requirement.RequirementVersion;
-import org.squashtest.csp.tm.domain.testcase.TestCaseExecutionMode;
-import org.squashtest.csp.tm.domain.testcase.TestCase;
-import org.squashtest.csp.tm.domain.testcase.ActionTestStep;
-import org.squashtest.csp.tm.infrastructure.filter.CollectionSorting;
-import org.squashtest.csp.tm.internal.repository.RequirementDao;
-import org.squashtest.csp.tm.internal.repository.RequirementVersionDao;
-import org.squashtest.csp.tm.internal.repository.TestCaseDao;
-import org.squashtest.csp.tm.internal.repository.TestStepDao;
-import org.squashtest.csp.tm.service.CallStepManagerService;
-import org.squashtest.csp.tools.unittest.assertions.CollectionAssertions;
+import org.squashtest.csp.core.infrastructure.collection.PagedCollectionHolder
+import org.squashtest.csp.core.infrastructure.collection.PagingAndSorting
+import org.squashtest.csp.tm.domain.requirement.Requirement
+import org.squashtest.csp.tm.domain.requirement.RequirementVersion
+import org.squashtest.csp.tm.domain.testcase.TestCaseExecutionMode
+import org.squashtest.csp.tm.domain.testcase.TestCase
+import org.squashtest.csp.tm.domain.testcase.ActionTestStep
+import org.squashtest.csp.tm.infrastructure.filter.CollectionSorting
+import org.squashtest.csp.tm.internal.repository.RequirementDao
+import org.squashtest.csp.tm.internal.repository.RequirementVersionDao
+import org.squashtest.csp.tm.internal.repository.TestCaseDao
+import org.squashtest.csp.tm.internal.repository.TestStepDao
+import org.squashtest.csp.tm.service.CallStepManagerService
+import org.squashtest.csp.tools.unittest.assertions.CollectionAssertions
 
 
-import spock.lang.Specification;
+import spock.lang.Specification
 
 class CustomTestCaseModificationServiceImplTest extends Specification {
 	CustomTestCaseModificationServiceImpl service = new CustomTestCaseModificationServiceImpl()
@@ -56,7 +56,7 @@ class CustomTestCaseModificationServiceImplTest extends Specification {
 		service.testCaseManagementService = testCaseManagementService
 		service.requirementVersionDao = requirementVersionDao
 		service.callStepManagerService = callStepManagerService
-		service.deletionHandler = deletionHandler;
+		service.deletionHandler = deletionHandler
 	}
 
 	def "should find test case and add a step"() {
@@ -113,40 +113,6 @@ class CustomTestCaseModificationServiceImplTest extends Specification {
 		1 * deletionHandler.deleteStep(testCase, tstep)
 	}
 
-	def "should return the first 2 verified requirements"() {
-		given:
-		PagingAndSorting filter = Mock()
-		filter.getFirstItemIndex() >> 0
-		filter.getPageSize() >> 2
-
-		and:
-		requirementVersionDao.findAllVerifiedByTestCase(10, filter) >> [
-			Mock(Requirement),
-			Mock(Requirement)
-		]
-
-		when:
-		def res = service.findAllDirectlyVerifiedRequirementsByTestCaseId(10, filter)
-
-		then:
-		res.pagedItems.size() == 2
-	}
-
-	def "should tell that unfiltered result size is 5"() {
-		given:
-		PagingAndSorting filter = Mock()
-		filter.getFirstItemIndex() >> 0
-		filter.getPageSize() >> 2
-
-		and:
-		requirementVersionDao.countVerifiedByTestCase(10) >> 5
-
-		when:
-		PagedCollectionHolder res = service.findAllDirectlyVerifiedRequirementsByTestCaseId(10, filter)
-
-		then:
-		res.totalNumberOfItems == 5
-	}
 
 	def "should copy and insert a Test Step a a specific position"(){
 		given:
@@ -189,7 +155,7 @@ class CustomTestCaseModificationServiceImplTest extends Specification {
 
 
 		and : "the looked up test case calls no test case"
-		callStepManagerService.getTestCaseCallTree(_) >> [];
+		callStepManagerService.getTestCaseCallTree(_) >> []
 
 
 		when:
@@ -213,7 +179,7 @@ class CustomTestCaseModificationServiceImplTest extends Specification {
 
 		and : "the looked up test case calls a test case"
 		long callee = 20L
-		callStepManagerService.getTestCaseCallTree(_) >> [callee];
+		callStepManagerService.getTestCaseCallTree(_) >> [callee]
 
 
 		and: "the callee verifies a requiremnt"
@@ -251,7 +217,7 @@ class CustomTestCaseModificationServiceImplTest extends Specification {
 		callStepManagerService.getTestCaseCallTree(_) >> [
 			firstLevelCallee,
 			secondLevelCallee
-		];
+		]
 
 
 

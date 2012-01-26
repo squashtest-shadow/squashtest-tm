@@ -185,35 +185,6 @@ public class CustomTestCaseModificationServiceImpl implements CustomTestCaseModi
 		return testCaseDao.findAndInit(testCaseId);
 	}
 
-	/*
-	 * regarding the @PreAuthorize for the verified requirements :
-	 * 
-	 * I prefer to show all the requirements that the test case refers to even if some of those requirements belongs to
-	 * a project the current user cannot "read", rather post filtering it.
-	 * 
-	 * The reason for that is that such policy is impractical for the same problem in the context of Iteration-TestCase
-	 * associations : filtering the test cases wouldn't make much sense and would lead to partial executions of a
-	 * campaign.
-	 * 
-	 * Henceforth the same policy applies to other cases of possible inter-project associations (like
-	 * TestCase-Requirement associations in the present case), for the sake of coherence.
-	 * 
-	 * @author bsiri
-	 * 
-	 * (non-Javadoc)
-	 * 
-	 * @see org.squashtest.csp.tm.service.TestCaseModificationService#findVerifiedRequirementsByTestCaseId(long,
-	 * org.squashtest.csp.tm.infrastructure.filter.CollectionSorting)
-	 */
-	@Override
-	@PreAuthorize("hasPermission(#testCaseId, 'org.squashtest.csp.tm.domain.testcase.TestCase' , 'READ') or hasRole('ROLE_ADMIN')")
-	public PagedCollectionHolder<List<RequirementVersion>> findAllDirectlyVerifiedRequirementsByTestCaseId(
-			long testCaseId, PagingAndSorting pas) {
-		List<RequirementVersion> verifiedReqs = requirementVersionDao.findAllVerifiedByTestCase(testCaseId, pas);
-		long verifiedCount = requirementVersionDao.countVerifiedByTestCase(testCaseId);
-		return new PagingBackedPagedCollectionHolder<List<RequirementVersion>>(pas, verifiedCount, verifiedReqs);
-	}
-
 	@Override
 	@PreAuthorize("hasPermission(#testCaseId, 'org.squashtest.csp.tm.domain.testcase.TestCase' , 'WRITE') or hasRole('ROLE_ADMIN')")
 	public void removeListOfSteps(long testCaseId, List<Long> testStepIds) {

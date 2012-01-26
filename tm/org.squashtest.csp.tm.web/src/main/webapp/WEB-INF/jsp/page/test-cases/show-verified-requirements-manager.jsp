@@ -32,9 +32,9 @@
 <%@ page language="java" contentType="text/html; charset=utf-8" pageEncoding="utf-8"%>
 
 <c:url var="treeBaseUrl" value="/requirement-browser/"/>
-<c:url var="verifiedRequirementsTableUrl" value="/test-cases/${testCase.id}/verified-requirements-table" />
-<c:url var="verifiedRequirementsUrl" value="/test-cases/${ testCase.id }/verified-requirements" />
-<c:url var="nonVerifiedRequirementsUrl" value="/test-cases/${ testCase.id }/non-verified-requirements" />
+<c:url var="verifiedRequirementsTableUrl" value="/test-cases/${testCase.id}/verified-requirement-versions/table" />
+<c:url var="verifiedRequirementsUrl" value="/test-cases/${ testCase.id }/verified-requirement-versions" />
+<c:url var="nonVerifiedRequirementsUrl" value="/test-cases/${ testCase.id }/non-verified-requirement-versions" />
 
 <layout:tree-picker-layout removeLabelKey="association_interface.remove.button.label" 
 						   workspaceTitleKey="workspace.test-case.title" 
@@ -48,6 +48,7 @@
 		<aggr:decorate-verified-requirements-table tableModelUrl="${ verifiedRequirementsTableUrl }" verifiedRequirementsUrl="${ verifiedRequirementsUrl }" 
 				nonVerifiedRequirementsUrl="${ nonVerifiedRequirementsUrl }" batchRemoveButtonId="remove-items-button" />
 				
+		<c:url var="addVerifiedRequirementsUrl" value="/test-cases/${ testCase.id }/verified-requirements" />
 		<script type="text/javascript">
 
 			function getRequirementsIds(){
@@ -109,7 +110,7 @@
 					ids = getRequirementsIds()
 			
 					if (ids.length > 0) {
-						$.post('${ verifiedRequirementsUrl }', { requirementsIds: ids}, addHandler);
+						$.post('${ addVerifiedRequirementsUrl }', { requirementsIds: ids}, addHandler);
 					}
 					tree.jstree('deselect_all');
 				});				
@@ -139,7 +140,7 @@
 	
 	<jsp:attribute name="subPageButtons">
 		<f:message var="backButtonLabel" key="fragment.edit.header.button.back" />
-		<input type="button" class="button" value="${backButtonLabel}" onClick="history.back();"/>	
+		<input type="button" class="button" value="${ backButtonLabel }" onClick="history.back();"/>	
 	</jsp:attribute>		
 	
 	<jsp:attribute name="tablePane">

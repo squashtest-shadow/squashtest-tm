@@ -99,10 +99,10 @@ it will insert sub-page-layout.tag between the top template and this one." %>
 			<div  id="tree-picker-actions-pane" class="centered">
 				<div style="position:absolute;top:45%;margin-right:2em;">
 					<f:message var="addLabel" key="${ addLabelKey }" />
-					<input id="add-items-button" type="button" value="${ addLabel }" class="button" style="margin-bottom:15px;width:30px;" />  
+					<input id="add-items-button" type="button" value="${ addLabel }" class="button" style="margin-bottom:15px;width:40px;" />  
 
 					<f:message var="removeLabel" key="${ removeLabelKey }" />
-					<input id="remove-items-button" type="button" value="${ removeLabel }" class="button" style="margin-top:15px;width:30px;" />
+					<input id="remove-items-button" type="button" value="${ removeLabel }" class="button" style="margin-top:15px;width:40px;" />
 				</div>
 			</div>
 			

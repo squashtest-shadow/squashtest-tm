@@ -63,10 +63,10 @@
 	<s:param name="tcId" value="${testCase.id}" />
 </s:url>
 
-<s:url var="verifiedReqsManagerUrl" value="/test-cases/${ testCase.id }/verified-requirements-manager" />
+<s:url var="verifiedReqsManagerUrl" value="/test-cases/${ testCase.id }/verified-requirement-versions/manager" />
 
-<c:url var="verifiedRequirementsUrl" value="/test-cases/${ testCase.id }/verified-requirements" />
-<c:url var="nonVerifiedRequirementsUrl" value="/test-cases/${ testCase.id }/non-verified-requirements" />
+<c:url var="verifiedRequirementsUrl" value="/test-cases/${ testCase.id }/verified-requirement-versions" />
+<c:url var="nonVerifiedRequirementsUrl" value="/test-cases/${ testCase.id }/non-verified-requirement-versions" />
 
 <s:url var="callStepManagerUrl" value="/test-cases/${ testCase.id }/call" />
 

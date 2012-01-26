@@ -20,6 +20,8 @@
  */
 package org.squashtest.csp.tm.internal.service
 
+import org.squashtest.csp.core.infrastructure.collection.PagedCollectionHolder
+import org.squashtest.csp.core.infrastructure.collection.PagingAndSorting
 import org.squashtest.csp.tm.domain.projectfilter.ProjectFilter
 import org.squashtest.csp.tm.domain.requirement.Requirement
 import org.squashtest.csp.tm.domain.requirement.RequirementLibrary
@@ -36,6 +38,7 @@ import org.squashtest.csp.tools.unittest.reflection.ReflectionCategory
 import org.squashtest.csp.tm.internal.repository.RequirementVersionDao
 import org.squashtest.csp.tm.internal.repository.TestCaseDao
 import org.squashtest.csp.tm.internal.repository.TestCaseLibraryDao
+import org.squashtest.csp.tm.service.TestCaseModificationService
 import org.squashtest.csp.tools.unittest.assertions.CollectionAssertions
 import org.squashtest.csp.tools.unittest.reflection.ReflectionCategory
 
@@ -61,18 +64,6 @@ class VerifiedRequirementsManagerServiceImplTest extends Specification {
 		service.libraryStrategy = libraryStrategy
 		service.requirementLibraryNodeDao = nodeDao
 		service.testCaseImportanceManagerService = testCaseImportanceManagerService
-	}
-
-	def "should find test case by id"() {
-		given:
-		TestCase testCase = Mock()
-		testCaseDao.findById(10L) >> testCase
-
-		when:
-		def res = service.findTestCase(10L)
-
-		then:
-		res == testCase
 	}
 
 	def "should find libraries of linkable requirements"() {
@@ -170,7 +161,7 @@ class VerifiedRequirementsManagerServiceImplTest extends Specification {
 		testCaseDao.findById(10) >> testCase
 
 		when:
-		service.removeVerifiedRequirementsFromTestCase([15], 10)
+		service.removeVerifiedRequirementVersionsFromTestCase([15], 10)
 
 		then:
 		testCase.verifiedRequirementVersions.containsExactly([req5])
@@ -188,9 +179,44 @@ class VerifiedRequirementsManagerServiceImplTest extends Specification {
 		testCaseDao.findById(10) >> testCase
 
 		when:
-		service.removeVerifiedRequirementFromTestCase(5, 10)
+		service.removeVerifiedRequirementVersionFromTestCase(5, 10)
 
 		then:
 		testCase.verifiedRequirementVersions.size() == 0
+	}
+
+	def "should return the first 2 verified requirements"() {
+		given:
+		PagingAndSorting filter = Mock()
+		filter.getFirstItemIndex() >> 0
+		filter.getPageSize() >> 2
+
+		and:
+		requirementVersionDao.findAllVerifiedByTestCase(10, filter) >> [
+			Mock(Requirement),
+			Mock(Requirement)
+		]
+
+		when:
+		def res = service.findAllDirectlyVerifiedRequirementsByTestCaseId(10, filter)
+
+		then:
+		res.pagedItems.size() == 2
+	}
+
+	def "should tell that unfiltered result size is 5"() {
+		given:
+		PagingAndSorting filter = Mock()
+		filter.getFirstItemIndex() >> 0
+		filter.getPageSize() >> 2
+
+		and:
+		requirementVersionDao.countVerifiedByTestCase(10) >> 5
+
+		when:
+		PagedCollectionHolder res = service.findAllDirectlyVerifiedRequirementsByTestCaseId(10, filter)
+
+		then:
+		res.totalNumberOfItems == 5
 	}
 }

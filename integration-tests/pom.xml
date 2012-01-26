@@ -390,16 +390,12 @@
 		</dependency>
 		<!-- ====== JTA ====== -->
 
-
 		<!-- ====== JSE DI API ====== -->
 		<dependency>
 			<groupId>javax.inject</groupId>
 			<artifactId>com.springsource.javax.inject</artifactId>
 		</dependency>
 		<!-- ====== /JSE DI API ====== -->
-		
-		
-		
 	</dependencies>
 
 	<profiles>

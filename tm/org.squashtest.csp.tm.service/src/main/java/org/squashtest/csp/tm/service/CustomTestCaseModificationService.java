@@ -80,18 +80,6 @@ public interface CustomTestCaseModificationService {
 	void removeListOfSteps(long testCaseId, List<Long> testStepIds);
 
 	/**
-	 * Returns the filtered list of {@link RequirementVersion}s directly verified by a test case.
-	 * 
-	 * @param testCaseId
-	 * @param filter
-	 * @return
-	 */
-	@Transactional(readOnly = true)
-	PagedCollectionHolder<List<RequirementVersion>> findAllDirectlyVerifiedRequirementsByTestCaseId(long testCaseId,
-			PagingAndSorting pas);
-
-	/**
-	 * @deprecated not used ?
 	 * @param testCaseId
 	 * @param pas
 	 * @return

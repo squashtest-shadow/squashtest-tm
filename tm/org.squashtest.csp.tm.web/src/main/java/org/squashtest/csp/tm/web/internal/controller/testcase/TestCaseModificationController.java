@@ -45,7 +45,6 @@ import org.squashtest.csp.core.infrastructure.collection.PagedCollectionHolder;
 import org.squashtest.csp.core.infrastructure.collection.PagingAndSorting;
 import org.squashtest.csp.tm.domain.Internationalizable;
 import org.squashtest.csp.tm.domain.project.Project;
-import org.squashtest.csp.tm.domain.requirement.Requirement;
 import org.squashtest.csp.tm.domain.requirement.RequirementCriticality;
 import org.squashtest.csp.tm.domain.requirement.RequirementVersion;
 import org.squashtest.csp.tm.domain.testcase.ActionTestStep;
@@ -375,27 +374,6 @@ public class TestCaseModificationController {
 
 	private PagingAndSorting createPagingAndSorting(DataTableDrawParameters params, DataTableMapper mapper) {
 		return new DataTableMapperPagingAndSortingAdapter(params, mapper);
-	}
-
-	@RequestMapping(value = "/verified-requirements-table", params = "sEcho")
-	@ResponseBody
-	public DataTableModel getVerifiedRequirementsTableModel(@PathVariable long testCaseId,
-			final DataTableDrawParameters params, final Locale locale) {
-
-		PagingAndSorting filter = new DataTableMapperPagingAndSortingAdapter(params, verifiedReqMapper);
-
-		PagedCollectionHolder<List<RequirementVersion>> holder = testCaseModificationService
-				.findAllDirectlyVerifiedRequirementsByTestCaseId(testCaseId, filter);
-
-		return new DataTableModelHelper<RequirementVersion>() {
-			@Override
-			public Object[] buildItemData(RequirementVersion item) {
-				return new Object[] { item.getId(), getCurrentIndex(), item.getRequirement().getProject().getName(),
-						item.getReference(), item.getName(), internationalize(item.getCriticality(), locale), "", true // the
-					};
-			}
-		}.buildDataModel(holder, params.getsEcho());
-
 	}
 
 	@RequestMapping(value = "/calling-test-case-table", params = "sEcho")
