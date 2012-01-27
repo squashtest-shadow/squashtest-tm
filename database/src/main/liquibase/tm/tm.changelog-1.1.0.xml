@@ -387,7 +387,7 @@
 		</comment>
 		
 		<createTable tableName="TEST_SUITE">
-			<column name="ID" type="BIGINT" >
+			<column name="ID" type="BIGINT" autoIncrement="true">
 				<constraints primaryKey="true" nullable="false" primaryKeyName="PK_TEST_SUITE" />
 			</column>
 			<column name="NAME" type="java.sql.Types.VARCHAR(100)" />

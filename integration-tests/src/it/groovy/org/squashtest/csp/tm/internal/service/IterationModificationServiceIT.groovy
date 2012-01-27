@@ -28,6 +28,7 @@ import javax.inject.Inject;
 import org.squashtest.csp.tm.domain.campaign.Campaign
 import org.squashtest.csp.tm.domain.campaign.IterationTestPlanItem;
 import org.squashtest.csp.tm.domain.campaign.Iteration
+import org.squashtest.csp.tm.domain.campaign.TestSuite;
 import org.squashtest.csp.tm.domain.execution.Execution;
 import org.squashtest.csp.tm.domain.testcase.TestCase;
 import org.squashtest.csp.tm.domain.testcase.ActionTestStep
@@ -54,9 +55,6 @@ class IterationModificationServiceIT extends HibernateServiceSpecification {
 
 	@Inject
 	private CampaignLibrariesCrudService campaignLibCrud
-
-
-
 
 	@Inject
 	private IterationTestPlanManagerService tpManagerService;
@@ -252,6 +250,24 @@ class IterationModificationServiceIT extends HibernateServiceSpecification {
 		itp1.getReferencedTestCase().id == tc1.id
 		itp1.id == itp2.id
 		itp1.id == itp3.id
+	}
+	
+	
+	def "should add a TestSuite to an iteration"(){
+		
+		given :
+			def suite = new TestSuite()
+			suite.name="suite"
+			
+		when :
+			iterService.addTestSuite(iterationId, suite);
+			def resuite = iterService.findAllTestSuites(iterationId)
+			def iteration = iterService.findById(iterationId)
+			
+		then :
+			resuite.size() == 1
+			resuite[0].iteration.id == iteration.id
+			 
 	}
 
 

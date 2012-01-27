@@ -21,6 +21,7 @@
 package org.squashtest.csp.tm.internal.service;
 
 import java.util.List;
+import java.util.Set;
 
 import javax.inject.Inject;
 
@@ -252,4 +253,12 @@ public class CustomIterationModificationServiceImpl implements CustomIterationMo
 		Iteration iteration = iterationDao.findAndInit(iterationId);
 		iteration.addTestSuite(suite);
 	}
+
+	@Override	
+	@PreAuthorize("hasPermission(#arg0, 'org.squashtest.csp.tm.domain.campaign.Iteration', 'READ') "
+			+ "or hasRole('ROLE_ADMIN')")	
+	public List<TestSuite> findAllTestSuites(long iterationId) {
+		return iterationDao.findAllTestSuites(iterationId);
+	}
+	
 }

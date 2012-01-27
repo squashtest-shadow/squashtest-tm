@@ -90,6 +90,7 @@
 		@NamedQuery(name = "iteration.findIterationByName", query = "from Iteration i where i.name like :iterationName order by i.name asc"),
 		@NamedQuery(name = "iteration.findTestPlanFiltered", query = "select tp from Iteration it join it.testPlans tp where it.id = :iterationId and index(tp) between :firstIndex and :lastIndex order by index(tp)"),
 		@NamedQuery(name = "iteration.findAllById", query = "from Iteration i where i.id in (:iterationIds)"),
+		@NamedQuery(name = "iteration.findAllTestSuites", query = "from TestSuite ts where ts.iteration = :iterationId"),
 
 		// Queries on TestCase
 		@NamedQuery(name = "testCase.findNamesInFolderStartingWith", query = "select c.name from TestCaseFolder f join f.content c where f.id = :containerId and c.name like :nameStart"),

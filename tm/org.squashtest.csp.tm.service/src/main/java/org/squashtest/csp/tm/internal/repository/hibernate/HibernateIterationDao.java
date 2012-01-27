@@ -33,6 +33,7 @@ import org.springframework.stereotype.Repository;
 import org.squashtest.csp.tm.domain.campaign.Campaign;
 import org.squashtest.csp.tm.domain.campaign.IterationTestPlanItem;
 import org.squashtest.csp.tm.domain.campaign.Iteration;
+import org.squashtest.csp.tm.domain.campaign.TestSuite;
 import org.squashtest.csp.tm.domain.execution.Execution;
 import org.squashtest.csp.tm.infrastructure.filter.CollectionSorting;
 import org.squashtest.csp.tm.internal.repository.IterationDao;
@@ -177,6 +178,12 @@ public class HibernateIterationDao extends HibernateEntityDao<Iteration> impleme
 			query.setParameterList("iterationIds", iterationIds, LongType.INSTANCE);
 			return query.list();
 		}
+	}
+
+	@Override
+	public List<TestSuite> findAllTestSuites(final long iterationId) {
+		SetQueryParametersCallback callback = idParameter(iterationId);
+		return executeListNamedQuery("iteration.findAllTestSuites", callback);
 	}
 
 

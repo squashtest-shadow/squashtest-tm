@@ -22,7 +22,9 @@
 package org.squashtest.csp.tm.service;
 
 import java.util.List;
+import java.util.Set;
 
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.transaction.annotation.Transactional;
 import org.squashtest.csp.tm.domain.campaign.Iteration;
 import org.squashtest.csp.tm.domain.campaign.IterationTestPlanItem;
@@ -96,5 +98,8 @@ public interface CustomIterationModificationService {
 	List<Long> deleteNodes(List<Long> targetIds);
 
 	void addTestSuite(long iterationId, TestSuite suite);
+	
+	List<TestSuite> findAllTestSuites(long iterationId);
+
 
 }

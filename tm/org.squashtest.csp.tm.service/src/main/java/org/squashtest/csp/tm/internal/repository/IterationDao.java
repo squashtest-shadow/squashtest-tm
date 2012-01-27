@@ -24,6 +24,7 @@ import java.util.List;
 
 import org.squashtest.csp.tm.domain.campaign.IterationTestPlanItem;
 import org.squashtest.csp.tm.domain.campaign.Iteration;
+import org.squashtest.csp.tm.domain.campaign.TestSuite;
 import org.squashtest.csp.tm.domain.execution.Execution;
 import org.squashtest.csp.tm.infrastructure.filter.CollectionSorting;
 
@@ -54,5 +55,7 @@ public interface IterationDao extends EntityDao<Iteration>{
 	long countTestPlans(Long iterationId);
 	
 	List<Iteration> findAllByIdList(List<Long> iterationIds);
+	
+	List<TestSuite> findAllTestSuites(long iterationId);
 	
 }
