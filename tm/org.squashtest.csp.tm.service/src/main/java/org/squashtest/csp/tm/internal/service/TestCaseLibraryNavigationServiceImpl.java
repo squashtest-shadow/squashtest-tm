@@ -126,7 +126,7 @@ TestCaseLibraryNavigationService {
 	}
 	
 	@Override
-	@PreAuthorize("hasPermission(#libraryId, 'org.squashtest.csp.tm.domain.testcase.TestCaseLibrary', 'WRITE')")
+	@PreAuthorize("hasPermission(#libraryId, 'org.squashtest.csp.tm.domain.testcase.TestCaseLibrary', 'WRITE') or hasRole('ROLE_ADMIN')")
 	public ImportSummary importExcelTestCase(InputStream archiveStream,
 			long libraryId, String encoding) {
 

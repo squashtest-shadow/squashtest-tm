@@ -78,6 +78,7 @@
 	</bean>
 
 	<!--  Dynamic managers -->
+ 
 	<bean id="squashtest.tm.service.TestCaseModificationService" class="org.squashtest.csp.core.infrastructure.dynamicmanager.DynamicManagerFactoryBean">
 		<property name="componentType" value="org.squashtest.csp.tm.service.TestCaseModificationService" />
 		<property name="entityType" value="org.squashtest.csp.tm.domain.testcase.TestCase" />
@@ -114,5 +115,6 @@
 		<property name="componentType" value="org.squashtest.csp.tm.service.RequirementVersionManagerService" />
 		<property name="entityType" value="org.squashtest.csp.tm.domain.requirement.RequirementVersion" />
 	</bean>
+	
 </beans>
 

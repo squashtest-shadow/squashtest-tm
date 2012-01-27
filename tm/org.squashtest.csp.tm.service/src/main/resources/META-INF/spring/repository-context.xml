@@ -72,6 +72,7 @@
 				<value>org.squashtest.csp.tm.domain.campaign.Iteration</value>
 				<value>org.squashtest.csp.tm.domain.campaign.IterationTestPlanItem</value>
 				<value>org.squashtest.csp.tm.domain.campaign.CampaignTestPlanItem</value>
+				<value>org.squashtest.csp.tm.domain.campaign.TestSuite</value>
 
 				<value>org.squashtest.csp.tm.domain.execution.Execution</value>
 				<value>org.squashtest.csp.tm.domain.execution.ExecutionStep</value>
@@ -99,6 +100,7 @@
 				<value>org.squashtest.csp.tm.domain.event.RequirementCreation</value>
 				<value>org.squashtest.csp.tm.domain.event.RequirementPropertyChange</value>
 				<value>org.squashtest.csp.tm.domain.event.RequirementLargePropertyChange</value>
+				
 			</list>
 		</property>
 		<property name="namingStrategy">
@@ -127,5 +129,6 @@
 		<property name="componentType" value="org.squashtest.csp.tm.internal.repository.RequirementVersionDao" />
 		<property name="entityType" value="org.squashtest.csp.tm.domain.requirement.RequirementVersion" />
 	</bean>	
+	
 </beans>
 
