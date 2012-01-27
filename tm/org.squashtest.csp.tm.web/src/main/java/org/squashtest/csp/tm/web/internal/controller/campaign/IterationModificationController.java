@@ -27,12 +27,14 @@ import java.util.Locale;
 
 import javax.inject.Inject;
 import javax.servlet.http.HttpServletResponse;
+import javax.validation.Valid;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.context.MessageSource;
 import org.springframework.osgi.extensions.annotation.ServiceReference;
 import org.springframework.stereotype.Controller;
+import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
@@ -42,6 +44,7 @@ import org.springframework.web.servlet.ModelAndView;
 import org.squashtest.csp.core.service.security.PermissionEvaluationService;
 import org.squashtest.csp.tm.domain.campaign.Iteration;
 import org.squashtest.csp.tm.domain.campaign.IterationTestPlanItem;
+import org.squashtest.csp.tm.domain.campaign.TestSuite;
 import org.squashtest.csp.tm.domain.execution.Execution;
 import org.squashtest.csp.tm.domain.execution.ExecutionStatus;
 import org.squashtest.csp.tm.domain.project.Project;
@@ -370,6 +373,14 @@ public class IterationModificationController {
 
 	}
 
+	/* ********************** test suites **************************** */
+	
+	@RequestMapping(value = "/test-suites/new", params="name", method=RequestMethod.POST)
+	public @ResponseBody void addTestSuite(@PathVariable long iterationId,  @Valid @ModelAttribute("new-test-suite") TestSuite suite){
+		iterationModService.addTestSuite(iterationId, suite);
+	}
+	
+	
 	/* ************** private stuffs are below ********************** */
 
 	private CollectionSorting createCollectionSorting(final DataTableDrawParameters params, DataTableMapper mapper) {

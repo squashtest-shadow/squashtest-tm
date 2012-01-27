@@ -236,6 +236,19 @@ the display:block trick will implicitly add that property */
 	display:none;	
 }
 
+
+/*******************************
+	test suites managment
+********************************/
+
+.create-suites-section{
+	margin-bottom : 1.5em;	
+}
+
+.display-suites-section{
+	margin-bottom : 1.5em;	
+}
+
 /*******************************
 	misc
 ********************************/

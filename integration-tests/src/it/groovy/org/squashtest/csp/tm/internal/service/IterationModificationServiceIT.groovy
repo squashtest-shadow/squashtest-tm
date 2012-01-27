@@ -25,6 +25,7 @@ import java.util.List;
 
 import javax.inject.Inject;
 
+import org.squashtest.csp.tm.domain.DuplicateNameException;
 import org.squashtest.csp.tm.domain.campaign.Campaign
 import org.squashtest.csp.tm.domain.campaign.IterationTestPlanItem;
 import org.squashtest.csp.tm.domain.campaign.Iteration
@@ -268,6 +269,26 @@ class IterationModificationServiceIT extends HibernateServiceSpecification {
 			resuite.size() == 1
 			resuite[0].iteration.id == iteration.id
 			 
+	}
+	
+	def "should rant because there is a conflict in suite names"(){
+		
+		given :
+			def suite = new TestSuite()
+			suite.name="suite"
+			iterService.addTestSuite(iterationId, suite);
+			
+		and :
+			def resuite = new TestSuite()
+			resuite.name="suite"
+			
+		when :
+			iterService.addTestSuite(iterationId, resuite)
+		
+		
+		then :
+			thrown DuplicateNameException
+		
 	}
 
 

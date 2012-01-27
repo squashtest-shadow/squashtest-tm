@@ -454,7 +454,7 @@ public class Iteration implements AttachmentHolder {
 		testSuites.add(suite);
 	}
 	
-	private boolean checkSuiteNameAvailable(String name){
+	boolean checkSuiteNameAvailable(String name){
 		for (TestSuite suite : testSuites){
 			if (suite.getName().equals(name)){
 				return false;

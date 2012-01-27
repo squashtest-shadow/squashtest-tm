@@ -88,7 +88,6 @@
 <c:url var="workspaceUrl" value="/campaign-workspace/#" />
 
 
-
 <s:url var="testCaseExecutionsUrl" value="/iterations/{iterId}/test-case-executions/" >
 	<s:param name="iterId" value="${iteration.id}"/>
 </s:url>
@@ -101,6 +100,9 @@
 <s:url var="confirmDeletionUrl" value="/campaign-browser/delete-iterations/confirm" />
 
 
+<s:url var="testSuitesUrl" value="/iterations/{iterId}/test-suites">
+	<s:param name="iterId" value="${iteration.id}"/>
+</s:url>
 
 
 <%-- ----------------------------------- Authorization ----------------------------------------------%>
@@ -331,9 +333,11 @@
 			<f:message var="associateLabel" key="campaign.test-plan.manage.button.label"/>
 			<f:message var="removeLabel" key="campaign.test-plan.remove.button.label"/>
 			<f:message var="assignLabel" key="campaign.test-plan.assign.button.label"/>
+			<f:message var="suitesLabel" key="iteration.test-plan.testsuite.manage.label"/>
 			<input id="test-case-button" type="button" value="${associateLabel}" class="button"/>
 			<input id="remove-test-case-button" type="button" value="${removeLabel}" class="button"/>
 			<input id="assign-test-case-button" type="button" value="${assignLabel}" class="button"/>
+			<input id="manage-test-suites-button" type="button" value="${suitesLabel}" class="button"/>
 		</c:if>
 	</jsp:attribute>
 	
@@ -388,6 +392,10 @@
 
 <%--------------------------- /Deletion confirmation pup for Test plan section ------------------------------------%>
 
+<%------------------------------------- Test Suite Management -------------------------------------------------- --%>
+
+<comp:test-suite-managment-popup suiteList="${iteration.testSuites}" openerId="manage-test-suites-button" 
+	divId="manage-test-suites-popup" baseUrl="${testSuitesUrl}" />
 
 
 <%------------------------------ Attachments bloc ---------------------------------------------%> 
