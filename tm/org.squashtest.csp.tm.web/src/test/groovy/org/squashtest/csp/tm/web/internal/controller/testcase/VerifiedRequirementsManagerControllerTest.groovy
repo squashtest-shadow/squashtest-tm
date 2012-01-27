@@ -31,6 +31,7 @@ import org.squashtest.csp.tm.domain.project.Project
 import org.squashtest.csp.tm.domain.requirement.Requirement
 import org.squashtest.csp.tm.domain.requirement.RequirementLibrary
 import org.squashtest.csp.tm.domain.testcase.TestCase
+import org.squashtest.csp.tm.service.TestCaseModificationService;
 import org.squashtest.csp.tm.service.VerifiedRequirementsManagerService
 import org.squashtest.csp.tm.web.internal.model.builder.DriveNodeBuilder
 import spock.lang.Specification
@@ -40,10 +41,12 @@ class VerifiedRequirementsManagerControllerTest extends Specification{
 	VerifiedRequirementsManagerController controller = new VerifiedRequirementsManagerController()
 	VerifiedRequirementsManagerService verifiedRequirementsManagerService = Mock()
 	Provider driveNodeBuilder = Mock()
+	TestCaseModificationService testCaseFinder = Mock()
 
 	def setup() {
 		controller.verifiedRequirementsManagerService = verifiedRequirementsManagerService
 		controller.driveNodeBuilder = driveNodeBuilder
+		controller.testCaseFinder = testCaseFinder
 		driveNodeBuilder.get() >> new DriveNodeBuilder(Mock(PermissionEvaluationService))
 	}
 
@@ -61,7 +64,7 @@ class VerifiedRequirementsManagerControllerTest extends Specification{
 	def "should populate manager page with test case and requirement libraries model"() {
 		given:
 		TestCase testCase = Mock()
-		verifiedRequirementsManagerService.findTestCase(20L) >> testCase
+		testCaseFinder.findById(20L) >> testCase
 
 		and:
 		RequirementLibrary lib = Mock()
@@ -91,18 +94,18 @@ class VerifiedRequirementsManagerControllerTest extends Specification{
 
 	def "should remove requirements to verified requirements of test case"() {
 		when:
-		controller.removeVerifiedRequirementsFromTestCase([5, 15], 10)
+		controller.removeVerifiedRequirementVersionsFromTestCase([5, 15], 10)
 
 		then:
-		1 * verifiedRequirementsManagerService.removeVerifiedRequirementsFromTestCase([5, 15], 10)
+		1 * verifiedRequirementsManagerService.removeVerifiedRequirementVersionsFromTestCase([5, 15], 10)
 	}
 
 	def "should remove single requirement from verified requirements of test case"() {
 		when:
-		controller.removeVerifiedRequirementFromTestCase(20, 10)
+		controller.removeVerifiedRequirementVersionFromTestCase(20, 10)
 
 		then:
-		1 * verifiedRequirementsManagerService.removeVerifiedRequirementFromTestCase(20, 10)
+		1 * verifiedRequirementsManagerService.removeVerifiedRequirementVersionFromTestCase(20, 10)
 	}
 
 	def "should return rapport of requirements which could not be added"() {
