@@ -137,7 +137,7 @@ class ExcelTestCaseParserImplTest extends Specification {
 			parser.parseRow(row, ptc)
 			
 		then :
-			ptc.prerequisite == "needs something to be done before"
+			ptc.prerequisites.contains("needs something to be done before")
 	}
 	
 	
@@ -325,6 +325,16 @@ class ExcelTestCaseParserImplTest extends Specification {
 			row.getLastCellNum() >> 2
 			row.getPhysicalNumberOfCells() >> 2
 			
+			def cell0 = Mock(Cell)
+			def cell1 = Mock(Cell)
+			
+			row.getCell(0) >> cell0
+			row.getCell(1) >> cell1
+			
+			cell0.getStringCellValue() >> "valid"
+			cell1.getStringCellValue() >> "valid"
+			
+			
 		when :
 			def res = parser.validateRegularRow(row)
 		
@@ -334,7 +344,7 @@ class ExcelTestCaseParserImplTest extends Specification {
 	}
 	
 	
-	def "sould say that the given normal raw is not acceptable (1)"(){
+	def "sould say that the given normal raw is not acceptable because of number of cells (1)"(){
 		
 		given :
 			def row = Mock(Row)
@@ -350,12 +360,36 @@ class ExcelTestCaseParserImplTest extends Specification {
 	}
 	
 	
-	def "sould say that the given normal raw is not acceptable (2)"(){
+	def "sould say that the given normal raw is not acceptable because of number of cells (2)"(){
 		
 		given :
 			def row = Mock(Row)
 			row.getLastCellNum() >> 2
 			row.getPhysicalNumberOfCells() >> 6
+			
+		when :
+			def res = parser.validateRegularRow(row)
+		
+		then :
+			res == false
+		
+	}
+	
+	def "sould say that the given normal raw is not acceptable because one of the cell have no content"(){
+		
+		given :
+			def row = Mock(Row)
+			row.getLastCellNum() >> 2
+			row.getPhysicalNumberOfCells() >> 2
+			
+			def cell0 = Mock(Cell)
+			def cell1 = Mock(Cell)
+			
+			row.getCell(0) >> cell0
+			row.getCell(1) >> cell1
+			
+			cell0.getStringCellValue() >> "valid"
+			cell1.getStringCellValue() >> ""
 			
 		when :
 			def res = parser.validateRegularRow(row)
@@ -373,10 +407,19 @@ class ExcelTestCaseParserImplTest extends Specification {
 			row.getLastCellNum() >> 3
 			row.getPhysicalNumberOfCells() >> 3
 			
-			def cell = Mock(Cell)
-			cell.getStringCellValue() >> ExcelTestCaseParser.ACTION_STEP_TAG
+			def cell0 = Mock(Cell)
+			def cell1 = Mock(Cell)
+			def cell2 = Mock(Cell)
+			
+			row.getCell(0) >> cell0
+			row.getCell(1) >> cell1
+			row.getCell(2) >> cell2
+			
+			
+			cell0.getStringCellValue() >> ExcelTestCaseParser.ACTION_STEP_TAG
+			cell1.getStringCellValue() >> "valid"
+			cell2.getStringCellValue() >> "valid"
 		
-			row.getCell(0) >> cell
 		when :
 		
 			def res = parser.validateStepRow(row)
@@ -387,7 +430,7 @@ class ExcelTestCaseParserImplTest extends Specification {
 	}
 	
 	
-	def "should say that the given step row is not acceptable (1)"(){
+	def "should say that the given step row is not acceptable because wrong number of cells (1)"(){
 		given :
 			def row = Mock(Row)
 			row.getLastCellNum() >> 3
@@ -402,17 +445,25 @@ class ExcelTestCaseParserImplTest extends Specification {
 			res == false
 	}
 	
-	def "should say that the given step row is not acceptable (2)"(){
+	def "should say that the given step row is not acceptable because the first row is not the action step tag"(){
 		
 		given :
 			def row = Mock(Row)
 			row.getLastCellNum() >> 3
 			row.getPhysicalNumberOfCells() >> 3
 			
-			def cell = Mock(Cell)
-			cell.getStringCellValue() >> "random"
-		
-			row.getCell(0) >> cell
+			def cell0 = Mock(Cell)
+			def cell1 = Mock(Cell)
+			def cell2 = Mock(Cell)
+			
+			row.getCell(0) >> cell0
+			row.getCell(1) >> cell1
+			row.getCell(2) >> cell2
+			
+			
+			cell0.getStringCellValue() >> "random"
+			cell1.getStringCellValue() >> "valid"
+			cell2.getStringCellValue() >> "valid"
 		when :
 		
 			def res = parser.validateStepRow(row)
@@ -422,16 +473,24 @@ class ExcelTestCaseParserImplTest extends Specification {
 		
 	}
 	
-	def "should say that the given step row is not acceptable (3)"(){
+	def "should say that the given step row is not acceptable because there are no action defined"(){
 		given :
 			def row = Mock(Row)
 			row.getLastCellNum() >> 3
-			row.getPhysicalNumberOfCells() >> 4
+			row.getPhysicalNumberOfCells() >> 3
 			
-			def cell = Mock(Cell)
-			cell.getStringCellValue() >> ExcelTestCaseParser.ACTION_STEP_TAG
-		
-			row.getCell(0) >> cell
+			def cell0 = Mock(Cell)
+			def cell1 = Mock(Cell)
+			def cell2 = Mock(Cell)
+			
+			row.getCell(0) >> cell0
+			row.getCell(1) >> cell1
+			row.getCell(2) >> cell2
+			
+			
+			cell0.getStringCellValue() >> ExcelTestCaseParser.ACTION_STEP_TAG
+			cell1.getStringCellValue() >> ""
+			cell2.getStringCellValue() >> "valid"
 		when :
 		
 			def res = parser.validateStepRow(row)
@@ -441,7 +500,7 @@ class ExcelTestCaseParserImplTest extends Specification {
 	
 	}
 	
-	def "should say that the given step row is not acceptable (4)"(){
+	def "should say that the given step row is not acceptable (again)"(){
 		given :
 			def row = Mock(Row)
 			row.getLastCellNum() >> 2
@@ -484,10 +543,18 @@ class ExcelTestCaseParserImplTest extends Specification {
 	def "should validate because it's a regular row"(){
 		
 		given :
-		
 			def row = Mock(Row)
 			row.getLastCellNum() >> 2
 			row.getPhysicalNumberOfCells() >> 2
+			
+			def cell0 = Mock(Cell)
+			def cell1 = Mock(Cell)
+			
+			row.getCell(0) >> cell0
+			row.getCell(1) >> cell1
+			
+			cell0.getStringCellValue() >> "valid"
+			cell1.getStringCellValue() >> "valid"
 			
 		when :
 			def res = parser.validateRow(row)
@@ -504,10 +571,18 @@ class ExcelTestCaseParserImplTest extends Specification {
 			row.getLastCellNum() >> 3
 			row.getPhysicalNumberOfCells() >> 3
 			
-			def cell = Mock(Cell)
-			cell.getStringCellValue() >> ExcelTestCaseParser.ACTION_STEP_TAG
-		
-			row.getCell(0) >> cell
+			def cell0 = Mock(Cell)
+			def cell1 = Mock(Cell)
+			def cell2 = Mock(Cell)
+			
+			row.getCell(0) >> cell0
+			row.getCell(1) >> cell1
+			row.getCell(2) >> cell2
+			
+			
+			cell0.getStringCellValue() >> ExcelTestCaseParser.ACTION_STEP_TAG
+			cell1.getStringCellValue() >> "valid"
+			cell2.getStringCellValue() >> "valid"
 		when :
 		
 			def res = parser.validateStepRow(row)

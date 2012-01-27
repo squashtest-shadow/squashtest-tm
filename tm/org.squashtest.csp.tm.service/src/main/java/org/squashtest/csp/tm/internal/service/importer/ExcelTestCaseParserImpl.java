@@ -141,7 +141,7 @@ public class ExcelTestCaseParserImpl implements ExcelTestCaseParser{
 				
 			}else if (str1.equals(PREREQUISITE_TAG)){
 				
-				pseudoTestCase.prerequisite=str2;
+				pseudoTestCase.prerequisites.add(str2);
 				
 			}else if (str1.equals(ACTION_STEP_TAG)){
 								
@@ -192,6 +192,10 @@ public class ExcelTestCaseParserImpl implements ExcelTestCaseParser{
 		String desc = pseudoTestCase.formatDescription();
 		testCase.setDescription(desc);
 		
+		//the prerequisites
+		String prereqs = pseudoTestCase.formatPreRequisites();
+		testCase.setPrerequisite(prereqs);
+		
 		//the importance
 		try{
 			
@@ -213,7 +217,6 @@ public class ExcelTestCaseParserImpl implements ExcelTestCaseParser{
 			testCase.addStep(step);
 		}
 
-		//TODO : prerequesite
 		
 		
 		return testCase;
@@ -236,7 +239,8 @@ public class ExcelTestCaseParserImpl implements ExcelTestCaseParser{
 		if (row==null){
 			validated=false;
 		}
-		//spec 2 : just two cells where they are expected, 3 in the case of an action step
+		//spec 3 : just two cells where they are expected, 3 in the case of an action step
+		//and they must all contain something
 		else if ( ! ( (validateRegularRow(row)) || (validateStepRow(row)) )){
 			validated=false;			
 		}
@@ -247,19 +251,44 @@ public class ExcelTestCaseParserImpl implements ExcelTestCaseParser{
 	
 	
 	private boolean validateRegularRow(Row row){
+		
+		boolean validated = true;
+	
 		int lastCell = row.getLastCellNum();
 		int nbCell = row.getPhysicalNumberOfCells();
-		return ((lastCell==2) && (nbCell==2));
+		
+		if ((lastCell!=2) || (nbCell!=2)){
+			validated =  false;
+		}else{
+			String text1 = (row.getCell(0) !=null) ? row.getCell(0).getStringCellValue() : "";
+			String text2 = (row.getCell(1) !=null) ? row.getCell(1).getStringCellValue() : "";
+			
+			validated = ((! text1.isEmpty()) && (! text2.isEmpty()));
+		}
+		
+		return validated;
 	}
 	
-	
+	/*
+	 * An action with no expected result is fine so we do not check the last cell
+	 */
 	private boolean validateStepRow(Row row){
+		
+		boolean validated = true;
+		
 		int lastCell = row.getLastCellNum();
 		int nbCell = row.getPhysicalNumberOfCells();
 		
-		String content = (row.getCell(0) !=null) ? row.getCell(0).getStringCellValue() : "";
+		if ((lastCell!=3) || (nbCell!=3) ){
+			validated = false;
+		}else{
+			String text1 = (row.getCell(0) !=null) ? row.getCell(0).getStringCellValue() : "";
+			String text2 = (row.getCell(1) !=null) ? row.getCell(1).getStringCellValue() : "";
+			
+			validated = (text1.equals(ACTION_STEP_TAG)) && (!text2.isEmpty());
+		}
 		
-		return ((content.equals(ACTION_STEP_TAG)) && (lastCell==3) && (nbCell==3) );
+		return validated;
 		
 	}
 
@@ -277,7 +306,7 @@ public class ExcelTestCaseParserImpl implements ExcelTestCaseParser{
 		//others are complementary elements
 		ArrayList<String[]> descriptionElements = new ArrayList<String[]>(); 
 		
-		String prerequisite = "";
+		ArrayList<String> prerequisites = new ArrayList<String>();
 		
 		LinkedList<String[]> stepElements = new LinkedList<String[]>();
 		
@@ -318,6 +347,23 @@ public class ExcelTestCaseParserImpl implements ExcelTestCaseParser{
 		
 		private TestCaseImportance formatImportance(){
 			return TestCaseImportance.valueOf(importance);		
+		}
+		
+		private String formatPreRequisites(){
+			StringBuilder builder = new StringBuilder();
+			
+			if (prerequisites.size()>0){
+			
+				builder.append("<ol>");
+				
+				for (String string : prerequisites){
+					builder.append("<li>").append(string).append("</li>");
+				}
+				
+				builder.append("</ol>");
+			}
+			
+			return builder.toString();
 		}
 		
 		
