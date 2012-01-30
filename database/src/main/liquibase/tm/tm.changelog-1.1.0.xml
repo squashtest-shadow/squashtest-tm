@@ -421,7 +421,7 @@
 		</createIndex>				
 	</changeSet>
 	
-	<changeSet id="tm-1.1.024" author="bsiri">
+	<changeSet id="tm-1.1.0.24" author="bsiri">
 		<comment>
 			Hereby an ITERATION_TEST_PLAN_ITEM shalt reference 0 or 1 TEST_SUITE
 		</comment>

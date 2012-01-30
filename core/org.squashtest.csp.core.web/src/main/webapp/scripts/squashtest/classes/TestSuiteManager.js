@@ -22,18 +22,18 @@
 
 function TestSuiteManager(settings){
 
-	/* **************** private ******************** */
+	/* **************** private state management methods ******************** */
 
 	var self=this;
 		
 	var enableSection = $.proxy(function(sectionName){
-		$(":input", this[sectionName].panel.removeAttr('disabled');
+		$(":input", this[sectionName].panel).removeAttr('disabled');
 	}, self);
 	
 	var disableSection = $.proxy(function(sectionName){
 		var inputs = $(":input", this[sectionName].panel);
 		inputs.attr('disabled', 'disabled');
-		inputs.val('');		
+		inputs.filter("[type='text']").val('');		
 	}, self);
 	
 	var deselectAllSuites = $.proxy(function(){
@@ -60,16 +60,78 @@ function TestSuiteManager(settings){
 		
 	}, self);
 	
+
+	/* ******************** DOM management ************************* */
 	
-	var bindSelectionHandler = $.proxy(function(){
-		this.display.panel.live('.suite-div', 'click', function(){
+	var sortSuiteList = $.proxy(function(){
+		var allSuites = $('.suite-div', this.display.panel);
+		var sorted = allSuites.sort(function(a,b){
+			return (a.firstElementChild.textContent < b.firstElementChild.textContent) ? -1 : 1;
+		});
+		this.display.panel.append(sorted);
+	},self);
+	
+	var appendNewSuite = $.proxy(function(jsonSuite){	
+		
+		var newSuite = $("<div/>", {'class' : 'suite-div ui-corner-all' } );
+		var spanSuite = $("<span/>", {'data-suite-id' : jsonSuite.id, 'text' : jsonSuite.name});
+		
+		newSuite.append(spanSuite);
+		this.display.panel.append(newSuite);
+
+		sortSuiteList();
+		
+	}, self);
+	
+	/* ******************** event handlers ************************* */
+	
+	/* ----- suite creation ------- */
+	
+	var postNewSuite = $.proxy(function(){
+		var url = this.url+"/new";
+		var name = $("input[type='text']",this.create.panel).val();
+		
+		/*$.post(url, { 'name' : name}, "json")*/
+		
+		$.ajax({
+			'url' : url,
+			type : 'POST',
+			data : { 'name' : name }	,
+			dataType : 'json'
+		})
+		.success(appendNewSuite);
+		
+	}, self);
+	
+	
+	/* ------ item selection --------- */
+	
+		
+	var bindSelectSuite = $.proxy(function(){
+		this.display.panel.delegate('.suite-div', 'click', function(){
 			$(this).toggleClass('suite-selected ui-widget-header ui-state-default');
 			updatePopupState();
 		});	
 	}, self);
 	
+	/* -------- key binding ------------ */
 	
-	/* ***************** init ********************** */
+	var bindKeypress = $.proxy(function(){
+		
+		var triggerBtn = function(evt){
+			if (evt.which=='13'){
+				$(this).find("input[type='button']").click();
+				evt.stopImmediatePropagation();
+			}
+		};
+	
+		this.create.panel.keypress(triggerBtn);
+		this.rename.panel.keypress(triggerBtn);
+	
+	}, self);
+	
+	
+	/* ******************** init code ****************************** */
 	
 	this.instance = settings.instance;
 	this.url = settings.url;
@@ -91,5 +153,10 @@ function TestSuiteManager(settings){
 	disableSection("rename");
 	disableSection("remove");
 	enableSection("create");
+
+	sortSuiteList();
+	bindKeypress();
+	bindSelectSuite();
+	$("input[type='button']", this.create.panel).click(postNewSuite);
 
 }

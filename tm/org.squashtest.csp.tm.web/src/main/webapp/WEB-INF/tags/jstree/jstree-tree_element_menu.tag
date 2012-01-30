@@ -118,7 +118,7 @@
 
 
 		<c:if test="${workspace == 'test-case'}">
-		initButton("#tree-import-button", "ui-icon-cart");		
+		initButton("#tree-import-button", "ui-icon-transferthick-e-w");		
 		
 		var importOption = {
 			"import-excel" : ".import-excel-tree-button"

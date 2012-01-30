@@ -208,11 +208,9 @@ the display:block trick will implicitly add that property */
 
 .confirm-div span{
 	font-weight : bold;
-	display:block;	
 }
 
 .confirm-div label{
-	display:block;
 	font-size : 1.1em;		
 }
 
@@ -238,16 +236,53 @@ the display:block trick will implicitly add that property */
 
 
 /*******************************
-	test suites managment
+	test suites management
 ********************************/
 
-.create-suites-section{
-	margin-bottom : 1.5em;	
+.main-div-suites > div{
+	width:80%;
+	margin-left  : auto;
+	margin-right : auto;
+	margin-bottom: 1.5em;
+	text-align : center;
 }
 
-.display-suites-section{
-	margin-bottom : 1.5em;	
+.main-div-suites input[type="text"]{
+	width: 68%;
+	margin-right:2%;
+	display : inline-block;
 }
+
+.main-div-suites input[type="button"]{
+	display : inline-block;
+}
+
+.remove-suites-section input[type="button"]{
+	width: 99%;	
+}
+
+.main-div-suites .display-suites-section{
+	border : 2px inset gray;
+	height : 300px;
+	overflow : auto;
+}
+
+.display-suites-section .suite-div{
+	margin-top : 0.5em;
+	margin-left : 0.5em;
+	margin-right : 0.5em;
+	cursor : pointer;
+	text-align : left;
+	padding-top : 2px;
+	padding-bottom : 2px;
+}
+
+.display-suites-section .suite-div.suite-selected{
+	background-color : #A843E6;
+	color : white;
+	font-weight : bold;
+}
+
 
 /*******************************
 	misc

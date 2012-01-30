@@ -26,7 +26,7 @@
 <%@ attribute name="baseUrl" required="true" description="url representing the current iteration" %>
 <%@ attribute name="divId" required="true" description="the id of the current iteration" %>
 <%@ attribute name="openerId" required="true" description="the id of the button opening this manager" %>
-<%@ attribute name="suiteList" type="java.lang.Object" required="true" description="the list of already existing suites" %>
+<%@ attribute name="suiteList" type="java.lang.Object" required="true" description="the list of the suites that exist already" %>
 
 
 <%@ taglib prefix="pop" 	tagdir="/WEB-INF/tags/popup" %>
@@ -35,40 +35,52 @@
 <%@ taglib prefix="s"		uri="http://www.springframework.org/tags"%>
 <%@ taglib prefix="comp" 	tagdir="/WEB-INF/tags/component" %>	
 
+<%-- script import moved to top of edit-iteration --%>
 
-<script type="text/javascript" src="http://localhost/scripts/TestSuiteManager.js"></script>
  
-<pop:popup id="${divId}" isContextual="true" openedBy="${openedId}" closeOnSuccess="false" >
+<pop:popup id="${divId}" isContextual="true" openedBy="${openerId}" closeOnSuccess="false" titleKey="dialog.testsuites.title">
+
 	<jsp:attribute name="buttons">
-		<pop:cancel-button/>
+	<f:message var="closeLabel" key="dialog.testsuites.close" />
+	'${ closeLabel }': function() {
+		$( this ).dialog( 'close' );
+	}		
 	</jsp:attribute>
+	
+	<jsp:attribute name="additionalSetup">
+		width : 400
+	</jsp:attribute>
+	
 
 	<jsp:attribute name="body">
 	
-	<div class="create-suites-section">
-		<f:message var="createLabel" key="dialog.testsuites.create.label" />
-		<input type="text" id="new-test-suite-name"/><input type="button" class="button" value="${createLabel}" />
-		<comp:error-message forField="name" />
-	</div>	
+	<div class="main-div-suites">
 	
-	<div class="display-suites-section">
-	<c:forEach items="${suiteList}" var="item">
-	<div class="suite-div ui-corner-all">
-		<span data-suite-id="${item.id}"><c:out value="${item.name}" /></span>
+		<div class="create-suites-section">
+			<f:message var="createLabel" key="dialog.testsuites.create.add" />
+			<input type="text" size="40"/><input type="button" class="button" value="${createLabel}" />
+			<comp:error-message forField="name" />				
+		</div>	
+		
+		<div class="display-suites-section">
+		<c:forEach items="${suiteList}" var="item">
+		<div class="suite-div ui-corner-all">
+			<span data-suite-id="${item.id}"><c:out value="${item.name}" /></span>
+		</div>
+		</c:forEach>
+		</div>
+		
+		<div class="rename-suites-section">
+			<f:message var="renameLabel" key="dialog.testsuites.rename.label" />
+			<input type="text" size="40"/><input type="button" class="button" value="${renameLabel}" />
+		</div> 
+		
+		<div class="remove-suites-section">
+			<f:message var="removeLabel" key="dialog.testsuites.remove.label" />
+			<input type="button" class="button" value="${removeLabel}"/>
+		</div>
+	
 	</div>
-	</c:forEach>
-	</div>
-	
-	<div class="rename-suites-section">
-		<f:message var="renameLabel" key="dialog.testsuites.rename.label" />
-		<input type="text" /><input type="button" class="button" value="${renameLabel}" />
-	</div> 
-	
-	<div class="remove-suites-section">
-		<f:message var="removeLabel" key="dialog.testsuites.remove.label" />
-		<input type="button" class="button" value="${removeLabel}"/>
-	</div>
-	
 	</jsp:attribute>
 </pop:popup>
 

@@ -37,6 +37,10 @@
 <comp:rich-jeditable-header />
 <comp:datepicker-manager locale="${squashlocale}"/>
 
+<script type="text/javascript" src="${ pageContext.servletContext.contextPath }/scripts/squashtest/classes/TestSuiteManager.js"></script>
+<%-- <script type="text/javascript" src="http://localhost/scripts/TestSuiteManager.js"></script> --%>
+<%--<link rel="stylesheet" type="text/css" href="http://localhost/css/suites.css" />  --%>
+
 <jq:execution-status-factory/> 
 
 
@@ -390,15 +394,15 @@
 	</jsp:attribute>
 </pop:popup>
 
-<%--------------------------- /Deletion confirmation pup for Test plan section ------------------------------------%>
+<%-- ------------------------- /Deletion confirmation pup for Test plan section ---------------------------------- --%>
 
-<%------------------------------------- Test Suite Management -------------------------------------------------- --%>
+<%-- ----------------------------------- Test Suite Management -------------------------------------------------- --%>
 
 <comp:test-suite-managment-popup suiteList="${iteration.testSuites}" openerId="manage-test-suites-button" 
 	divId="manage-test-suites-popup" baseUrl="${testSuitesUrl}" />
 
 
-<%------------------------------ Attachments bloc ---------------------------------------------%> 
+<%------------------------------ Attachments bloc ------------------------------------------- --%> 
 <comp:attachment-bloc entity="${iteration}" workspaceName="campaign" editable="${ editable }" />
 
 

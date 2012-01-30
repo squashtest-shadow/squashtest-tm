@@ -22,8 +22,10 @@ package org.squashtest.csp.tm.web.internal.controller.campaign;
 
 import java.text.SimpleDateFormat;
 import java.util.Date;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Locale;
+import java.util.Map;
 
 import javax.inject.Inject;
 import javax.servlet.http.HttpServletResponse;
@@ -376,8 +378,12 @@ public class IterationModificationController {
 	/* ********************** test suites **************************** */
 	
 	@RequestMapping(value = "/test-suites/new", params="name", method=RequestMethod.POST)
-	public @ResponseBody void addTestSuite(@PathVariable long iterationId,  @Valid @ModelAttribute("new-test-suite") TestSuite suite){
+	public @ResponseBody Map<String, String> addTestSuite(@PathVariable long iterationId,  @Valid @ModelAttribute("new-test-suite") TestSuite suite){
 		iterationModService.addTestSuite(iterationId, suite);
+		Map<String, String> res = new HashMap<String, String>();
+		res.put("id", suite.getId().toString());
+		res.put("name", suite.getName());
+		return res;
 	}
 	
 	
