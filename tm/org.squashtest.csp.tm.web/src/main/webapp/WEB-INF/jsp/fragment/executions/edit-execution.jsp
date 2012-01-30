@@ -289,19 +289,19 @@
 </div>
 
 
+<%----------------------------------- Prerequisites -----------------------------------------------%>
 
-<c:if test="${ editable }">
-	<comp:rich-jeditable targetUrl="${ executionUrl }" componentId="execution-description"/>
-</c:if>
-
-<f:message var="executionComment" key="execution.description.panel.title"/>
-<comp:toggle-panel id="execution-description-panel" title="${executionComment}" isContextual="true"  open="false">
+<comp:toggle-panel id="execution-prerequisite-panel" titleKey="generics.prerequisite.title" isContextual="true" open="${ not empty execution.prerequisite }">
 	<jsp:attribute name="body">
-		<div id="execution-description" >${ execution.description }</div>
+		<div id="execution-prerequisite-table" class="display-table">
+			<div class="display-table-row">
+				<div class="display-table-cell" >${ execution.prerequisite }</div>
+			</div>
+		</div>
 	</jsp:attribute>
-</comp:toggle-panel>
+</comp:toggle-panel> 
 
-<%-------------------------execution step summary status---------------------------------------%>
+<%---------------------------- execution step summary status --------------------------------------%>
 
 <comp:toggle-panel id="execution-steps-panel" titleKey="executions.execution-steps-summary.panel.title" isContextual="true" open="true">
 	<jsp:attribute name="body">
@@ -349,7 +349,17 @@
 	</jsp:attribute>
 </comp:toggle-panel>
 
+<%-------------------------------------- Comment --------------------------------------------------%>
 
+<c:if test="${ editable }">
+	<comp:rich-jeditable targetUrl="${ executionUrl }" componentId="execution-description"/>
+</c:if>
+<f:message var="executionComment" key="execution.description.panel.title"/>
+<comp:toggle-panel id="execution-description-panel" title="${executionComment}" isContextual="true"  open="false">
+	<jsp:attribute name="body">
+		<div id="execution-description" >${ execution.description }</div>
+	</jsp:attribute>
+</comp:toggle-panel>
 
 <%------------------------------ Attachments bloc ---------------------------------------------%> 
 

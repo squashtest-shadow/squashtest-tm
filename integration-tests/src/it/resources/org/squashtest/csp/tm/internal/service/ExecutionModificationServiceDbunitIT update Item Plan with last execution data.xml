@@ -33,7 +33,7 @@
 
 
 	<test_case_library_node tcln_id="1" name="test case 1" created_by="dbu" created_on="2010-02-01" />
-	<test_case tcln_id="1" version="1" attachment_list_id="1" />
+	<test_case tcln_id="1" version="1" attachment_list_id="1" prerequisite="test"/>
 
 	<!-- 3 test case step -->
 	<test_step test_step_id="1" />
@@ -62,10 +62,10 @@
 		attachment_list_id="1010" issue_list_id="2020"/>
 	<attachment_list attachment_list_id="1020" />
 	<execution execution_id="2" tcln_id="1" created_by="dbu" created_on="2011-04-01" name="execution 2"
-		attachment_list_id="1020" issue_list_id="2020" />
+		attachment_list_id="1020" issue_list_id="2020"/>
 	<attachment_list attachment_list_id="1030" />
 	<execution execution_id="3" tcln_id="1" created_by="dbu" created_on="2011-04-01" name="execution 3"
-		attachment_list_id="1030" issue_list_id="2020" />
+		attachment_list_id="1030" issue_list_id="2020"/>
 
 	<!-- link between test plan and executions -->
 	<item_test_plan_execution item_test_plan_id="1" execution_id="1" execution_order="0" />

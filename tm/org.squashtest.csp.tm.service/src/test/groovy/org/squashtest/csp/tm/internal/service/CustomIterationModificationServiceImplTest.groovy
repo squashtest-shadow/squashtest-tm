@@ -114,6 +114,7 @@ class CustomIterationModificationServiceImplTest extends Specification {
 		testCase.getExecutionMode() >> TestCaseExecutionMode.AUTOMATED
 		testCase.getName() >> "test case"
 		testCase.getAllAttachments() >> new HashSet<Attachment>();
+		testCase.getPrerequisite() >> "prerequisite"
 
 		IterationTestPlanItem testPlan = new IterationTestPlanItem(id:1, iteration : iteration);
 		testPlan.setReferencedTestCase(testCase)

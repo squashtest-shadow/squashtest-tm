@@ -87,6 +87,7 @@ public class ExecutionModificationServiceTest extends Specification {
 		testCase.getSteps() >> [ts1, ts2, ts3, ts4, ts5]
 		testCase.getId() >> 1
 		testCase.getAllAttachments() >> new HashSet<Attachment>()
+		testCase.getPrerequisite() >> "prerequisite"
 
 
 		Iteration iteration = new Iteration();

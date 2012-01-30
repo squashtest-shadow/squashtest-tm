@@ -165,6 +165,7 @@ class IterationTest extends Specification {
 		testCase.getId() >> 1
 		testCase.getName() >> "testCase1"
 		testCase.getExecutionMode() >> TestCaseExecutionMode.MANUAL
+		testCase.getPrerequisite() >> "prerequisite"
 
 		and :
 
@@ -189,6 +190,7 @@ class IterationTest extends Specification {
 		testCase.getId() >> 1
 		testCase.getName() >> "testCase1"
 		testCase.getExecutionMode() >> TestCaseExecutionMode.MANUAL;
+		testCase.getPrerequisite() >> "prerequisite"
 
 		Iteration iteration = new Iteration();
 		IterationTestPlanItem itp = new IterationTestPlanItem (referencedTestCase : testCase, iteration : iteration);

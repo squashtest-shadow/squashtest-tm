@@ -367,6 +367,8 @@
 		<dropColumn tableName="REQUIREMENT_LIBRARY_NODE" columnName="NAME"/>
 		<dropColumn tableName="REQUIREMENT_LIBRARY_NODE" columnName="DESCRIPTION"/>
 	</changeSet>
+
+<!--  ============================= PREREQUISITE FOR TEST-CASE =============================== -->
 	
 	<changeSet id="tm-1.1.0.21" author="fogaillard">
 		<comment>
@@ -429,6 +431,17 @@
 				<constraints foreignKeyName="fk_itpi_testsuite" nullable="true" references="TEST_SUITE(ID)"/>
 			</column>
 		</addColumn>		
+	</changeSet>
+
+<!--  =========================== PREREQUISITE FOR TEST-CASE EXECUTION ========================== -->
+	
+	<changeSet id="tm-1.1.0.25" author="fogaillard">
+		<comment>
+			Add Prerequisite collumn to the execution table
+		</comment>
+		<addColumn tableName="EXECUTION" >
+			<column name="PREREQUISITE" type="CLOB" defaultValue="NULL" remarks="the prerequisite for a test_case execution"/>
+		</addColumn>
 	</changeSet>
 
 </databaseChangeLog>

@@ -589,7 +589,6 @@
 	<jsp:attribute name="body">
 		<div id="test-case-prerequisite-table" class="display-table">
 			<div class="display-table-row">
-				<%--<label for="test-case-description" class="display-table-cell"><f:message key="test-case.prerequisite.label" /></label>--%>
 				<div class="display-table-cell" id="test-case-prerequisite" >${ testCase.prerequisite }</div>
 			</div>
 		</div>

@@ -72,7 +72,10 @@ public class Execution implements AttachmentHolder, Bugged {
 
 	@Lob
 	private String description;
-
+	
+	@Lob
+	private String prerequisite = "";
+	
 	@Basic(optional = false)
 	private String name;
 
@@ -177,6 +180,7 @@ public class Execution implements AttachmentHolder, Bugged {
 	public final void setReferencedTestCase(TestCase testCase) {
 		referencedTestCase = testCase;
 		executionMode = testCase.getExecutionMode();
+		setPrerequisite(testCase.getPrerequisite());
 		setName(testCase.getName());
 	}
 
@@ -208,7 +212,19 @@ public class Execution implements AttachmentHolder, Bugged {
 	public void setDescription(String description) {
 		this.description = description;
 	}
+	
+	public String getPrerequisite() {
+		return prerequisite;
+	}
 
+	/**
+	 * @param prerequisite
+	 *            the prerequisite to set
+	 */
+	public void setPrerequisite(@NotNull String prerequisite) {
+		this.prerequisite = prerequisite;
+	}
+	
 	public void addStep(@NotNull ExecutionStep step) {
 		steps.add(step);
 	}
