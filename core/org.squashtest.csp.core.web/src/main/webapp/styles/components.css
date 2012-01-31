@@ -240,21 +240,10 @@ the display:block trick will implicitly add that property */
 ********************************/
 
 .main-div-suites > div{
-	width:80%;
 	margin-left  : auto;
 	margin-right : auto;
 	margin-bottom: 1.5em;
 	text-align : center;
-}
-
-.main-div-suites input[type="text"]{
-	width: 68%;
-	margin-right:2%;
-	display : inline-block;
-}
-
-.main-div-suites input[type="button"]{
-	display : inline-block;
 }
 
 .remove-suites-section input[type="button"]{
@@ -267,7 +256,12 @@ the display:block trick will implicitly add that property */
 	overflow : auto;
 }
 
-.display-suites-section .suite-div{
+.remove-suites-section, .create-suites-section, .rename-suites-section{
+	width : 99%;
+}
+
+.display-suites-section  .suite-div{
+	width : 80%;
 	margin-top : 0.5em;
 	margin-left : 0.5em;
 	margin-right : 0.5em;
@@ -283,6 +277,24 @@ the display:block trick will implicitly add that property */
 	font-weight : bold;
 }
 
+.main-div-suites .manager-control-ready{
+	color : black;
+}
+
+.main-div-suites .manager-control-disabled{
+	color : black;
+}
+
+
+.main-div-suites input[type="text"]{
+	width: 68%;
+	margin-right:2%;
+	display : inline-block;
+}
+
+.main-div-suites input[type="button"]{
+	display : inline-block;
+}
 
 /*******************************
 	misc

@@ -37,9 +37,9 @@
 <comp:rich-jeditable-header />
 <comp:datepicker-manager locale="${squashlocale}"/>
 
-<script type="text/javascript" src="${ pageContext.servletContext.contextPath }/scripts/squashtest/classes/TestSuiteManager.js"></script>
-<%-- <script type="text/javascript" src="http://localhost/scripts/TestSuiteManager.js"></script> --%>
-<%--<link rel="stylesheet" type="text/css" href="http://localhost/css/suites.css" />  --%>
+<%-- <script type="text/javascript" src="${ pageContext.servletContext.contextPath }/scripts/squashtest/classes/TestSuiteManager.js"></script> --%>
+<script type="text/javascript" src="http://localhost/scripts/TestSuiteManager.js"></script>
+<link rel="stylesheet" type="text/css" href="http://localhost/css/suites.css" /> 
 
 <jq:execution-status-factory/> 
 

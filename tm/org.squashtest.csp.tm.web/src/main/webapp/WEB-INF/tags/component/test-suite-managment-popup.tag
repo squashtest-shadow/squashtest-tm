@@ -48,7 +48,10 @@
 	</jsp:attribute>
 	
 	<jsp:attribute name="additionalSetup">
-		width : 400
+		width : 400,
+		open : function(){
+			testSuiteManager.init();
+		}
 	</jsp:attribute>
 	
 
@@ -58,7 +61,7 @@
 	
 		<div class="create-suites-section">
 			<f:message var="createLabel" key="dialog.testsuites.create.add" />
-			<input type="text" size="40"/><input type="button" class="button" value="${createLabel}" />
+			<input type="text" size="30"/><input type="button" class="button" value="${createLabel}" />
 			<comp:error-message forField="name" />				
 		</div>	
 		
@@ -72,7 +75,7 @@
 		
 		<div class="rename-suites-section">
 			<f:message var="renameLabel" key="dialog.testsuites.rename.label" />
-			<input type="text" size="40"/><input type="button" class="button" value="${renameLabel}" />
+			<input type="text" size="30"/><input type="button" class="button" value="${renameLabel}" />
 		</div> 
 		
 		<div class="remove-suites-section">
@@ -84,14 +87,16 @@
 	</jsp:attribute>
 </pop:popup>
 
+<f:message var="defaultMessage" key="dialog.testsuites.defaultmessage" />
 <script type="text/javascript">
 	
-	var testSuiteManager = null;
+	var testSuiteManager;
 	
 	$(function(){
 		var settings = {
 			instance : $("#${divId}"),
-			url : "${baseUrl}"
+			url : "${baseUrl}",
+			defaultMessage : "${defaultMessage}"
 		};
 		
 		testSuiteManager = new TestSuiteManager(settings);

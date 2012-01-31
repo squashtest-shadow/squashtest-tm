@@ -19,42 +19,123 @@
  *     along with this software.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-
+ 
+ 
+/*
+ *
+ * TODO : document this
+ *
+ *
+ *
+ */
 function TestSuiteManager(settings){
+
+	/* ********************* private inner classes ************************** */
+	
+	function ManagerControl(settings){
+		
+		this.manager=settings.manager;
+		this.defaultMessage=settings.defaultMessage;
+		this.panel=settings.panel;
+		this.action=settings.action;
+		
+		this.input=$("input[type='text']",settings.panel);
+		this.button=$("input[type='button']", settings.panel);
+		
+		var self=this;
+		
+		/* ********* public ************ */
+		
+		this.reset = function(){
+			defaultState();
+			this.input.addClass('manager-control-ready');
+			this.input.removeClass('manager-control-disabled');
+		};
+		
+		this.deactivate = function(){
+			defaultState();
+			this.input.attr('disabled','disabled');
+			this.input.removeClass('manager-control-ready');
+			this.input.addClass('manager-control-disabled');
+		};
+		
+		
+		/* ************* private ******* */
+		
+		var defaultState=$.proxy(function(){
+			this.button.button("disable");
+			this.input.removeAttr('disabled');
+			this.input.val(this.defaultMessage);
+		}, self);
+		
+		var editState=$.proxy(function(){
+			this.input.removeClass('manager-control-ready');
+			this.input.val('');
+			this.input.change();
+			this.button.button('disable');
+		}, self);
+		
+		
+		/* ************* handlers ******** */	
+	
+		//we're in competition here with the default 'enter' event bound to the close button
+		this.input.keypress(function(evt){
+			self.manager.instance.find('.error-message').html('');
+			if(evt.which=='13'){
+				evt.stopImmediatePropagation();
+				var disabledStatus = self.button.button("option", "disabled");
+				if (disabledStatus===false){
+					self.button.click();
+				}
+			}		
+		});
+	
+		//that one is better than change()
+		this.input.keyup(function(evt){
+			var button = self.button;if (this.value.length>0){
+				button.button('enable');
+			}else{
+				button.button('disable');
+			}	
+		});
+		
+		this.button.click(function(){
+			self.action();
+		});
+		
+		this.input.focus(editState);
+		
+		this.input.focusout(function(){
+			defaultState();
+		});
+			
+	}
+	
+	/* ********************* end private inner class ************************ */
 
 	/* **************** private state management methods ******************** */
 
 	var self=this;
-		
-	var enableSection = $.proxy(function(sectionName){
-		$(":input", this[sectionName].panel).removeAttr('disabled');
-	}, self);
-	
-	var disableSection = $.proxy(function(sectionName){
-		var inputs = $(":input", this[sectionName].panel);
-		inputs.attr('disabled', 'disabled');
-		inputs.filter("[type='text']").val('');		
-	}, self);
-	
+			
 	var deselectAllSuites = $.proxy(function(){
 		$(".suite-div", this.display.panel).removeClass("suite-selected ui-widget-header ui-state-default");
 	}, self);
 	
 	var updatePopupState = $.proxy(function(){		
 
-		var allItems = $(".suite-div", this.display.panel);
+		var allItems = $(".suite-div.suite-selected", this.display.panel);
 		
 		switch(allItems.size()){
 			case 0 :
-				disableSection("rename");
-				enableSection("remove");
+				this.rename.control.deactivate();
+				this.remove.button.attr('disabled', 'disabled');
 				break;
 			case 1 : 
-				enableSection("rename");
-				enableSection("remove");
+				this.rename.control.reset();
+				this.remove.button.removeAttr('disabled', 'disabled');
 				break;
 			default : 
-				enableSection("remove");
+				this.rename.control.deactivate();
 				break;
 		}
 		
@@ -78,85 +159,122 @@ function TestSuiteManager(settings){
 		
 		newSuite.append(spanSuite);
 		this.display.panel.append(newSuite);
-
-		sortSuiteList();
 		
 	}, self);
 	
-	/* ******************** event handlers ************************* */
+	var renameSuite = $.proxy(function(jsonSuite){
+		var spanSuite = $(".suite-selected span[data-suite-id='"+jsSuite.id+"']", this.display.panel);
+		spanSuite.text(jsonSuite.name);
+	}, self);
+	
+	/* ******************** actions ************************* */
 	
 	/* ----- suite creation ------- */
 	
 	var postNewSuite = $.proxy(function(){
 		var url = this.url+"/new";
-		var name = $("input[type='text']",this.create.panel).val();
+		var name = this.create.control.input.val();
 		
-		/*$.post(url, { 'name' : name}, "json")*/
+		var defer = $.Deferred();
+	
+		$.ajax({
+			'url' : url,
+			type : 'POST',
+			data : { 'name' : name },
+			dataType : 'json'
+		})
+		.success(function(json){
+			appendNewSuite(json);
+			sortSuiteList();
+			defer.resolve();
+		});
+		
+		return defer.promise();
+		
+	}, self);
+	
+	/* ------- suite renaming -------- */
+	
+	var postRenameSuite = $.proxy(function(){
+		
+		var suiteId = $('.suite-selected span', this.display.panel).data('suite-id');
+		var url = this.url+"/"+suiteId+"/rename";
+		var name = this.rename.control.input.val();
+		
+		var defer = $.Deferred();
 		
 		$.ajax({
 			'url' : url,
 			type : 'POST',
-			data : { 'name' : name }	,
+			data : { 'newName' : name },
 			dataType : 'json'
 		})
-		.success(appendNewSuite);
+		.success(function(json){
+			renameSuite(json);
+			sortSuiteList();
+			defer.resolve();
+		});
+		
+		return defer.promise();
 		
 	}, self);
 	
 	
 	/* ------ item selection --------- */
-	
-		
+
 	var bindSelectSuite = $.proxy(function(){
 		this.display.panel.delegate('.suite-div', 'click', function(){
 			$(this).toggleClass('suite-selected ui-widget-header ui-state-default');
 			updatePopupState();
 		});	
 	}, self);
-	
-	/* -------- key binding ------------ */
-	
-	var bindKeypress = $.proxy(function(){
 		
-		var triggerBtn = function(evt){
-			if (evt.which=='13'){
-				$(this).find("input[type='button']").click();
-				evt.stopImmediatePropagation();
-			}
-		};
-	
-		this.create.panel.keypress(triggerBtn);
-		this.rename.panel.keypress(triggerBtn);
-	
-	}, self);
-	
 	
 	/* ******************** init code ****************************** */
 	
+	
+	this.init = function(){	
+		deselectAllSuites();
+		this.create.control.reset();
+		updatePopupState();
+	}
+	
+	
 	this.instance = settings.instance;
 	this.url = settings.url;
+	this.defaultMessage = settings.defaultMessage;
 	
 	this.create = {};
-	this.create.panel = $(".create-suites-section", this.instance);
+	this.rename = {};
 		
 	this.display = {};
 	this.display.panel = $(".display-suites-section", this.instance);
 	
-	this.rename = {};
-	this.rename.panel = $(".rename-suites-section", this.instance);
-	
 	this.remove = {};
-	this.remove.panel = $(".remove-suites-section", this.instance);
+	this.remove.button = $(".remove-suites-section input", this.instance);
+	
+	//ugly hack to put the focus on nothing
+	this.instance.append($("<input/>", { 'type' : 'hidden' }));
+	
+	var createControlSettings = {
+		manager : self,
+		defaultMessage : this.defaultMessage,
+		panel : $(".create-suites-section", this.instance),
+		action : postNewSuite	
+	}
+	
+	var renameControlSettings = {
+		manager : self,
+		defaultMessage: self.defaultMessage,
+		panel : this.rename.panel = $(".rename-suites-section", this.instance),
+		action : postRenameSuite
+	}
+	
+	this.create.control = new ManagerControl(createControlSettings);
+	this.rename.control = new ManagerControl(renameControlSettings);
 
 	
-	deselectAllSuites();
-	disableSection("rename");
-	disableSection("remove");
-	enableSection("create");
-
 	sortSuiteList();
-	bindKeypress();
 	bindSelectSuite();
-	$("input[type='button']", this.create.panel).click(postNewSuite);
-
+	
 }
