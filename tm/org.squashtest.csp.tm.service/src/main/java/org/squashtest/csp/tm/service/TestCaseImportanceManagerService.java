@@ -106,4 +106,20 @@ public interface TestCaseImportanceManagerService {
 	 */
 	void changeImportanceIfCallStepRemoved(TestCase calledTestCase, TestCase parentTestCase);
 
+	/**
+	 * will find TestCases concerned by deleted requirements versions and store them in property along with the
+	 * concerned criticalities
+	 * 
+	 * @param requirementIds
+	 */
+	void prepareRequirementDeletion(List<Long> requirementIds);
+
+	/**
+	 * <b style="color:red">Warning !! this method is to be used after the following one :
+	 * {@linkplain TestCaseImportanceManagerService#prepareRequirementDeletion(List)}</b><br>
+	 * will adapt the importance of the TestCases concerned by deleted requirements versions.
+	 * 
+	 */
+	void changeImportanceAfterRequirementDeletion();
+
 }

@@ -38,6 +38,4 @@ public interface RequirementVersionDao extends CustomRequirementVersionDao {
 
 	long countVerifiedByTestCase(long testCaseId);
 
-	List<RequirementVersion> findAllByRequirement(Requirement node);
-
 }

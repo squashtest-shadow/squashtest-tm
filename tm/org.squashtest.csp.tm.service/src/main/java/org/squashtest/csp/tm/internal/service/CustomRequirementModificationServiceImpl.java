@@ -80,7 +80,9 @@ public class CustomRequirementModificationServiceImpl implements CustomRequireme
 		Requirement requirement = findById(requirementId);
 		RequirementCriticality oldCriticality = requirement.getCriticality();
 		requirement.setCriticality(criticality);
-		testCaseImportanceManagerService.changeImportanceIfRequirementCriticalityChanged(requirementId, oldCriticality);
+		Long requirementVersionId = requirement.getCurrentVersion().getId();
+		testCaseImportanceManagerService.changeImportanceIfRequirementCriticalityChanged(requirementVersionId,
+				oldCriticality);
 
 	}
 }

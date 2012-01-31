@@ -57,10 +57,10 @@ class TestCaseImportanceLabelFormatterTest extends Specification {
 		
 		where:
 		item      | expectedLabel
-		VERY_HIGH | "1 - test-case.importance.VERY_HIGH"
-		HIGH      | "2 - test-case.importance.HIGH"
-		MEDIUM    | "3 - test-case.importance.MEDIUM"
-		LOW       | "4 - test-case.importance.LOW"
+		VERY_HIGH | "1-test-case.importance.VERY_HIGH"
+		HIGH      | "2-test-case.importance.HIGH"
+		MEDIUM    | "3-test-case.importance.MEDIUM"
+		LOW       | "4-test-case.importance.LOW"
 	}
 	def "should encode html entities"() {
 		given:
@@ -70,6 +70,6 @@ class TestCaseImportanceLabelFormatterTest extends Specification {
 		def res = formatter.formatLabel(VERY_HIGH)
 		
 		then:
-		res == "1 - m&ocirc;dits &agrave;ccents"		
+		res == "1-m&ocirc;dits &agrave;ccents"		
 	}
 }

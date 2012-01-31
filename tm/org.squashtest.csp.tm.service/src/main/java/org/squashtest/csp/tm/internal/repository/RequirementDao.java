@@ -28,6 +28,7 @@ import org.squashtest.csp.tm.domain.requirement.Requirement;
 import org.squashtest.csp.tm.domain.requirement.RequirementCriticality;
 import org.squashtest.csp.tm.domain.requirement.RequirementLibraryNode;
 import org.squashtest.csp.tm.domain.requirement.RequirementSearchCriteria;
+import org.squashtest.csp.tm.domain.requirement.RequirementVersion;
 
 public interface RequirementDao extends EntityDao<Requirement> {
 	/**
@@ -73,5 +74,13 @@ public interface RequirementDao extends EntityDao<Requirement> {
 	 * @return
 	 */
 	List<RequirementCriticality> findDistinctRequirementsCriticalities(List<Long> requirementsIds);
+
+	/**
+	 * returns the list of all requirement versions
+	 * 
+	 * @param requirementId
+	 * @return
+	 */
+	List<RequirementVersion> findVersions(Long requirementId);
 
 }

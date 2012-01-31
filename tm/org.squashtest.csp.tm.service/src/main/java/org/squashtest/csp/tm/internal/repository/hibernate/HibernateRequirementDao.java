@@ -349,4 +349,13 @@ public class HibernateRequirementDao extends HibernateEntityDao<Requirement> imp
 		}
 	}
 
+	@SuppressWarnings("unchecked")
+	@Override
+	public List<RequirementVersion> findVersions(Long requirementId) {
+		Query query = currentSession().getNamedQuery("requirement.findVersions");
+		query.setParameter("requirementId", requirementId);
+		return query.list();
+
+	}
+
 }

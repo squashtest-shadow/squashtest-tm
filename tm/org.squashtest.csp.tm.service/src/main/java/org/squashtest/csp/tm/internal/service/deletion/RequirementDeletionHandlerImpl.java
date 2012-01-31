@@ -29,9 +29,11 @@ import org.springframework.stereotype.Component;
 import org.squashtest.csp.tm.domain.requirement.RequirementFolder;
 import org.squashtest.csp.tm.domain.requirement.RequirementLibraryNode;
 import org.squashtest.csp.tm.internal.repository.FolderDao;
+import org.squashtest.csp.tm.internal.repository.RequirementDao;
 import org.squashtest.csp.tm.internal.repository.RequirementDeletionDao;
 import org.squashtest.csp.tm.internal.repository.RequirementFolderDao;
 import org.squashtest.csp.tm.internal.service.RequirementNodeDeletionHandler;
+import org.squashtest.csp.tm.service.TestCaseImportanceManagerService;
 import org.squashtest.csp.tm.service.deletion.SuppressionPreviewReport;
 
 @Component("squashtest.tm.service.deletion.RequirementNodeDeletionHandler")
@@ -41,65 +43,63 @@ public class RequirementDeletionHandlerImpl extends
 
 	@Inject
 	private RequirementFolderDao folderDao;
-	
-	
+
 	@Inject
 	private RequirementDeletionDao deletionDao;
-	
+
 	@Override
 	protected FolderDao<RequirementFolder, RequirementLibraryNode> getFolderDao() {
 		return folderDao;
 	}
 
+	@Inject
+	private TestCaseImportanceManagerService testCaseImportanceManagerService;
 
 	@Override
-	protected List<SuppressionPreviewReport> diagnoseSuppression(
-			List<Long> nodeIds) {
+	protected List<SuppressionPreviewReport> diagnoseSuppression(List<Long> nodeIds) {
 		List<SuppressionPreviewReport> preview = new LinkedList<SuppressionPreviewReport>();
-		
-		//TODO : perform an actual verification
-		
+
+		// TODO : perform an actual verification
+
 		return preview;
 	}
 
 	@Override
 	protected List<Long> detectLockedNodes(List<Long> nodeIds) {
 		List<Long> lockedIds = new LinkedList<Long>();
-		
-		//TODO : up to now a requirement is never locked for deletion (safe for security check)
-		//however if it may change later put something here.
-		
+
+		// TODO : up to now a requirement is never locked for deletion (safe for security check)
+		// however if it may change later put something here.
+
 		return lockedIds;
 	}
 
-
-
-
 	@Override
-	/*y.
+	/*
+	 * y.
 	 * 
 	 * 
-	 * Thus, removing a list of RequirementLibraryNodes means :
-	 * 	- find all the attachment lists,
-	 *  - remove them,
-	 *  - remove the nodes themselves
-	 * 
+	 * Thus, removing a list of RequirementLibraryNodes means : - find all the attachment lists, - remove them, - remove
+	 * the nodes themselves
 	 */
 	protected void batchDeleteNodes(List<Long> ids) {
 		if (!ids.isEmpty()) {
-			
+
+			testCaseImportanceManagerService.prepareRequirementDeletion(ids);
+
 			List<Long> requirementAttachmentIds = deletionDao.findRequirementAttachmentListIds(ids);
-			
+
 			deletionDao.removeFromVerifiedRequirementLists(ids);
-			
+
 			deletionDao.deleteRequirementAuditEvents(ids);
-			
+
 			deletionDao.removeEntities(ids);
-			
+
 			deletionDao.removeAttachmentsLists(requirementAttachmentIds);
+
+			testCaseImportanceManagerService.changeImportanceAfterRequirementDeletion();
 
 		}
 	}
-
 
 }

@@ -99,7 +99,7 @@
 	
 	<c:choose>
 		<c:when test="${ (empty editable) or editable }" >			
-			<input type="checkbox" id="${datePickerId}-auto" style="vertical-align:top;position:relative;"/> auto set	
+			<input type="checkbox" id="${datePickerId}-auto" style="vertical-align:top;position:relative;"/> auto
 		</c:when>
 	</c:choose>
 	

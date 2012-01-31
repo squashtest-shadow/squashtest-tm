@@ -72,7 +72,7 @@ public class LevelLabelFormatter implements LabelFormatter<Level> {
 		 */
 		@Override
 		public String formatLabel(Level toFormat) {
-			String label = toFormat.getLevel() + " - " + messageSource.getMessage(toFormat.getI18nKey(), null, locale); 
+			String label = toFormat.getLevel() + "-" + messageSource.getMessage(toFormat.getI18nKey(), null, locale); 
 			return StringEscapeUtils.escapeHtml(label);
 		}
 

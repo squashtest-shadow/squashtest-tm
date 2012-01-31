@@ -33,11 +33,10 @@
 
 <input type="checkbox" id="${associatedSelectJeditableId}-auto"
 	style="vertical-align: top; position: relative;" />
-auto set
+auto
 
 <script type="text/javascript">
 	$(function() {
-		//ici du code pour associer la combobox avec la checkbox
 		var sel_checkbx = $('#${associatedSelectJeditableId}-auto');
 		
 		sel_checkbx.attr('checked', ${isAuto});

@@ -29,6 +29,7 @@ import org.squashtest.csp.tm.domain.requirement.Requirement;
 import org.squashtest.csp.tm.domain.requirement.RequirementCriticality;
 import org.squashtest.csp.tm.domain.requirement.RequirementLibraryNode;
 import org.squashtest.csp.tm.domain.requirement.RequirementSearchCriteria;
+import org.squashtest.csp.tm.domain.requirement.RequirementVersion;
 import org.squashtest.csp.tm.internal.repository.RequirementDao;
 
 /**
@@ -109,6 +110,15 @@ public class StubRequirementDao extends StubEntityDao<Requirement> implements Re
 	@Override
 	public List<RequirementCriticality> findDistinctRequirementsCriticalities(List<Long> requirementsIds) {
 
+		return null;
+	}
+
+	/**
+	 * @see org.squashtest.csp.tm.internal.repository.RequirementDao#findVersions(Long)
+	 */
+	@Override
+	public List<RequirementVersion> findVersions(Long requirementId) {
+		// TODO Auto-generated method stub
 		return null;
 	}
 

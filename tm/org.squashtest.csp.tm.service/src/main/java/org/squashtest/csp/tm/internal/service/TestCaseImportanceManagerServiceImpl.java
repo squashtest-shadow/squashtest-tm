@@ -22,7 +22,10 @@ package org.squashtest.csp.tm.internal.service;
 
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
+import java.util.Map.Entry;
 import java.util.Set;
 
 import javax.inject.Inject;
@@ -30,6 +33,7 @@ import javax.inject.Inject;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Service;
+import org.squashtest.csp.tm.domain.requirement.Requirement;
 import org.squashtest.csp.tm.domain.requirement.RequirementCriticality;
 import org.squashtest.csp.tm.domain.requirement.RequirementVersion;
 import org.squashtest.csp.tm.domain.testcase.TestCase;
@@ -54,6 +58,8 @@ public class TestCaseImportanceManagerServiceImpl implements TestCaseImportanceM
 
 	@Inject
 	private TestCaseDao testCaseDao;
+
+	private Map<TestCase, List<RequirementCriticality>> requirementDeletionConcernedTestCases;
 
 	/**
 	 * 
@@ -296,4 +302,62 @@ public class TestCaseImportanceManagerServiceImpl implements TestCaseImportanceM
 
 	}
 
+	/**
+	 * @see org.squashtest.csp.tm.service.TestCaseImportanceManagerService#prepareRequirementDeletion(List)
+	 */
+	@Override
+	public void prepareRequirementDeletion(List<Long> requirementIds) {
+		this.requirementDeletionConcernedTestCases = new HashMap<TestCase, List<RequirementCriticality>>();
+		for (Long requirementId : requirementIds) {
+			Requirement requirement = requirementDao.findById(requirementId);
+			List<RequirementVersion> requirementVersions = requirementDao.findVersions(requirement.getId());
+			storeReqVersionConcernedTestCases(requirementVersions);
+		}
+
+	}
+
+	private void storeReqVersionConcernedTestCases(List<RequirementVersion> requirementVersions) {
+		for (RequirementVersion reqVersion : requirementVersions) {
+			Set<TestCase> concernedTestCases = reqVersion.getVerifyingTestCases();
+			RequirementCriticality nextCriticality = reqVersion.getCriticality();
+			storeConcernedTestCases(concernedTestCases, nextCriticality);
+		}
+	}
+
+	private void storeConcernedTestCases(Set<TestCase> concernedTestCases, RequirementCriticality nextCriticality) {
+		for (TestCase testCase : concernedTestCases) {
+			storeConcernedTestCase(nextCriticality, testCase);
+		}
+	}
+
+	private void storeConcernedTestCase(RequirementCriticality nextCriticality, TestCase testCase) {
+		if (this.requirementDeletionConcernedTestCases.containsKey(testCase)) {
+			List<RequirementCriticality> storedCriticalities = this.requirementDeletionConcernedTestCases.get(testCase);
+			storedCriticalities.add(nextCriticality);
+
+		} else {
+			List<RequirementCriticality> reqCriticalities = new ArrayList<RequirementCriticality>();
+			reqCriticalities.add(nextCriticality);
+			this.requirementDeletionConcernedTestCases.put(testCase, reqCriticalities);
+
+		}
+	}
+
+	/**
+	 * @see org.squashtest.csp.tm.service.TestCaseImportanceManagerService#changeImportanceAfterRequirementDeletion()
+	 */
+	@Override
+	public void changeImportanceAfterRequirementDeletion() {
+		if (this.requirementDeletionConcernedTestCases != null && !this.requirementDeletionConcernedTestCases.isEmpty()) {
+			for (Entry<TestCase, List<RequirementCriticality>> testCaseAndCriticalities : this.requirementDeletionConcernedTestCases
+					.entrySet()) {
+				TestCase testCase = testCaseAndCriticalities.getKey();
+				List<RequirementCriticality> requirementCriticalities = testCaseAndCriticalities.getValue();
+				TestCaseImportance maxReqCritImportance = TestCaseImportance
+						.deduceTestCaseImportance(requirementCriticalities);
+				changeImportanceIfRelationRemoved(maxReqCritImportance, testCase);
+			}
+		}
+		this.requirementDeletionConcernedTestCases = null;
+	}
 }
