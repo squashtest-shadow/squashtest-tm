@@ -152,6 +152,9 @@
 
 	<osgi:service ref="squashtest.tm.service.RequirementVersionManagerService"
 		interface="org.squashtest.csp.tm.service.RequirementVersionManagerService" />
+		
+	<osgi:service ref="squashtest.tm.service.CustomTestSuiteModificationService"
+		interface="org.squashtest.csp.tm.service.CustomTestSuiteModificationService" />
 
 	<!-- ====== SERVICES CONSUMED BY THIS BUNDLE ====== -->
 	<!--  Jdbc Datasource -->
@@ -212,7 +215,8 @@
 		
 	<osgi:reference id="squashtest.core.security.PermissionEvaluationService"
 		bean-name="squashtest.core.security.PermissionEvaluationService"
-		interface="org.squashtest.csp.core.service.security.PermissionEvaluationService" availability="mandatory" />		
+		interface="org.squashtest.csp.core.service.security.PermissionEvaluationService" availability="mandatory" />
+				
 
 	<!-- Validation services -->
 	<osgi:reference id="javax.validation.ValidatorFactory"

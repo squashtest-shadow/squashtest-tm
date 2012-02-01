@@ -33,10 +33,14 @@ import javax.persistence.ManyToOne;
 
 import org.hibernate.validator.constraints.NotBlank;
 import org.squashtest.csp.core.security.annotation.AclConstrainedObject;
+import org.squashtest.csp.core.security.annotation.InheritsAcls;
+import org.squashtest.csp.tm.domain.DuplicateNameException;
 import org.squashtest.csp.tm.domain.execution.Execution;
 import org.squashtest.csp.tm.domain.project.Project;
+import org.squashtest.csp.tm.domain.testcase.TestCase;
 
 @Entity
+@InheritsAcls(constrainedClass = Iteration.class, collectionName = "testSuites")
 public class TestSuite {
 	
 	public TestSuite(){
@@ -71,6 +75,13 @@ public class TestSuite {
 	public void setName(String name) {
 		this.name = name;
 	}
+	
+	public void rename(String newName){
+		if (! iteration.checkSuiteNameAvailable(newName)){
+			throw new DuplicateNameException("Cannot rename suite "+name+" : new name "+newName+" already exists in iteration "+iteration.getName());
+		}
+		this.name=newName;
+	}
 
 	public String getDescription() {
 		return description;
@@ -83,11 +94,9 @@ public class TestSuite {
 	public void setIteration(Iteration iteration){
 		this.iteration=iteration;
 	}
-
 	
-	@AclConstrainedObject
-	public Project getProject(){
-		return iteration.getProject();
+	public Iteration getIteration(){
+		return iteration;
 	}
-	
+
 }

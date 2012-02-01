@@ -246,6 +246,7 @@ the display:block trick will implicitly add that property */
 	text-align : center;
 }
 
+
 .remove-suites-section input[type="button"]{
 	width: 99%;	
 }

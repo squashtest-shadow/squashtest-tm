@@ -19,99 +19,94 @@
  *     along with this software.  If not, see <http://www.gnu.org/licenses/>.
  */
 
+ /*
+  * TODO : document this
+  *
+  */
+ 
+
+function TestSuiteManagerControl(settings){
+	
+	this.manager=settings.manager;
+	this.defaultMessage=settings.defaultMessage;
+	this.panel=settings.panel;
+	this.action=settings.action;
+	
+	this.input=$("input[type='text']",settings.panel);
+	this.button=$("input[type='button']", settings.panel);
+	
+	var self=this;
+	
+	/* ********* public ************ */
+	
+	this.reset = function(){
+		defaultState();
+		this.input.addClass('manager-control-ready');
+		this.input.removeClass('manager-control-disabled');
+	};
+	
+	this.deactivate = function(){
+		defaultState();
+		this.input.attr('disabled','disabled');
+		this.input.removeClass('manager-control-ready');
+		this.input.addClass('manager-control-disabled');
+	};
+	
+	
+	/* ************* private ******* */
+	
+	var defaultState=$.proxy(function(){
+		this.button.button("disable");
+		this.input.removeAttr('disabled');
+		this.input.val(this.defaultMessage);
+	}, self);
+	
+	var editState=$.proxy(function(){
+		this.input.removeClass('manager-control-ready');
+		this.input.val('');
+		this.input.change();
+		this.button.button('disable');
+	}, self);
+	
+	
+	/* ************* handlers ******** */	
+	
+			
+	this.button.click(function(){
+		self.action();
+	});
+
+	//we're in competition here with the default 'enter' event bound to the close button
+	this.input.keypress(function(evt){
+		self.manager.instance.find('.error-message').html('');
+		if(evt.which=='13'){
+			evt.stopImmediatePropagation();
+			var disabledStatus = self.button.button("option", "disabled");
+			if (disabledStatus===false){
+				self.button.click();
+			}
+		}		
+	});
+
+	//that one is better than change()
+	this.input.keyup(function(evt){
+		var button = self.button;
+		if (this.value.length>0){
+			button.button('enable');
+		}else{
+			button.button('disable');
+		}	
+	});
+	
+	this.input.focus(editState);
+	
+	//this.input.focusout(defaultState);
+		
+}
  
  
-/*
- *
- * TODO : document this
- *
- *
- *
- */
 function TestSuiteManager(settings){
 
-	/* ********************* private inner classes ************************** */
-	
-	function ManagerControl(settings){
-		
-		this.manager=settings.manager;
-		this.defaultMessage=settings.defaultMessage;
-		this.panel=settings.panel;
-		this.action=settings.action;
-		
-		this.input=$("input[type='text']",settings.panel);
-		this.button=$("input[type='button']", settings.panel);
-		
-		var self=this;
-		
-		/* ********* public ************ */
-		
-		this.reset = function(){
-			defaultState();
-			this.input.addClass('manager-control-ready');
-			this.input.removeClass('manager-control-disabled');
-		};
-		
-		this.deactivate = function(){
-			defaultState();
-			this.input.attr('disabled','disabled');
-			this.input.removeClass('manager-control-ready');
-			this.input.addClass('manager-control-disabled');
-		};
-		
-		
-		/* ************* private ******* */
-		
-		var defaultState=$.proxy(function(){
-			this.button.button("disable");
-			this.input.removeAttr('disabled');
-			this.input.val(this.defaultMessage);
-		}, self);
-		
-		var editState=$.proxy(function(){
-			this.input.removeClass('manager-control-ready');
-			this.input.val('');
-			this.input.change();
-			this.button.button('disable');
-		}, self);
-		
-		
-		/* ************* handlers ******** */	
-	
-		//we're in competition here with the default 'enter' event bound to the close button
-		this.input.keypress(function(evt){
-			self.manager.instance.find('.error-message').html('');
-			if(evt.which=='13'){
-				evt.stopImmediatePropagation();
-				var disabledStatus = self.button.button("option", "disabled");
-				if (disabledStatus===false){
-					self.button.click();
-				}
-			}		
-		});
-	
-		//that one is better than change()
-		this.input.keyup(function(evt){
-			var button = self.button;if (this.value.length>0){
-				button.button('enable');
-			}else{
-				button.button('disable');
-			}	
-		});
-		
-		this.button.click(function(){
-			self.action();
-		});
-		
-		this.input.focus(editState);
-		
-		this.input.focusout(function(){
-			defaultState();
-		});
-			
-	}
-	
-	/* ********************* end private inner class ************************ */
 
 	/* **************** private state management methods ******************** */
 
@@ -128,11 +123,11 @@ function TestSuiteManager(settings){
 		switch(allItems.size()){
 			case 0 :
 				this.rename.control.deactivate();
-				this.remove.button.attr('disabled', 'disabled');
+				this.remove.button.button('disable');
 				break;
 			case 1 : 
 				this.rename.control.reset();
-				this.remove.button.removeAttr('disabled', 'disabled');
+				this.remove.button.button('enable');
 				break;
 			default : 
 				this.rename.control.deactivate();
@@ -143,14 +138,21 @@ function TestSuiteManager(settings){
 	
 
 	/* ******************** DOM management ************************* */
-	
-	var sortSuiteList = $.proxy(function(){
-		var allSuites = $('.suite-div', this.display.panel);
+
+	var sortSuiteList = function(){
+		var allSuites = $('.suite-div', self.display.panel);
+		
 		var sorted = allSuites.sort(function(a,b){
-			return (a.firstElementChild.textContent < b.firstElementChild.textContent) ? -1 : 1;
+			if (a.firstElementChild!==undefined){
+				return (a.firstElementChild.textContent < b.firstElementChild.textContent) ? -1 : 1;		
+			}else{
+				return (a.firstChild.innerText < b.firstChild.innerText) ? -1 : 1;
+			}
+				
 		});
-		this.display.panel.append(sorted);
-	},self);
+		self.display.panel.append(sorted);
+	};
+
 	
 	var appendNewSuite = $.proxy(function(jsonSuite){	
 		
@@ -163,16 +165,17 @@ function TestSuiteManager(settings){
 	}, self);
 	
 	var renameSuite = $.proxy(function(jsonSuite){
-		var spanSuite = $(".suite-selected span[data-suite-id='"+jsSuite.id+"']", this.display.panel);
+		var spanSuite = $(".suite-selected span[data-suite-id='"+jsonSuite.id+"']", this.display.panel);
 		spanSuite.text(jsonSuite.name);
 	}, self);
+	
 	
 	/* ******************** actions ************************* */
 	
 	/* ----- suite creation ------- */
 	
 	var postNewSuite = $.proxy(function(){
-		var url = this.url+"/new";
+		var url = this.baseCreateUrl+"/new";
 		var name = this.create.control.input.val();
 		
 		var defer = $.Deferred();
@@ -187,7 +190,8 @@ function TestSuiteManager(settings){
 			appendNewSuite(json);
 			sortSuiteList();
 			defer.resolve();
-		});
+		})
+		.error(defer.reject);
 		
 		return defer.promise();
 		
@@ -198,22 +202,23 @@ function TestSuiteManager(settings){
 	var postRenameSuite = $.proxy(function(){
 		
 		var suiteId = $('.suite-selected span', this.display.panel).data('suite-id');
-		var url = this.url+"/"+suiteId+"/rename";
-		var name = this.rename.control.input.val();
+		var url = this.baseUpdateUrl+"/"+suiteId+"/rename";
+		var newName = this.rename.control.input.val();
 		
 		var defer = $.Deferred();
 		
 		$.ajax({
 			'url' : url,
 			type : 'POST',
-			data : { 'newName' : name },
+			data : { 'suiteId' : suiteId, 'newName' : newName },
 			dataType : 'json'
 		})
 		.success(function(json){
 			renameSuite(json);
 			sortSuiteList();
 			defer.resolve();
-		});
+		})
+		.error(defer.reject);
 		
 		return defer.promise();
 		
@@ -241,8 +246,8 @@ function TestSuiteManager(settings){
 	
 	
 	this.instance = settings.instance;
-	this.url = settings.url;
-	this.defaultMessage = settings.defaultMessage;
+	this.baseCreateUrl = settings.baseCreateUrl;
+	this.baseUpdateUrl = settings.baseUpdateUrl;
 	
 	this.create = {};
 	this.rename = {};
@@ -252,29 +257,30 @@ function TestSuiteManager(settings){
 	
 	this.remove = {};
 	this.remove.button = $(".remove-suites-section input", this.instance);
-	
-	//ugly hack to put the focus on nothing
-	this.instance.append($("<input/>", { 'type' : 'hidden' }));
-	
+
 	var createControlSettings = {
 		manager : self,
-		defaultMessage : this.defaultMessage,
+		defaultMessage : settings.defaultMessage,
 		panel : $(".create-suites-section", this.instance),
 		action : postNewSuite	
 	}
 	
 	var renameControlSettings = {
 		manager : self,
-		defaultMessage: self.defaultMessage,
+		defaultMessage: settings.defaultMessage,
 		panel : this.rename.panel = $(".rename-suites-section", this.instance),
 		action : postRenameSuite
 	}
 	
-	this.create.control = new ManagerControl(createControlSettings);
-	this.rename.control = new ManagerControl(renameControlSettings);
+	this.create.control = new TestSuiteManagerControl(createControlSettings);
+	this.rename.control = new TestSuiteManagerControl(renameControlSettings);
 
 	
 	sortSuiteList();
 	bindSelectSuite();
 	
+	/* TODO : */
+	this.remove.button.click(function(){alert("not implemented yet");});
+	
 }
+ 

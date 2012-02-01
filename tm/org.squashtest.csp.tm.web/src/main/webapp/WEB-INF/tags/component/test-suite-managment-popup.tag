@@ -29,16 +29,24 @@
 <%@ attribute name="suiteList" type="java.lang.Object" required="true" description="the list of the suites that exist already" %>
 
 
+
 <%@ taglib prefix="pop" 	tagdir="/WEB-INF/tags/popup" %>
 <%@ taglib prefix="f" 		uri="http://java.sun.com/jsp/jstl/fmt"%>
 <%@ taglib prefix="c" 		uri="http://java.sun.com/jsp/jstl/core" %>
 <%@ taglib prefix="s"		uri="http://www.springframework.org/tags"%>
 <%@ taglib prefix="comp" 	tagdir="/WEB-INF/tags/component" %>	
 
-<%-- script import moved to top of edit-iteration --%>
+
+
+<%--  <c:set var="scriptUrl" value="http://localhost/scripts/TestSuiteManager.js" /> 
+<link rel="stylesheet" type="text/css" href="http://localhost/css/suites.css" /> --%>
+
+
+<s:url var="scriptUrl" value="/scripts/squashtest/classes/TestSuiteManager.js"  />
+<s:url var="baseSuiteUrl" value="/test-suites" /> 
 
  
-<pop:popup id="${divId}" isContextual="true" openedBy="${openerId}" closeOnSuccess="false" titleKey="dialog.testsuites.title">
+<pop:popup id="${divId}" isContextual="true"  openedBy="${openerId}" closeOnSuccess="false" titleKey="dialog.testsuites.title">
 
 	<jsp:attribute name="buttons">
 	<f:message var="closeLabel" key="dialog.testsuites.close" />
@@ -57,7 +65,7 @@
 
 	<jsp:attribute name="body">
 	
-	<div class="main-div-suites">
+	<div class="main-div-suites not-displayed">
 	
 		<div class="create-suites-section">
 			<f:message var="createLabel" key="dialog.testsuites.create.add" />
@@ -67,7 +75,7 @@
 		
 		<div class="display-suites-section">
 		<c:forEach items="${suiteList}" var="item">
-		<div class="suite-div ui-corner-all">
+		<div class="suite-div ui-corner-all" >
 			<span data-suite-id="${item.id}"><c:out value="${item.name}" /></span>
 		</div>
 		</c:forEach>
@@ -88,18 +96,31 @@
 </pop:popup>
 
 <f:message var="defaultMessage" key="dialog.testsuites.defaultmessage" />
+
 <script type="text/javascript">
 	
 	var testSuiteManager;
 	
 	$(function(){
-		var settings = {
-			instance : $("#${divId}"),
-			url : "${baseUrl}",
-			defaultMessage : "${defaultMessage}"
-		};
 		
-		testSuiteManager = new TestSuiteManager(settings);
+		$.ajax({
+			cache : true,
+			type : 'GET',
+			url : "${scriptUrl}",
+			dataType : 'script'
+		})
+		.success(function(){
+			var settings = {
+				instance : $("#${divId}"),
+				baseCreateUrl : "${baseUrl}",
+				baseUpdateUrl : "${baseSuiteUrl}",
+				defaultMessage : "${defaultMessage}"
+			};
+			
+			testSuiteManager = new TestSuiteManager(settings);			
+			$("#${divId} .main-div-suites").removeClass("not-displayed");
+		});
+			
 			
 	});
 
