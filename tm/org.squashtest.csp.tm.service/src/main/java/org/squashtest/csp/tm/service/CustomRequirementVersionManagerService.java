@@ -18,35 +18,32 @@
  *     You should have received a copy of the GNU Lesser General Public License
  *     along with this software.  If not, see <http://www.gnu.org/licenses/>.
  */
+
 package org.squashtest.csp.tm.service;
 
 import javax.validation.constraints.NotNull;
 
-import org.springframework.security.access.prepost.PostAuthorize;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.transaction.annotation.Transactional;
-import org.squashtest.csp.tm.domain.requirement.RequirementStatus;
-import org.squashtest.csp.tm.domain.requirement.RequirementVersion;
+import org.squashtest.csp.tm.domain.requirement.RequirementCriticality;
 
 /**
- * Requirement Version mangement related services.
+ * RequirementVersion management services which cannot be dyanmically generated.
  * 
  * @author Gregory Fouquet
  * 
  */
 @Transactional
-public interface RequirementVersionManagerService extends CustomRequirementVersionManagerService {
-	@Transactional(readOnly = true)
-	@PostAuthorize("hasPermission(returnObject,'READ') or hasRole('ROLE_ADMIN')")
-	RequirementVersion findById(long requirementVersionId);
-
-	@PreAuthorize("hasPermission(#arg0, 'org.squashtest.csp.tm.domain.requirement.RequirementVersion','WRITE') or hasRole('ROLE_ADMIN')")
-	void changeDescription(long requirementId, @NotNull String newDescription);
-
-	@PreAuthorize("hasPermission(#arg0, 'org.squashtest.csp.tm.domain.requirement.RequirementVersion', 'WRITE') or hasRole('ROLE_ADMIN')")
-	void changeReference(long requirementVersionId, @NotNull String reference);
-
-	@PreAuthorize("hasPermission(#arg0, 'org.squashtest.csp.tm.domain.requirement.RequirementVersion', 'WRITE') or hasRole('ROLE_ADMIN')")
-	void changeStatus(long requirementVersionId, @NotNull RequirementStatus status);
+public interface CustomRequirementVersionManagerService {
+	/**
+	 * will change the requirement criticality and update the importance of any associated TestCase with importanceAuto
+	 * == true.<br>
+	 * (even through call steps)
+	 * 
+	 * @param requirementVersionId
+	 * @param criticality
+	 */
+	@PreAuthorize("hasPermission(#requirementVersionId, 'org.squashtest.csp.tm.domain.requirement.RequirementVersion', 'WRITE') or hasRole('ROLE_ADMIN')")
+	void changeCriticality(long requirementVersionId, @NotNull RequirementCriticality criticality);
 
 }

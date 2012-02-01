@@ -24,10 +24,10 @@ import static org.squashtest.csp.tm.web.internal.helper.JEditablePostParams.VALU
 
 import java.io.UnsupportedEncodingException;
 import java.util.Locale;
-import java.util.SortedMap;
-import java.util.TreeMap;
+import java.util.Map;
 
 import javax.inject.Inject;
+import javax.inject.Provider;
 import javax.servlet.http.HttpServletResponse;
 
 import org.slf4j.Logger;
@@ -35,6 +35,7 @@ import org.slf4j.LoggerFactory;
 import org.springframework.context.MessageSource;
 import org.springframework.osgi.extensions.annotation.ServiceReference;
 import org.springframework.stereotype.Controller;
+import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
@@ -47,13 +48,17 @@ import org.squashtest.csp.tm.domain.requirement.Requirement;
 import org.squashtest.csp.tm.domain.requirement.RequirementCriticality;
 import org.squashtest.csp.tm.domain.requirement.RequirementStatus;
 import org.squashtest.csp.tm.service.RequirementModificationService;
-import org.squashtest.csp.tm.web.internal.helper.JsonHelper;
 
 @Controller
 @RequestMapping("/requirements/{requirementId}")
 public class RequirementModificationController {
 
 	private static final Logger LOGGER = LoggerFactory.getLogger(RequirementModificationController.class);
+
+	@Inject
+	private Provider<RequirementCriticalityComboDataBuilder> criticalityComboBuilderProvider;
+	@Inject
+	private Provider<RequirementStatusComboDataBuilder> statusComboDataBuilderProvider;
 
 	private RequirementModificationService requirementModService;
 
@@ -75,11 +80,15 @@ public class RequirementModificationController {
 
 		mav.addObject("requirement", requirement);
 
-		// build criticality list
-		SortedMap<String, String> criticalities = initCriticitySelectionList(locale, requirement.getCriticality());
-		mav.addObject("criticalityList", jsonify(criticalities));
+		String criticalities = buildMarshalledCriticalities(locale);
+		mav.addObject("criticalityList", criticalities);
 
 		return mav;
+	}
+
+	private String buildMarshalledCriticalities(Locale locale) {
+		String criticalities = criticalityComboBuilderProvider.get().useLocale(locale).buildMarshalled();
+		return criticalities;
 	}
 
 	// will return the fragment only
@@ -91,8 +100,8 @@ public class RequirementModificationController {
 		mav.addObject("requirement", requirement);
 
 		// build criticality list
-		SortedMap<String, String> criticalities = initCriticitySelectionList(locale, requirement.getCriticality());
-		mav.addObject("criticalityList", jsonify(criticalities));
+		String criticalities = buildMarshalledCriticalities(locale);
+		mav.addObject("criticalityList", criticalities);
 
 		return mav;
 	}
@@ -153,7 +162,7 @@ public class RequirementModificationController {
 
 	@RequestMapping(method = RequestMethod.GET, value = "/next-status")
 	@ResponseBody
-	public SortedMap<String, String> getNextStatusList(Locale locale, @PathVariable long requirementId) {
+	public Map<String, String> getNextStatusList(Locale locale, @PathVariable long requirementId) {
 		Requirement requirement = requirementModService.findById(requirementId);
 		RequirementStatus status = requirement.getStatus();
 		return initStatusSelectionList(locale, status);
@@ -161,7 +170,7 @@ public class RequirementModificationController {
 
 	@RequestMapping(method = RequestMethod.POST, params = { "id=requirement-reference", VALUE })
 	@ResponseBody
-	String updateReference(@RequestParam(VALUE) String requirementReference, @PathVariable long requirementId)
+	public String updateReference(@RequestParam(VALUE) String requirementReference, @PathVariable long requirementId)
 			throws UnsupportedEncodingException {
 		requirementModService.changeReference(requirementId, requirementReference.trim());
 		LOGGER.debug("Requirement {} : requirement reference changed, new value : {}", requirementId,
@@ -175,58 +184,23 @@ public class RequirementModificationController {
 		requirementModService.createNewVersion(requirementId);
 	}
 
-	/***
-	 * Method which returns the criticality select options in the chosen language. The output is formatted in json and
-	 * meant to be used for a select input. That list is sorted according to the RequirementCriticality level. @param
-	 * locale the Locale
-	 * 
-	 * @return a map representing the available options.
-	 */
-	private SortedMap<String, String> initCriticitySelectionList(Locale locale, RequirementCriticality selected) {
-
-		SortedMap<String, String> map = new TreeMap<String, String>(RequirementCriticality.stringComparator());
-
-		for (RequirementCriticality criticality : RequirementCriticality.values()) {
-			String translated = formatCriticality(criticality, locale);
-			map.put(criticality.toString(), translated);
-		}
-
-		// we don't want to use the attribute 'selected' here because it induces wrong behaviors under FF or IE when
-		// editing the same combobox multiple times.
-
-		return map;
-
-	}
-
 	/**
 	 * The change status combobox is filtered and only proposes the status to which it is legal to switch to. That
 	 * method will generate a map for that purpose. Pretty much like
 	 * {@link #initCriticitySelectionList(Locale, RequirementCriticality)};
-	 * 
+	 *
 	 * @param locale
 	 * @param status
 	 * @return
 	 */
-	private SortedMap<String, String> initStatusSelectionList(Locale locale, RequirementStatus status) {
-		SortedMap<String, String> map = new TreeMap<String, String>(RequirementStatus.stringComparator());
-
-		for (RequirementStatus iterStatus : status.getAvailableNextStatus()) {
-			map.put(iterStatus.toString(), internationalize(iterStatus, locale));
-		}
-		// here other status are added with the value "disabled."+"iterStatus
-		for (RequirementStatus disabledStatus : status.getDisabledStatus()) {
-			map.put("disabled." + disabledStatus.toString(), internationalize(disabledStatus, locale));
-		}
-		// here we use the 'selected' attribute since it's reloaded for each use of the combobox anyway.
-		map.put("selected", status.toString());
-
-		return map;
+	private Map<String, String> initStatusSelectionList(Locale locale, RequirementStatus status) {
+		return statusComboDataBuilderProvider.get().useLocale(locale).selectItem(status).buildMap();
 
 	}
 
 	/***
 	 * Method which returns criticality in the chosen language
-	 * 
+	 *
 	 * @param criticality
 	 *            the criticality
 	 * @param locale
@@ -241,8 +215,16 @@ public class RequirementModificationController {
 		return messageSource.getMessage(internationalizable.getI18nKey(), null, locale);
 	}
 
-	private String jsonify(Object toSerialize) {
-		return JsonHelper.serialize(toSerialize);
+	@RequestMapping(value = "/versions/manager", method = RequestMethod.GET)
+	public String showRequirementVersionsManager(@PathVariable long requirementId, Model model, Locale locale) {
+		Requirement req = requirementModService.findById(requirementId);
+
+		model.addAttribute("requirement", req);
+		model.addAttribute("versions", req.getUnmodifiableVersions());
+		model.addAttribute("selectedVersion", req.getCurrentVersion());
+		model.addAttribute("jsonCriticalities", buildMarshalledCriticalities(locale));
+
+		return "page/requirements/versions-manager";
 	}
 
 }

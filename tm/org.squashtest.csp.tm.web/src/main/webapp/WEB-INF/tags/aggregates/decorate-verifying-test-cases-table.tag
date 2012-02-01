@@ -25,7 +25,6 @@
 <%@ attribute name="verifyingTestCasesUrl" required="true" description="URL to manipulate the verifying test-cases" %>
 <%@ attribute name="nonVerifyingTestCasesUrl" required="true" description="URL to manipulate the non verifying test cases" %>
 <%@ attribute name="batchRemoveButtonId" required="true" description="html id of button for batch removal of test cases" %>
-<%@ attribute name="testCaseDetailsBaseUrl" required="true" description="base of the URL to get rtest case details" %>
 <%@ attribute name="editable" type="java.lang.Boolean" description="Right to edit content. Default to false." %>
 
 <%@ taglib prefix="comp" tagdir="/WEB-INF/tags/component" %>
@@ -87,7 +86,7 @@
 	}
 	
 	function addHLinkToTestCaseName(row, data) {
-		var url= '${ testCaseDetailsBaseUrl }/' + getTestCasesTableRowId(data) + '/info';			
+		var url= "<c:url value='/test-cases/' />" + getTestCasesTableRowId(data) + '/info';			
 		addHLinkToCellText($( 'td:eq(2)', row ), url);
 	}	
 </script>

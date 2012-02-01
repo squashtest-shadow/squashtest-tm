@@ -25,6 +25,7 @@ import java.util.Arrays;
 import java.util.List;
 
 import org.squashtest.csp.tm.domain.Level;
+import org.squashtest.csp.tm.domain.LevelComparator;
 import org.squashtest.csp.tm.domain.requirement.RequirementCriticality;
 
 /**
@@ -38,7 +39,7 @@ public enum TestCaseImportance implements Level {
 	private static final String I18N_KEY_ROOT = "test-case.importance.";
 
 	private final int level;
-	private static final TestCaseImportanceLevelComparator levelComparator = new TestCaseImportanceLevelComparator();
+	private static final LevelComparator levelComparator = LevelComparator.getInstance();
 
 	private TestCaseImportance(int value) {
 		this.level = value;

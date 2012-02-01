@@ -19,33 +19,36 @@
  *     along with this software.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-package org.squashtest.csp.tm.service;
+package org.squashtest.csp.tm.web.internal.controller.requirement;
 
-import javax.validation.constraints.NotNull;
+import javax.inject.Inject;
 
-import org.springframework.transaction.annotation.Transactional;
+import org.springframework.context.annotation.Scope;
+import org.springframework.stereotype.Component;
+import org.squashtest.csp.tm.domain.LevelComparator;
 import org.squashtest.csp.tm.domain.requirement.RequirementCriticality;
+import org.squashtest.csp.tm.web.internal.helper.LevelLabelFormatter;
+import org.squashtest.csp.tm.web.internal.model.builder.EnumJeditableComboDataBuilder;
 
 /**
+ * Jeditable combo data builder which model is {@link RequirementCriticality}
+ * 
  * @author Gregory Fouquet
  * 
  */
-@Transactional
-public interface CustomRequirementModificationService {
-	void rename(long reqId, @NotNull String newName);
+@Component
+@Scope("prototype")
+public class RequirementCriticalityComboDataBuilder extends EnumJeditableComboDataBuilder<RequirementCriticality> {
+	public RequirementCriticalityComboDataBuilder() {
+		super();
+		setModel(RequirementCriticality.values());
+		setModelComparator(LevelComparator.getInstance());
+	}
 
-	/**
-	 * Increase the current version of the given requirement.
-	 * 
-	 * @param requirementId
-	 */
-	void createNewVersion(long requirementId);
-	/**
-	 * will change the requirement criticality and update the importance of any associated TestCase with importanceAuto == true.<br>
-	 * (even through call steps) 
-	 *
-	 * @param requirementId
-	 * @param criticality
-	 */
-	void changeCriticality(long requirementId, @NotNull RequirementCriticality criticality);
+	@Inject
+	public void setLabelFormatter(LevelLabelFormatter formatter) {
+		super.setLabelFormatter(formatter);
+	}
+
+
 }

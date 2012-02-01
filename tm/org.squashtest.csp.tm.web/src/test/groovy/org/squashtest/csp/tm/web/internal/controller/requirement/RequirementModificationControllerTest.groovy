@@ -18,28 +18,60 @@
  *     You should have received a copy of the GNU Lesser General Public License
  *     along with this software.  If not, see <http://www.gnu.org/licenses/>.
  */
-package org.squashtest.csp.tm.web.internal.controller.requirement;
+package org.squashtest.csp.tm.web.internal.controller.requirement
 
-import org.apache.poi.hssf.record.formula.functions.T
+import java.util.Locale;
+
+import javax.inject.Provider;
+
 import org.springframework.context.MessageSource
+import org.springframework.ui.ExtendedModelMap
+import org.springframework.ui.Model
 import org.springframework.web.servlet.ModelAndView
 import org.squashtest.csp.tm.domain.requirement.Requirement
 import org.squashtest.csp.tm.domain.requirement.RequirementCriticality
 import org.squashtest.csp.tm.domain.requirement.RequirementStatus
+import org.squashtest.csp.tm.domain.requirement.RequirementVersion;
 import org.squashtest.csp.tm.service.RequirementModificationService
+import org.squashtest.csp.tm.web.internal.helper.LabelFormatter;
+import org.squashtest.csp.tm.web.internal.helper.LevelLabelFormatter;
 
-import spock.lang.Specification
-
+import spock.lang.Specification;
 
 
 class RequirementModificationControllerTest extends Specification {
 	RequirementModificationController controller = new RequirementModificationController()
 	RequirementModificationService requirementModificationService= Mock()
 	MessageSource messageSource = Mock()
+	LabelFormatter formatter = new LevelLabelFormatter(messageSource)
+	Provider criticalityBuilderProvider = criticalityBuilderProvider()
+	Provider statusBuilderProvider = statusBuilderProvider
 
 	def setup() {
 		controller.requirementModificationService = requirementModificationService
 		controller.messageSource = messageSource
+		controller.criticalityComboBuilderProvider = criticalityBuilderProvider
+		controller.statusComboDataBuilderProvider = statusBuilderProvider
+	}
+
+	def criticalityBuilderProvider() {
+		RequirementCriticalityComboDataBuilder builder = new RequirementCriticalityComboDataBuilder()
+		builder.labelFormatter = formatter
+
+		Provider provider = Mock()
+		provider.get() >> builder
+
+		return provider
+	}
+
+	def statusBuilderProvider() {
+		RequirementStatusComboDataBuilder builder = new RequirementStatusComboDataBuilder()
+		builder.labelFormatter = formatter
+		
+		Provider provider = Mock()
+		provider.get() >> builder
+
+		return provider
 	}
 
 	def "should return requirement page fragment"() {
@@ -64,5 +96,35 @@ class RequirementModificationControllerTest extends Specification {
 
 		then:
 		requirementModificationService.createNewVersion(10L)
+	}
+
+	def "should return versions manager view"() {
+		given:
+		Requirement req = Mock()
+		requirementModificationService.findById(0) >> req
+		
+		when:
+		String viewName = controller.showRequirementVersionsManager(0, Mock(Model), Locale.JAPANESE)
+
+		then:
+		viewName == "page/requirements/versions-manager"
+	}
+
+	def "should populate versions manager model"() {
+		given:
+		Requirement req = Mock()
+		req.unmodifiableVersions >> []
+		req.currentVersion >> Mock(RequirementVersion)
+		requirementModificationService.findById(0) >> req
+		
+		when:
+		Model model = new ExtendedModelMap()
+		String viewName = controller.showRequirementVersionsManager(0, model, Locale.JAPANESE)
+
+		then:
+		model.asMap()["requirement"] != null
+		model.asMap()["versions"] != null
+		model.asMap()["selectedVersion"] != null
+		model.asMap()["jsonCriticalities"] != null
 	}
 }

@@ -33,7 +33,6 @@
 <c:url var="verifyingTestCasesTableUrl" value="/requirement-versions/${ requirementVersion.id }/verifying-test-cases/table" />
 <c:url var="verifyingTestCasesUrl" value="/requirement-versions/${ requirementVersion.id }/verifying-test-cases" />
 <c:url var="nonVerifyingTestCasesUrl" value="/requirement-versions/${ requirementVersion.id }/non-verifying-test-cases" />
-<c:url var="testCaseDetailsBaseUrl" value="/test-cases" />
 
 <layout:tree-picker-layout removeLabelKey="association_interface.remove.button.label" 
 							workspaceTitleKey="workspace.requirement.title" 
@@ -45,8 +44,7 @@
 		<link rel="stylesheet" type="text/css" href="${ pageContext.servletContext.contextPath }/styles/master.blue.css" />
 
 		<aggr:decorate-verifying-test-cases-table tableModelUrl="${ verifyingTestCasesTableUrl }" batchRemoveButtonId="remove-items-button" 
-			verifyingTestCasesUrl="${ verifyingTestCasesUrl }" nonVerifyingTestCasesUrl="${ nonVerifyingTestCasesUrl }"
-			testCaseDetailsBaseUrl="${ testCaseDetailsBaseUrl }" />
+			verifyingTestCasesUrl="${ verifyingTestCasesUrl }" nonVerifyingTestCasesUrl="${ nonVerifyingTestCasesUrl }" />
 		
 		<script type="text/javascript">
 			<%-- tree population callbacks --%>

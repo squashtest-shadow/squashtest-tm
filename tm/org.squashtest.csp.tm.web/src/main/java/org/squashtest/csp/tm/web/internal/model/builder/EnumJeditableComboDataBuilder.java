@@ -61,7 +61,7 @@ public class EnumJeditableComboDataBuilder<T extends Enum<?>> {
 	/**
 	 * The optional comparator used to sort the model. Should be injected.
 	 */
-	private Comparator<T> modelComparator;
+	private Comparator<? super T> modelComparator;
 
 	/**
 	 * The required formatter which produces item labels. Should be injected.
@@ -86,7 +86,7 @@ public class EnumJeditableComboDataBuilder<T extends Enum<?>> {
 	 * @param comparator
 	 *            the comparator to set
 	 */
-	public void setModelComparator(Comparator<T> comparator) {
+	public void setModelComparator(Comparator<? super T> comparator) {
 		this.modelComparator = comparator;
 	}
 
@@ -137,10 +137,20 @@ public class EnumJeditableComboDataBuilder<T extends Enum<?>> {
 		labelFormatter.useLocale(locale);
 
 		for (T item : model) {
-			comboData.put(item.name(), labelFormatter.formatLabel(item));
+			comboData.put(itemKey(item), labelFormatter.formatLabel(item));
 		}
 
 		return comboData;
+	}
+
+	/**
+	 * Returns the key which vill be used in combo data for the given item. defaults to the items's name.
+	 * 
+	 * @param item
+	 * @return
+	 */
+	protected String itemKey(T item) {
+		return item.name();
 	}
 
 	private void addSelectedItemIfRequired(Map<String, String> comboData) {
@@ -173,5 +183,14 @@ public class EnumJeditableComboDataBuilder<T extends Enum<?>> {
 	public EnumJeditableComboDataBuilder<T> useLocale(Locale locale) {
 		this.locale = locale;
 		return this;
+	}
+
+	/**
+	 * For internal use only.
+	 * 
+	 * @return the selected item, might be null.
+	 */
+	protected final T getSelectedItem() {
+		return selectedItem;
 	}
 }

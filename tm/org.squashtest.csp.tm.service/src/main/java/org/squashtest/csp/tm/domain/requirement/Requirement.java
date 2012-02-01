@@ -21,6 +21,7 @@
 package org.squashtest.csp.tm.domain.requirement;
 
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 
 import javax.persistence.CascadeType;
@@ -40,12 +41,12 @@ import static org.squashtest.csp.tm.domain.requirement.RequirementStatus.*;
 
 /**
  * Entity requirement
- * 
+ *
  * Note that much of its setters will throw an IllegalRequirementModificationException if a modification is attempted
  * while the status does not allow it.
- * 
+ *
  * @author bsiri
- * 
+ *
  */
 
 @Entity
@@ -68,7 +69,7 @@ public class Requirement extends RequirementLibraryNode<RequirementVersion> impl
 
 	/**
 	 * Creates a new requirement which "latest version" is the given {@link RequirementVersion}
-	 * 
+	 *
 	 * @param version
 	 */
 	public Requirement(@NotNull RequirementVersion version) {
@@ -110,7 +111,7 @@ public class Requirement extends RequirementLibraryNode<RequirementVersion> impl
 
 	/***
 	 * Set the requirement reference
-	 * 
+	 *
 	 * @param reference
 	 */
 	public void setReference(String reference) {
@@ -150,7 +151,7 @@ public class Requirement extends RequirementLibraryNode<RequirementVersion> impl
 
 	/***
 	 * Set the requirement criticality
-	 * 
+	 *
 	 * @param criticality
 	 */
 	public void setCriticality(RequirementCriticality criticality) {
@@ -166,7 +167,7 @@ public class Requirement extends RequirementLibraryNode<RequirementVersion> impl
 	}
 
 	/**
-	 * 
+	 *
 	 * @return <code>true</code> if this requirement can be (un)linked by new verifying testcases
 	 */
 	public boolean isLinkable() {
@@ -177,7 +178,7 @@ public class Requirement extends RequirementLibraryNode<RequirementVersion> impl
 	 * Tells if this requirement's "intrinsic" properties can be modified. The following are not considered as
 	 * "intrinsic" properties" : {@link #verifyingTestCases} are governed by the {@link #isLinkable()} state,
 	 * {@link #status} is governed by itself.
-	 * 
+	 *
 	 * @return <code>true</code> if this requirement's properties can be modified.
 	 */
 	public boolean isModifiable() {
@@ -213,7 +214,7 @@ public class Requirement extends RequirementLibraryNode<RequirementVersion> impl
 
 	/**
 	 * returns this requirement's version which should be linked to a test case by default.
-	 * 
+	 *
 	 * @return
 	 */
 	public RequirementVersion getDefaultVerifiableVersion() {
@@ -250,4 +251,11 @@ public class Requirement extends RequirementLibraryNode<RequirementVersion> impl
 		return null;
 	}
 
+	/**
+	 *
+	 * @return an unmodifiable view of this requirement's versions
+	 */
+	public List<RequirementVersion> getUnmodifiableVersions() {
+		return Collections.unmodifiableList(versions);
+	}
 }

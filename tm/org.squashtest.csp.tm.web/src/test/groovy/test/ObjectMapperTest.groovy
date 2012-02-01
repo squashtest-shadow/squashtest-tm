@@ -19,40 +19,40 @@
  *     along with this software.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-package org.squashtest.csp.tm.domain.testcase;
+package test
 
-import static org.squashtest.csp.tm.domain.testcase.TestCaseImportance.*;
+import org.codehaus.jackson.map.ObjectMapper;
+
 import spock.lang.Specification;
-import spock.lang.Unroll;
 
 /**
- * @author Gregory Fouquet
+ * @author Gregory
  *
  */
-class TestCaseImportanceLevelComparatorTest extends Specification {
-	TestCaseImportanceLevelComparator comparator = new TestCaseImportanceLevelComparator()
-	
-	@Unroll("#higher should be lower than #lower")
-	def "high priority should be smaller than low priority"() {
-		when:
-		def res = comparator.compare(higher, lower)
-		
-		then:
-		res < 0
-		
-		where:
-		higher    | lower
-		VERY_HIGH | HIGH
-		HIGH      | MEDIUM
-		MEDIUM    | LOW
-	}
+class ObjectMapperTest extends Specification {
+	ObjectMapper mapper = new ObjectMapper()
+	def "should marshall linked map in entries order"() {
+		given:
+		LinkedHashMap map = new LinkedHashMap();
+		map.put 2, "foo"
+		map.put 1, "bar"
 
-	def "null should be smaller than anything"() {
-		expect:
-		comparator.compare(null, VERY_HIGH) < 0
-	}	
-	def "anything should be greater than null"() {
-		expect:
-		comparator.compare(VERY_HIGH, null) > 0
-	}	
+		when:
+		def res = mapper.writeValueAsString(map);
+
+		then:
+		res == '{"2":"foo","1":"bar"}'
+	}
+	def "should marshall linked map in entries order, take 2"() {
+		given:
+		LinkedHashMap map = new LinkedHashMap();
+		map.put 1, "foo"
+		map.put 2, "bar"
+
+		when:
+		def res = mapper.writeValueAsString(map);
+
+		then:
+		res == '{"1":"foo","2":"bar"}'
+	}
 }

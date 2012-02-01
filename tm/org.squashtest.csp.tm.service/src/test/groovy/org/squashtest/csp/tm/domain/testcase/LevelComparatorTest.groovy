@@ -19,33 +19,43 @@
  *     along with this software.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-package org.squashtest.csp.tm.service;
+package org.squashtest.csp.tm.domain.testcase;
 
-import javax.validation.constraints.NotNull;
+import static org.squashtest.csp.tm.domain.testcase.TestCaseImportance.*;
 
-import org.springframework.transaction.annotation.Transactional;
-import org.squashtest.csp.tm.domain.requirement.RequirementCriticality;
+import org.squashtest.csp.tm.domain.LevelComparator;
+
+import spock.lang.Specification;
+import spock.lang.Unroll;
 
 /**
  * @author Gregory Fouquet
- * 
+ *
  */
-@Transactional
-public interface CustomRequirementModificationService {
-	void rename(long reqId, @NotNull String newName);
+class LevelComparatorTest extends Specification {
+	LevelComparator comparator = new LevelComparator()
+	
+	@Unroll("#higher should be lower than #lower")
+	def "high priority should be smaller than low priority"() {
+		when:
+		def res = comparator.compare(higher, lower)
+		
+		then:
+		res < 0
+		
+		where:
+		higher    | lower
+		VERY_HIGH | HIGH
+		HIGH      | MEDIUM
+		MEDIUM    | LOW
+	}
 
-	/**
-	 * Increase the current version of the given requirement.
-	 * 
-	 * @param requirementId
-	 */
-	void createNewVersion(long requirementId);
-	/**
-	 * will change the requirement criticality and update the importance of any associated TestCase with importanceAuto == true.<br>
-	 * (even through call steps) 
-	 *
-	 * @param requirementId
-	 * @param criticality
-	 */
-	void changeCriticality(long requirementId, @NotNull RequirementCriticality criticality);
+	def "null should be smaller than anything"() {
+		expect:
+		comparator.compare(null, VERY_HIGH) < 0
+	}	
+	def "anything should be greater than null"() {
+		expect:
+		comparator.compare(VERY_HIGH, null) > 0
+	}	
 }

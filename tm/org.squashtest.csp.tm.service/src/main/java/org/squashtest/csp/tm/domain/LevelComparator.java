@@ -19,21 +19,19 @@
  *     along with this software.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-package org.squashtest.csp.tm.domain.testcase;
+package org.squashtest.csp.tm.domain;
 
 import java.util.Comparator;
 
-import org.springframework.stereotype.Component;
-
 /**
- * Compares 2 {@link TestCaseImportance} using their {@link TestCaseImportance#getLevel()} property. The smaller the
- * level, the higher the importance.
+ * Compares 2 {@link Level} using their {@link Level#getLevel()} property. The smaller the level, the higher the
+ * importance.
  * 
  * @author Gregory Fouquet
  * 
  */
-@Component("squashtest.tm.domain.TestCaseImportanceLevelComparator")
-public class TestCaseImportanceLevelComparator implements Comparator<TestCaseImportance> {
+public class LevelComparator implements Comparator<Level> {
+	private static final LevelComparator INSTANCE = new LevelComparator();
 
 	/**
 	 * (non-Javadoc)
@@ -41,7 +39,7 @@ public class TestCaseImportanceLevelComparator implements Comparator<TestCaseImp
 	 * @see java.util.Comparator#compare(java.lang.Object, java.lang.Object)
 	 */
 	@Override
-	public int compare(TestCaseImportance o1, TestCaseImportance o2) {
+	public int compare(Level o1, Level o2) {
 		int level1 = computeLevel(o1);
 		int level2 = computeLevel(o2);
 
@@ -52,8 +50,15 @@ public class TestCaseImportanceLevelComparator implements Comparator<TestCaseImp
 	 * @param o2
 	 * @return
 	 */
-	private int computeLevel(TestCaseImportance importance) {
-		return importance == null ? 0 : importance.getLevel();
+	private int computeLevel(Level level) {
+		return level == null ? 0 : level.getLevel();
+	}
+
+	/**
+	 * @return
+	 */
+	public static LevelComparator getInstance() {
+		return INSTANCE;
 	}
 
 }

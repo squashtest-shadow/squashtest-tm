@@ -20,7 +20,6 @@
  */
 package org.squashtest.csp.tm.domain.report.common;
 
-
 import org.springframework.stereotype.Component;
 import org.squashtest.csp.tm.domain.report.ReportCategory;
 

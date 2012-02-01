@@ -24,7 +24,6 @@ import javax.inject.Inject;
 import javax.inject.Named;
 
 import org.hibernate.SessionFactory;
-import org.springframework.security.access.prepost.PostAuthorize;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.stereotype.Service;
 import org.squashtest.csp.tm.domain.requirement.Requirement;
@@ -55,12 +54,6 @@ public class CustomRequirementModificationServiceImpl implements CustomRequireme
 	}
 
 	@Override
-	@PostAuthorize("hasPermission(returnObject,'READ') or hasRole('ROLE_ADMIN')")
-	public Requirement findById(long reqId) {
-		return requirementDao.findById(reqId);
-	}
-
-	@Override
 	@PreAuthorize("hasPermission(#reqId, 'org.squashtest.csp.tm.domain.requirement.Requirement', 'WRITE') or hasRole('ROLE_ADMIN')")
 	public void rename(long reqId, String newName) {
 		requirementManagementService.renameNode(reqId, newName);
@@ -77,7 +70,7 @@ public class CustomRequirementModificationServiceImpl implements CustomRequireme
 	@Override
 	@PreAuthorize("hasPermission(#requirementId, 'org.squashtest.csp.tm.domain.requirement.Requirement', 'WRITE') or hasRole('ROLE_ADMIN')")
 	public void changeCriticality(long requirementId, RequirementCriticality criticality) {
-		Requirement requirement = findById(requirementId);
+		Requirement requirement = requirementDao.findById(requirementId);
 		RequirementCriticality oldCriticality = requirement.getCriticality();
 		requirement.setCriticality(criticality);
 		Long requirementVersionId = requirement.getCurrentVersion().getId();

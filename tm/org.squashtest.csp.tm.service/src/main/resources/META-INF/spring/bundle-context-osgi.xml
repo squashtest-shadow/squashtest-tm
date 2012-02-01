@@ -60,9 +60,6 @@
 	<osgi:service ref="squashtest.tm.service.TestCaseModificationService"
 		interface="org.squashtest.csp.tm.service.TestCaseModificationService" />
 
-	<osgi:service ref="squashtest.tm.service.TestCaseModificationService"
-		interface="org.squashtest.csp.tm.service.TestCaseModificationService" />
-
 	<osgi:service ref="squashtest.tm.service.TestCaseLibraryNavigationService"
 		interface="org.squashtest.csp.tm.service.TestCaseLibraryNavigationService" />
 
@@ -223,6 +220,4 @@
 		bean-name="javax.validation.ValidatorFactory" 
 		interface="javax.validation.ValidatorFactory" availability="mandatory" />
 		
-	<osgi:service ref="squashtest.tm.domain.TestCaseImportanceLevelComparator" 
-		interface="org.squashtest.csp.tm.domain.testcase.TestCaseImportanceLevelComparator" />
 </beans>

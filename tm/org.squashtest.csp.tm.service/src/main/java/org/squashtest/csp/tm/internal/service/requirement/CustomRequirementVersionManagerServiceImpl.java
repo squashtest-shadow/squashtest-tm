@@ -19,33 +19,37 @@
  *     along with this software.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-package org.squashtest.csp.tm.service;
+package org.squashtest.csp.tm.internal.service.requirement;
 
-import javax.validation.constraints.NotNull;
+import javax.inject.Inject;
 
-import org.springframework.transaction.annotation.Transactional;
+import org.springframework.stereotype.Service;
 import org.squashtest.csp.tm.domain.requirement.RequirementCriticality;
+import org.squashtest.csp.tm.domain.requirement.RequirementVersion;
+import org.squashtest.csp.tm.internal.repository.RequirementVersionDao;
+import org.squashtest.csp.tm.service.CustomRequirementVersionManagerService;
 
 /**
  * @author Gregory Fouquet
  * 
  */
-@Transactional
-public interface CustomRequirementModificationService {
-	void rename(long reqId, @NotNull String newName);
+@Service("CustomRequirementVersionManagerService")
+public class CustomRequirementVersionManagerServiceImpl implements CustomRequirementVersionManagerService {
+	@Inject
+	private RequirementVersionDao requirementVersionDao;
 
-	/**
-	 * Increase the current version of the given requirement.
+	/*
+	 * (non-Javadoc)
 	 * 
-	 * @param requirementId
+	 * @see org.squashtest.csp.tm.service.CustomRequirementVersionManagerService#changeCriticality(long,
+	 * org.squashtest.csp.tm.domain.requirement.RequirementCriticality)
 	 */
-	void createNewVersion(long requirementId);
-	/**
-	 * will change the requirement criticality and update the importance of any associated TestCase with importanceAuto == true.<br>
-	 * (even through call steps) 
-	 *
-	 * @param requirementId
-	 * @param criticality
-	 */
-	void changeCriticality(long requirementId, @NotNull RequirementCriticality criticality);
+	@Override
+	public void changeCriticality(long requirementVersionId, RequirementCriticality criticality) {
+		RequirementVersion requirementVersion = requirementVersionDao.findById(requirementVersionId);
+		// FIXME should send event to test cases
+		requirementVersion.setCriticality(criticality);
+
+	}
+
 }

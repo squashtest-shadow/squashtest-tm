@@ -19,30 +19,29 @@
  *     along with this software.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-package org.squashtest.csp.tm.web.internal.controller.testcase;
+package org.squashtest.csp.tm.web.internal.controller.requirement;
 
 import javax.inject.Inject;
 
 import org.springframework.context.annotation.Scope;
-import org.springframework.osgi.extensions.annotation.ServiceReference;
 import org.springframework.stereotype.Component;
 import org.squashtest.csp.tm.domain.LevelComparator;
-import org.squashtest.csp.tm.domain.testcase.TestCaseImportance;
+import org.squashtest.csp.tm.domain.requirement.RequirementStatus;
 import org.squashtest.csp.tm.web.internal.helper.LevelLabelFormatter;
 import org.squashtest.csp.tm.web.internal.model.builder.EnumJeditableComboDataBuilder;
 
 /**
- * Jeditable combo data builder which model is {@link TestCaseImportance}
+ * Jeditable combo data builder which model is {@link RequirementStatus}
  * 
  * @author Gregory Fouquet
  * 
  */
 @Component
 @Scope("prototype")
-public class TestCaseImportanceJeditableComboDataBuilder extends EnumJeditableComboDataBuilder<TestCaseImportance> {
-	public TestCaseImportanceJeditableComboDataBuilder() {
+public class RequirementStatusComboDataBuilder extends EnumJeditableComboDataBuilder<RequirementStatus> {
+	public RequirementStatusComboDataBuilder() {
 		super();
-		setModel(TestCaseImportance.values());
+		setModel(RequirementStatus.values());
 		setModelComparator(LevelComparator.getInstance());
 	}
 
@@ -51,4 +50,19 @@ public class TestCaseImportanceJeditableComboDataBuilder extends EnumJeditableCo
 		super.setLabelFormatter(formatter);
 	}
 
+	/**
+	 * @see org.squashtest.csp.tm.web.internal.model.builder.EnumJeditableComboDataBuilder#itemKey(java.lang.Enum)
+	 */
+	@Override
+	protected String itemKey(RequirementStatus item) {
+		String defaultKey = super.itemKey(item);
+		RequirementStatus selected = getSelectedItem();
+		
+		if (selected != null) {
+			if(selected.getDisabledStatus().contains(item)) {
+				defaultKey = "disabled." + defaultKey;
+			}
+		}
+		return defaultKey;
+	}
 }
