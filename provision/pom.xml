@@ -9,7 +9,7 @@
 
 	<groupId>org.squashtest.csp</groupId>
 	<artifactId>squashtest-csp-provision</artifactId>
-	<version>1.1.0.IT28-SNAPSHOT</version>
+	<version>1.1.0.IT29-SNAPSHOT</version>
 	<packaging>pom</packaging>
 	<name>squashtest-csp-provision</name>
 	<description>OSGi container provisioning - Used by pax:provision and
