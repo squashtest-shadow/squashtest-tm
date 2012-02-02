@@ -153,8 +153,8 @@
 	<osgi:service ref="squashtest.tm.service.RequirementVersionManagerService"
 		interface="org.squashtest.csp.tm.service.RequirementVersionManagerService" />
 		
-	<osgi:service ref="squashtest.tm.service.CustomTestSuiteModificationService"
-		interface="org.squashtest.csp.tm.service.CustomTestSuiteModificationService" />
+	<osgi:service ref="squashtest.tm.service.TestSuiteModificationService"
+		interface="org.squashtest.csp.tm.service.TestSuiteModificationService" />
 
 	<!-- ====== SERVICES CONSUMED BY THIS BUNDLE ====== -->
 	<!--  Jdbc Datasource -->

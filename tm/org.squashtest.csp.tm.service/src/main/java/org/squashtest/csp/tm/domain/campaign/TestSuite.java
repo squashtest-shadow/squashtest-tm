@@ -20,6 +20,10 @@
  */
 package org.squashtest.csp.tm.domain.campaign;
 
+import java.util.Collection;
+import java.util.LinkedList;
+import java.util.List;
+
 import javax.persistence.Basic;
 import javax.persistence.CascadeType;
 import javax.persistence.Column;
@@ -31,6 +35,9 @@ import javax.persistence.JoinTable;
 import javax.persistence.Lob;
 import javax.persistence.ManyToOne;
 
+import org.apache.commons.collections.CollectionUtils;
+import org.apache.commons.collections.Predicate;
+import org.apache.commons.collections.Transformer;
 import org.hibernate.validator.constraints.NotBlank;
 import org.squashtest.csp.core.security.annotation.AclConstrainedObject;
 import org.squashtest.csp.core.security.annotation.InheritsAcls;
@@ -62,6 +69,7 @@ public class TestSuite {
 	@ManyToOne
 	@JoinTable(name = "ITERATION_TEST_SUITE", joinColumns = @JoinColumn(name = "TEST_SUITE_ID", updatable = false, insertable = false), inverseJoinColumns = @JoinColumn(name = "ITERATION_ID", updatable = false, insertable = false))
 	private Iteration iteration;
+	
 	
 	
 	public Long getId(){
@@ -98,5 +106,36 @@ public class TestSuite {
 	public Iteration getIteration(){
 		return iteration;
 	}
+	
+	/**
+	 * Warning : that property builds a new list everytime. If you want to change the content of the list, use the other dedicated accessors ({@link #addTestPlan(List))} or the other one)
+	 * @return
+	 */
+	public List<IterationTestPlanItem> getTestPlan(){
+		List<IterationTestPlanItem> testPlan = new LinkedList<IterationTestPlanItem>();
+		for (IterationTestPlanItem item : iteration.getTestPlans()){
+			if (item.getTestSuite().getId().equals(this.id)){
+				testPlan.add(item);
+			}
+		}
+		return testPlan;
+	}
+	
+	public void addTestPlan(List<IterationTestPlanItem> items){
+		for (IterationTestPlanItem item : items){
+			item.setTestSuite(this);
+		}
+	}
+	
+	public void addTestPlanById(List<Long> itemIds){
+		for (Long id : itemIds){
+			for (IterationTestPlanItem item : iteration.getTestPlans()){
+				if (item.getId().equals(id)){
+					item.setTestSuite(this);
+				}
+			}
+		}
+	}
 
+	
 }

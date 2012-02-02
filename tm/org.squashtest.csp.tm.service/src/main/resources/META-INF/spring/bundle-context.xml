@@ -116,5 +116,10 @@
 		<property name="entityType" value="org.squashtest.csp.tm.domain.requirement.RequirementVersion" />
 	</bean>
 	
+	<bean id="squashtest.tm.service.TestSuiteModificationService" class="org.squashtest.csp.core.infrastructure.dynamicmanager.DynamicManagerFactoryBean">
+		<property name="componentType" value="org.squashtest.csp.tm.service.TestSuiteModificationService" />
+		<property name="entityType" value="org.squashtest.csp.tm.domain.campaign.TestSuite" />
+	</bean>
+	
 </beans>
 

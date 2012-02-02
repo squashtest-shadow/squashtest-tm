@@ -84,6 +84,10 @@ public class IterationTestPlanItem {
 	@ManyToOne
 	@JoinTable(name="ITEM_TEST_PLAN_LIST",joinColumns =  @JoinColumn(name = "ITEM_TEST_PLAN_ID"), inverseJoinColumns = @JoinColumn(name = "ITERATION_ID"))
 	private Iteration iteration;
+	
+	@ManyToOne
+	private TestSuite testSuite;
+	
 
 	public IterationTestPlanItem() {
 		super();
@@ -246,6 +250,14 @@ public class IterationTestPlanItem {
 
 	public Boolean isTestCaseDeleted(){
 		return getReferencedTestCase() == null;
+	}
+	
+	public TestSuite getTestSuite(){
+		return testSuite;
+	}
+	
+	public void setTestSuite(TestSuite suite){
+		this.testSuite = suite;
 	}
 
 }

@@ -21,6 +21,7 @@
 package org.squashtest.csp.tm.web.internal.controller.campaign;
 
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
 import org.springframework.osgi.extensions.annotation.ServiceReference;
@@ -30,17 +31,17 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
-import org.squashtest.csp.tm.service.CustomTestSuiteModificationService;
+import org.squashtest.csp.tm.service.TestSuiteModificationService;
 
 
 @Controller
 @RequestMapping("/test-suites/{suiteId}")
 public class TestSuiteModificationController {
 
-	private CustomTestSuiteModificationService service;
+	private TestSuiteModificationService service;
 	
 	@ServiceReference
-	public void setTestSuiteModificationService(CustomTestSuiteModificationService service){
+	public void setTestSuiteModificationService(TestSuiteModificationService service){
 		this.service=service;
 	}
 	
@@ -53,6 +54,13 @@ public class TestSuiteModificationController {
 		return result;
 	}
 	
+	@RequestMapping(value="/test-cases", method=RequestMethod.POST, params="ids[]")
+	public @ResponseBody Map<String, String> bindTestPlan(@PathVariable("suiteId") long suiteId, @RequestParam("ids[]") List<Long> itpIds){
+		service.bindTestPlan(suiteId, itpIds);
+		Map<String, String> result = new HashMap<String, String>();
+		result.put("id", Long.toString(suiteId));
+		return result;
+	}
 	
 	
 }

@@ -20,9 +20,12 @@
  */
 package org.squashtest.csp.tm.service;
 
+import java.util.List;
+
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.transaction.annotation.Transactional;
 import org.squashtest.csp.tm.domain.DuplicateNameException;
+import org.squashtest.csp.tm.domain.campaign.IterationTestPlanItem;
 
 @Transactional
 public interface CustomTestSuiteModificationService {
@@ -35,7 +38,21 @@ public interface CustomTestSuiteModificationService {
 	 * @param newName
 	 * @throws DuplicateNameException
 	 */
-	@PreAuthorize("hasPermission(#arg0, 'org.squashtest.csp.tm.domain.campaign.TestSuite','WRITE') or hasRole('ROLE_ADMIN')")		
 	void rename(long suiteId, String newName) throws DuplicateNameException;
+	
+	
+	/**
+	 * <p>That method will attach several {@link IterationTestPlanItem} to the given TestSuite. As usual, they
+	 * are identified using their Ids. Since a given item can be bound to at most one test suite, the item
+	 * be deassociated from its former TestSuite.</p>
+	 * 
+	 * <p>The implementation must also check that all these entities all belong to the same iteration or throw an unchecked exception
+	 * if not. TODO : define that exception.</p> 
+	 * 
+	 * @param suiteId
+	 * @param itemTestPlanIds
+	 */
+	@PreAuthorize("hasPermission(#arg0, 'org.squashtest.csp.tm.domain.campaign.TestSuite','WRITE') or hasRole('ROLE_ADMIN')")		
+	void bindTestPlan(long suiteId, List<Long> itemTestPlanIds);
 	
 }

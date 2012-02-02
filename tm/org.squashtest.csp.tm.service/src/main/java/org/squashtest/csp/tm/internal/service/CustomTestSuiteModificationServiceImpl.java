@@ -20,17 +20,18 @@
  */
 package org.squashtest.csp.tm.internal.service;
 
+import java.util.List;
+
 import javax.inject.Inject;
 
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.stereotype.Service;
 import org.squashtest.csp.tm.domain.DuplicateNameException;
-import org.squashtest.csp.tm.domain.campaign.Iteration;
 import org.squashtest.csp.tm.domain.campaign.TestSuite;
 import org.squashtest.csp.tm.internal.repository.TestSuiteDao;
 import org.squashtest.csp.tm.service.CustomTestSuiteModificationService;
 
-@Service("squashtest.tm.service.CustomTestSuiteModificationService")
+@Service("CustomTestSuiteModificationService")
 public class CustomTestSuiteModificationServiceImpl implements
 		CustomTestSuiteModificationService {
 	
@@ -43,6 +44,15 @@ public class CustomTestSuiteModificationServiceImpl implements
 			throws DuplicateNameException {
 		TestSuite suite = suiteDao.findById(suiteId);
 		suite.rename(newName);
+	}
+	
+	@Override
+	@PreAuthorize("hasPermission(#suiteId, 'org.squashtest.csp.tm.domain.campaign.TestSuite','WRITE') or hasRole('ROLE_ADMIN')")		
+	public void bindTestPlan(long suiteId, List<Long> itemTestPlanIds) {
+		//that implementation relies on how the TestSuite will do the job (regarding the checks on whether the itps belong to the 
+		//same iteration of not
+		TestSuite suite = suiteDao.findById(suiteId);
+		suite.addTestPlanById(itemTestPlanIds);
 	}
 
 }
