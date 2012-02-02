@@ -38,11 +38,11 @@
 
 
 
-<%--  <c:set var="scriptUrl" value="http://localhost/scripts/TestSuiteManager.js" /> 
+<%-- <c:set var="scriptUrl" value="http://localhost/scripts/TestSuiteManager.js" /> 
 <link rel="stylesheet" type="text/css" href="http://localhost/css/suites.css" /> --%>
 
 
-<s:url var="scriptUrl" value="/scripts/squashtest/classes/TestSuiteManager.js"  />
+<s:url var="scriptUrl" value="/scripts/squashtest/classes/TestSuiteManager.js"  />  
 <s:url var="baseSuiteUrl" value="/test-suites" /> 
 
  

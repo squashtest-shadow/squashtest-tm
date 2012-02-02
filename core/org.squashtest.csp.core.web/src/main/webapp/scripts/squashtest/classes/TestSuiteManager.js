@@ -31,11 +31,23 @@ function TestSuiteManagerControl(settings){
 	this.defaultMessage=settings.defaultMessage;
 	this.panel=settings.panel;
 	this.action=settings.action;
+	this.onfocus=settings.onfocus;
 	
 	this.input=$("input[type='text']",settings.panel);
 	this.button=$("input[type='button']", settings.panel);
 	
 	var self=this;
+	
+	/* *** little override here ***** */
+	var oldVal= this.input.val;
+	this.input.val = function(){
+		if (arguments.length>0){
+			oldVal.apply(this, arguments);
+			updateBtn();
+		}else{
+			return oldVal.call(this);
+		}
+	}
 	
 	/* ********* public ************ */
 	
@@ -52,20 +64,26 @@ function TestSuiteManagerControl(settings){
 		this.input.addClass('manager-control-disabled');
 	};
 	
+	this.setText = function(text){
+		this.input.val(text);
+	}
+	
+	this.setDefaultText = function(){
+		this.input.val(this.defaultMessage);
+	}
+	
 	
 	/* ************* private ******* */
 	
 	var defaultState=$.proxy(function(){
-		this.button.button("disable");
 		this.input.removeAttr('disabled');
 		this.input.val(this.defaultMessage);
+		this.button.button("disable");
 	}, self);
 	
 	var editState=$.proxy(function(){
 		this.input.removeClass('manager-control-ready');
-		this.input.val('');
-		this.input.change();
-		this.button.button('disable');
+		this.onfocus();
 	}, self);
 	
 	
@@ -88,20 +106,22 @@ function TestSuiteManagerControl(settings){
 		}		
 	});
 
-	//that one is better than change()
-	this.input.keyup(function(evt){
+	var updateBtn = function(){
 		var button = self.button;
-		if (this.value.length>0){
+		if (self.input.val().length>0){
 			button.button('enable');
 		}else{
 			button.button('disable');
-		}	
+		}		
+	};
+	
+	//that one is better than change()
+	this.input.keyup(function(evt){
+		updateBtn();	
 	});
 	
 	this.input.focus(editState);
 	
-	//this.input.focusout(defaultState);
-		
 }
  
  
@@ -127,6 +147,8 @@ function TestSuiteManager(settings){
 				break;
 			case 1 : 
 				this.rename.control.reset();
+				var itemText = allItems.eq(0).find('span').text();
+				this.rename.control.setText(itemText);
 				this.remove.button.button('enable');
 				break;
 			default : 
@@ -229,15 +251,35 @@ function TestSuiteManager(settings){
 
 	var bindSelectSuite = $.proxy(function(){
 		this.display.panel.delegate('.suite-div', 'click', function(){
+			if (! self.ctrlPressed){
+				deselectAllSuites();
+			}
 			$(this).toggleClass('suite-selected ui-widget-header ui-state-default');
 			updatePopupState();
 		});	
 	}, self);
 		
+		
+	/* ------- bind ctrl ------------ */
+	var bindCtrl = $.proxy(function(){
+		var jqDoc = $(document);
+		jqDoc.keydown(function(evt){
+			if (evt.which==17){
+				self.ctrlPressed=true;
+			}
+		});
+		
+		jqDoc.keyup(function(evt){
+			if (evt.which=17){
+				self.ctrlPressed=false;
+			}
+		});
+	}, self);
+	
 	
 	/* ******************** init code ****************************** */
 	
-	
+	//executed every time the popup opens
 	this.init = function(){	
 		deselectAllSuites();
 		this.create.control.reset();
@@ -245,9 +287,11 @@ function TestSuiteManager(settings){
 	}
 	
 	
+	//actual init code
 	this.instance = settings.instance;
 	this.baseCreateUrl = settings.baseCreateUrl;
 	this.baseUpdateUrl = settings.baseUpdateUrl;
+	this.ctrlPressed=false;
 	
 	this.create = {};
 	this.rename = {};
@@ -262,22 +306,24 @@ function TestSuiteManager(settings){
 		manager : self,
 		defaultMessage : settings.defaultMessage,
 		panel : $(".create-suites-section", this.instance),
-		action : postNewSuite	
+		action : postNewSuite,	
+		onfocus : function(){this.input.val('');}
 	}
 	
 	var renameControlSettings = {
 		manager : self,
 		defaultMessage: settings.defaultMessage,
 		panel : this.rename.panel = $(".rename-suites-section", this.instance),
-		action : postRenameSuite
+		action : postRenameSuite,
+		onfocus : function(){}
 	}
 	
 	this.create.control = new TestSuiteManagerControl(createControlSettings);
 	this.rename.control = new TestSuiteManagerControl(renameControlSettings);
 
-	
 	sortSuiteList();
 	bindSelectSuite();
+	bindCtrl();
 	
 	/* TODO : */
 	this.remove.button.click(function(){alert("not implemented yet");});
