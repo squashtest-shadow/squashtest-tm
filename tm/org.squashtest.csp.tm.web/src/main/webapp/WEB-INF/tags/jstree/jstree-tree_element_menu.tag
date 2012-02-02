@@ -82,7 +82,6 @@
 	$(function(){
 		squashtm.treemenu = {};
 		
-		
 		var initButton = function(bSelector, cssIcon){
 			$(bSelector).button({
 				disabled : false,
@@ -105,8 +104,7 @@
 		};
 		
 		squashtm.treemenu.create = $('#tree-create-button').treeMenu("#tree-create-menu", createOption);
-		
-		
+			
 		var actionOption = {
 				"copy" : ".copy-node-tree-button",
 				"paste" : ".paste-node-tree-button",

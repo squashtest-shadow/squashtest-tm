@@ -88,8 +88,12 @@
 						<layout:_ajax-processing-indicator  cssClass="snap-right"/>
 						<layout:_generic-error-notification-area cssClass="snap-right"/>
 						<layout:_warning-notification-area  cssClass="snap-right"/>
-					</div>
-					<div class="main-menubar">
+					
+					<%-- 
+						note about the sticked </div><div> below : IT DOES MATTER
+						if you insert any separator character between them the rendering will be altered for Chrome.
+					 --%>
+					</div><div class="main-menubar">
 						<layout:_menu-bar />
 					</div>
 				

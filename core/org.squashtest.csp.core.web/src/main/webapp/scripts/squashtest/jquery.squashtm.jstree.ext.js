@@ -358,7 +358,7 @@
 			
 		 });
 		 
-		 //ugly thing here. The widget is lazily created and we don't want that if we want to bind our events on the menu item.
+		 //ugly thing here. The widget is lazily created and we don't want that since we need to bind our events on the menu item.
 		 //so we force creation and hide it right away.
 		 var menu = allUIMenus[allUIMenus.length-1];
 		 menu.create();

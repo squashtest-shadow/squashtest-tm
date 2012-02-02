@@ -25,7 +25,7 @@
 	$(function (){
 		$("#ajax-processing-indicator").hide();
 		$(document).ajaxStart( function(){
-			$("#ajax-processing-indicator").show();
+			$("#ajax-processing-indicator").show().css('display', 'inline-block');
 		})		
 		.ajaxStop( function(){
 			$("#ajax-processing-indicator").hide();

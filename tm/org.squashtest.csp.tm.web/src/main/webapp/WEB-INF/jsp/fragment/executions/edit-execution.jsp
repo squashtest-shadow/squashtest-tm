@@ -143,9 +143,8 @@
 </script>
 
 <script type="text/javascript">
+
 	/* ******** step datatable additional javascript *** */
-	
-	
 	
 	function execStepTableDrawCallback(){
 		<c:if test="${ editable }">
