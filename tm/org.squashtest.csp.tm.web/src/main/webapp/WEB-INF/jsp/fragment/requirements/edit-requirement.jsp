@@ -278,11 +278,11 @@ that page won't be editable if
 					<div class="display-table-cell">
 						<c:choose>
 						<c:when test="${editable }">
-						<div id="requirement-criticality"><s:message code="requirement.criticality.${ requirement.criticality }" /></div>
+						<div id="requirement-criticality"><comp:level-message level="${ requirement.criticality }"/></div>
 						<comp:select-jeditable componentId="requirement-criticality" jsonData="${criticalityList}" targetUrl="${requirementUrl}" />
 						</c:when>
 						<c:otherwise>
-							<s:message code="requirement.criticality.${ requirement.criticality }" />
+							<comp:level-message level="${ requirement.criticality }"/>
 						</c:otherwise>
 						</c:choose>
 					</div>				
@@ -292,13 +292,13 @@ that page won't be editable if
 					<div class="display-table-cell">
 						<c:choose>
 						<c:when test="${status_editable}">
-						<div id="requirement-status"><s:message code="requirement.status.${ requirement.status }" /></div>
+						<div id="requirement-status"><comp:level-message level="${ requirement.status }"/></div>
 						<comp:select-jeditable componentId="requirement-status" jsonUrl="${getStatusComboContent}" 
 												targetUrl="${requirementUrl}"	
 												onSubmit="statusSelect" submitCallback="statusSelectCallback"/>
 						</c:when>
 						<c:otherwise>
-							<s:message code="requirement.status.${ requirement.status }" />
+							<comp:level-message level="${ requirement.status }"/>
 						</c:otherwise>
 						</c:choose>
 					</div>		

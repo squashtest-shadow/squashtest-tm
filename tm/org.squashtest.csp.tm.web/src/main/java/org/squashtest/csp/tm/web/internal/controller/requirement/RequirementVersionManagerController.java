@@ -42,10 +42,12 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.util.HtmlUtils;
 import org.squashtest.csp.tm.domain.Internationalizable;
+import org.squashtest.csp.tm.domain.Level;
 import org.squashtest.csp.tm.domain.requirement.RequirementCriticality;
 import org.squashtest.csp.tm.domain.requirement.RequirementStatus;
 import org.squashtest.csp.tm.domain.requirement.RequirementVersion;
 import org.squashtest.csp.tm.service.RequirementVersionManagerService;
+import org.squashtest.csp.tm.web.internal.helper.LevelLabelFormatter;
 
 /**
  * Controller which receives requirement version management related requests.
@@ -59,11 +61,11 @@ public class RequirementVersionManagerController {
 	private static final Logger LOGGER = LoggerFactory.getLogger(RequirementModificationController.class);
 
 	@Inject
-	private MessageSource messageSource;
-	@Inject
 	private Provider<RequirementCriticalityComboDataBuilder> criticalityComboBuilderProvider;
 	@Inject
 	private Provider<RequirementStatusComboDataBuilder> statusComboDataBuilderProvider;
+	@Inject
+	private Provider<LevelLabelFormatter> levelFormatterProvider;
 
 	private RequirementVersionManagerService requirementVersionManager;
 
@@ -112,8 +114,8 @@ public class RequirementVersionManagerController {
 	 * @param locale
 	 * @return
 	 */
-	private String internationalize(Internationalizable internationalizable, Locale locale) {
-		return messageSource.getMessage(internationalizable.getI18nKey(), null, locale);
+	private String internationalize(Level level, Locale locale) {
+		return levelFormatterProvider.get().useLocale(locale).formatLabel(level);
 	}
 
 	@RequestMapping(method = RequestMethod.GET)
