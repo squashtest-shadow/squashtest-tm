@@ -237,14 +237,16 @@ that page won't be editable if
 			<comp:general-information-panel auditableEntity="${requirement}" entityUrl="${ requirementUrl }" />
 		</div>
 
-		<c:if test="${editable }">
-			<div class="toolbar-button-panel">
+		<div class="toolbar-button-panel">
+			<c:if test="${ editable }">
 				<input type="button" value='<f:message key="requirement.button.rename.label" />' id="rename-requirement-button" class="button"/> 
 				<input type="button" value='<f:message key="requirement.button.remove.label" />' id="delete-requirement-button" class="button"/>		
+			</c:if>
+			<c:if test="${ user_authorized }">
 				<input type="button" value='<f:message key="requirement.button.new-version.label" />' id="new-version-button" class="button"/>		
-				<a href="<c:url value='/requirements/${ requirement.id }/versions/manager' />" class="button"><f:message key="requirement.button.manage-versions.label" /></a>		
-			</div>	
-		</c:if>
+				<a href="<c:url value='/requirements/${ requirement.id }/versions/manager' />" class="button"><f:message key="requirement.button.manage-versions.label" /></a>
+			</c:if>		
+		</div>	
 
 		<div style="clear:both;"></div>			
 	</div>
