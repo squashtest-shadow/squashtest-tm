@@ -23,6 +23,7 @@ package org.squashtest.csp.tm.web.internal.controller.requirement;
 import static org.squashtest.csp.tm.web.internal.helper.JEditablePostParams.VALUE;
 
 import java.io.UnsupportedEncodingException;
+import java.util.List;
 import java.util.Locale;
 import java.util.Map;
 
@@ -43,11 +44,20 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.servlet.ModelAndView;
 import org.springframework.web.util.HtmlUtils;
+import org.squashtest.csp.core.infrastructure.collection.PagedCollectionHolder;
+import org.squashtest.csp.core.infrastructure.collection.PagingAndSorting;
 import org.squashtest.csp.tm.domain.Internationalizable;
 import org.squashtest.csp.tm.domain.requirement.Requirement;
 import org.squashtest.csp.tm.domain.requirement.RequirementCriticality;
 import org.squashtest.csp.tm.domain.requirement.RequirementStatus;
+import org.squashtest.csp.tm.domain.requirement.RequirementVersion;
 import org.squashtest.csp.tm.service.RequirementModificationService;
+import org.squashtest.csp.tm.service.RequirementVersionManagerService;
+import org.squashtest.csp.tm.web.internal.model.datatable.DataTableDrawParameters;
+import org.squashtest.csp.tm.web.internal.model.datatable.DataTableMapperPagingAndSortingAdapter;
+import org.squashtest.csp.tm.web.internal.model.datatable.DataTableModel;
+import org.squashtest.csp.tm.web.internal.model.datatable.DataTableModelHelper;
+import org.squashtest.csp.tm.web.internal.model.viewmapper.DataTableMapper;
 
 @Controller
 @RequestMapping("/requirements/{requirementId}")
@@ -61,6 +71,15 @@ public class RequirementModificationController {
 	private Provider<RequirementStatusComboDataBuilder> statusComboDataBuilderProvider;
 
 	private RequirementModificationService requirementModService;
+	private RequirementVersionManagerService versionFinder;
+
+	private final DataTableMapper versionMapper = new DataTableMapper("requirement-version",
+ RequirementVersion.class)
+			.initMapping(6)
+			.mapAttribute(RequirementVersion.class, 1, "versionNumber", int.class)
+			.mapAttribute(RequirementVersion.class, 2, "reference", String.class)
+			.mapAttribute(RequirementVersion.class, 3, "name", String.class)
+			.mapAttribute(RequirementVersion.class, 4, "criticality", RequirementCriticality.class);
 
 	@ServiceReference
 	public void setRequirementModificationService(RequirementModificationService service) {
@@ -87,8 +106,7 @@ public class RequirementModificationController {
 	}
 
 	private String buildMarshalledCriticalities(Locale locale) {
-		String criticalities = criticalityComboBuilderProvider.get().useLocale(locale).buildMarshalled();
-		return criticalities;
+		return criticalityComboBuilderProvider.get().useLocale(locale).buildMarshalled();
 	}
 
 	// will return the fragment only
@@ -215,7 +233,7 @@ public class RequirementModificationController {
 		return messageSource.getMessage(internationalizable.getI18nKey(), null, locale);
 	}
 
-	@RequestMapping(value = "/versions/manager", method = RequestMethod.GET)
+	@RequestMapping(value = "/versions/manager")
 	public String showRequirementVersionsManager(@PathVariable long requirementId, Model model, Locale locale) {
 		Requirement req = requirementModService.findById(requirementId);
 
@@ -227,4 +245,26 @@ public class RequirementModificationController {
 		return "page/requirements/versions-manager";
 	}
 
+	@RequestMapping(value = "/versions/table", params = "sEcho")
+	@ResponseBody
+	public DataTableModel getRequirementVersionsTableModel(@PathVariable long requirementId,
+			DataTableDrawParameters params, final Locale locale) {
+		PagingAndSorting pas = new DataTableMapperPagingAndSortingAdapter(params, versionMapper);
+
+		PagedCollectionHolder<List<RequirementVersion>> holder = versionFinder.findAllByRequirement(requirementId,
+				pas);
+
+		return new DataTableModelHelper<RequirementVersion>() {
+			@Override
+			public Object[] buildItemData(RequirementVersion version) {
+				return new Object[] { version.getId(), version.getVersionNumber(), version.getReference(),
+						version.getName(), internationalize(version.getCriticality(), locale), "" };
+			}
+		}.buildDataModel(holder, params.getsEcho());
+	}
+
+	@ServiceReference
+	public void setVersionFinder(RequirementVersionManagerService versionFinder) {
+		this.versionFinder = versionFinder;
+	}
 }

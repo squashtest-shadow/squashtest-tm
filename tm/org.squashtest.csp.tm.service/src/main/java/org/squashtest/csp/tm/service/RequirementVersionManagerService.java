@@ -30,9 +30,9 @@ import org.squashtest.csp.tm.domain.requirement.RequirementVersion;
 
 /**
  * Requirement Version mangement related services.
- * 
+ *
  * @author Gregory Fouquet
- * 
+ *
  */
 @Transactional
 public interface RequirementVersionManagerService extends CustomRequirementVersionManagerService {

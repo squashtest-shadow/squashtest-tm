@@ -21,9 +21,15 @@
 
 package org.squashtest.csp.tm.internal.service.requirement;
 
+import java.util.List;
+
 import javax.inject.Inject;
 
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.stereotype.Service;
+import org.squashtest.csp.core.infrastructure.collection.PagedCollectionHolder;
+import org.squashtest.csp.core.infrastructure.collection.PagingAndSorting;
+import org.squashtest.csp.core.infrastructure.collection.PagingBackedPagedCollectionHolder;
 import org.squashtest.csp.tm.domain.requirement.RequirementCriticality;
 import org.squashtest.csp.tm.domain.requirement.RequirementVersion;
 import org.squashtest.csp.tm.internal.repository.RequirementVersionDao;
@@ -31,20 +37,19 @@ import org.squashtest.csp.tm.service.CustomRequirementVersionManagerService;
 
 /**
  * @author Gregory Fouquet
- * 
+ *
  */
 @Service("CustomRequirementVersionManagerService")
 public class CustomRequirementVersionManagerServiceImpl implements CustomRequirementVersionManagerService {
 	@Inject
 	private RequirementVersionDao requirementVersionDao;
 
-	/*
-	 * (non-Javadoc)
-	 * 
+	/**
 	 * @see org.squashtest.csp.tm.service.CustomRequirementVersionManagerService#changeCriticality(long,
-	 * org.squashtest.csp.tm.domain.requirement.RequirementCriticality)
+	 *      org.squashtest.csp.tm.domain.requirement.RequirementCriticality)
 	 */
 	@Override
+	@PreAuthorize("hasPermission(#requirementVersionId, 'org.squashtest.csp.tm.domain.requirement.RequirementVersion', 'WRITE') or hasRole('ROLE_ADMIN')")
 	public void changeCriticality(long requirementVersionId, RequirementCriticality criticality) {
 		RequirementVersion requirementVersion = requirementVersionDao.findById(requirementVersionId);
 		// FIXME should send event to test cases
@@ -52,4 +57,17 @@ public class CustomRequirementVersionManagerServiceImpl implements CustomRequire
 
 	}
 
+	/**
+	 * @see org.squashtest.csp.tm.service.CustomRequirementVersionManagerService#findAllByRequirement(long,
+	 *      org.squashtest.csp.core.infrastructure.collection.PagingAndSorting)
+	 */
+	@Override
+	@PreAuthorize("hasPermission(#requirementId, 'org.squashtest.csp.tm.domain.requirement.Requirement', 'READ') or hasRole('ROLE_ADMIN')")
+	public PagedCollectionHolder<List<RequirementVersion>> findAllByRequirement(long requirementId,
+			PagingAndSorting pas) {
+		List<RequirementVersion> versions = requirementVersionDao.findAllByRequirement(requirementId, pas);
+		long versionsCount = requirementVersionDao.countByRequirement(requirementId);
+
+		return new PagingBackedPagedCollectionHolder<List<RequirementVersion>>(pas, versionsCount, versions);
+	}
 }

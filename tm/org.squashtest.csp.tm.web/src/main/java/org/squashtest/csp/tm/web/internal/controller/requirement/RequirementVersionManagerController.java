@@ -118,12 +118,12 @@ public class RequirementVersionManagerController {
 		return levelFormatterProvider.get().useLocale(locale).formatLabel(level);
 	}
 
-	@RequestMapping(method = RequestMethod.GET)
+	@RequestMapping(value="/editor-fragment", method = RequestMethod.GET)
 	public String getRequirementEditor(@PathVariable long requirementVersionId, Model model, Locale locale) {
 		RequirementVersion requirementVersion = requirementVersionManager.findById(requirementVersionId);
 		model.addAttribute("requirementVersion", requirementVersion);
 
-		String criticalities = criticalityComboBuilderProvider.get().useLocale(locale).buildMarshalled();
+		String criticalities = buildMarshalledCriticalities(locale);
 		model.addAttribute("jsonCriticalities", criticalities);
 
 		return "fragment/requirements/requirement-version-editor";
@@ -138,5 +138,28 @@ public class RequirementVersionManagerController {
 		return statusComboDataBuilderProvider.get().useLocale(locale).selectItem(status).buildMap();
 
 	}
+	
+	@RequestMapping(value = "/general", method = RequestMethod.GET)
+	public String showGeneralInfos(@PathVariable long requirementVersionId, Model model) {
+		RequirementVersion version = requirementVersionManager.findById(requirementVersionId);
 
+		model.addAttribute("auditableEntity", version);
+		model.addAttribute("entityContextUrl", "/requirement-versions/" + requirementVersionId);
+
+		return "fragment/generics/general-information-fragment";
+	}
+
+//	@RequestMapping(value = "/editor", method = RequestMethod.GET)
+//	public String showInlinedEditor(@PathVariable long requirementVersionId, Model model, Locale locale) {
+//		RequirementVersion version = requirementVersionManager.findById(requirementVersionId);
+//
+//		model.addAttribute("requirementVersion", version);
+//		model.addAttribute("jsonCriticalities", buildMarshalledCriticalities(locale));
+//
+//		return "page/requirements/requirement-version-editor";
+//	}
+
+	private String buildMarshalledCriticalities(Locale locale) {
+		return criticalityComboBuilderProvider.get().useLocale(locale).buildMarshalled();
+	}
 }

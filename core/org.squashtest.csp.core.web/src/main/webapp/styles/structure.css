@@ -48,7 +48,7 @@ label:after {
 
 
 div#navigation {
-	position: absolute;
+	position: fixed;
 	min-height: 100%;
 	width: 1cm;
 	background: url("../images/fond_nav.gif") repeat-y scroll 0 0 #393834;
@@ -345,12 +345,6 @@ div#admin_nav {
 	height: 20%;
 	left: 0%;
 	width: 100%;
-}
-
-div#navigation .nav_btn { /*clear : left;
-	float : left;
-	margin : 10% 0%;*/
-	
 }
 
 div#navigation .nav_btn img {
@@ -843,6 +837,9 @@ div#user-account-password-panel > div > * {
 	float: right;
 }
 
+.unsnap {
+	clear:both;
+}
 
 .drag-handle {
 	cursor: n-resize;

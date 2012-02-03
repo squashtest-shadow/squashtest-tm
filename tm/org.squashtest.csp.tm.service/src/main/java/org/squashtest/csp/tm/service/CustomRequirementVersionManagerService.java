@@ -21,17 +21,21 @@
 
 package org.squashtest.csp.tm.service;
 
+import java.util.List;
+
 import javax.validation.constraints.NotNull;
 
-import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.transaction.annotation.Transactional;
+import org.squashtest.csp.core.infrastructure.collection.PagedCollectionHolder;
+import org.squashtest.csp.core.infrastructure.collection.PagingAndSorting;
 import org.squashtest.csp.tm.domain.requirement.RequirementCriticality;
+import org.squashtest.csp.tm.domain.requirement.RequirementVersion;
 
 /**
  * RequirementVersion management services which cannot be dyanmically generated.
- * 
+ *
  * @author Gregory Fouquet
- * 
+ *
  */
 @Transactional
 public interface CustomRequirementVersionManagerService {
@@ -39,11 +43,21 @@ public interface CustomRequirementVersionManagerService {
 	 * will change the requirement criticality and update the importance of any associated TestCase with importanceAuto
 	 * == true.<br>
 	 * (even through call steps)
-	 * 
+	 *
 	 * @param requirementVersionId
 	 * @param criticality
 	 */
-	@PreAuthorize("hasPermission(#requirementVersionId, 'org.squashtest.csp.tm.domain.requirement.RequirementVersion', 'WRITE') or hasRole('ROLE_ADMIN')")
 	void changeCriticality(long requirementVersionId, @NotNull RequirementCriticality criticality);
+
+	/**
+	 * Fetches the paged, sorted collection of versions for the given requirement.
+	 *
+	 * @param requirementId
+	 * @param pas
+	 * @return
+	 */
+	@Transactional(readOnly = true)
+	PagedCollectionHolder<List<RequirementVersion>> findAllByRequirement(long requirementId,
+			@NotNull PagingAndSorting pas);
 
 }

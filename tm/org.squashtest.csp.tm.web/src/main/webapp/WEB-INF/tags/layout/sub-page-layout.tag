@@ -81,7 +81,7 @@
 
 	
 	<jsp:attribute name="content">
-		<div id="sub-page" class="sub-page " >
+		<div id="sub-page" class="sub-page" >
 			
 			<div id="sub-page-header" class="sub-page-header shadow ui-corner-all">
 			
@@ -91,14 +91,9 @@
 				
 				<div id="sub-page-buttons" class="sub-page-buttons">
 					<jsp:invoke fragment="subPageButtons" />
-					<%--
-					<f:message var="backButtonLabel" key="fragment.edit.header.button.back" />
-					<input type="button" class="button" value="${backButtonLabel}" onClick="history.back();"/>  
-					--%>
 				</div>
 				
-				<div style="clear:both;"></div>
-				
+				<div class="unsnap"></div>
 			</div>
 			
 			<div id="sub-page-content" class="sub-page-content shadow ui-corner-all">

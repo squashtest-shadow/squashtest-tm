@@ -92,11 +92,10 @@
 }
 
 
-.sub-page-header{
+.sub-page-header, .sub-page-list-panel, .sub-page-selection-panel {
 	margin-bottom : 10px;
 	background-color : #EBEAE5;
 }
-
 
 .sub-page-title{
 	float:left;
@@ -108,10 +107,16 @@
 	margin : 0.3em;		
 }
 
-
-
 .sub-page-buttons{
 	float:right;
+}
+
+.sub-page-list-panel {
+	padding-top: 8px;
+	padding-left: 8px;
+	padding-bottom: 30px;
+	padding-right: 8px;
+	background-size: cover;
 }
 
 .sub-page-buttons .button, .sub-page-buttons input{
@@ -127,4 +132,19 @@
 	bottom: 0pt; 
 	overflow-y: scroll;
 	width: 100%;
+}
+
+.sub-page-selection-panel #contextual-content {
+ 	position: inherit;
+	top: inherit;
+ 	width: 100%;
+	float: none; 
+}
+
+.sub-page-selection-panel .fragment-body{
+	top: inherit;	
+	position: inherit;	
+ 	padding-left: 8px;
+ 	padding-right: 8px;
+ 	overflow-y: visible; 
 }

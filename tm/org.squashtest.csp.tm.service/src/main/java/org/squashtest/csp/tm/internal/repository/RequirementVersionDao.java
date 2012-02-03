@@ -27,9 +27,9 @@ import org.squashtest.csp.tm.domain.requirement.Requirement;
 import org.squashtest.csp.tm.domain.requirement.RequirementVersion;
 
 /**
- * 
+ *
  * @author Gregory Fouquet
- * 
+ *
  */
 public interface RequirementVersionDao extends CustomRequirementVersionDao {
 	List<RequirementVersion> findAllByIdList(Collection<Long> ids);
@@ -37,5 +37,13 @@ public interface RequirementVersionDao extends CustomRequirementVersionDao {
 	RequirementVersion findById(long requirementId);
 
 	long countVerifiedByTestCase(long testCaseId);
+
+	List<RequirementVersion> findAllByRequirement(Requirement node);
+
+	/**
+	 * @param requirementId
+	 * @return the versions count for the given requirement.
+	 */
+	long countByRequirement(long requirementId);
 
 }

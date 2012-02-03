@@ -52,4 +52,11 @@ public interface CustomRequirementVersionDao {
 	 */
 	List<RequirementVersion> findAllVerifiedByTestCase(long verifierId, PagingAndSorting sorting);
 
+	/**
+	 * @param requirementId
+	 * @param pas
+	 * @return the paged, sorted versions of the given requirement.
+	 */
+	List<RequirementVersion> findAllByRequirement(long requirementId, PagingAndSorting pas);
+
 }

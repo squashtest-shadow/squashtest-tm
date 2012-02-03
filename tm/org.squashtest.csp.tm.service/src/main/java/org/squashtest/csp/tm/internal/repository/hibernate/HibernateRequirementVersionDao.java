@@ -39,9 +39,9 @@ import org.squashtest.csp.tm.domain.requirement.RequirementVersion;
 import org.squashtest.csp.tm.internal.repository.CustomRequirementVersionDao;
 
 /**
- * 
+ *
  * @author Gregory Fouquet
- * 
+ *
  */
 @Repository("CustomRequirementVersionDao")
 public class HibernateRequirementVersionDao implements CustomRequirementVersionDao {
@@ -71,6 +71,7 @@ public class HibernateRequirementVersionDao implements CustomRequirementVersionD
 
 		PagingUtils.addPaging(crit, pagingAndSorting);
 		SortingUtils.addOrder(crit, pagingAndSorting);
+
 		return crit;
 	}
 
@@ -99,6 +100,23 @@ public class HibernateRequirementVersionDao implements CustomRequirementVersionD
 		Criteria crit = createFindAllVerifiedCriteria(pas);
 
 		crit.add(Restrictions.eq("TestCase.id", Long.valueOf(verifierId)));
+
+		return crit.list();
+	}
+
+	/**
+	 * @see org.squashtest.csp.tm.internal.repository.CustomRequirementVersionDao#findAllByRequirement(long,
+	 *      org.squashtest.csp.core.infrastructure.collection.PagingAndSorting)
+	 */
+	@SuppressWarnings("unchecked")
+	@Override
+	public List<RequirementVersion> findAllByRequirement(long requirementId, PagingAndSorting pas) {
+		Criteria crit = currentSession().createCriteria(RequirementVersion.class, "RequirementVersion");
+		crit.createAlias("requirement", "Requirement");
+		crit.add(Restrictions.eq("Requirement.id", Long.valueOf(requirementId)));
+
+		PagingUtils.addPaging(crit, pas);
+		SortingUtils.addOrder(crit, pas);
 
 		return crit.list();
 	}

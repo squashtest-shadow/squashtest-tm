@@ -162,7 +162,7 @@ that page won't be editable if
 		</h2>
 	</div>
 
-	<div style="clear:both;"></div>	
+	<div class="unsnap"></div>	
 
 	<c:if test="${ editable }">
 		<pop:popup id="rename-requirement-dialog" titleKey="dialog.rename-requirement.title" isContextual="true" openedBy="rename-requirement-button">
@@ -217,42 +217,46 @@ that page won't be editable if
 					<label for="requirement-version-number"><f:message key="requirement-version.version-number.label" /></label>
 					<div id="requirement-version-number">${ requirementVersion.versionNumber }</div>
 				</div>
-				<div class="display-table-row">
-					<label for="requirement-description" class="display-table-cell"><f:message key="requirement.description.label" /></label>
-					<div class="display-table-cell" id="requirement-description">${ requirementVersion.description }</div>
+				<div>
+					<label for="requirement-description"><f:message key="requirement.description.label" /></label>
+					<div id="requirement-description">${ requirementVersion.description }</div>
 				</div>
-				<div class="display-table-row">
-					<label class="display-table-cell"  for="requirement-reference"><f:message key="requirement.reference.label" /></label>
-					<div class="display-table-cell"  id="requirement-reference">${ requirementVersion.reference }</div>
+				<div>
+					<label for="requirement-reference"><f:message key="requirement.reference.label" /></label>
+					<div id="requirement-reference">${ requirementVersion.reference }</div>
 				</div>
-				<div class="display-table-row">
-					<label for="requirement-criticality" class="display-table-cell"><f:message key="requirement.criticality.combo.label" /></label>
-					<div class="display-table-cell">
-						<c:choose>
-						<c:when test="${ editable }">
-						<div id="requirement-criticality"><comp:level-message level="${ requirementVersion.criticality }"/></div>
-						<comp:select-jeditable componentId="requirement-criticality" jsonData="${ jsonCriticalities }" targetUrl="${ requirementUrl }" />
-						</c:when>
-						<c:otherwise>
-							<comp:level-message level="${ requirementVersion.criticality }"/>
-						</c:otherwise>
-						</c:choose>
+				<div>
+					<label for="requirement-criticality"><f:message key="requirement.criticality.combo.label" /></label>
+					<div>
+						<div id="requirement-criticality">
+							<c:choose>
+								<c:when test="${ editable }">
+									<comp:level-message level="${ requirementVersion.criticality }"/>
+									<comp:select-jeditable componentId="requirement-criticality" jsonData="${ jsonCriticalities }" targetUrl="${ requirementUrl }" />
+								</c:when>
+							<c:otherwise>
+								<comp:level-message level="${ requirementVersion.criticality }"/>
+							</c:otherwise>
+							</c:choose>
+						</div>
 					</div>				
 				</div>
-				<div class="display-table-row">
-					<label for="requirement-status" class="display-table-cell"><f:message key="requirement.status.combo.label" /></label>
-					<div class="display-table-cell">
+				<div>
+					<label for="requirement-status"><f:message key="requirement.status.combo.label" /></label>
+					<div>
+						<div id="requirement-status">
 						<c:choose>
-						<c:when test="${ editableStatus }">
-						<div id="requirement-status"><comp:level-message level="${ requirementVersion.status }"/></div>
-						<comp:select-jeditable componentId="requirement-status" jsonUrl="${ getStatusComboContent }" 
-												targetUrl="${ requirementUrl }"	
-												onSubmit="statusSelect" submitCallback="statusSelectCallback"/>
-						</c:when>
-						<c:otherwise>
-							<comp:level-message level="${ requirementVersion.status }"/>
-						</c:otherwise>
+							<c:when test="${ editableStatus }">
+								<comp:level-message level="${ requirementVersion.status }"/>
+								<comp:select-jeditable componentId="requirement-status" jsonUrl="${ getStatusComboContent }" 
+														targetUrl="${ requirementUrl }"	
+														onSubmit="statusSelect" submitCallback="statusSelectCallback"/>
+							</c:when>
+							<c:otherwise>
+								<comp:level-message level="${ requirementVersion.status }"/>
+							</c:otherwise>
 						</c:choose>
+						</div>
 					</div>		
 
 				</div>				
