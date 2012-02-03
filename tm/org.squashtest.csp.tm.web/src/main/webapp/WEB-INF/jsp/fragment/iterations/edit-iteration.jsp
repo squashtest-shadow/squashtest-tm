@@ -333,11 +333,10 @@
 			<f:message var="associateLabel" key="campaign.test-plan.manage.button.label"/>
 			<f:message var="removeLabel" key="campaign.test-plan.remove.button.label"/>
 			<f:message var="assignLabel" key="campaign.test-plan.assign.button.label"/>
-			<f:message var="suitesLabel" key="iteration.test-plan.testsuite.manage.label"/>
 			<input id="test-case-button" type="button" value="${associateLabel}" class="button"/>
 			<input id="remove-test-case-button" type="button" value="${removeLabel}" class="button"/>
 			<input id="assign-test-case-button" type="button" value="${assignLabel}" class="button"/>
-			<input id="manage-test-suites-button" type="button" value="${suitesLabel}" class="button"/>
+			<a id="manage-test-suites-menu" role="button" class="button tg-panel-button"><f:message key="menu.test-suites.button.main"/></a>
 		</c:if>
 	</jsp:attribute>
 	
@@ -394,8 +393,8 @@
 
 <%-- ----------------------------------- Test Suite Management -------------------------------------------------- --%>
 
-<comp:test-suite-managment-popup suiteList="${iteration.testSuites}" openerId="manage-test-suites-button" 
-	divId="manage-test-suites-popup" baseUrl="${testSuitesUrl}" />
+<comp:test-suite-managment suiteList="${iteration.testSuites}" 
+	popupId="manage-test-suites-popup" menuId="manage-test-suites-menu" baseUrl="${testSuitesUrl}" />
 
 
 <%------------------------------ Attachments bloc ------------------------------------------- --%> 

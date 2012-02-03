@@ -24,8 +24,8 @@
 <%@ tag description="managment of iteration test suites" body-content="empty" %>
 <%@ tag language="java" pageEncoding="ISO-8859-1"%>
 
-<%@ attribute name="divId" required="true" description="the id of the current iteration" %>
-<%@ attribute name="openerId" required="true" description="the id of the button opening this manager" %>
+<%@ attribute name="popupId" required="true" description="the id of the managment popup. Just supply the name and it will be generated." %>
+<%@ attribute name="menuId" required="true" description="the id of the button opening the menu. Must exists." %>
 <%@ attribute name="suiteList" type="java.lang.Object" required="true" description="the list of the suites that exist already" %>
 <%@ attribute name="baseUrl" required="true" description="url representing the current iteration" %>
 
@@ -36,13 +36,15 @@
 <%@ taglib prefix="s"		uri="http://www.springframework.org/tags"%>
 <%@ taglib prefix="comp" 	tagdir="/WEB-INF/tags/component" %>	
 
-<%--
+
 <c:set var="modelScriptUrl"   value="http://localhost/scripts/TestSuiteModel.js" />
 <c:set var="managerScriptUrl" value="http://localhost/scripts/TestSuiteManager.js" /> 
- --%>
+<c:set var="menuScriptUrl" value="http://localhost/scripts/TestSuiteMenu.js" />
+
+ <%--
 <s:url var="managerScriptUrl" value="/scripts/squashtest/classes/TestSuiteManager.js"  />  
 <s:url var="modelScriptUrl" value="/scripts/squashtest/classes/TestSuiteModel.js"  />  
-
+ --%>
 <%-- <link rel="stylesheet" type="text/css" href="http://localhost/css/suites.css" /> --%>
 
  
@@ -53,7 +55,7 @@
  <%-- ====================== POPUP STRUCTURE DEFINITION ========================= --%>
  
  
-<pop:popup id="${divId}" isContextual="true"  openedBy="${openerId}" closeOnSuccess="false" titleKey="dialog.testsuites.title">
+<pop:popup id="${popupId}" isContextual="true"  openedBy="manage-test-suites-button" closeOnSuccess="false" titleKey="dialog.testsuites.title">
 
 	<jsp:attribute name="buttons">
 	<f:message var="closeLabel" key="dialog.testsuites.close" />
@@ -98,9 +100,13 @@
 </pop:popup>
 
  <%-- ====================== /POPUP STRUCTURE DEFINITION  ========================= --%>
+
+ <%-- ============================= MENU DEFINITION =============================== --%>
  
+ <f:message var="suitesLabel" key="iteration.test-plan.testsuite.manage.label"/>	
+ <input id="manage-test-suites-button" type="button" value="${suitesLabel}" class="button not-displayed"/>
 
-
+ <%-- ============================= /MENU DEFINITION ============================== --%>
 <f:message var="defaultMessage" key="dialog.testsuites.defaultmessage" />
 
 <script type="text/javascript">
@@ -123,10 +129,19 @@
 			dataType : 'script'
 		});		
 	}
+	
+	function loadTestSuiteMenuScript(){
+		return $.ajax({
+			cache : true,
+			type : 'GET',
+			url : "${menuScriptUrl}",
+			dataType : 'script'
+		});		
+	}
 
 	
 	$(function(){		
-		$.when(loadTestSuiteModelScript(), loadTestSuiteManagerScript()) 		
+		$.when(loadTestSuiteModelScript(), loadTestSuiteManagerScript(), loadTestSuiteMenuScript()) 		
 		.then(function(){				
 			
 
@@ -149,14 +164,24 @@
 			squashtm.testSuiteManagement.testSuiteModel = new TestSuiteModel(modelSettings);
 			
 			var managerSettings = {
-				instance : $("#${divId} .main-div-suites"),
+				instance : $("#${popupId} .main-div-suites"),
 				model : squashtm.testSuiteManagement.testSuiteModel,
 				defaultMessage : "${defaultMessage}"					
 			};
 			
 			squashtm.testSuiteManagement.testSuiteManager = new TestSuiteManager(managerSettings);
 			
-			$("#${divId} .main-div-suites").removeClass("not-displayed");
+			
+			var menuSettings = {
+				instanceSelector : "#${menuId}",
+				managerButton : $("#manage-test-suites-button"),
+				model : squashtm.testSuiteManagement.testSuiteModel
+			};
+			
+			squashtm.testSuiteManagement.testSuiteMenu = new TestSuiteMenu(menuSettings);
+			
+			//now we can make reappear
+			$("#${popupId} .main-div-suites").removeClass("not-displayed");
 		});
 	});
 

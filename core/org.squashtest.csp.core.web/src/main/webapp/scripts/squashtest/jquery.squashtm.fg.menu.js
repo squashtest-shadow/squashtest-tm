@@ -36,6 +36,8 @@ Dual licensed under the MIT (filamentgroup.com/examples/mit-license.txt) and GPL
  * The methods kill() and showMenu() were modified. This file should be discarded once we upgrade to jquery ui 1.9 anyway.
  * 
  * Sorry if the license of Squash preceeds the original one, blame Maven for that.
+ * 
+ * also made the content reloadable (see the new attribute this.content, + first lines of this.create
  *
  * @author bsiri
  */
@@ -65,6 +67,7 @@ function Menu(caller, options){
 	
 	this.menuOpen = false;
 	this.menuExists = false;
+	this.content=options.content;
 	
 	var options = jQuery.extend({
 		content: null,
@@ -221,7 +224,12 @@ function Menu(caller, options){
 		$(document).keydown(keydownHandler);
 	};
 	
-	this.create = function(){	
+	this.create = function(){
+		//those lines allows dynamic recreation
+		container.empty();
+		container.append(this.content);
+		
+		//normal code now
 		container.css({ width: options.width }).appendTo('body').find('ul:first').not('.fg-menu-breadcrumb').addClass('fg-menu');
 		container.find('ul, li a').addClass('ui-corner-all');
 		
