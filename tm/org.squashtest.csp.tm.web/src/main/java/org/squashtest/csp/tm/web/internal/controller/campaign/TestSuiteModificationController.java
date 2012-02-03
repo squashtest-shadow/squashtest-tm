@@ -35,7 +35,7 @@ import org.squashtest.csp.tm.service.TestSuiteModificationService;
 
 
 @Controller
-@RequestMapping("/test-suites/{suiteId}")
+@RequestMapping("/test-suites/{id}")
 public class TestSuiteModificationController {
 
 	private TestSuiteModificationService service;
@@ -45,17 +45,17 @@ public class TestSuiteModificationController {
 		this.service=service;
 	}
 	
-	@RequestMapping(value="/rename", method=RequestMethod.POST, params="newName" )
-	public @ResponseBody Map<String, String> renameTestSuite(@PathVariable("suiteId") Long suiteId, @RequestParam("newName") String newName ){
-		service.rename(suiteId, newName);
+	@RequestMapping(value="/rename", method=RequestMethod.POST, params="name" )
+	public @ResponseBody Map<String, String> renameTestSuite(@PathVariable("id") Long id, @RequestParam("name") String name ){
+		service.rename(id, name);
 		Map<String, String> result = new HashMap<String, String>();
-		result.put("id", suiteId.toString());
-		result.put("name", newName);
+		result.put("id", id.toString());
+		result.put("name", name);
 		return result;
 	}
 	
 	@RequestMapping(value="/test-cases", method=RequestMethod.POST, params="ids[]")
-	public @ResponseBody Map<String, String> bindTestPlan(@PathVariable("suiteId") long suiteId, @RequestParam("ids[]") List<Long> itpIds){
+	public @ResponseBody Map<String, String> bindTestPlan(@PathVariable("id") long suiteId, @RequestParam("test-cases[]") List<Long> itpIds){
 		service.bindTestPlan(suiteId, itpIds);
 		Map<String, String> result = new HashMap<String, String>();
 		result.put("id", Long.toString(suiteId));

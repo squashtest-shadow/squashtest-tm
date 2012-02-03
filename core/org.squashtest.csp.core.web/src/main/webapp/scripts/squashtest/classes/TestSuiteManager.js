@@ -19,11 +19,11 @@
  *     along with this software.  If not, see <http://www.gnu.org/licenses/>.
  */
 
+ 
  /*
-  * TODO : document this
+  * A Control is a pair of input text / button enclosing the main view.
   *
   */
- 
 
 function TestSuiteManagerControl(settings){
 	
@@ -123,22 +123,143 @@ function TestSuiteManagerControl(settings){
 	this.input.focus(editState);
 	
 }
- 
+
+
+/*
+ *
+ * The view displays and manage the test suites (known here as items)
+ *
+ */
+function TestSuiteManagerView(settings){
+	
+	this.panel = settings.panel;
+	this.manager = settings.manager;
+	this.model = settings.model;
+	
+	var self=this;
+	
+	this.model.addListener(this);
+	
+	/* ****** private ********* */
+	
+	var getAllItems = $.proxy(function(){
+		return $('.suite-div', this.panel);
+	}, this);
+	
+
+	
+	var appendItem = $.proxy(function(data){	
+		
+		var newSuite = $("<div/>", {'class' : 'suite-div ui-corner-all' } );
+		var spanSuite = $("<span/>", {'data-suite-id' : data.id, 'text' : data.name});
+		
+		newSuite.append(spanSuite);
+		this.panel.append(newSuite);
+		
+	}, self);
+	
+	
+	var sortSuiteList = $.proxy(function(){
+		var allSuites = $('.suite-div', this.panel);
+		
+		var sorted = allSuites.sort(function(a,b){
+			var textA = getItemDomText(a);
+			var textB = getItemDomText(b);
+			return (textA < textB) ? -1 : 1;
+				
+		});
+		this.panel.append(sorted);
+	}, self);
+	
+	var getItemDomId = $.proxy(function(elt){
+		if (elt.firstElementChild!==undefined){
+			return elt.firstElementChild.getAttribute('data-suite-id');		
+		}else{
+			return elt.firstChild.getAttribute('data-suite-id');		
+		}			
+	}, self);
+
+	var getItemDomText = $.proxy(function(elt){		
+		if (elt.firstElementChild!==undefined){
+			return elt.firstElementChild.textContent;		
+		}else{
+			return elt.firstChild.innerText;
+		}	
+	}, self);
+	
+	/* ********* public *********** */
+	
+	
+	this.getSelectedIds = function(){
+		var ids = this.getSelected().find('span')
+		.collect(function(elt){
+			return elt.getAttribute('data-suite-id');
+		});
+		return ids;
+	}	
+	
+	this.selectItems = function(selected){
+		getAllItems().each(function(i,elt){
+			for (var j=0;j<selected.length;j++){
+				var id = getItemDomId(elt);
+				if (selected[j]==id){
+					$(elt).addClass("suite-selected ui-widget-header ui-state-default");
+				}
+			}
+		});	
+	}
+	
+	this.getSelected = function(){
+		return getAllItems().filter('.suite-selected');
+	};
+
+	
+	this.deselectAllItems = function(){
+		getAllItems().removeClass("suite-selected ui-widget-header ui-state-default");
+	};
+	
+	this.update = function(){
+		//save state
+		var selected = this.getSelectedIds();
+		
+		//rebuild
+		var modelData = this.model.getData();
+		this.panel.empty();
+		
+		for (var i in modelData){
+			appendItem(modelData[i]);
+		}
+
+		sortSuiteList();
+		
+		//restore state
+		this.selectItems(selected);
+		
+		this.manager.updatePopupState();
+	}
+
+	
+	this.panel.delegate('.suite-div', 'click', function(){
+		if (! self.manager.ctrlPressed){
+			self.deselectAllItems();
+		}
+		$(this).toggleClass('suite-selected ui-widget-header ui-state-default');
+		self.manager.updatePopupState();
+	});		
+	
+	
+}
  
 function TestSuiteManager(settings){
 
-
-	/* **************** private state management methods ******************** */
-
 	var self=this;
-			
-	var deselectAllSuites = $.proxy(function(){
-		$(".suite-div", this.display.panel).removeClass("suite-selected ui-widget-header ui-state-default");
-	}, self);
 	
-	var updatePopupState = $.proxy(function(){		
+	
+	/* **************** public state management methods ******************** */
+	
+	this.updatePopupState = function(){		
 
-		var allItems = $(".suite-div.suite-selected", this.display.panel);
+		var allItems = this.view.getSelected();
 		
 		switch(allItems.size()){
 			case 0 :
@@ -156,66 +277,19 @@ function TestSuiteManager(settings){
 				break;
 		}
 		
-	}, self);
+	}
 	
 
-	/* ******************** DOM management ************************* */
-
-	var sortSuiteList = function(){
-		var allSuites = $('.suite-div', self.display.panel);
-		
-		var sorted = allSuites.sort(function(a,b){
-			if (a.firstElementChild!==undefined){
-				return (a.firstElementChild.textContent < b.firstElementChild.textContent) ? -1 : 1;		
-			}else{
-				return (a.firstChild.innerText < b.firstChild.innerText) ? -1 : 1;
-			}
-				
-		});
-		self.display.panel.append(sorted);
-	};
-
-	
-	var appendNewSuite = $.proxy(function(jsonSuite){	
-		
-		var newSuite = $("<div/>", {'class' : 'suite-div ui-corner-all' } );
-		var spanSuite = $("<span/>", {'data-suite-id' : jsonSuite.id, 'text' : jsonSuite.name});
-		
-		newSuite.append(spanSuite);
-		this.display.panel.append(newSuite);
-		
-	}, self);
-	
-	var renameSuite = $.proxy(function(jsonSuite){
-		var spanSuite = $(".suite-selected span[data-suite-id='"+jsonSuite.id+"']", this.display.panel);
-		spanSuite.text(jsonSuite.name);
-	}, self);
-	
-	
 	/* ******************** actions ************************* */
 	
 	/* ----- suite creation ------- */
 	
 	var postNewSuite = $.proxy(function(){
-		var url = this.baseCreateUrl+"/new";
 		var name = this.create.control.input.val();
 		
-		var defer = $.Deferred();
-	
-		$.ajax({
-			'url' : url,
-			type : 'POST',
-			data : { 'name' : name },
-			dataType : 'json'
-		})
-		.success(function(json){
-			appendNewSuite(json);
-			sortSuiteList();
-			defer.resolve();
-		})
-		.error(defer.reject);
-		
-		return defer.promise();
+		var promise = this.model.postNew(name);
+
+		return promise;
 		
 	}, self);
 	
@@ -223,44 +297,19 @@ function TestSuiteManager(settings){
 	
 	var postRenameSuite = $.proxy(function(){
 		
-		var suiteId = $('.suite-selected span', this.display.panel).data('suite-id');
-		var url = this.baseUpdateUrl+"/"+suiteId+"/rename";
+		var suiteId = this.view.getSelectedIds()[0];
 		var newName = this.rename.control.input.val();
 		
-		var defer = $.Deferred();
+		var promise = this.model.postRename( {id : suiteId, name : newName});
 		
-		$.ajax({
-			'url' : url,
-			type : 'POST',
-			data : { 'suiteId' : suiteId, 'newName' : newName },
-			dataType : 'json'
-		})
-		.success(function(json){
-			renameSuite(json);
-			sortSuiteList();
-			defer.resolve();
-		})
-		.error(defer.reject);
-		
-		return defer.promise();
+		return promise;
 		
 	}, self);
 	
-	
-	/* ------ item selection --------- */
 
-	var bindSelectSuite = $.proxy(function(){
-		this.display.panel.delegate('.suite-div', 'click', function(){
-			if (! self.ctrlPressed){
-				deselectAllSuites();
-			}
-			$(this).toggleClass('suite-selected ui-widget-header ui-state-default');
-			updatePopupState();
-		});	
-	}, self);
-		
 		
 	/* ------- bind ctrl ------------ */
+	
 	var bindCtrl = $.proxy(function(){
 		var jqDoc = $(document);
 		jqDoc.keydown(function(evt){
@@ -281,29 +330,25 @@ function TestSuiteManager(settings){
 	
 	//executed every time the popup opens
 	this.init = function(){	
-		deselectAllSuites();
+		this.view.deselectAllItems();
 		this.create.control.reset();
-		updatePopupState();
+		this.updatePopupState();
 	}
 	
 	
 	//actual init code
 	this.instance = settings.instance;
-	this.baseCreateUrl = settings.baseCreateUrl;
-	this.baseUpdateUrl = settings.baseUpdateUrl;
+	this.model=settings.model
 	this.ctrlPressed=false;
 	
 	this.create = {};
 	this.rename = {};
-		
-	this.display = {};
-	this.display.panel = $(".display-suites-section", this.instance);
 	
 	this.remove = {};
 	this.remove.button = $(".remove-suites-section input", this.instance);
 
 	var createControlSettings = {
-		manager : self,
+		manager : this,
 		defaultMessage : settings.defaultMessage,
 		panel : $(".create-suites-section", this.instance),
 		action : postNewSuite,	
@@ -311,19 +356,25 @@ function TestSuiteManager(settings){
 	}
 	
 	var renameControlSettings = {
-		manager : self,
+		manager : this,
 		defaultMessage: settings.defaultMessage,
 		panel : this.rename.panel = $(".rename-suites-section", this.instance),
 		action : postRenameSuite,
 		onfocus : function(){}
 	}
 	
+	var viewSettings = {
+		manager : this,
+		model : settings.model,
+		panel : $(".display-suites-section", this.instance)	
+	}
+	
 	this.create.control = new TestSuiteManagerControl(createControlSettings);
 	this.rename.control = new TestSuiteManagerControl(renameControlSettings);
+	this.view = new TestSuiteManagerView(viewSettings);
 
-	sortSuiteList();
-	bindSelectSuite();
 	bindCtrl();
+	this.view.update();
 	
 	/* TODO : */
 	this.remove.button.click(function(){alert("not implemented yet");});
