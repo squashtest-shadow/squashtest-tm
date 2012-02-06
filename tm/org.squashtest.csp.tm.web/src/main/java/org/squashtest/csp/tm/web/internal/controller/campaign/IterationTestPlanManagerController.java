@@ -39,6 +39,7 @@ import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.servlet.ModelAndView;
 import org.squashtest.csp.tm.domain.campaign.Iteration;
 import org.squashtest.csp.tm.domain.campaign.IterationTestPlanItem;
+import org.squashtest.csp.tm.domain.campaign.TestSuite;
 import org.squashtest.csp.tm.domain.execution.ExecutionStatus;
 import org.squashtest.csp.tm.domain.project.Project;
 import org.squashtest.csp.tm.domain.testcase.TestCase;
@@ -78,13 +79,15 @@ public class IterationTestPlanManagerController {
 		this.iterationTestPlanManagerService = iterationTestPlanManagerService;
 	}
 
-	private final DataTableMapper testPlanMapper = new DataTableMapper("unused", IterationTestPlanItem.class, TestCase.class,
-			Project.class).initMapping(8).mapAttribute(Project.class, 2, "name", String.class)
+	private final DataTableMapper testPlanMapper = new DataTableMapper("unused", IterationTestPlanItem.class, 
+			TestCase.class,	Project.class, TestSuite.class).initMapping(9)
+			.mapAttribute(Project.class, 2, "name", String.class)
 			.mapAttribute(TestCase.class, 3, "name", String.class)
 			.mapAttribute(TestCase.class, 4, "executionMode", TestCaseExecutionMode.class)
-			.mapAttribute(IterationTestPlanItem.class, 5, "executionStatus", ExecutionStatus.class)
-			.mapAttribute(IterationTestPlanItem.class, 6, "lastExecutedBy", String.class)
-			.mapAttribute(IterationTestPlanItem.class, 7, "lastExecutedOn", Date.class);
+			.mapAttribute(TestSuite.class, 5, "name", String.class)
+			.mapAttribute(IterationTestPlanItem.class, 6, "executionStatus", ExecutionStatus.class)
+			.mapAttribute(IterationTestPlanItem.class, 7, "lastExecutedBy", String.class)
+			.mapAttribute(IterationTestPlanItem.class, 8, "lastExecutedOn", Date.class);
 
 	@RequestMapping(value = "/iterations/{iterationId}/test-plan-manager", method = RequestMethod.GET)
 	public ModelAndView showManager(@PathVariable long iterationId) {
@@ -202,6 +205,8 @@ public class IterationTestPlanManagerController {
 				String testCaseName;
 				String testCaseExecutionMode;
 				String testCaseId;
+				
+				String testSuiteName;
 
 				if (item.isTestCaseDeleted()){
 					projectName=formatNoData(locale);
@@ -217,12 +222,19 @@ public class IterationTestPlanManagerController {
 				}
 
 
+				if (item.getTestSuite()==null){
+					testSuiteName = formatNone(locale);
+				}else{
+					testSuiteName = item.getTestSuite().getName();
+				}				
+				
 				return new Object[]{
 						item.getId(),
 						getCurrentIndex(),
 						projectName,
 						testCaseName,
 						testCaseExecutionMode,
+						testSuiteName,
 						testCaseId,
 						item.isTestCaseDeleted(),
 						" "
@@ -249,6 +261,9 @@ public class IterationTestPlanManagerController {
 		return messageSource.getMessage(mode.getI18nKey(), null, locale);
 	}
 
+	private String formatNone(Locale locale){
+		return messageSource.getMessage("squashtm.none.f", null, locale);	
+	}
 
 
 	private CollectionSorting createCollectionSorting(final DataTableDrawParameters params, DataTableMapper mapper) {

@@ -171,21 +171,21 @@ function TestSuiteManagerView(settings){
 		this.panel.append(sorted);
 	}, self);
 	
-	var getItemDomId = $.proxy(function(elt){
+	var getItemDomId = function(elt){
 		if (elt.firstElementChild!==undefined){
 			return elt.firstElementChild.getAttribute('data-suite-id');		
 		}else{
 			return elt.firstChild.getAttribute('data-suite-id');		
 		}			
-	}, self);
+	};
 
-	var getItemDomText = $.proxy(function(elt){		
+	var getItemDomText = function(elt){		
 		if (elt.firstElementChild!==undefined){
 			return elt.firstElementChild.textContent;		
 		}else{
 			return elt.firstChild.innerText;
 		}	
-	}, self);
+	};
 	
 	/* ********* public *********** */
 	
@@ -218,24 +218,28 @@ function TestSuiteManagerView(settings){
 		getAllItems().removeClass("suite-selected ui-widget-header ui-state-default");
 	};
 	
-	this.update = function(){
-		//save state
-		var selected = this.getSelectedIds();
-		
-		//rebuild
-		var modelData = this.model.getData();
-		this.panel.empty();
-		
-		for (var i in modelData){
-			appendItem(modelData[i]);
-		}
+	this.update = function(evt){
+	
+		//the only evt ignored is "bind"
+		if ((evt===undefined) ||(evt=="add") || (evt=="rename") || (evt=="remove")){
+			//save state
+			var selected = this.getSelectedIds();
+			
+			//rebuild
+			var modelData = this.model.getData();
+			this.panel.empty();
+			
+			for (var i in modelData){
+				appendItem(modelData[i]);
+			}
 
-		sortSuiteList();
-		
-		//restore state
-		this.selectItems(selected);
-		
-		this.manager.updatePopupState();
+			sortSuiteList();
+			
+			//restore state
+			this.selectItems(selected);
+			
+			this.manager.updatePopupState();
+		}
 	}
 
 	
@@ -287,9 +291,8 @@ function TestSuiteManager(settings){
 	var postNewSuite = $.proxy(function(){
 		var name = this.create.control.input.val();
 		
-		var promise = this.model.postNew(name);
-
-		return promise;
+		this.model.postNew(name)
+		.success(function(){self.create.control.reset();});
 		
 	}, self);
 	
@@ -300,9 +303,7 @@ function TestSuiteManager(settings){
 		var suiteId = this.view.getSelectedIds()[0];
 		var newName = this.rename.control.input.val();
 		
-		var promise = this.model.postRename( {id : suiteId, name : newName});
-		
-		return promise;
+		this.model.postRename( {id : suiteId, name : newName});
 		
 	}, self);
 	

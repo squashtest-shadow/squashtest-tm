@@ -25,10 +25,11 @@
 <%@ tag language="java" pageEncoding="ISO-8859-1"%>
 
 <%@ attribute name="popupId" required="true" description="the id of the managment popup. Just supply the name and it will be generated." %>
+<%@ attribute name="popupOpener" required="true" description="the id of the button that will open the popup. Must exist prior to the call to this tag." %>
 <%@ attribute name="menuId" required="true" description="the id of the button opening the menu. Must exists." %>
 <%@ attribute name="suiteList" type="java.lang.Object" required="true" description="the list of the suites that exist already" %>
 <%@ attribute name="baseUrl" required="true" description="url representing the current iteration" %>
-
+<%@ attribute name="datatableId" required="true" description="the id of the test plan datatable"%>
 
 <%@ taglib prefix="pop" 	tagdir="/WEB-INF/tags/popup" %>
 <%@ taglib prefix="f" 		uri="http://java.sun.com/jsp/jstl/fmt"%>
@@ -37,14 +38,16 @@
 <%@ taglib prefix="comp" 	tagdir="/WEB-INF/tags/component" %>	
 
 
+<%--
 <c:set var="modelScriptUrl"   value="http://localhost/scripts/TestSuiteModel.js" />
 <c:set var="managerScriptUrl" value="http://localhost/scripts/TestSuiteManager.js" /> 
 <c:set var="menuScriptUrl" value="http://localhost/scripts/TestSuiteMenu.js" />
-
- <%--
-<s:url var="managerScriptUrl" value="/scripts/squashtest/classes/TestSuiteManager.js"  />  
-<s:url var="modelScriptUrl" value="/scripts/squashtest/classes/TestSuiteModel.js"  />  
  --%>
+
+<s:url var="managerScriptUrl" value="/scripts/squashtest/classes/TestSuiteManager.js"  />  
+<s:url var="modelScriptUrl" value="/scripts/squashtest/classes/TestSuiteModel.js"  /> 
+<s:url var="menuScriptUrl" value="/scripts/squashtest/classes/TestSuiteMenu.js" /> 
+
 <%-- <link rel="stylesheet" type="text/css" href="http://localhost/css/suites.css" /> --%>
 
  
@@ -101,12 +104,6 @@
 
  <%-- ====================== /POPUP STRUCTURE DEFINITION  ========================= --%>
 
- <%-- ============================= MENU DEFINITION =============================== --%>
- 
- <f:message var="suitesLabel" key="iteration.test-plan.testsuite.manage.label"/>	
- <input id="manage-test-suites-button" type="button" value="${suitesLabel}" class="button not-displayed"/>
-
- <%-- ============================= /MENU DEFINITION ============================== --%>
 <f:message var="defaultMessage" key="dialog.testsuites.defaultmessage" />
 
 <script type="text/javascript">
@@ -146,7 +143,8 @@
 			
 
 			squashtm.testSuiteManagement= {};
-			
+
+			/* ****************** define the main model ******************** */
 
 			var data = [
 					<c:forEach var="data" items="${suiteList}" varStatus="status" >
@@ -160,8 +158,12 @@
 				data : data
 			};
 			
-
+			
 			squashtm.testSuiteManagement.testSuiteModel = new TestSuiteModel(modelSettings);
+			
+			
+
+			/* ***************** define the suite manager ******************* */
 			
 			var managerSettings = {
 				instance : $("#${popupId} .main-div-suites"),
@@ -172,13 +174,28 @@
 			squashtm.testSuiteManagement.testSuiteManager = new TestSuiteManager(managerSettings);
 			
 			
+			/* ****************** define the suite menu *********************** */ 
+			
 			var menuSettings = {
 				instanceSelector : "#${menuId}",
-				managerButton : $("#manage-test-suites-button"),
-				model : squashtm.testSuiteManagement.testSuiteModel
+				model : squashtm.testSuiteManagement.testSuiteModel,
+				datatableSelector : "#${datatableId}"
 			};
 			
 			squashtm.testSuiteManagement.testSuiteMenu = new TestSuiteMenu(menuSettings);
+			
+			/* ********define on the fly a listener for the datatable ********* */
+			
+			var tableListener = {
+				update : function(evt){
+					//"add" or "rename" are none of our business.
+					if ((evt=="bind") || (evt=="remove") || (evt==undefined) || (evt=="rename")){
+						refreshTestPlansWithoutSelection();	
+					}
+				}
+			};
+			
+			squashtm.testSuiteManagement.testSuiteModel.addListener(tableListener);
 			
 			//now we can make reappear
 			$("#${popupId} .main-div-suites").removeClass("not-displayed");

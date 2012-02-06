@@ -82,12 +82,14 @@ public class IterationModificationController {
 	private MessageSource messageSource;
 
 	private final DataTableMapper testPlanMapper = new DataTableMapper("unused", IterationTestPlanItem.class,
-			TestCase.class, Project.class).initMapping(8).mapAttribute(Project.class, 2, "name", String.class)
+			TestCase.class, Project.class, TestSuite.class).initMapping(9)
+			.mapAttribute(Project.class, 2, "name", String.class)
 			.mapAttribute(TestCase.class, 3, "name", String.class)
 			.mapAttribute(TestCase.class, 4, "executionMode", TestCaseExecutionMode.class)
 			.mapAttribute(IterationTestPlanItem.class, 5, "executionStatus", ExecutionStatus.class)
-			.mapAttribute(IterationTestPlanItem.class, 6, "lastExecutedBy", String.class)
-			.mapAttribute(IterationTestPlanItem.class, 7, "lastExecutedOn", Date.class);
+			.mapAttribute(TestSuite.class, 6, "name", String.class)
+			.mapAttribute(IterationTestPlanItem.class, 7, "lastExecutedBy", String.class)
+			.mapAttribute(IterationTestPlanItem.class, 8, "lastExecutedOn", Date.class);
 
 	@RequestMapping(method = RequestMethod.GET)
 	public ModelAndView showIteration(@PathVariable long iterationId) {
@@ -353,6 +355,8 @@ public class IterationModificationController {
 				String projectName;
 				String testCaseName;
 				String testCaseExecutionMode;
+				
+				String testSuiteName;
 
 				if (item.isTestCaseDeleted()) {
 					projectName = formatNoData(locale);
@@ -363,11 +367,24 @@ public class IterationModificationController {
 					testCaseName = item.getReferencedTestCase().getName();
 					testCaseExecutionMode = formatExecutionMode(item.getReferencedTestCase().getExecutionMode(), locale);
 				}
+				
+				if (item.getTestSuite()==null){
+					testSuiteName = formatNone(locale);
+				}else{
+					testSuiteName = item.getTestSuite().getName();
+				}
 
-				return new Object[] { item.getId(), getCurrentIndex(), projectName, testCaseName,
-						testCaseExecutionMode, formatStatus(item.getExecutionStatus(), locale),
-						formatString(item.getLastExecutedBy(), locale), formatDate(item.getLastExecutedOn(), locale),
-						item.isTestCaseDeleted(), " "
+				return new Object[] { item.getId(), 
+						getCurrentIndex(), 
+						projectName, 
+						testCaseName,
+						testCaseExecutionMode, 
+						testSuiteName,
+						formatStatus(item.getExecutionStatus(), locale),
+						formatString(item.getLastExecutedBy(), locale), 
+						formatDate(item.getLastExecutedOn(), locale),
+						item.isTestCaseDeleted(), 
+						" "
 
 				};
 			}
@@ -428,6 +445,10 @@ public class IterationModificationController {
 
 	private String formatStatus(ExecutionStatus status, Locale locale) {
 		return messageSource.getMessage(status.getI18nKey(), null, locale);
+	}
+	
+	private String formatNone(Locale locale){
+		return messageSource.getMessage("squashtm.none.f", null, locale);	
 	}
 
 }

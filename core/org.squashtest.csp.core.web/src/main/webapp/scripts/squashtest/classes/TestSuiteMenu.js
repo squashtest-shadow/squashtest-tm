@@ -19,6 +19,41 @@
  *     along with this software.  If not, see <http://www.gnu.org/licenses/>.
  */
 
+
+function TestSuiteMenuControl(){
+	var self=this;
+	
+	var makeControl = $.proxy(function(){
+		var node = $("<div/>");
+		
+		var input = $("<input/>", { 'type' : 'text', 'class' : 'suite-manager-menu-input'} );
+		node.append(input);
+		
+		var button = $("<button/>", { 'role' : 'button', 'class' : 'button suite-manager-menu-button'});
+		button.button({ 
+						'text': false, 
+						icons: {
+							primary:'ui-icon-circle-plus'
+							}
+					  });
+					  
+		node.append(button);
+		
+		var superDiv = $("<div/>");
+		superDiv.append(node);
+		
+		this.control=superDiv;
+		
+	}, this);
+	
+	this.getControlHtml = function(){
+		return this.control.html();
+	}
+	
+	makeControl();
+
+}
+
 /*
   this version of fg-menu is able to replace the content dynamically, recreating the internal structure when needed.
 */
@@ -30,7 +65,7 @@ function TestSuiteMenu(settings){
 	var self = this;
 	
 	var makeList = $.proxy(function(){
-		var list=$("<ul/>");
+		var list=$("<ul/>", { 'class' : 'suite-manager-menu-mainlist' });
 		return list;
 	}, this);
 	
@@ -41,19 +76,30 @@ function TestSuiteMenu(settings){
 		a.text(json.name);
 		return node;
 	}, this);
-	
-	var makeEmptyItem = $.proxy(function(){
-		var node=$("<li/>", { 'role' : 'menuitem' } );
-		return node;		
-	}, this);
 
-	var getItemDomText = $.proxy(function(elt){		
+	var getItemDomText = function(elt){		
 		if (elt.firstElementChild!==undefined){
 			return elt.firstElementChild.textContent;		
 		}else{
 			return elt.firstChild.innerText;
 		}	
-	}, self);
+	};
+	
+	var getItemDomId =function(elt){
+		if (elt.firstElementChild!==undefined){
+			return elt.firstElementChild.getAttribute('data-suite-id');		
+		}else{
+			return elt.firstChild.getAttribute('data-suite-id');		
+		}			
+	}
+	
+	var getSpanDomId = function(elt){
+		return elt.getAttribute('data-suite-id');
+	}
+	
+	var getItemId = function(jqElt){
+		return $('span', jqElt).data('suite-id');
+	}
 	
 	
 	var initializeContent = $.proxy(function(){	
@@ -75,67 +121,159 @@ function TestSuiteMenu(settings){
 		
 		list.append(sorted);
 		
-		var hr = makeEmptyItem().removeAttr('role').append('<hr/>');
-		list.append(hr);
-		
+		//the horizontal rule + the control
+		var hr = $('<hr/>');
+		var control = this.control.getControlHtml();
+			
+		//now set the content
 		var container = $("<div>").append(list);
+		container.append(hr);
+		container.append(control);
 		this.menu.content=container.html();		
+		
+		
+	}, this);
+	
+	/*
+	 * if the menu was open by the time we (re)defined the content, we must create it now 
+	 * (and hope that the refresh will be fast enough to the eyes of the user)
+	 * else, we simply reset the 'menuExists' flag, and the popup will redraw itself next time 
+	 * we open it.
+	 */
+	var redrawIfNeeded = $.proxy(function(wasOpen){
+		if (wasOpen){
+			this.menu.create();
+		}else{
+			this.menu.menuExists=false;
+		}
+	}, this);
+
+	
+	var getDatatableSelected = $.proxy(function(){
+		var table = $(this.datatableSelector).dataTable( {'bRetrieve' : true});
+		return getIdsOfSelectedTableRows(table, getTestPlansTableRowId);
+	
+	}, this);
+	
+	var displayAddSuiteError = $.proxy(function(xhr, text){
+		try{
+			var errContent = jQuery.parseJSON(xhr.responseText);
+			var message = $("<div/>", { 'margin-top' : 'auto', 'margin-bottom' : 'auto'});
+			
+			if (errContent.fieldValidationErrors!==undefined){
+				var errors=errContent.fieldValidationErrors;
+				for (var i=0;i<errors.length;i++){
+					message.append("<div>"+errors[0].errorMessage+"</div>");
+				}
+			}else{
+				message.append('<div>could not add your suite : unexpected error</div>');
+			}
+			
+			oneShotDialog('Information', message);
+			
+		}catch(wtf){
+			//non json error : it must be handled by the generic handler (see the 
+			//red thing showing up in the view right now)
+			//anyway, job done here
+		}
 	}, this);
 	
 	/* **************************** public ****************************** */
 	
-	this.update = function(){
-	
-		redefineContent();
-		this.menu.menuExists=false;
-		this.menu.create();
-				
+	this.update = function(evt){
+		//the only event ignored is "bind"
+		if ((evt=="add") || (evt=="rename") || (evt=="remove")){
+			var wasOpen = this.menu.menuOpen;
+			initializeContent();
+			redrawIfNeeded(wasOpen);
+		}			
 	};
 	
+	/* *********************** handlers ***************** */
 	
-	/* ***************** bit of css customization ************** */
 	
-	//the goal is to init the popup and ass some style to the main container
-	//the plugin will generate.
-	var initMenu = $.proxy(function(){
-		
-		var randClass = this.instanceSelector.replace('#', '')+'-menu-class';
 	
-		this.instance.menu({
-			content : '<ul class="'+randClass+'"></ul>',
-			showSpeed : 0
-		});
-		
-		
-		this.menu = allUIMenus[allUIMenus.length-1];
-		this.menu.create();
-		this.menu.kill();		
-		
-		
-		var mainDiv = $("."+randClass).parent('.fg-menu-container');
-		
-		//gotcha ! TODO : css
-		mainDiv.css('overflow-x', 'hidden');
-		mainDiv.css('overflow-y', 'auto');
-		mainDiv.css('max-height', '200px');
-		
-		//now reset the flag
-		this.menu.menuExists=false;
-	
+	var addSuite = $.proxy(function(){
+		var self=this;
+		var name = this.menu.getContainer().find('.suite-manager-menu-input').val();
+		this.model.postNew(name)
+		.error(displayAddSuiteError);
+			
 	}, this);
 	
 	
+	var bindSuiteItems = $.proxy(function(){
+		var self=this;
+		this.menu.chooseItem = function(item){
+			
+			var toSend = {};
+			toSend.id= getSpanDomId(item);
+			toSend['test-cases[]'] = getDatatableSelected();
+			
+			self.model.postBind(toSend)
+			.success(function(){
+				self.menu.kill();
+			});
+			
+		}
+	}, this);
+	
+	var bindButton = $.proxy(function(){
+		var container = this.menu.getContainer();
+		container.delegate('.suite-manager-menu-button', 'click', function(evt){
+			evt.stopImmediatePropagation();
+			addSuite();
+		});
+	},this);
+	
+	var bindInput = $.proxy(function(){
+		var container = this.menu.getContainer();
+		container.delegate('.suite-manager-menu-input', 'click', function(evt){		
+			evt.stopImmediatePropagation();
+		});
+		container.delegate('.suite-manager-menu-input', 'keypress', function(evt){
+			evt.stopImmediatePropagation();
+			if (evt.which == '13' ){
+				addSuite();
+			}
+		});
+	}, this);
+	
+	var initHandlerBinding = $.proxy(function(){
+		bindSuiteItems();
+		bindButton();
+		bindInput();
+	}, this);
+	
+		
 	/* *********************** init ********************* */
+
+	
+	//the goal is to init the menu to get a handler on it.
+	var initMenu = $.proxy(function(){
+		
+		this.instance.menu({
+			content : '',
+			showSpeed : 0
+		});
+		
+		this.menu = allUIMenus[allUIMenus.length-1];
+		
+	}, this);
+	
 	
 	this.instanceSelector = settings.instanceSelector;
-	this.instance = $(settings.instanceSelector);
-	this.managerButton = settings.managerButton;
 	this.model = settings.model;
+	this.datatableSelector = settings.datatableSelector;
 
+	this.instance = $(settings.instanceSelector);
+	this.control = new TestSuiteMenuControl();
 
 	this.model.addListener(this);
 	
+	
 	initMenu();
+	initHandlerBinding();
 	initializeContent();	
 }
 

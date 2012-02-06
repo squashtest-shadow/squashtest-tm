@@ -41,9 +41,9 @@ function TestSuiteModel(settings){
 		}
 	}, self);
 	
-	var notifyListeners = $.proxy(function(){
+	var notifyListeners = $.proxy(function(evt){
 		for (var i=0;i<this.listeners.length;i++){
-			this.listeners[i].update();
+			this.listeners[i].update(evt);
 		}
 	}, self);
 	
@@ -61,10 +61,8 @@ function TestSuiteModel(settings){
 	
 
 	this.postNew = function(name){
-	
-		var defer = $.Deferred();
-		
-		$.ajax({
+
+		return $.ajax({
 			'url' : self.createUrl,
 			type : 'POST',
 			data : { 'name' : name },
@@ -72,23 +70,16 @@ function TestSuiteModel(settings){
 		})
 		.success(function(json){
 			self.data.push(json);
-			notifyListeners();
-			defer.resolve();
+			notifyListeners("add");
 		})
-		.error(defer.reject);
-		
-		return defer.promise();	
-	
 	}
 	
 	
 	this.postRename = function(toSend){
 	
 		var url = this.baseUpdateUrl+"/"+toSend.id+"/rename";
-		
-		var defer = $.Deferred();
-		
-		$.ajax({
+
+		return $.ajax({
 			'url' : url,
 			type : 'POST',
 			data : toSend,
@@ -96,12 +87,22 @@ function TestSuiteModel(settings){
 		})
 		.success(function(json){
 			renameSuite(json);
-			notifyListeners();
-			defer.resolve();
+			notifyListeners("rename");
+		})	
+	}
+	
+	this.postBind = function(toSend){
+		var url = this.baseUpdateUrl+"/"+toSend.id+"/test-cases";
+
+		return $.ajax({
+			'url' : url,
+			type : 'POST', 
+			data : toSend,
+			dataType : 'json'
 		})
-		.error(defer.reject);
-		
-		return defer.promise();		
+		.success(function(json){
+			notifyListeners("bind");
+		});
 	}
 
 

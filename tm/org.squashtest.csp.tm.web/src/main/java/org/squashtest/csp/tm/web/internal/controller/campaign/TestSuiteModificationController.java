@@ -54,7 +54,7 @@ public class TestSuiteModificationController {
 		return result;
 	}
 	
-	@RequestMapping(value="/test-cases", method=RequestMethod.POST, params="ids[]")
+	@RequestMapping(value="/test-cases", method=RequestMethod.POST, params="test-cases[]")
 	public @ResponseBody Map<String, String> bindTestPlan(@PathVariable("id") long suiteId, @RequestParam("test-cases[]") List<Long> itpIds){
 		service.bindTestPlan(suiteId, itpIds);
 		Map<String, String> result = new HashMap<String, String>();

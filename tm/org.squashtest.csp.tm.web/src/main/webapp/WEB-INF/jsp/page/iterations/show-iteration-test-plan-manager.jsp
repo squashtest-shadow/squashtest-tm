@@ -314,9 +314,9 @@
 						<jsp:attribute name="columnDefs">
 							<dt:column-definition targets="0" visible="false" />
 							<dt:column-definition targets="1" sortable="false" cssClass="centered ui-state-default drag-handle select-handle" />
-							<dt:column-definition targets="2, 3, 4" sortable="true" />
-							<dt:column-definition targets="5, 6" sortable="false" visible="false"/>
-							<dt:column-definition targets="7" sortable="false" width="2em" lastDef="true" cssClass="centered"/>
+							<dt:column-definition targets="2, 3, 4, 5" sortable="false" />
+							<dt:column-definition targets="6, 7" sortable="false" visible="false"/>
+							<dt:column-definition targets="8" sortable="false" width="2em" lastDef="true" cssClass="centered"/>
 						</jsp:attribute>
 				</comp:decorate-ajax-table>
 				<div class="fragment-body">
@@ -328,6 +328,7 @@
 								<th><f:message key="iteration.executions.table.column-header.project.label" /></th>
 								<th><f:message key="iteration.executions.table.column-header.test-case.label" /></th>
 								<th><f:message key="iteration.executions.table.column-header.type.label" /></th>
+								<th><f:message key="iteration.executions.table.column-header.suite.label" /></th>
 								<th>test case id</th>
 								<th>is deleted</th>
 								<th>&nbsp;</th>				

@@ -311,6 +311,25 @@ the display:block trick will implicitly add that property */
 	display : inline-block;
 }
 
+/* ***************************** 
+	test suite menu
+********************************/
+
+.suite-manager-menu-mainlist{
+	overflow-x : hidden;
+	overflow-y : auto;
+	max-height : 200px;		
+}
+
+.suite-manager-menu-input{
+	vertical-align: top;
+	margin-right: 1em;	
+}
+
+.suite-manager-menu-button{
+	height : 24px;
+}
+
 /*******************************
 	misc
 ********************************/

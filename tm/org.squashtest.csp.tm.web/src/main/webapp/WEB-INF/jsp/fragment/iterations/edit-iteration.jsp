@@ -233,9 +233,10 @@
 		</div>
 	</div>
 	<div class="toolbar-button-panel">
-		<c:if test="${ editable }">
+		<c:if test="${ editable }">	
+			<input type="button" value=' <f:message key="iteration.test-plan.testsuite.manage.label"/>' id="manage-test-suites-button" class="button"/>
 			<input type="button" value='<f:message key="iteration.button.rename.label" />' id="rename-iteration-button" class="button"/> 
-			<input type="button" value='<f:message key="iteration.button.remove.label" />' id="delete-iteration-button" class="button"/>
+			<input type="button" value='<f:message key="iteration.button.remove.label" />' id="delete-iteration-button" class="button"/>		
 		</c:if>
 	</div>	
 	<div style="clear:both;"></div>	
@@ -393,8 +394,9 @@
 
 <%-- ----------------------------------- Test Suite Management -------------------------------------------------- --%>
 
-<comp:test-suite-managment suiteList="${iteration.testSuites}" 
-	popupId="manage-test-suites-popup" menuId="manage-test-suites-menu" baseUrl="${testSuitesUrl}" />
+<comp:test-suite-managment suiteList="${iteration.testSuites}" popupOpener="manage-test-suites-button"
+	popupId="manage-test-suites-popup" menuId="manage-test-suites-menu" baseUrl="${testSuitesUrl}" datatableId="test-plans-table"/>
+
 
 
 <%------------------------------ Attachments bloc ------------------------------------------- --%> 

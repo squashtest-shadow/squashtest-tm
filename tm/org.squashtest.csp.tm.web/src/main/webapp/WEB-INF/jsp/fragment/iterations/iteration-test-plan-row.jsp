@@ -42,9 +42,12 @@
 <td>
 
 </td>
+
 <td>
 
 </td>
+
+
 <td >
 	
 		<c:forEach items="${ executions }" var="execution" varStatus="status" >
@@ -64,6 +67,12 @@
 			<span style="display:block; color: ${textcolor}; font-style:italic;"><f:message key="${ execution.executionMode.i18nKey }"/></span>
 		</c:forEach>
 </td>
+
+
+<td>
+
+</td>
+
 <td>
 		<c:forEach items="${ executions }" var="execution">
 			<span style="display:block; color: ${textcolor} font-style:italic;"><f:message key="execution.execution-status.${execution.executionStatus}"/></span>
