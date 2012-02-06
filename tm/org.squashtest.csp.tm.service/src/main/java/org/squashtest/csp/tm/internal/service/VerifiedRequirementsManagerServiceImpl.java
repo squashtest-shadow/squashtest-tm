@@ -170,6 +170,30 @@ public class VerifiedRequirementsManagerServiceImpl implements VerifiedRequireme
 		testCaseImportanceManagerService.changeImportanceIfRelationsRemovedFromTestCase(Arrays.asList(requirementId),
 				testCaseId);
 	}
+	
+	
+	/*
+	 * This service associates a new verified requirement to the test case
+	 * 
+	 * (non-Javadoc)
+	 * @see org.squashtest.csp.tm.service.VerifiedRequirementsManagerService#changeVerifiedRequirementVersionOnTestCase(long, long, long)
+	 */
+	@Override
+	@PreAuthorize("hasPermission(#testCaseId, 'org.squashtest.csp.tm.domain.testcase.TestCase' , 'WRITE') or hasRole('ROLE_ADMIN')")
+	public int changeVerifiedRequirementVersionOnTestCase(long oldVerifiedRequirementVersionId, long newVerifiedRequirementVersionId, long testCaseId) {
+		RequirementVersion oldReq = requirementVersionDao.findById(oldVerifiedRequirementVersionId);
+		RequirementVersion newReq = requirementVersionDao.findById(newVerifiedRequirementVersionId);
+		TestCase testCase = testCaseDao.findById(testCaseId);
+		
+		testCase.removeVerifiedRequirementVersion(oldReq);
+		
+		testCase.addVerifiedRequirementVersion(newReq);
+		
+		testCaseImportanceManagerService.changeImportanceIfRelationsRemovedFromTestCase(Arrays.asList(newVerifiedRequirementVersionId),
+				testCaseId);
+		
+		return newReq.getVersionNumber();
+	}
 
 	/*
 	 * regarding the @PreAuthorize for the verified requirements :

@@ -22,8 +22,12 @@ package org.squashtest.csp.tm.domain.requirement;
 
 import java.util.ArrayList;
 import java.util.Collections;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Locale;
+import java.util.Map;
 
+import javax.inject.Inject;
 import javax.persistence.CascadeType;
 import javax.persistence.Entity;
 import javax.persistence.JoinColumn;
@@ -33,6 +37,9 @@ import javax.persistence.OrderBy;
 import javax.persistence.PrimaryKeyJoinColumn;
 import javax.validation.constraints.NotNull;
 
+import net.sf.saxon.functions.Collection;
+
+import org.springframework.context.MessageSource;
 import org.squashtest.csp.tm.domain.NoVerifiableRequirementVersionException;
 import org.squashtest.csp.tm.domain.attachment.AttachmentHolder;
 import org.squashtest.csp.tm.domain.attachment.AttachmentList;
@@ -117,7 +124,14 @@ public class Requirement extends RequirementLibraryNode<RequirementVersion> impl
 	public void setReference(String reference) {
 		resource.setReference(reference);
 	}
-
+	
+	/**
+	 * Get the all the requirement versions numbers and status by the version Id
+	 */
+	public List<RequirementVersion> getRequirementVersions() {
+		return Collections.unmodifiableList(versions) ;
+	}
+	
 	/**
 	 * Creates a copy usable in a copy / paste operation. The copy is associated to no version, it should be done by the
 	 * caller (the latest version might not be eligible for copy / paste).

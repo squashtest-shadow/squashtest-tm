@@ -365,8 +365,8 @@ public class TestCaseModificationController {
 			@Override
 			public Object[] buildItemData(VerifiedRequirement item) {
 				return new Object[] { item.getId(), getCurrentIndex(), item.getProject().getName(),
-						item.getReference(), item.getName(), internationalize(item.getCriticality(), locale), "",
-						item.isDirectVerification() };
+						item.getReference(), item.getName(), item.getDecoratedRequirement().getVersionNumber(), internationalize(item.getCriticality(), locale), "",
+						item.getDecoratedRequirement().getStatus().name(), item.isDirectVerification() };
 			}
 		}.buildDataModel(holder, params.getsEcho());
 

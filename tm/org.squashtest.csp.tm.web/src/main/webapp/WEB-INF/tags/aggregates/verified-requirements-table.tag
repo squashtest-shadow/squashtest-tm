@@ -30,8 +30,10 @@
 			<th><f:message key="verified-requirements.table.column-header.project.label" /></th>
 			<th><f:message key="requirement.reference.label"/></th>
 			<th><f:message key="requirement.name.label" /></th>
+			<th><f:message key="requirement-version.version-number.label" /></th>
 			<th><f:message key="requirement.criticality.label"/></th>
-			<th>&nbsp;</th>			
+			<th>&nbsp;</th>		
+			<th>status(masked)</th>		
 			<th>isDirectlyVerified(masked)</th>	
 		</tr>
 	</thead>

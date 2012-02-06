@@ -74,4 +74,8 @@ public class VerifiedRequirement {
 	public Long getId() {
 		return decoratedRequirement.getId();
 	}
+	
+	public RequirementVersion getDecoratedRequirement() {
+		return decoratedRequirement;
+	}
 }

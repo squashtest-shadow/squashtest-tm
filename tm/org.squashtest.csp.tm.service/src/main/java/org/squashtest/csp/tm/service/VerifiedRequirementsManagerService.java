@@ -73,6 +73,16 @@ public interface VerifiedRequirementsManagerService {
 	 * @param requirementsIds
 	 */
 	void removeVerifiedRequirementVersionFromTestCase(long requirementVersionId, long testCaseId);
+	
+	/**
+	 * Removes a requirement version from the given test case and replaces it with the wanted version
+	 * if the same version is selected as was previously attached, nothing happens
+	 * 
+	 * @param testCaseId
+	 * @param oldVerifiedRequirementVersionId
+	 * @param newVerifiedRequirementVersionId
+	 */
+	int changeVerifiedRequirementVersionOnTestCase(long oldVerifiedRequirementVersionId, long newVerifiedRequirementVersionId, long testCaseId);
 
 	/**
 	 * Returns the filtered list of {@link RequirementVersion}s directly verified by a test case.

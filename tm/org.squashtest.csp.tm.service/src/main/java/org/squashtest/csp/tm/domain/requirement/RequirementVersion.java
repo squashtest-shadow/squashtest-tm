@@ -224,7 +224,7 @@ public class RequirementVersion extends Resource implements AttachmentHolder {
 	}
 
 	public void notifyNoLongerVerifiedBy(@NotNull TestCase testCase) {
-		checkLinkable();
+//		checkLinkable();
 		verifyingTestCases.remove(testCase);
 
 	}

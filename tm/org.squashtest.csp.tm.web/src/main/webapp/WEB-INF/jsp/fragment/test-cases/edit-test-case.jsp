@@ -39,7 +39,6 @@
 <script type="text/javascript" src="${ pageContext.servletContext.contextPath }/scripts/jquery/jquery.cookie.js"></script>
 
 
-
 <%------------------------------------- URLs ----------------------------------------------%>
 
 <c:url var="ckeConfigUrl" value="/styles/ckeditor/ckeditor-config.js" />
@@ -388,6 +387,7 @@
 	<%-- /STEPS TABLE --%>
 </script>
 <c:if test="${ editable }">
+
 <%-- ------------------------------ Add Test Step Dialog ------------------------------------------------ --%>
 <comp:popup id="add-test-step-dialog" titleKey="dialog.add-test_step.title" isContextual="true"
 	openedBy="add-test-step-button">
@@ -672,7 +672,6 @@
 </comp:toggle-panel> 
 
 <%--------------------------- Verified Requirements section ------------------------------------%> 
-
 <script
 	type="text/javascript">
 	$(function() {

@@ -175,17 +175,17 @@ class RequirementVersionTest extends Specification {
 		thrown(RequirementVersionNotLinkableException)
 	}
 
-	def "obsolete requirements should not allow removal of a test case "() {
-		given :
-		def tc = new TestCase(name:"tc", description:"tc")
-		RequirementVersion requirementVersion = prepareRequirement(OBSOLETE, tc)
-
-		when :
-		requirementVersion.removeVerifyingTestCase(tc)
-
-		then :
-		thrown(RequirementVersionNotLinkableException)
-	}
+//	def "obsolete requirements should not allow removal of a test case "() {
+//		given :
+//		def tc = new TestCase(name:"tc", description:"tc")
+//		RequirementVersion requirementVersion = prepareRequirement(OBSOLETE, tc)
+//
+//		when :
+//		requirementVersion.removeVerifyingTestCase(tc)
+//
+//		then :
+//		thrown(RequirementVersionNotLinkableException)
+//	}
 
 	@Unroll("should allow status change when current status is #status")
 	def "should allow status change"() {

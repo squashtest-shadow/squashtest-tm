@@ -20,6 +20,8 @@
  */
 package org.squashtest.csp.tm.web.internal.controller.testcase;
 
+import static org.squashtest.csp.tm.web.internal.helper.JEditablePostParams.VALUE;
+
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
@@ -29,6 +31,8 @@ import java.util.Map;
 import javax.inject.Inject;
 import javax.inject.Provider;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.context.MessageSource;
 import org.springframework.osgi.extensions.annotation.ServiceReference;
 import org.springframework.stereotype.Controller;
@@ -71,6 +75,8 @@ public class VerifiedRequirementsManagerController {
 	private static final String REQUIREMENT_VERSIONS_IDS = "requirementVersionsIds[]";
 
 	private static final String REQUIREMENTS_IDS = "requirementsIds[]";
+
+	private static final Logger LOGGER = LoggerFactory.getLogger(VerifiedRequirementsManagerController.class);
 
 	private final DataTableMapper verifiedReqMapper = new DataTableMapper("verified-requirement-version",
 			RequirementVersion.class, Project.class).initMapping(7)
@@ -137,6 +143,21 @@ public class VerifiedRequirementsManagerController {
 		return buildSummary(rejections);
 
 	}
+	
+	@RequestMapping(value = "/test-cases/{testCaseId}/verified-requirement-versions/{oldVersionId}", method = RequestMethod.POST)
+	@ResponseBody
+	public int changeVersion(@PathVariable long testCaseId, @PathVariable long oldVersionId, @RequestParam(VALUE) long newVersionId) {
+		
+		List<Long> oldVersion = new ArrayList<Long>();
+		oldVersion.add(oldVersionId);
+		List<Long> newVersion = new ArrayList<Long>();
+		newVersion.add(newVersionId);
+		
+		int newVersionNumber = verifiedRequirementsManagerService.changeVerifiedRequirementVersionOnTestCase(oldVersionId, newVersionId, testCaseId);
+		
+		return newVersionNumber;
+	}
+	
 
 	private Map<String, Object> buildSummary(Collection<VerifiedRequirementException> rejections) {
 		return VerifiedRequirementActionSummaryBuilder.buildAddActionSummary(rejections);
@@ -172,7 +193,7 @@ public class VerifiedRequirementsManagerController {
 			@Override
 			public Object[] buildItemData(RequirementVersion item) {
 				return new Object[] { item.getId(), getCurrentIndex(), item.getRequirement().getProject().getName(),
-						item.getReference(), item.getName(), internationalize(item.getCriticality(), locale), "", true // the
+						item.getReference(), item.getName(), item.getVersionNumber(), internationalize(item.getCriticality(), locale), "", item.getStatus().name(), true // the
 				};
 			}
 

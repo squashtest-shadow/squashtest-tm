@@ -310,23 +310,23 @@ class TestCaseTest extends Specification {
 		!req.verifyingTestCases.contains(tc)
 	}
 
-	def "should not be able to unverify an obsolete requirement"() {
-		given:
-		TestCase tc = new TestCase()
-
-		and:
-		RequirementVersion req = new RequirementVersion(status: RequirementStatus.OBSOLETE)
-		use (ReflectionCategory) {
-			RequirementVersion.set field: "verifyingTestCases", of: req, to: [tc]as Set
-			TestCase.set field: "verifiedRequirementVersions", of: tc, to: [req]as Set
-		}
-
-		when:
-		tc.removeVerifiedRequirementVersion req
-
-		then:
-		thrown(RequirementVersionNotLinkableException)
-	}
+//	def "should not be able to unverify an obsolete requirement"() {
+//		given:
+//		TestCase tc = new TestCase()
+//
+//		and:
+//		RequirementVersion req = new RequirementVersion(status: RequirementStatus.OBSOLETE)
+//		use (ReflectionCategory) {
+//			RequirementVersion.set field: "verifyingTestCases", of: req, to: [tc]as Set
+//			TestCase.set field: "verifiedRequirementVersions", of: tc, to: [req]as Set
+//		}
+//
+//		when:
+//		tc.removeVerifiedRequirementVersion req
+//
+//		then:
+//		thrown(RequirementVersionNotLinkableException)
+//	}
 
 	def "should not verify 2 versions of same requirement"() {
 		given:

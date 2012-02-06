@@ -34,24 +34,29 @@
 <%@ taglib prefix="comp" tagdir="/WEB-INF/tags/component"%>
 <%@ taglib prefix="dt" tagdir="/WEB-INF/tags/datatables"%>
 <%@ taglib uri="http://java.sun.com/jsp/jstl/core" prefix="c" %>
-
+<%@ taglib prefix="input" tagdir="/WEB-INF/tags/input" %>
 
 <script type="text/javascript">
 	$(function() {
 		<%-- single verified requirement removal --%>
-		
 		$('#verified-requirements-table .delete-verified-requirement-button').die('click');
 
 		$('#verified-requirements-table .delete-verified-requirement-button').live('click', function() {
-			$.ajax({
-				type : 'delete',
-				url : '${ verifiedRequirementsUrl }/' + parseRequirementId(this),
-				dataType : 'json',
-				success : function(){
-					refreshVerifiedRequirements();
-					<c:if test="${ not empty updateImportanceMethod }" >${ updateImportanceMethod }();</c:if>
-				   }
-			});
+			var savedThis = this;
+			var table = $( '#verified-requirements-table' ).dataTable();
+			var dialog = $( "#confirm-obsolete-requirement-version-removal-dialog" );
+			var id = parseRequirementId(savedThis);
+			var status = findRowStatus(table, id, getRequirementsTableRowId, getRequirementsTableRowStatus);
+			var confirmHandler = function() {
+				deleteVerifiedRequirement(id);
+				dialog.confirmDialog( "close" );
+			};
+			dialog.confirmDialog({confirm: confirmHandler});
+			if (status == "OBSOLETE") {
+				dialog.confirmDialog( "open" );
+			} else {
+				deleteVerifiedRequirement(id);
+			}
 		});
 		
 		<%-- 
@@ -60,22 +65,50 @@
 		--%>
 		$( '#${ batchRemoveButtonId }' ).click(function() {
 			var table = $( '#verified-requirements-table' ).dataTable();
+			var dialog = $( "#confirm-multiple-obsolete-requirement-versions-removal-dialog" );
 			var ids = getIdsOfSelectedTableRows(table, getRequirementsTableRowId);
-			var indirects = $("tr.requirement-indirect-verification", table);
+			var obsoleteStatuses = getObsoleteStatusesOfSelectedTableRows(table, getRequirementsTableRowStatus);
+			var indirects = $("tr.requirement-indirect-verification.ui-state-row-selected", table);
 			if (indirects.length >0){
 				alert('<f:message key="verified-requirements.table.indirectverifiedrequirements.removalattemptsforbidden.label"/>');
 			}
 			
-			if (ids.length > 0) {
-				$.post('${ nonVerifiedRequirementsUrl }', { requirementVersionsIds: ids }, refreshVerifiedRequirements)
-				<c:if test="${ not empty updateImportanceMethod }" >.success(function(){${ updateImportanceMethod }();})</c:if>
-				;
+			var confirmHandler = function() {
+				deleteVerifiedRequirements(ids);
+				dialog.confirmDialog( "close" );
+			};
+			dialog.confirmDialog({confirm: confirmHandler});
+			
+			if (obsoleteStatuses.length > 0){
+				dialog.confirmDialog( "open" );
+			} else {
+				deleteVerifiedRequirements(ids);
 			}
+			
 		});
 		
 		
 	});
 	
+	function deleteVerifiedRequirement(id){
+		$.ajax({
+			type : 'delete',
+			url : '${ verifiedRequirementsUrl }/' + id,
+			dataType : 'json',
+			success : function(){
+				refreshVerifiedRequirements();
+				<c:if test="${ not empty updateImportanceMethod }" >${ updateImportanceMethod }();</c:if>
+			   }
+		});
+	}
+	
+	function deleteVerifiedRequirements(ids){
+		if (ids.length > 0) {
+			$.post('${ nonVerifiedRequirementsUrl }', { requirementVersionsIds: ids }, refreshVerifiedRequirements)
+			<c:if test="${ not empty updateImportanceMethod }" >.success(function(){${ updateImportanceMethod }();})</c:if>
+			;
+		}
+	}
 	
 	function refreshVerifiedRequirements() {
 		var table = $('#verified-requirements-table').dataTable();
@@ -94,6 +127,10 @@
 	function getRequirementsTableRowId(rowData) {
 		return rowData[0];	
 	}
+	
+	function getRequirementsTableRowStatus(rowData) {
+		return rowData[8];	
+	}
 
 	
 	function requirementsTableRowCallback(row, data, displayIndex) {
@@ -102,6 +139,9 @@
 		</c:if>
 		addClickHandlerToSelectHandle(row, $("#verified-requirements-table"));
 		addHLinkToRequirementName(row, data);
+		<c:if test="${ editable }">
+		addSelectEditableToVersionNumber(row, data);
+		</c:if>
 		return row;
 	}
 
@@ -111,12 +151,38 @@
 		return elementId.substr(elementId.indexOf(":") + 1);
 	}
 	
-	
+	 
 	function addHLinkToRequirementName(row, data) {
-		var url= '${ pageContext.servletContext.contextPath }/requirements/' + getRequirementsTableRowId(data) + '/info';			
+		var url='${ pageContext.servletContext.contextPath }/requirements/' + getRequirementsTableRowId(data) + '/info';			
 		addHLinkToCellText($( 'td:eq(3)', row ), url);
 	}	
 	
+	function addSelectEditableToVersionNumber(row, data) {
+		var urlPOST='${ verifiedRequirementsUrl }/' + getRequirementsTableRowId(data);
+		var urlGET='${ pageContext.servletContext.contextPath }/requirements/' + getRequirementsTableRowId(data) + '/versions/version-number';
+		var table = $('#verified-requirements-table').dataTable();
+		if (data[9]!="false"){
+			<%-- the table needs to be redrawn after each return of the POST so we implement the posting workflow --%>
+			$( 'td:eq(4)', row ).editable(function(value, settings) {
+					var innerPOSTData;
+					$.post(urlPOST, {
+						value : value
+					}, function (data){
+						innerPOSTData = data;
+						table.fnDraw(false);
+					});
+					return(innerPOSTData);
+				}, {
+				type: 'select',	
+				<%-- placeholder: '<f:message key="rich-edit.placeholder" />', --%>
+				submit: '<f:message key="rich-edit.button.ok.label" />',
+				cancel: '<f:message key="rich-edit.button.cancel.label" />',	
+				onblur : function() {}, <%-- prevents the widget to return to unediting state on blur event --%> 
+				loadurl : urlGET,
+				onsubmit : function() {} <%-- do nothing for now --%>
+			});
+		}
+	}
 	
 	function discriminateDirectVerifications(dataTable){
 		var rows = dataTable.fnGetNodes();
@@ -124,7 +190,7 @@
 
 		$(rows).each(function(index, row) {
 			var data = dataTable.fnGetData(row);
-			if (data[7]=="false"){
+			if (data[9]=="false"){
 				$(row).addClass("requirement-indirect-verification");
 				$('td:last', row).html(''); //remove the delete button
 			}else{
@@ -135,6 +201,23 @@
 	}
 	
 </script>
+
+<%-- CONFIRM OBSOLETE REQUIREMENT VERSION REMOVAL POPUP --%>	
+<f:message var="confirmObsoleteRequirementVersionRemoval" key="dialog.obsolete.requirement.version.removal.confirm.title" />	
+<div id="confirm-obsolete-requirement-version-removal-dialog" class="not-displayed popup-dialog" title="${ confirmObsoleteRequirementVersionRemoval }">
+	<strong><f:message key="dialog.obsolete.requirement.version.removal.confirm.text" /></strong>
+	<input:confirm />
+	<input:cancel />
+</div>
+
+<%-- CONFIRM MULTIPLE OBSOLETE REQUIREMENT VERSIONS REMOVAL POPUP --%>	
+<f:message var="confirmMultipleObsoleteRequirementVersionsRemoval" key="dialog.multiple.obsolete.requirement.versions.removal.confirm.title" />	
+<div id="confirm-multiple-obsolete-requirement-versions-removal-dialog" class="not-displayed popup-dialog" title="${ confirmMultipleObsoleteRequirementVersionsRemoval }">
+	<strong><f:message key="dialog.multiple.obsolete.requirement.versions.removal.confirm.text" /></strong>
+	<input:confirm />
+	<input:cancel />
+</div>
+
 <comp:decorate-ajax-table url="${ tableModelUrl }" tableId="verified-requirements-table" paginate="true">
 	<jsp:attribute name="initialSort">[[4,'asc']]</jsp:attribute>
 	<jsp:attribute name="drawCallback">requirementsTableDrawCallback</jsp:attribute>
@@ -142,9 +225,10 @@
 	<jsp:attribute name="columnDefs">
 		<dt:column-definition targets="0" visible="false" />
 		<dt:column-definition targets="1" sortable="false" cssClass="select-handle centered" width="2em"/>
-		<dt:column-definition targets="2, 3, 4, 5" sortable="true" />
-		<dt:column-definition targets="6" sortable="false" width="2em" cssClass="centered"/>
-		<dt:column-definition targets="7" sortable="false" visible="false" lastDef="true"  />
+		<dt:column-definition targets="2, 3, 4, 5, 6" sortable="true" />
+		<dt:column-definition targets="7" sortable="false" width="2em" cssClass="centered"/>
+		<dt:column-definition targets="8" sortable="false" visible="false"  />
+		<dt:column-definition targets="9" sortable="false" visible="false" lastDef="true"  />
 
 	</jsp:attribute>
 </comp:decorate-ajax-table>
