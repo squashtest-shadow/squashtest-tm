@@ -266,7 +266,7 @@
 	
 
 	<jsp:attribute name="tree">
-		<tree:linkables-tree iconSet="testcase"  id="linkable-test-cases-tree" rootModel="${ linkableLibrariesModel }" folderContentUrlHandler="folderContentUrl" driveContentUrlHandler="libraryContentUrl"/>
+		<tree:linkables-tree workspaceType="test-case"  id="linkable-test-cases-tree" rootModel="${ linkableLibrariesModel }" />
 	</jsp:attribute>
 	
 <jsp:attribute name="contextualContent">		

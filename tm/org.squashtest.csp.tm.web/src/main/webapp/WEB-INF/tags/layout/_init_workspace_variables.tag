@@ -20,5 +20,11 @@
         along with this software.  If not, see <http://www.gnu.org/licenses/>.
 
 --%>
-<%@ tag body-content="empty" %>
-<link rel="stylesheet" type="text/css" href="${ pageContext.servletContext.contextPath }/styles/master.purple.css" />
+<%@ tag body-content="empty" description="Add script which handles json content of ajax errors and populates error-message tagsaccordingly" %>
+
+
+<script type="text/javascript">
+	$(function(){
+		squashtm.keyEventListener =  new KeyEventListener();
+	});
+</script>

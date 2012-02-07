@@ -20,9 +20,7 @@
         along with this software.  If not, see <http://www.gnu.org/licenses/>.
 
 --%>
-<%@ attribute name="libraryUrl" required="true" description="URL of the library" %>
 <%@ attribute name="rootModel" type="java.lang.Object" %>
-<%@ attribute name="selectedNode" type="java.lang.Object" %>
 <%@ attribute name="workspace" required="false" description="will branch the configuation with respect to the workspace"%>
 
 <%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core" %>

@@ -23,14 +23,20 @@
 <%@ attribute name="id" required="true" description="id of the tree component" %>
 <%@ attribute name="rootModel" required="false" type="java.lang.Object" description="JSON serializable model of root of tree. 
 	If not set, the tree won't be initialized until initLinkableTree(json) is explicitely called with a valid json argument" %>
-<%@ attribute name="driveContentUrlHandler" required="true" description="name of js function which computes the url to get content of a drive node" %>
-<%@ attribute name="folderContentUrlHandler" required="true" description="name of js function which computes the url to get content of a drive node" %>
-<%@ attribute name="iconSet" required="false" description="if set, will override the default icons"%>
+<%@ attribute name="workspaceType" required="false" description="if set, will override the default icons"%>
 
 
 <%@ taglib prefix="json" uri="http://org.squashtest.csp/taglib/json" %>
 <%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core" %>
 <%@ taglib prefix="tree" tagdir="/WEB-INF/tags/jstree" %>
+<%@ taglib prefix="su" uri="http://org.squashtest.csp/taglib/string-utils" %>
+
+
+<%@ taglib prefix="json" uri="http://org.squashtest.csp/taglib/json" %>
+<%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core" %>
+<%@ taglib prefix="s" uri="http://www.springframework.org/tags"%>
+<%@ taglib prefix="tree" tagdir="/WEB-INF/tags/jstree" %>
+<%@ taglib prefix="f" uri="http://java.sun.com/jsp/jstl/fmt"%>
 
 
 <tree:_html-tree treeId="${ id }">
@@ -52,25 +58,10 @@
 		var tree_icons = {
 			drive_icon : "${ pageContext.servletContext.contextPath }/images/root.png",
 			folder_icon : "${ pageContext.servletContext.contextPath }/images/Icon_Tree_Folder.png",
-			file_icon : "${ pageContext.servletContext.contextPath }/images/Icon_Tree_Iteration.png",
+			file_icon : "${ pageContext.servletContext.contextPath }/images/Icon_Tree_${ su:hyphenedToCamelCase(workspaceType) }.png",
 			resource_icon : "${ pageContext.servletContext.contextPath }/images/Icon_Tree_Iteration.png"
 			
 		};
-		
-		//override files if iconSet is provided
-		<c:if test="${not empty iconSet}">
-			<c:choose>
-				<c:when test="${iconSet=='testcase'}">
-					tree_icons.file_icon="${ pageContext.servletContext.contextPath }/images/Icon_Tree_TestCase.png"
-				</c:when>
-				<c:when test="${iconSet=='requirement'}">
-					tree_icons.file_icon="${ pageContext.servletContext.contextPath }/images/Icon_Tree_Requirement.png"
-				</c:when>
-				<c:when test="${iconSet=='campaign'}">
-					tree_icons.file_icon="${ pageContext.servletContext.contextPath }/images/Icon_Tree_Campaign.png"
-				</c:when>
-			</c:choose>
-		</c:if>
 		
 		$("#${ id }")
 		.jstree({ 
@@ -79,22 +70,12 @@
 					"data" : jsonData, 
 					"ajax" : {
 						"url": function (node) {
-							var nodeRel = node.attr("rel");
-							var contentUrl;
-							
-							switch (nodeRel) {
-							case "drive": 
-								contentUrl = ${ driveContentUrlHandler }(node);
-								break;
-							case "folder":
-								contentUrl = ${ folderContentUrlHandler }(node);
-								break;
-							case "file":
-								break;
-							}
-							
-							return contentUrl;
-						}, 
+								if ((node.is(':library')) || (node.is(':folder'))){
+									return "${ pageContext.servletContext.contextPath }"+node.treeNode().getContentUrl();
+								}else{
+									return null;
+								}
+							}, 
 						"data": { component : 'jstree' }
 					}
 				},
@@ -137,7 +118,7 @@
 					"url" : "${ pageContext.servletContext.contextPath }/styles/squashtree.css"					
 				},
 				"squash" : {
-					
+					rootUrl : "${ pageContext.servletContext.contextPath }"
 				}			
 				
 			});

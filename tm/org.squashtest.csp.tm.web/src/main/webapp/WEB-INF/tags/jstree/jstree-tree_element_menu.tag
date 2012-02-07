@@ -27,11 +27,6 @@
 <%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core" %>
 <%@ taglib prefix="fmt" uri="http://java.sun.com/jsp/jstl/fmt" %>
 	
-	
-<%--<a id="tree-create-button" href="#tree-create-menu" class="fg-button fg-button-icon-right ui-widget ui-state-default ui-corner-all" > 
-<%--<span class="ui-icon ui-icon-triangle-1-s"></span> create(warning)</a>--%>
-
-
 <div id="tree_element_menu" class="tree-top-toolbar">
 	<a id="tree-create-button" href="#tree-create-menu" class="button"><fmt:message key="squashtm.treemenu.create.label"/>...</a>
 	<a id="tree-action-button" href="#tree-action-menu" class="button" ><fmt:message key="squashtm.treemenu.action.label"/>...</a> 
@@ -43,7 +38,7 @@
 	<ul>
 		<li><a class="new-folder-tree-button menu-disabled" href="#"><fmt:message key="tree.button.new-folder.label" />...</a></li>
 		<li><a class="new-leaf-tree-button menu-disabled" href="#"><fmt:message key="${newLeafButtonMessage}" />...</a></li>
-		<c:if test="${ not empty newResourceButtonMessage }">
+		<c:if test="${ workspace == 'campaign' }">
 		<li><a class="new-resource-tree-button menu-disabled" href="#"><fmt:message key="${newResourceButtonMessage}" />...</a></li>
 		</c:if>
 	</ul>
