@@ -40,7 +40,6 @@
 	<layout:_common-script-import />		
 
 	<comp:rich-jeditable-header />	
-	<layout:_handle-ajax-errors />
 	<script type="text/javascript" src="${ pageContext.servletContext.contextPath }/scripts/jquery/jquery.cookie.js"></script>
 	
 	<script type="text/javascript">

@@ -21,6 +21,14 @@
 
 --%>
 <%@ tag body-content="empty" description="Add script which handles json content of ajax errors and populates error-message tagsaccordingly" %>
+<%@ attribute name="cssClass" description="additional css classes" %>
+<%@ taglib prefix="f" uri="http://java.sun.com/jsp/jstl/fmt" %>
+
+<div id="ajax-processing-indicator" class="ui-corner-all ${cssClass} " style="display:inline-block">
+	<img src="${ pageContext.servletContext.contextPath }/images/ajax-loader.gif" width="19px" height="19px"/>
+	<span><f:message key="squashtm.processing"/></span>
+</div>
+
 <script type="text/javascript">
 
 
@@ -39,6 +47,16 @@ $(function() {
 			}
 		}
 	});
+
+	$("#ajax-processing-indicator").hide();
+	$(document).ajaxStart( function(){
+		$("#ajax-processing-indicator").show().css('display', 'inline-block');
+	})		
+	.ajaxStop( function(){
+		$("#ajax-processing-indicator").hide();
+	});
+
+	
 });
 function handleJsonResponseError(request) {
 	<%-- this pukes an exception if not valid json. there's no other jQuery way to tell --%>
@@ -78,12 +96,9 @@ function handleGenericResponseError(request) {
 }
 
 function displayInformationNotification(message){
-	/*
-	$("#generic-information-notification-span").html(message);
-	$("#generic-information-notification-area").fadeIn('slow').delay(20000).fadeOut('slow');
-	*/
-	alert(message);
-	
+	alert(message);	
 }
 
 </script>
+
+

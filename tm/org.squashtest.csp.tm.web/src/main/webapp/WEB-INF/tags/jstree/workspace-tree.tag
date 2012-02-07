@@ -22,14 +22,6 @@
 --%>
 <%@ attribute name="id" required="true" description="id of the tree component" %>
 <%@ attribute name="rootModel" required="true" type="java.lang.Object" description="JSON serializable model of root of tree" %>
-<%@ attribute name="driveContentUrlHandler" required="true" description="name of js function which computes the url to get content of a drive node" %>
-<%@ attribute name="folderContentUrlHandler" required="true" description="name of js function which computes the url to get content of a drive node" %>
-<%@ attribute name="fileContentUrlHandler" required="false" description="name of js function which computes the url to get content of a drive node" %>
-<%@ attribute name="selectResourceHandler" required="false" %>
-<%@ attribute name="selectFileHandler" required="true" %>
-<%@ attribute name="selectFolderHandler" required="true" %>
-<%@ attribute name="selectDriveHandler" required="true" %>
-<%@ attribute name="browsableFiles" required="true" type="java.lang.Boolean" %>
 <%@ attribute name="workspaceType" required="true" %>
 
 <%@ taglib prefix="json" uri="http://org.squashtest.csp/taglib/json" %>
@@ -44,17 +36,18 @@
 
 <s:url var="moveUrl" value="/${ workspaceType }-browser/move" />
 <s:url var="copyUrl" value="/${ workspaceType }-browser/copy" />
+<s:url var="deleteUrl" value="/${ workspaceType }s/" />
 
 
-<s:url var="deleteUrl" value="/${ workspaceType }s/">
-</s:url>
+<c:set var="newLeafLabelKey" value="tree.button.new-${ workspaceType }.label"/>
+<tree:jstree-tree_element_menu workspace="${workspaceType}" newLeafButtonMessage="${ newLeafLabelKey }" newResourceButtonMessage="tree.button.new-iteration.label"/>
+
 
 <tree:_html-tree treeId="${ id }">
 </tree:_html-tree>
 
 <script type="text/javascript">
-	
-	//
+
 	// prevent iteration copy, first step, check if ctrl was clicked. For the moment, could not find a simpler way...
 	var isCtrlClicked = false;
 	
@@ -116,20 +109,7 @@
 	}
 	
 	
-	
-	function updateTreebuttons(strOperations){
-		for (var menu in squashtm.treemenu){
-			for (var operation in squashtm.treemenu[menu].buttons){
-				if (strOperations.match(operation)){
-					squashtm.treemenu[menu].buttons[operation].enable();
-				}
-				else{
-					squashtm.treemenu[menu].buttons[operation].disable();
-				}
-			}
-		}
-		
-	}
+
 
 	$(function () {
 		var tree_icons = {
@@ -140,85 +120,16 @@
 				
 		};
 
-		$("#${ id }")
-		.bind("select_node.jstree", function(event, data){
-			// 	unselectNonSiblings(data.rslt.obj, $('#${id}'));
-			// is replaced by : 
-			unselectDescendantsAndOtherProjectsSelections(data.rslt.obj, $('#${id}'));
-			operations = data.inst.allowedOperations();
-			updateTreebuttons(operations);
-			return true;
-		})
-		.bind("deselect_node.jstree", function(event, data){
-			operations = data.inst.allowedOperations();
-			updateTreebuttons(operations);
-			return true;
-		})		
-		<%-- 
-			the following should have been as a handler of before.jstree on call move_node.
-			however many considerations lead to postprocess mode_node like now, rather than preprocess it. At least that event is triggered only once. 
-		--%>
-		.bind("move_node.jstree", function(event, data){			
-			var moveObject = data.args[0];
-			
-			if (moveObject !==null 
-				&& moveObject !== undefined 
-				&& moveObject.cr !== undefined){
-						
-				if (isCtrlClicked){
-					//we need to destroy the copies first, since we'll use our owns.
-					destroyJTreeCopies(moveObject, data.inst);
-					
-					//now let's post.
-					var newData = moveObjectToCopyData(data);
-					copyNode(newData, "${copyUrl}")
-					.fail(function(){
-						data.inst.refresh();
-					});
-				}
-				else{
-					<f:message var="cannotMoveNodeLabel" key="squashtm.action.exception.cannotmovenode.label" />
-					//check if we can move the object
-					if(checkMoveIsAuthorized(data)){
-						moveNode(data, "${moveUrl}")
-						.fail(function(jqXHR){
-							displayInformationNotification("${cannotMoveNodeLabel}");
-							data.inst.refresh();
-						});
-					}
-					else{
-						displayInformationNotification("${cannotMoveNodeLabel}");
-						data.inst.refresh();
-					}
-				}
-			}			
-		})	
+		$("#${ id }")	
 		.jstree({ 
 				<%-- cookie plugin should be defined after ui otherwise tree select state wont be restored --%>	
-				"plugins" : ["json_data", "ui", "types", "sort", "crrm", "hotkeys", "dnd", "cookies", "themes", "squash" ], 			
+				"plugins" : ["json_data", "ui", "types", "sort", "crrm", "hotkeys", "dnd", "cookies", "themes", "squash", "workspace_tree" ], 			
 				
 				"json_data" : { 
 					"data" : ${ json:serialize(rootModel) }, 
 					"ajax" : {
 						"url": function (node) {
-							var nodeRel = node.attr("rel");
-							var contentUrl;
-							
-							switch (nodeRel) {
-							case "drive": 
-								contentUrl = nodeContentUrl('${ browserUrlRoot }', node);
-								break;
-							case "folder":
-								contentUrl = nodeContentUrl('${ browserUrlRoot }', node);
-								break;
-							case "file":
-								<c:if test="${browsableFiles}">
-								contentUrl = nodeContentUrl('${ browserUrlRoot }', node);
-								</c:if>
-								break;
-							}
-							
-							return contentUrl;
+							return "${ pageContext.servletContext.contextPath }"+node.treeNode().getContentUrl();
 						} 
 					}
 				},
@@ -231,58 +142,26 @@
 					"delete_node" : false,
 					"remove" : false,
 					"types" : {
-						<c:if test="${ browsableFiles }">
 						"resource" : {
-							"valid_children" : "none",
-							"select_node": function(node) {
-								${ selectResourceHandler }(liNode(node));
-								return true;
-							},							
+							"valid_children" : "none",						
 							"icon" : {
-							"image" : tree_icons.resource_icon
+								"image" : tree_icons.resource_icon
 							}
 						},
-						</c:if>
-						<c:if test="${ not browsableFiles }">
-						"file" : {
-							"valid_children" : "none",
-							"select_node": function(node) {
-								${ selectFileHandler }(liNode(node));
-								return true;
-							},
-							"icon" : {
-								"image" : tree_icons.file_icon
-							}
-						},
-						</c:if>
-						<c:if test="${ browsableFiles }">
 						"file" : {
 							"valid_children" : [ "resource" ],
-							"select_node": function(node) {
-								${ selectFileHandler }(liNode(node));
-								return true;
-							},
 							"icon" : {
 								"image" : tree_icons.file_icon
 							}
 						},
-						</c:if>
 						"folder" : {
 							"valid_children" : [ "file", "folder" ],
-							"select_node": function(node, check, event) {
-								${ selectFolderHandler }(liNode(node));
-								return true;
-							},
 							"icon" : {
 								"image" : tree_icons.folder_icon
 							}
 						},
 						"drive" : {
 							"valid_children" : [ "file", "folder" ],
-							"select_node": function(node) {
-								${ selectDriveHandler }(liNode(node));
-								return true;
-							},
 							"icon" : {
 								"image" : tree_icons.drive_icon
 							}
@@ -291,8 +170,6 @@
 				},
 				
 				"core" : { 
-					<%-- do not uncomment otherwise tree is closed on page refresh --%>
-					//"initially_open" : [ "${ selectedNode.attr['id'] }" ] 
 					"animation" : 0
 				},
 				"crrm": {
@@ -365,8 +242,13 @@
 					"icons" : true,
 					"url" : "${ pageContext.servletContext.contextPath }/styles/squashtree.css"					
 				},
+				
 				"squash" : {
-					
+					rootUrl : "${ pageContext.servletContext.contextPath }"
+				},
+				
+				"workspace_tree" : {
+					cannotMoveMessage : '<f:message key="squashtm.action.exception.cannotmovenode.label" />'					
 				}
 			});
 	});

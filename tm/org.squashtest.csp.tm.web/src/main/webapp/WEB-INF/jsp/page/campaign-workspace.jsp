@@ -26,7 +26,7 @@
 <%@ page language="java" contentType="text/html; charset=utf-8" pageEncoding="utf-8"%>
 <layout:workspace-page-layout resourceName="campaign">
 	<jsp:attribute name="head">
-		<layout:import-campaigns-stylesheet />
+		<link rel="stylesheet" type="text/css" href="${ pageContext.servletContext.contextPath }/styles/master.purple.css" />
 	</jsp:attribute>
 	
 	<jsp:attribute name="footer">

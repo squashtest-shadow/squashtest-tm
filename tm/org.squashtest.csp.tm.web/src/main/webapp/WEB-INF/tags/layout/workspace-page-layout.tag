@@ -131,7 +131,6 @@
 				</c:otherwise>
 			</c:choose>
 		</script>		
-
 		
 		<jsp:invoke fragment="head" />
 	</jsp:attribute>
@@ -143,7 +142,7 @@
 	<jsp:attribute name="tree">
 		<c:set var="browserUrlRoot" value="${ pageContext.servletContext.contextPath }/${ resourceName }-browser" />
 		<f:message var="libraryName" key="tree.node.${ resourceName }-library.title" />
-		<tree:library-tree  workspace="${ resourceName }" libraryUrl="${ browserUrlRoot }" rootModel="${ rootModel }" selectedNode="${ selectedNode }" />
+		<tree:workspace-tree  workspaceType="${ resourceName }" rootModel="${ rootModel }"  id="tree" />
 	</jsp:attribute>
 
 	<jsp:attribute name="contextualContent">

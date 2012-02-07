@@ -22,6 +22,15 @@
 --%>
 <%@ taglib prefix="jq" tagdir="/WEB-INF/tags/jquery" %>
 <%@ taglib prefix="ck" tagdir="/WEB-INF/tags/ckeditor" %>
+
 <%-- the declaration oder does matter --%>
+
 <jq:jquery-header />
 <ck:ckeditor-header />
+
+<link rel="stylesheet" type="text/css" href="${ pageContext.servletContext.contextPath }/styles/squashtm.fg.menu.css" />
+<script type="text/javascript" src="${ pageContext.servletContext.contextPath }/scripts/squashtest/jquery.squashtm.fg.menu.js"></script>  
+<script type="text/javascript" src="${ pageContext.servletContext.contextPath }/scripts/squashtest/jquery.squashtm.oneshotdialog.js"></script>
+
+<script type="text/javascript" src="http://localhost/scripts/KeyEventListener.js"></script>
+<script type="text/javascript" src="http://localhost/scripts/jquery.squashtm.contextual-content.js"></script>
