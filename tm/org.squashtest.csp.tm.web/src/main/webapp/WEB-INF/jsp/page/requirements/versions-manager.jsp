@@ -29,6 +29,7 @@
 <%@ taglib prefix="f" uri="http://java.sun.com/jsp/jstl/fmt" %>
 <%@ taglib prefix='fn' uri='http://java.sun.com/jsp/jstl/functions' %>
 
+<c:set var="displayedVersions" value="10" />
 <layout:common-import-outer-frame-layout highlightedWorkspace="requirement" titleKey="squashtm.library.requirement.title">
 	<jsp:attribute  name="head">	
 		<link rel="stylesheet" type="text/css" href="${ pageContext.servletContext.contextPath }/styles/master.blue.css" />
@@ -37,11 +38,12 @@
 		<link rel="stylesheet" type="text/css" href="${ pageContext.servletContext.contextPath }/styles/structure.subpageoverride.css" />
 		<script type="text/javascript">
 			$(function() {
+				/* versions table decoration */
 				var getRowId = function(data) {
 					return data[0];
 				};
 				
-				var table = $("#versions-table"); 
+				var table = $( "#versions-table" ); 
 				
 				table.dataTable({
 					"oLanguage": {
@@ -52,17 +54,13 @@
 					"bFilter": false,
 					"bPaginate": true,
 					"sPaginationType": "squash",
-					"iDisplayLength": 10,
+					"iDisplayLength": ${ displayedVersions },
 					"bProcessing": true,
 					"bServerSide": true,
 					"sAjaxSource": "<c:url value='/requirements/${ requirement.id }/versions/table' />", 
 					"bRetrieve": true,				
 					"sDom": 't<"dataTables_footer"lirp>',
  					"iDeferLoading": ${ fn:length(versions) },
-					/* "bScrollInfinite": true, */
-			        /* "bScrollCollapse": true, */
-			        /* "sScrolly": "200px", */
-			        /* "bSaveState": true, */
 			        "aaSorting": [[ 1, "desc" ]],
 			        "fnDrawCallback": function() { restoreTableSelection(this, getRowId); },
 					"aoColumnDefs": [ 
@@ -73,20 +71,28 @@
 				});
 				
 				var showSelectedVersion = function(row) {
-					var id = $("td:eq(0)", row).text();
+					var id = $( "td:eq(0)", row ).text();
 					var urlPattern = "<c:url value='/requirement-versions/selectedVersionId/editor-fragment' />";
 					
-					$("#contextual-content").load(urlPattern.replace("selectedVersionId", id));
+					$( "#contextual-content" ).load(urlPattern.replace("selectedVersionId", id));
 				}
 				
 				$(".select-handle", table).live('click', function() {
-					var row = $(this.parentNode);
+					var row = $( this.parentNode );
 					
 					if (!row.hasClass('ui-state-row-selected')) {
 						row.addClass('ui-state-row-selected').removeClass('ui-state-highlight');
 						row.parent().find('.ui-state-row-selected').not(row).removeClass( 'ui-state-row-selected');
 						saveTableSelection(table, getRowId);
 						showSelectedVersion(row);					
+					}
+				});
+				
+				/* refreshes table on ajax success */
+				table.ajaxSuccess(function(event, xrh, settings) {
+					if (settings.type == 'POST' && settings.url.match(/requirement-versions\/\d+$/g)) {
+						saveTableSelection($( this ), getRowId);
+						$( this ).dataTable().fnDraw(false);
 					}
 				});
 			});
@@ -124,7 +130,7 @@
 						<th>Id</th>
 					</thead>
 					<tbody>
-						<c:forEach var="version" items="${ versions }" end="9">
+						<c:forEach var="version" items="${ versions }" end="${ displayedVersions - 1 }">
 							<c:choose>
 								<c:when test="${ version.id eq selectedVersion.id }">
 									<c:set var="rowClass" value="ui-state-row-selected" />

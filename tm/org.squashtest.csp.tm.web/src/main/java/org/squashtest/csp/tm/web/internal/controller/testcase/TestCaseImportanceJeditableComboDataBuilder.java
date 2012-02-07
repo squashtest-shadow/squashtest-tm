@@ -24,7 +24,6 @@ package org.squashtest.csp.tm.web.internal.controller.testcase;
 import javax.inject.Inject;
 
 import org.springframework.context.annotation.Scope;
-import org.springframework.osgi.extensions.annotation.ServiceReference;
 import org.springframework.stereotype.Component;
 import org.squashtest.csp.tm.domain.LevelComparator;
 import org.squashtest.csp.tm.domain.testcase.TestCaseImportance;

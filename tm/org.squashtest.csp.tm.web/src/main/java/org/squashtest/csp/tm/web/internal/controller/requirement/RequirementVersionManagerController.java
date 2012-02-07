@@ -31,7 +31,6 @@ import javax.inject.Provider;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.springframework.context.MessageSource;
 import org.springframework.osgi.extensions.annotation.ServiceReference;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
@@ -41,7 +40,6 @@ import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.util.HtmlUtils;
-import org.squashtest.csp.tm.domain.Internationalizable;
 import org.squashtest.csp.tm.domain.Level;
 import org.squashtest.csp.tm.domain.requirement.RequirementCriticality;
 import org.squashtest.csp.tm.domain.requirement.RequirementStatus;
@@ -69,6 +67,10 @@ public class RequirementVersionManagerController {
 
 	private RequirementVersionManagerService requirementVersionManager;
 
+	public RequirementVersionManagerController() {
+		super();
+	}
+
 	/**
 	 * @param requirementVersionManagerService
 	 *            the requirementVersionManagerService to set
@@ -91,7 +93,7 @@ public class RequirementVersionManagerController {
 	public String updateCriticality(@PathVariable long requirementVersionId,
 			@RequestParam(VALUE) RequirementCriticality criticality, Locale locale) {
 		requirementVersionManager.changeCriticality(requirementVersionId, criticality);
-		return HtmlUtils.htmlEscape(internationalize(criticality, locale));
+		return internationalize(criticality, locale);
 	}
 
 	@RequestMapping(method = RequestMethod.POST, params = { "id=requirement-status", VALUE })
@@ -99,7 +101,7 @@ public class RequirementVersionManagerController {
 	public String updateStatus(@PathVariable long requirementVersionId, @RequestParam(VALUE) String value, Locale locale) {
 		RequirementStatus status = RequirementStatus.valueOf(value);
 		requirementVersionManager.changeStatus(requirementVersionId, status);
-		return HtmlUtils.htmlEscape(internationalize(status, locale));
+		return internationalize(status, locale);
 	}
 
 	@RequestMapping(method = RequestMethod.POST, params = { "id=requirement-reference", VALUE })

@@ -57,12 +57,11 @@ public class RequirementStatusComboDataBuilder extends EnumJeditableComboDataBui
 	protected String itemKey(RequirementStatus item) {
 		String defaultKey = super.itemKey(item);
 		RequirementStatus selected = getSelectedItem();
-		
-		if (selected != null) {
-			if(selected.getDisabledStatus().contains(item)) {
-				defaultKey = "disabled." + defaultKey;
-			}
+
+		if (selected != null && selected.getDisabledStatus().contains(item)) {
+			defaultKey = "disabled." + defaultKey;
 		}
+		
 		return defaultKey;
 	}
 }

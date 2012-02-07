@@ -84,7 +84,7 @@ public class TestCaseModificationController {
 			TestCase.class, Project.class).initMapping(5).mapAttribute(Project.class, 2, "name", String.class)
 			.mapAttribute(TestCase.class, 3, "name", String.class)
 			.mapAttribute(TestCase.class, 4, "executionMode", TestCaseExecutionMode.class);
-	
+
 	private TestCaseModificationService testCaseModificationService;
 
 	@Inject
@@ -98,7 +98,7 @@ public class TestCaseModificationController {
 
 	@Inject
 	private CallStepManagerService callStepManager;
-	
+
 	@ServiceReference
 	public void setTestCaseModificationService(TestCaseModificationService testCaseModificationService) {
 		this.testCaseModificationService = testCaseModificationService;
@@ -145,7 +145,7 @@ public class TestCaseModificationController {
 		mav.addObject("executionModes", executionModes);
 		mav.addObject("testCaseImportanceComboJson", buildImportanceComboData(testCase, locale));
 		mav.addObject("testCaseImportanceLabel", formatImportance(testCase.getImportance(), locale));
-		
+
 	}
 
 	private String buildImportanceComboData(TestCase testCase, Locale locale) {
@@ -276,17 +276,16 @@ public class TestCaseModificationController {
 
 		return formatImportance(importance, locale);
 	}
-	
-	
+
 	@RequestMapping(value = "/importanceAuto", method = RequestMethod.POST, params = { "importanceAuto" })
 	@ResponseBody
-	public String changeImportanceAuto(HttpServletResponse response, @PathVariable long testCaseId,
-			@RequestParam(value = "importanceAuto") boolean auto , 	Locale locale) {
+	public String changeImportanceAuto(@PathVariable long testCaseId,
+			@RequestParam(value = "importanceAuto") boolean auto, Locale locale) {
 		testCaseModificationService.customChangeImportanceAuto(testCaseId, auto);
 		TestCase testCase = testCaseModificationService.findById(testCaseId);
-		return  formatImportance(testCase.getImportance(), locale);
+		return formatImportance(testCase.getImportance(), locale);
 	}
-	
+
 	@RequestMapping(method = RequestMethod.POST, params = { "id=test-case-prerequisite", "value" })
 	@ResponseBody
 	public String changePrerequisite(@RequestParam("value") String testCasePrerequisite, @PathVariable long testCaseId) {
@@ -298,7 +297,7 @@ public class TestCaseModificationController {
 
 		return testCasePrerequisite;
 	}
-	
+
 	@RequestMapping(method = RequestMethod.POST, params = { "newName" })
 	@ResponseBody
 	public Object rename(HttpServletResponse response, @PathVariable long testCaseId, @RequestParam String newName) {
@@ -311,18 +310,19 @@ public class TestCaseModificationController {
 		};
 
 	}
+
 	@ResponseBody
 	@RequestMapping(value = "/importance", method = RequestMethod.GET)
-	public String getImportance(@PathVariable long testCaseId,
-			Locale locale) {
+	public String getImportance(@PathVariable long testCaseId, Locale locale) {
 		TestCase testCase = testCaseModificationService.findById(testCaseId);
 		TestCaseImportance importance = testCase.getImportance();
 		return formatImportance(importance, locale);
 	}
+
 	private String formatImportance(TestCaseImportance importance, Locale locale) {
 		return importanceLabelFormatterProvider.get().useLocale(locale).formatLabel(importance);
 	}
-	
+
 	@RequestMapping(value = "/general", method = RequestMethod.GET)
 	public ModelAndView refreshGeneralInfos(@PathVariable long testCaseId) {
 

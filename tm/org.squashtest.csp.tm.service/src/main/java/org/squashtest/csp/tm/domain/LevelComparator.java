@@ -21,21 +21,27 @@
 
 package org.squashtest.csp.tm.domain;
 
+import java.io.Serializable;
 import java.util.Comparator;
 
 /**
  * Compares 2 {@link Level} using their {@link Level#getLevel()} property. The smaller the level, the higher the
  * importance.
- * 
+ *
  * @author Gregory Fouquet
- * 
+ *
  */
-public class LevelComparator implements Comparator<Level> {
+public class LevelComparator implements Comparator<Level>, Serializable {
+	private static final long serialVersionUID = 7546560298276311392L;
 	private static final LevelComparator INSTANCE = new LevelComparator();
+
+	private LevelComparator() {
+		super();
+	}
 
 	/**
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see java.util.Comparator#compare(java.lang.Object, java.lang.Object)
 	 */
 	@Override

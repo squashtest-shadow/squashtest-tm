@@ -37,9 +37,9 @@ public enum TestCaseImportance implements Level {
 	VERY_HIGH(1), HIGH(2), MEDIUM(3), LOW(4);
 
 	private static final String I18N_KEY_ROOT = "test-case.importance.";
+	private static final LevelComparator LEVEL_COMPARATOR = LevelComparator.getInstance();
 
 	private final int level;
-	private static final LevelComparator levelComparator = LevelComparator.getInstance();
 
 	private TestCaseImportance(int value) {
 		this.level = value;
@@ -102,7 +102,7 @@ public enum TestCaseImportance implements Level {
 	public TestCaseImportance deduceNewImporanceWhenAddCriticality(RequirementCriticality newCriticality) {
 		TestCaseImportance importance = deduceTestCaseImportance(Arrays.asList(newCriticality));
 		TestCaseImportance newImportance = this;
-		if (levelComparator.compare(importance, this) < 0) {
+		if (LEVEL_COMPARATOR.compare(importance, this) < 0) {
 			newImportance = importance;
 		}
 		return newImportance;
@@ -121,8 +121,8 @@ public enum TestCaseImportance implements Level {
 		TestCaseImportance oldCriticalityImp = deduceTestCaseImportance(Arrays.asList(oldRequirementCriticality));
 		TestCaseImportance newCriticaltyImp = deduceTestCaseImportance(Arrays.asList(newCriticality));
 		boolean canChange = true;
-		if (levelComparator.compare(this, oldCriticalityImp) < 0
-				&& levelComparator.compare(this, newCriticaltyImp) <= 0) {
+		if (LEVEL_COMPARATOR.compare(this, oldCriticalityImp) < 0
+				&& LEVEL_COMPARATOR.compare(this, newCriticaltyImp) <= 0) {
 			canChange = false;
 		}
 		return canChange;

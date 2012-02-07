@@ -33,7 +33,6 @@ import javax.servlet.http.HttpServletResponse;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.springframework.context.MessageSource;
 import org.springframework.osgi.extensions.annotation.ServiceReference;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
@@ -46,13 +45,14 @@ import org.springframework.web.servlet.ModelAndView;
 import org.springframework.web.util.HtmlUtils;
 import org.squashtest.csp.core.infrastructure.collection.PagedCollectionHolder;
 import org.squashtest.csp.core.infrastructure.collection.PagingAndSorting;
-import org.squashtest.csp.tm.domain.Internationalizable;
+import org.squashtest.csp.tm.domain.Level;
 import org.squashtest.csp.tm.domain.requirement.Requirement;
 import org.squashtest.csp.tm.domain.requirement.RequirementCriticality;
 import org.squashtest.csp.tm.domain.requirement.RequirementStatus;
 import org.squashtest.csp.tm.domain.requirement.RequirementVersion;
 import org.squashtest.csp.tm.service.RequirementModificationService;
 import org.squashtest.csp.tm.service.RequirementVersionManagerService;
+import org.squashtest.csp.tm.web.internal.helper.LevelLabelFormatter;
 import org.squashtest.csp.tm.web.internal.model.datatable.DataTableDrawParameters;
 import org.squashtest.csp.tm.web.internal.model.datatable.DataTableMapperPagingAndSortingAdapter;
 import org.squashtest.csp.tm.web.internal.model.datatable.DataTableModel;
@@ -69,6 +69,8 @@ public class RequirementModificationController {
 	private Provider<RequirementCriticalityComboDataBuilder> criticalityComboBuilderProvider;
 	@Inject
 	private Provider<RequirementStatusComboDataBuilder> statusComboDataBuilderProvider;
+	@Inject
+	private Provider<LevelLabelFormatter> levelFormatterProvider;
 
 	private RequirementModificationService requirementModService;
 	private RequirementVersionManagerService versionFinder;
@@ -85,9 +87,6 @@ public class RequirementModificationController {
 	public void setRequirementModificationService(RequirementModificationService service) {
 		requirementModService = service;
 	}
-
-	@Inject
-	private MessageSource messageSource;
 
 	// will return the Requirement in a full page
 	@RequestMapping(value = "/info", method = RequestMethod.GET)
@@ -126,7 +125,7 @@ public class RequirementModificationController {
 
 	@RequestMapping(method = RequestMethod.POST, params = { "id=requirement-description", VALUE })
 	public @ResponseBody
-	String updateDescription(@RequestParam(VALUE) String newDescription, @PathVariable long requirementId) {
+	String changeDescription(@RequestParam(VALUE) String newDescription, @PathVariable long requirementId) {
 
 		requirementModService.changeDescription(requirementId, newDescription);
 		LOGGER.trace("requirement " + requirementId + ": updated description to " + newDescription);
@@ -161,21 +160,21 @@ public class RequirementModificationController {
 
 	@RequestMapping(method = RequestMethod.POST, params = { "id=requirement-criticality", VALUE })
 	@ResponseBody
-	public String updateCriticality(@RequestParam(VALUE) String value, @PathVariable long requirementId, Locale locale) {
+	public String changeCriticality(@RequestParam(VALUE) String value, @PathVariable long requirementId, Locale locale) {
 		RequirementCriticality criticality = RequirementCriticality.valueOf(value);
 		requirementModService.changeCriticality(requirementId, criticality);
 		LOGGER.debug("Requirement {} : requirement criticality changed, new value : {}", requirementId,
 				criticality.name());
-		return HtmlUtils.htmlEscape(formatCriticality(criticality, locale));
+		return formatCriticality(criticality, locale);
 	}
 
 	@RequestMapping(method = RequestMethod.POST, params = { "id=requirement-status", VALUE })
 	@ResponseBody
-	public String updateStatus(@RequestParam(VALUE) String value, @PathVariable long requirementId, Locale locale) {
+	public String changeStatus(@RequestParam(VALUE) String value, @PathVariable long requirementId, Locale locale) {
 		RequirementStatus status = RequirementStatus.valueOf(value);
 		requirementModService.changeStatus(requirementId, status);
 		LOGGER.debug("Requirement {} : requirement status changed, new value : {}", requirementId, status.name());
-		return HtmlUtils.htmlEscape(internationalize(status, locale));
+		return internationalize(status, locale);
 	}
 
 	@RequestMapping(method = RequestMethod.GET, value = "/next-status")
@@ -188,7 +187,7 @@ public class RequirementModificationController {
 
 	@RequestMapping(method = RequestMethod.POST, params = { "id=requirement-reference", VALUE })
 	@ResponseBody
-	public String updateReference(@RequestParam(VALUE) String requirementReference, @PathVariable long requirementId)
+	public String changeReference(@RequestParam(VALUE) String requirementReference, @PathVariable long requirementId)
 			throws UnsupportedEncodingException {
 		requirementModService.changeReference(requirementId, requirementReference.trim());
 		LOGGER.debug("Requirement {} : requirement reference changed, new value : {}", requirementId,
@@ -229,8 +228,8 @@ public class RequirementModificationController {
 		return internationalize(criticality, locale);
 	}
 
-	private String internationalize(Internationalizable internationalizable, Locale locale) {
-		return messageSource.getMessage(internationalizable.getI18nKey(), null, locale);
+	private String internationalize(Level level, Locale locale) {
+		return levelFormatterProvider.get().useLocale(locale).formatLabel(level);
 	}
 
 	@RequestMapping(value = "/versions/manager")

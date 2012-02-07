@@ -45,13 +45,14 @@ class RequirementModificationControllerTest extends Specification {
 	MessageSource messageSource = Mock()
 	LabelFormatter formatter = new LevelLabelFormatter(messageSource)
 	Provider criticalityBuilderProvider = criticalityBuilderProvider()
-	Provider statusBuilderProvider = statusBuilderProvider
+	Provider statusBuilderProvider = statusBuilderProvider()
+	Provider levelFormatterProvider = levelFormatterProvider()
 
 	def setup() {
 		controller.requirementModificationService = requirementModificationService
-		controller.messageSource = messageSource
 		controller.criticalityComboBuilderProvider = criticalityBuilderProvider
 		controller.statusComboDataBuilderProvider = statusBuilderProvider
+		controller.levelFormatterProvider = levelFormatterProvider
 	}
 
 	def criticalityBuilderProvider() {
@@ -74,7 +75,14 @@ class RequirementModificationControllerTest extends Specification {
 		return provider
 	}
 
-	def "should return requirement page fragment"() {
+	def levelFormatterProvider() {
+		Provider provider = Mock()
+		provider.get() >> formatter
+
+		return provider
+	}
+
+		def "should return requirement page fragment"() {
 		given:
 		Requirement req = Mock(Requirement.class)
 		req.getCriticality() >> RequirementCriticality.UNDEFINED
