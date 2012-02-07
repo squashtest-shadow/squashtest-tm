@@ -28,6 +28,7 @@
 <%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core" %>
 <%@ taglib prefix="f" uri="http://java.sun.com/jsp/jstl/fmt" %>
 <%@ taglib prefix='fn' uri='http://java.sun.com/jsp/jstl/functions' %>
+<%@ taglib prefix="cmp" tagdir="/WEB-INF/tags/component" %>
 
 <c:set var="displayedVersions" value="10" />
 <layout:common-import-outer-frame-layout highlightedWorkspace="requirement" titleKey="squashtm.library.requirement.title">
@@ -144,7 +145,7 @@
 								<td>${ version.versionNumber }</td>
 								<td>${ version.reference }</td>
 								<td>${ version.name }</td>
-								<td><f:message key="${ version.criticality.i18nKey }" /></td>
+								<td><cmp:level-message level="${ version.status }" /></td>
 								<td>&nbsp;</td>
 							</tr>
 						</c:forEach>

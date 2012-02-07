@@ -235,7 +235,7 @@ public class RequirementModificationController {
 			@Override
 			public Object[] buildItemData(RequirementVersion version) {
 				return new Object[] { version.getId(), version.getVersionNumber(), version.getReference(),
-						version.getName(), internationalize(version.getCriticality(), locale), "" };
+						version.getName(), internationalize(version.getStatus(), locale), "" };
 			}
 		}.buildDataModel(holder, params.getsEcho());
 	}
