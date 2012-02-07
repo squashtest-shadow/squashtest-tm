@@ -124,11 +124,9 @@ public class CampaignTestPlanManagerServiceImpl implements CampaignTestPlanManag
 		Campaign campaign = campaignDao.findById(campaignId);
 		
 		for (TestCase testCase : testCases){
-			if (! campaign.testPlanContains(testCase)){
-				CampaignTestPlanItem itp = new CampaignTestPlanItem(testCase);
-				campaignTestPlanItemDao.persist(itp);				
-				campaign.addToTestPlan(itp);
-			}
+			CampaignTestPlanItem itp = new CampaignTestPlanItem(testCase);
+			campaignTestPlanItemDao.persist(itp);				
+			campaign.addToTestPlan(itp);
 		}
 
 	}

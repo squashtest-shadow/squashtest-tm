@@ -229,7 +229,7 @@ class CampaignTestPlanManagerServiceImplTest extends Specification {
 	}
 
 	
-	def "should not persist items already in the test plan"() {
+	def "should persist items already in the test plan but only one call"() {
 		given: "a test case"
 		def tc1 = new MockTC(1L) 
 		nodeDao.findAllByIdList([1L]) >> [tc1]
@@ -246,7 +246,7 @@ class CampaignTestPlanManagerServiceImplTest extends Specification {
 		service.addTestCasesToCampaignTestPlan([1L], 10)
 
 		then:
-		0 * itemDao.persist(_)
+		1 * itemDao.persist(_)
 	}
 	
 	class MockTC extends TestCase{

@@ -169,7 +169,7 @@ public class CustomIterationModificationServiceImpl implements CustomIterationMo
 
 		executionDao.persist(execution);
 
-		iteration.addExecution(execution);
+		iteration.addExecution(execution, testPlan);
 
 	}
 

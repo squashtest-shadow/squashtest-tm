@@ -24,7 +24,6 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Date;
 import java.util.HashSet;
-import java.util.Iterator;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.ListIterator;
@@ -46,7 +45,6 @@ import javax.persistence.OneToOne;
 import javax.persistence.OrderColumn;
 import javax.validation.constraints.NotNull;
 
-import org.hibernate.annotations.Cascade;
 import org.hibernate.validator.constraints.NotBlank;
 import org.squashtest.csp.core.security.annotation.AclConstrainedObject;
 import org.squashtest.csp.tm.domain.DuplicateNameException;
@@ -64,6 +62,7 @@ import org.squashtest.csp.tm.domain.testcase.TestCase;
 @Entity
 @SoftDeletable
 public class Iteration implements AttachmentHolder {
+	
 	@Id
 	@GeneratedValue
 	@Column(name = "ITERATION_ID")
@@ -122,26 +121,26 @@ public class Iteration implements AttachmentHolder {
 
 	
 	/* ********************************************* METHODS ********************************************** */
-
+	
 	/**
-	 * That method will add an Execution to the iteration. In order to detect which IterationTestPlanItem we will attach
-	 * that Execution to, the Execution must be referencing at TestCase prior calling that method (ie
+	 * That method will add an Execution to the iteration. The iterationTestPlan to which it will be attached
+	 * is given among the arguments
+	 * The Execution must be referencing at TestCase prior calling that method (ie
 	 * execution.getReferencedTestCase() must not return null), or no operation will be performed.
 	 * 
 	 * @param execution
+	 * @param testPlanId
 	 */
-	public void addExecution(@NotNull Execution execution) {
+	public void addExecution(@NotNull Execution execution, @NotNull IterationTestPlanItem testPlan) {
 		// look for the test case. if not already included it will create a test
 		// plan for it.
 		if (execution.getReferencedTestCase() == null) {
 			return;
 		}
-		IterationTestPlanItem testplan = getTestPlanForTestCaseId(execution.getReferencedTestCase().getId());
-
-		if (testplan != null) {
-			testplan.addExecution(execution);
+		
+		if (testPlan != null) {
+			testPlan.addExecution(execution);
 		}
-
 	}
 
 
@@ -337,17 +336,11 @@ public class Iteration implements AttachmentHolder {
 	}
 	
 
-	// adds only if not already referenced
 	public void addTestPlan(@NotNull IterationTestPlanItem testPlan) {
 		if (testPlan.getReferencedTestCase() == null) {
 			return;
 		}
-		IterationTestPlanItem localTestPlan = getTestPlanForTestCaseId(testPlan.getReferencedTestCase().getId());
-
-		if (localTestPlan == null) {
-			testPlans.add(testPlan);
-		}
-
+		testPlans.add(testPlan);
 	}
 	
 	

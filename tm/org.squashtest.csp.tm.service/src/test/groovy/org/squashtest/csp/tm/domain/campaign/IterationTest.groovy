@@ -175,7 +175,7 @@ class IterationTest extends Specification {
 
 		Execution execution = new Execution(testCase);
 		when :
-		iteration.addExecution(execution);
+		iteration.addExecution(execution, itp);
 
 		then :
 		iteration.getExecutions() == [execution];
@@ -199,8 +199,8 @@ class IterationTest extends Specification {
 		Execution execution1 = new Execution(testCase);
 		Execution execution2 = new Execution(testCase);
 		when :
-		iteration.addExecution(execution1)
-		iteration.addExecution(execution2)
+		iteration.addExecution(execution1, itp)
+		iteration.addExecution(execution2, itp)
 
 		List<Execution> list = iteration.getExecutions();
 		List<IterationTestPlanItem> listTP = iteration.getTestPlans();

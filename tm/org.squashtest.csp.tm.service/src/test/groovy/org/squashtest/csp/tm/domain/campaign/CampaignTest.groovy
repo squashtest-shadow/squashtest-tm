@@ -55,7 +55,7 @@ class CampaignTest extends Specification {
 		campaign.testPlan == [itp]
 	}
 
-	def "should not add twice the same item to a test plan"() {
+	def "can add twice the same item to a test plan"() {
 
 		given:
 		TestCase tc = new TestCase();
@@ -69,7 +69,7 @@ class CampaignTest extends Specification {
 		campaign.addToTestPlan toAdd
 
 		then:
-		thrown(TestCaseAlreadyInTestPlanException)
+		campaign.getTestPlan().size() == 2
 	}
 
 	def "should remove test case from campaign"(){

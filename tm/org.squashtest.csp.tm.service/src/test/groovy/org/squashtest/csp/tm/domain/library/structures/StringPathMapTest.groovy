@@ -40,8 +40,6 @@ class StringPathMapTest extends Specification {
 		then :
 			def fName = file.getName()
 			def pName = parent.getName()
-			println("toto")
-		
 	}
 
 	def "should get the path from the node reference"(){

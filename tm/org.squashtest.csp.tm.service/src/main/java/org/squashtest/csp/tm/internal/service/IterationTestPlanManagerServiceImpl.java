@@ -145,11 +145,9 @@ public class IterationTestPlanManagerServiceImpl implements IterationTestPlanMan
 		Iteration iteration = iterationDao.findById(iterationId);
 		
 		for (TestCase testCase : testCases){
-			if (! iteration.isTestCasePlanned(testCase)){
-				IterationTestPlanItem itp = new IterationTestPlanItem(testCase);
-				itemTestPlanDao.persist(itp);
-				iteration.addTestPlan(itp);
-			}
+			IterationTestPlanItem itp = new IterationTestPlanItem(testCase);
+			itemTestPlanDao.persist(itp);
+			iteration.addTestPlan(itp);
 		}
 		
 	}

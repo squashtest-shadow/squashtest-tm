@@ -172,11 +172,7 @@ public class Campaign extends CampaignLibraryNode implements AttachmentHolder {
 	 * @param itemTestPlan
 	 * @throws TestCaseAlreadyInTestPlanException
 	 */
-	public void addToTestPlan(@NotNull CampaignTestPlanItem itemTestPlan) throws TestCaseAlreadyInTestPlanException {
-		if (testPlanContains(itemTestPlan.getReferencedTestCase())) {
-			throw new TestCaseAlreadyInTestPlanException(itemTestPlan.getReferencedTestCase(), this);
-		}
-
+	public void addToTestPlan(@NotNull CampaignTestPlanItem itemTestPlan) {
 		this.getTestPlan().add(itemTestPlan);
 		itemTestPlan.setCampaign(this);
 	}
