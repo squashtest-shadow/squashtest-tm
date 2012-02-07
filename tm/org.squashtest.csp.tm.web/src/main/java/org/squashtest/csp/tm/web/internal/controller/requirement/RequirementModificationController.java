@@ -145,18 +145,18 @@ public class RequirementModificationController {
 
 	}
 
-	@RequestMapping(value = "/general", method = RequestMethod.GET)
-	public ModelAndView refreshGeneralInfos(@PathVariable long requirementId) {
-
-		ModelAndView mav = new ModelAndView("fragment/generics/general-information-fragment");
-
-		Requirement requirement = requirementModService.findById(requirementId);
-
-		mav.addObject("auditableEntity", requirement);
-		mav.addObject("entityContextUrl", "/requirements/" + requirementId);
-
-		return mav;
-	}
+	// @RequestMapping(value = "/general", method = RequestMethod.GET)
+	// public ModelAndView refreshGeneralInfos(@PathVariable long requirementId) {
+	//
+	// ModelAndView mav = new ModelAndView("fragment/generics/general-information-fragment");
+	//
+	// Requirement requirement = requirementModService.findById(requirementId);
+	//
+	// mav.addObject("auditableEntity", requirement);
+	// mav.addObject("entityContextUrl", "/requirements/" + requirementId);
+	//
+	// return mav;
+	// }
 
 	@RequestMapping(method = RequestMethod.POST, params = { "id=requirement-criticality", VALUE })
 	@ResponseBody
