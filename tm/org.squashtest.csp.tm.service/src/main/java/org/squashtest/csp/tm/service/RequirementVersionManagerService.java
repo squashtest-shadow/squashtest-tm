@@ -49,4 +49,7 @@ public interface RequirementVersionManagerService extends CustomRequirementVersi
 	@PreAuthorize("hasPermission(#arg0, 'org.squashtest.csp.tm.domain.requirement.RequirementVersion', 'WRITE') or hasRole('ROLE_ADMIN')")
 	void changeStatus(long requirementVersionId, @NotNull RequirementStatus status);
 
+	@PreAuthorize("hasPermission(#arg0, 'org.squashtest.csp.tm.domain.requirement.RequirementVersion', 'WRITE') or hasRole('ROLE_ADMIN')")
+	void changeName(long requirementVersionId, String newName);
+
 }

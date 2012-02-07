@@ -49,9 +49,9 @@ import org.squashtest.csp.tm.web.internal.helper.LevelLabelFormatter;
 
 /**
  * Controller which receives requirement version management related requests.
- * 
+ *
  * @author Gregory Fouquet
- * 
+ *
  */
 @Controller
 @RequestMapping("/requirement-versions/{requirementVersionId}")
@@ -82,7 +82,7 @@ public class RequirementVersionManagerController {
 
 	@RequestMapping(method = RequestMethod.POST, params = { "id=requirement-description", VALUE })
 	public @ResponseBody
-	String updateDescription(@PathVariable long requirementVersionId, @RequestParam(VALUE) String newDescription) {
+	String changeDescription(@PathVariable long requirementVersionId, @RequestParam(VALUE) String newDescription) {
 		requirementVersionManager.changeDescription(requirementVersionId, newDescription);
 		return newDescription;
 
@@ -90,7 +90,7 @@ public class RequirementVersionManagerController {
 
 	@RequestMapping(method = RequestMethod.POST, params = { "id=requirement-criticality", VALUE })
 	@ResponseBody
-	public String updateCriticality(@PathVariable long requirementVersionId,
+	public String changeCriticality(@PathVariable long requirementVersionId,
 			@RequestParam(VALUE) RequirementCriticality criticality, Locale locale) {
 		requirementVersionManager.changeCriticality(requirementVersionId, criticality);
 		return internationalize(criticality, locale);
@@ -98,7 +98,7 @@ public class RequirementVersionManagerController {
 
 	@RequestMapping(method = RequestMethod.POST, params = { "id=requirement-status", VALUE })
 	@ResponseBody
-	public String updateStatus(@PathVariable long requirementVersionId, @RequestParam(VALUE) String value, Locale locale) {
+	public String changeStatus(@PathVariable long requirementVersionId, @RequestParam(VALUE) String value, Locale locale) {
 		RequirementStatus status = RequirementStatus.valueOf(value);
 		requirementVersionManager.changeStatus(requirementVersionId, status);
 		return internationalize(status, locale);
@@ -106,7 +106,7 @@ public class RequirementVersionManagerController {
 
 	@RequestMapping(method = RequestMethod.POST, params = { "id=requirement-reference", VALUE })
 	@ResponseBody
-	String updateReference(@PathVariable long requirementVersionId, @RequestParam(VALUE) String requirementReference) {
+	String changeReference(@PathVariable long requirementVersionId, @RequestParam(VALUE) String requirementReference) {
 		requirementVersionManager.changeReference(requirementVersionId, requirementReference.trim());
 		return HtmlUtils.htmlEscape(requirementReference);
 	}
@@ -136,11 +136,11 @@ public class RequirementVersionManagerController {
 	public Map<String, String> getNextStatusList(Locale locale, @PathVariable long requirementVersionId) {
 		RequirementVersion requirementVersion = requirementVersionManager.findById(requirementVersionId);
 		RequirementStatus status = requirementVersion.getStatus();
-		
+
 		return statusComboDataBuilderProvider.get().useLocale(locale).selectItem(status).buildMap();
 
 	}
-	
+
 	@RequestMapping(value = "/general", method = RequestMethod.GET)
 	public String showGeneralInfos(@PathVariable long requirementVersionId, Model model) {
 		RequirementVersion version = requirementVersionManager.findById(requirementVersionId);
@@ -151,17 +151,14 @@ public class RequirementVersionManagerController {
 		return "fragment/generics/general-information-fragment";
 	}
 
-//	@RequestMapping(value = "/editor", method = RequestMethod.GET)
-//	public String showInlinedEditor(@PathVariable long requirementVersionId, Model model, Locale locale) {
-//		RequirementVersion version = requirementVersionManager.findById(requirementVersionId);
-//
-//		model.addAttribute("requirementVersion", version);
-//		model.addAttribute("jsonCriticalities", buildMarshalledCriticalities(locale));
-//
-//		return "page/requirements/requirement-version-editor";
-//	}
-
 	private String buildMarshalledCriticalities(Locale locale) {
 		return criticalityComboBuilderProvider.get().useLocale(locale).buildMarshalled();
+	}
+
+	@RequestMapping(method = RequestMethod.POST, params = { "newName" })
+	public @ResponseBody
+	Object rename(@PathVariable long requirementVersionId, @RequestParam("newName") String newName) {
+		requirementVersionManager.changeName(requirementVersionId, newName);
+		return new Object();
 	}
 }

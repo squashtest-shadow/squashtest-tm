@@ -29,8 +29,6 @@ import java.util.Map;
 
 import javax.inject.Inject;
 import javax.inject.Provider;
-import javax.servlet.http.HttpServletResponse;
-
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.osgi.extensions.annotation.ServiceReference;
@@ -75,10 +73,8 @@ public class RequirementModificationController {
 	private RequirementModificationService requirementModService;
 	private RequirementVersionManagerService versionFinder;
 
-	private final DataTableMapper versionMapper = new DataTableMapper("requirement-version",
- RequirementVersion.class)
-			.initMapping(6)
-			.mapAttribute(RequirementVersion.class, 1, "versionNumber", int.class)
+	private final DataTableMapper versionMapper = new DataTableMapper("requirement-version", RequirementVersion.class)
+			.initMapping(6).mapAttribute(RequirementVersion.class, 1, "versionNumber", int.class)
 			.mapAttribute(RequirementVersion.class, 2, "reference", String.class)
 			.mapAttribute(RequirementVersion.class, 3, "name", String.class)
 			.mapAttribute(RequirementVersion.class, 4, "criticality", RequirementCriticality.class);
@@ -135,28 +131,11 @@ public class RequirementModificationController {
 
 	@RequestMapping(method = RequestMethod.POST, params = { "newName" })
 	public @ResponseBody
-	Object rename(HttpServletResponse response, @RequestParam("newName") String newName,
-			@PathVariable long requirementId) {
-
+	Object rename(@RequestParam("newName") String newName, @PathVariable long requirementId) {
 		requirementModService.rename(requirementId, newName);
 		LOGGER.info("RequirementModificationController : renaming " + requirementId + " as " + newName);
-		return new Object() {
-		};
-
+		return new Object();
 	}
-
-	// @RequestMapping(value = "/general", method = RequestMethod.GET)
-	// public ModelAndView refreshGeneralInfos(@PathVariable long requirementId) {
-	//
-	// ModelAndView mav = new ModelAndView("fragment/generics/general-information-fragment");
-	//
-	// Requirement requirement = requirementModService.findById(requirementId);
-	//
-	// mav.addObject("auditableEntity", requirement);
-	// mav.addObject("entityContextUrl", "/requirements/" + requirementId);
-	//
-	// return mav;
-	// }
 
 	@RequestMapping(method = RequestMethod.POST, params = { "id=requirement-criticality", VALUE })
 	@ResponseBody
@@ -250,8 +229,7 @@ public class RequirementModificationController {
 			DataTableDrawParameters params, final Locale locale) {
 		PagingAndSorting pas = new DataTableMapperPagingAndSortingAdapter(params, versionMapper);
 
-		PagedCollectionHolder<List<RequirementVersion>> holder = versionFinder.findAllByRequirement(requirementId,
-				pas);
+		PagedCollectionHolder<List<RequirementVersion>> holder = versionFinder.findAllByRequirement(requirementId, pas);
 
 		return new DataTableModelHelper<RequirementVersion>() {
 			@Override
