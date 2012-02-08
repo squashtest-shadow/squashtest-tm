@@ -129,7 +129,7 @@
 					"data" : ${ json:serialize(rootModel) }, 
 					"ajax" : {
 						"url": function (node) {
-							return "${ pageContext.servletContext.contextPath }"+node.treeNode().getContentUrl();
+							return node.treeNode().getContentUrl();
 						} 
 					}
 				},

@@ -48,6 +48,9 @@ var squashtm ;
 		resource : function(a){
 			return $(a).is("[rel='resource']");
 		},
+		resource : function(a){
+			return $(a).is("[rel='resource']");
+		},
 		iteration : function(a){
 			return $(a).is("[rel='resource']");
 		},

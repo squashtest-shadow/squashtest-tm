@@ -103,6 +103,7 @@
 </pop:popup>
 
 
+
  <%-- ====================== /POPUP STRUCTURE DEFINITION  ========================= --%>
 
 <f:message var="defaultMessage" key="dialog.testsuites.defaultmessage" />
