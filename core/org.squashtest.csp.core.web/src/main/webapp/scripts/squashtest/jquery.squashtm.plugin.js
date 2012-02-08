@@ -45,6 +45,9 @@ var squashtm ;
 		node : function(a){
 			return $(a).is("[rel='folder']") || $(a).is("[rel='file']") ;
 		},
+		resource : function(a){
+			return $(a).is("[rel='resource']");
+		},
 		iteration : function(a){
 			return $(a).is("[rel='resource']");
 		},

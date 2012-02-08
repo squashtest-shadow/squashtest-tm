@@ -71,7 +71,7 @@
 					"ajax" : {
 						"url": function (node) {
 								if ((node.is(':library')) || (node.is(':folder'))){
-									return "${ pageContext.servletContext.contextPath }"+node.treeNode().getContentUrl();
+									return node.treeNode().getContentUrl();
 								}else{
 									return null;
 								}

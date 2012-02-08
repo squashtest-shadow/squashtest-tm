@@ -156,23 +156,22 @@ The reason for that is that the parameters are urls already.
 	$(function(){
 		$("#${id}").bind("dialogopen",function(){
 			flipToPleaseWait();
-	 		getBugReportData();
+	 		getBugReportData()
+	 		.then(function(json){
+				flushReport();
+				fillReport(json);
+	 		})
+	 		.fail(bugReportDataError);
 		});
 		
 	});
 
 	function getBugReportData(){
 
-		$.ajax({
+		return $.ajax({
 			url : "${bugReport}",
 			type : "GET",
-			dataType : "json",
-			success : function(json){
-				flushReport();
-				fillReport(json);
-			},
-			error : bugReportDataError
-			
+			dataType : "json"			
 		});
 	}
 	
@@ -228,10 +227,44 @@ The reason for that is that the parameters are urls already.
 <%-- posting code section --%>
 <script type="text/javascript">
 
+	function truc(){
+		var issue = prepareIssueData();
+		
+		submitIssue(issue)
+		.then(submitIssueSuccess)
+		.fail(submitIssueFails)
+	}
+
+
 	function prepareAndSubmit(){
 		var issue = prepareIssueData();
 		submitIssue(issue);
 	}
+	
+	
+	function submitIssue(issue){
+		flipToPleaseWait();
+		
+		return $.ajax({
+			url: "${bugReport}",
+			type:"POST",
+			dataType : "json",
+			data : issue
+		});
+	}
+
+
+	
+	function submitIssueSuccess(json){
+		$("#${id}").dialog("close");
+		<c:if test="${not empty successCallback}">${successCallback}(json);</c:if>
+	}
+	
+	function submitIssueFails(){
+		flipToReport();
+	}
+
+	
 	
 	function makeProject(){
 		var id = $("#issue-report-project").val();
@@ -275,33 +308,6 @@ The reason for that is that the parameters are urls already.
 		return issue;
 	}
 		
-	
-	function submitIssue(issue){
-		flipToPleaseWait();
-		
-		$.ajax({
-			url: "${bugReport}",
-			type:"POST",
-			dataType : "json",
-			data : issue,
-			success : function (json){submitIssueSuccess(json);},
-			error : function(jqXHR, textStatus, errorThrown){ 
-				submitIssueFails();	
-			}
-			
-		});
-	}
-
-
-	
-	function submitIssueSuccess(json){
-		$("#${id}").dialog("close");
-		<c:if test="${not empty successCallback}">${successCallback}(json);</c:if>
-	}
-	
-	function submitIssueFails(){
-		flipToReport();
-	}
 
 
 </script>

@@ -125,7 +125,7 @@ $(function(){
 				description="#add-${ resourceName }-description"/>;
 			</c:otherwise>
 		</c:choose>
-		postNewTreeContent('tree', 'new-${ resourceName }', params);
+		$('#tree').jstree('postNewNode','new-${ resourceName }', params);
 	}
 	
 	$(function(){

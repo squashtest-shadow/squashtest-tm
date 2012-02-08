@@ -55,7 +55,7 @@ $(function(){
 		
 		initDeleteNodeDialog(jqThis)
 		.then(sendDeletionSimulationRequest)
-		.fail(function(jqThis){
+		.fail(function(){
 			<f:message var="deletionDeniedLabel" key="dialog.label.delete-node.rejected" />
 			jqThis.dialog("close");
 			displayInformationNotification("${deletionDeniedLabel}");			
@@ -78,23 +78,37 @@ $(function(){
 
 <script type="text/javascript">
 
-function toLiNodes(jqNodes){
-	return liNode(jqNodes);
+
+/* ***************  utilities  ***************** */ 
+  
+ 
+function getNodeCategories(treeNodes){
+	var allTypes = treeNodes.all('getDomType');
+	return $.unique(allTypes);
+}
+
+function getUrl(strType){
+	switch(strType){
+		case "folder" : 
+		case "file" : return "${baseUrl}"; break;
+		case "resource" : return "${delIterationsUrl}"; break;
+		
+	}
+}
+
+function getDeleteIds(strType, nodes){
+	return nodes.filter("[rel='"+strType+"']").treeNode().all('getResId');
 }
 
 
-function collectIds(jqNodes){
-	var result = [];
-	if (jqNodes.length==0) return result;
-	jqNodes.each(function(i,elt){
-		result.push($(elt).attr("resid"));
-	});
-	return result;
+function buildMessage(newText){
+	return $('<div>', {'text' : newText} );
 }
 
-function areNodesIterations(vNodes){
-	return vNodes.is(":iteration");
-}
+
+/* ***************  /utilities  ***************** */ 
+
+
 
 
 //returns a deferred
@@ -106,45 +120,56 @@ function initDeleteNodeDialog(jqDialog){
 	jqDialog.data("vNodes", null);			
 	
 	<%-- store the selected nodes. --%> 
+	
 	var tree = $('${treeSelector}');
-	var rawNodes = tree.jstree("get_selected");
-	var vNodes = toLiNodes(rawNodes);			
+	var vNodes = tree.jstree("get_selected");
+	jqDialog.data("vNodes", vNodes);
 	
 	var operations = tree.jstree("allowedOperations");
 	
-	if (operations.match("delete")){
-		jqDialog.data("vNodes", vNodes);		
-		
-		var areIterations = areNodesIterations(vNodes);
-		jqDialog.data("iterations", areIterations);	
-		
-		deferred.resolve(jqDialog);
-		
+	if (operations.match("delete")){		
+		deferred.resolve();		
 	}else{
-		deferred.reject(jqDialog);
+		deferred.reject();
 	}
-		
-	
+
 	return deferred.promise();
 }
 
-function sendDeletionSimulationRequest(jqDialog){
-	var vNodes = jqDialog.data("vNodes");
-	var areIterations = jqDialog.data("iterations");
-	var nodeIds = collectIds(vNodes);
+/**
+ * will treat differently regular files from iterations and test-suites.
+ */
+function sendDeletionSimulationRequest(){
 
-	var url = (! areIterations) ? "${baseUrl}/simulate" : "${delIterationsUrl}/simulate";
+	var jqDialog = $('#delete-node-dialog');
+	var message = $('<div/>');
 	
+	var vNodes = jqDialog.data("vNodes");
+	var types = getNodeCategories(vNodes);
+	
+	for (var i in types){
+		var domtype = types[i];
+		if (domtype!=="drive"){
+			
+			var url = getUrl(types[i])+"/simulate";
+			var nodeIds = getDeleteIds(domtype, vNodes);
+			
+			$.post(url, { 'nodeIds[]' : nodeIds})				
+			.success(function(data){
+				var newMessage = buildMessage(data); 
+				message.append(newMessage);
+			})
+			.fail(function(){
+				jqDialog.dialog("close"); <%-- the standard failure handler should kick in, no need for further treatment here. --%>
+				return ;
+			});		
+		}
+	}	
 
-	$.post(url, {"nodeIds[]":nodeIds})			
-	.success(function(data){
-		var message = data + "\n\n<b>${deleteMessage}</b>";
-		jqDialog.html(message);
-	})
-	.fail(function(){
-		jqDialog.dialog("close"); <%-- the standard failure handler should kick in, no need for further treatment here. --%>
-	});
-				
+	message.append("<span><strong>${deleteMessage}</strong></span>");
+	jqDialog.html(message.html());
+	
+	
 }
 </script>
 
@@ -164,31 +189,50 @@ function buildParamString(vNodeIds){
 }
 
 
-function confirmDeletion(){
-	
-	var jqDialog = $( "#delete-node-dialog" );
-	
-	var vNodes = jqDialog.data("vNodes");
-	var areIterations = jqDialog.data("iterations");
-	var nodeIds = collectIds(vNodes);
-	
-	var url = (! areIterations) ? "${baseUrl}/confirm" : "${delIterationsUrl}/confirm";
 
-	var params = buildParamString(nodeIds);
+function postConfirm(domtype, vNodes){
+
+	var nodeIds = getDeleteIds(domtype, vNodes);
+	var url = getUrl(domtype)+"/confirm?"+buildParamString(nodeIds);
 	
 	$.ajax({
-		url : url+"?"+params,
-		dataType : "json",
+		url : url,
+		dataType : 'json',
 		type : 'DELETE'
 	})
-	.success(function(list){			
-		jqDialog.dialog("close");
-		handleDeletionSuccess(list, areIterations);
+	.success(function(list){		
+		removeNodes(list, domtype);
+		<%-- not functional for now. If 3 requests are sent, the callback would be invoked 3 times !
 		<c:if test="${not empty successCallback}">
 		${successCallback}();
 		</c:if>
-	})
-	.fail();
+		--%>
+	});		
+}
+
+function confirmDeletion(){
+	
+	var jqDialog = $('#delete-node-dialog');
+	
+	var vNodes = jqDialog.data("vNodes");
+	
+
+	var newSelected = findPrevNode(vNodes);
+	vNodes.all('deselect');
+	newSelected.select();		
+	
+
+	jqDialog.dialog("close");
+	
+	var types = getNodeCategories(vNodes);	
+	
+	for (var i in types){
+		var domtype = types[i];
+		if (domtype!=="drive"){
+			postConfirm(domtype, vNodes);
+		}
+	}
+
 }
 	
 </script>
@@ -198,53 +242,33 @@ function confirmDeletion(){
 
 <script type="text/javascript">
 
-function handleDeletionSuccess(vIds, bWereIterations){
-	var jqTree = $('${treeSelector}');
-
-	var newSelected = findPrevNode(vIds, bWereIterations);
-	
-	removeNodes(vIds, bWereIterations);
-	
-	jqTree.jstree("deselect_all");
-	jqTree.jstree("select_node", newSelected);				
-}
-
-function removeNodes(vIds, bWereIterations){
+function removeNodes(vIds, domtype){
 	var i=0;		
 	var tree =  $('${treeSelector}');
-	var selector;
-	if (bWereIterations){
-		selector=":iteration";
-	}else{
-		selector=":node";
-	}
 	
 	for (i=0;i<vIds.length;i++){
 		var id = vIds[i];
-		var node = $("li[resid='"+id+"']"+selector, tree);  
+		var node = $("li[resid='"+id+"'][rel='"+domtype+"']", tree);  
 		tree.jstree("delete_node", node);
 	}
 }
 
-function findPrevNode(vIds, bWereIterations){
-	var tree =  $('${treeSelector}');
-	
-	if (vIds.length==0) return tree.jstree("get_selected");
+function findPrevNode(vNodes){
+	if (vNodes.length==0) return vNodes;
 
-	var baseId = vIds[0];
-
-	var loopNode = (bWereIterations) ? 	$("li[resid='"+baseId+"']:iteration", tree): $("li[resid='"+baseId+"']:node", tree);
+	var loopNode = vNodes.first().treeNode();
+	var ids = vNodes.all('getResId');
 
 	var willStay = false;
 	var candidateNode=null;
 	
 	while(! willStay){			
 		<%-- get the previous sibling or its parent if none found --%>
-		candidateNode = (loopNode.prev().length>0) ? loopNode.prev() : loopNode.parents("li").first();
+		candidateNode = loopNode.getPrevious();
+		var id = candidateNode.getResId();
 		
 		<%-- if the found node is a library, or do not belong to the array of deleted nodes we can stop looping --%>
-		var cId = parseInt(candidateNode.attr('resid'));
-		if ( candidateNode.is("[rel='drive']")  || $.inArray(cId, vIds) == -1){
+		if ( candidateNode.is(":library")  || $.inArray(id, ids) == -1){
 			willStay = true;
 		}else{
 			loopNode = candidateNode;

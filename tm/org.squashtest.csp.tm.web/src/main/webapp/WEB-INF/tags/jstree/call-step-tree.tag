@@ -36,46 +36,6 @@
 <c:set var="libraryUrl" value="${ pageContext.servletContext.contextPath }/${ resourceName }-browser" />
 
 <script type="text/javascript">
-
-	function selectLibrary(node) {
-		
-		var selResourceUrl = nodeResourceUrl('${ resourceUrlRoot }',  node);
-		var selNodeContentUrl = nodeContentUrl('${ libraryUrl }', node);
-		var selResourceId = node.attr('id');
-	
-		setTreeData(selResourceUrl, selNodeContentUrl, selResourceId);
-		loadContextualContentIfRequired(node, selResourceUrl);
-	}
-	
-	function selectFolder(node) {
-		
-		var selResourceUrl = nodeResourceUrl('${ resourceUrlRoot }',  node);
-		var selNodeContentUrl = nodeContentUrl('${ libraryUrl }', node);
-		var selResourceId = node.attr('id');
-	
-		setTreeData(selResourceUrl, selNodeContentUrl, selResourceId);
-		loadContextualContentIfRequired(node, selResourceUrl);
-	}
-	
-	function selectFile(node) {
-		
-		var selResourceUrl = nodeResourceUrl('${ resourceUrlRoot }',  node)+"?edit-mode=0";
-		var selNodeContentUrl = null;
-		var selResourceId = node.attr('id');
-	
-		setTreeData(selResourceUrl, selNodeContentUrl, selResourceId);
-		loadContextualContentIfRequired(node, selResourceUrl);
-	}
-
-	function setTreeData(selResourceUrl, selNodeContentUrl, selResourceId) {
-		storeSelectedNodeUrls('tree', selResourceUrl, selNodeContentUrl, selResourceId);
-	}
-
-	function loadContextualContentIfRequired(node, selResourceUrl) {
-		clearContextualContent("#contextual-content");
-		<jq:get-load urlExpression="selResourceUrl" targetSelector="#contextual-content" />;
-	}		
-
 	
 	function liNode(node) {
 		if ($(node).is("a")) {
@@ -101,8 +61,10 @@
 		};
 
 		$("#tree")
-		.bind("select_node.jstree", function(event, data){
-			unselectNonSiblings(data.rslt.obj, $('#tree'));
+		.bind("select_node.jstree", function(event, data){			
+			var resourceUrl = $(data.rslt.obj).treeNode().getResourceUrl();
+			squashtm.contextualContent.loadWith(resourceUrl);	
+			
 			return true;
 		})
 		.jstree({ 
@@ -111,19 +73,7 @@
 				"data" : ${ json:serialize(rootModel) }, 
 				"ajax" : {
 					"url": function (node) {
-						var nodeRel = node.attr("rel");
-						var contentUrl;
-						
-						switch (nodeRel) {
-						case "drive": 
-							contentUrl = nodeContentUrl('${ libraryUrl }', node);
-							break;
-						case "folder":
-							contentUrl = nodeContentUrl('${ libraryUrl }', node);
-							break;
-						}
-						
-						return contentUrl;
+						return node.treeNode().getContentUrl();
 					} 
 				}
 			},
@@ -135,10 +85,6 @@
 					
 					"file" : {
 						"valid_children" : "none",
-						"select_node": function(node) {
-							selectFile(liNode(node));
-							return true;
-						},
 						"icon" : {
 							"image" : tree_icons.file_icon
 						}
@@ -146,19 +92,9 @@
 
 					"folder" : {
 						"valid_children" : [ "file", "folder" ],
-						"select_node": function(node, check, event) {
-							selectFolder(liNode(node));
-							return true;
-						},
 						"icon" : {
 							"image" : tree_icons.folder_icon
 						}
-					},
-					"core" : { 
-						"animation" : 0
-					}, 
-					"ui" : {
-						select_multiple_modifier: false
 					},
 					"drive" : {
 						"valid_children" : [ "file", "folder" ],
@@ -168,6 +104,12 @@
 					}
 				}
 			},	
+			"core" : { 
+				"animation" : 0
+			}, 
+			"ui" : {
+				select_multiple_modifier: false
+			},
 			"themes" : {
 				"theme" : "squashtest",
 				"dots" : true,
@@ -175,7 +117,7 @@
 				"url" : "${ pageContext.servletContext.contextPath }/styles/squashtree.css"					
 			},
 			"squash" : {
-				
+				rootUrl : "${ pageContext.servletContext.contextPath }"
 			}				
 			
 		});
