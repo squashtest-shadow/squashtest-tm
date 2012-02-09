@@ -162,14 +162,14 @@ public class TestSuiteModificationController {
 
 	}
 
-//	@RequestMapping(value="/rename", method=RequestMethod.POST, params="name" )
-//	public @ResponseBody Map<String, String> renameTestSuite(@PathVariable("id") Long id, @RequestParam("name") String name ){
-//		service.rename(id, name);
-//		Map<String, String> result = new HashMap<String, String>();
-//		result.put("id", id.toString());
-//		result.put("name", name);
-//		return result;
-//	}
+	@RequestMapping(value="/rename", method=RequestMethod.POST, params="name" )
+	public @ResponseBody Map<String, String> renameTestSuite(@PathVariable("id") Long id, @RequestParam("name") String name ){
+		service.rename(id, name);
+		Map<String, String> result = new HashMap<String, String>();
+		result.put("id", id.toString());
+		result.put("name", name);
+		return result;
+	}
 	
 	@RequestMapping(value="/test-cases", method=RequestMethod.POST, params="test-cases[]")
 	public @ResponseBody Map<String, String> bindTestPlan(@PathVariable("id") long suiteId, @RequestParam("test-cases[]") List<Long> itpIds){
@@ -222,6 +222,13 @@ public class TestSuiteModificationController {
 			}
 		}.buildDataModel(holder, params.getsEcho());
 
+	}
+	
+	@RequestMapping(value="/remove", method=RequestMethod.POST, params="ids[]" )
+	public @ResponseBody List<Long> removeTestSuites(@RequestParam("ids[]") List<Long> ids ){
+		List<Long> deletedIds = service.remove(ids);
+		LOGGER.debug("removal of "+deletedIds.size()+" Test Suites");
+		return deletedIds;
 	}
 
 /* ***************** data formatter *************************** */

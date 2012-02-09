@@ -40,6 +40,14 @@ function TestSuiteModel(settings){
 			}
 		}
 	}, self);
+	var removeSuites = $.proxy(function(json){
+		for (var i=0;i<this.data.length;i++){
+			var idp = this.data[i].id;
+			if ($.inArray(parseInt(idp, 10), json)>=0){
+				delete this.data[i];
+			}
+		}
+	}, self);
 	
 	var notifyListeners = $.proxy(function(evt){
 		for (var i=0;i<this.listeners.length;i++){
@@ -88,6 +96,21 @@ function TestSuiteModel(settings){
 		.success(function(json){
 			renameSuite(json);
 			notifyListeners("rename");
+		})	
+	}
+	this.postRemove = function(toSend){
+		
+		var url = this.baseUpdateUrl+"/remove";
+
+		return $.ajax({
+			'url' : url,
+			type : 'POST',
+			data : toSend,
+			dataType : 'json'
+		})
+		.success(function(json){
+			removeSuites(json);
+			notifyListeners("remove");
 		})	
 	}
 	

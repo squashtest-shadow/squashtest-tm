@@ -117,11 +117,12 @@ public interface CustomTestCaseModificationService {
 	 * 
 	 */
 	void pasteCopiedTestStep(Long testCaseId, Long idToCopyAfter, Long copiedTestStepId);
-	
+
 	/**
-	 * will change the test case importance too if auto is true. 
+	 * will change the test case importance too if auto is true.
+	 * 
 	 * @param testCaseId
 	 * @param auto
 	 */
-	void customChangeImportanceAuto(long testCaseId, boolean auto);
+	void changeImportanceAuto(long testCaseId, boolean auto);
 }

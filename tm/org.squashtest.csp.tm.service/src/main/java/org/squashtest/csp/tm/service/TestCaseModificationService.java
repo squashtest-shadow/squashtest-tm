@@ -20,7 +20,6 @@
  */
 package org.squashtest.csp.tm.service;
 
-
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.transaction.annotation.Transactional;
 import org.squashtest.csp.tm.domain.testcase.TestCaseExecutionMode;
@@ -36,9 +35,6 @@ public interface TestCaseModificationService extends CustomTestCaseModificationS
 
 	@PreAuthorize("hasPermission(#arg0, 'org.squashtest.csp.tm.domain.testcase.TestCase' , 'WRITE') or hasRole('ROLE_ADMIN')")
 	void changeImportance(long testCaseId, TestCaseImportance importance);
-
-	@PreAuthorize("hasPermission(#arg0, 'org.squashtest.csp.tm.domain.testcase.TestCase' , 'WRITE') or hasRole('ROLE_ADMIN')")
-	void changeImportanceAuto(long testCaseId, boolean auto);
 
 	@PreAuthorize("hasPermission(#arg0, 'org.squashtest.csp.tm.domain.testcase.TestCase' , 'WRITE') or hasRole('ROLE_ADMIN')")
 	void changePrerequisite(long testCaseId, String newPrerequisite);

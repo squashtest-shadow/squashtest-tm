@@ -232,12 +232,14 @@ public class CustomTestCaseModificationServiceImpl implements CustomTestCaseModi
 		}
 
 	}
+
 	private void updateImportanceIfCallStep(TestCase parentTestCase, TestStep copyStep) {
 		if (copyStep instanceof CallTestStep) {
 			TestCase called = ((CallTestStep) copyStep).getCalledTestCase();
 			testCaseImportanceManagerService.changeImportanceIfCallStepAddedToTestCases(called, parentTestCase);
 		}
 	}
+
 	@Override
 	public PagedCollectionHolder<List<VerifiedRequirement>> findAllVerifiedRequirementsByTestCaseId(long testCaseId,
 			PagingAndSorting pas) {
@@ -256,8 +258,8 @@ public class CustomTestCaseModificationServiceImpl implements CustomTestCaseModi
 
 		TestCase mainTestCase = testCaseDao.findById(testCaseId);
 
-		List<VerifiedRequirement> verifiedReqs = buildVerifiedRequirementList(mainTestCase.getVerifiedRequirementVersions(),
-				verified);
+		List<VerifiedRequirement> verifiedReqs = buildVerifiedRequirementList(
+				mainTestCase.getVerifiedRequirementVersions(), verified);
 
 		long verifiedCount = requirementVersionDao.countVerifiedByTestCases(calleesIds);
 		if (LOGGER.isDebugEnabled()) {
@@ -294,7 +296,8 @@ public class CustomTestCaseModificationServiceImpl implements CustomTestCaseModi
 	}
 
 	@Override
-	public void customChangeImportanceAuto(long testCaseId, boolean auto) {
+	@PreAuthorize("hasPermission(#arg0, 'org.squashtest.csp.tm.domain.testcase.TestCase' , 'WRITE') or hasRole('ROLE_ADMIN')")
+	public void changeImportanceAuto(long testCaseId, boolean auto) {
 		TestCase testCase = testCaseDao.findById(testCaseId);
 		testCase.setImportanceAuto(auto);
 		testCaseImportanceManagerService.changeImportanceIfIsAuto(testCaseId);

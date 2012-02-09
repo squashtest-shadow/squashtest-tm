@@ -281,7 +281,7 @@ public class TestCaseModificationController {
 	@ResponseBody
 	public String changeImportanceAuto(@PathVariable long testCaseId,
 			@RequestParam(value = "importanceAuto") boolean auto, Locale locale) {
-		testCaseModificationService.customChangeImportanceAuto(testCaseId, auto);
+		testCaseModificationService.changeImportanceAuto(testCaseId, auto);
 		TestCase testCase = testCaseModificationService.findById(testCaseId);
 		return formatImportance(testCase.getImportance(), locale);
 	}
