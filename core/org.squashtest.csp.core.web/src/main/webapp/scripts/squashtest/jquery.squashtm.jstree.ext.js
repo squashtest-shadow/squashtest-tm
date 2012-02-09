@@ -569,6 +569,19 @@ function clearContextualContent(targetSelector){
 }
 
 
+function updateTreebuttons(strOperations){
+	for (var menu in squashtm.treemenu){
+		for (var operation in squashtm.treemenu[menu].buttons){
+			if (strOperations.match(operation)){
+				squashtm.treemenu[menu].buttons[operation].enable();
+			}
+			else{
+				squashtm.treemenu[menu].buttons[operation].disable();
+			}
+		}
+	}
+	
+}
 
 
 
@@ -652,6 +665,8 @@ function clearContextualContent(targetSelector){
 	}
 
 }
+
+ 
 
  
 

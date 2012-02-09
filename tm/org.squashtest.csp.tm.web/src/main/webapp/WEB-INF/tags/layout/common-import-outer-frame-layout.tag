@@ -97,7 +97,6 @@
 				</div>
 			</div>
 			
-			<layout:_init_workspace_variables />
 			
 			<jsp:invoke fragment="content"/>
 					
