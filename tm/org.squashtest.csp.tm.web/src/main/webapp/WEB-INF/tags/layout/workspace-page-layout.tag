@@ -41,30 +41,6 @@
 	<jsp:attribute name="head">
 		<comp:rich-jeditable-header />
 		<script type="text/javascript">
-
-			
-			<c:if test="${ resourceName == 'requirement' }">
-			function checkCrossProjectSelection(selectedNodes) {
-				if ($(selectedNodes[0]).attr('rel') == "drive" ) {
-					for (var num = 0; num < selectedNodes.length ; num++){
-						if ($(selectedNodes[num]).attr('rel') != "drive" ){
-							alert('<f:message key="dialog.cross-project.error.label"/>');
-							return true;
-						}
-					}
-				}
-				else if ($(selectedNodes[0]).attr('rel') != "drive") {
-					for (var num = 0; num < selectedNodes.length ; num++){
-						if ($(selectedNodes[num]).attr('rel') == "drive" ){
-							alert('<f:message key="dialog.cross-project.error.label"/>');
-							return true;
-						}
-					}
-				}
-				return false;
-			}
-			</c:if>
-	
 			
 			function renameSelectedNreeNode(name){
 				var node = $('#tree').jstree("get_selected");

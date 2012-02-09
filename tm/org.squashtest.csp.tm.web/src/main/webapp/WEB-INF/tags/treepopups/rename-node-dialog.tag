@@ -38,10 +38,18 @@
 	<jsp:attribute name="buttons">
 		<f:message var="label" key="dialog.rename.confirm.label" />	
 		"${ label }": function() {
-			var url = $('${treeSelector}').data('selectedResourceUrl');
-			<jq:ajaxcall url="url" dataType="json" httpMethod="POST" useData="true" successHandler="${successCallback}">
-				<jq:params-bindings newName="#rename-tree-node-text" />
-			</jq:ajaxcall>	
+			
+			var url = $('${treeSelector}').jstree('get_selected').getResourceUrl();
+			var name = $('#rename-tree-node-text').val();
+			
+			$.ajax({
+				url : url,
+				type : 'POST',
+				data : { 'newName' : name },
+				dataType : 'json'		
+			})
+			.success(${successCallback});
+	
 		},
 	<pop:cancel-button />
 	</jsp:attribute>
@@ -56,7 +64,7 @@
 				displayInformationNotification("${renameForbiddenLabel }");
 			}
 			else{
-				var name = node.attr('name');
+				var name = node.getName();
 				$("#rename-tree-node-text").val(name);
 			}			
 		}

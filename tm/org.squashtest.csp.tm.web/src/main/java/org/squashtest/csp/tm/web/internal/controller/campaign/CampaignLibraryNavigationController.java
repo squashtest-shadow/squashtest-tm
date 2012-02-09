@@ -144,7 +144,10 @@ LibraryNavigationController<CampaignLibrary, CampaignFolder, CampaignLibraryNode
 		return createIterationTreeNode(newIteration, newIterationIndex);
 	}
 
+	
+	// TODO : remove that method ? It looks like it's mapped to nothing
 	public @ResponseBody
+	@Deprecated
 	JsTreeNode addNewIterationToCampaign(long campaignId,
 			long iterationId, boolean copy) {
 		Iteration newIteration = campaignLibraryNavigationService
@@ -245,7 +248,7 @@ LibraryNavigationController<CampaignLibrary, CampaignFolder, CampaignLibraryNode
 		return campaignLibraryNavigationService.deleteIterations(nodeIds);	
 	}
 	
-	@RequestMapping(value="/copyIteration", method= RequestMethod.POST)
+	@RequestMapping(value="/copy", method= RequestMethod.POST)
 	public @ResponseBody List<JsTreeNode> copyIterations(@RequestParam("object-ids[]") Long[] iterationsIds, 
 							  @RequestParam("destination-id") long campaignId, 
 							  @RequestParam("destination-type") String destType,

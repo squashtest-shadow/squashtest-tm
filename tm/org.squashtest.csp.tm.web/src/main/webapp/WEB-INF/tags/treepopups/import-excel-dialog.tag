@@ -70,10 +70,10 @@
 				
 				var jqTree = $("${treeSelector}");
 				var projectId = thisDialog.find("select[name='projectId']").val();
-				var node =jqTree.find("li:library[resid='"+projectId+"']");
+				var lib = jqTree.jstree('findNodes', { rel : 'drive', resid : projectId });
 				
-				if (node.size()>0){
-					jqTree.jstree("refresh", node);
+				if (lib.size()>0){
+					jqTree.jstree("refresh", lib);
 				}
 			}
 		},

@@ -49,7 +49,8 @@
 	$(function(){
 		squashtm.treemenu.treeNodeCopier = new TreeNodeCopier({treeSelector : "${treeSelector}",
 											 errMessage : "${errorMessage}",
-											 pasteNotSameProject : "${pasteNotSameProject}",											 pasteNotHere :"${pasteNotHere}",
+											 pasteNotSameProject : "${pasteNotSameProject}",											 
+											 pasteNotHere :"${pasteNotHere}",
 											 pasteIterationNotHere :"${pasteIterationNotHere}",
 											 pasteNotHere :"${pasteNotHere}",
 											 notOneEditable :"${notOneEditable}",

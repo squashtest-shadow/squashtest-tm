@@ -21,7 +21,7 @@
 /**
  * Common functions for JsTree manipulation
  * 
- * @author Gregory Fouquet, Beno�t Siri
+ * @author Gregory Fouquet, Benoit Siri
  */
 
  
@@ -126,6 +126,7 @@
 			var s = this._get_settings().squash;
 			tree.data.squash.timeout=s.timeout;
 			tree.data.squash.isie=false;
+			tree.data.squash.rootUrl=(this._get_settings().squash.rootUrl===undefined) ? '' : this._get_settings().squash.rootUrl;
 			var container = this.get_container();
 			
 			/* we need our handlers to be bound first 
@@ -271,9 +272,31 @@
 						
 			},
 			
+			findNodes : function(objDescriptor){
+				var selector="";
+				for (ppt in objDescriptor){
+					selector+="["+ppt+"='"+objDescriptor[ppt]+"']";
+				}
+				try{
+					var nodes = this.get_container().find('li'+selector).treeNode();
+				}catch(invalide_node){
+					return $();
+				}
+			},
+			
+			get_selected : function(){
+				var selected = this.__call_old();
+				if (selected.length>0){
+					return selected.treeNode();
+				}else{
+					return selected;
+				}
+			},
+			
 			allowedOperations : function(){
 				var selectedNodes = this.get_selected();
 				var operations = "import-excel ";		//one can always import excel files
+				if (selectedNodes.length==0) return operations;
 				if(!this.selectionIsEditable(selectedNodes) == "OK") return operations; 
 				else{ 
 					if(this.selectionIsDeletable(selectedNodes) == "OK") operations += "delete ";
@@ -303,8 +326,87 @@
 		defaults : {
 			"item_h" : "ui-state-active",
 			"item_a" : "ui-state-default",
-			"timeout" : 500
+			"timeout" : 500,
 		}
+	 });
+	 
+	 
+	 $.jstree.plugin('workspace_tree', {
+		defaults : {
+		
+		},
+	 
+		__init : function(){
+			var container = this.get_container();
+			var self=this;
+			
+			container
+				.bind("select_node.jstree", function(event, data){
+					unselectDescendantsAndOtherProjectsSelections(data.rslt.obj, self);
+					operations = data.inst.allowedOperations();
+					updateTreebuttons(operations);
+					
+					var resourceUrl = $(data.rslt.obj).treeNode().getResourceUrl();
+					squashtm.contextualContent.loadWith(resourceUrl);
+					
+					return true;
+				})
+				.bind("deselect_node.jstree", function(event, data){
+					operations = data.inst.allowedOperations();
+					updateTreebuttons(operations);
+					return true;
+				})
+				/* 
+					the following should have been as a handler of before.jstree on call move_node.
+					however many considerations lead to postprocess mode_node like now, rather than preprocess it. At least that event is triggered only once. 
+				*/
+				.bind("move_node.jstree", function(event, data){			
+					var moveObject = data.args[0];
+					
+					if (moveObject !==null 
+						&& moveObject !== undefined 
+						&& moveObject.cr !== undefined){
+								
+						if (squashtm.keyEventListener.ctrl){
+							//we need to destroy the copies first, since we'll use our owns.
+							destroyJTreeCopies(moveObject, data.inst);
+		
+							//now let's post.							
+							var url = $(moveObject.o).treeNode().getBrowserUrl()+"/copy";
+							var newData = moveObjectToCopyData(data);
+							
+							copyNode(newData, url)
+							.fail(function(){
+								data.inst.refresh();
+							});
+						}
+						else{
+							//check if we can move the object
+							if(checkMoveIsAuthorized(data)){
+							
+								var url = $(moveObject.o).treeNode().getBrowserUrl()+"/move";		
+								
+								moveNode(data, url)
+								.fail(function(jqXHR){
+									displayInformationNotification(self._get_settings().workspace_tree.cannotMoveMessage);
+									data.inst.refresh();
+								});
+							}
+							else{
+								displayInformationNotification(self._get_settings().workspace_tree.cannotMoveMessage);
+								data.inst.refresh();
+							}
+						}
+					}			
+				})				
+		},
+		
+		_fn : {
+			postNewNode : postNewNode	//see below
+		
+		}
+	 
+	 
 	 });
 
 	 /*
@@ -325,14 +427,14 @@
 		},
 		_fn : {
 			get_selected : function(){
-				var selected = this.data.ui.selected.toArray();
-				selected.sort(function(a,b){
+				var selected = this.__call_old();
+				var sorted = selected.sort(function(a,b){
 					var order_a = $(a).attr('order');
 					var order_b = $(b).attr('order');
 					return order_a - order_b;
 				});
 				
-				return $(selected);
+				return sorted;
 			}
 		}
 	 
@@ -387,6 +489,19 @@
 
 
 
+function updateTreebuttons(strOperations){
+	for (var menu in squashtm.treemenu){
+		for (var operation in squashtm.treemenu[menu].buttons){
+			if (strOperations.match(operation)){
+				squashtm.treemenu[menu].buttons[operation].enable();
+			}
+			else{
+				squashtm.treemenu[menu].buttons[operation].disable();
+			}
+		}
+	}
+	
+}
 
 
 /* *************************** node click behaviour ********************* */
@@ -470,73 +585,51 @@ function clearContextualContent(targetSelector){
  * @param postParameters
  *            map of post params
  */
-function postNewTreeContent(treeId, contentDiscriminator, postParameters) {
+ 
+ function postNewNode(contentDiscriminator, postParameters) {
 
-	/* **************** variables init ****************** */
+	// **************** variables init ****************** 
 
-	var tree = $('#' + treeId);
+	var origNode = this.get_selected();		
+	var targetNode;
 	
+	if ( (origNode.is(':library')) || 
+		 (origNode.is(':folder'))  ||
+		 ((origNode.is(':campaign')) && (contentDiscriminator == "new-iteration"))	
+		) {
+		targetNode = origNode;
+	}
+	else {
+		targetNode=origNode.getParent();
+	}
+	
+	var url = targetNode.getContentUrl()+'/' + contentDiscriminator;
 	var newNode = null;
-	var url = tree.data('selectedNodeContentUrl') + '/' + contentDiscriminator;
-	var currentNode = tree.jstree("get_selected");
-	var origNode = currentNode;
 	
-	//this part is used to create a brother file when a file is selected 
-	if(currentNode.is(":file")&&contentDiscriminator!= "new-iteration"){
-		currentNode = $(currentNode).parent("ul").parent("li");
-		if(currentNode.is(":library ")){selectLibrary(currentNode, true);}
-		else{if(currentNode.is(":folder ")){selectFolder(currentNode, true);}}
-		url = tree.data('selectedNodeContentUrl') + '/' + contentDiscriminator;
-	}else{
-	//this part is used to create a sister iteration when an iteration is selected
-		if(currentNode.is(":iteration") && contentDiscriminator == "new-iteration"){
-			currentNode = $(currentNode).parent("ul").parent("li");
-			selectFile(currentNode, true);
-			url = tree.data('selectedNodeContentUrl') + '/' + contentDiscriminator;
-		}
-	}
-	
-	var isOpen = tree.jstree('is_open', currentNode);
-	
-	/* ***************** function init ******************** */
+	// ***************** function init ******************** 
 
-	var openNode = function(){
-		var defer = $.Deferred();
-		tree.jstree('open_node', currentNode, defer.resolve);
-		return defer.promise();
-	}
-	
-	
 	var postNode = function(){
-		var defer = $.Deferred();
 		return $.ajax({
 			url : url,
 			data : postParameters,
 			type : 'POST',
 			dataType : 'json',
-			success : defer.resolve,
 			contentType: "application/x-www-form-urlencoded;charset=UTF-8"
 		});
-		return defer.promise();
 	}
 	
 	var addNode = function(data){
-		var defer = $.Deferred();
-		newNode = tree.jstree('create_node',
-			currentNode, 
-			'last',
-			data,
-			defer.resolve,
-			true);
-			
-		return defer.promise;	
+		var res = targetNode.appendNode(data);
+		newNode = res[0];
+		return res[1];
 	}
 	
 	var selectNode = function(){
-		tree.jstree('select_node', newNode);
-		tree.jstree('deselect_node', origNode);
-		//unselectFather(newNode, $('#' + treeId));
-		openNode(); 	//yes, we need to repoen it. This is required if the newly added node is the first node that the parent contains.
+		newNode.select();
+		targetNode.deselect();
+		origNode.deselect();
+		
+		return targetNode.open();
 	}
 
 	
@@ -544,13 +637,14 @@ function postNewTreeContent(treeId, contentDiscriminator, postParameters) {
 		postNode()
 		.then(addNode)
 		.then(selectNode)
-		.then(openNode);
+		
 	}
 
-	/* ********** actual code. ****************** */
+	// ********** actual code. ****************** 
 	
+	var isOpen = targetNode.isOpen();
 	if (isOpen != true){
-		openNode()			//first call will make the node load if necessary. 
+		targetNode.open()			//first call will make the node load if necessary. 
 		.then(createNode);
 	}
 	else{
@@ -558,6 +652,8 @@ function postNewTreeContent(treeId, contentDiscriminator, postParameters) {
 	}
 
 }
+
+ 
 
 /* **************************** check move section **************************************** */
 
@@ -572,43 +668,44 @@ function treeCheckDnd(m){
 	var dest = m.np;
 	var src = m.op;
 	
-	var jqSrc = $(src);
-	var jqDest = $(dest);
-	var jqObject = $(object);
+	try{
+		var jqSrc = $(src).treeNode();
+		var jqDest = $(dest).treeNode();
+		var jqObject = $(object).treeNode();
+	}catch(invalid_node){
+		return false;
+	}
 	
 	//check if the node is draggable first
-	if (! jqObject.is(':editable')){
+	if (! jqObject.isEditable()){
 		return false;
 	}
 	
 
 	//check if the src and dest are within the same project. If they aren't themselve a drive we
 	//need to look for them.
-	var srcDrive =  jqSrc.is(':library') ? jqSrc : jqSrc.parents(':library');
-	var destDrive = jqDest.is(':library') ? jqDest : jqDest.parents(':library');
+	var srcDrive =  jqSrc.getLibrary();
+	var destDrive = jqDest.getLibrary();
 	
-	if ((srcDrive==null) || (destDrive==null)){
-		return false;
-	}
-	
-	if (srcDrive.attr('resid')!=destDrive.attr('resid')){
+	if (! srcDrive.isSame(destDrive)){
 		return false;
 	}
 	
 	//in case we are moving an iteration, check the destination is 
 	//of type campaign
 	
-	if ( ($(object).is(':iteration')) && (! $(dest).is(':file')) ){
-		return false;
+	if (jqObject.is(":iteration")){
+		if (jqDest.getResType()!=="campaigns" ){
+			return false;
+		}
+		if (jqDest.isSame(jqSrc)){
+			return false;
+		}
 	}
 	
-	//if the object is an iteration, the destination must be the same campaign
-	if(jqObject.is(':iteration') && jqSrc.attr('resid') != jqDest.attr('resid')){
-		return false;
-	}
 	//allow iteration copy
-	if(jqObject.is(':iteration') && isCtrlClicked == true){
-		return true;
+	if( (jqObject.is(':iteration')) && (!squashtm.keyEventListener.ctrl)){
+		return false;
 	}
 	
 	return true;			
@@ -618,7 +715,7 @@ function treeCheckDnd(m){
 		
 		
 	/*
-	  This method checks if we can move the object is the dest folder returns true if it's ok to move the object note that contrary to 
+	  This method checks if we can move the object is the dest folder returns true if it's ok to move the object. Note that contrary to 
 	  treeCheckDnd(moveObject), that code is called only for "move", not "copy" operations, and thus is not part of the aforementioned function.
 	  
 	  A second reasons is that we don't want to forbid the operation a-priori : we cancel it a-posteriori. Thus, the user will know
@@ -627,20 +724,19 @@ function treeCheckDnd(m){
 	function checkMoveIsAuthorized(data){
 		var dest = data.rslt.np;
 		var object = data.rslt.o;
-		//checks if there's an element with the same name in the dest folder
-		//get all the children nodes
-		elInDest = dest.children("ul").children("li");
-		okToGo = true;
-		//compare object name and type to each children attributes
-		elInDest.each(function(index, element){
-			if(object.attr('name') == $(element).attr('name') 
-					&& object.attr('id') != $(element).attr('id')){
-				//detect if there's a similar element in the container 
-				//(check the id not to compare the object with itself)
-				okToGo = false;
+		
+		//here are the names of all destination children, and the names of the moved objects
+		destNames = dest.children("ul").children("li").not(object).collect(function(elt){return $(elt).attr('name');});
+		movedNames = object.collect(function(elt){ return $(elt).attr('name');});
+		
+		var okay=true;
+		for (var i in movedNames){
+			if ($.inArray(movedNames[i], destNames)>=0){
+				okay=false;
+				break;
 			}
-		});
-		return okToGo;
+		}
+		return okay;
 	}
 
 
@@ -685,11 +781,11 @@ function insertCopiedNodes(jsonResponse, currentNode, tree){
 function moveObjectToCopyData(moveObject){
 	
 	var nodeData = moveObject.args[0];
-	
-	return  {
+	var jqNodes = $(nodeData.o);
+	return  packet =  {
 		inst : moveObject.inst,
 		sendData : {
-			"object-ids" : $(nodeData.o).collect(function(e){return $(e).attr('resid');}),
+			"object-ids" : jqNodes.collect(function(e){return $(e).attr('resid');}),
 			"destination-id" : nodeData.np.attr('resid'),
 			"destination-type" : isRoot(nodeData.np) ? "library" : "folder"
 		},
@@ -739,12 +835,9 @@ function copyNode(data, url){
 /* ******************************* node move section ******************************** */
 
 /*
-	we reject iterations. Beside that it's okay.
 	
 	@param data : the move_node object
 	@param url : the url to post to.
-
-
 */
 function moveNode(data, url){
 
@@ -764,7 +857,7 @@ function moveNode(data, url){
 	}
 	
 	var dataSent = {
-		"object-ids" : $(nodeData.o).collect(function(e){return $(e).attr('resid');}),
+		"object-ids" : $(nodeData.o).treeNode().all('getResId'),
 		"destination-id" : nodeData.np.attr('resid'),
 		"destination-type" : isRoot(nodeData.np) ? "library" : "folder"
 	};
@@ -784,81 +877,10 @@ function moveNode(data, url){
 
 /* ******************************* leaf URL management code ************************************* */ 
 
-/**
- * Returns the url where to GET the content (ie children) of a node. This url
- * should return JSON tree nodes.
- * 
- * @param urlRoot
- * @param node
- * @returns {String}
- */
-function nodeContentUrl(urlRoot, node) {
-	return urlRoot + '/' + node.attr('rel') + 's/' + node.attr('resId')
-			+ '/content';
-}
-/**
- * Returns the url where to GET the resource represented by a node. Thus url
- * usually returns HTML.
- * 
- * @param urlRoot
- * @param node
- */
-function nodeResourceUrl(urlRoot, node) {
-	return urlRoot + '/' + node.attr('resType') + '/' + node.attr('resId');
-}
-/**
- * Stores URLs relative to the current selected node in the tree
- * 
- * @param selResourceUrl
- * @param selResourceContentUrl
- * @param selNodeContentUrl
- * @param selResourceId
- */
-function storeSelectedNodeUrls(treeId, selResourceUrl, selNodeContentUrl,
-		selResourceId) {
-	var tree = $('#' + treeId);
-	tree.data('selectedResourceUrl', selResourceUrl);
-	tree.data('selectedNodeContentUrl', selNodeContentUrl);
-	tree.data('selectedResourceId', selResourceId);
-}
 
-/**
- * Unselects the nodes of the given tree which are not siblings of the given liNode.
- * 
- * @param liNode
- * @param tree
- */
-function unselectNonSiblings(liNode, tree) {
-	if (liNode.attr('rel') == 'drive') {
-		return;
-	}
-
-	var previouslySelected = findSelectedNodes(tree);
-
-	if (previouslySelected.length > 0) {
-		var parent = liNode.parents('li:first');
-		var siblings = $(parent).children('ul').children('li');
-
-		var notSelectables = $(previouslySelected).not(siblings);
-
-		notSelectables.each(function(index, element) {
-			tree.jstree('deselect_node', element);
-		});
-	}
-}
-/**
- * Unselects the node of the given tree that is the father of the given liNode.
- * 
- * @param liNode
- * @param tree
- */
-function unselectFather(liNode, tree){
-	var parent = liNode.parents('li:first');
-	tree.jstree('deselect_node', parent);
-}
 
 function unselectDescendantsAndOtherProjectsSelections(liNode, tree){
-	var previouslySelected = findSelectedNodes(tree);
+	var previouslySelected = tree.get_selected();
 	if (previouslySelected.length > 0) {
 		var descendants = unselectDescendants(liNode, tree);
 		previouslySelected = $(previouslySelected).not(descendants);
@@ -878,7 +900,7 @@ function unselectDescendants(liNode, tree){
 		
 	if(descendants.length > 0 ){
 		$(descendants).each(function(index, element) {
-			tree.jstree('deselect_node', element);
+			tree.deselect_node(element);
 		});
 	}
 	return descendants;
@@ -902,7 +924,7 @@ function unselectOtherProjectsSelections(liNode, tree, previouslySelected){
 	
 	var nodesToUnselect = previouslySelected.not(libraryOfSelectedNodeDescendants);
 	$(nodesToUnselect).each(function(index, element) {
-			tree.jstree('deselect_node', element);
+			tree.deselect_node(element);
 	});
 	
 }

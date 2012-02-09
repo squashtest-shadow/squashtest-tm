@@ -48,20 +48,6 @@
 
 <script type="text/javascript">
 
-	// prevent iteration copy, first step, check if ctrl was clicked. For the moment, could not find a simpler way...
-	var isCtrlClicked = false;
-	
-	$(document).keydown(function(e){
-		var keyCode = (window.event) ? e.which : e.keyCode;
-		if(keyCode == '17'){
-			isCtrlClicked = true;
-		}
-	});
-	
-	$(document).keyup(function(e){
-		isCtrlClicked = false;
-	});
-
 
 	function liNode(node) {
 		if ($(node).is("a")) {

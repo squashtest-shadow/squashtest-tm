@@ -43,6 +43,7 @@
 <c:url var="exportLibraryUrl"
 	value="/requirement-browser/export-library" />
 
+
 <script type="text/javascript">
 	function customSerialize(array, name) {
 
@@ -54,21 +55,25 @@
 
 		return serialized;
 	}
+
 </script>
 
+<f:message var="crossProjectError" key="dialog.cross-project.error.label" />
 <pop:popup id="export-requirement-node-dialog"
 	titleKey="dialog.export-requirement.title" openedBy="export-link">
 	<jsp:attribute name="buttons">
 	
 		<f:message var="label" key="dialog.export-requirement.title" />
 		'${ label }': function() {
-			var node = $("${treeSelector}").jstree("get_selected");
-			var url = (node.is(':library')) ? "${ exportLibraryUrl }" : "${ exportFolderUrl }";
-			if (!checkCrossProjectSelection(node)){
-				var tab = getIds(node, 3);
+			var nodes = $("${treeSelector}").jstree("get_selected");
+			var url = (nodes.is(':library')) ? "${ exportLibraryUrl }" : "${ exportFolderUrl }";
+			if ((nodes.length) && (nodes.areSameLibs())){
+				var tab = nodes.all('getResId');
 				var filename = $('#export-name-requirement-input').val();
 				url+="?name="+filename+"&"+customSerialize(tab,"tab[]");
 				document.location.href = url;
+			}else{
+				alert("${crossProjectError}");
 			}
 			
 			$("#export-requirement-node-dialog").dialog("close");
