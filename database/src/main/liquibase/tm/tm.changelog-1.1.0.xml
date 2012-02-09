@@ -392,6 +392,10 @@
 			</column>
 			<column name="NAME" type="java.sql.Types.VARCHAR(100)" />
 			<column name="DESCRIPTION" type="CLOB" defaultValue="NULL" />			
+			<column name="ATTACHMENT_LIST_ID" type="BIGINT">		
+				<constraints nullable="false" references="ATTACHMENT_LIST(ATTACHMENT_LIST_ID)" 
+				foreignKeyName="fk_test_suite_attachment_list" />
+			</column>
 		</createTable>
 	</changeSet>
 	
