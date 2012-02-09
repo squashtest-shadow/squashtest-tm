@@ -32,10 +32,12 @@ import javax.persistence.JoinColumn;
 import javax.persistence.JoinTable;
 import javax.persistence.Lob;
 import javax.persistence.ManyToOne;
+import javax.persistence.OneToOne;
 
 import org.hibernate.validator.constraints.NotBlank;
 import org.squashtest.csp.core.security.annotation.InheritsAcls;
 import org.squashtest.csp.tm.domain.DuplicateNameException;
+import org.squashtest.csp.tm.domain.attachment.AttachmentList;
 
 @Entity
 @InheritsAcls(constrainedClass = Iteration.class, collectionName = "testSuites")
@@ -61,6 +63,9 @@ public class TestSuite {
 	@JoinTable(name = "ITERATION_TEST_SUITE", joinColumns = @JoinColumn(name = "TEST_SUITE_ID", updatable = false, insertable = false), inverseJoinColumns = @JoinColumn(name = "ITERATION_ID", updatable = false, insertable = false))
 	private Iteration iteration;
 	
+	@OneToOne(cascade = { CascadeType.PERSIST, CascadeType.MERGE })
+	@JoinColumn(name = "ATTACHMENT_LIST_ID")
+	private final AttachmentList attachmentList = new AttachmentList();
 	
 	
 	public Long getId(){
@@ -97,6 +102,11 @@ public class TestSuite {
 	public Iteration getIteration(){
 		return iteration;
 	}
+	
+	public AttachmentList getAttachmentList() {
+		return attachmentList;
+	}
+
 	
 	/**
 	 * Warning : that property builds a new list everytime. If you want to change the content of the list, use the other dedicated accessors ({@link #addTestPlan(List))} or the other one)
