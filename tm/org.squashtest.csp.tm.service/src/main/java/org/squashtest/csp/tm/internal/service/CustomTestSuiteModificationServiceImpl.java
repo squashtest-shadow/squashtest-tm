@@ -24,6 +24,8 @@ import java.util.List;
 
 import javax.inject.Inject;
 
+import org.springframework.osgi.extensions.annotation.ServiceReference;
+import org.springframework.security.access.AccessDeniedException;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.stereotype.Service;
 import org.squashtest.csp.core.infrastructure.collection.PagedCollectionHolder;
@@ -46,6 +48,9 @@ public class CustomTestSuiteModificationServiceImpl implements
 	
 	private PermissionEvaluationService permissionService;
 
+	@Inject
+	private CampaignNodeDeletionHandler campaignNodeDeletionHandler;
+	
 	@ServiceReference
 	public void setPermissionService(PermissionEvaluationService permissionService) {
 		this.permissionService = permissionService;
@@ -96,10 +101,11 @@ public class CustomTestSuiteModificationServiceImpl implements
 	@Override
 	public List<Long> remove(List<Long> suitesIds) {
 		// fetch
+		List<TestSuite> testSuites = suiteDao.findAllByIdList(suitesIds);
 		// check
+		checkPermissionsForAll(testSuites, "WRITE");
 		// proceed
-		List<Long> deletedIds = new ArrayList<Long>();
-
+		List<Long> deletedIds = campaignNodeDeletionHandler.deleteSuites(testSuites);
 		return deletedIds;
 	}
 
@@ -133,4 +139,16 @@ public class CustomTestSuiteModificationServiceImpl implements
 			}
 		}
 	}
+
+
+	/* ************************* private stuffs ************************* */
+
+	private void checkPermissionsForAll(List<TestSuite> testSuites, String permission) {
+		for (TestSuite testSuite : testSuites) {
+			checkPermission(new SecurityCheckableObject(testSuite, permission));
+		}
+
+	}
+
+
 }
