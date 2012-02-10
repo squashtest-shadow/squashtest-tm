@@ -128,8 +128,16 @@
 					"delete_node" : false,
 					"remove" : false,
 					"types" : {
-						"resource" : {
+						
+						"view" : {
 							"valid_children" : "none",						
+							"icon" : {
+								"image" : tree_icons.resource_icon
+							}
+						},
+						
+						"resource" : {
+							"valid_children" : ["view"],						
 							"icon" : {
 								"image" : tree_icons.resource_icon
 							}
