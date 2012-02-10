@@ -37,7 +37,6 @@
 	var buildGetContent = function(treeNode){
 		var root = treeNode.getBaseUrl();
 		switch (treeNode.getResType()){
-				case "iterations" : 
 				case "requirements" : 
 				case "test-cases" : return function(){return null;}; break;
 				default : return function(){

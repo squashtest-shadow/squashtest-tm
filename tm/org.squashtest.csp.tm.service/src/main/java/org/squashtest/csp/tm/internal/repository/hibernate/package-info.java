@@ -134,6 +134,9 @@
 		//Queries on CampaignTestPlanItem
 		@NamedQuery(name = "campaignTestPlanItem.findAllByIdList", query = "from CampaignTestPlanItem tp where tp.id in (:testPlanIds)"),
 
+		//Queries on TestSuite
+		@NamedQuery(name = "TestSuite.findAllByIterationId", query = "select ts from TestSuite ts join ts.iteration i where i.id = ?"),
+		
 		//Queries on Execution
 		@NamedQuery(name = "execution.countStatus", query = "select count(exSteps.executionStatus) from Execution as execution join execution.steps as exSteps where execution.id =:execId and exSteps.executionStatus=:status"),
 

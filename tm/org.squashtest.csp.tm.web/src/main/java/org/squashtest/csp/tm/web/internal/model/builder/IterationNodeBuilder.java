@@ -44,7 +44,7 @@ public class IterationNodeBuilder extends JsTreeNodeBuilder<Iteration, Iteration
 		node.addAttr("rel", "resource");
 		node.addAttr("resId", String.valueOf(model.getId()));
 		node.addAttr("resType", "iterations");
-		node.setState(State.leaf);
+		node.setState(model.hasTestSuites() ? State.closed  : State.leaf);
 		node.setTitle(createTitle(model));
 		node.addAttr("iterationIndex", Integer.toString(iterationIndex + 1));
 		node.addAttr("name", model.getName());

@@ -38,6 +38,7 @@ import org.squashtest.csp.tm.domain.campaign.CampaignFolder;
 import org.squashtest.csp.tm.domain.campaign.CampaignLibrary;
 import org.squashtest.csp.tm.domain.campaign.CampaignLibraryNode;
 import org.squashtest.csp.tm.domain.campaign.Iteration;
+import org.squashtest.csp.tm.domain.campaign.TestSuite;
 import org.squashtest.csp.tm.domain.projectfilter.ProjectFilter;
 import org.squashtest.csp.tm.internal.infrastructure.strategy.LibrarySelectionStrategy;
 import org.squashtest.csp.tm.internal.repository.CampaignDao;
@@ -45,6 +46,7 @@ import org.squashtest.csp.tm.internal.repository.CampaignFolderDao;
 import org.squashtest.csp.tm.internal.repository.CampaignLibraryDao;
 import org.squashtest.csp.tm.internal.repository.IterationDao;
 import org.squashtest.csp.tm.internal.repository.LibraryNodeDao;
+import org.squashtest.csp.tm.internal.repository.TestSuiteDao;
 import org.squashtest.csp.tm.service.CampaignLibraryNavigationService;
 import org.squashtest.csp.tm.service.IterationModificationService;
 import org.squashtest.csp.tm.service.ProjectFilterModificationService;
@@ -71,6 +73,9 @@ public class CampaignLibraryNavigationServiceImpl extends
 
 	@Inject
 	private IterationDao iterationDao;
+	
+	@Inject
+	private TestSuiteDao suiteDao;
 
 	@Inject
 	private IterationModificationService iterationModificationService;
@@ -296,6 +301,12 @@ public class CampaignLibraryNavigationServiceImpl extends
 	public Iteration findIteration(long IterationId) {
 		return iterationDao.findById(IterationId);
 
+	}
+	
+	@Override
+	@PostFilter("hasPermission(filterObject, 'READ') or hasRole('ROLE_ADMIN')")
+	public List<TestSuite> findIterationContent(long iterationId){
+		return suiteDao.findAllByIterationId(iterationId);		
 	}
 
 	/*

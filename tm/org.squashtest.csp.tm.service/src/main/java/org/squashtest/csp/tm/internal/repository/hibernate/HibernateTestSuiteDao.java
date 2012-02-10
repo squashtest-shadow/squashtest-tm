@@ -20,11 +20,32 @@
  */
 package org.squashtest.csp.tm.internal.repository.hibernate;
 
+import java.util.List;
+
+import org.hibernate.Query;
 import org.springframework.stereotype.Repository;
 import org.squashtest.csp.tm.domain.campaign.TestSuite;
 import org.squashtest.csp.tm.internal.repository.TestSuiteDao;
 
+/* 
+ * todo : make it a dynamic call
+ * 
+ */
 @Repository
 public class HibernateTestSuiteDao extends HibernateEntityDao<TestSuite> implements TestSuiteDao {
-
+	
+	@Override
+	public List<TestSuite> findAllByIterationId(final long iterationId) {
+		
+		return executeListNamedQuery("TestSuite.findAllByIterationId", new SetQueryParametersCallback() {
+			
+			@Override
+			public void setQueryParameters(Query query) {
+				query.setParameter(0,iterationId);	
+			}
+			
+		});
+	}
+	
+	
 }

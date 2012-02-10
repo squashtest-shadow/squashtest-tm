@@ -27,6 +27,7 @@ import org.squashtest.csp.tm.domain.campaign.CampaignFolder;
 import org.squashtest.csp.tm.domain.campaign.CampaignLibrary;
 import org.squashtest.csp.tm.domain.campaign.CampaignLibraryNode;
 import org.squashtest.csp.tm.domain.campaign.Iteration;
+import org.squashtest.csp.tm.domain.campaign.TestSuite;
 import org.squashtest.csp.tm.service.deletion.SuppressionPreviewReport;
 
 
@@ -62,6 +63,8 @@ LibraryNavigationService<CampaignLibrary, CampaignFolder, CampaignLibraryNode> {
 			long iterationId);
 
 	Iteration findIteration(long iterationId);
+	
+	List<TestSuite> findIterationContent(long iterationId);
 
 	Campaign createCopyCampaign(long campaignId);
 	

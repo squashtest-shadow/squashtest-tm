@@ -455,6 +455,10 @@ public class Iteration implements AttachmentHolder {
 		}
 		return true;
 	}
+	
+	public boolean hasTestSuites(){
+		return (testSuites.size() > 0);		
+	}
 
 	/* ********************************************** Attachable implementation ****************************************** */
 

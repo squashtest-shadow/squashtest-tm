@@ -20,8 +20,10 @@
  */
 package org.squashtest.csp.tm.internal.repository;
 
+import java.util.List;
+
 import org.squashtest.csp.tm.domain.campaign.TestSuite;
 
 public interface TestSuiteDao extends EntityDao<TestSuite> {
-
+	List<TestSuite> findAllByIterationId(long iterationId);
 }

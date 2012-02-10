@@ -43,6 +43,7 @@ import org.squashtest.csp.tm.domain.campaign.CampaignFolder;
 import org.squashtest.csp.tm.domain.campaign.CampaignLibrary;
 import org.squashtest.csp.tm.domain.campaign.CampaignLibraryNode;
 import org.squashtest.csp.tm.domain.campaign.Iteration;
+import org.squashtest.csp.tm.domain.campaign.TestSuite;
 import org.squashtest.csp.tm.service.CampaignLibraryNavigationService;
 import org.squashtest.csp.tm.service.LibraryNavigationService;
 import org.squashtest.csp.tm.service.deletion.SuppressionPreviewReport;
@@ -50,6 +51,8 @@ import org.squashtest.csp.tm.web.internal.controller.generic.LibraryNavigationCo
 import org.squashtest.csp.tm.web.internal.model.builder.CampaignLibraryTreeNodeBuilder;
 import org.squashtest.csp.tm.web.internal.model.builder.DriveNodeBuilder;
 import org.squashtest.csp.tm.web.internal.model.builder.IterationNodeBuilder;
+import org.squashtest.csp.tm.web.internal.model.builder.JsTreeNodeListBuilder;
+import org.squashtest.csp.tm.web.internal.model.builder.TestSuiteNodeBuilder;
 import org.squashtest.csp.tm.web.internal.model.jstree.JsTreeNode;
 
 /**
@@ -70,6 +73,9 @@ LibraryNavigationController<CampaignLibrary, CampaignFolder, CampaignLibraryNode
 	private Provider<IterationNodeBuilder> iterationNodeBuilder;
 	@Inject
 	private Provider<CampaignLibraryTreeNodeBuilder> campaignLibraryTreeNodeBuilder;
+	@Inject
+	private Provider<TestSuiteNodeBuilder> suiteNodeBuilder;
+
 
 	private CampaignLibraryNavigationService campaignLibraryNavigationService;
 
@@ -176,6 +182,17 @@ LibraryNavigationController<CampaignLibrary, CampaignFolder, CampaignLibraryNode
 		List<Iteration> iterations = campaignLibraryNavigationService.findIterationsByCampaignId(campaignId);
 		return createCampaignIterationsModel(iterations);
 	}
+	
+	
+	@RequestMapping(value = "/resources/{resourceId}/content", method = RequestMethod.GET)
+	public @ResponseBody
+	List<JsTreeNode> getIterationTestSuitesTreeModel(@PathVariable("resourceId") long iterationId){
+		
+		List<TestSuite> testSuites = campaignLibraryNavigationService.findIterationContent(iterationId);
+		
+		return createIterationTestSuitesModel(testSuites);
+	
+	}
 
 	private @ResponseBody
 	List<JsTreeNode> createCampaignIterationsModel(List<Iteration> iterations) {
@@ -188,6 +205,20 @@ LibraryNavigationController<CampaignLibrary, CampaignFolder, CampaignLibraryNode
 
 		return res;
 	}
+	
+	
+	
+	private List<JsTreeNode> createIterationTestSuitesModel(List<TestSuite> suites){
+		TestSuiteNodeBuilder nodeBuilder = suiteNodeBuilder.get();
+		JsTreeNodeListBuilder<TestSuite> listBuilder = new JsTreeNodeListBuilder<TestSuite>(nodeBuilder);
+		
+		return listBuilder.setModel(suites).build();
+
+	}
+	
+	
+	
+
 	private @ResponseBody
 	List<JsTreeNode> createCopiedIterationsModel(
 			List<Iteration> newIterations, int nextIterationNumber) {
