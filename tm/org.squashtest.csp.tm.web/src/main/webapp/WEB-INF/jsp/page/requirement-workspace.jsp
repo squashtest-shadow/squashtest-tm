@@ -25,6 +25,6 @@
 
 <layout:workspace-page-layout resourceName="requirement" linkable="requirement">
 	<jsp:attribute name="head">
-<link rel="stylesheet" type="text/css" href="${ pageContext.servletContext.contextPath }/styles/master.blue.css" />
+		<layout:import-requirements-stylesheet />
 	</jsp:attribute>
 </layout:workspace-page-layout>

@@ -121,7 +121,7 @@
 
 	
 	<jsp:attribute name="tree">
-		<tree:linkables-tree workspaceType="requirement" id="linkable-requirements-tree" rootModel="${ linkableLibrariesModel }"/>
+		<tree:linkables-tree iconSet="requirement" id="linkable-requirements-tree" rootModel="${ linkableLibrariesModel }" folderContentUrlHandler="folderContentUrl" driveContentUrlHandler="libraryContentUrl"/>
 	</jsp:attribute>
 	
 	<jsp:attribute name="tableTitlePane">		

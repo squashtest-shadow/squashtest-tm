@@ -85,7 +85,10 @@
 				</div>
 				<div class="snap-right">
 					<div style="display:inline-block;">
-						<layout:_ajax-notifications  cssClass="snap-right"/>					
+						<layout:_ajax-processing-indicator  cssClass="snap-right"/>
+						<layout:_generic-error-notification-area cssClass="snap-right"/>
+						<layout:_warning-notification-area  cssClass="snap-right"/>
+					
 					<%-- 
 						note about the sticked </div><div> below : IT DOES MATTER
 						if you insert any separator character between them the rendering will be altered for Chrome.
@@ -104,6 +107,8 @@
 		<jsp:invoke fragment="footer" />	
 	</body>
 	<comp:rich-jeditable-header />
+	<layout:_handle-ajax-errors />
+	<layout:_handle-ajax-processing/>
 	<comp:decorate-buttons />
 	<layout:_init_workspace_variables />
 	<jsp:invoke fragment="foot" />

@@ -20,8 +20,10 @@
         along with this software.  If not, see <http://www.gnu.org/licenses/>.
 
 --%>
-<%@ taglib prefix="jq" tagdir="/WEB-INF/tags/jquery" %>
-<%@ taglib prefix="ck" tagdir="/WEB-INF/tags/ckeditor" %>
-<%-- the declaration oder does matter --%>
-<jq:jquery-header />
-<ck:ckeditor-header />
+<%@ attribute name="cssClass" description="additional css classes" %>
+<%@ taglib prefix="f" uri="http://java.sun.com/jsp/jstl/fmt" %>
+
+<div id="ajax-processing-indicator" class="ui-corner-all ${cssClass} " style="display:inline-block">
+	<img src="${ pageContext.servletContext.contextPath }/images/ajax-loader.gif" width="19px" height="19px"/>
+	<span><f:message key="squashtm.processing"/></span>
+</div>

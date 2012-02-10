@@ -53,6 +53,7 @@
 	<layout:_common-script-import />		
 
 	<comp:rich-jeditable-header />	
+	<layout:_handle-ajax-errors />
 	
 
 <%-- cautious : below are used StepIndexes and StepIds. Dont get confused. --%>

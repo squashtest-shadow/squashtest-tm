@@ -114,5 +114,7 @@ it will insert sub-page-layout.tag between the top template and this one." %>
 </c:choose>
 
 <comp:rich-jeditable-header />
+<layout:_handle-ajax-errors />
+<layout:_handle-ajax-processing/>
 <comp:decorate-buttons />
 </html>

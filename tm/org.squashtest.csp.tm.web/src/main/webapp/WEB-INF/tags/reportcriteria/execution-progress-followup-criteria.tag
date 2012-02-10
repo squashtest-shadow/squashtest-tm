@@ -156,7 +156,7 @@
 		<pop:cancel-button />
 	</jsp:attribute>
 	<jsp:attribute name="body">
-		<tree:linkables-tree workspaceType="campaign"  id="linkable-campaign-tree" />
+		<tree:linkables-tree iconSet="campaign"  id="linkable-campaign-tree" folderContentUrlHandler="folderContentUrl" driveContentUrlHandler="libraryContentUrl"/>
 	</jsp:attribute>
 </pop:popup>
 

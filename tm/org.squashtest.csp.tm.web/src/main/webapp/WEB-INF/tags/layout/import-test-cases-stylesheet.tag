@@ -20,8 +20,5 @@
         along with this software.  If not, see <http://www.gnu.org/licenses/>.
 
 --%>
-<%@ taglib prefix="jq" tagdir="/WEB-INF/tags/jquery" %>
-<%@ taglib prefix="ck" tagdir="/WEB-INF/tags/ckeditor" %>
-<%-- the declaration oder does matter --%>
-<jq:jquery-header />
-<ck:ckeditor-header />
+<%@ tag body-content="empty" %>
+<link rel="stylesheet" type="text/css" href="${ pageContext.servletContext.contextPath }/styles/master.green.css" />

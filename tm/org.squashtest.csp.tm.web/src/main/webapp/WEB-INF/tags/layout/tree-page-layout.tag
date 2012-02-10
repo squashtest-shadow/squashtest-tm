@@ -224,14 +224,6 @@ it will insert sub-page-layout.tag between the top template and this one." %>
 				</div>
 			</div>
 			
-			
-		
-			<script type="text/javascript">
-				$(function(){
-					squashtm.contextualContent = $('#contextualContent').contextualContent();
-				});		
-			</script>
-			
 			<div id="contextual-content">
 				<jsp:invoke fragment="contextualContent" />
 			</div>
@@ -300,14 +292,7 @@ it will insert sub-page-layout.tag between the top template and this one." %>
 				</div>
 			</div>
 			
-			
-
 			<div id="contextual-content">
-				<script type="text/javascript">
-					$(function(){
-						squashtm.contextualContent = $('#contextual-content').contextualContent();
-					});		
-				</script>
 				<jsp:invoke fragment="contextualContent" />
 			</div>
 	</jsp:attribute>

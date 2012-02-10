@@ -25,6 +25,6 @@
 <%@ page language="java" contentType="text/html; charset=utf-8" pageEncoding="utf-8"%>
 <layout:category-page-layout resourceName="report"  categories="${categories}">
 	<jsp:attribute name="head">
-		<link rel="stylesheet" type="text/css" href="${ pageContext.servletContext.contextPath }/styles/master.blue.css" />
+		<layout:import-requirements-stylesheet />
 	</jsp:attribute>		
 </layout:category-page-layout>

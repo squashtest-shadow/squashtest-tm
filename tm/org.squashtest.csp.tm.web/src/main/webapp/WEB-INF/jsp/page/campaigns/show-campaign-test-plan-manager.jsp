@@ -113,7 +113,7 @@
 	
 	
 	<jsp:attribute name="tree">
-		<tree:linkables-tree workspaceType="test-case"  id="linkable-test-cases-tree" rootModel="${ linkableLibrariesModel }" />
+		<tree:linkables-tree iconSet="testcase"  id="linkable-test-cases-tree" rootModel="${ linkableLibrariesModel }" folderContentUrlHandler="folderContentUrl" driveContentUrlHandler="libraryContentUrl"/>
 	</jsp:attribute>
 
 	<jsp:attribute name="tableTitlePane">		

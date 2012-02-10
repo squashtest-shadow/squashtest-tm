@@ -25,6 +25,6 @@
 <%@ page language="java" contentType="text/html; charset=utf-8" pageEncoding="utf-8"%>
 <layout:workspace-page-layout resourceName="test-case">
 	<jsp:attribute name="head">
-		<link rel="stylesheet" type="text/css" href="${ pageContext.servletContext.contextPath }/styles/master.green.css" />
+		<layout:import-test-cases-stylesheet />
 	</jsp:attribute>
 </layout:workspace-page-layout>

@@ -20,8 +20,17 @@
         along with this software.  If not, see <http://www.gnu.org/licenses/>.
 
 --%>
-<%@ taglib prefix="jq" tagdir="/WEB-INF/tags/jquery" %>
-<%@ taglib prefix="ck" tagdir="/WEB-INF/tags/ckeditor" %>
-<%-- the declaration oder does matter --%>
-<jq:jquery-header />
-<ck:ckeditor-header />
+<%@ tag language="java" pageEncoding="ISO-8859-1"%>
+<script type="text/javascript">
+	$(function (){
+		$("#ajax-processing-indicator").hide();
+		$(document).ajaxStart( function(){
+			$("#ajax-processing-indicator").show().css('display', 'inline-block');
+		})		
+		.ajaxStop( function(){
+			$("#ajax-processing-indicator").hide();
+		});
+	});
+
+
+</script>

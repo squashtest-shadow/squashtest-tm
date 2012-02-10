@@ -105,8 +105,11 @@
 					</div>
 					<div class="snap-right">
 						<div style="display:inline-block;">
-							<layout:_ajax-notifications  cssClass="snap-right"/>
-						</div><div class="main-menubar">
+							<layout:_ajax-processing-indicator  cssClass="snap-right"/>
+							<layout:_generic-error-notification-area cssClass="snap-right"/>
+							<layout:_warning-notification-area  cssClass="snap-right"/>
+						</div>
+						<div class="main-menubar">
 							<layout:_menu-bar />
 						</div>
 					
@@ -123,6 +126,8 @@
 		<jsp:invoke fragment="footer" />
 	</body>
 	<comp:rich-jeditable-header />
+	<layout:_handle-ajax-errors />
+	<layout:_handle-ajax-processing/>
 	<comp:decorate-buttons />
 	<jsp:invoke fragment="foot" />
 </html>

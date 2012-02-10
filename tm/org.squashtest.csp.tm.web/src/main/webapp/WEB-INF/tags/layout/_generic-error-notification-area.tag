@@ -20,8 +20,12 @@
         along with this software.  If not, see <http://www.gnu.org/licenses/>.
 
 --%>
-<%@ taglib prefix="jq" tagdir="/WEB-INF/tags/jquery" %>
-<%@ taglib prefix="ck" tagdir="/WEB-INF/tags/ckeditor" %>
-<%-- the declaration oder does matter --%>
-<jq:jquery-header />
-<ck:ckeditor-header />
+<%@ attribute name="cssClass" description="additional css classes" %>
+<%@ taglib prefix="f" uri="http://java.sun.com/jsp/jstl/fmt" %>
+<div id="generic-error-notification-area" class="ui-state-error ui-corner-all ${ cssClass } not-displayed ">
+	<span class="ui-icon ui-icon-alert icon"></span><span><f:message key="error.generic.label" />&nbsp;(<a href="#" id="show-generic-error-details"><f:message key="error.generic.button.details.label" /></a>)</span>
+</div>
+
+<div id="generic-information-notification-area" class="ui-state-highlight ui-corner-all ${ cssClass } not-displayed ">
+	<span class="ui-icon ui-icon-info icon"></span><span id="generic-information-notification-span"></span>
+</div>
