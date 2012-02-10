@@ -29,10 +29,13 @@ import org.hibernate.Session;
 import org.hibernate.type.LongType
 import org.spockframework.util.NotThreadSafe;
 import org.springframework.transaction.annotation.Transactional;
+import org.squashtest.csp.tm.domain.attachment.AttachmentList;
 import org.squashtest.csp.tm.domain.campaign.Campaign;
 import org.squashtest.csp.tm.domain.campaign.CampaignFolder
 import org.squashtest.csp.tm.domain.campaign.CampaignLibrary;
+import org.squashtest.csp.tm.domain.campaign.Iteration
 import org.squashtest.csp.tm.domain.campaign.IterationTestPlanItem;
+import org.squashtest.csp.tm.domain.campaign.TestSuite
 import org.squashtest.csp.tm.domain.execution.Execution
 import org.squashtest.csp.tm.internal.service.CampaignNodeDeletionHandler
 import org.squashtest.csp.tm.internal.service.DbunitServiceSpecification;
@@ -320,8 +323,28 @@ class CampaignNodeDeletionHandlerIT  extends DbunitServiceSpecification{
 		def lib=findEntity(CampaignLibrary.class, 1l)
 		lib.rootContent.size()==0
 	}
+	@DataSet("NodeDeletionHandlerTest.should delete testSuites.xml")
+	def"should remove test suites"(){
+		when :
+		TestSuite testSuite = findEntity (TestSuite.class, 1L)
+		TestSuite testSuite2 = findEntity (TestSuite.class, 2L)
+		deletionHandler.deleteSuites([testSuite, testSuite2])
+		then :
+		allDeleted("TestSuite", [1l, 2L])
+		allDeleted("AttachmentList", [12l, 13L])
+		
+		IterationTestPlanItem iterationTestPlanItem=findEntity(IterationTestPlanItem.class, 121l)
+		iterationTestPlanItem.getTestSuite() == null
+		IterationTestPlanItem iterationTestPlanItem2=findEntity(IterationTestPlanItem.class, 122l)
+		iterationTestPlanItem2.getTestSuite() == null
+		
+		Iteration iteration = findEntity(Iteration.class, 11L)
+		iteration.getTestSuites().size() == 0
+		Iteration iteration2 = findEntity(Iteration.class, 12L)
+		iteration2.getTestSuites().size() == 0
+		
 
-
+	}
 	/* ************************** utilities ********************************* */
 
 

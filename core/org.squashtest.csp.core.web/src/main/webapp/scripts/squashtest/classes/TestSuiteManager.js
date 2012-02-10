@@ -398,11 +398,8 @@ function TestSuiteManager(settings) {
 	this.view = new TestSuiteManagerView(viewSettings);
 
 	bindCtrl();
-	this.view.update();
+//	this.view.update();
 
-	/* TODO : */
-//	this.remove.button.click(function() {
-//		alert("not implemented yet");
-//	});
+	
 
 }

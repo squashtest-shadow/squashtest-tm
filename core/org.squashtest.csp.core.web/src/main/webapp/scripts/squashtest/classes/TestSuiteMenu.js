@@ -247,8 +247,6 @@ function TestSuiteMenu(settings){
 	
 		
 	/* *********************** init ********************* */
-
-	
 	//the goal is to init the menu to get a handler on it.
 	var initMenu = $.proxy(function(){
 		
@@ -274,6 +272,6 @@ function TestSuiteMenu(settings){
 	
 	initMenu();
 	initHandlerBinding();
-	initializeContent();	
+//	initializeContent();	
 }
 

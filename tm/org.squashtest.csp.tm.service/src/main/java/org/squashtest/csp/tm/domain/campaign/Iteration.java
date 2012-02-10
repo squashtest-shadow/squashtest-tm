@@ -62,7 +62,7 @@ import org.squashtest.csp.tm.domain.testcase.TestCase;
 @Entity
 @SoftDeletable
 public class Iteration implements AttachmentHolder {
-	
+
 	@Id
 	@GeneratedValue
 	@Column(name = "ITERATION_ID")
@@ -98,9 +98,9 @@ public class Iteration implements AttachmentHolder {
 	@JoinTable(name = "CAMPAIGN_ITERATION", joinColumns = @JoinColumn(name = "ITERATION_ID", updatable = false, insertable = false), inverseJoinColumns = @JoinColumn(name = "CAMPAIGN_ID", updatable = false, insertable = false))
 	private Campaign campaign;
 
-	/* 
-		FIXME TEST_PLAN might be a little more appropriate. Don't forget to fix the hql/criteria queries as well
-	*/
+	/*
+	 * FIXME TEST_PLAN might be a little more appropriate. Don't forget to fix the hql/criteria queries as well
+	 */
 	@OneToMany(cascade = { CascadeType.PERSIST, CascadeType.MERGE })
 	@OrderColumn(name = "ITEM_TEST_PLAN_ORDER")
 	@JoinTable(name = "ITEM_TEST_PLAN_LIST", joinColumns = @JoinColumn(name = "ITERATION_ID"), inverseJoinColumns = @JoinColumn(name = "ITEM_TEST_PLAN_ID"))
@@ -111,21 +111,18 @@ public class Iteration implements AttachmentHolder {
 	@OneToOne(cascade = { CascadeType.PERSIST, CascadeType.MERGE })
 	@JoinColumn(name = "ATTACHMENT_LIST_ID")
 	private final AttachmentList attachmentList = new AttachmentList();
-	
 
 	/* *********************** Test suites ********************************** */
-	
+
 	@OneToMany(cascade = { CascadeType.ALL })
 	@JoinTable(name = "ITERATION_TEST_SUITE", joinColumns = @JoinColumn(name = "ITERATION_ID"), inverseJoinColumns = @JoinColumn(name = "TEST_SUITE_ID"))
 	private Set<TestSuite> testSuites = new HashSet<TestSuite>();
 
-	
 	/* ********************************************* METHODS ********************************************** */
-	
+
 	/**
-	 * That method will add an Execution to the iteration. The iterationTestPlan to which it will be attached
-	 * is given among the arguments
-	 * The Execution must be referencing at TestCase prior calling that method (ie
+	 * That method will add an Execution to the iteration. The iterationTestPlan to which it will be attached is given
+	 * among the arguments The Execution must be referencing at TestCase prior calling that method (ie
 	 * execution.getReferencedTestCase() must not return null), or no operation will be performed.
 	 * 
 	 * @param execution
@@ -137,12 +134,11 @@ public class Iteration implements AttachmentHolder {
 		if (execution.getReferencedTestCase() == null) {
 			return;
 		}
-		
+
 		if (testPlan != null) {
 			testPlan.addExecution(execution);
 		}
 	}
-
 
 	// flattened list of the executions
 	public List<Execution> getExecutions() {
@@ -255,6 +251,14 @@ public class Iteration implements AttachmentHolder {
 		return scheduledPeriod;
 	}
 
+	private TestSuite getTestSuite(Long testSuiteId) {
+		for (TestSuite testSuite : testSuites) {
+			if (testSuite.getId().equals(testSuiteId)) {
+				return testSuite;
+			}
+		}
+		throw new UnknownEntityException(testSuiteId, TestSuite.class);
+	}
 
 	public IterationTestPlanItem getTestPlan(Long testPlanId) {
 		for (IterationTestPlanItem iterTestPlan : testPlans) {
@@ -306,16 +310,12 @@ public class Iteration implements AttachmentHolder {
 			clone.setActualEndDate((Date) this.getActualEndDate().clone());
 		}
 	}
-	
-	
-	
+
 	/* **************************************** TEST PLAN **************************************************** */
-	
+
 	public List<IterationTestPlanItem> getTestPlans() {
 		return testPlans;
 	}
-
-	
 
 	public List<TestCase> getPlannedTestCase() {
 		List<TestCase> list = new LinkedList<TestCase>();
@@ -325,6 +325,14 @@ public class Iteration implements AttachmentHolder {
 		return list;
 	}
 
+	public void removeTestSuite(@NotNull TestSuite testSuite) {
+		TestSuite localTestSuite = getTestSuite(testSuite.getId());
+
+		if (localTestSuite != null) {
+			testSuites.remove(testSuite);
+		}
+
+	}
 
 	public void removeTestPlan(@NotNull IterationTestPlanItem testPlan) {
 		IterationTestPlanItem localTestPlan = getTestPlan(testPlan.getId());
@@ -334,7 +342,6 @@ public class Iteration implements AttachmentHolder {
 		}
 
 	}
-	
 
 	public void addTestPlan(@NotNull IterationTestPlanItem testPlan) {
 		if (testPlan.getReferencedTestCase() == null) {
@@ -342,8 +349,7 @@ public class Iteration implements AttachmentHolder {
 		}
 		testPlans.add(testPlan);
 	}
-	
-	
+
 	/***
 	 * Method which returns the position of a test case in the current iteration
 	 * 
@@ -410,7 +416,6 @@ public class Iteration implements AttachmentHolder {
 		testPlans.remove(currentPosition);
 		testPlans.add(newPosition, testCaseToMove);
 	}
-	
 
 	public boolean isTestCasePlanned(Long testCaseId) {
 		return (getTestPlanForTestCaseId(testCaseId) != null);
@@ -419,7 +424,6 @@ public class Iteration implements AttachmentHolder {
 	public boolean isTestCasePlanned(TestCase testCase) {
 		return isTestCasePlanned(testCase.getId());
 	}
-
 
 	// get a test plan if the provided test case is part of it
 	// returns null otherwise
@@ -432,24 +436,27 @@ public class Iteration implements AttachmentHolder {
 		}
 		return null;
 	}
-	
-	
-	/* ********************************************** TEST SUITE ********************************************************* */
-	
-	public Set<TestSuite> getTestSuites(){
+
+	/*
+	 * ********************************************** TEST SUITE
+	 * *********************************************************
+	 */
+
+	public Set<TestSuite> getTestSuites() {
 		return testSuites;
 	}
-	
-	public void addTestSuite(TestSuite suite){
-		if (! checkSuiteNameAvailable(suite.getName())){
-			throw new DuplicateNameException("cannot add suite to iteration "+getName()+" : suite named "+suite.getName()+" already exists");
+
+	public void addTestSuite(TestSuite suite) {
+		if (!checkSuiteNameAvailable(suite.getName())) {
+			throw new DuplicateNameException("cannot add suite to iteration " + getName() + " : suite named "
+					+ suite.getName() + " already exists");
 		}
 		testSuites.add(suite);
 	}
-	
-	boolean checkSuiteNameAvailable(String name){
-		for (TestSuite suite : testSuites){
-			if (suite.getName().equals(name)){
+
+	boolean checkSuiteNameAvailable(String name) {
+		for (TestSuite suite : testSuites) {
+			if (suite.getName().equals(name)) {
 				return false;
 			}
 		}
@@ -460,7 +467,10 @@ public class Iteration implements AttachmentHolder {
 		return (testSuites.size() > 0);		
 	}
 
-	/* ********************************************** Attachable implementation ****************************************** */
+	/*
+	 * ********************************************** Attachable implementation
+	 * ******************************************
+	 */
 
 	@Override
 	public AttachmentList getAttachmentList() {
@@ -472,7 +482,10 @@ public class Iteration implements AttachmentHolder {
 		return campaign.getProject();
 	}
 
-	/* *********************************************** dates autosetting code ******************************************** */
+	/*
+	 * *********************************************** dates autosetting code
+	 * ********************************************
+	 */
 
 	/**
 	 * If the iteration have autodates set, they will be updated accordingly.

@@ -20,6 +20,7 @@
  */
 package org.squashtest.csp.tm.internal.service;
 
+import java.util.Collection;
 import java.util.List;
 
 import org.squashtest.csp.tm.domain.campaign.CampaignFolder;
@@ -108,6 +109,6 @@ public interface CampaignNodeDeletionHandler extends NodeDeletionHandler<Campaig
 	 * @param testSuites
 	 * @return
 	 */
-	List<Long> deleteSuites(List<TestSuite> testSuites);
+	List<Long> deleteSuites(Collection<TestSuite> testSuites);
 
 }

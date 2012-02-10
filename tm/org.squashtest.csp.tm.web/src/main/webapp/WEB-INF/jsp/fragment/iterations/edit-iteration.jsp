@@ -22,9 +22,9 @@
 --%>
 <?xml version="1.0" encoding="utf-8" ?>
 <%@ page language="java" contentType="text/html; charset=utf-8" pageEncoding="utf-8"%>
-<%@ taglib uri="http://java.sun.com/jsp/jstl/core" prefix="c" %>
-<%@ taglib tagdir="/WEB-INF/tags/jquery" prefix="jq" %>
-<%@ taglib tagdir="/WEB-INF/tags/component" prefix="comp" %>
+<%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core" %>
+<%@ taglib prefix="jq" tagdir="/WEB-INF/tags/jquery" %>
+<%@ taglib prefix="comp" tagdir="/WEB-INF/tags/component" prefix="comp" %>
 <%@ taglib prefix="s" uri="http://www.springframework.org/tags" %>
 <%@ taglib prefix="f" uri="http://java.sun.com/jsp/jstl/fmt" %>
 <%@ taglib prefix="pop" tagdir="/WEB-INF/tags/popup" %>
@@ -395,7 +395,7 @@
 <%-- ----------------------------------- Test Suite Management -------------------------------------------------- --%>
 
 <comp:test-suite-managment suiteList="${iteration.testSuites}" popupOpener="manage-test-suites-button"
-	popupId="manage-test-suites-popup" menuId="manage-test-suites-menu" baseUrl="${testSuitesUrl}" datatableId="test-plans-table"/>
+	popupId="manage-test-suites-popup" menuId="manage-test-suites-menu" testSuitesUrl="${testSuitesUrl}" datatableId="test-plans-table"/>
 
 
 

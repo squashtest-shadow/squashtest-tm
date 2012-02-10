@@ -28,7 +28,7 @@
 <%@ attribute name="popupOpener" required="true" description="the id of the button that will open the popup. Must exist prior to the call to this tag." %>
 <%@ attribute name="menuId" required="true" description="the id of the button opening the menu. Must exists." %>
 <%@ attribute name="suiteList" type="java.lang.Object" required="true" description="the list of the suites that exist already" %>
-<%@ attribute name="baseUrl" required="true" description="url representing the current iteration" %>
+<%@ attribute name="testSuitesUrl" required="true" description="url representing the current iteration" %>
 <%@ attribute name="datatableId" required="true" description="the id of the test plan datatable"%>
 
 <%@ taglib prefix="pop" 	tagdir="/WEB-INF/tags/popup" %>
@@ -147,17 +147,11 @@
 			squashtm.testSuiteManagement= {};
 
 			/* ****************** define the main model ******************** */
-
-			var data = [
-					<c:forEach var="data" items="${suiteList}" varStatus="status" >
-					{id : '${data.id}', name : '${data.name}'}<c:if test="${not status.last}">,</c:if>
-					</c:forEach>
-			];
 			
 			var modelSettings = {
-				createUrl : "${baseUrl}/new",	
+				createUrl : "${testSuitesUrl}/new",	
 				baseUpdateUrl : "${baseSuiteUrl}",
-				data : data
+				testSuiteListUrl : "${testSuitesUrl}/get"
 			};
 			
 			

@@ -20,6 +20,8 @@
  */
 package org.squashtest.csp.tm.internal.service.deletion;
 
+import java.util.ArrayList;
+import java.util.Collection;
 import java.util.Collections;
 import java.util.LinkedList;
 import java.util.List;
@@ -162,9 +164,33 @@ public class CampaignDeletionHandlerImpl extends AbstractNodeDeletionHandlerImpl
 	}
 
 	@Override
-	public List<Long> deleteSuites(List<TestSuite> testSuites) {
-		// TODO Auto-generated method stub
-		return Collections.emptyList();
+	public List<Long> deleteSuites(Collection<TestSuite> testSuites) {
+		List<Long> deletedIds = new ArrayList<Long>();
+		List<Long> attachmentListIds = new ArrayList<Long>();
+		for (TestSuite testSuite : testSuites) {
+			Long id = testSuite.getId();
+			// store the attachment list
+			attachmentListIds.add(testSuite.getAttachmentList().getId());
+			// remove test plan item's links
+			for (IterationTestPlanItem testPlanItem : testSuite.getTestPlan()) {
+				testPlanItem.setTestSuite(null);
+			}
+			// remove iteration's link
+			Iteration iteration = testSuite.getIteration();
+			iteration.removeTestSuite(testSuite);
+			// remove itself
+			deletionDao.removeEntity(testSuite);
+			// add the id to the list of deleted items
+			deletedIds.add(id);
+		}
+		/*
+		 * a flush is needed at this point because all operations above where performed by Hibernate, while the rest
+		 * will be executed using SQL queries. The inconsistencies between cached entities but not yet flushed entities
+		 * and the actual database content would make the operation crash, so we need to synchronize.
+		 */
+		deletionDao.flush();
+		deletionDao.removeAttachmentsLists(attachmentListIds);
+		return deletedIds;
 	}
 
 	@Override
@@ -214,6 +240,7 @@ public class CampaignDeletionHandlerImpl extends AbstractNodeDeletionHandlerImpl
 
 	private void doDeleteIterations(List<Iteration> iterations) {
 		for (Iteration iteration : iterations) {
+			deleteSuites(iteration.getTestSuites());
 			deleteIterationTestPlan(iteration.getTestPlans());
 			deletionDao.removeAttachmentList(iteration.getAttachmentList());
 			// iteration.getCampaign().removeIteration(iteration);

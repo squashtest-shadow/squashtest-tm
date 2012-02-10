@@ -22,8 +22,11 @@ package org.squashtest.csp.tm.web.internal.controller.campaign;
 
 import java.util.ArrayList;
 import java.util.Date;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Locale;
+import java.util.Map;
+import java.util.Set;
 
 import javax.inject.Inject;
 import javax.inject.Provider;
@@ -54,11 +57,12 @@ import org.squashtest.csp.tm.web.internal.model.datatable.DataTableDrawParameter
 import org.squashtest.csp.tm.web.internal.model.datatable.DataTableFilterSorter;
 import org.squashtest.csp.tm.web.internal.model.datatable.DataTableModel;
 import org.squashtest.csp.tm.web.internal.model.datatable.DataTableModelHelper;
+import org.squashtest.csp.tm.web.internal.model.jquery.TestSuiteModel;
 import org.squashtest.csp.tm.web.internal.model.jstree.JsTreeNode;
 import org.squashtest.csp.tm.web.internal.model.viewmapper.DataTableMapper;
 
 /**
- *
+ * 
  * @author R.A
  */
 @Controller
@@ -79,10 +83,9 @@ public class IterationTestPlanManagerController {
 		this.iterationTestPlanManagerService = iterationTestPlanManagerService;
 	}
 
-	private final DataTableMapper testPlanMapper = new DataTableMapper("unused", IterationTestPlanItem.class, 
-			TestCase.class,	Project.class, TestSuite.class).initMapping(9)
-			.mapAttribute(Project.class, 2, "name", String.class)
-			.mapAttribute(TestCase.class, 3, "name", String.class)
+	private final DataTableMapper testPlanMapper = new DataTableMapper("unused", IterationTestPlanItem.class,
+			TestCase.class, Project.class, TestSuite.class).initMapping(9)
+			.mapAttribute(Project.class, 2, "name", String.class).mapAttribute(TestCase.class, 3, "name", String.class)
 			.mapAttribute(TestCase.class, 4, "executionMode", TestCaseExecutionMode.class)
 			.mapAttribute(TestSuite.class, 5, "name", String.class)
 			.mapAttribute(IterationTestPlanItem.class, 6, "executionStatus", ExecutionStatus.class)
@@ -101,6 +104,21 @@ public class IterationTestPlanManagerController {
 		mav.addObject("iteration", iteration);
 		mav.addObject("linkableLibrariesModel", linkableLibrariesModel);
 		return mav;
+	}
+
+	@RequestMapping(value = "/iterations/{iterationId}/test-suites/get", method = RequestMethod.GET)
+	public @ResponseBody
+	List<TestSuiteModel> getTestSuites(@PathVariable long iterationId) {
+		Iteration iteration = iterationTestPlanManagerService.findIteration(iterationId);
+		Set<TestSuite> testSuites = iteration.getTestSuites();
+		List<TestSuiteModel> result = new ArrayList<TestSuiteModel>();
+		for (TestSuite testSuite : testSuites) {
+			TestSuiteModel model = new TestSuiteModel();
+			model.setId(testSuite.getId());
+			model.setName(testSuite.getName());
+			result.add(model);
+		}
+		return result;
 	}
 
 	@RequestMapping(value = "/iterations/{iterationId}/test-cases", method = RequestMethod.POST, params = TESTCASES_IDS_REQUEST_PARAM)
@@ -140,34 +158,36 @@ public class IterationTestPlanManagerController {
 
 	@RequestMapping(value = "/iterations/{iterationId}/test-case/{testPlanId}/assign-user", method = RequestMethod.POST)
 	public @ResponseBody
-	void assignUserToCampaignTestPlanItem(@PathVariable long testPlanId, @PathVariable long iterationId, @RequestParam long userId) {
+	void assignUserToCampaignTestPlanItem(@PathVariable long testPlanId, @PathVariable long iterationId,
+			@RequestParam long userId) {
 		iterationTestPlanManagerService.assignUserToTestPlanItem(testPlanId, iterationId, userId);
 	}
 
 	@RequestMapping(value = "/iterations/{iterationId}/batch-assign-user", method = RequestMethod.POST)
 	public @ResponseBody
-	void assignUserToCampaignTestPlanItems(@RequestParam(TESTPLANS_IDS_REQUEST_PARAM) List<Long> testPlanIds, @PathVariable long iterationId, @RequestParam long userId) {
+	void assignUserToCampaignTestPlanItems(@RequestParam(TESTPLANS_IDS_REQUEST_PARAM) List<Long> testPlanIds,
+			@PathVariable long iterationId, @RequestParam long userId) {
 		iterationTestPlanManagerService.assignUserToTestPlanItems(testPlanIds, iterationId, userId);
 	}
 
 	@RequestMapping(value = "/iterations/{iterationId}/assignable-user", method = RequestMethod.GET)
-	public
-	ModelAndView getAssignUserForIterationTestPlanItem(@RequestParam("testPlanId") long testPlanId, @PathVariable long iterationId,	final Locale locale) {
+	public ModelAndView getAssignUserForIterationTestPlanItem(@RequestParam("testPlanId") long testPlanId,
+			@PathVariable long iterationId, final Locale locale) {
 		List<Long> ids = new ArrayList<Long>();
 		ids.add(testPlanId);
-		List<User> usersList =  iterationTestPlanManagerService.findAssignableUserForTestPlan(iterationId);
+		List<User> usersList = iterationTestPlanManagerService.findAssignableUserForTestPlan(iterationId);
 		IterationTestPlanItem itp = iterationTestPlanManagerService.findTestPlanItem(iterationId, testPlanId);
 
 		ModelAndView mav = new ModelAndView("fragment/generics/test-plan-combo-box");
 
 		mav.addObject("usersList", usersList);
-		mav.addObject("selectIdentitier", "usersList"+testPlanId);
+		mav.addObject("selectIdentitier", "usersList" + testPlanId);
 		mav.addObject("selectClass", "userLogin");
-		mav.addObject("dataAssignUrl", "/iterations/"+iterationId+"/test-case/"+testPlanId+"/assign-user");
+		mav.addObject("dataAssignUrl", "/iterations/" + iterationId + "/test-case/" + testPlanId + "/assign-user");
 
-		if (itp.getUser() != null){
+		if (itp.getUser() != null) {
 			mav.addObject("testCaseAssignedLogin", itp.getUser().getLogin());
-		}else{
+		} else {
 			mav.addObject("testCaseAssignedLogin", null);
 		}
 
@@ -175,10 +195,9 @@ public class IterationTestPlanManagerController {
 	}
 
 	@RequestMapping(value = "/iterations/{iterationId}/batch-assignable-user", method = RequestMethod.GET)
-	public
-	ModelAndView getAssignUserForIterationTestPlanItems(@PathVariable long iterationId, final Locale locale) {
+	public ModelAndView getAssignUserForIterationTestPlanItems(@PathVariable long iterationId, final Locale locale) {
 
-		List<User> userList =  iterationTestPlanManagerService.findAssignableUserForTestPlan(iterationId);
+		List<User> userList = iterationTestPlanManagerService.findAssignableUserForTestPlan(iterationId);
 		ModelAndView mav = new ModelAndView("fragment/generics/test-plan-combo-box");
 		mav.addObject("usersList", userList);
 		mav.addObject("selectIdentitier", "comboUsersList");
@@ -194,8 +213,8 @@ public class IterationTestPlanManagerController {
 
 		CollectionSorting filter = createCollectionSorting(params, testPlanMapper);
 
-		FilteredCollectionHolder<List<IterationTestPlanItem>> holder = iterationTestPlanManagerService.findTestPlan(iterationId,
-				filter);
+		FilteredCollectionHolder<List<IterationTestPlanItem>> holder = iterationTestPlanManagerService.findTestPlan(
+				iterationId, filter);
 
 		return new DataTableModelHelper<IterationTestPlanItem>() {
 			@Override
@@ -205,39 +224,29 @@ public class IterationTestPlanManagerController {
 				String testCaseName;
 				String testCaseExecutionMode;
 				String testCaseId;
-				
+
 				String testSuiteName;
 
-				if (item.isTestCaseDeleted()){
-					projectName=formatNoData(locale);
-					testCaseName=formatDeleted(locale);
-					testCaseExecutionMode=formatNoData(locale);
-					testCaseId="";
-				}
-				else{
-					projectName=item.getReferencedTestCase().getProject().getName();
-					testCaseName=item.getReferencedTestCase().getName();
+				if (item.isTestCaseDeleted()) {
+					projectName = formatNoData(locale);
+					testCaseName = formatDeleted(locale);
+					testCaseExecutionMode = formatNoData(locale);
+					testCaseId = "";
+				} else {
+					projectName = item.getReferencedTestCase().getProject().getName();
+					testCaseName = item.getReferencedTestCase().getName();
 					testCaseExecutionMode = formatExecutionMode(item.getReferencedTestCase().getExecutionMode(), locale);
-					testCaseId=item.getReferencedTestCase().getId().toString();
+					testCaseId = item.getReferencedTestCase().getId().toString();
 				}
 
-
-				if (item.getTestSuite()==null){
+				if (item.getTestSuite() == null) {
 					testSuiteName = formatNone(locale);
-				}else{
+				} else {
 					testSuiteName = item.getTestSuite().getName();
-				}				
-				
-				return new Object[]{
-						item.getId(),
-						getCurrentIndex(),
-						projectName,
-						testCaseName,
-						testCaseExecutionMode,
-						testSuiteName,
-						testCaseId,
-						item.isTestCaseDeleted(),
-						" "
+				}
+
+				return new Object[] { item.getId(), getCurrentIndex(), projectName, testCaseName,
+						testCaseExecutionMode, testSuiteName, testCaseId, item.isTestCaseDeleted(), " "
 
 				};
 
@@ -246,14 +255,11 @@ public class IterationTestPlanManagerController {
 
 	}
 
-
-
 	private String formatNoData(Locale locale) {
 		return messageSource.getMessage("squashtm.nodata", null, locale);
 	}
 
-
-	private String formatDeleted(Locale locale){
+	private String formatDeleted(Locale locale) {
 		return messageSource.getMessage("squashtm.itemdeleted", null, locale);
 	}
 
@@ -261,10 +267,9 @@ public class IterationTestPlanManagerController {
 		return messageSource.getMessage(mode.getI18nKey(), null, locale);
 	}
 
-	private String formatNone(Locale locale){
-		return messageSource.getMessage("squashtm.none.f", null, locale);	
+	private String formatNone(Locale locale) {
+		return messageSource.getMessage("squashtm.none.f", null, locale);
 	}
-
 
 	private CollectionSorting createCollectionSorting(final DataTableDrawParameters params, DataTableMapper mapper) {
 		CollectionSorting filter = new DataTableFilterSorter(params, mapper);
