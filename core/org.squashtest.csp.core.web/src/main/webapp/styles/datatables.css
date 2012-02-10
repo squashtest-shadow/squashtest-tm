@@ -53,6 +53,12 @@ div.dataTables_footer{
 		
 }
 
+div.dataTables_footer{
+	color : #555555;
+	font-style : normal;
+		
+}
+
 
 div.dataTables_length  {
 	float:left;
