@@ -245,6 +245,13 @@ function TestSuiteMenu(settings){
 		bindInput();
 	}, this);
 	
+	var setContextual = $.proxy(function(){
+		var oldCreate = this.menu.create;
+		this.menu.create = function(){
+			oldCreate.call(this);
+			this.getContainer().parent().addClass('is-contextual');
+		}
+	}, this);
 		
 	/* *********************** init ********************* */
 	//the goal is to init the menu to get a handler on it.
@@ -263,6 +270,8 @@ function TestSuiteMenu(settings){
 	this.instanceSelector = settings.instanceSelector;
 	this.model = settings.model;
 	this.datatableSelector = settings.datatableSelector;
+	
+	if (settings.isContextual!==undefined) this.isContextual = settings.isContextual; 
 
 	this.instance = $(settings.instanceSelector);
 	this.control = new TestSuiteMenuControl();
@@ -273,5 +282,9 @@ function TestSuiteMenu(settings){
 	initMenu();
 	initHandlerBinding();
 //	initializeContent();	
+	
+	if (this.isContextual){
+		setContextual();
+	}
 }
 

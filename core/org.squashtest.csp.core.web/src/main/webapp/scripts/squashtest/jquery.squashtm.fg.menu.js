@@ -39,6 +39,7 @@ Dual licensed under the MIT (filamentgroup.com/examples/mit-license.txt) and GPL
  * - The methods kill() and showMenu() were modified to bind/unbind key event in their own scope, not all existing events as before.
  * - Made the content reloadable by allowing to set the content (see the new attribute this.content, + first lines of this.create).
  * - Exposed also the container throught getContainer() .
+ * - Added a naive destroyer, see this.destroy()
  *
  * @author bsiri
  */
@@ -228,6 +229,12 @@ function Menu(caller, options){
 		// assign key events
 		$(document).keydown(keydownHandler);
 	};
+	
+
+	this.destroy = function(){
+		container.parent().remove();
+	};
+	
 	
 	this.create = function(){
 		//those lines allows dynamic recreation

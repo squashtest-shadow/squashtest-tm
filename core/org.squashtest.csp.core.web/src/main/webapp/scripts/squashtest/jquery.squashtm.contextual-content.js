@@ -25,10 +25,7 @@
 	$.fn.contextualContent = function(settings){
 	
 		this.clean = function(){
-			$('.is-contextual', this).each(function(){
-				//todo : do something smarter next time		
-				$(this).dialog("destroy").remove(); 
-			});
+			$('.is-contextual').dialog("destroy").remove(); 
 			this.empty();					
 		};
 	
