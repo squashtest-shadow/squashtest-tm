@@ -4,7 +4,7 @@
 	<parent>
 		<artifactId>squashtest-csp-core</artifactId>
 		<groupId>org.squashtest.csp</groupId>
-		<version>1.1.0.IT29</version>
+		<version>1.1.0.RC1-SNAPSHOT</version>
 	</parent>
 	<artifactId>org.squashtest.csp.core.jetty.start.osgi</artifactId>
 	<name>org.squashtest.csp.core.jetty.start.osgi</name>
