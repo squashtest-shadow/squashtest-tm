@@ -186,6 +186,7 @@ public class CustomIterationModificationServiceImpl implements CustomIterationMo
 	@Override
 	@PreAuthorize("hasPermission(#iterationId, 'org.squashtest.csp.tm.domain.campaign.Iteration', 'WRITE') "
 			+ "or hasRole('ROLE_ADMIN')")
+	@Deprecated
 	public void changeTestPlanPosition(long iterationId, long testPlanId, int newTestPlanPosition) {
 
 		Iteration iteration = iterationDao.findById(iterationId);
@@ -199,6 +200,20 @@ public class CustomIterationModificationServiceImpl implements CustomIterationMo
 
 		iteration.moveTestPlan(currentPosition, newTestPlanPosition);
 
+	}
+	
+	/**
+	 * see doc in the interface
+	 * 
+	 */
+	@Override
+	@PreAuthorize("hasPermission(#iterationId, 'org.squashtest.csp.tm.domain.campaign.Iteration', 'WRITE') "
+			+ "or hasRole('ROLE_ADMIN')")
+	public void changeTestPlanPosition(long iterationId, int newPosition, List<Long> itemIds){
+		Iteration iteration = iterationDao.findById(iterationId);
+		List<IterationTestPlanItem> items = testPlanDao.findAllByIdList(itemIds);
+		
+		iteration.moveTestPlans(newPosition, items);
 	}
 
 	@Override

@@ -537,7 +537,7 @@ function updateTreebuttons(strOperations){
 	var node = target.parent();
 	
 	
-	if (node.is(':library') || node.is(':folder') || node.attr('restype') == "campaigns"){
+	if (node.is(':library') || node.is(':folder') || node.attr('restype') == "campaigns" || node.attr('restype') == "iterations"){
 		if (event.ctrlKey) return true;
 		event.stopImmediatePropagation();
 	
@@ -558,29 +558,6 @@ function updateTreebuttons(strOperations){
 	event.stopImmediatePropagation();
 	clearTimeout(tree.data.squash.clicktimer);
 	tree.toggle_node(node);			
-}
-
-function clearContextualContent(targetSelector){
-	$('.is-contextual').each(function(){
-		//todo : kill the damn ckeditor instances				
-		$(this).dialog("destroy").remove(); 
-	});
-	$(targetSelector).empty();		
-}
-
-
-function updateTreebuttons(strOperations){
-	for (var menu in squashtm.treemenu){
-		for (var operation in squashtm.treemenu[menu].buttons){
-			if (strOperations.match(operation)){
-				squashtm.treemenu[menu].buttons[operation].enable();
-			}
-			else{
-				squashtm.treemenu[menu].buttons[operation].disable();
-			}
-		}
-	}
-	
 }
 
 

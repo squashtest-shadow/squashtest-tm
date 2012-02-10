@@ -63,7 +63,10 @@ public interface CustomIterationModificationService {
 
 	void addExecution(long iterationId, long testPlanId);
 
+	@Deprecated	//use the other method instead when possible
 	void changeTestPlanPosition(long iterationId, long testPlanId, int newIndex);
+	
+	void changeTestPlanPosition(long iterationId, int newPosition, List<Long> itemIds);
 
 	@Transactional(readOnly = true)
 	List<Execution> findAllExecutions(long iterationId);

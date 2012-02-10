@@ -157,11 +157,11 @@
 	//for drag and drop test case feature
 	//row : selected row
 	//dropPosition : the new position
-	function testPlanDropHandler(row, dropPosition) {
-		//first compose the url to update the order, then send a request attribute newIndex and call the refresh function
-		$.post('${ updateTestPlanUrl }' + parseTestPlanId(row), { newIndex : dropPosition }, function(){
+	function testPlanDropHandler(rows, dropPosition) {
+		var itemIds = $(rows).collect(function(elt){return elt.id.split(':')[1];});
+		$.post('${ updateTestPlanUrl }/move', { newIndex : dropPosition, itemIds : itemIds }, function() {
 			refreshTestPlans();
-		}) ;
+		});
 	}
 	
 	function refreshTestPlans() {

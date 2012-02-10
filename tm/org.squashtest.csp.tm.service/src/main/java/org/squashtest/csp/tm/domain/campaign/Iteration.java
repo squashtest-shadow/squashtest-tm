@@ -407,6 +407,7 @@ public class Iteration implements AttachmentHolder {
 	 * @param newPosition
 	 *            the new position
 	 */
+	@Deprecated
 	public void moveTestPlan(int currentPosition, int newPosition) {
 		if (currentPosition == newPosition) {
 			return;
@@ -416,6 +417,15 @@ public class Iteration implements AttachmentHolder {
 		testPlans.remove(currentPosition);
 		testPlans.add(newPosition, testCaseToMove);
 	}
+	
+	public void moveTestPlans(int newIndex, List<IterationTestPlanItem> movedItems){
+		if (! testPlans.isEmpty()){
+			testPlans.removeAll(movedItems);
+			testPlans.addAll(newIndex, movedItems);
+		}
+	}
+	
+	
 
 	public boolean isTestCasePlanned(Long testCaseId) {
 		return (getTestPlanForTestCaseId(testCaseId) != null);
