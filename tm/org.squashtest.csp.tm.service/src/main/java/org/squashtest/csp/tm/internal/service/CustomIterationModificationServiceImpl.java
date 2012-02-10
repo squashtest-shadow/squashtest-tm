@@ -28,6 +28,7 @@ import javax.inject.Inject;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.security.access.prepost.PostAuthorize;
+import org.springframework.security.access.prepost.PostFilter;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.stereotype.Service;
 import org.squashtest.csp.tm.domain.CannotCreateExecutionException;
@@ -270,8 +271,7 @@ public class CustomIterationModificationServiceImpl implements CustomIterationMo
 	}
 
 	@Override	
-	@PreAuthorize("hasPermission(#arg0, 'org.squashtest.csp.tm.domain.campaign.Iteration', 'READ') "
-			+ "or hasRole('ROLE_ADMIN')")	
+	@PostFilter("hasPermission(filterObject, 'READ') or hasRole('ROLE_ADMIN')")
 	public List<TestSuite> findAllTestSuites(long iterationId) {
 		return iterationDao.findAllTestSuites(iterationId);
 	}

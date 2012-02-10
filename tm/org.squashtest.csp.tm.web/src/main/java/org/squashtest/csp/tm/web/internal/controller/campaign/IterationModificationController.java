@@ -21,11 +21,14 @@
 package org.squashtest.csp.tm.web.internal.controller.campaign;
 
 import java.text.SimpleDateFormat;
+import java.util.ArrayList;
+import java.util.Collection;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Locale;
 import java.util.Map;
+import java.util.Set;
 
 import javax.inject.Inject;
 import javax.servlet.http.HttpServletResponse;
@@ -59,6 +62,7 @@ import org.squashtest.csp.tm.web.internal.model.datatable.DataTableDrawParameter
 import org.squashtest.csp.tm.web.internal.model.datatable.DataTableFilterSorter;
 import org.squashtest.csp.tm.web.internal.model.datatable.DataTableModel;
 import org.squashtest.csp.tm.web.internal.model.datatable.DataTableModelHelper;
+import org.squashtest.csp.tm.web.internal.model.jquery.TestSuiteModel;
 import org.squashtest.csp.tm.web.internal.model.viewmapper.DataTableMapper;
 import org.squashtest.csp.tm.web.internal.utils.DateUtils;
 
@@ -402,6 +406,19 @@ public class IterationModificationController {
 		res.put("id", suite.getId().toString());
 		res.put("name", suite.getName());
 		return res;
+	}
+	
+	
+	@RequestMapping(value = "/test-suites", method = RequestMethod.GET)
+	public @ResponseBody
+	List<TestSuiteModel> getTestSuites(@PathVariable long iterationId) {
+		Collection<TestSuite> testSuites = iterationModService.findAllTestSuites(iterationId);
+		List<TestSuiteModel> result = new ArrayList<TestSuiteModel>();
+		for (TestSuite testSuite : testSuites) {
+			TestSuiteModel model = new TestSuiteModel(testSuite.getId(), testSuite.getName());
+			result.add(model);
+		}
+		return result;
 	}
 	
 	

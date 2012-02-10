@@ -118,13 +118,15 @@ function TestSuiteModel(settings) {
 		});
 	}
 
-	$.ajax({
-		'url' : settings.testSuiteListUrl,
-		type : 'GET',
-		dataType : 'json'
-	}).then(function(json) {
-		this.data = json;
-		notifyListeners("add");
-	});
+	this.getModel = function(){
+		$.ajax({
+			'url' : settings.testSuiteListUrl,
+			type : 'GET',
+			dataType : 'json'
+		}).then(function(json) {
+			this.data = json;
+			notifyListeners("add");
+		});
+	}
 
 }

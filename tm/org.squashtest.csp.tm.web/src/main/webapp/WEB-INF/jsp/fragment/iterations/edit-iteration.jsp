@@ -342,11 +342,9 @@
 	</jsp:attribute>
 	
 	<jsp:attribute name="body">
-		<%--
-		---- 
+		<%------ 
 			requires <jq:execution-status-factory/>
-		----  
-		--%>
+		------%>
 	
 		<aggr:decorate-iteration-test-cases-table tableModelUrl="${iterationTestPlanUrl}" testPlanDetailsBaseUrl="${testCaseDetailsBaseUrl}" 
 			testPlansUrl="${testCasesUrl}" batchRemoveButtonId="remove-test-case-button" 

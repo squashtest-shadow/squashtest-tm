@@ -91,7 +91,7 @@
 		@NamedQuery(name = "iteration.findIterationByName", query = "from Iteration i where i.name like :iterationName order by i.name asc"),
 		@NamedQuery(name = "iteration.findTestPlanFiltered", query = "select tp from Iteration it join it.testPlans tp where it.id = :iterationId and index(tp) between :firstIndex and :lastIndex order by index(tp)"),
 		@NamedQuery(name = "iteration.findAllById", query = "from Iteration i where i.id in (:iterationIds)"),
-		@NamedQuery(name = "iteration.findAllTestSuites", query = "from TestSuite ts where ts.iteration = :iterationId order by name asc"),
+		@NamedQuery(name = "iteration.findAllTestSuites", query = "select ts from TestSuite ts join ts.iteration i where i.id = :iterationId order by ts.name asc"),
 
 		// Queries on TestSuite
 		@NamedQuery(name = "testSuite.findTestPlanPaged", query = "select tp from TestSuite ts join ts.iteration it join it.testPlans tp where ts.id = :id and tp.testSuite.id = :id2 order by index(tp)"),
@@ -113,7 +113,7 @@
 		@NamedQuery(name = "testCase.findAllTestCasesIdsCalledByTestCase", query = "select called.id from TestCase caller join caller.steps step join step.calledTestCase called where caller.id = :testCaseId and step.class = CallTestStep"),
 		@NamedQuery(name = "testCase.findDistinctTestCasesIdsCalledByTestCase", query = "select distinct called.id from TestCase caller join caller.steps step join step.calledTestCase called where caller.id = :testCaseId and step.class = CallTestStep"),
 		@NamedQuery(name = "testCase.findAllTestCasesIdsCalledByTestCases", query = "select distinct called.id from TestCase caller join caller.steps step join step.calledTestCase called where caller.id in (:testCasesIds) and step.class = CallTestStep"),
-		//the two next ones are to be used together. The second one assumes that the calledIds are actually not called and wont check it again.
+		//the two next ones are to be used together. The second one assumes that the calledIds are actually not called and wont perform checks to make sure of that.
 		//Look for this query in HibernateTestCaseDao for more details.
 		@NamedQuery(name = "testCase.findTestCasesHavingCallerDetails", query = "select distinct caller.id, caller.name, called.id, called.name from TestCase caller join caller.steps steps join steps.calledTestCase called where steps.class = CallTestStep and called.id in (:testCaseIds) group by caller, called"),
 		@NamedQuery(name = "testCase.findTestCasesHavingNoCallerDetails", query = "select nullif(1,1), nullif(1,1), called.id, called.name from TestCase called where called.id in (:nonCalledIds)"),
@@ -140,7 +140,7 @@
 		@NamedQuery(name = "campaignTestPlanItem.findAllByIdList", query = "from CampaignTestPlanItem tp where tp.id in (:testPlanIds)"),
 
 		//Queries on TestSuite
-		@NamedQuery(name = "TestSuite.findAllByIterationId", query = "select ts from TestSuite ts join ts.iteration i where i.id = ?"),
+		@NamedQuery(name = "TestSuite.findAllByIterationId", query = "select ts from TestSuite ts join ts.iteration i where i.id = ? order by name asc"),
 		
 		//Queries on Execution
 		@NamedQuery(name = "execution.countStatus", query = "select count(exSteps.executionStatus) from Execution as execution join execution.steps as exSteps where execution.id =:execId and exSteps.executionStatus=:status"),

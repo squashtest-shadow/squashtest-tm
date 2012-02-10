@@ -154,7 +154,7 @@
 			var modelSettings = {
 				createUrl : "${testSuitesUrl}/new",	
 				baseUpdateUrl : "${baseSuiteUrl}",
-				testSuiteListUrl : "${testSuitesUrl}/get"
+				testSuiteListUrl : "${testSuitesUrl}"
 			};
 			
 			
@@ -196,6 +196,8 @@
 			};
 			
 			squashtm.testSuiteManagement.testSuiteModel.addListener(tableListener);
+			
+			squashtm.testSuiteManagement.testSuiteModel.getModel();
 			
 			//now we can make reappear
 			$("#${popupId} .main-div-suites").removeClass("not-displayed");

@@ -106,20 +106,7 @@ public class IterationTestPlanManagerController {
 		return mav;
 	}
 
-	@RequestMapping(value = "/iterations/{iterationId}/test-suites/get", method = RequestMethod.GET)
-	public @ResponseBody
-	List<TestSuiteModel> getTestSuites(@PathVariable long iterationId) {
-		Iteration iteration = iterationTestPlanManagerService.findIteration(iterationId);
-		Set<TestSuite> testSuites = iteration.getTestSuites();
-		List<TestSuiteModel> result = new ArrayList<TestSuiteModel>();
-		for (TestSuite testSuite : testSuites) {
-			TestSuiteModel model = new TestSuiteModel();
-			model.setId(testSuite.getId());
-			model.setName(testSuite.getName());
-			result.add(model);
-		}
-		return result;
-	}
+
 
 	@RequestMapping(value = "/iterations/{iterationId}/test-cases", method = RequestMethod.POST, params = TESTCASES_IDS_REQUEST_PARAM)
 	public @ResponseBody
