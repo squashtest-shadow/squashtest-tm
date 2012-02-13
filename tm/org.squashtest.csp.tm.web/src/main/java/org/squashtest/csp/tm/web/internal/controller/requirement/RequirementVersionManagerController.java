@@ -39,8 +39,10 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
+import org.springframework.web.servlet.ModelAndView;
 import org.springframework.web.util.HtmlUtils;
 import org.squashtest.csp.tm.domain.Level;
+import org.squashtest.csp.tm.domain.requirement.Requirement;
 import org.squashtest.csp.tm.domain.requirement.RequirementCriticality;
 import org.squashtest.csp.tm.domain.requirement.RequirementStatus;
 import org.squashtest.csp.tm.domain.requirement.RequirementVersion;
@@ -56,8 +58,6 @@ import org.squashtest.csp.tm.web.internal.helper.LevelLabelFormatter;
 @Controller
 @RequestMapping("/requirement-versions/{requirementVersionId}")
 public class RequirementVersionManagerController {
-	private static final Logger LOGGER = LoggerFactory.getLogger(RequirementModificationController.class);
-
 	@Inject
 	private Provider<RequirementCriticalityComboDataBuilder> criticalityComboBuilderProvider;
 	@Inject
@@ -122,13 +122,16 @@ public class RequirementVersionManagerController {
 
 	@RequestMapping(value="/editor-fragment", method = RequestMethod.GET)
 	public String getRequirementEditor(@PathVariable long requirementVersionId, Model model, Locale locale) {
+		populateRequirementEditorModel(requirementVersionId, model, locale);
+		return "fragment/requirements/requirement-version-editor";
+	}
+
+	private void populateRequirementEditorModel(long requirementVersionId, Model model, Locale locale) {
 		RequirementVersion requirementVersion = requirementVersionManager.findById(requirementVersionId);
 		model.addAttribute("requirementVersion", requirementVersion);
 
 		String criticalities = buildMarshalledCriticalities(locale);
 		model.addAttribute("jsonCriticalities", criticalities);
-
-		return "fragment/requirements/requirement-version-editor";
 	}
 
 	@RequestMapping(method = RequestMethod.GET, value = "/next-status")
@@ -161,4 +164,10 @@ public class RequirementVersionManagerController {
 		requirementVersionManager.changeName(requirementVersionId, newName);
 		return new Object();
 	}
+	
+	@RequestMapping(value = "/info", method = RequestMethod.GET)
+	public String showRequirementVersionEditor(@PathVariable long requirementVersionId, Model model, Locale locale) {
+		populateRequirementEditorModel(requirementVersionId, model, locale);
+		return "page/requirements/requirement-version-editor";
+	}	
 }

@@ -153,7 +153,7 @@
 	
 	 
 	function addHLinkToRequirementName(row, data) {
-		var url='${ pageContext.servletContext.contextPath }/requirements/' + getRequirementsTableRowId(data) + '/info';			
+		var url='${ pageContext.servletContext.contextPath }/requirement-versions/' + getRequirementsTableRowId(data) + '/info';			
 		addHLinkToCellText($( 'td:eq(3)', row ), url);
 	}	
 	
