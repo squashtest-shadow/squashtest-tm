@@ -71,8 +71,18 @@
 					] 
 				});
 				
-				var showSelectedVersion = function(row) {
-					var id = $( "td:eq(0)", row ).text();
+				var showSelectedVersion = function(table) {
+					var rows = table.fnGetNodes();
+					var id;
+
+					$( rows ).each(function(index, row) {
+						if ($( row ).hasClass( 'ui-state-row-selected' )) {
+							var data = table.fnGetData( row );
+							id = getRowId( data );
+							return false; // breaks the iteration
+						}
+					});
+
 					var urlPattern = "<c:url value='/requirement-versions/selectedVersionId/editor-fragment' />";
 					
 					$( "#contextual-content" ).load(urlPattern.replace("selectedVersionId", id));
@@ -84,16 +94,17 @@
 					if (!row.hasClass('ui-state-row-selected')) {
 						row.addClass('ui-state-row-selected').removeClass('ui-state-highlight');
 						row.parent().find('.ui-state-row-selected').not(row).removeClass( 'ui-state-row-selected');
-						saveTableSelection(table, getRowId);
-						showSelectedVersion(row);					
+						saveTableSelection(table.dataTable(), getRowId);
+						showSelectedVersion(table);					
 					}
 				});
 				
 				/* refreshes table on ajax success */
 				table.ajaxSuccess(function(event, xrh, settings) {
 					if (settings.type == 'POST' && settings.url.match(/requirement-versions\/\d+$/g)) {
-						saveTableSelection($( this ), getRowId);
-						$( this ).dataTable().fnDraw(false);
+						var dataTable = $( this ).dataTable();
+						saveTableSelection(dataTable, getRowId);
+						dataTable.fnDraw(false);
 					}
 				});
 			});
