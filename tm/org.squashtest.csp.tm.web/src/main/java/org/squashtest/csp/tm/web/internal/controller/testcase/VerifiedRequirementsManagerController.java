@@ -76,8 +76,6 @@ public class VerifiedRequirementsManagerController {
 
 	private static final String REQUIREMENTS_IDS = "requirementsIds[]";
 
-	private static final Logger LOGGER = LoggerFactory.getLogger(VerifiedRequirementsManagerController.class);
-
 	private final DataTableMapper verifiedReqMapper = new DataTableMapper("verified-requirement-version",
 			RequirementVersion.class, Project.class).initMapping(7)
 			.mapAttribute(Project.class, 2, "name", String.class)

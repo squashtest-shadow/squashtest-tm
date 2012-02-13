@@ -25,7 +25,6 @@ import java.util.List;
 
 import javax.inject.Inject;
 
-import org.apache.commons.collections.ListUtils;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.security.access.prepost.PostAuthorize;
 import org.springframework.security.access.prepost.PostFilter;
@@ -57,6 +56,11 @@ import org.squashtest.csp.tm.service.deletion.SuppressionPreviewReport;
 public class CampaignLibraryNavigationServiceImpl extends
 		AbstractLibraryNavigationService<CampaignLibrary, CampaignFolder, CampaignLibraryNode> implements
 		CampaignLibraryNavigationService {
+
+	/**
+	 * token appended to the name of a copy
+	 */
+	private static final String COPY_TOKEN = "-Copie";
 
 	@Inject
 	private CampaignLibraryDao campaignLibraryDao;
@@ -116,9 +120,9 @@ public class CampaignLibraryNavigationServiceImpl extends
 
 	private void renameIterationCopy(Iteration newIteration, Campaign campaign) {
 		List<String> copiesNames = campaignDao.findNamesInCampaignStartingWith(campaign.getId(),
-						newIteration.getName() + "-Copie");
+						newIteration.getName() + COPY_TOKEN);
 		int newCopy = generateUniqueCopyNumber(copiesNames);
-		String newName = newIteration.getName() + "-Copie" + newCopy;
+		String newName = newIteration.getName() + COPY_TOKEN + newCopy;
 		newIteration.setName(newName);
 	}
 
@@ -164,9 +168,9 @@ public class CampaignLibraryNavigationServiceImpl extends
 	private void renameIfHomonymeInDestination(Iteration newIteration,
 			List<String> namesAtDestination) {
 		if(namesAtDestination.contains(newIteration.getName())){
-			List<String> copiesNames = findNamesStartingWith(namesAtDestination,newIteration.getName()+ "-Copie");
+			List<String> copiesNames = findNamesStartingWith(namesAtDestination,newIteration.getName()+ COPY_TOKEN);
 			int newCopyNumber = generateUniqueCopyNumber(copiesNames);
-			String newName = newIteration.getName() + "-Copie" + newCopyNumber;
+			String newName = newIteration.getName() + COPY_TOKEN + newCopyNumber;
 			newIteration.setName(newName);
 		}
 	}
