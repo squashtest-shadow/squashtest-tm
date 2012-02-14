@@ -593,7 +593,6 @@ function clearContextualContent(targetSelector){
 
 
 
-
 /* ***************************  post new nodes operations ********************************************** */
 /**
  * Post new contents to the url determined by the selected node of a tree and
@@ -647,10 +646,10 @@ function clearContextualContent(targetSelector){
 	}
 	
 	var selectNode = function(){
-		newNode.select();
 		targetNode.deselect();
 		origNode.deselect();
 		
+		newNode.select();
 		return targetNode.open();
 	}
 
@@ -674,8 +673,6 @@ function clearContextualContent(targetSelector){
 	}
 
 }
-
- 
 
  
 

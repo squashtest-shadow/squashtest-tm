@@ -265,7 +265,7 @@ LibraryNavigationController<CampaignLibrary, CampaignFolder, CampaignLibraryNode
 		
 		for (SuppressionPreviewReport report : reportList){
 			builder.append(report.toString(getMessageSource(), locale));
-			builder.append("\n");
+			builder.append("<br/>");
 		}
 		
 		return builder.toString();
@@ -277,6 +277,28 @@ LibraryNavigationController<CampaignLibrary, CampaignFolder, CampaignLibraryNode
 		
 		return campaignLibraryNavigationService.deleteIterations(nodeIds);	
 	}
+	
+	@RequestMapping(value="/delete-test-suites/simulate", method = RequestMethod.POST, params = {"nodeIds[]"})
+	public @ResponseBody String simulateSuiteDeletion(@RequestParam("nodeIds[]") List<Long> nodeIds, Locale locale){
+		List<SuppressionPreviewReport> reportList = campaignLibraryNavigationService.simulateSuiteDeletion(nodeIds);
+		
+		StringBuilder builder = new StringBuilder();
+		
+		for (SuppressionPreviewReport report : reportList){
+			builder.append(report.toString(getMessageSource(), locale));
+			builder.append("<br/>");
+		}
+		
+		return builder.toString();
+		
+	}
+	
+	
+	@RequestMapping(value="/delete-test-suites/confirm", method=RequestMethod.DELETE, params= {"nodeIds[]"})
+	public @ResponseBody List<Long> confirmSuitesDeletion(@RequestParam("nodeIds[]") List<Long> nodeIds){
+		
+		return campaignLibraryNavigationService.deleteSuites(nodeIds);	
+	}	
 	
 	
 	@RequestMapping(value="/copy", method= RequestMethod.POST)

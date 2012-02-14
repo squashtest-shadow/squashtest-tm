@@ -355,5 +355,15 @@ public class CampaignLibraryNavigationServiceImpl extends
 	public List<Long> deleteIterations(List<Long> targetIds) {
 		return deletionHandler.deleteIterations(targetIds);
 	}
+	
+	@Override
+	public List<SuppressionPreviewReport> simulateSuiteDeletion(List<Long> targetIds) {
+		return deletionHandler.simulateSuiteDeletion(targetIds);
+	}
+
+	@Override
+	public List<Long> deleteSuites(List<Long> targetIds) {
+		return deletionHandler.deleteSuites(targetIds);
+	}
 
 }

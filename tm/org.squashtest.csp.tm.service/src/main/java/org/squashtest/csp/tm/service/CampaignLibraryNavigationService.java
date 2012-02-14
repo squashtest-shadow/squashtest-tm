@@ -89,5 +89,16 @@ LibraryNavigationService<CampaignLibrary, CampaignFolder, CampaignLibraryNode> {
 	 * @return
 	 */
 	List<Long> deleteIterations(List<Long> targetIds);
+	
+	
+	List<SuppressionPreviewReport> simulateSuiteDeletion(List<Long> targetIds);
+
+	/**
+	 * that method should delete test suites, and remove its references in iteration and iteration test plan item
+	 * 
+	 * @param testSuites
+	 * @return
+	 */
+	List<Long> deleteSuites(List<Long> suiteIds);
 
 }

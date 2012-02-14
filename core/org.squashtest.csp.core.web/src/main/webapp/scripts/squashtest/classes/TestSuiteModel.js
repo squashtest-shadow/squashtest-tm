@@ -33,6 +33,7 @@ function TestSuiteModel(settings) {
 	this.createUrl = settings.createUrl;
 	this.baseUpdateUrl = settings.baseUpdateUrl;
 	this.getUrl = settings.getUrl;
+	this.removeUrl = settings.removeUrl;
 	
 	if (settings.initData !==undefined){
 		this.data=settings.initData;
@@ -149,9 +150,10 @@ function TestSuiteModel(settings) {
 			notifyContextualContent(evt);
 		})
 	}
+	
 	this.postRemove = function(toSend) {
 
-		var url = this.baseUpdateUrl + "/remove";
+		var url = this.removeUrl;
 
 		return $.ajax({
 			'url' : url,
@@ -160,7 +162,7 @@ function TestSuiteModel(settings) {
 			dataType : 'json'
 		}).success(function(json) {
 			removeSuites(json);
-			var evt = { evt_name : "remove" } ;;
+			var evt = { evt_name : "remove" } ;
 			notifyListeners(evt);
 			notifyContextualContent(evt);
 		})

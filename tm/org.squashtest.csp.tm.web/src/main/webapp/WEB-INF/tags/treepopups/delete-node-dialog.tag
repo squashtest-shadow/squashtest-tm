@@ -37,6 +37,7 @@
 
 <c:url var="baseUrl" value="/${resourceName}-browser/delete-nodes"/>
 <c:url var="delIterationsUrl" value="/${resourceName}-browser/delete-iterations" />
+<c:url var="delSuitesUrl" value="/${resourceName}-browser/delete-test-suites" />
 
 
 <f:message var="deleteMessage" key="dialog.label.delete-nodes.label" />
@@ -92,6 +93,7 @@ function getUrl(strType){
 		case "folder" : 
 		case "file" : return "${baseUrl}"; break;
 		case "resource" : return "${delIterationsUrl}"; break;
+		case "view" : return "${delSuitesUrl}"; break;
 		
 	}
 }
