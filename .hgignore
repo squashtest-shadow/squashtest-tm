@@ -163,3 +163,6 @@ distribution/META-INF/NOTICE.txt
 distribution/META-INF/COPYING.txt
 syntax: regexp
 bnd.bnd$
+syntax: glob
+integration-tests/log/IT.log
+integration-tests/src/it/resources/log4j.properties
