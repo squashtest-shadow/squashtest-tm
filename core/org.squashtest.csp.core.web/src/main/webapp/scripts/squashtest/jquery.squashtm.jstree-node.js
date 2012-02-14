@@ -55,7 +55,7 @@
 		//check validity of this call to treeNode();
 		var lt = this.length;
 		var tree = $.jstree._reference(this);
-		var noLi = (! this.is('li') ) && (! this.is('a'));
+		var noLi = (! this.is('li') ) && (! this.is('a') && (! this.is('ins')));
 		
 		if ((lt==0) || (tree==null) || (noLi)){
 			throw "this node is not a valid tree node";
@@ -135,8 +135,13 @@
 		
 				
 		// ***************** tree actions
+		
 		this.deselectChildren = function(){
 			this.tree.deselect_all(this);
+		}
+		
+		this.refresh = function(){
+			this.tree.refresh(this);
 		}
 		
 		this.isOpen = function(){

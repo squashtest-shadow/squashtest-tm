@@ -42,13 +42,14 @@
 <c:set var="modelScriptUrl"   value="http://localhost/scripts/TestSuiteModel.js" />
 <c:set var="managerScriptUrl" value="http://localhost/scripts/TestSuiteManager.js" />
 <c:set var="menuScriptUrl" value="http://localhost/scripts/TestSuiteMenu.js" />
---%> 
+ --%>
 
 
 <s:url var="managerScriptUrl" value="/scripts/squashtest/classes/TestSuiteManager.js"  />  
 <s:url var="modelScriptUrl" value="/scripts/squashtest/classes/TestSuiteModel.js"  /> 
 <s:url var="menuScriptUrl" value="/scripts/squashtest/classes/TestSuiteMenu.js" /> 
 
+ 
 <%-- 
 <link rel="stylesheet" type="text/css" href="http://localhost/css/suites.css" />
  --%>
@@ -146,6 +147,12 @@
 		$.when(loadTestSuiteModelScript(), loadTestSuiteManagerScript(), loadTestSuiteMenuScript()) 		
 		.then(function(){				
 			
+			var initData = [
+				<c:forEach var="suite" items="${suiteList}" varStatus="status">
+					{ id : '${suite.id}', name : '${suite.name}'}<c:if test="${not status.last}">,</c:if>
+				</c:forEach>
+			];
+			
 
 			squashtm.testSuiteManagement= {};
 
@@ -154,7 +161,8 @@
 			var modelSettings = {
 				createUrl : "${testSuitesUrl}/new",	
 				baseUpdateUrl : "${baseSuiteUrl}",
-				testSuiteListUrl : "${testSuitesUrl}"
+				getUrl : "${testSuitesUrl}",
+				initData : initData
 			};
 			
 			
@@ -188,8 +196,8 @@
 			
 			var tableListener = {
 				update : function(evt){
-					//"add" or "rename" are none of our business.
-					if ((evt=="bind") || (evt=="remove") || (evt==undefined) || (evt=="rename")){
+					//"add" is none of our business.
+					if ((evt===undefined) || (evt.evt_name=="remove") || (evt.evt_name=="rename")){
 						refreshTestPlansWithoutSelection();	
 					}
 				}
@@ -197,7 +205,6 @@
 			
 			squashtm.testSuiteManagement.testSuiteModel.addListener(tableListener);
 			
-			squashtm.testSuiteManagement.testSuiteModel.getModel();
 			
 			//now we can make reappear
 			$("#${popupId} .main-div-suites").removeClass("not-displayed");

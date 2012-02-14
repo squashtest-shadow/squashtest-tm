@@ -178,6 +178,7 @@
 					}, this));
 		},
 		_fn : {
+		
 			selectionIsEditable : function(selectedNodes){
 			
 				//that variable will be set to true if at least one selected node is not editable.
@@ -187,12 +188,14 @@
 				else if(selectedNodes.length == 0) return "noNodeSelected";
 				else return "OK";
 			},
+			
 			selectionIsOneEditableNode : function(selectedNodes){
 				//true if only one node is selected and is editable
 				if(!selectedNodes.not(":editable").length > 0
 						&& selectedNodes.length == 1) return "OK";
 				else return "notOneEditable";
 			},
+			
 			selectionIsDeletable : function(selectedNodes){
 				//all nodes are deletables excepted project libraries
 				var isEdit = this.selectionIsEditable(selectedNodes);
@@ -200,6 +203,7 @@
 				else if ( selectedNodes.is(":library"))return "nodeleteLibrary";
 				else return "OK" ;
 			},
+			
 			selectionIsCopyable : function(selectedNodes){
 				// all nodes except libraries are copyable 
 				// if iterations are selected with other nodes type the selection is not copyable
@@ -209,6 +213,7 @@
 				else if (selectedNodes.is(":iteration") && selectedNodes.is(":node")) return "noCopyIteration+Other";
 				else return "OK";
 			},
+			
 			selectionIsCreateFolderAllowed : function(selectedNodes){
 				//need only one node selected
 				var isOneEdit = this.selectionIsOneEditableNode(selectedNodes);
@@ -219,6 +224,7 @@
 					}
 					else return "createFolderNotHere";
 			},
+			
 			selectionIsCreateFileAllowed : function(selectedNodes){
 				//need only one node selected
 				var isOneEdit = this.selectionIsOneEditableNode(selectedNodes);
@@ -235,6 +241,7 @@
 					else return "createFileNotHere";
 				}
 			},
+			
 			selectionIsCreateResourceAllowed : function(selectedNodes){
 				//need only one node selected
 				var isOneEdit = this.selectionIsOneEditableNode(selectedNodes);
@@ -243,6 +250,7 @@
 				else if (selectedNodes.attr('rel') ==  "file" || selectedNodes.attr('rel') ==  "resource") return "OK";
 				else return "createResNotHere"
 			},
+			
 			selectionIsRenamable : function(selectedNodes){
 				//need only one node selected
 				var isOneEdit = this.selectionIsOneEditableNode(selectedNodes);
@@ -251,6 +259,7 @@
 				//rename allowed for nodes other than libraries
 				else return "OK";
 			},
+			
 			selectionIsPasteAllowed : function(selectedNodes){
 				
 				//need only one node selected
@@ -310,16 +319,7 @@
 					}
 				}
 				return operations;			
-			},
-			
-			refresh_selected : function(){
-				var selected = this.get_selected();
-				var iter;
-				for (iter in selected){
-					this.refresh(projectNode);
-				}
 			}
-			
 			
 		},
 			
@@ -342,12 +342,23 @@
 			
 			container
 				.bind("select_node.jstree", function(event, data){
+				
 					unselectDescendantsAndOtherProjectsSelections(data.rslt.obj, self);
 					operations = data.inst.allowedOperations();
 					updateTreebuttons(operations);
 					
 					var resourceUrl = $(data.rslt.obj).treeNode().getResourceUrl();
-					squashtm.contextualContent.loadWith(resourceUrl);
+					
+					var selected = data.inst.get_selected();
+					
+					if (selected.length==1){
+						squashtm.contextualContent.loadWith(resourceUrl)
+						.done(function(){
+							squashtm.contextualContent.addListener(self);
+						});
+					}else{
+						squashtm.contextualContent.unload();
+					}
 					
 					return true;
 				})
@@ -402,8 +413,18 @@
 		},
 		
 		_fn : {
-			postNewNode : postNewNode	//see below
-		
+			postNewNode : postNewNode,	//see below
+			
+			update : function(event){
+				//todo : make something smarter
+				this.refresh_selected();
+			},
+			
+			refresh_selected : function(){
+				var self = this;
+				var selected = this.get_selected();
+				selected.all('refresh');
+			}
 		}
 	 
 	 
@@ -533,7 +554,7 @@ function updateTreebuttons(strOperations){
   * the event through for the other kind of nodes.
   */
  function handleNodeClick(tree, event){
-	var target = $(event.target);
+	var target = $(event.target).treeNode();
 	var node = target.parent();
 	
 	
@@ -559,6 +580,17 @@ function updateTreebuttons(strOperations){
 	clearTimeout(tree.data.squash.clicktimer);
 	tree.toggle_node(node);			
 }
+
+function clearContextualContent(targetSelector){
+	$('.is-contextual').each(function(){
+		//todo : kill the damn ckeditor instances				
+		$(this).dialog("destroy").remove(); 
+	});
+	$(targetSelector).empty();		
+}
+
+
+
 
 
 

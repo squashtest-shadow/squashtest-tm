@@ -18,40 +18,94 @@
  *     You should have received a copy of the GNU Lesser General Public License
  *     along with this software.  If not, see <http://www.gnu.org/licenses/>.
  */
+ 
+ 
+ /* ********************
+	This object somewhat implements a distributed MVC. Locally, within the contextual content, it represents the model. However, when modifications happen it must warn it's listeners, but also
+	the object squashtm.contextualContent. It will relay the information to other models (ie, the tree).
+	
+	As such a model object is both master (of its listeners) and slave (of the contextual content).
+ 
+ ********************* */
 
 function TestSuiteModel(settings) {
 
 	this.createUrl = settings.createUrl;
 	this.baseUpdateUrl = settings.baseUpdateUrl;
-	this.data = [];
+	this.getUrl = settings.getUrl;
+	
+	if (settings.initData !==undefined){
+		this.data=settings.initData;
+	}else{
+		this.data = [];
+	}
+	
 	this.listeners = [];
 
 	var self = this;
 
-	/* ************* private ************* */
+	/* ************** private ************* */
+	
+	//we have to reimplement indexOf because IE8 doesn't support it
+	//returns -1 if not found
+	var indexById = $.proxy(function(id){
+		for (var i=0;i<this.data.length;i++){
+			if (this.data[i].id==id){
+				return i;
+			}
+		}
+		return -1;
+	}, self);
+	
 	var renameSuite = $.proxy(function(json) {
-		for ( var i = 0; i < this.data.length; i++) {
-			if (this.data[i].id == json.id) {
-				this.data[i].name = json.name;
+		var index = indexById(json.id);
+		if (index!=-1){
+			this.data[index].name=json.name;
+		}
+	}, self);
+	
+	var removeSuites = $.proxy(function(list) {
+		for (var i in list){
+			var index = indexById(list[i]);
+			if (index!=-1){
+				this.data.splice(index, 1);
 			}
 		}
 	}, self);
-	var removeSuites = $.proxy(function(json) {
-		for ( var i = 0; i < this.data.length; i++) {
-			var idp = this.data[i].id;
-			if ($.inArray(parseInt(idp, 10), json) >= 0) {
-				delete this.data[i];
-			}
-		}
-	}, self);
+	
+	var _getModel = function(){
+		return $.ajax({
+			'url' : self.getUrl,
+			type : 'GET',
+			dataType : 'json'
+		}).success(function(json){
+			this.data=json;
+		});
+	}
 
 	var notifyListeners = $.proxy(function(evt) {
 		for ( var i = 0; i < this.listeners.length; i++) {
 			this.listeners[i].update(evt);
 		}
 	}, self);
+	
+	
+	var notifyContextualContent = $.proxy(function(evt){
+		if (squashtm.contextualContent !== undefined){
+			squashtm.contextualContent.fire(this, evt);
+		}
+	}, self);
 
-	/* ************** public *************** */
+	/* ************** public interface (slave) **************** */
+	
+	
+	this.update = function(event){
+		//in any case we refetch the data. Perhaps we will refine this later.
+		this.getModel();
+	}	
+	
+	
+	/* ************** public interface (master) *************** */
 
 	this.addListener = function(listener) {
 		this.listeners.push(listener);
@@ -60,6 +114,7 @@ function TestSuiteModel(settings) {
 	this.getData = function() {
 		return this.data;
 	}
+
 
 	this.postNew = function(name) {
 
@@ -72,7 +127,9 @@ function TestSuiteModel(settings) {
 			dataType : 'json'
 		}).success(function(json) {
 			self.data.push(json);
-			notifyListeners("add");
+			var evt = { evt_name : "add" };
+			notifyListeners(evt);
+			notifyContextualContent(evt);
 		})
 	}
 
@@ -87,7 +144,9 @@ function TestSuiteModel(settings) {
 			dataType : 'json'
 		}).success(function(json) {
 			renameSuite(json);
-			notifyListeners("rename");
+			var evt = { evt_name : "rename" }
+			notifyListeners(evt);
+			notifyContextualContent(evt);
 		})
 	}
 	this.postRemove = function(toSend) {
@@ -101,7 +160,9 @@ function TestSuiteModel(settings) {
 			dataType : 'json'
 		}).success(function(json) {
 			removeSuites(json);
-			notifyListeners("remove");
+			var evt = { evt_name : "remove" } ;;
+			notifyListeners(evt);
+			notifyContextualContent(evt);
 		})
 	}
 
@@ -114,19 +175,23 @@ function TestSuiteModel(settings) {
 			data : toSend,
 			dataType : 'json'
 		}).success(function(json) {
-			notifyListeners("bind");
+			var evt = { evt_name : "bind" };
+			notifyListeners(evt);
+			notifyContextualContent(evt);
 		});
 	}
+	
 
 	this.getModel = function(){
-		$.ajax({
-			'url' : settings.testSuiteListUrl,
-			type : 'GET',
-			dataType : 'json'
-		}).then(function(json) {
-			this.data = json;
-			notifyListeners("add");
+		_getModel().success(function() {
+			notifyListeners({ evt_name : "refresh"});
 		});
 	}
+	
+	//register to the contextual content manager if exists
+	
+	if (squashtm.contextualContent !== undefined){
+		squashtm.contextualContent.addListener(this);
+	}	
 
 }

@@ -273,7 +273,8 @@ public class CustomIterationModificationServiceImpl implements CustomIterationMo
 	@Override	
 	@PostFilter("hasPermission(filterObject, 'READ') or hasRole('ROLE_ADMIN')")
 	public List<TestSuite> findAllTestSuites(long iterationId) {
-		return iterationDao.findAllTestSuites(iterationId);
+		List<TestSuite> allSuites = iterationDao.findAllTestSuites(iterationId);
+		return allSuites;
 	}
 	
 }

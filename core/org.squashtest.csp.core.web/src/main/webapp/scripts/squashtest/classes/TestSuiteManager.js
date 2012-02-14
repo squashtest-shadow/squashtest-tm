@@ -38,7 +38,9 @@ function TestSuiteManagerControl(settings) {
 	var self = this;
 
 	/* *** little override here ***** */
+	
 	var oldVal = this.input.val;
+	
 	this.input.val = function() {
 		if (arguments.length > 0) {
 			oldVal.apply(this, arguments);
@@ -48,7 +50,7 @@ function TestSuiteManagerControl(settings) {
 		}
 	}
 
-	/* ********* public ************ */
+	/* ************** public *********** */
 
 	this.reset = function() {
 		defaultState();
@@ -71,7 +73,7 @@ function TestSuiteManagerControl(settings) {
 		this.input.val(this.defaultMessage);
 	}
 
-	/* ************* private ******* */
+	/* ************* private ******** */
 
 	var defaultState = $.proxy(function() {
 		this.input.removeAttr('disabled');
@@ -201,9 +203,7 @@ function TestSuiteManagerView(settings) {
 							for ( var j = 0; j < selected.length; j++) {
 								var id = getItemDomId(elt);
 								if (selected[j] == id) {
-									$(elt)
-											.addClass(
-													"suite-selected ui-widget-header ui-state-default");
+									$(elt).addClass("suite-selected ui-widget-header ui-state-default");
 								}
 							}
 						});
@@ -221,8 +221,13 @@ function TestSuiteManagerView(settings) {
 	this.update = function(evt) {
 
 		// the only evt ignored is "bind"
-		if ((evt === undefined) || (evt == "add") || (evt == "rename")
-				|| (evt == "remove")) {
+		if ((evt === undefined) || 
+			(evt.evt_name == "add") || 
+			(evt.evt_name == "rename") || 
+			(evt.evt_name == "remove") ||
+			(evt.evt_name == "refresh")
+			) {
+			
 			// save state
 			var selected = this.getSelectedIds();
 
@@ -377,6 +382,7 @@ function TestSuiteManager(settings) {
 		}
 	}
 
+	/* the remove control settings is special in the sense that it has no text input, just a button */
 	var removeControlSettings = {
 		manager : this,
 		defaultMessage : settings.defaultMessage,
@@ -398,7 +404,7 @@ function TestSuiteManager(settings) {
 	this.view = new TestSuiteManagerView(viewSettings);
 
 	bindCtrl();
-//	this.view.update();
+	this.view.update();
 
 	
 
