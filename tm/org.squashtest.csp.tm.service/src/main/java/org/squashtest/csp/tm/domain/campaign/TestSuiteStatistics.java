@@ -20,74 +20,78 @@
  */
 package org.squashtest.csp.tm.domain.campaign;
 
+import java.math.BigDecimal;
+import java.math.RoundingMode;
+
 import org.squashtest.csp.tm.domain.execution.ExecutionStatus;
 
 /* a good old bean used as a dto */
 public class TestSuiteStatistics {
 
-	private long nbTestCases;
-	private double progression;
-	private int nbSuccess;
-	private int nbFailure;
-	private int nbBloqued;
-	private int nbReady;
-	private int nbRunning;
+	private BigDecimal nbTestCases;
+	private BigDecimal progression;
+	private BigDecimal nbSuccess;
+	private BigDecimal nbFailure;
+	private BigDecimal nbBloqued;
+	private BigDecimal nbReady;
+	private BigDecimal nbRunning;
 	private ExecutionStatus status;
+	private BigDecimal nbDone;
 
 	public long getNbTestCases() {
-		return nbTestCases;
+		return nbTestCases.longValue();
 	}
 
 	public void setNbTestCases(int nbTestCases) {
-		this.nbTestCases = nbTestCases;
+		this.nbTestCases = new BigDecimal(nbTestCases);
 	}
 
-	public double getProgression() {
-		return progression;
+	public int getProgression() {
+		return progression.intValue();
 	}
 
 	public void setProgression(double progression) {
-		this.progression = progression;
+		this.progression = new BigDecimal(progression);
 	}
 
 	public int getNbSuccess() {
-		return nbSuccess;
+		return nbSuccess.intValue();
 	}
 
 	public void setNbSuccess(int nbSuccess) {
-		this.nbSuccess = nbSuccess;
+		this.nbSuccess = new BigDecimal(nbSuccess);
 	}
 
 	public int getNbFailure() {
-		return nbFailure;
+		return nbFailure.intValue();
 	}
 
 	public void setNbFailure(int nbFailure) {
-		this.nbFailure = nbFailure;
+		this.nbFailure = new BigDecimal(nbFailure);
 	}
 
 	public int getNbBloqued() {
-		return nbBloqued;
+		return nbBloqued.intValue();
 	}
 
 	public void setNbBloqued(int nbBloqued) {
-		this.nbBloqued = nbBloqued;
+		this.nbBloqued = new BigDecimal(nbBloqued);
 	}
 	
 	public int getNbRunning() {
-		return nbRunning;
+		return nbRunning.intValue();
 	}
 
 	public void setNbRunning(int nbRunning) {
-		this.nbRunning = nbRunning;
+		this.nbRunning = new BigDecimal(nbRunning);
 	}
 
 	public int getNbReady() {
-		return nbReady;
+		return nbReady.intValue();
 	}
 
 	public void setNbReady(int nbReady) {
-		this.nbReady = nbReady;
+		this.nbReady = new BigDecimal(nbReady);
 	}
 
 	public ExecutionStatus getStatus() {
@@ -98,31 +102,40 @@ public class TestSuiteStatistics {
 		this.status = status;
 	}
 
+	public int getNbDone() {
+		return nbDone.intValue();
+	}
+
+	public void setNbDone(int nbDone) {
+		this.nbDone = new BigDecimal(nbDone);
+	}
+
 	public TestSuiteStatistics() {
 
 	}
 	
 	public TestSuiteStatistics(long nbTestCases, int nbBloqued, int nbFailure, int nbSuccess, int nbRunning, int nbReady) {
 		super();
-		this.nbTestCases = nbTestCases;
-		this.nbBloqued = nbBloqued;
-		this.nbFailure = nbFailure;
-		this.nbSuccess = nbSuccess;
-		this.nbRunning = nbRunning;
-		this.nbReady = nbReady;
+		this.nbTestCases = new BigDecimal(nbTestCases);
+		this.nbBloqued = new BigDecimal(nbBloqued);
+		this.nbFailure = new BigDecimal(nbFailure);
+		this.nbSuccess = new BigDecimal(nbSuccess);
+		this.nbRunning = new BigDecimal(nbRunning);
+		this.nbReady = new BigDecimal(nbReady);
 		
 		findStatus();
 		findProgression();
-		long nbReadyRecalc = findReady();
-		if (nbReadyRecalc != this.nbReady){
-			this.nbReady = (int)nbReadyRecalc;
-		}
+//		long nbReadyRecalc = findReady();
+//		if (nbReadyRecalc != this.nbReady.longValue()){
+//			this.nbReady = new BigDecimal(nbReadyRecalc);
+//		}
+		findDone();
 	}
 	
 	private void findStatus(){
-		if ((nbBloqued + nbFailure + nbSuccess + nbRunning) == 0 ){
+		if ((nbBloqued.add(nbFailure).add(nbSuccess).add(nbRunning)).intValue() == 0 ){
 			status = ExecutionStatus.READY;
-		} else if ( (nbBloqued + nbFailure + nbSuccess) == nbTestCases ){
+		} else if ((nbBloqued.add(nbFailure).add(nbSuccess)).equals(nbTestCases) ){
 			status = ExecutionStatus.SUCCESS;
 		} else {
 			status = ExecutionStatus.RUNNING;
@@ -130,11 +143,15 @@ public class TestSuiteStatistics {
 	}
 	
 	private void findProgression(){
-		progression = (nbBloqued + nbFailure + nbSuccess + nbRunning) / nbTestCases;
+		progression = (nbBloqued.add(nbFailure).add(nbSuccess)).divide(nbTestCases, 2, RoundingMode.HALF_UP).multiply(new BigDecimal(100));
 	}
 	
-	private long findReady(){
-		return nbTestCases - (nbBloqued + nbFailure + nbSuccess);
+//	private long findReady(){
+//		return (nbTestCases.subtract(nbBloqued.add(nbFailure).add(nbSuccess))).longValue();
+//	}
+	
+	private void findDone(){
+		nbDone = nbBloqued.add(nbFailure).add(nbSuccess);
 	}
 
 }

@@ -240,21 +240,21 @@
 
 <%-- ------------------ statistiques --------------------------- --%>
 
-<comp:toggle-panel id="testSuite.statistics.panel" titleKey="testSuite.statistics.panel.title" open="true" isContextual="true">
+<comp:toggle-panel id="test-suite-statistics-panel" titleKey="test-suite.statistics.panel.title" open="true" isContextual="true">
 	<jsp:attribute name="body">
 		<div id="testSuite.statistics" >
-			<span ><f:message key="test-suite.statistics.nbTestCases" /> ${ statistics.nbTestCases }</span>
-			<span ><f:message key="test-suite.statistics.progression" /> ${ statistics.progression }</span>
-			<span ><f:message key="test-suite.statistics.nbSuccess" /> ${ statistics.nbSuccess }</span>
-			<span ><f:message key="test-suite.statistics.nbFailure" /> ${ statistics.nbFailure }</span>
-			<span ><f:message key="test-suite.statistics.nbRunning" /> ${ statistics.nbRunning }</span>
-			<span ><f:message key="test-suite.statistics.nbBloqued" /> ${ statistics.nbBloqued }</span>
-			<span ><f:message key="test-suite.statistics.nbReady" /> ${ statistics.nbReady }</span>
+			<span ><f:message key="test-suite.statistics.nbTestCases" />&nbsp;:&nbsp;${ statistics.nbTestCases }</span>	<br />
+			<span ><f:message key="test-suite.statistics.progression" />&nbsp;:&nbsp;${ statistics.progression }%&nbsp;(&nbsp;${ statistics.nbDone }&nbsp;/&nbsp;${ statistics.nbTestCases }&nbsp;)&nbsp;</span>	<br />
+			<span ><f:message key="test-suite.statistics.nbSuccess" />&nbsp;:&nbsp;${ statistics.nbSuccess }</span>	<br />
+			<span ><f:message key="test-suite.statistics.nbFailure" />&nbsp;:&nbsp;${ statistics.nbFailure }</span>	<br />
+			<span ><f:message key="test-suite.statistics.nbRunning" />&nbsp;:&nbsp;${ statistics.nbRunning }</span>	<br />
+			<span ><f:message key="test-suite.statistics.nbBloqued" />&nbsp;:&nbsp;${ statistics.nbBloqued }</span>	<br />
+			<span ><f:message key="test-suite.statistics.nbReady" />&nbsp;:&nbsp;${ statistics.nbReady }</span>	<br />
 			<c:if test="${ statistics.status.terminatedStatus }">	
-					<span ><f:message key="test-suite.statistics.status" /> <f:message key="execution.execution-status.DONE" /></span>
+					<span ><f:message key="test-suite.statistics.status" />&nbsp;:&nbsp;<b><f:message key="execution.execution-status.DONE" /></b></span>	<br />
 			</c:if>
 			<c:if test="${ not statistics.status.terminatedStatus }">	
-					<span ><f:message key="test-suite.statistics.status" /> <f:message key="${ statistics.status.i18nKey }" /></span>
+					<span ><f:message key="test-suite.statistics.status" />&nbsp;:&nbsp;<b><f:message key="${ statistics.status.i18nKey }" /></b></span>	<br />
 			</c:if>
 		</div>
 	</jsp:attribute>
