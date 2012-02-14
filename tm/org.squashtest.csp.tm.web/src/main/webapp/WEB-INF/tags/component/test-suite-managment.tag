@@ -39,17 +39,17 @@
 <%@ taglib prefix="fn"		uri="http://java.sun.com/jsp/jstl/functions" %>
 
 
-<%--
+
 <c:set var="modelScriptUrl"   value="http://localhost/scripts/TestSuiteModel.js" />
 <c:set var="managerScriptUrl" value="http://localhost/scripts/TestSuiteManager.js" />
 <c:set var="menuScriptUrl" value="http://localhost/scripts/TestSuiteMenu.js" />
- --%>
 
 
+<%--
 <s:url var="managerScriptUrl" value="/scripts/squashtest/classes/TestSuiteManager.js"  />  
 <s:url var="modelScriptUrl" value="/scripts/squashtest/classes/TestSuiteModel.js"  /> 
 <s:url var="menuScriptUrl" value="/scripts/squashtest/classes/TestSuiteMenu.js" /> 
-
+ --%>
  
 <%-- 
 <link rel="stylesheet" type="text/css" href="http://localhost/css/suites.css" />

@@ -72,8 +72,6 @@ public class TestSuiteModificationController {
 		this.service=service;
 	}
 	
-	@Inject
-	private PermissionEvaluationService permissionService;
 
 	@Inject
 	private MessageSource messageSource;
@@ -162,6 +160,7 @@ public class TestSuiteModificationController {
 
 	}
 
+	//that method is useful too so don't remove it !
 	@RequestMapping(value="/rename", method=RequestMethod.POST, params="name" )
 	public @ResponseBody Map<String, String> renameTestSuite(@PathVariable("id") Long id, @RequestParam("name") String name ){
 		service.rename(id, name);

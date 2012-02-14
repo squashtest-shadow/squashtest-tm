@@ -102,7 +102,7 @@ public class CustomTestSuiteModificationServiceImpl implements
 	@Override
 	public List<Long> remove(List<Long> suitesIds) {
 		// fetch
-		List<TestSuite> testSuites = suiteDao.findAllByIdList(suitesIds);
+		List<TestSuite> testSuites = testSuiteDao.findAllByIdList(suitesIds);
 		// check
 		checkPermissionsForAll(testSuites, "WRITE");
 		// proceed

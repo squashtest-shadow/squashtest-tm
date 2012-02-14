@@ -117,7 +117,7 @@ public class TestSuite {
 	public List<IterationTestPlanItem> getTestPlan(){
 		List<IterationTestPlanItem> testPlan = new LinkedList<IterationTestPlanItem>();
 		for (IterationTestPlanItem item : iteration.getTestPlans()){
-			if (item.getTestSuite().getId().equals(this.id)){
+			if (this.equals(item.getTestSuite())){
 				testPlan.add(item);
 			}
 		}
