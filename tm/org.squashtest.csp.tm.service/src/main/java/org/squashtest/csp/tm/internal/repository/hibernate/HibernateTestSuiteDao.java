@@ -90,6 +90,7 @@ public class HibernateTestSuiteDao extends HibernateEntityDao<TestSuite> impleme
 				@Override
 				public void setQueryParameters(Query query) {
 					query.setLong("id", testSuiteId);
+					query.setLong("id2", testSuiteId);
 					query.setParameter("status", fStatus);
 				}
 			};
@@ -112,7 +113,15 @@ public class HibernateTestSuiteDao extends HibernateEntityDao<TestSuite> impleme
 	}
 	
 	private SetQueryParametersCallback idParameter(final long id) {
-		return new SetIdParameter("id", id);
+		SetQueryParametersCallback newCallBack = new SetQueryParametersCallback() {
+
+			@Override
+			public void setQueryParameters(Query query) {
+				query.setLong("id", id);
+				query.setLong("id2", id);
+			}
+		};
+		return newCallBack;
 	}
 	
 }

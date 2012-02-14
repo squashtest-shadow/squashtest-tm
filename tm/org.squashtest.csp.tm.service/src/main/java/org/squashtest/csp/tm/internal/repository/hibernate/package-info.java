@@ -95,8 +95,8 @@
 
 		// Queries on TestSuite
 		@NamedQuery(name = "testSuite.findTestPlanPaged", query = "select tp from TestSuite ts join ts.iteration it join it.testPlans tp where ts.id = :id and tp.testSuite.id = :id2 order by index(tp)"),
-		@NamedQuery(name = "testSuite.countTestPlans", query = "select count(tp) from TestSuite ts join ts.iteration it join it.testPlans tp where ts.id = :id"),
-		@NamedQuery(name = "testSuite.countStatus", query = "select count(tp) from TestSuite ts join ts.iteration it join it.testPlans tp where ts.id = :id and tp.executionStatus = :status"),
+		@NamedQuery(name = "testSuite.countTestPlans", query = "select count(tp) from TestSuite ts join ts.iteration it join it.testPlans tp where ts.id = :id and tp.testSuite.id = :id2"),
+		@NamedQuery(name = "testSuite.countStatus", query = "select count(tp) from TestSuite ts join ts.iteration it join it.testPlans tp where ts.id = :id and tp.testSuite.id = :id2 and tp.executionStatus = :status"),
 		
 		// Queries on TestCase
 		@NamedQuery(name = "testCase.findNamesInFolderStartingWith", query = "select c.name from TestCaseFolder f join f.content c where f.id = :containerId and c.name like :nameStart"),
