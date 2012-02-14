@@ -22,8 +22,6 @@ package org.squashtest.csp.tm.internal.repository;
 
 import java.util.List;
 
-import java.util.List;
-
 import org.squashtest.csp.core.infrastructure.collection.Paging;
 import org.squashtest.csp.tm.domain.campaign.IterationTestPlanItem;
 import org.squashtest.csp.tm.domain.campaign.TestSuite;
