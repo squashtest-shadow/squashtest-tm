@@ -20,8 +20,6 @@
  */
 package org.squashtest.csp.tm.web.internal.controller.execution;
 
-
-
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.osgi.extensions.annotation.ServiceReference;
@@ -39,81 +37,70 @@ import org.squashtest.csp.tm.domain.execution.ExecutionStep;
 import org.squashtest.csp.tm.service.ExecutionProcessingService;
 import org.squashtest.csp.tm.web.internal.model.jquery.JsonSimpleData;
 
-
 @Controller
 @RequestMapping("/execute/{executionId}")
 public class ExecutionProcessingController {
 
 	private static final Logger LOGGER = LoggerFactory.getLogger(ExecutionProcessingController.class);
 
-
 	private ExecutionProcessingService executionProcService;
 
-
 	@ServiceReference
-	public void setExecutionProcService(
-			ExecutionProcessingService executionProcService) {
+	public void setExecutionProcService(ExecutionProcessingService executionProcService) {
 		this.executionProcService = executionProcService;
 	}
 
-
-	@RequestMapping(method=RequestMethod.GET)
-	public ModelAndView getLast(@PathVariable Long executionId){
-		Execution execution = executionProcService.findExecution(executionId) ;
+	@RequestMapping(method = RequestMethod.GET)
+	public ModelAndView getLast(@PathVariable Long executionId) {
+		Execution execution = executionProcService.findExecution(executionId);
 		Integer total = execution.getSteps().size();
 
-		ModelAndView mav = new ModelAndView("fragment/executions/execute-execution");
+		ModelAndView mav = new ModelAndView("page/executions/execute-execution");
 
 		if (total == 0) {
-			mav.addObject("totalSteps",total);
-		}
-		else{
+			mav.addObject("totalSteps", total);
+		} else {
 
 			ExecutionStep executionStep = executionProcService.findRunningExecutionStep(executionId);
-			if (executionStep==null) {
-				executionStep = executionProcService.getStepAt(executionId, total-1);
+			if (executionStep == null) {
+				executionStep = executionProcService.getStepAt(executionId, total - 1);
 			}
 
-
-
-			mav.addObject("execution",execution);
-			mav.addObject("executionStep",executionStep);
-			mav.addObject("totalSteps",total);
-			mav.addObject("executionStatus",ExecutionStatus.values());
+			mav.addObject("execution", execution);
+			mav.addObject("executionStep", executionStep);
+			mav.addObject("totalSteps", total);
+			mav.addObject("executionStatus", ExecutionStatus.values());
 		}
 
 		return mav;
 	}
 
-	@RequestMapping(value="/ieo" ,method=RequestMethod.GET)
-	public ModelAndView getIeoLast(@PathVariable Long executionId){
-		Execution execution = executionProcService.findExecution(executionId) ;
+	@RequestMapping(value = "/ieo", method = RequestMethod.GET)
+	public ModelAndView getIeoLast(@PathVariable Long executionId) {
+		Execution execution = executionProcService.findExecution(executionId);
 		Integer total = execution.getSteps().size();
 
-		ModelAndView mav = new ModelAndView("fragment/executions/ieo-execute-execution");
+		ModelAndView mav = new ModelAndView("page/executions/ieo-execute-execution");
 
 		if (total == 0) {
-			mav.addObject("totalSteps",total);
-		}
-		else{
+			mav.addObject("totalSteps", total);
+		} else {
 
 			ExecutionStep executionStep = executionProcService.findRunningExecutionStep(executionId);
-			if (executionStep==null) {
-				executionStep = executionProcService.getStepAt(executionId, total-1);
+			if (executionStep == null) {
+				executionStep = executionProcService.getStepAt(executionId, total - 1);
 			}
 
-
-
-			mav.addObject("execution",execution);
-			mav.addObject("executionStep",executionStep);
-			mav.addObject("totalSteps",total);
-			mav.addObject("executionStatus",ExecutionStatus.values());
+			mav.addObject("execution", execution);
+			mav.addObject("executionStep", executionStep);
+			mav.addObject("totalSteps", total);
+			mav.addObject("executionStatus", ExecutionStatus.values());
 		}
 
 		return mav;
 	}
 
-	@RequestMapping(value="/step/{stepIndex}", method=RequestMethod.GET)
+	@RequestMapping(value = "/step/{stepIndex}", method = RequestMethod.GET)
 	public String getStep(@PathVariable long executionId, @PathVariable int stepIndex, Model model) {
 		showExecutionStep(executionId, stepIndex, model);
 
@@ -121,20 +108,19 @@ public class ExecutionProcessingController {
 
 	}
 
-
 	private void showExecutionStep(long executionId, int stepIndex, Model model) {
-		Execution execution = executionProcService.findExecution(executionId) ;
+		Execution execution = executionProcService.findExecution(executionId);
 
 		Integer total = execution.getSteps().size();
 		ExecutionStep executionStep;
 		if (stepIndex >= total) {
-			executionStep = executionProcService.getStepAt(executionId, total-1);
+			executionStep = executionProcService.getStepAt(executionId, total - 1);
 		} else {
 			executionStep = executionProcService.getStepAt(executionId, stepIndex);
 		}
 
-		if (executionStep==null) {
-			executionStep = executionProcService.getStepAt(executionId, total-1);
+		if (executionStep == null) {
+			executionStep = executionProcService.getStepAt(executionId, total - 1);
 		}
 
 		model.addAttribute("execution", execution);
@@ -143,74 +129,75 @@ public class ExecutionProcessingController {
 		model.addAttribute("executionStatus", ExecutionStatus.values());
 	}
 
-	@RequestMapping(value="/step/{stepIndex}", method=RequestMethod.GET, params={"ieo=true"})
+	@RequestMapping(value = "/step/{stepIndex}", method = RequestMethod.GET, params = { "ieo=true" })
 	public String getIeoStep(@PathVariable long executionId, @PathVariable int stepIndex, Model model) {
 		showExecutionStep(executionId, stepIndex, model);
 
-		return "fragment/executions/ieo-fragment-step-information";
+		return "page/executions/ieo-fragment-step-information";
 
 	}
 
-	@RequestMapping(value="/step/{stepIndex}/menu", method=RequestMethod.GET)
-	public ModelAndView getGeneralInfos(@PathVariable Long executionId, @PathVariable Integer stepIndex){
-		Execution execution = executionProcService.findExecution(executionId) ;
+	/**
+	 * Only used by IEO
+	 */
+	@RequestMapping(value = "/step/{stepIndex}/menu", method = RequestMethod.GET)
+	public ModelAndView getGeneralInfos(@PathVariable Long executionId, @PathVariable Integer stepIndex) {
+		Execution execution = executionProcService.findExecution(executionId);
 		Integer total = execution.getSteps().size();
 		ExecutionStep executionStep;
 		if (stepIndex >= total) {
-			executionStep = executionProcService.getStepAt(executionId, total-1);
+			executionStep = executionProcService.getStepAt(executionId, total - 1);
 		} else {
 			executionStep = executionProcService.getStepAt(executionId, stepIndex);
 		}
 
-		if (executionStep==null) {
-			executionStep = executionProcService.getStepAt(executionId, total-1);
+		if (executionStep == null) {
+			executionStep = executionProcService.getStepAt(executionId, total - 1);
 		}
 		ModelAndView mav = new ModelAndView("fragment/executions/step-information-menu");
-		mav.addObject("execution",execution);
-		mav.addObject("executionStep",executionStep);
-		mav.addObject("totalSteps",total);
-		mav.addObject("executionStatus",ExecutionStatus.values());
+		mav.addObject("execution", execution);
+		mav.addObject("executionStep", executionStep);
+		mav.addObject("totalSteps", total);
+		mav.addObject("executionStatus", ExecutionStatus.values());
 		return mav;
 
 	}
 
-	@RequestMapping(value="/step/{stepIndex}/general", method=RequestMethod.GET)
-	public ModelAndView getMenuInfos(@PathVariable Long executionId, @PathVariable Integer stepIndex){
+	@RequestMapping(value = "/step/{stepIndex}/general", method = RequestMethod.GET)
+	public ModelAndView getMenuInfos(@PathVariable Long executionId, @PathVariable Integer stepIndex) {
 
 		ExecutionStep executionStep = executionProcService.getStepAt(executionId, stepIndex);
 
 		ModelAndView mav = new ModelAndView("fragment/executions/step-information-fragment");
 
-		mav.addObject("auditableEntity",executionStep);
+		mav.addObject("auditableEntity", executionStep);
 		mav.addObject("withoutCreationInfo", true);
 
 		return mav;
 
 	}
 
-	@RequestMapping(value="/step/{stepId}", method = RequestMethod.POST, params = {	"id=execution-comment", "value" })
+	@RequestMapping(value = "/step/{stepId}", method = RequestMethod.POST, params = { "id=execution-comment", "value" })
 	@ResponseBody
-	public String updateComment(@RequestParam("value") String newComment,
-			@PathVariable("stepId") Long stepId) {
+	public String updateComment(@RequestParam("value") String newComment, @PathVariable("stepId") Long stepId) {
 
 		executionProcService.setExecutionStepComment(stepId, newComment);
-		LOGGER.trace("ExecutionStep " + stepId.toString()	+ ": updated comment to " + newComment);
+		LOGGER.trace("ExecutionStep " + stepId.toString() + ": updated comment to " + newComment);
 		return newComment;
 	}
 
-	@RequestMapping(value="/step/{stepIndex}/new-step-infos", method = RequestMethod.GET)
+	@RequestMapping(value = "/step/{stepIndex}/new-step-infos", method = RequestMethod.GET)
 	@ResponseBody
-	public String getNewStepInfos(@PathVariable Long executionId,
-			@PathVariable Integer stepIndex) {
+	public String getNewStepInfos(@PathVariable Long executionId, @PathVariable Integer stepIndex) {
 
 		JsonSimpleData obj = new JsonSimpleData();
 
-		Execution execution = executionProcService.findExecution(executionId) ;
+		Execution execution = executionProcService.findExecution(executionId);
 		Integer total = execution.getSteps().size();
 		ExecutionStep executionStep = executionProcService.getStepAt(executionId, stepIndex);
 
-		if (executionStep==null) {
-			executionStep = executionProcService.getStepAt(executionId, total-1);
+		if (executionStep == null) {
+			executionStep = executionProcService.getStepAt(executionId, total - 1);
 		}
 
 		obj.addAttr("executionStepOrder", executionStep.getExecutionStepOrder().toString());
@@ -219,19 +206,11 @@ public class ExecutionProcessingController {
 		return obj.toString();
 	}
 
-
-	@RequestMapping(value="/step/{stepId}", method = RequestMethod.POST, params = "executionStatus")
+	@RequestMapping(value = "/step/{stepId}", method = RequestMethod.POST, params = "executionStatus")
 	@ResponseBody
 	public void updateExecutionMode(@RequestParam String executionStatus, @PathVariable("stepId") long stepId) {
 		ExecutionStatus status = ExecutionStatus.valueOf(executionStatus);
 		executionProcService.setExecutionStepStatus(stepId, status);
 	}
-
-
-
-
-
-
-
 
 }

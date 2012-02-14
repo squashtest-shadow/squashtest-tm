@@ -26,7 +26,7 @@
 <%@ taglib uri="http://java.sun.com/jsp/jstl/core" prefix="c" %>
 <%@ taglib tagdir="/WEB-INF/tags/jquery" prefix="jq" %>
 <%@ taglib prefix="layout" tagdir="/WEB-INF/tags/layout"  %>
-<%@ taglib tagdir="/WEB-INF/tags/component" prefix="comp" %>
+<%@ taglib prefix="comp" tagdir="/WEB-INF/tags/component" %>
 <%@ taglib prefix="sf" uri="http://www.springframework.org/tags/form"%>
 <%@ taglib prefix="f" uri="http://java.sun.com/jsp/jstl/fmt" %>
 
@@ -34,8 +34,6 @@
 <html xmlns="http://www.w3.org/1999/xhtml" >
 
 <head>
-	
-	
 	<layout:common-head />		
 	<layout:_common-script-import />		
 
@@ -230,6 +228,5 @@
 	</div>
 
 	<comp:decorate-buttons />
-
 </body>
 </html>

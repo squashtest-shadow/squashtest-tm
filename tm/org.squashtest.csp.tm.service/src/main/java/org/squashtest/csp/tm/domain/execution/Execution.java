@@ -79,6 +79,7 @@ public class Execution implements AttachmentHolder, Bugged {
 	@Basic(optional = false)
 	private String name;
 
+	// TODO rename as testPlanItem
 	@ManyToOne
 	@JoinTable(name = "ITEM_TEST_PLAN_EXECUTION", joinColumns = @JoinColumn(name = "EXECUTION_ID"), inverseJoinColumns = @JoinColumn(name = "ITEM_TEST_PLAN_ID"))
 	private IterationTestPlanItem testPlan;
