@@ -18,24 +18,35 @@
  *     You should have received a copy of the GNU Lesser General Public License
  *     along with this software.  If not, see <http://www.gnu.org/licenses/>.
  */
-package org.squashtest.csp.tm.internal.repository;
+package org.squashtest.csp.tm.service;
 
 import java.util.List;
 
-import java.util.List;
-
+import org.squashtest.csp.core.infrastructure.collection.PagedCollectionHolder;
 import org.squashtest.csp.core.infrastructure.collection.Paging;
 import org.squashtest.csp.tm.domain.campaign.IterationTestPlanItem;
 import org.squashtest.csp.tm.domain.campaign.TestSuite;
-import org.squashtest.csp.tm.domain.campaign.TestSuiteStatistics;
+import org.squashtest.csp.tm.domain.testcase.TestCaseLibrary;
 
-public interface TestSuiteDao extends EntityDao<TestSuite> {
+/**
+ * Service that aims at managing the test cases of a campaign (i.e. its test plan)
+ * @author François Gaillard
+ */
+public interface TestSuiteTestPlanManagerService {
 
-	List<TestSuite> findAllByIterationId(long iterationId);
-
-	List<IterationTestPlanItem> findTestPlanPaged(long testSuiteId, Paging paging);
-
-	long countTestPlans(Long iterationId);
+	/**
+	 * Find a iteration using its id
+	 * @param testSuiteId
+	 */
+	TestSuite findTestSuite(long testSuiteId);
 	
-	TestSuiteStatistics getTestSuiteStatistics(Long testSuitId);
+	/**
+	 * Returns a collection of {@link TestCaseLibrary}, the test cases of
+	 * which may be added to the campaign
+	 */
+	List<TestCaseLibrary> findLinkableTestCaseLibraries();
+
+
+	PagedCollectionHolder<List<IterationTestPlanItem>> findTestPlan(long testSuiteId, Paging paging);
+
 }

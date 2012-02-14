@@ -24,8 +24,12 @@ import java.util.List;
 
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.transaction.annotation.Transactional;
+import org.squashtest.csp.core.infrastructure.collection.PagedCollectionHolder;
+import org.squashtest.csp.core.infrastructure.collection.Paging;
 import org.squashtest.csp.tm.domain.DuplicateNameException;
 import org.squashtest.csp.tm.domain.campaign.IterationTestPlanItem;
+import org.squashtest.csp.tm.domain.campaign.TestSuite;
+import org.squashtest.csp.tm.domain.campaign.TestSuiteStatistics;
 
 @Transactional
 public interface CustomTestSuiteModificationService {
@@ -55,4 +59,28 @@ public interface CustomTestSuiteModificationService {
 	@PreAuthorize("hasPermission(#arg0, 'org.squashtest.csp.tm.domain.campaign.TestSuite','WRITE') or hasRole('ROLE_ADMIN')")		
 	void bindTestPlan(long suiteId, List<Long> itemTestPlanIds);
 	
+	/**
+	 * That method will find the test Suite by its ID
+	 * 
+	 * @param suiteId
+	 */
+	TestSuite findById(long suiteId);
+	
+	
+	/**
+	 * <p>That method will retrieve the test plan items attached to a given test suite.</p>
+	 * 
+	 * @param suiteId
+	 * @param paging
+	 */
+	@PreAuthorize("hasPermission(#arg0, 'org.squashtest.csp.tm.domain.campaign.TestSuite','WRITE') or hasRole('ROLE_ADMIN')")		
+	PagedCollectionHolder<List<IterationTestPlanItem>> findTestSuiteTestPlan(long suiteId, Paging paging);
+	
+	/**
+	 * <p>That method will retrieve the data and fill the testSuiteStatistics DTO.</p>
+	 * 
+	 * @param suiteId
+	 */
+	@PreAuthorize("hasPermission(#arg0, 'org.squashtest.csp.tm.domain.campaign.TestSuite','WRITE') or hasRole('ROLE_ADMIN')")		
+	TestSuiteStatistics findTestSuiteStatistics(long suiteId);
 }

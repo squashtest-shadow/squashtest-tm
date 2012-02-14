@@ -20,10 +20,14 @@
  */
 package org.squashtest.csp.tm.service;
 
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.transaction.annotation.Transactional;
 
 @Transactional
 public interface TestSuiteModificationService extends
 		CustomTestSuiteModificationService {
 
+	@PreAuthorize("hasPermission(#arg0, 'org.squashtest.csp.tm.domain.campaign.TestSuite', 'WRITE') "
+			+ "or hasRole('ROLE_ADMIN')")
+	void changeDescription(long id, String newDescription);
 }

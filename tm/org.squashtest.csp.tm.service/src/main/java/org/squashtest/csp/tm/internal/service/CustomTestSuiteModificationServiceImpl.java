@@ -26,8 +26,13 @@ import javax.inject.Inject;
 
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.stereotype.Service;
+import org.squashtest.csp.core.infrastructure.collection.PagedCollectionHolder;
+import org.squashtest.csp.core.infrastructure.collection.Paging;
+import org.squashtest.csp.core.infrastructure.collection.PagingBackedPagedCollectionHolder;
 import org.squashtest.csp.tm.domain.DuplicateNameException;
+import org.squashtest.csp.tm.domain.campaign.IterationTestPlanItem;
 import org.squashtest.csp.tm.domain.campaign.TestSuite;
+import org.squashtest.csp.tm.domain.campaign.TestSuiteStatistics;
 import org.squashtest.csp.tm.internal.repository.TestSuiteDao;
 import org.squashtest.csp.tm.service.CustomTestSuiteModificationService;
 
@@ -36,13 +41,13 @@ public class CustomTestSuiteModificationServiceImpl implements
 		CustomTestSuiteModificationService {
 	
 	@Inject
-	private TestSuiteDao suiteDao;
+	private TestSuiteDao testSuiteDao;
 
 	@Override
 	@PreAuthorize("hasPermission(#suiteId, 'org.squashtest.csp.tm.domain.campaign.TestSuite','WRITE') or hasRole('ROLE_ADMIN')")		
 	public void rename(long suiteId, String newName)
 			throws DuplicateNameException {
-		TestSuite suite = suiteDao.findById(suiteId);
+		TestSuite suite = testSuiteDao.findById(suiteId);
 		suite.rename(newName);
 	}
 	
@@ -51,8 +56,33 @@ public class CustomTestSuiteModificationServiceImpl implements
 	public void bindTestPlan(long suiteId, List<Long> itemTestPlanIds) {
 		//that implementation relies on how the TestSuite will do the job (regarding the checks on whether the itps belong to the 
 		//same iteration of not
-		TestSuite suite = suiteDao.findById(suiteId);
+		TestSuite suite = testSuiteDao.findById(suiteId);
 		suite.addTestPlanById(itemTestPlanIds);
 	}
+	
+	@Override
+	@PreAuthorize("hasPermission(#suiteId, 'org.squashtest.csp.tm.domain.campaign.TestSuite','WRITE') or hasRole('ROLE_ADMIN')")		
+	public TestSuite findById(long suiteId) {
+		TestSuite suite = testSuiteDao.findById(suiteId);
+		return suite;
+	}
+	
+	@Override
+	@PreAuthorize("hasPermission(#suiteId, 'org.squashtest.csp.tm.domain.campaign.TestSuite','READ') or hasRole('ROLE_ADMIN')")
+	public PagedCollectionHolder<List<IterationTestPlanItem>> findTestSuiteTestPlan(long suiteId, Paging paging) {
+		
+		List<IterationTestPlanItem> testPlan = testSuiteDao.findTestPlanPaged(suiteId, paging);
+		
+		long count = testSuiteDao.countTestPlans(suiteId);
+		
+		return new PagingBackedPagedCollectionHolder<List<IterationTestPlanItem>> (paging, count, testPlan);
+	}
 
+	@Override
+	@PreAuthorize("hasPermission(#suiteId, 'org.squashtest.csp.tm.domain.campaign.TestSuite','WRITE') or hasRole('ROLE_ADMIN')")		
+	public TestSuiteStatistics findTestSuiteStatistics(long suiteId){
+		TestSuiteStatistics stats = testSuiteDao.getTestSuiteStatistics(suiteId);
+		return stats;
+	}
+	
 }

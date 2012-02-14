@@ -20,10 +20,19 @@
  */
 package org.squashtest.csp.tm.web.internal.controller.campaign;
 
+import java.text.SimpleDateFormat;
+import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
+import java.util.Locale;
 import java.util.Map;
 
+import javax.inject.Inject;
+import javax.servlet.http.HttpServletResponse;
+
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+import org.springframework.context.MessageSource;
 import org.springframework.osgi.extensions.annotation.ServiceReference;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -31,28 +40,136 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
+import org.springframework.web.servlet.ModelAndView;
+import org.squashtest.csp.core.infrastructure.collection.PagedCollectionHolder;
+import org.squashtest.csp.core.infrastructure.collection.Paging;
+import org.squashtest.csp.core.service.security.PermissionEvaluationService;
+import org.squashtest.csp.tm.domain.campaign.IterationTestPlanItem;
+import org.squashtest.csp.tm.domain.campaign.TestSuite;
+import org.squashtest.csp.tm.domain.campaign.TestSuiteStatistics;
+import org.squashtest.csp.tm.domain.execution.ExecutionStatus;
+import org.squashtest.csp.tm.domain.project.Project;
+import org.squashtest.csp.tm.domain.testcase.TestCase;
+import org.squashtest.csp.tm.domain.testcase.TestCaseExecutionMode;
 import org.squashtest.csp.tm.service.TestSuiteModificationService;
+import org.squashtest.csp.tm.web.internal.model.datatable.DataTableDrawParameters;
+import org.squashtest.csp.tm.web.internal.model.datatable.DataTableMapperPagingAndSortingAdapter;
+import org.squashtest.csp.tm.web.internal.model.datatable.DataTableModel;
+import org.squashtest.csp.tm.web.internal.model.datatable.DataTableModelHelper;
+import org.squashtest.csp.tm.web.internal.model.viewmapper.DataTableMapper;
 
 
 @Controller
-@RequestMapping("/test-suites/{id}")
+@RequestMapping("/testSuite/{id}")
 public class TestSuiteModificationController {
 
 	private TestSuiteModificationService service;
+	
+	private static final Logger LOGGER = LoggerFactory.getLogger(TestSuiteModificationController.class);
 	
 	@ServiceReference
 	public void setTestSuiteModificationService(TestSuiteModificationService service){
 		this.service=service;
 	}
 	
-	@RequestMapping(value="/rename", method=RequestMethod.POST, params="name" )
-	public @ResponseBody Map<String, String> renameTestSuite(@PathVariable("id") Long id, @RequestParam("name") String name ){
-		service.rename(id, name);
-		Map<String, String> result = new HashMap<String, String>();
-		result.put("id", id.toString());
-		result.put("name", name);
-		return result;
+	@Inject
+	private PermissionEvaluationService permissionService;
+
+	@Inject
+	private MessageSource messageSource;
+	
+	private final DataTableMapper testPlanMapper = new DataTableMapper("unused", IterationTestPlanItem.class,
+			TestCase.class, Project.class, TestSuite.class).initMapping(9)
+			.mapAttribute(Project.class, 2, "name", String.class)
+			.mapAttribute(TestCase.class, 3, "name", String.class)
+			.mapAttribute(TestCase.class, 4, "executionMode", TestCaseExecutionMode.class)
+			.mapAttribute(IterationTestPlanItem.class, 5, "executionStatus", ExecutionStatus.class)
+			.mapAttribute(IterationTestPlanItem.class, 6, "lastExecutedBy", String.class)
+			.mapAttribute(IterationTestPlanItem.class, 7, "lastExecutedOn", Date.class);
+	
+	// will return the fragment only
+	@RequestMapping(method = RequestMethod.GET)
+	public ModelAndView showTestSuite(@PathVariable long id) {
+		TestSuite testSuite = service.findById(id);
+		TestSuiteStatistics testSuiteStats = service.findTestSuiteStatistics(id);
+		
+		ModelAndView mav = new ModelAndView("fragment/test-suites/edit-test-suite");
+		mav.addObject("testSuite", testSuite);
+		mav.addObject("statistics", testSuiteStats);
+
+		return mav;
 	}
+
+	// will return the iteration in a full page
+	@RequestMapping(value = "/info", method = RequestMethod.GET)
+	public ModelAndView showTestSuiteInfo(@PathVariable long id) {
+
+		TestSuite testSuite = service.findById(id);
+
+		TestSuiteStatistics testSuiteStats = service.findTestSuiteStatistics(id);
+		
+		ModelAndView mav = new ModelAndView("page/campaign-libraries/show-test-suite");
+
+		if (testSuite != null) {
+			mav.addObject("testSuite", testSuite);
+			mav.addObject("statistics", testSuiteStats);
+		} else {
+			testSuite = new TestSuite();
+			testSuite.setName("Not found");
+			testSuite.setDescription("This test suite either do not exists, or was removed");
+			mav.addObject("testSuite", testSuite);
+
+		}
+		return mav;
+	}
+	
+	@RequestMapping(value = "/general", method = RequestMethod.GET)
+	public ModelAndView refreshGeneralInfos(@PathVariable long id) {
+
+		TestSuite testSuite = service.findById(id);
+
+		ModelAndView mav = new ModelAndView("fragment/generics/general-information-fragment");
+
+		mav.addObject("auditableEntity", testSuite);
+		mav.addObject("entityContextUrl", "/testSuite/" + id);
+
+		return mav;
+	}
+	
+
+	@RequestMapping(method = RequestMethod.POST, params = { "id=test-suite-description", "value" })
+	@ResponseBody
+	public String updateDescription(@RequestParam("value") String newDescription, @PathVariable long id) {
+
+		service.changeDescription(id, newDescription);
+		LOGGER.trace("Test-suite " + id + ": updated description to " + newDescription);
+		return newDescription;
+
+	}
+	
+
+	@RequestMapping(method = RequestMethod.POST, params = { "newName" })
+	@ResponseBody
+	public Object rename(HttpServletResponse response, @RequestParam("newName") String newName,
+			@PathVariable long id) {
+
+		LOGGER.info("TestSuiteModificationController : renaming " + id + " as " + newName);
+		service.rename(id, newName);
+		final String reNewName = newName;
+		return new Object() {
+			public String newName = reNewName; // NOSONAR : field is actually read by JSON marshaller
+		};
+
+	}
+
+//	@RequestMapping(value="/rename", method=RequestMethod.POST, params="name" )
+//	public @ResponseBody Map<String, String> renameTestSuite(@PathVariable("id") Long id, @RequestParam("name") String name ){
+//		service.rename(id, name);
+//		Map<String, String> result = new HashMap<String, String>();
+//		result.put("id", id.toString());
+//		result.put("name", name);
+//		return result;
+//	}
 	
 	@RequestMapping(value="/test-cases", method=RequestMethod.POST, params="test-cases[]")
 	public @ResponseBody Map<String, String> bindTestPlan(@PathVariable("id") long suiteId, @RequestParam("test-cases[]") List<Long> itpIds){
@@ -62,5 +179,89 @@ public class TestSuiteModificationController {
 		return result;
 	}
 	
+	@RequestMapping(value = "/test-plan/table", params = "sEcho")
+	public @ResponseBody
+	DataTableModel getTestPlanModel(@PathVariable Long id, final DataTableDrawParameters params,
+			final Locale locale) {
+
+		Paging paging = new DataTableMapperPagingAndSortingAdapter(params, testPlanMapper);
+		
+		PagedCollectionHolder<List<IterationTestPlanItem>> holder = service.findTestSuiteTestPlan(
+				id, paging);
+		
+		return new DataTableModelHelper<IterationTestPlanItem>() {
+			@Override
+			public Object[] buildItemData(IterationTestPlanItem item) {
+
+				String projectName;
+				String testCaseName;
+				String testCaseExecutionMode;
+
+				if (item.isTestCaseDeleted()) {
+					projectName = formatNoData(locale);
+					testCaseName = formatDeleted(locale);
+					testCaseExecutionMode = formatNoData(locale);
+				} else {
+					projectName = item.getReferencedTestCase().getProject().getName();
+					testCaseName = item.getReferencedTestCase().getName();
+					testCaseExecutionMode = formatExecutionMode(item.getReferencedTestCase().getExecutionMode(), locale);
+				}
+
+				return new Object[] { item.getId(), 
+						getCurrentIndex(), 
+						projectName, 
+						testCaseName,
+						testCaseExecutionMode, 
+						formatStatus(item.getExecutionStatus(), locale),
+						formatString(item.getLastExecutedBy(), locale), 
+						formatDate(item.getLastExecutedOn(), locale),
+						item.isTestCaseDeleted(), 
+						" "
+
+				};
+			}
+		}.buildDataModel(holder, params.getsEcho());
+
+	}
+
+/* ***************** data formatter *************************** */
+
+	private String formatString(String arg, Locale locale) {
+		if (arg == null) {
+			return formatNoData(locale);
+		} else {
+			return arg;
+		}
+	}
+
+	private String formatDate(Date date, Locale locale) {
+		try {
+			String format = messageSource.getMessage("squashtm.dateformat", null, locale);
+			return new SimpleDateFormat(format).format(date);
+		} catch (Exception anyException) {
+			return formatNoData(locale);
+		}
+
+	}
+
+	private String formatNoData(Locale locale) {
+		return messageSource.getMessage("squashtm.nodata", null, locale);
+	}
+
+	private String formatDeleted(Locale locale) {
+		return messageSource.getMessage("squashtm.itemdeleted", null, locale);
+	}
+
+	private String formatExecutionMode(TestCaseExecutionMode mode, Locale locale) {
+		return messageSource.getMessage(mode.getI18nKey(), null, locale);
+	}
+
+	private String formatStatus(ExecutionStatus status, Locale locale) {
+		return messageSource.getMessage(status.getI18nKey(), null, locale);
+	}
+	
+	private String formatNone(Locale locale){
+		return messageSource.getMessage("squashtm.none.f", null, locale);	
+	}
 	
 }

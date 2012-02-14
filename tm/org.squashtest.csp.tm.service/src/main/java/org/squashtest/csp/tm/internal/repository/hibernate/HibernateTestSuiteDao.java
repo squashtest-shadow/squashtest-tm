@@ -20,11 +20,17 @@
  */
 package org.squashtest.csp.tm.internal.repository.hibernate;
 
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 import org.hibernate.Query;
 import org.springframework.stereotype.Repository;
+import org.squashtest.csp.core.infrastructure.collection.Paging;
+import org.squashtest.csp.tm.domain.campaign.IterationTestPlanItem;
 import org.squashtest.csp.tm.domain.campaign.TestSuite;
+import org.squashtest.csp.tm.domain.campaign.TestSuiteStatistics;
+import org.squashtest.csp.tm.domain.execution.ExecutionStatus;
 import org.squashtest.csp.tm.internal.repository.TestSuiteDao;
 
 /* 
@@ -47,5 +53,66 @@ public class HibernateTestSuiteDao extends HibernateEntityDao<TestSuite> impleme
 		});
 	}
 	
+	@Override
+	public List<IterationTestPlanItem> findTestPlanPaged(final long testSuiteId, final Paging paging) {
+		SetQueryParametersCallback callback = new SetQueryParametersCallback() {
+
+			@Override
+			public void setQueryParameters(Query query) {
+				query.setParameter("id", testSuiteId);
+				query.setParameter("id2", testSuiteId);
+				query.setFirstResult(paging.getFirstItemIndex());
+				query.setMaxResults(paging.getPageSize());
+			}
+
+		};
+
+		return executeListNamedQuery("testSuite.findTestPlanPaged", callback);		
+	}
+
+	@Override
+	public long countTestPlans(Long testSuiteId) {
+		return (Long) executeEntityNamedQuery("testSuite.countTestPlans", idParameter(testSuiteId));
+	}
+
+	@Override
+	public TestSuiteStatistics getTestSuiteStatistics(final Long testSuiteId) {
+		
+		Map<String, Integer> statusMap = new HashMap<String, Integer>();
+
+		Long nbTestPlans = countTestPlans(testSuiteId);
+		
+		for (ExecutionStatus status : ExecutionStatus.values()) {
+			final ExecutionStatus fStatus = status;
+
+			SetQueryParametersCallback newCallBack = new SetQueryParametersCallback() {
+
+				@Override
+				public void setQueryParameters(Query query) {
+					query.setLong("id", testSuiteId);
+					query.setParameter("status", fStatus);
+				}
+			};
+
+			Long lResult = executeEntityNamedQuery("testSuite.countStatus", newCallBack);
+
+			Integer result = lResult.intValue();
+
+			statusMap.put(status.name(), result);
+		}
+
+		TestSuiteStatistics stats = new TestSuiteStatistics(nbTestPlans, 
+				statusMap.get(ExecutionStatus.BLOCKED.name()),
+				statusMap.get(ExecutionStatus.FAILURE.name()),
+				statusMap.get(ExecutionStatus.SUCCESS.name()),
+				statusMap.get(ExecutionStatus.RUNNING.name()),
+				statusMap.get(ExecutionStatus.READY.name()));
+		
+		return stats;
+	}
+	
+	private SetQueryParametersCallback idParameter(final long id) {
+		return new SetIdParameter("id", id);
+	}
 	
 }

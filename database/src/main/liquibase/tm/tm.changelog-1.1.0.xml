@@ -396,6 +396,14 @@
 				<constraints nullable="false" references="ATTACHMENT_LIST(ATTACHMENT_LIST_ID)" 
 				foreignKeyName="fk_test_suite_attachment_list" />
 			</column>
+			<column name="CREATED_BY" type="VARCHAR(50)" remarks="Who created this test suite">
+				<constraints nullable="false" />
+			</column>
+			<column name="CREATED_ON" type="DATETIME" remarks="When this test suite was created">
+				<constraints nullable="false" />
+			</column>
+			<column name="LAST_MODIFIED_BY" type="VARCHAR(50)" defaultValue="NULL" remarks="Who modified this test suite last" />
+			<column name="LAST_MODIFIED_ON" type="DATETIME" defaultValue="NULL" remarks="When this test suite was last modified" />
 		</createTable>
 	</changeSet>
 	

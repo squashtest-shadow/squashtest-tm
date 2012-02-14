@@ -39,7 +39,9 @@ import org.hibernate.validator.constraints.NotBlank;
 import org.squashtest.csp.core.security.annotation.InheritsAcls;
 import org.squashtest.csp.tm.domain.DuplicateNameException;
 import org.squashtest.csp.tm.domain.attachment.AttachmentList;
+import org.squashtest.csp.tm.domain.audit.Auditable;
 
+@Auditable
 @Entity
 @InheritsAcls(constrainedClass = Iteration.class, collectionName = "testSuites")
 public class TestSuite {
@@ -107,7 +109,6 @@ public class TestSuite {
 	public AttachmentList getAttachmentList() {
 		return attachmentList;
 	}
-
 	
 	/**
 	 * Warning : that property builds a new list everytime. If you want to change the content of the list, use the other dedicated accessors ({@link #addTestPlan(List))} or the other one)
