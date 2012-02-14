@@ -27,6 +27,7 @@
 <%@ taglib tagdir="/WEB-INF/tags/jquery" prefix="jq" %>
 <%@ taglib prefix="layout" tagdir="/WEB-INF/tags/layout"  %>
 <%@ taglib prefix="comp" tagdir="/WEB-INF/tags/component" %>
+<%@ taglib prefix="gr" tagdir="/WEB-INF/tags/aggregates" %>
 <%@ taglib prefix="sf" uri="http://www.springframework.org/tags/form"%>
 <%@ taglib prefix="f" uri="http://java.sun.com/jsp/jstl/fmt" %>
 
@@ -105,19 +106,15 @@
 	<link rel="stylesheet" type="text/css" href="${ pageContext.servletContext.contextPath }/styles/master.purple.css" />
 </head>
 
-
 <body id="ieo-body">
 	<script type="text/javascript">
-	
-	
 	$(function(){
 
 		$("#left-panel").resizable({
 			helper: "ui-resizable-helper",
 			alsoResize: "#right-panel",
 			start: function(){ 
-				$("#right-panel").css('visibility','hidden');
-				$("#iframe-left").css('visibility','hidden');
+				$(".resizable").addClass('not-visible');
 			},
 			stop: function(event, ui) {
 				var body = document.getElementById("ieo-body");
@@ -126,17 +123,72 @@
 				var leftPanelSize = $(this).width();
 				var rightPanelWidth = bodyWidth - (marginLeft + leftPanelSize);
 				$("#right-panel").width(rightPanelWidth);
-				$("#right-panel").css('visibility','visible');
-				$("#iframe-left").css('visibility','visible');
+				$(".resizable").removeClass('not-visible');
 			}
 		});
 
 		$("#right-panel").resizable();
 		
+		var toolbox = $("#menu-space");
+		
+		toolbox.delegate("#execute-next-step", "click", function(){
+			navigateNext();
+		});
+		toolbox.delegate("#execute-previous-step", "click", function() {
+			navigatePrevious();
+		});
+		toolbox.delegate('#stop-execution', 'click', function() {
+			window.close();
+		});
+		toolbox.delegate('#step-status-combo', 'change', function(success) {
+			$.post(changeStatusUrl, {
+				executionStatus : $(this).val()
+			},
+			statusComboChange(this)
+			);
+		});
+		toolbox.delegate('#step-succeeded', 'click', function() {
+			$.post(changeStatusUrl, {
+				executionStatus : "SUCCESS"
+			}, setStatusSuccess());				
+		});
+		toolbox.delegate('#step-failed', 'click', function(){
+			$.post(changeStatusUrl, {
+				executionStatus : "FAILURE"
+			}, setStatusFailure());					
+		});
 	});
 	
-	function initStepValues(){
+	function statusComboSetIcon(combo){
+		var cbox = $(this);
+		//reset the classes
+		cbox.attr("class","");
 		
+		cbox.addClass("execution-status-combo-class");
+		
+		//find and set the new class
+		var selectedIndex = document.getElementById('step-status-combo').selectedIndex;
+		var selector = "option:eq(" + selectedIndex + ")";
+		
+		var className = cbox.find(selector).attr("class");
+		
+		cbox.addClass(className);
+	}
+	
+	function statusComboChange(combo){
+		statusComboSetIcon(combo);
+	}
+
+	function setStatusSuccess(){
+		$("#step-status-combo").val("SUCCESS");			
+		statusComboChange();
+		navigateNext();
+	}
+	
+	function setStatusFailure(){
+		$("#step-status-combo").val("FAILURE");
+		statusComboChange();
+		navigateNext();
 	}
 	
 	function refreshStepValues(urlStep){
@@ -175,15 +227,10 @@
 	
 	<%-- Navigate left panel to the right Step --%>
 	function navigateNext(){
-		<c:choose>
-			<c:when test="${stepNumberNext == totalSteps-1}">
-		testComplete();
-			</c:when>
-			<c:otherwise>
+		if (hasNextStep) {
 			parent.frameleft.document.location.href=urlNext;
 			refreshMenuNext();
-			</c:otherwise>
-		</c:choose>
+		}
 	}
 	
 	function navigateOther(value){
@@ -194,17 +241,17 @@
 	}
 
 	function navigatePrevious(){
-		<c:choose>
-			<c:when test="${stepNumberPrevious == 0}">
-		testComplete();
-			</c:when>
-			<c:otherwise>
+		if (hasPreviousStep) {
 			parent.frameleft.document.location.href=urlPrevious;
 			refreshMenuPrevious();
-			</c:otherwise>
-	</c:choose>			
-
+		}
 	}
+
+	function testComplete(){
+		alert( executionCompleteMessage );
+		window.close();
+	}
+	
 	<%-- fill the right panel with the content of entered url --%>
 	function fillRightFrame(url){
 		$('#iframe-right').attr("src", url);
@@ -212,19 +259,19 @@
 	
 	</script>
 
-	<div id="left-panel" style="z-index: 0;">
+	<div id="left-panel" class="iframe-container resizable" style="z-index: 0;">
 		<iframe id="iframe-left" name="frameleft" src="${executeThis}">
 		</iframe>
 	</div>
 
 	
-	<div id="right-panel" style="z-index: 0;">
-		<iframe id="iframe-right" name="frameright">
+	<div id="right-panel" class="iframe-container" style="z-index: 0;">
+		<iframe id="iframe-right" class="resizable" name="frameright">
 		</iframe> 
 	</div>
 	
 	<div id="menu-space" >
-		<jsp:include page="step-information-menu.jsp" />
+		<gr:ieo-toolbox execution="${ execution }" executionStep="${ executionStep }" hasNextStep="${ hasNextStep }" hasPreviousStep="${ hasPreviousStep }" totalSteps="${ totalSteps }" />
 	</div>
 
 	<comp:decorate-buttons />

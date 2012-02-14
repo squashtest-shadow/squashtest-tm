@@ -849,6 +849,10 @@ div#user-account-password-panel > div > * {
 	display: none;
 }
 
+.not-visible {
+	visibility: hidden;
+}
+
 .centered {
 	text-align: center;
 }
@@ -882,7 +886,7 @@ div#user-account-password-panel > div > * {
 		
 }
 
-.requirement-indirect-verification, .requirement-indirect-verification td > a{
+.requirement-indirect-verification, .requirement-indirect-verification td > a {
 	font-style : italic;
 	color : gray;
 }
