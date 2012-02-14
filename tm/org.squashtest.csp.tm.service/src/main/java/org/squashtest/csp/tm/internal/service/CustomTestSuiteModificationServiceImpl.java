@@ -47,15 +47,7 @@ public class CustomTestSuiteModificationServiceImpl implements
 	@Inject
 	private TestSuiteDao testSuiteDao;
 	
-	private PermissionEvaluationService permissionService;
 
-	@Inject
-	private CampaignNodeDeletionHandler campaignNodeDeletionHandler;
-	
-	@ServiceReference
-	public void setPermissionService(PermissionEvaluationService permissionService) {
-		this.permissionService = permissionService;
-	}
 
 	@Override
 	@PreAuthorize("hasPermission(#suiteId, 'org.squashtest.csp.tm.domain.campaign.TestSuite','WRITE') or hasRole('ROLE_ADMIN')")		
@@ -99,57 +91,8 @@ public class CustomTestSuiteModificationServiceImpl implements
 		return stats;
 	}
 	
-	@Override
-	public List<Long> remove(List<Long> suitesIds) {
-		// fetch
-		List<TestSuite> testSuites = testSuiteDao.findAllByIdList(suitesIds);
-		// check
-		checkPermissionsForAll(testSuites, "WRITE");
-		// proceed
-		List<Long> deletedIds = campaignNodeDeletionHandler.deleteSuites(testSuites);
-		return deletedIds;
-	}
-
-	/* ************************* private stuffs ************************* */
-
-	/* **that class just performs the same, using a domainObject directly */
-	private class SecurityCheckableObject {
-		private final Object domainObject;
-		private final String permission;
-
-		private SecurityCheckableObject(Object domainObject, String permission) {
-			this.domainObject = domainObject;
-			this.permission = permission;
-		}
-
-		public String getPermission() {
-			return permission;
-		}
-
-		public Object getObject() {
-			return domainObject;
-		}
-
-	}
-
-	private void checkPermission(SecurityCheckableObject... checkableObjects) {
-		for (SecurityCheckableObject object : checkableObjects) {
-			if (!permissionService
-					.hasRoleOrPermissionOnObject("ROLE_ADMIN", object.getPermission(), object.getObject())) {
-				throw new AccessDeniedException("Access is denied");
-			}
-		}
-	}
 
 
-	/* ************************* private stuffs ************************* */
-
-	private void checkPermissionsForAll(List<TestSuite> testSuites, String permission) {
-		for (TestSuite testSuite : testSuites) {
-			checkPermission(new SecurityCheckableObject(testSuite, permission));
-		}
-
-	}
 
 
 }

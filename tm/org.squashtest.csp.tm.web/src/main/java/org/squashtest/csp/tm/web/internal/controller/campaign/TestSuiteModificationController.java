@@ -43,7 +43,6 @@ import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.servlet.ModelAndView;
 import org.squashtest.csp.core.infrastructure.collection.PagedCollectionHolder;
 import org.squashtest.csp.core.infrastructure.collection.Paging;
-import org.squashtest.csp.core.service.security.PermissionEvaluationService;
 import org.squashtest.csp.tm.domain.campaign.IterationTestPlanItem;
 import org.squashtest.csp.tm.domain.campaign.TestSuite;
 import org.squashtest.csp.tm.domain.campaign.TestSuiteStatistics;
@@ -60,7 +59,7 @@ import org.squashtest.csp.tm.web.internal.model.viewmapper.DataTableMapper;
 
 
 @Controller
-@RequestMapping("/testSuite/{id}")
+@RequestMapping("/test-suites/{id}")
 public class TestSuiteModificationController {
 
 	private TestSuiteModificationService service;
@@ -223,12 +222,7 @@ public class TestSuiteModificationController {
 
 	}
 	
-	@RequestMapping(value="/remove", method=RequestMethod.POST, params="ids[]" )
-	public @ResponseBody List<Long> removeTestSuites(@RequestParam("ids[]") List<Long> ids ){
-		List<Long> deletedIds = service.remove(ids);
-		LOGGER.debug("removal of "+deletedIds.size()+" Test Suites");
-		return deletedIds;
-	}
+
 
 /* ***************** data formatter *************************** */
 

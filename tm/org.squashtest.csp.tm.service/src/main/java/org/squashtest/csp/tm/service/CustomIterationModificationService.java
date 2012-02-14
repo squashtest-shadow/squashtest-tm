@@ -103,6 +103,16 @@ public interface CustomIterationModificationService {
 	void addTestSuite(long iterationId, TestSuite suite);
 	
 	List<TestSuite> findAllTestSuites(long iterationId);
+	
+	/**
+	 * <p>
+	 * That method will remove each test suite, leaving it's test plan items linked to no test_suite
+	 * </p>
+	 * 
+	 * @param suitesIds
+	 * @return the deleted suitesIds
+	 */
+	List<Long> removeTestSuites(List<Long> suitesIds);
 
 
 }

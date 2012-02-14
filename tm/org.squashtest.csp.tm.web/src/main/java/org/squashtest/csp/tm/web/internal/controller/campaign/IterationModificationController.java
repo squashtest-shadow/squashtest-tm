@@ -150,17 +150,6 @@ public class IterationModificationController {
 
 	}
 
-	@RequestMapping(method = RequestMethod.DELETE)
-	@ResponseBody
-	public String remove(@PathVariable long iterationId) {
-
-		iterationModService.delete(iterationId);
-
-		LOGGER.info("IterationModificationController : deleting " + iterationId);
-
-		return "ok";
-
-	}
 
 	@RequestMapping(value = "/general", method = RequestMethod.GET)
 	public ModelAndView refreshGeneralInfos(@PathVariable long iterationId) {
@@ -420,6 +409,14 @@ public class IterationModificationController {
 		}
 		return result;
 	}
+	
+	@RequestMapping(value = "/test-suites/delete", method = RequestMethod.POST, params= {"ids[]"} )
+	public @ResponseBody List<Long> removeTestSuites(@RequestParam("ids[]") List<Long> ids ){
+		List<Long> deletedIds = iterationModService.removeTestSuites(ids);
+		LOGGER.debug("removal of "+deletedIds.size()+" Test Suites");
+		return deletedIds;
+	}
+
 	
 	
 	/* ************** private stuffs are below ********************** */

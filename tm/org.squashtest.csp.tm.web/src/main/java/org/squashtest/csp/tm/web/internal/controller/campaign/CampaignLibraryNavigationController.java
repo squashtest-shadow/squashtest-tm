@@ -272,12 +272,12 @@ LibraryNavigationController<CampaignLibrary, CampaignFolder, CampaignLibraryNode
 		
 	}
 
-
 	@RequestMapping(value="/delete-iterations/confirm", method=RequestMethod.DELETE, params= {"nodeIds[]"})
 	public @ResponseBody List<Long> confirmIterationsDeletion(@RequestParam("nodeIds[]") List<Long> nodeIds){
 		
 		return campaignLibraryNavigationService.deleteIterations(nodeIds);	
 	}
+	
 	
 	@RequestMapping(value="/copy", method= RequestMethod.POST)
 	public @ResponseBody List<JsTreeNode> copyIterations(@RequestParam("object-ids[]") Long[] iterationsIds, 

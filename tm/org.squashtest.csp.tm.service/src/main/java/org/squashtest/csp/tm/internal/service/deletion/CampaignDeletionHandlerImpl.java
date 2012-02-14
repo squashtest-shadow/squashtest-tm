@@ -25,6 +25,7 @@ import java.util.Collection;
 import java.util.Collections;
 import java.util.LinkedList;
 import java.util.List;
+import java.util.Set;
 
 import javax.inject.Inject;
 
@@ -47,6 +48,7 @@ import org.squashtest.csp.tm.internal.repository.CampaignDeletionDao;
 import org.squashtest.csp.tm.internal.repository.CampaignFolderDao;
 import org.squashtest.csp.tm.internal.repository.FolderDao;
 import org.squashtest.csp.tm.internal.repository.IterationDao;
+import org.squashtest.csp.tm.internal.repository.TestSuiteDao;
 import org.squashtest.csp.tm.internal.service.CampaignNodeDeletionHandler;
 import org.squashtest.csp.tm.service.deletion.SuppressionPreviewReport;
 
@@ -65,6 +67,9 @@ public class CampaignDeletionHandlerImpl extends AbstractNodeDeletionHandlerImpl
 
 	@Inject
 	private IterationDao iterationDao;
+	
+	@Inject
+	private TestSuiteDao suiteDao;
 
 	@Override
 	protected FolderDao<CampaignFolder, CampaignLibraryNode> getFolderDao() {
@@ -90,6 +95,13 @@ public class CampaignDeletionHandlerImpl extends AbstractNodeDeletionHandlerImpl
 	@Override
 	public List<SuppressionPreviewReport> simulateExecutionDeletion(Long execId) {
 
+		// TODO : implement the specs when they are ready. Default is "nothing special".
+		return Collections.emptyList();
+	}
+	
+	@Override
+	public List<SuppressionPreviewReport> simulateSuiteDeletion(List<Long> targetIds){
+		
 		// TODO : implement the specs when they are ready. Default is "nothing special".
 		return Collections.emptyList();
 	}
@@ -162,35 +174,33 @@ public class CampaignDeletionHandlerImpl extends AbstractNodeDeletionHandlerImpl
 		return targetIds;
 
 	}
-
+	
+	
 	@Override
-	public List<Long> deleteSuites(Collection<TestSuite> testSuites) {
-		List<Long> deletedIds = new ArrayList<Long>();
+	public List<Long> deleteSuites(List<Long> testSuites) {
+		List<TestSuite> suites = suiteDao.findAllByIdList(testSuites);
+
+		doDeleteSuites(suites);
+				
+		return testSuites;
+	
+	}
+
+
+	private void doDeleteSuites(Collection<TestSuite> testSuites) {
 		List<Long> attachmentListIds = new ArrayList<Long>();
+		
 		for (TestSuite testSuite : testSuites) {
-			Long id = testSuite.getId();
-			// store the attachment list
 			attachmentListIds.add(testSuite.getAttachmentList().getId());
-			// remove test plan item's links
 			for (IterationTestPlanItem testPlanItem : testSuite.getTestPlan()) {
 				testPlanItem.setTestSuite(null);
-			}
-			// remove iteration's link
-			Iteration iteration = testSuite.getIteration();
-			iteration.removeTestSuite(testSuite);
-			// remove itself
+			}		
+			testSuite.getIteration().removeTestSuite(testSuite);
 			deletionDao.removeEntity(testSuite);
-			// add the id to the list of deleted items
-			deletedIds.add(id);
 		}
-		/*
-		 * a flush is needed at this point because all operations above where performed by Hibernate, while the rest
-		 * will be executed using SQL queries. The inconsistencies between cached entities but not yet flushed entities
-		 * and the actual database content would make the operation crash, so we need to synchronize.
-		 */
+
 		deletionDao.flush();
 		deletionDao.removeAttachmentsLists(attachmentListIds);
-		return deletedIds;
 	}
 
 	@Override
@@ -237,13 +247,19 @@ public class CampaignDeletionHandlerImpl extends AbstractNodeDeletionHandlerImpl
 	 * removing an iteration means : - removing its test plan, - removing its attachment list - remove itself from
 	 * repository.
 	 */
-
 	private void doDeleteIterations(List<Iteration> iterations) {
 		for (Iteration iteration : iterations) {
-			deleteSuites(iteration.getTestSuites());
+			
+			Collection<TestSuite> suites = new ArrayList<TestSuite>();  
+			suites.addAll(iteration.getTestSuites());
+			
+			doDeleteSuites(suites);
+			iteration.getTestSuites().clear();
+			
 			deleteIterationTestPlan(iteration.getTestPlans());
+			iteration.getTestSuites().clear();
+			
 			deletionDao.removeAttachmentList(iteration.getAttachmentList());
-			// iteration.getCampaign().removeIteration(iteration);
 			deletionDao.removeEntity(iteration);
 		}
 	}

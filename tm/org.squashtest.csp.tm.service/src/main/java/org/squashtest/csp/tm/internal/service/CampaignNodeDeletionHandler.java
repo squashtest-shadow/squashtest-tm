@@ -102,6 +102,9 @@ public interface CampaignNodeDeletionHandler extends NodeDeletionHandler<Campaig
 	 *             if the execution should not be deleted.
 	 */
 	void deleteExecution(Execution execution);
+	
+	
+	List<SuppressionPreviewReport> simulateSuiteDeletion(List<Long> targetIds);
 
 	/**
 	 * that method should delete test suites, and remove its references in iteration and iteration test plan item
@@ -109,6 +112,6 @@ public interface CampaignNodeDeletionHandler extends NodeDeletionHandler<Campaig
 	 * @param testSuites
 	 * @return
 	 */
-	List<Long> deleteSuites(Collection<TestSuite> testSuites);
+	List<Long> deleteSuites(List<Long> suiteIds);
 
 }

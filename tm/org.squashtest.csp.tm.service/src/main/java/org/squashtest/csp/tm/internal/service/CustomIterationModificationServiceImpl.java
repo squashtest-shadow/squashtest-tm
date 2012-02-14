@@ -27,10 +27,13 @@ import javax.inject.Inject;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.osgi.extensions.annotation.ServiceReference;
+import org.springframework.security.access.AccessDeniedException;
 import org.springframework.security.access.prepost.PostAuthorize;
 import org.springframework.security.access.prepost.PostFilter;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.stereotype.Service;
+import org.squashtest.csp.core.service.security.PermissionEvaluationService;
 import org.squashtest.csp.tm.domain.CannotCreateExecutionException;
 import org.squashtest.csp.tm.domain.attachment.Attachment;
 import org.squashtest.csp.tm.domain.campaign.Campaign;
@@ -74,6 +77,14 @@ public class CustomIterationModificationServiceImpl implements CustomIterationMo
 
 	@Inject
 	private CampaignNodeDeletionHandler deletionHandler;
+	
+	private PermissionEvaluationService permissionService;
+	
+
+	@ServiceReference
+	public void setPermissionService(PermissionEvaluationService permissionService) {
+		this.permissionService = permissionService;
+	}
 
 	@Override
 	@PreAuthorize("hasPermission(#campaignId, 'org.squashtest.csp.tm.domain.campaign.Campaign', 'WRITE') "
@@ -276,5 +287,61 @@ public class CustomIterationModificationServiceImpl implements CustomIterationMo
 		List<TestSuite> allSuites = iterationDao.findAllTestSuites(iterationId);
 		return allSuites;
 	}
+
+	
+	@Override
+	public List<Long> removeTestSuites(List<Long> suitesIds) {
+		List<TestSuite> testSuites = suiteDao.findAllByIdList(suitesIds);
+		// check
+		checkPermissionsForAll(testSuites, "WRITE");
+		// proceed
+		List<Long> deletedIds = deletionHandler.deleteSuites(suitesIds);
+		return deletedIds;
+		
+	}
+
+
+
+	/* ************************* security ************************* */
+
+	/* **that class just performs the same, using a domainObject directly */
+	private static class SecurityCheckableObject {
+		private final Object domainObject;
+		private final String permission;
+	
+		private SecurityCheckableObject(Object domainObject, String permission) {
+			this.domainObject = domainObject;
+			this.permission = permission;
+		}
+	
+		public String getPermission() {
+			return permission;
+		}
+	
+		public Object getObject() {
+			return domainObject;
+		}
+	
+	}
+	
+	private void checkPermission(SecurityCheckableObject... checkableObjects) {
+		for (SecurityCheckableObject object : checkableObjects) {
+			if (!permissionService
+					.hasRoleOrPermissionOnObject("ROLE_ADMIN", object.getPermission(), object.getObject())) {
+			throw new AccessDeniedException("Access is denied");
+			}
+		}
+	}
+	
+	
+	/* ************************* private stuffs ************************* */
+	
+	private void checkPermissionsForAll(List<TestSuite> testSuites, String permission) {
+		for (TestSuite testSuite : testSuites) {
+			checkPermission(new SecurityCheckableObject(testSuite, permission));
+		}
+	
+	}
+
 	
 }

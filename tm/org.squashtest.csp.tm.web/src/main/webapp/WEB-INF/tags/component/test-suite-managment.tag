@@ -163,6 +163,7 @@
 				createUrl : "${testSuitesUrl}/new",	
 				baseUpdateUrl : "${baseSuiteUrl}",
 				getUrl : "${testSuitesUrl}",
+				removeUrl : "${testSuitesUrl}/delete",
 				initData : initData
 			};
 			

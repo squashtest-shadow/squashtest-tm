@@ -326,9 +326,7 @@ class CampaignNodeDeletionHandlerIT  extends DbunitServiceSpecification{
 	@DataSet("NodeDeletionHandlerTest.should delete testSuites.xml")
 	def"should remove test suites"(){
 		when :
-		TestSuite testSuite = findEntity (TestSuite.class, 1L)
-		TestSuite testSuite2 = findEntity (TestSuite.class, 2L)
-		deletionHandler.deleteSuites([testSuite, testSuite2])
+		deletionHandler.deleteSuites([1L, 2L])
 		then :
 		allDeleted("TestSuite", [1l, 2L])
 		allDeleted("AttachmentList", [12l, 13L])

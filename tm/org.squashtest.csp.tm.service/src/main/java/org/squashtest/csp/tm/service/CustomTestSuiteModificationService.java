@@ -59,15 +59,7 @@ public interface CustomTestSuiteModificationService {
 	@PreAuthorize("hasPermission(#arg0, 'org.squashtest.csp.tm.domain.campaign.TestSuite','WRITE') or hasRole('ROLE_ADMIN')")		
 	void bindTestPlan(long suiteId, List<Long> itemTestPlanIds);
 
-	/**
-	 * <p>
-	 * That method will remove each test suite, leaving it's test plan items linked to no test_suite
-	 * </p>
-	 * 
-	 * @param suitesIds
-	 * @return the deleted suitesIds
-	 */
-	List<Long> remove(List<Long> suitesIds);
+
 
 	/**
 	 * That method will find the test Suite by its ID
