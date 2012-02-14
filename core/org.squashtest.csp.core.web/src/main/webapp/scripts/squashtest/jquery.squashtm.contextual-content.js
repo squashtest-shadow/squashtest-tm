@@ -18,7 +18,12 @@
 			this.listeners = [];
 		}, this);
 
-			
+		
+		var abortIfRunning = $.proxy(function(){
+			if (this.currentXhr.readyState!=4){
+				this.currentXhr.abort();
+			}
+		}, this);
 		
 		/* ******************* public **************** */
 		
@@ -46,6 +51,7 @@
 				defer.reject;
 				return defer.promise();			
 			}else{
+				abortIfRunning();
 				this.currentXhr = $.ajax({
 					url : url,
 					type : 'GET', 
@@ -65,7 +71,7 @@
 		this.unload = function(){
 			cleanContent();
 			this.currentUrl = "";
-			if (this.currentXhr.readyState != 4) this.currentXhr.abort();
+			abortIfRunning();
 		}
 		
 		return this;

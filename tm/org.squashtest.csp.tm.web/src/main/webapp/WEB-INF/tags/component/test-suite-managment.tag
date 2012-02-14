@@ -36,6 +36,7 @@
 <%@ taglib prefix="c" 		uri="http://java.sun.com/jsp/jstl/core" %>
 <%@ taglib prefix="s"		uri="http://www.springframework.org/tags"%>
 <%@ taglib prefix="comp" 	tagdir="/WEB-INF/tags/component" %>	
+<%@ taglib prefix="fn"		uri="http://java.sun.com/jsp/jstl/functions" %>
 
 
 <%--
@@ -149,7 +150,7 @@
 			
 			var initData = [
 				<c:forEach var="suite" items="${suiteList}" varStatus="status">
-					{ id : '${suite.id}', name : '${suite.name}'}<c:if test="${not status.last}">,</c:if>
+					{ id : '${suite.id}', name : '${fn:replace(suite.name, "'", "\\'")}' }<c:if test="${not status.last}">,</c:if>
 				</c:forEach>
 			];
 			
@@ -197,7 +198,7 @@
 			var tableListener = {
 				update : function(evt){
 					//"add" is none of our business.
-					if ((evt===undefined) || (evt.evt_name=="remove") || (evt.evt_name=="rename")){
+					if ((evt===undefined) || (evt.evt_name=="remove") || (evt.evt_name=="rename") || (evt.evt_name =="bind")){
 						refreshTestPlansWithoutSelection();	
 					}
 				}
