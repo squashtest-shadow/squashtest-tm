@@ -20,8 +20,8 @@
  */
 package org.squashtest.csp.tm.internal.service;
 
-import java.util.Arrays;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.List;
@@ -33,7 +33,7 @@ import org.springframework.security.access.prepost.PostFilter;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
-import org.squashtest.csp.core.domain.IdentifiedComparator;
+import org.squashtest.csp.core.domain.IdentifiersOrderComparator;
 import org.squashtest.csp.core.infrastructure.collection.PagedCollectionHolder;
 import org.squashtest.csp.core.infrastructure.collection.PagingAndSorting;
 import org.squashtest.csp.core.infrastructure.collection.PagingBackedPagedCollectionHolder;
@@ -91,7 +91,8 @@ public class VerifyingTestCaseManagerServiceImpl implements VerifyingTestCaseMan
 		List<TestCaseLibraryNode> nodes = testCaseLibraryNodeDao.findAllByIdList(testCasesIds);
 
 		// now we resort them according to the order in which the testcaseids were given
-		Collections.sort(nodes, IdentifiedComparator.getInstance());
+		IdentifiersOrderComparator comparator = new IdentifiersOrderComparator(testCasesIds);
+		Collections.sort(nodes, comparator);
 
 		List<TestCase> testCases = new TestCaseNodeWalker().walk(nodes);
 

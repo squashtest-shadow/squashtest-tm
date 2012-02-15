@@ -34,7 +34,7 @@ import org.springframework.security.acls.model.ObjectIdentity;
 import org.springframework.security.acls.model.ObjectIdentityRetrievalStrategy;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
-import org.squashtest.csp.core.domain.IdentifiedComparator;
+import org.squashtest.csp.core.domain.IdentifiersOrderComparator;
 import org.squashtest.csp.core.security.acls.model.ObjectAclService;
 import org.squashtest.csp.tm.domain.campaign.Campaign;
 import org.squashtest.csp.tm.domain.campaign.CampaignTestPlanItem;
@@ -117,7 +117,8 @@ public class CampaignTestPlanManagerServiceImpl implements CampaignTestPlanManag
 		List<TestCaseLibraryNode> nodes= testCaseLibraryNodeDao.findAllByIdList(testCasesIds);
 		
 		//now we resort them according to the order in which the testcaseids were given
-		Collections.sort(nodes, IdentifiedComparator.getInstance());
+		IdentifiersOrderComparator comparator = new IdentifiersOrderComparator(testCasesIds);
+		Collections.sort(nodes, comparator);
 
 		List<TestCase> testCases = new TestCaseNodeWalker().walk(nodes);
 		

@@ -27,8 +27,6 @@ import java.util.List;
 
 import javax.inject.Inject;
 
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.osgi.extensions.annotation.ServiceReference;
 import org.springframework.security.access.prepost.PostFilter;
@@ -37,7 +35,7 @@ import org.springframework.security.acls.model.ObjectIdentity;
 import org.springframework.security.acls.model.ObjectIdentityRetrievalStrategy;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
-import org.squashtest.csp.core.domain.IdentifiedComparator;
+import org.squashtest.csp.core.domain.IdentifiersOrderComparator;
 import org.squashtest.csp.core.security.acls.model.ObjectAclService;
 import org.squashtest.csp.tm.domain.campaign.Iteration;
 import org.squashtest.csp.tm.domain.campaign.IterationTestPlanItem;
@@ -61,8 +59,6 @@ import org.squashtest.csp.tm.service.ProjectFilterModificationService;
 @Service("squashtest.tm.service.IterationTestPlanManagerService")
 @Transactional
 public class IterationTestPlanManagerServiceImpl implements IterationTestPlanManagerService {
-	private static final Logger LOGGER = LoggerFactory.getLogger(IterationTestPlanManagerServiceImpl.class);
-
 	@Inject
 	private IterationModificationService delegateService;
 
@@ -138,7 +134,8 @@ public class IterationTestPlanManagerServiceImpl implements IterationTestPlanMan
 		List<TestCaseLibraryNode> nodes= testCaseLibraryNodeDao.findAllByIdList(objectsIds);
 		
 		//now we resort them according to the order in which the testcaseids were given
-		Collections.sort(nodes,IdentifiedComparator.getInstance());
+		IdentifiersOrderComparator comparator = new IdentifiersOrderComparator(objectsIds);
+		Collections.sort(nodes, comparator);
 
 		List<TestCase> testCases = new TestCaseNodeWalker().walk(nodes);
 		
@@ -149,10 +146,7 @@ public class IterationTestPlanManagerServiceImpl implements IterationTestPlanMan
 			itemTestPlanDao.persist(itp);
 			iteration.addTestPlan(itp);
 		}
-		
 	}
-	
-	
 	
 	@Override
 	@PreAuthorize("hasPermission(#iterationId, 'org.squashtest.csp.tm.domain.campaign.Iteration', 'WRITE') "
@@ -262,8 +256,6 @@ public class IterationTestPlanManagerServiceImpl implements IterationTestPlanMan
 				itp.setUser(user);
 			}
 		}
-
-
 	}
 
 	// FIXME : security
