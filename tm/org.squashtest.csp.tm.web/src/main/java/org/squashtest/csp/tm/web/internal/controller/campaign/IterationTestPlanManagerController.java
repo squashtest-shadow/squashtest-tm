@@ -102,11 +102,10 @@ public class IterationTestPlanManagerController {
 
 		ModelAndView mav = new ModelAndView("page/iterations/show-iteration-test-plan-manager");
 		mav.addObject("iteration", iteration);
+		mav.addObject("baseURL", "/iterations/" + iterationId );
 		mav.addObject("linkableLibrariesModel", linkableLibrariesModel);
 		return mav;
 	}
-
-
 
 	@RequestMapping(value = "/iterations/{iterationId}/test-cases", method = RequestMethod.POST, params = TESTCASES_IDS_REQUEST_PARAM)
 	public @ResponseBody
@@ -193,7 +192,7 @@ public class IterationTestPlanManagerController {
 		return mav;
 	}
 
-	@RequestMapping(value = "/iterations/{iterationId}/test-cases", params = "sEcho")
+	@RequestMapping(value = "/iterations/{iterationId}/test-cases/table", params = "sEcho")
 	public @ResponseBody
 	DataTableModel getIterationTableModel(@PathVariable Long iterationId, final DataTableDrawParameters params,
 			final Locale locale) {
@@ -232,8 +231,15 @@ public class IterationTestPlanManagerController {
 					testSuiteName = item.getTestSuite().getName();
 				}
 
-				return new Object[] { item.getId(), getCurrentIndex(), projectName, testCaseName,
-						testCaseExecutionMode, testSuiteName, testCaseId, item.isTestCaseDeleted(), " "
+				return new Object[] { item.getId(), 
+						getCurrentIndex(), 
+						projectName, 
+						testCaseName,
+						testCaseExecutionMode, 
+						testSuiteName, 
+						testCaseId, 
+						item.isTestCaseDeleted(), 
+						" "
 
 				};
 

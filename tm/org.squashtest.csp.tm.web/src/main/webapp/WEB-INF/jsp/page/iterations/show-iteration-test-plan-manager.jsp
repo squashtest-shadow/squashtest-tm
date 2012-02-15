@@ -32,16 +32,14 @@
 
 <c:url var="backUrl" value="/campaign-workspace/" />
 <c:url var="treeBaseUrl" value="/test-case-browser/" />
-<c:url var="testPlansTableUrl" value="/iterations/${iteration.id}/test-cases" />
-<c:url var="testPlanUrl" value="/iterations/${ iteration.id }/test-cases" />
-<c:url var="removeTestPlanUrl" value="/iterations/${ iteration.id }/test-plan" />
-<c:url var="nonBelongingTestPlansUrl" value="/iterations/${ iteration.id }/non-belonging-test-cases" />
+<c:url var="testPlansTableUrl" value="${ baseURL }/test-cases/table" />
+<c:url var="testPlanUrl" value="${ baseURL }/test-cases/table" />
+<c:url var="removeTestPlanUrl" value="${ baseURL }/test-plan" />
+<c:url var="nonBelongingTestPlansUrl" value="${ baseURL }/non-belonging-test-cases" />
 
 <c:url var="testPlanDetailsBaseUrl" value="/test-cases" />
 
-<s:url var="updateTestPlanUrl" value="/iterations/{iterId}/test-case/">
-	<s:param name="iterId" value="${iteration.id}" />
-</s:url>
+<c:url var="updateTestPlanUrl" value="${ baseURL }/test-case/" />
 
 <f:message var="unauthorizedDeletion" key="dialog.remove-testcase-association.unauthorized-deletion.message"  />
 <%-- TODO : why is that no tree-picker-layout like the rest of association interface  ? --%>
@@ -190,11 +188,11 @@
 		}
 		
 		function isTestCaseDeleted(rowData){
-			return (rowData[6]=="true");
+			return (rowData[7]=="true");
 		}
 		
 		function getTestCaseId(rowData){
-			return rowData[5];
+			return rowData[6];
 		}
 		
 
