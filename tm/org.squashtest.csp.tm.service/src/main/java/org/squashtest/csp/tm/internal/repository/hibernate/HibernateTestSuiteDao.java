@@ -26,6 +26,7 @@ import java.util.Set;
 import java.util.Map;
 
 import org.hibernate.Query;
+import org.hibernate.type.LongType;
 import org.springframework.stereotype.Repository;
 import org.squashtest.csp.core.infrastructure.collection.Paging;
 import org.squashtest.csp.tm.domain.campaign.IterationTestPlanItem;
@@ -123,6 +124,24 @@ public class HibernateTestSuiteDao extends HibernateEntityDao<TestSuite> impleme
 		return stats;
 	}
 
+
+
+	@Override
+	public List<IterationTestPlanItem> findTestPlanPartition(final Long testSuiteId,
+			final List<Long> testPlanItemIds) {
+		
+		SetQueryParametersCallback callback = new SetQueryParametersCallback() {
+			
+			@Override
+			public void setQueryParameters(Query query) {
+				query.setParameter("suiteId", testSuiteId);
+				query.setParameterList("itemIds", testPlanItemIds, LongType.INSTANCE);
+			}
+		};
+		
+		return executeListNamedQuery("testSuite.findTestPlanPartition", callback);
+	}
+
 	private SetQueryParametersCallback idParameter(final long id) {
 		SetQueryParametersCallback newCallBack = new SetQueryParametersCallback() {
 
@@ -134,5 +153,5 @@ public class HibernateTestSuiteDao extends HibernateEntityDao<TestSuite> impleme
 		};
 		return newCallBack;
 	}
-
+	
 }
