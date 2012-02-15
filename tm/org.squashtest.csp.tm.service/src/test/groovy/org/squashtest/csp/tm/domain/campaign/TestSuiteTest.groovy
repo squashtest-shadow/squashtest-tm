@@ -21,6 +21,7 @@
 package org.squashtest.csp.tm.domain.campaign
 
 import org.squashtest.csp.tm.domain.DuplicateNameException;
+import org.squashtest.csp.tm.domain.testcase.TestCase;
 
 import spock.lang.Specification;
 
@@ -70,7 +71,7 @@ class TestSuiteTest extends Specification {
 			def suite = new TestSuite()
 			
 		when :
-			suite.addTestPlan(items)
+			suite.bindTestPlan(items)
 			
 		then :
 			1 * items[0].setTestSuite(suite)
@@ -93,13 +94,77 @@ class TestSuiteTest extends Specification {
 			suite.iteration=iteration
 			
 		when :
-			suite.addTestPlanById([0l, 1l, 2l])
+			suite.bindTestPlanById([0l, 1l, 2l])
 			
 		then :
-			items[0].setTestSuite(suite)
-			items[1].setTestSuite(suite)
-			items[2].setTestSuite(suite)
+			1 * items[0].setTestSuite(suite)
+			1 * items[1].setTestSuite(suite)
+			1 * items[2].setTestSuite(suite)
 			
+	}
+	
+	def "should reorder item test plans (1)"(){
+		
+		given :
+			
+			def iteration = new Iteration()
+			def suite = new TestSuite()
+			iteration.addTestSuite(suite)
+			suite.iteration=iteration
+			
+			def items = []
+			10.times{
+					def item = new IterationTestPlanItem(referencedTestCase:Mock(TestCase)); 
+					iteration.addTestPlan(item) 
+					items << item
+				}
+			
+		and :
+			suite.bindTestPlan(items[2, 4, 6, 7, 8, 9])
+		
+		and :
+	
+			def toMove = items[4,6,7]
+			
+		when :
+		
+			suite.reorderTestPlan(0, toMove) 
+		
+		then :
+			suite.getTestPlan() == items[4, 6, 7, 2, 8, 9]
+			iteration.getTestPlans() == items[0, 1, 4, 6, 7, 2, 3, 5, 8, 9]
+	}
+	
+	def "should reorder item test plans (2)"(){
+		
+		given :
+			
+			def iteration = new Iteration()
+			def suite = new TestSuite()
+			iteration.addTestSuite(suite)
+			suite.iteration=iteration
+			
+			def items = []
+			10.times{
+					def item = new IterationTestPlanItem(referencedTestCase:Mock(TestCase));
+					iteration.addTestPlan(item)
+					items << item
+				}
+			
+		and :
+			suite.bindTestPlan(items[2, 4, 6, 7, 8, 9])
+		
+		and :
+	
+			def toMove = items[4,6,7]
+			
+		when :
+		
+			suite.reorderTestPlan(2, toMove)
+		
+		then :
+			suite.getTestPlan() == items[2, 8, 4, 6, 7, 9 ]
+			iteration.getTestPlans() == items[0, 1, 2, 3, 5, 8, 4, 6, 7, 9 ]
 	}
 	
 	def mockITP = {

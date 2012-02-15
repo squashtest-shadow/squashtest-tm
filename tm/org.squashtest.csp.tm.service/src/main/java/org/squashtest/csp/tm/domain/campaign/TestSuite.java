@@ -111,7 +111,7 @@ public class TestSuite {
 	}
 	
 	/**
-	 * Warning : that property builds a new list everytime. If you want to change the content of the list, use the other dedicated accessors ({@link #addTestPlan(List))} or the other one)
+	 * Warning : that property builds a new list every time. If you want to change the content of the list, use the other dedicated accessors ({@link #addTestPlan(List))} or the other one)
 	 * @return
 	 */
 	public List<IterationTestPlanItem> getTestPlan(){
@@ -124,13 +124,13 @@ public class TestSuite {
 		return testPlan;
 	}
 	
-	public void addTestPlan(List<IterationTestPlanItem> items){
+	public void bindTestPlan(List<IterationTestPlanItem> items){
 		for (IterationTestPlanItem item : items){
 			item.setTestSuite(this);
 		}
 	}
 	
-	public void addTestPlanById(List<Long> itemIds){
+	public void bindTestPlanById(List<Long> itemIds){
 		for (Long itemId : itemIds){
 			for (IterationTestPlanItem item : iteration.getTestPlans()){
 				if (item.getId().equals(itemId)){
@@ -138,6 +138,21 @@ public class TestSuite {
 				}
 			}
 		}
+	}
+	
+	
+	/*
+	 * Since the test plan of a TestSuite is merely a view on the backing iteration, we will reorder here the test plan accordingly. For instance if the newIndex is x in the TS test plan, Ix being the item at 
+	 * position x in the TS test plan, we will place the moved items at position y in Iteration test plan where y is the position of Ix in the Iteration test plan.   
+	 */
+	public void reorderTestPlan(int newIndex, List<IterationTestPlanItem> movedItems){
+		
+		IterationTestPlanItem anchorItem = getTestPlan().get(newIndex);
+		Iteration iteration = getIteration();
+		
+		int anchorIndex = iteration.getIndexOf(anchorItem);
+		iteration.moveTestPlans(anchorIndex, movedItems);
+				
 	}
 
 	

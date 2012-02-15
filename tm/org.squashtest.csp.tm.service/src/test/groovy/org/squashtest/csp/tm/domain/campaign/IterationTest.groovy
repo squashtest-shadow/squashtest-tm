@@ -214,6 +214,29 @@ class IterationTest extends Specification {
 		} == ["testCase1", "testCase1"];
 	}
 
+	
+	
+	def "should return the index of a test plan item"(){
+		
+		given :
+			def iteration = new Iteration()
+			def item1 = new IterationTestPlanItem(referencedTestCase:Mock(TestCase))
+			def item2 = new IterationTestPlanItem(referencedTestCase:Mock(TestCase))
+			def item3 = new IterationTestPlanItem(referencedTestCase:Mock(TestCase))
+			
+			iteration.addTestPlan(item1)
+			iteration.addTestPlan(item2)
+			iteration.addTestPlan(item3)
+		
+		when :
+		
+			def index = iteration.getIndexOf(item2)
+		
+		
+		then :
+			index == 1
+		
+	}
 
 	/* *********************** autodates cascade logic * ****************************** */
 

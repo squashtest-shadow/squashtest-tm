@@ -85,4 +85,9 @@ public interface CustomTestSuiteModificationService {
 	 */
 	@PreAuthorize("hasPermission(#arg0, 'org.squashtest.csp.tm.domain.campaign.TestSuite','WRITE') or hasRole('ROLE_ADMIN')")		
 	TestSuiteStatistics findTestSuiteStatistics(long suiteId);
+	
+	
+	
+	void changeTestPlanPosition(Long testSuiteId, int newIndex, List<Long>itemIds);
+	
 }

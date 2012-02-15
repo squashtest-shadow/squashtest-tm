@@ -63,7 +63,7 @@ public class CustomTestSuiteModificationServiceImpl implements
 		//that implementation relies on how the TestSuite will do the job (regarding the checks on whether the itps belong to the 
 		//same iteration of not
 		TestSuite suite = testSuiteDao.findById(suiteId);
-		suite.addTestPlanById(itemTestPlanIds);
+		suite.bindTestPlanById(itemTestPlanIds);
 	}
 	
 	@Override
@@ -89,6 +89,19 @@ public class CustomTestSuiteModificationServiceImpl implements
 	public TestSuiteStatistics findTestSuiteStatistics(long suiteId){
 		TestSuiteStatistics stats = testSuiteDao.getTestSuiteStatistics(suiteId);
 		return stats;
+	}
+	
+	
+	
+	@Override
+	@PreAuthorize("hasPermission(#testSuiteId, 'org.squashtest.csp.tm.domain.campaign.TestSuite','WRITE') or hasRole('ROLE_ADMIN')")		
+	public void changeTestPlanPosition(Long testSuiteId, int newIndex, List<Long>itemIds){
+		
+		TestSuite suite = testSuiteDao.findById(testSuiteId);		
+		
+		List<IterationTestPlanItem> items = testSuiteDao.findTestPlanPartition(testSuiteId, itemIds);
+		
+		suite.reorderTestPlan(newIndex, items);
 	}
 	
 

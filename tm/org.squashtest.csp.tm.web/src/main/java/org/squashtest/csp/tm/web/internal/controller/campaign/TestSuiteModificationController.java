@@ -177,6 +177,29 @@ public class TestSuiteModificationController {
 		return result;
 	}
 	
+	/***
+	 * Method called when you drag a test case and change its position in the selected iteration
+	 * 
+	 * @param testPlanId : 
+	 * 				the iteration owning the moving test plan items
+	 * 
+	 * @param itemIds
+	 *            the ids of the items we are trying to move
+	 * 
+	 * @param newIndex
+	 *            the new position of the first of them
+	 */
+	@RequestMapping(value = "/test-case/move", method = RequestMethod.POST, params = { "newIndex", "itemIds[]" })
+	@ResponseBody
+	public void changeTestPlanIndex(@PathVariable("id") long testSuiteId, @RequestParam int newIndex, @RequestParam("itemIds[]") List<Long> itemIds){
+		service.changeTestPlanPosition(testSuiteId, newIndex, itemIds);
+		if (LOGGER.isTraceEnabled()) {
+			LOGGER.trace("test-suite " + testSuiteId+ ": moving "+itemIds.size()+" test plan items  to " + newIndex);
+		}
+	}
+	
+	
+	
 	@RequestMapping(value = "/test-plan/table", params = "sEcho")
 	public @ResponseBody
 	DataTableModel getTestPlanModel(@PathVariable Long id, final DataTableDrawParameters params,

@@ -425,6 +425,21 @@ public class Iteration implements AttachmentHolder {
 		}
 	}
 	
+	/* returns the index of that item if found, -1 if not found */
+	public int getIndexOf(IterationTestPlanItem item){
+		
+		int i=0;
+		ListIterator<IterationTestPlanItem> iterator = testPlans.listIterator();
+		
+		while(iterator.hasNext()){
+			if (item.equals(iterator.next())){
+				return i;
+			}
+			i++;
+		}
+		
+		return -1;
+	}
 	
 
 	public boolean isTestCasePlanned(Long testCaseId) {
@@ -448,9 +463,7 @@ public class Iteration implements AttachmentHolder {
 	}
 
 	/*
-	 * ********************************************** TEST SUITE
-	 * *********************************************************
-	 */
+	 * ********************************* TEST SUITE ********************************************* */
 
 	public Set<TestSuite> getTestSuites() {
 		return testSuites;

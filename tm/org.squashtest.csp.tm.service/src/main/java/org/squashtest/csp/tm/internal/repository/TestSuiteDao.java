@@ -47,4 +47,6 @@ public interface TestSuiteDao extends EntityDao<TestSuite> {
 
 	TestSuiteStatistics getTestSuiteStatistics(Long testSuitId);
 
+	
+	List<IterationTestPlanItem> findTestPlanPartition(Long testSuiteId, List<Long> testPlanItemIds);
 }
