@@ -97,7 +97,9 @@
 		@NamedQuery(name = "testSuite.findTestPlanPaged", query = "select tp from TestSuite ts join ts.iteration it join it.testPlans tp where ts.id = :id and tp.testSuite.id = :id2 order by index(tp)"),
 		@NamedQuery(name = "testSuite.countTestPlans", query = "select count(tp) from TestSuite ts join ts.iteration it join it.testPlans tp where ts.id = :id and tp.testSuite.id = :id2"),
 		@NamedQuery(name = "testSuite.countStatus", query = "select count(tp) from TestSuite ts join ts.iteration it join it.testPlans tp where ts.id = :id and tp.testSuite.id = :id2 and tp.executionStatus = :status"),
-		
+		@NamedQuery(name = "testSuite.findAllByIterationId", query = "select ts from TestSuite ts join ts.iteration i where i.id = ?"),
+		@NamedQuery(name = "testSuite.findLaunchableTestPlan", query = "select tp from TestSuite ts join ts.iteration it join it.testPlans tp where ts.id = ? and tp.testSuite.id = ? and ((tp.referencedTestCase is not null) or (tp.executions is not empty)) order by index(tp)"),
+
 		// Queries on TestCase
 		@NamedQuery(name = "testCase.findNamesInFolderStartingWith", query = "select c.name from TestCaseFolder f join f.content c where f.id = :containerId and c.name like :nameStart"),
 		@NamedQuery(name = "testCase.findNamesInLibraryStartingWith", query = "select c.name from TestCaseLibrary l join l.rootContent c where l.id = :containerId and c.name like :nameStart"),
@@ -139,9 +141,6 @@
 		//Queries on CampaignTestPlanItem
 		@NamedQuery(name = "campaignTestPlanItem.findAllByIdList", query = "from CampaignTestPlanItem tp where tp.id in (:testPlanIds)"),
 
-		//Queries on TestSuite
-		@NamedQuery(name = "TestSuite.findAllByIterationId", query = "select ts from TestSuite ts join ts.iteration i where i.id = ? order by ts.name asc"),
-		
 		//Queries on Execution
 		@NamedQuery(name = "execution.countStatus", query = "select count(exSteps.executionStatus) from Execution as execution join execution.steps as exSteps where execution.id =:execId and exSteps.executionStatus=:status"),
 

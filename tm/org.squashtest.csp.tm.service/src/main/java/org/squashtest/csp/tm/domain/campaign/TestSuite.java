@@ -131,9 +131,9 @@ public class TestSuite {
 	}
 	
 	public void addTestPlanById(List<Long> itemIds){
-		for (Long id : itemIds){
+		for (Long itemId : itemIds){
 			for (IterationTestPlanItem item : iteration.getTestPlans()){
-				if (item.getId().equals(id)){
+				if (item.getId().equals(itemId)){
 					item.setTestSuite(this);
 				}
 			}

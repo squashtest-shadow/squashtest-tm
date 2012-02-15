@@ -23,35 +23,82 @@ package org.squashtest.csp.tm.domain.execution;
 import org.squashtest.csp.tm.domain.testcase.TestCase;
 import org.squashtest.csp.tm.domain.testcase.TestCaseExecutionMode;
 import org.squashtest.csp.tm.domain.testcase.ActionTestStep;
-
 import spock.lang.Specification;
 
 class ExecutionTest extends Specification {
-	
+
 
 	def "should copy test steps as execution steps"(){
 		given :
-			Execution execution = new Execution()
-			ActionTestStep ts1 = new ActionTestStep(action:"action1",expectedResult:"result1")
-			ActionTestStep ts2 = new ActionTestStep(action:"action2",expectedResult:"result2")
-			ActionTestStep ts3 = new ActionTestStep(action:"action3",expectedResult:"result3")
+		Execution execution = new Execution()
+		ActionTestStep ts1 = new ActionTestStep(action:"action1",expectedResult:"result1")
+		ActionTestStep ts2 = new ActionTestStep(action:"action2",expectedResult:"result2")
+		ActionTestStep ts3 = new ActionTestStep(action:"action3",expectedResult:"result3")
 
 		when :
-			ExecutionStep exs1 = new ExecutionStep(ts1)
-			ExecutionStep exs2 = new ExecutionStep(ts2)
-			ExecutionStep exs3 = new ExecutionStep(ts3)
-			
-			execution.addStep(exs1)
-			execution.addStep(exs2)
-			execution.addStep(exs3)
-			
-			List<ExecutionStep> list = execution.getSteps();
-		
+		ExecutionStep exs1 = new ExecutionStep(ts1)
+		ExecutionStep exs2 = new ExecutionStep(ts2)
+		ExecutionStep exs3 = new ExecutionStep(ts3)
+
+		execution.addStep(exs1)
+		execution.addStep(exs2)
+		execution.addStep(exs3)
+
+		List<ExecutionStep> list = execution.getSteps();
+
 		then :
-			list.collect { it.action } == ["action1","action2","action3"]
-			list.collect { it.expectedResult } == ["result1","result2","result3"]
-			list.collect { it.executionStatus } == [ExecutionStatus.READY,ExecutionStatus.READY,ExecutionStatus.READY]
-		
+		list.collect { it.action } == [
+			"action1",
+			"action2",
+			"action3"
+		]
+		list.collect { it.expectedResult } == [
+			"result1",
+			"result2",
+			"result3"
+		]
+		list.collect { it.executionStatus } == [
+			ExecutionStatus.READY,
+			ExecutionStatus.READY,
+			ExecutionStatus.READY
+		]
 	}
-	
+	def "should not find first unexecuted step because has no steps"(){
+		given : Execution execution = new Execution()
+		when : ExecutionStep executionStep = execution.findFirstUnexecutedStep()
+		then :
+		executionStep == null
+	}
+	def "should not find first unexecuted step because all executed"(){
+		given : Execution execution = new Execution()
+		ExecutionStep step1 = new ExecutionStep()
+		step1.setExecutionStatus ExecutionStatus.SUCCESS
+		execution.addStep step1
+		ExecutionStep step2 = new ExecutionStep()
+		step2.setExecutionStatus ExecutionStatus.FAILURE
+		execution.addStep step2
+		ExecutionStep step3 = new ExecutionStep()
+		step3.setExecutionStatus ExecutionStatus.BLOCKED
+		execution.addStep step3
+
+		when :def executionStep = execution.findFirstUnexecutedStep()
+		then :
+		executionStep == null
+	}
+	def "should find first unexecuted step "(){
+		given : Execution execution = new Execution()
+		ExecutionStep step1 = new ExecutionStep()
+		step1.setExecutionStatus ExecutionStatus.SUCCESS
+		execution.addStep step1
+		ExecutionStep step2 = new ExecutionStep()
+		step2.setExecutionStatus ExecutionStatus.READY
+		execution.addStep step2
+		ExecutionStep step3 = new ExecutionStep()
+		step3.setExecutionStatus ExecutionStatus.BLOCKED
+		execution.addStep step3
+
+		when :def executionStep = execution.findFirstUnexecutedStep()
+		then :
+		executionStep == step2
+	}
 }

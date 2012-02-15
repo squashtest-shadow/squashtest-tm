@@ -37,7 +37,7 @@ import org.squashtest.csp.tm.service.deletion.SuppressionPreviewReport;
 
 /**
  * @author Gregory Fouquet
- *
+ * 
  */
 @Transactional
 public interface CustomIterationModificationService {
@@ -61,7 +61,7 @@ public interface CustomIterationModificationService {
 
 	void rename(long iterationId, String newName);
 
-	void addExecution(long iterationId, long testPlanId);
+	Execution addExecution(long iterationId, long testPlanId);
 
 	@Deprecated	//use the other method instead when possible
 	void changeTestPlanPosition(long iterationId, long testPlanId, int newIndex);
@@ -82,8 +82,8 @@ public interface CustomIterationModificationService {
 			CollectionSorting filter);
 
 	/**
-	 * that method should investigate the consequences of the deletion request, and return a report
-	 * about what will happen.
+	 * that method should investigate the consequences of the deletion request, and return a report about what will
+	 * happen.
 	 * 
 	 * @param targetIds
 	 * @return
@@ -91,8 +91,8 @@ public interface CustomIterationModificationService {
 	List<SuppressionPreviewReport> simulateDeletion(List<Long> targetIds);
 
 	/**
-	 * that method should delete the nodes. It still takes care of non deletable nodes so
-	 * the implementation should filter out the ids who can't be deleted.
+	 * that method should delete the nodes. It still takes care of non deletable nodes so the implementation should
+	 * filter out the ids who can't be deleted.
 	 * 
 	 * 
 	 * @param targetIds
@@ -101,7 +101,7 @@ public interface CustomIterationModificationService {
 	List<Long> deleteNodes(List<Long> targetIds);
 
 	void addTestSuite(long iterationId, TestSuite suite);
-	
+
 	List<TestSuite> findAllTestSuites(long iterationId);
 	
 	/**
@@ -113,6 +113,5 @@ public interface CustomIterationModificationService {
 	 * @return the deleted suitesIds
 	 */
 	List<Long> removeTestSuites(List<Long> suitesIds);
-
 
 }

@@ -22,6 +22,7 @@ package org.squashtest.csp.tm.internal.repository.hibernate;
 
 import java.util.HashMap;
 import java.util.List;
+import java.util.Set;
 import java.util.Map;
 
 import org.hibernate.Query;
@@ -39,26 +40,39 @@ import org.squashtest.csp.tm.internal.repository.TestSuiteDao;
  */
 @Repository
 public class HibernateTestSuiteDao extends HibernateEntityDao<TestSuite> implements TestSuiteDao {
-	
+
 	@Override
 	public List<TestSuite> findAllByIterationId(final long iterationId) {
-		
-		return executeListNamedQuery("TestSuite.findAllByIterationId", new SetQueryParametersCallback() {
-			
+
+		return executeListNamedQuery("testSuite.findAllByIterationId", new SetQueryParametersCallback() {
+
 			@Override
 			public void setQueryParameters(Query query) {
-				query.setParameter(0,iterationId);	
+				query.setParameter(0, iterationId);
 			}
-			
+
 		});
 	}
-	
+
 	@Override
+	public List<IterationTestPlanItem> findLaunchableTestPlan(final Long testSuiteId) {
+		return executeListNamedQuery("testSuite.findLaunchableTestPlan", new SetQueryParametersCallback() {
+
+			@Override
+			public void setQueryParameters(Query query) {
+				query.setParameter(0, testSuiteId);
+				query.setParameter(1, testSuiteId);
+			}
+
+		});
+	}
+
 	public List<IterationTestPlanItem> findTestPlanPaged(final long testSuiteId, final Paging paging) {
 		SetQueryParametersCallback callback = new SetQueryParametersCallback() {
 
 			@Override
 			public void setQueryParameters(Query query) {
+
 				query.setParameter("id", testSuiteId);
 				query.setParameter("id2", testSuiteId);
 				query.setFirstResult(paging.getFirstItemIndex());
@@ -67,7 +81,7 @@ public class HibernateTestSuiteDao extends HibernateEntityDao<TestSuite> impleme
 
 		};
 
-		return executeListNamedQuery("testSuite.findTestPlanPaged", callback);		
+		return executeListNamedQuery("testSuite.findTestPlanPaged", callback);
 	}
 
 	@Override
@@ -77,11 +91,11 @@ public class HibernateTestSuiteDao extends HibernateEntityDao<TestSuite> impleme
 
 	@Override
 	public TestSuiteStatistics getTestSuiteStatistics(final Long testSuiteId) {
-		
+
 		Map<String, Integer> statusMap = new HashMap<String, Integer>();
 
 		Long nbTestPlans = countTestPlans(testSuiteId);
-		
+
 		for (ExecutionStatus status : ExecutionStatus.values()) {
 			final ExecutionStatus fStatus = status;
 
@@ -102,16 +116,13 @@ public class HibernateTestSuiteDao extends HibernateEntityDao<TestSuite> impleme
 			statusMap.put(status.name(), result);
 		}
 
-		TestSuiteStatistics stats = new TestSuiteStatistics(nbTestPlans, 
-				statusMap.get(ExecutionStatus.BLOCKED.name()),
-				statusMap.get(ExecutionStatus.FAILURE.name()),
-				statusMap.get(ExecutionStatus.SUCCESS.name()),
-				statusMap.get(ExecutionStatus.RUNNING.name()),
-				statusMap.get(ExecutionStatus.READY.name()));
-		
+		TestSuiteStatistics stats = new TestSuiteStatistics(nbTestPlans, statusMap.get(ExecutionStatus.BLOCKED.name()),
+				statusMap.get(ExecutionStatus.FAILURE.name()), statusMap.get(ExecutionStatus.SUCCESS.name()),
+				statusMap.get(ExecutionStatus.RUNNING.name()), statusMap.get(ExecutionStatus.READY.name()));
+
 		return stats;
 	}
-	
+
 	private SetQueryParametersCallback idParameter(final long id) {
 		SetQueryParametersCallback newCallBack = new SetQueryParametersCallback() {
 
@@ -123,5 +134,5 @@ public class HibernateTestSuiteDao extends HibernateEntityDao<TestSuite> impleme
 		};
 		return newCallBack;
 	}
-	
+
 }

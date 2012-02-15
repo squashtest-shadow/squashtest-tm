@@ -64,16 +64,16 @@ public class CustomIterationModificationServiceImpl implements CustomIterationMo
 	private CampaignDao campaignDao;
 	@Inject
 	private IterationDao iterationDao;
-	@Inject 
-	private TestSuiteDao suiteDao;	
+	@Inject
+	private TestSuiteDao suiteDao;
 	@Inject
 	private ExecutionDao executionDao;
 	@Inject
 	private ItemTestPlanDao testPlanDao;
 	@Inject
 	private ExecutionStepDao executionStepDao;
-	@Inject 
-	private CallStepManagerService callStepManager ; 
+	@Inject
+	private CallStepManagerService callStepManager;
 
 	@Inject
 	private CampaignNodeDeletionHandler deletionHandler;
@@ -149,7 +149,7 @@ public class CustomIterationModificationServiceImpl implements CustomIterationMo
 	@Override
 	@PreAuthorize("hasPermission(#iterationId, 'org.squashtest.csp.tm.domain.campaign.Iteration', 'WRITE') "
 			+ "or hasRole('ROLE_ADMIN')")
-	public void addExecution(long iterationId, long testPlanId) {
+	public Execution addExecution(long iterationId, long testPlanId) {
 
 		Iteration iteration = iterationDao.findAndInit(iterationId);
 		IterationTestPlanItem testPlan = iteration.getTestPlan(testPlanId);
@@ -159,9 +159,9 @@ public class CustomIterationModificationServiceImpl implements CustomIterationMo
 		}
 
 		TestCase testCase = testPlan.getReferencedTestCase();
-		//TODO test
+		// TODO test
 		callStepManager.checkForCyclicStepCallBeforeExecutionCreation(testCase.getId());
-		
+
 		Execution execution = new Execution(testCase);
 
 		// copy the steps
@@ -183,6 +183,7 @@ public class CustomIterationModificationServiceImpl implements CustomIterationMo
 
 		iteration.addExecution(execution, testPlan);
 
+		return execution;
 	}
 
 	/****
@@ -281,7 +282,7 @@ public class CustomIterationModificationServiceImpl implements CustomIterationMo
 		iteration.addTestSuite(suite);
 	}
 
-	@Override	
+	@Override
 	@PostFilter("hasPermission(filterObject, 'READ') or hasRole('ROLE_ADMIN')")
 	public List<TestSuite> findAllTestSuites(long iterationId) {
 		List<TestSuite> allSuites = iterationDao.findAllTestSuites(iterationId);
@@ -343,5 +344,5 @@ public class CustomIterationModificationServiceImpl implements CustomIterationMo
 	
 	}
 
-	
+
 }

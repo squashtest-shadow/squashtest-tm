@@ -18,33 +18,19 @@
  *     You should have received a copy of the GNU Lesser General Public License
  *     along with this software.  If not, see <http://www.gnu.org/licenses/>.
  */
-package org.squashtest.csp.tm.internal.repository;
+package org.squashtest.csp.tm.service;
 
-import java.util.List;
-import org.squashtest.csp.tm.domain.campaign.IterationTestPlanItem;
-import org.squashtest.csp.core.infrastructure.collection.Paging;
-import org.squashtest.csp.tm.domain.campaign.TestSuite;
-import org.squashtest.csp.tm.domain.campaign.TestSuiteStatistics;
+import org.springframework.transaction.annotation.Transactional;
+import org.squashtest.csp.tm.domain.execution.ExecutionStep;
 
-public interface TestSuiteDao extends EntityDao<TestSuite> {
-
-	List<TestSuite> findAllByIterationId(long iterationId);
+@Transactional
+public interface TestSuiteExecutionProcessingService {
 
 	/**
-	 * <p>
-	 * return a list of ordered iteration_test_plan_items that are linked to a test case or have an execution<br>
-	 * making it the launchable test plan of the test suite
-	 * </p>
+	 * returns the execution step were to resume the test suite
 	 * 
 	 * @param testSuiteId
 	 * @return
 	 */
-	List<IterationTestPlanItem> findLaunchableTestPlan(Long testSuiteId);
-
-	List<IterationTestPlanItem> findTestPlanPaged(long testSuiteId, Paging paging);
-
-	long countTestPlans(Long iterationId);
-
-	TestSuiteStatistics getTestSuiteStatistics(Long testSuitId);
-
+	ExecutionStep findExecutionStepWereToResumeExecution(Long testSuiteId);
 }

@@ -72,17 +72,16 @@ public class Execution implements AttachmentHolder, Bugged {
 
 	@Lob
 	private String description;
-	
+
 	@Lob
 	private String prerequisite = "";
-	
+
 	@Basic(optional = false)
 	private String name;
 
 	@ManyToOne
-	@JoinTable(name="ITEM_TEST_PLAN_EXECUTION",joinColumns =  @JoinColumn(name = "EXECUTION_ID"), inverseJoinColumns = @JoinColumn(name = "ITEM_TEST_PLAN_ID"))
+	@JoinTable(name = "ITEM_TEST_PLAN_EXECUTION", joinColumns = @JoinColumn(name = "EXECUTION_ID"), inverseJoinColumns = @JoinColumn(name = "ITEM_TEST_PLAN_ID"))
 	private IterationTestPlanItem testPlan;
-
 
 	@ManyToOne
 	@JoinColumn(name = "TCLN_ID", referencedColumnName = "TCLN_ID")
@@ -105,20 +104,18 @@ public class Execution implements AttachmentHolder, Bugged {
 
 	/* *********************** attachment attributes ************************ */
 
-	@OneToOne(cascade = { CascadeType.PERSIST, CascadeType.MERGE } )
+	@OneToOne(cascade = { CascadeType.PERSIST, CascadeType.MERGE })
 	@JoinColumn(name = "ATTACHMENT_LIST_ID")
 	private final AttachmentList attachmentList = new AttachmentList();
-	/* ***********************   / attachement attributes ************************ */
-
+	/* *********************** / attachement attributes ************************ */
 
 	/* *********************** issues attributes ************************ */
 
-	@OneToOne(cascade = { CascadeType.PERSIST, CascadeType.MERGE } )
+	@OneToOne(cascade = { CascadeType.PERSIST, CascadeType.MERGE })
 	@JoinColumn(name = "ISSUE_LIST_ID")
 	private final IssueList issueList = new IssueList();
 
 	/* *********************** /issues attributes ************************ */
-
 
 	public List<ExecutionStep> getSteps() {
 		return steps;
@@ -147,11 +144,11 @@ public class Execution implements AttachmentHolder, Bugged {
 
 	public void setExecutionStatus(ExecutionStatus status) {
 		executionStatus = status;
-		//update parentTestPlan status
+		// update parentTestPlan status
 
 		IterationTestPlanItem itp = getTestPlan();
 
-		if (itp!=null){
+		if (itp != null) {
 			itp.updateExecutionStatus();
 		}
 
@@ -212,7 +209,7 @@ public class Execution implements AttachmentHolder, Bugged {
 	public void setDescription(String description) {
 		this.description = description;
 	}
-	
+
 	public String getPrerequisite() {
 		return prerequisite;
 	}
@@ -224,11 +221,29 @@ public class Execution implements AttachmentHolder, Bugged {
 	public void setPrerequisite(@NotNull String prerequisite) {
 		this.prerequisite = prerequisite;
 	}
-	
+
 	public void addStep(@NotNull ExecutionStep step) {
 		steps.add(step);
 	}
 
+	/**
+	 * <p>
+	 * return the first step with a running or a ready state.<br>
+	 * Or null if there is none or the execution has no steps
+	 * </p>
+	 * 
+	 * @return
+	 */
+	public ExecutionStep findFirstUnexecutedStep() {
+		if (!this.getSteps().isEmpty()) {
+			for (ExecutionStep step : this.getSteps()) {
+				if (!step.getExecutionStatus().isTerminatedStatus()) {
+					return step;
+				}
+			}
+		}
+		return null;
+	}
 
 	/* *************** Attachable implementation ****************** */
 	@Override
@@ -236,17 +251,17 @@ public class Execution implements AttachmentHolder, Bugged {
 		return attachmentList;
 	}
 
-	public IterationTestPlanItem getTestPlan(){
+	public IterationTestPlanItem getTestPlan() {
 		return testPlan;
 	}
 
-	public void setTestPlan(IterationTestPlanItem testPlan){
-		this.testPlan=testPlan;
+	public void setTestPlan(IterationTestPlanItem testPlan) {
+		this.testPlan = testPlan;
 	}
 
 	/* ***************** Bugged implementation *********************** */
 	@Override
-	public Project getProject(){
+	public Project getProject() {
 		return testPlan.getProject();
 	}
 
@@ -266,7 +281,7 @@ public class Execution implements AttachmentHolder, Bugged {
 
 		list.add(issueList.getId());
 
-		for (ExecutionStep step : steps){
+		for (ExecutionStep step : steps) {
 			list.addAll(step.getAllIssueListId());
 		}
 
@@ -278,14 +293,13 @@ public class Execution implements AttachmentHolder, Bugged {
 		return "";
 	}
 
-
 	@Override
 	public List<Bugged> getAllBuggeds() {
 		List<Bugged> list = new LinkedList<Bugged>();
 
 		list.add(this);
 
-		for (ExecutionStep step : steps){
+		for (ExecutionStep step : steps) {
 			list.addAll(step.getAllBuggeds());
 		}
 
