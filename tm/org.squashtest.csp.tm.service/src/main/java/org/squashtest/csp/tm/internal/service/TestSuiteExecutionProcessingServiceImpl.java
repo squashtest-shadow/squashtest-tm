@@ -26,6 +26,7 @@ import javax.inject.Inject;
 
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.stereotype.Service;
+import org.squashtest.csp.tm.domain.campaign.Iteration;
 import org.squashtest.csp.tm.domain.campaign.IterationTestPlanItem;
 import org.squashtest.csp.tm.domain.campaign.TestSuite;
 import org.squashtest.csp.tm.domain.execution.Execution;
@@ -40,29 +41,31 @@ public class TestSuiteExecutionProcessingServiceImpl implements TestSuiteExecuti
 	private TestSuiteDao suiteDao;
 	@Inject
 	private IterationModificationService iterationModificationService;
+	@Inject
+	private CampaignNodeDeletionHandler campaignDeletionHandler;
 
 	@Override
 	@PreAuthorize("hasPermission(#testSuiteId, 'org.squashtest.csp.tm.domain.campaign.TestSuite','WRITE') or hasRole('ROLE_ADMIN')")
-	public ExecutionStep findExecutionStepWereToResumeExecution(Long testSuiteId) {
-		TestSuite testSuite = suiteDao.findById(testSuiteId);
+	public ExecutionStep findExecutionStepWhereToResumeExecutionOfSuite(Long testSuiteId) {
 		List<IterationTestPlanItem> testSuiteResumableTestPlan = suiteDao.findLaunchableTestPlan(testSuiteId);
 		if (!testSuiteResumableTestPlan.isEmpty()) {
-			return truc(testSuiteResumableTestPlan, testSuite);
+			return findExecutionStepWhereToResumeExecutionOfTestPlan(testSuiteResumableTestPlan);
 		}
 		return null;
 	}
 
-	private ExecutionStep findFirstUnexecutedStep(List<Execution> executions) {
+	private ExecutionStep findFirstUnexecutedStepOfLastExecution(List<Execution> executions) {
 		Execution lastExecution = executions.get(executions.size() - 1);
 		ExecutionStep step = lastExecution.findFirstUnexecutedStep();
 		return step;
 	}
 
-	private ExecutionStep truc(List<IterationTestPlanItem> testSuiteResumableTestPlan, TestSuite testSuite) {
+	private ExecutionStep findExecutionStepWhereToResumeExecutionOfTestPlan(
+			List<IterationTestPlanItem> testSuiteResumableTestPlan) {
 		ExecutionStep executionStep = null;
 		for (IterationTestPlanItem testPlanItem : testSuiteResumableTestPlan) {
 			List<Execution> executions = testPlanItem.getExecutions();
-			executionStep = truc2(executions, testPlanItem, testSuite);
+			executionStep = findFirstUnexecutedOrCreateExecution(executions, testPlanItem);
 			if (executionStep != null) {
 				break;
 			}
@@ -70,18 +73,64 @@ public class TestSuiteExecutionProcessingServiceImpl implements TestSuiteExecuti
 		return executionStep;
 	}
 
-	private ExecutionStep truc2(List<Execution> executions, IterationTestPlanItem testPlanItem, TestSuite testSuite) {
+	private ExecutionStep findFirstUnexecutedOrCreateExecution(List<Execution> executions,
+			IterationTestPlanItem testPlanItem) {
 		ExecutionStep executionStep = null;
 		if (!executions.isEmpty()) {
-			executionStep = findFirstUnexecutedStep(executions);
+			executionStep = findFirstUnexecutedStepOfLastExecution(executions);
 
 		} else {
-			Execution execution = iterationModificationService.addExecution(testSuite.getIteration().getId(),
-					testPlanItem.getId());
-			if (!execution.getSteps().isEmpty()) {
-				executionStep = execution.getSteps().get(0);
+			if (!testPlanItem.isTestCaseDeleted()) {
+				Execution execution = iterationModificationService.addExecution(testPlanItem.getIteration().getId(),
+						testPlanItem.getId());
+				if (!execution.getSteps().isEmpty()) {
+					executionStep = execution.getSteps().get(0);
+				}
 			}
 		}
 		return executionStep;
+	}
+
+	@Override
+	@PreAuthorize("hasPermission(#testSuiteId, 'org.squashtest.csp.tm.domain.campaign.TestSuite','WRITE') or hasRole('ROLE_ADMIN')")
+	public ExecutionStep relaunchExecution(Long testSuiteId) {
+		// getTest plan
+		ExecutionStep firstStep = null;
+		TestSuite testSuite = suiteDao.findById(testSuiteId);
+		List<IterationTestPlanItem> suiteTestPlan = testSuite.getTestPlan();
+		// get test plan
+		if (!suiteTestPlan.isEmpty()) {
+			// delete all executions
+			deleteAllExecutionsOfTestPlan(suiteTestPlan);
+			// create new execution for first test_plan_item
+			firstStep = createExecutionsUntillHasSteps(suiteTestPlan);
+		}
+		return firstStep;
+	}
+
+	private ExecutionStep createExecutionsUntillHasSteps(List<IterationTestPlanItem> suiteTestPlan) {
+		ExecutionStep step = null;
+		for (IterationTestPlanItem iterationTestPlanItem : suiteTestPlan) {
+			if (!iterationTestPlanItem.isTestCaseDeleted()) {
+				Iteration iteration = iterationTestPlanItem.getIteration();
+				Long iterationId = iteration.getId();
+				Long testPlanId = iterationTestPlanItem.getId();
+				Execution execution = iterationModificationService.addExecution(iterationId, testPlanId);
+				if (!execution.getSteps().isEmpty()) {
+					step = execution.getSteps().get(0);
+					break;
+				}
+			}
+		}
+		return step;
+	}
+
+	private void deleteAllExecutionsOfTestPlan(List<IterationTestPlanItem> suiteTestPlan) {
+		for (IterationTestPlanItem iterationTestPlanItem : suiteTestPlan) {
+			List<Execution> executions = iterationTestPlanItem.getExecutions();
+			if (!executions.isEmpty()) {
+				campaignDeletionHandler.deleteExecutions(executions);
+			}
+		}
 	}
 }

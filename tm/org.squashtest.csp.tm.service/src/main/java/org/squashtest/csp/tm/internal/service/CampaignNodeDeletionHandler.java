@@ -102,8 +102,14 @@ public interface CampaignNodeDeletionHandler extends NodeDeletionHandler<Campaig
 	 *             if the execution should not be deleted.
 	 */
 	void deleteExecution(Execution execution);
-	
-	
+
+	/**
+	 * uses {@linkplain CampaignNodeDeletionHandler#deleteExecution(Execution)}
+	 * 
+	 * @param executions
+	 */
+	void deleteExecutions(List<Execution> executions);
+
 	List<SuppressionPreviewReport> simulateSuiteDeletion(List<Long> targetIds);
 
 	/**

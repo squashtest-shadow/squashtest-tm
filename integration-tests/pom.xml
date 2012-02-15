@@ -12,8 +12,9 @@
 	<name>Squashtest TM - Integration tests module</name>
 
 	<properties>
-		<!-- On Jenkins server these relative paths are not interpreted in the same way by liquibase and the datasource. These 
-			props should be overridden with absolute paths (which don't work under windows...) -->
+		<!-- On Jenkins server these relative paths are not interpreted in the 
+			same way by liquibase and the datasource. These props should be overridden 
+			with absolute paths (which don't work under windows...) -->
 		<dbunit-database.url>jdbc:h2:target/database/squash-it-dbunit/squash-it</dbunit-database.url>
 		<non-dbunit-database.url>jdbc:h2:target/database/squash-it-non-dbunit/squash-it</non-dbunit-database.url>
 		<database.changelog>../database/src/main/liquibase/global.changelog-master.xml</database.changelog>
@@ -31,12 +32,12 @@
 					<exclude>**/*.zip</exclude>
 				</excludes>
 			</testResource>
-      		<testResource>
-		        <directory>src/it/resources</directory>
-		        <filtering>false</filtering>
-		        <includes>
-		          <include>**/*.zip</include>
-		        </includes>
+			<testResource>
+				<directory>src/it/resources</directory>
+				<filtering>false</filtering>
+				<includes>
+					<include>**/*.zip</include>
+				</includes>
 			</testResource>
 		</testResources>
 
@@ -92,7 +93,8 @@
 				<configuration>
 					<parallel>false</parallel>
 					<threadCount>1</threadCount>
-					<!-- systemProperties> <property> <name>log4j.configuration</name> <value>it-log4j.properties</value> </property> </systemProperties -->
+					<!-- systemProperties> <property> <name>log4j.configuration</name> <value>it-log4j.properties</value> 
+						</property> </systemProperties -->
 					<!-- We can run ITs and skip unit tests with -DskipTests=true -->
 					<skipTests>${skipITs}</skipTests>
 				</configuration>
@@ -372,6 +374,10 @@
 				<exclusion>
 					<groupId>org.slf4j</groupId>
 					<artifactId>slf4j-nop</artifactId>
+				</exclusion>
+				<exclusion>
+					<groupId>poi</groupId>
+					<artifactId>poi</artifactId>
 				</exclusion>
 			</exclusions>
 		</dependency>

@@ -27,10 +27,24 @@ import org.squashtest.csp.tm.domain.execution.ExecutionStep;
 public interface TestSuiteExecutionProcessingService {
 
 	/**
-	 * returns the execution step were to resume the test suite
+	 * <p>
+	 * returns the execution step were to resume the test suite<br>
+	 * or null if no execution step is to be resumed
+	 * </p>
 	 * 
 	 * @param testSuiteId
 	 * @return
 	 */
-	ExecutionStep findExecutionStepWereToResumeExecution(Long testSuiteId);
+	ExecutionStep findExecutionStepWhereToResumeExecutionOfSuite(Long testSuiteId);
+
+	/**
+	 * <p>
+	 * returns the execution step were to start the test suite execution<br>
+	 * or null if there is no execution step
+	 * </p>
+	 * 
+	 * @param testSuiteId
+	 * @return
+	 */
+	ExecutionStep relaunchExecution(Long testSuiteId);
 }

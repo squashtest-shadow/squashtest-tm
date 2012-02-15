@@ -67,7 +67,7 @@ public class CampaignDeletionHandlerImpl extends AbstractNodeDeletionHandlerImpl
 
 	@Inject
 	private IterationDao iterationDao;
-	
+
 	@Inject
 	private TestSuiteDao suiteDao;
 
@@ -98,10 +98,10 @@ public class CampaignDeletionHandlerImpl extends AbstractNodeDeletionHandlerImpl
 		// TODO : implement the specs when they are ready. Default is "nothing special".
 		return Collections.emptyList();
 	}
-	
+
 	@Override
-	public List<SuppressionPreviewReport> simulateSuiteDeletion(List<Long> targetIds){
-		
+	public List<SuppressionPreviewReport> simulateSuiteDeletion(List<Long> targetIds) {
+
 		// TODO : implement the specs when they are ready. Default is "nothing special".
 		return Collections.emptyList();
 	}
@@ -174,27 +174,25 @@ public class CampaignDeletionHandlerImpl extends AbstractNodeDeletionHandlerImpl
 		return targetIds;
 
 	}
-	
-	
+
 	@Override
 	public List<Long> deleteSuites(List<Long> testSuites) {
 		List<TestSuite> suites = suiteDao.findAllByIdList(testSuites);
 
 		doDeleteSuites(suites);
-				
-		return testSuites;
-	
-	}
 
+		return testSuites;
+
+	}
 
 	private void doDeleteSuites(Collection<TestSuite> testSuites) {
 		List<Long> attachmentListIds = new ArrayList<Long>();
-		
+
 		for (TestSuite testSuite : testSuites) {
 			attachmentListIds.add(testSuite.getAttachmentList().getId());
 			for (IterationTestPlanItem testPlanItem : testSuite.getTestPlan()) {
 				testPlanItem.setTestSuite(null);
-			}		
+			}
 			testSuite.getIteration().removeTestSuite(testSuite);
 			deletionDao.removeEntity(testSuite);
 		}
@@ -249,16 +247,16 @@ public class CampaignDeletionHandlerImpl extends AbstractNodeDeletionHandlerImpl
 	 */
 	private void doDeleteIterations(List<Iteration> iterations) {
 		for (Iteration iteration : iterations) {
-			
-			Collection<TestSuite> suites = new ArrayList<TestSuite>();  
+
+			Collection<TestSuite> suites = new ArrayList<TestSuite>();
 			suites.addAll(iteration.getTestSuites());
-			
+
 			doDeleteSuites(suites);
 			iteration.getTestSuites().clear();
-			
+
 			deleteIterationTestPlan(iteration.getTestPlans());
 			iteration.getTestSuites().clear();
-			
+
 			deletionDao.removeAttachmentList(iteration.getAttachmentList());
 			deletionDao.removeEntity(iteration);
 		}
@@ -279,14 +277,12 @@ public class CampaignDeletionHandlerImpl extends AbstractNodeDeletionHandlerImpl
 	/*
 	 *  
 	 */
+	@Override
 	public void deleteExecutions(List<Execution> executions) {
-		for (Execution execution : executions) {
-			deleteIssues(execution);
-
-			deletionDao.removeAttachmentList(execution.getAttachmentList());
-
-			deleteExecSteps(execution);
-			deletionDao.removeEntity(execution);
+		Collection<Execution> executionsCopy = new ArrayList<Execution>();
+		executionsCopy.addAll(executions);
+		for (Execution execution : executionsCopy) {
+			deleteExecution(execution);
 		}
 	}
 

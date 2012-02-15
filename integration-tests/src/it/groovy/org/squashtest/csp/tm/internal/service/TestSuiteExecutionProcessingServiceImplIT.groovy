@@ -21,8 +21,12 @@
 
 package org.squashtest.csp.tm.internal.service
 
+import java.util.List;
+
 import javax.inject.Inject;
 
+import org.hibernate.Query
+import org.hibernate.type.LongType
 import org.spockframework.util.NotThreadSafe;
 import org.springframework.transaction.annotation.Transactional;
 import org.squashtest.csp.tm.domain.execution.ExecutionStep
@@ -38,62 +42,149 @@ class TestSuiteExecutionProcessingServiceImplIT extends DbunitServiceSpecificati
 	@Inject
 	private TestSuiteExecutionProcessingService service
 
-	@DataSet("TestSuiteExecutionProcessingServiceImplIT.dataset1.xml")
-	def "should not find execution step where to resume because test plan empty"(){
+	@DataSet("TestSuiteExecutionProcessingServiceImplIT.should try to resume and not find execution step because test plan empty.xml")
+	def "should try to resume and not find execution step because test plan empty"(){
 		given :
 		long testSuiteId = 1L
 
 		when :
-		ExecutionStep executionStep = service.findExecutionStepWereToResumeExecution(testSuiteId)
+		ExecutionStep executionStep = service.findExecutionStepWhereToResumeExecutionOfSuite(testSuiteId)
 
 		then :
 		executionStep == null
 	}
-	@DataSet("TestSuiteExecutionProcessingServiceImplIT.dataset2.xml")
-	def "should not find execution step where to resume because all executions terminated"(){
+	@DataSet("TestSuiteExecutionProcessingServiceImplIT.should try to resume and not find execution step because all executions terminated.xml")
+	def "should try to resume and not find execution step because all executions terminated"(){
 		given :
 		long testSuiteId = 1L
 
 		when :
-		ExecutionStep executionStep = service.findExecutionStepWereToResumeExecution(testSuiteId)
-
-		then :
-		executionStep == null
-		
-	}
-	@DataSet("TestSuiteExecutionProcessingServiceImplIT.dataset3.xml")
-	def "should not find execution step where to resume because all execution have no step"(){
-		given :
-		long testSuiteId = 1L
-
-		when :
-		ExecutionStep executionStep = service.findExecutionStepWereToResumeExecution(testSuiteId)
+		ExecutionStep executionStep = service.findExecutionStepWhereToResumeExecutionOfSuite(testSuiteId)
 
 		then :
 		executionStep == null
 	}
-	@DataSet("TestSuiteExecutionProcessingServiceImplIT.dataset4.xml")
-	def "should find execution step where to resume through new execution"(){
+	@DataSet("TestSuiteExecutionProcessingServiceImplIT.should try to resume and not find execution step because all execution have no step.xml")
+	def "should try to resume and not find execution step because all execution have no step"(){
 		given :
 		long testSuiteId = 1L
 
 		when :
-		ExecutionStep executionStep = service.findExecutionStepWereToResumeExecution(testSuiteId)
+		ExecutionStep executionStep = service.findExecutionStepWhereToResumeExecutionOfSuite(testSuiteId)
+
+		then :
+		executionStep == null
+	}
+	@DataSet("TestSuiteExecutionProcessingServiceImplIT.should try to resume and find execution step through new execution.xml")
+	def "should try to resume and find execution step through new execution"(){
+		given :
+		long testSuiteId = 1L
+
+		when :
+		ExecutionStep executionStep = service.findExecutionStepWhereToResumeExecutionOfSuite(testSuiteId)
 
 		then :
 		executionStep != null
 		executionStep.action == "lipsum4"
 	}
-	@DataSet("TestSuiteExecutionProcessingServiceImplIT.dataset5.xml")
-	def "should find execution step where to resume through old execution"(){
+	@DataSet("TestSuiteExecutionProcessingServiceImplIT.should try to resume and find execution step through old execution.xml")
+	def "should try to resume and find execution step through old execution"(){
 		given :
 		long testSuiteId = 1L
 
 		when :
-		ExecutionStep executionStep = service.findExecutionStepWereToResumeExecution(testSuiteId)
+		ExecutionStep executionStep = service.findExecutionStepWhereToResumeExecutionOfSuite(testSuiteId)
 
 		then :
 		executionStep != null
 		executionStep.getId() == 5
+	}
+	@DataSet("TestSuiteExecutionProcessingServiceImplIT.should try to relaunch, delete execution and not find execution step because there is none.xml")
+	def "should try to relaunch, delete execution and not find execution step because there is none"(){
+		given :
+		long testSuiteId = 1L
+
+		when :
+		ExecutionStep executionStep = service.relaunchExecution (testSuiteId)
+
+		then :
+		allDeleted("Execution", [1L, 2L, 3L])
+		allDeleted("ExecutionStep", [
+			1l,
+			2l,
+			3l,
+			4l,
+			5l,
+			6l,
+			7L,
+			8L,
+			9L
+		])
+		executionStep == null
+	}
+	@DataSet("TestSuiteExecutionProcessingServiceImplIT.should try to relaunch, delete execution and not find execution step because test cases deleted.xml")
+	def "should try to relaunch, delete execution and not find execution step because all test plan are test case deleted"(){
+		given :
+		long testSuiteId = 1L
+
+		when :
+		ExecutionStep executionStep = service.relaunchExecution (testSuiteId)
+
+		then :
+		allDeleted("Execution", [1L, 2L, 3L])
+		allDeleted("ExecutionStep", [
+			1L,
+			2L,
+			3L,
+			4L,
+			5L,
+			6L,
+			7L,
+			8L,
+			9L
+		])
+		executionStep == null
+	}
+	@DataSet("TestSuiteExecutionProcessingServiceImplIT.should try to relaunch, delete execution and find execution step.xml")
+	def "should try to relaunch, delete execution and find execution step"(){
+		given :
+		long testSuiteId = 1L
+
+		when :
+		ExecutionStep executionStep = service.relaunchExecution (testSuiteId)
+
+		then :
+		allDeleted("Execution", [1L, 2L, 3L])
+		allDeleted("ExecutionStep", [
+			1L,
+			2L,
+			3L,
+			4L,
+			5L,
+			6L,
+			7L,
+			8L,
+			9L
+		])
+		allNotDeleted("Execution",[4l])
+		allNotDeleted("ExecutionStep", [10L, 11L, 12L])
+		executionStep != null
+		executionStep.getAction() == "lipsum1"
+	}
+	/* ************************** utilities ********************************* */
+
+	private boolean allDeleted(String className, List<Long> ids){
+		Query query = getSession().createQuery("from "+className+" where id in (:ids)")
+		query.setParameterList("ids", ids, new LongType())
+		List<?> result = query.list()
+
+		return result.isEmpty()
+	}
+	private boolean allNotDeleted(String className, List<Long> ids){
+		Query query = getSession().createQuery("from "+className+" where id in (:ids)")
+		query.setParameterList("ids", ids, new LongType())
+		List<?> result = query.list()
+
+		return result.size() == ids.size();
 	}
 }
