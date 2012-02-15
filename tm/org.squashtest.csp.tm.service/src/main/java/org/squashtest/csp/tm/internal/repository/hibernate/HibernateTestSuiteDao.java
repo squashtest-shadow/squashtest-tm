@@ -124,8 +124,7 @@ public class HibernateTestSuiteDao extends HibernateEntityDao<TestSuite> impleme
 		return stats;
 	}
 
-
-
+	
 	@Override
 	public List<IterationTestPlanItem> findTestPlanPartition(final Long testSuiteId,
 			final List<Long> testPlanItemIds) {
@@ -141,7 +140,8 @@ public class HibernateTestSuiteDao extends HibernateEntityDao<TestSuite> impleme
 		
 		return executeListNamedQuery("testSuite.findTestPlanPartition", callback);
 	}
-
+	
+	
 	private SetQueryParametersCallback idParameter(final long id) {
 		SetQueryParametersCallback newCallBack = new SetQueryParametersCallback() {
 
