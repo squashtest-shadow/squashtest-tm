@@ -83,7 +83,7 @@ public class ExecutionProcessingServiceImpl implements ExecutionProcessingServic
 	}
 
 	@Override
-	public ExecutionStep getStepAt(Long executionId, int executionStepIndex) {
+	public ExecutionStep getStepAt(long executionId, int executionStepIndex) {
 		Execution execution = executionDao.findAndInit(executionId);
 
 		return execution.getSteps().get(executionStepIndex);
