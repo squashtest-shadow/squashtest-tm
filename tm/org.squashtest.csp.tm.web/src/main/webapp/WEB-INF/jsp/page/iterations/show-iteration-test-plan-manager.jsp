@@ -25,7 +25,7 @@
 <%@ taglib prefix="layout" tagdir="/WEB-INF/tags/layout"%>
 <%@ taglib prefix="tree" tagdir="/WEB-INF/tags/jstree"%>
 <%@ taglib prefix="jq" tagdir="/WEB-INF/tags/jquery"%>
-<%@ taglib prefix="comp" tagdir="/WEB-INF/tags/component"%>
+<%@ taglib prefix="aggr" tagdir="/WEB-INF/tags/aggregates"%>
 <%@ taglib prefix="dt" tagdir="/WEB-INF/tags/datatables" %>
 <%@ taglib prefix="s" uri="http://www.springframework.org/tags" %>
 <%@ page language="java" contentType="text/html; charset=utf-8" pageEncoding="utf-8"%>
@@ -33,7 +33,7 @@
 <c:url var="backUrl" value="/campaign-workspace/" />
 <c:url var="treeBaseUrl" value="/test-case-browser/" />
 <c:url var="testPlansTableUrl" value="${ baseURL }/test-cases/table" />
-<c:url var="testPlanUrl" value="${ baseURL }/test-cases/table" />
+<c:url var="testPlanUrl" value="${ baseURL }/test-cases" />
 <c:url var="removeTestPlanUrl" value="${ baseURL }/test-plan" />
 <c:url var="nonBelongingTestPlansUrl" value="${ baseURL }/non-belonging-test-cases" />
 
@@ -56,7 +56,40 @@
 		$(function(){
 			navLinkHighlight("campaign-link");
 			
+			$( '#add-test-case-button' ).click(function() {
+				var tree = $( '#linkable-test-cases-tree' );
+				var ids = getTestCasesIds();
+				if (ids.length > 0) {
+					$.post('${ testPlanUrl }', { testCasesIds: ids}, refreshTestPlans);
+				}
+				tree.jstree('deselect_all'); //todo : each panel should define that method too.
+				firstIndex = null;
+				lastIndex = null;
+			});
+			
 		});
+		
+		<%-- test-case addition --%>
+		
+		//todo : get that wtf thing straight. 
+		//each panel (tree, search tc, search by req) should define a method getSelected()
+		//the present function should only call the one belonging to the currently selected panel.
+		function getTestCasesIds(){
+			var tab =  new Array();
+			var selected = $( "#tabbed-pane" ).tabs('option', 'selected');
+			var tree = $( '#linkable-test-cases-tree' );
+			if (selected == 0){
+				tab = tree.jstree('get_selected')
+					  .not(':library')
+					  .collect(function(elt){return $(elt).attr('resid');});
+			}
+			else{
+				//that line is especially wtf, see seach-panel.tag and search-panel-by-requirement.tag
+				//to understand what I mean.
+				tab = getIdSelection();
+			}
+			return tab;
+		}		
 	</script>	
 		<%-- 
 			tree js 
@@ -77,175 +110,9 @@
 	</script>
 		
 		
-		<%-- 
-			table js 
-			Note : we duplicate part of the code of aggregate:decorate-iteration-test-plan-table, because we don't need 
-			all the features that manage its executions	
-		--%>
-		<script type="text/javascript">
-			
-		$(function() {
-			
-			$( '#remove-test-case-button' ).click(function() {
-					var table = $( '#test-plan-table' ).dataTable();
-					var ids = getIdsOfSelectedTableRows(table);
-					
-					if (ids.length > 0) {
-						$.post('${ nonBelongingTestPlansUrl }', { testPlanIds: ids }, function(data){
-							refreshTestPlans();
-							checkForbiddenDeletion(data);
-						});
-					}
-					
-					$( 'tr.row_selected', table ).removeClass('row_selected');
-				});
-				
-				<%-- enable table row selection --%>
-				$( '#test-plan-table tbody tr:not(.delete-test-case-button)' ).live('click', function() {
-					 $( this ).toggleClass('row_selected');
-				});		
-		
-		
-			<%-- single test-case removal --%>
-			$('#test-plan-table .delete-test-case-button').live('click', function() {
-				$.ajax({
-					type : 'delete',
-					url : '${ removeTestPlanUrl }/' + parseTestPlanId(this),
-					dataType : 'text',
-					success : function(data){
-						refreshTestPlans();
-						checkForbiddenDeletion(data);
-					}
-				});
-			});
-			
-		
-			
-			<%-- test-case addition --%>
-			
-			//todo : get that wtf thing straight. 
-			//each panel (tree, search tc, search by req) should define a method getSelected()
-			//the present function should only call the one belonging to the currently selected panel.
-			function getTestCasesIds(){
-				var tab =  new Array();
-				var selected = $( "#tabbed-pane" ).tabs('option', 'selected');
-				var tree = $( '#linkable-test-cases-tree' );
-				if (selected == 0){
-					tab = tree.jstree('get_selected')
-						  .not(':library')
-						  .collect(function(elt){return $(elt).attr('resid');});
-				}
-				else{
-					//that line is especially wtf, see seach-panel.tag and search-panel-by-requirement.tag
-					//to understand what I mean.
-					tab = getIdSelection();
-				}
-				return tab;
-			}				
-			
-			$( '#add-test-case-button' ).click(function() {
-					var tree = $( '#linkable-test-cases-tree' );
-					var ids = getTestCasesIds();
-					if (ids.length > 0) {
-						$.post('${ testPlanUrl }', { testCasesIds: ids}, refreshTestPlans);
-					}
-					tree.jstree('deselect_all'); //todo : each panel should define that method too.
-					firstIndex = null;
-					lastIndex = null;
-				});
-			
-		});
-			
-		//This function checks the response and inform the user if a deletion was impossible
-		function checkForbiddenDeletion(data){
-			if(data=="true"){
-				displayInformationNotification('${ unauthorizedDeletion }');
-			}
-		}
-
-		//for drag and drop test case feature
-		//row : selected row
-		//dropPosition : the new position
-		function testPlanDropHandler(row, dropPosition) {
-			//first compose the url to update the order, then send a request attribute newIndex and call the refresh function
-			$.post('${ updateTestPlanUrl }' + parseTestPlanId(row), { newIndex : dropPosition }, function(){
-				refreshTestPlans();
-			}) ;
-		}
-		
-		function refreshTestPlans() {
-			var table = $('#test-plan-table').dataTable();
-			saveTableSelection(table, getTestPlansTableRowId);
-			table.fnDraw(false);
-		}
-		
-		function getTestPlansTableRowId(rowData) {
-			return rowData[0];	
-		}
-		
-		function getTestPlanTableRowIndex(rowData){
-			return rowData[1];
-		}
-		
-		function isTestCaseDeleted(rowData){
-			return (rowData[7]=="true");
-		}
-		
-		function getTestCaseId(rowData){
-			return rowData[6];
-		}
-		
-
-		function testPlanTableDrawCallback() {
-			enableTableDragAndDrop('test-plan-table', getTestPlanTableRowIndex, testPlanDropHandler);
-			decorateDeleteButtons($('.delete-test-case-button', this));
-			restoreTableSelection(this, getTestPlansTableRowId);
-		}
 
 
-
-		function testPlanTableRowCallback(row, data, displayIndex) {
-			addIdtoTestPlanRow(row, data);
-			addDeleteButtonToRow(row, getTestPlansTableRowId(data), 'delete-test-case-button');
-			addClickHandlerToSelectHandle(row, $("#test-plan-table"));
-			addHLinkToTestPlanName(row, data);
-			return row;
-		}
-		
-		function addIdtoTestPlanRow(nRow, aData){
-			$(nRow).attr("id", "test-case:" + getTestPlansTableRowId(aData));
-		}
-
-		function parseTestPlanId(element) {
-			var elementId = element.id;
-			return elementId.substr(elementId.indexOf(":") + 1);
-		}
-		
-		function addHLinkToTestPlanName(row, data) {
-			if (! isTestCaseDeleted(data) ){
-				var url= '${ testPlanDetailsBaseUrl }/' + getTestCaseId(data) + '/info';		
-				addHLinkToCellText($( 'td:eq(2)', row ), url);
-			}
-		}	
-		
-		
-		<%-- returns list of id of selected row --%>
-			function getIdsOfSelectedTableRows(dataTable) {
-				var rows = dataTable.fnGetNodes();
-				var ids = new Array();
-				
-				$( rows ).each(function(index, row) {
-					if ($( row ).attr('class').search('selected') != -1) {
-						var data = dataTable.fnGetData(row);
-						ids.push(data[0]);
-					}
-				});
-				
-				return ids;
-			}
-
 			
-		</script>
 	</jsp:attribute>
 	
 	<jsp:attribute name="titlePane">
@@ -268,78 +135,49 @@
 	</jsp:attribute>
 	
 <jsp:attribute name="contextualContent">		
-		<script type="text/javascript">
-			$(function(){
-				$("#back").button().click(function(){
-					document.location.href="${backUrl}";
-				});
+	<script type="text/javascript">
+		$(function(){
+			$("#back").button().click(function(){
+				document.location.href="${backUrl}";
 			});
-		</script>
-		
-		<div style="overflow:hidden;height:100%;">
-		
-			<div  id="tree-picker-actions-pane" class="centered">
-				<div style="position:absolute;top:45%;margin-right:2em;">
-					<f:message var="addLabel" key="association_interface.add.button.label" />
-					<input id="add-test-case-button" type="button" value="${ addLabel }" class="button" 
-					style="margin-bottom:15px;width:30px;"/>  
+		});
+	</script>
+	
+	<div style="overflow:hidden;height:100%;">
+	
+		<div  id="tree-picker-actions-pane" class="centered">
+			<div style="position:absolute;top:45%;margin-right:2em;">
+				<f:message var="addLabel" key="association_interface.add.button.label" />
+				<input id="add-test-case-button" type="button" value="${ addLabel }" class="button" 
+				style="margin-bottom:15px;width:30px;"/>  
 
-				
-					<f:message var="removeLabel" key="association_interface.remove.button.label" />
-					<input id="remove-test-case-button" type="button" value="${ removeLabel }" class="button" 					
-					style="margin-top:15px;width:30px;"/>
-				</div>
-			</div>
-
-			<div id="tree-picker-target-pane">
-				<div class="ui-widget-header ui-corner-all fragment-header">
-		
-					<div style="float:left;height:100%;">			
-						<h2>
-							<f:message var="title" key="campaign.test-plan.panel.title"/>
-							<label>${title}</label>
-						</h2>
-					</div>	
-					<div style="clear:both;"></div>
-		
-				</div>
-				
-				
-				<comp:decorate-ajax-table url="${ testPlansTableUrl }" tableId="test-plan-table" paginate="true">
-					<jsp:attribute name="drawCallback">testPlanTableDrawCallback</jsp:attribute>
-					<jsp:attribute name="rowCallback">testPlanTableRowCallback</jsp:attribute>
-						<jsp:attribute name="initialSort">[[2,'asc']]</jsp:attribute>
-						<jsp:attribute name="columnDefs">
-							<dt:column-definition targets="0" visible="false" />
-							<dt:column-definition targets="1" sortable="false" cssClass="centered ui-state-default drag-handle select-handle" />
-							<dt:column-definition targets="2, 3, 4, 5" sortable="false" />
-							<dt:column-definition targets="6, 7" sortable="false" visible="false"/>
-							<dt:column-definition targets="8" sortable="false" width="2em" lastDef="true" cssClass="centered"/>
-						</jsp:attribute>
-				</comp:decorate-ajax-table>
-				<div class="fragment-body">
-					<table id="test-plan-table">
-						<thead>
-							<tr>
-								<th>test plan Id</th>
-								<th>&nbsp;</th>
-								<th><f:message key="iteration.executions.table.column-header.project.label" /></th>
-								<th><f:message key="iteration.executions.table.column-header.test-case.label" /></th>
-								<th><f:message key="iteration.executions.table.column-header.type.label" /></th>
-								<th><f:message key="iteration.executions.table.column-header.suite.label" /></th>
-								<th>test case id</th>
-								<th>is deleted</th>
-								<th>&nbsp;</th>				
-							</tr>
-						</thead>
-						<tbody><%-- Will be populated through ajax --%></tbody>
-					</table>
-				 	<div id="test-case-row-buttons" class="not-displayed">
-						<a id="delete-test-case-button" href="#" class="delete-test-case-button"><f:message key="test-case.verified_requirement_item.remove.button.label" /></a>
-					</div> 
-				</div>
+			
+				<f:message var="removeLabel" key="association_interface.remove.button.label" />
+				<input id="remove-test-case-button" type="button" value="${ removeLabel }" class="button" 					
+				style="margin-top:15px;width:30px;"/>
 			</div>
 		</div>
-	</jsp:attribute>
+
+		<div id="tree-picker-target-pane">
+			<div class="ui-widget-header ui-corner-all fragment-header">
+	
+				<div style="float:left;height:100%;">			
+					<h2>
+						<f:message var="title" key="campaign.test-plan.panel.title"/>
+						<label>${title}</label>
+					</h2>
+				</div>	
+				<div style="clear:both;"></div>
+	
+			</div>
+			
+			<aggr:decorate-iteration-test-plan-manager-table tableModelUrl="${testPlansTableUrl}" testPlanDetailsBaseUrl="${testPlanDetailsBaseUrl}" 
+				testPlansUrl="${removeTestPlanUrl}" batchRemoveButtonId="remove-test-case-button" 
+				updateTestPlanUrl="${updateTestPlanUrl}" nonBelongingTestPlansUrl="${nonBelongingTestPlansUrl}" />
+			<aggr:iteration-test-plan-manager-table/>
+			
+		</div>
+	</div>
+</jsp:attribute>
 
 </layout:tree-page-layout>
