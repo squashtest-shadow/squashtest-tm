@@ -343,18 +343,11 @@
 	</jsp:attribute>
 </pop:popup>
 
-<%--------------------------- /Deletion confirmation pup for Test plan section ------------------------------------%>
-
-
-<%--------------------------- /Test plan section ------------------------------------%>
 
 <%------------------------------ Attachments bloc ---------------------------------------------%> 
 
 <comp:attachment-bloc entity="${campaign}" workspaceName="campaign" editable="${ editable }" />
 
-
-
-<comp:decorate-buttons />
 
 <%--------------------------- Deletion confirmation popup -------------------------------------%>
 <c:if test="${ editable }">
@@ -414,6 +407,7 @@
 			</div>
 		</jsp:body>
 </comp:popup>
+<comp:decorate-buttons />
 </div>
 
 

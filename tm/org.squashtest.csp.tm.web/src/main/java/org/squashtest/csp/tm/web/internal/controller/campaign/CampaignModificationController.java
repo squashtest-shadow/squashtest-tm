@@ -43,6 +43,7 @@ import org.squashtest.csp.tm.domain.campaign.CampaignTestPlanItem;
 import org.squashtest.csp.tm.domain.project.Project;
 import org.squashtest.csp.tm.domain.testcase.TestCase;
 import org.squashtest.csp.tm.domain.testcase.TestCaseExecutionMode;
+import org.squashtest.csp.tm.domain.testcase.TestCaseImportance;
 import org.squashtest.csp.tm.infrastructure.filter.CollectionSorting;
 import org.squashtest.csp.tm.infrastructure.filter.FilteredCollectionHolder;
 import org.squashtest.csp.tm.service.CampaignModificationService;
@@ -65,10 +66,16 @@ public class CampaignModificationController {
 	@Inject
 	private MessageSource messageSource;
 
+	/*
+	 *   //TODO since this controller may return two different models of different datatables (the one in the campaign and the one in the association interface)
+	 *   they should be addressed by two distinct DataTableMappers, especially because their configuration and content are different !  
+	 * 
+	 */
 	private final DataTableMapper testPlanMapper = new DataTableMapper("irrelevant", TestCase.class, Project.class)
-			.initMapping(5).mapAttribute(Project.class, 2, "name", String.class)
+			.initMapping(7).mapAttribute(Project.class, 2, "name", String.class)
 			.mapAttribute(TestCase.class, 3, "name", String.class)
-			.mapAttribute(TestCase.class, 4, "executionMode", TestCaseExecutionMode.class);
+			.mapAttribute(TestCase.class, 5, "importance", TestCaseImportance.class)
+			.mapAttribute(TestCase.class, 6, "executionMode", TestCaseExecutionMode.class);
 
 	@ServiceReference
 	public void setIterationModificationService(IterationModificationService iterationModificationService) {
@@ -278,10 +285,16 @@ public class CampaignModificationController {
 			@Override
 			public Object[] buildItemData(CampaignTestPlanItem item) {
 				TestCase testCase = item.getReferencedTestCase();
-				return new Object[] { testCase.getId(), getCurrentIndex(), testCase.getProject().getName(),
-						testCase.getName(),
-						(item.getUser() != null) ? item.getUser().getLogin() : formatNoData(locale),
-						formatExecutionMode(testCase.getExecutionMode(), locale), "" };
+				return new Object[] { 
+					testCase.getId(), 
+					getCurrentIndex(), 
+					testCase.getProject().getName(),
+					testCase.getName(),
+					(item.getUser() != null) ? item.getUser().getLogin() : formatNoData(locale),
+					formatImportance(testCase.getImportance(), locale),
+					formatExecutionMode(testCase.getExecutionMode(), locale), 
+					"" 
+				};
 			}
 		}.buildDataModel(holder, filter.getFirstItemIndex() + 1, params.getsEcho());
 	}
@@ -299,8 +312,15 @@ public class CampaignModificationController {
 			@Override
 			public Object[] buildItemData(CampaignTestPlanItem item) {
 				TestCase testCase = item.getReferencedTestCase();
-				return new Object[] { testCase.getId(), getCurrentIndex(), testCase.getProject().getName(),
-						testCase.getName(), formatExecutionMode(testCase.getExecutionMode(), locale), "" };
+				return new Object[] { 
+					testCase.getId(), 
+					getCurrentIndex(), 
+					testCase.getProject().getName(),
+					testCase.getName(), 
+					formatImportance(testCase.getImportance(), locale),
+					formatExecutionMode(testCase.getExecutionMode(), locale), 
+					"" 
+				};
 			}
 		}.buildDataModel(holder, filter.getFirstItemIndex() + 1, params.getsEcho());
 	}
@@ -317,6 +337,10 @@ public class CampaignModificationController {
 
 	private String formatNoData(Locale locale) {
 		return messageSource.getMessage("squashtm.nodata", null, locale);
+	}
+	
+	private String formatImportance(TestCaseImportance importance,  Locale locale){
+		return messageSource.getMessage(importance.getI18nKey(), null, locale);
 	}
 
 }
