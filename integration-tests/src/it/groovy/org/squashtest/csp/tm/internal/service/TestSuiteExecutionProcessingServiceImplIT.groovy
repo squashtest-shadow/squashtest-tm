@@ -42,7 +42,7 @@ class TestSuiteExecutionProcessingServiceImplIT extends DbunitServiceSpecificati
 	@Inject
 	private TestSuiteExecutionProcessingService service
 
-	@DataSet("TestSuiteExecutionProcessingServiceImplIT.should try to resume and not find execution step because test plan empty.xml")
+	@DataSet("TestSuiteExecutionProcessingServiceImplIT.should not find exec step because test plan empty.xml")
 	def "should try to resume and not find execution step because test plan empty"(){
 		given :
 		long testSuiteId = 1L
@@ -53,7 +53,7 @@ class TestSuiteExecutionProcessingServiceImplIT extends DbunitServiceSpecificati
 		then :
 		executionStep == null
 	}
-	@DataSet("TestSuiteExecutionProcessingServiceImplIT.should try to resume and not find execution step because all executions terminated.xml")
+	@DataSet("TestSuiteExecutionProcessingServiceImplIT.should not find exec step because all execs terminated.xml")
 	def "should try to resume and not find execution step because all executions terminated"(){
 		given :
 		long testSuiteId = 1L
@@ -64,7 +64,7 @@ class TestSuiteExecutionProcessingServiceImplIT extends DbunitServiceSpecificati
 		then :
 		executionStep == null
 	}
-	@DataSet("TestSuiteExecutionProcessingServiceImplIT.should try to resume and not find execution step because all execution have no step.xml")
+	@DataSet("TestSuiteExecutionProcessingServiceImplIT.should not find exec step because all execs have no step.xml")
 	def "should try to resume and not find execution step because all execution have no step"(){
 		given :
 		long testSuiteId = 1L
@@ -75,7 +75,7 @@ class TestSuiteExecutionProcessingServiceImplIT extends DbunitServiceSpecificati
 		then :
 		executionStep == null
 	}
-	@DataSet("TestSuiteExecutionProcessingServiceImplIT.should try to resume and find execution step through new execution.xml")
+	@DataSet("TestSuiteExecutionProcessingServiceImplIT.should find exec step through new exec.xml")
 	def "should try to resume and find execution step through new execution"(){
 		given :
 		long testSuiteId = 1L
@@ -87,7 +87,7 @@ class TestSuiteExecutionProcessingServiceImplIT extends DbunitServiceSpecificati
 		executionStep != null
 		executionStep.action == "lipsum4"
 	}
-	@DataSet("TestSuiteExecutionProcessingServiceImplIT.should try to resume and find execution step through old execution.xml")
+	@DataSet("TestSuiteExecutionProcessingServiceImplIT.should find exec step through old exec.xml")
 	def "should try to resume and find execution step through old execution"(){
 		given :
 		long testSuiteId = 1L
@@ -99,7 +99,7 @@ class TestSuiteExecutionProcessingServiceImplIT extends DbunitServiceSpecificati
 		executionStep != null
 		executionStep.getId() == 5
 	}
-	@DataSet("TestSuiteExecutionProcessingServiceImplIT.should try to relaunch, delete execution and not find execution step because there is none.xml")
+	@DataSet("TestSuiteExecutionProcessingServiceImplIT.should not find execution step because there is none.xml")
 	def "should try to relaunch, delete execution and not find execution step because there is none"(){
 		given :
 		long testSuiteId = 1L
@@ -122,7 +122,7 @@ class TestSuiteExecutionProcessingServiceImplIT extends DbunitServiceSpecificati
 		])
 		executionStep == null
 	}
-	@DataSet("TestSuiteExecutionProcessingServiceImplIT.should try to relaunch, delete execution and not find execution step because test cases deleted.xml")
+	@DataSet("TestSuiteExecutionProcessingServiceImplIT.should not find exec step because test cases deleted.xml")
 	def "should try to relaunch, delete execution and not find execution step because all test plan are test case deleted"(){
 		given :
 		long testSuiteId = 1L
@@ -145,7 +145,7 @@ class TestSuiteExecutionProcessingServiceImplIT extends DbunitServiceSpecificati
 		])
 		executionStep == null
 	}
-	@DataSet("TestSuiteExecutionProcessingServiceImplIT.should try to relaunch, delete execution and find execution step.xml")
+	@DataSet("TestSuiteExecutionProcessingServiceImplIT.should delete exec and find exec step.xml")
 	def "should try to relaunch, delete execution and find execution step"(){
 		given :
 		long testSuiteId = 1L
