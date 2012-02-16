@@ -20,6 +20,12 @@
         along with this software.  If not, see <http://www.gnu.org/licenses/>.
 
 --%>
+<%-- 
+	Winner of the Golden WTF Award here ! Whenever we have time for refractoring DUMP THIS along with 
+		- search-result-display-by-requirement
+		- search-result-display-ordered-by-requirement
+		- search-result-display
+ --%>
 <%@ taglib uri="http://java.sun.com/jsp/jstl/core" prefix="c" %>
 <%@ taglib uri="http://java.sun.com/jsp/jstl/fmt" prefix="f"%>
 <%@ taglib prefix="dt" tagdir="/WEB-INF/tags/datatables" %>
@@ -36,11 +42,12 @@
 		<tr>
 			<th> Id </th>
 			<th><f:message key="${workspace}.header.title" />s</th>
+			<c:if test="${ icon != 'Requirement' }"><th><f:message key="test-case.importance.combo.label"/></th></c:if>
 			<c:if test="${ icon == 'Requirement' }">
-				<th> Reference </th>
-				<th> Criticalité </th>
+			<th><f:message key="requirement.reference.label"/></th>
+			<th><f:message key="search.criticality.label"/></th>
 			</c:if>
-			<th> Projet </th>
+			<th><f:message key="test-case.calling-test-cases.table.project.label"/></th>
 		</tr>
 	</thead>
 	<tbody>
@@ -50,28 +57,22 @@
 			<c:if test="${currentProject != oldProject}">
 				<tr> 
 					<td> ${object.id}</td>
-					<td id="searchnode-${object.class.simpleName}Library-${object.project.id}" class="searched-project non-tree" style="border: none;"> 
+					<c:if test="${ icon != 'Requirement' }"><c:set var="colSpan" value="3" /></c:if>
+					<c:if test="${ icon == 'Requirement' }"><c:set var="colSpan" value="4" /></c:if>
+					<td colspan="${colSpan}" id="searchnode-${object.class.simpleName}Library-${object.project.id}" class="searched-project non-tree" style="border: none;"> 
 						<a style="color: white; text-decoration: none; border: none;" href="#">
 							<img class="search-image" src="${servContext}/images/root.png">
 							<span class="search-text">${object.project.name}</span>
 						</a>
 					</td> 
+					<td></td>
+					<td></td>
+					<c:if test="${colSpan ==4}"><td></td></c:if>
 					
-					<c:if test="${ icon == 'Requirement' }">
-						<td>
-							${object.project.name }
-						</td>
-						<td>
-							${object.project.name }
-						</td>
-					</c:if>
-					<td>
-						${object.project.name }
-					</td>
 				</tr>
 				<c:set var="oldProject" value="${currentProject}"></c:set>
 			</c:if>
-				
+		
 			<c:choose>
 				<c:when test="${object.class.simpleName== icon}">
 				<c:choose>
@@ -105,6 +106,7 @@
 									<span class="search-text">${object.name}</span>
 								</a>
 							</td>
+							<td><f:message key="${object.importance.i18nKey}" /></td>
 							<td>
 								${object.project.name }-${object.name }
 							</td>
@@ -112,40 +114,44 @@
 					</c:otherwise>
 				</c:choose>		
 			</c:when>
-				<c:when test="${object.class.simpleName== 'Iteration'}">
-					<tr> 
-						<td class = "objectId"> ${object.id}</td> 
-						<td id="searchnode-${object.class.simpleName}-${object.id}" class="non-tree" style="border: none;"> 
-							<a href="#" style="text-decoration: none; border: none;">
-								<img class="search-image" src="${servContext}/images/Icon_Tree_Iteration.png">
-								<span class="search-text">${object.name}</span>
-							</a>
-						</td>
-						<td>
-							${object.project.name }-${object.name }
-						</td>
-					</tr>	
-				</c:when>
-				<c:otherwise>
-					<tr> 
-					<td class = "objectId"> ${object.id}</td>
+			<c:when test="${object.class.simpleName== 'Iteration'}">
+				<tr> 
+					<td class = "objectId"> ${object.id}</td> 
 					<td id="searchnode-${object.class.simpleName}-${object.id}" class="non-tree" style="border: none;"> 
 						<a href="#" style="text-decoration: none; border: none;">
-							<img class="search-image" src="${servContext}/images/Icon_Tree_Folder.png">
+							<img class="search-image" src="${servContext}/images/Icon_Tree_Iteration.png">
 							<span class="search-text">${object.name}</span>
 						</a>
 					</td>
-					<c:if test="${ icon == 'Requirement' }">
-					<td>${object.project.name }-</td>
-					<td>${object.project.name }-</td>
-					</c:if>
+					<td>---</td>
 					<td>
 						${object.project.name }-${object.name }
 					</td>
+				</tr>	
+				</c:when>
+				<c:otherwise>
+					<tr> 
+						<td class = "objectId"> ${object.id}</td>
+						<td id="searchnode-${object.class.simpleName}-${object.id}" class="non-tree" style="border: none;"> 
+							<a href="#" style="text-decoration: none; border: none;">
+								<img class="search-image" src="${servContext}/images/Icon_Tree_Folder.png">
+								<span class="search-text">${object.name}</span>
+							</a>
+						</td>
+						<c:if test="${ icon != 'Requirement' }"><td>---</td></c:if>
+						<c:if test="${ icon == 'Requirement' }">
+						<td>${object.project.name }-</td>
+						<td>${object.project.name }-</td>
+						</c:if>
+						<td>
+							${object.project.name }-${object.name }
+						</td>
 					
 					</tr>	
 				</c:otherwise>
 			</c:choose>
+			
+				
 		</c:forEach>
 	</tbody>
 	</table>
@@ -168,7 +174,8 @@
 		<jsp:attribute name="columnDefs">
 			<dt:column-definition targets="0" sortable="false" visible="false" />
 			<dt:column-definition targets="1" sortable="false" />
-			<dt:column-definition targets="2" sortable="false" visible="false" lastDef="true" />
+			<dt:column-definition targets="2" sortable="false" />
+			<dt:column-definition targets="3" sortable="false" visible="false" lastDef="true" />
 		</jsp:attribute>
 	</comp:decorate-ajax-search-table>
 </c:if>

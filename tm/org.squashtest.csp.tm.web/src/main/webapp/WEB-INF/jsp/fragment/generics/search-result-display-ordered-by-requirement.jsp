@@ -20,6 +20,12 @@
         along with this software.  If not, see <http://www.gnu.org/licenses/>.
 
 --%>
+<%-- 
+	Winner of the Golden WTF Award here ! Whenever we have time for refractoring DUMP THIS along with 
+		- search-result-display-by-requirement
+		- search-result-display
+		- search-result-display-ordered
+ --%>
 <%@ taglib uri="http://java.sun.com/jsp/jstl/core" prefix="c" %>
 <%@ taglib uri="http://java.sun.com/jsp/jstl/fmt" prefix="f"%>
 <%@ taglib prefix="dt" tagdir="/WEB-INF/tags/datatables" %>

@@ -20,6 +20,13 @@
         along with this software.  If not, see <http://www.gnu.org/licenses/>.
 
 --%>
+<%-- 
+	Winner of the Golden WTF Award here ! Whenever we have time for refractoring DUMP THIS along with 
+		- search-result-display-by-requirement
+		- search-result-display-ordered-by-requirement
+		- search-result-display-ordered
+ --%>
+
 <%@ taglib uri="http://java.sun.com/jsp/jstl/core" prefix="c" %>
 <%@ taglib uri="http://java.sun.com/jsp/jstl/fmt" prefix="f"%>
 <%@ taglib prefix="dt" tagdir="/WEB-INF/tags/datatables" %>
@@ -44,9 +51,11 @@
 </c:if>
 <c:if test="${ icon != 'Requirement' }">
 	<comp:decorate-ajax-search-table tableId="search-result-datatable" >
+		<jsp:attribute name="initialSort">[[2,'asc']]</jsp:attribute>
 		<jsp:attribute name="columnDefs">
 			<dt:column-definition targets="0" sortable="false" visible="false" />
-			<dt:column-definition targets="1" sortable="false" lastDef="true" />
+			<dt:column-definition targets="1" sortable="false" visible="true" />
+			<dt:column-definition targets="2" sortable="false" visible="true" lastDef="true" />
 		</jsp:attribute>
 	</comp:decorate-ajax-search-table>
 </c:if>
@@ -56,10 +65,11 @@
 		<tr>
 			<th> Id </th>
 			<th> <f:message key="${workspace}.header.title" />s </th>
+			<c:if test="${ icon != 'Requirement' }"><th><f:message key="test-case.importance.combo.label"/></th></c:if>
 			<c:if test="${ icon == 'Requirement' }">
-			<th> Reference </th>
-			<th> Criticalité </th>
-			<th> Projet </th>
+			<th><f:message key="requirement.reference.label"/></th>
+			<th><f:message key="search.criticality.label"/></th>
+			<th><f:message key="test-case.calling-test-cases.table.project.label"/></th>
 			</c:if>
 		</tr>
 	</thead>
@@ -96,6 +106,9 @@
 								<span class="search-text">${object.name}</span>
 							</a>
 						</td>
+						<td><%-- assuming this case is REALLY test case --%>
+							<f:message key="${object.importance.i18nKey}" />
+						</td>
 					</c:otherwise>
 				</c:choose>		
 			</c:when>
@@ -106,6 +119,9 @@
 						<img class="search-image" src="${servContext}/images/Icon_Tree_Iteration.png"/>
 						<span class="search-text">${object.name}</span>
 					</a>
+				</td>
+				<td>
+					---
 				</td>		
 			</c:when>
 			<c:otherwise>
@@ -115,6 +131,9 @@
 						<img class="search-image" src="${servContext}/images/Icon_Tree_Folder.png"/>
 						<span class="search-text">${object.name}</span>
 					</a>
+				</td>
+				<td>
+					---
 				</td>
 				<c:if test="${ icon == 'Requirement' }">
 					<td>&nbsp;</td>

@@ -25,6 +25,7 @@ import javax.servlet.ServletContextEvent;
 import javax.servlet.ServletContextListener;
 
 import org.squashtest.csp.tm.domain.requirement.VerificationCriterion;
+import org.squashtest.csp.tm.domain.testcase.TestCaseImportance;
 
 /**
  * This Listener exposes enums into the ServletContext on application startup.
@@ -44,6 +45,7 @@ public class EnumServletContextExposer implements ServletContextListener {
 	public void contextInitialized(ServletContextEvent event) {
 		ServletContext context = event.getServletContext();
 
+		context.setAttribute("testCaseImportanceEnum", TestCaseImportance.values());
 		context.setAttribute("verificationCriterionEnum", VerificationCriterion.values());
 	}
 
