@@ -108,23 +108,30 @@
 		availability="optional" 
 		sticky="false" />
 		
-
+		
+	<!--  
+		pretty much the same problem here. To be specific, that thing should be instanciated here in core.service.
+		the reason is that due to the rigid configuration of Spring security, we had to declare it, along with the main authentication manager, in
+		core.web. That is : 
+			- you can't delegate the authentication manager for one Spring context to a bean from another context (eg core.web and core.service)
+			  so you must declare the authentication manager in the web context.
+			- the UserDetailsService and AuthenticationManager need cross-references to each other that cannot be lazily initialized,
+			  thus forbidding asynchronous OSGI-service injection.
+		
+		Spring DM, Spring security and Hibernate really need to talk together.
+	-->
+	<osgi:reference id="squashtest.core.security.JdbcUserDetailsManager"
+		bean-name="squashtest.core.security.JdbcUserDetailsManager"
+		interface="org.springframework.security.provisioning.UserDetailsManager" 
+		availability="optional" 
+		sticky="false" />
 	
 		
 	<!--  
 		the beans handling the credentials
 	 -->
 
-
-	<osgi:service ref="squashtest.core.security.JdbcUserDetailsManager">
-	  <osgi:interfaces>
-	     <value>org.springframework.security.provisioning.UserDetailsManager</value>
-	     <value>org.springframework.security.provisioning.JdbcUserDetailsManager</value>
-	  </osgi:interfaces>	
-	</osgi:service>
-	
-		
-			 	
+	 	
 	 <osgi:service ref="squashtest.core.security.AdministratorAuthenticationService"
 	 	interface="org.squashtest.csp.core.service.security.UserAuthenticationService" 	/>	 	
 	 	

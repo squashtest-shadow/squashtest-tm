@@ -22,6 +22,7 @@ package org.squashtest.csp.core.internal.security.security;
 
 import java.util.Collection;
 
+import org.springframework.osgi.extensions.annotation.ServiceReference;
 import org.springframework.security.authentication.encoding.PasswordEncoder;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.userdetails.User;
@@ -36,6 +37,7 @@ public class AdministratorAuthenticationServiceImpl implements
 	private PasswordEncoder encoder;
 	private Object salt=null;
 	
+	@ServiceReference
 	public void setUserDetailsManager(UserDetailsManager userManager){
 		this.userManager=userManager;
 	}
