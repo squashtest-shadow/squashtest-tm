@@ -139,16 +139,13 @@
 		
 
 		function makeDisplayableStatus(execStatus){
-			var content;
-			var context = "${ pageContext.servletContext.contextPath }";
-			var header="<div style=\"white-space:nowrap;\"><img src=\"";
-			var label="\" /><span style=\"vertical-align:top;margin-left:10px;\">";
-			var footer="</span> </div>";
- 
+			var header = $('<div/>', { 'style' : "white-space:nowrap;"});
+			var img = $("<img/>", { 'src' : execStatus.icon });
+			var span = $("<span/>", { 'style' : "vertical-align:top; margin-left:10px;", 'text' : execStatus.text});
 			
-			content=header+execStatus.icon+label+execStatus.text+footer;
-		
-			return content;		
+			header.append(img);
+			header.append(span);
+ 			return header.html();
 		}
 		
 		

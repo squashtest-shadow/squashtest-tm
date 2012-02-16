@@ -60,7 +60,7 @@
 
 </c:choose>
 
-<span style="white-space:nowrap;" >
-	<img src="${statusIcon}" style="margin-left:5px;vertical-align:bottom;" height="1em;" width="1em;"/>
+<span style="white-space:nowrap; display:inline-block;" >
+	<img src="${statusIcon}" style="margin-left:5px;vertical-align:bottom;" />
 	<span style="margin-left:10px;">${entityStatus}</span>
 </span>

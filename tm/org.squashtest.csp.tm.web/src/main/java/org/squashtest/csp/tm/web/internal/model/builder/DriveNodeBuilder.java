@@ -50,7 +50,7 @@ public class DriveNodeBuilder extends JsTreeNodeBuilder<Library<?>, DriveNodeBui
 		node.addAttr("rel", "drive");
 		node.addAttr("resId", String.valueOf(model.getId()));
 		node.addAttr("resType", buildResourceType(model.getClassSimpleName()));
-		node.setState(State.closed);
+		node.setState(model.hasContent() ? State.closed : State.leaf);
 		node.setTitle(model.getProject().getName());
 		node.addAttr("name", model.getClassSimpleName());
 		node.addAttr("id", model.getClassSimpleName() + '-' + model.getId());
