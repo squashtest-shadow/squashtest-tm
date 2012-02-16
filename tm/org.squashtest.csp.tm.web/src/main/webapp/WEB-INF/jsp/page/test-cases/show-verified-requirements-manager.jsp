@@ -36,9 +36,7 @@
 <c:url var="verifiedRequirementsUrl" value="/test-cases/${ testCase.id }/verified-requirement-versions" />
 <c:url var="nonVerifiedRequirementsUrl" value="/test-cases/${ testCase.id }/non-verified-requirement-versions" />
 
-<layout:tree-picker-layout removeLabelKey="association_interface.remove.button.label" 
-						   workspaceTitleKey="workspace.test-case.title" 
-						   addLabelKey="association_interface.add.button.label" 
+<layout:tree-picker-layout workspaceTitleKey="workspace.test-case.title" 
 						   highlightedWorkspace="test-case"
 						   treeBaseUrl="${treeBaseUrl}" linkable="requirement" isSubPaged="true">
 						   
@@ -107,7 +105,7 @@
 				$( '#add-items-button' ).click(function() {
 					var tree = $( '#linkable-requirements-tree' );
 					var ids = new Array();
-					ids = getRequirementsIds()
+					ids = getRequirementsIds();
 			
 					if (ids.length > 0) {
 						$.post('${ addVerifiedRequirementsUrl }', { requirementsIds: ids}, addHandler);
@@ -128,7 +126,7 @@
 		<div class="snap-left" style="height:100%;">			
 			<h2>
 				<f:message var="title" key="test-case.verified_requirements.panel.title"/>
-				<label>${title}</label>
+				<span>${title}</span>
 			</h2>
 		</div>						
 		<div style="clear:both;"></div>

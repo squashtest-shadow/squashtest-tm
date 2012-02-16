@@ -47,7 +47,7 @@
 		
 	$(function() {
 		
-		$( '#remove-test-case-button' ).click(function() {
+		$( '#${batchRemoveButtonId}' ).click(function() {
 				var table = $( '#test-plan-table' ).dataTable();
 				var ids = getIdsOfSelectedTableRows(table);
 				

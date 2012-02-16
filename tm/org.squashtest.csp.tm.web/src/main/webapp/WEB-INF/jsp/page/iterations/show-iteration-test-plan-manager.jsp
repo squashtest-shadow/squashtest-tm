@@ -56,7 +56,7 @@
 		$(function(){
 			navLinkHighlight("campaign-link");
 			
-			$( '#add-test-case-button' ).click(function() {
+			$( '#add-items-button' ).click(function() {
 				var tree = $( '#linkable-test-cases-tree' );
 				var ids = getTestCasesIds();
 				if (ids.length > 0) {
@@ -147,14 +147,8 @@
 	
 		<div  id="tree-picker-actions-pane" class="centered">
 			<div style="position:absolute;top:45%;margin-right:2em;">
-				<f:message var="addLabel" key="association_interface.add.button.label" />
-				<input id="add-test-case-button" type="button" value="${ addLabel }" class="button" 
-				style="margin-bottom:15px;width:30px;"/>  
-
-			
-				<f:message var="removeLabel" key="association_interface.remove.button.label" />
-				<input id="remove-test-case-button" type="button" value="${ removeLabel }" class="button" 					
-				style="margin-top:15px;width:30px;"/>
+				<div id="add-items-button" class="association-button" ></div>  
+				<div id="remove-items-button" class="association-button" ></div>
 			</div>
 		</div>
 
@@ -164,7 +158,7 @@
 				<div style="float:left;height:100%;">			
 					<h2>
 						<f:message var="title" key="campaign.test-plan.panel.title"/>
-						<label>${title}</label>
+						<span>${title}</span>
 					</h2>
 				</div>	
 				<div style="clear:both;"></div>
@@ -172,12 +166,35 @@
 			</div>
 			
 			<aggr:decorate-iteration-test-plan-manager-table tableModelUrl="${testPlansTableUrl}" testPlanDetailsBaseUrl="${testPlanDetailsBaseUrl}" 
-				testPlansUrl="${removeTestPlanUrl}" batchRemoveButtonId="remove-test-case-button" 
+				testPlansUrl="${removeTestPlanUrl}" batchRemoveButtonId="remove-items-button" 
 				updateTestPlanUrl="${updateTestPlanUrl}" nonBelongingTestPlansUrl="${nonBelongingTestPlansUrl}" />
 			<aggr:iteration-test-plan-manager-table/>
 			
 		</div>
 	</div>
 </jsp:attribute>
+
+<jsp:attribute name="foot">
+		<f:message var ="addLabel" key="subpage.association.button.associate.label" />
+		<f:message var ="removeLabel" key="subpage.association.button.disassociate.label" />
+		<script type="text/javascript">
+			$(function(){				
+				$("#add-items-button").button({
+					disabled : false,
+					text : "${addLabel}",
+					icons : {
+						primary : "ui-icon-seek-next"
+					}
+				});		
+				$("#remove-items-button").button({
+					disabled : false,
+					text : "${removeLabel}",
+					icons : {
+						primary : "ui-icon-seek-prev"
+					}
+				});	
+			});
+		</script>
+	</jsp:attribute>
 
 </layout:tree-page-layout>

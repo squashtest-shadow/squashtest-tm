@@ -38,9 +38,7 @@
 
 <%@ attribute name="workspaceTitleKey" description="key of page title" required="true" %>
 <%@ attribute name="tree" fragment="true" required="true" description="Tree definition" %>
-<%@ attribute name="addLabelKey" required="true" %>
 <%@ attribute name="linkable" required="true" %>
-<%@ attribute name="removeLabelKey" required="true" %>
 <%@ attribute name="highlightedWorkspace" required="true" %>
 <%@ attribute name="treeBaseUrl" required="true" description="the base url of the library browser. The tree will use it as a base url 
 															  from which it will build more specifics url according to the nodes it'll try
@@ -98,11 +96,8 @@ it will insert sub-page-layout.tag between the top template and this one." %>
 		<div style="overflow:hidden;height:100%;">
 			<div  id="tree-picker-actions-pane" class="centered">
 				<div style="position:absolute;top:45%;margin-right:2em;">
-					<f:message var="addLabel" key="${ addLabelKey }" />
-					<input id="add-items-button" type="button" value="${ addLabel }" class="button" style="margin-bottom:15px;width:40px;" />  
-
-					<f:message var="removeLabel" key="${ removeLabelKey }" />
-					<input id="remove-items-button" type="button" value="${ removeLabel }" class="button" style="margin-top:15px;width:40px;" />
+					<div id="add-items-button" class="association-button" ></div>  
+					<div id="remove-items-button" class="association-button" ></div>
 				</div>
 			</div>
 			
@@ -120,6 +115,26 @@ it will insert sub-page-layout.tag between the top template and this one." %>
 	
 	<jsp:attribute name="foot">
 		<jsp:invoke fragment="foot" />
+		<f:message var ="addLabel" key="subpage.association.button.associate.label" />
+		<f:message var ="removeLabel" key="subpage.association.button.disassociate.label" />
+		<script type="text/javascript">
+			$(function(){				
+				$("#add-items-button").button({
+					disabled : false,
+					text : "${addLabel}",
+					icons : {
+						primary : "ui-icon-seek-next"
+					}
+				});		
+				$("#remove-items-button").button({
+					disabled : false,
+					text : "${removeLabel}",
+					icons : {
+						primary : "ui-icon-seek-prev"
+					}
+				});	
+			});
+		</script>
 	</jsp:attribute>
 </layout:tree-page-layout>
 	

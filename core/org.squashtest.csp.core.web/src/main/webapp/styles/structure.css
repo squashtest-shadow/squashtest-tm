@@ -882,6 +882,20 @@ div#user-account-password-panel > div > * {
 }
 
 
+/* ------->>> association interface <<<---------------------*/
+
+.association-button {
+	margin-bottom : 15px;
+	width : 40px;
+	height : 20px;	
+}
+
+.association-button span {
+	left : 1em !important;
+}
+
+/* ------->>> /association interface <<<--------------------*/
+
 /* ------->>> PAGE LAYOUT WITH UP NAVIGATION BAR<<<---------*/
 	
 /* ---------------------------------------------------------*/

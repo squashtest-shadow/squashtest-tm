@@ -34,9 +34,7 @@
 <c:url var="verifyingTestCasesUrl" value="/requirement-versions/${ requirementVersion.id }/verifying-test-cases" />
 <c:url var="nonVerifyingTestCasesUrl" value="/requirement-versions/${ requirementVersion.id }/non-verifying-test-cases" />
 
-<layout:tree-picker-layout removeLabelKey="association_interface.remove.button.label" 
-							workspaceTitleKey="workspace.requirement.title" 
-							addLabelKey="association_interface.add.button.label" 
+<layout:tree-picker-layout  workspaceTitleKey="workspace.requirement.title" 
 							highlightedWorkspace="requirement"
 							treeBaseUrl="${treeBaseUrl}" linkable="test-case" isSubPaged="true">
 							

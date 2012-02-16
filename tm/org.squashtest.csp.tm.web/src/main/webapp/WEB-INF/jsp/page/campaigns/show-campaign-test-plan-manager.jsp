@@ -42,9 +42,7 @@
 	<c:set var="editable" value="${ true }" /> 
 </authz:authorized>
 
-<layout:tree-picker-layout removeLabelKey="association_interface.remove.button.label" 
-							workspaceTitleKey="workspace.campaign.title" 
-							addLabelKey="association_interface.add.button.label" 
+<layout:tree-picker-layout  workspaceTitleKey="workspace.campaign.title" 
 							highlightedWorkspace="campaign"
 							treeBaseUrl="${treeBaseUrl}"
 							isRequirementPaneSearchOn="true" linkable="test-case" isSubPaged="true">
@@ -120,7 +118,7 @@
 		<div class="snap-left" style="height:100%;">	
 			<h2>
 				<f:message var="title" key="campaign.test-plan.panel.title"/>
-				<label>${title}</label>
+				<span>${title}</span>
 			</h2>
 		</div>	
 		<div style="clear:both;"></div>
