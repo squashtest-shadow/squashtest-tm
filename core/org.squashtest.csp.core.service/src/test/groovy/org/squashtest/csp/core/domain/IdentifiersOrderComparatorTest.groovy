@@ -39,25 +39,25 @@ class IdentifiersOrderComparatorTest extends Specification {
 		(new IdentifiersOrderComparator(ordered).compare(id1, id2) > 0) == bigger
 		
 		where: 
-		id1               | id2                | ordered  | bigger
-		new Id(ident: 1L) | new Id(ident: 2L)  | [1L, 2L] | false
-		new Id(ident: 1L) | new Id(ident: 2L)  | [2L, 1L] | true
-		new Id(ident: 2L) | new Id(ident: 1L)  | [1L, 2L] | true
-		new Id(ident: 1L) | new Id(ident: 1L)  | [1L, 2L] | false
+		id1                    | id2                     | ordered  | bigger
+		new DummyId(ident: 1L) | new DummyId(ident: 2L)  | [1L, 2L] | false
+		new DummyId(ident: 1L) | new DummyId(ident: 2L)  | [2L, 1L] | true
+		new DummyId(ident: 2L) | new DummyId(ident: 1L)  | [1L, 2L] | true
+		new DummyId(ident: 1L) | new DummyId(ident: 1L)  | [1L, 2L] | false
 		
 	}
 	
 	def "should compare to 0"() {
 		given:
-		def id1 = new Id(ident: 1L)
-		def secondId1 = new Id(ident: 1L)
+		def id1 = new DummyId(ident: 1L)
+		def secondId1 = new DummyId(ident: 1L)
 		
 		expect: 
 		new IdentifiersOrderComparator([2L, 1L]).compare(id1, secondId1) == 0		
 	}
 }
 
-class Id implements Identified {
+class DummyId implements Identified {
 	public Long ident
 	
 	public Long getId() {
