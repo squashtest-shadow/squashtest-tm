@@ -26,27 +26,20 @@ import org.squashtest.csp.core.infrastructure.collection.PagedCollectionHolder;
 import org.squashtest.csp.core.infrastructure.collection.Paging;
 import org.squashtest.csp.tm.domain.campaign.IterationTestPlanItem;
 import org.squashtest.csp.tm.domain.campaign.TestSuite;
-import org.squashtest.csp.tm.domain.testcase.TestCaseLibrary;
 
 /**
  * Service that aims at managing the test cases of a campaign (i.e. its test plan)
  * @author François Gaillard
  */
 public interface TestSuiteTestPlanManagerService {
-
+	
 	/**
 	 * Find a iteration using its id
 	 * @param testSuiteId
 	 */
 	TestSuite findTestSuite(long testSuiteId);
-	
-	/**
-	 * Returns a collection of {@link TestCaseLibrary}, the test cases of
-	 * which may be added to the campaign
-	 */
-	List<TestCaseLibrary> findLinkableTestCaseLibraries();
-
 
 	PagedCollectionHolder<List<IterationTestPlanItem>> findTestPlan(long testSuiteId, Paging paging);
 
+	void addTestCasesToIterationAndTestSuite(List<Long> testCaseIds, long suiteId);
 }

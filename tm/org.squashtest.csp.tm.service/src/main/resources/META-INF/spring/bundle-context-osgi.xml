@@ -153,6 +153,9 @@
 	<osgi:service ref="squashtest.tm.service.TestSuiteModificationService"
 		interface="org.squashtest.csp.tm.service.TestSuiteModificationService" />
 
+	<osgi:service ref="squashtest.tm.service.TestSuiteTestPlanManagerService"
+		interface="org.squashtest.csp.tm.service.TestSuiteTestPlanManagerService" />
+
 	<!-- ====== SERVICES CONSUMED BY THIS BUNDLE ====== -->
 	<!--  Jdbc Datasource -->
 	<osgi:reference id="squashtest.core.persistence.jdbc.DataSource"

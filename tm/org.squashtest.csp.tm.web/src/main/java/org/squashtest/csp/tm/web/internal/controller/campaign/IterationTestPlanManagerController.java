@@ -102,7 +102,8 @@ public class IterationTestPlanManagerController {
 
 		ModelAndView mav = new ModelAndView("page/iterations/show-iteration-test-plan-manager");
 		mav.addObject("iteration", iteration);
-		mav.addObject("baseURL", "/iterations/" + iterationId );
+		mav.addObject("baseURL", "/iterations/" + iterationId);
+		mav.addObject("useIterationTable", new Boolean(true));
 		mav.addObject("linkableLibrariesModel", linkableLibrariesModel);
 		return mav;
 	}
@@ -231,15 +232,8 @@ public class IterationTestPlanManagerController {
 					testSuiteName = item.getTestSuite().getName();
 				}
 
-				return new Object[] { item.getId(), 
-						getCurrentIndex(), 
-						projectName, 
-						testCaseName,
-						testCaseExecutionMode, 
-						testSuiteName, 
-						testCaseId, 
-						item.isTestCaseDeleted(), 
-						" "
+				return new Object[] { item.getId(), getCurrentIndex(), projectName, testCaseName,
+						testCaseExecutionMode, testSuiteName, testCaseId, item.isTestCaseDeleted(), " "
 
 				};
 

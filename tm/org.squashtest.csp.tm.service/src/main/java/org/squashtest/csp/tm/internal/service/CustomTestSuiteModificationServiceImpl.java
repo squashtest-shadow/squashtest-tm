@@ -50,7 +50,7 @@ public class CustomTestSuiteModificationServiceImpl implements
 
 
 	@Override
-	@PreAuthorize("hasPermission(#suiteId, 'org.squashtest.csp.tm.domain.campaign.TestSuite','WRITE') or hasRole('ROLE_ADMIN')")		
+	@PreAuthorize("hasPermission(#suiteId, 'org.squashtest.csp.tm.domain.campaign.TestSuite', 'WRITE') or hasRole('ROLE_ADMIN')")		
 	public void rename(long suiteId, String newName)
 			throws DuplicateNameException {
 		TestSuite suite = testSuiteDao.findById(suiteId);
@@ -58,12 +58,19 @@ public class CustomTestSuiteModificationServiceImpl implements
 	}
 	
 	@Override
-	@PreAuthorize("hasPermission(#suiteId, 'org.squashtest.csp.tm.domain.campaign.TestSuite','WRITE') or hasRole('ROLE_ADMIN')")		
+	@PreAuthorize("hasPermission(#suiteId, 'org.squashtest.csp.tm.domain.campaign.TestSuite', 'WRITE') or hasRole('ROLE_ADMIN')")		
 	public void bindTestPlan(long suiteId, List<Long> itemTestPlanIds) {
 		//that implementation relies on how the TestSuite will do the job (regarding the checks on whether the itps belong to the 
 		//same iteration of not
 		TestSuite suite = testSuiteDao.findById(suiteId);
 		suite.bindTestPlanById(itemTestPlanIds);
+	}
+	
+	@Override
+	@PreAuthorize("hasPermission(#testSuite, 'WRITE') or hasRole('ROLE_ADMIN')")		
+	public void bindTestPlanObj(TestSuite testSuite, List<IterationTestPlanItem> itemTestPlans) {
+		//the test plans have already been associated to the Iteration
+		testSuite.bindTestPlan(itemTestPlans);
 	}
 	
 	@Override

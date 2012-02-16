@@ -164,12 +164,18 @@
 				<div style="clear:both;"></div>
 	
 			</div>
-			
-			<aggr:decorate-iteration-test-plan-manager-table tableModelUrl="${testPlansTableUrl}" testPlanDetailsBaseUrl="${testPlanDetailsBaseUrl}" 
-				testPlansUrl="${removeTestPlanUrl}" batchRemoveButtonId="remove-items-button" 
-				updateTestPlanUrl="${updateTestPlanUrl}" nonBelongingTestPlansUrl="${nonBelongingTestPlansUrl}" />
-			<aggr:iteration-test-plan-manager-table/>
-			
+			<c:if test="${ useIterationTable }">
+				<aggr:decorate-iteration-test-plan-manager-table tableModelUrl="${testPlansTableUrl}" testPlanDetailsBaseUrl="${testPlanDetailsBaseUrl}" 
+					testPlansUrl="${removeTestPlanUrl}" batchRemoveButtonId="remove-items-button" 
+					updateTestPlanUrl="${updateTestPlanUrl}" nonBelongingTestPlansUrl="${nonBelongingTestPlansUrl}" />
+				<aggr:iteration-test-plan-manager-table/>
+			</c:if>
+			<c:if test="${ not useIterationTable }">
+				<aggr:decorate-test-suite-test-plan-manager-table tableModelUrl="${testPlansTableUrl}" testPlanDetailsBaseUrl="${testPlanDetailsBaseUrl}" 
+					testPlansUrl="${removeTestPlanUrl}" batchRemoveButtonId="remove-items-button"
+					updateTestPlanUrl="${updateTestPlanUrl}" nonBelongingTestPlansUrl="${nonBelongingTestPlansUrl}" />
+				<aggr:test-suite-test-plan-manager-table/>
+			</c:if>
 		</div>
 	</div>
 </jsp:attribute>

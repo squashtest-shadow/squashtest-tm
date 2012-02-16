@@ -43,46 +43,51 @@
 
 <c:url var="ckeConfigUrl" value="/styles/ckeditor/ckeditor-config.js" />
 
-<s:url var="testSuiteUrl" value="/testSuite/{testSuiteId}">
+<s:url var="testSuiteUrl" value="/test-suites/{testSuiteId}">
 	<s:param name="testSuiteId" value="${testSuite.id}" />
 </s:url>
 
-<s:url var="testSuiteInfoUrl" value="/testSuite/{testSuiteId}/general">
+<s:url var="testSuiteInfoUrl" value="/test-suites/{testSuiteId}/general">
 	<s:param name="testSuiteId" value="${testSuite.id}" />
 </s:url>
 
-<s:url var="testSuiteTestPlanUrl" value="/testSuite/{testSuiteId}/test-plan/table">
+<s:url var="testSuiteTestPlanUrl" value="/test-suites/{testSuiteId}/test-plan/table">
 	<s:param name="testSuiteId" value="${testSuite.id}" />
 </s:url>
 
-<s:url var="testCasesUrl" value="/testSuite/{testSuiteId}/test-plan/table" >
+<s:url var="testCasesUrl" value="/test-suites/{testSuiteId}/test-plan/table" >
 		<s:param name="testSuiteId" value="${testSuite.id}" />
 </s:url>
 
-<s:url var="updateTestCaseUrl" value="/testSuite/{testSuiteId}/test-case/">
+<s:url var="updateTestCaseUrl" value="/test-suites/{testSuiteId}/test-case/">
 	<s:param name="testSuiteId" value="${testSuite.id}" />
 </s:url>
 
-<s:url var="assignableUsersUrl" value="/testSuite/{testSuiteId}/{iterationId}/assignable-user" >
+<s:url var="assignableUsersUrl" value="/test-suites/{testSuiteId}/{iterationId}/assignable-user" >
 		<s:param name="testSuiteId" value="${testSuite.id}" />
 		<s:param name="iterationId" value="${testSuite.iteration.id}" />
 </s:url>
 
-<s:url var="batchAssignableUsersUrl" value="/testSuite/{testSuiteId}/{iterationId}/batch-assignable-user" >
+<s:url var="batchAssignableUsersUrl" value="/test-suites/{testSuiteId}/{iterationId}/batch-assignable-user" >
 		<s:param name="testSuiteId" value="${testSuite.id}" />
 		<s:param name="iterationId" value="${testSuite.iteration.id}" />
 </s:url>
 
-<s:url var="assignTestCasesUrl" value="/testSuite/{testSuiteId}/{iterationId}/batch-assign-user" >
+<s:url var="assignTestCasesUrl" value="/test-suites/{testSuiteId}/{iterationId}/batch-assign-user" >
 		<s:param name="testSuiteId" value="${testSuite.id}" />
 		<s:param name="iterationId" value="${testSuite.iteration.id}" />
 </s:url>
 
-<s:url var="nonBelongingTestCasesUrl" value="/testSuite/{testSuiteId}/non-belonging-test-cases" >
+<s:url var="testPlanManagerUrl" value="/test-suites/{testSuiteId}/{iterationId}/test-plan-manager">
+		<s:param name="testSuiteId" value="${testSuite.id}" />
+		<s:param name="iterationId" value="${testSuite.iteration.id}" />
+</s:url>
+
+<s:url var="nonBelongingTestCasesUrl" value="/test-suites/{testSuiteId}/non-belonging-test-cases" >
 		<s:param name="testSuiteId" value="${testSuite.id}" />
 </s:url>
 
-<s:url var="testCaseExecutionsUrl" value="/testSuite/{testSuiteId}/test-case-executions/" >
+<s:url var="testCaseExecutionsUrl" value="/test-suites/{testSuiteId}/test-case-executions/" >
 	<s:param name="testSuiteId" value="${testSuite.id}"/>
 </s:url>
 
@@ -265,15 +270,14 @@
 
 <comp:toggle-panel id="test-plan-panel" titleKey="campaign.test-plan.panel.title" open="true" isContextual="true">
 	<jsp:attribute name="panelButtons">
-<%-- 		<c:if test="${ editable }"> --%>
-<%-- 			<f:message var="associateLabel" key="campaign.test-plan.manage.button.label"/> --%>
+		<c:if test="${ editable }">
+			<f:message var="associateLabel" key="campaign.test-plan.manage.button.label"/>
 <%-- 			<f:message var="removeLabel" key="campaign.test-plan.remove.button.label"/> --%>
 <%-- 			<f:message var="assignLabel" key="campaign.test-plan.assign.button.label"/> --%>
-<%-- 			<input id="test-case-button" type="button" value="${associateLabel}" class="button"/> --%>
+			<input id="test-case-button" type="button" value="${associateLabel}" class="button"/>
 <%-- 			<input id="remove-test-case-button" type="button" value="${removeLabel}" class="button"/> --%>
 <%-- 			<input id="assign-test-case-button" type="button" value="${assignLabel}" class="button"/> --%>
-<%-- 			<a id="manage-test-suites-menu" role="button" class="button tg-panel-button"><f:message key="menu.test-suites.button.main"/></a> --%>
-<%-- 		</c:if> --%>
+		</c:if>
 	</jsp:attribute>
 	
 	<jsp:attribute name="body">

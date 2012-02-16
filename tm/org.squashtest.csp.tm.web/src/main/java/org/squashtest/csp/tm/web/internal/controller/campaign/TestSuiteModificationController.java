@@ -57,7 +57,6 @@ import org.squashtest.csp.tm.web.internal.model.datatable.DataTableModel;
 import org.squashtest.csp.tm.web.internal.model.datatable.DataTableModelHelper;
 import org.squashtest.csp.tm.web.internal.model.viewmapper.DataTableMapper;
 
-
 @Controller
 @RequestMapping("/test-suites/{id}")
 public class TestSuiteModificationController {
@@ -128,7 +127,7 @@ public class TestSuiteModificationController {
 		ModelAndView mav = new ModelAndView("fragment/generics/general-information-fragment");
 
 		mav.addObject("auditableEntity", testSuite);
-		mav.addObject("entityContextUrl", "/testSuite/" + id);
+		mav.addObject("entityContextUrl", "/test-suites/" + id);
 
 		return mav;
 	}

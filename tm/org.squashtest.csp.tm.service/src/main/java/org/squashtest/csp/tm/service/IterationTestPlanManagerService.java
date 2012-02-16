@@ -50,11 +50,18 @@ public interface IterationTestPlanManagerService {
 	List<TestCaseLibrary> findLinkableTestCaseLibraries();
 
 	/**
-	 * Adds a list of test cases to a campaign.
-	 * @param testCaseIdss
-	 * @param campaignId
+	 * Adds a list of test cases to an iteration.
+	 * @param testCaseIds
+	 * @param iterationId
 	 */
 	void addTestCasesToIteration(List<Long> testCaseIds, long iterationId);
+	
+	/**
+	 * Adds a list of test cases to an iteration.
+	 * @param testCaseIds
+	 * @param iteration
+	 */
+	List<IterationTestPlanItem> addTestPlanItemsToIteration(List<Long> testCaseIds, Iteration iteration);
 
 	/**
 	 * Adds a list of test cases to a campaign.

@@ -129,7 +129,17 @@ public class IterationTestPlanManagerServiceImpl implements IterationTestPlanMan
 	@PreAuthorize("hasPermission(#iterationId, 'org.squashtest.csp.tm.domain.campaign.Iteration', 'WRITE') "
 			+ "or hasRole('ROLE_ADMIN')")
 	public void addTestCasesToIteration(final List<Long> objectsIds, long iterationId) {
+		
+		Iteration iteration = iterationDao.findById(iterationId);
+		
+		addTestPlanItemsToIteration(objectsIds, iteration);
+	}
 	
+	@Override
+	@PreAuthorize("hasPermission(#iteration, 'WRITE') "
+			+ "or hasRole('ROLE_ADMIN')")
+	public List<IterationTestPlanItem> addTestPlanItemsToIteration(final List<Long> objectsIds, Iteration iteration) {
+		
 		//nodes are returned unsorted
 		List<TestCaseLibraryNode> nodes= testCaseLibraryNodeDao.findAllByIdList(objectsIds);
 		
@@ -139,13 +149,15 @@ public class IterationTestPlanManagerServiceImpl implements IterationTestPlanMan
 
 		List<TestCase> testCases = new TestCaseNodeWalker().walk(nodes);
 		
-		Iteration iteration = iterationDao.findById(iterationId);
+		List<IterationTestPlanItem> testPlanItemsList = new ArrayList<IterationTestPlanItem>();
 		
 		for (TestCase testCase : testCases){
 			IterationTestPlanItem itp = new IterationTestPlanItem(testCase);
 			itemTestPlanDao.persist(itp);
 			iteration.addTestPlan(itp);
+			testPlanItemsList.add(itp);
 		}
+		return testPlanItemsList;
 	}
 	
 	@Override

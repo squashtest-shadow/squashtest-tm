@@ -56,10 +56,19 @@ public interface CustomTestSuiteModificationService {
 	 * @param suiteId
 	 * @param itemTestPlanIds
 	 */
-	@PreAuthorize("hasPermission(#arg0, 'org.squashtest.csp.tm.domain.campaign.TestSuite','WRITE') or hasRole('ROLE_ADMIN')")		
 	void bindTestPlan(long suiteId, List<Long> itemTestPlanIds);
 
-
+	/**
+	 * <p>That method will attach several {@link IterationTestPlanItem} to the given TestSuite. They
+	 * are identified using their Objects. Since a given item can be bound to at most one test suite, the item
+	 * be deassociated from its former TestSuite.</p>
+	 * 
+	 * <p>These entities all belong to the same iteration since they have previously been attached to it.</p> 
+	 * 
+	 * @param testSuite
+	 * @param itemTestPlans
+	 */
+	void bindTestPlanObj(TestSuite testSuite, List<IterationTestPlanItem> itemTestPlans);
 
 	/**
 	 * That method will find the test Suite by its ID
@@ -75,7 +84,6 @@ public interface CustomTestSuiteModificationService {
 	 * @param suiteId
 	 * @param paging
 	 */
-	@PreAuthorize("hasPermission(#arg0, 'org.squashtest.csp.tm.domain.campaign.TestSuite','WRITE') or hasRole('ROLE_ADMIN')")		
 	PagedCollectionHolder<List<IterationTestPlanItem>> findTestSuiteTestPlan(long suiteId, Paging paging);
 	
 	/**
@@ -83,7 +91,6 @@ public interface CustomTestSuiteModificationService {
 	 * 
 	 * @param suiteId
 	 */
-	@PreAuthorize("hasPermission(#arg0, 'org.squashtest.csp.tm.domain.campaign.TestSuite','WRITE') or hasRole('ROLE_ADMIN')")		
 	TestSuiteStatistics findTestSuiteStatistics(long suiteId);
 	
 	
