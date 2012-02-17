@@ -63,9 +63,10 @@ public interface CustomIterationModificationService {
 
 	Execution addExecution(long iterationId, long testPlanId);
 
-	@Deprecated	//use the other method instead when possible
+	@Deprecated
+	// use the other method instead when possible
 	void changeTestPlanPosition(long iterationId, long testPlanId, int newIndex);
-	
+
 	void changeTestPlanPosition(long iterationId, int newPosition, List<Long> itemIds);
 
 	@Transactional(readOnly = true)
@@ -76,10 +77,6 @@ public interface CustomIterationModificationService {
 
 	@Transactional(readOnly = true)
 	List<TestCase> findPlannedTestCases(long iterationId);
-
-	@Transactional(readOnly = true)
-	FilteredCollectionHolder<List<IterationTestPlanItem>> findIterationTestPlan(long iterationId,
-			CollectionSorting filter);
 
 	/**
 	 * that method should investigate the consequences of the deletion request, and return a report about what will
@@ -103,7 +100,7 @@ public interface CustomIterationModificationService {
 	void addTestSuite(long iterationId, TestSuite suite);
 
 	List<TestSuite> findAllTestSuites(long iterationId);
-	
+
 	/**
 	 * <p>
 	 * That method will remove each test suite, leaving it's test plan items linked to no test_suite
@@ -113,5 +110,18 @@ public interface CustomIterationModificationService {
 	 * @return the deleted suitesIds
 	 */
 	List<Long> removeTestSuites(List<Long> suitesIds);
+
+	/**
+	 * <p>
+	 * will create a copy of the test suite and it's test plan , then associate it to the given iteration
+	 * </p>
+	 * 
+	 * @param testSuiteId
+	 *            = test suite to copy
+	 * @param iterationId
+	 *            = iteration where to add the copy of the test suite
+	 * @return the copy of the test suite
+	 */
+	TestSuite copyPasteTestSuiteToIteration(Long testSuiteId, Long iterationId);
 
 }

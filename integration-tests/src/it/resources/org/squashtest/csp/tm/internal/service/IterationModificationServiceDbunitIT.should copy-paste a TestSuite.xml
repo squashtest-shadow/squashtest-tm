@@ -1,0 +1,226 @@
+<?xml version='1.0' encoding='UTF-8'?>
+<!--
+
+        This file is part of the Squashtest platform.
+        Copyright (C) 2010 - 2011 Squashtest TM, Squashtest.org
+
+        See the NOTICE file distributed with this work for additional
+        information regarding copyright ownership.
+
+        This is free software: you can redistribute it and/or modify
+        it under the terms of the GNU Lesser General Public License as published by
+        the Free Software Foundation, either version 3 of the License, or
+        (at your option) any later version.
+
+        this software is distributed in the hope that it will be useful,
+        but WITHOUT ANY WARRANTY; without even the implied warranty of
+        MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+        GNU Lesser General Public License for more details.
+
+        You should have received a copy of the GNU Lesser General Public License
+        along with this software.  If not, see <http://www.gnu.org/licenses/>.
+
+-->
+<dataset>
+	<attachment_list attachment_list_id="1" />
+	<attachment_list attachment_list_id="2" />
+	<attachment_list attachment_list_id="3" />
+	<attachment_list attachment_list_id="4" />
+	<attachment_list attachment_list_id="5" />
+	<attachment_list attachment_list_id="6" />
+	<attachment_list attachment_list_id="7" />
+	<attachment_list attachment_list_id="8" />
+	<attachment_list attachment_list_id="9" />
+	<attachment_list attachment_list_id="10" />
+	<attachment_list attachment_list_id="11" />
+	<attachment_list attachment_list_id="12" />
+	<attachment_list attachment_list_id="1010" />
+	<attachment_list attachment_list_id="1011" />
+	<attachment_list attachment_list_id="1020" />
+	<!-- iterations -->
+	<iteration name="source" iteration_id="1" actual_end_auto="false"
+		actual_start_auto="false" actual_start_date="2011-01-01"
+		actual_end_date="2011-01-02" scheduled_start_date="2011-01-01"
+		scheduled_end_date="2011-01-02" created_by="dbu" created_on="2010-02-01"
+		attachment_list_id="1" />
+
+	<iteration name="destination" iteration_id="10"
+		actual_end_auto="false" actual_start_auto="false" actual_start_date="2011-01-01"
+		actual_end_date="2011-01-02" scheduled_start_date="2011-01-01"
+		scheduled_end_date="2011-01-02" created_by="dbu" created_on="2010-02-01"
+		attachment_list_id="12" />
+
+	<!-- test suite source -->
+	<test_suite id="1" name="suite de test 1" description="ma description 1"
+		attachment_list_id="2" created_on="2012-02-09" created_by="dbu" />
+	<iteration_test_suite iteration_id="1"
+		test_suite_id="1" />
+
+	<!-- 1 test case with 3 test steps -->
+	<test_case_library_node tcln_id="1" name="test case 1"
+		created_by="dbu" created_on="2010-02-01" />
+	<test_case tcln_id="1" version="1" attachment_list_id="3"
+		prerequisite="test" />
+	<!-- 3 test case step -->
+	<test_step test_step_id="1" />
+	<action_test_step test_step_id="1" action="lipsum1"
+		attachment_list_id="5" />
+	<test_step test_step_id="2" />
+	<action_test_step test_step_id="2" action="lipsum2"
+		attachment_list_id="6" />
+	<test_step test_step_id="3" />
+	<action_test_step test_step_id="3" action="lipsum3"
+		attachment_list_id="7" />
+
+	<test_case_steps test_case_id="1" step_id="1"
+		step_order="0" />
+	<test_case_steps test_case_id="1" step_id="2"
+		step_order="1" />
+	<test_case_steps test_case_id="1" step_id="3"
+		step_order="2" />
+
+	<!-- another test case with 3 test steps -->
+	<test_case_library_node tcln_id="2" name="test case 2"
+		created_by="dbu" created_on="2010-02-01" />
+	<test_case tcln_id="2" version="1" attachment_list_id="8"
+		prerequisite="test" />
+	<!-- 3 test case step -->
+	<test_step test_step_id="4" />
+	<action_test_step test_step_id="4" action="lipsum4"
+		attachment_list_id="9" />
+	<test_step test_step_id="5" />
+	<action_test_step test_step_id="5" action="lipsum5"
+		attachment_list_id="10" />
+	<test_step test_step_id="6" />
+	<action_test_step test_step_id="6" action="lipsum6"
+		attachment_list_id="11" />
+
+	<test_case_steps test_case_id="2" step_id="4"
+		step_order="0" />
+	<test_case_steps test_case_id="2" step_id="5"
+		step_order="1" />
+	<test_case_steps test_case_id="2" step_id="6"
+		step_order="2" />
+
+	<!-- test plan of iteration -->
+	<iteration_test_plan_item item_test_plan_id="1"
+		execution_status="FAILURE" tcln_id="1" created_by="dbu" created_on="2011-01-01"
+		test_suite="1" />
+	<item_test_plan_list iteration_id="1"
+		item_test_plan_id="1" item_test_plan_order="0" />
+	<iteration_test_plan_item item_test_plan_id="2"
+		execution_status="SUCCESS" tcln_id="2" created_by="dbu" created_on="2011-01-01"
+		test_suite="1" />
+	<item_test_plan_list iteration_id="1"
+		item_test_plan_id="2" item_test_plan_order="1" />
+	<iteration_test_plan_item item_test_plan_id="3"
+		execution_status="READY" tcln_id="2" created_by="dbu" created_on="2011-01-01" />
+	<item_test_plan_list iteration_id="1"
+		item_test_plan_id="3" item_test_plan_order="2" />
+
+	<!-- executions of suite 1 -->
+	<issue_list issue_list_id="2020" />
+	<execution execution_id="1" tcln_id="1" created_by="dbu"
+		created_on="2011-04-01" name="execution 1" attachment_list_id="1010"
+		issue_list_id="2020" execution_status="FAILURE" />
+	<issue_list issue_list_id="2022" />
+	<execution execution_id="2" tcln_id="2" created_by="dbu"
+		created_on="2011-04-01" name="execution 2" attachment_list_id="1020"
+		issue_list_id="2022" execution_status="SUCCESS" />
+	<issue_list issue_list_id="2021" />
+	<execution execution_id="3" tcln_id="1" created_by="dbu"
+		created_on="2011-04-01" name="execution 2" attachment_list_id="1011"
+		issue_list_id="2021" execution_status="FAILURE" />
+
+	<!-- link between test plan and executions -->
+	<item_test_plan_execution item_test_plan_id="1"
+		execution_id="1" execution_order="0" />
+	<item_test_plan_execution item_test_plan_id="1"
+		execution_id="3" execution_order="1" />
+	<item_test_plan_execution item_test_plan_id="2"
+		execution_id="2" execution_order="0" />
+
+	<!-- execution step for first execution -->
+	<issue_list issue_list_id="1" />
+	<issue_list issue_list_id="2" />
+	<issue_list issue_list_id="3" />
+
+	<attachment_list attachment_list_id="10101" />
+	<execution_step execution_step_id="1"
+		attachment_list_id="10101" action="lipsum1" test_step_id="1"
+		execution_status="FAILURE" created_by="dbu" created_on="2010-02-01"
+		issue_list_id="1" />
+	<attachment_list attachment_list_id="10102" />
+	<execution_step execution_step_id="2"
+		attachment_list_id="10102" action="lipsum2" test_step_id="2"
+		execution_status="SUCCESS" created_by="dbu" created_on="2010-02-01"
+		issue_list_id="2" />
+	<attachment_list attachment_list_id="10103" />
+	<execution_step execution_step_id="3"
+		attachment_list_id="10103" action="lipsum3" test_step_id="3"
+		execution_status="FAILURE" created_by="dbu" created_on="2010-02-01"
+		issue_list_id="3" />
+	<execution_execution_steps execution_id="1"
+		execution_step_id="1" execution_step_order="0" />
+	<execution_execution_steps execution_id="1"
+		execution_step_id="2" execution_step_order="1" />
+	<execution_execution_steps execution_id="1"
+		execution_step_id="3" execution_step_order="2" />
+
+	<!-- execution step for second execution -->
+	<issue_list issue_list_id="4" />
+	<issue_list issue_list_id="5" />
+	<issue_list issue_list_id="6" />
+
+	<attachment_list attachment_list_id="10104" />
+	<execution_step execution_step_id="4"
+		attachment_list_id="10104" action="lipsum4" test_step_id="1"
+		execution_status="FAILURE" created_by="dbu" created_on="2010-02-01"
+		issue_list_id="4" />
+	<attachment_list attachment_list_id="10105" />
+	<execution_step execution_step_id="5"
+		attachment_list_id="10105" action="lipsum5" test_step_id="2"
+		execution_status="FAILURE" created_by="dbu" created_on="2010-02-01"
+		issue_list_id="5" />
+	<attachment_list attachment_list_id="10106" />
+	<execution_step execution_step_id="6"
+		attachment_list_id="10106" action="lipsum6" test_step_id="3"
+		execution_status="FAILURE" created_by="dbu" created_on="2010-02-01"
+		issue_list_id="6" />
+	<execution_execution_steps execution_id="3"
+		execution_step_id="4" execution_step_order="0" />
+	<execution_execution_steps execution_id="3"
+		execution_step_id="5" execution_step_order="1" />
+	<execution_execution_steps execution_id="3"
+		execution_step_id="6" execution_step_order="2" />
+
+	<!-- execution step third execution -->
+
+	<issue_list issue_list_id="7" />
+	<issue_list issue_list_id="8" />
+	<issue_list issue_list_id="9" />
+
+
+	<attachment_list attachment_list_id="10107" />
+	<execution_step execution_step_id="7"
+		attachment_list_id="10107" action="lipsum7" test_step_id="4"
+		execution_status="SUCCESS" created_by="dbu" created_on="2010-02-01"
+		issue_list_id="7" />
+	<attachment_list attachment_list_id="10108" />
+	<execution_step execution_step_id="8"
+		attachment_list_id="10108" action="lipsum8" test_step_id="5"
+		execution_status="SUCCESS" created_by="dbu" created_on="2010-02-01"
+		issue_list_id="8" />
+	<attachment_list attachment_list_id="10109" />
+	<execution_step execution_step_id="9"
+		attachment_list_id="10109" action="lipsum9" test_step_id="6"
+		execution_status="SUCCESS" created_by="dbu" created_on="2010-02-01"
+		issue_list_id="9" />
+	<execution_execution_steps execution_id="2"
+		execution_step_id="7" execution_step_order="0" />
+	<execution_execution_steps execution_id="2"
+		execution_step_id="8" execution_step_order="1" />
+	<execution_execution_steps execution_id="2"
+		execution_step_id="9" execution_step_order="2" />
+
+</dataset>

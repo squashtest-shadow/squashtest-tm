@@ -23,6 +23,7 @@ package org.squashtest.csp.tm.internal.service;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Date;
+import java.util.LinkedList;
 import java.util.List;
 
 import javax.inject.Inject;
@@ -59,8 +60,6 @@ import org.squashtest.csp.tm.service.ProjectFilterModificationService;
 @Service("squashtest.tm.service.IterationTestPlanManagerService")
 @Transactional
 public class IterationTestPlanManagerServiceImpl implements IterationTestPlanManagerService {
-	@Inject
-	private IterationModificationService delegateService;
 
 	@Inject
 	private TestCaseLibraryDao testCaseLibraryDao;
@@ -71,16 +70,15 @@ public class IterationTestPlanManagerServiceImpl implements IterationTestPlanMan
 	@Inject
 	private ItemTestPlanDao itemTestPlanDao;
 
-
 	@Inject
 	private ObjectAclService aclService;
 
 	@Inject
 	private UserDao userDao;
-	
+
 	@Inject
 	@Qualifier("squashtest.tm.repository.TestCaseLibraryNodeDao")
-	private LibraryNodeDao<TestCaseLibraryNode> testCaseLibraryNodeDao;	
+	private LibraryNodeDao<TestCaseLibraryNode> testCaseLibraryNodeDao;
 
 	@Inject
 	private ProjectFilterModificationService projectFilterModificationService;
@@ -116,12 +114,12 @@ public class IterationTestPlanManagerServiceImpl implements IterationTestPlanMan
 
 	}
 
-
 	/*
-	 * security note here : well what if we add test cases for which the user have no permissions on ? think of something
-	 * better.
-	 *
+	 * security note here : well what if we add test cases for which the user have no permissions on ? think of
+	 * something better.
+	 * 
 	 * (non-Javadoc)
+	 * 
 	 * @see org.squashtest.csp.tm.service.IterationTestPlanManagerService#addTestCasesToIteration(java.util.List, long)
 	 */
 
@@ -140,26 +138,37 @@ public class IterationTestPlanManagerServiceImpl implements IterationTestPlanMan
 			+ "or hasRole('ROLE_ADMIN')")
 	public List<IterationTestPlanItem> addTestPlanItemsToIteration(final List<Long> objectsIds, Iteration iteration) {
 		
-		//nodes are returned unsorted
-		List<TestCaseLibraryNode> nodes= testCaseLibraryNodeDao.findAllByIdList(objectsIds);
-		
-		//now we resort them according to the order in which the testcaseids were given
+		// nodes are returned unsorted
+		List<TestCaseLibraryNode> nodes = testCaseLibraryNodeDao.findAllByIdList(objectsIds);
+
+		// now we resort them according to the order in which the testcaseids were given
 		IdentifiersOrderComparator comparator = new IdentifiersOrderComparator(objectsIds);
 		Collections.sort(nodes, comparator);
 
 		List<TestCase> testCases = new TestCaseNodeWalker().walk(nodes);
-		
-		List<IterationTestPlanItem> testPlanItemsList = new ArrayList<IterationTestPlanItem>();
-		
-		for (TestCase testCase : testCases){
+
+		List<IterationTestPlanItem> testPlan = new LinkedList<IterationTestPlanItem>();
+
+		for (TestCase testCase : testCases) {
 			IterationTestPlanItem itp = new IterationTestPlanItem(testCase);
+			testPlan.add(itp);
+		}
+		addTestPlanToIteration(testPlan, iterationId);
+	}
+
+	@Override
+	@PreAuthorize("hasPermission(#iterationId, 'org.squashtest.csp.tm.domain.campaign.Iteration', 'WRITE') "
+			+ "or hasRole('ROLE_ADMIN')")
+	public void addTestPlanToIteration(List<IterationTestPlanItem> testPlan, long iterationId) {
+		Iteration iteration = iterationDao.findById(iterationId);
+		for (IterationTestPlanItem itp : testPlan) {
 			itemTestPlanDao.persist(itp);
 			iteration.addTestPlan(itp);
 			testPlanItemsList.add(itp);
 		}
 		return testPlanItemsList;
 	}
-	
+
 	@Override
 	@PreAuthorize("hasPermission(#iterationId, 'org.squashtest.csp.tm.domain.campaign.Iteration', 'WRITE') "
 			+ "or hasRole('ROLE_ADMIN')")
@@ -209,17 +218,21 @@ public class IterationTestPlanManagerServiceImpl implements IterationTestPlanMan
 
 	// FIXME : security
 	@Override
-	public void updateTestCaseLastExecutedByAndOn(IterationTestPlanItem givenTestPlan, Date lastExecutedOn, String lastExecutedBy) {
+	public void updateTestCaseLastExecutedByAndOn(IterationTestPlanItem givenTestPlan, Date lastExecutedOn,
+			String lastExecutedBy) {
 		givenTestPlan.setLastExecutedBy(lastExecutedBy);
 		givenTestPlan.setLastExecutedOn(lastExecutedOn);
 		givenTestPlan.setUser(userDao.findUserByLogin(lastExecutedBy));
 
 	}
 
-	// FIXME : security
 	@Override
+	@PreAuthorize("hasPermission(#iterationId, 'org.squashtest.csp.tm.domain.campaign.Iteration', 'READ') "
+			+ "or hasRole('ROLE_ADMIN')")
 	public FilteredCollectionHolder<List<IterationTestPlanItem>> findTestPlan(long iterationId, CollectionSorting filter) {
-		return delegateService.findIterationTestPlan(iterationId, filter);
+		List<IterationTestPlanItem> testPlan = iterationDao.findTestPlanFiltered(iterationId, filter);
+		long count = iterationDao.countTestPlans(iterationId);
+		return new FilteredCollectionHolder<List<IterationTestPlanItem>>(count, testPlan);
 	}
 
 	@Override
@@ -232,39 +245,35 @@ public class IterationTestPlanManagerServiceImpl implements IterationTestPlanMan
 		ObjectIdentity oid = objIdRetrievalStrategy.getObjectIdentity(iteration);
 		entityRefs.add(oid);
 
-
 		List<String> loginList = aclService.findUsersWithWritePermission(entityRefs);
 		List<User> usersList = userDao.findUsersByLoginList(loginList);
 
 		return usersList;
 
-
 	}
 
 	// FIXME : security
 	@Override
-	public void assignUserToTestPlanItem(Long testPlanId, long iterationId,
-			Long userId) {
+	public void assignUserToTestPlanItem(Long testPlanId, long iterationId, Long userId) {
 		Iteration iteration = iterationDao.findById(iterationId);
-		User user = (userId==0) ? null : userDao.findById(userId);
-		
+		User user = (userId == 0) ? null : userDao.findById(userId);
+
 		IterationTestPlanItem itp = iteration.getTestPlan(testPlanId);
-		if (! itp.isTestCaseDeleted()){
+		if (!itp.isTestCaseDeleted()) {
 			itp.setUser(user);
 		}
 	}
 
 	// FIXME : security
 	@Override
-	public void assignUserToTestPlanItems(List<Long> testPlanIds,
-			long iterationId, Long userId) {
+	public void assignUserToTestPlanItems(List<Long> testPlanIds, long iterationId, Long userId) {
 		Iteration iteration = iterationDao.findById(iterationId);
 
-		User user = (userId==0) ? null : userDao.findById(userId);
+		User user = (userId == 0) ? null : userDao.findById(userId);
 
 		for (Long testPlan : testPlanIds) {
 			IterationTestPlanItem itp = iteration.getTestPlan(testPlan);
-			if (! itp.isTestCaseDeleted()){
+			if (!itp.isTestCaseDeleted()) {
 				itp.setUser(user);
 			}
 		}
@@ -284,6 +293,5 @@ public class IterationTestPlanManagerServiceImpl implements IterationTestPlanMan
 		Iteration iteration = iterationDao.findById(iterationId);
 		return iteration.getTestPlan(itemTestPlanId);
 	}
-
 
 }

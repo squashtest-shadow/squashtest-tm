@@ -80,7 +80,7 @@ class CustomIterationModificationServiceImplTest extends Specification {
 
 		then:
 		campaign.iterations.contains(iteration)
-		1 * iterationDao.persist(iteration)
+		1 * iterationDao.persistIterationAndTestPlan(iteration)
 		iteration.getPlannedTestCase() == [tc1, tc2]
 	}
 

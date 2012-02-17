@@ -44,14 +44,16 @@ public class HibernateIterationDao extends HibernateEntityDao<Iteration> impleme
 	@Override
 	public List<Iteration> findAllInitializedByCampaignId(long campaignId) {
 
-		return executeListNamedQuery("iterationDao.findAllInitializedByCampaignId", new SetIdParameter("campaignId", campaignId));
+		return executeListNamedQuery("iterationDao.findAllInitializedByCampaignId", new SetIdParameter("campaignId",
+				campaignId));
 	}
-	
+
 	/*
-	 * as long as the ordering of a collection is managed by @OrderColumn, but you can't explicitely reference the ordering column 
-	 * in the join table, initialize the collection itself is the only solution
+	 * as long as the ordering of a collection is managed by @OrderColumn, but you can't explicitely reference the
+	 * ordering column in the join table, initialize the collection itself is the only solution
 	 * 
 	 * (non-Javadoc)
+	 * 
 	 * @see org.squashtest.csp.tm.internal.repository.IterationDao#findOrderedExecutionsByIterationId(long)
 	 */
 	@Override
@@ -61,14 +63,12 @@ public class HibernateIterationDao extends HibernateEntityDao<Iteration> impleme
 		return iteration;
 	}
 
-	
-
 	@Override
 	public void removeFromCampaign(Iteration iteration) {
 		// TODO Auto-generated method stub
 
 		Campaign campaign = findCampaignByIterationId(iteration.getId());
-		
+
 		if (campaign == null) {
 			return;
 		}
@@ -81,11 +81,9 @@ public class HibernateIterationDao extends HibernateEntityDao<Iteration> impleme
 				break;
 			}
 		}
-		
-		
+
 	}
-	
-	
+
 	/*
 	 * Returns a Campaign if it contains an Iteration with the provided Id Returns null otherwise
 	 * 
@@ -97,7 +95,7 @@ public class HibernateIterationDao extends HibernateEntityDao<Iteration> impleme
 		Session session = currentSession();
 
 		List<Campaign> tcList = session.createCriteria(Campaign.class).createCriteria("iterations")
-		.add(Restrictions.eq("id", iterationId)).list();
+				.add(Restrictions.eq("id", iterationId)).list();
 
 		if (tcList.size() > 0) {
 			Campaign ca = tcList.get(0);
@@ -108,41 +106,35 @@ public class HibernateIterationDao extends HibernateEntityDao<Iteration> impleme
 		}
 	}
 
-
-
-	
 	@Override
 	public List<Execution> findOrderedExecutionsByIterationId(long iterationId) {
 		Iteration iteration = getEntity(iterationId);
 		Hibernate.initialize(iteration.getExecutions());
 		return iteration.getExecutions();
-	}	
-	
+	}
+
 	@Override
-	public List<Execution> findOrderedExecutionsByIterationAndTestCase(
-			long iterationId, long testCaseId) {
+	public List<Execution> findOrderedExecutionsByIterationAndTestCase(long iterationId, long testCaseId) {
 		Iteration iter = findById(iterationId);
 		IterationTestPlanItem iterTP = iter.getTestPlanForTestCaseId(testCaseId);
 		Hibernate.initialize(iterTP.getExecutions());
 		return iterTP.getExecutions();
 	}
-	
+
 	@Override
-	public List<Execution> findOrderedExecutionsByIterationAndTestPlan(long iterationId, long testPlanId){
+	public List<Execution> findOrderedExecutionsByIterationAndTestPlan(long iterationId, long testPlanId) {
 		Iteration iter = findById(iterationId);
 		IterationTestPlanItem iterTP = iter.getTestPlan(testPlanId);
 		Hibernate.initialize(iterTP.getExecutions());
-		return iterTP.getExecutions();		
+		return iterTP.getExecutions();
 	}
-	
 
 	@Override
-	public List<IterationTestPlanItem> findTestPlanFiltered(final long iterationId,
-			CollectionSorting filter) {
-		
+	public List<IterationTestPlanItem> findTestPlanFiltered(final long iterationId, CollectionSorting filter) {
+
 		final int firstIndex = filter.getFirstItemIndex();
-		final int lastIndex = filter.getFirstItemIndex() + filter.getMaxNumberOfItems() - 1;		
-		
+		final int lastIndex = filter.getFirstItemIndex() + filter.getMaxNumberOfItems() - 1;
+
 		SetQueryParametersCallback callback = new SetQueryParametersCallback() {
 
 			@Override
@@ -156,7 +148,7 @@ public class HibernateIterationDao extends HibernateEntityDao<Iteration> impleme
 
 		};
 
-		return executeListNamedQuery("iteration.findTestPlanFiltered", callback);		
+		return executeListNamedQuery("iteration.findTestPlanFiltered", callback);
 
 	}
 
@@ -171,9 +163,9 @@ public class HibernateIterationDao extends HibernateEntityDao<Iteration> impleme
 
 	@Override
 	public List<Iteration> findAllByIdList(List<Long> iterationIds) {
-		if (iterationIds.isEmpty()){
+		if (iterationIds.isEmpty()) {
 			return Collections.emptyList();
-		}else{
+		} else {
 			Query query = currentSession().getNamedQuery("iteration.findAllById");
 			query.setParameterList("iterationIds", iterationIds, LongType.INSTANCE);
 			return query.list();
@@ -186,5 +178,16 @@ public class HibernateIterationDao extends HibernateEntityDao<Iteration> impleme
 		return executeListNamedQuery("iteration.findAllTestSuites", callback);
 	}
 
+	@Override
+	public void persistIterationAndTestPlan(Iteration iteration) {
+		persistTestPlan(iteration);
+		persist(iteration);
 
+	}
+
+	private void persistTestPlan(Iteration iteration) {
+		for (IterationTestPlanItem iterationTestPlanItem : iteration.getTestPlans()) {
+			currentSession().persist(iterationTestPlanItem);
+		}
+	}
 }

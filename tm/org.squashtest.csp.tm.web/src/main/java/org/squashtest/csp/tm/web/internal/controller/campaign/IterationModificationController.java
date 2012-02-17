@@ -58,6 +58,7 @@ import org.squashtest.csp.tm.domain.testcase.TestCaseExecutionMode;
 import org.squashtest.csp.tm.infrastructure.filter.CollectionSorting;
 import org.squashtest.csp.tm.infrastructure.filter.FilteredCollectionHolder;
 import org.squashtest.csp.tm.service.IterationModificationService;
+import org.squashtest.csp.tm.service.IterationTestPlanFinder;
 import org.squashtest.csp.tm.web.internal.model.datatable.DataTableDrawParameters;
 import org.squashtest.csp.tm.web.internal.model.datatable.DataTableFilterSorter;
 import org.squashtest.csp.tm.web.internal.model.datatable.DataTableModel;
@@ -76,6 +77,9 @@ public class IterationModificationController {
 
 	@Inject
 	private PermissionEvaluationService permissionService;
+	
+	@Inject 
+	private IterationTestPlanFinder testPlanFinder;
 
 	@ServiceReference
 	public void setIterationModificationService(IterationModificationService iterationModificationService) {
@@ -339,7 +343,7 @@ public class IterationModificationController {
 
 		CollectionSorting filter = createCollectionSorting(params, testPlanMapper);
 
-		FilteredCollectionHolder<List<IterationTestPlanItem>> holder = iterationModService.findIterationTestPlan(
+		FilteredCollectionHolder<List<IterationTestPlanItem>> holder = testPlanFinder.findTestPlan(
 				iterationId, filter);
 
 		return new DataTableModelHelper<IterationTestPlanItem>() {

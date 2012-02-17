@@ -23,6 +23,7 @@ package org.squashtest.csp.tm.service;
 import java.util.Date;
 import java.util.List;
 
+import org.springframework.transaction.annotation.Transactional;
 import org.squashtest.csp.tm.domain.campaign.Iteration;
 import org.squashtest.csp.tm.domain.campaign.IterationTestPlanItem;
 import org.squashtest.csp.tm.domain.testcase.TestCase;
@@ -33,19 +34,21 @@ import org.squashtest.csp.tm.infrastructure.filter.FilteredCollectionHolder;
 
 /**
  * Service that aims at managing the test cases of a campaign (i.e. its test plan)
+ * 
  * @author Agnes Durand
  */
-public interface IterationTestPlanManagerService {
+@Transactional
+public interface IterationTestPlanManagerService extends IterationTestPlanFinder {
 
 	/**
 	 * Find a iteration using its id
+	 * 
 	 * @param iterationId
 	 */
 	Iteration findIteration(long iterationId);
 
 	/**
-	 * Returns a collection of {@link TestCaseLibrary}, the test cases of
-	 * which may be added to the campaign
+	 * Returns a collection of {@link TestCaseLibrary}, the test cases of which may be added to the campaign
 	 */
 	List<TestCaseLibrary> findLinkableTestCaseLibraries();
 
@@ -65,17 +68,17 @@ public interface IterationTestPlanManagerService {
 
 	/**
 	 * Adds a list of test cases to a campaign.
+	 * 
 	 * @param testCaseIdss
 	 * @param campaignId
 	 */
 	IterationTestPlanItem findTestPlanItemByTestCaseId(long iterationId, long testCaseId);
 
-
 	IterationTestPlanItem findTestPlanItem(Long iterationId, Long itemTestPlanId);
 
 	/**
 	 * Removes a list of test cases from a campaign excepted the test plans which were executed
-	 *
+	 * 
 	 * @param testPlanIds
 	 *            the ids of the test plan managing that test case for that iteration
 	 * @param iterationId
@@ -86,7 +89,7 @@ public interface IterationTestPlanManagerService {
 
 	/**
 	 * Removes a test case from a campaign excepted the test plans which were executed
-	 *
+	 * 
 	 * @param testPlanId
 	 *            the id of the test plan managing that test case for that iteration
 	 * @param campaignId
@@ -98,38 +101,47 @@ public interface IterationTestPlanManagerService {
 
 	/**
 	 * Update item test plan lastExecuted data (by and on) (for the moment they're constants)
-	 *
-	 * @param givenTestPlan : the test plan to update
-	 * @param executionDate : the execution date
+	 * 
+	 * @param givenTestPlan
+	 *            : the test plan to update
+	 * @param executionDate
+	 *            : the execution date
 	 */
-	void updateTestCaseLastExecutedByAndOn(IterationTestPlanItem givenTestPlan, Date lastExecutedOn, String lastExecutedBy);
-
+	void updateTestCaseLastExecutedByAndOn(IterationTestPlanItem givenTestPlan, Date lastExecutedOn,
+			String lastExecutedBy);
 
 	/**
 	 * Get Users with Write Access for an Iteration and its TestPlan.
-	 *
+	 * 
 	 * @param testCaseId
 	 * @param campaignId
 	 */
-	List <User> findAssignableUserForTestPlan(long iterationId);
+	List<User> findAssignableUserForTestPlan(long iterationId);
 
 	/**
 	 * Assign User with Write Access to a TestPlan item.
-	 *
+	 * 
 	 * @param testCaseId
 	 * @param campaignId
 	 */
 	void assignUserToTestPlanItem(Long testPlanId, long iterationId, Long userId);
 
 	/**
-	 *  Assign User with Write Access to a multiple TestPlan items.
-	 *
+	 * Assign User with Write Access to a multiple TestPlan items.
+	 * 
 	 * @param testPlanIds
 	 * @param campaignId
 	 */
 	void assignUserToTestPlanItems(List<Long> testPlanIds, long iterationId, Long userId);
 
-
-	FilteredCollectionHolder<List<IterationTestPlanItem>> findTestPlan(long iterationId, CollectionSorting filter);
+	/**
+	 * <p>
+	 * persist each iteration_test_plan_item and add it to iteration
+	 * </p>
+	 * 
+	 * @param testPlan
+	 * @param iterationId
+	 */
+	void addTestPlanToIteration(List<IterationTestPlanItem> testPlan, long iterationId);
 
 }

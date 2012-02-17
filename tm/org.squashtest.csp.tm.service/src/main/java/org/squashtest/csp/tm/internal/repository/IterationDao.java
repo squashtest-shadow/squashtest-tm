@@ -28,7 +28,7 @@ import org.squashtest.csp.tm.domain.campaign.TestSuite;
 import org.squashtest.csp.tm.domain.execution.Execution;
 import org.squashtest.csp.tm.infrastructure.filter.CollectionSorting;
 
-public interface IterationDao extends EntityDao<Iteration>{
+public interface IterationDao extends EntityDao<Iteration> {
 
 	/**
 	 * Returns the initialized list of the iterations of a campaign. Returned list order is the same as
@@ -38,24 +38,25 @@ public interface IterationDao extends EntityDao<Iteration>{
 	 * @return
 	 */
 	List<Iteration> findAllInitializedByCampaignId(long campaignId);
-	
+
 	void removeFromCampaign(Iteration iteration);
-	
-	
+
 	List<Execution> findOrderedExecutionsByIterationId(long iterationId);
-	
+
 	List<Execution> findOrderedExecutionsByIterationAndTestCase(long iterationId, long testCaseId);
-	
+
 	List<Execution> findOrderedExecutionsByIterationAndTestPlan(long iterationId, long testPlanId);
-		
+
 	Iteration findAndInit(long iterationId);
-	
+
 	List<IterationTestPlanItem> findTestPlanFiltered(long iterationId, CollectionSorting filter);
-	
+
 	long countTestPlans(Long iterationId);
-	
+
 	List<Iteration> findAllByIdList(List<Long> iterationIds);
-	
+
 	List<TestSuite> findAllTestSuites(long iterationId);
-	
+
+	void persistIterationAndTestPlan(Iteration iteration);
+
 }

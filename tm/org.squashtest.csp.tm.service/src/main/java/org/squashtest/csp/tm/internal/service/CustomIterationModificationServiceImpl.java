@@ -20,6 +20,7 @@
  */
 package org.squashtest.csp.tm.internal.service;
 
+import java.util.LinkedList;
 import java.util.List;
 import java.util.Set;
 
@@ -55,6 +56,8 @@ import org.squashtest.csp.tm.internal.repository.IterationDao;
 import org.squashtest.csp.tm.internal.repository.TestSuiteDao;
 import org.squashtest.csp.tm.service.CallStepManagerService;
 import org.squashtest.csp.tm.service.CustomIterationModificationService;
+import org.squashtest.csp.tm.service.IterationTestPlanManagerService;
+import org.squashtest.csp.tm.service.TestSuiteModificationService;
 import org.squashtest.csp.tm.service.deletion.SuppressionPreviewReport;
 
 @Service("CustomIterationModificationService")
@@ -77,9 +80,14 @@ public class CustomIterationModificationServiceImpl implements CustomIterationMo
 
 	@Inject
 	private CampaignNodeDeletionHandler deletionHandler;
-	
+
 	private PermissionEvaluationService permissionService;
-	
+
+	@Inject
+	private IterationTestPlanManagerService iterationTestPlanManagerService;
+
+	@Inject
+	private TestSuiteModificationService testSuiteModificationService;
 
 	@ServiceReference
 	public void setPermissionService(PermissionEvaluationService permissionService) {
@@ -98,11 +106,9 @@ public class CustomIterationModificationServiceImpl implements CustomIterationMo
 
 		for (CampaignTestPlanItem tc : tcList) {
 			IterationTestPlanItem iterTP = new IterationTestPlanItem(tc);
-			testPlanDao.persist(iterTP);
 			iteration.addTestPlan(iterTP);
 		}
-
-		iterationDao.persist(iteration);
+		iterationDao.persistIterationAndTestPlan(iteration);
 		campaign.addIteration(iteration);
 		return campaign.getIterations().size() - 1;
 	}
@@ -214,7 +220,7 @@ public class CustomIterationModificationServiceImpl implements CustomIterationMo
 		iteration.moveTestPlan(currentPosition, newTestPlanPosition);
 
 	}
-	
+
 	/**
 	 * see doc in the interface
 	 * 
@@ -222,10 +228,10 @@ public class CustomIterationModificationServiceImpl implements CustomIterationMo
 	@Override
 	@PreAuthorize("hasPermission(#iterationId, 'org.squashtest.csp.tm.domain.campaign.Iteration', 'WRITE') "
 			+ "or hasRole('ROLE_ADMIN')")
-	public void changeTestPlanPosition(long iterationId, int newPosition, List<Long> itemIds){
+	public void changeTestPlanPosition(long iterationId, int newPosition, List<Long> itemIds) {
 		Iteration iteration = iterationDao.findById(iterationId);
 		List<IterationTestPlanItem> items = testPlanDao.findAllByIdList(itemIds);
-		
+
 		iteration.moveTestPlans(newPosition, items);
 	}
 
@@ -254,16 +260,6 @@ public class CustomIterationModificationServiceImpl implements CustomIterationMo
 	}
 
 	@Override
-	@PreAuthorize("hasPermission(#iterationId, 'org.squashtest.csp.tm.domain.campaign.Iteration', 'READ') "
-			+ "or hasRole('ROLE_ADMIN')")
-	public FilteredCollectionHolder<List<IterationTestPlanItem>> findIterationTestPlan(long iterationId,
-			CollectionSorting filter) {
-		List<IterationTestPlanItem> testPlan = iterationDao.findTestPlanFiltered(iterationId, filter);
-		long count = iterationDao.countTestPlans(iterationId);
-		return new FilteredCollectionHolder<List<IterationTestPlanItem>>(count, testPlan);
-	}
-
-	@Override
 	public List<SuppressionPreviewReport> simulateDeletion(List<Long> targetIds) {
 		return deletionHandler.simulateIterationDeletion(targetIds);
 	}
@@ -277,8 +273,8 @@ public class CustomIterationModificationServiceImpl implements CustomIterationMo
 	@PreAuthorize("hasPermission(#iterationId, 'org.squashtest.csp.tm.domain.campaign.Iteration', 'WRITE') "
 			+ "or hasRole('ROLE_ADMIN')")
 	public void addTestSuite(long iterationId, TestSuite suite) {
+		Iteration iteration = iterationDao.findById(iterationId);
 		suiteDao.persist(suite);
-		Iteration iteration = iterationDao.findAndInit(iterationId);
 		iteration.addTestSuite(suite);
 	}
 
@@ -289,7 +285,28 @@ public class CustomIterationModificationServiceImpl implements CustomIterationMo
 		return allSuites;
 	}
 
-	
+	@Override
+	@PreAuthorize("hasPermission(#iterationId, 'org.squashtest.csp.tm.domain.campaign.Iteration', 'WRITE') "
+			+ "or hasRole('ROLE_ADMIN')")
+	public TestSuite copyPasteTestSuiteToIteration(Long testSuiteId, Long iterationId) {
+		TestSuite testSuite = suiteDao.findById(testSuiteId);
+		List<IterationTestPlanItem> copyOfTestPlan = testSuite.createPastableCopyOfTestPlan();
+		TestSuite copyOfTestSuite = testSuite.createPastableCopy();
+		iterationTestPlanManagerService.addTestPlanToIteration(copyOfTestPlan, iterationId);
+		addTestSuite(iterationId, copyOfTestSuite);
+		List<Long> itemTestPlanIds = listTestPlanIds(copyOfTestPlan);
+		testSuiteModificationService.bindTestPlan(copyOfTestSuite.getId(), itemTestPlanIds);
+		return copyOfTestSuite;
+	}
+
+	private List<Long> listTestPlanIds(List<IterationTestPlanItem> copyOfTestPlan) {
+		List<Long> ids = new LinkedList<Long>();
+		for (IterationTestPlanItem iterationTestPlanItem : copyOfTestPlan) {
+			ids.add(iterationTestPlanItem.getId());
+		}
+		return ids;
+	}
+
 	@Override
 	public List<Long> removeTestSuites(List<Long> suitesIds) {
 		List<TestSuite> testSuites = suiteDao.findAllByIdList(suitesIds);
@@ -298,10 +315,8 @@ public class CustomIterationModificationServiceImpl implements CustomIterationMo
 		// proceed
 		List<Long> deletedIds = deletionHandler.deleteSuites(suitesIds);
 		return deletedIds;
-		
+
 	}
-
-
 
 	/* ************************* security ************************* */
 
@@ -309,40 +324,38 @@ public class CustomIterationModificationServiceImpl implements CustomIterationMo
 	private static class SecurityCheckableObject {
 		private final Object domainObject;
 		private final String permission;
-	
+
 		private SecurityCheckableObject(Object domainObject, String permission) {
 			this.domainObject = domainObject;
 			this.permission = permission;
 		}
-	
+
 		public String getPermission() {
 			return permission;
 		}
-	
+
 		public Object getObject() {
 			return domainObject;
 		}
-	
+
 	}
-	
+
 	private void checkPermission(SecurityCheckableObject... checkableObjects) {
 		for (SecurityCheckableObject object : checkableObjects) {
 			if (!permissionService
 					.hasRoleOrPermissionOnObject("ROLE_ADMIN", object.getPermission(), object.getObject())) {
-			throw new AccessDeniedException("Access is denied");
+				throw new AccessDeniedException("Access is denied");
 			}
 		}
 	}
-	
-	
+
 	/* ************************* private stuffs ************************* */
-	
+
 	private void checkPermissionsForAll(List<TestSuite> testSuites, String permission) {
 		for (TestSuite testSuite : testSuites) {
 			checkPermission(new SecurityCheckableObject(testSuite, permission));
 		}
-	
-	}
 
+	}
 
 }

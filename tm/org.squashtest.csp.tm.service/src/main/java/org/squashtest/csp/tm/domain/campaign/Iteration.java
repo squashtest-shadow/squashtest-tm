@@ -45,6 +45,7 @@ import javax.persistence.OneToOne;
 import javax.persistence.OrderColumn;
 import javax.validation.constraints.NotNull;
 
+import org.hibernate.annotations.Cascade;
 import org.hibernate.validator.constraints.NotBlank;
 import org.squashtest.csp.core.security.annotation.AclConstrainedObject;
 import org.squashtest.csp.tm.domain.DuplicateNameException;
@@ -348,6 +349,7 @@ public class Iteration implements AttachmentHolder {
 			return;
 		}
 		testPlans.add(testPlan);
+		testPlan.setIteration(this);
 	}
 
 	/***
@@ -417,30 +419,29 @@ public class Iteration implements AttachmentHolder {
 		testPlans.remove(currentPosition);
 		testPlans.add(newPosition, testCaseToMove);
 	}
-	
-	public void moveTestPlans(int newIndex, List<IterationTestPlanItem> movedItems){
-		if (! testPlans.isEmpty()){
+
+	public void moveTestPlans(int newIndex, List<IterationTestPlanItem> movedItems) {
+		if (!testPlans.isEmpty()) {
 			testPlans.removeAll(movedItems);
 			testPlans.addAll(newIndex, movedItems);
 		}
 	}
-	
+
 	/* returns the index of that item if found, -1 if not found */
-	public int getIndexOf(IterationTestPlanItem item){
-		
-		int i=0;
+	public int getIndexOf(IterationTestPlanItem item) {
+
+		int i = 0;
 		ListIterator<IterationTestPlanItem> iterator = testPlans.listIterator();
-		
-		while(iterator.hasNext()){
-			if (item.equals(iterator.next())){
+
+		while (iterator.hasNext()) {
+			if (item.equals(iterator.next())) {
 				return i;
 			}
 			i++;
 		}
-		
+
 		return -1;
 	}
-	
 
 	public boolean isTestCasePlanned(Long testCaseId) {
 		return (getTestPlanForTestCaseId(testCaseId) != null);
@@ -463,7 +464,8 @@ public class Iteration implements AttachmentHolder {
 	}
 
 	/*
-	 * ********************************* TEST SUITE ********************************************* */
+	 * ********************************* TEST SUITE *********************************************
+	 */
 
 	public Set<TestSuite> getTestSuites() {
 		return testSuites;
@@ -475,6 +477,7 @@ public class Iteration implements AttachmentHolder {
 					+ suite.getName() + " already exists");
 		}
 		testSuites.add(suite);
+		suite.setIteration(this);
 	}
 
 	boolean checkSuiteNameAvailable(String name) {
@@ -485,9 +488,9 @@ public class Iteration implements AttachmentHolder {
 		}
 		return true;
 	}
-	
-	public boolean hasTestSuites(){
-		return (testSuites.size() > 0);		
+
+	public boolean hasTestSuites() {
+		return (testSuites.size() > 0);
 	}
 
 	/*

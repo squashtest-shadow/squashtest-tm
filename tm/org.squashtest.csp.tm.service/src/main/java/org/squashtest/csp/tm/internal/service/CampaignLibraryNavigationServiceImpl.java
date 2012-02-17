@@ -25,6 +25,7 @@ import java.util.List;
 
 import javax.inject.Inject;
 
+import org.hibernate.SessionFactory;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.security.access.prepost.PostAuthorize;
 import org.springframework.security.access.prepost.PostFilter;
@@ -37,12 +38,14 @@ import org.squashtest.csp.tm.domain.campaign.CampaignFolder;
 import org.squashtest.csp.tm.domain.campaign.CampaignLibrary;
 import org.squashtest.csp.tm.domain.campaign.CampaignLibraryNode;
 import org.squashtest.csp.tm.domain.campaign.Iteration;
+import org.squashtest.csp.tm.domain.campaign.IterationTestPlanItem;
 import org.squashtest.csp.tm.domain.campaign.TestSuite;
 import org.squashtest.csp.tm.domain.projectfilter.ProjectFilter;
 import org.squashtest.csp.tm.internal.infrastructure.strategy.LibrarySelectionStrategy;
 import org.squashtest.csp.tm.internal.repository.CampaignDao;
 import org.squashtest.csp.tm.internal.repository.CampaignFolderDao;
 import org.squashtest.csp.tm.internal.repository.CampaignLibraryDao;
+import org.squashtest.csp.tm.internal.repository.ItemTestPlanDao;
 import org.squashtest.csp.tm.internal.repository.IterationDao;
 import org.squashtest.csp.tm.internal.repository.LibraryNodeDao;
 import org.squashtest.csp.tm.internal.repository.TestSuiteDao;
@@ -61,7 +64,8 @@ public class CampaignLibraryNavigationServiceImpl extends
 	 * token appended to the name of a copy
 	 */
 	private static final String COPY_TOKEN = "-Copie";
-
+	@Inject
+	private SessionFactory sessionFactory;
 	@Inject
 	private CampaignLibraryDao campaignLibraryDao;
 
@@ -77,9 +81,12 @@ public class CampaignLibraryNavigationServiceImpl extends
 
 	@Inject
 	private IterationDao iterationDao;
-	
+
 	@Inject
 	private TestSuiteDao suiteDao;
+
+	@Inject
+	private ItemTestPlanDao testPlanDao;
 
 	@Inject
 	private IterationModificationService iterationModificationService;
@@ -110,17 +117,18 @@ public class CampaignLibraryNavigationServiceImpl extends
 		if (!campaign.isContentNameAvailable(newIteration.getName())) {
 			renameIterationCopy(newIteration, campaign);
 		}
-		
-		//persist
-		iterationDao.persist(newIteration);
-		//link to campaign
+
+		// persist
+		iterationDao.persistIterationAndTestPlan(newIteration);
+
+		// link to campaign
 		campaign.addIteration(newIteration);
 		return 0;
 	}
 
 	private void renameIterationCopy(Iteration newIteration, Campaign campaign) {
-		List<String> copiesNames = campaignDao.findNamesInCampaignStartingWith(campaign.getId(),
-						newIteration.getName() + COPY_TOKEN);
+		List<String> copiesNames = campaignDao.findNamesInCampaignStartingWith(campaign.getId(), newIteration.getName()
+				+ COPY_TOKEN);
 		int newCopy = generateUniqueCopyNumber(copiesNames);
 		String newName = newIteration.getName() + COPY_TOKEN + newCopy;
 		newIteration.setName(newName);
@@ -129,33 +137,25 @@ public class CampaignLibraryNavigationServiceImpl extends
 	@Override
 	@PreAuthorize("(hasPermission(#campaignId, 'org.squashtest.csp.tm.domain.campaign.Campaign', 'WRITE'))"
 			+ " or hasRole('ROLE_ADMIN')")
-	public List<Iteration> copyIterationsToCampaign(long campaignId,
-			Long[] iterationsIds) {
-		//create copies
-		List<Iteration> newIterations = createCopiesOfIterations(campaignId,
-				iterationsIds);
-		//persist
-		iterationDao.persist(newIterations);
-		
-		//link to campaign
+	public List<Iteration> copyIterationsToCampaign(long campaignId, Long[] iterationsIds) {
+		// create persisted copies
+		List<Iteration> newIterations = createCopiesOfIterations(campaignId, iterationsIds);
+		// link to campaign
 		linkIterationsToCampaign(campaignId, newIterations);
-		
+
 		return newIterations;
 	}
 
-	private void linkIterationsToCampaign(long campaignId,
-			List<Iteration> newIterations) {
+	private void linkIterationsToCampaign(long campaignId, List<Iteration> newIterations) {
 		Campaign campaign = campaignDao.findById(campaignId);
-		for(Iteration iteration : newIterations){
+		for (Iteration iteration : newIterations) {
 			campaign.addIteration(iteration);
 		}
 	}
 
-	private List<Iteration> createCopiesOfIterations(long campaignId,
-			Long[] iterationsIds) {
+	private List<Iteration> createCopiesOfIterations(long campaignId, Long[] iterationsIds) {
 		List<Iteration> newIterations = new ArrayList<Iteration>();
-		List<String> namesAtDestination = campaignDao
-				.findAllNamesInCampaign(campaignId);
+		List<String> namesAtDestination = campaignDao.findAllNamesInCampaign(campaignId);
 		for (Long iterationId : iterationsIds) {
 			Iteration newIteration = createCopyIteration(iterationId);
 			renameIfHomonymeInDestination(newIteration, namesAtDestination);
@@ -165,21 +165,19 @@ public class CampaignLibraryNavigationServiceImpl extends
 		return newIterations;
 	}
 
-	private void renameIfHomonymeInDestination(Iteration newIteration,
-			List<String> namesAtDestination) {
-		if(namesAtDestination.contains(newIteration.getName())){
-			List<String> copiesNames = findNamesStartingWith(namesAtDestination,newIteration.getName()+ COPY_TOKEN);
+	private void renameIfHomonymeInDestination(Iteration newIteration, List<String> namesAtDestination) {
+		if (namesAtDestination.contains(newIteration.getName())) {
+			List<String> copiesNames = findNamesStartingWith(namesAtDestination, newIteration.getName() + COPY_TOKEN);
 			int newCopyNumber = generateUniqueCopyNumber(copiesNames);
 			String newName = newIteration.getName() + COPY_TOKEN + newCopyNumber;
 			newIteration.setName(newName);
 		}
 	}
 
-	private List<String> findNamesStartingWith(List<String> namesAtDestination,
-			String string) {
+	private List<String> findNamesStartingWith(List<String> namesAtDestination, String string) {
 		List<String> copiedNames = new ArrayList<String>();
-		for(String name : namesAtDestination){
-			if(name.startsWith(string)){
+		for (String name : namesAtDestination) {
+			if (name.startsWith(string)) {
 				copiedNames.add(name);
 			}
 		}
@@ -252,7 +250,7 @@ public class CampaignLibraryNavigationServiceImpl extends
 		 * If you don't understand the comment above, just don't touch this.
 		 */
 		for (Iteration iteration : clone.getIterations()) {
-			iterationDao.persist(iteration);
+			iterationDao.persistIterationAndTestPlan(iteration);
 		}
 
 		campaignDao.persist(clone);
@@ -267,8 +265,15 @@ public class CampaignLibraryNavigationServiceImpl extends
 	public Iteration createCopyIteration(long iterationId) {
 		Iteration original = iterationModificationService.findById(iterationId);
 		Iteration clone = original.createCopy();
-		iterationDao.persist(clone);
+		iterationDao.persistIterationAndTestPlan(clone);
+
 		return clone;
+	}
+
+	private void persistTestPlan(Iteration iteration) {
+		for (IterationTestPlanItem testPlanItem : iteration.getTestPlans()) {
+			testPlanDao.persist(testPlanItem);
+		}
 	}
 
 	@Override
@@ -306,11 +311,11 @@ public class CampaignLibraryNavigationServiceImpl extends
 		return iterationDao.findById(IterationId);
 
 	}
-	
+
 	@Override
 	@PostFilter("hasPermission(filterObject, 'READ') or hasRole('ROLE_ADMIN')")
-	public List<TestSuite> findIterationContent(long iterationId){
-		return suiteDao.findAllByIterationId(iterationId);		
+	public List<TestSuite> findIterationContent(long iterationId) {
+		return suiteDao.findAllByIterationId(iterationId);
 	}
 
 	/*
@@ -355,7 +360,7 @@ public class CampaignLibraryNavigationServiceImpl extends
 	public List<Long> deleteIterations(List<Long> targetIds) {
 		return deletionHandler.deleteIterations(targetIds);
 	}
-	
+
 	@Override
 	public List<SuppressionPreviewReport> simulateSuiteDeletion(List<Long> targetIds) {
 		return deletionHandler.simulateSuiteDeletion(targetIds);

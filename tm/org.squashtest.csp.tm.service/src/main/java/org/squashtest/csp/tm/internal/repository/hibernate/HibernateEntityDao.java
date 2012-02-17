@@ -33,26 +33,24 @@ public class HibernateEntityDao<ENTITY_TYPE> extends HibernateDao<ENTITY_TYPE> i
 	public final ENTITY_TYPE findById(long id) {
 		return getEntity(id);
 	}
-	
+
 	@SuppressWarnings("unchecked")
 	@Override
-	public List<ENTITY_TYPE> findAllByIdList(List<Long> ids){
+	public List<ENTITY_TYPE> findAllByIdList(List<Long> ids) {
 		if (ids.isEmpty()) {
 			return Collections.emptyList();
 		} else {
-			Criteria criteria = currentSession()
-				.createCriteria(entityType)
-				.add(Restrictions.in(getIdPropertyName(), ids.toArray()));
+			Criteria criteria = currentSession().createCriteria(entityType).add(
+					Restrictions.in(getIdPropertyName(), ids.toArray()));
 
 			return criteria.list();
 		}
 	}
-	
-	public String getIdPropertyName(){
+
+	public String getIdPropertyName() {
 		return "id";
 	}
 
-	
 	@Override
 	public final void persist(ENTITY_TYPE transientEntity) {
 		persistEntity(transientEntity);
@@ -62,18 +60,17 @@ public class HibernateEntityDao<ENTITY_TYPE> extends HibernateDao<ENTITY_TYPE> i
 	public final void remove(ENTITY_TYPE entity) {
 		removeEntity(entity);
 	}
-	
+
 	@Override
-	public final void flush(){
+	public final void flush() {
 		currentSession().flush();
 	}
 
 	@Override
 	public void persist(List<ENTITY_TYPE> transientEntities) {
-		for(ENTITY_TYPE transientEntity : transientEntities){
+		for (ENTITY_TYPE transientEntity : transientEntities) {
 			persistEntity(transientEntity);
 		}
 	}
-
 
 }

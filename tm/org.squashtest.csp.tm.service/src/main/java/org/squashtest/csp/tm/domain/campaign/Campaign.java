@@ -154,7 +154,7 @@ public class Campaign extends CampaignLibraryNode implements AttachmentHolder {
 	}
 
 	/**
-	 *
+	 * 
 	 * @param testCase
 	 * @return the test plan item which references the given test case, if any.
 	 */
@@ -168,9 +168,8 @@ public class Campaign extends CampaignLibraryNode implements AttachmentHolder {
 	}
 
 	/**
-	 *
+	 * 
 	 * @param itemTestPlan
-	 * @throws TestCaseAlreadyInTestPlanException
 	 */
 	public void addToTestPlan(@NotNull CampaignTestPlanItem itemTestPlan) {
 		this.getTestPlan().add(itemTestPlan);
@@ -221,7 +220,6 @@ public class Campaign extends CampaignLibraryNode implements AttachmentHolder {
 			copy.setScheduledEndDate((Date) this.getScheduledEndDate().clone());
 		}
 
-
 		for (Attachment tcAttach : this.getAttachmentList().getAllAttachments()) {
 			Attachment atCopy = tcAttach.hardCopy();
 			copy.getAttachmentList().addAttachment(atCopy);
@@ -248,7 +246,7 @@ public class Campaign extends CampaignLibraryNode implements AttachmentHolder {
 
 	/**
 	 * If the iteration have autodates set, they will be updated accordingly.
-	 *
+	 * 
 	 * @param newItemTestPlanDate
 	 */
 	public void updateActualStart(Date newIterationStartDate) {
@@ -320,8 +318,8 @@ public class Campaign extends CampaignLibraryNode implements AttachmentHolder {
 	public boolean testPlanContains(@NotNull TestCase tc) {
 		return (findTestPlanItem(tc) != null);
 	}
-	
-	public boolean hasIterations(){
-		return (iterations.size()>0);
+
+	public boolean hasIterations() {
+		return (iterations.size() > 0);
 	}
 }

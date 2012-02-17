@@ -20,15 +20,15 @@
  */
 package org.squashtest.csp.tm.internal.service;
 
-import org.squashtest.csp.tm.domain.campaign.Iteration 
+import org.squashtest.csp.tm.domain.campaign.Iteration
 import org.squashtest.csp.tm.domain.testcase.TestCase;
 import org.squashtest.csp.tm.domain.testcase.TestCaseFolder;
 import org.squashtest.csp.tm.domain.testcase.TestCaseLibraryNode;
 import org.squashtest.csp.tm.internal.repository.ItemTestPlanDao;
 import org.squashtest.csp.tm.internal.repository.IterationDao;
 import org.squashtest.csp.tm.internal.repository.LibraryNodeDao;
-import org.squashtest.csp.tm.internal.service.CampaignTestPlanManagerServiceImplTest.MockTC 
-import org.squashtest.csp.tm.internal.service.CampaignTestPlanManagerServiceImplTest.MockTCF 
+import org.squashtest.csp.tm.internal.service.CampaignTestPlanManagerServiceImplTest.MockTC
+import org.squashtest.csp.tm.internal.service.CampaignTestPlanManagerServiceImplTest.MockTCF
 
 import spock.lang.Specification;
 
@@ -39,47 +39,47 @@ public class IterationTestPlanManagerServiceImplTest extends Specification {
 	LibraryNodeDao<TestCaseLibraryNode> nodeDao = Mock()
 	IterationDao iterDao = Mock()
 	ItemTestPlanDao itemDao = Mock()
-	
-	
+
+
 	def setup(){
 		service.testCaseLibraryNodeDao = nodeDao;
 		service.iterationDao = iterDao;
 		service.itemTestPlanDao = itemDao;
 	}
-	
-	
+
+
 	def "should reccursively add a list of test cases to an iteration"() {
 		given: "a campaign"
-			Iteration iteration = new Iteration()
-			iterDao.findById(10) >> iteration
-			
+		Iteration iteration = new Iteration()
+		iterDao.findById(10) >> iteration
+
 		and : "a bunch of folders and testcases"
-			def folder1 = new MockTCF(1L, "f1")
-			def folder2 = new MockTCF(2L, "f2")
-			def tc1 = new MockTC(3L, "tc1")
-			def tc2 = new MockTC(4L, "tc2")
-			def tc3 = new MockTC(5L, "tc3")
-			
-			folder1.addContent(tc1)
-			folder1.addContent(folder2)
-			folder2.addContent(tc2)
-			
-			nodeDao.findAllByIdList([1L, 5L]) >> [tc3, folder1] //note that we reversed the order here to test the sorting
-		
+		def folder1 = new MockTCF(1L, "f1")
+		def folder2 = new MockTCF(2L, "f2")
+		def tc1 = new MockTC(3L, "tc1")
+		def tc2 = new MockTC(4L, "tc2")
+		def tc3 = new MockTC(5L, "tc3")
+
+		folder1.addContent(tc1)
+		folder1.addContent(folder2)
+		folder2.addContent(tc2)
+
+		nodeDao.findAllByIdList([1L, 5L]) >> [
+			tc3,
+			folder1] //note that we reversed the order here to test the sorting
 		when: "the test cases are added to the campaign"
-			service.addTestCasesToIteration([1L, 5L], 10)
-		
+		service.addTestCasesToIteration([1L, 5L], 10)
+
 		then :
-			def collected = iteration.getTestPlans().collect{it.referencedTestCase} ;
-			/*we'll test here that :
-				the content of collected states that tc3 is positioned last,
-				collected contains tc1 and tc2 in an undefined order in first position (since the content of a folder is a Set)
-			*/
-			collected[0..1] == [tc1, tc2] || [tc2, tc1]
-			collected[2] == tc3
-	
+		def collected = iteration.getTestPlans().collect{it.referencedTestCase} ;
+		/*we'll test here that :
+		 the content of collected states that tc3 is positioned last,
+		 collected contains tc1 and tc2 in an undefined order in first position (since the content of a folder is a Set)
+		 */
+		collected[0..1] == [tc1, tc2]|| [tc2, tc1]
+		collected[2] == tc3
 	}
-	
+
 	class MockTC extends TestCase{
 		Long overId;
 		MockTC(Long id){
@@ -90,11 +90,14 @@ public class IterationTestPlanManagerServiceImplTest extends Specification {
 			this(id);
 			this.name=name;
 		}
-		public Long getId(){return overId;}
-		public void setId(Long newId){overId=newId;}
-		
+		public Long getId(){
+			return overId;
+		}
+		public void setId(Long newId){
+			overId=newId;
+		}
 	}
-	
+
 	class MockTCF extends TestCaseFolder{
 		Long overId;
 		MockTCF(Long id){
@@ -105,8 +108,11 @@ public class IterationTestPlanManagerServiceImplTest extends Specification {
 			this(id);
 			this.name=name;
 		}
-		public Long getId(){return overId;}
-		public void setId(Long newId){overId=newId;}
+		public Long getId(){
+			return overId;
+		}
+		public void setId(Long newId){
+			overId=newId;
+		}
 	}
-	
 }

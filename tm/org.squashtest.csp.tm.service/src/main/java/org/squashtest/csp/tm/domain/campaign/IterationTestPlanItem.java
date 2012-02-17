@@ -62,7 +62,7 @@ public class IterationTestPlanItem {
 	private String label = "";
 
 	@ManyToOne
-	@JoinColumn(name="USER_ID")
+	@JoinColumn(name = "USER_ID")
 	private User user;
 
 	@Column(insertable = false)
@@ -82,18 +82,17 @@ public class IterationTestPlanItem {
 	private final List<Execution> executions = new ArrayList<Execution>();
 
 	@ManyToOne
-	@JoinTable(name="ITEM_TEST_PLAN_LIST",joinColumns =  @JoinColumn(name = "ITEM_TEST_PLAN_ID"), inverseJoinColumns = @JoinColumn(name = "ITERATION_ID"))
+	@JoinTable(name = "ITEM_TEST_PLAN_LIST", joinColumns = @JoinColumn(name = "ITEM_TEST_PLAN_ID", insertable = false, updatable = false), inverseJoinColumns = @JoinColumn(name = "ITERATION_ID", insertable = false, updatable = false))
 	private Iteration iteration;
-	
+
 	@ManyToOne
 	private TestSuite testSuite;
-	
 
 	public IterationTestPlanItem() {
 		super();
 	}
 
-	public Iteration getIteration(){
+	public Iteration getIteration() {
 		return iteration;
 	}
 
@@ -118,7 +117,7 @@ public class IterationTestPlanItem {
 
 	/**
 	 * the IterationTestPlanItem will fetch the ExecutionStatus of the last "live" Execution in his execution list
-	 *
+	 * 
 	 */
 	public void updateExecutionStatus() {
 		int iIndexLastExec = executions.size();
@@ -171,7 +170,7 @@ public class IterationTestPlanItem {
 	public void setLastExecutedOn(Date lastExecutedOn) {
 		this.lastExecutedOn = lastExecutedOn;
 
-		if (getIteration()!=null){
+		if (getIteration() != null) {
 			getIteration().updateAutoDates(lastExecutedOn);
 		}
 	}
@@ -188,12 +187,12 @@ public class IterationTestPlanItem {
 		executions.add(execution);
 		updateExecutionStatus();
 
-		//this means that getLastExecutedBy and getLastExecutedOn should be reset and propagated to the Iteration this object
-		//is bound to.
+		// this means that getLastExecutedBy and getLastExecutedOn should be reset and propagated to the Iteration this
+		// object
+		// is bound to.
 		this.lastExecutedBy = null;
 		this.lastExecutedOn = null;
 		resetIterationDates();
-
 
 	}
 
@@ -204,13 +203,12 @@ public class IterationTestPlanItem {
 		}
 	}
 
-
-	public void removeExecution(Execution execution){
+	public void removeExecution(Execution execution) {
 		ListIterator<Execution> iterator = executions.listIterator();
 
-		while (iterator.hasNext()){
+		while (iterator.hasNext()) {
 			Execution exec = iterator.next();
-			if (exec.getId().equals(execution.getId())){
+			if (exec.getId().equals(execution.getId())) {
 				iterator.remove();
 				break;
 			}
@@ -219,11 +217,9 @@ public class IterationTestPlanItem {
 		updateExecutionStatus();
 	}
 
-
-
 	/**
 	 * Factory method. Creates a copy of this object according to copy / paste rules.
-	 *
+	 * 
 	 * @return the copy, never <code>null</code>
 	 */
 	public IterationTestPlanItem createCopy() {
@@ -235,8 +231,7 @@ public class IterationTestPlanItem {
 		return copy;
 	}
 
-
-	public Project getProject(){
+	public Project getProject() {
 		return iteration.getProject();
 	}
 
@@ -248,16 +243,22 @@ public class IterationTestPlanItem {
 		this.user = user;
 	}
 
-	public Boolean isTestCaseDeleted(){
+	public Boolean isTestCaseDeleted() {
 		return getReferencedTestCase() == null;
 	}
-	
-	public TestSuite getTestSuite(){
+
+	public TestSuite getTestSuite() {
 		return testSuite;
 	}
-	
-	public void setTestSuite(TestSuite suite){
+
+	public void setTestSuite(TestSuite suite) {
 		this.testSuite = suite;
+	}
+
+	/** package **/
+	void setIteration(Iteration iteration) {
+		this.iteration = iteration;
+
 	}
 
 }
