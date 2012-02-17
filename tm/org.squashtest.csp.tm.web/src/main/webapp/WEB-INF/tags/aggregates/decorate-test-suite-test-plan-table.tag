@@ -181,7 +181,7 @@
 	//for drag and drop test case feature
 	//row : selected row
 	//dropPosition : the new position
-	function testPlanDropHandler(row, dropPosition) {
+	function testPlanDropHandler(rows, dropPosition) {
 		var itemIds = $(rows).collect(function(elt){return elt.id.split(':')[1];});
 		$.post('${ updateTestPlanUrl }/move', { newIndex : dropPosition, itemIds : itemIds }, function() {
 			refreshTestPlans();

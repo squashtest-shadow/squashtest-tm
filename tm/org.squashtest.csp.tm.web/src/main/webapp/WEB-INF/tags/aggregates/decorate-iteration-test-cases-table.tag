@@ -191,7 +191,7 @@
 		return rowData[1];
 	}
 	function isTestCaseDeleted(data){
-		return (data[9]=="true");
+		return (data[10]=="true");
 	}
 	
 
@@ -232,7 +232,7 @@
 	function addLoginListToTestPlan(row, data){
 		if (! isTestCaseDeleted(data)){
 			var id = getTestPlansTableRowId(data);
-			$('td:eq(6)', row).load("${assignableUsersUrl}" + "?testPlanId="+ id +"");
+			$('td:eq(7)', row).load("${assignableUsersUrl}" + "?testPlanId="+ id +"");
 		}
 	}
 
@@ -252,7 +252,7 @@
 		if (rows.length==0) return;
 		
 		$(rows).each(function(){
-			var col=$("td:eq(5)", this);
+			var col=$("td:eq(6)", this);
 			var oldContent=col.html();
 			
 			var newContent = factory.getDisplayableStatus(oldContent);	
@@ -325,8 +325,8 @@
 		<dt:column-definition targets="0" visible="false" />
 		<dt:column-definition targets="1" sortable="false" cssClass="centered ui-state-default drag-handle select-handle" />
 		<dt:column-definition targets="2, 3, 4" sortable="false" />
-		<dt:column-definition targets="5, 6, 7, 8" sortable="false" width="12em"/>
-		<dt:column-definition targets="9" sortable="false" visible="false" />
-		<dt:column-definition targets="10" sortable="false" width="2em" lastDef="true" cssClass="centered"/>
+		<dt:column-definition targets="5, 6, 7, 8, 9" sortable="false" width="12em"/>
+		<dt:column-definition targets="10" sortable="false" visible="false" />
+		<dt:column-definition targets="11" sortable="false" width="2em" lastDef="true" cssClass="centered"/>
 	</jsp:attribute>
 </comp:decorate-ajax-table>

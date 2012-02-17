@@ -29,6 +29,7 @@
 			<th>#</th>
 			<th><f:message key="iteration.executions.table.column-header.project.label" /></th>
 			<th><f:message key="iteration.executions.table.column-header.test-case.label" /></th>
+			<th><f:message key="iteration.executions.table.column-header.importance.label" /></th>
 			<th><f:message key="iteration.executions.table.column-header.type.label" /></th>
 			<th><f:message key="iteration.executions.table.column-header.suite.label" /></th>
 			<th><f:message key="iteration.executions.table.column-header.status.label" /></th>

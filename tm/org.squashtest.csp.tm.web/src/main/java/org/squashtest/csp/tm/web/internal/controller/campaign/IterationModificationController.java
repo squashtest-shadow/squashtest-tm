@@ -55,6 +55,7 @@ import org.squashtest.csp.tm.domain.execution.ExecutionStatus;
 import org.squashtest.csp.tm.domain.project.Project;
 import org.squashtest.csp.tm.domain.testcase.TestCase;
 import org.squashtest.csp.tm.domain.testcase.TestCaseExecutionMode;
+import org.squashtest.csp.tm.domain.testcase.TestCaseImportance;
 import org.squashtest.csp.tm.infrastructure.filter.CollectionSorting;
 import org.squashtest.csp.tm.infrastructure.filter.FilteredCollectionHolder;
 import org.squashtest.csp.tm.service.IterationModificationService;
@@ -94,14 +95,15 @@ public class IterationModificationController {
 	private MessageSource messageSource;
 
 	private final DataTableMapper testPlanMapper = new DataTableMapper("unused", IterationTestPlanItem.class,
-			TestCase.class, Project.class, TestSuite.class).initMapping(9)
+			TestCase.class, Project.class, TestSuite.class).initMapping(10)
 			.mapAttribute(Project.class, 2, "name", String.class)
 			.mapAttribute(TestCase.class, 3, "name", String.class)
-			.mapAttribute(TestCase.class, 4, "executionMode", TestCaseExecutionMode.class)
-			.mapAttribute(IterationTestPlanItem.class, 5, "executionStatus", ExecutionStatus.class)
-			.mapAttribute(TestSuite.class, 6, "name", String.class)
-			.mapAttribute(IterationTestPlanItem.class, 7, "lastExecutedBy", String.class)
-			.mapAttribute(IterationTestPlanItem.class, 8, "lastExecutedOn", Date.class);
+			.mapAttribute(TestCase.class, 4, "importance", TestCaseImportance.class)
+			.mapAttribute(TestCase.class, 5, "executionMode", TestCaseExecutionMode.class)
+			.mapAttribute(IterationTestPlanItem.class, 6, "executionStatus", ExecutionStatus.class)
+			.mapAttribute(TestSuite.class, 7, "name", String.class)
+			.mapAttribute(IterationTestPlanItem.class, 8, "lastExecutedBy", String.class)
+			.mapAttribute(IterationTestPlanItem.class, 9, "lastExecutedOn", Date.class);
 
 	@RequestMapping(method = RequestMethod.GET)
 	public ModelAndView showIteration(@PathVariable long iterationId) {
@@ -361,6 +363,7 @@ public class IterationModificationController {
 
 				String projectName;
 				String testCaseName;
+				String importance;
 				String testCaseExecutionMode;
 				
 				String testSuiteName;
@@ -369,9 +372,11 @@ public class IterationModificationController {
 					projectName = formatNoData(locale);
 					testCaseName = formatDeleted(locale);
 					testCaseExecutionMode = formatNoData(locale);
+					importance = formatNoData(locale);
 				} else {
 					projectName = item.getReferencedTestCase().getProject().getName();
 					testCaseName = item.getReferencedTestCase().getName();
+					importance = formatImportance(item.getReferencedTestCase().getImportance(), locale);
 					testCaseExecutionMode = formatExecutionMode(item.getReferencedTestCase().getExecutionMode(), locale);
 				}
 				
@@ -381,10 +386,12 @@ public class IterationModificationController {
 					testSuiteName = item.getTestSuite().getName();
 				}
 
-				return new Object[] { item.getId(), 
+				return new Object[] { 
+						item.getId(), 
 						getCurrentIndex(), 
 						projectName, 
 						testCaseName,
+						importance,
 						testCaseExecutionMode, 
 						testSuiteName,
 						formatStatus(item.getExecutionStatus(), locale),
@@ -473,6 +480,11 @@ public class IterationModificationController {
 
 	private String formatStatus(ExecutionStatus status, Locale locale) {
 		return messageSource.getMessage(status.getI18nKey(), null, locale);
+	}
+	
+	
+	private String formatImportance(TestCaseImportance importance,  Locale locale){
+		return messageSource.getMessage(importance.getI18nKey(), null, locale);
 	}
 	
 	private String formatNone(Locale locale){
