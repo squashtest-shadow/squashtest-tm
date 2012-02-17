@@ -480,7 +480,7 @@ public class Iteration implements AttachmentHolder {
 		suite.setIteration(this);
 	}
 
-	boolean checkSuiteNameAvailable(String name) {
+	public boolean checkSuiteNameAvailable(String name) {
 		for (TestSuite suite : testSuites) {
 			if (suite.getName().equals(name)) {
 				return false;

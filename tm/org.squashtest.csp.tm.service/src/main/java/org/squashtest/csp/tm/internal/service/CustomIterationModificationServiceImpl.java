@@ -293,10 +293,23 @@ public class CustomIterationModificationServiceImpl implements CustomIterationMo
 		List<IterationTestPlanItem> copyOfTestPlan = testSuite.createPastableCopyOfTestPlan();
 		TestSuite copyOfTestSuite = testSuite.createPastableCopy();
 		iterationTestPlanManagerService.addTestPlanToIteration(copyOfTestPlan, iterationId);
+		renameTestSuiteIfNecessary(copyOfTestSuite, iterationId);
 		addTestSuite(iterationId, copyOfTestSuite);
 		List<Long> itemTestPlanIds = listTestPlanIds(copyOfTestPlan);
 		testSuiteModificationService.bindTestPlan(copyOfTestSuite.getId(), itemTestPlanIds);
 		return copyOfTestSuite;
+	}
+
+	private void renameTestSuiteIfNecessary(TestSuite copyOfTestSuite, Long iterationId) {
+		Iteration iteration = iterationDao.findById(iterationId);
+		String originalSuiteName = copyOfTestSuite.getName();
+		String newName = originalSuiteName;
+		int numberOfCopy = 0;
+		while (!iteration.checkSuiteNameAvailable(newName)) {
+			numberOfCopy++;
+			newName = originalSuiteName + "_Copie" + numberOfCopy;
+		}
+		copyOfTestSuite.setName(newName);
 	}
 
 	private List<Long> listTestPlanIds(List<IterationTestPlanItem> copyOfTestPlan) {

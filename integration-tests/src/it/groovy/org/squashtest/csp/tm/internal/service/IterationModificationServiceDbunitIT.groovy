@@ -62,16 +62,16 @@ class IterationModificationServiceDbunitIT extends DbunitServiceSpecification {
 		
 	}
 	
-//	@DataSet("IterationModificationServiceDbunitIT.should copy-paste a TestSuite.xml")
-//	def "should copy-paste a TestSuite and rename it depending on TestSuites at destination"(){
-//		given:
-//		def testSuiteId = 1L
-//		def iterationId = 10L
-//
-//		when :
-//		TestSuite copyOfSuite = iterService.copyPasteTestSuiteToIteration (testSuiteId, iterationId)
-//		
-//		then :
-//		copyOfSuite.getName() == "suite de test 1_Copie1"
-//	}
+	@DataSet("IterationModificationServiceDbunitIT.should copy-paste a TestSuite and rename it.xml")
+	def "should copy-paste a TestSuite and rename it depending on TestSuites at destination"(){
+		given:
+		def testSuiteId = 1L
+		def iterationId = 1L
+
+		when :
+		TestSuite copyOfSuite = iterService.copyPasteTestSuiteToIteration (testSuiteId, iterationId)
+		
+		then :
+		copyOfSuite.getName() == "suite de test 1_Copie1"
+	}
 }

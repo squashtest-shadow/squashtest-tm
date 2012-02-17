@@ -113,7 +113,8 @@ public interface CustomIterationModificationService {
 
 	/**
 	 * <p>
-	 * will create a copy of the test suite and it's test plan , then associate it to the given iteration
+	 * will create a copy of the test suite and it's test plan , then associate it to the given iteration<br>
+	 * will rename test suite if there is name conflict at destination
 	 * </p>
 	 * 
 	 * @param testSuiteId
