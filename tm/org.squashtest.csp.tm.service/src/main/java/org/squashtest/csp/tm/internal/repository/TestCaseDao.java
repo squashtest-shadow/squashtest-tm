@@ -28,6 +28,7 @@ import org.squashtest.csp.tm.domain.requirement.RequirementSearchCriteria;
 import org.squashtest.csp.tm.domain.testcase.ActionTestStep;
 import org.squashtest.csp.tm.domain.testcase.TestCase;
 import org.squashtest.csp.tm.domain.testcase.TestCaseLibraryNode;
+import org.squashtest.csp.tm.domain.testcase.TestCaseSearchCriteria;
 import org.squashtest.csp.tm.domain.testcase.TestStep;
 import org.squashtest.csp.tm.infrastructure.filter.CollectionFilter;
 import org.squashtest.csp.tm.infrastructure.filter.CollectionSorting;
@@ -175,5 +176,7 @@ public interface TestCaseDao extends EntityDao<TestCase> {
 	 * @return
 	 */
 	List<TestCase> findUnsortedAllByVerifiedRequirementVersion(long requirementId);
+	
+	List<TestCaseLibraryNode> findBySearchCriteria(TestCaseSearchCriteria criteria);
 
 }

@@ -36,6 +36,7 @@ import org.squashtest.csp.tm.domain.requirement.RequirementLibraryNode;
 import org.squashtest.csp.tm.domain.requirement.RequirementSearchCriteria;
 import org.squashtest.csp.tm.domain.testcase.TestCase;
 import org.squashtest.csp.tm.domain.testcase.TestCaseLibraryNode;
+import org.squashtest.csp.tm.domain.testcase.TestCaseSearchCriteria;
 import org.squashtest.csp.tm.internal.repository.CampaignDao;
 import org.squashtest.csp.tm.internal.repository.RequirementDao;
 import org.squashtest.csp.tm.internal.repository.TestCaseDao;
@@ -82,6 +83,13 @@ public class SearchServiceImpl implements SearchService {
 	@PostFilter("hasPermission(filterObject, 'READ') or hasRole('ROLE_ADMIN')")
 	public List<TestCaseLibraryNode> findTestCaseByName(String aName, boolean groupByProject) {
 		List<TestCaseLibraryNode> list = testCaseDao.findAllByNameContaining(aName, groupByProject);
+		return applyProjectFilter(list);
+	}
+	
+	@Override
+	@PostFilter("hasPermission(filterObject, 'READ') or hasRole('ROLE_ADMIN')")
+	public List<TestCaseLibraryNode> findTestCase(TestCaseSearchCriteria criteria){
+		List<TestCaseLibraryNode> list = testCaseDao.findBySearchCriteria(criteria);
 		return applyProjectFilter(list);
 	}
 

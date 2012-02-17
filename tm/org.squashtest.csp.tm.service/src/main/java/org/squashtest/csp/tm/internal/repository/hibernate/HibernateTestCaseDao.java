@@ -26,14 +26,18 @@ import java.util.LinkedList;
 import java.util.List;
 
 import org.apache.commons.collections.CollectionUtils;
+import org.apache.commons.lang.StringUtils;
 import org.hibernate.Criteria;
 import org.hibernate.Hibernate;
 import org.hibernate.Query;
 import org.hibernate.Session;
+import org.hibernate.criterion.Criterion;
 import org.hibernate.criterion.DetachedCriteria;
 import org.hibernate.criterion.MatchMode;
 import org.hibernate.criterion.Order;
+import org.hibernate.criterion.Projections;
 import org.hibernate.criterion.Restrictions;
+import org.hibernate.transform.ResultTransformer;
 import org.hibernate.type.LongType;
 import org.springframework.stereotype.Repository;
 import org.squashtest.csp.core.infrastructure.collection.PagingAndSorting;
@@ -42,7 +46,9 @@ import org.squashtest.csp.core.infrastructure.hibernate.SortingUtils;
 import org.squashtest.csp.tm.domain.requirement.RequirementSearchCriteria;
 import org.squashtest.csp.tm.domain.testcase.ActionTestStep;
 import org.squashtest.csp.tm.domain.testcase.TestCase;
+import org.squashtest.csp.tm.domain.testcase.TestCaseImportance;
 import org.squashtest.csp.tm.domain.testcase.TestCaseLibraryNode;
+import org.squashtest.csp.tm.domain.testcase.TestCaseSearchCriteria;
 import org.squashtest.csp.tm.domain.testcase.TestStep;
 import org.squashtest.csp.tm.infrastructure.filter.CollectionFilter;
 import org.squashtest.csp.tm.infrastructure.filter.CollectionSorting;
@@ -423,5 +429,42 @@ public class HibernateTestCaseDao extends HibernateEntityDao<TestCase> implement
 		query.setParameter("requirementVersionId", requirementVersionId);
 		return query.list();
 	}
-
+	
+	@Override
+	public List<TestCaseLibraryNode> findBySearchCriteria(TestCaseSearchCriteria criteria){
+		Criteria hCriteria;
+		
+		if (usesImportance(criteria)){
+			hCriteria = testCaseRootedCriteria(criteria);
+		}else{
+			hCriteria = tcNodeRootedCriteria(criteria); 
+		}
+		
+		hCriteria.addOrder(Order.asc("name"));
+		
+		if (StringUtils.isNotBlank(criteria.getName())){
+			hCriteria.add(Restrictions.ilike("name", criteria.getName(), MatchMode.ANYWHERE));
+		}
+											 
+		if (criteria.isGroupByProject()){
+			hCriteria.setProjection(Projections.projectionList().add(Projections.groupProperty("project")));
+		}
+		
+		return hCriteria.list();
+		
+											
+	}
+	
+	private boolean usesImportance(TestCaseSearchCriteria criteria){
+		return (criteria.getImportanceFilterSet().size() != TestCaseImportance.values().length);
+	}
+	
+	private Criteria testCaseRootedCriteria(TestCaseSearchCriteria criteria){
+		return currentSession().createCriteria(TestCase.class)
+									 .add(Restrictions.in("importance", criteria.getImportanceFilterSet()));		
+	}
+	
+	private Criteria tcNodeRootedCriteria(TestCaseSearchCriteria criteria){
+		return currentSession().createCriteria(TestCaseLibraryNode.class);
+	}
 }

@@ -27,12 +27,16 @@ import org.squashtest.csp.tm.domain.requirement.RequirementLibraryNode;
 import org.squashtest.csp.tm.domain.requirement.RequirementSearchCriteria;
 import org.squashtest.csp.tm.domain.testcase.TestCase;
 import org.squashtest.csp.tm.domain.testcase.TestCaseLibraryNode;
+import org.squashtest.csp.tm.domain.testcase.TestCaseSearchCriteria;
 
 public interface SearchService {
 
 	List<CampaignLibraryNode> findCampaignByName(String aName, boolean groupByProject);
 
+	@Deprecated //since 12/02/17, remove it if you see this comment and if task 384-04 is done.
 	List<TestCaseLibraryNode> findTestCaseByName(String aName, boolean groupByProject);
+	
+	List<TestCaseLibraryNode> findTestCase(TestCaseSearchCriteria criteria);
 
 	List<RequirementLibraryNode> findAllBySearchCriteria(RequirementSearchCriteria criteria);
 

@@ -53,17 +53,18 @@ public class SearchController {
 		this.searchService = searchService;
 	}
 
-	@RequestMapping(value = "/test-cases", method = RequestMethod.GET, params = { "order" })
-	public ModelAndView searchOrderedTestCases(@RequestParam("name") String name, @RequestParam String order) {
+	@RequestMapping(value = "/test-cases", method = RequestMethod.GET, params = { "order", "importance[]" })
+	public ModelAndView searchOrderedTestCases(@RequestParam("name") String name, @RequestParam("order") Boolean order, 
+			@RequestParam("importance[]") String[] importance) {
 		LOGGER.info("SQUASH INFO: TRY TestCase search with name : " + name);
 
-		boolean isOrdered = Boolean.parseBoolean(order);
-
-		List<TestCaseLibraryNode> resultList = searchService.findTestCaseByName(name, isOrdered);
+		TestCaseSearchCriteriaAdapter criteria = new TestCaseSearchCriteriaAdapter(name, order, importance);
+		
+		List<TestCaseLibraryNode> resultList = searchService.findTestCase(criteria);
 
 		LOGGER.info("SQUASH INFO: DONE TestCase search with name : " + name);
 		ModelAndView mav;
-		if (isOrdered == true) {
+		if (order == true) {
 			mav = new ModelAndView("fragment/generics/search-result-display-ordered");
 		} else {
 			mav = new ModelAndView("fragment/generics/search-result-display");

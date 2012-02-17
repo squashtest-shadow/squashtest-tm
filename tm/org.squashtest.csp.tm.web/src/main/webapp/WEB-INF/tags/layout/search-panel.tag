@@ -21,7 +21,10 @@
 
 --%>
 <%-- 
+
 	TODO : dump this pile of **** and put something decent in place of it.
+	-- bsiri
+	
 --%>
 <%@ taglib uri="http://java.sun.com/jsp/jstl/core" prefix="c" %>
 <%@ taglib uri="http://java.sun.com/jsp/jstl/fmt" prefix="f"%>
@@ -53,7 +56,7 @@
 	
 	$(function(){
 		
-		addSearchParams();	
+		setup();	
 		getOldSearch();
 		$( "#tabbed-pane" ).bind( "tabsshow", function(event, ui) {
 			<c:if test="${workspace == 'requirement'}">
@@ -87,7 +90,7 @@
 		table.fnSort([[parseInt(value),'asc']]);
 	}
 	
-	function addSearchParams(){
+	function setup(){
 		<c:choose>
 		<c:when test="${ workspace eq 'requirement' || linkable eq 'requirement' }" >
 			<c:choose>
@@ -149,6 +152,7 @@
 			if (document.getElementById("linkable-test-cases-tree") != null){
 				data['name'] = rename;
 				data['order'] = order;
+				data['importance'] = getImportanceParams();
 				url = '${searchTCUrl}';
 			}
 			else{
@@ -162,6 +166,7 @@
 		<c:if test="${ (workspace eq 'requirement' && linkable eq 'test-case') }" >
 			data['name'] = rename;
 			data['order'] = order;
+			data['importance'] = getImportanceParams();
 			url = '${searchTCUrl}';
 		</c:if>
 		
@@ -301,6 +306,12 @@
 		critValue[2] = $('#crit-3').attr('checked');
 		critValue[3] = $('#crit-4').attr('checked');
 		return critValue;	
+	}
+	
+	function getImportanceParams(){
+		return $(".search-panel-tc-importance input:checked").collect(function(elt){
+			return $(elt).data('value');
+		});
 	}
 	
 	function testEmptyCriticality (){
@@ -447,10 +458,10 @@
 					<div class="caption">
 						<span class="gray-text"><f:message key="search.test-case.importance.filter"/></span>
 					</div><div class="options">
-						<div class="search-tc-importance-1"><input type="checkbox" id="importance-1"/><span><f:message key="test-case.importance.LOW"/></span></div>
-						<div class="search-tc-importance-2"><input type="checkbox" id="importance-2"/><span><f:message key="test-case.importance.MEDIUM"/></span></div>				
-						<div class="search-tc-importance-3"><input type="checkbox" id="importance-3"/><span><f:message key="test-case.importance.HIGH"/></span></div>
-						<div class="search-tc-importance-4"><input type="checkbox" id="importance-4"/><span><f:message key="test-case.importance.VERY_HIGH"/></span></div>
+						<div class="search-tc-importance-1"><input type="checkbox" id="importance-1" data-value="LOW"/><span><f:message key="test-case.importance.LOW"/></span></div>
+						<div class="search-tc-importance-2"><input type="checkbox" id="importance-2" data-value="MEDIUM"/><span><f:message key="test-case.importance.MEDIUM"/></span></div>				
+						<div class="search-tc-importance-3"><input type="checkbox" id="importance-3" data-value="HIGH"/><span><f:message key="test-case.importance.HIGH"/></span></div>
+						<div class="search-tc-importance-4"><input type="checkbox" id="importance-4" data-value="VERY_HIGH"/><span><f:message key="test-case.importance.VERY_HIGH"/></span></div>
 					</div>
 				</div>
 			</td></tr>		
