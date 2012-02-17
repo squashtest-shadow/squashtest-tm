@@ -30,6 +30,7 @@ import org.squashtest.csp.tm.internal.repository.LibraryNodeDao;
 import org.squashtest.csp.tm.internal.service.CampaignTestPlanManagerServiceImplTest.MockTC
 import org.squashtest.csp.tm.internal.service.CampaignTestPlanManagerServiceImplTest.MockTCF
 
+import org.squashtest.csp.tools.unittest.reflection.ReflectionCategory
 import spock.lang.Specification;
 
 public class IterationTestPlanManagerServiceImplTest extends Specification {
@@ -52,6 +53,9 @@ public class IterationTestPlanManagerServiceImplTest extends Specification {
 		given: "a campaign"
 		Iteration iteration = new Iteration()
 		iterDao.findById(10) >> iteration
+		use(ReflectionCategory){
+			Iteration.set field:"id", of:iteration, to:10L
+		}
 
 		and : "a bunch of folders and testcases"
 		def folder1 = new MockTCF(1L, "f1")

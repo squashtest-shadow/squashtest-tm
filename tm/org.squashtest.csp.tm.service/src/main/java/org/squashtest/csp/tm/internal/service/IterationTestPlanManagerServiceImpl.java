@@ -127,22 +127,21 @@ public class IterationTestPlanManagerServiceImpl implements IterationTestPlanMan
 	@PreAuthorize("hasPermission(#iterationId, 'org.squashtest.csp.tm.domain.campaign.Iteration', 'WRITE') "
 			+ "or hasRole('ROLE_ADMIN')")
 	public void addTestCasesToIteration(final List<Long> objectsIds, long iterationId) {
-		
+
 		Iteration iteration = iterationDao.findById(iterationId);
-		
+
 		addTestPlanItemsToIteration(objectsIds, iteration);
 	}
-	
+
 	@Override
-	@PreAuthorize("hasPermission(#iteration, 'WRITE') "
-			+ "or hasRole('ROLE_ADMIN')")
-	public List<IterationTestPlanItem> addTestPlanItemsToIteration(final List<Long> objectsIds, Iteration iteration) {
-		
+	@PreAuthorize("hasPermission(#iteration, 'WRITE') " + "or hasRole('ROLE_ADMIN')")
+	public List<IterationTestPlanItem> addTestPlanItemsToIteration(final List<Long> testNodesIds, Iteration iteration) {
+
 		// nodes are returned unsorted
-		List<TestCaseLibraryNode> nodes = testCaseLibraryNodeDao.findAllByIdList(objectsIds);
+		List<TestCaseLibraryNode> nodes = testCaseLibraryNodeDao.findAllByIdList(testNodesIds);
 
 		// now we resort them according to the order in which the testcaseids were given
-		IdentifiersOrderComparator comparator = new IdentifiersOrderComparator(objectsIds);
+		IdentifiersOrderComparator comparator = new IdentifiersOrderComparator(testNodesIds);
 		Collections.sort(nodes, comparator);
 
 		List<TestCase> testCases = new TestCaseNodeWalker().walk(nodes);
@@ -153,7 +152,8 @@ public class IterationTestPlanManagerServiceImpl implements IterationTestPlanMan
 			IterationTestPlanItem itp = new IterationTestPlanItem(testCase);
 			testPlan.add(itp);
 		}
-		addTestPlanToIteration(testPlan, iterationId);
+		addTestPlanToIteration(testPlan, iteration.getId());
+		return testPlan;
 	}
 
 	@Override
@@ -164,9 +164,8 @@ public class IterationTestPlanManagerServiceImpl implements IterationTestPlanMan
 		for (IterationTestPlanItem itp : testPlan) {
 			itemTestPlanDao.persist(itp);
 			iteration.addTestPlan(itp);
-			testPlanItemsList.add(itp);
 		}
-		return testPlanItemsList;
+
 	}
 
 	@Override
