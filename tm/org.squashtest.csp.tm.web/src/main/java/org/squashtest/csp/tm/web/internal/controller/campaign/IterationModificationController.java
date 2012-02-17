@@ -157,7 +157,12 @@ public class IterationModificationController {
 		};
 
 	}
-
+	
+	@RequestMapping(value="/duplicateTestSuite/{testSuiteId}", method=RequestMethod.POST)
+	public @ResponseBody Long duplicateTestSuite(@PathVariable("iterationId") Long iterationId , @PathVariable("testSuiteId") Long testSuiteId ){
+		TestSuite duplicate = iterationModService.copyPasteTestSuiteToIteration(testSuiteId, iterationId);
+		return duplicate.getId();
+	}
 
 	@RequestMapping(value = "/general", method = RequestMethod.GET)
 	public ModelAndView refreshGeneralInfos(@PathVariable long iterationId) {

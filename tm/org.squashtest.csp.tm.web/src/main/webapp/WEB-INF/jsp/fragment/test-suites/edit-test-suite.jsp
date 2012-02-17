@@ -46,6 +46,10 @@
 <s:url var="testSuiteUrl" value="/test-suites/{testSuiteId}">
 	<s:param name="testSuiteId" value="${testSuite.id}" />
 </s:url>
+<s:url var="duplicateTestSuiteUrl" value="/iterations/{iterationId}/duplicateTestSuite/{testSuiteId}">
+	<s:param name="testSuiteId" value="${testSuite.id}" />
+	<s:param name="iterationId" value="${testSuite.iteration.id}" />
+</s:url>
 
 <s:url var="testSuiteInfoUrl" value="/test-suites/{testSuiteId}/general">
 	<s:param name="testSuiteId" value="${testSuite.id}" />
@@ -114,7 +118,18 @@
 		$('#test-suite-name').html(name);
 		refreshTestSuiteInfos();
 	}
-
+	$("#duplicate-test-suite-button").click(function() {
+		duplicateTestSuite().done(function(){alert("success");});
+	});
+	
+	function duplicateTestSuite(){
+		return $.ajax({
+			'url' : '${duplicateTestSuiteUrl}',
+			type : 'POST',
+			data : [],
+			dataType : 'json'
+		});
+	}
 	/* renaming success handler */
 	function renameTestSuiteSuccess(data){
 		nodeSetname(data.newName);
@@ -226,6 +241,8 @@
 		<c:if test="${ editable }">	
 			<input type="button" value='<f:message key="test-suite.button.rename.label" />' id="rename-test-suite-button" class="button"/> 
 			<input type="button" value='<f:message key="test-suite.button.remove.label" />' id="delete-test-suite-button" class="button"/>		
+			<input type="button" value='<f:message key="test-suite.button.duplicate.label" />' id="duplicate-test-suite-button" class="button"/>		
+		
 		</c:if>
 	</div>	
 	<div style="clear:both;"></div>	
