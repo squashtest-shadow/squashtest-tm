@@ -144,7 +144,7 @@ div#tabbed-pane > ul {
     left: 2px;
     padding-top: 0;
     position: absolute;
-    top: 2.5cm;
+    top: 4.7cm;
     right: 2px;
 }
 
@@ -170,13 +170,46 @@ img.search-image{
 	border: none;
 }
 
-div#search-input {
+#search-input {
 	padding: 0;
 	position: relative;
 	top: -0.9cm;
 }
 
-div#by-requirement-search-input {
+#search-input .search-panel-tc-importance {
+	margin-top:	0.5em;
+	margin-bottom: 0.5em;
+}
+
+.search-panel-tc-importance .caption {
+	width : 35%;
+	display:inline-block;
+}
+
+.search-panel-tc-importance .options {
+	width : 64%;
+	display:inline-block;
+	vertical-align:top;	
+}
+
+.search-panel-tc-importance .search-tc-importance-1 {
+	background-color:	#ECF8E0;
+}
+
+.search-panel-tc-importance .search-tc-importance-2 {
+	background-color:	#E3F6CE;
+}
+
+.search-panel-tc-importance .search-tc-importance-3 {
+	background-color:	#D0F5A9;
+}
+
+.search-panel-tc-importance .search-tc-importance-4 {
+	background-color:	#BEF781;
+}
+
+
+#by-requirement-search-input {
 	padding: 0;
 	position: relative;
 	top: -0.9cm;

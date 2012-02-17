@@ -20,6 +20,9 @@
         along with this software.  If not, see <http://www.gnu.org/licenses/>.
 
 --%>
+<%-- 
+	TODO : dump this pile of **** and put something decent in place of it.
+--%>
 <%@ taglib uri="http://java.sun.com/jsp/jstl/core" prefix="c" %>
 <%@ taglib uri="http://java.sun.com/jsp/jstl/fmt" prefix="f"%>
 <%@ taglib prefix="s" uri="http://www.springframework.org/tags"%>
@@ -437,11 +440,28 @@
 		</c:if>
 		</c:if>
 		
+		
+		<c:if test="${(workspace eq 'test-case' || linkable eq 'test-case' )}">		
+			<tr> <td>
+				<div class="search-panel-tc-importance">
+					<div class="caption">
+						<span class="gray-text"><f:message key="search.test-case.importance.filter"/></span>
+					</div><div class="options">
+						<div class="search-tc-importance-1"><input type="checkbox" id="importance-1"/><span><f:message key="test-case.importance.LOW"/></span></div>
+						<div class="search-tc-importance-2"><input type="checkbox" id="importance-2"/><span><f:message key="test-case.importance.MEDIUM"/></span></div>				
+						<div class="search-tc-importance-3"><input type="checkbox" id="importance-3"/><span><f:message key="test-case.importance.HIGH"/></span></div>
+						<div class="search-tc-importance-4"><input type="checkbox" id="importance-4"/><span><f:message key="test-case.importance.VERY_HIGH"/></span></div>
+					</div>
+				</div>
+			</td></tr>		
+		</c:if>		
+		
 		<tr> <td>
 			<input type="checkbox" id="project-view" /> <span class="gray-text"> <f:message key="search.project.view"/> </span>
 		</td> </tr>
 		<f:message key="search.button.label" var="searchLabel"/>
 		<tr> <td style="text-align: center;"> <input type="button" id="search-button" value="${ searchLabel }"/> </td> </tr>
+
 		
 		<c:if test="${ (workspace eq 'requirement' || linkable eq 'requirement')}">
 		<c:if test="${ not empty linkable && linkable != 'test-case' }">
