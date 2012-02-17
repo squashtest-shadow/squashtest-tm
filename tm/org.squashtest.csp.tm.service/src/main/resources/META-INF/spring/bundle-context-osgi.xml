@@ -33,12 +33,13 @@
 		is to facilitate integration testing of the bundle outside of an OSGi container -->
 
 	<!-- ====== SERVICES EXPOSED BY THIS BUNDLE ====== -->
-	
 
-	
-	<!-- service reference injection  -->
-	<bean class="org.springframework.osgi.extensions.annotation.ServiceReferenceInjectionBeanPostProcessor" />	
-	
+
+
+	<!-- service reference injection -->
+	<bean
+		class="org.springframework.osgi.extensions.annotation.ServiceReferenceInjectionBeanPostProcessor" />
+
 	<!-- ========= Bugtracker ============= -->
 	<osgi:service ref="squashtest.core.bugtracker.BugTrackerContextHolder"
 		interface="org.squashtest.csp.core.bugtracker.service.BugTrackerContextHolder" />
@@ -85,9 +86,9 @@
 
 	<osgi:service ref="squashtest.tm.service.VerifyingTestCaseManagerService"
 		interface="org.squashtest.csp.tm.service.VerifyingTestCaseManagerService" />
-		
+
 	<osgi:service ref="squashtest.tm.service.CallStepManagerService"
-		interface="org.squashtest.csp.tm.service.CallStepManagerService" />	
+		interface="org.squashtest.csp.tm.service.CallStepManagerService" />
 
 	<osgi:service ref="squashtest.tm.service.CampaignTestPlanManagerService"
 		interface="org.squashtest.csp.tm.service.CampaignTestPlanManagerService" />
@@ -101,8 +102,12 @@
 	<osgi:service ref="squashtest.tm.service.ProjectManagerService"
 		interface="org.squashtest.csp.tm.service.ProjectManagerService" />
 
-	<osgi:service ref="squashtest.tm.service.IterationTestPlanManagerService"
-		interface="org.squashtest.csp.tm.service.IterationTestPlanManagerService" />
+	<osgi:service ref="squashtest.tm.service.IterationTestPlanManagerService">
+		<osgi:interfaces>
+			<value>org.squashtest.csp.tm.service.IterationTestPlanManagerService</value>
+			<value>org.squashtest.csp.tm.service.IterationTestPlanFinder</value>
+		</osgi:interfaces>
+	</osgi:service>
 
 	<osgi:service ref="squashtest.tm.service.AttachmentManagerService"
 		interface="org.squashtest.csp.tm.service.AttachmentManagerService" />
@@ -128,28 +133,30 @@
 
 	<osgi:service ref="squashtest.tm.service.ReportService"
 		interface="org.squashtest.csp.tm.service.ReportService" />
-		
+
 	<osgi:service ref="squashtest.tm.service.ProjectFilterModificationService"
 		interface="org.squashtest.csp.tm.service.ProjectFilterModificationService" />
-		
+
 	<osgi:service ref="squashtest.tm.service.SearchService"
 		interface="org.squashtest.csp.tm.service.SearchService" />
-		
+
 	<osgi:service ref="squashtest.tm.service.UserAccountService"
 		interface="org.squashtest.csp.tm.service.UserAccountService" />
-		
+
 	<osgi:service ref="squashtest.tm.service.AdministrationService"
 		interface="org.squashtest.csp.tm.service.AdministrationService" />
-	
-	<osgi:service ref="squashtest.tm.service.ProjectsPermissionManagementService"
+
+	<osgi:service
+		ref="squashtest.tm.service.ProjectsPermissionManagementService"
 		interface="org.squashtest.csp.tm.service.ProjectsPermissionManagementService" />
-		
-	<osgi:service ref="squashtest.tm.service.audit.RequirementAuditTrailService"
+
+	<osgi:service
+		ref="squashtest.tm.service.audit.RequirementAuditTrailService"
 		interface="org.squashtest.csp.tm.service.audit.RequirementAuditTrailService" />
 
 	<osgi:service ref="squashtest.tm.service.RequirementVersionManagerService"
 		interface="org.squashtest.csp.tm.service.RequirementVersionManagerService" />
-		
+
 	<osgi:service ref="squashtest.tm.service.TestSuiteModificationService"
 		interface="org.squashtest.csp.tm.service.TestSuiteModificationService" />
 
@@ -157,7 +164,7 @@
 		interface="org.squashtest.csp.tm.service.TestSuiteTestPlanManagerService" />
 
 	<!-- ====== SERVICES CONSUMED BY THIS BUNDLE ====== -->
-	<!--  Jdbc Datasource -->
+	<!-- Jdbc Datasource -->
 	<osgi:reference id="squashtest.core.persistence.jdbc.DataSource"
 		bean-name="squashtest.core.persistence.jdbc.DataSource" interface="javax.sql.DataSource"
 		availability="mandatory" />
@@ -173,27 +180,31 @@
 	<!-- Bugtracker connector -->
 	<osgi:reference id="squashtest.core.bugtracker.BugTrackerConnectorFactory"
 		bean-name="squashtest.core.bugtracker.BugTrackerConnectorFactory"
-		interface="org.squashtest.csp.core.bugtracker.core.BugTrackerConnectorFactory" availability="mandatory" />
+		interface="org.squashtest.csp.core.bugtracker.core.BugTrackerConnectorFactory"
+		availability="mandatory" />
 
 	<!-- Security related service FIXME : REMOVE THE UNUSED SERVICES -->
-	<osgi:reference id="squashtest.core.user.UserContextService" 
-		bean-name="squashtest.core.user.UserContextService" 
-		interface="org.squashtest.csp.core.service.security.UserContextService" availability="mandatory"/>
-		
-	 	
-	 <osgi:reference id="squashtest.core.security.UserAuthenticationService"
-		interface="org.squashtest.csp.core.service.security.UserAuthenticationService" 
-		availability="mandatory"/>	 	
-		
-	 <osgi:reference id="squashtest.core.security.AdministratorAuthenticationService"
-		interface="org.squashtest.csp.core.service.security.AdministratorAuthenticationService" 
-		availability="mandatory"/>	 				
-		
+	<osgi:reference id="squashtest.core.user.UserContextService"
+		bean-name="squashtest.core.user.UserContextService"
+		interface="org.squashtest.csp.core.service.security.UserContextService"
+		availability="mandatory" />
+
+
+	<osgi:reference id="squashtest.core.security.UserAuthenticationService"
+		interface="org.squashtest.csp.core.service.security.UserAuthenticationService"
+		availability="mandatory" />
+
+	<osgi:reference
+		id="squashtest.core.security.AdministratorAuthenticationService"
+		interface="org.squashtest.csp.core.service.security.AdministratorAuthenticationService"
+		availability="mandatory" />
+
 	<osgi:reference id="squashtest.core.security.PermissionEvaluator"
-		bean-name="squashtest.core.security.PermissionEvaluator"
-		interface="org.springframework.security.access.PermissionEvaluator" availability="mandatory" />
-	
-	<osgi:reference id="squashtest.core.security.ObjectAclService" bean-name="squashtest.core.security.AclService" availability="mandatory">
+		bean-name="squashtest.core.security.PermissionEvaluator" interface="org.springframework.security.access.PermissionEvaluator"
+		availability="mandatory" />
+
+	<osgi:reference id="squashtest.core.security.ObjectAclService"
+		bean-name="squashtest.core.security.AclService" availability="mandatory">
 		<osgi:interfaces>
 			<value>org.squashtest.csp.core.security.acls.model.ObjectAclService</value>
 		</osgi:interfaces>
@@ -201,26 +212,31 @@
 
 	<osgi:reference id="squashtest.core.configuration.ConfigurationService"
 		bean-name="squashtest.core.configuration.ConfigurationService"
-		interface="org.squashtest.csp.core.service.configuration.ConfigurationService" availability="mandatory" />
-	
+		interface="org.squashtest.csp.core.service.configuration.ConfigurationService"
+		availability="mandatory" />
+
 	<osgi:reference id="squashtest.core.security.ObjectIdentityService"
 		bean-name="squashtest.core.security.ObjectIdentityService"
-		interface="org.squashtest.csp.core.service.security.ObjectIdentityService" availability="mandatory" />
-	
-		
-	<osgi:reference id="squashtest.core.security.ObjectIdentityRetrievalStrategy"
+		interface="org.squashtest.csp.core.service.security.ObjectIdentityService"
+		availability="mandatory" />
+
+
+	<osgi:reference
+		id="squashtest.core.security.ObjectIdentityRetrievalStrategy"
 		bean-name="squashtest.core.security.ObjectIdentityRetrievalStrategy"
-		interface="org.springframework.security.acls.model.ObjectIdentityRetrievalStrategy" availability="mandatory" />
-		
-		
+		interface="org.springframework.security.acls.model.ObjectIdentityRetrievalStrategy"
+		availability="mandatory" />
+
+
 	<osgi:reference id="squashtest.core.security.PermissionEvaluationService"
 		bean-name="squashtest.core.security.PermissionEvaluationService"
-		interface="org.squashtest.csp.core.service.security.PermissionEvaluationService" availability="mandatory" />
-				
+		interface="org.squashtest.csp.core.service.security.PermissionEvaluationService"
+		availability="mandatory" />
+
 
 	<!-- Validation services -->
 	<osgi:reference id="javax.validation.ValidatorFactory"
-		bean-name="javax.validation.ValidatorFactory" 
-		interface="javax.validation.ValidatorFactory" availability="mandatory" />
-		
+		bean-name="javax.validation.ValidatorFactory" interface="javax.validation.ValidatorFactory"
+		availability="mandatory" />
+
 </beans>

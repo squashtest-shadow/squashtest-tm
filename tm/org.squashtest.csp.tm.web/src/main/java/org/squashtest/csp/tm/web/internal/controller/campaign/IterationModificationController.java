@@ -78,12 +78,16 @@ public class IterationModificationController {
 	@Inject
 	private PermissionEvaluationService permissionService;
 	
-	@Inject 
 	private IterationTestPlanFinder testPlanFinder;
 
 	@ServiceReference
 	public void setIterationModificationService(IterationModificationService iterationModificationService) {
 		this.iterationModService = iterationModificationService;
+	}
+	@ServiceReference
+	public void setIterationTestPlanFinder(IterationTestPlanFinder iterationTestPlanFinder) {
+		this.testPlanFinder = iterationTestPlanFinder;
+		int i = 5;
 	}
 
 	@Inject
