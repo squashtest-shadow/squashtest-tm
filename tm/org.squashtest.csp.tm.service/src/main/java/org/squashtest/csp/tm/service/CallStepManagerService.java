@@ -23,7 +23,6 @@ package org.squashtest.csp.tm.service;
 import java.util.List;
 import java.util.Set;
 
-import org.springframework.transaction.annotation.Transactional;
 import org.squashtest.csp.tm.domain.CyclicStepCallException;
 import org.squashtest.csp.tm.domain.testcase.TestCase;
 import org.squashtest.csp.tm.domain.testcase.TestCaseLibrary;
@@ -77,16 +76,5 @@ public interface CallStepManagerService {
 	 * @param testCaseId
 	 * @param copiedStepId
 	 */
-	void checkForCyclicStepCallBeforePaste(long destinationTestCaseId, String[] pastedStepsIds);
-	
-	/**
-	 * Used to check if the testPlan call tree is not cyclic before creating it's execution
-	 * This method is used to prevent infinite cycle in case of bugged data. 
-	 * 
-	 * if so :  a {@linkplain CyclicStepCallException} is thrown.
-	 * 
-	 * @param testPlanId
-	 */
-	void checkForCyclicStepCallBeforeExecutionCreation(Long testPlanId);
-	
+	void checkForCyclicStepCallBeforePaste(long destinationTestCaseId, String[] pastedStepsIds);	
 }

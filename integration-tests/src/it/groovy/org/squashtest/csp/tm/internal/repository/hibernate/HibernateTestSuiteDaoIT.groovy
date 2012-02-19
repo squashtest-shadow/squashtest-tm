@@ -60,8 +60,8 @@ class HibernateTestSuiteDaoIT extends DbunitDaoSpecification {
 		paging.getPageSize() >> 100
 
 		when :
-		List<IterationTestPlanItem> listTPI1 = testSuiteDao.findTestPlanPaged (1L, paging)
-		List<IterationTestPlanItem> listTPI2 = testSuiteDao.findTestPlanPaged (2L, paging)
+		List<IterationTestPlanItem> listTPI1 = testSuiteDao.findAllTestPlanItemsPaged (1L, paging)
+		List<IterationTestPlanItem> listTPI2 = testSuiteDao.findAllTestPlanItemsPaged (2L, paging)
 
 		then :	
 		listTPI1.size()==4

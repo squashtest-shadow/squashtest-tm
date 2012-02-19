@@ -21,18 +21,18 @@
 
 package org.squashtest.csp.tm.internal.service
 
-import java.util.List;
+import java.util.List
 
-import javax.inject.Inject;
+import javax.inject.Inject
 
 import org.hibernate.Query
 import org.hibernate.type.LongType
-import org.spockframework.util.NotThreadSafe;
-import org.springframework.transaction.annotation.Transactional;
+import org.spockframework.util.NotThreadSafe
+import org.springframework.transaction.annotation.Transactional
 import org.squashtest.csp.tm.domain.execution.ExecutionStep
-import org.squashtest.csp.tm.service.TestSuiteExecutionProcessingService;
-import org.unitils.dbunit.annotation.DataSet;
-import spock.unitils.UnitilsSupport;
+import org.squashtest.csp.tm.service.TestSuiteExecutionProcessingService
+import org.unitils.dbunit.annotation.DataSet
+import spock.unitils.UnitilsSupport
 
 @NotThreadSafe
 @UnitilsSupport
@@ -109,17 +109,7 @@ class TestSuiteExecutionProcessingServiceImplIT extends DbunitServiceSpecificati
 
 		then :
 		allDeleted("Execution", [1L, 2L, 3L])
-		allDeleted("ExecutionStep", [
-			1l,
-			2l,
-			3l,
-			4l,
-			5l,
-			6l,
-			7L,
-			8L,
-			9L
-		])
+		allDeleted("ExecutionStep", [ 1l, 2l, 3l, 4l, 5l, 6l, 7L, 8L, 9L])
 		executionStep == null
 	}
 	@DataSet("TestSuiteExecutionProcessingServiceImplIT.should not find exec step because test cases deleted.xml")
@@ -132,17 +122,7 @@ class TestSuiteExecutionProcessingServiceImplIT extends DbunitServiceSpecificati
 
 		then :
 		allDeleted("Execution", [1L, 2L, 3L])
-		allDeleted("ExecutionStep", [
-			1L,
-			2L,
-			3L,
-			4L,
-			5L,
-			6L,
-			7L,
-			8L,
-			9L
-		])
+		allDeleted("ExecutionStep", [ 1L, 2L, 3L, 4L, 5L, 6L, 7L, 8L, 9L ])
 		executionStep == null
 	}
 	@DataSet("TestSuiteExecutionProcessingServiceImplIT.should delete exec and find exec step.xml")
@@ -155,17 +135,7 @@ class TestSuiteExecutionProcessingServiceImplIT extends DbunitServiceSpecificati
 
 		then :
 		allDeleted("Execution", [1L, 2L, 3L])
-		allDeleted("ExecutionStep", [
-			1L,
-			2L,
-			3L,
-			4L,
-			5L,
-			6L,
-			7L,
-			8L,
-			9L
-		])
+		allDeleted("ExecutionStep", [ 1L, 2L, 3L, 4L, 5L, 6L, 7L, 8L, 9L ])
 		allNotDeleted("Execution",[4l])
 		allNotDeleted("ExecutionStep", [10L, 11L, 12L])
 		executionStep != null
@@ -185,6 +155,6 @@ class TestSuiteExecutionProcessingServiceImplIT extends DbunitServiceSpecificati
 		query.setParameterList("ids", ids, new LongType())
 		List<?> result = query.list()
 
-		return result.size() == ids.size();
+		return result.size() == ids.size()
 	}
 }

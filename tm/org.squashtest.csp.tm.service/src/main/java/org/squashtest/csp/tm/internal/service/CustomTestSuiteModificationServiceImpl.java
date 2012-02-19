@@ -63,14 +63,14 @@ public class CustomTestSuiteModificationServiceImpl implements
 		//that implementation relies on how the TestSuite will do the job (regarding the checks on whether the itps belong to the 
 		//same iteration of not
 		TestSuite suite = testSuiteDao.findById(suiteId);
-		suite.bindTestPlanById(itemTestPlanIds);
+		suite.bindTestPlanItemsById(itemTestPlanIds);
 	}
 	
 	@Override
 	@PreAuthorize("hasPermission(#testSuite, 'WRITE') or hasRole('ROLE_ADMIN')")		
 	public void bindTestPlanObj(TestSuite testSuite, List<IterationTestPlanItem> itemTestPlans) {
 		//the test plans have already been associated to the Iteration
-		testSuite.bindTestPlan(itemTestPlans);
+		testSuite.bindTestPlanItems(itemTestPlans);
 	}
 	
 	
@@ -92,9 +92,9 @@ public class CustomTestSuiteModificationServiceImpl implements
 	@PreAuthorize("hasPermission(#suiteId, 'org.squashtest.csp.tm.domain.campaign.TestSuite','READ') or hasRole('ROLE_ADMIN')")
 	public PagedCollectionHolder<List<IterationTestPlanItem>> findTestSuiteTestPlan(long suiteId, Paging paging) {
 		
-		List<IterationTestPlanItem> testPlan = testSuiteDao.findTestPlanPaged(suiteId, paging);
+		List<IterationTestPlanItem> testPlan = testSuiteDao.findAllTestPlanItemsPaged(suiteId, paging);
 		
-		long count = testSuiteDao.countTestPlans(suiteId);
+		long count = testSuiteDao.countTestPlanItems(suiteId);
 		
 		return new PagingBackedPagedCollectionHolder<List<IterationTestPlanItem>> (paging, count, testPlan);
 	}

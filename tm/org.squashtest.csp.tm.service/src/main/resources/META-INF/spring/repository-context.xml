@@ -130,5 +130,9 @@
 		<property name="entityType" value="org.squashtest.csp.tm.domain.requirement.RequirementVersion" />
 	</bean>	
 	
+	<bean id="testSuiteDao" class="org.squashtest.csp.core.infrastructure.dynamicmanager.DynamicDaoFactoryBean">
+		<property name="componentType" value="org.squashtest.csp.tm.internal.repository.TestSuiteDao" />
+		<property name="entityType" value="org.squashtest.csp.tm.domain.campaign.TestSuite" />
+	</bean>	
 </beans>
 

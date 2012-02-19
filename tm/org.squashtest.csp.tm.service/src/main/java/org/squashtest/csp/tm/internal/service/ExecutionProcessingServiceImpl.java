@@ -36,7 +36,6 @@ import org.squashtest.csp.tm.domain.execution.ExecutionStatusReport;
 import org.squashtest.csp.tm.domain.execution.ExecutionStep;
 import org.squashtest.csp.tm.internal.repository.ExecutionDao;
 import org.squashtest.csp.tm.internal.repository.ExecutionStepDao;
-import org.squashtest.csp.tm.internal.repository.UserDao;
 import org.squashtest.csp.tm.service.ExecutionModificationService;
 import org.squashtest.csp.tm.service.ExecutionProcessingService;
 import org.squashtest.csp.tm.service.IterationTestPlanManagerService;
@@ -69,9 +68,6 @@ public class ExecutionProcessingServiceImpl implements ExecutionProcessingServic
 	@Inject
 	private IterationTestPlanManagerService testPlanService;
 	
-	@Inject
-	private UserDao userDao;
-
 	@Override
 	public ExecutionStep findExecutionStep(Long executionStepId) {
 		return executionStepDao.findById(executionStepId);
@@ -83,7 +79,7 @@ public class ExecutionProcessingServiceImpl implements ExecutionProcessingServic
 	}
 
 	@Override
-	public ExecutionStep getStepAt(long executionId, int executionStepIndex) {
+	public ExecutionStep findStepAt(long executionId, int executionStepIndex) {
 		Execution execution = executionDao.findAndInit(executionId);
 
 		return execution.getSteps().get(executionStepIndex);

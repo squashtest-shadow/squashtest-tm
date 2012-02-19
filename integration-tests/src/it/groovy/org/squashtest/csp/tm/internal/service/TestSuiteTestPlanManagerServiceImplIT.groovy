@@ -68,7 +68,7 @@ class TestSuiteTestPlanManagerServiceImplIT extends DbunitServiceSpecification {
 			Iteration iter = ts.getIteration()
 		
 		then :
-			testSuiteDao.findTestPlanPaged(testSuiteId, paging).size()==4
+			testSuiteDao.findAllTestPlanItemsPaged(testSuiteId, paging).size()==4
 			iter.getTestPlans().size()==4
 	}
 	
@@ -84,7 +84,7 @@ class TestSuiteTestPlanManagerServiceImplIT extends DbunitServiceSpecification {
 			Iteration iter = ts.getIteration()
 		
 		then :
-			testSuiteDao.findTestPlanPaged(testSuiteId, paging).size()==2
+			testSuiteDao.findAllTestPlanItemsPaged(testSuiteId, paging).size()==2
 			iter.getTestPlans().size()==4
 	}
 	
@@ -100,7 +100,7 @@ class TestSuiteTestPlanManagerServiceImplIT extends DbunitServiceSpecification {
 			Iteration iter = ts.getIteration()
 		
 		then :
-			testSuiteDao.findTestPlanPaged(testSuiteId, paging).size()==2
+			testSuiteDao.findAllTestPlanItemsPaged(testSuiteId, paging).size()==2
 			iter.getTestPlans().size()==2
 	}
 }

@@ -18,33 +18,32 @@
  *     You should have received a copy of the GNU Lesser General Public License
  *     along with this software.  If not, see <http://www.gnu.org/licenses/>.
  */
-package org.squashtest.csp.tm.service;
+package org.squashtest.csp.tm.internal.repository;
 
-import org.springframework.transaction.annotation.Transactional;
-import org.squashtest.csp.tm.domain.execution.ExecutionStep;
+import java.util.List;
 
-@Transactional
-public interface TestSuiteExecutionProcessingService {
+import org.squashtest.csp.tm.domain.campaign.IterationTestPlanItem;
+import org.squashtest.csp.tm.domain.campaign.TestSuite;
+import org.squashtest.csp.tm.domain.campaign.TestSuiteStatistics;
+
+public interface CustomTestSuiteDao {
+
+	List<TestSuite> findAllByIterationId(long iterationId);
 
 	/**
 	 * <p>
-	 * returns the execution step were to resume the test suite<br>
-	 * or null if no execution step is to be resumed
+	 * return a list of ordered iteration_test_plan_items that are linked to a test case or have an execution<br>
+	 * making it the launchable test plan of the test suite
 	 * </p>
 	 * 
 	 * @param testSuiteId
 	 * @return
 	 */
-	ExecutionStep findExecutionStepWhereToResumeExecutionOfSuite(long testSuiteId);
+	List<IterationTestPlanItem> findLaunchableTestPlan(long testSuiteId);
 
-	/**
-	 * <p>
-	 * returns the execution step were to start the test suite execution<br>
-	 * or null if there is no execution step
-	 * </p>
-	 * 
-	 * @param testSuiteId
-	 * @return
-	 */
-	ExecutionStep relaunchExecution(long testSuiteId);
+	TestSuiteStatistics getTestSuiteStatistics(long testSuitId);
+
+	List<IterationTestPlanItem> findTestPlanPartition(long testSuiteId,
+			List<Long> testPlanItemIds);
+
 }

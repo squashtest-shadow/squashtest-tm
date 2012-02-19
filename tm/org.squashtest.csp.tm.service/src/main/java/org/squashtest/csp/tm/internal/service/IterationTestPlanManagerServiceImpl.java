@@ -53,7 +53,6 @@ import org.squashtest.csp.tm.internal.repository.IterationDao;
 import org.squashtest.csp.tm.internal.repository.LibraryNodeDao;
 import org.squashtest.csp.tm.internal.repository.TestCaseLibraryDao;
 import org.squashtest.csp.tm.internal.repository.UserDao;
-import org.squashtest.csp.tm.service.IterationModificationService;
 import org.squashtest.csp.tm.service.IterationTestPlanManagerService;
 import org.squashtest.csp.tm.service.ProjectFilterModificationService;
 
@@ -117,9 +116,9 @@ public class IterationTestPlanManagerServiceImpl implements IterationTestPlanMan
 	/*
 	 * security note here : well what if we add test cases for which the user have no permissions on ? think of
 	 * something better.
-	 * 
+	 *
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see org.squashtest.csp.tm.service.IterationTestPlanManagerService#addTestCasesToIteration(java.util.List, long)
 	 */
 

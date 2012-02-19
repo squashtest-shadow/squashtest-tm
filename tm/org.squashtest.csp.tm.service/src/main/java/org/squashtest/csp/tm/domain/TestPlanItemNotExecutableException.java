@@ -18,33 +18,32 @@
  *     You should have received a copy of the GNU Lesser General Public License
  *     along with this software.  If not, see <http://www.gnu.org/licenses/>.
  */
-package org.squashtest.csp.tm.service;
+package org.squashtest.csp.tm.domain;
 
-import org.springframework.transaction.annotation.Transactional;
-import org.squashtest.csp.tm.domain.execution.ExecutionStep;
-
-@Transactional
-public interface TestSuiteExecutionProcessingService {
+public class TestPlanItemNotExecutableException extends ActionException {
 
 	/**
-	 * <p>
-	 * returns the execution step were to resume the test suite<br>
-	 * or null if no execution step is to be resumed
-	 * </p>
 	 * 
-	 * @param testSuiteId
-	 * @return
 	 */
-	ExecutionStep findExecutionStepWhereToResumeExecutionOfSuite(long testSuiteId);
-
-	/**
-	 * <p>
-	 * returns the execution step were to start the test suite execution<br>
-	 * or null if there is no execution step
-	 * </p>
-	 * 
-	 * @param testSuiteId
-	 * @return
-	 */
-	ExecutionStep relaunchExecution(long testSuiteId);
+	private static final long serialVersionUID = 7668234787125033427L;
+	private static final String ERROR_MESSAGE_KEY = "squashtm.action.exception.cannotcreateexecution.label";
+	
+	
+	public TestPlanItemNotExecutableException(Exception ex){
+		super(ex);
+	}
+	
+	public TestPlanItemNotExecutableException(String message){
+		super(message);
+	}
+	
+	public TestPlanItemNotExecutableException(){
+		
+	}
+	
+	@Override
+	public String getI18nKey() {
+		return ERROR_MESSAGE_KEY;
+	}
+	
 }

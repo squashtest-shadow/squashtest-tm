@@ -271,13 +271,6 @@ public class TestSuiteTestPlanManagerController {
 
 	}
 	
-//	@RequestMapping(value="/remove", method=RequestMethod.POST, params="ids[]" )
-//	public @ResponseBody List<Long> removeTestSuites(@RequestParam("ids[]") List<Long> ids ){
-//		List<Long> deletedIds = testSuiteTestPlanManagerService.remove(ids);
-//		LOGGER.debug("removal of "+deletedIds.size()+" Test Suites");
-//		return deletedIds;
-//	}
-
 /* ***************** data formatter *************************** */
 
 	private String formatString(String arg, Locale locale) {

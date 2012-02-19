@@ -34,10 +34,12 @@ import javax.persistence.JoinTable;
 import javax.persistence.Lob;
 import javax.persistence.ManyToOne;
 import javax.persistence.OneToOne;
+import javax.validation.constraints.NotNull;
 
 import org.hibernate.validator.constraints.NotBlank;
 import org.squashtest.csp.core.security.annotation.InheritsAcls;
 import org.squashtest.csp.tm.domain.DuplicateNameException;
+import org.squashtest.csp.tm.domain.EmptyTestPlanException;
 import org.squashtest.csp.tm.domain.attachment.Attachment;
 import org.squashtest.csp.tm.domain.attachment.AttachmentList;
 import org.squashtest.csp.tm.domain.audit.Auditable;
@@ -99,8 +101,13 @@ public class TestSuite {
 		this.description = description;
 	}
 
-	/** package **/
-	void setIteration(Iteration iteration) {
+	/**
+	 * When one needs to create a suite in the scope of an iteration, it should use
+	 * {@link Iteration#addTestSuite(TestSuite)}. This method is for internal use only.
+	 *
+	 * @param iteration
+	 */
+	/* package */void setIteration(@NotNull Iteration iteration) {
 		this.iteration = iteration;
 	}
 
@@ -114,23 +121,59 @@ public class TestSuite {
 
 	/**
 	 * Warning : that property builds a new list every time. If you want to change the content of the list, use the
-	 * other dedicated accessors ({@link #addTestPlan(List))} or the other one)
-	 * 
+	 * other dedicated accessors ( {@link #addTestPlan(List))} or the other one)
+	 *
 	 * @return
 	 */
 	public List<IterationTestPlanItem> getTestPlan() {
-		// the test plan is not gotten through mapping hibernate because we need the order that is only held by
+		// the test plan is not gotten through mapping hibernate because we need
+		// the order that is only held by
 		// iteration
 		List<IterationTestPlanItem> testPlan = new LinkedList<IterationTestPlanItem>();
 		for (IterationTestPlanItem item : iteration.getTestPlans()) {
-			if (this.equals(item.getTestSuite())) {
+			if (boundToThisSuite(item)) {
 				testPlan.add(item);
 			}
 		}
 		return testPlan;
 	}
 
-	public void bindTestPlan(List<IterationTestPlanItem> items) {
+	private boolean boundToThisSuite(IterationTestPlanItem item) {
+		TestSuite that = item.getTestSuite();
+
+		return that != null && isSame(that);
+	}
+
+	/**
+	 * Compares 2 suites, for internal use.
+	 *
+	 * @param that
+	 * @return
+	 */
+	private boolean isSame(TestSuite that) {
+		if (this.id == null) {
+			return this.equals(that);
+		}
+		// id not null -> persistent entity -> we cant use equals() because "that" might be a proxy so equals() would return false
+		return this.id.equals(that.getId());
+	}
+
+	public IterationTestPlanItem getFirstTestPlanItem() {
+		for (IterationTestPlanItem item : iteration.getTestPlans()) {
+			if (boundToThisSuite(item)) {
+				return item;
+			}
+		}
+
+		throw new EmptyTestPlanException(this);
+	}
+
+	/**
+	 * Binds the test plan items to this test suite
+	 *
+	 * @param items
+	 */
+	public void bindTestPlanItems(List<IterationTestPlanItem> items) {
 		for (IterationTestPlanItem item : items) {
 			item.setTestSuite(this);
 		}
@@ -142,7 +185,12 @@ public class TestSuite {
 		}
 	}
 	
-	public void bindTestPlanById(List<Long> itemIds) {
+	/**
+	 * Binds the test plan items to this test suite using their id to retrieve them from the iteration.
+	 *
+	 * @param itemIds
+	 */
+	public void bindTestPlanItemsById(List<Long> itemIds) {
 		for (Long itemId : itemIds) {
 			for (IterationTestPlanItem item : iteration.getTestPlans()) {
 				if (item.getId().equals(itemId)) {
@@ -152,7 +200,7 @@ public class TestSuite {
 		}
 	}
 
-	/*
+	/**
 	 * Since the test plan of a TestSuite is merely a view on the backing iteration, we will reorder here the test plan
 	 * accordingly. For instance if the newIndex is x in the TS test plan, Ix being the item at position x in the TS
 	 * test plan, we will place the moved items at position y in Iteration test plan where y is the position of Ix in
@@ -180,12 +228,14 @@ public class TestSuite {
 	public List<IterationTestPlanItem> createPastableCopyOfTestPlan() {
 		List<IterationTestPlanItem> testPlanCopy = new LinkedList<IterationTestPlanItem>();
 		List<IterationTestPlanItem> testPlanOriginal = this.getTestPlan();
+
 		for (IterationTestPlanItem iterationTestPlanItem : testPlanOriginal) {
 			if (!iterationTestPlanItem.isTestCaseDeleted()) {
 				IterationTestPlanItem testPlanItemCopy = iterationTestPlanItem.createCopy();
 				testPlanCopy.add(testPlanItemCopy);
 			}
 		}
+
 		return testPlanCopy;
 
 	}
@@ -195,19 +245,23 @@ public class TestSuite {
 	 * returns a copy of a test Suite without it's test plan. <br>
 	 * a copy of the test plan can be found at {@linkplain TestSuite#createPastableCopyOfTestPlan()}
 	 * </p>
-	 * 
+	 *
 	 * @return returns a copy of a test Suite
 	 */
 	public TestSuite createPastableCopy() {
-		// the pastable copy of a test suite doesn't contain a test plan because , if so, the test plan wouldn't be
-		// reached with "getTestPlan()" because the test suite copy is not yet linked to an iteration.
+		// the pastable copy of a test suite doesn't contain a test plan because
+		// , if so, the test plan wouldn't be
+		// reached with "getTestPlan()" because the test suite copy is not yet
+		// linked to an iteration.
 		TestSuite testSuiteCopy = new TestSuite();
 		testSuiteCopy.setName(getName());
 		testSuiteCopy.setDescription(getDescription());
+
 		for (Attachment attach : this.getAttachmentList().getAllAttachments()) {
 			Attachment copyAttach = attach.hardCopy();
 			testSuiteCopy.getAttachmentList().addAttachment(copyAttach);
 		}
+
 		return testSuiteCopy;
 	}
 

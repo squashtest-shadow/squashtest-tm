@@ -41,12 +41,14 @@ import javax.persistence.Temporal;
 import javax.persistence.TemporalType;
 import javax.validation.constraints.NotNull;
 
+import org.squashtest.csp.tm.domain.TestPlanItemNotExecutableException;
 import org.squashtest.csp.tm.domain.audit.Auditable;
 import org.squashtest.csp.tm.domain.execution.Execution;
 import org.squashtest.csp.tm.domain.execution.ExecutionStatus;
 import org.squashtest.csp.tm.domain.project.Project;
 import org.squashtest.csp.tm.domain.testcase.TestCase;
 import org.squashtest.csp.tm.domain.users.User;
+import org.squashtest.csp.tm.internal.service.TestCaseCyclicCallChecker;
 
 @Entity
 @Auditable
@@ -116,8 +118,9 @@ public class IterationTestPlanItem {
 	}
 
 	/**
-	 * the IterationTestPlanItem will fetch the ExecutionStatus of the last "live" Execution in his execution list
-	 * 
+	 * the IterationTestPlanItem will fetch the ExecutionStatus of the last
+	 * "live" Execution in his execution list
+	 *
 	 */
 	public void updateExecutionStatus() {
 		int iIndexLastExec = executions.size();
@@ -165,7 +168,8 @@ public class IterationTestPlanItem {
 	}
 
 	/**
-	 * that method will also forward the information to the iteration for update of autoset dates.
+	 * that method will also forward the information to the iteration for update
+	 * of autoset dates.
 	 */
 	public void setLastExecutedOn(Date lastExecutedOn) {
 		this.lastExecutedOn = lastExecutedOn;
@@ -180,19 +184,38 @@ public class IterationTestPlanItem {
 	}
 
 	public void addExecution(@NotNull Execution execution) {
-		if (execution == null) {
-			throw new IllegalArgumentException("IterationTestPlanItem : cannot insert null execution");
-		}
-		execution.setReferencedTestCase(referencedTestCase);
 		executions.add(execution);
+		execution.notifyAddedTo(this);
 		updateExecutionStatus();
 
-		// this means that getLastExecutedBy and getLastExecutedOn should be reset and propagated to the Iteration this
+		// this means that getLastExecutedBy and getLastExecutedOn should be
+		// reset and propagated to the Iteration this
 		// object
 		// is bound to.
 		this.lastExecutedBy = null;
 		this.lastExecutedOn = null;
 		resetIterationDates();
+
+	}
+
+	/**
+	 * Creates an execution of this item and returns it.
+	 * @return the new execution
+	 */
+	public Execution createExecution(TestCaseCyclicCallChecker cyclicCallChecker) throws TestPlanItemNotExecutableException {
+		checkExecutable();
+		cyclicCallChecker.checkNoCyclicCall(referencedTestCase);
+
+		Execution newExecution = new Execution(referencedTestCase);
+
+		return newExecution;
+	}
+
+	private void checkExecutable() throws TestPlanItemNotExecutableException {
+		if (isTestCaseDeleted()) {
+			throw new TestPlanItemNotExecutableException(
+					"Test case referenced by this item was deleted");
+		}
 
 	}
 
@@ -218,16 +241,19 @@ public class IterationTestPlanItem {
 	}
 
 	/**
-	 * Factory method. Creates a copy of this object according to copy / paste rules.
-	 * 
+	 * Factory method. Creates a copy of this object according to copy / paste
+	 * rules.
+	 *
 	 * @return the copy, never <code>null</code>
 	 */
 	public IterationTestPlanItem createCopy() {
 		IterationTestPlanItem copy = new IterationTestPlanItem();
+
 		copy.setExecutionStatus(ExecutionStatus.READY);
 		copy.setLabel(this.label);
 		copy.setReferencedTestCase(this.referencedTestCase);
 		copy.setUser(this.user);
+
 		return copy;
 	}
 
@@ -243,7 +269,7 @@ public class IterationTestPlanItem {
 		this.user = user;
 	}
 
-	public Boolean isTestCaseDeleted() {
+	public boolean isTestCaseDeleted() {
 		return getReferencedTestCase() == null;
 	}
 
@@ -252,11 +278,17 @@ public class IterationTestPlanItem {
 	}
 
 	public void setTestSuite(TestSuite suite) {
+		if (suite != null && !this.iteration.equals(suite.getIteration())) {
+			throw new IllegalArgumentException("Item[" + id
+					+ "] dont belong to Iteration["
+					+ suite.getIteration().getId()
+					+ "], it cannot be bound to TestSuite['" + suite.getName()
+					+ "']");
+		}
 		this.testSuite = suite;
 	}
 
-	/** package **/
-	void setIteration(Iteration iteration) {
+	/* package */void setIteration(Iteration iteration) {
 		this.iteration = iteration;
 
 	}

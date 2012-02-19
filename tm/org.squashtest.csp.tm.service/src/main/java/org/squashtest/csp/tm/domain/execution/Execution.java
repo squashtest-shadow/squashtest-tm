@@ -25,7 +25,6 @@ import java.util.Date;
 import java.util.LinkedList;
 import java.util.List;
 
-import javax.persistence.Basic;
 import javax.persistence.CascadeType;
 import javax.persistence.Column;
 import javax.persistence.Entity;
@@ -45,6 +44,8 @@ import javax.persistence.TemporalType;
 import javax.validation.constraints.NotNull;
 
 import org.hibernate.annotations.Formula;
+import org.hibernate.validator.constraints.NotBlank;
+import org.squashtest.csp.tm.domain.attachment.Attachment;
 import org.squashtest.csp.tm.domain.attachment.AttachmentHolder;
 import org.squashtest.csp.tm.domain.attachment.AttachmentList;
 import org.squashtest.csp.tm.domain.audit.Auditable;
@@ -54,11 +55,11 @@ import org.squashtest.csp.tm.domain.campaign.IterationTestPlanItem;
 import org.squashtest.csp.tm.domain.project.Project;
 import org.squashtest.csp.tm.domain.testcase.TestCase;
 import org.squashtest.csp.tm.domain.testcase.TestCaseExecutionMode;
+import org.squashtest.csp.tm.domain.testcase.TestStep;
 
 @Auditable
 @Entity
 public class Execution implements AttachmentHolder, Bugged {
-
 	@Id
 	@GeneratedValue
 	@Column(name = "EXECUTION_ID")
@@ -76,12 +77,12 @@ public class Execution implements AttachmentHolder, Bugged {
 	@Lob
 	private String prerequisite = "";
 
-	@Basic(optional = false)
+	@NotBlank
 	private String name;
 
 	// TODO rename as testPlanItem
 	@ManyToOne
-	@JoinTable(name = "ITEM_TEST_PLAN_EXECUTION", joinColumns = @JoinColumn(name = "EXECUTION_ID"), inverseJoinColumns = @JoinColumn(name = "ITEM_TEST_PLAN_ID"))
+	@JoinTable(name = "ITEM_TEST_PLAN_EXECUTION", joinColumns = @JoinColumn(name = "EXECUTION_ID", insertable = false, updatable = false), inverseJoinColumns = @JoinColumn(name = "ITEM_TEST_PLAN_ID", insertable = false, updatable = false))
 	private IterationTestPlanItem testPlan;
 
 	@ManyToOne
@@ -130,13 +131,32 @@ public class Execution implements AttachmentHolder, Bugged {
 		this.description = description;
 	}
 
-	public Execution(String description, TestCase testCase) {
-		this(description);
-		setReferencedTestCase(testCase);
-	}
-
+	/**
+	 * Creates an execution for the test case references by the given tess plan item. Should be used by
+	 * {@link IterationTestPlanItem} only.
+	 *
+	 * @param testPlanItem
+	 */
 	public Execution(TestCase testCase) {
 		setReferencedTestCase(testCase);
+		populateSteps();
+		populateAttachments();
+	}
+
+	private void populateAttachments() {
+		for (Attachment tcAttach : referencedTestCase.getAllAttachments()) {
+			Attachment clone = tcAttach.hardCopy();
+			attachmentList.addAttachment(clone);
+		}
+	}
+
+	private void populateSteps() {
+		for (TestStep step : referencedTestCase.getSteps()) {
+			List<ExecutionStep> execList = step.createExecutionSteps();
+			for (ExecutionStep executionStep : execList) {
+				addStep(executionStep);
+			}
+		}
 	}
 
 	public ExecutionStatus getExecutionStatus() {
@@ -175,7 +195,7 @@ public class Execution implements AttachmentHolder, Bugged {
 		this.lastExecutedOn = lastExecutedOn;
 	}
 
-	public final void setReferencedTestCase(TestCase testCase) {
+	private final void setReferencedTestCase(TestCase testCase) {
 		referencedTestCase = testCase;
 		executionMode = testCase.getExecutionMode();
 		setPrerequisite(testCase.getPrerequisite());
@@ -223,7 +243,7 @@ public class Execution implements AttachmentHolder, Bugged {
 		this.prerequisite = prerequisite;
 	}
 
-	public void addStep(@NotNull ExecutionStep step) {
+	private void addStep(@NotNull ExecutionStep step) {
 		steps.add(step);
 	}
 
@@ -232,7 +252,7 @@ public class Execution implements AttachmentHolder, Bugged {
 	 * return the first step with a running or a ready state.<br>
 	 * Or null if there is none or the execution has no steps
 	 * </p>
-	 * 
+	 *
 	 * @return
 	 */
 	public ExecutionStep findFirstUnexecutedStep() {
@@ -254,10 +274,6 @@ public class Execution implements AttachmentHolder, Bugged {
 
 	public IterationTestPlanItem getTestPlan() {
 		return testPlan;
-	}
-
-	public void setTestPlan(IterationTestPlanItem testPlan) {
-		this.testPlan = testPlan;
 	}
 
 	/* ***************** Bugged implementation *********************** */
@@ -305,6 +321,10 @@ public class Execution implements AttachmentHolder, Bugged {
 		}
 
 		return list;
+	}
+
+	public void notifyAddedTo(IterationTestPlanItem testPlan) {
+		this.testPlan = testPlan;
 	}
 
 }

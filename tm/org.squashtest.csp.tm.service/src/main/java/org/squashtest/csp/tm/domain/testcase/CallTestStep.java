@@ -59,12 +59,14 @@ public class CallTestStep extends TestStep {
 	}
 	
 	@Override
-	public List<ExecutionStep> getExecutionStep(){
-		List<ExecutionStep> returnList = new ArrayList<ExecutionStep>();
+	public List<ExecutionStep> createExecutionSteps(){		
 		List<TestStep> testSteps = this.getCalledTestCase().getSteps();
+		List<ExecutionStep> returnList = new ArrayList<ExecutionStep>(testSteps.size());
+		
 		for (TestStep testStep : testSteps) {
-			returnList.addAll(testStep.getExecutionStep());
+			returnList.addAll(testStep.createExecutionSteps());
 		}
+		
 		return returnList;
 	}
 

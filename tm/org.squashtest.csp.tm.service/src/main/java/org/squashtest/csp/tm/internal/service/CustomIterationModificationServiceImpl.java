@@ -34,31 +34,28 @@ import org.springframework.security.access.prepost.PostFilter;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.stereotype.Service;
 import org.squashtest.csp.core.service.security.PermissionEvaluationService;
-import org.squashtest.csp.tm.domain.CannotCreateExecutionException;
-import org.squashtest.csp.tm.domain.attachment.Attachment;
+import org.squashtest.csp.tm.domain.TestPlanItemNotExecutableException;
 import org.squashtest.csp.tm.domain.campaign.Campaign;
 import org.squashtest.csp.tm.domain.campaign.CampaignTestPlanItem;
 import org.squashtest.csp.tm.domain.campaign.Iteration;
 import org.squashtest.csp.tm.domain.campaign.IterationTestPlanItem;
 import org.squashtest.csp.tm.domain.campaign.TestSuite;
 import org.squashtest.csp.tm.domain.execution.Execution;
-import org.squashtest.csp.tm.domain.execution.ExecutionStep;
 import org.squashtest.csp.tm.domain.testcase.TestCase;
-import org.squashtest.csp.tm.domain.testcase.TestStep;
 import org.squashtest.csp.tm.internal.repository.CampaignDao;
 import org.squashtest.csp.tm.internal.repository.ExecutionDao;
-import org.squashtest.csp.tm.internal.repository.ExecutionStepDao;
 import org.squashtest.csp.tm.internal.repository.ItemTestPlanDao;
 import org.squashtest.csp.tm.internal.repository.IterationDao;
 import org.squashtest.csp.tm.internal.repository.TestSuiteDao;
-import org.squashtest.csp.tm.service.CallStepManagerService;
+import org.squashtest.csp.tm.internal.service.campaign.IterationTestPlanManager;
 import org.squashtest.csp.tm.service.CustomIterationModificationService;
 import org.squashtest.csp.tm.service.IterationTestPlanManagerService;
 import org.squashtest.csp.tm.service.TestSuiteModificationService;
 import org.squashtest.csp.tm.service.deletion.SuppressionPreviewReport;
 
 @Service("CustomIterationModificationService")
-public class CustomIterationModificationServiceImpl implements CustomIterationModificationService {
+public class CustomIterationModificationServiceImpl implements CustomIterationModificationService,
+		IterationTestPlanManager {
 	private static final Logger LOGGER = LoggerFactory.getLogger(CustomIterationModificationServiceImpl.class);
 	@Inject
 	private CampaignDao campaignDao;
@@ -67,13 +64,11 @@ public class CustomIterationModificationServiceImpl implements CustomIterationMo
 	@Inject
 	private TestSuiteDao suiteDao;
 	@Inject
-	private ExecutionDao executionDao;
-	@Inject
 	private ItemTestPlanDao testPlanDao;
 	@Inject
-	private ExecutionStepDao executionStepDao;
+	private ExecutionDao executionDao;
 	@Inject
-	private CallStepManagerService callStepManager;
+	private TestCaseCyclicCallChecker testCaseCyclicCallChecker;
 
 	@Inject
 	private CampaignNodeDeletionHandler deletionHandler;
@@ -155,43 +150,14 @@ public class CustomIterationModificationServiceImpl implements CustomIterationMo
 	public Execution addExecution(long iterationId, long testPlanId) {
 
 		Iteration iteration = iterationDao.findAndInit(iterationId);
-		IterationTestPlanItem testPlan = iteration.getTestPlan(testPlanId);
+		IterationTestPlanItem item = iteration.getTestPlan(testPlanId);
 
-		if (testPlan.isTestCaseDeleted()) {
-			throw new CannotCreateExecutionException();
-		}
-
-		TestCase testCase = testPlan.getReferencedTestCase();
-		// TODO test
-		callStepManager.checkForCyclicStepCallBeforeExecutionCreation(testCase.getId());
-
-		Execution execution = new Execution(testCase);
-
-		// copy the steps
-		for (TestStep step : testCase.getSteps()) {
-			List<ExecutionStep> execList = step.getExecutionStep();
-			for (ExecutionStep executionStep : execList) {
-				executionStepDao.persist(executionStep);
-				execution.addStep(executionStep);
-			}
-		}
-
-		// copy the attachments
-		for (Attachment tcAttach : testCase.getAllAttachments()) {
-			Attachment clone = tcAttach.hardCopy();
-			execution.getAttachmentList().addAttachment(clone);
-		}
-
-		executionDao.persist(execution);
-
-		iteration.addExecution(execution, testPlan);
-
-		return execution;
+		return addExecution(item);
 	}
 
 	/****
 	 * Method which change the index of test case in the selected iteration
-	 * 
+	 *
 	 * @param iterationId
 	 *            the iteration at which the test case is attached
 	 * @param testCaseId
@@ -220,7 +186,7 @@ public class CustomIterationModificationServiceImpl implements CustomIterationMo
 
 	/**
 	 * see doc in the interface
-	 * 
+	 *
 	 */
 	@Override
 	@PreAuthorize("hasPermission(#iterationId, 'org.squashtest.csp.tm.domain.campaign.Iteration', 'WRITE') "
@@ -287,13 +253,18 @@ public class CustomIterationModificationServiceImpl implements CustomIterationMo
 			+ "or hasRole('ROLE_ADMIN')")
 	public TestSuite copyPasteTestSuiteToIteration(Long testSuiteId, Long iterationId) {
 		TestSuite testSuite = suiteDao.findById(testSuiteId);
+
 		List<IterationTestPlanItem> copyOfTestPlan = testSuite.createPastableCopyOfTestPlan();
 		TestSuite copyOfTestSuite = testSuite.createPastableCopy();
+
 		iterationTestPlanManagerService.addTestPlanToIteration(copyOfTestPlan, iterationId);
+
 		renameTestSuiteIfNecessary(copyOfTestSuite, iterationId);
 		addTestSuite(iterationId, copyOfTestSuite);
 		List<Long> itemTestPlanIds = listTestPlanIds(copyOfTestPlan);
+
 		testSuiteModificationService.bindTestPlan(copyOfTestSuite.getId(), itemTestPlanIds);
+
 		return copyOfTestSuite;
 	}
 
@@ -366,6 +337,17 @@ public class CustomIterationModificationServiceImpl implements CustomIterationMo
 			checkPermission(new SecurityCheckableObject(testSuite, permission));
 		}
 
+	}
+
+	@Override
+	public Execution addExecution(IterationTestPlanItem item) throws TestPlanItemNotExecutableException {
+		Execution execution = item.createExecution(testCaseCyclicCallChecker);
+		// if we dont persist before we add, add will trigger an update of item.testPlan which fail because execution
+		// has no id yet. this is caused by weird mapping (https://hibernate.onjira.com/browse/HHH-5732)
+		executionDao.persist(execution);
+		item.addExecution(execution);
+
+		return execution;
 	}
 
 }

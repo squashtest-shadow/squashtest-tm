@@ -18,32 +18,18 @@
  *     You should have received a copy of the GNU Lesser General Public License
  *     along with this software.  If not, see <http://www.gnu.org/licenses/>.
  */
-package org.squashtest.csp.tm.domain;
+package org.squashtest.csp.tm.internal.service;
 
-public class CannotCreateExecutionException extends ActionException {
+import org.squashtest.csp.tm.domain.CyclicStepCallException;
+import org.squashtest.csp.tm.domain.testcase.TestCase;
 
+public interface TestCaseCyclicCallChecker {
 	/**
+	 * Used to check if the testPlan call tree is not cyclic 
+	 * This method is used to prevent infinite cycle in case of bugged data. 
+	 * 
+	 * if so :  a {@linkplain CyclicStepCallException} is thrown.
 	 * 
 	 */
-	private static final long serialVersionUID = 7668234787125033427L;
-	private static final String ERROR_MESSAGE_KEY = "squashtm.action.exception.cannotcreateexecution.label";
-	
-	
-	public CannotCreateExecutionException(Exception ex){
-		super(ex);
-	}
-	
-	public CannotCreateExecutionException(String message){
-		super(message);
-	}
-	
-	public CannotCreateExecutionException(){
-		
-	}
-	
-	@Override
-	public String getI18nKey() {
-		return ERROR_MESSAGE_KEY;
-	}
-	
+	public void checkNoCyclicCall(TestCase testCase) throws CyclicStepCallException;
 }

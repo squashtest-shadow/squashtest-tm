@@ -20,7 +20,7 @@
  */
 package org.squashtest.csp.tm.domain.campaign
 
-import org.h2.util.New;
+import org.h2.util.New
 import java.text.SimpleDateFormat
 
 import org.squashtest.csp.tm.domain.DuplicateNameException
@@ -158,63 +158,6 @@ class IterationTest extends Specification {
 		listPlans.size()==2
 	}
 
-	def "should add an execution to an iteration"(){
-		given :
-		TestCase testCase = Mock()
-		testCase.getId() >> 1
-		testCase.getName() >> "testCase1"
-		testCase.getExecutionMode() >> TestCaseExecutionMode.MANUAL
-		testCase.getPrerequisite() >> "prerequisite"
-
-		and :
-
-		Iteration iteration = new Iteration()
-		IterationTestPlanItem itp = new IterationTestPlanItem(referencedTestCase : testCase, iteration : iteration)
-		iteration.addTestPlan(itp)
-
-		Execution execution = new Execution(testCase)
-		when :
-		iteration.addExecution(execution, itp)
-
-		then :
-		iteration.getExecutions() == [execution]
-	}
-
-
-
-	def "should add and retrieve 2 executions"(){
-		given :
-
-		TestCase testCase = Mock()
-		testCase.getId() >> 1
-		testCase.getName() >> "testCase1"
-		testCase.getExecutionMode() >> TestCaseExecutionMode.MANUAL
-		testCase.getPrerequisite() >> "prerequisite"
-
-		Iteration iteration = new Iteration()
-		IterationTestPlanItem itp = new IterationTestPlanItem (referencedTestCase : testCase, iteration : iteration)
-		iteration.addTestPlan(itp)
-
-		Execution execution1 = new Execution(testCase)
-		Execution execution2 = new Execution(testCase)
-		when :
-		iteration.addExecution(execution1, itp)
-		iteration.addExecution(execution2, itp)
-
-		List<Execution> list = iteration.getExecutions()
-		List<IterationTestPlanItem> listTP = iteration.getTestPlans()
-
-		then :
-		listTP.size()==1
-		listTP.get(0).getExecutions().size()==2
-		list == [execution1, execution2]
-		list.collect{
-			it.name
-		} == ["testCase1", "testCase1"]
-	}
-
-
-
 	def "should return the index of a test plan item"(){
 
 		given :
@@ -342,10 +285,10 @@ class IterationTest extends Specification {
 
 
 	/*
-	 * expected result is that 
+	 * expected result is that
 	 * - the actual start after update is the new execution date of an Item Test Plan,
-	 * - the actual end after update is the actual start before update 
-	 * 
+	 * - the actual end after update is the actual start before update
+	 *
 	 */
 	def "should udpate actual start and end because new input is lower"(){
 		given :
@@ -375,7 +318,7 @@ class IterationTest extends Specification {
 
 	/*
 	 * expected result is both dates set to initial end
-	 * 
+	 *
 	 */
 	def "should update actual start and end because new input is null"(){
 		given :
@@ -438,7 +381,7 @@ class IterationTest extends Specification {
 	 * expected result  :
 	 *  - new start = initial start
 	 *  - new end = new end
-	 */		
+	 */
 	def "should update actual end date because the item test plan responsible for the former date has changed"(){
 		given :
 		SimpleDateFormat format = new SimpleDateFormat("dd/MM/yyyy")

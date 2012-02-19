@@ -267,9 +267,13 @@
 	</div>
 	<div class="toolbar-button-panel">
 		<c:if test="${ editable }">	
-			<input type="button" value='<f:message key="test-suite.button.rename.label" />' id="rename-test-suite-button" class="button"/> 
-			<input type="button" value='<f:message key="test-suite.button.remove.label" />' id="delete-test-suite-button" class="button"/>		
-			<input type="button" value='<f:message key="test-suite.button.duplicate.label" />' id="duplicate-test-suite-button" class="button"/>		
+			<input type="button" value="<f:message key='test-suite.button.rename.label' />" id="rename-test-suite-button" class="button"/> 
+			<input type="button" value="<f:message key='test-suite.button.remove.label' />" id="delete-test-suite-button" class="button"/>
+			<%-- TODO verifier conditions d'affichage dans iteration --%>	
+			<form action="<c:url value="/test-suites/${testSuite.id}/test-plan/new-execution/ieo" />" method="post" name="execute-test-suite-form">
+				<input type="submit" value='<f:message key="test-suite.execute.label" />' name="execute-test-suite" class="button"/>
+			</form>
+			<%-- TODO mettre ca ailleurs --%>		
 		</c:if>
 	</div>	
 	<div style="clear:both;"></div>	
@@ -449,16 +453,7 @@
 
 		$('#test-case-button').click(function(){
 			document.location.href="${testPlanManagerUrl}" ;	
-			
 		});		
-		
-		/*duplicate button click handler*/
-		$("#duplicate-test-suite-button").click(function() {
-			duplicateTestSuite().done(function(data){duplicateTestSuiteSuccess(data);});
-		});
 		
 	});
 </script>
-
-
-

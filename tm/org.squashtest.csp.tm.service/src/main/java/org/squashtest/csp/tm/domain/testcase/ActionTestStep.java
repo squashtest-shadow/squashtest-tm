@@ -105,8 +105,8 @@ public class ActionTestStep extends TestStep implements AttachmentHolder {
 	}
 
 	@Override
-	public List<ExecutionStep> getExecutionStep(){
-		List<ExecutionStep> returnList = new ArrayList<ExecutionStep>();
+	public List<ExecutionStep> createExecutionSteps(){
+		List<ExecutionStep> returnList = new ArrayList<ExecutionStep>(1);
 		ExecutionStep exec = new ExecutionStep(this);
 		returnList.add(exec);
 		return returnList;

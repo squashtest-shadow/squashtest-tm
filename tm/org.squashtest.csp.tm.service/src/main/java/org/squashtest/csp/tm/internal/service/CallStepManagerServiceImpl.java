@@ -51,7 +51,7 @@ import org.squashtest.csp.tm.service.TestCaseImportanceManagerService;
 
 @Service("squashtest.tm.service.CallStepManagerService")
 @Transactional
-public class CallStepManagerServiceImpl implements CallStepManagerService {
+public class CallStepManagerServiceImpl implements CallStepManagerService, TestCaseCyclicCallChecker {
 	private static final Logger LOGGER = LoggerFactory.getLogger(CallStepManagerServiceImpl.class);
 
 	@Inject
@@ -182,7 +182,9 @@ public class CallStepManagerServiceImpl implements CallStepManagerService {
 	}
 
 	@Override
-	public void checkForCyclicStepCallBeforeExecutionCreation(Long rootTestCaseId) {
+	public void checkNoCyclicCall(TestCase testCase) throws CyclicStepCallException {
+		long rootTestCaseId = testCase.getId();
+		
 		List<Long> firstCalledTestCasesIds = testCaseDao.findDistinctTestCasesIdsCalledByTestCase(rootTestCaseId);
 		// 1> find first called test cases and check they are not the parent one
 		if (firstCalledTestCasesIds.contains(rootTestCaseId)) {

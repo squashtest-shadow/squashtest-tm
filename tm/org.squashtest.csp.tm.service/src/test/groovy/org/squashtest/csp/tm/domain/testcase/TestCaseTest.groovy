@@ -23,6 +23,7 @@ package org.squashtest.csp.tm.domain.testcase
 
 import javax.swing.plaf.basic.BasicFileChooserUI.ApproveSelectionAction
 
+import org.apache.commons.lang.NullArgumentException
 import org.squashtest.csp.tm.domain.RequirementAlreadyVerifiedException
 import org.squashtest.csp.tm.domain.RequirementVersionNotLinkableException
 import org.squashtest.csp.tm.domain.UnknownEntityException
@@ -62,7 +63,7 @@ class TestCaseTest extends Specification {
 		testCase.addStep(null)
 
 		then:
-		thrown(IllegalArgumentException)
+		thrown(NullArgumentException)
 	}
 
 	def "should move step from given index to a greater index"() {
@@ -310,23 +311,23 @@ class TestCaseTest extends Specification {
 		!req.verifyingTestCases.contains(tc)
 	}
 
-//	def "should not be able to unverify an obsolete requirement"() {
-//		given:
-//		TestCase tc = new TestCase()
-//
-//		and:
-//		RequirementVersion req = new RequirementVersion(status: RequirementStatus.OBSOLETE)
-//		use (ReflectionCategory) {
-//			RequirementVersion.set field: "verifyingTestCases", of: req, to: [tc]as Set
-//			TestCase.set field: "verifiedRequirementVersions", of: tc, to: [req]as Set
-//		}
-//
-//		when:
-//		tc.removeVerifiedRequirementVersion req
-//
-//		then:
-//		thrown(RequirementVersionNotLinkableException)
-//	}
+	//	def "should not be able to unverify an obsolete requirement"() {
+	//		given:
+	//		TestCase tc = new TestCase()
+	//
+	//		and:
+	//		RequirementVersion req = new RequirementVersion(status: RequirementStatus.OBSOLETE)
+	//		use (ReflectionCategory) {
+	//			RequirementVersion.set field: "verifyingTestCases", of: req, to: [tc]as Set
+	//			TestCase.set field: "verifiedRequirementVersions", of: tc, to: [req]as Set
+	//		}
+	//
+	//		when:
+	//		tc.removeVerifiedRequirementVersion req
+	//
+	//		then:
+	//		thrown(RequirementVersionNotLinkableException)
+	//	}
 
 	def "should not verify 2 versions of same requirement"() {
 		given:

@@ -33,7 +33,9 @@ import org.squashtest.csp.core.infrastructure.collection.Paging;
 import org.squashtest.csp.tm.domain.campaign.Iteration;
 import org.squashtest.csp.tm.domain.campaign.IterationTestPlanItem;
 import org.squashtest.csp.tm.domain.campaign.TestSuite;
+import org.squashtest.csp.tm.domain.execution.Execution;
 import org.squashtest.csp.tm.internal.repository.TestSuiteDao;
+import org.squashtest.csp.tm.internal.service.campaign.IterationTestPlanManager;
 import org.squashtest.csp.tm.internal.repository.ItemTestPlanDao;
 import org.squashtest.csp.tm.service.IterationTestPlanManagerService;
 import org.squashtest.csp.tm.service.TestSuiteModificationService;
@@ -41,13 +43,17 @@ import org.squashtest.csp.tm.service.TestSuiteTestPlanManagerService;
 
 @Service("squashtest.tm.service.TestSuiteTestPlanManagerService")
 @Transactional
-public class TestSuiteTestPlanManagerServiceImpl implements TestSuiteTestPlanManagerService {
+public class TestSuiteTestPlanManagerServiceImpl implements
+		TestSuiteTestPlanManagerService {
 
 	@Inject
 	private TestSuiteModificationService delegateTestSuiteModificationService;
 
 	@Inject
 	private IterationTestPlanManagerService delegateIterationTestPlanManagerService;
+
+	@Inject
+	private IterationTestPlanManager testPlanManager;
 
 	@Inject
 	private TestSuiteDao testSuiteDao;
@@ -67,23 +73,37 @@ public class TestSuiteTestPlanManagerServiceImpl implements TestSuiteTestPlanMan
 	@Override
 	@PreAuthorize("hasPermission(#suiteId, 'org.squashtest.csp.tm.domain.campaign.TestSuite', 'WRITE') "
 			+ "or hasRole('ROLE_ADMIN')")
-	public PagedCollectionHolder<List<IterationTestPlanItem>> findTestPlan(long suiteId, Paging paging) {
-		return delegateTestSuiteModificationService.findTestSuiteTestPlan(suiteId, paging);
+	public PagedCollectionHolder<List<IterationTestPlanItem>> findTestPlan(
+			long suiteId, Paging paging) {
+		return delegateTestSuiteModificationService.findTestSuiteTestPlan(
+				suiteId, paging);
 	}
-	
+
 	@Override
 	@PreAuthorize("hasPermission(#suiteId, 'org.squashtest.csp.tm.domain.campaign.TestSuite', 'WRITE') "
 			+ "or hasRole('ROLE_ADMIN')")
-	public void addTestCasesToIterationAndTestSuite(List<Long> testCaseIds, long suiteId) {
-		
+	public void addTestCasesToIterationAndTestSuite(List<Long> testCaseIds,
+			long suiteId) {
+
 		TestSuite testSuite = testSuiteDao.findById(suiteId);
-		
+
 		Iteration iteration = testSuite.getIteration();
-		
-		List<IterationTestPlanItem> listTestPlanItemsToAffectToTestSuite = 
-			delegateIterationTestPlanManagerService.addTestPlanItemsToIteration(testCaseIds, iteration);
-		
-		delegateTestSuiteModificationService.bindTestPlanObj(testSuite, listTestPlanItemsToAffectToTestSuite);
+
+		List<IterationTestPlanItem> listTestPlanItemsToAffectToTestSuite = delegateIterationTestPlanManagerService
+				.addTestPlanItemsToIteration(testCaseIds, iteration);
+
+		delegateTestSuiteModificationService.bindTestPlanObj(testSuite,
+				listTestPlanItemsToAffectToTestSuite);
+	}
+
+	@Override
+	@PreAuthorize("hasPermission(#testSuiteId, 'org.squashtest.csp.tm.domain.campaign.TestSuite', 'WRITE') "
+			+ "or hasRole('ROLE_ADMIN')")
+	public Execution startNewExecution(long testSuiteId) {
+		TestSuite suite = testSuiteDao.findById(testSuiteId);
+		IterationTestPlanItem firstItem = suite.getFirstTestPlanItem();
+
+		return testPlanManager.addExecution(firstItem);
 	}
 	
 

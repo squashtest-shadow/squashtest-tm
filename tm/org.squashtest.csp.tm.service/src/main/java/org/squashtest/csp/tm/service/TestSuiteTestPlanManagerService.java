@@ -22,28 +22,45 @@ package org.squashtest.csp.tm.service;
 
 import java.util.List;
 
+import org.springframework.transaction.annotation.Transactional;
 import org.squashtest.csp.core.infrastructure.collection.PagedCollectionHolder;
 import org.squashtest.csp.core.infrastructure.collection.Paging;
 import org.squashtest.csp.tm.domain.campaign.Iteration;
 import org.squashtest.csp.tm.domain.campaign.IterationTestPlanItem;
 import org.squashtest.csp.tm.domain.campaign.TestSuite;
+import org.squashtest.csp.tm.domain.execution.Execution;
 
 /**
  * Service that aims at managing the test cases of a campaign (i.e. its test plan)
  * @author François Gaillard
  */
+@Transactional
 public interface TestSuiteTestPlanManagerService {
-	
+
 	/**
 	 * Find a iteration using its id
+	 * 
 	 * @param testSuiteId
 	 */
+	@Transactional(readOnly = true)
 	TestSuite findTestSuite(long testSuiteId);
 
-	PagedCollectionHolder<List<IterationTestPlanItem>> findTestPlan(long testSuiteId, Paging paging);
+	@Transactional(readOnly = true)
+	PagedCollectionHolder<List<IterationTestPlanItem>> findTestPlan(
+			long testSuiteId, Paging paging);
 
-	void addTestCasesToIterationAndTestSuite(List<Long> testCaseIds, long suiteId);
-	
+	void addTestCasesToIterationAndTestSuite(List<Long> testCaseIds,
+			long suiteId);
+
+	/**
+	 * Should start a new execution for the given test suite, ie create an
+	 * execution for the first test case of this suite's test plan.
+	 * 
+	 * @param testSuiteId
+	 * @return the created {@link Execution}
+	 */
+	Execution startNewExecution(long testSuiteId);
+
 	void detachTestPlanFromTestSuite(List<Long> testPlanIds, long suiteId);
 	
 	boolean detachTestPlanFromTestSuiteAndRemoveFromIteration(List<Long> testPlanIds, long suiteId);

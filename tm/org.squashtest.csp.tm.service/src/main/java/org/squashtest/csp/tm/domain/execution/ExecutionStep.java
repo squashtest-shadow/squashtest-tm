@@ -85,7 +85,7 @@ public class ExecutionStep implements AttachmentHolder, Bugged, TestStepVisitor 
 	private TestStep referencedTestStep;
 
 	@ManyToOne
-	@JoinTable(name = "EXECUTION_EXECUTION_STEPS", joinColumns = @JoinColumn(name = "EXECUTION_STEP_ID"), inverseJoinColumns = @JoinColumn(name = "EXECUTION_ID"))
+	@JoinTable(name = "EXECUTION_EXECUTION_STEPS", joinColumns = @JoinColumn(name = "EXECUTION_STEP_ID", insertable = false, updatable = false), inverseJoinColumns = @JoinColumn(name = "EXECUTION_ID", insertable = false, updatable = false))
 	private Execution execution;
 
 	@Formula("(select EXECUTION_EXECUTION_STEPS.EXECUTION_STEP_ORDER from  EXECUTION_EXECUTION_STEPS where  EXECUTION_EXECUTION_STEPS.EXECUTION_STEP_ID = EXECUTION_STEP_ID)")

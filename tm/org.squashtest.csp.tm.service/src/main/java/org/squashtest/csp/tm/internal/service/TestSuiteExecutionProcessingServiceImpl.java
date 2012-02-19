@@ -46,7 +46,7 @@ public class TestSuiteExecutionProcessingServiceImpl implements TestSuiteExecuti
 
 	@Override
 	@PreAuthorize("hasPermission(#testSuiteId, 'org.squashtest.csp.tm.domain.campaign.TestSuite','WRITE') or hasRole('ROLE_ADMIN')")
-	public ExecutionStep findExecutionStepWhereToResumeExecutionOfSuite(Long testSuiteId) {
+	public ExecutionStep findExecutionStepWhereToResumeExecutionOfSuite(long testSuiteId) {
 		List<IterationTestPlanItem> testSuiteResumableTestPlan = suiteDao.findLaunchableTestPlan(testSuiteId);
 		if (!testSuiteResumableTestPlan.isEmpty()) {
 			return findExecutionStepWhereToResumeExecutionOfTestPlan(testSuiteResumableTestPlan);
@@ -63,6 +63,7 @@ public class TestSuiteExecutionProcessingServiceImpl implements TestSuiteExecuti
 	private ExecutionStep findExecutionStepWhereToResumeExecutionOfTestPlan(
 			List<IterationTestPlanItem> testSuiteResumableTestPlan) {
 		ExecutionStep executionStep = null;
+
 		for (IterationTestPlanItem testPlanItem : testSuiteResumableTestPlan) {
 			List<Execution> executions = testPlanItem.getExecutions();
 			executionStep = findFirstUnexecutedOrCreateExecution(executions, testPlanItem);
@@ -93,7 +94,7 @@ public class TestSuiteExecutionProcessingServiceImpl implements TestSuiteExecuti
 
 	@Override
 	@PreAuthorize("hasPermission(#testSuiteId, 'org.squashtest.csp.tm.domain.campaign.TestSuite','WRITE') or hasRole('ROLE_ADMIN')")
-	public ExecutionStep relaunchExecution(Long testSuiteId) {
+	public ExecutionStep relaunchExecution(long testSuiteId) {
 		// getTest plan
 		ExecutionStep firstStep = null;
 		TestSuite testSuite = suiteDao.findById(testSuiteId);

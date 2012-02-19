@@ -21,32 +21,20 @@
 package org.squashtest.csp.tm.internal.repository;
 
 import java.util.List;
-import org.squashtest.csp.tm.domain.campaign.IterationTestPlanItem;
+
 import org.squashtest.csp.core.infrastructure.collection.Paging;
+import org.squashtest.csp.tm.domain.campaign.IterationTestPlanItem;
 import org.squashtest.csp.tm.domain.campaign.TestSuite;
-import org.squashtest.csp.tm.domain.campaign.TestSuiteStatistics;
 
-public interface TestSuiteDao extends EntityDao<TestSuite> {
+public interface TestSuiteDao extends CustomTestSuiteDao {
 
-	List<TestSuite> findAllByIterationId(long iterationId);
+	List<IterationTestPlanItem> findAllTestPlanItemsPaged(long testSuiteId, Paging paging);
 
-	/**
-	 * <p>
-	 * return a list of ordered iteration_test_plan_items that are linked to a test case or have an execution<br>
-	 * making it the launchable test plan of the test suite
-	 * </p>
-	 * 
-	 * @param testSuiteId
-	 * @return
-	 */
-	List<IterationTestPlanItem> findLaunchableTestPlan(Long testSuiteId);
+	long countTestPlanItems(long testSuiteId);
 
-	List<IterationTestPlanItem> findTestPlanPaged(long testSuiteId, Paging paging);
+	TestSuite findById(long testSuiteId);
 
-	long countTestPlans(Long iterationId);
+	List<TestSuite> findAllByIdList(List<Long> suitesIds);
 
-	TestSuiteStatistics getTestSuiteStatistics(Long testSuitId);
-
-	
-	List<IterationTestPlanItem> findTestPlanPartition(Long testSuiteId, List<Long> testPlanItemIds);
+	void persist(TestSuite suite);
 }

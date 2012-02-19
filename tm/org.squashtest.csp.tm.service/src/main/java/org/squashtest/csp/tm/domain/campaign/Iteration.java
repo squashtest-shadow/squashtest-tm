@@ -45,7 +45,6 @@ import javax.persistence.OneToOne;
 import javax.persistence.OrderColumn;
 import javax.validation.constraints.NotNull;
 
-import org.hibernate.annotations.Cascade;
 import org.hibernate.validator.constraints.NotBlank;
 import org.squashtest.csp.core.security.annotation.AclConstrainedObject;
 import org.squashtest.csp.tm.domain.DuplicateNameException;
@@ -84,14 +83,14 @@ public class Iteration implements AttachmentHolder {
 	/*
 	 * read http://docs.redhat.com/docs/en-US/JBoss_Enterprise_Web_Platform/5/html
 	 * /Hibernate_Annotations_Reference_Guide /entity-mapping-association-collection-onetomany.html
-	 * 
+	 *
 	 * "To map a bidirectional one to many, with the one-to-many side as the owning side, you have to remove the
 	 * mappedBy element and set the many to one @JoinColumn as insertable and updatable to false. This solution is
 	 * obviously not optimized and will produce some additional UPDATE statements."
-	 * 
+	 *
 	 * The reason for this is because Hibernate doesn't support the correct mapping (using mappingBy and @OrderColumns).
 	 * The solution used here is only a workaround.
-	 * 
+	 *
 	 * See bug HHH-5390 for a concise discussion about this.
 	 */
 
@@ -119,29 +118,9 @@ public class Iteration implements AttachmentHolder {
 	@JoinTable(name = "ITERATION_TEST_SUITE", joinColumns = @JoinColumn(name = "ITERATION_ID"), inverseJoinColumns = @JoinColumn(name = "TEST_SUITE_ID"))
 	private Set<TestSuite> testSuites = new HashSet<TestSuite>();
 
-	/* ********************************************* METHODS ********************************************** */
-
 	/**
-	 * That method will add an Execution to the iteration. The iterationTestPlan to which it will be attached is given
-	 * among the arguments The Execution must be referencing at TestCase prior calling that method (ie
-	 * execution.getReferencedTestCase() must not return null), or no operation will be performed.
-	 * 
-	 * @param execution
-	 * @param testPlanId
+	 * flattened list of the executions
 	 */
-	public void addExecution(@NotNull Execution execution, @NotNull IterationTestPlanItem testPlan) {
-		// look for the test case. if not already included it will create a test
-		// plan for it.
-		if (execution.getReferencedTestCase() == null) {
-			return;
-		}
-
-		if (testPlan != null) {
-			testPlan.addExecution(execution);
-		}
-	}
-
-	// flattened list of the executions
 	public List<Execution> getExecutions() {
 		List<Execution> listExec = new ArrayList<Execution>();
 		for (IterationTestPlanItem testplan : testPlans) {
@@ -290,7 +269,7 @@ public class Iteration implements AttachmentHolder {
 	/**
 	 * copy planning info: <br>
 	 * if actual end/start is auto => don't copy the actual date.
-	 * 
+	 *
 	 * @param clone
 	 */
 	private void copyPlanning(Iteration clone) {
@@ -312,7 +291,9 @@ public class Iteration implements AttachmentHolder {
 		}
 	}
 
-	/* **************************************** TEST PLAN **************************************************** */
+	/*
+	 * **************************************** TEST PLAN ****************************************************
+	 */
 
 	public List<IterationTestPlanItem> getTestPlans() {
 		return testPlans;
@@ -344,7 +325,10 @@ public class Iteration implements AttachmentHolder {
 
 	}
 
+	// TODO have a addToTestPlan(TestCase) method instead / also
 	public void addTestPlan(@NotNull IterationTestPlanItem testPlan) {
+		// TODO undocumented behaviour which silently breaks what the method is
+		// supposed to do. gotta come up with something better
 		if (testPlan.getReferencedTestCase() == null) {
 			return;
 		}
@@ -354,7 +338,7 @@ public class Iteration implements AttachmentHolder {
 
 	/***
 	 * Method which returns the position of a test case in the current iteration
-	 * 
+	 *
 	 * @param testCaseId
 	 *            the id of the test case we're looking for
 	 * @return the position of the test case (int)
@@ -378,7 +362,7 @@ public class Iteration implements AttachmentHolder {
 
 	/***
 	 * Method which returns the position of an item test plan in the current iteration
-	 * 
+	 *
 	 * @param testPlanId
 	 *            the id of the test plan we're looking for
 	 * @return the position of the test plan (int)
@@ -403,7 +387,7 @@ public class Iteration implements AttachmentHolder {
 
 	/***
 	 * Method which sets a test case at a new position
-	 * 
+	 *
 	 * @param currentPosition
 	 *            the current position
 	 * @param newPosition
@@ -515,7 +499,7 @@ public class Iteration implements AttachmentHolder {
 
 	/**
 	 * If the iteration have autodates set, they will be updated accordingly.
-	 * 
+	 *
 	 * @param newItemTestPlanDate
 	 */
 	public void updateAutoDates(Date newItemTestPlanDate) {
@@ -587,7 +571,7 @@ public class Iteration implements AttachmentHolder {
 	/***
 	 * This methods browses testPlans and checks if at least one testPlanItem has RUNNING or READY for execution status.
 	 * If this is the case, the actualEndDate should not be set
-	 * 
+	 *
 	 * @return false if the date should not be set
 	 */
 	private boolean actualEndDateUpdateAuthorization() {

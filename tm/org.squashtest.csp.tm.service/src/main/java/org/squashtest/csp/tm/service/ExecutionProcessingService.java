@@ -64,7 +64,7 @@ public interface ExecutionProcessingService {
 	 * @param executionStepRank
 	 * @return
 	 */
-	ExecutionStep getStepAt(long executionId, int executionStepIndex);
+	ExecutionStep findStepAt(long executionId, int executionStepIndex);
 
 	/***
 	 * Method which modify the execution step status<br>

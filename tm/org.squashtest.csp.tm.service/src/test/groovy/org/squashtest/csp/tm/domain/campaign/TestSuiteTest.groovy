@@ -20,22 +20,23 @@
  */
 package org.squashtest.csp.tm.domain.campaign
 
-import org.squashtest.csp.tm.domain.DuplicateNameException;
-import org.squashtest.csp.tm.domain.attachment.Attachment;
-import org.squashtest.csp.tm.domain.execution.Execution;
-import org.squashtest.csp.tm.domain.testcase.TestCase;
+import org.squashtest.csp.tm.domain.DuplicateNameException
+import org.squashtest.csp.tm.domain.attachment.Attachment
+import org.squashtest.csp.tm.domain.execution.Execution
+import org.squashtest.csp.tm.domain.testcase.TestCase
+import org.squashtest.csp.tm.internal.repository.ItemTestPlanDao
 
-import spock.lang.Specification;
+import spock.lang.Specification
 
 class TestSuiteTest extends Specification {
 
 	def "should rename normally"(){
 		given :
-		def iteration = Mock(Iteration);
+		def iteration = Mock(Iteration)
 		iteration.checkSuiteNameAvailable(_) >> true
 
 		and :
-		def suite = new TestSuite(name:"bob");
+		def suite = new TestSuite(name:"bob")
 		suite.iteration = iteration
 
 		when :
@@ -48,7 +49,7 @@ class TestSuiteTest extends Specification {
 	def "should rant because cannot rename"(){
 
 		given :
-		def iteration = Mock(Iteration);
+		def iteration = Mock(Iteration)
 		iteration.checkSuiteNameAvailable(_) >> false
 
 		and :
@@ -72,7 +73,7 @@ class TestSuiteTest extends Specification {
 		def suite = new TestSuite()
 
 		when :
-		suite.bindTestPlan(items)
+		suite.bindTestPlanItems(items)
 
 		then :
 		1 * items[0].setTestSuite(suite)
@@ -95,7 +96,7 @@ class TestSuiteTest extends Specification {
 		suite.iteration=iteration
 
 		when :
-		suite.bindTestPlanById([0l, 1l, 2l])
+		suite.bindTestPlanItemsById([0l, 1l, 2l])
 
 		then :
 		1 * items[0].setTestSuite(suite)
@@ -114,13 +115,13 @@ class TestSuiteTest extends Specification {
 
 		def items = []
 		10.times{
-			def item = new IterationTestPlanItem(referencedTestCase:Mock(TestCase));
+			def item = new IterationTestPlanItem(referencedTestCase:Mock(TestCase))
 			iteration.addTestPlan(item)
 			items << item
 		}
 
 		and :
-		suite.bindTestPlan(items[2, 4, 6, 7, 8, 9])
+		suite.bindTestPlanItems(items[2, 4, 6, 7, 8, 9])
 
 		and :
 
@@ -146,13 +147,13 @@ class TestSuiteTest extends Specification {
 
 		def items = []
 		10.times{
-			def item = new IterationTestPlanItem(referencedTestCase:Mock(TestCase));
+			def item = new IterationTestPlanItem(referencedTestCase:Mock(TestCase))
 			iteration.addTestPlan(item)
 			items << item
 		}
 
 		and :
-		suite.bindTestPlan(items[2, 4, 6, 7, 8, 9])
+		suite.bindTestPlanItems(items[2, 4, 6, 7, 8, 9])
 
 		and :
 
@@ -169,23 +170,32 @@ class TestSuiteTest extends Specification {
 
 	def "copy of a TestSuite's test plan should avoid deleted testCases"() {
 		given:
-		TestCase tc1 = new TestCase()
-		IterationTestPlanItem testPlanItem = new IterationTestPlanItem()
-		testPlanItem.setReferencedTestCase(tc1)
+		TestCase tc = new TestCase()
+		IterationTestPlanItem testPlanItem = new IterationTestPlanItem(Mock(TestCase))
+		testPlanItem.setReferencedTestCase(tc)
 		testPlanItem.setLabel("name")
-		IterationTestPlanItem testPlanItemWithoutTestCase = new IterationTestPlanItem()
+
+		and:
+		IterationTestPlanItem testPlanItemWithoutTestCase = new IterationTestPlanItem(Mock(TestCase))
+		// we need to remove the test case leter, otherwise the item wont be added to the test plan.
+
+		and:
 		Iteration iteration = new Iteration()
 		iteration.addTestPlan(testPlanItem)
 		iteration.addTestPlan(testPlanItemWithoutTestCase)
+		testPlanItemWithoutTestCase.referencedTestCase = null
+
+
+		and:
 		TestSuite testSuite = new TestSuite()
-		testSuite.setIteration iteration
-		testSuite.bindTestPlan([
+		iteration.addTestSuite(testSuite)
+		testSuite.bindTestPlanItems([
 			testPlanItem,
 			testPlanItemWithoutTestCase
 		])
 
 		when:
-		List<IterationTestPlanItem> copiedTestPlan = testSuite.createPastableCopyOfTestPlan();
+		List<IterationTestPlanItem> copiedTestPlan = testSuite.createPastableCopyOfTestPlan()
 
 		then:
 		copiedTestPlan.size() == 1
@@ -203,7 +213,7 @@ class TestSuiteTest extends Specification {
 		iteration.addTestPlan(testPlanItem)
 		TestSuite testSuite = new TestSuite()
 		testSuite.setIteration iteration
-		testSuite.bindTestPlan([testPlanItem])
+		testSuite.bindTestPlanItems([testPlanItem])
 
 		when:
 		List<IterationTestPlanItem> copiedTestPlan = testSuite.createPastableCopyOfTestPlan()
@@ -222,7 +232,7 @@ class TestSuiteTest extends Specification {
 		iteration.addTestPlan(testPlanItem)
 		TestSuite testSuite = new TestSuite()
 		testSuite.setIteration iteration
-		testSuite.bindTestPlan([testPlanItem])
+		testSuite.bindTestPlanItems([testPlanItem])
 		testSuite.setName("name")
 		testSuite.setDescription("description")
 		Attachment attach1 = new Attachment()
@@ -250,5 +260,28 @@ class TestSuiteTest extends Specification {
 		def m = Mock(IterationTestPlanItem)
 		m.getId() >> it
 		return m
+	}
+
+	def "should return the first item of test plan"() {
+		given:
+		TestSuite testSuite = new TestSuite()
+		Iteration iteration = new Iteration()
+		testSuite.setIteration(iteration)
+
+		and:
+		IterationTestPlanItem item = new IterationTestPlanItem(Mock(TestCase))
+		iteration.addTestPlan(item)
+		item.setTestSuite(testSuite)
+
+		and:
+		IterationTestPlanItem otherItem = new IterationTestPlanItem(Mock(TestCase))
+		iteration.addTestPlan(otherItem)
+		otherItem.setTestSuite(testSuite)
+
+		when:
+		def res = testSuite.getFirstTestPlanItem()
+
+		then:
+		res == item
 	}
 }

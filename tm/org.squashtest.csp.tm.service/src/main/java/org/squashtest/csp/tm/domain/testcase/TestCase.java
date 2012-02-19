@@ -43,7 +43,6 @@ import javax.persistence.OneToMany;
 import javax.persistence.OneToOne;
 import javax.persistence.OrderColumn;
 import javax.persistence.PrimaryKeyJoinColumn;
-import javax.persistence.Transient;
 import javax.validation.constraints.NotNull;
 
 import org.squashtest.csp.tm.domain.NoVerifiableRequirementVersionException;

@@ -18,33 +18,21 @@
  *     You should have received a copy of the GNU Lesser General Public License
  *     along with this software.  If not, see <http://www.gnu.org/licenses/>.
  */
-package org.squashtest.csp.tm.service;
+package org.squashtest.csp.tm.domain;
 
-import org.springframework.transaction.annotation.Transactional;
-import org.squashtest.csp.tm.domain.execution.ExecutionStep;
+import org.squashtest.csp.tm.domain.campaign.TestSuite;
 
-@Transactional
-public interface TestSuiteExecutionProcessingService {
 
-	/**
-	 * <p>
-	 * returns the execution step were to resume the test suite<br>
-	 * or null if no execution step is to be resumed
-	 * </p>
-	 * 
-	 * @param testSuiteId
-	 * @return
-	 */
-	ExecutionStep findExecutionStepWhereToResumeExecutionOfSuite(long testSuiteId);
+public class EmptyTestPlanException extends RuntimeException {
 
 	/**
-	 * <p>
-	 * returns the execution step were to start the test suite execution<br>
-	 * or null if there is no execution step
-	 * </p>
 	 * 
-	 * @param testSuiteId
-	 * @return
 	 */
-	ExecutionStep relaunchExecution(long testSuiteId);
+	private static final long serialVersionUID = 194192955658433029L;
+
+	public EmptyTestPlanException(TestSuite testSuite) {
+		super("The test plan is empty for Test Suite[" + testSuite.getId() + ']');
+	}
+
+	
 }

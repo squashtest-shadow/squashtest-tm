@@ -18,14 +18,17 @@
  *     You should have received a copy of the GNU Lesser General Public License
  *     along with this software.  If not, see <http://www.gnu.org/licenses/>.
  */
-package org.squashtest.csp.tm.domain.campaign;
+package org.squashtest.csp.tm.domain.campaign
 
-import org.squashtest.csp.tm.domain.execution.Execution;
-import org.squashtest.csp.tm.domain.execution.ExecutionStatus;
-import org.squashtest.csp.tm.domain.testcase.TestCase;
+import org.squashtest.csp.tm.domain.CyclicStepCallException
+import org.squashtest.csp.tm.domain.TestPlanItemNotExecutableException
+import org.squashtest.csp.tm.domain.execution.Execution
+import org.squashtest.csp.tm.domain.execution.ExecutionStatus
+import org.squashtest.csp.tm.domain.testcase.TestCase
 import org.squashtest.csp.tm.domain.users.User
+import org.squashtest.csp.tm.internal.service.TestCaseCyclicCallChecker
 
-import spock.lang.Specification;
+import spock.lang.Specification
 
 public class IterationTestPlanItemTest extends Specification {
 	IterationTestPlanItem copySource = new IterationTestPlanItem(iteration : Mock(Iteration), executionStatus: ExecutionStatus.FAILURE, label: "copy source")
@@ -53,7 +56,7 @@ public class IterationTestPlanItemTest extends Specification {
 		then:
 		copy.executions.isEmpty()
 	}
-	
+
 	def "copy of a test plan item should reference the same test case"() {
 		when:
 		IterationTestPlanItem copy = copySource.createCopy()
@@ -70,14 +73,14 @@ public class IterationTestPlanItemTest extends Specification {
 		copy.label == copySource.label
 	}
 	def "copy of a test plan item should copy the assigned user"() {
-		given: 
+		given:
 		User user = new User()
 		copySource.setUser(user)
 		when:
 		IterationTestPlanItem copy = copySource.createCopy()
 
 		then:
-		copy.user == copySource.getUser();
+		copy.user == copySource.getUser()
 	}
 
 	def "should copying a  test plan item should not modify the source"() {
@@ -96,5 +99,49 @@ public class IterationTestPlanItemTest extends Specification {
 		source.label == "label"
 		source.referencedTestCase == referencedTestCase
 		source.executions == [exec]
+	}
+
+	def "should not add an execution if not executable"() {
+		given:
+		IterationTestPlanItem item = new IterationTestPlanItem()
+
+		when:
+		item.createExecution(Mock(TestCaseCyclicCallChecker))
+
+		then:
+		thrown(TestPlanItemNotExecutableException)
+	}
+
+	def "should not add an execution if test case contains cyclic call"() {
+		given:
+		IterationTestPlanItem item = new IterationTestPlanItem(Mock(TestCase))
+
+		and:
+		TestCaseCyclicCallChecker checker = Mock()
+		checker.checkNoCyclicCall(_) >> { throw new CyclicStepCallException() }
+
+		when:
+		item.createExecution(checker)
+
+		then:
+		thrown(CyclicStepCallException)
+	}
+
+	def "should add an execution"() {
+		given:
+		TestCase testCase = new TestCase()
+		IterationTestPlanItem item = new IterationTestPlanItem(testCase)
+
+		and:
+		TestCaseCyclicCallChecker checker = Mock()
+
+		when:
+		def res = item.createExecution(checker)
+		item.addExecution(res)
+
+		then:
+		item.executions[0] == res
+		res.referencedTestCase == item.referencedTestCase
+		res.testPlan == item
 	}
 }

@@ -197,11 +197,11 @@ class ExecutionModificationServiceIT extends HibernateServiceSpecification {
 
 		when :
 		def executionSteps = []
-		executionSteps << procservice.getStepAt(execution.id,0)
-		executionSteps << procservice.getStepAt(execution.id,1)
-		executionSteps << procservice.getStepAt(execution.id,2)
-		executionSteps << procservice.getStepAt(execution.id,3)
-		executionSteps << procservice.getStepAt(execution.id,4)
+		executionSteps << procservice.findStepAt(execution.id,0)
+		executionSteps << procservice.findStepAt(execution.id,1)
+		executionSteps << procservice.findStepAt(execution.id,2)
+		executionSteps << procservice.findStepAt(execution.id,3)
+		executionSteps << procservice.findStepAt(execution.id,4)
 
 
 		then :
@@ -224,7 +224,7 @@ class ExecutionModificationServiceIT extends HibernateServiceSpecification {
 		def execList = iterService.findAllExecutions(iterationId)
 		def execution = execList.get(execList.size()-1)
 		when :
-		def fails = procservice.getStepAt(execution.id, 10)
+		def fails = procservice.findStepAt(execution.id, 10)
 
 		then :
 		thrown(IndexOutOfBoundsException)
@@ -293,7 +293,7 @@ class ExecutionModificationServiceIT extends HibernateServiceSpecification {
 		def execList = iterService.findAllExecutions(iterationId)
 		def execution = execList.get(execList.size()-1)
 		when :
-		ExecutionStep executionStep = procservice.getStepAt(execution.id,0)
+		ExecutionStep executionStep = procservice.findStepAt(execution.id,0)
 
 		procservice.setExecutionStepComment(executionStep.id, "Wooooohooo I did that here too !")
 
@@ -313,8 +313,8 @@ class ExecutionModificationServiceIT extends HibernateServiceSpecification {
 
 		when :
 
-		def exec1 = procservice.getStepAt(execution.id, 0)
-		def exec3 = procservice.getStepAt(execution.id, 2)
+		def exec1 = procservice.findStepAt(execution.id, 0)
+		def exec3 = procservice.findStepAt(execution.id, 2)
 
 
 
@@ -330,10 +330,10 @@ class ExecutionModificationServiceIT extends HibernateServiceSpecification {
 		def execList = iterService.findAllExecutions(iterationId)
 		def execution = execList.get(execList.size()-1)
 
-		ExecutionStep estep = procservice.getStepAt(execution.id, 0);
+		ExecutionStep estep = procservice.findStepAt(execution.id, 0);
 		procservice.setExecutionStepStatus(estep.id, ExecutionStatus.SUCCESS);
 
-		estep = procservice.getStepAt(execution.id, 1);
+		estep = procservice.findStepAt(execution.id, 1);
 		procservice.setExecutionStepStatus(estep.id, ExecutionStatus.FAILURE);
 
 

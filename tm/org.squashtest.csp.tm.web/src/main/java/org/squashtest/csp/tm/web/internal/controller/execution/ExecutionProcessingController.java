@@ -71,7 +71,7 @@ public class ExecutionProcessingController {
 				ExecutionStep executionStep = executionProcService.findRunningExecutionStep(executionId);
 				
 				if (executionStep == null) {
-					executionStep = executionProcService.getStepAt(executionId, stepCount - 1);
+					executionStep = executionProcService.findStepAt(executionId, stepCount - 1);
 				}
 				
 				return executionStep;
@@ -101,13 +101,13 @@ public class ExecutionProcessingController {
 			@Override
 			public ExecutionStep execute(int stepCount) {
 				if (stepIndex >= stepCount) {
-					return  executionProcService.getStepAt(executionId, stepCount - 1);
+					return  executionProcService.findStepAt(executionId, stepCount - 1);
 				}
 
-				ExecutionStep executionStep = executionProcService.getStepAt(executionId, stepIndex);
+				ExecutionStep executionStep = executionProcService.findStepAt(executionId, stepIndex);
 
 				if (executionStep == null) {
-					executionStep = executionProcService.getStepAt(executionId, stepCount - 1);
+					executionStep = executionProcService.findStepAt(executionId, stepCount - 1);
 				}
 				
 				return executionStep;
@@ -152,7 +152,7 @@ public class ExecutionProcessingController {
 	@RequestMapping(value = "/step/{stepIndex}/general", method = RequestMethod.GET)
 	public ModelAndView getMenuInfos(@PathVariable Long executionId, @PathVariable Integer stepIndex) {
 
-		ExecutionStep executionStep = executionProcService.getStepAt(executionId, stepIndex);
+		ExecutionStep executionStep = executionProcService.findStepAt(executionId, stepIndex);
 
 		ModelAndView mav = new ModelAndView("fragment/executions/step-information-fragment");
 
@@ -180,10 +180,10 @@ public class ExecutionProcessingController {
 
 		Execution execution = executionProcService.findExecution(executionId);
 		Integer total = execution.getSteps().size();
-		ExecutionStep executionStep = executionProcService.getStepAt(executionId, stepIndex);
+		ExecutionStep executionStep = executionProcService.findStepAt(executionId, stepIndex);
 
 		if (executionStep == null) {
-			executionStep = executionProcService.getStepAt(executionId, total - 1);
+			executionStep = executionProcService.findStepAt(executionId, total - 1);
 		}
 
 		obj.addAttr("executionStepOrder", executionStep.getExecutionStepOrder().toString());
