@@ -77,7 +77,7 @@ public class TestSuiteStatistics {
 	public void setNbBloqued(int nbBloqued) {
 		this.nbBloqued = new BigDecimal(nbBloqued);
 	}
-	
+
 	public int getNbRunning() {
 		return nbRunning.intValue();
 	}
@@ -113,7 +113,7 @@ public class TestSuiteStatistics {
 	public TestSuiteStatistics() {
 
 	}
-	
+
 	public TestSuiteStatistics(long nbTestCases, int nbBloqued, int nbFailure, int nbSuccess, int nbRunning, int nbReady) {
 		super();
 		this.nbTestCases = new BigDecimal(nbTestCases);
@@ -122,35 +122,40 @@ public class TestSuiteStatistics {
 		this.nbSuccess = new BigDecimal(nbSuccess);
 		this.nbRunning = new BigDecimal(nbRunning);
 		this.nbReady = new BigDecimal(nbReady);
-		
+
 		findStatus();
 		findProgression();
-//		long nbReadyRecalc = findReady();
-//		if (nbReadyRecalc != this.nbReady.longValue()){
-//			this.nbReady = new BigDecimal(nbReadyRecalc);
-//		}
+		// long nbReadyRecalc = findReady();
+		// if (nbReadyRecalc != this.nbReady.longValue()){
+		// this.nbReady = new BigDecimal(nbReadyRecalc);
+		// }
 		findDone();
 	}
-	
-	private void findStatus(){
-		if ((nbBloqued.add(nbFailure).add(nbSuccess).add(nbRunning)).intValue() == 0 ){
+
+	private void findStatus() {
+		if ((nbBloqued.add(nbFailure).add(nbSuccess).add(nbRunning)).intValue() == 0) {
 			status = ExecutionStatus.READY;
-		} else if ((nbBloqued.add(nbFailure).add(nbSuccess)).equals(nbTestCases) ){
+		} else if ((nbBloqued.add(nbFailure).add(nbSuccess)).equals(nbTestCases)) {
 			status = ExecutionStatus.SUCCESS;
 		} else {
 			status = ExecutionStatus.RUNNING;
 		}
 	}
-	
-	private void findProgression(){
-		progression = (nbBloqued.add(nbFailure).add(nbSuccess)).divide(nbTestCases, 2, RoundingMode.HALF_UP).multiply(new BigDecimal(100));
+
+	private void findProgression() {
+		if (!nbTestCases.equals(BigDecimal.ZERO)) {
+			progression = (nbBloqued.add(nbFailure).add(nbSuccess)).divide(nbTestCases, 2, RoundingMode.HALF_UP)
+					.multiply(new BigDecimal(100));
+		} else {
+			progression = BigDecimal.ZERO;
+		}
 	}
-	
-//	private long findReady(){
-//		return (nbTestCases.subtract(nbBloqued.add(nbFailure).add(nbSuccess))).longValue();
-//	}
-	
-	private void findDone(){
+
+	// private long findReady(){
+	// return (nbTestCases.subtract(nbBloqued.add(nbFailure).add(nbSuccess))).longValue();
+	// }
+
+	private void findDone() {
 		nbDone = nbBloqued.add(nbFailure).add(nbSuccess);
 	}
 
