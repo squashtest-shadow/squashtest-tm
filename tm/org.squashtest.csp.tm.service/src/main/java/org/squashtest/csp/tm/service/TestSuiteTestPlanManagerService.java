@@ -24,6 +24,7 @@ import java.util.List;
 
 import org.squashtest.csp.core.infrastructure.collection.PagedCollectionHolder;
 import org.squashtest.csp.core.infrastructure.collection.Paging;
+import org.squashtest.csp.tm.domain.campaign.Iteration;
 import org.squashtest.csp.tm.domain.campaign.IterationTestPlanItem;
 import org.squashtest.csp.tm.domain.campaign.TestSuite;
 
@@ -42,4 +43,8 @@ public interface TestSuiteTestPlanManagerService {
 	PagedCollectionHolder<List<IterationTestPlanItem>> findTestPlan(long testSuiteId, Paging paging);
 
 	void addTestCasesToIterationAndTestSuite(List<Long> testCaseIds, long suiteId);
+	
+	void detachTestPlanFromTestSuite(List<Long> testPlanIds, long suiteId);
+	
+	boolean detachTestPlanFromTestSuiteAndRemoveFromIteration(List<Long> testPlanIds, long suiteId);
 }

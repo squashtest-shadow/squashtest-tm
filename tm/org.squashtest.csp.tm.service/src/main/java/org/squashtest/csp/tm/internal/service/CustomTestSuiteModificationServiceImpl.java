@@ -73,6 +73,14 @@ public class CustomTestSuiteModificationServiceImpl implements
 		testSuite.bindTestPlan(itemTestPlans);
 	}
 	
+	
+	@Override
+	@PreAuthorize("hasPermission(#testSuite, 'WRITE') or hasRole('ROLE_ADMIN')")		
+	public void unbindTestPlanObj(TestSuite testSuite, List<IterationTestPlanItem> itemTestPlans) {
+		//the test plans have already been associated to the Iteration
+		testSuite.unBindTestPlan(itemTestPlans);
+	}
+	
 	@Override
 	@PreAuthorize("hasPermission(#suiteId, 'org.squashtest.csp.tm.domain.campaign.TestSuite','WRITE') or hasRole('ROLE_ADMIN')")		
 	public TestSuite findById(long suiteId) {

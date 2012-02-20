@@ -20,6 +20,7 @@
  */
 package org.squashtest.csp.tm.internal.service;
 
+import java.util.ArrayList;
 import java.util.List;
 
 import javax.inject.Inject;
@@ -33,6 +34,7 @@ import org.squashtest.csp.tm.domain.campaign.Iteration;
 import org.squashtest.csp.tm.domain.campaign.IterationTestPlanItem;
 import org.squashtest.csp.tm.domain.campaign.TestSuite;
 import org.squashtest.csp.tm.internal.repository.TestSuiteDao;
+import org.squashtest.csp.tm.internal.repository.ItemTestPlanDao;
 import org.squashtest.csp.tm.service.IterationTestPlanManagerService;
 import org.squashtest.csp.tm.service.TestSuiteModificationService;
 import org.squashtest.csp.tm.service.TestSuiteTestPlanManagerService;
@@ -49,6 +51,9 @@ public class TestSuiteTestPlanManagerServiceImpl implements TestSuiteTestPlanMan
 
 	@Inject
 	private TestSuiteDao testSuiteDao;
+	
+	@Inject
+	private ItemTestPlanDao itemTestPlanDao;
 
 	// FIXME : security
 	@Override
@@ -81,4 +86,43 @@ public class TestSuiteTestPlanManagerServiceImpl implements TestSuiteTestPlanMan
 		delegateTestSuiteModificationService.bindTestPlanObj(testSuite, listTestPlanItemsToAffectToTestSuite);
 	}
 	
+
+	@Override
+	@PreAuthorize("hasPermission(#suiteId, 'org.squashtest.csp.tm.domain.campaign.TestSuite', 'WRITE') "
+			+ "or hasRole('ROLE_ADMIN')")
+	public void detachTestPlanFromTestSuite(List<Long> testPlanIds, long suiteId){
+		
+		TestSuite testSuite = testSuiteDao.findById(suiteId);
+		List<IterationTestPlanItem> listTestPlanItems = new ArrayList<IterationTestPlanItem>();
+		
+		for (long testPlanId : testPlanIds) {
+			IterationTestPlanItem iterTestPlanItem = itemTestPlanDao.findById(testPlanId);
+			listTestPlanItems.add(iterTestPlanItem);
+		}
+
+		delegateTestSuiteModificationService.unbindTestPlanObj(testSuite, listTestPlanItems);
+	}
+	
+	@Override
+	@PreAuthorize("hasPermission(#suiteId, 'org.squashtest.csp.tm.domain.campaign.TestSuite', 'WRITE') "
+			+ "or hasRole('ROLE_ADMIN')")
+	public boolean detachTestPlanFromTestSuiteAndRemoveFromIteration(List<Long> testPlanIds, long suiteId){
+		Boolean ok = new Boolean(true);
+		
+		TestSuite testSuite = testSuiteDao.findById(suiteId);
+		List<IterationTestPlanItem> listTestPlanItems = new ArrayList<IterationTestPlanItem>();
+		
+		for (long testPlanId : testPlanIds) {
+			IterationTestPlanItem iterTestPlanItem = itemTestPlanDao.findById(testPlanId);
+			listTestPlanItems.add(iterTestPlanItem);
+		}
+		
+		delegateTestSuiteModificationService.unbindTestPlanObj(testSuite, listTestPlanItems);
+		
+		Iteration iteration = testSuite.getIteration();
+		
+		ok = delegateIterationTestPlanManagerService.removeTestPlansFromIterationObj(testPlanIds, iteration);
+		
+		return ok;
+	}
 }

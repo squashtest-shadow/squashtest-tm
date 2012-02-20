@@ -136,6 +136,12 @@ public class TestSuite {
 		}
 	}
 
+	public void unBindTestPlan(List<IterationTestPlanItem> items){
+		for (IterationTestPlanItem item : items){
+			item.setTestSuite(null);
+		}
+	}
+	
 	public void bindTestPlanById(List<Long> itemIds) {
 		for (Long itemId : itemIds) {
 			for (IterationTestPlanItem item : iteration.getTestPlans()) {

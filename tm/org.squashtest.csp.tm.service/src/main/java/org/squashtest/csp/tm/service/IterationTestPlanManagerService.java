@@ -88,11 +88,22 @@ public interface IterationTestPlanManagerService extends IterationTestPlanFinder
 	boolean removeTestPlansFromIteration(List<Long> testPlanIds, long iterationId);
 
 	/**
-	 * Removes a test case from a campaign excepted the test plans which were executed
+	 * Removes a list of test cases from an iteration excepted the test plans which were executed
 	 * 
+	 * @param testPlanIds
+	 *            the ids of the test plan managing that test case for that iteration
+	 * @param iteration
+	 *            the iteration
+	 * @return true if at least one test plan was already executed and therefore not deleted
+	 */
+	boolean removeTestPlansFromIterationObj(List<Long> testPlanIds, Iteration iteration);
+	
+	/**
+	 * Removes a test case from an iteration except if the test plans was executed
+	 *
 	 * @param testPlanId
 	 *            the id of the test plan managing that test case for that iteration
-	 * @param campaignId
+	 * @param iterationId
 	 * @return true if the test plan was already executed and therefore not deleted
 	 */
 	boolean removeTestPlanFromIteration(Long testPlanId, long iterationId);

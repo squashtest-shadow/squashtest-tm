@@ -59,8 +59,9 @@
 	<s:param name="testSuiteId" value="${testSuite.id}" />
 </s:url>
 
-<s:url var="testCasesUrl" value="/test-suites/{testSuiteId}/test-plan/table" >
+<s:url var="removeTestCaseUrl" value="/test-suites/{testSuiteId}/{iterationId}/test-plan/remove" >
 		<s:param name="testSuiteId" value="${testSuite.id}" />
+		<s:param name="iterationId" value="${testSuite.iteration.id}" />
 </s:url>
 
 <s:url var="updateTestCaseUrl" value="/test-suites/{testSuiteId}/test-case/">
@@ -87,8 +88,9 @@
 		<s:param name="iterationId" value="${testSuite.iteration.id}" />
 </s:url>
 
-<s:url var="nonBelongingTestCasesUrl" value="/test-suites/{testSuiteId}/non-belonging-test-cases" >
+<s:url var="nonBelongingTestCasesUrl" value="/test-suites/{testSuiteId}/{iterationId}/non-belonging-test-cases/remove" >
 		<s:param name="testSuiteId" value="${testSuite.id}" />
+		<s:param name="iterationId" value="${testSuite.iteration.id}" />
 </s:url>
 
 <s:url var="testCaseExecutionsUrl" value="/test-suites/{testSuiteId}/test-case-executions/" >
@@ -289,10 +291,10 @@
 	<jsp:attribute name="panelButtons">
 		<c:if test="${ editable }">
 			<f:message var="associateLabel" key="campaign.test-plan.manage.button.label"/>
-<%-- 			<f:message var="removeLabel" key="campaign.test-plan.remove.button.label"/> --%>
+			<f:message var="removeLabel" key="campaign.test-plan.remove.button.label"/>
 <%-- 			<f:message var="assignLabel" key="campaign.test-plan.assign.button.label"/> --%>
 			<input id="test-case-button" type="button" value="${associateLabel}" class="button"/>
-<%-- 			<input id="remove-test-case-button" type="button" value="${removeLabel}" class="button"/> --%>
+			<input id="remove-test-case-button" type="button" value="${removeLabel}" class="button"/>
 <%-- 			<input id="assign-test-case-button" type="button" value="${assignLabel}" class="button"/> --%>
 		</c:if>
 	</jsp:attribute>
@@ -305,7 +307,7 @@
 		--%>
 	
 		<aggr:decorate-test-suite-test-plan-table tableModelUrl="${testSuiteTestPlanUrl}" testPlanDetailsBaseUrl="${testCaseDetailsBaseUrl}" 
-			testPlansUrl="${testCasesUrl}" batchRemoveButtonId="remove-test-case-button" 
+			removeTestPlansUrl="${removeTestCaseUrl}" batchRemoveButtonId="remove-test-case-button" 
 			updateTestPlanUrl="${updateTestCaseUrl}" assignableUsersUrl="${assignableUsersUrl}"
 			nonBelongingTestPlansUrl="${nonBelongingTestCasesUrl}" testPlanExecutionsUrl="${testCaseExecutionsUrl}" editable="${ editable }" testCaseMultipleRemovalPopupId="delete-multiple-test-plan-dialog" 
 			testCaseSingleRemovalPopupId="delete-single-test-plan-dialog" />
@@ -315,36 +317,48 @@
 
 <%--------------------------- Deletion confirmation pup for Test plan section ------------------------------------%>
 
-<%--<pop:popup id="delete-multiple-test-plan-dialog" openedBy="remove-test-case-button" titleKey="dialog.remove-testcase-associations.title">
+<pop:popup id="delete-multiple-test-plan-dialog" openedBy="remove-test-case-button" titleKey="dialog.remove-testcase-testsuite-associations.title">
 	<jsp:attribute name="buttons">
-		<f:message var="label" key="attachment.button.delete.label" />
-				'${ label }' : function(){
-						$("#delete-multiple-test-plan-dialog").data("answer","yes");
+		<f:message var="labelDelete" key="attachment.button.delete.label" />
+				'${ labelDelete }' : function(){						
+						$("#delete-multiple-test-plan-dialog").data("answer","delete");
+						$("#delete-multiple-test-plan-dialog").dialog("close");
+				},
+				
+		<f:message var="labelDetach" key="attachment.button.detach.label" />
+				'${ labelDetach }' : function(){
+						$("#delete-multiple-test-plan-dialog").data("answer","detach");
 						$("#delete-multiple-test-plan-dialog").dialog("close");
 				},
 				
 		<pop:cancel-button />
 	</jsp:attribute>
 	<jsp:attribute name="body">
-		<f:message key="dialog.remove-testcase-associations.message" />
+		<f:message key="dialog.remove-testcase-testsuite-associations.message" />
 	</jsp:attribute>
-</pop:popup> --%>
+</pop:popup>
 
 <%--- the openedBy attribute here is irrelevant and is just a dummy --%>
-<%--<pop:popup id="delete-single-test-plan-dialog" openedBy="test-plans-table .delete-test-plan-button" titleKey="dialog.remove-testcase-association.title">
+<pop:popup id="delete-single-test-plan-dialog" openedBy="test-plans-table .delete-test-plan-button" titleKey="dialog.remove-testcase-testsuite-association.title">
 	<jsp:attribute name="buttons">
-		<f:message var="label" key="attachment.button.delete.label" />
-				'${ label }' : function(){
-						$("#delete-single-test-plan-dialog").data("answer","yes");
+		<f:message var="labelDelete" key="attachment.button.delete.label" />
+				'${ labelDelete }' : function(){
+						$("#delete-single-test-plan-dialog").data("answer","delete");
+						$("#delete-single-test-plan-dialog").dialog("close");
+				},
+				
+		<f:message var="labelDetach" key="attachment.button.detach.label" />
+				'${ labelDetach }' : function(){
+						$("#delete-single-test-plan-dialog").data("answer","detach");
 						$("#delete-single-test-plan-dialog").dialog("close");
 				},
 				
 		<pop:cancel-button />
 	</jsp:attribute>
 	<jsp:attribute name="body">
-		<f:message key="dialog.remove-testcase-association.message" />
+		<f:message key="dialog.remove-testcase-testsuite-association.message" />
 	</jsp:attribute>
-</pop:popup> --%>
+</pop:popup>
 
 <%-- ------------------------- /Deletion confirmation pup for Test plan section --------------------------------- --%>
 

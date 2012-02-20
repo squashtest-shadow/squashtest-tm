@@ -22,7 +22,7 @@
 --%>
 <%@ tag body-content="empty" description="jqueryfies a campaign test case table" %>
 <%@ attribute name="tableModelUrl" required="true" description="URL to GET the model of the table" %>
-<%@ attribute name="testPlansUrl" required="true" description="URL to manipulate the test-plans" %>
+<%@ attribute name="removeTestPlansUrl" required="true" description="URL to delete the selected test-case from the test-plan" %>
 <%@ attribute name="nonBelongingTestPlansUrl" required="true" description="URL to manipulate the non belonging test cases" %>
 <%@ attribute name="batchRemoveButtonId" required="true" description="html id of button for batch removal of test cases" %>
 <%@ attribute name="testPlanDetailsBaseUrl" required="true" description="base of the URL to get test case details" %>
@@ -58,20 +58,34 @@
 		
 		$("#${ testCaseSingleRemovalPopupId }").bind('dialogclose', function() {
 			var answer = $("#${ testCaseSingleRemovalPopupId }").data("answer");
-			if (answer != "yes") {
+			if ( (answer != "delete") && (answer != "detach") ) {
 				return;
 			}
 			var bCaller = $.data(this,"opener");
-		
-			$.ajax({
-				type : 'delete',
-				url : '${ testPlansUrl }/' + parseTestPlanId(bCaller),
-				dataType : 'text',
-				success : function (data){
-					refreshTestPlans();
-					checkForbiddenDeletion(data);
-				}
-			});
+			
+			if (answer == "delete") {
+				$.ajax({
+					type : 'delete',
+					url : '${ removeTestPlansUrl }/delete/' + parseTestPlanId(bCaller),
+					dataType : 'text',
+					success : function (data){
+						refreshTestPlans();
+						checkForbiddenDeletion(data);
+					}
+				});
+			}
+			
+			if (answer == "detach") {
+				$.ajax({
+					type : 'delete',
+					url : '${ removeTestPlansUrl }/detach/' + parseTestPlanId(bCaller),
+					dataType : 'text',
+					success : function (data){
+						refreshTestPlans();
+						checkForbiddenDeletion(data);
+					}
+				});
+			}
 		});
 		
 		//This function checks the response and inform the user if a deletion was impossible
@@ -85,18 +99,28 @@
 		//multiple deletion
 		$("#${ testCaseMultipleRemovalPopupId }").bind('dialogclose', function() {
 			var answer = $("#${ testCaseMultipleRemovalPopupId }").data("answer");
-			if (answer != "yes") {
+			if ( (answer != "delete") && (answer != "detach") ) {
 				return;
 			}
 			
 			var table = $( '#test-plans-table' ).dataTable();
 			var ids = getIdsOfSelectedTableRows(table, getTestPlansTableRowId);
 			
-			if (ids.length > 0) {
-				$.post('${ nonBelongingTestPlansUrl }', { testPlanIds: ids }, function(data){
-					refreshTestPlans();
-					checkForbiddenDeletion(data);
-					});
+			if (answer == "delete") {
+				if (ids.length > 0) {
+					$.post('${ nonBelongingTestPlansUrl }/delete', { testPlanIds: ids }, function(data){
+						refreshTestPlans();
+						checkForbiddenDeletion(data);
+						});
+				}
+			}
+			if (answer == "detach") {
+				if (ids.length > 0) {
+					$.post('${ nonBelongingTestPlansUrl }/detach', { testPlanIds: ids }, function(data){
+						refreshTestPlans();
+						checkForbiddenDeletion(data);
+						});
+				}
 			}
 		
 		});

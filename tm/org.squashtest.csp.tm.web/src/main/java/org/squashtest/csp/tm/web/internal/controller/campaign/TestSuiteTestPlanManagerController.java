@@ -189,6 +189,42 @@ public class TestSuiteTestPlanManagerController {
 			@PathVariable long id, @PathVariable long iterationId) {
 		testSuiteTestPlanManagerService.addTestCasesToIterationAndTestSuite(testCasesIds, id);
 	}
+
+	@RequestMapping(value = "/test-suites/{id}/{iterationId}/test-plan/remove/delete/{testPlanId}", method = RequestMethod.DELETE)
+	public @ResponseBody
+	String removeTestCaseFromTestSuiteAndIteration(@PathVariable("testPlanId") long testPlanId, @PathVariable long id) {
+		// check if a test plan was already executed and therefore not removed from the iteration
+		List<Long> testPlanIds = new ArrayList<Long>();
+		testPlanIds.add(testPlanId);
+		Boolean response = testSuiteTestPlanManagerService.detachTestPlanFromTestSuiteAndRemoveFromIteration(testPlanIds, id);
+		return response.toString();
+	}
+
+	@RequestMapping(value = "/test-suites/{id}/{iterationId}/test-plan/remove/detach/{testPlanId}", method = RequestMethod.DELETE)
+	public @ResponseBody
+	String detachTestCaseFromTestSuite(@PathVariable("testPlanId") long testPlanId, @PathVariable long id) {
+		List<Long> testPlanIds = new ArrayList<Long>();
+		testPlanIds.add(testPlanId);
+		testSuiteTestPlanManagerService.detachTestPlanFromTestSuite(testPlanIds, id);
+		return new Boolean(false).toString();
+	}
+	
+	@RequestMapping(value = "/test-suites/{id}/{iterationId}/non-belonging-test-cases/remove/delete", method = RequestMethod.POST, params = TESTPLANS_IDS_REQUEST_PARAM)
+	public @ResponseBody
+	String removeTestCasesFromTestSuiteAndIteration(@RequestParam(TESTPLANS_IDS_REQUEST_PARAM) List<Long> testPlansIds, 
+			@PathVariable long id) {
+		// check if a test plan was already executed and therefore not removed from the iteration
+		Boolean response = testSuiteTestPlanManagerService.detachTestPlanFromTestSuiteAndRemoveFromIteration(testPlansIds, id);
+		return response.toString();
+	}
+
+	@RequestMapping(value = "/test-suites/{id}/{iterationId}/non-belonging-test-cases/remove/detach", method = RequestMethod.POST, params = TESTPLANS_IDS_REQUEST_PARAM)
+	public @ResponseBody
+	String detachTestCasesFromTestSuite(@RequestParam(TESTPLANS_IDS_REQUEST_PARAM) List<Long> testPlansIds,
+			@PathVariable long id) {
+		testSuiteTestPlanManagerService.detachTestPlanFromTestSuite(testPlansIds, id);
+		return new Boolean(false).toString();
+	}
 	
 	@RequestMapping(value = "/test-suites/{id}/{iterationId}/test-cases/table", params = "sEcho")
 	public @ResponseBody

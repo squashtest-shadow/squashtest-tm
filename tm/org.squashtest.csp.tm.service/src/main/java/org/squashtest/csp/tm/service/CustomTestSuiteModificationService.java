@@ -71,6 +71,18 @@ public interface CustomTestSuiteModificationService {
 	void bindTestPlanObj(TestSuite testSuite, List<IterationTestPlanItem> itemTestPlans);
 
 	/**
+	 * <p>That method will detach several {@link IterationTestPlanItem} from the given TestSuite. They
+	 * are identified using their Objects. Since a given item can be bound to at most one test suite, the item
+	 * be deassociated from its former TestSuite.</p>
+	 * 
+	 * <p>These entities all belong to the same iteration since they have previously been attached to it.</p> 
+	 * 
+	 * @param testSuite
+	 * @param itemTestPlans
+	 */
+	void unbindTestPlanObj(TestSuite testSuite, List<IterationTestPlanItem> itemTestPlans);
+	
+	/**
 	 * That method will find the test Suite by its ID
 	 * 
 	 * @param suiteId

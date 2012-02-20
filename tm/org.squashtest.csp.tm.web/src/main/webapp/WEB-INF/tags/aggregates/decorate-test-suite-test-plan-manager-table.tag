@@ -53,7 +53,7 @@
 				var ids = getIdsOfSelectedTableRows(table);
 				
 				if (ids.length > 0) {
-					$.post('${ nonBelongingTestPlansUrl }', { testPlanIds: ids }, function(data){
+					$.post('${ nonBelongingTestPlansUrl }/remove/detach', { testPlanIds: ids }, function(data){
 						refreshTestPlans();
 						checkForbiddenDeletion(data);
 					});
@@ -67,7 +67,7 @@
 		$('#test-plan-table .delete-test-case-button').live('click', function() {
 			$.ajax({
 				type : 'delete',
-				url : '${ testPlansUrl }/' + parseTestPlanId(this),
+				url : '${ testPlansUrl }/remove/detach/' + parseTestPlanId(this),
 				dataType : 'text',
 				success : function(data){
 					refreshTestPlans();

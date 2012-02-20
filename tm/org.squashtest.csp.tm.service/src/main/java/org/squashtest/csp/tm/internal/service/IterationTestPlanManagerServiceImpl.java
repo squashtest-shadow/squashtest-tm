@@ -174,11 +174,23 @@ public class IterationTestPlanManagerServiceImpl implements IterationTestPlanMan
 	public boolean removeTestPlansFromIteration(List<Long> testPlanIds, long iterationId) {
 		boolean unauthorizedDeletion = false;
 		Iteration it = iterationDao.findById(iterationId);
+		
+		unauthorizedDeletion = removeTestPlansFromIterationObj(testPlanIds, it);
+
+		return unauthorizedDeletion;
+	}
+	
+	@Override
+	@PreAuthorize("hasPermission(#iteration, 'WRITE') "
+			+ "or hasRole('ROLE_ADMIN')")
+	public boolean removeTestPlansFromIterationObj(List<Long> testPlanIds, Iteration iteration) {
+		boolean unauthorizedDeletion = false;
+		
 		for (Long id : testPlanIds) {
-			IterationTestPlanItem itp = it.getTestPlan(id);
+			IterationTestPlanItem itp = iteration.getTestPlan(id);
 			// We do not allow deletion if there are execution
 			if (itp.getExecutions().isEmpty()) {
-				it.removeTestPlan(itp);
+				iteration.removeTestPlan(itp);
 				itemTestPlanDao.remove(itp);
 			} else {
 				unauthorizedDeletion = true;
@@ -194,6 +206,7 @@ public class IterationTestPlanManagerServiceImpl implements IterationTestPlanMan
 	public boolean removeTestPlanFromIteration(Long testPlanId, long iterationId) {
 		boolean unauthorizedDeletion = false;
 		Iteration it = iterationDao.findById(iterationId);
+		
 		IterationTestPlanItem itp = it.getTestPlan(testPlanId);
 		// We do not allow deletion if there are execution
 		if (itp.getExecutions().isEmpty()) {
