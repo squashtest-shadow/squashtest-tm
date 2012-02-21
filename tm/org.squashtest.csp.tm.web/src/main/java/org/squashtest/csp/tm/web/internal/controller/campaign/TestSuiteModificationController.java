@@ -61,6 +61,8 @@ import org.squashtest.csp.tm.web.internal.model.viewmapper.DataTableMapper;
 @RequestMapping("/test-suites/{id}")
 public class TestSuiteModificationController {
 
+	private static final String NAME = "name";
+
 	private TestSuiteModificationService service;
 	
 	private static final Logger LOGGER = LoggerFactory.getLogger(TestSuiteModificationController.class);
@@ -76,8 +78,8 @@ public class TestSuiteModificationController {
 	
 	private final DataTableMapper testPlanMapper = new DataTableMapper("unused", IterationTestPlanItem.class,
 			TestCase.class, Project.class, TestSuite.class).initMapping(9)
-			.mapAttribute(Project.class, 2, "name", String.class)
-			.mapAttribute(TestCase.class, 3, "name", String.class)
+			.mapAttribute(Project.class, 2, NAME, String.class)
+			.mapAttribute(TestCase.class, 3, NAME, String.class)
 			.mapAttribute(TestCase.class, 4, "executionMode", TestCaseExecutionMode.class)
 			.mapAttribute(IterationTestPlanItem.class, 5, "executionStatus", ExecutionStatus.class)
 			.mapAttribute(IterationTestPlanItem.class, 6, "lastExecutedBy", String.class)
@@ -172,12 +174,12 @@ public class TestSuiteModificationController {
 	}
 
 	//that method is useful too so don't remove it !
-	@RequestMapping(value="/rename", method=RequestMethod.POST, params="name" )
-	public @ResponseBody Map<String, String> renameTestSuite(@PathVariable("id") Long id, @RequestParam("name") String name ){
+	@RequestMapping(value="/rename", method=RequestMethod.POST, params=NAME )
+	public @ResponseBody Map<String, String> renameTestSuite(@PathVariable("id") Long id, @RequestParam(NAME) String name ){
 		service.rename(id, name);
 		Map<String, String> result = new HashMap<String, String>();
 		result.put("id", id.toString());
-		result.put("name", name);
+		result.put(NAME, name);
 		return result;
 	}
 	

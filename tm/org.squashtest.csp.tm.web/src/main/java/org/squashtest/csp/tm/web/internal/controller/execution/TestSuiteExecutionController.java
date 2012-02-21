@@ -38,11 +38,15 @@ import org.squashtest.csp.tm.service.TestSuiteTestPlanManagerService;
 @RequestMapping("/test-suites/{testSuiteId}/test-plan/")
 public class TestSuiteExecutionController {
 	private TestSuiteTestPlanManagerService testPlanManager;
+	
+	public TestSuiteExecutionController() {
+		super();
+	}
 
 	@RequestMapping(value = "/new-execution/ieo", method = RequestMethod.POST)
 	public String startNewExecutionInIEO(@PathVariable long testSuiteId) {
 		Execution newExec = testPlanManager.startNewExecution(testSuiteId);
-		// TODO un PRG piloté par le client
+		// TODO un PRG pilotÃ© par le client
 		String url = "redirect:/test-suites/" + testSuiteId + "/test-plan/" + newExec.getTestPlan().getId()
 				+ "/executions/" + newExec.getId() + "/ieo";
 

@@ -20,7 +20,6 @@
  */
 package org.squashtest.csp.tm.web.internal.controller.campaign;
 
-import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
@@ -29,8 +28,6 @@ import java.util.Locale;
 import javax.inject.Inject;
 import javax.inject.Provider;
 
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import org.springframework.context.MessageSource;
 import org.springframework.osgi.extensions.annotation.ServiceReference;
 import org.springframework.stereotype.Controller;
@@ -70,8 +67,6 @@ public class TestSuiteTestPlanManagerController {
 
 	private static final String TESTCASES_IDS_REQUEST_PARAM = "testCasesIds[]";
 	private static final String TESTPLANS_IDS_REQUEST_PARAM = "testPlanIds[]";
-	
-	private static final Logger LOGGER = LoggerFactory.getLogger(TestSuiteTestPlanManagerController.class);
 	
 	private TestSuiteTestPlanManagerService testSuiteTestPlanManagerService;
 	private IterationTestPlanManagerService iterationTestPlanManagerService;
@@ -273,24 +268,6 @@ public class TestSuiteTestPlanManagerController {
 	
 /* ***************** data formatter *************************** */
 
-	private String formatString(String arg, Locale locale) {
-		if (arg == null) {
-			return formatNoData(locale);
-		} else {
-			return arg;
-		}
-	}
-
-	private String formatDate(Date date, Locale locale) {
-		try {
-			String format = messageSource.getMessage("squashtm.dateformat", null, locale);
-			return new SimpleDateFormat(format).format(date);
-		} catch (Exception anyException) {
-			return formatNoData(locale);
-		}
-
-	}
-
 	private String formatNoData(Locale locale) {
 		return messageSource.getMessage("squashtm.nodata", null, locale);
 	}
@@ -301,13 +278,5 @@ public class TestSuiteTestPlanManagerController {
 
 	private String formatExecutionMode(TestCaseExecutionMode mode, Locale locale) {
 		return messageSource.getMessage(mode.getI18nKey(), null, locale);
-	}
-
-	private String formatStatus(ExecutionStatus status, Locale locale) {
-		return messageSource.getMessage(status.getI18nKey(), null, locale);
-	}
-	
-	private String formatNone(Locale locale){
-		return messageSource.getMessage("squashtm.none.f", null, locale);	
 	}
 }

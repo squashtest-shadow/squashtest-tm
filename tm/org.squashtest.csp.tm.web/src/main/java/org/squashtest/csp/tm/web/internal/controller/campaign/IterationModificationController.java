@@ -28,7 +28,6 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Locale;
 import java.util.Map;
-import java.util.Set;
 
 import javax.inject.Inject;
 import javax.servlet.http.HttpServletResponse;
@@ -72,6 +71,8 @@ import org.squashtest.csp.tm.web.internal.utils.DateUtils;
 @RequestMapping("/iterations/{iterationId}")
 public class IterationModificationController {
 
+	private static final String NAME = "name";
+
 	private static final Logger LOGGER = LoggerFactory.getLogger(IterationModificationController.class);
 
 	private IterationModificationService iterationModService;
@@ -88,7 +89,6 @@ public class IterationModificationController {
 	@ServiceReference
 	public void setIterationTestPlanFinder(IterationTestPlanFinder iterationTestPlanFinder) {
 		this.testPlanFinder = iterationTestPlanFinder;
-		int i = 5;
 	}
 
 	@Inject
@@ -96,12 +96,12 @@ public class IterationModificationController {
 
 	private final DataTableMapper testPlanMapper = new DataTableMapper("unused", IterationTestPlanItem.class,
 			TestCase.class, Project.class, TestSuite.class).initMapping(10)
-			.mapAttribute(Project.class, 2, "name", String.class)
-			.mapAttribute(TestCase.class, 3, "name", String.class)
+			.mapAttribute(Project.class, 2, NAME, String.class)
+			.mapAttribute(TestCase.class, 3, NAME, String.class)
 			.mapAttribute(TestCase.class, 4, "importance", TestCaseImportance.class)
 			.mapAttribute(TestCase.class, 5, "executionMode", TestCaseExecutionMode.class)
 			.mapAttribute(IterationTestPlanItem.class, 6, "executionStatus", ExecutionStatus.class)
-			.mapAttribute(TestSuite.class, 7, "name", String.class)
+			.mapAttribute(TestSuite.class, 7, NAME, String.class)
 			.mapAttribute(IterationTestPlanItem.class, 8, "lastExecutedBy", String.class)
 			.mapAttribute(IterationTestPlanItem.class, 9, "lastExecutedOn", Date.class);
 
@@ -408,12 +408,12 @@ public class IterationModificationController {
 
 	/* ********************** test suites **************************** */
 	
-	@RequestMapping(value = "/test-suites/new", params="name", method=RequestMethod.POST)
+	@RequestMapping(value = "/test-suites/new", params=NAME, method=RequestMethod.POST)
 	public @ResponseBody Map<String, String> addTestSuite(@PathVariable long iterationId,  @Valid @ModelAttribute("new-test-suite") TestSuite suite){
 		iterationModService.addTestSuite(iterationId, suite);
 		Map<String, String> res = new HashMap<String, String>();
 		res.put("id", suite.getId().toString());
-		res.put("name", suite.getName());
+		res.put(NAME, suite.getName());
 		return res;
 	}
 	

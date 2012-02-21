@@ -31,5 +31,5 @@ public interface TestCaseCyclicCallChecker {
 	 * if so :  a {@linkplain CyclicStepCallException} is thrown.
 	 * 
 	 */
-	public void checkNoCyclicCall(TestCase testCase) throws CyclicStepCallException;
+	void checkNoCyclicCall(TestCase testCase) throws CyclicStepCallException;
 }

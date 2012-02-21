@@ -195,7 +195,7 @@ public class Execution implements AttachmentHolder, Bugged {
 		this.lastExecutedOn = lastExecutedOn;
 	}
 
-	private final void setReferencedTestCase(TestCase testCase) {
+	private void setReferencedTestCase(TestCase testCase) {
 		referencedTestCase = testCase;
 		executionMode = testCase.getExecutionMode();
 		setPrerequisite(testCase.getPrerequisite());

@@ -44,6 +44,12 @@ import org.squashtest.csp.tm.web.internal.search.ExpandedTestCase;
 @RequestMapping("/search")
 public class SearchController {
 
+	private static final String RESULT_LIST = "resultList";
+
+	private static final String WORKSPACE = "workspace";
+
+	private static final String ICON = "icon";
+
 	private static final Logger LOGGER = LoggerFactory.getLogger(SearchController.class);
 
 	private SearchService searchService;
@@ -73,9 +79,9 @@ public class SearchController {
 		} else {
 			mav = new ModelAndView("fragment/generics/search-result-display");
 		}
-		mav.addObject("resultList", resultList);
-		mav.addObject("icon", "TestCase");
-		mav.addObject("workspace", "test-case");
+		mav.addObject(RESULT_LIST, resultList);
+		mav.addObject(ICON, "TestCase");
+		mav.addObject(WORKSPACE, "test-case");
 
 		return mav;
 	}
@@ -105,9 +111,9 @@ public class SearchController {
 		}
 
 		ModelAndView mav = new ModelAndView("fragment/generics/search-result-display");
-		mav.addObject("resultList", resultList);
-		mav.addObject("icon", "Requirement");
-		mav.addObject("workspace", "requirement");
+		mav.addObject(RESULT_LIST, resultList);
+		mav.addObject(ICON, "Requirement");
+		mav.addObject(WORKSPACE, "requirement");
 
 		return mav;
 	}
@@ -131,9 +137,9 @@ public class SearchController {
 		LOGGER.info("SQUASH INFO: DONE requirement ordered search with name : " + params.getName());
 		mav = new ModelAndView("fragment/generics/search-result-display-ordered");
 
-		mav.addObject("resultList", resultList);
-		mav.addObject("icon", "Requirement");
-		mav.addObject("workspace", "requirement");
+		mav.addObject(RESULT_LIST, resultList);
+		mav.addObject(ICON, "Requirement");
+		mav.addObject(WORKSPACE, "requirement");
 
 		return mav;
 	}
@@ -156,9 +162,9 @@ public class SearchController {
 			mav = new ModelAndView("fragment/generics/search-result-display");
 		}
 
-		mav.addObject("resultList", resultList);
-		mav.addObject("icon", "Campaign");
-		mav.addObject("workspace", "campaign");
+		mav.addObject(RESULT_LIST, resultList);
+		mav.addObject(ICON, "Campaign");
+		mav.addObject(WORKSPACE, "campaign");
 
 		return mav;
 	}
@@ -178,9 +184,9 @@ public class SearchController {
 			mav = new ModelAndView("fragment/generics/search-result-display-by-requirement");
 		}
 
-		mav.addObject("resultList", getExpandedTestCases(resultList, criteria));
-		mav.addObject("icon", "ExpandedTestCase");
-		mav.addObject("workspace", "test-case");
+		mav.addObject(RESULT_LIST, getExpandedTestCases(resultList, criteria));
+		mav.addObject(ICON, "ExpandedTestCase");
+		mav.addObject(WORKSPACE, "test-case");
 
 		return mav;
 	}

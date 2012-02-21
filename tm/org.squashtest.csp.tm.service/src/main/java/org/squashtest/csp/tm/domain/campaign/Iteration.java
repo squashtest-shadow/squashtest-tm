@@ -63,9 +63,11 @@ import org.squashtest.csp.tm.domain.testcase.TestCase;
 @SoftDeletable
 public class Iteration implements AttachmentHolder {
 
+	private static final String ITERATION_ID = "ITERATION_ID";
+
 	@Id
 	@GeneratedValue
-	@Column(name = "ITERATION_ID")
+	@Column(name = ITERATION_ID)
 	private Long id;
 
 	@Lob
@@ -95,7 +97,7 @@ public class Iteration implements AttachmentHolder {
 	 */
 
 	@ManyToOne
-	@JoinTable(name = "CAMPAIGN_ITERATION", joinColumns = @JoinColumn(name = "ITERATION_ID", updatable = false, insertable = false), inverseJoinColumns = @JoinColumn(name = "CAMPAIGN_ID", updatable = false, insertable = false))
+	@JoinTable(name = "CAMPAIGN_ITERATION", joinColumns = @JoinColumn(name = ITERATION_ID, updatable = false, insertable = false), inverseJoinColumns = @JoinColumn(name = "CAMPAIGN_ID", updatable = false, insertable = false))
 	private Campaign campaign;
 
 	/*
@@ -103,7 +105,7 @@ public class Iteration implements AttachmentHolder {
 	 */
 	@OneToMany(cascade = { CascadeType.PERSIST, CascadeType.MERGE })
 	@OrderColumn(name = "ITEM_TEST_PLAN_ORDER")
-	@JoinTable(name = "ITEM_TEST_PLAN_LIST", joinColumns = @JoinColumn(name = "ITERATION_ID"), inverseJoinColumns = @JoinColumn(name = "ITEM_TEST_PLAN_ID"))
+	@JoinTable(name = "ITEM_TEST_PLAN_LIST", joinColumns = @JoinColumn(name = ITERATION_ID), inverseJoinColumns = @JoinColumn(name = "ITEM_TEST_PLAN_ID"))
 	private final List<IterationTestPlanItem> testPlans = new ArrayList<IterationTestPlanItem>();
 
 	/* *********************** attachment attributes ************************ */
@@ -115,7 +117,7 @@ public class Iteration implements AttachmentHolder {
 	/* *********************** Test suites ********************************** */
 
 	@OneToMany(cascade = { CascadeType.ALL })
-	@JoinTable(name = "ITERATION_TEST_SUITE", joinColumns = @JoinColumn(name = "ITERATION_ID"), inverseJoinColumns = @JoinColumn(name = "TEST_SUITE_ID"))
+	@JoinTable(name = "ITERATION_TEST_SUITE", joinColumns = @JoinColumn(name = ITERATION_ID), inverseJoinColumns = @JoinColumn(name = "TEST_SUITE_ID"))
 	private Set<TestSuite> testSuites = new HashSet<TestSuite>();
 
 	/**

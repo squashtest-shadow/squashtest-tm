@@ -127,8 +127,6 @@ public class TestSuiteTestPlanManagerServiceImpl implements
 	@PreAuthorize("hasPermission(#suiteId, 'org.squashtest.csp.tm.domain.campaign.TestSuite', 'WRITE') "
 			+ "or hasRole('ROLE_ADMIN')")
 	public boolean detachTestPlanFromTestSuiteAndRemoveFromIteration(List<Long> testPlanIds, long suiteId){
-		Boolean ok = new Boolean(true);
-		
 		TestSuite testSuite = testSuiteDao.findById(suiteId);
 		List<IterationTestPlanItem> listTestPlanItems = new ArrayList<IterationTestPlanItem>();
 		
@@ -141,8 +139,6 @@ public class TestSuiteTestPlanManagerServiceImpl implements
 		
 		Iteration iteration = testSuite.getIteration();
 		
-		ok = delegateIterationTestPlanManagerService.removeTestPlansFromIterationObj(testPlanIds, iteration);
-		
-		return ok;
+		return delegateIterationTestPlanManagerService.removeTestPlansFromIterationObj(testPlanIds, iteration);
 	}
 }

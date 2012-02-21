@@ -25,7 +25,6 @@ import java.util.List;
 
 import javax.inject.Inject;
 
-import org.hibernate.SessionFactory;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.security.access.prepost.PostAuthorize;
 import org.springframework.security.access.prepost.PostFilter;
@@ -38,14 +37,12 @@ import org.squashtest.csp.tm.domain.campaign.CampaignFolder;
 import org.squashtest.csp.tm.domain.campaign.CampaignLibrary;
 import org.squashtest.csp.tm.domain.campaign.CampaignLibraryNode;
 import org.squashtest.csp.tm.domain.campaign.Iteration;
-import org.squashtest.csp.tm.domain.campaign.IterationTestPlanItem;
 import org.squashtest.csp.tm.domain.campaign.TestSuite;
 import org.squashtest.csp.tm.domain.projectfilter.ProjectFilter;
 import org.squashtest.csp.tm.internal.infrastructure.strategy.LibrarySelectionStrategy;
 import org.squashtest.csp.tm.internal.repository.CampaignDao;
 import org.squashtest.csp.tm.internal.repository.CampaignFolderDao;
 import org.squashtest.csp.tm.internal.repository.CampaignLibraryDao;
-import org.squashtest.csp.tm.internal.repository.ItemTestPlanDao;
 import org.squashtest.csp.tm.internal.repository.IterationDao;
 import org.squashtest.csp.tm.internal.repository.LibraryNodeDao;
 import org.squashtest.csp.tm.internal.repository.TestSuiteDao;
@@ -65,8 +62,6 @@ public class CampaignLibraryNavigationServiceImpl extends
 	 */
 	private static final String COPY_TOKEN = "-Copie";
 	@Inject
-	private SessionFactory sessionFactory;
-	@Inject
 	private CampaignLibraryDao campaignLibraryDao;
 
 	@Inject
@@ -84,9 +79,6 @@ public class CampaignLibraryNavigationServiceImpl extends
 
 	@Inject
 	private TestSuiteDao suiteDao;
-
-	@Inject
-	private ItemTestPlanDao testPlanDao;
 
 	@Inject
 	private IterationModificationService iterationModificationService;
@@ -268,12 +260,6 @@ public class CampaignLibraryNavigationServiceImpl extends
 		iterationDao.persistIterationAndTestPlan(clone);
 
 		return clone;
-	}
-
-	private void persistTestPlan(Iteration iteration) {
-		for (IterationTestPlanItem testPlanItem : iteration.getTestPlans()) {
-			testPlanDao.persist(testPlanItem);
-		}
 	}
 
 	@Override
