@@ -26,6 +26,8 @@ import org.springframework.transaction.annotation.Transactional
 import org.squashtest.csp.core.infrastructure.collection.PagingAndSorting;
 import org.squashtest.csp.tm.domain.requirement.RequirementCriticality
 import org.squashtest.csp.tm.domain.requirement.RequirementSearchCriteria
+import org.squashtest.csp.tm.domain.testcase.TestCaseImportance;
+import org.squashtest.csp.tm.domain.testcase.TestCaseSearchCriteria;
 import org.squashtest.csp.tm.infrastructure.filter.CollectionFilter
 import org.squashtest.csp.tm.infrastructure.filter.CollectionSorting
 import org.squashtest.csp.tm.internal.repository.TestCaseDao
@@ -368,4 +370,77 @@ class HibernateTestCaseDaoIT extends DbunitDaoSpecification {
 		res.size() == 3
 		res.containsSameIdentifiers([302L, 103L, 102L])
 	}
+	
+	@DataSet("HibernateTestCaseDaoIT.search-by-criteria-setup.xml")
+	def "should find the test cases and folders ordered by names, not grouped by project and no importance filter"(){
+		
+		given :
+			def importances = TestCaseImportance.values(); 
+			def criteria = Mock(TestCaseSearchCriteria)
+			criteria.getName() >> "roject"
+			criteria.isGroupByProject() >> false
+			criteria.getImportanceFilterSet() >> Arrays.asList(importances);
+		
+		when :
+			def result = testCaseDao.findBySearchCriteria(criteria)
+			
+		then :
+			result.collect{it.id} == [ 211,121,  112, 221, 212, 111 ]
+			result.collect{it.name} == [
+				"aaa project Ed test case 1",
+				"aaa project Ion folder 1",
+				"aaa project Ion test case 2",
+				"bbb project Ed folder 1",
+				"bbb project Ed test case 2",
+				"bbb project Ion test case 1"
+			]
+	}
+	
+	
+	@DataSet("HibernateTestCaseDaoIT.search-by-criteria-setup.xml")
+	def "should find the test cases and folders ordered by names, grouped by project and no importance filter"(){
+		
+		given :
+			def importances = TestCaseImportance.values();
+			def criteria = Mock(TestCaseSearchCriteria)
+			criteria.getName() >> "roject"
+			criteria.isGroupByProject() >> true
+			criteria.getImportanceFilterSet() >> Arrays.asList(importances);
+		
+		when :
+			def result = testCaseDao.findBySearchCriteria(criteria)
+			
+		then :
+			result.collect{it.id} == [ 121, 112, 111, 211, 221, 212]
+			result.collect{it.name} == [
+				"aaa project Ion folder 1",
+				"aaa project Ion test case 2",
+				"bbb project Ion test case 1",
+				"aaa project Ed test case 1",
+				"bbb project Ed folder 1",
+				"bbb project Ed test case 2",
+			]
+	}
+	
+	@DataSet("HibernateTestCaseDaoIT.search-by-criteria-setup.xml")
+	def "should find test cases ordered by names, not grouped by project and having importance MEDIUM and HIGH"(){
+		
+		given :
+			def criteria = Mock(TestCaseSearchCriteria)
+			criteria.getName() >> "roject"
+			criteria.isGroupByProject() >> false
+			criteria.getImportanceFilterSet() >> [TestCaseImportance.MEDIUM, TestCaseImportance.HIGH] 
+		
+		when :
+			def result = testCaseDao.findBySearchCriteria(criteria)
+		
+		then :
+		
+			result.collect{it.id} == [ 112, 212 ]
+			result.collect{it.name} == [
+				"aaa project Ion test case 2", "bbb project Ed test case 2"
+			]
+	
+	}
+	
 }

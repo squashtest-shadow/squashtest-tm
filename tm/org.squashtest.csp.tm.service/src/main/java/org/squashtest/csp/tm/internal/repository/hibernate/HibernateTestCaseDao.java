@@ -440,15 +440,17 @@ public class HibernateTestCaseDao extends HibernateEntityDao<TestCase> implement
 			hCriteria = tcNodeRootedCriteria(criteria); 
 		}
 		
-		hCriteria.addOrder(Order.asc("name"));
+		 
+		if (criteria.isGroupByProject()){
+			hCriteria.addOrder(Order.asc("project"));
+		}
+		
 		
 		if (StringUtils.isNotBlank(criteria.getName())){
 			hCriteria.add(Restrictions.ilike("name", criteria.getName(), MatchMode.ANYWHERE));
 		}
-											 
-		if (criteria.isGroupByProject()){
-			hCriteria.setProjection(Projections.projectionList().add(Projections.groupProperty("project")));
-		}
+
+		hCriteria.addOrder(Order.asc("name"));
 		
 		return hCriteria.list();
 		
