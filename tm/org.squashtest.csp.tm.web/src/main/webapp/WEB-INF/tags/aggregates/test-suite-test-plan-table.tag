@@ -22,7 +22,7 @@
 --%>
 <%@ tag body-content="empty" description="inserts the html table of test cases" %>
 <%@ taglib prefix="f" uri="http://java.sun.com/jsp/jstl/fmt" %>
-<table id="test-plans-table"  >
+<table id="test-suite-test-plans-table"  >
 	<thead>
 		<tr>
 			<th>Test Plan Id</th>
@@ -40,5 +40,5 @@
 	<tbody><%-- Will be populated through ajax --%></tbody>
 </table>
 	<div id="test-case-row-buttons" class="not-displayed">
-	<a id="delete-test-plan-button" href="#" class="delete-test-plan-button"><f:message key="test-case.verified_requirement_item.remove.button.label" /></a>
+	<a id="delete-test-suite-test-plan-button" href="#" class="delete-test-suite-test-plan-button"><f:message key="dialog.remove-testcase-association.title" /></a>
 </div> 

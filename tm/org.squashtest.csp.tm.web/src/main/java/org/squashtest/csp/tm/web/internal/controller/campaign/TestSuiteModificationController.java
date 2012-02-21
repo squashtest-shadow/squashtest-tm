@@ -132,6 +132,19 @@ public class TestSuiteModificationController {
 		return mav;
 	}
 	
+	
+	@RequestMapping(value = "/stats", method = RequestMethod.GET)
+	public ModelAndView refreshStats(@PathVariable long id) {
+		
+		TestSuiteStatistics testSuiteStats = service.findTestSuiteStatistics(id);
+
+		ModelAndView mav = new ModelAndView("fragment/generics/test-suite-statistics-fragment");
+
+		mav.addObject("statisticsEntity", testSuiteStats);
+
+		return mav;
+	}
+	
 
 	@RequestMapping(method = RequestMethod.POST, params = { "id=test-suite-description", "value" })
 	@ResponseBody

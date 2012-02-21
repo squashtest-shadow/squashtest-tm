@@ -49,10 +49,10 @@
 <script type="text/javascript">
 	$(function() {
 		<%-- single test-plan removal --%>
-		$('#test-plans-table .delete-test-plan-button').die('click');
+		$('#test-suite-test-plans-table .delete-test-suite-test-plan-button').die('click');
 		
 		//single deletion buttons
-		$('#test-plans-table .delete-test-plan-button').live('click', function() {
+		$('#test-suite-test-plans-table .delete-test-suite-test-plan-button').live('click', function() {
 			$("#${ testCaseSingleRemovalPopupId }").data('opener', this).dialog('open');
 		});
 		
@@ -71,6 +71,7 @@
 					success : function (data){
 						refreshTestPlans();
 						checkForbiddenDeletion(data);
+						refreshStats();
 					}
 				});
 			}
@@ -83,6 +84,7 @@
 					success : function (data){
 						refreshTestPlans();
 						checkForbiddenDeletion(data);
+						refreshStats();
 					}
 				});
 			}
@@ -103,7 +105,7 @@
 				return;
 			}
 			
-			var table = $( '#test-plans-table' ).dataTable();
+			var table = $( '#test-suite-test-plans-table' ).dataTable();
 			var ids = getIdsOfSelectedTableRows(table, getTestPlansTableRowId);
 			
 			if (answer == "delete") {
@@ -111,6 +113,7 @@
 					$.post('${ nonBelongingTestPlansUrl }/delete', { testPlanIds: ids }, function(data){
 						refreshTestPlans();
 						checkForbiddenDeletion(data);
+						refreshStats();
 						});
 				}
 			}
@@ -119,6 +122,7 @@
 					$.post('${ nonBelongingTestPlansUrl }/detach', { testPlanIds: ids }, function(data){
 						refreshTestPlans();
 						checkForbiddenDeletion(data);
+						refreshStats();
 						});
 				}
 			}
@@ -189,20 +193,20 @@
 	}
 	
 	function refreshTestPlans() {
-		var table = $('#test-plans-table').dataTable();
+		var table = $('#test-suite-test-plans-table').dataTable();
 		saveTableSelection(table, getTestPlansTableRowId);
 		table.fnDraw(false);
 	}
 	
 	function refreshTestPlansWithoutSelection() {
-		var table = $('#test-plans-table').dataTable();
+		var table = $('#test-suite-test-plans-table').dataTable();
 		table.fnDraw(false);
 	}
 
 	function testPlanTableDrawCallback() {
 		<c:if test="${ editable }">
-		enableTableDragAndDrop('test-plans-table', getTestPlanTableRowIndex, testPlanDropHandler);
-		decorateDeleteButtons($('.delete-test-plan-button', this));
+		enableTableDragAndDrop('test-suite-test-plans-table', getTestPlanTableRowIndex, testPlanDropHandler);
+		decorateDeleteButtons($('.delete-test-suite-test-plan-button', this));
 		</c:if>
 		restoreTableSelection(this, getTestPlansTableRowId);
 		convertExecutionStatus(this);
@@ -222,8 +226,8 @@
 	function testPlanTableRowCallback(row, data, displayIndex) {
 		addIdtoTestPlanRow(row, data);
 		<c:if test="${ editable }">
-		addDeleteButtonToRow(row, getTestPlansTableRowId(data), 'delete-test-plan-button');
-		addClickHandlerToSelectHandle(row, $("#test-plans-table"));
+		addDeleteButtonToRow(row, getTestPlansTableRowId(data), 'delete-test-suite-test-plan-button');
+		addClickHandlerToSelectHandle(row, $("#test-suite-test-plans-table"));
 		addLoginListToTestPlan(row, data);
 		</c:if>
 		addHLinkToTestPlanName(row, data);
@@ -290,7 +294,7 @@
 	function toggleExpandIcon(testPlanHyperlink){
 		
 	
-		var table =  $('#test-plans-table').dataTable();
+		var table =  $('#test-suite-test-plans-table').dataTable();
 		var donnees = table.fnGetData(testPlanHyperlink.parentNode.parentNode);
 		var image = $(testPlanHyperlink).parent().find("img");
 		var ltr = testPlanHyperlink.parentNode.parentNode;
@@ -330,10 +334,10 @@
 			could be optimized if we bind that in the datatableDrawCallback.		
 		*/
 		
-		$('#test-plans-table tbody td a.test-case-name-hlink').die('click');
+		$('#test-suite-test-plans-table tbody td a.test-case-name-hlink').die('click');
 		
 		<%-- binding the handler managing the collapse/expand test case icon--%>
-		$('#test-plans-table tbody td a.test-case-name-hlink').live('click', function () {
+		$('#test-suite-test-plans-table tbody td a.test-case-name-hlink').live('click', function () {
 			toggleExpandIcon(this);
 		} );
 		
@@ -342,7 +346,7 @@
 	
 </script>
 
-<comp:decorate-ajax-table url="${ tableModelUrl }" tableId="test-plans-table" paginate="true">
+<comp:decorate-ajax-table url="${ tableModelUrl }" tableId="test-suite-test-plans-table" paginate="true">
 	<jsp:attribute name="drawCallback">testPlanTableDrawCallback</jsp:attribute>
 	<jsp:attribute name="rowCallback">testPlanTableRowCallback</jsp:attribute>
 	<jsp:attribute name="columnDefs">

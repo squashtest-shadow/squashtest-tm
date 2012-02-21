@@ -20,10 +20,9 @@
         along with this software.  If not, see <http://www.gnu.org/licenses/>.
 
 --%>
-<%@ tag body-content="empty" description="adds a cancel button to a popup" %>
-<%@ taglib prefix="f" uri="http://java.sun.com/jsp/jstl/fmt" %>
-<f:message var="label" key="dialog.button.cancel.label"/>
-'${ label }': function() {
-	$( this ).data("answer","cancel");
-	$( this ).dialog( 'close' );
-}
+<%@ taglib uri="http://java.sun.com/jsp/jstl/core" prefix="c" %>
+<%@ taglib tagdir="/WEB-INF/tags/component" prefix="comp" %>
+<%@ taglib uri="http://java.sun.com/jsp/jstl/fmt" prefix="f" %>
+<?xml version="1.0" encoding="utf-8" ?>
+<%@ page language="java" contentType="text/html; charset=utf-8" pageEncoding="utf-8"%>
+<comp:test-suite-statistics-panel statisticsEntity="${ statisticsEntity }" />
