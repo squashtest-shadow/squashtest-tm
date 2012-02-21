@@ -540,6 +540,7 @@
 	<comp:select-jeditable componentId="test-case-importance" jsonData="${ testCaseImportanceComboJson }" targetUrl="${ testCaseUrl }" />
 </c:if>
 
+
 <comp:toggle-panel id="test-case-description-panel" titleKey="generics.description.title" isContextual="true" open="true">
 	<jsp:attribute name="body">
 		<div id="test-case-description-table" class="display-table">
@@ -805,7 +806,7 @@
 	function deleteTestCaseSuccess() {
 		<c:choose>
 		<%-- case one : we were in a sub page context. We need to navigate back to the workspace. --%>
-		<c:when test="${param.isInfoPage}" >		
+		<c:when test="${param['isInfoPage']}" >		
 		document.location.href="${workspaceUrl}" ;
 		</c:when>
 		<%-- case two : we were already in the workspace. we simply reload it (todo : make something better). --%>

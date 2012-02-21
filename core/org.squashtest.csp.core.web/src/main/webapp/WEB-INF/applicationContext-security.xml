@@ -83,7 +83,7 @@
 		
 		<access-denied-handler ref="accessDeniedHandler" />
 		
-		<custom-filter ref="htmlSanitizationFilter" position="FIRST"/>
+		<custom-filter ref="htmlSanitizationFilter" position="FIRST"/> 
 		
 	</http>
 	
@@ -108,8 +108,9 @@
 	 	<beans:property name="forceHttps" value="${authentication.application.forcehttps}" />
 	</beans:bean>
 	
+
 	<beans:bean id="htmlSanitizationFilter" class="org.squashtest.csp.core.web.internal.filter.HtmlSanitizationFilter"/>
-	
+
 	<authentication-manager
 		alias="squashtest.core.security.AuthenticationManager">
 		<authentication-provider user-service-ref="squashtest.core.security.JdbcUserDetailsManager">			

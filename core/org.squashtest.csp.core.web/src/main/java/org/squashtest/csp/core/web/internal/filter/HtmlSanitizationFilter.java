@@ -75,30 +75,46 @@ public class HtmlSanitizationFilter implements Filter {
 		
 	}
 	
+	static 	protected String[] escapeValue(String[] orig){
+		if (orig== null) return null;
+		
+		String[] aString = new String[orig.length];
+					
+		int i=0;
+		for (String string : orig){
+			aString[i++] = HTMLCleanupUtils.stripJavascript(string);
+		}
+		
+		return aString;			
+	}
+	
 	@SuppressWarnings("unchecked")
 	private class HtmlSafeRequestWrapper extends HttpServletRequestWrapper{
-		
-		private final HtmlSafeParameterMapWrapper wrapper;
 				
+		private HttpServletRequest request;
+		
 		HtmlSafeRequestWrapper(HttpServletRequest request) {
 			super(request);
-			wrapper = new HtmlSafeParameterMapWrapper(request.getParameterMap());
+			this.request=request;
 		}
 		
 		@Override
 		public String getParameter(String name) {
-			String[] value = wrapper.get(name);
-			return (value!=null) ? value[0] : null;
+			String value = request.getParameter(name);
+			if (value==null) return null;
+			String[] cleaned = escapeValue(new String[] {value});
+			return (cleaned !=null) ? cleaned[0] : null;
 		}
 		
 		@Override
 		public String[] getParameterValues(String name) {
-			return wrapper.get(name);
+			String[] values = request.getParameterValues(name);
+			return escapeValue(values);
 		}
 		
 		@Override
 		public Map<?, ?> getParameterMap() {
-			return wrapper;
+			return new HtmlSafeParameterMapWrapper(request.getParameterMap());
 		}
 		
 		
@@ -111,6 +127,9 @@ public class HtmlSanitizationFilter implements Filter {
 		public HtmlSafeParameterMapWrapper(Map<String, String[]> wrappedMap) {
 			this.wrappedMap=wrappedMap;
 		}
+		
+		
+
 
 		@Override
 		public void clear() {
@@ -131,19 +150,7 @@ public class HtmlSanitizationFilter implements Filter {
 		public Set<java.util.Map.Entry<String, String[]>> entrySet() {
 			return wrappedMap.entrySet();
 		}
-		
-		private String[] escapeValue(String[] orig){
-			if (orig== null) return null;
-				
-			String[] aString = new String[orig.length];
-						
-			int i=0;
-			for (String string : orig){
-				aString[i++] = HTMLCleanupUtils.stripJavascript(string);
-			}
-			
-			return aString;			
-		}
+
 
 		@Override
 		public String[] get(Object key) {
