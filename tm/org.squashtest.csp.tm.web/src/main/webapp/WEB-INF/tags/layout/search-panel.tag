@@ -158,6 +158,7 @@
 			else{
 				data['name'] = rename;
 				data['order'] = order;
+				data['importance'] = getImportanceParams();
 				url = '${searchUrl}';
 			}
 		</c:otherwise>
@@ -170,6 +171,9 @@
 			url = '${searchTCUrl}';
 		</c:if>
 		
+		<%-- the following is just more wtf on the pile of wtf, I don't care anymore --%>
+		if (data['importance'].length==0) delete data['importance'];
+
 		<%-- load with data issues a POST --%>
 		$.get(url, data, function(data) {
 			$("#search-result-pane").html(data);

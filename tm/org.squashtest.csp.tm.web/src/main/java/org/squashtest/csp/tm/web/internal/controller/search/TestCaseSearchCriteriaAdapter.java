@@ -84,7 +84,11 @@ public class TestCaseSearchCriteriaAdapter implements TestCaseSearchCriteria {
 	}
 	
 	public void setImportanceFilter(String[] importances){
-		this.importances = Arrays.copyOf(importances, importances.length);
+		if (importances == null){
+			this.importances=new String[0];
+		}else{
+			this.importances = Arrays.copyOf(importances, importances.length);
+		}
 		
 	}
 

@@ -53,9 +53,13 @@ public class SearchController {
 		this.searchService = searchService;
 	}
 
-	@RequestMapping(value = "/test-cases", method = RequestMethod.GET, params = { "order", "importance[]" })
+	/*
+	 * note that according to the mapping below importance[] may be legally null.
+	 * 
+	 */
+	@RequestMapping(value = "/test-cases", method = RequestMethod.GET)
 	public ModelAndView searchOrderedTestCases(@RequestParam("name") String name, @RequestParam("order") Boolean order, 
-			@RequestParam("importance[]") String[] importance) {
+			@RequestParam(value="importance[]", required=false) String[] importance) {
 		LOGGER.info("SQUASH INFO: TRY TestCase search with name : " + name);
 
 		TestCaseSearchCriteriaAdapter criteria = new TestCaseSearchCriteriaAdapter(name, order, importance);
