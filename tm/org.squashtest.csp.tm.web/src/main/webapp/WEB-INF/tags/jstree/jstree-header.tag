@@ -31,6 +31,7 @@
 <script type="text/javascript" src="http://localhost/scripts/jquery.squashtm.jstree-node.js"></script>
 --%> 
 
+<script type="text/javascript" src="${ pageContext.servletContext.contextPath }/scripts/squashtest/classes/TreeEventHandler.js"></script>
 <script type="text/javascript" src="${ pageContext.servletContext.contextPath }/scripts/squashtest/jquery.squashtm.jstree.ext.js"></script>
 <script type="text/javascript" src="${ pageContext.servletContext.contextPath }/scripts/squashtest/jquery.squashtm.jstree-node.js"></script>
 

@@ -364,6 +364,9 @@
 	 
 		__init : function(){
 			var container = this.get_container();
+			
+			this.eventHandler = new TreeEventHandler({tree : this});
+			
 			var self=this;
 			
 			container
@@ -380,7 +383,7 @@
 					if (selected.length==1){
 						squashtm.contextualContent.loadWith(resourceUrl)
 						.done(function(){
-							squashtm.contextualContent.addListener(self);
+							squashtm.contextualContent.addListener(self.eventHandler);
 						});
 					}else{
 						squashtm.contextualContent.unload();
@@ -443,15 +446,7 @@
 		
 		_fn : {
 			postNewNode : postNewNode,	// see below
-			
-			update : function(event){
-				// todo : make something smarter
-				if(event.evt_name == "paste"){
-					updateEventPaste(event, this);
-				}
-				else{this.refresh_selected();}
-			},
-			
+
 			refresh_selected : function(){
 				var self = this;
 				var selected = this.get_selected();
@@ -561,32 +556,12 @@ function updateTreebuttons(strOperations){
 }
 
 
-/* *************************** update Events ********************* */
-
-function updateEventPaste(event, tree){
-	var destination = tree.findNodes({ restype : event.evt_destination.obj_restype, resid : event.evt_destination.obj_id });
-	if(!destination.isOpen()){
-		destination.open();
-	}
-	destination.children("ul").remove();
-	destination.load()
-	.done(function(){	
-		if(event instanceof EventDuplicate){			
-			var source = tree.findNodes({ restype : event.evt_source.obj_restype , resid : event.evt_source.obj_id });
-			source.deselect();
-			var duplicate = tree.findNodes({ restype : event.evt_duplicate.obj_restype, resid : event.evt_duplicate.obj_id });
-			duplicate.select();
-			
-		}	
-	});
-
-}
 
 /* *************************** node click behaviour ********************* */
 
 
 /**
- * Behaviour of a node when clicked or double clicked There are two possible
+ * Behaviour of a node when clicked or double clicked. There are two possible
  * paths : 1) the node is not a container (files, resources) : a/ click events :
  * proceed, b/ double click event (and further click event) : cancel that event
  * and let the first one complete. 2) the node is a container (libraries,
