@@ -22,11 +22,8 @@ package org.squashtest.csp.tm.web.internal.controller.campaign;
 
 import java.util.ArrayList;
 import java.util.Date;
-import java.util.HashMap;
 import java.util.List;
 import java.util.Locale;
-import java.util.Map;
-import java.util.Set;
 
 import javax.inject.Inject;
 import javax.inject.Provider;
@@ -58,7 +55,6 @@ import org.squashtest.csp.tm.web.internal.model.datatable.DataTableDrawParameter
 import org.squashtest.csp.tm.web.internal.model.datatable.DataTableFilterSorter;
 import org.squashtest.csp.tm.web.internal.model.datatable.DataTableModel;
 import org.squashtest.csp.tm.web.internal.model.datatable.DataTableModelHelper;
-import org.squashtest.csp.tm.web.internal.model.jquery.TestSuiteModel;
 import org.squashtest.csp.tm.web.internal.model.jstree.JsTreeNode;
 import org.squashtest.csp.tm.web.internal.model.viewmapper.DataTableMapper;
 
@@ -106,7 +102,7 @@ public class IterationTestPlanManagerController {
 		ModelAndView mav = new ModelAndView("page/iterations/show-iteration-test-plan-manager");
 		mav.addObject("iteration", iteration);
 		mav.addObject("baseURL", "/iterations/" + iterationId);
-		mav.addObject("useIterationTable", new Boolean(true));
+		mav.addObject("useIterationTable", true);
 		mav.addObject("linkableLibrariesModel", linkableLibrariesModel);
 		return mav;
 	}

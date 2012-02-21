@@ -65,6 +65,7 @@ import org.squashtest.csp.tm.web.internal.model.viewmapper.DataTableMapper;
 @Controller
 public class TestSuiteTestPlanManagerController {
 
+	private static final String FALSE = "false";
 	private static final String TESTCASES_IDS_REQUEST_PARAM = "testCasesIds[]";
 	private static final String TESTPLANS_IDS_REQUEST_PARAM = "testPlanIds[]";
 	
@@ -110,7 +111,7 @@ public class TestSuiteTestPlanManagerController {
 		mav.addObject("iteration", iteration);
 		mav.addObject("testSuite", testSuite);
 		mav.addObject("baseURL", "/test-suites/" + id + "/" + iterationId );
-		mav.addObject("useIterationTable", new Boolean(false));
+		mav.addObject("useIterationTable", false);
 		mav.addObject("linkableLibrariesModel", linkableLibrariesModel);
 		return mav;
 	}
@@ -201,7 +202,7 @@ public class TestSuiteTestPlanManagerController {
 		List<Long> testPlanIds = new ArrayList<Long>();
 		testPlanIds.add(testPlanId);
 		testSuiteTestPlanManagerService.detachTestPlanFromTestSuite(testPlanIds, id);
-		return new Boolean(false).toString();
+		return FALSE;
 	}
 	
 	@RequestMapping(value = "/test-suites/{id}/{iterationId}/non-belonging-test-cases/remove/delete", method = RequestMethod.POST, params = TESTPLANS_IDS_REQUEST_PARAM)
@@ -218,7 +219,7 @@ public class TestSuiteTestPlanManagerController {
 	String detachTestCasesFromTestSuite(@RequestParam(TESTPLANS_IDS_REQUEST_PARAM) List<Long> testPlansIds,
 			@PathVariable long id) {
 		testSuiteTestPlanManagerService.detachTestPlanFromTestSuite(testPlansIds, id);
-		return new Boolean(false).toString();
+		return FALSE;
 	}
 	
 	@RequestMapping(value = "/test-suites/{id}/{iterationId}/test-cases/table", params = "sEcho")

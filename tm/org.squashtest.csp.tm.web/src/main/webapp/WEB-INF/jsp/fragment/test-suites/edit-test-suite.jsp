@@ -272,6 +272,14 @@
 			<%-- TODO verifier conditions d'affichage dans iteration --%>	
 			<form action="<c:url value="/test-suites/${testSuite.id}/test-plan/new-execution/ieo" />" method="post" name="execute-test-suite-form">
 				<input type="submit" value='<f:message key="test-suite.execute.label" />' name="execute-test-suite" class="button"/>
+				<%-- <script type="text/javascript">
+					$('execute-test-suite').click(function() {
+						$.post('<c:url value="/test-suites/${testSuite.id}/test-plan/new-execution/ieo" />',function(data, status, xrh) {
+							window.open(url,"test");
+						});
+					});
+				</script> --%>
+				
 			</form>
 			<%-- TODO mettre ca ailleurs --%>		
 		</c:if>
