@@ -26,41 +26,47 @@
 
  
 /**
- *
- * That function clean the contextual content from its temporary widgets.
- * The goal is to prevent undesired interactions between page controls.
- *
- * @param targetSelector 
- *			a jQuery selector being the handle to the contextual content div.
+ * 
+ * That function clean the contextual content from its temporary widgets. The
+ * goal is to prevent undesired interactions between page controls.
+ * 
+ * @param targetSelector
+ *            a jQuery selector being the handle to the contextual content div.
  */
 
 (function($){
 	/*
-	
-		Override of jstree.dnd.dnd_show. We want it to always target "inside" when the target is a container.
-	
-		For that purpose we need to modify the "marker". The marker represents the position where the node will be inserted, both graphically and internally. The marker can be set to 
-		3 positions : before, inside and after. 
-		
-		The marker can be set to one of these positions if the node being browsed supports it. Let's call it the "drop profile" of the node. That profile is held by the this.data.dnd object.
-		
-			- For libraries (aka drives) and folders, the drop profile is true, true, true.
-			- For leaves, the profile is true, false, true.
-		
-		The drop profile is unfortunately not configurable. Also, comparing the drop profile is the only way to differenciate a leaf from the rest.
-		
-		The present function will identify the hovered node and return the following marker position :
-			- for leaves -> no modification
-			- for folders, libraries -> force 'inside'.
-	
-	*/
+	 * 
+	 * Override of jstree.dnd.dnd_show. We want it to always target "inside"
+	 * when the target is a container.
+	 * 
+	 * For that purpose we need to modify the "marker". The marker represents
+	 * the position where the node will be inserted, both graphically and
+	 * internally. The marker can be set to 3 positions : before, inside and
+	 * after.
+	 * 
+	 * The marker can be set to one of these positions if the node being browsed
+	 * supports it. Let's call it the "drop profile" of the node. That profile
+	 * is held by the this.data.dnd object. - For libraries (aka drives) and
+	 * folders, the drop profile is true, true, true. - For leaves, the profile
+	 * is true, false, true.
+	 * 
+	 * The drop profile is unfortunately not configurable. Also, comparing the
+	 * drop profile is the only way to differenciate a leaf from the rest.
+	 * 
+	 * The present function will identify the hovered node and return the
+	 * following marker position : - for leaves -> no modification - for
+	 * folders, libraries -> force 'inside'.
+	 * 
+	 */
 
 	var overridenM;
 
 
 	$.jstree._fn.dnd_show = function(){
 				
-			//that variable in the vanilla tree is part of the closure context we cannot access here, so we must fetch it by other means.
+			// that variable in the vanilla tree is part of the closure context
+			// we cannot access here, so we must fetch it by other means.
 			if (overridenM===undefined){
 				overridenM = $("div#jstree-marker");
 			}	
@@ -88,7 +94,8 @@
 				$.vakata.dnd.helper.children("ins").attr("class","jstree-invalid"); 
 			}
 			
-			//here we override the function. if the profile matches the one of a container, we force r to "inside"
+			// here we override the function. if the profile matches the one of
+			// a container, we force r to "inside"
 			if (this.data.dnd.before && this.data.dnd.inside && this.data.dnd.after){
 				r = "inside";
 			}
@@ -129,24 +136,33 @@
 			tree.data.squash.rootUrl=(this._get_settings().squash.rootUrl===undefined) ? '' : this._get_settings().squash.rootUrl;
 			var container = this.get_container();
 			
-			/* we need our handlers to be bound first 
-			 * note that we are bound to 'click' and not 'click.jstree'. That detail matters 
-			 * in the handler just below.
+			/*
+			 * we need our handlers to be bound first note that we are bound to
+			 * 'click' and not 'click.jstree'. That detail matters in the
+			 * handler just below.
 			 */
 
-			/* note about click events and browsers specificities :
-			 * 	- ff, chrome : 2 clicks fire 2 click and 1 dblclick event. both event objects have a property .detail
-			 *  - ie 8 : fire click and dblclick alternately.
-			 *
-			 * considering the discrepencies between those behavior the node click handling will branch wrt event.detail.
-			 * FF and Chrome will simply use a clickhandler, while ie 8 will use both a click and a dblclick handler.
-			 *
+			/*
+			 * note about click events and browsers specificities : - ff, chrome :
+			 * 2 clicks fire 2 click and 1 dblclick event. both event objects
+			 * have a property .detail - ie 8 : fire click and dblclick
+			 * alternately.
+			 * 
+			 * considering the discrepencies between those behavior the node
+			 * click handling will branch wrt event.detail. FF and Chrome will
+			 * simply use a clickhandler, while ie 8 will use both a click and a
+			 * dblclick handler.
+			 * 
 			 */
 			container.bindFirst("live", function(){
 			
 				container.delegate("a",'click', function(event, data) {
 					if (event.detail && event.detail>1){
-						event.stopImmediatePropagation();		//cancel the multiple click event for ff and chrome
+						event.stopImmediatePropagation();		// cancel the
+																// multiple
+																// click event
+																// for ff and
+																// chrome
 					}else{
 						handleNodeClick(tree, event);
 					}
@@ -158,7 +174,8 @@
 			});
 			
 			container
-				//that section is copied/pasted from the original themeroller plugin, kudos mate.
+				// that section is copied/pasted from the original themeroller
+				// plugin, kudos mate.
 				.addClass("ui-widget-content")
 				.delegate("a","mouseenter.jstree", function () {
 					$(this).addClass(s.item_h);
@@ -181,23 +198,25 @@
 		
 			selectionIsEditable : function(selectedNodes){
 			
-				//that variable will be set to true if at least one selected node is not editable.
+				// that variable will be set to true if at least one selected
+				// node is not editable.
 				var noEdit = (selectedNodes.not(":editable").length > 0);
-				//selection is not editable if no node is selected or one node of the selection is not editable
+				// selection is not editable if no node is selected or one node
+				// of the selection is not editable
 				if( noEdit ) return "noEdit";
 				else if(selectedNodes.length == 0) return "noNodeSelected";
 				else return "OK";
 			},
 			
 			selectionIsOneEditableNode : function(selectedNodes){
-				//true if only one node is selected and is editable
+				// true if only one node is selected and is editable
 				if(!selectedNodes.not(":editable").length > 0
 						&& selectedNodes.length == 1) return "OK";
 				else return "notOneEditable";
 			},
 			
 			selectionIsDeletable : function(selectedNodes){
-				//all nodes are deletables excepted project libraries
+				// all nodes are deletables excepted project libraries
 				var isEdit = this.selectionIsEditable(selectedNodes);
 				if(isEdit != "OK") return isEdit;
 				else if ( selectedNodes.is(":library"))return "nodeleteLibrary";
@@ -205,8 +224,9 @@
 			},
 			
 			selectionIsCopyable : function(selectedNodes){
-				// all nodes except libraries are copyable 
-				// if iterations are selected with other nodes type the selection is not copyable
+				// all nodes except libraries are copyable
+				// if iterations are selected with other nodes type the
+				// selection is not copyable
 				var isEdit = this.selectionIsEditable(selectedNodes);
 				if(isEdit != "OK") return isEdit;
 				else if	( selectedNodes.is(":library")) return "noCopyLibrary";
@@ -215,10 +235,11 @@
 			},
 			
 			selectionIsCreateFolderAllowed : function(selectedNodes){
-				//need only one node selected
+				// need only one node selected
 				var isOneEdit = this.selectionIsOneEditableNode(selectedNodes);
 				if(isOneEdit != "OK") return isOneEdit;
-				// only libraries and folders are allowed for creation of folder and files 
+				// only libraries and folders are allowed for creation of folder
+				// and files
 				else if (selectedNodes.attr('rel') ==  "drive" || selectedNodes.attr('rel') ==  "folder"){
 						return "OK";
 					}
@@ -226,13 +247,14 @@
 			},
 			
 			selectionIsCreateFileAllowed : function(selectedNodes){
-				//need only one node selected
+				// need only one node selected
 				var isOneEdit = this.selectionIsOneEditableNode(selectedNodes);
 				if(isOneEdit != "OK") {
 					return isOneEdit;
 				
 				}else {
-					// only libraries and folders are allowed for creation of folder and files 
+					// only libraries and folders are allowed for creation of
+					// folder and files
 					var nodeAttr = selectedNodes.attr('rel');
 					if (nodeAttr ==  "drive" || nodeAttr ==  "folder" || nodeAttr ==  "file" ){
 				
@@ -243,35 +265,37 @@
 			},
 			
 			selectionIsCreateResourceAllowed : function(selectedNodes){
-				//need only one node selected
+				// need only one node selected
 				var isOneEdit = this.selectionIsOneEditableNode(selectedNodes);
 				if(isOneEdit != "OK") return isOneEdit;
-				//creation of resource is allowed only for files
+				// creation of resource is allowed only for files
 				else if (selectedNodes.attr('rel') ==  "file" || selectedNodes.attr('rel') ==  "resource") return "OK";
 				else return "createResNotHere"
 			},
 			
 			selectionIsRenamable : function(selectedNodes){
-				//need only one node selected
+				// need only one node selected
 				var isOneEdit = this.selectionIsOneEditableNode(selectedNodes);
 				if(isOneEdit != "OK") return isOneEdit;
 				else if	(selectedNodes.attr('rel') ==  "drive") return "noRenameLib";
-				//rename allowed for nodes other than libraries
+				// rename allowed for nodes other than libraries
 				else return "OK";
 			},
 			
 			selectionIsPasteAllowed : function(selectedNodes){
 				
-				//need only one node selected
+				// need only one node selected
 				var isOneEdit = this.selectionIsOneEditableNode(selectedNodes);
 				if(isOneEdit != "OK") return isOneEdit;
 				else{ 
-					//paste allowed for library and folder if the copied items are not iterations
+					// paste allowed for library and folder if the copied items
+					// are not iterations
 					if($.cookie('squash-copy-iterations-only') == "0"){
 						if(selectedNodes.attr('rel') ==  "drive" || selectedNodes.attr('rel') ==  "folder"){return "OK";}
 						else{return "pasteNotHere";}
 					}
-					//paste allowed for campaign if the copied items are iterations
+					// paste allowed for campaign if the copied items are
+					// iterations
 					else{
 						if(selectedNodes.is(":campaign")){return "OK";}
 						else{return "pasteIterationNotHere";}
@@ -288,6 +312,7 @@
 				}
 				try{
 					var nodes = this.get_container().find('li'+selector).treeNode();
+					return nodes;
 				}catch(invalide_node){
 					return $();
 				}
@@ -304,7 +329,8 @@
 			
 			allowedOperations : function(){
 				var selectedNodes = this.get_selected();
-				var operations = "import-excel ";		//one can always import excel files
+				var operations = "import-excel ";		// one can always import
+														// excel files
 				if (selectedNodes.length==0) return operations;
 				if(!this.selectionIsEditable(selectedNodes) == "OK") return operations; 
 				else{ 
@@ -367,10 +393,12 @@
 					updateTreebuttons(operations);
 					return true;
 				})
-				/* 
-					the following should have been as a handler of before.jstree on call move_node.
-					however many considerations lead to postprocess mode_node like now, rather than preprocess it. At least that event is triggered only once. 
-				*/
+				/*
+				 * the following should have been as a handler of before.jstree
+				 * on call move_node. however many considerations lead to
+				 * postprocess mode_node like now, rather than preprocess it. At
+				 * least that event is triggered only once.
+				 */
 				.bind("move_node.jstree", function(event, data){			
 					var moveObject = data.args[0];
 					
@@ -379,10 +407,11 @@
 						&& moveObject.cr !== undefined){
 								
 						if (squashtm.keyEventListener.ctrl){
-							//we need to destroy the copies first, since we'll use our owns.
+							// we need to destroy the copies first, since we'll
+							// use our owns.
 							destroyJTreeCopies(moveObject, data.inst);
 		
-							//now let's post.							
+							// now let's post.
 							var url = $(moveObject.o).treeNode().getBrowserUrl()+"/copy";
 							var newData = moveObjectToCopyData(data);
 							
@@ -392,7 +421,7 @@
 							});
 						}
 						else{
-							//check if we can move the object
+							// check if we can move the object
 							if(checkMoveIsAuthorized(data)){
 							
 								var url = $(moveObject.o).treeNode().getBrowserUrl()+"/move";		
@@ -413,11 +442,14 @@
 		},
 		
 		_fn : {
-			postNewNode : postNewNode,	//see below
+			postNewNode : postNewNode,	// see below
 			
 			update : function(event){
-				//todo : make something smarter
-				this.refresh_selected();
+				// todo : make something smarter
+				if(event.evt_name == "paste"){
+					updateEventPaste(event, this);
+				}
+				else{this.refresh_selected();}
 			},
 			
 			refresh_selected : function(){
@@ -431,9 +463,10 @@
 	 });
 
 	 /*
-	  * specialization for tree-pickers.
-	  * will maintain the order in which nodes were selected and redefine get_selected to return the nodes in that order.
-	  */
+		 * specialization for tree-pickers. will maintain the order in which
+		 * nodes were selected and redefine get_selected to return the nodes in
+		 * that order.
+		 */
 	 $.jstree.plugin("treepicker",{
 		__init : function(){
 			this.data.treepicker.counter=0;
@@ -464,15 +497,16 @@
 	 
 	 
 	 /*
-	  * definition of the treemenu buttons. 
-	  * Parameter : 
-	  * 	- contentSelector : the selector of the content.
-	  * 	- params : a map association <buttonPropertyName, buttonSelector>.
-	  * 
-	  * Note 1 : the way the menu was implemented forces us to ugly things and should need refactoring once it's included in the trunk of jQuery UI.
-	  * Note 2 : I had no choice but modifying jquery.fg.menu.js directly, specifically the methods showMenu() and kill(), due to the careless managment of
-	  * event unbinding.
-	  */
+		 * definition of the treemenu buttons. Parameter : - contentSelector :
+		 * the selector of the content. - params : a map association
+		 * <buttonPropertyName, buttonSelector>.
+		 * 
+		 * Note 1 : the way the menu was implemented forces us to ugly things
+		 * and should need refactoring once it's included in the trunk of jQuery
+		 * UI. Note 2 : I had no choice but modifying jquery.fg.menu.js
+		 * directly, specifically the methods showMenu() and kill(), due to the
+		 * careless managment of event unbinding.
+		 */
 	
 	 $.fn.treeMenu = function(contentSelector, params){
 	  	 this.menu({
@@ -481,8 +515,9 @@
 			
 		 });
 		 
-		 //ugly thing here. The widget is lazily created and we don't want that since we need to bind our events on the menu item.
-		 //so we force creation and hide it right away.
+		 // ugly thing here. The widget is lazily created and we don't want
+			// that since we need to bind our events on the menu item.
+		 // so we force creation and hide it right away.
 		 var menu = allUIMenus[allUIMenus.length-1];
 		 menu.create();
 		 menu.kill();
@@ -490,8 +525,9 @@
 		 this.buttons = {};
 		 
 		 for (var getter in params){
-			//menu.create did create a clone of the content which class is fg-menu-container. We'll be looking at the item we want to bind
-			//in the cloned content.
+			// menu.create did create a clone of the content which class is
+			// fg-menu-container. We'll be looking at the item we want to bind
+			// in the cloned content.
 			var selector=".fg-menu-container "+params[getter];
 			var button = $(selector);
 			button.enable = function(){$(this).removeClass('menu-disabled');};
@@ -525,34 +561,56 @@ function updateTreebuttons(strOperations){
 }
 
 
+/* *************************** update Events ********************* */
+
+function updateEventPaste(event, tree){
+	var destination = tree.findNodes({ restype : event.evt_destination.obj_restype, resid : event.evt_destination.obj_id });
+	if(!destination.isOpen()){
+		destination.open();
+	}
+	destination.children("ul").remove();
+	destination.load()
+	.done(function(){	
+		if(event instanceof EventDuplicate){			
+			var source = tree.findNodes({ restype : event.evt_source.obj_restype , resid : event.evt_source.obj_id });
+			source.deselect();
+			var duplicate = tree.findNodes({ restype : event.evt_duplicate.obj_restype, resid : event.evt_duplicate.obj_id });
+			duplicate.select();
+			
+		}	
+	});
+
+}
+
 /* *************************** node click behaviour ********************* */
 
 
 /**
- * Behaviour of a node when clicked or double clicked There are two possible paths : 
- *  1) the node is not a container (files, resources) : 
- *				a/ click events : proceed, 
- *				b/ double click event (and further click event) : cancel that event and let the first one complete.
- *  2) the node is a container (libraries, folders, campaigns) : 
- * 				a/ click event : start a timer. If the timer is not canceled, fire a specific click.jstree event.
- *              b/  double click event (and further click event) : toggle the node and stop event propagation.
- *
- * Basically we'll stop the event propagation everytime except for case 1-a. The case 2-a actually do not let the event
- * propagate : it fires a new 'click.jstree' event instead. The reason for this is because the following handler is bound
- * to 'click' and we don't want it to be called again.
- *
- * cases 1-a and 2-a are treated in handleNodeClick, while 1-b and 2-b are treated in handleNodeDblClick. 
- *
- * @params : 
- *  - tree : the tree instance
- *  - clickEvent : the click event.
- *
+ * Behaviour of a node when clicked or double clicked There are two possible
+ * paths : 1) the node is not a container (files, resources) : a/ click events :
+ * proceed, b/ double click event (and further click event) : cancel that event
+ * and let the first one complete. 2) the node is a container (libraries,
+ * folders, campaigns) : a/ click event : start a timer. If the timer is not
+ * canceled, fire a specific click.jstree event. b/ double click event (and
+ * further click event) : toggle the node and stop event propagation.
+ * 
+ * Basically we'll stop the event propagation everytime except for case 1-a. The
+ * case 2-a actually do not let the event propagate : it fires a new
+ * 'click.jstree' event instead. The reason for this is because the following
+ * handler is bound to 'click' and we don't want it to be called again.
+ * 
+ * cases 1-a and 2-a are treated in handleNodeClick, while 1-b and 2-b are
+ * treated in handleNodeDblClick.
+ * 
+ * @params : - tree : the tree instance - clickEvent : the click event.
+ * 
  */ 
  
- /* 
-  * here we want to delay the event for folders, libraries and campaign (waiting for a possible dblclick), while letting
-  * the event through for the other kind of nodes.
-  */
+ /*
+	 * here we want to delay the event for folders, libraries and campaign
+	 * (waiting for a possible dblclick), while letting the event through for
+	 * the other kind of nodes.
+	 */
  function handleNodeClick(tree, event){
 	var target = $(event.target).treeNode();
 	var node = target.parent();
@@ -568,10 +626,11 @@ function updateTreebuttons(strOperations){
 	}
  }
  
- /* 
-  * here we handle dblclicks. basically we don't want the event to be processed twice, except for containers
-  * that will toggle their open-close status.
-  */
+ /*
+	 * here we handle dblclicks. basically we don't want the event to be
+	 * processed twice, except for containers that will toggle their open-close
+	 * status.
+	 */
  function handleNodeDblClick(tree, event){
 	var target = $(event.target);
 	var node = target.parent();
@@ -583,17 +642,17 @@ function updateTreebuttons(strOperations){
 
 function clearContextualContent(targetSelector){
 	$('.is-contextual').each(function(){
-		//todo : kill the damn ckeditor instances				
+		// todo : kill the damn ckeditor instances
 		$(this).dialog("destroy").remove(); 
 	});
 	$(targetSelector).empty();		
 }
 
 
-
-
-
-/* ***************************  post new nodes operations ********************************************** */
+/*
+ * *************************** post new nodes operations
+ * **********************************************
+ */
 /**
  * Post new contents to the url determined by the selected node of a tree and
  * creates a new node with returned JSON data.
@@ -609,7 +668,7 @@ function clearContextualContent(targetSelector){
  
  function postNewNode(contentDiscriminator, postParameters) {
 
-	// **************** variables init ****************** 
+	// **************** variables init ******************
 
 	var origNode = this.get_selected();		
 	var targetNode;
@@ -627,7 +686,7 @@ function clearContextualContent(targetSelector){
 	var url = targetNode.getContentUrl()+'/' + contentDiscriminator;
 	var newNode = null;
 	
-	// ***************** function init ******************** 
+	// ***************** function init ********************
 
 	var postNode = function(){
 		return $.ajax({
@@ -661,11 +720,12 @@ function clearContextualContent(targetSelector){
 		
 	}
 
-	// ********** actual code. ****************** 
+	// ********** actual code. ******************
 	
 	var isOpen = targetNode.isOpen();
 	if (isOpen != true){
-		targetNode.open()			//first call will make the node load if necessary. 
+		targetNode.open()			// first call will make the node load if
+									// necessary.
 		.then(createNode);
 	}
 	else{
@@ -676,12 +736,15 @@ function clearContextualContent(targetSelector){
 
  
 
-/* **************************** check move section **************************************** */
+/*
+ * **************************** check move section
+ * ****************************************
+ */
 
 /*
- * Will check if a dnd move is legal. Note that this check is preemptive, contrarily to checkMoveIsAuthorized
- * which needs to post-check. 
- *
+ * Will check if a dnd move is legal. Note that this check is preemptive,
+ * contrarily to checkMoveIsAuthorized which needs to post-check.
+ * 
  */
 function treeCheckDnd(m){
 	
@@ -697,14 +760,15 @@ function treeCheckDnd(m){
 		return false;
 	}
 	
-	//check if the node is draggable first
+	// check if the node is draggable first
 	if (! jqObject.isEditable()){
 		return false;
 	}
 	
 
-	//check if the src and dest are within the same project. If they aren't themselve a drive we
-	//need to look for them.
+	// check if the src and dest are within the same project. If they aren't
+	// themselve a drive we
+	// need to look for them.
 	var srcDrive =  jqSrc.getLibrary();
 	var destDrive = jqDest.getLibrary();
 	
@@ -712,8 +776,8 @@ function treeCheckDnd(m){
 		return false;
 	}
 	
-	//in case we are moving an iteration, check the destination is 
-	//of type campaign
+	// in case we are moving an iteration, check the destination is
+	// of type campaign
 	
 	if (jqObject.is(":iteration")){
 		if (jqDest.getResType()!=="campaigns" ){
@@ -724,7 +788,7 @@ function treeCheckDnd(m){
 		}
 	}
 	
-	//allow iteration copy
+	// allow iteration copy
 	if( (jqObject.is(':iteration')) && (!squashtm.keyEventListener.ctrl)){
 		return false;
 	}
@@ -736,17 +800,22 @@ function treeCheckDnd(m){
 		
 		
 	/*
-	  This method checks if we can move the object is the dest folder returns true if it's ok to move the object. Note that contrary to 
-	  treeCheckDnd(moveObject), that code is called only for "move", not "copy" operations, and thus is not part of the aforementioned function.
-	  
-	  A second reasons is that we don't want to forbid the operation a-priori : we cancel it a-posteriori. Thus, the user will know
-	  why the operation could not be performed instead of wondering why the hell he cannot move the bloody node.	  
+	 * This method checks if we can move the object is the dest folder returns
+	 * true if it's ok to move the object. Note that contrary to
+	 * treeCheckDnd(moveObject), that code is called only for "move", not "copy"
+	 * operations, and thus is not part of the aforementioned function.
+	 * 
+	 * A second reasons is that we don't want to forbid the operation a-priori :
+	 * we cancel it a-posteriori. Thus, the user will know why the operation
+	 * could not be performed instead of wondering why the hell he cannot move
+	 * the bloody node.
 	 */
 	function checkMoveIsAuthorized(data){
 		var dest = data.rslt.np;
 		var object = data.rslt.o;
 		
-		//here are the names of all destination children, and the names of the moved objects
+		// here are the names of all destination children, and the names of the
+		// moved objects
 		destNames = dest.children("ul").children("li").not(object).collect(function(elt){return $(elt).attr('name');});
 		movedNames = object.collect(function(elt){ return $(elt).attr('name');});
 		
@@ -761,16 +830,20 @@ function treeCheckDnd(m){
 	}
 
 
-/* ***************************** node copy section **************************************** */
+/*
+ * ***************************** node copy section
+ * ****************************************
+ */
 
 
 /*
-	jstree inserts dumb copies when we ask for copies. We need to destroy them before inserting the correct
-	ones incoming from the server.
-	
-	@param object : the move_object returned as part of the data of the event mode_node.jstree.
-	
-*/
+ * jstree inserts dumb copies when we ask for copies. We need to destroy them
+ * before inserting the correct ones incoming from the server.
+ * 
+ * @param object : the move_object returned as part of the data of the event
+ * mode_node.jstree.
+ * 
+ */
 function destroyJTreeCopies(object, tree){
 	object.oc.each(function(index, elt){
 		tree.delete_node( elt);
@@ -779,14 +852,14 @@ function destroyJTreeCopies(object, tree){
 
 
 /*
-	will batch-insert nodes incoming from the server.
-	
-	@param jsonResponse : the node formatted in json coming from the server.
-	
-	@param currentNode : the node where we want them to be inserted.
-	
-	@param tree : the tree instance.
-*/
+ * will batch-insert nodes incoming from the server.
+ * 
+ * @param jsonResponse : the node formatted in json coming from the server.
+ * 
+ * @param currentNode : the node where we want them to be inserted.
+ * 
+ * @param tree : the tree instance.
+ */
 function insertCopiedNodes(jsonResponse, currentNode, tree){
 	for (var i=0;i< jsonResponse.length; i++){
 		tree.create_node(
@@ -815,15 +888,16 @@ function moveObjectToCopyData(moveObject){
 }
 
 /*
-	will erase fake copies in the tree, send the copied node data to the server, and insert the returned nodes.
-	
-	@param data : the data associated to the event move_node.jstree
-	
-	@param url : the url where to send the data.
-	
-	@returns : a promise
-
-*/
+ * will erase fake copies in the tree, send the copied node data to the server,
+ * and insert the returned nodes.
+ * 
+ * @param data : the data associated to the event move_node.jstree
+ * 
+ * @param url : the url where to send the data.
+ * 
+ * @returns : a promise
+ * 
+ */
 function copyNode(data, url){
 	
 	var deferred = $.Deferred();
@@ -853,25 +927,27 @@ function copyNode(data, url){
 }
 
 
-/* ******************************* node move section ******************************** */
+/*
+ * ******************************* node move section
+ * ********************************
+ */
 
 /*
-	
-	@param data : the move_node object
-	@param url : the url to post to.
-*/
+ * 
+ * @param data : the move_node object @param url : the url to post to.
+ */
 function moveNode(data, url){
 
 	var tree=data.inst;
 	var nodeData = data.args[0];
 	var newParent = nodeData.np;
 	
-	//first check if we don't need to perform an operation
+	// first check if we don't need to perform an operation
 	if (nodeData.o.length==0){
 		return;
 	}
 	
-	//we also reject iterations.
+	// we also reject iterations.
 	var firstNode=nodeData.o[0];
 	if ($(firstNode).is(":iteration")){
 		return;
@@ -896,7 +972,10 @@ function moveNode(data, url){
 }
 
 
-/* ******************************* leaf URL management code ************************************* */ 
+/*
+ * ******************************* leaf URL management code
+ * *************************************
+ */ 
 
 
 
@@ -911,7 +990,8 @@ function unselectDescendantsAndOtherProjectsSelections(liNode, tree){
 	}
 }
 /**
- * Unselects the nodes of the given tree which are descendants of the given liNode.
+ * Unselects the nodes of the given tree which are descendants of the given
+ * liNode.
  * 
  * @param liNode
  * @param tree
@@ -927,7 +1007,8 @@ function unselectDescendants(liNode, tree){
 	return descendants;
 }
 /**
- * Unselects the nodes of the given tree which are not descendants of the same project as the given liNode.
+ * Unselects the nodes of the given tree which are not descendants of the same
+ * project as the given liNode.
  * 
  * @param liNode
  * @param tree
@@ -955,18 +1036,21 @@ function findSelectedNodes(tree) {
 }
 
 	
-/* ****************************** other tree-related objects ************************************** */
+/*
+ * ****************************** other tree-related objects
+ * **************************************
+ */
 
 
 function TreeNodeCopier(initObj){
 	
-	//properties
+	// properties
 	this.tree = $.jstree._reference(initObj.treeSelector);
 	this.errMessage= initObj.errMessage;
 	this.url= initObj.url;
 	
 	
-	//private methods		
+	// private methods
 	var displayError = function(){
 		displayInformationNotification(this.errMessage);
 	}
@@ -981,7 +1065,7 @@ function TreeNodeCopier(initObj){
 		return nodes.is(':library') ? nodes : nodes.parents(":library");
 	}
 	
-	//public methods
+	// public methods
 	this.copyNodesToCookie = function(){
 		var nodes = this.tree.get_selected();
 		var ids = nodes.collect(function(elt){return $(elt).attr('resid');});
@@ -1026,7 +1110,8 @@ function TreeNodeCopier(initObj){
 				if(isRoot(target)){
 					destinationType = "library";
 				}
-				//here we mimick the move_object used by moveNode, describe earlier in the file
+				// here we mimick the move_object used by moveNode, describe
+				// earlier in the file
 				var copyData = {
 					inst : this.tree,
 					sendData : {
@@ -1036,7 +1121,8 @@ function TreeNodeCopier(initObj){
 					},
 					newParent : target
 				}
-				//if the destination is a campaign the request will not be the same
+				// if the destination is a campaign the request will not be the
+				// same
 				if(target.is(':campaign')){
 					this.url = initObj.urlIteration ;
 					var iterations = this.tree._get_children(target) ;
@@ -1052,7 +1138,7 @@ function TreeNodeCopier(initObj){
 						}
 				}				
 				
-				//then we send it to the copy routine
+				// then we send it to the copy routine
 				copyNode(copyData, this.url).fail(function(){this.tree.refresh();});
 			}
 		}

@@ -128,10 +128,10 @@
 		$('#test-suite-name').html(name);
 		refreshTestSuiteInfos();
 	}
-	$("#duplicate-test-suite-button").click(function() {
-		duplicateTestSuite().done(function(){alert("success");});
-	});
 	
+
+	
+	/*post a request to duplicate the test suite*/
 	function duplicateTestSuite(){
 		return $.ajax({
 			'url' : '${duplicateTestSuiteUrl}',
@@ -139,7 +139,26 @@
 			data : [],
 			dataType : 'json'
 		});
+	};
+	
+	/*duplication sucess handler*/
+	function duplicateTestSuiteSuccess(idOfDuplicate){
+		<c:choose>
+			<%-- if we were in a sub page context. We need to navigate back to the workspace. --%>
+			<c:when test="${param.isInfoPage}" >	
+				document.location.href="${workspaceUrl}" ;
+			</c:when>
+			<c:otherwise>
+				var destination = new SquashEventObject(${testSuite.iteration.id}, "iterations");
+				var duplicate = new SquashEventObject( idOfDuplicate, "test-suites");
+				var source = new SquashEventObject(${testSuite.id}, "test-suites");
+				var evt = new EventDuplicate(destination, duplicate, source);
+				squashtm.contextualContent.fire(this, evt);
+			</c:otherwise>
+		</c:choose>
+		
 	}
+	
 	/* renaming success handler */
 	function renameTestSuiteSuccess(data){
 		nodeSetname(data.newName);
@@ -175,7 +194,7 @@
 		<c:choose>
 		<%-- case one : we were in a sub page context. We need to navigate back to the workspace. --%>
 		<c:when test="${param.isInfoPage}" >		
-		document.location.href="${workspaceUrl}" ;
+			document.location.href="${workspaceUrl}" ;
 		</c:when>
 		<%-- case two : we were already in the workspace. we simply reload it (todo : make something better). --%>
 		<c:otherwise>
@@ -183,7 +202,6 @@
 		</c:otherwise>
 		</c:choose>		
 	}
-	
 	/* deletion failure handler */
 	function deleteTestSuiteFailure(xhr){
 		alert(xhr.statusText);		
@@ -431,7 +449,13 @@
 
 		$('#test-case-button').click(function(){
 			document.location.href="${testPlanManagerUrl}" ;	
+			
 		});		
+		
+		/*duplicate button click handler*/
+		$("#duplicate-test-suite-button").click(function() {
+			duplicateTestSuite().done(function(data){duplicateTestSuiteSuccess(data);});
+		});
 		
 	});
 </script>

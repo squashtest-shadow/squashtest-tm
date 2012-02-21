@@ -141,6 +141,7 @@
 		}
 		
 		this.refresh = function(){
+			
 			this.tree.refresh(this);
 		}
 		
@@ -159,7 +160,7 @@
 		
 		this.load = function(){
 			var defer = $.Deferred();
-			this.tree.load_node ( this , defer.resolve(), defer.reject);
+			this.tree.load_node ( this , defer.resolve, defer.reject);
 			return defer.promise();
 		}
 		
