@@ -173,7 +173,7 @@ public class CustomIterationModificationServiceImpl implements CustomIterationMo
 
 		Iteration iteration = iterationDao.findById(iterationId);
 
-		int currentPosition = iteration.findTestPlanInIteration(testPlanId);
+		int currentPosition = iteration.findItemIndexInTestPlan(testPlanId);
 
 		if (LOGGER.isDebugEnabled()) {
 			LOGGER.debug("**************** change test case order : old index = " + currentPosition + ",new index : "

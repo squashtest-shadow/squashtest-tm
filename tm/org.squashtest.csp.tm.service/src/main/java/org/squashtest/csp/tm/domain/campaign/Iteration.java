@@ -347,7 +347,7 @@ public class Iteration implements AttachmentHolder {
 	 * @throws UnknownEntityException
 	 *             if not found.
 	 */
-	public int findTestCaseInIteration(Long testCaseId) {
+	public int findTestCaseIndexInTestPlan(long testCaseId) {
 		ListIterator<IterationTestPlanItem> iterator = testPlans.listIterator();
 		while (iterator.hasNext()) {
 			IterationTestPlanItem itemTestPlan = iterator.next();
@@ -371,7 +371,7 @@ public class Iteration implements AttachmentHolder {
 	 * @throws UnknownEntityException
 	 *             if not found.
 	 */
-	public int findTestPlanInIteration(Long testPlanId) {
+	public int findItemIndexInTestPlan(long testPlanId) {
 
 		ListIterator<IterationTestPlanItem> iterator = testPlans.listIterator();
 		while (iterator.hasNext()) {

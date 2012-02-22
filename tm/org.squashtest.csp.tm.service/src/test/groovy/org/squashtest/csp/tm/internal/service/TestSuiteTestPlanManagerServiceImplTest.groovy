@@ -31,6 +31,7 @@ import org.squashtest.csp.tm.internal.service.CampaignTestPlanManagerServiceImpl
 import org.squashtest.csp.tm.internal.service.campaign.IterationTestPlanManager
 
 import spock.lang.Specification
+import spock.lang.Unroll;
 
 class TestSuiteTestPlanManagerServiceImplTest  extends Specification {
 	TestSuiteTestPlanManagerServiceImpl manager = new TestSuiteTestPlanManagerServiceImpl()
@@ -40,7 +41,7 @@ class TestSuiteTestPlanManagerServiceImplTest  extends Specification {
 	def setup() {
 		manager.testSuiteDao = testSuiteDao
 		manager.testPlanManager = testPlanManager
-		}
+	}
 
 	def "should start new execution of test suite"() {
 		given:
@@ -61,6 +62,56 @@ class TestSuiteTestPlanManagerServiceImplTest  extends Specification {
 
 		when:
 		def res = manager.startNewExecution(10)
+
+		then:
+		res == exec
+	}
+
+	@Unroll("should there have more test cases in test plan ? #moreExecutable !")
+	def "should have more test cases in test plan"() {
+		given:
+		TestSuite testSuite = Mock()
+		testSuiteDao.findById(10) >> testSuite
+
+		and:
+		testSuite.isLastExecutableTestPlanItem(20) >> lastExecutable
+
+
+		when:
+		def more = manager.hasMoreExecutableItems(10, 20)
+
+		then:
+		more == moreExecutable
+
+		where:
+		lastExecutable | moreExecutable
+		false          | true
+		true           | false
+	}
+
+	def "should start next execution of test suite"() {
+		given:
+		TestSuite suite = Mock()
+
+		IterationTestPlanItem currentItem = Mock()
+		currentItem.id >> 100
+		IterationTestPlanItem nextItem = Mock()
+		nextItem.id >> 200
+		suite.testPlan >> [currentItem, nextItem]
+
+		TestCase referenced = Mock()
+		currentItem.referencedTestCase >> referenced
+		nextItem.referencedTestCase >> referenced
+		
+		and:
+		testSuiteDao.findById(10) >> suite
+
+		and:
+		Execution exec = Mock()
+		testPlanManager.addExecution(_) >> exec
+
+		when:
+		def res = manager.startNextExecution(10, 100)
 
 		then:
 		res == exec

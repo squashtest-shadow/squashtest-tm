@@ -150,12 +150,12 @@
 		toolbox.delegate('#step-succeeded', 'click', function() {
 			$.post(changeStatusUrl, {
 				executionStatus : "SUCCESS"
-			}, setStatusSuccess());				
+			}).done(setStatusSuccess());				
 		});
 		toolbox.delegate('#step-failed', 'click', function(){
 			$.post(changeStatusUrl, {
 				executionStatus : "FAILURE"
-			}, setStatusFailure());					
+			}).done(setStatusFailure());					
 		});
 	});
 	
@@ -271,7 +271,7 @@
 	</div>
 	
 	<div id="menu-space" >
-		<gr:ieo-toolbox execution="${ execution }" executionStep="${ executionStep }" hasNextStep="${ hasNextStep }" hasPreviousStep="${ hasPreviousStep }" totalSteps="${ totalSteps }" />
+		<gr:ieo-toolbox execution="${ execution }" executionStep="${ executionStep }" hasNextStep="${ hasNextStep }" hasPreviousStep="${ hasPreviousStep }" totalSteps="${ totalSteps }" hasNextTestCase="${ hasNextTestCase }" testPlanItemUrl="${ testPlanItemUrl }" />
 	</div>
 
 	<comp:decorate-buttons />

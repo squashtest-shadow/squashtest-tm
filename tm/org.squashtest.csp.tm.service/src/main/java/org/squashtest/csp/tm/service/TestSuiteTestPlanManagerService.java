@@ -25,13 +25,13 @@ import java.util.List;
 import org.springframework.transaction.annotation.Transactional;
 import org.squashtest.csp.core.infrastructure.collection.PagedCollectionHolder;
 import org.squashtest.csp.core.infrastructure.collection.Paging;
-import org.squashtest.csp.tm.domain.campaign.Iteration;
 import org.squashtest.csp.tm.domain.campaign.IterationTestPlanItem;
 import org.squashtest.csp.tm.domain.campaign.TestSuite;
 import org.squashtest.csp.tm.domain.execution.Execution;
 
 /**
  * Service that aims at managing the test cases of a campaign (i.e. its test plan)
+ * 
  * @author François Gaillard
  */
 @Transactional
@@ -46,15 +46,13 @@ public interface TestSuiteTestPlanManagerService {
 	TestSuite findTestSuite(long testSuiteId);
 
 	@Transactional(readOnly = true)
-	PagedCollectionHolder<List<IterationTestPlanItem>> findTestPlan(
-			long testSuiteId, Paging paging);
+	PagedCollectionHolder<List<IterationTestPlanItem>> findTestPlan(long testSuiteId, Paging paging);
 
-	void addTestCasesToIterationAndTestSuite(List<Long> testCaseIds,
-			long suiteId);
+	void addTestCasesToIterationAndTestSuite(List<Long> testCaseIds, long suiteId);
 
 	/**
-	 * Should start a new execution for the given test suite, ie create an
-	 * execution for the first test case of this suite's test plan.
+	 * Should start a new execution for the given test suite, ie create an execution for the first test case of this
+	 * suite's test plan.
 	 * 
 	 * @param testSuiteId
 	 * @return the created {@link Execution}
@@ -62,6 +60,15 @@ public interface TestSuiteTestPlanManagerService {
 	Execution startNewExecution(long testSuiteId);
 
 	void detachTestPlanFromTestSuite(List<Long> testPlanIds, long suiteId);
-	
+
 	boolean detachTestPlanFromTestSuiteAndRemoveFromIteration(List<Long> testPlanIds, long suiteId);
+
+	/**
+	 * tells if a test suite has at least one executable item in its test plan after the given item.
+	 * 
+	 * @param testSuiteId
+	 * @param testPlanItemId
+	 * @return
+	 */
+	boolean hasMoreExecutableItems(long testSuiteId, long testPlanItemId);
 }

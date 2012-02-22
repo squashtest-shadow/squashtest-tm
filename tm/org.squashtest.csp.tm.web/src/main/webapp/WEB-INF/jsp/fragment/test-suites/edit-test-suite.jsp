@@ -270,16 +270,8 @@
 			<input type="button" value="<f:message key='test-suite.button.rename.label' />" id="rename-test-suite-button" class="button"/> 
 			<input type="button" value="<f:message key='test-suite.button.remove.label' />" id="delete-test-suite-button" class="button"/>
 			<%-- TODO verifier conditions d'affichage dans iteration --%>	
-			<form action="<c:url value="/test-suites/${testSuite.id}/test-plan/new-execution/ieo" />" method="post" name="execute-test-suite-form">
-				<input type="submit" value='<f:message key="test-suite.execute.label" />' name="execute-test-suite" class="button"/>
-				<%-- <script type="text/javascript">
-					$('execute-test-suite').click(function() {
-						$.post('<c:url value="/test-suites/${testSuite.id}/test-plan/new-execution/ieo" />',function(data, status, xrh) {
-							window.open(url,"test");
-						});
-					});
-				</script> --%>
-				
+			<form action="<c:url value="/test-suites/${testSuite.id}/test-plan/new-execution/runner" />" method="post" name="execute-test-suite-form" target="optimized-execution-runner">
+				<input type="submit" value='<f:message key="test-suite.execution.start.label" />' name="optimized" class="button"/>
 			</form>
 			<%-- TODO mettre ca ailleurs --%>		
 		</c:if>

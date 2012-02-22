@@ -27,7 +27,7 @@
 <%@ attribute name="hasNextStep" required="true" type="java.lang.Boolean" %>
 <%@ attribute name="totalSteps" required="true" type="java.lang.Integer" %>
 <%@ attribute name="hasNextTestCase" required="false" type="java.lang.Boolean" %>
-<%@ attribute name="hasNextTestCase" required="false" type="java.lang.Boolean" %>
+<%@ attribute name="testPlanItemUrl" required="false" %>
 <%@ taglib uri="http://java.sun.com/jsp/jstl/core" prefix="c" %>
 <%@ taglib tagdir="/WEB-INF/tags/component" prefix="comp" %>
 <%@ taglib uri="http://java.sun.com/jsp/jstl/fmt" prefix="f" %>
@@ -112,11 +112,13 @@
 
 		$("#execute-next-test-case").button({
 			'text': false,
-			'disabled': !hasNextTestCase,
+			'disabled': ${ (empty hasNextTestCase) or (not hasNextTestCase) } || hasNextStep,
 			icons: {
 				primary : 'ui-icon-seek-next'
 			}
 		});
+		
+		if (${ not empty testPlanItemUrl }) $('#execute-next-test-case-panel').removeClass('not-displayed');
 
 		$("#draggable-menu .button").button();
 		
@@ -130,24 +132,29 @@
 <div id="draggable-menu" class="ui-state-active">
 	<table >
 		<tr>
-			<td style="text-align:left;"><button id="stop-execution" ><f:message key="execute.header.button.stop.title" /></button></td>
-			<td style="text-align:right;">
+			<td class="left-aligned"><button id="stop-execution" ><f:message key="execute.header.button.stop.title" /></button></td>
+			<td class="right-aligned">
 				<label id="evaluation-label-status"><f:message key="execute.header.status.label" /></label>
 				<comp:execution-status-combo name="executionStatus" id="step-status-combo" />
 				<button id="step-failed"><f:message key="execute.header.button.failure.title" /></button>
 				<button id="step-succeeded"><f:message key="execute.header.button.passed.title" /></button>
 			</td>
-			<td style="text-align:center;">
+			<td class="centered">
 				<button id="open-address-dialog-button" class="button"><f:message key="execution.IEO.address.go.to.button" /></button>
 				<span id="step-paging">${executionStep.executionStepOrder +1} / ${totalSteps}</span>
 				<button id="execute-previous-step" class="button"><f:message key="execute.header.button.previous.title" /></button>	
 				<button id="execute-next-step" class="button"><f:message key="execute.header.button.next.title" /></button>
-				<f:message  var="nextTestCaseTitle" key="execute.header.button.next-test-case.title" />
-				<button id="execute-next-test-case" class="button" title="${ nextTestCaseTitle }">${ nextTestCaseTitle }</button>
+			</td>
+			<td class="centered not-displayed" id="execute-next-test-case-panel">
+				<form action="${ testPlanItemUrl }/next-execution/runner" method="post">
+					<f:message  var="nextTestCaseTitle" key="execute.header.button.next-test-case.title" />
+					<button id="execute-next-test-case" class="button" title="${ nextTestCaseTitle }">${ nextTestCaseTitle }</button>
+					<input type="hidden" name="style" value="optimized" />
+				</form>
 			</td>
 		</tr>
 		<tr>
-			<td>
+			<td class="centered" colspan="4">
 				<div id="slider"></div>
 			</td>
 		</tr>

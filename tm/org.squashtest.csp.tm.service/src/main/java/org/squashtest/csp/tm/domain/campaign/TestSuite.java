@@ -264,5 +264,18 @@ public class TestSuite {
 
 		return testSuiteCopy;
 	}
+	
+	public boolean isLastExecutableTestPlanItem(long itemId) {
+		List<IterationTestPlanItem> testPlan = iteration.getTestPlans();
+		for (int i = testPlan.size() - 1; i >= 0; i--) {
+			IterationTestPlanItem item = testPlan.get(i);
+			
+			if (boundToThisSuite(item) && item.isExecutable()) {
+				return itemId == item.getId();
+			}
+		}
+		
+		return false;
+	}
 
 }

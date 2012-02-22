@@ -25,6 +25,7 @@ import org.squashtest.csp.tm.domain.attachment.Attachment
 import org.squashtest.csp.tm.domain.execution.Execution
 import org.squashtest.csp.tm.domain.testcase.TestCase
 import org.squashtest.csp.tm.internal.repository.ItemTestPlanDao
+import org.squashtest.csp.tools.unittest.reflection.ReflectionCategory;
 
 import spock.lang.Specification
 
@@ -284,4 +285,115 @@ class TestSuiteTest extends Specification {
 		then:
 		res == item
 	}
+	
+	def "item should not be the last executable of test plan"() {
+		given:
+		TestSuite testSuite = new TestSuite()
+		Iteration iteration = new Iteration()
+		testSuite.setIteration(iteration)
+
+		and:
+		IterationTestPlanItem item = new IterationTestPlanItem(Mock(TestCase))
+		use (ReflectionCategory) {
+			IterationTestPlanItem.set field: "id", of: item, to: 10L
+		}
+		iteration.addTestPlan(item)
+		item.setTestSuite(testSuite)
+
+		and:
+		IterationTestPlanItem otherItem = new IterationTestPlanItem(Mock(TestCase))
+		use (ReflectionCategory) {
+			IterationTestPlanItem.set field: "id", of: otherItem, to: 20L
+		}
+		iteration.addTestPlan(otherItem)
+		otherItem.setTestSuite(testSuite)
+
+		when:
+		def res = testSuite.isLastExecutableTestPlanItem(10L)
+
+		then:
+		res == false
+	}
+	
+	def "item should be the last of test plan"() {
+		given:
+		TestSuite testSuite = new TestSuite()
+		Iteration iteration = new Iteration()
+		testSuite.setIteration(iteration)
+
+		and:
+		IterationTestPlanItem item = new IterationTestPlanItem(Mock(TestCase))
+		use (ReflectionCategory) {
+			IterationTestPlanItem.set field: "id", of: item, to: 10L
+		}
+		iteration.addTestPlan(item)
+		item.setTestSuite(testSuite)
+
+		and:
+		IterationTestPlanItem otherItem = new IterationTestPlanItem(Mock(TestCase))
+		use (ReflectionCategory) {
+			IterationTestPlanItem.set field: "id", of: otherItem, to: 20L
+		}
+		iteration.addTestPlan(otherItem)
+		otherItem.setTestSuite(testSuite)
+
+		when:
+		def res = testSuite.isLastExecutableTestPlanItem(20L)
+
+		then:
+		res == true
+	}
+	
+	def "item should be the last executable of test plan"() {
+		given:
+		TestSuite testSuite = new TestSuite()
+		Iteration iteration = new Iteration()
+		testSuite.setIteration(iteration)
+
+		and:
+		IterationTestPlanItem item = new IterationTestPlanItem(Mock(TestCase))
+		use (ReflectionCategory) {
+			IterationTestPlanItem.set field: "id", of: item, to: 10L
+		}
+		iteration.addTestPlan(item)
+		item.setTestSuite(testSuite)
+
+		and:
+		IterationTestPlanItem otherItem = new IterationTestPlanItem(Mock(TestCase))
+		iteration.addTestPlan(otherItem)
+		otherItem.setTestSuite(testSuite)
+		use (ReflectionCategory) {
+			IterationTestPlanItem.set field: "id", of: otherItem, to: 20L
+			IterationTestPlanItem.set field: "referencedTestCase", of: otherItem, to: null
+			
+		}
+
+		when:
+		def res = testSuite.isLastExecutableTestPlanItem(10L)
+
+		then:
+		res == true
+	}
+
+	def "wrong item should not be the last of test plan"() {
+		given:
+		TestSuite testSuite = new TestSuite()
+		Iteration iteration = new Iteration()
+		testSuite.setIteration(iteration)
+
+		and:
+		IterationTestPlanItem item = new IterationTestPlanItem(Mock(TestCase))
+		use (ReflectionCategory) {
+			IterationTestPlanItem.set field: "id", of: item, to: 10L
+		}
+		iteration.addTestPlan(item)
+		item.setTestSuite(testSuite)
+
+		when:
+		def res = testSuite.isLastExecutableTestPlanItem(30L)
+
+		then:
+		res == false
+	}
+
 }

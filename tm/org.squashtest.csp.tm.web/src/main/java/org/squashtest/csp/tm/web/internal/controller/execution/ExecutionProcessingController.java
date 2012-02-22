@@ -20,6 +20,8 @@
  */
 package org.squashtest.csp.tm.web.internal.controller.execution;
 
+import javax.inject.Inject;
+
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.osgi.extensions.annotation.ServiceReference;
@@ -40,11 +42,11 @@ import org.squashtest.csp.tm.web.internal.model.jquery.JsonSimpleData;
 @Controller
 @RequestMapping("/execute/{executionId}")
 public class ExecutionProcessingController {
-	private interface FetchStepCommand {
-		ExecutionStep execute(int stepCount);
-	}
 
 	private static final Logger LOGGER = LoggerFactory.getLogger(ExecutionProcessingController.class);
+
+	@Inject
+	private ExecutionRunnerControllerHelper helper;
 
 	private ExecutionProcessingService executionProcService;
 
@@ -55,35 +57,14 @@ public class ExecutionProcessingController {
 
 	@RequestMapping(method = RequestMethod.GET)
 	public String showClassicExecutionRunner(@PathVariable long executionId, Model model) {
-		populateExecutionRunnerModel(executionId, model);
+		helper.populateExecutionRunnerModel(executionId, model);
 
 		return "page/executions/execute-execution";
 	}
 
-	private void populateExecutionRunnerModel(final long executionId, Model model) {
-		FetchStepCommand command = new FetchStepCommand() {
-			@Override
-			public ExecutionStep execute(int stepCount) {
-				if (stepCount == 0) {
-					return  null;
-				} 
-				
-				ExecutionStep executionStep = executionProcService.findRunningExecutionStep(executionId);
-				
-				if (executionStep == null) {
-					executionStep = executionProcService.findStepAt(executionId, stepCount - 1);
-				}
-				
-				return executionStep;
-			}
-		};
-		
-		populateExecutionStepModel(executionId, model, command);
-	}
-
 	@RequestMapping(value = "/ieo", method = RequestMethod.GET)
 	public String showOptimizedExecutionRunner(@PathVariable long executionId, Model model) {
-		populateExecutionRunnerModel(executionId, model);
+		helper.populateExecutionRunnerModel(executionId, model);
 
 		return "page/executions/ieo-execute-execution";
 	}
@@ -91,50 +72,15 @@ public class ExecutionProcessingController {
 	@RequestMapping(value = "/step/{stepIndex}", method = RequestMethod.GET)
 	public String getClassicExecutionStepFragment(@PathVariable long executionId, @PathVariable int stepIndex,
 			Model model) {
-		populateExecutionStepModel(executionId, stepIndex, model);
+		helper.populateExecutionStepModel(executionId, stepIndex, model);
 		return "fragment/executions/execute-execution";
 
 	}
 
-	private void populateExecutionStepModel(final long executionId, final int stepIndex, Model model) {
-		FetchStepCommand command = new FetchStepCommand() {
-			@Override
-			public ExecutionStep execute(int stepCount) {
-				if (stepIndex >= stepCount) {
-					return  executionProcService.findStepAt(executionId, stepCount - 1);
-				}
-
-				ExecutionStep executionStep = executionProcService.findStepAt(executionId, stepIndex);
-
-				if (executionStep == null) {
-					executionStep = executionProcService.findStepAt(executionId, stepCount - 1);
-				}
-				
-				return executionStep;
-			}	
-		};
-		
-		populateExecutionStepModel(executionId, model, command);
-	}
-
-	private void populateExecutionStepModel(long executionId, Model model, FetchStepCommand command) {
-		Execution execution = executionProcService.findExecution(executionId);
-		Integer total = execution.getSteps().size();
-		
-		ExecutionStep executionStep = command.execute(total);
-
-		model.addAttribute("execution", execution);
-		model.addAttribute("executionStep", executionStep);
-		model.addAttribute("totalSteps", total);
-		model.addAttribute("executionStatus", ExecutionStatus.values());
-		model.addAttribute("hasPreviousStep", executionStep.getExecutionStepOrder() != 0);
-		model.addAttribute("hasNextStep", executionStep.getExecutionStepOrder() != (total - 1));
-	}	
-	
 	@RequestMapping(value = "/step/{stepIndex}", method = RequestMethod.GET, params = { "ieo=true" })
 	public String getOptimizedExecutionStepFragment(@PathVariable long executionId, @PathVariable int stepIndex,
 			Model model) {
-		populateExecutionStepModel(executionId, stepIndex, model);
+		helper.populateExecutionStepModel(executionId, stepIndex, model);
 		return "page/executions/ieo-fragment-step-information";
 
 	}
@@ -143,8 +89,9 @@ public class ExecutionProcessingController {
 	 * Only used by IEO
 	 */
 	@RequestMapping(value = "/step/{stepIndex}/menu", method = RequestMethod.GET)
-	public String getOptimizedExecutionToolboxFragment(@PathVariable long executionId, @PathVariable int stepIndex, Model model) {
-		populateExecutionStepModel(executionId, stepIndex, model);
+	public String getOptimizedExecutionToolboxFragment(@PathVariable long executionId, @PathVariable int stepIndex,
+			Model model) {
+		helper.populateExecutionStepModel(executionId, stepIndex, model);
 		return "fragment/executions/step-information-menu";
 
 	}

@@ -743,8 +743,8 @@ body#ieo-body{
 }
 
 div#draggable-menu {
-	width: 450px;
-	height: 50px;
+	width: 500px;
+	height: 55px;
 	position: absolute;
 	z-index: 5;
 	background-color: gray;
@@ -855,6 +855,14 @@ div#user-account-password-panel > div > * {
 
 .centered {
 	text-align: center;
+}
+
+.left-aligned {
+	text-align: left;
+}
+
+.right-aligned {
+	text-align: right;
 }
 
 .v-centered {

@@ -118,9 +118,8 @@ public class IterationTestPlanItem {
 	}
 
 	/**
-	 * the IterationTestPlanItem will fetch the ExecutionStatus of the last
-	 * "live" Execution in his execution list
-	 *
+	 * the IterationTestPlanItem will fetch the ExecutionStatus of the last "live" Execution in his execution list
+	 * 
 	 */
 	public void updateExecutionStatus() {
 		int iIndexLastExec = executions.size();
@@ -168,8 +167,7 @@ public class IterationTestPlanItem {
 	}
 
 	/**
-	 * that method will also forward the information to the iteration for update
-	 * of autoset dates.
+	 * that method will also forward the information to the iteration for update of autoset dates.
 	 */
 	public void setLastExecutedOn(Date lastExecutedOn) {
 		this.lastExecutedOn = lastExecutedOn;
@@ -200,9 +198,11 @@ public class IterationTestPlanItem {
 
 	/**
 	 * Creates an execution of this item and returns it.
+	 * 
 	 * @return the new execution
 	 */
-	public Execution createExecution(TestCaseCyclicCallChecker cyclicCallChecker) throws TestPlanItemNotExecutableException {
+	public Execution createExecution(TestCaseCyclicCallChecker cyclicCallChecker)
+			throws TestPlanItemNotExecutableException {
 		checkExecutable();
 		cyclicCallChecker.checkNoCyclicCall(referencedTestCase);
 
@@ -212,9 +212,8 @@ public class IterationTestPlanItem {
 	}
 
 	private void checkExecutable() throws TestPlanItemNotExecutableException {
-		if (isTestCaseDeleted()) {
-			throw new TestPlanItemNotExecutableException(
-					"Test case referenced by this item was deleted");
+		if (!isExecutable()) {
+			throw new TestPlanItemNotExecutableException("Test case referenced by this item was deleted");
 		}
 
 	}
@@ -241,9 +240,8 @@ public class IterationTestPlanItem {
 	}
 
 	/**
-	 * Factory method. Creates a copy of this object according to copy / paste
-	 * rules.
-	 *
+	 * Factory method. Creates a copy of this object according to copy / paste rules.
+	 * 
 	 * @return the copy, never <code>null</code>
 	 */
 	public IterationTestPlanItem createCopy() {
@@ -269,6 +267,15 @@ public class IterationTestPlanItem {
 		this.user = user;
 	}
 
+	public boolean isExecutable() {
+		return !isTestCaseDeleted();
+	}
+
+	/**
+	 * One should use {@link #isExecutable()} in favor of this method.
+	 * 
+	 * @return
+	 */
 	public boolean isTestCaseDeleted() {
 		return getReferencedTestCase() == null;
 	}
@@ -279,11 +286,8 @@ public class IterationTestPlanItem {
 
 	public void setTestSuite(TestSuite suite) {
 		if (suite != null && !this.iteration.equals(suite.getIteration())) {
-			throw new IllegalArgumentException("Item[" + id
-					+ "] dont belong to Iteration["
-					+ suite.getIteration().getId()
-					+ "], it cannot be bound to TestSuite['" + suite.getName()
-					+ "']");
+			throw new IllegalArgumentException("Item[" + id + "] dont belong to Iteration["
+					+ suite.getIteration().getId() + "], it cannot be bound to TestSuite['" + suite.getName() + "']");
 		}
 		this.testSuite = suite;
 	}
