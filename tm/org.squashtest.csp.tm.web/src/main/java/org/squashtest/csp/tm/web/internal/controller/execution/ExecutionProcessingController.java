@@ -85,7 +85,7 @@ public class ExecutionProcessingController {
 
 	}
 
-	@RequestMapping(value = "/step/{stepIndex}", method = RequestMethod.GET, params = { "ieo=true" })
+	@RequestMapping(value = "/step/{stepIndex}", method = RequestMethod.GET, params = "ieo")
 	public String getOptimizedExecutionStepFragment(@PathVariable long executionId, @PathVariable int stepIndex,
 			Model model) {
 		helper.populateExecutionStepModel(executionId, stepIndex, model);

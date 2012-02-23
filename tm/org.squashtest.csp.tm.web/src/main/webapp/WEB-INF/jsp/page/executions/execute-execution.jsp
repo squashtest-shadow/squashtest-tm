@@ -118,7 +118,7 @@
 				$("#execution-information-fragment").load("${executeThis}/general");
 			}
 		
-			function testComplete(){
+			function testComplete() {
 				alert( "${ completedMessage }" );
 				refreshParent();
 				window.close();

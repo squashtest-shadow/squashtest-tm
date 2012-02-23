@@ -42,14 +42,13 @@
 	<script type="text/javascript" src="${ pageContext.servletContext.contextPath }/scripts/jquery/jquery.cookie.js"></script>
 	
 	<script type="text/javascript">
-	
 	var urlRefreshStep = "<c:url value='${ currentStepUrl }' />";
-	var stepNumber = parseInt("${executionStep.executionStepOrder}");
+	var stepNumber = parseInt("${ executionStep.executionStepOrder }");
 	var stepNumberPrevious = stepNumber - 1;
 	var stepNumberNext = stepNumber + 1;
 	var stepId = ${executionStep.id};
-	var urlMenuPrevious = urlRefreshStep + "" + stepNumberPrevious +"/menu?ieo=true";
-	var urlMenuNext = urlRefreshStep + "" + stepNumberNext +"/menu?ieo=true";
+	var urlToolboxPrevious = urlRefreshStep + "" + stepNumberPrevious +"/menu?ieo=true";
+	var urlToolboxNext = urlRefreshStep + "" + stepNumberNext +"/menu?ieo=true";
 	
 	var urlPrevious = urlRefreshStep + "" + stepNumberPrevious +"?ieo=true";
 	var urlNext = urlRefreshStep + "" + stepNumberNext +"?ieo=true";
@@ -61,55 +60,16 @@
 	
 	</script>
 	
-	<%-- cautious : below are used StepIndexes and StepIds. Dont get confused. --%>
-	
-	<s:url var="executeNext" value="/execute/{execId}/step/{stepIndex}">
-		<s:param name="execId" value="${execution.id}" />
-		<s:param name="stepIndex" value="${executionStep.executionStepOrder+1}" />
-		<s:param name="ieo" value="true"/>
-	</s:url>
-	
-	<s:url var="executePrevious" value="/execute/{execId}/step/{stepIndex}">
-		<s:param name="execId" value="${execution.id}" />
-		<s:param name="stepIndex" value="${executionStep.executionStepOrder-1}" />
-		<s:param name="ieo" value="true"/>
-	</s:url>
-	
-	<s:url var="executeMenuNext" value="/execute/{execId}/step/{stepIndex}/menu">
-		<s:param name="execId" value="${execution.id}" />
-		<s:param name="stepIndex" value="${executionStep.executionStepOrder+1}" />
-		<s:param name="ieo" value="true"/>
-	</s:url>
-	
-	<s:url var="executeMenuPrevious" value="/execute/{execId}/step/{stepIndex}/menu">
-		<s:param name="execId" value="${execution.id}" />
-		<s:param name="stepIndex" value="${executionStep.executionStepOrder-1}" />
-		<s:param name="ieo" value="true"/>
-	</s:url>
-	
-	<s:url var="executeThis" value="/execute/{execId}/step/{stepIndex}">
-		<s:param name="execId" value="${execution.id}" />
-		<s:param name="stepIndex" value="${executionStep.executionStepOrder}" />
-		<s:param name="ieo" value="true"/>
-	</s:url>
-	
-	<s:url var="executeComment" value="/execute/{execId}/step/{stepId}">
-		<s:param name="execId" value="${execution.id}" />
-		<s:param name="stepId" value="${executionStep.id}" />
-		<s:param name="ieo" value="true"/>
-	</s:url>
-	
-	<s:url var="executeStatus" value="/execute/{execId}/step/{stepId}">
-		<s:param name="execId" value="${execution.id}" />
-		<s:param name="stepId" value="${executionStep.id}" />
-	</s:url>
+	<%-- cautious : below are used StepIndexes and StepIds. Dont get confused. --%>	
+	<c:url var="executeThis" value='${ currentStepUrl }/${ executionStep.executionStepOrder }'>
+		<c:param name="ieo" />
+	</c:url>
 	<link rel="stylesheet" type="text/css" href="${ pageContext.servletContext.contextPath }/styles/master.purple.css" />
 </head>
 
 <body id="ieo-body">
 	<script type="text/javascript">
 	$(function() {
-
 		$("#left-panel").resizable({
 			helper: "ui-resizable-helper",
 			alsoResize: "#right-panel",
@@ -129,7 +89,7 @@
 
 		$("#right-panel").resizable();
 		
-		var toolbox = $("#menu-space");
+		var toolbox = $("#toolbox-container");
 		
 		toolbox.delegate("#execute-next-step", "click", function(){
 			navigateNext();
@@ -197,8 +157,8 @@
 				stepNumberPrevious = stepNumber - 1;
 				stepNumberNext = stepNumber + 1;
 				stepId = rslt.executionStepId;
-				urlMenuPrevious = urlRefreshStep + "" + stepNumberPrevious +"/menu?ieo=true";
-				urlMenuNext = urlRefreshStep + "" + stepNumberNext +"/menu?ieo=true";
+				urlToolboxPrevious = urlRefreshStep + "" + stepNumberPrevious +"/menu?ieo=true";
+				urlToolboxNext = urlRefreshStep + "" + stepNumberNext +"/menu?ieo=true";
 				
 				urlPrevious = urlRefreshStep + "" + stepNumberPrevious +"?ieo=true";
 				urlNext = urlRefreshStep + "" + stepNumberNext +"?ieo=true";
@@ -212,24 +172,24 @@
 	}
 	
 	<%-- Reloading draggable menu with the right step --%>
-	function refreshMenu(menuUrl, newNumber){
-		$("#menu-space").load(menuUrl);
+	function refreshToolbox(toolboxUrl, newNumber){
+		$("#toolbox-container").load(toolboxUrl);
 		refreshStepValues(urlRefreshStep + "" + newNumber + "/new-step-infos");
 	}
 	
-	function refreshMenuNext(){
-		refreshMenu(urlMenuNext, stepNumberNext);
+	function refreshToolboxNext(){
+		refreshToolbox(urlToolboxNext, stepNumberNext);
 	}
 	
-	function refreshMenuPrevious(){
-		refreshMenu(urlMenuPrevious, stepNumberPrevious);
+	function refreshToolboxPrevious(){
+		refreshToolbox(urlToolboxPrevious, stepNumberPrevious);
 	}
 	
 	<%-- Navigate left panel to the right Step --%>
 	function navigateNext(){
 		if (hasNextStep) {
 			parent.frameleft.document.location.href=urlNext;
-			refreshMenuNext();
+			refreshToolboxNext();
 		}
 	}
 	
@@ -237,13 +197,13 @@
 		var theUrl =  urlRefreshStep + ""+ value +"?ieo=true";
 		var theMenuUrl =  urlRefreshStep + ""+ value +"/menu?ieo=true";
 		parent.frameleft.document.location.href=theUrl;
-		refreshMenu(theMenuUrl, value);
+		refreshToolbox(theMenuUrl, value);
 	}
 
 	function navigatePrevious(){
 		if (hasPreviousStep) {
 			parent.frameleft.document.location.href=urlPrevious;
-			refreshMenuPrevious();
+			refreshToolboxPrevious();
 		}
 	}
 
@@ -270,7 +230,7 @@
 		</iframe> 
 	</div>
 	
-	<div id="menu-space" >
+	<div id="toolbox-container" >
 		<gr:ieo-toolbox execution="${ execution }" executionStep="${ executionStep }" hasNextStep="${ hasNextStep }" hasPreviousStep="${ hasPreviousStep }" totalSteps="${ totalSteps }" hasNextTestCase="${ hasNextTestCase }" testPlanItemUrl="${ testPlanItemUrl }" />
 	</div>
 

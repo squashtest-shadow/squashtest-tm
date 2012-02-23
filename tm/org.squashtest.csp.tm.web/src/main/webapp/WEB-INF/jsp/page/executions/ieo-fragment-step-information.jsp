@@ -56,47 +56,11 @@
 	
 
 <%-- cautious : below are used StepIndexes and StepIds. Dont get confused. --%>
-<s:url var="executeNext" value="/execute/{execId}/step/{stepIndex}">
-	<s:param name="execId" value="${execution.id}" />
-	<s:param name="stepIndex" value="${executionStep.executionStepOrder+1}" />
-	<s:param name="ieo" value="true"/>
-</s:url>
-
-<s:url var="executePrevious" value="/execute/{execId}/step/{stepIndex}">
-	<s:param name="execId" value="${execution.id}" />
-	<s:param name="stepIndex" value="${executionStep.executionStepOrder-1}" />
-	<s:param name="ieo" value="true"/>
-</s:url>
-
-<s:url var="executeMenuNext" value="/execute/{execId}/step/{stepIndex}/menu">
-	<s:param name="execId" value="${execution.id}" />
-	<s:param name="stepIndex" value="${executionStep.executionStepOrder+1}" />
-	<s:param name="ieo" value="true"/>
-</s:url>
-
-<s:url var="executeMenuPrevious" value="/execute/{execId}/step/{stepIndex/menu">
-	<s:param name="execId" value="${execution.id}" />
-	<s:param name="stepIndex" value="${executionStep.executionStepOrder-1}" />
-	<s:param name="ieo" value="true"/>
-</s:url>
-
-<s:url var="executeThis" value="/execute/{execId}/step/{stepIndex}">
-	<s:param name="execId" value="${execution.id}" />
-	<s:param name="stepIndex" value="${executionStep.executionStepOrder}" />
-	<s:param name="ieo" value="true"/>
-</s:url>
-
 <s:url var="executeComment" value="/execute/{execId}/step/{stepId}">
 	<s:param name="execId" value="${execution.id}" />
 	<s:param name="stepId" value="${executionStep.id}" />
 	<s:param name="ieo" value="true"/>
 </s:url>
-
-<s:url var="executeStatus" value="/execute/{execId}/step/{stepId}">
-	<s:param name="execId" value="${execution.id}" />
-	<s:param name="stepId" value="${executionStep.id}" />
-</s:url>
-
 
 	<link rel="stylesheet" type="text/css" href="${ pageContext.servletContext.contextPath }/styles/master.purple.css" />	
 </head>
@@ -107,121 +71,39 @@
 
 
 <body class="execute-html-body ieo-body">
-
-
-
-	
 	<f:message var="completedMessage" key="execute.alert.test.complete" />
 	
 	<script type="text/javascript">
-	
-		function refreshExecStepInfos(){
-			<%-- $("execute-html-body").parent().load("${executeThis}/ieo"); --%>
-			
-		}
-	
-		function testComplete(){
-			alert( "${completedMessage}" );
-			window.close();
-		}
-	
-		function navigateNext(){
-			parent.parent.navigateNext();
-		}
-		
-		function navigatePrevious(){
-			parent.parent.navigatePrevious();	
-
-		}
-		
-		function initNextButton(){
+		$(function(){
 			$("#execute-next-button").button({
-				'text' : false,
-				icons : {
+				'text': false,
+				'disabled': ${ not hasNextStep },
+				icons: {
 					primary : 'ui-icon-triangle-1-e'
 				}
-			});
-			$("#execute-next-button-2").button({
+			}).click(function(){
+				parent.parent.navigateNext();
+			});	
+		
+			$("#execute-previous-button").button({
 				'text' : false,
+				'disabled': ${ not hasPreviousStep },
 				icons : {
-					primary : 'ui-icon-triangle-1-e'
+					primary : 'ui-icon-triangle-1-w'
 				}
+			}).click(function(){
+				parent.parent.navigatePrevious();
 			});
-			<c:choose>
-				<c:when test="${executionStep.executionStepOrder == totalSteps-1}">
-			//disable the next button since it's the last step
-			$("#execute-next-button").button("option", "disabled", true);
-			$("#execute-next-button-2").button("option", "disabled", true);
-				</c:when>
-				<c:otherwise>
-			$("#execute-next-button").click(function(){
-				navigateNext();
-			});	
-			$("#execute-next-button-2").click(function(){
-				navigateNext();
-			});	
-				</c:otherwise>
-			</c:choose>
-		}
 		
-		function initPreviousButton(){			
-		$("#execute-previous-button").button({
-			'text' : false,
-			icons : {
-				primary : 'ui-icon-triangle-1-w'
-			}
-		});
-		$("#execute-previous-button-2").button({
-			'text' : false,
-			icons : {
-				primary : 'ui-icon-triangle-1-w'
-			}
-		});
-		<c:choose>
-			<c:when test="${executionStep.executionStepOrder == 0}">
-		//disable the previous button since it's the first step
-		$("#execute-previous-button").button("option", "disabled", true);
-		$("#execute-previous-button-2").button("option", "disabled", true);
-			</c:when>
-			<c:otherwise>
-		$("#execute-previous-button").click(function(){
-			navigatePrevious();
-		});
-		$("#execute-previous-button-2").click(function(){
-			navigatePrevious();
-		});	
-			</c:otherwise>
-		</c:choose>
-		}
-		
-		function initStopButton(){
 			$("#execute-stop-button").button({
 				'text': false, 
 				'icons' : {
 					'primary' : 'execute-stop'
 				} 
-			})
-			.click(function(){
+			}).click(function(){
 				parent.parent.window.close();
 			});			
-		}
-		
-		
-		$(function(){
-			initNextButton();
-			initPreviousButton();
-			initStopButton();
-			$("#open-address-dialog-button").button();
-			$("#execute-previous-button-2").button();
-			$("#execute-next-button-2").button();
-		});	
-	</script>
 
-	<script type="text/javascript">
-	
-		$(function() {	
-
-			
 			$("#execution-action a").live('click', function(){
 				$(this).attr('target', "frameright");
 			});
@@ -229,22 +111,36 @@
 			$("#bugtracker-section-div a").live('click', function(){
 				$(this).attr('target', "frameright");
 			});			
+
+			$("#execute-next-test-case").button({
+				'text': false,
+				'disabled': ${ (empty hasNextTestCase) or (not hasNextTestCase) or hasNextStep },
+				icons: {
+					primary : 'ui-icon-seek-next'
+				}
+			});
+			
+			if (${ not empty testPlanItemUrl }) $('#execute-next-test-case-panel').removeClass('not-displayed');		
 		});
-		
 	</script> 
 	<div id="execute-header">
 		<!--  table layout ftw. -->	
 		<table>
 			<tr>
-				<td style="text-align:left;"><button id="execute-stop-button" ><f:message key="execute.header.button.stop.title" /></button></td>
-				<td style="text-align:left; padding-left: 20px;">
+				<td class="left-aligned"><button id="execute-stop-button" ><f:message key="execute.header.button.stop.title" /></button></td>
+				<td style="padding-left: 20px;" class="left-aligned">
 					<button id="execute-previous-button"><f:message key="execute.header.button.previous.title" /></button>
 					<span id="execute-header-numbers-label">${executionStep.executionStepOrder +1} / ${totalSteps}</span>	
 					<button id="execute-next-button"><f:message key="execute.header.button.next.title" /></button>
 				</td>
+				<td class="centered not-displayed" id="execute-next-test-case-panel">
+					<form action="<c:url value='${ testPlanItemUrl }/next-execution/runner' />" method="post" target="optimized-execution-runner">
+						<f:message  var="nextTestCaseTitle" key="execute.header.button.next-test-case.title" />
+						<button id="execute-next-test-case" name="optimized" class="button" title="${ nextTestCaseTitle }">${ nextTestCaseTitle }</button>
+					</form>
+				</td>
 			</tr>
-		</table> 
-			
+		</table> 	
 	</div>
 	<div id="execute-body" class="execute-fragment-body">
 	
@@ -269,8 +165,7 @@
 		
 			<div id="execute-evaluation-leftside">
 	
-				<comp:rich-jeditable targetUrl="${executeComment}" componentId="execution-comment" 
-				submitCallback="refreshExecStepInfos"/>
+				<comp:rich-jeditable targetUrl="${executeComment}" componentId="execution-comment" />
 	
 				<comp:toggle-panel id="execution-comment-panel" titleKey="execute.panel.comment.title" isContextual="true" open="true">
 					<jsp:attribute name="body">

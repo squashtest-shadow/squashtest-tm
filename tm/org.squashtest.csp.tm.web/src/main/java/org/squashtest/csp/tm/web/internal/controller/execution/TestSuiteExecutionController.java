@@ -89,18 +89,14 @@ public class TestSuiteExecutionController {
 	public void setTestSuiteExecutionProcessingService(TestSuiteExecutionProcessingService testSuiteExecutionProcessingService) {
 		this.testSuiteExecutionProcessingService = testSuiteExecutionProcessingService;
 	}
-	
+
 	@RequestMapping(value = "/{testPlanItemId}/executions/{executionId}/runner", method = RequestMethod.GET, params = "optimized")
 	public String showOptimizedExecutionRunner(@PathVariable long testSuiteId, @PathVariable long testPlanItemId,
 			@PathVariable long executionId, Model model) {
 		helper.populateExecutionRunnerModel(executionId, model);
 
-		boolean hasNextTestCase = testSuiteExecutionProcessingService.hasMoreExecutableItems(testSuiteId, testPlanItemId);
-		model.addAttribute("hasNextTestCase", hasNextTestCase);
-
-		String testPlanItemUrl = MessageFormat.format(TEST_PLAN_ITEM_URL_PATTERN, testSuiteId, testPlanItemId);
-		model.addAttribute("testPlanItemUrl", testPlanItemUrl);
-
+		addHasNextTestCase(testSuiteId, testPlanItemId, model);
+		addTestPlanItemUrl(testSuiteId, testPlanItemId, model);
 		addCurrentStepUrl(model, testSuiteId, testPlanItemId, executionId);
 
 		if (LOGGER.isTraceEnabled()) {
@@ -108,6 +104,16 @@ public class TestSuiteExecutionController {
 		}
 
 		return "page/executions/ieo-execute-execution";
+	}
+
+	private void addTestPlanItemUrl(long testSuiteId, long testPlanItemId, Model model) {
+		String testPlanItemUrl = MessageFormat.format(TEST_PLAN_ITEM_URL_PATTERN, testSuiteId, testPlanItemId);
+		model.addAttribute("testPlanItemUrl", testPlanItemUrl);
+	}
+
+	private void addHasNextTestCase(long testSuiteId, long testPlanItemId, Model model) {
+		boolean hasNextTestCase = testSuiteExecutionProcessingService.hasMoreExecutableItems(testSuiteId, testPlanItemId);
+		model.addAttribute("hasNextTestCase", hasNextTestCase);
 	}
 
 	private void addCurrentStepUrl(Model model, Long... ids) {
@@ -130,25 +136,26 @@ public class TestSuiteExecutionController {
 		helper.populateExecutionRunnerModel(executionId, model);
 		return "page/executions/execute-execution";
 	}
-	
+
 	/* copypasta from now on. rework asap */
 
 	@RequestMapping(value = "/{testPlanItemId}/executions/{executionId}/steps/index/{stepIndex}", method = RequestMethod.GET)
 	public String getClassicExecutionStepFragment(@PathVariable long testSuiteId, @PathVariable long testPlanItemId,
-			@PathVariable long executionId, @PathVariable int stepIndex,
-			Model model) {
+			@PathVariable long executionId, @PathVariable int stepIndex, Model model) {
 		helper.populateExecutionStepModel(executionId, stepIndex, model);
 		addCurrentStepUrl(model, testSuiteId, testPlanItemId, executionId);
 
-		return "fragment/executions/execute-execution";
+		return "page/executions/execute-execution";
 
 	}
 
 	@RequestMapping(value = "/{testPlanItemId}/executions/{executionId}/steps/index/{stepIndex}", method = RequestMethod.GET, params = { "ieo" })
-	public String getOptimizedExecutionStepFragment(@PathVariable long testSuiteId, @PathVariable long testPlanItemId,
-			@PathVariable long executionId, @PathVariable int stepIndex,
-			Model model) {
+	public String showExecutionStepInOptimizedRunner(@PathVariable long testSuiteId, @PathVariable long testPlanItemId,
+			@PathVariable long executionId, @PathVariable int stepIndex, Model model) {
 		helper.populateExecutionStepModel(executionId, stepIndex, model);
+
+		addHasNextTestCase(testSuiteId, testPlanItemId, model);
+		addTestPlanItemUrl(testSuiteId, testPlanItemId, model);
 		addCurrentStepUrl(model, testSuiteId, testPlanItemId, executionId);
 
 		return "page/executions/ieo-fragment-step-information";
@@ -156,10 +163,12 @@ public class TestSuiteExecutionController {
 	}
 
 	@RequestMapping(value = "/{testPlanItemId}/executions/{executionId}/steps/index/{stepIndex}/menu", method = RequestMethod.GET)
-	public String getOptimizedExecutionToolboxFragment(@PathVariable long testSuiteId, @PathVariable long testPlanItemId,
-	@PathVariable long executionId, @PathVariable int stepIndex,
-			Model model) {
+	public String getOptimizedRunnerToolboxFragment(@PathVariable long testSuiteId, @PathVariable long testPlanItemId,
+			@PathVariable long executionId, @PathVariable int stepIndex, Model model) {
 		helper.populateExecutionStepModel(executionId, stepIndex, model);
+
+		addHasNextTestCase(testSuiteId, testPlanItemId, model);
+		addTestPlanItemUrl(testSuiteId, testPlanItemId, model);
 		addCurrentStepUrl(model, testSuiteId, testPlanItemId, executionId);
 
 		return "fragment/executions/step-information-menu";
@@ -179,18 +188,9 @@ public class TestSuiteExecutionController {
 
 	}
 
-	@RequestMapping(value = "/{testPlanItemId}/executions/{executionId}/steps/index/{stepId}", method = RequestMethod.POST, params = { "id=execution-comment", "value" })
-	@ResponseBody
-	public String updateComment(@RequestParam("value") String newComment, @PathVariable("stepId") Long stepId) {
-		executionProcessingService.setExecutionStepComment(stepId, newComment);
-		LOGGER.trace("ExecutionStep " + stepId.toString() + ": updated comment to " + newComment);
-		return newComment;
-	}
-
 	@RequestMapping(value = "/{testPlanItemId}/executions/{executionId}/steps/index/{stepIndex}/new-step-infos", method = RequestMethod.GET)
 	@ResponseBody
 	public String getNewStepInfos(@PathVariable Long executionId, @PathVariable Integer stepIndex) {
-
 		JsonSimpleData obj = new JsonSimpleData();
 
 		Execution execution = executionProcessingService.findExecution(executionId);
@@ -213,10 +213,12 @@ public class TestSuiteExecutionController {
 		ExecutionStatus status = ExecutionStatus.valueOf(executionStatus);
 		executionProcessingService.setExecutionStepStatus(stepId, status);
 	}
-	/* end copypasta*/
+
+	/* end copypasta */
 
 	/**
-	 * @param executionProcessingService the executionProcessingService to set
+	 * @param executionProcessingService
+	 *            the executionProcessingService to set
 	 */
 	@ServiceReference
 	public void setExecutionProcessingService(ExecutionProcessingService executionProcessingService) {
