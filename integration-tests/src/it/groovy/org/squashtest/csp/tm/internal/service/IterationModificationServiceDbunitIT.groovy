@@ -72,7 +72,7 @@ class IterationModificationServiceDbunitIT extends DbunitServiceSpecification {
 		TestSuite copyOfSuite = iterService.copyPasteTestSuiteToIteration (testSuiteId, iterationId)
 		
 		then :
-		copyOfSuite.getName() == "suite de test 1_Copie1"
+		copyOfSuite.getName() == "suite de test 1-Copie1"
 	}
 	
 	@DataSet("IterationModificationServiceDbunitIT.should copy-paste 2 TestSuites.xml")
