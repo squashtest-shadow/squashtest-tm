@@ -20,6 +20,7 @@
  */
 package org.squashtest.csp.tm.internal.service;
 
+import java.util.ArrayList;
 import java.util.LinkedList;
 import java.util.List;
 
@@ -266,6 +267,20 @@ public class CustomIterationModificationServiceImpl implements CustomIterationMo
 		testSuiteModificationService.bindTestPlan(copyOfTestSuite.getId(), itemTestPlanIds);
 
 		return copyOfTestSuite;
+	}
+	
+	@Override
+	@PreAuthorize("hasPermission(#iterationId, 'org.squashtest.csp.tm.domain.campaign.Iteration', 'WRITE') "
+			+ "or hasRole('ROLE_ADMIN')")
+	public List<TestSuite> copyPasteTestSuitesToIteration(Long[] testSuiteIds, Long iterationId) {
+		
+		List<TestSuite> createdTestSuites = new ArrayList<TestSuite>();
+		
+		for (Long testSuiteId : testSuiteIds) {
+			createdTestSuites.add(copyPasteTestSuiteToIteration(testSuiteId, iterationId));
+		}
+		
+		return createdTestSuites;
 	}
 
 	private void renameTestSuiteIfNecessary(TestSuite copyOfTestSuite, Long iterationId) {

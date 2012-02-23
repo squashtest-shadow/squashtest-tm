@@ -74,4 +74,34 @@ class IterationModificationServiceDbunitIT extends DbunitServiceSpecification {
 		then :
 		copyOfSuite.getName() == "suite de test 1_Copie1"
 	}
+	
+	@DataSet("IterationModificationServiceDbunitIT.should copy-paste 2 TestSuites.xml")
+	def "should copy-paste 2 TestSuites"(){
+		given:
+		def testSuite1Id = 1L
+		def testSuite2Id = 2L
+		def iterationId = 10L
+		def Long[] testSuiteIds = new Long[2]
+		testSuiteIds[0] = testSuite1Id
+		testSuiteIds[1] = testSuite2Id
+
+		when :
+		List<TestSuite> copyOfSuites = iterService.copyPasteTestSuitesToIteration (testSuiteIds, iterationId)
+
+		then :
+		copyOfSuites.size() == 2
+		copyOfSuites.get(0).getIteration().getId() == iterationId
+		copyOfSuites.get(0).getTestPlan().size() == 2
+		copyOfSuites.get(0).getName() == "suite de test 1"
+		copyOfSuites.get(0).getId()!= 1L
+		copyOfSuites.get(0).getId()!= null
+		copyOfSuites.get(0).getTestPlan().each {it.getExecutions().size()==0 }
+		copyOfSuites.get(0).getTestPlan().each {it.getExecutionStatus()== ExecutionStatus.READY }
+		copyOfSuites.get(0).getTestPlan().each {it.getIteration().getId() == iterationId }
+		copyOfSuites.get(1).getIteration().getId() == iterationId
+		copyOfSuites.get(1).getName() == "suite de test 2"
+		copyOfSuites.get(1).getId()!= 2L
+		copyOfSuites.get(1).getId()!= null
+		
+	}
 }

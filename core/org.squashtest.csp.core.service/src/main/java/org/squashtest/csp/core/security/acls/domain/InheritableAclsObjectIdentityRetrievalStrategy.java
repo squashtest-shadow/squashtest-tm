@@ -70,6 +70,7 @@ public class InheritableAclsObjectIdentityRetrievalStrategy implements ObjectIde
 
 		@Override
 		public boolean equals(Object obj) { // NOSONAR generated code
+			//CHECKSTYLE:OFF
 			if (this == obj) {
 				return true;
 			}
@@ -95,6 +96,7 @@ public class InheritableAclsObjectIdentityRetrievalStrategy implements ObjectIde
 				return false;
 			}
 			return true;
+			//CHECKSTYLE:ON
 		}
 
 	}

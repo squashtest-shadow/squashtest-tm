@@ -45,6 +45,7 @@ import org.squashtest.csp.tm.domain.campaign.CampaignLibraryNode;
 import org.squashtest.csp.tm.domain.campaign.Iteration;
 import org.squashtest.csp.tm.domain.campaign.TestSuite;
 import org.squashtest.csp.tm.service.CampaignLibraryNavigationService;
+import org.squashtest.csp.tm.service.IterationModificationService;
 import org.squashtest.csp.tm.service.LibraryNavigationService;
 import org.squashtest.csp.tm.service.deletion.SuppressionPreviewReport;
 import org.squashtest.csp.tm.web.internal.controller.generic.LibraryNavigationController;
@@ -84,7 +85,12 @@ LibraryNavigationController<CampaignLibrary, CampaignFolder, CampaignLibraryNode
 		this.campaignLibraryNavigationService = campaignLibraryNavigationService;
 	}
 
+	private IterationModificationService iterationModificationService;
 
+	@ServiceReference
+	public void setIterationModificationService(IterationModificationService iterationModificationService) {
+		this.iterationModificationService = iterationModificationService;
+	}
 
 	@RequestMapping(value = "/drives/{libraryId}/content/new-campaign", method = RequestMethod.POST)
 	public @ResponseBody
@@ -175,6 +181,10 @@ LibraryNavigationController<CampaignLibrary, CampaignFolder, CampaignLibraryNode
 	private JsTreeNode createIterationTreeNode(Iteration iteration, int iterationIndex) {
 		return iterationNodeBuilder.get().setModel(iteration).setIterationIndex(iterationIndex).build();
 	}
+	
+	private JsTreeNode createTestSuiteTreeNode(TestSuite testSuite) {
+		return suiteNodeBuilder.get().setModel(testSuite).build();
+	}
 
 	@RequestMapping(value = "/files/{campaignId}/content", method = RequestMethod.GET)
 	public @ResponseBody
@@ -232,7 +242,19 @@ LibraryNavigationController<CampaignLibrary, CampaignFolder, CampaignLibraryNode
 
 		return res;
 	}
+	
+	private @ResponseBody
+	List<JsTreeNode> createCopiedTestSuitesModel(
+			List<TestSuite> newTestSuites) {
+		
+		List<JsTreeNode> res = new ArrayList<JsTreeNode>();
+		
+		for (TestSuite testSuite : newTestSuites) {
+			res.add(createTestSuiteTreeNode(testSuite));
+		}
 
+		return res;
+	}
 
 
 
@@ -306,17 +328,39 @@ LibraryNavigationController<CampaignLibrary, CampaignFolder, CampaignLibraryNode
 							  @RequestParam("destination-id") long campaignId, 
 							  @RequestParam("destination-type") String destType,
 							  @RequestParam("next-iteration-number") int nextIterationNumber){
-		List<Iteration> iterationsList;
-		
-		if (destType.equals("campaign")){
-			iterationsList = campaignLibraryNavigationService.copyIterationsToCampaign(campaignId, iterationsIds);
-		}
-		else{
-			throw new IllegalArgumentException("copy nodes : cannot paste iterations to : "+destType);
-		}
-		return createCopiedIterationsModel(iterationsList, nextIterationNumber);
+
+		return copyNodes(iterationsIds, campaignId, destType, nextIterationNumber);
 	}
 	
+	@RequestMapping(value="/copy-test-suite", method= RequestMethod.POST)
+	public @ResponseBody List<JsTreeNode> copyTestSuites(@RequestParam("object-ids[]") Long[] testSuiteIds, 
+							  @RequestParam("destination-id") long iterationId, 
+							  @RequestParam("destination-type") String destType){
+		
+		return copyNodes(testSuiteIds, iterationId, destType, 0);
+		
+	}
 	
+	private List<JsTreeNode> copyNodes(Long[] itemIds, long destinationId, String destinationType, int nextNumberInDestination){
+		
+		if (destinationType.equals("campaign") || destinationType.equals("iteration") ){
+			if (destinationType.equals("campaign")){
+				List<Iteration> iterationsList;
+				iterationsList = campaignLibraryNavigationService.copyIterationsToCampaign(destinationId, itemIds);
+				return createCopiedIterationsModel(iterationsList, nextNumberInDestination);
+			}
+			else if (destinationType.equals("iteration")){
+				List<TestSuite> testSuiteList;
+				testSuiteList = iterationModificationService.copyPasteTestSuitesToIteration(itemIds, destinationId);
+				return createCopiedTestSuitesModel(testSuiteList);
+			}
+			else {
+				throw new IllegalArgumentException("copy nodes : cannot paste item to : "+destinationType);
+			}
+		}
+		else {
+			throw new IllegalArgumentException("copy nodes : cannot paste item to : "+destinationType);
+		}
+	}
 
 }

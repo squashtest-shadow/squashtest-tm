@@ -119,5 +119,19 @@ public interface CustomIterationModificationService {
 	 * @return the copy of the test suite
 	 */
 	TestSuite copyPasteTestSuiteToIteration(Long testSuiteId, Long iterationId);
+	
+	/**
+	 * <p>
+	 * will create a copy of the test suites and their test plan , then associate them to the given iteration<br>
+	 * will rename test suites if there is name conflict at destination
+	 * </p>
+	 * 
+	 * @param testSuiteIds
+	 *            = list of test suites to copy
+	 * @param iterationId
+	 *            = iteration where to add the copy of the test suite
+	 * @return the list containing all the copies of the test suites
+	 */
+	List<TestSuite> copyPasteTestSuitesToIteration(Long[] testSuiteIds, Long iterationId);
 
 }
