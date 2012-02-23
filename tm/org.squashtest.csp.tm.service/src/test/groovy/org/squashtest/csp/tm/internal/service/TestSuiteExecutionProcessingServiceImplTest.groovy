@@ -89,31 +89,31 @@ class TestSuiteExecutionProcessingServiceImplTest  extends Specification {
 		true           | false
 	}
 
-	//	def "should start next execution of test suite"() {
-	//		given:
-	//		TestSuite suite = Mock()
-	//
-	//		IterationTestPlanItem currentItem = Mock()
-	//		currentItem.id >> 100
-	//		IterationTestPlanItem nextItem = Mock()
-	//		nextItem.id >> 200
-	//		suite.testPlan >> [currentItem, nextItem]
-	//
-	//		TestCase referenced = Mock()
-	//		currentItem.referencedTestCase >> referenced
-	//		nextItem.referencedTestCase >> referenced
-	//
-	//		and:
-	//		testSuiteDao.findById(10) >> suite
-	//
-	//		and:
-	//		Execution exec = Mock()
-	//		testPlanManager.addExecution(_) >> exec
-	//
-	//		when:
-	//		def res = manager.startNextExecution(10, 100)
-	//
-	//		then:
-	//		res == exec
-	//	}
+	def "should start next execution of test suite"() {
+		given:
+		TestSuite suite = Mock()
+
+		IterationTestPlanItem currentItem = Mock()
+		currentItem.id >> 100
+		IterationTestPlanItem nextItem = Mock()
+		nextItem.id >> 200
+		suite.testPlan >> [currentItem, nextItem]
+
+		TestCase referenced = Mock()
+		currentItem.referencedTestCase >> referenced
+		nextItem.referencedTestCase >> referenced
+
+		and:
+		testSuiteDao.findById(10) >> suite
+
+		and:
+		Execution exec = Mock()
+		testPlanManager.addExecution(_) >> exec
+
+		when:
+		def res = manager.startNextExecution(10, 100)
+
+		then:
+		res == exec
+	}
 }

@@ -117,7 +117,7 @@ public class TestSuiteExecutionController {
 
 	@RequestMapping(value = "/{testPlanItemId}/next-execution/runner", method = RequestMethod.POST, params = "optimized")
 	public String startNextExecutionInOptimizedRunner(@PathVariable long testSuiteId, @PathVariable long testPlanItemId) {
-		Execution execution = testPlanManager.startNextExecution(testSuiteId, testPlanItemId);
+		Execution execution = testSuiteExecutionProcessingService.startNextExecution(testSuiteId, testPlanItemId);
 
 		return "redirect:"
 				+ MessageFormat.format(OPTIMIZED_RUNNER_VIEW_PATTERN, testSuiteId, execution.getTestPlan().getId(),

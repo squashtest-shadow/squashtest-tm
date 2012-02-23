@@ -123,16 +123,4 @@ public class TestSuiteTestPlanManagerServiceImpl implements TestSuiteTestPlanMan
 		return delegateIterationTestPlanManagerService.removeTestPlansFromIterationObj(testPlanIds, iteration);
 	}
 
-	/**
-	 * @see org.squashtest.csp.tm.service.TestSuiteTestPlanManagerService#startNextExecution(long, long)
-	 */
-	@Override
-	@PreAuthorize("hasPermission(#testSuiteId, 'org.squashtest.csp.tm.domain.campaign.TestSuite', 'WRITE') "
-			+ "or hasRole('ROLE_ADMIN')")
-	public Execution startNextExecution(long testSuiteId, long testPlanItemId) {
-		TestSuite testSuite = testSuiteDao.findById(testSuiteId);
-		IterationTestPlanItem next = testSuite.findNextExecutableTestPlanItem(testPlanItemId);
-		return testPlanManager.addExecution(next);
-	}
-
 }

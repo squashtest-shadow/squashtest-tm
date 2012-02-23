@@ -54,13 +54,4 @@ public interface TestSuiteTestPlanManagerService {
 
 	boolean detachTestPlanFromTestSuiteAndRemoveFromIteration(List<Long> testPlanIds, long suiteId);
 
-
-	/**
-	 * Should start a new execution for the next executable test plan item of the given test suite. suite's test plan.
-	 * 
-	 * @param testSuiteId
-	 * @param testPlanItemId
-	 * @return
-	 */
-	Execution startNextExecution(long testSuiteId, long testPlanItemId);
 }
