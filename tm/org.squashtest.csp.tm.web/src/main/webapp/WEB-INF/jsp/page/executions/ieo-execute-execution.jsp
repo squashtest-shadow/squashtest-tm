@@ -43,7 +43,7 @@
 	
 	<script type="text/javascript">
 	
-	var urlRefreshStep = "/squash/execute/${execution.id}/step/";
+	var urlRefreshStep = "<c:url value='${ currentStepUrl }' />";
 	var stepNumber = parseInt("${executionStep.executionStepOrder}");
 	var stepNumberPrevious = stepNumber - 1;
 	var stepNumberNext = stepNumber + 1;
@@ -108,7 +108,7 @@
 
 <body id="ieo-body">
 	<script type="text/javascript">
-	$(function(){
+	$(function() {
 
 		$("#left-panel").resizable({
 			helper: "ui-resizable-helper",

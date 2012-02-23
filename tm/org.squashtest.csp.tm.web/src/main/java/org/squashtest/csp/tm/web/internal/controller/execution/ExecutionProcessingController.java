@@ -58,13 +58,19 @@ public class ExecutionProcessingController {
 	@RequestMapping(method = RequestMethod.GET)
 	public String showClassicExecutionRunner(@PathVariable long executionId, Model model) {
 		helper.populateExecutionRunnerModel(executionId, model);
-
+		addCurrentStepUrl(executionId, model);
+		
 		return "page/executions/execute-execution";
+	}
+
+	private void addCurrentStepUrl(long executionId, Model model) {
+		model.addAttribute("currentStepUrl", "/execute/" + executionId + "/step/");
 	}
 
 	@RequestMapping(value = "/ieo", method = RequestMethod.GET)
 	public String showOptimizedExecutionRunner(@PathVariable long executionId, Model model) {
 		helper.populateExecutionRunnerModel(executionId, model);
+		addCurrentStepUrl(executionId, model);
 
 		return "page/executions/ieo-execute-execution";
 	}
@@ -73,7 +79,9 @@ public class ExecutionProcessingController {
 	public String getClassicExecutionStepFragment(@PathVariable long executionId, @PathVariable int stepIndex,
 			Model model) {
 		helper.populateExecutionStepModel(executionId, stepIndex, model);
-		return "fragment/executions/execute-execution";
+		addCurrentStepUrl(executionId, model);
+
+		return "page/executions/execute-execution";
 
 	}
 
@@ -81,6 +89,8 @@ public class ExecutionProcessingController {
 	public String getOptimizedExecutionStepFragment(@PathVariable long executionId, @PathVariable int stepIndex,
 			Model model) {
 		helper.populateExecutionStepModel(executionId, stepIndex, model);
+		addCurrentStepUrl(executionId, model);
+
 		return "page/executions/ieo-fragment-step-information";
 
 	}
@@ -92,13 +102,14 @@ public class ExecutionProcessingController {
 	public String getOptimizedExecutionToolboxFragment(@PathVariable long executionId, @PathVariable int stepIndex,
 			Model model) {
 		helper.populateExecutionStepModel(executionId, stepIndex, model);
+		addCurrentStepUrl(executionId, model);
+
 		return "fragment/executions/step-information-menu";
 
 	}
 
 	@RequestMapping(value = "/step/{stepIndex}/general", method = RequestMethod.GET)
 	public ModelAndView getMenuInfos(@PathVariable Long executionId, @PathVariable Integer stepIndex) {
-
 		ExecutionStep executionStep = executionProcService.findStepAt(executionId, stepIndex);
 
 		ModelAndView mav = new ModelAndView("fragment/executions/step-information-fragment");
@@ -113,7 +124,6 @@ public class ExecutionProcessingController {
 	@RequestMapping(value = "/step/{stepId}", method = RequestMethod.POST, params = { "id=execution-comment", "value" })
 	@ResponseBody
 	public String updateComment(@RequestParam("value") String newComment, @PathVariable("stepId") Long stepId) {
-
 		executionProcService.setExecutionStepComment(stepId, newComment);
 		LOGGER.trace("ExecutionStep " + stepId.toString() + ": updated comment to " + newComment);
 		return newComment;
