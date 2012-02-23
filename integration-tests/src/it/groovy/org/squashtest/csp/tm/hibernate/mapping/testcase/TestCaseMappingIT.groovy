@@ -127,6 +127,7 @@ class TestCaseMappingIT extends HibernateMappingSpecification {
 		then:
 		content.name == tc.name
 	}
+
 	def "should persist new steps order"() {
 		given:
 		TestCase tc = new TestCase(name: "reorder")
