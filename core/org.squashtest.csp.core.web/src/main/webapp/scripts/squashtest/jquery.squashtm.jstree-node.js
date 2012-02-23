@@ -100,6 +100,7 @@
 				
 	
 		// ************ relationships getters
+		
 		this.getLibrary = function(){
 			if (this.reference.is(':library')) {
 				return this;
@@ -117,6 +118,10 @@
 			return this.getLibrary().getResType().replace('-libraries', '');
 		}
 		
+		this.getChildren = function(){
+			var children= this.tree._get_children(this) ;
+			return (children.length) ? children.treeNode() : $();
+		}
 				
 	
 		this.getPrevious = function(){
@@ -186,6 +191,7 @@
 
 		
 		// *********** tests
+		
 		this.isBrother = function(otherNode){
 			var myParent = this.getParent();
 			var itsParent = otherNode.getParent();
@@ -202,64 +208,139 @@
 			return (this.getDomId() == otherNode.getDomId());
 		}
 		
+		this.match = function(matchObject){
+			for (var ppt in matchObject){	
+				if (! (this.attr(ppt) == matchObject[ppt])) return false;
+			}
+			return true;
+		}
 		
 		
 		// ************* methods for multiple matched elements ************
 
-		// one method to rule them all	
+		// one method to rule them all. Accepts a string, or an array of string.
+		// those strings represent the name of the methods we want to call.
+		// returns a collection of object which properties are the lowercased name of the 
+		// methods (minus 'get' if present) and the corresponding values.
 		this.all = function(strOrArray){
 			return this.collect(function(elt){
 				if ( typeof strOrArray == 'string'){
 					return $(elt).treeNode()[strOrArray]();
 				}else{
 					var data={};
+					var localNode = $(elt).treeNode();
 					for (var i in strOrArray){
 						var func = strOrArray[i];
-						var res = $(elt).treeNode()[func]();
+						var res = localNode[func]();
 						data[func.toLowerCase().replace('get', '')] = res;
 					}
 					return data;
 				}
 			});
-		}
+		};
+		
+		// if 1 argument is present, it must be an array of strings representing the 
+		// dom attributes we need and returns a collection of objects made of the specified attributes.
+		//
+		// if no argument is specified, defaults to restype and resid.		
+		this.toData = function(){
+			
+			var attributes;
+			
+			if (arguments.length==0) 
+				attributes=["restype", "resid"];
+			else
+				attributes=arguments[0];
+				
+			return this.collect(function(elt){
+				var res = {};
+				var localNode = $(elt);
+				for (var i in attributes){
+					var attr = attributes[i];
+					res[attr]=localNode.attr(attr);
+				}
+				return res;			
+			});
+		};
+		
+		
+		//given a matchObject describing the name/value dom attributes they all must share,
+		//returns true if they all have the same or false if they differ.
+		this.allMatch = function(matchObject){
+			
+			if (this.length ==0) return false;
+			
+			var shrinkingSet = this;
+		
+			for (var ppt in matchObject){
+				var selector = "["+ppt+"='"+matchObject[ppt]+"']";
+				shrinkingSet = shrinkingSet.filter(selector);
+			}
+			
+			return (shrinkingSet.length == this.length);	
+		};
+		
+		
+		// returns true if all the nodes share the same values (whatever they are) for the 
+		// requested attributes, false if not.
+		//
+		// that method differs from allMatch as we don't want to compare each nodes
+		// to a specified value, but against each others.
+		//
+		// pptArray : an array with the names of the dom properties we want to restrict our 
+		// comparison to.
+		this.haveSame = function(pptArray){			
+			var res = this.toData(pptArray);
+			return this.allMatch(res[0]);			
+		};
 		
 		
 		this.areSameLibs = function(){
 			var libs = this.collect(function(elt){return $(elt).treeNode().getLibrary().getDomId();});
 			return ($.unique(libs).length==1);
-		}
+		};
 		
 		this.areAllBrothers = function(){
 			var parents = this.collect(function(elt){return $(elt).treeNode().getParent().getDomId();});
 			return ($.unique(parents).length==1);
-		}
+		};
 		
+		this.areNodes = function(){
+			var types = this.all('getDomType');
+			
+			for (var i in types){
+				if ( ! (types[i]=="file" || types[i]=="folder") ) return false;
+			}
+		
+			return true;
+		};
+		
+		this.areResources = function(){
+			return this.allMatch( { rel : 'resource' } );
+		};
+		
+		this.areViews = function(){
+			return this.allMatch( { rel : 'view' } );
+		}
 		
 		// *************** urls 
 		
 		this.getResourceUrl = function(){
 			return this.getBaseUrl()+"/"+this.getResType()+"/"+this.getResId();
-		}
+		};
 		
 		this.getBaseUrl = function(){
 			return this.tree.data.squash.rootUrl+"/";		
-		}
+		};
 		
 		this.getBrowserUrl = function(){
 			return this.getBaseUrl()+this.getWorkspace()+"-browser";
-		}
+		};
 		
 		this.getContentUrl = buildGetContent(this);
 
-	
-
-		
 		return this;
 	}
 	
 
 })(jQuery);
-
-
-
-

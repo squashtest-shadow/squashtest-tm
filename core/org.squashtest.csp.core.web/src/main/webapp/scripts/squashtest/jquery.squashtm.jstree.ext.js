@@ -283,36 +283,35 @@
 			},
 			
 			selectionIsPasteAllowed : function(selectedNodes){
-				
-				// need only one node selected
-				var isOneEdit = this.selectionIsOneEditableNode(selectedNodes);
-				if(isOneEdit != "OK") return isOneEdit;
-				else{ 
-					// paste allowed for library and folder if the copied items
-					// are not iterations
-					if($.cookie('squash-copy-iterations-only') == "0"){
-						if(selectedNodes.attr('rel') ==  "drive" || selectedNodes.attr('rel') ==  "folder"){return "OK";}
-						else{return "pasteNotHere";}
-					}
-					// paste allowed for campaign if the copied items are
-					// iterations
-					else{
-						if(selectedNodes.is(":campaign")){return "OK";}
-						else{return "pasteIterationNotHere";}
-					}
-					
-				}
-						
+				return squashtm.treemenu.treeNodeCopier.mayPaste();
 			},
 			
-			findNodes : function(objDescriptor){
+			//accepts an object, or an array of object. the attributes of the object(s) will be
+			//tested against the dom attributes of the nodes and returns those that match all the 
+			//attributes of at least one of the objects.
+			findNodes : function(descriptor){
 				var selector="";
-				for (ppt in objDescriptor){
-					selector+="["+ppt+"='"+objDescriptor[ppt]+"']";
+				var matchers;
+				
+				if (descriptor instanceof Array){
+					matchers = descriptor
+				}else{
+					matchers = [ descriptor ];
 				}
+				
+				var nodes = $();
+				
+				for (var index in matchers){
+					var subList;
+					for (var ppt in matchers[index]){
+						selector+="["+ppt+"='"+matchers[index][ppt]+"']";
+					}
+					subList = this.get_container().find('li'+selector);	
+					nodes = nodes.add(subList);
+				}
+				
 				try{
-					var nodes = this.get_container().find('li'+selector).treeNode();
-					return nodes;
+					return nodes.treeNode();
 				}catch(invalide_node){
 					return $();
 				}
