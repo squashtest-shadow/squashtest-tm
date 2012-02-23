@@ -323,7 +323,7 @@ LibraryNavigationController<CampaignLibrary, CampaignFolder, CampaignLibraryNode
 	}	
 	
 	
-	@RequestMapping(value="/copy", method= RequestMethod.POST)
+	@RequestMapping(value="/copy-iterations", method= RequestMethod.POST)
 	public @ResponseBody List<JsTreeNode> copyIterations(@RequestParam("object-ids[]") Long[] iterationsIds, 
 							  @RequestParam("destination-id") long campaignId, 
 							  @RequestParam("destination-type") String destType,

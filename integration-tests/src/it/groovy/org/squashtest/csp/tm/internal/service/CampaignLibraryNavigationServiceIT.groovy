@@ -25,6 +25,8 @@ import java.util.List;
 import javax.inject.Inject;
 
 import org.apache.tools.ant.taskdefs.Copy;
+import org.hibernate.Query
+import org.hibernate.Session
 import org.junit.runner.RunWith;
 import org.spockframework.runtime.Sputnik;
 import org.spockframework.util.NotThreadSafe;
@@ -34,6 +36,7 @@ import org.squashtest.csp.tm.domain.campaign.Campaign;
 import org.squashtest.csp.tm.domain.campaign.CampaignFolder;
 import org.squashtest.csp.tm.domain.campaign.CampaignLibraryNode;
 import org.squashtest.csp.tm.domain.campaign.Iteration;
+import org.squashtest.csp.tm.domain.campaign.TestSuite
 import org.squashtest.csp.tm.service.CampaignLibrariesCrudService;
 import org.squashtest.csp.tm.service.CampaignLibraryNavigationService;
 import org.unitils.dbunit.annotation.DataSet;
@@ -253,23 +256,6 @@ class CampaignLibraryNavigationServiceIT extends DbunitServiceSpecification {
 		obj.name=="campaign 1"
 		obj.description=="the first campaign"
 	}
-
-	def "should get a clone of the campaign" (){
-		given:
-		def campa = new Campaign(name: "campaign 2", description: "the first campaign")
-		navService.addCampaignToCampaignLibrary(libId, campa)
-
-		def iteration = new Iteration(name:"iteration 2", description: "the first iteration")
-
-		navService.addIterationToCampaign(iteration, campa.id)
-
-		when :
-		def res = navService.createCopyCampaign(campa.id)
-
-		then:
-		res.testPlan.collect { it.referencedTestCase } == campa.testPlan.collect { it.referencedTestCase }
-		res.iterations == []
-	}
 	
 	@DataSet("CampaignLibraryNavigationServiceIT.should copy paste iterations to campaign.xml")
 	def "should copy paste iterations to campaign"(){
@@ -285,6 +271,69 @@ class CampaignLibraryNavigationServiceIT extends DbunitServiceSpecification {
 		iterations.size() == 2
 		iterations.get(0).name == "iter - tc1"
 		
-		
 	}
+	
+	@DataSet("CampaignLibraryNavigationServiceIT.should copy paste iterations with testSuites.xml")
+	def "should copy paste iterations with testSuites"(){
+		given:
+		Long[] iterationList = [10012L,2L]
+		Long targetCampaignId = 11L
+		
+		when:
+		List<Iteration> iterations = navService.copyIterationsToCampaign(targetCampaignId , iterationList )
+		
+		then:
+		iterations.size() == 2
+		iterations.find {it.getName()== "iter - tc1" } != null
+		Iteration iteration1 = iterations.find {it.getName() == "iter - tc1" }
+		iteration1.getTestSuites().size() == 2
+		iteration1.getTestSuites().find {it.getName() == "testSuite1"} != null
+		TestSuite testsSuite1 = iteration1.getTestSuites().find {it.getName() == "testSuite1"}
+		testsSuite1.getTestPlan().size() == 1
+		iteration1.getTestPlans().size() == 1
+		iteration1.getTestSuites().find {it.getName() == "testSuite2"} != null
+		TestSuite testsSuite2 = iteration1.getTestSuites().find {it.getName() == "testSuite2"}
+		testsSuite2.getTestPlan().size() == 0
+	}
+	
+	@DataSet("CampaignLibraryNavigationServiceIT.should copy paste campaigns with iterations.xml")
+	def "should copy paste campaigns with iterations"(){
+		given:
+		Long[] targetIds = [10L]
+		Long destinationId = 1L
+		
+		when:
+		List<Campaign> campaigns = navService.copyNodesToFolder(destinationId, targetIds)
+		
+		then:
+		campaigns.get(0).getIterations().size() == 2
+		def iterations = campaigns.get(0).getIterations()
+		iterations.find {it.getName() == "iter - tc1" } != null
+		iterations.find {it.getName() == "iter - tc1 -2" } != null
+	}
+	
+	@DataSet("CampaignLibraryNavigationServiceIT.should copy paste campaigns with testSuites.xml")
+	def "should copy paste campaigns with testSuites"(){
+		given:
+			Long[] targetIds = [10L]
+		Long destinationId = 1L
+		
+		when:
+		List<Campaign> campaigns = navService.copyNodesToFolder(destinationId, targetIds)
+		
+		then:
+		campaigns.get(0).getIterations().size() == 2
+		def iterations = campaigns.get(0).getIterations()
+		Iteration iteration1 = iterations.find {it.getName() == "iter - tc1" }
+		iteration1.getTestSuites().size() == 2
+		iteration1.getTestSuites().find {it.getName() == "testSuite1"} != null
+		TestSuite testsSuite1 = iteration1.getTestSuites().find {it.getName() == "testSuite1"}
+		testsSuite1.getTestPlan().size() == 1
+		iteration1.getTestSuites().find {it.getName() == "testSuite2"} != null
+		TestSuite testsSuite2 = iteration1.getTestSuites().find {it.getName() == "testSuite2"}
+		testsSuite2.getTestPlan().size() == 0
+		Iteration iteration2 = iterations.find {it.getName() == "iter - tc1 -2" }
+		iteration2.getTestSuites().isEmpty()
+	}
+	
 }

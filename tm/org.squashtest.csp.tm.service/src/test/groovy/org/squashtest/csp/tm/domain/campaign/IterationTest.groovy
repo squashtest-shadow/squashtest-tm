@@ -18,6 +18,7 @@
  *     You should have received a copy of the GNU Lesser General Public License
  *     along with this software.  If not, see <http://www.gnu.org/licenses/>.
  */
+
 package org.squashtest.csp.tm.domain.campaign
 
 import org.h2.util.New
@@ -51,6 +52,8 @@ class IterationTest extends Specification {
 		copy.getDescription() == copySource.getDescription()
 		copy.getName() == copySource.getName()
 	}
+
+
 	def "copy of an Iteration should copy it's planning infos"() {
 		given:
 		SimpleDateFormat format = new SimpleDateFormat("dd/MM/yyyy")
@@ -111,7 +114,35 @@ class IterationTest extends Specification {
 		list.size() == 1
 		list.asList() == [attachCopy]
 	}
+	def "copy of test suites should return the indexes of test-plan-items to bind in iteration-copied-test-plan"(){
+		TestCase tc1 = new TestCase()
+		IterationTestPlanItem testPlanItem1 = new IterationTestPlanItem()
+		testPlanItem1.setLabel("testPlanItem1")
+		testPlanItem1.setReferencedTestCase(tc1)
+		IterationTestPlanItem testPlanItemWithoutTestCase = new IterationTestPlanItem()
+		TestCase tc2 = new TestCase()
+		IterationTestPlanItem testPlanItem2 = new IterationTestPlanItem()
+		testPlanItem2.setReferencedTestCase(tc2)
+		testPlanItem2.setLabel("testPlanItem2")
+		copySource.addTestPlan(testPlanItem1)
+		copySource.addTestPlan(testPlanItemWithoutTestCase)
+		copySource.addTestPlan(testPlanItem2)
+		TestSuite testSuite = new TestSuite()
+		copySource.addTestSuite(testSuite)
+		testSuite.setName("testSuite")
+		testSuite.bindTestPlanItems([testPlanItem1, testPlanItem2])
 
+		when:
+		Map<TestSuite, List<Integer>> testSuitesPastableCopies = copySource.createTestSuitesPastableCopy()
+
+		then:
+		testSuitesPastableCopies.size() == 1
+		testSuitesPastableCopies.entrySet().find {it.getKey().getName() == "testSuite"} != null
+		def entry = testSuitesPastableCopies.entrySet().find {it.getKey().getName() == "testSuite"}
+		entry.getValue().size() == 2
+		entry.getValue().find {it == 0} != null
+		entry.getValue().find {it == 1} != null
+	}
 	def "should add a test plan"(){
 
 		given :
@@ -442,7 +473,8 @@ class IterationTest extends Specification {
 		Iteration iteration = new Iteration()
 		iteration.testSuites = [
 			new TestSuite(name:"suite1"),
-			new TestSuite(name:"suite2")] as Set
+			new TestSuite(name:"suite2")
+		]as Set
 
 		when :
 		def res =iteration.checkSuiteNameAvailable("suite3")
@@ -455,7 +487,8 @@ class IterationTest extends Specification {
 		Iteration iteration = new Iteration()
 		iteration.testSuites = [
 			new TestSuite(name:"suite1"),
-			new TestSuite(name:"suite2")] as Set
+			new TestSuite(name:"suite2")
+		]as Set
 
 		when :
 		def res =iteration.checkSuiteNameAvailable("suite2")
@@ -468,7 +501,8 @@ class IterationTest extends Specification {
 		Iteration iteration = new Iteration()
 		iteration.testSuites = [
 			new TestSuite(name:"suite1"),
-			new TestSuite(name:"suite2")] as Set
+			new TestSuite(name:"suite2")
+		]as Set
 
 		when :
 		def suite = new TestSuite(name:"suite3")
@@ -483,7 +517,8 @@ class IterationTest extends Specification {
 		Iteration iteration = new Iteration()
 		iteration.testSuites = [
 			new TestSuite(name:"suite1"),
-			new TestSuite(name:"suite2")] as Set
+			new TestSuite(name:"suite2")
+		]as Set
 
 		when :
 		def suite = new TestSuite(name:"suite2")

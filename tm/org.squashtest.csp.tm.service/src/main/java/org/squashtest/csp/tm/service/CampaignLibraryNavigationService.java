@@ -30,13 +30,10 @@ import org.squashtest.csp.tm.domain.campaign.Iteration;
 import org.squashtest.csp.tm.domain.campaign.TestSuite;
 import org.squashtest.csp.tm.service.deletion.SuppressionPreviewReport;
 
-
 public interface CampaignLibraryNavigationService extends
-LibraryNavigationService<CampaignLibrary, CampaignFolder, CampaignLibraryNode> {
-
+		LibraryNavigationService<CampaignLibrary, CampaignFolder, CampaignLibraryNode> {
 
 	void addCampaignToCampaignLibrary(long libraryId, Campaign campaign);
-
 
 	void addCampaignToCampaignFolder(long folderId, Campaign campaign);
 
@@ -54,43 +51,36 @@ LibraryNavigationService<CampaignLibrary, CampaignFolder, CampaignLibraryNode> {
 	List<Iteration> findIterationsByCampaignId(long campaignId);
 
 	int copyIterationToCampaign(long campaignId, long iterationId);
-	
 
-	List<Iteration> copyIterationsToCampaign(long campaignId,
-			Long[] iterationsIds);
+	List<Iteration> copyIterationsToCampaign(long campaignId, Long[] iterationsIds);
 
-	int moveIterationToNewCampaign(long newCampaignId, long oldCampaignId,
-			long iterationId);
+	int moveIterationToNewCampaign(long newCampaignId, long oldCampaignId, long iterationId);
 
 	Iteration findIteration(long iterationId);
-	
+
 	List<TestSuite> findIterationContent(long iterationId);
 
-	Campaign createCopyCampaign(long campaignId);
-	
 	List<CampaignLibrary> findLinkableCampaignLibraries();
-	
-	
+
 	/**
-	 * that method should investigate the consequences of the deletion request of iterations, and return a report
-	 * about what will happen.
+	 * that method should investigate the consequences of the deletion request of iterations, and return a report about
+	 * what will happen.
 	 * 
 	 * @param targetIds
 	 * @return
 	 */
 	List<SuppressionPreviewReport> simulateIterationDeletion(List<Long> targetIds);
-	
+
 	/**
-	 * that method should delete the iterations. It still takes care of non deletable iterations so
-	 * the implementation should filter out the ids who can't be deleted.
+	 * that method should delete the iterations. It still takes care of non deletable iterations so the implementation
+	 * should filter out the ids who can't be deleted.
 	 * 
 	 * 
 	 * @param targetIds
 	 * @return
 	 */
 	List<Long> deleteIterations(List<Long> targetIds);
-	
-	
+
 	List<SuppressionPreviewReport> simulateSuiteDeletion(List<Long> targetIds);
 
 	/**

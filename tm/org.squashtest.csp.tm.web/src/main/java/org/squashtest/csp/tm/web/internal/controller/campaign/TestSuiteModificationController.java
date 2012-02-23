@@ -94,7 +94,6 @@ public class TestSuiteModificationController {
 		ModelAndView mav = new ModelAndView("fragment/test-suites/edit-test-suite");
 		mav.addObject("testSuite", testSuite);
 		mav.addObject("statistics", testSuiteStats);
-
 		return mav;
 	}
 

@@ -23,10 +23,13 @@ package org.squashtest.csp.tm.domain.campaign;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Date;
+import java.util.HashMap;
 import java.util.HashSet;
+import java.util.Iterator;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.ListIterator;
+import java.util.Map;
 import java.util.Set;
 
 import javax.persistence.Basic;
@@ -45,6 +48,7 @@ import javax.persistence.OneToOne;
 import javax.persistence.OrderColumn;
 import javax.validation.constraints.NotNull;
 
+import org.hibernate.mapping.Array;
 import org.hibernate.validator.constraints.NotBlank;
 import org.squashtest.csp.core.security.annotation.AclConstrainedObject;
 import org.squashtest.csp.tm.domain.DuplicateNameException;
@@ -251,14 +255,21 @@ public class Iteration implements AttachmentHolder {
 		throw new UnknownEntityException(testPlanId, IterationTestPlanItem.class);
 	}
 
+	/**
+	 * <p>
+	 * copy of iteration <u>doesn't contain test-suites</u> !!<br>
+	 * </p>
+	 * 
+	 * @return
+	 */
 	public Iteration createCopy() {
 		Iteration clone = new Iteration();
 		clone.setName(this.getName());
 		clone.setDescription(this.getDescription());
 		copyPlanning(clone);
-
 		for (IterationTestPlanItem itemTestPlan : testPlans) {
 			clone.addTestPlan(itemTestPlan.createCopy());
+
 		}
 		for (Attachment attach : this.getAttachmentList().getAllAttachments()) {
 			Attachment copyAttach = attach.hardCopy();
@@ -604,6 +615,44 @@ public class Iteration implements AttachmentHolder {
 					CascadingAutoDateComparatorBuilder.buildTestPlanLastDateSorter());
 			return lastTestPlan.getLastExecutedOn();
 		}
+	}
+
+	/**
+	 * this method is used in case of copy paste of an iteration with test suites.<br>
+	 * 
+	 * @return A map of test suite and indexes<br>
+	 *         One entry-set contains
+	 *         <ul>
+	 *         <li>a copied test suite (without it's test plan)</li>
+	 *         <li>and the indexes of the copied test plan that are to be linked with it
+	 *         <em>(taking into account test_plan_items that are test_case deleted)</em></li>
+	 */
+	public Map<TestSuite, List<Integer>> createTestSuitesPastableCopy() {
+		Map<TestSuite, List<Integer>> resultMap = new HashMap<TestSuite, List<Integer>>();
+		List<IterationTestPlanItem> testPlanWithoutDeletedTestCases = getTestPlanWithoutDeletedTestCases();
+		for (TestSuite testSuite : getTestSuites()) {
+			List<IterationTestPlanItem> testSuiteTestPlan = testSuite.getTestPlan();
+			TestSuite testSuiteCopy = testSuite.createPastableCopy();
+			List<Integer> testPlanIndex = new ArrayList<Integer>();
+			for (IterationTestPlanItem iterationTestPlanItem : testSuiteTestPlan) {
+				int testPlanItemIndex = testPlanWithoutDeletedTestCases.indexOf(iterationTestPlanItem);
+				testPlanIndex.add(testPlanItemIndex);
+			}
+			resultMap.put(testSuiteCopy, testPlanIndex);
+		}
+		return resultMap;
+	}
+
+	private List<IterationTestPlanItem> getTestPlanWithoutDeletedTestCases() {
+		List<IterationTestPlanItem> testPlanResult = getTestPlans();
+		Iterator<IterationTestPlanItem> iterator = testPlanResult.iterator();
+		while (iterator.hasNext()) {
+			IterationTestPlanItem itpi = iterator.next();
+			if (itpi.isTestCaseDeleted()) {
+				testPlanResult.remove(itpi);
+			}
+		}
+		return testPlanResult;
 	}
 
 }

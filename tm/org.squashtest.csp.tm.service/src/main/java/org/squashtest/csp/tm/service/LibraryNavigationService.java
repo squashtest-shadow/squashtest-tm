@@ -30,48 +30,46 @@ import org.squashtest.csp.tm.service.deletion.SuppressionPreviewReport;
 /**
  * Defines common methods for a library navigation service, mainly library access and folder manipulation.
  * 
- * TODO Move all methods which modify a folder's content to another service 
+ * TODO Move all methods which modify a folder's content to another service
  * 
  * @author Gregory Fouquet
  * 
  */
 public interface LibraryNavigationService<LIBRARY extends Library<? extends NODE>, FOLDER extends Folder<? extends NODE>, NODE extends LibraryNode> {
 
-
 	/**
-	 * will create a deep copy of the given LibraryNodes, paste them 
-	 * in the target folder, and return the copies.
+	 * will create a deep copy of the given LibraryNodes, paste them in the destination folder, and return the copies.
 	 * 
 	 * 
-	 * @param destinationId the id of the folder where you need to copy to.
-	 * @param targetId the list of the librarynodes we want copies of.
+	 * @param destinationId
+	 *            the id of the folder where you need to copy to.
+	 * @param sourceNodesIds
+	 *            the list of the librarynodes we want copies of.
 	 * @return the list of the copies themselves.
 	 */
-	List<NODE> copyNodesToFolder(long destinationId, Long[] targetId);
-	
+	List<NODE> copyNodesToFolder(long destinationId, Long[] sourceNodesIds);
+
 	/**
 	 * same, when the destination is a Library.
 	 * 
 	 * 
-	 * @param destinationId the id of the library where you need to copy to.
-	 * @param targetId the list of the librarynodes we want copies of.
+	 * @param destinationId
+	 *            the id of the library where you need to copy to.
+	 * @param targetId
+	 *            the list of the librarynodes we want copies of.
 	 * @return the list of the copies themselves.
 	 */
 	List<NODE> copyNodesToLibrary(long destinationId, Long[] targetId);
-	
-	
-	void modeNodesToFolder(long destinationId, Long[] targetId);
-	
-	void moveNodesToLibrary(long destinationId, Long[] targetId);
-	
 
+	void modeNodesToFolder(long destinationId, Long[] targetId);
+
+	void moveNodesToLibrary(long destinationId, Long[] targetId);
 
 	void addFolderToLibrary(long destinationId, FOLDER newFolder);
 
 	void addFolderToFolder(long destinationId, FOLDER newFolder);
 
 	FOLDER findFolder(long folderId);
-
 
 	List<NODE> findLibraryRootContent(long libraryId);
 
@@ -83,33 +81,28 @@ public interface LibraryNavigationService<LIBRARY extends Library<? extends NODE
 	 */
 	List<NODE> findFolderContent(long folderId);
 
-
 	@Deprecated
 	void renameFolder(long folderId, String newName);
 
-
 	LIBRARY findLibrary(long libraryId);
-	
-	
+
 	/**
-	 * that method should investigate the consequences of the deletion request, and return a report
-	 * about what will happen.
+	 * that method should investigate the consequences of the deletion request, and return a report about what will
+	 * happen.
 	 * 
 	 * @param targetIds
 	 * @return
 	 */
 	List<SuppressionPreviewReport> simulateDeletion(List<Long> targetIds);
-	
+
 	/**
-	 * that method should delete the nodes. It still takes care of non deletable nodes so
-	 * the implementation should filter out the ids who can't be deleted.
+	 * that method should delete the nodes. It still takes care of non deletable nodes so the implementation should
+	 * filter out the ids who can't be deleted.
 	 * 
 	 * 
 	 * @param targetIds
 	 * @return
 	 */
 	List<Long> deleteNodes(List<Long> targetIds);
-	
-	
 
 }

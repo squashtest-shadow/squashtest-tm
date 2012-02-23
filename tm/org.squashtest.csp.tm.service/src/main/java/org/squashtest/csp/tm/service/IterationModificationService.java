@@ -25,6 +25,7 @@ import java.util.Set;
 
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.transaction.annotation.Transactional;
+import org.squashtest.csp.tm.domain.campaign.Iteration;
 import org.squashtest.csp.tm.domain.campaign.TestSuite;
 
 @Transactional
@@ -57,5 +58,4 @@ public interface IterationModificationService extends CustomIterationModificatio
 			+ "or hasRole('ROLE_ADMIN')")
 	void changeActualEndAuto(long iterationId, boolean isAuto);
 
-	
 }

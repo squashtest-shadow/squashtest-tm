@@ -35,7 +35,7 @@
 <s:url var="copyUrl" value="/{workspace}-browser/copy">
 	<s:param name="workspace" value="${resourceName}" />
 </s:url>
-<s:url var="copyIterationUrl" value="/{workspace}-browser/copyIteration">
+<s:url var="copyIterationUrl" value="/{workspace}-browser/copy-iterations">
 	<s:param name="workspace" value="${resourceName}" />
 </s:url>
 

@@ -101,8 +101,8 @@ public abstract class AbstractLibraryNavigationService<LIBRARY extends Library<N
 			// identity holder
 			for (Long id : sourceNodesIds) {
 				NODE node = getLibraryNodeDao().findById(id);
-				checkPermission(new SecurityCheckableObject(container, "WRITE"), new SecurityCheckableObject(
-						node, "READ"));
+				checkPermission(new SecurityCheckableObject(container, "WRITE"), new SecurityCheckableObject(node,
+						"READ"));
 			}
 
 			// proceed
@@ -110,14 +110,14 @@ public abstract class AbstractLibraryNavigationService<LIBRARY extends Library<N
 
 			for (Long id : sourceNodesIds) {
 				NODE node = getLibraryNodeDao().findById(id);
-				
+
 				String tempName = node.getName();
 				String newName = tempName;
 
 				if (!container.isContentNameAvailable(tempName)) {
 					List<String> copiesNames = findNamesInContainerStartingWith(containerId, tempName);
 					int newCopy = generateUniqueCopyNumber(copiesNames);
-					newName = tempName + "-Copie" + newCopy;
+					newName = tempName + COPY_TOKEN + newCopy;
 				}
 
 				NODE copy = createPastableCopy(node);
@@ -131,11 +131,17 @@ public abstract class AbstractLibraryNavigationService<LIBRARY extends Library<N
 
 			return nodeList;
 		}
-		
+
 		protected abstract CONTAINER findContainerById(long id);
+
 		protected abstract List<String> findNamesInContainerStartingWith(long containerId, String tempName);
 
 	}
+
+	/**
+	 * token appended to the name of a copy
+	 */
+	protected static final String COPY_TOKEN = "-Copie";
 
 	private PermissionEvaluationService permissionService;
 
@@ -383,8 +389,8 @@ public abstract class AbstractLibraryNavigationService<LIBRARY extends Library<N
 	/* ********************************* copy operations ****************************** */
 
 	@Override
-	public List<NODE> copyNodesToFolder(long destinationId, Long[] targetId) {
-		return pasteToFolderStrategy.pasteNodes(destinationId, targetId);
+	public List<NODE> copyNodesToFolder(long destinationId, Long[] sourceNodesIds) {
+		return pasteToFolderStrategy.pasteNodes(destinationId, sourceNodesIds);
 	}
 
 	@Override
@@ -396,7 +402,7 @@ public abstract class AbstractLibraryNavigationService<LIBRARY extends Library<N
 
 		int lastCopy = 0;
 		// we want to match one or more digits following the first instance of substring -Copie
-		Pattern pattern = Pattern.compile("-Copie(\\d+)");
+		Pattern pattern = Pattern.compile(COPY_TOKEN + "(\\d+)");
 
 		for (String copyName : copiesNames) {
 

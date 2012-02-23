@@ -41,86 +41,76 @@ import org.squashtest.csp.tm.internal.repository.TestSuiteDao;
 import org.squashtest.csp.tm.service.CustomTestSuiteModificationService;
 
 @Service("CustomTestSuiteModificationService")
-public class CustomTestSuiteModificationServiceImpl implements
-		CustomTestSuiteModificationService {
-	
+public class CustomTestSuiteModificationServiceImpl implements CustomTestSuiteModificationService {
+
 	@Inject
 	private TestSuiteDao testSuiteDao;
-	
-
 
 	@Override
-	@PreAuthorize("hasPermission(#suiteId, 'org.squashtest.csp.tm.domain.campaign.TestSuite', 'WRITE') or hasRole('ROLE_ADMIN')")		
-	public void rename(long suiteId, String newName)
-			throws DuplicateNameException {
+	@PreAuthorize("hasPermission(#suiteId, 'org.squashtest.csp.tm.domain.campaign.TestSuite', 'WRITE') or hasRole('ROLE_ADMIN')")
+	public void rename(long suiteId, String newName) throws DuplicateNameException {
 		TestSuite suite = testSuiteDao.findById(suiteId);
 		suite.rename(newName);
 	}
-	
+
 	@Override
-	@PreAuthorize("hasPermission(#suiteId, 'org.squashtest.csp.tm.domain.campaign.TestSuite', 'WRITE') or hasRole('ROLE_ADMIN')")		
+	@PreAuthorize("hasPermission(#suiteId, 'org.squashtest.csp.tm.domain.campaign.TestSuite', 'WRITE') or hasRole('ROLE_ADMIN')")
 	public void bindTestPlan(long suiteId, List<Long> itemTestPlanIds) {
-		//that implementation relies on how the TestSuite will do the job (regarding the checks on whether the itps belong to the 
-		//same iteration of not
+		// that implementation relies on how the TestSuite will do the job (regarding the checks on whether the itps
+		// belong to the
+		// same iteration of not
 		TestSuite suite = testSuiteDao.findById(suiteId);
 		suite.bindTestPlanItemsById(itemTestPlanIds);
 	}
-	
+
 	@Override
-	@PreAuthorize("hasPermission(#testSuite, 'WRITE') or hasRole('ROLE_ADMIN')")		
+	@PreAuthorize("hasPermission(#testSuite, 'WRITE') or hasRole('ROLE_ADMIN')")
 	public void bindTestPlanObj(TestSuite testSuite, List<IterationTestPlanItem> itemTestPlans) {
-		//the test plans have already been associated to the Iteration
+		// the test plans have already been associated to the Iteration
 		testSuite.bindTestPlanItems(itemTestPlans);
 	}
-	
-	
+
 	@Override
-	@PreAuthorize("hasPermission(#testSuite, 'WRITE') or hasRole('ROLE_ADMIN')")		
+	@PreAuthorize("hasPermission(#testSuite, 'WRITE') or hasRole('ROLE_ADMIN')")
 	public void unbindTestPlanObj(TestSuite testSuite, List<IterationTestPlanItem> itemTestPlans) {
-		//the test plans have already been associated to the Iteration
+		// the test plans have already been associated to the Iteration
 		testSuite.unBindTestPlan(itemTestPlans);
 	}
-	
+
 	@Override
-	@PreAuthorize("hasPermission(#suiteId, 'org.squashtest.csp.tm.domain.campaign.TestSuite','WRITE') or hasRole('ROLE_ADMIN')")		
+	@PreAuthorize("hasPermission(#suiteId, 'org.squashtest.csp.tm.domain.campaign.TestSuite','WRITE') or hasRole('ROLE_ADMIN')")
 	public TestSuite findById(long suiteId) {
 		TestSuite suite = testSuiteDao.findById(suiteId);
 		return suite;
 	}
-	
+
 	@Override
 	@PreAuthorize("hasPermission(#suiteId, 'org.squashtest.csp.tm.domain.campaign.TestSuite','READ') or hasRole('ROLE_ADMIN')")
 	public PagedCollectionHolder<List<IterationTestPlanItem>> findTestSuiteTestPlan(long suiteId, Paging paging) {
-		
+
 		List<IterationTestPlanItem> testPlan = testSuiteDao.findAllTestPlanItemsPaged(suiteId, paging);
-		
+
 		long count = testSuiteDao.countTestPlanItems(suiteId);
-		
-		return new PagingBackedPagedCollectionHolder<List<IterationTestPlanItem>> (paging, count, testPlan);
+
+		return new PagingBackedPagedCollectionHolder<List<IterationTestPlanItem>>(paging, count, testPlan);
 	}
 
 	@Override
-	@PreAuthorize("hasPermission(#suiteId, 'org.squashtest.csp.tm.domain.campaign.TestSuite','WRITE') or hasRole('ROLE_ADMIN')")		
-	public TestSuiteStatistics findTestSuiteStatistics(long suiteId){
+	@PreAuthorize("hasPermission(#suiteId, 'org.squashtest.csp.tm.domain.campaign.TestSuite','WRITE') or hasRole('ROLE_ADMIN')")
+	public TestSuiteStatistics findTestSuiteStatistics(long suiteId) {
 		TestSuiteStatistics stats = testSuiteDao.getTestSuiteStatistics(suiteId);
 		return stats;
 	}
-	
-	
-	
+
 	@Override
-	@PreAuthorize("hasPermission(#testSuiteId, 'org.squashtest.csp.tm.domain.campaign.TestSuite','WRITE') or hasRole('ROLE_ADMIN')")		
-	public void changeTestPlanPosition(Long testSuiteId, int newIndex, List<Long>itemIds){
-		
-		TestSuite suite = testSuiteDao.findById(testSuiteId);		
-		
+	@PreAuthorize("hasPermission(#testSuiteId, 'org.squashtest.csp.tm.domain.campaign.TestSuite','WRITE') or hasRole('ROLE_ADMIN')")
+	public void changeTestPlanPosition(Long testSuiteId, int newIndex, List<Long> itemIds) {
+
+		TestSuite suite = testSuiteDao.findById(testSuiteId);
+
 		List<IterationTestPlanItem> items = testSuiteDao.findTestPlanPartition(testSuiteId, itemIds);
-		
+
 		suite.reorderTestPlan(newIndex, items);
 	}
-	
-
-
-
 
 }

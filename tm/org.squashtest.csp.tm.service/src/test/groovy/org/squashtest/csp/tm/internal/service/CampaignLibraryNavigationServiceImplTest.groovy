@@ -20,17 +20,24 @@
  */
 package org.squashtest.csp.tm.internal.service
 
-import org.squashtest.csp.core.service.security.PermissionEvaluationService;
-import org.squashtest.csp.tm.domain.DuplicateNameException;
-import org.squashtest.csp.tm.domain.campaign.Campaign;
-import org.squashtest.csp.tm.domain.campaign.CampaignFolder;
-import org.squashtest.csp.tm.domain.campaign.CampaignLibrary;
-import org.squashtest.csp.tm.internal.repository.CampaignDao;
-import org.squashtest.csp.tm.internal.repository.CampaignFolderDao;
-import org.squashtest.csp.tm.internal.repository.CampaignLibraryDao;
-import org.squashtest.csp.tm.internal.service.CampaignLibraryNavigationServiceImpl;
+import org.squashtest.csp.core.service.security.PermissionEvaluationService
+import org.squashtest.csp.tm.domain.DuplicateNameException
+import org.squashtest.csp.tm.domain.campaign.Campaign
+import org.squashtest.csp.tm.domain.campaign.CampaignFolder
+import org.squashtest.csp.tm.domain.campaign.CampaignLibrary
+import org.squashtest.csp.tm.domain.campaign.IterationTestPlanItem;
+import org.squashtest.csp.tm.domain.campaign.TestSuite
+import org.squashtest.csp.tm.internal.repository.CampaignDao
+import org.squashtest.csp.tm.internal.repository.CampaignFolderDao
+import org.squashtest.csp.tm.internal.repository.CampaignLibraryDao
+import org.squashtest.csp.tm.internal.repository.IterationDao;
+import org.squashtest.csp.tm.internal.service.CampaignLibraryNavigationServiceImpl
+import org.squashtest.csp.tm.internal.service.campaign.IterationTestPlanManager;
+import org.squashtest.csp.tm.service.IterationModificationService;
 import org.squashtest.csp.tm.domain.campaign.CampaignLibraryNode
-
+import org.squashtest.csp.tm.domain.campaign.Iteration
+import java.util.List
+import java.util.ArrayList
 
 import spock.lang.Specification;
 
@@ -39,17 +46,23 @@ class CampaignLibraryNavigationServiceImplTest extends Specification {
 
 	CampaignLibraryNavigationServiceImpl service = new CampaignLibraryNavigationServiceImpl();
 
-	CampaignLibraryDao campaignLibraryDao = Mock();
-	CampaignFolderDao campaignFolderDao = Mock();
-	CampaignDao campaignDao = Mock();
-	PermissionEvaluationService permissionService = Mock();
+	CampaignLibraryDao campaignLibraryDao = Mock()
+	CampaignFolderDao campaignFolderDao = Mock()
+	CampaignDao campaignDao = Mock()
+	PermissionEvaluationService permissionService = Mock()
+	IterationModificationService iterationModificationService = Mock()
+	IterationDao iterationDao = Mock()
+	IterationTestPlanManager iterationTestPlanManager = Mock()
 
 	def setup() {
 		service.campaignLibraryDao = campaignLibraryDao
 		service.campaignFolderDao = campaignFolderDao
 		service.campaignDao = campaignDao
-		service.permissionService = permissionService;
+		service.permissionService = permissionService
 		permissionService.hasRoleOrPermissionOnObject(_, _, _) >> true
+		service.iterationModificationService = iterationModificationService
+		service.iterationDao = iterationDao
+		service.iterationTestPlanManager = iterationTestPlanManager
 	}
 
 
@@ -247,7 +260,6 @@ class CampaignLibraryNavigationServiceImplTest extends Specification {
 		given:
 		CampaignLibrary l = Mock()
 		campaignLibraryDao.findById(10) >> l
-
 
 		when:
 		def found = service.findLibrary(10)

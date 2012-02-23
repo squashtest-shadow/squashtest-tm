@@ -158,7 +158,7 @@ public class CustomIterationModificationServiceImpl implements CustomIterationMo
 
 	/****
 	 * Method which change the index of test case in the selected iteration
-	 *
+	 * 
 	 * @param iterationId
 	 *            the iteration at which the test case is attached
 	 * @param testCaseId
@@ -187,7 +187,7 @@ public class CustomIterationModificationServiceImpl implements CustomIterationMo
 
 	/**
 	 * see doc in the interface
-	 *
+	 * 
 	 */
 	@Override
 	@PreAuthorize("hasPermission(#iterationId, 'org.squashtest.csp.tm.domain.campaign.Iteration', 'WRITE') "
@@ -238,8 +238,14 @@ public class CustomIterationModificationServiceImpl implements CustomIterationMo
 			+ "or hasRole('ROLE_ADMIN')")
 	public void addTestSuite(long iterationId, TestSuite suite) {
 		Iteration iteration = iterationDao.findById(iterationId);
+		addTestSuite(iteration, suite);
+	}
+
+	@Override
+	public void addTestSuite(Iteration iteration, TestSuite suite) {
 		suiteDao.persist(suite);
 		iteration.addTestSuite(suite);
+
 	}
 
 	@Override
@@ -290,7 +296,7 @@ public class CustomIterationModificationServiceImpl implements CustomIterationMo
 		int numberOfCopy = 0;
 		while (!iteration.checkSuiteNameAvailable(newName)) {
 			numberOfCopy++;
-			newName = originalSuiteName + "_Copie" + numberOfCopy;
+			newName = originalSuiteName + AbstractLibraryNavigationService.COPY_TOKEN + numberOfCopy;
 		}
 		copyOfTestSuite.setName(newName);
 	}

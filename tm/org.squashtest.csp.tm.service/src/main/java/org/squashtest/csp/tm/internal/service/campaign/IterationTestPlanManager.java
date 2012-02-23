@@ -23,14 +23,19 @@ package org.squashtest.csp.tm.internal.service.campaign;
 
 import org.springframework.stereotype.Service;
 import org.squashtest.csp.tm.domain.TestPlanItemNotExecutableException;
+import org.squashtest.csp.tm.domain.campaign.Iteration;
 import org.squashtest.csp.tm.domain.campaign.IterationTestPlanItem;
+import org.squashtest.csp.tm.domain.campaign.TestSuite;
 import org.squashtest.csp.tm.domain.execution.Execution;
 
 /**
  * @author Gregory Fouquet
- *
+ * 
  */
 @Service
 public interface IterationTestPlanManager {
+
 	Execution addExecution(IterationTestPlanItem item) throws TestPlanItemNotExecutableException;
+
+	void addTestSuite(Iteration iteration, TestSuite suite);
 }
