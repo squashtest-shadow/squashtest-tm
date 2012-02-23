@@ -353,6 +353,9 @@ LibraryNavigationController<CampaignLibrary, CampaignFolder, CampaignLibraryNode
 			testSuiteList = iterationModificationService.copyPasteTestSuitesToIteration(itemIds, destinationId);
 			return createCopiedTestSuitesModel(testSuiteList);
 		}
+        else {
+            throw new IllegalArgumentException("copy nodes : cannot paste item to : "+destinationType);
+        }
 	}
 
 }
