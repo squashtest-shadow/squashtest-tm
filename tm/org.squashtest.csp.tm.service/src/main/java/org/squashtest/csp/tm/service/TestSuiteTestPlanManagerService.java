@@ -50,27 +50,10 @@ public interface TestSuiteTestPlanManagerService {
 
 	void addTestCasesToIterationAndTestSuite(List<Long> testCaseIds, long suiteId);
 
-	/**
-	 * Should start a new execution for the given test suite, ie create an execution for the first test case of this
-	 * suite's test plan.
-	 * 
-	 * @param testSuiteId
-	 * @return the created {@link Execution}
-	 */
-	Execution startNewExecution(long testSuiteId);
-
 	void detachTestPlanFromTestSuite(List<Long> testPlanIds, long suiteId);
 
 	boolean detachTestPlanFromTestSuiteAndRemoveFromIteration(List<Long> testPlanIds, long suiteId);
 
-	/**
-	 * tells if a test suite has at least one executable item in its test plan after the given item.
-	 * 
-	 * @param testSuiteId
-	 * @param testPlanItemId
-	 * @return
-	 */
-	boolean hasMoreExecutableItems(long testSuiteId, long testPlanItemId);
 
 	/**
 	 * Should start a new execution for the next executable test plan item of the given test suite. suite's test plan.

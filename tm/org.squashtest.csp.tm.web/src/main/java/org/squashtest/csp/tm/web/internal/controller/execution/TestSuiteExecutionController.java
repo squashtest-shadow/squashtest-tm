@@ -37,9 +37,9 @@ import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.servlet.ModelAndView;
 import org.squashtest.csp.tm.domain.execution.Execution;
 import org.squashtest.csp.tm.domain.execution.ExecutionStatus;
+import org.squashtest.csp.tm.service.TestSuiteExecutionProcessingService;
 import org.squashtest.csp.tm.domain.execution.ExecutionStep;
 import org.squashtest.csp.tm.service.ExecutionProcessingService;
-import org.squashtest.csp.tm.service.TestSuiteTestPlanManagerService;
 import org.squashtest.csp.tm.web.internal.model.jquery.JsonSimpleData;
 
 /**
@@ -57,7 +57,7 @@ public class TestSuiteExecutionController {
 	private static final String TEST_PLAN_ITEM_URL_PATTERN = "/test-suites/{0}/test-plan/{1}";
 	private static final String CURRENT_STEP_URL_PATTERN = "/test-suites/{0}/test-plan/{1}/executions/{2}/steps/index/";
 
-	private TestSuiteTestPlanManagerService testPlanManager;
+	private TestSuiteExecutionProcessingService testSuiteExecutionProcessingService;
 	private ExecutionProcessingService executionProcessingService;
 
 	@Inject
@@ -67,35 +67,35 @@ public class TestSuiteExecutionController {
 		super();
 	}
 
-	@RequestMapping(value = "/new-execution/runner", method = RequestMethod.POST, params = "optimized")
+	@RequestMapping(value = "/start-resume/runner", method = RequestMethod.POST, params = "optimized")
 	public String startExecutionInOptimizedRunner(@PathVariable long testSuiteId) {
 		return startExecution(testSuiteId, OPTIMIZED_RUNNER_VIEW_PATTERN);
 	}
 
 	private String startExecution(long testSuiteId, String runnerViewPattern) {
-		Execution execution = testPlanManager.startNewExecution(testSuiteId);
+		Execution execution = testSuiteExecutionProcessingService.startNewExecution(testSuiteId);
 
 		return "redirect:"
 				+ MessageFormat.format(runnerViewPattern, testSuiteId, execution.getTestPlan().getId(),
 						execution.getId());
 	}
 
-	@RequestMapping(value = "/new-execution/classic-runner", method = RequestMethod.POST)
+	@RequestMapping(value = "/start-resume/classic-runner", method = RequestMethod.POST)
 	public String startExecutionInClassicRunner(@PathVariable long testSuiteId) {
 		return startExecution(testSuiteId, CLASSIC_RUNNER_VIEW_PATTERN);
 	}
 
 	@ServiceReference
-	public void setTestPlanManager(TestSuiteTestPlanManagerService testPlanManager) {
-		this.testPlanManager = testPlanManager;
+	public void setTestSuiteExecutionProcessingService(TestSuiteExecutionProcessingService testSuiteExecutionProcessingService) {
+		this.testSuiteExecutionProcessingService = testSuiteExecutionProcessingService;
 	}
-
+	
 	@RequestMapping(value = "/{testPlanItemId}/executions/{executionId}/runner", method = RequestMethod.GET, params = "optimized")
 	public String showOptimizedExecutionRunner(@PathVariable long testSuiteId, @PathVariable long testPlanItemId,
 			@PathVariable long executionId, Model model) {
 		helper.populateExecutionRunnerModel(executionId, model);
 
-		boolean hasNextTestCase = testPlanManager.hasMoreExecutableItems(testSuiteId, testPlanItemId);
+		boolean hasNextTestCase = testSuiteExecutionProcessingService.hasMoreExecutableItems(testSuiteId, testPlanItemId);
 		model.addAttribute("hasNextTestCase", hasNextTestCase);
 
 		String testPlanItemUrl = MessageFormat.format(TEST_PLAN_ITEM_URL_PATTERN, testSuiteId, testPlanItemId);

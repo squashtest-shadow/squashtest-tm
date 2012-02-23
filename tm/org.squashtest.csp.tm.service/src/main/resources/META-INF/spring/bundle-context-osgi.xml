@@ -162,6 +162,9 @@
 
 	<osgi:service ref="squashtest.tm.service.TestSuiteTestPlanManagerService"
 		interface="org.squashtest.csp.tm.service.TestSuiteTestPlanManagerService" />
+		
+	<osgi:service ref="squashtest.tm.service.TestSuiteExecutionProcessingService"
+		interface="org.squashtest.csp.tm.service.TestSuiteExecutionProcessingService" />
 
 	<!-- ====== SERVICES CONSUMED BY THIS BUNDLE ====== -->
 	<!-- Jdbc Datasource -->

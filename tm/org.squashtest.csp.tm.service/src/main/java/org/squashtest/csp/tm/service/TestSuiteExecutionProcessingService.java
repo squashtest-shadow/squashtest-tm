@@ -21,6 +21,7 @@
 package org.squashtest.csp.tm.service;
 
 import org.springframework.transaction.annotation.Transactional;
+import org.squashtest.csp.tm.domain.execution.Execution;
 import org.squashtest.csp.tm.domain.execution.ExecutionStep;
 
 @Transactional
@@ -47,4 +48,26 @@ public interface TestSuiteExecutionProcessingService {
 	 * @return
 	 */
 	ExecutionStep relaunchExecution(long testSuiteId);
+
+	/**
+	 * <p>
+	 * Should start a new execution for the given test suite, ie create an execution for the first test case of this
+	 * suite's test plan.
+	 * </p>
+	 * 
+	 * @param testSuiteId
+	 * @return the created {@link Execution}
+	 */
+	Execution startNewExecution(long testSuiteId);
+
+	/**
+	 * <p>
+	 * tells if a test suite has at least one executable item in its test plan after the given item.
+	 * </p>
+	 * 
+	 * @param testSuiteId
+	 * @param testPlanItemId
+	 * @return
+	 */
+	boolean hasMoreExecutableItems(long testSuiteId, long testPlanItemId);
 }

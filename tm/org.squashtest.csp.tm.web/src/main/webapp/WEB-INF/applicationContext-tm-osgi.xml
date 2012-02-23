@@ -119,8 +119,5 @@
 		bean-name="squashtest.tm.service.TestSuiteModificationService"
 		interface="org.squashtest.csp.tm.service.TestSuiteModificationService"
 		availability="mandatory" />	
-	
-			
-		
 		
 </beans>

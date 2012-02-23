@@ -33,13 +33,12 @@
 <%@ taglib prefix="authz" tagdir="/WEB-INF/tags/authz" %>
 
 <f:message var="squashlocale" key="squashtm.locale" />
+<f:message var="duplicateSuccesMessage" key="test-suite.duplicate.success.message" />
 
 <comp:rich-jeditable-header />
 <comp:datepicker-manager locale="${squashlocale}"/>
 
 <jq:execution-status-factory/> 
-
-
 
 <c:url var="ckeConfigUrl" value="/styles/ckeditor/ckeditor-config.js" />
 
@@ -146,7 +145,7 @@
 		<c:choose>
 			<%-- if we were in a sub page context. We need to navigate back to the workspace. --%>
 			<c:when test="${param.isInfoPage}" >	
-				document.location.href="${workspaceUrl}" ;
+				alert("${duplicateSuccesMessage}");
 			</c:when>
 			<c:otherwise>
 				var destination = new SquashEventObject(${testSuite.iteration.id}, "iterations");
@@ -270,7 +269,7 @@
 			<input type="button" value="<f:message key='test-suite.button.rename.label' />" id="rename-test-suite-button" class="button"/> 
 			<input type="button" value="<f:message key='test-suite.button.remove.label' />" id="delete-test-suite-button" class="button"/>
 			<%-- TODO verifier conditions d'affichage dans iteration --%>	
-			<form action="<c:url value="/test-suites/${testSuite.id}/test-plan/new-execution/runner" />" method="post" name="execute-test-suite-form" target="optimized-execution-runner">
+			<form action="<c:url value="/test-suites/${testSuite.id}/test-plan/start-resume/runner" />" method="post" name="execute-test-suite-form" target="optimized-execution-runner">
 				<input type="submit" value='<f:message key="test-suite.execution.start.label" />' name="optimized" class="button"/>
 			</form>
 			<%-- TODO mettre ca ailleurs --%>		

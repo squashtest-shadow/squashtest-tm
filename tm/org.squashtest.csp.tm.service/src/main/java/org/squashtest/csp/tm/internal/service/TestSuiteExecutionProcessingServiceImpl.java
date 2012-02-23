@@ -26,23 +26,24 @@ import javax.inject.Inject;
 
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.stereotype.Service;
-import org.squashtest.csp.tm.domain.campaign.Iteration;
+import org.springframework.transaction.annotation.Transactional;
 import org.squashtest.csp.tm.domain.campaign.IterationTestPlanItem;
 import org.squashtest.csp.tm.domain.campaign.TestSuite;
 import org.squashtest.csp.tm.domain.execution.Execution;
 import org.squashtest.csp.tm.domain.execution.ExecutionStep;
 import org.squashtest.csp.tm.internal.repository.TestSuiteDao;
-import org.squashtest.csp.tm.service.IterationModificationService;
+import org.squashtest.csp.tm.internal.service.campaign.IterationTestPlanManager;
 import org.squashtest.csp.tm.service.TestSuiteExecutionProcessingService;
 
-@Service
+@Service("squashtest.tm.service.TestSuiteExecutionProcessingService")
+@Transactional
 public class TestSuiteExecutionProcessingServiceImpl implements TestSuiteExecutionProcessingService {
 	@Inject
 	private TestSuiteDao suiteDao;
 	@Inject
-	private IterationModificationService iterationModificationService;
-	@Inject
 	private CampaignNodeDeletionHandler campaignDeletionHandler;
+	@Inject
+	private IterationTestPlanManager testPlanManager;
 
 	@Override
 	@PreAuthorize("hasPermission(#testSuiteId, 'org.squashtest.csp.tm.domain.campaign.TestSuite','WRITE') or hasRole('ROLE_ADMIN')")
@@ -82,8 +83,7 @@ public class TestSuiteExecutionProcessingServiceImpl implements TestSuiteExecuti
 
 		} else {
 			if (!testPlanItem.isTestCaseDeleted()) {
-				Execution execution = iterationModificationService.addExecution(testPlanItem.getIteration().getId(),
-						testPlanItem.getId());
+				Execution execution = testPlanManager.addExecution(testPlanItem);
 				if (!execution.getSteps().isEmpty()) {
 					executionStep = execution.getSteps().get(0);
 				}
@@ -113,10 +113,7 @@ public class TestSuiteExecutionProcessingServiceImpl implements TestSuiteExecuti
 		ExecutionStep step = null;
 		for (IterationTestPlanItem iterationTestPlanItem : suiteTestPlan) {
 			if (!iterationTestPlanItem.isTestCaseDeleted()) {
-				Iteration iteration = iterationTestPlanItem.getIteration();
-				Long iterationId = iteration.getId();
-				Long testPlanId = iterationTestPlanItem.getId();
-				Execution execution = iterationModificationService.addExecution(iterationId, testPlanId);
+				Execution execution = testPlanManager.addExecution(iterationTestPlanItem);
 				if (!execution.getSteps().isEmpty()) {
 					step = execution.getSteps().get(0);
 					break;
@@ -133,5 +130,24 @@ public class TestSuiteExecutionProcessingServiceImpl implements TestSuiteExecuti
 				campaignDeletionHandler.deleteExecutions(executions);
 			}
 		}
+	}
+
+	@Override
+	@PreAuthorize("hasPermission(#testSuiteId, 'org.squashtest.csp.tm.domain.campaign.TestSuite', 'WRITE') "
+			+ "or hasRole('ROLE_ADMIN')")
+	public Execution startNewExecution(long testSuiteId) {
+		TestSuite suite = suiteDao.findById(testSuiteId);
+		IterationTestPlanItem firstItem = suite.getFirstTestPlanItem();
+
+		return testPlanManager.addExecution(firstItem);
+	}
+
+	/**
+	 * @see org.squashtest.csp.tm.service.TestSuiteTestPlanManagerService#hasMoreExecutableItems(long, long)
+	 */
+	@Override
+	public boolean hasMoreExecutableItems(long testSuiteId, long testPlanItemId) {
+		TestSuite testSuite = suiteDao.findById(testSuiteId);
+		return !testSuite.isLastExecutableTestPlanItem(testPlanItemId);
 	}
 }

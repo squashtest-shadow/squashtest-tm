@@ -52,9 +52,6 @@ public class TestSuiteTestPlanManagerServiceImpl implements TestSuiteTestPlanMan
 	private IterationTestPlanManagerService delegateIterationTestPlanManagerService;
 
 	@Inject
-	private IterationTestPlanManager testPlanManager;
-
-	@Inject
 	private TestSuiteDao testSuiteDao;
 
 	@Inject
@@ -92,16 +89,6 @@ public class TestSuiteTestPlanManagerServiceImpl implements TestSuiteTestPlanMan
 	}
 
 	@Override
-	@PreAuthorize("hasPermission(#testSuiteId, 'org.squashtest.csp.tm.domain.campaign.TestSuite', 'WRITE') "
-			+ "or hasRole('ROLE_ADMIN')")
-	public Execution startNewExecution(long testSuiteId) {
-		TestSuite suite = testSuiteDao.findById(testSuiteId);
-		IterationTestPlanItem firstItem = suite.getFirstTestPlanItem();
-
-		return testPlanManager.addExecution(firstItem);
-	}
-
-	@Override
 	@PreAuthorize("hasPermission(#suiteId, 'org.squashtest.csp.tm.domain.campaign.TestSuite', 'WRITE') "
 			+ "or hasRole('ROLE_ADMIN')")
 	public void detachTestPlanFromTestSuite(List<Long> testPlanIds, long suiteId) {
@@ -134,15 +121,6 @@ public class TestSuiteTestPlanManagerServiceImpl implements TestSuiteTestPlanMan
 		Iteration iteration = testSuite.getIteration();
 
 		return delegateIterationTestPlanManagerService.removeTestPlansFromIterationObj(testPlanIds, iteration);
-	}
-
-	/**
-	 * @see org.squashtest.csp.tm.service.TestSuiteTestPlanManagerService#hasMoreExecutableItems(long, long)
-	 */
-	@Override
-	public boolean hasMoreExecutableItems(long testSuiteId, long testPlanItemId) {
-		TestSuite testSuite = testSuiteDao.findById(testSuiteId);
-		return !testSuite.isLastExecutableTestPlanItem(testPlanItemId);
 	}
 
 	/**
