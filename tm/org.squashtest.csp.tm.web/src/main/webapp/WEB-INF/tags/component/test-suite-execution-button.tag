@@ -27,22 +27,49 @@
 <%@ taglib uri="http://java.sun.com/jsp/jstl/core" prefix="c" %>
 
 <div id="test-suite-execution-button" style="display:inline-block;">
+	<c:url var='runnerUrl' value='/test-suites/${ testSuiteId }/test-plan/execution/runner' />
+	<script type="text/javascript">
+		$(function() {
+			$("#start-classic-execution").button()
+			.click(function() {
+				var url = "${ runnerUrl }";
+				var data = {'classic': '', 'mode': 'start-resume'};
+				var winDef = {  name: "classic-execution-runner",  features: "height=500, width=600, resizable, scrollbars, dialog, alwaysRaised" };
+				$.open(url, data, winDef);
+			});
+			$("#restart-classic-execution").button()
+			.click(function() {
+				var url = "${ runnerUrl }";
+				var data = {'classic': '', 'mode': 'restart'};
+				var winDef = {  name: "classic-execution-runner",  features: "height=500, width=600, resizable, scrollbars, dialog, alwaysRaised" };
+				$.open(url, data, winDef);
+			});
+		});
+	</script>
 	<c:if test="${ statisticsEntity.status == 'READY' }">	
-		<form action="<c:url value="/test-suites/${testSuiteId}/test-plan/start-resume/runner" />" method="post" name="execute-test-suite-form" target="optimized-execution-runner" style="display:inline-block;">
-			<input type="submit" value='<f:message key="test-suite.execution.start.label" />' name="optimized" class="button execButton"/>
+		<form action="${ runnerUrl }" method="post" name="execute-test-suite-form" target="optimized-execution-runner" style="display:inline-block;">
+			<input type="submit" value="<f:message key='test-suite.execution.optimized.start.label' />" name="optimized" class="button execButton"/>
+			<input type="hidden" name="mode" value="start-resume" />
 		</form>
+		<input id="start-classic-execution" type="button" value="<f:message key='test-suite.execution.classic.start.label' />" name="classic" class="button" />
 	</c:if>
 	<c:if test="${ statisticsEntity.status == 'RUNNING' }">	
-		<form action="<c:url value="/test-suites/${testSuiteId}/test-plan/start-resume/runner" />" method="post" name="execute-test-suite-form" target="optimized-execution-runner" style="display:inline-block;">
-			<input type="submit" value='<f:message key="test-suite.execution.resume.label" />' name="optimized" class="button execButton"/>
+		<form action="${ runnerUrl }" method="post" name="execute-test-suite-form" target="optimized-execution-runner" style="display:inline-block;">
+			<input type="submit" value="<f:message key='test-suite.execution.optimized.resume.label' />" name="optimized" class="button execButton"/>
+			<input type="hidden" name="mode" value="start-resume" />
 		</form>
-		<form action="<c:url value="/test-suites/${testSuiteId}/test-plan/restart/runner" />" method="post" name="execute-test-suite-form" target="optimized-execution-runner" style="display:inline-block;">
-			<input type="submit" value='<f:message key="test-suite.execution.restart.label" />' name="optimized" class="button execButton"/>
+		<input id="start-classic-execution" type="button" value="<f:message key='test-suite.execution.classic.resume.label' />" name="classic" class="button" />
+		<form action="${ runnerUrl }" method="post" name="execute-test-suite-form" target="optimized-execution-runner" style="display:inline-block;">
+			<input type="submit" value="<f:message key='test-suite.execution.optimized.restart.label' />" name="optimized" class="button execButton" />
+			<input type="hidden" name="mode" value="restart" />
 		</form>
+		<input id="restart-classic-execution" type="button" value="<f:message key='test-suite.execution.classic.restart.label' />" name="classic" class="button" />
 	</c:if>
 	<c:if test="${ statisticsEntity.status.terminatedStatus }">		
-		<form action="<c:url value="/test-suites/${testSuiteId}/test-plan/restart/runner" />" method="post" name="execute-test-suite-form" target="optimized-execution-runner" style="display:inline-block;">
-			<input type="submit" value='<f:message key="test-suite.execution.restart.label" />' name="optimized" class="button execButton"/>
+		<form action="${ runnerUrl }" method="post" name="execute-test-suite-form" target="optimized-execution-runner" style="display:inline-block;">
+			<input type="submit" value="<f:message key='test-suite.execution.optimized.restart.label' />" name="optimized" class="button execButton" />
+			<input type="hidden" name="mode" value="restart" />
 		</form>
+		<input id="restart-classic-execution" type="button" value="<f:message key='test-suite.execution.classic.restart.label' />" name="classic" class="button" />
 	</c:if>
 </div>

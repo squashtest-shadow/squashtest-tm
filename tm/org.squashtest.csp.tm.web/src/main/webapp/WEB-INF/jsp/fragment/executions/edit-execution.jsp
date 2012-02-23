@@ -74,11 +74,7 @@
 	<s:param name="execId" value="${execution.id}" />
 </s:url>
 
-
-
-<s:url var="stepAttachmentManagerUrl" value="/attach-list/">
-</s:url>
-
+<s:url var="stepAttachmentManagerUrl" value="/attach-list/" />
 
 <s:url var="btEntityUrl" value="/bugtracker/execution/{id}" >
 	<s:param name="id" value="${execution.id}"/>

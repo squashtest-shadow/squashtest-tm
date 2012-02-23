@@ -59,11 +59,8 @@ var squashtm ;
 		}
 	});
 	
-
 	//convenient function to gather data of a jQuery object.
-	
 	$.fn.collect = function(fnArg){	
-		
 		var res = [];
 		if (this.length>0){		
 			this.each(function(index, elt){
@@ -87,8 +84,6 @@ var squashtm ;
 		
 	}
 	
-	
-	
 	$.fn.bindFirst = function(event, closure){
 		var handlers = this.data('events')[event];
 		this.data('events')[event]=[];
@@ -97,6 +92,35 @@ var squashtm ;
 			this.data('events')[event].push(handlers[i]);
 		};		
 	}
+
+	/* defines functions in the jQuery namespace */
+	$.extend({
+		/**
+		 * Opens a "popup" window containing the result of a POST. Plain window.open() can only GET
+		 * @param url the url to POST
+		 * @param data the post data as a javascript object
+		 * @param windowDef definition of the window to open : { name: "name of window", features: "features string as per window.open" }
+		 * @return reference to the new window
+		 */
+		open: function(url, data, windowDef) {
+			var postData = '';
+			
+			for (attr in data) {
+				postData += '<input type=\"hidden\" name=\"' + attr + '\" value=\"' + data[attr] + '\" />';
+			}
+			
+			var form = '<form id=\"postForm\" style=\"display:none;\" action=\"' + url + '\" method=\"post\">'
+				+ '<input type=\"submit\" name=\"postFormSubmit\" value=\"\" />'
+				+ postData
+				+'</form>';
+			
+			var win = window.open("about:blank", windowDef.name, windowDef.features);
+			win.document.write(form);
+			win.document.forms['postForm'].submit();		
+			
+			return win;
+		}
+	});
 	
 	/*
 		Squash TM domain name : variable $.fn.squashtm
@@ -219,8 +243,4 @@ var squashtm ;
 				//end popup.cleanup
 			}
 	}
-	
-	
-
-
 })(jQuery);

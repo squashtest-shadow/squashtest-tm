@@ -129,8 +129,6 @@
 		refreshTestSuiteInfos();
 	}
 	
-
-	
 	/*post a request to duplicate the test suite*/
 	function duplicateTestSuite(){
 		return $.ajax({
@@ -206,8 +204,6 @@
 	function deleteTestSuiteFailure(xhr){
 		alert(xhr.statusText);		
 	}
-
-
 </script>
 
 
@@ -276,8 +272,6 @@
 	</div>	
 	<div style="clear:both;"></div>	
 </div>
-
-
 
 <c:if test="${ editable }">
 	<comp:rich-jeditable targetUrl="${ testSuiteUrl }" componentId="test-suite-description" submitCallback="refreshTestSuiteInfos"/>
@@ -381,8 +375,6 @@
 
 <%------------------------------ Attachments bloc ------------------------------------------- --%> 
 <comp:attachment-bloc entity="${testSuite}" workspaceName="campaign" editable="${ editable }" />
-
-
  
 <%-- ---------------------deletion popup------------------------------ --%>
 <c:if test="${ editable }">

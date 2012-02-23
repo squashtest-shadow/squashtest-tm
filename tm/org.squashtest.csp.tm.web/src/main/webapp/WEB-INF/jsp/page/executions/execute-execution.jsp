@@ -58,28 +58,23 @@
 	
 
 <%-- cautious : below are used StepIndexes and StepIds. Dont get confused. --%>
-<s:url var="executeNext" value="/execute/{execId}/step/{stepIndex}">
-	<s:param name="execId" value="${execution.id}" />
+<s:url var="executeNext" value="${ currentStepUrl }{stepIndex}">
 	<s:param name="stepIndex" value="${executionStep.executionStepOrder+1}" />
 </s:url>
 
-<s:url var="executePrevious" value="/execute/{execId}/step/{stepIndex}">
-	<s:param name="execId" value="${execution.id}" />
+<s:url var="executePrevious" value="${ currentStepUrl }{stepIndex}">
 	<s:param name="stepIndex" value="${executionStep.executionStepOrder-1}" />
 </s:url>
 
-<s:url var="executeThis" value="/execute/{execId}/step/{stepIndex}">
-	<s:param name="execId" value="${execution.id}" />
+<s:url var="executeThis" value="${ currentStepUrl }{stepIndex}">
 	<s:param name="stepIndex" value="${executionStep.executionStepOrder}" />
 </s:url>
 
-<s:url var="executeComment" value="/execute/{execId}/step/{stepId}">
-	<s:param name="execId" value="${execution.id}" />
+<s:url var="executeComment" value="${ currentStepUrl }{stepId}">
 	<s:param name="stepId" value="${executionStep.id}" />
 </s:url>
 
-<s:url var="executeStatus" value="/execute/{execId}/step/{stepId}">
-	<s:param name="execId" value="${execution.id}" />
+<s:url var="executeStatus" value="${ currentStepUrl }{stepId}">
 	<s:param name="stepId" value="${executionStep.id}" />
 </s:url>
 
@@ -92,12 +87,7 @@
 </s:url>
 
 <body class="execute-html-body">
-
-
-	
 	<f:message var="completedMessage" key="execute.alert.test.complete" />
-	
-	
 		<script type="text/javascript">
 		
 			window.onunload = test;
@@ -126,22 +116,22 @@
 		
 			function navigateNext(){
 				<c:choose>
-					<c:when test="${executionStep.executionStepOrder == totalSteps-1}">
+					<c:when test="${ not hasNextStep }">
 				testComplete();
 					</c:when>
 					<c:otherwise>
-				document.location.href="${executeNext}";						
+				document.location.href="${ executeNext }";						
 					</c:otherwise>
 				</c:choose>
 			}
 			
 			function navigatePrevious(){
 				<c:choose>
-					<c:when test="${executionStep.executionStepOrder == 0}">
+					<c:when test="${ not hasPreviousStep }">
 				testComplete();
 					</c:when>
 					<c:otherwise>
-				document.location.href="${executePrevious}";						
+				document.location.href="${ executePrevious }";						
 					</c:otherwise>
 				</c:choose>
 			}
@@ -149,41 +139,25 @@
 			function initNextButton(){
 				$("#execute-next-button").button({
 					'text' : false,
+					'disabled': ${ not hasNextStep },
 					icons : {
 						primary : 'ui-icon-triangle-1-e'
 					}
-				});
-				<c:choose>
-					<c:when test="${executionStep.executionStepOrder == totalSteps-1}">
-				//disable the next button since it's the last step
-				$("#execute-next-button").button("option", "disabled", true);				
-					</c:when>
-					<c:otherwise>
-				$("#execute-next-button").click(function(){
+				}).click(function(){
 					navigateNext();
 				});	
-					</c:otherwise>
-				</c:choose>
 			}
 			
 			function initPreviousButton(){			
-			$("#execute-previous-button").button({
-				'text' : false,
-				icons : {
-					primary : 'ui-icon-triangle-1-w'
-				}
-			});
-			<c:choose>
-				<c:when test="${executionStep.executionStepOrder == 0}">
-			//disable the previous button since it's the first step
-			$("#execute-previous-button").button("option", "disabled", true);				
-				</c:when>
-				<c:otherwise>
-			$("#execute-previous-button").click(function(){
-				navigatePrevious();
-			});	
-				</c:otherwise>
-			</c:choose>
+				$("#execute-previous-button").button({
+					'text' : false,
+					'disabled': ${ not hasPreviousStep },
+					icons : {
+						primary : 'ui-icon-triangle-1-w'
+					}
+				}).click(function(){
+					navigatePrevious();
+				});	
 			}
 			
 			function initStopButton(){
@@ -192,8 +166,7 @@
 					'icons' : {
 						'primary' : 'execute-stop'
 					} 
-				})
-				.click(function(){
+				}).click(function(){
 					refreshParent();
 					window.close();
 				});
@@ -206,8 +179,7 @@
 					'icons' :{
 						'primary' : 'execute-failure'
 					}
-				})
-				.click(function(){
+				}).click(function(){
 					$.post('${ executeStatus }', {
 						executionStatus : "FAILURE"
 					}, function(){
@@ -224,8 +196,7 @@
 					'icons' : {
 						'primary' : 'execute-success'
 					}
-				})
-				.click(function(){
+				}).click(function(){
 					$.post('${ executeStatus }', {
 						executionStatus : "SUCCESS"
 					}, function(){
@@ -249,18 +220,6 @@
 				navigateNext();
 			}
 			
-			
-			$(function(){
-				initNextButton();
-				initPreviousButton();
-				initStopButton();
-				initFailButton();
-				initSuccessButton();
-			});	
-		</script>
-	
-		<script type="text/javascript">
-		
 			function statusComboSetIcon(){
 				var cbox = $("#execution-status-combo");
 				//reset the classes
@@ -281,8 +240,14 @@
 				statusComboSetIcon();
 				refreshExecStepInfos();
 			}
-		
-			$(function() {	
+			
+			$(function(){
+				initNextButton();
+				initPreviousButton();
+				initStopButton();
+				initFailButton();
+				initSuccessButton();
+
 				$("#execution-status-combo").val("${executionStep.executionStatus}");
 				statusComboSetIcon();
 				
@@ -294,25 +259,40 @@
 					);
 				});
 				
-			});
-		</script> 
-
+				$("#execute-next-test-case").button({
+					'text': false,
+					'disabled': ${ (empty hasNextTestCase) or (not hasNextTestCase) or hasNextStep },
+					icons: {
+						primary : 'ui-icon-seek-next'
+					}
+				});
+				
+				if (${ not empty testPlanItemUrl }) $('#execute-next-test-case-panel').removeClass('not-displayed');		
+			});	
+		</script>
+	
 	<div id="execute-header">
 		<%--  I know, table as a layout. But damn. --%>
 		<table>
 			<tr>
-				<td style="text-align:left;"><button id="execute-stop-button" ><f:message key="execute.header.button.stop.title" /></button></td>
-				<td style="text-align:center;">
+				<td class="left-align"><button id="execute-stop-button" ><f:message key="execute.header.button.stop.title" /></button></td>
+				<td class="centered">
 					<button id="execute-previous-button"><f:message key="execute.header.button.previous.title" /></button>
 					<span id="execute-header-numbers-label">${executionStep.executionStepOrder +1} / ${totalSteps}</span>	
 					<button id="execute-next-button"><f:message key="execute.header.button.next.title" /></button>
 				</td>
-					<td style="text-align:right;">
-						<label id="evaluation-label-status"><f:message key="execute.header.status.label" /></label>
-						<comp:execution-status-combo name="executionStatus" id="execution-status-combo" />
-						<button id="execute-fail-button"><f:message key="execute.header.button.failure.title" /></button>
-						<button id="execute-success-button"><f:message key="execute.header.button.passed.title" /></button>
-					</td>
+				<td class="right-align">
+					<label id="evaluation-label-status"><f:message key="execute.header.status.label" /></label>
+					<comp:execution-status-combo name="executionStatus" id="execution-status-combo" />
+					<button id="execute-fail-button"><f:message key="execute.header.button.failure.title" /></button>
+					<button id="execute-success-button"><f:message key="execute.header.button.passed.title" /></button>
+				</td>
+				<td class="centered not-displayed" id="execute-next-test-case-panel">
+					<form action="<c:url value='${ testPlanItemUrl }/next-execution/runner' />" method="post">
+						<f:message  var="nextTestCaseTitle" key="execute.header.button.next-test-case.title" />
+						<button id="execute-next-test-case" name="classic" class="button" title="${ nextTestCaseTitle }">${ nextTestCaseTitle }</button>
+					</form>
+				</td>
 			</tr>
 		</table>
 		
@@ -346,13 +326,6 @@
 			</div>		
 			
 			<div id="execute-evaluation-rightside">
-				<%--
-				<sf:form commandName="executionStep" method="POST">
-					<sf:select path="executionStatus" id="execution-status-combo" 
-					cssStyle="combobox" items="${ executionStatus }" />
-				</sf:form>
-				--%>
-
 				<div id="execution-information-fragment">
 					<comp:step-information-panel auditableEntity="${executionStep}"/>
 				</div>
@@ -360,12 +333,7 @@
 			<div style="clear:both;visibility:hidden"></div>
 		</div>	
 		
-				
-		<%------------------------------ Attachments bloc ---------------------------------------------%> 
-		
 		<comp:attachment-bloc entity="${executionStep}" workspaceName="campaign" editable="${ editable }" />
-		
-		<%------------------------------ /attachment ------------------------------%>
 		
 		<%------------------------------ bugs section -------------------------------%>
 		<%--
