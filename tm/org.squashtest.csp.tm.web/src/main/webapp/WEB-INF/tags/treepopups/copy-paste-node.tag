@@ -35,9 +35,6 @@
 <s:url var="copyUrl" value="/{workspace}-browser/copy">
 	<s:param name="workspace" value="${resourceName}" />
 </s:url>
-<s:url var="copyIterationUrl" value="/{workspace}-browser/copy-iterations">
-	<s:param name="workspace" value="${resourceName}" />
-</s:url>
 
 <f:message var="errorMessage" key="tree.button.copy-node.error"/>
 <f:message var="pasteNotHere" key="tree.button.copy-node.error.pastenothere"/>
@@ -49,13 +46,10 @@
 	$(function(){
 		squashtm.treemenu.treeNodeCopier = new TreeNodeCopier({treeSelector : "${treeSelector}",
 											 errMessage : "${errorMessage}",
-											 pasteNotSameProject : "${pasteNotSameProject}",											 
-											 pasteNotHere :"${pasteNotHere}",
+											 pasteNotSameProject : "${pasteNotSameProject}",	
 											 pasteIterationNotHere :"${pasteIterationNotHere}",
-											 pasteNotHere :"${pasteNotHere}",
 											 notOneEditable :"${notOneEditable}",
 											 url : "${copyUrl}",
-											 urlIteration : "${copyIterationUrl}"
 										});		
 		
 		${treeNodeButtonCopy}.click(function(){

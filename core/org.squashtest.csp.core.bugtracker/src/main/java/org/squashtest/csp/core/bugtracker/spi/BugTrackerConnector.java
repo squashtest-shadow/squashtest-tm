@@ -56,7 +56,6 @@ public interface BugTrackerConnector {
 	 */
 	void checkCredentials(AuthenticationCredentials credentials);
 
-
 	/**
 	 * will build the suffix of the url to view that issue on the remote bugtracker.
 	 * Must be appended to the base url of the bugtracker to be functionnal.
@@ -64,7 +63,6 @@ public interface BugTrackerConnector {
 	 * @return an a suffix for an url if success, null if something failed.
 	 */
 	String makeViewIssueUrlSuffix(String issueId);
-
 
 	/**
 	 * returns the list of priorities.

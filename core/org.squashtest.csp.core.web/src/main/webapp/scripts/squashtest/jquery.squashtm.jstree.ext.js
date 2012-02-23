@@ -895,7 +895,7 @@ function copyNode(data, url){
 			insertCopiedNodes(jsonData, newParent, tree);
 			tree.open_node( newParent, deferred.resolve);
 		})
-		.error(deferred.fail);
+		.error(deferred.reject);
 	});
 	
 	return deferred.promise();
@@ -941,16 +941,11 @@ function moveNode(data, url){
 		url : url,
 		data : dataSent,
 		dataType : 'json'
-	})
-
-
+	});
 }
 
 
-/*
- * ******************************* leaf URL management code
- * *************************************
- */ 
+/* ******************************* leaf URL management code ************************************* */ 
 
 
 
@@ -1011,114 +1006,3 @@ function findSelectedNodes(tree) {
 }
 
 	
-/*
- * ****************************** other tree-related objects
- * **************************************
- */
-
-
-function TreeNodeCopier(initObj){
-	
-	// properties
-	this.tree = $.jstree._reference(initObj.treeSelector);
-	this.errMessage= initObj.errMessage;
-	this.url= initObj.url;
-	
-	
-	// private methods
-	var displayError = function(){
-		displayInformationNotification(this.errMessage);
-	}
-	
-	var checkSameProject = function(target){			
-		var targetLib = findParentLibrary(target);
-		var previousLibId = $.cookie('squash-copy-library-id');
-		return targetLib.attr('resid') === previousLibId;
-	}
-	
-	var findParentLibrary = function (nodes){
-		return nodes.is(':library') ? nodes : nodes.parents(":library");
-	}
-	
-	// public methods
-	this.copyNodesToCookie = function(){
-		var nodes = this.tree.get_selected();
-		var ids = nodes.collect(function(elt){return $(elt).attr('resid');});
-		var library = findParentLibrary(nodes);
-		var libraryId = library.attr('resid');
-		$.cookie('squash-copy-nodes-ids', ids.toString());			
-		$.cookie('squash-copy-library-id', libraryId);
-		$.cookie('squash-copy-iterations-only', "0");
-		if(nodes.filter(':iteration').length == nodes.length){
-			$.cookie('squash-copy-iterations-only', "1");
-		}
-		
-	}
-	
-	this.pasteNodesFromCookie = function(){
-		var ids = $.cookie('squash-copy-nodes-ids').split(',');
-		
-		if (! ids) return;
-		
-		var target = this.tree.get_selected();
-		var pasteAllowed = this.tree.selectionIsPasteAllowed(target);
-		if (!checkSameProject(target)){
-			this.errMessage = initObj.pasteNotSameProject;
-			displayError.call(this);
-		}
-		else{ 
-			if (pasteAllowed != "OK"){
-				if(pasteAllowed == "notOneEditable"){
-					this.errMessage =  initObj.notOneEditable;
-				}
-				else{ 
-					if(pasteAllowed == "pasteIterationNotHere"){ this.errMessage =  initObj.pasteIterationNotHere;}
-					else{ 
-						if(pasteAllowed == "pasteNotHere") this.errMessage =  initObj.pasteNotHere;
-						}
-					}
-				displayError.call(this);
-			}
-			else{
-				if(!this.tree.is_open(target)){this.tree.open_node(target);}
-				var destinationType = "folder";
-				if(isRoot(target)){
-					destinationType = "library";
-				}
-				// here we mimick the move_object used by moveNode, describe
-				// earlier in the file
-				var copyData = {
-					inst : this.tree,
-					sendData : {
-						"object-ids" : ids,
-						"destination-id" : target.attr('resid'),
-						"destination-type" : destinationType
-					},
-					newParent : target
-				}
-				// if the destination is a campaign the request will not be the
-				// same
-				if(target.is(':campaign')){
-					this.url = initObj.urlIteration ;
-					var iterations = this.tree._get_children(target) ;
-					copyData = {
-							inst : this.tree,
-							sendData : {
-								"object-ids" : ids,
-								"destination-id" : target.attr('resid'),
-								"destination-type" : "campaign",
-								"next-iteration-number" : iterations.length
-							},
-							newParent : target
-						}
-				}				
-				
-				// then we send it to the copy routine
-				copyNode(copyData, this.url).fail(function(){this.tree.refresh();});
-			}
-		}
-	
-	}		
-	
-}
-

@@ -105,16 +105,13 @@ public class BugTrackerLocalServiceImpl implements BugTrackerLocalService{
 
 		Issue sqIssue = new Issue();
 		sqIssue.setRemoteIssueId(createdIssue.getId());
-
-		
+	
 		IssueList list = entity.getIssueList();
 		
 		list.addIssue(sqIssue);
 		
-		
 		issueDao.persist(sqIssue);
-
-
+		
 		return createdIssue;
 	}
 	
@@ -123,10 +120,6 @@ public class BugTrackerLocalServiceImpl implements BugTrackerLocalService{
 	public List<BTIssue> getIssues(List<String> issueKeyList) {
 		return remoteBugTrackerService.getIssues(issueKeyList);
 	}
-	
-	
-
-
 	
 	
 	@Override
@@ -148,8 +141,6 @@ public class BugTrackerLocalServiceImpl implements BugTrackerLocalService{
 		
 	}
 
-
-	
 	
 	//TODO
 	/*

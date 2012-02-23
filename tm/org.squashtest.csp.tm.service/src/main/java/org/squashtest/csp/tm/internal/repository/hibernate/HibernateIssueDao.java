@@ -89,6 +89,11 @@ public class HibernateIssueDao extends HibernateEntityDao<Issue> implements Issu
 	 * Note : that code may sound weird and hairy, but preferable to 1/ get all the data from the db and 2/ sort them here. In the current
 	 * implementation do most of the sorting job, and the list we sort here was already narrowed.
 	 * 
+	 * **********************************************************************************************************************************
+	 * 
+	 * TODO : this whole code is stupid and I apologize for it. Just use the damn hibernate abilities : cycle through all bugged entities, merge their list, 
+	 * sort the result, be done with it !
+	 * 
 	 */
 	@Override
 	public List<IssueOwnership<Issue>> findIssuesWithOwner(Bugged entity,

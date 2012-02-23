@@ -36,10 +36,10 @@
  
  	this.update = function(event){
 		// todo : make something smarter
-		if(event.evt_name == "paste"){
-			updateEventPaste(event, this.tree);
+		switch(event.evt_name){
+			case "paste" : updateEventPaste(event, this.tree); break;
+			default : this.tree.refresh_selected(); break;
 		}
-		else{this.tree.refresh_selected();}
  	}
 
  }
