@@ -40,6 +40,7 @@ import org.hibernate.validator.constraints.NotBlank;
 import org.squashtest.csp.core.security.annotation.InheritsAcls;
 import org.squashtest.csp.tm.domain.DuplicateNameException;
 import org.squashtest.csp.tm.domain.EmptyTestPlanException;
+import org.squashtest.csp.tm.domain.TestPlanItemNotExecutableException;
 import org.squashtest.csp.tm.domain.attachment.Attachment;
 import org.squashtest.csp.tm.domain.attachment.AttachmentList;
 import org.squashtest.csp.tm.domain.audit.Auditable;
@@ -154,7 +155,8 @@ public class TestSuite {
 		if (this.id == null) {
 			return this.equals(that);
 		}
-		// id not null -> persistent entity -> we cant use equals() because "that" might be a proxy so equals() would return false
+		// id not null -> persistent entity -> we cant use equals() because "that" might be a proxy so equals() would
+		// return false
 		return this.id.equals(that.getId());
 	}
 
@@ -179,12 +181,12 @@ public class TestSuite {
 		}
 	}
 
-	public void unBindTestPlan(List<IterationTestPlanItem> items){
-		for (IterationTestPlanItem item : items){
+	public void unBindTestPlan(List<IterationTestPlanItem> items) {
+		for (IterationTestPlanItem item : items) {
 			item.setTestSuite(null);
 		}
 	}
-	
+
 	/**
 	 * Binds the test plan items to this test suite using their id to retrieve them from the iteration.
 	 *
@@ -222,7 +224,7 @@ public class TestSuite {
 	 * -test plans items that are not linked to a test case are not copied<br>
 	 * -the copy of a test plan item is done using {@linkplain IterationTestPlanItem#createCopy()}
 	 * </p>
-	 * 
+	 *
 	 * @return an ordered copy of the test-suite test plan
 	 */
 	public List<IterationTestPlanItem> createPastableCopyOfTestPlan() {
@@ -264,18 +266,46 @@ public class TestSuite {
 
 		return testSuiteCopy;
 	}
-	
+
 	public boolean isLastExecutableTestPlanItem(long itemId) {
 		List<IterationTestPlanItem> testPlan = iteration.getTestPlans();
 		for (int i = testPlan.size() - 1; i >= 0; i--) {
 			IterationTestPlanItem item = testPlan.get(i);
-			
+
 			if (boundToThisSuite(item) && item.isExecutable()) {
 				return itemId == item.getId();
 			}
 		}
-		
+
 		return false;
+	}
+
+	/**
+	 * @param testPlanItemId
+	 */
+	public IterationTestPlanItem findNextExecutableTestPlanItem(long testPlanItemId) {
+		List<IterationTestPlanItem> remaining = getRemainingPlanById(testPlanItemId);
+
+		for (IterationTestPlanItem item : remaining) {
+			if (item.isExecutable()) {
+				return item;
+			}
+		}
+
+		throw new TestPlanItemNotExecutableException("No more executable item in this suite's test plan");
+
+	}
+
+	private List<IterationTestPlanItem> getRemainingPlanById(long testPlanItemId) {
+		List<IterationTestPlanItem> testPlan = iteration.getTestPlans();
+
+		for (int i = 0; i < testPlan.size(); i++) {
+			if (testPlanItemId == testPlan.get(i).getId()) {
+				return testPlan.subList(i + 1, testPlan.size());
+			}
+		}
+
+		throw new IllegalArgumentException("Item[" + testPlanItemId + "] does not belong to test plan of TestSuite[" + id + ']');
 	}
 
 }

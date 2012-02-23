@@ -146,10 +146,9 @@
 				<button id="execute-next-step" class="button"><f:message key="execute.header.button.next.title" /></button>
 			</td>
 			<td class="centered not-displayed" id="execute-next-test-case-panel">
-				<form action="${ testPlanItemUrl }/next-execution/runner" method="post">
+				<form action="<c:url value='${ testPlanItemUrl }/next-execution/runner' />" method="post">
 					<f:message  var="nextTestCaseTitle" key="execute.header.button.next-test-case.title" />
-					<button id="execute-next-test-case" class="button" title="${ nextTestCaseTitle }">${ nextTestCaseTitle }</button>
-					<input type="hidden" name="style" value="optimized" />
+					<button id="execute-next-test-case" name="optimized" class="button" title="${ nextTestCaseTitle }">${ nextTestCaseTitle }</button>
 				</form>
 			</td>
 		</tr>

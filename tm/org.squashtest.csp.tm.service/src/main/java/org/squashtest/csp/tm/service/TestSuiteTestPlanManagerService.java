@@ -71,4 +71,13 @@ public interface TestSuiteTestPlanManagerService {
 	 * @return
 	 */
 	boolean hasMoreExecutableItems(long testSuiteId, long testPlanItemId);
+
+	/**
+	 * Should start a new execution for the next executable test plan item of the given test suite. suite's test plan.
+	 * 
+	 * @param testSuiteId
+	 * @param testPlanItemId
+	 * @return
+	 */
+	Execution startNextExecution(long testSuiteId, long testPlanItemId);
 }

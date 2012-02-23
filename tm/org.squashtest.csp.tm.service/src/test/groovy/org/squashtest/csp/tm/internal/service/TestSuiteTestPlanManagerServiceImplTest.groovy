@@ -27,7 +27,6 @@ import org.squashtest.csp.tm.domain.campaign.TestSuite
 import org.squashtest.csp.tm.domain.execution.Execution
 import org.squashtest.csp.tm.domain.testcase.TestCase
 import org.squashtest.csp.tm.internal.repository.TestSuiteDao
-import org.squashtest.csp.tm.internal.service.CampaignTestPlanManagerServiceImplTest.MockTC
 import org.squashtest.csp.tm.internal.service.campaign.IterationTestPlanManager
 
 import spock.lang.Specification
@@ -89,31 +88,32 @@ class TestSuiteTestPlanManagerServiceImplTest  extends Specification {
 		true           | false
 	}
 
-//	def "should start next execution of test suite"() {
-//		given:
-//		TestSuite suite = Mock()
-//
-//		IterationTestPlanItem currentItem = Mock()
-//		currentItem.id >> 100
-//		IterationTestPlanItem nextItem = Mock()
-//		nextItem.id >> 200
-//		suite.testPlan >> [currentItem, nextItem]
-//
-//		TestCase referenced = Mock()
-//		currentItem.referencedTestCase >> referenced
-//		nextItem.referencedTestCase >> referenced
-//
-//		and:
-//		testSuiteDao.findById(10) >> suite
-//
-//		and:
-//		Execution exec = Mock()
-//		testPlanManager.addExecution(_) >> exec
-//
-//		when:
-//		def res = manager.startNextExecution(10, 100)
-//
-//		then:
-//		res == exec
-//	}
+
+	def "should start next execution of test suite"() {
+		given:
+		TestSuite suite = Mock()
+
+		IterationTestPlanItem currentItem = Mock()
+		currentItem.id >> 100
+		IterationTestPlanItem nextItem = Mock()
+		nextItem.id >> 200
+		suite.testPlan >> [currentItem, nextItem]
+
+		TestCase referenced = Mock()
+		currentItem.referencedTestCase >> referenced
+		nextItem.referencedTestCase >> referenced
+
+		and:
+		testSuiteDao.findById(10) >> suite
+
+		and:
+		Execution exec = Mock()
+		testPlanManager.addExecution(_) >> exec
+
+		when:
+		def res = manager.startNextExecution(10, 100)
+
+		then:
+		res == exec
+	}
 }

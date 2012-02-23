@@ -25,7 +25,7 @@ import org.squashtest.csp.tm.domain.attachment.Attachment
 import org.squashtest.csp.tm.domain.execution.Execution
 import org.squashtest.csp.tm.domain.testcase.TestCase
 import org.squashtest.csp.tm.internal.repository.ItemTestPlanDao
-import org.squashtest.csp.tools.unittest.reflection.ReflectionCategory;
+import org.squashtest.csp.tools.unittest.reflection.ReflectionCategory
 
 import spock.lang.Specification
 
@@ -285,28 +285,10 @@ class TestSuiteTest extends Specification {
 		then:
 		res == item
 	}
-	
+
 	def "item should not be the last executable of test plan"() {
 		given:
-		TestSuite testSuite = new TestSuite()
-		Iteration iteration = new Iteration()
-		testSuite.setIteration(iteration)
-
-		and:
-		IterationTestPlanItem item = new IterationTestPlanItem(Mock(TestCase))
-		use (ReflectionCategory) {
-			IterationTestPlanItem.set field: "id", of: item, to: 10L
-		}
-		iteration.addTestPlan(item)
-		item.setTestSuite(testSuite)
-
-		and:
-		IterationTestPlanItem otherItem = new IterationTestPlanItem(Mock(TestCase))
-		use (ReflectionCategory) {
-			IterationTestPlanItem.set field: "id", of: otherItem, to: 20L
-		}
-		iteration.addTestPlan(otherItem)
-		otherItem.setTestSuite(testSuite)
+		TestSuite testSuite = aSuiteWithExecutableItems(10L, 20L)
 
 		when:
 		def res = testSuite.isLastExecutableTestPlanItem(10L)
@@ -314,28 +296,10 @@ class TestSuiteTest extends Specification {
 		then:
 		res == false
 	}
-	
+
 	def "item should be the last of test plan"() {
 		given:
-		TestSuite testSuite = new TestSuite()
-		Iteration iteration = new Iteration()
-		testSuite.setIteration(iteration)
-
-		and:
-		IterationTestPlanItem item = new IterationTestPlanItem(Mock(TestCase))
-		use (ReflectionCategory) {
-			IterationTestPlanItem.set field: "id", of: item, to: 10L
-		}
-		iteration.addTestPlan(item)
-		item.setTestSuite(testSuite)
-
-		and:
-		IterationTestPlanItem otherItem = new IterationTestPlanItem(Mock(TestCase))
-		use (ReflectionCategory) {
-			IterationTestPlanItem.set field: "id", of: otherItem, to: 20L
-		}
-		iteration.addTestPlan(otherItem)
-		otherItem.setTestSuite(testSuite)
+		TestSuite testSuite = aSuiteWithExecutableItems(10L, 20L)
 
 		when:
 		def res = testSuite.isLastExecutableTestPlanItem(20L)
@@ -343,7 +307,7 @@ class TestSuiteTest extends Specification {
 		then:
 		res == true
 	}
-	
+
 	def "item should be the last executable of test plan"() {
 		given:
 		TestSuite testSuite = new TestSuite()
@@ -365,7 +329,7 @@ class TestSuiteTest extends Specification {
 		use (ReflectionCategory) {
 			IterationTestPlanItem.set field: "id", of: otherItem, to: 20L
 			IterationTestPlanItem.set field: "referencedTestCase", of: otherItem, to: null
-			
+
 		}
 
 		when:
@@ -396,4 +360,32 @@ class TestSuiteTest extends Specification {
 		res == false
 	}
 
+
+	def "should return next executable item of test plan"() {
+		given:
+		TestSuite testSuite = aSuiteWithExecutableItems(10L, 20L)
+
+		when:
+		def res = testSuite.findNextExecutableTestPlanItem(10L)
+
+		then:
+		res.id == 20L
+	}
+
+	def aSuiteWithExecutableItems(Long... ids) {
+		TestSuite testSuite = new TestSuite()
+		Iteration iteration = new Iteration()
+		testSuite.setIteration(iteration)
+
+		ids.each { id ->
+			IterationTestPlanItem item = new IterationTestPlanItem(Mock(TestCase))
+			use (ReflectionCategory) {
+				IterationTestPlanItem.set field: "id", of: item, to: id
+			}
+			iteration.addTestPlan(item)
+			item.setTestSuite(testSuite)
+		}
+
+		return testSuite
+	}
 }

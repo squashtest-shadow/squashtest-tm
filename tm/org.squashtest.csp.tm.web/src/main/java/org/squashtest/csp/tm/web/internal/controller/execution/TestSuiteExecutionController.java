@@ -32,7 +32,6 @@ import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
-import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.context.request.WebRequest;
 import org.squashtest.csp.tm.domain.execution.Execution;
 import org.squashtest.csp.tm.service.TestSuiteTestPlanManagerService;
@@ -46,7 +45,7 @@ import org.squashtest.csp.tm.service.TestSuiteTestPlanManagerService;
 @RequestMapping("/test-suites/{testSuiteId}/test-plan")
 public class TestSuiteExecutionController {
 	private static final Logger LOGGER = LoggerFactory.getLogger(TestSuiteExecutionController.class);
-	
+
 	private static final String OPTIMIZED_RUNNER_VIEW_PATTERN = "/test-suites/{0}/test-plan/{1}/executions/{2}/runner?optimized";
 	private static final String CLASSIC_RUNNER_VIEW_PATTERN = "/test-suites/{0}/test-plan/{1}/executions/{2}/runner";
 
@@ -85,29 +84,33 @@ public class TestSuiteExecutionController {
 	public String showOptimizedExecutionRunner(@PathVariable long testSuiteId, @PathVariable long testPlanItemId,
 			@PathVariable long executionId, Model model, WebRequest request) {
 		helper.populateExecutionRunnerModel(executionId, model);
-		
+
 		boolean hasNextTestCase = testPlanManager.hasMoreExecutableItems(testSuiteId, testPlanItemId);
 		model.addAttribute("hasNextTestCase", hasNextTestCase);
 
-		String testPlanItemUrl = request.getContextPath() + "/test-suites/" + testSuiteId + "/test-plan"
-				+ testPlanItemId;
+		String testPlanItemUrl = "/test-suites/" + testSuiteId + "/test-plan/" + testPlanItemId;
 		model.addAttribute("testPlanItemUrl", testPlanItemUrl);
-		
+
 		if (LOGGER.isTraceEnabled()) {
-			LOGGER.trace("Will show OER for test suite using model :" + model.asMap());;
+			LOGGER.trace("Will show OER for test suite using model :" + model.asMap());
+			;
 		}
-		
+
 		return "page/executions/ieo-execute-execution";
 	}
 
 	@RequestMapping(value = "/{testPlanItemId}/next-execution/runner", method = RequestMethod.POST, params = "optimized")
-	@ResponseBody
 	public String startNextExecutionInOptimizedRunner(@PathVariable long testSuiteId, @PathVariable long testPlanItemId) {
-		return "next exec of suite " + testSuiteId + " item " + testPlanItemId;
+		Execution execution = testPlanManager.startNextExecution(testSuiteId, testPlanItemId);
+
+		return "redirect:"
+				+ MessageFormat.format(OPTIMIZED_RUNNER_VIEW_PATTERN, testSuiteId, execution.getTestPlan().getId(),
+						execution.getId());
 	}
 
 	@RequestMapping(value = "/{testPlanItemId}/executions/{executionId}/classic-runner", method = RequestMethod.GET)
 	public String showClassicExecutionRunner(@PathVariable long executionId, Model model) {
+		// FIXME not yet worky
 		helper.populateExecutionRunnerModel(executionId, model);
 		return "page/executions/execute-execution";
 	}
