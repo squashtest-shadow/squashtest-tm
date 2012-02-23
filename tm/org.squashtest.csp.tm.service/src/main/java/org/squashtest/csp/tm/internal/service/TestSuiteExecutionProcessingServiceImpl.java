@@ -158,7 +158,7 @@ public class TestSuiteExecutionProcessingServiceImpl implements TestSuiteExecuti
 	@PreAuthorize("hasPermission(#testSuiteId, 'org.squashtest.csp.tm.domain.campaign.TestSuite', 'WRITE') "
 			+ "or hasRole('ROLE_ADMIN')")
 	public Execution startNextExecution(long testSuiteId, long testPlanItemId) {
-		TestSuite testSuite = testSuiteDao.findById(testSuiteId);
+		TestSuite testSuite = suiteDao.findById(testSuiteId);
 		IterationTestPlanItem next = testSuite.findNextExecutableTestPlanItem(testPlanItemId);
 		return testPlanManager.addExecution(next);
 	}

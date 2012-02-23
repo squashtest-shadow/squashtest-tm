@@ -46,7 +46,6 @@ import org.squashtest.csp.tm.service.TestCaseImportanceManagerService;
 
 @Service
 public class TestCaseImportanceManagerServiceImpl implements TestCaseImportanceManagerService {
-	private static final Logger LOGGER = LoggerFactory.getLogger(TestCaseImportanceManagerServiceImpl.class);
 
 	@Inject
 	private RequirementDao requirementDao;
