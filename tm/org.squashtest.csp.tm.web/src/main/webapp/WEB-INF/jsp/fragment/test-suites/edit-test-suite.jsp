@@ -58,6 +58,10 @@
 	<s:param name="testSuiteId" value="${testSuite.id}" />
 </s:url>
 
+<s:url var="testSuiteExecButtonsUrl" value="/test-suites/{testSuiteId}/exec-button">
+	<s:param name="testSuiteId" value="${testSuite.id}" />
+</s:url>
+
 <s:url var="testSuiteTestPlanUrl" value="/test-suites/{testSuiteId}/test-plan/table">
 	<s:param name="testSuiteId" value="${testSuite.id}" />
 </s:url>
@@ -96,8 +100,9 @@
 		<s:param name="iterationId" value="${testSuite.iteration.id}" />
 </s:url>
 
-<s:url var="testCaseExecutionsUrl" value="/test-suites/{testSuiteId}/test-case-executions/" >
+<s:url var="testCaseExecutionsUrl" value="/test-suites/{testSuiteId}/{iterationId}/test-case-executions/" >
 	<s:param name="testSuiteId" value="${testSuite.id}"/>
+	<s:param name="iterationId" value="${testSuite.iteration.id}" />
 </s:url>
 
 <c:url var="testCaseDetailsBaseUrl" value="/test-case-libraries/1/test-cases" />
@@ -115,10 +120,6 @@
 	/* Bind any changeable element to this handler to refresh the general informations */	
 	function refreshTestSuiteInfos(){
 		$('#general-informations-panel').load('${testSuiteInfoUrl}');	
-	}
-	
-	function refreshStats(){
-		$('#test-suite-statistics-panel').load('${testSuiteStatisticsUrl}');
 	}
 	
 	/* display the iteration name. Used for extern calls (like from the page who will include this fragment)
@@ -266,13 +267,11 @@
 	</div>
 	<div class="toolbar-button-panel">
 		<c:if test="${ editable }">	
-			<input type="button" value="<f:message key='test-suite.button.rename.label' />" id="rename-test-suite-button" class="button"/> 
-			<input type="button" value="<f:message key='test-suite.button.remove.label' />" id="delete-test-suite-button" class="button"/>
-			<%-- TODO verifier conditions d'affichage dans iteration --%>	
-			<form action="<c:url value="/test-suites/${testSuite.id}/test-plan/start-resume/runner" />" method="post" name="execute-test-suite-form" target="optimized-execution-runner">
-				<input type="submit" value='<f:message key="test-suite.execution.start.label" />' name="optimized" class="button"/>
-			</form>
-			<%-- TODO mettre ca ailleurs --%>		
+			<div id="test-suite-execution-button" style="display:inline-block;">
+				<comp:test-suite-execution-button testSuiteId="${ testSuite.id }" statisticsEntity="${ statistics }"/>
+			</div>	
+			<input type="button" value="<f:message key='test-suite.button.rename.label' />" id="rename-test-suite-button" class="button" style="display:inline-block;"/> 
+			<input type="button" value="<f:message key='test-suite.button.remove.label' />" id="delete-test-suite-button" class="button" style="display:inline-block;"/>	
 		</c:if>
 	</div>	
 	<div style="clear:both;"></div>	
@@ -284,7 +283,7 @@
 	<comp:rich-jeditable targetUrl="${ testSuiteUrl }" componentId="test-suite-description" submitCallback="refreshTestSuiteInfos"/>
 </c:if>
 
-<comp:toggle-panel id="test-suite-description-panel" titleKey="generics.description.title" isContextual="true" open="true">
+<comp:toggle-panel id="test-suite-description-panel" titleKey="generics.description.title" isContextual="true" open="${ not empty testSuite.description }">
 	<jsp:attribute name="body">
 		<div id="test-suite-description" >${ testSuite.description }</div>
 	</jsp:attribute>
@@ -326,7 +325,9 @@
 			removeTestPlansUrl="${removeTestCaseUrl}" batchRemoveButtonId="remove-test-suite-test-case-button" 
 			updateTestPlanUrl="${updateTestCaseUrl}" assignableUsersUrl="${assignableUsersUrl}"
 			nonBelongingTestPlansUrl="${nonBelongingTestCasesUrl}" testPlanExecutionsUrl="${testCaseExecutionsUrl}" editable="${ editable }" 
-			testCaseMultipleRemovalPopupId="delete-test-suite-multiple-test-plan-dialog" testCaseSingleRemovalPopupId="delete-test-suite-single-test-plan-dialog" />
+			testCaseMultipleRemovalPopupId="delete-test-suite-multiple-test-plan-dialog" testCaseSingleRemovalPopupId="delete-test-suite-single-test-plan-dialog"
+			testSuiteStatisticsId="test-suite-statistics-panel" testSuiteStatisticsUrl="${ testSuiteStatisticsUrl }"
+			testSuiteExecButtonsId="test-suite-execution-button" testSuiteExecButtonsUrl="${ testSuiteExecButtonsUrl }"/>
 		<aggr:test-suite-test-plan-table/>
 	</jsp:attribute>
 </comp:toggle-panel>

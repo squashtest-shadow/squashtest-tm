@@ -32,6 +32,10 @@
 <%@ attribute name="assignableUsersUrl" required="true" description="URL to manipulate user of the test-plans" %>
 <%@ attribute name="testCaseSingleRemovalPopupId" required="true" description="html id of the single test-case removal popup" %>
 <%@ attribute name="testCaseMultipleRemovalPopupId" required="true" description="html id of the multiple test-case removal popup" %>
+<%@ attribute name="testSuiteStatisticsId" required="true" description="html id of the test suite statistics panel" %>
+<%@ attribute name="testSuiteStatisticsUrl" required="true" description="URL to manipulate and refresh the test suite statistics" %>
+<%@ attribute name="testSuiteExecButtonsId" required="true" description="html id of the test suite execution buttons panel" %>
+<%@ attribute name="testSuiteExecButtonsUrl" required="true" description="URL to refresh the labels on the execution buttons" %>
 
 <%@ taglib prefix="comp" tagdir="/WEB-INF/tags/component" %>
 <%@ taglib prefix="dt" tagdir="/WEB-INF/tags/datatables" %>
@@ -72,6 +76,7 @@
 						refreshTestPlans();
 						checkForbiddenDeletion(data);
 						refreshStats();
+						refreshExecButtons();
 					}
 				});
 			}
@@ -85,6 +90,7 @@
 						refreshTestPlans();
 						checkForbiddenDeletion(data);
 						refreshStats();
+						refreshExecButtons();
 					}
 				});
 			}
@@ -114,6 +120,7 @@
 						refreshTestPlans();
 						checkForbiddenDeletion(data);
 						refreshStats();
+						refreshExecButtons();
 						});
 				}
 			}
@@ -123,15 +130,12 @@
 						refreshTestPlans();
 						checkForbiddenDeletion(data);
 						refreshStats();
+						refreshExecButtons();
 						});
 				}
 			}
 		
 		});
-		
-		<%-- bind the new execution creation button to their event --%>
-		$('a[id|="new-exec"]').die('click');
-		$('a[id|="new-exec"]').live('click', newExecutionClickHandler);
 		
 
 		
@@ -196,6 +200,14 @@
 		var table = $('#test-suite-test-plans-table').dataTable();
 		saveTableSelection(table, getTestPlansTableRowId);
 		table.fnDraw(false);
+	}
+	
+	function refreshStats(){
+		$('#${ testSuiteStatisticsId }').load('${ testSuiteStatisticsUrl }');
+	}
+	
+	function refreshExecButtons(){
+		$('#${ testSuiteExecButtonsId }').load('${ testSuiteExecButtonsUrl }');
 	}
 	
 	function refreshTestPlansWithoutSelection() {

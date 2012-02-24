@@ -43,13 +43,17 @@ import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.servlet.ModelAndView;
 import org.squashtest.csp.core.infrastructure.collection.PagedCollectionHolder;
 import org.squashtest.csp.core.infrastructure.collection.Paging;
+import org.squashtest.csp.core.service.security.PermissionEvaluationService;
+import org.squashtest.csp.tm.domain.campaign.Iteration;
 import org.squashtest.csp.tm.domain.campaign.IterationTestPlanItem;
 import org.squashtest.csp.tm.domain.campaign.TestSuite;
 import org.squashtest.csp.tm.domain.campaign.TestSuiteStatistics;
+import org.squashtest.csp.tm.domain.execution.Execution;
 import org.squashtest.csp.tm.domain.execution.ExecutionStatus;
 import org.squashtest.csp.tm.domain.project.Project;
 import org.squashtest.csp.tm.domain.testcase.TestCase;
 import org.squashtest.csp.tm.domain.testcase.TestCaseExecutionMode;
+import org.squashtest.csp.tm.service.IterationModificationService;
 import org.squashtest.csp.tm.service.TestSuiteModificationService;
 import org.squashtest.csp.tm.web.internal.model.datatable.DataTableDrawParameters;
 import org.squashtest.csp.tm.web.internal.model.datatable.DataTableMapperPagingAndSortingAdapter;
@@ -65,6 +69,11 @@ public class TestSuiteModificationController {
 
 	private TestSuiteModificationService service;
 	
+	private IterationModificationService iterationModService;
+
+	@Inject
+	private PermissionEvaluationService permissionService;
+	
 	private static final Logger LOGGER = LoggerFactory.getLogger(TestSuiteModificationController.class);
 	
 	@ServiceReference
@@ -72,6 +81,10 @@ public class TestSuiteModificationController {
 		this.service=service;
 	}
 	
+	@ServiceReference
+	public void setIterationModificationService(IterationModificationService iterationModService){
+		this.iterationModService=iterationModService;
+	}
 
 	@Inject
 	private MessageSource messageSource;
@@ -133,7 +146,6 @@ public class TestSuiteModificationController {
 		return mav;
 	}
 	
-	
 	@RequestMapping(value = "/stats", method = RequestMethod.GET)
 	public ModelAndView refreshStats(@PathVariable long id) {
 		
@@ -146,6 +158,18 @@ public class TestSuiteModificationController {
 		return mav;
 	}
 	
+	@RequestMapping(value = "/exec-button", method = RequestMethod.GET)
+	public ModelAndView refreshExecButton(@PathVariable long id) {
+		
+		TestSuiteStatistics testSuiteStats = service.findTestSuiteStatistics(id);
+
+		ModelAndView mav = new ModelAndView("fragment/generics/test-suite-execution-button");
+
+		mav.addObject("testSuiteId", id);
+		mav.addObject("statisticsEntity", testSuiteStats);
+
+		return mav;
+	}
 
 	@RequestMapping(method = RequestMethod.POST, params = { "id=test-suite-description", "value" })
 	@ResponseBody
@@ -211,7 +235,25 @@ public class TestSuiteModificationController {
 		}
 	}
 	
-	
+	@RequestMapping(value = "{iterationId}/test-case-executions/{testPlanId}", method = RequestMethod.GET)
+	public ModelAndView getExecutionsForTestPlan(@PathVariable Long id, @PathVariable Long iterationId, @PathVariable Long testPlanId) {
+
+		TestSuite testSuite = service.findById(id);
+		
+		List<Execution> executionList = iterationModService.findExecutionsByTestPlan(iterationId, testPlanId);
+		// get the iteraction to check access rights
+		Iteration iter = iterationModService.findById(iterationId);
+		boolean editable = permissionService.hasRoleOrPermissionOnObject("ROLE_ADMIN", "WRITE", iter);
+
+		ModelAndView mav = new ModelAndView("fragment/test-suites/test-suite-test-plan-row");
+
+		mav.addObject("testPlanId", testPlanId);
+		mav.addObject("iterationId", iterationId);
+		mav.addObject("executions", executionList);
+
+		return mav;
+
+	}
 	
 	@RequestMapping(value = "/test-plan/table", params = "sEcho")
 	public @ResponseBody
