@@ -68,12 +68,12 @@ public class TestSuiteExecutionController {
 	}
 
 	@RequestMapping(value = "/start-resume/runner", method = RequestMethod.POST, params = "optimized")
-	public String startExecutionInOptimizedRunner(@PathVariable long testSuiteId) {
-		return startExecution(testSuiteId, OPTIMIZED_RUNNER_VIEW_PATTERN);
+	public String startResumeExecutionInOptimizedRunner(@PathVariable long testSuiteId) {
+		return startResumeExecution(testSuiteId, OPTIMIZED_RUNNER_VIEW_PATTERN);
 	}
 
-	private String startExecution(long testSuiteId, String runnerViewPattern) {
-		Execution execution = testSuiteExecutionProcessingService.startNewExecution(testSuiteId);
+	private String startResumeExecution(long testSuiteId, String runnerViewPattern) {
+		Execution execution = testSuiteExecutionProcessingService.startResume(testSuiteId);
 
 		return "redirect:"
 				+ MessageFormat.format(runnerViewPattern, testSuiteId, execution.getTestPlan().getId(),
@@ -81,8 +81,8 @@ public class TestSuiteExecutionController {
 	}
 
 	@RequestMapping(value = "/start-resume/classic-runner", method = RequestMethod.POST)
-	public String startExecutionInClassicRunner(@PathVariable long testSuiteId) {
-		return startExecution(testSuiteId, CLASSIC_RUNNER_VIEW_PATTERN);
+	public String startResumeExecutionInClassicRunner(@PathVariable long testSuiteId) {
+		return startResumeExecution(testSuiteId, CLASSIC_RUNNER_VIEW_PATTERN);
 	}
 
 	@ServiceReference
@@ -93,7 +93,12 @@ public class TestSuiteExecutionController {
 	@RequestMapping(value = "/{testPlanItemId}/executions/{executionId}/runner", method = RequestMethod.GET, params = "optimized")
 	public String showOptimizedExecutionRunner(@PathVariable long testSuiteId, @PathVariable long testPlanItemId,
 			@PathVariable long executionId, Model model) {
-		helper.populateExecutionRunnerModel(executionId, model);
+		
+		int stepIndex = testSuiteExecutionProcessingService.findIndexOfFirstUnexecuted(executionId);
+		
+		//FIXME add exception handle for step index = -1
+		
+		helper.populateExecutionStepModel(executionId, stepIndex, model);
 
 		addHasNextTestCase(testSuiteId, testPlanItemId, model);
 		addTestPlanItemUrl(testSuiteId, testPlanItemId, model);

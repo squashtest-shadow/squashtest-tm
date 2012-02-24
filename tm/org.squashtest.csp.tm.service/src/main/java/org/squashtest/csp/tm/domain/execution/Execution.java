@@ -134,7 +134,7 @@ public class Execution implements AttachmentHolder, Bugged {
 	/**
 	 * Creates an execution for the test case references by the given tess plan item. Should be used by
 	 * {@link IterationTestPlanItem} only.
-	 *
+	 * 
 	 * @param testPlanItem
 	 */
 	public Execution(TestCase testCase) {
@@ -252,7 +252,7 @@ public class Execution implements AttachmentHolder, Bugged {
 	 * return the first step with a running or a ready state.<br>
 	 * Or null if there is none or the execution has no steps
 	 * </p>
-	 *
+	 * 
 	 * @return
 	 */
 	public ExecutionStep findFirstUnexecutedStep() {
@@ -264,6 +264,23 @@ public class Execution implements AttachmentHolder, Bugged {
 			}
 		}
 		return null;
+	}
+
+	/**
+	 * <p>
+	 * return the index of the first step with a running or a ready state.<br>
+	 * Or -1 if there is none or the execution has no steps
+	 * </p>
+	 * 
+	 * @return
+	 */
+	public int findIndexOfFirstUnexecutedStep() {
+		int index = -1;
+		ExecutionStep executionStep = findFirstUnexecutedStep();
+		if (executionStep != null) {
+			index = this.getSteps().indexOf(executionStep);
+		}
+		return index;
 	}
 
 	/* *************** Attachable implementation ****************** */

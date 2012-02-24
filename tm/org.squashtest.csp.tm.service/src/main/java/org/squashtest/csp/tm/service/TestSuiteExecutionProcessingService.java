@@ -26,50 +26,27 @@ import org.squashtest.csp.tm.domain.execution.ExecutionStep;
 
 @Transactional
 public interface TestSuiteExecutionProcessingService {
-
 	/**
 	 * <p>
-	 * returns the execution step were to resume the test suite<br>
-	 * or null if no execution step is to be resumed
+	 * will find the first unexecuted step of the execution or return -1<br>
+	 * returns -1 if all steps have a status, or, if there is no steps
 	 * </p>
 	 * 
-	 * @param testSuiteId
-	 * @return
+	 * @param executionId
+	 * @return the first unexecuted {@linkplain ExecutionStep} or -1
 	 */
-	ExecutionStep findExecutionStepWhereToResumeExecutionOfSuite(long testSuiteId);
+	int findIndexOfFirstUnexecuted(long executionId);
 
 	/**
 	 * <p>
-	 * returns the execution step were to start the test suite execution<br>
+	 * will delete all existing executions and returns the execution step were to restart the test suite execution<br>
 	 * or null if there is no execution step
 	 * </p>
 	 * 
 	 * @param testSuiteId
 	 * @return
 	 */
-	ExecutionStep relaunchExecution(long testSuiteId);
-
-	/**
-	 * <p>
-	 * Should start a new execution for the given test suite, ie create an execution for the first test case of this
-	 * suite's test plan.
-	 * </p>
-	 * 
-	 * @param testSuiteId
-	 * @return the created {@link Execution}
-	 */
-	Execution startNewExecution(long testSuiteId);
-
-	/**
-	 * <p>
-	 * tells if a test suite has at least one executable item in its test plan after the given item.
-	 * </p>
-	 * 
-	 * @param testSuiteId
-	 * @param testPlanItemId
-	 * @return
-	 */
-	boolean hasMoreExecutableItems(long testSuiteId, long testPlanItemId);
+	ExecutionStep restartExecution(long testSuiteId);
 
 	/**
 	 * <p>
@@ -81,4 +58,34 @@ public interface TestSuiteExecutionProcessingService {
 	 * @return
 	 */
 	Execution startNextExecution(long testSuiteId, long testPlanItemId);
+
+	/**
+	 * <p>
+	 * returns the execution were to resume the test suite<br>
+	 * or null if no execution is to be resumed because :
+	 * <ul>
+	 * <li>all terminated, or</li>
+	 * <li>no execution-step on executions, or</li>
+	 * <li>no execution and test-case deleted</li>
+	 * </ul>
+	 * <p>
+	 * if there is no execution should start a new execution for the given test suite, ie create an execution for the
+	 * first test case of this suite's test plan
+	 * </p>
+	 * 
+	 * @param testSuiteId
+	 * @return the {@linkplain Execution} where to resume or null
+	 */
+	Execution startResume(long testSuiteId);
+
+	/**
+	 * <p>
+	 * tells if a test suite has at least one executable item in its test plan after the given item.
+	 * </p>
+	 * 
+	 * @param testSuiteId
+	 * @param testPlanItemId
+	 * @return
+	 */
+	boolean hasMoreExecutableItems(long testSuiteId, long testPlanItemId);
 }

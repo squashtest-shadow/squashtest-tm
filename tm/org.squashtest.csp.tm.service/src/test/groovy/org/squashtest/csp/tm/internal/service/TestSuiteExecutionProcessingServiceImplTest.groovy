@@ -25,9 +25,10 @@ import static org.junit.Assert.*
 import org.squashtest.csp.tm.domain.campaign.IterationTestPlanItem
 import org.squashtest.csp.tm.domain.campaign.TestSuite
 import org.squashtest.csp.tm.domain.execution.Execution
+import org.squashtest.csp.tm.domain.execution.ExecutionStep
 import org.squashtest.csp.tm.domain.testcase.TestCase
+import org.squashtest.csp.tm.domain.testcase.TestStep
 import org.squashtest.csp.tm.internal.repository.TestSuiteDao
-import org.squashtest.csp.tm.internal.service.CampaignTestPlanManagerServiceImplTest.MockTC
 import org.squashtest.csp.tm.internal.service.campaign.IterationTestPlanManager
 
 import spock.lang.Specification
@@ -46,22 +47,21 @@ class TestSuiteExecutionProcessingServiceImplTest  extends Specification {
 	def "should start new execution of test suite"() {
 		given:
 		TestSuite suite = Mock()
-
 		IterationTestPlanItem item = Mock()
-		suite.testPlan >> [item]
-
-		TestCase referenced = Mock()
-		item.referencedTestCase >> referenced
+		manager.suiteDao.findLaunchableTestPlan(_)>> [item]
+		item.getExecutions()>> []
 
 		and:
 		testSuiteDao.findById(10) >> suite
 
 		and:
 		Execution exec = Mock()
+		ExecutionStep executionStep = Mock()
+		exec.getSteps()>> [executionStep]
 		testPlanManager.addExecution(_) >> exec
 
 		when:
-		def res = manager.startNewExecution(10)
+		def res = manager.startResume(10)
 
 		then:
 		res == exec

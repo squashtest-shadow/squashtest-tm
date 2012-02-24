@@ -29,6 +29,7 @@ import org.hibernate.Query
 import org.hibernate.type.LongType
 import org.spockframework.util.NotThreadSafe
 import org.springframework.transaction.annotation.Transactional
+import org.squashtest.csp.tm.domain.execution.Execution
 import org.squashtest.csp.tm.domain.execution.ExecutionStep
 import org.squashtest.csp.tm.service.TestSuiteExecutionProcessingService
 import org.unitils.dbunit.annotation.DataSet
@@ -43,61 +44,61 @@ class TestSuiteExecutionProcessingServiceImplIT extends DbunitServiceSpecificati
 	private TestSuiteExecutionProcessingService service
 
 	@DataSet("TestSuiteExecutionProcessingServiceImplIT.should not find exec step because test plan empty.xml")
-	def "should try to resume and not find execution step because test plan empty"(){
+	def "should try to resume and not find execution because test plan empty"(){
 		given :
 		long testSuiteId = 1L
 
 		when :
-		ExecutionStep executionStep = service.findExecutionStepWhereToResumeExecutionOfSuite(testSuiteId)
+		Execution execution = service.startResume(testSuiteId)
 
 		then :
-		executionStep == null
+		execution == null
 	}
 	@DataSet("TestSuiteExecutionProcessingServiceImplIT.should not find exec step because all execs terminated.xml")
-	def "should try to resume and not find execution step because all executions terminated"(){
+	def "should try to resume and not find execution because all terminated"(){
 		given :
 		long testSuiteId = 1L
 
 		when :
-		ExecutionStep executionStep = service.findExecutionStepWhereToResumeExecutionOfSuite(testSuiteId)
-
+		Execution execution = service.startResume(testSuiteId)
+		
 		then :
-		executionStep == null
+		execution == null
 	}
 	@DataSet("TestSuiteExecutionProcessingServiceImplIT.should not find exec step because all execs have no step.xml")
-	def "should try to resume and not find execution step because all execution have no step"(){
+	def "should try to resume and not find execution because all have no step"(){
 		given :
 		long testSuiteId = 1L
 
 		when :
-		ExecutionStep executionStep = service.findExecutionStepWhereToResumeExecutionOfSuite(testSuiteId)
+		Execution execution = service.startResume(testSuiteId)
 
 		then :
-		executionStep == null
+		execution == null
 	}
 	@DataSet("TestSuiteExecutionProcessingServiceImplIT.should find exec step through new exec.xml")
-	def "should try to resume and find execution step through new execution"(){
+	def "should try to resume and create new execution"(){
 		given :
 		long testSuiteId = 1L
 
 		when :
-		ExecutionStep executionStep = service.findExecutionStepWhereToResumeExecutionOfSuite(testSuiteId)
+		Execution execution = service.startResume(testSuiteId)
 
 		then :
-		executionStep != null
-		executionStep.action == "lipsum4"
+		execution != null
+		execution.findFirstUnexecutedStep().action == "lipsum4"
 	}
 	@DataSet("TestSuiteExecutionProcessingServiceImplIT.should find exec step through old exec.xml")
-	def "should try to resume and find execution step through old execution"(){
+	def "should try to resume and find old execution"(){
 		given :
 		long testSuiteId = 1L
 
 		when :
-		ExecutionStep executionStep = service.findExecutionStepWhereToResumeExecutionOfSuite(testSuiteId)
+		Execution execution = service.startResume(testSuiteId)
 
 		then :
-		executionStep != null
-		executionStep.getId() == 5
+		execution != null
+		execution.findFirstUnexecutedStep().getId() == 5
 	}
 	@DataSet("TestSuiteExecutionProcessingServiceImplIT.should not find execution step because there is none.xml")
 	def "should try to relaunch, delete execution and not find execution step because there is none"(){
@@ -105,7 +106,7 @@ class TestSuiteExecutionProcessingServiceImplIT extends DbunitServiceSpecificati
 		long testSuiteId = 1L
 
 		when :
-		ExecutionStep executionStep = service.relaunchExecution (testSuiteId)
+		ExecutionStep executionStep = service.restartExecution (testSuiteId)
 
 		then :
 		allDeleted("Execution", [1L, 2L, 3L])
@@ -118,7 +119,7 @@ class TestSuiteExecutionProcessingServiceImplIT extends DbunitServiceSpecificati
 		long testSuiteId = 1L
 
 		when :
-		ExecutionStep executionStep = service.relaunchExecution (testSuiteId)
+		ExecutionStep executionStep = service.restartExecution (testSuiteId)
 
 		then :
 		allDeleted("Execution", [1L, 2L, 3L])
@@ -131,7 +132,7 @@ class TestSuiteExecutionProcessingServiceImplIT extends DbunitServiceSpecificati
 		long testSuiteId = 1L
 
 		when :
-		ExecutionStep executionStep = service.relaunchExecution (testSuiteId)
+		ExecutionStep executionStep = service.restartExecution (testSuiteId)
 
 		then :
 		allDeleted("Execution", [1L, 2L, 3L])
