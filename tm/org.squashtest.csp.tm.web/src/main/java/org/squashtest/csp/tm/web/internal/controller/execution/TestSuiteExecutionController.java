@@ -67,6 +67,21 @@ public class TestSuiteExecutionController {
 		super();
 	}
 
+	@ServiceReference
+	public void setTestSuiteExecutionProcessingService(TestSuiteExecutionProcessingService testSuiteExecutionProcessingService) {
+		this.testSuiteExecutionProcessingService = testSuiteExecutionProcessingService;
+	}
+
+	/**
+	 * @param executionProcessingService
+	 *            the executionProcessingService to set
+	 */
+	@ServiceReference
+	public void setExecutionProcessingService(ExecutionProcessingService executionProcessingService) {
+		this.executionProcessingService = executionProcessingService;
+	}
+
+	/*------------------------------START RESUME-------------------------------------------------------------*/
 	@RequestMapping(value = "/start-resume/runner", method = RequestMethod.POST, params = "optimized")
 	public String startResumeExecutionInOptimizedRunner(@PathVariable long testSuiteId) {
 		return startResumeExecution(testSuiteId, OPTIMIZED_RUNNER_VIEW_PATTERN);
@@ -84,18 +99,30 @@ public class TestSuiteExecutionController {
 	public String startResumeExecutionInClassicRunner(@PathVariable long testSuiteId) {
 		return startResumeExecution(testSuiteId, CLASSIC_RUNNER_VIEW_PATTERN);
 	}
-
-	@ServiceReference
-	public void setTestSuiteExecutionProcessingService(TestSuiteExecutionProcessingService testSuiteExecutionProcessingService) {
-		this.testSuiteExecutionProcessingService = testSuiteExecutionProcessingService;
+	/*------------------------------ RESTART -------------------------------------------------------------*/
+	@RequestMapping(value = "/restart/runner", method = RequestMethod.POST, params = "optimized")
+	public String restartExecutionInOptimizedRunner(@PathVariable long testSuiteId) {
+		return restartExecution(testSuiteId, OPTIMIZED_RUNNER_VIEW_PATTERN);
 	}
 
+	private String restartExecution(long testSuiteId, String runnerViewPattern) {
+		Execution execution = testSuiteExecutionProcessingService.restart(testSuiteId);
+
+		return "redirect:"
+				+ MessageFormat.format(runnerViewPattern, testSuiteId, execution.getTestPlan().getId(),
+						execution.getId());
+	}
+
+	@RequestMapping(value = "/start-resume/classic-runner", method = RequestMethod.POST)
+	public String restartExecutionInClassicRunner(@PathVariable long testSuiteId) {
+		return restartExecution(testSuiteId, CLASSIC_RUNNER_VIEW_PATTERN);
+	}
+	/*--------------------------------LAUNCH RUNNER-----------------------------------------------------------*/
 	@RequestMapping(value = "/{testPlanItemId}/executions/{executionId}/runner", method = RequestMethod.GET, params = "optimized")
 	public String showOptimizedExecutionRunner(@PathVariable long testSuiteId, @PathVariable long testPlanItemId,
 			@PathVariable long executionId, Model model) {
 		
 		int stepIndex = testSuiteExecutionProcessingService.findIndexOfFirstUnexecuted(executionId);
-		
 		//FIXME add exception handle for step index = -1
 		
 		helper.populateExecutionStepModel(executionId, stepIndex, model);
@@ -125,7 +152,14 @@ public class TestSuiteExecutionController {
 		String currentStepUrl = MessageFormat.format(CURRENT_STEP_URL_PATTERN, (Object[]) ids);
 		model.addAttribute("currentStepUrl", currentStepUrl);
 	}
-
+	
+	@RequestMapping(value = "/{testPlanItemId}/executions/{executionId}/classic-runner", method = RequestMethod.GET)
+	public String showClassicExecutionRunner(@PathVariable long executionId, Model model) {
+		// FIXME not yet worky
+		helper.populateExecutionRunnerModel(executionId, model);
+		return "page/executions/execute-execution";
+	}
+	/*-----------------------------------------------NEXT EXECUTION--------------------------------------------*/
 	@RequestMapping(value = "/{testPlanItemId}/next-execution/runner", method = RequestMethod.POST, params = "optimized")
 	public String startNextExecutionInOptimizedRunner(@PathVariable long testSuiteId, @PathVariable long testPlanItemId) {
 		Execution execution = testSuiteExecutionProcessingService.startNextExecution(testSuiteId, testPlanItemId);
@@ -135,12 +169,7 @@ public class TestSuiteExecutionController {
 						execution.getId());
 	}
 
-	@RequestMapping(value = "/{testPlanItemId}/executions/{executionId}/classic-runner", method = RequestMethod.GET)
-	public String showClassicExecutionRunner(@PathVariable long executionId, Model model) {
-		// FIXME not yet worky
-		helper.populateExecutionRunnerModel(executionId, model);
-		return "page/executions/execute-execution";
-	}
+	
 
 	/* copypasta from now on. rework asap */
 
@@ -220,14 +249,5 @@ public class TestSuiteExecutionController {
 	}
 
 	/* end copypasta */
-
-	/**
-	 * @param executionProcessingService
-	 *            the executionProcessingService to set
-	 */
-	@ServiceReference
-	public void setExecutionProcessingService(ExecutionProcessingService executionProcessingService) {
-		this.executionProcessingService = executionProcessingService;
-	}
 
 }

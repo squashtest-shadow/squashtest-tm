@@ -111,9 +111,9 @@ public class TestSuiteExecutionProcessingServiceImpl implements TestSuiteExecuti
 
 	@Override
 	@PreAuthorize("hasPermission(#testSuiteId, 'org.squashtest.csp.tm.domain.campaign.TestSuite','WRITE') or hasRole('ROLE_ADMIN')")
-	public ExecutionStep restartExecution(long testSuiteId) {
+	public Execution restart(long testSuiteId) {
 		// getTest plan
-		ExecutionStep firstStep = null;
+		Execution execution = null;
 		TestSuite testSuite = suiteDao.findById(testSuiteId);
 		List<IterationTestPlanItem> suiteTestPlan = testSuite.getTestPlan();
 		// get test plan
@@ -121,23 +121,23 @@ public class TestSuiteExecutionProcessingServiceImpl implements TestSuiteExecuti
 			// delete all executions
 			deleteAllExecutionsOfTestPlan(suiteTestPlan);
 			// create new execution for first test_plan_item
-			firstStep = createExecutionsUntillHasSteps(suiteTestPlan);
+			execution = createExecutionsUntillHasSteps(suiteTestPlan);
 		}
-		return firstStep;
+		return execution;
 	}
 
-	private ExecutionStep createExecutionsUntillHasSteps(List<IterationTestPlanItem> suiteTestPlan) {
-		ExecutionStep step = null;
+	private Execution createExecutionsUntillHasSteps(List<IterationTestPlanItem> suiteTestPlan) {
+		Execution executionToReturn = null;
 		for (IterationTestPlanItem iterationTestPlanItem : suiteTestPlan) {
 			if (!iterationTestPlanItem.isTestCaseDeleted()) {
 				Execution execution = testPlanManager.addExecution(iterationTestPlanItem);
 				if (!execution.getSteps().isEmpty()) {
-					step = execution.getSteps().get(0);
+					executionToReturn = execution;
 					break;
 				}
 			}
 		}
-		return step;
+		return executionToReturn;
 	}
 
 	private void deleteAllExecutionsOfTestPlan(List<IterationTestPlanItem> suiteTestPlan) {
