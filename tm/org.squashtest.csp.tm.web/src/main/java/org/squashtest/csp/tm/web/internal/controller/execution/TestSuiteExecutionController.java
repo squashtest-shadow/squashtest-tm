@@ -113,7 +113,7 @@ public class TestSuiteExecutionController {
 						execution.getId());
 	}
 
-	@RequestMapping(value = "/start-resume/classic-runner", method = RequestMethod.POST)
+	@RequestMapping(value = "/restart/classic-runner", method = RequestMethod.POST)
 	public String restartExecutionInClassicRunner(@PathVariable long testSuiteId) {
 		return restartExecution(testSuiteId, CLASSIC_RUNNER_VIEW_PATTERN);
 	}
