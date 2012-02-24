@@ -50,14 +50,20 @@ public interface TestSuiteExecutionProcessingService {
 
 	/**
 	 * <p>
-	 * Should start a new execution for the next executable test plan item of the given test suite. suite's test plan.
+	 * Should start a new execution for the next executable test plan item of the given test suite's test plan. Or
+	 * should return the execution to resume or null if :
+	 * <ul>
+	 * <li>all terminated, or</li>
+	 * <li>no execution-step on executions, or</li>
+	 * <li>no execution and test-case deleted</li>
+	 * </ul>
 	 * </p>
 	 * 
 	 * @param testSuiteId
 	 * @param testPlanItemId
-	 * @return
+	 * @return the execution to resume/restart or null if there is none
 	 */
-	Execution startNextExecution(long testSuiteId, long testPlanItemId);
+	Execution startResumeNextExecution(long testSuiteId, long testPlanItemId);
 
 	/**
 	 * <p>

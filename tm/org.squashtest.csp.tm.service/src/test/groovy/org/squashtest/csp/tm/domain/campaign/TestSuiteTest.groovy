@@ -24,6 +24,7 @@ import org.squashtest.csp.tm.domain.DuplicateNameException
 import org.squashtest.csp.tm.domain.attachment.Attachment
 import org.squashtest.csp.tm.domain.execution.Execution
 import org.squashtest.csp.tm.domain.testcase.TestCase
+import org.squashtest.csp.tm.domain.testcase.TestStep
 import org.squashtest.csp.tm.internal.repository.ItemTestPlanDao
 import org.squashtest.csp.tools.unittest.reflection.ReflectionCategory
 
@@ -329,7 +330,6 @@ class TestSuiteTest extends Specification {
 		use (ReflectionCategory) {
 			IterationTestPlanItem.set field: "id", of: otherItem, to: 20L
 			IterationTestPlanItem.set field: "referencedTestCase", of: otherItem, to: null
-
 		}
 
 		when:
@@ -364,7 +364,6 @@ class TestSuiteTest extends Specification {
 	def "should return next executable item of test plan"() {
 		given:
 		TestSuite testSuite = aSuiteWithExecutableItems(10L, 20L)
-
 		when:
 		def res = testSuite.findNextExecutableTestPlanItem(10L)
 
@@ -372,13 +371,110 @@ class TestSuiteTest extends Specification {
 		res.id == 20L
 	}
 
+	def "should return first executable item of test plan"() {
+		given:
+		TestSuite testSuite = aSuiteWithExecutableItems(10L, 20L)
+		when:
+		def res = testSuite.findFirstExecutableTestPlanItem()
+
+		then:
+		res.id == 10L
+	}
+
+
+	def "should return next executable item of TestSuite's test plan"() {
+		given: "a test suite and an iteration"
+		TestSuite testSuite = new TestSuite()
+		Iteration iteration = new Iteration()
+		testSuite.setIteration(iteration)
+		TestCase testCase = Mock()
+		TestStep testStep = Mock()
+		testCase.getSteps() >> [testStep]
+
+		and:"item linked to test suite and iteration"
+		IterationTestPlanItem item = new IterationTestPlanItem(testCase)
+		use (ReflectionCategory) {
+			IterationTestPlanItem.set field: "id", of: item, to: 10L
+		}
+		iteration.addTestPlan(item)
+		item.setTestSuite(testSuite)
+
+		and:"item2 linked iteration ONLY"
+		IterationTestPlanItem item2 = new IterationTestPlanItem(testCase)
+		use (ReflectionCategory) {
+			IterationTestPlanItem.set field: "id", of: item2, to: 20L
+		}
+		iteration.addTestPlan(item2)
+
+		and:"item3 linked to test suite and iteration"
+		IterationTestPlanItem item3 = new IterationTestPlanItem(testCase)
+		use (ReflectionCategory) {
+			IterationTestPlanItem.set field: "id", of: item3, to: 30L
+		}
+		iteration.addTestPlan(item3)
+		item3.setTestSuite(testSuite)
+
+
+		when:
+		def res = testSuite.findNextExecutableTestPlanItem(10L)
+
+		then:
+		res.id == 30L
+	}
+	def "should return first executable item of TestSuite's test plan"() {
+		given: "a test suite and an iteration"
+		TestSuite testSuite = new TestSuite()
+		Iteration iteration = new Iteration()
+		iteration.addTestSuite(testSuite)
+
+		TestCase testCase = Mock()
+		TestStep testStep = Mock()
+		testCase.getSteps() >> [testStep]
+		TestCase testCase2 = Mock()
+		testCase2.getSteps() >> []
+
+		and:"item linked to test suite and iteration whith last execution = terminated"
+		IterationTestPlanItem item = new IterationTestPlanItem(testCase)
+		use (ReflectionCategory) {
+			IterationTestPlanItem.set field: "id", of: item, to: 10L
+		}
+		iteration.addTestPlan(item)
+		Execution execution1 = Mock()
+		execution1.findFirstUnexecutedStep()>> null
+		item.addExecution(execution1)
+
+		and:"item2 linked iteration ONLY"
+		IterationTestPlanItem item2 = new IterationTestPlanItem(testCase)
+		use (ReflectionCategory) {
+			IterationTestPlanItem.set field: "id", of: item2, to: 20L
+		}
+		iteration.addTestPlan(item2)
+
+		and:"item3 linked to test suite and iteration"
+		IterationTestPlanItem item3 = new IterationTestPlanItem(testCase)
+		use (ReflectionCategory) {
+			IterationTestPlanItem.set field: "id", of: item3, to: 30L
+		}
+		iteration.addTestPlan(item3)
+
+		testSuite.bindTestPlanItems([item, item3])
+
+		when:
+		def res = testSuite.findFirstExecutableTestPlanItem()
+
+		then:
+		res.id == 30L
+	}
 	def aSuiteWithExecutableItems(Long... ids) {
 		TestSuite testSuite = new TestSuite()
 		Iteration iteration = new Iteration()
 		testSuite.setIteration(iteration)
 
 		ids.each { id ->
-			IterationTestPlanItem item = new IterationTestPlanItem(Mock(TestCase))
+			TestCase testCase = Mock()
+			TestStep testStep = Mock()
+			testCase.getSteps() >> [testStep]
+			IterationTestPlanItem item = new IterationTestPlanItem(testCase)
 			use (ReflectionCategory) {
 				IterationTestPlanItem.set field: "id", of: item, to: id
 			}

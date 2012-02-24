@@ -105,7 +105,7 @@ public class TestSuite {
 	/**
 	 * When one needs to create a suite in the scope of an iteration, it should use
 	 * {@link Iteration#addTestSuite(TestSuite)}. This method is for internal use only.
-	 *
+	 * 
 	 * @param iteration
 	 */
 	/* package */void setIteration(@NotNull Iteration iteration) {
@@ -123,7 +123,7 @@ public class TestSuite {
 	/**
 	 * Warning : that property builds a new list every time. If you want to change the content of the list, use the
 	 * other dedicated accessors ( {@link #addTestPlan(List))} or the other one)
-	 *
+	 * 
 	 * @return
 	 */
 	public List<IterationTestPlanItem> getTestPlan() {
@@ -147,7 +147,7 @@ public class TestSuite {
 
 	/**
 	 * Compares 2 suites, for internal use.
-	 *
+	 * 
 	 * @param that
 	 * @return
 	 */
@@ -172,7 +172,7 @@ public class TestSuite {
 
 	/**
 	 * Binds the test plan items to this test suite
-	 *
+	 * 
 	 * @param items
 	 */
 	public void bindTestPlanItems(List<IterationTestPlanItem> items) {
@@ -189,7 +189,7 @@ public class TestSuite {
 
 	/**
 	 * Binds the test plan items to this test suite using their id to retrieve them from the iteration.
-	 *
+	 * 
 	 * @param itemIds
 	 */
 	public void bindTestPlanItemsById(List<Long> itemIds) {
@@ -224,7 +224,7 @@ public class TestSuite {
 	 * -test plans items that are not linked to a test case are not copied<br>
 	 * -the copy of a test plan item is done using {@linkplain IterationTestPlanItem#createCopy()}
 	 * </p>
-	 *
+	 * 
 	 * @return an ordered copy of the test-suite test plan
 	 */
 	public List<IterationTestPlanItem> createPastableCopyOfTestPlan() {
@@ -247,7 +247,7 @@ public class TestSuite {
 	 * returns a copy of a test Suite without it's test plan. <br>
 	 * a copy of the test plan can be found at {@linkplain TestSuite#createPastableCopyOfTestPlan()}
 	 * </p>
-	 *
+	 * 
 	 * @return returns a copy of a test Suite
 	 */
 	public TestSuite createPastableCopy() {
@@ -272,7 +272,7 @@ public class TestSuite {
 		for (int i = testPlan.size() - 1; i >= 0; i--) {
 			IterationTestPlanItem item = testPlan.get(i);
 
-			if (boundToThisSuite(item) && item.isExecutable()) {
+			if (boundToThisSuite(item) && item.isExecutableThroughIteration()) {
 				return itemId == item.getId();
 			}
 		}
@@ -281,13 +281,19 @@ public class TestSuite {
 	}
 
 	/**
+	 * finds next item (that last execution has unexecuted step) or (has no execution and is not test case deleted)
+	 * <em>can return item linked to test-case with no step</em>
+	 * 
+	 * @throws TestPlanItemNotExecutableException
+	 *             if no item is found
+	 * @throws IllegalArgumentException
+	 *             if id does not correspond to an item of the test suite
 	 * @param testPlanItemId
 	 */
 	public IterationTestPlanItem findNextExecutableTestPlanItem(long testPlanItemId) {
 		List<IterationTestPlanItem> remaining = getRemainingPlanById(testPlanItemId);
-
 		for (IterationTestPlanItem item : remaining) {
-			if (item.isExecutable()) {
+			if (item.isExecutableThroughTestSuite()) {
 				return item;
 			}
 		}
@@ -296,8 +302,24 @@ public class TestSuite {
 
 	}
 
+	/**
+	 * @throws TestPlanItemNotExecutableException
+	 * @return
+	 */
+	public IterationTestPlanItem findFirstExecutableTestPlanItem() {
+		List<IterationTestPlanItem> testPlan = this.getTestPlan();
+		if (!testPlan.isEmpty()) {
+			if (testPlan.get(0).isExecutableThroughTestSuite()) {
+				return testPlan.get(0);
+			} else {
+				return findNextExecutableTestPlanItem(testPlan.get(0).getId());
+			}
+		}
+		throw new TestPlanItemNotExecutableException("No executable item in this suite's test plan");
+	}
+
 	private List<IterationTestPlanItem> getRemainingPlanById(long testPlanItemId) {
-		List<IterationTestPlanItem> testPlan = iteration.getTestPlans();
+		List<IterationTestPlanItem> testPlan = this.getTestPlan();
 
 		for (int i = 0; i < testPlan.size(); i++) {
 			if (testPlanItemId == testPlan.get(i).getId()) {
@@ -305,7 +327,8 @@ public class TestSuite {
 			}
 		}
 
-		throw new IllegalArgumentException("Item[" + testPlanItemId + "] does not belong to test plan of TestSuite[" + id + ']');
+		throw new IllegalArgumentException("Item[" + testPlanItemId + "] does not belong to test plan of TestSuite["
+				+ id + ']');
 	}
 
 }

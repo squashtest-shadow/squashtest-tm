@@ -48,9 +48,10 @@ class TestSuiteExecutionProcessingServiceImplTest  extends Specification {
 		given:
 		TestSuite suite = Mock()
 		IterationTestPlanItem item = Mock()
-		manager.suiteDao.findLaunchableTestPlan(_)>> [item]
+		item.isTestCaseDeleted()>>false
+		item.isExecutableThroughTestSuite()>>true
+		suite.findFirstExecutableTestPlanItem()>>item
 		item.getExecutions()>> []
-
 		and:
 		testSuiteDao.findById(10) >> suite
 
@@ -92,26 +93,21 @@ class TestSuiteExecutionProcessingServiceImplTest  extends Specification {
 	def "should start next execution of test suite"() {
 		given:
 		TestSuite suite = Mock()
-
-		IterationTestPlanItem currentItem = Mock()
-		currentItem.id >> 100
 		IterationTestPlanItem nextItem = Mock()
-		nextItem.id >> 200
-		suite.testPlan >> [currentItem, nextItem]
-
-		TestCase referenced = Mock()
-		currentItem.referencedTestCase >> referenced
-		nextItem.referencedTestCase >> referenced
+		suite.findNextExecutableTestPlanItem(100)>>nextItem
+		nextItem.isExecutableThroughTestSuite()>>true
 
 		and:
 		testSuiteDao.findById(10) >> suite
 
 		and:
 		Execution exec = Mock()
+		ExecutionStep executionStep = Mock()
+		exec.getSteps()>>[executionStep]
 		testPlanManager.addExecution(_) >> exec
 
 		when:
-		def res = manager.startNextExecution(10, 100)
+		def res = manager.startResumeNextExecution(10, 100)
 
 		then:
 		res == exec

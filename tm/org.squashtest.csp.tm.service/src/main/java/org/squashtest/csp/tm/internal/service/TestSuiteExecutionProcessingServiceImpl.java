@@ -32,6 +32,7 @@ import org.squashtest.csp.tm.domain.campaign.TestSuite;
 import org.squashtest.csp.tm.domain.execution.Execution;
 import org.squashtest.csp.tm.domain.execution.ExecutionStep;
 import org.squashtest.csp.tm.internal.repository.ExecutionDao;
+import org.squashtest.csp.tm.internal.repository.ItemTestPlanDao;
 import org.squashtest.csp.tm.internal.repository.TestSuiteDao;
 import org.squashtest.csp.tm.internal.service.campaign.IterationTestPlanManager;
 import org.squashtest.csp.tm.service.TestSuiteExecutionProcessingService;
@@ -48,17 +49,26 @@ public class TestSuiteExecutionProcessingServiceImpl implements TestSuiteExecuti
 	@Inject
 	private IterationTestPlanManager testPlanManager;
 
+	/**
+	 * @see org.squashtest.csp.tm.service.TestSuiteExecutionProcessingService#startResume(long, long)
+	 */
 	@Override
 	@PreAuthorize("hasPermission(#testSuiteId, 'org.squashtest.csp.tm.domain.campaign.TestSuite', 'WRITE') "
 			+ "or hasRole('ROLE_ADMIN')")
 	public Execution startResume(long testSuiteId) {
-		List<IterationTestPlanItem> testSuiteResumableTestPlan = suiteDao.findLaunchableTestPlan(testSuiteId);
-		if (!testSuiteResumableTestPlan.isEmpty()) {
-			return findExecutionWhereToResume(testSuiteResumableTestPlan);
+		Execution execution = null;
+		TestSuite suite = suiteDao.findById(testSuiteId);
+		IterationTestPlanItem item = suite.findFirstExecutableTestPlanItem();
+		execution = findUnexecutedOrCreateExecution(item);
+		if (execution == null || execution.getSteps().isEmpty()) {
+			startResumeNextExecution(testSuiteId, item.getId());
 		}
-		return null;
+		return execution;
 	}
 
+	/**
+	 * @see org.squashtest.csp.tm.service.TestSuiteExecutionProcessingService#findIndexOfFirstUnexecuted(long, long)
+	 */
 	@Override
 	@PreAuthorize("hasPermission(#executionId, 'org.squashtest.csp.tm.domain.execution.Execution', 'READ') "
 			+ "or hasRole('ROLE_ADMIN')")
@@ -67,48 +77,30 @@ public class TestSuiteExecutionProcessingServiceImpl implements TestSuiteExecuti
 		return execution.findIndexOfFirstUnexecutedStep();
 	}
 
-	private Execution findExecutionWhereToResume(List<IterationTestPlanItem> testSuiteResumableTestPlan) {
-		Execution execution = null;
-		for (IterationTestPlanItem testPlanItem : testSuiteResumableTestPlan) {
-			List<Execution> executions = testPlanItem.getExecutions();
-			execution = findFirstUnexecutedOrCreateExecution(executions, testPlanItem);
-			if (execution != null) {
-				break;
-			}
-		}
-		return execution;
-	}
-
 	/**
-	 * will go through testPlan and find one with no execution or unterminated one, else will return null
+	 * if has executions: will return last execution if not terminated,<br>
+	 * if has no execution and is not test-case deleted : will return new execution<br>
+	 * else will return null
 	 * 
 	 * @param executions
 	 * @param testPlanItem
 	 * @return
+	 * 
 	 */
-	private Execution findFirstUnexecutedOrCreateExecution(List<Execution> executions,
-			IterationTestPlanItem testPlanItem) {
+	private Execution findUnexecutedOrCreateExecution(IterationTestPlanItem testPlanItem) {
 		Execution executionToReturn = null;
-		if (!executions.isEmpty()) {
-			if (lastExecutionIsNotTerminated(executions)) {
-				executionToReturn = executions.get(executions.size() - 1);
-			}
-		} else {
-			if (!testPlanItem.isTestCaseDeleted()) {
-				Execution execution = testPlanManager.addExecution(testPlanItem);
-				if (!execution.getSteps().isEmpty()) {
-					executionToReturn = execution;
-				}
+		if (testPlanItem.isExecutableThroughTestSuite()) {
+			executionToReturn = testPlanItem.getLastExecution();
+			if (executionToReturn == null) {
+				executionToReturn = testPlanManager.addExecution(testPlanItem);
 			}
 		}
 		return executionToReturn;
 	}
 
-	private boolean lastExecutionIsNotTerminated(List<Execution> executions) {
-		Execution lastExecution = executions.get(executions.size() - 1);
-		return lastExecution.findFirstUnexecutedStep() != null;
-	}
-
+	/**
+	 * @see org.squashtest.csp.tm.service.TestSuiteExecutionProcessingService#restart(long, long)
+	 */
 	@Override
 	@PreAuthorize("hasPermission(#testSuiteId, 'org.squashtest.csp.tm.domain.campaign.TestSuite','WRITE') or hasRole('ROLE_ADMIN')")
 	public Execution restart(long testSuiteId) {
@@ -116,28 +108,13 @@ public class TestSuiteExecutionProcessingServiceImpl implements TestSuiteExecuti
 		Execution execution = null;
 		TestSuite testSuite = suiteDao.findById(testSuiteId);
 		List<IterationTestPlanItem> suiteTestPlan = testSuite.getTestPlan();
-		// get test plan
 		if (!suiteTestPlan.isEmpty()) {
 			// delete all executions
 			deleteAllExecutionsOfTestPlan(suiteTestPlan);
 			// create new execution for first test_plan_item
-			execution = createExecutionsUntillHasSteps(suiteTestPlan);
+			execution = startResume(testSuiteId);
 		}
 		return execution;
-	}
-
-	private Execution createExecutionsUntillHasSteps(List<IterationTestPlanItem> suiteTestPlan) {
-		Execution executionToReturn = null;
-		for (IterationTestPlanItem iterationTestPlanItem : suiteTestPlan) {
-			if (!iterationTestPlanItem.isTestCaseDeleted()) {
-				Execution execution = testPlanManager.addExecution(iterationTestPlanItem);
-				if (!execution.getSteps().isEmpty()) {
-					executionToReturn = execution;
-					break;
-				}
-			}
-		}
-		return executionToReturn;
 	}
 
 	private void deleteAllExecutionsOfTestPlan(List<IterationTestPlanItem> suiteTestPlan) {
@@ -150,7 +127,7 @@ public class TestSuiteExecutionProcessingServiceImpl implements TestSuiteExecuti
 	}
 
 	/**
-	 * @see org.squashtest.csp.tm.service.TestSuiteTestPlanManagerService#hasMoreExecutableItems(long, long)
+	 * @see org.squashtest.csp.tm.service.TestSuiteExecutionProcessingService#hasMoreExecutableItems(long, long)
 	 */
 	@Override
 	public boolean hasMoreExecutableItems(long testSuiteId, long testPlanItemId) {
@@ -159,15 +136,21 @@ public class TestSuiteExecutionProcessingServiceImpl implements TestSuiteExecuti
 	}
 
 	/**
-	 * @see org.squashtest.csp.tm.service.TestSuiteTestPlanManagerService#startNextExecution(long, long)
+	 * @see org.squashtest.csp.tm.service.TestSuiteExecutionProcessingService#startNextExecution(long, long)
 	 */
 	@Override
 	@PreAuthorize("hasPermission(#testSuiteId, 'org.squashtest.csp.tm.domain.campaign.TestSuite', 'WRITE') "
 			+ "or hasRole('ROLE_ADMIN')")
-	public Execution startNextExecution(long testSuiteId, long testPlanItemId) {
+	public Execution startResumeNextExecution(long testSuiteId, long testPlanItemId) {
+		Execution execution = null;
 		TestSuite testSuite = suiteDao.findById(testSuiteId);
-		IterationTestPlanItem next = testSuite.findNextExecutableTestPlanItem(testPlanItemId);
-		return testPlanManager.addExecution(next);
+		IterationTestPlanItem item = testSuite.findNextExecutableTestPlanItem(testPlanItemId);
+		execution = findUnexecutedOrCreateExecution(item);
+		while (execution == null || execution.getSteps().isEmpty()) {
+			item = testSuite.findNextExecutableTestPlanItem(testPlanItemId);
+			execution = findUnexecutedOrCreateExecution(item);
+		}
+		return execution;
 	}
 
 }

@@ -29,6 +29,7 @@ import org.hibernate.Query
 import org.hibernate.type.LongType
 import org.spockframework.util.NotThreadSafe
 import org.springframework.transaction.annotation.Transactional
+import org.squashtest.csp.tm.domain.TestPlanItemNotExecutableException;
 import org.squashtest.csp.tm.domain.execution.Execution
 import org.squashtest.csp.tm.domain.execution.ExecutionStep
 import org.squashtest.csp.tm.service.TestSuiteExecutionProcessingService
@@ -52,7 +53,7 @@ class TestSuiteExecutionProcessingServiceImplIT extends DbunitServiceSpecificati
 		Execution execution = service.startResume(testSuiteId)
 
 		then :
-		execution == null
+		thrown TestPlanItemNotExecutableException
 	}
 	@DataSet("TestSuiteExecutionProcessingServiceImplIT.should not find exec step because all execs terminated.xml")
 	def "should try to resume and not find execution because all terminated"(){
@@ -63,7 +64,7 @@ class TestSuiteExecutionProcessingServiceImplIT extends DbunitServiceSpecificati
 		Execution execution = service.startResume(testSuiteId)
 		
 		then :
-		execution == null
+		thrown TestPlanItemNotExecutableException
 	}
 	@DataSet("TestSuiteExecutionProcessingServiceImplIT.should not find exec step because all execs have no step.xml")
 	def "should try to resume and not find execution because all have no step"(){
@@ -74,7 +75,7 @@ class TestSuiteExecutionProcessingServiceImplIT extends DbunitServiceSpecificati
 		Execution execution = service.startResume(testSuiteId)
 
 		then :
-		execution == null
+		thrown TestPlanItemNotExecutableException
 	}
 	@DataSet("TestSuiteExecutionProcessingServiceImplIT.should find exec step through new exec.xml")
 	def "should try to resume and create new execution"(){
@@ -111,7 +112,7 @@ class TestSuiteExecutionProcessingServiceImplIT extends DbunitServiceSpecificati
 		then :
 		allDeleted("Execution", [1L, 2L, 3L])
 		allDeleted("ExecutionStep", [ 1l, 2l, 3l, 4l, 5l, 6l, 7L, 8L, 9L])
-		execution == null
+		thrown TestPlanItemNotExecutableException
 	}
 	@DataSet("TestSuiteExecutionProcessingServiceImplIT.should not find exec step because test cases deleted.xml")
 	def "should try to relaunch, delete execution and not find execution step because all test plan are test case deleted"(){
@@ -124,7 +125,8 @@ class TestSuiteExecutionProcessingServiceImplIT extends DbunitServiceSpecificati
 		then :
 		allDeleted("Execution", [1L, 2L, 3L])
 		allDeleted("ExecutionStep", [ 1L, 2L, 3L, 4L, 5L, 6L, 7L, 8L, 9L ])
-		execution == null
+		thrown TestPlanItemNotExecutableException
+		
 	}
 	@DataSet("TestSuiteExecutionProcessingServiceImplIT.should delete exec and find exec step.xml")
 	def "should try to relaunch, delete execution and find execution step"(){

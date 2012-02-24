@@ -212,7 +212,7 @@ public class IterationTestPlanItem {
 	}
 
 	private void checkExecutable() throws TestPlanItemNotExecutableException {
-		if (!isExecutable()) {
+		if (!isExecutableThroughIteration()) {
 			throw new TestPlanItemNotExecutableException("Test case referenced by this item was deleted");
 		}
 
@@ -267,12 +267,32 @@ public class IterationTestPlanItem {
 		this.user = user;
 	}
 
-	public boolean isExecutable() {
+	public boolean isExecutableThroughIteration() {
 		return !isTestCaseDeleted();
 	}
 
 	/**
-	 * One should use {@link #isExecutable()} in favor of this method.
+	 * @return true if (the item last execution with unexecuted step) or (item has no execution and is linked to a
+	 *         testCase).
+	 */
+	public boolean isExecutableThroughTestSuite() {
+		boolean isExecutableThroughTestSuite = false;
+		// case 1 : has executions and the last one has at least one step unexecuted
+		if (!executions.isEmpty()) {
+			if (executions.get(executions.size() - 1).findFirstUnexecutedStep() != null) {
+				isExecutableThroughTestSuite = true;
+			}
+			// case 2 : has NO execution but is linked to a testCase
+		} else {
+			if (!this.isTestCaseDeleted()) {
+				isExecutableThroughTestSuite = true;
+			}
+		}
+		return isExecutableThroughTestSuite;
+	}
+
+	/**
+	 * One should use {@link #isExecutableThroughIteration()} in favor of this method.
 	 * 
 	 * @return
 	 */
@@ -292,9 +312,20 @@ public class IterationTestPlanItem {
 		this.testSuite = suite;
 	}
 
-	/* package */void setIteration(Iteration iteration) {
+	/* package - */void setIteration(Iteration iteration) {
 		this.iteration = iteration;
 
+	}
+
+	/**
+	 * 
+	 * @return the last {@linkplain Execution} or null if there is none
+	 */
+	public Execution getLastExecution() {
+		if (!executions.isEmpty()) {
+			return executions.get(executions.size() - 1);
+		}
+		return null;
 	}
 
 }
