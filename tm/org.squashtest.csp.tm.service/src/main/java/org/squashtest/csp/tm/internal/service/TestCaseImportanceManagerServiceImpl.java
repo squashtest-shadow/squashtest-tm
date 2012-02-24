@@ -307,11 +307,8 @@ public class TestCaseImportanceManagerServiceImpl implements TestCaseImportanceM
 	@Override
 	public void prepareRequirementDeletion(List<Long> requirementIds) {
 		this.requirementDeletionConcernedTestCases = new HashMap<TestCase, List<RequirementCriticality>>();
-		for (Long requirementId : requirementIds) {
-			Requirement requirement = requirementDao.findById(requirementId);
-			List<RequirementVersion> requirementVersions = requirementDao.findVersions(requirement.getId());
-			storeReqVersionConcernedTestCases(requirementVersions);
-		}
+		List<RequirementVersion> versions = requirementDao.findVersionsForAll(requirementIds);
+		storeReqVersionConcernedTestCases(versions);
 
 	}
 

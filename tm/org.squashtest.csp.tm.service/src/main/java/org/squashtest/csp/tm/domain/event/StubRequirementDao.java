@@ -121,5 +121,11 @@ public class StubRequirementDao extends StubEntityDao<Requirement> implements Re
 		// TODO Auto-generated method stub
 		return null;
 	}
+	
+	@Override
+	public List<RequirementVersion> findVersionsForAll(List<Long> requirementIds) {
+		// TODO Auto-generated method stub
+		return null;
+	}
 
 }

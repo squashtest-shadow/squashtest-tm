@@ -21,6 +21,7 @@
 package org.squashtest.csp.tm.internal.repository.hibernate;
 
 import java.util.Collection;
+import java.util.Collections;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Set;
@@ -138,29 +139,41 @@ public abstract class HibernateDeletionDao implements DeletionDao {
 /* **************** convenient shorthands **************************************************** */
 	
 	protected void executeDeleteNamedQuery(String namedQuery, String paramName, Collection<Long> ids){
-		Query query = getSession().getNamedQuery(namedQuery);
-		query.setParameterList(paramName, ids, LongType.INSTANCE);
-		query.executeUpdate();		
+		if (! ids.isEmpty()){
+			Query query = getSession().getNamedQuery(namedQuery);
+			query.setParameterList(paramName, ids, LongType.INSTANCE);
+			query.executeUpdate();		
+		}
 	}
 	
 	
 	protected <R> List<R> executeSelectNamedQuery(String namedQuery, String paramName, Collection<Long> ids){
-		Query query = getSession().getNamedQuery(namedQuery);
-		query.setParameterList(paramName, ids, LongType.INSTANCE);
-		return query.list();		
+		if (! ids.isEmpty()){
+			Query query = getSession().getNamedQuery(namedQuery);
+			query.setParameterList(paramName, ids, LongType.INSTANCE);
+			return query.list();		
+		}else{
+			return Collections.emptyList();
+		}
 	}
 	
 	protected void executeDeleteSQLQuery(String queryString, String paramName, Collection<Long> ids){
-		Query query = getSession().createSQLQuery(queryString);
-		query.setParameterList(paramName, ids, LongType.INSTANCE);
-		query.executeUpdate();		
+		if (! ids.isEmpty()){
+			Query query = getSession().createSQLQuery(queryString);
+			query.setParameterList(paramName, ids, LongType.INSTANCE);
+			query.executeUpdate();		
+		}
 	}
 	
 	
 	protected <R> List<R> executeSelectSQLQuery(String queryString, String paramName, Collection<Long> ids){
-		Query query = getSession().createSQLQuery(queryString);
-		query.setParameterList(paramName, ids, LongType.INSTANCE);
-		return query.list();		
+		if (! ids.isEmpty()){
+			Query query = getSession().createSQLQuery(queryString);
+			query.setParameterList(paramName, ids, LongType.INSTANCE);
+			return query.list();		
+		}else{
+			return Collections.emptyList();
+		}
 	}
 	
 

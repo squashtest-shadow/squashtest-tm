@@ -357,5 +357,18 @@ public class HibernateRequirementDao extends HibernateEntityDao<Requirement> imp
 		return query.list();
 
 	}
+	
+	@Override
+	public List<RequirementVersion> findVersionsForAll(List<Long> requirementIds){
+		if (! requirementIds.isEmpty()){
+			Query query = currentSession().getNamedQuery("requirement.findVersionsForAll");
+			query.setParameterList("requirementIds", requirementIds, LongType.INSTANCE);
+			return query.list();		
+		}else{
+			return Collections.emptyList();
+		}
+		
+	}
+	
 
 }
