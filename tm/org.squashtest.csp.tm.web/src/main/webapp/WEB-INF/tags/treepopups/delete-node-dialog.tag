@@ -55,7 +55,9 @@ $(function(){
 		var jqThis = $(this);
 		
 		initDeleteNodeDialog(jqThis)
-		.then(sendDeletionSimulationRequest)
+		.done(function(){
+			sendDeletionSimulationRequest();
+		})
 		.fail(function(){
 			<f:message var="deletionDeniedLabel" key="dialog.label.delete-node.rejected" />
 			jqThis.dialog("close");

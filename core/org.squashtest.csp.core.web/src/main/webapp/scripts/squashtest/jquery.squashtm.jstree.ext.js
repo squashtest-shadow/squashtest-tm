@@ -290,7 +290,6 @@
 			//tested against the dom attributes of the nodes and returns those that match all the 
 			//attributes of at least one of the objects.
 			findNodes : function(descriptor){
-				var selector="";
 				var matchers;
 				
 				if (descriptor instanceof Array){
@@ -301,8 +300,9 @@
 				
 				var nodes = $();
 				
-				for (var index in matchers){
+				for (var index=0;index<matchers.length;index++){
 					var subList;
+					var selector="";
 					for (var ppt in matchers[index]){
 						selector+="["+ppt+"='"+matchers[index][ppt]+"']";
 					}
@@ -413,8 +413,11 @@
 							// use our owns.
 							destroyJTreeCopies(moveObject, data.inst);
 		
-							// now let's post.
-							var url = $(moveObject.o).treeNode().getBrowserUrl()+"/copy";
+							// now let's post. Again, as annoying as it is, the url depends on th
+							// nature of the nodes.
+							var jqObjects = $(moveObject.o);
+							var url = jqObjects.treeNode().getCopyUrl();
+														
 							var newData = moveObjectToCopyData(data);
 							
 							copyNode(newData, url)
@@ -426,7 +429,7 @@
 							// check if we can move the object
 							if(checkMoveIsAuthorized(data)){
 							
-								var url = $(moveObject.o).treeNode().getBrowserUrl()+"/move";		
+								var url = $(moveObject.o).treeNode().getMoveUrl();	
 								
 								moveNode(data, url)
 								.fail(function(jqXHR){
@@ -718,6 +721,8 @@ function clearContextualContent(targetSelector){
 /*
  * Will check if a dnd move is legal. Note that this check is preemptive,
  * contrarily to checkMoveIsAuthorized which needs to post-check.
+ *
+ * NB : this method is called by the configuration of plugin "crrm" in the initialization object.
  * 
  */
 function treeCheckDnd(m){
@@ -750,20 +755,16 @@ function treeCheckDnd(m){
 		return false;
 	}
 	
-	// in case we are moving an iteration, check the destination is
-	// of type campaign
-	
-	if (jqObject.is(":iteration")){
-		if (jqDest.getResType()!=="campaigns" ){
-			return false;
-		}
-		if (jqDest.isSame(jqSrc)){
-			return false;
-		}
+	//check that the destination type is legal
+	if (! jqDest.acceptsAsContent(jqObject)){
+		return false;
 	}
-	
-	// allow iteration copy
-	if( (jqObject.is(':iteration')) && (!squashtm.keyEventListener.ctrl)){
+		
+	// allow iteration or test suite copy only
+	if( 
+		(jqObject.is(':resource') || (jqObject.is(':view'))) && 
+		! squashtm.keyEventListener.ctrl		
+	){
 		return false;
 	}
 	
@@ -848,17 +849,11 @@ function insertCopiedNodes(jsonResponse, currentNode, tree){
 
 function moveObjectToCopyData(moveObject){
 	
-	var nodeData = moveObject.args[0];
-	var jqNodes = $(nodeData.o);
-	return  packet =  {
-		inst : moveObject.inst,
-		sendData : {
-			"object-ids" : jqNodes.collect(function(e){return $(e).attr('resid');}),
-			"destination-id" : nodeData.np.attr('resid'),
-			"destination-type" : isRoot(nodeData.np) ? "library" : "folder"
-		},
-		newParent : nodeData.np
-	}
+	var nodes = $(moveObject.args[0].o).treeNode();
+	var target = $(moveObject.args[0].np).treeNode();
+	
+	return squashtm.treemenu.treeNodeCopier.preparePasteData(nodes, target);
+
 }
 
 /*

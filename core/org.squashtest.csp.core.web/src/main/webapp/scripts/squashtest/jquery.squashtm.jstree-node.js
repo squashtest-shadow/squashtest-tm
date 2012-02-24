@@ -215,6 +215,14 @@
 			return true;
 		}
 		
+		this.acceptsAsContent = function(nodes){
+			return (
+				( this.is(':library') && nodes.areNodes() )	||
+				( this.is(':folder') && nodes.areNodes() )	||
+				( this.is(':file') && nodes.areResources() ) ||
+				( this.is(':resource') && nodes.areViews() )
+			);				
+		}
 		
 		// ************* methods for multiple matched elements ************
 
@@ -229,7 +237,7 @@
 				}else{
 					var data={};
 					var localNode = $(elt).treeNode();
-					for (var i in strOrArray){
+					for (var i=0; i<strOrArray.length;i++){
 						var func = strOrArray[i];
 						var res = localNode[func]();
 						data[func.toLowerCase().replace('get', '')] = res;
@@ -308,7 +316,7 @@
 		this.areNodes = function(){
 			var types = this.all('getDomType');
 			
-			for (var i in types){
+			for (var i=0;i<types.length;i++){
 				if ( ! (types[i]=="file" || types[i]=="folder") ) return false;
 			}
 		
@@ -338,9 +346,32 @@
 		};
 		
 		this.getContentUrl = buildGetContent(this);
+		
+		this.getCopyUrl = function(){
+			switch(this.getDomType()){
+				case "folder" : 
+				case "file" : return this.getBrowserUrl()+"/copy";
+				case "resource" : return this.getBrowserUrl()+"/copy-iterations";
+				case "view" : return this.getBrowserUrl()+"/copy-test-suites";
+			}
+		};
+		
+		this.getMoveUrl = function(){
+			switch(this.getDomType()){
+				case "folder" : 
+				case "file" : return this.getBrowserUrl()+"/move";
+			}			
+			return undefined;
+		};
 
 		return this;
 	}
 	
+	
+	
 
 })(jQuery);
+
+
+
+

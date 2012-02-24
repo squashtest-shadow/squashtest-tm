@@ -51,6 +51,9 @@ var squashtm ;
 		iteration : function(a){
 			return $(a).is("[rel='resource']");
 		},
+		view : function(a){
+			return $(a).is("[rel='view']");
+		},
 		editable : function(a){
 			return $(a).attr('editable') === 'true';
 		}

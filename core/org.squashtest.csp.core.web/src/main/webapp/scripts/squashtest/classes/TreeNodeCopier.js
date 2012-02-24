@@ -19,7 +19,6 @@
  *     along with this software.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-
 function TreeNodeCopier(initObj){
 	
 	// properties
@@ -70,48 +69,7 @@ function TreeNodeCopier(initObj){
 			case "buffer-empty" : displayError("no nodes copied  - (todo : localization)"); break;		
 		}
 	}
-	
-	var preparePasteData = $.proxy(function(nodes, target){
-	
-		var destinationType;
-		var url;
-		
-		// todo : makes something better if we can refractor the whole service in depth one day.
-		switch(target.getDomType()){
-			case "drive" : 		destinationType = "library"; 
-								url = initObj.url;
-								break;
-								
-			case "folder" : 	destinationType = "folder"; 
-								url = initObj.url;
-								break;
-								
-			case "file" : 		destinationType = "campaign"; 
-								url = initObj.url+"-iterations";
-								break;
-								
-			case "resource" : 	destinationType = "iteration"; 
-								url = initObj.url+"-test-suites"; 
-								break;
-			default : "azeporiapzeorj"; //should not happen if this.mayPaste() did its job.
-		}
-		
-		//here we mimick the move_object used by tree.moveNode, defined in
-		//jquery.squashtm.jstree.ext.js.
-		var pasteData = {
-			inst : this.tree,
-			sendData : {
-				"object-ids" : nodes.all('getResId'),
-				"destination-id" : target.attr('resid'),
-				"destination-type" : destinationType
-			},
-			newParent : target,
-			url : url
-		}
-	
-		return pasteData;
-	
-	}, this);
+
 	
 	
 	// ****************** public methods **********************
@@ -171,12 +129,7 @@ function TreeNodeCopier(initObj){
 		
 		var sameLib = (target.getLibrary().getDomId() == data.library);
 		
-		var validTarget = (
-			( target.match( { rel : 'drive' } ) && nodes.areNodes() )	||
-			( target.match( { rel : 'folder'} ) && nodes.areNodes() )	||
-			( target.match( { rel : 'file'} ) && nodes.areResources() ) ||
-			( target.match( { rel : 'resource'}) && nodes.areViews() )
-		);		
+		var validTarget = target.acceptsAsContent(nodes);
 		
 		if (! sameLib) return 'wrong-library';
 		
@@ -186,6 +139,49 @@ function TreeNodeCopier(initObj){
 	};
 	
 	
+	this.preparePasteData = function(nodes, target){
+	
+		var destinationType;
+		var url;
+		
+		// todo : makes something better if we can refractor the whole service in depth one day.
+		switch(target.getDomType()){
+			case "drive" : 		destinationType = "library"; 
+								break;
+								
+			case "folder" : 	destinationType = "folder"; 
+								break;
+								
+			case "file" : 		destinationType = "campaign"; 
+								break;
+								
+			case "resource" : 	destinationType = "iteration"; 
+								break;
+			default : "azeporiapzeorj"; //should not happen if this.mayPaste() did its job.
+		}
+		
+		//here we mimick the move_object used by tree.moveNode, defined in
+		//jquery.squashtm.jstree.ext.js.
+		var pasteData = {
+			inst : this.tree,
+			sendData : {
+				"object-ids" : nodes.all('getResId'),
+				"destination-id" : target.attr('resid'),
+				"destination-type" : destinationType
+			},
+			newParent : target,
+			url : nodes.getCopyUrl()
+		}
+		
+				
+		//another special delivery for iterations (also should be refractored)
+		if (target.is(':campaign')){
+			pasteData.sendData["next-iteration-number"] = target.getChildren().length;
+		}
+	
+		return pasteData;
+	
+	};	
 	
 	this.pasteNodesFromCookie = function(){
 		
@@ -202,12 +198,8 @@ function TreeNodeCopier(initObj){
 		
 		target.open();
 		
-		var pasteData = preparePasteData(nodes, target);
-		
-		//another special delivery for iterations (also should be refractored)
-		if (target.is(':campaign')){
-			pasteData.sendData["next-iteration-number"] = target.getChildren().length;
-		}
+		var pasteData = this.preparePasteData(nodes, target);
+
 		
 		//now we can proceed
 		copyNode(pasteData, pasteData.url)

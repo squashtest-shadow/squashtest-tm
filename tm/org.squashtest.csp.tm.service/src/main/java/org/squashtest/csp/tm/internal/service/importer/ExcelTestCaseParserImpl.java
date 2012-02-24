@@ -109,9 +109,7 @@ public class ExcelTestCaseParserImpl implements ExcelTestCaseParser{
 	
 	
 	/* ********************************* private things **************************** */
-	
-	
-	
+
 	private void parseRow(Row row, PseudoTestCase pseudoTestCase){
 	
 		if (validateRow(row)){
