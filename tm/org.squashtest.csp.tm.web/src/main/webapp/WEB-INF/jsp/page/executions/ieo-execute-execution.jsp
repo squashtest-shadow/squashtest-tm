@@ -119,6 +119,14 @@
 		});
 	});
 	
+	function refreshParent(){
+		window.opener.location.href = window.opener.location.href;
+		if (window.opener.progressWindow)
+		{
+			window.opener.progressWindow.close();
+		}
+	}
+	
 	function statusComboSetIcon(combo){
 		var cbox = $(this);
 		//reset the classes
@@ -191,6 +199,7 @@
 			parent.frameleft.document.location.href=urlNext;
 			refreshToolboxNext();
 		}
+		refreshParent();
 	}
 	
 	function navigateOther(value){
@@ -198,6 +207,7 @@
 		var theMenuUrl =  urlRefreshStep + ""+ value +"/menu?ieo=true";
 		parent.frameleft.document.location.href=theUrl;
 		refreshToolbox(theMenuUrl, value);
+		refreshParent();
 	}
 
 	function navigatePrevious(){
@@ -205,10 +215,12 @@
 			parent.frameleft.document.location.href=urlPrevious;
 			refreshToolboxPrevious();
 		}
+		refreshParent();
 	}
 
 	function testComplete(){
 		alert( executionCompleteMessage );
+		refreshParent();
 		window.close();
 	}
 	
