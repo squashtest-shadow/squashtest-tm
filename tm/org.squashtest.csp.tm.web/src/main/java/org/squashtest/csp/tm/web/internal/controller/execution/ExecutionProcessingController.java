@@ -42,6 +42,8 @@ import org.squashtest.csp.tm.web.internal.model.jquery.JsonSimpleData;
 @Controller
 @RequestMapping("/execute/{executionId}")
 public class ExecutionProcessingController {
+	private static final String OPTIMIZED_RUNNER_PAGE_VIEW = "page/executions/ieo-execute-execution";
+	private static final String STEP_PAGE_VIEW = "page/executions/execute-execution";
 
 	private static final Logger LOGGER = LoggerFactory.getLogger(ExecutionProcessingController.class);
 
@@ -60,7 +62,7 @@ public class ExecutionProcessingController {
 		helper.populateExecutionRunnerModel(executionId, model);
 		addCurrentStepUrl(executionId, model);
 		
-		return "page/executions/execute-execution";
+		return STEP_PAGE_VIEW;
 	}
 
 	private void addCurrentStepUrl(long executionId, Model model) {
@@ -72,7 +74,7 @@ public class ExecutionProcessingController {
 		helper.populateExecutionRunnerModel(executionId, model);
 		addCurrentStepUrl(executionId, model);
 
-		return "page/executions/ieo-execute-execution";
+		return OPTIMIZED_RUNNER_PAGE_VIEW;
 	}
 
 	@RequestMapping(value = "/step/{stepIndex}", method = RequestMethod.GET)
@@ -81,7 +83,7 @@ public class ExecutionProcessingController {
 		helper.populateExecutionStepModel(executionId, stepIndex, model);
 		addCurrentStepUrl(executionId, model);
 
-		return "page/executions/execute-execution";
+		return STEP_PAGE_VIEW;
 
 	}
 

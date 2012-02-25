@@ -50,17 +50,23 @@ import org.squashtest.csp.tm.web.internal.model.jquery.JsonSimpleData;
 @Controller
 @RequestMapping("/test-suites/{testSuiteId}/test-plan")
 public class TestSuiteExecutionController {
-	private static final String SHOW_STEP_INFO_REQUEST_MAPPING = "/{testPlanItemId}/executions/{executionId}/steps/index/{stepIndex}";
-
-	private static final String SHOW_EXECUTION_RUNNER_REQUEST_MAPPING = "/{testPlanItemId}/executions/{executionId}/runner";
-
 	private static final Logger LOGGER = LoggerFactory.getLogger(TestSuiteExecutionController.class);
 
-	private static final String RUNNER_VIEW_PATTERN = "/test-suites/{0}/test-plan/{1}/executions/{2}/runner";
-	private static final String CLASSIC_RUNNER_VIEW_PATTERN = RUNNER_VIEW_PATTERN + "?classic";
-	private static final String OPTIMIZED_RUNNER_VIEW_PATTERN = RUNNER_VIEW_PATTERN + "?optimized";
-	private static final String TEST_PLAN_ITEM_URL_PATTERN = "/test-suites/{0}/test-plan/{1}";
-	private static final String CURRENT_STEP_URL_PATTERN = "/test-suites/{0}/test-plan/{1}/executions/{2}/steps/index/";
+	private static class RequestMappings {
+		public static final String SHOW_STEP_INFO = "/{testPlanItemId}/executions/{executionId}/steps/index/{stepIndex}";
+		public static final String SHOW_EXECUTION_RUNNER = "/{testPlanItemId}/executions/{executionId}/runner";
+		public static final String INIT_EXECUTION_RUNNER = "/execution/runner";
+		public static final String INIT_NEXT_EXECUTION_RUNNER = "/{testPlanItemId}/next-execution/runner";
+	}
+
+	private static class ViewNames {
+		public static final String RUNNER_VIEW_PATTERN = "/test-suites/{0}/test-plan/{1}/executions/{2}/runner";
+		public static final String CLASSIC_RUNNER_VIEW_PATTERN = RUNNER_VIEW_PATTERN + "?classic";
+		public static final String OPTIMIZED_RUNNER_VIEW_PATTERN = RUNNER_VIEW_PATTERN + "?optimized";
+	}
+
+	public static final String TEST_PLAN_ITEM_URL_PATTERN = "/test-suites/{0}/test-plan/{1}";
+	public static final String CURRENT_STEP_URL_PATTERN = "/test-suites/{0}/test-plan/{1}/executions/{2}/steps/index/";
 
 	private TestSuiteExecutionProcessingService testSuiteExecutionProcessingService;
 	private ExecutionProcessingService executionProcessingService;
@@ -72,12 +78,12 @@ public class TestSuiteExecutionController {
 		super();
 	}
 
-	@RequestMapping(value = "/execution/runner", method = RequestMethod.POST, params = {"optimized", "mode=start-resume"})
+	@RequestMapping(value = RequestMappings.INIT_EXECUTION_RUNNER, method = RequestMethod.POST, params = {"optimized", "mode=start-resume"})
 	public String startResumeExecutionInOptimizedRunner(@PathVariable long testSuiteId) {
-		return startResumeExecution(testSuiteId, OPTIMIZED_RUNNER_VIEW_PATTERN);
+		return startResumeExecution(testSuiteId, ViewNames.OPTIMIZED_RUNNER_VIEW_PATTERN);
 	}
 
-	@RequestMapping(value = SHOW_EXECUTION_RUNNER_REQUEST_MAPPING, method = RequestMethod.GET, params = "optimized")
+	@RequestMapping(value = RequestMappings.SHOW_EXECUTION_RUNNER, method = RequestMethod.GET, params = "optimized")
 	public String showOptimizedExecutionRunner(@PathVariable long testSuiteId, @PathVariable long testPlanItemId,
 			@PathVariable long executionId, Model model) {
 		populateExecutionRunnerModel(testSuiteId, testPlanItemId, executionId, model);
@@ -89,12 +95,12 @@ public class TestSuiteExecutionController {
 		return "page/executions/ieo-execute-execution";
 	}
 
-	@RequestMapping(value = "/execution/runner", method = RequestMethod.POST, params = {"classic", "mode=start-resume"})
+	@RequestMapping(value = RequestMappings.INIT_EXECUTION_RUNNER, method = RequestMethod.POST, params = {"classic", "mode=start-resume"})
 	public String startResumeExecutionInClassicRunner(@PathVariable long testSuiteId) {
-		return startResumeExecution(testSuiteId, CLASSIC_RUNNER_VIEW_PATTERN);
+		return startResumeExecution(testSuiteId, ViewNames.CLASSIC_RUNNER_VIEW_PATTERN);
 	}
 
-	@RequestMapping(value = SHOW_EXECUTION_RUNNER_REQUEST_MAPPING, method = RequestMethod.GET, params = "classic")
+	@RequestMapping(value = RequestMappings.SHOW_EXECUTION_RUNNER, method = RequestMethod.GET, params = "classic")
 	public String showClassicExecutionRunner(@PathVariable long testSuiteId, @PathVariable long testPlanItemId,
 			@PathVariable long executionId, Model model) {
 		populateExecutionRunnerModel(testSuiteId, testPlanItemId, executionId, model);
@@ -130,25 +136,25 @@ public class TestSuiteExecutionController {
 	}
 
 	private void addCurrentStepUrl(Model model, Long... ids) {
-		String currentStepUrl = MessageFormat.format(CURRENT_STEP_URL_PATTERN, (Object[]) ids);
+		String currentStepUrl = MessageFormat.format( CURRENT_STEP_URL_PATTERN, (Object[]) ids);
 		model.addAttribute("currentStepUrl", currentStepUrl);
 	}
 
-	@RequestMapping(value = "/{testPlanItemId}/next-execution/runner", method = RequestMethod.POST, params = "optimized")
+	@RequestMapping(value = RequestMappings.INIT_NEXT_EXECUTION_RUNNER, method = RequestMethod.POST, params = "optimized")
 	public String startResumeNextExecutionInOptimizedRunner(@PathVariable long testSuiteId, @PathVariable long testPlanItemId) {
 		Execution execution = testSuiteExecutionProcessingService.startResumeNextExecution(testSuiteId, testPlanItemId);
 
 		return "redirect:"
-				+ MessageFormat.format(OPTIMIZED_RUNNER_VIEW_PATTERN, testSuiteId, execution.getTestPlan().getId(),
+				+ MessageFormat.format(ViewNames.OPTIMIZED_RUNNER_VIEW_PATTERN, testSuiteId, execution.getTestPlan().getId(),
 						execution.getId());
 	}
 
-	@RequestMapping(value = "/{testPlanItemId}/next-execution/runner", method = RequestMethod.POST, params = "classic")
+	@RequestMapping(value = RequestMappings.INIT_NEXT_EXECUTION_RUNNER, method = RequestMethod.POST, params = "classic")
 	public String startResumeNextExecutionInClassicRunner(@PathVariable long testSuiteId, @PathVariable long testPlanItemId) {
 		Execution execution = testSuiteExecutionProcessingService.startResumeNextExecution(testSuiteId, testPlanItemId);
 
 		return "redirect:"
-				+ MessageFormat.format(CLASSIC_RUNNER_VIEW_PATTERN, testSuiteId, execution.getTestPlan().getId(),
+				+ MessageFormat.format(ViewNames.CLASSIC_RUNNER_VIEW_PATTERN, testSuiteId, execution.getTestPlan().getId(),
 						execution.getId());
 	}
 
@@ -166,7 +172,7 @@ public class TestSuiteExecutionController {
 
 	/* copypasta from now on. rework asap */
 
-	@RequestMapping(value = SHOW_STEP_INFO_REQUEST_MAPPING, method = RequestMethod.GET)
+	@RequestMapping(value = RequestMappings.SHOW_STEP_INFO, method = RequestMethod.GET)
 	public String showStepInClassicRunner(@PathVariable long testSuiteId, @PathVariable long testPlanItemId,
 			@PathVariable long executionId, @PathVariable int stepIndex, Model model) {
 		populateExecutionStepModel(testSuiteId, testPlanItemId, executionId, stepIndex, model);
@@ -183,7 +189,7 @@ public class TestSuiteExecutionController {
 		addCurrentStepUrl(model, testSuiteId, testPlanItemId, executionId);
 	}
 
-	@RequestMapping(value = SHOW_STEP_INFO_REQUEST_MAPPING, method = RequestMethod.GET, params = "ieo")
+	@RequestMapping(value = RequestMappings.SHOW_STEP_INFO, method = RequestMethod.GET, params = "ieo")
 	public String showStepInOptimizedRunner(@PathVariable long testSuiteId, @PathVariable long testPlanItemId,
 			@PathVariable long executionId, @PathVariable int stepIndex, Model model) {
 		populateExecutionStepModel(testSuiteId, testPlanItemId, executionId, stepIndex, model);
@@ -253,7 +259,7 @@ public class TestSuiteExecutionController {
 
 	@RequestMapping(value = "/execution/runner", method = RequestMethod.POST, params = {"optimized", "mode=restart"})
 	public String restartExecutionInOptimizedRunner(@PathVariable long testSuiteId) {
-		return restartExecution(testSuiteId, OPTIMIZED_RUNNER_VIEW_PATTERN);
+		return restartExecution(testSuiteId, RequestMappings.INIT_EXECUTION_RUNNER);
 	}
 
 	private String restartExecution(long testSuiteId, String runnerViewPattern) {
@@ -266,6 +272,6 @@ public class TestSuiteExecutionController {
 
 	@RequestMapping(value = "/execution/runner", method = RequestMethod.POST, params = {"classic", "mode=restart"})
 	public String restartExecutionInClassicRunner(@PathVariable long testSuiteId) {
-		return restartExecution(testSuiteId, CLASSIC_RUNNER_VIEW_PATTERN);
+		return restartExecution(testSuiteId, RequestMappings.INIT_EXECUTION_RUNNER);
 	}
 }
