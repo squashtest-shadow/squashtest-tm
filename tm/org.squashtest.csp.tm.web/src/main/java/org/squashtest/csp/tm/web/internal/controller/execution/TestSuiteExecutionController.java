@@ -257,9 +257,9 @@ public class TestSuiteExecutionController {
 		this.executionProcessingService = executionProcessingService;
 	}
 
-	@RequestMapping(value = "/execution/runner", method = RequestMethod.POST, params = {"optimized", "mode=restart"})
+	@RequestMapping(value = RequestMappings.INIT_EXECUTION_RUNNER, method = RequestMethod.POST, params = {"optimized", "mode=restart"})
 	public String restartExecutionInOptimizedRunner(@PathVariable long testSuiteId) {
-		return restartExecution(testSuiteId, RequestMappings.INIT_EXECUTION_RUNNER);
+		return restartExecution(testSuiteId, ViewNames.OPTIMIZED_RUNNER_VIEW_PATTERN);
 	}
 
 	private String restartExecution(long testSuiteId, String runnerViewPattern) {
@@ -270,8 +270,8 @@ public class TestSuiteExecutionController {
 						execution.getId());
 	}
 
-	@RequestMapping(value = "/execution/runner", method = RequestMethod.POST, params = {"classic", "mode=restart"})
+	@RequestMapping(value = RequestMappings.INIT_EXECUTION_RUNNER, method = RequestMethod.POST, params = {"classic", "mode=restart"})
 	public String restartExecutionInClassicRunner(@PathVariable long testSuiteId) {
-		return restartExecution(testSuiteId, RequestMappings.INIT_EXECUTION_RUNNER);
+		return restartExecution(testSuiteId, ViewNames.CLASSIC_RUNNER_VIEW_PATTERN);
 	}
 }
