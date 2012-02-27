@@ -371,4 +371,12 @@ public class HibernateRequirementDao extends HibernateEntityDao<Requirement> imp
 	}
 	
 
+	@SuppressWarnings("unchecked")
+	@Override
+	public List<Requirement> findAllRequirements(List<Long> requirementLibrarieNodesIds) {
+		Query query = currentSession().getNamedQuery("requirement.findAllRequirements");
+		query.setParameterList("requirementsId", requirementLibrarieNodesIds);
+		return query.list();
+	}
+
 }

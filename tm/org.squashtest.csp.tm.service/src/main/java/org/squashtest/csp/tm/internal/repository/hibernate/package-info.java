@@ -78,6 +78,7 @@
 		@NamedQuery(name = "requirement.findAllRootContent", query = "select r.id from RequirementLibraryNode r where r.project.id in (:rIds)"),
 		@NamedQuery(name = "requirement.findVersions", query = "select rv from RequirementVersion rv where rv.requirement.id = :requirementId"),
 		@NamedQuery(name = "requirement.findVersionsForAll", query = "select rv from RequirementVersion rv join rv.requirement r where r.id in (:requirementIds)"),
+		@NamedQuery(name = "requirement.findAllRequirements", query = "from Requirement r where r.id in (:requirementsId)"),
 
 		// Queries on CampaignFolder
 		@NamedQuery(name = "campaignFolder.findAllContentById", query = "select f.content from CampaignFolder f where f.id = :folderId"),
@@ -98,7 +99,7 @@
 		@NamedQuery(name = "TestSuite.findAllTestPlanItemsPaged", query = "select tp from TestSuite ts join ts.iteration it join it.testPlans tp where ts.id = ? and tp.testSuite.id = ts.id order by index(tp)"),
 		@NamedQuery(name = "TestSuite.countTestPlanItems", query = "select count(tp) from TestSuite ts join ts.iteration it join it.testPlans tp where ts.id = ? and tp.testSuite.id = ts.id"),
 		@NamedQuery(name = "testSuite.countStatus", query = "select count(tp) from TestSuite ts join ts.iteration it join it.testPlans tp where ts.id = :id and tp.testSuite.id = :id2 and tp.executionStatus = :status"),
-		@NamedQuery(name = "testSuite.findTestPlanPartition", query = "select plan from TestSuite ts join ts.iteration iter join iter.testPlans plan where plan.id in (:itemIds) and ts.id = :suiteId order by index(plan)" ),
+		@NamedQuery(name = "testSuite.findTestPlanPartition", query = "select plan from TestSuite ts join ts.iteration iter join iter.testPlans plan where plan.id in (:itemIds) and ts.id = :suiteId order by index(plan)"),
 
 		@NamedQuery(name = "testSuite.findAllByIterationId", query = "select ts from TestSuite ts join ts.iteration i where i.id = ?"),
 		@NamedQuery(name = "testSuite.findLaunchableTestPlan", query = "select tp from TestSuite ts join ts.iteration it join it.testPlans tp where ts.id = ? and tp.testSuite.id = ? and ((tp.referencedTestCase is not null) or (tp.executions is not empty)) order by index(tp)"),

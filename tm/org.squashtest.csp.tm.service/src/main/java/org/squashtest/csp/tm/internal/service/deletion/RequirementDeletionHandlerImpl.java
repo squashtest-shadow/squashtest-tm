@@ -24,6 +24,7 @@ import java.util.LinkedList;
 import java.util.List;
 
 import javax.inject.Inject;
+import javax.inject.Provider;
 
 import org.springframework.stereotype.Component;
 import org.squashtest.csp.tm.domain.requirement.RequirementFolder;
@@ -45,15 +46,15 @@ public class RequirementDeletionHandlerImpl extends
 	private RequirementFolderDao folderDao;
 
 	@Inject
+	private Provider<TestCaseImportanceManagerForRequirementDeletion> provider;
+
+	@Inject
 	private RequirementDeletionDao deletionDao;
 
 	@Override
 	protected FolderDao<RequirementFolder, RequirementLibraryNode> getFolderDao() {
 		return folderDao;
 	}
-
-	@Inject
-	private TestCaseImportanceManagerService testCaseImportanceManagerService;
 
 	@Override
 	protected List<SuppressionPreviewReport> diagnoseSuppression(List<Long> nodeIds) {
@@ -85,7 +86,8 @@ public class RequirementDeletionHandlerImpl extends
 	protected void batchDeleteNodes(List<Long> ids) {
 		if (!ids.isEmpty()) {
 
-			testCaseImportanceManagerService.prepareRequirementDeletion(ids);
+			TestCaseImportanceManagerForRequirementDeletion testCaseImportanceManager = provider.get();
+			testCaseImportanceManager.prepareRequirementDeletion(ids);
 
 			List<Long> requirementAttachmentIds = deletionDao.findRequirementAttachmentListIds(ids);
 
@@ -97,7 +99,7 @@ public class RequirementDeletionHandlerImpl extends
 
 			deletionDao.removeAttachmentsLists(requirementAttachmentIds);
 
-			testCaseImportanceManagerService.changeImportanceAfterRequirementDeletion();
+			testCaseImportanceManager.changeImportanceAfterRequirementDeletion();
 
 		}
 	}

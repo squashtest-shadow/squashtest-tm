@@ -118,7 +118,14 @@ public class StubRequirementDao extends StubEntityDao<Requirement> implements Re
 	 */
 	@Override
 	public List<RequirementVersion> findVersions(Long requirementId) {
-		// TODO Auto-generated method stub
+		return null;
+	}
+
+	/**
+	 * @see org.squashtest.csp.tm.internal.repository.RequirementDao#findAllRequirements(List)
+	 */
+	@Override
+	public List<Requirement> findAllRequirements(List<Long> requirementLibrarieNodesIds) {
 		return null;
 	}
 	

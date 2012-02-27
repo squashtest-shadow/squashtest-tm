@@ -1,0 +1,111 @@
+<?xml version='1.0' encoding='UTF-8'?>
+<!--
+
+        This file is part of the Squashtest platform.
+        Copyright (C) 2010 - 2011 Squashtest TM, Squashtest.org
+
+        See the NOTICE file distributed with this work for additional
+        information regarding copyright ownership.
+
+        This is free software: you can redistribute it and/or modify
+        it under the terms of the GNU Lesser General Public License as published by
+        the Free Software Foundation, either version 3 of the License, or
+        (at your option) any later version.
+
+        this software is distributed in the hope that it will be useful,
+        but WITHOUT ANY WARRANTY; without even the implied warranty of
+        MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+        GNU Lesser General Public License for more details.
+
+        You should have received a copy of the GNU Lesser General Public License
+        along with this software.  If not, see <http://www.gnu.org/licenses/>.
+
+-->
+
+
+<!-- 
+	depends on NodeDeletionDao.general.dbsetup.xml
+
+ -->
+
+<dataset>
+
+	<!--  ============================ attachment lists (unattached to anything) ===================== -->
+			
+	<attachment_list attachment_list_id="111" /> <!--  for reqVersion 111 of req 11-->
+	<attachment_list attachment_list_id="112" /> <!--  for reqVersion 112 of req 11 -->
+	<attachment_list attachment_list_id="121" /> <!--  for reqVersion 121 of req 12 -->
+	
+	
+	<!--  ============================ attachment_content ============================================ -->
+
+	<attachment_content attachment_content_id="111"  stream_content="abcde"  /> <!--  for reqVersion 111 of req 11-->
+	<attachment_content attachment_content_id="112" stream_content="abcde" /> <!--  for reqVersion 112 of req 11 -->
+	<attachment_content attachment_content_id="121"  stream_content="abcde"  /> <!--  for reqVersion 121 of req 12 -->
+	
+	
+	<!--  ============================ attachments =================================================== -->
+	
+	<attachment attachment_id="111"  name="reqV 111 attach"  type="txt" size="5" added_on="2011-08-08" content_id="111"  attachment_list_id="111"  />
+	<attachment attachment_id="121"  name="reqV 121 attach"  type="txt" size="5" added_on="2011-08-08" content_id="121"  attachment_list_id="121"  />	
+	<attachment attachment_id="112"  name="reqV 112 attach"  type="txt" size="5" added_on="2011-08-08" content_id="112"  attachment_list_id="112"  />	
+	
+	<test_case_library tcl_id="1"/>
+	<requirement_library rl_id="1" />
+	<campaign_library cl_id="1" />
+	
+	<!-- =============================== one project ================================================ -->
+	
+	<project project_id="1" name="base project" active="true" created_by="IT" created_on="2011-08-08" 
+			 cl_id="1" rl_id="1" tcl_id="1"/>
+	
+	<requirement_library_node rln_id="1" created_by="IT" created_on="2011-08-08" />
+	<requirement_library_node rln_id="11" created_by="IT" created_on="2011-08-08" /> 
+	<requirement_library_node rln_id="12" created_by="IT" created_on="2011-08-08" />  
+	
+
+	<!-- ============================ req folder ================================================= -->
+	
+ 	<resource res_id="1" name="req folder 1" created_on="2012-01-02" created_by="dbu"/>
+ 	<simple_resource res_id="1"/>
+	<requirement_folder rln_id="1" res_id="1"/>
+	
+	<!-- ============================ req======================================================== -->
+	<requirement rln_id="11" />
+	
+	<requirement rln_id="12" />
+	
+	<!-- ============================ req Versions======================================================== -->
+	<resource res_id="111" name="req V 111" created_on="2012-01-02" created_by="dbu"/>
+	<requirement_version res_id="111" requirement_id="11" version_number="1" criticality="MINOR" requirement_status="OBSOLETE" attachment_list_id="111"/>
+	
+	<resource res_id="112" name="req V 112" created_on="2012-01-02" created_by="dbu"/>
+	<requirement_version res_id="112" requirement_id="11" version_number="2" criticality="MINOR" requirement_status="OBSOLETE" attachment_list_id="112"/>
+	
+	<resource res_id="121" name="req V 121" created_on="2012-01-02" created_by="dbu"/>
+	<requirement_version res_id="121" requirement_id="12" criticality="MINOR" requirement_status="OBSOLETE" attachment_list_id="121"/>
+	
+	
+<!-- ============================ 	req_relationship ================================================ -->
+	
+	<rln_relationship ancestor_id="1" descendant_id="11" /> <!--  tcfolder 1 contains r11 -->
+	<rln_relationship ancestor_id="1" descendant_id="12" /> <!--  tcfolder 1 contains r12 -->
+	
+	<!-- ============================ 	req_audit_events ================================================ -->
+	<requirement_audit_event event_id="111" req_version_id="111" event_date="2012-01-02" author="dbu"/>
+	<requirement_creation event_id="111" />
+	
+	<requirement_audit_event event_id="112" req_version_id="112" event_date="2012-01-02" author="dbu"/>
+	<requirement_creation event_id="112" />
+	
+	<requirement_audit_event event_id="121" req_version_id="121" event_date="2012-01-02" author="dbu"/>
+	<requirement_creation event_id="121" />
+	
+	<requirement_audit_event event_id="122" req_version_id="121" event_date="2012-01-03" author="dbu"/>
+	<requirement_property_change event_id="122" />
+	
+	<requirement_audit_event event_id="123" req_version_id="121" event_date="2012-01-04" author="dbu"/>
+	<requirement_large_property_change event_id="123" />
+	
+	
+</dataset>
