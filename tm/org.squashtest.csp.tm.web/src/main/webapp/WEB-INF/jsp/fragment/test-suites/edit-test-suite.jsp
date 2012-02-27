@@ -21,31 +21,32 @@
 
 --%>
 <?xml version="1.0" encoding="utf-8" ?>
-<%@ page language="java" contentType="text/html; charset=utf-8" pageEncoding="utf-8"%>
-<%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core" %>
-<%@ taglib prefix="jq" tagdir="/WEB-INF/tags/jquery" %>
-<%@ taglib prefix="comp" tagdir="/WEB-INF/tags/component" %>
-<%@ taglib prefix="s" uri="http://www.springframework.org/tags" %>
-<%@ taglib prefix="f" uri="http://java.sun.com/jsp/jstl/fmt" %>
-<%@ taglib prefix="pop" tagdir="/WEB-INF/tags/popup" %>
-<%@ taglib prefix="dt" tagdir="/WEB-INF/tags/datatables" %>
-<%@ taglib prefix="aggr" tagdir="/WEB-INF/tags/aggregates" %>
-<%@ taglib prefix="authz" tagdir="/WEB-INF/tags/authz" %>
+<%@ page language="java" contentType="text/html; charset=utf-8"
+	pageEncoding="utf-8"%>
+<%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core"%>
+<%@ taglib prefix="jq" tagdir="/WEB-INF/tags/jquery"%>
+<%@ taglib prefix="comp" tagdir="/WEB-INF/tags/component"%>
+<%@ taglib prefix="s" uri="http://www.springframework.org/tags"%>
+<%@ taglib prefix="f" uri="http://java.sun.com/jsp/jstl/fmt"%>
+<%@ taglib prefix="pop" tagdir="/WEB-INF/tags/popup"%>
+<%@ taglib prefix="dt" tagdir="/WEB-INF/tags/datatables"%>
+<%@ taglib prefix="aggr" tagdir="/WEB-INF/tags/aggregates"%>
+<%@ taglib prefix="authz" tagdir="/WEB-INF/tags/authz"%>
 
 <f:message var="squashlocale" key="squashtm.locale" />
-<f:message var="duplicateSuccesMessage" key="test-suite.duplicate.success.message" />
 
 <comp:rich-jeditable-header />
-<comp:datepicker-manager locale="${squashlocale}"/>
+<comp:datepicker-manager locale="${squashlocale}" />
 
-<jq:execution-status-factory/> 
+<jq:execution-status-factory />
 
 <c:url var="ckeConfigUrl" value="/styles/ckeditor/ckeditor-config.js" />
 
 <s:url var="testSuiteUrl" value="/test-suites/{testSuiteId}">
 	<s:param name="testSuiteId" value="${testSuite.id}" />
 </s:url>
-<s:url var="duplicateTestSuiteUrl" value="/iterations/{iterationId}/duplicateTestSuite/{testSuiteId}">
+<s:url var="duplicateTestSuiteUrl"
+	value="/iterations/{iterationId}/duplicateTestSuite/{testSuiteId}">
 	<s:param name="testSuiteId" value="${testSuite.id}" />
 	<s:param name="iterationId" value="${testSuite.iteration.id}" />
 </s:url>
@@ -54,65 +55,80 @@
 	<s:param name="testSuiteId" value="${testSuite.id}" />
 </s:url>
 
-<s:url var="testSuiteStatisticsUrl" value="/test-suites/{testSuiteId}/stats">
+<s:url var="testSuiteStatisticsUrl"
+	value="/test-suites/{testSuiteId}/stats">
 	<s:param name="testSuiteId" value="${testSuite.id}" />
 </s:url>
 
-<s:url var="testSuiteExecButtonsUrl" value="/test-suites/{testSuiteId}/exec-button">
+<s:url var="testSuiteExecButtonsUrl"
+	value="/test-suites/{testSuiteId}/exec-button">
 	<s:param name="testSuiteId" value="${testSuite.id}" />
 </s:url>
 
-<s:url var="testSuiteTestPlanUrl" value="/test-suites/{testSuiteId}/test-plan/table">
+<s:url var="testSuiteTestPlanUrl"
+	value="/test-suites/{testSuiteId}/test-plan/table">
 	<s:param name="testSuiteId" value="${testSuite.id}" />
 </s:url>
 
-<s:url var="removeTestCaseUrl" value="/test-suites/{testSuiteId}/{iterationId}/test-plan/remove" >
-		<s:param name="testSuiteId" value="${testSuite.id}" />
-		<s:param name="iterationId" value="${testSuite.iteration.id}" />
-</s:url>
-
-<s:url var="updateTestCaseUrl" value="/test-suites/{testSuiteId}/test-case/">
+<s:url var="removeTestCaseUrl"
+	value="/test-suites/{testSuiteId}/{iterationId}/test-plan/remove">
 	<s:param name="testSuiteId" value="${testSuite.id}" />
-</s:url>
-
-<s:url var="assignableUsersUrl" value="/test-suites/{testSuiteId}/{iterationId}/assignable-user" >
-		<s:param name="testSuiteId" value="${testSuite.id}" />
-		<s:param name="iterationId" value="${testSuite.iteration.id}" />
-</s:url>
-
-<s:url var="batchAssignableUsersUrl" value="/test-suites/{testSuiteId}/{iterationId}/batch-assignable-user" >
-		<s:param name="testSuiteId" value="${testSuite.id}" />
-		<s:param name="iterationId" value="${testSuite.iteration.id}" />
-</s:url>
-
-<s:url var="assignTestCasesUrl" value="/test-suites/{testSuiteId}/{iterationId}/batch-assign-user" >
-		<s:param name="testSuiteId" value="${testSuite.id}" />
-		<s:param name="iterationId" value="${testSuite.iteration.id}" />
-</s:url>
-
-<s:url var="testPlanManagerUrl" value="/test-suites/{testSuiteId}/{iterationId}/test-plan-manager">
-		<s:param name="testSuiteId" value="${testSuite.id}" />
-		<s:param name="iterationId" value="${testSuite.iteration.id}" />
-</s:url>
-
-<s:url var="nonBelongingTestCasesUrl" value="/test-suites/{testSuiteId}/{iterationId}/non-belonging-test-cases/remove" >
-		<s:param name="testSuiteId" value="${testSuite.id}" />
-		<s:param name="iterationId" value="${testSuite.iteration.id}" />
-</s:url>
-
-<s:url var="testCaseExecutionsUrl" value="/test-suites/{testSuiteId}/{iterationId}/test-case-executions/" >
-	<s:param name="testSuiteId" value="${testSuite.id}"/>
 	<s:param name="iterationId" value="${testSuite.iteration.id}" />
 </s:url>
 
-<c:url var="testCaseDetailsBaseUrl" value="/test-case-libraries/1/test-cases" />
-<s:url var="simulateDeletionUrl" value="/campaign-browser/delete-iterations/simulate" />
-<s:url var="confirmDeletionUrl" value="/campaign-browser/delete-iterations/confirm" />
+<s:url var="updateTestCaseUrl"
+	value="/test-suites/{testSuiteId}/test-case/">
+	<s:param name="testSuiteId" value="${testSuite.id}" />
+</s:url>
+
+<s:url var="assignableUsersUrl"
+	value="/test-suites/{testSuiteId}/{iterationId}/assignable-user">
+	<s:param name="testSuiteId" value="${testSuite.id}" />
+	<s:param name="iterationId" value="${testSuite.iteration.id}" />
+</s:url>
+
+<s:url var="batchAssignableUsersUrl"
+	value="/test-suites/{testSuiteId}/{iterationId}/batch-assignable-user">
+	<s:param name="testSuiteId" value="${testSuite.id}" />
+	<s:param name="iterationId" value="${testSuite.iteration.id}" />
+</s:url>
+
+<s:url var="assignTestCasesUrl"
+	value="/test-suites/{testSuiteId}/{iterationId}/batch-assign-user">
+	<s:param name="testSuiteId" value="${testSuite.id}" />
+	<s:param name="iterationId" value="${testSuite.iteration.id}" />
+</s:url>
+
+<s:url var="testPlanManagerUrl"
+	value="/test-suites/{testSuiteId}/{iterationId}/test-plan-manager">
+	<s:param name="testSuiteId" value="${testSuite.id}" />
+	<s:param name="iterationId" value="${testSuite.iteration.id}" />
+</s:url>
+
+<s:url var="nonBelongingTestCasesUrl"
+	value="/test-suites/{testSuiteId}/{iterationId}/non-belonging-test-cases/remove">
+	<s:param name="testSuiteId" value="${testSuite.id}" />
+	<s:param name="iterationId" value="${testSuite.iteration.id}" />
+</s:url>
+
+<s:url var="testCaseExecutionsUrl"
+	value="/test-suites/{testSuiteId}/{iterationId}/test-case-executions/">
+	<s:param name="testSuiteId" value="${testSuite.id}" />
+	<s:param name="iterationId" value="${testSuite.iteration.id}" />
+</s:url>
+
+<c:url var="testCaseDetailsBaseUrl"
+	value="/test-case-libraries/1/test-cases" />
+<s:url var="simulateDeletionUrl"
+	value="/campaign-browser/delete-iterations/simulate" />
+<s:url var="confirmDeletionUrl"
+	value="/campaign-browser/delete-iterations/confirm" />
 
 <%-- ----------------------------------- Authorization ----------------------------------------------%>
-<c:set var="editable" value="${ false }" /> 
-<authz:authorized hasRole="ROLE_ADMIN" hasPermission="WRITE" domainObject="${ testSuite }">
-	<c:set var="editable" value="${ true }" /> 
+<c:set var="editable" value="${ false }" />
+<authz:authorized hasRole="ROLE_ADMIN" hasPermission="WRITE"
+	domainObject="${ testSuite }">
+	<c:set var="editable" value="${ true }" />
 </authz:authorized>
 
 <script type="text/javascript">
@@ -144,7 +160,7 @@
 		<c:choose>
 			<%-- if we were in a sub page context. We need to navigate back to the workspace. --%>
 			<c:when test="${param.isInfoPage}" >	
-				alert("${duplicateSuccesMessage}");
+			oneShotDialog('<f:message key="test-suite.duplicate.success.title" />', '<f:message key="test-suite.duplicate.success.message" />');
 			</c:when>
 			<c:otherwise>
 				var destination = new SquashEventObject(${testSuite.iteration.id}, "iterations");
@@ -206,30 +222,28 @@
 	}
 </script>
 
-
-
-<div class="ui-widget-header ui-state-default ui-corner-all fragment-header">
-	<div style="float:left;height:100%;">	
+<div
+	class="ui-widget-header ui-state-default ui-corner-all fragment-header">
+	<div style="float: left; height: 100%;">
 		<h2>
-			<span><f:message key="test-suite.header.title" />&nbsp;:&nbsp;</span><a id="test-suite-name" href="${ testSuiteUrl }/info"><c:out value="${ testSuite.name }" escapeXml="true"/></a>
+			<span><f:message key="test-suite.header.title" />&nbsp;:&nbsp;</span><a
+				id="test-suite-name" href="${ testSuiteUrl }/info"><c:out
+					value="${ testSuite.name }" escapeXml="true" /> </a>
 		</h2>
 	</div>
-	
-	<div style="clear:both;"></div>	
+
+	<div style="clear: both;"></div>
 	<c:if test="${ editable }">
-		<comp:popup id="rename-test-suite-dialog" titleKey="dialog.testsuites.rename.title" 
-		            isContextual="true"   openedBy="rename-test-suite-button">
+		<comp:popup id="rename-test-suite-dialog"
+			titleKey="dialog.testsuites.rename.title" isContextual="true"
+			openedBy="rename-test-suite-button">
 			<jsp:attribute name="buttons">
 			
 				<f:message var="label" key="dialog.testsuites.rename.title" />
 				'${ label }': function() {
 					var url = "${ testSuiteUrl }";
-					<jq:ajaxcall 
-						url="url"
-						dataType="json"
-						httpMethod="POST"
-						useData="true"
-						successHandler="renameTestSuiteSuccess">				
+					<jq:ajaxcall url="url" dataType="json" httpMethod="POST"
+					useData="true" successHandler="renameTestSuiteSuccess">				
 						<jq:params-bindings newName="#rename-test-suite-name" />
 					</jq:ajaxcall>					
 				},			
@@ -243,94 +257,129 @@
 					
 				});
 				</script>			
-				<label><f:message key="dialog.rename.label" /></label>
-				<input type="text" id="rename-test-suite-name" /><br/>
-				<comp:error-message forField="name"/>	
+				<label><f:message key="dialog.rename.label" />
+				</label>
+				<input type="text" id="rename-test-suite-name" />
+				<br />
+				<comp:error-message forField="name" />	
 		
 			</jsp:body>
-		</comp:popup>	
-	</c:if>	
+		</comp:popup>
+	</c:if>
 </div>
 
 <div class="fragment-body">
 
 
-<div id="test-suite-toolbar" class="toolbar-class ui-corner-all " >
-	<div  class="toolbar-information-panel">
-		<div id="general-informations-panel">
-			<comp:general-information-panel auditableEntity="${testSuite}"/>
+	<div id="test-suite-toolbar" class="toolbar-class ui-corner-all ">
+		<div class="toolbar-information-panel">
+			<div id="general-informations-panel">
+				<comp:general-information-panel auditableEntity="${testSuite}" />
+			</div>
 		</div>
+		<div class="toolbar-button-panel">
+			<c:if test="${ editable }">
+				<div id="test-suite-execution-button" style="display: inline-block;">
+					<comp:test-suite-execution-button testSuiteId="${ testSuite.id }"
+						statisticsEntity="${ statistics }" />
+				</div>
+				<input type="button"
+					value="<f:message key='test-suite.button.rename.label' />"
+					id="rename-test-suite-button" class="button"
+					style="display: inline-block;" />
+				<input type="button"
+					value="<f:message key='test-suite.button.remove.label' />"
+					id="delete-test-suite-button" class="button"
+					style="display: inline-block;" />
+				<input type="button"
+					value="<f:message key='test-suite.button.duplicate.label' />"
+					id="duplicate-test-suite-button" class="button"
+					style="display: inline-block;" />
+			</c:if>
+		</div>
+		<div style="clear: both;"></div>
 	</div>
-	<div class="toolbar-button-panel">
-		<c:if test="${ editable }">	
-			<div id="test-suite-execution-button" style="display:inline-block;">
-				<comp:test-suite-execution-button testSuiteId="${ testSuite.id }" statisticsEntity="${ statistics }"/>
-			</div>	
-			<input type="button" value="<f:message key='test-suite.button.rename.label' />" id="rename-test-suite-button" class="button" style="display:inline-block;"/> 
-			<input type="button" value="<f:message key='test-suite.button.remove.label' />" id="delete-test-suite-button" class="button" style="display:inline-block;"/>	
-			<input type="button" value="<f:message key='test-suite.button.duplicate.label' />" id="duplicate-test-suite-button" class="button" style="display:inline-block;"/>
-		</c:if>
-	</div>	
-	<div style="clear:both;"></div>	
-</div>
 
-<c:if test="${ editable }">
-	<comp:rich-jeditable targetUrl="${ testSuiteUrl }" componentId="test-suite-description" submitCallback="refreshTestSuiteInfos"/>
-</c:if>
+	<c:if test="${ editable }">
+		<comp:rich-jeditable targetUrl="${ testSuiteUrl }"
+			componentId="test-suite-description"
+			submitCallback="refreshTestSuiteInfos" />
+	</c:if>
 
-<comp:toggle-panel id="test-suite-description-panel" titleKey="generics.description.title" isContextual="true" open="${ not empty testSuite.description }">
-	<jsp:attribute name="body">
-		<div id="test-suite-description" >${ testSuite.description }</div>
+	<comp:toggle-panel id="test-suite-description-panel"
+		titleKey="generics.description.title" isContextual="true"
+		open="${ not empty testSuite.description }">
+		<jsp:attribute name="body">
+		<div id="test-suite-description">${ testSuite.description }</div>
 	</jsp:attribute>
-</comp:toggle-panel>
+	</comp:toggle-panel>
 
-<%-- ------------------ statistiques --------------------------- --%>
+	<%-- ------------------ statistiques --------------------------- --%>
 
-<comp:toggle-panel id="test-suite-statistics-toggle-panel" titleKey="test-suite.statistics.panel.title" open="true" isContextual="true">
-	<jsp:attribute name="body">
+	<comp:toggle-panel id="test-suite-statistics-toggle-panel"
+		titleKey="test-suite.statistics.panel.title" open="true"
+		isContextual="true">
+		<jsp:attribute name="body">
 		<div id="test-suite-statistics-panel">
-			<comp:test-suite-statistics-panel statisticsEntity="${ statistics }"/>
+			<comp:test-suite-statistics-panel statisticsEntity="${ statistics }" />
 		</div>
 	</jsp:attribute>
-</comp:toggle-panel>
+	</comp:toggle-panel>
 
-<%-- ------------------ test plan ------------------------------ --%>
+	<%-- ------------------ test plan ------------------------------ --%>
 
 
-<comp:toggle-panel id="test-plan-panel" titleKey="campaign.test-plan.panel.title" open="true" isContextual="true">
-	<jsp:attribute name="panelButtons">
+	<comp:toggle-panel id="test-plan-panel"
+		titleKey="campaign.test-plan.panel.title" open="true"
+		isContextual="true">
+		<jsp:attribute name="panelButtons">
 		<c:if test="${ editable }">
-			<f:message var="associateLabel" key="campaign.test-plan.manage.button.label"/>
-			<f:message var="removeLabel" key="campaign.test-plan.remove.button.label"/>
+			<f:message var="associateLabel"
+					key="campaign.test-plan.manage.button.label" />
+			<f:message var="removeLabel"
+					key="campaign.test-plan.remove.button.label" />
 <%-- 			<f:message var="assignLabel" key="campaign.test-plan.assign.button.label"/> --%>
-			<input id="test-case-button" type="button" value="${associateLabel}" class="button"/>
-			<input id="remove-test-suite-test-case-button" type="button" value="${removeLabel}" class="button"/>
+			<input id="test-case-button" type="button" value="${associateLabel}"
+					class="button" />
+			<input id="remove-test-suite-test-case-button" type="button"
+					value="${removeLabel}" class="button" />
 <%-- 			<input id="assign-test-case-button" type="button" value="${assignLabel}" class="button"/> --%>
 		</c:if>
 	</jsp:attribute>
-	
-	<jsp:attribute name="body">
+
+		<jsp:attribute name="body">
 		<%--
 		---- 
 			requires <jq:execution-status-factory/>
 		----  
 		--%>
 	
-		<aggr:decorate-test-suite-test-plan-table tableModelUrl="${testSuiteTestPlanUrl}" testPlanDetailsBaseUrl="${testCaseDetailsBaseUrl}" 
-			removeTestPlansUrl="${removeTestCaseUrl}" batchRemoveButtonId="remove-test-suite-test-case-button" 
-			updateTestPlanUrl="${updateTestCaseUrl}" assignableUsersUrl="${assignableUsersUrl}"
-			nonBelongingTestPlansUrl="${nonBelongingTestCasesUrl}" testPlanExecutionsUrl="${testCaseExecutionsUrl}" editable="${ editable }" 
-			testCaseMultipleRemovalPopupId="delete-test-suite-multiple-test-plan-dialog" testCaseSingleRemovalPopupId="delete-test-suite-single-test-plan-dialog"
-			testSuiteStatisticsId="test-suite-statistics-panel" testSuiteStatisticsUrl="${ testSuiteStatisticsUrl }"
-			testSuiteExecButtonsId="test-suite-execution-button" testSuiteExecButtonsUrl="${ testSuiteExecButtonsUrl }"/>
-		<aggr:test-suite-test-plan-table/>
+		<aggr:decorate-test-suite-test-plan-table
+				tableModelUrl="${testSuiteTestPlanUrl}"
+				testPlanDetailsBaseUrl="${testCaseDetailsBaseUrl}"
+				removeTestPlansUrl="${removeTestCaseUrl}"
+				batchRemoveButtonId="remove-test-suite-test-case-button"
+				updateTestPlanUrl="${updateTestCaseUrl}"
+				assignableUsersUrl="${assignableUsersUrl}"
+				nonBelongingTestPlansUrl="${nonBelongingTestCasesUrl}"
+				testPlanExecutionsUrl="${testCaseExecutionsUrl}"
+				editable="${ editable }"
+				testCaseMultipleRemovalPopupId="delete-test-suite-multiple-test-plan-dialog"
+				testCaseSingleRemovalPopupId="delete-test-suite-single-test-plan-dialog"
+				testSuiteStatisticsId="test-suite-statistics-panel"
+				testSuiteStatisticsUrl="${ testSuiteStatisticsUrl }"
+				testSuiteExecButtonsId="test-suite-execution-button"
+				testSuiteExecButtonsUrl="${ testSuiteExecButtonsUrl }" />
+		<aggr:test-suite-test-plan-table />
 	</jsp:attribute>
-</comp:toggle-panel>
+	</comp:toggle-panel>
 
-<%--------------------------- Deletion confirmation pup for Test plan section ------------------------------------%>
+	<%--------------------------- Deletion confirmation pup for Test plan section ------------------------------------%>
 
-<pop:popup id="delete-test-suite-multiple-test-plan-dialog" openedBy="remove-test-suite-test-case-button" titleKey="dialog.remove-testcase-testsuite-associations.title">
-	<jsp:attribute name="buttons">
+	<pop:popup id="delete-test-suite-multiple-test-plan-dialog"
+		openedBy="remove-test-suite-test-case-button"
+		titleKey="dialog.remove-testcase-testsuite-associations.title">
+		<jsp:attribute name="buttons">
 		<f:message var="labelDelete" key="attachment.button.delete.label" />
 				'${ labelDelete }' : function(){						
 						$("#delete-test-suite-multiple-test-plan-dialog").data("answer","delete");
@@ -345,14 +394,16 @@
 				
 		<pop:cancel-button />
 	</jsp:attribute>
-	<jsp:attribute name="body">
+		<jsp:attribute name="body">
 		<f:message key="dialog.remove-testcase-testsuite-associations.message" />
 	</jsp:attribute>
-</pop:popup>
+	</pop:popup>
 
-<%--- the openedBy attribute here is irrelevant and is just a dummy --%>
-<pop:popup id="delete-test-suite-single-test-plan-dialog" openedBy="test-suite-test-plans-table .delete-test-suite-test-plan-button" titleKey="dialog.remove-testcase-testsuite-association.title">
-	<jsp:attribute name="buttons">
+	<%--- the openedBy attribute here is irrelevant and is just a dummy --%>
+	<pop:popup id="delete-test-suite-single-test-plan-dialog"
+		openedBy="test-suite-test-plans-table .delete-test-suite-test-plan-button"
+		titleKey="dialog.remove-testcase-testsuite-association.title">
+		<jsp:attribute name="buttons">
 		<f:message var="labelDelete" key="attachment.button.delete.label" />
 				'${ labelDelete }' : function(){
 						$("#delete-test-suite-single-test-plan-dialog").data("answer","delete");
@@ -367,31 +418,37 @@
 				
 		<pop:cancel-button />
 	</jsp:attribute>
-	<jsp:attribute name="body">
+		<jsp:attribute name="body">
 		<f:message key="dialog.remove-testcase-testsuite-association.message" />
 	</jsp:attribute>
-</pop:popup>
+	</pop:popup>
 
-<%-- ------------------------- /Deletion confirmation pup for Test plan section --------------------------------- --%>
+	<%-- ------------------------- /Deletion confirmation pup for Test plan section --------------------------------- --%>
 
-<%------------------------------ Attachments bloc ------------------------------------------- --%> 
-<comp:attachment-bloc entity="${testSuite}" workspaceName="campaign" editable="${ editable }" />
- 
-<%-- ---------------------deletion popup------------------------------ --%>
-<c:if test="${ editable }">
+	<%------------------------------ Attachments bloc ------------------------------------------- --%>
+	<comp:attachment-bloc entity="${testSuite}" workspaceName="campaign"
+		editable="${ editable }" />
 
-	<comp:delete-contextual-node-dialog simulationUrl="${simulateDeletionUrl}" confirmationUrl="${confirmDeletionUrl}" 
-	itemId="${testSuite.id}" successCallback="deleteTestSuiteSuccess" openedBy="delete-test-suite-button" titleKey="dialog.delete-iteration.title"/>
+	<%-- ---------------------deletion popup------------------------------ --%>
+	<c:if test="${ editable }">
 
-</c:if>
+		<comp:delete-contextual-node-dialog
+			simulationUrl="${simulateDeletionUrl}"
+			confirmationUrl="${confirmDeletionUrl}" itemId="${testSuite.id}"
+			successCallback="deleteTestSuiteSuccess"
+			openedBy="delete-test-suite-button"
+			titleKey="dialog.delete-iteration.title" />
 
-<%--------------------------- Assign User popup -------------------------------------%>
+	</c:if>
+
+	<%--------------------------- Assign User popup -------------------------------------%>
 
 
 
- <comp:popup id="batch-assign-test-case" titleKey="dialog.assign-test-case.title" 	
-	isContextual="true" openedBy="assign-test-case-button" closeOnSuccess="false">
-	
+	<comp:popup id="batch-assign-test-case"
+		titleKey="dialog.assign-test-case.title" isContextual="true"
+		openedBy="assign-test-case-button" closeOnSuccess="false">
+
 		<jsp:attribute name="buttons">
 		
 			<f:message var="label" key="campaign.test-plan.assign.button.label" />
@@ -411,8 +468,10 @@
 			<pop:cancel-button />
 		</jsp:attribute>
 		<jsp:body>
-			<f:message var="emptyMessage" key="dialog.assign-user.selection.empty.label" />
-			<f:message var="confirmMessage" key="dialog.assign-test-case.confirm.label" />
+			<f:message var="emptyMessage"
+				key="dialog.assign-user.selection.empty.label" />
+			<f:message var="confirmMessage"
+				key="dialog.assign-test-case.confirm.label" />
 			<script type="text/javascript">
 				$("#batch-assign-test-case").bind( "dialogopen", function(event, ui){
 					var table = $( '#test-plans-table' ).dataTable();
@@ -435,7 +494,7 @@
 			<div id="comboBox-div">
 			</div>
 		</jsp:body>
-</comp:popup> 
+	</comp:popup>
 
 </div>
 
