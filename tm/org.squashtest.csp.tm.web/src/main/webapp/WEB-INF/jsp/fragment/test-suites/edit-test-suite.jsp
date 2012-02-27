@@ -268,6 +268,7 @@
 			</div>	
 			<input type="button" value="<f:message key='test-suite.button.rename.label' />" id="rename-test-suite-button" class="button" style="display:inline-block;"/> 
 			<input type="button" value="<f:message key='test-suite.button.remove.label' />" id="delete-test-suite-button" class="button" style="display:inline-block;"/>	
+			<input type="button" value="<f:message key='test-suite.button.duplicate.label' />" id="duplicate-test-suite-button" class="button" style="display:inline-block;"/>
 		</c:if>
 	</div>	
 	<div style="clear:both;"></div>	
@@ -447,5 +448,10 @@
 			document.location.href="${testPlanManagerUrl}" ;	
 		});		
 		
+		$('#duplicate-test-suite-button').click(function(){
+			duplicateTestSuite().done(function(json){
+				duplicateTestSuiteSuccess(json);
+			});
+		});
 	});
 </script>
