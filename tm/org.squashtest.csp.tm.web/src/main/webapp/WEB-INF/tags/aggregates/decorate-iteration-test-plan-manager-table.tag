@@ -113,7 +113,7 @@
 	}
 	
 	function getTestCaseId(rowData){
-		return rowData[9];
+		return rowData[7];
 	}
 	
 	
