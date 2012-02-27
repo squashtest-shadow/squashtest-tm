@@ -59,8 +59,8 @@
 			drive_icon : "${ pageContext.servletContext.contextPath }/images/root.png",
 			folder_icon : "${ pageContext.servletContext.contextPath }/images/Icon_Tree_Folder.png",
 			file_icon : "${ pageContext.servletContext.contextPath }/images/Icon_Tree_${ su:hyphenedToCamelCase(workspaceType) }.png",
-			resource_icon : "${ pageContext.servletContext.contextPath }/images/Icon_Tree_Iteration.png"
-			
+			resource_icon : "${ pageContext.servletContext.contextPath }/images/Icon_Tree_Iteration.png",
+			view_icon : "${ pageContext.servletContext.contextPath }/images/Icon_Tree_TestSuite.png"				
 		};
 		
 		$("#${ id }")
