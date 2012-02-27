@@ -204,10 +204,10 @@ public class CampaignDeletionHandlerImpl extends AbstractNodeDeletionHandlerImpl
 
 		deleteIssues(execution);
 		deletionDao.removeAttachmentList(execution.getAttachmentList());
-
 		deleteExecSteps(execution);
-		execution.getTestPlan().removeExecution(execution);
-
+		IterationTestPlanItem testPlanItem = execution.getTestPlan();
+		testPlanItem.removeExecution(execution);
+		testPlanItem.updateExecutionStatus();
 		deletionDao.removeEntity(execution);
 	}
 
