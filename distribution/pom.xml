@@ -16,11 +16,13 @@
 	<packaging>pom</packaging>
 
 	<properties>
-		<master.changelog>${project.build.outputDirectory}/distribution.changelog-master.xml</master.changelog>
-		<upgrade.0.15.0.changelog>${project.build.outputDirectory}/distribution.changelog-upgrade-to-0.15.0.xml</upgrade.0.15.0.changelog>
-		<upgrade.0.17.0.changelog>${project.build.outputDirectory}/distribution.changelog-upgrade-to-0.17.0.xml</upgrade.0.17.0.changelog>
-		<upgrade.0.20.0.changelog>${project.build.outputDirectory}/distribution.changelog-upgrade-to-0.20.0.xml</upgrade.0.20.0.changelog>
-		<upgrade.0.23.0.changelog>${project.build.outputDirectory}/distribution.changelog-upgrade-to-0.23.0.xml</upgrade.0.23.0.changelog>
+		<shared-resources>${project.build.directory}/maven-shared-archive-resources</shared-resources>
+		<master.changelog>${shared-resources}/global.changelog-master.xml</master.changelog>
+		<upgrade.0.15.0.changelog>${shared-resources}/upgrade/upgrade.changelog-up-to-0.15.0.xml</upgrade.0.15.0.changelog>
+		<upgrade.0.17.0.changelog>${shared-resources}/upgrade/upgrade.changelog-up-to-0.17.0.xml</upgrade.0.17.0.changelog>
+		<upgrade.0.20.0.changelog>${shared-resources}/upgrade/upgrade.changelog-up-to-0.20.0.xml</upgrade.0.20.0.changelog>
+		<upgrade.0.23.0.changelog>${shared-resources}/upgrade/upgrade.changelog-up-to-0.23.0.xml</upgrade.0.23.0.changelog>
+		<upgrade.1.1.0.changelog>${shared-resources}/upgrade/upgrade.changelog-up-to-1.1.0.xml</upgrade.1.1.0.changelog>
 		<distributed-db.changelog>${project.build.outputDirectory}/distributed-db.changelog.xml</distributed-db.changelog>
 		<felix.artifactId>org.apache.felix.main</felix.artifactId>
 		<felix.version>3.2.1</felix.version>
@@ -44,6 +46,7 @@
 		<izpack.licence.path>${project.build.directory}/maven-shared-archive-resources/META-INF/COPYING.txt</izpack.licence.path>
 		<izpack.distro.directory>${project.build.directory}/${distro.archive.name}/${distro.directory.name}</izpack.distro.directory>
 		<squash.launcher.name>squash-launcher.jar</squash.launcher.name>
+		<squashTmVersion>${project.version}</squashTmVersion>
 	</properties>
 
 	<build>
@@ -55,6 +58,25 @@
 		</resources>
 		
 		<plugins>
+			<plugin>
+				<groupId>org.apache.maven.plugins</groupId>
+				<artifactId>maven-remote-resources-plugin</artifactId>
+				<executions>
+					<execution>
+						<phase>generate-resources</phase>
+						<goals>
+							<goal>process</goal>
+						</goals>
+						<configuration>
+							<resourceBundles>
+								<resourceBundle>org.squashtest.csp:squashtest-tm-database:${squashTmVersion}</resourceBundle>
+								<resourceBundle>org.squashtest.csp:squashtest-license-resources:${squashTmVersion}</resourceBundle>
+							</resourceBundles>
+						</configuration>
+					</execution>
+				</executions>
+			</plugin>
+
 			<plugin>
 				<groupId>org.apache.maven.plugins</groupId>
 				<artifactId>maven-assembly-plugin</artifactId>
@@ -206,6 +228,23 @@
 							<username>sa</username>
 							<password>sa</password>
 							<migrationSqlOutputFile>${database.script.directory}/h2-upgrade-to-0.23.0.sql</migrationSqlOutputFile>
+						</configuration>
+					</execution>
+
+					<execution>
+						<id>generate-h2-1.1.0-script</id>
+						<phase>prepare-package</phase>
+						<goals>
+							<goal>updateSQL</goal>
+						</goals>
+						<configuration>
+							<dropFirst>false</dropFirst>
+							<changeLogFile>${upgrade.1.1.0.changelog}</changeLogFile>
+							<driver>org.h2.Driver</driver>
+							<url>${h2.incremental.url}</url>
+							<username>sa</username>
+							<password>sa</password>
+							<migrationSqlOutputFile>${database.script.directory}/h2-upgrade-to-${squashTmVersion}.sql</migrationSqlOutputFile>
 						</configuration>
 					</execution>
 
@@ -432,6 +471,23 @@
 							<username>${liquibase.mysql.username}</username>
 							<password>${liquibase.mysql.password}</password>
 							<migrationSqlOutputFile>${database.script.directory}/mysql-upgrade-to-0.23.0.sql</migrationSqlOutputFile>
+						</configuration>
+					</execution>
+
+					<execution>
+						<id>generate-mysql-1.1.0-script</id>
+						<phase>prepare-package</phase>
+						<goals>
+							<goal>updateSQL</goal>
+						</goals>
+						<configuration>
+							<dropFirst>false</dropFirst>
+							<changeLogFile>${upgrade.1.1.0.changelog}</changeLogFile>
+							<driver>com.mysql.jdbc.Driver</driver>
+							<url>${liquibase.mysql.url}</url>
+							<username>${liquibase.mysql.username}</username>
+							<password>${liquibase.mysql.password}</password>
+							<migrationSqlOutputFile>${database.script.directory}/mysql-upgrade-to-${squashTmVersion}.sql</migrationSqlOutputFile>
 						</configuration>
 					</execution>
 				</executions>
