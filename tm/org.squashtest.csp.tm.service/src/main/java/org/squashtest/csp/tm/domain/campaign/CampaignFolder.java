@@ -50,8 +50,7 @@ public class CampaignFolder extends CampaignLibraryNode implements Folder<Campai
 	@OneToMany(cascade = { CascadeType.PERSIST, CascadeType.MERGE, CascadeType.REMOVE })
 	@JoinTable(name = "CLN_RELATIONSHIP", joinColumns = @JoinColumn(name = "ANCESTOR_ID"), inverseJoinColumns = @JoinColumn(name = "DESCENDANT_ID"))
 	private final Set<CampaignLibraryNode> content = new HashSet<CampaignLibraryNode>();
-	private static final Logger LOGGER = LoggerFactory
-			.getLogger(CampaignLibrary.class);
+	private static final Logger LOGGER = LoggerFactory.getLogger(CampaignLibrary.class);
 
 	@Override
 	public Set<CampaignLibraryNode> getContent() {
@@ -65,8 +64,7 @@ public class CampaignFolder extends CampaignLibraryNode implements Folder<Campai
 	}
 
 	@Override
-	public void removeContent(CampaignLibraryNode node)
-			throws NullArgumentException {
+	public void removeContent(CampaignLibraryNode node) throws NullArgumentException {
 		content.remove(node);
 		LOGGER.info(content.toString());
 
@@ -88,12 +86,6 @@ public class CampaignFolder extends CampaignLibraryNode implements Folder<Campai
 		CampaignFolder newFolder = new CampaignFolder();
 		newFolder.setName(getName());
 		newFolder.setDescription(getDescription());
-
-		for (CampaignLibraryNode node : this.content) {
-			CampaignLibraryNode newNode = node.createPastableCopy();
-			newFolder.addContent(newNode);
-		}
-
 		newFolder.notifyAssociatedWithProject(this.getProject());
 		return newFolder;
 	}

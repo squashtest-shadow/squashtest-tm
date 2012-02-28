@@ -225,6 +225,9 @@ public class CampaignLibraryNavigationServiceImpl extends
 		return iterationModificationService.findIterationsByCampaignId(campaignId);
 	}
 
+	/**
+	 * this is done here because content of campaigns is to be persisted first
+	 */
 	@Override
 	protected CampaignLibraryNode createPastableCopy(CampaignLibraryNode original) {
 		if (original instanceof Campaign) {
@@ -235,7 +238,13 @@ public class CampaignLibraryNavigationServiceImpl extends
 			}
 			return clone;
 		} else {
-			return original.createPastableCopy();
+			CampaignFolder sourceFolder = (CampaignFolder) original;
+			CampaignFolder newFolder = sourceFolder.createPastableCopy();
+			for (CampaignLibraryNode node : sourceFolder.getContent()) {
+				CampaignLibraryNode newNode = createPastableCopy(node);
+				newFolder.addContent(newNode);
+			}
+			return newFolder;
 		}
 
 	}
