@@ -53,6 +53,14 @@
 		<c:forEach items="${ executions }" var="execution" varStatus="status" >
 			<span style="display:block; margin-left: 10px; color: ${textcolor}; font-style:italic; text-decoration: underline"><a href="${showExecutionUrl}/${execution.id}">Exec. ${status.index + 1} :  ${ execution.name }</a></span>
 		</c:forEach>
+		
+		<c:if test="${ editableIteration }">
+			<span style="text-align:right;margin-right:10px;display:block">
+				<small> 
+					<a style="color:${textcolor}" id="new-exec-${testPlanId}" href="#" data-new-exec="${newExecutionUrl}" ><f:message key="execution.iteration-test-plan-row.new"/></a> 
+				</small>
+			</span>
+		</c:if> 
 </td>
 <td>
 		<c:forEach items="${ executions }" var="execution">

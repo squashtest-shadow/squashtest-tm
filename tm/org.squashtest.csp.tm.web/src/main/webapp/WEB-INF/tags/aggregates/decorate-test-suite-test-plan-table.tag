@@ -137,8 +137,10 @@
 		
 		});
 		
+		<%-- bind the new execution creation button to their event --%>
+		$('a[id|="new-exec"]').die('click');
+		$('a[id|="new-exec"]').live('click', newExecutionClickHandler);
 
-		
 	});
 	
 	
