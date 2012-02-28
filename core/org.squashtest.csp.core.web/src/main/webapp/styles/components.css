@@ -95,6 +95,7 @@ div.toggle-panel  div.ui-accordion-content{
 	overflow : auto; 
 }
 
+
 div.execute-fragment-body div.toggle-panel  div.ui-accordion-content{
 	min-height: 85px;
 }
@@ -331,9 +332,16 @@ the display:block trick will implicitly add that property */
 }
 
 /*******************************
+	information panel / description panel
+********************************/
+.ui-widget-content.information-panel a {
+	color : #555555;
+	font-size: 90%;
+    font-style: italic;
+}
+/*******************************
 	misc
 ********************************/
-
 span.span-red{
 	color : red;	
 }

@@ -245,8 +245,7 @@ that page won't be editable if
 			</c:if>
 			<c:if test="${ user_authorized }">
 				<input type="button" value='<f:message key="requirement.button.new-version.label" />' id="new-version-button" class="button"/>		
-				<a href="<c:url value='/requirements/${ requirement.id }/versions/manager' />" class="button"><f:message key="requirement.button.manage-versions.label" /></a>
-			</c:if>		
+				</c:if>		
 		</div>	
 
 		<div style="clear:both;"></div>			
@@ -259,12 +258,13 @@ that page won't be editable if
 		<comp:simple-jeditable targetUrl="${ requirementUrl }" componentId="requirement-reference" submitCallback="updateReferenceInTitle" maxLength="20" />
 	</c:if>
 
-	<comp:toggle-panel id="requirement-information-panel" titleKey="requirement.panel.general-informations.title" isContextual="true" open="true" >
+	<comp:toggle-panel id="requirement-information-panel" classes="information-panel" titleKey="requirement.panel.general-informations.title" isContextual="true" open="true" >
 		<jsp:attribute name="body">
 			<div id="edit-requirement-table" class="display-table">
 				<div>
 					<label for="requirement-version-number"><f:message key="requirement-version.version-number.label" /></label>
-					<div id="requirement-version-number">${ requirement.currentVersion.versionNumber }</div>
+					<div id="requirement-version-number">${ requirement.currentVersion.versionNumber }&nbsp;&nbsp;<a href="<c:url value='/requirements/${ requirement.id }/versions/manager' />"><f:message key="requirement.button.manage-versions.label" /></a>
+			</div>
 				</div>
 				<div class="display-table-row">
 					<label for="requirement-description" class="display-table-cell"><f:message key="requirement.description.label" /></label>

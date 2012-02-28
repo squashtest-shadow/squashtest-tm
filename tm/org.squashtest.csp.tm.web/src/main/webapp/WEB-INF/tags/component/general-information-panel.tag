@@ -30,7 +30,7 @@
 
 <f:message var="dateFormat" key="squashtm.dateformat" />
 
-<div id="general-information-panel">
+<div id="general-information-panel" class="information-panel">
 	<c:if test="${ not withoutCreationInfo }">
 		<span ><f:message key="auditable_entity.created_on.label" />&nbsp;:&nbsp;</span>
 		<span id="created-on">

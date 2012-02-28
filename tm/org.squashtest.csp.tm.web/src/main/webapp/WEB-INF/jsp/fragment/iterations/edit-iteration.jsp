@@ -252,7 +252,7 @@
 
 
 
-<comp:toggle-panel id="iteration-description-panel" titleKey="generics.description.title" isContextual="true" open="true">
+<comp:toggle-panel id="iteration-description-panel" classes="information-panel" titleKey="generics.description.title" isContextual="true" open="true">
 	<jsp:attribute name="body">
 		<div id="iteration-description" >${ iteration.description }</div>
 	</jsp:attribute>

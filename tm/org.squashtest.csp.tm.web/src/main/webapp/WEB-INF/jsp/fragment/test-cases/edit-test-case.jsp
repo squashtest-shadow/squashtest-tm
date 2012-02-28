@@ -517,7 +517,7 @@
 
 <div class="fragment-body">
 
-<div id="test-case-toolbar" class="toolbar-class ui-corner-all">
+<div id="test-case-toolbar" classes="toolbar-class ui-corner-all">
 <div class="toolbar-information-panel">
 <comp:general-information-panel auditableEntity="${ testCase }" entityUrl="${ testCaseUrl }" />
 
