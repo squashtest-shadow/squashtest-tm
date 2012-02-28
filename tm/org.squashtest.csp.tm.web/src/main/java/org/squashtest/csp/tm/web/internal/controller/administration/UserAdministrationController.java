@@ -120,6 +120,7 @@ public class UserAdministrationController {
 
 	@RequestMapping(value="/add", method=RequestMethod.POST)
 	public @ResponseBody void addNewUser(@Valid @ModelAttribute("add-user") User user, @RequestParam long groupId, @Valid @RequestParam String password){
+		adminService.checkLoginAvailability(user.getLogin());
 		adminService.addUser(user, groupId, password);
 	}
 	

@@ -22,6 +22,7 @@ package org.squashtest.csp.tm.internal.service;
 
 import static org.junit.Assert.*;
 
+import org.squashtest.csp.tm.domain.LoginAlreadyExistsException;
 import org.squashtest.csp.tm.domain.users.User;
 import org.squashtest.csp.tm.domain.users.UsersGroup;
 import org.squashtest.csp.tm.internal.repository.UserDao;
@@ -31,29 +32,42 @@ import org.squashtest.csp.tm.service.AdministrationService;
 import spock.lang.Specification;
 
 class AdministrationServiceImplTest extends Specification {
-	
+
 	AdministrationService service = new AdministrationServiceImpl();
 	UserDao userDao = Mock()
 	UsersGroupDao groupDao = Mock()
-	
+
 	def setup(){
 		service.userDao = userDao
 		service.groupDao = groupDao
 	}
-	
+
 	def "shoud add a group to a specific user" (){
 		given:
-		User user = new User() 
+		User user = new User()
 		userDao.findById(10) >> user
 		and:
 		UsersGroup group = new UsersGroup()
 		groupDao.findById(1) >> group
-		
-		
+
+
 		when:
 		service.setUserGroupAuthority (10, 1)
-		
+
 		then:
 		user.group == group
+	}
+
+	def "should throw a LoginAlreadyExistException"(){
+		given:
+		User user = new User()
+		String login = "login"
+		userDao.findUserByLogin("login")>> user
+
+		when:
+		service.checkLoginAvailability("login")
+
+		then:
+		thrown LoginAlreadyExistsException
 	}
 }

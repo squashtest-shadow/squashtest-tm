@@ -35,6 +35,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.squashtest.csp.core.service.configuration.ConfigurationService;
 import org.squashtest.csp.core.service.security.AdministratorAuthenticationService;
+import org.squashtest.csp.tm.domain.LoginAlreadyExistsException;
 import org.squashtest.csp.tm.domain.project.Project;
 import org.squashtest.csp.tm.domain.users.User;
 import org.squashtest.csp.tm.domain.users.UsersGroup;
@@ -46,25 +47,23 @@ import org.squashtest.csp.tm.internal.repository.UsersGroupDao;
 import org.squashtest.csp.tm.service.AdministrationService;
 import org.squashtest.csp.tm.service.UserAccountService;
 
-
 /**
  * 
  * 
- *  //TODO : should be in core.service
+ * //TODO : should be in core.service
  * 
  * 
  * 
  * @author bsiri
- *
+ * 
  */
 @Service("squashtest.tm.service.AdministrationService")
 @Transactional
 public class AdministrationServiceImpl implements AdministrationService {
-	
 
-	@Inject 
+	@Inject
 	private UserAccountService userAccountService;
-	
+
 	@Inject
 	private ProjectDao projectDao;
 
@@ -73,23 +72,22 @@ public class AdministrationServiceImpl implements AdministrationService {
 
 	@Inject
 	private UsersGroupDao groupDao;
-	
-	
+
 	private ConfigurationService configurationService;
 	private AdministratorAuthenticationService adminService;
-	
-	private final static String WELCOME_MESSAGE_KEY = "WELCOME_MESSAGE"; 
+
+	private final static String WELCOME_MESSAGE_KEY = "WELCOME_MESSAGE";
 
 	@ServiceReference
-	public void setAdministratorAuthenticationService(AdministratorAuthenticationService adminService){
-		this.adminService=adminService;
+	public void setAdministratorAuthenticationService(AdministratorAuthenticationService adminService) {
+		this.adminService = adminService;
 	}
-	
+
 	@ServiceReference
 	public void setConfigurationService(ConfigurationService configurationService) {
 		this.configurationService = configurationService;
 	}
-	
+
 	/* **************** delegate user section, so is security ************ */
 
 	@Override
@@ -112,36 +110,31 @@ public class AdministrationServiceImpl implements AdministrationService {
 		userAccountService.modifyUserEmail(userId, newEmail);
 	}
 
-	
 	/* ********************** proper admin section ******************* */
-	
 
 	@Override
 	@PreAuthorize("hasRole('ROLE_ADMIN')")
 	public User findUserById(long userId) {
 		return userDao.findById(userId);
 	}
-	
-	
+
 	@Override
-	@PreAuthorize("hasRole('ROLE_ADMIN')")	
+	@PreAuthorize("hasRole('ROLE_ADMIN')")
 	public List<User> findAllUsers() {
 		List<User> userList = userDao.findAllUsers();
 		return userList;
 	}
 
-
 	@Override
-	@PreAuthorize("hasRole('ROLE_ADMIN')")	
+	@PreAuthorize("hasRole('ROLE_ADMIN')")
 	public FilteredCollectionHolder<List<User>> findAllUsersFiltered(CollectionFilter filter) {
 		List<User> list = userDao.findAllUsersFiltered(filter);
 		long count = findAllUsers().size();
 		return new FilteredCollectionHolder<List<User>>(count, list);
 	}
 
-
 	@Override
-	@PreAuthorize("hasRole('ROLE_ADMIN')")	
+	@PreAuthorize("hasRole('ROLE_ADMIN')")
 	public List<UsersGroup> findAllUsersGroup() {
 		List<UsersGroup> groupList = groupDao.findAllGroups();
 		return groupList;
@@ -150,18 +143,19 @@ public class AdministrationServiceImpl implements AdministrationService {
 	@Override
 	@PreAuthorize("hasRole('ROLE_ADMIN')")
 	public void addUser(User aUser, long groupId, @NotNull @NotEmpty @NotBlank String password) {
-		//FIXME : also check the auth part when time is come
+		// FIXME : also check the auth part when time is come
 		UsersGroup group = groupDao.findById(groupId);
-		
+
 		aUser.setGroup(group);
-		adminService.createNewUserPassword(aUser.getLogin(), password, aUser.getActive(), true, true, true, new ArrayList<GrantedAuthority>());
+		adminService.createNewUserPassword(aUser.getLogin(), password, aUser.getActive(), true, true, true,
+				new ArrayList<GrantedAuthority>());
 		userDao.persist(aUser);
 	}
-	
+
 	@Override
 	@PreAuthorize("hasRole('ROLE_ADMIN')")
 	public void modifyUserActiveParam(long userId, boolean active) {
-		//TODO : in CORE_USER or AUTH_USER ?
+		// TODO : in CORE_USER or AUTH_USER ?
 		User user = userDao.findById(userId);
 		user.setActive(active);
 	}
@@ -181,7 +175,7 @@ public class AdministrationServiceImpl implements AdministrationService {
 
 	@Override
 	public void modifyWelcomeMessage(String welcomeMessage) {
-		if (configurationService.findConfiguration(WELCOME_MESSAGE_KEY) == null){
+		if (configurationService.findConfiguration(WELCOME_MESSAGE_KEY) == null) {
 			configurationService.createNewConfiguration(WELCOME_MESSAGE_KEY, welcomeMessage);
 			return;
 		}
@@ -191,5 +185,13 @@ public class AdministrationServiceImpl implements AdministrationService {
 	@Override
 	public String findWelcomeMessage() {
 		return configurationService.findConfiguration(WELCOME_MESSAGE_KEY);
+	}
+
+	@Override
+	public void checkLoginAvailability(String login) {
+		if (userDao.findUserByLogin(login) != null) {
+			throw new LoginAlreadyExistsException();
+		}
+
 	}
 }

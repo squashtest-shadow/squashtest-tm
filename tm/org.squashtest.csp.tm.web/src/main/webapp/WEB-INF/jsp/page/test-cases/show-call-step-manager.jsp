@@ -96,7 +96,7 @@
 				
 				if (json != null && json.actionValidationError != null){
 					if (json.actionValidationError.exception === "CyclicStepCallException"){						
-						displayInformationNotification("${cyclicCallError}");					
+						oneShotDialog('<f:message key="popup.title.error" />', "${cyclicCallError}");
 					}
 				}
 			}
