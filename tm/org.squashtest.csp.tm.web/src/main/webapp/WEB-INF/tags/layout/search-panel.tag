@@ -456,7 +456,7 @@
 		</c:if>
 		
 		
-		<c:if test="${(workspace eq 'test-case' || linkable eq 'test-case' )}">		
+		<c:if test="${((workspace eq 'test-case' || linkable eq 'test-case' )&& linkable != 'requirement')}">		
 			<tr> <td>
 				<div class="search-panel-tc-importance">
 					<div class="caption">
