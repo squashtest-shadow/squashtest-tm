@@ -147,7 +147,8 @@ public class RequirementModificationController {
 	Object rename(@RequestParam("newName") String newName, @PathVariable long requirementId) {
 		requirementModService.rename(requirementId, newName);
 		LOGGER.info("RequirementModificationController : renaming " + requirementId + " as " + newName);
-		return new Object();
+		final String newNameJson = newName;
+		return new Object(){ public String newName=newNameJson; };
 	}
 
 	@RequestMapping(method = RequestMethod.POST, params = { "id=requirement-criticality", VALUE })
