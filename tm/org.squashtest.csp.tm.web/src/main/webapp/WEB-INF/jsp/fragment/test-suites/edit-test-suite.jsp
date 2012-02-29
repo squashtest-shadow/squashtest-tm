@@ -45,6 +45,7 @@
 <s:url var="testSuiteUrl" value="/test-suites/{testSuiteId}">
 	<s:param name="testSuiteId" value="${testSuite.id}" />
 </s:url>
+
 <s:url var="duplicateTestSuiteUrl"
 	value="/iterations/{iterationId}/duplicateTestSuite/{testSuiteId}">
 	<s:param name="testSuiteId" value="${testSuite.id}" />
@@ -119,8 +120,10 @@
 
 <c:url var="testCaseDetailsBaseUrl"
 	value="/test-case-libraries/1/test-cases" />
+	
 <s:url var="simulateDeletionUrl"
 	value="/campaign-browser/delete-iterations/simulate" />
+	
 <s:url var="confirmDeletionUrl"
 	value="/campaign-browser/delete-iterations/confirm" />
 
@@ -222,8 +225,7 @@
 	}
 </script>
 
-<div
-	class="ui-widget-header ui-state-default ui-corner-all fragment-header">
+<div class="ui-widget-header ui-state-default ui-corner-all fragment-header">
 	<div style="float: left; height: 100%;">
 		<h2>
 			<span><f:message key="test-suite.header.title" />&nbsp;:&nbsp;</span><a

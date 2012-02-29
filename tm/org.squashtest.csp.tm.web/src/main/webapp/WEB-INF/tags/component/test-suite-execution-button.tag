@@ -20,56 +20,124 @@
         along with this software.  If not, see <http://www.gnu.org/licenses/>.
 
 --%>
-<%@ tag description="general information panel for an auditable entity. Client can add more info in the body of this tag" body-content="scriptless" %>
-<%@ attribute name="statisticsEntity" required="true" type="java.lang.Object" description="The entity which general information we want to show" %>
-<%@ attribute name="testSuiteId" required="true" description="The id of the test-suite" %>
-<%@ taglib uri="http://java.sun.com/jsp/jstl/fmt" prefix="f" %>
-<%@ taglib uri="http://java.sun.com/jsp/jstl/core" prefix="c" %>
+<%@ tag
+	description="general information panel for an auditable entity. Client can add more info in the body of this tag"
+	body-content="scriptless"%>
+<%@ attribute name="statisticsEntity" required="true"
+	type="java.lang.Object"
+	description="The entity which general information we want to show"%>
+<%@ attribute name="testSuiteId" required="true"
+	description="The id of the test-suite"%>
+<%@ taglib uri="http://java.sun.com/jsp/jstl/fmt" prefix="f"%>
+<%@ taglib uri="http://java.sun.com/jsp/jstl/core" prefix="c"%>
 
-<div id="test-suite-execution-button" style="display:inline-block;">
-	<c:url var='runnerUrl' value='/test-suites/${ testSuiteId }/test-plan/execution/runner' />
+<div id="test-suite-execution-button" style="display: inline-block;">
+	<c:url var='runnerUrl'
+		value='/test-suites/${ testSuiteId }/test-plan/execution/runner' />
 	<script type="text/javascript">
-		$(function() {
-			$("#start-classic-execution").button()
-			.click(function() {
-				var url = "${ runnerUrl }";
-				var data = {'classic': '', 'mode': 'start-resume'};
-				var winDef = {  name: "classic-execution-runner",  features: "height=500, width=600, resizable, scrollbars, dialog, alwaysRaised" };
-				$.open(url, data, winDef);
-			});
-			$("#restart-classic-execution").button()
-			.click(function() {
-				var url = "${ runnerUrl }";
-				var data = {'classic': '', 'mode': 'restart'};
-				var winDef = {  name: "classic-execution-runner",  features: "height=500, width=600, resizable, scrollbars, dialog, alwaysRaised" };
-				$.open(url, data, winDef);
-			});
-		});
+	
+		var classicExecution = function(runMode) {
+			var url = "${ runnerUrl }";
+			var data = {
+				'classic' : '',
+				'mode' : runMode
+			};
+			var winDef = {
+				name : "classic-execution-runner",
+				features : "height=500, width=600, resizable, scrollbars, dialog, alwaysRaised"
+			};
+			$.open(url, data, winDef);
+		}
+		
 	</script>
-	<c:if test="${ statisticsEntity.status == 'READY' }">	
-		<form action="${ runnerUrl }" method="post" name="execute-test-suite-form" target="optimized-execution-runner" style="display:inline-block;">
-			<input type="submit" value="<f:message key='test-suite.execution.optimized.start.label' />" name="optimized" class="button execButton"/>
+	<c:if test="${ statisticsEntity.status == 'READY' }">
+		<f:message var='startResumeLabel'
+			key='test-suite.execution.start.label' />
+	</c:if>
+	<c:if test="${ statisticsEntity.status == 'RUNNING' }">
+		<f:message var='startResumeLabel'
+			key='test-suite.execution.resume.label' />
+	</c:if>
+
+	<c:if test="${ statisticsEntity.status == 'RUNNING' || statisticsEntity.status == 'READY'}">
+		<a tabindex="0" href="#start" class="button" id="start-resume-button">${startResumeLabel}</a>
+		<div id="start" style="display: none">
+			<ul>
+				<li><a class="start-suite-optimized" href="#"><f:message
+							key="test-suite.execution.optimized.label" /> </a>
+				</li>
+				<li><a class="start-suite-classic" href="#"><f:message
+							key='test-suite.execution.classic.label' /> </a>
+				</li>
+			</ul>
+		</div> 
+		<form action="${ runnerUrl }" method="post"
+			name="execute-test-suite-form" target="optimized-execution-runner" style="display:none;">
+			<input type="submit" value='' name="optimized" id="start-optimized-button"/> 
 			<input type="hidden" name="mode" value="start-resume" />
 		</form>
-		<input id="start-classic-execution" type="button" value="<f:message key='test-suite.execution.classic.start.label' />" name="classic" class="button" />
+		<script>
+			$("#start-resume-button").menu({
+				content : $('#start-resume-button').next().html(),
+				showSpeed : 0,
+				width : 130
+			});
+
+			var startmenu = allUIMenus[allUIMenus.length - 1];
+
+			startmenu.chooseItem = function(item) {
+				console.log(item);
+				if ($(item).hasClass('start-suite-classic')) {
+					classicExecution('start-resume');
+				} else {
+					if ($(item).hasClass('start-suite-optimized')) {
+						$('#start-optimized-button').trigger('click');
+					}
+				}
+
+			}
+		</script>
 	</c:if>
-	<c:if test="${ statisticsEntity.status == 'RUNNING' }">	
-		<form action="${ runnerUrl }" method="post" name="execute-test-suite-form" target="optimized-execution-runner" style="display:inline-block;">
-			<input type="submit" value="<f:message key='test-suite.execution.optimized.resume.label' />" name="optimized" class="button execButton"/>
-			<input type="hidden" name="mode" value="start-resume" />
-		</form>
-		<input id="start-classic-execution" type="button" value="<f:message key='test-suite.execution.classic.resume.label' />" name="classic" class="button" />
-		<form action="${ runnerUrl }" method="post" name="execute-test-suite-form" target="optimized-execution-runner" style="display:inline-block;">
-			<input type="submit" value="<f:message key='test-suite.execution.optimized.restart.label' />" name="optimized" class="button execButton" />
+	<c:if test="${ statisticsEntity.status != 'READY' }">
+	<a tabindex="0" href="#restart" class="button" id="restart-button"><f:message
+							key='test-suite.execution.restart.label' /></a>
+		<div id="restart" style="display: none">
+			<ul>
+				<li><a class="restart-suite-optimized" href="#"><f:message
+							key="test-suite.execution.optimized.label" /> </a>
+				</li>
+				<li><a class="restart-suite-classic" href="#"><f:message
+							key='test-suite.execution.classic.label' /> </a>
+				</li>
+			</ul>
+		</div>
+		<form action="${ runnerUrl }" method="post"
+			name="execute-test-suite-form" target="optimized-execution-runner"
+			style="display: none;">
+			<input type="submit" value="" name="optimized" id="restart-optimized-button"/> 
 			<input type="hidden" name="mode" value="restart" />
 		</form>
-		<input id="restart-classic-execution" type="button" value="<f:message key='test-suite.execution.classic.restart.label' />" name="classic" class="button" />
-	</c:if>
-	<c:if test="${ statisticsEntity.status.terminatedStatus }">		
-		<form action="${ runnerUrl }" method="post" name="execute-test-suite-form" target="optimized-execution-runner" style="display:inline-block;">
-			<input type="submit" value="<f:message key='test-suite.execution.optimized.restart.label' />" name="optimized" class="button execButton" />
-			<input type="hidden" name="mode" value="restart" />
-		</form>
-		<input id="restart-classic-execution" type="button" value="<f:message key='test-suite.execution.classic.restart.label' />" name="classic" class="button" />
+		<script>
+			$("#restart-button").menu({
+				content : $('#restart-button').next().html(),
+				showSpeed : 0,
+				width : 130
+			});
+
+			var startmenu = allUIMenus[allUIMenus.length - 1];
+
+			startmenu.chooseItem = function(item) {
+				console.log(item);
+				if ($(item).hasClass('restart-suite-classic')) {
+					classicExecution('restart');
+				} else {
+					if ($(item).hasClass('restart-suite-optimized')) {
+						$('#restart-optimized-button').trigger('click');
+					}
+				}
+
+			}
+		</script>
+		
 	</c:if>
 </div>
