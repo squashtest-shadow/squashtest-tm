@@ -77,7 +77,7 @@ function Menu(caller, options){
 	
 	var options = jQuery.extend({
 		content: null,
-		width: 320, // width of menu container, must be set or passed in to calculate widths of child menus
+		width: 180, // width of menu container, must be set or passed in to calculate widths of child menus
 		maxHeight: 180, // max height of menu (if a drilldown: height does not include breadcrumb)
 		positionOpts: {
 			posX: 'left', 

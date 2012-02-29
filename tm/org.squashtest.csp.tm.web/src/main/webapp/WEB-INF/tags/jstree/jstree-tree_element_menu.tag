@@ -31,8 +31,6 @@
 	<a id="tree-create-button" href="#tree-create-menu" class="button"><fmt:message key="squashtm.treemenu.create.label"/>...</a>
 	<a id="tree-action-button" href="#tree-action-menu" class="button" ><fmt:message key="squashtm.treemenu.action.label"/>...</a> 
 
-	
-	
 	<div class="not-displayed" >
 	<div id="tree-create-menu" >
 	<ul>
@@ -107,7 +105,7 @@
 				"delete" : ".delete-node-tree-button"
 			};
 			
-		squashtm.treemenu.action = $('#tree-action-button').treeMenu("#tree-action-menu", actionOption);
+		squashtm.treemenu.action = $('#tree-action-button').treeMenu("#tree-action-menu", actionOption, 320);
 
 
 		<c:if test="${workspace == 'test-case'}">

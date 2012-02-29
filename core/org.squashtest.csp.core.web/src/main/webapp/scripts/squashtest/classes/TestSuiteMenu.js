@@ -264,7 +264,8 @@ function TestSuiteMenu(settings){
 		
 		this.instance.menu({
 			content : '',
-			showSpeed : 0
+			showSpeed : 0,
+			width: 190
 		});
 		
 		this.menu = allUIMenus[allUIMenus.length-1];

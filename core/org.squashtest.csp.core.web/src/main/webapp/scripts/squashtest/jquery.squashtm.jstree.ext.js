@@ -505,10 +505,11 @@
 		 * careless managment of event unbinding.
 		 */
 	
-	 $.fn.treeMenu = function(contentSelector, params){
+	 $.fn.treeMenu = function(contentSelector, params, widthParam){
 	  	 this.menu({
 			 content : $(contentSelector).html(),
-			 showSpeed : 0
+			 showSpeed : 0,
+			 width	: widthParam || 180
 			
 		 });
 		 
@@ -516,6 +517,7 @@
 			// that since we need to bind our events on the menu item.
 		 // so we force creation and hide it right away.
 		 var menu = allUIMenus[allUIMenus.length-1];
+		 
 		 menu.create();
 		 menu.kill();
 		 
