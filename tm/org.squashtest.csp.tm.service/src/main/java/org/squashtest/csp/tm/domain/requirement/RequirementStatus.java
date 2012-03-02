@@ -35,7 +35,7 @@ public enum RequirementStatus implements Level {
 			next.add(UNDER_REVIEW);
 			return next;
 		}
-
+		
 		@Override
 		public boolean isRequirementModifiable() {
 			return true;
@@ -91,6 +91,8 @@ public enum RequirementStatus implements Level {
 		@Override
 		public Set<RequirementStatus> getAvailableNextStatus() {
 			Set<RequirementStatus> next = defaultAvailableSet();
+			next.add(UNDER_REVIEW);
+			next.add(WORK_IN_PROGRESS);
 			return next;
 		}
 
@@ -149,7 +151,6 @@ public enum RequirementStatus implements Level {
 	private RequirementStatus(int level) {
 		this.level = level;
 	}
-
 	/**
 	 * @see org.squashtest.csp.tm.domain.Level#getLevel()
 	 */
@@ -157,7 +158,7 @@ public enum RequirementStatus implements Level {
 	public int getLevel() {
 		return level;
 	}
-
+	
 	/**
 	 * the set of the available status transition. As for 1.1.0 and until further notice, should also include
 	 * <i>this</i>
@@ -188,9 +189,8 @@ public enum RequirementStatus implements Level {
 
 	protected Set<RequirementStatus> defaultAvailableSet() {
 		Set<RequirementStatus> next = new TreeSet<RequirementStatus>();
-		if (RequirementStatus.OBSOLETE != this) {
+		if (RequirementStatus.OBSOLETE != this)
 			next.add(RequirementStatus.OBSOLETE);
-		}
 		next.add(this);
 		return next;
 	}
@@ -198,12 +198,10 @@ public enum RequirementStatus implements Level {
 	public static StringComparator stringComparator() {
 		return new StringComparator();
 	}
-
 	@Override
 	public String getI18nKey() {
 		return I18N_KEY_ROOT + name();
 	}
-
 	/**
 	 * inner class used to sort RequirementStatus over their string representation. In case we have to sort stringified
 	 * statuses with other arbitrary strings, stringified statuses will have a lower rank than other strings.
@@ -212,14 +210,14 @@ public enum RequirementStatus implements Level {
 		@Override
 		public int compare(String o1, String o2) {
 			RequirementStatus status1, status2;
-
+			
 			try {
 				String comparableString1 = removeDisableString(o1);
 				status1 = RequirementStatus.valueOf(comparableString1);
 			} catch (IllegalArgumentException iae) {
 				return 1;
 			}
-
+			
 			try {
 				String comparableString2 = removeDisableString(o2);
 				status2 = RequirementStatus.valueOf(comparableString2);

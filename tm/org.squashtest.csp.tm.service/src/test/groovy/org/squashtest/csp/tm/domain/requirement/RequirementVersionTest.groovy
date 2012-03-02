@@ -138,7 +138,11 @@ class RequirementVersionTest extends Specification {
 		notThrown(IllegalRequirementModificationException)
 
 		where :
-		status << [ WORK_IN_PROGRESS, UNDER_REVIEW, APPROVED ]
+		status << [
+			WORK_IN_PROGRESS,
+			UNDER_REVIEW,
+			APPROVED
+		]
 	}
 
 	@Unroll("should allow removal of a test case for #status ")
@@ -152,7 +156,11 @@ class RequirementVersionTest extends Specification {
 		notThrown(IllegalRequirementModificationException)
 
 		where :
-		status << [ WORK_IN_PROGRESS, UNDER_REVIEW, APPROVED ]
+		status << [
+			WORK_IN_PROGRESS,
+			UNDER_REVIEW,
+			APPROVED
+		]
 	}
 
 	def "obsolete requirements should not allow verification of a test case"() {
@@ -167,6 +175,18 @@ class RequirementVersionTest extends Specification {
 		thrown(RequirementVersionNotLinkableException)
 	}
 
+//	def "obsolete requirements should not allow removal of a test case "() {
+//		given :
+//		def tc = new TestCase(name:"tc", description:"tc")
+//		RequirementVersion requirementVersion = prepareRequirement(OBSOLETE, tc)
+//
+//		when :
+//		requirementVersion.removeVerifyingTestCase(tc)
+//
+//		then :
+//		thrown(RequirementVersionNotLinkableException)
+//	}
+
 	@Unroll("should allow status change when current status is #status")
 	def "should allow status change"() {
 		given :
@@ -176,7 +196,11 @@ class RequirementVersionTest extends Specification {
 		then :
 		notThrown(IllegalRequirementModificationException)
 		where :
-		status << [ WORK_IN_PROGRESS, UNDER_REVIEW, APPROVED ]
+		status << [
+			WORK_IN_PROGRESS,
+			UNDER_REVIEW,
+			APPROVED
+		]
 	}
 
 	def "should not allow status change for OBSOLETE"(){
@@ -205,9 +229,23 @@ class RequirementVersionTest extends Specification {
 
 		where :
 		status				|	availableStatuses
-		WORK_IN_PROGRESS  	|	[ OBSOLETE, WORK_IN_PROGRESS, UNDER_REVIEW ]
-		UNDER_REVIEW		|	[ OBSOLETE, UNDER_REVIEW, APPROVED, WORK_IN_PROGRESS ]
-		APPROVED			|	[ OBSOLETE, APPROVED ]
+		WORK_IN_PROGRESS  	|	[
+			OBSOLETE,
+			WORK_IN_PROGRESS,
+			UNDER_REVIEW
+		]
+		UNDER_REVIEW		|	[
+			OBSOLETE,
+			UNDER_REVIEW,
+			APPROVED,
+			WORK_IN_PROGRESS
+		]
+		APPROVED			|	[
+			OBSOLETE,
+			APPROVED,
+			UNDER_REVIEW,
+			WORK_IN_PROGRESS
+		]
 	}
 
 	@Unroll("the following workflow transition for #status are not legal : #illegalStatuses")
@@ -229,10 +267,15 @@ class RequirementVersionTest extends Specification {
 
 		where :
 		status				|	illegalStatuses
-		WORK_IN_PROGRESS  	|	[ APPROVED ]
+		WORK_IN_PROGRESS  	|	[APPROVED]
 		UNDER_REVIEW		|	[]
-		APPROVED			|	[ UNDER_REVIEW, WORK_IN_PROGRESS ]
-		OBSOLETE			|	[ WORK_IN_PROGRESS, UNDER_REVIEW, APPROVED, OBSOLETE ]
+		APPROVED			|	[]
+		OBSOLETE			|	[
+			WORK_IN_PROGRESS,
+			UNDER_REVIEW,
+			APPROVED,
+			OBSOLETE
+		]
 	}
 
 	//that (naive) method builds requirements with initial status that could bypass the workflow.

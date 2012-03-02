@@ -23,12 +23,12 @@ package org.squashtest.csp.tm.domain.requirement
 import static org.squashtest.csp.tm.domain.requirement.RequirementStatus.*
 
 import org.squashtest.csp.tm.domain.IllegalRequirementModificationException
-import org.squashtest.csp.tm.domain.NoVerifiableRequirementVersionException
-import org.squashtest.csp.tm.domain.RequirementVersionNotLinkableException
-import org.squashtest.csp.tm.domain.attachment.Attachment
-import org.squashtest.csp.tm.domain.project.Project
+import org.squashtest.csp.tm.domain.NoVerifiableRequirementVersionException;
+import org.squashtest.csp.tm.domain.RequirementVersionNotLinkableException;
+import org.squashtest.csp.tm.domain.attachment.Attachment;
+import org.squashtest.csp.tm.domain.project.Project;
 import org.squashtest.csp.tm.domain.testcase.TestCase
-import org.squashtest.csp.tools.unittest.reflection.ReflectionCategory
+import org.squashtest.csp.tools.unittest.reflection.ReflectionCategory;
 
 import spock.lang.Shared
 import spock.lang.Specification
@@ -150,7 +150,7 @@ class RequirementTest extends Specification {
 	def "check workflow legal"(){
 
 		when :
-		def arrayResult = []
+		def arrayResult = [];
 		for (tester in availableStatuses){
 			def req = prepareRequirement(status)
 			req.setStatus(tester)
@@ -164,14 +164,14 @@ class RequirementTest extends Specification {
 		status				|	availableStatuses
 		WORK_IN_PROGRESS  	|	[ OBSOLETE, WORK_IN_PROGRESS, UNDER_REVIEW ]
 		UNDER_REVIEW		|	[ OBSOLETE, UNDER_REVIEW, APPROVED, WORK_IN_PROGRESS ]
-		APPROVED			|	[ OBSOLETE, APPROVED ]
+		APPROVED			|	[ OBSOLETE, APPROVED, UNDER_REVIEW, WORK_IN_PROGRESS ]
 	}
 
 	@Unroll("the following workflow transition for #status are not legal : #illegalStatuses")
 	def "check workflow illegal"(){
 
 		when :
-		def arrayResult = []
+		def arrayResult = [];
 		for (tester in illegalStatuses){
 			def req = prepareRequirement(status)
 			try{
@@ -188,47 +188,47 @@ class RequirementTest extends Specification {
 		status				|	illegalStatuses
 		WORK_IN_PROGRESS  	|	[APPROVED]
 		UNDER_REVIEW		|	[]
-		APPROVED			|	[ WORK_IN_PROGRESS, UNDER_REVIEW ]
+		APPROVED			|	[]
 		OBSOLETE			|	[ WORK_IN_PROGRESS, UNDER_REVIEW, APPROVED, OBSOLETE ]
 	}
 
 	//that (naive) method builds requirements with initial status that could bypass the workflow.
 	private Requirement prepareRequirement(RequirementStatus status){
-		def req = new Requirement(new RequirementVersion(name:"req", description:"this is a req"))
+		def req = new Requirement(new RequirementVersion(name:"req", description:"this is a req"));
 
 		for (iterStatus in RequirementStatus.values()) {
-			req.status = iterStatus
+			req.status = iterStatus;
 			if (iterStatus == status) {
-				break
+				break;
 			}
 		}
 
-		return req
+		return req;
 	}
 
 	//same
 	private Requirement prepareRequirement(RequirementStatus status, TestCase testCase){
-		def req = new Requirement(new RequirementVersion(name:"req", description:"this is a req"))
+		def req = new Requirement(new RequirementVersion(name:"req", description:"this is a req"));
 		req.addVerifyingTestCase(testCase)
 
 		for (iterStatus in RequirementStatus.values()){
-			req.status = iterStatus
+			req.status = iterStatus;
 			if (iterStatus == status) {
-				break
+				break;
 			}
 		}
 
-		return req
+		return req;
 	}
 
 	def "should create a 'pastable' copy"() {
 		given:
 		RequirementVersion ver = new RequirementVersion(name: "ver")
-		Requirement source = new Requirement(ver)
+		Requirement source = new Requirement(ver);
 
 		and:
 		Project project = new Project()
-		source.notifyAssociatedWithProject(project)
+		source.notifyAssociatedWithProject(project);
 
 		when:
 		Requirement copy = source.createPastableCopy()
@@ -248,7 +248,7 @@ class RequirementTest extends Specification {
 	def "'pastable' copy should not have obsolete versions"() {
 		given:
 		RequirementVersion ver = new RequirementVersion(name: "ver")
-		Requirement source = new Requirement(ver)
+		Requirement source = new Requirement(ver);
 
 		and:
 		RequirementVersion obsolete = new RequirementVersion(name: "obsolete")
@@ -276,10 +276,10 @@ class RequirementTest extends Specification {
 	def "should increase the current version"() {
 		given:
 		RequirementVersion ver = new RequirementVersion(name: "ver")
-		Requirement req = new Requirement(ver)
+		Requirement req = new Requirement(ver);
 
 		when:
-		req.increaseVersion()
+		req.increaseVersion();
 
 		then:
 		req.currentVersion != ver
@@ -340,7 +340,7 @@ class RequirementTest extends Specification {
 		then:
 		res == expectedVerifiable
 	}
-
+	
 	def "should throw an exception when no version is verifiable"() {
 		given: "a req with an approved version"
 		RequirementVersion v1 = new RequirementVersion()
