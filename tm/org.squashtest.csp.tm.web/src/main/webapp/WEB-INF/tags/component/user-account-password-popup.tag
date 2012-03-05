@@ -64,14 +64,14 @@
 			
 			<div >
 				<label><f:message key="user.account.oldpass.label"/></label>					
-				<input type="password" id="user-account-oldpass"/>
-				<comp:error-message forField="user-account-oldpass" />
+				<input type="password" id="oldPassword"/>
+				<comp:error-message forField="oldPassword" />
 			</div>
 		
 			<div>
 				<label ><f:message key="user.account.newpass.label"/></label>
-				<input type="password" id="user-account-newpass"/>
-				<comp:error-message forField="user-account-newpass" />
+				<input type="password" id="newPassword"/>
+				<comp:error-message forField="newPassword" />
 			</div>
 			
 			<div>
@@ -102,14 +102,14 @@
 		
 		if (! validatePassword()) return;		
 			
-		var oldpass= $("#user-account-oldpass").val();
-		var newpass = $("#user-account-newpass").val();
+		var oldPassword= $("#oldPassword").val();
+		var newPassword = $("#newPassword").val();
 		
 		$.ajax({
 			url : "${url}",
 			type : "POST",
 			dataType : "json",
-			data : { "old-password" : oldpass, "new-password" : newpass } ,
+			data : { "oldPassword" : oldPassword, "newPassword" : newPassword } ,
 			success : userPasswordSuccess
 		});		
 						
@@ -134,13 +134,13 @@
 		var samePassesOkay=true;
 		
 
-		if (! isFilled("#user-account-oldpass")){
-			$("span.error-message.user-account-oldpass-error").html("${oldPassError}");
+		if (! isFilled("#oldPassword")){
+			$("span.error-message.oldPassword-error").html("${oldPassError}");
 			oldPassOkay=false;
 		}
 		
-		if (! isFilled("#user-account-newpass")){
-			$("span.error-message.user-account-newpass-error").html("${newPassError}");
+		if (! isFilled("#newPassword")){
+			$("span.error-message.newPassword-error").html("${newPassError}");
 			newPassOkay=false;
 		}
 
@@ -150,11 +150,11 @@
 		}				
 		
 		if ((newPassOkay==true) && (confirmPassOkay==true)){
-			var pass = $("#user-account-newpass").val();
+			var pass = $("#newPassword").val();
 			var confirm = $("#user-account-confirmpass").val();
 			
 			if ( pass != confirm){
-				$("span.error-message.user-account-newpass-error").html("${samePassError}");
+				$("span.error-message.newPassword-error").html("${samePassError}");
 				samePassesOkay=false;
 			}
 		}
@@ -179,8 +179,8 @@
 	
 	function hasPasswdChanged(){
 		return (
-			   (isFilled("#user-account-oldpass"))
-			|| (isFilled("#user-account-newpass"))
+			   (isFilled("#oldPassword"))
+			|| (isFilled("#newPassword"))
 			|| (isFilled("#user-account-confirmpass"))
 		);
 	}
@@ -195,8 +195,8 @@
 	}
 	
 	function cleanUp(){
-		$("#user-account-oldpass").val('');
-		$("#user-account-newpass").val('');
+		$("#oldPassword").val('');
+		$("#newPassword").val('');
 		$("#user-account-confirmpass").val('');	
 		
 	}

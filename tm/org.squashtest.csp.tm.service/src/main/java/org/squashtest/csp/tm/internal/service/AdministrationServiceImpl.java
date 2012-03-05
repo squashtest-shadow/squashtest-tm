@@ -24,10 +24,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 import javax.inject.Inject;
-import javax.validation.constraints.NotNull;
 
-import org.hibernate.validator.constraints.NotBlank;
-import org.hibernate.validator.constraints.NotEmpty;
 import org.springframework.osgi.extensions.annotation.ServiceReference;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.security.core.GrantedAuthority;
@@ -142,7 +139,7 @@ public class AdministrationServiceImpl implements AdministrationService {
 
 	@Override
 	@PreAuthorize("hasRole('ROLE_ADMIN')")
-	public void addUser(User aUser, long groupId, @NotNull @NotEmpty @NotBlank String password) {
+	public void addUser(User aUser, long groupId, String password) {
 		// FIXME : also check the auth part when time is come
 		UsersGroup group = groupDao.findById(groupId);
 

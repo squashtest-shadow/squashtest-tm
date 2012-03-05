@@ -33,59 +33,59 @@ import org.squashtest.csp.tm.domain.audit.Auditable;
 
 @Entity
 @Auditable
-@Table(name="CORE_USER")
+@Table(name = "CORE_USER")
 public class User {
-	
+
 	@Id
 	@GeneratedValue
 	private Long id;
 
+	@NotBlank
 	private String firstName;
+	@NotBlank
 	private String lastName;
+	@NotBlank
 	private String login;
 	private String email;
-	
-	private Boolean active=true;
-	
-	
-	@OneToOne
-	@JoinTable(name="CORE_GROUP_MEMBER", joinColumns = @JoinColumn(name = "USER_ID"), inverseJoinColumns = @JoinColumn(name = "GROUP_ID"))
-	private UsersGroup group;
-	
-	public User(){
-	}
-	
 
-	public User(String firstName, String lastName, String login) {
+	private Boolean active = true;
+
+	@OneToOne
+	@JoinTable(name = "CORE_GROUP_MEMBER", joinColumns = @JoinColumn(name = "USER_ID"), inverseJoinColumns = @JoinColumn(name = "GROUP_ID"))
+	private UsersGroup group;
+
+	public User() {
 		super();
-		this.firstName = firstName;
-		this.lastName = lastName;
-		this.login = login;
 	}
-	@NotBlank
+
 	public String getFirstName() {
 		return firstName;
 	}
+
 	public void setFirstName(String firstName) {
 		this.firstName = firstName;
 	}
-	@NotBlank
+
 	public String getLastName() {
 		return lastName;
 	}
+
 	public void setLastName(String lastName) {
 		this.lastName = lastName;
 	}
-	@NotBlank
+
 	public String getLogin() {
 		return login;
 	}
+
 	public void setLogin(String login) {
 		this.login = login;
 	}
+
 	public Long getId() {
 		return id;
 	}
+
 	public UsersGroup getGroup() {
 		return group;
 	}
@@ -93,15 +93,19 @@ public class User {
 	public void setGroup(UsersGroup group) {
 		this.group = group;
 	}
+
 	public String getEmail() {
 		return email;
 	}
+
 	public void setEmail(String email) {
 		this.email = email;
-	}	
+	}
+
 	public Boolean getActive() {
 		return active;
 	}
+
 	public void setActive(Boolean active) {
 		this.active = active;
 	}

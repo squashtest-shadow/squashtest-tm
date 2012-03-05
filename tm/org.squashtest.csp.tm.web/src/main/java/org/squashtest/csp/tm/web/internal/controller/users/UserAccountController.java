@@ -20,8 +20,11 @@
  */
 package org.squashtest.csp.tm.web.internal.controller.users;
 
+import javax.validation.Valid;
+
 import org.springframework.osgi.extensions.annotation.ServiceReference;
 import org.springframework.stereotype.Controller;
+import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
@@ -53,12 +56,10 @@ public class UserAccountController {
 
 	}
 
-	@RequestMapping(value="/update", method=RequestMethod.POST, params={"old-password", "new-password"})
+	@RequestMapping(value="/update", method=RequestMethod.POST, params={"oldPassword", "newPassword"})
 	@ResponseBody
-	public void changePassword(@RequestParam("old-password") String oldPassword, @RequestParam("new-password") String newPassword){
-		if ( (oldPassword!=null) && (newPassword!=null) ){			
-			userService.setCurrentUserPassword(oldPassword, newPassword);
-		}
+	public void changePassword(@ModelAttribute @Valid PasswordChangeForm form){
+			userService.setCurrentUserPassword(form.getOldPassword(), form.getNewPassword());
 	}
 	
 	@RequestMapping(value="/update", method=RequestMethod.POST, params={"id=user-account-email", "value"})

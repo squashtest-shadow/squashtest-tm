@@ -30,51 +30,49 @@ import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.provisioning.UserDetailsManager;
 import org.squashtest.csp.core.service.security.AdministratorAuthenticationService;
 
-public class AdministratorAuthenticationServiceImpl implements
-		AdministratorAuthenticationService {
-	
+public class AdministratorAuthenticationServiceImpl implements AdministratorAuthenticationService {
+
 	private UserDetailsManager userManager;
 	private PasswordEncoder encoder;
-	private Object salt=null;
-	
+	private Object salt = null;
+
 	@ServiceReference
-	public void setUserDetailsManager(UserDetailsManager userManager){
-		this.userManager=userManager;
+	public void setUserDetailsManager(UserDetailsManager userManager) {
+		this.userManager = userManager;
 	}
-	
-	public void setPasswordEncoder(PasswordEncoder encoder){
-		this.encoder=encoder;
+
+	public void setPasswordEncoder(PasswordEncoder encoder) {
+		this.encoder = encoder;
 	}
-	
-	public void setSalt(Object salt){
-		this.salt=salt;
+
+	public void setSalt(Object salt) {
+		this.salt = salt;
 	}
 
 	@Override
 	public boolean canModifyUser() {
-		//TODO : how am I supposed to know that ?
+		// TODO : how am I supposed to know that ?
 		return true;
 	}
 
 	@Override
-	public void setUserPassword(String userLogin, String plainOldPassword,
-			String plainNewPassword) {
-		
+	public void setUserPassword(String userLogin, String plainOldPassword, String plainNewPassword) {
+
 		String encNewPasswd = encoder.encodePassword(plainNewPassword, salt);
 		userManager.changePassword(plainOldPassword, encNewPasswd);
 	}
 
 	@Override
-	public void createNewUserPassword(String login, String plainTextPassword,
-			Boolean enabled, boolean accountNonExpired,
-			boolean credentialsNonExpired, boolean accountNonLocked,
+	public void createNewUserPassword(String login, String plainTextPassword, boolean enabled,
+			boolean accountNonExpired, boolean credentialsNonExpired, boolean accountNonLocked,
 			Collection<GrantedAuthority> autorities) {
 
 		String encodedPassword = encoder.encodePassword(plainTextPassword, salt);
-		
-		UserDetails user = new User(login, encodedPassword, enabled, accountNonExpired, credentialsNonExpired, accountNonLocked, autorities);
+
+		UserDetails user = new User(login, encodedPassword, enabled, accountNonExpired, credentialsNonExpired,
+				accountNonLocked, autorities);
 		userManager.createUser(user);
-		
+
 	}
 
 }

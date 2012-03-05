@@ -21,10 +21,9 @@
 package org.squashtest.csp.core.service.security;
 
 
-
 public interface UserAuthenticationService {
 
 	boolean canModifyUser();
-	
+
 	void setUserPassword(String userLogin, String plainOldPassword, String plainNewPassword);
 }

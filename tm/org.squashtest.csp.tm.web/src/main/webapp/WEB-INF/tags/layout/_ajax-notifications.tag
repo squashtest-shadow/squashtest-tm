@@ -63,9 +63,7 @@ function handleJsonResponseError(request) {
 	var json = jQuery.parseJSON(request.responseText);
 
 	if (json != null && json.fieldValidationErrors != null) {
-		
 		<%-- IE8 requires it a low tech code --%>
-		
 		var validationErrorList = json.fieldValidationErrors;
 		if (validationErrorList.length>0){
 			

@@ -90,7 +90,7 @@
 					var confirmPassOkay=true;
 					var samePassesOkay=true;
 					
-					if (! isFilled("#new-user-password")){
+					if (! isFilled("#add-user-password")){
 						$("span.error-message.password-error").html("${newPassError}");
 						newPassOkay=false;
 					}
@@ -101,7 +101,7 @@
 					}				
 					
 					if ((newPassOkay==true) && (confirmPassOkay==true)){
-						var pass = $("#new-user-password").val();
+						var pass = $("#add-user-password").val();
 						var confirm = $("#new-user-confirmpass").val();
 						
 						if ( pass != confirm){
@@ -193,7 +193,7 @@
 				var url = "${ addUserUrl }";
 				<jq:ajaxcall url="url" httpMethod="POST" useData="true" successHandler="refreshUsers" errorHandler="createUserFailed" dataType="json">		
 					<jq:params-bindings login="#add-user-login" firstName="#add-user-firstName" lastName="#add-user-lastName"
-					 email="#add-user-email" groupId="#new-user-group" password="#new-user-password" />
+					 email="#add-user-email" groupId="#add-user-group" password="#add-user-password" />
 				</jq:ajaxcall>		
 			},			
 			<pop:cancel-button />
@@ -239,10 +239,10 @@
 				<td><comp:error-message forField="email" /></td>
 				 </tr>
 				<tr> <td>
-					<label style="font-weight: bold;" for="new-user-group"><f:message key="user.account.group.label" /></label>
+					<label style="font-weight: bold;" for="add-user-group"><f:message key="user.account.group.label" /></label>
 					</td>
 					<td>
-					<select id="new-user-group">
+					<select id="add-user-group">
 						<c:forEach var="group" items="${ usersGroupList }">
 							<c:choose>
 								<c:when test="${ group.simpleName == 'User' }">
@@ -256,10 +256,10 @@
 					</select>
 				</td> </tr>
 				<tr> <td>
-					<label  style="font-weight: bold;" for="new-user-password"><f:message key="user.account.newpass.label"/></label>
+					<label  style="font-weight: bold;" for="add-user-password"><f:message key="user.account.newpass.label"/></label>
 					</td>
 					<td>
-					<input type="password" id="new-user-password" size="30"/>
+					<input type="password" id="add-user-password" size="30"/>
 				</td>
 				</tr>
 				<tr>
