@@ -190,10 +190,6 @@
 	}
 	
 	function updateTreeDisplayedName(name){
-		//compose name
-		if (typeof getSelectedNodeIndex == 'function'){
-			name = getSelectedNodeIndex() + " - " + name;
-		}
 		//update the name
 		if (typeof renameSelectedNreeNode == 'function'){
 			renameSelectedNreeNode(name);
