@@ -134,6 +134,12 @@ public class TestSuiteExecutionController {
 				testPlanItemId);
 		model.addAttribute("hasNextTestCase", hasNextTestCase);
 	}
+	
+	private void addHasPreviousTestCase(long testSuiteId, long testPlanItemId, Model model) {
+		boolean hasPreviousTestCase = testSuiteExecutionProcessingService.hasPreviousExecutableItems(testSuiteId,
+				testPlanItemId);
+		model.addAttribute("hasPreviousTestCase", hasPreviousTestCase);
+	}
 
 	private void addCurrentStepUrl(Model model, Long... ids) {
 		String currentStepUrl = MessageFormat.format( CURRENT_STEP_URL_PATTERN, (Object[]) ids);
@@ -167,6 +173,7 @@ public class TestSuiteExecutionController {
 
 	private void addTestSuiteTestPlanItemData(long testSuiteId, long testPlanItemId, Model model) {
 		addHasNextTestCase(testSuiteId, testPlanItemId, model);
+		addHasPreviousTestCase(testSuiteId, testPlanItemId, model);
 		addTestPlanItemUrl(testSuiteId, testPlanItemId, model);
 	}
 

@@ -121,6 +121,9 @@
 			}
 		
 			function navigateNext(){
+				if ( $('#new-test-case-label').hasClass('not-displayed') == false ) {
+					$('#new-test-case-label').addClass('not-displayed');
+				}
 				<c:choose>
 					<c:when test="${ not hasNextStep }">
 						testComplete();
@@ -133,6 +136,9 @@
 			}
 			
 			function navigatePrevious(){
+				if ( $('#new-test-case-label').hasClass('not-displayed') == false ) {
+					$('#new-test-case-label').addClass('not-displayed');
+				}
 				<c:choose>
 					<c:when test="${ not hasPreviousStep }">
 						testComplete();
@@ -276,6 +282,8 @@
 				});
 				
 				if (${ not empty testPlanItemUrl }) $('#execute-next-test-case-panel').removeClass('not-displayed');		
+				
+				if (${ not empty testPlanItemUrl } && ${ hasPreviousTestCase } && ${ not hasPreviousStep } ) $('#new-test-case-label').removeClass('not-displayed');		
 			});	
 		</script>
 	
@@ -305,7 +313,12 @@
 		</table>
 		
 	</div>
+	
 	<div id="execute-body" class="execute-fragment-body">
+
+		<div id="new-test-case-label" class="centered not-displayed">
+			<font color=red><f:message key="execute.test.suite.next.test.case.label" /></font>
+		</div>
 
 		<comp:toggle-panel id="execution-action-panel" titleKey="execute.panel.action.title" isContextual="true" open="true">
 			<jsp:attribute name="body">

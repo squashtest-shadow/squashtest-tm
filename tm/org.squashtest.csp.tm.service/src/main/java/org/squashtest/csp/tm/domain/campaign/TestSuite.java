@@ -280,6 +280,11 @@ public class TestSuite {
 		return false;
 	}
 
+	public boolean isFirstExecutableTestPlanItem(long itemId) {
+		List<IterationTestPlanItem> testPlan = iteration.getTestPlans();
+		return itemId == testPlan.get(0).getId();
+	}
+	
 	/**
 	 * finds next item (that last execution has unexecuted step) or (has no execution and is not test case deleted)
 	 * <em>can return item linked to test-case with no step</em>

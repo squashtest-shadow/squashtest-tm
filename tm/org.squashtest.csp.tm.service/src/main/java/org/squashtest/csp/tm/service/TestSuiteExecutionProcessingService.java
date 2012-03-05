@@ -94,4 +94,15 @@ public interface TestSuiteExecutionProcessingService {
 	 * @return
 	 */
 	boolean hasMoreExecutableItems(long testSuiteId, long testPlanItemId);
+
+	/**
+	 * <p>
+	 * tells if a test suite has at least one executable item in its test plan before the given item.
+	 * </p>
+	 * 
+	 * @param testSuiteId
+	 * @param testPlanItemId
+	 * @return
+	 */
+	boolean hasPreviousExecutableItems(long testSuiteId, long testPlanItemId);
 }

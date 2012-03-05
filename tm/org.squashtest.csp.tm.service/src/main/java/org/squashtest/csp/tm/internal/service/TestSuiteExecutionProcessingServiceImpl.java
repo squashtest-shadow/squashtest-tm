@@ -134,6 +134,15 @@ public class TestSuiteExecutionProcessingServiceImpl implements TestSuiteExecuti
 		TestSuite testSuite = suiteDao.findById(testSuiteId);
 		return !testSuite.isLastExecutableTestPlanItem(testPlanItemId);
 	}
+	
+	/**
+	 * @see org.squashtest.csp.tm.service.TestSuiteExecutionProcessingService#hasPreviousExecutableItems(long, long)
+	 */
+	@Override
+	public boolean hasPreviousExecutableItems(long testSuiteId, long testPlanItemId) {
+		TestSuite testSuite = suiteDao.findById(testSuiteId);
+		return !testSuite.isFirstExecutableTestPlanItem(testPlanItemId);
+	}
 
 	/**
 	 * @see org.squashtest.csp.tm.service.TestSuiteExecutionProcessingService#startNextExecution(long, long)
