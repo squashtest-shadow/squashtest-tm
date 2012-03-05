@@ -68,6 +68,7 @@
 </head>
 
 <body id="ieo-body">
+	<f:message var="completedMessage" key="execute.alert.test.complete" />
 	<script type="text/javascript">
 	$(function() {
 		$("#left-panel").resizable({
@@ -195,11 +196,13 @@
 	
 	<%-- Navigate left panel to the right Step --%>
 	function navigateNext(){
+		refreshParent();
 		if (hasNextStep) {
 			parent.frameleft.document.location.href=urlNext;
 			refreshToolboxNext();
+		} else {
+			testComplete();
 		}
-		refreshParent();
 	}
 	
 	function navigateOther(value){
@@ -211,17 +214,24 @@
 	}
 
 	function navigatePrevious(){
+		refreshParent();
 		if (hasPreviousStep) {
 			parent.frameleft.document.location.href=urlPrevious;
 			refreshToolboxPrevious();
+		} else {
+			testComplete();
 		}
-		refreshParent();
 	}
 
 	function testComplete(){
-		alert( executionCompleteMessage );
+		alert( "${ completedMessage }" );
 		refreshParent();
-		window.close();
+		if (${ (empty hasNextTestCase) or (not hasNextTestCase) }){
+			window.close();
+		}
+		else {
+			$('#execute-next-test-case').click();		
+		}
 	}
 	
 	<%-- fill the right panel with the content of entered url --%>

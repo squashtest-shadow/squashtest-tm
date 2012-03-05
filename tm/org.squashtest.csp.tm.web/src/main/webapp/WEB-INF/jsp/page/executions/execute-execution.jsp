@@ -105,22 +105,29 @@
 			}
 		
 			function refreshExecStepInfos(){
+				refreshParent();
 				$("#execution-information-fragment").load("${executeThis}/general");
 			}
 		
 			function testComplete() {
 				alert( "${ completedMessage }" );
 				refreshParent();
-				window.close();
+				if (${ (empty hasNextTestCase) or (not hasNextTestCase) }){
+					window.close();
+				}
+				else {
+					$('#execute-next-test-case').click();		
+				}
 			}
 		
 			function navigateNext(){
 				<c:choose>
 					<c:when test="${ not hasNextStep }">
-				testComplete();
+						testComplete();
 					</c:when>
 					<c:otherwise>
-				document.location.href="${ executeNext }";						
+						refreshParent();
+						document.location.href="${ executeNext }";						
 					</c:otherwise>
 				</c:choose>
 			}
@@ -128,10 +135,11 @@
 			function navigatePrevious(){
 				<c:choose>
 					<c:when test="${ not hasPreviousStep }">
-				testComplete();
+						testComplete();
 					</c:when>
 					<c:otherwise>
-				document.location.href="${ executePrevious }";						
+						refreshParent();
+						document.location.href="${ executePrevious }";						
 					</c:otherwise>
 				</c:choose>
 			}
