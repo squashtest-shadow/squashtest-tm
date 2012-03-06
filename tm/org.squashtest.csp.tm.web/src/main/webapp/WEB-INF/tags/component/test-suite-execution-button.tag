@@ -28,15 +28,15 @@
 	description="The entity which general information we want to show"%>
 <%@ attribute name="testSuiteId" required="true"
 	description="The id of the test-suite"%>
-<%@ taglib uri="http://java.sun.com/jsp/jstl/fmt" prefix="f"%>
-<%@ taglib uri="http://java.sun.com/jsp/jstl/core" prefix="c"%>
+<%@ taglib prefix="f" uri="http://java.sun.com/jsp/jstl/fmt" %>
+<%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core" %>
+<%@ taglib prefix="input" tagdir="/WEB-INF/tags/input" %>
 
 <div id="test-suite-execution-button" style="display: inline-block;">
 	<c:url var='runnerUrl'
 		value='/test-suites/${ testSuiteId }/test-plan/execution/runner' />
 	<script type="text/javascript">
-	
-		var classicExecution = function(runMode) {
+		function classicExecution(runMode) {
 			var url = "${ runnerUrl }";
 			var data = {
 				'classic' : '',
@@ -48,7 +48,6 @@
 			};
 			$.open(url, data, winDef);
 		}
-		
 	</script>
 	<c:if test="${ statisticsEntity.status == 'READY' }">
 		<f:message var='startResumeLabel'
@@ -77,25 +76,24 @@
 			<input type="hidden" name="mode" value="start-resume" />
 		</form>
 		<script>
-			$("#start-resume-button").menu({
-				content : $('#start-resume-button').next().html(),
-				showSpeed : 0,
-				width : 130
-			});
-
-			var startmenu = allUIMenus[allUIMenus.length - 1];
-
-			startmenu.chooseItem = function(item) {
-				console.log(item);
-				if ($(item).hasClass('start-suite-classic')) {
-					classicExecution('start-resume');
-				} else {
-					if ($(item).hasClass('start-suite-optimized')) {
+			$(function() {
+				$("#start-resume-button").menu({
+					content : $('#start-resume-button').next().html(),
+					showSpeed : 0,
+					width : 130
+				});
+	
+				var startmenu = allUIMenus[allUIMenus.length - 1];
+	
+				startmenu.chooseItem = function(item) {
+					console.log(item);
+					if ($(item).hasClass('start-suite-classic')) {
+						classicExecution('start-resume');
+					} else if ($(item).hasClass('start-suite-optimized')) {
 						$('#start-optimized-button').trigger('click');
 					}
 				}
-
-			}
+			});
 		</script>
 	</c:if>
 	<c:if test="${ statisticsEntity.status != 'READY' }">
@@ -117,26 +115,57 @@
 			<input type="submit" value="" name="optimized" id="restart-optimized-button"/> 
 			<input type="hidden" name="mode" value="restart" />
 		</form>
+		<div id="confirm-restart-dialog" class="not-displayed popup-dialog" title="<f:message key='test-suite.execution.restart.title' />">
+			<input id="restart-mode" type="hidden" value="classic" />
+			<span><f:message key="test-suite.execution.restart.warning-message" /></span>
+			<input:ok />
+			<input:cancel />
+		</div>
 		<script>
-			$("#restart-button").menu({
-				content : $('#restart-button').next().html(),
-				showSpeed : 0,
-				width : 130
-			});
-
-			var startmenu = allUIMenus[allUIMenus.length - 1];
-
-			startmenu.chooseItem = function(item) {
-				console.log(item);
-				if ($(item).hasClass('restart-suite-classic')) {
+			$(function() {
+				$("#restart-button").menu({
+					content : $('#restart-button').next().html(),
+					showSpeed : 0,
+					width : 130
+				});
+	
+				var restartClassic = function() {
+					restartDialog.confirmDialog('close');
 					classicExecution('restart');
-				} else {
-					if ($(item).hasClass('restart-suite-optimized')) {
-						$('#restart-optimized-button').trigger('click');
+				};
+				
+				var restartOptimized = function() {
+					restartDialog.confirmDialog('close');
+					$('#restart-optimized-button').trigger('click');
+				};
+				
+				var confirmRestartHandler = function() {
+					if ($( '#restart-mode' ).val() == 'classic') {
+						restartClassic(); 
+					} else {
+						restartOptimized();
+					}	
+				};
+				
+				var restartDialog = $( "#confirm-restart-dialog" );
+				restartDialog.confirmDialog({confirm: confirmRestartHandler});
+	
+				var startmenu = allUIMenus[allUIMenus.length - 1];
+	
+				startmenu.chooseItem = function(item) {
+					var it = $(item);
+					var restartMode = $( '#restart-mode' );
+					
+					if (it.hasClass('restart-suite-classic')) {
+						restartMode.val('classic');
+						restartDialog.confirmDialog('open');
+						
+					} else if (it.hasClass('restart-suite-optimized')) {
+						restartMode.val('optimized');
+						restartDialog.confirmDialog('open');
 					}
 				}
-
-			}
+			});
 		</script>
 		
 	</c:if>
