@@ -210,7 +210,7 @@
 	});
 </script>
 
-<comp:toggle-panel id="campaign-description-panel" class="information-panel" titleKey="generics.description.title" isContextual="true" open="true">
+<comp:toggle-panel id="campaign-description-panel" classes="information-panel" titleKey="generics.description.title" isContextual="true" open="true">
 	<jsp:attribute name="body">
 		<div id="campaign-description" >${ campaign.description }</div>
 	</jsp:attribute>
