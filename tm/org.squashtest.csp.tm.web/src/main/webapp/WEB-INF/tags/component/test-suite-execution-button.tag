@@ -46,7 +46,33 @@
 				name : "classic-execution-runner",
 				features : "height=500, width=600, resizable, scrollbars, dialog, alwaysRaised"
 			};
-			$.open(url, data, winDef);
+			checkTestSuiteExecutionDoable(data, url).fail(testSuiteExecutionError).done(
+					function() {
+						$.open(url, data, winDef);
+					});
+
+		}
+		var checkTestSuiteExecutionDoable = function(dataP, urlP) {
+			return $.ajax({
+				type : 'post',
+				data : dataP,
+				dataType : "json",
+				url : urlP
+			});
+		}
+		var testSuiteExecutionError = function(jqXHR) {
+			var json = jQuery.parseJSON(jqXHR.responseText);
+			
+			if (json != null && json.actionValidationError != null) {
+					var message= '<p><f:message key="squashtm.action.exception.testsuite.execution.error.first.words" />';
+					message += '<ul>'
+				if (json.actionValidationError.exception === "EmptyTestPlanException") {
+					message += '<li> <f:message key="squashtm.action.exception.testsuite.testplan.empty" /></li>';
+					
+				}
+				message += '</ul></p>'
+				oneShotDialog('<f:message key="popup.title.error" />',message);
+			}
 		}
 	</script>
 	<c:if test="${ statisticsEntity.status == 'READY' }">
@@ -58,7 +84,8 @@
 			key='test-suite.execution.resume.label' />
 	</c:if>
 
-	<c:if test="${ statisticsEntity.status == 'RUNNING' || statisticsEntity.status == 'READY'}">
+	<c:if
+		test="${ statisticsEntity.status == 'RUNNING' || statisticsEntity.status == 'READY'}">
 		<a tabindex="0" href="#start" class="button" id="start-resume-button">${startResumeLabel}</a>
 		<div id="start" style="display: none">
 			<ul>
@@ -69,11 +96,13 @@
 							key='test-suite.execution.classic.label' /> </a>
 				</li>
 			</ul>
-		</div> 
+		</div>
 		<form action="${ runnerUrl }" method="post"
-			name="execute-test-suite-form" target="optimized-execution-runner" style="display:none;">
-			<input type="submit" value='' name="optimized" id="start-optimized-button"/> 
-			<input type="hidden" name="mode" value="start-resume" />
+			name="execute-test-suite-form" target="optimized-execution-runner"
+			style="display: none;">
+			<input type="submit" value='' name="optimized"
+				id="start-optimized-button" /> <input type="hidden" name="mode"
+				value="start-resume" />
 		</form>
 		<script>
 			$(function() {
@@ -86,7 +115,6 @@
 				var startmenu = allUIMenus[allUIMenus.length - 1];
 	
 				startmenu.chooseItem = function(item) {
-					console.log(item);
 					if ($(item).hasClass('start-suite-classic')) {
 						classicExecution('start-resume');
 					} else if ($(item).hasClass('start-suite-optimized')) {
@@ -97,8 +125,8 @@
 		</script>
 	</c:if>
 	<c:if test="${ statisticsEntity.status != 'READY' }">
-	<a tabindex="0" href="#restart" class="button" id="restart-button"><f:message
-							key='test-suite.execution.restart.label' /></a>
+		<a tabindex="0" href="#restart" class="button" id="restart-button"><f:message
+				key='test-suite.execution.restart.label' /> </a>
 		<div id="restart" style="display: none">
 			<ul>
 				<li><a class="restart-suite-optimized" href="#"><f:message
@@ -112,8 +140,9 @@
 		<form action="${ runnerUrl }" method="post"
 			name="execute-test-suite-form" target="optimized-execution-runner"
 			style="display: none;">
-			<input type="submit" value="" name="optimized" id="restart-optimized-button"/> 
-			<input type="hidden" name="mode" value="restart" />
+			<input type="submit" value="" name="optimized"
+				id="restart-optimized-button" /> <input type="hidden" name="mode"
+				value="restart" />
 		</form>
 		<div id="confirm-restart-dialog" class="not-displayed popup-dialog" title="<f:message key='test-suite.execution.restart.title' />">
 			<input id="restart-mode" type="hidden" value="classic" />
@@ -167,6 +196,6 @@
 				}
 			});
 		</script>
-		
+
 	</c:if>
 </div>

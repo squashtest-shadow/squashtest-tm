@@ -26,17 +26,16 @@ public class ActionException extends RuntimeException implements Internationaliz
 	 * 
 	 */
 	private static final long serialVersionUID = -7715263070633043453L;
-	private static final String GENERIC_ACTION_EXCEPTION_KEY = "squashtm.action.exception.label";
+	private static final String GENERIC_ACTION_EXCEPTION_KEY = "json.actionValidationError";
 
-	
-	public ActionException(){
-		
+	public ActionException() {
+
 	}
-	
-	public ActionException(Exception ex){
+
+	public ActionException(Exception ex) {
 		super(ex);
 	}
-	
+
 	public ActionException(String arg0, Throwable arg1) {
 		super(arg0, arg1);
 	}
@@ -45,7 +44,7 @@ public class ActionException extends RuntimeException implements Internationaliz
 		super(arg0);
 	}
 
-	public ActionException(String message){
+	public ActionException(String message) {
 		super(message);
 	}
 

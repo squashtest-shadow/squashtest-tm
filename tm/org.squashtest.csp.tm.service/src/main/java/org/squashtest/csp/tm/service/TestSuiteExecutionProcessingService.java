@@ -68,7 +68,7 @@ public interface TestSuiteExecutionProcessingService {
 	/**
 	 * <p>
 	 * returns the execution were to resume the test suite<br>
-	 * or null if no execution is to be resumed because :
+	 * or throw a TestPlanItemNotExecutableException if no execution is to be resumed because :
 	 * <ul>
 	 * <li>all terminated, or</li>
 	 * <li>no execution-step on executions, or</li>

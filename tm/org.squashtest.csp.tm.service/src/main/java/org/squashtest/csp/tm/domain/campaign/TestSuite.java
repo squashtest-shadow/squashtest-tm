@@ -284,7 +284,7 @@ public class TestSuite {
 		List<IterationTestPlanItem> testPlan = iteration.getTestPlans();
 		return itemId == testPlan.get(0).getId();
 	}
-	
+
 	/**
 	 * finds next item (that last execution has unexecuted step) or (has no execution and is not test case deleted)
 	 * <em>can return item linked to test-case with no step</em>
@@ -308,19 +308,18 @@ public class TestSuite {
 	}
 
 	/**
-	 * @throws TestPlanItemNotExecutableException
+	 * @throws {@link TestPlanItemNotExecutableException}
+	 * @throws {@link EmptyTestPlanException}
 	 * @return
 	 */
 	public IterationTestPlanItem findFirstExecutableTestPlanItem() {
-		List<IterationTestPlanItem> testPlan = this.getTestPlan();
-		if (!testPlan.isEmpty()) {
-			if (testPlan.get(0).isExecutableThroughTestSuite()) {
-				return testPlan.get(0);
-			} else {
-				return findNextExecutableTestPlanItem(testPlan.get(0).getId());
-			}
+		IterationTestPlanItem firstTestPlanItem = getFirstTestPlanItem();
+		if (firstTestPlanItem.isExecutableThroughTestSuite()) {
+			return firstTestPlanItem;
+		} else {
+			return findNextExecutableTestPlanItem(firstTestPlanItem.getId());
 		}
-		throw new TestPlanItemNotExecutableException("No executable item in this suite's test plan");
+
 	}
 
 	private List<IterationTestPlanItem> getRemainingPlanById(long testPlanItemId) {

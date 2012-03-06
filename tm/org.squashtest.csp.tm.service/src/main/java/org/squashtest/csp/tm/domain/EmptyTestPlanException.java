@@ -22,8 +22,7 @@ package org.squashtest.csp.tm.domain;
 
 import org.squashtest.csp.tm.domain.campaign.TestSuite;
 
-
-public class EmptyTestPlanException extends RuntimeException {
+public class EmptyTestPlanException extends ActionException {
 
 	/**
 	 * 
@@ -34,5 +33,4 @@ public class EmptyTestPlanException extends RuntimeException {
 		super("The test plan is empty for Test Suite[" + testSuite.getId() + ']');
 	}
 
-	
 }
