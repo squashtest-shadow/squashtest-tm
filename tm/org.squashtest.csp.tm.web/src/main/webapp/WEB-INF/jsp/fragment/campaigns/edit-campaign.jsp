@@ -37,16 +37,13 @@
 <comp:datepicker-manager locale="${squashlocale}"/>
 
 <c:url var="ckeConfigUrl" value="/styles/ckeditor/ckeditor-config.js" />
-<s:url var="campaignUrl" value="/campaigns/{campId}">
-	<s:param name="campId" value="${campaign.id}" />
-</s:url>
+<c:url var="campaignUrl" value="/campaigns/${campaign.id}" />
 <s:url var="campaignInfoUrl" value="/campaigns/{campId}/general">
 	<s:param name="campId" value="${campaign.id}" />
 </s:url>
 <s:url var="campaignPlanningUrl" value="/campaigns/{campId}/planning">
 	<s:param name="campId" value="${campaign.id}" />
 </s:url>
-
 <s:url var="assignableUsersUrl" value="/campaigns/{campId}/assignable-user">
 		<s:param name="campId" value="${campaign.id}" />
 </s:url>
@@ -62,7 +59,6 @@
 <s:url var="getTestCaseUrl" value="/campaigns/${campaign.id}/test-cases-table" />
 <s:url var="testCaseManagerUrl" value="/campaigns/${ campaign.id }/campaign-test-plan-manager">
 </s:url>
-<c:url var="testCasesUrl" value="/campaigns/${ campaign.id }/test-cases" />
 <c:url var="nonBelongingTestCasesUrl" value="/campaigns/${ campaign.id }/non-belonging-test-cases" />
 <c:url var="testCaseDetailsBaseUrl" value="/test-cases" />
 
@@ -75,8 +71,6 @@
 <authz:authorized hasRole="ROLE_ADMIN" hasPermission="WRITE" domainObject="${ campaign }">
 	<c:set var="editable" value="${ true }" /> 
 </authz:authorized>
-
-
 
 <script type="text/javascript">
 
@@ -302,9 +296,9 @@
 	</jsp:attribute>
 	
 	<jsp:attribute name="body">
-		<aggr:decorate-campaign-test-cases-table tableModelUrl="${getTestCaseUrl}" testCaseDetailsBaseUrl="${testCaseDetailsBaseUrl}" testCasesUrl="${testCasesUrl}" 
+		<aggr:decorate-campaign-test-plan-table tableModelUrl="${getTestCaseUrl}" testCaseDetailsBaseUrl="${testCaseDetailsBaseUrl}" 
 			batchRemoveButtonId="remove-test-case-button" nonBelongingTestCasesUrl="${nonBelongingTestCasesUrl}" editable="${ editable }" assignableUsersUrl="${assignableUsersUrl}" 
-			campaignUrl="${campaignUrl}" testCaseMultipleRemovalPopupId="delete-multiple-test-cases-dialog" testCaseSingleRemovalPopupId="delete-single-test-case-dialog" />
+			campaignUrl="${ campaignUrl }" testCaseMultipleRemovalPopupId="delete-multiple-test-cases-dialog" testCaseSingleRemovalPopupId="delete-single-test-case-dialog" />
 		<aggr:campaign-test-cases-table/>
 	</jsp:attribute>
 </comp:toggle-panel>
@@ -371,7 +365,7 @@
 			'${ label }': function() {
 				var url = "${assignTestCasesUrl}";
 				var table = $( '#test-cases-table' ).dataTable();
-				var ids = getIdsOfSelectedTableRows(table, getTestCasesTableRowId);
+				var ids = getIdsOfSelectedTableRows(table, getTestPlanTableRowId);
 				var user = $(".comboLogin").val();
 			
 				$.post(url, { testCasesIds: ids, userId: user}, function(){
@@ -388,7 +382,7 @@
 			<script type="text/javascript">
 				$("#batch-assign-test-case").bind( "dialogopen", function(event, ui){
 					var table = $( '#test-cases-table' ).dataTable();
-					var ids = getIdsOfSelectedTableRows(table, getTestCasesTableRowId);
+					var ids = getIdsOfSelectedTableRows(table, getTestPlanTableRowId);
 					if (ids.length > 0) {
 						var comboBox = $.get("${batchAssignableUsersUrl}", false, function(){
 							$("#comboBox-div").html("${confirmMessage}");

@@ -29,24 +29,26 @@ import org.squashtest.csp.tm.domain.users.User;
 
 /**
  * Service that aims at managing the test cases of a campaign (i.e. its test plan)
+ * 
  * @author Agnes Durand
  */
 public interface CampaignTestPlanManagerService {
 
 	/**
 	 * Find a campaign using its id
+	 * 
 	 * @param campaignId
 	 */
 	Campaign findCampaign(long campaignId);
 
 	/**
-	 * Returns a collection of {@link TestCaseLibrary}, the test cases of
-	 * which may be added to the campaign
+	 * Returns a collection of {@link TestCaseLibrary}, the test cases of which may be added to the campaign
 	 */
 	List<TestCaseLibrary> findLinkableTestCaseLibraries();
 
 	/**
 	 * Adds a list of test cases to a campaign.
+	 * 
 	 * @param testCaseIds
 	 * @param campaignId
 	 */
@@ -67,15 +69,15 @@ public interface CampaignTestPlanManagerService {
 	 * @param campaignId
 	 */
 	void removeTestCaseFromCampaign(Long testCaseId, long campaignId);
-	
+
 	/**
 	 * Get Users with Write Access for a campaign and his test plans.
 	 * 
 	 * @param testCaseId
 	 * @param campaignId
 	 */
-	List <User> findAssignableUserForTestPlan(long campaignId);
-	
+	List<User> findAssignableUserForTestPlan(long campaignId);
+
 	/**
 	 * Get Users with Write Access for a TestPlan.
 	 * 
@@ -83,7 +85,7 @@ public interface CampaignTestPlanManagerService {
 	 * @param campaignId
 	 */
 	void assignUserToTestPlanItem(Long testCaseId, long campaignId, Long userId);
-	
+
 	/**
 	 * Get Users with Write Access for a TestPlan.
 	 * 
@@ -91,13 +93,24 @@ public interface CampaignTestPlanManagerService {
 	 * @param campaignId
 	 */
 	void assignUserToTestPlanItems(List<Long> testCaseIds, long campaignId, Long userId);
-	
+
 	/**
 	 * Adds a list of test cases to a campaign.
+	 * 
 	 * @param testCaseIdss
 	 * @param campaignId
 	 */
 	CampaignTestPlanItem findTestPlanItemByTestCaseId(long campaignId, long testCaseId);
 
+	/**
+	 * 
+	 * @param campaignId
+	 *            the campaign which test plan we are about to modify.
+	 * @param targetIndex
+	 *            the index of the test plan to which we want to move the items
+	 * @param itemIds
+	 *            the ids of the items we want to move.
+	 */
+	void moveTestPlanItems(long campaignId, int targetIndex, List<Long> itemIds);
 
 }

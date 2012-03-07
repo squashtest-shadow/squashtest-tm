@@ -82,8 +82,7 @@ public class IterationTestPlanManagerController {
 
 	private final DataTableMapper testPlanMapper = new DataTableMapper("unused", IterationTestPlanItem.class,
 			TestCase.class, Project.class, TestSuite.class).initMapping(10)
-			.mapAttribute(Project.class, 2, "name", String.class)
-			.mapAttribute(TestCase.class, 3, "name", String.class)
+			.mapAttribute(Project.class, 2, "name", String.class).mapAttribute(TestCase.class, 3, "name", String.class)
 			.mapAttribute(TestCase.class, 4, "importance", TestCaseImportance.class)
 			.mapAttribute(TestCase.class, 5, "executionMode", TestCaseExecutionMode.class)
 			.mapAttribute(IterationTestPlanItem.class, 6, "executionStatus", ExecutionStatus.class)
@@ -218,7 +217,7 @@ public class IterationTestPlanManagerController {
 					projectName = formatNoData(locale);
 					testCaseName = formatDeleted(locale);
 					importance = formatNoData(locale);
-					testCaseExecutionMode = formatNoData(locale);					
+					testCaseExecutionMode = formatNoData(locale);
 					testCaseId = "";
 				} else {
 					projectName = item.getReferencedTestCase().getProject().getName();
@@ -228,29 +227,27 @@ public class IterationTestPlanManagerController {
 					testCaseId = item.getReferencedTestCase().getId().toString();
 				}
 
-				if (item.getTestSuite() == null) {
-					testSuiteName = formatNone(locale);
-				} else {
-					testSuiteName = item.getTestSuite().getName();
-				}
+				testSuiteName = testSuiteName(item, locale);
 
-				return new Object[] { 
-						item.getId(), 
-						getCurrentIndex(), 
-						projectName, 
-						testCaseName, 
-						importance,
-						testCaseExecutionMode, 
-						testSuiteName, 
-						testCaseId, 
-						item.isTestCaseDeleted(), 
-						" "
+				return new Object[] { item.getId(), getCurrentIndex(), projectName, testCaseName, importance,
+						testCaseExecutionMode, testSuiteName, testCaseId, item.isTestCaseDeleted(), " "
 
 				};
 
 			}
+
 		}.buildDataModel(holder, filter.getFirstItemIndex() + 1, params.getsEcho());
 
+	}
+
+	private String testSuiteName(IterationTestPlanItem item, Locale locale) {
+		String testSuiteName;
+		if (item.getTestSuite() == null) {
+			testSuiteName = formatNone(locale);
+		} else {
+			testSuiteName = item.getTestSuite().getName();
+		}
+		return testSuiteName;
 	}
 
 	private String formatNoData(Locale locale) {
@@ -265,10 +262,10 @@ public class IterationTestPlanManagerController {
 		return messageSource.getMessage(mode.getI18nKey(), null, locale);
 	}
 
-	private String formatImportance(TestCaseImportance importance,  Locale locale){
+	private String formatImportance(TestCaseImportance importance, Locale locale) {
 		return messageSource.getMessage(importance.getI18nKey(), null, locale);
 	}
-	
+
 	private String formatNone(Locale locale) {
 		return messageSource.getMessage("squashtm.none.f", null, locale);
 	}

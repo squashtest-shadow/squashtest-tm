@@ -48,7 +48,6 @@ import javax.persistence.OneToOne;
 import javax.persistence.OrderColumn;
 import javax.validation.constraints.NotNull;
 
-import org.hibernate.mapping.Array;
 import org.hibernate.validator.constraints.NotBlank;
 import org.squashtest.csp.core.security.annotation.AclConstrainedObject;
 import org.squashtest.csp.tm.domain.DuplicateNameException;
@@ -259,7 +258,7 @@ public class Iteration implements AttachmentHolder {
 	 * <p>
 	 * copy of iteration <u>doesn't contain test-suites</u> !!<br>
 	 * </p>
-	 * 
+	 *
 	 * @return
 	 */
 	public Iteration createCopy() {
@@ -619,7 +618,7 @@ public class Iteration implements AttachmentHolder {
 
 	/**
 	 * this method is used in case of copy paste of an iteration with test suites.<br>
-	 * 
+	 *
 	 * @return A map of test suite and indexes<br>
 	 *         One entry-set contains
 	 *         <ul>

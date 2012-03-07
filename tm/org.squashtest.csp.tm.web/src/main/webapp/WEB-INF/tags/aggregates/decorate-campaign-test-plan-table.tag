@@ -22,7 +22,6 @@
 --%>
 <%@ tag body-content="empty" description="jqueryfies a campaign test case table" %>
 <%@ attribute name="tableModelUrl" required="true" description="URL to GET the model of the table" %>
-<%@ attribute name="testCasesUrl" required="true" description="URL to manipulate the test-cases" %>
 <%@ attribute name="nonBelongingTestCasesUrl" required="true" description="URL to manipulate the non belonging test cases" %>
 <%@ attribute name="batchRemoveButtonId" required="true" description="html id of button for batch removal of test cases" %>
 <%@ attribute name="testCaseDetailsBaseUrl" required="true" description="base of the URL to get test case details" %>
@@ -40,17 +39,17 @@
 <script type="text/javascript">
 	$(function() {
 		//multiple deletion
-		$("#${ testCaseMultipleRemovalPopupId }").bind('dialogclose', function() {
+		$( '#${ testCaseMultipleRemovalPopupId }' ).bind('dialogclose', function() {
 			var answer = $("#${ testCaseMultipleRemovalPopupId }").data("answer");
 			if (answer != "yes") {
 				return;
 			}
 			
 			var table = $( '#test-cases-table' ).dataTable();
-			var ids = getIdsOfSelectedTableRows(table, getTestCasesTableRowId);
+			var ids = getIdsOfSelectedTableRows(table, getTestPlanTableRowId);
 			
 			if (ids.length > 0) {
-				$.post('${ nonBelongingTestCasesUrl }', { testCasesIds: ids }, refreshTestCases);
+				$.post('${ nonBelongingTestCasesUrl }', { testCasesIds: ids }, refreshTestPlan);
 			}
 		
 		});
@@ -71,16 +70,12 @@
 		
 			$.ajax({
 				type : 'delete',
-				url : '${ testCasesUrl }/' + parseTestCaseId(bCaller),
+				url : '${ campaignUrl }/test-plan/' + parseItemId(bCaller),
 				dataType : 'json',
-				success : refreshTestCases
+				success : refreshTestPlan
 			});
 		});
-
-		
 	});
-	
-	
 	
 	function changeUserLogin(cbox){
 		var jqBox = $(cbox);
@@ -96,69 +91,81 @@
 		});
 
 	}
+
+	function testPlanDropHandler(rows, dropPosition) {
+		var itemIds = $(rows).collect(function(row) { return parseItemId(row); });
+		$.post('${ campaignUrl }/test-plan/index/' + dropPosition, { action : 'move', itemIds : itemIds }, refreshTestPlan);
+	}
 	
-	function refreshTestCases() {
+	function refreshTestPlan() {
 		var table = $('#test-cases-table').dataTable();
-		saveTableSelection(table, getTestCasesTableRowId);
+		saveTableSelection(table, getTestPlanTableRowId);
 		table.fnDraw(false);
 	}
 	
-	function refreshTestCasesWithoutSelection(){
+	function refreshTestPlanWithoutSelection(){
 		var table = $('#test-cases-table').dataTable();
+		saveTableSelection(table, getTestPlanTableRowId);
 		table.fnDraw(false);
 	}
 
-	function testCaseTableDrawCallback() {
+	function testPlanDrawCallback() {
 		<c:if test="${ editable }">
+		enableTableDragAndDrop('test-cases-table', getTestPlanTableRowIndex, testPlanDropHandler);
 		decorateDeleteButtons($('.delete-test-case-button', this));
 		</c:if>
-		restoreTableSelection(this, getTestCasesTableRowId);
+		restoreTableSelection(this, getTestPlanTableRowId);
 	}
 
-	function getTestCasesTableRowId(rowData) {
+	function getTestPlanTableRowId(rowData) {
 		return rowData[0];	
 	}
 
+	function getTestPlanTableRowIndex(rowData){
+		return rowData[1];
+	}
+
 	function addIdtoTestCaseRow(nRow, aData){
-		$(nRow).attr("id", "test-case:" + getTestCasesTableRowId(aData));
+		$(nRow).attr("id", "test-plan-item:" + getTestPlanTableRowId(aData));
 	}
 	
-	function testCaseTableRowCallback(row, data, displayIndex) {
+	function testPlanRowCallback(row, data, displayIndex) {
 		addIdtoTestCaseRow(row, data);
 		<c:if test="${ editable }">
 		<c:if test='${assignableUsersUrl != " " }'>
 		addLoginListToTestCase(row, data);
 		</c:if>
-		addDeleteButtonToRow(row, getTestCasesTableRowId(data), 'delete-test-case-button');
+		addDeleteButtonToRow(row, getTestPlanTableRowId(data), 'delete-test-case-button');
 		</c:if>
 		addClickHandlerToSelectHandle(row, $("#test-cases-table"));
 		addHLinkToTestCaseName(row, data);
 		return row;
 	}
 	
-	function addLoginListToTestCase(row, data){
-		var id = getTestCasesTableRowId(data);
+	function addLoginListToTestCase(row, data) {
+		var id = getTestPlanTableRowId(data);
 		$('td:eq(3)', row).load("${assignableUsersUrl}" + "?testCaseId="+ id +"");
 	}
-	function parseTestCaseId(element) {
+	
+	function parseItemId(element) {
 		var elementId = element.id;
 		return elementId.substr(elementId.indexOf(":") + 1);
 	}
 	
 	function addHLinkToTestCaseName(row, data) {
-		var url= '${ testCaseDetailsBaseUrl }/' + getTestCasesTableRowId(data) + '/info';			
+		var url= '${ testCaseDetailsBaseUrl }/' + getTestPlanTableRowId(data) + '/info';			
 		addHLinkToCellText($( 'td:eq(2)', row ), url);
 	}	
 </script>
 
 <comp:decorate-ajax-table url="${ tableModelUrl }" tableId="test-cases-table" paginate="true">
 	<jsp:attribute name="initialSort">[[3,'asc']]</jsp:attribute>
-	<jsp:attribute name="drawCallback">testCaseTableDrawCallback</jsp:attribute>
-	<jsp:attribute name="rowCallback">testCaseTableRowCallback</jsp:attribute>
+	<jsp:attribute name="drawCallback">testPlanDrawCallback</jsp:attribute>
+	<jsp:attribute name="rowCallback">testPlanRowCallback</jsp:attribute>
 	<jsp:attribute name="columnDefs">
 		<dt:column-definition targets="0" visible="false" />
-		<dt:column-definition targets="1" sortable="false" cssClass="select-handle centered" width="2em"/>
+		<dt:column-definition targets="1" sortable="false" cssClass="select-handle drag-handle centered" width="2em" />
 		<dt:column-definition targets="2,3,4,5,6" sortable="false" />
-		<dt:column-definition targets="7" sortable="false" width="2em" lastDef="true" cssClass="centered"/>
+		<dt:column-definition targets="7" sortable="false" width="2em" lastDef="true" cssClass="centered" />
 	</jsp:attribute>
 </comp:decorate-ajax-table>

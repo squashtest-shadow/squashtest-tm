@@ -37,7 +37,7 @@ import org.squashtest.csp.tm.domain.users.User;
 @Table(name = "CAMPAIGN_TEST_PLAN_ITEM")
 public class CampaignTestPlanItem {
 
-	// TODO give meaningful name ! WTF is an item's user ?
+	// TODO give meaningful name ! eg assigned user
 	@ManyToOne
 	@JoinColumn(name = "USER_ID")
 	private User user;
@@ -82,6 +82,9 @@ public class CampaignTestPlanItem {
 	public User getUser() {
 		return user;
 	}
+	
+	// TODO add isAssigned()
+	
 
 	/**
 	 * Factory method. Creates a copy of this object according to copy / paste rules. The copy is associated to no

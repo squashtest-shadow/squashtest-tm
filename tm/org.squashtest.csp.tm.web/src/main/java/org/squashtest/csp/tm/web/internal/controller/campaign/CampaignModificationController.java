@@ -67,9 +67,9 @@ public class CampaignModificationController {
 	private MessageSource messageSource;
 
 	/*
-	 *   //TODO since this controller may return two different models of different datatables (the one in the campaign and the one in the association interface)
-	 *   they should be addressed by two distinct DataTableMappers, especially because their configuration and content are different !  
-	 * 
+	 * //TODO since this controller may return two different models of different datatables (the one in the campaign and
+	 * the one in the association interface) they should be addressed by two distinct DataTableMappers, especially
+	 * because their configuration and content are different !
 	 */
 	private final DataTableMapper testPlanMapper = new DataTableMapper("irrelevant", TestCase.class, Project.class)
 			.initMapping(7).mapAttribute(Project.class, 2, "name", String.class)
@@ -125,12 +125,12 @@ public class CampaignModificationController {
 	public @ResponseBody
 	Object rename(HttpServletResponse response, @RequestParam("newName") String newName, @PathVariable long campaignId) {
 		LOGGER.info("Renaming Campaign " + campaignId + " as " + newName);
-		
+
 		campaignModService.rename(campaignId, newName);
 		final String reNewName = newName;
 		return new Object() {
 			public String newName = reNewName; // NOSONAR : field is actually read by JSON marshaller
-		}; 
+		};
 
 	}
 
@@ -285,16 +285,13 @@ public class CampaignModificationController {
 			@Override
 			public Object[] buildItemData(CampaignTestPlanItem item) {
 				TestCase testCase = item.getReferencedTestCase();
-				return new Object[] { 
-					testCase.getId(), 
-					getCurrentIndex(), 
-					testCase.getProject().getName(),
-					testCase.getName(),
-					(item.getUser() != null) ? item.getUser().getLogin() : formatNoData(locale),
-					formatImportance(testCase.getImportance(), locale),
-					formatExecutionMode(testCase.getExecutionMode(), locale), 
-					"" 
-				};
+				String user = (item.getUser() != null) ? item.getUser().getLogin() : formatNoData(locale); 
+				
+				return new Object[] { item.getId(), getCurrentIndex(), testCase.getProject().getName(),
+						testCase.getName(),
+						user,
+						formatImportance(testCase.getImportance(), locale),
+						formatExecutionMode(testCase.getExecutionMode(), locale), "" };
 			}
 		}.buildDataModel(holder, filter.getFirstItemIndex() + 1, params.getsEcho());
 	}
@@ -312,15 +309,9 @@ public class CampaignModificationController {
 			@Override
 			public Object[] buildItemData(CampaignTestPlanItem item) {
 				TestCase testCase = item.getReferencedTestCase();
-				return new Object[] { 
-					testCase.getId(), 
-					getCurrentIndex(), 
-					testCase.getProject().getName(),
-					testCase.getName(), 
-					formatImportance(testCase.getImportance(), locale),
-					formatExecutionMode(testCase.getExecutionMode(), locale), 
-					"" 
-				};
+				return new Object[] { testCase.getId(), getCurrentIndex(), testCase.getProject().getName(),
+						testCase.getName(), formatImportance(testCase.getImportance(), locale),
+						formatExecutionMode(testCase.getExecutionMode(), locale), "" };
 			}
 		}.buildDataModel(holder, filter.getFirstItemIndex() + 1, params.getsEcho());
 	}
@@ -338,9 +329,8 @@ public class CampaignModificationController {
 	private String formatNoData(Locale locale) {
 		return messageSource.getMessage("squashtm.nodata", null, locale);
 	}
-	
-	private String formatImportance(TestCaseImportance importance,  Locale locale){
+
+	private String formatImportance(TestCaseImportance importance, Locale locale) {
 		return messageSource.getMessage(importance.getI18nKey(), null, locale);
 	}
-
 }

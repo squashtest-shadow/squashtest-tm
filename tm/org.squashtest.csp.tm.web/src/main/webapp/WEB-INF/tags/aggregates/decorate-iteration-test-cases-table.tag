@@ -299,13 +299,10 @@
 		$(testPlanHyperlink).toggleClass("opened");		
 	}
 	
-	
-	$(function(){	
-
+	$(function() {	
 		/*
 			could be optimized if we bind that in the datatableDrawCallback.		
 		*/
-		
 		$('#test-plans-table tbody td a.test-case-name-hlink').die('click');
 		
 		<%-- binding the handler managing the collapse/expand test case icon--%>
@@ -314,7 +311,6 @@
 		} );
 		
 	});
-	
 	
 </script>
 

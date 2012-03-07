@@ -30,6 +30,7 @@ import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.osgi.extensions.annotation.ServiceReference;
 import org.springframework.security.access.prepost.PostAuthorize;
 import org.springframework.security.access.prepost.PostFilter;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.security.acls.model.ObjectIdentity;
 import org.springframework.security.acls.model.ObjectIdentityRetrievalStrategy;
 import org.springframework.stereotype.Service;
@@ -68,34 +69,33 @@ public class CampaignTestPlanManagerServiceImpl implements CampaignTestPlanManag
 
 	@Inject
 	private ProjectFilterModificationService projectFilterModificationService;
-	
+
 	@Inject
 	@Qualifier("squashtest.tm.repository.TestCaseLibraryNodeDao")
 	private LibraryNodeDao<TestCaseLibraryNode> testCaseLibraryNodeDao;
-	
+
 	@Inject
 	private ObjectAclService aclService;
 
 	@Inject
 	private CampaignTestPlanItemDao campaignTestPlanItemDao;
-	
+
 	@Inject
 	private UserDao userDao;
-	
+
 	private ObjectIdentityRetrievalStrategy objIdRetrievalStrategy;
 
 	@Inject
 	@Qualifier("squashtest.tm.service.TestCaseLibrarySelectionStrategy")
 	private LibrarySelectionStrategy<TestCaseLibrary, TestCaseLibraryNode> libraryStrategy;
-	
-	
+
 	@ServiceReference
 	public void setObjectIdentityRetrievalStrategy(ObjectIdentityRetrievalStrategy objectIdentityRetrievalStrategy) {
 		this.objIdRetrievalStrategy = objectIdentityRetrievalStrategy;
 	}
-	
+
 	@Override
-	@PostAuthorize("hasPermission(#campaignId, 'org.squashtest.csp.tm.domain.campaign.Campaign', 'READ') or hasRole('ROLE_ADMIN')")
+	@PostAuthorize("hasPermission(#returnObject, 'READ') or hasRole('ROLE_ADMIN')")
 	public Campaign findCampaign(long campaignId) {
 		return campaignDao.findById(campaignId);
 	}
@@ -110,33 +110,30 @@ public class CampaignTestPlanManagerServiceImpl implements CampaignTestPlanManag
 	}
 
 	@Override
-	@PostAuthorize("hasPermission(#campaignId, 'org.squashtest.csp.tm.domain.campaign.Campaign', 'WRITE') or hasRole('ROLE_ADMIN')")
+	@PreAuthorize("hasPermission(#campaignId, 'org.squashtest.csp.tm.domain.campaign.Campaign', 'WRITE') or hasRole('ROLE_ADMIN')")
 	public void addTestCasesToCampaignTestPlan(final List<Long> testCasesIds, long campaignId) {
-		
-		//nodes are returned unsorted
-		List<TestCaseLibraryNode> nodes= testCaseLibraryNodeDao.findAllByIdList(testCasesIds);
-		
-		//now we resort them according to the order in which the testcaseids were given
+
+		// nodes are returned unsorted
+		List<TestCaseLibraryNode> nodes = testCaseLibraryNodeDao.findAllByIdList(testCasesIds);
+
+		// now we resort them according to the order in which the testcaseids were given
 		IdentifiersOrderComparator comparator = new IdentifiersOrderComparator(testCasesIds);
 		Collections.sort(nodes, comparator);
 
 		List<TestCase> testCases = new TestCaseNodeWalker().walk(nodes);
-		
+
 		Campaign campaign = campaignDao.findById(campaignId);
-		
-		for (TestCase testCase : testCases){
+
+		for (TestCase testCase : testCases) {
 			CampaignTestPlanItem itp = new CampaignTestPlanItem(testCase);
-			campaignTestPlanItemDao.persist(itp);				
+			campaignTestPlanItemDao.persist(itp);
 			campaign.addToTestPlan(itp);
 		}
 
 	}
-	
-
-
 
 	@Override
-	@PostAuthorize("hasPermission(#campaignId, 'org.squashtest.csp.tm.domain.campaign.Campaign', 'WRITE') or hasRole('ROLE_ADMIN')")
+	@PreAuthorize("hasPermission(#campaignId, 'org.squashtest.csp.tm.domain.campaign.Campaign', 'WRITE') or hasRole('ROLE_ADMIN')")
 	public void removeTestCasesFromCampaign(List<Long> testCaseIds, long campaignId) {
 
 		List<TestCase> tcs = testCaseDao.findAllByIdList(testCaseIds);
@@ -158,19 +155,19 @@ public class CampaignTestPlanManagerServiceImpl implements CampaignTestPlanManag
 	}
 
 	@Override
-	@PostAuthorize("hasPermission(#campaignId, 'org.squashtest.csp.tm.domain.campaign.Campaign', 'WRITE') or hasRole('ROLE_ADMIN')")
+	@PreAuthorize("hasPermission(#campaignId, 'org.squashtest.csp.tm.domain.campaign.Campaign', 'WRITE') or hasRole('ROLE_ADMIN')")
 	public void removeTestCaseFromCampaign(Long testCaseId, long campaignId) {
 
 		TestCase testCase = testCaseDao.findById(testCaseId);
 		Campaign campaign = campaignDao.findById(campaignId);
 		removeTestCaseFromCampaignTestPlan(campaign, testCase);
 	}
-	
+
 	@Override
 	public List<User> findAssignableUserForTestPlan(long campaignId) {
-		
+
 		Campaign campaign = campaignDao.findById(campaignId);
-		
+
 		List<ObjectIdentity> entityRefs = new ArrayList<ObjectIdentity>();
 		ObjectIdentity oid = objIdRetrievalStrategy.getObjectIdentity(campaign);
 		entityRefs.add(oid);
@@ -184,21 +181,20 @@ public class CampaignTestPlanManagerServiceImpl implements CampaignTestPlanManag
 	public void assignUserToTestPlanItem(Long testCaseId, long campaignId, Long userId) {
 		Campaign campaign = campaignDao.findById(campaignId);
 		TestCase testCase = testCaseDao.findById(testCaseId);
-		if (userId == 0){
+		if (userId == 0) {
 			CampaignTestPlanItem itp = campaign.findTestPlanItem(testCase);
 			itp.setUser(null);
 			return;
 		}
 		User user = userDao.findById(userId);
 		CampaignTestPlanItem itp = campaign.findTestPlanItem(testCase);
-		itp.setUser(user);	
+		itp.setUser(user);
 	}
 
 	@Override
-	public void assignUserToTestPlanItems(List<Long> testCaseIds,
-			long campaignId, Long userId) {
+	public void assignUserToTestPlanItems(List<Long> testCaseIds, long campaignId, Long userId) {
 		Campaign campaign = campaignDao.findById(campaignId);
-		if (userId == 0){
+		if (userId == 0) {
 			for (Long testCaseId : testCaseIds) {
 				TestCase testCase = testCaseDao.findById(testCaseId);
 				CampaignTestPlanItem itp = campaign.findTestPlanItem(testCase);
@@ -215,15 +211,21 @@ public class CampaignTestPlanManagerServiceImpl implements CampaignTestPlanManag
 	}
 
 	@Override
-	public CampaignTestPlanItem findTestPlanItemByTestCaseId(long campaignId,
-			long testCaseId) {
+	public CampaignTestPlanItem findTestPlanItemByTestCaseId(long campaignId, long testCaseId) {
 		Campaign campaign = campaignDao.findById(campaignId);
 		TestCase testCase = testCaseDao.findById(testCaseId);
 		CampaignTestPlanItem itp = campaign.findTestPlanItem(testCase);
 		return itp;
 	}
-	
 
-	
+	/**
+	 * @see org.squashtest.csp.tm.service.CampaignTestPlanManagerService#moveTestPlanItems(long, int, java.util.List)
+	 */
+	@Override
+	@PreAuthorize("hasPermission(#campaignId, 'org.squashtest.csp.tm.domain.campaign.Campaign', 'WRITE') or hasRole('ROLE_ADMIN')")
+	public void moveTestPlanItems(long campaignId, int targetIndex, List<Long> itemIds) {
+		Campaign campaign = campaignDao.findById(campaignId);
+		campaign.moveTestPlanItems(targetIndex, itemIds);
+	}
 
 }

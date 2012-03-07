@@ -67,10 +67,6 @@ public class Campaign extends CampaignLibraryNode implements AttachmentHolder {
 		super();
 	}
 
-	public Campaign(String name, String description) {
-		super(name, description);
-	}
-
 	@Override
 	public void accept(CampaignLibraryNodeVisitor visitor) {
 		visitor.visit(this);
@@ -154,7 +150,7 @@ public class Campaign extends CampaignLibraryNode implements AttachmentHolder {
 	}
 
 	/**
-	 * 
+	 *
 	 * @param testCase
 	 * @return the test plan item which references the given test case, if any.
 	 */
@@ -168,7 +164,7 @@ public class Campaign extends CampaignLibraryNode implements AttachmentHolder {
 	}
 
 	/**
-	 * 
+	 *
 	 * @param itemTestPlan
 	 */
 	public void addToTestPlan(@NotNull CampaignTestPlanItem itemTestPlan) {
@@ -246,7 +242,7 @@ public class Campaign extends CampaignLibraryNode implements AttachmentHolder {
 
 	/**
 	 * If the iteration have autodates set, they will be updated accordingly.
-	 * 
+	 *
 	 * @param newItemTestPlanDate
 	 */
 	public void updateActualStart(Date newIterationStartDate) {
@@ -321,5 +317,22 @@ public class Campaign extends CampaignLibraryNode implements AttachmentHolder {
 
 	public boolean hasIterations() {
 		return (iterations.size() > 0);
+	}
+
+	public void moveTestPlanItems(int targetIndex, List<Long> itemIds) {
+		if (itemIds.isEmpty()) {
+			return;
+		}
+
+		List<CampaignTestPlanItem> moved = new ArrayList<CampaignTestPlanItem>(itemIds.size());
+
+		for (CampaignTestPlanItem item : testPlan) {
+			if (itemIds.contains(item.getId())) {
+				moved.add(item);
+			}
+		}
+
+		testPlan.removeAll(moved);
+		testPlan.addAll(targetIndex, moved);
 	}
 }

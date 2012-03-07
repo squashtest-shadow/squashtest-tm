@@ -310,7 +310,7 @@ public class IterationModificationController {
 	 */
 	@RequestMapping(value = "/test-case/move", method = RequestMethod.POST, params = { "newIndex", "itemIds[]" })
 	@ResponseBody
-	public void changeTestPlanIndex(@PathVariable("iterationId") long iterationId, @RequestParam int newIndex, @RequestParam("itemIds[]") List<Long> itemIds){
+	public void moveTestPlanItems(@PathVariable("iterationId") long iterationId, @RequestParam int newIndex, @RequestParam("itemIds[]") List<Long> itemIds){
 		iterationModService.changeTestPlanPosition(iterationId, newIndex, itemIds);
 		if (LOGGER.isTraceEnabled()) {
 			LOGGER.trace("iteration " + iterationId + ": moving "+itemIds.size()+" test plan items  to " + newIndex);
@@ -329,7 +329,7 @@ public class IterationModificationController {
 	}
 
 	@RequestMapping(value = "/test-case-executions/{testPlanId}", method = RequestMethod.GET)
-	public ModelAndView getExecutionsForTestPlan(@PathVariable Long iterationId, @PathVariable Long testPlanId) {
+	public ModelAndView getExecutionsForTestPlan(@PathVariable long iterationId, @PathVariable long testPlanId) {
 
 		List<Execution> executionList = iterationModService.findExecutionsByTestPlan(iterationId, testPlanId);
 		// get the iteraction to check access rights

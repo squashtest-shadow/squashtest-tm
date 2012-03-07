@@ -158,7 +158,7 @@ public class CustomIterationModificationServiceImpl implements CustomIterationMo
 
 	/****
 	 * Method which change the index of test case in the selected iteration
-	 * 
+	 *
 	 * @param iterationId
 	 *            the iteration at which the test case is attached
 	 * @param testCaseId
@@ -186,8 +186,7 @@ public class CustomIterationModificationServiceImpl implements CustomIterationMo
 	}
 
 	/**
-	 * see doc in the interface
-	 * 
+	 * @see CustomIterationModificationService#changeTestPlanPosition(long, int, List)
 	 */
 	@Override
 	@PreAuthorize("hasPermission(#iterationId, 'org.squashtest.csp.tm.domain.campaign.Iteration', 'WRITE') "
@@ -274,18 +273,18 @@ public class CustomIterationModificationServiceImpl implements CustomIterationMo
 
 		return copyOfTestSuite;
 	}
-	
+
 	@Override
 	@PreAuthorize("hasPermission(#iterationId, 'org.squashtest.csp.tm.domain.campaign.Iteration', 'WRITE') "
 			+ "or hasRole('ROLE_ADMIN')")
 	public List<TestSuite> copyPasteTestSuitesToIteration(Long[] testSuiteIds, Long iterationId) {
-		
+
 		List<TestSuite> createdTestSuites = new ArrayList<TestSuite>();
-		
+
 		for (Long testSuiteId : testSuiteIds) {
 			createdTestSuites.add(copyPasteTestSuiteToIteration(testSuiteId, iterationId));
 		}
-		
+
 		return createdTestSuites;
 	}
 
