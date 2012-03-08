@@ -33,7 +33,6 @@
 <c:url var="treeBaseUrl" value="/test-case-browser"/>
 <c:url var="campaignUrl" value="/campaigns/${ campaign.id }" />
 <c:url var="testPlanUrl" value="/campaigns/${ campaign.id }/test-cases" />
-<c:url var="nonBelongingTestCasesUrl" value="/campaigns/${ campaign.id }/non-belonging-test-cases" />
 <c:url  var="testCaseDetailsBaseUrl" value="/test-cases" /> 
 
 <%-- ----------------------------------- Authorization ----------------------------------------------%>
@@ -49,8 +48,8 @@
 	<jsp:attribute name="head">
 		<link rel="stylesheet" type="text/css" href="${ pageContext.servletContext.contextPath }/styles/master.purple.css" />
 
-		<aggr:decorate-linkable-campaign-test-cases-table testCasesUrl="${ testPlanUrl }" campaignUrl="${ campaignUrl }" 
-			batchRemoveButtonId="remove-items-button" nonBelongingTestCasesUrl="${ nonBelongingTestCasesUrl }" testCaseDetailsBaseUrl="${ testCaseDetailsBaseUrl }" editable="${editable}"/>
+		<aggr:decorate-campaign-test-plan-manager-table testCasesUrl="${ testPlanUrl }" campaignUrl="${ campaignUrl }" 
+			batchRemoveButtonId="remove-items-button" testCaseDetailsBaseUrl="${ testCaseDetailsBaseUrl }" editable="${editable}"/>
 		
 		<script type="text/javascript">
 			

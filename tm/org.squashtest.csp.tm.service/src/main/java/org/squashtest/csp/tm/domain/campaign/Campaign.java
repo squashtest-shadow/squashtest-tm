@@ -187,6 +187,15 @@ public class Campaign extends CampaignLibraryNode implements AttachmentHolder {
 		}
 	}
 
+	public void removeTestPlanItems(List<Long> itemIds) {
+		Iterator<CampaignTestPlanItem> it = testPlan.iterator();
+		while (it.hasNext()) {
+			if (itemIds.contains(it.next().getId())) {
+				it.remove();
+			}
+		}
+	}
+
 	public void removeIteration(@NotNull Iteration iteration) {
 		getIterations().remove(iteration);
 	}
@@ -199,7 +208,7 @@ public class Campaign extends CampaignLibraryNode implements AttachmentHolder {
 		getIterations().add(iteration);
 		iteration.setCampaign(this);
 	}
-
+	
 	private ScheduledTimePeriod getScheduledPeriod() {
 		// Hibernate workaround : when STP fields are null, component is set to null
 		if (scheduledPeriod == null) {

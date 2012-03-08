@@ -135,38 +135,6 @@ public class CampaignTestPlanManagerServiceImpl implements CampaignTestPlanManag
 			campaignTestPlanItemDao.persist(itp);
 			campaign.addToTestPlan(itp);
 		}
-
-	}
-
-	@Override
-	@PreAuthorize(CAN_WRITE_CAMPAIGN_BY_ID)
-	public void removeTestCasesFromCampaign(List<Long> testCaseIds, long campaignId) {
-
-		List<TestCase> tcs = testCaseDao.findAllByIdList(testCaseIds);
-
-		if (!tcs.isEmpty()) {
-			Campaign camp = campaignDao.findById(campaignId);
-
-			for (TestCase testCase : tcs) {
-				removeTestCaseFromCampaignTestPlan(camp, testCase);
-			}
-		}
-
-	}
-
-	private void removeTestCaseFromCampaignTestPlan(Campaign camp, TestCase testCase) {
-		CampaignTestPlanItem itp = camp.findTestPlanItem(testCase);
-		camp.removeTestPlanItem(itp);
-		campaignTestPlanItemDao.remove(itp);
-	}
-
-	@Override
-	@PreAuthorize(CAN_WRITE_CAMPAIGN_BY_ID)
-	public void removeTestCaseFromCampaign(Long testCaseId, long campaignId) {
-
-		TestCase testCase = testCaseDao.findById(testCaseId);
-		Campaign campaign = campaignDao.findById(campaignId);
-		removeTestCaseFromCampaignTestPlan(campaign, testCase);
 	}
 
 	@Override
@@ -242,6 +210,16 @@ public class CampaignTestPlanManagerServiceImpl implements CampaignTestPlanManag
 	public void removeTestPlanItem(long campaignId, long itemId) {
 		Campaign campaign = campaignDao.findById(campaignId);
 		campaign.removeTestPlanItem(itemId);
+	}
+
+	/**
+	 * @see org.squashtest.csp.tm.service.CampaignTestPlanManagerService#removeTestPlanItems(long, java.util.List)
+	 */
+	@Override
+	@PreAuthorize(CAN_WRITE_CAMPAIGN_BY_ID)
+	public void removeTestPlanItems(long campaignId, List<Long> itemIds) {
+		Campaign campaign = campaignDao.findById(campaignId);
+		campaign.removeTestPlanItems(itemIds);
 	}
 
 }

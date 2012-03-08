@@ -48,6 +48,8 @@ import org.squashtest.csp.tm.web.internal.model.jstree.JsTreeNode;
 @Controller
 public class CampaignTestPlanManagerController {
 
+	private static final String ITEMS_IDS_REQUEST_PARAM = "itemsIds[]";
+
 	private static final String TESTCASES_IDS_REQUEST_PARAM = "testCasesIds[]";
 
 	@Inject
@@ -81,16 +83,15 @@ public class CampaignTestPlanManagerController {
 		testPlanManager.addTestCasesToCampaignTestPlan(testCasesIds, campaignId);
 	}
 
-	@RequestMapping(value = "/campaigns/{campaignId}/non-belonging-test-cases", method = RequestMethod.POST, params = TESTCASES_IDS_REQUEST_PARAM)
+	@RequestMapping(value = "/campaigns/{campaignId}/test-plan", method = RequestMethod.POST, params = { "action=remove", ITEMS_IDS_REQUEST_PARAM})
 	public @ResponseBody
-	void removeTestCasesFromCampaign(@RequestParam(TESTCASES_IDS_REQUEST_PARAM) List<Long> testPlanIds,
-			@PathVariable long campaignId) {
-		testPlanManager.removeTestCasesFromCampaign(testPlanIds, campaignId);
+	void removeItemsFromTestPlan(@PathVariable long campaignId, @RequestParam(ITEMS_IDS_REQUEST_PARAM) List<Long> itemsIds) {
+		testPlanManager.removeTestPlanItems(campaignId, itemsIds);
 	}
 
 	@RequestMapping(value = "/campaigns/{campaignId}/test-plan/{itemId}", method = RequestMethod.DELETE)
 	public @ResponseBody
-	void removeTestCaseFromCampaign(@PathVariable long campaignId, @PathVariable long itemId) {
+	void removeItemFromTestPlan(@PathVariable long campaignId, @PathVariable long itemId) {
 		testPlanManager.removeTestPlanItem(campaignId, itemId);
 	}
 
@@ -149,10 +150,10 @@ public class CampaignTestPlanManagerController {
 	}
 
 	@RequestMapping(value = "/campaigns/{campaignId}/test-plan/index/{targetIndex}", method = RequestMethod.POST, params = { "action=move",
-			"itemIds[]" })
+			ITEMS_IDS_REQUEST_PARAM })
 	@ResponseBody
 	public void moveTestPlanItems(@PathVariable long campaignId, @PathVariable int targetIndex,
-			@RequestParam(value = "itemIds[]") List<Long> itemIds) {
-		testPlanManager.moveTestPlanItems(campaignId, targetIndex, itemIds);
+			@RequestParam(ITEMS_IDS_REQUEST_PARAM) List<Long> itemsIds) {
+		testPlanManager.moveTestPlanItems(campaignId, targetIndex, itemsIds);
 	}
 }

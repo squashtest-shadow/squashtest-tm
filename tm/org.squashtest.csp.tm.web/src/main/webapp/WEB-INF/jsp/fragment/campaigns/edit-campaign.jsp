@@ -57,7 +57,6 @@
 </s:url>
 
 <c:url var="testCaseManagerUrl" value="/campaigns/${ campaign.id }/test-plan/manager" />
-<c:url var="nonBelongingTestCasesUrl" value="/campaigns/${ campaign.id }/non-belonging-test-cases" />
 <c:url var="testCaseDetailsBaseUrl" value="/test-cases" />
 
 <c:url var="workspaceUrl" value="/campaign-workspace/#" />
@@ -295,7 +294,7 @@
 	
 	<jsp:attribute name="body">
 		<aggr:decorate-campaign-test-plan-table testCaseDetailsBaseUrl="${testCaseDetailsBaseUrl}" 
-			batchRemoveButtonId="remove-test-case-button" nonBelongingTestCasesUrl="${nonBelongingTestCasesUrl}" editable="${ editable }" assignableUsersUrl="${assignableUsersUrl}" 
+			batchRemoveButtonId="remove-test-case-button" editable="${ editable }" assignableUsersUrl="${assignableUsersUrl}" 
 			campaignUrl="${ campaignUrl }" testCaseMultipleRemovalPopupId="delete-multiple-test-cases-dialog" testCaseSingleRemovalPopupId="delete-single-test-case-dialog" />
 		<aggr:campaign-test-cases-table/>
 	</jsp:attribute>

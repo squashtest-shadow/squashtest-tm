@@ -151,70 +151,6 @@ class CampaignTestPlanManagerServiceImplTest extends Specification {
 
 	}
 
-	def "should remove a list of test cases from a campaign"() {
-
-		given: "some test cases"
-		TestCase tc1 = Mock()
-		tc1.getId() >> 1
-		TestCase tc2 = Mock()
-		tc2.getId() >> 2
-		TestCase tc3 = Mock()
-		tc3.getId() >> 3
-		testCaseDao.findAllByIdList([1, 3]) >> [tc1, tc3]
-
-		and: "a campaign containing those test cases"
-		CampaignTestPlanItem itp1 = new CampaignTestPlanItem(tc1)
-		CampaignTestPlanItem itp2 = new CampaignTestPlanItem(tc2)
-		CampaignTestPlanItem itp3 = new CampaignTestPlanItem(tc3)
-		itemDao.findAllByIdList ([1, 3]) >> [itp1, itp3]
-		Campaign camp = new Campaign()
-		camp.addToTestPlan(itp1)
-		camp.addToTestPlan(itp2)
-		camp.addToTestPlan(itp3)
-
-		campaignDao.findById(10) >> camp
-
-
-		when: "some test cases are removed from the campaign"
-		service.removeTestCasesFromCampaign([1, 3], 10)
-
-		then: "the campaign should contain all but the removed test cases"
-		print camp
-		camp.getTestPlan().containsAll([itp2])
-	}
-
-	def "should remove a single test case from a campaign"() {
-
-		given: "some test cases"
-		TestCase tc1 = Mock()
-		tc1.getId() >> 1
-		TestCase tc2 = Mock()
-		tc2.getId() >> 2
-		TestCase tc3 = Mock()
-		tc3.getId() >> 3
-		testCaseDao.findById(2) >> tc2
-
-		and: "a campaign containing those test cases"
-		CampaignTestPlanItem itp1 = new CampaignTestPlanItem(tc1)
-		CampaignTestPlanItem itp2 = new CampaignTestPlanItem(tc2)
-		CampaignTestPlanItem itp3 = new CampaignTestPlanItem(tc3)
-		Campaign camp = new Campaign()
-		camp.addToTestPlan(itp1)
-		camp.addToTestPlan(itp2)
-		camp.addToTestPlan(itp3)
-		campaignDao.findById(10) >> camp
-		itemDao.findById (2) >> itp2
-
-
-
-		when: "a test case is removed from the campaign"
-		service.removeTestCaseFromCampaign(2, 10)
-
-		then: "the campaign should contain all but the removed test case"
-		print camp
-		camp.getTestPlan().containsAll([itp1, itp3])
-	}
-
 	def "should remove a single test plan item from a campaign"() {
 		given: 
 		TestCase tc = Mock()
@@ -244,6 +180,37 @@ class CampaignTestPlanManagerServiceImplTest extends Specification {
 
 		then: "the campaign should contain all but the removed test case"
 		camp.testPlan == [itp1, itp3]
+	}
+
+	def "should remove test plan items from a campaign"() {
+		given: 
+		TestCase tc = Mock()
+		tc.id >> 2
+
+		and:
+		Campaign camp = new Campaign()
+		campaignDao.findById(10) >> camp
+			
+		CampaignTestPlanItem itp1 = new CampaignTestPlanItem(tc)
+		CampaignTestPlanItem itp2 = new CampaignTestPlanItem(tc)
+		CampaignTestPlanItem itp3 = new CampaignTestPlanItem(tc)
+
+		use (ReflectionCategory) {
+			CampaignTestPlanItem.set field: "id", of: itp1, to: 1L
+			camp.testPlan << itp1
+			
+			CampaignTestPlanItem.set field: "id", of: itp2, to: 2L
+			camp.testPlan << itp2
+	
+			CampaignTestPlanItem.set field: "id", of: itp3, to: 3L
+			camp.testPlan << itp3
+		}
+		
+		when: "a test case is removed from the campaign"
+		service.removeTestPlanItems 10, [1L, 3L]
+
+		then: "the campaign should contain all but the removed test case"
+		camp.testPlan == [itp2]
 	}
 
 	def "should persist new items added to the test plan"() {

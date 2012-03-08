@@ -55,24 +55,6 @@ public interface CampaignTestPlanManagerService {
 	void addTestCasesToCampaignTestPlan(List<Long> testCaseIds, long campaignId);
 
 	/**
-	 * Removes a list of test cases from a campaign.
-	 * 
-	 * @param testCaseIds
-	 * @param requirementId
-	 */
-	void removeTestCasesFromCampaign(List<Long> testPlanIds, long campaignId);
-
-	/**
-	 * Removes a test case from a campaign.
-	 * 
-	 * @param testCaseId
-	 * @param campaignId
-	 * @deprecated use  {@link #removeTestPlanItem(long, long)}
-	 */
-	@Deprecated
-	void removeTestCaseFromCampaign(Long testCaseId, long campaignId);
-
-	/**
 	 * Get Users with Write Access for a campaign and his test plans.
 	 * 
 	 * @param testCaseId
@@ -116,9 +98,14 @@ public interface CampaignTestPlanManagerService {
 	void moveTestPlanItems(long campaignId, int targetIndex, List<Long> itemIds);
 
 	/**
-	 * @param campaignId
-	 * @param itemId
+	 * @param campaignId id of the campaign which test plan we will remove an item from
+	 * @param itemId id of the test plan item we want to remove
 	 */
 	void removeTestPlanItem(long campaignId, long itemId);
+	/**
+	 * @param campaignId id of the campaign which test plan we will remove items from
+	 * @param itemId
+	 */
+	void removeTestPlanItems(long campaignId, List<Long> itemIds);
 
 }

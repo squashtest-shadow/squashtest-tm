@@ -21,7 +21,6 @@
 
 --%>
 <%@ tag body-content="empty" description="jqueryfies a campaign test case table" %>
-<%@ attribute name="nonBelongingTestCasesUrl" required="true" description="URL to manipulate the non belonging test cases" %>
 <%@ attribute name="batchRemoveButtonId" required="true" description="html id of button for batch removal of test cases" %>
 <%@ attribute name="testCaseDetailsBaseUrl" required="true" description="base of the URL to get test case details" %>
 <%@ attribute name="editable" type="java.lang.Boolean" description="Right to edit content. Default to false." %>
@@ -48,7 +47,7 @@
 			var ids = getIdsOfSelectedTableRows(table, getTestPlanTableRowId);
 			
 			if (ids.length > 0) {
-				$.post('${ nonBelongingTestCasesUrl }', { testCasesIds: ids }, refreshTestPlan);
+				$.post('${ campaignUrl }/test-plan', { action: 'remove', itemsIds: ids }, refreshTestPlan);
 			}
 		
 		});
@@ -92,8 +91,8 @@
 	}
 
 	function testPlanDropHandler(rows, dropPosition) {
-		var itemIds = $(rows).collect(function(row) { return parseItemId(row); });
-		$.post('${ campaignUrl }/test-plan/index/' + dropPosition, { action : 'move', itemIds : itemIds }, refreshTestPlan);
+		var itemsIds = $(rows).collect(function(row) { return parseItemId(row); });
+		$.post('${ campaignUrl }/test-plan/index/' + dropPosition, { action : 'move', itemsIds : itemsIds }, refreshTestPlan);
 	}
 	
 	function refreshTestPlan() {

@@ -23,7 +23,6 @@
 <%@ tag body-content="empty" description="jqueryfies a campaign test case table" %>
 <%@ attribute name="campaignUrl" required="true" description="the url to the campaign that hold all of these test cases" %>
 <%@ attribute name="testCasesUrl" required="true" description="URL to manipulate the test-cases" %>
-<%@ attribute name="nonBelongingTestCasesUrl" required="true" description="URL to manipulate the non belonging test cases" %>
 <%@ attribute name="batchRemoveButtonId" required="true" description="html id of button for batch removal of test cases" %>
 <%@ attribute name="testCaseDetailsBaseUrl" required="true" description="base of the URL to get test case details" %>
 <%@ attribute name="editable" type="java.lang.Boolean" description="Right to edit content. Default to false." %>
@@ -40,7 +39,7 @@
 		$('#test-cases-table .delete-test-case-button').live('click', function() {
 			$.ajax({
 				type : 'delete',
-				url : '${ testCasesUrl }/' + parseTestCaseId(this),
+				url : '${ campaignUrl }/test-plan/' + parseTestCaseId(this),
 				dataType : 'json',
 				success : refreshTestCases
 			});
@@ -51,7 +50,7 @@
 			var ids = getIdsOfSelectedTableRows(table, getTestCasesTableRowId);
 			
 			if (ids.length > 0) {
-				$.post('${ nonBelongingTestCasesUrl }', { testCasesIds: ids }, refreshTestCases);
+				$.post('${ campaignUrl }/test-plan', { action: 'remove', itemsIds: ids }, refreshTestCases);
 			}
 		});
 	});
