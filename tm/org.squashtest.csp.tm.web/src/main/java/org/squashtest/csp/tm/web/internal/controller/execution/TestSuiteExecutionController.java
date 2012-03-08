@@ -23,6 +23,7 @@ package org.squashtest.csp.tm.web.internal.controller.execution;
 import java.text.MessageFormat;
 
 import javax.inject.Inject;
+import javax.servlet.http.HttpServletResponse;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -35,6 +36,7 @@ import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.servlet.ModelAndView;
+import org.squashtest.csp.tm.domain.TestPlanItemNotExecutableException;
 import org.squashtest.csp.tm.domain.execution.Execution;
 import org.squashtest.csp.tm.domain.execution.ExecutionStatus;
 import org.squashtest.csp.tm.service.TestSuiteExecutionProcessingService;
@@ -163,12 +165,12 @@ public class TestSuiteExecutionController {
 	}
 
 	@RequestMapping(value = RequestMappings.INIT_NEXT_EXECUTION_RUNNER, method = RequestMethod.POST, params = "classic")
-	public String startResumeNextExecutionInClassicRunner(@PathVariable long testSuiteId, @PathVariable long testPlanItemId) {
+	public String startResumeNextExecutionInClassicRunner(@PathVariable long testSuiteId, @PathVariable long testPlanItemId  ) {
 		Execution execution = testSuiteExecutionProcessingService.startResumeNextExecution(testSuiteId, testPlanItemId);
-
 		return "redirect:"
-				+ MessageFormat.format(ViewNames.CLASSIC_RUNNER_VIEW_PATTERN, testSuiteId, execution.getTestPlan().getId(),
-						execution.getId());
+		+ MessageFormat.format(ViewNames.CLASSIC_RUNNER_VIEW_PATTERN, testSuiteId, execution.getTestPlan().getId(),
+				execution.getId());
+		
 	}
 
 	private void populateExecutionRunnerModel(long testSuiteId, long testPlanItemId, long executionId, Model model) {

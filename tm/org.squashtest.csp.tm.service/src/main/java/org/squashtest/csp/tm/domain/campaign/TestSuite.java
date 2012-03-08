@@ -272,7 +272,7 @@ public class TestSuite {
 		for (int i = testPlan.size() - 1; i >= 0; i--) {
 			IterationTestPlanItem item = testPlan.get(i);
 
-			if (boundToThisSuite(item) && item.isExecutableThroughIteration()) {
+			if (boundToThisSuite(item) && item.isExecutableThroughTestSuite()) {
 				return itemId == item.getId();
 			}
 		}

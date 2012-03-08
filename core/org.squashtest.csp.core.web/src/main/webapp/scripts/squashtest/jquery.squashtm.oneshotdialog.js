@@ -32,6 +32,8 @@ function oneShotDialog(dialogTitle, domMessage){
 		}
 	});
 
+	this.defer = $.Deferred();
+	
 	oneShotPopup.dialog({ 
 		width : '300px',
 		resizable : false,
@@ -43,10 +45,14 @@ function oneShotDialog(dialogTitle, domMessage){
 				jqDialog.dialog('close'); 
 				jqDialog.dialog('destroy');
 				oneShotPopup.remove();
+				this.defer.resolve();
 			}
 		}]
 			
 	});
+	
 	oneShotPopup.dialog('open');
+	
+	return this.defer.promise();
 
 }

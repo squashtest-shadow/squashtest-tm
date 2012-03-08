@@ -242,7 +242,7 @@
 						var message = '<p><f:message key="squashtm.action.exception.testsuite.execution.error.first.words" />';
 						message += '<ul>'
 						if (json.actionValidationError.exception === "TestPlanItemNotExecutableException") {
-							message += '<li> <f:message key="squashtm.action.exception.testsuite.testplan.nostep.or.deleted" /></li>';
+							message += '<li> <f:message key="squashtm.action.exception.testsuite.testplan.terminated.or.no.steps" /></li>';
 						}
 						message += '</ul></p>'
 						oneShotDialog('<f:message key="popup.title.error" />', message);
