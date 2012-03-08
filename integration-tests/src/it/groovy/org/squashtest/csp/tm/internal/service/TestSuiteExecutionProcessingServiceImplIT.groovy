@@ -102,50 +102,6 @@ class TestSuiteExecutionProcessingServiceImplIT extends DbunitServiceSpecificati
 		execution != null
 		execution.findFirstUnexecutedStep().getId() == 5
 	}
-	@DataSet("TestSuiteExecutionProcessingServiceImplIT.should not find execution step because there is none.xml")
-	def "should try to relaunch, delete execution and not find execution step because there is none"(){
-		given :
-		long testSuiteId = 1L
-
-		when :
-		Execution execution = service.restart (testSuiteId)
-
-		then :
-		allDeleted("Execution", [1L, 2L, 3L])
-		allDeleted("ExecutionStep", [ 1l, 2l, 3l, 4l, 5l, 6l, 7L, 8L, 9L])
-		thrown TestPlanItemNotExecutableException
-	}
-	@DataSet("TestSuiteExecutionProcessingServiceImplIT.should not find exec step because test cases deleted.xml")
-	def "should try to relaunch, delete execution and not find execution step because all test plan are test case deleted"(){
-		given :
-		long testSuiteId = 1L
-
-		when :
-		Execution execution = service.restart (testSuiteId)
-
-		then :
-		allDeleted("Execution", [1L, 2L, 3L])
-		allDeleted("ExecutionStep", [ 1L, 2L, 3L, 4L, 5L, 6L, 7L, 8L, 9L ])
-		thrown TestPlanItemNotExecutableException
-		
-	}
-	@DataSet("TestSuiteExecutionProcessingServiceImplIT.should delete exec and find exec step.xml")
-	def "should try to relaunch, delete execution and find execution step"(){
-		given :
-		long testSuiteId = 1L
-
-		when :
-		Execution execution = service.restart (testSuiteId)
-
-		then :
-		allDeleted("Execution", [1L, 2L, 3L])
-		allDeleted("ExecutionStep", [ 1L, 2L, 3L, 4L, 5L, 6L, 7L, 8L, 9L ])
-		allNotDeleted("Execution",[4l])
-		allNotDeleted("ExecutionStep", [10L, 11L, 12L])
-		execution != null
-		execution.findFirstUnexecutedStep() != null
-		execution.findFirstUnexecutedStep().getAction() == "lipsum1"
-	}
 	/* ************************** utilities ********************************* */
 
 	private boolean allDeleted(String className, List<Long> ids){
