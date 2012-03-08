@@ -57,7 +57,6 @@
 </s:url>
 
 <c:url var="testCaseManagerUrl" value="/campaigns/${ campaign.id }/test-plan/manager" />
-<c:url var="testCaseDetailsBaseUrl" value="/test-cases" />
 
 <c:url var="workspaceUrl" value="/campaign-workspace/#" />
 <s:url var="simulateDeletionUrl" value="/campaign-browser/delete-nodes/simulate" />
@@ -293,10 +292,10 @@
 	</jsp:attribute>
 	
 	<jsp:attribute name="body">
-		<aggr:decorate-campaign-test-plan-table testCaseDetailsBaseUrl="${testCaseDetailsBaseUrl}" 
+		<aggr:decorate-campaign-test-plan-table 
 			batchRemoveButtonId="remove-test-case-button" editable="${ editable }" assignableUsersUrl="${assignableUsersUrl}" 
 			campaignUrl="${ campaignUrl }" testCaseMultipleRemovalPopupId="delete-multiple-test-cases-dialog" testCaseSingleRemovalPopupId="delete-single-test-case-dialog" />
-		<aggr:campaign-test-cases-table/>
+		<aggr:campaign-test-plan-table />
 	</jsp:attribute>
 </comp:toggle-panel>
 

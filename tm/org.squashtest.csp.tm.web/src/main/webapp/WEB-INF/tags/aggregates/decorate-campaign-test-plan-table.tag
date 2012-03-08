@@ -22,7 +22,6 @@
 --%>
 <%@ tag body-content="empty" description="jqueryfies a campaign test case table" %>
 <%@ attribute name="batchRemoveButtonId" required="true" description="html id of button for batch removal of test cases" %>
-<%@ attribute name="testCaseDetailsBaseUrl" required="true" description="base of the URL to get test case details" %>
 <%@ attribute name="editable" type="java.lang.Boolean" description="Right to edit content. Default to false." %>
 <%@ attribute name="assignableUsersUrl" required="true" description="URL to manipulate user of the test-cases" %>
 <%@ attribute name="campaignUrl" required="true" description="the url to the campaign that hold all of these test cases" %>
@@ -33,6 +32,7 @@
 <%@ taglib prefix="dt" tagdir="/WEB-INF/tags/datatables" %>
 <%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core"%>
 
+<c:url var="testCaseDetailsBaseUrl" value="/test-cases" />
 
 <script type="text/javascript">
 	$(function() {
@@ -44,7 +44,7 @@
 			}
 			
 			var table = $( '#test-cases-table' ).dataTable();
-			var ids = getIdsOfSelectedTableRows(table, getTestPlanTableRowId);
+			var ids = getIdsOfSelectedTableRows(table, rowDataToItemId);
 			
 			if (ids.length > 0) {
 				$.post('${ campaignUrl }/test-plan', { action: 'remove', itemsIds: ids }, refreshTestPlan);
@@ -68,7 +68,7 @@
 		
 			$.ajax({
 				type : 'delete',
-				url : '${ campaignUrl }/test-plan/' + parseItemId(bCaller),
+				url : '${ campaignUrl }/test-plan/' + trToItemId(bCaller),
 				dataType : 'json',
 				success : refreshTestPlan
 			});
@@ -91,40 +91,44 @@
 	}
 
 	function testPlanDropHandler(rows, dropPosition) {
-		var itemsIds = $(rows).collect(function(row) { return parseItemId(row); });
+		var itemsIds = $(rows).collect(function(row) { return trToItemId(row); });
 		$.post('${ campaignUrl }/test-plan/index/' + dropPosition, { action : 'move', itemsIds : itemsIds }, refreshTestPlan);
 	}
 	
 	function refreshTestPlan() {
 		var table = $('#test-cases-table').dataTable();
-		saveTableSelection(table, getTestPlanTableRowId);
+		saveTableSelection(table, rowDataToItemId);
 		table.fnDraw(false);
 	}
 	
 	function refreshTestPlanWithoutSelection(){
 		var table = $('#test-cases-table').dataTable();
-		saveTableSelection(table, getTestPlanTableRowId);
+		saveTableSelection(table, rowDataToItemId);
 		table.fnDraw(false);
 	}
 
 	function testPlanDrawCallback() {
 		<c:if test="${ editable }">
-		enableTableDragAndDrop('test-cases-table', getTestPlanTableRowIndex, testPlanDropHandler);
+		enableTableDragAndDrop('test-cases-table', rowDataToItemIndex, testPlanDropHandler);
 		decorateDeleteButtons($('.delete-test-case-button', this));
 		</c:if>
-		restoreTableSelection(this, getTestPlanTableRowId);
+		restoreTableSelection(this, rowDataToItemId);
 	}
 
-	function getTestPlanTableRowId(rowData) {
+	function rowDataToItemId(rowData) {
 		return rowData[0];	
 	}
 
-	function getTestPlanTableRowIndex(rowData){
+	function rowDataToItemIndex(rowData){
 		return rowData[1];
 	}
 
+	function rowDataToTestCaseId(rowData){
+		return rowData[8];
+	}
+
 	function addIdtoTestCaseRow(nRow, aData){
-		$(nRow).attr("id", "test-plan-item:" + getTestPlanTableRowId(aData));
+		$(nRow).attr("id", "test-plan-item:" + rowDataToItemId(aData));
 	}
 	
 	function testPlanRowCallback(row, data, displayIndex) {
@@ -133,7 +137,7 @@
 		<c:if test='${assignableUsersUrl != " " }'>
 		addLoginListToTestCase(row, data);
 		</c:if>
-		addDeleteButtonToRow(row, getTestPlanTableRowId(data), 'delete-test-case-button');
+		addDeleteButtonToRow(row, rowDataToItemId(data), 'delete-test-case-button');
 		</c:if>
 		addClickHandlerToSelectHandle(row, $("#test-cases-table"));
 		addHLinkToTestCaseName(row, data);
@@ -141,17 +145,17 @@
 	}
 	
 	function addLoginListToTestCase(row, data) {
-		var id = getTestPlanTableRowId(data);
+		var id = rowDataToItemId(data);
 		$('td:eq(3)', row).load("${assignableUsersUrl}" + "?testCaseId="+ id +"");
 	}
 	
-	function parseItemId(element) {
+	function trToItemId(element) {
 		var elementId = element.id;
 		return elementId.substr(elementId.indexOf(":") + 1);
 	}
 	
 	function addHLinkToTestCaseName(row, data) {
-		var url= '${ testCaseDetailsBaseUrl }/' + getTestPlanTableRowId(data) + '/info';			
+		var url= '${ testCaseDetailsBaseUrl }/' + rowDataToTestCaseId(data) + '/info';			
 		addHLinkToCellText($( 'td:eq(2)', row ), url);
 	}	
 </script>
@@ -164,6 +168,7 @@
 		<dt:column-definition targets="0" visible="false" />
 		<dt:column-definition targets="1" sortable="false" cssClass="select-handle drag-handle centered" width="2em" />
 		<dt:column-definition targets="2,3,4,5,6" sortable="false" />
-		<dt:column-definition targets="7" sortable="false" width="2em" lastDef="true" cssClass="centered" />
+		<dt:column-definition targets="7" sortable="false" width="2em" cssClass="centered" />
+		<dt:column-definition targets="8" visible="false" lastDef="true" />		
 	</jsp:attribute>
 </comp:decorate-ajax-table>

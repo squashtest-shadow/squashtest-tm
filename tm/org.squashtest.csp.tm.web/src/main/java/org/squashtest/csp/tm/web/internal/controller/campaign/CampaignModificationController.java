@@ -291,7 +291,7 @@ public class CampaignModificationController {
 						testCase.getName(),
 						user,
 						formatImportance(testCase.getImportance(), locale),
-						formatExecutionMode(testCase.getExecutionMode(), locale), "" };
+						formatExecutionMode(testCase.getExecutionMode(), locale), "", testCase.getId() };
 			}
 		}.buildDataModel(holder, filter.getFirstItemIndex() + 1, params.getsEcho());
 	}

@@ -25,7 +25,7 @@
 <table id="test-cases-table">
 	<thead>
 		<tr>
-			<th>Id</th>
+			<th>Item Id</th>
 			<th>#</th>
 			<th><f:message key="campaign.test-plan.table.column-header.project.label" /></th>
 			<th><f:message key="test-case.name.label" /></th>
@@ -33,6 +33,7 @@
 			<th><f:message key="test-case.importance.combo.label" /></th>
 			<th><f:message key="campaign.test-plan.table.column-header.type.label" /></th>
 			<th>&nbsp;</th>				
+			<th>TC Id</th>							
 		</tr>
 	</thead>
 	<tbody><%-- Will be populated through ajax --%></tbody>
