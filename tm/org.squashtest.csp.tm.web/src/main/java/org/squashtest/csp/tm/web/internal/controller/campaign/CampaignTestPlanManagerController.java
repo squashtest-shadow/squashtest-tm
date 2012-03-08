@@ -83,9 +83,11 @@ public class CampaignTestPlanManagerController {
 		testPlanManager.addTestCasesToCampaignTestPlan(testCasesIds, campaignId);
 	}
 
-	@RequestMapping(value = "/campaigns/{campaignId}/test-plan", method = RequestMethod.POST, params = { "action=remove", ITEMS_IDS_REQUEST_PARAM})
+	@RequestMapping(value = "/campaigns/{campaignId}/test-plan", method = RequestMethod.POST, params = {
+			"action=remove", ITEMS_IDS_REQUEST_PARAM })
 	public @ResponseBody
-	void removeItemsFromTestPlan(@PathVariable long campaignId, @RequestParam(ITEMS_IDS_REQUEST_PARAM) List<Long> itemsIds) {
+	void removeItemsFromTestPlan(@PathVariable long campaignId,
+			@RequestParam(ITEMS_IDS_REQUEST_PARAM) List<Long> itemsIds) {
 		testPlanManager.removeTestPlanItems(campaignId, itemsIds);
 	}
 
@@ -102,25 +104,25 @@ public class CampaignTestPlanManagerController {
 		return listBuilder.setModel(linkableLibraries).build();
 	}
 
-	@RequestMapping(value = "/campaigns/{campaignId}/test-cases/{testCaseId}/assign-user", method = RequestMethod.POST)
+	@RequestMapping(value = "/campaigns/{campaignId}/test-plan/{itemId}/assigned-user", method = RequestMethod.POST, params = "userId")
 	public @ResponseBody
-	void assignUserToCampaignTestPlanItem(@PathVariable long testCaseId, @PathVariable long campaignId,
+	void assignUserToCampaignTestPlanItem(@PathVariable long itemId, @PathVariable long campaignId,
 			@RequestParam long userId) {
-		testPlanManager.assignUserToTestPlanItem(testCaseId, campaignId, userId);
+		testPlanManager.assignUserToTestPlanItem(itemId, campaignId, userId);
 	}
 
 	@RequestMapping(value = "/campaigns/{campaignId}/assignable-user", method = RequestMethod.GET)
-	public ModelAndView getAssignUserForCampaignTestPlanItem(@RequestParam long testCaseId,
+	public ModelAndView getAssignUserForCampaignTestPlanItem(@RequestParam long itemId,
 			@PathVariable long campaignId) {
 		List<User> usersList = testPlanManager.findAssignableUserForTestPlan(campaignId);
-		CampaignTestPlanItem itp = testPlanManager.findTestPlanItemByTestCaseId(campaignId, testCaseId);
+		CampaignTestPlanItem itp = testPlanManager.findById(itemId);
 
 		ModelAndView mav = new ModelAndView("fragment/generics/test-plan-combo-box");
 
 		mav.addObject("usersList", usersList);
 		mav.addObject("selectIdentitier", "usersList");
 		mav.addObject("selectClass", "userLogin");
-		mav.addObject("dataAssignUrl", "/campaigns/" + campaignId + "/test-cases/" + testCaseId + "/assign-user");
+		mav.addObject("dataAssignUrl", "/campaigns/" + campaignId + "/test-plan/" + itp.getId() + "/assigned-user");
 
 		if (itp != null && itp.getUser() != null) {
 			mav.addObject("testCaseAssignedLogin", itp.getUser().getLogin());
@@ -142,15 +144,16 @@ public class CampaignTestPlanManagerController {
 		return mav;
 	}
 
-	@RequestMapping(value = "/campaigns/{campaignId}/batch-assign-user", method = RequestMethod.POST)
+	@RequestMapping(value = "/campaigns/{campaignId}/test-plan", method = RequestMethod.POST, params = {
+			"action=assign-user", ITEMS_IDS_REQUEST_PARAM, "userId" })
 	public @ResponseBody
-	void assignUserToCampaignTestPlanItems(@RequestParam(TESTCASES_IDS_REQUEST_PARAM) List<Long> testPlanIds,
+	void assignUserToCampaignTestPlanItems(@RequestParam(ITEMS_IDS_REQUEST_PARAM) List<Long> itemsIds,
 			@PathVariable long campaignId, @RequestParam long userId) {
-		testPlanManager.assignUserToTestPlanItems(testPlanIds, campaignId, userId);
+		testPlanManager.assignUserToTestPlanItems(itemsIds, campaignId, userId);
 	}
 
-	@RequestMapping(value = "/campaigns/{campaignId}/test-plan/index/{targetIndex}", method = RequestMethod.POST, params = { "action=move",
-			ITEMS_IDS_REQUEST_PARAM })
+	@RequestMapping(value = "/campaigns/{campaignId}/test-plan/index/{targetIndex}", method = RequestMethod.POST, params = {
+			"action=move", ITEMS_IDS_REQUEST_PARAM })
 	@ResponseBody
 	public void moveTestPlanItems(@PathVariable long campaignId, @PathVariable int targetIndex,
 			@RequestParam(ITEMS_IDS_REQUEST_PARAM) List<Long> itemsIds) {

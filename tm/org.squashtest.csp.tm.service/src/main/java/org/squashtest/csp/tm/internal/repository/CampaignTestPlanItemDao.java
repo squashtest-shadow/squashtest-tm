@@ -23,9 +23,8 @@ package org.squashtest.csp.tm.internal.repository;
 import java.util.List;
 
 import org.squashtest.csp.tm.domain.campaign.CampaignTestPlanItem;
-import org.squashtest.csp.tm.infrastructure.filter.CollectionSorting;
 
 public interface CampaignTestPlanItemDao extends EntityDao<CampaignTestPlanItem>{
 
-	List<CampaignTestPlanItem> findAllByIdList(List<Long> testPlanIds);
+	List<CampaignTestPlanItem> findAllByIdList(List<Long> itemsIds);
 }

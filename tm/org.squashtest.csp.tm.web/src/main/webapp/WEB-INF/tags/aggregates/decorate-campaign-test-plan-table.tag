@@ -91,7 +91,7 @@
 	}
 
 	function testPlanDropHandler(rows, dropPosition) {
-		var itemsIds = $(rows).collect(function(row) { return trToItemId(row); });
+		var itemsIds = $( rows ).collect( trToItemId );
 		$.post('${ campaignUrl }/test-plan/index/' + dropPosition, { action : 'move', itemsIds : itemsIds }, refreshTestPlan);
 	}
 	
@@ -146,7 +146,7 @@
 	
 	function addLoginListToTestCase(row, data) {
 		var id = rowDataToItemId(data);
-		$('td:eq(3)', row).load("${assignableUsersUrl}" + "?testCaseId="+ id +"");
+		$('td:eq(3)', row).load("${assignableUsersUrl}" + "?itemId="+ id +"");
 	}
 	
 	function trToItemId(element) {

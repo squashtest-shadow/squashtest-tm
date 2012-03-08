@@ -30,6 +30,7 @@
 <%@ taglib prefix="aggr" tagdir="/WEB-INF/tags/aggregates" %>
 <%@ taglib prefix="pop" tagdir="/WEB-INF/tags/popup" %>
 <%@ taglib prefix="authz" tagdir="/WEB-INF/tags/authz" %>
+<%@ taglib prefix="comp" tagdir="/WEB-INF/tags/component" %>
 
 <f:message var="squashlocale" key="squashtm.locale" />
 
@@ -52,9 +53,7 @@
 		<s:param name="campId" value="${campaign.id}" />
 </s:url>
 
-<s:url var="assignTestCasesUrl" value="/campaigns/{campId}/batch-assign-user">
-		<s:param name="campId" value="${campaign.id}" />
-</s:url>
+<s:url var="assignTestCasesUrl" value="/campaigns/${ campaign.id }/test-plan" />
 
 <c:url var="testCaseManagerUrl" value="/campaigns/${ campaign.id }/test-plan/manager" />
 
@@ -359,13 +358,13 @@
 		
 			<f:message var="label" key="dialog.assign-test-case.title" />
 			'${ label }': function() {
-				var url = "${assignTestCasesUrl}";
+				var url = "${ assignTestCasesUrl }";
 				var table = $( '#test-cases-table' ).dataTable();
-				var ids = getIdsOfSelectedTableRows(table, getTestPlanTableRowId);
+				var ids = getIdsOfSelectedTableRows(table, rowDataToItemId);
 				var user = $(".comboLogin").val();
 			
-				$.post(url, { testCasesIds: ids, userId: user}, function(){
-					refreshTestCasesWithoutSelection();
+				$.post(url, { action: 'assign-user', itemsIds: ids, userId: user}, function(){
+					refreshTestPlanWithoutSelection();
 					$("#batch-assign-test-case").dialog('close');
 				});
 				
@@ -378,7 +377,7 @@
 			<script type="text/javascript">
 				$("#batch-assign-test-case").bind( "dialogopen", function(event, ui){
 					var table = $( '#test-cases-table' ).dataTable();
-					var ids = getIdsOfSelectedTableRows(table, getTestPlanTableRowId);
+					var ids = getIdsOfSelectedTableRows(table, rowDataToItemId);
 					if (ids.length > 0) {
 						var comboBox = $.get("${batchAssignableUsersUrl}", false, function(){
 							$("#comboBox-div").html("${confirmMessage}");

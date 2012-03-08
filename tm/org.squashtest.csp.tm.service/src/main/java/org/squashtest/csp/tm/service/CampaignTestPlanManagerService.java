@@ -63,28 +63,28 @@ public interface CampaignTestPlanManagerService {
 	List<User> findAssignableUserForTestPlan(long campaignId);
 
 	/**
-	 * Get Users with Write Access for a TestPlan.
+	 * Assign a user to the given test plan items
 	 * 
-	 * @param testCaseId
+	 * @param itemsIds
+	 *            the test plan items to which assign a user
 	 * @param campaignId
+	 *            the campaign which test plan contains the items.
+	 * @param userId
+	 *            the assigned user
 	 */
-	void assignUserToTestPlanItem(Long testCaseId, long campaignId, Long userId);
+	void assignUserToTestPlanItem(long itemId, long campaignId, long userId);
 
 	/**
-	 * Get Users with Write Access for a TestPlan.
+	 * Assign a user to the given test plan items
 	 * 
-	 * @param testCaseIds
+	 * @param itemsIds
+	 *            the test plan items to which assign a user
 	 * @param campaignId
+	 *            the campaign which test plan contains the items.
+	 * @param userId
+	 *            the assigned user
 	 */
-	void assignUserToTestPlanItems(List<Long> testCaseIds, long campaignId, Long userId);
-
-	/**
-	 * Adds a list of test cases to a campaign.
-	 * 
-	 * @param testCaseIdss
-	 * @param campaignId
-	 */
-	CampaignTestPlanItem findTestPlanItemByTestCaseId(long campaignId, long testCaseId);
+	void assignUserToTestPlanItems(List<Long> itemsIds, long campaignId, long userId);
 
 	/**
 	 * 
@@ -98,14 +98,23 @@ public interface CampaignTestPlanManagerService {
 	void moveTestPlanItems(long campaignId, int targetIndex, List<Long> itemIds);
 
 	/**
-	 * @param campaignId id of the campaign which test plan we will remove an item from
-	 * @param itemId id of the test plan item we want to remove
+	 * @param campaignId
+	 *            id of the campaign which test plan we will remove an item from
+	 * @param itemId
+	 *            id of the test plan item we want to remove
 	 */
 	void removeTestPlanItem(long campaignId, long itemId);
+
 	/**
-	 * @param campaignId id of the campaign which test plan we will remove items from
+	 * @param campaignId
+	 *            id of the campaign which test plan we will remove items from
 	 * @param itemId
 	 */
 	void removeTestPlanItems(long campaignId, List<Long> itemIds);
 
+	/**
+	 * @param itemId
+	 * @return
+	 */
+	CampaignTestPlanItem findById(long itemId);
 }

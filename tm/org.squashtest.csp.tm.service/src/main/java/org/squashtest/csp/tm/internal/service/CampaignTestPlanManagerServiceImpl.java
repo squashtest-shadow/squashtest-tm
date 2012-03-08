@@ -25,6 +25,7 @@ import java.util.Collections;
 import java.util.List;
 
 import javax.inject.Inject;
+import javax.validation.constraints.NotNull;
 
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.osgi.extensions.annotation.ServiceReference;
@@ -48,7 +49,6 @@ import org.squashtest.csp.tm.internal.infrastructure.strategy.LibrarySelectionSt
 import org.squashtest.csp.tm.internal.repository.CampaignDao;
 import org.squashtest.csp.tm.internal.repository.CampaignTestPlanItemDao;
 import org.squashtest.csp.tm.internal.repository.LibraryNodeDao;
-import org.squashtest.csp.tm.internal.repository.TestCaseDao;
 import org.squashtest.csp.tm.internal.repository.TestCaseLibraryDao;
 import org.squashtest.csp.tm.internal.repository.UserDao;
 import org.squashtest.csp.tm.service.CampaignTestPlanManagerService;
@@ -58,12 +58,14 @@ import org.squashtest.csp.tm.service.ProjectFilterModificationService;
 @Transactional
 public class CampaignTestPlanManagerServiceImpl implements CampaignTestPlanManagerService {
 	/**
+	 * 
+	 */
+	private static final String CAN_READ_RETURNED_OBJECT = "hasPermission(#returnObject, 'READ') or hasRole('ROLE_ADMIN')";
+
+	/**
 	 * Permission string for writing campaigns based on campaignId param.
 	 */
 	private static final String CAN_WRITE_CAMPAIGN_BY_ID = "hasPermission(#campaignId, 'org.squashtest.csp.tm.domain.campaign.Campaign', 'WRITE') or hasRole('ROLE_ADMIN')";
-
-	@Inject
-	private TestCaseDao testCaseDao;
 
 	@Inject
 	private TestCaseLibraryDao testCaseLibraryDao;
@@ -100,7 +102,7 @@ public class CampaignTestPlanManagerServiceImpl implements CampaignTestPlanManag
 
 	@Override
 	@Transactional(readOnly = true)
-	@PostAuthorize("hasPermission(#returnObject, 'READ') or hasRole('ROLE_ADMIN')")
+	@PostAuthorize(CAN_READ_RETURNED_OBJECT)
 	public Campaign findCampaign(long campaignId) {
 		return campaignDao.findById(campaignId);
 	}
@@ -138,6 +140,7 @@ public class CampaignTestPlanManagerServiceImpl implements CampaignTestPlanManag
 	}
 
 	@Override
+	@Transactional(readOnly = true)
 	public List<User> findAssignableUserForTestPlan(long campaignId) {
 
 		Campaign campaign = campaignDao.findById(campaignId);
@@ -151,45 +154,41 @@ public class CampaignTestPlanManagerServiceImpl implements CampaignTestPlanManag
 		return usersList;
 	}
 
+	/**
+	 * @see CampaignTestPlanManagerService#assignUserToTestPlanItem(Long, long, Long)
+	 * @param campaignId
+	 *            not necessary but actually used for security check
+	 */
 	@Override
-	public void assignUserToTestPlanItem(Long testCaseId, long campaignId, Long userId) {
-		Campaign campaign = campaignDao.findById(campaignId);
-		TestCase testCase = testCaseDao.findById(testCaseId);
-		if (userId == 0) {
-			CampaignTestPlanItem itp = campaign.findTestPlanItem(testCase);
-			itp.setUser(null);
-			return;
+	@PreAuthorize(CAN_WRITE_CAMPAIGN_BY_ID)
+	public void assignUserToTestPlanItem(long itemId, long campaignId, long userId) {
+		User assignee = null;
+		if (userId != 0) {
+			assignee = userDao.findById(userId);
 		}
-		User user = userDao.findById(userId);
-		CampaignTestPlanItem itp = campaign.findTestPlanItem(testCase);
-		itp.setUser(user);
+
+		CampaignTestPlanItem item = campaignTestPlanItemDao.findById(itemId);
+		item.setUser(assignee);
 	}
 
+	/**
+	 * @see CampaignTestPlanManagerService#assignUserToTestPlanItem(Long, long, Long)
+	 * @param campaignId
+	 *            not necessary but actually used for security check
+	 */
 	@Override
-	public void assignUserToTestPlanItems(List<Long> testCaseIds, long campaignId, Long userId) {
-		Campaign campaign = campaignDao.findById(campaignId);
-		if (userId == 0) {
-			for (Long testCaseId : testCaseIds) {
-				TestCase testCase = testCaseDao.findById(testCaseId);
-				CampaignTestPlanItem itp = campaign.findTestPlanItem(testCase);
-				itp.setUser(null);
-			}
-			return;
+	@PreAuthorize(CAN_WRITE_CAMPAIGN_BY_ID)
+	public void assignUserToTestPlanItems(@NotNull List<Long> itemsIds, long campaignId, long userId) {
+		User assignee = null;
+		if (userId != 0) {
+			assignee = userDao.findById(userId);
 		}
-		User user = userDao.findById(userId);
-		for (Long testCaseId : testCaseIds) {
-			TestCase testCase = testCaseDao.findById(testCaseId);
-			CampaignTestPlanItem itp = campaign.findTestPlanItem(testCase);
-			itp.setUser(user);
-		}
-	}
 
-	@Override
-	public CampaignTestPlanItem findTestPlanItemByTestCaseId(long campaignId, long testCaseId) {
-		Campaign campaign = campaignDao.findById(campaignId);
-		TestCase testCase = testCaseDao.findById(testCaseId);
-		CampaignTestPlanItem itp = campaign.findTestPlanItem(testCase);
-		return itp;
+		List<CampaignTestPlanItem> items = campaignTestPlanItemDao.findAllByIdList(itemsIds);
+
+		for (CampaignTestPlanItem item : items) {
+			item.setUser(assignee);
+		}
 	}
 
 	/**
@@ -220,6 +219,16 @@ public class CampaignTestPlanManagerServiceImpl implements CampaignTestPlanManag
 	public void removeTestPlanItems(long campaignId, List<Long> itemIds) {
 		Campaign campaign = campaignDao.findById(campaignId);
 		campaign.removeTestPlanItems(itemIds);
+	}
+
+	/**
+	 * @see org.squashtest.csp.tm.service.CampaignTestPlanManagerService#findById(long)
+	 */
+	@Override
+	@Transactional(readOnly = true)
+	@PostAuthorize(CAN_READ_RETURNED_OBJECT)
+	public CampaignTestPlanItem findById(long itemId) {
+		return campaignTestPlanItemDao.findById(itemId);
 	}
 
 }

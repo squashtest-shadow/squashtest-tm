@@ -29,12 +29,14 @@ import org.squashtest.csp.tm.domain.testcase.TestCase
 import org.squashtest.csp.tm.domain.testcase.TestCaseFolder
 import org.squashtest.csp.tm.domain.testcase.TestCaseLibrary
 import org.squashtest.csp.tm.domain.testcase.TestCaseLibraryNode
+import org.squashtest.csp.tm.domain.users.User;
 import org.squashtest.csp.tm.internal.infrastructure.strategy.LibrarySelectionStrategy
 import org.squashtest.csp.tm.internal.repository.CampaignDao
 import org.squashtest.csp.tm.internal.repository.CampaignTestPlanItemDao
 import org.squashtest.csp.tm.internal.repository.LibraryNodeDao
 import org.squashtest.csp.tm.internal.repository.TestCaseDao
 import org.squashtest.csp.tm.internal.repository.TestCaseLibraryDao
+import org.squashtest.csp.tm.internal.repository.UserDao;
 import org.squashtest.csp.tools.unittest.assertions.CollectionAssertions;
 import org.squashtest.csp.tools.unittest.reflection.ReflectionCategory;
 
@@ -43,22 +45,22 @@ import spock.lang.Specification
 class CampaignTestPlanManagerServiceImplTest extends Specification {
 
 	CampaignTestPlanManagerServiceImpl service = new CampaignTestPlanManagerServiceImpl()
-	TestCaseDao testCaseDao = Mock()
 	TestCaseLibraryDao testCaseLibraryDao = Mock()
 	LibraryNodeDao<TestCaseLibraryNode> nodeDao = Mock()
 	CampaignDao campaignDao = Mock()
 	CampaignTestPlanItemDao itemDao = Mock()
 	ProjectFilterModificationServiceImpl projectFilterModificationService = Mock()
 	LibrarySelectionStrategy<TestCaseLibrary, TestCaseLibraryNode> libraryStrategy = Mock()
+	UserDao userDao = Mock()
 
 	def setup(){
-		service.testCaseDao = testCaseDao
 		service.testCaseLibraryDao = testCaseLibraryDao
 		service.campaignDao = campaignDao
 		service.projectFilterModificationService = projectFilterModificationService
 		service.libraryStrategy = libraryStrategy
 		service.campaignTestPlanItemDao = itemDao
 		service.testCaseLibraryNodeDao = nodeDao
+		service.userDao = userDao
 	}
 
 	def "should find campaign by id"(){
@@ -278,4 +280,39 @@ class CampaignTestPlanManagerServiceImplTest extends Specification {
 		public Long getId(){return overId}
 		public void setId(Long newId){overId=newId}
 	}
+	
+	def "should assign user to test plan items"() {
+		given:
+		User u = Mock()
+		userDao.findById(10L) >> u
+		
+		and:
+		CampaignTestPlanItem i100 = Mock()
+		CampaignTestPlanItem i200 = Mock()
+		itemDao.findAllByIdList([100L, 200L]) >> [i100, i200]
+		
+		when:
+		service.assignUserToTestPlanItems([100L, 200L], 10000L, 10L)
+		
+		then:
+		1 * i100.setUser(u)
+		1 * i200.setUser(u)
+	}
+	
+	def "should assign user to test plan item"() {
+		given:
+		User u = Mock()
+		userDao.findById(10L) >> u
+		
+		and:
+		CampaignTestPlanItem item = Mock()
+		itemDao.findById(100L) >> item
+		
+		when:
+		service.assignUserToTestPlanItem(100L, 10000L, 10L)
+		
+		then:
+		1 * item.setUser(u)
+	}
+
 }
