@@ -32,8 +32,7 @@
 <%@ page language="java" contentType="text/html; charset=utf-8" pageEncoding="utf-8"%>
 <c:url var="treeBaseUrl" value="/test-case-browser"/>
 <c:url var="campaignUrl" value="/campaigns/${ campaign.id }" />
-<c:url var="testPlanUrl" value="/campaigns/${ campaign.id }/test-cases" />
-<c:url  var="testCaseDetailsBaseUrl" value="/test-cases" /> 
+
 
 <%-- ----------------------------------- Authorization ----------------------------------------------%>
 <c:set var="editable" value="${ false }" /> 
@@ -48,8 +47,8 @@
 	<jsp:attribute name="head">
 		<link rel="stylesheet" type="text/css" href="${ pageContext.servletContext.contextPath }/styles/master.purple.css" />
 
-		<aggr:decorate-campaign-test-plan-manager-table testCasesUrl="${ testPlanUrl }" campaignUrl="${ campaignUrl }" 
-			batchRemoveButtonId="remove-items-button" testCaseDetailsBaseUrl="${ testCaseDetailsBaseUrl }" editable="${editable}"/>
+		<aggr:decorate-campaign-test-plan-manager-table campaignUrl="${ campaignUrl }" 
+			batchRemoveButtonId="remove-items-button" editable="${editable}"/>
 		
 		<script type="text/javascript">
 			
@@ -89,7 +88,7 @@
 					var tree = $( '#linkable-test-cases-tree' );
 					var ids = getTestCasesIds();
 					if (ids.length > 0) {
-						$.post('${ testPlanUrl }', { testCasesIds: ids}, refreshTestCases);
+						$.post('${ testPlanUrl }', { testCasesIds: ids}, refreshTestPlan);
 					}
 					tree.jstree('deselect_all'); //todo : each panel should define that method too.
 					firstIndex = null;
@@ -124,7 +123,7 @@
 	</jsp:attribute>	
 	
 	<jsp:attribute name="tablePane">
-		<aggr:linkable-campaign-test-cases-table />
+		<aggr:campaign-test-plan-manager-table />
 	</jsp:attribute>
 </layout:tree-picker-layout>
 

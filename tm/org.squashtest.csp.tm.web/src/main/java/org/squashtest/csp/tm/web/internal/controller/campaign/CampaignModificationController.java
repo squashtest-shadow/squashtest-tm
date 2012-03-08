@@ -309,9 +309,9 @@ public class CampaignModificationController {
 			@Override
 			public Object[] buildItemData(CampaignTestPlanItem item) {
 				TestCase testCase = item.getReferencedTestCase();
-				return new Object[] { testCase.getId(), getCurrentIndex(), testCase.getProject().getName(),
+				return new Object[] { item.getId(), getCurrentIndex(), testCase.getProject().getName(),
 						testCase.getName(), formatImportance(testCase.getImportance(), locale),
-						formatExecutionMode(testCase.getExecutionMode(), locale), "" };
+						formatExecutionMode(testCase.getExecutionMode(), locale), "", testCase.getId() };
 			}
 		}.buildDataModel(holder, filter.getFirstItemIndex() + 1, params.getsEcho());
 	}
