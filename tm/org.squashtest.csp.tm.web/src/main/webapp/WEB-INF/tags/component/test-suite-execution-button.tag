@@ -37,6 +37,8 @@
 		value='/test-suites/${ testSuiteId }/test-plan/execution/runner' />
 	<c:url var='testRunnerUrl'
 		value='/test-suites/${ testSuiteId }/test-plan/execution/test-runner' />
+	<c:url var='deleteOnRestartUrl'
+		value='/test-suites/${ testSuiteId }/test-plan/execution/delete-restart' />
 	<script type="text/javascript">
 		function classicExecution(mode) {
 			var url = "${ runnerUrl }";
@@ -51,31 +53,31 @@
 			$.open(url, data, winDef);
 
 		}
-		function checkTestSuiteExecutionDoable(dataP, urlP) {
+		function checkTestSuiteExecutionDoable() {
 			return $.ajax({
 				type : 'post',
-				data : dataP,
+				data : { 'mode' : 'start-resume' },
 				dataType : "json",
-				url : urlP
+				url : "${ testRunnerUrl }"
 			});
 		}
-		var testSuiteExecutionError = function(jqXHR) {
-			var json = jQuery.parseJSON(jqXHR.responseText);
-
-			if (json != null && json.actionValidationError != null) {
-				var message = '<p><f:message key="squashtm.action.exception.testsuite.execution.error.first.words" />';
-				message += '<ul>'
-				if (json.actionValidationError.exception === "EmptyTestPlanException") {
-					message += '<li> <f:message key="squashtm.action.exception.testsuite.testplan.empty" /></li>';
+		function testSuiteExecutionError (jqXHR) {
+			try{
+				var json = jQuery.parseJSON(jqXHR.responseText);
+				if (json != null && json.actionValidationError != null) {
+					var message = '<p><f:message key="squashtm.action.exception.testsuite.execution.error.first.words" />';
+					message += '<ul>'
+					if (json.actionValidationError.exception === "EmptyTestPlanException") {
+						message += '<li> <f:message key="squashtm.action.exception.testsuite.testplan.empty" /></li>';
+					}
+					if (json.actionValidationError.exception === "TestPlanItemNotExecutableException") {
+						message += '<li> <f:message key="squashtm.action.exception.testsuite.testplan.terminated.or.no.steps" /></li>';
+					}
+					message += '</ul></p>'
+					oneShotDialog('<f:message key="popup.title.error" />', message);
 				}
-				if (json.actionValidationError.exception === "TestPlanItemNotExecutableException") {
-					message += '<li> <f:message key="squashtm.action.exception.testsuite.testplan.terminated.or.no.steps" /></li>';
-				}
-				message += '</ul></p>'
-				oneShotDialog('<f:message key="popup.title.error" />', message);
-			}
-
-		};
+			}catch(e){}
+		}
 	</script>
 	<c:if test="${ statisticsEntity.status == 'READY' }">
 		<f:message var='startResumeLabel'
@@ -92,9 +94,11 @@
 		<div id="start" style="display: none">
 			<ul>
 				<li><a class="start-suite-optimized" href="#"><f:message
-							key="test-suite.execution.optimized.label" /> </a></li>
+							key="test-suite.execution.optimized.label" /> </a>
+				</li>
 				<li><a class="start-suite-classic" href="#"><f:message
-							key='test-suite.execution.classic.label' /> </a></li>
+							key='test-suite.execution.classic.label' /> </a>
+				</li>
 			</ul>
 		</div>
 		<form action="${ runnerUrl }" method="post"
@@ -115,17 +119,14 @@
 				var startmenu = allUIMenus[allUIMenus.length - 1];
 
 				startmenu.chooseItem = function(item) {
-					var data = {
-						'mode' : 'start-resume'
-					};
-					var url = "${ testRunnerUrl }";
+					
 					if ($(item).hasClass('start-suite-classic')) {
-						checkTestSuiteExecutionDoable(data, url).fail(
+						checkTestSuiteExecutionDoable().fail(
 								testSuiteExecutionError).done(
 								startResumeClassic);
 					} else {
 						if ($(item).hasClass('start-suite-optimized')) {
-							checkTestSuiteExecutionDoable(data, url).fail(
+							checkTestSuiteExecutionDoable().fail(
 									testSuiteExecutionError).done(
 									startResumeOptimized);
 						}
@@ -133,13 +134,17 @@
 				};
 			});
 			function startResumeClassic(jqXHR) {
-				if(jqXHR == null){
+				//I shouldn't have to do this, I know, they made me .. :( 
+				// seriously : don't know why but the ajax.done() method above is called even when the check fails (observed with FF 10)
+				// therefore i have to check for jqXHR to be null to make sure the method is not called after a fail
+				if (jqXHR == null) {
 					classicExecution('start-resume');
 				}
 
 			}
 			function startResumeOptimized(jqXHR) {
-				if(jqXHR == null){
+				//same as comment above
+				if (jqXHR == null) {
 					$('#start-optimized-button').trigger('click');
 				}
 			}
@@ -151,9 +156,11 @@
 		<div id="restart" style="display: none">
 			<ul>
 				<li><a class="restart-suite-optimized" href="#"><f:message
-							key="test-suite.execution.optimized.label" /> </a></li>
+							key="test-suite.execution.optimized.label" /> </a>
+				</li>
 				<li><a class="restart-suite-classic" href="#"><f:message
-							key='test-suite.execution.classic.label' /> </a></li>
+							key='test-suite.execution.classic.label' /> </a>
+				</li>
 			</ul>
 		</div>
 		<form action="${ runnerUrl }" method="post"
@@ -178,27 +185,9 @@
 					width : 130
 				});
 
-				var restartClassic = function() {
-					restartDialog.confirmDialog('close');
-					classicExecution('restart');
-				};
-
-				var restartOptimized = function() {
-					restartDialog.confirmDialog('close');
-					$('#restart-optimized-button').trigger('click');
-				};
-
-				var confirmRestartHandler = function() {
-					if ($('#restart-mode').val() == 'classic') {
-						restartClassic();
-					} else {
-						restartOptimized();
-					}
-				};
-
 				var restartDialog = $("#confirm-restart-dialog");
 				restartDialog.confirmDialog({
-					confirm : confirmRestartHandler
+					confirm : deleteExecAndStart
 				});
 
 				var startmenu = allUIMenus[allUIMenus.length - 1];
@@ -215,7 +204,51 @@
 						restartMode.val('optimized');
 						restartDialog.confirmDialog('open');
 					}
-				}
+				};
+				function confirmRestartHandler (jqXHR) {
+					//I shouldn't have to do this, I know, they made me .. :( 
+					// seriously : don't know why but the ajax.done() method above is called even when the check fails (observed with FF 10)
+					// therefore i have to check for jqXHR to be null to make sure the method is not called after a fail
+					if (jqXHR == null) {
+						restartDialog.confirmDialog('close');
+						if ($('#restart-mode').val() == 'classic') {
+							startResumeClassic();
+						} else {
+							startResumeOptimized();
+						}
+					}
+				};
+				function deleteExec (){
+					return $.ajax({
+						type : 'post',
+						data : [],
+						dataType : "json",
+						url : "${ deleteOnRestartUrl }"
+					});
+				};
+				function deleteExecAndStart (){
+					deleteExec().then(checkStartAndHandleResultForRestart);
+				};
+				
+			 	function checkStartAndHandleResultForRestart (){
+					checkTestSuiteExecutionDoable().fail(restartFail).done(confirmRestartHandler);
+				};
+				
+				function restartFail(jqXHR){
+					restartDialog.confirmDialog('close');
+					try{
+					var json = jQuery.parseJSON(jqXHR.responseText);
+					if (json != null && json.actionValidationError != null) {
+						var message = '<p><f:message key="squashtm.action.exception.testsuite.execution.error.first.words" />';
+						message += '<ul>'
+						if (json.actionValidationError.exception === "TestPlanItemNotExecutableException") {
+							message += '<li> <f:message key="squashtm.action.exception.testsuite.testplan.nostep.or.deleted" /></li>';
+						}
+						message += '</ul></p>'
+						oneShotDialog('<f:message key="popup.title.error" />', message);
+					}
+					}catch(e){}
+				};
 			});
 		</script>
 

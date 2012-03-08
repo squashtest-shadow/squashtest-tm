@@ -58,6 +58,7 @@ public class TestSuiteExecutionController {
 		public static final String INIT_EXECUTION_RUNNER = "/execution/runner";
 		public static final String TEST_EXECUTION_BEFORE_INIT = "/execution/test-runner";
 		public static final String INIT_NEXT_EXECUTION_RUNNER = "/{testPlanItemId}/next-execution/runner";
+		public static final String DELETE_ON_RESTART = "/execution/delete-restart";
 	}
 
 	private static class ViewNames {
@@ -270,21 +271,9 @@ public class TestSuiteExecutionController {
 		this.executionProcessingService = executionProcessingService;
 	}
 
-	@RequestMapping(value = RequestMappings.INIT_EXECUTION_RUNNER, method = RequestMethod.POST, params = {"optimized", "mode=restart"})
-	public String restartExecutionInOptimizedRunner(@PathVariable long testSuiteId) {
-		return restartExecution(testSuiteId, ViewNames.OPTIMIZED_RUNNER_VIEW_PATTERN);
+	@RequestMapping(value = RequestMappings.DELETE_ON_RESTART, method = RequestMethod.POST )
+	public @ResponseBody void deleteOnRestart(@PathVariable long testSuiteId) {
+		 testSuiteExecutionProcessingService.deleteOnRestart(testSuiteId);
 	}
 
-	private String restartExecution(long testSuiteId, String runnerViewPattern) {
-		Execution execution = testSuiteExecutionProcessingService.restart(testSuiteId);
-
-		return "redirect:"
-				+ MessageFormat.format(runnerViewPattern, testSuiteId, execution.getTestPlan().getId(),
-						execution.getId());
-	}
-
-	@RequestMapping(value = RequestMappings.INIT_EXECUTION_RUNNER, method = RequestMethod.POST, params = {"classic", "mode=restart"})
-	public String restartExecutionInClassicRunner(@PathVariable long testSuiteId) {
-		return restartExecution(testSuiteId, ViewNames.CLASSIC_RUNNER_VIEW_PATTERN);
-	}
 }

@@ -39,14 +39,13 @@ public interface TestSuiteExecutionProcessingService {
 
 	/**
 	 * <p>
-	 * will delete all existing executions and returns the execution were to restart the test suite<br>
-	 * or null if there is no execution step or all test-case deleted
+	 * will delete all existing executions
 	 * </p>
 	 * 
 	 * @param testSuiteId
 	 * @return
 	 */
-	Execution restart(long testSuiteId);
+	void deleteOnRestart(long testSuiteId);
 
 	/**
 	 * <p>

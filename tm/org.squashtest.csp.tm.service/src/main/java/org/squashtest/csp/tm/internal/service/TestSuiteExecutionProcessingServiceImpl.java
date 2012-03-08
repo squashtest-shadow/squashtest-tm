@@ -103,18 +103,15 @@ public class TestSuiteExecutionProcessingServiceImpl implements TestSuiteExecuti
 	 */
 	@Override
 	@PreAuthorize("hasPermission(#testSuiteId, 'org.squashtest.csp.tm.domain.campaign.TestSuite','WRITE') or hasRole('ROLE_ADMIN')")
-	public Execution restart(long testSuiteId) {
+	public void deleteOnRestart(long testSuiteId) {
 		// getTest plan
-		Execution execution = null;
 		TestSuite testSuite = suiteDao.findById(testSuiteId);
 		List<IterationTestPlanItem> suiteTestPlan = testSuite.getTestPlan();
 		if (!suiteTestPlan.isEmpty()) {
 			// delete all executions
 			deleteAllExecutionsOfTestPlan(suiteTestPlan);
-			// create new execution for first test_plan_item
-			execution = startResume(testSuiteId);
 		}
-		return execution;
+
 	}
 
 	private void deleteAllExecutionsOfTestPlan(List<IterationTestPlanItem> suiteTestPlan) {
