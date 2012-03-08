@@ -283,7 +283,7 @@
 				
 				if (${ not empty testPlanItemUrl }) $('#execute-next-test-case-panel').removeClass('not-displayed');		
 				
-				if (${ not empty testPlanItemUrl } && ${ hasPreviousTestCase } && ${ not hasPreviousStep } ) $('#new-test-case-label').removeClass('not-displayed');		
+				if (${ not empty testPlanItemUrl } && ${not empty hasPreviousTestCase && hasPreviousTestCase } && ${ not hasPreviousStep } ) $('#new-test-case-label').removeClass('not-displayed');		
 			});	
 		</script>
 	

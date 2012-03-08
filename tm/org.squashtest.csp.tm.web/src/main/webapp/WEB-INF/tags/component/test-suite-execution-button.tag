@@ -35,9 +35,15 @@
 <div id="test-suite-execution-button" style="display: inline-block;">
 	<c:url var='runnerUrl'
 		value='/test-suites/${ testSuiteId }/test-plan/execution/runner' />
+	<c:url var='testRunnerUrl'
+		value='/test-suites/${ testSuiteId }/test-plan/execution/test-runner' />
 	<script type="text/javascript">
-		function classicExecution(data,  url) {
-
+		function classicExecution(mode) {
+			var url = "${ runnerUrl }";
+			var data = {
+				'classic' : '',
+				'mode' : mode
+			};
 			var winDef = {
 				name : "classic-execution-runner",
 				features : "height=500, width=600, resizable, scrollbars, dialog, alwaysRaised"
@@ -45,7 +51,7 @@
 			$.open(url, data, winDef);
 
 		}
-		var checkTestSuiteExecutionDoable = function(dataP, urlP) {
+		function checkTestSuiteExecutionDoable(dataP, urlP) {
 			return $.ajax({
 				type : 'post',
 				data : dataP,
@@ -62,10 +68,14 @@
 				if (json.actionValidationError.exception === "EmptyTestPlanException") {
 					message += '<li> <f:message key="squashtm.action.exception.testsuite.testplan.empty" /></li>';
 				}
+				if (json.actionValidationError.exception === "TestPlanItemNotExecutableException") {
+					message += '<li> <f:message key="squashtm.action.exception.testsuite.testplan.terminated.or.no.steps" /></li>';
+				}
 				message += '</ul></p>'
 				oneShotDialog('<f:message key="popup.title.error" />', message);
 			}
-		}
+
+		};
 	</script>
 	<c:if test="${ statisticsEntity.status == 'READY' }">
 		<f:message var='startResumeLabel'
@@ -82,11 +92,9 @@
 		<div id="start" style="display: none">
 			<ul>
 				<li><a class="start-suite-optimized" href="#"><f:message
-							key="test-suite.execution.optimized.label" /> </a>
-				</li>
+							key="test-suite.execution.optimized.label" /> </a></li>
 				<li><a class="start-suite-classic" href="#"><f:message
-							key='test-suite.execution.classic.label' /> </a>
-				</li>
+							key='test-suite.execution.classic.label' /> </a></li>
 			</ul>
 		</div>
 		<form action="${ runnerUrl }" method="post"
@@ -107,21 +115,31 @@
 				var startmenu = allUIMenus[allUIMenus.length - 1];
 
 				startmenu.chooseItem = function(item) {
-					var url = "${ runnerUrl }";
 					var data = {
-						'classic' : '',
 						'mode' : 'start-resume'
 					};
-					checkTestSuiteExecutionDoable(data, url).fail(
-							testSuiteExecutionError).done(function(){
-							launchClassicOrOptimizedStart(data, url, item);});
-				}
+					var url = "${ testRunnerUrl }";
+					if ($(item).hasClass('start-suite-classic')) {
+						checkTestSuiteExecutionDoable(data, url).fail(
+								testSuiteExecutionError).done(
+								startResumeClassic);
+					} else {
+						if ($(item).hasClass('start-suite-optimized')) {
+							checkTestSuiteExecutionDoable(data, url).fail(
+									testSuiteExecutionError).done(
+									startResumeOptimized);
+						}
+					}
+				};
 			});
+			function startResumeClassic(jqXHR) {
+				if(jqXHR == null){
+					classicExecution('start-resume');
+				}
 
-			function launchClassicOrOptimizedStart(data, url, item) {
-				if ($(item).hasClass('start-suite-classic')) {
-					classicExecution(data, url);
-				} else if ($(item).hasClass('start-suite-optimized')) {
+			}
+			function startResumeOptimized(jqXHR) {
+				if(jqXHR == null){
 					$('#start-optimized-button').trigger('click');
 				}
 			}
@@ -133,11 +151,9 @@
 		<div id="restart" style="display: none">
 			<ul>
 				<li><a class="restart-suite-optimized" href="#"><f:message
-							key="test-suite.execution.optimized.label" /> </a>
-				</li>
+							key="test-suite.execution.optimized.label" /> </a></li>
 				<li><a class="restart-suite-classic" href="#"><f:message
-							key='test-suite.execution.classic.label' /> </a>
-				</li>
+							key='test-suite.execution.classic.label' /> </a></li>
 			</ul>
 		</div>
 		<form action="${ runnerUrl }" method="post"
