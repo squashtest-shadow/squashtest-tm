@@ -88,7 +88,7 @@
 					var tree = $( '#linkable-test-cases-tree' );
 					var ids = getTestCasesIds();
 					if (ids.length > 0) {
-						$.post('${ testPlanUrl }', { testCasesIds: ids}, refreshTestPlan);
+						$.post('<c:url value="/campaigns/${ campaign.id }/test-plan" />', { testCasesIds: ids }, refreshTestPlan);
 					}
 					tree.jstree('deselect_all'); //todo : each panel should define that method too.
 					firstIndex = null;
