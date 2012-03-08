@@ -56,9 +56,7 @@
 		<s:param name="campId" value="${campaign.id}" />
 </s:url>
 
-<s:url var="getTestCaseUrl" value="/campaigns/${campaign.id}/test-cases-table" />
-<s:url var="testCaseManagerUrl" value="/campaigns/${ campaign.id }/campaign-test-plan-manager">
-</s:url>
+<c:url var="testCaseManagerUrl" value="/campaigns/${ campaign.id }/test-plan/manager" />
 <c:url var="nonBelongingTestCasesUrl" value="/campaigns/${ campaign.id }/non-belonging-test-cases" />
 <c:url var="testCaseDetailsBaseUrl" value="/test-cases" />
 
@@ -277,7 +275,7 @@
 <script type="text/javascript">
 	$(function(){
 		$("#test-case-button").button().click(function(){
-			document.location.href="${testCaseManagerUrl}" ;	
+			document.location.href="${testCaseManagerUrl}";	
 		});
 		$("#remove-test-case-button").button();
 	});
@@ -296,7 +294,7 @@
 	</jsp:attribute>
 	
 	<jsp:attribute name="body">
-		<aggr:decorate-campaign-test-plan-table tableModelUrl="${getTestCaseUrl}" testCaseDetailsBaseUrl="${testCaseDetailsBaseUrl}" 
+		<aggr:decorate-campaign-test-plan-table testCaseDetailsBaseUrl="${testCaseDetailsBaseUrl}" 
 			batchRemoveButtonId="remove-test-case-button" nonBelongingTestCasesUrl="${nonBelongingTestCasesUrl}" editable="${ editable }" assignableUsersUrl="${assignableUsersUrl}" 
 			campaignUrl="${ campaignUrl }" testCaseMultipleRemovalPopupId="delete-multiple-test-cases-dialog" testCaseSingleRemovalPopupId="delete-single-test-case-dialog" />
 		<aggr:campaign-test-cases-table/>

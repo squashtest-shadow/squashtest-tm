@@ -60,7 +60,7 @@ public class CampaignTestPlanManagerController {
 		this.testPlanManager = campaignTestPlanManagerService;
 	}
 
-	@RequestMapping(value = "/campaigns/{campaignId}/campaign-test-plan-manager", method = RequestMethod.GET)
+	@RequestMapping(value = "/campaigns/{campaignId}/test-plan/manager", method = RequestMethod.GET)
 	public ModelAndView showManager(@PathVariable long campaignId) {
 
 		Campaign campaign = testPlanManager.findCampaign(campaignId);
@@ -88,10 +88,10 @@ public class CampaignTestPlanManagerController {
 		testPlanManager.removeTestCasesFromCampaign(testPlanIds, campaignId);
 	}
 
-	@RequestMapping(value = "/campaigns/{campaignId}/test-cases/{testCaseId}", method = RequestMethod.DELETE)
+	@RequestMapping(value = "/campaigns/{campaignId}/test-plan/{itemId}", method = RequestMethod.DELETE)
 	public @ResponseBody
-	void removeTestCaseFromCampaign(@PathVariable long testCaseId, @PathVariable long campaignId) {
-		testPlanManager.removeTestCaseFromCampaign(testCaseId, campaignId);
+	void removeTestCaseFromCampaign(@PathVariable long campaignId, @PathVariable long itemId) {
+		testPlanManager.removeTestPlanItem(campaignId, itemId);
 	}
 
 	private List<JsTreeNode> createLinkableLibrariesModel(List<TestCaseLibrary> linkableLibraries) {

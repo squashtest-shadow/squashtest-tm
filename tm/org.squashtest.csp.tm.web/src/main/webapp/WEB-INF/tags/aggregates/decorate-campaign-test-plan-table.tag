@@ -21,7 +21,6 @@
 
 --%>
 <%@ tag body-content="empty" description="jqueryfies a campaign test case table" %>
-<%@ attribute name="tableModelUrl" required="true" description="URL to GET the model of the table" %>
 <%@ attribute name="nonBelongingTestCasesUrl" required="true" description="URL to manipulate the non belonging test cases" %>
 <%@ attribute name="batchRemoveButtonId" required="true" description="html id of button for batch removal of test cases" %>
 <%@ attribute name="testCaseDetailsBaseUrl" required="true" description="base of the URL to get test case details" %>
@@ -158,7 +157,7 @@
 	}	
 </script>
 
-<comp:decorate-ajax-table url="${ tableModelUrl }" tableId="test-cases-table" paginate="true">
+<comp:decorate-ajax-table url="${ campaignUrl }/test-plan/table" tableId="test-cases-table" paginate="true">
 	<jsp:attribute name="initialSort">[[3,'asc']]</jsp:attribute>
 	<jsp:attribute name="drawCallback">testPlanDrawCallback</jsp:attribute>
 	<jsp:attribute name="rowCallback">testPlanRowCallback</jsp:attribute>

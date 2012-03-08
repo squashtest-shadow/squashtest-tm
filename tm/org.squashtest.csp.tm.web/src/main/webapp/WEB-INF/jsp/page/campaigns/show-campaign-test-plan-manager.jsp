@@ -31,7 +31,7 @@
 <%@ taglib prefix="authz" tagdir="/WEB-INF/tags/authz" %>
 <%@ page language="java" contentType="text/html; charset=utf-8" pageEncoding="utf-8"%>
 <c:url var="treeBaseUrl" value="/test-case-browser"/>
-<c:url var="testCasesTableUrl" value="/campaigns/${campaign.id}/linkable-test-cases-table" />
+<c:url var="campaignUrl" value="/campaigns/${ campaign.id }" />
 <c:url var="testPlanUrl" value="/campaigns/${ campaign.id }/test-cases" />
 <c:url var="nonBelongingTestCasesUrl" value="/campaigns/${ campaign.id }/non-belonging-test-cases" />
 <c:url  var="testCaseDetailsBaseUrl" value="/test-cases" /> 
@@ -49,7 +49,7 @@
 	<jsp:attribute name="head">
 		<link rel="stylesheet" type="text/css" href="${ pageContext.servletContext.contextPath }/styles/master.purple.css" />
 
-		<aggr:decorate-linkable-campaign-test-cases-table tableModelUrl="${ testCasesTableUrl }" testCasesUrl="${ testPlanUrl }" 
+		<aggr:decorate-linkable-campaign-test-cases-table testCasesUrl="${ testPlanUrl }" campaignUrl="${ campaignUrl }" 
 			batchRemoveButtonId="remove-items-button" nonBelongingTestCasesUrl="${ nonBelongingTestCasesUrl }" testCaseDetailsBaseUrl="${ testCaseDetailsBaseUrl }" editable="${editable}"/>
 		
 		<script type="text/javascript">

@@ -272,7 +272,7 @@ public class CampaignModificationController {
 
 	// ****************************** Test Plan **********************************
 
-	@RequestMapping(value = "/test-cases-table", params = "sEcho")
+	@RequestMapping(value = "/test-plan/table", params = "sEcho")
 	public @ResponseBody
 	DataTableModel getTestCasesTableModel(@PathVariable("campaignId") long campaignId,
 			final DataTableDrawParameters params, final Locale locale) {
@@ -296,7 +296,7 @@ public class CampaignModificationController {
 		}.buildDataModel(holder, filter.getFirstItemIndex() + 1, params.getsEcho());
 	}
 
-	@RequestMapping(value = "/linkable-test-cases-table", params = "sEcho")
+	@RequestMapping(value = "/test-plan/manager/table", params = "sEcho")
 	public @ResponseBody
 	DataTableModel getLinkableTestCasesTableModel(@PathVariable("campaignId") long campaignId,
 			final DataTableDrawParameters params, final Locale locale) {

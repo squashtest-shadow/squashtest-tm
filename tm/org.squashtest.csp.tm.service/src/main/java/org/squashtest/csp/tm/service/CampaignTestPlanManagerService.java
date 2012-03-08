@@ -67,7 +67,9 @@ public interface CampaignTestPlanManagerService {
 	 * 
 	 * @param testCaseId
 	 * @param campaignId
+	 * @deprecated use  {@link #removeTestPlanItem(long, long)}
 	 */
+	@Deprecated
 	void removeTestCaseFromCampaign(Long testCaseId, long campaignId);
 
 	/**
@@ -112,5 +114,11 @@ public interface CampaignTestPlanManagerService {
 	 *            the ids of the items we want to move.
 	 */
 	void moveTestPlanItems(long campaignId, int targetIndex, List<Long> itemIds);
+
+	/**
+	 * @param campaignId
+	 * @param itemId
+	 */
+	void removeTestPlanItem(long campaignId, long itemId);
 
 }

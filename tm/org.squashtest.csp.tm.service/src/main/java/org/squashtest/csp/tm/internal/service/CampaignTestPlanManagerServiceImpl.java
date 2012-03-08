@@ -57,6 +57,10 @@ import org.squashtest.csp.tm.service.ProjectFilterModificationService;
 @Service("squashtest.tm.service.CampaignTestPlanManagerService")
 @Transactional
 public class CampaignTestPlanManagerServiceImpl implements CampaignTestPlanManagerService {
+	/**
+	 * Permission string for writing campaigns based on campaignId param.
+	 */
+	private static final String CAN_WRITE_CAMPAIGN_BY_ID = "hasPermission(#campaignId, 'org.squashtest.csp.tm.domain.campaign.Campaign', 'WRITE') or hasRole('ROLE_ADMIN')";
 
 	@Inject
 	private TestCaseDao testCaseDao;
@@ -95,12 +99,14 @@ public class CampaignTestPlanManagerServiceImpl implements CampaignTestPlanManag
 	}
 
 	@Override
+	@Transactional(readOnly = true)
 	@PostAuthorize("hasPermission(#returnObject, 'READ') or hasRole('ROLE_ADMIN')")
 	public Campaign findCampaign(long campaignId) {
 		return campaignDao.findById(campaignId);
 	}
 
 	@Override
+	@Transactional(readOnly = true)
 	@PostFilter("hasPermission(filterObject, 'READ') or hasRole('ROLE_ADMIN')")
 	public List<TestCaseLibrary> findLinkableTestCaseLibraries() {
 		ProjectFilter pf = projectFilterModificationService.findProjectFilterByUserLogin();
@@ -110,7 +116,7 @@ public class CampaignTestPlanManagerServiceImpl implements CampaignTestPlanManag
 	}
 
 	@Override
-	@PreAuthorize("hasPermission(#campaignId, 'org.squashtest.csp.tm.domain.campaign.Campaign', 'WRITE') or hasRole('ROLE_ADMIN')")
+	@PreAuthorize(CAN_WRITE_CAMPAIGN_BY_ID)
 	public void addTestCasesToCampaignTestPlan(final List<Long> testCasesIds, long campaignId) {
 
 		// nodes are returned unsorted
@@ -133,7 +139,7 @@ public class CampaignTestPlanManagerServiceImpl implements CampaignTestPlanManag
 	}
 
 	@Override
-	@PreAuthorize("hasPermission(#campaignId, 'org.squashtest.csp.tm.domain.campaign.Campaign', 'WRITE') or hasRole('ROLE_ADMIN')")
+	@PreAuthorize(CAN_WRITE_CAMPAIGN_BY_ID)
 	public void removeTestCasesFromCampaign(List<Long> testCaseIds, long campaignId) {
 
 		List<TestCase> tcs = testCaseDao.findAllByIdList(testCaseIds);
@@ -155,7 +161,7 @@ public class CampaignTestPlanManagerServiceImpl implements CampaignTestPlanManag
 	}
 
 	@Override
-	@PreAuthorize("hasPermission(#campaignId, 'org.squashtest.csp.tm.domain.campaign.Campaign', 'WRITE') or hasRole('ROLE_ADMIN')")
+	@PreAuthorize(CAN_WRITE_CAMPAIGN_BY_ID)
 	public void removeTestCaseFromCampaign(Long testCaseId, long campaignId) {
 
 		TestCase testCase = testCaseDao.findById(testCaseId);
@@ -222,10 +228,20 @@ public class CampaignTestPlanManagerServiceImpl implements CampaignTestPlanManag
 	 * @see org.squashtest.csp.tm.service.CampaignTestPlanManagerService#moveTestPlanItems(long, int, java.util.List)
 	 */
 	@Override
-	@PreAuthorize("hasPermission(#campaignId, 'org.squashtest.csp.tm.domain.campaign.Campaign', 'WRITE') or hasRole('ROLE_ADMIN')")
+	@PreAuthorize(CAN_WRITE_CAMPAIGN_BY_ID)
 	public void moveTestPlanItems(long campaignId, int targetIndex, List<Long> itemIds) {
 		Campaign campaign = campaignDao.findById(campaignId);
 		campaign.moveTestPlanItems(targetIndex, itemIds);
+	}
+
+	/**
+	 * @see org.squashtest.csp.tm.service.CampaignTestPlanManagerService#removeTestPlanItem(long, long)
+	 */
+	@Override
+	@PreAuthorize(CAN_WRITE_CAMPAIGN_BY_ID)
+	public void removeTestPlanItem(long campaignId, long itemId) {
+		Campaign campaign = campaignDao.findById(campaignId);
+		campaign.removeTestPlanItem(itemId);
 	}
 
 }

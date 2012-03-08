@@ -104,7 +104,20 @@ class CampaignTest extends Specification {
 		campaign.testPlan == [itp1, itp3]
 	}
 
+	def "should remove test plan item from campaign using its id"(){
+		given:
+		CampaignTestPlanItem item = Mock()
+		item.id >> 10
 
+		campaign.addToTestPlan item
+
+		when:
+		campaign.removeTestPlanItem 10
+
+		then:
+		campaign.testPlan == []
+	}
+		
 
 	/* ******************** autodates test code ************************ */
 

@@ -23,6 +23,7 @@ package org.squashtest.csp.tm.domain.campaign;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Date;
+import java.util.Iterator;
 import java.util.List;
 
 import javax.persistence.CascadeType;
@@ -150,7 +151,7 @@ public class Campaign extends CampaignLibraryNode implements AttachmentHolder {
 	}
 
 	/**
-	 *
+	 * 
 	 * @param testCase
 	 * @return the test plan item which references the given test case, if any.
 	 */
@@ -164,7 +165,7 @@ public class Campaign extends CampaignLibraryNode implements AttachmentHolder {
 	}
 
 	/**
-	 *
+	 * 
 	 * @param itemTestPlan
 	 */
 	public void addToTestPlan(@NotNull CampaignTestPlanItem itemTestPlan) {
@@ -174,6 +175,16 @@ public class Campaign extends CampaignLibraryNode implements AttachmentHolder {
 
 	public void removeTestPlanItem(@NotNull CampaignTestPlanItem itemTestPlan) {
 		getTestPlan().remove(itemTestPlan);
+	}
+
+	public void removeTestPlanItem(long itemId) {
+		Iterator<CampaignTestPlanItem> it = testPlan.iterator();
+		while (it.hasNext()) {
+			if (it.next().getId() == itemId) {
+				it.remove();
+				return;
+			}
+		}
 	}
 
 	public void removeIteration(@NotNull Iteration iteration) {
@@ -242,7 +253,7 @@ public class Campaign extends CampaignLibraryNode implements AttachmentHolder {
 
 	/**
 	 * If the iteration have autodates set, they will be updated accordingly.
-	 *
+	 * 
 	 * @param newItemTestPlanDate
 	 */
 	public void updateActualStart(Date newIterationStartDate) {
