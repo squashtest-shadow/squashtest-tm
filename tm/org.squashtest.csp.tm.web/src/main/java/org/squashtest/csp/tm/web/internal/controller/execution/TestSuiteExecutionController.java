@@ -62,13 +62,13 @@ public class TestSuiteExecutionController {
 	}
 
 	private static class ViewNames {
-		public static final String RUNNER_VIEW_PATTERN = "/test-suites/{0}/test-plan/{1}/executions/{2}/runner";
+		public static final String RUNNER_VIEW_PATTERN = "/test-suites/{0,number,####}/test-plan/{1,number,####}/executions/{2,number,####}/runner";
 		public static final String CLASSIC_RUNNER_VIEW_PATTERN = RUNNER_VIEW_PATTERN + "?classic";
 		public static final String OPTIMIZED_RUNNER_VIEW_PATTERN = RUNNER_VIEW_PATTERN + "?optimized";
 	}
 
-	public static final String TEST_PLAN_ITEM_URL_PATTERN = "/test-suites/{0}/test-plan/{1}";
-	public static final String CURRENT_STEP_URL_PATTERN = "/test-suites/{0}/test-plan/{1}/executions/{2}/steps/index/";
+	public static final String TEST_PLAN_ITEM_URL_PATTERN = "/test-suites/{0,number,####}/test-plan/{1,number,####}";
+	public static final String CURRENT_STEP_URL_PATTERN = "/test-suites/{0,number,####}/test-plan/{1,number,####}/executions/{2,number,####}/steps/index/";
 
 	private TestSuiteExecutionProcessingService testSuiteExecutionProcessingService;
 	private ExecutionProcessingService executionProcessingService;
@@ -131,6 +131,7 @@ public class TestSuiteExecutionController {
 	public void setTestSuiteExecutionProcessingService(TestSuiteExecutionProcessingService testSuiteExecutionProcessingService) {
 		this.testSuiteExecutionProcessingService = testSuiteExecutionProcessingService;
 	}
+	
 	private void addTestPlanItemUrl(long testSuiteId, long testPlanItemId, Model model) {
 		String testPlanItemUrl = MessageFormat.format(TEST_PLAN_ITEM_URL_PATTERN, testSuiteId, testPlanItemId);
 		model.addAttribute("testPlanItemUrl", testPlanItemUrl);
