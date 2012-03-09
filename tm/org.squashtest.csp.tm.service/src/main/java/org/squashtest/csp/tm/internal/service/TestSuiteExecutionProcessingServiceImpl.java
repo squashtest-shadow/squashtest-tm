@@ -38,6 +38,10 @@ import org.squashtest.csp.tm.service.TestSuiteExecutionProcessingService;
 @Service("squashtest.tm.service.TestSuiteExecutionProcessingService")
 @Transactional
 public class TestSuiteExecutionProcessingServiceImpl implements TestSuiteExecutionProcessingService {
+	/**
+	 * 
+	 */
+	private static final String CAN_WRITE_BY_CAMPAIGN_ID = "hasPermission(#testSuiteId, 'org.squashtest.csp.tm.domain.campaign.TestSuite', 'WRITE') or hasRole('ROLE_ADMIN')";
 	@Inject
 	private TestSuiteDao suiteDao;
 	@Inject
@@ -51,8 +55,7 @@ public class TestSuiteExecutionProcessingServiceImpl implements TestSuiteExecuti
 	 * @see org.squashtest.csp.tm.service.TestSuiteExecutionProcessingService#startResume(long, long)
 	 */
 	@Override
-	@PreAuthorize("hasPermission(#testSuiteId, 'org.squashtest.csp.tm.domain.campaign.TestSuite', 'WRITE') "
-			+ "or hasRole('ROLE_ADMIN')")
+	@PreAuthorize(CAN_WRITE_BY_CAMPAIGN_ID)
 	public Execution startResume(long testSuiteId) {
 		Execution execution = null;
 		TestSuite suite = suiteDao.findById(testSuiteId);
@@ -101,7 +104,7 @@ public class TestSuiteExecutionProcessingServiceImpl implements TestSuiteExecuti
 	 */
 	@Override
 	@PreAuthorize("hasPermission(#testSuiteId, 'org.squashtest.csp.tm.domain.campaign.TestSuite','WRITE') or hasRole('ROLE_ADMIN')")
-	public void deleteOnRestart(long testSuiteId) {
+	public void deleteAllExecutions(long testSuiteId) {
 		// getTest plan
 		TestSuite testSuite = suiteDao.findById(testSuiteId);
 		List<IterationTestPlanItem> suiteTestPlan = testSuite.getTestPlan();
@@ -143,8 +146,7 @@ public class TestSuiteExecutionProcessingServiceImpl implements TestSuiteExecuti
 	 * @see org.squashtest.csp.tm.service.TestSuiteExecutionProcessingService#startNextExecution(long, long)
 	 */
 	@Override
-	@PreAuthorize("hasPermission(#testSuiteId, 'org.squashtest.csp.tm.domain.campaign.TestSuite', 'WRITE') "
-			+ "or hasRole('ROLE_ADMIN')")
+	@PreAuthorize(CAN_WRITE_BY_CAMPAIGN_ID)
 	public Execution startResumeNextExecution(long testSuiteId, long testPlanItemId) {
 		Execution execution = null;
 		TestSuite testSuite = suiteDao.findById(testSuiteId);

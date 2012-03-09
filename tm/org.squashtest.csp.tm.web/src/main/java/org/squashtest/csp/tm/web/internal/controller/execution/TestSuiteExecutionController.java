@@ -23,7 +23,6 @@ package org.squashtest.csp.tm.web.internal.controller.execution;
 import java.text.MessageFormat;
 
 import javax.inject.Inject;
-import javax.servlet.http.HttpServletResponse;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -36,12 +35,11 @@ import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.servlet.ModelAndView;
-import org.squashtest.csp.tm.domain.TestPlanItemNotExecutableException;
 import org.squashtest.csp.tm.domain.execution.Execution;
 import org.squashtest.csp.tm.domain.execution.ExecutionStatus;
-import org.squashtest.csp.tm.service.TestSuiteExecutionProcessingService;
 import org.squashtest.csp.tm.domain.execution.ExecutionStep;
 import org.squashtest.csp.tm.service.ExecutionProcessingService;
+import org.squashtest.csp.tm.service.TestSuiteExecutionProcessingService;
 import org.squashtest.csp.tm.web.internal.model.jquery.JsonSimpleData;
 
 /**
@@ -60,7 +58,7 @@ public class TestSuiteExecutionController {
 		public static final String INIT_EXECUTION_RUNNER = "/execution/runner";
 		public static final String TEST_EXECUTION_BEFORE_INIT = "/execution/test-runner";
 		public static final String INIT_NEXT_EXECUTION_RUNNER = "/{testPlanItemId}/next-execution/runner";
-		public static final String DELETE_ON_RESTART = "/execution/delete-restart";
+		public static final String DELETE_ALL_EXECUTIONS = "/executions";
 	}
 
 	private static class ViewNames {
@@ -273,9 +271,9 @@ public class TestSuiteExecutionController {
 		this.executionProcessingService = executionProcessingService;
 	}
 
-	@RequestMapping(value = RequestMappings.DELETE_ON_RESTART, method = RequestMethod.POST )
-	public @ResponseBody void deleteOnRestart(@PathVariable long testSuiteId) {
-		 testSuiteExecutionProcessingService.deleteOnRestart(testSuiteId);
+	@RequestMapping(value = RequestMappings.DELETE_ALL_EXECUTIONS, method = RequestMethod.DELETE )
+	public @ResponseBody void deleteAllExecutions(@PathVariable long testSuiteId) {
+		 testSuiteExecutionProcessingService.deleteAllExecutions(testSuiteId);
 	}
 
 }

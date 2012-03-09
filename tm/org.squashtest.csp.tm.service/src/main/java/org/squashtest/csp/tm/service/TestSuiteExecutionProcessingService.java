@@ -45,7 +45,7 @@ public interface TestSuiteExecutionProcessingService {
 	 * @param testSuiteId
 	 * @return
 	 */
-	void deleteOnRestart(long testSuiteId);
+	void deleteAllExecutions(long testSuiteId);
 
 	/**
 	 * <p>

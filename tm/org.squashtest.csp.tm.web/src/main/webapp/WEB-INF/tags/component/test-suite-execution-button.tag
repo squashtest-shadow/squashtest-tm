@@ -38,7 +38,7 @@
 	<c:url var='testRunnerUrl'
 		value='/test-suites/${ testSuiteId }/test-plan/execution/test-runner' />
 	<c:url var='deleteOnRestartUrl'
-		value='/test-suites/${ testSuiteId }/test-plan/execution/delete-restart' />
+		value='/test-suites/${ testSuiteId }/test-plan/executions' />
 	<script type="text/javascript">
 		function classicExecution(mode) {
 			var url = "${ runnerUrl }";
@@ -220,9 +220,7 @@
 				};
 				function deleteExec (){
 					return $.ajax({
-						type : 'post',
-						data : [],
-						dataType : "json",
+						type : 'delete',
 						url : "${ deleteOnRestartUrl }"
 					});
 				};

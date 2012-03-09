@@ -58,7 +58,7 @@ import org.squashtest.csp.tm.service.ProjectFilterModificationService;
 @Transactional
 public class CampaignTestPlanManagerServiceImpl implements CampaignTestPlanManagerService {
 	/**
-	 * 
+	 * Permission string for reading returned object.
 	 */
 	private static final String CAN_READ_RETURNED_OBJECT = "hasPermission(#returnObject, 'READ') or hasRole('ROLE_ADMIN')";
 
@@ -120,7 +120,6 @@ public class CampaignTestPlanManagerServiceImpl implements CampaignTestPlanManag
 	@Override
 	@PreAuthorize(CAN_WRITE_CAMPAIGN_BY_ID)
 	public void addTestCasesToCampaignTestPlan(final List<Long> testCasesIds, long campaignId) {
-
 		// nodes are returned unsorted
 		List<TestCaseLibraryNode> nodes = testCaseLibraryNodeDao.findAllByIdList(testCasesIds);
 
