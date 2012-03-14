@@ -27,73 +27,64 @@ import org.squashtest.csp.tm.domain.report.query.QueryOperator;
  * This class explicitly designs a criterion for a HibernateReportQuery.
  * 
  * The primary goal of this class is to hold all the informations and metainformations describing a particular Criterion
- * for the parent Query. 
+ * for the parent Query.
  * 
- * Implementing classes must also implement a method that return a Hibernate Criterion based on those informations. 
- *
+ * Implementing classes must also implement a method that return a Hibernate Criterion based on those informations.
  * 
- *  Implementing the ReportCriterion :
- *  ==================================
  * 
- * - makeCriterion() will generate the corresponding Hibernate Criterion, based on the informations you fed the instance with.
- * You might not need all of its properties (see the setters below) and those properties exist for convenience in case
- * you need them.
+ * Implementing the ReportCriterion : ==================================
+ * 
+ * - makeCriterion() will generate the corresponding Hibernate Criterion, based on the informations you fed the instance
+ * with. You might not need all of its properties (see the setters below) and those properties exist for convenience in
+ * case you need them.
  * 
  * @author bsiri
- *
+ * 
  */
 
 public abstract class ReportCriterion {
-	private String criterionName="";
-	private QueryOperator operator=null;
-	
-	private Class<?> entityClass=null;
-	private String entityAlias="";
-	
-	private Class<?> paramClass=null;
-	private String attributePath="";
-	
-	
-	
-	
-	private Object[] parameters=null;
-	
-	
-	public ReportCriterion(){
-		
+	private String criterionName = "";
+	private QueryOperator operator = null;
+
+	private Class<?> entityClass = null;
+	private String entityAlias = "";
+
+	private Class<?> paramClass = null;
+	private String attributePath = "";
+
+	private Object[] parameters = null;
+
+	public ReportCriterion() {
+
 	}
-	
-	
+
 	/**
 	 * Rich constructor for a ReportCriterion.
-	 * @param criterionName the name for that Criterion.
-	 * @param attributePath the path to the property of the target Hibernate entity.
+	 * 
+	 * @param criterionName
+	 *            the name for that Criterion.
+	 * @param attributePath
+	 *            the path to the property of the target Hibernate entity.
 	 */
-	public ReportCriterion(String criterionName,String attributePath){
+	public ReportCriterion(String criterionName, String attributePath) {
 		setCriterionName(criterionName);
 		setAttributePath(attributePath);
 	}
-	
-	
-	
+
 	public String getCriterionName() {
 		return criterionName;
 	}
 
-
-	public  void setCriterionName(String criterionName) {
+	public void setCriterionName(String criterionName) {
 		this.criterionName = criterionName;
-	} 
-	
-	
+	}
+
 	public void setAttributePath(String attributePath) {
 		this.attributePath = attributePath;
 	}
 
-
-	
-	public void setParameter(Object... params){
-		this.parameters=params;
+	public void setParameter(Object... params) {
+		this.parameters = params;
 	}
 
 	public String getAttributePath() {
@@ -124,9 +115,9 @@ public abstract class ReportCriterion {
 		return entityAlias;
 	}
 
-	
 	/**
 	 * Sets an alternate alias for the target entity.
+	 * 
 	 * @param entityAlias
 	 */
 	protected void setEntityAlias(String entityAlias) {
@@ -138,8 +129,10 @@ public abstract class ReportCriterion {
 	}
 
 	/**
-	 * Specify the class of the parameters. 
-	 * @param paramClass the java class of the parameters.
+	 * Specify the class of the parameters.
+	 * 
+	 * @param paramClass
+	 *            the java class of the parameters.
 	 */
 	protected void setParamClass(Class<?> paramClass) {
 		this.paramClass = paramClass;
@@ -150,22 +143,24 @@ public abstract class ReportCriterion {
 	}
 
 	/**
-	 * Sets a semantic hint about what will the criterion do. Implementations might use that hint or not. 
+	 * Sets a semantic hint about what will the criterion do. Implementations might use that hint or not.
+	 * 
 	 * @param operator
 	 */
 	protected void setOperator(QueryOperator operator) {
 		this.operator = operator;
 	}
 
-	
 	protected void setParameters(Object[] parameters) {
 		this.parameters = parameters;
 	}
 
 	/**
-	 * This method will convert, using some of its properties, a Hibernate Criterion corresponding to that ReportCriterion.
+	 * This method will convert, using some of its properties, a Hibernate Criterion corresponding to that
+	 * ReportCriterion.
+	 * 
 	 * @return the converted Criterion.
 	 */
 	abstract public Criterion makeCriterion();
-	
+
 }

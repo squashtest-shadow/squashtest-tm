@@ -30,6 +30,8 @@ import org.hibernate.Query;
 import org.hibernate.Session;
 import org.hibernate.criterion.DetachedCriteria;
 import org.hibernate.type.LongType;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.squashtest.csp.tm.domain.project.Project;
 import org.squashtest.csp.tm.domain.report.common.dto.ReqCoverageByTestProjectDto;
 import org.squashtest.csp.tm.domain.report.common.dto.ReqCoverageByTestRequirementSingleDto;
@@ -38,6 +40,7 @@ import org.squashtest.csp.tm.domain.report.query.hibernate.HibernateReportQuery;
 import org.squashtest.csp.tm.domain.report.query.hibernate.ReportCriterion;
 import org.squashtest.csp.tm.domain.requirement.Requirement;
 import org.squashtest.csp.tm.domain.requirement.RequirementFolder;
+import org.squashtest.csp.tm.domain.requirement.RequirementVersion;
 
 /**
  * 
@@ -47,15 +50,24 @@ import org.squashtest.csp.tm.domain.requirement.RequirementFolder;
  * @reviewed-on 2011-11-30
  */
 public class HibernateRequirementCoverageByTestsQuery extends HibernateReportQuery {
+	private static final Logger LOGGER = LoggerFactory.getLogger(HibernateRequirementCoverageByTestsQuery.class);
 	/***
 	 * The rates default value
 	 */
-	private static double DEFAULT_RATE_VALUE = 100D;
+	private static final double DEFAULT_RATE_VALUE = 100D;
 
 	/***
 	 * Name of the project created only to display totals in the report
 	 */
-	private static String TOTAL_PROJECT_NAME = "TOTAL";
+	private static final String TOTAL_PROJECT_NAME = "TOTAL";
+	/**
+	 * will treat each version of requirement as a separate requirement
+	 */
+	private static final int REPORT_EACH_VERSION = 1;
+	/**
+	 * will take into account only the last version of the requirement
+	 */
+	private static final int REPORT_LAST_VERSION = 2;
 
 	public HibernateRequirementCoverageByTestsQuery() {
 		Map<String, ReportCriterion> criterions = getCriterions();
@@ -69,6 +81,9 @@ public class HibernateRequirementCoverageByTestsQuery extends HibernateReportQue
 		// note : the name here follows the naming convention of http requests for array parameters. It allows the
 		// controller to directly map the http query string to that criterion.
 		criterions.put("projectIds[]", projectIds);
+
+		ReportCriterion reportMode = new RequirementReportTypeCriterion("mode", "on s'en fout");
+		criterions.put("mode", reportMode);
 	}
 
 	@Override
@@ -83,14 +98,7 @@ public class HibernateRequirementCoverageByTestsQuery extends HibernateReportQue
 		// Get projectIds
 		List<Long> ids = new ArrayList<Long>();
 		// Check if there's projects id
-		boolean isProjectIds = false;
-		if (this.getCriterions().get("projectIds[]").getParameters() != null) {
-			isProjectIds = true;
-			// Put ids in a list
-			for (Object id : this.getCriterions().get("projectIds[]").getParameters()) {
-				ids.add(Long.parseLong((String) id));
-			}
-		}
+		boolean isProjectIds = checkIfThereIsProjectsIds(ids);
 
 		// Forced to get data with two requests so :
 		// get requirement and requirementLibraryNode
@@ -117,6 +125,14 @@ public class HibernateRequirementCoverageByTestsQuery extends HibernateReportQue
 
 		// Initiate result list
 		List<Object[]> results = new ArrayList<Object[]>();
+		fillResultListWithRequirementAndFolders(queryFirstStep, folderList, results);
+
+		return results;
+	}
+
+	@SuppressWarnings("unchecked")
+	private void fillResultListWithRequirementAndFolders(Query queryFirstStep, List<RequirementFolder> folderList,
+			List<Object[]> results) {
 		// Browse the requirement and requirementLibraryNode to get the folder which contains the requirement and fill
 		// the result list
 		for (Object[] requirements : (List<Object[]>) queryFirstStep.list()) {
@@ -134,8 +150,18 @@ public class HibernateRequirementCoverageByTestsQuery extends HibernateReportQue
 			// add to the result list
 			results.add(resultArray);
 		}
+	}
 
-		return results;
+	private boolean checkIfThereIsProjectsIds(List<Long> ids) {
+		boolean isProjectIds = false;
+		if (this.getCriterions().get("projectIds[]").getParameters() != null) {
+			isProjectIds = true;
+			// Put ids in a list
+			for (Object id : this.getCriterions().get("projectIds[]").getParameters()) {
+				ids.add(Long.parseLong((String) id));
+			}
+		}
+		return isProjectIds;
 	}
 
 	@SuppressWarnings("unchecked")
@@ -165,17 +191,13 @@ public class HibernateRequirementCoverageByTestsQuery extends HibernateReportQue
 			// Update current project rate
 			calculateProjectCoverageRates(project);
 			// update projectTotals
-			projectTotals.increaseTotals(project.getTotalRequirementNumber(),
-					project.getTotalVerifiedRequirementNumber(), project.getCriticalRequirementNumber(),
-					project.getCriticalVerifiedRequirementNumber(), project.getMajorRequirementNumber(),
-					project.getMajorVerifiedRequirementNumber(), project.getMinorRequirementNumber(),
-					project.getMinorVerifiedRequirementNumber(), project.getUndefinedRequirementNumber(),
-					project.getUndefinedVerifiedRequirementNumber());
+			projectTotals.increaseTotals(project.getRequirementNumbers());
 		}
 	}
 
 	private Map<Long, ReqCoverageByTestProjectDto> populateRequirementDtosAndUpdateProjectStatistics(
 			List<Object[]> filteredData) {
+
 		// First initiate the projectDTO map, project id is the key
 		Map<Long, ReqCoverageByTestProjectDto> projectList = new HashMap<Long, ReqCoverageByTestProjectDto>();
 		for (Object[] objects : filteredData) {
@@ -187,14 +209,18 @@ public class HibernateRequirementCoverageByTestsQuery extends HibernateReportQue
 			// Get current project Id from requirement
 			Long projectId = requirement.getProject().getId();
 
-			// Create the requirementSingle
-			ReqCoverageByTestRequirementSingleDto requirementSingleDto = createRequirementSingleDto(requirement, folder);
+			// Create the requirementSingleDtos depending on the mode
+			List<ReqCoverageByTestRequirementSingleDto> requirementSingleDtos = createRequirementSingleDtos(
+					requirement, folder);
 
 			currentProject = findProjectDto(projectList, requirement, projectId);
-			// add the requirement
-			currentProject.addRequirement(requirementSingleDto);
-			// update statistics and the project in the Map
-			updateProjectStatistics(currentProject, requirementSingleDto);
+			// add the requirementDtos
+			for (ReqCoverageByTestRequirementSingleDto requirementSingleDto : requirementSingleDtos) {
+				currentProject.addRequirement(requirementSingleDto);
+				// update statistics and the project in the Map
+				updateProjectStatistics(currentProject, requirementSingleDto);
+			}
+
 		}
 		return projectList;
 	}
@@ -257,18 +283,63 @@ public class HibernateRequirementCoverageByTestsQuery extends HibernateReportQue
 	 *            the requirementFolder
 	 * @return a ReqCoverageByTestRequirementSingleDto
 	 */
-	private ReqCoverageByTestRequirementSingleDto createRequirementSingleDto(Requirement requirement,
+	private List<ReqCoverageByTestRequirementSingleDto> createRequirementSingleDtos(Requirement requirement,
 			RequirementFolder folder) {
+		Object mode = this.criterions.get("mode").getParameters()[0];
+		int reqMode = Integer.parseInt((String) mode);
+		List<ReqCoverageByTestRequirementSingleDto> reqCovByTestReqSingleDtos = new ArrayList<ReqCoverageByTestRequirementSingleDto>();
+		switch (reqMode) {
+		case REPORT_EACH_VERSION:
+			LOGGER.debug("creation of reqCovByTestReqSingleDtos for Report mode 1 : all versions of requirement taken into account");
+			createSingleDtoReportEachVersion(requirement, folder, reqCovByTestReqSingleDtos);
+			break;
+		case REPORT_LAST_VERSION:
+			LOGGER.debug("creation of reqCovByTestReqSingleDtos for Report mode 2 : only last version of requirement taken into account");
+			createSingleDtoReportLastVersion(requirement, folder, reqCovByTestReqSingleDtos);
+			break;
+		default:
+			LOGGER.warn("mode selection problem : default value");
+			LOGGER.debug("creation of reqCovByTestReqSingleDtos for Report default mode : all versions of requirement taken into account");
+			createSingleDtoReportEachVersion(requirement, folder, reqCovByTestReqSingleDtos);
+			break;
+		}
+
+		return reqCovByTestReqSingleDtos;
+	}
+
+	private void createSingleDtoReportEachVersion(Requirement requirement, RequirementFolder folder,
+			List<ReqCoverageByTestRequirementSingleDto> reqCovByTestReqSingleDtos) {
+		List<RequirementVersion> requirementVersions = requirement.getRequirementVersions();
+		for (RequirementVersion version : requirementVersions) {
+			ReqCoverageByTestRequirementSingleDto requirementSingleDto = createRequirementSingleDto(version, folder,
+					requirement);
+			reqCovByTestReqSingleDtos.add(requirementSingleDto);
+		}
+	}
+
+	private ReqCoverageByTestRequirementSingleDto createRequirementSingleDto(RequirementVersion version,
+			RequirementFolder folder, Requirement requirement) {
 		ReqCoverageByTestRequirementSingleDto requirementSingleDto = new ReqCoverageByTestRequirementSingleDto();
 		requirementSingleDto.setLabel(requirement.getName());
 		requirementSingleDto.setReference(requirement.getReference());
-		requirementSingleDto.setCriticality(requirement.getCriticality());
-		// XXX RequirementVersion
-//		requirementSingleDto.setAssociatedTestCaseNumber(requirement.getVerifyingTestCase().size());
+		requirementSingleDto.setCriticality(version.getCriticality());
+		requirementSingleDto.setStatus(version.getStatus());
+		requirementSingleDto.setVersionNumber(version.getVersionNumber());
+		int verifyingTestCases = version.getVerifyingTestCases().size();
+		requirementSingleDto.setAssociatedTestCaseNumber(verifyingTestCases);
 		if (folder != null) {
 			requirementSingleDto.setFolder(folder.getName());
 		}
+
 		return requirementSingleDto;
+	}
+
+	private void createSingleDtoReportLastVersion(Requirement requirement, RequirementFolder folder,
+			List<ReqCoverageByTestRequirementSingleDto> reqCovByTestReqSingleDtos) {
+		RequirementVersion lastVersion = requirement.getCurrentVersion();
+		ReqCoverageByTestRequirementSingleDto requirementSingleDto = createRequirementSingleDto(lastVersion, folder,
+				requirement);
+		reqCovByTestReqSingleDtos.add(requirementSingleDto);
 	}
 
 	/***
@@ -279,44 +350,22 @@ public class HibernateRequirementCoverageByTestsQuery extends HibernateReportQue
 	 */
 	private void updateProjectStatistics(ReqCoverageByTestProjectDto project,
 			ReqCoverageByTestRequirementSingleDto requirementSingleDto) {
-		project.incrementNumber(ReqCoverageByTestStatType.TOTAL);
+		project.incrementReqNumber(ReqCoverageByTestStatType.TOTAL);
 		// if verified by testCase
 		boolean isVerifiedByTestCase = false;
 		if (requirementSingleDto.hasAssociatedTestCases()) {
 			isVerifiedByTestCase = true;
-			project.incrementNumber(ReqCoverageByTestStatType.TOTAL_VERIFIED);
+			project.incrementReqNumber(ReqCoverageByTestStatType.TOTAL_VERIFIED);
 		}
-		// TODO replace swich by RCBST.convertVerified and convert
-		switch (requirementSingleDto.getCriticality()) {
-		case CRITICAL:
-			project.incrementNumber(ReqCoverageByTestStatType.CRITICAL);
-			if (isVerifiedByTestCase) {
-				project.incrementNumber(ReqCoverageByTestStatType.CRITICAL_VERIFIED);
-			}
-			break;
-		case MAJOR:
-			project.incrementNumber(ReqCoverageByTestStatType.MAJOR);
-			if (isVerifiedByTestCase) {
-				project.incrementNumber(ReqCoverageByTestStatType.MAJOR_VERIFIED);
-			}
-			break;
-		case MINOR:
-			project.incrementNumber(ReqCoverageByTestStatType.MINOR);
-			if (isVerifiedByTestCase) {
-				project.incrementNumber(ReqCoverageByTestStatType.MINOR_VERIFIED);
-			}
-			break;
-		case UNDEFINED:
-			project.incrementNumber(ReqCoverageByTestStatType.UNDEFINED);
-			if (isVerifiedByTestCase) {
-				project.incrementNumber(ReqCoverageByTestStatType.UNDEFINED_VERIFIED);
-			}
-			break;
+		project.incrementReqNumber(requirementSingleDto.convertCrit());
+		project.incrementReqStatusNumber(requirementSingleDto.getStatus().toString()
+				+ requirementSingleDto.convertCrit().toString());
+		if (isVerifiedByTestCase) {
+			project.incrementReqNumber(requirementSingleDto.convertCritVerif());
+			project.incrementReqStatusNumber(requirementSingleDto.getStatus().toString()
+					+ requirementSingleDto.convertCritVerif().toString());
+		}
 
-		default:
-			// useless here
-			break;
-		}
 	}
 
 	/***

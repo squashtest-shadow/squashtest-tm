@@ -21,9 +21,13 @@
 package org.squashtest.csp.tm.domain.report.common.dto;
 
 import org.squashtest.csp.tm.domain.requirement.RequirementCriticality;
+import org.squashtest.csp.tm.domain.requirement.RequirementStatus;
 
+/**
+ * this represent a requirement version mpagnon
+ * 
+ */
 public class ReqCoverageByTestRequirementSingleDto {
-
 	/***
 	 * The name of the folder which contains the requirement. Default value is " - "
 	 */
@@ -33,7 +37,10 @@ public class ReqCoverageByTestRequirementSingleDto {
 	 * The requirement reference and name
 	 */
 	private String reference, label;
-
+	/**
+	 * The requirement version number.
+	 */
+	private int versionNumber = 0;
 	/***
 	 * Requirement criticality
 	 */
@@ -43,6 +50,10 @@ public class ReqCoverageByTestRequirementSingleDto {
 	 * Total number of Test case which verify this requirement
 	 */
 	private int associatedTestCaseNumber = 0;
+	/**
+	 * Requirement Status
+	 */
+	private RequirementStatus status;
 
 	// ACCESSORS
 
@@ -85,9 +96,32 @@ public class ReqCoverageByTestRequirementSingleDto {
 	public void setAssociatedTestCaseNumber(int associatedTestCaseNumber) {
 		this.associatedTestCaseNumber = associatedTestCaseNumber;
 	}
-	
-	public boolean hasAssociatedTestCases(){
+
+	public boolean hasAssociatedTestCases() {
 		return getAssociatedTestCaseNumber() > 0;
 	}
 
+	public int getVersionNumber() {
+		return versionNumber;
+	}
+
+	public void setVersionNumber(int versionNumber) {
+		this.versionNumber = versionNumber;
+	}
+
+	public RequirementStatus getStatus() {
+		return status;
+	}
+
+	public void setStatus(RequirementStatus status) {
+		this.status = status;
+	}
+
+	public ReqCoverageByTestStatType convertCrit() {
+		return ReqCoverageByTestStatType.valueOf(this.criticality.toString());
+	}
+
+	public ReqCoverageByTestStatType convertCritVerif() {
+		return ReqCoverageByTestStatType.valueOf(this.criticality.toString() + "_VERIFIED");
+	}
 }

@@ -42,6 +42,7 @@
 	
 	$(function(){
 		reportCriteria=new Object();
+		reportCriteria['mode']="1";
 	})
 	
 	function getReportCriteria(){
@@ -113,8 +114,20 @@
 			</div>
 		</jsp:attribute>
 	</pop:popup>
+	<br>
+	<input type="radio" name="reqVInclude" value="1" onclick="toggleSet(this)" checked/> <f:message key="report.criteria.panel.requirement.version.include.all.label" /><br />
+	<input type="radio" name="reqVInclude" value="2" onclick="toggleSet(this)"/> <f:message key="report.criteria.panel.requirement.version.include.last.label" />
 </div>
-
+<%-- 
+	code managing the radio buttons
+ --%>
+ <script type="text/javascript">
+ function toggleSet(rad)
+ {
+ var mode = rad.value;
+ updateCriteria("mode", mode);
+ }
+ </script>
 
 <%-- 
 	code managing the popup

@@ -235,8 +235,10 @@
 	}
 	
 	<%-- fill the right panel with the content of entered url --%>
-	function fillRightFrame(url){
-		$('#iframe-right').attr("src", url);
+	function fillRightFrame(urlP){
+// 		var iframeobj=document.getElementById("iframe-right");
+// 		iframeobj.src=urlP;
+		$('#iframe-right').attr("src", urlP);
 	}
 	
 	</script>
@@ -248,7 +250,7 @@
 
 	
 	<div id="right-panel" class="iframe-container" style="z-index: 0;">
-		<iframe id="iframe-right" class="resizable" name="frameright">
+		<iframe id="iframe-right" class="resizable" name="frameright" >
 		</iframe> 
 	</div>
 	

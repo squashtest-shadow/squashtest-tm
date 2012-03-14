@@ -21,7 +21,12 @@
 package org.squashtest.csp.tm.domain.report.common.dto;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
+import java.util.Map.Entry;
+
+import org.squashtest.csp.tm.domain.requirement.RequirementStatus;
 
 public class ReqCoverageByTestProjectDto {
 
@@ -39,22 +44,20 @@ public class ReqCoverageByTestProjectDto {
 	/** STATISTICS **/
 	/****************************/
 
-	/* TOTALS */
-	private Long totalRequirementNumber = 0L;
-	private Long totalVerifiedRequirementNumber = 0L;
+	private Map<ReqCoverageByTestStatType, Long> requirementNumbers = new HashMap<ReqCoverageByTestStatType, Long>();
+	private Map<String, Long> requirementStatusNumbers = new HashMap<String, Long>();
 
-	// by criticality
-	private Long criticalRequirementNumber = 0L;
-	private Long criticalVerifiedRequirementNumber = 0L;
-
-	private Long majorRequirementNumber = 0L;
-	private Long majorVerifiedRequirementNumber = 0L;
-
-	private Long minorRequirementNumber = 0L;
-	private Long minorVerifiedRequirementNumber = 0L;
-
-	private Long undefinedRequirementNumber = 0L;
-	private Long undefinedVerifiedRequirementNumber = 0L;
+	public ReqCoverageByTestProjectDto() {
+		for (ReqCoverageByTestStatType reqStatType : ReqCoverageByTestStatType.values()) {
+			requirementNumbers.put(reqStatType, 0L);
+		}
+		for (RequirementStatus status : RequirementStatus.values()) {
+			for (ReqCoverageByTestStatType reqStatType : ReqCoverageByTestStatType.values()) {
+				String key = status.toString() + reqStatType.toString();
+				requirementStatusNumbers.put(key, 0L);
+			}
+		}
+	}
 
 	/* RATES */
 	private Byte globalRequirementCoverage;
@@ -67,6 +70,47 @@ public class ReqCoverageByTestProjectDto {
 	private Byte minorRequirementCoverage;
 
 	private Byte undefinedRequirementCoverage;
+
+	/**
+	 * Increments the number identified by the ReqCoverageByTestStatType
+	 * 
+	 * @param type
+	 *            identify the reqNumber type to increment
+	 */
+	public void incrementReqNumber(ReqCoverageByTestStatType type) {
+		Long number = requirementNumbers.get(type);
+		number++;
+		requirementNumbers.put(type, number);
+	}
+
+	/**
+	 * Increments the number identified by the String status+reqCoverageByTestStartType
+	 * 
+	 * @param key
+	 *            the String status+reqCoverageByTestStartType
+	 */
+	public void incrementReqStatusNumber(String key) {
+		Long number = requirementStatusNumbers.get(key);
+		number++;
+		requirementStatusNumbers.put(key, number);
+	}
+
+	/**
+	 * 
+	 * Method which add the given values to the totals
+	 * 
+	 * @param requirementNumbers
+	 *            of the project that will increase the projectTotals numbers
+	 */
+	public void increaseTotals(Map<ReqCoverageByTestStatType, Long> requirementNumbers2) {
+		for (Entry<ReqCoverageByTestStatType, Long> parameterEntry : requirementNumbers2.entrySet()) {
+			ReqCoverageByTestStatType concernedType = parameterEntry.getKey();
+			Long reqNumber = this.requirementNumbers.get(concernedType);
+			reqNumber += parameterEntry.getValue();
+			this.requirementNumbers.put(concernedType, reqNumber);
+		}
+
+	}
 
 	/* ACCESSORS */
 
@@ -87,43 +131,43 @@ public class ReqCoverageByTestProjectDto {
 	}
 
 	public Long getTotalRequirementNumber() {
-		return totalRequirementNumber;
+		return requirementNumbers.get(ReqCoverageByTestStatType.TOTAL);
 	}
 
 	public Long getTotalVerifiedRequirementNumber() {
-		return totalVerifiedRequirementNumber;
+		return requirementNumbers.get(ReqCoverageByTestStatType.TOTAL_VERIFIED);
 	}
 
 	public Long getCriticalRequirementNumber() {
-		return criticalRequirementNumber;
+		return requirementNumbers.get(ReqCoverageByTestStatType.CRITICAL);
 	}
 
 	public Long getCriticalVerifiedRequirementNumber() {
-		return criticalVerifiedRequirementNumber;
+		return requirementNumbers.get(ReqCoverageByTestStatType.CRITICAL_VERIFIED);
 	}
 
 	public Long getMajorRequirementNumber() {
-		return majorRequirementNumber;
+		return requirementNumbers.get(ReqCoverageByTestStatType.MAJOR);
 	}
 
 	public Long getMajorVerifiedRequirementNumber() {
-		return majorVerifiedRequirementNumber;
+		return requirementNumbers.get(ReqCoverageByTestStatType.MAJOR_VERIFIED);
 	}
 
 	public Long getMinorRequirementNumber() {
-		return minorRequirementNumber;
+		return requirementNumbers.get(ReqCoverageByTestStatType.MINOR);
 	}
 
 	public Long getMinorVerifiedRequirementNumber() {
-		return minorVerifiedRequirementNumber;
+		return requirementNumbers.get(ReqCoverageByTestStatType.MINOR_VERIFIED);
 	}
 
 	public Long getUndefinedRequirementNumber() {
-		return undefinedRequirementNumber;
+		return requirementNumbers.get(ReqCoverageByTestStatType.UNDEFINED);
 	}
 
 	public Long getUndefinedVerifiedRequirementNumber() {
-		return undefinedVerifiedRequirementNumber;
+		return requirementNumbers.get(ReqCoverageByTestStatType.UNDEFINED_VERIFIED);
 	}
 
 	public Byte getGlobalRequirementCoverage() {
@@ -166,90 +210,212 @@ public class ReqCoverageByTestProjectDto {
 		this.undefinedRequirementCoverage = undefinedRequirementCoverage;
 	}
 
-	/**
-	 * Increments the number identified by the ReqCoverageByTestStatType
-	 *
-	 * @param type
-	 *            identify the number to increment
-	 */
-	public void incrementNumber(ReqCoverageByTestStatType type) {
-		// One method instead of ten which does the exact same thing
-		switch (type) {
-		case TOTAL:
-			this.totalRequirementNumber++;
-			break;
-		case TOTAL_VERIFIED:
-			this.totalVerifiedRequirementNumber++;
-			break;
-		case CRITICAL:
-			this.criticalRequirementNumber++;
-			break;
-		case CRITICAL_VERIFIED:
-			this.criticalVerifiedRequirementNumber++;
-			break;
-		case MAJOR:
-			this.majorRequirementNumber++;
-			break;
-		case MAJOR_VERIFIED:
-			this.majorVerifiedRequirementNumber++;
-			break;
-		case MINOR:
-			this.minorRequirementNumber++;
-			break;
-		case MINOR_VERIFIED:
-			this.minorVerifiedRequirementNumber++;
-			break;
-		case UNDEFINED:
-			this.undefinedRequirementNumber++;
-			break;
-		case UNDEFINED_VERIFIED:
-			this.undefinedVerifiedRequirementNumber++;
-			break;
-		default:
-			// useless as we choose the type
-			break;
-		}
+	public Map<ReqCoverageByTestStatType, Long> getRequirementNumbers() {
+		return requirementNumbers;
 	}
 
-	/***
-	 * Method which add the given values to the totals
-	 *
-	 * @param totalRequirementNumber
-	 *            total number of requirements
-	 * @param totalVerifiedRequirementNumber
-	 *            total number of verified requirements
-	 * @param criticalRequirementNumber
-	 *            total number of critical requirements
-	 * @param criticalVerifiedRequirementNumber
-	 *            total number of critical and verified requirements
-	 * @param majorRequirementNumber
-	 *            total number of major requirements
-	 * @param majorVerifiedRequirementNumber
-	 *            total number of major and verified requirements
-	 * @param minorRequirementNumber
-	 *            total number of minor requirements
-	 * @param minorVerifiedRequirementNumber
-	 *            total number of minor and verified requirements
-	 * @param undefinedRequirementNumber
-	 *            total number of undefined requirements
-	 * @param undefinedVerifiedRequirementNumber
-	 *            total number of undefined and verified requirements
-	 */
-	public void increaseTotals(Long totalRequirementNumber, Long totalVerifiedRequirementNumber,
-			Long criticalRequirementNumber, Long criticalVerifiedRequirementNumber, Long majorRequirementNumber,
-			Long majorVerifiedRequirementNumber, Long minorRequirementNumber, Long minorVerifiedRequirementNumber,
-			Long undefinedRequirementNumber, Long undefinedVerifiedRequirementNumber) {
-		this.totalRequirementNumber += totalRequirementNumber;
-		this.totalVerifiedRequirementNumber += totalVerifiedRequirementNumber;
-		this.criticalRequirementNumber += criticalRequirementNumber;
-		this.criticalVerifiedRequirementNumber += criticalVerifiedRequirementNumber;
-		this.majorRequirementNumber += majorRequirementNumber;
-		this.majorVerifiedRequirementNumber += majorVerifiedRequirementNumber;
-		this.minorRequirementNumber += minorRequirementNumber;
-		this.minorVerifiedRequirementNumber += minorVerifiedRequirementNumber;
-		this.undefinedRequirementNumber += undefinedRequirementNumber;
-		this.undefinedVerifiedRequirementNumber += undefinedVerifiedRequirementNumber;
+	public void setRequirementNumbers(Map<ReqCoverageByTestStatType, Long> requirementNumbers) {
+		this.requirementNumbers = requirementNumbers;
+	}
 
+	public Long getWorkInProgressTotalRequirementNumber() {
+		return requirementStatusNumbers.get(RequirementStatus.WORK_IN_PROGRESS.toString()
+				+ ReqCoverageByTestStatType.TOTAL.toString());
+	}
+
+	public Long getWorkInProgressTotalVerifiedRequirementNumber() {
+		return requirementStatusNumbers.get(RequirementStatus.WORK_IN_PROGRESS.toString()
+				+ ReqCoverageByTestStatType.TOTAL_VERIFIED.toString());
+	}
+
+	public Long getWorkInProgressCriticalRequirementNumber() {
+		return requirementStatusNumbers.get(RequirementStatus.WORK_IN_PROGRESS.toString()
+				+ ReqCoverageByTestStatType.CRITICAL.toString());
+	}
+
+	public Long getWorkInProgressCriticalVerifiedRequirementNumber() {
+		return requirementStatusNumbers.get(RequirementStatus.WORK_IN_PROGRESS.toString()
+				+ ReqCoverageByTestStatType.CRITICAL_VERIFIED.toString());
+	}
+
+	public Long getWorkInProgressMajorRequirementNumber() {
+		return requirementStatusNumbers.get(RequirementStatus.WORK_IN_PROGRESS.toString()
+				+ ReqCoverageByTestStatType.MAJOR.toString());
+	}
+
+	public Long getWorkInProgressMajorVerifiedRequirementNumber() {
+		return requirementStatusNumbers.get(RequirementStatus.WORK_IN_PROGRESS.toString()
+				+ ReqCoverageByTestStatType.MAJOR_VERIFIED.toString());
+	}
+
+	public Long getWorkInProgressMinorRequirementNumber() {
+		return requirementStatusNumbers.get(RequirementStatus.WORK_IN_PROGRESS.toString()
+				+ ReqCoverageByTestStatType.MINOR.toString());
+	}
+
+	public Long getWorkInProgressMinorVerifiedRequirementNumber() {
+		return requirementStatusNumbers.get(RequirementStatus.WORK_IN_PROGRESS.toString()
+				+ ReqCoverageByTestStatType.MINOR_VERIFIED.toString());
+	}
+
+	public Long getWorkInProgressUndefinedRequirementNumber() {
+		return requirementStatusNumbers.get(RequirementStatus.WORK_IN_PROGRESS.toString()
+				+ ReqCoverageByTestStatType.UNDEFINED.toString());
+	}
+
+	public Long getWorkInProgressUndefinedVerifiedRequirementNumber() {
+		return requirementStatusNumbers.get(RequirementStatus.WORK_IN_PROGRESS.toString()
+				+ ReqCoverageByTestStatType.UNDEFINED_VERIFIED.toString());
+	}
+
+	public Long getUnderReviewTotalRequirementNumber() {
+		return requirementStatusNumbers.get(RequirementStatus.UNDER_REVIEW.toString()
+				+ ReqCoverageByTestStatType.TOTAL.toString());
+	}
+
+	public Long getUnderReviewTotalVerifiedRequirementNumber() {
+		return requirementStatusNumbers.get(RequirementStatus.UNDER_REVIEW.toString()
+				+ ReqCoverageByTestStatType.TOTAL_VERIFIED.toString());
+	}
+
+	public Long getUnderReviewCriticalRequirementNumber() {
+		return requirementStatusNumbers.get(RequirementStatus.UNDER_REVIEW.toString()
+				+ ReqCoverageByTestStatType.CRITICAL.toString());
+	}
+
+	public Long getUnderReviewCriticalVerifiedRequirementNumber() {
+		return requirementStatusNumbers.get(RequirementStatus.UNDER_REVIEW.toString()
+				+ ReqCoverageByTestStatType.CRITICAL_VERIFIED.toString());
+	}
+
+	public Long getUnderReviewMajorRequirementNumber() {
+		return requirementStatusNumbers.get(RequirementStatus.UNDER_REVIEW.toString()
+				+ ReqCoverageByTestStatType.MAJOR.toString());
+	}
+
+	public Long getUnderReviewMajorVerifiedRequirementNumber() {
+		return requirementStatusNumbers.get(RequirementStatus.UNDER_REVIEW.toString()
+				+ ReqCoverageByTestStatType.MAJOR_VERIFIED.toString());
+	}
+
+	public Long getUnderReviewMinorRequirementNumber() {
+		return requirementStatusNumbers.get(RequirementStatus.UNDER_REVIEW.toString()
+				+ ReqCoverageByTestStatType.MINOR.toString());
+	}
+
+	public Long getUnderReviewMinorVerifiedRequirementNumber() {
+		return requirementStatusNumbers.get(RequirementStatus.UNDER_REVIEW.toString()
+				+ ReqCoverageByTestStatType.MINOR_VERIFIED.toString());
+	}
+
+	public Long getUnderReviewUndefinedRequirementNumber() {
+		return requirementStatusNumbers.get(RequirementStatus.UNDER_REVIEW.toString()
+				+ ReqCoverageByTestStatType.UNDEFINED.toString());
+	}
+
+	public Long getUnderReviewUndefinedVerifiedRequirementNumber() {
+		return requirementStatusNumbers.get(RequirementStatus.UNDER_REVIEW.toString()
+				+ ReqCoverageByTestStatType.UNDEFINED_VERIFIED.toString());
+	}
+
+	public Long getApprovedTotalRequirementNumber() {
+		return requirementStatusNumbers.get(RequirementStatus.APPROVED.toString()
+				+ ReqCoverageByTestStatType.TOTAL.toString());
+	}
+
+	public Long getApprovedTotalVerifiedRequirementNumber() {
+		return requirementStatusNumbers.get(RequirementStatus.APPROVED.toString()
+				+ ReqCoverageByTestStatType.TOTAL_VERIFIED.toString());
+	}
+
+	public Long getApprovedCriticalRequirementNumber() {
+		return requirementStatusNumbers.get(RequirementStatus.APPROVED.toString()
+				+ ReqCoverageByTestStatType.CRITICAL.toString());
+	}
+
+	public Long getApprovedCriticalVerifiedRequirementNumber() {
+		return requirementStatusNumbers.get(RequirementStatus.APPROVED.toString()
+				+ ReqCoverageByTestStatType.CRITICAL_VERIFIED.toString());
+	}
+
+	public Long getApprovedMajorRequirementNumber() {
+		return requirementStatusNumbers.get(RequirementStatus.APPROVED.toString()
+				+ ReqCoverageByTestStatType.MAJOR.toString());
+	}
+
+	public Long getApprovedMajorVerifiedRequirementNumber() {
+		return requirementStatusNumbers.get(RequirementStatus.APPROVED.toString()
+				+ ReqCoverageByTestStatType.MAJOR_VERIFIED.toString());
+	}
+
+	public Long getApprovedMinorRequirementNumber() {
+		return requirementStatusNumbers.get(RequirementStatus.APPROVED.toString()
+				+ ReqCoverageByTestStatType.MINOR.toString());
+	}
+
+	public Long getApprovedMinorVerifiedRequirementNumber() {
+		return requirementStatusNumbers.get(RequirementStatus.APPROVED.toString()
+				+ ReqCoverageByTestStatType.MINOR_VERIFIED.toString());
+	}
+
+	public Long getApprovedUndefinedRequirementNumber() {
+		return requirementStatusNumbers.get(RequirementStatus.APPROVED.toString()
+				+ ReqCoverageByTestStatType.UNDEFINED.toString());
+	}
+
+	public Long getApprovedUndefinedVerifiedRequirementNumber() {
+		return requirementStatusNumbers.get(RequirementStatus.APPROVED.toString()
+				+ ReqCoverageByTestStatType.UNDEFINED_VERIFIED.toString());
+	}
+
+	public Long getObsoleteTotalRequirementNumber() {
+		return requirementStatusNumbers.get(RequirementStatus.OBSOLETE.toString()
+				+ ReqCoverageByTestStatType.TOTAL.toString());
+	}
+
+	public Long getObsoleteTotalVerifiedRequirementNumber() {
+		return requirementStatusNumbers.get(RequirementStatus.OBSOLETE.toString()
+				+ ReqCoverageByTestStatType.TOTAL_VERIFIED.toString());
+	}
+
+	public Long getObsoleteCriticalRequirementNumber() {
+		return requirementStatusNumbers.get(RequirementStatus.OBSOLETE.toString()
+				+ ReqCoverageByTestStatType.CRITICAL.toString());
+	}
+
+	public Long getObsoleteCriticalVerifiedRequirementNumber() {
+		return requirementStatusNumbers.get(RequirementStatus.OBSOLETE.toString()
+				+ ReqCoverageByTestStatType.CRITICAL_VERIFIED.toString());
+	}
+
+	public Long getObsoleteMajorRequirementNumber() {
+		return requirementStatusNumbers.get(RequirementStatus.OBSOLETE.toString()
+				+ ReqCoverageByTestStatType.MAJOR.toString());
+	}
+
+	public Long getObsoleteMajorVerifiedRequirementNumber() {
+		return requirementStatusNumbers.get(RequirementStatus.OBSOLETE.toString()
+				+ ReqCoverageByTestStatType.MAJOR_VERIFIED.toString());
+	}
+
+	public Long getObsoleteMinorRequirementNumber() {
+		return requirementStatusNumbers.get(RequirementStatus.OBSOLETE.toString()
+				+ ReqCoverageByTestStatType.MINOR.toString());
+	}
+
+	public Long getObsoleteMinorVerifiedRequirementNumber() {
+		return requirementStatusNumbers.get(RequirementStatus.OBSOLETE.toString()
+				+ ReqCoverageByTestStatType.MINOR_VERIFIED.toString());
+	}
+
+	public Long getObsoleteUndefinedRequirementNumber() {
+		return requirementStatusNumbers.get(RequirementStatus.OBSOLETE.toString()
+				+ ReqCoverageByTestStatType.UNDEFINED.toString());
+	}
+
+	public Long getObsoleteUndefinedVerifiedRequirementNumber() {
+		return requirementStatusNumbers.get(RequirementStatus.OBSOLETE.toString()
+				+ ReqCoverageByTestStatType.UNDEFINED_VERIFIED.toString());
 	}
 
 }
