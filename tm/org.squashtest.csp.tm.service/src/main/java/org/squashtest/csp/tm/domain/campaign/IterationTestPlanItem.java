@@ -41,6 +41,7 @@ import javax.persistence.Temporal;
 import javax.persistence.TemporalType;
 import javax.validation.constraints.NotNull;
 
+import org.squashtest.csp.core.security.annotation.InheritsAcls;
 import org.squashtest.csp.tm.domain.TestPlanItemNotExecutableException;
 import org.squashtest.csp.tm.domain.audit.Auditable;
 import org.squashtest.csp.tm.domain.execution.Execution;
@@ -52,6 +53,7 @@ import org.squashtest.csp.tm.internal.service.TestCaseCyclicCallChecker;
 
 @Entity
 @Auditable
+@InheritsAcls(constrainedClass = Iteration.class, collectionName = "testPlans")
 public class IterationTestPlanItem {
 	@Id
 	@GeneratedValue

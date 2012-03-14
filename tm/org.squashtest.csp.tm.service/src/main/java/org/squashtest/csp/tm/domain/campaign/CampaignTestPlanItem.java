@@ -29,14 +29,15 @@ import javax.persistence.ManyToOne;
 import javax.persistence.Table;
 import javax.validation.constraints.NotNull;
 
+import org.squashtest.csp.core.security.annotation.InheritsAcls;
 import org.squashtest.csp.tm.domain.project.Project;
 import org.squashtest.csp.tm.domain.testcase.TestCase;
 import org.squashtest.csp.tm.domain.users.User;
 
 @Entity
 @Table(name = "CAMPAIGN_TEST_PLAN_ITEM")
+@InheritsAcls(constrainedClass = Campaign.class, collectionName = "testPlan")
 public class CampaignTestPlanItem {
-
 	// TODO give meaningful name ! eg assigned user
 	@ManyToOne
 	@JoinColumn(name = "USER_ID")
@@ -82,14 +83,13 @@ public class CampaignTestPlanItem {
 	public User getUser() {
 		return user;
 	}
-	
+
 	// TODO add isAssigned()
-	
 
 	/**
 	 * Factory method. Creates a copy of this object according to copy / paste rules. The copy is associated to no
 	 * {@link Campaign}, it needs to be added to a campaign afterwards.
-	 *
+	 * 
 	 * @return the copy, never <code>null</code>
 	 */
 	public CampaignTestPlanItem createCampaignlessCopy() {
@@ -111,7 +111,7 @@ public class CampaignTestPlanItem {
 
 	/**
 	 * Should only be used by the Campaign when this item is added to the test plan.
-	 *
+	 * 
 	 * @param campaign
 	 */
 	protected void setCampaign(@NotNull Campaign campaign) {

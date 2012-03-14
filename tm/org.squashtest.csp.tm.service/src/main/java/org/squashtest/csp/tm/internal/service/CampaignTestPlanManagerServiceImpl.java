@@ -60,7 +60,7 @@ public class CampaignTestPlanManagerServiceImpl implements CampaignTestPlanManag
 	/**
 	 * Permission string for reading returned object.
 	 */
-	private static final String CAN_READ_RETURNED_OBJECT = "hasPermission(#returnObject, 'READ') or hasRole('ROLE_ADMIN') ) ";
+	private static final String CAN_READ_RETURNED_OBJECT = "hasPermission(returnObject, 'READ') or hasRole('ROLE_ADMIN') ) ";
 
 	/**
 	 * Permission string for writing campaigns based on campaignId param.
@@ -102,7 +102,7 @@ public class CampaignTestPlanManagerServiceImpl implements CampaignTestPlanManag
 
 	@Override
 	@Transactional(readOnly = true)
-	// @PostAuthorize(CAN_READ_RETURNED_OBJECT)FIXME erreur quand droits lecture + ecriture
+	@PostAuthorize(CAN_READ_RETURNED_OBJECT)
 	public Campaign findCampaign(long campaignId) {
 		return campaignDao.findById(campaignId);
 	}
@@ -225,7 +225,7 @@ public class CampaignTestPlanManagerServiceImpl implements CampaignTestPlanManag
 	 */
 	@Override
 	@Transactional(readOnly = true)
-	// @PostAuthorize(CAN_READ_RETURNED_OBJECT)FIXME erreur affichage campagne quand droits lecture + ecriture
+	@PostAuthorize(CAN_READ_RETURNED_OBJECT)
 	public CampaignTestPlanItem findById(long itemId) {
 		return campaignTestPlanItemDao.findById(itemId);
 	}
