@@ -19,8 +19,7 @@
  *     along with this software.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-function TreeNodeCopier(initObj){
-	
+function TreeNodeCopier(initObj) {
 	// properties
 	this.tree = $.jstree._reference(initObj.treeSelector);
 	this.errMessage= initObj.errMessage;
@@ -37,7 +36,6 @@ function TreeNodeCopier(initObj){
 			displayInformationNotification(arguments[0]);
 		}
 	};
-	
 
 	var reset = function(){
 		$.cookie('squash-copy-nodes', null);
@@ -66,7 +64,7 @@ function TreeNodeCopier(initObj){
 			case "not-unique-editable" : displayError(initObj.notOneEditable); break;
 			case "wrong-library"	:	displayError(initObj.pasteNotSameProject); break;
 			case "target-type-invalid" : displayError(initObj.pasteIterationNotHere); break;
-			case "buffer-empty" : displayError("no nodes copied  - (todo : localization)"); break;		
+			case "buffer-empty" : displayError(initObj.nothingToPaste); break;		
 		}
 	}
 
@@ -202,10 +200,7 @@ function TreeNodeCopier(initObj){
 
 		
 		//now we can proceed
-		copyNode(pasteData, pasteData.url)
-		.done(reset)
-		.fail(this.tree.refresh);
-		
+		copyNode(pasteData, pasteData.url).fail(this.tree.refresh);
 	};
 	
 	

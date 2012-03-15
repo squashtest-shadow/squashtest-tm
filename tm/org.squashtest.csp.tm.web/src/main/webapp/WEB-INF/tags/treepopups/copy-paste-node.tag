@@ -41,6 +41,7 @@
 <f:message var="pasteIterationNotHere" key="tree.button.copy-node.error.pasteiterationnothere"/>
 <f:message var="pasteNotSameProject" key="tree.button.copy-node.error.pastenotsameproject"/>
 <f:message var="notOneEditable" key="tree.button.copy-node.error.notOneEditable"/>
+<f:message var="nothingToPaste" key="tree.button.copy-node.error.nothing-to-paste"/>
 <script type="text/javascript" >
 
 	$(function(){
@@ -50,6 +51,7 @@
 											 pasteIterationNotHere :"${pasteIterationNotHere}",
 											 notOneEditable :"${notOneEditable}",
 											 url : "${copyUrl}",
+											 nothingToPaste: "${ nothingToPaste }",
 										});		
 		
 		${treeNodeButtonCopy}.click(function(){
