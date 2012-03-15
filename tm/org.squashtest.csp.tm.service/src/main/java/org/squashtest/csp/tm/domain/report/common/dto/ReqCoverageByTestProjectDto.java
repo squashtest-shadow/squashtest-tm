@@ -71,6 +71,54 @@ public class ReqCoverageByTestProjectDto {
 
 	private Byte undefinedRequirementCoverage;
 
+	/* Work in progress RATES */
+	private Byte workInProgressGlobalRequirementCoverage;
+
+	// by criticality
+	private Byte workInProgressCriticalRequirementCoverage;
+
+	private Byte workInProgressMajorRequirementCoverage;
+
+	private Byte workInProgressMinorRequirementCoverage;
+
+	private Byte workInProgressUndefinedRequirementCoverage;
+
+	/* Under review RATES */
+	private Byte underReviewGlobalRequirementCoverage;
+
+	// by criticality
+	private Byte underReviewCriticalRequirementCoverage;
+
+	private Byte underReviewMajorRequirementCoverage;
+
+	private Byte underReviewMinorRequirementCoverage;
+
+	private Byte underReviewUndefinedRequirementCoverage;
+
+	/* approved RATES */
+	private Byte approvedGlobalRequirementCoverage;
+
+	// by criticality
+	private Byte approvedCriticalRequirementCoverage;
+
+	private Byte approvedMajorRequirementCoverage;
+
+	private Byte approvedMinorRequirementCoverage;
+
+	private Byte approvedUndefinedRequirementCoverage;
+
+	/* obsolete RATES */
+	private Byte obsoleteGlobalRequirementCoverage;
+
+	// by criticality
+	private Byte obsoleteCriticalRequirementCoverage;
+
+	private Byte obsoleteMajorRequirementCoverage;
+
+	private Byte obsoleteMinorRequirementCoverage;
+
+	private Byte obsoleteUndefinedRequirementCoverage;
+
 	/**
 	 * Increments the number identified by the ReqCoverageByTestStatType
 	 * 
@@ -102,12 +150,19 @@ public class ReqCoverageByTestProjectDto {
 	 * @param requirementNumbers
 	 *            of the project that will increase the projectTotals numbers
 	 */
-	public void increaseTotals(Map<ReqCoverageByTestStatType, Long> requirementNumbers2) {
+	public void increaseTotals(Map<ReqCoverageByTestStatType, Long> requirementNumbers2,
+			Map<String, Long> requirementStatusNumbers2) {
 		for (Entry<ReqCoverageByTestStatType, Long> parameterEntry : requirementNumbers2.entrySet()) {
 			ReqCoverageByTestStatType concernedType = parameterEntry.getKey();
 			Long reqNumber = this.requirementNumbers.get(concernedType);
 			reqNumber += parameterEntry.getValue();
 			this.requirementNumbers.put(concernedType, reqNumber);
+		}
+		for (Entry<String, Long> parameterEntry : requirementStatusNumbers2.entrySet()) {
+			String concernedType = parameterEntry.getKey();
+			Long reqNumber = this.requirementStatusNumbers.get(concernedType);
+			reqNumber += parameterEntry.getValue();
+			this.requirementStatusNumbers.put(concernedType, reqNumber);
 		}
 
 	}
@@ -416,6 +471,170 @@ public class ReqCoverageByTestProjectDto {
 	public Long getObsoleteUndefinedVerifiedRequirementNumber() {
 		return requirementStatusNumbers.get(RequirementStatus.OBSOLETE.toString()
 				+ ReqCoverageByTestStatType.UNDEFINED_VERIFIED.toString());
+	}
+
+	public Byte getWorkInProgressGlobalRequirementCoverage() {
+		return workInProgressGlobalRequirementCoverage;
+	}
+
+	public Byte getWorkInProgressCriticalRequirementCoverage() {
+		return workInProgressCriticalRequirementCoverage;
+	}
+
+	public Byte getWorkInProgressMajorRequirementCoverage() {
+		return workInProgressMajorRequirementCoverage;
+	}
+
+	public Byte getWorkInProgressMinorRequirementCoverage() {
+		return workInProgressMinorRequirementCoverage;
+	}
+
+	public Byte getWorkInProgressUndefinedRequirementCoverage() {
+		return workInProgressUndefinedRequirementCoverage;
+	}
+
+	public Byte getUnderReviewGlobalRequirementCoverage() {
+		return underReviewGlobalRequirementCoverage;
+	}
+
+	public Byte getUnderReviewCriticalRequirementCoverage() {
+		return underReviewCriticalRequirementCoverage;
+	}
+
+	public Byte getUnderReviewMajorRequirementCoverage() {
+		return underReviewMajorRequirementCoverage;
+	}
+
+	public Byte getUnderReviewMinorRequirementCoverage() {
+		return underReviewMinorRequirementCoverage;
+	}
+
+	public Byte getUnderReviewUndefinedRequirementCoverage() {
+		return underReviewUndefinedRequirementCoverage;
+	}
+
+	public Byte getApprovedGlobalRequirementCoverage() {
+		return approvedGlobalRequirementCoverage;
+	}
+
+	public Byte getApprovedCriticalRequirementCoverage() {
+		return approvedCriticalRequirementCoverage;
+	}
+
+	public Byte getApprovedMajorRequirementCoverage() {
+		return approvedMajorRequirementCoverage;
+	}
+
+	public Byte getApprovedMinorRequirementCoverage() {
+		return approvedMinorRequirementCoverage;
+	}
+
+	public Byte getApprovedUndefinedRequirementCoverage() {
+		return approvedUndefinedRequirementCoverage;
+	}
+
+	public Byte getObsoleteGlobalRequirementCoverage() {
+		return obsoleteGlobalRequirementCoverage;
+	}
+
+	public Byte getObsoleteCriticalRequirementCoverage() {
+		return obsoleteCriticalRequirementCoverage;
+	}
+
+	public Byte getObsoleteMajorRequirementCoverage() {
+		return obsoleteMajorRequirementCoverage;
+	}
+
+	public Byte getObsoleteMinorRequirementCoverage() {
+		return obsoleteMinorRequirementCoverage;
+	}
+
+	public Byte getObsoleteUndefinedRequirementCoverage() {
+		return obsoleteUndefinedRequirementCoverage;
+	}
+
+	public void setWorkInProgressGlobalRequirementCoverage(Byte workInProgressGlobalRequirementCoverage) {
+		this.workInProgressGlobalRequirementCoverage = workInProgressGlobalRequirementCoverage;
+	}
+
+	public void setWorkInProgressCriticalRequirementCoverage(Byte workInProgressCriticalRequirementCoverage) {
+		this.workInProgressCriticalRequirementCoverage = workInProgressCriticalRequirementCoverage;
+	}
+
+	public void setWorkInProgressMajorRequirementCoverage(Byte workInProgressMajorRequirementCoverage) {
+		this.workInProgressMajorRequirementCoverage = workInProgressMajorRequirementCoverage;
+	}
+
+	public void setWorkInProgressMinorRequirementCoverage(Byte workInProgressMinorRequirementCoverage) {
+		this.workInProgressMinorRequirementCoverage = workInProgressMinorRequirementCoverage;
+	}
+
+	public void setWorkInProgressUndefinedRequirementCoverage(Byte workInProgressUndefinedRequirementCoverage) {
+		this.workInProgressUndefinedRequirementCoverage = workInProgressUndefinedRequirementCoverage;
+	}
+
+	public void setUnderReviewGlobalRequirementCoverage(Byte underReviewGlobalRequirementCoverage) {
+		this.underReviewGlobalRequirementCoverage = underReviewGlobalRequirementCoverage;
+	}
+
+	public void setUnderReviewCriticalRequirementCoverage(Byte underReviewCriticalRequirementCoverage) {
+		this.underReviewCriticalRequirementCoverage = underReviewCriticalRequirementCoverage;
+	}
+
+	public void setUnderReviewMajorRequirementCoverage(Byte underReviewMajorRequirementCoverage) {
+		this.underReviewMajorRequirementCoverage = underReviewMajorRequirementCoverage;
+	}
+
+	public void setUnderReviewMinorRequirementCoverage(Byte underReviewMinorRequirementCoverage) {
+		this.underReviewMinorRequirementCoverage = underReviewMinorRequirementCoverage;
+	}
+
+	public void setUnderReviewUndefinedRequirementCoverage(Byte underReviewUndefinedRequirementCoverage) {
+		this.underReviewUndefinedRequirementCoverage = underReviewUndefinedRequirementCoverage;
+	}
+
+	public void setApprovedGlobalRequirementCoverage(Byte approvedGlobalRequirementCoverage) {
+		this.approvedGlobalRequirementCoverage = approvedGlobalRequirementCoverage;
+	}
+
+	public void setApprovedCriticalRequirementCoverage(Byte approvedCriticalRequirementCoverage) {
+		this.approvedCriticalRequirementCoverage = approvedCriticalRequirementCoverage;
+	}
+
+	public void setApprovedMajorRequirementCoverage(Byte approvedMajorRequirementCoverage) {
+		this.approvedMajorRequirementCoverage = approvedMajorRequirementCoverage;
+	}
+
+	public void setApprovedMinorRequirementCoverage(Byte approvedMinorRequirementCoverage) {
+		this.approvedMinorRequirementCoverage = approvedMinorRequirementCoverage;
+	}
+
+	public void setApprovedUndefinedRequirementCoverage(Byte approvedUndefinedRequirementCoverage) {
+		this.approvedUndefinedRequirementCoverage = approvedUndefinedRequirementCoverage;
+	}
+
+	public void setObsoleteGlobalRequirementCoverage(Byte obsoleteGlobalRequirementCoverage) {
+		this.obsoleteGlobalRequirementCoverage = obsoleteGlobalRequirementCoverage;
+	}
+
+	public void setObsoleteCriticalRequirementCoverage(Byte obsoleteCriticalRequirementCoverage) {
+		this.obsoleteCriticalRequirementCoverage = obsoleteCriticalRequirementCoverage;
+	}
+
+	public void setObsoleteMajorRequirementCoverage(Byte obsoleteMajorRequirementCoverage) {
+		this.obsoleteMajorRequirementCoverage = obsoleteMajorRequirementCoverage;
+	}
+
+	public void setObsoleteMinorRequirementCoverage(Byte obsoleteMinorRequirementCoverage) {
+		this.obsoleteMinorRequirementCoverage = obsoleteMinorRequirementCoverage;
+	}
+
+	public void setObsoleteUndefinedRequirementCoverage(Byte obsoleteUndefinedRequirementCoverage) {
+		this.obsoleteUndefinedRequirementCoverage = obsoleteUndefinedRequirementCoverage;
+	}
+
+	public Map<String, Long> getRequirementStatusNumbers() {
+		return requirementStatusNumbers;
 	}
 
 }

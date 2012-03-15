@@ -72,6 +72,9 @@
 	<field name="reference" class="java.lang.String">
 		<fieldDescription><![CDATA[reference]]></fieldDescription>
 	</field>
+	<field name="versionNumber" class="java.lang.Integer">
+		<fieldDescription><![CDATA[versionNumber]]></fieldDescription>
+	</field>
 	<detail>
 		<band height="20" splitType="Stretch">
 			<textField>
@@ -81,19 +84,19 @@
 				<textFieldExpression class="java.lang.String"><![CDATA[$F{folder}]]></textFieldExpression>
 			</textField>
 			<textField>
-				<reportElement style="cell" x="292" y="0" width="103" height="20"/>
+				<reportElement style="cell" x="292" y="0" width="91" height="20"/>
 				<box leftPadding="5"/>
 				<textElement/>
 				<textFieldExpression class="java.lang.String"><![CDATA[$F{reference}]]></textFieldExpression>
 			</textField>
 			<textField>
-				<reportElement style="cell" x="395" y="0" width="220" height="20"/>
+				<reportElement style="cell" x="383" y="0" width="210" height="20"/>
 				<box leftPadding="5"/>
 				<textElement/>
 				<textFieldExpression class="java.lang.String"><![CDATA[$F{label}]]></textFieldExpression>
 			</textField>
 			<textField>
-				<reportElement style="cell" x="615" y="0" width="107" height="20"/>
+				<reportElement style="cell" x="643" y="0" width="109" height="20"/>
 				<box leftPadding="5"/>
 				<textElement/>
 				<textFieldExpression class="java.lang.String"><![CDATA[($F{criticality}.toString() == "CRITICAL") ? $R{report.requirementcoverage.main.criticality.critical.label} :
@@ -102,7 +105,7 @@
 $R{report.requirementcoverage.main.criticality.undefined.label}]]></textFieldExpression>
 			</textField>
 			<textField>
-				<reportElement style="cell_right" x="722" y="0" width="80" height="20"/>
+				<reportElement style="cell_right" x="752" y="0" width="50" height="20"/>
 				<box leftPadding="5"/>
 				<textElement/>
 				<textFieldExpression class="java.lang.Integer"><![CDATA[$F{associatedTestCaseNumber}]]></textFieldExpression>
@@ -112,6 +115,12 @@ $R{report.requirementcoverage.main.criticality.undefined.label}]]></textFieldExp
 				<box leftPadding="5"/>
 				<textElement/>
 				<textFieldExpression class="java.lang.String"><![CDATA[$P{projectName}]]></textFieldExpression>
+			</textField>
+			<textField>
+				<reportElement style="cell" x="593" y="0" width="50" height="20"/>
+				<box leftPadding="5"/>
+				<textElement/>
+				<textFieldExpression class="java.lang.Integer"><![CDATA[$F{versionNumber}]]></textFieldExpression>
 			</textField>
 		</band>
 	</detail>

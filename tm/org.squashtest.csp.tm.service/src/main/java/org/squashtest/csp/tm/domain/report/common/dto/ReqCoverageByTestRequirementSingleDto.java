@@ -40,7 +40,7 @@ public class ReqCoverageByTestRequirementSingleDto {
 	/**
 	 * The requirement version number.
 	 */
-	private int versionNumber = 0;
+	private Integer versionNumber = 0;
 	/***
 	 * Requirement criticality
 	 */
