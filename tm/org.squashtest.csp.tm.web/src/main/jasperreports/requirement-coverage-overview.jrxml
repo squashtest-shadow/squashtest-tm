@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <jasperReport xmlns="http://jasperreports.sourceforge.net/jasperreports" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://jasperreports.sourceforge.net/jasperreports http://jasperreports.sourceforge.net/xsd/jasperreport.xsd" name="report1" pageWidth="842" pageHeight="595" orientation="Landscape" columnWidth="802" leftMargin="20" rightMargin="20" topMargin="20" bottomMargin="20" resourceBundle="/WEB-INF/reports/messages/execution-progression" whenResourceMissingType="Key">
 	<property name="ireport.zoom" value="1.2100000000000077"/>
-	<property name="ireport.x" value="378"/>
+	<property name="ireport.x" value="0"/>
 	<property name="ireport.y" value="0"/>
 	<style name="cartouche" mode="Opaque" forecolor="#FFFFFF" backcolor="#660000" fill="Solid">
 		<conditionalStyle>
@@ -340,17 +340,17 @@
 	<detail>
 		<band height="226" splitType="Stretch">
 			<textField>
-				<reportElement style="bgBlue" x="0" y="200" width="135" height="20"/>
+				<reportElement style="bgBlue" x="1" y="200" width="135" height="20"/>
 				<textElement textAlignment="Right" verticalAlignment="Middle">
-					<font isItalic="false"/>
+					<font isBold="true" isItalic="false"/>
 				</textElement>
 				<textFieldExpression class="java.lang.String"><![CDATA[$R{report.requirementcoverage.main.projects.coverage.label}]]></textFieldExpression>
 			</textField>
 			<textField>
-				<reportElement style="bgBlue" x="135" y="200" width="96" height="20"/>
+				<reportElement style="bgBlue" x="136" y="200" width="95" height="20"/>
 				<box leftPadding="3"/>
 				<textElement textAlignment="Left" verticalAlignment="Middle">
-					<font size="8" isItalic="false"/>
+					<font size="8" isBold="true" isItalic="false"/>
 				</textElement>
 				<textFieldExpression class="java.lang.String"><![CDATA[$R{report.requirementcoverage.main.projects.coverage.precision.label}]]></textFieldExpression>
 			</textField>
@@ -365,51 +365,65 @@
 			<textField pattern="" isBlankWhenNull="false">
 				<reportElement style="bgBlue_sup" x="268" y="180" width="85" height="20" forecolor="#003366"/>
 				<textElement textAlignment="Center" verticalAlignment="Middle" rotation="None" markup="none">
-					<font fontName="SansSerif" size="10" isBold="false" isItalic="false" isUnderline="false" isStrikeThrough="false" pdfEncoding="Cp1252" isPdfEmbedded="false"/>
+					<font fontName="SansSerif" size="10" isBold="true" isItalic="false" isUnderline="false" isStrikeThrough="false" pdfEncoding="Cp1252" isPdfEmbedded="false"/>
 				</textElement>
 				<textFieldExpression class="java.lang.Long"><![CDATA[$F{totalRequirementNumber}]]></textFieldExpression>
 			</textField>
 			<textField pattern="###0">
 				<reportElement style="bgBlue" x="268" y="200" width="45" height="20" forecolor="#003366"/>
-				<textElement textAlignment="Right" verticalAlignment="Middle"/>
+				<textElement textAlignment="Right" verticalAlignment="Middle">
+					<font isBold="true"/>
+				</textElement>
 				<textFieldExpression class="java.lang.String"><![CDATA[$F{globalRequirementCoverage} + " %"]]></textFieldExpression>
 			</textField>
 			<textField>
 				<reportElement style="bgBlue" x="313" y="200" width="40" height="20" forecolor="#666666"/>
 				<box leftPadding="3"/>
 				<textElement textAlignment="Left" verticalAlignment="Middle">
-					<font size="8" isItalic="true" isStrikeThrough="false"/>
+					<font size="8" isBold="true" isItalic="true" isStrikeThrough="false"/>
 				</textElement>
 				<textFieldExpression class="java.lang.String"><![CDATA["(" + $F{totalVerifiedRequirementNumber} + " / " + $F{totalRequirementNumber} + ")"]]></textFieldExpression>
 			</textField>
 			<textField>
 				<reportElement style="bgBlue_sup" x="376" y="180" width="85" height="20" forecolor="#000000"/>
-				<textElement textAlignment="Center" verticalAlignment="Middle"/>
+				<textElement textAlignment="Center" verticalAlignment="Middle">
+					<font isBold="true"/>
+				</textElement>
 				<textFieldExpression class="java.lang.Long"><![CDATA[$F{criticalRequirementNumber}]]></textFieldExpression>
 			</textField>
 			<textField>
 				<reportElement style="bgBlue_sup" x="461" y="180" width="85" height="20" forecolor="#000000"/>
-				<textElement textAlignment="Center" verticalAlignment="Middle"/>
+				<textElement textAlignment="Center" verticalAlignment="Middle">
+					<font isBold="true"/>
+				</textElement>
 				<textFieldExpression class="java.lang.Long"><![CDATA[$F{majorRequirementNumber}]]></textFieldExpression>
 			</textField>
 			<textField>
 				<reportElement style="bgBlue_sup" x="546" y="180" width="85" height="20" forecolor="#000000"/>
-				<textElement textAlignment="Center" verticalAlignment="Middle"/>
+				<textElement textAlignment="Center" verticalAlignment="Middle">
+					<font isBold="true"/>
+				</textElement>
 				<textFieldExpression class="java.lang.Long"><![CDATA[$F{minorRequirementNumber}]]></textFieldExpression>
 			</textField>
 			<textField>
 				<reportElement style="bgBlue_sup" x="631" y="180" width="85" height="20" forecolor="#000000"/>
-				<textElement textAlignment="Center" verticalAlignment="Middle"/>
+				<textElement textAlignment="Center" verticalAlignment="Middle">
+					<font isBold="true"/>
+				</textElement>
 				<textFieldExpression class="java.lang.Long"><![CDATA[$F{undefinedRequirementNumber}]]></textFieldExpression>
 			</textField>
 			<textField>
 				<reportElement style="bgBlue" x="376" y="200" width="45" height="20"/>
-				<textElement textAlignment="Right" verticalAlignment="Middle"/>
+				<textElement textAlignment="Right" verticalAlignment="Middle">
+					<font isBold="true"/>
+				</textElement>
 				<textFieldExpression class="java.lang.String"><![CDATA[$F{criticalRequirementCoverage} + " %"]]></textFieldExpression>
 			</textField>
 			<textField>
 				<reportElement style="bgBlue" x="461" y="200" width="45" height="20"/>
-				<textElement textAlignment="Right" verticalAlignment="Middle"/>
+				<textElement textAlignment="Right" verticalAlignment="Middle">
+					<font isBold="true"/>
+				</textElement>
 				<textFieldExpression class="java.lang.String"><![CDATA[$F{majorRequirementCoverage} + " %"]]></textFieldExpression>
 			</textField>
 			<rectangle>
@@ -425,10 +439,10 @@
 				</graphicElement>
 			</rectangle>
 			<textField>
-				<reportElement style="bgBlue_sup" x="-1" y="180" width="232" height="20"/>
+				<reportElement style="bgBlue_sup" x="1" y="180" width="230" height="20"/>
 				<box rightPadding="4"/>
 				<textElement textAlignment="Right" verticalAlignment="Middle">
-					<font isItalic="false"/>
+					<font isBold="true" isItalic="false"/>
 				</textElement>
 				<textFieldExpression class="java.lang.String"><![CDATA[$R{report.requirementcoverage.main.projects.totalnumber.label}]]></textFieldExpression>
 			</textField>
@@ -436,7 +450,7 @@
 				<reportElement style="bgBlue" x="421" y="200" width="40" height="20" forecolor="#666666"/>
 				<box leftPadding="3"/>
 				<textElement textAlignment="Left" verticalAlignment="Middle">
-					<font size="8" isItalic="true" isStrikeThrough="false"/>
+					<font size="8" isBold="true" isItalic="true" isStrikeThrough="false"/>
 				</textElement>
 				<textFieldExpression class="java.lang.String"><![CDATA["(" + $F{criticalVerifiedRequirementNumber} + " / " + $F{criticalRequirementNumber} + ")"]]></textFieldExpression>
 			</textField>
@@ -444,7 +458,7 @@
 				<reportElement style="bgBlue" x="506" y="200" width="40" height="20" forecolor="#666666"/>
 				<box leftPadding="3"/>
 				<textElement textAlignment="Left" verticalAlignment="Middle">
-					<font size="8" isItalic="true" isStrikeThrough="false"/>
+					<font size="8" isBold="true" isItalic="true" isStrikeThrough="false"/>
 				</textElement>
 				<textFieldExpression class="java.lang.String"><![CDATA["(" + $F{majorVerifiedRequirementNumber} + " / " + $F{majorRequirementNumber} + ")"]]></textFieldExpression>
 			</textField>
@@ -452,7 +466,7 @@
 				<reportElement style="bgBlue" x="676" y="200" width="40" height="20" forecolor="#666666"/>
 				<box leftPadding="3"/>
 				<textElement textAlignment="Left" verticalAlignment="Middle">
-					<font size="8" isItalic="true" isStrikeThrough="false"/>
+					<font size="8" isBold="true" isItalic="true" isStrikeThrough="false"/>
 				</textElement>
 				<textFieldExpression class="java.lang.String"><![CDATA["(" + $F{undefinedVerifiedRequirementNumber} + " / " + $F{undefinedRequirementNumber} + ")"]]></textFieldExpression>
 			</textField>
@@ -758,7 +772,7 @@
 				<textElement textAlignment="Right" verticalAlignment="Middle">
 					<font isItalic="false"/>
 				</textElement>
-				<textFieldExpression class="java.lang.String"><![CDATA[$R{report.requirementcoverage.main.projects.totalnumber.obsolete.label}]]></textFieldExpression>
+				<textFieldExpression class="java.lang.String"><![CDATA[$R{report.requirementcoverage.main.projects.totalnumber.approved.label}]]></textFieldExpression>
 			</textField>
 			<textField>
 				<reportElement style="bgBlue" x="313" y="160" width="40" height="20" forecolor="#666666"/>
@@ -829,7 +843,9 @@
 			</textField>
 			<textField>
 				<reportElement style="bgBlue" x="631" y="200" width="45" height="20"/>
-				<textElement textAlignment="Right" verticalAlignment="Middle"/>
+				<textElement textAlignment="Right" verticalAlignment="Middle">
+					<font isBold="true"/>
+				</textElement>
 				<textFieldExpression class="java.lang.String"><![CDATA[$F{undefinedRequirementCoverage} + " %"]]></textFieldExpression>
 			</textField>
 			<textField isBlankWhenNull="false">
@@ -857,7 +873,9 @@
 			</textField>
 			<textField>
 				<reportElement style="bgBlue" x="546" y="200" width="45" height="20"/>
-				<textElement textAlignment="Right" verticalAlignment="Middle"/>
+				<textElement textAlignment="Right" verticalAlignment="Middle">
+					<font isBold="true"/>
+				</textElement>
 				<textFieldExpression class="java.lang.String"><![CDATA[$F{minorRequirementCoverage} + " %"]]></textFieldExpression>
 			</textField>
 			<textField>
@@ -911,7 +929,7 @@
 				<textElement textAlignment="Right" verticalAlignment="Middle">
 					<font isItalic="false"/>
 				</textElement>
-				<textFieldExpression class="java.lang.String"><![CDATA[$R{report.requirementcoverage.main.projects.totalnumber.approved.label}]]></textFieldExpression>
+				<textFieldExpression class="java.lang.String"><![CDATA[$R{report.requirementcoverage.main.projects.totalnumber.obsolete.label}]]></textFieldExpression>
 			</textField>
 			<textField>
 				<reportElement style="bgBlue" x="546" y="40" width="45" height="20"/>
@@ -930,7 +948,7 @@
 				<reportElement style="bgBlue" x="591" y="200" width="40" height="20" forecolor="#666666"/>
 				<box leftPadding="3"/>
 				<textElement textAlignment="Left" verticalAlignment="Middle">
-					<font size="8" isItalic="true" isStrikeThrough="false"/>
+					<font size="8" isBold="true" isItalic="true" isStrikeThrough="false"/>
 				</textElement>
 				<textFieldExpression class="java.lang.String"><![CDATA["(" + $F{minorVerifiedRequirementNumber} + " / " + $F{minorRequirementNumber} + ")"]]></textFieldExpression>
 			</textField>
