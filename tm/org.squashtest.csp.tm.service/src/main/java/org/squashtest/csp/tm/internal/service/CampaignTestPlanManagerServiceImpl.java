@@ -60,7 +60,7 @@ public class CampaignTestPlanManagerServiceImpl implements CampaignTestPlanManag
 	/**
 	 * Permission string for reading returned object.
 	 */
-	private static final String CAN_READ_RETURNED_OBJECT = "hasPermission(returnObject, 'READ') or hasRole('ROLE_ADMIN') ) ";
+	private static final String CAN_READ_RETURNED_OBJECT = "hasPermission(returnObject, 'READ') or hasRole('ROLE_ADMIN')";
 
 	/**
 	 * Permission string for writing campaigns based on campaignId param.
