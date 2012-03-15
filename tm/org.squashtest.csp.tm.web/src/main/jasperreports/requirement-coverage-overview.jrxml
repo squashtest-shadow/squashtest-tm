@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <jasperReport xmlns="http://jasperreports.sourceforge.net/jasperreports" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://jasperreports.sourceforge.net/jasperreports http://jasperreports.sourceforge.net/xsd/jasperreport.xsd" name="report1" pageWidth="842" pageHeight="595" orientation="Landscape" columnWidth="802" leftMargin="20" rightMargin="20" topMargin="20" bottomMargin="20" resourceBundle="/WEB-INF/reports/messages/execution-progression" whenResourceMissingType="Key">
 	<property name="ireport.zoom" value="1.2100000000000077"/>
-	<property name="ireport.x" value="402"/>
+	<property name="ireport.x" value="378"/>
 	<property name="ireport.y" value="0"/>
 	<style name="cartouche" mode="Opaque" forecolor="#FFFFFF" backcolor="#660000" fill="Solid">
 		<conditionalStyle>
@@ -449,14 +449,6 @@
 				<textFieldExpression class="java.lang.String"><![CDATA["(" + $F{majorVerifiedRequirementNumber} + " / " + $F{majorRequirementNumber} + ")"]]></textFieldExpression>
 			</textField>
 			<textField>
-				<reportElement style="bgBlue" x="590" y="200" width="41" height="20" forecolor="#666666"/>
-				<box leftPadding="3"/>
-				<textElement textAlignment="Left" verticalAlignment="Middle">
-					<font size="8" isItalic="true" isStrikeThrough="false"/>
-				</textElement>
-				<textFieldExpression class="java.lang.String"><![CDATA["(" + $F{minorVerifiedRequirementNumber} + " / " + $F{minorRequirementNumber} + ")"]]></textFieldExpression>
-			</textField>
-			<textField>
 				<reportElement style="bgBlue" x="676" y="200" width="40" height="20" forecolor="#666666"/>
 				<box leftPadding="3"/>
 				<textElement textAlignment="Left" verticalAlignment="Middle">
@@ -615,11 +607,6 @@
 				<textFieldExpression class="java.lang.String"><![CDATA["(" + $F{workInProgressCriticalVerifiedRequirementNumber} + " / " + $F{workInProgressCriticalRequirementNumber} + ")"]]></textFieldExpression>
 			</textField>
 			<textField>
-				<reportElement style="bgBlue" x="546" y="40" width="45" height="20"/>
-				<textElement textAlignment="Right" verticalAlignment="Middle"/>
-				<textFieldExpression class="java.lang.String"><![CDATA[$F{workInProgressMinorRequirementCoverage} + " %"]]></textFieldExpression>
-			</textField>
-			<textField>
 				<reportElement style="bgBlue" x="461" y="40" width="45" height="20"/>
 				<textElement textAlignment="Right" verticalAlignment="Middle"/>
 				<textFieldExpression class="java.lang.String"><![CDATA[$F{workInProgressMajorRequirementCoverage} + " %"]]></textFieldExpression>
@@ -649,14 +636,6 @@
 				<reportElement style="bgBlue" x="268" y="40" width="45" height="20" forecolor="#003366"/>
 				<textElement textAlignment="Right" verticalAlignment="Middle"/>
 				<textFieldExpression class="java.lang.String"><![CDATA[$F{workInProgressGlobalRequirementCoverage} + " %"]]></textFieldExpression>
-			</textField>
-			<textField>
-				<reportElement style="bgBlue" x="590" y="80" width="41" height="20" forecolor="#666666"/>
-				<box leftPadding="3"/>
-				<textElement textAlignment="Left" verticalAlignment="Middle">
-					<font size="8" isItalic="true" isStrikeThrough="false"/>
-				</textElement>
-				<textFieldExpression class="java.lang.String"><![CDATA["(" + $F{underReviewMinorVerifiedRequirementNumber} + " / " + $F{underReviewMinorRequirementNumber} + ")"]]></textFieldExpression>
 			</textField>
 			<textField>
 				<reportElement style="bgBlue" x="376" y="80" width="45" height="20"/>
@@ -779,7 +758,7 @@
 				<textElement textAlignment="Right" verticalAlignment="Middle">
 					<font isItalic="false"/>
 				</textElement>
-				<textFieldExpression class="java.lang.String"><![CDATA[$R{report.requirementcoverage.main.projects.totalnumber.approved.label}]]></textFieldExpression>
+				<textFieldExpression class="java.lang.String"><![CDATA[$R{report.requirementcoverage.main.projects.totalnumber.obsolete.label}]]></textFieldExpression>
 			</textField>
 			<textField>
 				<reportElement style="bgBlue" x="313" y="160" width="40" height="20" forecolor="#666666"/>
@@ -803,14 +782,14 @@
 				<textFieldExpression class="java.lang.String"><![CDATA["(" + $F{obsoleteMajorVerifiedRequirementNumber} + " / " + $F{obsoleteMajorRequirementNumber} + ")"]]></textFieldExpression>
 			</textField>
 			<textField>
-				<reportElement style="bgBlue" x="84" y="160" width="147" height="20"/>
+				<reportElement style="bgBlue" x="83" y="160" width="148" height="20"/>
 				<textElement textAlignment="Right" verticalAlignment="Middle">
 					<font isItalic="false"/>
 				</textElement>
 				<textFieldExpression class="java.lang.String"><![CDATA[$R{report.requirementcoverage.main.projects.coverage.label}]]></textFieldExpression>
 			</textField>
 			<textField>
-				<reportElement style="bgBlue" x="590" y="160" width="41" height="20" forecolor="#666666"/>
+				<reportElement style="bgBlue" x="591" y="160" width="40" height="20" forecolor="#666666"/>
 				<box leftPadding="3"/>
 				<textElement textAlignment="Left" verticalAlignment="Middle">
 					<font size="8" isItalic="true" isStrikeThrough="false"/>
@@ -839,14 +818,6 @@
 				<reportElement style="bgBlue" x="268" y="160" width="45" height="20" forecolor="#003366"/>
 				<textElement textAlignment="Right" verticalAlignment="Middle"/>
 				<textFieldExpression class="java.lang.String"><![CDATA[$F{obsoleteGlobalRequirementCoverage} + " %"]]></textFieldExpression>
-			</textField>
-			<textField>
-				<reportElement style="bgBlue_sup" x="1" y="140" width="83" height="40"/>
-				<box rightPadding="4"/>
-				<textElement textAlignment="Right" verticalAlignment="Middle">
-					<font isItalic="false"/>
-				</textElement>
-				<textFieldExpression class="java.lang.String"><![CDATA[$R{report.requirementcoverage.main.projects.totalnumber.obsolete.label}]]></textFieldExpression>
 			</textField>
 			<textField>
 				<reportElement style="bgBlue_sup" x="83" y="140" width="148" height="20"/>
@@ -895,7 +866,7 @@
 				<textFieldExpression class="java.lang.Long"><![CDATA[$F{approvedMinorRequirementNumber}]]></textFieldExpression>
 			</textField>
 			<textField>
-				<reportElement style="bgBlue" x="590" y="40" width="41" height="20" forecolor="#666666"/>
+				<reportElement style="bgBlue" x="591" y="40" width="40" height="20" forecolor="#666666"/>
 				<box leftPadding="3"/>
 				<textElement textAlignment="Left" verticalAlignment="Middle">
 					<font size="8" isItalic="true" isStrikeThrough="false"/>
@@ -903,7 +874,7 @@
 				<textFieldExpression class="java.lang.String"><![CDATA["(" + $F{workInProgressMinorVerifiedRequirementNumber} + " / " + $F{workInProgressMinorRequirementNumber} + ")"]]></textFieldExpression>
 			</textField>
 			<textField>
-				<reportElement style="bgBlue" x="590" y="120" width="41" height="20" forecolor="#666666"/>
+				<reportElement style="bgBlue" x="591" y="120" width="40" height="20" forecolor="#666666"/>
 				<box leftPadding="3"/>
 				<textElement textAlignment="Left" verticalAlignment="Middle">
 					<font size="8" isItalic="true" isStrikeThrough="false"/>
@@ -933,6 +904,35 @@
 					<font size="8" isItalic="true" isStrikeThrough="false"/>
 				</textElement>
 				<textFieldExpression class="java.lang.String"><![CDATA["(" + $F{obsoleteUndefinedVerifiedRequirementNumber} + " / " + $F{obsoleteUndefinedRequirementNumber} + ")"]]></textFieldExpression>
+			</textField>
+			<textField>
+				<reportElement style="bgBlue_sup" x="1" y="140" width="82" height="40"/>
+				<box rightPadding="4"/>
+				<textElement textAlignment="Right" verticalAlignment="Middle">
+					<font isItalic="false"/>
+				</textElement>
+				<textFieldExpression class="java.lang.String"><![CDATA[$R{report.requirementcoverage.main.projects.totalnumber.approved.label}]]></textFieldExpression>
+			</textField>
+			<textField>
+				<reportElement style="bgBlue" x="546" y="40" width="45" height="20"/>
+				<textElement textAlignment="Right" verticalAlignment="Middle"/>
+				<textFieldExpression class="java.lang.String"><![CDATA[$F{workInProgressMinorRequirementCoverage} + " %"]]></textFieldExpression>
+			</textField>
+			<textField>
+				<reportElement style="bgBlue" x="591" y="80" width="40" height="20" forecolor="#666666"/>
+				<box leftPadding="3"/>
+				<textElement textAlignment="Left" verticalAlignment="Middle">
+					<font size="8" isItalic="true" isStrikeThrough="false"/>
+				</textElement>
+				<textFieldExpression class="java.lang.String"><![CDATA["(" + $F{underReviewMinorVerifiedRequirementNumber} + " / " + $F{underReviewMinorRequirementNumber} + ")"]]></textFieldExpression>
+			</textField>
+			<textField>
+				<reportElement style="bgBlue" x="591" y="200" width="40" height="20" forecolor="#666666"/>
+				<box leftPadding="3"/>
+				<textElement textAlignment="Left" verticalAlignment="Middle">
+					<font size="8" isItalic="true" isStrikeThrough="false"/>
+				</textElement>
+				<textFieldExpression class="java.lang.String"><![CDATA["(" + $F{minorVerifiedRequirementNumber} + " / " + $F{minorRequirementNumber} + ")"]]></textFieldExpression>
 			</textField>
 		</band>
 	</detail>
