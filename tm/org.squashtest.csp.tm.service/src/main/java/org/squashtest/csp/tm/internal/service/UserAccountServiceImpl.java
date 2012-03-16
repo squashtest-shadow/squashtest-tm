@@ -39,10 +39,9 @@ import org.squashtest.csp.tm.service.UserAccountService;
 @Transactional
 public class UserAccountServiceImpl implements UserAccountService {
 
-	
 	@Inject
 	private UserDao userDao;
-	
+
 	@Inject
 	private UsersGroupDao groupDao;
 
@@ -50,70 +49,62 @@ public class UserAccountServiceImpl implements UserAccountService {
 	private UserAuthenticationService authService;
 
 	@ServiceReference
-	public void setUserContextService(UserContextService userContextService){
-		this.userContextService=userContextService;
+	public void setUserContextService(UserContextService userContextService) {
+		this.userContextService = userContextService;
 	}
-	
-	@ServiceReference
-	public void setUserAuthenticationService(UserAuthenticationService authService){
-		this.authService=authService;
-	}
-	
 
-	
+	@ServiceReference
+	public void setUserAuthenticationService(UserAuthenticationService authService) {
+		this.authService = authService;
+	}
 
 	@Override
 	public void modifyUserFirstName(long userId, String newName) {
-		//fetch
+		// fetch
 		User user = userDao.findById(userId);
-		//check
+		// check
 		checkPermissions(user);
-		//proceed
+		// proceed
 		user.setFirstName(newName);
 	}
 
 	@Override
 	public void modifyUserLastName(long userId, String newName) {
-		//fetch
+		// fetch
 		User user = userDao.findById(userId);
-		//check
+		// check
 		checkPermissions(user);
-		//proceed
+		// proceed
 		user.setLastName(newName);
 	}
 
 	@Override
 	public void modifyUserLogin(long userId, String newLogin) {
-		//fetch
+		// fetch
 		User user = userDao.findById(userId);
-		//check
+		// check
 		checkPermissions(user);
-		//proceed
+		// proceed
 		user.setLogin(newLogin);
 	}
 
-
-	
 	@Override
 	public void modifyUserEmail(long userId, String newEmail) {
-		//fetch
+		// fetch
 		User user = userDao.findById(userId);
-		//check
+		// check
 		checkPermissions(user);
-		//proceed
+		// proceed
 		user.setEmail(newEmail);
 	}
-	
 
 	/* ************ surprise : no security check is needed for the methods below ********** */
-	
 
 	@Override
 	public User findCurrentUser() {
 		String username = userContextService.getUsername();
-		return userDao.findUserByLogin(username);	
+		return userDao.findUserByLogin(username);
 	}
-	
 
 	@Override
 	public void setCurrentUserEmail(String newEmail) {
@@ -121,30 +112,28 @@ public class UserAccountServiceImpl implements UserAccountService {
 		User user = userDao.findUserByLogin(username);
 		user.setEmail(newEmail);
 	}
-	
-	
+
 	@Override
-	public void setCurrentUserPassword(String oldPass, String newPass){
-		if (! authService.canModifyUser()){
-			//FIXME : subclass that exception and make one more explicit
-			throw new PasswordChangeFailedException("The authentication service do not allow users to change their passwords using Squash");
+	public void setCurrentUserPassword(String oldPass, String newPass) {
+		if (!authService.canModifyUser()) {
+			// FIXME : subclass that exception and make one more explicit
+			throw new PasswordChangeFailedException(
+					"The authentication service do not allow users to change their passwords using Squash");
 		}
-		try{
+		try {
 			authService.setUserPassword(userContextService.getUsername(), oldPass, newPass);
-		}catch(BadCredentialsException bce){
-			throw new PasswordChangeFailedException("wrong pair of old/new passwords");
+		} catch (BadCredentialsException bce) {
+			throw new PasswordChangeFailedException("wrong password");
 		}
-		
+
 	}
 
-	
 	/* ************ private stuffs ****************** */
-	
-	
-	private void checkPermissions(User user){
+
+	private void checkPermissions(User user) {
 		String currentLogin = userContextService.getUsername();
-		
-		if ( (! user.getLogin().equals(currentLogin)) && (! userContextService.hasRole("ROLE_ADMIN")) ){
+
+		if ((!user.getLogin().equals(currentLogin)) && (!userContextService.hasRole("ROLE_ADMIN"))) {
 			throw new AccessDeniedException("Access is denied");
 		}
 	}

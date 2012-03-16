@@ -21,7 +21,6 @@
 package org.squashtest.csp.tm.domain;
 
 public class PasswordChangeFailedException extends DomainException {
-	
 
 	/**
 	 * 
@@ -30,12 +29,12 @@ public class PasswordChangeFailedException extends DomainException {
 
 	public PasswordChangeFailedException() {
 		super();
-		setField("user-account-newpass");
+		setField("oldPassword");
 	}
 
 	public PasswordChangeFailedException(String message) {
 		super(message);
-		setField("user-account-newpass");
+		setField("oldPassword");
 	}
 
 }
