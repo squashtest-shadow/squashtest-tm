@@ -825,7 +825,9 @@ div#user-account-password-panel > div > * {
 /* ------------------------------------------ */
 /* -------------->>> MISC <<<---------------- */
 /* ------------------------------------------ */
-
+.error-message{
+	 color: #99352B;
+	}
 .export-requirement-link{
 	bottom: 1px;
 	float: left;
