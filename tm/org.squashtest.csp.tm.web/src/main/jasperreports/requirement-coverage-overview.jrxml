@@ -233,7 +233,7 @@
 		<fieldDescription><![CDATA[obsoleteTotalRequirementNumber]]></fieldDescription>
 	</field>
 	<field name="workInProgressGlobalRequirementCoverage" class="java.lang.Byte">
-		<fieldDescription><![CDATA[globalRequirementCoverage]]></fieldDescription>
+		<fieldDescription><![CDATA[workInProgressGlobalRequirementCoverage]]></fieldDescription>
 	</field>
 	<field name="workInProgressCriticalRequirementCoverage" class="java.lang.Byte">
 		<fieldDescription><![CDATA[workInProgressCriticalRequirementCoverage]]></fieldDescription>
