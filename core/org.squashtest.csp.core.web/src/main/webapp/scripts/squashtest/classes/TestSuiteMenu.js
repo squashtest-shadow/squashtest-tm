@@ -201,25 +201,27 @@ function TestSuiteMenu(settings){
 	var addSuite = $.proxy(function(){
 		var self=this;
 		var name = this.menu.getContainer().find('.suite-manager-menu-input').val();
-		this.model.postNew(name)
-		.error(displayAddSuiteError);
-			
+		this.model.postNew(name).error(displayAddSuiteError).success(function(json) {
+			console.log(json);
+			bindSuiteItemsGeneral(json.id);
+		});			
 	}, this);
 	
-	
-	var bindSuiteItems = $.proxy(function(){
+	var bindSuiteItemsGeneral = $.proxy(function(itemId){
 		var self=this;
+		var toSend = {};
+		toSend.id = itemId;
+		toSend['test-cases[]'] = getDatatableSelected();
+		
+		self.model.postBind(toSend)
+		.success(function(){
+			self.menu.kill();
+		});
+	},this);
+	var bindSuiteItems = $.proxy(function(){
 		this.menu.chooseItem = function(item){
-			
-			var toSend = {};
-			toSend.id= getSpanDomId(item);
-			toSend['test-cases[]'] = getDatatableSelected();
-			
-			self.model.postBind(toSend)
-			.success(function(){
-				self.menu.kill();
-			});
-			
+			var toSendId = getSpanDomId(item);
+			bindSuiteItemsGeneral(toSendId);
 		}
 	}, this);
 	
