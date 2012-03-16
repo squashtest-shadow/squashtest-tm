@@ -42,21 +42,169 @@
 The following urls aren't defined with a <c:url> but regular <c:set>. 
 The reason for that is that the parameters are urls already.
 --%>
-
 <c:set var="bugReport" value="${entityUrl}/bug-report"/>
 
 <script type="text/javascript" src="${ pageContext.servletContext.contextPath }/scripts/squashtest/bugtracker-dialog.js"></script>
 
+<%-- state manager code of the popup --%>
+<script type="text/javascript">
+	function flipToPleaseWait(){
+		$("#${id}-pleasewait").removeClass("not-displayed");
+		$("#${id}-content").addClass("not-displayed");		
+	}
+	
+	function flipToReport(){
+		$("#${id}-pleasewait").addClass("not-displayed");
+		$("#${id}-content").removeClass("not-displayed");			
+	}
 
+	
+
+ 	function toggleReportStyle(){
+		$("#${id}-pleasewait").toggleClass("not-displayed");
+		$("#${id}-content").toggleClass("not-displayed");	
+ 	}
+ 	
+ 	<%--  init code section --%>
+	$(function(){
+		$("#${id}").bind("dialogopen",function(){
+			flipToPleaseWait();
+	 		getBugReportData()
+	 		.then(function(json){
+				flushReport();
+				fillReport(json);
+	 		})
+	 		.fail(bugReportDataError);
+		});
+		
+	});
+
+	function getBugReportData(){
+
+		return $.ajax({
+			url : "${bugReport}",
+			type : "GET",
+			dataType : "json"			
+		});
+	}
+	
+ 	function flushReport(){
+ 		var jqPriority = $("#issue-report-select-priority");
+ 		var jqVersion = $("#issue-report-select-version");
+ 		var jqAssignee = $("#issue-report-select-assignee");
+ 		var jqCategory = $("#issue-report-select-category");
+ 		
+ 		flushSelect(jqPriority);
+ 		flushSelect(jqVersion);
+ 		flushSelect(jqAssignee);
+ 		flushSelect(jqCategory);
+ 	}
+ 	
+ 	function fillReport(jsonData){
+ 		var jqPriority = $("#issue-report-select-priority");
+ 		var jqVersion = $("#issue-report-select-version");
+ 		var jqAssignee = $("#issue-report-select-assignee");
+ 		var jqCategory = $("#issue-report-select-category");
+ 		
+ 		var priorities = jsonData.priorities;
+ 		var users = jsonData.users;
+ 		
+ 	 	<%-- those two next may represent empty lists so we handle them here --%>
+ 		
+ 		var categories = handleEmptyList(jsonData.categories,"${interfaceDescriptor.noCategoryLabel}");
+ 		var versions = handleEmptyList(jsonData.versions,"${interfaceDescriptor.noVersionLabel}");
+ 		
+ 		populateSelect(jqPriority,priorities);
+ 		populateSelect(jqVersion,versions);
+ 		populateSelect(jqAssignee,users);
+ 		populateSelect(jqCategory,categories);
+ 		
+ 		$("#issue-report-description").val(jsonData.defaultDescription);
+ 		
+ 		$("#issue-report-project").val(jsonData.projectId);
+ 		
+ 		flipToReport();
+ 	}
+ 	
+ 	
+ 	function bugReportDataError(jqXHR, textStatus, errorThrown){
+ 		flipToReport();
+ 	}
+
+	<%-- posting code section --%>
+	function prepareAndSubmit(){
+		var issue = prepareIssueData();
+		
+		submitIssue(issue)
+		.done(submitIssueSuccess)
+		.fail(submitIssueFails);
+	}
+	
+	function submitIssue(issue){
+		flipToPleaseWait();
+		
+		return $.ajax({
+			url: "${bugReport}",
+			type:"POST",
+			dataType : "json",
+			data : issue
+		});
+	}
+	
+	function submitIssueSuccess(json){
+		$("#${id}").dialog("close");
+		<c:if test="${not empty successCallback}">${successCallback}(json);</c:if>
+	}
+	
+	function submitIssueFails(){
+		flipToReport();
+	}
+
+	function makeProject(){
+		var id = $("#issue-report-project").val();
+		var name = "${projectIdentifier}";
+		return new btEntity(id, name);
+	}
+
+	function prepareIssueData(){
+		<%-- would be beautyful if only we could... 
+		return $("#issue-report-form").serializeArray();
+		instead we go for the following : --%>
+		
+		var jqPriority = $("#issue-report-select-priority");
+ 		var jqVersion = $("#issue-report-select-version");
+ 		var jqAssignee = $("#issue-report-select-assignee");
+ 		var jqCategory = $("#issue-report-select-category");
+ 		
+ 		<%-- the following variables are of type btEntity, see squashtest/bugtracker-dialog.js--%>
+ 		var priority = extractSelectData(jqPriority);
+ 		var version = extractSelectData(jqVersion);
+ 		var assignee = extractSelectData(jqAssignee);
+ 		var category = extractSelectData(jqCategory);
+ 		var project = makeProject();
+ 			
+ 		<%-- setting the final data --%>
+ 		var issue = new Object();
+ 		
+ 		issue.project=project.format();
+ 		issue.priority=priority.format();
+ 		issue.version=version.format();
+ 		issue.assignee=assignee.format();
+ 		issue.category=category.format();
+		issue.summary=$("#issue-report-summary").val();
+		issue.description=$("#issue-report-description").val();
+		issue.comment=$("#issue-report-comment").val();
+		
+		return issue;
+	}
+</script>
 
 <pop:popup id="${id}" openedBy="none" isContextual="true" 
 		titleKey="dialog.issue.report.title" closeOnSuccess="false">
 		
  	<jsp:attribute name="buttons"> 	
 		<f:message var="label" key="dialog.button.add.label" />
-		'${ label }': function() {
-			prepareAndSubmit();
-		},			
+		'${ label }': prepareAndSubmit,			
 		<pop:cancel-button />
  	</jsp:attribute> 
  	<jsp:attribute name="additionalSetup">
@@ -126,189 +274,5 @@ The reason for that is that the parameters are urls already.
 
 
 
-<%-- state manager code of the popup --%>
-<script type="text/javascript">
 
-	function flipToPleaseWait(){
-		$("#${id}-pleasewait").removeClass("not-displayed");
-		$("#${id}-content").addClass("not-displayed");		
-	}
-	
-	function flipToReport(){
-		$("#${id}-pleasewait").addClass("not-displayed");
-		$("#${id}-content").removeClass("not-displayed");			
-	}
-
-	
-
- 	function toggleReportStyle(){
-		$("#${id}-pleasewait").toggleClass("not-displayed");
-		$("#${id}-content").toggleClass("not-displayed");	
- 	}
- 	 
-	
-</script>
- 
- <%--  init code section --%>
- <script type="text/javascript">
- 
- 
-	$(function(){
-		$("#${id}").bind("dialogopen",function(){
-			flipToPleaseWait();
-	 		getBugReportData()
-	 		.then(function(json){
-				flushReport();
-				fillReport(json);
-	 		})
-	 		.fail(bugReportDataError);
-		});
-		
-	});
-
-	function getBugReportData(){
-
-		return $.ajax({
-			url : "${bugReport}",
-			type : "GET",
-			dataType : "json"			
-		});
-	}
-	
- 	function flushReport(){
- 		var jqPriority = $("#issue-report-select-priority");
- 		var jqVersion = $("#issue-report-select-version");
- 		var jqAssignee = $("#issue-report-select-assignee");
- 		var jqCategory = $("#issue-report-select-category");
- 		
- 		flushSelect(jqPriority);
- 		flushSelect(jqVersion);
- 		flushSelect(jqAssignee);
- 		flushSelect(jqCategory);
- 	}
- 	
- 	function fillReport(jsonData){
- 		var jqPriority = $("#issue-report-select-priority");
- 		var jqVersion = $("#issue-report-select-version");
- 		var jqAssignee = $("#issue-report-select-assignee");
- 		var jqCategory = $("#issue-report-select-category");
- 		
- 		var priorities = jsonData.priorities;
- 		var users = jsonData.users;
- 		
- 	 	<%-- those two next may represent empty lists so we handle them here --%>
- 		
- 		var categories = handleEmptyList(jsonData.categories,"${interfaceDescriptor.noCategoryLabel}");
- 		var versions = handleEmptyList(jsonData.versions,"${interfaceDescriptor.noVersionLabel}");
- 		
- 		populateSelect(jqPriority,priorities);
- 		populateSelect(jqVersion,versions);
- 		populateSelect(jqAssignee,users);
- 		populateSelect(jqCategory,categories);
- 		
- 		$("#issue-report-description").val(jsonData.defaultDescription);
- 		
- 		$("#issue-report-project").val(jsonData.projectId);
- 		
- 		flipToReport();
- 	}
- 	
- 	
- 	function bugReportDataError(jqXHR, textStatus, errorThrown){
- 		flipToReport();
- 	}
- 
- 	
-
- </script>
- 
- 
-
-<%-- posting code section --%>
-<script type="text/javascript">
-
-	function truc(){
-		var issue = prepareIssueData();
-		
-		submitIssue(issue)
-		.then(submitIssueSuccess)
-		.fail(submitIssueFails)
-	}
-
-
-	function prepareAndSubmit(){
-		var issue = prepareIssueData();
-		submitIssue(issue);
-	}
-	
-	
-	function submitIssue(issue){
-		flipToPleaseWait();
-		
-		return $.ajax({
-			url: "${bugReport}",
-			type:"POST",
-			dataType : "json",
-			data : issue
-		});
-	}
-
-
-	
-	function submitIssueSuccess(json){
-		$("#${id}").dialog("close");
-		<c:if test="${not empty successCallback}">${successCallback}(json);</c:if>
-	}
-	
-	function submitIssueFails(){
-		flipToReport();
-	}
-
-	
-	
-	function makeProject(){
-		var id = $("#issue-report-project").val();
-		var name = "${projectIdentifier}";
-		return new btEntity(id, name);
-	}
-
-	
-	function prepareIssueData(){
-		<%--
-		would be beautyful if only we could... 
-		return $("#issue-report-form").serializeArray();
-		--%>
-		
-		<%-- instead we go for the following : --%>
-		
-		var jqPriority = $("#issue-report-select-priority");
- 		var jqVersion = $("#issue-report-select-version");
- 		var jqAssignee = $("#issue-report-select-assignee");
- 		var jqCategory = $("#issue-report-select-category");
- 		
- 		<%-- the following variables are of type btEntity, see squashtest/bugtracker-dialog.js--%>
- 		var priority = extractSelectData(jqPriority);
- 		var version = extractSelectData(jqVersion);
- 		var assignee = extractSelectData(jqAssignee);
- 		var category = extractSelectData(jqCategory);
- 		var project = makeProject();
- 			
- 		<%-- setting the final data --%>
- 		var issue = new Object();
- 		
- 		issue.project=project.format();
- 		issue.priority=priority.format();
- 		issue.version=version.format();
- 		issue.assignee=assignee.format();
- 		issue.category=category.format();
-		issue.summary=$("#issue-report-summary").val();
-		issue.description=$("#issue-report-description").val();
-		issue.comment=$("#issue-report-comment").val();
-		
-		return issue;
-	}
-		
-
-
-</script>
  

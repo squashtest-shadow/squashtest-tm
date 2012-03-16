@@ -97,11 +97,7 @@
 		$("#issue-add-success-message").html(newMessage);
 	
 	}
-	
-
 </script>
-
-
 
 <div id="issue-panel-bugcreated-area" class="not-displayed ui-corner-all ">
 	<span class="ui-icon ui-icon-info icon"></span><span id="issue-add-success-message"><f:message key="issue.add.success" />&nbsp;(<a href="" id="issue-url"></a>)</span>
