@@ -95,13 +95,15 @@ public class ExecutionRunnerControllerHelper {
 		Integer total = execution.getSteps().size();
 
 		ExecutionStep executionStep = command.execute(total);
+		
+		int stepOrder = executionStep == null ? 0 : executionStep.getExecutionStepOrder();
 
 		model.addAttribute("execution", execution);
 		model.addAttribute("executionStep", executionStep);
 		model.addAttribute("totalSteps", total);
 		model.addAttribute("executionStatus", ExecutionStatus.values());
-		model.addAttribute("hasPreviousStep", executionStep.getExecutionStepOrder() != 0);
-		model.addAttribute("hasNextStep", executionStep.getExecutionStepOrder() != (total - 1));
+		model.addAttribute("hasPreviousStep", stepOrder != 0);
+		model.addAttribute("hasNextStep", stepOrder != (total - 1));
 	}
 
 }
