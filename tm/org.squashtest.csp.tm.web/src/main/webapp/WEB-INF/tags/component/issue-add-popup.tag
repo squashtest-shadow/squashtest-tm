@@ -36,7 +36,7 @@
 <%@ taglib uri="http://java.sun.com/jsp/jstl/core" prefix="c"%>
 <%@ taglib prefix="s" uri="http://www.springframework.org/tags"%>
 <%@ taglib tagdir="/WEB-INF/tags/component" prefix="comp"%>
-
+<f:message var="addIssueLabel" key="dialog.button.add.label" />
 
 <%-- 
 The following urls aren't defined with a <c:url> but regular <c:set>. 
@@ -49,30 +49,32 @@ The reason for that is that the parameters are urls already.
 <%-- state manager code of the popup --%>
 <script type="text/javascript">
 	function flipToPleaseWait(){
-		$("#${id}-pleasewait").removeClass("not-displayed");
-		$("#${id}-content").addClass("not-displayed");		
+		$("#${ id }-pleasewait").removeClass("not-displayed");
+		$("#${ id }-content").addClass("not-displayed");		
 	}
 	
 	function flipToReport(){
-		$("#${id}-pleasewait").addClass("not-displayed");
-		$("#${id}-content").removeClass("not-displayed");			
+		$("#${ id }-pleasewait").addClass("not-displayed");
+		$("#${ id }-content").removeClass("not-displayed");			
 	}
 
 	
 
  	function toggleReportStyle(){
-		$("#${id}-pleasewait").toggleClass("not-displayed");
-		$("#${id}-content").toggleClass("not-displayed");	
+		$("#${ id }-pleasewait").toggleClass("not-displayed");
+		$("#${ id }-content").toggleClass("not-displayed");	
  	}
  	
  	<%--  init code section --%>
 	$(function(){
-		$("#${id}").bind("dialogopen",function(){
+		$("#${ id }").bind("dialogopen",function(){
+			$( '.post-issue-button' ).button('option', 'disabled', true);		
 			flipToPleaseWait();
 	 		getBugReportData()
 	 		.then(function(json){
 				flushReport();
 				fillReport(json);
+				$( '.post-issue-button' ).button('option', 'disabled', false);		
 	 		})
 	 		.fail(bugReportDataError);
 		});
@@ -82,7 +84,7 @@ The reason for that is that the parameters are urls already.
 	function getBugReportData(){
 
 		return $.ajax({
-			url : "${bugReport}",
+			url : "${ bugReport }",
 			type : "GET",
 			dataType : "json"			
 		});
@@ -111,8 +113,8 @@ The reason for that is that the parameters are urls already.
  		
  	 	<%-- those two next may represent empty lists so we handle them here --%>
  		
- 		var categories = handleEmptyList(jsonData.categories,"${interfaceDescriptor.noCategoryLabel}");
- 		var versions = handleEmptyList(jsonData.versions,"${interfaceDescriptor.noVersionLabel}");
+ 		var categories = handleEmptyList(jsonData.categories,"${ interfaceDescriptor.noCategoryLabel }");
+ 		var versions = handleEmptyList(jsonData.versions,"${ interfaceDescriptor.noVersionLabel }");
  		
  		populateSelect(jqPriority,priorities);
  		populateSelect(jqVersion,versions);
@@ -132,7 +134,8 @@ The reason for that is that the parameters are urls already.
  	}
 
 	<%-- posting code section --%>
-	function prepareAndSubmit(){
+	function prepareAndSubmit(){		
+		$( '.post-issue-button' ).button('option', 'disabled', true);		
 		var issue = prepareIssueData();
 		
 		submitIssue(issue)
@@ -144,7 +147,7 @@ The reason for that is that the parameters are urls already.
 		flipToPleaseWait();
 		
 		return $.ajax({
-			url: "${bugReport}",
+			url: "${ bugReport }",
 			type:"POST",
 			dataType : "json",
 			data : issue
@@ -152,11 +155,13 @@ The reason for that is that the parameters are urls already.
 	}
 	
 	function submitIssueSuccess(json){
-		$("#${id}").dialog("close");
+		$("#${ id }").dialog("close");
+		$( '.post-issue-button' ).button('option', 'disabled', false);		
 		<c:if test="${not empty successCallback}">${successCallback}(json);</c:if>
 	}
 	
 	function submitIssueFails(){
+		$( '.post-issue-button' ).button('option', 'disabled', false);		
 		flipToReport();
 	}
 
@@ -201,12 +206,20 @@ The reason for that is that the parameters are urls already.
 
 <pop:popup id="${id}" openedBy="none" isContextual="true" 
 		titleKey="dialog.issue.report.title" closeOnSuccess="false">
-		
- 	<jsp:attribute name="buttons"> 	
-		<f:message var="label" key="dialog.button.add.label" />
-		'${ label }': prepareAndSubmit,			
-		<pop:cancel-button />
- 	</jsp:attribute> 
+	<jsp:attribute name="buttonsArray">
+		{
+			text: '${ addIssueLabel }',
+			click: prepareAndSubmit, 
+			'class': 'post-issue-button'
+		}, {
+			text: "<f:message key='dialog.button.cancel.label'/>",
+			click: function() {
+				$( this )
+					.data('answer', 'cancel')
+					.dialog( 'close' );
+			}
+		}
+	</jsp:attribute>	
  	<jsp:attribute name="additionalSetup">
  		height : 400,
  		width : 550
