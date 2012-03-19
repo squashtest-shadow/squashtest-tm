@@ -38,9 +38,11 @@ import org.hibernate.criterion.Order;
 import org.hibernate.criterion.Restrictions;
 import org.hibernate.type.LongType;
 import org.springframework.stereotype.Repository;
+import org.squashtest.csp.tm.domain.project.Project;
 import org.squashtest.csp.tm.domain.requirement.ExportRequirementData;
 import org.squashtest.csp.tm.domain.requirement.Requirement;
 import org.squashtest.csp.tm.domain.requirement.RequirementCriticality;
+import org.squashtest.csp.tm.domain.requirement.RequirementFolder;
 import org.squashtest.csp.tm.domain.requirement.RequirementLibraryNode;
 import org.squashtest.csp.tm.domain.requirement.RequirementSearchCriteria;
 import org.squashtest.csp.tm.domain.requirement.RequirementVersion;
@@ -51,17 +53,16 @@ import org.squashtest.csp.tm.domain.testcase.TestCase;
 
 @Repository
 public class HibernateRequirementDao extends HibernateEntityDao<Requirement> implements RequirementDao {
-	private static final Map<VerificationCriterion, Object[]> HIBERNATE_RESTRICTION_BY_VERIFICATION_CRITERION = new HashMap<VerificationCriterion, Object[]>(
+	private static final Map<VerificationCriterion, Criterion> HIBERNATE_RESTRICTION_BY_VERIFICATION_CRITERION = new HashMap<VerificationCriterion, Criterion>(
 			VerificationCriterion.values().length);
 
 	static {
-		HIBERNATE_RESTRICTION_BY_VERIFICATION_CRITERION.put(VerificationCriterion.ANY, new Object[] { Resource.class,
-				null }); // yeah, it's a null.
+		HIBERNATE_RESTRICTION_BY_VERIFICATION_CRITERION.put(VerificationCriterion.ANY, null); // yeah, it's a null.
 
-		HIBERNATE_RESTRICTION_BY_VERIFICATION_CRITERION.put(VerificationCriterion.SHOULD_BE_VERIFIED, new Object[] {
-				RequirementVersion.class, Restrictions.isNotEmpty("verifyingTestCases") });
-		HIBERNATE_RESTRICTION_BY_VERIFICATION_CRITERION.put(VerificationCriterion.SHOULD_NOT_BE_VERIFIED, new Object[] {
-				RequirementVersion.class, Restrictions.isEmpty("verifyingTestCases") });
+		HIBERNATE_RESTRICTION_BY_VERIFICATION_CRITERION.put(VerificationCriterion.SHOULD_BE_VERIFIED,
+				Restrictions.isNotEmpty("res.verifyingTestCases"));
+		HIBERNATE_RESTRICTION_BY_VERIFICATION_CRITERION.put(VerificationCriterion.SHOULD_NOT_BE_VERIFIED,
+				Restrictions.isEmpty("res.verifyingTestCases"));
 
 	}
 
@@ -113,15 +114,39 @@ public class HibernateRequirementDao extends HibernateEntityDao<Requirement> imp
 	@SuppressWarnings({ "rawtypes", "unchecked" })
 	@Override
 	public List<RequirementLibraryNode> findAllBySearchCriteria(RequirementSearchCriteria searchCriteria) {
-		DetachedCriteria crit = createCriteria(searchCriteria);
+		List<RequirementLibraryNode> resultList = new ArrayList<RequirementLibraryNode>();
+		// requirements
+		DetachedCriteria requirementCriteria = createRequirementCriteria(searchCriteria);
+		requirementCriteria.addOrder(Order.asc("res.name"));
+		List<RequirementLibraryNode> requirementList = requirementCriteria.getExecutableCriteria(currentSession())
+				.list();
+		resultList.addAll(requirementList);
+		// requirement Folders
+		if (searchCriteria.libeleIsOnlyCriteria()) {
+			DetachedCriteria requirementFolderCriteria = createRequirementFolderCriteria(searchCriteria);
+			requirementFolderCriteria.addOrder(Order.asc("res.name"));
+			List<RequirementLibraryNode> requirementFolderList = requirementFolderCriteria.getExecutableCriteria(
+					currentSession()).list();
+			resultList.addAll(requirementFolderList);
+		}
 
-		crit.addOrder(Order.asc("res.name"));
-
-		return crit.getExecutableCriteria(currentSession()).list();
+		return resultList;
 	}
 
-	private DetachedCriteria createCriteria(RequirementSearchCriteria searchCriteria) {
-		DetachedCriteria versionCriteria = DetachedCriteria.forClass(RequirementLibraryNode.class);
+	private DetachedCriteria createRequirementFolderCriteria(RequirementSearchCriteria searchCriteria) {
+		DetachedCriteria criteria = DetachedCriteria.forClass(RequirementFolder.class);
+		criteria.createCriteria("resource", "res");
+
+		if (StringUtils.isNotBlank(searchCriteria.getName())) {
+			criteria.add(Restrictions.ilike("res.name", searchCriteria.getName(), MatchMode.ANYWHERE));
+		}
+
+		return criteria;
+
+	}
+
+	private DetachedCriteria createRequirementCriteria(RequirementSearchCriteria searchCriteria) {
+		DetachedCriteria versionCriteria = DetachedCriteria.forClass(Requirement.class);
 		versionCriteria.createCriteria("resource", "res");
 
 		if (StringUtils.isNotBlank(searchCriteria.getName())) {
@@ -139,14 +164,9 @@ public class HibernateRequirementDao extends HibernateEntityDao<Requirement> imp
 		return versionCriteria;
 	}
 
-	Class<?> getCriteriaClass(RequirementSearchCriteria searchCriteria) {
-		return (Class<?>) HIBERNATE_RESTRICTION_BY_VERIFICATION_CRITERION
-				.get(searchCriteria.getVerificationCriterion())[0];
-	}
-
 	private void addVerificationRestriction(RequirementSearchCriteria searchCriteria, DetachedCriteria criteria) {
 		Criterion restriction = (Criterion) HIBERNATE_RESTRICTION_BY_VERIFICATION_CRITERION.get(searchCriteria
-				.getVerificationCriterion())[1];
+				.getVerificationCriterion());
 
 		if (restriction != null) {
 			criteria.add(restriction);
@@ -156,12 +176,21 @@ public class HibernateRequirementDao extends HibernateEntityDao<Requirement> imp
 	@SuppressWarnings({ "unchecked", "rawtypes" })
 	@Override
 	public List<RequirementLibraryNode> findAllBySearchCriteriaOrderByProject(RequirementSearchCriteria searchCriteria) {
-		DetachedCriteria crit = createCriteria(searchCriteria);
+		List<RequirementLibraryNode> resultlist = new ArrayList<RequirementLibraryNode>();
 
+		DetachedCriteria crit = createRequirementCriteria(searchCriteria);
 		crit.createAlias("project", "p").addOrder(Order.asc("p.name"));
-		crit.addOrder(Order.asc("name"));
+		crit.addOrder(Order.asc("res.name"));
 
-		return crit.getExecutableCriteria(currentSession()).list();
+		resultlist.addAll(crit.getExecutableCriteria(currentSession()).list());
+		if (searchCriteria.libeleIsOnlyCriteria()) {
+			DetachedCriteria critfolder = createRequirementFolderCriteria(searchCriteria);
+			critfolder.createAlias("project", "p").addOrder(Order.asc("p.name"));
+			critfolder.addOrder(Order.asc("res.name"));
+
+			resultlist.addAll(critfolder.getExecutableCriteria(currentSession()).list());
+		}
+		return resultlist;
 	}
 
 	@Override
@@ -357,19 +386,18 @@ public class HibernateRequirementDao extends HibernateEntityDao<Requirement> imp
 		return query.list();
 
 	}
-	
+
 	@Override
-	public List<RequirementVersion> findVersionsForAll(List<Long> requirementIds){
-		if (! requirementIds.isEmpty()){
+	public List<RequirementVersion> findVersionsForAll(List<Long> requirementIds) {
+		if (!requirementIds.isEmpty()) {
 			Query query = currentSession().getNamedQuery("requirement.findVersionsForAll");
 			query.setParameterList("requirementIds", requirementIds, LongType.INSTANCE);
-			return query.list();		
-		}else{
+			return query.list();
+		} else {
 			return Collections.emptyList();
 		}
-		
+
 	}
-	
 
 	@SuppressWarnings("unchecked")
 	@Override

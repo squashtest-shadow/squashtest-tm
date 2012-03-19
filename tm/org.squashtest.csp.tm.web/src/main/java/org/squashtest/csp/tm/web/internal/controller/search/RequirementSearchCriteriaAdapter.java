@@ -24,6 +24,7 @@ import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
 
+import org.apache.commons.lang.StringUtils;
 import org.squashtest.csp.tm.domain.requirement.RequirementCriticality;
 import org.squashtest.csp.tm.domain.requirement.RequirementSearchCriteria;
 import org.squashtest.csp.tm.domain.requirement.VerificationCriterion;
@@ -73,6 +74,11 @@ public class RequirementSearchCriteriaAdapter implements RequirementSearchCriter
 			return VerificationCriterion.valueOf(params.getVerification());
 		}
 		return null;
+	}
+
+	@Override
+	public boolean libeleIsOnlyCriteria() {
+		return (!StringUtils.isNotBlank(getReference()))&& getCriticalities().isEmpty();
 	}
 
 }

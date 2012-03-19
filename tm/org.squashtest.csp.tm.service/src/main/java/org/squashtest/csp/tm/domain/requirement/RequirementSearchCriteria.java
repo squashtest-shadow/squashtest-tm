@@ -24,36 +24,38 @@ import java.util.Collection;
 
 /**
  * Criteria applied for a Requirement search.
- *
+ * 
  * @author Gregory Fouquet
- *
+ * 
  */
 public interface RequirementSearchCriteria {
 	/**
 	 * Token to be matched by searched Requirements name.
-	 *
+	 * 
 	 * @return
 	 */
 	String getName();
 
 	/**
 	 * Token to be matched by searched Requirements reference.
-	 *
+	 * 
 	 * @return
 	 */
 	String getReference();
 
 	/**
 	 * Criticalities of searched Requirements.
-	 *
+	 * 
 	 * @return List of {@link RequirementCriticality}. Should never return null.
 	 */
 	Collection<RequirementCriticality> getCriticalities();
 
 	/**
 	 * Verification criterion, meaning whether the searched Requirements should be verified by a test case or not.
-	 *
+	 * 
 	 * @return the verification criterion. Should never return null.
 	 */
 	VerificationCriterion getVerificationCriterion();
+
+	boolean libeleIsOnlyCriteria();
 }

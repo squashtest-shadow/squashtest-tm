@@ -34,7 +34,7 @@ import spock.unitils.UnitilsSupport;
 
 @UnitilsSupport
 @Transactional
-class HibernateRequirementDaoIT_Disabled extends DbunitDaoSpecification {
+class HibernateRequirementDaoIT extends DbunitDaoSpecification {
 	@Inject RequirementDao requirementDao
 
 	@DataSet("HibernateRequirementDaoIT.should find requirements by name token.xml")
@@ -56,7 +56,7 @@ class HibernateRequirementDaoIT_Disabled extends DbunitDaoSpecification {
 		given:
 		def req = aLabelBasedCriteria()
 		req.reference >> "token"
-
+		
 		when:
 		def res = requirementDao.findAllBySearchCriteria(req)
 
@@ -77,7 +77,7 @@ class HibernateRequirementDaoIT_Disabled extends DbunitDaoSpecification {
 
 		then:
 		res.size() == 1
-		res[0].id == 30
+		res[0].id == 10
 	}
 
 	@DataSet("HibernateRequirementDaoIT.should find requirements by criticalities.xml")
@@ -148,7 +148,7 @@ class HibernateRequirementDaoIT_Disabled extends DbunitDaoSpecification {
 		RequirementSearchCriteria req = Mock()
 		req.criticalities >> []
 		req.verificationCriterion >> VerificationCriterion.ANY
-
+		req.libeleIsOnlyCriteria() >> true;
 		when:
 		def res = requirementDao.findAllBySearchCriteria(req)
 
@@ -175,7 +175,8 @@ class HibernateRequirementDaoIT_Disabled extends DbunitDaoSpecification {
 		given:
 		def req = aLabelBasedCriteria()
 		req.name >> "token"
-
+		req.libeleIsOnlyCriteria() >> true
+		
 		when:
 		def res = requirementDao.findAllBySearchCriteria(req)
 
