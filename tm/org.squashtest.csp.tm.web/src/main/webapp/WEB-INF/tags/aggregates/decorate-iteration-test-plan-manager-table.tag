@@ -73,6 +73,7 @@
 					checkForbiddenDeletion(data);
 				}
 			});
+			return false; //return false to prevent navigation in page (# appears at the end of the URL)
 		});
 
 	});

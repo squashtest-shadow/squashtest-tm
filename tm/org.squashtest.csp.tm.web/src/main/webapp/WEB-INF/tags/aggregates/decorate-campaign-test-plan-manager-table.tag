@@ -41,8 +41,9 @@
 				type : 'delete',
 				url : '${ campaignUrl }/test-plan/' + trToItemId(this),
 				dataType : 'json',
-				success : refreshTestPlan
+				success : refreshTestPlan		
 			});
+			return false; //return false to prevent navigation in page (# appears at the end of the URL)
 		});
 		<%-- selected test-case removal --%>
 		$( '#${ batchRemoveButtonId }' ).click(function() {
