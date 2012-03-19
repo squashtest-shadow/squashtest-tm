@@ -3,8 +3,8 @@
 	<modelVersion>4.0.0</modelVersion>
 	<parent>
 		<artifactId>squashtest-csp</artifactId>
-		<groupId>org.squashtest.csp</groupId>
-                <version>1.1.0.RC3-SNAPSHOT</version>
+                <groupId>org.squashtest.csp</groupId>
+                <version>1.1.0.RC4-SNAPSHOT</version>
 	</parent>
 
 	<groupId>org.squashtest.csp</groupId>

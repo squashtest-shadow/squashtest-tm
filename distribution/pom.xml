@@ -6,7 +6,7 @@
 	<parent>
 		<artifactId>squashtest-parent-pom</artifactId>
 		<groupId>org.squashtest.csp</groupId>
-		<version>1.1.0.RC3-SNAPSHOT</version>
+		<version>1.1.0.RC4-SNAPSHOT</version>
 		<relativePath>../parent-pom</relativePath>
 	</parent>
 	<artifactId>squashtest-csp-distribution</artifactId>
