@@ -78,6 +78,21 @@
 				}
 			}catch(e){}
 		}
+		function startResumeClassic(jqXHR) {
+			//I shouldn't have to do this, I know, they made me .. :( 
+			// seriously : don't know why but the ajax.done() method above is called even when the check fails (observed with FF 10)
+			// therefore i have to check for jqXHR to be null to make sure the method is not called after a fail
+			if (jqXHR == null) {
+				classicExecution('start-resume');
+			}
+
+		}
+		function startResumeOptimized(jqXHR) {
+			//same as comment above
+			if (jqXHR == null) {
+				$('#start-optimized-button').trigger('click');
+			}
+		}
 	</script>
 	<c:if test="${ statisticsEntity.status == 'READY' }">
 		<f:message var='startResumeLabel'
@@ -101,13 +116,7 @@
 				</li>
 			</ul>
 		</div>
-		<form action="${ runnerUrl }" method="post"
-			name="execute-test-suite-form" target="optimized-execution-runner"
-			style="display: none;">
-			<input type="submit" value='' name="optimized"
-				id="start-optimized-button" /> <input type="hidden" name="mode"
-				value="start-resume" />
-		</form>
+
 		<script>
 			$(function() {
 				$("#start-resume-button").menu({
@@ -133,23 +142,15 @@
 					}
 				};
 			});
-			function startResumeClassic(jqXHR) {
-				//I shouldn't have to do this, I know, they made me .. :( 
-				// seriously : don't know why but the ajax.done() method above is called even when the check fails (observed with FF 10)
-				// therefore i have to check for jqXHR to be null to make sure the method is not called after a fail
-				if (jqXHR == null) {
-					classicExecution('start-resume');
-				}
-
-			}
-			function startResumeOptimized(jqXHR) {
-				//same as comment above
-				if (jqXHR == null) {
-					$('#start-optimized-button').trigger('click');
-				}
-			}
 		</script>
 	</c:if>
+	<form action="${ runnerUrl }" method="post"
+		name="execute-test-suite-form" target="optimized-execution-runner"
+		style="display: none;">
+		<input type="submit" value='' name="optimized"
+			id="start-optimized-button" /> <input type="hidden" name="mode"
+			value="start-resume" />
+	</form>
 	<c:if test="${ statisticsEntity.status != 'READY' }">
 		<a tabindex="0" href="#restart" class="button" id="restart-button"><f:message
 				key='test-suite.execution.restart.label' /> </a>

@@ -45,7 +45,7 @@ function oneShotDialog(dialogTitle, domMessage){
 				jqDialog.dialog('close'); 
 				jqDialog.dialog('destroy');
 				oneShotPopup.remove();
-				this.defer.resolve();
+				defer.resolve();
 			}
 		}]
 			

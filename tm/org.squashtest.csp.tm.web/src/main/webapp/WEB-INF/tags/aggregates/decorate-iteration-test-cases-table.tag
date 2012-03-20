@@ -149,6 +149,7 @@
 					}
 				}
 		});
+		return false; //return false to prevent navigation in page (# appears at the end of the URL)
 	}
 	
 	
@@ -308,6 +309,7 @@
 		<%-- binding the handler managing the collapse/expand test case icon--%>
 		$('#test-plans-table tbody td a.test-case-name-hlink').live('click', function () {
 			toggleExpandIcon(this);
+			return false; //return false to prevent navigation in page (# appears at the end of the URL)
 		} );
 		
 	});
