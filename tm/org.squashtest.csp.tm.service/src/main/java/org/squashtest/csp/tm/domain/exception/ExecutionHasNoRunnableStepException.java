@@ -18,35 +18,25 @@
  *     You should have received a copy of the GNU Lesser General Public License
  *     along with this software.  If not, see <http://www.gnu.org/licenses/>.
  */
-package org.squashtest.csp.tm.domain;
 
-public class ActionException extends RuntimeException implements Internationalizable {
+package org.squashtest.csp.tm.domain.exception;
+
+
+/**
+ * Indicates we tried to run an execution which has no runnable step.
+ * 
+ * @author Gregory Fouquet
+ * 
+ */
+public class ExecutionHasNoRunnableStepException extends RunExecutionException {
+
 
 	/**
 	 * 
 	 */
-	private static final long serialVersionUID = -7715263070633043453L;
-	private static final String GENERIC_ACTION_EXCEPTION_KEY = "json.actionValidationError";
+	private static final long serialVersionUID = -5950946392120066945L;
 
-	public ActionException() {
-
+	public ExecutionHasNoRunnableStepException() {
+		super("Execution has no runnable step");
 	}
-
-	public ActionException(String arg0, Throwable arg1) {
-		super(arg0, arg1);
-	}
-
-	public ActionException(Throwable arg0) {
-		super(arg0);
-	}
-
-	public ActionException(String message) {
-		super(message);
-	}
-
-	@Override
-	public String getI18nKey() {
-		return GENERIC_ACTION_EXCEPTION_KEY;
-	}
-
 }

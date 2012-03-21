@@ -18,35 +18,29 @@
  *     You should have received a copy of the GNU Lesser General Public License
  *     along with this software.  If not, see <http://www.gnu.org/licenses/>.
  */
-package org.squashtest.csp.tm.domain;
 
-public class ActionException extends RuntimeException implements Internationalizable {
+package org.squashtest.csp.tm.domain.exception;
+
+import org.squashtest.csp.tm.domain.ActionException;
+
+/**
+ * Something happened while trying to run an execution.
+ * 
+ * @author Gregory Fouquet
+ * 
+ */
+public abstract class RunExecutionException extends ActionException {
 
 	/**
 	 * 
 	 */
-	private static final long serialVersionUID = -7715263070633043453L;
-	private static final String GENERIC_ACTION_EXCEPTION_KEY = "json.actionValidationError";
+	private static final long serialVersionUID = 6362259582776701922L;
 
-	public ActionException() {
-
-	}
-
-	public ActionException(String arg0, Throwable arg1) {
-		super(arg0, arg1);
-	}
-
-	public ActionException(Throwable arg0) {
-		super(arg0);
-	}
-
-	public ActionException(String message) {
+	/**
+	 * @param message
+	 */
+	public RunExecutionException(String message) {
 		super(message);
-	}
-
-	@Override
-	public String getI18nKey() {
-		return GENERIC_ACTION_EXCEPTION_KEY;
 	}
 
 }

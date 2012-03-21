@@ -22,21 +22,9 @@ package org.squashtest.csp.tm.service;
 
 import org.springframework.transaction.annotation.Transactional;
 import org.squashtest.csp.tm.domain.execution.Execution;
-import org.squashtest.csp.tm.domain.execution.ExecutionStep;
 
 @Transactional
 public interface TestSuiteExecutionProcessingService {
-	/**
-	 * <p>
-	 * will find the first unexecuted step of the execution or return -1<br>
-	 * returns -1 if all steps have a status, or, if there is no steps
-	 * </p>
-	 * 
-	 * @param executionId
-	 * @return the first unexecuted {@linkplain ExecutionStep} or -1
-	 */
-	int findIndexOfFirstUnexecuted(long executionId);
-
 	/**
 	 * <p>
 	 * will delete all existing executions

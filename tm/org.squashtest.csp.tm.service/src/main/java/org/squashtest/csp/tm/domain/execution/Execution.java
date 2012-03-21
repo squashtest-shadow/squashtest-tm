@@ -52,6 +52,8 @@ import org.squashtest.csp.tm.domain.audit.Auditable;
 import org.squashtest.csp.tm.domain.bugtracker.Bugged;
 import org.squashtest.csp.tm.domain.bugtracker.IssueList;
 import org.squashtest.csp.tm.domain.campaign.IterationTestPlanItem;
+import org.squashtest.csp.tm.domain.exception.ExecutionHasNoRunnableStepException;
+import org.squashtest.csp.tm.domain.exception.ExecutionHasNoStepsException;
 import org.squashtest.csp.tm.domain.project.Project;
 import org.squashtest.csp.tm.domain.testcase.TestCase;
 import org.squashtest.csp.tm.domain.testcase.TestCaseExecutionMode;
@@ -266,21 +268,8 @@ public class Execution implements AttachmentHolder, Bugged {
 		return null;
 	}
 
-	/**
-	 * <p>
-	 * return the index of the first step with a running or a ready state.<br>
-	 * Or -1 if there is none or the execution has no steps
-	 * </p>
-	 * 
-	 * @return
-	 */
-	public int findIndexOfFirstUnexecutedStep() {
-		int index = -1;
-		ExecutionStep executionStep = findFirstUnexecutedStep();
-		if (executionStep != null) {
-			index = this.getSteps().indexOf(executionStep);
-		}
-		return index;
+	public boolean hasUnexecutedSteps() {
+		return findFirstUnexecutedStep() != null;
 	}
 
 	/* *************** Attachable implementation ****************** */
@@ -344,4 +333,36 @@ public class Execution implements AttachmentHolder, Bugged {
 		this.testPlan = testPlan;
 	}
 
+	/**
+	 * @return the first step not in success or failure status.
+	 * @throws ExecutionHasNoStepsException
+	 * @throws ExecutionHasNoRunnableStepException
+	 */
+	public ExecutionStep findFirstRunnableStep() throws ExecutionHasNoStepsException,
+			ExecutionHasNoRunnableStepException {
+		// Note : this was transplanted from untested HibernateExecDao method, I'm not sure of biz rules
+		if (steps.isEmpty()) {
+			throw new ExecutionHasNoStepsException();
+		}
+
+		for (ExecutionStep step : steps) {
+			if (step.getExecutionStatus().isNoneOf(ExecutionStatus.SUCCESS, ExecutionStatus.FAILURE)) {
+				return step;
+			}
+		}
+
+		throw new ExecutionHasNoRunnableStepException();
+	}
+
+	/**
+	 * @return the last step of the execution.
+	 * @throws ExecutionHasNoStepsException
+	 *             if there are no steps
+	 */
+	public ExecutionStep getLastStep() throws ExecutionHasNoStepsException {
+		if (steps.isEmpty()) {
+			throw new ExecutionHasNoStepsException();
+		}
+		return steps.get(steps.size() - 1);
+	}
 }

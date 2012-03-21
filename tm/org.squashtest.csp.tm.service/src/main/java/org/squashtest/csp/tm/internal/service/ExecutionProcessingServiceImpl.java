@@ -30,6 +30,8 @@ import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Service;
 import org.squashtest.csp.core.service.security.UserContextService;
 import org.squashtest.csp.tm.domain.campaign.IterationTestPlanItem;
+import org.squashtest.csp.tm.domain.exception.ExecutionHasNoRunnableStepException;
+import org.squashtest.csp.tm.domain.exception.ExecutionHasNoStepsException;
 import org.squashtest.csp.tm.domain.execution.Execution;
 import org.squashtest.csp.tm.domain.execution.ExecutionStatus;
 import org.squashtest.csp.tm.domain.execution.ExecutionStatusReport;
@@ -39,14 +41,6 @@ import org.squashtest.csp.tm.internal.repository.ExecutionStepDao;
 import org.squashtest.csp.tm.service.ExecutionModificationService;
 import org.squashtest.csp.tm.service.ExecutionProcessingService;
 import org.squashtest.csp.tm.service.IterationTestPlanManagerService;
-
-
-
-/*
- * //FIXME : see ci.squashtest.org, task #105
- * 
- * 
- */
 
 
 @Service("squashtest.tm.service.ExecutionProcessingService")
@@ -74,8 +68,17 @@ public class ExecutionProcessingServiceImpl implements ExecutionProcessingServic
 	}
 
 	@Override
-	public ExecutionStep findRunningExecutionStep(Long executionId) {
-		return executionDao.findLastStep(executionId);
+	public ExecutionStep findRunnableExecutionStep(long executionId) throws ExecutionHasNoStepsException {
+		Execution execution = executionDao.findById(executionId);
+		
+		ExecutionStep step;
+		try {
+			step = execution.findFirstRunnableStep();
+		} catch (ExecutionHasNoRunnableStepException e) {
+			step = execution.getLastStep();
+		}
+		
+		return step;
 	}
 
 	@Override
@@ -105,11 +108,6 @@ public class ExecutionProcessingServiceImpl implements ExecutionProcessingServic
 	@Override
 	public Execution findExecution(Long executionId) {
 		return execModService.findExecution(executionId);
-	}
-
-	@Override
-	public int findExecutionRank(Long executionId) {
-		return execModService.findExecutionRank(executionId);
 	}
 
 	@Override

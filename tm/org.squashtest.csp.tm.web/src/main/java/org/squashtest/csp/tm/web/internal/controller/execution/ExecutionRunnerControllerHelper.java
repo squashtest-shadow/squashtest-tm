@@ -52,17 +52,7 @@ public class ExecutionRunnerControllerHelper {
 		FetchStepCommand command = new FetchStepCommand() {
 			@Override
 			public ExecutionStep execute(int stepCount) {
-				if (stepCount == 0) {
-					return null;
-				}
-
-				ExecutionStep executionStep = executionProcessingService.findRunningExecutionStep(executionId);
-
-				if (executionStep == null) {
-					executionStep = executionProcessingService.findStepAt(executionId, stepCount - 1);
-				}
-
-				return executionStep;
+				return executionProcessingService.findRunnableExecutionStep(executionId);
 			}
 		};
 

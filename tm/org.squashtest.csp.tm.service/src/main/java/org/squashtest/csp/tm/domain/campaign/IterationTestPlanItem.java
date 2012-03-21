@@ -105,12 +105,6 @@ public class IterationTestPlanItem {
 		label = testCase.getName();
 	}
 
-	public IterationTestPlanItem(CampaignTestPlanItem campaignItem) {
-		TestCase testCase = campaignItem.getReferencedTestCase();
-		referencedTestCase = testCase;
-		label = testCase.getName();
-	}
-
 	public ExecutionStatus getExecutionStatus() {
 		return executionStatus;
 	}
@@ -278,19 +272,15 @@ public class IterationTestPlanItem {
 	 *         testCase).
 	 */
 	public boolean isExecutableThroughTestSuite() {
-		boolean isExecutableThroughTestSuite = false;
-		// case 1 : has executions and the last one has at least one step unexecuted
-		if (!executions.isEmpty()) {
-			if (executions.get(executions.size() - 1).findFirstUnexecutedStep() != null) {
-				isExecutableThroughTestSuite = true;
-			}
-			// case 2 : has NO execution but is linked to a testCase
+		if (executions.isEmpty()) {
+			return !this.isTestCaseDeleted();
 		} else {
-			if (!this.isTestCaseDeleted()) {
-				isExecutableThroughTestSuite = true;
-			}
+			return isLatestExecutionStillRunning();
 		}
-		return isExecutableThroughTestSuite;
+	}
+
+	private boolean isLatestExecutionStillRunning() {
+		return getLatestExecution().hasUnexecutedSteps();
 	}
 
 	/**
@@ -314,7 +304,7 @@ public class IterationTestPlanItem {
 		this.testSuite = suite;
 	}
 
-	/* package - */void setIteration(Iteration iteration) {
+	/* package */void setIteration(Iteration iteration) {
 		this.iteration = iteration;
 
 	}
@@ -323,7 +313,7 @@ public class IterationTestPlanItem {
 	 * 
 	 * @return the last {@linkplain Execution} or null if there is none
 	 */
-	public Execution getLastExecution() {
+	public Execution getLatestExecution() {
 		if (!executions.isEmpty()) {
 			return executions.get(executions.size() - 1);
 		}

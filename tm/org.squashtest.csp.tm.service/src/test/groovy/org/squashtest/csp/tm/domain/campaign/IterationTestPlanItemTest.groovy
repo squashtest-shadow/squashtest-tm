@@ -27,6 +27,7 @@ import org.squashtest.csp.tm.domain.execution.ExecutionStatus
 import org.squashtest.csp.tm.domain.testcase.TestCase
 import org.squashtest.csp.tm.domain.users.User
 import org.squashtest.csp.tm.internal.service.TestCaseCyclicCallChecker
+import org.squashtest.csp.tm.internal.service.CampaignTestPlanManagerServiceImplTest.MockTC;
 
 import spock.lang.Specification
 
@@ -144,4 +145,41 @@ public class IterationTestPlanItemTest extends Specification {
 		res.referencedTestCase == item.referencedTestCase
 		res.testPlan == item
 	}
+	
+	def "item without test case should not be executable through suite"() {
+		given: 
+		IterationTestPlanItem item = new IterationTestPlanItem()
+		
+		expect:
+		!item.isExecutableThroughTestSuite()
+	}
+	
+	def "item without running execution should not be executable through suite"() {
+		given:
+		TestCase testCase = Mock()
+		IterationTestPlanItem item = new IterationTestPlanItem(testCase)
+		
+		and: 
+		Execution exec = Mock()
+		exec.executionStatus >> ExecutionStatus.FAILURE
+		item.executions << exec
+		
+		expect:
+		!item.isExecutableThroughTestSuite()
+	}
+
+	def "item with running execution should not executable through suite"() {
+		given:
+		TestCase testCase = Mock()
+		IterationTestPlanItem item = new IterationTestPlanItem(testCase)
+		
+		and:
+		Execution exec = Mock()
+		exec.executionStatus >> ExecutionStatus.RUNNING
+		item.executions << exec
+		
+		expect:
+		!item.isExecutableThroughTestSuite()
+	}
+
 }

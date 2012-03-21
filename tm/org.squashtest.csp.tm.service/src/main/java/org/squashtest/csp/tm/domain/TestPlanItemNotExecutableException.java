@@ -29,11 +29,11 @@ public class TestPlanItemNotExecutableException extends ActionException {
 	private static final String ERROR_MESSAGE_KEY = "squashtm.action.exception.cannotcreateexecution.label";
 	
 	
-	public TestPlanItemNotExecutableException(Exception ex){
+	public TestPlanItemNotExecutableException(Exception ex) {
 		super(ex);
 	}
 	
-	public TestPlanItemNotExecutableException(String message){
+	public TestPlanItemNotExecutableException(String message) {
 		super(message);
 	}
 	

@@ -23,47 +23,38 @@ package org.squashtest.csp.tm.service;
 import java.util.List;
 
 import org.springframework.transaction.annotation.Transactional;
+import org.squashtest.csp.tm.domain.exception.ExecutionHasNoStepsException;
 import org.squashtest.csp.tm.domain.execution.Execution;
 import org.squashtest.csp.tm.domain.execution.ExecutionStatus;
 import org.squashtest.csp.tm.domain.execution.ExecutionStatusReport;
 import org.squashtest.csp.tm.domain.execution.ExecutionStep;
-
 
 @Transactional
 public interface ExecutionProcessingService {
 
 	Execution findExecution(Long executionId);
 
-	/**
-	 * @deprecated dead code ?
-	 * @param executionId
-	 * @return
-	 */
-	@Deprecated
-	int findExecutionRank(Long executionId);
-
-
 	ExecutionStep findExecutionStep(Long executionStepId);
 
 	/**
-	 *
+	 * 
 	 * @param executionId
 	 * @return the first occurence of a running or ready ExecutionStep
 	 */
-	ExecutionStep findRunningExecutionStep(Long executionId);
+	@Transactional(readOnly = true)
+	ExecutionStep findRunnableExecutionStep(long executionId) throws ExecutionHasNoStepsException;
 
 	List<ExecutionStep> getExecutionSteps(Long executionId);
 
-
-
 	/**
-	 * Returns, for a given execution and for a given step index, the corresponding ExecutionStep
-	 * Will create the next step if the index corresponds to the one immediately following the last step, similarly to "nextExecutionStep"
-	 *
+	 * Returns, for a given execution and for a given step index, the corresponding ExecutionStep Will create the next
+	 * step if the index corresponds to the one immediately following the last step, similarly to "nextExecutionStep"
+	 * 
 	 * @param executionId
 	 * @param executionStepRank
 	 * @return
 	 */
+	@Transactional(readOnly = true)
 	ExecutionStep findStepAt(long executionId, int executionStepIndex);
 
 	/***
@@ -72,8 +63,11 @@ public interface ExecutionProcessingService {
 	 * * execution status update<br>
 	 * * item test plan status update<br>
 	 * * last execution date and user update for step, execution and item test plan<br>
-	 * @param executionStepId the step id
-	 * @param status the new status
+	 * 
+	 * @param executionStepId
+	 *            the step id
+	 * @param status
+	 *            the new status
 	 */
 	void setExecutionStepStatus(Long executionStepId, ExecutionStatus status);
 
@@ -84,7 +78,6 @@ public interface ExecutionProcessingService {
 	ExecutionStatusReport getExecutionStatusReport(Long executionId);
 
 	void setExecutionStepComment(Long executionStepId, String comment);
-
 
 	int findExecutionStepRank(Long executionStepId);
 

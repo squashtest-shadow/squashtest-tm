@@ -229,45 +229,6 @@ class ExecutionModificationServiceIT extends HibernateServiceSpecification {
 		then :
 		thrown(IndexOutOfBoundsException)
 	}
-	/*
-	 * 
-	 * unimplemented for now 	
-	 def "should return execution status READY"(){
-	 given :
-	 iterService.addExecution(iterationId, testPlanId);
-	 def execList = iterService.findAllExecutions(iterationId)
-	 def execution = execList.get(execList.size()-1)
-	 when :
-	 def executionSteps = []
-	 executionSteps << procservice.nextExecutionStep(execution.id)
-	 executionSteps << procservice.nextExecutionStep(execution.id)
-	 executionSteps << procservice.nextExecutionStep(execution.id)
-	 executionSteps << procservice.nextExecutionStep(execution.id)
-	 executionSteps << procservice.nextExecutionStep(execution.id)
-	 Execution execution2 = execService.findAndInitExecution(execution.id)
-	 def status = execution2.getExecutionStatus();
-	 then :
-	 status = ExecutionStatus.READY;
-	 }
-	 def "should return execution status BLOCKED"(){
-	 given :
-	 iterService.addExecution(iterationId, testPlanId);
-	 def execList = iterService.findAllExecutions(iterationId)
-	 def execution = execList.get(execList.size()-1)
-	 when :
-	 def executionSteps = []
-	 executionSteps << procservice.nextExecutionStep(execution.id)
-	 executionSteps << procservice.nextExecutionStep(execution.id)
-	 executionSteps << procservice.nextExecutionStep(execution.id)
-	 executionSteps << procservice.nextExecutionStep(execution.id)
-	 executionSteps << procservice.nextExecutionStep(execution.id)
-	 procservice.setExecutionStepStatus(executionSteps.get(2).getId(), ExecutionStatus.BLOCKED)
-	 Execution execution2 = execService.findAndInitExecution(execution.id)
-	 def status = execution2.getExecutionStatus();
-	 then :
-	 status = ExecutionStatus.READY;
-	 }
-	 */	
 
 	def "should update execution dscription"(){
 
@@ -339,7 +300,7 @@ class ExecutionModificationServiceIT extends HibernateServiceSpecification {
 
 		when :
 
-		def lastOne = procservice.findRunningExecutionStep (execution.id)
+		def lastOne = procservice.findRunnableExecutionStep(execution.id)
 
 
 		then :

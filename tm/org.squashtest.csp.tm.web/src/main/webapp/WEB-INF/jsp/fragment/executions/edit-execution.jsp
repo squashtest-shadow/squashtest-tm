@@ -45,29 +45,17 @@
 	<c:set var="editable" value="${ true }" /> 
 </authz:authorized>
 
-
 <script type="text/javascript" src="${ pageContext.servletContext.contextPath }/scripts/jquery/jquery.dateformat.js"></script>
-
 
 <%-------------------------- urls ------------------------------%>
 
-
 <c:url var="ckeConfigUrl" value="/styles/ckeditor/ckeditor-config.js" />
 
-<s:url var="executionUrl" value="/executions/{execId}">
-	<s:param name="execId" value="${execution.id}" />
-</s:url>
+<c:url var="executionUrl" value="/executions/${execution.id}" />
+<c:url var="runnerUrl" value="/executions/${execution.id}/runner" />
 
 <s:url var="executionInfoUrl" value="/executions/{execId}/general">
 	<s:param name="execId" value="${execution.id}" />
-</s:url>
-
-<s:url var="executeExecutionUrl" value="/execute/{execId}">
-	<s:param name="execId" value="${execution.id}"/>
-</s:url>
-
-<s:url var="ieoExecutionUrl" value="/execute/{execId}/ieo">
-	<s:param name="execId" value="${execution.id}"/>
 </s:url>
 
 <s:url var="executionStepsUrl" value="/executions/{execId}/steps">
@@ -80,19 +68,8 @@
 	<s:param name="id" value="${execution.id}"/>
 </s:url>
 
-
-
 <%-------------------------- /urls ------------------------------%>
-
 <script type="text/javascript">
-
-	/* simple initialization for simple components */
-	$(function(){
-		$('#delete-execution-button').button();
-		$('#execute-execution-button').button();
-		$('#ieo-execution-button').button();
-	});
-	
 	/* display the execution name. Used for extern calls (like from the page who will include this fragment)
 	*  will refresh the general informations as well*/
 	function nodeSetName(name){
@@ -110,35 +87,78 @@
 	/* deletion success handler */
 	function deleteExecutionSuccess(){
 		$( '#delete-execution-confirm' ).dialog( 'close' );
-		document.location.href="${parentUrl}" ;				
+		document.location.href="${ parentUrl }" ;				
 	}
 	
 	/* deletion failure handler */
 	function deleteExecutionFailure(xhr){
 		alert(xhr.statusText);		
 	}
-</script>
 
-<script type="text/javascript">
+	/* simple initialization for simple components */
 	$(function(){
+		$('#delete-execution-button').button();
+
 		$("#back").button().click(function(){
-			//document.location.href="${referer}";
 			history.back();
 		});
 		
-		$("#execute-execution-button").click(function(){
-			var url="${executeExecutionUrl}";
-			popup = window.open(url,"test", "height=500, width=600, resizable, scrollbars, dialog, alwaysRaised");
-		});
+		var dryRunStart = function() {
+			return $.ajax({
+				url: '${ runnerUrl }', 
+				method: 'get', 
+				dataType: 'json', 
+				data: {
+					'dry-run': ''
+				}
+			});
+		};
 		
-		$("#ieo-execution-button").click(function(){
-			var url="${ieoExecutionUrl}";
-			newWindow = window.open(url,"test");
-		});
+		var startResumeClassic = function() {
+			var url = "${ runnerUrl }";
+			var data = {
+				'classic' : ''
+			};
+			var winDef = {
+				name : "classic-execution-runner",
+				features : "height=500, width=600, resizable, scrollbars, dialog, alwaysRaised"
+			};
+			$.open(url, data, winDef);
+		};
+	
+		var startResumeOptimized = function() {
+			$('#start-optimized-button').trigger('click');
+		};
+		
+		var notStartable = function(xhr) {
+			var json = jQuery.parseJSON(xhr.responseText);
+			if (json != null && json.actionValidationError != null) {
+				var message = "<p><f:message key='test-plan-item.execution.error.message-start' />";
+				message += '<ul>'
+				if (json.actionValidationError.exception === "ExecutionHasNoStepsException") {
+					message += "<li> <f:message key='test-plan-item.execution.error.no-steps' /></li>";
+				} else {
+					message += json.actionValidationError.message
+				}
+				message += '</ul></p>'
+				oneShotDialog('<f:message key="popup.title.error" />', message);
+			}
+		};
+		
+		$("#execute-execution-button").button()
+			.click(function(){
+				dryRunStart()
+					.done(startResumeClassic)
+					.fail(notStartable);
+			});
+		
+		$("#ieo-execution-button").button()
+			.click(function(){
+				dryRunStart()
+					.done(startResumeOptimized)
+					.fail(notStartable);
+			});
 	});
-</script>
-
-<script type="text/javascript">
 
 	/* ******** step datatable additional javascript *** */
 	
@@ -194,8 +214,6 @@
 			var esId = data[0];	
 			var columnComment = $("td:eq(6)", this);
 			turnToEditable(columnComment,"comment",esId);
-
-			
 		});
 
 	}
@@ -274,6 +292,9 @@
 		</c:choose>
 		<c:if test="${ editable }">
 			<input type="button" value="<f:message key="execution.execute.IEO.button.label" />" id="ieo-execution-button"/>
+			<form action="${ runnerUrl }" method="post" name="execute-test-case-form" target="optimized-execution-runner" class="not-displayed">
+				<input type="submit" value='' name="optimized" id="start-optimized-button" />
+			</form>
 			<input type="button" value="${executeBtnLabel}" id="execute-execution-button"/>
 			<%--
 			<input type="button" value='<f:message key="execution.execute.remove.button.label" />' id="delete-execution-button" />

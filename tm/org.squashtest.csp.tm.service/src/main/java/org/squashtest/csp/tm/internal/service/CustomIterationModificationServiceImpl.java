@@ -95,11 +95,11 @@ public class CustomIterationModificationServiceImpl implements CustomIterationMo
 
 		// copy the campaign test plan in the iteration
 
-		List<CampaignTestPlanItem> tcList = campaign.getTestPlan();
+		List<CampaignTestPlanItem> campaignTestPlan = campaign.getTestPlan();
 
-		for (CampaignTestPlanItem tc : tcList) {
-			IterationTestPlanItem iterTP = new IterationTestPlanItem(tc);
-			iteration.addTestPlan(iterTP);
+		for (CampaignTestPlanItem campaignItem : campaignTestPlan) {
+			IterationTestPlanItem iterationItem = new IterationTestPlanItem(campaignItem.getReferencedTestCase());
+			iteration.addTestPlan(iterationItem);
 		}
 		iterationDao.persistIterationAndTestPlan(iteration);
 		campaign.addIteration(iteration);

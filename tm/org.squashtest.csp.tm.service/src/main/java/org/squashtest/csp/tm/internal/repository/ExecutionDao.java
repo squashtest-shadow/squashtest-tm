@@ -27,25 +27,20 @@ import org.squashtest.csp.tm.domain.execution.ExecutionStatusReport;
 import org.squashtest.csp.tm.domain.execution.ExecutionStep;
 import org.squashtest.csp.tm.infrastructure.filter.CollectionFilter;
 
-
-
 public interface ExecutionDao extends EntityDao<Execution> {
-	
-	List<ExecutionStep> findExecutionSteps(long executionId); 
-		
+
+	List<ExecutionStep> findExecutionSteps(long executionId);
+
 	Execution findAndInit(long executionId);
-	
-	ExecutionStep findLastStep(long executionId);
-	
+
 	int findExecutionRank(long executionId);
-	
+
 	ExecutionStatusReport getStatusReport(long executionId);
-	
+
 	Integer countSuccess(long executionId);
-	
+
 	Integer countReady(long executionId);
-	
-	List<ExecutionStep> findStepsFiltered(Long executionId,
-			CollectionFilter filter);	
-	
+
+	List<ExecutionStep> findStepsFiltered(Long executionId, CollectionFilter filter);
+
 }

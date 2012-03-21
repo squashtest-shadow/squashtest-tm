@@ -30,7 +30,6 @@ import org.springframework.transaction.annotation.Transactional;
 import org.squashtest.csp.tm.domain.campaign.IterationTestPlanItem;
 import org.squashtest.csp.tm.domain.campaign.TestSuite;
 import org.squashtest.csp.tm.domain.execution.Execution;
-import org.squashtest.csp.tm.internal.repository.ExecutionDao;
 import org.squashtest.csp.tm.internal.repository.TestSuiteDao;
 import org.squashtest.csp.tm.internal.service.campaign.IterationTestPlanManager;
 import org.squashtest.csp.tm.service.TestSuiteExecutionProcessingService;
@@ -44,8 +43,6 @@ public class TestSuiteExecutionProcessingServiceImpl implements TestSuiteExecuti
 	private static final String CAN_WRITE_BY_CAMPAIGN_ID = "hasPermission(#testSuiteId, 'org.squashtest.csp.tm.domain.campaign.TestSuite', 'WRITE') or hasRole('ROLE_ADMIN')";
 	@Inject
 	private TestSuiteDao suiteDao;
-	@Inject
-	private ExecutionDao executionDao;
 	@Inject
 	private CampaignNodeDeletionHandler campaignDeletionHandler;
 	@Inject
@@ -68,17 +65,6 @@ public class TestSuiteExecutionProcessingServiceImpl implements TestSuiteExecuti
 	}
 
 	/**
-	 * @see org.squashtest.csp.tm.service.TestSuiteExecutionProcessingService#findIndexOfFirstUnexecuted(long, long)
-	 */
-	@Override
-	@PreAuthorize("hasPermission(#executionId, 'org.squashtest.csp.tm.domain.execution.Execution', 'READ') "
-			+ "or hasRole('ROLE_ADMIN')")
-	public int findIndexOfFirstUnexecuted(long executionId) {
-		Execution execution = executionDao.findById(executionId);
-		return execution.findIndexOfFirstUnexecutedStep();
-	}
-
-	/**
 	 * if has executions: will return last execution if not terminated,<br>
 	 * if has no execution and is not test-case deleted : will return new execution<br>
 	 * else will return null
@@ -91,7 +77,8 @@ public class TestSuiteExecutionProcessingServiceImpl implements TestSuiteExecuti
 	private Execution findUnexecutedOrCreateExecution(IterationTestPlanItem testPlanItem) {
 		Execution executionToReturn = null;
 		if (testPlanItem.isExecutableThroughTestSuite()) {
-			executionToReturn = testPlanItem.getLastExecution();
+			executionToReturn = testPlanItem.getLatestExecution();
+			
 			if (executionToReturn == null) {
 				executionToReturn = testPlanManager.addExecution(testPlanItem);
 			}

@@ -70,19 +70,6 @@ public class HibernateExecutionDao extends HibernateEntityDao<Execution> impleme
 	}
 
 	@Override
-	public ExecutionStep findLastStep(long executionId) {
-		Execution execution = findById(executionId);
-		for (ExecutionStep step : execution.getSteps()) {
-			if (step.getExecutionStatus() != ExecutionStatus.SUCCESS
-					&& step.getExecutionStatus() != ExecutionStatus.FAILURE) {
-				return step;
-			}
-		}
-
-		return null;
-	}
-
-	@Override
 	public int findExecutionRank(long executionId) {
 		IterationTestPlanItem testPlan = (IterationTestPlanItem) currentSession().createCriteria(IterationTestPlanItem.class)
 				.createCriteria("executions").add(Restrictions.eq("id", executionId)).uniqueResult();
