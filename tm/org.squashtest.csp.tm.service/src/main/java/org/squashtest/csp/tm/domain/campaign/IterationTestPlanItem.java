@@ -120,6 +120,7 @@ public class IterationTestPlanItem {
 	public void updateExecutionStatus() {
 		int iIndexLastExec = executions.size();
 		if (iIndexLastExec == 0) {
+			executionStatus = ExecutionStatus.READY;
 			return;
 		}
 		Execution execution = executions.get(iIndexLastExec - 1);
