@@ -484,4 +484,77 @@ class TestSuiteTest extends Specification {
 
 		return testSuite
 	}
+	def "item should not be the first executable of test plan"() {
+		given:
+		TestSuite testSuite = aSuiteWithExecutableItems(10L, 20L)
+
+		when:
+		def res = testSuite.isFirstExecutableTestPlanItem(20L)
+
+		then:
+		res == false
+	}
+
+	def "item should be the first of test plan"() {
+		given:
+		TestSuite testSuite = aSuiteWithExecutableItems(10L, 20L)
+
+		when:
+		def res = testSuite.isFirstExecutableTestPlanItem(10L)
+
+		then:
+		res == true
+	}
+
+	def "item should be the first executable of test plan"() {
+		given:
+		TestSuite testSuite = new TestSuite()
+		Iteration iteration = new Iteration()
+		testSuite.setIteration(iteration)
+
+		and:
+		IterationTestPlanItem otherItem = new IterationTestPlanItem(Mock(TestCase))
+		iteration.addTestPlan(otherItem)
+		otherItem.setTestSuite(testSuite)
+		use (ReflectionCategory) {
+			IterationTestPlanItem.set field: "id", of: otherItem, to: 20L
+			IterationTestPlanItem.set field: "referencedTestCase", of: otherItem, to: null
+		}
+
+		and:
+			IterationTestPlanItem item = new IterationTestPlanItem(Mock(TestCase))
+		use (ReflectionCategory) {
+			IterationTestPlanItem.set field: "id", of: item, to: 10L
+		}
+		iteration.addTestPlan(item)
+		item.setTestSuite(testSuite)
+		
+		when:
+		def res = testSuite.isFirstExecutableTestPlanItem(10L)
+
+		then:
+		res == true
+	}
+
+	def "wrong item should not be the first of test plan"() {
+		given:
+		TestSuite testSuite = new TestSuite()
+		Iteration iteration = new Iteration()
+		testSuite.setIteration(iteration)
+
+		and:
+		IterationTestPlanItem item = new IterationTestPlanItem(Mock(TestCase))
+		use (ReflectionCategory) {
+			IterationTestPlanItem.set field: "id", of: item, to: 10L
+		}
+		iteration.addTestPlan(item)
+		item.setTestSuite(testSuite)
+
+		when:
+		def res = testSuite.isFirstExecutableTestPlanItem(30L)
+
+		then:
+		res == false
+	}
+
 }

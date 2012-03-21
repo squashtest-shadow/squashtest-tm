@@ -20,7 +20,6 @@
  */
 package org.squashtest.csp.tm.domain.campaign;
 
-import java.util.ArrayList;
 import java.util.LinkedList;
 import java.util.List;
 
@@ -281,16 +280,19 @@ public class TestSuite {
 		return false;
 	}
 
-	//Determines if the item is the first of the test plan of the test suite
+	/**
+	 * Determines if the item is the first of the test plan of the test suite
+	 */
 	public boolean isFirstExecutableTestPlanItem(long itemId) {
 		List<IterationTestPlanItem> testPlanInIteration = iteration.getTestPlans();
-		List<IterationTestPlanItem> testPlanInTestSuite = new ArrayList<IterationTestPlanItem>();
+		
 		for (IterationTestPlanItem iterationTestPlanItem : testPlanInIteration) {
-			if (iterationTestPlanItem.getTestSuite() != null && iterationTestPlanItem.getTestSuite().getId() == getId()) {
-				testPlanInTestSuite.add(iterationTestPlanItem);
+			if (boundToThisSuite(iterationTestPlanItem) && iterationTestPlanItem.isExecutableThroughTestSuite()) {
+				return itemId == iterationTestPlanItem.getId();
 			}
 		}
-		return itemId == testPlanInTestSuite.get(0).getId();
+		
+		return false;
 	}
 
 	/**
