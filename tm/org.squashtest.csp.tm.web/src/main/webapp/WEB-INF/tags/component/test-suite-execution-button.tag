@@ -144,12 +144,9 @@
 			});
 		</script>
 	</c:if>
-	<form action="${ runnerUrl }" method="post"
-		name="execute-test-suite-form" target="optimized-execution-runner"
-		style="display: none;">
-		<input type="submit" value='' name="optimized"
-			id="start-optimized-button" /> <input type="hidden" name="mode"
-			value="start-resume" />
+	<form action="${ runnerUrl }" method="post" name="execute-test-suite-form" target="optimized-execution-runner" class="not-displayed">
+		<input type="submit" value='' name="optimized" id="start-optimized-button" />
+		<input type="hidden" name="mode" value="start-resume" />
 	</form>
 	<c:if test="${ statisticsEntity.status != 'READY' }">
 		<a tabindex="0" href="#restart" class="button" id="restart-button"><f:message
@@ -164,13 +161,6 @@
 				</li>
 			</ul>
 		</div>
-		<form action="${ runnerUrl }" method="post"
-			name="execute-test-suite-form" target="optimized-execution-runner"
-			style="display: none;">
-			<input type="submit" value="" name="optimized"
-				id="restart-optimized-button" /> <input type="hidden" name="mode"
-				value="restart" />
-		</form>
 		<div id="confirm-restart-dialog" class="not-displayed popup-dialog"
 			title="<f:message key='test-suite.execution.restart.title' />">
 			<input id="restart-mode" type="hidden" value="classic" /> <span><f:message
