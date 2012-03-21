@@ -40,7 +40,7 @@
 
 <br />
 
-<c:if test="${ icon == 'Requirement' }">
+<c:if test="${ icon == 'Requirement'  }">
 	<comp:decorate-ajax-search-table tableId="search-result-datatable">
 		<jsp:attribute name="initialSort">[[4,'asc']]</jsp:attribute>
 		<jsp:attribute name="columnDefs">
@@ -52,7 +52,7 @@
 		</jsp:attribute>
 	</comp:decorate-ajax-search-table>
 </c:if>
-<c:if test="${ icon != 'Requirement' }">
+<c:if test="${ icon == 'TestCase' || icon == 'ExpandedTestCase'}">
 	<comp:decorate-ajax-search-table tableId="search-result-datatable">
 		<jsp:attribute name="initialSort">[[2,'asc']]</jsp:attribute>
 		<jsp:attribute name="columnDefs">
@@ -63,13 +63,21 @@
 		</jsp:attribute>
 	</comp:decorate-ajax-search-table>
 </c:if>
-
+<c:if test="${ icon == 'Campaign' }">
+	<comp:decorate-ajax-search-table tableId="search-result-datatable">
+		<jsp:attribute name="initialSort">[[2,'asc']]</jsp:attribute>
+		<jsp:attribute name="columnDefs">
+			<dt:column-definition targets="0" sortable="false" visible="false" />
+			<dt:column-definition targets="1" sortable="false" visible="true" />
+		</jsp:attribute>
+	</comp:decorate-ajax-search-table>
+</c:if>
 <table id="search-result-datatable">
 	<thead>
 		<tr>
 			<th>Id</th>
 			<th><f:message key="${workspace}.header.title" />s</th>
-			<c:if test="${ icon != 'Requirement' }">
+			<c:if test="${ icon == 'TestCase' || icon == 'ExpandedTestCase' }">
 				<th><f:message key="test-case.importance.combo.label" /></th>
 			</c:if>
 			<c:if test="${ icon == 'Requirement' }">
@@ -87,8 +95,7 @@
 				<c:choose>
 					<c:when test="${'Requirement' == icon }">
 						<c:choose>
-							<c:when
-								test="${'Requirement' == object.class.simpleName}">
+							<c:when test="${'Requirement' == object.class.simpleName}">
 								<td class="objectId">${object.id}</td>
 								<td id="searchnode-${object.class.simpleName}-${object.id}"
 									class="non-tree requirement-${object.criticality}"
@@ -97,8 +104,7 @@
 										class="search-image"
 										src="${servContext}/images/Icon_Tree_${icon}.png" /> <span
 										class="search-text">${object.reference}-${object.name}</span>
-								</a>
-								</td>
+								</a></td>
 								<td>${object.criticality}</td>
 								<td>${object.reference}</td>
 								<td>${object.name}</td>
@@ -118,18 +124,30 @@
 							</c:when>
 						</c:choose>
 					</c:when>
-					<c:when test="${object.class.simpleName== 'TestCase'}"><td class="objectId">${object.id}</td>
-								<td id="searchnode-${object.class.simpleName}-${object.id}"
-									class="non-tree" style="border: none;"><a href="#"
-									style="text-decoration: none; border: none;"> <img
-										class="search-image"
-										src="${servContext}/images/Icon_Tree_${icon}.png" /> <span
-										class="search-text">${object.name}</span> </a>
-								</td>
-								<td>
-									<%-- assuming this case is REALLY test case --%> <f:message
-										key="${object.importance.i18nKey}" />
-								</td></c:when>
+					<c:when
+						test="${object.class.simpleName == 'TestCase' || object.class.simpleName == 'ExpandedTestCase' }">
+						<td class="objectId">${object.id}</td>
+						<td id="searchnode-${object.class.simpleName}-${object.id}"
+							class="non-tree" style="border: none;"><a href="#"
+							style="text-decoration: none; border: none;"> <img
+								class="search-image"
+								src="${servContext}/images/Icon_Tree_${icon}.png" /> <span
+								class="search-text">${object.name}</span> </a>
+						</td>
+						<td><f:message key="${object.importance.i18nKey}" />
+						</td>
+					</c:when>
+					<c:when test="${object.class.simpleName== 'Campaign'}">
+						<td class="objectId">${object.id}</td>
+						<td id="searchnode-${object.class.simpleName}-${object.id}"
+							class="non-tree" style="border: none;"><a href="#"
+							style="text-decoration: none; border: none;"> <img
+								class="search-image"
+								src="${servContext}/images/Icon_Tree_${icon}.png" /> <span
+								class="search-text">${object.name}</span> </a>
+						</td>
+
+					</c:when>
 					<c:when test="${object.class.simpleName== 'Iteration'}">
 						<td class="objectId">${object.id}</td>
 						<td id="searchnode-${object.class.simpleName}-${object.id}"
@@ -139,7 +157,7 @@
 								src="${servContext}/images/Icon_Tree_Iteration.png" /> <span
 								class="search-text">${object.name}</span> </a>
 						</td>
-						<td>---</td>
+
 					</c:when>
 					<c:otherwise>
 						<td class="objectId">${object.id}</td>
@@ -150,7 +168,9 @@
 								src="${servContext}/images/Icon_Tree_Folder.png" /> <span
 								class="search-text">${object.name}</span> </a>
 						</td>
-						<td>---</td>
+						<c:if test="${ icon == 'TestCase' || icon == 'ExpandedTestCase'}">
+							<td>&nbsp;</td>
+						</c:if>
 						<c:if test="${ icon == 'Requirement' }">
 							<td>&nbsp;</td>
 							<td>&nbsp;</td>
