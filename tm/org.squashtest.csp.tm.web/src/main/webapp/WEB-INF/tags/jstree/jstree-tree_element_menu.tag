@@ -34,10 +34,10 @@
 	<div class="not-displayed" >
 	<div id="tree-create-menu" >
 	<ul>
-		<li><a class="new-folder-tree-button menu-disabled" href="#"><fmt:message key="tree.button.new-folder.label" />...</a></li>
-		<li><a class="new-leaf-tree-button menu-disabled" href="#"><fmt:message key="${newLeafButtonMessage}" />...</a></li>
+		<li><a class="new-folder-tree-button menu-disabled" href="JavaScript:void(0);"><fmt:message key="tree.button.new-folder.label" />...</a></li>
+		<li><a class="new-leaf-tree-button menu-disabled" href="JavaScript:void(0);"><fmt:message key="${newLeafButtonMessage}" />...</a></li>
 		<c:if test="${ workspace == 'campaign' }">
-		<li><a class="new-resource-tree-button menu-disabled" href="#"><fmt:message key="${newResourceButtonMessage}" />...</a></li>
+		<li><a class="new-resource-tree-button menu-disabled" href="JavaScript:void(0);"><fmt:message key="${newResourceButtonMessage}" />...</a></li>
 		</c:if>
 	</ul>
 	</div>
@@ -47,10 +47,10 @@
 	<div class="not-displayed" >
 	<div id="tree-action-menu" >
 	<ul>
-		<li><a class="copy-node-tree-button menu-disabled" href="#"><fmt:message key="tree.button.copy-node.label" /></a></li>
-		<li><a class="paste-node-tree-button menu-disabled" href="#"><fmt:message key="tree.button.paste-node.label" /></a></li>
-		<li><a class="rename-node-tree-button menu-disabled" href="#"><fmt:message key="tree.button.rename-node.label" />...</a></li>
-		<li><a class="delete-node-tree-button menu-disabled" href="#"><fmt:message key="tree.button.delete.label" />...</a></li>
+		<li><a class="copy-node-tree-button menu-disabled" href="JavaScript:void(0);"><fmt:message key="tree.button.copy-node.label" /></a></li>
+		<li><a class="paste-node-tree-button menu-disabled" href="JavaScript:void(0);"><fmt:message key="tree.button.paste-node.label" /></a></li>
+		<li><a class="rename-node-tree-button menu-disabled" href="JavaScript:void(0);"><fmt:message key="tree.button.rename-node.label" />...</a></li>
+		<li><a class="delete-node-tree-button menu-disabled" href="JavaScript:void(0);"><fmt:message key="tree.button.delete.label" />...</a></li>
 	</ul>
 	</div>
 	</div>	
@@ -61,7 +61,7 @@
 	<div class="not-displayed" >
 	<div id="tree-import-menu" >
 	<ul>
-		<li><a class="import-excel-tree-button" href="#"><fmt:message key="tree.button.import-excel.label" /></a></li>
+		<li><a class="import-excel-tree-button" href="JavaScript:void(0);"><fmt:message key="tree.button.import-excel.label" /></a></li>
 	</ul>
 	</div>
 	</div>	
