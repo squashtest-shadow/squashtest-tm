@@ -40,5 +40,5 @@
 	<tbody><%-- Will be populated through ajax --%></tbody>
 </table>
 	<div id="test-case-row-buttons" class="not-displayed">
-	<a id="delete-test-suite-test-plan-button" href="#" class="delete-test-suite-test-plan-button"><f:message key="dialog.remove-testcase-association.title" /></a>
+	<a id="delete-test-suite-test-plan-button" href="#" class="delete-test-suite-test-plan-button"><f:message key="dialog.remove-testcase-testsuite-association.title2" /></a>
 </div> 
