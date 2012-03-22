@@ -129,10 +129,6 @@ public class Execution implements AttachmentHolder, Bugged {
 
 	}
 
-	public Execution(String description) {
-		this.description = description;
-	}
-
 	/**
 	 * Creates an execution for the test case references by the given tess plan item. Should be used by
 	 * {@link IterationTestPlanItem} only.
@@ -200,8 +196,16 @@ public class Execution implements AttachmentHolder, Bugged {
 	private void setReferencedTestCase(TestCase testCase) {
 		referencedTestCase = testCase;
 		executionMode = testCase.getExecutionMode();
-		setPrerequisite(testCase.getPrerequisite());
+
 		setName(testCase.getName());
+		
+		nullSafeSetPrerequisite(testCase);
+	}
+	
+	private void nullSafeSetPrerequisite(TestCase testCase) {
+		// though it's constrained by the app, database allows null test case prerequisite. hence this safety belt. 
+		String pr = testCase.getPrerequisite();
+		setPrerequisite(pr == null ? "" : pr);
 	}
 
 	public TestCaseExecutionMode getExecutionMode() {

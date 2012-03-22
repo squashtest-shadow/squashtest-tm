@@ -38,7 +38,6 @@ import org.hibernate.criterion.Order;
 import org.hibernate.criterion.Restrictions;
 import org.hibernate.type.LongType;
 import org.springframework.stereotype.Repository;
-import org.squashtest.csp.tm.domain.project.Project;
 import org.squashtest.csp.tm.domain.requirement.ExportRequirementData;
 import org.squashtest.csp.tm.domain.requirement.Requirement;
 import org.squashtest.csp.tm.domain.requirement.RequirementCriticality;
@@ -47,9 +46,7 @@ import org.squashtest.csp.tm.domain.requirement.RequirementLibraryNode;
 import org.squashtest.csp.tm.domain.requirement.RequirementSearchCriteria;
 import org.squashtest.csp.tm.domain.requirement.RequirementVersion;
 import org.squashtest.csp.tm.domain.requirement.VerificationCriterion;
-import org.squashtest.csp.tm.domain.resource.Resource;
 import org.squashtest.csp.tm.internal.repository.RequirementDao;
-import org.squashtest.csp.tm.domain.testcase.TestCase;
 
 @Repository
 public class HibernateRequirementDao extends HibernateEntityDao<Requirement> implements RequirementDao {
@@ -387,6 +384,7 @@ public class HibernateRequirementDao extends HibernateEntityDao<Requirement> imp
 
 	}
 
+	@SuppressWarnings("unchecked")
 	@Override
 	public List<RequirementVersion> findVersionsForAll(List<Long> requirementIds) {
 		if (!requirementIds.isEmpty()) {

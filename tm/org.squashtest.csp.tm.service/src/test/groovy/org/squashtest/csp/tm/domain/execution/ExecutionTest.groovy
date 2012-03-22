@@ -20,15 +20,14 @@
  */
 package org.squashtest.csp.tm.domain.execution;
 
+import org.apache.commons.lang.NullArgumentException;
 import org.squashtest.csp.tm.domain.testcase.TestCase;
 import org.squashtest.csp.tm.domain.testcase.TestCaseExecutionMode;
 import org.squashtest.csp.tm.domain.testcase.ActionTestStep;
 import spock.lang.Specification;
 
 class ExecutionTest extends Specification {
-
-
-	def "should copy test steps as execution steps"(){
+	def "should copy test steps as execution steps"() {
 		given :
 		Execution execution = new Execution()
 		ActionTestStep ts1 = new ActionTestStep(action:"action1",expectedResult:"result1")
@@ -63,12 +62,14 @@ class ExecutionTest extends Specification {
 			ExecutionStatus.READY
 		]
 	}
+	
 	def "should not find first unexecuted step because has no steps"(){
 		given : Execution execution = new Execution()
 		when : ExecutionStep executionStep = execution.findFirstUnexecutedStep()
 		then :
 		executionStep == null
 	}
+	
 	def "should not find first unexecuted step because all executed"(){
 		given : Execution execution = new Execution()
 		ExecutionStep step1 = new ExecutionStep()
@@ -85,6 +86,7 @@ class ExecutionTest extends Specification {
 		then :
 		executionStep == null
 	}
+	
 	def "should find first unexecuted step "(){
 		given : Execution execution = new Execution()
 		ExecutionStep step1 = new ExecutionStep()
@@ -97,8 +99,25 @@ class ExecutionTest extends Specification {
 		step3.setExecutionStatus ExecutionStatus.BLOCKED
 		execution.addStep step3
 
-		when :def executionStep = execution.findFirstUnexecutedStep()
+		when :
+		def executionStep = execution.findFirstUnexecutedStep()
+		
 		then :
 		executionStep == step2
+	}
+	
+	def "should create a valid execution from a test case without prerequisite"() {
+		given: 
+		TestCase testCase = Mock()
+		testCase.name >> "peter parker"
+		testCase.steps >> []
+		testCase.allAttachments >> []
+		
+		when:
+		Execution res = new Execution(testCase)
+		
+		then:
+		notThrown NullArgumentException
+		
 	}
 }

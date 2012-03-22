@@ -45,6 +45,10 @@ public class TestCaseExecutionController {
 	private ExecutionRunnerControllerHelper helper;
 
 	private ExecutionProcessingService executionProcessingService;
+	
+	public TestCaseExecutionController() {
+		super();
+	}
 
 	@ServiceReference
 	public void setExecutionProcessingService(ExecutionProcessingService executionProcService) {

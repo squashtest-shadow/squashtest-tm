@@ -92,7 +92,7 @@
 		
 		var toolbox = $("#toolbox-container");
 		
-		toolbox.delegate("#execute-next-step", "click", function(){
+		toolbox.delegate("#execute-next-step", "click", function() {
 			navigateNext();
 		});
 		toolbox.delegate("#execute-previous-step", "click", function() {
@@ -122,8 +122,7 @@
 	
 	function refreshParent(){
 		window.opener.location.href = window.opener.location.href;
-		if (window.opener.progressWindow)
-		{
+		if (window.opener.progressWindow) {
 			window.opener.progressWindow.close();
 		}
 	}
@@ -181,16 +180,16 @@
 	}
 	
 	<%-- Reloading draggable menu with the right step --%>
-	function refreshToolbox(toolboxUrl, newNumber){
+	function refreshToolbox(toolboxUrl, newNumber) {
 		$("#toolbox-container").load(toolboxUrl);
 		refreshStepValues(urlRefreshStep + "" + newNumber + "/new-step-infos");
 	}
 	
-	function refreshToolboxNext(){
+	function refreshToolboxNext() {
 		refreshToolbox(urlToolboxNext, stepNumberNext);
 	}
 	
-	function refreshToolboxPrevious(){
+	function refreshToolboxPrevious() {
 		refreshToolbox(urlToolboxPrevious, stepNumberPrevious);
 	}
 	
@@ -205,7 +204,7 @@
 		}
 	}
 	
-	function navigateOther(value){
+	function navigateOther(value) {
 		var theUrl =  urlRefreshStep + ""+ value +"?ieo=true";
 		var theMenuUrl =  urlRefreshStep + ""+ value +"/menu?ieo=true";
 		parent.frameleft.document.location.href=theUrl;
@@ -213,7 +212,7 @@
 		refreshParent();
 	}
 
-	function navigatePrevious(){
+	function navigatePrevious() {
 		refreshParent();
 		if (hasPreviousStep) {
 			parent.frameleft.document.location.href=urlPrevious;
@@ -226,18 +225,15 @@
 	function testComplete(){
 		alert( "${ completedMessage }" );
 		refreshParent();
-		if (${ (empty hasNextTestCase) or (not hasNextTestCase) }){
+		if (${ (empty hasNextTestCase) or (not hasNextTestCase) }) {
 			window.close();
-		}
-		else {
+		} else {
 			$('#execute-next-test-case').click();		
 		}
 	}
 	
 	<%-- fill the right panel with the content of entered url --%>
 	function fillRightFrame(urlP){
-// 		var iframeobj=document.getElementById("iframe-right");
-// 		iframeobj.src=urlP;
 		$('#iframe-right').attr("src", urlP);
 	}
 	
