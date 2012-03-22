@@ -26,43 +26,45 @@ import org.squashtest.csp.tm.domain.library.Folder;
 import org.squashtest.csp.tm.domain.library.LibraryNode;
 
 public interface FolderDao<FOLDER extends Folder<NODE>, NODE extends LibraryNode> extends EntityDao<FOLDER> {
-	 
-	 List<NODE> findAllContentById(long folderId);
 
-	 /**
+	List<NODE> findAllContentById(long folderId);
+
+	/**
 	 * Finds the folder which has the given node in its content.
 	 * 
 	 * @param node
 	 * @return
 	 */
-	 FOLDER findByContent(NODE node);
-	
-	 List<String> findNamesInFolderStartingWith(final long folderId,
-				final String nameStart);
-	 List<String> findNamesInLibraryStartingWith(final long libraryId,
-					final String nameStart);
-	 
-	 
-	 /**
-	  * @param ids
-	  * @return the list of the node ids which are descendant of the given folder ids.
-	  */
-	 List<Long> findContentForList(List<Long> ids); 
-	 
-	 
-	 /**
-	  * @return the list of the node ids which are descendant of the given folder ids paired with their owners 
-	  */
-	 List<Long[]> findPairedContentForList(List<Long> ids);
-	 
-	 
-	 /**
-	  * will return a (non-null) list of test case folders given their ids
-	  * 
-	  * @param folderIds
-	  * @return
-	  */
-	 List<FOLDER> findAllFolders(List<Long> folderIds);
-	 
+	FOLDER findByContent(NODE node);
+
+	List<String> findNamesInFolderStartingWith(final long folderId, final String nameStart);
+
+	List<String> findNamesInLibraryStartingWith(final long libraryId, final String nameStart);
+
+	/**
+	 * @param ids
+	 * @return the list of the node ids which are descendant of the given folder ids.
+	 */
+	List<Long> findContentForList(List<Long> ids);
+
+	/**
+	 * @return the list of the node ids which are descendant of the given folder ids paired with their owners
+	 */
+	List<Long[]> findPairedContentForList(List<Long> ids);
+
+	/**
+	 * will return a (non-null) list of test case folders given their ids
+	 * 
+	 * @param folderIds
+	 * @return
+	 */
+	List<FOLDER> findAllFolders(List<Long> folderIds);
+
+	/**
+	 * will return the parent folder of the node with the id parameter
+	 * 
+	 * @param id
+	 */
+	FOLDER findParentOf(Long id);
 
 }

@@ -39,6 +39,7 @@
 <%@ attribute name="linkable" description="Optional page foot" %>
 
 <s:url var ="searchUrl" value="/search/${workspace}s" />
+<s:url var ="breadCrumbUrl" value="/search/${workspace}s/breadcrumb" />
 <s:url var ="searchReqUrl" value="/search/requirements" />
 <s:url var ="searchTCUrl" value="/search/test-cases" />
 <s:url var ="loadEntityUrl" value="/${workspace}s" />
@@ -271,30 +272,90 @@
 	
 	function selectTreeNodeFromSearchNode(searchNodeDomId){
 		var offset = "searchnode-";
-		var treeName = searchNodeDomId.substring(offset.length);
+		var treeNodeName = searchNodeDomId.substring(offset.length);
 		
 		<c:if test="${linkable eq 'test-case'}">
-			var treeNode = $("#linkable-test-cases-tree li[id=\'"+treeName+"\']");
+			var treeNode = $("#linkable-test-cases-tree li[id=\'"+treeNodeName+"\']");
+			console.log("treenode, ="+treeNode+" linkable = ${linkable}");
+// 			if(treeNode[0] == null){
+// 					openTreeToReachTreeNodeAndOpenIt(treeNodeName, "${linkable}" );
+// 			}else{
 			jqTree=$("#linkable-test-cases-tree");
 			jqTree.jstree("deselect_all");
 			jqTree.jstree("select_node",treeNode);
+// 			}
 			return;
 		</c:if>
 		
 		<c:if test="${linkable eq 'requirement'}">
-			var treeNode = $("#linkable-requirements-tree li[id=\'"+treeName+"\']");
+			var treeNode = $("#linkable-requirements-tree li[id=\'"+treeNodeName+"\']");
+			console.log("treenode, ="+treeNode+" linkable = ${linkable}"");
+// 			if(treeNode[0] == null){
+// 					openTreeToReachTreeNodeAndOpenIt(treeNodeName, "${linkable}");
+// 			}else{
 			jqTree=$("#linkable-requirements-tree");
 			jqTree.jstree("deselect_all");
 			jqTree.jstree("select_node",treeNode);
+// 			}
 			return;
 		</c:if>
 		
-		var treeNode = $("#tree li[id=\'"+treeName+"\']");
+		var treeNode = $("#tree li[id=\'"+treeNodeName+"\']");
+		console.log("treenode="+treeNode[0]);
+		if(treeNode[0] == null){
+			openTreeToReachTreeNodeAndOpenIt(treeNodeName, "${linkable}");
+			
+		}else{
 		jqTree=$("#tree");
 		jqTree.jstree("deselect_all");
 		jqTree.jstree("select_node",treeNode);
+		}
+		
 	}
-	
+	function openTreeToReachTreeNodeAndOpenIt(treeNodeName, linkable){
+		findTreeBreadcrumbToNode(treeNodeName, linkable).done(openBreadCrumb);
+		
+	}
+	function openBreadCrumb(treeNodesIds){
+		console.log("treenode="+treeNodesIds);
+		var breadCrumbLength = treeNodesIds.length;
+		var libraryName = treeNodesIds[breadCrumbLength - 1];
+		jqTree=$("#tree");
+		jqTree.jstree("deselect_all");
+		var librayNode = $("#tree li[id=\'"+libraryName+"\']");
+		  console.log(librayNode);
+		  var start = breadCrumbLength -2;
+		  jqTree.jstree("open_node",librayNode, function(){openFoldersUntillEnd(treeNodesIds,  jqTree, start);});
+		
+		
+	}
+	function openFoldersUntillEnd(treeNodesIds,  jqTree, i){
+		 if ( i >= 1 ) {  
+			  console.log(i);
+			  var treeNodeName = treeNodesIds[i];
+			  var treeNode = $("#tree li[id=\'"+treeNodeName+"\']");
+			  console.log(treeNode);
+			  i--;
+			  jqTree.jstree("open_node",treeNode, function(){openFoldersUntillEnd(treeNodesIds,  jqTree, i);});
+		  }else{
+			  var treeNodeName = treeNodesIds[i];
+			  var treeNode = $("#tree li[id=\'"+treeNodeName+"\']");
+			  jqTree.jstree("deselect_all");
+			  jqTree.jstree("select_node",treeNode);
+		  }
+	}
+	function findTreeBreadcrumbToNode (treeNodeName){
+		console.log("on va chercher "+treeNodeName);
+		var dataB = {
+				'nodeName' : treeNodeName
+			};
+		return $.ajax({
+			'url' : "${breadCrumbUrl}",
+			type : 'POST',
+			data : dataB,
+			dataType : 'json'
+		});
+	}
 	function bindSwitchToTreePanelHandler(){
 		$("td.non-tree").bind("dblclick", function(){
 			selectTreeNodeFromSearchNode($(this).attr("id"));

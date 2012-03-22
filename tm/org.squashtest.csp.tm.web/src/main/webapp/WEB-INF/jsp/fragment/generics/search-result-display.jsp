@@ -100,7 +100,7 @@
 								<td id="searchnode-${object.class.simpleName}-${object.id}"
 									class="non-tree requirement-${object.criticality}"
 									style="border: none;"><a href="#"
-									style="text-decoration: none; border: none;"> <img
+									style="text-decoration: none; border: none;" rel="nofollow"> <img
 										class="search-image"
 										src="${servContext}/images/Icon_Tree_${icon}.png" /> <span
 										class="search-text">${object.reference}-${object.name}</span>
@@ -113,7 +113,7 @@
 								<td class="objectId">${object.id}</td>
 								<td id="searchnode-${object.class.simpleName}-${object.id}"
 									class="non-tree" style="border: none;"><a href="#"
-									style="text-decoration: none; border: none;"> <img
+									style="text-decoration: none; border: none;" rel="nofollow"> <img
 										class="search-image"
 										src="${servContext}/images/Icon_Tree_Folder.png" /> <span
 										class="search-text">${object.name}</span> </a>
@@ -129,7 +129,7 @@
 						<td class="objectId">${object.id}</td>
 						<td id="searchnode-${object.class.simpleName}-${object.id}"
 							class="non-tree" style="border: none;"><a href="#"
-							style="text-decoration: none; border: none;"> <img
+							style="text-decoration: none; border: none;" rel="nofollow"> <img
 								class="search-image"
 								src="${servContext}/images/Icon_Tree_${icon}.png" /> <span
 								class="search-text">${object.name}</span> </a>
@@ -141,7 +141,7 @@
 						<td class="objectId">${object.id}</td>
 						<td id="searchnode-${object.class.simpleName}-${object.id}"
 							class="non-tree" style="border: none;"><a href="#"
-							style="text-decoration: none; border: none;"> <img
+							style="text-decoration: none; border: none;" rel="nofollow"> <img
 								class="search-image"
 								src="${servContext}/images/Icon_Tree_${icon}.png" /> <span
 								class="search-text">${object.name}</span> </a>
@@ -152,7 +152,7 @@
 						<td class="objectId">${object.id}</td>
 						<td id="searchnode-${object.class.simpleName}-${object.id}"
 							class="non-tree" style="border: none;"><a href="#"
-							style="text-decoration: none; border: none;"> <img
+							style="text-decoration: none; border: none;" rel="nofollow"> <img
 								class="search-image"
 								src="${servContext}/images/Icon_Tree_Iteration.png" /> <span
 								class="search-text">${object.name}</span> </a>
@@ -163,7 +163,7 @@
 						<td class="objectId">${object.id}</td>
 						<td id="searchnode-${object.class.simpleName}-${object.id}"
 							class="non-tree" style="border: none;"><a href="#"
-							style="text-decoration: none; border: none;"> <img
+							style="text-decoration: none; border: none;" rel="nofollow" > <img
 								class="search-image"
 								src="${servContext}/images/Icon_Tree_Folder.png" /> <span
 								class="search-text">${object.name}</span> </a>

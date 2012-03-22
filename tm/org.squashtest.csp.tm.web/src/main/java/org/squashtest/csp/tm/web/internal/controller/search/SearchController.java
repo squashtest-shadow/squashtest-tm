@@ -31,6 +31,7 @@ import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.servlet.ModelAndView;
 import org.squashtest.csp.tm.domain.campaign.CampaignLibraryNode;
 import org.squashtest.csp.tm.domain.requirement.RequirementLibraryNode;
@@ -51,6 +52,7 @@ public class SearchController {
 	private static final String ICON = "icon";
 
 	private static final Logger LOGGER = LoggerFactory.getLogger(SearchController.class);
+	private static final String NODE_NAME_REJEX = "-";
 
 	private SearchService searchService;
 
@@ -58,7 +60,41 @@ public class SearchController {
 	public void setSearchService(SearchService searchService) {
 		this.searchService = searchService;
 	}
-
+	
+	@RequestMapping(value = "test-cases/breadcrumb", method = RequestMethod.POST, params = {"nodeName"})
+	@ResponseBody
+	public List<String> findBreadCrumbTestCase(@RequestParam("nodeName") String nodeName){
+		LOGGER.trace("search breadcrumb");
+		List<String> result = new ArrayList<String>();
+		String[] splitedNodeName = nodeName.split(NODE_NAME_REJEX);
+		String className = splitedNodeName[0];
+		Long nodeId = Long.parseLong(splitedNodeName[1]);
+		result = searchService.findBreadCrumbForTestCase(className, nodeId, NODE_NAME_REJEX);
+		return result;
+	}
+	@RequestMapping(value = "requirements/breadcrumb", method = RequestMethod.POST, params = {"nodeName"})
+	@ResponseBody
+	public List<String> findBreadCrumbRequirement(@RequestParam("nodeName") String nodeName){
+		LOGGER.trace("search breadcrumb");
+		List<String> result = new ArrayList<String>();
+		String[] splitedNodeName = nodeName.split(NODE_NAME_REJEX);
+		String className = splitedNodeName[0];
+		Long nodeId = Long.parseLong(splitedNodeName[1]);
+		result = searchService.findBreadCrumbForRequirement(className, nodeId, NODE_NAME_REJEX);
+		
+		return result;
+	}
+	@RequestMapping(value = "campaigns/breadcrumb", method = RequestMethod.POST, params = {"nodeName"})
+	@ResponseBody
+	public List<String> findBreadCrumbCampaign(@RequestParam("nodeName") String nodeName){
+		LOGGER.trace("search breadcrumb");
+		List<String> result = new ArrayList<String>();
+		String[] splitedNodeName = nodeName.split(NODE_NAME_REJEX);
+		String className = splitedNodeName[0];
+		Long nodeId = Long.parseLong(splitedNodeName[1]);
+		result = searchService.findBreadCrumbForCampaign(className, nodeId, NODE_NAME_REJEX);
+		return result;
+	}
 	/*
 	 * note that according to the mapping below importance[] may be legally null.
 	 * 
@@ -74,7 +110,7 @@ public class SearchController {
 
 		LOGGER.info("SQUASH INFO: DONE TestCase search with name : " + name);
 		ModelAndView mav;
-		if (order == true) {
+		if (order) {
 			mav = new ModelAndView("fragment/generics/search-result-display-ordered");
 		} else {
 			mav = new ModelAndView("fragment/generics/search-result-display");
@@ -156,7 +192,7 @@ public class SearchController {
 
 		ModelAndView mav;
 
-		if (isOrdered == true) {
+		if (isOrdered) {
 			mav = new ModelAndView("fragment/generics/search-result-display-ordered");
 		} else {
 			mav = new ModelAndView("fragment/generics/search-result-display");

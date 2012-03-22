@@ -34,7 +34,7 @@ import org.squashtest.csp.tm.internal.repository.RequirementFolderDao;
 
 @Repository
 public class HibernateRequirementFolderDao extends HibernateEntityDao<RequirementFolder> implements
-RequirementFolderDao {
+		RequirementFolderDao {
 	@SuppressWarnings("rawtypes")
 	@Override
 	public List<RequirementLibraryNode> findAllContentById(final long folderId) {
@@ -63,10 +63,9 @@ RequirementFolderDao {
 
 		return executeEntityNamedQuery("requirementFolder.findByContent", callback);
 	}
-	
+
 	@Override
-	public List<String> findNamesInFolderStartingWith(final long folderId,
-			final String nameStart) {
+	public List<String> findNamesInFolderStartingWith(final long folderId, final String nameStart) {
 		SetQueryParametersCallback newCallBack1 = new SetQueryParametersCallback() {
 
 			@Override
@@ -75,13 +74,11 @@ RequirementFolderDao {
 				query.setParameter("nameStart", nameStart + "%");
 			}
 		};
-		return executeListNamedQuery(
-				"requirementFolder.findNamesInFolderStartingWith", newCallBack1);
+		return executeListNamedQuery("requirementFolder.findNamesInFolderStartingWith", newCallBack1);
 	}
 
 	@Override
-	public List<String> findNamesInLibraryStartingWith(final long libraryId,
-			final String nameStart) {
+	public List<String> findNamesInLibraryStartingWith(final long libraryId, final String nameStart) {
 		SetQueryParametersCallback newCallBack1 = new SetQueryParametersCallback() {
 
 			@Override
@@ -90,47 +87,43 @@ RequirementFolderDao {
 				query.setParameter("nameStart", nameStart + "%");
 			}
 		};
-		return executeListNamedQuery(
-				"requirementFolder.findNamesInLibraryStartingWith", newCallBack1);
+		return executeListNamedQuery("requirementFolder.findNamesInLibraryStartingWith", newCallBack1);
 	}
-
-	
 
 	@SuppressWarnings("unchecked")
 	@Override
 	public List<Long[]> findPairedContentForList(final List<Long> ids) {
 
-		if (ids.size()==0) return Collections.emptyList();
-		
-		
-		SQLQuery query = currentSession().createSQLQuery(NativeQueries.REQUIREMENT_FOLDER_SQL_FIND_PAIRED_COTENT_FOR_FOLDERS);		
+		if (ids.size() == 0)
+			return Collections.emptyList();
+
+		SQLQuery query = currentSession().createSQLQuery(
+				NativeQueries.REQUIREMENT_FOLDER_SQL_FIND_PAIRED_COTENT_FOR_FOLDERS);
 		query.setParameterList("folderIds", ids, LongType.INSTANCE);
 		query.addScalar("ancestor_id", LongType.INSTANCE);
 		query.addScalar("descendant_id", LongType.INSTANCE);
-		
+
 		List<Object[]> result = query.list();
-		
+
 		return toArrayOfLong(result);
 	}
 
-	
 	@SuppressWarnings("unchecked")
 	@Override
 	public List<Long> findContentForList(List<Long> ids) {
-		if (ids.size()==0) return Collections.emptyList();
-		
-		
-		SQLQuery query = currentSession().createSQLQuery(NativeQueries.REQUIREMENT_FOLDER_SQL_FIND_CONTENT_FOR_FOLDER);		
+		if (ids.size() == 0)
+			return Collections.emptyList();
+
+		SQLQuery query = currentSession().createSQLQuery(NativeQueries.REQUIREMENT_FOLDER_SQL_FIND_CONTENT_FOR_FOLDER);
 		query.setParameterList("folderIds", ids, LongType.INSTANCE);
 		query.addScalar("descendant_id", LongType.INSTANCE);
-		
+
 		return query.list();
 	}
 
-
 	@Override
 	public List<RequirementFolder> findAllFolders(final List<Long> folderIds) {
-		
+
 		SetQueryParametersCallback newCallBack = new SetQueryParametersCallback() {
 
 			@Override
@@ -138,23 +131,31 @@ RequirementFolderDao {
 				query.setParameterList("folderIds", folderIds, LongType.INSTANCE);
 			}
 		};
-		return executeListNamedQuery(
-				"requirementFolder.findAllFolders", newCallBack);	
-		
+		return executeListNamedQuery("requirementFolder.findAllFolders", newCallBack);
+
 	}
 
-	
-	private List<Long[]> toArrayOfLong(List<Object[]> input){
+	private List<Long[]> toArrayOfLong(List<Object[]> input) {
 		List<Long[]> result = new ArrayList<Long[]>();
-		
-		for (Object[] pair : input){
-			Long[] newPair  = new Long[]{(Long)pair[0], (Long) pair[1]};
+
+		for (Object[] pair : input) {
+			Long[] newPair = new Long[] { (Long) pair[0], (Long) pair[1] };
 			result.add(newPair);
 		}
-		
+
 		return result;
 	}
 
+	@Override
+	public RequirementFolder findParentOf(final Long id) {
+		SetQueryParametersCallback newCallBack = new SetQueryParametersCallback() {
 
+			@Override
+			public void setQueryParameters(Query query) {
+				query.setParameter("contentId", id, LongType.INSTANCE);
+			}
+		};
+		return executeEntityNamedQuery("requirementFolder.findParentOf", newCallBack);
+	}
 
 }

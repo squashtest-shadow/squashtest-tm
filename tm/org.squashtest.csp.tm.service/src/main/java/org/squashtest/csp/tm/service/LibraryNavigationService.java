@@ -105,4 +105,20 @@ public interface LibraryNavigationService<LIBRARY extends Library<? extends NODE
 	 */
 	List<Long> deleteNodes(List<Long> targetIds);
 
+	/**
+	 * That method should find the parentFolder of the library Node if it has one
+	 * 
+	 * @param node
+	 * @return the parent node or null if do not exists
+	 */
+	FOLDER findParentIfExists(LibraryNode node);
+
+	/**
+	 * That method should find the library of the root node
+	 * 
+	 * @param id
+	 * @return the library or null
+	 */
+	LIBRARY findLibraryOfRootNodeIfExist(NODE node);
+
 }

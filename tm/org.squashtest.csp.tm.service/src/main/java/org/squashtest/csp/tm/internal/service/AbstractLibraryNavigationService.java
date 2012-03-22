@@ -275,6 +275,16 @@ public abstract class AbstractLibraryNavigationService<LIBRARY extends Library<N
 
 	}
 
+	@Override
+	public FOLDER findParentIfExists(LibraryNode node) {
+		return getFolderDao().findParentOf(node.getId());
+	}
+
+	@Override
+	public LIBRARY findLibraryOfRootNodeIfExist(NODE node) {
+		return getLibraryDao().findByRootContent(node);
+	}
+
 	/* ********************** move operations *************************** */
 
 	private void removeFromLibrary(LIBRARY library, NODE node) {

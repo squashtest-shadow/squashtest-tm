@@ -32,7 +32,6 @@ import org.squashtest.csp.tm.domain.testcase.TestCaseFolder;
 import org.squashtest.csp.tm.domain.testcase.TestCaseLibraryNode;
 import org.squashtest.csp.tm.internal.repository.TestCaseFolderDao;
 
-
 @Repository
 public class HibernateTestCaseFolderDao extends HibernateEntityDao<TestCaseFolder> implements TestCaseFolderDao {
 
@@ -50,7 +49,6 @@ public class HibernateTestCaseFolderDao extends HibernateEntityDao<TestCaseFolde
 
 	}
 
-	
 	@Override
 	public TestCaseFolder findByContent(final TestCaseLibraryNode node) {
 		SetQueryParametersCallback callback = new SetQueryParametersCallback() {
@@ -63,11 +61,9 @@ public class HibernateTestCaseFolderDao extends HibernateEntityDao<TestCaseFolde
 
 		return executeEntityNamedQuery("testCaseFolder.findByContent", callback);
 	}
-	
-	
+
 	@Override
-	public List<String> findNamesInFolderStartingWith(final long folderId,
-			final String nameStart) {
+	public List<String> findNamesInFolderStartingWith(final long folderId, final String nameStart) {
 		SetQueryParametersCallback newCallBack1 = new SetQueryParametersCallback() {
 
 			@Override
@@ -76,14 +72,11 @@ public class HibernateTestCaseFolderDao extends HibernateEntityDao<TestCaseFolde
 				query.setParameter("nameStart", nameStart + "%");
 			}
 		};
-		return executeListNamedQuery(
-				"testCaseFolder.findNamesInFolderStartingWith", newCallBack1);
+		return executeListNamedQuery("testCaseFolder.findNamesInFolderStartingWith", newCallBack1);
 	}
 
-	
 	@Override
-	public List<String> findNamesInLibraryStartingWith(final long libraryId,
-			final String nameStart) {
+	public List<String> findNamesInLibraryStartingWith(final long libraryId, final String nameStart) {
 		SetQueryParametersCallback newCallBack1 = new SetQueryParametersCallback() {
 
 			@Override
@@ -92,11 +85,9 @@ public class HibernateTestCaseFolderDao extends HibernateEntityDao<TestCaseFolde
 				query.setParameter("nameStart", nameStart + "%");
 			}
 		};
-		return executeListNamedQuery(
-				"testCaseFolder.findNamesInLibraryStartingWith", newCallBack1);
+		return executeListNamedQuery("testCaseFolder.findNamesInLibraryStartingWith", newCallBack1);
 	}
 
-	
 	@Override
 	public List<Long> findTestCasesFolderIdsInFolderContent(final long folderId) {
 		SetQueryParametersCallback newCallBack1 = new SetQueryParametersCallback() {
@@ -106,44 +97,41 @@ public class HibernateTestCaseFolderDao extends HibernateEntityDao<TestCaseFolde
 				query.setParameter("folderId", folderId);
 			}
 		};
-		return executeListNamedQuery(
-				"testCaseFolder.findTestCasesFolderIdsInFolderContent", newCallBack1);
+		return executeListNamedQuery("testCaseFolder.findTestCasesFolderIdsInFolderContent", newCallBack1);
 	}
 
-	
 	@Override
 	public List<Long[]> findPairedContentForList(final List<Long> ids) {
 
-		if (ids.size()==0) return Collections.emptyList();
-		
-		
-		SQLQuery query = currentSession().createSQLQuery(NativeQueries.TEST_CASE_FOLDER_SQL_FIND_PAIRED_CONTENT_FOR_FOLDERS);		
+		if (ids.size() == 0)
+			return Collections.emptyList();
+
+		SQLQuery query = currentSession().createSQLQuery(
+				NativeQueries.TEST_CASE_FOLDER_SQL_FIND_PAIRED_CONTENT_FOR_FOLDERS);
 		query.setParameterList("folderIds", ids, LongType.INSTANCE);
 		query.addScalar("ancestor_id", LongType.INSTANCE);
 		query.addScalar("descendant_id", LongType.INSTANCE);
-		
+
 		List<Object[]> result = query.list();
-		
+
 		return toArrayOfLong(result);
 	}
 
-	
 	@Override
 	public List<Long> findContentForList(List<Long> ids) {
-		if (ids.size()==0) return Collections.emptyList();
-		
-		
-		SQLQuery query = currentSession().createSQLQuery(NativeQueries.TEST_CASE_FOLDER_SQL_FIND_CONTENT_FOR_FOLDER);		
+		if (ids.size() == 0)
+			return Collections.emptyList();
+
+		SQLQuery query = currentSession().createSQLQuery(NativeQueries.TEST_CASE_FOLDER_SQL_FIND_CONTENT_FOR_FOLDER);
 		query.setParameterList("folderIds", ids, LongType.INSTANCE);
 		query.addScalar("descendant_id", LongType.INSTANCE);
-		
+
 		return query.list();
 	}
 
-
 	@Override
 	public List<TestCaseFolder> findAllFolders(final List<Long> folderIds) {
-		
+
 		SetQueryParametersCallback newCallBack = new SetQueryParametersCallback() {
 
 			@Override
@@ -151,23 +139,31 @@ public class HibernateTestCaseFolderDao extends HibernateEntityDao<TestCaseFolde
 				query.setParameterList("folderIds", folderIds, LongType.INSTANCE);
 			}
 		};
-		return executeListNamedQuery(
-				"testCaseFolder.findAllFolders", newCallBack);	
-		
+		return executeListNamedQuery("testCaseFolder.findAllFolders", newCallBack);
+
 	}
 
-	
-	private List<Long[]> toArrayOfLong(List<Object[]> input){
+	private List<Long[]> toArrayOfLong(List<Object[]> input) {
 		List<Long[]> result = new ArrayList<Long[]>();
-		
-		for (Object[] pair : input){
-			Long[] newPair  = new Long[]{(Long)pair[0], (Long) pair[1]};
+
+		for (Object[] pair : input) {
+			Long[] newPair = new Long[] { (Long) pair[0], (Long) pair[1] };
 			result.add(newPair);
 		}
-		
+
 		return result;
 	}
 
+	@Override
+	public TestCaseFolder findParentOf(final Long id) {
+		SetQueryParametersCallback newCallBack = new SetQueryParametersCallback() {
 
+			@Override
+			public void setQueryParameters(Query query) {
+				query.setParameter("contentId", id, LongType.INSTANCE);
+			}
+		};
+		return executeEntityNamedQuery("testCaseFolder.findParentOf", newCallBack);
+	}
 
 }
