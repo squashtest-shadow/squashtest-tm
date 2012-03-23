@@ -44,6 +44,7 @@ import org.squashtest.csp.tm.domain.TestPlanItemNotExecutableException;
 import org.squashtest.csp.tm.domain.attachment.Attachment;
 import org.squashtest.csp.tm.domain.attachment.AttachmentList;
 import org.squashtest.csp.tm.domain.audit.Auditable;
+import org.squashtest.csp.tm.domain.testcase.TestCase;
 
 @Auditable
 @Entity
@@ -271,8 +272,15 @@ public class TestSuite {
 		List<IterationTestPlanItem> testPlan = iteration.getTestPlans();
 		for (int i = testPlan.size() - 1; i >= 0; i--) {
 			IterationTestPlanItem item = testPlan.get(i);
-
-			if (boundToThisSuite(item) && item.isExecutableThroughTestSuite()) {
+			
+			//We have to check if the referenced test case has execution steps
+			TestCase testCase = null;
+			if (!item.isTestCaseDeleted()) {
+				testCase = item.getReferencedTestCase();
+			}
+			
+			if (boundToThisSuite(item) && item.isExecutableThroughTestSuite() 
+					&& (testCase != null && testCase.getSteps() != null && testCase.getSteps().size() > 0)) {
 				return itemId == item.getId();
 			}
 		}
@@ -287,7 +295,7 @@ public class TestSuite {
 		List<IterationTestPlanItem> testPlanInIteration = iteration.getTestPlans();
 		
 		for (IterationTestPlanItem iterationTestPlanItem : testPlanInIteration) {
-			if (boundToThisSuite(iterationTestPlanItem) && iterationTestPlanItem.isExecutableThroughTestSuite()) {
+			if (boundToThisSuite(iterationTestPlanItem) && !iterationTestPlanItem.isTestCaseDeleted()) { // && iterationTestPlanItem.isExecutableThroughTestSuite()
 				return itemId == iterationTestPlanItem.getId();
 			}
 		}
