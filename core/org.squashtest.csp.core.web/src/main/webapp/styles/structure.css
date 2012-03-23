@@ -144,8 +144,9 @@ div#tabbed-pane > ul {
     left: 2px;
     padding-top: 0;
     position: absolute;
-    top: 4.7cm;
+    top: 5cm;
     right: 2px;
+    overflow:auto;
 }
 
 .search-div-requirement {

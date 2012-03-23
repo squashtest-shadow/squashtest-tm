@@ -34,10 +34,6 @@
 <%@ page language="java" contentType="text/html; charset=utf-8" pageEncoding="utf-8"%>
 <c:set var="servContext" value="${ pageContext.servletContext.contextPath }"/>
 <c:url var="objectUrl" value="${workspace}" />
-
-<br/>
-
-
 <comp:decorate-ajax-search-table tableId="by-req-search-result-datatable" >
 	<jsp:attribute name="initialSort">[[3,'asc']]</jsp:attribute>
 	<jsp:attribute name="columnDefs">

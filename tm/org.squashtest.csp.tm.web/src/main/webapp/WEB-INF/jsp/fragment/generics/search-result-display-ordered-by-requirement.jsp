@@ -34,8 +34,6 @@
 <%@ page language="java" contentType="text/html; charset=utf-8" pageEncoding="utf-8"%>
 <c:set var="servContext" value="${ pageContext.servletContext.contextPath }"/>
 <c:url var="objectUrl" value="${workspace}" />
-
-<br/>
 <div id="search-result">
 	<table id="by-req-search-result-datatable">
 	<thead>

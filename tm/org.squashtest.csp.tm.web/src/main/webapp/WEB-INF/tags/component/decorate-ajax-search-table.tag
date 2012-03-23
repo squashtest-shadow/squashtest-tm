@@ -48,7 +48,7 @@
 					"sLast":     '<f:message key="generics.datatable.paginate.last" />'
 				}
 			},
-			"sScrollY": "350px",
+// 			"sScrollY": "350px",
 			"bJQueryUI": true,
 			"bAutoWidth": false,
 			"bFilter": false,

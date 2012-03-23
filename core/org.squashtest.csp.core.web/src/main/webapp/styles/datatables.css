@@ -66,8 +66,7 @@ div.dataTables_length  {
 }
 
 div.dataTables_info, div.dataTables_processing{
-	
-	float : left;
+	display:none;
 	font-size : 0.8em;
 	margin-right:2em;
 	margin-top:0.2em;	

@@ -37,12 +37,9 @@
 <c:set var="servContext"
 	value="${ pageContext.servletContext.contextPath }" />
 <c:url var="objectUrl" value="${workspace}" />
-
-<br />
-
 <c:if test="${ icon == 'Requirement'  }">
 	<comp:decorate-ajax-search-table tableId="search-result-datatable">
-		<jsp:attribute name="initialSort">[[4,'asc']]</jsp:attribute>
+		<jsp:attribute name="initialSort">[[1,'asc']]</jsp:attribute>
 		<jsp:attribute name="columnDefs">
 			<dt:column-definition targets="0" sortable="false" visible="false" />
 			<dt:column-definition targets="1" sortable="false" />
@@ -54,28 +51,27 @@
 </c:if>
 <c:if test="${ icon == 'TestCase' || icon == 'ExpandedTestCase'}">
 	<comp:decorate-ajax-search-table tableId="search-result-datatable">
-		<jsp:attribute name="initialSort">[[2,'asc']]</jsp:attribute>
+		<jsp:attribute name="initialSort">[[1,'asc']]</jsp:attribute>
 		<jsp:attribute name="columnDefs">
-			<dt:column-definition targets="0" sortable="false" visible="false" />
+		<dt:column-definition targets="0" sortable="false" visible="false" />
 			<dt:column-definition targets="1" sortable="false" visible="true" />
-			<dt:column-definition targets="2" sortable="false" visible="true"
-				lastDef="true" />
+			<dt:column-definition targets="2" sortable="false" visible="true" lastDef="true"/>
 		</jsp:attribute>
 	</comp:decorate-ajax-search-table>
 </c:if>
 <c:if test="${ icon == 'Campaign' }">
 	<comp:decorate-ajax-search-table tableId="search-result-datatable">
-		<jsp:attribute name="initialSort">[[2,'asc']]</jsp:attribute>
+		<jsp:attribute name="initialSort">[[1,'asc']]</jsp:attribute>
 		<jsp:attribute name="columnDefs">
 			<dt:column-definition targets="0" sortable="false" visible="false" />
-			<dt:column-definition targets="1" sortable="false" visible="true" />
+			<dt:column-definition targets="1" sortable="false" visible="true" lastDef="true" />
 		</jsp:attribute>
 	</comp:decorate-ajax-search-table>
 </c:if>
 <table id="search-result-datatable">
 	<thead>
 		<tr>
-			<th>Id</th>
+		<th>Id</th>
 			<th><f:message key="${workspace}.header.title" />s</th>
 			<c:if test="${ icon == 'TestCase' || icon == 'ExpandedTestCase' }">
 				<th><f:message key="test-case.importance.combo.label" /></th>
@@ -86,6 +82,7 @@
 				<th><f:message
 						key="test-case.calling-test-cases.table.project.label" /></th>
 			</c:if>
+			
 		</tr>
 	</thead>
 	<tbody>
@@ -96,8 +93,8 @@
 					<c:when test="${'Requirement' == icon }">
 						<c:choose>
 							<c:when test="${'Requirement' == object.class.simpleName}">
-								<td class="objectId">${object.id}</td>
-								<td id="searchnode-${object.class.simpleName}-${object.id}"
+							<td class="objectId">${object.id}</td>
+							<td id="searchnode-${object.class.simpleName}-${object.id}"
 									class="non-tree requirement-${object.criticality}"
 									style="border: none;"><a href="#"
 									style="text-decoration: none; border: none;" rel="nofollow"> <img
@@ -138,7 +135,7 @@
 						</td>
 					</c:when>
 					<c:when test="${object.class.simpleName== 'Campaign'}">
-						<td class="objectId">${object.id}</td>
+					<td class="objectId">${object.id}</td>
 						<td id="searchnode-${object.class.simpleName}-${object.id}"
 							class="non-tree" style="border: none;"><a href="#"
 							style="text-decoration: none; border: none;" rel="nofollow"> <img
@@ -146,10 +143,9 @@
 								src="${servContext}/images/Icon_Tree_${icon}.png" /> <span
 								class="search-text">${object.name}</span> </a>
 						</td>
-
 					</c:when>
 					<c:when test="${object.class.simpleName== 'Iteration'}">
-						<td class="objectId">${object.id}</td>
+					<td class="objectId">${object.id}</td>
 						<td id="searchnode-${object.class.simpleName}-${object.id}"
 							class="non-tree" style="border: none;"><a href="#"
 							style="text-decoration: none; border: none;" rel="nofollow"> <img
@@ -157,10 +153,9 @@
 								src="${servContext}/images/Icon_Tree_Iteration.png" /> <span
 								class="search-text">${object.name}</span> </a>
 						</td>
-
 					</c:when>
 					<c:otherwise>
-						<td class="objectId">${object.id}</td>
+					<td class="objectId">${object.id}</td>
 						<td id="searchnode-${object.class.simpleName}-${object.id}"
 							class="non-tree" style="border: none;"><a href="#"
 							style="text-decoration: none; border: none;" rel="nofollow" > <img
