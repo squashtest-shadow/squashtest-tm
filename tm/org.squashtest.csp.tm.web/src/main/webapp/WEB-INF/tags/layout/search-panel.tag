@@ -75,7 +75,7 @@
 		});
 		
 		$("#search-button").button().bind("click", function(){
-			<c:if test="${ workspace eq 'requirement' || linkable eq 'requirement' }" >
+			<c:if test="${ (workspace eq 'requirement' && linkable != 'test-case') || linkable eq 'requirement' }" >
 				if (!verifyParams()){
 					return;
 				}
