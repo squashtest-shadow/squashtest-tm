@@ -69,22 +69,22 @@
 	</comp:decorate-ajax-search-table>
 </c:if>
 <table id="search-result-datatable">
-	<thead>
-		<tr>
-		<th>Id</th>
-			<th><f:message key="${workspace}.header.title" />s</th>
-			<c:if test="${ icon == 'TestCase' || icon == 'ExpandedTestCase' }">
-				<th><f:message key="test-case.importance.combo.label" /></th>
-			</c:if>
-			<c:if test="${ icon == 'Requirement' }">
-				<th><f:message key="requirement.reference.label" /></th>
-				<th><f:message key="search.criticality.label" /></th>
-				<th><f:message
-						key="test-case.calling-test-cases.table.project.label" /></th>
-			</c:if>
+<!-- 	<thead> -->
+<!-- 		<tr> -->
+<!-- 		<th>Id</th> -->
+<%-- 			<th><f:message key="${workspace}.header.title" />s</th> --%>
+<%-- 			<c:if test="${ icon == 'TestCase' || icon == 'ExpandedTestCase' }"> --%>
+<%-- 				<th><f:message key="test-case.importance.combo.label" /></th> --%>
+<%-- 			</c:if> --%>
+<%-- 			<c:if test="${ icon == 'Requirement' }"> --%>
+<%-- 				<th><f:message key="requirement.reference.label" /></th> --%>
+<%-- 				<th><f:message key="search.criticality.label" /></th> --%>
+<%-- 				<th><f:message --%>
+<!-- 						key="test-case.calling-test-cases.table.project.label" /></th> -->
+<%-- 			</c:if> --%>
 			
-		</tr>
-	</thead>
+<!-- 		</tr> -->
+<!-- 	</thead> -->
 	<tbody>
 		<c:forEach var="object" items="${resultList}">
 
