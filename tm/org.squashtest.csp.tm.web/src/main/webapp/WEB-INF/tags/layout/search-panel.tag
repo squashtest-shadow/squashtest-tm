@@ -26,26 +26,30 @@
 	-- bsiri
 	
 --%>
-<%@ taglib uri="http://java.sun.com/jsp/jstl/core" prefix="c" %>
+<%@ taglib uri="http://java.sun.com/jsp/jstl/core" prefix="c"%>
 <%@ taglib uri="http://java.sun.com/jsp/jstl/fmt" prefix="f"%>
 <%@ taglib prefix="s" uri="http://www.springframework.org/tags"%>
-<%@ taglib prefix="fn" uri="http://java.sun.com/jsp/jstl/functions" %>
-<%@ taglib prefix="stru" uri="http://org.squashtest.csp/taglib/string-utils" %>
+<%@ taglib prefix="fn" uri="http://java.sun.com/jsp/jstl/functions"%>
+<%@ taglib prefix="stru"
+	uri="http://org.squashtest.csp/taglib/string-utils"%>
 <%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core"%>
-<%@ taglib prefix="dt" tagdir="/WEB-INF/tags/datatables" %>
-<%@ taglib prefix="comp" tagdir="/WEB-INF/tags/component" %>
+<%@ taglib prefix="dt" tagdir="/WEB-INF/tags/datatables"%>
+<%@ taglib prefix="comp" tagdir="/WEB-INF/tags/component"%>
 
-<%@ attribute name="workspace" description="Optional page foot" required="true"%>
-<%@ attribute name="linkable" description="Optional page foot" %>
+<%@ attribute name="workspace" description="Optional page foot"
+	required="true"%>
+<%@ attribute name="linkable" description="Optional page foot"%>
 
-<s:url var ="searchUrl" value="/search/${workspace}s" />
-<s:url var ="breadCrumbUrl" value="/search/${workspace}s/breadcrumb" />
-<s:url var ="searchReqUrl" value="/search/requirements" />
-<s:url var ="searchTCUrl" value="/search/test-cases" />
-<s:url var ="loadEntityUrl" value="/${workspace}s" />
+<s:url var="searchUrl" value="/search/${workspace}s" />
+<s:url var="breadCrumbUrl" value="/search/${workspace}s/breadcrumb" />
+<s:url var="testCaseBreadCrumbUrl" value="/search/test-cases/breadcrumb" />
+<s:url var="requirementBreadCrumbUrl" value="/search/requirements/breadcrumb" />
+<s:url var="searchReqUrl" value="/search/requirements" />
+<s:url var="searchTCUrl" value="/search/test-cases" />
+<s:url var="loadEntityUrl" value="/${workspace}s" />
 
-<f:message var="InputFailMessage" key='search.validate.failure.label'/>
-<f:message var="InputEmptyMessage" key='search.validate.empty.label'/>
+<f:message var="InputFailMessage" key='search.validate.failure.label' />
+<f:message var="InputEmptyMessage" key='search.validate.empty.label' />
 <script type="text/javascript">
 	
 	//Array with selected ids
@@ -276,34 +280,34 @@
 		
 		<c:if test="${linkable eq 'test-case'}">
 			var treeNode = $("#linkable-test-cases-tree li[id=\'"+treeNodeName+"\']");
-			console.log("treenode, ="+treeNode+" linkable = ${linkable}");
-// 			if(treeNode[0] == null){
-// 					openTreeToReachTreeNodeAndOpenIt(treeNodeName, "${linkable}" );
-// 			}else{
+// 			console.log("treenode, ="+treeNode+" linkable = ${linkable}");
+			if(treeNode[0] == null){
+					openLinkableTreeToReachTestCaseTreeNodeAndOpenIt(treeNodeName );
+			}else{
 			jqTree=$("#linkable-test-cases-tree");
 			jqTree.jstree("deselect_all");
 			jqTree.jstree("select_node",treeNode);
-// 			}
+			}
 			return;
 		</c:if>
 		
-		<c:if test="${linkable eq 'requirement'}">
+		<c:if test="${linkable eq 'requirement' && workspace != 'requirement'}">
 			var treeNode = $("#linkable-requirements-tree li[id=\'"+treeNodeName+"\']");
-			console.log("treenode, ="+treeNode+" linkable = ${linkable}"");
-// 			if(treeNode[0] == null){
-// 					openTreeToReachTreeNodeAndOpenIt(treeNodeName, "${linkable}");
-// 			}else{
+// 			console.log("treenode, ="+treeNode+" linkable = ${linkable}");
+			if(treeNode[0] == null){
+					openLinkableTreeToReachRequirementTreeNodeAndOpenIt(treeNodeName);
+			}else{
 			jqTree=$("#linkable-requirements-tree");
 			jqTree.jstree("deselect_all");
 			jqTree.jstree("select_node",treeNode);
-// 			}
+			}
 			return;
 		</c:if>
 		
 		var treeNode = $("#tree li[id=\'"+treeNodeName+"\']");
-		console.log("treenode="+treeNode[0]);
+// 		console.log("treenode="+treeNode[0]);
 		if(treeNode[0] == null){
-			openTreeToReachTreeNodeAndOpenIt(treeNodeName, "${linkable}");
+			openTreeToReachTreeNodeAndOpenIt(treeNodeName);
 			
 		}else{
 		jqTree=$("#tree");
@@ -312,18 +316,47 @@
 		}
 		
 	}
-	function openTreeToReachTreeNodeAndOpenIt(treeNodeName, linkable){
-		findTreeBreadcrumbToNode(treeNodeName, linkable).done(openBreadCrumb);
+	function openLinkableTreeToReachTestCaseTreeNodeAndOpenIt(treeNodeName){
+		jqTree=$("#linkable-test-cases-tree");
+		findTreeBreadcrumbToNode(treeNodeName, "${testCaseBreadCrumbUrl}").done(function(data){openBreadCrumb(data, jqTree);});
+	}
+	function openLinkableTreeToReachRequirementTreeNodeAndOpenIt(treeNodeName){
+		jqTree=$("#linkable-requirements-tree");
+		findTreeBreadcrumbToNode(treeNodeName,"${requirementBreadCrumbUrl}" ).done(function(data){openBreadCrumb(data, jqTree);});
+	}
+	function openTreeToReachTreeNodeAndOpenIt(treeNodeName){
+		jqTree=$("#tree");
+		findTreeBreadcrumbToNode(treeNodeName,"${breadCrumbUrl}" ).done(function(data){openBreadCrumb(data, jqTree);});
 		
 	}
-	function openBreadCrumb(treeNodesIds){
-		console.log("treenode="+treeNodesIds);
+// 	function openLinkableTestCaseBreadCrumb(treeNodesIds){
+// 		var breadCrumbLength = treeNodesIds.length;
+// 		var libraryName = treeNodesIds[breadCrumbLength - 1];
+// 		jqTree=$("#linkable-test-cases-tree");
+// 		jqTree.jstree("deselect_all");
+// 		var librayNode = jqTree.find("li[id=\'"+libraryName+"\']");
+// 		  var start = breadCrumbLength -2;
+// 		  jqTree.jstree("open_node",librayNode, function(){openFoldersUntillEnd(treeNodesIds,  jqTree, start);});
+		
+// 	}
+	
+// 	function openLinkableRequirementBreadCrumb(treeNodesIds, jqTree){
+// 		var breadCrumbLength = treeNodesIds.length;
+// 		var libraryName = treeNodesIds[breadCrumbLength - 1];
+		
+// 		jqTree.jstree("deselect_all");
+// 		var librayNode = jqTree.find("li[id=\'"+libraryName+"\']");
+// 		  var start = breadCrumbLength -2;
+// 		  jqTree.jstree("open_node",librayNode, function(){openFoldersUntillEnd(treeNodesIds,  jqTree, start);});
+		
+// 	}
+	function openBreadCrumb(treeNodesIds, jqTree){
+// 		console.log("treenode="+treeNodesIds);
 		var breadCrumbLength = treeNodesIds.length;
 		var libraryName = treeNodesIds[breadCrumbLength - 1];
-		jqTree=$("#tree");
 		jqTree.jstree("deselect_all");
-		var librayNode = $("#tree li[id=\'"+libraryName+"\']");
-		  console.log(librayNode);
+		var librayNode = jqTree.find("li[id=\'"+libraryName+"\']");
+// 		  console.log(librayNode);
 		  var start = breadCrumbLength -2;
 		  jqTree.jstree("open_node",librayNode, function(){openFoldersUntillEnd(treeNodesIds,  jqTree, start);});
 		
@@ -331,26 +364,27 @@
 	}
 	function openFoldersUntillEnd(treeNodesIds,  jqTree, i){
 		 if ( i >= 1 ) {  
-			  console.log(i);
+// 			  console.log(i);
 			  var treeNodeName = treeNodesIds[i];
-			  var treeNode = $("#tree li[id=\'"+treeNodeName+"\']");
-			  console.log(treeNode);
+			  var treeNode = jqTree.find("li[id=\'"+treeNodeName+"\']");
+// 			  console.log(treeNode);
 			  i--;
 			  jqTree.jstree("open_node",treeNode, function(){openFoldersUntillEnd(treeNodesIds,  jqTree, i);});
 		  }else{
 			  var treeNodeName = treeNodesIds[i];
-			  var treeNode = $("#tree li[id=\'"+treeNodeName+"\']");
+			  var treeNode = jqTree.find("li[id=\'"+treeNodeName+"\']");
 			  jqTree.jstree("deselect_all");
 			  jqTree.jstree("select_node",treeNode);
 		  }
 	}
-	function findTreeBreadcrumbToNode (treeNodeName){
-		console.log("on va chercher "+treeNodeName);
+		
+	function findTreeBreadcrumbToNode (treeNodeName, url){
+// 		console.log("on va chercher "+treeNodeName);
 		var dataB = {
 				'nodeName' : treeNodeName
 			};
 		return $.ajax({
-			'url' : "${breadCrumbUrl}",
+			'url' : url,
 			type : 'POST',
 			data : dataB,
 			dataType : 'json'
@@ -466,99 +500,150 @@
 
 <div id="search-input">
 	<table>
-		<c:if test="${ (workspace eq 'requirement' || linkable eq 'requirement')}">
-		<c:if test="${ not empty linkable && linkable != 'test-case' }">
-		<tr id="requirementReference" class="requirementCriterion"> <td> <span class="gray-text"> <f:message key="search.reference.label" /> </span> : <input id="searchReference" type="text" class="std-height snap-right" style="width: 66%;" /> </td> </tr>
+		<c:if
+			test="${ (workspace eq 'requirement' || linkable eq 'requirement')}">
+			<c:if test="${ not empty linkable && linkable != 'test-case' }">
+				<tr id="requirementReference" class="requirementCriterion">
+					<td><span class="gray-text"> <f:message
+								key="search.reference.label" /> </span> : <input id="searchReference"
+						type="text" class="std-height snap-right" style="width: 66%;" />
+					</td>
+				</tr>
+			</c:if>
 		</c:if>
-		</c:if>
-		<tr> <td> 
-			<span class="gray-text"> <f:message key="search.name.label" /> </span> : <input id="searchName" type="text" class="std-height snap-right" style="width: 66%;margin-left: 2em;" /> 
-		</td> </tr>
-		
-		<c:if test="${ (workspace eq 'requirement' || linkable eq 'requirement')}">
-		<c:if test="${ not empty linkable && linkable != 'test-case' }">
-		<tr> <td>
-			<div id="requirementProperties" class="requirementCriterion">
-			
-				<span class="gray-text"><f:message key="requirement.criticality.label" /> :</span>
-				<table>
-					<tr>
-						<td class="requirement-UNDEFINED">
-							<span> <input type="checkbox" id="crit-1" value="1"/> <span> <f:message key="requirement.criticality.UNDEFINED" /> </span> </span>
-						</td>
-						<td class="requirement-MINOR">
-							<span> <input type="checkbox" id="crit-2" value="2"/> <span> <f:message key="requirement.criticality.MINOR" /> </span> </span>
-						</td>
-					</tr>
-					<tr>
-						<td class="requirement-MAJOR">
-							<span> <input type="checkbox" id="crit-3" value="3"/> <span> <f:message key="requirement.criticality.MAJOR" /> </span> </span>
-						</td>
-						<td class="requirement-CRITICAL">
-							<span > <input type="checkbox" id="crit-4" value="4" /> <span> <f:message key="requirement.criticality.CRITICAL" /> </span></span>
-						</td>
-					</tr>
-				</table>
-			</div>
-			<div class="requirementCriterion">
-				<select id="requirementVerification">
-					<c:forEach var="verificationCriterion" items="${ verificationCriterionEnum }" varStatus="status">
-						<c:if test="${ status.first }">
-							<option value="${ verificationCriterion }" selected="selected"><f:message key="${ verificationCriterion.i18nKey }" /></option>
-						</c:if>
-						<c:if test="${ not status.first }">
-							<option value="${ verificationCriterion }" ><f:message key="${ verificationCriterion.i18nKey }" /></option>
-						</c:if>
-					</c:forEach>
-				</select> 
-			</div>			
-		</td> </tr>
-		</c:if>
-		</c:if>
-		
-		
-		<c:if test="${((workspace eq 'test-case' || linkable eq 'test-case' )&& linkable != 'requirement')}">		
-			<tr> <td>
-				<div class="search-panel-tc-importance">
-					<div class="caption">
-						<span class="gray-text"><f:message key="search.test-case.importance.filter"/></span>
-					</div><div class="options">
-						<div class="search-tc-importance-1"><input type="checkbox" id="importance-1" data-value="LOW"/><span><f:message key="test-case.importance.LOW"/></span></div>
-						<div class="search-tc-importance-2"><input type="checkbox" id="importance-2" data-value="MEDIUM"/><span><f:message key="test-case.importance.MEDIUM"/></span></div>				
-						<div class="search-tc-importance-3"><input type="checkbox" id="importance-3" data-value="HIGH"/><span><f:message key="test-case.importance.HIGH"/></span></div>
-						<div class="search-tc-importance-4"><input type="checkbox" id="importance-4" data-value="VERY_HIGH"/><span><f:message key="test-case.importance.VERY_HIGH"/></span></div>
-					</div>
-				</div>
-			</td></tr>		
-		</c:if>		
-		
-		<tr> <td>
-			<input type="checkbox" id="project-view" /> <span class="gray-text"> <f:message key="search.project.view"/> </span>
-		</td> </tr>
-		<f:message key="search.button.label" var="searchLabel"/>
-		<tr> <td style="text-align: center;"> <input type="button" id="search-button" value="${ searchLabel }"/> </td> </tr>
+		<tr>
+			<td><span class="gray-text"> <f:message
+						key="search.name.label" /> </span> : <input id="searchName" type="text"
+				class="std-height snap-right" style="width: 66%; margin-left: 2em;" />
+			</td>
+		</tr>
 
-		
-		<c:if test="${ (workspace eq 'requirement' || linkable eq 'requirement')}">
-		<c:if test="${ not empty linkable && linkable != 'test-case' }">
-		<tr> <td> 
-			 <div id="sortingProperties" class="requirementCriterion">
-				<span><f:message key="search.sort.choose.label" /></span>
-				<select id="sortParam">
-					<option value="4" selected="selected"><f:message key="search.name.label" /></option>
-					<option value="3" ><f:message key="search.reference.label" /></option>
-					<option value="2" ><f:message key="search.criticality.label" /></option>
-				</select> 
-			</div>
-		</td> </tr>
+		<c:if
+			test="${ (workspace eq 'requirement' || linkable eq 'requirement')}">
+			<c:if test="${ not empty linkable && linkable != 'test-case' }">
+				<tr>
+					<td>
+						<div id="requirementProperties" class="requirementCriterion">
+
+							<span class="gray-text"><f:message
+									key="requirement.criticality.label" /> :</span>
+							<table>
+								<tr>
+									<td class="requirement-UNDEFINED"><span> <input
+											type="checkbox" id="crit-1" value="1" /> <span> <f:message
+													key="requirement.criticality.UNDEFINED" /> </span> </span></td>
+									<td class="requirement-MINOR"><span> <input
+											type="checkbox" id="crit-2" value="2" /> <span> <f:message
+													key="requirement.criticality.MINOR" /> </span> </span></td>
+								</tr>
+								<tr>
+									<td class="requirement-MAJOR"><span> <input
+											type="checkbox" id="crit-3" value="3" /> <span> <f:message
+													key="requirement.criticality.MAJOR" /> </span> </span></td>
+									<td class="requirement-CRITICAL"><span> <input
+											type="checkbox" id="crit-4" value="4" /> <span> <f:message
+													key="requirement.criticality.CRITICAL" /> </span>
+									</span></td>
+								</tr>
+							</table>
+						</div>
+						<div class="requirementCriterion">
+							<select id="requirementVerification">
+								<c:forEach var="verificationCriterion"
+									items="${ verificationCriterionEnum }" varStatus="status">
+									<c:if test="${ status.first }">
+										<option value="${ verificationCriterion }" selected="selected">
+											<f:message key="${ verificationCriterion.i18nKey }" />
+										</option>
+									</c:if>
+									<c:if test="${ not status.first }">
+										<option value="${ verificationCriterion }">
+											<f:message key="${ verificationCriterion.i18nKey }" />
+										</option>
+									</c:if>
+								</c:forEach>
+							</select>
+						</div></td>
+				</tr>
+			</c:if>
 		</c:if>
+
+
+		<c:if
+			test="${((workspace eq 'test-case' || linkable eq 'test-case' )&& linkable != 'requirement')}">
+			<tr>
+				<td>
+					<div class="search-panel-tc-importance">
+						<div class="caption">
+							<span class="gray-text"><f:message
+									key="search.test-case.importance.filter" />
+							</span>
+						</div>
+						<div class="options">
+							<div class="search-tc-importance-1">
+								<input type="checkbox" id="importance-1" data-value="LOW" /><span><f:message
+										key="test-case.importance.LOW" />
+								</span>
+							</div>
+							<div class="search-tc-importance-2">
+								<input type="checkbox" id="importance-2" data-value="MEDIUM" /><span><f:message
+										key="test-case.importance.MEDIUM" />
+								</span>
+							</div>
+							<div class="search-tc-importance-3">
+								<input type="checkbox" id="importance-3" data-value="HIGH" /><span><f:message
+										key="test-case.importance.HIGH" />
+								</span>
+							</div>
+							<div class="search-tc-importance-4">
+								<input type="checkbox" id="importance-4" data-value="VERY_HIGH" /><span><f:message
+										key="test-case.importance.VERY_HIGH" />
+								</span>
+							</div>
+						</div>
+					</div></td>
+			</tr>
+		</c:if>
+
+		<tr>
+			<td><input type="checkbox" id="project-view" /> <span
+				class="gray-text"> <f:message key="search.project.view" /> </span></td>
+		</tr>
+		<f:message key="search.button.label" var="searchLabel" />
+		<tr>
+			<td style="text-align: center;"><input type="button"
+				id="search-button" value="${ searchLabel }" /></td>
+		</tr>
+
+
+		<c:if
+			test="${ (workspace eq 'requirement' || linkable eq 'requirement')}">
+			<c:if test="${ not empty linkable && linkable != 'test-case' }">
+				<tr>
+					<td>
+						<div id="sortingProperties" class="requirementCriterion">
+							<span><f:message key="search.sort.choose.label" />
+							</span> <select id="sortParam">
+								<option value="4" selected="selected">
+									<f:message key="search.name.label" />
+								</option>
+								<option value="3">
+									<f:message key="search.reference.label" />
+								</option>
+								<option value="2">
+									<f:message key="search.criticality.label" />
+								</option>
+							</select>
+						</div></td>
+				</tr>
+			</c:if>
 		</c:if>
 	</table>
 </div>
 
 
-<div id="search"> 
-	<div id="search-result-pane"> </div>
+<div id="search">
+	<div id="search-result-pane"></div>
 </div>
 
 <comp:decorate-buttons />
