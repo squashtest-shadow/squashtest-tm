@@ -114,11 +114,19 @@
 			
 				function testComplete() {
 					if (${ (empty hasNextTestCase) or (not hasNextTestCase) }){
-						oneShotDialog("<f:message key='popup.title.info' />","${ endTestSuiteMessage }").done(function()
-						{
-							refreshParent();
-							window.close();
-						});
+						if (${ empty hasNextTestCase }){
+							oneShotDialog("<f:message key='popup.title.info' />",  "${ completedMessage }" ).done(function()
+							{
+								refreshParent();
+								window.close();
+							});
+						} else {
+							oneShotDialog("<f:message key='popup.title.info' />","${ endTestSuiteMessage }").done(function()
+							{
+								refreshParent();
+								window.close();
+							});
+						}
 					}
 					else {
 						oneShotDialog("<f:message key='popup.title.info' />",  "${ completedMessage }" ).done(function()
