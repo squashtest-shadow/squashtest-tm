@@ -123,6 +123,7 @@ public class MantisConnector implements BugTrackerConnector {
 		if (found != null) {
 			return found;
 		} else {
+			// TODO pas tres clair, devrait jeter une ProjectNotFOundException
 			throw new BugTrackerNotFoundException();
 		}
 
@@ -138,6 +139,7 @@ public class MantisConnector implements BugTrackerConnector {
 		if (found != null) {
 			return found;
 		} else {
+			// TODO pas tres clair, devrait jeter une ProjectNotFOundException
 			throw new BugTrackerNotFoundException();
 		}
 	}

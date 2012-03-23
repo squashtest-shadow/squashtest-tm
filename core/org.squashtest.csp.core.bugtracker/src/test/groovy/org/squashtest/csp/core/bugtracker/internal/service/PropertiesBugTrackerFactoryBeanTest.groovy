@@ -20,10 +20,12 @@
  */
 package org.squashtest.csp.core.bugtracker.internal.service
 
+import org.spockframework.runtime.UnrolledFeatureNameGenerator;
 import org.squashtest.csp.core.bugtracker.domain.BugTracker;
 import org.squashtest.csp.core.bugtracker.service.PropertiesBugTrackerFactoryBean;
 
 import spock.lang.Specification;
+import spock.lang.Unroll;
 
 class PropertiesBugTrackerFactoryBeanTest extends Specification {
 	PropertiesBugTrackerFactoryBean factoryBean = new PropertiesBugTrackerFactoryBean()
@@ -36,28 +38,53 @@ class PropertiesBugTrackerFactoryBeanTest extends Specification {
 		factoryBean.singleton
 	}
 
-	def "should return NOT_DEFINED BT when no properties are available"() {
+	@Unroll("should return NOT_DEFINED BT when kind is #kind and url is #url") 
+	def "should return NOT_DEFINED BT when properties are not properly set"() {
+		given:
+		factoryBean.url = url
+		factoryBean.kind = kind
+		
 		when:
 		factoryBean.afterPropertiesSet()
 
 		then:
 		factoryBean.object == BugTracker.NOT_DEFINED
+		
+		where:
+		url               | kind 
+		null              | null 
+		null              | "whatever"
+		""                | "whatever"
+		"http://wherever" | null 
+		"http://wherever" | ""
+		""                | "" 
 	}
 
 	def "should create a BT from properties"() {
 		given:
-		Properties props = Mock()
-		props.getProperty("squashtest.bugtracker.url") >> "http://foo"
-		props.getProperty("squashtest.bugtracker.kind") >> "bar"
+		factoryBean.url = "http://peterparker.com"
+		factoryBean.kind = "spider-man"
 
-		factoryBean.setBugTrackerProperties(props)
 
 		when:
 		factoryBean.afterPropertiesSet()
 		def res = factoryBean.object
 
 		then:
-		res.url == "http://foo"
-		res.kind == "bar"
+		res.url == "http://peterparker.com"
+		res.kind == "spider-man"
+	}
+	
+	def "should create undefined BT from properties"() {
+		given:
+		factoryBean.url = "none"
+		factoryBean.kind = "none"
+
+
+		when:
+		factoryBean.afterPropertiesSet()
+
+		then:
+		factoryBean.object == BugTracker.NOT_DEFINED
 	}
 }

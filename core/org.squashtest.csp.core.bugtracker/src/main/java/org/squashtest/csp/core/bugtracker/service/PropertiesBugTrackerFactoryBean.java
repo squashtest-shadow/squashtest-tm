@@ -20,28 +20,32 @@
  */
 package org.squashtest.csp.core.bugtracker.service;
 
-import java.util.Properties;
-
+import org.apache.commons.lang.StringUtils;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.FactoryBean;
 import org.springframework.beans.factory.InitializingBean;
 import org.squashtest.csp.core.bugtracker.domain.BugTracker;
 
 /**
- * Creates a {@link BugTracker} using a {@link Properties} set. If no properties are available, this factory returns
- * {@link BugTracker#NOT_DEFINED}
- *
+ * Creates a {@link BugTracker}. If any ofh the properties are not set or set to 'none', it will create
+ * an undefined bugtracker.
+ * 
  * @author Gregory Fouquet
- *
+ * 
  */
 public class PropertiesBugTrackerFactoryBean implements FactoryBean<BugTracker>, InitializingBean {
-	private static final String BUG_TRACKER_URL_KEY = "squashtest.bugtracker.url";
-	private static final String BUG_TRACKER_KIND_KEY = "squashtest.bugtracker.kind";
-	
+
+	private static final Logger LOGGER = LoggerFactory.getLogger(PropertiesBugTrackerFactoryBean.class);
+
 	private static final String BUG_TRACKER_UNDEFINED_KIND = "none";
 	private static final String BUG_TRACKER_UNDEFINED_URL = "none";
 
-	private Properties bugTrackerProperties;
 	private BugTracker bugTracker = BugTracker.NOT_DEFINED;
+
+	private String kind;
+
+	private String url;
 
 	@Override
 	public BugTracker getObject() throws Exception {
@@ -58,29 +62,69 @@ public class PropertiesBugTrackerFactoryBean implements FactoryBean<BugTracker>,
 		return true;
 	}
 
-	public void setBugTrackerProperties(Properties bugTrackerProperties) {
-		this.bugTrackerProperties = bugTrackerProperties;
-	}
-
 	@Override
 	public void afterPropertiesSet() throws Exception {
-		if (bugTrackerProperties != null) {
-			String kind = bugTrackerProperties.getProperty(BUG_TRACKER_KIND_KEY);
-			String url = bugTrackerProperties.getProperty(BUG_TRACKER_URL_KEY);
-			
-			if (isNullBugTracker(kind, url)){
-				bugTracker=BugTracker.NOT_DEFINED;
-			}else{
-				BugTracker bt = new BugTracker(url, kind);
-				bugTracker = bt;
-			}
-		}else{
-			bugTracker=BugTracker.NOT_DEFINED;
+		fixWrongProperties();
+
+		if (isNullBugTracker(kind, url)) {
+			bugTracker = BugTracker.NOT_DEFINED;
+		} else {
+			BugTracker bt = new BugTracker(url, kind);
+			bugTracker = bt;
 		}
+
+		LOGGER.warn("Squash will try to connect to a '" + kind + "' kinded bugtracker at url '" + url + '\'');
 	}
-	
-	private boolean isNullBugTracker(String kind, String url){
-		return kind.equals(BUG_TRACKER_UNDEFINED_KIND) && url.equals(BUG_TRACKER_UNDEFINED_URL);
+
+	/**
+	 * 
+	 */
+	private void fixWrongProperties() {
+		if (StringUtils.isBlank(kind)) {
+			LOGGER.warn("Bug tracker kind was not properly set, '" + BUG_TRACKER_UNDEFINED_KIND
+					+ "' will be used instead");
+			kind = BUG_TRACKER_UNDEFINED_KIND;
+		}
+		if (StringUtils.isBlank(url)) {
+			LOGGER.warn("Bug tracker url was not properly set, '" + BUG_TRACKER_UNDEFINED_URL
+					+ "' will be used instead");
+			url = BUG_TRACKER_UNDEFINED_URL;
+		}
+
+	}
+
+	private boolean isNullBugTracker(String kind, String url) {
+		return kind.equals(BUG_TRACKER_UNDEFINED_KIND) || url.equals(BUG_TRACKER_UNDEFINED_URL);
+	}
+
+	/**
+	 * @return the kind
+	 */
+	public String getKind() {
+		return kind;
+	}
+
+	/**
+	 * @param kind
+	 *            the kind to set
+	 */
+	public void setKind(String kind) {
+		this.kind = kind;
+	}
+
+	/**
+	 * @return the url
+	 */
+	public String getUrl() {
+		return url;
+	}
+
+	/**
+	 * @param url
+	 *            the url to set
+	 */
+	public void setUrl(String url) {
+		this.url = url;
 	}
 
 }
