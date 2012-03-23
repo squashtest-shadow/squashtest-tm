@@ -37,9 +37,14 @@
 	//Array with selected ids
 	selectionSearchByReq = new Array();
 	
+	function setupReq(){
+		$("#byReqSearch").addClass("search-div");
+		$("#byReqSearch").addClass("search-div-requirement");
+	}
+	
 	//add the event on research button and sort options change
 	$(function() {
-		
+		setupReq();
 		//Set the search input to last entered value
 		byReqGetOldSearch();
 		

@@ -34,6 +34,19 @@
 <%@ page language="java" contentType="text/html; charset=utf-8" pageEncoding="utf-8"%>
 <c:set var="servContext" value="${ pageContext.servletContext.contextPath }"/>
 <c:url var="objectUrl" value="${workspace}" />
+<c:choose>	
+<c:when test="${ object.class.simpleName == icon  }">
+<comp:decorate-ajax-search-table tableId="by-req-search-result-datatable" >
+	<jsp:attribute name="initialSort">[[3,'asc']]</jsp:attribute>
+	<jsp:attribute name="columnDefs">
+		<dt:column-definition targets="0" sortable="false" visible="false" />
+		<dt:column-definition targets="1" sortable="false" />
+		<dt:column-definition targets="2" sortable="true"  />
+		<dt:column-definition targets="3" sortable="true" visible="false" lastDef="true"/>
+	</jsp:attribute>
+</comp:decorate-ajax-search-table>
+</c:when>
+<c:otherwise>
 <comp:decorate-ajax-search-table tableId="by-req-search-result-datatable" >
 	<jsp:attribute name="initialSort">[[3,'asc']]</jsp:attribute>
 	<jsp:attribute name="columnDefs">
@@ -43,23 +56,23 @@
 		<dt:column-definition targets="3" sortable="true" visible="false" lastDef="true"/>
 	</jsp:attribute>
 </comp:decorate-ajax-search-table>
-
-
+</c:otherwise>
+</c:choose>
 <table id="by-req-search-result-datatable">
-	<thead>
-		<tr>
-			<th> Id </th>
-			<th> <f:message key="${workspace}.header.title" />s </th>
-			<th> Criticalité </th>
-			<th> Projet </th>
-		</tr>
-	</thead>
+<!-- 	<thead> -->
+<!-- 		<tr> -->
+<!-- 			<th> Id </th> -->
+<%-- 			<th> <f:message key="${workspace}.header.title" />s </th> --%>
+<!-- 			<th> Criticalité </th> -->
+<!-- 			<th> Projet </th> -->
+<!-- 		</tr> -->
+<!-- 	</thead> -->
 	<tbody>
 	<c:forEach var="object" items="${resultList}">
 
 		<tr class="search-items">
 		<c:choose>	
-			<c:when test="${object.class.simpleName== icon}">
+			<c:when test="${object.class.simpleName == icon}">
 						<td class = "objectId"> ${object.id}</td>
 						<td id="searchnode-${object.class.simpleName}-${object.id}" class="non-tree requirement-${object.criticality}" style="border: none;">
 							<a href="#" style="text-decoration: none; border: none;">

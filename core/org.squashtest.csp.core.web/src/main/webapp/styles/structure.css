@@ -18,7 +18,6 @@
  *     You should have received a copy of the GNU Lesser General Public License
  *     along with this software.  If not, see <http://www.gnu.org/licenses/>.
  */
-/* ---------------------------------*/
 /* ---------->>> PAGE <<<-----------*/
 /* ---------------------------------*/
 html,body {
@@ -150,16 +149,11 @@ div#tabbed-pane > ul {
 }
 
 .search-div-requirement {
-	border: 1px solid;
-    bottom: 0.1cm;
-    float: left;
-    left: 2px;
-    padding-top: 0;
-    position: absolute;
     top: 5.8cm;
-    right: 2px;
 }
-
+.search-div-campaign {
+    top: 3cm;
+}
 span.search-text{
 	margin-left: 0.5em;
     vertical-align: top;

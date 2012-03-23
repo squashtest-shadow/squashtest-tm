@@ -43,7 +43,8 @@
 <s:url var="searchUrl" value="/search/${workspace}s" />
 <s:url var="breadCrumbUrl" value="/search/${workspace}s/breadcrumb" />
 <s:url var="testCaseBreadCrumbUrl" value="/search/test-cases/breadcrumb" />
-<s:url var="requirementBreadCrumbUrl" value="/search/requirements/breadcrumb" />
+<s:url var="requirementBreadCrumbUrl"
+	value="/search/requirements/breadcrumb" />
 <s:url var="searchReqUrl" value="/search/requirements" />
 <s:url var="searchTCUrl" value="/search/test-cases" />
 <s:url var="loadEntityUrl" value="/${workspace}s" />
@@ -96,21 +97,13 @@
 	}
 	
 	function setup(){
-		<c:choose>
-		<c:when test="${ workspace eq 'requirement' || linkable eq 'requirement' }" >
-			<c:choose>
-			<c:when test="${linkable eq 'test-case'}" >
-				$("#search").addClass("search-div");
-			</c:when>
-			<c:otherwise>
-				$("#search").addClass("search-div-requirement");
-			</c:otherwise>
-			</c:choose>
-		</c:when>
-		<c:otherwise>
-			$("#search").addClass("search-div");
-		</c:otherwise>
-		</c:choose>
+		$("#search").addClass("search-div");
+		<c:if test="${ (workspace eq 'requirement' && linkable != 'test-case') || linkable eq 'requirement' }" >
+		$("#search").addClass("search-div-requirement");
+		</c:if>
+		<c:if test="${ workspace eq 'campaign' && empty linkable}" >
+		$("#search").addClass("search-div-campaign");
+		</c:if>
 	}
 	
 	function verifyParams(){
@@ -531,19 +524,22 @@
 								<tr>
 									<td class="requirement-UNDEFINED"><span> <input
 											type="checkbox" id="crit-1" value="1" /> <span> <f:message
-													key="requirement.criticality.UNDEFINED" /> </span> </span></td>
+													key="requirement.criticality.UNDEFINED" /> </span> </span>
+									</td>
 									<td class="requirement-MINOR"><span> <input
 											type="checkbox" id="crit-2" value="2" /> <span> <f:message
-													key="requirement.criticality.MINOR" /> </span> </span></td>
+													key="requirement.criticality.MINOR" /> </span> </span>
+									</td>
 								</tr>
 								<tr>
 									<td class="requirement-MAJOR"><span> <input
 											type="checkbox" id="crit-3" value="3" /> <span> <f:message
-													key="requirement.criticality.MAJOR" /> </span> </span></td>
+													key="requirement.criticality.MAJOR" /> </span> </span>
+									</td>
 									<td class="requirement-CRITICAL"><span> <input
 											type="checkbox" id="crit-4" value="4" /> <span> <f:message
-													key="requirement.criticality.CRITICAL" /> </span>
-									</span></td>
+													key="requirement.criticality.CRITICAL" /> </span> </span>
+									</td>
 								</tr>
 							</table>
 						</div>
@@ -563,7 +559,8 @@
 									</c:if>
 								</c:forEach>
 							</select>
-						</div></td>
+						</div>
+					</td>
 				</tr>
 			</c:if>
 		</c:if>
@@ -576,43 +573,41 @@
 					<div class="search-panel-tc-importance">
 						<div class="caption">
 							<span class="gray-text"><f:message
-									key="search.test-case.importance.filter" />
-							</span>
+									key="search.test-case.importance.filter" /> </span>
 						</div>
 						<div class="options">
 							<div class="search-tc-importance-1">
 								<input type="checkbox" id="importance-1" data-value="LOW" /><span><f:message
-										key="test-case.importance.LOW" />
-								</span>
+										key="test-case.importance.LOW" /> </span>
 							</div>
 							<div class="search-tc-importance-2">
 								<input type="checkbox" id="importance-2" data-value="MEDIUM" /><span><f:message
-										key="test-case.importance.MEDIUM" />
-								</span>
+										key="test-case.importance.MEDIUM" /> </span>
 							</div>
 							<div class="search-tc-importance-3">
 								<input type="checkbox" id="importance-3" data-value="HIGH" /><span><f:message
-										key="test-case.importance.HIGH" />
-								</span>
+										key="test-case.importance.HIGH" /> </span>
 							</div>
 							<div class="search-tc-importance-4">
 								<input type="checkbox" id="importance-4" data-value="VERY_HIGH" /><span><f:message
-										key="test-case.importance.VERY_HIGH" />
-								</span>
+										key="test-case.importance.VERY_HIGH" /> </span>
 							</div>
 						</div>
-					</div></td>
+					</div>
+				</td>
 			</tr>
 		</c:if>
 
 		<tr>
 			<td><input type="checkbox" id="project-view" /> <span
-				class="gray-text"> <f:message key="search.project.view" /> </span></td>
+				class="gray-text"> <f:message key="search.project.view" /> </span>
+			</td>
 		</tr>
 		<f:message key="search.button.label" var="searchLabel" />
 		<tr>
 			<td style="text-align: center;"><input type="button"
-				id="search-button" value="${ searchLabel }" /></td>
+				id="search-button" value="${ searchLabel }" />
+			</td>
 		</tr>
 
 
@@ -622,8 +617,8 @@
 				<tr>
 					<td>
 						<div id="sortingProperties" class="requirementCriterion">
-							<span><f:message key="search.sort.choose.label" />
-							</span> <select id="sortParam">
+							<span><f:message key="search.sort.choose.label" /> </span> <select
+								id="sortParam">
 								<option value="4" selected="selected">
 									<f:message key="search.name.label" />
 								</option>
@@ -634,7 +629,8 @@
 									<f:message key="search.criticality.label" />
 								</option>
 							</select>
-						</div></td>
+						</div>
+					</td>
 				</tr>
 			</c:if>
 		</c:if>
