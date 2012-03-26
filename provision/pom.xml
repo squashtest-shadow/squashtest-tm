@@ -3,8 +3,8 @@
 	<modelVersion>4.0.0</modelVersion>
 	<parent>
 		<artifactId>squashtest-csp</artifactId>
-                <groupId>org.squashtest.csp</groupId>
-                <version>1.1.0.RC4-SNAPSHOT</version>
+		<groupId>org.squashtest.csp</groupId>
+		<version>1.1.0.RELEASE-SNAPSHOT</version>
 	</parent>
 
 	<groupId>org.squashtest.csp</groupId>
@@ -57,7 +57,7 @@
 					</execution>
 				</executions>
 			</plugin>
-			
+
 			<plugin>
 				<groupId>org.liquibase</groupId>
 				<artifactId>liquibase-maven-plugin</artifactId>
@@ -284,7 +284,7 @@
 	<dependencies>
 		<!-- ====== SQUASHTEST ====== -->
 		<!-- Squashtest core modules -->
-	 	<dependency>
+		<dependency>
 			<groupId>${project.groupId}</groupId>
 			<artifactId>org.squashtest.csp.core.log4j</artifactId>
 			<version>${project.version}</version>
@@ -641,7 +641,7 @@
 			<artifactId>com.springsource.org.apache.commons.io</artifactId>
 			<version>1.4.0</version>
 			<scope>runtime</scope>
-		</dependency>		
+		</dependency>
 		<!-- ====== /AXIS 1.4 ====== -->
 		<!-- ====== /MANTIS ====== -->
 
@@ -652,21 +652,21 @@
 			<version>3.1</version>
 		</dependency>
 		<!-- ===== HTML parsing stuffs ==== -->
-		
+
 		<!-- ====== apache poi ============ -->
 		<dependency>
 			<groupId>org.apache.poi</groupId>
 			<artifactId>org.squashtest.org.apache.poi</artifactId>
-			<version>3.7</version>			
+			<version>3.7</version>
 		</dependency>
-		
-		<!--  ======= junit (for weirdos than need junit at runtime)======== -->
+
+		<!-- ======= junit (for weirdos than need junit at runtime)======== -->
 		<dependency>
-		    <groupId>org.junit</groupId>
-		    <artifactId>com.springsource.org.junit</artifactId>
-		    <version>4.5.0</version>
-		</dependency>		
-		 
+			<groupId>org.junit</groupId>
+			<artifactId>com.springsource.org.junit</artifactId>
+			<version>4.5.0</version>
+		</dependency>
+
 		<!-- ====== /apache poi ============ -->
 
 		<!-- ====== BUGTRACKER STUFF ======= -->
