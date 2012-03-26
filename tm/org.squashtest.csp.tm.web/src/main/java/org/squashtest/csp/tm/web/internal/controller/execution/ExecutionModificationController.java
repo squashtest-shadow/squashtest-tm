@@ -67,7 +67,6 @@ public class ExecutionModificationController {
 	@Inject
 	private MessageSource messageSource;
 
-
 	@ServiceReference
 	public void setIterationModificationService(ExecutionModificationService iterationModificationService) {
 		this.executionModService = iterationModificationService;
@@ -80,7 +79,6 @@ public class ExecutionModificationController {
 
 		LOGGER.trace("ExecutionModService : getting execution {}, rank {}", executionId, rank);
 
-
 		ModelAndView mav = new ModelAndView("page/campaign-libraries/show-execution");
 
 		mav.addObject("execution", execution);
@@ -90,55 +88,42 @@ public class ExecutionModificationController {
 
 	}
 
-	@RequestMapping(value="/steps", method=RequestMethod.GET)
+	@RequestMapping(value = "/steps", method = RequestMethod.GET)
 	@ResponseBody
-	public DataTableModel getStepsTableModel(@PathVariable long executionId,DataTableDrawParameters params, final Locale locale){
+	public DataTableModel getStepsTableModel(@PathVariable long executionId, DataTableDrawParameters params,
+			final Locale locale) {
 		LOGGER.trace("ExecutionModificationController: getStepsTableModel called ");
 
 		CollectionFilter filter = createCollectionFilter(params);
 
-		FilteredCollectionHolder<List<ExecutionStep>> holder = executionModService.getExecutionSteps(executionId, filter);
+		FilteredCollectionHolder<List<ExecutionStep>> holder = executionModService.getExecutionSteps(executionId,
+				filter);
 
-
-		return new DataTableModelHelper<ExecutionStep>(){
+		return new DataTableModelHelper<ExecutionStep>() {
 			@Override
 			public Object[] buildItemData(ExecutionStep item) {
-				return new Object[] { item.getId(),
-						item.getExecutionStepOrder()+1,
-						item.getAction(),
-						item.getExpectedResult(),
-						localizedStatus(item.getExecutionStatus(), locale),
-						formatDate(item.getLastExecutedOn(),locale),
-						item.getLastExecutedBy(),
-						item.getComment(),
-						item.getAttachmentList().size(),
-						item.getAttachmentList().getId()
-						};
+				return new Object[] { item.getId(), item.getExecutionStepOrder() + 1, item.getAction(),
+						item.getExpectedResult(), localizedStatus(item.getExecutionStatus(), locale),
+						formatDate(item.getLastExecutedOn(), locale), item.getLastExecutedBy(), item.getComment(),
+						item.getAttachmentList().size(), item.getAttachmentList().getId() };
 			}
-		}.buildDataModel(holder, filter.getFirstItemIndex()+1, params.getsEcho());
+		}.buildDataModel(holder, filter.getFirstItemIndex() + 1, params.getsEcho());
 
 	}
-
 
 	private CollectionFilter createCollectionFilter(final DataTableDrawParameters params) {
 		return new DataTablePagedFilter(params);
 	}
 
-
-
 	@RequestMapping(value = "/steps/{stepId}/comment", method = RequestMethod.POST, params = { "id", "value" })
 	@ResponseBody
-	String updateStepComment(@PathVariable Long stepId, @RequestParam("value") String newComment){
+	String updateStepComment(@PathVariable Long stepId, @RequestParam("value") String newComment) {
 		executionModService.setExecutionStepComment(stepId, newComment);
 		LOGGER.trace("ExecutionModificationController : updated comment for step " + stepId);
 		return newComment;
 	}
 
-
-
-
-
-	private String localizedStatus(ExecutionStatus status, Locale locale){
+	private String localizedStatus(ExecutionStatus status, Locale locale) {
 		return messageSource.getMessage(status.getI18nKey(), null, locale);
 	}
 
@@ -189,39 +174,28 @@ public class ExecutionModificationController {
 		return mav;
 	}
 
-
-
 	// still to be done.
 
 	@RequestMapping(method = RequestMethod.DELETE)
 	public @ResponseBody
 	String removeExecution(@PathVariable long executionId, HttpServletResponse response) {
-
-		//todo
-
-		response.setStatus(500);
-
-		LOGGER.info("ExecutionModificationController : deleting " + executionId+ "NOT SUPPORED YET");
-
-		return "Operation not supported yet";
-
+		Execution execution = executionModService.simpleGetExecutionById(executionId);
+		executionModService.deleteExecution(execution);
+		return "Execution deleted";
 	}
 
-	private String formatDate(Date date, Locale locale){
-		try{
+	private String formatDate(Date date, Locale locale) {
+		try {
 			String format = messageSource.getMessage("squashtm.dateformat", null, locale);
 			return new SimpleDateFormat(format).format(date);
-		}
-		catch(Exception anyException){
+		} catch (Exception anyException) {
 			return formatNoData(locale);
 		}
 
 	}
-	
 
-	private String formatNoData(Locale locale){
-		return messageSource.getMessage("squashtm.nodata",null, locale);
+	private String formatNoData(Locale locale) {
+		return messageSource.getMessage("squashtm.nodata", null, locale);
 	}
-	
 
 }

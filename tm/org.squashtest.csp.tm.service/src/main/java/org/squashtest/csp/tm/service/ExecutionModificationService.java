@@ -32,22 +32,21 @@ import org.squashtest.csp.tm.service.deletion.SuppressionPreviewReport;
 @Transactional
 public interface ExecutionModificationService {
 	Execution findExecution(Long executionId);
-	
+
 	Execution findAndInitExecution(Long executionId);
-	
+
 	void setExecutionDescription(Long executionId, String description);
-	
-	/*********************************** Steps methods*****************************************/
-	
+
+	/*********************************** Steps methods *****************************************/
+
 	List<ExecutionStep> getExecutionSteps(Long executionId);
-	
-	FilteredCollectionHolder<List<ExecutionStep>> getExecutionSteps(
-			long executionId, CollectionFilter filter);	
-	
+
+	FilteredCollectionHolder<List<ExecutionStep>> getExecutionSteps(long executionId, CollectionFilter filter);
+
 	int findExecutionRank(Long executionId);
-	
+
 	void setExecutionStepComment(Long executionStepId, String comment);
-	
+
 	/**
 	 * that method should investigate the consequences of the deletion of the given executions, and return a report
 	 * about what will happen.
@@ -56,16 +55,18 @@ public interface ExecutionModificationService {
 	 * @return
 	 */
 	List<SuppressionPreviewReport> simulateExecutionDeletion(Long execId);
-	
-	
+
 	/**
-	 * that method should delete the execution. It still takes care of non deletable executions so
-	 * the implementation should abort if the execution can't be deleted.
+	 * that method should delete the execution. It still takes care of non deletable executions so the implementation
+	 * should abort if the execution can't be deleted.
 	 * 
 	 * 
-	 * @param targetIds 
-	 * @throws RuntimeException if the execution should not be deleted.
+	 * @param targetIds
+	 * @throws RuntimeException
+	 *             if the execution should not be deleted.
 	 */
-	void deleteExecution(Execution execution);	
-		
+	void deleteExecution(Execution execution);
+
+	Execution simpleGetExecutionById(Long id);
+
 }

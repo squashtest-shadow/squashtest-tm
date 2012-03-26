@@ -87,7 +87,8 @@
 	/* deletion success handler */
 	function deleteExecutionSuccess(){
 		$( '#delete-execution-confirm' ).dialog( 'close' );
-		document.location.href="${ parentUrl }" ;				
+// 		document.location.href="${ parentUrl }" ;
+		history.back();
 	}
 	
 	/* deletion failure handler */
@@ -296,9 +297,7 @@
 				<input type="submit" value='' name="optimized" id="start-optimized-button" />
 			</form>
 			<input type="button" value="${executeBtnLabel}" id="execute-execution-button"/>
-			<%--
 			<input type="button" value='<f:message key="execution.execute.remove.button.label" />' id="delete-execution-button" />
-			 --%>
 		</c:if>
 	</div>	
 	<div style="clear:both;"></div>	
@@ -400,10 +399,7 @@
 <comp:decorate-buttons />
 
 <%--------------------------- Deletion confirmation popup -------------------------------------%>
-<%-- 
-*
-* unused yet.
-*
+
 
 <comp:popup id="delete-execution-confirm" titleKey="dialog.delete-execution.title" 
 
@@ -426,7 +422,7 @@ isContextual="true" openedBy="delete-execution-button">
 		<br/>				
 	</jsp:body>
 </comp:popup>
- --%>
+ 
 <%--------------------------- /Deletion confirmation popup -------------------------------------%>
 
 </div>

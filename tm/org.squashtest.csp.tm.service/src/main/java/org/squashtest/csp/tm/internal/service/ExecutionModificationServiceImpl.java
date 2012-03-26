@@ -40,20 +40,17 @@ import org.squashtest.csp.tm.service.deletion.SuppressionPreviewReport;
  * 
  */
 
-
 @Service("squashtest.tm.service.ExecutionModificationService")
-public class ExecutionModificationServiceImpl implements
-		ExecutionModificationService {
-	
+public class ExecutionModificationServiceImpl implements ExecutionModificationService {
+
 	@Inject
 	private ExecutionDao executionDao;
-	
-	@Inject 
-	private ExecutionStepDao executionStepDao;
-	
-	@Inject 
-	private CampaignNodeDeletionHandler deletionHandler;
 
+	@Inject
+	private ExecutionStepDao executionStepDao;
+
+	@Inject
+	private CampaignNodeDeletionHandler deletionHandler;
 
 	@Override
 	public Execution findExecution(Long executionId) {
@@ -71,30 +68,25 @@ public class ExecutionModificationServiceImpl implements
 		execution.setDescription(description);
 	}
 
-	
-
 	@Override
 	public List<ExecutionStep> getExecutionSteps(Long executionId) {
 		return executionDao.findExecutionSteps(executionId);
 	}
 
-	
 	@Override
 	public int findExecutionRank(Long executionId) {
 		return executionDao.findExecutionRank(executionId);
 	}
-	
+
 	@Override
-	public void setExecutionStepComment(Long executionStepId, String comment){
+	public void setExecutionStepComment(Long executionStepId, String comment) {
 		ExecutionStep executionStep = executionStepDao.findById(executionStepId);
 		executionStep.setComment(comment);
 	}
 
 	@Override
-	public FilteredCollectionHolder<List<ExecutionStep>> getExecutionSteps(
-			long executionId, CollectionFilter filter) {
-		List<ExecutionStep> list = executionDao.findStepsFiltered(executionId,
-				filter);
+	public FilteredCollectionHolder<List<ExecutionStep>> getExecutionSteps(long executionId, CollectionFilter filter) {
+		List<ExecutionStep> list = executionDao.findStepsFiltered(executionId, filter);
 		long count = getExecutionSteps(executionId).size();
 		return new FilteredCollectionHolder<List<ExecutionStep>>(count, list);
 	}
@@ -109,6 +101,9 @@ public class ExecutionModificationServiceImpl implements
 		deletionHandler.deleteExecution(execution);
 	}
 
-
+	@Override
+	public Execution simpleGetExecutionById(Long id) {
+		return executionDao.findById(id);
+	}
 
 }
