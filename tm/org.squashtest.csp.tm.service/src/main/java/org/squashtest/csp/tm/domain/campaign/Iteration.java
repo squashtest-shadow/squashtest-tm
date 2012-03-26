@@ -32,7 +32,6 @@ import java.util.ListIterator;
 import java.util.Map;
 import java.util.Set;
 
-import javax.persistence.Basic;
 import javax.persistence.CascadeType;
 import javax.persistence.Column;
 import javax.persistence.Embedded;
@@ -47,6 +46,7 @@ import javax.persistence.OneToMany;
 import javax.persistence.OneToOne;
 import javax.persistence.OrderColumn;
 import javax.validation.constraints.NotNull;
+import javax.validation.constraints.Size;
 
 import org.hibernate.validator.constraints.NotBlank;
 import org.squashtest.csp.core.security.annotation.AclConstrainedObject;
@@ -76,7 +76,8 @@ public class Iteration implements AttachmentHolder {
 	@Lob
 	private String description;
 
-	@Basic(optional = false)
+	@NotBlank
+	@Size(min=0, max=255) 
 	private String name;
 
 	@Embedded

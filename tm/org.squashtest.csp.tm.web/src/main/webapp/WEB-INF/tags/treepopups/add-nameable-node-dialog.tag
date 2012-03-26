@@ -81,7 +81,7 @@ $(function(){
 				</label>
 				</td>
 				<td>
-					<input id="add-${ resourceName }-name" type="text" size="50" /><br />
+					<input id="add-${ resourceName }-name" type="text" size="50" maxlength="255" /><br />
 					<comp:error-message forField="name" />
 				</td>
 			</tr>

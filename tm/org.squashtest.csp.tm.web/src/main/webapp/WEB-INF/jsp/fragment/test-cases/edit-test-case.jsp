@@ -505,7 +505,7 @@
 	});
 </script>
 		<label><f:message key="dialog.rename.label" /></label>
-		<input type="text" id="rename-test-case-input" />
+		<input type="text" id="rename-test-case-input" maxlength="255" />
 		<br />
 		<comp:error-message forField="name" />	
 

@@ -20,7 +20,6 @@
  */
 package org.squashtest.csp.tm.domain.project;
 
-import javax.persistence.Basic;
 import javax.persistence.CascadeType;
 import javax.persistence.Column;
 import javax.persistence.Entity;
@@ -30,6 +29,7 @@ import javax.persistence.Id;
 import javax.persistence.JoinColumn;
 import javax.persistence.Lob;
 import javax.persistence.OneToOne;
+import javax.validation.constraints.Size;
 
 import org.hibernate.validator.constraints.NotBlank;
 import org.squashtest.csp.tm.domain.audit.Auditable;
@@ -50,7 +50,8 @@ public class Project {
 
 	private String label;
 
-	@Basic(optional = false)
+	@NotBlank
+	@Size(min = 0, max = 255)
 	private String name;
 
 	private Boolean active = Boolean.TRUE;

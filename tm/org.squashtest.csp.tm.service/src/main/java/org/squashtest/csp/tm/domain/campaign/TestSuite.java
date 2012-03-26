@@ -23,7 +23,6 @@ package org.squashtest.csp.tm.domain.campaign;
 import java.util.LinkedList;
 import java.util.List;
 
-import javax.persistence.Basic;
 import javax.persistence.CascadeType;
 import javax.persistence.Column;
 import javax.persistence.Entity;
@@ -35,6 +34,7 @@ import javax.persistence.Lob;
 import javax.persistence.ManyToOne;
 import javax.persistence.OneToOne;
 import javax.validation.constraints.NotNull;
+import javax.validation.constraints.Size;
 
 import org.hibernate.validator.constraints.NotBlank;
 import org.squashtest.csp.core.security.annotation.InheritsAcls;
@@ -60,8 +60,8 @@ public class TestSuite {
 	@Column(name = "ID")
 	private Long id;
 
-	@Basic(optional = false)
 	@NotBlank
+	@Size(min=0, max=255)
 	private String name;
 
 	@Lob

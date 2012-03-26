@@ -164,7 +164,7 @@
 				});
 				</script>			
 				<label><f:message key="dialog.rename.label" /></label>
-				<input type="text" id="rename-campaign-name" /><br/>
+				<input type="text" id="rename-campaign-name" maxlength="255" /><br/>
 				<comp:error-message forField="name"/>	
 		
 			</jsp:body>

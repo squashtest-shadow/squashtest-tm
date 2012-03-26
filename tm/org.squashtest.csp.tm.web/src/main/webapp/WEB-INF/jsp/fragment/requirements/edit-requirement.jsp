@@ -96,7 +96,6 @@ that page won't be editable if
 <c:if test="${status_editable}">
 <f:message var="StatusNotAllowedMessage" key='requirement.status.notAllowed' />
 <script type="text/javascript">
-		
 		function statusSelect(settings, widget){
 			
 			//first check if 'obsolete' is selected
@@ -150,8 +149,6 @@ that page won't be editable if
 		function statusSelectCallback(){
 			document.location.reload();
 		}
-		
-		
 </script>
 </c:if>
 
@@ -195,7 +192,7 @@ that page won't be editable if
 				});
 				</script>
 				<label><f:message key="dialog.rename.label" /></label>
-				<input type="text" id="rename-requirement-input" /><br/>
+				<input type="text" id="rename-requirement-input" maxlength="255" /><br/>
 				<comp:error-message forField="name"/>
 			</jsp:body>
 		</comp:popup>

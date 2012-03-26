@@ -20,11 +20,11 @@
  */
 package org.squashtest.csp.tm.domain.library;
 
-import javax.persistence.Basic;
 import javax.persistence.JoinColumn;
 import javax.persistence.Lob;
 import javax.persistence.ManyToOne;
 import javax.persistence.MappedSuperclass;
+import javax.validation.constraints.Size;
 
 import org.hibernate.validator.constraints.NotBlank;
 import org.squashtest.csp.tm.domain.project.Project;
@@ -41,8 +41,8 @@ public abstract class GenericLibraryNode implements LibraryNode {
 	@JoinColumn(name = "PROJECT_ID")
 	private Project project;
 
-	@Basic(optional = false)
 	@NotBlank
+	@Size(min=0, max=255)
 	private String name;
 
 	@Lob
