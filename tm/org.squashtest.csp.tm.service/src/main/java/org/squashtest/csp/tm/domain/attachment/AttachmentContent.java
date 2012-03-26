@@ -32,6 +32,14 @@ import javax.persistence.Lob;
 
 import org.hibernate.annotations.Type;
 
+/**
+ * the BLOB part of the attachment was kept apart from the Attachment class itself to enforce the lazy loading of potentially large data.
+ * 
+ * 
+ * @author bsiri
+ *
+ */
+
 @Entity
 public class AttachmentContent {
 
