@@ -182,8 +182,7 @@ public class SearchServiceImpl implements SearchService {
 			node = requirementLibraryNavigationService.findRequirement(nodeId);
 		}
 
-		List<String> result = findBreadCrumbOfRequirementNode(node, requirementLibraryNavigationService, rejex);
-		return result;
+		return findBreadCrumbOfRequirementNode(node, requirementLibraryNavigationService, rejex);
 	}
 
 	private List<String> findBreadCrumbOfRequirementNode(RequirementLibraryNode node,
@@ -219,8 +218,7 @@ public class SearchServiceImpl implements SearchService {
 			node = testCaseLibraryNavigationService.findTestCase(nodeId);
 		}
 
-		List<String> result = findBreadCrumbOfTestCaseNode(node, testCaseLibraryNavigationService, rejex);
-		return result;
+		return findBreadCrumbOfTestCaseNode(node, testCaseLibraryNavigationService, rejex);
 	}
 
 	private List<String> findBreadCrumbOfTestCaseNode(TestCaseLibraryNode node,

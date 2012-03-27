@@ -65,35 +65,31 @@ public class SearchController {
 	@ResponseBody
 	public List<String> findBreadCrumbTestCase(@RequestParam("nodeName") String nodeName){
 		LOGGER.trace("search breadcrumb");
-		List<String> result = new ArrayList<String>();
+
 		String[] splitedNodeName = nodeName.split(NODE_NAME_REJEX);
 		String className = splitedNodeName[0];
 		Long nodeId = Long.parseLong(splitedNodeName[1]);
-		result = searchService.findBreadCrumbForTestCase(className, nodeId, NODE_NAME_REJEX);
-		return result;
+		return searchService.findBreadCrumbForTestCase(className, nodeId, NODE_NAME_REJEX);
 	}
 	@RequestMapping(value = "requirements/breadcrumb", method = RequestMethod.POST, params = {"nodeName"})
 	@ResponseBody
 	public List<String> findBreadCrumbRequirement(@RequestParam("nodeName") String nodeName){
 		LOGGER.trace("search breadcrumb");
-		List<String> result = new ArrayList<String>();
+
 		String[] splitedNodeName = nodeName.split(NODE_NAME_REJEX);
 		String className = splitedNodeName[0];
 		Long nodeId = Long.parseLong(splitedNodeName[1]);
-		result = searchService.findBreadCrumbForRequirement(className, nodeId, NODE_NAME_REJEX);
-		
-		return result;
+		return searchService.findBreadCrumbForRequirement(className, nodeId, NODE_NAME_REJEX);
 	}
 	@RequestMapping(value = "campaigns/breadcrumb", method = RequestMethod.POST, params = {"nodeName"})
 	@ResponseBody
 	public List<String> findBreadCrumbCampaign(@RequestParam("nodeName") String nodeName){
 		LOGGER.trace("search breadcrumb");
-		List<String> result = new ArrayList<String>();
+
 		String[] splitedNodeName = nodeName.split(NODE_NAME_REJEX);
 		String className = splitedNodeName[0];
 		Long nodeId = Long.parseLong(splitedNodeName[1]);
-		result = searchService.findBreadCrumbForCampaign(className, nodeId, NODE_NAME_REJEX);
-		return result;
+		return searchService.findBreadCrumbForCampaign(className, nodeId, NODE_NAME_REJEX);
 	}
 	/*
 	 * note that according to the mapping below importance[] may be legally null.

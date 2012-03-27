@@ -34,7 +34,6 @@ import org.squashtest.csp.tm.internal.repository.TestCaseFolderDao;
 
 @Repository
 public class HibernateTestCaseFolderDao extends HibernateEntityDao<TestCaseFolder> implements TestCaseFolderDao {
-
 	@Override
 	public List<TestCaseLibraryNode> findAllContentById(final long folderId) {
 		SetQueryParametersCallback setParams = new SetQueryParametersCallback() {
@@ -102,9 +101,9 @@ public class HibernateTestCaseFolderDao extends HibernateEntityDao<TestCaseFolde
 
 	@Override
 	public List<Long[]> findPairedContentForList(final List<Long> ids) {
-
-		if (ids.size() == 0)
+		if (ids.size() == 0) {
 			return Collections.emptyList();
+		}
 
 		SQLQuery query = currentSession().createSQLQuery(
 				NativeQueries.TEST_CASE_FOLDER_SQL_FIND_PAIRED_CONTENT_FOR_FOLDERS);
@@ -119,8 +118,9 @@ public class HibernateTestCaseFolderDao extends HibernateEntityDao<TestCaseFolde
 
 	@Override
 	public List<Long> findContentForList(List<Long> ids) {
-		if (ids.size() == 0)
+		if (ids.size() == 0) {
 			return Collections.emptyList();
+		}
 
 		SQLQuery query = currentSession().createSQLQuery(NativeQueries.TEST_CASE_FOLDER_SQL_FIND_CONTENT_FOR_FOLDER);
 		query.setParameterList("folderIds", ids, LongType.INSTANCE);

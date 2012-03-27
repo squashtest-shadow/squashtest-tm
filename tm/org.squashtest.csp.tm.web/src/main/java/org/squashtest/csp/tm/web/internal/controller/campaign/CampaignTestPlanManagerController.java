@@ -123,7 +123,7 @@ public class CampaignTestPlanManagerController {
 		mav.addObject("selectClass", "userLogin");
 		mav.addObject("dataAssignUrl", "/campaigns/" + campaignId + "/test-plan/" + itp.getId() + "/assigned-user");
 
-		if (itp != null && itp.getUser() != null) {
+		if (itp.getUser() != null) {
 			mav.addObject("testCaseAssignedLogin", itp.getUser().getLogin());
 		} else {
 			mav.addObject("testCaseAssignedLogin", null);

@@ -92,8 +92,9 @@ public class HibernateCampaignFolderDao extends HibernateEntityDao<CampaignFolde
 	@Override
 	public List<Long[]> findPairedContentForList(final List<Long> ids) {
 
-		if (ids.size() == 0)
+		if (ids.size() == 0) {
 			return Collections.emptyList();
+		}
 
 		SQLQuery query = currentSession().createSQLQuery(
 				NativeQueries.CAMPAIGN_FOLDER_SQL_FIND_PAIRED_CONTENT_FOR_FOLDERS);
@@ -108,8 +109,9 @@ public class HibernateCampaignFolderDao extends HibernateEntityDao<CampaignFolde
 
 	@Override
 	public List<Long> findContentForList(List<Long> ids) {
-		if (ids.size() == 0)
+		if (ids.size() == 0) {
 			return Collections.emptyList();
+		}
 
 		SQLQuery query = currentSession().createSQLQuery(NativeQueries.CAMPAIGN_FOLDER_SQL_FIND_CONTENT_FOR_FOLDER);
 		query.setParameterList("folderIds", ids, LongType.INSTANCE);
