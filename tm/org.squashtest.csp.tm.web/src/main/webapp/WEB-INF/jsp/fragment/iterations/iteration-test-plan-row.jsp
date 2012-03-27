@@ -147,8 +147,10 @@
 		// I choose this solution because it is easier to delete severas executions in a row without waiting for the execution table to reload.
 		// the drawback is that the number of the executions is not updated. 
 		//console.log("execRow = " + execRow);
-		$(execRow).detach();
-		$(testPlanHyperLink).get
+		//$(execRow).detach();
+		//or 
+		
+		refreshTestPlans();
 		refreshIterationInfos();
 		actualStart.refreshAutoDate(data.newStartDate);
 		actualEnd.refreshAutoDate(data.newStartDate);

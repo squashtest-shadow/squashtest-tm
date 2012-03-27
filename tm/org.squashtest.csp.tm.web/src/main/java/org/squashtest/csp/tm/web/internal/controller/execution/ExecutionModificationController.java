@@ -185,6 +185,7 @@ public class ExecutionModificationController {
 		IterationTestPlanItem testPlan = execution.getTestPlan();
 		Iteration iteration = testPlan.getIteration();
 		executionModService.deleteExecution(execution);
+//		final IterationTestPlanItem reTestPlanItem = testPlan;
 		final Long reNewStartDate ;
 		if (iteration.getActualStartDate() != null) {
 			reNewStartDate = iteration.getActualStartDate().getTime();
@@ -200,6 +201,7 @@ public class ExecutionModificationController {
 		return new Object() {
 			public Long newStartDate = reNewStartDate; // NOSONAR unreadable field actually read by JSON marshaller.
 			public Long newEndDate = reNewEndDate;
+//			public IterationTestPlanItem testPlanItem = reTestPlanItem;
 		};
 	}
 
