@@ -42,5 +42,5 @@
 	<tbody><%-- Will be populated through ajax --%></tbody>
 </table>
 	<div id="test-case-row-buttons" class="not-displayed">
-	<a id="delete-test-plan-button" href="#" class="delete-test-plan-button"><f:message key="test-case.verified_requirement_item.remove.button.label" /></a>
+	<a id="delete-test-plan-button" href="javascript:void(0)" class="delete-test-plan-button"><f:message key="test-case.verified_requirement_item.remove.button.label" /></a>
 </div> 

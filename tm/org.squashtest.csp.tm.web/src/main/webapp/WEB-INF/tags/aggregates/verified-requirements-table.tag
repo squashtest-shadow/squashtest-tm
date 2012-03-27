@@ -42,7 +42,7 @@
 	</tbody>
 </table>
 <div id="verified-requirement-row-buttons" class="not-displayed">
-	<a id="delete-verified-requirement-button" href="#"	class="delete-verified-requirement-button">
+	<a id="delete-verified-requirement-button" href="javascript:void(0)"	class="delete-verified-requirement-button">
 		<f:message key="test-case.verified_requirement_item.remove.button.label" />
 	</a>
 </div>

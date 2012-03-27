@@ -29,8 +29,8 @@
 <table id="exec-list-table">
 	<c:forEach var="exec" items="${executionList}">
 		<tr>
-			<td style="display:none;">${exec.id}</td>
-			<td><a href="#">${exec.name}</a></td>
+			<td class="not-displayed">${exec.id}</td>
+			<td><a href="javascript:void(0)">${exec.name}</a></td>
 			<td>${exec.executionStatus}</td>
 		</tr>
 	</c:forEach>

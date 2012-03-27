@@ -295,7 +295,7 @@ it will insert sub-page-layout.tag between the top template and this one." %>
 						</div>
 					</c:if>
 					<c:if test="${highlightedWorkspace == 'requirement'}">
-					<a href='#' id='export-link' class='export-requirement-link'><f:message key='tree.button.export.label'/>...</a>
+					<a href="javascript:void(0)" id="export-link" class="export-requirement-link"><f:message key='tree.button.export.label'/>...</a>
 					</c:if>					
 				</div>
 			</div>

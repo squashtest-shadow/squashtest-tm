@@ -58,6 +58,7 @@
 		//single deletion buttons
 		$('#test-suite-test-plans-table .delete-test-suite-test-plan-button').live('click', function() {
 			$("#${ testCaseSingleRemovalPopupId }").data('opener', this).dialog('open');
+			return false;
 		});
 		
 		$("#${ testCaseSingleRemovalPopupId }").bind('dialogclose', function() {
@@ -261,7 +262,7 @@
 	}
 	
 	function addHLinkToTestPlanName(row, data) {
-		var url= '#';			
+		var url= 'javascript:void(0)';			
 		addHLinkToCellText($( 'td:eq(2)', row ), url);
 		$('td:eq(2) a', row).addClass('test-case-name-hlink');
 	}

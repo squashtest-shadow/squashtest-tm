@@ -359,8 +359,8 @@
 		</table>
 		<br />
 		<div id="execution-step-row-buttons" class="not-displayed">
-			<a id="manage-attachment-button" href="#" class="manage-attachment-button"><f:message key="execution.step.manage-attachment.label" /></a>
-			<a id="manage-attachment-button-empty" href="#" class="manage-attachment-button-empty"><f:message key="execution.step.add-attachment.label" /></a>
+			<a id="manage-attachment-button" href="javascript:void(0)" class="manage-attachment-button"><f:message key="execution.step.manage-attachment.label" /></a>
+			<a id="manage-attachment-button-empty" href="javascript:void(0)" class="manage-attachment-button-empty"><f:message key="execution.step.add-attachment.label" /></a>
 		</div>
 	</jsp:attribute>
 </comp:toggle-panel>

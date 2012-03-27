@@ -38,5 +38,5 @@
 	<tbody><%-- Will be populated through ajax --%></tbody>
 </table>
 <div id="test-case-row-buttons" class="not-displayed">
-	<a id="delete-test-case-button" href="#" class="delete-test-case-button"><f:message key="test-case.verified_requirement_item.remove.button.label" /></a>
+	<a id="delete-test-case-button" href="javascript:void(0)" class="delete-test-case-button"><f:message key="test-case.verified_requirement_item.remove.button.label" /></a>
 </div> 

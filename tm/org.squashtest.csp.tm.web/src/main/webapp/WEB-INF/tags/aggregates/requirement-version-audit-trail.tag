@@ -97,7 +97,7 @@
 	</jsp:attribute>
 </cmp:toggle-panel>
 
-<span id="show-audit-event-details-template" class="not-displayed">&nbsp;<a id="show-audit-event-details" href="#"><f:message key="audit-trail.requirement.property-change.show-details.label" /></a></span>
+<span id="show-audit-event-details-template" class="not-displayed">&nbsp;<a id="show-audit-event-details" href="javascript:void(0)"><f:message key="audit-trail.requirement.property-change.show-details.label" /></a></span>
 
 <script type="text/javascript">
 	$(function() {

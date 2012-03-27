@@ -33,12 +33,9 @@
 <%@ taglib prefix="input" tagdir="/WEB-INF/tags/input"%>
 
 <div id="test-suite-execution-button" style="display: inline-block;">
-	<c:url var='runnerUrl'
-		value='/test-suites/${ testSuiteId }/test-plan/execution/runner' />
-	<c:url var='testRunnerUrl'
-		value='/test-suites/${ testSuiteId }/test-plan/execution/test-runner' />
-	<c:url var='deleteOnRestartUrl'
-		value='/test-suites/${ testSuiteId }/test-plan/executions' />
+	<c:url var='runnerUrl' value='/test-suites/${ testSuiteId }/test-plan/execution/runner' />
+	<c:url var='testRunnerUrl' value='/test-suites/${ testSuiteId }/test-plan/execution/test-runner' />
+	<c:url var='deleteOnRestartUrl' value='/test-suites/${ testSuiteId }/test-plan/executions' />
 	<script type="text/javascript">
 		function classicExecution(mode) {
 			var url = "${ runnerUrl }";
@@ -95,24 +92,22 @@
 		}
 	</script>
 	<c:if test="${ statisticsEntity.status == 'READY' }">
-		<f:message var='startResumeLabel'
-			key='test-suite.execution.start.label' />
+		<f:message var='startResumeLabel' key='test-suite.execution.start.label' />
 	</c:if>
 	<c:if test="${ statisticsEntity.status == 'RUNNING' }">
-		<f:message var='startResumeLabel'
-			key='test-suite.execution.resume.label' />
+		<f:message var='startResumeLabel' key='test-suite.execution.resume.label' />
 	</c:if>
 
 	<c:if
 		test="${ statisticsEntity.status == 'RUNNING' || statisticsEntity.status == 'READY'}">
-		<a tabindex="0" href="#start" class="button" id="start-resume-button">${startResumeLabel}</a>
+		<a tabindex="0" href="#start" class="button run-menu" id="start-resume-button" class="button">${startResumeLabel}</a>
 		<div id="start" style="display: none">
 			<ul>
-				<li><a class="start-suite-optimized" href="#"><f:message
-							key="test-suite.execution.optimized.label" /> </a>
+				<li>
+					<a class="start-suite-optimized" href="javascript:void(0)"><f:message key="test-suite.execution.optimized.label" /> </a>
 				</li>
-				<li><a class="start-suite-classic" href="#"><f:message
-							key='test-suite.execution.classic.label' /> </a>
+				<li>
+					<a class="start-suite-classic" href="javascript:void(0)"><f:message key='test-suite.execution.classic.label' /> </a>
 				</li>
 			</ul>
 		</div>
@@ -149,22 +144,21 @@
 		<input type="hidden" name="mode" value="start-resume" />
 	</form>
 	<c:if test="${ statisticsEntity.status != 'READY' }">
-		<a tabindex="0" href="#restart" class="button" id="restart-button"><f:message
-				key='test-suite.execution.restart.label' /> </a>
+		<a tabindex="0" href="#restart" class="button run-menu" id="restart-button"><f:message key='test-suite.execution.restart.label' /></a>
 		<div id="restart" style="display: none">
 			<ul>
-				<li><a class="restart-suite-optimized" href="#"><f:message
-							key="test-suite.execution.optimized.label" /> </a>
+				<li>
+					<a class="restart-suite-optimized exec" href="javascript:void(0)"><f:message key="test-suite.execution.optimized.label" /> </a>
 				</li>
-				<li><a class="restart-suite-classic" href="#"><f:message
-							key='test-suite.execution.classic.label' /> </a>
+				<li>
+					<a class="restart-suite-classic" href="javascript:void(0)"><f:message key='test-suite.execution.classic.label' /> </a>
 				</li>
 			</ul>
 		</div>
 		<div id="confirm-restart-dialog" class="not-displayed popup-dialog"
 			title="<f:message key='test-suite.execution.restart.title' />">
-			<input id="restart-mode" type="hidden" value="classic" /> <span><f:message
-					key="test-suite.execution.restart.warning-message" /> </span>
+			<input id="restart-mode" type="hidden" value="classic" />
+			<span><f:message key="test-suite.execution.restart.warning-message" /> </span>
 			<input:ok />
 			<input:cancel />
 		</div>

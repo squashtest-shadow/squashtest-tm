@@ -346,11 +346,8 @@
 	</jsp:attribute>
 
 		<jsp:attribute name="body">
-		<%--
-		---- 
-			requires <jq:execution-status-factory/>
-		----  
-		--%>
+		
+		<%-- requires <jq:execution-status-factory/> --%>
 	
 		<aggr:decorate-test-suite-test-plan-table
 				tableModelUrl="${testSuiteTestPlanUrl}"
