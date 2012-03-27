@@ -87,7 +87,7 @@ function DatePickerAuto(controls, params){
 	this.postState=dpa_postState;
 	this.postStateSuccess=dpa_postStateSuccess;
 	this.postStateFailed=dpa_postStateFailed;
-		
+	this.refreshAutoDate = dpa_refreshAutoDate;
 	//pseudo constructors 
 	this.initialize=dpa_initialize;
 
@@ -413,6 +413,21 @@ function dpa_postStateSuccess(strDate, callback){
 function dpa_postStateFailed(){
 	alert("error while posting state");
 	
+	
+}
+function dpa_refreshAutoDate(newDateToPut){
+	var checkbx = this.controls.checkbx;		
+	if($(checkbx).attr('checked')){
+		var newDate;
+		
+		if (newDateToPut != null){
+			newDate=parseInt(newDateToPut);
+		}
+		else{
+			newDate=-1;
+		}
+		this.setDate(newDate);	
+	}
 }
 
 	

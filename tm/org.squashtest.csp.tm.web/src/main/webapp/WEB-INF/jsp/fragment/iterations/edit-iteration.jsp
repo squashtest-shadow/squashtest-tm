@@ -287,7 +287,8 @@
 						postCallback="refreshIterationInfos"
 						initialDate="${iteration.actualStartDate.time}"
 						isContextual="true"
-						editable="${ editable }" >
+						editable="${ editable }" 
+						jsVarName="actualStart">
 					</comp:datepicker-auto>
 				</td>
 			</tr>
@@ -312,7 +313,8 @@
 						postCallback="refreshIterationInfos"
 						initialDate="${iteration.actualEndDate.time}"
 						isContextual="true"
-						editable="${ editable }">
+						editable="${ editable }"
+						jsVarName="actualEnd">
 					</comp:datepicker-auto>
 				</td>
 			</tr>

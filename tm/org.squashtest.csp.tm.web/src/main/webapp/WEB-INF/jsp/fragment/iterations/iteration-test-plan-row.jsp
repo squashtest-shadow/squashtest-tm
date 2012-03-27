@@ -123,18 +123,19 @@
 				});
 	}
 	function doDeleteExecution(idExec, testPlanHyperlink, execRow) {
-		deleteExecutionOfSpecifiedId(idExec).done(function() {
-			refreshTable(testPlanHyperlink, execRow)
+		deleteExecutionOfSpecifiedId(idExec).done(function(data) {
+			refreshTable(testPlanHyperlink, execRow, data)
 		});
 	}
 	function deleteExecutionOfSpecifiedId(idExec) {
 		return $.ajax({
 			'url' : "${showExecutionUrl}/" + idExec,
 			type : 'DELETE',
-			data : []
+			data : [],
+			dataType : "json"
 		});
 	}
-	function refreshTable(testPlanHyperlink, execRow) {
+	function refreshTable(testPlanHyperlink, execRow, data) {
 		// 1/ refresh execution table
 		//
 		// 		$(testPlanHyperlink).click();
@@ -147,5 +148,10 @@
 		// the drawback is that the number of the executions is not updated. 
 		//console.log("execRow = " + execRow);
 		$(execRow).detach();
+		$(testPlanHyperLink).get
+		refreshIterationInfos();
+		actualStart.refreshAutoDate(data.newStartDate);
+		actualEnd.refreshAutoDate(data.newStartDate);
+		
 	}
 </script>

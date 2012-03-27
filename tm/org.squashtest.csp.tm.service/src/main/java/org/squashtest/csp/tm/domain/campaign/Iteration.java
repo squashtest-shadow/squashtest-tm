@@ -661,36 +661,46 @@ public class Iteration implements AttachmentHolder {
 	 * @param execution
 	 */
 	public void updateAutoDatesAfterExecutionDetach(IterationTestPlanItem iterationTestPlanItem, Execution execution) {
-		boolean actualEndChanged = false;
-		boolean actualStartChanged = false;
+
+		boolean actualEndChanged = updateAutoEndDateAfterExecutionDetach(iterationTestPlanItem, execution);
+		boolean actualStartChanged = updateStartAutoDateAfterExecutionDetach(execution);
+
+		if (actualStartChanged || actualEndChanged) {
+			updateCampaignAutoDatesAfterExecutionDetach(actualEndChanged, actualStartChanged);
+		}
+
+	}
+
+	private void updateCampaignAutoDatesAfterExecutionDetach(boolean actualEndChanged, boolean actualStartChanged) {
+		if (this.campaign != null) {
+			if (actualEndChanged) {
+				this.campaign.updateEndAutoDateAfterIterationChange(this);
+			}
+			if (actualStartChanged) {
+				this.campaign.updateStartAutoDateAfterIterationChange(this);
+			}
+		}
+	}
+
+	private boolean updateStartAutoDateAfterExecutionDetach(Execution execution) {
+		Date actualStartPrevious = this.getActualStartDate();
+		if (this.isActualStartAuto()) {
+			autoSetActualStartDate();
+		}
+		return actualStartPrevious == this.getActualStartDate();
+
+	}
+
+	private boolean updateAutoEndDateAfterExecutionDetach(IterationTestPlanItem iterationTestPlanItem,
+			Execution execution) {
+		Date actualEndPrevious = this.getActualEndDate();
 		if (this.isActualEndAuto()) {
 			if (!iterationTestPlanItem.getExecutionStatus().isTerminatedStatus()) {
 				this.setActualEndDate(null);
-				actualEndChanged = true;
 			} else {
-				if (execution.getLastExecutedOn().compareTo(this.getActualEndDate()) == 0) {
-					autoSetActualEndDate();
-					actualEndChanged = true;
-				}
+				autoSetActualEndDate();
 			}
 		}
-		if (this.isActualStartAuto()) {
-			if (execution.getLastExecutedOn().compareTo(this.getActualStartDate()) == 0) {
-				autoSetActualStartDate();
-				actualStartChanged = true;
-			}
-		}
-		if (actualStartChanged || actualEndChanged) {
-			Campaign campaign = getCampaign();
-			if (campaign != null) {
-				if (actualEndChanged) {
-					campaign.updateEndAutoDateAfterIterationChange(this);
-				}
-				if (actualStartChanged) {
-					campaign.updateStartAutoDateAfterIterationChange(this);
-				}
-			}
-		}
-
+		return actualEndPrevious == this.getActualEndDate();
 	}
 }

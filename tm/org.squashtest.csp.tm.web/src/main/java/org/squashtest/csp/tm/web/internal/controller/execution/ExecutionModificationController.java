@@ -45,6 +45,8 @@ import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.servlet.ModelAndView;
+import org.squashtest.csp.tm.domain.campaign.Iteration;
+import org.squashtest.csp.tm.domain.campaign.IterationTestPlanItem;
 import org.squashtest.csp.tm.domain.execution.Execution;
 import org.squashtest.csp.tm.domain.execution.ExecutionStatus;
 import org.squashtest.csp.tm.domain.execution.ExecutionStep;
@@ -178,10 +180,27 @@ public class ExecutionModificationController {
 
 	@RequestMapping(method = RequestMethod.DELETE)
 	public @ResponseBody
-	String removeExecution(@PathVariable long executionId, HttpServletResponse response) {
+	Object removeExecution(@PathVariable long executionId, HttpServletResponse response) {
 		Execution execution = executionModService.simpleGetExecutionById(executionId);
+		IterationTestPlanItem testPlan = execution.getTestPlan();
+		Iteration iteration = testPlan.getIteration();
 		executionModService.deleteExecution(execution);
-		return "Execution deleted";
+		final Long reNewStartDate ;
+		if (iteration.getActualStartDate() != null) {
+			reNewStartDate = iteration.getActualStartDate().getTime();
+		}else{
+			reNewStartDate = null;
+		}
+		final Long reNewEndDate;
+		if (iteration.getActualEndDate() != null) {
+			reNewEndDate = iteration.getActualEndDate().getTime();
+		}else{
+			reNewEndDate = null;
+		}
+		return new Object() {
+			public Long newStartDate = reNewStartDate; // NOSONAR unreadable field actually read by JSON marshaller.
+			public Long newEndDate = reNewEndDate;
+		};
 	}
 
 	private String formatDate(Date date, Locale locale) {
