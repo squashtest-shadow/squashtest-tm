@@ -20,92 +20,86 @@
         along with this software.  If not, see <http://www.gnu.org/licenses/>.
 
 --%>
-<%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core" %>
-<%@ taglib prefix="f" uri="http://java.sun.com/jsp/jstl/fmt" %>
-<%@ taglib prefix="s" uri="http://www.springframework.org/tags" %>
+<%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core"%>
+<%@ taglib prefix="f" uri="http://java.sun.com/jsp/jstl/fmt"%>
+<%@ taglib prefix="s" uri="http://www.springframework.org/tags"%>
 
-<%@ taglib prefix="s" uri="http://www.springframework.org/tags" %>
-<%@ taglib prefix="jq" tagdir="/WEB-INF/tags/jquery" %>
+<%@ taglib prefix="s" uri="http://www.springframework.org/tags"%>
+<%@ taglib prefix="jq" tagdir="/WEB-INF/tags/jquery"%>
 <?xml version="1.0" encoding="utf-8" ?>
-<%@ page language="java" contentType="text/html; charset=utf-8" pageEncoding="utf-8"%>
-<s:url var="newExecutionUrl" value="/iterations/{iterId}/test-plan/{tpId}/new-execution">
+<%@ page language="java" contentType="text/html; charset=utf-8"
+	pageEncoding="utf-8"%>
+<s:url var="newExecutionUrl"
+	value="/iterations/{iterId}/test-plan/{tpId}/new-execution">
 	<s:param name="iterId" value="${iterationId}" />
 	<s:param name="tpId" value="${testPlanId}" />
 </s:url>
 
 
-<s:url var ="showExecutionUrl" value="/executions"/>
+<s:url var="showExecutionUrl" value="/executions" />
 
 <c:set var="textcolor" value="#555555" />
 
 
-<td>
-
-</td>
-
-<td>
-
-</td>
-
-
-<td >
-	
-		<c:forEach items="${ executions }" var="execution" varStatus="status" >
-			<span style="display:block; margin-left: 10px; color: ${textcolor}; font-style:italic; text-decoration: underline"><a href="${showExecutionUrl}/${execution.id}">Exec. ${status.index + 1} :  ${ execution.name }</a></span>
+<td colspan="8"><table>
+		<!-- -----------------------------------------------ROW OF EXECUTION -->
+		<c:forEach items="${ executions }" var="execution" varStatus="status">
+			<tr>
+				<td></td>
+				<td></td>
+				<td style="margin-left: 10px; color: ${textcolor}; font-style:italic; text-decoration: underline"><a
+						href="${showExecutionUrl}/${execution.id}"><b>Exec.
+							${status.index + 1} :</b> ${ execution.name }</a>
+				
+				</td>
+				<td style="color: ${textcolor}; font-style:italic;"><f:message key="${ execution.executionMode.i18nKey }" />
+				</td>
+				<td style="width: 12em; color: ${textcolor} font-style:italic;"><f:message
+							key="execution.execution-status.${execution.executionStatus}" />
+				
+				</td>
+				<td style="width: 12em; color: ${textcolor}"><c:choose>
+							<c:when test="${ execution.lastExecutedBy != null }">
+								<i>${ execution.lastExecutedBy }</i>
+							</c:when>
+							<c:otherwise>
+								<i><f:message key="squashtm.nodata" />
+								</i>
+							</c:otherwise>
+						</c:choose>
+				</td>
+				<td style="width: 12em; color: ${textcolor}">
+				<c:choose>
+							<c:when test="${ execution.lastExecutedOn != null }">
+								<f:message var="dateFormat" key="squashtm.dateformat" />
+								<i><f:formatDate value="${ execution.lastExecutedOn }"
+										pattern="${dateFormat}" />
+								</i>
+							</c:when>
+							<c:otherwise>
+								<i><f:message key="squashtm.nodata" />
+								</i>
+							</c:otherwise>
+						</c:choose>
+				</td>
+				<td style="width: 2em;">
+				</td>
+			</tr>
 		</c:forEach>
-		
+		<!-- ------------------------------------------END ROW OF EXECUTION -->
+
+
+		<!-- ---------------------------------------------ROW NEW EXECUTION -->
+
 		<c:if test="${ editableIteration }">
-			<span style="text-align:right;margin-right:10px;display:block">
-				<small> 
-					<a style="color:${textcolor}" id="new-exec-${testPlanId}" href="javascript:void(0)" data-new-exec="${newExecutionUrl}" ><f:message key="execution.iteration-test-plan-row.new"/></a> 
-				</small>
-			</span>
-		</c:if> 
-</td>
-<td>
-		<c:forEach items="${ executions }" var="execution">
-			<span style="display:block; color: ${textcolor}; font-style:italic;"><f:message key="${ execution.executionMode.i18nKey }"/></span>
-		</c:forEach>
-</td>
-
-<td>
-		<c:forEach items="${ executions }" var="execution">
-			<span style="display:block; color: ${textcolor} font-style:italic;"><f:message key="execution.execution-status.${execution.executionStatus}"/></span>
-		</c:forEach>
-	
-</td>
-<td>
-	
-		<c:forEach items="${ executions }" var="execution">
-			<span style="display:block; color: ${textcolor}">
-				<c:choose>
-					<c:when test="${ execution.lastExecutedBy != null }">
-						<i>${ execution.lastExecutedBy }</i>
-					</c:when>
-					<c:otherwise>
-						<i><f:message key="squashtm.nodata"/></i>
-					</c:otherwise>
-				</c:choose>
-			</span>
-		</c:forEach>
-
-</td>	
-<td>
-		<c:forEach items="${ executions }" var="execution">
-			<span style="display:block; color: ${textcolor}">
-				<c:choose>
-					<c:when test="${ execution.lastExecutedOn != null }">
-						<f:message var="dateFormat" key="squashtm.dateformat" />
-						<i><f:formatDate value="${ execution.lastExecutedOn }" pattern="${dateFormat}"/></i>
-					</c:when>
-					<c:otherwise>
-						<i><f:message key="squashtm.nodata"/></i>
-					</c:otherwise>
-				</c:choose>
-			</span>
-		</c:forEach>
-
-</td>
-<td>
-
+			<tr>
+				<td colspan="8" style="text-align: left;"><b> <a
+						style="color:${textcolor}" id="new-exec-${testPlanId}"
+						href="javascript:void(0)" data-new-exec="${newExecutionUrl}"><f:message
+								key="execution.iteration-test-plan-row.new" />
+					</a> </b></td>
+			</tr>
+		</c:if>
+		<!-- ---------------------------------------------END ROW NEW EXECUTION -->
+	</table>
 </td>
