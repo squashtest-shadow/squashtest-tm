@@ -50,9 +50,8 @@
 				<td style="margin-left: 10px; color: ${textcolor}; font-style:italic; text-decoration: underline"><a
 						href="${showExecutionUrl}/${execution.id}"><b>Exec.
 							${status.index + 1} :</b> ${ execution.name }</a>
-				
 				</td>
-				<td style="color: ${textcolor}; font-style:italic;"><f:message key="${ execution.executionMode.i18nKey }" />
+				<td style="width: 7.5em;color: ${textcolor}; font-style:italic;"><f:message key="${ execution.executionMode.i18nKey }" />
 				</td>
 				<td style="width: 12em; color: ${textcolor} font-style:italic;"><f:message
 							key="execution.execution-status.${execution.executionStatus}" />
