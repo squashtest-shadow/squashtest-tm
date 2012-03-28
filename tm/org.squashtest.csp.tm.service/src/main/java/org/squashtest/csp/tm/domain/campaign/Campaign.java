@@ -313,30 +313,41 @@ public class Campaign extends CampaignLibraryNode implements AttachmentHolder {
 	}
 
 	private Date getFirstIterationActualStartDate() {
-		if (getIterations().size() == 0) {
-			return null;
-		} else {
-			Iteration firstIteration = getFirstIteration();
+
+		Iteration firstIteration = getFirstIteration();
+		if (firstIteration != null) {
 			return firstIteration.getActualStartDate();
+		} else {
+			return null;
 		}
+
 	}
 
 	private Iteration getFirstIteration() {
-		return Collections.min(getIterations(), CascadingAutoDateComparatorBuilder.buildIterationActualStartOrder());
-	}
-
-	private Date getLastIterationActualEndDate() {
 		if (getIterations().size() == 0) {
 			return null;
 		} else {
-			Iteration lastIteration = getLastIteration();
+			return Collections
+					.min(getIterations(), CascadingAutoDateComparatorBuilder.buildIterationActualStartOrder());
+		}
+	}
+
+	private Date getLastIterationActualEndDate() {
+		Iteration lastIteration = getLastIteration();
+		if (lastIteration != null) {
 			return lastIteration.getActualEndDate();
+
+		} else {
+			return null;
 		}
 	}
 
 	private Iteration getLastIteration() {
-
-		return Collections.max(getIterations(), CascadingAutoDateComparatorBuilder.buildIterationActualEndOrder());
+		if (getIterations().size() == 0) {
+			return null;
+		} else {
+			return Collections.max(getIterations(), CascadingAutoDateComparatorBuilder.buildIterationActualEndOrder());
+		}
 	}
 
 	public boolean testPlanContains(@NotNull TestCase tc) {
@@ -371,7 +382,8 @@ public class Campaign extends CampaignLibraryNode implements AttachmentHolder {
 	 *            that changed actual dates
 	 */
 	public void updateStartAutoDateAfterIterationChange(Iteration iteration) {
-		if (this.isActualStartAuto() && this.getFirstIteration().equals(iteration)) {
+		Iteration firstIteration = this.getFirstIteration();
+		if (firstIteration != null && this.isActualStartAuto() && firstIteration.equals(iteration)) {
 			autoSetActualStartDate();
 		}
 
@@ -384,7 +396,8 @@ public class Campaign extends CampaignLibraryNode implements AttachmentHolder {
 	 *            that changed actual dates
 	 */
 	public void updateEndAutoDateAfterIterationChange(Iteration iteration) {
-		if (this.getLastIteration().equals(iteration) && this.isActualEndAuto()) {
+		Iteration lastIteration = this.getLastIteration();
+		if (lastIteration != null && lastIteration.equals(iteration) && this.isActualEndAuto()) {
 			autoSetActualEndDate();
 		}
 
