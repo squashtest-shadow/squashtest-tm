@@ -294,7 +294,7 @@
 		tabPanel.tabs({
 				select: function(event, ui){
 					tabPanel.data("selected",ui.index);
-					loadReport();
+// 					loadReport();
 				}
 		});
 		
