@@ -294,7 +294,7 @@
 		tabPanel.tabs({
 				select: function(event, ui){
 					tabPanel.data("selected",ui.index);
-// 					loadReport();
+// 					loadReport(); //FOG 28/03/2012 We don't need to load the report yet
 				}
 		});
 		
