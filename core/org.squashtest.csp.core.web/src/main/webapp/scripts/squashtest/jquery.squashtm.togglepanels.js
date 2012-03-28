@@ -49,7 +49,8 @@
 			
 			panelHead.click($.proxy(function(event){
 				event.stopImmediatePropagation();
-				widget.toggleContent.call(this.element);
+				//widget.toggleContent.call(this.element);
+				widget.toggleContent();
 			}, this));
 		
 		}, 
@@ -76,21 +77,29 @@
 		},
 		
 		toggleContent : function(){
-			var panelHead = this.prev();
+			//var panelHead = this.prev();
+			var panelHead = this.element.prev();
 			
 			if (! panelHead.length){
 				return; 	//if the head is not found, that's usually because the body was detached due to the animating sequence. Sorry for this but the 			
 				//(:animated) selector wouldn't work
 			}
 			
-			this.toggle('blind', 500);			
+			this.element.toggle('blind', 500);			
 			panelHead.toggleClass( "ui-state-focus ui-state-active ui-corner-top ui-corner-all tg-open" );
 			
 			//now disable the buttons. 
 			var disabled = (panelHead.hasClass('tg-open')) ? false : true;
 			panelHead.find(':button, .button').button("option","disabled",disabled);
+		},
+		
+		openContent : function(){
+			var panelHead = this.element.prev();
+			if (! panelHead.hasClass('tg-open')){
+				this.toggleContent();
+			}
 		}
 	
 	});
 	
-})(jQuery);
+}(jQuery));

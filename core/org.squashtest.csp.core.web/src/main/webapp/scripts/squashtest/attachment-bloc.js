@@ -97,10 +97,7 @@ function openAttachmentIfNotEmpty(){
 	var imgs = $("#attachment-container img");
 	
 	if (imgs.length!=0){
-		var parent = $("#attachment-container").parents(".toggle-panel").find("h3");
-		if (! parent.hasClass("ui-state-active")){
-			parent.click(); //will unfold it
-		}
+		$("#attachment-panel").togglePanel("openContent");
 	}
 }
 
