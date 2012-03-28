@@ -164,6 +164,7 @@
 				<div style="clear:both;"></div>
 	
 			</div>
+			<div class="fragment-body">
 			<c:if test="${ useIterationTable }">
 				<aggr:decorate-iteration-test-plan-manager-table tableModelUrl="${testPlansTableUrl}" testPlanDetailsBaseUrl="${testPlanDetailsBaseUrl}" 
 					testPlansUrl="${removeTestPlanUrl}" batchRemoveButtonId="remove-items-button" 
@@ -176,6 +177,7 @@
 					updateTestPlanUrl="${updateTestPlanUrl}" nonBelongingTestPlansUrl="${nonBelongingTestPlansUrl}" />
 				<aggr:test-suite-test-plan-manager-table/>
 			</c:if>
+			</div>
 		</div>
 	</div>
 </jsp:attribute>
