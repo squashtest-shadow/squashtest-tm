@@ -153,7 +153,7 @@
 		refreshTestPlans();
 		refreshIterationInfos();
 		actualStart.refreshAutoDate(data.newStartDate);
-		actualEnd.refreshAutoDate(data.newStartDate);
+		actualEnd.refreshAutoDate(data.newEndDate);
 		
 	}
 </script>

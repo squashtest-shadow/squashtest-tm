@@ -576,8 +576,10 @@ public class Iteration implements AttachmentHolder {
 
 	private void autoSetActualEndDate() {
 		// Check if end date can be set
-		Date actualDate = (actualEndDateUpdateAuthorization()) ? getLastExecutedTestPlanDate() : null;
-
+		Date actualDate = null;
+		if (actualEndDateUpdateAuthorization()) {
+			actualDate = getLastExecutedTestPlanDate();
+		}
 		setActualEndDate(actualDate);
 	}
 
@@ -662,38 +664,19 @@ public class Iteration implements AttachmentHolder {
 	 */
 	public void updateAutoDatesAfterExecutionDetach(IterationTestPlanItem iterationTestPlanItem, Execution execution) {
 
-		boolean actualEndChanged = updateAutoEndDateAfterExecutionDetach(iterationTestPlanItem, execution);
-		boolean actualStartChanged = updateStartAutoDateAfterExecutionDetach(execution);
-
-		if (actualStartChanged || actualEndChanged) {
-			updateCampaignAutoDatesAfterExecutionDetach(actualEndChanged, actualStartChanged);
-		}
+		updateAutoEndDateAfterExecutionDetach(iterationTestPlanItem, execution);
+		updateStartAutoDateAfterExecutionDetach(execution);
 
 	}
 
-	private void updateCampaignAutoDatesAfterExecutionDetach(boolean actualEndChanged, boolean actualStartChanged) {
-		if (this.campaign != null) {
-			if (actualEndChanged) {
-				this.campaign.updateEndAutoDateAfterIterationChange(this);
-			}
-			if (actualStartChanged) {
-				this.campaign.updateStartAutoDateAfterIterationChange(this);
-			}
-		}
-	}
-
-	private boolean updateStartAutoDateAfterExecutionDetach(Execution execution) {
-		Date actualStartPrevious = this.getActualStartDate();
+	private void updateStartAutoDateAfterExecutionDetach(Execution execution) {
 		if (this.isActualStartAuto()) {
 			autoSetActualStartDate();
 		}
-		return actualStartPrevious == this.getActualStartDate();
 
 	}
 
-	private boolean updateAutoEndDateAfterExecutionDetach(IterationTestPlanItem iterationTestPlanItem,
-			Execution execution) {
-		Date actualEndPrevious = this.getActualEndDate();
+	private void updateAutoEndDateAfterExecutionDetach(IterationTestPlanItem iterationTestPlanItem, Execution execution) {
 		if (this.isActualEndAuto()) {
 			if (!iterationTestPlanItem.getExecutionStatus().isTerminatedStatus()) {
 				this.setActualEndDate(null);
@@ -701,6 +684,6 @@ public class Iteration implements AttachmentHolder {
 				autoSetActualEndDate();
 			}
 		}
-		return actualEndPrevious == this.getActualEndDate();
+
 	}
 }

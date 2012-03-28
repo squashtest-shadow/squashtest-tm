@@ -375,32 +375,4 @@ public class Campaign extends CampaignLibraryNode implements AttachmentHolder {
 		testPlan.addAll(targetIndex, moved);
 	}
 
-	/**
-	 * will update actual start date if are auto after iteration's auto dates update
-	 * 
-	 * @param iteration
-	 *            that changed actual dates
-	 */
-	public void updateStartAutoDateAfterIterationChange(Iteration iteration) {
-		Iteration firstIteration = this.getFirstIteration();
-		if (firstIteration != null && this.isActualStartAuto() && firstIteration.equals(iteration)) {
-			autoSetActualStartDate();
-		}
-
-	}
-
-	/**
-	 * will update actual end date if are auto after iteration's auto dates update
-	 * 
-	 * @param iteration
-	 *            that changed actual dates
-	 */
-	public void updateEndAutoDateAfterIterationChange(Iteration iteration) {
-		Iteration lastIteration = this.getLastIteration();
-		if (lastIteration != null && lastIteration.equals(iteration) && this.isActualEndAuto()) {
-			autoSetActualEndDate();
-		}
-
-	}
-
 }
