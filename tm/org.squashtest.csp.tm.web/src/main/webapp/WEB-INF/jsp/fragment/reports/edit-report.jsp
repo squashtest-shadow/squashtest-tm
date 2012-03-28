@@ -264,7 +264,7 @@
 			
 			<%--- forgive me w3c --%>
 			<div id="export-option-div" style="float:right;">
-				<label><f:message key="report.view.panel.label.export.label"/></label>
+				<span><f:message key="report.view.panel.label.export.label"/></span>
 				<select id="export-select">
 				</select>
 			
