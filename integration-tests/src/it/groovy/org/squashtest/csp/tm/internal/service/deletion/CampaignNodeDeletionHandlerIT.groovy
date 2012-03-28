@@ -37,6 +37,7 @@ import org.squashtest.csp.tm.domain.campaign.Iteration
 import org.squashtest.csp.tm.domain.campaign.IterationTestPlanItem;
 import org.squashtest.csp.tm.domain.campaign.TestSuite
 import org.squashtest.csp.tm.domain.execution.Execution
+import org.squashtest.csp.tm.domain.execution.ExecutionStatus;
 import org.squashtest.csp.tm.internal.service.CampaignNodeDeletionHandler
 import org.squashtest.csp.tm.internal.service.DbunitServiceSpecification;
 import org.squashtest.csp.tm.service.CampaignLibraryNavigationService;
@@ -90,10 +91,10 @@ class CampaignNodeDeletionHandlerIT  extends DbunitServiceSpecification{
 	@DataSet("NodeDeletionHandlerTest.executionPlusSteps.xml")
 	def "should delete an execution, its steps, their attachments and their issues"(){
 		given :
-		def exec = findEntity(Execution.class, 500l);
+		def exec = findEntity(Execution.class, 500l)
 
 		when :
-		deletionHandler.deleteExecution(exec);
+		deletionHandler.deleteExecution(exec)
 
 		then :
 		allDeleted("AttachmentList", [500l, 6001l, 6002l, 6003l]);
@@ -106,7 +107,7 @@ class CampaignNodeDeletionHandlerIT  extends DbunitServiceSpecification{
 			60022l,
 			60031l,
 			60032l
-		]);
+		])
 		allDeleted("AttachmentContent", [
 			5001l,
 			5002l,
@@ -116,9 +117,9 @@ class CampaignNodeDeletionHandlerIT  extends DbunitServiceSpecification{
 			60022l,
 			60031l,
 			60032l
-		]);
+		])
 
-		allDeleted("IssueList", [500l, 6001l, 6002l, 6003l]);
+		allDeleted("IssueList", [500l, 6001l, 6002l, 6003l])
 		allDeleted("Issue", [
 			5001l,
 			5002l,
@@ -128,35 +129,93 @@ class CampaignNodeDeletionHandlerIT  extends DbunitServiceSpecification{
 			60022l,
 			60031l,
 			60032l
-		]);
+		])
 
 
-		allDeleted("Execution", [500l]);
-		allDeleted("ExecutionStep", [500l, 6001l, 6002l, 6003l]);
+		allDeleted("Execution", [500l])
+		allDeleted("ExecutionStep", [500l, 6001l, 6002l, 6003l])
 	}
 
 	@DataSet("NodeDeletionHandlerTest.iterationPlusExecutions.xml")
 	def "should delete an execution but not the other"(){
 		given :
-		def exec = findEntity(Execution.class, 1111l);
+		def exec = findEntity(Execution.class, 1111l)
 
 		when :
-		deletionHandler.deleteExecution(exec);
+		deletionHandler.deleteExecution(exec)
 
 		then :
-		allDeleted("AttachmentList", [1111l]);
-		allDeleted("IssueList", [1111l]);
-		allDeleted("Execution", [1111l]);
+		allDeleted("AttachmentList", [1111l])
+		allDeleted("IssueList", [1111l])
+		allDeleted("Execution", [1111l])
 
-		!allDeleted("AttachmentList", [1112l]);
-		!allDeleted("IssueList", [1112l]);
-		!allDeleted("Execution", [1112l]);
+		!allDeleted("AttachmentList", [1112l])
+		!allDeleted("IssueList", [1112l])
+		!allDeleted("Execution", [1112l])
 
 		def tp = findEntity(IterationTestPlanItem.class, 111l )
 		tp.executions.size()==1
 		tp.executions[0].id==1112l
 	}
+	@DataSet("NodeDeletionHandlerTest.iterationPlusExecutionsStatus.xml")
+	def "should delete an execution and update status and auto dates"(){
+		given :
+		def exec = findEntity(Execution.class, 1112l)
 
+		when :
+		deletionHandler.deleteExecution(exec)
+
+		then :
+		
+		IterationTestPlanItem tp = findEntity(IterationTestPlanItem.class, 111l )
+		tp.executionStatus == ExecutionStatus.READY
+		tp.lastExecutedBy == null
+		tp.lastExecutedOn == null
+		Iteration iteration = tp.iteration
+		iteration.actualEndDate == null
+		Campaign campaign = iteration.campaign
+		campaign.actualEndDate.date == 12
+		campaign.actualEndDate.month +1  == 8
+		campaign.actualEndDate.year +1900  == 2011
+	}
+	
+	@DataSet("NodeDeletionHandlerTest.iterationPlusExecutionsStatus2.xml")
+	def "should delete an execution and update status and auto dates 2"(){
+		given :
+		def exec = findEntity(Execution.class, 1112l)
+
+		when :
+		deletionHandler.deleteExecution(exec)
+
+		then :
+		
+		IterationTestPlanItem tp = findEntity(IterationTestPlanItem.class, 111l )
+		tp.executionStatus == ExecutionStatus.FAILURE
+		tp.lastExecutedBy == "machin"
+		tp.lastExecutedOn != null
+		tp.lastExecutedOn.date == 18
+		tp.lastExecutedOn.month +1 == 8
+		tp.lastExecutedOn.year +1900 == 2011
+		Iteration iteration = tp.iteration
+		iteration.actualEndDate != null
+		iteration.actualEndDate.date == 20
+		iteration.actualEndDate.month +1 == 8
+		iteration.actualEndDate.year +1900 == 2011
+		iteration.actualStartDate != null
+		iteration.actualStartDate.date == 18
+		iteration.actualStartDate.month +1 == 8
+		iteration.actualStartDate.year +1900 == 2011
+		Campaign campaign = iteration.campaign
+		campaign.actualEndDate != null
+		campaign.actualEndDate.date == 20
+		campaign.actualEndDate.month +1  == 8
+		campaign.actualEndDate.year +1900  == 2011
+		campaign.actualStartDate != null
+		campaign.actualStartDate.date == 18
+		campaign.actualStartDate.month +1  == 8
+		campaign.actualStartDate.year +1900  == 2011
+	}
+	
 	@DataSet("NodeDeletionHandlerTest.iterationPlusExecutions.xml")
 	def "should remove a pair of iterations and the executions"(){
 
