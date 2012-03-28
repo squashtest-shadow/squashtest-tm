@@ -77,7 +77,7 @@ public class Iteration implements AttachmentHolder {
 	private String description;
 
 	@NotBlank
-	@Size(min=0, max=255) 
+	@Size(min = 0, max = 255)
 	private String name;
 
 	@Embedded
@@ -89,14 +89,14 @@ public class Iteration implements AttachmentHolder {
 	/*
 	 * read http://docs.redhat.com/docs/en-US/JBoss_Enterprise_Web_Platform/5/html
 	 * /Hibernate_Annotations_Reference_Guide /entity-mapping-association-collection-onetomany.html
-	 *
+	 * 
 	 * "To map a bidirectional one to many, with the one-to-many side as the owning side, you have to remove the
 	 * mappedBy element and set the many to one @JoinColumn as insertable and updatable to false. This solution is
 	 * obviously not optimized and will produce some additional UPDATE statements."
-	 *
+	 * 
 	 * The reason for this is because Hibernate doesn't support the correct mapping (using mappingBy and @OrderColumns).
 	 * The solution used here is only a workaround.
-	 *
+	 * 
 	 * See bug HHH-5390 for a concise discussion about this.
 	 */
 
@@ -259,7 +259,7 @@ public class Iteration implements AttachmentHolder {
 	 * <p>
 	 * copy of iteration <u>doesn't contain test-suites</u> !!<br>
 	 * </p>
-	 *
+	 * 
 	 * @return
 	 */
 	public Iteration createCopy() {
@@ -282,7 +282,7 @@ public class Iteration implements AttachmentHolder {
 	/**
 	 * copy planning info: <br>
 	 * if actual end/start is auto => don't copy the actual date.
-	 *
+	 * 
 	 * @param clone
 	 */
 	private void copyPlanning(Iteration clone) {
@@ -351,7 +351,7 @@ public class Iteration implements AttachmentHolder {
 
 	/***
 	 * Method which returns the position of a test case in the current iteration
-	 *
+	 * 
 	 * @param testCaseId
 	 *            the id of the test case we're looking for
 	 * @return the position of the test case (int)
@@ -375,7 +375,7 @@ public class Iteration implements AttachmentHolder {
 
 	/***
 	 * Method which returns the position of an item test plan in the current iteration
-	 *
+	 * 
 	 * @param testPlanId
 	 *            the id of the test plan we're looking for
 	 * @return the position of the test plan (int)
@@ -400,7 +400,7 @@ public class Iteration implements AttachmentHolder {
 
 	/***
 	 * Method which sets a test case at a new position
-	 *
+	 * 
 	 * @param currentPosition
 	 *            the current position
 	 * @param newPosition
@@ -512,7 +512,7 @@ public class Iteration implements AttachmentHolder {
 
 	/**
 	 * If the iteration have autodates set, they will be updated accordingly.
-	 *
+	 * 
 	 * @param newItemTestPlanDate
 	 */
 	public void updateAutoDates(Date newItemTestPlanDate) {
@@ -584,7 +584,7 @@ public class Iteration implements AttachmentHolder {
 	/***
 	 * This methods browses testPlans and checks if at least one testPlanItem has RUNNING or READY for execution status.
 	 * If this is the case, the actualEndDate should not be set
-	 *
+	 * 
 	 * @return false if the date should not be set
 	 */
 	private boolean actualEndDateUpdateAuthorization() {
@@ -619,7 +619,7 @@ public class Iteration implements AttachmentHolder {
 
 	/**
 	 * this method is used in case of copy paste of an iteration with test suites.<br>
-	 *
+	 * 
 	 * @return A map of test suite and indexes<br>
 	 *         One entry-set contains
 	 *         <ul>
@@ -655,4 +655,42 @@ public class Iteration implements AttachmentHolder {
 		return testPlanResult;
 	}
 
+	/**
+	 * will update acual end and start dates if are auto and if they were driven by the execution last-executed on
+	 * 
+	 * @param execution
+	 */
+	public void updateAutoDatesAfterExecutionDetach(IterationTestPlanItem iterationTestPlanItem, Execution execution) {
+		boolean actualEndChanged = false;
+		boolean actualStartChanged = false;
+		if (this.isActualEndAuto()) {
+			if (!iterationTestPlanItem.getExecutionStatus().isTerminatedStatus()) {
+				this.setActualEndDate(null);
+				actualEndChanged = true;
+			} else {
+				if (execution.getLastExecutedOn().compareTo(this.getActualEndDate()) == 0) {
+					autoSetActualEndDate();
+					actualEndChanged = true;
+				}
+			}
+		}
+		if (this.isActualStartAuto()) {
+			if (execution.getLastExecutedOn().compareTo(this.getActualStartDate()) == 0) {
+				autoSetActualStartDate();
+				actualStartChanged = true;
+			}
+		}
+		if (actualStartChanged || actualEndChanged) {
+			Campaign campaign = getCampaign();
+			if (campaign != null) {
+				if (actualEndChanged) {
+					campaign.updateEndAutoDateAfterIterationChange(this);
+				}
+				if (actualStartChanged) {
+					campaign.updateStartAutoDateAfterIterationChange(this);
+				}
+			}
+		}
+
+	}
 }

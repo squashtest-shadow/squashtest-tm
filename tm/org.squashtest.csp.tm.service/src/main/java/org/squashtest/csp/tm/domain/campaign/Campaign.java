@@ -40,6 +40,7 @@ import javax.validation.constraints.NotNull;
 import org.squashtest.csp.tm.domain.attachment.Attachment;
 import org.squashtest.csp.tm.domain.attachment.AttachmentHolder;
 import org.squashtest.csp.tm.domain.attachment.AttachmentList;
+import org.squashtest.csp.tm.domain.execution.Execution;
 import org.squashtest.csp.tm.domain.testcase.TestCase;
 
 @Entity
@@ -208,7 +209,7 @@ public class Campaign extends CampaignLibraryNode implements AttachmentHolder {
 		getIterations().add(iteration);
 		iteration.setCampaign(this);
 	}
-	
+
 	private ScheduledTimePeriod getScheduledPeriod() {
 		// Hibernate workaround : when STP fields are null, component is set to null
 		if (scheduledPeriod == null) {
@@ -315,20 +316,27 @@ public class Campaign extends CampaignLibraryNode implements AttachmentHolder {
 		if (getIterations().size() == 0) {
 			return null;
 		} else {
-			Iteration firstIteration = Collections.min(getIterations(),
-					CascadingAutoDateComparatorBuilder.buildIterationActualStartOrder());
+			Iteration firstIteration = getFirstIteration();
 			return firstIteration.getActualStartDate();
 		}
+	}
+
+	private Iteration getFirstIteration() {
+		return Collections.min(getIterations(), CascadingAutoDateComparatorBuilder.buildIterationActualStartOrder());
 	}
 
 	private Date getLastIterationActualEndDate() {
 		if (getIterations().size() == 0) {
 			return null;
 		} else {
-			Iteration lastIteration = Collections.max(getIterations(),
-					CascadingAutoDateComparatorBuilder.buildIterationActualEndOrder());
+			Iteration lastIteration = getLastIteration();
 			return lastIteration.getActualEndDate();
 		}
+	}
+
+	private Iteration getLastIteration() {
+
+		return Collections.max(getIterations(), CascadingAutoDateComparatorBuilder.buildIterationActualEndOrder());
 	}
 
 	public boolean testPlanContains(@NotNull TestCase tc) {
@@ -355,4 +363,31 @@ public class Campaign extends CampaignLibraryNode implements AttachmentHolder {
 		testPlan.removeAll(moved);
 		testPlan.addAll(targetIndex, moved);
 	}
+
+	/**
+	 * will update actual start date if are auto after iteration's auto dates update
+	 * 
+	 * @param iteration
+	 *            that changed actual dates
+	 */
+	public void updateStartAutoDateAfterIterationChange(Iteration iteration) {
+		if (this.isActualStartAuto() && this.getFirstIteration().equals(iteration)) {
+			autoSetActualStartDate();
+		}
+
+	}
+
+	/**
+	 * will update actual end date if are auto after iteration's auto dates update
+	 * 
+	 * @param iteration
+	 *            that changed actual dates
+	 */
+	public void updateEndAutoDateAfterIterationChange(Iteration iteration) {
+		if (this.getLastIteration().equals(iteration) && this.isActualEndAuto()) {
+			autoSetActualEndDate();
+		}
+
+	}
+
 }

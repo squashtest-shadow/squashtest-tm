@@ -118,13 +118,13 @@ public class IterationTestPlanItem {
 	 * 
 	 */
 	public void updateExecutionStatus() {
-		int iIndexLastExec = executions.size();
-		if (iIndexLastExec == 0) {
+		if (executions.isEmpty()) {
 			executionStatus = ExecutionStatus.READY;
 			return;
+		} else {
+			Execution execution = getLatestExecution();
+			executionStatus = execution.getExecutionStatus();
 		}
-		Execution execution = executions.get(iIndexLastExec - 1);
-		executionStatus = execution.getExecutionStatus();
 	}
 
 	public TestCase getReferencedTestCase() {
@@ -223,6 +223,10 @@ public class IterationTestPlanItem {
 	}
 
 	public void removeExecution(Execution execution) {
+		boolean wasLastExecution = false;
+		if (this.getLatestExecution().equals(execution)) {
+			wasLastExecution = true;
+		}
 		ListIterator<Execution> iterator = executions.listIterator();
 
 		while (iterator.hasNext()) {
@@ -232,8 +236,22 @@ public class IterationTestPlanItem {
 				break;
 			}
 		}
+		if (wasLastExecution) {
+			updateExecutionStatus();
+			if (this.getLatestExecution() != null) {
+				this.lastExecutedOn = this.getLatestExecution().getLastExecutedOn();
+				this.lastExecutedBy = this.getLatestExecution().getLastExecutedBy();
+			} else {
+				this.lastExecutedOn = null;
+				this.lastExecutedBy = null;
+			}
+			Iteration iteration = this.getIteration();
 
-		updateExecutionStatus();
+			if (iteration != null) {
+				iteration.updateAutoDatesAfterExecutionDetach(this, execution);
+			}
+		}
+
 	}
 
 	/**
