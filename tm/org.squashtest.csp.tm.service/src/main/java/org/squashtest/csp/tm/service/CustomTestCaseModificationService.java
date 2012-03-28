@@ -105,8 +105,7 @@ public interface CustomTestCaseModificationService {
 	FilteredCollectionHolder<List<TestCase>> findCallingTestCases(long testCaseId, CollectionSorting sorting);
 
 	/**
-	 * will insert a test step into a test case script, possibly after a step (the position), given their Ids. If no
-	 * position is provided, it defaults to the first position.
+	 * will insert a test step into a test case script, possibly after a step (the position), given their Ids.
 	 * 
 	 * @param testCaseId
 	 *            the id of the test case.
@@ -116,8 +115,19 @@ public interface CustomTestCaseModificationService {
 	 *            the id of the testStep to copy.
 	 * 
 	 */
-	void pasteCopiedTestStep(Long testCaseId, Long idToCopyAfter, Long copiedTestStepId);
+	void pasteCopiedTestStep(long testCaseId, long idToCopyAfter, long copiedTestStepId);
 
+	/**
+	 * will insert a test step into a test case script at the last position
+	 * 
+	 * @param testCaseId
+	 *            the id of the test case.
+	 * @param copiedTestStepId
+	 *            the id of the testStep to copy.
+	 * 
+	 */
+	void pasteCopiedTestStepToLastIndex(long testCaseId, long copiedTestStepId);
+	
 	/**
 	 * will change the test case importance too if auto is true.
 	 * 

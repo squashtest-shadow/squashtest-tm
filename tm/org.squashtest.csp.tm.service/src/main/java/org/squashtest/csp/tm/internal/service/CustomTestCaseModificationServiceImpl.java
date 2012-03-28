@@ -208,7 +208,7 @@ public class CustomTestCaseModificationServiceImpl implements CustomTestCaseModi
 
 	@Override
 	@PreAuthorize("hasPermission(#testCaseId, 'org.squashtest.csp.tm.domain.testcase.TestCase' , 'WRITE') or hasRole('ROLE_ADMIN')")
-	public void pasteCopiedTestStep(Long testCaseId, Long idToCopyAfter, Long copiedTestStepId) {
+	public void pasteCopiedTestStep(long testCaseId, long idToCopyAfter, long copiedTestStepId) {
 		TestStep original = testStepDao.findById(copiedTestStepId);
 		// FIXME il faut vérifier un éventuel cycle !
 		TestStep copyStep = original.createCopy();
@@ -218,13 +218,9 @@ public class CustomTestCaseModificationServiceImpl implements CustomTestCaseModi
 		TestCase testCase = testCaseDao.findAndInit(testCaseId);
 		int index;
 
-		if (idToCopyAfter != null) {
-			TestStep stepToCopyAfter = testStepDao.findById(idToCopyAfter);
-			index = testCase.getSteps().indexOf(stepToCopyAfter) + 1;
-		} else {
-			index = 0;
-		}
-
+		TestStep stepToCopyAfter = testStepDao.findById(idToCopyAfter);
+		index = testCase.getSteps().indexOf(stepToCopyAfter) + 1;
+		
 		testCase.addStep(index, copyStep);
 
 		if (!testCase.getSteps().contains(original)) {
@@ -233,6 +229,25 @@ public class CustomTestCaseModificationServiceImpl implements CustomTestCaseModi
 
 	}
 
+	@Override
+	@PreAuthorize("hasPermission(#testCaseId, 'org.squashtest.csp.tm.domain.testcase.TestCase' , 'WRITE') or hasRole('ROLE_ADMIN')")
+	public void pasteCopiedTestStepToLastIndex(long testCaseId, long copiedTestStepId) {
+		TestStep original = testStepDao.findById(copiedTestStepId);
+		// FIXME il faut vérifier un éventuel cycle !
+		TestStep copyStep = original.createCopy();
+
+		testStepDao.persist(copyStep);
+
+		TestCase testCase = testCaseDao.findAndInit(testCaseId);
+
+		testCase.addStep(copyStep);
+
+		if (!testCase.getSteps().contains(original)) {
+			updateImportanceIfCallStep(testCase, copyStep);
+		}
+
+	}
+	
 	private void updateImportanceIfCallStep(TestCase parentTestCase, TestStep copyStep) {
 		if (copyStep instanceof CallTestStep) {
 			TestCase called = ((CallTestStep) copyStep).getCalledTestCase();

@@ -195,13 +195,27 @@ public class TestCaseModificationController {
 	@RequestMapping(value = "/steps/paste", method = RequestMethod.POST, params = { "copiedStepId[]" })
 	@ResponseBody
 	public void pasteStep(@RequestParam("copiedStepId[]") String[] copiedStepId,
-			@RequestParam(value = "indexToCopy", required = false) Long positionId, @PathVariable long testCaseId) {
+			@RequestParam(value = "indexToCopy", required = true) Long positionId, @PathVariable long testCaseId) {
 
 		callStepManager.checkForCyclicStepCallBeforePaste(testCaseId, copiedStepId);
 
 		for (int i = copiedStepId.length - 1; i >= 0; i--) {
 			String id = copiedStepId[i];
 			testCaseModificationService.pasteCopiedTestStep(testCaseId, positionId, Long.parseLong(id));
+		}
+		LOGGER.trace("test case copied some Steps");
+	}
+	
+	@RequestMapping(value = "/steps/paste-last-index", method = RequestMethod.POST, params = { "copiedStepId[]" })
+	@ResponseBody
+	public void pasteStepLastIndex(@RequestParam("copiedStepId[]") String[] copiedStepId,
+			@PathVariable long testCaseId) {
+
+		callStepManager.checkForCyclicStepCallBeforePaste(testCaseId, copiedStepId);
+		
+		for (int i = 0; i < copiedStepId.length; i++) {
+			String id = copiedStepId[i];
+			testCaseModificationService.pasteCopiedTestStepToLastIndex(testCaseId, Long.parseLong(id));
 		}
 		LOGGER.trace("test case copied some Steps");
 	}

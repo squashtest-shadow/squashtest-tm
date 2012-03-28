@@ -345,18 +345,25 @@
 
 		var data = new Object();
 		data['copiedStepId']=idList;
+
+		var pasteUrl = "${testCaseUrl}"
 		
 		if (position.length>0){
 			data['indexToCopy']=position[0];
+			pasteUrl = pasteUrl + "/steps/paste";
+		} else {
+			pasteUrl = pasteUrl + "/steps/paste-last-index";
 		}
 		
 		$.ajax({
 			type : 'POST',
 			data : data,
-			url : "${testCaseUrl}/steps/paste",
+			url : pasteUrl,
 			dataType : "json", 
 			success: refreshStepsAndImportance
 		}).fail(copyPasteFail);
+		
+		
 	}
 	function copyPasteFail(jqXHR, textStatus, errorThrown){
 		var json = jQuery.parseJSON(jqXHR.responseText);
