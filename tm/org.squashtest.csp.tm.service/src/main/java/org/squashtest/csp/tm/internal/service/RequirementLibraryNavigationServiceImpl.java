@@ -133,14 +133,12 @@ public class RequirementLibraryNavigationServiceImpl extends
 
 	@Override
 	public List<ExportRequirementData> findRequirementsToExportFromLibrary(List<Long> libraryIds) {
-		List<ExportRequirementData> list = requirementDao.findRequirementToExportFromLibrary(libraryIds);
-		return list;
+		return requirementDao.findRequirementToExportFromLibrary(libraryIds);
 	}
 
 	@Override
 	public List<ExportRequirementData> findRequirementsToExportFromFolder(List<Long> folderIds) {
-		List<ExportRequirementData> list = requirementDao.findRequirementToExportFromFolder(folderIds);
-		return list;
+		return requirementDao.findRequirementToExportFromFolder(folderIds);
 	}
 
 }
