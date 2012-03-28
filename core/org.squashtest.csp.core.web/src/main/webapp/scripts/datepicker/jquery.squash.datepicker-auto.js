@@ -113,7 +113,7 @@ function dpa_initialize(){
 		var formerdate = me.formerState.formerDate;
 		
 		//if null, we set the control to automode
-		if (currentDate==null) me.setAutoMode();
+		//if (currentDate==null) me.setAutoMode();
 		
 		me.inputAndExitEditMode();
 		
@@ -218,7 +218,6 @@ function dpa_enterEditMode(){
 	$(datelabel).addClass("date-hidden");			
 	$(datepick).datepicker('show');
 	//$(datepick).datepicker("setDate",null);
-	
 }
 
 
@@ -252,6 +251,7 @@ function dpa_cancelEditMode(){
 	var datelabel = this.controls.datelabel;	
 			
 	this.setDate(this.formerState.formerDate);
+
 
 	if (this.formerState.wasAuto){
 		this.setAutoMode();
