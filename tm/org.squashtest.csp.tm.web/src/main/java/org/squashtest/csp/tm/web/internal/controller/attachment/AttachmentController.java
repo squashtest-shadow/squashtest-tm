@@ -249,7 +249,7 @@ public class AttachmentController {
 
 			response.setContentType("application/octet-stream");
 			response.setHeader("Content-Disposition",
-					"attachment; filename=" + HtmlUtils.htmlEscape(attachment.getName().replace(" ", "_")));
+					"attachment; filename=" + attachment.getName().replace(" ", "_"));
 
 			flushOutputStream(inStream, outStream);
 
