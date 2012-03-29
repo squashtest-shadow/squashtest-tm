@@ -56,3 +56,51 @@ function oneShotDialog(dialogTitle, domMessage){
 	return this.defer.promise();
 
 }
+
+function twoShotDialog(dialogTitle, domMessage, koText){
+	
+	var oneShotPopup = $("<div/>");
+	$(document).append(oneShotPopup);
+	
+	oneShotPopup.append(domMessage);
+	oneShotPopup.keypress(function(){
+		if (evt.which=='13'){
+			$('button', oneShotPopup).trigger('click');
+		}
+	});
+
+	this.defer = $.Deferred();
+	
+	oneShotPopup.dialog({ 
+		width : '300px',
+		resizable : false,
+		title : dialogTitle,
+		buttons : [{ 
+			'text': 'Ok',
+			'click' : function(){ 
+				var jqDialog = $(this);
+				jqDialog.dialog('close'); 
+				jqDialog.dialog('destroy');
+				oneShotPopup.remove();
+				defer.resolve();
+			}
+		},
+		{ 
+			'text': koText,
+			'click' : function(){ 
+				var jqDialog = $(this);
+				jqDialog.dialog('close'); 
+				jqDialog.dialog('destroy');
+				oneShotPopup.remove();
+				defer.reject();
+			}
+		}
+		]
+			
+	});
+	
+	oneShotPopup.dialog('open');
+	
+	return this.defer.promise();
+
+}

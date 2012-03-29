@@ -116,8 +116,8 @@
 		
 	}
 	function confirmeDeleteExecution(idExec, testPlanHyperlink, execRow) {
-		oneShotDialog("<f:message key='dialog.delete-execution.title'/>",
-				"<f:message key='dialog.delete-execution.message'/>").done(
+		twoShotDialog("<f:message key='dialog.delete-execution.title'/>",
+				"<f:message key='dialog.delete-execution.message'/>", "<f:message key='dialog.button.cancel.label'/>").done(
 				function() {
 					doDeleteExecution(idExec, testPlanHyperlink, execRow);
 				});
