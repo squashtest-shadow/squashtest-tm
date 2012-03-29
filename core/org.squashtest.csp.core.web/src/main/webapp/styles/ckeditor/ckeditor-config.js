@@ -6,7 +6,8 @@ CKEDITOR.editorConfig = function( config ){
 		['Bold','Italic','Underline','NumberedList','BulletedList'], 
 		['Link'],  
 		['JustifyLeft','JustifyCenter','JustifyRight'],  
-		['TextColor','Font','FontSize'],
+		['TextColor'],['Font'],['FontSize'],
+		['Scayt'],
 		];  
 	config.height = '10em';
 	config.resize_minHeight = 	175;
