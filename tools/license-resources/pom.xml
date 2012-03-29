@@ -4,12 +4,12 @@
 	<parent>
 		<artifactId>squashtest-csp-tools</artifactId>
 		<groupId>org.squashtest.csp</groupId>
-		<version>1.1.0.RELEASE</version>
+		<version>1.2.0.IT31-SNAPSHOT</version>
 	</parent>
 	<!-- No parent because it would trigger maven-remote-resources-plugin:resource -->
 	<groupId>org.squashtest.csp</groupId>
 	<artifactId>squashtest-license-resources</artifactId>
-	<version>1.1.0.RELEASE</version>
+	<version>1.2.0.IT31-SNAPSHOT</version>
 	<name>Squashtest - Tools - License resources bundle</name>
 	<description>Squash licence and copyright files which should be included in distributed artifacts</description>
 	<packaging>jar</packaging>
