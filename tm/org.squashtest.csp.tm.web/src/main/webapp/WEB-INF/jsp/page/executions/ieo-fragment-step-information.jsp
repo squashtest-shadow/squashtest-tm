@@ -121,6 +121,7 @@
 			});
 			
 			if (${ not empty testPlanItemUrl }) $('#execute-next-test-case-panel').removeClass('not-displayed');		
+			if (${ (not empty testPlanItemUrl) and hasPreviousTestCase and (not hasPreviousStep) }) $('#new-test-case-label').removeClass('not-displayed');
 		});
 	</script> 
 	<div id="execute-header">
@@ -143,6 +144,11 @@
 		</table> 	
 	</div>
 	<div id="execute-body" class="execute-fragment-body">
+		<div id="new-test-case-label" class="centered not-displayed">
+			<font color=red><f:message
+					key="execute.test.suite.next.test.case.label" />
+			</font>
+		</div>
 	
 		<div id="execute-evaluation-rightside">
 			<div id="execution-information-fragment">
