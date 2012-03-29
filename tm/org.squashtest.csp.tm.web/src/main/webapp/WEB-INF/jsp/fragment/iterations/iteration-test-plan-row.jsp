@@ -40,7 +40,7 @@
 <c:set var="textcolor" value="#555555" />
 
 <td colspan="10">
-	<table>
+	<table class="executions-table">
 		<c:forEach items="${ executions }" var="execution" varStatus="status">
 			<tr>
 				<td colspan="4"
@@ -76,9 +76,7 @@
 						</c:otherwise>
 					</c:choose>
 				</td>
-				<td style="width: 2em;"><input
-					id="delete-execution-table-button-${execution.id}" type="button"
-					value='-' class="delete-execution-table-button" /></td>
+				<td style="width: 2em;"><button id="delete-execution-table-button-${execution.id}" class="delete-execution-table-button" ></button></td>
 			</tr>
 		</c:forEach>
 		<c:if test="${ editableIteration }">
@@ -96,8 +94,10 @@
 <script>
 	$(function() {
 		bindDeleteButtonsToFunctions();
+		decorateDeleteButtons($(".delete-execution-table-button"));
 	});
-
+	
+	
 	function bindDeleteButtonsToFunctions() {
 		var execOffset = "delete-execution-table-button-";
 		$(".delete-execution-table-button").click(
