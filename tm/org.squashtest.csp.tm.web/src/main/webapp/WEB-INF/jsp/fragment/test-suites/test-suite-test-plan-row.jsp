@@ -81,8 +81,7 @@
 							</c:otherwise>
 						</c:choose>
 				</td>
-				<td style="width: 2em;">
-				</td>
+				<td style="width: 2em;"><button id="delete-execution-table-button-${execution.id}" class="delete-execution-table-button" ></button></td>
 			</tr>
 		</c:forEach>
 		<!-- ------------------------------------------END ROW OF EXECUTION -->
@@ -102,3 +101,71 @@
 		<!-- ---------------------------------------------END ROW NEW EXECUTION -->
 	</table>
 </td>
+
+<script>
+	$(function() {
+		bindDeleteButtonsToFunctions();
+		decorateDeleteButtons($(".delete-execution-table-button"));
+	});
+	
+	
+	function bindDeleteButtonsToFunctions() {
+		var execOffset = "delete-execution-table-button-";
+		$(".delete-execution-table-button").click(
+					function() {
+						//console.log("delete execution #"+idExec);
+						var execId = $(this).attr("id");
+						var idExec = execId.substring(execOffset.length);
+						var execRow = $(this).closest("tr");
+						var testPlanHyperlink = $(this).closest("tr")
+								.closest("tr").prev().find(
+										"a.test-case-name-hlink");
+
+						confirmeDeleteExecution(idExec, testPlanHyperlink,
+								execRow);
+					});
+		
+	}
+	function confirmeDeleteExecution(idExec, testPlanHyperlink, execRow) {
+		oneShotDialog("<f:message key='dialog.delete-execution.title'/>",
+				"<f:message key='dialog.delete-execution.message'/>").done(
+				function() {
+					doDeleteExecution(idExec, testPlanHyperlink, execRow);
+				});
+	}
+	function doDeleteExecution(idExec, testPlanHyperlink, execRow) {
+		deleteExecutionOfSpecifiedId(idExec).done(function(data) {
+			refreshTable(testPlanHyperlink, execRow, data)
+		});
+	}
+	function deleteExecutionOfSpecifiedId(idExec) {
+		return $.ajax({
+			'url' : "${showExecutionUrl}/" + idExec,
+			type : 'DELETE',
+			data : [],
+			dataType : "json"
+		});
+	}
+	function refreshTable(testPlanHyperlink, execRow, data) {
+		// 1/ refresh execution table
+		//
+		// 		$(testPlanHyperlink).click();
+		// 		$(testPlanHyperlink).click();
+		//
+		//OR  
+		//
+		// 2 / just remove the execution row 
+		// I choose this solution because it is easier to delete severas executions in a row without waiting for the execution table to reload.
+		// the drawback is that the number of the executions is not updated. 
+		//console.log("execRow = " + execRow);
+		//$(execRow).detach();
+		//or 
+		//3/ Because can't refresh only the status & last executed by yet
+		refreshTestPlans();
+		
+		
+		refreshTestSuiteInfos();
+		refreshStats();
+		refreshExecButtons();
+	}
+</script>
