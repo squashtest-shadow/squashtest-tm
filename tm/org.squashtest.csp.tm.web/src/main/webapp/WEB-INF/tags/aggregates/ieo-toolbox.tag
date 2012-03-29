@@ -27,6 +27,7 @@
 <%@ attribute name="hasNextStep" required="true" type="java.lang.Boolean" %>
 <%@ attribute name="totalSteps" required="true" type="java.lang.Integer" %>
 <%@ attribute name="hasNextTestCase" required="false" type="java.lang.Boolean" %>
+<%@ attribute name="isSuite" required="false" type="java.lang.Boolean" %>
 <%@ attribute name="testPlanItemUrl" required="false" %>
 <%@ taglib uri="http://java.sun.com/jsp/jstl/core" prefix="c" %>
 <%@ taglib tagdir="/WEB-INF/tags/component" prefix="comp" %>
@@ -38,15 +39,17 @@
 </s:url>
 
 <script type="text/javascript">
-	var hasPreviousStep = ${ hasPreviousStep }; 
-	var hasNextStep = ${ hasNextStep }; 
 	var changeStatusUrl = '${ executeStatus }';
+	var hasPreviousStep = ${ (not empty hasPreviousStep) and hasPreviousStep }; 
+	var hasNextStep = ${ (not empty hasNextStep) and hasNextStep };
+	var hasNextTestCase = ${ (not empty hasNextTestCase) and hasNextTestCase };
+	var isSuite = ${ (not empty isSuite) and isSuite }
 
-	$(function(){
+	$(function() {
 		var positionLeft = $.cookie("ieo-toolbox-position-left");
 		var positionTop = $.cookie("ieo-toolbox-position-top");
 		
-		if ( positionLeft != null && positionTop != null){
+		if ( positionLeft != null && positionTop != null ) {
 			$("#draggable-menu").offset({top : positionTop, left: positionLeft});
 		}
 		
@@ -112,7 +115,7 @@
 
 		$("#execute-next-test-case").button({
 			'text': false,
-			'disabled': ${ (empty hasNextTestCase) or (not hasNextTestCase) } || hasNextStep,
+			'disabled': !hasNextTestCase || hasNextStep,
 			icons: {
 				primary : 'ui-icon-seek-next'
 			}

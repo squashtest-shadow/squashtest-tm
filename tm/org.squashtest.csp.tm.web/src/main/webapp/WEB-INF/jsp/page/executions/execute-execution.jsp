@@ -91,18 +91,16 @@
 		<body class="execute-html-body">
 			<f:message var="completedMessage" key="execute.alert.test.complete" />
 			<f:message var="endTestSuiteMessage" key="squashtm.action.exception.testsuite.end" />
-			<script type="text/javascript">
-		
-				window.onunload = test;
-			
-				function test(){
-					refreshParent();
-				}
-				
+			<script type="text/javascript">						
+				var isOer = ${ not empty hasNextTestCase };
+				var hasNextTestCase = ${ (not empty hasNextTestCase) and hasNextTestCase };
+				var hasPreviousTestCase = ${ (not empty hasPreviousTestCase) and hasPreviousTestCase };
+				var hasNextStep = ${ (not empty hasNextStep) and hasNextStep };
+				var hasPreviousStep = ${ (not empty hasPreviousStep) and hasPreviousStep };
+	
 				function refreshParent(){
 					window.opener.location.href = window.opener.location.href;
-					if (window.opener.progressWindow)
-					{
+					if (window.opener.progressWindow) {
 						window.opener.progressWindow.close();
 					}
 				}
@@ -112,58 +110,41 @@
 					$("#execution-information-fragment").load("${executeThis}/general");
 				}
 			
-				function testComplete() {
-					if (${ (empty hasNextTestCase) or (not hasNextTestCase) }){
-						if (${ empty hasNextTestCase }){
-							oneShotDialog("<f:message key='popup.title.info' />",  "${ completedMessage }" ).done(function()
-							{
-								refreshParent();
-								window.close();
-							});
-						} else {
-							oneShotDialog("<f:message key='popup.title.info' />","${ endTestSuiteMessage }").done(function()
-							{
-								refreshParent();
-								window.close();
-							});
-						}
-					}
-					else {
-						oneShotDialog("<f:message key='popup.title.info' />",  "${ completedMessage }" ).done(function()
-						{
-							refreshParent();
-							$('#execute-next-test-case').click();
+				function testComplete() {	
+					if (!isOer) {
+						oneShotDialog("<f:message key='popup.title.info' />",  "${ completedMessage }" ).done(function() {
+							window.close();
 						});
-					}
+					} else if (hasNextTestCase) {
+						$('#execute-next-test-case').click();
+					} else { // oer without next
+						oneShotDialog("<f:message key='popup.title.info' />","${ endTestSuiteMessage }").done(function() {
+							window.close();
+						});
+					}					
+					// parent refresh triggered through event
 				}
+				
 				function navigateNext(){
 					if ( $('#new-test-case-label').hasClass('not-displayed') == false ) {
 						$('#new-test-case-label').addClass('not-displayed');
 					}
-					<c:choose>
-						<c:when test="${ not hasNextStep }">
-							testComplete();
-						</c:when>
-						<c:otherwise>
-							refreshParent();
-							document.location.href="${ executeNext }";						
-						</c:otherwise>
-					</c:choose>
+					if (hasNextStep) {
+						document.location.href="${ executeNext }";						
+					} else {
+						testComplete();
+					}
 				}
 				
 				function navigatePrevious(){
 					if ( $('#new-test-case-label').hasClass('not-displayed') == false ) {
 						$('#new-test-case-label').addClass('not-displayed');
 					}
-					<c:choose>
-						<c:when test="${ not hasPreviousStep }">
-							testComplete();
-						</c:when>
-						<c:otherwise>
-							refreshParent();
-							document.location.href="${ executePrevious }";						
-						</c:otherwise>
-					</c:choose>
+					if (hasPreviousStep) {
+						document.location.href="${ executePrevious }";						
+					} else {
+						testComplete();
+					}
 				}
 				
 				function initNextButton(){
@@ -173,21 +154,17 @@
 						icons : {
 							primary : 'ui-icon-triangle-1-e'
 						}
-					}).click(function(){
-						navigateNext();
-					});	
+					}).click( navigateNext );	
 				}
 				
 				function initPreviousButton(){			
 					$("#execute-previous-button").button({
 						'text' : false,
-						'disabled': ${ not hasPreviousStep },
+						'disabled': !hasPreviousStep,
 						icons : {
 							primary : 'ui-icon-triangle-1-w'
 						}
-					}).click(function(){
-						navigatePrevious();
-					});	
+					}).click( navigatePrevious );	
 				}
 				
 				function initStopButton(){
@@ -197,7 +174,6 @@
 							'primary' : 'execute-stop'
 						} 
 					}).click(function(){
-						refreshParent();
 						window.close();
 					});
 					
@@ -212,10 +188,7 @@
 					}).click(function(){
 						$.post('${ executeStatus }', {
 							executionStatus : "FAILURE"
-						}, function(){
-							setStatusFailure();
-							}
-						);
+						},  setStatusFailure );
 					});		
 				}
 				
@@ -229,15 +202,11 @@
 					}).click(function(){
 						$.post('${ executeStatus }', {
 							executionStatus : "SUCCESS"
-						}, function(){
-							setStatusSuccess();
-							}
-						);
+						},  setStatusSuccess );
 					});
 					
 				}
 				
-		
 				function setStatusSuccess(){
 					$("#execution-status-combo").val("SUCCESS");			
 					statusComboChange();
@@ -291,7 +260,7 @@
 					
 					$("#execute-next-test-case").button({
 						'text': false,
-						'disabled': ${ (empty hasNextTestCase) or (not hasNextTestCase) or hasNextStep },
+						'disabled': !hasNextTestCase || hasNextStep,
 						icons: {
 							primary : 'ui-icon-seek-next'
 						}
@@ -299,7 +268,9 @@
 					
 					if (${ not empty testPlanItemUrl }) $('#execute-next-test-case-panel').removeClass('not-displayed');		
 					
-					if (${ not empty testPlanItemUrl } && ${ not empty hasPreviousTestCase && hasPreviousTestCase } && ${ not hasPreviousStep } ) $('#new-test-case-label').removeClass('not-displayed');		
+					if (${ not empty testPlanItemUrl } && hasPreviousTestCase &&  !hasPreviousStep) $('#new-test-case-label').removeClass('not-displayed');
+					
+					$(window).unload( refreshParent );
 				});	
 			</script>
 

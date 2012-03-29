@@ -69,8 +69,10 @@
 
 <body id="ieo-body">
 	<f:message var="completedMessage" key="execute.alert.test.complete" />
+	<f:message var="endTestSuiteMessage" key="squashtm.action.exception.testsuite.end" />
 	<script type="text/javascript">
 	$(function() {
+
 		$("#left-panel").resizable({
 			helper: "ui-resizable-helper",
 			alsoResize: "#right-panel",
@@ -92,32 +94,31 @@
 		
 		var toolbox = $("#toolbox-container");
 		
-		toolbox.delegate("#execute-next-step", "click", function() {
-			navigateNext();
-		});
-		toolbox.delegate("#execute-previous-step", "click", function() {
-			navigatePrevious();
-		});
+		toolbox.delegate("#execute-next-step", "click", navigateNext);
+		toolbox.delegate("#execute-previous-step", "click", navigatePrevious);
 		toolbox.delegate('#stop-execution', 'click', function() {
 			window.close();
 		});
 		toolbox.delegate('#step-status-combo', 'change', function(success) {
+			var self = this;
 			$.post(changeStatusUrl, {
-				executionStatus : $(this).val()
-			},
-			statusComboChange(this)
-			);
+				executionStatus : $(self).val()
+			}, function() {
+				statusComboChange(self);
+			});
 		});
 		toolbox.delegate('#step-succeeded', 'click', function() {
 			$.post(changeStatusUrl, {
 				executionStatus : "SUCCESS"
-			}).done(setStatusSuccess());				
+			}).done( setStatusSuccess );				
 		});
 		toolbox.delegate('#step-failed', 'click', function(){
 			$.post(changeStatusUrl, {
 				executionStatus : "FAILURE"
-			}).done(setStatusFailure());					
+			}).done( setStatusFailure );					
 		});
+		
+		$(parent.frameleft).unload( refreshParent );
 	});
 	
 	function refreshParent(){
@@ -148,14 +149,16 @@
 	}
 
 	function setStatusSuccess(){
-		$("#step-status-combo").val("SUCCESS");			
-		statusComboChange();
+		var combo = $("#step-status-combo"); 
+		combo.val("SUCCESS");			
+		statusComboChange(combo);
 		navigateNext();
 	}
 	
 	function setStatusFailure(){
-		$("#step-status-combo").val("FAILURE");
-		statusComboChange();
+		var combo = $("#step-status-combo"); 
+		combo.val("FAILURE");
+		statusComboChange(combo);
 		navigateNext();
 	}
 	
@@ -195,9 +198,9 @@
 	
 	<%-- Navigate left panel to the right Step --%>
 	function navigateNext(){
-		refreshParent();
+		/* refreshParent(); */
 		if (hasNextStep) {
-			parent.frameleft.document.location.href=urlNext;
+			showStepAt(urlNext);
 			refreshToolboxNext();
 		} else {
 			testComplete();
@@ -207,29 +210,39 @@
 	function navigateOther(value) {
 		var theUrl =  urlRefreshStep + ""+ value +"?ieo=true";
 		var theMenuUrl =  urlRefreshStep + ""+ value +"/menu?ieo=true";
-		parent.frameleft.document.location.href=theUrl;
+		showStepAt(theUrl);
 		refreshToolbox(theMenuUrl, value);
-		refreshParent();
+		/* refreshParent(); */
 	}
 
 	function navigatePrevious() {
-		refreshParent();
+		/* refreshParent(); */
 		if (hasPreviousStep) {
-			parent.frameleft.document.location.href=urlPrevious;
+			showStepAt(urlPrevious);
 			refreshToolboxPrevious();
 		} else {
 			testComplete();
 		}
 	}
+	
+	function showStepAt(url) {
+		parent.frameleft.document.location.href = url
+		$(parent.frameleft).unload( refreshParent );
+		/* refreshParent(); */
+	}
 
 	function testComplete(){
-		alert( "${ completedMessage }" );
-		refreshParent();
-		if (${ (empty hasNextTestCase) or (not hasNextTestCase) }) {
-			window.close();
-		} else {
-			$('#execute-next-test-case').click();		
-		}
+		if (!isSuite) {
+			oneShotDialog("<f:message key='popup.title.info' />",  "${ completedMessage }" ).done(function() {
+				window.close();
+			});
+		} else if (hasNextTestCase) {
+			$('#execute-next-test-case').click();
+		} else { // suite without next
+			oneShotDialog("<f:message key='popup.title.info' />","${ endTestSuiteMessage }").done(function() {
+				window.close();
+			});
+		}					
 	}
 	
 	<%-- fill the right panel with the content of entered url --%>
@@ -251,7 +264,7 @@
 	</div>
 	
 	<div id="toolbox-container" >
-		<gr:ieo-toolbox execution="${ execution }" executionStep="${ executionStep }" hasNextStep="${ hasNextStep }" hasPreviousStep="${ hasPreviousStep }" totalSteps="${ totalSteps }" hasNextTestCase="${ hasNextTestCase }" testPlanItemUrl="${ testPlanItemUrl }" />
+		<gr:ieo-toolbox execution="${ execution }" executionStep="${ executionStep }" hasNextStep="${ hasNextStep }" hasPreviousStep="${ hasPreviousStep }" totalSteps="${ totalSteps }" hasNextTestCase="${ hasNextTestCase }" testPlanItemUrl="${ testPlanItemUrl }" isSuite="${ not empty hasNextTestCase }" />
 	</div>
 
 	<comp:decorate-buttons />
