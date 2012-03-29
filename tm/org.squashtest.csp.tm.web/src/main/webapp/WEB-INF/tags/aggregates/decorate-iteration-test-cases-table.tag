@@ -62,6 +62,10 @@
 <f:message var="cyclicStepCallException"
 	key="squashtm.action.exception.cyclicstepcallexception.label" />
 <script type="text/javascript">
+	
+	var testPlansUrl = "${testPlansUrl}";
+	var nonBelongingTestPlansUrl = "${nonBelongingTestPlansUrl}";
+	
 	$(function() {
 <%-- single test-plan removal --%>
 	$('#test-plans-table .delete-test-plan-button').die('click');
@@ -86,7 +90,7 @@
 
 					$.ajax({
 						type : 'delete',
-						url : '${ testPlansUrl }/' + parseTestPlanId(bCaller),
+						url : testPlansUrl + '/' + parseTestPlanId(bCaller),
 						dataType : 'text',
 						success : function(data) {
 							refreshTestPlans();
@@ -117,7 +121,7 @@
 							getTestPlansTableRowId);
 
 					if (ids.length > 0) {
-						$.post('${ nonBelongingTestPlansUrl }', {
+						$.post( nonBelongingTestPlansUrl , {
 							testPlanIds : ids
 						}, function(data) {
 							refreshTestPlans();
