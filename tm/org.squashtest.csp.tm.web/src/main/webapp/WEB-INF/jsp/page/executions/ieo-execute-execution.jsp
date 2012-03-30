@@ -58,6 +58,8 @@
 	var urlComment = urlRefreshStep + "" + stepId;
 	var urlStatus = urlRefreshStep + "" + stepId;
 	
+	var urlIFrame = "${ urlIFrame }";
+	
 	</script>
 	
 	<%-- cautious : below are used StepIndexes and StepIds. Dont get confused. --%>	
@@ -247,7 +249,9 @@
 	
 	<%-- fill the right panel with the content of entered url --%>
 	function fillRightFrame(urlP){
+		urlIFrame = urlP;
 		$('#iframe-right').attr("src", urlP);
+		$('#urlATransmettre').attr("value", urlP);
 	}
 	
 	</script>
@@ -259,7 +263,7 @@
 
 	
 	<div id="right-panel" class="iframe-container" style="z-index: 0;">
-		<iframe id="iframe-right" class="resizable" name="frameright" >
+		<iframe id="iframe-right" class="resizable" name="frameright" src="${ urlIFrame }">
 		</iframe> 
 	</div>
 	

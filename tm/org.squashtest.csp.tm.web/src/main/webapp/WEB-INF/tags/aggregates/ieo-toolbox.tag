@@ -128,6 +128,8 @@
 		$("#step-status-combo").val("${executionStep.executionStatus}");
 		
 		statusComboSetIcon($("#step-status-combo"));		
+		
+		$('#urlATransmettre').attr("value", $('#iframe-right').attr("src"));
 	});	
 </script>
 
@@ -150,6 +152,7 @@
 			</td>
 			<td class="centered not-displayed" id="execute-next-test-case-panel">
 				<form action="<c:url value='${ testPlanItemUrl }/next-execution/runner' />" method="post">
+					<input id="urlATransmettre" type="hidden" name="ieoIFrameUrl" value="" >
 					<f:message  var="nextTestCaseTitle" key="execute.header.button.next-test-case.title" />
 					<button id="execute-next-test-case" name="optimized" class="button" title="${ nextTestCaseTitle }">${ nextTestCaseTitle }</button>
 				</form>

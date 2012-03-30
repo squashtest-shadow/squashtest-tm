@@ -65,6 +65,7 @@ public class TestSuiteExecutionController {
 		public static final String RUNNER_VIEW_PATTERN = "/test-suites/{0,number,####}/test-plan/{1,number,####}/executions/{2,number,####}/runner";
 		public static final String CLASSIC_RUNNER_VIEW_PATTERN = RUNNER_VIEW_PATTERN + "?classic";
 		public static final String OPTIMIZED_RUNNER_VIEW_PATTERN = RUNNER_VIEW_PATTERN + "?optimized";
+		public static final String OPTIMIZED_RUNNER_VIEW_PATTERN_WITH_URL = OPTIMIZED_RUNNER_VIEW_PATTERN + "&ieoIFrameUrl={3}";
 	}
 
 	public static final String TEST_PLAN_ITEM_URL_PATTERN = "/test-suites/{0,number,####}/test-plan/{1,number,####}";
@@ -87,8 +88,11 @@ public class TestSuiteExecutionController {
 
 	@RequestMapping(value = RequestMappings.SHOW_EXECUTION_RUNNER, method = RequestMethod.GET, params = "optimized")
 	public String showOptimizedExecutionRunner(@PathVariable long testSuiteId, @PathVariable long testPlanItemId,
-			@PathVariable long executionId, Model model) {
-		populateExecutionRunnerModel(testSuiteId, testPlanItemId, executionId, model);
+			@PathVariable long executionId, Model model, @RequestParam(value="ieoIFrameUrl", required=false) String ieoIFrameUrl) {
+		if (ieoIFrameUrl==null) {
+			ieoIFrameUrl = "";
+		}
+		populateExecutionRunnerModel(testSuiteId, testPlanItemId, executionId, ieoIFrameUrl, model);
 
 		if (LOGGER.isTraceEnabled()) {
 			LOGGER.trace("Will show OER for test suite using model :" + model.asMap());
@@ -110,7 +114,7 @@ public class TestSuiteExecutionController {
 	@RequestMapping(value = RequestMappings.SHOW_EXECUTION_RUNNER, method = RequestMethod.GET, params = "classic")
 	public String showClassicExecutionRunner(@PathVariable long testSuiteId, @PathVariable long testPlanItemId,
 			@PathVariable long executionId, Model model) {
-		populateExecutionRunnerModel(testSuiteId, testPlanItemId, executionId, model);
+		populateExecutionRunnerModel(testSuiteId, testPlanItemId, executionId, "", model);
 
 		if (LOGGER.isTraceEnabled()) {
 			LOGGER.trace("Will show Classic exec runner for test suite using model :" + model.asMap());
@@ -155,12 +159,16 @@ public class TestSuiteExecutionController {
 	}
 
 	@RequestMapping(value = RequestMappings.INIT_NEXT_EXECUTION_RUNNER, method = RequestMethod.POST, params = "optimized")
-	public String startResumeNextExecutionInOptimizedRunner(@PathVariable long testSuiteId, @PathVariable long testPlanItemId) {
+	public String startResumeNextExecutionInOptimizedRunner(@PathVariable long testSuiteId, @PathVariable long testPlanItemId, @RequestParam(value="ieoIFrameUrl", required=false) String ieoIFrameUrl) {
 		Execution execution = testSuiteExecutionProcessingService.startResumeNextExecution(testSuiteId, testPlanItemId);
 
+		if (ieoIFrameUrl == null){
+			ieoIFrameUrl = "";
+		}
+		
 		return "redirect:"
-				+ MessageFormat.format(ViewNames.OPTIMIZED_RUNNER_VIEW_PATTERN, testSuiteId, execution.getTestPlan().getId(),
-						execution.getId());
+				+ MessageFormat.format(ViewNames.OPTIMIZED_RUNNER_VIEW_PATTERN_WITH_URL, testSuiteId, execution.getTestPlan().getId(),
+						execution.getId(), ieoIFrameUrl);
 	}
 
 	@RequestMapping(value = RequestMappings.INIT_NEXT_EXECUTION_RUNNER, method = RequestMethod.POST, params = "classic")
@@ -172,17 +180,22 @@ public class TestSuiteExecutionController {
 		
 	}
 
-	private void populateExecutionRunnerModel(long testSuiteId, long testPlanItemId, long executionId, Model model) {
+	private void populateExecutionRunnerModel(long testSuiteId, long testPlanItemId, long executionId, String ieoIFrameUrl, Model model) {
 		helper.populateExecutionRunnerModel(executionId, model);
 
 		addTestSuiteTestPlanItemData(testSuiteId, testPlanItemId, model);
 		addCurrentStepUrl(model, testSuiteId, testPlanItemId, executionId);
+		addCUrrentIFrameUrl(model, ieoIFrameUrl);
 	}
 
 	private void addTestSuiteTestPlanItemData(long testSuiteId, long testPlanItemId, Model model) {
 		addHasNextTestCase(testSuiteId, testPlanItemId, model);
 		addHasPreviousTestCase(testSuiteId, testPlanItemId, model);
 		addTestPlanItemUrl(testSuiteId, testPlanItemId, model);
+	}
+	
+	private void addCUrrentIFrameUrl(Model model, String ieoIFrameUrl) {
+		model.addAttribute("urlIFrame", ieoIFrameUrl);
 	}
 
 	/* copypasta from now on. rework asap */
