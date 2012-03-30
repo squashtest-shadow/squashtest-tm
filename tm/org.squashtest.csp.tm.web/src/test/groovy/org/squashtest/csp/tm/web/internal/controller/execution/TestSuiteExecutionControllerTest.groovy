@@ -63,8 +63,7 @@ class TestSuiteExecutionControllerTest extends Specification {
 		model.asMap()['currentStepUrl'] ==~ /(\/[A-z\-]+(\/\d+)?)+\//
 	}
 	
-	@Unroll("should not format runner view name from controller #startResumeController")
-	def "should not format runner view name"() {
+	def "should not format runner view name startResumeNextExecutionInClassicRunner"() {
 		given:
 		TestSuiteExecutionProcessingService  testSuiteExecutionProcessingService = Mock()
 		controller.testSuiteExecutionProcessingService = testSuiteExecutionProcessingService
@@ -79,12 +78,30 @@ class TestSuiteExecutionControllerTest extends Specification {
 		testSuiteExecutionProcessingService.startResumeNextExecution(_, _) >> execution
 		
 		when:
-		def viewName = controller.invokeMethod(startResumeController,[10000, 20000])
+		def viewName = controller.startResumeNextExecutionInClassicRunner(10000, 20000)
 		
 		then: 
 		viewName ==~ /redirect:(\/[A-z\-]+(\/\d+)?)+(\?[A-z\-]+)?/
+	}
+	
+	def "should not format runner view name startResumeNextExecutionInOptimizedRunner"() {
+		given:
+		TestSuiteExecutionProcessingService  testSuiteExecutionProcessingService = Mock()
+		controller.testSuiteExecutionProcessingService = testSuiteExecutionProcessingService
 		
-		where:
-		startResumeController << ["startResumeNextExecutionInClassicRunner", "startResumeNextExecutionInOptimizedRunner"]
+		and:
+		Execution execution = Mock()
+		IterationTestPlanItem item = Mock()
+		item.id >> 30000L
+		execution.testPlan >> item
+		
+		and:
+		testSuiteExecutionProcessingService.startResumeNextExecution(_, _) >> execution
+		
+		when:
+		def viewName = controller.startResumeNextExecutionInOptimizedRunner(10000, 20000, "http://www.apple.com")
+		
+		then:
+		viewName ==~ /redirect:(\/[A-z\-]+(\/\d+)?)+(\?[A-z\-]+)?+(\&[A-z\-]+=)?+([A-z\-\/:\.]+)?/
 	}
 }
