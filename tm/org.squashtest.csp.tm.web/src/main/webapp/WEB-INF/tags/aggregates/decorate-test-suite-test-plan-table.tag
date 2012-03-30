@@ -51,6 +51,9 @@
 <f:message var="unauthorizedDeletion" key="dialog.remove-testcase-association.unauthorized-deletion.message"  />
 <f:message var="cyclicStepCallException" key="squashtm.action.exception.cyclicstepcallexception.label" />
 <script type="text/javascript">
+var removeTestPlansUrl = "${removeTestPlansUrl}";
+var nonBelongingTestPlansUrl = "${nonBelongingTestPlansUrl}";
+
 	$(function() {
 		<%-- single test-plan removal --%>
 		$('#test-suite-test-plans-table .delete-test-suite-test-plan-button').die('click');
@@ -71,7 +74,7 @@
 			if (answer == "delete") {
 				$.ajax({
 					type : 'delete',
-					url : '${ removeTestPlansUrl }/delete/' + parseTestPlanId(bCaller),
+					url : removeTestPlansUrl+'/delete/' + parseTestPlanId(bCaller),
 					dataType : 'text',
 					success : function (data){
 						refreshTestPlans();
@@ -85,7 +88,7 @@
 			if (answer == "detach") {
 				$.ajax({
 					type : 'delete',
-					url : '${ removeTestPlansUrl }/detach/' + parseTestPlanId(bCaller),
+					url : removeTestPlansUrl+'/detach/' + parseTestPlanId(bCaller),
 					dataType : 'text',
 					success : function (data){
 						refreshTestPlans();
@@ -117,7 +120,7 @@
 			
 			if (answer == "delete") {
 				if (ids.length > 0) {
-					$.post('${ nonBelongingTestPlansUrl }/delete', { testPlanIds: ids }, function(data){
+					$.post(nonBelongingTestPlansUrl+'/delete', { testPlanIds: ids }, function(data){
 						refreshTestPlans();
 						checkForbiddenDeletion(data);
 						refreshStats();
@@ -127,7 +130,7 @@
 			}
 			if (answer == "detach") {
 				if (ids.length > 0) {
-					$.post('${ nonBelongingTestPlansUrl }/detach', { testPlanIds: ids }, function(data){
+					$.post(nonBelongingTestPlansUrl+'/detach', { testPlanIds: ids }, function(data){
 						refreshTestPlans();
 						checkForbiddenDeletion(data);
 						refreshStats();
