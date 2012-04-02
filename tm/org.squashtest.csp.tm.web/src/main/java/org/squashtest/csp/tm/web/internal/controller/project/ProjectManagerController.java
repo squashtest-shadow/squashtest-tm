@@ -34,12 +34,17 @@ import org.springframework.context.MessageSource;
 import org.springframework.osgi.extensions.annotation.ServiceReference;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.ModelAttribute;
+import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.servlet.ModelAndView;
+import org.springframework.web.util.HtmlUtils;
 import org.squashtest.csp.tm.domain.audit.AuditableMixin;
 import org.squashtest.csp.tm.domain.project.Project;
+import org.squashtest.csp.tm.domain.users.User;
+import org.squashtest.csp.tm.domain.users.UsersGroup;
 import org.squashtest.csp.tm.infrastructure.filter.CollectionSorting;
 import org.squashtest.csp.tm.infrastructure.filter.FilteredCollectionHolder;
 import org.squashtest.csp.tm.service.ProjectManagerService;
@@ -132,8 +137,15 @@ public class ProjectManagerController {
 		}.buildDataModel(holder, filter.getFirstItemIndex()+1, params.getsEcho());
 
 	}
-
-
+	
+	@RequestMapping(value="/{projectId}/info", method=RequestMethod.GET)
+	public ModelAndView getProjectInfos(@PathVariable long projectId){
+		Project project = projectManagerService.findProjectById(projectId);
+		ModelAndView mav = new ModelAndView("page/projects/project-info");	
+		mav.addObject("project", project);
+		return mav;
+	}
+	
 	/* ****************************** data formatters ********************************************** */
 
 	private CollectionSorting createCollectionFilter(final DataTableDrawParameters params,

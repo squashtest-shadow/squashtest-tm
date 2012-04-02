@@ -35,13 +35,13 @@
 	</jsp:attribute>
 	
 	<jsp:attribute name="titlePane">
-		<h2><f:message key="squashtm.project.title" /></h2>	
+		<h2><f:message key="workspace.project.title" /></h2>	
 	</jsp:attribute>
 	
 	<jsp:attribute name="informationContent">	
 		<c:url var="projectsUrl" value="/projects/list" />
 		<c:url var="addProjectUrl" value="/projects/add" />
-		
+		<c:url var="projectDetailsBaseUrl" value="/projects" />
 		
 		<script type="text/javascript">
 					$(function() {
@@ -59,7 +59,21 @@
 		
 					function tableDrawCallback() {
 						addHoverHandler(this);
-					}			
+					}	
+					
+					function getProjectTableRowId(rowData) {
+						return rowData[0];	
+					}
+					
+					function addHLinkToProjectLogin(row, data) {
+						var url= '${ projectDetailsBaseUrl }/' + getProjectTableRowId(data) + '/info';			
+						addHLinkToCellText($( 'td:eq(1)', row ), url);
+					}	
+					
+					function projectTableRowCallback(row, data, displayIndex) {
+						addHLinkToProjectLogin(row, data);
+						return row;
+					}
 					
 					function addHoverHandler(dataTable){
 						$( 'tbody tr', dataTable ).hover(
@@ -99,6 +113,7 @@
 				<comp:decorate-ajax-table url="${ projectsUrl }" tableId="projects-table" paginate="true">
 					<jsp:attribute name="drawCallback">tableDrawCallback</jsp:attribute>
 					<jsp:attribute name="initialSort">[[2,'asc']]</jsp:attribute>
+					<jsp:attribute name="rowCallback">projectTableRowCallback</jsp:attribute>
 					<jsp:attribute name="columnDefs">
 						<dt:column-definition targets="0" visible="false" />
 						<dt:column-definition targets="1" width="2em" cssClass="select-handle centered" sortable="false"/>

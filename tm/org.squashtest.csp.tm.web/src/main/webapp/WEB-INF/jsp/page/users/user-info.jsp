@@ -59,13 +59,13 @@
 
 <f:message key="dialog.add-permission.empty.label" var="emptyMessage" />
 
-<layout:info-page-layout titleKey="workspace.user.title">
+<layout:info-page-layout titleKey="workspace.user.info.title">
 	<jsp:attribute  name="head">	
 		<link rel="stylesheet" type="text/css" href="${ pageContext.servletContext.contextPath }/styles/master.blue.css" />	
 	</jsp:attribute>
 	
 	<jsp:attribute name="titlePane">
-		<h2><f:message key="user.table.title" /></h2>	
+		<h2><f:message key="workspace.user.info.title" /></h2>	
 	</jsp:attribute>
 	
 	<jsp:attribute name="informationContent">

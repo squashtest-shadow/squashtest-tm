@@ -44,7 +44,7 @@
 	</jsp:attribute>
 	
 	<jsp:attribute name="titlePane">
-		<h2><f:message key="user.table.title" /></h2>	
+		<h2><f:message key="workspace.user.title" /></h2>	
 	</jsp:attribute>
 	
 	<jsp:attribute name="informationContent">	

@@ -58,6 +58,9 @@
 		interface="org.hibernate.SessionFactory" />
 
 	<!-- Application services -->
+	<osgi:service ref="squashtest.tm.service.ProjectModificationService"
+		interface="org.squashtest.csp.tm.service.ProjectModificationService" />
+	
 	<osgi:service ref="squashtest.tm.service.TestCaseModificationService"
 		interface="org.squashtest.csp.tm.service.TestCaseModificationService" />
 

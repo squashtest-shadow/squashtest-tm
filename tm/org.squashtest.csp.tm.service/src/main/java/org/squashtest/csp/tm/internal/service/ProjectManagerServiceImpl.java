@@ -56,16 +56,15 @@ public class ProjectManagerServiceImpl implements ProjectManagerService {
 
 	@Inject
 	private RequirementLibraryDao requirementLibraryDao;
-	
+
 	@Inject
 	private ObjectIdentityService objectIdentityService;
-	
+
 	@PostFilter("hasPermission(filterObject, 'READ') or hasRole('ROLE_ADMIN')")
 	@Override
 	public List<Project> findAll() {
 		return projectDao.findAll();
 	}
-
 
 	@Override
 	@PreAuthorize("hasRole('ROLE_ADMIN')")
@@ -83,18 +82,29 @@ public class ProjectManagerServiceImpl implements ProjectManagerService {
 		testCaseLibraryDao.persist(tcl);
 
 		projectDao.persist(project);
-		
+
 		objectIdentityService.addObjectIdentity(project.getId(), project.getClass());
 
 	}
 
 	@Override
 	@PreAuthorize("hasRole('ROLE_ADMIN')")
-	public FilteredCollectionHolder<List<Project>> findSortedProjects(
-			CollectionSorting filter) {
+	public FilteredCollectionHolder<List<Project>> findSortedProjects(CollectionSorting filter) {
 		List<Project> projects = projectDao.findSortedProjects(filter);
 		long count = projectDao.countProjects();
 		return new FilteredCollectionHolder<List<Project>>(count, projects);
+	}
+
+	@Override
+	@PreAuthorize("hasRole('ROLE_ADMIN')")
+	public Project findProjectById(long projectId) {
+		return projectDao.findById(projectId);
+	}
+
+	@Override
+	public void modifyProjectLabel(long projectId, String projectLabel) {
+		// TODO Auto-generated method stub
+
 	}
 
 }

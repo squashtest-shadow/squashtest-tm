@@ -110,6 +110,11 @@
 		interface="org.squashtest.csp.tm.service.AdministrationService"
 		availability="mandatory" />		
 		
+	<osgi:reference id="squashtest.tm.service.ProjectModificationService"
+		bean-name="squashtest.tm.service.ProjectModificationService"
+		interface="org.squashtest.csp.tm.service.ProjectModificationService"
+		availability="mandatory" />
+		
 	<osgi:reference id="squashtest.tm.service.CallStepManagerService"
 		bean-name="squashtest.tm.service.CallStepManagerService" 
 		interface="org.squashtest.csp.tm.service.CallStepManagerService"
