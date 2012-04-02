@@ -18,24 +18,30 @@
  *     You should have received a copy of the GNU Lesser General Public License
  *     along with this software.  If not, see <http://www.gnu.org/licenses/>.
  */
-package org.squashtest.csp.tm.service;
+package org.squashtest.csp.tm.internal.service;
 
-import java.util.List;
+import javax.inject.Inject;
 
+import org.springframework.security.access.prepost.PreAuthorize;
+import org.springframework.stereotype.Service;
 import org.squashtest.csp.tm.domain.project.Project;
-import org.squashtest.csp.tm.infrastructure.filter.CollectionSorting;
-import org.squashtest.csp.tm.infrastructure.filter.FilteredCollectionHolder;
+import org.squashtest.csp.tm.internal.repository.ProjectDao;
+import org.squashtest.csp.tm.service.CustomProjectModificationService;
 
-public interface ProjectManagerService {
+/**
+ * 
+ * @author mpagnon
+ * 
+ */
+@Service("CustomProjectModificationService")
+public class CustomProjectModificationServiceImpl implements CustomProjectModificationService {
+	@Inject
+	private ProjectDao projectDao;
 
-	List<Project> findAll();
-
-	void addProject(Project project);
-
-	FilteredCollectionHolder<List<Project>> findSortedProjects(CollectionSorting filter);
-
-	Project findProjectById(long projectId);
-
-	void modifyProjectLabel(long projectId, String projectLabel);
+	@Override
+	@PreAuthorize("hasRole('ROLE_ADMIN')")
+	public Project findById(long projectId) {
+		return projectDao.findById(projectId);
+	}
 
 }

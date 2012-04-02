@@ -20,22 +20,10 @@
  */
 package org.squashtest.csp.tm.service;
 
-import java.util.List;
-
+import org.springframework.transaction.annotation.Transactional;
 import org.squashtest.csp.tm.domain.project.Project;
-import org.squashtest.csp.tm.infrastructure.filter.CollectionSorting;
-import org.squashtest.csp.tm.infrastructure.filter.FilteredCollectionHolder;
 
-public interface ProjectManagerService {
-
-	List<Project> findAll();
-
-	void addProject(Project project);
-
-	FilteredCollectionHolder<List<Project>> findSortedProjects(CollectionSorting filter);
-
-	Project findProjectById(long projectId);
-
-	void modifyProjectLabel(long projectId, String projectLabel);
-
+public interface CustomProjectModificationService {
+	@Transactional(readOnly = true)
+	Project findById(long projectId);
 }
