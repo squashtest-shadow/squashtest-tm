@@ -26,7 +26,6 @@ import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Date;
-import java.util.LinkedList;
 import java.util.List;
 
 import org.apache.poi.openxml4j.exceptions.InvalidFormatException;
@@ -38,7 +37,6 @@ import org.apache.poi.ss.usermodel.WorkbookFactory;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.squashtest.csp.tm.domain.SheetCorruptedException;
-import org.squashtest.csp.tm.domain.testcase.ActionTestStep;
 import org.squashtest.csp.tm.domain.testcase.TestCase;
 import org.squashtest.csp.tm.domain.testcase.TestCaseImportance;
 import org.squashtest.csp.tm.domain.testcase.TestStep;
@@ -53,8 +51,132 @@ import org.squashtest.csp.tm.domain.testcase.TestStep;
  * 
  */
 public class ExcelTestCaseParserImpl implements ExcelTestCaseParser {
+	/**
+	 * Superclass of strategy objects which populate a pseudo test case using data from a worksheet row.
+	 * 
+	 * @author Gregory Fouquet
+	 * 
+	 */
+	private static abstract class FieldPopulator {
+		protected final String managedFieldTag;
+
+		/**
+		 * @param managedFieldTag
+		 */
+		public FieldPopulator(String managedFieldTag) {
+			this.managedFieldTag = managedFieldTag;
+		}
+
+		/**
+		 * Checks the row tag and if it matches this populator's managed tag, it populates pseudo test case using row
+		 * data. Template method which calls {@link #doPopulate(PseudoTestCase, Row)}
+		 * 
+		 * @param pseudoTestCase
+		 * @param row
+		 * @return
+		 */
+		public final boolean populate(PseudoTestCase pseudoTestCase, Row row) {
+
+			if (manages(row)) {
+				doPopulate(pseudoTestCase, row);
+				return true;
+			}
+			return false;
+		}
+
+		private boolean manages(Row row) {
+			Cell fieldTagCell = tagCell(row);
+			String candidateFieldTag = fieldTagCell.getStringCellValue();
+			return managedFieldTag.equalsIgnoreCase(candidateFieldTag);
+		}
+
+		protected final Cell tagCell(Row row) {
+			return row.getCell(0);
+		}
+
+		protected final Cell valueCell(Row row) {
+			return row.getCell(1);
+		}
+
+		/**
+		 * Populates pseudo test case using row without tag checking.
+		 * 
+		 * @param pseudoTestCase
+		 * @param row
+		 */
+		protected abstract void doPopulate(PseudoTestCase pseudoTestCase, Row row);
+	}
 
 	private static final Logger logger = LoggerFactory.getLogger(ExcelTestCaseParserImpl.class);
+
+	private final List<FieldPopulator> fieldPopulators = new ArrayList<ExcelTestCaseParserImpl.FieldPopulator>(6);
+
+	private final FieldPopulator DEFAULT_POPULATOR = new FieldPopulator("") {
+		public void doPopulate(PseudoTestCase pseudoTestCase, Row row) {
+			String tag = tagCell(row).getStringCellValue();
+			String value = valueCell(row).getStringCellValue();
+
+			String[] desc = pairedString(tag, value);
+			pseudoTestCase.descriptionElements.add(desc);
+		}
+	};
+
+	{
+		// description populator
+		fieldPopulators.add(new FieldPopulator(DESCRIPTION_TAG) {
+			protected void doPopulate(PseudoTestCase pseudoTestCase, Row row) {
+				String tag = tagCell(row).getStringCellValue();
+				String value = valueCell(row).getStringCellValue();
+
+				String[] desc = pairedString(tag, value);
+				pseudoTestCase.descriptionElements.add(0, desc);
+			}
+		});
+
+		// importance populator
+		fieldPopulators.add(new FieldPopulator(IMPORTANCE_TAG) {
+			protected void doPopulate(PseudoTestCase pseudoTestCase, Row row) {
+				String value = valueCell(row).getStringCellValue();
+				pseudoTestCase.importance = value;
+			}
+		});
+		// created on populator
+		fieldPopulators.add(new FieldPopulator(CREATED_ON_TAG) {
+			protected void doPopulate(PseudoTestCase pseudoTestCase, Row row) {
+				try {
+					String value = valueCell(row).getStringCellValue();
+					pseudoTestCase.createdOn = value;
+				} catch (IllegalStateException e) {
+					Date value = valueCell(row).getDateCellValue();
+					pseudoTestCase.createdOnDate = value;
+				}
+			}
+		});
+		// created by populator
+		fieldPopulators.add(new FieldPopulator(CREATED_BY_TAG) {
+			protected void doPopulate(PseudoTestCase pseudoTestCase, Row row) {
+				String value = valueCell(row).getStringCellValue();
+				pseudoTestCase.createdBy = value;
+			}
+		});
+		// prerequisite populator
+		fieldPopulators.add(new FieldPopulator(PREREQUISITE_TAG) {
+			protected void doPopulate(PseudoTestCase pseudoTestCase, Row row) {
+				String value = valueCell(row).getStringCellValue();
+				pseudoTestCase.prerequisites.add(value);
+			}
+		});
+		// action step populator
+		fieldPopulators.add(new FieldPopulator(ACTION_STEP_TAG) {
+			protected void doPopulate(PseudoTestCase pseudoTestCase, Row row) {
+				String action = valueCell(row).getStringCellValue();
+				String expectation = row.getCell(2).getStringCellValue();
+
+				String[] stepInfo = pairedString(action, expectation);
+				pseudoTestCase.stepElements.add(stepInfo);
+			}
+		});
+	}
 
 	@Override
 	public TestCase parseFile(InputStream stream, ImportSummaryImpl summary) throws SheetCorruptedException {
@@ -105,57 +227,23 @@ public class ExcelTestCaseParserImpl implements ExcelTestCaseParser {
 	private void parseRow(Row row, PseudoTestCase pseudoTestCase) {
 
 		if (validateRow(row)) {
-
-			Cell cell1 = row.getCell(0);
-			Cell cell2 = row.getCell(1);
-
-			String str1 = cell1.getStringCellValue();
-			String str2 = null;
-			Date date = null;
-			try {
-				str2 = cell2.getStringCellValue();
-			} catch (IllegalStateException ise) {
-				date = cell2.getDateCellValue();
-			}
-			if (str1.equalsIgnoreCase(DESCRIPTION_TAG)) {
-
-				String[] desc = pairedString(str1, str2);
-				pseudoTestCase.descriptionElements.add(0, desc);
-
-			} else if (str1.equalsIgnoreCase(IMPORTANCE_TAG)) {
-
-				pseudoTestCase.importance = str2;
-
-			} else if (str1.equalsIgnoreCase(CREATED_ON_TAG)) {
-
-				pseudoTestCase.createdOn = str2;
-				pseudoTestCase.createdOnDate = date;
-
-			} else if (str1.equalsIgnoreCase(CREATED_BY_TAG)) {
-
-				pseudoTestCase.createdBy = str2;
-
-			} else if (str1.equalsIgnoreCase(PREREQUISITE_TAG)) {
-
-				pseudoTestCase.prerequisites.add(str2);
-
-			} else if (str1.equalsIgnoreCase(ACTION_STEP_TAG)) {
-
-				String str3 = row.getCell(2).getStringCellValue();
-
-				String[] stepInfo = pairedString(str2, str3);
-				pseudoTestCase.stepElements.add(stepInfo);
-
-			} else {
-
-				String[] descAddition = pairedString(str1, str2);
-				pseudoTestCase.descriptionElements.add(descAddition);
-			}
+			parseValidRow(row, pseudoTestCase);
 		}
 
 	}
 
-	private String[] pairedString(String index0, String index1) {
+	private void parseValidRow(Row row, PseudoTestCase pseudoTestCase) {
+		for (FieldPopulator populator : fieldPopulators) {
+			if (populator.populate(pseudoTestCase, row)) {
+				return;
+			}
+		}
+
+		// default behaviour needs to override tag checking -> we call doPopulate
+		DEFAULT_POPULATOR.doPopulate(pseudoTestCase, row);
+	}
+
+	private static String[] pairedString(String index0, String index1) {
 		String[] pair = new String[2];
 		pair[0] = index0;
 		pair[1] = index1;
@@ -169,17 +257,15 @@ public class ExcelTestCaseParserImpl implements ExcelTestCaseParser {
 		if ((pseudoTestCase.createdOnDate != null) && (pseudoTestCase.createdBy != null)) {
 			testCase = new TestCase(pseudoTestCase.createdOnDate, pseudoTestCase.createdBy);
 
-		} else {
-			if ((pseudoTestCase.createdOn != null) && (pseudoTestCase.createdBy != null)) {
-				try {
-					Date createdDate = new SimpleDateFormat("dd/MM/yyyy").parse(pseudoTestCase.createdOn);
-					testCase = new TestCase(createdDate, pseudoTestCase.createdBy);
+		} else if ((pseudoTestCase.createdOn != null) && (pseudoTestCase.createdBy != null)) {
+			try {
+				Date createdDate = new SimpleDateFormat("dd/MM/yyyy").parse(pseudoTestCase.createdOn);
+				testCase = new TestCase(createdDate, pseudoTestCase.createdBy);
 
-				} catch (ParseException ex) {
-					logger.warn(ex.getMessage());
-					summary.incrModified();
-					testCase = new TestCase();
-				}
+			} catch (ParseException ex) {
+				logger.warn(ex.getMessage());
+				summary.incrModified();
+				testCase = new TestCase();
 			}
 		}
 
@@ -227,10 +313,9 @@ public class ExcelTestCaseParserImpl implements ExcelTestCaseParser {
 		// spec 1 : the row must not be null
 		if (row == null) {
 			validated = false;
-		}
-		// spec 3 : at least two cells where they are expected, 3 in the case of an action step
-		// and they must all contain something
-		else if (!((validateRegularRow(row)) || (validateStepRow(row)))) {
+		} else if (!((validateRegularRow(row)) || (validateStepRow(row)))) {
+			// spec 3 : at least two cells where they are expected, 3 in the case of an action step
+			// and they must all contain something
 			validated = false;
 		}
 
@@ -279,7 +364,6 @@ public class ExcelTestCaseParserImpl implements ExcelTestCaseParser {
 		try {
 			text2 = (row.getCell(1) != null) ? row.getCell(1).getStringCellValue() : "";
 		} catch (IllegalStateException ise) {
-
 		}
 
 		validated = (text1.equals(ACTION_STEP_TAG)) && (!text2.isEmpty()) && ((lastCell >= 3) && (nbCell >= 3));
@@ -287,94 +371,4 @@ public class ExcelTestCaseParserImpl implements ExcelTestCaseParser {
 		return validated;
 
 	}
-
-	/* ********************************** private classes ************************** */
-
-	private static class PseudoTestCase {
-
-		public Date createdOnDate = null;
-		String createdBy = null;
-		String createdOn = null;
-
-		String importance = "";
-
-		// the first element of the list is the description itself
-		// others are complementary elements
-		ArrayList<String[]> descriptionElements = new ArrayList<String[]>();
-
-		ArrayList<String> prerequisites = new ArrayList<String>();
-
-		LinkedList<String[]> stepElements = new LinkedList<String[]>();
-
-		/* ***************************** formatters *********************************** */
-
-		private String formatDescription() {
-
-			StringBuilder builder = new StringBuilder();
-
-			ArrayList<String[]> elements = descriptionElements;
-
-			if (elements.size() > 0) {
-				// appending the description
-				builder.append("<p>").append(elements.get(0)[1]).append("</p>");
-			}
-
-			// appending supplementary material if any;
-
-			if (elements.size() > 1) {
-
-				builder.append("<hr/>");
-				builder.append("<ul>");
-
-				for (int i = 1; i < elements.size(); i++) {
-					String[] elt = elements.get(i);
-					builder.append("<li>").append("<strong>" + elt[0] + " :</strong> ").append(elt[1]).append("</li>");
-				}
-
-				builder.append("</ul>");
-
-			}
-
-			return builder.toString();
-
-		}
-
-		private TestCaseImportance formatImportance() {
-			return TestCaseImportance.valueOf(importance);
-		}
-
-		private String formatPreRequisites() {
-			StringBuilder builder = new StringBuilder();
-
-			if (prerequisites.size() > 0) {
-
-				builder.append("<ol>");
-
-				for (String string : prerequisites) {
-					builder.append("<li>").append(string).append("</li>");
-				}
-
-				builder.append("</ol>");
-			}
-
-			return builder.toString();
-		}
-
-		private List<TestStep> formatSteps() {
-
-			List<TestStep> steps = new LinkedList<TestStep>();
-
-			for (String[] pseudoStep : stepElements) {
-				ActionTestStep step = new ActionTestStep();
-				step.setAction("<p>" + pseudoStep[0] + "</p>");
-				step.setExpectedResult("<p>" + pseudoStep[1] + "</p>");
-				steps.add(step);
-			}
-
-			return steps;
-
-		}
-
-	}
-
 }

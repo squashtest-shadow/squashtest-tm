@@ -24,7 +24,6 @@ import org.apache.poi.openxml4j.exceptions.InvalidFormatException;
 import org.apache.poi.ss.usermodel.Cell;
 import org.apache.poi.ss.usermodel.Row;
 import org.squashtest.csp.tm.domain.testcase.TestCaseImportance;
-import org.squashtest.csp.tm.internal.service.importer.ExcelTestCaseParserImpl.PseudoTestCase;
 
 import spock.lang.Specification;
 import spock.lang.Unroll;
@@ -128,7 +127,6 @@ class ExcelTestCaseParserImplTest extends Specification {
 
 	def "should parse the prerequesite tag"(){
 		given :
-
 		def row = makeRow("Prerequisite", "needs something to be done before")
 
 		and :
@@ -185,17 +183,9 @@ class ExcelTestCaseParserImplTest extends Specification {
 
 		then :
 		ptc.descriptionElements.collect{[it[0], it[1]]} == [
-			[
-				"Description",
-				"the proper description"
-			],
-			[
-				"add stuff 1",
-				"a bit of that"
-			],
-			[
-				"add stuff 2",
-				"more of this"]
+			[ "Description", "the proper description" ],
+			[ "add stuff 1", "a bit of that" ],
+			[ "add stuff 2", "more of this" ]
 		]
 	}
 
@@ -365,21 +355,20 @@ class ExcelTestCaseParserImplTest extends Specification {
 		res == false
 	}
 
-	// TODO modify test
-	//	def "sould say that the given normal raw is not acceptable because of number of cells (2)"(){
-	//
-	//		given :
-	//			def row = Mock(Row)
-	//			row.getLastCellNum() >> 2
-	//			row.getPhysicalNumberOfCells() >> 6
-	//
-	//		when :
-	//			def res = parser.validateRegularRow(row)
-	//
-	//		then :
-	//			res == false
-	//
-	//	}
+	def "sould say that the given normal raw is not acceptable because of number of cells (2)"(){
+
+		given :
+			def row = Mock(Row)
+			row.getLastCellNum() >> 2
+			row.getPhysicalNumberOfCells() >> 6
+
+		when :
+			def res = parser.validateRegularRow(row)
+
+		then :
+			res == false
+
+	}
 
 	def "sould say that the given normal raw is not acceptable because one of the cell have no content"(){
 
@@ -433,21 +422,20 @@ class ExcelTestCaseParserImplTest extends Specification {
 		res == true
 	}
 
-	// TODO Modify test
-	//	def "should say that the given step row is not acceptable because wrong number of cells (1)"(){
-	//		given :
-	//			def row = Mock(Row)
-	//			row.getLastCellNum() >> 3
-	//			row.getPhysicalNumberOfCells() >> 3
-	//
-	//			row.getCell(0) >> null
-	//		when :
-	//
-	//			def res = parser.validateStepRow(row)
-	//
-	//		then :
-	//			res == false
-	//	}
+		def "should say that the given step row is not acceptable because wrong number of cells (1)"(){
+			given :
+				def row = Mock(Row)
+				row.getLastCellNum() >> 3
+				row.getPhysicalNumberOfCells() >> 3
+	
+				row.getCell(0) >> null
+			when :
+	
+				def res = parser.validateStepRow(row)
+	
+			then :
+				res == false
+		}
 
 	def "should say that the given step row is not acceptable because the first row is not the action step tag"(){
 
