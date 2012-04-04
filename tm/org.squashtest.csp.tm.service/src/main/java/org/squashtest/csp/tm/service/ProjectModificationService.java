@@ -32,4 +32,9 @@ public interface ProjectModificationService extends CustomProjectModificationSer
 	@PreAuthorize("hasRole('ROLE_ADMIN')")
 	void changeLabel(long projectId, String newLabel);
 
+	@PreAuthorize("hasRole('ROLE_ADMIN')")
+	void changeName(long projectId, String newName);
+
+	@PreAuthorize("hasRole('ROLE_ADMIN')")
+	void changeActive(long projectId, boolean isActive);
 }

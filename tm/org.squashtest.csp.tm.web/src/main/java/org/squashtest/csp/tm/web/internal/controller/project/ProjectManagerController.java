@@ -71,8 +71,8 @@ public class ProjectManagerController {
 	private DataTableMapper projectMapper=new DataTableMapper("projects-table", Project.class)
 										.initMapping(9)
 										.mapAttribute(Project.class, 2, "name", String.class)
-										.mapAttribute(Project.class, 3, "description", String.class)
-										.mapAttribute(Project.class, 4, "active", Boolean.class)
+										.mapAttribute(Project.class, 3, "label", String.class)
+										.mapAttribute(Project.class, 4, "active", boolean.class)
 										.mapAttribute(Project.class, 5, "audit.createdOn", Date.class)
 										.mapAttribute(Project.class, 6, "audit.createdBy", String.class)
 										.mapAttribute(Project.class, 7, "audit.lastModifiedOn", Date.class)
@@ -90,7 +90,7 @@ public class ProjectManagerController {
 
 		LOGGER.info("description " + project.getDescription());
 		LOGGER.info("name " + project.getName());
-		LOGGER.info("name " + project.getLabel());
+		LOGGER.info("label " + project.getLabel());
 
 		projectManagerService.addProject(project);
 
@@ -126,8 +126,8 @@ public class ProjectManagerController {
 						item.getId(),
 						getCurrentIndex(),
 						formatString(item.getName(), locale),
-						formatString(item.getDescription(),locale),
-						formatBoolean(item.isActive(),locale),
+						formatString(item.getLabel(),locale),
+						formatBoolean((Boolean)item.isActive(),locale),
 						formatDate(newP.getCreatedOn(),locale),
 						formatString(newP.getCreatedBy(),locale),
 						formatDate(newP.getLastModifiedOn(),locale),
@@ -145,6 +145,8 @@ public class ProjectManagerController {
 		mav.addObject("project", project);
 		return mav;
 	}
+	
+	
 	
 	/* ****************************** data formatters ********************************************** */
 

@@ -21,6 +21,7 @@
 package org.squashtest.csp.tm.domain.projectfilter;
 
 import java.util.ArrayList;
+import java.util.Iterator;
 import java.util.List;
 
 import javax.persistence.CascadeType;
@@ -49,7 +50,7 @@ public class ProjectFilter {
 	@JoinTable(name = "PROJECT_FILTER_ENTRY", joinColumns = @JoinColumn(name = "FILTER_ID"), inverseJoinColumns = @JoinColumn(name = "PROJECT_ID"))
 	private final List<Project> projects = new ArrayList<Project>();
 
-	public void setProjects(List<Project> newProjectList){
+	public void setProjects(List<Project> newProjectList) {
 		this.projects.clear();
 		this.projects.addAll(newProjectList);
 	}
@@ -80,18 +81,28 @@ public class ProjectFilter {
 
 	/**
 	 * returns true if the project is listed, false otherwhise.
-	 *
+	 * 
 	 * @param project
 	 * @return
 	 */
-	public boolean isProjectSelected(Project project){
-		boolean result=false;
-		for (Project localProject : projects){
-			if (project.getId().equals(localProject.getId())){
-				result=true;
+	public boolean isProjectSelected(Project project) {
+		boolean result = false;
+		for (Project localProject : projects) {
+			if (project.getId().equals(localProject.getId())) {
+				result = true;
 			}
 		}
 		return result;
+	}
+
+	public void removeProject(Project project) {
+		Iterator<Project> projectIterator = this.projects.iterator();
+		while (projectIterator.hasNext()) {
+			Project projectItem = projectIterator.next();
+			if (projectItem.getId() == project.getId()) {
+				projectIterator.remove();
+			}
+		}
 	}
 
 }

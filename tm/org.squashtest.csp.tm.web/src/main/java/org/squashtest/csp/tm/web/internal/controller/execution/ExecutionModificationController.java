@@ -180,7 +180,7 @@ public class ExecutionModificationController {
 
 	@RequestMapping(method = RequestMethod.DELETE)
 	public @ResponseBody
-	Object removeExecution(@PathVariable long executionId, HttpServletResponse response) {
+	Object removeExecution(@PathVariable long executionId) {
 		Execution execution = executionModService.simpleGetExecutionById(executionId);
 		IterationTestPlanItem testPlan = execution.getTestPlan();
 		Iteration iteration = testPlan.getIteration();

@@ -1,3 +1,4 @@
+
 /**
  *     This file is part of the Squashtest platform.
  *     Copyright (C) 2010 - 2011 Squashtest TM, Squashtest.org
@@ -18,17 +19,30 @@
  *     You should have received a copy of the GNU Lesser General Public License
  *     along with this software.  If not, see <http://www.gnu.org/licenses/>.
  */
+
 package org.squashtest.csp.tm.service;
 
-import org.springframework.security.access.prepost.PreAuthorize;
-import org.springframework.transaction.annotation.Transactional;
+import java.util.List;
+
 import org.squashtest.csp.tm.domain.project.Project;
 
-public interface CustomProjectModificationService {
-	@Transactional(readOnly = true)
-	@PreAuthorize("hasRole('ROLE_ADMIN')")
-	Project findById(long projectId);
 
-	@PreAuthorize("hasRole('ROLE_ADMIN')")
-	void deleteProject(long projectId);
+import spock.lang.Shared;
+
+/**
+ * @author mpagnon
+ *
+ */
+class ProjectModificationDynamicServiceTest extends DynamicManagerInterfaceSpecification {
+	@Shared Class entityType = Project
+	@Shared Class managerType = ProjectModificationService
+
+	@Shared List changeServiceCalls = [
+		{
+			it.changeDescription(10L, "foo")
+		},
+		{
+			it.changeLabel(10L, "bar")
+		}
+	]
 }

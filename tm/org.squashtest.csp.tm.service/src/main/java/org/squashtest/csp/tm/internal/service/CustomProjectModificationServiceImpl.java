@@ -22,8 +22,11 @@ package org.squashtest.csp.tm.internal.service;
 
 import javax.inject.Inject;
 
-import org.springframework.security.access.prepost.PreAuthorize;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
+import org.squashtest.csp.tm.domain.CannotDeleteProjectException;
 import org.squashtest.csp.tm.domain.project.Project;
 import org.squashtest.csp.tm.internal.repository.ProjectDao;
 import org.squashtest.csp.tm.service.CustomProjectModificationService;
@@ -34,14 +37,22 @@ import org.squashtest.csp.tm.service.CustomProjectModificationService;
  * 
  */
 @Service("CustomProjectModificationService")
+@Transactional
 public class CustomProjectModificationServiceImpl implements CustomProjectModificationService {
+	private static final Logger LOGGER = LoggerFactory.getLogger(CustomProjectModificationServiceImpl.class);
 	@Inject
 	private ProjectDao projectDao;
+	@Inject
+	private ProjectDeletionHandler projectDeletionHandler;
 
 	@Override
-	@PreAuthorize("hasRole('ROLE_ADMIN')")
 	public Project findById(long projectId) {
 		return projectDao.findById(projectId);
+	}
+
+	@Override
+	public void deleteProject(long projectId) {
+		projectDeletionHandler.deleteProject(projectId);
 	}
 
 }

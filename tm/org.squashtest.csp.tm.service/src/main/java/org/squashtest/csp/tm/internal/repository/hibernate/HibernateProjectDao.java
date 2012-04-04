@@ -29,6 +29,7 @@ import org.hibernate.Session;
 import org.hibernate.criterion.Order;
 import org.springframework.stereotype.Repository;
 import org.squashtest.csp.tm.domain.project.Project;
+import org.squashtest.csp.tm.domain.projectfilter.ProjectFilter;
 import org.squashtest.csp.tm.infrastructure.filter.CollectionSorting;
 import org.squashtest.csp.tm.internal.repository.ProjectDao;
 
@@ -48,23 +49,20 @@ public class HibernateProjectDao extends HibernateEntityDao<Project> implements 
 		String sortedAttribute = filter.getSortedAttribute();
 		String order = filter.getSortingOrder();
 
-		Criteria crit = session.createCriteria(Project.class,"Project");
+		Criteria crit = session.createCriteria(Project.class, "Project");
 
 		/* add ordering */
-		if (sortedAttribute!=null){
-			if (order.equals("asc")){
+		if (sortedAttribute != null) {
+			if (order.equals("asc")) {
 				crit.addOrder(Order.asc(sortedAttribute).ignoreCase());
-			}
-			else{
+			} else {
 				crit.addOrder(Order.desc(sortedAttribute).ignoreCase());
 			}
 		}
 
-
 		/* result range */
 		crit.setFirstResult(filter.getFirstItemIndex());
 		crit.setMaxResults(filter.getMaxNumberOfItems());
-
 
 		return crit.list();
 
@@ -73,15 +71,15 @@ public class HibernateProjectDao extends HibernateEntityDao<Project> implements 
 	@Override
 	public long countProjects() {
 		return (Long) executeEntityNamedQuery("project.countProjects", voidCallback());
-		
+
 	}
-	
-	//empty stub of SetQueryParametersCallback so executeEntityNamedQuery above wont crash
-	private SetQueryParametersCallback voidCallback(){
-		return new SetQueryParametersCallback() {		
+
+	// empty stub of SetQueryParametersCallback so executeEntityNamedQuery above wont crash
+	private SetQueryParametersCallback voidCallback() {
+		return new SetQueryParametersCallback() {
 			@Override
 			public void setQueryParameters(Query query) {
-				// TODO never put code that modify the query.				
+				// TODO never put code that modify the query.
 			}
 		};
 	}
@@ -97,4 +95,21 @@ public class HibernateProjectDao extends HibernateEntityDao<Project> implements 
 		return executeListNamedQuery("project.findAllByIdList", setParams);
 	}
 
+	@Override
+	public long countNonFoldersInProject(long projectId) {
+		Long req = (Long) executeEntityNamedQuery("project.countNonFolderInRequirement", idParameter(projectId));
+		Long tc = (Long) executeEntityNamedQuery("project.countNonFolderInTestCase", idParameter(projectId));
+		Long camp = (Long) executeEntityNamedQuery("project.countNonFolderInCampaign", idParameter(projectId));
+
+		return req + tc + camp;
+	}
+
+	private SetQueryParametersCallback idParameter(final long id) {
+		return new SetIdParameter("projectId", id);
+	}
+
+	@Override
+	public List<ProjectFilter> findProjectFiltersContainingProject(Long projectId) {
+		return executeListNamedQuery("project.findProjectFiltersContainingProject", idParameter(projectId));
+	}
 }

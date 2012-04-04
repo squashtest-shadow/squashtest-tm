@@ -907,12 +907,23 @@ div#user-account-password-panel > div > * {
 	padding-top:5px;
 	padding-bottom:5px;
 	text-align:left;
+	line-height: 2;
 }
 
 .display-table-cell, .display-table > div > div, .display-table > div > label, .display-table > div > span {
 	display : table-cell;
 	padding-left : 10px;
 	padding-right : 10px;
+}
+
+div#project-description-table .projectInactive {
+	color : red;
+}
+div#project-description-table .projectActive {
+	color : green;
+}
+div.information-panel p{
+	margin:0;
 }
 
 .smallfonts {

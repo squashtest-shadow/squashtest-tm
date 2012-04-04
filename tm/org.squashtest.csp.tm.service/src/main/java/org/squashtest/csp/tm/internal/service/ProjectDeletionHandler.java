@@ -18,17 +18,13 @@
  *     You should have received a copy of the GNU Lesser General Public License
  *     along with this software.  If not, see <http://www.gnu.org/licenses/>.
  */
-package org.squashtest.csp.tm.service;
+package org.squashtest.csp.tm.internal.service;
 
-import org.springframework.security.access.prepost.PreAuthorize;
-import org.springframework.transaction.annotation.Transactional;
-import org.squashtest.csp.tm.domain.project.Project;
-
-public interface CustomProjectModificationService {
-	@Transactional(readOnly = true)
-	@PreAuthorize("hasRole('ROLE_ADMIN')")
-	Project findById(long projectId);
-
-	@PreAuthorize("hasRole('ROLE_ADMIN')")
+/**
+ * 
+ * @author mpagnon
+ * 
+ */
+public interface ProjectDeletionHandler {
 	void deleteProject(long projectId);
 }

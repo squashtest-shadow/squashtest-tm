@@ -100,11 +100,11 @@ public class Project {
 		this.name = name;
 	}
 
-	public void setActive(Boolean isActive) {
+	public void setActive(boolean isActive) {
 		this.active = isActive;
 	}
 
-	public Boolean isActive() {
+	public boolean isActive() {
 		return this.active;
 	}
 
@@ -138,7 +138,7 @@ public class Project {
 
 	/**
 	 * Notifies a library it was associated with this project.
-	 *
+	 * 
 	 * @param library
 	 */
 	private void notifyLibraryAssociation(GenericLibrary<?> library) {
