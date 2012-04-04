@@ -46,7 +46,7 @@
 				<td colspan="4"
 					style="text-align:left;color: ${textcolor}; font-style:italic; text-decoration: underline"><a
 					href="${showExecutionUrl}/${execution.id}"><b>Exec.
-						${status.index + 1} :</b> ${ execution.name }</a></span></td>
+							${status.index + 1} :</b> ${ execution.name }</a></span></td>
 				<td style="width: 12em;"><span
 					style="color: ${textcolor}; font-style:italic;"><f:message
 							key="${ execution.executionMode.i18nKey }" />
@@ -76,14 +76,18 @@
 						</c:otherwise>
 					</c:choose>
 				</td>
-				<td style="width: 2em;"><button id="delete-execution-table-button-${execution.id}" class="delete-execution-table-button" ></button></td>
+				<td style="width: 2em;"><c:if test="${ editableIteration }">
+						<button id="delete-execution-table-button-${execution.id}"
+							class="delete-execution-table-button"></button>
+					</c:if>
+				</td>
 			</tr>
 		</c:forEach>
 		<c:if test="${ editableIteration }">
 			<tr>
 				<td colspan="10" style="text-align: left;"><b> <a
-						style="color:${textcolor}" id="new-exec-${testPlanId}" href="javascript:void(0)"
-						data-new-exec="${newExecutionUrl}"><f:message
+						style="color:${textcolor}" id="new-exec-${testPlanId}"
+						href="javascript:void(0)" data-new-exec="${newExecutionUrl}"><f:message
 								key="execution.iteration-test-plan-row.new" /> </a> </b>
 				</td>
 			</tr>
@@ -96,28 +100,29 @@
 		bindDeleteButtonsToFunctions();
 		decorateDeleteButtons($(".delete-execution-table-button"));
 	});
-	
-	
+
 	function bindDeleteButtonsToFunctions() {
 		var execOffset = "delete-execution-table-button-";
-		$(".delete-execution-table-button").click(
-					function() {
-						//console.log("delete execution #"+idExec);
-						var execId = $(this).attr("id");
-						var idExec = execId.substring(execOffset.length);
-						var execRow = $(this).closest("tr");
-						var testPlanHyperlink = $(this).closest("tr")
-								.closest("tr").prev().find(
-										"a.test-case-name-hlink");
+		$(".delete-execution-table-button")
+				.click(
+						function() {
+							//console.log("delete execution #"+idExec);
+							var execId = $(this).attr("id");
+							var idExec = execId.substring(execOffset.length);
+							var execRow = $(this).closest("tr");
+							var testPlanHyperlink = $(this).closest("tr")
+									.closest("tr").prev().find(
+											"a.test-case-name-hlink");
 
-						confirmeDeleteExecution(idExec, testPlanHyperlink,
-								execRow);
-					});
-		
+							confirmeDeleteExecution(idExec, testPlanHyperlink,
+									execRow);
+						});
+
 	}
 	function confirmeDeleteExecution(idExec, testPlanHyperlink, execRow) {
 		twoShotDialog("<f:message key='dialog.delete-execution.title'/>",
-				"<f:message key='dialog.delete-execution.message'/>", "<f:message key='dialog.button.cancel.label'/>").done(
+				"<f:message key='dialog.delete-execution.message'/>",
+				"<f:message key='dialog.button.cancel.label'/>").done(
 				function() {
 					doDeleteExecution(idExec, testPlanHyperlink, execRow);
 				});
@@ -149,11 +154,11 @@
 		//console.log("execRow = " + execRow);
 		//$(execRow).detach();
 		//or 
-		
+
 		refreshTestPlans();
 		refreshIterationInfos();
 		actualStart.refreshAutoDate(data.newStartDate);
 		actualEnd.refreshAutoDate(data.newEndDate);
-		
+
 	}
 </script>

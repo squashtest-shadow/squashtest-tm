@@ -47,41 +47,43 @@
 			<tr>
 				<td></td>
 				<td></td>
-				<td style="margin-left: 10px; color: ${textcolor}; font-style:italic; text-decoration: underline"><a
-						href="${showExecutionUrl}/${execution.id}"><b>Exec.
+				<td
+					style="margin-left: 10px; color: ${textcolor}; font-style:italic; text-decoration: underline"><a
+					href="${showExecutionUrl}/${execution.id}"><b>Exec.
 							${status.index + 1} :</b> ${ execution.name }</a>
 				</td>
-				<td style="width: 7.5em;color: ${textcolor}; font-style:italic;"><f:message key="${ execution.executionMode.i18nKey }" />
+				<td style="width: 7.5em;color: ${textcolor}; font-style:italic;"><f:message
+						key="${ execution.executionMode.i18nKey }" />
 				</td>
 				<td style="width: 12em; color: ${textcolor} font-style:italic;"><f:message
-							key="execution.execution-status.${execution.executionStatus}" />
-				
+						key="execution.execution-status.${execution.executionStatus}" />
+
 				</td>
 				<td style="width: 12em; color: ${textcolor}"><c:choose>
-							<c:when test="${ execution.lastExecutedBy != null }">
-								<i>${ execution.lastExecutedBy }</i>
-							</c:when>
-							<c:otherwise>
-								<i><f:message key="squashtm.nodata" />
-								</i>
-							</c:otherwise>
-						</c:choose>
+						<c:when test="${ execution.lastExecutedBy != null }">
+							<i>${ execution.lastExecutedBy }</i>
+						</c:when>
+						<c:otherwise>
+							<i><f:message key="squashtm.nodata" /> </i>
+						</c:otherwise>
+					</c:choose>
 				</td>
-				<td style="width: 12em; color: ${textcolor}">
-				<c:choose>
-							<c:when test="${ execution.lastExecutedOn != null }">
-								<f:message var="dateFormat" key="squashtm.dateformat" />
-								<i><f:formatDate value="${ execution.lastExecutedOn }"
-										pattern="${dateFormat}" />
-								</i>
-							</c:when>
-							<c:otherwise>
-								<i><f:message key="squashtm.nodata" />
-								</i>
-							</c:otherwise>
-						</c:choose>
+				<td style="width: 12em; color: ${textcolor}"><c:choose>
+						<c:when test="${ execution.lastExecutedOn != null }">
+							<f:message var="dateFormat" key="squashtm.dateformat" />
+							<i><f:formatDate value="${ execution.lastExecutedOn }"
+									pattern="${dateFormat}" /> </i>
+						</c:when>
+						<c:otherwise>
+							<i><f:message key="squashtm.nodata" /> </i>
+						</c:otherwise>
+					</c:choose>
 				</td>
-				<td style="width: 2em;"><button id="delete-execution-table-button-${execution.id}" class="delete-execution-table-button" ></button></td>
+				<td style="width: 2em;"><c:if test="${ editableIteration }">
+						<button id="delete-execution-table-button-${execution.id}"
+							class="delete-execution-table-button"></button>
+					</c:if>
+				</td>
 			</tr>
 		</c:forEach>
 		<!-- ------------------------------------------END ROW OF EXECUTION -->
@@ -94,78 +96,76 @@
 				<td colspan="8" style="text-align: left;"><b> <a
 						style="color:${textcolor}" id="new-exec-${testPlanId}"
 						href="javascript:void(0)" data-new-exec="${newExecutionUrl}"><f:message
-								key="execution.iteration-test-plan-row.new" />
-					</a> </b></td>
+								key="execution.iteration-test-plan-row.new" /> </a> </b></td>
 			</tr>
 		</c:if>
 		<!-- ---------------------------------------------END ROW NEW EXECUTION -->
 	</table>
 </td>
+<c:if test="${ editableIteration }">
+	<script>
+		$(function() {
+			bindDeleteButtonsToFunctions();
+			decorateDeleteButtons($(".delete-execution-table-button"));
+		});
 
-<script>
-	$(function() {
-		bindDeleteButtonsToFunctions();
-		decorateDeleteButtons($(".delete-execution-table-button"));
-	});
-	
-	
-	function bindDeleteButtonsToFunctions() {
-		var execOffset = "delete-execution-table-button-";
-		$(".delete-execution-table-button").click(
+		function bindDeleteButtonsToFunctions() {
+			var execOffset = "delete-execution-table-button-";
+			$(".delete-execution-table-button").click(
 					function() {
 						//console.log("delete execution #"+idExec);
 						var execId = $(this).attr("id");
 						var idExec = execId.substring(execOffset.length);
 						var execRow = $(this).closest("tr");
-						var testPlanHyperlink = $(this).closest("tr")
-								.closest("tr").prev().find(
-										"a.test-case-name-hlink");
+						var testPlanHyperlink = $(this).closest("tr").closest(
+								"tr").prev().find("a.test-case-name-hlink");
 
 						confirmeDeleteExecution(idExec, testPlanHyperlink,
 								execRow);
 					});
-		
-	}
-	function confirmeDeleteExecution(idExec, testPlanHyperlink, execRow) {
-		twoShotDialog("<f:message key='dialog.delete-execution.title'/>",
-				"<f:message key='dialog.delete-execution.message'/>","<f:message key='dialog.button.cancel.label'/>").done(
-				function() {
-					doDeleteExecution(idExec, testPlanHyperlink, execRow);
-				});
-	}
-	function doDeleteExecution(idExec, testPlanHyperlink, execRow) {
-		deleteExecutionOfSpecifiedId(idExec).done(function(data) {
-			refreshTable(testPlanHyperlink, execRow, data)
-		});
-	}
-	function deleteExecutionOfSpecifiedId(idExec) {
-		return $.ajax({
-			'url' : "${showExecutionUrl}/" + idExec,
-			type : 'DELETE',
-			data : [],
-			dataType : "json"
-		});
-	}
-	function refreshTable(testPlanHyperlink, execRow, data) {
-		// 1/ refresh execution table
-		//
-		// 		$(testPlanHyperlink).click();
-		// 		$(testPlanHyperlink).click();
-		//
-		//OR  
-		//
-		// 2 / just remove the execution row 
-		// I choose this solution because it is easier to delete severas executions in a row without waiting for the execution table to reload.
-		// the drawback is that the number of the executions is not updated. 
-		//console.log("execRow = " + execRow);
-		//$(execRow).detach();
-		//or 
-		//3/ Because can't refresh only the status & last executed by yet
-		refreshTestPlans();
-		
-		
-		refreshTestSuiteInfos();
-		refreshStats();
-		refreshExecButtons();
-	}
-</script>
+
+		}
+		function confirmeDeleteExecution(idExec, testPlanHyperlink, execRow) {
+			twoShotDialog("<f:message key='dialog.delete-execution.title'/>",
+					"<f:message key='dialog.delete-execution.message'/>",
+					"<f:message key='dialog.button.cancel.label'/>").done(
+					function() {
+						doDeleteExecution(idExec, testPlanHyperlink, execRow);
+					});
+		}
+		function doDeleteExecution(idExec, testPlanHyperlink, execRow) {
+			deleteExecutionOfSpecifiedId(idExec).done(function(data) {
+				refreshTable(testPlanHyperlink, execRow, data)
+			});
+		}
+		function deleteExecutionOfSpecifiedId(idExec) {
+			return $.ajax({
+				'url' : "${showExecutionUrl}/" + idExec,
+				type : 'DELETE',
+				data : [],
+				dataType : "json"
+			});
+		}
+		function refreshTable(testPlanHyperlink, execRow, data) {
+			// 1/ refresh execution table
+			//
+			// 		$(testPlanHyperlink).click();
+			// 		$(testPlanHyperlink).click();
+			//
+			//OR  
+			//
+			// 2 / just remove the execution row 
+			// I choose this solution because it is easier to delete severas executions in a row without waiting for the execution table to reload.
+			// the drawback is that the number of the executions is not updated. 
+			//console.log("execRow = " + execRow);
+			//$(execRow).detach();
+			//or 
+			//3/ Because can't refresh only the status & last executed by yet
+			refreshTestPlans();
+
+			refreshTestSuiteInfos();
+			refreshStats();
+			refreshExecButtons();
+		}
+	</script>
+</c:if>
