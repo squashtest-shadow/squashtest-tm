@@ -157,6 +157,10 @@
 		@NamedQuery(name = "project.findAll", query = "from Project fetch all properties order by name"),
 		@NamedQuery(name = "project.countProjects", query = "select count(p) from Project p"),
 		@NamedQuery(name = "project.findAllByIdList", query = "from Project p where p.id in (:idList)"),
+		@NamedQuery(name = "project.countNonFolderInCampaign", query = "select count(camp) from Campaign camp where camp.project.id = :projectId"),
+		@NamedQuery(name = "project.countNonFolderInTestCase", query = "select count(tc) from  TestCase tc where tc.project.id = :projectId "),
+		@NamedQuery(name = "project.countNonFolderInRequirement", query = "select count(req) from Requirement req where req.project.id = :projectId "),
+		@NamedQuery(name = "project.findProjectFiltersContainingProject", query = "select pf from ProjectFilter pf join pf.projects p where p.id = :projectId "),
 
 		//Queries on Attachement et al
 		@NamedQuery(name = "attachment.findContentId", query = "select aContent.id from Attachment attachment join attachment.content aContent where attachment.id = :attachId"),

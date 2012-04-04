@@ -35,7 +35,7 @@
 	</jsp:attribute>
 	
 	<jsp:attribute name="titlePane">
-		<h2><f:message key="workspace.project.title" /></h2>	
+		<h2><f:message key="workspace.project.title" /></h2>
 	</jsp:attribute>
 	
 	<jsp:attribute name="informationContent">	
@@ -97,7 +97,7 @@
 		* id (not shown)
 		* selecthandle
 		* name,
-		* description
+		* label
 		* isActive,
 		* created on
 		* created by
@@ -129,7 +129,7 @@
 							<th>Id(not shown)</th> 
 							<th>#</th>
 							<th><f:message key="project.workspace.table.header.name.label" /></th>
-							<th><f:message key="project.workspace.table.header.description.label" /></th>
+							<th><f:message key="project.workspace.table.header.label.label" /></th>
 							<th><f:message key="project.workspace.table.header.active.label" /></th>
 							<th><f:message key="project.workspace.table.header.createdon.label" /></th>
 							<th><f:message key="project.workspace.table.header.createdby.label" /></th>

@@ -20,6 +20,8 @@
  */
 package org.squashtest.csp.tm.web.internal.controller.project;
 
+import javax.servlet.http.HttpServletResponse;
+
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.osgi.extensions.annotation.ServiceReference;
@@ -54,6 +56,29 @@ public class ProjectModificationController {
 		return projectLabel;
 	}
 	
+	@RequestMapping(method = RequestMethod.POST, params = { "newName" })
+	@ResponseBody
+	public Object changeName(HttpServletResponse response, @PathVariable long projectId, @RequestParam String newName) {
+
+		projectModificationService.changeName(projectId, newName);
+		LOGGER.info("Project modification : renaming {} as {}", projectId, newName);
+		final String reNewName = newName;
+		return new Object() {
+			public String newName = reNewName; // NOSONAR unreadable field actually read by JSON marshaller.
+		};
+	}
+	
+	@RequestMapping(method = RequestMethod.POST, params = { "isActive" })
+	@ResponseBody
+	public Object changeActive(HttpServletResponse response, @PathVariable long projectId, @RequestParam boolean isActive) {
+
+		projectModificationService.changeActive(projectId, isActive);
+		LOGGER.info("Project modification : change project {} is active = {}", projectId, isActive);
+		final Boolean newIsActive = isActive;
+		return new Object() {
+			public Boolean active = newIsActive; // NOSONAR unreadable field actually read by JSON marshaller.
+		};
+	}
 	@RequestMapping(method = RequestMethod.POST, params = { "id=project-description", "value" })
 	@ResponseBody
 	public String changeDescription(@RequestParam("value") String projectDescription, @PathVariable long projectId) {
@@ -70,7 +95,6 @@ public class ProjectModificationController {
 		ModelAndView mav = new ModelAndView("fragment/generics/general-information-fragment");
 
 		Project project = projectModificationService.findById(projectId);
-
 		if (project == null) {
 			throw new UnknownEntityException(projectId, Project.class);
 		}
@@ -79,5 +103,11 @@ public class ProjectModificationController {
 		mav.addObject("entityContextUrl", "/projects/" + projectId);
 
 		return mav;
+	}
+	
+	@RequestMapping(method = RequestMethod.DELETE)
+	@ResponseBody
+	public void deleteProject(@PathVariable long projectId){
+		projectModificationService.deleteProject(projectId);
 	}
 }

@@ -18,17 +18,21 @@
  *     You should have received a copy of the GNU Lesser General Public License
  *     along with this software.  If not, see <http://www.gnu.org/licenses/>.
  */
-package org.squashtest.csp.tm.service;
+package org.squashtest.csp.tm.internal.repository.hibernate;
 
-import org.springframework.security.access.prepost.PreAuthorize;
-import org.springframework.transaction.annotation.Transactional;
-import org.squashtest.csp.tm.domain.project.Project;
+import java.util.List;
 
-public interface CustomProjectModificationService {
-	@Transactional(readOnly = true)
-	@PreAuthorize("hasRole('ROLE_ADMIN')")
-	Project findById(long projectId);
+import org.springframework.stereotype.Repository;
+import org.squashtest.csp.tm.domain.attachment.AttachmentList;
+import org.squashtest.csp.tm.internal.repository.ProjectDeletionDao;
 
-	@PreAuthorize("hasRole('ROLE_ADMIN')")
-	void deleteProject(long projectId);
+@Repository
+public class HibernateProjectDeletionDao extends HibernateDeletionDao implements ProjectDeletionDao {
+
+	@Override
+	public void removeEntities(List<Long> entityIds) {
+		// TODO Auto-generated method stub
+
+	}
+
 }

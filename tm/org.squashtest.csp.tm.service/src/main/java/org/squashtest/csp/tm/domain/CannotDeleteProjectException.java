@@ -18,17 +18,31 @@
  *     You should have received a copy of the GNU Lesser General Public License
  *     along with this software.  If not, see <http://www.gnu.org/licenses/>.
  */
-package org.squashtest.csp.tm.service;
+package org.squashtest.csp.tm.domain;
 
-import org.springframework.security.access.prepost.PreAuthorize;
-import org.springframework.transaction.annotation.Transactional;
-import org.squashtest.csp.tm.domain.project.Project;
+public class CannotDeleteProjectException extends ActionException {
 
-public interface CustomProjectModificationService {
-	@Transactional(readOnly = true)
-	@PreAuthorize("hasRole('ROLE_ADMIN')")
-	Project findById(long projectId);
+	/**
+	 * 
+	 */
+	private static final long serialVersionUID = 6224996610418283183L;
+	private final String cannotDeleteMessageKey = "squashtm.action.exception.callstepcycle.label";
 
-	@PreAuthorize("hasRole('ROLE_ADMIN')")
-	void deleteProject(long projectId);
+	public CannotDeleteProjectException(Exception ex) {
+		super(ex);
+	}
+
+	public CannotDeleteProjectException(String message) {
+		super(message);
+	}
+
+	public CannotDeleteProjectException() {
+
+	}
+
+	@Override
+	public String getI18nKey() {
+		return cannotDeleteMessageKey;
+	}
+
 }

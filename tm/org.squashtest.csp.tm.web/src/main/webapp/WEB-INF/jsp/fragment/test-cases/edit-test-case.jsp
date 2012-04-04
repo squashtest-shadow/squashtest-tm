@@ -500,7 +500,7 @@
 			<jq:ajaxcall url="url" dataType="json" httpMethod="POST" useData="true" successHandler="renameTestCaseSuccess">					
 				<jq:params-bindings newName="#rename-test-case-input" />
 			</jq:ajaxcall>					
-		},			
+		},
 		<pop:cancel-button />
 	</jsp:attribute>
 	<jsp:body>
@@ -534,8 +534,8 @@
 
 <div class="toolbar-button-panel">
 <c:if test="${ editable }">
-	<input type="button" value='<f:message key="test-case.button.rename.label" />' id="rename-test-case-button" class="button" />
-	<input type="button" value='<f:message key="test-case.button.remove.label" />' id="delete-test-case-button" class="button" />
+	<input type="button" value="<f:message key='test-case.button.rename.label' />" id="rename-test-case-button" class="button" />
+	<input type="button" value="<f:message key='test-case.button.remove.label' />" id="delete-test-case-button" class="button" />
 </c:if>
 	</div>
 <div style="clear: both;"></div>
