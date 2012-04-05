@@ -146,7 +146,8 @@
 </layout:info-page-layout>
 
 <script type="text/javascript">
-	var changeActive = ${!project.active};
+
+	var changeActive = ${!adminproject.project.active};
 	
 	$(function() {
 
