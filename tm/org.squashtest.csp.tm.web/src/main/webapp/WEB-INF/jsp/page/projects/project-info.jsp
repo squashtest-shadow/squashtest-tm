@@ -120,18 +120,18 @@
 						</div>
 						<div class="display-table-row">
 						<f:message var="active" key="project.active.label" />
-						<f:message var="activate" key="project.activate.label" />
+						
 						<f:message var="inactive" key="project.inactive.label" />
-						<f:message var="inactivate" key="project.inactivate.label" />
+						
 						<label for="project-active" class="display-table-cell "><f:message key="project.state.label"/></label>
 							<div class="display-table-cell" id="project-active">
 								<c:if test="${project.active}">		
 								<span class="projectActive">${active} </span>
-										<a id="activateProject" href="javascript:void(0);">[${inactivate}]</a>
+										
 								</c:if>
 								<c:if test="${!project.active}">
 								<span class="projectInactive">${inactive} </span>
-										<a id="activateProject" href="javascript:void(0);">[${activate}]</a>
+										
 								</c:if>
 							</div>
 						</div>
@@ -146,62 +146,17 @@
 </layout:info-page-layout>
 
 <script type="text/javascript">
-	var changeActive = ${!project.active};
 	
 	$(function() {
 
 		$("#back").button().click(clickProjectBackButton);
-
-		$('#activateProject').click(function() {
-			changeActiveProject(changeActive);
-		});
-		
 		$('#delete-project-button').button().click(deleteProject);
 	});
 	
 	function clickProjectBackButton(){
 			document.location.href = "${projectsUrl}";
 	}
-	function changeActiveProject(active) {
 
-		requestProjectActivation(active).done(function(data) {
-			refreshProjectActivationSuccess(data);
-		});
-	}
-
-	function requestProjectActivation(active) {
-		return $.ajax({
-			type : 'post',
-			data : {
-				'isActive' : active
-			},
-			dataType : "json",
-			url : "${ projectUrl }"
-		});
-	}
-
-	function refreshProjectActivationSuccess(data) {
-		var isNowActive = data.active;
-		if (isNowActive) {
-			var labelInactive = $('#project-description-table .projectInactive');
-			labelInactive.removeClass('projectInactive');
-			labelInactive.addClass('projectActive');
-			labelInactive.text("${active}");
-
-			var linkActivate = $('#project-description-table a#activateProject');
-			linkActivate.text("[${inactivate}]");
-			changeActive = !isNowActive;
-		} else {
-			var labelInactive = $('#project-description-table .projectActive');
-			labelInactive.removeClass('projectActive');
-			labelInactive.addClass('projectInactive');
-			labelInactive.text("${inactive}");
-
-			var linkActivate = $('#project-description-table a#activateProject');
-			linkActivate.text("[${activate}]");
-			changeActive = !isNowActive;
-		}
-	}
 	
 	function deleteProject(){
 		oneShotConfirm("<f:message key='dialog.delete-project.title'/>",
