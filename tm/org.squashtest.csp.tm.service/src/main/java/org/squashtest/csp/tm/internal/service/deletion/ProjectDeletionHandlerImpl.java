@@ -26,31 +26,27 @@ import java.util.Set;
 
 import javax.inject.Inject;
 
+import org.hibernate.SessionFactory;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Component;
-import org.springframework.transaction.annotation.Transactional;
 import org.squashtest.csp.tm.domain.CannotDeleteProjectException;
 import org.squashtest.csp.tm.domain.campaign.CampaignLibrary;
-import org.squashtest.csp.tm.domain.campaign.CampaignLibraryNode;
 import org.squashtest.csp.tm.domain.library.Library;
 import org.squashtest.csp.tm.domain.library.LibraryNode;
 import org.squashtest.csp.tm.domain.project.Project;
 import org.squashtest.csp.tm.domain.projectfilter.ProjectFilter;
 import org.squashtest.csp.tm.domain.requirement.RequirementLibrary;
-import org.squashtest.csp.tm.domain.requirement.RequirementLibraryNode;
 import org.squashtest.csp.tm.domain.testcase.TestCaseLibrary;
 import org.squashtest.csp.tm.internal.repository.ProjectDao;
 import org.squashtest.csp.tm.internal.repository.ProjectDeletionDao;
 import org.squashtest.csp.tm.internal.service.CampaignNodeDeletionHandler;
-import org.squashtest.csp.tm.internal.service.CustomProjectModificationServiceImpl;
 import org.squashtest.csp.tm.internal.service.NodeDeletionHandler;
 import org.squashtest.csp.tm.internal.service.ProjectDeletionHandler;
 import org.squashtest.csp.tm.internal.service.RequirementNodeDeletionHandler;
 import org.squashtest.csp.tm.internal.service.TestCaseNodeDeletionHandler;
 
 @Component("squashtest.tm.service.deletion.ProjectDeletionHandler")
-@Transactional
 public class ProjectDeletionHandlerImpl implements ProjectDeletionHandler {
 	private static final Logger LOGGER = LoggerFactory.getLogger(ProjectDeletionHandlerImpl.class);
 
@@ -64,6 +60,8 @@ public class ProjectDeletionHandlerImpl implements ProjectDeletionHandler {
 	private RequirementNodeDeletionHandler requirementDeletionHandler;
 	@Inject
 	private ProjectDeletionDao projectDeletionDao;
+	@Inject
+	private SessionFactory sessionFactory;
 
 	@Override
 	public void deleteProject(long projectId) {
@@ -94,7 +92,8 @@ public class ProjectDeletionHandlerImpl implements ProjectDeletionHandler {
 
 		RequirementLibrary requirementLibrary = project.getRequirementLibrary();
 		deleteLibraryContent(requirementLibrary, requirementDeletionHandler);
-
+		sessionFactory.getCurrentSession().evict(project);
+		project = projectDao.findById(projectId);
 		removeProjectFromFilters(project);
 
 		projectDeletionDao.removeEntity(project);

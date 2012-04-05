@@ -56,15 +56,15 @@ public class Project {
 
 	private Boolean active = Boolean.TRUE;
 
-	@OneToOne(cascade = { CascadeType.PERSIST, CascadeType.MERGE }, optional = false, fetch = FetchType.LAZY)
+	@OneToOne(cascade = { CascadeType.ALL }, optional = false, fetch = FetchType.LAZY)
 	@JoinColumn(name = "TCL_ID")
 	private TestCaseLibrary testCaseLibrary;
 
-	@OneToOne(cascade = { CascadeType.PERSIST, CascadeType.MERGE }, optional = false, fetch = FetchType.LAZY)
+	@OneToOne(cascade = { CascadeType.ALL }, optional = false, fetch = FetchType.LAZY)
 	@JoinColumn(name = "RL_ID")
 	private RequirementLibrary requirementLibrary;
 
-	@OneToOne(cascade = { CascadeType.PERSIST, CascadeType.MERGE }, optional = false, fetch = FetchType.LAZY)
+	@OneToOne(cascade = { CascadeType.ALL }, optional = false, fetch = FetchType.LAZY)
 	@JoinColumn(name = "CL_ID")
 	private CampaignLibrary campaignLibrary;
 
