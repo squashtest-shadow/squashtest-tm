@@ -204,8 +204,12 @@
 	}
 	
 	function deleteProject(){
-		requestProjectDeletion().done(deleteProjectSuccess).fail(deleteProjectError);
-		console.log("delete project");
+		oneShotConfirm("<f:message key='dialog.delete-project.title'/>",
+		"<f:message key='dialog.delete-project.message'/>",
+		"<f:message key='dialog.button.confirm.label'/>",
+		"<f:message key='dialog.button.cancel.label'/>").done(function(){
+			requestProjectDeletion().done(deleteProjectSuccess).fail(deleteProjectError);
+			});
 	}
 	
 	function requestProjectDeletion(){

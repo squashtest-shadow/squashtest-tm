@@ -57,7 +57,7 @@ function oneShotDialog(dialogTitle, domMessage){
 
 }
 
-function twoShotDialog(dialogTitle, domMessage, koText){
+function oneShotConfirm(dialogTitle, domMessage, okText, koText){
 	
 	var oneShotPopup = $("<div/>");
 	$(document).append(oneShotPopup);
@@ -76,7 +76,7 @@ function twoShotDialog(dialogTitle, domMessage, koText){
 		resizable : false,
 		title : dialogTitle,
 		buttons : [{ 
-			'text': 'Ok',
+			'text': okText,
 			'click' : function(){ 
 				var jqDialog = $(this);
 				jqDialog.dialog('close'); 
