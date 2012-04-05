@@ -138,16 +138,6 @@ public class ProjectManagerController {
 
 	}
 	
-	@RequestMapping(value="/{projectId}/info", method=RequestMethod.GET)
-	public ModelAndView getProjectInfos(@PathVariable long projectId){
-		Project project = projectManagerService.findProjectById(projectId);
-		ModelAndView mav = new ModelAndView("page/projects/project-info");	
-		mav.addObject("project", project);
-		return mav;
-	}
-	
-	
-	
 	/* ****************************** data formatters ********************************************** */
 
 	private CollectionSorting createCollectionFilter(final DataTableDrawParameters params,

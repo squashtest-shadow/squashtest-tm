@@ -34,7 +34,7 @@
 <%------------------------------------- URLs et back button ----------------------------------------------%>
 <c:url var="ckeConfigUrl" value="/styles/ckeditor/ckeditor-config.js" />
 <s:url var="projectUrl" value="/projects/{projectId}">
-	<s:param name="projectId" value="${project.id}" />
+	<s:param name="projectId" value="${adminproject.project.id}" />
 </s:url>
 <s:url var="projectsUrl" value="/projects" />
 
@@ -60,7 +60,7 @@
 					<label for="project-name-header"><f:message
 							key="project.header.title" />
 					</label><a id="project-name-header" href="javascript:void(0);"><c:out
-							value="${ project.name }" escapeXml="true" />
+							value="${ adminproject.project.name }" escapeXml="true" />
 					</a>
 				</h2>
 			</div>
@@ -80,7 +80,7 @@
 	
 			<div id="project-toolbar" classes="toolbar-class ui-corner-all"><%---INFO + Toolbar ---------------------%>
 			<div>
-				<comp:general-information-panel auditableEntity="${project}"
+				<comp:general-information-panel auditableEntity="${adminproject.project}"
 						entityUrl="${ projectUrl }" />
 			</div>
 				
@@ -110,13 +110,13 @@
 							<label for="project-label" class="display-table-cell">
 							<f:message key="project.label.label" />
 							</label>
-							<div class="display-table-cell" id="project-label">${ project.label }</div>
+							<div class="display-table-cell" id="project-label">${ adminproject.project.label }</div>
 						</div>
 						<div class="display-table-row">
 							<label for="project-description" class="display-table-cell">
 							<f:message key="project.description.label" />
 							</label>
-							<div class="display-table-cell" id="project-description">${ project.description }</div>
+							<div class="display-table-cell" id="project-description">${ adminproject.project.description }</div>
 						</div>
 						<div class="display-table-row">
 						<f:message var="active" key="project.active.label" />
@@ -125,11 +125,11 @@
 						<f:message var="inactivate" key="project.inactivate.label" />
 						<label for="project-active" class="display-table-cell "><f:message key="project.state.label"/></label>
 							<div class="display-table-cell" id="project-active">
-								<c:if test="${project.active}">		
+								<c:if test="${adminproject.project.active}">		
 								<span class="projectActive">${active} </span>
 										<a id="activateProject" href="javascript:void(0);">[${inactivate}]</a>
 								</c:if>
-								<c:if test="${!project.active}">
+								<c:if test="${!adminproject.project.active}">
 								<span class="projectInactive">${inactive} </span>
 										<a id="activateProject" href="javascript:void(0);">[${activate}]</a>
 								</c:if>
@@ -162,6 +162,7 @@
 	function clickProjectBackButton(){
 			document.location.href = "${projectsUrl}";
 	}
+	
 	function changeActiveProject(active) {
 
 		requestProjectActivation(active).done(function(data) {
@@ -204,12 +205,17 @@
 	}
 	
 	function deleteProject(){
+	<c:if test="${adminproject.deletable}">	
 		oneShotConfirm("<f:message key='dialog.delete-project.title'/>",
 		"<f:message key='dialog.delete-project.message'/>",
 		"<f:message key='dialog.button.confirm.label'/>",
 		"<f:message key='dialog.button.cancel.label'/>").done(function(){
 			requestProjectDeletion().done(deleteProjectSuccess).fail(deleteProjectError);
 			});
+		</c:if>
+		<c:if test="${!adminproject.deletable}">	
+		oneShotDialog("<f:message key='popup.title.info'/>","<f:message key='project.delete.cannot.exception'/>");	
+		</c:if>
 	}
 	
 	function requestProjectDeletion(){

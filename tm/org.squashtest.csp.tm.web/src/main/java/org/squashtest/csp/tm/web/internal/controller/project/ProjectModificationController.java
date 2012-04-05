@@ -33,6 +33,7 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.servlet.ModelAndView;
 import org.squashtest.csp.tm.domain.UnknownEntityException;
+import org.squashtest.csp.tm.domain.project.AdministrableProject;
 import org.squashtest.csp.tm.domain.project.Project;
 import org.squashtest.csp.tm.service.ProjectModificationService;
 
@@ -44,6 +45,13 @@ public class ProjectModificationController {
 	@ServiceReference
 	public void setProjectModificationService(ProjectModificationService projectModificationService) {
 		this.projectModificationService = projectModificationService;
+	}
+	@RequestMapping(value="/info", method=RequestMethod.GET)
+	public ModelAndView getProjectInfos(@PathVariable long projectId){
+		AdministrableProject project = projectModificationService.findAdministrableProjectById(projectId);
+		ModelAndView mav = new ModelAndView("page/projects/project-info");	
+		mav.addObject("adminproject", project);
+		return mav;
 	}
 	
 	@RequestMapping(method = RequestMethod.POST, params = { "id=project-label", "value" })

@@ -34,8 +34,4 @@ public interface ProjectManagerService {
 
 	FilteredCollectionHolder<List<Project>> findSortedProjects(CollectionSorting filter);
 
-	Project findProjectById(long projectId);
-
-	void modifyProjectLabel(long projectId, String projectLabel);
-
 }
