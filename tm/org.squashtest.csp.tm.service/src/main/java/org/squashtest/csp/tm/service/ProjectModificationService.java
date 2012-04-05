@@ -37,4 +37,5 @@ public interface ProjectModificationService extends CustomProjectModificationSer
 
 	@PreAuthorize("hasRole('ROLE_ADMIN')")
 	void changeActive(long projectId, boolean isActive);
+
 }

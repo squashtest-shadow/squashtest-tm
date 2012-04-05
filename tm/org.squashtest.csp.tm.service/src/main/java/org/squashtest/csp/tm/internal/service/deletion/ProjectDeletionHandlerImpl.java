@@ -71,7 +71,8 @@ public class ProjectDeletionHandlerImpl implements ProjectDeletionHandler {
 
 	}
 
-	private void checkProjectContainsOnlyFolders(long projectId) {
+	@Override
+	public void checkProjectContainsOnlyFolders(long projectId) {
 		Long nonFolder = projectDao.countNonFoldersInProject(projectId);
 		LOGGER.debug("The project #" + projectId + " contains " + nonFolder + " non folder library nodes");
 		if (nonFolder > 0L) {

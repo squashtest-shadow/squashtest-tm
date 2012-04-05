@@ -27,4 +27,6 @@ package org.squashtest.csp.tm.internal.service;
  */
 public interface ProjectDeletionHandler {
 	void deleteProject(long projectId);
+
+	void checkProjectContainsOnlyFolders(long projectId);
 }

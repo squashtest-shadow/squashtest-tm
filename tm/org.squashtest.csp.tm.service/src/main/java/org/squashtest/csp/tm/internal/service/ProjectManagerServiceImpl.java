@@ -95,16 +95,4 @@ public class ProjectManagerServiceImpl implements ProjectManagerService {
 		return new FilteredCollectionHolder<List<Project>>(count, projects);
 	}
 
-	@Override
-	@PreAuthorize("hasRole('ROLE_ADMIN')")
-	public Project findProjectById(long projectId) {
-		return projectDao.findById(projectId);
-	}
-
-	@Override
-	public void modifyProjectLabel(long projectId, String projectLabel) {
-		// TODO Auto-generated method stub
-
-	}
-
 }

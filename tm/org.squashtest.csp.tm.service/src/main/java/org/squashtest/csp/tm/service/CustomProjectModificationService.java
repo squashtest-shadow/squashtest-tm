@@ -22,6 +22,7 @@ package org.squashtest.csp.tm.service;
 
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.transaction.annotation.Transactional;
+import org.squashtest.csp.tm.domain.project.AdministrableProject;
 import org.squashtest.csp.tm.domain.project.Project;
 
 public interface CustomProjectModificationService {
@@ -31,4 +32,7 @@ public interface CustomProjectModificationService {
 
 	@PreAuthorize("hasRole('ROLE_ADMIN')")
 	void deleteProject(long projectId);
+
+	@PreAuthorize("hasRole('ROLE_ADMIN')")
+	AdministrableProject findAdministrableProjectById(long projectId);
 }

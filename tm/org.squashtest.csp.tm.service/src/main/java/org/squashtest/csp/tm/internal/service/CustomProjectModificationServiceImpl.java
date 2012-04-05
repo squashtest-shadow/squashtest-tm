@@ -27,6 +27,7 @@ import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.squashtest.csp.tm.domain.CannotDeleteProjectException;
+import org.squashtest.csp.tm.domain.project.AdministrableProject;
 import org.squashtest.csp.tm.domain.project.Project;
 import org.squashtest.csp.tm.internal.repository.ProjectDao;
 import org.squashtest.csp.tm.service.CustomProjectModificationService;
@@ -55,4 +56,17 @@ public class CustomProjectModificationServiceImpl implements CustomProjectModifi
 		projectDeletionHandler.deleteProject(projectId);
 	}
 
+	@Override
+	public AdministrableProject findAdministrableProjectById(long projectId) {
+		Project project = findById(projectId);
+		boolean isDeletable = true;
+		try {
+			projectDeletionHandler.checkProjectContainsOnlyFolders(projectId);
+		} catch (CannotDeleteProjectException e) {
+			isDeletable = false;
+		}
+		AdministrableProject administrableProject = new AdministrableProject(project);
+		administrableProject.setDeletable(isDeletable);
+		return administrableProject;
+	}
 }
