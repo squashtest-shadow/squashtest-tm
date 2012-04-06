@@ -33,7 +33,7 @@ import org.squashtest.csp.core.service.configuration.ConfigurationService;
 public class LoginLogoutController {
 
 	private ConfigurationService configService;
-	private final static String WELCOME_MESSAGE = "WELCOME_MESSAGE";
+	private final static String LOGIN_MESSAGE = "LOGIN_MESSAGE";
 
 	@Inject
 	@Value("${authentication.application.welcomePage}")
@@ -47,7 +47,7 @@ public class LoginLogoutController {
 
 	@RequestMapping("/login")
 	public String login(Model model) {
-		String welcomeMessage = configService.findConfiguration(WELCOME_MESSAGE);
+		String welcomeMessage = configService.findConfiguration(LOGIN_MESSAGE);
 		model.addAttribute("welcomeMessage", welcomeMessage);
 		return "authentication/login";
 	}

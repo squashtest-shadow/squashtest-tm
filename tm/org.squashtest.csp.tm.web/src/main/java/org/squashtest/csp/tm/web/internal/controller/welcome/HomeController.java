@@ -54,12 +54,26 @@ public class HomeController {
 		administrationService.modifyWelcomeMessage(welcomeMessage);
 		return welcomeMessage;
 	}
+	@RequestMapping(value = "/configuration/modify-login-message", method=RequestMethod.POST)
+	public @ResponseBody
+	String modifyLoginMessage(@RequestParam("value") String loginMessage){
+		administrationService.modifyLoginMessage(loginMessage);
+		return loginMessage;
+	}
 	
 	@RequestMapping("/configuration/welcome-message")
 	public ModelAndView welcomeMessagePage(){
 		String welcomeMessage = administrationService.findWelcomeMessage();
 		ModelAndView mav = new ModelAndView("page/configurations/welcome-message-workspace");
 		mav.addObject("welcomeMessage", welcomeMessage);
+		return mav;
+	}
+	
+	@RequestMapping("/configuration/login-message")
+	public ModelAndView loginMessagePage(){
+		String loginMessage = administrationService.findLoginMessage();
+		ModelAndView mav = new ModelAndView("page/configurations/login-message-workspace");
+		mav.addObject("loginMessage", loginMessage);
 		return mav;
 	}
 	

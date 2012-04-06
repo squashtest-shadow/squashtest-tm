@@ -31,7 +31,7 @@
 <c:url var="editWelcomeUrl" value="/configuration/modify-welcome-message"/>
 
 
-<layout:info-page-layout titleKey="welcome-message.management.url.label" highlightedWorkspace="requirement" isSubPaged="true">
+<layout:info-page-layout titleKey="admin.welcome-message.management.url.label" highlightedWorkspace="requirement" isSubPaged="true">
 	<jsp:attribute  name="head">
 		<link rel="stylesheet" type="text/css" href="${ pageContext.servletContext.contextPath }/styles/master.blue.css" />
 	</jsp:attribute>
@@ -41,7 +41,7 @@
 	</jsp:attribute>
 		
 	<jsp:attribute name="subPageTitle">
-		<h2><f:message key="welcome-message.management.url.label" /></h2>
+		<h2><f:message key="admin.welcome-message.management.url.label" /></h2>
 	</jsp:attribute>
 	
 	<jsp:attribute name="subPageButtons">

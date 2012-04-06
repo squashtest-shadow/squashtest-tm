@@ -74,6 +74,7 @@ public class AdministrationServiceImpl implements AdministrationService {
 	private AdministratorAuthenticationService adminService;
 
 	private final static String WELCOME_MESSAGE_KEY = "WELCOME_MESSAGE";
+	private final static String LOGIN_MESSAGE_KEY = "LOGIN_MESSAGE";
 
 	@ServiceReference
 	public void setAdministratorAuthenticationService(AdministratorAuthenticationService adminService) {
@@ -180,8 +181,22 @@ public class AdministrationServiceImpl implements AdministrationService {
 	}
 
 	@Override
+	public void modifyLoginMessage(String loginMessage) {
+		if (configurationService.findConfiguration(LOGIN_MESSAGE_KEY) == null) {
+			configurationService.createNewConfiguration(LOGIN_MESSAGE_KEY, loginMessage);
+			return;
+		}
+		configurationService.updateConfiguration(LOGIN_MESSAGE_KEY, loginMessage);
+	}
+
+	@Override
 	public String findWelcomeMessage() {
 		return configurationService.findConfiguration(WELCOME_MESSAGE_KEY);
+	}
+
+	@Override
+	public String findLoginMessage() {
+		return configurationService.findConfiguration(LOGIN_MESSAGE_KEY);
 	}
 
 	@Override
