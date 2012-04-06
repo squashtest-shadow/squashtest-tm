@@ -28,29 +28,36 @@
 <%@ taglib prefix="comp" tagdir="/WEB-INF/tags/component"%>
 <%@ taglib prefix="pop" tagdir="/WEB-INF/tags/popup" %>
 
-<c:url var="usersUrl" value="/users/list"/>
-<c:url var="projectsUrl" value="/projects"/>
-<c:url var="loginUrl" value="/configuration/login-message"/>
-<c:url var="welcomeUrl" value="/configuration/welcome-message"/>
+<c:url var="editLoginMsgUrl" value="/configuration/modify-login-message"/>
 
 
-<layout:info-page-layout titleKey="workspace.home.title">
-	<jsp:attribute  name="head">	
-		<link rel="stylesheet" type="text/css" href="${ pageContext.servletContext.contextPath }/styles/master.blue.css" />	
+<layout:info-page-layout titleKey="admin.login-message.management.url.label" highlightedWorkspace="requirement" isSubPaged="true">
+	<jsp:attribute  name="head">
+		<link rel="stylesheet" type="text/css" href="${ pageContext.servletContext.contextPath }/styles/master.blue.css" />
 	</jsp:attribute>
 	
 	<jsp:attribute name="titlePane">
 		<h2><f:message key="workspace.home.title" /></h2>	
 	</jsp:attribute>
-	
-	<jsp:attribute name="informationContent">	
-		<div id="admin-link-pane">
-			<table>
-				<tr><td><a href="${ usersUrl }"><b><f:message key="admin.users.management.url.label" /></b></a></td></tr>
-				<tr><td><a href="${ projectsUrl }"><b><f:message key="admin.projects.management.url.label" /></b></a></td></tr>
-				<tr><td><a href="${ loginUrl }"><b><f:message key="admin.login-message.management.url.label" /></b></a></td></tr>
-				<tr><td><a href="${ welcomeUrl }"><b><f:message key="admin.welcome-message.management.url.label" /></b></a></td></tr>
-			</table>
-		</div>	
+		
+	<jsp:attribute name="subPageTitle">
+		<h2><f:message key="admin.login-message.management.url.label" /></h2>
 	</jsp:attribute>
+	
+	<jsp:attribute name="subPageButtons">
+		<f:message var="backButtonLabel" key="fragment.edit.header.button.back" />
+		<input type="button" class="button" value="${backButtonLabel}" onClick="history.back();"/>	
+	</jsp:attribute>
+	
+	<jsp:attribute name="footer">	
+		
+	</jsp:attribute>
+	
+	<jsp:attribute name="informationContent">
+		<div id="login-page-content">
+			<span id="login-message">${loginMessage}</span>
+			<comp:rich-jeditable targetUrl="${ editLoginMsgUrl }" componentId="login-message" welcome="true" />
+		</div>
+	</jsp:attribute>
+	
 </layout:info-page-layout>

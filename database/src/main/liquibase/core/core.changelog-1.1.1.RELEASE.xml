@@ -21,12 +21,16 @@
         along with this software.  If not, see <http://www.gnu.org/licenses/>.
 
 -->
-<databaseChangeLog
-     xmlns="http://www.liquibase.org/xml/ns/dbchangelog"
-     xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
-     xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog 
-     http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-2.0.xsd">
 
- 
- 	<include file="core.changelog-1.1.1.RELEASE.xml" relativeToChangelogFile="true" />
-</databaseChangeLog> 
+<databaseChangeLog xmlns="http://www.liquibase.org/xml/ns/dbchangelog" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog 
+     http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-2.0.xsd">
+	<changeSet id="core-1.1.1.RELEASE.01" author="mpagnon">
+		<comment>Add new line in CORE_CONFIG for LOGIN_MESSAGE and change WELCOME_MESSAGE</comment>
+		<sql>
+			<![CDATA[
+				insert into CORE_CONFIG (STR_KEY, VALUE) values ('LOGIN_MESSAGE', '<p><span style="color:#ff0000;">The administrator default login is <strong>admin/admin</strong> (you can change this password in the &quot;<em>My account (admin)</em>&quot; menu).</span></p><p>Go to the &quot;<em>Administration&quot;</em> menu (in the upper right corner) to create new users and projects, or change this default home message.</p><p>&nbsp;</p>');
+				update CORE_CONFIG set VALUE = '<p>Wellcome</p>' where STR_KEY = 'WELCOME_MESSAGE';]]> 
+		</sql>
+	</changeSet>
+</databaseChangeLog>
