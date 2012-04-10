@@ -40,13 +40,15 @@ public class ReportRequirementCoverageByTests extends Report {
 		initViewCatalog();
 	}
 
-	@Inject @Named("reportTypeProgressFollowUp")
+	@Inject
+	@Named("reportTypeProgressFollowUp")
 	@Override
 	protected void setReportType(ReportType reportType) {
 		this.reportType = reportType;
 	}
 
-	@Inject @Named("categoryPreparationPhase")
+	@Inject
+	@Named("categoryPreparationPhase")
 	@Override
 	protected void setReportCategory(ReportCategory reportCategory) {
 		this.reportCategory = reportCategory;
@@ -62,10 +64,10 @@ public class ReportRequirementCoverageByTests extends Report {
 		ReportView view2 = new ReportView().setTitleKey("squashtest.report.view.title.requirementcoveragedashboard")
 				.setCodeKey("squashtest.report.view.code.dashboard").setFormats("pdf", "html")
 				.setModel("requirementCoverage1");
-		viewCatalog.addView(view1);
 		viewCatalog.addView(view2);
+		viewCatalog.addView(view1);
 
-		viewCatalog.setDefaultViewIndex(1);
+		viewCatalog.setDefaultViewIndex(0);
 		setViewCatalog(viewCatalog);
 	}
 

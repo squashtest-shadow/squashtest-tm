@@ -32,49 +32,45 @@ import org.squashtest.csp.tm.domain.report.view.ReportViewCatalog;
 
 @Component("reportExecutionProgressFollowUp")
 public class ReportExecutionProgressFollowUp extends Report {
-	
+
 	{
-		resourceKeyDescription="squashtest.report.report.executionprogressfollowup.description";
-		resourceKeyName="squashtest.report.report.executionprogressfollowup.name";
+		resourceKeyDescription = "squashtest.report.report.executionprogressfollowup.description";
+		resourceKeyName = "squashtest.report.report.executionprogressfollowup.name";
 		initViewCatalog();
 	}
 
-	@Inject @Named("reportTypeProgressFollowUp")
+	@Inject
+	@Named("reportTypeProgressFollowUp")
 	@Override
 	protected void setReportType(ReportType reportType) {
-		this.reportType=reportType;
+		this.reportType = reportType;
 	}
 
-	@Inject @Named("categoryExecutionPhase")
+	@Inject
+	@Named("categoryExecutionPhase")
 	@Override
 	protected void setReportCategory(ReportCategory reportCategory) {
-		this.reportCategory=reportCategory;
+		this.reportCategory = reportCategory;
 		this.reportCategory.addReport(this);
 	}
-	
-	private void initViewCatalog(){
+
+	private void initViewCatalog() {
 		ReportViewCatalog viewCatalog = new ReportViewCatalog();
-		
-		ReportView view1 = new ReportView()
-							.setTitleKey("squashtest.report.view.title.listtcbycampaign")
-							.setCodeKey("squashtest.report.view.code.datatable")
-							.setFormats("xls", "ods","csv", "pdf","html")
-							.setModel("executionProgression1");
-		ReportView view2 = new ReportView()
-							.setTitleKey("squashtest.report.view.title.campaigndashboard")
-							.setCodeKey("squashtest.report.view.code.dashboard")
-							.setFormats("pdf","html")
-							.setModel("executionProgression2");
-		
-		viewCatalog.addView(view1);
+
+		ReportView view1 = new ReportView().setTitleKey("squashtest.report.view.title.listtcbycampaign")
+				.setCodeKey("squashtest.report.view.code.datatable").setFormats("xls", "ods", "csv", "pdf", "html")
+				.setModel("executionProgression1");
+		ReportView view2 = new ReportView().setTitleKey("squashtest.report.view.title.campaigndashboard")
+				.setCodeKey("squashtest.report.view.code.dashboard").setFormats("pdf", "html")
+				.setModel("executionProgression2");
+
 		viewCatalog.addView(view2);
-		
-		viewCatalog.setDefaultViewIndex(1);
-		
+		viewCatalog.addView(view1);
+
+		viewCatalog.setDefaultViewIndex(0);
+
 		setViewCatalog(viewCatalog);
-		
+
 	}
-
-
 
 }
