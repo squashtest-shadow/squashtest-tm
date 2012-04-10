@@ -105,12 +105,10 @@
 	}
 	
 	function loadReport(){
-		console.log("loadReport selectedTab = "+selectedTab);
 		loadOptionSelect().done(function(data){loadOptionSelectSuccess(data);});		
 	}
 	
 	function loadContent(){
-		console.log("loadContent");
 		var url = report_create_url();
 		url+="&format=html";
 		$(selectedTab.panel).load(url);
@@ -119,14 +117,12 @@
 	
 	
 	function loadOptionSelectSuccess(data){
-		console.log("loadOptionSelectSuccess");
 		populateExportOptionSelect(data);
 		tabsOptionSelect[$("#view-tabed-panel").data("selected")] = data;
 		loadContent();
 	}
 	
 	function loadOptionSelect(){
-		console.log("loadOptionSelect");
 		var optionUrl=report_create_exportoption_url();		
 		return $.ajax({
 			'url' : optionUrl,
@@ -138,7 +134,6 @@
 	function loadReportFromTab(selected,generateHasBeenClicked ){
 		if(generateHasBeenClicked){
 			if(selected.panel.innerHTML == ""){
-			 	console.log("loadReportFromTab selectedPanel is empty "+selected);
 			 	loadReport();
 			}else{
 			var selectedIndex = $("#view-tabed-panel").data("selected")
@@ -179,16 +174,13 @@
 			foldCriteriaPanel();
 			
 			if(generateHasBeenClicked == false){
-				console.log("generateHasBeenClicked = "+generateHasBeenClicked);
 			//display the view
 			$("#view-tabed-panel").removeClass("not-displayed");
 			generateHasBeenClicked = true;
 			}else{
-				console.log("generateHasBeenClicked = "+generateHasBeenClicked);
 				$('.view-content-panel').empty();
 			}
 			//fetch the view
-			console.log("loadReportFromGenerate");
 			loadReport();
 			
 		});		
@@ -318,8 +310,7 @@
 		<ul>
 			<c:forEach var="view" items="${report.viewCatalog.viewList}">
 				<li><a href="#view-content-panel-${view.model}"><f:message
-							key="${view.codeKey}" /> </a>
-				</li>
+							key="${view.codeKey}" /> </a></li>
 			</c:forEach>
 
 			<%--- forgive me w3c --%>
@@ -350,21 +341,21 @@
 <%-- post initialization javascript stuffs --%>
 
 <script type="text/javascript">
-
-	var selectedTab ;
+var selectedTab;
 	$(function(){
 		var tabPanel=$("#view-tabed-panel");
 		tabPanel.tabs({
 				select: function(event, ui){
 					tabPanel.data("selected",ui.index);
 					selectedTab = ui;
-					console.log("selectedTab = "+selectedTab)
-					loadReportFromTab(ui,generateHasBeenClicked); 
+					loadReportFromTab(ui,generateHasBeenClicked);
 				}
 		});
 		
+		tabPanel.tabs("select",1); //TODO find prettier solution :  if i don't do that the next line won't initiate the "selectedTab" var because tab[0] is already selected. 
 		tabPanel.tabs("select",${report.viewCatalog.defaultViewIndex});
 		tabPanel.data("selected",${report.viewCatalog.defaultViewIndex});
+		
 
 	});
 
