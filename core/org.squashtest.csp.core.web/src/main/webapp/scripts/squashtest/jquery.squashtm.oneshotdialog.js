@@ -57,8 +57,10 @@ function oneShotDialog(dialogTitle, domMessage){
 
 }
 
-function oneShotConfirm(dialogTitle, domMessage, okText, koText){
-	
+function oneShotConfirm(dialogTitle, domMessage, okText, koText, widthParam){
+	if(widthParam == null){
+		widthParam = '300px';
+	}
 	var oneShotPopup = $("<div/>");
 	$(document).append(oneShotPopup);
 	
@@ -72,7 +74,7 @@ function oneShotConfirm(dialogTitle, domMessage, okText, koText){
 	this.defer = $.Deferred();
 	
 	oneShotPopup.dialog({ 
-		width : '300px',
+		width : widthParam,
 		resizable : false,
 		title : dialogTitle,
 		buttons : [{ 

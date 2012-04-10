@@ -27,6 +27,7 @@
 <%@ attribute name="batchRemoveButtonId" required="true" description="html id of button for batch removal of test cases" %>
 <%@ attribute name="editable" type="java.lang.Boolean" description="Right to edit content. Default to false." %>
 
+<%@ taglib prefix="f" uri="http://java.sun.com/jsp/jstl/fmt" %>
 <%@ taglib prefix="comp" tagdir="/WEB-INF/tags/component" %>
 <%@ taglib prefix="dt" tagdir="/WEB-INF/tags/datatables" %>
 <%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core"%>
@@ -36,12 +37,12 @@
 		<%-- single verifying test-case removal --%>
 		$('#verifying-test-cases-table .delete-verifying-test-case-button').die('click');
 		$('#verifying-test-cases-table .delete-verifying-test-case-button').live('click', function() {
-			$.ajax({
-				type : 'delete',
-				url : '${ verifyingTestCasesUrl }/' + parseTestCaseId(this),
-				dataType : 'json',
-				success : refreshVerifyingTestCases
-			});
+			var savedThis = this;
+			oneShotConfirm("<f:message key='popup.title.confirm' />", 
+					"<f:message key='dialog.remove-testcase-requirement-association.message' />",
+					"<f:message key='dialog.button.confirm.label'/>",
+					"<f:message key='dialog.button.cancel.label'/>", '600px').done(	function(){deleteRequirementLink(savedThis);});
+			
 		});
 		<%-- selected verifying test-case removal --%>
 		$( '#${ batchRemoveButtonId }' ).click(function() {
@@ -49,11 +50,28 @@
 			var ids = getIdsOfSelectedTableRows(table, getTestCasesTableRowId);
 			
 			if (ids.length > 0) {
-				$.post('${ nonVerifyingTestCasesUrl }', { testCasesIds: ids }, refreshVerifyingTestCases);
+				oneShotConfirm("<f:message key='popup.title.confirm' />", 
+						"<f:message key='dialog.remove-testcase-requirement-associations.message' />",
+						"<f:message key='dialog.button.confirm.label'/>",
+						"<f:message key='dialog.button.cancel.label'/>", '600px').done(function(){deleteRequirementsLinks(ids);	});
 			}
 		});
 	});
-	
+	function deleteRequirementLink(savedThis){
+		$.ajax({
+			type : 'delete',
+			url : '${ verifyingTestCasesUrl }/' + parseTestCaseId(savedThis),
+			dataType : 'json',
+			success : refreshVerifyingTestCases
+			});
+	}
+	function deleteRequirementsLinks(ids){
+		$.post(
+				'${ nonVerifyingTestCasesUrl }',
+				{ testCasesIds: ids },
+				refreshVerifyingTestCases
+			 );
+	}
 	function refreshVerifyingTestCases() {
 		var table = $('#verifying-test-cases-table').dataTable();
 		saveTableSelection(table, getTestCasesTableRowId);
