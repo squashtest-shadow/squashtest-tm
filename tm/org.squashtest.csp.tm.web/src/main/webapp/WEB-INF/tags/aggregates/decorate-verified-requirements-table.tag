@@ -20,21 +20,26 @@
         along with this software.  If not, see <http://www.gnu.org/licenses/>.
 
 --%>
-<%@ tag body-content="empty" description="jqueryfies a verified reqs table"%>
-<%@ attribute name="tableModelUrl" required="true" description="URL to GET the model of the table"%>
-<%@ attribute name="verifiedRequirementsUrl" required="true" description="URL to manipulate the verified requirements"%>
+<%@ tag body-content="empty"
+	description="jqueryfies a verified reqs table"%>
+<%@ attribute name="tableModelUrl" required="true"
+	description="URL to GET the model of the table"%>
+<%@ attribute name="verifiedRequirementsUrl" required="true"
+	description="URL to manipulate the verified requirements"%>
 <%@ attribute name="nonVerifiedRequirementsUrl" required="true"
 	description="URL to manipulate the non verified requirements"%>
 <%@ attribute name="batchRemoveButtonId" required="true"
 	description="html id of button for batch removal of requirements"%>
-<%@ attribute name="editable" type="java.lang.Boolean" description="Right to edit content. Default to false." %>
-<%@ attribute name="updateImportanceMethod" required="false" description="name of the method used to update the importance of the test case when deleting requirement associations" %>
-<%@ taglib uri="http://java.sun.com/jsp/jstl/fmt" prefix="f"%>
-	
+<%@ attribute name="editable" type="java.lang.Boolean"
+	description="Right to edit content. Default to false."%>
+<%@ attribute name="updateImportanceMethod" required="false"
+	description="name of the method used to update the importance of the test case when deleting requirement associations"%>
+
+<%@ taglib prefix="f" uri="http://java.sun.com/jsp/jstl/fmt" %>
 <%@ taglib prefix="comp" tagdir="/WEB-INF/tags/component"%>
 <%@ taglib prefix="dt" tagdir="/WEB-INF/tags/datatables"%>
-<%@ taglib uri="http://java.sun.com/jsp/jstl/core" prefix="c" %>
-<%@ taglib prefix="input" tagdir="/WEB-INF/tags/input" %>
+<%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core"%>
+<%@ taglib prefix="input" tagdir="/WEB-INF/tags/input"%>
 
 <script type="text/javascript">
 	$(function() {
@@ -44,18 +49,20 @@
 		$('#verified-requirements-table .delete-verified-requirement-button').live('click', function() {
 			var savedThis = this;
 			var table = $( '#verified-requirements-table' ).dataTable();
-			var dialog = $( "#confirm-obsolete-requirement-version-removal-dialog" );
+			
 			var id = parseRequirementId(savedThis);
 			var status = findRowStatus(table, id, getRequirementsTableRowId, getRequirementsTableRowStatus);
-			var confirmHandler = function() {
-				deleteVerifiedRequirement(id);
-				dialog.confirmDialog( "close" );
-			};
-			dialog.confirmDialog({confirm: confirmHandler});
+			
 			if (status == "OBSOLETE") {
-				dialog.confirmDialog( "open" );
+				oneShotConfirm("<f:message	key='dialog.obsolete.requirement.version.removal.confirm.title' />", 
+						"<f:message key='dialog.obsolete.requirement.version.removal.confirm.text' />",
+						"<f:message key='dialog.button.confirm.label'/>",
+						"<f:message key='dialog.button.cancel.label'/>", '600px').done(function(){deleteVerifiedRequirement(id);});
 			} else {
-				deleteVerifiedRequirement(id);
+				oneShotConfirm("<f:message key='popup.title.confirm' />", 
+						"<f:message key='dialog.remove-requirement-version-association.message' />",
+						"<f:message key='dialog.button.confirm.label'/>",
+						"<f:message key='dialog.button.cancel.label'/>", '600px').done(function(){deleteVerifiedRequirement(id);});
 			}
 		});
 		
@@ -65,28 +72,25 @@
 		--%>
 		$( '#${ batchRemoveButtonId }' ).click(function() {
 			var table = $( '#verified-requirements-table' ).dataTable();
-			var dialog = $( "#confirm-multiple-obsolete-requirement-versions-removal-dialog" );
 			var ids = getIdsOfSelectedTableRows(table, getRequirementsTableRowId);
 			var obsoleteStatuses = getObsoleteStatusesOfSelectedTableRows(table, getRequirementsTableRowStatus);
 			var indirects = $("tr.requirement-indirect-verification.ui-state-row-selected", table);
 			if (indirects.length >0){
 				alert('<f:message key="verified-requirements.table.indirectverifiedrequirements.removalattemptsforbidden.label"/>');
 			}
-			
-			var confirmHandler = function() {
-				deleteVerifiedRequirements(ids);
-				dialog.confirmDialog( "close" );
-			};
-			dialog.confirmDialog({confirm: confirmHandler});
-			
 			if (obsoleteStatuses.length > 0){
-				dialog.confirmDialog( "open" );
+				oneShotConfirm("<f:message key='dialog.multiple.obsolete.requirement.versions.removal.confirm.title' />", 
+						"<f:message key='dialog.multiple.obsolete.requirement.versions.removal.confirm.text' />",
+						"<f:message key='dialog.button.confirm.label'/>",
+						"<f:message key='dialog.button.cancel.label'/>", '600px').done(function(){deleteVerifiedRequirements(ids);});
 			} else {
-				deleteVerifiedRequirements(ids);
+				oneShotConfirm("<f:message key='popup.title.confirm' />", 
+						"<f:message key='dialog.remove-requirement-version-associations.message' />",
+						"<f:message key='dialog.button.confirm.label'/>",
+						"<f:message key='dialog.button.cancel.label'/>", '600px').done(function(){deleteVerifiedRequirements(ids);});
 			}
 			
 		});
-		
 		
 	});
 	
@@ -202,33 +206,23 @@
 	
 </script>
 
-<%-- CONFIRM OBSOLETE REQUIREMENT VERSION REMOVAL POPUP --%>	
-<f:message var="confirmObsoleteRequirementVersionRemoval" key="dialog.obsolete.requirement.version.removal.confirm.title" />	
-<div id="confirm-obsolete-requirement-version-removal-dialog" class="not-displayed popup-dialog" title="${ confirmObsoleteRequirementVersionRemoval }">
-	<strong><f:message key="dialog.obsolete.requirement.version.removal.confirm.text" /></strong>
-	<input:confirm />
-	<input:cancel />
-</div>
 
-<%-- CONFIRM MULTIPLE OBSOLETE REQUIREMENT VERSIONS REMOVAL POPUP --%>	
-<f:message var="confirmMultipleObsoleteRequirementVersionsRemoval" key="dialog.multiple.obsolete.requirement.versions.removal.confirm.title" />	
-<div id="confirm-multiple-obsolete-requirement-versions-removal-dialog" class="not-displayed popup-dialog" title="${ confirmMultipleObsoleteRequirementVersionsRemoval }">
-	<strong><f:message key="dialog.multiple.obsolete.requirement.versions.removal.confirm.text" /></strong>
-	<input:confirm />
-	<input:cancel />
-</div>
 
-<comp:decorate-ajax-table url="${ tableModelUrl }" tableId="verified-requirements-table" paginate="true">
+<comp:decorate-ajax-table url="${ tableModelUrl }"
+	tableId="verified-requirements-table" paginate="true">
 	<jsp:attribute name="initialSort">[[4,'asc']]</jsp:attribute>
 	<jsp:attribute name="drawCallback">requirementsTableDrawCallback</jsp:attribute>
 	<jsp:attribute name="rowCallback">requirementsTableRowCallback</jsp:attribute>
 	<jsp:attribute name="columnDefs">
 		<dt:column-definition targets="0" visible="false" />
-		<dt:column-definition targets="1" sortable="false" cssClass="select-handle centered" width="2em"/>
+		<dt:column-definition targets="1" sortable="false"
+			cssClass="select-handle centered" width="2em" />
 		<dt:column-definition targets="2, 3, 4, 5, 6" sortable="true" />
-		<dt:column-definition targets="7" sortable="false" width="2em" cssClass="centered"/>
-		<dt:column-definition targets="8" sortable="false" visible="false"  />
-		<dt:column-definition targets="9" sortable="false" visible="false" lastDef="true"  />
+		<dt:column-definition targets="7" sortable="false" width="2em"
+			cssClass="centered" />
+		<dt:column-definition targets="8" sortable="false" visible="false" />
+		<dt:column-definition targets="9" sortable="false" visible="false"
+			lastDef="true" />
 
 	</jsp:attribute>
 </comp:decorate-ajax-table>
