@@ -93,20 +93,21 @@
 
 		<c:if test="${ editableIteration }">
 			<tr>
-				<td colspan="8" style="text-align: left;"><b> <a
-						style="color:${textcolor}" id="new-exec-${testPlanId}"
-						href="javascript:void(0)" data-new-exec="${newExecutionUrl}"><f:message
-								key="execution.iteration-test-plan-row.new" /> </a> </b></td>
+				<td colspan="8" style="text-align: left;"> <a id="new-exec-${testPlanId}" style="font-size:0.8em;"
+						class="button" href="javascript:void(0)" data-new-exec="${newExecutionUrl}"><f:message
+								key="execution.iteration-test-plan-row.new" /> </a> </td>
 			</tr>
 		</c:if>
 		<!-- ---------------------------------------------END ROW NEW EXECUTION -->
 	</table>
 </td>
+
 <c:if test="${ editableIteration }">
 	<script>
 		$(function() {
 			bindDeleteButtonsToFunctions();
 			decorateDeleteButtons($(".delete-execution-table-button"));
+			$('a.button').button();
 		});
 
 		function bindDeleteButtonsToFunctions() {
