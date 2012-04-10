@@ -86,7 +86,7 @@
 		<c:if test="${ editableIteration }">
 			<tr>
 				<td colspan="10" style="text-align: left;"><b> <a
-						style="color:${textcolor}" id="new-exec-${testPlanId}"
+						class="button" style="font-size:0.8em;" id="new-exec-${testPlanId}"
 						href="javascript:void(0)" data-new-exec="${newExecutionUrl}"><f:message
 								key="execution.iteration-test-plan-row.new" /> </a> </b>
 				</td>
@@ -99,6 +99,7 @@
 	$(function() {
 		bindDeleteButtonsToFunctions();
 		decorateDeleteButtons($(".delete-execution-table-button"));
+		$('a.button').button();
 	});
 
 	function bindDeleteButtonsToFunctions() {
