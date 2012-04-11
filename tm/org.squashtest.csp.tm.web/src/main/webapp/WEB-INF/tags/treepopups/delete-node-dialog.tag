@@ -39,8 +39,21 @@
 <c:url var="delIterationsUrl" value="/${resourceName}-browser/delete-iterations" />
 <c:url var="delSuitesUrl" value="/${resourceName}-browser/delete-test-suites" />
 
+<c:choose>
+		<c:when test="${'requirement' == resourceName}">
+			<f:message var="deleteMessage" key="dialog.label.delete-nodes.requirements.label" />
+		</c:when>
+		<c:when test="${'test-case' == resourceName}">
+			<f:message var="deleteMessage" key="dialog.label.delete-nodes.test-cases.label" />
+		</c:when>
+		<c:when test="${'campaign' == resourceName}">
+			<f:message var="deleteMessage" key="dialog.label.delete-nodes.campaigns.label" />
+		</c:when>
+		<c:otherwise>
+			<f:message var="deleteMessage" key="dialog.label.delete-nodes.label" />
+		</c:otherwise>
+	</c:choose>
 
-<f:message var="deleteMessage" key="dialog.label.delete-nodes.label" />
 
 <%-- onLoad code --%>
 <script type="text/javascript">
@@ -169,8 +182,9 @@ function sendDeletionSimulationRequest(){
 			});		
 		}
 	}	
-
+	
 	message.append("<span><strong>${deleteMessage}</strong></span>");
+		
 	jqDialog.html(message.html());
 	
 	
@@ -287,15 +301,11 @@ function findPrevNode(vNodes){
 
 <pop:popup id="delete-node-dialog" titleKey="dialog.delete-tree-node.title" closeOnSuccess="false" >
 	<jsp:attribute name="buttons">
-	
 		<f:message var="label" key="tree.button.delete-node.label" />
-	
 			'${ label }': confirmDeletion,			
 		<pop:cancel-button />
 	</jsp:attribute>
-	
 	<jsp:attribute name="body">
-		
 		<span id="delete-node-dialog-label"></span>
 		<br />				
 	</jsp:attribute>
