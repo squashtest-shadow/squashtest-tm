@@ -122,9 +122,9 @@ public class CampaignLibraryNavigationServiceImpl extends
 	}
 
 	private void renameIterationCopy(Iteration newIteration, Campaign campaign) {
-		List<String> copiesNames = campaignDao.findNamesInCampaignStartingWith(campaign.getId(), newIteration.getName()
-				+ COPY_TOKEN);
-		int newCopy = generateUniqueCopyNumber(copiesNames);
+		List<String> copiesNames = campaignDao
+				.findNamesInCampaignStartingWith(campaign.getId(), newIteration.getName());
+		int newCopy = generateUniqueCopyNumber(copiesNames, newIteration.getName());
 		String newName = newIteration.getName() + COPY_TOKEN + newCopy;
 		newIteration.setName(newName);
 	}
@@ -162,8 +162,8 @@ public class CampaignLibraryNavigationServiceImpl extends
 
 	private void renameIfHomonymeInDestination(Iteration newIteration, List<String> namesAtDestination) {
 		if (namesAtDestination.contains(newIteration.getName())) {
-			List<String> copiesNames = findNamesStartingWith(namesAtDestination, newIteration.getName() + COPY_TOKEN);
-			int newCopyNumber = generateUniqueCopyNumber(copiesNames);
+			List<String> copiesNames = findNamesStartingWith(namesAtDestination, newIteration.getName());
+			int newCopyNumber = generateUniqueCopyNumber(copiesNames, newIteration.getName());
 			String newName = newIteration.getName() + COPY_TOKEN + newCopyNumber;
 			newIteration.setName(newName);
 		}
