@@ -115,8 +115,8 @@ public abstract class AbstractLibraryNavigationService<LIBRARY extends Library<N
 				String newName = tempName;
 
 				if (!container.isContentNameAvailable(tempName)) {
-					List<String> copiesNames = findNamesInContainerStartingWith(containerId, tempName);
-					int newCopy = generateUniqueCopyNumber(copiesNames);
+					List<String> copiesNames = findNamesInContainerStartingWith(containerId, newName);
+					int newCopy = generateUniqueCopyNumber(copiesNames, tempName);
 					newName = tempName + COPY_TOKEN + newCopy;
 				}
 
@@ -408,11 +408,11 @@ public abstract class AbstractLibraryNavigationService<LIBRARY extends Library<N
 		return pasteToLibraryStrategy.pasteNodes(destinationId, targetId);
 	}
 
-	public int generateUniqueCopyNumber(List<String> copiesNames) {
+	public int generateUniqueCopyNumber(List<String> copiesNames, String sourceName) {
 
 		int lastCopy = 0;
 		// we want to match one or more digits following the first instance of substring -Copie
-		Pattern pattern = Pattern.compile(COPY_TOKEN + "(\\d+)");
+		Pattern pattern = Pattern.compile(sourceName + COPY_TOKEN + "(\\d+)");
 
 		for (String copyName : copiesNames) {
 
