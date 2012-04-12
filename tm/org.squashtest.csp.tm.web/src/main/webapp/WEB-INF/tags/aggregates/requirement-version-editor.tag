@@ -36,6 +36,7 @@
 <%@ taglib prefix="input" tagdir="/WEB-INF/tags/input" %>
 
 <s:url var="requirementUrl" value="/requirement-versions/${ requirementVersion.id }" />
+<s:url var="pageUrl" value="/requirement-versions/" />
 <s:url var="getVerifyingTestCaseUrl" value="/requirement-versions/${ requirementVersion.id }/verifying-test-cases/table" />
 
 <s:url var="verifyingTCManagerUrl" value="/requirement-versions/${ requirementVersion.id }/verifying-test-cases/manager" /> 
@@ -159,32 +160,37 @@ that page won't be editable if
 			<%-- raw reference and name because we need to get the name and only the name for modification, and then re-compose the title with the reference  --%>
 			<span id="requirement-raw-reference" style="display:none"><c:out value="${ requirementVersion.reference }" /></span>
 			<span id="requirement-raw-name" style="display:none"><c:out value="${ requirementVersion.name }" /></span>
+			<span id="requirement-id" style="display:none"><c:out value="${ requirementVersion.id }" /></span>
 		</h2>
 	</div>
 
 	<div class="unsnap"></div>	
 
 	<c:if test="${ editable }">
-		<pop:popup id="rename-requirement-dialog" titleKey="dialog.rename-requirement.title" isContextual="true" openedBy="rename-requirement-button">
+		<comp:popup id="rename-requirement-dialog" titleKey="dialog.rename-requirement.title" 
+			isContextual="true" openedBy="rename-requirement-button">
 			<jsp:attribute name="buttons">
-				"<f:message key='dialog.rename-requirement.title' />": function() {
-					$.post("${ requirementUrl }", { newName: $( "#rename-requirement-input" ).val() }, renameRequirementSuccess, "json");
+				<f:message var="label" key="dialog.rename-requirement.title" />
+				'${ label }': function() {
+					var url = "${ pageUrl }" + $('#requirement-id').text();
+					<jq:ajaxcall  url="url" dataType="json" httpMethod="POST" useData="true" successHandler="renameRequirementSuccess">		
+						<jq:params-bindings newName="#rename-requirement-input" />
+					</jq:ajaxcall>					
 				},			
 				<pop:cancel-button />
 			</jsp:attribute>
-			<jsp:attribute name="body">
+			<jsp:body>
 				<script type="text/javascript">
 				$( "#rename-requirement-dialog" ).bind( "dialogopen", function(event, ui) {
 					var name = $('#requirement-raw-name').text();
 					$("#rename-requirement-input").val(name);
-					
 				});
 				</script>
 				<label><f:message key="dialog.rename.label" /></label>
-				<input type="text" id="rename-requirement-input" /><br/>
+				<input type="text" id="rename-requirement-input" maxlength="255" /><br/>
 				<comp:error-message forField="name"/>
-			</jsp:attribute>
-		</pop:popup>
+			</jsp:body>
+		</comp:popup>
 	</c:if>
 </div>
 
