@@ -23,6 +23,7 @@ package org.squashtest.csp.tm.internal.repository.hibernate;
 import java.math.BigInteger;
 import java.util.ArrayList;
 import java.util.Collections;
+import java.util.Comparator;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -46,6 +47,7 @@ import org.squashtest.csp.tm.domain.requirement.RequirementLibraryNode;
 import org.squashtest.csp.tm.domain.requirement.RequirementSearchCriteria;
 import org.squashtest.csp.tm.domain.requirement.RequirementVersion;
 import org.squashtest.csp.tm.domain.requirement.VerificationCriterion;
+import org.squashtest.csp.tm.domain.testcase.TestCase;
 import org.squashtest.csp.tm.internal.repository.RequirementDao;
 
 @Repository
@@ -173,21 +175,15 @@ public class HibernateRequirementDao extends HibernateEntityDao<Requirement> imp
 	@SuppressWarnings({ "unchecked", "rawtypes" })
 	@Override
 	public List<RequirementLibraryNode> findAllBySearchCriteriaOrderByProject(RequirementSearchCriteria searchCriteria) {
-		List<RequirementLibraryNode> resultlist = new ArrayList<RequirementLibraryNode>();
+		List<RequirementLibraryNode> resultList = findAllBySearchCriteria(searchCriteria);
+		Collections.sort(resultList, new Comparator<RequirementLibraryNode>() {
 
-		DetachedCriteria crit = createRequirementCriteria(searchCriteria);
-		crit.createAlias("project", "p").addOrder(Order.asc("p.name"));
-		crit.addOrder(Order.asc("res.name"));
-
-		resultlist.addAll(crit.getExecutableCriteria(currentSession()).list());
-		if (searchCriteria.libeleIsOnlyCriteria()) {
-			DetachedCriteria critfolder = createRequirementFolderCriteria(searchCriteria);
-			critfolder.createAlias("project", "p").addOrder(Order.asc("p.name"));
-			critfolder.addOrder(Order.asc("res.name"));
-
-			resultlist.addAll(critfolder.getExecutableCriteria(currentSession()).list());
-		}
-		return resultlist;
+			@Override
+			public int compare(RequirementLibraryNode req1, RequirementLibraryNode req2) {
+				return req1.getProject().getName().compareTo(req2.getProject().getName());
+			}
+		});
+		return resultList;
 	}
 
 	@Override

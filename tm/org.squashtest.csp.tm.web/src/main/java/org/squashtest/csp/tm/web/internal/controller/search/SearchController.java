@@ -21,6 +21,8 @@
 package org.squashtest.csp.tm.web.internal.controller.search;
 
 import java.util.ArrayList;
+import java.util.Collections;
+import java.util.Comparator;
 import java.util.List;
 
 import org.slf4j.Logger;
@@ -48,6 +50,8 @@ public class SearchController {
 	private static final String RESULT_LIST = "resultList";
 
 	private static final String WORKSPACE = "workspace";
+	
+	private static final String PROJECT_LIST = "projectList";
 
 	private static final String ICON = "icon";
 
@@ -208,7 +212,6 @@ public class SearchController {
 
 		RequirementSearchCriteria criteria = new RequirementSearchCriteriaAdapter(params, criticalitiesSelection);
 		List<TestCase> resultList = searchService.findTestCaseByRequirement(criteria, isProjectOrdered);
-
 		ModelAndView mav;
 		if (isProjectOrdered) {
 			mav = new ModelAndView("fragment/generics/search-result-display-ordered-by-requirement");
