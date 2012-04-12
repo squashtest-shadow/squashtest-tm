@@ -146,32 +146,22 @@
 			data['order'] = order;
 			url = '${searchReqUrl}';
 		</c:when>
-		<c:otherwise>
-			if (document.getElementById("linkable-test-cases-tree") != null){
-				data['name'] = rename;
-				data['order'] = order;
-				data['importance'] = getImportanceParams();
-				url = '${searchTCUrl}';
-			}
-			else{
-				data['name'] = rename;
-				data['order'] = order;
-				data['importance'] = getImportanceParams();
-				url = '${searchUrl}';
-			}
-		</c:otherwise>
-		</c:choose>
-		
-		<c:if test="${ (workspace eq 'requirement' && linkable eq 'test-case') }" >
+		<c:when test="${ (workspace eq 'test-case' || linkable eq 'test-case') }">
 			data['name'] = rename;
 			data['order'] = order;
 			data['importance'] = getImportanceParams();
 			url = '${searchTCUrl}';
-		</c:if>
+			
+			<%-- the following is just more wtf on the pile of wtf, I don't care anymore --%>
+			if (data['importance']!=null&&data['importance'].length==0) delete data['importance'];
+		</c:when>
+		<c:when test="${ workspace eq 'campaign' && empty linkable}">
+				data['name'] = rename;
+				data['order'] = order;
+				url = '${searchUrl}';
+		</c:when>
+		</c:choose>
 		
-		<%-- the following is just more wtf on the pile of wtf, I don't care anymore --%>
-		if (data['importance']!=null&&data['importance'].length==0) delete data['importance'];
-
 		<%-- load with data issues a POST --%>
 		$.get(url, data, function(data) {
 			$("#search-result-pane").html(data);
