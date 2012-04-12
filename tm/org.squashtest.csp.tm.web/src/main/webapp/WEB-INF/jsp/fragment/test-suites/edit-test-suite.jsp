@@ -39,7 +39,7 @@
 <comp:datepicker-manager locale="${squashlocale}" />
 
 <jq:execution-status-factory />
-
+<c:url var="workspaceUrl" value="/campaign-workspace/#" />
 <c:url var="ckeConfigUrl" value="/styles/ckeditor/ckeditor-config.js" />
 
 <s:url var="testSuiteUrl" value="/test-suites/{testSuiteId}">
@@ -120,12 +120,12 @@
 
 <c:url var="testCaseDetailsBaseUrl"
 	value="/test-case-libraries/1/test-cases" />
-	
-<s:url var="simulateDeletionUrl"
-	value="/campaign-browser/delete-iterations/simulate" />
-	
+
 <s:url var="confirmDeletionUrl"
-	value="/campaign-browser/delete-iterations/confirm" />
+	value="/iterations/{iterationId}/test-suites/delete">
+	<s:param name="iterationId" value="${testSuite.iteration.id}" />
+</s:url>
+
 
 <%-- ----------------------------------- Authorization ----------------------------------------------%>
 <c:set var="editable" value="${ false }" />
@@ -217,11 +217,12 @@
 	}
 	/* deletion failure handler */
 	function deleteTestSuiteFailure(xhr){
-		alert(xhr.statusText);		
+		oneShotDialog("<f:message key='popup.title.error' />", xhr.statusText);
 	}
 </script>
 
-<div class="ui-widget-header ui-state-default ui-corner-all fragment-header">
+<div
+	class="ui-widget-header ui-state-default ui-corner-all fragment-header">
 	<div style="float: left; height: 100%;">
 		<h2>
 			<span><f:message key="test-suite.header.title" />&nbsp;:&nbsp;</span><a
@@ -426,13 +427,28 @@
 
 	<%-- ---------------------deletion popup------------------------------ --%>
 	<c:if test="${ editable }">
-
-		<comp:delete-contextual-node-dialog
-			simulationUrl="${simulateDeletionUrl}"
-			confirmationUrl="${confirmDeletionUrl}" itemId="${testSuite.id}"
-			successCallback="deleteTestSuiteSuccess"
-			openedBy="delete-test-suite-button"
-			titleKey="dialog.delete-iteration.title" />
+		<script>
+		var testSuiteId = ${testSuite.id};
+		$(function(){
+			$('#delete-test-suite-button').click(function(){
+				oneShotConfirm("<f:message key='dialog.delete-test-suite.title' />", 
+						"<f:message key='dialog.delete-test-suite.message' />",
+						"<f:message key='dialog.button.confirm.label' />",  
+						"<f:message key='dialog.button.cancel.label' />",
+						'500px').done(function(){confirmTestSuiteDeletion().done(deleteTestSuiteSuccess).fail(deleteTestSuiteFailure)});
+			});
+		});
+		function confirmTestSuiteDeletion(){
+			return $.ajax({
+				'url' : '${confirmDeletionUrl}',
+				type : 'POST',
+				data : {"ids[]":[testSuiteId]},
+				dataType : 'json'
+			});
+		}
+		
+		</script>
+	
 
 	</c:if>
 
