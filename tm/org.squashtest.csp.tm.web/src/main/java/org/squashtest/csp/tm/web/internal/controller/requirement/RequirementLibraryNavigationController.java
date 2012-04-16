@@ -203,12 +203,13 @@ public class RequirementLibraryNavigationController extends
 			// it seems JasperReports doesn't like '\n' and the likes so we'll HTML-encode that first.
 			// that solution is quite weak though.
 			for (ExportRequirementData data : dataSource) {
-				char replacer = ' ';
+//				char replacer = ' ';
 				Source htmlSource = new Source(data.getDescription());
 				Segment htmlSegment = new Segment(htmlSource, 0, data.getDescription().length());
 				Renderer htmlRend = new Renderer(htmlSegment);
-				String encoded = htmlRend.toString().replace('\n', replacer).replace('\t', replacer)
-						.replace('\r', replacer);
+				String encoded = htmlRend.toString();
+//				String encoded = htmlRend.replace('\n', replacer).replace('\t', replacer)
+//				.replace('\r', replacer);
 				data.setDescription(encoded);
 			}
 
