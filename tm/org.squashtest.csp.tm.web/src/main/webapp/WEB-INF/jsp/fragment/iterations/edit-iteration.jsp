@@ -395,14 +395,14 @@
 <%-- ----------------------------------- Test Suite Management -------------------------------------------------- --%>
 
 <comp:test-suite-managment suiteList="${iteration.testSuites}" popupOpener="manage-test-suites-button"
-	popupId="manage-test-suites-popup" menuId="manage-test-suites-menu" testSuitesUrl="${testSuitesUrl}" datatableId="test-plans-table"/>
+	popupId="manage-test-suites-popup" menuId="manage-test-suites-menu" testSuitesUrl="${testSuitesUrl}" datatableId="test-plans-table" emptySelectionMessageId="test-plan-empty-sel-msg" />
 
-
-
+<div id="test-plan-empty-sel-msg" class="not-visible" title="<f:message key='iteration.test-plan.action.title' />">
+	<div><f:message key="iteration.test-plan.action.empty-selection.message" /></div>
+</div>
+	
 <%------------------------------ Attachments bloc ------------------------------------------- --%> 
 <comp:attachment-bloc entity="${iteration}" workspaceName="campaign" editable="${ editable }" />
-
-
  
 <%-- ---------------------deletion popup------------------------------ --%>
 <c:if test="${ editable }">
@@ -413,9 +413,6 @@
 </c:if>
 
 <%--------------------------- Assign User popup -------------------------------------%>
-
-
-
 <comp:popup id="batch-assign-test-case" titleKey="dialog.assign-test-case.title" 	
 	isContextual="true" openedBy="assign-test-case-button" closeOnSuccess="false">
 	
