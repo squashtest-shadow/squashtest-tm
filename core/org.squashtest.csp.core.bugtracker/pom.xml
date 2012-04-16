@@ -189,7 +189,7 @@
 						</goals>
 						<configuration>
 							<inputFiles>
-								<inputFile>mantisconnect.wsdl</inputFile>
+								<inputFile>mantisconnect-1.2.9.wsdl</inputFile>
 							</inputFiles>
 							<sourceDirectory>${basedir}/src/main/resources</sourceDirectory>
 							<packageSpace>org.squashtest.csp.core.bugtracker.mantis.binding</packageSpace>
