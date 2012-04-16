@@ -71,7 +71,7 @@
 						message += '<li> <f:message key="squashtm.action.exception.testsuite.testplan.terminated.or.no.steps" /></li>';
 					}
 					message += '</ul></p>'
-					oneShotDialog('<f:message key="popup.title.error" />', message);
+						$.squash.openMessage('<f:message key="popup.title.error" />', message);
 				}
 			}catch(e){}
 		}
@@ -228,7 +228,7 @@
 							message += '<li> <f:message key="squashtm.action.exception.testsuite.testplan.terminated.or.no.steps" /></li>';
 						}
 						message += '</ul></p>'
-						oneShotDialog('<f:message key="popup.title.error" />', message);
+							$.squash.openMessage('<f:message key="popup.title.error" />', message);
 					}
 					}catch(e){}
 				};

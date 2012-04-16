@@ -235,13 +235,13 @@
 
 	function testComplete(){
 		if (!isSuite) {
-			oneShotDialog("<f:message key='popup.title.info' />",  "${ completedMessage }" ).done(function() {
+			$.squash.openMessage("<f:message key='popup.title.info' />",  "${ completedMessage }" ).done(function() {
 				window.close();
 			});
 		} else if (hasNextTestCase) {
 			$('#execute-next-test-case').click();
 		} else { // suite without next
-			oneShotDialog("<f:message key='popup.title.info' />","${ endTestSuiteMessage }").done(function() {
+			$.squash.openMessage("<f:message key='popup.title.info' />","${ endTestSuiteMessage }").done(function() {
 				window.close();
 			});
 		}					

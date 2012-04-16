@@ -167,7 +167,7 @@
 					requestProjectDeletion().done(deleteProjectSuccess).fail(deleteProjectError);});
 		</c:if>
 		<c:if test="${!adminproject.deletable}">	
-			oneShotDialog("<f:message key='popup.title.info'/>","<f:message key='project.delete.cannot.exception'/>");	
+			$.squash.openMessage("<f:message key='popup.title.info'/>","<f:message key='project.delete.cannot.exception'/>");	
 		</c:if>
 	}
 	
@@ -186,7 +186,7 @@
 		
 		if (json != null && json.actionValidationError != null){
 			if (json.actionValidationError.exception === "CannotDeleteProjectException"){						
-				oneShotDialog("<f:message key='popup.title.error'/>","<f:message key='project.delete.cannot.exception'/>");		
+				$.squash.openMessage("<f:message key='popup.title.error'/>","<f:message key='project.delete.cannot.exception'/>");		
 			}
 		}
 	}

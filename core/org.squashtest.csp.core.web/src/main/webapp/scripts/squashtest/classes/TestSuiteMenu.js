@@ -85,7 +85,7 @@ function TestSuiteMenu(settings){
 		}	
 	};
 	
-	var getItemDomId =function(elt){
+	var getItemDomId = function(elt){
 		if (elt.firstElementChild!==undefined){
 			return elt.firstElementChild.getAttribute('data-suite-id');		
 		}else{
@@ -147,12 +147,10 @@ function TestSuiteMenu(settings){
 			this.menu.menuExists=false;
 		}
 	}, this);
-
 	
 	var getDatatableSelected = $.proxy(function(){
 		var table = $(this.datatableSelector).dataTable( {'bRetrieve' : true});
 		return getIdsOfSelectedTableRows(table, getTestPlansTableRowId);
-	
 	}, this);
 	
 	var displayAddSuiteError = $.proxy(function(xhr, text){
@@ -202,7 +200,6 @@ function TestSuiteMenu(settings){
 		var self=this;
 		var name = this.menu.getContainer().find('.suite-manager-menu-input').val();
 		this.model.postNew(name).error(displayAddSuiteError).success(function(json) {
-			console.log(json);
 			bindSuiteItemsGeneral(json.id);
 		});			
 	}, this);
@@ -221,7 +218,12 @@ function TestSuiteMenu(settings){
 	var bindSuiteItems = $.proxy(function(){
 		this.menu.chooseItem = function(item){
 			var toSendId = getSpanDomId(item);
-			bindSuiteItemsGeneral(toSendId);
+			
+			if(getDatatableSelected().length ==  0) {
+				$(settings.emptySelectionMessageSelector).openMessage();
+			} else {
+				bindSuiteItemsGeneral(toSendId);				
+			}
 		}
 	}, this);
 	
