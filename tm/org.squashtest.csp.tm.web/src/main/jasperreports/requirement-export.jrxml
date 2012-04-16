@@ -23,7 +23,7 @@
 -->
 <jasperReport xmlns="http://jasperreports.sourceforge.net/jasperreports" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://jasperreports.sourceforge.net/jasperreports http://jasperreports.sourceforge.net/xsd/jasperreport.xsd" name="requirement-export" pageWidth="1020" pageHeight="595" orientation="Landscape" columnWidth="1020" leftMargin="0" rightMargin="0" topMargin="0" bottomMargin="0" resourceBundle="/WEB-INF/messages/tm/messages" whenResourceMissingType="Key">
 	<property name="ireport.zoom" value="1.0"/>
-	<property name="ireport.x" value="218"/>
+	<property name="ireport.x" value="189"/>
 	<property name="ireport.y" value="0"/>
 	<property name="net.sf.jasperreports.text.truncate.at.char" value="Boolean.FALSE"/>
 	<style name="table">
@@ -121,12 +121,16 @@
 	<detail>
 		<band height="20" splitType="Stretch">
 			<textField>
-				<reportElement x="0" y="0" width="170" height="20"/>
+				<reportElement x="0" y="0" width="170" height="20">
+					<property name="net.sf.jasperreports.print.keep.full.text" value="true"/>
+				</reportElement>
 				<textElement/>
 				<textFieldExpression class="java.lang.String"><![CDATA[$F{project}]]></textFieldExpression>
 			</textField>
 			<textField>
-				<reportElement x="170" y="0" width="170" height="20"/>
+				<reportElement x="170" y="0" width="170" height="20">
+					<property name="net.sf.jasperreports.print.keep.full.text" value="true"/>
+				</reportElement>
 				<textElement/>
 				<textFieldExpression class="java.lang.String"><![CDATA[$F{reference}]]></textFieldExpression>
 			</textField>
@@ -146,15 +150,17 @@
 ($F{criticality}.toString() == "UNDEFINED") ? $R{requirement.criticality.UNDEFINED} :
 $R{requirement.criticality.UNKNOWN}]]></textFieldExpression>
 			</textField>
-			<textField pattern="">
-				<reportElement x="680" y="0" width="170" height="20">
+			<textField>
+				<reportElement mode="Opaque" x="680" y="0" width="170" height="20">
 					<property name="net.sf.jasperreports.print.keep.full.text" value="true"/>
 				</reportElement>
-				<textElement/>
+				<textElement markup="none"/>
 				<textFieldExpression class="java.lang.String"><![CDATA[$F{description}]]></textFieldExpression>
 			</textField>
 			<textField>
-				<reportElement x="850" y="0" width="170" height="20"/>
+				<reportElement x="850" y="0" width="170" height="20">
+					<property name="net.sf.jasperreports.print.keep.full.text" value="true"/>
+				</reportElement>
 				<textElement/>
 				<textFieldExpression class="java.lang.String"><![CDATA[$F{folderName}]]></textFieldExpression>
 			</textField>
