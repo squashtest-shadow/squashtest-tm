@@ -18,22 +18,22 @@
  *     You should have received a copy of the GNU Lesser General Public License
  *     along with this software.  If not, see <http://www.gnu.org/licenses/>.
  */
-/**
- * MessageDialog widget.
- * A message dialog is a preconfigured modal dialog which shows a message and only has a close button.
- * 
- * If the div used to generate the dialog contains an <input type="button" /> element, its value is used as the massage dialog's ok button.
- * 
- * @author Gregory Fouquet
- */
 (function($) {
+	/**
+	 * MessageDialog widget.
+	 * A message dialog is a preconfigured modal dialog which shows a message and only has a close button.
+	 * 
+	 * If the div used to generate the dialog contains an <input type="button" /> element, its value is used as the massage dialog's ok button.
+	 * 
+	 * @author Gregory Fouquet
+	 */
 	$.widget( "squash.messageDialog", $.ui.dialog, { 
 		options : {
 			autoOpen : false,
 			resizable : false,
 			modal : true,
 			width : 600,
-			position : [ 'center', 100 ],
+			// position : [ 'center', 100 ],
 			closeOnEscape : true,
 			closeOnEnter : true,
 			buttons : [{ 
@@ -61,8 +61,8 @@
 					}
 				});
 			
-			
-			
+			self.element.removeClass("not-visible");
+
 		},
 
 		_createButtons : function(buttons) {
@@ -103,6 +103,66 @@
 					});
 				}
 			}
+			// we need this otherwise events won't bubble
+			$.Widget.prototype._trigger.apply(this, arguments);
+		},
+		
+	    destroy: function() {
+	    	// root dialog widget removed the title of the original elemnt. we put it back.
+	    	if (this.originalTitle != "") {
+	    		this.element.attr("title", this.originalTitle);
+	    	}
+	    	
+	        // In jQuery UI 1.8, you must invoke the destroy method from the
+			// base widget
+	        $.Widget.prototype.destroy.call( this );
+	    }		
+	});
+	
+	/**
+	 * Opens a messageDialog created on the fly and discards it afterwards. 
+	 * eg : $('#dialogDef").openMessage().done(function() { console.log('closed') })
+	 * @return a promise
+	 */
+	$.fn.openMessage = function() {
+		var self = this;
+		var deferred = $.Deferred();
+		
+		var close = function() {
+			self.messageDialog('destroy');
+			deferred.resolve();
+		}
+		
+		self.messageDialog()
+		.bind('messagedialogclose', close )
+		.messageDialog('open');		
+		
+		return deferred.promise();
+	};
+	/**
+	 * Adds functions in the $.squash namespace
+	 */
+	$.extend($.squash, {
+		/**
+		 * Creates a modal message dialog out of the blue using the given title and message. Created DOM are discarded when dialog is closed.
+		 * @param title text title of message dialog
+		 * @param html chunk used as the body of the dialog.
+		 * @return a promise
+		 */
+		openMessage: function(title, htmlMessage) {		  
+			var dialog = $('<div></div>');
+			dialog.attr('title', title);
+			dialog.append(htmlMessage);
+			$(document).append(dialog);
+			
+			var discardDialog = function() {
+				dialog.remove();
+			}
+			
+			dialog.bind('destroy', discardDialog);
+			
+			return dialog.openMessage();
 		}
 	});
+
 }(jQuery));	

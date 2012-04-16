@@ -30,6 +30,7 @@
 <%@ attribute name="suiteList" type="java.lang.Object" required="true" description="the list of the suites that exist already" %>
 <%@ attribute name="testSuitesUrl" required="true" description="url representing the current iteration" %>
 <%@ attribute name="datatableId" required="true" description="the id of the test plan datatable"%>
+<%@ attribute name="emptySelectionMessageId" required="true" description="the id of the div representing the message shown when nothing is selected"%>
 
 <%@ taglib prefix="pop" 	tagdir="/WEB-INF/tags/popup" %>
 <%@ taglib prefix="f" 		uri="http://java.sun.com/jsp/jstl/fmt"%>
@@ -38,30 +39,12 @@
 <%@ taglib prefix="comp" 	tagdir="/WEB-INF/tags/component" %>	
 <%@ taglib prefix="fn"		uri="http://java.sun.com/jsp/jstl/functions" %>
 
-
-<%--
-<c:set var="modelScriptUrl"   value="http://localhost/scripts/TestSuiteModel.js" />
-<c:set var="managerScriptUrl" value="http://localhost/scripts/TestSuiteManager.js" />
-<c:set var="menuScriptUrl" value="http://localhost/scripts/TestSuiteMenu.js" />
- --%>
-
-
 <s:url var="managerScriptUrl" value="/scripts/squashtest/classes/TestSuiteManager.js"  />  
 <s:url var="modelScriptUrl" value="/scripts/squashtest/classes/TestSuiteModel.js"  /> 
 <s:url var="menuScriptUrl" value="/scripts/squashtest/classes/TestSuiteMenu.js" /> 
-
- 
-<%-- 
-<link rel="stylesheet" type="text/css" href="http://localhost/css/suites.css" />
- --%>
-
- 
 <s:url var="baseSuiteUrl" value="/test-suites" /> 
  
- 
- 
  <%-- ====================== POPUP STRUCTURE DEFINITION ========================= --%>
- 
  
 <pop:popup id="${popupId}" isContextual="true"  openedBy="manage-test-suites-button" closeOnSuccess="false" titleKey="dialog.testsuites.title">
 
@@ -107,9 +90,7 @@
 	</jsp:attribute>
 </pop:popup>
 
-
-
- <%-- ====================== /POPUP STRUCTURE DEFINITION  ========================= --%>
+<%-- ====================== /POPUP STRUCTURE DEFINITION  ========================= --%>
 
 <f:message var="defaultMessage" key="dialog.testsuites.defaultmessage" />
 
@@ -189,7 +170,8 @@
 				instanceSelector : "#${menuId}",
 				model : squashtm.testSuiteManagement.testSuiteModel,
 				datatableSelector : "#${datatableId}",
-				isContextual : true
+				isContextual : true,
+				emptySelectionMessageSelector: "#${ emptySelectionMessageId }"
 			};
 			
 			squashtm.testSuiteManagement.testSuiteMenu = new TestSuiteMenu(menuSettings);

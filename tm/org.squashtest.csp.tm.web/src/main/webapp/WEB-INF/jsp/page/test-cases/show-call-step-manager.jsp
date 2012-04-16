@@ -96,7 +96,7 @@
 				
 				if (json != null && json.actionValidationError != null){
 					if (json.actionValidationError.exception === "CyclicStepCallException"){						
-						oneShotDialog('<f:message key="popup.title.error" />', "${cyclicCallError}");
+						$.squash.openMessage('<f:message key="popup.title.error" />', "${cyclicCallError}");
 					}
 				}
 			}

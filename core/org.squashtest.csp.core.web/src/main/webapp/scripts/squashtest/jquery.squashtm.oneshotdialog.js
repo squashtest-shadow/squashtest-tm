@@ -19,44 +19,6 @@
  *     along with this software.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-
-function oneShotDialog(dialogTitle, domMessage){
-				
-	var oneShotPopup = $("<div/>");
-	$(document).append(oneShotPopup);
-	
-	oneShotPopup.append(domMessage);
-	oneShotPopup.keypress(function(){
-		if (evt.which=='13'){
-			$('button', oneShotPopup).trigger('click');
-		}
-	});
-
-	this.defer = $.Deferred();
-	
-	oneShotPopup.dialog({ 
-		width : '300px',
-		resizable : false,
-		title : dialogTitle,
-		buttons : [{ 
-			'text': 'Ok',
-			'click' : function(){ 
-				var jqDialog = $(this);
-				jqDialog.dialog('close'); 
-				jqDialog.dialog('destroy');
-				oneShotPopup.remove();
-				defer.resolve();
-			}
-		}]
-			
-	});
-	
-	oneShotPopup.dialog('open');
-	
-	return this.defer.promise();
-
-}
-
 function oneShotConfirm(dialogTitle, domMessage, okText, koText, widthParam){
 	if(widthParam == null){
 		widthParam = '300px';

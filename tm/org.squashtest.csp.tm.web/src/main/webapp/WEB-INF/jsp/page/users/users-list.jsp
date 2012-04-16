@@ -131,7 +131,7 @@
 					
 					if (json != null && json.actionValidationError != null){
 						if (json.actionValidationError.exception === "LoginAlreadyExistsException"){						
-							oneShotDialog('<f:message key="popup.title.error" />', '<f:message key="squashtm.action.exception.login.exists.label" />');					
+							$.squash.openMessage('<f:message key="popup.title.error" />', '<f:message key="squashtm.action.exception.login.exists.label" />');					
 						}
 					}
 				}

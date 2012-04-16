@@ -163,7 +163,7 @@
 		<c:choose>
 			<%-- if we were in a sub page context. We need to navigate back to the workspace. --%>
 			<c:when test="${param.isInfoPage}" >	
-			oneShotDialog('<f:message key="test-suite.duplicate.success.title" />', '<f:message key="test-suite.duplicate.success.message" />');
+			$.squash.openMessage('<f:message key="test-suite.duplicate.success.title" />', '<f:message key="test-suite.duplicate.success.message" />');
 			</c:when>
 			<c:otherwise>
 				var destination = new SquashEventObject(${testSuite.iteration.id}, "iterations");

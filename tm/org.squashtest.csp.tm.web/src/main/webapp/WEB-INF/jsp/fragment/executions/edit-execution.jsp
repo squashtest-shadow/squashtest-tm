@@ -142,7 +142,7 @@
 					message += json.actionValidationError.message
 				}
 				message += '</ul></p>'
-				oneShotDialog('<f:message key="popup.title.error" />', message);
+				$.squash.openMessage('<f:message key="popup.title.error" />', message);
 			}
 		};
 		
