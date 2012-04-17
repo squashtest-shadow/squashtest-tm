@@ -30,8 +30,9 @@
 		<sql>
 			<![CDATA[
 				insert into CORE_CONFIG (STR_KEY, VALUE) select 'LOGIN_MESSAGE', VALUE from CORE_CONFIG where STR_KEY = 'WELCOME_MESSAGE';
-				update CORE_CONFIG set VALUE = '1.1.1' where STR_KEY = 'squashtest.tm.database.version';]]> 
-				]]> 
+				update CORE_CONFIG set VALUE = '1.1.1' where STR_KEY = 'squashtest.tm.database.version';
+			]]> 
+			
 		</sql>
 	</changeSet>
 </databaseChangeLog>
