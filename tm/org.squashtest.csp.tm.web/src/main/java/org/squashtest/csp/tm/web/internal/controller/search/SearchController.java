@@ -21,8 +21,6 @@
 package org.squashtest.csp.tm.web.internal.controller.search;
 
 import java.util.ArrayList;
-import java.util.Collections;
-import java.util.Comparator;
 import java.util.List;
 
 import org.slf4j.Logger;
@@ -51,7 +49,7 @@ public class SearchController {
 
 	private static final String WORKSPACE = "workspace";
 	
-	private static final String PROJECT_LIST = "projectList";
+//	private static final String PROJECT_LIST = "projectList";
 
 	private static final String ICON = "icon";
 

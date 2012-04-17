@@ -4,7 +4,7 @@
 	<parent>
 		<artifactId>squashtest-csp-core</artifactId>
 		<groupId>org.squashtest.csp</groupId>
-		<version>1.2.0.IT31-SNAPSHOT</version>
+		<version>1.2.0.IT32-SNAPSHOT</version>
 	</parent>
 	<artifactId>org.squashtest.csp.core.bugtracker</artifactId>
 	<name>Squashtest CSP - Core module - Bug Tracker connection component</name>

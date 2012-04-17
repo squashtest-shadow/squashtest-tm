@@ -4,11 +4,11 @@
 	<parent>
 		<artifactId>squashtest-csp-core</artifactId>
 		<groupId>org.squashtest.csp</groupId>
-		<version>1.2.0.IT31-SNAPSHOT</version>
+		<version>1.2.0.IT32-SNAPSHOT</version>
 	</parent>
 	<groupId>org.squashtest.csp</groupId>
 	<artifactId>org.squashtest.csp.core.log4j</artifactId>
-	<version>1.2.0.IT31-SNAPSHOT</version>
+	<version>1.2.0.IT32-SNAPSHOT</version>
 	<name>org.squashtest.csp.core.log4j</name>
 	<properties>
 		<bundle.name>${project.artifactId}</bundle.name>

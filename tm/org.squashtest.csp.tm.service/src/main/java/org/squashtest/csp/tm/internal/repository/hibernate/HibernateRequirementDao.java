@@ -47,7 +47,6 @@ import org.squashtest.csp.tm.domain.requirement.RequirementLibraryNode;
 import org.squashtest.csp.tm.domain.requirement.RequirementSearchCriteria;
 import org.squashtest.csp.tm.domain.requirement.RequirementVersion;
 import org.squashtest.csp.tm.domain.requirement.VerificationCriterion;
-import org.squashtest.csp.tm.domain.testcase.TestCase;
 import org.squashtest.csp.tm.internal.repository.RequirementDao;
 
 @Repository
