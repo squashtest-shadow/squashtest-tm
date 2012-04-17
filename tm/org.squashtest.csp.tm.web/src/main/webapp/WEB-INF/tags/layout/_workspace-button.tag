@@ -28,5 +28,5 @@
 <c:url var="workspaceUrl" value="/${ resourceName }-workspace/" />
 <fmt:message var="requirementsTitle" key="workspace.${ resourceName }.button.label" />
 <a id="${ resourceName }-link" class="nav_btn" href="${ workspaceUrl }">
-	<img src="${ pageContext.servletContext.contextPath }/images/${ imageName }" title="${ requirementsTitle }" border="0"/>
+	<img src="${ pageContext.servletContext.contextPath }/images/${ imageName }" alt="${ requirementsTitle }" title="${ requirementsTitle }" border="0"/>
 </a>

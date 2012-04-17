@@ -44,7 +44,9 @@ label{
 label:after {
 	content: " : ";
 }
-
+label.afterDisabled:after {
+	content: "";	
+}
 
 div#navigation {
 	position: fixed;
@@ -883,8 +885,11 @@ div#user-account-password-panel > div > * {
 	clear:both;
 }
 
-.drag-handle {
-	cursor: n-resize;
+tr td.drag-handle {
+	cursor: crosshair;
+}
+tr.nodrop td.drag-handle {
+	cursor : n-resize;
 }
 
 .requirement-direct-verification{

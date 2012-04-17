@@ -124,7 +124,7 @@ var myDatePicker;
 		<c:choose>
 			<c:when test="${ (empty editable) or editable }">
 				<input type="checkbox" id="${datePickerId}-auto"
-					style="vertical-align: top; position: relative;" /> auto
+					style="vertical-align: top; position: relative;" /><label for="${datePickerId}-auto" class="afterDisabled">auto</label>
 		</c:when>
 		</c:choose>
 

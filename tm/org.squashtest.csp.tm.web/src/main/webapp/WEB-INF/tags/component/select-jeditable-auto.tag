@@ -32,8 +32,7 @@
 <%-- <%@ taglib prefix="f" uri="http://java.sun.com/jsp/jstl/fmt" %> --%>
 
 <input type="checkbox" id="${associatedSelectJeditableId}-auto"
-	style="vertical-align: top; position: relative;" />
-auto
+	style="vertical-align: middle; position: relative;" /><label for="${associatedSelectJeditableId}-auto" class="afterDisabled">auto</label>
 
 <script type="text/javascript">
 	$(function() {

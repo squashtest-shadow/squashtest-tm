@@ -85,7 +85,7 @@ jQuery.tableDnD.makeDraggable = function(table) {
          	
 				var allRows = $(".ui-state-row-selected", table).add(this.parentNode);
 				allRows.addClass('nodrop');	
-				
+				document.body.style.cursor = "n-resize";
                 jQuery.tableDnD.dragObject = jQuery.tableDnD.adaptDragObject(allRows);
                 jQuery.tableDnD.currentTable = table;
 				
@@ -130,6 +130,7 @@ var tableDnDoldMouseUp = jQuery.tableDnD.mouseup;
 jQuery.tableDnD.mouseup = function(event){
 	if (jQuery.tableDnD.dragObject){
 		jQuery.tableDnD.dragObject.removeClass('nodrop');
+		document.body.style.cursor = "default";
 	}
 	tableDnDoldMouseUp.call(this,event);
 }

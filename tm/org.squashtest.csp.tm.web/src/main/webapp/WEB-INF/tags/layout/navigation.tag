@@ -98,6 +98,6 @@
 	</div>
 	
 	<div id="nav_logo">
-		<img src="${ pageContext.servletContext.contextPath }/images/logo_squash30.png" style="width:30px;"/>
+		<img src="${ pageContext.servletContext.contextPath }/images/logo_squash30.png" alt="logo_squash" style="width:30px;"/>
 	</div>
 </div>

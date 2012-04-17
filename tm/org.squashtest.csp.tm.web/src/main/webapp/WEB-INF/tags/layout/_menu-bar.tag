@@ -35,13 +35,6 @@
 <c:url var="projectUrl" value="/projects"/>
 <c:url var="userAccountUrl" value="/user-account" />
 
-
-<div>
-<a id="menu-account-link" href="${userAccountUrl}">
-<f:message key="workspace.menubar.account.label"/>&nbsp;(<c:out value="${sessionScope['SPRING_SECURITY_CONTEXT'].authentication.name}"/>)
-</a>
-</div>
-
 <div>
 	<input type="checkbox" id="menu-toggle-filter-ckbox"></input>
 	<a id="menu-project-filter-link" href="#" ></a> 
@@ -49,17 +42,20 @@
 <%--
 <div><a id="menu-settings-link" href="" ><f:message key="workspace.menubar.parameters.label"/></a></div>
  --%>
- 
- 
 <sec:authorize access="hasRole('ROLE_ADMIN')">
 <div><a id="menu-administration-link" href="${ administrationUrl }" ><f:message key="workspace.menubar.administration.label"/></a></div>
 </sec:authorize>
+
+<div>
+<a id="menu-account-link" href="${userAccountUrl}">
+<f:message key="workspace.menubar.account.label"/>&nbsp;(<c:out value="${sessionScope['SPRING_SECURITY_CONTEXT'].authentication.name}"/>)
+</a>
+</div>
 
 <sec:authorize access="isAuthenticated()">
 	<c:url var="logoutUrl" value="/logout" />
 </sec:authorize>
 <div><a id="menu-logout-link" href="${ logoutUrl }" ><f:message key="workspace.menubar.logout.label"/></a></div>
-
 
 
 <comp:settings-project-filter-popup divId="project-filter-popup" openedBy="menu-project-filter-link"/>

@@ -550,7 +550,7 @@ function decorateAttachmentButtons(buttons) {
 	buttons.button({
 		text : false,
 		icons : {
-			primary : "ui-icon-link"
+			primary : "ui-icon-notice"
 		}
 	});
 }
@@ -563,7 +563,7 @@ function decorateEmptyAttachmentButtons(buttons) {
 	buttons.button({
 		text : false,
 		icons : {
-			primary : "ui-icon-plus"
+			primary : "ui-icon-document"
 		}
 	});
 }
