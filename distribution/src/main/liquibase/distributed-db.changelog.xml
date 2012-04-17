@@ -35,4 +35,5 @@
 		<sqlFile path="distributed-db-data.sql" relativeToChangelogFile="true" endDelimiter=";"/>
 	</changeSet>
 	<include file="${project.basedir}/../database/src/main/liquibase/upgrade/upgrade.changelog-up-to-1.1.0.xml" />
+	<include file="${project.basedir}/../database/src/main/liquibase/upgrade/upgrade.changelog-up-to-1.1.1.xml" />
 </databaseChangeLog> 
