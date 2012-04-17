@@ -29,6 +29,6 @@
 
 	<include file="core.changelog-0.15.0.xml" relativeToChangelogFile="true" />	
 	<include file="core.changelog-0.20.0.xml" relativeToChangelogFile="true" />
-	<include file="core.changelog-1.1.1.RELEASE.xml" relativeToChangelogFile="true" />
+	<include file="core.changelog-1.1.1.xml" relativeToChangelogFile="true" />
 	
 </databaseChangeLog> 
