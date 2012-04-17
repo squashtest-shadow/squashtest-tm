@@ -57,9 +57,12 @@ public class ReportRequirementCoverageByTests extends Report {
 
 	private void initViewCatalog() {
 		ReportViewCatalog viewCatalog = new ReportViewCatalog();
-
+		// REMOVED XLS OPTION UNTIL THE BUG 680 IS FIXED
+		// ReportView view1 = new ReportView().setTitleKey("squashtest.report.view.title.listreqbyproject")
+		// .setCodeKey("squashtest.report.view.code.datatable").setFormats("xls", "ods", "csv", "pdf", "html")
+		// .setModel("requirementCoverage2");
 		ReportView view1 = new ReportView().setTitleKey("squashtest.report.view.title.listreqbyproject")
-				.setCodeKey("squashtest.report.view.code.datatable").setFormats("xls", "ods", "csv", "pdf", "html")
+				.setCodeKey("squashtest.report.view.code.datatable").setFormats("ods", "csv", "pdf", "html")
 				.setModel("requirementCoverage2");
 		ReportView view2 = new ReportView().setTitleKey("squashtest.report.view.title.requirementcoveragedashboard")
 				.setCodeKey("squashtest.report.view.code.dashboard").setFormats("pdf", "html")
