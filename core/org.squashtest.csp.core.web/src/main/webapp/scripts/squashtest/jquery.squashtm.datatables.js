@@ -66,11 +66,13 @@
 				.append(nPageTxt)
 				.append(nNext)
 				.append(nLast);
-				
-			initButton(nFirst, "ui-icon-seek-first");
-			initButton(nPrevious, "ui-icon-seek-prev");
-			initButton(nNext, "ui-icon-seek-next");
-			initButton(nLast, "ui-icon-seek-end");
+			
+			//utf8 code for caracter "◀" = U25C0 and for "▶" = U25B6
+			nFirst.text("◀◀");
+			nPrevious.text("◀");
+			nNext.text("▶");
+			nLast.text("▶▶");
+			
 				
 			nFirst.click(function () {
 				oSettings.oApi._fnPageChange(oSettings, "first");

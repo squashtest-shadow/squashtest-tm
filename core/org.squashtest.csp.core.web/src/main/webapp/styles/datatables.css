@@ -77,13 +77,21 @@ div.dataTables_info, div.dataTables_processing{
 div.dataTables_paginate{
 	float:right;
 	text-align:right;
-	font-size:0.8em;
+	font-size:10px;
 }
 
 
-.dataTables_paginate span.ui-button {
-	margin-left:0.05em;
-	margin-right:0.05em;
+.dataTables_paginate span {
+	margin-left:1px;
+	padding-left:1px;
+	margin-right:1px;
+	padding-right:1px;
+	cursor: default;
+	border: 1px solid transparent;
+}
+.dataTables_paginate span.paginate_button:HOVER{
+	border:1px solid black;
+	cursor:pointer;
 }
 
 
