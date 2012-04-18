@@ -30,7 +30,7 @@
 <%@ attribute name="columnDefs"  fragment="true" description="Columns definition, as inlined list of JSON" %>
 <%@ attribute name="dom" fragment="true" description="Optional cryptic string which defines table header and footer." %>
 <%@ attribute name="initialSort" fragment="true" required="false" description="If set, the data will be sorted at first call"%>
-
+<%@ attribute name="disableHighlightOnMouseOver" fragment="true" required="false" description="If set to true, the rows will NOT be highlighted on mouse over"%>
 
 <%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core" %>
 <%@ taglib prefix="f" uri="http://java.sun.com/jsp/jstl/fmt" %>
@@ -82,8 +82,9 @@
 			] 
 		})
 		.addClass("is-contextual");	
-		
-		bindHover(dataTable);
+		<c:if test="${ empty disableHighlightOnMouseOver }">
+			bindHover(dataTable);
+		</c:if>
 	});
 	
 	

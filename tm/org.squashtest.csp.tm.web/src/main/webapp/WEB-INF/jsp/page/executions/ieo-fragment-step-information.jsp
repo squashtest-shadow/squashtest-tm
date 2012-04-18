@@ -98,7 +98,7 @@
 			$("#execute-stop-button").button({
 				'text': false, 
 				'icons' : {
-					'primary' : 'execute-stop'
+					'primary' : 'ui-icon-power'
 				} 
 			}).click(function(){
 				parent.parent.window.close();

@@ -56,7 +56,7 @@
  	</jsp:attribute> 
 
 	<jsp:attribute name="additionalSetup">
-		width: 400,
+		width: 420,
 	</jsp:attribute> 	
  	
  	<jsp:attribute name="body"> 

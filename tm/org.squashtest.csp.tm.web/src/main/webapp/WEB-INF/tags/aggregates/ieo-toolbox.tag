@@ -95,7 +95,7 @@
 		$("#stop-execution").button({
 			'text': false, 
 			'icons' : {
-				'primary' : 'execute-stop'
+				'primary' : 'ui-icon-power'
 			} 
 		});
 

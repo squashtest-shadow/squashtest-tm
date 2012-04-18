@@ -634,6 +634,7 @@
 		<comp:decorate-ajax-table url="${ getStepsUrl }" tableId="test-steps-table" paginate="true">		
 			<jsp:attribute name="drawCallback">stepsTableDrawCallback</jsp:attribute>
 			<jsp:attribute name="rowCallback">stepsTableRowCallback</jsp:attribute>
+			<jsp:attribute name="disableHighlightOnMouseOver">true</jsp:attribute>
 			<jsp:attribute name="columnDefs">
 
 				<dt:column-definition targets="0, 2, 6" visible="false" sortable="false" />
