@@ -67,7 +67,7 @@
 				.append(nNext)
 				.append(nLast);
 			
-			//utf8 code for caracter "◀" = U25C0 and for "▶" = U25B6
+			//utf8 code for character "◀" = U25C0 and for "▶" = U25B6
 			nFirst.text("◀◀");
 			nPrevious.text("◀");
 			nNext.text("▶");
@@ -597,3 +597,4 @@ function addAttachmentButtonToRowDoV(row, attCount, buttonTemplateId, buttonTemp
 		cell.html($('#' + buttonTemplateEmptyId).clone()).find('a').attr('id', buttonTemplateEmptyId + ':' + entityId);
 	}
 }
+

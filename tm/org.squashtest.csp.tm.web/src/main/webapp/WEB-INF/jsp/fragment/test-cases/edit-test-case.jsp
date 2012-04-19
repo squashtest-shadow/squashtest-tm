@@ -38,7 +38,6 @@
 <%-- used for copy/paste of steps --%>
 <script type="text/javascript" src="${ pageContext.servletContext.contextPath }/scripts/jquery/jquery.cookie.js"></script>
 
-
 <%------------------------------------- URLs ----------------------------------------------%>
 
 <c:url var="ckeConfigUrl" value="/styles/ckeditor/ckeditor-config.js" />
@@ -82,6 +81,8 @@
 <s:url var="importanceAutoUrl" value="/test-cases/{tcId}/importanceAuto">
 	<s:param name="tcId" value="${testCase.id}" />
 </s:url>
+<s:url var="collapserScriptUrl" value="/scripts/squashtest/classes/TableCollapser.js" /> 
+
 <%-- ----------------------------------- Authorization ----------------------------------------------%>
 
 <%-- 
@@ -100,18 +101,53 @@
 <f:message var="cyclicCallError"  key="subpage.test-case.callstep.error.cycle.label" />
 
 <script type="text/javascript">
-	<%-- STEPS TABLE --%>
-	$(function() {
-		<%-- single step removal --%>
-		$('#test-steps-table .delete-step-button').live('click', function() {
-			$("#delete-step-dialog").data('opener', this).dialog('open');
-		});
-
-		$( "add-test-step-button" ).die('click');
+$(function() {
+	<%-- single step removal --%>
+	$('#test-steps-table .delete-step-button').live('click', function() {
+		$("#delete-step-dialog").data('opener', this).dialog('open');
 	});
+	$( "add-test-step-button" ).die('click');
 	
+	bindCollapser();
+});
+	<%--COLLAPSER --%>
+	function loadCollapserScript(){
+		return $.ajax({
+			cache : true,
+			type : 'GET',
+			url : "${collapserScriptUrl}",
+			dataType : 'script'
+		});
+	}
+	var collapser ; 
+	function bindCollapser(){
+		var collapseButton = $('#collapse-steps-button');
+		var table = $('#test-steps-table');
+		var columns = [2,3];
+		loadCollapserScript().done(function(){ 
+			collapser = new TableCollapser(collapseButton, table, columns); 
+			collapser.onClose.addHandler(disableCKE);
+			collapser.onOpen.addHandler(enableCKE);	
+// 			collapseButton.click(function(){
+// 				if(collapser.isOpen){
+// 					console.log("checkCkEditors");
+// 					collapser.closeAll();
+// 				}else{
+// 					collapser.openAll();
+// 				}
+// 			});
+		});
+	 }
+	function disableCKE(){
+		console.log("DisableCKE");
+		$('#test-steps-table tbody tr td').editable('disable');
 		
-	
+	}
+	function enableCKE(){
+		console.log("EnableCKE");
+		$('#test-steps-table tbody tr td').editable('enable');
+	}
+	<%-- STEPS TABLE --%>	
 	function stepsTableRowCallback(row, data, displayIndex) {
 		try{
 		addIdToStepRow(row, data);
@@ -137,6 +173,9 @@
 		restoreTableSelection(this, getStepsTableRowId);
 		decorateAttachmentButtons($('.manage-attachment-button', this));
 		decorateEmptyAttachmentButtons($('.manage-attachment-button-empty', this));
+		if(collapser){
+			collapser.refreshTable();
+		}
 		}catch(wtf){
 			alert(wtf);
 		}
@@ -170,16 +209,24 @@
 	function getCalledTCId(rowData){
 		return rowData[10];
 	}
-
+	
 	function stepDropHandler(rows, dropPosition) {
 		var stepIds = $(rows).collect(function(elt){return elt.id.split(':')[1];});
-		$.post('${ updateStepUrl }/move', { newIndex : dropPosition, stepIds : stepIds }, function() {
-			refreshSteps();
+		postMoveStep(stepIds,dropPosition).fail(moveStepsError).then(refreshSteps);
+	}
+	
+	function moveStepsError(){
+		$.squash.openMessage("<f:message key='popup.title.error' />", "<f:message key='error.generic.label' />");
+	}
+	function postMoveStep(stepIds, dropPosition){
+		return $.ajax({
+			type : 'post',
+			url : '${ updateStepUrl }/move',
+			data : { newIndex : dropPosition, stepIds : stepIds },
+			dataType : 'json'
 		});
 	}
-
 	function refreshSteps() {
-		
 		var dataTable = $('#test-steps-table').dataTable();
 		saveTableSelection(dataTable, getStepsTableRowId); 
 		dataTable.fnDraw();
@@ -304,7 +351,7 @@
 		decorateStepTableButton("#add-test-step-button", "ui-icon-plusthick");
 		decorateStepTableButton("#add-call-step-button", "ui-icon-arrowthickstop-1-e");
 		decorateStepTableButton("#delete-all-steps-button", "ui-icon-minusthick");
-		
+		decorateStepTableButton("#collapse-steps-button", "ui-icon-zoomout");
 		
 		<%-- note : until access to attachments manager is properly secured we'll forbid the access. --%>
 		<c:if test="${editable}">
@@ -615,14 +662,17 @@
 	});
 
 </script>
-
+<f:message var="collapse" key="test-case.step.button.collapse.label" />
+<f:message var="expand" key="test-case.step.button.expand.label" />
 
 <comp:toggle-panel id="test-case-steps-panel"
 	titleKey="test-case.steps.table.title" open="true" isContextual="true">
 	<jsp:attribute name="panelButtons">
-	<c:if test="${ editable }">		
+	<a id="collapse-steps-button" class="button ui-icon test-step-toolbar-button" href="#">${collapse}</a>
+	<c:if test="${ editable }">	
 		<a id="add-test-step-button" class="button ui-icon test-step-toolbar-button" href="#"><f:message key="test-case.step.button.add.label" /></a>
 		<a id="delete-all-steps-button" class="button ui-icon test-step-toolbar-button" href="#"><f:message key="test-case.step.button.remove.label" /></a>
+		
 		<a id="add-call-step-button" class="button ui-icon test-step-toolbar-button" href="#"><f:message key="test-case.step.button.call.label" /></a>
 		
 		<a id="copy-step"  class="button ui-icon test-step-toolbar-button" href="#"><f:message key="test-case.step.button.copy.label" /></a>
@@ -784,6 +834,8 @@
 <comp:decorate-buttons />
 
 <script type="text/javascript">
+
+
 	/* display the test case name. Used for extern calls (like from the page who will include this fragment)
 	 *  will refresh the general informations as well*/
 	function nodeSetname(name) {
