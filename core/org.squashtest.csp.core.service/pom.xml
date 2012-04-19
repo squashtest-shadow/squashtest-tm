@@ -49,6 +49,11 @@
 			<artifactId>org.squashtest.csp.core.bugtracker</artifactId>
 			<version>${project.version}</version>
 		</dependency>
+		<dependency>
+			<groupId>org.squashtest</groupId>
+			<artifactId>core.api</artifactId>
+			<version>${project.version}</version>
+		</dependency>
 		<!--======= /SQUASHTEST MODULES ======== -->
 
 		<!-- ====== FOUNDATION ====== -->

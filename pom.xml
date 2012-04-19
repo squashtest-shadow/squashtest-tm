@@ -1218,6 +1218,12 @@
 				Releases</name>
 			<url>http://repository.springsource.com/maven/bundles/release</url>
 		</repository>
+		
+		<repository>
+			<id>jboss-releases</id>
+			<url>https://repository.jboss.org/nexus/content/repositories/releases</url>
+		</repository>
+		
 		<repository>
 			<id>com.springsource.repository.bundles.external</id>
 			<name>SpringSource Enterprise Bundle Repository - External Bundle
@@ -1237,11 +1243,12 @@
 			<name>Springframework Maven OSGified Artifacts Repository</name>
 			<url>http://maven.springframework.org/osgi</url>
 		</repository>
-		<repository>
+<!-- 		<repository>
 			<id>sourceforge</id>
 			<url>http://hsql.sourceforge.net/m2-repo/</url>
 		</repository>
-		<repository>
+ -->
+ 		<repository>
 			<id>ops4j.repository</id>
 			<url>http://repository.ops4j.org/maven2</url>
 		</repository>
@@ -1292,6 +1299,7 @@
 		<module>database</module>
 		<module>core</module>
 		<module>tm</module>
+		<module>osgi-integration-tests</module>
 	</modules>
 
 	<profiles>

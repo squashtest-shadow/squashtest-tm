@@ -17,6 +17,7 @@
 
 	<modules>
 		<module>org.squashtest.csp.core.log4j</module>
+		<module>core.api</module>
 		<module>org.squashtest.csp.core.service</module>
 		<module>org.squashtest.csp.core.web</module>
 		<module>org.squashtest.csp.core.bugtracker</module>

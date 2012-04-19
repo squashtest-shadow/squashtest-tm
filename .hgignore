@@ -7,6 +7,9 @@ src/META-INF$
 \.DS_Store$
 ^core/core.api/META-INF$
 pom\.xml\.versionsBackup$
+acceptance-tests/META-INF$
+osgi-integration-test/META-INF$
+osgi-integration-tests/META-INF$
 syntax: regexp
 /\.settings/
 syntax: regexp
