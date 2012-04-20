@@ -126,8 +126,8 @@ $(function() {
 		var columns = [2,3];
 		loadCollapserScript().done(function(){ 
 			collapser = new TableCollapser(table, columns); 
-			collapser.onClose.addHandler(disableCKE);
-			collapser.onOpen.addHandler(enableCKE);	
+			collapser.onClose.addHandler(collapseCloseHandle);
+			collapser.onOpen.addHandler(collapseOpenHandle);	
 			//collapser.bindButtonToTable(collapseButton);
 			collapseButton.click(function(){
 				if(collapser.isOpen){
@@ -144,29 +144,31 @@ $(function() {
 		});
 	 }
 	function oneCellIsInEditingState(){
-		var tableCells = $('#test-steps-table tbody tr td.editable');
-		for(var k = 0; k < tableCells.length ; k++){
-		if(tableCells[k].editing){
-			return  true;
-		}
-		}
-		
+		var collapsibleCells = collapser.collapsibleCells;
+		for(var k = 0; k < collapsibleCells.length ; k++){
+			if(collapsibleCells[k].editing){
+				return  true;
+			}
+		}		
 		return false;
 	}
-	function disableCKE(){
-		console.log("DisableCKE");
-		var editableTableCells = $('#test-steps-table tbody tr td.editable');
-		editableTableCells.editable('disable');
-		editableTableCells.removeClass('editable');
-//  		editableTableCells.click(function(){
-//  			alert("click");
-//  		});
+	function collapseCloseHandle(){
+		var collapsibleCells = $(collapser.collapsibleCells);
+		collapsibleCells.editable('disable');
+		collapsibleCells.removeClass('editable');
+		collapsibleCells.bind("click", openAllAndSetEditing);
 	}
-	function enableCKE(){
-		console.log("EnableCKE");
-		var tableCells = $('#test-steps-table tbody tr td');
-		tableCells.editable('enable');
-		tableCells.addClass('editable');
+	function openAllAndSetEditing(eventObject){
+		collapser.openAll();
+		setTimeout(function() {
+			$(eventObject.target).click();
+		 }, 500);
+	}
+	function collapseOpenHandle(){
+		var collapsibleCells = $(collapser.collapsibleCells);
+		collapsibleCells.editable('enable');
+		collapsibleCells.addClass('editable');
+		collapsibleCells.unbind("click", openAllAndSetEditing);
 	}
 	<%-- STEPS TABLE --%>	
 	function stepsTableRowCallback(row, data, displayIndex) {

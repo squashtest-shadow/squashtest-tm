@@ -22,34 +22,29 @@
 
 function TableCollapser( dataTableP, columnsP){
 	var collapser = this;
-	
 	var dataTable = dataTableP;
 	var columns = columnsP;
 	this.isOpen = true;
 	var rows = new Array();
-	var collapsibleCells = new Array();
+	this.collapsibleCells = new Array();
 	this.onClose = new TableCollapserEvent();
 	this.onOpen = new TableCollapserEvent();
 	
 	
 	function setCellsData(){
 		var rows = dataTableP.find('tbody tr');
-		 console.log("length "+columns.length);
 		for(var i = 0; i < columns.length ; i++) {
 			for(var j = 0; j < rows.length ; j++){
-				collapsibleCells.push($(rows[j]).children('td')[columns[i]]);
+				collapser.collapsibleCells.push($(rows[j]).children('td')[columns[i]]);
 			 }
 		 }
-		 console.log("collapsible "+collapsibleCells.length);
-		 for(var k = 0; k < collapsibleCells.length ; k++){
-			var cell = $(collapsibleCells[k]);
-			console.log("cell text "+cell.text().substring(0,50));
-			//cell.css('visibility', 'collapse');
+		 for(var k = 0; k < collapser.collapsibleCells.length ; k++){
+			var cell = $(collapser.collapsibleCells[k]);
 			cell.data('completeHtml', cell.html());
 			var truncated = cell.text();
 			var maxChar = 50;
 			if(truncated.length > maxChar){
-				truncated = truncated.substring(0,50)+"[...]";
+				truncated = truncated.substring(0,50)+" [...]";
 			}
 			cell.data('truncatedHtml', truncated);
 		 }
@@ -67,29 +62,23 @@ function TableCollapser( dataTableP, columnsP){
 		}
 	}
 	this.closeAll = function (){
-		console.log("closeAll");
 		setCellsData();
-		for(var k = 0; k < collapsibleCells.length ; k++){
-			var cell = $(collapsibleCells[k]);
-			//console.log("cell text"+cell.text());
-			//cell.css('visibility', 'collapse');
+		for(var k = 0; k < collapser.collapsibleCells.length ; k++){
+			var cell = $(collapser.collapsibleCells[k]);
 			cell.html(cell.data('truncatedHtml'));
 		 }
 		 collapser.onClose.execute();
 		 collapser.isOpen = false;
+		
 	}
 	
 	this.openAll = function (){
-		console.log("onpenAll");
-		for(var k = 0; k < collapsibleCells.length ; k++){
-			 var cell = $(collapsibleCells[k]);
-				//console.log("cell text"+cell.text());
-				//cell.css('visibility', 'visible');
+		for(var k = 0; k < collapser.collapsibleCells.length ; k++){
+			 var cell = $(collapser.collapsibleCells[k]);
 				cell.html(cell.data('completeHtml'));
 		}
 		collapser.onOpen.execute();
 		collapser.isOpen = true;
-		
 	}
 	this.refreshTable = function (){
 		if(!collapser.isOpen){
