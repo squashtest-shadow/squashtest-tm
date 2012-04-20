@@ -342,6 +342,10 @@ the display:block trick will implicitly add that property */
 /*******************************
 	misc
 ********************************/
+.editable {border: 1px solid transparent;}
+.editable:HOVER {border: 1px solid #bbbbbb;}
+td.editable:HOVER {border: 1px solid transparent;}
+	
 span.span-red{
 	color : red;	
 }

@@ -85,7 +85,7 @@ function SquashDatePicker(controls, params) {
 function dp_initialize() {
 	// init the datepicker
 	$(this.controls.datepick).datepicker();
-
+	$(this.controls.datelabel).addClass("editable");
 	var me = this;
 
 	$(this.controls.datepick).datepicker("option", "onClose", function() {

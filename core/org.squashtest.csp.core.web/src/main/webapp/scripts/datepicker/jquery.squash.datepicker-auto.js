@@ -100,7 +100,6 @@ function DatePickerAuto(controls, params){
 function dpa_initialize(){
 	//init the datepicker
 	$(this.controls.datepick).datepicker();
-	
 	var me = this;
 	
 	$(this.controls.datepick).datepicker("option","onClose", function(){
@@ -173,7 +172,7 @@ function dpa_initState(){
 function dpa_setAutoMode(){
 	var datelabel = this.controls.datelabel;
 	var checkbx = this.controls.checkbx;		
-	
+	$(this.controls.datelabel).removeClass("editable");
 	$(checkbx).attr('checked',true);
 	$(datelabel).unbind();
 	
@@ -187,7 +186,7 @@ function dpa_setAutoMode(){
 function dpa_setManualMode(){
 	var datelabel = this.controls.datelabel;
 	var checkbx = this.controls.checkbx;		
-	
+	$(this.controls.datelabel).addClass("editable");
 	var me = this;
 	
 	$(checkbx).attr('checked',false);
