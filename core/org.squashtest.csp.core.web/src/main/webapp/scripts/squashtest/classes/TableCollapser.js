@@ -20,18 +20,17 @@
  */
 
 
-function TableCollapser(buttonP, dataTableP, columnsP){
+function TableCollapser( dataTableP, columnsP){
 	var collapser = this;
-	var collapseButton = buttonP;
+	
 	var dataTable = dataTableP;
 	var columns = columnsP;
-	var isOpen = true;
+	this.isOpen = true;
 	var rows = new Array();
 	var collapsibleCells = new Array();
 	this.onClose = new TableCollapserEvent();
 	this.onOpen = new TableCollapserEvent();
 	
-	bindButtonToTable();
 	
 	function setCellsData(){
 		var rows = dataTableP.find('tbody tr');
@@ -56,18 +55,18 @@ function TableCollapser(buttonP, dataTableP, columnsP){
 		 }
 		 
 	}
-	function bindButtonToTable(){
+	this.bindButtonToTable = function (collapseButton){
 		collapseButton.click(bindClick);
 		
 	}
 	function bindClick(){
-		if(isOpen){
-			closeAll();
+		if(collapser.isOpen){
+			collapser.closeAll();
 		}else{
-			openAll();
+			collapser.openAll();
 		}
 	}
-	function closeAll(){
+	this.closeAll = function (){
 		console.log("closeAll");
 		setCellsData();
 		for(var k = 0; k < collapsibleCells.length ; k++){
@@ -77,10 +76,10 @@ function TableCollapser(buttonP, dataTableP, columnsP){
 			cell.html(cell.data('truncatedHtml'));
 		 }
 		 collapser.onClose.execute();
-		 isOpen = false;
+		 collapser.isOpen = false;
 	}
 	
-	function openAll(){
+	this.openAll = function (){
 		console.log("onpenAll");
 		for(var k = 0; k < collapsibleCells.length ; k++){
 			 var cell = $(collapsibleCells[k]);
@@ -89,12 +88,12 @@ function TableCollapser(buttonP, dataTableP, columnsP){
 				cell.html(cell.data('completeHtml'));
 		}
 		collapser.onOpen.execute();
-		isOpen = true;
+		collapser.isOpen = true;
 		
 	}
 	this.refreshTable = function (){
-		if(!isOpen){
-			closeAll();
+		if(!collapser.isOpen){
+			collapser.closeAll();
 		}
 	}
 }

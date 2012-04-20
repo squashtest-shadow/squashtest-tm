@@ -152,6 +152,7 @@
 		openMessage: function(title, htmlMessage) {		  
 			var dialog = $('<div></div>');
 			dialog.attr('title', title);
+			
 			dialog.append(htmlMessage);
 			$(document).append(dialog);
 			

@@ -125,27 +125,48 @@ $(function() {
 		var table = $('#test-steps-table');
 		var columns = [2,3];
 		loadCollapserScript().done(function(){ 
-			collapser = new TableCollapser(collapseButton, table, columns); 
+			collapser = new TableCollapser(table, columns); 
 			collapser.onClose.addHandler(disableCKE);
 			collapser.onOpen.addHandler(enableCKE);	
-// 			collapseButton.click(function(){
-// 				if(collapser.isOpen){
-// 					console.log("checkCkEditors");
-// 					collapser.closeAll();
-// 				}else{
-// 					collapser.openAll();
-// 				}
-// 			});
+			//collapser.bindButtonToTable(collapseButton);
+			collapseButton.click(function(){
+				if(collapser.isOpen){
+					if(oneCellIsInEditingState()){
+						$.squash.openMessage("<f:message key='popup.title.info' />", "<f:message key='collapser.error.editing-cell.opened' />");
+					}else{
+						collapser.closeAll();
+					}
+					
+				}else{
+					collapser.openAll();
+				}
+			});
 		});
 	 }
+	function oneCellIsInEditingState(){
+		var tableCells = $('#test-steps-table tbody tr td.editable');
+		for(var k = 0; k < tableCells.length ; k++){
+		if(tableCells[k].editing){
+			return  true;
+		}
+		}
+		
+		return false;
+	}
 	function disableCKE(){
 		console.log("DisableCKE");
-		$('#test-steps-table tbody tr td').editable('disable');
-		
+		var editableTableCells = $('#test-steps-table tbody tr td.editable');
+		editableTableCells.editable('disable');
+		editableTableCells.removeClass('editable');
+//  		editableTableCells.click(function(){
+//  			alert("click");
+//  		});
 	}
 	function enableCKE(){
 		console.log("EnableCKE");
-		$('#test-steps-table tbody tr td').editable('enable');
+		var tableCells = $('#test-steps-table tbody tr td');
+		tableCells.editable('enable');
+		tableCells.addClass('editable');
 	}
 	<%-- STEPS TABLE --%>	
 	function stepsTableRowCallback(row, data, displayIndex) {
