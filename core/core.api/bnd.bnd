@@ -1,0 +1,4 @@
+-include: pom.xml
+
+#Bundle-SymbolicName: ${pom.artifactId}
+#Bundle-Version: ${pom.version}
