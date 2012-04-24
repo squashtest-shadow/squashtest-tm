@@ -38,12 +38,9 @@
 	<s:param name="reqId" value="${requirement.id}" />
 </s:url>
 <s:url var="getVerifyingTestCaseUrl" value="/requirement-versions/${requirement.currentVersion.id}/verifying-test-cases/table" />
-
 <s:url var="verifyingTCManagerUrl" value="/requirement-versions/${ requirement.currentVersion.id }/verifying-test-cases/manager" /> 
-
 <c:url var="verifyingTestCasesUrl" value="/requirement-versions/${ requirement.currentVersion.id }/verifying-test-cases" />
 <c:url var="nonVerifyingTestCasesUrl" value="/requirement-versions/${ requirement.currentVersion.id }/non-verifying-test-cases" />
-
 <c:url var="workspaceUrl" value="/requirement-workspace/#" />
 <s:url var="simulateDeletionUrl" value="/requirement-browser/delete-nodes/simulate" />
 <s:url var="confirmDeletionUrl" value="/requirement-browser/delete-nodes/confirm" />
@@ -65,9 +62,6 @@ that page won't be editable if
 <c:set var="status_editable" value="${ user_authorized && requirement.status.allowsStatusUpdate }"/>
 
 <%-- ----------------------------------- Init ----------------------------------------------%>
-
-
-
 <%-- 
 	Code managing the status of a requirement. It is a handler for the 'onsubmit' of a jeditable (see documentation for details).
 
@@ -152,7 +146,6 @@ that page won't be editable if
 </script>
 </c:if>
 
-
 <div class="ui-widget-header ui-corner-all ui-state-default fragment-header">
 	<div style="float:left;height:100%;">	
 		<h2>
@@ -227,9 +220,7 @@ that page won't be editable if
 		<%-- /NEW VERSION POPUP --%>			
 	</c:if>		
 </div>
-
-<div class="fragment-body">
-	<div id="requirement-toolbar" class="toolbar-class ui-corner-all" >
+<div id="requirement-toolbar" class="toolbar-class ui-corner-all" >
 		<div  class="toolbar-information-panel">
 		<c:url var="currentVersionUrl" value="/requirement-versions/${requirement.currentVersion.id}" />
 			<comp:general-information-panel auditableEntity="${ requirement.currentVersion }" entityUrl="${ currentVersionUrl }" />
@@ -254,7 +245,13 @@ that page won't be editable if
 		<%-- TODO put at end of page, maybe componentize --%>
 		<comp:simple-jeditable targetUrl="${ requirementUrl }" componentId="requirement-reference" submitCallback="updateReferenceInTitle" maxLength="20" />
 	</c:if>
-
+<comp:fragment-tabs />
+<div class="fragment-tabs fragment-body">
+	<ul>
+		<li><a href="#tabs-1"><f:message key="tabs.label.information" /></a></li>
+		<li><a href="#tabs-2"><f:message key="tabs.label.attachments" /></a></li>
+	</ul>
+	<div id="tabs-1">
 	<comp:toggle-panel id="requirement-information-panel" classes="information-panel" titleKey="requirement.panel.general-informations.title" isContextual="true" open="true" >
 		<jsp:attribute name="body">
 			<div id="edit-requirement-table" class="display-table">
@@ -361,12 +358,12 @@ that page won't be editable if
 			<aggr:verifying-test-cases-table />
 		</jsp:attribute>
 	</comp:toggle-panel>
-
-<%----------------------------------------------------- Attachments bloc ------------------------------------------------------------%> 
-
-	<comp:attachment-bloc entity="${ requirement }" workspaceName="requirement" editable="${ editable }" />
 	<aggr:requirement-version-audit-trail requirementVersion="${ requirement.currentVersion }" />
-
+</div>
+<%----------------------------------------------------- Attachments bloc ------------------------------------------------------------%> 
+<div id="tabs-2" >
+	<comp:attachment-bloc entity="${ requirement }" workspaceName="requirement" editable="${ editable }" />
+</div></div>
 	<%--------------------------- Deletion confirmation popup -------------------------------------%>
 	<c:if test="${editable}">
 	
@@ -375,10 +372,8 @@ that page won't be editable if
 	
 
 	</c:if>
-</div>
 
 <comp:decorate-buttons />
-
 <script type="text/javascript">
 	/* display the requirement name. Used for extern calls (like from the page who will include this fragment)
 	*  will refresh the general informations as well*/

@@ -129,15 +129,28 @@ ul.ui-tabs-nav li.ui-state-default.ui-corner-top{
 ul.ui-tabs-nav li.ui-state-default.ui-corner-top.ui-state-hover{
     background: url("jquery/ui/images/ui-bg_glass_75_2b2b2b_1x400.png") repeat-x scroll 50% 50% #2B2B2B;
 }
-
-div#tabbed-pane > ul {
+div.fragment-tabs{
+    background : none;
+    border :  none;
+}
+div.fragment-tabs > ul {
+    border-bottom: 1px solid black !important ;
+    border-radius : 0px 0px 0px 0px !important;
+}
+div.fragment-tabs .ui-tabs-panel{
+	overflow-y:scroll;
+	padding:0;
+	
+}
+div#tabbed-pane > ul, div.fragment-tabs > ul {
 	border: 0;
 	background: none;
+}
+div#tabbed-pane > ul {
 	position: relative;
 	top: -0.75cm;
 	padding: 0;
-}
-
+ }
 .search-div {
 	border: 1px solid;
     bottom: 0.1cm;
@@ -606,8 +619,8 @@ div#search-result .library {
 /* ------------------------------------------*/
 /* add the class .fragment-header if the first child of the contextual-content is not a div 
 (any preceding <style>, <script> etc will break it) */
-div#contextual-content > div:first-child, .fragment-header {
-	padding-left:15px;
+div#contextual-content > div:first-child, .fragment-fixed{
+	padding-left:15px ;
 }
 
 div#contextual-content >  div:first-child h2, .fragment-header h2 {
@@ -623,14 +636,15 @@ div#contextual-content >  div:first-child h2, .fragment-header h2 {
 	margin-right: 1.5em;
 }
 
+
 .fragment-body {
-    bottom: 0;
+/*     bottom: 0; */
     left: auto;
     overflow-x: hidden;
-    overflow-y: scroll;
+/*     overflow-y: scroll; */
     position: absolute;
     right: inherit;
-    top: 0.9cm;
+/*     top: 0.9cm; */
     width: 100%;
 }
 
@@ -641,7 +655,7 @@ div#contextual-content >  div:first-child h2, .fragment-header h2 {
 	margin-right:10px;
 }
 
-.fragment-body > div.toggle-panel, .fragment-body-component.toggle-panel {
+.fragment-body div.toggle-panel, .fragment-body-component.toggle-panel {
 	margin-top:18px;
 	margin-bottom:18px;
 } 

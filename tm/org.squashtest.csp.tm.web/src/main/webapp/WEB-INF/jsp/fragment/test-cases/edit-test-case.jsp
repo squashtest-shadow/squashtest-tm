@@ -39,9 +39,7 @@
 <script type="text/javascript" src="${ pageContext.servletContext.contextPath }/scripts/jquery/jquery.cookie.js"></script>
 
 <%------------------------------------- URLs ----------------------------------------------%>
-
 <c:url var="ckeConfigUrl" value="/styles/ckeditor/ckeditor-config.js" />
-
 <s:url var="testCaseUrl" value="/test-cases/{tcId}">
 	<s:param name="tcId" value="${testCase.id}" />
 </s:url>
@@ -54,24 +52,16 @@
 <s:url var="addStepUrl" value="/test-cases/{tcId}/steps/add">
 	<s:param name="tcId" value="${testCase.id}" />
 </s:url>
-
 <c:url var="verifiedRequirementsTableUrl" value="/test-cases/${testCase.id}/all-verified-requirements-table" />
-
 <s:url var="updateStepUrl" value="/test-cases/{tcId}/steps/">
 	<s:param name="tcId" value="${testCase.id}" />
 </s:url>
-
 <s:url var="verifiedReqsManagerUrl" value="/test-cases/${ testCase.id }/verified-requirement-versions/manager" />
-
 <c:url var="verifiedRequirementsUrl" value="/test-cases/${ testCase.id }/verified-requirement-versions" />
 <c:url var="nonVerifiedRequirementsUrl" value="/test-cases/${ testCase.id }/non-verified-requirement-versions" />
-
 <s:url var="callStepManagerUrl" value="/test-cases/${ testCase.id }/call" />
-
 <s:url var="stepAttachmentManagerUrl" value="/attach-list/" />
-
 <s:url var="callingtestCasesTableUrl" value="/test-cases/${testCase.id}/calling-test-case-table" />
-
 <c:url var="workspaceUrl" value="/test-case-workspace/#" />
 <s:url var="simulateDeletionUrl" value="/test-case-browser/delete-nodes/simulate" />
 <s:url var="confirmDeletionUrl" value="/test-case-browser/delete-nodes/confirm" />
@@ -84,7 +74,6 @@
 <s:url var="collapserScriptUrl" value="/scripts/squashtest/classes/TableCollapser.js" /> 
 
 <%-- ----------------------------------- Authorization ----------------------------------------------%>
-
 <%-- 
 	if no variable 'editable' was provided in the context, we'll set one according to the authorization the user
 	was granted for that object. 
@@ -135,10 +124,13 @@ $(function() {
 						$.squash.openMessage("<f:message key='popup.title.info' />", "<f:message key='collapser.error.editing-cell.opened' />");
 					}else{
 						collapser.closeAll();
+						decorateStepTableButton("#collapse-steps-button", "ui-icon-zoomin");
+						$("#collapse-steps-button").attr('title', "<f:message key='test-case.step.button.expand.label' />");
 					}
-					
 				}else{
 					collapser.openAll();
+					decorateStepTableButton("#collapse-steps-button", "ui-icon-zoomout");
+					$("#collapse-steps-button").attr('title', "<f:message key='test-case.step.button.collapse.label' />");
 				}
 			});
 		});
@@ -267,10 +259,10 @@ $(function() {
 	
 	function decorateStepTableButton(selector, cssclass){
 		$(selector).button({
-			text : false,
 			icons : {
 				primary : cssclass
-			}
+			},
+			text : false
 		});
 	}
 	
@@ -543,16 +535,12 @@ $(function() {
 
 
 <%---------------------------- Test Case Header ------------------------------%>
-
-
-
 <div id="test-case-name-div" class="ui-widget-header ui-corner-all ui-state-default fragment-header">
 
 <div style="float: left; height: 100%;">
 <h2><span><f:message key="test-case.header.title" />&nbsp;:&nbsp;</span><a id="test-case-name" href="${ testCaseUrl }/info"><c:out
 	value="${ testCase.name }" escapeXml="true" /></a></h2>
 </div>
-
 
 
 <div style="clear: both;"></div>
@@ -592,8 +580,6 @@ $(function() {
 
 <%---------------------------- Test Case Informations ------------------------------%>
 
-<div class="fragment-body">
-
 <div id="test-case-toolbar" classes="toolbar-class ui-corner-all">
 <div class="toolbar-information-panel">
 <comp:general-information-panel auditableEntity="${ testCase }" entityUrl="${ testCaseUrl }" />
@@ -610,7 +596,14 @@ $(function() {
 	</div>
 <div style="clear: both;"></div>
 </div>
-
+<comp:fragment-tabs />
+<div class="fragment-tabs fragment-body">
+	<ul>
+		<li><a href="#tabs-1"><f:message key="tabs.label.information" /></a></li>
+		<li><a href="#tabs-2"><f:message key="tabs.label.steps" /></a></li>
+		<li><a href="#tabs-3"><f:message key="tabs.label.attachments" /></a></li>
+	</ul>
+	<div id="tabs-1">
 <%----------------------------------- Description -----------------------------------------------%>
 <c:if test="${ editable }">
 	<comp:rich-jeditable targetUrl="${ testCaseUrl }" componentId="test-case-description" />
@@ -670,86 +663,6 @@ $(function() {
 				<div class="display-table-cell" id="test-case-prerequisite" >${ testCase.prerequisite }</div>
 			</div>
 		</div>
-	</jsp:attribute>
-</comp:toggle-panel> 
-
-<%----------------------------------- Test Step Table -----------------------------------------------%> 
-
-<script type="text/javascript">
-	$(function(){
-		$("#add-call-step-button").click(function(){			
-			var url = document.URL;
-			$.cookie('call-step-manager-referer', url, {path:'/'});
-			document.location.href = "${callStepManagerUrl}";			
-		});
-	});
-
-</script>
-<f:message var="collapse" key="test-case.step.button.collapse.label" />
-<f:message var="expand" key="test-case.step.button.expand.label" />
-
-<comp:toggle-panel id="test-case-steps-panel"
-	titleKey="test-case.steps.table.title" open="true" isContextual="true">
-	<jsp:attribute name="panelButtons">
-	<a id="collapse-steps-button" class="button ui-icon test-step-toolbar-button" href="#">${collapse}</a>
-	<c:if test="${ editable }">	
-		<a id="add-test-step-button" class="button ui-icon test-step-toolbar-button" href="#"><f:message key="test-case.step.button.add.label" /></a>
-		<a id="delete-all-steps-button" class="button ui-icon test-step-toolbar-button" href="#"><f:message key="test-case.step.button.remove.label" /></a>
-		
-		<a id="add-call-step-button" class="button ui-icon test-step-toolbar-button" href="#"><f:message key="test-case.step.button.call.label" /></a>
-		
-		<a id="copy-step"  class="button ui-icon test-step-toolbar-button" href="#"><f:message key="test-case.step.button.copy.label" /></a>
-		<a id="paste-step" class="button ui-icon test-step-toolbar-button" href="#"><f:message key="test-case.step.button.paste.label" /></a>
-
-	</c:if>
-	</jsp:attribute>
-	<jsp:attribute name="body">
-		<comp:decorate-ajax-table url="${ getStepsUrl }" tableId="test-steps-table" paginate="true">		
-			<jsp:attribute name="drawCallback">stepsTableDrawCallback</jsp:attribute>
-			<jsp:attribute name="rowCallback">stepsTableRowCallback</jsp:attribute>
-			<jsp:attribute name="disableHighlightOnMouseOver">true</jsp:attribute>
-			<jsp:attribute name="columnDefs">
-
-				<dt:column-definition targets="0, 2, 6" visible="false" sortable="false" />
-				<dt:column-definition targets="1" sortable="false" cssClass="centered ui-state-default drag-handle select-handle"
-					width="2em" />
-				<dt:column-definition targets="3" sortable="false" width="2em" cssClass="centered has-attachment-cell" />
-				<dt:column-definition targets="4" sortable="false" cssClass="action-cell" />
-				<dt:column-definition targets="5" sortable="false" cssClass="result-cell" />
-				<dt:column-definition targets="7" sortable="false" cssClass="centered" width="2em" />
-				<dt:column-definition targets="8" sortable="false" visible="false"/>
-				<dt:column-definition targets="9" sortable="false" visible="false" />
-				<dt:column-definition targets="10" sortable="false" visible="false" lastDef="true" />
-			</jsp:attribute>
-		</comp:decorate-ajax-table>
-		
-		<table id="test-steps-table">
-			<thead>
-				<tr>
-					<th>S</th>
-					<th>#</th>
-					<th>stepId(masked)</th>
-					<th><f:message key="table.column-header.has-attachment.label" /></th>
-					<th><f:message key="test-case.steps.table.column-header.actions.label" /></th>
-					<th><f:message key="test-case.steps.table.column-header.expected-results.label" /></th>
-					<th>M</th>
-					<th>&nbsp;</th>
-					<th>nbAttach(masked)</th>
-					<th>stepNature(masked)</th>
-					<th>calledStepId(masked)</th>	
-				</tr>
-			</thead>
-			<tbody>
-				<%-- Will be populated by ajax --%>
-			</tbody>
-		</table>
-		
-	 	<div id="test-step-row-buttons" class="not-displayed">
-			<a id="delete-step-button" href="#" class="delete-step-button"><f:message key="test-case.step.delete.label" /></a>
-			<a id="manage-attachment-button" href="#" class="manage-attachment-button"><f:message key="test-case.step.manage-attachment.label" /></a>
-			<a id="manage-attachment-button-empty" href="#" class="manage-attachment-button-empty"><f:message key="test-case.step.add-attachment.label" /></a>
-		</div>
-	
 	</jsp:attribute>
 </comp:toggle-panel> 
 
@@ -835,12 +748,89 @@ $(function() {
 
 </comp:toggle-panel>
 
+</div>
+<div id="tabs-2">
+<%----------------------------------- Test Step Table -----------------------------------------------%> 
+
+<script type="text/javascript">
+	$(function(){
+		$("#add-call-step-button").click(function(){			
+			var url = document.URL;
+			$.cookie('call-step-manager-referer', url, {path:'/'});
+			document.location.href = "${callStepManagerUrl}";			
+		});
+	});
+
+</script>
+<f:message var="collapse" key="test-case.step.button.collapse.label" />
+<f:message var="expand" key="test-case.step.button.expand.label" />
+
+
+	<button id="collapse-steps-button" class="button test-step-toolbar-button" href="#">${collapse}</button>
+	<c:if test="${ editable }">	
+		<button id="add-test-step-button" class="test-step-toolbar-button" href="#"><f:message key="test-case.step.button.add.label" /></button>
+		<button id="delete-all-steps-button" class="test-step-toolbar-button" href="#"><f:message key="test-case.step.button.remove.label" /></button>
+		<button id="add-call-step-button" class="test-step-toolbar-button" href="#"><f:message key="test-case.step.button.call.label" /></button>
+		<button id="copy-step"  class="test-step-toolbar-button" href="#"><f:message key="test-case.step.button.copy.label" /></button>
+		<button id="paste-step" class="test-step-toolbar-button" href="#"><f:message key="test-case.step.button.paste.label" /></button>
+
+	</c:if>
+		<comp:decorate-ajax-table url="${ getStepsUrl }" tableId="test-steps-table" paginate="true">		
+			<jsp:attribute name="drawCallback">stepsTableDrawCallback</jsp:attribute>
+			<jsp:attribute name="rowCallback">stepsTableRowCallback</jsp:attribute>
+			<jsp:attribute name="disableHighlightOnMouseOver">true</jsp:attribute>
+			<jsp:attribute name="infiniteScroll">true</jsp:attribute>
+			<jsp:attribute name="columnDefs">
+				<dt:column-definition targets="0, 2, 6" visible="false" sortable="false" />
+				<dt:column-definition targets="1" sortable="false" cssClass="centered ui-state-default drag-handle select-handle"
+					width="2em" />
+				<dt:column-definition targets="3" sortable="false" width="2em" cssClass="centered has-attachment-cell" />
+				<dt:column-definition targets="4" sortable="false" cssClass="action-cell" />
+				<dt:column-definition targets="5" sortable="false" cssClass="result-cell" />
+				<dt:column-definition targets="7" sortable="false" cssClass="centered" width="2em" />
+				<dt:column-definition targets="8" sortable="false" visible="false"/>
+				<dt:column-definition targets="9" sortable="false" visible="false" />
+				<dt:column-definition targets="10" sortable="false" visible="false" lastDef="true" />
+			</jsp:attribute>
+		</comp:decorate-ajax-table>
+		
+		<table id="test-steps-table">
+			<thead>
+				<tr>
+					<th>S</th>
+					<th>#</th>
+					<th>stepId(masked)</th>
+					<th><f:message key="table.column-header.has-attachment.label" /></th>
+					<th><f:message key="test-case.steps.table.column-header.actions.label" /></th>
+					<th><f:message key="test-case.steps.table.column-header.expected-results.label" /></th>
+					<th>M</th>
+					<th>&nbsp;</th>
+					<th>nbAttach(masked)</th>
+					<th>stepNature(masked)</th>
+					<th>calledStepId(masked)</th>	
+				</tr>
+			</thead>
+			<tbody>
+				<%-- Will be populated by ajax --%>
+			</tbody>
+		</table>
+		
+	 	<div id="test-step-row-buttons" class="not-displayed">
+			<a id="delete-step-button" href="#" class="delete-step-button"><f:message key="test-case.step.delete.label" /></a>
+			<a id="manage-attachment-button" href="#" class="manage-attachment-button"><f:message key="test-case.step.manage-attachment.label" /></a>
+			<a id="manage-attachment-button-empty" href="#" class="manage-attachment-button-empty"><f:message key="test-case.step.add-attachment.label" /></a>
+		</div>
+	
+	
+</div>
+<div id="tabs-3">
 <%------------------------------ Attachments bloc ---------------------------------------------%> 
 
 
 <comp:attachment-bloc entity="${testCase}" workspaceName="test-case" editable="${ editable }" />
 
-
+</div>
+</div>
 <%--------------------------- Deletion confirmation popup -------------------------------------%> 
 
 <c:if test="${ editable }">
@@ -852,7 +842,7 @@ $(function() {
 </c:if>
 
 
-</div>
+
 
 <comp:decorate-buttons />
 
