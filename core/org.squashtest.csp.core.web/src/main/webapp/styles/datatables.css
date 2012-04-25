@@ -43,9 +43,6 @@ div.dataTables_wrapper a.ui-button-icon-only[role="button"]{
 	height:1.5em;
 }
 
-div.dataTables_footer{
-	color:#555555	
-}
 
 div.dataTables_length label{
 	font-size : 100%;
@@ -93,8 +90,6 @@ div.dataTables_paginate{
 	border:1px solid black;
 	cursor:pointer;
 }
-
-
 
 /* that one override the css for the <th> sorting icon class. It actually calls the jquery.blue.css icon sheet*/
 div.DataTables_sort_wrapper > span.ui-icon{

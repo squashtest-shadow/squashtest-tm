@@ -126,11 +126,13 @@ $(function() {
 						collapser.closeAll();
 						decorateStepTableButton("#collapse-steps-button", "ui-icon-zoomin");
 						$("#collapse-steps-button").attr('title', "<f:message key='test-case.step.button.expand.label' />");
+						$("#collapse-steps-button").button({label:"<f:message key='test-case.step.button.expand.label' />"});
 					}
 				}else{
 					collapser.openAll();
 					decorateStepTableButton("#collapse-steps-button", "ui-icon-zoomout");
 					$("#collapse-steps-button").attr('title', "<f:message key='test-case.step.button.collapse.label' />");
+					$("#collapse-steps-button").button({label:"<f:message key='test-case.step.button.collapse.label' />"});
 				}
 			});
 		});
@@ -261,8 +263,7 @@ $(function() {
 		$(selector).button({
 			icons : {
 				primary : cssclass
-			},
-			text : false
+			}
 		});
 	}
 	
@@ -749,7 +750,7 @@ $(function() {
 </comp:toggle-panel>
 
 </div>
-<div id="tabs-2">
+<div id="tabs-2" class="table-tab" >
 <%----------------------------------- Test Step Table -----------------------------------------------%> 
 
 <script type="text/javascript">
@@ -764,22 +765,23 @@ $(function() {
 </script>
 <f:message var="collapse" key="test-case.step.button.collapse.label" />
 <f:message var="expand" key="test-case.step.button.expand.label" />
+<div class="toolbar" >
 
-
-	<button id="collapse-steps-button" class="button test-step-toolbar-button" href="#">${collapse}</button>
+	<span class ="group" ><button id="collapse-steps-button" class="button test-step-toolbar-button" href="#">${collapse}</button></span>
 	<c:if test="${ editable }">	
-		<button id="add-test-step-button" class="test-step-toolbar-button" href="#"><f:message key="test-case.step.button.add.label" /></button>
+		<span class ="group" ><button id="add-test-step-button" class="test-step-toolbar-button" href="#"><f:message key="test-case.step.button.add.label" /></button>
 		<button id="delete-all-steps-button" class="test-step-toolbar-button" href="#"><f:message key="test-case.step.button.remove.label" /></button>
 		<button id="add-call-step-button" class="test-step-toolbar-button" href="#"><f:message key="test-case.step.button.call.label" /></button>
-		<button id="copy-step"  class="test-step-toolbar-button" href="#"><f:message key="test-case.step.button.copy.label" /></button>
+		</span><span class ="group" ><button id="copy-step"  class="test-step-toolbar-button" href="#"><f:message key="test-case.step.button.copy.label" /></button>
 		<button id="paste-step" class="test-step-toolbar-button" href="#"><f:message key="test-case.step.button.paste.label" /></button>
-
+		</span>
 	</c:if>
+</div>	
+<div class="table-tab-wrap" >
 		<comp:decorate-ajax-table url="${ getStepsUrl }" tableId="test-steps-table" paginate="true">		
 			<jsp:attribute name="drawCallback">stepsTableDrawCallback</jsp:attribute>
 			<jsp:attribute name="rowCallback">stepsTableRowCallback</jsp:attribute>
 			<jsp:attribute name="disableHighlightOnMouseOver">true</jsp:attribute>
-			<jsp:attribute name="infiniteScroll">true</jsp:attribute>
 			<jsp:attribute name="columnDefs">
 				<dt:column-definition targets="0, 2, 6" visible="false" sortable="false" />
 				<dt:column-definition targets="1" sortable="false" cssClass="centered ui-state-default drag-handle select-handle"
@@ -821,7 +823,7 @@ $(function() {
 			<a id="manage-attachment-button-empty" href="#" class="manage-attachment-button-empty"><f:message key="test-case.step.add-attachment.label" /></a>
 		</div>
 	
-	
+	</div>
 </div>
 <div id="tabs-3">
 <%------------------------------ Attachments bloc ---------------------------------------------%> 
