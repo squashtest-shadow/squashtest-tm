@@ -20,29 +20,54 @@
         along with this software.  If not, see <http://www.gnu.org/licenses/>.
 
 --%>
-<%@ tag description="activation of jquery-ui tabs" %>
+<%@ tag description="activation of jquery-ui tabs"%>
 <script type="text/javascript">
-<%-- The dialog creates and kills ckeditor instances each times it is used, otherwise it does not work --%>
-$(function() {
-	$( '.fragment-tabs' ).tabs();
-	resizeTabs();
-});
-var contentDiv;
-var parentTop;
-var viewportHeight;
-var computedHeight;
-function resizeTabs()
-{
-    // Get elements and necessary element heights
-     contentDiv = $('.fragment-tabs > div');
-     parentTop = $(contentDiv[0]).offset().top;
-     viewportHeight = document.getElementsByTagName('body')[0].clientHeight;
-     var computedHeight = viewportHeight - parentTop -20;
-	    for(var i=0; i<contentDiv.length; i++){    	        	  
-	    	   $(contentDiv[i]).css('height', computedHeight); 
-	    }
 	
-}
-window.onresize = resizeTabs;
+	$(function() {
+		$('.fragment-tabs').tabs({
+			cookie: {
+				// store cookie for a day, without, it would be a session cookie
+				expires: 1
+			},
+			show : calculateTopTableWrap
+		});
+		calculateTopPositionsOfTabs();
+	});
 
+	window.onresize = function(){setTimeout(calculateTopPositionsOfTabs, 200);};
+	
+	function calculateTopPositionsOfTabs() {
+		var selectors = [ '.fragment-tabs', '.fragment-tabs > div'];
+		for ( var i = 0; i < selectors.length; i++) {
+			var selectedElements = $(selectors[i]);
+// 			console.log('selecteds '+i+' = ' + selectedElements);
+			for ( var j = 0; j < selectedElements.length; j++) {
+				var element = $(selectedElements[j]);
+// 				console.log('element '+j+' = ' + element);
+				var previous = element.prevAll().not('.ui-tabs-panel');
+				var topPos = 0;
+				for ( var k = 0; k < previous.length; k++) {
+// 					console.log('previous '+k+' = ' + $(previous[k]).outerHeight());
+					topPos += $(previous[k]).outerHeight();
+				}
+				element.css('top', topPos);
+			}
+		}
+		calculateTopTableWrap();		
+	}
+	
+	function calculateTopTableWrap(){
+		var tableWrap =$(' div.fragment-tabs > div.table-tab > div.table-tab-wrap ').not(':hidden');
+		if(tableWrap){
+			var tablePrev = tableWrap.prevAll().not(':hidden');
+			if(tablePrev){
+				var topPos = 0;
+				for ( var k = 0; k < tablePrev.length; k++) {
+// 					console.log('tablePrev '+k+' = ' + $(tablePrev[k]).outerHeight());
+					topPos += $(tablePrev[k]).outerHeight();
+				}
+				tableWrap.css('top', topPos);
+			}
+		}
+	}
 </script>
