@@ -900,7 +900,7 @@ div#user-account-password-panel > div > * {
 }
 
 tr td.drag-handle {
-	cursor: crosshair;
+	cursor: pointer;
 }
 tr.nodrop td.drag-handle {
 	cursor : n-resize;
