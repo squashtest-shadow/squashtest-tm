@@ -602,7 +602,7 @@ $(function() {
 	<ul>
 		<li><a href="#tabs-1"><f:message key="tabs.label.information" /></a></li>
 		<li><a href="#tabs-2"><f:message key="tabs.label.steps" /></a></li>
-		<li><a href="#tabs-3"><f:message key="tabs.label.attachments" /></a></li>
+		<li><a href="#tabs-3"><f:message key="tabs.label.attachments" /><c:if test="${ testCase.attachmentList.notEmpty }"><span class="hasAttach">!</span></c:if></a></li>
 	</ul>
 	<div id="tabs-1">
 <%----------------------------------- Description -----------------------------------------------%>
@@ -825,13 +825,10 @@ $(function() {
 	
 	</div>
 </div>
-<div id="tabs-3">
+
 <%------------------------------ Attachments bloc ---------------------------------------------%> 
 
-
-<comp:attachment-bloc entity="${testCase}" workspaceName="test-case" editable="${ editable }" />
-
-</div>
+<comp:attachment-tab tabId="tabs-3" entity="${ testCase }" editable="${ editable }" />
 </div>
 <%--------------------------- Deletion confirmation popup -------------------------------------%> 
 

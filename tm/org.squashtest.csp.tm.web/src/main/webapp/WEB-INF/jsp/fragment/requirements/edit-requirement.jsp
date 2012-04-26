@@ -249,7 +249,9 @@ that page won't be editable if
 <div class="fragment-tabs fragment-body">
 	<ul>
 		<li><a href="#tabs-1"><f:message key="tabs.label.information" /></a></li>
-		<li><a href="#tabs-2"><f:message key="tabs.label.attachments" /></a></li>
+		<li><a href="#tabs-2"><f:message key="tabs.label.attachments" />
+		<c:if test="${ requirement.attachmentList.notEmpty }"><span class="hasAttach">!</span></c:if>
+		</a></li>
 	</ul>
 	<div id="tabs-1">
 	<comp:toggle-panel id="requirement-information-panel" classes="information-panel" titleKey="requirement.panel.general-informations.title" isContextual="true" open="true" >
@@ -362,7 +364,7 @@ that page won't be editable if
 </div>
 <%----------------------------------------------------- Attachments bloc ------------------------------------------------------------%> 
 
-<comp:attachment-tab tabId="tabs-2" entity="${ requirement }" workspaceName="requirement" editable="${ editable }" />
+<comp:attachment-tab tabId="tabs-2" entity="${ requirement }" editable="${ editable }" />
 
 <%--------------------------- Deletion confirmation popup -------------------------------------%>
 	<c:if test="${editable}">

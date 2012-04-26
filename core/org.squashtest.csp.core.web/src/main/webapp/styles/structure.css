@@ -147,6 +147,11 @@ div.fragment-tabs > ul {
     border-radius : 0px 0px 0px 0px !important;
     position: relative;
 }
+div.fragment-tabs  ul  li .hasAttach{
+    color: orange;
+    font-weight: bold;
+    padding-left : 0.5em;
+}
 div.fragment-tabs > div {
 	 bottom: 0;
     overflow-y: auto;

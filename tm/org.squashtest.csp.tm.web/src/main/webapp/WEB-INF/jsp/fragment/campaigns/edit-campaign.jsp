@@ -191,7 +191,7 @@
 	<ul>
 		<li><a href="#tabs-1"><f:message key="tabs.label.information" /></a></li>
 		<li><a href="#tabs-2"><f:message key="tabs.label.test-plan" /></a></li>
-		<li><a href="#tabs-3"><f:message key="tabs.label.attachments" /></a></li>
+		<li><a href="#tabs-3"><f:message key="tabs.label.attachments" /><c:if test="${ campaign.attachmentList.notEmpty }"><span class="hasAttach">!</span></c:if></a></li>
 	</ul>
 	<div id="tabs-1">
 <c:if test="${ editable }">
@@ -335,12 +335,10 @@
 </pop:popup>
 
 </div>
-<div id="tabs-3">
+
 <%------------------------------ Attachments bloc ---------------------------------------------%> 
 
-<comp:attachment-bloc entity="${campaign}" workspaceName="campaign" editable="${ editable }" />
-
-</div>
+<comp:attachment-tab tabId="tabs-3" entity="${ campaign }" editable="${ editable }" />
 <%--------------------------- Deletion confirmation popup -------------------------------------%>
 <c:if test="${ editable }">
 

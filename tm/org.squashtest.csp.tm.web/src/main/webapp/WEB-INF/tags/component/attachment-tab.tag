@@ -22,7 +22,6 @@
 --%>
 <%@ tag language="java" pageEncoding="ISO-8859-1"%>
 
-<%@ attribute name="workspaceName" description="name of the workspace we are working in" %>
 <%@ attribute name="entity" type="java.lang.Object"  description="the entity to which we bind those attachments" %>
 <%@ attribute name="editable" type="java.lang.Boolean" description="List of attachments is editable. Defaults to false." %>
 <%@ attribute name="tabId" description="id of the concerned tab" required="true" %>
@@ -227,7 +226,7 @@
 		<jsp:attribute name="drawCallback">requirementsTableDrawCallback</jsp:attribute>
 		<jsp:attribute name="columnDefs">
 			<dt:column-definition targets="0" visible="false" />
-			<dt:column-definition targets="1" visible="true" cssClass="select-handle centered" width="2em"/>
+			<dt:column-definition targets="1" visible="true" cssClass="select-handle" width="2em"/>
 			<dt:column-definition targets="2" visible="false" />
 		    <dt:column-definition targets="3,4,5" visible="true" cssClass="centered" sortable="true"/>
 			<dt:column-definition targets="6" visible="true" width="2em" lastDef="true" cssClass="centered"/>

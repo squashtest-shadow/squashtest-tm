@@ -224,7 +224,7 @@
 	<ul>
 		<li><a href="#tabs-1"><f:message key="tabs.label.information" /></a></li>
 		<li><a href="#tabs-2"><f:message key="tabs.label.test-plan" /></a></li>
-		<li><a href="#tabs-3"><f:message key="tabs.label.attachments" /></a></li>
+		<li><a href="#tabs-3"><f:message key="tabs.label.attachments" /><c:if test="${ iteration.attachmentList.notEmpty }"><span class="hasAttach">!</span></c:if></a></li>
 	</ul>
 	<div id="tabs-1">
 
@@ -385,12 +385,10 @@
 	<div><f:message key="iteration.test-plan.action.empty-selection.message" /></div>
 </div>
 <%-- ----------------------------------- /Test Suite Management -------------------------------------------------- --%>
-
 </div>
-<div id="tabs-3">
+
 <%------------------------------ Attachments bloc ------------------------------------------- --%> 
-<comp:attachment-bloc entity="${iteration}" workspaceName="campaign" editable="${ editable }" />
- </div>
+<comp:attachment-tab tabId="tabs-3" entity="${ iteration }" editable="${ editable }" />
 <%-- ---------------------deletion popup------------------------------ --%>
 <c:if test="${ editable }">
 
