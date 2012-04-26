@@ -148,3 +148,7 @@
  	padding-right: 8px;
  	overflow-y: visible; 
 }
+.sub-page-selection-panel #contextual-content .fragment-tabs  div {
+    top:0;
+    position:relative;
+}

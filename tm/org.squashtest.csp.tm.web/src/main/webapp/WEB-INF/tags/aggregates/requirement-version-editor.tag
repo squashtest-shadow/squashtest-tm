@@ -92,7 +92,16 @@
 </div>
 <%-- ----------------------------------- /toolbar ----------------------------------------------%>
 <%-- -------------------------------------------------------- TABS-----------------------------------------------------------%>
-<comp:fragment-tabs />
+<script>
+	$(function() {
+		$('.fragment-tabs').tabs({
+			cookie: {
+				// store cookie for a day, without, it would be a session cookie
+				expires: 1
+			}
+		});
+	});
+</script>
 <div class="fragment-tabs fragment-body">
 	<ul>
 		<li><a href="#tabs-1"><f:message key="tabs.label.information" /></a></li>
