@@ -172,7 +172,7 @@
 	</c:if>	
 </div>
 
-<div class="fragment-body">
+
 
 <div id="campaign-toolbar" class="toolbar-class ui-corner-all " >
 	<div  class="toolbar-information-panel">
@@ -186,9 +186,14 @@
 	</div>	
 	<div style="clear:both;"></div>	
 </div>
-
-
-
+<comp:fragment-tabs />
+<div class="fragment-tabs fragment-body">
+	<ul>
+		<li><a href="#tabs-1"><f:message key="tabs.label.information" /></a></li>
+		<li><a href="#tabs-2"><f:message key="tabs.label.test-plan" /></a></li>
+		<li><a href="#tabs-3"><f:message key="tabs.label.attachments" /></a></li>
+	</ul>
+	<div id="tabs-1">
 <c:if test="${ editable }">
 	<comp:rich-jeditable targetUrl="${ campaignUrl }" componentId="campaign-description" />
 </c:if>
@@ -265,8 +270,8 @@
 <%--------------------------- /Planning section ------------------------------------%>
 
 
-
-
+</div>
+<div id="tabs-2" class="table-tab">
 
 <%--------------------------- Test plan section ------------------------------------%>
 <script type="text/javascript">
@@ -278,8 +283,7 @@
 	});
 </script>
 
-<comp:toggle-panel id="test-plan-panel" titleKey="campaign.test-plan.panel.title" open="true">
-	<jsp:attribute name="panelButtons">
+<div class="toolbar" >
 		<c:if test="${ editable }">
 			<f:message var="associateLabel" key="campaign.test-plan.manage.button.label"/>
 			<f:message var="removeLabel" key="campaign.test-plan.remove.button.label"/>
@@ -288,18 +292,16 @@
 			<input id="remove-test-case-button" type="button" value="${removeLabel}" class="button"/>
 			<input id="assign-test-case-button" type="button" value="${assignLabel}" class="button"/>
 		</c:if>
-	</jsp:attribute>
-	
-	<jsp:attribute name="body">
+</div>
+<div class="table-tab-wrap" >
 		<aggr:decorate-campaign-test-plan-table 
 			batchRemoveButtonId="remove-test-case-button" editable="${ editable }" assignableUsersUrl="${assignableUsersUrl}" 
 			campaignUrl="${ campaignUrl }" testCaseMultipleRemovalPopupId="delete-multiple-test-cases-dialog" testCaseSingleRemovalPopupId="delete-single-test-case-dialog" />
 		<aggr:campaign-test-plan-table />
-	</jsp:attribute>
-</comp:toggle-panel>
+</div>
 
 
-<%--------------------------- Deletion confirmation pup for Test plan section ------------------------------------%>
+<%--------------------------- Deletion confirmation popup for Test plan section ------------------------------------%>
 
 <pop:popup id="delete-multiple-test-cases-dialog" openedBy="remove-test-case-button" titleKey="dialog.remove-testcase-associations.title">
 	<jsp:attribute name="buttons">
@@ -332,12 +334,13 @@
 	</jsp:attribute>
 </pop:popup>
 
-
+</div>
+<div id="tabs-3">
 <%------------------------------ Attachments bloc ---------------------------------------------%> 
 
 <comp:attachment-bloc entity="${campaign}" workspaceName="campaign" editable="${ editable }" />
 
-
+</div>
 <%--------------------------- Deletion confirmation popup -------------------------------------%>
 <c:if test="${ editable }">
 

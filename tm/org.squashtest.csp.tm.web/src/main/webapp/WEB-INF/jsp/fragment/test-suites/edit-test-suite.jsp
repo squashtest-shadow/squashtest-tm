@@ -377,7 +377,7 @@
 	</div>
 	
 
-	<%--------------------------- Deletion confirmation pup for Test plan section ------------------------------------%>
+	<%--------------------------- Deletion confirmation popup for Test plan section ------------------------------------%>
 
 	<pop:popup id="delete-test-suite-multiple-test-plan-dialog"
 		openedBy="remove-test-suite-test-case-button"
@@ -426,7 +426,7 @@
 	</jsp:attribute>
 	</pop:popup>
 
-	<%-- ------------------------- /Deletion confirmation pup for Test plan section --------------------------------- --%>
+	<%-- ------------------------- /Deletion confirmation popup for Test plan section --------------------------------- --%>
 </div>
 <div id="tabs-3">
 	<%------------------------------ Attachments bloc ------------------------------------------- --%>

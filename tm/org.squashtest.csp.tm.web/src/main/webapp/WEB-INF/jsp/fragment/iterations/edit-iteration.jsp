@@ -39,67 +39,47 @@
 
 <jq:execution-status-factory/> 
 
-
-
 <c:url var="ckeConfigUrl" value="/styles/ckeditor/ckeditor-config.js" />
-
 <s:url var="iterationUrl" value="/iterations/{iterId}">
 	<s:param name="iterId" value="${iteration.id}" />
 </s:url>
-
 <s:url var="iterationInfoUrl" value="/iterations/{iterId}/general">
 	<s:param name="iterId" value="${iteration.id}" />
 </s:url>
-
 <s:url var="iterationPlanningUrl" value="/iterations/{iterId}/planning">
 	<s:param name="iterId" value="${iteration.id}" />
 </s:url>
-
 <s:url var="iterationTestPlanUrl" value="/iterations/{iterId}/test-plan">
 	<s:param name="iterId" value="${iteration.id}" />
 </s:url>
-
 <s:url var="testPlanManagerUrl" value="/iterations/{iterId}/test-plan-manager">
 		<s:param name="iterId" value="${iteration.id}" />
 </s:url>
-
 <s:url var="testCasesUrl" value="/iterations/{iterId}/test-plan" >
 		<s:param name="iterId" value="${iteration.id}" />
 </s:url>
-
 <s:url var="nonBelongingTestCasesUrl" value="/iterations/{iterId}/non-belonging-test-cases" >
 		<s:param name="iterId" value="${iteration.id}" />
 </s:url>
-
 <s:url var="assignableUsersUrl" value="/iterations/{iterId}/assignable-user" >
 		<s:param name="iterId" value="${iteration.id}" />
 </s:url>
-
 <s:url var="batchAssignableUsersUrl" value="/iterations/{iterId}/batch-assignable-user" >
 		<s:param name="iterId" value="${iteration.id}" />
 </s:url>
-
 <s:url var="assignTestCasesUrl" value="/iterations/{iterId}/batch-assign-user" >
 		<s:param name="iterId" value="${iteration.id}" />
 </s:url>
-
 <c:url var="testCaseDetailsBaseUrl" value="/test-case-libraries/1/test-cases" />
-
 <c:url var="workspaceUrl" value="/campaign-workspace/#" />
-
-
 <s:url var="testCaseExecutionsUrl" value="/iterations/{iterId}/test-case-executions/" >
 	<s:param name="iterId" value="${iteration.id}"/>
 </s:url>
 <s:url var="updateTestCaseUrl" value="/iterations/{iterId}/test-case/">
 	<s:param name="iterId" value="${iteration.id}" />
 </s:url>
-
-
 <s:url var="simulateDeletionUrl" value="/campaign-browser/delete-iterations/simulate" />
 <s:url var="confirmDeletionUrl" value="/campaign-browser/delete-iterations/confirm" />
-
-
 <s:url var="testSuitesUrl" value="/iterations/{iterId}/test-suites">
 	<s:param name="iterId" value="${iteration.id}"/>
 </s:url>
@@ -223,9 +203,6 @@
 	</c:if>	
 </div>
 
-<div class="fragment-body">
-
-
 <div id="iteration-toolbar" class="toolbar-class ui-corner-all " >
 	<div  class="toolbar-information-panel">
 		<div id="general-informations-panel">
@@ -242,7 +219,14 @@
 	<div style="clear:both;"></div>	
 </div>
 
-
+<comp:fragment-tabs />
+<div class="fragment-tabs fragment-body">
+	<ul>
+		<li><a href="#tabs-1"><f:message key="tabs.label.information" /></a></li>
+		<li><a href="#tabs-2"><f:message key="tabs.label.test-plan" /></a></li>
+		<li><a href="#tabs-3"><f:message key="tabs.label.attachments" /></a></li>
+	</ul>
+	<div id="tabs-1">
 
 <c:if test="${ editable }">
 <comp:rich-jeditable targetUrl="${ iterationUrl }" componentId="iteration-description"
@@ -325,25 +309,26 @@
 	</div>
 </jsp:attribute>
 </comp:toggle-panel>
-
+</div>
+<div id="tabs-2" class="table-tab">
 
 <%-- ------------------ test plan ------------------------------ --%>
 
 
-<comp:toggle-panel id="test-plan-panel" titleKey="campaign.test-plan.panel.title" open="true" isContextual="true">
-	<jsp:attribute name="panelButtons">
+<div class="toolbar" >
 		<c:if test="${ editable }">
 			<f:message var="associateLabel" key="campaign.test-plan.manage.button.label"/>
 			<f:message var="removeLabel" key="campaign.test-plan.remove.button.label"/>
 			<f:message var="assignLabel" key="campaign.test-plan.assign.button.label"/>
+			<f:message var="manageTS" key='menu.test-suites.button.main'/>
 			<input id="test-case-button" type="button" value="${associateLabel}" class="button"/>
 			<input id="remove-test-case-button" type="button" value="${removeLabel}" class="button"/>
 			<input id="assign-test-case-button" type="button" value="${assignLabel}" class="button"/>
-			<a id="manage-test-suites-menu" role="button" class="button tg-panel-button"><f:message key="menu.test-suites.button.main"/></a>
+			<input id="manage-test-suites-menu" type="button" value="${manageTS}" class="button" />
 		</c:if>
-	</jsp:attribute>
-	
-	<jsp:attribute name="body">
+	</div>
+
+		<div class="table-tab-wrap" >
 		<%------ 
 			requires <jq:execution-status-factory/>
 		------%>
@@ -354,8 +339,7 @@
 			nonBelongingTestPlansUrl="${nonBelongingTestCasesUrl}" testPlanExecutionsUrl="${testCaseExecutionsUrl}" editable="${ editable }" testCaseMultipleRemovalPopupId="delete-multiple-test-plan-dialog" 
 			testCaseSingleRemovalPopupId="delete-single-test-plan-dialog" />
 		<aggr:iteration-test-cases-table/>
-	</jsp:attribute>
-</comp:toggle-panel>
+	</div>
 
 <%--------------------------- Deletion confirmation pup for Test plan section ------------------------------------%>
 
@@ -390,7 +374,7 @@
 	</jsp:attribute>
 </pop:popup>
 
-<%-- ------------------------- /Deletion confirmation pup for Test plan section --------------------------------- --%>
+<%-- ------------------------- /Deletion confirmation popup for Test plan section --------------------------------- --%>
 
 <%-- ----------------------------------- Test Suite Management -------------------------------------------------- --%>
 
@@ -400,10 +384,13 @@
 <div id="test-plan-empty-sel-msg" class="not-visible" title="<f:message key='iteration.test-plan.action.title' />">
 	<div><f:message key="iteration.test-plan.action.empty-selection.message" /></div>
 </div>
-	
+<%-- ----------------------------------- /Test Suite Management -------------------------------------------------- --%>
+
+</div>
+<div id="tabs-3">
 <%------------------------------ Attachments bloc ------------------------------------------- --%> 
 <comp:attachment-bloc entity="${iteration}" workspaceName="campaign" editable="${ editable }" />
- 
+ </div>
 <%-- ---------------------deletion popup------------------------------ --%>
 <c:if test="${ editable }">
 
