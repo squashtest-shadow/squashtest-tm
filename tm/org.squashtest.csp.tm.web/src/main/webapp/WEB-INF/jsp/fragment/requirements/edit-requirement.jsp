@@ -238,13 +238,6 @@ that page won't be editable if
 
 		<div style="clear:both;"></div>			
 	</div>
-
-	<c:if test="${editable }">
-		<comp:rich-jeditable targetUrl="${ requirementUrl }" componentId="requirement-description" />
-		<%-- make requirement-reference editable --%>
-		<%-- TODO put at end of page, maybe componentize --%>
-		<comp:simple-jeditable targetUrl="${ requirementUrl }" componentId="requirement-reference" submitCallback="updateReferenceInTitle" maxLength="20" />
-	</c:if>
 <comp:fragment-tabs />
 <div class="fragment-tabs fragment-body">
 	<ul>
@@ -254,6 +247,13 @@ that page won't be editable if
 		</a></li>
 	</ul>
 	<div id="tabs-1">
+	<c:if test="${editable }">
+		<comp:rich-jeditable targetUrl="${ requirementUrl }" componentId="requirement-description" />
+		<%-- make requirement-reference editable --%>
+		<%-- TODO put at end of page, maybe componentize --%>
+		<comp:simple-jeditable targetUrl="${ requirementUrl }" componentId="requirement-reference" submitCallback="updateReferenceInTitle" maxLength="20" />
+	</c:if>
+
 	<comp:toggle-panel id="requirement-information-panel" classes="information-panel" titleKey="requirement.panel.general-informations.title" isContextual="true" open="true" >
 		<jsp:attribute name="body">
 			<div id="edit-requirement-table" class="display-table">

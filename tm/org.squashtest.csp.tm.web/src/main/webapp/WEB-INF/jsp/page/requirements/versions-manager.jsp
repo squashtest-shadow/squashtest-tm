@@ -38,6 +38,34 @@
 		<link rel="stylesheet" type="text/css" href="${ pageContext.servletContext.contextPath }/styles/structure.override.css" />
 		<link rel="stylesheet" type="text/css" href="${ pageContext.servletContext.contextPath }/styles/structure.subpageoverride.css" />
 		<script type="text/javascript">
+// 	----------------------------------------------	RESIZE
+		$(function() {
+			calculateTopPosition();
+		});
+
+		window.onresize = function(){setTimeout(calculateTopPosition, 200);};
+
+		function calculateTopPosition() {
+			var selectors = [ '#sub-page-content'];
+			for ( var i = 0; i < selectors.length; i++) {
+				var selectedElements = $(selectors[i]);
+//					console.log('selecteds '+i+' = ' + selectedElements);
+				for ( var j = 0; j < selectedElements.length; j++) {
+					var element = $(selectedElements[j]);
+//						console.log('element '+j+' = ' + element);
+					var previous = element.prevAll().not(':hidden');
+					var topPos = 0;
+					for ( var k = 0; k < previous.length; k++) {
+//							console.log('previous '+k+' = ' + $(previous[k]).outerHeight());
+						topPos += $(previous[k]).outerHeight() + 20;
+					}
+					element.css('top', topPos );
+				}
+			}
+			
+		}
+//	 	----------------------------------------------	/RESIZE
+//	 	----------------------------------------------	/TABLE
 			$(function() {
 				/* versions table decoration */
 				var getRowId = function(data) {
@@ -85,7 +113,7 @@
 
 					var urlPattern = "<c:url value='/requirement-versions/selectedVersionId/editor-fragment' />";
 					
-					$( "#contextual-content" ).load(urlPattern.replace("selectedVersionId", id));
+					$( "#sub-page-content" ).load(urlPattern.replace("selectedVersionId", id));
 				}
 				
 				$(".select-handle", table).live('click', function() {
@@ -108,6 +136,7 @@
 					}
 				});
 			});
+//		 	----------------------------------------------	/TABLE
 		</script>
 	</jsp:attribute>
 	
@@ -131,8 +160,8 @@
 				<div class="unsnap"></div>
 			</div>
 			
-			<div id="sub-page-list-panel" class="sub-page-list-panel shadow ui-corner-all ui-helper-reset ui-widget ui-widget-content">
-				<table id="versions-table">
+			<div id="sub-page-list-panel" class="sub-page-list-panel shadow ui-corner-all ui-helper-reset ui-widget ui-widget-content" >
+				<table id="versions-table" >
 					<thead>
 						<th>Id</th>
 						<th><f:message key="requirement.versions.table.col-header.version-number" /></th>
@@ -141,7 +170,7 @@
 						<th><f:message key="requirement.versions.table.col-header.status" /></th>
 						<th>Id</th>
 					</thead>
-					<tbody>
+					<tbody >
 						<c:forEach var="version" items="${ versions }" end="${ displayedVersions - 1 }">
 							<c:choose>
 								<c:when test="${ version.id eq selectedVersion.id }">
@@ -164,21 +193,12 @@
 				</table>
 			</div>	
 			
-			<div id="sub-page-selection-panel" class="sub-page-selection-panel shadow ui-corner-all ui-component">
-				<div id="contextual-content">
-					<gr:requirement-version-editor requirementVersion="${ selectedVersion }" jsonCriticalities="${ jsonCriticalities }" />
-				</div>
+			<div id="sub-page-content" class="sub-page-content shadow ui-corner-all ui-component">
+				
+				<gr:requirement-version-editor requirementVersion="${ selectedVersion }" jsonCriticalities="${ jsonCriticalities }" />
+				
 			</div>	
 		</div>
 	
 	</jsp:attribute>
 </layout:common-import-outer-frame-layout>
-
-
-
-
-
-
-
-
-

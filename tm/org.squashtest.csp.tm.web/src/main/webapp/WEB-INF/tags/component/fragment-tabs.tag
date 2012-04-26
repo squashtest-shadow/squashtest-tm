@@ -44,7 +44,7 @@
 			for ( var j = 0; j < selectedElements.length; j++) {
 				var element = $(selectedElements[j]);
 // 				console.log('element '+j+' = ' + element);
-				var previous = element.prevAll().not('.ui-tabs-panel');
+				var previous = element.prevAll().not(':hidden').not('.ui-tabs-panel');
 				var topPos = 0;
 				for ( var k = 0; k < previous.length; k++) {
 // 					console.log('previous '+k+' = ' + $(previous[k]).outerHeight());

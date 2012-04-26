@@ -47,23 +47,202 @@
 <s:url var="getStatusComboContent" value="/requirement-versions/${ requirementVersion.id }/next-status" />
 
 <%-- ----------------------------------- Authorization ----------------------------------------------%>
-<%-- 
-that page won't be editable if 
+<%-- that page won't be editable if 
    * the user don't have the correct permission,
-   * the requirement status doesn't allow it.
-
- --%>
+   * the requirement status doesn't allow it. --%>
  
 <authz:authorized hasRole="ROLE_ADMIN" hasPermission="WRITE" domainObject="${ requirementVersion }">
 	<c:set var="editable" value="${ requirementVersion.modifiable }" />
 	<c:set var="editableStatus" value="${ requirementVersion.status.allowsStatusUpdate }"/>
 	<c:set var="linkable" value="${ requirementVersion.linkable }" />
 </authz:authorized>
+<%-- ----------------------------------- /Authorization ----------------------------------------------%>
+<%-- ----------------------------------- header ----------------------------------------------%>
+<div class="ui-widget-header ui-corner-all ui-state-default fragment-header">
+	<div style="float:left;height:100%;">	
+		<h2>
+			<span><f:message key="requirement.header.title" />&nbsp;:&nbsp;</span>
+			<c:set var="completeRequirementName" value="${ requirementVersion.name }" />
+			<c:if test="${ not empty requirementVersion.reference && fn:length(requirementVersion.reference) > 0 }" >
+				<c:set var="completeRequirementName" value='${ requirementVersion.reference } - ${ requirementVersion.name }' />
+			</c:if>
+			<a id="requirement-name" href="${ requirementUrl }/info"><c:out value="${ completeRequirementName }" /></a>
+			<%-- raw reference and name because we need to get the name and only the name for modification, and then re-compose the title with the reference  --%>
+			<span id="requirement-raw-reference" style="display:none"><c:out value="${ requirementVersion.reference }" /></span>
+			<span id="requirement-raw-name" style="display:none"><c:out value="${ requirementVersion.name }" /></span>
+			<span id="requirement-id" style="display:none"><c:out value="${ requirementVersion.id }" /></span>
+		</h2>
+	</div>
+	<div class="unsnap"></div>		
+</div>
+<%-- ----------------------------------- /header ----------------------------------------------%>
+<%-- ----------------------------------- toolbar ----------------------------------------------%>
+<div id="requirement-toolbar" class="toolbar-class ui-corner-all" >
+	<div  class="toolbar-information-panel">
+		<comp:general-information-panel auditableEntity="${ requirementVersion }" entityUrl="${ requirementUrl }" />
+	</div>
 
+	<c:if test="${ editable }">
+		<div class="toolbar-button-panel">
+			<input type="button" value='<f:message key="requirement.button.rename.label" />' id="rename-requirement-button" class="button"/> 
+		</div>	
+	</c:if>
+
+	<div style="clear:both;"></div>			
+</div>
+<%-- ----------------------------------- /toolbar ----------------------------------------------%>
+<%-- -------------------------------------------------------- TABS-----------------------------------------------------------%>
+<comp:fragment-tabs />
+<div class="fragment-tabs fragment-body">
+	<ul>
+		<li><a href="#tabs-1"><f:message key="tabs.label.information" /></a></li>
+		<li><a href="#tabs-2"><f:message key="tabs.label.attachments" />
+		<c:if test="${ requirementVersion.attachmentList.notEmpty }"><span class="hasAttach">!</span></c:if>
+		</a></li>
+	</ul>
+<%-- --------------------------------------------- tab1 Information----------------------------------------------%>
+	<div id="tabs-1">
+	<c:if test="${ editable }">
+		<comp:rich-jeditable targetUrl="${ requirementUrl }" componentId="requirement-description" />
+		<%-- make requirement-reference editable --%>
+		<%-- TODO put at end of page, maybe componentize --%>
+		<comp:simple-jeditable targetUrl="${ requirementUrl }" componentId="requirement-reference" submitCallback="updateReferenceInTitle" maxLength="20" />
+	</c:if>
+
+	<comp:toggle-panel id="requirement-information-panel" titleKey="requirement.panel.general-informations.title" isContextual="true" open="true" >
+		<jsp:attribute name="body">
+			<div id="edit-requirement-table" class="display-table">
+				<div>
+					<label for="requirement-version-number"><f:message key="requirement-version.version-number.label" /></label>
+					<div id="requirement-version-number">${ requirementVersion.versionNumber }</div>
+				</div>
+				<div>
+					<label for="requirement-description"><f:message key="requirement.description.label" /></label>
+					<div id="requirement-description">${ requirementVersion.description }</div>
+				</div>
+				<div>
+					<label for="requirement-reference"><f:message key="requirement.reference.label" /></label>
+					<div id="requirement-reference">${ requirementVersion.reference }</div>
+				</div>
+				<div>
+					<label for="requirement-criticality"><f:message key="requirement.criticality.combo.label" /></label>
+					<div>
+						<div id="requirement-criticality">
+							<c:choose>
+								<c:when test="${ editable }">
+									<comp:level-message level="${ requirementVersion.criticality }"/>
+									<comp:select-jeditable componentId="requirement-criticality" jsonData="${ jsonCriticalities }" targetUrl="${ requirementUrl }" />
+								</c:when>
+							<c:otherwise>
+								<comp:level-message level="${ requirementVersion.criticality }"/>
+							</c:otherwise>
+							</c:choose>
+						</div>
+					</div>				
+				</div>
+				<div>
+					<label for="requirement-status"><f:message key="requirement.status.combo.label" /></label>
+					<div>
+						<div id="requirement-status">
+						<c:choose>
+							<c:when test="${ editableStatus }">
+								<comp:level-message level="${ requirementVersion.status }"/>
+								<comp:select-jeditable componentId="requirement-status" jsonUrl="${ getStatusComboContent }" 
+														targetUrl="${ requirementUrl }"	
+														onSubmit="statusSelect" submitCallback="statusSelectCallback"/>
+							</c:when>
+							<c:otherwise>
+								<comp:level-message level="${ requirementVersion.status }"/>
+							</c:otherwise>
+						</c:choose>
+						</div>
+					</div>		
+
+				</div>				
+			</div>
+		</jsp:attribute>
+	</comp:toggle-panel>
+	<%--------------- verifying TestCase section ------------------------------------%>
+	<comp:toggle-panel id="verifying-requirement-panel" titleKey="requirement.verifying_test-case.panel.title" open="true">
+		<jsp:attribute name="panelButtons">
+			<c:if test="${ linkable }">
+				<f:message var="associateLabel" key="requirement.verifying_test-case.manage.button.label"/>
+				<f:message var="removeLabel" key="test-case.verified_requirement_item.remove.button.label"/>
+				
+				<input id="verifying-test-case-button" type="button" class="button" value="${ associateLabel }"/>
+				<input id="remove-verifying-test-case-button" type="button" class="button" value="${ removeLabel }"/>
+			</c:if>
+		</jsp:attribute>
+
+		<jsp:attribute name="body">
+			<aggr:decorate-verifying-test-cases-table nonVerifyingTestCasesUrl="${ nonVerifyingTestCasesUrl }" tableModelUrl="${ getVerifyingTestCaseUrl }" 
+				verifyingTestCasesUrl="${ verifyingTestCasesUrl }" batchRemoveButtonId="remove-verifying-test-case-button"
+				editable="${ linkable }" />
+			<aggr:verifying-test-cases-table />
+		</jsp:attribute>
+	</comp:toggle-panel>
+	
+	<%--------------- Audit Trail ------------------------------------%>
+	<aggr:requirement-version-audit-trail requirementVersion="${ requirementVersion }" />
+</div>
+<%-- --------------------------------------------- /tab1 Information----------------------------------------------%>
+<%-- --------------------------------------------- tab2 Attachments ----------------------------------------------%>
+	<comp:attachment-tab tabId="tabs-2" entity="${ requirementVersion }" editable="${ editable }" />
+<%-- --------------------------------------------- /tab2 Attachments ----------------------------------------------%>
+	
+</div>
+<%-- --------------------------------------------------------------- /TABS ------------------------------------------------------------%>
+<comp:decorate-buttons />
+<!------------------------------------------ POPUPS ------------------------------------------------------>
+	<%------------------- confirm new status if set to obsolete ---------------------%>
+	<c:if test="${ editableStatus }">
+	<pop:popup id="requirement-status-confirm-dialog" closeOnSuccess="false" titleKey="dialog.requirement.status.confirm.title" isContextual="true" >
+		<jsp:attribute name="buttons">
+			<f:message var="confirmLabel" key="dialog.button.confirm.label" />
+			<f:message var="cancelLabel" key="dialog.button.cancel.label"/>
+				'${ confirmLabel }' : function(){
+					var jqDiag = $(this);
+					jqDiag.dialog( 'close' );
+					jqDiag.data("confirm", true);
+					var form = jqDiag.data('callMeBack');
+					form.submit();
+				},
+				
+				'${ cancelLabel }': function() {
+					var jqDiag = $(this);
+					jqDiag.dialog( 'close' );
+					jqDiag.data("confirm", false);
+					var form = jqDiag.data('callMeBack');
+					form.submit();
+				}
+		</jsp:attribute>
+		<jsp:attribute name="body">
+			<span><f:message key="dialog.requirement.status.confirm.text"/></span>
+		</jsp:attribute>					
+	</pop:popup>
+		<%------------------- rename ---------------------%>
+		<comp:popup id="rename-requirement-dialog" titleKey="dialog.rename-requirement.title" 
+			isContextual="true" openedBy="rename-requirement-button">
+			<jsp:attribute name="buttons">
+				<f:message var="label" key="dialog.rename-requirement.title" />
+				'${ label }': function() {
+					var url = "${ pageUrl }" + $('#requirement-id').text();
+					<jq:ajaxcall  url="url" dataType="json" httpMethod="POST" useData="true" successHandler="renameRequirementSuccess">		
+						<jq:params-bindings newName="#rename-requirement-input" />
+					</jq:ajaxcall>					
+				},			
+				<pop:cancel-button />
+			</jsp:attribute>
+			<jsp:body>
+				<label><f:message key="dialog.rename.label" /></label>
+				<input type="text" id="rename-requirement-input" maxlength="255" /><br/>
+				<comp:error-message forField="name"/>
+			</jsp:body>
+		</comp:popup>
+	</c:if>
+<!------------------------------------------/ POPUPS ------------------------------------------------------>
+<!------------------------------------------ SCRIPTS ------------------------------------------------------>
 <%-- ----------------------------------- Init ----------------------------------------------%>
-
-
-
 <%-- 
 	Code managing the status of a requirement. It is a handler for the 'onsubmit' of a jeditable (see documentation for details).
 
@@ -146,194 +325,19 @@ that page won't be editable if
 		}
 </script>
 </c:if>
-
-
-<div class="ui-widget-header ui-corner-all ui-state-default fragment-header">
-	<div style="float:left;height:100%;">	
-		<h2>
-			<span><f:message key="requirement.header.title" />&nbsp;:&nbsp;</span>
-			<c:set var="completeRequirementName" value="${ requirementVersion.name }" />
-			<c:if test="${ not empty requirementVersion.reference && fn:length(requirementVersion.reference) > 0 }" >
-				<c:set var="completeRequirementName" value='${ requirementVersion.reference } - ${ requirementVersion.name }' />
-			</c:if>
-			<a id="requirement-name" href="${ requirementUrl }/info"><c:out value="${ completeRequirementName }" /></a>
-			<%-- raw reference and name because we need to get the name and only the name for modification, and then re-compose the title with the reference  --%>
-			<span id="requirement-raw-reference" style="display:none"><c:out value="${ requirementVersion.reference }" /></span>
-			<span id="requirement-raw-name" style="display:none"><c:out value="${ requirementVersion.name }" /></span>
-			<span id="requirement-id" style="display:none"><c:out value="${ requirementVersion.id }" /></span>
-		</h2>
-	</div>
-
-	<div class="unsnap"></div>	
-
-	<c:if test="${ editable }">
-		<comp:popup id="rename-requirement-dialog" titleKey="dialog.rename-requirement.title" 
-			isContextual="true" openedBy="rename-requirement-button">
-			<jsp:attribute name="buttons">
-				<f:message var="label" key="dialog.rename-requirement.title" />
-				'${ label }': function() {
-					var url = "${ pageUrl }" + $('#requirement-id').text();
-					<jq:ajaxcall  url="url" dataType="json" httpMethod="POST" useData="true" successHandler="renameRequirementSuccess">		
-						<jq:params-bindings newName="#rename-requirement-input" />
-					</jq:ajaxcall>					
-				},			
-				<pop:cancel-button />
-			</jsp:attribute>
-			<jsp:body>
-				<script type="text/javascript">
-				$( "#rename-requirement-dialog" ).bind( "dialogopen", function(event, ui) {
-					var name = $('#requirement-raw-name').text();
-					$("#rename-requirement-input").val(name);
-				});
-				</script>
-				<label><f:message key="dialog.rename.label" /></label>
-				<input type="text" id="rename-requirement-input" maxlength="255" /><br/>
-				<comp:error-message forField="name"/>
-			</jsp:body>
-		</comp:popup>
-	</c:if>
-</div>
-
-<div class="fragment-body">
-	<div id="requirement-toolbar" class="toolbar-class ui-corner-all" >
-		<div  class="toolbar-information-panel">
-			<comp:general-information-panel auditableEntity="${ requirementVersion }" entityUrl="${ requirementUrl }" />
-		</div>
-
-		<c:if test="${ editable }">
-			<div class="toolbar-button-panel">
-				<input type="button" value='<f:message key="requirement.button.rename.label" />' id="rename-requirement-button" class="button"/> 
-			</div>	
-		</c:if>
-
-		<div style="clear:both;"></div>			
-	</div>
-
-	<c:if test="${ editable }">
-		<comp:rich-jeditable targetUrl="${ requirementUrl }" componentId="requirement-description" />
-		<%-- make requirement-reference editable --%>
-		<%-- TODO put at end of page, maybe componentize --%>
-		<comp:simple-jeditable targetUrl="${ requirementUrl }" componentId="requirement-reference" submitCallback="updateReferenceInTitle" maxLength="20" />
-	</c:if>
-
-	<comp:toggle-panel id="requirement-information-panel" titleKey="requirement.panel.general-informations.title" isContextual="true" open="true" >
-		<jsp:attribute name="body">
-			<div id="edit-requirement-table" class="display-table">
-				<div>
-					<label for="requirement-version-number"><f:message key="requirement-version.version-number.label" /></label>
-					<div id="requirement-version-number">${ requirementVersion.versionNumber }</div>
-				</div>
-				<div>
-					<label for="requirement-description"><f:message key="requirement.description.label" /></label>
-					<div id="requirement-description">${ requirementVersion.description }</div>
-				</div>
-				<div>
-					<label for="requirement-reference"><f:message key="requirement.reference.label" /></label>
-					<div id="requirement-reference">${ requirementVersion.reference }</div>
-				</div>
-				<div>
-					<label for="requirement-criticality"><f:message key="requirement.criticality.combo.label" /></label>
-					<div>
-						<div id="requirement-criticality">
-							<c:choose>
-								<c:when test="${ editable }">
-									<comp:level-message level="${ requirementVersion.criticality }"/>
-									<comp:select-jeditable componentId="requirement-criticality" jsonData="${ jsonCriticalities }" targetUrl="${ requirementUrl }" />
-								</c:when>
-							<c:otherwise>
-								<comp:level-message level="${ requirementVersion.criticality }"/>
-							</c:otherwise>
-							</c:choose>
-						</div>
-					</div>				
-				</div>
-				<div>
-					<label for="requirement-status"><f:message key="requirement.status.combo.label" /></label>
-					<div>
-						<div id="requirement-status">
-						<c:choose>
-							<c:when test="${ editableStatus }">
-								<comp:level-message level="${ requirementVersion.status }"/>
-								<comp:select-jeditable componentId="requirement-status" jsonUrl="${ getStatusComboContent }" 
-														targetUrl="${ requirementUrl }"	
-														onSubmit="statusSelect" submitCallback="statusSelectCallback"/>
-							</c:when>
-							<c:otherwise>
-								<comp:level-message level="${ requirementVersion.status }"/>
-							</c:otherwise>
-						</c:choose>
-						</div>
-					</div>		
-
-				</div>				
-			</div>
-		</jsp:attribute>
-	</comp:toggle-panel>
-	
-	<%------------------------------- confirm new status if set to obsolete ---------------------%>
-	<c:if test="${ editableStatus }">
-	<pop:popup id="requirement-status-confirm-dialog" closeOnSuccess="false" titleKey="dialog.requirement.status.confirm.title" isContextual="true" >
-		<jsp:attribute name="buttons">
-			<f:message var="confirmLabel" key="dialog.button.confirm.label" />
-			<f:message var="cancelLabel" key="dialog.button.cancel.label"/>
-				'${ confirmLabel }' : function(){
-					var jqDiag = $(this);
-					jqDiag.dialog( 'close' );
-					jqDiag.data("confirm", true);
-					var form = jqDiag.data('callMeBack');
-					form.submit();
-				},
-				
-				'${ cancelLabel }': function() {
-					var jqDiag = $(this);
-					jqDiag.dialog( 'close' );
-					jqDiag.data("confirm", false);
-					var form = jqDiag.data('callMeBack');
-					form.submit();
-				}
-		</jsp:attribute>
-		<jsp:attribute name="body">
-			<span><f:message key="dialog.requirement.status.confirm.text"/></span>
-		</jsp:attribute>					
-	</pop:popup>
-	</c:if>
-
-	<%--------------------------- verifying TestCase section ------------------------------------%>
-	<script type="text/javascript">
-		$(function(){
-			$("#verifying-test-case-button").button().click(function(){
-				document.location.href="${ verifyingTCManagerUrl }" ;	
-			});
-		});
-	</script>
-
-	<comp:toggle-panel id="verifying-requirement-panel" titleKey="requirement.verifying_test-case.panel.title" open="true">
-		<jsp:attribute name="panelButtons">
-			<c:if test="${ linkable }">
-				<f:message var="associateLabel" key="requirement.verifying_test-case.manage.button.label"/>
-				<f:message var="removeLabel" key="test-case.verified_requirement_item.remove.button.label"/>
-				
-				<input id="verifying-test-case-button" type="button" class="button" value="${ associateLabel }"/>
-				<input id="remove-verifying-test-case-button" type="button" class="button" value="${ removeLabel }"/>
-			</c:if>
-		</jsp:attribute>
-
-		<jsp:attribute name="body">
-			<aggr:decorate-verifying-test-cases-table nonVerifyingTestCasesUrl="${ nonVerifyingTestCasesUrl }" tableModelUrl="${ getVerifyingTestCaseUrl }" 
-				verifyingTestCasesUrl="${ verifyingTestCasesUrl }" batchRemoveButtonId="remove-verifying-test-case-button"
-				editable="${ linkable }" />
-			<aggr:verifying-test-cases-table />
-		</jsp:attribute>
-	</comp:toggle-panel>
-
-	<comp:attachment-bloc entity="${ requirementVersion }" workspaceName="requirement" editable="${ editable }" />
-	
-	<aggr:requirement-version-audit-trail requirementVersion="${ requirementVersion }" />
-</div>
-
-<comp:decorate-buttons />
-
+<%-- ----------------------------------- Other ----------------------------------------------%>
 <script type="text/javascript">
+	$( "#rename-requirement-dialog" ).bind( "dialogopen", function(event, ui) {
+		var name = $('#requirement-raw-name').text();
+		$("#rename-requirement-input").val(name);
+	});
+	
+	$(function(){
+		$("#verifying-test-case-button").button().click(function(){
+			document.location.href="${ verifyingTCManagerUrl }" ;	
+		});
+	});
+	
 	/* display the requirement name. Used for extern calls (like from the page who will include this fragment)
 	*  will refresh the general informations as well*/
 	function nodeSetname(name){
@@ -404,3 +408,4 @@ that page won't be editable if
 		}
 		</c:if>
 </script>
+<!------------------------------------------ /SCRIPTS ------------------------------------------------------>
