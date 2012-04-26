@@ -267,7 +267,7 @@
 	</c:if>
 </div>
 
-<div class="fragment-body">
+
 
 
 	<div id="test-suite-toolbar" class="toolbar-class ui-corner-all ">
@@ -298,7 +298,14 @@
 		</div>
 		<div style="clear: both;"></div>
 	</div>
-
+<comp:fragment-tabs />
+<div class="fragment-tabs fragment-body">
+	<ul>
+		<li><a href="#tabs-1"><f:message key="tabs.label.information" /></a></li>
+		<li><a href="#tabs-2"><f:message key="tabs.label.test-plan" /></a></li>
+		<li><a href="#tabs-3"><f:message key="tabs.label.attachments" /></a></li>
+	</ul>
+	<div id="tabs-1">
 	<c:if test="${ editable }">
 		<comp:rich-jeditable targetUrl="${ testSuiteUrl }"
 			componentId="test-suite-description"
@@ -324,14 +331,13 @@
 		</div>
 	</jsp:attribute>
 	</comp:toggle-panel>
-
+</div>
+<div id="tabs-2" class="table-tab">
 	<%-- ------------------ test plan ------------------------------ --%>
 
 
-	<comp:toggle-panel id="test-plan-panel"
-		titleKey="campaign.test-plan.panel.title" open="true"
-		isContextual="true">
-		<jsp:attribute name="panelButtons">
+	
+		<div class="toolbar" >
 		<c:if test="${ editable }">
 			<f:message var="associateLabel"
 					key="campaign.test-plan.manage.button.label" />
@@ -343,10 +349,11 @@
 			<input id="remove-test-suite-test-case-button" type="button"
 					value="${removeLabel}" class="button" />
 <%-- 			<input id="assign-test-case-button" type="button" value="${assignLabel}" class="button"/> --%>
+			
 		</c:if>
-	</jsp:attribute>
+	</div>
 
-		<jsp:attribute name="body">
+		<div class="table-tab-wrap" >
 		
 		<%-- requires <jq:execution-status-factory/> --%>
 	
@@ -367,8 +374,8 @@
 				testSuiteExecButtonsId="test-suite-execution-button"
 				testSuiteExecButtonsUrl="${ testSuiteExecButtonsUrl }" />
 		<aggr:test-suite-test-plan-table />
-	</jsp:attribute>
-	</comp:toggle-panel>
+	</div>
+	
 
 	<%--------------------------- Deletion confirmation pup for Test plan section ------------------------------------%>
 
@@ -420,11 +427,12 @@
 	</pop:popup>
 
 	<%-- ------------------------- /Deletion confirmation pup for Test plan section --------------------------------- --%>
-
+</div>
+<div id="tabs-3">
 	<%------------------------------ Attachments bloc ------------------------------------------- --%>
 	<comp:attachment-bloc entity="${testSuite}" workspaceName="campaign"
 		editable="${ editable }" />
-
+</div>
 	<%-- ---------------------deletion popup------------------------------ --%>
 	<c:if test="${ editable }">
 		<script>

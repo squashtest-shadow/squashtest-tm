@@ -176,7 +176,10 @@ div.fragment-tabs > div.table-tab > div.table-tab-wrap .dataTables_footer {
 	bottom: 15px;
     position: fixed;
  }
-
+div.sub-page  div.fragment-tabs > div.table-tab > div.table-tab-wrap .dataTables_footer {
+	bottom: 1.8cm;
+    position: fixed;
+ }
 div#tabbed-pane > ul {
 	position: relative;
 	top: -0.75cm;
