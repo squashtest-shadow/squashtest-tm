@@ -352,7 +352,7 @@
 			cssClass="centered ui-state-default drag-handle select-handle" />
 		<dt:column-definition targets="2, 3, 4" sortable="false" />
 		<dt:column-definition targets="5, 6, 7, 8, 9" sortable="false"
-			width="12em" />
+			width="10%" />
 		<dt:column-definition targets="10" sortable="false" visible="false" />
 		<dt:column-definition targets="11" sortable="false" width="2em"
 			lastDef="true" cssClass="centered" />

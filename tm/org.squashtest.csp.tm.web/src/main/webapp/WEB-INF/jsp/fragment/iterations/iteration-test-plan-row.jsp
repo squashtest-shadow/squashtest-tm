@@ -47,15 +47,15 @@
 					style="text-align:left;color: ${textcolor}; font-style:italic; text-decoration: underline"><a
 					href="${showExecutionUrl}/${execution.id}"><b>Exec.
 							${status.index + 1} :</b> ${ execution.name }</a></span></td>
-				<td style="width: 12em;"><span
+				<td style="width: 10%;"><span
 					style="color: ${textcolor}; font-style:italic;"><f:message
 							key="${ execution.executionMode.i18nKey }" />
 				</td>
-				<td style="width: 12em;"></td>
-				<td style="width: 12em; color: ${textcolor} font-style:italic;"><f:message
+				<td style="width: 10%;"></td>
+				<td style="width: 10%; color: ${textcolor} font-style:italic;"><f:message
 						key="execution.execution-status.${execution.executionStatus}" />
 				</td>
-				<td style="width: 12em;"><span style="color: ${textcolor}">
+				<td style="width: 10%;"><span style="color: ${textcolor}">
 						<c:choose>
 							<c:when test="${ execution.lastExecutedBy != null }">
 								<i>${ execution.lastExecutedBy }</i>
@@ -65,7 +65,7 @@
 							</c:otherwise>
 						</c:choose> </span>
 				</td>
-				<td style="width: 12em;color: ${textcolor}"><c:choose>
+				<td style="width: 10%;color: ${textcolor}"><c:choose>
 						<c:when test="${ execution.lastExecutedOn != null }">
 							<f:message var="dateFormat" key="squashtm.dateformat" />
 							<i><f:formatDate value="${ execution.lastExecutedOn }"
