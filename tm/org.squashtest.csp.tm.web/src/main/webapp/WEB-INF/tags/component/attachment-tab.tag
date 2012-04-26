@@ -20,6 +20,12 @@
         along with this software.  If not, see <http://www.gnu.org/licenses/>.
 
 --%>
+<%@ tag language="java" pageEncoding="ISO-8859-1"%>
+
+<%@ attribute name="workspaceName" description="name of the workspace we are working in" %>
+<%@ attribute name="entity" type="java.lang.Object"  description="the entity to which we bind those attachments" %>
+<%@ attribute name="editable" type="java.lang.Boolean" description="List of attachments is editable. Defaults to false." %>
+<%@ attribute name="tabId" description="id of the concerned tab" required="true" %>
 <%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core" %>
 <%@ taglib prefix="f" uri="http://java.sun.com/jsp/jstl/fmt" %>
 <%@ taglib prefix="jq" tagdir="/WEB-INF/tags/jquery" %>
@@ -29,50 +35,30 @@
 <%@ taglib prefix="sf" uri="http://www.springframework.org/tags/form"%>
 <%@ taglib prefix="aggr" tagdir="/WEB-INF/tags/aggregates"%>
 <%@ taglib prefix="pop" tagdir="/WEB-INF/tags/popup" %>
-<?xml version="1.0" encoding="utf-8" ?>
-<%@ page language="java" contentType="text/html; charset=utf-8" pageEncoding="utf-8"%>
-
-<%-- @params : voir page/attachments/attachment-manager.jsp --%>
-
-<dt:datatables-header/>
-
-<script type="text/javascript" src="${ pageContext.servletContext.contextPath }/scripts/squashtest/attachment-bloc.js"></script>
-
 
 <%------------------------------------- URLs --------------------------------------------------------%>
-
-<c:set var="rootUrl" value="attach-list/${attachListId}/attachments" />
-
+<c:set var="rootUrl" value="attach-list/${entity.attachmentList.id}/attachments" />
 <s:url var="prefixedRootUrl" value="/{rootUrl}">
 	<s:param name="rootUrl" value="${rootUrl}"></s:param>
 </s:url>
-
 <s:url var="uploadAttachmentUrl" value="/{rootUrl}/upload">
 	<s:param name="rootUrl" value="${rootUrl}"></s:param>
 </s:url>
-
 <s:url var="attachmentDetailsUrl" value="/{rootUrl}/details">
 	<s:param name="rootUrl" value="${rootUrl}"></s:param>
 </s:url>
-
 <s:url var="attachmentRemoveUrl" value="/{rootUrl}">
 	<s:param name="rootUrl" value="${rootUrl}"></s:param>
 </s:url>
-
 <s:url var="attachmentRemoveListUrl" value="/{rootUrl}/removed-attachments">
 	<s:param name="rootUrl" value="${rootUrl}"></s:param>
 </s:url>
-
 <s:url var="renameAttachmentUrl" value="/{rootUrl}">
 	<s:param name="rootUrl" value="${rootUrl}"></s:param>
 </s:url>
-
-
-
 <%------------------------------------- /URLs --------------------------------------------------------%>
-
 <%------------------------------------- scripts ------------------------------------------------------%>
-
+<script type="text/javascript" src="${ pageContext.servletContext.contextPath }/scripts/squashtest/attachment-bloc.js"></script>
 <script type="text/javascript">
 
 	//init function
@@ -101,7 +87,9 @@
 	}
 	
 	function requirementsTableDrawCallback() {
+		<c:if test="${ editable }">
 		decorateDeleteButtons($('.delete-attachment-button', this));
+		</c:if>
 		restoreTableSelection(this, getAttachmentsTableRowId);
 	}
 	
@@ -110,7 +98,9 @@
 	}
 	
 	function attachmentsTableRowCallback(row, data, displayIndex) {
+		<c:if test="${ editable }">
 		addDeleteButtonToRow(row, getAttachmentsTableRowId(data), 'delete-attachment-button');
+		</c:if>
 		addClickHandlerToSelectHandle(row, $("#attachment-detail-table"));
 		addHLinkToAttachmentName(row, data);
 		return row;
@@ -214,53 +204,65 @@
 		}
 	}
 	
-
 </script>
-
 <%------------------------------------- /scripts ------------------------------------------------------%>
+<div id="${tabId}" class="table-tab">
 
-<script type="text/javascript">
-	$(function(){
-		$("#back").button().click(function(){
-			//document.location.href="${referer}";
-			history.back();
-		});
-	});
-</script>
-
-<div id="test-case-name-div" class="ui-widget-header ui-corner-all ui-state-default fragment-header">
-	<div style="float: left; height: 100%;">
-	<h2><span><f:message key="attachment.manager.table.title"/>&nbsp;:&nbsp;</span><a id="test-case-name" href="${ testCaseUrl }/info"><c:out
-		value="${ testCase.name }" escapeXml="true" /></a></h2>
-	</div>	
-	<div style="float: right;">
-		<f:message var="back" key="fragment.edit.header.button.back" /> 
-		<input id="back" type="button" value="${ back }" class="button"/>
-	</div>
-	<div style="clear: both;"></div>
-	
-</div>
-
-<comp:add-attachment-popup url="${uploadAttachmentUrl}" paramName="attachment" openedBy="add-attachment" submitCallback="refreshAttachments" />
-
-
-
-<div class="fragment-body">
-
-<div id="test-case-toolbar" class="toolbar-class ui-corner-all">
-	<div class="toolbar-information-panel"></div>
-	<div class="toolbar-button-panel">
+<div class="toolbar" >
+<c:if test="${ editable }">
 		<f:message var="uploadAttachment" key="attachment.button.upload.label" />
 		<input id="add-attachment" type="button" value="${uploadAttachment}" class="button"/>
-	</div>
-	<div style="clear: both;"></div>
+		<f:message var="renameAttachment" key="attachment.button.rename.label" />
+		<input type="button" value="${renameAttachment}" id="rename-attachment-button" class="button" />
+		<f:message var="removeAttachment" key="attachment.button.remove.label" />
+		<input type="button" value="${removeAttachment}" id="delete-all-attachment-button" class="button" />
+</c:if>
 </div>
+<%---------------------------------Attachments table ------------------------------------------------%>
+<dt:datatables-header/>
 
-<%------------------------ Deletion dialogs ----------------------------------%>
+<div class="table-tab-wrap" >
+	<comp:decorate-ajax-table url="${attachmentDetailsUrl}" tableId="attachment-detail-table" paginate="true">
+		<jsp:attribute name="rowCallback">attachmentsTableRowCallback</jsp:attribute>
+		<jsp:attribute name="drawCallback">requirementsTableDrawCallback</jsp:attribute>
+		<jsp:attribute name="columnDefs">
+			<dt:column-definition targets="0" visible="false" />
+			<dt:column-definition targets="1" visible="true" cssClass="select-handle centered" width="2em"/>
+			<dt:column-definition targets="2" visible="false" />
+		    <dt:column-definition targets="3,4,5" visible="true" cssClass="centered" sortable="true"/>
+			<dt:column-definition targets="6" visible="true" width="2em" lastDef="true" cssClass="centered"/>
+		</jsp:attribute>					
+	</comp:decorate-ajax-table>
+	<table id="attachment-detail-table">
+		<thead>
+			<tr>
+				<th>Id</th>
+				<th>#</th>
+				<th>(notdisplayed)</th>	
+				<th><f:message key="attachment.manager.table.name"/></th>	
+				<th><f:message key="attachment.manager.table.size"/></th>
+				<th><f:message key="attachment.manager.table.date"/></th>
+				<th>&nbsp;</th> 
+			</tr>
+		</thead>
+		<tbody>
+			<%-- Will be populated through ajax --%>
+		</tbody>
+	</table>
+	<div id="attachment-row-buttons" class="not-displayed">
+		<a id="delete-attachment-button" class="delete-attachment-button" href="javascript:void(0)">
+		<f:message key="attachment.button.remove.label" /></a>
+	</div>
+</div>
+<%--------------------------------- /Attachments table ------------------------------------------------%>
 
+<comp:decorate-buttons />
+</div>
+			
+<%------------------------------------------------- Dialogs ----------------------------------%>
+<c:if test="${ editable }">
 <%--- the openedBy attribute here is irrelevant and is just a dummy --%>
-<pop:popup id="delete-attachment-dialog" titleKey="dialog.attachment.remove.title" isContextual="true"
-	openedBy="delete-attachment-button">
+<pop:popup id="delete-attachment-dialog" titleKey="dialog.attachment.remove.title" isContextual="true" openedBy="delete-attachment-button">
 	<jsp:attribute name="buttons">
 		<f:message var="label" key="dialog.button.confirm.label" />
 
@@ -335,53 +337,7 @@ check the init function in the javascript above to find the real binding.
 
 	</jsp:body>
 </comp:popup>
-<%---------------------------------Attachments table ------------------------------------------------%>
 
-
-<comp:toggle-panel id="attachment-table-panel" titleKey="attachment.manager.table.title" isContextual="true" open="true" >
-	<jsp:attribute name="panelButtons">	
-		<f:message var="renameAttachment" key="attachment.button.rename.label" />
-		<input type="button" value="${renameAttachment}" id="rename-attachment-button" class="button" />
-		<f:message var="removeAttachment" key="attachment.button.remove.label" />
-		<input type="button" value="${removeAttachment}" id="delete-all-attachment-button" class="button" />
-	</jsp:attribute>
-	<jsp:attribute name="body">
-		<comp:decorate-ajax-table url="${attachmentDetailsUrl}" tableId="attachment-detail-table" paginate="true">
-			<jsp:attribute name="rowCallback">attachmentsTableRowCallback</jsp:attribute>	
-			<jsp:attribute name="drawCallback">requirementsTableDrawCallback</jsp:attribute>			
-			<jsp:attribute name="columnDefs">
-				<dt:column-definition targets="0" visible="false" />
-				<dt:column-definition targets="1" visible="true" cssClass="select-handle centered" width="2em"/>
-				<dt:column-definition targets="2" visible="false" />
-			    <dt:column-definition targets="3,4,5" visible="true" cssClass="centered" sortable="true"/>
-				<dt:column-definition targets="6" visible="true" width="2em" lastDef="true" cssClass="centered"/>
-			</jsp:attribute>					
-		</comp:decorate-ajax-table>
-		<table id="attachment-detail-table">
-			<thead>
-				<tr>
-					<th>Id</th>
-					<th>#</th>
-					<th>(notdisplayed)</th>	
-					<th><f:message key="attachment.manager.table.name"/></th>	
-					<th><f:message key="attachment.manager.table.size"/></th>
-					<th><f:message key="attachment.manager.table.date"/></th>
-					<th>&nbsp;</th> 
-				</tr>
-			</thead>
-			<tbody>
-				<%-- Will be populated through ajax --%>
-			</tbody>
-		</table>
-		<div id="attachment-row-buttons" class="not-displayed">
-			<a id="delete-attachment-button"	class="delete-attachment-button">
-			<f:message key="attachment.button.remove.label" />
-		</a>
-		</div>
-	</jsp:attribute>
-</comp:toggle-panel>
-
-
-</div>
-
-<comp:decorate-buttons />
+<comp:add-attachment-popup url="${uploadAttachmentUrl}" paramName="attachment" openedBy="add-attachment" submitCallback="refreshAttachments" />
+</c:if>
+<%------------------------------------------------- /Dialogs ----------------------------------%>

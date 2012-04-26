@@ -37,7 +37,7 @@
 	window.onresize = function(){setTimeout(calculateTopPositionsOfTabs, 200);};
 	
 	function calculateTopPositionsOfTabs() {
-		var selectors = [ '.fragment-tabs', '.fragment-tabs > div'];
+		var selectors = [ '.fragment-tabs', '.fragment-tabs .ui-tabs-panel'];
 		for ( var i = 0; i < selectors.length; i++) {
 			var selectedElements = $(selectors[i]);
 // 			console.log('selecteds '+i+' = ' + selectedElements);

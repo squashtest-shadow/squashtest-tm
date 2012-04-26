@@ -361,10 +361,10 @@ that page won't be editable if
 	<aggr:requirement-version-audit-trail requirementVersion="${ requirement.currentVersion }" />
 </div>
 <%----------------------------------------------------- Attachments bloc ------------------------------------------------------------%> 
-<div id="tabs-2" >
-	<comp:attachment-bloc entity="${ requirement }" workspaceName="requirement" editable="${ editable }" />
-</div></div>
-	<%--------------------------- Deletion confirmation popup -------------------------------------%>
+
+<comp:attachment-tab tabId="tabs-2" entity="${ requirement }" workspaceName="requirement" editable="${ editable }" />
+
+<%--------------------------- Deletion confirmation popup -------------------------------------%>
 	<c:if test="${editable}">
 	
 	<comp:delete-contextual-node-dialog simulationUrl="${simulateDeletionUrl}" confirmationUrl="${confirmDeletionUrl}" 
