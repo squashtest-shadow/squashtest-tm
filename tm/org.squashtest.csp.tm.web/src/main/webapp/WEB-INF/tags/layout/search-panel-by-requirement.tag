@@ -80,13 +80,13 @@
 
 		if (aString.length == 0 && reference.length == 0
 				&& !testEmptyCriticality()) {
-			alert("${InputEmptyMessage}");
+			$.squash.openMessage("<f:message key='popup.title.error' />", "${InputEmptyMessage}");
 			return false;
 		}
 
 		if (aString.length != 0) {
 			if (aString.length < 3) {
-				alert("${InputFailMessage}");
+				$.squash.openMessage("<f:message key='popup.title.error' />", "${InputFailMessage}");
 				return false;
 			}
 		}

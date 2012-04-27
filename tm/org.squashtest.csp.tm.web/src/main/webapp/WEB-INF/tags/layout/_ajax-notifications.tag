@@ -94,7 +94,7 @@ function handleGenericResponseError(request) {
 }
 
 function displayInformationNotification(message){
-	alert(message);	
+	$.squash.openMessage("<f:message key='popup.title.info' />", message);
 }
 
 </script>

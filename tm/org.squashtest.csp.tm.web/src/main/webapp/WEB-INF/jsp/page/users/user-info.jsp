@@ -101,7 +101,7 @@
 				$("#add-permission-dialog").bind("dialogopen", function(event, ui) {
 					if ($("#project-input option:last-child").html() == null){
 						$(this).dialog('close');	
-						alert('${emptyMessage}');
+						$.squash.openMessage("<f:message key='popup.title.error' />", '${emptyMessage}');
 					}
 				});
 

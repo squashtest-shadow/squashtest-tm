@@ -194,7 +194,7 @@
 		
 		if (selectedIDs.length!=1){
 			<f:message var="renameAttachImpossible" key="dialog.attachment.rename.impossible.label"/>
-			alert("${renameAttachImpossible}");
+			$.squash.openMessage("<f:message key='popup.title.error' />", "${renameAttachImpossible}");
 		}		
 		else{
 			var zeId = selectedIDs[0];

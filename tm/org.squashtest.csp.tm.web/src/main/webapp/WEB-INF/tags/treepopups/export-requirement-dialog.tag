@@ -74,7 +74,7 @@
 				url+="?name="+filename+"&"+customSerialize(tab,"tab[]");
 				document.location.href = url;
 			}else{
-				alert("${crossProjectError}");
+				$.squash.openMessage("<f:message key='popup.title.error' />", "${crossProjectError}");
 			}
 			
 			$("#export-requirement-node-dialog").dialog("close");
@@ -91,7 +91,7 @@
 				$("#export-name-requirement-input").val(name);
 			}
 			else{
-				alert("<f:message key="requirement.export.no.node.selected.message" />");
+				$.squash.openMessage("<f:message key='popup.title.error' />", "<f:message key="requirement.export.no.node.selected.message" />");
 				$("#export-requirement-node-dialog").dialog("close");
 			}		
 		}

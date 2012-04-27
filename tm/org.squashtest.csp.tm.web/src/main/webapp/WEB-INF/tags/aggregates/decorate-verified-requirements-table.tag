@@ -76,7 +76,7 @@
 			var obsoleteStatuses = getObsoleteStatusesOfSelectedTableRows(table, getRequirementsTableRowStatus);
 			var indirects = $("tr.requirement-indirect-verification.ui-state-row-selected", table);
 			if (indirects.length >0){
-				alert('<f:message key="verified-requirements.table.indirectverifiedrequirements.removalattemptsforbidden.label"/>');
+				$.squash.openMessage("<f:message key='popup.title.error' />", '<f:message key="verified-requirements.table.indirectverifiedrequirements.removalattemptsforbidden.label"/>');
 			}
 			if (obsoleteStatuses.length > 0){
 				oneShotConfirm("<f:message key='dialog.multiple.obsolete.requirement.versions.removal.confirm.title' />", 

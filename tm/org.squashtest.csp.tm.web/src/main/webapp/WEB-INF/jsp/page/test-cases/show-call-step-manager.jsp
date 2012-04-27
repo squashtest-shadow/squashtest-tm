@@ -76,7 +76,7 @@
 				var calledId = getSelectedId();
 				
 				if (calledId.length != 1){
-					alert("${noSelectionError}");
+					$.squash.openMessage("<f:message key='popup.title.error' />", "${noSelectionError}");
 					return;
 				}
 				

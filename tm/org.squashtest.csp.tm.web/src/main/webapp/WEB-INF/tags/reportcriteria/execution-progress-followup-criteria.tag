@@ -169,7 +169,7 @@
 			try{
 				initLinkableTree(jsondata);
 			}catch(e){
-				alert(e.toString());
+				$.squash.openMessage("<f:message key='popup.title.error' />", e.toString());
 			}
 		}
 

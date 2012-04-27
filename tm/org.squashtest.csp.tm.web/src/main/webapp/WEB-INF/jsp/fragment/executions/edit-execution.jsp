@@ -93,7 +93,7 @@
 	
 	/* deletion failure handler */
 	function deleteExecutionFailure(xhr){
-		alert(xhr.statusText);		
+		$.squash.openMessage("<f:message key='popup.title.error' />", xhr.statusText);		
 	}
 
 	/* simple initialization for simple components */

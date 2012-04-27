@@ -82,7 +82,7 @@
 			$("#${associatedSelectJeditableId}").html(deducedValue);	
 		};
 		function sel_postStateFailed(){
-			alert("error while posting state");
+			$.squash.openMessage("<f:message key='popup.title.error' />", "<f:message key='error.generic.label'");
 			
 		};
 

@@ -99,7 +99,7 @@ that page won't be editable if
 			
 			if (isDisabled(selected)){
 				toReturn=false;
-				alert("${StatusNotAllowedMessage}");
+				$.squash.openMessage("<f:message key='popup.title.error' />", "${StatusNotAllowedMessage}");
 			}
 			else if ("OBSOLETE" == selected) {
 				var jqDialog = $('#requirement-status-confirm-dialog');

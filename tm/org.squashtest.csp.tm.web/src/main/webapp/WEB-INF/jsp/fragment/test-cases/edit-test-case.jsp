@@ -176,7 +176,7 @@ $(function() {
 		addHLinkToCallStep(row, data);
 		return row;
 		}catch(wtf){
-			alert(wtf);
+			$.squash.openMessage("<f:message key='popup.title.error' />", wtf);
 		}
 	}
 
@@ -194,7 +194,7 @@ $(function() {
 			collapser.refreshTable();
 		}
 		}catch(wtf){
-			alert(wtf);
+			$.squash.openMessage("<f:message key='popup.title.error' />", wtf);
 		}
 	}
 
@@ -398,7 +398,7 @@ $(function() {
 	function pasteSelectedSteps(idList){
 			
 		if (idList.length==0){
-			alert('<f:message key="test.case.steps.no.selection" />');
+			$.squash.openMessage("<f:message key='popup.title.error' />", '<f:message key="test.case.steps.no.selection" />');
 			return false;
 		};
 
@@ -443,7 +443,7 @@ $(function() {
 		var allSelectedIds = getIdsOfSelectedTableRows(datatable, getStepsTableRowId);
 		
 		if (allSelectedIds.length==0){
-			alert('<f:message key="test.case.steps.no.selection" />');
+			$.squash.openMessage("<f:message key='popup.title.error' />", '<f:message key="test.case.steps.no.selection" />');
 			return false;
 		}
 		return allSelectedIds;
@@ -648,7 +648,7 @@ $(function() {
 		$("#test-case-importance").html(importance);	
 	}
 	function refreshTCImportanceFail(){
-		alert("fail to refresh importance");
+		$.squash.openMessage("<f:message key='popup.title.error' />", "fail to refresh importance");
 	}
 </script>
 

@@ -118,7 +118,7 @@
 	
 	/* deletion failure handler */
 	function deleteCampaignFailure(xhr){
-		alert(xhr.statusText);		
+		$.squash.openMessage("<f:message key='popup.title.error' />", xhr.statusText);		
 	}
 	
 
@@ -387,7 +387,7 @@
 						});
 					}
 					else {
-						alert("${emptyMessage}");
+						$.squash.openMessage("<f:message key='popup.title.error' />", "${emptyMessage}");
 						$(this).dialog('close');
 					}
 					

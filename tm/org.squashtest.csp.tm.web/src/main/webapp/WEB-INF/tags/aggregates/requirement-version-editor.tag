@@ -284,7 +284,7 @@
 			
 			if (isDisabled(selected)){
 				toReturn=false;
-				alert("${ StatusNotAllowedMessage }");
+				$.squash.openMessage("<f:message key='popup.title.info' />", "${ StatusNotAllowedMessage }");
 			}
 			else if ("OBSOLETE" == selected) {
 				var jqDialog = $('#requirement-status-confirm-dialog');
