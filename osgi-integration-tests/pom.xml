@@ -1,16 +1,15 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
-	xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
 	<modelVersion>4.0.0</modelVersion>
 	<parent>
 		<artifactId>squashtest-csp</artifactId>
 		<groupId>org.squashtest.csp</groupId>
-		<version>1.2.0.IT32-SNAPSHOT</version>
+		<version>1.2.0.IT32</version>
 	</parent>
 
 	<groupId>org.squashtest</groupId>
 	<artifactId>osgi-integration-tests</artifactId>
-	<version>1.2.0.IT32-SNAPSHOT</version>
+	<version>1.2.0.IT32</version>
 	<name>${project.groupId}.${project.artifactId}</name>
 	<description>Squash TM osgi integration tests - produces a bundle which should be deployed in the container. Failures are logged using logger.</description>
 	<packaging>bundle</packaging>
