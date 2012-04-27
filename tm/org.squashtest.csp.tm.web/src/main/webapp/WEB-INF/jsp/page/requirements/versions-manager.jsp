@@ -84,7 +84,7 @@
 
 					var urlPattern = "<c:url value='/requirement-versions/selectedVersionId/editor-fragment' />";
 					
-					$( "#contextual-content" ).load(urlPattern.replace("selectedVersionId", id));
+					squashtm.contextualContent.loadWith(urlPattern.replace("selectedVersionId", id));
 				}
 				
 				$(".select-handle", table).live('click', function() {
@@ -168,7 +168,13 @@
 				<gr:requirement-version-editor requirementVersion="${ selectedVersion }" jsonCriticalities="${ jsonCriticalities }" />
 				</div>
 			</div>	
+			<script type="text/javascript">
+				$(function(){
+					squashtm.contextualContent = $('#contextual-content').contextualContent();
+				});		
+			</script>
 		</div>
 	
 	</jsp:attribute>
 </layout:common-import-outer-frame-layout>
+
