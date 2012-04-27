@@ -39,16 +39,13 @@
 		<link rel="stylesheet" type="text/css" href="${ pageContext.servletContext.contextPath }/styles/structure.subpageoverride.css" />
 		<script type="text/javascript">
 
-//	 	----------------------------------------------	/TABLE
 			$(function() {
 				/* versions table decoration */
 				var getRowId = function(data) {
 					return data[0];
 				};
 				
-				var table = $( "#versions-table" ); 
-				
-				table.dataTable({
+				var table = $( "#versions-table" ).dataTable({
 					"oLanguage": {
 						"sUrl": "<c:url value='/datatables/messages' />"
 					},
@@ -96,7 +93,8 @@
 					if (!row.hasClass('ui-state-row-selected')) {
 						row.addClass('ui-state-row-selected').removeClass('ui-state-highlight');
 						row.parent().find('.ui-state-row-selected').not(row).removeClass( 'ui-state-row-selected');
-						saveTableSelection(table.dataTable(), getRowId);
+						
+						saveTableSelection(table, getRowId);
 						showSelectedVersion(table);					
 					}
 				});
@@ -104,13 +102,11 @@
 				/* refreshes table on ajax success */
 				table.ajaxSuccess(function(event, xrh, settings) {
 					if (settings.type == 'POST' && settings.url.match(/requirement-versions\/\d+$/g)) {
-						var dataTable = $( this ).dataTable();
-						saveTableSelection(dataTable, getRowId);
-						dataTable.fnDraw(false);
+						saveTableSelection(table, getRowId);
+						table.fnDraw(false);
 					}
 				});
 			});
-//		 	----------------------------------------------	/TABLE
 		</script>
 	</jsp:attribute>
 	

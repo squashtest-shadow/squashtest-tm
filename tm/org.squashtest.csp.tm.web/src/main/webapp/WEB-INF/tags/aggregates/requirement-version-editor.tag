@@ -93,14 +93,9 @@
 <%-- ----------------------------------- /toolbar ----------------------------------------------%>
 <%-- -------------------------------------------------------- TABS-----------------------------------------------------------%>
 <script>
-	$(function() {
-		$('.fragment-tabs').tabs({
-			cookie: {
-				// store cookie for a day, without, it would be a session cookie
-				expires: 1
-			}
-		});
-	});
+	$(function() { 
+		$('.fragment-tabs').tabs();
+ 	}); 
 </script>
 <div class="fragment-tabs fragment-body">
 	<ul>
