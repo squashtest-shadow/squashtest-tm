@@ -86,11 +86,23 @@ div.dataTables_paginate{
 	cursor: default;
 	border: 1px solid transparent;
 }
+
+.dataTables_paginate span.paginate_button{
+	border:1px solid transparent;
+        background:none;
+        color  : black;
+        padding :0px !important;
+	cursor:pointer;
+}
 .dataTables_paginate span.paginate_button:HOVER{
 	border:1px solid black;
 	cursor:pointer;
 }
-
+.dataTables_paginate span.paginate_button .ui-button-text{
+    padding : 0px;
+padding-left : 2px;
+padding-right : 2px;
+}
 /* that one override the css for the <th> sorting icon class. It actually calls the jquery.blue.css icon sheet*/
 div.DataTables_sort_wrapper > span.ui-icon{
 	float:right;	

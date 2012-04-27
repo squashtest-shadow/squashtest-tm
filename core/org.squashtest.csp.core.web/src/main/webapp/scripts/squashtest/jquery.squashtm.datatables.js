@@ -72,7 +72,10 @@
 			nPrevious.text("◀");
 			nNext.text("▶");
 			nLast.text("▶▶");
-			
+			$('.paginate_button').button({
+				disabled : false,
+				text : true				
+				}); 
 				
 			nFirst.click(function () {
 				oSettings.oApi._fnPageChange(oSettings, "first");
