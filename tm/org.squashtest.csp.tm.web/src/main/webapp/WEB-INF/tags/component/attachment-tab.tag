@@ -57,7 +57,6 @@
 </s:url>
 <%------------------------------------- /URLs --------------------------------------------------------%>
 <%------------------------------------- scripts ------------------------------------------------------%>
-<script type="text/javascript" src="${ pageContext.servletContext.contextPath }/scripts/squashtest/attachment-bloc.js"></script>
 <script type="text/javascript">
 
 	//init function
@@ -85,7 +84,7 @@
 		table.fnDraw(false);
 	}
 	
-	function requirementsTableDrawCallback() {
+	function attachmentsTableDrawCallback() {
 		<c:if test="${ editable }">
 		decorateDeleteButtons($('.delete-attachment-button', this));
 		</c:if>
@@ -218,12 +217,12 @@
 </c:if>
 </div>
 <%---------------------------------Attachments table ------------------------------------------------%>
-<dt:datatables-header/>
+
 
 <div class="table-tab-wrap" >
 	<comp:decorate-ajax-table url="${attachmentDetailsUrl}" tableId="attachment-detail-table" paginate="true">
 		<jsp:attribute name="rowCallback">attachmentsTableRowCallback</jsp:attribute>
-		<jsp:attribute name="drawCallback">requirementsTableDrawCallback</jsp:attribute>
+		<jsp:attribute name="drawCallback">attachmentsTableDrawCallback</jsp:attribute>
 		<jsp:attribute name="columnDefs">
 			<dt:column-definition targets="0" visible="false" />
 			<dt:column-definition targets="1" visible="true" cssClass="select-handle" width="2em"/>
