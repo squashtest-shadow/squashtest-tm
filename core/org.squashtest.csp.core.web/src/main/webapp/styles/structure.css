@@ -677,13 +677,13 @@ div#contextual-content >  div:first-child h2, .fragment-header h2 {
 
 
 .fragment-body {
-/*     bottom: 0; */
+    bottom: 0; 
     left: auto;
     overflow-x: hidden;
 /*     overflow-y: scroll; */
     position: absolute;
     right: inherit;
-/*     top: 0.9cm; */
+    top: 0.9cm; 
     width: 100%;
 }
 
