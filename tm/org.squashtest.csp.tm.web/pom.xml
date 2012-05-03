@@ -336,8 +336,8 @@
 					<!--note this must be repeated here to pick up correct xml validation -->
 					<dependency>
 						<groupId>net.sf.jasperreports</groupId>
-						<artifactId>org.squashtest.net.sf.jasperreports</artifactId>
-						<version>${jasperreports.version}</version>
+						<artifactId>jasperreports</artifactId>
+						<version>3.7.6</version>
 					</dependency>
 				</dependencies>
 			</plugin>
