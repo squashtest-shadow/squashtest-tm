@@ -26,7 +26,7 @@ public class ActionException extends RuntimeException implements Internationaliz
 	 * 
 	 */
 	private static final long serialVersionUID = -7715263070633043453L;
-	private static final String GENERIC_ACTION_EXCEPTION_KEY = "json.actionValidationError";
+	private static final String GENERIC_ACTION_EXCEPTION_KEY = "error.generic.label";
 
 	public ActionException() {
 

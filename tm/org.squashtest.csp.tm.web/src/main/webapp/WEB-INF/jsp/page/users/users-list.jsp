@@ -126,15 +126,7 @@
 					}
 					
 				}
-				function createUserFailed(jqXHR, textStatus, errorThrown){
-					var json = jQuery.parseJSON(jqXHR.responseText);
-					
-					if (json != null && json.actionValidationError != null){
-						if (json.actionValidationError.exception === "LoginAlreadyExistsException"){						
-							$.squash.openMessage('<f:message key="popup.title.error" />', '<f:message key="squashtm.action.exception.login.exists.label" />');					
-						}
-					}
-				}
+				
 			</script>
 			
 			<div class="fragment-body">
@@ -191,7 +183,7 @@
 			'${ label }': function() {
 				if (! validatePassword()) return;
 				var url = "${ addUserUrl }";
-				<jq:ajaxcall url="url" httpMethod="POST" useData="true" successHandler="refreshUsers" errorHandler="createUserFailed" dataType="json">		
+				<jq:ajaxcall url="url" httpMethod="POST" useData="true" successHandler="refreshUsers" dataType="json">		
 					<jq:params-bindings login="#add-user-login" firstName="#add-user-firstName" lastName="#add-user-lastName"
 					 email="#add-user-email" groupId="#add-user-group" password="#add-user-password" />
 				</jq:ajaxcall>		

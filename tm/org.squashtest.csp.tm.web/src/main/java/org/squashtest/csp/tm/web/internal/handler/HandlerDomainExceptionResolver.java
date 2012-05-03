@@ -23,11 +23,14 @@ package org.squashtest.csp.tm.web.internal.handler;
 import java.util.ArrayList;
 import java.util.Enumeration;
 import java.util.List;
+import java.util.Locale;
 
+import javax.inject.Inject;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
 import org.apache.commons.lang.StringUtils;
+import org.springframework.context.MessageSource;
 import org.springframework.stereotype.Component;
 import org.springframework.web.servlet.ModelAndView;
 import org.springframework.web.servlet.handler.AbstractHandlerExceptionResolver;
@@ -38,7 +41,9 @@ import org.squashtest.csp.tm.domain.DomainException;
 @Component
 public class HandlerDomainExceptionResolver extends
 		AbstractHandlerExceptionResolver {
-
+	
+	@Inject
+	private MessageSource messageSource;
 
 	
 	public HandlerDomainExceptionResolver() {
@@ -49,11 +54,12 @@ public class HandlerDomainExceptionResolver extends
 	@Override
 	protected ModelAndView doResolveException(HttpServletRequest request, HttpServletResponse response, Object handler,
 			Exception ex) {
+		
 		if (exceptionIsHandled(ex) && clientAcceptsJson(request)) {
 			response.setStatus(HttpServletResponse.SC_PRECONDITION_FAILED);
 
 			DomainException dex = (DomainException) ex; // NOSONAR Type was checked earlier
-			List<FieldValidationErrorModel> errors = buildFieldValidationErrors(dex);
+			List<FieldValidationErrorModel> errors = buildFieldValidationErrors(dex, request.getLocale());
 
 			return new ModelAndView(new MappingJacksonJsonView(), "fieldValidationErrors", errors);
 		}
@@ -62,10 +68,11 @@ public class HandlerDomainExceptionResolver extends
 	}
 
 
-	private List<FieldValidationErrorModel> buildFieldValidationErrors(DomainException dex) {
+	private List<FieldValidationErrorModel> buildFieldValidationErrors(DomainException dex, Locale locale ) {
 		List<FieldValidationErrorModel> ves = new ArrayList<FieldValidationErrorModel>();
-
-		ves.add(new FieldValidationErrorModel(dex.getObjectName(), dex.getField(), dex.getDefaultMessage()));
+		String key = dex.getI18nKey();
+		String message = messageSource.getMessage(key, null, locale);
+		ves.add(new FieldValidationErrorModel(dex.getObjectName(), dex.getField(), message));
 
 		return ves;
 	}

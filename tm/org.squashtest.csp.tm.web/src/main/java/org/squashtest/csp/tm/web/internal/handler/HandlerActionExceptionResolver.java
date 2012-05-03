@@ -21,12 +21,15 @@
 package org.squashtest.csp.tm.web.internal.handler;
 
 import java.util.Enumeration;
+import java.util.Locale;
 import java.util.Map;
 
+import javax.inject.Inject;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
 import org.apache.commons.lang.StringUtils;
+import org.springframework.context.MessageSource;
 import org.springframework.stereotype.Component;
 import org.springframework.web.servlet.ModelAndView;
 import org.springframework.web.servlet.handler.AbstractHandlerExceptionResolver;
@@ -51,7 +54,8 @@ import org.squashtest.csp.tm.domain.ActionException;
 
 @Component
 public class HandlerActionExceptionResolver extends AbstractHandlerExceptionResolver {
-
+	@Inject
+	private MessageSource messageSource;
 	public HandlerActionExceptionResolver() {
 		super();
 	}
@@ -68,33 +72,47 @@ public class HandlerActionExceptionResolver extends AbstractHandlerExceptionReso
 	}
 
 	private ModelAndView handleException(HttpServletRequest request, HttpServletResponse response, Exception ex) {
+		ActionException actionEx = (ActionException) ex; // NOSONAR Type was checked earlier
 		if (clientAcceptsMIME(request, MimeType.APPLICATION_JSON)) {
-			return formatJsonResponse(response, ex);
+			return formatJsonResponse(response, actionEx, request.getLocale());
 		}
 
 		else if (clientAcceptsMIME(request, MimeType.TEXT_PLAIN)) {
-			return formatPlainTextResponse(response, ex);
+			return formatPlainTextResponse(response, actionEx, request.getLocale());
 
 		}
 
 		return null;
 	}
 
-	private ModelAndView formatPlainTextResponse(HttpServletResponse response, Exception ex) {
+	private ModelAndView formatPlainTextResponse(HttpServletResponse response, ActionException actionEx, Locale locale) {
 		response.setStatus(HttpServletResponse.SC_PRECONDITION_FAILED);
-
-		String error = ex.getClass().getSimpleName() + ':' + ex.getMessage();
+		String exception = actionEx.getClass().getSimpleName();
+		String message = getLocalizedMessage(locale, actionEx);
+		String error = exception + ':' + message;
 
 		AbstractView view = new PlainTextView();
 
 		return new ModelAndView(view, "actionValidationError", error);
 	}
 
-	private ModelAndView formatJsonResponse(HttpServletResponse response, Exception ex) {
+	private ModelAndView formatJsonResponse(HttpServletResponse response, ActionException actionEx, Locale locale) {
 		response.setStatus(HttpServletResponse.SC_PRECONDITION_FAILED);
-		ActionValidationErrorModel error = new ActionValidationErrorModel(ex);
-
+		String exception = actionEx.getClass().getSimpleName();
+		String message = getLocalizedMessage(locale, actionEx);
+		ActionValidationErrorModel error = new ActionValidationErrorModel(exception, message);
 		return new ModelAndView(new MappingJacksonJsonView(), "actionValidationError", error);
+	}
+
+	private String getLocalizedMessage(Locale locale, ActionException actionEx) {
+		String key = actionEx.getI18nKey();
+		String message = messageSource.getMessage(key, null, locale);
+		if(message != null ){
+			return message;
+		}else{
+			return messageSource.getMessage("error.generic.label", null, locale);
+		}
+		
 	}
 
 	private boolean exceptionIsHandled(Exception ex) {

@@ -28,7 +28,7 @@
 <%@ taglib prefix="comp" tagdir="/WEB-INF/tags/component" %>
 <%@ taglib prefix="jq" tagdir="/WEB-INF/tags/jquery" %>
 <%@ taglib prefix="pop" tagdir="/WEB-INF/tags/popup" %>
-<layout:info-page-layout titleKey="squashtm.library.test-case.title">
+<layout:info-page-layout titleKey="squashtm.project.title">
 	<jsp:attribute  name="head">	
 		<link rel="stylesheet" type="text/css" href="${ pageContext.servletContext.contextPath }/styles/master.purple.css" />	
 		

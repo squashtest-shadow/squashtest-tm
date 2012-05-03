@@ -50,8 +50,10 @@
 				<span id="nav-up-version">Squash TM v${initParam["squashTMVersion"]} </span>			
 			</div>
 			<div class="snap-right">
+				<div style="display:inline-block;">
+							<layout:_ajax-notifications  cssClass="snap-right"/>
 				<img src="${ pageContext.servletContext.contextPath }/images/logo_squash30h.png" />
-				
+				</div>
 			</div>
 		</div>
 		

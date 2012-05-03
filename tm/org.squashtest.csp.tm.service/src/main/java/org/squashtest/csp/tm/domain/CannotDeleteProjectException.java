@@ -26,7 +26,7 @@ public class CannotDeleteProjectException extends ActionException {
 	 * 
 	 */
 	private static final long serialVersionUID = 6224996610418283183L;
-	private final String cannotDeleteMessageKey = "squashtm.action.exception.callstepcycle.label";
+	private final String cannotDeleteMessageKey = "squashtm.action.exception.cannot.delete.project";
 
 	public CannotDeleteProjectException(Exception ex) {
 		super(ex);

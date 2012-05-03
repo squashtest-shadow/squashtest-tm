@@ -28,6 +28,10 @@
 	<img src="${ pageContext.servletContext.contextPath }/images/ajax-loader.gif" width="19px" height="19px"/>
 	<span><f:message key="squashtm.processing"/></span>
 </div>
+<div id="generic-error-notification-area" class="ui-state-error ui-corner-all ${ cssClass } not-displayed ">
+	<span class="ui-icon ui-icon-alert icon"></span><span><f:message key="error.generic.label" />&nbsp;(<a href="#" id="show-generic-error-details"><f:message key="error.generic.button.details.label" /></a>)</span>
+</div>
+
 
 <script type="text/javascript">
 
@@ -61,26 +65,27 @@ $(function() {
 function handleJsonResponseError(request) {
 	<%-- this pukes an exception if not valid json. there's no other jQuery way to tell --%>
 	var json = jQuery.parseJSON(request.responseText);
-
-	if (json != null && json.fieldValidationErrors != null) {
-		<%-- IE8 requires it a low tech code --%>
-		var validationErrorList = json.fieldValidationErrors;
-		if (validationErrorList.length>0){
-			
-			var counter=0;
-			for (counter=0;counter<validationErrorList.length;counter++){
-				var fve = validationErrorList[counter];
-				var labelId = fve.fieldName + '-' + 'error';
+	if(json != null){
+		if ( json.actionValidationError != null){
+			return $.squash.openMessage("<f:message key='popup.title.error'/>",json.actionValidationError.message);		
+		}
+		if ( json.fieldValidationErrors != null) {
+			<%-- IE8 requires it a low tech code --%>
+			var validationErrorList = json.fieldValidationErrors;
+			if (validationErrorList.length>0){
+				var counter=0;
+				for (counter=0;counter<validationErrorList.length;counter++){
+					var fve = validationErrorList[counter];
+					var labelId = fve.fieldName + '-' + 'error';
+					
+					var label = $('span.error-message.'+labelId);
 				
-				var label = $('span.error-message.'+labelId);
-			
-				if (label != null) {
-					label.html(fve.errorMessage);
-				}					
+					if (label != null) {
+						label.html(fve.errorMessage);
+					}					
+				}
 			}
 		}
-		
-
 	}
 }
 

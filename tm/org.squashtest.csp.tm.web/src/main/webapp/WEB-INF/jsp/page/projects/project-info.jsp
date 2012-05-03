@@ -211,7 +211,7 @@
 		"<f:message key='dialog.delete-project.message'/>",
 		"<f:message key='dialog.button.confirm.label'/>",
 		"<f:message key='dialog.button.cancel.label'/>").done(function(){
-			requestProjectDeletion().done(deleteProjectSuccess).fail(deleteProjectError);
+			requestProjectDeletion().done(deleteProjectSuccess);
 			});
 		</c:if>
 		<c:if test="${!adminproject.deletable}">	
@@ -229,15 +229,7 @@
 	function deleteProjectSuccess(data){
 		clickProjectBackButton();
 	}
-	function deleteProjectError(jqXHR, textStatus, errorThrown){
-		var json = jQuery.parseJSON(jqXHR.responseText);
-		
-		if (json != null && json.actionValidationError != null){
-			if (json.actionValidationError.exception === "CannotDeleteProjectException"){						
-				$.squash.openMessage("<f:message key='popup.title.error'/>","<f:message key='project.delete.cannot.exception'/>");		
-			}
-		}
-	}
+	
 </script>
 
 <!-- --------------------------------RENAME POPUP--------------------------------------------------------- -->

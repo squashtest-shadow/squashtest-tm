@@ -20,10 +20,9 @@
  */
 package org.squashtest.csp.tm.domain;
 
-public class InvalidCampaignDateException extends DomainException{
+public class InvalidCampaignDateException extends DomainException {
 
 	private static final long serialVersionUID = 746349558557903600L;
-
 
 	public InvalidCampaignDateException() {
 		super();
@@ -32,5 +31,10 @@ public class InvalidCampaignDateException extends DomainException{
 	public InvalidCampaignDateException(String message) {
 		super(message);
 	}
-	
+
+	@Override
+	public String getI18nKey() {
+		return "squashtm.domain.exception.invalid.campaign.date";
+	}
+
 }

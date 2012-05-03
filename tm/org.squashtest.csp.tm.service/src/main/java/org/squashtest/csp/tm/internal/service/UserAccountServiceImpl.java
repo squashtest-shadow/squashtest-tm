@@ -30,6 +30,8 @@ import org.springframework.transaction.annotation.Transactional;
 import org.squashtest.csp.core.service.security.UserAuthenticationService;
 import org.squashtest.csp.core.service.security.UserContextService;
 import org.squashtest.csp.tm.domain.PasswordChangeFailedException;
+import org.squashtest.csp.tm.domain.UnauthorizedPasswordChange;
+import org.squashtest.csp.tm.domain.WrongPasswordException;
 import org.squashtest.csp.tm.domain.users.User;
 import org.squashtest.csp.tm.internal.repository.UserDao;
 import org.squashtest.csp.tm.internal.repository.UsersGroupDao;
@@ -116,14 +118,13 @@ public class UserAccountServiceImpl implements UserAccountService {
 	@Override
 	public void setCurrentUserPassword(String oldPass, String newPass) {
 		if (!authService.canModifyUser()) {
-			// FIXME : subclass that exception and make one more explicit
-			throw new PasswordChangeFailedException(
+			throw new UnauthorizedPasswordChange(
 					"The authentication service do not allow users to change their passwords using Squash");
 		}
 		try {
 			authService.setUserPassword(userContextService.getUsername(), oldPass, newPass);
 		} catch (BadCredentialsException bce) {
-			throw new PasswordChangeFailedException("wrong password");
+			throw new WrongPasswordException("wrong password");
 		}
 
 	}

@@ -22,9 +22,8 @@ package org.squashtest.csp.tm.domain;
 
 public class DuplicateNameException extends DomainException {
 	private static final long serialVersionUID = 2815263509542519285L;
-	
-	//note : this exception always reports an error on the name, hence the setField("name");
-	
+
+	// note : this exception always reports an error on the name, hence the setField("name");
 
 	public DuplicateNameException(String oldName, String newName) {
 		this("Cannot create/rename " + oldName + " : " + newName + " already exists within the same container");
@@ -40,8 +39,9 @@ public class DuplicateNameException extends DomainException {
 		setField("name");
 	}
 
-
-	
-	
+	@Override
+	public String getI18nKey() {
+		return "squashtm.domain.exception.duplicate.name";
+	}
 
 }

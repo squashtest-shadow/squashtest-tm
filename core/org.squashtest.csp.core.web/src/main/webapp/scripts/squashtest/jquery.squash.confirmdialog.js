@@ -41,7 +41,7 @@
 			    click: function() {} 
 			}, 
 			{ 
-				text: "Cancel", // cancel button closes by default
+				text: "Cancel", // cancel button closes by default // TODO ! need to be local dependent ! 
 			    click: function() { $(this).confirmDialog("close"); } 
 			}]
 		},

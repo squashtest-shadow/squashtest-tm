@@ -20,22 +20,21 @@
  */
 package org.squashtest.csp.tm.domain;
 
-public abstract class DomainException extends RuntimeException {
+public abstract class DomainException extends RuntimeException implements Internationalizable {
 
 	private static final long serialVersionUID = 5203532234097674488L;
-	
+
 	private String objectName;
 	private String field;
 
-	protected DomainException(String message){
+	protected DomainException(String message) {
 		super(message);
 	}
 
-	protected DomainException(){
+	protected DomainException() {
 		super();
 	}
 
-	
 	public String getObjectName() {
 		return objectName;
 	}
@@ -51,9 +50,9 @@ public abstract class DomainException extends RuntimeException {
 	public void setField(String field) {
 		this.field = field;
 	}
-	
-	public String getDefaultMessage(){
+
+	public String getDefaultMessage() {
 		return getMessage();
-	}	
-	
+	}
+
 }
