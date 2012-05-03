@@ -46,7 +46,7 @@ import org.slf4j.LoggerFactory;
 public class UserConcurrentRequestLockFilter implements Filter {
 	private static final Logger LOGGER = LoggerFactory.getLogger(UserConcurrentRequestLockFilter.class);
 	/**
-	 * Key used do store BT context in http session.
+	 * Key used do store lock in http session.
 	 */
 	public static final String READ_WRITE_LOCK_SESSION_KEY = "squashtest.core.ReadWriteLock";
 
@@ -87,7 +87,7 @@ public class UserConcurrentRequestLockFilter implements Filter {
 
 		try {
 			if (LOGGER.isDebugEnabled()) {
-				LOGGER.debug("Read lock acquired by request '{}'", request);
+				LOGGER.trace("Read lock acquired by request '{}'", request);
 			}
 
 			chain.doFilter(request, response);
@@ -95,7 +95,7 @@ public class UserConcurrentRequestLockFilter implements Filter {
 			lock.readLock().unlock();
 
 			if (LOGGER.isDebugEnabled()) {
-				LOGGER.debug("Read lock released by request '{}'", request);
+				LOGGER.trace("Read lock released by request '{}'", request);
 			}
 		}
 
@@ -107,7 +107,7 @@ public class UserConcurrentRequestLockFilter implements Filter {
 
 		try {
 			if (LOGGER.isDebugEnabled()) {
-				LOGGER.debug("Write lock acquired by request '{}'", request);
+				LOGGER.trace("Write lock acquired by request '{}'", request);
 			}
 
 			chain.doFilter(request, response);
@@ -115,7 +115,7 @@ public class UserConcurrentRequestLockFilter implements Filter {
 			lock.writeLock().unlock();
 
 			if (LOGGER.isDebugEnabled()) {
-				LOGGER.debug("Write lock released by request '{}'", request);
+				LOGGER.trace("Write lock released by request '{}'", request);
 			}
 		}
 
@@ -131,28 +131,28 @@ public class UserConcurrentRequestLockFilter implements Filter {
 		HttpSession session = ((HttpServletRequest) request).getSession(false);
 
 		if (session == null) {
-			LOGGER.info("Session was invalidated, ReadWriteLock will not be stored");
+			LOGGER.debug("Session was invalidated, ReadWriteLock will not be stored");
 			return;
 		}
 
-		storeContext(session, context);
-		LOGGER.debug("ReadWriteLock stored to session");
+		storeLock(session, context);
+		LOGGER.trace("ReadWriteLock stored to session");
 	}
 
-	private void storeContext(HttpSession session, ReadWriteLock context) {
-		session.setAttribute(READ_WRITE_LOCK_SESSION_KEY, context);
+	private void storeLock(HttpSession session, ReadWriteLock lock) {
+		session.setAttribute(READ_WRITE_LOCK_SESSION_KEY, lock);
 	}
 
 	private ReadWriteLock loadLock(ServletRequest request) {
-		LOGGER.debug("Loading ReadWriteLock from HTTP session");
+		LOGGER.trace("Loading ReadWriteLock from HTTP session");
 
 		HttpSession session = ((HttpServletRequest) request).getSession();
 		ReadWriteLock lock = (ReadWriteLock) session.getAttribute(READ_WRITE_LOCK_SESSION_KEY);
 
 		if (lock == null) {
-			LOGGER.info("No ReadWriteLock available, will create it and eagerly store it in session");
+			LOGGER.debug("No ReadWriteLock available, will create it and eagerly store it in session");
 			lock = new ReentrantReadWriteLock();
-			storeContext(session, lock);
+			storeLock(session, lock);
 		}
 
 		return lock;

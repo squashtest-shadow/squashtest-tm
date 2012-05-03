@@ -38,7 +38,7 @@
 		</dependency>
 		<!-- ====== /SPRING DM ====== -->
 
-		<!-- ====== /SPRING DI ====== -->
+		<!-- ====== SPRING DI ====== -->
 		<dependency>
 			<groupId>org.springframework</groupId>
 			<artifactId>org.springframework.aop</artifactId>
