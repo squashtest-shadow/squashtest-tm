@@ -18,29 +18,25 @@
  *     You should have received a copy of the GNU Lesser General Public License
  *     along with this software.  If not, see <http://www.gnu.org/licenses/>.
  */
+package org.squashtest.csp.tm.domain;
 
-package org.squashtest.csp.tm.domain.exception;
+import org.squashtest.csp.tm.domain.campaign.TestSuite;
 
-/**
- * Indicates we tried to run an execution which has no runnable step.
- * 
- * @author Gregory Fouquet
- * 
- */
-public class ExecutionHasNoRunnableStepException extends RunExecutionException {
+public class EmptyTestSuiteTestPlanException extends ActionException {
 
 	/**
 	 * 
 	 */
-	private static final long serialVersionUID = -5950946392120066945L;
-	private static final String EXECUTION_HAS_NO_RUNNABLE_STEPS_KEY = "squashtm.action.exception.execution.has.no.runnable.steps";
+	private static final long serialVersionUID = 194192955658433029L;
+	private static final String EMPTY_TEST_PLAN_MESSAGE_KEY = "squashtm.action.exception.testsuite.testplan.empty";
+
+	public EmptyTestSuiteTestPlanException(TestSuite testSuite) {
+		super("The test plan is empty for Test Suite[" + testSuite.getId() + ']');
+	}
 
 	@Override
 	public String getI18nKey() {
-		return EXECUTION_HAS_NO_RUNNABLE_STEPS_KEY;
+		return EMPTY_TEST_PLAN_MESSAGE_KEY;
 	}
 
-	public ExecutionHasNoRunnableStepException() {
-		super("Execution has no runnable step");
-	}
 }

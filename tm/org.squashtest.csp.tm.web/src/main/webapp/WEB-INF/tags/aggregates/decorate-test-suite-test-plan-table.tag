@@ -49,7 +49,6 @@
 
 <f:message var="cannotCreateExecutionException" key="squashtm.action.exception.cannotcreateexecution.label" />
 <f:message var="unauthorizedDeletion" key="dialog.remove-testcase-association.unauthorized-deletion.message"  />
-<f:message var="cyclicStepCallException" key="squashtm.action.exception.cyclicstepcallexception.label" />
 <script type="text/javascript">
 var removeTestPlansUrl = "${removeTestPlansUrl}";
 var nonBelongingTestPlansUrl = "${nonBelongingTestPlansUrl}";
@@ -173,19 +172,6 @@ var nonBelongingTestPlansUrl = "${nonBelongingTestPlansUrl}";
 		$.ajax({type : 'POST', url : url, dataType : "json"})
 		.success(function(id){
 			document.location.href="${showExecutionUrl}/"+id;
-		})
-		.fail(function(jqXHR){					
-				var json = jQuery.parseJSON(jqXHR.responseText);
-				
-				if (json != null && json.actionValidationError != null){
-					if (json.actionValidationError.exception === "CannotCreateExecutionException"){						
-						displayInformationNotification("${cannotCreateExecutionException}");					
-					}
-					else
-					if(json.actionValidationError.exception === "CyclicStepCallException"){
-						displayInformationNotification("${cyclicStepCallException}");
-					}
-				}
 		});
 		return false; //return false to prevent navigation in page (# appears at the end of the URL)
 	}

@@ -29,13 +29,19 @@ package org.squashtest.csp.tm.domain.exception;
  */
 public class ExecutionHasNoStepsException extends RunExecutionException {
 
-	/**
+	/** 
 	 * 
 	 */
 	private static final long serialVersionUID = 2966972992411380380L;
+	private static final String EXECUTION_HAS_NO_STEPS_KEY = "squashtm.action.exception.execution.has.no.steps";
 
 	public ExecutionHasNoStepsException() {
 		super("Execution has no steps");
+	}
+
+	@Override
+	public String getI18nKey() {
+		return EXECUTION_HAS_NO_STEPS_KEY;
 	}
 
 }

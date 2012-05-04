@@ -39,7 +39,7 @@ import javax.validation.constraints.Size;
 import org.hibernate.validator.constraints.NotBlank;
 import org.squashtest.csp.core.security.annotation.InheritsAcls;
 import org.squashtest.csp.tm.domain.DuplicateNameException;
-import org.squashtest.csp.tm.domain.EmptyTestPlanException;
+import org.squashtest.csp.tm.domain.EmptyTestSuiteTestPlanException;
 import org.squashtest.csp.tm.domain.TestPlanItemNotExecutableException;
 import org.squashtest.csp.tm.domain.attachment.Attachment;
 import org.squashtest.csp.tm.domain.attachment.AttachmentList;
@@ -61,7 +61,7 @@ public class TestSuite {
 	private Long id;
 
 	@NotBlank
-	@Size(min=0, max=255)
+	@Size(min = 0, max = 255)
 	private String name;
 
 	@Lob
@@ -168,7 +168,7 @@ public class TestSuite {
 			}
 		}
 
-		throw new EmptyTestPlanException(this);
+		throw new EmptyTestSuiteTestPlanException(this);
 	}
 
 	/**
@@ -272,14 +272,14 @@ public class TestSuite {
 		List<IterationTestPlanItem> testPlan = iteration.getTestPlans();
 		for (int i = testPlan.size() - 1; i >= 0; i--) {
 			IterationTestPlanItem item = testPlan.get(i);
-			
-			//We have to check if the referenced test case has execution steps
+
+			// We have to check if the referenced test case has execution steps
 			TestCase testCase = null;
 			if (!item.isTestCaseDeleted()) {
 				testCase = item.getReferencedTestCase();
 			}
-			
-			if (boundToThisSuite(item) && item.isExecutableThroughTestSuite() 
+
+			if (boundToThisSuite(item) && item.isExecutableThroughTestSuite()
 					&& (testCase != null && testCase.getSteps() != null && testCase.getSteps().size() > 0)) {
 				return itemId == item.getId();
 			}
@@ -293,13 +293,14 @@ public class TestSuite {
 	 */
 	public boolean isFirstExecutableTestPlanItem(long itemId) {
 		List<IterationTestPlanItem> testPlanInIteration = iteration.getTestPlans();
-		
+
 		for (IterationTestPlanItem iterationTestPlanItem : testPlanInIteration) {
-			if (boundToThisSuite(iterationTestPlanItem) && !iterationTestPlanItem.isTestCaseDeleted()) { // && iterationTestPlanItem.isExecutableThroughTestSuite()
+			if (boundToThisSuite(iterationTestPlanItem) && !iterationTestPlanItem.isTestCaseDeleted()) { // &&
+																											// iterationTestPlanItem.isExecutableThroughTestSuite()
 				return itemId == iterationTestPlanItem.getId();
 			}
 		}
-		
+
 		return false;
 	}
 
@@ -327,7 +328,7 @@ public class TestSuite {
 
 	/**
 	 * @throws {@link TestPlanItemNotExecutableException}
-	 * @throws {@link EmptyTestPlanException}
+	 * @throws {@link EmptyTestSuiteTestPlanException}
 	 * @return
 	 */
 	public IterationTestPlanItem findFirstExecutableTestPlanItem() {

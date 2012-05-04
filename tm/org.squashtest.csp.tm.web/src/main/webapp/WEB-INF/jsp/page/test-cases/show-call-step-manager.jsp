@@ -50,7 +50,7 @@
 
 
 
-<f:message var="cyclicCallError"  key="subpage.test-case.callstep.error.cycle.label" />
+
 <f:message var="noSelectionError" key="subpage.test-case.callstep.error.noselection.label" />
 <layout:tree-page-layout titleKey="squashtm" highlightedWorkspace="${resourceName}" isSubPaged="true">
 
@@ -86,20 +86,12 @@
 					we need that post to be a json just to trigger business exception handlers server side (if an exception occurs).
 					also we'll receive the said exception as a json object, which is always cool.
 				--%>
-				$.post("${postCallStepUrl}", param, function(){},"json").success(navigateBackFromCallStepManager).fail(associationFail);
+				$.post("${postCallStepUrl}", param, function(){},"json").success(navigateBackFromCallStepManager);
 	
 				
 			}		
 	
-			function associationFail(jqXHR, textStatus, errorThrown){
-				var json = jQuery.parseJSON(jqXHR.responseText);
-				
-				if (json != null && json.actionValidationError != null){
-					if (json.actionValidationError.exception === "CyclicStepCallException"){						
-						$.squash.openMessage('<f:message key="popup.title.error" />', "${cyclicCallError}");
-					}
-				}
-			}
+			
 
 	
 			function getSelectedId(){

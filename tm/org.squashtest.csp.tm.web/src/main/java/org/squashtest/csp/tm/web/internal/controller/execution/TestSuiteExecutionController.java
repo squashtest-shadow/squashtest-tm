@@ -35,6 +35,8 @@ import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.servlet.ModelAndView;
+import org.squashtest.csp.tm.domain.TestPlanItemNotExecutableException;
+import org.squashtest.csp.tm.domain.TestPlanTerminatedOrNoStepsException;
 import org.squashtest.csp.tm.domain.execution.Execution;
 import org.squashtest.csp.tm.domain.execution.ExecutionStatus;
 import org.squashtest.csp.tm.domain.execution.ExecutionStep;
@@ -103,7 +105,9 @@ public class TestSuiteExecutionController {
 
 	@RequestMapping(value = RequestMappings.TEST_EXECUTION_BEFORE_INIT, method = RequestMethod.POST, params = {"mode=start-resume"})
 	public @ResponseBody void testStartResumeExecutionInClassicRunner(@PathVariable long testSuiteId) {
-		testSuiteExecutionProcessingService.startResume(testSuiteId);
+		try{testSuiteExecutionProcessingService.startResume(testSuiteId);}catch(TestPlanItemNotExecutableException e){
+			throw new TestPlanTerminatedOrNoStepsException();
+		}
 	}
 	
 	@RequestMapping(value = RequestMappings.INIT_EXECUTION_RUNNER, method = RequestMethod.POST, params = {"classic", "mode=start-resume"})

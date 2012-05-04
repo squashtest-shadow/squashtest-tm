@@ -58,23 +58,7 @@
 				url : "${ testRunnerUrl }"
 			});
 		}
-		function testSuiteExecutionError (jqXHR) {
-			try{
-				var json = jQuery.parseJSON(jqXHR.responseText);
-				if (json != null && json.actionValidationError != null) {
-					var message = '<p><f:message key="squashtm.action.exception.testsuite.execution.error.first.words" />';
-					message += '<ul>'
-					if (json.actionValidationError.exception === "EmptyTestPlanException") {
-						message += '<li> <f:message key="squashtm.action.exception.testsuite.testplan.empty" /></li>';
-					}
-					if (json.actionValidationError.exception === "TestPlanItemNotExecutableException") {
-						message += '<li> <f:message key="squashtm.action.exception.testsuite.testplan.terminated.or.no.steps" /></li>';
-					}
-					message += '</ul></p>'
-						$.squash.openMessage('<f:message key="popup.title.error" />', message);
-				}
-			}catch(e){}
-		}
+		
 		function startResumeClassic(jqXHR) {
 			//I shouldn't have to do this, I know, they made me .. :( 
 			// seriously : don't know why but the ajax.done() method above is called even when the check fails (observed with FF 10)
@@ -125,13 +109,11 @@
 				startmenu.chooseItem = function(item) {
 					
 					if ($(item).hasClass('start-suite-classic')) {
-						checkTestSuiteExecutionDoable().fail(
-								testSuiteExecutionError).done(
+						checkTestSuiteExecutionDoable().done(
 								startResumeClassic);
 					} else {
 						if ($(item).hasClass('start-suite-optimized')) {
-							checkTestSuiteExecutionDoable().fail(
-									testSuiteExecutionError).done(
+							checkTestSuiteExecutionDoable().done(
 									startResumeOptimized);
 						}
 					}
@@ -214,24 +196,10 @@
 				};
 				
 			 	function checkStartAndHandleResultForRestart (){
-					checkTestSuiteExecutionDoable().fail(restartFail).done(confirmRestartHandler);
+					checkTestSuiteExecutionDoable().done(confirmRestartHandler);
 				};
 				
-				function restartFail(jqXHR){
-					restartDialog.confirmDialog('close');
-					try{
-					var json = jQuery.parseJSON(jqXHR.responseText);
-					if (json != null && json.actionValidationError != null) {
-						var message = '<p><f:message key="squashtm.action.exception.testsuite.execution.error.first.words" />';
-						message += '<ul>'
-						if (json.actionValidationError.exception === "TestPlanItemNotExecutableException") {
-							message += '<li> <f:message key="squashtm.action.exception.testsuite.testplan.terminated.or.no.steps" /></li>';
-						}
-						message += '</ul></p>'
-							$.squash.openMessage('<f:message key="popup.title.error" />', message);
-					}
-					}catch(e){}
-				};
+				
 			});
 		</script>
 

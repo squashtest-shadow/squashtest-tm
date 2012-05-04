@@ -20,17 +20,21 @@
  */
 package org.squashtest.csp.tm.domain;
 
-import org.squashtest.csp.tm.domain.campaign.TestSuite;
-
-public class EmptyTestPlanException extends ActionException {
+public class TestPlanTerminatedOrNoStepsException extends ActionException {
 
 	/**
 	 * 
 	 */
-	private static final long serialVersionUID = 194192955658433029L;
+	private static final long serialVersionUID = 2L;
+	private static final String ERROR_MESSAGE_KEY = "squashtm.action.exception.testsuite.testplan.terminated.or.no.steps";
 
-	public EmptyTestPlanException(TestSuite testSuite) {
-		super("The test plan is empty for Test Suite[" + testSuite.getId() + ']');
+	public TestPlanTerminatedOrNoStepsException() {
+		super(" no execution is to be resumed because : all terminated, or no execution-step on executions");
+	}
+
+	@Override
+	public String getI18nKey() {
+		return ERROR_MESSAGE_KEY;
 	}
 
 }

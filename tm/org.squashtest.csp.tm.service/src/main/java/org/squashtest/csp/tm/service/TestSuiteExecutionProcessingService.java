@@ -21,6 +21,8 @@
 package org.squashtest.csp.tm.service;
 
 import org.springframework.transaction.annotation.Transactional;
+import org.squashtest.csp.tm.domain.EmptyTestSuiteTestPlanException;
+import org.squashtest.csp.tm.domain.TestPlanItemNotExecutableException;
 import org.squashtest.csp.tm.domain.execution.Execution;
 
 @Transactional
@@ -55,7 +57,8 @@ public interface TestSuiteExecutionProcessingService {
 	/**
 	 * <p>
 	 * returns the execution were to resume the test suite<br>
-	 * or throw a TestPlanItemNotExecutableException if no execution is to be resumed because :
+	 * or throw a @link{@linkplain EmptyTestSuiteTestPlanException} or {@linkplain TestPlanItemNotExecutableException}
+	 * if no execution is to be resumed because :
 	 * <ul>
 	 * <li>all terminated, or</li>
 	 * <li>no execution-step on executions, or</li>
@@ -68,6 +71,8 @@ public interface TestSuiteExecutionProcessingService {
 	 * 
 	 * @param testSuiteId
 	 * @return the {@linkplain Execution} where to resume or null
+	 * @throws EmptyTestSuiteTestPlanException
+	 * @throws {@link TestPlanItemNotExecutableException}
 	 */
 	Execution startResume(long testSuiteId);
 

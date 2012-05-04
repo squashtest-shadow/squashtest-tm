@@ -131,33 +131,16 @@
 			$('#start-optimized-button').trigger('click');
 		};
 		
-		var notStartable = function(xhr) {
-			var json = jQuery.parseJSON(xhr.responseText);
-			if (json != null && json.actionValidationError != null) {
-				var message = "<p><f:message key='test-plan-item.execution.error.message-start' />";
-				message += '<ul>'
-				if (json.actionValidationError.exception === "ExecutionHasNoStepsException") {
-					message += "<li> <f:message key='test-plan-item.execution.error.no-steps' /></li>";
-				} else {
-					message += json.actionValidationError.message
-				}
-				message += '</ul></p>'
-				$.squash.openMessage('<f:message key="popup.title.error" />', message);
-			}
-		};
-		
 		$("#execute-execution-button").button()
 			.click(function(){
 				dryRunStart()
-					.done(startResumeClassic)
-					.fail(notStartable);
+					.done(startResumeClassic);
 			});
 		
 		$("#ieo-execution-button").button()
 			.click(function(){
 				dryRunStart()
-					.done(startResumeOptimized)
-					.fail(notStartable);
+					.done(startResumeOptimized);
 			});
 	});
 

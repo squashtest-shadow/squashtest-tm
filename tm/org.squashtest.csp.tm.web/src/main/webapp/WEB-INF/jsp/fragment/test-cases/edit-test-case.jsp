@@ -87,7 +87,7 @@
  
 <%-- ----------------------------------- Init ----------------------------------------------%>
 
-<f:message var="cyclicCallError"  key="subpage.test-case.callstep.error.cycle.label" />
+
 
 <script type="text/javascript">
 $(function() {
@@ -424,20 +424,13 @@ $(function() {
 			url : pasteUrl,
 			dataType : "json", 
 			success: refreshStepsAndImportance
-		}).fail(copyPasteFail);
+		});
 		
-		
-	}
-	function copyPasteFail(jqXHR, textStatus, errorThrown){
-		var json = jQuery.parseJSON(jqXHR.responseText);
-		
-		if (json != null && json.actionValidationError != null){
-			if (json.actionValidationError.exception === "CyclicStepCallException"){						
-				displayInformationNotification("${cyclicCallError}");					
-			}
-		}
 		$("#paste-step").removeClass('ui-state-focus');
 	}
+	
+		
+	
 	function getSelectedSteps(){
 		var datatable = $("#test-steps-table").dataTable();
 		var allSelectedIds = getIdsOfSelectedTableRows(datatable, getStepsTableRowId);
