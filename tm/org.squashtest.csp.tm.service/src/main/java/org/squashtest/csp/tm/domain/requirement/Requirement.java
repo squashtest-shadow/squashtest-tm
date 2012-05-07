@@ -20,14 +20,13 @@
  */
 package org.squashtest.csp.tm.domain.requirement;
 
+import static org.squashtest.csp.tm.domain.requirement.RequirementStatus.APPROVED;
+import static org.squashtest.csp.tm.domain.requirement.RequirementStatus.OBSOLETE;
+
 import java.util.ArrayList;
 import java.util.Collections;
-import java.util.HashMap;
 import java.util.List;
-import java.util.Locale;
-import java.util.Map;
 
-import javax.inject.Inject;
 import javax.persistence.CascadeType;
 import javax.persistence.Entity;
 import javax.persistence.JoinColumn;
@@ -37,15 +36,9 @@ import javax.persistence.OrderBy;
 import javax.persistence.PrimaryKeyJoinColumn;
 import javax.validation.constraints.NotNull;
 
-import net.sf.saxon.functions.Collection;
-
-import org.springframework.context.MessageSource;
 import org.squashtest.csp.tm.domain.NoVerifiableRequirementVersionException;
 import org.squashtest.csp.tm.domain.attachment.AttachmentHolder;
 import org.squashtest.csp.tm.domain.attachment.AttachmentList;
-import org.squashtest.csp.tm.domain.report.common.dto.ReqCoverageByTestStatType;
-
-import static org.squashtest.csp.tm.domain.requirement.RequirementStatus.*;
 
 /**
  * Entity requirement

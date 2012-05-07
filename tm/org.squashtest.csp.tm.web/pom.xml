@@ -1,5 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
 	<modelVersion>4.0.0</modelVersion>
 	<parent>
 		<artifactId>squashtest-csp-tm</artifactId>
@@ -39,14 +40,14 @@
 			<artifactId>org.squashtest.csp.core.bugtracker</artifactId>
 			<version>${project.version}</version>
 		</dependency>
-		
+
 		<dependency>
 			<groupId>${project.groupId}</groupId>
 			<artifactId>org.squashtest.csp.core.web</artifactId>
 			<version>${project.version}</version>
 			<classifier>classes</classifier>
 			<scope>provided</scope>
-		</dependency>		
+		</dependency>
 
 		<dependency>
 			<groupId>${project.groupId}</groupId>
@@ -55,7 +56,7 @@
 			<type>pom</type>
 			<scope>test</scope>
 		</dependency>
-		
+
 		<dependency>
 			<groupId>${project.groupId}</groupId>
 			<artifactId>org.squashtest.csp.tools.unittest</artifactId>
@@ -203,8 +204,12 @@
 
 		<!-- ====== FILE UPLOAD ====== -->
 		<dependency>
-			<groupId>org.apache.commons</groupId>
-			<artifactId>com.springsource.org.apache.commons.fileupload</artifactId>
+			<groupId>commons-fileupload</groupId>
+			<artifactId>commons-fileupload</artifactId>
+		</dependency>
+		<dependency>
+			<groupId>commons-io</groupId>
+			<artifactId>commons-io</artifactId>
 		</dependency>
 		<!-- ====== /FILE UPLOAD ====== -->
 
@@ -238,6 +243,7 @@
 			<version>3.1</version>
 		</dependency>
 		<!-- ====== /JASPER REPORTS ====== -->
+
 	</dependencies>
 
 	<build>
@@ -299,13 +305,14 @@
 						<Bundle-ClassPath>.,WEB-INF/classes,WEB-INF/reports</Bundle-ClassPath>
 						<!-- <Web-ContextPath>${bundle.contextPath}</Web-ContextPath> -->
 						<Fragment-Host>org.squashtest.csp.core.web</Fragment-Host>
-						<!-- Runtime classes defined in config files such as web.xml and spring should be manually imported below -->
+						<!-- Runtime classes defined in config files such as web.xml and spring 
+							should be manually imported below -->
 						<Import-Package>
 							*,
 							net.sf.jasperreports.engine,
 							net.sf.jasperreports.engine.export,
-							<!-- some dependency needs the commons.lang version 2.5.0, however it is already used and exported as 2.4 in other 
-								bundles -->
+							<!-- some dependency needs the commons.lang version 2.5.0, however 
+								it is already used and exported as 2.4 in other bundles -->
 							org.apache.commons.lang;version="${commons.lang.version}",
 							org.squashtest.csp.core.web.utils; version="${project.version}"
 						</Import-Package>

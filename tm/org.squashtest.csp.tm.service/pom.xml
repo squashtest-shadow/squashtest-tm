@@ -8,6 +8,7 @@
 	</parent>
 	<artifactId>org.squashtest.csp.tm.service</artifactId>
 	<name>Squashtest CSP - Test Management module - Service component</name>
+	<packaging>bundle</packaging>
 	<properties>
 		<bundle.name>${project.artifactId}</bundle.name>
 		<bundle.symbolicName>${project.artifactId}</bundle.symbolicName>
@@ -58,8 +59,18 @@
 		
 		<!-- ====== FOUNDATION ====== -->
 		<dependency>
+			<groupId>commons-lang</groupId>
+			<artifactId>commons-lang</artifactId>
+			<scope>compile</scope>
+		</dependency>
+		<dependency>
+			<groupId>commons-collections</groupId>
+			<artifactId>commons-collections</artifactId>
+			<scope>compile</scope>
+		</dependency>
+		<dependency>
 			<groupId>org.apache.commons</groupId>
-			<artifactId>com.springsource.org.apache.commons.lang</artifactId>
+			<artifactId>commons-compress</artifactId>
 			<scope>compile</scope>
 		</dependency>
 		<!-- ====== /FOUNDATION ====== -->
@@ -96,8 +107,8 @@
 
 		<!-- ====== CONNECTION POOL ====== -->
 		<dependency>
-			<groupId>org.apache.commons</groupId>
-			<artifactId>com.springsource.org.apache.commons.dbcp</artifactId>
+			<groupId>commons-dbcp</groupId>
+			<artifactId>commons-dbcp</artifactId>
 		</dependency>
 		<!-- ====== /CONNECTION POOL ====== -->
 
@@ -141,22 +152,12 @@
 		</dependency>
 		<!-- ====== /SPRING SECURITY ====== -->
 		
-		<!-- ====== Convenient tools ====== -->
-
-		<dependency>
-			<groupId>org.apache.commons</groupId>
-			<artifactId>com.springsource.org.apache.commons.collections</artifactId>
-			<scope>compile</scope>
-		</dependency>
-		<!-- ===== /Convenient tools ====== -->
-		
-		<!-- ============= apache poi ================ -->
+		<!-- ====== POI ====== -->
  		<dependency>
 			<groupId>org.apache.poi</groupId>
 			<artifactId>org.squashtest.org.apache.poi</artifactId>
-			<version>3.7</version>
 		</dependency> 
-		<!-- ============= /apache poi ================ -->
+		<!-- ====== /POI ====== -->
 	</dependencies>
 
 	<build>
@@ -194,29 +195,29 @@
 			</plugin>
 
 			<plugin>
-				<groupId>com.springsource.bundlor</groupId>
-				<artifactId>com.springsource.bundlor.maven</artifactId>
-				<executions>
-					<execution>
-						<id>bundlor</id>
-						<goals>
-							<goal>bundlor</goal>
-						</goals>
-					</execution>
-				</executions>
+				<groupId>org.apache.felix</groupId>
+				<artifactId>maven-bundle-plugin</artifactId>
+				<extensions>true</extensions>
 				<configuration>
-					<removeNullHeaders>true</removeNullHeaders>
-				</configuration>
-			</plugin>
-
-			<plugin>
-				<groupId>org.apache.maven.plugins</groupId>
-				<artifactId>maven-jar-plugin</artifactId>
-				<configuration>
-					<archive>
-						<manifestFile>${project.build.outputDirectory}/META-INF/MANIFEST.MF</manifestFile>
-						<index />
-					</archive>
+					<instructions>
+						<_include>bnd.bnd</_include>
+						<Export-Package>!*internal*,org.squashtest.csp.tm.*</Export-Package>
+						<Import-Package>
+						com.mysql.jdbc;resolution:=optional,
+						javassist.util.proxy,
+						javax.transaction,
+						org.aopalliance.aop,
+						org.apache.commons.dbcp,
+						org.h2;resolution:=optional,
+						org.hibernate.dialect,
+						org.hibernate.proxy,
+						org.hibernate.validator,
+						org.springframework.aop,
+						org.springframework.aop.framework,
+						!org.squashtest.csp.tm*,
+						*
+						</Import-Package>
+					</instructions>
 				</configuration>
 			</plugin>
 

@@ -322,7 +322,6 @@
 			<groupId>${project.groupId}</groupId>
 			<artifactId>org.squashtest.csp.tm.service</artifactId>
 			<version>${project.version}</version>
-			<scope>provided</scope>
 		</dependency>
 		<!-- ====== /SQUASHTEST ====== -->
 
@@ -341,6 +340,7 @@
 		<dependency>
 			<groupId>javax.servlet</groupId>
 			<artifactId>com.springsource.javax.servlet</artifactId>
+			<scope>compile</scope>
 		</dependency>
 		<dependency>
 			<groupId>javax.el</groupId>
@@ -414,6 +414,7 @@
 		<dependency>
 			<groupId>org.eclipse.osgi</groupId>
 			<artifactId>org.eclipse.osgi</artifactId>
+			<scope>compile</scope>
 		</dependency>
 		<!-- ====== /OSGI API ====== -->
 
