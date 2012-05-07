@@ -236,8 +236,8 @@
 
 		<!-- ====== DB AND CONNECTION POOL ====== -->
 		<dependency>
-			<groupId>org.apache.commons</groupId>
-			<artifactId>com.springsource.org.apache.commons.dbcp</artifactId>
+			<groupId>commons-dbcp</groupId>
+			<artifactId>commons-dbcp</artifactId>
 			<scope>runtime</scope>
 		</dependency>
 		<dependency>
@@ -383,8 +383,8 @@
 		</dependency>
 		<!-- ====== FOUNDATION ====== -->
 		<dependency>
-			<groupId>org.apache.commons</groupId>
-			<artifactId>com.springsource.org.apache.commons.lang</artifactId>
+			<groupId>commons-lang</groupId>
+			<artifactId>commons-lang</artifactId>
 			<scope>runtime</scope>
 		</dependency>
 		<!-- ====== /FOUNDATION ====== -->
