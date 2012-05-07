@@ -69,21 +69,27 @@ function handleJsonResponseError(request) {
 		if ( json.actionValidationError != null){
 			return $.squash.openMessage("<f:message key='popup.title.error'/>",json.actionValidationError.message);		
 		}
-		if ( json.fieldValidationErrors != null) {
-			<%-- IE8 requires it a low tech code --%>
-			var validationErrorList = json.fieldValidationErrors;
-			if (validationErrorList.length>0){
-				var counter=0;
-				for (counter=0;counter<validationErrorList.length;counter++){
-					var fve = validationErrorList[counter];
-					var labelId = fve.fieldName + '-' + 'error';
+		else{
+			if ( json.fieldValidationErrors != null) {
+				<%-- IE8 requires it a low tech code --%>
+				var validationErrorList = json.fieldValidationErrors;
+				if (validationErrorList.length>0){
+					var counter=0;
+					for (counter=0;counter<validationErrorList.length;counter++){
+						var fve = validationErrorList[counter];
+						var labelId = fve.fieldName + '-' + 'error';
+						
+						var label = $('span.error-message.'+labelId);
 					
-					var label = $('span.error-message.'+labelId);
-				
-					if (label != null) {
-						label.html(fve.errorMessage);
-					}					
+						if (label.length != 0) {
+							label.html(fve.errorMessage);
+						}else{
+							throw 'exception';
+						}
+					}
 				}
+			}else{
+				throw 'exception';
 			}
 		}
 	}
