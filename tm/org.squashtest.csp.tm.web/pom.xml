@@ -217,15 +217,18 @@
 		<!-- We need this at runtime (OSGi bundle) -->
 		<dependency>
 			<groupId>net.sf.jasperreports</groupId>
-			<artifactId>org.squashtest.net.sf.jasperreports</artifactId>
+			<artifactId>jasperreports</artifactId>
+			<scope>provided</scope>
 		</dependency>
 		<!-- 
 			We need this to compile the reports. Our OSGi wrapped artifact wont 
 			work and plugin dependency wont be the one picked
 		-->
- 		<dependency>
+ 	
+		<dependency>
 			<groupId>net.sf.jasperreports</groupId>
-			<artifactId>jasperreports</artifactId>
+			<artifactId>org.squashtest.net.sf.jasperreports</artifactId>
+			<scope>runtime</scope>
 		</dependency>
 		<dependency>
 			<groupId>org.beanshell</groupId>
