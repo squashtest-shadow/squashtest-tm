@@ -23,6 +23,7 @@ package org.squashtest.csp.core.validation;
 import java.util.ArrayList;
 import java.util.List;
 
+import javax.validation.MessageInterpolator;
 import javax.validation.Validation;
 import javax.validation.ValidationProviderResolver;
 import javax.validation.ValidatorFactory;
@@ -31,6 +32,7 @@ import javax.validation.spi.ValidationProvider;
 
 import org.hibernate.validator.HibernateValidator;
 import org.hibernate.validator.HibernateValidatorConfiguration;
+import org.springframework.validation.beanvalidation.LocaleContextMessageInterpolator;
 
 /**
  * Validation framework does not properly bootstrap in OSGi + DM environment, so we need to use this factory of
@@ -41,7 +43,7 @@ import org.hibernate.validator.HibernateValidatorConfiguration;
  * 
  */
 public final class ValidatorFactoryBean {
-
+	
 	/**
 	 * Custom provider resolver is needed since the default provider resolver relies on current thread context loader
 	 * and doesn't find the default META-INF/services/.... configuration file
@@ -63,7 +65,12 @@ public final class ValidatorFactoryBean {
 		ProviderSpecificBootstrap<HibernateValidatorConfiguration> validationBootStrap = Validation
 		.byProvider(HibernateValidator.class);
 		validationBootStrap.providerResolver(new HibernateValidationProviderResolver());
-		INSTANCE = validationBootStrap.configure().buildValidatorFactory();
+		HibernateValidatorConfiguration configuration = validationBootStrap.configure();
+		MessageInterpolator targetInterpolator = configuration.getDefaultMessageInterpolator();
+		configuration.messageInterpolator(new LocaleContextMessageInterpolator(targetInterpolator));
+
+		INSTANCE = configuration.buildValidatorFactory();
+
 	}
 
 	public static ValidatorFactory getInstance() {
@@ -73,5 +80,9 @@ public final class ValidatorFactoryBean {
 	private ValidatorFactoryBean() {
 		super();
 	}
+
+	
+	
+	
 
 }

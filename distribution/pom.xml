@@ -24,6 +24,8 @@
 		<upgrade.0.23.0.changelog>${shared-resources}/upgrade/upgrade.changelog-up-to-0.23.0.xml</upgrade.0.23.0.changelog>
 		<upgrade.1.1.0.changelog>${shared-resources}/upgrade/upgrade.changelog-up-to-1.1.0.xml</upgrade.1.1.0.changelog>
 		<upgrade.1.1.1.changelog>${shared-resources}/upgrade/upgrade.changelog-up-to-1.1.1.xml</upgrade.1.1.1.changelog>
+		<upgrade.1.2.0.changelog>${shared-resources}/upgrade/upgrade.changelog-up-to-1.2.0.xml</upgrade.1.2.0.changelog>
+		
 		<distributed-db.changelog>${project.build.outputDirectory}/distributed-db.changelog.xml</distributed-db.changelog>
 		<felix.artifactId>org.apache.felix.main</felix.artifactId>
 		<felix.version>3.2.1</felix.version>
@@ -258,10 +260,25 @@
 							<url>${h2.incremental.url}</url>
 							<username>sa</username>
 							<password>sa</password>
+							<migrationSqlOutputFile>${database.script.directory}/h2-upgrade-to-1.1.1.sql</migrationSqlOutputFile>
+						</configuration>
+					</execution>
+					<execution>
+						<id>generate-h2-1.2.0-script</id>
+						<phase>prepare-package</phase>
+						<goals>
+							<goal>updateSQL</goal>
+						</goals>
+						<configuration>
+							<dropFirst>false</dropFirst>
+							<changeLogFile>${upgrade.1.2.0.changelog}</changeLogFile>
+							<driver>org.h2.Driver</driver>
+							<url>${h2.incremental.url}</url>
+							<username>sa</username>
+							<password>sa</password>
 							<migrationSqlOutputFile>${database.script.directory}/h2-upgrade-to-${squashTmVersion}.sql</migrationSqlOutputFile>
 						</configuration>
 					</execution>
-
 					<execution>
 						<id>generate-h2-full-install-script</id>
 						<phase>prepare-package</phase>
@@ -514,6 +531,22 @@
 						<configuration>
 							<dropFirst>false</dropFirst>
 							<changeLogFile>${upgrade.1.1.1.changelog}</changeLogFile>
+							<driver>com.mysql.jdbc.Driver</driver>
+							<url>${liquibase.mysql.url}</url>
+							<username>${liquibase.mysql.username}</username>
+							<password>${liquibase.mysql.password}</password>
+							<migrationSqlOutputFile>${database.script.directory}/mysql-upgrade-to-1.1.1.sql</migrationSqlOutputFile>
+						</configuration>
+					</execution>
+					<execution>
+						<id>generate-mysql-1.2.0-script</id>
+						<phase>prepare-package</phase>
+						<goals>
+							<goal>updateSQL</goal>
+						</goals>
+						<configuration>
+							<dropFirst>false</dropFirst>
+							<changeLogFile>${upgrade.1.2.0.changelog}</changeLogFile>
 							<driver>com.mysql.jdbc.Driver</driver>
 							<url>${liquibase.mysql.url}</url>
 							<username>${liquibase.mysql.username}</username>
