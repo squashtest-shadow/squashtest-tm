@@ -43,8 +43,6 @@ public class JasperReportsServiceImplTest extends Specification {
 	def "should export some requirements"(){
 		
 		given :	
-			
-			
 			URL fileURL = getClass().getClassLoader().getResource("requirement-export.jasper");
 			File file = new File(fileURL.getFile());
 			InputStream reportStream = new FileInputStream(file);

@@ -214,10 +214,18 @@
 		<!-- ====== /FILE UPLOAD ====== -->
 
 		<!-- ====== JASPER REPORTS ====== -->
+		<!-- We need this at runtime (OSGi bundle) -->
 		<dependency>
 			<groupId>net.sf.jasperreports</groupId>
 			<artifactId>org.squashtest.net.sf.jasperreports</artifactId>
-			<version>3.7.6</version>
+		</dependency>
+		<!-- 
+			We need this to compile the reports. Our OSGi wrapped artifact wont 
+			work and plugin dependency wont be the one picked
+		-->
+ 		<dependency>
+			<groupId>net.sf.jasperreports</groupId>
+			<artifactId>jasperreports</artifactId>
 		</dependency>
 		<dependency>
 			<groupId>org.beanshell</groupId>
@@ -338,15 +346,6 @@
 						</configuration>
 					</execution>
 				</executions>
-
-				<dependencies>
-					<!--note this must be repeated here to pick up correct xml validation -->
-					<dependency>
-						<groupId>net.sf.jasperreports</groupId>
-						<artifactId>jasperreports</artifactId>
-						<version>3.7.6</version>
-					</dependency>
-				</dependencies>
 			</plugin>
 
 			<plugin>

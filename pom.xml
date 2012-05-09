@@ -61,6 +61,7 @@
 		<jackson.version>1.4.3</jackson.version>
 		<liquibase.version>2.0.1</liquibase.version>
 		<jasperreports.version>3.7.6.B-SNAPSHOT</jasperreports.version>
+		<jasperreports-compiler.version>3.7.6</jasperreports-compiler.version>
 		<mysql.version>5.1.6</mysql.version>
 		<hibernate.version>3.6.10.Final-SNAPSHOT</hibernate.version>
 		<hibernate-annotations.version>3.2.0.Final</hibernate-annotations.version>
@@ -247,6 +248,17 @@
 							</goals>
 						</execution>
 					</executions>
+					<dependencies>
+						<!-- 
+							note this must be repeated here to pick up correct xml validation
+							- yet it wont be used for compilation - 
+						-->
+						<dependency>
+							<groupId>net.sf.jasperreports</groupId>
+							<artifactId>jasperreports</artifactId>
+							<version>${jasperreports-compiler.version}</version>
+						</dependency>
+					</dependencies>
 				</plugin>
 
 				<plugin>
@@ -942,12 +954,8 @@
 			<!-- ====== DATABASES ====== -->
 
 			<!-- ====== FILE UPLOAD ====== -->
-		<!-- 	<dependency>
-				<groupId>org.apache.commons</groupId>
-				<artifactId>com.springsource.org.apache.commons.fileupload</artifactId>
-				<version>1.2.1</version>
-				<scope>compile</scope>
-			</dependency> -->
+			<!-- <dependency> <groupId>org.apache.commons</groupId> <artifactId>com.springsource.org.apache.commons.fileupload</artifactId> 
+				<version>1.2.1</version> <scope>compile</scope> </dependency> -->
 			<dependency>
 				<groupId>commons-fileupload</groupId>
 				<artifactId>commons-fileupload</artifactId>
@@ -966,6 +974,14 @@
 				<groupId>net.sf.jasperreports</groupId>
 				<artifactId>org.squashtest.net.sf.jasperreports</artifactId>
 				<version>${jasperreports.version}</version>
+				<scope>runtime</scope>
+			</dependency>
+			<!--  This one is used for reports compilation -->
+			<dependency>
+				<groupId>net.sf.jasperreports</groupId>
+				<artifactId>jasperreports</artifactId>
+				<version>${jasperreports-compiler.version}</version>
+				<scope>provided</scope>
 			</dependency>
 			<!-- ====== /JASPER REPORTS ====== -->
 
@@ -1149,6 +1165,7 @@
 			<name>SpringSource Enterprise Bundle Repository</name>
 			<url>http://repository.springsource.com/maven/bundles/milestone</url>
 		</pluginRepository>
+
 		<pluginRepository>
 			<id>jasperreports</id>
 			<url>http://jasperreports.sourceforge.net/maven2</url>
