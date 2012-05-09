@@ -199,6 +199,7 @@
 					<configuration>
 						<nonFilteredFileExtensions>
 							<nonFilteredFileExtension>ico</nonFilteredFileExtension>
+							<nonFilteredFileExtension>zip</nonFilteredFileExtension>
 						</nonFilteredFileExtensions>
 					</configuration>
 				</plugin>
