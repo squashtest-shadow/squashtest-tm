@@ -57,7 +57,7 @@
 				<exclude>org.codehaus.izpack:*</exclude>
 				<exclude>*:*:pom:*</exclude>
 			</excludes>
-			<useTransitiveDependencies>false</useTransitiveDependencies>
+			<useTransitiveDependencies>true</useTransitiveDependencies>
 		</dependencySet>
 		<dependencySet>
 			<!-- web bundles need to be renamed as jars for felix to start them -->
@@ -66,7 +66,7 @@
 				<include>*:*:war</include>
 			</includes>
 			<outputFileNameMapping>${artifact.artifactId}-${artifact.version}${dashClassifier?}.jar</outputFileNameMapping>
-			<useTransitiveDependencies>false</useTransitiveDependencies>
+			<useTransitiveDependencies>true</useTransitiveDependencies>
 		</dependencySet>
 		<dependencySet>
 			<outputDirectory>bundles</outputDirectory>
@@ -77,12 +77,12 @@
 				<exclude>org.apache.felix:${felix.artifactId}</exclude>
 				<exclude>org.squashtest.csp:squashtest-csp-launcher</exclude>
 			</excludes>
-			<useTransitiveDependencies>false</useTransitiveDependencies>
+			<useTransitiveDependencies>true</useTransitiveDependencies>
 			<scope>provided</scope>
 		</dependencySet>
 	</dependencySets>
 	
-	<moduleSets>
+<!-- 	<moduleSets>
 		<moduleSet>
 			<useAllReactorProjects>true</useAllReactorProjects>
 			<includes>
@@ -107,21 +107,8 @@
 			</binaries>
 		</moduleSet>
 	</moduleSets>
-	
+ -->	
 	<fileSets>
-		<!-- 
-		<fileSet>
-			<directory>src/main/resources/bin</directory>
-			<filtered>true</filtered>
-			<outputDirectory>bin</outputDirectory>
-		</fileSet>
-		<fileSet>
-			<
-			<directory>src/main/resources/conf</directory>
-			<filtered>true</filtered>
-			<outputDirectory>conf</outputDirectory>
-		</fileSet>
-		-->
 		<fileSet>
 			<directory>src/main/resources</directory>
 			<filtered>true</filtered>

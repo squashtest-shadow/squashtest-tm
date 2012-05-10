@@ -28,10 +28,6 @@
 		<felix.artifactId>org.apache.felix.main</felix.artifactId>
 		<felix.version>3.2.1</felix.version>
 		<felix.gogo.version>0.6.1</felix.gogo.version>
-		<equinox.artifactId>org.eclipse.osgi</equinox.artifactId>
-		<equinox.version>3.6.1.R36x_v20100806</equinox.version>
-		<equinox.launcher.artifactId>launcher</equinox.launcher.artifactId>
-		<equinox.launcher.version>1.0.0-v20070606</equinox.launcher.version>
 		<database.script.directory>${project.build.directory}/database-scripts/</database.script.directory>
 		<h2.incremental.url>jdbc:h2:target/incremental-upgrade-database/squash-tm</h2.incremental.url>
 		<h2.full.url>jdbc:h2:target/full-install-database/squash-tm</h2.full.url>
@@ -561,78 +557,69 @@
 			<version>1.6.4</version>
 		</dependency>
 
+		<!-- ====== SQUASHTEST ====== -->
+		<!-- Squashtest core modules -->
 		<dependency>
-			<groupId>org.apache.felix</groupId>
-			<artifactId>org.apache.felix.configadmin</artifactId>
-		</dependency>
-		<dependency>
-			<groupId>org.ops4j.pax.confman</groupId>
-			<artifactId>pax-confman-propsloader</artifactId>
-		</dependency>
-		<!-- ====== /CONFIG ADMIN COMPENDIUM SERVICE ====== -->
-
-		<!-- ====== SPRING DM ====== -->
-		<dependency>
-			<groupId>org.springframework.osgi</groupId>
-			<artifactId>spring-osgi-extender</artifactId>
-		</dependency>
-		<!-- ====== /SPRING DM ====== -->
-
-		<!-- ====== SPRING DM WEB EXTENDER ====== -->
-		<dependency>
-			<groupId>org.springframework.osgi</groupId>
-			<artifactId>spring-osgi-web</artifactId>
+			<groupId>${project.groupId}</groupId>
+			<artifactId>org.squashtest.csp.core.log4j</artifactId>
+			<version>${project.version}</version>
 		</dependency>
 		<dependency>
-			<groupId>org.springframework.osgi</groupId>
-			<artifactId>spring-osgi-web-extender</artifactId>
-		</dependency>
-		<!-- Deploys WARs to Jetty -->
-		<dependency>
-			<groupId>org.springframework.osgi</groupId>
-			<artifactId>jetty.web.extender.fragment.osgi</artifactId>
-		</dependency>
-		<!-- ====== /SPRING DM WEB EXTENDER ====== -->
-
-		<!-- ====== JETTY ====== -->
-		<dependency>
-			<groupId>org.mortbay.jetty</groupId>
-			<artifactId>com.springsource.org.mortbay.jetty.server</artifactId>
+			<groupId>${project.groupId}</groupId>
+			<artifactId>org.squashtest.csp.core.jetty.start.osgi</artifactId>
+			<version>${project.version}</version>
 		</dependency>
 		<dependency>
-			<groupId>org.mortbay.jetty</groupId>
-			<artifactId>com.springsource.org.mortbay.util</artifactId>
-		</dependency>
-		<!-- ====== /JETTY ====== -->
-
-		<!-- ====== JSP COMPILER ====== -->
-		<dependency>
-			<groupId>org.springframework.osgi</groupId>
-			<artifactId>jasper.osgi</artifactId>
-		</dependency>
-		<!-- ====== /JSP COMPILER ====== -->
-
-		<!-- ====== FILE UPLOAD ====== -->
-<!-- 		<dependency>
-			<groupId>org.apache.commons</groupId>
-			<artifactId>com.springsource.org.apache.commons.fileupload</artifactId>
+			<groupId>${project.groupId}</groupId>
+			<artifactId>org.squashtest.csp.core.bugtracker</artifactId>
+			<version>${project.version}</version>
 		</dependency>
 		<dependency>
-			<groupId>org.apache.commons</groupId>
-			<artifactId>com.springsource.org.apache.commons.io</artifactId>
-		</dependency>
- -->		<!-- ====== /FILE UPLOAD ====== -->
-
-		<!-- ====== DATABASE ====== -->
-		<dependency>
-			<groupId>com.h2database</groupId>
-			<artifactId>h2</artifactId>
+			<groupId>${project.groupId}</groupId>
+			<artifactId>org.squashtest.csp.core.web</artifactId>
+			<version>${project.version}</version>
+			<type>war</type>
 		</dependency>
 		<dependency>
-			<groupId>com.mysql.jdbc</groupId>
-			<artifactId>com.springsource.com.mysql.jdbc</artifactId>
+			<groupId>${project.groupId}</groupId>
+			<artifactId>org.squashtest.csp.core.web</artifactId>
+			<version>${project.version}</version>
+			<type>pom</type>
 		</dependency>
-		<!-- ====== /DATABASE ====== -->
+		<dependency>
+			<groupId>${project.groupId}</groupId>
+			<artifactId>org.squashtest.csp.core.service</artifactId>
+			<version>${project.version}</version>
+		</dependency>
+		<dependency>
+			<groupId>org.squashtest</groupId>
+			<artifactId>core.api</artifactId>
+			<version>${project.version}</version>
+		</dependency>
+		<dependency>
+			<groupId>${project.groupId}</groupId>
+			<artifactId>squashtest-csp-launcher</artifactId>
+			<version>${project.version}</version>
+		</dependency>
+		<!-- Squashtest tm modules -->
+		<dependency>
+			<groupId>${project.groupId}</groupId>
+			<artifactId>org.squashtest.csp.tm.web</artifactId>
+			<version>${project.version}</version>
+			<type>war</type>
+		</dependency>
+		<dependency>
+			<groupId>${project.groupId}</groupId>
+			<artifactId>org.squashtest.csp.tm.web</artifactId>
+			<version>${project.version}</version>
+			<type>pom</type>
+		</dependency>
+		<dependency>
+			<groupId>${project.groupId}</groupId>
+			<artifactId>org.squashtest.csp.tm.service</artifactId>
+			<version>${project.version}</version>
+		</dependency>
+		<!-- ====== /SQUASHTEST ====== -->
 
 		<!-- ====== SQUASHTEST ====== -->
 		<!-- Squashtest core modules -->
@@ -681,38 +668,26 @@
 		</dependency>
 		<!-- ====== /SQUASHTEST ====== -->
 
-		<!-- Below : non pulled transitive deps of war module -->
-
-		<!-- ===== HTML Parsing ===== -->
-
+		<!-- ====== CONFIG ADMIN COMPENDIUM SERVICE ====== -->
 		<dependency>
-			<groupId>net.htmlparser.jericho</groupId>
-			<artifactId>org.squashtest.net.htmlparser.jericho</artifactId>
-			<version>3.1</version>
-		</dependency>
-
-		<!-- ===== /HTML Parsing ===== -->
-
-		<!-- ===== JACKSON ===== -->
-		<dependency>
-			<groupId>org.codehaus.jackson</groupId>
-			<artifactId>com.springsource.org.codehaus.jackson.mapper</artifactId>
-			</dependency>
-		<dependency>
-			<groupId>org.codehaus.jackson</groupId>
-			<artifactId>com.springsource.org.codehaus.jackson</artifactId>
+			<groupId>org.apache.felix</groupId>
+			<artifactId>org.apache.felix.configadmin</artifactId>
 		</dependency>
 		<dependency>
-			<groupId>org.joda</groupId>
-			<artifactId>com.springsource.org.joda.time</artifactId>
-
+			<groupId>org.ops4j.pax.confman</groupId>
+			<artifactId>pax-confman-propsloader</artifactId>
 		</dependency>
-		<!-- ===== / JACKSON ===== -->
+		<!-- ====== /CONFIG ADMIN COMPENDIUM SERVICE ====== -->
 
 		<!-- ====== JEE API ====== -->
 		<dependency>
 			<groupId>javax.servlet</groupId>
 			<artifactId>com.springsource.javax.servlet</artifactId>
+			<scope>compile</scope>
+		</dependency>
+		<dependency>
+			<groupId>javax.el</groupId>
+			<artifactId>com.springsource.javax.el</artifactId>
 		</dependency>
 		<dependency>
 			<groupId>javax.servlet</groupId>
@@ -722,21 +697,67 @@
 			<groupId>javax.servlet</groupId>
 			<artifactId>com.springsource.javax.servlet.jsp.jstl</artifactId>
 		</dependency>
-		<dependency>
-			<groupId>javax.el</groupId>
-			<artifactId>com.springsource.javax.el</artifactId>
-		</dependency>
 		<!-- ====== /JEE API ====== -->
 
-		<!-- ====== JSE DI API ====== -->
+		<!-- ====== SPRING DM ====== -->
 		<dependency>
-			<groupId>javax.inject</groupId>
-			<artifactId>com.springsource.javax.inject</artifactId>
+			<groupId>org.springframework.osgi</groupId>
+			<artifactId>spring-osgi-extender</artifactId>
 		</dependency>
-		<!-- ====== /JSE DI API ====== -->
+		<!-- ====== /SPRING DM ====== -->
+
+		<!-- ====== SPRING DM WEB EXTENDER ====== -->
+		<dependency>
+			<groupId>org.springframework.osgi</groupId>
+			<artifactId>spring-osgi-web</artifactId>
+		</dependency>
+		<dependency>
+			<groupId>org.springframework.osgi</groupId>
+			<artifactId>spring-osgi-web-extender</artifactId>
+		</dependency>
+		<!-- Deploys WARs to Jetty -->
+		<dependency>
+			<groupId>org.springframework.osgi</groupId>
+			<artifactId>jetty.web.extender.fragment.osgi</artifactId>
+		</dependency>
+		<!-- ====== /SPRING DM WEB EXTENDER ====== -->
+
+		<!-- ====== JETTY ====== -->
+		<dependency>
+			<groupId>org.mortbay.jetty</groupId>
+			<artifactId>com.springsource.org.mortbay.jetty.server</artifactId>
+		</dependency>
+		<dependency>
+			<groupId>org.mortbay.jetty</groupId>
+			<artifactId>com.springsource.org.mortbay.util</artifactId>
+		</dependency>
+		<!-- ====== /JETTY ====== -->
+
+		<!-- ====== JSP COMPILER ====== -->
+		<dependency>
+			<groupId>org.springframework.osgi</groupId>
+			<artifactId>jasper.osgi</artifactId>
+		</dependency>
+<!-- should not be needed in felix
+ 		<dependency>
+			<groupId>org.apache.xmlcommons</groupId>
+			<artifactId>com.springsource.org.apache.xmlcommons</artifactId>
+		</dependency>
+ -->		<!-- ====== /JSP COMPILER ====== -->
+
+		<!-- ====== DATABASE ====== -->
+		<dependency>
+			<groupId>com.h2database</groupId>
+			<artifactId>h2</artifactId>
+		</dependency>
+		<dependency>
+			<groupId>com.mysql.jdbc</groupId>
+			<artifactId>com.springsource.com.mysql.jdbc</artifactId>
+		</dependency>
+		<!-- ====== /DATABASE ====== -->
 
 		<!-- ====== LOGGING ====== -->
-		<dependency>
+<!-- 		<dependency>
 			<groupId>org.slf4j</groupId>
 			<artifactId>com.springsource.slf4j.api</artifactId>
 		</dependency>
@@ -752,103 +773,22 @@
 			<groupId>org.apache.log4j</groupId>
 			<artifactId>com.springsource.org.apache.log4j</artifactId>
 		</dependency>
-		<!-- ====== /LOGGING ====== -->
-
-		<!-- ====== SPRING DI ====== -->
-		<!-- Required by Spring MVC -->
-		<dependency>
-			<groupId>org.springframework</groupId>
-			<artifactId>org.springframework.context.support</artifactId>
-		</dependency>
-		<!-- ====== /SPRING DI ====== -->
+ -->		<!-- ====== /LOGGING ====== -->
 
 		<!-- ====== XML PARSER ====== -->
 		<!-- Required by jstl impl -->
-		<dependency>
+<!-- 		<dependency>
 			<groupId>org.apache.xmlcommons</groupId>
 			<artifactId>com.springsource.org.apache.xmlcommons</artifactId>
 			<scope>runtime</scope>
 		</dependency>
-		<!-- ====== /XML PARSER ====== -->
+ -->		<!-- ====== /XML PARSER ====== -->
 
-		<!-- ====== SPRING MVC ====== -->
-		<dependency>
-			<groupId>org.springframework</groupId>
-			<artifactId>org.springframework.web</artifactId>
-		</dependency>
-		<dependency>
-			<groupId>org.springframework</groupId>
-			<artifactId>org.springframework.web.servlet</artifactId>
-		</dependency>
-		<!-- ====== /SPRING MVC ====== -->
-
-		<!-- ====== URL REWRITING ====== -->
-		<dependency>
-			<groupId>org.tuckey</groupId>
-			<artifactId>com.springsource.org.tuckey.web.filters.urlrewrite</artifactId>
-		</dependency>
-		<!-- ====== /URL REWRITING ====== -->
-
-		<!-- ====== SPRING SECURITY ====== -->
-		<dependency>
-			<groupId>org.springframework.security</groupId>
-			<artifactId>org.springframework.security.web</artifactId>
-		</dependency>
-		<dependency>
-			<groupId>org.springframework.security</groupId>
-			<artifactId>org.springframework.security.config</artifactId>
-		</dependency>
-		<dependency>
-			<groupId>org.springframework.security</groupId>
-			<artifactId>org.springframework.security.taglibs</artifactId>
-		</dependency>
-		<dependency>
-			<groupId>org.springframework.security</groupId>
-			<artifactId>org.springframework.security.core</artifactId>
-		</dependency>
-		<!-- ====== /SPRING SECURITY ====== -->
-
-		<!-- ====== VALIDATION ====== -->
-		<dependency>
-			<groupId>javax.validation</groupId>
-			<artifactId>com.springsource.javax.validation</artifactId>
-		</dependency>
-		<dependency>
-			<groupId>org.hibernate</groupId>
-			<artifactId>com.springsource.org.hibernate.validator</artifactId>
-		</dependency>
-		<!-- ====== /VALIDATION ====== -->
-
-		<!-- ===== ASPECTJ ===== -->
-		<dependency>
-			<groupId>org.aspectj</groupId>
-			<artifactId>com.springsource.org.aspectj.runtime</artifactId>
-		</dependency>
-		<dependency>
-			<groupId>org.aspectj</groupId>
-			<artifactId>com.springsource.org.aspectj.weaver</artifactId>
-		</dependency>
-		<!-- ===== / ASPECTJ ===== -->
-
-		<!-- ===== JASPER REPORTS ===== -->
-		<dependency>
-			<groupId>net.sf.jasperreports</groupId>
-			<artifactId>org.squashtest.net.sf.jasperreports</artifactId>
-		</dependency>
-		<!-- ===== /JASPER REPORTS ===== -->
 		<dependency>
 			<groupId>org.codehaus.izpack</groupId>
 			<artifactId>izpack-standalone-compiler</artifactId>
 			<version>${izpack-compiler.version}</version>
 			<scope>test</scope>
 		</dependency>
-		
-
-		<!-- ====== apache poi ============ -->
-		<dependency>
-			<groupId>org.apache.poi</groupId>
-			<artifactId>org.squashtest.org.apache.poi</artifactId>
-		</dependency>
-		<!-- ====== /apache poi ============ -->		
 	</dependencies>
 </project>

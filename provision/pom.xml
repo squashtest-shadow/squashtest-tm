@@ -305,6 +305,11 @@
 			<artifactId>org.squashtest.csp.core.service</artifactId>
 			<version>${project.version}</version>
 		</dependency>
+		<dependency>
+			<groupId>org.squashtest</groupId>
+			<artifactId>core.api</artifactId>
+			<version>${project.version}</version>
+		</dependency>
 		<!-- Squashtest tm modules -->
 		<dependency>
 			<groupId>${project.groupId}</groupId>
@@ -439,12 +444,5 @@
 			<artifactId>h2</artifactId>
 		</dependency>
 		<!-- ====== /DATABASE ====== -->
-
-		<!-- ======= junit (for weirdos than need junit at runtime)======== -->
-		<dependency>
-			<groupId>org.junit</groupId>
-			<artifactId>com.springsource.org.junit</artifactId>
-			<version>4.5.0</version>
-		</dependency>
 	</dependencies>
 </project>
