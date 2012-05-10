@@ -24,6 +24,7 @@ import javax.inject.Inject;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.squashtest.csp.tm.domain.CannotDeleteProjectException;
@@ -47,16 +48,20 @@ public class CustomProjectModificationServiceImpl implements CustomProjectModifi
 	private ProjectDeletionHandler projectDeletionHandler;
 
 	@Override
+	@Transactional(readOnly = true)
+	@PreAuthorize("hasPermission(#projectId, 'org.squashtest.csp.tm.domain.project.Project', 'MANAGEMENT') or hasRole('ROLE_ADMIN')")
 	public Project findById(long projectId) {
 		return projectDao.findById(projectId);
 	}
 
 	@Override
+	@PreAuthorize("hasRole('ROLE_ADMIN')")
 	public void deleteProject(long projectId) {
 		projectDeletionHandler.deleteProject(projectId);
 	}
 
 	@Override
+	@PreAuthorize("hasPermission(#projectId, 'org.squashtest.csp.tm.domain.project.Project', 'MANAGEMENT') or hasRole('ROLE_ADMIN')")
 	public AdministrableProject findAdministrableProjectById(long projectId) {
 		Project project = findById(projectId);
 		boolean isDeletable = true;

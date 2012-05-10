@@ -60,7 +60,7 @@ public class ProjectManagerServiceImpl implements ProjectManagerService {
 	@Inject
 	private ObjectIdentityService objectIdentityService;
 
-	@PostFilter("hasPermission(filterObject, 'READ') or hasRole('ROLE_ADMIN')")
+	@PostFilter("hasPermission(filterObject, 'READ') or  hasRole('ROLE_ADMIN')")
 	@Override
 	public List<Project> findAll() {
 		return projectDao.findAll();
@@ -88,7 +88,7 @@ public class ProjectManagerServiceImpl implements ProjectManagerService {
 	}
 
 	@Override
-	@PreAuthorize("hasRole('ROLE_ADMIN')")
+	@PreAuthorize("hasRole('ROLE_TM_PROJECT_MANAGER') or hasRole('ROLE_ADMIN')")
 	public FilteredCollectionHolder<List<Project>> findSortedProjects(CollectionSorting filter) {
 		List<Project> projects = projectDao.findSortedProjects(filter);
 		long count = projectDao.countProjects();

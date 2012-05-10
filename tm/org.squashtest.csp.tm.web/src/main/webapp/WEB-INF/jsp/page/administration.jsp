@@ -27,6 +27,7 @@
 <%@ taglib prefix="jq" tagdir="/WEB-INF/tags/jquery"%>
 <%@ taglib prefix="comp" tagdir="/WEB-INF/tags/component"%>
 <%@ taglib prefix="pop" tagdir="/WEB-INF/tags/popup" %>
+<%@ taglib uri="http://www.springframework.org/security/tags" prefix="sec"%>
 
 <c:url var="usersUrl" value="/users/list"/>
 <c:url var="projectsUrl" value="/projects"/>
@@ -46,10 +47,14 @@
 	<jsp:attribute name="informationContent">	
 		<div id="admin-link-pane">
 			<table>
+			<sec:authorize access=" hasRole('ROLE_ADMIN')">
 				<tr><td><a href="${ usersUrl }"><b><f:message key="admin.users.management.url.label" /></b></a></td></tr>
+				</sec:authorize>
 				<tr><td><a href="${ projectsUrl }"><b><f:message key="admin.projects.management.url.label" /></b></a></td></tr>
+				<sec:authorize access=" hasRole('ROLE_ADMIN')">
 				<tr><td><a href="${ loginUrl }"><b><f:message key="admin.login-message.management.url.label" /></b></a></td></tr>
 				<tr><td><a href="${ welcomeUrl }"><b><f:message key="admin.welcome-message.management.url.label" /></b></a></td></tr>
+				</sec:authorize>
 			</table>
 		</div>	
 	</jsp:attribute>

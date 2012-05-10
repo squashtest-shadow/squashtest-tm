@@ -42,7 +42,7 @@
 <%--
 <div><a id="menu-settings-link" href="" ><f:message key="workspace.menubar.parameters.label"/></a></div>
  --%>
-<sec:authorize access="hasRole('ROLE_ADMIN')">
+<sec:authorize access="hasRole('ROLE_TM_PROJECT_MANAGER') or hasRole('ROLE_ADMIN')">
 <div><a id="menu-administration-link" href="${ administrationUrl }" ><f:message key="workspace.menubar.administration.label"/></a></div>
 </sec:authorize>
 

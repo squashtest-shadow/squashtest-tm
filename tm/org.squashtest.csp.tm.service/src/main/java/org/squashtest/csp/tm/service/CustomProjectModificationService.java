@@ -26,13 +26,9 @@ import org.squashtest.csp.tm.domain.project.AdministrableProject;
 import org.squashtest.csp.tm.domain.project.Project;
 
 public interface CustomProjectModificationService {
-	@Transactional(readOnly = true)
-	@PreAuthorize("hasRole('ROLE_ADMIN')")
 	Project findById(long projectId);
 
-	@PreAuthorize("hasRole('ROLE_ADMIN')")
 	void deleteProject(long projectId);
 
-	@PreAuthorize("hasRole('ROLE_ADMIN')")
 	AdministrableProject findAdministrableProjectById(long projectId);
 }
