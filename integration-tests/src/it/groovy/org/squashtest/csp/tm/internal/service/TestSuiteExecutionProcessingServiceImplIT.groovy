@@ -29,7 +29,7 @@ import org.hibernate.Query
 import org.hibernate.type.LongType
 import org.spockframework.util.NotThreadSafe
 import org.springframework.transaction.annotation.Transactional
-import org.squashtest.csp.tm.domain.EmptyTestPlanException;
+import org.squashtest.csp.tm.domain.EmptyTestSuiteTestPlanException;
 import org.squashtest.csp.tm.domain.TestPlanItemNotExecutableException;
 import org.squashtest.csp.tm.domain.execution.Execution
 import org.squashtest.csp.tm.domain.execution.ExecutionStep
@@ -54,7 +54,7 @@ class TestSuiteExecutionProcessingServiceImplIT extends DbunitServiceSpecificati
 		Execution execution = service.startResume(testSuiteId)
 
 		then :
-		thrown EmptyTestPlanException
+		thrown EmptyTestSuiteTestPlanException
 	}
 	@DataSet("TestSuiteExecutionProcessingServiceImplIT.should not find exec step because all execs terminated.xml")
 	def "should try to resume and not find execution because all terminated"(){
