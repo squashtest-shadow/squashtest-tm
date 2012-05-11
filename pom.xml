@@ -60,10 +60,10 @@
 		<dwr.version>3.0.0.M1</dwr.version>
 		<jackson.version>1.4.3</jackson.version>
 		<liquibase.version>2.0.1</liquibase.version>
-		<jasperreports.version>3.7.6.B-SNAPSHOT</jasperreports.version>
+		<jasperreports.version>3.7.6.B</jasperreports.version>
 		<jasperreports-compiler.version>3.7.6</jasperreports-compiler.version>
 		<mysql.version>5.1.6</mysql.version>
-		<hibernate.version>3.6.10.Final-SNAPSHOT</hibernate.version>
+		<hibernate.version>3.6.10.Final</hibernate.version>
 		<hibernate-annotations.version>3.2.0.Final</hibernate-annotations.version>
 		<commons-collections.version>3.2.1</commons-collections.version>
 
@@ -1071,7 +1071,7 @@
 			<dependency>
 				<groupId>org.apache.poi</groupId>
 				<artifactId>org.squashtest.org.apache.poi</artifactId>
-				<version>3.7.0.B-SNAPSHOT</version>
+				<version>3.7.0.B</version>
 			</dependency>
 			<!-- ====== /POI ====== -->
 
