@@ -116,6 +116,12 @@ public class JdbcManageableAclService extends JdbcAclService implements ObjectAc
 			"inner join ACL_CLASS ac on ac.ID = oid.CLASS_ID " +
 			"where cu.LOGIN = ? and ac.CLASSNAME = ?";
 	
+	private final String userAndAclClassFromProject= "select arse.USER_ID, ag.ID, ag.QUALIFIED_NAME from " +
+			"ACL_GROUP ag " +
+			"inner join ACL_RESPONSIBILITY_SCOPE_ENTRY arse on ag.ID = arse.ACL_GROUP_ID " +
+			"inner join ACL_OBJECT_IDENTITY oid on oid.ID = arse.OBJECT_IDENTITY_ID " +
+			"inner join ACL_CLASS ac on ac.ID = oid.CLASS_ID " +
+			"where oid.IDENTITY = ? and ac.CLASSNAME = ?";
 	
 	private final String deleteResponsablityEntry = "delete from ACL_RESPONSIBILITY_SCOPE_ENTRY "+
 													"where USER_ID = (select ID from CORE_USER where login = ?) " +
@@ -131,12 +137,28 @@ public class JdbcManageableAclService extends JdbcAclService implements ObjectAc
 								"and oid.IDENTITY = ? "+
 								"and ac.CLASSNAME = ?";
 	*/
-	private final String findObjectsWithoutPermission = "select nro.IDENTITY from ACL_OBJECT_IDENTITY nro inner join ACL_CLASS nrc on nro.CLASS_ID = nrc.ID where nrc.CLASSNAME = ? and not exists " +
-			"(select 1 from ACL_OBJECT_IDENTITY ro inner join ACL_CLASS rc on rc.ID = ro.CLASS_ID inner join ACL_RESPONSIBILITY_SCOPE_ENTRY r on r.OBJECT_IDENTITY_ID = ro.ID inner join CORE_USER u on u.ID = r.USER_ID " +
-			"where ro.ID = nro.ID and rc.ID = nrc.ID and u.LOGIN = ?) ";
+	private final String findObjectsWithoutPermission = "select nro.IDENTITY from ACL_OBJECT_IDENTITY nro " +
+			"inner join ACL_CLASS nrc on nro.CLASS_ID = nrc.ID " +
+			"where nrc.CLASSNAME = ? " +
+			"and not exists (select 1 " +
+				"from ACL_OBJECT_IDENTITY ro " +
+				"inner join ACL_CLASS rc on rc.ID = ro.CLASS_ID " +
+				"inner join ACL_RESPONSIBILITY_SCOPE_ENTRY r on r.OBJECT_IDENTITY_ID = ro.ID " +
+				"inner join CORE_USER u on u.ID = r.USER_ID " +
+				"where ro.ID = nro.ID and rc.ID = nrc.ID and u.LOGIN = ?) ";
 	
 	//private final String findObjectsWithoutPermission = "select oid.IDENTITY from ACL_OBJECT_IDENTITY oid inner join ACL_RESPONSIBILITY_SCOPE_ENTRY arse on arse.OBJECT_IDENTITY_ID = oid.ID inner join CORE_USER cu on cu.ID = arse.USER_ID inner join ACL_CLASS ac on oid.CLASS_ID = ac.ID right join ACL_OBJECT_IDENTITY aoc"+
 	//" where cu.LOGIN = ? and ac.CLASSNAME = ? and oid.ID is null";
+	
+	private final String findUsersWithoutPermissionByObject = "select u.ID from CORE_USER u "+
+			"where not exists (select 1 " +
+				"from ACL_OBJECT_IDENTITY aoi " +
+				"inner join ACL_CLASS ac on ac.ID = aoi.CLASS_ID " +
+				"inner join ACL_RESPONSIBILITY_SCOPE_ENTRY arse on arse.OBJECT_IDENTITY_ID = aoi.ID " +
+				"where u.ID = arse.USER_ID " +
+				"and ac.CLASSNAME = ? " +
+				"and aoi.IDENTITY = ?) ";
+	
 	
 	public JdbcManageableAclService(DataSource dataSource, LookupStrategy lookupStrategy) {
 		super(dataSource, lookupStrategy);
@@ -293,6 +315,24 @@ public class JdbcManageableAclService extends JdbcAclService implements ObjectAc
 		if (aclCache!=null){
 			aclCache.evictFromCache(oIdentity);
 		}
+	}
+
+	@Override
+	public List<Object[]> retrieveUserAndAclClassFromProject(long projectId, String projectClassName) {
+		return jdbcTemplate.query(userAndAclClassFromProject,
+				new Object[] { projectId, projectClassName}, AclGroupMapper);
+		
+	}
+
+	@Override
+	public List<Long> findUsersWithoutPermissionByObject(long objectId, String qualifiedClassName) {
+		List<BigInteger> result = jdbcTemplate.queryForList(findUsersWithoutPermissionByObject,
+				new Object[] { qualifiedClassName, objectId}, BigInteger.class);
+		List<Long> finalResult = new ArrayList<Long>();
+		for (BigInteger bigInteger : result) {
+			finalResult.add(bigInteger.longValue());
+		}
+		return finalResult;
 	}
 	
 }

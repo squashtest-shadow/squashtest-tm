@@ -29,6 +29,7 @@
 <%@ taglib prefix="layout" tagdir="/WEB-INF/tags/layout"%>
 <%@ taglib prefix="dt" tagdir="/WEB-INF/tags/datatables"%>
 <%@ taglib prefix="pop" tagdir="/WEB-INF/tags/popup"%>
+<%@ taglib uri="http://www.springframework.org/security/tags" prefix="sec"%>
 <%@ page language="java" contentType="text/html; charset=utf-8"
 	pageEncoding="utf-8"%>
 <%------------------------------------- URLs et back button ----------------------------------------------%>
@@ -37,6 +38,23 @@
 	<s:param name="projectId" value="${adminproject.project.id}" />
 </s:url>
 <s:url var="projectsUrl" value="/projects" />
+
+
+<s:url var="permissionTableUrl" value="/projects/{projectId}/permission-table">
+	<s:param name="projectId" value="${adminproject.project.id}" />
+</s:url>
+
+<s:url var="permissionPopupUrl" value="/projects/{projectId}/permission-popup">
+	<s:param name="projectId" value="${adminproject.project.id}" />
+</s:url>
+
+<s:url var="addPermissionUrl" value="/projects/{projectId}/add-permission">
+<s:param name="projectId" value="${adminproject.project.id}" />
+</s:url>
+
+<s:url var="removePermissionUrl" value="/projects/{projectId}/remove-permission">
+	<s:param name="projectId" value="${adminproject.project.id}" />
+</s:url>
 
 <layout:info-page-layout titleKey="workspace.project.info.title">
 	<jsp:attribute name="head">	
@@ -85,13 +103,16 @@
 			</div>
 				
 			<div class="toolbar-button-panel">
+				<sec:authorize access=" hasRole('ROLE_ADMIN')">
 				<f:message var="rename" key="project.button.rename.label" />
 				<input type="button" value="${ rename }" id="rename-project-button"
 					class="button" />
 					<f:message var="delete" key='project.button.delete.label' />
 					<input type="button" value="${ delete }" id="delete-project-button" class="button" />
+					</sec:authorize>
 			</div>
 			</div><%-------------------------------------------------------------END INFO + Toolbar ---------------%>
+		
 			<%----------------------------------- INFORMATION PANEL -----------------------------------------------%>
 			<br />
 			<comp:rich-jeditable targetUrl="${ projectUrl }"
@@ -127,11 +148,11 @@
 							<div class="display-table-cell" id="project-active">
 								<c:if test="${adminproject.project.active}">		
 								<span class="projectActive">${active} </span>
-										<a id="activateProject" href="javascript:void(0);">[${inactivate}]</a>
+										<sec:authorize access=" hasRole('ROLE_ADMIN')"><a id="activateProject" href="javascript:void(0);">[${inactivate}]</a></sec:authorize>
 								</c:if>
 								<c:if test="${!adminproject.project.active}">
 								<span class="projectInactive">${inactive} </span>
-										<a id="activateProject" href="javascript:void(0);">[${activate}]</a>
+									<sec:authorize access=" hasRole('ROLE_ADMIN')">	<a id="activateProject" href="javascript:void(0);">[${activate}]</a></sec:authorize>
 								</c:if>
 							</div>
 						</div>
@@ -139,6 +160,51 @@
 				</jsp:attribute>
 			</comp:toggle-panel>
 			<%-----------------------------------END INFORMATION PANEL -----------------------------------------------%>
+				<%----------------------------------- USER PANEL -----------------------------------------------%>
+			<br />
+			<comp:toggle-panel id="project-users-panel"
+				titleKey="project.users.panel.title" isContextual="true" open="true"
+				classes="users-panel">
+	
+				<jsp:attribute name="panelButtons">
+					<input id="add-permission-button" title="${addButtonTitle}" type="button" value="+" class="button"/>
+				</jsp:attribute>
+				
+				<jsp:attribute name="body">
+					<div id="permission-table"></div>
+					<div id="permission-row-buttons" class="not-displayed">
+						<a id="delete-permission-button" href="#" class="delete-permission-button">
+							<f:message key="tree.button.delete.label" />
+						</a>
+					</div> 
+				</jsp:attribute>
+			</comp:toggle-panel>
+			<%-----------------------------------END USERS PANEL -----------------------------------------------%>
+			<%----------------------------------- add User Popup-----------------------------------------------%>
+		<comp:popup id="add-permission-dialog"
+			titleKey="dialog.add-permission.title" isContextual="true"
+			openedBy="add-permission-button">
+			<jsp:attribute name="buttons">
+			
+				<f:message var="label" key="dialog.add-permission.button.label" />
+				'${ label }': function() {
+					var url = "${ addPermissionUrl }";
+					
+					<jq:ajaxcall url="url" dataType="json" httpMethod="POST"
+					useData="true" successHandler="refreshTableAndPopup">					
+						<jq:params-bindings user="#user-input" permission="#permission-input" />
+					</jq:ajaxcall>	
+					
+					
+				},			
+				<pop:cancel-button />
+			</jsp:attribute>
+			<jsp:body>
+				<div id="permission-popup">
+				</div>
+			</jsp:body>
+		</comp:popup>
+		<%----------------------------------- /add User Popup-----------------------------------------------%>
 		</div>
 		<%---------------------------------------------------------------END  BODY -----------------------------------------------%>
 	<comp:decorate-buttons />
@@ -147,22 +213,98 @@
 
 <script type="text/javascript">
 
+//*********************************************************************NON ADMIN SCRIPT 
+//*****************Back button
+	$(function() {
+	
+		$("#back").button().click(clickProjectBackButton);
+	});
+	function clickProjectBackButton(){
+		document.location.href = "${projectsUrl}";
+	}
+//****************End Back button
+//***************Permission management
+	$(function(){
+		refreshTableAndPopup();
+		$("#add-permission-button").button();
+		
+		$("#add-permission-dialog").bind("dialogopen", function(event, ui) {
+ 			if ($("#user-input option:last-child").html() == null){
+ 				$(this).dialog('close');
+ 				$.squash.openMessage("<f:message key='popup.title.error' />", "<f:message key='dialog.add-permission.project.empty.label' />");
+ 			}
+		});
+		
+		$(".select-class").live('change', function(){
+			var url = "${addPermissionUrl}";
+			var tr = $(this).parents("tr");
+			var userId = $(tr).attr("id");
+
+			$.ajax({
+				  type: 'POST',
+				  url: url,
+				  data: "user="+userId+"&permission="+$(this).val(),
+				  dataType: 'json',
+				  success: function(){
+					  refreshTableAndPopup();
+				  }
+			});
+		});
+		
+		$(".delete-permission-button").live('click', function(){
+			var url = "${removePermissionUrl}";
+			var tr = $(this).parents("tr");
+			var userId = $(tr).attr("id");
+			
+			$.ajax({
+				  type: 'POST',
+				  url: url,
+				  data: "user="+userId,
+				  success: function(){
+					refreshTableAndPopup();
+				  }
+			});
+		});
+		
+		
+	});
+	
+	function getPermissionTableRowId(rowData) {
+		return rowData[0];	
+	}
+	
+	function addDeleteButtonCallBack(row, data, displayIndex){
+		var id = getPermissionTableRowId(data);
+		addDeleteButtonToRow(row, id, 'delete-permission-button');
+		return row;
+	}
+	
+	function refreshTableCallBack(){
+		decorateDeleteButtons($('.delete-permission-button', this));
+	}
+	
+	function refreshTableAndPopup(){
+		$("#permission-table").empty();
+		$("#permission-table").load("${permissionTableUrl}");
+		$("#permission-popup").empty();
+		$("#permission-popup").load("${permissionPopupUrl}");
+	}
+//************************** End Permission Management
+// *****************************************************************************END NON ADMIN SCRIPT 
+
+
+<sec:authorize access=" hasRole('ROLE_ADMIN')">//**********************************ADMIN SCRIPT 
 	var changeActive = ${!adminproject.project.active};
 	
 	$(function() {
 
-		$("#back").button().click(clickProjectBackButton);
-
 		$('#activateProject').click(function() {
 			changeActiveProject(changeActive);
 		});
-		
 		$('#delete-project-button').button().click(deleteProject);
+		
 	});
 	
-	function clickProjectBackButton(){
-			document.location.href = "${projectsUrl}";
-	}
 	
 	function changeActiveProject(active) {
 
@@ -229,10 +371,11 @@
 	function deleteProjectSuccess(data){
 		clickProjectBackButton();
 	}
-	
+	</sec:authorize>//**********************************************************************END ADMIN SCRIPT 
 </script>
 
 <!-- --------------------------------RENAME POPUP--------------------------------------------------------- -->
+<sec:authorize access=" hasRole('ROLE_ADMIN')">
 <comp:popup id="rename-project-dialog"
 	titleKey="dialog.rename-project.title" isContextual="true"
 	openedBy="rename-project-button">
@@ -268,4 +411,5 @@
 		<comp:error-message forField="name" />
 	</jsp:body>
 </comp:popup>
+</sec:authorize>
 <!-- ------------------------------------END RENAME POPUP------------------------------------------------------- -->

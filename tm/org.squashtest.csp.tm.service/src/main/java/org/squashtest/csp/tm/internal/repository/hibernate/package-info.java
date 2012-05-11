@@ -180,6 +180,7 @@
 		@NamedQuery(name = "user.findAllUsers", query = "from User fetch all properties order by login"),
 		@NamedQuery(name = "user.findUsersByLoginList", query = "from User fetch all properties where login in (:userIds)"),
 		@NamedQuery(name = "user.findUserByLogin", query = "from User fetch all properties where login = :userLogin"),
+		@NamedQuery(name = "user.findAllByIdList", query = "from User u where u.id in (:idList)"),
 
 		//Queries on RequirementAuditEvent
 		// XXX RequirementVersion

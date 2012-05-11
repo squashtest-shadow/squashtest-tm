@@ -18,28 +18,42 @@
  *     You should have received a copy of the GNU Lesser General Public License
  *     along with this software.  If not, see <http://www.gnu.org/licenses/>.
  */
-package org.squashtest.csp.tm.service;
+package org.squashtest.csp.tm.domain.users;
 
-import java.util.List;
-
-import org.springframework.security.access.prepost.PreAuthorize;
-import org.springframework.transaction.annotation.Transactional;
 import org.squashtest.csp.core.security.acls.PermissionGroup;
-import org.squashtest.csp.tm.domain.project.Project;
-import org.squashtest.csp.tm.domain.project.ProjectPermission;
 
-@Transactional
-public interface ProjectModificationService extends CustomProjectModificationService {
-	@PreAuthorize("hasPermission(#arg0, 'org.squashtest.csp.tm.domain.project.Project', 'MANAGEMENT') or hasRole('ROLE_ADMIN')")
-	void changeDescription(long projectId, String newDescription);
+/**
+ * This class represents a user and an aggregation of permissions (read, write and so on) which can be given to this
+ * user and which have a scope of object identities.
+ * 
+ * This class is used to populate a permission table for given project
+ * 
+ * @author mpagnon
+ * 
+ */
+public class UserProjectPermissionsBean {
 
-	@PreAuthorize("hasPermission(#arg0, 'org.squashtest.csp.tm.domain.project.Project', 'MANAGEMENT') or hasRole('ROLE_ADMIN')")
-	void changeLabel(long projectId, String newLabel);
+	private User user;
+	private PermissionGroup permissionGroup;
 
-	@PreAuthorize("hasRole('ROLE_ADMIN')")
-	void changeName(long projectId, String newName);
+	public UserProjectPermissionsBean(User user, PermissionGroup permissionGroup) {
+		this.user = user;
+		this.permissionGroup = permissionGroup;
+	}
 
-	@PreAuthorize("hasRole('ROLE_ADMIN')")
-	void changeActive(long projectId, boolean isActive);
+	public User getUser() {
+		return user;
+	}
 
+	public void setUser(User user) {
+		this.user = user;
+	}
+
+	public PermissionGroup getPermissionGroup() {
+		return permissionGroup;
+	}
+
+	public void setPermissionGroup(PermissionGroup permissionGroup) {
+		this.permissionGroup = permissionGroup;
+	}
 }

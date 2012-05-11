@@ -25,18 +25,24 @@ import java.util.List;
 import org.squashtest.csp.core.security.acls.PermissionGroup;
 import org.squashtest.csp.tm.domain.project.Project;
 import org.squashtest.csp.tm.domain.project.ProjectPermission;
+import org.squashtest.csp.tm.domain.users.User;
+import org.squashtest.csp.tm.domain.users.UserProjectPermissionsBean;
 
 public interface ProjectsPermissionManagementService {
 
 	List<PermissionGroup> findAllPossiblePermission();
-	
+
 	void deleteUserProjectOldPermission(String userLogin, long projectId);
-	
+
 	void addNewPermissionToProject(long userId, long projectId, String permissionName);
-	
+
 	List<ProjectPermission> findProjectPermissionByLogin(String userLogin);
-	
+
 	List<Project> findProjectWithoutPermissionByLogin(String userLogin);
-	
+
 	void removeProjectPermission(long userId, long projectId);
+
+	List<UserProjectPermissionsBean> findUserPermissionsBeanByProject(long projectId);
+
+	List<User> findUserWithoutPermissionByProject(long projectId);
 }

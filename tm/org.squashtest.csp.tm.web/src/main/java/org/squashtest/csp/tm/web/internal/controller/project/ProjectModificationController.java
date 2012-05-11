@@ -20,6 +20,8 @@
  */
 package org.squashtest.csp.tm.web.internal.controller.project;
 
+import java.util.List;
+
 import javax.servlet.http.HttpServletResponse;
 
 import org.slf4j.Logger;
@@ -32,9 +34,12 @@ import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.servlet.ModelAndView;
+import org.squashtest.csp.core.security.acls.PermissionGroup;
 import org.squashtest.csp.tm.domain.UnknownEntityException;
 import org.squashtest.csp.tm.domain.project.AdministrableProject;
 import org.squashtest.csp.tm.domain.project.Project;
+import org.squashtest.csp.tm.domain.users.User;
+import org.squashtest.csp.tm.domain.users.UserProjectPermissionsBean;
 import org.squashtest.csp.tm.service.ProjectModificationService;
 
 @Controller
@@ -118,4 +123,42 @@ public class ProjectModificationController {
 	public void deleteProject(@PathVariable long projectId){
 		projectModificationService.deleteProject(projectId);
 	}
+	
+	//*********************Permission Management*********************
+	@RequestMapping(value="/add-permission", method=RequestMethod.POST)
+	public @ResponseBody void addNewPermission(@RequestParam("user") long userId, @PathVariable long projectId, @RequestParam String permission){
+		projectModificationService.addNewPermissionToProject(userId, projectId, permission);
+	}
+	
+	@RequestMapping(value="/remove-permission", method=RequestMethod.POST)
+	public @ResponseBody void removePermission(@RequestParam("user") long userId, @PathVariable long projectId){
+		projectModificationService.removeProjectPermission(userId, projectId);
+	}
+	
+	@RequestMapping(value = "/permission-popup" ,method = RequestMethod.GET)
+	public ModelAndView getPermissionPopup(@PathVariable long projectId) {
+		Project project = projectModificationService.findById(projectId);
+		List<PermissionGroup> permissionList = projectModificationService.findAllPossiblePermission();
+		List<User> userList = projectModificationService.findUserWithoutPermissionByProject(projectId);
+		
+		ModelAndView mav = new ModelAndView("fragment/project/project-permission-popup");
+		mav.addObject("project", project);
+		mav.addObject("userList", userList);
+		mav.addObject("permissionList", permissionList);
+		return mav;
+	}
+	
+	@RequestMapping(value = "/permission-table" ,method = RequestMethod.GET)
+	public ModelAndView getPermissionTable(@PathVariable long projectId) {
+		Project project = projectModificationService.findById(projectId);
+		List<UserProjectPermissionsBean> userProjectPermissionsBean = projectModificationService.findUserPermissionsBeansByProject(projectId);
+		List<PermissionGroup> permissionList = projectModificationService.findAllPossiblePermission();
+		
+		ModelAndView mav = new ModelAndView("fragment/project/project-permission-table");
+		mav.addObject("project", project);
+		mav.addObject("permissionList", permissionList);
+		mav.addObject("userPermissionList", userProjectPermissionsBean);
+		return mav;
+	}
+	
 }

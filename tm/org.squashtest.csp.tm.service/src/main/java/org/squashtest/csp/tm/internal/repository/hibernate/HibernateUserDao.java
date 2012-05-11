@@ -20,6 +20,7 @@
  */
 package org.squashtest.csp.tm.internal.repository.hibernate;
 
+import java.util.Collection;
 import java.util.Collections;
 import java.util.LinkedList;
 import java.util.List;
@@ -31,42 +32,39 @@ import org.squashtest.csp.tm.infrastructure.filter.CollectionFilter;
 import org.squashtest.csp.tm.internal.repository.UserDao;
 
 @Repository
-public class HibernateUserDao extends HibernateEntityDao<User> implements UserDao{
-
-
-
+public class HibernateUserDao extends HibernateEntityDao<User> implements UserDao {
 
 	@Override
 	public List<User> findAllUsers() {
 		return executeListNamedQuery("user.findAllUsers");
 	}
-	
+
 	@Override
 	public List<User> findAllUsersFiltered(CollectionFilter filter) {
-		
+
 		List<User> users = executeListNamedQuery("user.findAllUsers");
-		int listSize= users.size();
-		
+		int listSize = users.size();
+
 		int startIndex = filter.getFirstItemIndex();
-		int lastIndex = filter.getFirstItemIndex()+filter.getMaxNumberOfItems();
-		
-		//prevent IndexOutOfBoundException :
-		if (startIndex>=listSize){
-			return new LinkedList<User>(); //ie resultset is empty
+		int lastIndex = filter.getFirstItemIndex() + filter.getMaxNumberOfItems();
+
+		// prevent IndexOutOfBoundException :
+		if (startIndex >= listSize) {
+			return new LinkedList<User>(); // ie resultset is empty
 		}
-		
-		if (lastIndex>=listSize){
-			lastIndex=listSize;
+
+		if (lastIndex >= listSize) {
+			lastIndex = listSize;
 		}
-		
-		return users.subList(startIndex,lastIndex);
+
+		return users.subList(startIndex, lastIndex);
 	}
 
 	@Override
 	// FIXME : be careful of the filter
 	public User findUserByLogin(final String login) {
 		return executeEntityNamedQuery("user.findUserByLogin", new SetQueryParametersCallback() {
-			
+
 			@Override
 			public void setQueryParameters(Query query) {
 				query.setParameter("userLogin", login);
@@ -76,13 +74,13 @@ public class HibernateUserDao extends HibernateEntityDao<User> implements UserDa
 
 	@Override
 	public List<User> findUsersByLoginList(final List<String> idList) {
-		
-		if (idList.isEmpty()){
+
+		if (idList.isEmpty()) {
 			return Collections.emptyList();
-		}else{
-		
+		} else {
+
 			SetQueryParametersCallback setParams = new SetQueryParametersCallback() {
-	
+
 				@Override
 				public void setQueryParameters(Query query) {
 					query.setParameterList("userIds", idList);
@@ -90,5 +88,16 @@ public class HibernateUserDao extends HibernateEntityDao<User> implements UserDa
 			};
 			return executeListNamedQuery("user.findUsersByLoginList", setParams);
 		}
+	}
+
+	@Override
+	public List<User> findByIdList(final Collection<Long> idList) {
+		SetQueryParametersCallback setParams = new SetQueryParametersCallback() {
+			@Override
+			public void setQueryParameters(Query query) {
+				query.setParameterList("idList", idList);
+			}
+		};
+		return executeListNamedQuery("user.findAllByIdList", setParams);
 	}
 }

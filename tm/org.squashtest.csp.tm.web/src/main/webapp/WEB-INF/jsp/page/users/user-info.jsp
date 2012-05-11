@@ -69,9 +69,6 @@
 	</jsp:attribute>
 	
 	<jsp:attribute name="informationContent">
-
-		<%---------------------------- Test Case Header ------------------------------%>
-
 		<script type="text/javascript">
 		
 		<%---
@@ -91,7 +88,7 @@
 		
 		
 			$(function(){
-				refreshTableAndPopup()
+				refreshTableAndPopup();
 				setActiveValue();
 				$("#add-permission-button").button();
 				$("#back").button().click(function(){
@@ -271,7 +268,8 @@
 			</jsp:attribute>
 
 		</comp:toggle-panel>
-
+		<%-----------------------------------/ User Infos -----------------------------------------------%>
+		<%-----------------------------------Permissions -----------------------------------------------%>
 		<br />
 		<f:message key="dialog.add-permission.title" var="addButtonTitle" />
 		
@@ -290,8 +288,8 @@
 				</div> 
 			</jsp:attribute>
 		</comp:toggle-panel>
-		
-				
+		<%----------------------------------- /Permissions -----------------------------------------------%>
+		<%----------------------------------- add Permission Popup-----------------------------------------------%>
 		<comp:popup id="add-permission-dialog"
 			titleKey="dialog.add-permission.title" isContextual="true"
 			openedBy="add-permission-button">
@@ -315,6 +313,7 @@
 				</div>
 			</jsp:body>
 		</comp:popup>
+		<%----------------------------------- /add Permission Popup-----------------------------------------------%>
 	</div>
 	<comp:decorate-buttons />
 	</jsp:attribute>

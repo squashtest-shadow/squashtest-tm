@@ -41,4 +41,8 @@ public interface ObjectAclService {
 	void addNewResponsibility(String userLogin, ObjectIdentity entityRef, String qualifiedName);
 	
 	List<String> findUsersWithWritePermission(List<ObjectIdentity> entityRefs);
+
+	List<Object[]> retrieveUserAndAclClassFromProject(long projectId, String projectClassName);
+
+	List<Long> findUsersWithoutPermissionByObject(long objectId, String qualifiedClassName);
 }

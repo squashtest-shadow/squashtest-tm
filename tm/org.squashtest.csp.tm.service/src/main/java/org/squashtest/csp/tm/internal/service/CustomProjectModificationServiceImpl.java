@@ -20,6 +20,8 @@
  */
 package org.squashtest.csp.tm.internal.service;
 
+import java.util.List;
+
 import javax.inject.Inject;
 
 import org.slf4j.Logger;
@@ -27,11 +29,15 @@ import org.slf4j.LoggerFactory;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+import org.squashtest.csp.core.security.acls.PermissionGroup;
 import org.squashtest.csp.tm.domain.CannotDeleteProjectException;
 import org.squashtest.csp.tm.domain.project.AdministrableProject;
 import org.squashtest.csp.tm.domain.project.Project;
+import org.squashtest.csp.tm.domain.users.User;
+import org.squashtest.csp.tm.domain.users.UserProjectPermissionsBean;
 import org.squashtest.csp.tm.internal.repository.ProjectDao;
 import org.squashtest.csp.tm.service.CustomProjectModificationService;
+import org.squashtest.csp.tm.service.ProjectsPermissionManagementService;
 
 /**
  * 
@@ -46,6 +52,8 @@ public class CustomProjectModificationServiceImpl implements CustomProjectModifi
 	private ProjectDao projectDao;
 	@Inject
 	private ProjectDeletionHandler projectDeletionHandler;
+	@Inject
+	private ProjectsPermissionManagementService permissionService;
 
 	@Override
 	@Transactional(readOnly = true)
@@ -73,5 +81,34 @@ public class CustomProjectModificationServiceImpl implements CustomProjectModifi
 		AdministrableProject administrableProject = new AdministrableProject(project);
 		administrableProject.setDeletable(isDeletable);
 		return administrableProject;
+	}
+
+	@Override
+	@PreAuthorize("hasPermission(#projectId, 'org.squashtest.csp.tm.domain.project.Project', 'MANAGEMENT') or hasRole('ROLE_ADMIN')")
+	public void addNewPermissionToProject(long userId, long projectId, String permission) {
+		permissionService.addNewPermissionToProject(userId, projectId, permission);
+
+	}
+
+	@Override
+	@PreAuthorize("hasPermission(#projectId, 'org.squashtest.csp.tm.domain.project.Project', 'MANAGEMENT') or hasRole('ROLE_ADMIN')")
+	public void removeProjectPermission(long userId, long projectId) {
+		permissionService.removeProjectPermission(userId, projectId);
+
+	}
+
+	@Override
+	public List<UserProjectPermissionsBean> findUserPermissionsBeansByProject(long projectId) {
+		return permissionService.findUserPermissionsBeanByProject(projectId);
+	}
+
+	@Override
+	public List<PermissionGroup> findAllPossiblePermission() {
+		return permissionService.findAllPossiblePermission();
+	}
+
+	@Override
+	public List<User> findUserWithoutPermissionByProject(long projectId) {
+		return permissionService.findUserWithoutPermissionByProject(projectId);
 	}
 }

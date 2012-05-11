@@ -20,10 +20,16 @@
  */
 package org.squashtest.csp.tm.service;
 
+import java.util.List;
+
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.transaction.annotation.Transactional;
+import org.squashtest.csp.core.security.acls.PermissionGroup;
 import org.squashtest.csp.tm.domain.project.AdministrableProject;
 import org.squashtest.csp.tm.domain.project.Project;
+import org.squashtest.csp.tm.domain.project.ProjectPermission;
+import org.squashtest.csp.tm.domain.users.User;
+import org.squashtest.csp.tm.domain.users.UserProjectPermissionsBean;
 
 public interface CustomProjectModificationService {
 	Project findById(long projectId);
@@ -31,4 +37,15 @@ public interface CustomProjectModificationService {
 	void deleteProject(long projectId);
 
 	AdministrableProject findAdministrableProjectById(long projectId);
+
+	void addNewPermissionToProject(long userId, long projectId, String permission);
+
+	void removeProjectPermission(long userId, long projectId);
+
+	List<UserProjectPermissionsBean> findUserPermissionsBeansByProject(long projectId);
+
+	List<PermissionGroup> findAllPossiblePermission();
+
+	List<User> findUserWithoutPermissionByProject(long projectId);
+
 }

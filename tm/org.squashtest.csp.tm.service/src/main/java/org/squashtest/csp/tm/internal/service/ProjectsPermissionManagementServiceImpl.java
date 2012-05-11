@@ -34,26 +34,25 @@ import org.squashtest.csp.core.security.acls.model.ObjectAclService;
 import org.squashtest.csp.tm.domain.project.Project;
 import org.squashtest.csp.tm.domain.project.ProjectPermission;
 import org.squashtest.csp.tm.domain.users.User;
+import org.squashtest.csp.tm.domain.users.UserProjectPermissionsBean;
 import org.squashtest.csp.tm.internal.repository.ProjectDao;
 import org.squashtest.csp.tm.internal.repository.UserDao;
 import org.squashtest.csp.tm.service.ProjectsPermissionManagementService;
 
-
 @Service("squashtest.tm.service.ProjectsPermissionManagementService")
-public class ProjectsPermissionManagementServiceImpl implements
-		ProjectsPermissionManagementService {
-	
+public class ProjectsPermissionManagementServiceImpl implements ProjectsPermissionManagementService {
+
 	private static final String NAMESPACE = "squashtest.acl.group.tm";
 	private static final String PROJECT_CLASS_NAME = "org.squashtest.csp.tm.domain.project.Project";
-	
+
 	private ObjectAclService aclService;
-	
+
 	@Inject
-	ProjectDao projectDao;
-	
+	private ProjectDao projectDao;
+
 	@Inject
-	UserDao userDao;
-	
+	private UserDao userDao;
+
 	@ServiceReference
 	public void setObjectAclService(ObjectAclService aclService) {
 		this.aclService = aclService;
@@ -66,7 +65,7 @@ public class ProjectsPermissionManagementServiceImpl implements
 
 	@Override
 	public void deleteUserProjectOldPermission(String userLogin, long projectId) {
-		ObjectIdentity entityRef =  new ObjectIdentityImpl(Project.class, projectId);
+		ObjectIdentity entityRef = new ObjectIdentityImpl(Project.class, projectId);
 		aclService.removeAllResponsibilities(userLogin, entityRef);
 	}
 
@@ -84,7 +83,7 @@ public class ProjectsPermissionManagementServiceImpl implements
 	@Override
 	public List<Project> findProjectWithoutPermissionByLogin(String userLogin) {
 		List<Long> idList = aclService.findObjectWithoutPermissionByLogin(userLogin, PROJECT_CLASS_NAME);
-		if(idList == null || idList.isEmpty()){
+		if (idList == null || idList.isEmpty()) {
 			return null;
 		}
 		return projectDao.findByIdList(idList);
@@ -92,15 +91,35 @@ public class ProjectsPermissionManagementServiceImpl implements
 
 	@Override
 	public void addNewPermissionToProject(long userId, long projectId, String permissionName) {
-		ObjectIdentity entityRef =  new ObjectIdentityImpl(Project.class, projectId);
+		ObjectIdentity entityRef = new ObjectIdentityImpl(Project.class, projectId);
 		User user = userDao.findById(userId);
 		aclService.addNewResponsibility(user.getLogin(), entityRef, permissionName);
 	}
 
 	@Override
 	public void removeProjectPermission(long userId, long projectId) {
-		ObjectIdentity entityRef =  new ObjectIdentityImpl(Project.class, projectId);
+		ObjectIdentity entityRef = new ObjectIdentityImpl(Project.class, projectId);
 		User user = userDao.findById(userId);
 		aclService.removeAllResponsibilities(user.getLogin(), entityRef);
+	}
+
+	@Override
+	public List<UserProjectPermissionsBean> findUserPermissionsBeanByProject(long projectId) {
+		List<UserProjectPermissionsBean> newResult = new ArrayList<UserProjectPermissionsBean>();
+		List<Object[]> result = aclService.retrieveUserAndAclClassFromProject(projectId, PROJECT_CLASS_NAME);
+		for (Object[] objects : result) {
+			User user = userDao.findById((Long) objects[0]);
+			newResult.add(new UserProjectPermissionsBean(user, (PermissionGroup) objects[1]));
+		}
+		return newResult;
+	}
+
+	@Override
+	public List<User> findUserWithoutPermissionByProject(long projectId) {
+		List<Long> idList = aclService.findUsersWithoutPermissionByObject(projectId, PROJECT_CLASS_NAME);
+		if (idList == null || idList.isEmpty()) {
+			return null;
+		}
+		return userDao.findByIdList(idList);
 	}
 }

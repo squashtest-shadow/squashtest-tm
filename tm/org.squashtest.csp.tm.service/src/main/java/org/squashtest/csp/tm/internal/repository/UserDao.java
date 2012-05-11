@@ -20,19 +20,21 @@
  */
 package org.squashtest.csp.tm.internal.repository;
 
+import java.util.Collection;
 import java.util.List;
 
 import org.squashtest.csp.tm.domain.users.User;
 import org.squashtest.csp.tm.infrastructure.filter.CollectionFilter;
 
-
 public interface UserDao extends EntityDao<User> {
-	
+
 	List<User> findAllUsers();
-	
+
 	List<User> findAllUsersFiltered(CollectionFilter filter);
-	
+
 	User findUserByLogin(String login);
-	
+
 	List<User> findUsersByLoginList(List<String> idList);
+
+	List<User> findByIdList(Collection<Long> idList);
 }
