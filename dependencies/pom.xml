@@ -3,11 +3,11 @@
   <parent>
     <artifactId>squashtest-csp</artifactId>
     <groupId>org.squashtest.csp</groupId>
-    <version>1.2.0.IT33-SNAPSHOT</version>
+    <version>1.2.0.IT33</version>
   </parent>
   <groupId>org.squashtest.csp</groupId>
   <artifactId>squashtest-csp-dependencies</artifactId>
-  <version>1.2.0.IT33-SNAPSHOT</version>
+  <version>1.2.0.IT33</version>
   <packaging>pom</packaging>
   <name>squashtest-csp-dependencies</name>
   <description>This modules contains dependencies-grouping modules</description>
