@@ -192,7 +192,7 @@
 					
 					<jq:ajaxcall url="url" dataType="json" httpMethod="POST"
 					useData="true" successHandler="refreshTableAndPopup">					
-						<jq:params-bindings user="#user-input" permission="#permission-input" />
+						<jq:params-bindings userLogin="#user-input" permission="#permission-input" />
 					</jq:ajaxcall>	
 					
 					
@@ -229,10 +229,10 @@
 		$("#add-permission-button").button();
 		
 		$("#add-permission-dialog").bind("dialogopen", function(event, ui) {
- 			if ($("#user-input option:last-child").html() == null){
- 				$(this).dialog('close');
- 				$.squash.openMessage("<f:message key='popup.title.error' />", "<f:message key='dialog.add-permission.project.empty.label' />");
- 			}
+//  			if ($("#user-input option:last-child").html() == null){
+//  				$(this).dialog('close');
+//  				$.squash.openMessage("<f:message key='popup.title.error' />", "<f:message key='dialog.add-permission.project.empty.label' />");
+//  			}
 		});
 		
 		$(".select-class").live('change', function(){

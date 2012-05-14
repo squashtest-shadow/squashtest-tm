@@ -36,6 +36,7 @@ import org.squashtest.csp.tm.domain.project.Project;
 import org.squashtest.csp.tm.domain.users.User;
 import org.squashtest.csp.tm.domain.users.UserProjectPermissionsBean;
 import org.squashtest.csp.tm.internal.repository.ProjectDao;
+import org.squashtest.csp.tm.internal.repository.UserDao;
 import org.squashtest.csp.tm.service.CustomProjectModificationService;
 import org.squashtest.csp.tm.service.ProjectsPermissionManagementService;
 
@@ -47,9 +48,12 @@ import org.squashtest.csp.tm.service.ProjectsPermissionManagementService;
 @Service("CustomProjectModificationService")
 @Transactional
 public class CustomProjectModificationServiceImpl implements CustomProjectModificationService {
+
 	private static final Logger LOGGER = LoggerFactory.getLogger(CustomProjectModificationServiceImpl.class);
 	@Inject
 	private ProjectDao projectDao;
+	@Inject
+	private UserDao userDao;
 	@Inject
 	private ProjectDeletionHandler projectDeletionHandler;
 	@Inject
@@ -110,5 +114,10 @@ public class CustomProjectModificationServiceImpl implements CustomProjectModifi
 	@Override
 	public List<User> findUserWithoutPermissionByProject(long projectId) {
 		return permissionService.findUserWithoutPermissionByProject(projectId);
+	}
+
+	@Override
+	public User findUserByLogin(String userLogin) {
+		return userDao.findUserByLogin(userLogin);
 	}
 }

@@ -35,6 +35,7 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.servlet.ModelAndView;
 import org.squashtest.csp.core.security.acls.PermissionGroup;
+import org.squashtest.csp.tm.domain.LoginDoNotExistException;
 import org.squashtest.csp.tm.domain.UnknownEntityException;
 import org.squashtest.csp.tm.domain.project.AdministrableProject;
 import org.squashtest.csp.tm.domain.project.Project;
@@ -129,7 +130,14 @@ public class ProjectModificationController {
 	public @ResponseBody void addNewPermission(@RequestParam("user") long userId, @PathVariable long projectId, @RequestParam String permission){
 		projectModificationService.addNewPermissionToProject(userId, projectId, permission);
 	}
-	
+	@RequestMapping(value="/add-permission", method=RequestMethod.POST)
+	public @ResponseBody void addNewPermissionWithLogin(@RequestParam("userLogin") String userLogin, @PathVariable long projectId, @RequestParam String permission){
+		User user = projectModificationService.findUserByLogin(userLogin);
+		if(user == null){
+			throw new LoginDoNotExistException();
+		}
+		projectModificationService.addNewPermissionToProject(user.getId(), projectId, permission);
+	}
 	@RequestMapping(value="/remove-permission", method=RequestMethod.POST)
 	public @ResponseBody void removePermission(@RequestParam("user") long userId, @PathVariable long projectId){
 		projectModificationService.removeProjectPermission(userId, projectId);

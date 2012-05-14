@@ -30,11 +30,7 @@
 		<span> <f:message key="user.login.label" /></span>
 	</td>
 	<td> 
-	<select id="user-input"> 
-		<c:forEach items="${userList}" var="user">
-			<option value="${user.id}" id="${user.login}">${user.login}</option>
-		</c:forEach>
-	</select>
+	<input id="user-input"/> 
 	</td>
 	</tr>
 	
@@ -52,3 +48,16 @@
 	</td>
 	</tr>
 </table>
+<script>
+$(function() {
+	var availableTags = [""
+		<c:forEach items="${userList}" var="user">
+			,"${user.login}"
+		</c:forEach>
+		];
+	console.log(availableTags);
+	$( "#user-input" ).autocomplete({
+		source: availableTags
+	});
+});
+</script>
