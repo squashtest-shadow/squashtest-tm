@@ -508,7 +508,7 @@
 		 */
 	
 	 $.fn.treeMenu = function(contentSelector, params, widthParam){
-	  	 this.menu({
+	  	 this.fgmenu({
 			 content : $(contentSelector).html(),
 			 showSpeed : 0,
 			 width	: widthParam || 180

@@ -266,7 +266,7 @@ function TestSuiteMenu(settings){
 	//the goal is to init the menu to get a handler on it.
 	var initMenu = $.proxy(function(){
 		
-		this.instance.menu({
+		this.instance.fgmenu({
 			content : '',
 			showSpeed : 0,
 			width: 190

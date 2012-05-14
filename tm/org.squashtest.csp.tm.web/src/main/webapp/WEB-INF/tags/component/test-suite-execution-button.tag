@@ -98,7 +98,7 @@
 
 		<script>
 			$(function() {
-				$("#start-resume-button").menu({
+				$("#start-resume-button").fgmenu({
 					content : $('#start-resume-button').next().html(),
 					showSpeed : 0,
 					width : 130
@@ -146,7 +146,7 @@
 		</div>
 		<script>
 			$(function() {
-				$("#restart-button").menu({
+				$("#restart-button").fgmenu({
 					content : $('#restart-button').next().html(),
 					showSpeed : 0,
 					width : 130

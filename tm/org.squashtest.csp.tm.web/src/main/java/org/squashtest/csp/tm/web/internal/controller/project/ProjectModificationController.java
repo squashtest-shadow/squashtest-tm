@@ -126,12 +126,12 @@ public class ProjectModificationController {
 	}
 	
 	//*********************Permission Management*********************
-	@RequestMapping(value="/add-permission", method=RequestMethod.POST)
-	public @ResponseBody void addNewPermission(@RequestParam("user") long userId, @PathVariable long projectId, @RequestParam String permission){
+	@RequestMapping(value="/add-permission", method=RequestMethod.POST, params = { "user" })
+	public @ResponseBody void addNewPermission(@RequestParam long userId, @PathVariable long projectId, @RequestParam String permission){
 		projectModificationService.addNewPermissionToProject(userId, projectId, permission);
 	}
-	@RequestMapping(value="/add-permission", method=RequestMethod.POST)
-	public @ResponseBody void addNewPermissionWithLogin(@RequestParam("userLogin") String userLogin, @PathVariable long projectId, @RequestParam String permission){
+	@RequestMapping(value="/add-permission", method=RequestMethod.POST, params = { "userLogin" })
+	public @ResponseBody void addNewPermissionWithLogin(@RequestParam String userLogin, @PathVariable long projectId, @RequestParam String permission){
 		User user = projectModificationService.findUserByLogin(userLogin);
 		if(user == null){
 			throw new LoginDoNotExistException();

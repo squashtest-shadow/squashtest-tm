@@ -44,8 +44,8 @@ Dual licensed under the MIT (filamentgroup.com/examples/mit-license.txt) and GPL
  * @author bsiri
  */
 var allUIMenus = [];
-
-$.fn.menu = function(options){
+//renamed menu to fgmenu because caused conflict with jqueryui autocomplete (mpagnon 14/05/2012)
+$.fn.fgmenu = function(options){
 	var caller = this;
 	var options = options;
 	var m = new Menu(caller, options);	
