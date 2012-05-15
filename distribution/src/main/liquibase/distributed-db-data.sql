@@ -38,6 +38,7 @@ Insert into core_group_member(USER_ID, GROUP_ID) values
 Insert into project(PROJECT_ID, NAME, DESCRIPTION, LABEL, ACTIVE, CREATED_BY, CREATED_ON, LAST_MODIFIED_BY, LAST_MODIFIED_ON, CL_ID, TCL_ID, RL_ID) values 
  (14, 'Test Project-1', '<p>Lorem ipsum dolor sit amet, consectetur adipiscing elit. Nullam felis ante,</p>', 'Lorem ipsum dolor sit amet, ', true, 'admin', '2011-09-30 10:24:47.0', null, null, 14, 14, 14);
 Insert into acl_responsibility_scope_entry(ID, USER_ID, ACL_GROUP_ID, OBJECT_IDENTITY_ID) values 
+(56, 32, 2, 14),
  (56, 32, 2, 15),
  (56, 32, 2, 16),
  (56, 32, 2, 17);
