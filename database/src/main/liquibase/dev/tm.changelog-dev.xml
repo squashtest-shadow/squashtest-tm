@@ -43,30 +43,51 @@
 		<insert tableName="ACL_OBJECT_IDENTITY">
 			<column name="IDENTITY" valueComputed="(select max(PROJECT_ID) from PROJECT)" />
 			<column name="CLASS_ID" valueComputed="(select ID from ACL_CLASS where CLASSNAME = 'org.squashtest.csp.tm.domain.project.Project')" />
+			<column name="IDENTITY" valueComputed="(select max(TCL_ID) from TEST_CASE_LIBRARY)" />
+			<column name="CLASS_ID" valueComputed="(select ID from ACL_CLASS where CLASSNAME = 'org.squashtest.csp.tm.domain.testcase.TestCaseLibrary')" />
+			<column name="IDENTITY" valueComputed="(select max(RL_ID) from REQUIREMENT_LIBRARY)" />
+			<column name="CLASS_ID" valueComputed="(select ID from ACL_CLASS where CLASSNAME = 'org.squashtest.csp.tm.domain.requirement.RequirementLibrary')" />
+			<column name="IDENTITY" valueComputed="(select max(CL_ID) from CAMPAIGN_LIBRARY)" />
+			<column name="CLASS_ID" valueComputed="(select ID from ACL_CLASS where CLASSNAME = 'org.squashtest.csp.tm.domain.campaign.CampaignLibrary')" />
 		</insert>
 		
-		<!-- <insert tableName="ACL_RESPONSIBILITY_SCOPE_ENTRY">
+		<insert tableName="ACL_RESPONSIBILITY_SCOPE_ENTRY">
 			<column name="OBJECT_IDENTITY_ID" valueComputed="(select max(ID) from ACL_OBJECT_IDENTITY)" />
 			<column name="USER_ID" valueComputed="(select ID from CORE_USER where LOGIN = 'project.manager')" />
 			<column name="ACL_GROUP_ID" valueComputed="(select ID from ACL_GROUP where QUALIFIED_NAME= 'squashtest.acl.group.tm.ProjectManager')" />
-		</insert> -->
+		</insert> 
 
-		<!-- insert tableName="ACL_RESPONSIBILITY_SCOPE_ENTRY">
+		<insert tableName="ACL_RESPONSIBILITY_SCOPE_ENTRY">
 			<column name="OBJECT_IDENTITY_ID" valueComputed="(select max(ID) from ACL_OBJECT_IDENTITY)" />
 			<column name="USER_ID" valueComputed="(select ID from CORE_USER where LOGIN = 'test.editor')" />
 			<column name="ACL_GROUP_ID" valueComputed="(select ID from ACL_GROUP where QUALIFIED_NAME= 'squashtest.acl.group.tm.TestEditor')" />
-		</insert-->
+		</insert>
 
-		<!-- <insert tableName="ACL_RESPONSIBILITY_SCOPE_ENTRY">
+		<insert tableName="ACL_RESPONSIBILITY_SCOPE_ENTRY">
 			<column name="OBJECT_IDENTITY_ID" valueComputed="(select max(ID) from ACL_OBJECT_IDENTITY)" />
 			<column name="USER_ID" valueComputed="(select ID from CORE_USER where LOGIN = 'test.runner')" />
 			<column name="ACL_GROUP_ID" valueComputed="(select ID from ACL_GROUP where QUALIFIED_NAME= 'squashtest.acl.group.tm.TestRunner')" />
-		</insert> -->
+		</insert> 
 
 		<insert tableName="ACL_RESPONSIBILITY_SCOPE_ENTRY">
 			<column name="OBJECT_IDENTITY_ID" valueComputed="(select max(ID) from ACL_OBJECT_IDENTITY)" />
 			<column name="USER_ID" valueComputed="(select ID from CORE_USER where LOGIN = 'project.viewer')" />
 			<column name="ACL_GROUP_ID" valueComputed="(select ID from ACL_GROUP where QUALIFIED_NAME= 'squashtest.acl.group.tm.ProjectViewer')" />
+		</insert>
+		<insert tableName="ACL_RESPONSIBILITY_SCOPE_ENTRY">
+			<column name="OBJECT_IDENTITY_ID" valueComputed="(select max(ID) from ACL_OBJECT_IDENTITY)" />
+			<column name="USER_ID" valueComputed="(select ID from CORE_USER where LOGIN = 'advance.tester')" />
+			<column name="ACL_GROUP_ID" valueComputed="(select ID from ACL_GROUP where QUALIFIED_NAME= 'squashtest.acl.group.tm.AdvanceTester')" />
+		</insert>
+		<insert tableName="ACL_RESPONSIBILITY_SCOPE_ENTRY">
+			<column name="OBJECT_IDENTITY_ID" valueComputed="(select max(ID) from ACL_OBJECT_IDENTITY)" />
+			<column name="USER_ID" valueComputed="(select ID from CORE_USER where LOGIN = 'test.designer')" />
+			<column name="ACL_GROUP_ID" valueComputed="(select ID from ACL_GROUP where QUALIFIED_NAME= 'squashtest.acl.group.tm.TestDesigner')" />
+		</insert>
+		<insert tableName="ACL_RESPONSIBILITY_SCOPE_ENTRY">
+			<column name="OBJECT_IDENTITY_ID" valueComputed="(select max(ID) from ACL_OBJECT_IDENTITY)" />
+			<column name="USER_ID" valueComputed="(select ID from CORE_USER where LOGIN = 'validator')" />
+			<column name="ACL_GROUP_ID" valueComputed="(select ID from ACL_GROUP where QUALIFIED_NAME= 'squashtest.acl.group.tm.Validator')" />
 		</insert>
 	</changeSet>
 		
@@ -87,13 +108,19 @@
 		<insert tableName="ACL_OBJECT_IDENTITY">
 			<column name="IDENTITY" valueComputed="(select max(PROJECT_ID) from PROJECT)" />
 			<column name="CLASS_ID" valueComputed="(select ID from ACL_CLASS where CLASSNAME = 'org.squashtest.csp.tm.domain.project.Project')" />
+			<column name="IDENTITY" valueComputed="(select max(TCL_ID) from TEST_CASE_LIBRARY)" />
+			<column name="CLASS_ID" valueComputed="(select ID from ACL_CLASS where CLASSNAME = 'org.squashtest.csp.tm.domain.testcase.TestCaseLibrary')" />
+			<column name="IDENTITY" valueComputed="(select max(RL_ID) from REQUIREMENT_LIBRARY)" />
+			<column name="CLASS_ID" valueComputed="(select ID from ACL_CLASS where CLASSNAME = 'org.squashtest.csp.tm.domain.requirement.RequirementLibrary')" />
+			<column name="IDENTITY" valueComputed="(select max(CL_ID) from CAMPAIGN_LIBRARY)" />
+			<column name="CLASS_ID" valueComputed="(select ID from ACL_CLASS where CLASSNAME = 'org.squashtest.csp.tm.domain.campaign.CampaignLibrary')" />
 		</insert>
-
-<!--		<insert tableName="ACL_RESPONSIBILITY_SCOPE_ENTRY">-->
-<!--			<column name="OBJECT_IDENTITY_ID" valueComputed="(select max(ID) from ACL_OBJECT_IDENTITY)" />-->
-<!--			<column name="USER_ID" valueComputed="(select ID from CORE_USER where LOGIN = 'project.manager')" />-->
-<!--			<column name="ACL_GROUP_ID" valueComputed="(select ID from ACL_GROUP where QUALIFIED_NAME= 'squashtest.acl.group.tm.ProjectManager')" />-->
-<!--		</insert>-->
+		
+		<insert tableName="ACL_RESPONSIBILITY_SCOPE_ENTRY">
+			<column name="OBJECT_IDENTITY_ID" valueComputed="(select max(ID) from ACL_OBJECT_IDENTITY)" />
+			<column name="USER_ID" valueComputed="(select ID from CORE_USER where LOGIN = 'project.manager')" />
+			<column name="ACL_GROUP_ID" valueComputed="(select ID from ACL_GROUP where QUALIFIED_NAME= 'squashtest.acl.group.tm.ProjectManager')" />
+		</insert> 
 
 		<insert tableName="ACL_RESPONSIBILITY_SCOPE_ENTRY">
 			<column name="OBJECT_IDENTITY_ID" valueComputed="(select max(ID) from ACL_OBJECT_IDENTITY)" />
@@ -101,17 +128,28 @@
 			<column name="ACL_GROUP_ID" valueComputed="(select ID from ACL_GROUP where QUALIFIED_NAME= 'squashtest.acl.group.tm.TestEditor')" />
 		</insert>
 
-<!--		<insert tableName="ACL_RESPONSIBILITY_SCOPE_ENTRY">-->
-<!--			<column name="OBJECT_IDENTITY_ID" valueComputed="(select max(ID) from ACL_OBJECT_IDENTITY)" />-->
-<!--			<column name="USER_ID" valueComputed="(select ID from CORE_USER where LOGIN = 'test.runner')" />-->
-<!--			<column name="ACL_GROUP_ID" valueComputed="(select ID from ACL_GROUP where QUALIFIED_NAME= 'squashtest.acl.group.tm.TestRunner')" />-->
-<!--		</insert>-->
+		<insert tableName="ACL_RESPONSIBILITY_SCOPE_ENTRY">
+			<column name="OBJECT_IDENTITY_ID" valueComputed="(select max(ID) from ACL_OBJECT_IDENTITY)" />
+			<column name="USER_ID" valueComputed="(select ID from CORE_USER where LOGIN = 'test.runner')" />
+			<column name="ACL_GROUP_ID" valueComputed="(select ID from ACL_GROUP where QUALIFIED_NAME= 'squashtest.acl.group.tm.TestRunner')" />
+		</insert> 
 
 		<insert tableName="ACL_RESPONSIBILITY_SCOPE_ENTRY">
 			<column name="OBJECT_IDENTITY_ID" valueComputed="(select max(ID) from ACL_OBJECT_IDENTITY)" />
 			<column name="USER_ID" valueComputed="(select ID from CORE_USER where LOGIN = 'project.viewer')" />
 			<column name="ACL_GROUP_ID" valueComputed="(select ID from ACL_GROUP where QUALIFIED_NAME= 'squashtest.acl.group.tm.ProjectViewer')" />
 		</insert>
+		<insert tableName="ACL_RESPONSIBILITY_SCOPE_ENTRY">
+			<column name="OBJECT_IDENTITY_ID" valueComputed="(select max(ID) from ACL_OBJECT_IDENTITY)" />
+			<column name="USER_ID" valueComputed="(select ID from CORE_USER where LOGIN = 'advance.tester')" />
+			<column name="ACL_GROUP_ID" valueComputed="(select ID from ACL_GROUP where QUALIFIED_NAME= 'squashtest.acl.group.tm.AdvanceTester')" />
+		</insert>
+		<insert tableName="ACL_RESPONSIBILITY_SCOPE_ENTRY">
+			<column name="OBJECT_IDENTITY_ID" valueComputed="(select max(ID) from ACL_OBJECT_IDENTITY)" />
+			<column name="USER_ID" valueComputed="(select ID from CORE_USER where LOGIN = 'test.designer')" />
+			<column name="ACL_GROUP_ID" valueComputed="(select ID from ACL_GROUP where QUALIFIED_NAME= 'squashtest.acl.group.tm.TestDesigner')" />
+		</insert>
+	
 	</changeSet>
 		
 	<changeSet author="gfouquet" id="tm-dev-3">
@@ -131,13 +169,19 @@
 		<insert tableName="ACL_OBJECT_IDENTITY">
 			<column name="IDENTITY" valueComputed="(select max(PROJECT_ID) from PROJECT)" />
 			<column name="CLASS_ID" valueComputed="(select ID from ACL_CLASS where CLASSNAME = 'org.squashtest.csp.tm.domain.project.Project')" />
+			<column name="IDENTITY" valueComputed="(select max(TCL_ID) from TEST_CASE_LIBRARY)" />
+			<column name="CLASS_ID" valueComputed="(select ID from ACL_CLASS where CLASSNAME = 'org.squashtest.csp.tm.domain.testcase.TestCaseLibrary')" />
+			<column name="IDENTITY" valueComputed="(select max(RL_ID) from REQUIREMENT_LIBRARY)" />
+			<column name="CLASS_ID" valueComputed="(select ID from ACL_CLASS where CLASSNAME = 'org.squashtest.csp.tm.domain.requirement.RequirementLibrary')" />
+			<column name="IDENTITY" valueComputed="(select max(CL_ID) from CAMPAIGN_LIBRARY)" />
+			<column name="CLASS_ID" valueComputed="(select ID from ACL_CLASS where CLASSNAME = 'org.squashtest.csp.tm.domain.campaign.CampaignLibrary')" />
 		</insert>
-
-<!--		<insert tableName="ACL_RESPONSIBILITY_SCOPE_ENTRY">-->
-<!--			<column name="OBJECT_IDENTITY_ID" valueComputed="(select max(ID) from ACL_OBJECT_IDENTITY)" />-->
-<!--			<column name="USER_ID" valueComputed="(select ID from CORE_USER where LOGIN = 'project.manager')" />-->
-<!--			<column name="ACL_GROUP_ID" valueComputed="(select ID from ACL_GROUP where QUALIFIED_NAME= 'squashtest.acl.group.tm.ProjectManager')" />-->
-<!--		</insert>-->
+		
+		<insert tableName="ACL_RESPONSIBILITY_SCOPE_ENTRY">
+			<column name="OBJECT_IDENTITY_ID" valueComputed="(select max(ID) from ACL_OBJECT_IDENTITY)" />
+			<column name="USER_ID" valueComputed="(select ID from CORE_USER where LOGIN = 'project.manager')" />
+			<column name="ACL_GROUP_ID" valueComputed="(select ID from ACL_GROUP where QUALIFIED_NAME= 'squashtest.acl.group.tm.ProjectManager')" />
+		</insert> 
 
 		<insert tableName="ACL_RESPONSIBILITY_SCOPE_ENTRY">
 			<column name="OBJECT_IDENTITY_ID" valueComputed="(select max(ID) from ACL_OBJECT_IDENTITY)" />
@@ -145,17 +189,23 @@
 			<column name="ACL_GROUP_ID" valueComputed="(select ID from ACL_GROUP where QUALIFIED_NAME= 'squashtest.acl.group.tm.TestEditor')" />
 		</insert>
 
-<!--		<insert tableName="ACL_RESPONSIBILITY_SCOPE_ENTRY">-->
-<!--			<column name="OBJECT_IDENTITY_ID" valueComputed="(select max(ID) from ACL_OBJECT_IDENTITY)" />-->
-<!--			<column name="USER_ID" valueComputed="(select ID from CORE_USER where LOGIN = 'test.runner')" />-->
-<!--			<column name="ACL_GROUP_ID" valueComputed="(select ID from ACL_GROUP where QUALIFIED_NAME= 'squashtest.acl.group.tm.TestRunner')" />-->
-<!--		</insert>-->
+		<insert tableName="ACL_RESPONSIBILITY_SCOPE_ENTRY">
+			<column name="OBJECT_IDENTITY_ID" valueComputed="(select max(ID) from ACL_OBJECT_IDENTITY)" />
+			<column name="USER_ID" valueComputed="(select ID from CORE_USER where LOGIN = 'test.runner')" />
+			<column name="ACL_GROUP_ID" valueComputed="(select ID from ACL_GROUP where QUALIFIED_NAME= 'squashtest.acl.group.tm.TestRunner')" />
+		</insert> 
 
 		<insert tableName="ACL_RESPONSIBILITY_SCOPE_ENTRY">
 			<column name="OBJECT_IDENTITY_ID" valueComputed="(select max(ID) from ACL_OBJECT_IDENTITY)" />
 			<column name="USER_ID" valueComputed="(select ID from CORE_USER where LOGIN = 'project.viewer')" />
 			<column name="ACL_GROUP_ID" valueComputed="(select ID from ACL_GROUP where QUALIFIED_NAME= 'squashtest.acl.group.tm.ProjectViewer')" />
 		</insert>
+		<insert tableName="ACL_RESPONSIBILITY_SCOPE_ENTRY">
+			<column name="OBJECT_IDENTITY_ID" valueComputed="(select max(ID) from ACL_OBJECT_IDENTITY)" />
+			<column name="USER_ID" valueComputed="(select ID from CORE_USER where LOGIN = 'advance.tester')" />
+			<column name="ACL_GROUP_ID" valueComputed="(select ID from ACL_GROUP where QUALIFIED_NAME= 'squashtest.acl.group.tm.AdvanceTester')" />
+		</insert>
+	
 	</changeSet>
 		
 	<changeSet author="gfouquet" id="tm-dev-4">
@@ -175,13 +225,19 @@
 		<insert tableName="ACL_OBJECT_IDENTITY">
 			<column name="IDENTITY" valueComputed="(select max(PROJECT_ID) from PROJECT)" />
 			<column name="CLASS_ID" valueComputed="(select ID from ACL_CLASS where CLASSNAME = 'org.squashtest.csp.tm.domain.project.Project')" />
+			<column name="IDENTITY" valueComputed="(select max(TCL_ID) from TEST_CASE_LIBRARY)" />
+			<column name="CLASS_ID" valueComputed="(select ID from ACL_CLASS where CLASSNAME = 'org.squashtest.csp.tm.domain.testcase.TestCaseLibrary')" />
+			<column name="IDENTITY" valueComputed="(select max(RL_ID) from REQUIREMENT_LIBRARY)" />
+			<column name="CLASS_ID" valueComputed="(select ID from ACL_CLASS where CLASSNAME = 'org.squashtest.csp.tm.domain.requirement.RequirementLibrary')" />
+			<column name="IDENTITY" valueComputed="(select max(CL_ID) from CAMPAIGN_LIBRARY)" />
+			<column name="CLASS_ID" valueComputed="(select ID from ACL_CLASS where CLASSNAME = 'org.squashtest.csp.tm.domain.campaign.CampaignLibrary')" />
 		</insert>
-<!---->
-<!--		<insert tableName="ACL_RESPONSIBILITY_SCOPE_ENTRY">-->
-<!--			<column name="OBJECT_IDENTITY_ID" valueComputed="(select max(ID) from ACL_OBJECT_IDENTITY)" />-->
-<!--			<column name="USER_ID" valueComputed="(select ID from CORE_USER where LOGIN = 'project.manager')" />-->
-<!--			<column name="ACL_GROUP_ID" valueComputed="(select ID from ACL_GROUP where QUALIFIED_NAME= 'squashtest.acl.group.tm.ProjectManager')" />-->
-<!--		</insert>-->
+		
+		<insert tableName="ACL_RESPONSIBILITY_SCOPE_ENTRY">
+			<column name="OBJECT_IDENTITY_ID" valueComputed="(select max(ID) from ACL_OBJECT_IDENTITY)" />
+			<column name="USER_ID" valueComputed="(select ID from CORE_USER where LOGIN = 'project.manager')" />
+			<column name="ACL_GROUP_ID" valueComputed="(select ID from ACL_GROUP where QUALIFIED_NAME= 'squashtest.acl.group.tm.ProjectManager')" />
+		</insert> 
 
 		<insert tableName="ACL_RESPONSIBILITY_SCOPE_ENTRY">
 			<column name="OBJECT_IDENTITY_ID" valueComputed="(select max(ID) from ACL_OBJECT_IDENTITY)" />
@@ -189,16 +245,17 @@
 			<column name="ACL_GROUP_ID" valueComputed="(select ID from ACL_GROUP where QUALIFIED_NAME= 'squashtest.acl.group.tm.TestEditor')" />
 		</insert>
 
-<!--		<insert tableName="ACL_RESPONSIBILITY_SCOPE_ENTRY">-->
-<!--			<column name="OBJECT_IDENTITY_ID" valueComputed="(select max(ID) from ACL_OBJECT_IDENTITY)" />-->
-<!--			<column name="USER_ID" valueComputed="(select ID from CORE_USER where LOGIN = 'test.runner')" />-->
-<!--			<column name="ACL_GROUP_ID" valueComputed="(select ID from ACL_GROUP where QUALIFIED_NAME= 'squashtest.acl.group.tm.TestRunner')" />-->
-<!--		</insert>-->
+		<insert tableName="ACL_RESPONSIBILITY_SCOPE_ENTRY">
+			<column name="OBJECT_IDENTITY_ID" valueComputed="(select max(ID) from ACL_OBJECT_IDENTITY)" />
+			<column name="USER_ID" valueComputed="(select ID from CORE_USER where LOGIN = 'test.runner')" />
+			<column name="ACL_GROUP_ID" valueComputed="(select ID from ACL_GROUP where QUALIFIED_NAME= 'squashtest.acl.group.tm.TestRunner')" />
+		</insert> 
 
 		<insert tableName="ACL_RESPONSIBILITY_SCOPE_ENTRY">
 			<column name="OBJECT_IDENTITY_ID" valueComputed="(select max(ID) from ACL_OBJECT_IDENTITY)" />
 			<column name="USER_ID" valueComputed="(select ID from CORE_USER where LOGIN = 'project.viewer')" />
 			<column name="ACL_GROUP_ID" valueComputed="(select ID from ACL_GROUP where QUALIFIED_NAME= 'squashtest.acl.group.tm.ProjectViewer')" />
 		</insert>
+
 	</changeSet>
 </databaseChangeLog>

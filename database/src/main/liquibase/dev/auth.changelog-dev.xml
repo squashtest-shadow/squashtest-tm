@@ -49,7 +49,22 @@
 
 		<insert tableName="AUTH_USER">
 			<column name="LOGIN" value="test.runner" />
-			<column name="PASSWORD" value="eb7ae8319a0913632ed30bc268fe8f8cdf3766db" remarks="Password is login" />
+			<column name="PASSWORD" value="eb7ae8319a0913632ed30bc268fe8f8cdf3766db" remarks="Password is test.editor" />
+			<column name="ACTIVE" valueBoolean="true" />
+		</insert>
+		<insert tableName="AUTH_USER">
+			<column name="LOGIN" value="test.designer" />
+			<column name="PASSWORD" value="47430cd8fa3f3d42e677df6878666b0271328eab" remarks="Password is test.editor" />
+			<column name="ACTIVE" valueBoolean="true" />
+		</insert>
+		<insert tableName="AUTH_USER">
+			<column name="LOGIN" value="advance.tester" />
+			<column name="PASSWORD" value="47430cd8fa3f3d42e677df6878666b0271328eab" remarks="Password is test.editor" />
+			<column name="ACTIVE" valueBoolean="true" />
+		</insert>
+		<insert tableName="AUTH_USER">
+			<column name="LOGIN" value="validator" />
+			<column name="PASSWORD" value="47430cd8fa3f3d42e677df6878666b0271328eab" remarks="Password is test.editor" />
 			<column name="ACTIVE" valueBoolean="true" />
 		</insert>
 

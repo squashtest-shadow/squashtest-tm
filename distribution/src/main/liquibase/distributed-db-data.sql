@@ -1,5 +1,8 @@
 Insert into acl_object_identity(ID, `IDENTITY`, CLASS_ID) values 
- (14, 14, 1);
+ (14, 14, 1),
+ (15, 14, 2);
+ (16, 14, 3);
+ (17, 14, 4);
 Insert into campaign_library(CL_ID) values 
  (14);
 Insert into test_step(TEST_STEP_ID) values 
@@ -35,7 +38,9 @@ Insert into core_group_member(USER_ID, GROUP_ID) values
 Insert into project(PROJECT_ID, NAME, DESCRIPTION, LABEL, ACTIVE, CREATED_BY, CREATED_ON, LAST_MODIFIED_BY, LAST_MODIFIED_ON, CL_ID, TCL_ID, RL_ID) values 
  (14, 'Test Project-1', '<p>Lorem ipsum dolor sit amet, consectetur adipiscing elit. Nullam felis ante,</p>', 'Lorem ipsum dolor sit amet, ', true, 'admin', '2011-09-30 10:24:47.0', null, null, 14, 14, 14);
 Insert into acl_responsibility_scope_entry(ID, USER_ID, ACL_GROUP_ID, OBJECT_IDENTITY_ID) values 
- (56, 32, 2, 14);
+ (56, 32, 2, 15),
+ (56, 32, 2, 16),
+ (56, 32, 2, 17);
 Insert into execution_step(EXECUTION_STEP_ID, EXPECTED_RESULT, `ACTION`, EXECUTION_STATUS, LAST_EXECUTED_BY, LAST_EXECUTED_ON, COMMENT, TEST_STEP_ID, CREATED_BY, CREATED_ON, LAST_MODIFIED_BY, LAST_MODIFIED_ON, ATTACHMENT_LIST_ID, ISSUE_LIST_ID) values 
  (228, '<ol><li>Quisque euismod mi in nunc soda</li><li>les ac porta augue viverra. Fusce n</li><li>on odio nec magna gravida vehicula</li><li>. Donec tincidunt erat justo, ut fringilla</li></ol><p>velit. Donec dapibus ullamcorper leo, non bibendum quam condi<strong>mentum sit amet. Du</strong>is cursus dui quis tortor accumsan in pulvinar lectus mattis.</p>', '<p>Fusce nec risus augue, at lacinia enim.</p><ul><li>Mauris eget arcu sem, eget suscipit dui. Integer vulputate venenatis urna a commodo. Sed elementum tincidunt adipiscing. Nulla o</li><li>dio tortor, dapibus sit amet interdum eu,</li><li>suscipit quis diam. Phasellus convallis</li></ul><p>pellentesque lorem, ut volutpat mi tincidunt vitae. Cum sociis natoque penatibus et magnis dis parturient montes, nascetur ridiculus mus. Aliquam libero nibh, sollicitud</p>', 'SUCCESS', 'User-1', '2011-09-30 10:37:35.0', null, 165, 'User-1', '2011-09-30 10:37:26.0', 'User-1', '2011-09-30 10:37:35.0', 895, 310), 
  (229, '<p>Sed eget rhoncus sapien. Nam et pulvinar nisi. In mattis quam eu risus aliquet vel condimentum dui mattis. Ut vitae mi orci.</p><p>hasellus suscipit luctus qua</p><p>non scelerisque. Aliquam orci diam, ultrices vel cursus eget, gravida sed tortor. Maecenas in metus dui, ut rhoncus sem. Do</p>', '<ul><li><u>Praesent nec enim id arcu porta fringilla u</u></li><li><u>t id nisi. Aenean tempor gravida lectus id co</u></li><li><u>mmodo. In vestibulum dictum ligula, nec feug</u></li></ul><p>iat lorem lacinia ac. Donec interdum, risus sed hendrerit tempus, est urna commodo odio, quis varius nulla metus non dolor. Curabitur nec arcu enim, sagittis adipiscing enim. Nam vehicula sodales ipsum, sit amet posuere ante hendrerit nec. In consequat feugiat tempor. Suspendisse mass</p>', 'SUCCESS', 'User-1', '2011-09-30 10:37:37.0', null, 166, 'User-1', '2011-09-30 10:37:26.0', 'User-1', '2011-09-30 10:37:37.0', 896, 311);
