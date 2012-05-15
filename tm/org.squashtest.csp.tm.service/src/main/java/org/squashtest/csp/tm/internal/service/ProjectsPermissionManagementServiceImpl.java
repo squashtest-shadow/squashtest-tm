@@ -31,8 +31,11 @@ import org.springframework.security.acls.model.ObjectIdentity;
 import org.springframework.stereotype.Service;
 import org.squashtest.csp.core.security.acls.PermissionGroup;
 import org.squashtest.csp.core.security.acls.model.ObjectAclService;
+import org.squashtest.csp.tm.domain.campaign.CampaignLibrary;
 import org.squashtest.csp.tm.domain.project.Project;
 import org.squashtest.csp.tm.domain.project.ProjectPermission;
+import org.squashtest.csp.tm.domain.requirement.RequirementLibrary;
+import org.squashtest.csp.tm.domain.testcase.TestCaseLibrary;
 import org.squashtest.csp.tm.domain.users.User;
 import org.squashtest.csp.tm.domain.users.UserProjectPermissionsBean;
 import org.squashtest.csp.tm.internal.repository.ProjectDao;
@@ -67,6 +70,16 @@ public class ProjectsPermissionManagementServiceImpl implements ProjectsPermissi
 	public void deleteUserProjectOldPermission(String userLogin, long projectId) {
 		ObjectIdentity entityRef = new ObjectIdentityImpl(Project.class, projectId);
 		aclService.removeAllResponsibilities(userLogin, entityRef);
+		Project project = projectDao.findById(projectId);
+		ObjectIdentity rlibraryRef = new ObjectIdentityImpl(RequirementLibrary.class, project.getRequirementLibrary()
+				.getId());
+		aclService.removeAllResponsibilities(userLogin, rlibraryRef);
+		ObjectIdentity tclibraryRef = new ObjectIdentityImpl(TestCaseLibrary.class, project.getRequirementLibrary()
+				.getId());
+		aclService.removeAllResponsibilities(userLogin, tclibraryRef);
+		ObjectIdentity clibraryRef = new ObjectIdentityImpl(CampaignLibrary.class, project.getRequirementLibrary()
+				.getId());
+		aclService.removeAllResponsibilities(userLogin, clibraryRef);
 	}
 
 	@Override
@@ -91,16 +104,38 @@ public class ProjectsPermissionManagementServiceImpl implements ProjectsPermissi
 
 	@Override
 	public void addNewPermissionToProject(long userId, long projectId, String permissionName) {
-		ObjectIdentity entityRef = new ObjectIdentityImpl(Project.class, projectId);
+		ObjectIdentity projectRef = new ObjectIdentityImpl(Project.class, projectId);
 		User user = userDao.findById(userId);
-		aclService.addNewResponsibility(user.getLogin(), entityRef, permissionName);
+		aclService.addNewResponsibility(user.getLogin(), projectRef, permissionName);
+
+		Project project = projectDao.findById(projectId);
+		ObjectIdentity rlibraryRef = new ObjectIdentityImpl(RequirementLibrary.class, project.getRequirementLibrary()
+				.getId());
+		aclService.addNewResponsibility(user.getLogin(), rlibraryRef, permissionName);
+		ObjectIdentity tclibraryRef = new ObjectIdentityImpl(TestCaseLibrary.class, project.getRequirementLibrary()
+				.getId());
+		aclService.addNewResponsibility(user.getLogin(), tclibraryRef, permissionName);
+		ObjectIdentity clibraryRef = new ObjectIdentityImpl(CampaignLibrary.class, project.getRequirementLibrary()
+				.getId());
+		aclService.addNewResponsibility(user.getLogin(), clibraryRef, permissionName);
+
 	}
 
 	@Override
 	public void removeProjectPermission(long userId, long projectId) {
-		ObjectIdentity entityRef = new ObjectIdentityImpl(Project.class, projectId);
+		ObjectIdentity projectRef = new ObjectIdentityImpl(Project.class, projectId);
 		User user = userDao.findById(userId);
-		aclService.removeAllResponsibilities(user.getLogin(), entityRef);
+		aclService.removeAllResponsibilities(user.getLogin(), projectRef);
+		Project project = projectDao.findById(projectId);
+		ObjectIdentity rlibraryRef = new ObjectIdentityImpl(RequirementLibrary.class, project.getRequirementLibrary()
+				.getId());
+		aclService.removeAllResponsibilities(user.getLogin(), rlibraryRef);
+		ObjectIdentity tclibraryRef = new ObjectIdentityImpl(TestCaseLibrary.class, project.getRequirementLibrary()
+				.getId());
+		aclService.removeAllResponsibilities(user.getLogin(), tclibraryRef);
+		ObjectIdentity clibraryRef = new ObjectIdentityImpl(CampaignLibrary.class, project.getRequirementLibrary()
+				.getId());
+		aclService.removeAllResponsibilities(user.getLogin(), clibraryRef);
 	}
 
 	@Override

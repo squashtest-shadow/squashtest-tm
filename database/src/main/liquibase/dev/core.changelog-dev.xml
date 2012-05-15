@@ -41,7 +41,7 @@
 		</insert>
 		<insert tableName="CORE_USER">
 			<column name="LOGIN" value="project.viewer" />
-			<column name="FIRST_NAME" value="Gest"
+			<column name="FIRST_NAME" value="Gest"/>
 			<column name="LAST_NAME" value="Viewer" />
 			<column name="EMAIL" value="unknown" />
 			<column name="CREATED_ON" valueComputed="CURRENT_TIMESTAMP()" />

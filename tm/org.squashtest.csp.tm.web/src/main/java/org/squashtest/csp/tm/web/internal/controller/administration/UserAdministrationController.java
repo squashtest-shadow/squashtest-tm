@@ -128,7 +128,7 @@ public class UserAdministrationController {
 	
 	@RequestMapping(value="/table", method=RequestMethod.GET)
 	public @ResponseBody DataTableModel getTable(final DataTableDrawParameters params, final Locale locale) {
-		LOGGER.trace("TestCaseModificationController: getStepsTableModel called ");
+		LOGGER.trace("UserAdministrationController: getTable called ");
 
 		CollectionFilter filter = createCollectionFilter(params);
 

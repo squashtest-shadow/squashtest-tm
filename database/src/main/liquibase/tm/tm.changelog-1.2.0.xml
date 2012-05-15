@@ -333,7 +333,7 @@
 			<column name="CLASS_ID" valueComputed="(select ID from ACL_CLASS where CLASSNAME = 'org.squashtest.csp.tm.domain.campaign.CampaignLibrary')" />
 		</insert>
 	</changeSet>
-<!-- 	PROJECT VIEWER -->
+	<!-- 	PROJECT VIEWER -->
 	<changeSet  id="tm-1.2.0.34-5" author="mpagnon">
 	<comment>ProjectViewer / Project</comment>
 		<insert tableName="ACL_GROUP_PERMISSION">
@@ -392,7 +392,7 @@
 	</changeSet>
 <!-- 	TEST DESIGNER -->
 	<changeSet  id="tm-1.2.0.34-7" author="mpagnon">
-	<comment>TestDesigner / Project</comment>
+		<comment>TestDesigner / Project</comment>
 		<insert tableName="ACL_GROUP_PERMISSION">
 			<column name="ACL_GROUP_ID" valueComputed="(select ID from ACL_GROUP where QUALIFIED_NAME = 'squashtest.acl.group.tm.TestDesigner')" />
 			<column name="PERMISSION_MASK" value="1" />
@@ -473,7 +473,7 @@
 	</changeSet>
 <!-- 	ADVANCE TESTER -->
 	<changeSet  id="tm-1.2.0.34-8" author="mpagnon">
-	<comment>AdvanceTester / Project</comment>
+		<comment>AdvanceTester / Project</comment>
 		<insert tableName="ACL_GROUP_PERMISSION">
 			<column name="ACL_GROUP_ID" valueComputed="(select ID from ACL_GROUP where QUALIFIED_NAME = 'squashtest.acl.group.tm.AdvanceTester')" />
 			<column name="PERMISSION_MASK" value="1" />

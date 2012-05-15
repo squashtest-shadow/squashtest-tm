@@ -127,8 +127,8 @@ public class ProjectModificationController {
 	
 	//*********************Permission Management*********************
 	@RequestMapping(value="/add-permission", method=RequestMethod.POST, params = { "user" })
-	public @ResponseBody void addNewPermission(@RequestParam long userId, @PathVariable long projectId, @RequestParam String permission){
-		projectModificationService.addNewPermissionToProject(userId, projectId, permission);
+	public @ResponseBody void addNewPermission(@RequestParam long user, @PathVariable long projectId, @RequestParam String permission){
+		projectModificationService.addNewPermissionToProject(user, projectId, permission);
 	}
 	@RequestMapping(value="/add-permission", method=RequestMethod.POST, params = { "userLogin" })
 	public @ResponseBody void addNewPermissionWithLogin(@RequestParam String userLogin, @PathVariable long projectId, @RequestParam String permission){
