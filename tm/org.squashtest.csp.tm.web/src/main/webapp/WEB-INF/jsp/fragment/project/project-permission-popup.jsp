@@ -55,7 +55,6 @@ $(function() {
 			,"${user.login}"
 		</c:forEach>
 		];
-	console.log(availableTags);
 	$( "#user-input" ).autocomplete({
 		source: availableTags
 	});

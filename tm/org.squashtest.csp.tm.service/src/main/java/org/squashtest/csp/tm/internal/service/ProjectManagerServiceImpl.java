@@ -84,6 +84,9 @@ public class ProjectManagerServiceImpl implements ProjectManagerService {
 		projectDao.persist(project);
 
 		objectIdentityService.addObjectIdentity(project.getId(), project.getClass());
+		objectIdentityService.addObjectIdentity(tcl.getId(), tcl.getClass());
+		objectIdentityService.addObjectIdentity(rl.getId(), rl.getClass());
+		objectIdentityService.addObjectIdentity(cl.getId(), cl.getClass());
 
 	}
 

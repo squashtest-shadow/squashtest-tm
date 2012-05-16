@@ -41,6 +41,7 @@ import org.squashtest.csp.tm.domain.attachment.Attachment;
 import org.squashtest.csp.tm.domain.attachment.AttachmentHolder;
 import org.squashtest.csp.tm.domain.attachment.AttachmentList;
 import org.squashtest.csp.tm.domain.execution.Execution;
+import org.squashtest.csp.tm.domain.library.Library;
 import org.squashtest.csp.tm.domain.testcase.TestCase;
 
 @Entity
@@ -373,6 +374,11 @@ public class Campaign extends CampaignLibraryNode implements AttachmentHolder {
 
 		testPlan.removeAll(moved);
 		testPlan.addAll(targetIndex, moved);
+	}
+
+	@Override
+	public Library<?> getLibrary() {
+		return getProject().getCampaignLibrary();
 	}
 
 }

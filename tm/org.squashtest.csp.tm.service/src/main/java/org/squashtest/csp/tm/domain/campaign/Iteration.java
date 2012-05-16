@@ -500,9 +500,13 @@ public class Iteration implements AttachmentHolder {
 		return attachmentList;
 	}
 
-	@AclConstrainedObject
 	public Project getProject() {
 		return campaign.getProject();
+	}
+
+	@AclConstrainedObject
+	public CampaignLibrary getCampaignLibrary() {
+		return getProject().getCampaignLibrary();
 	}
 
 	/*

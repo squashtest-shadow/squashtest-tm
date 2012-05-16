@@ -179,6 +179,9 @@ class DummyNode implements LibraryNode {
 	}
 	Project getProject() {
 	}
+	Library getLibrary(){
+		
+	}
 	void notifyAssociatedWithProject(Project project) {
 	}
 	@Override
@@ -204,6 +207,10 @@ class DummyLibrary implements Library<DummyNode> {
 	@Override
 	public Project getProject() {
 		return null
+	}
+	@Override 
+	public Library getLibrary(){
+		return this;
 	}
 	void notifyAssociatedWithProject(Project project) {
 	}

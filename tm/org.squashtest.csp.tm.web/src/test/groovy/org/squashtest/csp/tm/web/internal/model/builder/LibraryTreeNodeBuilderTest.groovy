@@ -24,6 +24,7 @@ package org.squashtest.csp.tm.web.internal.model.builder;
 
 import org.squashtest.csp.core.service.security.PermissionEvaluationService;
 import org.squashtest.csp.tm.web.internal.model.jstree.JsTreeNode;
+import org.squashtest.csp.tm.domain.library.Library;
 import org.squashtest.csp.tm.domain.library.LibraryNode;
 import org.squashtest.csp.tm.domain.project.Project;
 
@@ -101,6 +102,9 @@ class DummyNode implements LibraryNode {
 	void deleteMe(){
 	}
 	Project getProject() {
+	}
+	Library<LibraryNode> getLibrary() {
+		
 	}
 	void notifyAssociatedWithProject(Project project){
 	}

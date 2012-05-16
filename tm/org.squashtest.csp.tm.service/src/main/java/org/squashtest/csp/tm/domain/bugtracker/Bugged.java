@@ -23,56 +23,59 @@ package org.squashtest.csp.tm.domain.bugtracker;
 import java.util.List;
 
 import org.squashtest.csp.core.security.annotation.AclConstrainedObject;
+import org.squashtest.csp.tm.domain.campaign.CampaignLibrary;
 import org.squashtest.csp.tm.domain.project.Project;
 
 public interface Bugged {
 
 	Long getId();
 
-
 	/**
-	 *
+	 * 
 	 * @return its IssueList
 	 */
 	IssueList getIssueList();
 
 	/**
-	 *
-	 * will return the (Squash) project that entity belongs to
-	 *
-	 * @return the project of that entity
+	 * 
+	 * will return the (Squash) campaign library that entity belongs to
+	 * 
+	 * @return the campaign library of that entity
 	 */
 	@AclConstrainedObject
+	CampaignLibrary getCampaignLibrary();
+
+	/**
+	 * will return the (Squash) project that entity belongs to
+	 * 
+	 * @return the project of that entity
+	 */
 	Project getProject();
 
 	/**
-	 *
+	 * 
 	 * @return the Id of its IssueList
 	 */
 	Long getIssueListId();
 
 	/**
-	 * @return the list of ids of its own IssueList and the result of getAllIssueListIds of other Bugged entities to which that Bugged
-	 * is bound to.
+	 * @return the list of ids of its own IssueList and the result of getAllIssueListIds of other Bugged entities to
+	 *         which that Bugged is bound to.
 	 */
 	List<Long> getAllIssueListId();
 
-
 	/**
 	 * used to prefill a bug report
-	 *
+	 * 
 	 * @return a String representing the Description of a bug report.
 	 */
 	String getDefaultDescription();
 
-
 	/**
-	 *
+	 * 
 	 * @return all the bugged entities to which that one is linked, including itself.
-	 *
+	 * 
 	 */
 	List<Bugged> getAllBuggeds();
-
-
 
 }

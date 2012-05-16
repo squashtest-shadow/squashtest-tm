@@ -51,6 +51,7 @@ import org.squashtest.csp.tm.domain.attachment.AttachmentList;
 import org.squashtest.csp.tm.domain.audit.Auditable;
 import org.squashtest.csp.tm.domain.bugtracker.Bugged;
 import org.squashtest.csp.tm.domain.bugtracker.IssueList;
+import org.squashtest.csp.tm.domain.campaign.CampaignLibrary;
 import org.squashtest.csp.tm.domain.campaign.IterationTestPlanItem;
 import org.squashtest.csp.tm.domain.exception.ExecutionHasNoRunnableStepException;
 import org.squashtest.csp.tm.domain.exception.ExecutionHasNoStepsException;
@@ -198,12 +199,12 @@ public class Execution implements AttachmentHolder, Bugged {
 		executionMode = testCase.getExecutionMode();
 
 		setName(testCase.getName());
-		
+
 		nullSafeSetPrerequisite(testCase);
 	}
-	
+
 	private void nullSafeSetPrerequisite(TestCase testCase) {
-		// though it's constrained by the app, database allows null test case prerequisite. hence this safety belt. 
+		// though it's constrained by the app, database allows null test case prerequisite. hence this safety belt.
 		String pr = testCase.getPrerequisite();
 		setPrerequisite(pr == null ? "" : pr);
 	}
@@ -287,6 +288,11 @@ public class Execution implements AttachmentHolder, Bugged {
 	}
 
 	/* ***************** Bugged implementation *********************** */
+	@Override
+	public CampaignLibrary getCampaignLibrary() {
+		return testPlan.getProject().getCampaignLibrary();
+	}
+
 	@Override
 	public Project getProject() {
 		return testPlan.getProject();

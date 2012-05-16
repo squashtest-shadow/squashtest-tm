@@ -180,5 +180,6 @@
 		<beans:property name="enableGroups" value="true" />
 		
 	</beans:bean>
+	<beans:bean id="permissionFactory" class="org.squashtest.csp.core.security.acls.CustomPermissionFactory" />
 	
 </beans:beans>

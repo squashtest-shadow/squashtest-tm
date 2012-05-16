@@ -36,6 +36,7 @@ import javax.validation.constraints.NotNull;
 import org.apache.commons.lang.NullArgumentException;
 import org.squashtest.csp.tm.domain.library.Folder;
 import org.squashtest.csp.tm.domain.library.FolderSupport;
+import org.squashtest.csp.tm.domain.library.Library;
 import org.squashtest.csp.tm.domain.project.Project;
 import org.squashtest.csp.tm.domain.resource.SimpleResource;
 
@@ -55,9 +56,9 @@ public class RequirementFolder extends RequirementLibraryNode<SimpleResource> im
 
 	@OneToOne(cascade = { CascadeType.ALL })
 	@NotNull
-	@JoinColumn(name="RES_ID", updatable = false)
+	@JoinColumn(name = "RES_ID", updatable = false)
 	private SimpleResource resource;
-	
+
 	public RequirementFolder() {
 		resource = new SimpleResource();
 	}
@@ -74,8 +75,7 @@ public class RequirementFolder extends RequirementLibraryNode<SimpleResource> im
 	}
 
 	@Override
-	public void removeContent(RequirementLibraryNode contentToRemove)
-			throws NullArgumentException {
+	public void removeContent(RequirementLibraryNode contentToRemove) throws NullArgumentException {
 		content.remove(contentToRemove);
 
 	}
@@ -95,7 +95,7 @@ public class RequirementFolder extends RequirementLibraryNode<SimpleResource> im
 		RequirementFolder newFolder = new RequirementFolder();
 		newFolder.setName(getName());
 		newFolder.setDescription(getDescription());
-		
+
 		for (RequirementLibraryNode node : this.content) {
 			RequirementLibraryNode newNode = (RequirementLibraryNode) node.createPastableCopy();
 			newFolder.addContent(newNode);
@@ -112,7 +112,7 @@ public class RequirementFolder extends RequirementLibraryNode<SimpleResource> im
 		folderSupport.notifyAssociatedProjectWasSet(former, project);
 
 	}
-	
+
 	@Override
 	public boolean hasContent() {
 		return folderSupport.hasContent();
@@ -140,6 +140,11 @@ public class RequirementFolder extends RequirementLibraryNode<SimpleResource> im
 	@Override
 	public SimpleResource getResource() {
 		return resource;
+	}
+
+	@Override
+	public Library<?> getLibrary() {
+		return getProject().getRequirementLibrary();
 	}
 
 }

@@ -34,6 +34,7 @@ import javax.persistence.Transient;
 import org.apache.commons.lang.NullArgumentException;
 import org.squashtest.csp.tm.domain.library.Folder;
 import org.squashtest.csp.tm.domain.library.FolderSupport;
+import org.squashtest.csp.tm.domain.library.Library;
 import org.squashtest.csp.tm.domain.project.Project;
 
 @Entity
@@ -42,10 +43,10 @@ public class TestCaseFolder extends TestCaseLibraryNode implements Folder<TestCa
 	/**
 	 * Delegate implementation of folder responsibilities.
 	 */
-	
+
 	private static final String CLASS_NAME = "org.squashtest.csp.tm.domain.testcase.TestCaseFolder";
 	private static final String SIMPLE_CLASS_NAME = "TestCaseFolder";
-	
+
 	@Transient
 	private final FolderSupport<TestCaseLibraryNode> folderSupport = new FolderSupport<TestCaseLibraryNode>(this);
 
@@ -53,40 +54,33 @@ public class TestCaseFolder extends TestCaseLibraryNode implements Folder<TestCa
 	@JoinTable(name = "TCLN_RELATIONSHIP", joinColumns = @JoinColumn(name = "ANCESTOR_ID"), inverseJoinColumns = @JoinColumn(name = "DESCENDANT_ID"))
 	private final Set<TestCaseLibraryNode> content = new HashSet<TestCaseLibraryNode>();
 
-	
 	@Override
 	public void addContent(TestCaseLibraryNode node) {
 		folderSupport.addContent(node);
 	}
 
-	
 	@Override
 	public Set<TestCaseLibraryNode> getContent() {
 		return content;
 	}
 
-	
 	@Override
 	public void accept(TestCaseLibraryNodeVisitor visitor) {
 		visitor.visit(this);
 
 	}
 
-	
 	@Override
 	public boolean isContentNameAvailable(String name) {
 		return folderSupport.isContentNameAvailable(name);
 	}
 
-	
 	@Override
-	public void removeContent(TestCaseLibraryNode node)
-			throws NullArgumentException {
+	public void removeContent(TestCaseLibraryNode node) throws NullArgumentException {
 		content.remove(node);
 
 	}
 
-	
 	@Override
 	public TestCaseFolder createPastableCopy() {
 		TestCaseFolder newFolder = new TestCaseFolder();
@@ -101,7 +95,6 @@ public class TestCaseFolder extends TestCaseLibraryNode implements Folder<TestCa
 		return newFolder;
 	}
 
-	
 	@Override
 	public void notifyAssociatedWithProject(Project project) {
 		Project former = getProject();
@@ -110,21 +103,24 @@ public class TestCaseFolder extends TestCaseLibraryNode implements Folder<TestCa
 
 	}
 
-	
 	@Override
 	public String getClassSimpleName() {
 		return TestCaseFolder.SIMPLE_CLASS_NAME;
 	}
 
-	
 	@Override
 	public String getClassName() {
 		return TestCaseFolder.CLASS_NAME;
 	}
-	
+
 	@Override
 	public boolean hasContent() {
 		return folderSupport.hasContent();
+	}
+
+	@Override
+	public Library<?> getLibrary() {
+		return getProject().getTestCaseLibrary();
 	}
 
 }

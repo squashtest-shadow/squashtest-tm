@@ -51,11 +51,18 @@
    * the user don't have the correct permission,
    * the requirement status doesn't allow it. --%>
  
-<authz:authorized hasRole="ROLE_ADMIN" hasPermission="WRITE" domainObject="${ requirementVersion }">
-	<c:set var="editable" value="${ requirementVersion.modifiable }" />
-	<c:set var="editableStatus" value="${ requirementVersion.status.allowsStatusUpdate }"/>
+<authz:authorized hasRole="ROLE_ADMIN" hasPermission="WRITE" domainObject="${ requirement }">
+	<c:set var="writable" value="${ requirementVersion.modifiable }" />
+	<c:set var="validable" value="${requirementVersion.modifiable }"/>
+</authz:authorized>
+<authz:authorized hasRole="ROLE_ADMIN" hasPermission="VALIDATE" domainObject="${ requirement }">
+	<c:set var="validable" value="${requirementVersion.modifiable }"/>
+</authz:authorized>
+<authz:authorized hasRole="ROLE_ADMIN" hasPermission="LINK" domainObject="${ requirement }">
 	<c:set var="linkable" value="${ requirementVersion.linkable }" />
 </authz:authorized>
+<c:set var="editableStatus" value="${ validable && requirementVersion.status.allowsStatusUpdate }"/>
+
 <%-- ----------------------------------- /Authorization ----------------------------------------------%>
 <%-- ----------------------------------- header ----------------------------------------------%>
 <div class="ui-widget-header ui-corner-all ui-state-default fragment-header">
@@ -82,7 +89,7 @@
 		<comp:general-information-panel auditableEntity="${ requirementVersion }" entityUrl="${ requirementUrl }" />
 	</div>
 
-	<c:if test="${ editable }">
+	<c:if test="${ validable }">
 		<div class="toolbar-button-panel">
 			<input type="button" value='<f:message key="requirement.button.rename.label" />' id="rename-requirement-button" class="button"/> 
 		</div>	
@@ -106,7 +113,7 @@
 	</ul>
 <%-- --------------------------------------------- tab1 Information----------------------------------------------%>
 	<div id="tabs-1">
-	<c:if test="${ editable }">
+	<c:if test="${ validable }">
 		<comp:rich-jeditable targetUrl="${ requirementUrl }" componentId="requirement-description" />
 		<%-- make requirement-reference editable --%>
 		<%-- TODO put at end of page, maybe componentize --%>
@@ -133,7 +140,7 @@
 					<div>
 						<div id="requirement-criticality">
 							<c:choose>
-								<c:when test="${ editable }">
+								<c:when test="${ validable }">
 									<comp:level-message level="${ requirementVersion.criticality }"/>
 									<comp:select-jeditable componentId="requirement-criticality" jsonData="${ jsonCriticalities }" targetUrl="${ requirementUrl }" />
 								</c:when>
@@ -191,7 +198,7 @@
 </div>
 <%-- --------------------------------------------- /tab1 Information----------------------------------------------%>
 <%-- --------------------------------------------- tab2 Attachments ----------------------------------------------%>
-	<comp:attachment-tab tabId="tabs-2" entity="${ requirementVersion }" editable="${ editable }" />
+	<comp:attachment-tab tabId="tabs-2" entity="${ requirementVersion }" editable="${ writable }" />
 <%-- --------------------------------------------- /tab2 Attachments ----------------------------------------------%>
 	
 </div>
@@ -361,7 +368,7 @@
 		return toReturn;
 	}
 
-	<c:if test="${ editable }">
+	<c:if test="${ validable }">
 		/* renaming success handler */
 		function renameRequirementSuccess(data){
 			//Compose the real name

@@ -36,6 +36,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.squashtest.csp.tm.domain.library.Folder;
 import org.squashtest.csp.tm.domain.library.FolderSupport;
+import org.squashtest.csp.tm.domain.library.Library;
 import org.squashtest.csp.tm.domain.project.Project;
 
 @Entity
@@ -101,5 +102,10 @@ public class CampaignFolder extends CampaignLibraryNode implements Folder<Campai
 	@Override
 	public boolean hasContent() {
 		return folderSupport.hasContent();
+	}
+
+	@Override
+	public Library<?> getLibrary() {
+		return getProject().getCampaignLibrary();
 	}
 }

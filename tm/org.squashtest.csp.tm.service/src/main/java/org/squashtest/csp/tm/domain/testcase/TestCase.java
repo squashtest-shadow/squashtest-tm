@@ -52,6 +52,7 @@ import org.squashtest.csp.tm.domain.attachment.Attachment;
 import org.squashtest.csp.tm.domain.attachment.AttachmentHolder;
 import org.squashtest.csp.tm.domain.attachment.AttachmentList;
 import org.squashtest.csp.tm.domain.audit.AuditableMixin;
+import org.squashtest.csp.tm.domain.library.Library;
 import org.squashtest.csp.tm.domain.requirement.Requirement;
 import org.squashtest.csp.tm.domain.requirement.RequirementVersion;
 
@@ -355,6 +356,11 @@ public class TestCase extends TestCaseLibraryNode implements AttachmentHolder {
 			throws NoVerifiableRequirementVersionException, RequirementAlreadyVerifiedException {
 		RequirementVersion candidate = requirement.getDefaultVerifiableVersion();
 		addVerifiedRequirementVersion(candidate);
+	}
+
+	@Override
+	public Library<?> getLibrary() {
+		return getProject().getTestCaseLibrary();
 	}
 
 }

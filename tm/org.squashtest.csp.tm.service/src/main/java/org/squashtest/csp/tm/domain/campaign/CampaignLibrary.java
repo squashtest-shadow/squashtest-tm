@@ -45,7 +45,7 @@ public class CampaignLibrary extends GenericLibrary<CampaignLibraryNode> impleme
 
 	private static final String CLASS_NAME = "org.squashtest.csp.tm.domain.campaign.CampaignLibrary";
 	private static final String SIMPLE_CLASS_NAME = "CampaignLibrary";
-	
+
 	@Id
 	@GeneratedValue
 	@Column(name = "CL_ID")
@@ -82,7 +82,6 @@ public class CampaignLibrary extends GenericLibrary<CampaignLibraryNode> impleme
 	}
 
 	@Override
-	@AclConstrainedObject
 	public Project getProject() {
 		return project;
 	}
@@ -93,8 +92,7 @@ public class CampaignLibrary extends GenericLibrary<CampaignLibraryNode> impleme
 	}
 
 	/* ***************************** SelfClassAware section ******************************* */
-	
-	
+
 	@Override
 	public String getClassSimpleName() {
 		return CampaignLibrary.SIMPLE_CLASS_NAME;
@@ -107,7 +105,12 @@ public class CampaignLibrary extends GenericLibrary<CampaignLibraryNode> impleme
 
 	@Override
 	public boolean hasContent() {
-		return (rootContent.size()>0);
+		return (rootContent.size() > 0);
+	}
+
+	@Override
+	public Library<?> getLibrary() {
+		return this;
 	}
 
 }

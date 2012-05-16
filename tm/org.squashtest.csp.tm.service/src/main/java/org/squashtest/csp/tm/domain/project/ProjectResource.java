@@ -21,27 +21,30 @@
 package org.squashtest.csp.tm.domain.project;
 
 import org.squashtest.csp.core.security.annotation.AclConstrainedObject;
+import org.squashtest.csp.tm.domain.library.Library;
 
 /**
  * Any resource associated to a project.
- *
+ * 
  * @author Gregory Fouquet
- *
+ * 
  */
 public interface ProjectResource {
 	/**
-	 *
+	 * 
 	 * @return The project which this resource belongs to. Should never be <code>null</code>.
 	 */
-	@AclConstrainedObject
 	Project getProject();
+
+	@AclConstrainedObject
+	Library<?> getLibrary();
 
 	/**
 	 * Notifies this resource now belongs to the given project. {@kink ProjectResource#getProject()} should
 	 * return this project afterwards.
-	 *
+	 * 
 	 * @param project
-	 *            should not ne <code>null</code>
+	 *            should not be <code>null</code>
 	 */
 	void notifyAssociatedWithProject(Project project);
 

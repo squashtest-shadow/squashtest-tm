@@ -40,13 +40,12 @@ import org.squashtest.csp.tm.domain.project.Project;
 
 @SuppressWarnings("rawtypes")
 @Entity
-public class RequirementLibrary extends GenericLibrary<RequirementLibraryNode>
-		implements Library<RequirementLibraryNode> {
-	
+public class RequirementLibrary extends GenericLibrary<RequirementLibraryNode> implements
+		Library<RequirementLibraryNode> {
+
 	private static final String CLASS_NAME = "org.squashtest.csp.tm.domain.requirement.RequirementLibrary";
 	private static final String SIMPLE_CLASS_NAME = "RequirementLibrary";
-	
-	
+
 	@Id
 	@GeneratedValue
 	@Column(name = "RL_ID")
@@ -75,7 +74,6 @@ public class RequirementLibrary extends GenericLibrary<RequirementLibraryNode>
 	}
 
 	@Override
-	@AclConstrainedObject
 	public Project getProject() {
 		return project;
 	}
@@ -91,10 +89,9 @@ public class RequirementLibrary extends GenericLibrary<RequirementLibraryNode>
 		rootContent.remove(node);
 
 	}
-	
+
 	/* ***************************** SelfClassAware section ******************************* */
-	
-	
+
 	@Override
 	public String getClassSimpleName() {
 		return RequirementLibrary.SIMPLE_CLASS_NAME;
@@ -104,11 +101,15 @@ public class RequirementLibrary extends GenericLibrary<RequirementLibraryNode>
 	public String getClassName() {
 		return RequirementLibrary.CLASS_NAME;
 	}
-	
 
 	@Override
 	public boolean hasContent() {
-		return (rootContent.size()>0);
+		return (rootContent.size() > 0);
+	}
+
+	@Override
+	public Library<?> getLibrary() {
+		return this;
 	}
 
 }

@@ -55,12 +55,22 @@ that page won't be editable if
  --%>
  
 <authz:authorized hasRole="ROLE_ADMIN" hasPermission="WRITE" domainObject="${ requirement }">
-	<c:set var="user_authorized" value="${ true }" />
+	<c:set var="writable" value="${ requirement.modifiable }" />
+	<c:set var="validable" value="${requirement.modifiable }"/>
+</authz:authorized>
+<authz:authorized hasRole="ROLE_ADMIN" hasPermission="VALIDATE" domainObject="${ requirement }">
+	<c:set var="validable" value="${requirement.modifiable }"/>
+</authz:authorized>
+<authz:authorized hasRole="ROLE_ADMIN" hasPermission="DELETE" domainObject="${ requirement }">
+	<c:set var="deletable" value="${requirement.modifiable }"/>
+</authz:authorized>
+<authz:authorized hasRole="ROLE_ADMIN" hasPermission="CREATE" domainObject="${ requirement }">
+	<c:set var="creatable" value="${true }"/>
+</authz:authorized>
+<authz:authorized hasRole="ROLE_ADMIN" hasPermission="LINK" domainObject="${ requirement }">
 	<c:set var="linkable" value="${ requirement.linkable }" />
 </authz:authorized>
-<c:set var="editable" value="${ user_authorized && requirement.modifiable }"/>
-<c:set var="status_editable" value="${ user_authorized && requirement.status.allowsStatusUpdate }"/>
-
+<c:set var="status_editable" value="${ validable && requirement.status.allowsStatusUpdate }"/>
 <%-- ----------------------------------- Init ----------------------------------------------%>
 <%-- 
 	Code managing the status of a requirement. It is a handler for the 'onsubmit' of a jeditable (see documentation for details).
@@ -86,7 +96,6 @@ that page won't be editable if
 	
 	See also the code in #requirement-status-confirm-dialog for details. 
 --%>
-
 <c:if test="${status_editable}">
 <f:message var="StatusNotAllowedMessage" key='requirement.status.notAllowed' />
 <script type="text/javascript">
@@ -146,6 +155,8 @@ that page won't be editable if
 </script>
 </c:if>
 
+<%-- ----------------------------------- CONTENT ----------------------------------------------%>
+<%-- ----------------------------------- TITLE ----------------------------------------------%>
 <div class="ui-widget-header ui-corner-all ui-state-default fragment-header">
 	<div style="float:left;height:100%;">	
 		<h2>
@@ -160,84 +171,32 @@ that page won't be editable if
 			<span id="requirement-raw-name" style="display:none"><c:out value="${ requirement.name }" escapeXml="true"/></span>
 		</h2>
 	</div>
-
-	<div style="clear:both;"></div>	
-
-	<c:if test="${ editable }">
-		<comp:popup id="rename-requirement-dialog" titleKey="dialog.rename-requirement.title" 
-			isContextual="true" openedBy="rename-requirement-button">
-			<jsp:attribute name="buttons">
-				<f:message var="label" key="dialog.rename-requirement.title" />
-				'${ label }': function() {
-					var url = "${ requirementUrl }";
-					<jq:ajaxcall  url="url" dataType="json" httpMethod="POST" useData="true" successHandler="renameRequirementSuccess">		
-						<jq:params-bindings newName="#rename-requirement-input" />
-					</jq:ajaxcall>					
-				},			
-				<pop:cancel-button />
-			</jsp:attribute>
-			<jsp:body>
-				<script type="text/javascript">
-				$( "#rename-requirement-dialog" ).bind( "dialogopen", function(event, ui) {
-					var name = $('#requirement-raw-name').text();
-					$("#rename-requirement-input").val(name);
-					
-				});
-				</script>
-				<label><f:message key="dialog.rename.label" /></label>
-				<input type="text" id="rename-requirement-input" maxlength="255" /><br/>
-				<comp:error-message forField="name"/>
-			</jsp:body>
-		</comp:popup>
-	</c:if>
-	<c:if test="${ user_authorized }">
-		<%-- NEW VERSION POPUP --%>	
-		<f:message var="confirmNewVersionDialogTitle" key="requirement.new-version.confirm-dialog.title" />	
-		<div id="confirm-new-version-dialog" class="not-displayed popup-dialog" title="${ confirmNewVersionDialogTitle }">
-			<strong><f:message key="requirement.new-version.confirm-dialog.label" /></strong>
-			<input:ok />
-			<input:cancel />
-		</div>
-		<s:url var="createNewVersionUrl" value="/requirements/${requirement.id}/versions/new" />
-		<script type="text/javascript">
-			$(function() {
-				var confirmHandler = function() {
-					$.post( "${ createNewVersionUrl }", function() {
-						document.location.reload(true);
-					} );
-				};
-				
-				var dialog = $( "#confirm-new-version-dialog" );
-				dialog.confirmDialog({confirm: confirmHandler});
-				
-				$( "#new-version-button" ).bind( "click", function() {
-					dialog.confirmDialog( "open" );
-					return false;
-				});
-				
-			});
-		</script>
-		<%-- /NEW VERSION POPUP --%>			
-	</c:if>		
+	<div style="clear:both;"></div>		
 </div>
+<%-- ----------------------------------- /TITLE ----------------------------------------------%>
+<%-- ----------------------------------- AUDIT & TOOLBAR  ----------------------------------------------%>	
 <div id="requirement-toolbar" class="toolbar-class ui-corner-all" >
-		<div  class="toolbar-information-panel">
-		<c:url var="currentVersionUrl" value="/requirement-versions/${requirement.currentVersion.id}" />
-			<comp:general-information-panel auditableEntity="${ requirement.currentVersion }" entityUrl="${ currentVersionUrl }" />
-		</div>
-
-		<div class="toolbar-button-panel">
-			<c:if test="${ editable }">
-				<input type="button" value='<f:message key="requirement.button.rename.label" />' id="rename-requirement-button" class="button"/> 
-				<input type="button" value='<f:message key="requirement.button.remove.label" />' id="delete-requirement-button" class="button"/>		
-			</c:if>
-			<c:if test="${ user_authorized }">
-				<input type="button" value='<f:message key="requirement.button.new-version.label" />' id="new-version-button" class="button"/>		
-				</c:if>		
-		</div>	
-
-		<div style="clear:both;"></div>			
+	<div  class="toolbar-information-panel">
+	<c:url var="currentVersionUrl" value="/requirement-versions/${requirement.currentVersion.id}" />
+		<comp:general-information-panel auditableEntity="${ requirement.currentVersion }" entityUrl="${ currentVersionUrl }" />
 	</div>
+
+	<div class="toolbar-button-panel">
+		<c:if test="${ validable }">
+			<input type="button" value='<f:message key="requirement.button.rename.label" />' id="rename-requirement-button" class="button"/> 
+		</c:if>
+		<c:if test="${deletable }">
+				<input type="button" value='<f:message key="requirement.button.remove.label" />' id="delete-requirement-button" class="button"/>	
+		</c:if>	
+		<c:if test="${ creatable }">
+			<input type="button" value='<f:message key="requirement.button.new-version.label" />' id="new-version-button" class="button"/>		
+		</c:if>		
+	</div>	
+
+	<div style="clear:both;"></div>			
+</div>
+<%-- ----------------------------------- /AUDIT & TOOLBAR  ----------------------------------------------%>	
+<%-- ----------------------------------- TABS  ----------------------------------------------%>	
 <comp:fragment-tabs />
 <div class="fragment-tabs fragment-body">
 	<ul>
@@ -246,8 +205,10 @@ that page won't be editable if
 		<c:if test="${ requirement.attachmentList.notEmpty }"><span class="hasAttach">!</span></c:if>
 		</a></li>
 	</ul>
+	<%-- ----------------------------------- INFO TAB  ----------------------------------------------%>	
 	<div id="tabs-1">
-	<c:if test="${editable }">
+	
+	<c:if test="${validable }">
 		<comp:rich-jeditable targetUrl="${ requirementUrl }" componentId="requirement-description" />
 		<%-- make requirement-reference editable --%>
 		<%-- TODO put at end of page, maybe componentize --%>
@@ -274,7 +235,7 @@ that page won't be editable if
 					<label for="requirement-criticality" class="display-table-cell"><f:message key="requirement.criticality.combo.label" /></label>
 					<div class="display-table-cell">
 						<c:choose>
-						<c:when test="${editable }">
+						<c:when test="${validable }">
 						<div id="requirement-criticality"><comp:level-message level="${ requirement.criticality }"/></div>
 						<comp:select-jeditable componentId="requirement-criticality" jsonData="${criticalityList}" targetUrl="${requirementUrl}" />
 						</c:when>
@@ -305,33 +266,7 @@ that page won't be editable if
 		</jsp:attribute>
 	</comp:toggle-panel>
 	
-	<%------------------------------- confirm new status if set to obsolete ---------------------%>
-	<c:if test="${status_editable}">
-	<pop:popup id="requirement-status-confirm-dialog" closeOnSuccess="false" titleKey="dialog.requirement.status.confirm.title" isContextual="true" >
-		<jsp:attribute name="buttons">
-			<f:message var="confirmLabel" key="dialog.button.confirm.label" />
-			<f:message var="cancelLabel" key="dialog.button.cancel.label"/>
-				'${confirmLabel}' : function(){
-					var jqDiag = $(this);
-					jqDiag.dialog( 'close' );
-					jqDiag.data("confirm", true);
-					var form = jqDiag.data('callMeBack');
-					form.submit();
-				},
-				
-				'${ cancelLabel }': function() {
-					var jqDiag = $(this);
-					jqDiag.dialog( 'close' );
-					jqDiag.data("confirm", false);
-					var form = jqDiag.data('callMeBack');
-					form.submit();
-				}
-		</jsp:attribute>
-		<jsp:attribute name="body">
-			<span><f:message key="dialog.requirement.status.confirm.text"/></span>
-		</jsp:attribute>					
-	</pop:popup>
-	</c:if>
+	
 
 	<%--------------------------- verifying TestCase section ------------------------------------%>
 	<script type="text/javascript">
@@ -362,19 +297,104 @@ that page won't be editable if
 	</comp:toggle-panel>
 	<aggr:requirement-version-audit-trail requirementVersion="${ requirement.currentVersion }" />
 </div>
-<%----------------------------------------------------- Attachments bloc ------------------------------------------------------------%> 
-
-<comp:attachment-tab tabId="tabs-2" entity="${ requirement }" editable="${ editable }" />
-
-<%--------------------------- Deletion confirmation popup -------------------------------------%>
-	<c:if test="${editable}">
+<%-- ----------------------------------- /INFO TAB  ----------------------------------------------%>	
+<%-- ----------------------------------- ATTACHMENT TAB  ----------------------------------------------%>
+<comp:attachment-tab tabId="tabs-2" entity="${ requirement }" editable="${ writable }" />
+<%-- ----------------------------------- /ATTACHMENT TAB  ----------------------------------------------%>	
+<%-- -------------------------------------------------------- /TABS  ----------------------------------------------%>	
+<%-- ----------------------------------------------------------- /CONTENT ----------------------------------------------%>
 	
+<%-- -----------------------------------POPUPS ----------------------------------------------%>
+<%--------------------------- Rename popup -------------------------------------%>
+<c:if test="${ validable }">
+		<comp:popup id="rename-requirement-dialog" titleKey="dialog.rename-requirement.title" 
+			isContextual="true" openedBy="rename-requirement-button">
+			<jsp:attribute name="buttons">
+				<f:message var="label" key="dialog.rename-requirement.title" />
+				'${ label }': function() {
+					var url = "${ requirementUrl }";
+					<jq:ajaxcall  url="url" dataType="json" httpMethod="POST" useData="true" successHandler="renameRequirementSuccess">		
+						<jq:params-bindings newName="#rename-requirement-input" />
+					</jq:ajaxcall>					
+				},			
+				<pop:cancel-button />
+			</jsp:attribute>
+			<jsp:body>
+				<script type="text/javascript">
+				$( "#rename-requirement-dialog" ).bind( "dialogopen", function(event, ui) {
+					var name = $('#requirement-raw-name').text();
+					$("#rename-requirement-input").val(name);
+					
+				});
+				</script>
+				<label><f:message key="dialog.rename.label" /></label>
+				<input type="text" id="rename-requirement-input" maxlength="255" /><br/>
+				<comp:error-message forField="name"/>
+			</jsp:body>
+		</comp:popup>
+	</c:if>
+<%--------------------------- New version popup -------------------------------------%>
+	<c:if test="${ creatable }">
+	<f:message var="confirmNewVersionDialogTitle" key="requirement.new-version.confirm-dialog.title" />	
+	<div id="confirm-new-version-dialog" class="not-displayed popup-dialog" title="${ confirmNewVersionDialogTitle }">
+		<strong><f:message key="requirement.new-version.confirm-dialog.label" /></strong>
+		<input:ok />
+		<input:cancel />
+	</div>
+	<s:url var="createNewVersionUrl" value="/requirements/${requirement.id}/versions/new" />
+	<script type="text/javascript">
+		$(function() {
+			var confirmHandler = function() {
+				$.post( "${ createNewVersionUrl }", function() {
+					document.location.reload(true);
+				} );
+			};
+			
+			var dialog = $( "#confirm-new-version-dialog" );
+			dialog.confirmDialog({confirm: confirmHandler});
+			
+			$( "#new-version-button" ).bind( "click", function() {
+				dialog.confirmDialog( "open" );
+				return false;
+			});
+			
+		});
+	</script>		
+	</c:if>	
+<%--------------------------- Deletion confirmation popup -------------------------------------%>
+	<c:if test="${deletable} }">
 	<comp:delete-contextual-node-dialog simulationUrl="${simulateDeletionUrl}" confirmationUrl="${confirmDeletionUrl}" 
 			itemId="${requirement.id}" successCallback="deleteRequirementSuccess" openedBy="delete-requirement-button" titleKey="dialog.delete-requirement.title"/>
-	
-
 	</c:if>
-
+<%------------------------------- confirm new status if set to obsolete popup---------------------%>
+	<c:if test="${status_editable}">
+	<pop:popup id="requirement-status-confirm-dialog" closeOnSuccess="false" titleKey="dialog.requirement.status.confirm.title" isContextual="true" >
+		<jsp:attribute name="buttons">
+			<f:message var="confirmLabel" key="dialog.button.confirm.label" />
+			<f:message var="cancelLabel" key="dialog.button.cancel.label"/>
+				'${confirmLabel}' : function(){
+					var jqDiag = $(this);
+					jqDiag.dialog( 'close' );
+					jqDiag.data("confirm", true);
+					var form = jqDiag.data('callMeBack');
+					form.submit();
+				},
+				
+				'${ cancelLabel }': function() {
+					var jqDiag = $(this);
+					jqDiag.dialog( 'close' );
+					jqDiag.data("confirm", false);
+					var form = jqDiag.data('callMeBack');
+					form.submit();
+				}
+		</jsp:attribute>
+		<jsp:attribute name="body">
+			<span><f:message key="dialog.requirement.status.confirm.text"/></span>
+		</jsp:attribute>					
+	</pop:popup>
+	</c:if>
+<%-- -----------------------------------/POPUPS ----------------------------------------------%>
+<%-- -----------------------------------SCRIPT ----------------------------------------------%>
 <comp:decorate-buttons />
 <script type="text/javascript">
 	/* display the requirement name. Used for extern calls (like from the page who will include this fragment)
@@ -396,7 +416,7 @@ that page won't be editable if
 		return toReturn;
 	}
 
-	<c:if test="${editable}">
+	<c:if test="${validable}">
 		/* renaming success handler */
 		function renameRequirementSuccess(data){
 			//Compose the real name
@@ -445,22 +465,25 @@ that page won't be editable if
 			$('#rename-requirement-dialog .popup-label-error')
 			.html(xhr.statusText);		
 		}
-		
-		/* deletion success handler */
-		function deleteRequirementSuccess(){		
-			<c:choose>
-			<%-- case one : we were in a sub page context. We need to navigate back to the workspace. --%>
-			<c:when test="${param.isInfoPage}" >		
-			document.location.href="${workspaceUrl}" ;
-			</c:when>
-			<%-- case two : we were already in the workspace. we simply reload it (todo : make something better). --%>
-			<c:otherwise>
-			location.reload(true);
-			</c:otherwise>
-			</c:choose>				
-		}
-
+			
 		</c:if>
+		
+			<c:if test="${deletable}">
+				/* deletion success handler */
+				function deleteRequirementSuccess(){		
+					<c:choose>
+					<%-- case one : we were in a sub page context. We need to navigate back to the workspace. --%>
+					<c:when test="${param.isInfoPage}" >		
+					document.location.href="${workspaceUrl}" ;
+					</c:when>
+					<%-- case two : we were already in the workspace. we simply reload it (todo : make something better). --%>
+					<c:otherwise>
+					location.reload(true);
+					</c:otherwise>
+					</c:choose>				
+				}
+			</c:if>
+		
 </script>
-
+<%-- -----------------------------------/ SCRIPT ----------------------------------------------%>
 

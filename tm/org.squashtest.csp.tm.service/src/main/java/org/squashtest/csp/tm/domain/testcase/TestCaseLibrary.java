@@ -40,13 +40,10 @@ import org.squashtest.csp.tm.domain.project.Project;
 
 @Entity
 public class TestCaseLibrary extends GenericLibrary<TestCaseLibraryNode> implements Library<TestCaseLibraryNode> {
-	
-	
+
 	private static final String CLASS_NAME = "org.squashtest.csp.tm.domain.testcase.TestCaseLibrary";
 	private static final String SIMPLE_CLASS_NAME = "TestCaseLibrary";
-	
-	
-	
+
 	@Id
 	@GeneratedValue
 	@Column(name = "TCL_ID")
@@ -70,7 +67,6 @@ public class TestCaseLibrary extends GenericLibrary<TestCaseLibraryNode> impleme
 	}
 
 	@Override
-	@AclConstrainedObject
 	public Project getProject() {
 		return project;
 	}
@@ -85,12 +81,9 @@ public class TestCaseLibrary extends GenericLibrary<TestCaseLibraryNode> impleme
 		rootContent.remove(node);
 
 	}
-	
-	
-	
+
 	/* ***************************** SelfClassAware section ******************************* */
-	
-	
+
 	@Override
 	public String getClassSimpleName() {
 		return TestCaseLibrary.SIMPLE_CLASS_NAME;
@@ -103,8 +96,12 @@ public class TestCaseLibrary extends GenericLibrary<TestCaseLibraryNode> impleme
 
 	@Override
 	public boolean hasContent() {
-		return (rootContent.size()>0);
+		return (rootContent.size() > 0);
 	}
-	
+
+	@Override
+	public Library<?> getLibrary() {
+		return this;
+	}
 
 }

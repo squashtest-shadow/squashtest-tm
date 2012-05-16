@@ -345,6 +345,7 @@
 							org.squashtest.csp.core.bugtracker.core,
 							org.squashtest.csp.core.bugtracker.service,
 							org.squashtest.csp.core.bugtracker.web,
+							org.squashtest.csp.core.security.acls,
 							org.h2;resolution:=optional,
 							com.mysql.jdbc;resolution:=optional
 						</Import-Package>

@@ -46,6 +46,7 @@ import org.squashtest.csp.tm.domain.attachment.AttachmentList;
 import org.squashtest.csp.tm.domain.audit.Auditable;
 import org.squashtest.csp.tm.domain.bugtracker.Bugged;
 import org.squashtest.csp.tm.domain.bugtracker.IssueList;
+import org.squashtest.csp.tm.domain.campaign.CampaignLibrary;
 import org.squashtest.csp.tm.domain.project.Project;
 import org.squashtest.csp.tm.domain.testcase.ActionTestStep;
 import org.squashtest.csp.tm.domain.testcase.CallTestStep;
@@ -201,6 +202,11 @@ public class ExecutionStep implements AttachmentHolder, Bugged, TestStepVisitor 
 		builder.append("<b>Action :</b>\n").append(action).append("\n\n");
 		builder.append("<b>Expected Result :</b>\n").append(expectedResult).append("\n\n");
 		return builder.toString();
+	}
+
+	@Override
+	public CampaignLibrary getCampaignLibrary() {
+		return execution.getCampaignLibrary();
 	}
 
 	@Override
