@@ -26,9 +26,14 @@
 
 <%@ taglib prefix="s" uri="http://www.springframework.org/tags"%>
 <%@ taglib prefix="jq" tagdir="/WEB-INF/tags/jquery"%>
+<%@ taglib prefix="authz" tagdir="/WEB-INF/tags/authz" %>
+
 <?xml version="1.0" encoding="utf-8" ?>
 <%@ page language="java" contentType="text/html; charset=utf-8"
 	pageEncoding="utf-8"%>
+<authz:authorized hasRole="ROLE_ADMIN" hasPermission="EXECUTE" domainObject="${ iteration }">
+	<c:set var="executable" value="${ true }" />
+</authz:authorized>
 <s:url var="newExecutionUrl"
 	value="/iterations/{iterId}/test-plan/{tpId}/new-execution">
 	<s:param name="iterId" value="${iterationId}" />
@@ -83,7 +88,7 @@
 				</td>
 			</tr>
 		</c:forEach>
-		<c:if test="${ editableIteration }">
+		<c:if test="${ executable }">
 			<tr>
 				<td colspan="10" style="text-align: left;"><b> <a
 						class="button" style="font-size:0.8em;" id="new-exec-${testPlanId}"

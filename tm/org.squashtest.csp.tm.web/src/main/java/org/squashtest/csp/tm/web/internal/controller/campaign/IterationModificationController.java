@@ -341,6 +341,7 @@ public class IterationModificationController {
 		mav.addObject("editableIteration", editable);
 		mav.addObject("testPlanId", testPlanId);
 		mav.addObject("iterationId", iterationId);
+		mav.addObject("iteration", iter);
 		mav.addObject("executions", executionList);
 
 		return mav;

@@ -152,7 +152,6 @@
 
 	function newExecutionClickHandler() {
 		var url = $(this).attr('data-new-exec');
-
 		$.ajax({
 					type : 'POST',
 					url : url,

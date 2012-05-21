@@ -31,6 +31,8 @@
 <%@ attribute name="testSuitesUrl" required="true" description="url representing the current iteration" %>
 <%@ attribute name="datatableId" required="true" description="the id of the test plan datatable"%>
 <%@ attribute name="emptySelectionMessageId" required="true" description="the id of the div representing the message shown when nothing is selected"%>
+<%@ attribute name="creatable" required="true" type="java.lang.Boolean" description="if the user has creation rights on the iteration" %>
+<%@ attribute name="deletable" required="true" type="java.lang.Boolean" description="if the user has deletion rights on the iteration" %>
 
 <%@ taglib prefix="pop" 	tagdir="/WEB-INF/tags/popup" %>
 <%@ taglib prefix="f" 		uri="http://java.sun.com/jsp/jstl/fmt"%>
@@ -66,13 +68,13 @@
 	<jsp:attribute name="body">
 	
 	<div class="main-div-suites not-displayed">
-	
+	<c:if test="${ creatable }">
 		<div class="create-suites-section">
 			<f:message var="createLabel" key="dialog.testsuites.create.add" />
 			<input type="text" size="30"/><input type="button" class="button" value="${createLabel}" />
 			<comp:error-message forField="name" />				
 		</div>	
-		
+		</c:if>
 		<div class="display-suites-section">
 		</div>
 		
@@ -80,12 +82,12 @@
 			<f:message var="renameLabel" key="dialog.testsuites.rename.label" />
 			<input type="text" size="30"/><input type="button" class="button" value="${renameLabel}" />
 		</div> 
-		
+		<c:if test="${ deletable }">
 		<div class="remove-suites-section">
 			<f:message var="removeLabel" key="dialog.testsuites.remove.label" />
 			<input type="button" class="button" value="${removeLabel}"/>
 		</div>
-	
+	</c:if>
 	</div>
 	</jsp:attribute>
 </pop:popup>

@@ -86,11 +86,21 @@
 
 
 <%-- ----------------------------------- Authorization ----------------------------------------------%>
-<c:set var="editable" value="${ false }" /> 
 <authz:authorized hasRole="ROLE_ADMIN" hasPermission="WRITE" domainObject="${ iteration }">
-	<c:set var="editable" value="${ true }" /> 
+	<c:set var="writable" value="${ true }" />
 </authz:authorized>
-
+<authz:authorized hasRole="ROLE_ADMIN" hasPermission="DELETE" domainObject="${ iteration }">
+	<c:set var="deletable" value="${true }"/>
+</authz:authorized>
+<authz:authorized hasRole="ROLE_ADMIN" hasPermission="CREATE" domainObject="${ iteration }">
+	<c:set var="creatable" value="${true }"/>
+</authz:authorized>
+<authz:authorized hasRole="ROLE_ADMIN" hasPermission="LINK" domainObject="${ iteration }">
+	<c:set var="linkable" value="${ true }" />
+</authz:authorized>
+<authz:authorized hasRole="ROLE_ADMIN" hasPermission="EXECUTE" domainObject="${ iteration }">
+	<c:set var="executable" value="${ true }" />
+</authz:authorized>
 <script type="text/javascript">
 
 	/* Bind any changeable element to this handler to refresh the general informations */	
@@ -167,7 +177,7 @@
 	</div>
 	
 	<div style="clear:both;"></div>	
-	<c:if test="${ editable }">
+	<c:if test="${ writable }">
 		<comp:popup id="rename-iteration-dialog" titleKey="dialog.rename-iteration.title" 
 		            isContextual="true"   openedBy="rename-iteration-button">
 			<jsp:attribute name="buttons">
@@ -210,9 +220,10 @@
 		</div>
 	</div>
 	<div class="toolbar-button-panel">
-		<c:if test="${ editable }">	
+		<c:if test="${ writable }">	
 			<input type="button" value=' <f:message key="iteration.test-plan.testsuite.manage.label"/>' id="manage-test-suites-button" class="button"/>
 			<input type="button" value='<f:message key="iteration.button.rename.label" />' id="rename-iteration-button" class="button"/> 
+		</c:if>	<c:if test="${ deletable }">	
 			<input type="button" value='<f:message key="iteration.button.remove.label" />' id="delete-iteration-button" class="button"/>		
 		</c:if>
 	</div>	
@@ -228,7 +239,7 @@
 	</ul>
 	<div id="tabs-1">
 
-<c:if test="${ editable }">
+<c:if test="${ writable }">
 <comp:rich-jeditable targetUrl="${ iterationUrl }" componentId="iteration-description"
 					 submitCallback="refreshIterationInfos"
 					 />
@@ -256,7 +267,7 @@
 						paramName="scheduledStart" isContextual="true"
 						postCallback="refreshIterationInfos"
 						initialDate="${iteration.scheduledStartDate.time}"
-						editable="${ editable }" >	
+						editable="${ writable }" >	
 					</comp:datepicker>
 				</td>
 				<td class="datepicker-table-col">
@@ -271,7 +282,7 @@
 						postCallback="refreshIterationInfos"
 						initialDate="${iteration.actualStartDate.time}"
 						isContextual="true"
-						editable="${ editable }" 
+						editable="${ writable }" 
 						jsVarName="actualStart">
 					</comp:datepicker-auto>
 				</td>
@@ -283,7 +294,7 @@
 						paramName="scheduledEnd" isContextual="true"
 						postCallback="refreshIterationInfos"
 						initialDate="${iteration.scheduledEndDate.time}"
-						editable="${ editable }" >	
+						editable="${ writable }" >	
 					</comp:datepicker>				
 				</td>
 				<td class="datepicker-table-col">
@@ -297,7 +308,7 @@
 						postCallback="refreshIterationInfos"
 						initialDate="${iteration.actualEndDate.time}"
 						isContextual="true"
-						editable="${ editable }"
+						editable="${ writable }"
 						jsVarName="actualEnd">
 					</comp:datepicker-auto>
 				</td>
@@ -316,7 +327,7 @@
 
 
 <div class="toolbar" >
-		<c:if test="${ editable }">
+		<c:if test="${ linkable }">
 			<f:message var="associateLabel" key="campaign.test-plan.manage.button.label"/>
 			<f:message var="removeLabel" key="campaign.test-plan.remove.button.label"/>
 			<f:message var="assignLabel" key="campaign.test-plan.assign.button.label"/>
@@ -336,13 +347,13 @@
 		<aggr:decorate-iteration-test-cases-table tableModelUrl="${iterationTestPlanUrl}" testPlanDetailsBaseUrl="${testCaseDetailsBaseUrl}" 
 			testPlansUrl="${testCasesUrl}" batchRemoveButtonId="remove-test-case-button" 
 			updateTestPlanUrl="${updateTestCaseUrl}" assignableUsersUrl="${assignableUsersUrl}"
-			nonBelongingTestPlansUrl="${nonBelongingTestCasesUrl}" testPlanExecutionsUrl="${testCaseExecutionsUrl}" editable="${ editable }" testCaseMultipleRemovalPopupId="delete-multiple-test-plan-dialog" 
+			nonBelongingTestPlansUrl="${nonBelongingTestCasesUrl}" testPlanExecutionsUrl="${testCaseExecutionsUrl}" editable="${ linkable }" testCaseMultipleRemovalPopupId="delete-multiple-test-plan-dialog" 
 			testCaseSingleRemovalPopupId="delete-single-test-plan-dialog" />
 		<aggr:iteration-test-cases-table/>
 	</div>
 
 <%--------------------------- Deletion confirmation pup for Test plan section ------------------------------------%>
-
+<c:if test="${ linkable }">
 <pop:popup id="delete-multiple-test-plan-dialog" openedBy="remove-test-case-button" titleKey="dialog.remove-testcase-associations.title">
 	<jsp:attribute name="buttons">
 		<f:message var="label" key="attachment.button.delete.label" />
@@ -373,24 +384,27 @@
 		<f:message key="dialog.remove-testcase-association.message" />
 	</jsp:attribute>
 </pop:popup>
-
+</c:if>
 <%-- ------------------------- /Deletion confirmation popup for Test plan section --------------------------------- --%>
 
 <%-- ----------------------------------- Test Suite Management -------------------------------------------------- --%>
-
+<c:if test="${ writable }">
+<!-- here the deletable attribute concern the iteration because it has the same impact so far on the appearance the deletion button for a test suite. -->
+<!-- it is unlikely but for more specific right management we will have to check the right of the user on the selected test suites in the popup -->
 <comp:test-suite-managment suiteList="${iteration.testSuites}" popupOpener="manage-test-suites-button"
-	popupId="manage-test-suites-popup" menuId="manage-test-suites-menu" testSuitesUrl="${testSuitesUrl}" datatableId="test-plans-table" emptySelectionMessageId="test-plan-empty-sel-msg" />
+	creatable="${ creatable }" deletable="${ deletable }" popupId="manage-test-suites-popup" menuId="manage-test-suites-menu" testSuitesUrl="${testSuitesUrl}" datatableId="test-plans-table" emptySelectionMessageId="test-plan-empty-sel-msg" />
 
 <div id="test-plan-empty-sel-msg" class="not-visible" title="<f:message key='iteration.test-plan.action.title' />">
 	<div><f:message key="iteration.test-plan.action.empty-selection.message" /></div>
 </div>
+</c:if>
 <%-- ----------------------------------- /Test Suite Management -------------------------------------------------- --%>
 </div>
 
 <%------------------------------ Attachments bloc ------------------------------------------- --%> 
-<comp:attachment-tab tabId="tabs-3" entity="${ iteration }" editable="${ editable }" />
+<comp:attachment-tab tabId="tabs-3" entity="${ iteration }" editable="${ executable }" />
 <%-- ---------------------deletion popup------------------------------ --%>
-<c:if test="${ editable }">
+<c:if test="${deletable}">
 
 	<comp:delete-contextual-node-dialog simulationUrl="${simulateDeletionUrl}" confirmationUrl="${confirmDeletionUrl}" 
 	itemId="${iteration.id}" successCallback="deleteIterationSuccess" openedBy="delete-iteration-button" titleKey="dialog.delete-iteration.title"/>
@@ -398,6 +412,7 @@
 </c:if>
 
 <%--------------------------- Assign User popup -------------------------------------%>
+<c:if test="${writable}">
 <comp:popup id="batch-assign-test-case" titleKey="dialog.assign-test-case.title" 	
 	isContextual="true" openedBy="assign-test-case-button" closeOnSuccess="false">
 	
@@ -445,11 +460,11 @@
 			</div>
 		</jsp:body>
 </comp:popup>
-
+</c:if>
 </div>
 
 <comp:decorate-buttons />
-
+<c:if test="${linkable}">
 <script type="text/javascript">
 	$(function(){
 
@@ -459,6 +474,5 @@
 		
 	});
 </script>
-
-
+</c:if>
 
