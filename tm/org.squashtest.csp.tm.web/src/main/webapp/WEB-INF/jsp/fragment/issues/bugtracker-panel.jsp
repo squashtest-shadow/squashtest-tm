@@ -51,7 +51,7 @@
  --%>
 <%-- ----------------------------------- Authorization ----------------------------------------------%>
 <c:set var="editable" value="${ false }" /> 
-<authz:authorized hasRole="ROLE_ADMIN" hasPermission="WRITE" domainObject="${ entity }">
+<authz:authorized hasRole="ROLE_ADMIN" hasPermission="EXECUTE" domainObject="${ entity }">
 	<c:set var="editable" value="${ true }" /> 
 </authz:authorized>
 

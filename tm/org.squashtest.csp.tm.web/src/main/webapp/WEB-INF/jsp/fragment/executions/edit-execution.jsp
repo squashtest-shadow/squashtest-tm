@@ -41,7 +41,7 @@
 
 <%-- ----------------------------------- Authorization ----------------------------------------------%>
 <c:set var="editable" value="${ false }" /> 
-<authz:authorized hasRole="ROLE_ADMIN" hasPermission="WRITE" domainObject="${ execution }">
+<authz:authorized hasRole="ROLE_ADMIN" hasPermission="EXECUTE" domainObject="${ execution }">
 	<c:set var="editable" value="${ true }" /> 
 </authz:authorized>
 
