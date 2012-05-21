@@ -128,10 +128,20 @@
 
 
 <%-- ----------------------------------- Authorization ----------------------------------------------%>
-<c:set var="editable" value="${ false }" />
-<authz:authorized hasRole="ROLE_ADMIN" hasPermission="WRITE"
-	domainObject="${ testSuite }">
-	<c:set var="editable" value="${ true }" />
+<authz:authorized hasRole="ROLE_ADMIN" hasPermission="WRITE" domainObject="${ testSuite }">
+	<c:set var="writable" value="${ true }" />
+</authz:authorized>
+<authz:authorized hasRole="ROLE_ADMIN" hasPermission="DELETE" domainObject="${ testSuite }">
+	<c:set var="deletable" value="${true }"/>
+</authz:authorized>
+<authz:authorized hasRole="ROLE_ADMIN" hasPermission="CREATE" domainObject="${ testSuite }">
+	<c:set var="creatable" value="${true }"/>
+</authz:authorized>
+<authz:authorized hasRole="ROLE_ADMIN" hasPermission="LINK" domainObject="${ testSuite }">
+	<c:set var="linkable" value="${ true }" />
+</authz:authorized>
+<authz:authorized hasRole="ROLE_ADMIN" hasPermission="EXECUTE" domainObject="${ testSuite }">
+	<c:set var="executable" value="${ true }" />
 </authz:authorized>
 
 <script type="text/javascript">
@@ -232,7 +242,7 @@
 	</div>
 
 	<div style="clear: both;"></div>
-	<c:if test="${ editable }">
+	<c:if test="${ writable }">
 		<comp:popup id="rename-test-suite-dialog"
 			titleKey="dialog.testsuites.rename.title" isContextual="true"
 			openedBy="rename-test-suite-button">
@@ -277,19 +287,25 @@
 			</div>
 		</div>
 		<div class="toolbar-button-panel">
-			<c:if test="${ editable }">
+			<c:if test="${ executable }">
 				<div id="test-suite-execution-button" style="display: inline-block;">
 					<comp:test-suite-execution-button testSuiteId="${ testSuite.id }"
 						statisticsEntity="${ statistics }" />
 				</div>
+			</c:if>
+			<c:if test="${ writable }">
 				<input type="button"
 					value="<f:message key='test-suite.button.rename.label' />"
 					id="rename-test-suite-button" class="button"
 					style="display: inline-block;" />
+					</c:if>
+			<c:if test="${ deletable }">
 				<input type="button"
 					value="<f:message key='test-suite.button.remove.label' />"
 					id="delete-test-suite-button" class="button"
 					style="display: inline-block;" />
+					</c:if>
+			<c:if test="${ creatable }">
 				<input type="button"
 					value="<f:message key='test-suite.button.duplicate.label' />"
 					id="duplicate-test-suite-button" class="button"
@@ -306,7 +322,7 @@
 		<li><a href="#tabs-3"><f:message key="tabs.label.attachments" /><c:if test="${ testSuite.attachmentList.notEmpty }"><span class="hasAttach">!</span></c:if></a></li>
 	</ul>
 	<div id="tabs-1">
-	<c:if test="${ editable }">
+	<c:if test="${ writable }">
 		<comp:rich-jeditable targetUrl="${ testSuiteUrl }"
 			componentId="test-suite-description"
 			submitCallback="refreshTestSuiteInfos" />
@@ -338,7 +354,7 @@
 
 	
 		<div class="toolbar" >
-		<c:if test="${ editable }">
+		<c:if test="${ linkable }">
 			<f:message var="associateLabel"
 					key="campaign.test-plan.manage.button.label" />
 			<f:message var="removeLabel"
@@ -366,7 +382,7 @@
 				assignableUsersUrl="${assignableUsersUrl}"
 				nonBelongingTestPlansUrl="${nonBelongingTestCasesUrl}"
 				testPlanExecutionsUrl="${testCaseExecutionsUrl}"
-				editable="${ editable }"
+				editable="${ linkable }"
 				testCaseMultipleRemovalPopupId="delete-test-suite-multiple-test-plan-dialog"
 				testCaseSingleRemovalPopupId="delete-test-suite-single-test-plan-dialog"
 				testSuiteStatisticsId="test-suite-statistics-panel"
@@ -430,9 +446,9 @@
 </div>
 
 	<%------------------------------ Attachments bloc ------------------------------------------- --%>
-	<comp:attachment-tab tabId="tabs-3" entity="${ testSuite }" editable="${ editable }" />
+	<comp:attachment-tab tabId="tabs-3" entity="${ testSuite }" editable="${ executable }" />
 	<%-- ---------------------deletion popup------------------------------ --%>
-	<c:if test="${ editable }">
+	<c:if test="${ deletable }">
 		<script>
 		var testSuiteId = ${testSuite.id};
 		$(function(){

@@ -23,8 +23,9 @@
 <%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core"%>
 <%@ taglib prefix="f" uri="http://java.sun.com/jsp/jstl/fmt"%>
 <%@ taglib prefix="s" uri="http://www.springframework.org/tags"%>
-
 <%@ taglib prefix="s" uri="http://www.springframework.org/tags"%>
+<%@ taglib prefix="authz" tagdir="/WEB-INF/tags/authz" %>
+
 <%@ taglib prefix="jq" tagdir="/WEB-INF/tags/jquery"%>
 <?xml version="1.0" encoding="utf-8" ?>
 <%@ page language="java" contentType="text/html; charset=utf-8"
@@ -37,6 +38,10 @@
 
 
 <s:url var="showExecutionUrl" value="/executions" />
+
+<authz:authorized hasRole="ROLE_ADMIN" hasPermission="EXECUTE" domainObject="${ testSuite }">
+	<c:set var="executable" value="${ true }" />
+</authz:authorized>
 
 <c:set var="textcolor" value="#555555" />
 
@@ -79,10 +84,10 @@
 						</c:otherwise>
 					</c:choose>
 				</td>
-				<td style="width: 2em;"><c:if test="${ editableIteration }">
+				<td style="width: 2em;"><authz:authorized hasRole="ROLE_ADMIN" hasPermission="EXECUTE" domainObject="${ execution }">
 						<button id="delete-execution-table-button-${execution.id}"
 							class="delete-execution-table-button"></button>
-					</c:if>
+					</authz:authorized>
 				</td>
 			</tr>
 		</c:forEach>
@@ -91,7 +96,7 @@
 
 		<!-- ---------------------------------------------ROW NEW EXECUTION -->
 
-		<c:if test="${ editableIteration }">
+		<c:if test="${ executable }">
 			<tr>
 				<td colspan="8" style="text-align: left;"> <a id="new-exec-${testPlanId}" style="font-size:0.8em;"
 						class="button" href="javascript:void(0)" data-new-exec="${newExecutionUrl}"><f:message

@@ -237,7 +237,7 @@ public class TestSuiteModificationController {
 	
 	@RequestMapping(value = "{iterationId}/test-case-executions/{testPlanId}", method = RequestMethod.GET)
 	public ModelAndView getExecutionsForTestPlan(@PathVariable Long id, @PathVariable Long iterationId, @PathVariable Long testPlanId) {
-
+		TestSuite testSuite = service.findById(id);
 		List<Execution> executionList = iterationModService.findExecutionsByTestPlan(iterationId, testPlanId);
 		// get the iteraction to check access rights
 		Iteration iter = iterationModService.findById(iterationId);
@@ -249,7 +249,7 @@ public class TestSuiteModificationController {
 		mav.addObject("testPlanId", testPlanId);
 		mav.addObject("iterationId", iterationId);
 		mav.addObject("executions", executionList);
-
+		mav.addObject("testSuite", testSuite);
 		return mav;
 
 	}

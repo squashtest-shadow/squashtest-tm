@@ -81,10 +81,10 @@
 						</c:otherwise>
 					</c:choose>
 				</td>
-				<td style="width: 2em;"><c:if test="${ editableIteration }">
+				<td style="width: 2em;"><authz:authorized hasRole="ROLE_ADMIN" hasPermission="EXECUTE" domainObject="${ execution }">
 						<button id="delete-execution-table-button-${execution.id}"
 							class="delete-execution-table-button"></button>
-					</c:if>
+					</authz:authorized>
 				</td>
 			</tr>
 		</c:forEach>
