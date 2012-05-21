@@ -524,7 +524,12 @@
 		</insert>
 		<insert tableName="ACL_GROUP_PERMISSION">
 			<column name="ACL_GROUP_ID" valueComputed="(select ID from ACL_GROUP where QUALIFIED_NAME = 'squashtest.acl.group.tm.AdvanceTester')" />
-			<column name="PERMISSION_MASK" value="15" />
+			<column name="PERMISSION_MASK" value="256" />
+			<column name="CLASS_ID" valueComputed="(select ID from ACL_CLASS where CLASSNAME = 'org.squashtest.csp.tm.domain.campaign.CampaignLibrary')" />
+		</insert>
+		<insert tableName="ACL_GROUP_PERMISSION">
+			<column name="ACL_GROUP_ID" valueComputed="(select ID from ACL_GROUP where QUALIFIED_NAME = 'squashtest.acl.group.tm.AdvanceTester')" />
+			<column name="PERMISSION_MASK" value="271" />
 			<column name="CLASS_ID" valueComputed="(select ID from ACL_CLASS where CLASSNAME = 'org.squashtest.csp.tm.domain.campaign.CampaignLibrary')" />
 		</insert>
 	</changeSet>

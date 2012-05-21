@@ -62,10 +62,19 @@
 <s:url var="confirmDeletionUrl" value="/campaign-browser/delete-nodes/confirm" />
 
 <%-- ----------------------------------- Authorization ----------------------------------------------%>
-<c:set var="editable" value="${ false }" /> 
 <authz:authorized hasRole="ROLE_ADMIN" hasPermission="WRITE" domainObject="${ campaign }">
-	<c:set var="editable" value="${ true }" /> 
+	<c:set var="writable" value="${ true }" />
 </authz:authorized>
+<authz:authorized hasRole="ROLE_ADMIN" hasPermission="DELETE" domainObject="${ campaign }">
+	<c:set var="deletable" value="${true }"/>
+</authz:authorized>
+<authz:authorized hasRole="ROLE_ADMIN" hasPermission="CREATE" domainObject="${ campaign }">
+	<c:set var="creatable" value="${true }"/>
+</authz:authorized>
+<authz:authorized hasRole="ROLE_ADMIN" hasPermission="LINK" domainObject="${ campaign }">
+	<c:set var="linkable" value="${ true }" />
+</authz:authorized>
+ 
 
 <script type="text/javascript">
 
@@ -136,7 +145,7 @@
 	</div>
 	
 	<div style="clear:both;"></div>
-	<c:if test="${ editable }">
+	<c:if test="${writable}">
 		<comp:popup id="rename-campaign-dialog" titleKey="dialog.rename-campaign.title" 
 		            isContextual="true"   openedBy="rename-campaign-button">
 			<jsp:attribute name="buttons">
@@ -179,8 +188,9 @@
 		<comp:general-information-panel auditableEntity="${campaign}"/>
 	</div>
 	<div class="toolbar-button-panel">
-	<c:if test="${ editable }">
+	<c:if test="${ writable }">
 		<input type="button" value='<f:message key="campaign.button.rename.label" />' id="rename-campaign-button" /> 
+	</c:if><c:if test="${ deletable }">
 		<input type="button" value='<f:message key="campaign.button.remove.label" />' id="delete-campaign-button" />
 	</c:if>
 	</div>	
@@ -194,7 +204,7 @@
 		<li><a href="#tabs-3"><f:message key="tabs.label.attachments" /><c:if test="${ campaign.attachmentList.notEmpty }"><span class="hasAttach">!</span></c:if></a></li>
 	</ul>
 	<div id="tabs-1">
-<c:if test="${ editable }">
+<c:if test="${ writable }">
 	<comp:rich-jeditable targetUrl="${ campaignUrl }" componentId="campaign-description" />
 </c:if>
 
@@ -221,7 +231,7 @@
 					<comp:datepicker fmtLabel="dialog.label.campaign.scheduled_start.label" 
 						url="${campaignPlanningUrl}" datePickerId="scheduled-start" 
 						paramName="scheduledStart" isContextual="true"
-						initialDate="${campaign.scheduledStartDate.time}" editable="${ editable }" >	
+						initialDate="${campaign.scheduledStartDate.time}" editable="${ writable }" >	
 					</comp:datepicker>
 				</td>
 				<td class="datepicker-table-col">
@@ -234,7 +244,7 @@
 						isAuto="${campaign.actualStartAuto}"
 						initialDate="${campaign.actualStartDate.time}"
 						isContextual="true"
-						editable="${ editable }" >
+						editable="${ writable }" >
 					</comp:datepicker-auto>
 				</td>
 			</tr>
@@ -244,7 +254,7 @@
 						url="${campaignPlanningUrl}" datePickerId="scheduled-end" 
 						paramName="scheduledEnd" isContextual="true"
 						initialDate="${campaign.scheduledEndDate.time}" 
-						editable="${ editable }"
+						editable="${ writable }"
 						>	
 					</comp:datepicker>				
 				</td>
@@ -258,7 +268,7 @@
 						isAuto="${campaign.actualEndAuto}"
 						initialDate="${campaign.actualEndDate.time}"
 						isContextual="true"
-						editable="${ editable }"
+						editable="${ writable }"
 						>
 					</comp:datepicker-auto>
 				</td>
@@ -284,7 +294,7 @@
 </script>
 
 <div class="toolbar" >
-		<c:if test="${ editable }">
+		<c:if test="${ linkable }">
 			<f:message var="associateLabel" key="campaign.test-plan.manage.button.label"/>
 			<f:message var="removeLabel" key="campaign.test-plan.remove.button.label"/>
 			<f:message var="assignLabel" key="campaign.test-plan.assign.button.label"/>
@@ -295,7 +305,7 @@
 </div>
 <div class="table-tab-wrap" >
 		<aggr:decorate-campaign-test-plan-table 
-			batchRemoveButtonId="remove-test-case-button" editable="${ editable }" assignableUsersUrl="${assignableUsersUrl}" 
+			batchRemoveButtonId="remove-test-case-button" editable="${ linkable }" assignableUsersUrl="${assignableUsersUrl}" 
 			campaignUrl="${ campaignUrl }" testCaseMultipleRemovalPopupId="delete-multiple-test-cases-dialog" testCaseSingleRemovalPopupId="delete-single-test-case-dialog" />
 		<aggr:campaign-test-plan-table />
 </div>
@@ -338,9 +348,9 @@
 
 <%------------------------------ Attachments bloc ---------------------------------------------%> 
 
-<comp:attachment-tab tabId="tabs-3" entity="${ campaign }" editable="${ editable }" />
+<comp:attachment-tab tabId="tabs-3" entity="${ campaign }" editable="${ writable }" />
 <%--------------------------- Deletion confirmation popup -------------------------------------%>
-<c:if test="${ editable }">
+<c:if test="${ deletable }">
 
 
 	<comp:delete-contextual-node-dialog simulationUrl="${simulateDeletionUrl}" confirmationUrl="${confirmDeletionUrl}" 
