@@ -136,7 +136,7 @@ div#tabbed-pane > ul, div.fragment-tabs > ul {
 div.fragment-tabs{
 	background: none ;
     border: 0 none;
-   	overflow:auto; 
+   	overflow:hidden; 
    	position: absolute;
    	bottom: 0px;
    	width:100%;

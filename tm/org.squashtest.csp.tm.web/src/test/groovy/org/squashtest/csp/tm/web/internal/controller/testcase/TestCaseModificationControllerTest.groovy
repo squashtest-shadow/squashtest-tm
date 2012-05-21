@@ -169,7 +169,7 @@ class TestCaseModificationControllerTest extends Specification {
 		testCaseModificationService.findById(tcId) >> tc
 
 		when:
-		ModelAndView res = controller.showTestCase (tcId, null, null)
+		ModelAndView res = controller.showTestCase (tcId, null)
 
 		then:
 		res.viewName == "fragment/test-cases/edit-test-case"

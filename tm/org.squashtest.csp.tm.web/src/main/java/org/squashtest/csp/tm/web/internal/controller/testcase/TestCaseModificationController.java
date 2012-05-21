@@ -105,17 +105,12 @@ public class TestCaseModificationController {
 	}
 
 	@RequestMapping(method = RequestMethod.GET)
-	public final ModelAndView showTestCase(@PathVariable long testCaseId,
-			@RequestParam(required = false, value = "edit-mode") Boolean editable, Locale locale) {
+	public final ModelAndView showTestCase(@PathVariable long testCaseId, Locale locale) {
 		ModelAndView mav = new ModelAndView("fragment/test-cases/edit-test-case");
 
 		TestCase testCase = testCaseModificationService.findById(testCaseId);
 		populateModelWithTestCaseEditionData(mav, testCase, locale);
-
-		if (editable != null) {
-			mav.addObject("editable", editable);
-		}
-
+		
 		return mav;
 	}
 

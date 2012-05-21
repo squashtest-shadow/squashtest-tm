@@ -78,12 +78,23 @@
 	if no variable 'editable' was provided in the context, we'll set one according to the authorization the user
 	was granted for that object. 
 --%>
-<c:if test="${empty editable}">
-	<c:set var="editable" value="${ false }" /> 
-	<authz:authorized hasRole="ROLE_ADMIN" hasPermission="WRITE" domainObject="${ testCase }">
-		<c:set var="editable" value="${ true }" /> 
-	</authz:authorized>
-</c:if>
+
+<authz:authorized hasRole="ROLE_ADMIN" hasPermission="WRITE" domainObject="${ testCase }">
+	<c:set var="writable" value="${ true }" />
+	<c:set var="validable" value="${true }"/>
+</authz:authorized>
+<authz:authorized hasRole="ROLE_ADMIN" hasPermission="VALIDATE" domainObject="${ testCase }">
+	<c:set var="validable" value="${true }"/>
+</authz:authorized>
+<authz:authorized hasRole="ROLE_ADMIN" hasPermission="DELETE" domainObject="${ testCase }">
+	<c:set var="deletable" value="${true }"/>
+</authz:authorized>
+<authz:authorized hasRole="ROLE_ADMIN" hasPermission="CREATE" domainObject="${ testCase }">
+	<c:set var="creatable" value="${true }"/>
+</authz:authorized>
+<authz:authorized hasRole="ROLE_ADMIN" hasPermission="LINK" domainObject="${ testCase }">
+	<c:set var="linkable" value="${ true }" />
+</authz:authorized>
  
 <%-- ----------------------------------- Init ----------------------------------------------%>
 
@@ -168,7 +179,7 @@ $(function() {
 	function stepsTableRowCallback(row, data, displayIndex) {
 		try{
 		addIdToStepRow(row, data);
-		<c:if test="${ editable }">
+		<c:if test="${ writable }">
 		addDeleteButtonToRow(row, getStepsTableRowId(data), 'delete-step-button');
 		addClickHandlerToSelectHandle(row, $("#test-steps-table"));
 		</c:if>
@@ -182,7 +193,7 @@ $(function() {
 
 	function stepsTableDrawCallback() {
 		try{
-		<c:if test="${ editable }">
+		<c:if test="${ writable }">
 		enableTableDragAndDrop('test-steps-table', getStepTableRowIndex, stepDropHandler);
 		decorateDeleteButtons($('.delete-step-button', this));
 		makeEditable(this);
@@ -370,7 +381,7 @@ $(function() {
 		decorateStepTableButton("#collapse-steps-button", "ui-icon-zoomout");
 		
 		<%-- note : until access to attachments manager is properly secured we'll forbid the access. --%>
-		<c:if test="${editable}">
+		<c:if test="${writable}">
 		$('#test-steps-table .has-attachment-cell a').live('click', function() {
 			var listId = parseStepListId(this);
 			document.location.href = "${stepAttachmentManagerUrl}" + listId + "/attachments/manager?workspace=test-case";
@@ -449,7 +460,7 @@ $(function() {
 	
 	<%-- /STEPS TABLE --%>
 </script>
-<c:if test="${ editable }">
+<c:if test="${ writable }">
 
 <%-- ------------------------------ Add Test Step Dialog ------------------------------------------------ --%>
 <comp:popup id="add-test-step-dialog" titleKey="dialog.add-test_step.title" isContextual="true"
@@ -541,7 +552,7 @@ $(function() {
 </div>
 
 <%---------------------------- Rename test case popup ------------------------------%>
-<c:if test="${ editable }">
+<c:if test="${ validable }">
 <comp:popup id="rename-test-case-dialog" titleKey="dialog.rename-test-case.title" isContextual="true"
 	openedBy="rename-test-case-button">
 	<jsp:attribute name="buttons">
@@ -583,8 +594,10 @@ $(function() {
 </div>
 
 <div class="toolbar-button-panel">
-<c:if test="${ editable }">
+<c:if test="${ validable }">
 	<input type="button" value="<f:message key='test-case.button.rename.label' />" id="rename-test-case-button" class="button" />
+</c:if>
+<c:if test="${ deletable }">
 	<input type="button" value="<f:message key='test-case.button.remove.label' />" id="delete-test-case-button" class="button" />
 </c:if>
 	</div>
@@ -599,7 +612,7 @@ $(function() {
 	</ul>
 	<div id="tabs-1">
 <%----------------------------------- Description -----------------------------------------------%>
-<c:if test="${ editable }">
+<c:if test="${ validable }">
 	<comp:rich-jeditable targetUrl="${ testCaseUrl }" componentId="test-case-description" />
 	<comp:select-jeditable componentId="test-case-importance" jsonData="${ testCaseImportanceComboJson }" targetUrl="${ testCaseUrl }" />
 </c:if>
@@ -616,7 +629,7 @@ $(function() {
 				<label for="test-case-importance" class="display-table-cell"><f:message key="test-case.importance.combo.label" /></label>
 				<div class="display-table-cell">
 					<span id="test-case-importance">${ testCaseImportanceLabel }</span>
-					<c:if test="${ editable }">
+					<c:if test="${ validable }">
 					<comp:select-jeditable-auto associatedSelectJeditableId="test-case-importance" url="${ importanceAutoUrl }" isAuto="${ testCase.importanceAuto }" paramName="importanceAuto"/>
 					</c:if>
 					
@@ -646,7 +659,7 @@ $(function() {
 </script>
 
 <%----------------------------------- Prerequisites -----------------------------------------------%>
-<c:if test="${ editable }">
+<c:if test="${ validable }">
 	<comp:rich-jeditable targetUrl="${ testCaseUrl }" componentId="test-case-prerequisite" />
 </c:if>
 
@@ -672,7 +685,7 @@ $(function() {
 
 <comp:toggle-panel id="verified-requirements-panel" titleKey="test-case.verified_requirements.panel.title" isContextual="true" open="true">
 	<jsp:attribute name="panelButtons">
-	<c:if test="${ editable }">
+	<c:if test="${ linkable }">
 		<f:message var="associateLabel" key="test-case.verified_requirements.manage.button.label" />
 		<input id="verified-req-button" type="button" value="${associateLabel}" class="button" />
 		<f:message var="removeLabel" key="test-case.verified_requirement_item.remove.button.label" />
@@ -683,7 +696,7 @@ $(function() {
 	<jsp:attribute name="body">
 		<aggr:decorate-verified-requirements-table tableModelUrl="${ verifiedRequirementsTableUrl }"
 			verifiedRequirementsUrl="${ verifiedRequirementsUrl }" batchRemoveButtonId="remove-verified-requirements-button"
-			nonVerifiedRequirementsUrl="${ nonVerifiedRequirementsUrl }" editable="${ editable }" updateImportanceMethod="refreshTCImportance" />
+			nonVerifiedRequirementsUrl="${ nonVerifiedRequirementsUrl }" editable="${ linkable }" updateImportanceMethod="refreshTCImportance" />
 		<aggr:verified-requirements-table />
 	</jsp:attribute>
 </comp:toggle-panel> 
@@ -761,7 +774,7 @@ $(function() {
 <div class="toolbar" >
 
 	<span class ="group" ><button id="collapse-steps-button" class="button test-step-toolbar-button" href="#">${collapse}</button></span>
-	<c:if test="${ editable }">	
+	<c:if test="${ writable }">	
 		<span class ="group" ><button id="add-test-step-button" class="test-step-toolbar-button" href="#"><f:message key="test-case.step.button.add.label" /></button>
 		<button id="delete-all-steps-button" class="test-step-toolbar-button" href="#"><f:message key="test-case.step.button.remove.label" /></button>
 		<button id="add-call-step-button" class="test-step-toolbar-button" href="#"><f:message key="test-case.step.button.call.label" /></button>
@@ -821,11 +834,11 @@ $(function() {
 
 <%------------------------------ Attachments bloc ---------------------------------------------%> 
 
-<comp:attachment-tab tabId="tabs-3" entity="${ testCase }" editable="${ editable }" />
+<comp:attachment-tab tabId="tabs-3" entity="${ testCase }" editable="${ writable }" />
 </div>
 <%--------------------------- Deletion confirmation popup -------------------------------------%> 
 
-<c:if test="${ editable }">
+<c:if test="${ deletable }">
 
 
 	<comp:delete-contextual-node-dialog simulationUrl="${simulateDeletionUrl}" confirmationUrl="${confirmDeletionUrl}" 
