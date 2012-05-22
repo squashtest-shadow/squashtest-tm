@@ -146,7 +146,7 @@ public class CustomIterationModificationServiceImpl implements CustomIterationMo
 
 	// FIXME : should be secured with a permission 'EXECUTION' when it's done
 	@Override
-	@PreAuthorize("hasPermission(#iterationId, 'org.squashtest.csp.tm.domain.campaign.Iteration', 'WRITE') "
+	@PreAuthorize("hasPermission(#iterationId, 'org.squashtest.csp.tm.domain.campaign.Iteration', 'EXECUTE') "
 			+ "or hasRole('ROLE_ADMIN')")
 	public Execution addExecution(long iterationId, long testPlanId) {
 
@@ -158,7 +158,7 @@ public class CustomIterationModificationServiceImpl implements CustomIterationMo
 
 	/****
 	 * Method which change the index of test case in the selected iteration
-	 *
+	 * 
 	 * @param iterationId
 	 *            the iteration at which the test case is attached
 	 * @param testCaseId
