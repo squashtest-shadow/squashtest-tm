@@ -81,7 +81,6 @@
 
 <authz:authorized hasRole="ROLE_ADMIN" hasPermission="WRITE" domainObject="${ testCase }">
 	<c:set var="writable" value="${ true }" />
-	<c:set var="validable" value="${true }"/>
 </authz:authorized>
 <authz:authorized hasRole="ROLE_ADMIN" hasPermission="VALIDATE" domainObject="${ testCase }">
 	<c:set var="validable" value="${true }"/>

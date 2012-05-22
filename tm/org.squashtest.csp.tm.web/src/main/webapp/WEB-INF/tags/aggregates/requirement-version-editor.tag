@@ -53,7 +53,6 @@
  
 <authz:authorized hasRole="ROLE_ADMIN" hasPermission="WRITE" domainObject="${ requirement }">
 	<c:set var="writable" value="${ requirementVersion.modifiable }" />
-	<c:set var="validable" value="${requirementVersion.modifiable }"/>
 </authz:authorized>
 <authz:authorized hasRole="ROLE_ADMIN" hasPermission="VALIDATE" domainObject="${ requirement }">
 	<c:set var="validable" value="${requirementVersion.modifiable }"/>

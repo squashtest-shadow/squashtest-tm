@@ -46,7 +46,7 @@ public abstract class JsTreeNodeBuilder<MODEL, BUILDER extends JsTreeNodeBuilder
 
 	public JsTreeNode build() {
 		JsTreeNode node = new JsTreeNode();
-		boolean editable = (permissionEvaluationService.hasRoleOrPermissionOnObject("ROLE_ADMIN", "WRITE", model)|| permissionEvaluationService.hasRoleOrPermissionOnObject("ROLE_ADMIN", "VALIDATE", model)) ;
+		boolean editable = (permissionEvaluationService.hasRoleOrPermissionOnObject("ROLE_ADMIN", "WRITE", model)) ;
 		node.addAttr("editable", String.valueOf(editable));
 		boolean validable =permissionEvaluationService.hasRoleOrPermissionOnObject("ROLE_ADMIN", "VALIDATE", model) ;
 		node.addAttr("validable", String.valueOf(validable));

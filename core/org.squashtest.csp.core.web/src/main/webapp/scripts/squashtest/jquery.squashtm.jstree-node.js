@@ -91,7 +91,7 @@
 		}
 		
 		this.isEditable = function(){
-			return this.reference.attr('editable');
+			return this.reference.attr('validable');
 		}
 		
 		this.isCreatable = function(){

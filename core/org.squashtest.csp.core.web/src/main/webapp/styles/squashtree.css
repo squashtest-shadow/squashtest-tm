@@ -28,10 +28,10 @@
 li[rel] a.ui-state-default {	font-weight: bold; }
 li[rel="drive"] > a {	width:88%;	background: #2E2E2E;	-moz-border-radius: 8px; -webkit-border-radius: 8px; border-radius: 8px;	color:white;}
 li[rel="drive"] > a.filter-enabled {	width:88%;	background: #2E2E2E;	-moz-border-radius: 8px; -webkit-border-radius: 8px; border-radius: 8px;	color : #B9121B;}
-li[rel="drive"][editable="false"][executable="false"] > a > .jstree-icon {	background-image: url("../images/eye.png");	vertical-align : middle;}
+li[rel="drive"][editable="false"][validable="false"][executable="false"] > a > .jstree-icon {	background-image: url("../images/eye.png");	vertical-align : middle;}
 li[rel="drive"][editable="false"][executable="true"] > a > .jstree-icon {	background-image: url("../images/control_play.png");	vertical-align : top;}
-li[rel="drive"][editable="true"][creatable="false"][deletable="false"][validable="false"]> a > .jstree-icon {	background-image: url("../images/pencil.png");	vertical-align : middle;}
-li[rel="drive"][editable="true"][creatable="false"][deletable="false"][validable="true"] > a > .jstree-icon {	background-image: url("../images/accept.png");	vertical-align : top;}
+li[rel="drive"][editable="false"][validable="true"] > a > .jstree-icon {	background-image: url("../images/accept.png");	vertical-align : top;}
+li[rel="drive"][editable="true"][creatable="false"][deletable="false"]> a > .jstree-icon {	background-image: url("../images/pencil.png");	vertical-align : middle;}
 li[rel="drive"][editable="true"][creatable="true"][deletable="true"] > a > .jstree-icon {	background-image: url("../images/star_2.png");	vertical-align : top;}
 
 li[rel="file"][editable="false"] a, li[rel="folder"][editable="false"] a, li[rel="resource"][editable="false"] a {	color: gray;}

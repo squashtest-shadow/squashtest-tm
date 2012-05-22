@@ -56,7 +56,6 @@ that page won't be editable if
  
 <authz:authorized hasRole="ROLE_ADMIN" hasPermission="WRITE" domainObject="${ requirement }">
 	<c:set var="writable" value="${ requirement.modifiable }" />
-	<c:set var="validable" value="${requirement.modifiable }"/>
 </authz:authorized>
 <authz:authorized hasRole="ROLE_ADMIN" hasPermission="VALIDATE" domainObject="${ requirement }">
 	<c:set var="validable" value="${requirement.modifiable }"/>
