@@ -56,6 +56,12 @@ var squashtm ;
 		},
 		editable : function(a){
 			return $(a).attr('editable') === 'true';
+		},
+		creatable : function(a){
+			return $(a).attr('creatable') === 'true';
+		},
+		deletable : function(a){
+			return $(a).attr('deletable') === 'true';
 		}
 	});
 	

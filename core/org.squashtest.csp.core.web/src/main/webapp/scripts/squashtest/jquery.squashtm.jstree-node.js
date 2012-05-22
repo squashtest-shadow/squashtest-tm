@@ -94,6 +94,14 @@
 			return this.reference.attr('editable');
 		}
 		
+		this.isCreatable = function(){
+			return this.reference.attr('creatable');
+		}
+		
+		this.isDeletable = function(){
+			return this.reference.attr('deletable');
+		}
+		
 		this.getName = function(){
 			return this.reference.attr('name');
 		}

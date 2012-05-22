@@ -121,9 +121,9 @@ function TreeNodeCopier(initObj) {
 		var target = this.tree.get_selected();
 		
 		var isUnique = (target.length == 1);		
-		var isEditable = target.isEditable();
+		var isCreatable = target.isCreatable();
 		
-		if (!(isUnique && isEditable)) return 'not-unique-editable';
+		if (!(isUnique && isCreatable)) return 'not-unique-editable';
 		
 		var sameLib = (target.getLibrary().getDomId() == data.library);
 		

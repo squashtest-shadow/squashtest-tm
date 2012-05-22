@@ -166,12 +166,14 @@
 					}else{
 						handleNodeClick(tree, event);
 					}
-					return false; //return false to prevent navigation in page (# appears at the end of the URL)
+					return false; // return false to prevent navigation in
+									// page (# appears at the end of the URL)
 				});
 				
 				container.delegate('a', 'dblclick ', function(event,data){
 					handleNodeDblClick(tree, event);
-					return false; //return false to prevent navigation in page (# appears at the end of the URL)
+					return false; // return false to prevent navigation in
+									// page (# appears at the end of the URL)
 				});
 			});
 			
@@ -210,6 +212,30 @@
 				else return "OK";
 			},
 			
+			selectionIsCreatable : function(selectedNodes){
+				
+				// that variable will be set to true if at least one selected
+				// node is not editable.
+				var noEdit = (selectedNodes.not(":creatable").length > 0);
+				// selection is not editable if no node is selected or one node
+				// of the selection is not editable
+				if( noEdit ) return "noCreate";
+				else if(selectedNodes.length == 0) return "noNodeSelected";
+				else return "OK";
+			},
+			
+			selectionIsDeletableAttr : function(selectedNodes){
+				
+				// that variable will be set to true if at least one selected
+				// node is not editable.
+				var noDelete = (selectedNodes.not(":deletable").length > 0);
+				// selection is not editable if no node is selected or one node
+				// of the selection is not editable
+				if( noDelete ) return "noDelete";
+				else if(selectedNodes.length == 0) return "noNodeSelected";
+				else return "OK";
+			},
+			
 			selectionIsOneEditableNode : function(selectedNodes){
 				// true if only one node is selected and is editable
 				if(!selectedNodes.not(":editable").length > 0
@@ -217,10 +243,16 @@
 				else return "notOneEditable";
 			},
 			
+			selectionIsOneCreatableNode : function(selectedNodes){
+				//true if only one node is selected and is creatable
+				if(!selectedNodes.not(":creatable").length > 0 && selectedNodes.length == 1 ) return "OK";
+				else return "notOneCreatable";
+			},
+			
 			selectionIsDeletable : function(selectedNodes){
 				// all nodes are deletables excepted project libraries
-				var isEdit = this.selectionIsEditable(selectedNodes);
-				if(isEdit != "OK") return isEdit;
+				var isDelete = this.selectionIsDeletableAttr(selectedNodes);
+				if(isDelete != "OK") return isDelete;
 				else if ( selectedNodes.is(":library"))return "nodeleteLibrary";
 				else return "OK" ;
 			},
@@ -229,8 +261,8 @@
 				// all nodes except libraries are copyable
 				// if iterations are selected with other nodes type the
 				// selection is not copyable
-				var isEdit = this.selectionIsEditable(selectedNodes);
-				if(isEdit != "OK") return isEdit;
+				var isCreate = this.selectionIsCreatable(selectedNodes);
+				if(isCreate != "OK") return isCreate;
 				else if	( selectedNodes.is(":library")) return "noCopyLibrary";
 				else if (selectedNodes.is(":iteration") && selectedNodes.is(":node")) return "noCopyIteration+Other";
 				else return "OK";
@@ -238,8 +270,8 @@
 			
 			selectionIsCreateFolderAllowed : function(selectedNodes){
 				// need only one node selected
-				var isOneEdit = this.selectionIsOneEditableNode(selectedNodes);
-				if(isOneEdit != "OK") return isOneEdit;
+				var isOneCreate = this.selectionIsOneCreatableNode(selectedNodes);
+				if(isOneCreate != "OK") return isOneCreate;
 				// only libraries and folders are allowed for creation of folder
 				// and files
 				else if (selectedNodes.attr('rel') ==  "drive" || selectedNodes.attr('rel') ==  "folder"){
@@ -250,9 +282,9 @@
 			
 			selectionIsCreateFileAllowed : function(selectedNodes){
 				// need only one node selected
-				var isOneEdit = this.selectionIsOneEditableNode(selectedNodes);
-				if(isOneEdit != "OK") {
-					return isOneEdit;
+				var isOneCreate = this.selectionIsOneCreatableNode(selectedNodes);
+				if(isOneCreate != "OK") {
+					return isOneCreate;
 				
 				}else {
 					// only libraries and folders are allowed for creation of
@@ -268,8 +300,8 @@
 			
 			selectionIsCreateResourceAllowed : function(selectedNodes){
 				// need only one node selected
-				var isOneEdit = this.selectionIsOneEditableNode(selectedNodes);
-				if(isOneEdit != "OK") return isOneEdit;
+				var isOneCreate = this.selectionIsOneCreatableNode(selectedNodes);
+				if(isOneCreate != "OK") return isOneCreate;
 				// creation of resource is allowed only for files
 				else if (selectedNodes.attr('rel') ==  "file" || selectedNodes.attr('rel') ==  "resource") return "OK";
 				else return "createResNotHere"
@@ -288,9 +320,11 @@
 				return squashtm.treemenu.treeNodeCopier.mayPaste();
 			},
 			
-			//accepts an object, or an array of object. the attributes of the object(s) will be
-			//tested against the dom attributes of the nodes and returns those that match all the 
-			//attributes of at least one of the objects.
+			// accepts an object, or an array of object. the attributes of the
+			// object(s) will be
+			// tested against the dom attributes of the nodes and returns those
+			// that match all the
+			// attributes of at least one of the objects.
 			findNodes : function(descriptor){
 				var matchers;
 				
@@ -415,7 +449,8 @@
 							// use our owns.
 							destroyJTreeCopies(moveObject, data.inst);
 		
-							// now let's post. Again, as annoying as it is, the url depends on th
+							// now let's post. Again, as annoying as it is, the
+							// url depends on th
 							// nature of the nodes.
 							var jqObjects = $(moveObject.o);
 							var url = jqObjects.treeNode().getCopyUrl();
@@ -725,8 +760,9 @@ function clearContextualContent(targetSelector){
 /*
  * Will check if a dnd move is legal. Note that this check is preemptive,
  * contrarily to checkMoveIsAuthorized which needs to post-check.
- *
- * NB : this method is called by the configuration of plugin "crrm" in the initialization object.
+ * 
+ * NB : this method is called by the configuration of plugin "crrm" in the
+ * initialization object.
  * 
  */
 function treeCheckDnd(m){
@@ -759,7 +795,7 @@ function treeCheckDnd(m){
 		return false;
 	}
 	
-	//check that the destination type is legal
+	// check that the destination type is legal
 	if (! jqDest.acceptsAsContent(jqObject)){
 		return false;
 	}
@@ -943,7 +979,10 @@ function moveNode(data, url){
 }
 
 
-/* ******************************* leaf URL management code ************************************* */ 
+/*
+ * ******************************* leaf URL management code
+ * *************************************
+ */ 
 
 
 
