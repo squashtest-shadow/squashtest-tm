@@ -88,7 +88,7 @@ public class CustomIterationModificationServiceImpl implements CustomIterationMo
 	}
 
 	@Override
-	@PreAuthorize("hasPermission(#campaignId, 'org.squashtest.csp.tm.domain.campaign.Campaign', 'WRITE') "
+	@PreAuthorize("hasPermission(#campaignId, 'org.squashtest.csp.tm.domain.campaign.Campaign', 'CREATE') "
 			+ "or hasRole('ROLE_ADMIN')")
 	public int addIterationToCampaign(Iteration iteration, long campaignId) {
 		Campaign campaign = campaignDao.findById(campaignId);
@@ -120,7 +120,7 @@ public class CustomIterationModificationServiceImpl implements CustomIterationMo
 	}
 
 	@Override
-	@PreAuthorize("hasPermission(#iterationId, 'org.squashtest.csp.tm.domain.campaign.Iteration', 'WRITE') "
+	@PreAuthorize("hasPermission(#iterationId, 'org.squashtest.csp.tm.domain.campaign.Iteration', 'DELETE') "
 			+ "or hasRole('ROLE_ADMIN')")
 	public String delete(long iterationId) {
 		Iteration iteration = iterationDao.findById(iterationId);
@@ -144,7 +144,6 @@ public class CustomIterationModificationServiceImpl implements CustomIterationMo
 		iteration.setName(newName);
 	}
 
-	// FIXME : should be secured with a permission 'EXECUTION' when it's done
 	@Override
 	@PreAuthorize("hasPermission(#iterationId, 'org.squashtest.csp.tm.domain.campaign.Iteration', 'EXECUTE') "
 			+ "or hasRole('ROLE_ADMIN')")
@@ -233,7 +232,7 @@ public class CustomIterationModificationServiceImpl implements CustomIterationMo
 	}
 
 	@Override
-	@PreAuthorize("hasPermission(#iterationId, 'org.squashtest.csp.tm.domain.campaign.Iteration', 'WRITE') "
+	@PreAuthorize("hasPermission(#iterationId, 'org.squashtest.csp.tm.domain.campaign.Iteration', 'CREATE') "
 			+ "or hasRole('ROLE_ADMIN')")
 	public void addTestSuite(long iterationId, TestSuite suite) {
 		Iteration iteration = iterationDao.findById(iterationId);
@@ -255,7 +254,7 @@ public class CustomIterationModificationServiceImpl implements CustomIterationMo
 	}
 
 	@Override
-	@PreAuthorize("hasPermission(#iterationId, 'org.squashtest.csp.tm.domain.campaign.Iteration', 'WRITE') "
+	@PreAuthorize("hasPermission(#iterationId, 'org.squashtest.csp.tm.domain.campaign.Iteration', 'CREATE') "
 			+ "or hasRole('ROLE_ADMIN')")
 	public TestSuite copyPasteTestSuiteToIteration(Long testSuiteId, Long iterationId) {
 		TestSuite testSuite = suiteDao.findById(testSuiteId);
@@ -275,7 +274,7 @@ public class CustomIterationModificationServiceImpl implements CustomIterationMo
 	}
 
 	@Override
-	@PreAuthorize("hasPermission(#iterationId, 'org.squashtest.csp.tm.domain.campaign.Iteration', 'WRITE') "
+	@PreAuthorize("hasPermission(#iterationId, 'org.squashtest.csp.tm.domain.campaign.Iteration', 'CREATE') "
 			+ "or hasRole('ROLE_ADMIN')")
 	public List<TestSuite> copyPasteTestSuitesToIteration(Long[] testSuiteIds, Long iterationId) {
 
@@ -312,7 +311,7 @@ public class CustomIterationModificationServiceImpl implements CustomIterationMo
 	public List<Long> removeTestSuites(List<Long> suitesIds) {
 		List<TestSuite> testSuites = suiteDao.findAllByIdList(suitesIds);
 		// check
-		checkPermissionsForAll(testSuites, "WRITE");
+		checkPermissionsForAll(testSuites, "DELETE");
 		// proceed
 		List<Long> deletedIds = deletionHandler.deleteSuites(suitesIds);
 		return deletedIds;

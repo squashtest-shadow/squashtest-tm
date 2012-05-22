@@ -66,6 +66,10 @@ public class CampaignTestPlanManagerServiceImpl implements CampaignTestPlanManag
 	 * Permission string for writing campaigns based on campaignId param.
 	 */
 	private static final String CAN_WRITE_CAMPAIGN_BY_ID = "hasPermission(#campaignId, 'org.squashtest.csp.tm.domain.campaign.Campaign', 'WRITE') or hasRole('ROLE_ADMIN')";
+	/**
+	 * Permission string for linking campaigns to TP / Users based on campaignId param.
+	 */
+	private static final String CAN_LINK_CAMPAIGN_BY_ID = "hasPermission(#campaignId, 'org.squashtest.csp.tm.domain.campaign.Campaign', 'LINK') or hasRole('ROLE_ADMIN')";
 
 	@Inject
 	private TestCaseLibraryDao testCaseLibraryDao;
@@ -118,7 +122,7 @@ public class CampaignTestPlanManagerServiceImpl implements CampaignTestPlanManag
 	}
 
 	@Override
-	@PreAuthorize(CAN_WRITE_CAMPAIGN_BY_ID)
+	@PreAuthorize(CAN_LINK_CAMPAIGN_BY_ID)
 	public void addTestCasesToCampaignTestPlan(final List<Long> testCasesIds, long campaignId) {
 		// nodes are returned unsorted
 		List<TestCaseLibraryNode> nodes = testCaseLibraryNodeDao.findAllByIdList(testCasesIds);
@@ -148,7 +152,7 @@ public class CampaignTestPlanManagerServiceImpl implements CampaignTestPlanManag
 		ObjectIdentity oid = objIdRetrievalStrategy.getObjectIdentity(campaign);
 		entityRefs.add(oid);
 
-		List<String> loginList = aclService.findUsersWithWritePermission(entityRefs);
+		List<String> loginList = aclService.findUsersWithExecutePermission(entityRefs);
 		List<User> usersList = userDao.findUsersByLoginList(loginList);
 		return usersList;
 	}
@@ -159,7 +163,7 @@ public class CampaignTestPlanManagerServiceImpl implements CampaignTestPlanManag
 	 *            not necessary but actually used for security check
 	 */
 	@Override
-	@PreAuthorize(CAN_WRITE_CAMPAIGN_BY_ID)
+	@PreAuthorize(CAN_LINK_CAMPAIGN_BY_ID)
 	public void assignUserToTestPlanItem(long itemId, long campaignId, long userId) {
 		User assignee = null;
 		if (userId != 0) {
@@ -176,7 +180,7 @@ public class CampaignTestPlanManagerServiceImpl implements CampaignTestPlanManag
 	 *            not necessary but actually used for security check
 	 */
 	@Override
-	@PreAuthorize(CAN_WRITE_CAMPAIGN_BY_ID)
+	@PreAuthorize(CAN_LINK_CAMPAIGN_BY_ID)
 	public void assignUserToTestPlanItems(@NotNull List<Long> itemsIds, long campaignId, long userId) {
 		User assignee = null;
 		if (userId != 0) {
@@ -194,7 +198,7 @@ public class CampaignTestPlanManagerServiceImpl implements CampaignTestPlanManag
 	 * @see org.squashtest.csp.tm.service.CampaignTestPlanManagerService#moveTestPlanItems(long, int, java.util.List)
 	 */
 	@Override
-	@PreAuthorize(CAN_WRITE_CAMPAIGN_BY_ID)
+	@PreAuthorize(CAN_LINK_CAMPAIGN_BY_ID)
 	public void moveTestPlanItems(long campaignId, int targetIndex, List<Long> itemIds) {
 		Campaign campaign = campaignDao.findById(campaignId);
 		campaign.moveTestPlanItems(targetIndex, itemIds);
@@ -204,7 +208,7 @@ public class CampaignTestPlanManagerServiceImpl implements CampaignTestPlanManag
 	 * @see org.squashtest.csp.tm.service.CampaignTestPlanManagerService#removeTestPlanItem(long, long)
 	 */
 	@Override
-	@PreAuthorize(CAN_WRITE_CAMPAIGN_BY_ID)
+	@PreAuthorize(CAN_LINK_CAMPAIGN_BY_ID)
 	public void removeTestPlanItem(long campaignId, long itemId) {
 		Campaign campaign = campaignDao.findById(campaignId);
 		campaign.removeTestPlanItem(itemId);
@@ -214,7 +218,7 @@ public class CampaignTestPlanManagerServiceImpl implements CampaignTestPlanManag
 	 * @see org.squashtest.csp.tm.service.CampaignTestPlanManagerService#removeTestPlanItems(long, java.util.List)
 	 */
 	@Override
-	@PreAuthorize(CAN_WRITE_CAMPAIGN_BY_ID)
+	@PreAuthorize(CAN_LINK_CAMPAIGN_BY_ID)
 	public void removeTestPlanItems(long campaignId, List<Long> itemIds) {
 		Campaign campaign = campaignDao.findById(campaignId);
 		campaign.removeTestPlanItems(itemIds);

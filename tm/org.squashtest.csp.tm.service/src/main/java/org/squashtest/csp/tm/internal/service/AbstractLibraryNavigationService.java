@@ -101,7 +101,7 @@ public abstract class AbstractLibraryNavigationService<LIBRARY extends Library<N
 			// identity holder
 			for (Long id : sourceNodesIds) {
 				NODE node = getLibraryNodeDao().findById(id);
-				checkPermission(new SecurityCheckableObject(container, "WRITE"), new SecurityCheckableObject(node,
+				checkPermission(new SecurityCheckableObject(container, "CREATE"), new SecurityCheckableObject(node,
 						"READ"));
 			}
 
@@ -229,7 +229,11 @@ public abstract class AbstractLibraryNavigationService<LIBRARY extends Library<N
 		// fetch
 		FOLDER folder = getFolderDao().findById(folderId);
 		// check
-		checkPermission(new SecurityCheckableObject(folder, "WRITE"));
+		try {
+			checkPermission(new SecurityCheckableObject(folder, "WRITE"));
+		} catch (AccessDeniedException ade) {
+			checkPermission(new SecurityCheckableObject(folder, "VALIDATE"));
+		}
 
 		// proceed
 		LIBRARY library = getLibraryDao().findByRootContent((NODE) folder);
@@ -255,7 +259,7 @@ public abstract class AbstractLibraryNavigationService<LIBRARY extends Library<N
 		// fetch
 		LIBRARY container = getLibraryDao().findById(destinationId);
 		// check
-		checkPermission(new SecurityCheckableObject(container, "WRITE"));
+		checkPermission(new SecurityCheckableObject(container, "CREATE"));
 
 		// proceed
 		container.addRootContent((NODE) newFolder);
@@ -268,7 +272,7 @@ public abstract class AbstractLibraryNavigationService<LIBRARY extends Library<N
 		// fetch
 		FOLDER container = getFolderDao().findById(destinationId);
 		// check
-		checkPermission(new SecurityCheckableObject(container, "WRITE"));
+		checkPermission(new SecurityCheckableObject(container, "CREATE"));
 
 		container.addContent((NODE) newFolder);
 		getFolderDao().persist(newFolder);
@@ -337,8 +341,8 @@ public abstract class AbstractLibraryNavigationService<LIBRARY extends Library<N
 
 			Object parentObject = (parentLib != null) ? parentLib : getFolderDao().findByContent(node);
 
-			checkPermission(new SecurityCheckableObject(destinationFolder, "WRITE"), new SecurityCheckableObject(
-					parentObject, "WRITE"), new SecurityCheckableObject(node, "READ"));
+			checkPermission(new SecurityCheckableObject(destinationFolder, "CREATE"), new SecurityCheckableObject(
+					parentObject, "DELETE"), new SecurityCheckableObject(node, "READ"));
 
 			nodesAndTheirParents.put(node, parentObject);
 
@@ -368,8 +372,8 @@ public abstract class AbstractLibraryNavigationService<LIBRARY extends Library<N
 			LIBRARY parentLib = getLibraryDao().findByRootContent(node);
 			Object parentObject = (parentLib != null) ? parentLib : getFolderDao().findByContent(node);
 
-			checkPermission(new SecurityCheckableObject(destinationLibrary, "WRITE"), new SecurityCheckableObject(
-					parentObject, "WRITE"), new SecurityCheckableObject(node, "READ"));
+			checkPermission(new SecurityCheckableObject(destinationLibrary, "CREATE"), new SecurityCheckableObject(
+					parentObject, "DELETE"), new SecurityCheckableObject(node, "READ"));
 
 			nodesAndTheirParents.put(node, parentObject);
 		}
@@ -455,7 +459,7 @@ public abstract class AbstractLibraryNavigationService<LIBRARY extends Library<N
 		// identity holder
 		for (Long id : targetIds) {
 			NODE node = getLibraryNodeDao().findById(id);
-			checkPermission(new SecurityCheckableObject(node, "WRITE"));
+			checkPermission(new SecurityCheckableObject(node, "DELETE"));
 		}
 
 		return getDeletionHandler().deleteNodes(targetIds);

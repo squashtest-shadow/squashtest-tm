@@ -45,4 +45,6 @@ public interface ObjectAclService {
 	List<Object[]> retrieveUserAndAclClassFromProject(long projectId, String projectClassName);
 
 	List<Long> findUsersWithoutPermissionByObject(long objectId, String qualifiedClassName);
+
+	List<String> findUsersWithExecutePermission(List<ObjectIdentity> entityRefs);
 }

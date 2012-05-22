@@ -103,7 +103,7 @@ public class CampaignLibraryNavigationServiceImpl extends
 	}
 
 	@Override
-	@PreAuthorize("(hasPermission(#campaignId, 'org.squashtest.csp.tm.domain.campaign.Campaign', 'WRITE')"
+	@PreAuthorize("(hasPermission(#campaignId, 'org.squashtest.csp.tm.domain.campaign.Campaign', 'CREATE')"
 			+ "and hasPermission(#iterationId, 'org.squashtest.csp.tm.domain.campaign.Iteration', 'READ'))"
 			+ "or hasRole('ROLE_ADMIN')")
 	public int copyIterationToCampaign(long campaignId, long iterationId) {
@@ -130,7 +130,7 @@ public class CampaignLibraryNavigationServiceImpl extends
 	}
 
 	@Override
-	@PreAuthorize("(hasPermission(#campaignId, 'org.squashtest.csp.tm.domain.campaign.Campaign', 'WRITE'))"
+	@PreAuthorize("(hasPermission(#campaignId, 'org.squashtest.csp.tm.domain.campaign.Campaign', 'CREATE'))"
 			+ " or hasRole('ROLE_ADMIN')")
 	public List<Iteration> copyIterationsToCampaign(long campaignId, Long[] iterationsIds) {
 		// create persisted copies
@@ -186,7 +186,7 @@ public class CampaignLibraryNavigationServiceImpl extends
 	}
 
 	@Override
-	@PreAuthorize("hasPermission(#campaignId, 'org.squashtest.csp.tm.domain.campaign.Campaign', 'WRITE') or hasRole('ROLE_ADMIN')")
+	@PreAuthorize("hasPermission(#campaignId, 'org.squashtest.csp.tm.domain.campaign.Campaign', 'CREATE') or hasRole('ROLE_ADMIN')")
 	public int addIterationToCampaign(Iteration iteration, long campaignId) {
 		Campaign campaign = campaignDao.findById(campaignId);
 
@@ -291,7 +291,7 @@ public class CampaignLibraryNavigationServiceImpl extends
 	}
 
 	@Override
-	@PreAuthorize("hasPermission(#libraryId, 'org.squashtest.csp.tm.domain.campaign.CampaignLibrary', 'WRITE')"
+	@PreAuthorize("hasPermission(#libraryId, 'org.squashtest.csp.tm.domain.campaign.CampaignLibrary', 'CREATE')"
 			+ "or hasRole('ROLE_ADMIN')")
 	public void addCampaignToCampaignLibrary(long libraryId, Campaign newCampaign) {
 		CampaignLibrary library = campaignLibraryDao.findById(libraryId);
@@ -306,7 +306,7 @@ public class CampaignLibraryNavigationServiceImpl extends
 	}
 
 	@Override
-	@PreAuthorize("hasPermission(#folderId, 'org.squashtest.csp.tm.domain.campaign.CampaignFolder', 'WRITE')"
+	@PreAuthorize("hasPermission(#folderId, 'org.squashtest.csp.tm.domain.campaign.CampaignFolder', 'CREATE')"
 			+ "or hasRole('ROLE_ADMIN')")
 	public void addCampaignToCampaignFolder(long folderId, Campaign newCampaign) {
 		CampaignFolder folder = campaignFolderDao.findById(folderId);
@@ -340,8 +340,8 @@ public class CampaignLibraryNavigationServiceImpl extends
 	 * @see org.squashtest.csp.tm.service.CampaignLibraryNavigationService#moveIterationToNewCampaign(long, long, long)
 	 */
 	@Override
-	@PreAuthorize("(hasPermission(#newCampaignId, 'org.squashtest.csp.tm.domain.campaign.Campaign' , 'WRITE') "
-			+ "and hasPermission(#oldCampaignId, 'org.squashtest.csp.tm.domain.campaign.Campaign' , 'WRITE') "
+	@PreAuthorize("(hasPermission(#newCampaignId, 'org.squashtest.csp.tm.domain.campaign.Campaign' , 'CREATE') "
+			+ "and hasPermission(#oldCampaignId, 'org.squashtest.csp.tm.domain.campaign.Campaign' , 'DELETE') "
 			+ "and hasPermission(#iterationId, 'org.squashtest.csp.tm.domain.campaign.Iteration' , 'READ' ) ) "
 			+ "or hasRole('ROLE_ADMIN')")
 	public int moveIterationToNewCampaign(long newCampaignId, long oldCampaignId, long iterationId) {

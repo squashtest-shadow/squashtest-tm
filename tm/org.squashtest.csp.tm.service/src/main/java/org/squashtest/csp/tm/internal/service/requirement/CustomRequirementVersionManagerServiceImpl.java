@@ -37,7 +37,7 @@ import org.squashtest.csp.tm.service.CustomRequirementVersionManagerService;
 
 /**
  * @author Gregory Fouquet
- *
+ * 
  */
 @Service("CustomRequirementVersionManagerService")
 public class CustomRequirementVersionManagerServiceImpl implements CustomRequirementVersionManagerService {
@@ -49,7 +49,7 @@ public class CustomRequirementVersionManagerServiceImpl implements CustomRequire
 	 *      org.squashtest.csp.tm.domain.requirement.RequirementCriticality)
 	 */
 	@Override
-	@PreAuthorize("hasPermission(#requirementVersionId, 'org.squashtest.csp.tm.domain.requirement.RequirementVersion', 'WRITE') or hasRole('ROLE_ADMIN')")
+	@PreAuthorize("hasPermission(#requirementVersionId, 'org.squashtest.csp.tm.domain.requirement.RequirementVersion', 'WRITE') or hasPermission(#requirementVersionId, 'org.squashtest.csp.tm.domain.requirement.RequirementVersion', 'VALIDATE') or hasRole('ROLE_ADMIN')")
 	public void changeCriticality(long requirementVersionId, RequirementCriticality criticality) {
 		RequirementVersion requirementVersion = requirementVersionDao.findById(requirementVersionId);
 		// FIXME should send event to test cases
@@ -63,8 +63,7 @@ public class CustomRequirementVersionManagerServiceImpl implements CustomRequire
 	 */
 	@Override
 	@PreAuthorize("hasPermission(#requirementId, 'org.squashtest.csp.tm.domain.requirement.Requirement', 'READ') or hasRole('ROLE_ADMIN')")
-	public PagedCollectionHolder<List<RequirementVersion>> findAllByRequirement(long requirementId,
-			PagingAndSorting pas) {
+	public PagedCollectionHolder<List<RequirementVersion>> findAllByRequirement(long requirementId, PagingAndSorting pas) {
 		List<RequirementVersion> versions = requirementVersionDao.findAllByRequirement(requirementId, pas);
 		long versionsCount = requirementVersionDao.countByRequirement(requirementId);
 

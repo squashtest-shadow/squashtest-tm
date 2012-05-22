@@ -46,6 +46,7 @@ import org.springframework.security.acls.model.AlreadyExistsException;
 import org.springframework.security.acls.model.ObjectIdentity;
 import org.springframework.security.acls.model.Permission;
 import org.springframework.security.acls.model.Sid;
+import org.squashtest.csp.core.security.acls.CustomPermission;
 import org.squashtest.csp.core.security.acls.PermissionGroup;
 import org.squashtest.csp.core.security.acls.model.ObjectAclService;
 
@@ -284,7 +285,13 @@ public class JdbcManageableAclService extends JdbcAclService implements ObjectAc
 	}
 	
 	@Override
-	public List<String> findUsersWithWritePermission(@NotNull List<ObjectIdentity> entityRefs){
+	public List<String> findUsersWithExecutePermission(List<ObjectIdentity> entityRefs) {
+		List<Permission> permissions = new ArrayList<Permission>();
+		permissions.add(CustomPermission.EXECUTE);
+		return findUsersWithPermissions(entityRefs, permissions );
+	}
+	
+	private List<String> findUsersWithPermissions(List<ObjectIdentity> entityRefs, List<Permission> permissionsList) {
 		List<String> resultSidList = new ArrayList<String>(); 
 		Collection<Acl> aclList = readAclsById(entityRefs).values();
 		
@@ -295,7 +302,9 @@ public class JdbcManageableAclService extends JdbcAclService implements ObjectAc
 				
 				List<Sid> sids = new ArrayList<Sid>();
 				List<Permission> permissions = new ArrayList<Permission>();
-				permissions.add(BasePermission.WRITE);
+				for(Permission permission : permissionsList){
+					permissions.add(permission);
+				}
 				sids.add(ctrlEntry.getSid());
 				try{
 					if(acl.isGranted(permissions, sids, false)){
@@ -309,6 +318,13 @@ public class JdbcManageableAclService extends JdbcAclService implements ObjectAc
 		}
 		
 		return resultSidList;
+	}
+	
+	@Override
+	public List<String> findUsersWithWritePermission(@NotNull List<ObjectIdentity> entityRefs){
+		List<Permission> permissions = new ArrayList<Permission>();
+		permissions.add(BasePermission.WRITE);
+		return findUsersWithPermissions(entityRefs, permissions );
 	}
 	
 	protected void evictFromCache(ObjectIdentity oIdentity){
