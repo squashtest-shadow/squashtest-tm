@@ -45,32 +45,31 @@ import org.squashtest.csp.tm.service.importer.ImportSummary;
 
 @Service("squashtest.tm.service.TestCaseLibraryNavigationService")
 @Transactional
-public class TestCaseLibraryNavigationServiceImpl extends AbstractLibraryNavigationService<TestCaseLibrary, TestCaseFolder, TestCaseLibraryNode> implements
-TestCaseLibraryNavigationService {
+public class TestCaseLibraryNavigationServiceImpl extends
+		AbstractLibraryNavigationService<TestCaseLibrary, TestCaseFolder, TestCaseLibraryNode> implements
+		TestCaseLibraryNavigationService {
 	@Inject
 	private TestCaseLibraryDao testCaseLibraryDao;
 	@Inject
 	private TestCaseFolderDao testCaseFolderDao;
-	
+
 	@Inject
 	@Qualifier("squashtest.tm.repository.TestCaseLibraryNodeDao")
-	private LibraryNodeDao<TestCaseLibraryNode>testCaseLibraryNodeDao;
+	private LibraryNodeDao<TestCaseLibraryNode> testCaseLibraryNodeDao;
 
 	@Inject
 	private TestCaseDao testCaseDao;
-	
-	
+
 	@Inject
 	private TestCaseImporter testCaseImporter;
 	@Inject
 	private TestCaseNodeDeletionHandler deletionHandler;
 
-	
 	@Override
 	protected NodeDeletionHandler<TestCaseLibraryNode, TestCaseFolder> getDeletionHandler() {
 		return deletionHandler;
 	}
-	
+
 	@Override
 	protected LibraryDao<TestCaseLibrary, TestCaseLibraryNode> getLibraryDao() {
 		return testCaseLibraryDao;
@@ -80,9 +79,9 @@ TestCaseLibraryNavigationService {
 	protected FolderDao<TestCaseFolder, TestCaseLibraryNode> getFolderDao() {
 		return testCaseFolderDao;
 	}
-	
+
 	@Override
-	protected final LibraryNodeDao<TestCaseLibraryNode> getLibraryNodeDao(){
+	protected final LibraryNodeDao<TestCaseLibraryNode> getLibraryNodeDao() {
 		return testCaseLibraryNodeDao;
 	}
 
@@ -92,17 +91,14 @@ TestCaseLibraryNavigationService {
 		return testCaseDao.findById(testCaseId);
 	}
 
-
-
 	@Override
-	@PreAuthorize("hasPermission(#libraryId, 'org.squashtest.csp.tm.domain.testcase.TestCaseLibrary' , 'WRITE' )" +
-					"or hasRole('ROLE_ADMIN')")	
+	@PreAuthorize("hasPermission(#libraryId, 'org.squashtest.csp.tm.domain.testcase.TestCaseLibrary' , 'CREATE' )"
+			+ "or hasRole('ROLE_ADMIN')")
 	public void addTestCaseToLibrary(long libraryId, TestCase testCase) {
 		TestCaseLibrary library = testCaseLibraryDao.findById(libraryId);
 
 		if (!library.isContentNameAvailable(testCase.getName())) {
-			throw new DuplicateNameException(testCase.getName(),
-					testCase.getName());
+			throw new DuplicateNameException(testCase.getName(), testCase.getName());
 		} else {
 			library.addRootContent(testCase);
 			testCaseDao.persist(testCase);
@@ -110,25 +106,23 @@ TestCaseLibraryNavigationService {
 	}
 
 	@Override
-	@PreAuthorize("hasPermission(#folderId, 'org.squashtest.csp.tm.domain.testcase.TestCaseFolder' , 'WRITE') " +
-	"or hasRole('ROLE_ADMIN')")	
+	@PreAuthorize("hasPermission(#folderId, 'org.squashtest.csp.tm.domain.testcase.TestCaseFolder' , 'CREATE') "
+			+ "or hasRole('ROLE_ADMIN')")
 	public void addTestCaseToFolder(long folderId, TestCase testCase) {
 		TestCaseFolder folder = testCaseFolderDao.findById(folderId);
 
 		if (!folder.isContentNameAvailable(testCase.getName())) {
-			throw new DuplicateNameException(testCase.getName(),
-					testCase.getName());
+			throw new DuplicateNameException(testCase.getName(), testCase.getName());
 		} else {
 			folder.addContent(testCase);
 			testCaseDao.persist(testCase);
 		}
 
 	}
-	
+
 	@Override
-	@PreAuthorize("hasPermission(#libraryId, 'org.squashtest.csp.tm.domain.testcase.TestCaseLibrary', 'WRITE') or hasRole('ROLE_ADMIN')")
-	public ImportSummary importExcelTestCase(InputStream archiveStream,
-			long libraryId, String encoding) {
+	@PreAuthorize("hasPermission(#libraryId, 'org.squashtest.csp.tm.domain.testcase.TestCaseLibrary', 'IMPORT') or hasRole('ROLE_ADMIN')")
+	public ImportSummary importExcelTestCase(InputStream archiveStream, long libraryId, String encoding) {
 
 		return testCaseImporter.importExcelTestCases(archiveStream, libraryId, encoding);
 	}

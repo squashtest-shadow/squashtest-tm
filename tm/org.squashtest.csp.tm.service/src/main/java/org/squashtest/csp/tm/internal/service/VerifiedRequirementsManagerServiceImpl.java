@@ -90,7 +90,7 @@ public class VerifiedRequirementsManagerServiceImpl implements VerifiedRequireme
 
 	@SuppressWarnings("rawtypes")
 	@Override
-	@PreAuthorize("hasPermission(#testCaseId, 'org.squashtest.csp.tm.domain.testcase.TestCase' , 'WRITE') or hasRole('ROLE_ADMIN')")
+	@PreAuthorize("hasPermission(#testCaseId, 'org.squashtest.csp.tm.domain.testcase.TestCase' , 'LINK') or hasRole('ROLE_ADMIN')")
 	public Collection<VerifiedRequirementException> addVerifiedRequirementsToTestCase(List<Long> requirementsIds,
 			long testCaseId) {
 		List<RequirementLibraryNode> nodes = requirementLibraryNodeDao.findAllByIdList(requirementsIds);
@@ -143,7 +143,7 @@ public class VerifiedRequirementsManagerServiceImpl implements VerifiedRequireme
 	}
 
 	@Override
-	@PreAuthorize("hasPermission(#testCaseId, 'org.squashtest.csp.tm.domain.testcase.TestCase' , 'WRITE') or hasRole('ROLE_ADMIN')")
+	@PreAuthorize("hasPermission(#testCaseId, 'org.squashtest.csp.tm.domain.testcase.TestCase' , 'LINK') or hasRole('ROLE_ADMIN')")
 	public void removeVerifiedRequirementVersionsFromTestCase(List<Long> requirementsIds, long testCaseId) {
 		List<RequirementVersion> reqs = requirementVersionDao.findAllByIdList(requirementsIds);
 
@@ -153,45 +153,48 @@ public class VerifiedRequirementsManagerServiceImpl implements VerifiedRequireme
 			for (RequirementVersion requirement : reqs) {
 				testCase.removeVerifiedRequirementVersion(requirement);
 			}
-			
+
 			testCaseImportanceManagerService
 					.changeImportanceIfRelationsRemovedFromTestCase(requirementsIds, testCaseId);
 		}
 	}
 
 	@Override
-	@PreAuthorize("hasPermission(#testCaseId, 'org.squashtest.csp.tm.domain.testcase.TestCase' , 'WRITE') or hasRole('ROLE_ADMIN')")
+	@PreAuthorize("hasPermission(#testCaseId, 'org.squashtest.csp.tm.domain.testcase.TestCase' , 'LINK') or hasRole('ROLE_ADMIN')")
 	public void removeVerifiedRequirementVersionFromTestCase(long requirementId, long testCaseId) {
 		RequirementVersion req = requirementVersionDao.findById(requirementId);
 		TestCase testCase = testCaseDao.findById(testCaseId);
-		
+
 		testCase.removeVerifiedRequirementVersion(req);
-		
+
 		testCaseImportanceManagerService.changeImportanceIfRelationsRemovedFromTestCase(Arrays.asList(requirementId),
 				testCaseId);
 	}
-	
-	
+
 	/*
 	 * This service associates a new verified requirement to the test case
 	 * 
 	 * (non-Javadoc)
-	 * @see org.squashtest.csp.tm.service.VerifiedRequirementsManagerService#changeVerifiedRequirementVersionOnTestCase(long, long, long)
+	 * 
+	 * @see
+	 * org.squashtest.csp.tm.service.VerifiedRequirementsManagerService#changeVerifiedRequirementVersionOnTestCase(long,
+	 * long, long)
 	 */
 	@Override
-	@PreAuthorize("hasPermission(#testCaseId, 'org.squashtest.csp.tm.domain.testcase.TestCase' , 'WRITE') or hasRole('ROLE_ADMIN')")
-	public int changeVerifiedRequirementVersionOnTestCase(long oldVerifiedRequirementVersionId, long newVerifiedRequirementVersionId, long testCaseId) {
+	@PreAuthorize("hasPermission(#testCaseId, 'org.squashtest.csp.tm.domain.testcase.TestCase' , 'LINK') or hasRole('ROLE_ADMIN')")
+	public int changeVerifiedRequirementVersionOnTestCase(long oldVerifiedRequirementVersionId,
+			long newVerifiedRequirementVersionId, long testCaseId) {
 		RequirementVersion oldReq = requirementVersionDao.findById(oldVerifiedRequirementVersionId);
 		RequirementVersion newReq = requirementVersionDao.findById(newVerifiedRequirementVersionId);
 		TestCase testCase = testCaseDao.findById(testCaseId);
-		
+
 		testCase.removeVerifiedRequirementVersion(oldReq);
-		
+
 		testCase.addVerifiedRequirementVersion(newReq);
-		
-		testCaseImportanceManagerService.changeImportanceIfRelationsRemovedFromTestCase(Arrays.asList(newVerifiedRequirementVersionId),
-				testCaseId);
-		
+
+		testCaseImportanceManagerService.changeImportanceIfRelationsRemovedFromTestCase(
+				Arrays.asList(newVerifiedRequirementVersionId), testCaseId);
+
 		return newReq.getVersionNumber();
 	}
 

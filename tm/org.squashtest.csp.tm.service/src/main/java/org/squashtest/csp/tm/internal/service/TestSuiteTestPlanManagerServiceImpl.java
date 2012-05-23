@@ -57,24 +57,22 @@ public class TestSuiteTestPlanManagerServiceImpl implements TestSuiteTestPlanMan
 	@Inject
 	private ItemTestPlanDao itemTestPlanDao;
 
-	// FIXME : security
 	@Override
-	@PreAuthorize("hasPermission(#testSuiteId, 'org.squashtest.csp.tm.domain.campaign.TestSuite', 'WRITE') "
+	@PreAuthorize("hasPermission(#testSuiteId, 'org.squashtest.csp.tm.domain.campaign.TestSuite', 'READ') "
 			+ "or hasRole('ROLE_ADMIN')")
 	public TestSuite findTestSuite(long testSuiteId) {
 		return testSuiteDao.findById(testSuiteId);
 	}
 
-	// FIXME : security
 	@Override
-	@PreAuthorize("hasPermission(#suiteId, 'org.squashtest.csp.tm.domain.campaign.TestSuite', 'WRITE') "
+	@PreAuthorize("hasPermission(#suiteId, 'org.squashtest.csp.tm.domain.campaign.TestSuite', 'READ') "
 			+ "or hasRole('ROLE_ADMIN')")
 	public PagedCollectionHolder<List<IterationTestPlanItem>> findTestPlan(long suiteId, Paging paging) {
 		return delegateTestSuiteModificationService.findTestSuiteTestPlan(suiteId, paging);
 	}
 
 	@Override
-	@PreAuthorize("hasPermission(#suiteId, 'org.squashtest.csp.tm.domain.campaign.TestSuite', 'WRITE') "
+	@PreAuthorize("hasPermission(#suiteId, 'org.squashtest.csp.tm.domain.campaign.TestSuite', 'LINK') "
 			+ "or hasRole('ROLE_ADMIN')")
 	public void addTestCasesToIterationAndTestSuite(List<Long> testCaseIds, long suiteId) {
 
@@ -89,7 +87,7 @@ public class TestSuiteTestPlanManagerServiceImpl implements TestSuiteTestPlanMan
 	}
 
 	@Override
-	@PreAuthorize("hasPermission(#suiteId, 'org.squashtest.csp.tm.domain.campaign.TestSuite', 'WRITE') "
+	@PreAuthorize("hasPermission(#suiteId, 'org.squashtest.csp.tm.domain.campaign.TestSuite', 'LINK') "
 			+ "or hasRole('ROLE_ADMIN')")
 	public void detachTestPlanFromTestSuite(List<Long> testPlanIds, long suiteId) {
 
@@ -105,7 +103,7 @@ public class TestSuiteTestPlanManagerServiceImpl implements TestSuiteTestPlanMan
 	}
 
 	@Override
-	@PreAuthorize("hasPermission(#suiteId, 'org.squashtest.csp.tm.domain.campaign.TestSuite', 'WRITE') "
+	@PreAuthorize("hasPermission(#suiteId, 'org.squashtest.csp.tm.domain.campaign.TestSuite', 'LINK') "
 			+ "or hasRole('ROLE_ADMIN')")
 	public boolean detachTestPlanFromTestSuiteAndRemoveFromIteration(List<Long> testPlanIds, long suiteId) {
 		TestSuite testSuite = testSuiteDao.findById(suiteId);

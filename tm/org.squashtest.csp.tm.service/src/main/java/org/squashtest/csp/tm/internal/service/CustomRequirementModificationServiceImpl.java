@@ -54,13 +54,13 @@ public class CustomRequirementModificationServiceImpl implements CustomRequireme
 	}
 
 	@Override
-	@PreAuthorize("hasPermission(#reqId, 'org.squashtest.csp.tm.domain.requirement.Requirement', 'WRITE') or hasRole('ROLE_ADMIN')")
+	@PreAuthorize("hasPermission(#reqId, 'org.squashtest.csp.tm.domain.requirement.Requirement', 'VALIDATE') or hasRole('ROLE_ADMIN')")
 	public void rename(long reqId, String newName) {
 		requirementManagementService.renameNode(reqId, newName);
 	}
 
 	@Override
-	@PreAuthorize("hasPermission(#requirementId, 'org.squashtest.csp.tm.domain.requirement.Requirement', 'VALIDATE') or hasRole('ROLE_ADMIN')")
+	@PreAuthorize("hasPermission(#requirementId, 'org.squashtest.csp.tm.domain.requirement.Requirement', 'CREATE') or hasRole('ROLE_ADMIN')")
 	public void createNewVersion(long requirementId) {
 		Requirement req = requirementDao.findById(requirementId);
 		req.increaseVersion();

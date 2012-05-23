@@ -54,7 +54,7 @@ public class CustomTestSuiteModificationServiceImpl implements CustomTestSuiteMo
 	}
 
 	@Override
-	@PreAuthorize("hasPermission(#suiteId, 'org.squashtest.csp.tm.domain.campaign.TestSuite', 'WRITE') or hasRole('ROLE_ADMIN')")
+	@PreAuthorize("hasPermission(#suiteId, 'org.squashtest.csp.tm.domain.campaign.TestSuite', 'LINK') or hasRole('ROLE_ADMIN')")
 	public void bindTestPlan(long suiteId, List<Long> itemTestPlanIds) {
 		// that implementation relies on how the TestSuite will do the job (regarding the checks on whether the itps
 		// belong to the
@@ -64,14 +64,14 @@ public class CustomTestSuiteModificationServiceImpl implements CustomTestSuiteMo
 	}
 
 	@Override
-	@PreAuthorize("hasPermission(#testSuite, 'WRITE') or hasRole('ROLE_ADMIN')")
+	@PreAuthorize("hasPermission(#testSuite, 'LINK') or hasRole('ROLE_ADMIN')")
 	public void bindTestPlanObj(TestSuite testSuite, List<IterationTestPlanItem> itemTestPlans) {
 		// the test plans have already been associated to the Iteration
 		testSuite.bindTestPlanItems(itemTestPlans);
 	}
 
 	@Override
-	@PreAuthorize("hasPermission(#testSuite, 'WRITE') or hasRole('ROLE_ADMIN')")
+	@PreAuthorize("hasPermission(#testSuite, 'LINK') or hasRole('ROLE_ADMIN')")
 	public void unbindTestPlanObj(TestSuite testSuite, List<IterationTestPlanItem> itemTestPlans) {
 		// the test plans have already been associated to the Iteration
 		testSuite.unBindTestPlan(itemTestPlans);
@@ -103,7 +103,7 @@ public class CustomTestSuiteModificationServiceImpl implements CustomTestSuiteMo
 	}
 
 	@Override
-	@PreAuthorize("hasPermission(#testSuiteId, 'org.squashtest.csp.tm.domain.campaign.TestSuite','WRITE') or hasRole('ROLE_ADMIN')")
+	@PreAuthorize("hasPermission(#testSuiteId, 'org.squashtest.csp.tm.domain.campaign.TestSuite','LINK') or hasRole('ROLE_ADMIN')")
 	public void changeTestPlanPosition(Long testSuiteId, int newIndex, List<Long> itemIds) {
 
 		TestSuite suite = testSuiteDao.findById(testSuiteId);

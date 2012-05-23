@@ -136,7 +136,7 @@ public class CustomIterationModificationServiceImpl implements CustomIterationMo
 	}
 
 	@Override
-	@PreAuthorize("hasPermission(#iterationId, 'org.squashtest.csp.tm.domain.campaign.Iteration', 'WRITE') "
+	@PreAuthorize("hasPermission(#iterationId, 'org.squashtest.csp.tm.domain.campaign.Iteration', 'VALIDATE') "
 			+ "or hasRole('ROLE_ADMIN')")
 	public void rename(long iterationId, String newName) {
 		Iteration iteration = iterationDao.findById(iterationId);
@@ -166,7 +166,7 @@ public class CustomIterationModificationServiceImpl implements CustomIterationMo
 	 *            the test case new position
 	 */
 	@Override
-	@PreAuthorize("hasPermission(#iterationId, 'org.squashtest.csp.tm.domain.campaign.Iteration', 'WRITE') "
+	@PreAuthorize("hasPermission(#iterationId, 'org.squashtest.csp.tm.domain.campaign.Iteration', 'LINK') "
 			+ "or hasRole('ROLE_ADMIN')")
 	@Deprecated
 	public void changeTestPlanPosition(long iterationId, long testPlanId, int newTestPlanPosition) {
@@ -188,7 +188,7 @@ public class CustomIterationModificationServiceImpl implements CustomIterationMo
 	 * @see CustomIterationModificationService#changeTestPlanPosition(long, int, List)
 	 */
 	@Override
-	@PreAuthorize("hasPermission(#iterationId, 'org.squashtest.csp.tm.domain.campaign.Iteration', 'WRITE') "
+	@PreAuthorize("hasPermission(#iterationId, 'org.squashtest.csp.tm.domain.campaign.Iteration', 'LINK') "
 			+ "or hasRole('ROLE_ADMIN')")
 	public void changeTestPlanPosition(long iterationId, int newPosition, List<Long> itemIds) {
 		Iteration iteration = iterationDao.findById(iterationId);

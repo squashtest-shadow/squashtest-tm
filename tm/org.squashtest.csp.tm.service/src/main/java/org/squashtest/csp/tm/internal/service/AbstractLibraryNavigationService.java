@@ -229,11 +229,7 @@ public abstract class AbstractLibraryNavigationService<LIBRARY extends Library<N
 		// fetch
 		FOLDER folder = getFolderDao().findById(folderId);
 		// check
-		try {
-			checkPermission(new SecurityCheckableObject(folder, "WRITE"));
-		} catch (AccessDeniedException ade) {
-			checkPermission(new SecurityCheckableObject(folder, "VALIDATE"));
-		}
+		checkPermission(new SecurityCheckableObject(folder, "VALIDATE"));
 
 		// proceed
 		LIBRARY library = getLibraryDao().findByRootContent((NODE) folder);

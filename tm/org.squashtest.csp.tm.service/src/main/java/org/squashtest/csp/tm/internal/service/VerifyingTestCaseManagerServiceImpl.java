@@ -84,7 +84,7 @@ public class VerifyingTestCaseManagerServiceImpl implements VerifyingTestCaseMan
 	}
 
 	@Override
-	@PreAuthorize("hasPermission(#requirementVersionId, 'org.squashtest.csp.tm.domain.requirement.RequirementVersion', 'WRITE') or hasRole('ROLE_ADMIN')")
+	@PreAuthorize("hasPermission(#requirementVersionId, 'org.squashtest.csp.tm.domain.requirement.RequirementVersion', 'LINK') or hasRole('ROLE_ADMIN')")
 	public Collection<VerifiedRequirementException> addVerifyingTestCasesToRequirementVersion(List<Long> testCasesIds,
 			long requirementVersionId) {
 		// nodes are returned unsorted
@@ -122,7 +122,7 @@ public class VerifyingTestCaseManagerServiceImpl implements VerifyingTestCaseMan
 	}
 
 	@Override
-	@PreAuthorize("hasPermission(#requirementVersionId, 'org.squashtest.csp.tm.domain.requirement.RequirementVersion', 'WRITE') or hasRole('ROLE_ADMIN')")
+	@PreAuthorize("hasPermission(#requirementVersionId, 'org.squashtest.csp.tm.domain.requirement.RequirementVersion', 'LINK') or hasRole('ROLE_ADMIN')")
 	public void removeVerifyingTestCasesFromRequirementVersion(List<Long> testCasesIds, long requirementVersionId) {
 
 		List<TestCase> testCases = testCaseDao.findAllByIdList(testCasesIds);
@@ -139,7 +139,7 @@ public class VerifyingTestCaseManagerServiceImpl implements VerifyingTestCaseMan
 	}
 
 	@Override
-	@PreAuthorize("hasPermission(#requirementVersionId, 'org.squashtest.csp.tm.domain.requirement.RequirementVersion', 'WRITE') or hasRole('ROLE_ADMIN')")
+	@PreAuthorize("hasPermission(#requirementVersionId, 'org.squashtest.csp.tm.domain.requirement.RequirementVersion', 'LINK') or hasRole('ROLE_ADMIN')")
 	public void removeVerifyingTestCaseFromRequirementVersion(long testCaseId, long requirementVersionId) {
 
 		RequirementVersion req = requirementVersionDao.findById(requirementVersionId);

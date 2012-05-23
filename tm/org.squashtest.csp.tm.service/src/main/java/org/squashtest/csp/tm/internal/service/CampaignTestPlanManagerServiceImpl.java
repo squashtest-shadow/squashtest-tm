@@ -63,10 +63,6 @@ public class CampaignTestPlanManagerServiceImpl implements CampaignTestPlanManag
 	private static final String CAN_READ_RETURNED_OBJECT = "hasPermission(returnObject, 'READ') or hasRole('ROLE_ADMIN')";
 
 	/**
-	 * Permission string for writing campaigns based on campaignId param.
-	 */
-	private static final String CAN_WRITE_CAMPAIGN_BY_ID = "hasPermission(#campaignId, 'org.squashtest.csp.tm.domain.campaign.Campaign', 'WRITE') or hasRole('ROLE_ADMIN')";
-	/**
 	 * Permission string for linking campaigns to TP / Users based on campaignId param.
 	 */
 	private static final String CAN_LINK_CAMPAIGN_BY_ID = "hasPermission(#campaignId, 'org.squashtest.csp.tm.domain.campaign.Campaign', 'LINK') or hasRole('ROLE_ADMIN')";

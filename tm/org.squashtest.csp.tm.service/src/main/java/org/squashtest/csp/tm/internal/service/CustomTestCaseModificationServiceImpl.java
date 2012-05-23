@@ -88,7 +88,7 @@ public class CustomTestCaseModificationServiceImpl implements CustomTestCaseModi
 	/* *************** TestCase section ***************************** */
 
 	@Override
-	@PreAuthorize("hasPermission(#testCaseId, 'org.squashtest.csp.tm.domain.testcase.TestCase' , 'WRITE') or hasRole('ROLE_ADMIN')")
+	@PreAuthorize("hasPermission(#testCaseId, 'org.squashtest.csp.tm.domain.testcase.TestCase' , 'VALIDATE') or hasRole('ROLE_ADMIN')")
 	public void rename(long testCaseId, String newName) throws DuplicateNameException {
 		testCaseManagementService.renameNode(testCaseId, newName);
 	}
@@ -210,7 +210,7 @@ public class CustomTestCaseModificationServiceImpl implements CustomTestCaseModi
 	@PreAuthorize("hasPermission(#testCaseId, 'org.squashtest.csp.tm.domain.testcase.TestCase' , 'WRITE') or hasRole('ROLE_ADMIN')")
 	public void pasteCopiedTestStep(long testCaseId, long idToCopyAfter, long copiedTestStepId) {
 		TestStep original = testStepDao.findById(copiedTestStepId);
-		// FIXME il faut vérifier un éventuel cycle !
+		// FIXME il faut vérifier un éventuel cycle ! // pour l'instant v�rifi� au niveau du controller
 		TestStep copyStep = original.createCopy();
 
 		testStepDao.persist(copyStep);
@@ -220,7 +220,7 @@ public class CustomTestCaseModificationServiceImpl implements CustomTestCaseModi
 
 		TestStep stepToCopyAfter = testStepDao.findById(idToCopyAfter);
 		index = testCase.getSteps().indexOf(stepToCopyAfter) + 1;
-		
+
 		testCase.addStep(index, copyStep);
 
 		if (!testCase.getSteps().contains(original)) {
@@ -233,7 +233,7 @@ public class CustomTestCaseModificationServiceImpl implements CustomTestCaseModi
 	@PreAuthorize("hasPermission(#testCaseId, 'org.squashtest.csp.tm.domain.testcase.TestCase' , 'WRITE') or hasRole('ROLE_ADMIN')")
 	public void pasteCopiedTestStepToLastIndex(long testCaseId, long copiedTestStepId) {
 		TestStep original = testStepDao.findById(copiedTestStepId);
-		// FIXME il faut vérifier un éventuel cycle !
+		// FIXME il faut vérifier un éventuel cycle ! // pour l'instant v�rifi� au niveau du controller
 		TestStep copyStep = original.createCopy();
 
 		testStepDao.persist(copyStep);
@@ -247,7 +247,7 @@ public class CustomTestCaseModificationServiceImpl implements CustomTestCaseModi
 		}
 
 	}
-	
+
 	private void updateImportanceIfCallStep(TestCase parentTestCase, TestStep copyStep) {
 		if (copyStep instanceof CallTestStep) {
 			TestCase called = ((CallTestStep) copyStep).getCalledTestCase();

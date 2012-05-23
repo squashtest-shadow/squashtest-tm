@@ -92,7 +92,7 @@ public class RequirementLibraryNavigationServiceImpl extends
 	}
 
 	@Override
-	@PreAuthorize("hasPermission(#libraryId, 'org.squashtest.csp.tm.domain.requirement.RequirementLibrary' , 'WRITE') "
+	@PreAuthorize("hasPermission(#libraryId, 'org.squashtest.csp.tm.domain.requirement.RequirementLibrary' , 'CREATE') "
 			+ "or hasRole('ROLE_ADMIN')")
 	public Requirement addRequirementToRequirementLibrary(long libraryId, @NotNull NewRequirementVersionDto newVersion) {
 		RequirementLibrary library = requirementLibraryDao.findById(libraryId);
@@ -114,7 +114,7 @@ public class RequirementLibraryNavigationServiceImpl extends
 	}
 
 	@Override
-	@PreAuthorize("hasPermission(#folderId, 'org.squashtest.csp.tm.domain.requirement.RequirementFolder' , 'WRITE') "
+	@PreAuthorize("hasPermission(#folderId, 'org.squashtest.csp.tm.domain.requirement.RequirementFolder' , 'CREATE') "
 			+ "or hasRole('ROLE_ADMIN')")
 	public Requirement addRequirementToRequirementFolder(long folderId, @NotNull NewRequirementVersionDto firstVersion) {
 		RequirementFolder folder = requirementFolderDao.findById(folderId);

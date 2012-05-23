@@ -36,9 +36,9 @@ import org.squashtest.csp.tm.service.FolderModificationService;
 
 /**
  * Generic management service for folders. It is responsible for common rename / move / copy / remove operations.
- *
+ * 
  * @author Gregory Fouquet
- *
+ * 
  * @param <FOLDER>
  *            Type of folders managed by this object
  * @param <NODE>
@@ -48,16 +48,13 @@ import org.squashtest.csp.tm.service.FolderModificationService;
 public class GenericFolderModificationService<FOLDER extends Folder<NODE>, NODE extends LibraryNode> implements
 		FolderModificationService<FOLDER> {
 
-
 	private PermissionEvaluationService permissionService;
-
 
 	@ServiceReference
 	public void setPermissionService(PermissionEvaluationService permissionService) {
 		this.permissionService = permissionService;
 		delegate.setPermissionService(permissionService);
 	}
-
 
 	private final GenericNodeManagementService<FOLDER, NODE, FOLDER> delegate = new GenericNodeManagementService<FOLDER, NODE, FOLDER>();
 	private FolderDao<FOLDER, NODE> folderDao;
@@ -83,24 +80,24 @@ public class GenericFolderModificationService<FOLDER extends Folder<NODE>, NODE 
 
 	@Override
 	public final void removeFolder(long folderId) {
-		//check
-		checkPermission(new SecurityCheckableItem(folderId, SecurityCheckableItem.FOLDER, "WRITE"));
-		//proceed
+		// check
+		checkPermission(new SecurityCheckableItem(folderId, SecurityCheckableItem.FOLDER, "DELETE"));
+		// proceed
 		delegate.removeNode(folderId);
 	}
 
 	@Override
 	public final void renameFolder(long folderId, String newName) {
-		//check
-		checkPermission(new SecurityCheckableItem(folderId, SecurityCheckableItem.FOLDER, "WRITE"));
-		//proceed
+		// check
+		checkPermission(new SecurityCheckableItem(folderId, SecurityCheckableItem.FOLDER, "VALIDATE"));
+		// proceed
 		delegate.renameNode(folderId, newName);
 	}
 
 	@Override
 	public final void updateFolderDescription(long folderId, String newDescription) {
 		// check
-		checkPermission(new SecurityCheckableItem(folderId, SecurityCheckableItem.FOLDER, "WRITE"));
+		checkPermission(new SecurityCheckableItem(folderId, SecurityCheckableItem.FOLDER, "VALIDATE"));
 		// proceed
 		delegate.updateNodeDescription(folderId, newDescription);
 	}
@@ -111,8 +108,7 @@ public class GenericFolderModificationService<FOLDER extends Folder<NODE>, NODE 
 
 	/* *************** private section ************************ */
 
-
-	private class SecurityCheckableItem{
+	private class SecurityCheckableItem {
 		private static final String FOLDER = "folder";
 		private static final String LIBRARY = "library";
 
@@ -120,8 +116,7 @@ public class GenericFolderModificationService<FOLDER extends Folder<NODE>, NODE 
 		private String domainObjectKind; // which should be one of the two above
 		private final String permission;
 
-		public SecurityCheckableItem(long domainObjectId,
-				String domainObjectKind, String permission) {
+		public SecurityCheckableItem(long domainObjectId, String domainObjectKind, String permission) {
 			super();
 			this.domainObjectId = domainObjectId;
 			setKind(domainObjectKind);
@@ -129,46 +124,44 @@ public class GenericFolderModificationService<FOLDER extends Folder<NODE>, NODE 
 			this.permission = permission;
 		}
 
-		private void setKind(String kind){
-			if (! (kind.equals(SecurityCheckableItem.FOLDER))
-					|| kind.equals(SecurityCheckableItem.LIBRARY)){
-				throw new RuntimeException("(dev note : AbstracLibraryNavigationService : manual security checks aren't correctly configured");
+		private void setKind(String kind) {
+			if (!(kind.equals(SecurityCheckableItem.FOLDER)) || kind.equals(SecurityCheckableItem.LIBRARY)) {
+				throw new RuntimeException(
+						"(dev note : AbstracLibraryNavigationService : manual security checks aren't correctly configured");
 			}
-			domainObjectKind=kind;
+			domainObjectKind = kind;
 		}
 
 		public long getId() {
 			return domainObjectId;
 		}
+
 		public String getKind() {
 			return domainObjectKind;
 		}
+
 		public String getPermission() {
 			return permission;
 		}
-
 
 	}
 
 	private void checkPermission(SecurityCheckableItem... securityCheckableItems) throws AccessDeniedException {
 
-		for (SecurityCheckableItem item : securityCheckableItems){
+		for (SecurityCheckableItem item : securityCheckableItems) {
 
 			Object domainObject;
 
-			if (item.getKind().equals(SecurityCheckableItem.FOLDER)){
+			if (item.getKind().equals(SecurityCheckableItem.FOLDER)) {
 				domainObject = folderDao.findById(item.getId());
-			}
-			else {
+			} else {
 				domainObject = libraryDao.findById(item.getId());
 			}
 
-			if (! permissionService.hasRoleOrPermissionOnObject("ROLE_ADMIN", item.getPermission() , domainObject)){
+			if (!permissionService.hasRoleOrPermissionOnObject("ROLE_ADMIN", item.getPermission(), domainObject)) {
 				throw new AccessDeniedException("Access is denied");
 			}
 		}
 	}
-
-
 
 }

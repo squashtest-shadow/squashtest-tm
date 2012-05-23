@@ -116,14 +116,14 @@ public class IterationTestPlanManagerServiceImpl implements IterationTestPlanMan
 	/*
 	 * security note here : well what if we add test cases for which the user have no permissions on ? think of
 	 * something better.
-	 *
+	 * 
 	 * (non-Javadoc)
-	 *
+	 * 
 	 * @see org.squashtest.csp.tm.service.IterationTestPlanManagerService#addTestCasesToIteration(java.util.List, long)
 	 */
 
 	@Override
-	@PreAuthorize("hasPermission(#iterationId, 'org.squashtest.csp.tm.domain.campaign.Iteration', 'WRITE') "
+	@PreAuthorize("hasPermission(#iterationId, 'org.squashtest.csp.tm.domain.campaign.Iteration', 'LINK') "
 			+ "or hasRole('ROLE_ADMIN')")
 	public void addTestCasesToIteration(final List<Long> objectsIds, long iterationId) {
 
@@ -133,7 +133,7 @@ public class IterationTestPlanManagerServiceImpl implements IterationTestPlanMan
 	}
 
 	@Override
-	@PreAuthorize("hasPermission(#iteration, 'WRITE') " + "or hasRole('ROLE_ADMIN')")
+	@PreAuthorize("hasPermission(#iteration, 'LINK') " + "or hasRole('ROLE_ADMIN')")
 	public List<IterationTestPlanItem> addTestPlanItemsToIteration(final List<Long> testNodesIds, Iteration iteration) {
 
 		// nodes are returned unsorted
@@ -156,7 +156,7 @@ public class IterationTestPlanManagerServiceImpl implements IterationTestPlanMan
 	}
 
 	@Override
-	@PreAuthorize("hasPermission(#iterationId, 'org.squashtest.csp.tm.domain.campaign.Iteration', 'WRITE') "
+	@PreAuthorize("hasPermission(#iterationId, 'org.squashtest.csp.tm.domain.campaign.Iteration', 'LINK') "
 			+ "or hasRole('ROLE_ADMIN')")
 	public void addTestPlanToIteration(List<IterationTestPlanItem> testPlan, long iterationId) {
 		Iteration iteration = iterationDao.findById(iterationId);
@@ -168,23 +168,22 @@ public class IterationTestPlanManagerServiceImpl implements IterationTestPlanMan
 	}
 
 	@Override
-	@PreAuthorize("hasPermission(#iterationId, 'org.squashtest.csp.tm.domain.campaign.Iteration', 'WRITE') "
+	@PreAuthorize("hasPermission(#iterationId, 'org.squashtest.csp.tm.domain.campaign.Iteration', 'LINK') "
 			+ "or hasRole('ROLE_ADMIN')")
 	public boolean removeTestPlansFromIteration(List<Long> testPlanIds, long iterationId) {
 		boolean unauthorizedDeletion = false;
 		Iteration it = iterationDao.findById(iterationId);
-		
+
 		unauthorizedDeletion = removeTestPlansFromIterationObj(testPlanIds, it);
 
 		return unauthorizedDeletion;
 	}
-	
+
 	@Override
-	@PreAuthorize("hasPermission(#iteration, 'WRITE') "
-			+ "or hasRole('ROLE_ADMIN')")
+	@PreAuthorize("hasPermission(#iteration, 'LINK') " + "or hasRole('ROLE_ADMIN')")
 	public boolean removeTestPlansFromIterationObj(List<Long> testPlanIds, Iteration iteration) {
 		boolean unauthorizedDeletion = false;
-		
+
 		for (Long id : testPlanIds) {
 			IterationTestPlanItem itp = iteration.getTestPlan(id);
 			// We do not allow deletion if there are execution
@@ -200,12 +199,12 @@ public class IterationTestPlanManagerServiceImpl implements IterationTestPlanMan
 	}
 
 	@Override
-	@PreAuthorize("hasPermission(#iterationId, 'org.squashtest.csp.tm.domain.campaign.Iteration', 'WRITE') "
+	@PreAuthorize("hasPermission(#iterationId, 'org.squashtest.csp.tm.domain.campaign.Iteration', 'LINK') "
 			+ "or hasRole('ROLE_ADMIN')")
 	public boolean removeTestPlanFromIteration(Long testPlanId, long iterationId) {
 		boolean unauthorizedDeletion = false;
 		Iteration it = iterationDao.findById(iterationId);
-		
+
 		IterationTestPlanItem itp = it.getTestPlan(testPlanId);
 		// We do not allow deletion if there are execution
 		if (itp.getExecutions().isEmpty()) {

@@ -36,9 +36,9 @@ import org.squashtest.csp.tm.internal.repository.LibraryDao;
 /**
  * Generic management service for library nodes. It is responsible for common operations such as rename / move / copy
  * and so on.
- *
+ * 
  * @author Gregory Fouquet
- *
+ * 
  * @param <FOLDER>
  *            Type of folder which can contain managed type
  * @param <NODE>
@@ -63,7 +63,7 @@ public class GenericNodeManagementService<MANAGED extends LibraryNode, NODE exte
 
 	/*
 	 * (non-Javadoc)
-	 *
+	 * 
 	 * @see org.squashtest.csp.tm.internal.service.NodeManagementService#findNode(long)
 	 */
 	@Override
@@ -79,12 +79,12 @@ public class GenericNodeManagementService<MANAGED extends LibraryNode, NODE exte
 
 	/*
 	 * (non-Javadoc)
-	 *
+	 * 
 	 * @see org.squashtest.csp.tm.internal.service.NodeManagementService#removeNode(long)
 	 */
 	@Override
 	public/* final */void removeNode(long nodeId) {
-		MANAGED node = findModifiableNode(nodeId);
+		MANAGED node = checkDeletableNode(nodeId);
 
 		// proceed
 		// TODO throw some exception instead
@@ -96,25 +96,37 @@ public class GenericNodeManagementService<MANAGED extends LibraryNode, NODE exte
 	}
 
 	/**
-	 * finds a node on which the curent user context has write permission.
-	 *
+	 * check if the current user context has delete permission on the node.
+	 * 
 	 * @param nodeId
 	 * @return
 	 */
-	private MANAGED findModifiableNode(long nodeId) {
+	private MANAGED checkDeletableNode(long nodeId) {
 		MANAGED node = nodeDao.findById(nodeId);
-		checkPermission(new SecurityCheckableObject(node, "WRITE"));
+		checkPermission(new SecurityCheckableObject(node, "DELETE"));
+		return node;
+	}
+
+	/**
+	 * check if the current user context has validate permission on the node.
+	 * 
+	 * @param nodeId
+	 * @return
+	 */
+	private MANAGED checkValidableNode(long nodeId) {
+		MANAGED node = nodeDao.findById(nodeId);
+		checkPermission(new SecurityCheckableObject(node, "VALIDATE"));
 		return node;
 	}
 
 	/*
 	 * (non-Javadoc)
-	 *
+	 * 
 	 * @see org.squashtest.csp.tm.internal.service.NodeManagementService#renameNode(long, java.lang.String)
 	 */
 	@Override
 	public final void renameNode(long nodeId, String newName) throws DuplicateNameException {
-		MANAGED node = findModifiableNode(nodeId);
+		MANAGED node = checkValidableNode(nodeId);
 
 		// proceed
 		renameNode(newName, node);
@@ -128,7 +140,7 @@ public class GenericNodeManagementService<MANAGED extends LibraryNode, NODE exte
 
 	@Override
 	public final void updateNodeDescription(long nodeId, String newDescription) {
-		MANAGED node = findModifiableNode(nodeId);
+		MANAGED node = checkValidableNode(nodeId);
 
 		// proceed
 		node.setDescription(newDescription);
@@ -136,7 +148,7 @@ public class GenericNodeManagementService<MANAGED extends LibraryNode, NODE exte
 
 	/**
 	 * Renames the node regardless its current name. In other words, renaming a node to its current name should fail.
-	 *
+	 * 
 	 * @param node
 	 * @param newName
 	 */
