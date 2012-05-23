@@ -89,6 +89,9 @@
 <authz:authorized hasRole="ROLE_ADMIN" hasPermission="WRITE" domainObject="${ iteration }">
 	<c:set var="writable" value="${ true }" />
 </authz:authorized>
+<authz:authorized hasRole="ROLE_ADMIN" hasPermission="VALIDATE" domainObject="${ iteration }">
+	<c:set var="validable" value="${ true }" />
+</authz:authorized>
 <authz:authorized hasRole="ROLE_ADMIN" hasPermission="DELETE" domainObject="${ iteration }">
 	<c:set var="deletable" value="${true }"/>
 </authz:authorized>
@@ -177,7 +180,7 @@
 	</div>
 	
 	<div style="clear:both;"></div>	
-	<c:if test="${ writable }">
+	<c:if test="${ validable }">
 		<comp:popup id="rename-iteration-dialog" titleKey="dialog.rename-iteration.title" 
 		            isContextual="true"   openedBy="rename-iteration-button">
 			<jsp:attribute name="buttons">
@@ -222,6 +225,7 @@
 	<div class="toolbar-button-panel">
 		<c:if test="${ writable }">	
 			<input type="button" value=' <f:message key="iteration.test-plan.testsuite.manage.label"/>' id="manage-test-suites-button" class="button"/>
+		</c:if><c:if test="${ validable }">
 			<input type="button" value='<f:message key="iteration.button.rename.label" />' id="rename-iteration-button" class="button"/> 
 		</c:if>	<c:if test="${ deletable }">	
 			<input type="button" value='<f:message key="iteration.button.remove.label" />' id="delete-iteration-button" class="button"/>		
@@ -239,7 +243,7 @@
 	</ul>
 	<div id="tabs-1">
 
-<c:if test="${ writable }">
+<c:if test="${ validable }">
 <comp:rich-jeditable targetUrl="${ iterationUrl }" componentId="iteration-description"
 					 submitCallback="refreshIterationInfos"
 					 />
@@ -267,7 +271,7 @@
 						paramName="scheduledStart" isContextual="true"
 						postCallback="refreshIterationInfos"
 						initialDate="${iteration.scheduledStartDate.time}"
-						editable="${ writable }" >	
+						editable="${ validable }" >	
 					</comp:datepicker>
 				</td>
 				<td class="datepicker-table-col">
@@ -282,7 +286,7 @@
 						postCallback="refreshIterationInfos"
 						initialDate="${iteration.actualStartDate.time}"
 						isContextual="true"
-						editable="${ writable }" 
+						editable="${ validable }" 
 						jsVarName="actualStart">
 					</comp:datepicker-auto>
 				</td>
@@ -294,7 +298,7 @@
 						paramName="scheduledEnd" isContextual="true"
 						postCallback="refreshIterationInfos"
 						initialDate="${iteration.scheduledEndDate.time}"
-						editable="${ writable }" >	
+						editable="${ validable }" >	
 					</comp:datepicker>				
 				</td>
 				<td class="datepicker-table-col">
@@ -308,7 +312,7 @@
 						postCallback="refreshIterationInfos"
 						initialDate="${iteration.actualEndDate.time}"
 						isContextual="true"
-						editable="${ writable }"
+						editable="${ validable }"
 						jsVarName="actualEnd">
 					</comp:datepicker-auto>
 				</td>
