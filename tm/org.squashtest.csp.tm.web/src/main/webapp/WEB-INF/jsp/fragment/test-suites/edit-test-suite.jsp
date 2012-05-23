@@ -131,8 +131,8 @@
 <authz:authorized hasRole="ROLE_ADMIN" hasPermission="WRITE" domainObject="${ testSuite }">
 	<c:set var="writable" value="${ true }" />
 </authz:authorized>
-<authz:authorized hasRole="ROLE_ADMIN" hasPermission="VALIDATE" domainObject="${ testSuite }">
-	<c:set var="validable" value="${ true }" />
+<authz:authorized hasRole="ROLE_ADMIN" hasPermission="SMALL_EDIT" domainObject="${ testSuite }">
+	<c:set var="smallEditable" value="${ true }" />
 </authz:authorized>
 <authz:authorized hasRole="ROLE_ADMIN" hasPermission="DELETE" domainObject="${ testSuite }">
 	<c:set var="deletable" value="${true }"/>
@@ -245,7 +245,7 @@
 	</div>
 
 	<div style="clear: both;"></div>
-	<c:if test="${ validable }">
+	<c:if test="${ smallEditable }">
 		<comp:popup id="rename-test-suite-dialog"
 			titleKey="dialog.testsuites.rename.title" isContextual="true"
 			openedBy="rename-test-suite-button">
@@ -296,7 +296,7 @@
 						statisticsEntity="${ statistics }" />
 				</div>
 			</c:if>
-			<c:if test="${ validable }">
+			<c:if test="${ smallEditable }">
 				<input type="button"
 					value="<f:message key='test-suite.button.rename.label' />"
 					id="rename-test-suite-button" class="button"
@@ -325,7 +325,7 @@
 		<li><a href="#tabs-3"><f:message key="tabs.label.attachments" /><c:if test="${ testSuite.attachmentList.notEmpty }"><span class="hasAttach">!</span></c:if></a></li>
 	</ul>
 	<div id="tabs-1">
-	<c:if test="${ validable }">
+	<c:if test="${ smallEditable }">
 		<comp:rich-jeditable targetUrl="${ testSuiteUrl }"
 			componentId="test-suite-description"
 			submitCallback="refreshTestSuiteInfos" />

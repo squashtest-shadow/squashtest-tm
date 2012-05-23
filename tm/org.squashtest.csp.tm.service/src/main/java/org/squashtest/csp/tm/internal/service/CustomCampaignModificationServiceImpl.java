@@ -60,17 +60,17 @@ public class CustomCampaignModificationServiceImpl implements CustomCampaignModi
 	}
 
 	@Override
-	@PreAuthorize("hasPermission(#campaignId, 'org.squashtest.csp.tm.domain.campaign.Campaign' ,'WRITE') " +
-			"or hasRole('ROLE_ADMIN')")
+	@PreAuthorize("hasPermission(#campaignId, 'org.squashtest.csp.tm.domain.campaign.Campaign' ,'SMALL_EDIT') "
+			+ "or hasRole('ROLE_ADMIN')")
 	public void rename(long campaignId, String newName) {
 		campaignManagementService.renameNode(campaignId, newName);
 	}
 
 	@Override
-	@PreAuthorize("hasPermission(#campaignId, 'org.squashtest.csp.tm.domain.campaign.Campaign' ,'READ') " +
-			"or hasRole('ROLE_ADMIN')")
-	public FilteredCollectionHolder<List<CampaignTestPlanItem>> findTestPlanByCampaignId(
-			long campaignId, CollectionSorting filter){
+	@PreAuthorize("hasPermission(#campaignId, 'org.squashtest.csp.tm.domain.campaign.Campaign' ,'READ') "
+			+ "or hasRole('ROLE_ADMIN')")
+	public FilteredCollectionHolder<List<CampaignTestPlanItem>> findTestPlanByCampaignId(long campaignId,
+			CollectionSorting filter) {
 		List<CampaignTestPlanItem> tcs = campaignDao.findAllTestPlanByIdFiltered(campaignId, filter);
 		long count = campaignDao.countTestPlanById(campaignId);
 		return new FilteredCollectionHolder<List<CampaignTestPlanItem>>(count, tcs);

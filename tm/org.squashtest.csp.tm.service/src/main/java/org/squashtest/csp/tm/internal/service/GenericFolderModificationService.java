@@ -89,7 +89,7 @@ public class GenericFolderModificationService<FOLDER extends Folder<NODE>, NODE 
 	@Override
 	public final void renameFolder(long folderId, String newName) {
 		// check
-		checkPermission(new SecurityCheckableItem(folderId, SecurityCheckableItem.FOLDER, "VALIDATE"));
+		checkPermission(new SecurityCheckableItem(folderId, SecurityCheckableItem.FOLDER, "SMALL_EDIT"));
 		// proceed
 		delegate.renameNode(folderId, newName);
 	}
@@ -97,7 +97,7 @@ public class GenericFolderModificationService<FOLDER extends Folder<NODE>, NODE 
 	@Override
 	public final void updateFolderDescription(long folderId, String newDescription) {
 		// check
-		checkPermission(new SecurityCheckableItem(folderId, SecurityCheckableItem.FOLDER, "VALIDATE"));
+		checkPermission(new SecurityCheckableItem(folderId, SecurityCheckableItem.FOLDER, "SMALL_EDIT"));
 		// proceed
 		delegate.updateNodeDescription(folderId, newDescription);
 	}

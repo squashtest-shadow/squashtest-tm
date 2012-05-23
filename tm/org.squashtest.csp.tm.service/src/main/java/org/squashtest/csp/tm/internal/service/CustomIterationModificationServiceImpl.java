@@ -136,7 +136,7 @@ public class CustomIterationModificationServiceImpl implements CustomIterationMo
 	}
 
 	@Override
-	@PreAuthorize("hasPermission(#iterationId, 'org.squashtest.csp.tm.domain.campaign.Iteration', 'VALIDATE') "
+	@PreAuthorize("hasPermission(#iterationId, 'org.squashtest.csp.tm.domain.campaign.Iteration', 'SMALL_EDIT') "
 			+ "or hasRole('ROLE_ADMIN')")
 	public void rename(long iterationId, String newName) {
 		Iteration iteration = iterationDao.findById(iterationId);

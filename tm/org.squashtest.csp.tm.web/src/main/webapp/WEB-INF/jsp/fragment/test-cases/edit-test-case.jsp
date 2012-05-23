@@ -82,8 +82,8 @@
 <authz:authorized hasRole="ROLE_ADMIN" hasPermission="WRITE" domainObject="${ testCase }">
 	<c:set var="writable" value="${ true }" />
 </authz:authorized>
-<authz:authorized hasRole="ROLE_ADMIN" hasPermission="VALIDATE" domainObject="${ testCase }">
-	<c:set var="validable" value="${true }"/>
+<authz:authorized hasRole="ROLE_ADMIN" hasPermission="SMALL_EDIT" domainObject="${ testCase }">
+	<c:set var="smallEditable" value="${true }"/>
 </authz:authorized>
 <authz:authorized hasRole="ROLE_ADMIN" hasPermission="DELETE" domainObject="${ testCase }">
 	<c:set var="deletable" value="${true }"/>
@@ -551,7 +551,7 @@ $(function() {
 </div>
 
 <%---------------------------- Rename test case popup ------------------------------%>
-<c:if test="${ validable }">
+<c:if test="${ smallEditable }">
 <comp:popup id="rename-test-case-dialog" titleKey="dialog.rename-test-case.title" isContextual="true"
 	openedBy="rename-test-case-button">
 	<jsp:attribute name="buttons">
@@ -593,7 +593,7 @@ $(function() {
 </div>
 
 <div class="toolbar-button-panel">
-<c:if test="${ validable }">
+<c:if test="${ smallEditable }">
 	<input type="button" value="<f:message key='test-case.button.rename.label' />" id="rename-test-case-button" class="button" />
 </c:if>
 <c:if test="${ deletable }">
@@ -611,7 +611,7 @@ $(function() {
 	</ul>
 	<div id="tabs-1">
 <%----------------------------------- Description -----------------------------------------------%>
-<c:if test="${ validable }">
+<c:if test="${ smallEditable }">
 	<comp:rich-jeditable targetUrl="${ testCaseUrl }" componentId="test-case-description" />
 	<comp:select-jeditable componentId="test-case-importance" jsonData="${ testCaseImportanceComboJson }" targetUrl="${ testCaseUrl }" />
 </c:if>
@@ -628,7 +628,7 @@ $(function() {
 				<label for="test-case-importance" class="display-table-cell"><f:message key="test-case.importance.combo.label" /></label>
 				<div class="display-table-cell">
 					<span id="test-case-importance">${ testCaseImportanceLabel }</span>
-					<c:if test="${ validable }">
+					<c:if test="${ smallEditable }">
 					<comp:select-jeditable-auto associatedSelectJeditableId="test-case-importance" url="${ importanceAutoUrl }" isAuto="${ testCase.importanceAuto }" paramName="importanceAuto"/>
 					</c:if>
 					
@@ -658,7 +658,7 @@ $(function() {
 </script>
 
 <%----------------------------------- Prerequisites -----------------------------------------------%>
-<c:if test="${ validable }">
+<c:if test="${ smallEditable }">
 	<comp:rich-jeditable targetUrl="${ testCaseUrl }" componentId="test-case-prerequisite" />
 </c:if>
 

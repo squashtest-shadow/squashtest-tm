@@ -83,8 +83,8 @@ public abstract class LibraryTreeNodeBuilder<T extends LibraryNode> {
 	public final JsTreeNode build() {
 		builtNode = new JsTreeNode();
 
-		boolean editable = permissionEvaluationService.hasRoleOrPermissionOnObject("ROLE_ADMIN", "WRITE", node) ;
-		builtNode.addAttr("editable", String.valueOf(editable));
+		boolean editable = permissionEvaluationService.hasRoleOrPermissionOnObject("ROLE_ADMIN", "SMALL_EDIT", node) ;
+		builtNode.addAttr("smallEdit", String.valueOf(editable));
 		boolean creatable = permissionEvaluationService.hasRoleOrPermissionOnObject("ROLE_ADMIN", "CREATE", node);
 		builtNode.addAttr("creatable", String.valueOf(creatable));
 		boolean deletable = permissionEvaluationService.hasRoleOrPermissionOnObject("ROLE_ADMIN", "DELETE", node);

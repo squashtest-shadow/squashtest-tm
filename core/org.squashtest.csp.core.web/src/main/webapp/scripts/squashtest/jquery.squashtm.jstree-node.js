@@ -91,7 +91,7 @@
 		}
 		
 		this.isEditable = function(){
-			return this.reference.attr('validable');
+			return this.reference.attr('smallEdit');
 		}
 		
 		this.isCreatable = function(){

@@ -88,7 +88,7 @@ public class CustomTestCaseModificationServiceImpl implements CustomTestCaseModi
 	/* *************** TestCase section ***************************** */
 
 	@Override
-	@PreAuthorize("hasPermission(#testCaseId, 'org.squashtest.csp.tm.domain.testcase.TestCase' , 'VALIDATE') or hasRole('ROLE_ADMIN')")
+	@PreAuthorize("hasPermission(#testCaseId, 'org.squashtest.csp.tm.domain.testcase.TestCase' , 'SMALL_EDIT') or hasRole('ROLE_ADMIN')")
 	public void rename(long testCaseId, String newName) throws DuplicateNameException {
 		testCaseManagementService.renameNode(testCaseId, newName);
 	}

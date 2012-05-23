@@ -54,7 +54,7 @@ public class CustomRequirementModificationServiceImpl implements CustomRequireme
 	}
 
 	@Override
-	@PreAuthorize("hasPermission(#reqId, 'org.squashtest.csp.tm.domain.requirement.Requirement', 'VALIDATE') or hasRole('ROLE_ADMIN')")
+	@PreAuthorize("hasPermission(#reqId, 'org.squashtest.csp.tm.domain.requirement.Requirement', 'SMALL_EDIT') or hasRole('ROLE_ADMIN')")
 	public void rename(long reqId, String newName) {
 		requirementManagementService.renameNode(reqId, newName);
 	}
@@ -68,7 +68,7 @@ public class CustomRequirementModificationServiceImpl implements CustomRequireme
 	}
 
 	@Override
-	@PreAuthorize("hasPermission(#requirementId, 'org.squashtest.csp.tm.domain.requirement.Requirement', 'VALIDATE') or hasRole('ROLE_ADMIN')")
+	@PreAuthorize("hasPermission(#requirementId, 'org.squashtest.csp.tm.domain.requirement.Requirement', 'SMALL_EDIT') or hasRole('ROLE_ADMIN')")
 	public void changeCriticality(long requirementId, RequirementCriticality criticality) {
 		Requirement requirement = requirementDao.findById(requirementId);
 		RequirementCriticality oldCriticality = requirement.getCriticality();

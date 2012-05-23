@@ -55,7 +55,7 @@ var squashtm ;
 			return $(a).is("[rel='view']");
 		},
 		editable : function(a){
-			return $(a).attr('validable') === 'true';
+			return $(a).attr('smallEdit') === 'true';
 		},
 		creatable : function(a){
 			return $(a).attr('creatable') === 'true';

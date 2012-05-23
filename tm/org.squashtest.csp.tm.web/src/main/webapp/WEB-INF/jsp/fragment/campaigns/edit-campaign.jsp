@@ -65,6 +65,9 @@
 <authz:authorized hasRole="ROLE_ADMIN" hasPermission="WRITE" domainObject="${ campaign }">
 	<c:set var="writable" value="${ true }" />
 </authz:authorized>
+<authz:authorized hasRole="ROLE_ADMIN" hasPermission="SMALL_EDIT" domainObject="${ campaign }">
+	<c:set var="smallEditable" value="${ true }" />
+</authz:authorized>
 <authz:authorized hasRole="ROLE_ADMIN" hasPermission="DELETE" domainObject="${ campaign }">
 	<c:set var="deletable" value="${true }"/>
 </authz:authorized>
@@ -145,7 +148,7 @@
 	</div>
 	
 	<div style="clear:both;"></div>
-	<c:if test="${writable}">
+	<c:if test="${smallEditable}">
 		<comp:popup id="rename-campaign-dialog" titleKey="dialog.rename-campaign.title" 
 		            isContextual="true"   openedBy="rename-campaign-button">
 			<jsp:attribute name="buttons">
@@ -188,7 +191,7 @@
 		<comp:general-information-panel auditableEntity="${campaign}"/>
 	</div>
 	<div class="toolbar-button-panel">
-	<c:if test="${ writable }">
+	<c:if test="${ smallEditable }">
 		<input type="button" value='<f:message key="campaign.button.rename.label" />' id="rename-campaign-button" /> 
 	</c:if><c:if test="${ deletable }">
 		<input type="button" value='<f:message key="campaign.button.remove.label" />' id="delete-campaign-button" />
@@ -204,7 +207,7 @@
 		<li><a href="#tabs-3"><f:message key="tabs.label.attachments" /><c:if test="${ campaign.attachmentList.notEmpty }"><span class="hasAttach">!</span></c:if></a></li>
 	</ul>
 	<div id="tabs-1">
-<c:if test="${ writable }">
+<c:if test="${ smallEditable }">
 	<comp:rich-jeditable targetUrl="${ campaignUrl }" componentId="campaign-description" />
 </c:if>
 
@@ -231,7 +234,7 @@
 					<comp:datepicker fmtLabel="dialog.label.campaign.scheduled_start.label" 
 						url="${campaignPlanningUrl}" datePickerId="scheduled-start" 
 						paramName="scheduledStart" isContextual="true"
-						initialDate="${campaign.scheduledStartDate.time}" editable="${ writable }" >	
+						initialDate="${campaign.scheduledStartDate.time}" editable="${ smallEditable }" >	
 					</comp:datepicker>
 				</td>
 				<td class="datepicker-table-col">
@@ -244,7 +247,7 @@
 						isAuto="${campaign.actualStartAuto}"
 						initialDate="${campaign.actualStartDate.time}"
 						isContextual="true"
-						editable="${ writable }" >
+						editable="${ smallEditable }" >
 					</comp:datepicker-auto>
 				</td>
 			</tr>
@@ -254,7 +257,7 @@
 						url="${campaignPlanningUrl}" datePickerId="scheduled-end" 
 						paramName="scheduledEnd" isContextual="true"
 						initialDate="${campaign.scheduledEndDate.time}" 
-						editable="${ writable }"
+						editable="${ smallEditable }"
 						>	
 					</comp:datepicker>				
 				</td>
@@ -268,7 +271,7 @@
 						isAuto="${campaign.actualEndAuto}"
 						initialDate="${campaign.actualEndDate.time}"
 						isContextual="true"
-						editable="${ writable }"
+						editable="${ smallEditable }"
 						>
 					</comp:datepicker-auto>
 				</td>

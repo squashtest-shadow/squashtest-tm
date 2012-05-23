@@ -57,8 +57,8 @@ that page won't be editable if
 <authz:authorized hasRole="ROLE_ADMIN" hasPermission="WRITE" domainObject="${ requirement }">
 	<c:set var="writable" value="${ requirement.modifiable }" />
 </authz:authorized>
-<authz:authorized hasRole="ROLE_ADMIN" hasPermission="VALIDATE" domainObject="${ requirement }">
-	<c:set var="validable" value="${requirement.modifiable }"/>
+<authz:authorized hasRole="ROLE_ADMIN" hasPermission="SMALL_EDIT" domainObject="${ requirement }">
+	<c:set var="smallEditable" value="${requirement.modifiable }"/>
 </authz:authorized>
 <authz:authorized hasRole="ROLE_ADMIN" hasPermission="DELETE" domainObject="${ requirement }">
 	<c:set var="deletable" value="${requirement.modifiable }"/>
@@ -69,7 +69,7 @@ that page won't be editable if
 <authz:authorized hasRole="ROLE_ADMIN" hasPermission="LINK" domainObject="${ requirement }">
 	<c:set var="linkable" value="${ requirement.linkable }" />
 </authz:authorized>
-<c:set var="status_editable" value="${ validable && requirement.status.allowsStatusUpdate }"/>
+<c:set var="status_editable" value="${ smallEditable && requirement.status.allowsStatusUpdate }"/>
 <%-- ----------------------------------- Init ----------------------------------------------%>
 <%-- 
 	Code managing the status of a requirement. It is a handler for the 'onsubmit' of a jeditable (see documentation for details).
@@ -181,7 +181,7 @@ that page won't be editable if
 	</div>
 
 	<div class="toolbar-button-panel">
-		<c:if test="${ validable }">
+		<c:if test="${ smallEditable }">
 			<input type="button" value='<f:message key="requirement.button.rename.label" />' id="rename-requirement-button" class="button"/> 
 		</c:if>
 		<c:if test="${deletable }">
@@ -207,7 +207,7 @@ that page won't be editable if
 	<%-- ----------------------------------- INFO TAB  ----------------------------------------------%>	
 	<div id="tabs-1">
 	
-	<c:if test="${validable }">
+	<c:if test="${smallEditable }">
 		<comp:rich-jeditable targetUrl="${ requirementUrl }" componentId="requirement-description" />
 		<%-- make requirement-reference editable --%>
 		<%-- TODO put at end of page, maybe componentize --%>
@@ -234,7 +234,7 @@ that page won't be editable if
 					<label for="requirement-criticality" class="display-table-cell"><f:message key="requirement.criticality.combo.label" /></label>
 					<div class="display-table-cell">
 						<c:choose>
-						<c:when test="${validable }">
+						<c:when test="${smallEditable }">
 						<div id="requirement-criticality"><comp:level-message level="${ requirement.criticality }"/></div>
 						<comp:select-jeditable componentId="requirement-criticality" jsonData="${criticalityList}" targetUrl="${requirementUrl}" />
 						</c:when>
@@ -305,7 +305,7 @@ that page won't be editable if
 	
 <%-- -----------------------------------POPUPS ----------------------------------------------%>
 <%--------------------------- Rename popup -------------------------------------%>
-<c:if test="${ validable }">
+<c:if test="${ smallEditable }">
 		<comp:popup id="rename-requirement-dialog" titleKey="dialog.rename-requirement.title" 
 			isContextual="true" openedBy="rename-requirement-button">
 			<jsp:attribute name="buttons">
@@ -415,7 +415,7 @@ that page won't be editable if
 		return toReturn;
 	}
 
-	<c:if test="${validable}">
+	<c:if test="${smallEditable}">
 		/* renaming success handler */
 		function renameRequirementSuccess(data){
 			//Compose the real name
