@@ -552,12 +552,7 @@ function addAttachmentButtonToRow(row, entityId, buttonTemplateId) {
  * @param buttons
  */
 function decorateAttachmentButtons(buttons) {
-	buttons.button({
-		text : false,
-		icons : {
-			primary : "ui-icon-notice"
-		}
-	});
+	$(buttons).html("<img src='/squash/images/attach_2.png'>");
 }
 /**
  * Decorates given buttons for empty attachment list
@@ -565,12 +560,7 @@ function decorateAttachmentButtons(buttons) {
  * @param buttons
  */
 function decorateEmptyAttachmentButtons(buttons) {
-	buttons.button({
-		text : false,
-		icons : {
-			primary : "ui-icon-document"
-		}
-	});
+	$(buttons).html("<img src='/squash/images/add.png'>");
 }
 
 /**
