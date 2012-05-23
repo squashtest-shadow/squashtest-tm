@@ -52,13 +52,15 @@ public interface IterationTestPlanManagerService extends IterationTestPlanFinder
 
 	/**
 	 * Adds a list of test cases to an iteration.
+	 * 
 	 * @param testCaseIds
 	 * @param iterationId
 	 */
 	void addTestCasesToIteration(List<Long> testCaseIds, long iterationId);
-	
+
 	/**
 	 * Adds a list of test cases to an iteration.
+	 * 
 	 * @param testCaseIds
 	 * @param iteration
 	 */
@@ -95,10 +97,10 @@ public interface IterationTestPlanManagerService extends IterationTestPlanFinder
 	 * @return true if at least one test plan was already executed and therefore not deleted
 	 */
 	boolean removeTestPlansFromIterationObj(List<Long> testPlanIds, Iteration iteration);
-	
+
 	/**
 	 * Removes a test case from an iteration except if the test plans was executed
-	 *
+	 * 
 	 * @param testPlanId
 	 *            the id of the test plan managing that test case for that iteration
 	 * @param iterationId
@@ -120,7 +122,7 @@ public interface IterationTestPlanManagerService extends IterationTestPlanFinder
 			String lastExecutedBy);
 
 	/**
-	 * Get Users with Write Access for an Iteration and its TestPlan.
+	 * Get Users with Execute Access for an Iteration and its TestPlan.
 	 * 
 	 * @param testCaseId
 	 * @param campaignId
@@ -128,7 +130,7 @@ public interface IterationTestPlanManagerService extends IterationTestPlanFinder
 	List<User> findAssignableUserForTestPlan(long iterationId);
 
 	/**
-	 * Assign User with Write Access to a TestPlan item.
+	 * Assign User with Execute Access to a TestPlan item.
 	 * 
 	 * @param testCaseId
 	 * @param campaignId
@@ -136,7 +138,7 @@ public interface IterationTestPlanManagerService extends IterationTestPlanFinder
 	void assignUserToTestPlanItem(Long testPlanId, long iterationId, Long userId);
 
 	/**
-	 * Assign User with Write Access to a multiple TestPlan items.
+	 * Assign User with Execute Access to a multiple TestPlan items.
 	 * 
 	 * @param testPlanIds
 	 * @param campaignId

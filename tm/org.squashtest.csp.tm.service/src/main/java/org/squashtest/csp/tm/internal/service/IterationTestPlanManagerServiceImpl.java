@@ -255,14 +255,14 @@ public class IterationTestPlanManagerServiceImpl implements IterationTestPlanMan
 		ObjectIdentity oid = objIdRetrievalStrategy.getObjectIdentity(iteration);
 		entityRefs.add(oid);
 
-		List<String> loginList = aclService.findUsersWithWritePermission(entityRefs);
+		List<String> loginList = aclService.findUsersWithExecutePermission(entityRefs);
 		List<User> usersList = userDao.findUsersByLoginList(loginList);
 
 		return usersList;
 
 	}
 
-	// FIXME : security
+	// FIXME : security execute
 	@Override
 	public void assignUserToTestPlanItem(Long testPlanId, long iterationId, Long userId) {
 		Iteration iteration = iterationDao.findById(iterationId);
@@ -274,7 +274,7 @@ public class IterationTestPlanManagerServiceImpl implements IterationTestPlanMan
 		}
 	}
 
-	// FIXME : security
+	// FIXME : security execute
 	@Override
 	public void assignUserToTestPlanItems(List<Long> testPlanIds, long iterationId, Long userId) {
 		Iteration iteration = iterationDao.findById(iterationId);

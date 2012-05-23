@@ -24,10 +24,9 @@ import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.transaction.annotation.Transactional;
 
 @Transactional
-public interface TestSuiteModificationService extends
-		CustomTestSuiteModificationService {
+public interface TestSuiteModificationService extends CustomTestSuiteModificationService {
 
-	@PreAuthorize("hasPermission(#arg0, 'org.squashtest.csp.tm.domain.campaign.TestSuite', 'WRITE') "
+	@PreAuthorize("hasPermission(#arg0, 'org.squashtest.csp.tm.domain.campaign.TestSuite', 'SMALL_EDIT') "
 			+ "or hasRole('ROLE_ADMIN')")
 	void changeDescription(long id, String newDescription);
 }

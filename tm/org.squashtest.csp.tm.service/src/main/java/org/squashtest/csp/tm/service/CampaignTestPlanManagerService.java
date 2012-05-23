@@ -55,7 +55,7 @@ public interface CampaignTestPlanManagerService {
 	void addTestCasesToCampaignTestPlan(List<Long> testCaseIds, long campaignId);
 
 	/**
-	 * Get Users with Write Access for a campaign and his test plans.
+	 * Get Users with Execute Access for a campaign and his test plans.
 	 * 
 	 * @param testCaseId
 	 * @param campaignId

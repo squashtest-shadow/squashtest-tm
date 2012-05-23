@@ -30,31 +30,31 @@ import org.squashtest.csp.tm.domain.campaign.TestSuite;
 
 @Transactional
 public interface IterationModificationService extends CustomIterationModificationService {
-	@PreAuthorize("hasPermission(#arg0, 'org.squashtest.csp.tm.domain.campaign.Iteration', 'WRITE') "
+	@PreAuthorize("hasPermission(#arg0, 'org.squashtest.csp.tm.domain.campaign.Iteration', 'SMALL_EDIT') "
 			+ "or hasRole('ROLE_ADMIN')")
 	void changeDescription(long iterationId, String newDescription);
 
-	@PreAuthorize("hasPermission(#arg0, 'org.squashtest.csp.tm.domain.campaign.Iteration', 'WRITE') "
+	@PreAuthorize("hasPermission(#arg0, 'org.squashtest.csp.tm.domain.campaign.Iteration', 'SMALL_EDIT') "
 			+ "or hasRole('ROLE_ADMIN')")
 	void changeScheduledStartDate(long iterationId, Date scheduledStart);
 
-	@PreAuthorize("hasPermission(#arg0, 'org.squashtest.csp.tm.domain.campaign.Iteration', 'WRITE') "
+	@PreAuthorize("hasPermission(#arg0, 'org.squashtest.csp.tm.domain.campaign.Iteration', 'SMALL_EDIT') "
 			+ "or hasRole('ROLE_ADMIN')")
 	void changeScheduledEndDate(long iterationId, Date scheduledEnd);
 
-	@PreAuthorize("hasPermission(#arg0, 'org.squashtest.csp.tm.domain.campaign.Iteration', 'WRITE') "
+	@PreAuthorize("hasPermission(#arg0, 'org.squashtest.csp.tm.domain.campaign.Iteration', 'SMALL_EDIT') "
 			+ "or hasRole('ROLE_ADMIN')")
 	void changeActualStartDate(long iterationId, Date actualStart);
 
-	@PreAuthorize("hasPermission(#arg0, 'org.squashtest.csp.tm.domain.campaign.Iteration', 'WRITE') "
+	@PreAuthorize("hasPermission(#arg0, 'org.squashtest.csp.tm.domain.campaign.Iteration', 'SMALL_EDIT') "
 			+ "or hasRole('ROLE_ADMIN')")
 	void changeActualEndDate(long iterationId, Date actualEnd);
 
-	@PreAuthorize("hasPermission(#arg0, 'org.squashtest.csp.tm.domain.campaign.Iteration', 'WRITE') "
+	@PreAuthorize("hasPermission(#arg0, 'org.squashtest.csp.tm.domain.campaign.Iteration', 'SMALL_EDIT') "
 			+ "or hasRole('ROLE_ADMIN')")
 	void changeActualStartAuto(long iterationId, boolean isAuto);
 
-	@PreAuthorize("hasPermission(#arg0, 'org.squashtest.csp.tm.domain.campaign.Iteration', 'WRITE') "
+	@PreAuthorize("hasPermission(#arg0, 'org.squashtest.csp.tm.domain.campaign.Iteration', 'SMALL_EDIT') "
 			+ "or hasRole('ROLE_ADMIN')")
 	void changeActualEndAuto(long iterationId, boolean isAuto);
 

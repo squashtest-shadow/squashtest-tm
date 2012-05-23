@@ -20,7 +20,6 @@
  */
 package org.squashtest.csp.tm.service;
 
-
 import org.springframework.security.access.prepost.PostAuthorize;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.transaction.annotation.Transactional;
@@ -29,14 +28,14 @@ import org.squashtest.csp.tm.domain.requirement.RequirementStatus;
 
 @Transactional
 public interface RequirementModificationService extends CustomRequirementModificationService {
-	@PreAuthorize("hasPermission(#arg0, 'org.squashtest.csp.tm.domain.requirement.Requirement','WRITE') or hasRole('ROLE_ADMIN')")		
+	@PreAuthorize("hasPermission(#arg0, 'org.squashtest.csp.tm.domain.requirement.Requirement','SMALL_EDIT') or hasRole('ROLE_ADMIN')")
 	void changeDescription(long requirementId, String newDescription);
-	
-	@PreAuthorize("hasPermission(#arg0, 'org.squashtest.csp.tm.domain.requirement.Requirement', 'WRITE') or hasRole('ROLE_ADMIN')")
+
+	@PreAuthorize("hasPermission(#arg0, 'org.squashtest.csp.tm.domain.requirement.Requirement', 'SMALL_EDIT') or hasRole('ROLE_ADMIN')")
 	void changeReference(long requirementId, String reference);
-	
-	@PreAuthorize("hasPermission(#arg0, 'org.squashtest.csp.tm.domain.requirement.Requirement', 'WRITE') or hasRole('ROLE_ADMIN')")
-	void changeStatus(long requirementId, RequirementStatus status);	
+
+	@PreAuthorize("hasPermission(#arg0, 'org.squashtest.csp.tm.domain.requirement.Requirement', 'SMALL_EDIT') or hasRole('ROLE_ADMIN')")
+	void changeStatus(long requirementId, RequirementStatus status);
 
 	@Transactional(readOnly = true)
 	@PostAuthorize("hasPermission(returnObject,'READ') or hasRole('ROLE_ADMIN')")
