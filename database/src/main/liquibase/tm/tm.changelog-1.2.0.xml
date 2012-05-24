@@ -645,7 +645,7 @@
 		<comment>Existing Data Update for ACL_RESPONSIBILITY_SCOPE_ENTRY / REQUIREMENT_LIBRARY</comment>
 		<sql>insert into ACL_RESPONSIBILITY_SCOPE_ENTRY (USER_ID, ACL_GROUP_ID, OBJECT_IDENTITY_ID)
 			select arse.USER_ID, arse.ACL_GROUP_ID, aoiRequirement.ID
-			from ACL_RESPONSIBILITY_SCOPE_ENTRY arse, ACL_OBJECT_IDENTITY aoiProject, ACL_CLASS aclassProject, ACL_OBJECT_IDENTITY aoiRequirement, ACL_CLASS aclassRequirement, Project p
+			from ACL_RESPONSIBILITY_SCOPE_ENTRY arse, ACL_OBJECT_IDENTITY aoiProject, ACL_CLASS aclassProject, ACL_OBJECT_IDENTITY aoiRequirement, ACL_CLASS aclassRequirement, PROJECT p
 			where arse.OBJECT_IDENTITY_ID = aoiProject.ID
 			and aoiProject.CLASS_ID = aclassProject.ID
 			and aclassProject.CLASSNAME = 'org.squashtest.csp.tm.domain.project.Project'
@@ -658,7 +658,7 @@
 		<comment>Existing Data Update for ACL_RESPONSIBILITY_SCOPE_ENTRY / TEST_CASE_LIBRARY</comment>
 		<sql>insert into ACL_RESPONSIBILITY_SCOPE_ENTRY (USER_ID, ACL_GROUP_ID, OBJECT_IDENTITY_ID)
 			select arse.USER_ID, arse.ACL_GROUP_ID, aoiTestCase.ID
-			from ACL_RESPONSIBILITY_SCOPE_ENTRY arse, ACL_OBJECT_IDENTITY aoiProject, ACL_CLASS aclassProject, ACL_OBJECT_IDENTITY aoiTestCase, ACL_CLASS aclassTestCase, Project p
+			from ACL_RESPONSIBILITY_SCOPE_ENTRY arse, ACL_OBJECT_IDENTITY aoiProject, ACL_CLASS aclassProject, ACL_OBJECT_IDENTITY aoiTestCase, ACL_CLASS aclassTestCase, PROJECT p
 			where arse.OBJECT_IDENTITY_ID = aoiProject.ID
 			and aoiProject.CLASS_ID = aclassProject.ID
 			and aclassProject.CLASSNAME = 'org.squashtest.csp.tm.domain.project.Project'
@@ -671,7 +671,7 @@
 		<comment>Existing Data Update for ACL_RESPONSIBILITY_SCOPE_ENTRY / CAMPAIGN_LIBRARY</comment>
 		<sql>insert into ACL_RESPONSIBILITY_SCOPE_ENTRY (USER_ID, ACL_GROUP_ID, OBJECT_IDENTITY_ID)
 			select arse.USER_ID, arse.ACL_GROUP_ID, aoiCampaign.ID
-			from ACL_RESPONSIBILITY_SCOPE_ENTRY arse, ACL_OBJECT_IDENTITY aoiProject, ACL_CLASS aclassProject, ACL_OBJECT_IDENTITY aoiCampaign, ACL_CLASS aclassCampaign, Project p
+			from ACL_RESPONSIBILITY_SCOPE_ENTRY arse, ACL_OBJECT_IDENTITY aoiProject, ACL_CLASS aclassProject, ACL_OBJECT_IDENTITY aoiCampaign, ACL_CLASS aclassCampaign, PROJECT p
 			where arse.OBJECT_IDENTITY_ID = aoiProject.ID
 			and aoiProject.CLASS_ID = aclassProject.ID
 			and aclassProject.CLASSNAME = 'org.squashtest.csp.tm.domain.project.Project'
