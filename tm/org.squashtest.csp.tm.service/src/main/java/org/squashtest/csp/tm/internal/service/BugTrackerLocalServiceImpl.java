@@ -46,11 +46,6 @@ import org.squashtest.csp.tm.infrastructure.filter.FilteredCollectionHolder;
 import org.squashtest.csp.tm.internal.repository.IssueDao;
 import org.squashtest.csp.tm.service.BugTrackerLocalService;
 
-/*
- * //FIXME : see ci.squashtest.org/mantis task #105 
- * 
- */
-
 @Service("squashtest.tm.service.BugTrackerLocalService")
 @Transactional
 public class BugTrackerLocalServiceImpl implements BugTrackerLocalService {

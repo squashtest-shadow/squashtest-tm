@@ -63,7 +63,7 @@ function TreeNodeCopier(initObj) {
 		switch (flag){
 			case "not-unique-editable" : displayError(initObj.notOneEditable); break;
 			case "wrong-library"	:	displayError(initObj.pasteNotSameProject); break;
-			case "target-type-invalid" : displayError(initObj.pasteIterationNotHere); break;
+			case "target-type-invalid" : displayError(initObj.pasteNotHere); break;
 			case "buffer-empty" : displayError(initObj.nothingToPaste); break;		
 		}
 	}

@@ -780,7 +780,7 @@ function treeCheckDnd(m){
 	}
 	
 	// check if the node is draggable first
-	if (! jqObject.isEditable()){
+	if (! jqObject.isCreatable()){
 		return false;
 	}
 	

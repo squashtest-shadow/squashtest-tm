@@ -24,6 +24,7 @@ import java.util.List;
 
 import javax.inject.Inject;
 
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.stereotype.Service;
 import org.squashtest.csp.tm.domain.execution.Execution;
 import org.squashtest.csp.tm.domain.execution.ExecutionStep;
@@ -33,12 +34,6 @@ import org.squashtest.csp.tm.internal.repository.ExecutionDao;
 import org.squashtest.csp.tm.internal.repository.ExecutionStepDao;
 import org.squashtest.csp.tm.service.ExecutionModificationService;
 import org.squashtest.csp.tm.service.deletion.SuppressionPreviewReport;
-
-/*
- * //FIXME : see ci.squashtest.org, task #105
- * 
- * 
- */
 
 @Service("squashtest.tm.service.ExecutionModificationService")
 public class ExecutionModificationServiceImpl implements ExecutionModificationService {
@@ -63,6 +58,8 @@ public class ExecutionModificationServiceImpl implements ExecutionModificationSe
 	}
 
 	@Override
+	@PreAuthorize("hasPermission(#executionId, 'org.squashtest.csp.tm.domain.execution.Execution', 'EXECUTE') "
+			+ "or hasRole('ROLE_ADMIN')")
 	public void setExecutionDescription(Long executionId, String description) {
 		Execution execution = executionDao.findById(executionId);
 		execution.setDescription(description);
@@ -79,6 +76,8 @@ public class ExecutionModificationServiceImpl implements ExecutionModificationSe
 	}
 
 	@Override
+	@PreAuthorize("hasPermission(#executionStepId, 'org.squashtest.csp.tm.domain.execution.ExecutionStep', 'EXECUTE') "
+			+ "or hasRole('ROLE_ADMIN')")
 	public void setExecutionStepComment(Long executionStepId, String comment) {
 		ExecutionStep executionStep = executionStepDao.findById(executionStepId);
 		executionStep.setComment(comment);
@@ -92,11 +91,15 @@ public class ExecutionModificationServiceImpl implements ExecutionModificationSe
 	}
 
 	@Override
+	@PreAuthorize("hasPermission(#execId, 'org.squashtest.csp.tm.domain.execution.Execution', 'EXECUTE') "
+			+ "or hasRole('ROLE_ADMIN')")
 	public List<SuppressionPreviewReport> simulateExecutionDeletion(Long execId) {
 		return deletionHandler.simulateExecutionDeletion(execId);
 	}
 
 	@Override
+	// @PreAuthorize("hasPermission(#executionId, 'org.squashtest.csp.tm.domain.execution.Execution', 'EXECUTE') "
+	// + "or hasRole('ROLE_ADMIN')")
 	public void deleteExecution(Execution execution) {
 		deletionHandler.deleteExecution(execution);
 	}
