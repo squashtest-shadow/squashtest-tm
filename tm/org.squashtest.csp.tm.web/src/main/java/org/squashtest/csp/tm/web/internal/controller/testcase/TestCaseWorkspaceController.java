@@ -56,7 +56,7 @@ public class TestCaseWorkspaceController extends WorkspaceController<TestCaseLib
 	public ModelAndView showWorkspace() {
 
 		ModelAndView mav = super.showWorkspace();
-		List<TestCaseLibrary> libraries = workspaceService.findAllEditableLibraries();
+		List<TestCaseLibrary> libraries = workspaceService.findAllImportableLibraries();
 		mav.addObject("editableLibraries", libraries);
 
 		return mav;

@@ -658,7 +658,7 @@ $(function() {
 </script>
 
 <%----------------------------------- Prerequisites -----------------------------------------------%>
-<c:if test="${ smallEditable }">
+<c:if test="${ writable }">
 	<comp:rich-jeditable targetUrl="${ testCaseUrl }" componentId="test-case-prerequisite" />
 </c:if>
 

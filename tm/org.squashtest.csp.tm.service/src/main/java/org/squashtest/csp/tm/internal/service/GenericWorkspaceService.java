@@ -29,6 +29,7 @@ import org.springframework.transaction.annotation.Transactional;
 import org.squashtest.csp.tm.domain.library.Library;
 import org.squashtest.csp.tm.domain.library.LibraryNode;
 import org.squashtest.csp.tm.domain.projectfilter.ProjectFilter;
+import org.squashtest.csp.tm.domain.testcase.TestCaseLibrary;
 import org.squashtest.csp.tm.internal.infrastructure.strategy.LibrarySelectionStrategy;
 import org.squashtest.csp.tm.internal.repository.LibraryDao;
 import org.squashtest.csp.tm.service.ProjectFilterModificationService;
@@ -36,15 +37,15 @@ import org.squashtest.csp.tm.service.WorkspaceService;
 
 /**
  * Generic service for workspace access. This service must be configured through XML.
- *
+ * 
  * @author Gregory Fouquet
- *
+ * 
  * @param <LIBRARY>
  * @param <NODE>
  */
 @Transactional
 public class GenericWorkspaceService<LIBRARY extends Library<NODE>, NODE extends LibraryNode> implements
-WorkspaceService<LIBRARY> {
+		WorkspaceService<LIBRARY> {
 
 	@Inject
 	private ProjectFilterModificationService projectFilterModificationService;
@@ -57,12 +58,19 @@ WorkspaceService<LIBRARY> {
 	@PostFilter("hasPermission(filterObject, 'READ') or hasRole('ROLE_ADMIN')")
 	public List<LIBRARY> findAllLibraries() {
 		ProjectFilter pf = projectFilterModificationService.findProjectFilterByUserLogin();
-		return pf.getActivated()==true?libraryStrategy.getSpecificLibraries(pf.getProjects()):libraryDao.findAll();
+		return pf.getActivated() == true ? libraryStrategy.getSpecificLibraries(pf.getProjects()) : libraryDao
+				.findAll();
 	}
-	
+
 	@Override
 	@PostFilter("hasPermission(filterObject, 'WRITE') or hasRole('ROLE_ADMIN')")
 	public List<LIBRARY> findAllEditableLibraries() {
+		return libraryDao.findAll();
+	}
+
+	@Override
+	@PostFilter("hasPermission(filterObject, 'IMPORT') or hasRole('ROLE_ADMIN')")
+	public List<LIBRARY> findAllImportableLibraries() {
 		return libraryDao.findAll();
 	}
 

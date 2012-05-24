@@ -66,7 +66,7 @@ class LibraryTreeNodeBuilderTest extends Specification{
 		def res = builder.setNode(node).build()
 
 		then:
-		res.attr["editable"] == "false"
+		res.attr["smallEdit"] == "false"
 	}
 	def "node should not be editable"() {
 		given:
@@ -79,7 +79,7 @@ class LibraryTreeNodeBuilderTest extends Specification{
 		def res = builder.setNode(node).build()
 
 		then:
-		res.attr["editable"] == "true"
+		res.attr["smallEdit"] == "true"
 	}
 }
 

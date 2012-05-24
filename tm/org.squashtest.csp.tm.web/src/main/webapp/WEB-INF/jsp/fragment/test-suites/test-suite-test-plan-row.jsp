@@ -107,7 +107,7 @@
 	</table>
 </td>
 
-<c:if test="${ editableIteration }">
+<c:if test="${ executable }">
 	<script>
 		$(function() {
 			bindDeleteButtonsToFunctions();

@@ -91,15 +91,15 @@
 		}
 		
 		this.isEditable = function(){
-			return this.reference.attr('smallEdit');
+			return this.reference.attr('smallEdit') === "true";
 		}
 		
 		this.isCreatable = function(){
-			return this.reference.attr('creatable');
+			return this.reference.attr('creatable') === "true";
 		}
 		
 		this.isDeletable = function(){
-			return this.reference.attr('deletable');
+			return this.reference.attr('deletable') === "true";
 		}
 		
 		this.getName = function(){

@@ -38,6 +38,7 @@
 	description="base of the url to update the test case url"%>
 <%@ attribute name="editable" type="java.lang.Boolean"
 	description="Right to edit content. Default to false."%>
+	
 <%@ attribute name="assignableUsersUrl" required="true"
 	description="URL to manipulate user of the test-plans"%>
 <%@ attribute name="testCaseSingleRemovalPopupId" required="true"

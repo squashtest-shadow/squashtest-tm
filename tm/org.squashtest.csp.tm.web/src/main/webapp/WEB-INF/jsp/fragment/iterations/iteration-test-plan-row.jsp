@@ -99,7 +99,7 @@
 		</c:if>
 	</table>
 </td>
-
+<c:if test="${ executable }">
 <script>
 	$(function() {
 		bindDeleteButtonsToFunctions();
@@ -169,3 +169,4 @@
 
 	}
 </script>
+</c:if>

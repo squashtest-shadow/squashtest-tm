@@ -24,20 +24,28 @@ import java.util.List;
 
 import org.squashtest.csp.tm.domain.library.Library;
 import org.squashtest.csp.tm.domain.library.LibraryNode;
+import org.squashtest.csp.tm.domain.testcase.TestCaseLibrary;
 
 public interface WorkspaceService<LIBRARY extends Library<? extends LibraryNode>> {
 	/**
 	 * Returns all the libraries of LIBRARY type.
-	 *
+	 * 
 	 * @return
 	 */
 	List<LIBRARY> findAllLibraries();
-	
+
 	/**
 	 * Returns all libraries that the user may edit.
 	 * 
 	 * @return
 	 */
-	
+
 	List<LIBRARY> findAllEditableLibraries();
+
+	/**
+	 * Returns all libraries that the user may import to.
+	 * 
+	 * @return
+	 */
+	List<LIBRARY> findAllImportableLibraries();
 }
