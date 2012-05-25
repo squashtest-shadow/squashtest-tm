@@ -75,8 +75,22 @@ public class NativeQueries {
 	public static final String campaign_sql_removeFromFolder = "delete from CLN_RELATIONSHIP where ancestor_id in (:ancIds) or descendant_id in (:descIds)";
 	public static final String campaign_sql_removeFromLibrary = "delete from CAMPAIGN_LIBRARY_CONTENT where content_id in (:campaignIds)";
 
+	
+	public static final String aclResponsibilityScopeEntry_remove_all_concerning_class = "delete from ACL_RESPONSIBILITY_SCOPE_ENTRY "
+			+ "where ID in (select arse.ID "
+			+ "from ACL_RESPONSIBILITY_SCOPE_ENTRY arse, ACL_OBJECT_IDENTITY aoi, ACL_CLASS aclass "
+			+ "where aclass.CLASSNAME = :className "
+			+ "and aclass.ID = aoi.CLASS_ID "
+			+ "and aoi.ID = arse.OBJECT_IDENTITY_ID " + "and aoi.IDENTITY = :id ) ";
+	
+	public static final String aclObjectIdentity_remove_all_concerning_class = "delete from ACL_OBJECT_IDENTITY "
+			+ "where ID in (select aoi.ID " 
+			+ "from  ACL_OBJECT_IDENTITY aoi, ACL_CLASS aclass "
+			+ "where aclass.CLASSNAME =  :className " 
+			+ "and aclass.ID = aoi.CLASS_ID "
+			+ "and aoi.IDENTITY = :id )";
 	/*
-	 *  ********************************************** consequences of test case deletion on campaign item test plans
+	 * ********************************************** consequences of test case deletion on campaign item test plans
 	 * *******************************************
 	 */
 
@@ -98,7 +112,7 @@ public class NativeQueries {
 	public static final String testCase_sql_removeCallingCampaignItemTestPlan = "delete from CAMPAIGN_TEST_PLAN_ITEM where test_case_id in (:testCaseIds)";
 
 	/*
-	 *  ********************************************* consequences of test case deletion on item test plans
+	 * ********************************************* consequences of test case deletion on item test plans
 	 * ******************************************************
 	 */
 
@@ -130,7 +144,7 @@ public class NativeQueries {
 	public static final String testCase_sql_removeCallingIterationItemTestPlan = "delete from ITERATION_TEST_PLAN_ITEM  where item_test_plan_id in (:itpHavingNoExecIds) ";
 
 	/*
-	 *  ********************************************* /consequences of test case deletion on item test plans
+	 * ********************************************* /consequences of test case deletion on item test plans
 	 * *******************************************************
 	 */
 

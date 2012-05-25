@@ -63,6 +63,7 @@ public class ProjectDeletionHandlerImpl implements ProjectDeletionHandler {
 	@Inject
 	private SessionFactory sessionFactory;
 
+	
 	@Override
 	public void deleteProject(long projectId) {
 		checkProjectContainsOnlyFolders(projectId);
@@ -97,7 +98,7 @@ public class ProjectDeletionHandlerImpl implements ProjectDeletionHandler {
 		project = projectDao.findById(projectId);
 		removeProjectFromFilters(project);
 
-		projectDeletionDao.removeEntity(project);
+		projectDeletionDao.removeProject(project);
 	}
 
 	private void removeProjectFromFilters(Project project) {

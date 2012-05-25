@@ -22,4 +22,6 @@ package org.squashtest.csp.tm.internal.repository;
 
 public interface ProjectDeletionDao extends DeletionDao {
 
+	void removeProject(Object entity);
+
 }
