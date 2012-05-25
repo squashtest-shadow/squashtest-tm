@@ -1,5 +1,11 @@
-insert into PROJECT (NAME, ACTIVE, CREATED_BY, CREATED_ON)
-values ('squashtest', 1, 'squash_it', '2011-09-21');
+Insert into CAMPAIGN_LIBRARY(CL_ID) values 
+(6);
+Insert into REQUIREMENT_LIBRARY(RL_ID) values 
+ (6);
+Insert into TEST_CASE_LIBRARY(TCL_ID) values 
+ (6);
+insert into PROJECT (NAME, ACTIVE, CREATED_BY, CREATED_ON, CL_ID, TCL_ID, RL_ID)
+values ('squashtest', 1, 'squash_it', '2011-09-21', 6,6,6);
 
 insert into ACL_OBJECT_IDENTITY (IDENTITY, CLASS_ID)
 values (1, 1);
