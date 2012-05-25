@@ -4,7 +4,7 @@
 	<parent>
 		<artifactId>squashtest-csp-core</artifactId>
 		<groupId>org.squashtest.csp</groupId>
-		<version>1.2.0.IT34-SNAPSHOT</version>
+		<version>1.2.0.IT34</version>
 	</parent>
 	<artifactId>org.squashtest.csp.core.service</artifactId>
 	<name>Squashtest CSP - Core module - Service component</name>
