@@ -51,8 +51,8 @@
    * the user don't have the correct permission,
    * the requirement status doesn't allow it. --%>
  
-<authz:authorized hasRole="ROLE_ADMIN" hasPermission="WRITE" domainObject="${ requirement }">
-	<c:set var="writable" value="${ requirementVersion.modifiable }" />
+<authz:authorized hasRole="ROLE_ADMIN" hasPermission="ATTACH" domainObject="${ requirement }">
+	<c:set var="attachable" value="${ requirementVersion.modifiable }" />
 </authz:authorized>
 <authz:authorized hasRole="ROLE_ADMIN" hasPermission="SMALL_EDIT" domainObject="${ requirement }">
 	<c:set var="smallEditable" value="${requirementVersion.modifiable }"/>
@@ -197,7 +197,7 @@
 </div>
 <%-- --------------------------------------------- /tab1 Information----------------------------------------------%>
 <%-- --------------------------------------------- tab2 Attachments ----------------------------------------------%>
-	<comp:attachment-tab tabId="tabs-2" entity="${ requirementVersion }" editable="${ writable }" />
+	<comp:attachment-tab tabId="tabs-2" entity="${ requirementVersion }" editable="${ attachable }" />
 <%-- --------------------------------------------- /tab2 Attachments ----------------------------------------------%>
 	
 </div>

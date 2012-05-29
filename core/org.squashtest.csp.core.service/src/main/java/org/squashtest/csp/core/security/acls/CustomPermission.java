@@ -37,6 +37,7 @@ public class CustomPermission extends BasePermission {
 	public static final Permission EXECUTE = new CustomPermission(1 << 7, 'E'); //NONSONAR 128
 	public static final Permission LINK = new CustomPermission(1 << 8, 'L'); //NONSONAR 256
 	public static final Permission IMPORT = new CustomPermission(1 << 9, 'I'); //NONSONAR 512
+	public static final Permission ATTACH = new CustomPermission(1 << 10, 'T'); //NONSONAR 1024
 	
 	public CustomPermission(int mask) {
 		super(mask);

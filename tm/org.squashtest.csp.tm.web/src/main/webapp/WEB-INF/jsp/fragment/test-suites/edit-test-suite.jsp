@@ -128,9 +128,7 @@
 
 
 <%-- ----------------------------------- Authorization ----------------------------------------------%>
-<authz:authorized hasRole="ROLE_ADMIN" hasPermission="WRITE" domainObject="${ testSuite }">
-	<c:set var="writable" value="${ true }" />
-</authz:authorized>
+
 <authz:authorized hasRole="ROLE_ADMIN" hasPermission="SMALL_EDIT" domainObject="${ testSuite }">
 	<c:set var="smallEditable" value="${ true }" />
 </authz:authorized>

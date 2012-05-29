@@ -82,6 +82,9 @@
 <authz:authorized hasRole="ROLE_ADMIN" hasPermission="WRITE" domainObject="${ testCase }">
 	<c:set var="writable" value="${ true }" />
 </authz:authorized>
+<authz:authorized hasRole="ROLE_ADMIN" hasPermission="ATTACH" domainObject="${ testCase }">
+	<c:set var="attachable" value="${ true }" />
+</authz:authorized>
 <authz:authorized hasRole="ROLE_ADMIN" hasPermission="SMALL_EDIT" domainObject="${ testCase }">
 	<c:set var="smallEditable" value="${true }"/>
 </authz:authorized>
@@ -380,7 +383,7 @@ $(function() {
 		decorateStepTableButton("#collapse-steps-button", "ui-icon-zoomout");
 		
 		<%-- note : until access to attachments manager is properly secured we'll forbid the access. --%>
-		<c:if test="${writable}">
+		<c:if test="${attachable}">
 		$('#test-steps-table .has-attachment-cell a').live('click', function() {
 			var listId = parseStepListId(this);
 			document.location.href = "${stepAttachmentManagerUrl}" + listId + "/attachments/manager?workspace=test-case";
@@ -833,7 +836,7 @@ $(function() {
 
 <%------------------------------ Attachments bloc ---------------------------------------------%> 
 
-<comp:attachment-tab tabId="tabs-3" entity="${ testCase }" editable="${ writable }" />
+<comp:attachment-tab tabId="tabs-3" entity="${ testCase }" editable="${ attachable }" />
 </div>
 <%--------------------------- Deletion confirmation popup -------------------------------------%> 
 

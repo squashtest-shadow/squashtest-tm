@@ -102,11 +102,6 @@
 			<column name="PERMISSION_MASK" value="32" />
 			<column name="CLASS_ID" valueComputed="(select ID from ACL_CLASS where CLASSNAME = 'org.squashtest.csp.tm.domain.project.Project')" />
 		</insert>
-		<insert tableName="ACL_GROUP_PERMISSION">
-			<column name="ACL_GROUP_ID" valueComputed="(select ID from ACL_GROUP where QUALIFIED_NAME = 'squashtest.acl.group.tm.ProjectManager')" />
-			<column name="PERMISSION_MASK" value="33" />
-			<column name="CLASS_ID" valueComputed="(select ID from ACL_CLASS where CLASSNAME = 'org.squashtest.csp.tm.domain.project.Project')" />
-		</insert>
 		<comment>ProjectManager / RequirementLibrary</comment>
 		<insert tableName="ACL_GROUP_PERMISSION">
 			<column name="ACL_GROUP_ID" valueComputed="(select ID from ACL_GROUP where QUALIFIED_NAME = 'squashtest.acl.group.tm.ProjectManager')" />
@@ -145,7 +140,7 @@
 		</insert>
 		<insert tableName="ACL_GROUP_PERMISSION">
 			<column name="ACL_GROUP_ID" valueComputed="(select ID from ACL_GROUP where QUALIFIED_NAME = 'squashtest.acl.group.tm.ProjectManager')" />
-			<column name="PERMISSION_MASK" value="847" />
+			<column name="PERMISSION_MASK" value="1024" />
 			<column name="CLASS_ID" valueComputed="(select ID from ACL_CLASS where CLASSNAME = 'org.squashtest.csp.tm.domain.requirement.RequirementLibrary')" />
 		</insert>
 		<comment>ProjectManager / TestCaseLibrary</comment>
@@ -186,7 +181,7 @@
 		</insert>
 		<insert tableName="ACL_GROUP_PERMISSION">
 			<column name="ACL_GROUP_ID" valueComputed="(select ID from ACL_GROUP where QUALIFIED_NAME = 'squashtest.acl.group.tm.ProjectManager')" />
-			<column name="PERMISSION_MASK" value="847" />
+			<column name="PERMISSION_MASK" value="1024" />
 			<column name="CLASS_ID" valueComputed="(select ID from ACL_CLASS where CLASSNAME = 'org.squashtest.csp.tm.domain.testcase.TestCaseLibrary')" />
 		</insert>
 		<comment>ProjectManager / CampaignLibrary</comment>
@@ -222,7 +217,7 @@
 		</insert>
 		<insert tableName="ACL_GROUP_PERMISSION">
 			<column name="ACL_GROUP_ID" valueComputed="(select ID from ACL_GROUP where QUALIFIED_NAME = 'squashtest.acl.group.tm.ProjectManager')" />
-			<column name="PERMISSION_MASK" value="463" />
+			<column name="PERMISSION_MASK" value="1024" />
 			<column name="CLASS_ID" valueComputed="(select ID from ACL_CLASS where CLASSNAME = 'org.squashtest.csp.tm.domain.campaign.CampaignLibrary')" />
 		</insert>
 		</changeSet>
@@ -267,10 +262,10 @@
 		</insert>
 		<insert tableName="ACL_GROUP_PERMISSION">
 			<column name="ACL_GROUP_ID" valueComputed="(select ID from ACL_GROUP where QUALIFIED_NAME = 'squashtest.acl.group.tm.TestEditor')" />
-			<column name="PERMISSION_MASK" value="335" />
+			<column name="PERMISSION_MASK" value="1024" />
 			<column name="CLASS_ID" valueComputed="(select ID from ACL_CLASS where CLASSNAME = 'org.squashtest.csp.tm.domain.requirement.RequirementLibrary')" />
 		</insert>
-		<comment>TestEditor / TestCaseLibrary</comment>
+	<comment>TestEditor / TestCaseLibrary</comment>
 		<insert tableName="ACL_GROUP_PERMISSION">
 			<column name="ACL_GROUP_ID" valueComputed="(select ID from ACL_GROUP where QUALIFIED_NAME = 'squashtest.acl.group.tm.TestEditor')" />
 			<column name="PERMISSION_MASK" value="1" />
@@ -303,10 +298,10 @@
 		</insert>
 		<insert tableName="ACL_GROUP_PERMISSION">
 			<column name="ACL_GROUP_ID" valueComputed="(select ID from ACL_GROUP where QUALIFIED_NAME = 'squashtest.acl.group.tm.TestEditor')" />
-			<column name="PERMISSION_MASK" value="335" />
+			<column name="PERMISSION_MASK" value="1024" />
 			<column name="CLASS_ID" valueComputed="(select ID from ACL_CLASS where CLASSNAME = 'org.squashtest.csp.tm.domain.testcase.TestCaseLibrary')" />
 		</insert>
-		<comment>TestEditor / CampaignLibrary</comment>
+	<comment>TestEditor / CampaignLibrary</comment>
 		<insert tableName="ACL_GROUP_PERMISSION">
 			<column name="ACL_GROUP_ID" valueComputed="(select ID from ACL_GROUP where QUALIFIED_NAME = 'squashtest.acl.group.tm.TestEditor')" />
 			<column name="PERMISSION_MASK" value="1" />
@@ -344,7 +339,7 @@
 		</insert>
 		<insert tableName="ACL_GROUP_PERMISSION">
 			<column name="ACL_GROUP_ID" valueComputed="(select ID from ACL_GROUP where QUALIFIED_NAME = 'squashtest.acl.group.tm.TestEditor')" />
-			<column name="PERMISSION_MASK" value="463" />
+			<column name="PERMISSION_MASK" value="1024" />
 			<column name="CLASS_ID" valueComputed="(select ID from ACL_CLASS where CLASSNAME = 'org.squashtest.csp.tm.domain.campaign.CampaignLibrary')" />
 		</insert>
 	</changeSet>
@@ -401,7 +396,7 @@
 		</insert>
 		<insert tableName="ACL_GROUP_PERMISSION">
 			<column name="ACL_GROUP_ID" valueComputed="(select ID from ACL_GROUP where QUALIFIED_NAME = 'squashtest.acl.group.tm.TestRunner')" />
-			<column name="PERMISSION_MASK" value="129" />
+			<column name="PERMISSION_MASK" value="1024" />
 			<column name="CLASS_ID" valueComputed="(select ID from ACL_CLASS where CLASSNAME = 'org.squashtest.csp.tm.domain.campaign.CampaignLibrary')" />
 		</insert>
 	</changeSet>
@@ -446,7 +441,7 @@
 		</insert>
 		<insert tableName="ACL_GROUP_PERMISSION">
 			<column name="ACL_GROUP_ID" valueComputed="(select ID from ACL_GROUP where QUALIFIED_NAME = 'squashtest.acl.group.tm.TestDesigner')" />
-			<column name="PERMISSION_MASK" value="335" />
+			<column name="PERMISSION_MASK" value="1024" />
 			<column name="CLASS_ID" valueComputed="(select ID from ACL_CLASS where CLASSNAME = 'org.squashtest.csp.tm.domain.requirement.RequirementLibrary')" />
 		</insert>
 		<comment>TestDesigner / TestCaseLibrary</comment>
@@ -482,7 +477,7 @@
 		</insert>
 		<insert tableName="ACL_GROUP_PERMISSION">
 			<column name="ACL_GROUP_ID" valueComputed="(select ID from ACL_GROUP where QUALIFIED_NAME = 'squashtest.acl.group.tm.TestDesigner')" />
-			<column name="PERMISSION_MASK" value="335" />
+			<column name="PERMISSION_MASK" value="1024" />
 			<column name="CLASS_ID" valueComputed="(select ID from ACL_CLASS where CLASSNAME = 'org.squashtest.csp.tm.domain.testcase.TestCaseLibrary')" />
 		</insert>
 	</changeSet>
@@ -518,7 +513,7 @@
 		</insert>
 		<insert tableName="ACL_GROUP_PERMISSION">
 			<column name="ACL_GROUP_ID" valueComputed="(select ID from ACL_GROUP where QUALIFIED_NAME = 'squashtest.acl.group.tm.AdvanceTester')" />
-			<column name="PERMISSION_MASK" value="67" />
+			<column name="PERMISSION_MASK" value="1024" />
 			<column name="CLASS_ID" valueComputed="(select ID from ACL_CLASS where CLASSNAME = 'org.squashtest.csp.tm.domain.testcase.TestCaseLibrary')" />
 		</insert>
 		<comment>AdvanceTester / CampaignLibrary</comment>
@@ -559,7 +554,7 @@
 		</insert>
 		<insert tableName="ACL_GROUP_PERMISSION">
 			<column name="ACL_GROUP_ID" valueComputed="(select ID from ACL_GROUP where QUALIFIED_NAME = 'squashtest.acl.group.tm.AdvanceTester')" />
-			<column name="PERMISSION_MASK" value="463" />
+			<column name="PERMISSION_MASK" value="1024" />
 			<column name="CLASS_ID" valueComputed="(select ID from ACL_CLASS where CLASSNAME = 'org.squashtest.csp.tm.domain.campaign.CampaignLibrary')" />
 		</insert>
 	</changeSet>
@@ -582,11 +577,6 @@
 			<column name="PERMISSION_MASK" value="64" />
 			<column name="CLASS_ID" valueComputed="(select ID from ACL_CLASS where CLASSNAME = 'org.squashtest.csp.tm.domain.requirement.RequirementLibrary')" />
 		</insert>
-		<insert tableName="ACL_GROUP_PERMISSION">
-			<column name="ACL_GROUP_ID" valueComputed="(select ID from ACL_GROUP where QUALIFIED_NAME = 'squashtest.acl.group.tm.Validator')" />
-			<column name="PERMISSION_MASK" value="65" />
-			<column name="CLASS_ID" valueComputed="(select ID from ACL_CLASS where CLASSNAME = 'org.squashtest.csp.tm.domain.requirement.RequirementLibrary')" />
-		</insert>
 		<comment>Validator / TestCaseLibrary</comment>
 		<insert tableName="ACL_GROUP_PERMISSION">
 			<column name="ACL_GROUP_ID" valueComputed="(select ID from ACL_GROUP where QUALIFIED_NAME = 'squashtest.acl.group.tm.Validator')" />
@@ -596,11 +586,6 @@
 		<insert tableName="ACL_GROUP_PERMISSION">
 			<column name="ACL_GROUP_ID" valueComputed="(select ID from ACL_GROUP where QUALIFIED_NAME = 'squashtest.acl.group.tm.Validator')" />
 			<column name="PERMISSION_MASK" value="64" />
-			<column name="CLASS_ID" valueComputed="(select ID from ACL_CLASS where CLASSNAME = 'org.squashtest.csp.tm.domain.testcase.TestCaseLibrary')" />
-		</insert>
-		<insert tableName="ACL_GROUP_PERMISSION">
-			<column name="ACL_GROUP_ID" valueComputed="(select ID from ACL_GROUP where QUALIFIED_NAME = 'squashtest.acl.group.tm.Validator')" />
-			<column name="PERMISSION_MASK" value="65" />
 			<column name="CLASS_ID" valueComputed="(select ID from ACL_CLASS where CLASSNAME = 'org.squashtest.csp.tm.domain.testcase.TestCaseLibrary')" />
 		</insert>
 		<comment>Validator / CampaignLibrary</comment>

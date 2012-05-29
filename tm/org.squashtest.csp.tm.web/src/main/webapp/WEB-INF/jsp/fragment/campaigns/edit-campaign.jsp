@@ -62,8 +62,8 @@
 <s:url var="confirmDeletionUrl" value="/campaign-browser/delete-nodes/confirm" />
 
 <%-- ----------------------------------- Authorization ----------------------------------------------%>
-<authz:authorized hasRole="ROLE_ADMIN" hasPermission="WRITE" domainObject="${ campaign }">
-	<c:set var="writable" value="${ true }" />
+<authz:authorized hasRole="ROLE_ADMIN" hasPermission="ATTACH" domainObject="${ campaign }">
+	<c:set var="attachable" value="${ true }" />
 </authz:authorized>
 <authz:authorized hasRole="ROLE_ADMIN" hasPermission="SMALL_EDIT" domainObject="${ campaign }">
 	<c:set var="smallEditable" value="${ true }" />
@@ -351,7 +351,7 @@
 
 <%------------------------------ Attachments bloc ---------------------------------------------%> 
 
-<comp:attachment-tab tabId="tabs-3" entity="${ campaign }" editable="${ writable }" />
+<comp:attachment-tab tabId="tabs-3" entity="${ campaign }" editable="${ attachable }" />
 <%--------------------------- Deletion confirmation popup -------------------------------------%>
 <c:if test="${ deletable }">
 

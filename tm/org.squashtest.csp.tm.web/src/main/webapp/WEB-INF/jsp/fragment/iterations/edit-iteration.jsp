@@ -89,6 +89,9 @@
 <authz:authorized hasRole="ROLE_ADMIN" hasPermission="WRITE" domainObject="${ iteration }">
 	<c:set var="writable" value="${ true }" />
 </authz:authorized>
+<authz:authorized hasRole="ROLE_ADMIN" hasPermission="ATTACH" domainObject="${ iteration }">
+	<c:set var="attachable" value="${ true }" />
+</authz:authorized>
 <authz:authorized hasRole="ROLE_ADMIN" hasPermission="SMALL_EDIT" domainObject="${ iteration }">
 	<c:set var="smallEditable" value="${ true }" />
 </authz:authorized>
@@ -406,7 +409,7 @@
 </div>
 
 <%------------------------------ Attachments bloc ------------------------------------------- --%> 
-<comp:attachment-tab tabId="tabs-3" entity="${ iteration }" editable="${ executable }" />
+<comp:attachment-tab tabId="tabs-3" entity="${ iteration }" editable="${ attachable }" />
 <%-- ---------------------deletion popup------------------------------ --%>
 <c:if test="${deletable}">
 

@@ -54,8 +54,8 @@ that page won't be editable if
 
  --%>
  
-<authz:authorized hasRole="ROLE_ADMIN" hasPermission="WRITE" domainObject="${ requirement }">
-	<c:set var="writable" value="${ requirement.modifiable }" />
+<authz:authorized hasRole="ROLE_ADMIN" hasPermission="ATTACH" domainObject="${ requirement }">
+	<c:set var="attachable" value="${ requirement.modifiable }" />
 </authz:authorized>
 <authz:authorized hasRole="ROLE_ADMIN" hasPermission="SMALL_EDIT" domainObject="${ requirement }">
 	<c:set var="smallEditable" value="${requirement.modifiable }"/>
@@ -298,7 +298,7 @@ that page won't be editable if
 </div>
 <%-- ----------------------------------- /INFO TAB  ----------------------------------------------%>	
 <%-- ----------------------------------- ATTACHMENT TAB  ----------------------------------------------%>
-<comp:attachment-tab tabId="tabs-2" entity="${ requirement }" editable="${ writable }" />
+<comp:attachment-tab tabId="tabs-2" entity="${ requirement }" editable="${ attachable }" />
 <%-- ----------------------------------- /ATTACHMENT TAB  ----------------------------------------------%>	
 <%-- -------------------------------------------------------- /TABS  ----------------------------------------------%>	
 <%-- ----------------------------------------------------------- /CONTENT ----------------------------------------------%>
