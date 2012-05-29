@@ -26,6 +26,7 @@
 <%@ attribute name="workspace" required="true" %>
 <%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core" %>
 <%@ taglib prefix="fmt" uri="http://java.sun.com/jsp/jstl/fmt" %>
+<%@ taglib prefix="sec" uri="http://www.springframework.org/security/tags" %>
 	
 <div id="tree_element_menu" class="tree-top-toolbar">
 	<a id="tree-create-button" href="#tree-create-menu" class="button"><fmt:message key="squashtm.treemenu.create.label"/>...</a>
@@ -54,7 +55,7 @@
 	</ul>
 	</div>
 	</div>	
-	
+<sec:authorize access="hasRole('ROLE_TM_PROJECT_MANAGER') or hasRole('ROLE_ADMIN')">
 <c:if test="${workspace == 'test-case' }">
 	<a id="tree-import-button" href="#tree-import-menu" class="button"><fmt:message key="squashtm.treemenu.import.label"/>...</a>
 	
@@ -65,9 +66,8 @@
 	</ul>
 	</div>
 	</div>	
-	
 </c:if>	
-	
+</sec:authorize>
 </div>
 
 
@@ -107,18 +107,18 @@
 			
 		squashtm.treemenu.action = $('#tree-action-button').treeMenu("#tree-action-menu", actionOption, 320);
 
-
-		<c:if test="${workspace == 'test-case'}">
-		initButton("#tree-import-button", "ui-icon-transferthick-e-w");		
-		
-		var importOption = {
-			"import-excel" : ".import-excel-tree-button"
-		};
-		
-		squashtm.treemenu.importer = $('#tree-import-button').treeMenu('#tree-import-menu', importOption);
-		
-		</c:if>
-		
+		<sec:authorize access="hasRole('ROLE_TM_PROJECT_MANAGER') or hasRole('ROLE_ADMIN')">
+			<c:if test="${workspace == 'test-case'}">
+			initButton("#tree-import-button", "ui-icon-transferthick-e-w");		
+			
+			var importOption = {
+				"import-excel" : ".import-excel-tree-button"
+			};
+			
+			squashtm.treemenu.importer = $('#tree-import-button').treeMenu('#tree-import-menu', importOption);
+			
+			</c:if>
+		</sec:authorize>
 		
 	});
 
