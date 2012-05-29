@@ -79,9 +79,14 @@ public class UserAdministrationController {
 		@Override
 		public Object[] buildItemData(User item) {
 			AuditableMixin newP = (AuditableMixin) item;
+			String group = messageSource.getMessage("user.account.group."+item.getGroup().getSimpleName()+".label", null, locale);
+			if(group == null){
+				group = item.getGroup().getSimpleName();
+			}
 			return new Object[] { item.getId(),
 					getCurrentIndex(),
 					item.getLogin(),
+					group,
 					item.getFirstName(),
 					item.getLastName(),
 					item.getEmail(),

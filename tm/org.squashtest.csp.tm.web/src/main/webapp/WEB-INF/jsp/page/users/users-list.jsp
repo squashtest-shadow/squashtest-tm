@@ -146,7 +146,8 @@
 							<tr>
 								<th>Id</th>
 								<th>#</th>
-								<th><f:message key="dialog.add-user.login.label" /></th>		
+								<th><f:message key="dialog.add-user.login.label" /></th>
+ 								<th><f:message key="dialog.add-user.group.label" /></th>
 								<th><f:message key="dialog.add-user.firstname.label" /></th>
 								<th><f:message key="dialog.add-user.lastname.label" /></th>
 								<th><f:message key="dialog.add-user.email.label" /></th>
@@ -167,8 +168,8 @@
 					<jsp:attribute name="columnDefs">
 						<dt:column-definition targets="0" visible="false" />
 						<dt:column-definition targets="1" sortable="false" cssClass="select-handle centered" width="2em"/>
-						<dt:column-definition targets="2, 3, 4, 5, 6, 7, 8" sortable="true" />
-						<dt:column-definition targets="9" sortable="false" width="2em" lastDef="true"/>
+						<dt:column-definition targets="2, 3, 4, 5, 6, 7, 8, 9" sortable="true" />
+						<dt:column-definition targets="10" sortable="false" width="2em" lastDef="true"/>
 					</jsp:attribute>
 				</comp:decorate-ajax-table>	
 				
