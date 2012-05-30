@@ -35,6 +35,7 @@
 <%@ taglib prefix="treepopup" tagdir="/WEB-INF/tags/treepopups" %>
 <%@ taglib prefix="tree" tagdir="/WEB-INF/tags/jstree" %>
 <%@ taglib prefix="treepopup" tagdir="/WEB-INF/tags/treepopups" %>
+<%@ taglib prefix="sec" uri="http://www.springframework.org/security/tags" %>
 
 
 <layout:tree-page-layout titleKey="squashtm" highlightedWorkspace="${ resourceName }" linkable="${linkable}">
@@ -163,8 +164,10 @@
 			<treepopup:export-requirement-dialog treeSelector="#tree"  />			
 		</c:if>
 		<c:if test="${ resourceName == 'test-case' }">
+			<sec:authorize access="hasRole('ROLE_TM_PROJECT_MANAGER') or hasRole('ROLE_ADMIN')">
 			<treepopup:import-excel-dialog treeSelector="#tree" workspace="${resourceName}"  
 			treeNodeButton="squashtm.treemenu.importer.buttons['import-excel']" targetLibraries="${editableLibraries}"/>
+			</sec:authorize>
 		</c:if>
 
 		<jsp:invoke fragment="footer" />		
