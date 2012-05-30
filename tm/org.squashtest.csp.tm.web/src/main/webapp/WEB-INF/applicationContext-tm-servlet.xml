@@ -22,7 +22,8 @@
 
 -->
 <beans xmlns="http://www.springframework.org/schema/beans"
-	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:p="http://www.springframework.org/schema/p"
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" 
+	xmlns:p="http://www.springframework.org/schema/p"
 	xmlns:context="http://www.springframework.org/schema/context"
 	xmlns:aop="http://www.springframework.org/schema/aop"
 	xmlns:util="http://www.springframework.org/schema/util"	
@@ -215,5 +216,6 @@
 	<!-- ============================== /multipart files handling =============================================== -->
 
 	<bean id="tmEnumServletContextExposer" class="org.squashtest.csp.tm.web.internal.filter.EnumServletContextExposer" />
-
+	
+	
 </beans>
