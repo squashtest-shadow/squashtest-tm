@@ -6,12 +6,17 @@
 		<groupId>org.squashtest.csp</groupId>
 		<version>1.2.0.IT35-SNAPSHOT</version>
 	</parent>
-	<artifactId>org.squashtest.csp.core.bugtracker</artifactId>
+	<groupId>org.squashtest.tm</groupId>
+	<artifactId>core.bugtracker.api</artifactId>
 	<name>Squashtest CSP - Core module - Bug Tracker connection component</name>
 	
 	<properties>
-		<bundle.name>${project.artifactId}</bundle.name>
-		<bundle.symbolicName>${project.artifactId}</bundle.symbolicName>
+		
+		<former.groupId>org.squashtest.csp</former.groupId>
+		
+		<bundle.name>${project.groupId}.${project.artifactId}</bundle.name>
+	
+		<bundle.symbolicName>${bundle.name}</bundle.symbolicName>
 		<cxf.version>2.3.3</cxf.version>
 		<project.build.sourceEncoding>ISO-8859-1</project.build.sourceEncoding>
 		<axis.generated-sources.directory>/generated-sources/axis-1.4</axis.generated-sources.directory>
@@ -20,20 +25,20 @@
 	<dependencies>
 		<!-- ====== DEPENDENCY POMS ====== -->
 		<dependency>
-			<groupId>${project.groupId}</groupId>
+			<groupId>${former.groupId}</groupId>
 			<artifactId>springdm-bundle-dependencies</artifactId>
 			<version>${project.version}</version>
 			<type>pom</type>
 		</dependency>
 		<dependency>
-			<groupId>${project.groupId}</groupId>
+			<groupId>${former.groupId}</groupId>
 			<artifactId>spock-test-dependencies</artifactId>
 			<version>${project.version}</version>
 			<type>pom</type>
 			<scope>test</scope>
 		</dependency>
 		<dependency>
-			<groupId>${project.groupId}</groupId>
+			<groupId>${former.groupId}</groupId>
 			<artifactId>org.squashtest.csp.tools.unittest</artifactId>
 			<version>${project.version}</version>
 			<scope>test</scope>
@@ -156,6 +161,8 @@
 	</dependencies>
 
 	<build>
+	
+		
 
 		<resources>
 			<resource>

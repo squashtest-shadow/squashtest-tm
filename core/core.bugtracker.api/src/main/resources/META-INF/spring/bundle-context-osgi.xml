@@ -1,0 +1,54 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+
+        This file is part of the Squashtest platform.
+        Copyright (C) 2010 - 2011 Squashtest TM, Squashtest.org
+
+        See the NOTICE file distributed with this work for additional
+        information regarding copyright ownership.
+
+        This is free software: you can redistribute it and/or modify
+        it under the terms of the GNU Lesser General Public License as published by
+        the Free Software Foundation, either version 3 of the License, or
+        (at your option) any later version.
+
+        this software is distributed in the hope that it will be useful,
+        but WITHOUT ANY WARRANTY; without even the implied warranty of
+        MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+        GNU Lesser General Public License for more details.
+
+        You should have received a copy of the GNU Lesser General Public License
+        along with this software.  If not, see <http://www.gnu.org/licenses/>.
+
+-->
+
+<beans xmlns="http://www.springframework.org/schema/beans"
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:osgi="http://www.springframework.org/schema/osgi"
+	xmlns:osgix="http://www.springframework.org/schema/osgi-compendium"
+	xsi:schemaLocation="
+			http://www.springframework.org/schema/beans 
+			http://www.springframework.org/schema/beans/spring-beans.xsd 
+            http://www.springframework.org/schema/osgi
+            http://www.springframework.org/schema/osgi/spring-osgi.xsd
+            http://www.springframework.org/schema/osgi-compendium 
+            http://www.springframework.org/schema/osgi-compendium/spring-osgi-compendium.xsd">
+
+	<!-- This listener should be notified of BT connector plugins and registers 
+		them -->
+	<osgi:service
+		ref="squashtest.core.bugtracker.BTConnectorPluginRegistrationListener"
+		interface="org.springframework.osgi.service.exporter.OsgiServiceRegistrationListener" />
+
+	<!-- Entrypoint of the Mantis plugin. In a perfect world it would be in 
+		a separate bundle -->
+	<osgi:service
+		ref="squashtest.core.bugtracker.mantis.MantisConnectorProvider"
+		interface="org.squashtest.csp.core.bugtracker.spi.BugTrackerConnectorProvider">
+		<!-- As it's not in a separate bundle, we have to register it manually -->
+		<osgi:registration-listener
+			ref="squashtest.core.bugtracker.BTConnectorPluginRegistrationListener" />
+	</osgi:service>
+
+	<osgi:service ref="squashtest.core.bugtracker.BugTrackerConnectorFactory"
+		interface="org.squashtest.csp.core.bugtracker.core.BugTrackerConnectorFactory" />
+</beans>

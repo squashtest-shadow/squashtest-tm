@@ -26,8 +26,8 @@
 	<dependencies>
 		<!-- ====== SQUASHTEST ====== -->
 		<dependency>
-			<groupId>${project.groupId}</groupId>
-			<artifactId>org.squashtest.csp.core.bugtracker</artifactId>
+			<groupId>org.squashtest.tm</groupId>
+			<artifactId>core.bugtracker.api</artifactId>
 			<version>${project.version}</version>
 		</dependency>
 		<dependency>
