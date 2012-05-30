@@ -39,16 +39,6 @@
 		ref="squashtest.core.bugtracker.BTConnectorPluginRegistrationListener"
 		interface="org.springframework.osgi.service.exporter.OsgiServiceRegistrationListener" />
 
-	<!-- Entrypoint of the Mantis plugin. In a perfect world it would be in 
-		a separate bundle -->
-	<osgi:service
-		ref="squashtest.core.bugtracker.mantis.MantisConnectorProvider"
-		interface="org.squashtest.csp.core.bugtracker.spi.BugTrackerConnectorProvider">
-		<!-- As it's not in a separate bundle, we have to register it manually -->
-		<osgi:registration-listener
-			ref="squashtest.core.bugtracker.BTConnectorPluginRegistrationListener" />
-	</osgi:service>
-
 	<osgi:service ref="squashtest.core.bugtracker.BugTrackerConnectorFactory"
 		interface="org.squashtest.csp.core.bugtracker.core.BugTrackerConnectorFactory" />
 </beans>

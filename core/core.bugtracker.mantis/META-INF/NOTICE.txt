@@ -46,6 +46,7 @@ This product includes/uses software developed by 'Spring Framework' (http://www.
 
 This product includes/uses software developed by 'Squashtest TM, Squashtest.org'
   - springdm-bundle-dependencies
+  - Squashtest CSP - Core module - Bug Tracker connection component
 
 This product includes/uses software developed by 'The Apache Software Foundation' (http://www.apache.org/)
   - Commons Lang (http://commons.apache.org/lang/)

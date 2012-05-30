@@ -24,6 +24,7 @@ import java.math.BigInteger;
 import java.net.MalformedURLException;
 import java.net.URL;
 import java.rmi.RemoteException;
+
 import javax.xml.rpc.ServiceException;
 
 import org.slf4j.Logger;
@@ -31,7 +32,6 @@ import org.slf4j.LoggerFactory;
 import org.squashtest.csp.core.bugtracker.core.BugTrackerLocalException;
 import org.squashtest.csp.core.bugtracker.core.BugTrackerRemoteException;
 import org.squashtest.csp.core.bugtracker.domain.BugTracker;
-import org.squashtest.csp.core.bugtracker.mantis.MantisExceptionConverter;
 import org.squashtest.csp.core.bugtracker.mantis.binding.AccountData;
 import org.squashtest.csp.core.bugtracker.mantis.binding.IssueData;
 import org.squashtest.csp.core.bugtracker.mantis.binding.MantisConnectLocator;

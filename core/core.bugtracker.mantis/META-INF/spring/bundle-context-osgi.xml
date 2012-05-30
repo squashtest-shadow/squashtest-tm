@@ -33,12 +33,12 @@
             http://www.springframework.org/schema/osgi-compendium 
             http://www.springframework.org/schema/osgi-compendium/spring-osgi-compendium.xsd">
 
-	<!-- This listener should be notified of BT connector plugins and registers 
-		them -->
-	<osgi:service
-		ref="squashtest.core.bugtracker.BTConnectorPluginRegistrationListener"
-		interface="org.springframework.osgi.service.exporter.OsgiServiceRegistrationListener" />
 
-	<osgi:service ref="squashtest.core.bugtracker.BugTrackerConnectorFactory"
-		interface="org.squashtest.csp.core.bugtracker.core.BugTrackerConnectorFactory" />
+
+	<!-- Entrypoint of the Mantis plugin. In a perfect world it would be in 
+		a separate bundle -->
+	<osgi:service
+		ref="squashtest.core.bugtracker.mantis.MantisConnectorProvider"
+		interface="org.squashtest.csp.core.bugtracker.spi.BugTrackerConnectorProvider">
+	</osgi:service>
 </beans>

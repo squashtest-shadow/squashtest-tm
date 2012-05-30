@@ -41,8 +41,8 @@ import org.squashtest.csp.core.bugtracker.mantis.binding.ObjectRef;
 import org.squashtest.csp.core.bugtracker.mantis.binding.ProjectData;
 import org.squashtest.csp.core.bugtracker.mantis.binding.ProjectVersionData;
 
-public final class MantisConverter {
-	private MantisConverter() {
+public final class MantisEntityConverter {
+	private MantisEntityConverter() {
 		super();
 	}
 

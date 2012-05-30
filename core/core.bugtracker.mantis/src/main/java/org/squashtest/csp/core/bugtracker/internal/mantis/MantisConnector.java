@@ -38,7 +38,6 @@ import org.squashtest.csp.core.bugtracker.domain.Permission;
 import org.squashtest.csp.core.bugtracker.domain.Priority;
 import org.squashtest.csp.core.bugtracker.domain.User;
 import org.squashtest.csp.core.bugtracker.domain.Version;
-import org.squashtest.csp.core.bugtracker.mantis.MantisExceptionConverter;
 import org.squashtest.csp.core.bugtracker.mantis.binding.AccountData;
 import org.squashtest.csp.core.bugtracker.mantis.binding.IssueData;
 import org.squashtest.csp.core.bugtracker.mantis.binding.ObjectRef;
@@ -104,19 +103,19 @@ public class MantisConnector implements BugTrackerConnector {
 	@Override
 	public List<Priority> getPriorities() {
 		ObjectRef[] priorities = client.getPriorities(credentialsHolder.get());
-		return MantisConverter.mantis2SquashPriority(priorities);
+		return MantisEntityConverter.mantis2SquashPriority(priorities);
 	}
 
 	@Override
 	public List<Permission> getPermissions() {
 		ObjectRef[] accessLevels = client.getAccessLevel(credentialsHolder.get());
-		return MantisConverter.mantis2SquashPermission(accessLevels);
+		return MantisEntityConverter.mantis2SquashPermission(accessLevels);
 	}
 
 	@Override
 	public BTProject findProject(String projectName) {
 		ProjectData[] mantisProjects = client.findProjects(credentialsHolder.get());
-		List<BTProject> projects = MantisConverter.mantis2SquashProject(mantisProjects);
+		List<BTProject> projects = MantisEntityConverter.mantis2SquashProject(mantisProjects);
 
 		BTProject found = findInListByName(projects, projectName);
 
@@ -132,7 +131,7 @@ public class MantisConnector implements BugTrackerConnector {
 	@Override
 	public BTProject findProject(Long projectId) {
 		ProjectData[] mantisProjects = client.findProjects(credentialsHolder.get());
-		List<BTProject> projects = MantisConverter.mantis2SquashProject(mantisProjects);
+		List<BTProject> projects = MantisEntityConverter.mantis2SquashProject(mantisProjects);
 
 		BTProject found = findInListById(projects, String.valueOf(projectId));
 
@@ -185,16 +184,16 @@ public class MantisConnector implements BugTrackerConnector {
 	@Override
 	public List<Category> findCategories(BTProject project) {
 		String[] categories = client.findCategories(credentialsHolder.get(),
-				MantisConverter.squash2MantisId(project.getId()));
-		return MantisConverter.mantis2SquashCategory(categories);
+				MantisEntityConverter.squash2MantisId(project.getId()));
+		return MantisEntityConverter.mantis2SquashCategory(categories);
 	}
 
 	@Override
 	public BTIssue createIssue(BTIssue issue) {
-		IssueData data = MantisConverter.squashToMantisIssue(issue);
+		IssueData data = MantisEntityConverter.squashToMantisIssue(issue);
 		BigInteger issueId = client.createIssue(credentialsHolder.get(), data);
 
-		issue.setId(MantisConverter.mantis2SquashId(issueId));
+		issue.setId(MantisEntityConverter.mantis2SquashId(issueId));
 		return issue;
 	}
 
@@ -203,9 +202,9 @@ public class MantisConnector implements BugTrackerConnector {
 		List<BTIssue> toReturn = new ArrayList<BTIssue>();
 		for (String issueKey : issueKeyList) {
 			// Get the mantis isse data....
-			IssueData mantisIssue = client.getIssue(credentialsHolder.get(), MantisConverter.squash2MantisId(issueKey));
+			IssueData mantisIssue = client.getIssue(credentialsHolder.get(), MantisEntityConverter.squash2MantisId(issueKey));
 			// ... and convert it
-			BTIssue issue = MantisConverter.mantis2squashIssue(mantisIssue);
+			BTIssue issue = MantisEntityConverter.mantis2squashIssue(mantisIssue);
 			toReturn.add(issue);
 		}
 		return toReturn;
@@ -219,9 +218,9 @@ public class MantisConnector implements BugTrackerConnector {
 
 		for (Permission permission : permissions) {
 			AccountData[] mantisUsers = client.findUsersForProject(credentialsHolder.get(),
-					MantisConverter.squash2MantisId(project.getId()),
-					MantisConverter.squash2MantisId(permission.getId()));
-			List<User> subList = MantisConverter.mantis2SquashUser(mantisUsers);
+					MantisEntityConverter.squash2MantisId(project.getId()),
+					MantisEntityConverter.squash2MantisId(permission.getId()));
+			List<User> subList = MantisEntityConverter.mantis2SquashUser(mantisUsers);
 
 			// if the user wasn't already in we add him in the map, and anyway we add the current permission to him
 			for (User user : subList) {
@@ -239,9 +238,9 @@ public class MantisConnector implements BugTrackerConnector {
 	private List<Version> makeVersionList(BTProject project) {
 
 		ProjectVersionData[] mantisVersions = client.findVersions(credentialsHolder.get(),
-				MantisConverter.squash2MantisId(project.getId()));
+				MantisEntityConverter.squash2MantisId(project.getId()));
 
-		List<Version> versions = MantisConverter.mantis2SquashVersion(mantisVersions);
+		List<Version> versions = MantisEntityConverter.mantis2SquashVersion(mantisVersions);
 
 		return versions;
 	}
