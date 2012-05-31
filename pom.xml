@@ -1,5 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
 	<modelVersion>4.0.0</modelVersion>
 
 	<parent>
@@ -49,7 +50,7 @@
 		<groovy.version>1.7.10</groovy.version>
 		<spock.version>0.5-groovy-1.7</spock.version>
 		<groovy-eclipse-compiler.version>2.5.2-01</groovy-eclipse-compiler.version>
-		
+
 		<org.osgi.service.http.port>9090</org.osgi.service.http.port>
 		<org.osgi.service.http.port.secure>9443</org.osgi.service.http.port.secure>
 
@@ -232,10 +233,8 @@
 						</execution>
 					</executions>
 					<dependencies>
-						<!-- 
-							note this must be repeated here to pick up correct xml validation
-							- yet it wont be used for compilation - 
-						-->
+						<!-- note this must be repeated here to pick up correct xml validation 
+							- yet it wont be used for compilation - -->
 						<dependency>
 							<groupId>net.sf.jasperreports</groupId>
 							<artifactId>jasperreports</artifactId>
@@ -516,5 +515,13 @@
 			</activation>
 		</profile>
 	</profiles>
+
+
+	<repositories>
+		<repository>
+			<id>squash-official-repo</id>
+			<url>http://repo.squashtest.org/maven2/releases</url>
+		</repository>
+	</repositories>
 
 </project>
