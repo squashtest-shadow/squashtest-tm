@@ -30,7 +30,8 @@ import org.squashtest.csp.core.bugtracker.core.BugTrackerConnectorFactory;
 import org.squashtest.csp.core.bugtracker.spi.BugTrackerConnectorProvider;
 
 
-@Component("squashtest.core.bugtracker.BTConnectorPluginRegistrationListener")
+//@Component("squashtest.core.bugtracker.BTConnectorPluginRegistrationListener")
+@Deprecated
 public class BTConnectorPluginRegistrationListener implements OsgiServiceRegistrationListener {
 	@Inject
 	private BugTrackerConnectorFactory bugTrackerConnectorFactory;
@@ -44,7 +45,7 @@ public class BTConnectorPluginRegistrationListener implements OsgiServiceRegistr
 	@Override
 	public void registered(Object service, Map serviceProperties) {
 		if (shouldPropagateEvent(service)) {
-			bugTrackerConnectorFactory.registerProvider((BugTrackerConnectorProvider) service);
+			bugTrackerConnectorFactory.registerProvider((BugTrackerConnectorProvider) service, serviceProperties);
 		}
 
 	}
@@ -57,7 +58,7 @@ public class BTConnectorPluginRegistrationListener implements OsgiServiceRegistr
 	@Override
 	public void unregistered(Object service, Map serviceProperties) {
 		if (shouldPropagateEvent(service)) {
-			bugTrackerConnectorFactory.unregisterProvider((BugTrackerConnectorProvider) service);
+			bugTrackerConnectorFactory.unregisterProvider((BugTrackerConnectorProvider) service, serviceProperties);
 		}
 
 	}

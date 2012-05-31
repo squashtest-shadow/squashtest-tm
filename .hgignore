@@ -133,7 +133,7 @@ syntax: regexp
 syntax: regexp
 \.checkstyle$
 syntax: regexp
-^core/org\.squashtest\.csp\.core\.bugtracker/META-INF$
+^core/core\.bugtracker\..*/META-INF$
 syntax: regexp
 ^core/org\.squashtest\.csp\.core\.web/META-INF$
 syntax: regexp

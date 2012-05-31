@@ -21,7 +21,6 @@
 package org.squashtest.csp.core.security.acls.domain
 
 import org.springframework.security.acls.model.ObjectIdentity;
-import org.squashtest.csp.core.bugtracker.mantis.binding.ProjectAttachmentData;
 import org.squashtest.csp.core.security.annotation.AclConstrainedObject;
 
 import spock.lang.Specification;

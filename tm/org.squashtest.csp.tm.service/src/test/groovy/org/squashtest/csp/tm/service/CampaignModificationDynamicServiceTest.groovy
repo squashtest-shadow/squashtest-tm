@@ -21,7 +21,6 @@
 
 package org.squashtest.csp.tm.service;
 
-import org.apache.axis.holders.SchemaHolder;
 import org.hibernate.SessionFactory;
 import org.hibernate.classic.Session;
 import org.junit.runner.RunWith;

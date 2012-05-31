@@ -1,4 +1,3 @@
-<?xml version="1.0" encoding="UTF-8"?>
 <!--
 
         This file is part of the Squashtest platform.
@@ -21,24 +20,17 @@
         along with this software.  If not, see <http://www.gnu.org/licenses/>.
 
 -->
-
 <beans xmlns="http://www.springframework.org/schema/beans"
 	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:osgi="http://www.springframework.org/schema/osgi"
-	xmlns:osgix="http://www.springframework.org/schema/osgi-compendium"
+	xmlns:context="http://www.springframework.org/schema/context"
 	xsi:schemaLocation="
-			http://www.springframework.org/schema/beans 
-			http://www.springframework.org/schema/beans/spring-beans.xsd 
+       		http://www.springframework.org/schema/context 
+       		http://www.springframework.org/schema/context/spring-context-3.0.xsd 
+            http://www.springframework.org/schema/beans
+            http://www.springframework.org/schema/beans/spring-beans-3.0.xsd
             http://www.springframework.org/schema/osgi
-            http://www.springframework.org/schema/osgi/spring-osgi.xsd
-            http://www.springframework.org/schema/osgi-compendium 
-            http://www.springframework.org/schema/osgi-compendium/spring-osgi-compendium.xsd">
+            http://www.springframework.org/schema/osgi/spring-osgi.xsd">
 
-	<!-- This listener should be notified of BT connector plugins and registers 
-		them -->
-	<osgi:service
-		ref="squashtest.core.bugtracker.BTConnectorPluginRegistrationListener"
-		interface="org.springframework.osgi.service.exporter.OsgiServiceRegistrationListener" />
-
-	<osgi:service ref="squashtest.core.bugtracker.BugTrackerConnectorFactory"
-		interface="org.squashtest.csp.core.bugtracker.core.BugTrackerConnectorFactory" />
+	<context:component-scan base-package="*" />
+	
 </beans>

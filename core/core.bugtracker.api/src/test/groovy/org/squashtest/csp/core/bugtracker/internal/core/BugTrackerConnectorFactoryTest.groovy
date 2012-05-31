@@ -21,6 +21,7 @@
 package org.squashtest.csp.core.bugtracker.internal.core
 
 import org.apache.commons.lang.NullArgumentException;
+import org.junit.Ignore;
 import org.squashtest.csp.core.bugtracker.core.BugTrackerConnectorFactory;
 import org.squashtest.csp.core.bugtracker.core.UnknownConnectorKindException;
 import org.squashtest.csp.core.bugtracker.domain.BugTracker;
@@ -28,6 +29,7 @@ import org.squashtest.csp.core.bugtracker.spi.BugTrackerConnector;
 import org.squashtest.csp.core.bugtracker.spi.BugTrackerConnectorProvider;
 
 import spock.lang.Specification;
+
 
 class BugTrackerConnectorFactoryTest extends Specification {
 	BugTrackerConnectorFactory factory = new BugTrackerConnectorFactory();
@@ -44,7 +46,7 @@ class BugTrackerConnectorFactoryTest extends Specification {
 		provider.createConnector(_) >> connector
 
 		when:
-		factory.registerProvider provider
+		factory.registerProvider (provider, null)
 		def res = factory.createConnector(bt)
 
 		then:
@@ -57,7 +59,7 @@ class BugTrackerConnectorFactoryTest extends Specification {
 		BugTrackerConnectorProvider provider = Mock()
 
 		when:
-		factory.registerProvider provider
+		factory.registerProvider (provider, null)
 
 		then:
 		thrown(NullArgumentException)
@@ -84,10 +86,10 @@ class BugTrackerConnectorFactoryTest extends Specification {
 		BugTrackerConnectorProvider provider = Mock()
 		provider.bugTrackerKind >> "foo"
 		provider.createConnector(_) >> connector
-		factory.registerProvider provider
+		factory.registerProvider (provider, null)
 
 		when:
-		factory.unregisterProvider provider
+		factory.unregisterProvider (provider,null)
 		def res = factory.createConnector(bt)
 
 		then:

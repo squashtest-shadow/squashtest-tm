@@ -86,7 +86,7 @@ public class BugTrackerConnectorFactory {
 	 *
 	 * @param provider
 	 */
-	public void registerProvider(BugTrackerConnectorProvider provider) {
+	public void registerProvider(BugTrackerConnectorProvider provider, Map serviceProperties) {
 		String kind = provider.getBugTrackerKind();
 
 		if (kind == null) {
@@ -103,7 +103,7 @@ public class BugTrackerConnectorFactory {
 	 *
 	 * @param provider
 	 */
-	public void unregisterProvider(BugTrackerConnectorProvider provider) {
+	public void unregisterProvider(BugTrackerConnectorProvider provider, Map serviceProperties) {
 		String kind = provider.getBugTrackerKind();
 
 		LOGGER.info("Unregistering Connector provider for bug trackers of kind '{}'", kind);

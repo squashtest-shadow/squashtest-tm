@@ -20,12 +20,14 @@
  */
 package org.squashtest.csp.core.bugtracker.osgi
 
+import org.junit.Ignore;
 import org.squashtest.csp.core.bugtracker.core.BugTrackerConnectorFactory;
 import org.squashtest.csp.core.bugtracker.internal.osgi.BTConnectorPluginRegistrationListener;
 import org.squashtest.csp.core.bugtracker.spi.BugTrackerConnectorProvider;
 
 import spock.lang.Specification;
 
+@Ignore //the class tested here is deprecated
 class BTConnectorPluginRegistrationListenerTest extends Specification {
 	BTConnectorPluginRegistrationListener registerer = new BTConnectorPluginRegistrationListener()
 	BugTrackerConnectorFactory factory = Mock()
