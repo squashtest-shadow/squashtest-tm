@@ -195,5 +195,6 @@
 		<param-name>stage</param-name>
 		<param-value>${project.stage}</param-value><!--  ensure that the values are DEV or RELEASE -->
 	</context-param>	
-	 
+	 <!-- ================ Listner ====================== -->
+	 <listener><listener-class>org.squashtest.csp.tm.web.internal.listner.HttpSessionListnerImpl</listener-class></listener>
 </web-app>

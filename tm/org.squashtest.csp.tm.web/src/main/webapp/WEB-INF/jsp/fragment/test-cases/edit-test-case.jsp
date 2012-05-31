@@ -604,6 +604,7 @@ $(function() {
 </c:if>
 	</div>
 <div style="clear: both;"></div>
+<c:if test="${otherViewers}"><div style="color: red; display: block; text-align: center;"><p>Y'A QQN D'AUTRE !! CASSE TOI</p></div></c:if>
 </div>
 <comp:fragment-tabs />
 <div class="fragment-tabs fragment-body">

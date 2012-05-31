@@ -20,9 +20,6 @@
  */
 package org.squashtest.csp.tm.web.internal.interceptor;
 
-import java.util.Map;
-
-import javax.inject.Inject;
 import javax.servlet.ServletContext;
 
 import org.slf4j.Logger;
@@ -30,7 +27,7 @@ import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.osgi.extensions.annotation.ServiceReference;
 import org.springframework.web.context.request.WebRequestInterceptor;
-import org.squashtest.csp.core.internal.security.security.AclPermissionEvaluationService;
+import org.squashtest.csp.core.domain.Identified;
 import org.squashtest.csp.core.service.security.PermissionEvaluationService;
 
 public abstract class ObjectViewsInterceptor implements WebRequestInterceptor{
@@ -44,13 +41,33 @@ public abstract class ObjectViewsInterceptor implements WebRequestInterceptor{
 		this.permissionService = permissionService;
 	}
 	private PermissionEvaluationService permissionService; 
+	
+	public boolean addViewerToEntity(String contextAttributeName, Identified object, String userLogin) {
+		boolean otherViewers = false;
+		if(permissionService.hasRoleOrPermissionOnObject("ROLE_ADMIN", "SMALL_EDIT", object)){
+		LOGGER.debug("User has more than readonly in object = true");
+			
+		OpenedEntities openedEntities = findContextAttribute(contextAttributeName);
+		otherViewers = openedEntities.addViewerToEntity(object, userLogin);
 
-	public void addUserToViewers(String contextAttributeName, Object object, String userLogin) {
-		LOGGER.debug(""+permissionService.hasRoleOrPermissionOnObject("ADMIN", "WRITE", object));
-		Map<Long, Map<String, Integer>> testCaseViewers = (Map<Long, Map<String, Integer>>) context.getAttribute("test-case-views");
-		if(testCaseViewers == null){
-			LOGGER.debug("ServletContext attribute test-case-views is null");
+		
+		}else {
+			LOGGER.debug("User has more than readonly in object = false");
 		}
+		return otherViewers;
+	}
+
+	@SuppressWarnings("unchecked")
+	private OpenedEntities findContextAttribute(String contextAttributeName) {
+		OpenedEntities entityViewers = (OpenedEntities) context.getAttribute(contextAttributeName);
+		if(entityViewers == null){
+			LOGGER.debug("ServletContext attribute is null");
+			entityViewers = new OpenedEntities();
+			context.setAttribute(contextAttributeName, entityViewers);
+		}else{
+			LOGGER.debug("ServletContext attribute is not null");
+		}
+		return entityViewers;
 	}
 	
 }

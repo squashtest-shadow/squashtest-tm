@@ -20,37 +20,45 @@
  */
 package org.squashtest.csp.tm.web.internal.interceptor;
 
+import java.util.HashMap;
+import java.util.Map;
+
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.springframework.ui.ModelMap;
-import org.springframework.web.context.request.WebRequest;
 import org.squashtest.csp.core.domain.Identified;
 
-public class TestCaseViewInterceptor extends ObjectViewsInterceptor {
-
-	private static final Logger LOGGER = LoggerFactory.getLogger(TestCaseViewInterceptor.class);
-	private static final String CONTEXT_ATTRIBUTE_KEY = "test-case-views";
- 	
-
-	@Override
-	public void preHandle(WebRequest request) throws Exception {
+public class OpenedEntities {
+	private static final Logger LOGGER = LoggerFactory.getLogger(OpenedEntities.class);
+	
+	private Map<Long, OpenedEntity> entitiesViewers;
+	
+	public OpenedEntities(){
+		entitiesViewers = new HashMap<Long, OpenedEntity>();
+	}
+	
+	public boolean addViewerToEntity(Identified object, String userLogin) {
+		//get the entity || create one if none
+		OpenedEntity openedEntity = findOpenedEntity(object);
+		
+		//add viewer to entity and return true if viewer is not the only one
+		return openedEntity.addViewer(userLogin);
+	}
+	
+	
+	private OpenedEntity findOpenedEntity(Identified object) {
+		OpenedEntity openedEntity = this.entitiesViewers.get(object.getId());
+		if(openedEntity == null){
+			LOGGER.debug("Entity was not listed => new Entity");
+			openedEntity = new OpenedEntity();
+			this.entitiesViewers.put(object.getId(), openedEntity);
+		}else{
+			LOGGER.debug("Entity was already listed");
+		}
+		return openedEntity;
+	}
+	
+	
+	public void removeViewer(String viewerLogin){
 		
 	}
-
-	@Override
-	public void postHandle(WebRequest request, ModelMap model) throws Exception {
-		LOGGER.debug("Viewer = "+request.getRemoteUser());
-		Identified tc = (Identified) model.get("testCase");
-        LOGGER.debug("TestCase = "+tc);
-        LOGGER.debug("TestCase contextPath = "+request.getContextPath()+" description "+request.getDescription(true));
-        boolean otherViewers = super.addViewerToEntity(CONTEXT_ATTRIBUTE_KEY, tc, request.getRemoteUser());
-        model.addAttribute("otherViewers", otherViewers);
-	}
-
-	@Override
-	public void afterCompletion(WebRequest request, Exception ex) throws Exception {
-		// TODO Auto-generated method stub
-		
-	}
-
 }
