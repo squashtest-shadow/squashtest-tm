@@ -34,9 +34,6 @@
             http://www.springframework.org/schema/osgi-compendium/spring-osgi-compendium.xsd">
 
 
-
-	<!-- Entrypoint of the Mantis plugin. In a perfect world it would be in 
-		a separate bundle -->
 	<osgi:service
 		ref="squashtest.core.bugtracker.mantis.MantisConnectorProvider"
 		interface="org.squashtest.csp.core.bugtracker.spi.BugTrackerConnectorProvider">
