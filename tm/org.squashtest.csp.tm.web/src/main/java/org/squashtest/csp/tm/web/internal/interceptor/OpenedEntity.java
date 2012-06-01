@@ -28,43 +28,45 @@ import org.slf4j.LoggerFactory;
 
 public class OpenedEntity {
 	private static final Logger LOGGER = LoggerFactory.getLogger(OpenedEntity.class);
-	
+
 	private Map<String, Integer> viewers;
-	
-	public OpenedEntity(){
+
+	public OpenedEntity() {
 		viewers = new HashMap<String, Integer>();
 	}
-	
-	public boolean addViewForViewer(String viewerLogin){
-		boolean otherViewers = false;		
-		//try to find viewer in list
+
+	public boolean addViewForViewer(String viewerLogin) {
+		boolean otherViewers = false;
+		// try to find viewer in list
 		Integer numberOfViews = viewers.get(viewerLogin);
-		//if already here increment number of his view for this entity
-		if(numberOfViews != null){
-			numberOfViews ++;
-		}
-		else{//else create input for this user
+		// if already here increment number of his view for this entity
+		if (numberOfViews != null) {
+			numberOfViews++;
+		} else {// else create input for this user
 			viewers.put(viewerLogin, new Integer(1));
 		}
-		//if list of users is higher than 1 return true
-		if(viewers.size()>1){
+		// if list of users is higher than 1 return true
+		if (viewers.size() > 1) {
 			otherViewers = true;
 		}
-		LOGGER.debug("Other Viewers = "+otherViewers);
+		LOGGER.debug("Other Viewers = " + otherViewers);
 		return otherViewers;
-		
+
 	}
-	public void removeViewForViewer(String viewerLogin){
+
+	public void removeViewForViewer(String viewerLogin) {
 		Integer views = viewers.get(viewerLogin);
-		views--;
-		if(views >= 0){
-			viewers.remove(viewerLogin);
+		if (views != null) {
+			views--;
+			if (views >= 0) {
+				viewers.remove(viewerLogin);
+			}
 		}
-		
+
 	}
 
 	public void removeAllViewsForViewer(String viewerLogin) {
 		viewers.remove(viewerLogin);
-		
+
 	}
 }

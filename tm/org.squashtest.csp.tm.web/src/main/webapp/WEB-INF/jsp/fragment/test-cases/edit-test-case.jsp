@@ -46,6 +46,9 @@
 <s:url var="testCaseInfoUrl" value="/test-cases/{tcId}/general">
 	<s:param name="tcId" value="${testCase.id}" />
 </s:url>
+<s:url var="quitUrl" value="/opened-entity/test-cases/{tcId}">
+	<s:param name="tcId" value="${testCase.id}" />
+</s:url>
 <s:url var="getStepsUrl" value="/test-cases/{tcId}/steps-table">
 	<s:param name="tcId" value="${testCase.id}" />
 </s:url>
@@ -573,7 +576,6 @@ $(function() {
 	$("#rename-test-case-dialog").bind("dialogopen", function(event, ui) {
 		var name = $('#test-case-name').text();
 		$("#rename-test-case-input").val(name);
-
 	});
 </script>
 		<label><f:message key="dialog.rename.label" /></label>
@@ -604,7 +606,17 @@ $(function() {
 </c:if>
 	</div>
 <div style="clear: both;"></div>
-<c:if test="${otherViewers}"><div style="color: red; display: block; text-align: center;"><p>Y'A QQN D'AUTRE !! CASSE TOI</p></div></c:if>
+<c:if test="${ otherViewers }">
+<comp:opened-object  />
+</c:if>
+<script>
+window.onbeforeunload = function(){
+	  $.ajax({
+			type : 'DELETE',
+			url : '${quitUrl}'
+});
+};
+</script>
 </div>
 <comp:fragment-tabs />
 <div class="fragment-tabs fragment-body">
@@ -896,7 +908,7 @@ $(function() {
 		</c:otherwise>
 		</c:choose>		
 	}
-
+	
 </script>
 
 

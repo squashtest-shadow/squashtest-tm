@@ -72,4 +72,12 @@ public class OpenedEntities {
 			openedEntity.removeAllViewsForViewer(viewerLogin);
 		}
 	}
+
+	public void removeView(String name, Long id) {
+		OpenedEntity openedEntity = this.entitiesViewers.get(id);
+		if(openedEntity != null){
+			openedEntity.removeViewForViewer(name);
+		}
+		
+	}
 }
