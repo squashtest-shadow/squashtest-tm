@@ -242,16 +242,6 @@
 			</plugin>
 
 			<plugin>
-				<groupId>org.codehaus.mojo</groupId>
-				<artifactId>aspectj-maven-plugin</artifactId>
-				<configuration>
-					<showWeaveInfo>${verbose.compiler}</showWeaveInfo>
-					<source>${jdk.version}</source>
-					<target>${jdk.version}</target>
-					<compatibilityLevel>${jdk.version}</compatibilityLevel>
-				</configuration>
-			</plugin>
-			<plugin>
 				<groupId>com.springsource.bundlor</groupId>
 				<artifactId>com.springsource.bundlor.maven</artifactId>
 				<executions>

@@ -6,7 +6,7 @@
 	<parent>
 		<artifactId>squash-tm-dependencies</artifactId>
 		<groupId>org.squashtest.tm</groupId>
-		<version>1.0-RELEASE</version>
+		<version>1.1-SNAPSHOT</version>
 	</parent>
 
 
@@ -66,19 +66,9 @@
 			<plugins>
 				<plugin>
 					<groupId>org.apache.maven.plugins</groupId>
-					<artifactId>maven-clean-plugin</artifactId>
-					<version>2.4.1</version>
-				</plugin>
-				<plugin>
-					<groupId>org.apache.maven.plugins</groupId>
 					<artifactId>maven-compiler-plugin</artifactId>
-					<version>2.3.1</version>
 					<configuration>
-						<source>${jdk.version}</source>
-						<target>${jdk.version}</target>
-						<!-- Compiles Groovy along with java -->
 						<compilerId>groovy-eclipse-compiler</compilerId>
-						<!-- verbose>true</verbose -->
 					</configuration>
 					<dependencies>
 						<dependency>
@@ -127,45 +117,10 @@
 					</executions>
 				</plugin>
 
-				<plugin>
-					<groupId>org.ops4j</groupId>
-					<artifactId>maven-pax-plugin</artifactId>
-					<version>1.4</version>
-				</plugin>
-				<plugin>
-					<groupId>org.apache.felix</groupId>
-					<artifactId>maven-bundle-plugin</artifactId>
-					<version>2.3.7</version>
-				</plugin>
-				<plugin>
-					<groupId>org.apache.maven.plugins</groupId>
-					<artifactId>maven-war-plugin</artifactId>
-					<version>2.1.1</version>
-				</plugin>
-				<plugin>
-					<groupId>org.apache.maven.plugins</groupId>
-					<artifactId>maven-jar-plugin</artifactId>
-					<version>2.3.1</version>
-				</plugin>
-				<plugin>
-					<groupId>org.apache.maven.plugins</groupId>
-					<artifactId>maven-failsafe-plugin</artifactId>
-					<version>2.7.1</version>
-				</plugin>
-				<plugin>
-					<groupId>org.apache.maven.plugins</groupId>
-					<artifactId>maven-dependency-plugin</artifactId>
-					<version>2.1</version>
-				</plugin>
-				<plugin>
-					<groupId>com.springsource.bundlor</groupId>
-					<artifactId>com.springsource.bundlor.maven</artifactId>
-					<version>1.0.0.RC1</version>
-				</plugin>
+
 				<plugin>
 					<groupId>org.apache.maven.plugins</groupId>
 					<artifactId>maven-surefire-plugin</artifactId>
-					<version>2.7.1</version>
 					<configuration>
 						<systemProperties>
 							<property>
@@ -189,23 +144,6 @@
 					</configuration>
 				</plugin>
 				<plugin>
-					<groupId>org.codehaus.mojo</groupId>
-					<artifactId>aspectj-maven-plugin</artifactId>
-					<version>1.3</version>
-					<executions>
-						<execution>
-							<goals>
-								<goal>compile</goal>
-								<goal>test-compile</goal>
-							</goals>
-						</execution>
-					</executions>
-					<configuration>
-						<source>${jdk.version}</source>
-						<target>${jdk.version}</target>
-					</configuration>
-				</plugin>
-				<plugin>
 					<groupId>org.liquibase</groupId>
 					<artifactId>liquibase-maven-plugin</artifactId>
 					<version>${liquibase.version}</version>
@@ -221,27 +159,7 @@
 					</dependencies>
 				</plugin>
 
-				<plugin>
-					<groupId>org.codehaus.mojo</groupId>
-					<artifactId>jasperreports-maven-plugin</artifactId>
-					<version>1.0-beta-2</version>
-					<executions>
-						<execution>
-							<goals>
-								<goal>compile-reports</goal>
-							</goals>
-						</execution>
-					</executions>
-					<dependencies>
-						<!-- note this must be repeated here to pick up correct xml validation 
-							- yet it wont be used for compilation - -->
-						<dependency>
-							<groupId>net.sf.jasperreports</groupId>
-							<artifactId>jasperreports</artifactId>
-							<version>${jasperreports-compiler.version}</version>
-						</dependency>
-					</dependencies>
-				</plugin>
+
 
 				<plugin>
 					<groupId>org.codehaus.mojo</groupId>
@@ -251,28 +169,13 @@
 				<plugin>
 					<groupId>org.apache.maven.plugins</groupId>
 					<artifactId>maven-release-plugin</artifactId>
-					<version>2.2.1</version>
 					<configuration>
 						<pushChanges>true</pushChanges>
 					</configuration>
 				</plugin>
 
-				<plugin>
-					<artifactId>maven-remote-resources-plugin</artifactId>
-					<version>1.2.1</version>
-				</plugin>
 
-				<plugin>
-					<groupId>com.mycila.maven-license-plugin</groupId>
-					<artifactId>maven-license-plugin</artifactId>
-					<version>1.9.0</version>
-				</plugin>
 
-				<plugin>
-					<groupId>org.apache.maven.plugins</groupId>
-					<artifactId>maven-assembly-plugin</artifactId>
-					<version>2.2.1</version>
-				</plugin>
 			</plugins>
 		</pluginManagement>
 
@@ -372,96 +275,6 @@
 		</plugins>
 	</build>
 
-	<dependencyManagement>
-		<dependencies>
-			<!-- ====== SPRING DM INTEGRATION TEST SUPPORT ====== -->
-			<dependency>
-				<groupId>org.springframework.osgi</groupId>
-				<artifactId>spring-osgi-mock</artifactId>
-				<version>${springdm.version}</version>
-				<scope>test</scope>
-			</dependency>
-			<dependency>
-				<groupId>org.springframework.osgi</groupId>
-				<artifactId>spring-osgi-test</artifactId>
-				<version>${springdm.version}</version>
-				<scope>test</scope>
-			</dependency>
-			<!-- ====== /SPRING DM INTEGRATION TEST SUPPORT ====== -->
-
-			<!-- ====== SPRING INTEGRATION TEST SUPPORT ====== -->
-			<dependency>
-				<groupId>org.springframework</groupId>
-				<artifactId>org.springframework.test</artifactId>
-				<version>${spring.version}</version>
-				<scope>test</scope>
-				<exclusions>
-					<exclusion>
-						<artifactId>com.springsource.org.apache.commons.logging</artifactId>
-						<groupId>org.apache.commons</groupId>
-					</exclusion>
-				</exclusions>
-			</dependency>
-			<!-- ====== /SPRING INTEGRATION TEST SUPPORT ====== -->
-
-			<!-- ====== JAVA UNIT TESTS ====== -->
-			<dependency>
-				<groupId>junit</groupId>
-				<artifactId>junit</artifactId>
-				<version>4.8.1</version>
-				<scope>test</scope>
-			</dependency>
-			<dependency>
-				<groupId>org.hamcrest</groupId>
-				<artifactId>hamcrest-all</artifactId>
-				<version>1.1</version>
-				<scope>test</scope>
-			</dependency>
-			<dependency>
-				<groupId>org.mockito</groupId>
-				<artifactId>mockito-core</artifactId>
-				<version>1.8.5</version>
-				<scope>test</scope>
-			</dependency>
-			<dependency>
-				<groupId>org.objenesis</groupId>
-				<artifactId>objenesis</artifactId>
-				<version>1.2</version>
-				<scope>test</scope>
-			</dependency>
-			<!-- ====== / JAVA UNIT TESTS ====== -->
-
-			<!-- ====== SPOCK TESTS ====== -->
-			<dependency>
-				<groupId>org.codehaus.groovy</groupId>
-				<artifactId>groovy-all</artifactId>
-				<version>${groovy.version}</version>
-				<scope>test</scope>
-			</dependency>
-			<dependency>
-				<groupId>org.spockframework</groupId>
-				<artifactId>spock-core</artifactId>
-				<version>${spock.version}</version>
-				<scope>test</scope>
-			</dependency>
-			<dependency>
-				<groupId>org.spockframework</groupId>
-				<artifactId>spock-spring</artifactId>
-				<version>${spock.version}</version>
-				<scope>test</scope>
-			</dependency>
-			<dependency>
-				<groupId>org.spockframework</groupId>
-				<artifactId>spock-unitils</artifactId>
-				<version>${spock.version}</version>
-				<scope>test</scope>
-			</dependency>
-			<!-- ====== /SPOCK TESTS ====== -->
-
-
-		</dependencies>
-	</dependencyManagement>
-
 
 	<modules>
 		<!-- tools is a parent-pom dep so it needs to built first -->
@@ -522,6 +335,10 @@
 			<id>squash-official-repo</id>
 			<url>http://repo.squashtest.org/maven2/releases</url>
 		</repository>
+		<repository>
+			<id>squash-DEV-repo</id>
+			<url>http://repo.squashtest.org/maven2/snapshots</url>
+		</repository>		
 	</repositories>
 
 </project>
