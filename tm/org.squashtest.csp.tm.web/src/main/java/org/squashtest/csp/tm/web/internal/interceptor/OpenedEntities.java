@@ -20,17 +20,25 @@
  */
 package org.squashtest.csp.tm.web.internal.interceptor;
 
+import java.lang.reflect.Array;
+import java.util.Arrays;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
+import java.util.Map.Entry;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.squashtest.csp.core.domain.Identified;
+import org.squashtest.csp.tm.domain.campaign.Campaign;
+import org.squashtest.csp.tm.domain.testcase.TestCase;
 
 public class OpenedEntities {
 	private static final Logger LOGGER = LoggerFactory.getLogger(OpenedEntities.class);
 	
 	private Map<Long, OpenedEntity> entitiesViewers;
+	
+	public static final List<String> MANAGED_ENTITIES_LIST = Arrays.asList(TestCase.class.getSimpleName());
 	
 	public OpenedEntities(){
 		entitiesViewers = new HashMap<Long, OpenedEntity>();
@@ -41,7 +49,7 @@ public class OpenedEntities {
 		OpenedEntity openedEntity = findOpenedEntity(object);
 		
 		//add viewer to entity and return true if viewer is not the only one
-		return openedEntity.addViewer(userLogin);
+		return openedEntity.addViewForViewer(userLogin);
 	}
 	
 	
@@ -59,6 +67,9 @@ public class OpenedEntities {
 	
 	
 	public void removeViewer(String viewerLogin){
-		
+		for(Entry<Long, OpenedEntity> entityViewers : entitiesViewers.entrySet()){
+			OpenedEntity openedEntity = entityViewers.getValue();
+			openedEntity.removeAllViewsForViewer(viewerLogin);
+		}
 	}
 }

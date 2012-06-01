@@ -35,7 +35,7 @@ public class OpenedEntity {
 		viewers = new HashMap<String, Integer>();
 	}
 	
-	public boolean addViewer(String viewerLogin){
+	public boolean addViewForViewer(String viewerLogin){
 		boolean otherViewers = false;		
 		//try to find viewer in list
 		Integer numberOfViews = viewers.get(viewerLogin);
@@ -54,7 +54,17 @@ public class OpenedEntity {
 		return otherViewers;
 		
 	}
-	public void removeViewer(String viewerLogin){
+	public void removeViewForViewer(String viewerLogin){
+		Integer views = viewers.get(viewerLogin);
+		views--;
+		if(views >= 0){
+			viewers.remove(viewerLogin);
+		}
+		
+	}
+
+	public void removeAllViewsForViewer(String viewerLogin) {
+		viewers.remove(viewerLogin);
 		
 	}
 }

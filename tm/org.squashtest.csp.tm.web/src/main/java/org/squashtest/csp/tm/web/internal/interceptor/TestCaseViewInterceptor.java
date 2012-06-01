@@ -25,11 +25,12 @@ import org.slf4j.LoggerFactory;
 import org.springframework.ui.ModelMap;
 import org.springframework.web.context.request.WebRequest;
 import org.squashtest.csp.core.domain.Identified;
+import org.squashtest.csp.tm.domain.testcase.TestCase;
 
 public class TestCaseViewInterceptor extends ObjectViewsInterceptor {
 
 	private static final Logger LOGGER = LoggerFactory.getLogger(TestCaseViewInterceptor.class);
-	private static final String CONTEXT_ATTRIBUTE_KEY = "test-case-views";
+	
  	
 
 	@Override
@@ -43,7 +44,7 @@ public class TestCaseViewInterceptor extends ObjectViewsInterceptor {
 		Identified tc = (Identified) model.get("testCase");
         LOGGER.debug("TestCase = "+tc);
         LOGGER.debug("TestCase contextPath = "+request.getContextPath()+" description "+request.getDescription(true));
-        boolean otherViewers = super.addViewerToEntity(CONTEXT_ATTRIBUTE_KEY, tc, request.getRemoteUser());
+        boolean otherViewers = super.addViewerToEntity(TestCase.class.getSimpleName(), tc, request.getRemoteUser());
         model.addAttribute("otherViewers", otherViewers);
 	}
 
