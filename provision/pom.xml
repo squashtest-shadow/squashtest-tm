@@ -288,6 +288,21 @@
 			<artifactId>core.bugtracker.api</artifactId>
 			<version>${project.version}</version>
 		</dependency>
+		
+		<!-- 
+			the following mantis artifact is a plugin. It could be removed, but that would 
+			also remove it's dependencies from the provisioning.
+			
+			TODO : maybe promote mantis plugin dependencies to "first class" : 1) put them
+			in the squash-tm-dependencies pom and 2) put them here and in distro project.
+		 -->
+		<dependency>
+			<groupId>org.squashtest.tm</groupId>
+			<artifactId>core.bugtracker.mantis</artifactId>
+			<version>${project.version}</version>
+		</dependency>		
+		
+
 		<dependency>
 			<groupId>${project.groupId}</groupId>
 			<artifactId>org.squashtest.csp.core.web</artifactId>
