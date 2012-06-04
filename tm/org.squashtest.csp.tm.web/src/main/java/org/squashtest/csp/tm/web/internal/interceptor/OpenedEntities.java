@@ -20,7 +20,6 @@
  */
 package org.squashtest.csp.tm.web.internal.interceptor;
 
-import java.lang.reflect.Array;
 import java.util.Arrays;
 import java.util.HashMap;
 import java.util.List;
@@ -31,6 +30,9 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.squashtest.csp.core.domain.Identified;
 import org.squashtest.csp.tm.domain.campaign.Campaign;
+import org.squashtest.csp.tm.domain.campaign.Iteration;
+import org.squashtest.csp.tm.domain.campaign.TestSuite;
+import org.squashtest.csp.tm.domain.requirement.Requirement;
 import org.squashtest.csp.tm.domain.testcase.TestCase;
 
 public class OpenedEntities {
@@ -38,8 +40,9 @@ public class OpenedEntities {
 	
 	private Map<Long, OpenedEntity> entitiesViewers;
 	
-	public static final List<String> MANAGED_ENTITIES_LIST = Arrays.asList(TestCase.class.getSimpleName());
-	
+	public static final List<String> MANAGED_ENTITIES_LIST = Arrays.asList(TestCase.class.getSimpleName(),
+			Requirement.class.getSimpleName(), Campaign.class.getSimpleName(), Iteration.class.getSimpleName(), TestSuite.class.getSimpleName());
+
 	public OpenedEntities(){
 		entitiesViewers = new HashMap<Long, OpenedEntity>();
 	}

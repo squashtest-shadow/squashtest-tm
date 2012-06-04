@@ -94,6 +94,31 @@
 		 	<mvc:mapping path="/test-cases/*/info"/>
 	      <bean class="org.squashtest.csp.tm.web.internal.interceptor.TestCaseViewInterceptor"/>
 		</mvc:interceptor>
+		<mvc:interceptor>
+			<mvc:mapping path="/requirements/*"/>
+		 	<mvc:mapping path="/requirements/*/info"/>
+	      <bean class="org.squashtest.csp.tm.web.internal.interceptor.RequirementViewInterceptor"/>
+		</mvc:interceptor>
+		<mvc:interceptor>
+			<mvc:mapping path="/campaigns/*"/>
+		 	<mvc:mapping path="/campaigns/*/info"/>
+	      <bean class="org.squashtest.csp.tm.web.internal.interceptor.CampaignViewInterceptor"/>
+		</mvc:interceptor>
+		<mvc:interceptor>
+			<mvc:mapping path="/iterations/*"/>
+		 	<mvc:mapping path="/iterations/*/info"/>
+	      <bean class="org.squashtest.csp.tm.web.internal.interceptor.IterationViewInterceptor"/>
+		</mvc:interceptor>
+		<mvc:interceptor>
+			<mvc:mapping path="/test-suites/*"/>
+		 	<mvc:mapping path="/test-suites/*/info"/>
+	      <bean class="org.squashtest.csp.tm.web.internal.interceptor.TestSuiteViewInterceptor"/>
+		</mvc:interceptor>
+		<mvc:interceptor>
+			<mvc:mapping path="/executions/*"/>
+		 	<mvc:mapping path="/executions/*/info"/>
+	      <bean class="org.squashtest.csp.tm.web.internal.interceptor.ExecutionViewInterceptor"/>
+		</mvc:interceptor>
 	</mvc:interceptors>
 </beans>
 

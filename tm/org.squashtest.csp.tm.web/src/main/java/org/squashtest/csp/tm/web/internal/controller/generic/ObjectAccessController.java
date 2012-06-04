@@ -34,6 +34,11 @@ import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.ResponseBody;
+import org.squashtest.csp.tm.domain.campaign.Campaign;
+import org.squashtest.csp.tm.domain.campaign.Iteration;
+import org.squashtest.csp.tm.domain.campaign.TestSuite;
+import org.squashtest.csp.tm.domain.execution.Execution;
+import org.squashtest.csp.tm.domain.requirement.Requirement;
 import org.squashtest.csp.tm.domain.testcase.TestCase;
 import org.squashtest.csp.tm.web.internal.interceptor.OpenedEntities;
 
@@ -45,21 +50,58 @@ public class ObjectAccessController {
 	@RequestMapping(value = "/test-cases/{id}/opened-entity", method = RequestMethod.DELETE)
 	@ResponseBody
 	public void leaveTestCase(@PathVariable("id") Long id, HttpServletRequest request) {
+		String contextKey = TestCase.class.getSimpleName();
+		removeViewForObject(id, request, contextKey);
+	}
+	
+	@RequestMapping(value = "/requirements/{id}/opened-entity", method = RequestMethod.DELETE)
+	@ResponseBody
+	public void leaveRequirement(@PathVariable("id") Long id, HttpServletRequest request) {
+		String contextKey = Requirement.class.getSimpleName();
+		removeViewForObject(id, request, contextKey);
+	}
+	
+	@RequestMapping(value = "/campaigns/{id}/opened-entity", method = RequestMethod.DELETE)
+	@ResponseBody
+	public void leaveCampaign(@PathVariable("id") Long id, HttpServletRequest request) {
+		String contextKey = Campaign.class.getSimpleName();
+		removeViewForObject(id, request, contextKey);
+	}
+	@RequestMapping(value = "/iterations/{id}/opened-entity", method = RequestMethod.DELETE)
+	@ResponseBody
+	public void leaveIteration(@PathVariable("id") Long id, HttpServletRequest request) {
+		String contextKey = Iteration.class.getSimpleName();
+		removeViewForObject(id, request, contextKey);
+	}
+	@RequestMapping(value = "/test-suites/{id}/opened-entity", method = RequestMethod.DELETE)
+	@ResponseBody
+	public void leaveTestSuite(@PathVariable("id") Long id, HttpServletRequest request) {
+		String contextKey = TestSuite.class.getSimpleName();
+		removeViewForObject(id, request, contextKey);
+	}
+	@RequestMapping(value = "/executions/{id}/opened-entity", method = RequestMethod.DELETE)
+	@ResponseBody
+	public void leaveExecution(@PathVariable("id") Long id, HttpServletRequest request) {
+		String contextKey = Execution.class.getSimpleName();
+		removeViewForObject(id, request, contextKey);
+	}
+	
+	private void removeViewForObject(Long id, HttpServletRequest request, String contextKey) {
 		Principal user = request.getUserPrincipal();
 		HttpSession session = request.getSession();
 		if (session != null) {
 			ServletContext context = request.getSession().getServletContext();
 			if (context != null && user != null) {
 				LOGGER.debug("context = "+context);
-				LOGGER.debug("leave Test case #" + id);
+				LOGGER.debug("leave "+contextKey+" #" + id);
 								LOGGER.debug(""+user.getName());
-				OpenedEntities openedEnities = (OpenedEntities) context.getAttribute(TestCase.class.getSimpleName());
+				OpenedEntities openedEnities = (OpenedEntities) context.getAttribute(contextKey);
 				if(openedEnities != null){
 					openedEnities.removeView(user.getName(), id);
 				}
 			}
 		}
-		
 	}
+	
 
 }

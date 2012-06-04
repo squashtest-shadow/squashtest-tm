@@ -192,7 +192,8 @@ that page won't be editable if
 		</c:if>		
 	</div>	
 
-	<div style="clear:both;"></div>			
+	<div style="clear:both;"></div>	
+	<comp:opened-object otherViewers="${ otherViewers }" objectUrl="${ requirementUrl }" />
 </div>
 <%-- ----------------------------------- /AUDIT & TOOLBAR  ----------------------------------------------%>	
 <%-- ----------------------------------- TABS  ----------------------------------------------%>	

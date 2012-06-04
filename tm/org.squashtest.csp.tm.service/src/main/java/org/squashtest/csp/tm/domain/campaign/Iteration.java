@@ -49,6 +49,7 @@ import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Size;
 
 import org.hibernate.validator.constraints.NotBlank;
+import org.squashtest.csp.core.domain.Identified;
 import org.squashtest.csp.core.security.annotation.AclConstrainedObject;
 import org.squashtest.csp.tm.domain.DuplicateNameException;
 import org.squashtest.csp.tm.domain.UnknownEntityException;
@@ -64,7 +65,7 @@ import org.squashtest.csp.tm.domain.testcase.TestCase;
 @Auditable
 @Entity
 @SoftDeletable
-public class Iteration implements AttachmentHolder {
+public class Iteration implements AttachmentHolder , Identified {
 
 	private static final String ITERATION_ID = "ITERATION_ID";
 
@@ -223,7 +224,7 @@ public class Iteration implements AttachmentHolder {
 		}
 
 	}
-
+	@Override
 	public Long getId() {
 		return id;
 	}

@@ -314,6 +314,7 @@
 			</c:if>
 		</div>
 		<div style="clear: both;"></div>
+		<comp:opened-object otherViewers="${ otherViewers }" objectUrl="${ testSuiteUrl }" />
 	</div>
 <comp:fragment-tabs />
 <div class="fragment-tabs fragment-body">

@@ -22,13 +22,14 @@ package org.squashtest.csp.tm.domain.bugtracker;
 
 import java.util.List;
 
+import org.squashtest.csp.core.domain.Identified;
 import org.squashtest.csp.core.security.annotation.AclConstrainedObject;
 import org.squashtest.csp.tm.domain.campaign.CampaignLibrary;
 import org.squashtest.csp.tm.domain.project.Project;
 
-public interface Bugged {
+public interface Bugged extends Identified{
 
-	Long getId();
+
 
 	/**
 	 * 

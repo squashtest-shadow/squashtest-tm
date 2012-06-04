@@ -255,6 +255,7 @@
 	
 	
 	<div style="clear:both;"></div>
+			<comp:opened-object otherViewers="${ otherViewers }" objectUrl="${ executionUrl }" />
 </div>
 
 <div class="fragment-body">

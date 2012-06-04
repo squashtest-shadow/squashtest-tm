@@ -37,6 +37,7 @@ import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Size;
 
 import org.hibernate.validator.constraints.NotBlank;
+import org.squashtest.csp.core.domain.Identified;
 import org.squashtest.csp.core.security.annotation.InheritsAcls;
 import org.squashtest.csp.tm.domain.DuplicateNameException;
 import org.squashtest.csp.tm.domain.EmptyTestSuiteTestPlanException;
@@ -49,7 +50,7 @@ import org.squashtest.csp.tm.domain.testcase.TestCase;
 @Auditable
 @Entity
 @InheritsAcls(constrainedClass = Iteration.class, collectionName = "testSuites")
-public class TestSuite {
+public class TestSuite implements Identified {
 
 	public TestSuite() {
 		super();
@@ -75,6 +76,7 @@ public class TestSuite {
 	@JoinColumn(name = "ATTACHMENT_LIST_ID")
 	private final AttachmentList attachmentList = new AttachmentList();
 
+	@Override
 	public Long getId() {
 		return id;
 	}
