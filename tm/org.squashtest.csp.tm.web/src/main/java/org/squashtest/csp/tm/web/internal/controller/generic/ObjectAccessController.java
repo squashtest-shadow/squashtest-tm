@@ -38,12 +38,11 @@ import org.squashtest.csp.tm.domain.testcase.TestCase;
 import org.squashtest.csp.tm.web.internal.interceptor.OpenedEntities;
 
 @Controller
-@RequestMapping(value="/opened-entity")
 public class ObjectAccessController {
 	
 	private static final Logger LOGGER = LoggerFactory.getLogger(ObjectAccessController.class);
 
-	@RequestMapping(value = "/test-cases/{id}", method = RequestMethod.DELETE)
+	@RequestMapping(value = "/test-cases/{id}/opened-entity", method = RequestMethod.DELETE)
 	@ResponseBody
 	public void leaveTestCase(@PathVariable("id") Long id, HttpServletRequest request) {
 		Principal user = request.getUserPrincipal();

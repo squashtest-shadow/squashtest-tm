@@ -38,7 +38,6 @@
 			this.listeners = [];
 			if(this.onCleanContent != null){
 				this.onCleanContent();
-				console.log("onCleanContent");
 				this.onCleanContent = null;
 			}
 		}, this);

@@ -21,7 +21,7 @@
 
 --%>
 <%@ tag body-content="empty" description="Displays message if other user is viewing the same object" %>
-<%@ attribute name="quitUrl" required="true" %>
+<%@ attribute name="objectUrl" required="true" %>
 <%@ attribute name="otherViewers" required="false" type="java.lang.Boolean"%>
 <%@ taglib uri="http://java.sun.com/jsp/jstl/fmt" prefix="f"%>
 <%@ taglib uri="http://java.sun.com/jsp/jstl/core" prefix="c"%>
@@ -32,7 +32,7 @@
 function quitTestCase (){
 	 $.ajax({
 			type : 'DELETE',
-			url : '${quitUrl}'
+			url : '${objectUrl}'+'/opened-entity'
 });
 }
 window.onbeforeunload = quitTestCase;

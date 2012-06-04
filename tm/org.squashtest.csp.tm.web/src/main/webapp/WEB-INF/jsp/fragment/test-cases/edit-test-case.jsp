@@ -46,9 +46,6 @@
 <s:url var="testCaseInfoUrl" value="/test-cases/{tcId}/general">
 	<s:param name="tcId" value="${testCase.id}" />
 </s:url>
-<s:url var="quitUrl" value="/opened-entity/test-cases/{tcId}">
-	<s:param name="tcId" value="${testCase.id}" />
-</s:url>
 <s:url var="getStepsUrl" value="/test-cases/{tcId}/steps-table">
 	<s:param name="tcId" value="${testCase.id}" />
 </s:url>
@@ -607,7 +604,7 @@ $(function() {
 	</div>
 <div style="clear: both;"></div>
 
-<comp:opened-object otherViewers="${ otherViewers }" quitUrl="${ quitUrl }" />
+<comp:opened-object otherViewers="${ otherViewers }" objectUrl="${ testCaseUrl }" />
 
 </div>
 <comp:fragment-tabs />
