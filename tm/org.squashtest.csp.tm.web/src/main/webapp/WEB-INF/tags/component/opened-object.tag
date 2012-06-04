@@ -22,9 +22,11 @@
 --%>
 <%@ tag body-content="empty" description="Displays message if other user is viewing the same object" %>
 <%@ attribute name="objectUrl" required="true" %>
-<%@ attribute name="otherViewers" required="false" type="java.lang.Boolean"%>
+<%@ attribute name="otherViewers" required="true" type="java.lang.Boolean"%>
+<%@ attribute name="isContextual" required="true" type="java.lang.Boolean"%>
 <%@ taglib uri="http://java.sun.com/jsp/jstl/fmt" prefix="f"%>
 <%@ taglib uri="http://java.sun.com/jsp/jstl/core" prefix="c"%>
+
 <c:if test="${ otherViewers }">
 <div style="color: #7E0426; display: block; text-align: center;"><p><f:message key="squashtm.generic.opened-object.quit.message"/></p></div>
 </c:if>
@@ -36,7 +38,8 @@ function quitTestCase (){
 });
 }
 window.onbeforeunload = quitTestCase;
-if(squashtm.contextualContent){
+<c:if test="${ isContextual }">
 squashtm.contextualContent.onCleanContent = quitTestCase;
-}
+console.log("isNotInfoPage");
+</c:if>
 </script>

@@ -255,7 +255,7 @@
 	
 	
 	<div style="clear:both;"></div>
-			<comp:opened-object otherViewers="${ otherViewers }" objectUrl="${ executionUrl }" />
+			<comp:opened-object otherViewers="${ otherViewers }" objectUrl="${ executionUrl }" isContextual="false"/>
 </div>
 
 <div class="fragment-body">

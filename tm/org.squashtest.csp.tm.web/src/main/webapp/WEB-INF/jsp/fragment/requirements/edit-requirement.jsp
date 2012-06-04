@@ -193,7 +193,7 @@ that page won't be editable if
 	</div>	
 
 	<div style="clear:both;"></div>	
-	<comp:opened-object otherViewers="${ otherViewers }" objectUrl="${ requirementUrl }" />
+	<comp:opened-object otherViewers="${ otherViewers }" objectUrl="${ requirementUrl }" isContextual="${ ! param.isInfoPage }"/>
 </div>
 <%-- ----------------------------------- /AUDIT & TOOLBAR  ----------------------------------------------%>	
 <%-- ----------------------------------- TABS  ----------------------------------------------%>	

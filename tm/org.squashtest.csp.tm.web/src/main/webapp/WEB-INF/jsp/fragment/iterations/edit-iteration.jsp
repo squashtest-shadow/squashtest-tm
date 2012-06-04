@@ -235,7 +235,7 @@
 		</c:if>
 	</div>	
 	<div style="clear:both;"></div>	
-	<comp:opened-object otherViewers="${ otherViewers }" objectUrl="${ iterationUrl }" />
+	<comp:opened-object otherViewers="${ otherViewers }" objectUrl="${ iterationUrl }" isContextual="${ ! param.isInfoPage }"/>
 </div>
 
 <comp:fragment-tabs />

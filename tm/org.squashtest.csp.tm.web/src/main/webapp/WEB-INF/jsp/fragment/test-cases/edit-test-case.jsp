@@ -603,7 +603,7 @@ $(function() {
 </c:if>
 	</div>
 <div style="clear: both;"></div>
-<comp:opened-object otherViewers="${ otherViewers }" objectUrl="${ testCaseUrl }" />
+<comp:opened-object otherViewers="${ otherViewers }" objectUrl="${ testCaseUrl }" isContextual="${ ! param.isInfoPage }"/>
 
 </div>
 <comp:fragment-tabs />
