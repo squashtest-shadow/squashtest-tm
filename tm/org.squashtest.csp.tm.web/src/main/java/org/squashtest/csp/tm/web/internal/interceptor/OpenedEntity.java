@@ -42,6 +42,7 @@ public class OpenedEntity {
 		// if already here increment number of his view for this entity
 		if (numberOfViews != null) {
 			numberOfViews++;
+			viewers.put(viewerLogin, numberOfViews);
 		} else {// else create input for this user
 			viewers.put(viewerLogin, new Integer(1));
 		}
@@ -57,9 +58,11 @@ public class OpenedEntity {
 	public void removeViewForViewer(String viewerLogin) {
 		Integer views = viewers.get(viewerLogin);
 		if (views != null) {
-			views--;
-			if (views >= 0) {
+			views = views - 1;
+			if (views <= 0) {
 				viewers.remove(viewerLogin);
+			}else{
+				viewers.put(viewerLogin, views);
 			}
 		}
 

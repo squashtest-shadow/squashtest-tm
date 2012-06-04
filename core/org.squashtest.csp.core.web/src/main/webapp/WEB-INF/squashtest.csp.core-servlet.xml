@@ -90,7 +90,7 @@
 		</bean>
 
 		<mvc:interceptor>
-			<mvc:mapping path="//test-cases/*"/>
+			<mvc:mapping path="/test-cases/*"/>
 		 	<mvc:mapping path="/test-cases/*/info"/>
 	      <bean class="org.squashtest.csp.tm.web.internal.interceptor.TestCaseViewInterceptor"/>
 		</mvc:interceptor>

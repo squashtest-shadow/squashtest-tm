@@ -21,6 +21,22 @@
 
 --%>
 <%@ tag body-content="empty" description="Displays message if other user is viewing the same object" %>
-<%@ taglib prefix="f" uri="http://java.sun.com/jsp/jstl/fmt" %>
-
+<%@ attribute name="quitUrl" required="true" %>
+<%@ attribute name="otherViewers" required="false" type="java.lang.Boolean"%>
+<%@ taglib uri="http://java.sun.com/jsp/jstl/fmt" prefix="f"%>
+<%@ taglib uri="http://java.sun.com/jsp/jstl/core" prefix="c"%>
+<c:if test="${ otherViewers }">
 <div style="color: #7E0426; display: block; text-align: center;"><p><f:message key="squashtm.generic.opened-object.quit.message"/></p></div>
+</c:if>
+<script>
+function quitTestCase (){
+	 $.ajax({
+			type : 'DELETE',
+			url : '${quitUrl}'
+});
+}
+window.onbeforeunload = quitTestCase;
+if(squashtm.contextualContent){
+squashtm.contextualContent.onCleanContent = quitTestCase;
+}
+</script>

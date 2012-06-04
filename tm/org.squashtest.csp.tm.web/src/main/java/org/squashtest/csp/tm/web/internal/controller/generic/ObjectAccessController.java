@@ -50,15 +50,13 @@ public class ObjectAccessController {
 		HttpSession session = request.getSession();
 		if (session != null) {
 			ServletContext context = request.getSession().getServletContext();
-			if (context != null) {
+			if (context != null && user != null) {
 				LOGGER.debug("context = "+context);
 				LOGGER.debug("leave Test case #" + id);
-				if (user != null) {
-					LOGGER.debug(""+user.getName());
-					OpenedEntities openedEnities = (OpenedEntities) context.getAttribute(TestCase.class.getSimpleName());
-					if(openedEnities != null){
-						openedEnities.removeView(user.getName(), id);
-					}
+								LOGGER.debug(""+user.getName());
+				OpenedEntities openedEnities = (OpenedEntities) context.getAttribute(TestCase.class.getSimpleName());
+				if(openedEnities != null){
+					openedEnities.removeView(user.getName(), id);
 				}
 			}
 		}

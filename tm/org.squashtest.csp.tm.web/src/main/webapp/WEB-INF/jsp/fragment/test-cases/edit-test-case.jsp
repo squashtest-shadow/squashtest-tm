@@ -606,20 +606,9 @@ $(function() {
 </c:if>
 	</div>
 <div style="clear: both;"></div>
-<c:if test="${ otherViewers }">
-<comp:opened-object  />
-</c:if>
-<script>
-function quitTestCase (){
-	 $.ajax({
-			type : 'DELETE',
-			url : '${quitUrl}'
-});
-}
-window.onbeforeunload = quitTestCase;
-squashtm.contextualContent.onCleanContent = quitTestCase;
 
-</script>
+<comp:opened-object otherViewers="${ otherViewers }" quitUrl="${ quitUrl }" />
+
 </div>
 <comp:fragment-tabs />
 <div class="fragment-tabs fragment-body">

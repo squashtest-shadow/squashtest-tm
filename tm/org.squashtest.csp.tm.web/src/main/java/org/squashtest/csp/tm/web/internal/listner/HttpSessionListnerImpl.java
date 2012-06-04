@@ -20,26 +20,20 @@
  */
 package org.squashtest.csp.tm.web.internal.listner;
 
-import java.util.Enumeration;
-
 import javax.servlet.ServletContext;
+import javax.servlet.ServletContextEvent;
+import javax.servlet.ServletContextListener;
 import javax.servlet.http.HttpSession;
 import javax.servlet.http.HttpSessionEvent;
 import javax.servlet.http.HttpSessionListener;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContext;
-import org.springframework.security.core.context.SecurityContextHolder;
-import org.springframework.security.core.userdetails.User;
-import org.springframework.security.core.userdetails.UserDetails;
-import org.springframework.web.context.WebApplicationContext;
-import org.squashtest.csp.tm.web.internal.interceptor.ObjectViewsInterceptor;
 import org.squashtest.csp.tm.web.internal.interceptor.OpenedEntities;
 
-public class HttpSessionListnerImpl implements HttpSessionListener {
+public class HttpSessionListnerImpl implements HttpSessionListener, ServletContextListener{
 	private static final Logger LOGGER = LoggerFactory.getLogger(HttpSessionListnerImpl.class);
 
 	@Override
@@ -48,11 +42,8 @@ public class HttpSessionListnerImpl implements HttpSessionListener {
 
 	}
 	
-	
-
 	@Override
 	public void sessionDestroyed(HttpSessionEvent arg0) {
-		LOGGER.debug("Session Closed");
 		ServletContext context = arg0.getSession().getServletContext();
 		HttpSession session = arg0.getSession();
 		SecurityContext securityContext = (SecurityContext) session.getAttribute("SPRING_SECURITY_CONTEXT");
@@ -63,9 +54,8 @@ public class HttpSessionListnerImpl implements HttpSessionListener {
 				login = authentication.getName();
 			}
 		}
-		
 		if (login != null) {
-			
+			LOGGER.debug("Session Closed for user "+login);
 			for (String managedEntityKey : OpenedEntities.MANAGED_ENTITIES_LIST) {
 				removeUserFromViewers(managedEntityKey, login, context);
 			}
@@ -75,6 +65,27 @@ public class HttpSessionListnerImpl implements HttpSessionListener {
 	private void removeUserFromViewers(String managedEntityKey, String login, ServletContext context) {
 		OpenedEntities openedEntities = (OpenedEntities) context.getAttribute(managedEntityKey);
 		if(openedEntities != null){openedEntities.removeViewer(login);}
+	}
+
+
+
+	@Override
+	public void contextDestroyed(ServletContextEvent arg0) {
+		
+		
+	}
+
+
+
+	@Override
+	public void contextInitialized(ServletContextEvent arg0) {
+		ServletContext context = arg0.getServletContext();
+		LOGGER.debug("ServletContext attribute is null");
+		for (String contextAttributeName : OpenedEntities.MANAGED_ENTITIES_LIST) {
+			OpenedEntities entities = new OpenedEntities();
+			context.setAttribute(contextAttributeName, entities);
+		}
+		
 	}
 
 }

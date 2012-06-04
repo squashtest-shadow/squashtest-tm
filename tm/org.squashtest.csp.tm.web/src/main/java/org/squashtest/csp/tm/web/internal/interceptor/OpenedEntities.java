@@ -44,7 +44,7 @@ public class OpenedEntities {
 		entitiesViewers = new HashMap<Long, OpenedEntity>();
 	}
 	
-	public boolean addViewerToEntity(Identified object, String userLogin) {
+	public synchronized boolean addViewerToEntity(Identified object, String userLogin) {
 		//get the entity || create one if none
 		OpenedEntity openedEntity = findOpenedEntity(object);
 		
@@ -53,7 +53,7 @@ public class OpenedEntities {
 	}
 	
 	
-	private OpenedEntity findOpenedEntity(Identified object) {
+	private synchronized OpenedEntity findOpenedEntity(Identified object) {
 		OpenedEntity openedEntity = this.entitiesViewers.get(object.getId());
 		if(openedEntity == null){
 			LOGGER.debug("Entity was not listed => new Entity");
@@ -66,14 +66,14 @@ public class OpenedEntities {
 	}
 	
 	
-	public void removeViewer(String viewerLogin){
+	public synchronized void removeViewer(String viewerLogin){
 		for(Entry<Long, OpenedEntity> entityViewers : entitiesViewers.entrySet()){
 			OpenedEntity openedEntity = entityViewers.getValue();
 			openedEntity.removeAllViewsForViewer(viewerLogin);
 		}
 	}
 
-	public void removeView(String name, Long id) {
+	public synchronized void removeView(String name, Long id) {
 		OpenedEntity openedEntity = this.entitiesViewers.get(id);
 		if(openedEntity != null){
 			openedEntity.removeViewForViewer(name);
