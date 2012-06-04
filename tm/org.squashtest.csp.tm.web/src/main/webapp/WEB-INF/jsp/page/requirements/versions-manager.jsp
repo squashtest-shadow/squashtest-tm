@@ -28,8 +28,12 @@
 <%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core" %>
 <%@ taglib prefix="f" uri="http://java.sun.com/jsp/jstl/fmt" %>
 <%@ taglib prefix='fn' uri='http://java.sun.com/jsp/jstl/functions' %>
-<%@ taglib prefix="cmp" tagdir="/WEB-INF/tags/component" %>
+<%@ taglib prefix="comp" tagdir="/WEB-INF/tags/component" %>
+<%@ taglib prefix="s" uri="http://www.springframework.org/tags" %>
 
+<s:url var="requirementUrl" value="/requirements/{reqId}">
+	<s:param name="reqId" value="${requirement.id}" />
+</s:url>
 <c:set var="displayedVersions" value="10" />
 <layout:common-import-outer-frame-layout highlightedWorkspace="requirement" titleKey="squashtm.library.requirement.title">
 	<jsp:attribute  name="head">	
@@ -128,6 +132,7 @@
 				</div>
 				
 				<div class="unsnap"></div>
+				<comp:opened-object otherViewers="${ otherViewers }" objectUrl="${ requirementUrl }" isContextual="false"/>
 			</div>
 			
 			<div id="sub-page-list-panel" class="sub-page-list-panel shadow ui-corner-all ui-helper-reset ui-widget ui-widget-content" >
@@ -155,7 +160,7 @@
 								<td>${ version.versionNumber }</td>
 								<td>${ version.reference }</td>
 								<td>${ version.name }</td>
-								<td><cmp:level-message level="${ version.status }" /></td>
+								<td><comp:level-message level="${ version.status }" /></td>
 								<td>&nbsp;</td>
 							</tr>
 						</c:forEach>

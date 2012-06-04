@@ -97,6 +97,8 @@
 		<mvc:interceptor>
 			<mvc:mapping path="/requirements/*"/>
 		 	<mvc:mapping path="/requirements/*/info"/>
+		 	<mvc:mapping path="/requirements/*/versions/manager"/>
+		 	<mvc:mapping path="/requirement-versions/*/verifying-test-cases/manager"/>
 	      <bean class="org.squashtest.csp.tm.web.internal.interceptor.RequirementViewInterceptor"/>
 		</mvc:interceptor>
 		<mvc:interceptor>

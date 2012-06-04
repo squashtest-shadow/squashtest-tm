@@ -99,7 +99,7 @@ public class VerifyingTestCaseManagerController {
 		List<TestCaseLibrary> linkableLibraries = verifyingTestCaseManager.findLinkableTestCaseLibraries();
 
 		List<JsTreeNode> linkableLibrariesModel = createLinkableLibrariesModel(linkableLibraries);
-
+		model.addAttribute("requirement", requirementVersion.getRequirement()); //this is done because of RequirementViewInterceptor
 		model.addAttribute("requirementVersion", requirementVersion);
 		model.addAttribute("linkableLibrariesModel", linkableLibrariesModel);
 

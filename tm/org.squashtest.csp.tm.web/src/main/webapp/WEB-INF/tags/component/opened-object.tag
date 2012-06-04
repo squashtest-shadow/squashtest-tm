@@ -34,12 +34,12 @@
 function quitTestCase (){
 	 $.ajax({
 			type : 'DELETE',
-			url : '${objectUrl}'+'/opened-entity'
+			url : '${objectUrl}'+'/opened-entity',
+			async : false
 });
 }
 window.onbeforeunload = quitTestCase;
 <c:if test="${ isContextual }">
 squashtm.contextualContent.onCleanContent = quitTestCase;
-console.log("isNotInfoPage");
 </c:if>
 </script>

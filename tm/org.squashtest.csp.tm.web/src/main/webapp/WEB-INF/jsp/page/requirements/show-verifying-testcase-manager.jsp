@@ -30,6 +30,7 @@
 <%@ page language="java" contentType="text/html; charset=utf-8" pageEncoding="utf-8"%>
 <c:url var="treeBaseUrl" value="/test-case-browser"/>
 <c:url var="backUrl" value="/requirement-workspace/" />
+<c:url var="requirementUrl" value="/requirements/${ requirement.id }" />
 <c:url var="verifyingTestCasesTableUrl" value="/requirement-versions/${ requirementVersion.id }/verifying-test-cases/table" />
 <c:url var="verifyingTestCasesUrl" value="/requirement-versions/${ requirementVersion.id }/verifying-test-cases" />
 <c:url var="nonVerifyingTestCasesUrl" value="/requirement-versions/${ requirementVersion.id }/non-verifying-test-cases" />
@@ -128,7 +129,7 @@
 			</div>	
 			<div style="clear:both;"></div>
 	</jsp:attribute>
-
+	<comp:opened-object otherViewers="${ otherViewers }" objectUrl="${ requirementUrl }" isContextual="false"/>
 	<jsp:attribute name="tablePane">
 		<aggr:verifying-test-cases-table />
 		<div id="add-summary-dialog" class="not-displayed" title="<f:message key='requirement-version.verifying-test-case.add-summary-dialog.title' />">
