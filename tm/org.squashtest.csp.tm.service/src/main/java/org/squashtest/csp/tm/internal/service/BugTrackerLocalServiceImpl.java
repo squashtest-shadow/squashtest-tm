@@ -159,9 +159,7 @@ public class BugTrackerLocalServiceImpl implements BugTrackerLocalService {
 		// get them
 		List<BTIssue> remoteIssues = getIssues(issuesIds);
 
-		// now return a new FilteredCollectionHolder containing the BTIssues paired with their owner
-		// note : the method makeBTIssueOwnership is used to ensure that the list is correctly sorted, but theoretically
-		// the two lists are already sorted in the same order.
+		// now return a new FilteredCollectionHolder containing the BTIssues paired with their owner 
 		List<IssueOwnership<BTIssue>> btOwnership = makeBTIssueOwnership(remoteIssues,
 				filteredIssues.getFilteredCollection());
 
