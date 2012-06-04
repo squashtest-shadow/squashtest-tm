@@ -610,12 +610,15 @@ $(function() {
 <comp:opened-object  />
 </c:if>
 <script>
-window.onbeforeunload = function(){
-	  $.ajax({
+function quitTestCase (){
+	 $.ajax({
 			type : 'DELETE',
 			url : '${quitUrl}'
 });
-};
+}
+window.onbeforeunload = quitTestCase;
+squashtm.contextualContent.onCleanContent = quitTestCase;
+
 </script>
 </div>
 <comp:fragment-tabs />

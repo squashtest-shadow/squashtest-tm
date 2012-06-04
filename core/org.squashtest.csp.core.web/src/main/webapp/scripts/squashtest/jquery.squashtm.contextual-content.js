@@ -26,18 +26,22 @@
 	
 		this.listeners = [];
 		this.currentUrl = "";
-		this.currentXhr = { readyState : 4, abort : function(){} };		//we initialize it with a mock.
-		
-		var self = this;
-		
+		this.currentXhr = { readyState : 4, abort : function(){} };		// we initialize  it with a mock.
+//		this.isTestCaseUrl = function(){return this.currentUrl.match(/test-cases/)};
+		this.onCleanContent = null;
+
 		/* ******************* private **************** */
 		
 		var cleanContent = $.proxy(function(){
 			$('.is-contextual').dialog("destroy").remove(); 
 			this.empty();		
 			this.listeners = [];
+			if(this.onCleanContent != null){
+				this.onCleanContent();
+				console.log("onCleanContent");
+				this.onCleanContent = null;
+			}
 		}, this);
-
 		
 		var abortIfRunning = $.proxy(function(){
 			if (this.currentXhr.readyState!=4){
@@ -78,8 +82,8 @@
 					dataType : 'html'
 				})
 				.success(function(data){
-					self.currentUrl = url;
 					cleanContent();
+					self.currentUrl = url;
 					self.html(data);
 				});
 				

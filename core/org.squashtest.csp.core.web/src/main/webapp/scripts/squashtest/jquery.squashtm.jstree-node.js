@@ -342,7 +342,7 @@
 		// *************** urls 
 		
 		this.getResourceUrl = function(){
-			return this.getBaseUrl()+"/"+this.getResType()+"/"+this.getResId();
+			return this.getBaseUrl()+this.getResType()+"/"+this.getResId();
 		};
 		
 		this.getBaseUrl = function(){

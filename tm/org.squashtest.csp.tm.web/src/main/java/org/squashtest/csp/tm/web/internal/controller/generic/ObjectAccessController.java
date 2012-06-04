@@ -33,16 +33,18 @@ import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
+import org.springframework.web.bind.annotation.ResponseBody;
 import org.squashtest.csp.tm.domain.testcase.TestCase;
 import org.squashtest.csp.tm.web.internal.interceptor.OpenedEntities;
 
 @Controller
-@RequestMapping(value = "/opened-entity")
+@RequestMapping(value="/opened-entity")
 public class ObjectAccessController {
 	
 	private static final Logger LOGGER = LoggerFactory.getLogger(ObjectAccessController.class);
 
 	@RequestMapping(value = "/test-cases/{id}", method = RequestMethod.DELETE)
+	@ResponseBody
 	public void leaveTestCase(@PathVariable("id") Long id, HttpServletRequest request) {
 		Principal user = request.getUserPrincipal();
 		HttpSession session = request.getSession();
