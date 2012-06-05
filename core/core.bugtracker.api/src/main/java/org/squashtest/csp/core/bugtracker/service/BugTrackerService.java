@@ -103,11 +103,7 @@ public interface BugTrackerService {
 	List<Priority> getPriorities();
 
 
-	/**
-	 * will return the list of permissions for the given bugtracker
-	 * @return the list of available Permission
-	 */
-	List<Permission> getPermissions();
+
 
 	/**
 	 * will return a project, matching by its name
@@ -126,7 +122,7 @@ public interface BugTrackerService {
 	 * @return the project if found, shipped with all known versions, categories and users.
 	 * @throws various subclasses of BugTrackerManagerException
 	 */
-	BTProject findProject(Long id);
+	BTProject findProjectById(String id);
 
 	/**
 	 * will send an issue to the bugtracker.
@@ -147,7 +143,4 @@ public interface BugTrackerService {
 	 */
 	List<BTIssue> getIssues(List<String> issueKeyList);
 
-	/*
-	public List<Severity> getSeverities() ;
-	*/
 }

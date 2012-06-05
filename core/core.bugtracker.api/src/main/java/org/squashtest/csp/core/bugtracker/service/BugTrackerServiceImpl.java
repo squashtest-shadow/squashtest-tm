@@ -31,9 +31,7 @@ import org.squashtest.csp.core.bugtracker.core.BugTrackerConnectorFactory;
 import org.squashtest.csp.core.bugtracker.domain.BTIssue;
 import org.squashtest.csp.core.bugtracker.domain.BTProject;
 import org.squashtest.csp.core.bugtracker.domain.BugTracker;
-import org.squashtest.csp.core.bugtracker.domain.Permission;
 import org.squashtest.csp.core.bugtracker.domain.Priority;
-import org.squashtest.csp.core.bugtracker.domain.Severity;
 import org.squashtest.csp.core.bugtracker.net.AuthenticationCredentials;
 import org.squashtest.csp.core.bugtracker.spi.BugTrackerConnector;
 import org.squashtest.csp.core.bugtracker.spi.BugTrackerInterfaceDescriptor;
@@ -144,37 +142,23 @@ public class BugTrackerServiceImpl implements BugTrackerService {
 		return connector.getPriorities();
 	}
 
-	@Override
-	public List<Permission> getPermissions() {
-		BugTrackerConnector connector = bugTrackerConnectorFactory.createConnector(bugTracker);
-		connector.authenticate(getBugTrackerContext().getCredentials());
-		return connector.getPermissions();
-	}
+	
+	
 
 	@Override
 	public BTProject findProject(String name) {
 		BugTrackerConnector connector = bugTrackerConnectorFactory.createConnector(bugTracker);
 		connector.authenticate(getBugTrackerContext().getCredentials());
 
-		BTProject project = connector.findProject(name);
-		project.addAllVersions(connector.findVersions(project));
-		project.addAllUsers(connector.findUsers(project));
-		project.addAllCategories(connector.findCategories(project));
-
-		return project;
+		return connector.findProject(name);
 	}
 
 	@Override
-	public BTProject findProject(Long id) {
+	public BTProject findProjectById(String projectId) {
 		BugTrackerConnector connector = bugTrackerConnectorFactory.createConnector(bugTracker);
 		connector.authenticate(getBugTrackerContext().getCredentials());
 
-		BTProject project = connector.findProject(id);
-		project.addAllVersions(connector.findVersions(project));
-		project.addAllUsers(connector.findUsers(project));
-		project.addAllCategories(connector.findCategories(project));
-
-		return project;
+		return connector.findProject(projectId);
 	}
 
 	@Override

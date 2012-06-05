@@ -152,5 +152,15 @@ public class BTProject implements Identifiable{
 		return false;
 	}
 	
-	
+	/**
+	 *  returns true if the user list is empty or if it contains only {@link User}.NO_USER 
+	 * 
+	 * @return
+	 */
+	public boolean canAssignUsers(){
+		return ! (
+				(users.isEmpty()) ||
+				(users.size() == 1 && users.get(0).equals(User.NO_USER)) 
+		);
+	}
 }

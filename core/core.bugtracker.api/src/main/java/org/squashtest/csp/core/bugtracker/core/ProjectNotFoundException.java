@@ -20,23 +20,26 @@
  */
 package org.squashtest.csp.core.bugtracker.core;
 
-public class BugTrackerNotFoundException extends BugTrackerManagerException {
+public class ProjectNotFoundException extends
+		BugTrackerNotFoundException {
+	
 
-	private static final long serialVersionUID = 6738012630408869671L;
-	
-	private static final String defaultMessage = "squashtest.core.bugtracker.exceptions.notfoundexception";
-	
-	
-	public BugTrackerNotFoundException(){
-		super(defaultMessage);
+	/**
+	 * 
+	 */
+	private static final long serialVersionUID = 1L;
+
+	public ProjectNotFoundException() {
+		super();
 	}
 
-	public BugTrackerNotFoundException(String message, Throwable cause) {
+	public ProjectNotFoundException(String message, Throwable cause) {
 		super(message, cause);
 	}
 
-	public BugTrackerNotFoundException(Throwable cause) {
+	public ProjectNotFoundException(Throwable cause) {
 		super(cause);
 	}
+	
 	
 }

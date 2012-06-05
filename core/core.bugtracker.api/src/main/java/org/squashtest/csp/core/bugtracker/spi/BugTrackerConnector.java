@@ -73,13 +73,6 @@ public interface BugTrackerConnector {
 
 
 	/**
-	 * returns the list of existing permissions on the bugtracker
-	 * @return a list of Permission
-	 */
-	List<Permission> getPermissions();
-
-
-	/**
 	 * will return a project based on its name.
 	 *
 	 * @return a project if found, BugTrackerNotFoundException if not found.
@@ -92,7 +85,7 @@ public interface BugTrackerConnector {
 	 *
 	 * @return a project if found, BugTrackerNotFoundException if not found.
 	 */
-	BTProject findProject(Long projectId);
+	BTProject findProjectById(String projectId);
 
 
 	/**
@@ -108,7 +101,7 @@ public interface BugTrackerConnector {
 	 * @param projectId is the bugtracker id of the project
 	 * @return the list of the version if found, BugTrackerNotFoundException if the project doesn't exist
 	 */
-	List<Version> findVersions(Long projectId);
+	List<Version> findVersionsById(String projectId);
 
 	/**
 	 *  will return the list of the available version of the given project
@@ -144,7 +137,7 @@ public interface BugTrackerConnector {
 	 *
 	 * @return the list of the users with permissions set if found, BugTrackerNotFoundException if the project doesn't exist
 	 */
-	List<User> findUsers(Long projectID);
+	List<User> findUsersById(String projectID);
 
 
 	/**

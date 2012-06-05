@@ -21,6 +21,20 @@
 package org.squashtest.csp.core.bugtracker.domain;
 
 public class Permission implements Identifiable {
+	
+	private static final char nonPrintableKey = 0x06;
+	private static final String hopefullyUniqueKey = new String(new char[] { nonPrintableKey, nonPrintableKey,
+			nonPrintableKey });
+	
+	
+	/**
+	 * Note : this field uses a version having no printable character as an Id. This enforce slightly the uniqueness of
+	 * that id regarding real ids you may find in an actual bugtracker. However it's not totally safe. Refer to code if
+	 * you need to implement something clever.
+	 */
+	public static final Permission NO_PERMISSION = new Permission(hopefullyUniqueKey, "");
+	
+	
 	private final String id;
 	private final String name;
 
