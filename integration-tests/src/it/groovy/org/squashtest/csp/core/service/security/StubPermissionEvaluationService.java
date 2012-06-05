@@ -39,4 +39,10 @@ public class StubPermissionEvaluationService implements
 	
 	}
 
+	@Override
+	public boolean hasMoreThanRead(Object object) {
+		// TODO Auto-generated method stub
+		return true;
+	}
+
 }
