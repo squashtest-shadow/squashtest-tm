@@ -25,7 +25,12 @@ import java.util.Map;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-
+/**
+ * Represents a list of users viewing the same object at the same time and how many views have each user opened. 
+ * see it's use at {@linkplain OpenedEntities}
+ * @author mpagnon
+ *
+ */
 public class OpenedEntity {
 	private static final Logger LOGGER = LoggerFactory.getLogger(OpenedEntity.class);
 

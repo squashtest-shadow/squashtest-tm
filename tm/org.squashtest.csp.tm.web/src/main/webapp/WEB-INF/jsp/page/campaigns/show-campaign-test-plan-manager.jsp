@@ -121,8 +121,8 @@
 		</div>	
 		<div style="clear:both;"></div>
 	</jsp:attribute>	
-	
 	<jsp:attribute name="tablePane">
+		<comp:opened-object otherViewers="${ otherViewers }" objectUrl="${ campaignUrl }" isContextual="false"/>
 		<aggr:campaign-test-plan-manager-table />
 	</jsp:attribute>
 </layout:tree-picker-layout>

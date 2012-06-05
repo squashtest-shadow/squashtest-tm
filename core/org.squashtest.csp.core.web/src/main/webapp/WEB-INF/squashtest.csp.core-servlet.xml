@@ -92,6 +92,7 @@
 		<mvc:interceptor>
 			<mvc:mapping path="/test-cases/*"/>
 		 	<mvc:mapping path="/test-cases/*/info"/>
+		 	<mvc:mapping path="/test-cases/*/verified-requirement-versions/manager"/>
 	      <bean class="org.squashtest.csp.tm.web.internal.interceptor.TestCaseViewInterceptor"/>
 		</mvc:interceptor>
 		<mvc:interceptor>
@@ -104,16 +105,19 @@
 		<mvc:interceptor>
 			<mvc:mapping path="/campaigns/*"/>
 		 	<mvc:mapping path="/campaigns/*/info"/>
+		 	<mvc:mapping path="/campaigns/*/test-plan/manager"/>
 	      <bean class="org.squashtest.csp.tm.web.internal.interceptor.CampaignViewInterceptor"/>
 		</mvc:interceptor>
 		<mvc:interceptor>
 			<mvc:mapping path="/iterations/*"/>
 		 	<mvc:mapping path="/iterations/*/info"/>
+		 	<mvc:mapping path="/iterations/*/test-plan-manager"/>
 	      <bean class="org.squashtest.csp.tm.web.internal.interceptor.IterationViewInterceptor"/>
 		</mvc:interceptor>
 		<mvc:interceptor>
 			<mvc:mapping path="/test-suites/*"/>
 		 	<mvc:mapping path="/test-suites/*/info"/>
+		 	<mvc:mapping path="/test-suites/*/*/test-plan-manager"/>
 	      <bean class="org.squashtest.csp.tm.web.internal.interceptor.TestSuiteViewInterceptor"/>
 		</mvc:interceptor>
 		<mvc:interceptor>

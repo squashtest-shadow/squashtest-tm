@@ -20,7 +20,7 @@
         along with this software.  If not, see <http://www.gnu.org/licenses/>.
 
 --%>
-<%@ tag body-content="empty" description="Displays message if other user is viewing the same object" %>
+<%@ tag body-content="empty" description="Displays message if other user is viewing the same object and send a request when the user leaves the page" %>
 <%@ attribute name="objectUrl" required="true" %>
 <%@ attribute name="otherViewers" required="true" type="java.lang.Boolean"%>
 <%@ attribute name="isContextual" required="true" type="java.lang.Boolean"%>

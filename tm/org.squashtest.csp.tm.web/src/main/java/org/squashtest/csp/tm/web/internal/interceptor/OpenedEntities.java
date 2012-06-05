@@ -34,7 +34,30 @@ import org.squashtest.csp.tm.domain.campaign.Iteration;
 import org.squashtest.csp.tm.domain.campaign.TestSuite;
 import org.squashtest.csp.tm.domain.requirement.Requirement;
 import org.squashtest.csp.tm.domain.testcase.TestCase;
-
+/**
+ * Opened Entities represent a list of object of one type among the "MANAGED_ENTITIES_LIST". 
+ * It is used to notify a user if he is not the only one with to view the element. 
+ * <br><br>
+ * For example an OpenedEntities for TestCases will store , for each test-case is viewed, an entry in the "entitiesViewers" map with it's id as the key.
+ * The OpenedEntity value will store the informations of how many users are viewing the test-case and how many views he has opened.
+ * <br><br>
+ * <b>How to add an object as a managed entity ? </b>
+ * <ol> <li>create an <span style="color:darkgreen">interceptor</span> in the same model as that extends the ObjectViewsInterceptor. 
+ * 	declare it in the <span style="color:darkgreen">servlet.xml</span> and map it to the rightful url, make sure the url will return a mav with the object of interest in it.
+ * 	handle the opening of a new view and add the boolean "otherViewers" to the mav. </li>
+ * <li>add the <span style="color:darkgreen">component "opened-object"</span> in the view to notify the user if he is not alone viewing this object and to send a quit request if the user leaves the view</li>
+ * <li>add the leaveObject method in the <span style="color:darkgreen">ObjectAccessController</span> </li>
+ * <li>add the object class.simpleName to the <span style="color:darkgreen">MANAGED_ENTITIES_LIST</span> below</li>. This will allow the HttpSessionListnerImpl to create the needed OpenedEntities at the start of squash and to close the view of a user the end of his session</ol>
+ * <br>
+ * <b>How to add a view to a managed entity</b>
+ * <ol><li>add the view's access url to the rightful interceptor in the <span style="color:darkgreen">serlvet.xml</span></li>
+ * <li>make sure <span style="color:darkgreen">the object is returned in the mav</span> with the same name as in the other hanldled views</li>
+ * <li>add the <span style="color:darkgreen">component "opened-object"</span> in the view</li>
+ * </ol>
+ * 
+ * @author mpagnon
+ *
+ */
 public class OpenedEntities {
 	private static final Logger LOGGER = LoggerFactory.getLogger(OpenedEntities.class);
 	

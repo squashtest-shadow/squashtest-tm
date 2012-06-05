@@ -24,6 +24,7 @@
 <%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core"%>
 <%@ taglib prefix="layout" tagdir="/WEB-INF/tags/layout"%>
 <%@ taglib prefix="tree" tagdir="/WEB-INF/tags/jstree"%>
+<%@ taglib prefix="comp" tagdir="/WEB-INF/tags/component"%>
 <%@ taglib prefix="jq" tagdir="/WEB-INF/tags/jquery"%>
 <%@ taglib prefix="aggr" tagdir="/WEB-INF/tags/aggregates"%>
 <%@ taglib prefix="dt" tagdir="/WEB-INF/tags/datatables" %>
@@ -31,6 +32,7 @@
 <%@ page language="java" contentType="text/html; charset=utf-8" pageEncoding="utf-8"%>
 
 <c:url var="backUrl" value="/campaign-workspace/" />
+<c:url var="iterationUrl" value="/iterations/${ iteration.id }" />
 <c:url var="treeBaseUrl" value="/test-case-browser/" />
 <c:url var="testPlansTableUrl" value="${ baseURL }/test-cases/table" />
 <c:url var="testPlanUrl" value="${ baseURL }/test-cases" />
@@ -165,13 +167,17 @@
 	
 			</div>
 			<div class="fragment-body">
+			
 			<c:if test="${ useIterationTable }">
+			<comp:opened-object otherViewers="${ otherViewers }" objectUrl="${ iterationUrl }" isContextual="false"/>
 				<aggr:decorate-iteration-test-plan-manager-table tableModelUrl="${testPlansTableUrl}" testPlanDetailsBaseUrl="${testPlanDetailsBaseUrl}" 
 					testPlansUrl="${removeTestPlanUrl}" batchRemoveButtonId="remove-items-button" 
 					updateTestPlanUrl="${updateTestPlanUrl}" nonBelongingTestPlansUrl="${nonBelongingTestPlansUrl}" />
 				<aggr:iteration-test-plan-manager-table/>
 			</c:if>
 			<c:if test="${ not useIterationTable }">
+			<c:url var="testSuiteUrl" value="/test-suites/${ testSuite.id }" />
+			<comp:opened-object otherViewers="${ otherViewers }" objectUrl="${ testSuiteUrl }" isContextual="false"/>
 				<aggr:decorate-test-suite-test-plan-manager-table tableModelUrl="${testPlansTableUrl}" testPlanDetailsBaseUrl="${testPlanDetailsBaseUrl}" 
 					testPlansUrl="${removeTestPlanUrl}" batchRemoveButtonId="remove-items-button"
 					updateTestPlanUrl="${updateTestPlanUrl}" nonBelongingTestPlansUrl="${nonBelongingTestPlansUrl}" />

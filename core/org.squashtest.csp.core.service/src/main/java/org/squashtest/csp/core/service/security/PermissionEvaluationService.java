@@ -20,6 +20,8 @@
  */
 package org.squashtest.csp.core.service.security;
 
+import org.squashtest.csp.core.domain.Identified;
+
 /**
  * This service evaluates permissions of the current user.
  *
@@ -43,5 +45,12 @@ public interface PermissionEvaluationService {
 	 * @return
 	 */
 	boolean canRead(Object object);
+	
+	/**
+	 * return true if the user has more than readonly on the object
+	 * @param object
+	 * @return
+	 */
+	boolean hasMoreThanRead(Object object);
 	
 }

@@ -26,7 +26,11 @@ import org.springframework.ui.ModelMap;
 import org.springframework.web.context.request.WebRequest;
 import org.squashtest.csp.core.domain.Identified;
 import org.squashtest.csp.tm.domain.campaign.Campaign;
-
+/**
+ * 
+ * @author mpagnon
+ *
+ */
 public class CampaignViewInterceptor extends ObjectViewsInterceptor {
 
 	private static final Logger LOGGER = LoggerFactory.getLogger(CampaignViewInterceptor.class); 	

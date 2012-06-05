@@ -32,7 +32,15 @@ import org.slf4j.LoggerFactory;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContext;
 import org.squashtest.csp.tm.web.internal.interceptor.OpenedEntities;
-
+/**
+ * This lisner acts when the ServletContext is created or when a user's session is ending.
+ * <ul><li>When the servletContext is created : a OpenedEntities instance is created and stored in the servletContext for each entry in the {@linkplain OpenedEntities#MANAGED_ENTITIES_LIST}.</li>
+ * <li>When a user's session is ending, all his stored views on the existing OpenedEntities are removed</li></ul>
+ * The aim of all this is to notify a user when someone else is viewing the same object than him. See {@linkplain OpenedEntities}'s java doc for more details.
+ * 
+ * @author mpagnon
+ *
+ */
 public class HttpSessionListnerImpl implements HttpSessionListener, ServletContextListener{
 	private static final Logger LOGGER = LoggerFactory.getLogger(HttpSessionListnerImpl.class);
 

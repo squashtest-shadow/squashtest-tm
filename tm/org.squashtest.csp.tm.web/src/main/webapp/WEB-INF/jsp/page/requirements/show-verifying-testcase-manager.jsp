@@ -129,8 +129,8 @@
 			</div>	
 			<div style="clear:both;"></div>
 	</jsp:attribute>
-	<comp:opened-object otherViewers="${ otherViewers }" objectUrl="${ requirementUrl }" isContextual="false"/>
 	<jsp:attribute name="tablePane">
+		<comp:opened-object otherViewers="${ otherViewers }" objectUrl="${ requirementUrl }" isContextual="false"/>
 		<aggr:verifying-test-cases-table />
 		<div id="add-summary-dialog" class="not-displayed" title="<f:message key='requirement-version.verifying-test-case.add-summary-dialog.title' />">
 			<ul><li>summary message here</li></ul>

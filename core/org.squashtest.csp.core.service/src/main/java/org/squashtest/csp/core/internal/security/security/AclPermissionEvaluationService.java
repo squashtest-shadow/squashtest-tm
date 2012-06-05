@@ -20,13 +20,20 @@
  */
 package org.squashtest.csp.core.internal.security.security;
 
+import java.lang.reflect.Field;
+import java.util.Arrays;
+import java.util.List;
+
 import javax.inject.Inject;
 
 import org.springframework.security.access.PermissionEvaluator;
+import org.springframework.security.acls.domain.BasePermission;
 import org.springframework.security.acls.domain.PermissionFactory;
 import org.springframework.security.acls.model.Permission;
+import org.springframework.security.core.Authentication;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+import org.squashtest.csp.core.security.acls.CustomPermission;
 import org.squashtest.csp.core.service.security.PermissionEvaluationService;
 import org.squashtest.csp.core.service.security.UserContextService;
 
@@ -61,6 +68,31 @@ public class AclPermissionEvaluationService implements PermissionEvaluationServi
 	@Override
 	public boolean canRead(Object object) {
 		return hasRoleOrPermissionOnObject("ROLE_ADMIN", "READ", object);
+	}
+
+	@Override
+	public boolean hasMoreThanRead(Object object) {
+		boolean hasMore = false;
+		if(userContextService.hasRole("ROLE_ADMIN")){
+			hasMore = true;
+		}else{
+			Authentication authentication = userContextService.getPrincipal();
+			  Field[] fields = CustomPermission.class.getFields();
+			  for (int i = 0; i < fields.length; i++) {
+				  try{
+				  if((!fields[i].getName().equals("READ"))&& permissionEvaluator.hasPermission(authentication, object, fields[i].getName())){
+					  return true;
+				  }
+				  }catch(IllegalArgumentException iaexecption){
+					  List<String> knownMessages = Arrays.asList("Unknown permission 'RESERVED_ON'","Unknown permission 'RESERVED_OFF'", "Unknown permission 'THIRTY_TWO_RESERVED_OFF'" );
+					  if(!(knownMessages.contains(iaexecption.getMessage()))){
+						  throw iaexecption;
+					  }
+				  }
+			  }
+			  
+		}
+		return hasMore;
 	}
 	
 }

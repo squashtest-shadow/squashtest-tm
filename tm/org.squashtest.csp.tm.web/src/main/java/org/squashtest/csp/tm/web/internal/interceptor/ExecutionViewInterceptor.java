@@ -26,7 +26,11 @@ import org.springframework.ui.ModelMap;
 import org.springframework.web.context.request.WebRequest;
 import org.squashtest.csp.core.domain.Identified;
 import org.squashtest.csp.tm.domain.execution.Execution;
-
+/**
+ * 
+ * @author mpagnon
+ *
+ */
 public class ExecutionViewInterceptor extends ObjectViewsInterceptor {
 
 	private static final Logger LOGGER = LoggerFactory.getLogger(ExecutionViewInterceptor.class); 	

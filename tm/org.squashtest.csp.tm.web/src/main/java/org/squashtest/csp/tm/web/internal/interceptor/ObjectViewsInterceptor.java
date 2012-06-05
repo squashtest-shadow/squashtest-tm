@@ -29,7 +29,12 @@ import org.springframework.osgi.extensions.annotation.ServiceReference;
 import org.springframework.web.context.request.WebRequestInterceptor;
 import org.squashtest.csp.core.domain.Identified;
 import org.squashtest.csp.core.service.security.PermissionEvaluationService;
-
+/**
+ * Groups mutual code to store the information of an access to the view of an entity in the OpenedEntities stored in the ServeletContext. 
+ * see {@linkplain OpenedEntities}
+ * @author mpagnon
+ *
+ */
 public abstract class ObjectViewsInterceptor implements WebRequestInterceptor {
 	private static final Logger LOGGER = LoggerFactory.getLogger(ObjectViewsInterceptor.class);
 
@@ -45,7 +50,7 @@ public abstract class ObjectViewsInterceptor implements WebRequestInterceptor {
 
 	public boolean addViewerToEntity(String contextAttributeName, Identified object, String userLogin) {
 		boolean otherViewers = false;
-		if (permissionService.hasRoleOrPermissionOnObject("ROLE_ADMIN", "SMALL_EDIT", object)) {
+		if (permissionService.hasMoreThanRead(object)) {
 			LOGGER.debug("User has more than readonly in object = true");
 
 			OpenedEntities openedEntities = (OpenedEntities) context.getAttribute(contextAttributeName);

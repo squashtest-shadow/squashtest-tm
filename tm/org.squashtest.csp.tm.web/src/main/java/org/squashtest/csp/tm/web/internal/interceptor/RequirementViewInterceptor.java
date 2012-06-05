@@ -27,7 +27,11 @@ import org.springframework.web.context.request.WebRequest;
 import org.squashtest.csp.core.domain.Identified;
 import org.squashtest.csp.tm.domain.requirement.Requirement;
 import org.squashtest.csp.tm.domain.testcase.TestCase;
-
+/**
+ * 
+ * @author mpagnon
+ *
+ */
 public class RequirementViewInterceptor extends ObjectViewsInterceptor {
 
 	private static final Logger LOGGER = LoggerFactory.getLogger(RequirementViewInterceptor.class); 	

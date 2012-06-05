@@ -26,7 +26,11 @@ import org.springframework.ui.ModelMap;
 import org.springframework.web.context.request.WebRequest;
 import org.squashtest.csp.core.domain.Identified;
 import org.squashtest.csp.tm.domain.testcase.TestCase;
-
+/**
+ * 
+ * @author mpagnon
+ *
+ */
 public class TestCaseViewInterceptor extends ObjectViewsInterceptor {
 
 	private static final Logger LOGGER = LoggerFactory.getLogger(TestCaseViewInterceptor.class);
