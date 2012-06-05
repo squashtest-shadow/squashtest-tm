@@ -81,21 +81,27 @@
 
 <authz:authorized hasRole="ROLE_ADMIN" hasPermission="WRITE" domainObject="${ testCase }">
 	<c:set var="writable" value="${ true }" />
+	<c:set var="moreThanReadOnly" value="${ true }" />
 </authz:authorized>
 <authz:authorized hasRole="ROLE_ADMIN" hasPermission="ATTACH" domainObject="${ testCase }">
 	<c:set var="attachable" value="${ true }" />
+	<c:set var="moreThanReadOnly" value="${ true }" />
 </authz:authorized>
 <authz:authorized hasRole="ROLE_ADMIN" hasPermission="SMALL_EDIT" domainObject="${ testCase }">
 	<c:set var="smallEditable" value="${true }"/>
+	<c:set var="moreThanReadOnly" value="${ true }" />
 </authz:authorized>
 <authz:authorized hasRole="ROLE_ADMIN" hasPermission="DELETE" domainObject="${ testCase }">
 	<c:set var="deletable" value="${true }"/>
+	<c:set var="moreThanReadOnly" value="${ true }" />
 </authz:authorized>
 <authz:authorized hasRole="ROLE_ADMIN" hasPermission="CREATE" domainObject="${ testCase }">
 	<c:set var="creatable" value="${true }"/>
+	<c:set var="moreThanReadOnly" value="${ true }" />
 </authz:authorized>
 <authz:authorized hasRole="ROLE_ADMIN" hasPermission="LINK" domainObject="${ testCase }">
 	<c:set var="linkable" value="${ true }" />
+	<c:set var="moreThanReadOnly" value="${ true }" />
 </authz:authorized>
  
 <%-- ----------------------------------- Init ----------------------------------------------%>
@@ -603,7 +609,9 @@ $(function() {
 </c:if>
 	</div>
 <div style="clear: both;"></div>
+<c:if test="${ moreThanReadOnly }">
 <comp:opened-object otherViewers="${ otherViewers }" objectUrl="${ testCaseUrl }" isContextual="${ ! param.isInfoPage }"/>
+</c:if>
 
 </div>
 <comp:fragment-tabs />

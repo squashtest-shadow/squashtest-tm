@@ -64,18 +64,23 @@
 <%-- ----------------------------------- Authorization ----------------------------------------------%>
 <authz:authorized hasRole="ROLE_ADMIN" hasPermission="ATTACH" domainObject="${ campaign }">
 	<c:set var="attachable" value="${ true }" />
+	<c:set var="moreThanReadOnly" value="${ true }" />
 </authz:authorized>
 <authz:authorized hasRole="ROLE_ADMIN" hasPermission="SMALL_EDIT" domainObject="${ campaign }">
 	<c:set var="smallEditable" value="${ true }" />
+	<c:set var="moreThanReadOnly" value="${ true }" />
 </authz:authorized>
 <authz:authorized hasRole="ROLE_ADMIN" hasPermission="DELETE" domainObject="${ campaign }">
 	<c:set var="deletable" value="${true }"/>
+	<c:set var="moreThanReadOnly" value="${ true }" />
 </authz:authorized>
 <authz:authorized hasRole="ROLE_ADMIN" hasPermission="CREATE" domainObject="${ campaign }">
 	<c:set var="creatable" value="${true }"/>
+	<c:set var="moreThanReadOnly" value="${ true }" />
 </authz:authorized>
 <authz:authorized hasRole="ROLE_ADMIN" hasPermission="LINK" domainObject="${ campaign }">
 	<c:set var="linkable" value="${ true }" />
+	<c:set var="moreThanReadOnly" value="${ true }" />
 </authz:authorized>
  
 
@@ -198,7 +203,9 @@
 	</c:if>
 	</div>	
 	<div style="clear:both;"></div>	
-	<comp:opened-object otherViewers="${ otherViewers }" objectUrl="${ campaignUrl }" isContextual="${ ! param.isInfoPage }"/>
+	<c:if test="${moreThanReadOnly }">
+		<comp:opened-object otherViewers="${ otherViewers }" objectUrl="${ campaignUrl }" isContextual="${ ! param.isInfoPage }"/>
+	</c:if>
 </div>
 <comp:fragment-tabs />
 <div class="fragment-tabs fragment-body">

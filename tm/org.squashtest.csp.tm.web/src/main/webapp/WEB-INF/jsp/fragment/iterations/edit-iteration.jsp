@@ -88,24 +88,31 @@
 <%-- ----------------------------------- Authorization ----------------------------------------------%>
 <authz:authorized hasRole="ROLE_ADMIN" hasPermission="WRITE" domainObject="${ iteration }">
 	<c:set var="writable" value="${ true }" />
+	<c:set var="moreThanReadOnly" value="${ true }" />
 </authz:authorized>
 <authz:authorized hasRole="ROLE_ADMIN" hasPermission="ATTACH" domainObject="${ iteration }">
 	<c:set var="attachable" value="${ true }" />
+	<c:set var="moreThanReadOnly" value="${ true }" />
 </authz:authorized>
 <authz:authorized hasRole="ROLE_ADMIN" hasPermission="SMALL_EDIT" domainObject="${ iteration }">
 	<c:set var="smallEditable" value="${ true }" />
+	<c:set var="moreThanReadOnly" value="${ true }" />
 </authz:authorized>
 <authz:authorized hasRole="ROLE_ADMIN" hasPermission="DELETE" domainObject="${ iteration }">
 	<c:set var="deletable" value="${true }"/>
+	<c:set var="moreThanReadOnly" value="${ true }" />
 </authz:authorized>
 <authz:authorized hasRole="ROLE_ADMIN" hasPermission="CREATE" domainObject="${ iteration }">
 	<c:set var="creatable" value="${true }"/>
+	<c:set var="moreThanReadOnly" value="${ true }" />
 </authz:authorized>
 <authz:authorized hasRole="ROLE_ADMIN" hasPermission="LINK" domainObject="${ iteration }">
 	<c:set var="linkable" value="${ true }" />
+	<c:set var="moreThanReadOnly" value="${ true }" />
 </authz:authorized>
 <authz:authorized hasRole="ROLE_ADMIN" hasPermission="EXECUTE" domainObject="${ iteration }">
 	<c:set var="executable" value="${ true }" />
+	<c:set var="moreThanReadOnly" value="${ true }" />
 </authz:authorized>
 <script type="text/javascript">
 
@@ -235,7 +242,9 @@
 		</c:if>
 	</div>	
 	<div style="clear:both;"></div>	
+	<c:if test="moreThanReadOnly">
 	<comp:opened-object otherViewers="${ otherViewers }" objectUrl="${ iterationUrl }" isContextual="${ ! param.isInfoPage }"/>
+	</c:if>
 </div>
 
 <comp:fragment-tabs />

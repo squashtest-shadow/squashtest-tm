@@ -56,18 +56,23 @@ that page won't be editable if
  
 <authz:authorized hasRole="ROLE_ADMIN" hasPermission="ATTACH" domainObject="${ requirement }">
 	<c:set var="attachable" value="${ requirement.modifiable }" />
+	<c:set var="moreThanReadOnly" value="${ true }" />
 </authz:authorized>
 <authz:authorized hasRole="ROLE_ADMIN" hasPermission="SMALL_EDIT" domainObject="${ requirement }">
 	<c:set var="smallEditable" value="${requirement.modifiable }"/>
+		<c:set var="moreThanReadOnly" value="${ true }" />
 </authz:authorized>
 <authz:authorized hasRole="ROLE_ADMIN" hasPermission="DELETE" domainObject="${ requirement }">
 	<c:set var="deletable" value="${requirement.modifiable }"/>
+		<c:set var="moreThanReadOnly" value="${ true }" />
 </authz:authorized>
 <authz:authorized hasRole="ROLE_ADMIN" hasPermission="CREATE" domainObject="${ requirement }">
 	<c:set var="creatable" value="${true }"/>
+		<c:set var="moreThanReadOnly" value="${ true }" />
 </authz:authorized>
 <authz:authorized hasRole="ROLE_ADMIN" hasPermission="LINK" domainObject="${ requirement }">
 	<c:set var="linkable" value="${ requirement.linkable }" />
+		<c:set var="moreThanReadOnly" value="${ true }" />
 </authz:authorized>
 <c:set var="status_editable" value="${ smallEditable && requirement.status.allowsStatusUpdate }"/>
 <%-- ----------------------------------- Init ----------------------------------------------%>
@@ -193,7 +198,9 @@ that page won't be editable if
 	</div>	
 
 	<div style="clear:both;"></div>	
+	<c:if test="${ moreThanReadOnly	 }">
 	<comp:opened-object otherViewers="${ otherViewers }" objectUrl="${ requirementUrl }" isContextual="${ ! param.isInfoPage }"/>
+	</c:if>
 </div>
 <%-- ----------------------------------- /AUDIT & TOOLBAR  ----------------------------------------------%>	
 <%-- ----------------------------------- TABS  ----------------------------------------------%>	

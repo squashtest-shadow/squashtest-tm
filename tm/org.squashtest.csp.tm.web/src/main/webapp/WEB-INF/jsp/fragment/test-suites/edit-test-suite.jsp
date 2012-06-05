@@ -131,18 +131,23 @@
 
 <authz:authorized hasRole="ROLE_ADMIN" hasPermission="SMALL_EDIT" domainObject="${ testSuite }">
 	<c:set var="smallEditable" value="${ true }" />
+	<c:set var="moreThanReadOnly" value="${ true }" />
 </authz:authorized>
 <authz:authorized hasRole="ROLE_ADMIN" hasPermission="DELETE" domainObject="${ testSuite }">
 	<c:set var="deletable" value="${true }"/>
+	<c:set var="moreThanReadOnly" value="${ true }" />
 </authz:authorized>
 <authz:authorized hasRole="ROLE_ADMIN" hasPermission="CREATE" domainObject="${ testSuite }">
 	<c:set var="creatable" value="${true }"/>
+	<c:set var="moreThanReadOnly" value="${ true }" />
 </authz:authorized>
 <authz:authorized hasRole="ROLE_ADMIN" hasPermission="LINK" domainObject="${ testSuite }">
 	<c:set var="linkable" value="${ true }" />
+	<c:set var="moreThanReadOnly" value="${ true }" />
 </authz:authorized>
 <authz:authorized hasRole="ROLE_ADMIN" hasPermission="EXECUTE" domainObject="${ testSuite }">
 	<c:set var="executable" value="${ true }" />
+	<c:set var="moreThanReadOnly" value="${ true }" />
 </authz:authorized>
 
 <script type="text/javascript">
@@ -314,7 +319,9 @@
 			</c:if>
 		</div>
 		<div style="clear: both;"></div>
+		<c:if test="${ moreThanReadOnly }">
 		<comp:opened-object otherViewers="${ otherViewers }" objectUrl="${ testSuiteUrl }" isContextual="${ ! param.isInfoPage }"/>
+		</c:if>
 	</div>
 <comp:fragment-tabs />
 <div class="fragment-tabs fragment-body">

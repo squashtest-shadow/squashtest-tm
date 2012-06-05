@@ -255,7 +255,9 @@
 	
 	
 	<div style="clear:both;"></div>
+	<c:if test="editable">
 			<comp:opened-object otherViewers="${ otherViewers }" objectUrl="${ executionUrl }" isContextual="false"/>
+			</c:if>
 </div>
 
 <div class="fragment-body">
