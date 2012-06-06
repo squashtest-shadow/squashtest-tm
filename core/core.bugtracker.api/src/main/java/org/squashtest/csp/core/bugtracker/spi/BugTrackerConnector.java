@@ -25,7 +25,6 @@ import java.util.List;
 import org.squashtest.csp.core.bugtracker.domain.BTIssue;
 import org.squashtest.csp.core.bugtracker.domain.BTProject;
 import org.squashtest.csp.core.bugtracker.domain.Category;
-import org.squashtest.csp.core.bugtracker.domain.Permission;
 import org.squashtest.csp.core.bugtracker.domain.Priority;
 import org.squashtest.csp.core.bugtracker.domain.User;
 import org.squashtest.csp.core.bugtracker.domain.Version;
@@ -150,7 +149,7 @@ public interface BugTrackerConnector {
 
 
 	/**
-	 * will submit an issue to the bugtracker
+	 * will submit an issue to the bugtracker.
 	 *
 	 * @param issue a squash Issue
 	 * @return the newly created issue

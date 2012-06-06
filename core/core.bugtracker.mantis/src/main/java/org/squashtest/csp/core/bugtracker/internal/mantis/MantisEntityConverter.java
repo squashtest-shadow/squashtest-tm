@@ -256,14 +256,14 @@ public final class MantisEntityConverter {
 
 		//the next two may be empty, we need to check that first.
 		Version sqVersion = squashIssue.getVersion();
-		if (sqVersion.isEmpty()){
+		if (sqVersion.isDummy()){
 			data.setVersion(null);
 		}else{
 			data.setVersion(sqVersion.getName());
 		}
 
 		Category sqCategory = squashIssue.getCategory();
-		if (sqCategory.isEmpty()){
+		if (sqCategory.isDummy()){
 			data.setCategory(null);
 		}else{
 			data.setCategory(sqCategory.getName());
@@ -315,8 +315,8 @@ public final class MantisEntityConverter {
 
 	/* **** private utilities **** */
 
-	private static ObjectRef makeObjectRef(Identifiable squashEntity){
-		if (! squashEntity.isEmpty()){
+	private static ObjectRef makeObjectRef(Identifiable<?> squashEntity){
+		if (! squashEntity.isDummy()){
 			ObjectRef oRef = new ObjectRef();
 			oRef.setId(squash2MantisId(squashEntity.getId()));
 			oRef.setName(squashEntity.getName());

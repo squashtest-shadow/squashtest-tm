@@ -105,7 +105,11 @@ public class BugtrackerController {
 		binder.registerCustomEditor(BTProject.class, new ProjectPropertyEditorSupport());
 	}
 
-	/* ********************* Execution Step level section *************************** */
+	/* **************************************************************************************************************
+	 * 																												*
+	 *  								ExecutionStep level section 												*
+	 *  																											*
+	 *  *********************************************************************************************************** */
 
 	/**
 	 * returns the panel displaying the current bugs of that execution step and the stub for the report form. Remember
@@ -137,36 +141,17 @@ public class BugtrackerController {
 
 			filteredCollection = bugTrackerLocalService.findBugTrackerIssues(bugged, sorter);
 		}
-		// we only filter here the exception happening when the credentials aren't set. Every other Exceptions will be
-		// handled via the normal way
-		// (see the various implementations of AbstractHandlerExceptionResolver in
-		// org.squashtest.csp.tm.web.internal.handler)
+		
+		
+		// no credentials exception are okay, the rest is to be treated as usual
 		catch (BugTrackerNoCredentialsException noCrdsException) {
-			LOGGER.trace("BugTrackerController : fetching known issues for execution step " + stepId
-					+ " failed, exception : ", noCrdsException);
-			List<IssueOwnership<BTIssue>> emptyList = new LinkedList<IssueOwnership<BTIssue>>();
-			filteredCollection = new FilteredCollectionHolder<List<IssueOwnership<BTIssue>>>(0, emptyList);
-		} catch (NullArgumentException npException) {
-			LOGGER.trace("BugTrackerController : fetching known issues for execution step " + stepId
-					+ " failed, exception : ", npException);
-			List<IssueOwnership<BTIssue>> emptyList = new LinkedList<IssueOwnership<BTIssue>>();
-			filteredCollection = new FilteredCollectionHolder<List<IssueOwnership<BTIssue>>>(0, emptyList);
+			filteredCollection = makeEmptyCollectionHolder(EXECUTION_STEP_TYPE, stepId, noCrdsException);
+		} 
+		catch (NullArgumentException npException) {
+			filteredCollection = makeEmptyCollectionHolder(EXECUTION_STEP_TYPE, stepId, npException);
 		}
 
-		/*
-		 * the DataTableModel will hold :
-		 *
-		 * - the url of that issue, - the id, - the summary, - the priority
-		 */
-		return new DataTableModelHelper<IssueOwnership<BTIssue>>() {
-			@Override
-			public Object[] buildItemData(IssueOwnership<BTIssue> ownership) {
-				return new Object[] {
-						bugTrackerLocalService.getIssueUrl(ownership.getIssue().getId()).toExternalForm(),
-						ownership.getIssue().getId(), ownership.getIssue().getSummary(),
-						ownership.getIssue().getPriority().getName() };
-			}
-		}.buildDataModel(filteredCollection, sorter.getFirstItemIndex() + 1, params.getsEcho());
+		return new StepIssuesTableModel().buildDataModel(filteredCollection, sorter.getFirstItemIndex() + 1, params.getsEcho());
 
 	}
 
@@ -199,7 +184,11 @@ public class BugtrackerController {
 		return processIssue(jsonIssue, entity);
 	}
 
-	/* ************************* Execution level section ********************** */
+	/* **************************************************************************************************************
+	 * 																												*
+	 *  								Execution level section 													*
+	 *  																											*
+	 *  *********************************************************************************************************** */
 
 	/**
 	 * returns the panel displaying the current bugs of that execution and the stub for the report form. Remember that
@@ -233,37 +222,16 @@ public class BugtrackerController {
 			filteredCollection = bugTrackerLocalService.findBugTrackerIssues(bugged, sorter);
 
 		}
-		// we only filter here the exception happening when the credentials aren't set. Every other Exceptions will be
-		// handled via the normal way
-		// (see the various implementations of AbstractHandlerExceptionResolver in
-		// org.squashtest.csp.tm.web.internal.handler)
+
+		// no credentials exception are okay, the rest is to be treated as usual
 		catch (BugTrackerNoCredentialsException noCrdsException) {
-			LOGGER.trace("BugTrackerController : fetching known issues for execution " + execId
-					+ " failed, exception : ", noCrdsException);
-			List<IssueOwnership<BTIssue>> emptyList = new LinkedList<IssueOwnership<BTIssue>>();
-			filteredCollection = new FilteredCollectionHolder<List<IssueOwnership<BTIssue>>>(0, emptyList);
-		} catch (NullArgumentException npException) {
-			LOGGER.trace("BugTrackerController : fetching known issues for execution " + execId
-					+ " failed, exception : ", npException);
-			List<IssueOwnership<BTIssue>> emptyList = new LinkedList<IssueOwnership<BTIssue>>();
-			filteredCollection = new FilteredCollectionHolder<List<IssueOwnership<BTIssue>>>(0, emptyList);
+			filteredCollection = makeEmptyCollectionHolder(EXECUTION_TYPE, execId, noCrdsException);
+		} 
+		catch (NullArgumentException npException) {
+			filteredCollection = makeEmptyCollectionHolder(EXECUTION_TYPE, execId, npException);
 		}
-		/*
-		 * the DataTableModel for an execution will hold :
-		 *
-		 * - the url of that issue, - the id, - the summary, - the priority, - the status, - the assignee, - the owning
-		 * entity
-		 */
-		return new DataTableModelHelper<IssueOwnership<BTIssue>>() {
-			@Override
-			public Object[] buildItemData(IssueOwnership<BTIssue> ownership) {
-				return new Object[] {
-						bugTrackerLocalService.getIssueUrl(ownership.getIssue().getId()).toExternalForm(),
-						ownership.getIssue().getId(), ownership.getIssue().getSummary(),
-						ownership.getIssue().getPriority().getName(), ownership.getIssue().getStatus().getName(),
-						ownership.getIssue().getAssignee().getName(), buildOwnerName(ownership.getOwner(), locale) };
-			}
-		}.buildDataModel(filteredCollection, sorter.getFirstItemIndex() + 1, params.getsEcho());
+
+		return new ExecutionIssuesTableModel(locale).buildDataModel(filteredCollection, sorter.getFirstItemIndex() + 1, params.getsEcho());
 
 	}
 
@@ -501,4 +469,70 @@ public class BugtrackerController {
 		return mav;
 	}
 
+	
+	// **************************************** private utilities *******************************************************
+	
+	
+	
+	private FilteredCollectionHolder<List<IssueOwnership<BTIssue>>> makeEmptyCollectionHolder(String entityName, Long entityId, Exception cause){
+		LOGGER.trace("BugTrackerController : fetching known issues for  " +entityName+" "+ entityId
+				+ " failed, exception : ", cause);
+		List<IssueOwnership<BTIssue>> emptyList = new LinkedList<IssueOwnership<BTIssue>>();
+		return new FilteredCollectionHolder<List<IssueOwnership<BTIssue>>>(0, emptyList);
+	}
+	
+	
+	/**
+	 * <p>the DataTableModel for an execution will hold :
+	 *<ul>
+	 *	<li>the url of that issue,</li>
+	 *	<li>the id,</li>
+	 *	<li>the summary</li>,
+	 *	<li>the priority,</li>
+	 *	<li>the status,</li>
+	 *	<li>the assignee,</li>
+	 *	<li>the owning entity</li>
+	 *</ul>
+	 * </p>
+	 */
+	private class ExecutionIssuesTableModel extends DataTableModelHelper<IssueOwnership<BTIssue>>{
+		
+		private final Locale locale;
+		
+		public ExecutionIssuesTableModel(Locale locale){
+			this.locale=locale;
+		}
+		
+		@Override
+		public Object[] buildItemData(IssueOwnership<BTIssue> ownership) {
+			return new Object[] {
+					bugTrackerLocalService.getIssueUrl(ownership.getIssue().getId()).toExternalForm(),
+					ownership.getIssue().getId(), ownership.getIssue().getSummary(),
+					ownership.getIssue().getPriority().getName(), ownership.getIssue().getStatus().getName(),
+					ownership.getIssue().getAssignee().getName(), buildOwnerName(ownership.getOwner(), locale) };
+		}		
+	}
+	
+
+	/**
+	 * <p>the DataTableModel will hold :
+	 *	<ul>
+	 * 		<li>the url of that issue,</li>
+	 * 		<li>the id,</li>
+	 * 		<li>the summary,</li>
+	 * 		<li>the priority</li>
+	 * 	</ul>
+	 * </p>
+	 */
+	private class StepIssuesTableModel extends DataTableModelHelper<IssueOwnership<BTIssue>>{
+
+		@Override
+		public Object[] buildItemData(IssueOwnership<BTIssue> ownership) {
+			return new Object[] {
+					bugTrackerLocalService.getIssueUrl(ownership.getIssue().getId()).toExternalForm(),
+					ownership.getIssue().getId(), ownership.getIssue().getSummary(),
+					ownership.getIssue().getPriority().getName() };
+		}	
+	}
+	
 }

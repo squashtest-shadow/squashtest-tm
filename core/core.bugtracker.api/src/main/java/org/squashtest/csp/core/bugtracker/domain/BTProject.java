@@ -24,7 +24,7 @@ import java.util.Collection;
 import java.util.LinkedList;
 import java.util.List;
 
-public class BTProject implements Identifiable{
+public class BTProject implements Identifiable<BTProject>{
 	private final String id;
 	private final String name;
 	
@@ -147,11 +147,17 @@ public class BTProject implements Identifiable{
 		return null;
 	}
 	
+	
+	/**
+	 * is hopefully never a dummy
+	 * 
+	 */
 	@Override
-	public boolean isEmpty(){
+	public boolean isDummy(){
 		return false;
 	}
 	
+
 	/**
 	 *  returns true if the user list is empty or if it contains only {@link User}.NO_USER 
 	 * 
@@ -160,7 +166,7 @@ public class BTProject implements Identifiable{
 	public boolean canAssignUsers(){
 		return ! (
 				(users.isEmpty()) ||
-				(users.size() == 1 && users.get(0).equals(User.NO_USER)) 
+				(users.size() == 1 && users.get(0).isDummy()) 
 		);
 	}
 }

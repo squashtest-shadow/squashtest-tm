@@ -46,6 +46,19 @@ public interface IssueDao extends EntityDao<Issue>{
 
 	
 	/**
+	 * Will recursively find a sorted/filtered list of Issues paired with their owning Bugged entity, 
+	 * from the given bugged entity and its related Bugged entities.
+	 *  
+	 * The data will be sorted/filtered regardless of their owner.
+	 * 
+	 * @param entity the entity at the base of the bugged hierarchy
+	 * @param sorter a CollectionSoring object that will tell who we must sort the data
+	 * @param bugtrackerName the name of the bugtracker we are filtering on
+	 * @return a non null but possibly empty list of IssueOwnership<Issue>, that will pair each Issue with their Owner.
+	 */
+	List<IssueOwnership<Issue>> findIssuesWithOwner(Bugged entity, CollectionSorting sorter, String bugtrackerName);
+	
+	/**
 	 * Will count the total number of issues related to the given IssueList.  
 	 * 
 	 * 
@@ -53,5 +66,15 @@ public interface IssueDao extends EntityDao<Issue>{
 	 * @return how many issues they hold.
 	 */
 	Integer countIssuesfromIssueList(List<Long> issueListIds);
+	
+	/**
+	 * Will count the total number of issues related to the given IssueList, for the given bugtracker
+	 * 
+	 * 
+	 * @param issueListIds the id of the issue lists.
+	 * @param bugtrackerName the name of the bugtracker we are filtering on
+	 * @return how many issues they hold.
+	 */
+	Integer countIssuesfromIssueList(List<Long> issueListIds, String bugtrackerName);
 
 }

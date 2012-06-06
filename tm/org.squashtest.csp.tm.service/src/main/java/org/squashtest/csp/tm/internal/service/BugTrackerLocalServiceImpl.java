@@ -85,13 +85,18 @@ public class BugTrackerLocalServiceImpl implements BugTrackerLocalService {
 	@PreAuthorize("hasPermission(#entity, 'EXECUTE') or hasRole('ROLE_ADMIN')")
 	public BTIssue createIssue(Bugged entity, BTIssue issue) {
 
+		String btName = remoteBugTrackerService.getBugTrackerName();
+		issue.setBugtracker(btName);
+		
 		BTIssue createdIssue = remoteBugTrackerService.createIssue(issue);
+		createdIssue.setBugtracker(btName);
 
 		// if success we set the bug in Squash TM database
 		// a success being : we reach this code with no exceptions
 
 		Issue sqIssue = new Issue();
 		sqIssue.setRemoteIssueId(createdIssue.getId());
+		sqIssue.setBugtrackerName(btName);
 
 		IssueList list = entity.getIssueList();
 
@@ -112,9 +117,11 @@ public class BugTrackerLocalServiceImpl implements BugTrackerLocalService {
 	public FilteredCollectionHolder<List<IssueOwnership<Issue>>> findSquashIssues(Bugged buggedEntity,
 			CollectionSorting sorter) {
 
+		String btName = remoteBugTrackerService.getBugTrackerName();
+		
 		List<Long> issueListIds = buggedEntity.getAllIssueListId();
 
-		List<IssueOwnership<Issue>> pairedIssues = issueDao.findIssuesWithOwner(buggedEntity, sorter);
+		List<IssueOwnership<Issue>> pairedIssues = issueDao.findIssuesWithOwner(buggedEntity, sorter, btName);
 
 		Integer totalIssues = issueDao.countIssuesfromIssueList(issueListIds);
 

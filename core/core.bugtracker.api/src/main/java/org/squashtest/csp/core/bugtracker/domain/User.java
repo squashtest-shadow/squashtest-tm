@@ -30,18 +30,9 @@ import java.util.List;
  *
  */
 
-public class User implements Identifiable{
+public class User implements Identifiable<User>{
 
-	private static final char nonPrintableKey = 0x06;
-	private static final String hopefullyUniqueKey = new String(new char[] { nonPrintableKey, nonPrintableKey,
-			nonPrintableKey });
-
-	/**
-	 * Note : this field uses a version having no printable character as an Id. This enforce slightly the uniqueness of
-	 * that id regarding real ids you may find in an actual bugtracker. However it's not totally safe. Refer to code if
-	 * you need to implement something clever.
-	 */
-	public static final User NO_USER = new User(hopefullyUniqueKey, "");
+	public static final User NO_USER = new User(Identifiable.DUMMY_ID, Identifiable.DUMMY_NAME);
 
 	private final String id;
 	private final String name;
@@ -104,8 +95,10 @@ public class User implements Identifiable{
 	
 	
 	@Override
-	public boolean isEmpty(){
-		return this.id.equals(User.NO_USER.getId());
+	public boolean isDummy(){
+		return this.id.equals(NO_USER.id);
 	}
+	
+	
 
 }

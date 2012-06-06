@@ -26,7 +26,6 @@ import java.util.List;
 import org.squashtest.csp.core.bugtracker.core.BugTrackerRemoteException;
 import org.squashtest.csp.core.bugtracker.domain.BTIssue;
 import org.squashtest.csp.core.bugtracker.domain.BTProject;
-import org.squashtest.csp.core.bugtracker.domain.Permission;
 import org.squashtest.csp.core.bugtracker.domain.Priority;
 import org.squashtest.csp.core.bugtracker.spi.BugTrackerInterfaceDescriptor;
 
@@ -44,6 +43,14 @@ public interface BugTrackerService {
 	 * @return
 	 */
 	boolean isBugTrackerDefined();
+	
+	
+	/**
+	 * 
+	 * 
+	 * @return the name of this instance of bugtracker. The name is a symbolic name : not his kind, nor url.
+	 */
+	String getBugTrackerName();
 
 	/**
 	 * Tell if this service should be given authentication credentials before being able to perform any BT operation.

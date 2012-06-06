@@ -57,9 +57,6 @@ public class HibernateIssueDao extends HibernateEntityDao<Issue> implements Issu
 	}
 
 
-
-
-
 	@Override
 	public Integer countIssuesfromIssueList(final List<Long> issueListIds) {
 		
@@ -75,7 +72,23 @@ public class HibernateIssueDao extends HibernateEntityDao<Issue> implements Issu
 		}
 		
 	}
+	
 
+	@Override
+	public Integer countIssuesfromIssueList(List<Long> issueListIds,
+			String bugtrackerName) {
+		if (! issueListIds.isEmpty()){			
+			Query query = currentSession().getNamedQuery("issueList.countIssuesByTracker");
+			query.setParameterList("issueListIds", issueListIds);
+			query.setParameter("bugtracker", bugtrackerName);
+			Long result = (Long)query.uniqueResult();
+			
+			return result.intValue();
+		}
+		else{
+			return 0;
+		}		
+	}
 	
 	/*
 	 * the process is the following :
@@ -98,12 +111,19 @@ public class HibernateIssueDao extends HibernateEntityDao<Issue> implements Issu
 	@Override
 	public List<IssueOwnership<Issue>> findIssuesWithOwner(Bugged entity,
 			CollectionSorting sorter) {
+
+		return findIssuesWithOwner(entity, sorter, null);
+	}
+
+	@Override
+	public List<IssueOwnership<Issue>> findIssuesWithOwner(Bugged entity,
+			CollectionSorting sorter, String bugtrackerName) {
 		
 		List<Long> issueListIds = entity.getAllIssueListId();
 		List<Class<? extends Bugged>> possibleOwnerClasses = getActualClasses(entity.getAllBuggeds());
 		
 		//step 1
-		List<Issue> sortedOrphanIssues = findIssuesFromIssueList(issueListIds, sorter);
+		List<Issue> sortedOrphanIssues = findIssuesFromIssueList(issueListIds, sorter, bugtrackerName);
 		
 		//step 2
 		List<Long> sortedOprhanIds = collectIds(sortedOrphanIssues);
@@ -122,10 +142,9 @@ public class HibernateIssueDao extends HibernateEntityDao<Issue> implements Issu
 			
 		//done
 		return pairedIssues;
-		
 	}
 
-	
+
 
 
 	
@@ -188,10 +207,11 @@ public class HibernateIssueDao extends HibernateEntityDao<Issue> implements Issu
 	 * 
 	 * @param issueListIds the list of the ids of the IssueList
 	 * @param sorter will sort and filter the result set
+	 * @param bugtrackerName if non null, will accept issues having the same bugtracker name or null bugtracker name. If null, will not be filtered on bugtracker name. 
 	 * @return a non-null but possibly empty list of Issue.
 	 */
 	protected List<Issue> findIssuesFromIssueList(final List<Long> issueListIds,
-			final CollectionSorting sorter) {
+			final CollectionSorting sorter, String bugtrackerName) {
 
 		List<Issue> result = new LinkedList<Issue>();
 		
@@ -199,8 +219,14 @@ public class HibernateIssueDao extends HibernateEntityDao<Issue> implements Issu
 			
 			Criteria crit = currentSession().createCriteria(IssueList.class, "IssueList")
 											.createAlias("IssueList.issues", "Issue")
-											.add(Restrictions.in("IssueList.id", issueListIds))
-											.setResultTransformer(Criteria.ALIAS_TO_ENTITY_MAP);
+											.add(Restrictions.in("IssueList.id", issueListIds));
+			
+			//add the optional filter on the bugtracker name
+			if (bugtrackerName!=null){
+				crit = crit.add(Restrictions.in("Issue.bugtrackerName", new String[]{bugtrackerName, null}));
+			}
+			
+			crit = crit.setResultTransformer(Criteria.ALIAS_TO_ENTITY_MAP);
 			
 			String sortBy = sorter.getSortedAttribute();
 			String sortDirection = sorter.getSortingOrder();
@@ -282,6 +308,12 @@ public class HibernateIssueDao extends HibernateEntityDao<Issue> implements Issu
 		return result;
 		
 	}
+
+
+
+
+
+
 	
 
 

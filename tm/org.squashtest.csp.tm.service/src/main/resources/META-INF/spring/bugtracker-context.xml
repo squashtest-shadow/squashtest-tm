@@ -43,6 +43,7 @@
 		class="org.squashtest.csp.core.bugtracker.service.PropertiesBugTrackerFactoryBean">
 		<property name="kind" value="${squashtest.bugtracker.kind}" />
 		<property name="url" value="${squashtest.bugtracker.url}" />
+		<property name="name" value="${squashtest.bugtracker.name}" />
 	</bean>
 
 	<bean id="squashtest.core.bugtracker.BugTrackerContextHolder"

@@ -21,17 +21,9 @@
 package org.squashtest.csp.core.bugtracker.domain;
 
 
-public class Category implements Identifiable {
+public class Category implements Identifiable<Category>{
 
-	private static final char nonPrintableKey = 0x06;
-	private static final String hopefullyUniqueKey= new String(new char[]{nonPrintableKey,nonPrintableKey,nonPrintableKey}); 
-	
-	/**
-	 * Note : this field uses a category having no printable character as an Id. This enforce
-	 * slightly the uniqueness of that id regarding real ids you may find in an actual bugtracker.
-	 * However it's not totally safe. Refer to code if you need to implement something clever.
-	 */
-	public static final Category NO_CATEGORY = new Category(hopefullyUniqueKey,"");
+	public static final Category NO_CATEGORY = new Category(Identifiable.DUMMY_ID, Identifiable.DUMMY_NAME);
 
 	
 	private final String id;
@@ -55,8 +47,10 @@ public class Category implements Identifiable {
 	}
 
 	@Override
-	public boolean isEmpty(){
-		return this.id.equals(Category.NO_CATEGORY.getId());
+	public boolean isDummy(){
+		return this.id.equals(NO_CATEGORY.id);
 	}
+	
+
 
 }

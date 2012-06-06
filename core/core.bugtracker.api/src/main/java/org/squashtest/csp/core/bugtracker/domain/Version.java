@@ -21,17 +21,10 @@
 package org.squashtest.csp.core.bugtracker.domain;
 
 
-public class Version implements Identifiable{
+public class Version implements Identifiable<Version>{
 	
-	private static final char nonPrintableKey = 0x06;
-	private static final String hopefullyUniqueKey= new String(new char[]{nonPrintableKey,nonPrintableKey,nonPrintableKey}); 
-	
-	/**
-	 * Note : this field uses a version having no printable character as an Id. This enforce
-	 * slightly the uniqueness of that id regarding real ids you may find in an actual bugtracker.
-	 * However it's not totally safe. Refer to code if you need to implement something clever.
-	 */
-	public static final Version NO_VERSION = new Version(hopefullyUniqueKey,"");
+
+	public static final Version NO_VERSION = new Version(Identifiable.DUMMY_ID, Identifiable.DUMMY_NAME);
 	
 	private final String id;
 	private final String name;
@@ -53,9 +46,10 @@ public class Version implements Identifiable{
 	}
 	
 	@Override
-	public boolean isEmpty(){
-		return this.id.equals(Version.NO_VERSION.getId());
+	public boolean isDummy(){
+		return this.id.equals(NO_VERSION.id);
 	}
 	
+
 
 }

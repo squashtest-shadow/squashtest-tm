@@ -95,4 +95,9 @@ class StubBugTrackerService implements BugTrackerService {
 	public BTProject findProjectById(String id) {
 		return null;
 	}
+	
+	@Override
+	public String getBugTrackerName() {
+		return null;
+	}
 }

@@ -28,8 +28,8 @@ import org.springframework.beans.factory.InitializingBean;
 import org.squashtest.csp.core.bugtracker.domain.BugTracker;
 
 /**
- * Creates a {@link BugTracker}. If any ofh the properties are not set or set to 'none', it will create
- * an undefined bugtracker.
+ * Creates a {@link BugTracker}. If any of the properties are not set or set to 'none', it will create
+ * an undefined bugtracker. If the name of the bugtracker is not defined, the name will default to the given url.
  * 
  * @author Gregory Fouquet
  * 
@@ -40,12 +40,13 @@ public class PropertiesBugTrackerFactoryBean implements FactoryBean<BugTracker>,
 
 	private static final String BUG_TRACKER_UNDEFINED_KIND = "none";
 	private static final String BUG_TRACKER_UNDEFINED_URL = "none";
+	
 
 	private BugTracker bugTracker = BugTracker.NOT_DEFINED;
 
 	private String kind;
-
 	private String url;
+	private String name;
 
 	@Override
 	public BugTracker getObject() throws Exception {
@@ -69,11 +70,11 @@ public class PropertiesBugTrackerFactoryBean implements FactoryBean<BugTracker>,
 		if (isNullBugTracker(kind, url)) {
 			bugTracker = BugTracker.NOT_DEFINED;
 		} else {
-			BugTracker bt = new BugTracker(url, kind);
+			BugTracker bt = new BugTracker(url, kind, name);
 			bugTracker = bt;
 		}
 
-		LOGGER.warn("Squash will try to connect to a '" + kind + "' kinded bugtracker at url '" + url + '\'');
+		LOGGER.warn("Squash will try to connect to a '" + kind + "' kinded bugtracker at url '" + url + "\' named '"+name+'\'');
 	}
 
 	/**
@@ -125,6 +126,15 @@ public class PropertiesBugTrackerFactoryBean implements FactoryBean<BugTracker>,
 	 */
 	public void setUrl(String url) {
 		this.url = url;
+	}
+	
+	
+	public void setName(String name){
+		this.name=name;
+	}
+	
+	public String getName(){
+		return name;
 	}
 
 }

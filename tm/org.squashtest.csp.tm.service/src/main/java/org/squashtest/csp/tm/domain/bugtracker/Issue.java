@@ -39,7 +39,10 @@ public class Issue {
 	@JoinColumn(name = "ISSUE_LIST_ID")
 	private IssueList issueList;
 	
-
+	
+	@Column(name = "BT_NAME")
+	private String bugtrackerName;
+	
 	private String remoteIssueId;
 
 	public Long getId() {
@@ -62,4 +65,13 @@ public class Issue {
 		this.issueList = issueList;
 	}
 
+	public String getBugtrackerName(){
+		return bugtrackerName;
+	}
+	
+	public void setBugtrackerName(String name){
+		bugtrackerName=  name;
+	}
+	
+	
 }

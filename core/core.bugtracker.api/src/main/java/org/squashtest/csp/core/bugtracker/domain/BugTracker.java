@@ -21,15 +21,17 @@
 package org.squashtest.csp.core.bugtracker.domain;
 
 public class BugTracker {
-	public static final BugTracker NOT_DEFINED = new BugTracker("", "none");
+	public static final BugTracker NOT_DEFINED = new BugTracker("", "none", "");
 
 	private final String url;
 	private final String kind;
+	private final String name;
 
-	public BugTracker(String bugTrackerUrl, String connectorKind) {
+	public BugTracker(String bugTrackerUrl, String connectorKind, String name) {
 		super();
 		this.url = bugTrackerUrl;
 		this.kind = connectorKind;
+		this.name = name;
 	}
 
 	public final String getUrl() {
@@ -38,5 +40,9 @@ public class BugTracker {
 
 	public final String getKind() {
 		return kind;
+	}
+	
+	public final String getName(){
+		return name;
 	}
 }

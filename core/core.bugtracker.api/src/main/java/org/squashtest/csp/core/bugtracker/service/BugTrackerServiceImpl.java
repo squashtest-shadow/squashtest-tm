@@ -95,6 +95,12 @@ public class BugTrackerServiceImpl implements BugTrackerService {
 		return url;
 
 	}
+	
+	@Override 
+	public String getBugTrackerName(){
+		return bugTracker.getName();
+	}
+	
 
 	@Override
 	public URL getViewIssueUrl(String issueId) {
@@ -175,6 +181,14 @@ public class BugTrackerServiceImpl implements BugTrackerService {
 		BugTrackerConnector connector = bugTrackerConnectorFactory.createConnector(bugTracker);
 		connector.authenticate(getBugTrackerContext().getCredentials());
 
-		return connector.findIssues(issueKeyList);
+		List<BTIssue> issues = connector.findIssues(issueKeyList);
+		
+		String bugtrackerName = getBugTrackerName();
+		
+		for (BTIssue issue : issues){
+			issue.setBugtracker(bugtrackerName);
+		}
+		
+		return issues;
 	}
 }

@@ -20,7 +20,7 @@
  */
 package org.squashtest.csp.core.bugtracker.domain;
 
-public class Priority implements Identifiable{
+public class Priority implements Identifiable<Priority>{
 	private final String id;
 	private final String name;
 
@@ -42,11 +42,16 @@ public class Priority implements Identifiable{
 	
 	
 	
+	/**
+	 * is hopefully never a dummy
+	 * 
+	 */
 	@Override
-	public boolean isEmpty(){
+	public boolean isDummy(){
 		return false;
 	}
 	
+
 }
 
 

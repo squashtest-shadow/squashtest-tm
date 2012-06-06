@@ -26,7 +26,7 @@ package org.squashtest.csp.core.bugtracker.domain;
  * @author Gregory Fouquet
  *
  */
-public class Severity implements Identifiable{
+public class Severity implements Identifiable<Severity>{
 	private final String id;
 	private final String name;
 
@@ -47,8 +47,13 @@ public class Severity implements Identifiable{
 	}
 	
 	
+	/**
+	 * Severity is hopefully never a dummy
+	 * 
+	 */
 	@Override
-	public boolean isEmpty(){
+	public boolean isDummy(){
 		return false;
 	}
+
 }

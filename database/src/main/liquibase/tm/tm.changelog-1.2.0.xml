@@ -670,5 +670,21 @@
 			and aoiCampaign.CLASS_ID = aclassCampaign.ID
 			and aclassCampaign.CLASSNAME = 'org.squashtest.csp.tm.domain.campaign.CampaignLibrary';</sql>
 	</changeSet>
+	
+	<changeSet id="tm-1.2.0.35-01" author="bsiri">
+		
+		<comment>table ISSUE nows holds the bugtracker name where the remote issues are hosted</comment>
+		
+		<addColumn tableName="ISSUE">
+			<column name="BT_NAME" type="java.sql.Types.VARCHAR(60)">
+				<constraints nullable="true" />
+			</column>
+		</addColumn>
+		
+		<createIndex tableName="ISSUE" indexName="idx_bt_name">
+		    <column name="BT_NAME"/>
+		</createIndex>		
+	
+	</changeSet>
 </databaseChangeLog>
  

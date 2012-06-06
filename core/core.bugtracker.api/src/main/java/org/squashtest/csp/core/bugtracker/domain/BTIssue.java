@@ -29,7 +29,7 @@ import java.util.Date;
  *
  */
 
-public class BTIssue implements Identifiable{
+public class BTIssue implements Identifiable<BTIssue>{
 	
 	private String id;
 	
@@ -55,7 +55,7 @@ public class BTIssue implements Identifiable{
 	
 	private Status status;
 	
-	
+	private String bugtracker;
 
 	public BTIssue(){
 		
@@ -176,9 +176,25 @@ public class BTIssue implements Identifiable{
 		this.status=status;
 	}
 	
+	/**
+	 * sets the name of the instance of the bugtracker (not its kind, url or else)
+	 * 
+	 * @param btName
+	 */
+	public void setBugtracker(String btName){
+		this.bugtracker = btName;
+	}
 	
+	public String getBugtracker(){
+		return bugtracker;
+	}
+	
+	/**
+	 * an issue is never a dummy
+	 */
 	@Override
-	public boolean isEmpty(){
+	public boolean isDummy(){
 		return false;
 	}
+
 }

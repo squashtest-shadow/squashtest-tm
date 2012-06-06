@@ -20,10 +20,27 @@
  */
 package org.squashtest.csp.core.bugtracker.domain;
 
-public interface Identifiable {
+public interface Identifiable<X> {
 	
+	public static final String DUMMY_ID = "----";
+	public static final String DUMMY_NAME = "--" ;
+	
+	/**
+	 * 
+	 * @return the id
+	 */
 	String getId();
-	String getName();
-	boolean isEmpty();
 	
+	/**
+	 * 
+	 * @return the name
+	 */
+	String getName();
+	
+	/**
+	 * 
+	 * @return tells whether this instance is dummy one standing for a void value
+	 */
+	boolean isDummy();
+
 }
