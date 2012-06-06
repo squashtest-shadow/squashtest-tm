@@ -171,8 +171,8 @@ class BugTrackerLocalServiceImplTest extends Specification {
 			step1.getAllIssueListId() >> [1l, 2l, 3l] 
 			
 		and :
-			issueDao.findIssuesWithOwner(step1, null) >> [ownerShip1, ownerShip2, ownerShip3];
-			issueDao.countIssuesfromIssueList(_) >> 3		;	
+			issueDao.findIssuesWithOwner(step1, null, _) >> [ownerShip1, ownerShip2, ownerShip3];
+			issueDao.countIssuesfromIssueList(_, _) >> 3		;	
 						
 		
 		when :

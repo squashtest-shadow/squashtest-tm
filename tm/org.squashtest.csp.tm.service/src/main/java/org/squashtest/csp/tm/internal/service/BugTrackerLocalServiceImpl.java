@@ -123,7 +123,7 @@ public class BugTrackerLocalServiceImpl implements BugTrackerLocalService {
 
 		List<IssueOwnership<Issue>> pairedIssues = issueDao.findIssuesWithOwner(buggedEntity, sorter, btName);
 
-		Integer totalIssues = issueDao.countIssuesfromIssueList(issueListIds);
+		Integer totalIssues = issueDao.countIssuesfromIssueList(issueListIds, btName);
 
 		FilteredCollectionHolder<List<IssueOwnership<Issue>>> result = new FilteredCollectionHolder<List<IssueOwnership<Issue>>>(
 				totalIssues, pairedIssues);

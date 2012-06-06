@@ -38,7 +38,7 @@
 		<context:annotation-config />
 
 	<!-- =============== BUG TRACKER RELATED BEANS ============================ -->
-	<context:property-placeholder properties-ref="squashtest.tm.bugtracker.config" />
+	<context:property-placeholder properties-ref="squashtest.tm.bugtracker.config" ignore-unresolvable="true" />
 	<bean id="bugTracker"
 		class="org.squashtest.csp.core.bugtracker.service.PropertiesBugTrackerFactoryBean">
 		<property name="kind" value="${squashtest.bugtracker.kind}" />

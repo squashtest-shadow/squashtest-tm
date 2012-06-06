@@ -43,6 +43,7 @@ import org.squashtest.csp.tm.internal.repository.IssueDao;
 @Repository
 public class HibernateIssueDao extends HibernateEntityDao<Issue> implements IssueDao {
 
+	private static final String ANY_BUGTRACKER = "_____any";
 
 	@Override
 	@SuppressWarnings("unchecked")
@@ -112,7 +113,7 @@ public class HibernateIssueDao extends HibernateEntityDao<Issue> implements Issu
 	public List<IssueOwnership<Issue>> findIssuesWithOwner(Bugged entity,
 			CollectionSorting sorter) {
 
-		return findIssuesWithOwner(entity, sorter, null);
+		return findIssuesWithOwner(entity, sorter, ANY_BUGTRACKER);
 	}
 
 	@Override
@@ -207,8 +208,7 @@ public class HibernateIssueDao extends HibernateEntityDao<Issue> implements Issu
 	 * 
 	 * @param issueListIds the list of the ids of the IssueList
 	 * @param sorter will sort and filter the result set
-	 * @param bugtrackerName if non null, will accept issues having the same bugtracker name or null bugtracker name. If null, will not be filtered on bugtracker name. 
-	 * @return a non-null but possibly empty list of Issue.
+	 *  @return a non-null but possibly empty list of Issue.
 	 */
 	protected List<Issue> findIssuesFromIssueList(final List<Long> issueListIds,
 			final CollectionSorting sorter, String bugtrackerName) {
@@ -221,12 +221,13 @@ public class HibernateIssueDao extends HibernateEntityDao<Issue> implements Issu
 											.createAlias("IssueList.issues", "Issue")
 											.add(Restrictions.in("IssueList.id", issueListIds));
 			
-			//add the optional filter on the bugtracker name
-			if (bugtrackerName!=null){
-				crit = crit.add(Restrictions.in("Issue.bugtrackerName", new String[]{bugtrackerName, null}));
+			
+			if (bugtrackerName != ANY_BUGTRACKER){
+				crit = crit.add(Restrictions.eq("Issue.bugtrackerName", bugtrackerName));
 			}
 			
 			crit = crit.setResultTransformer(Criteria.ALIAS_TO_ENTITY_MAP);
+			
 			
 			String sortBy = sorter.getSortedAttribute();
 			String sortDirection = sorter.getSortingOrder();
@@ -258,6 +259,7 @@ public class HibernateIssueDao extends HibernateEntityDao<Issue> implements Issu
 		return result;
 		
 	}
+
 	
 	
 	/*
