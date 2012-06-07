@@ -155,7 +155,7 @@ public class BugTrackerLocalServiceImpl implements BugTrackerLocalService {
 		List<BTIssue> remoteIssues = getIssues(issuesIds);
 
 		// now return a new FilteredCollectionHolder containing the BTIssues paired with their owner 
-		List<IssueOwnership<BTIssue>> btOwnership = makeBTIssueOwnership(remoteIssues,
+		List<IssueOwnership<BTIssue>> btOwnership = buildSortedBTIssueOwnership(remoteIssues,
 				filteredIssues.getFilteredCollection());
 
 		FilteredCollectionHolder<List<IssueOwnership<BTIssue>>> toReturn = new FilteredCollectionHolder<List<IssueOwnership<BTIssue>>>(
@@ -191,23 +191,25 @@ public class BugTrackerLocalServiceImpl implements BugTrackerLocalService {
 
 	/* ******************* private stuffs ****************************** */
 
-	private List<IssueOwnership<BTIssue>> makeBTIssueOwnership(List<BTIssue> remoteIssues,
+	private List<IssueOwnership<BTIssue>> buildSortedBTIssueOwnership(List<BTIssue> remoteIssues,
 			List<IssueOwnership<Issue>> localIssues) {
 
 		List<IssueOwnership<BTIssue>> remoteOwnerships = new LinkedList<IssueOwnership<BTIssue>>();
-
-		for (BTIssue remoteIssue : remoteIssues) {
-			ListIterator<IssueOwnership<Issue>> iterator = localIssues.listIterator();
-
-			while (iterator.hasNext()) {
-				IssueOwnership<Issue> localOwnership = iterator.next();
-				if (localOwnership.getIssue().getRemoteIssueId().equals(remoteIssue.getId())) {
-					IssueOwnership<BTIssue> remoteOwnership = new IssueOwnership<BTIssue>(remoteIssue,
-							localOwnership.getOwner());
+		
+		for (IssueOwnership<Issue> localOwner : localIssues){
+			
+			ListIterator<BTIssue> remoteIterator = remoteIssues.listIterator();
+			
+			while (remoteIterator.hasNext()){
+				
+				BTIssue remoteIssue = remoteIterator.next();
+				if (remoteIssue.getId().equals(localOwner.getIssue().getRemoteIssueId())){
+					IssueOwnership<BTIssue> remoteOwnership = new IssueOwnership<BTIssue>(remoteIssue, localOwner.getOwner());
 					remoteOwnerships.add(remoteOwnership);
-					iterator.remove();
-				}
+					remoteIterator.remove();
+				}				
 			}
+			
 		}
 
 		return remoteOwnerships;
