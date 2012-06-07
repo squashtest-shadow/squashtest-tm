@@ -172,7 +172,7 @@
 
 		//Queries on IssueList
 		@NamedQuery(name = "issueList.countIssues", query = "select count(issues) from IssueList issueList join issueList.issues issues where issueList.id in (:issueListIds)"),
-		@NamedQuery(name = "issueList.countIssuesByTracker", query = "select count(issues) from IssueList issueList join issueList.issues issues where issueList.id in (:issueListIds) and bugtrackerName = :bugtracker"),
+		@NamedQuery(name = "issueList.countIssuesByTracker", query = "select count(issues) from IssueList issueList join issueList.issues issues where issueList.id in (:issueListIds) and issues.bugtrackerName = :bugtracker"),
 
 		//Queries on UsersGroup
 		@NamedQuery(name = "usersGroup.findAllGroups", query = "from UsersGroup fetch all properties order by qualifiedName"),
