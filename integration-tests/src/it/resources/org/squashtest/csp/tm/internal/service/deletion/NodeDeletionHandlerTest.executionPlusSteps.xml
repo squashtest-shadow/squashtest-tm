@@ -62,14 +62,14 @@
 	
 	<!--  =============== their content ================================ -->
 	
-	<issue issue_id="5001" remote_issue_id="5001" issue_list_id="500"/>
-	<issue issue_id="5002" remote_issue_id="5002" issue_list_id="500" />
-	<issue issue_id="60011" remote_issue_id="60011" issue_list_id="6001" />
-	<issue issue_id="60012" remote_issue_id="60012" issue_list_id="6001" />
-	<issue issue_id="60021" remote_issue_id="60021" issue_list_id="6002" />
-	<issue issue_id="60022" remote_issue_id="60022" issue_list_id="6002" />
-	<issue issue_id="60031" remote_issue_id="60031" issue_list_id="6003" />
-	<issue issue_id="60032" remote_issue_id="60032" issue_list_id="6003" />
+	<issue issue_id="5001" remote_issue_id="5001" issue_list_id="500" 	  bt_name="default"/>
+	<issue issue_id="5002" remote_issue_id="5002" issue_list_id="500"  	  bt_name="default"/>
+	<issue issue_id="60011" remote_issue_id="60011" issue_list_id="6001"  bt_name="default"/>
+	<issue issue_id="60012" remote_issue_id="60012" issue_list_id="6001"  bt_name="default"/>
+	<issue issue_id="60021" remote_issue_id="60021" issue_list_id="6002"  bt_name="default"/>
+	<issue issue_id="60022" remote_issue_id="60022" issue_list_id="6002"  bt_name="default"/>
+	<issue issue_id="60031" remote_issue_id="60031" issue_list_id="6003"  bt_name="default"/>
+	<issue issue_id="60032" remote_issue_id="60032" issue_list_id="6003"  bt_name="default"/>
 
 	
 	

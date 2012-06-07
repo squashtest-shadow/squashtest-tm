@@ -134,19 +134,7 @@ public class BugTrackerLocalServiceImpl implements BugTrackerLocalService {
 
 	// TODO
 	/*
-	 * on a second though that code could be optimized if we did :
-	 * 
-	 * 1) get the sorted/filtered yet unpaired squash issues first, 2) get the corresponding remote issues, 3) get their
-	 * owner in the squash DB again by matching the remoteIssueId
-	 * 
-	 * steps 1) and 3) could be achieved by splitting HibernateIssueDao.findIssuesWithOwner(Bugged, CollectionSorting)
-	 * and modifying it a bit.
-	 * 
-	 * (non-Javadoc)
-	 * 
-	 * @see
-	 * org.squashtest.csp.tm.service.BugTrackerLocalService#findBugTrackerIssues(org.squashtest.csp.tm.domain.bugtracker
-	 * .Bugged, org.squashtest.csp.tm.infrastructure.filter.CollectionSorting)
+	 * refactor that code, it's too hard to understand (and maintain)
 	 */
 
 	@Override
