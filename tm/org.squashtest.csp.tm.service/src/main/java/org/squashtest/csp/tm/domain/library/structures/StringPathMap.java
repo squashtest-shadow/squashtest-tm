@@ -77,7 +77,7 @@ public class StringPathMap<T> {
 	
 	
 	/**
-	 * Given a path begining with a '/', will return all the names composing the path. The first returned elements will always be 
+	 * Given a path begining with a '/', will return all the names composing the path. The first returned element will always be 
 	 * "/", which means the root of course.
 	 * 
 	 */

@@ -163,7 +163,7 @@
 		<c:if test="${ resourceName == 'requirement' }">		
 			<treepopup:export-requirement-dialog treeSelector="#tree"  />			
 		</c:if>
-		<c:if test="${ resourceName == 'test-case' }">
+		<c:if test="${ resourceName == 'test-case' || resourceName == 'requirement' }">
 			<sec:authorize access="hasRole('ROLE_TM_PROJECT_MANAGER') or hasRole('ROLE_ADMIN')">
 			<treepopup:import-excel-dialog treeSelector="#tree" workspace="${resourceName}"  
 			treeNodeButton="squashtm.treemenu.importer.buttons['import-excel']" targetLibraries="${editableLibraries}"/>

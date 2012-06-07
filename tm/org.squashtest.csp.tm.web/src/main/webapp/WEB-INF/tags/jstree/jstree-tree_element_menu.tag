@@ -56,7 +56,7 @@
 	</div>
 	</div>	
 <sec:authorize access="hasRole('ROLE_TM_PROJECT_MANAGER') or hasRole('ROLE_ADMIN')">
-<c:if test="${workspace == 'test-case' }">
+<c:if test="${workspace == 'test-case' || workspace == 'requirement' }">
 	<a id="tree-import-button" href="#tree-import-menu" class="button"><fmt:message key="squashtm.treemenu.import.label"/>...</a>
 	
 	<div class="not-displayed" >
@@ -108,15 +108,14 @@
 		squashtm.treemenu.action = $('#tree-action-button').treeMenu("#tree-action-menu", actionOption, 320);
 
 		<sec:authorize access="hasRole('ROLE_TM_PROJECT_MANAGER') or hasRole('ROLE_ADMIN')">
-			<c:if test="${workspace == 'test-case'}">
-			initButton("#tree-import-button", "ui-icon-transferthick-e-w");		
-			
-			var importOption = {
-				"import-excel" : ".import-excel-tree-button"
-			};
-			
-			squashtm.treemenu.importer = $('#tree-import-button').treeMenu('#tree-import-menu', importOption);
-			
+			<c:if test="${workspace == 'test-case' || workspace == 'requirement'}">
+				initButton("#tree-import-button", "ui-icon-transferthick-e-w");		
+				
+				var importOption = {
+					"import-excel" : ".import-excel-tree-button"
+				};
+				
+				squashtm.treemenu.importer = $('#tree-import-button').treeMenu('#tree-import-menu', importOption);
 			</c:if>
 		</sec:authorize>
 		

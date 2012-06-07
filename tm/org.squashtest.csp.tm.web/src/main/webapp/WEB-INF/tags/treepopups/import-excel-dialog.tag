@@ -49,8 +49,32 @@
 	if not, consider checking the results of $(tree).jstree("get_selected");
 
  --%>
-
-
+<c:choose>
+	<c:when  test="${workspace == 'test-case'}" >
+		<f:message var="importTotal" key="dialog.import-excel.test-case.total"/>
+		<f:message var="importSuccess" key="dialog.import-excel.test-case.success"/>
+		<f:message var="importFailed" key="dialog.import-excel.test-case.failed"/>
+		<f:message var="importRenamed" key="dialog.import-excel.test-case.warnings.renamed"/>
+		<f:message var="importModified" key="dialog.import-excel.test-case.warnings.modified"/>
+		<f:message var="importInputFileLabel" key="dialog.import-excel.test-case.filetype.message"/>
+		<c:set var="importFormatMIME" value="zip"/>
+		<c:set var="importFormatParam" value="'zip'"/>
+		<c:set var="importFormatText" value="zip"/>
+	</c:when>
+	<c:otherwise>
+		<c:if test="${workspace == 'requirement'}">
+			<f:message var="importTotal" key="dialog.import-excel.requirement.total"/>
+			<f:message var="importSuccess" key="dialog.import-excel.requirement.success"/>
+			<f:message var="importFailed" key="dialog.import-excel.requirement.failed"/>
+			<f:message var="importRenamed" key="dialog.import-excel.requirement.warnings.renamed"/>
+			<f:message var="importModified" key="dialog.import-excel.requirement.warnings.modified"/>
+			<f:message var="importInputFileLabel" key="dialog.import-excel.requirement.filetype.message"/>
+			<c:set var="importFormatMIME" value="vnd.ms-excel"/>
+			<c:set var="importFormatParam" value="'xls', 'xlsx'"/>
+			<c:set var="importFormatText" value="xls, xlsx"/>
+		</c:if>
+	</c:otherwise>
+</c:choose>
 <pop:popup id="import-excel-dialog" titleKey="dialog.import-excel.title" isContextual="false"  closeOnSuccess="false">
 	<jsp:attribute name="buttonsArray">	
 		<f:message var="confirmLabel" key="dialog.import.confirm.label" />	
@@ -118,19 +142,19 @@
 						</div>
 					</div>
 					<div class="display-table-row">
-						<div class="display-table-cell"><label><f:message key="dialog.import.filetype.message"/></label></div>
+						<div class="display-table-cell"><label>${ importInputFileLabel }</label></div>
 						<div class="display-table-cell">
-							<input type="file" name="archive" size="20" accept="application/zip" 
+							<input type="file" name="archive" size="20" accept="application/${ importFormatMIME }" 
 							onchange="var filename = /([^\\]+)$/.exec(this.value)[1]; $('#import-excel-dialog .confirm-file').text(filename);"/>
 						</div>
 					</div>
-					<div class="display-table-row">
+					<c:if test="${importFormatMIME == 'zip' }"><div class="display-table-row">
 						<div class="display-table-cell"><label><f:message key="dialog.import.encoding.label"/></label></div>
 						<div class="display-table-cell"><select name="zipEncoding">
 							<option value="Cp858">Windows <f:message key="dialog.import.encoding.default"/></option>
 							<option value="UTF8">UTF-8</option>
 						</select></div>
-					</div>
+					</div></c:if>
 
 				</form>
 			
@@ -157,13 +181,13 @@
 		
 		<div class="summary">
 			<div>
-				<span><f:message key="dialog.import-excel.test-case.total"/></span><span class="total-import span-bold"></span>
+				<span>${ importTotal }</span><span class="total-import span-bold"></span>
 			</div>
 			<div>
-				<span><f:message key="dialog.import-excel.test-case.success"/></span><span class="success-import span-bold span-green"></span>
+				<span>${ importSuccess }</span><span class="success-import span-bold span-green"></span>
 			</div>
 			<div>
-				<span><f:message key="dialog.import-excel.test-case.failed"/></span><span class="failures-import span-bold"></span>
+				<span>${ importFailed }</span><span class="failures-import span-bold"></span>
 			</div>			
 			
 			
@@ -172,8 +196,8 @@
 				<hr/>
 				<span><f:message key="dialog.import.summary.notes.label"/></span>
 				<ul>
-					<li class="import-excel-dialog-renamed"><span><f:message key="dialog.import-excel.test-case.warnings.renamed"/></span></li>
-					<li class="import-excel-dialog-modified"><span><f:message key="dialog.import-excel.test-case.warnings.modified"/></span></li>	
+					<li class="import-excel-dialog-renamed"><span>${ importRenamed }</span></li>
+					<li class="import-excel-dialog-modified"><span>${ importRenamed }</span></li>	
 				</ul>		
 			</div>
 		</div>
@@ -239,8 +263,8 @@
 			
 			parametrization : {
 				submitUrl : "${importUrl}",
-				extensions : [ "zip" ],
-				errorMessage : "${wrongFileMessage} zip"
+				extensions : [ ${importFormatParam} ],
+				errorMessage : "${wrongFileMessage} ${importFormatText}"
 			},
 			
 			summary : {

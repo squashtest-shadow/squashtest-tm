@@ -20,6 +20,7 @@
  */
 package org.squashtest.csp.tm.internal.service;
 
+import java.io.InputStream;
 import java.util.List;
 
 import javax.inject.Inject;
@@ -41,7 +42,9 @@ import org.squashtest.csp.tm.internal.repository.LibraryNodeDao;
 import org.squashtest.csp.tm.internal.repository.RequirementDao;
 import org.squashtest.csp.tm.internal.repository.RequirementFolderDao;
 import org.squashtest.csp.tm.internal.repository.RequirementLibraryDao;
+import org.squashtest.csp.tm.internal.service.importer.RequirementImporter;
 import org.squashtest.csp.tm.service.RequirementLibraryNavigationService;
+import org.squashtest.csp.tm.service.importer.ImportSummary;
 
 @SuppressWarnings("rawtypes")
 @Service("squashtest.tm.service.RequirementLibraryNavigationService")
@@ -58,12 +61,15 @@ public class RequirementLibraryNavigationServiceImpl extends
 	@Inject
 	@Qualifier("squashtest.tm.repository.RequirementLibraryNodeDao")
 	private LibraryNodeDao<RequirementLibraryNode> requirementLibraryNodeDao;
-
+	
 	@Inject
 	private RequirementDao requirementDao;
 
 	@Inject
 	private RequirementNodeDeletionHandler deletionHandler;
+	
+	@Inject
+	private RequirementImporter requirementImporter;
 
 	@Override
 	protected NodeDeletionHandler<RequirementLibraryNode, RequirementFolder> getDeletionHandler() {
@@ -139,6 +145,11 @@ public class RequirementLibraryNavigationServiceImpl extends
 	@Override
 	public List<ExportRequirementData> findRequirementsToExportFromFolder(List<Long> folderIds) {
 		return requirementDao.findRequirementToExportFromFolder(folderIds);
+	}
+
+	@Override
+	public ImportSummary importExcel(InputStream stream, Long libraryId) {
+		return requirementImporter.importExcelRequirements(stream, libraryId);
 	}
 
 }

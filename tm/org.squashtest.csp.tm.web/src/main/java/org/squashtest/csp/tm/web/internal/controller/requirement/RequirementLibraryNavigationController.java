@@ -53,6 +53,7 @@ import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.bind.annotation.ResponseStatus;
+import org.springframework.web.multipart.MultipartFile;
 import org.springframework.web.servlet.ModelAndView;
 import org.squashtest.csp.tm.domain.requirement.ExportRequirementData;
 import org.squashtest.csp.tm.domain.requirement.NewRequirementVersionDto;
@@ -62,6 +63,7 @@ import org.squashtest.csp.tm.domain.requirement.RequirementLibrary;
 import org.squashtest.csp.tm.domain.requirement.RequirementLibraryNode;
 import org.squashtest.csp.tm.service.LibraryNavigationService;
 import org.squashtest.csp.tm.service.RequirementLibraryNavigationService;
+import org.squashtest.csp.tm.service.importer.ImportSummary;
 import org.squashtest.csp.tm.web.internal.controller.generic.LibraryNavigationController;
 import org.squashtest.csp.tm.web.internal.model.builder.DriveNodeBuilder;
 import org.squashtest.csp.tm.web.internal.model.builder.RequirementLibraryTreeNodeBuilder;
@@ -245,7 +247,16 @@ public class RequirementLibraryNavigationController extends
 		}
 
 	}
-
+	
+	@RequestMapping(value="/import/upload", method = RequestMethod.POST,  params = "upload-ticket")
+	public @ResponseBody ImportSummary importArchive(@RequestParam("archive") MultipartFile archive, 
+			@RequestParam("projectId") Long projectId) throws IOException{
+		
+		InputStream stream = archive.getInputStream();
+		
+		return requirementLibraryNavigationService.importExcel(stream, projectId);	
+		
+	}
 	/* ********************************** private stuffs ******************************* */
 
 	private void flushStreams(InputStream inStream, ServletOutputStream outStream) throws IOException {

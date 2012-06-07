@@ -107,11 +107,11 @@ public class ExcelTestCaseParserImpl implements ExcelTestCaseParser {
 		protected abstract void doPopulate(PseudoTestCase pseudoTestCase, Row row);
 	}
 
-	private static final Logger logger = LoggerFactory.getLogger(ExcelTestCaseParserImpl.class);
+	private static final Logger LOGGER = LoggerFactory.getLogger(ExcelTestCaseParserImpl.class);
 
 	private final List<FieldPopulator> fieldPopulators = new ArrayList<ExcelTestCaseParserImpl.FieldPopulator>(6);
 
-	private final FieldPopulator DEFAULT_POPULATOR = new FieldPopulator("") {
+	private final FieldPopulator DefaultPopulator = new FieldPopulator("") {
 		public void doPopulate(PseudoTestCase pseudoTestCase, Row row) {
 			String tag = tagCell(row).getStringCellValue();
 			String value = valueCell(row).getStringCellValue();
@@ -187,13 +187,13 @@ public class ExcelTestCaseParserImpl implements ExcelTestCaseParser {
 			return parseFile(workbook, summary);
 
 		} catch (InvalidFormatException e) {
-			logger.warn(e.getMessage());
+			LOGGER.warn(e.getMessage());
 			throw new SheetCorruptedException(e);
 		} catch (IOException e) {
-			logger.warn(e.getMessage());
+			LOGGER.warn(e.getMessage());
 			throw new SheetCorruptedException(e);
 		} catch (IllegalArgumentException e) {
-			logger.warn(e.getMessage());
+			LOGGER.warn(e.getMessage());
 			throw new SheetCorruptedException(e);
 		}
 
@@ -240,7 +240,7 @@ public class ExcelTestCaseParserImpl implements ExcelTestCaseParser {
 		}
 
 		// default behaviour needs to override tag checking -> we call doPopulate
-		DEFAULT_POPULATOR.doPopulate(pseudoTestCase, row);
+		DefaultPopulator.doPopulate(pseudoTestCase, row);
 	}
 
 	private static String[] pairedString(String index0, String index1) {
@@ -263,7 +263,7 @@ public class ExcelTestCaseParserImpl implements ExcelTestCaseParser {
 				testCase = new TestCase(createdDate, pseudoTestCase.createdBy);
 
 			} catch (ParseException ex) {
-				logger.warn(ex.getMessage());
+				LOGGER.warn(ex.getMessage());
 				summary.incrModified();
 				testCase = new TestCase();
 			}
@@ -285,7 +285,7 @@ public class ExcelTestCaseParserImpl implements ExcelTestCaseParser {
 
 		} catch (IllegalArgumentException ex) {
 
-			logger.warn(ex.getMessage());
+			LOGGER.warn(ex.getMessage());
 			summary.incrModified();
 			testCase.setImportance(TestCaseImportance.defaultValue());
 		}
@@ -330,7 +330,7 @@ public class ExcelTestCaseParserImpl implements ExcelTestCaseParser {
 		int lastCell = row.getLastCellNum();
 		int nbCell = row.getPhysicalNumberOfCells();
 
-		if ((lastCell < 2) || (nbCell < 2)) {
+		if (lessThan2Cells(lastCell, nbCell)) {
 			validated = false;
 		} else {
 			String text1 = (row.getCell(0) != null) ? row.getCell(0).getStringCellValue() : "";
@@ -347,6 +347,10 @@ public class ExcelTestCaseParserImpl implements ExcelTestCaseParser {
 		}
 
 		return validated;
+	}
+
+	private boolean lessThan2Cells(int lastCell, int nbCell) {
+		return (lastCell < 2) || (nbCell < 2);
 	}
 
 	/*

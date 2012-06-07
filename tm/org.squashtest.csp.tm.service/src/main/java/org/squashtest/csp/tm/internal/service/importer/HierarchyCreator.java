@@ -79,7 +79,6 @@ class HierarchyCreator{
 		while(reader.hasNext()){
 			
 			Entry entry = reader.next();
-
 			
 			if (entry.isDirectory()){					
 				findOrCreateFolder(entry);					

@@ -20,6 +20,7 @@
  */
 package org.squashtest.csp.tm.web.internal.controller.requirement;
 
+import java.util.List;
 import java.util.Locale;
 
 import javax.inject.Inject;
@@ -30,8 +31,10 @@ import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.ResponseBody;
+import org.springframework.web.servlet.ModelAndView;
 import org.squashtest.csp.tm.domain.requirement.RequirementCriticality;
 import org.squashtest.csp.tm.domain.requirement.RequirementLibrary;
+import org.squashtest.csp.tm.domain.testcase.TestCaseLibrary;
 import org.squashtest.csp.tm.service.WorkspaceService;
 import org.squashtest.csp.tm.web.internal.controller.generic.WorkspaceController;
 
@@ -123,6 +126,17 @@ public class RequirementWorkspaceController extends WorkspaceController<Requirem
 			break;
 		}
 		return toReturn;
+	}
+	
+	@Override
+	@RequestMapping(method = RequestMethod.GET)
+	public ModelAndView showWorkspace() {
+
+		ModelAndView mav = super.showWorkspace();
+		List<RequirementLibrary> libraries = workspaceService.findAllImportableLibraries();
+		mav.addObject("editableLibraries", libraries);
+
+		return mav;
 	}
 
 }

@@ -20,6 +20,7 @@
  */
 package org.squashtest.csp.tm.service;
 
+import java.io.InputStream;
 import java.util.List;
 
 import javax.validation.constraints.NotNull;
@@ -30,6 +31,7 @@ import org.squashtest.csp.tm.domain.requirement.Requirement;
 import org.squashtest.csp.tm.domain.requirement.RequirementFolder;
 import org.squashtest.csp.tm.domain.requirement.RequirementLibrary;
 import org.squashtest.csp.tm.domain.requirement.RequirementLibraryNode;
+import org.squashtest.csp.tm.service.importer.ImportSummary;
 
 @SuppressWarnings("rawtypes")
 public interface RequirementLibraryNavigationService extends
@@ -44,5 +46,14 @@ public interface RequirementLibraryNavigationService extends
 	List<ExportRequirementData> findRequirementsToExportFromLibrary(@NotNull List<Long> libraryIds);
 
 	List<ExportRequirementData> findRequirementsToExportFromFolder(@NotNull List<Long> folderIds);
+	/**
+	 * Accepts a stream to a .xls / .xlsx file info for requirement folders and requirements. Will
+	 * convert the test cases from excel to squash.
+	 * 
+	 * @param ExcelStream
+	 * @param libraryId the identifier of the library we are importing requirements into.
+	 * @return a summary of the operations.
+	 */
+	ImportSummary importExcel(InputStream stream, Long projectId);
 
 }

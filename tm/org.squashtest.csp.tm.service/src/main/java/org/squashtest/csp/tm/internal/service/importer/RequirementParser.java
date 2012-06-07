@@ -20,25 +20,25 @@
  */
 package org.squashtest.csp.tm.internal.service.importer;
 
-import java.io.InputStream;
+import java.util.Map;
 
-import org.apache.poi.ss.usermodel.Workbook;
-import org.squashtest.csp.tm.domain.SheetCorruptedException;
-import org.squashtest.csp.tm.domain.testcase.TestCase;
+import org.apache.poi.ss.usermodel.Row;
+import org.squashtest.csp.tm.domain.requirement.Requirement;
+import org.squashtest.csp.tm.domain.requirement.RequirementFolder;
 
-interface ExcelTestCaseParser {
+interface RequirementParser {
 	
+	String PATH_TAG = "PATH";
+	String ID_TAG = "ID";
+	String VERSION_TAG = "VERSION";
+	String LABEL_TAG = "LABEL";
+	String REF_TAG = "REF";
+	String CRITICALITY_TAG = "CRITICALITY";
+	String STATE_TAG = "STATE";
+	String DESCRIPTION_TAG = "DESCRIPTION";
+	String CREATED_ON_TAG = "CREATED_ON";
+	String CREATED_BY_TAG = "CREATED_BY_TAG";
 
-	String DESCRIPTION_TAG = "Description";
-	String IMPORTANCE_TAG = "Importance";
-	String CREATED_ON_TAG = "Created_on";
-	String CREATED_BY_TAG = "Created_by";
-	String PREREQUISITE_TAG = "Prerequisite";
-	String ACTION_STEP_TAG = "Action_step";
-
-	TestCase parseFile(Workbook workbook, ImportSummaryImpl summary) throws SheetCorruptedException;
+	PseudoRequirement parseRow(RequirementFolder root, Row row, ImportSummaryImpl summary, Map<String, Integer> columnsMapping) ;
 	
-	TestCase parseFile(InputStream stream, ImportSummaryImpl summary) throws SheetCorruptedException;
-	
-	String stripFileExtension(String fullName);
 }

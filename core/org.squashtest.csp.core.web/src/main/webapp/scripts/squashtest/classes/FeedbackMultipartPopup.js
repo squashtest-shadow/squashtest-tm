@@ -134,14 +134,14 @@ function FeedbackMultipartPopup(settings){
 		var fileUploads = $("."+FeedbackMultipartPopup.PARAMETRIZATION+" input[type='file']", this.popup);
 		
 		var self = this;
-		var validated = true;
+		var validated = false;
 		
 		fileUploads.each(function(i,v){			
 			var fileName = v.value;
 			
 			$.each(self.parametrization.extensions, function(i,v){
-				if (! fileName.match("."+v+"$")){
-					validated=false;
+				if (fileName.match("."+v+"$")){
+					validated=true;
 				}
 			});
 			
