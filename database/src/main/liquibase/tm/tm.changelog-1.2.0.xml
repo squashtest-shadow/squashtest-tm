@@ -676,8 +676,8 @@
 		<comment>table ISSUE nows holds the bugtracker name where the remote issues are hosted</comment>
 		
 		<addColumn tableName="ISSUE">
-			<column name="BT_NAME" type="java.sql.Types.VARCHAR(60)">
-				<constraints nullable="true" />
+			<column name="BT_NAME" type="java.sql.Types.VARCHAR(60)" value="default">
+				<constraints nullable="false" />
 			</column>
 		</addColumn>
 		

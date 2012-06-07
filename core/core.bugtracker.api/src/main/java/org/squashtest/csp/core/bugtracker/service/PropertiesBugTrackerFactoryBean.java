@@ -29,7 +29,7 @@ import org.squashtest.csp.core.bugtracker.domain.BugTracker;
 
 /**
  * Creates a {@link BugTracker}. If any of the properties are not set or set to 'none', it will create
- * an undefined bugtracker. If the name of the bugtracker is not defined, the name will default to the given url.
+ * an undefined bugtracker. If the name of the bugtracker is not defined, the name will default to 'default'.
  * 
  * @author Gregory Fouquet
  * 
@@ -40,6 +40,7 @@ public class PropertiesBugTrackerFactoryBean implements FactoryBean<BugTracker>,
 
 	private static final String BUG_TRACKER_UNDEFINED_KIND = "none";
 	private static final String BUG_TRACKER_UNDEFINED_URL = "none";
+	private static final String BUG_TRACKER_UNSPECIFIED_NAME_DEFAULT = "default";
 	
 
 	private BugTracker bugTracker = BugTracker.NOT_DEFINED;
@@ -81,17 +82,30 @@ public class PropertiesBugTrackerFactoryBean implements FactoryBean<BugTracker>,
 	 * 
 	 */
 	private void fixWrongProperties() {
-		if (StringUtils.isBlank(kind)) {
+		if (isPropertyUnset(kind, BUG_TRACKER_UNDEFINED_KIND)) {
 			LOGGER.warn("Bug tracker kind was not properly set, '" + BUG_TRACKER_UNDEFINED_KIND
 					+ "' will be used instead");
 			kind = BUG_TRACKER_UNDEFINED_KIND;
 		}
-		if (StringUtils.isBlank(url)) {
+		if (isPropertyUnset(url, BUG_TRACKER_UNDEFINED_URL)) {
 			LOGGER.warn("Bug tracker url was not properly set, '" + BUG_TRACKER_UNDEFINED_URL
 					+ "' will be used instead");
 			url = BUG_TRACKER_UNDEFINED_URL;
 		}
+		if (isPropertyUnset(name, BUG_TRACKER_UNSPECIFIED_NAME_DEFAULT)){
+			LOGGER.warn("Bug tracker name was not properly set, '" + BUG_TRACKER_UNSPECIFIED_NAME_DEFAULT
+					+ "' will be used instead");
+			name = BUG_TRACKER_UNSPECIFIED_NAME_DEFAULT;
+		}
 
+	}
+	
+	private boolean isPropertyUnset(String property, String defaultSetting){
+		return (
+					StringUtils.isBlank(property) ||
+					property.equals(defaultSetting)
+				);
+		
 	}
 
 	private boolean isNullBugTracker(String kind, String url) {

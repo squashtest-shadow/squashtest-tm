@@ -38,7 +38,28 @@
 		<context:annotation-config />
 
 	<!-- =============== BUG TRACKER RELATED BEANS ============================ -->
-	<context:property-placeholder properties-ref="squashtest.tm.bugtracker.config" ignore-unresolvable="true" />
+	
+	<!--  creation of a property placeholder configurer with builtin defaults -->
+	
+	<util:properties id="squashtest.tm.bugtracker.default">		
+		<prop key="squashtest.bugtracker.kind">none</prop>	<!-- should refer to PropertiesBugTrackerFactoryBean#BUG_TRACKER_UNDEFINED_KIND -->
+		<prop key="squashtest.bugtracker.url">none</prop>   <!-- should refer to PropertiesBugTrackerFactoryBean#BUG_TRACKER_UNDEFINED_URL -->
+		<prop key="squashtest.bugtracker.name">default</prop><!-- should refer to PropertiesBugTrackerFactoryBean#BUG_TRACKER_UNDEFINED_NAME_DEFAULT -->
+	</util:properties>
+
+ 	<bean class="org.springframework.beans.factory.config.PropertyPlaceholderConfigurer">
+ 		<property name="propertiesArray">
+ 			<array>
+ 				<ref bean="squashtest.tm.bugtracker.default"/>
+ 				<ref bean="squashtest.tm.bugtracker.config" />
+ 			</array>
+ 		</property>
+ 	</bean>
+	
+	
+	
+	<!--                   creation of the bugtracker beans                    -->
+	
 	<bean id="bugTracker"
 		class="org.squashtest.csp.core.bugtracker.service.PropertiesBugTrackerFactoryBean">
 		<property name="kind" value="${squashtest.bugtracker.kind}" />
