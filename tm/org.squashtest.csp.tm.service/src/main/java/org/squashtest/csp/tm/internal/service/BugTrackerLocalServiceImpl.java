@@ -207,6 +207,7 @@ public class BugTrackerLocalServiceImpl implements BugTrackerLocalService {
 					IssueOwnership<BTIssue> remoteOwnership = new IssueOwnership<BTIssue>(remoteIssue, localOwner.getOwner());
 					remoteOwnerships.add(remoteOwnership);
 					remoteIterator.remove();
+					break;
 				}				
 			}
 			

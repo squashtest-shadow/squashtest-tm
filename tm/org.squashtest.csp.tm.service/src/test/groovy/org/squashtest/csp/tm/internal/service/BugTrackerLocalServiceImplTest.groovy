@@ -221,6 +221,7 @@ class BugTrackerLocalServiceImplTest extends Specification {
 		
 	}
 	
+	
 	def "should set the credentials"(){
 		
 		given :
@@ -235,9 +236,44 @@ class BugTrackerLocalServiceImplTest extends Specification {
 		then :
 			1 * remoteService.setCredentials(name, password);
 		
+	}
+
+	
+	def "should create a list of remote issue ownership sorted according to local issue ordering"(){
+		
+		given :
+			def ids = (1..5).collect{ return "ISSUE-0$it"}
+			def permutted = new ArrayList(ids)
+			Collections.shuffle(permutted)
+		and :
+
+			def remoteIssues = permutted.collect{remoteIssue(it)} 	//we shuffle the list before use.
+			def localOwnership = ids.collect{localOwnership(it)}	//here we maintain the specified order
+			
+		when :
+			def res = service.buildSortedBTIssueOwnership(remoteIssues, localOwnership)
+		then :
+			res.collect{it.issue.id} == ids	
+		
 		
 	}
 	
+	
+	def remoteIssue(id){
+		BTIssue rIssue = Mock()
+		rIssue.getId() >> id
+		return rIssue;
+	}
+	
+	def localOwnership(id){
+		IssueOwnership<Issue> ownership = Mock()
+		Issue issue = Mock()
+		
+		ownership.getIssue() >> issue
+		issue.getRemoteIssueId() >> id
+		
+		return ownership
+	}
 	
 	
 }
