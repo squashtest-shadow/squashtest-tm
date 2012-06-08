@@ -33,14 +33,12 @@ import java.util.Locale;
  *
  */
 public interface  BugTrackerInterfaceDescriptor {
-	
+
 	/**
-	 * sets the locale for the current thread.
-	 * 
+	 * sets the locale for current thread.
 	 * @param locale
 	 */
 	void setLocale(Locale locale);
-	
 	
 	
 	// ***************** labels for the issue report popup fields *******************
@@ -103,15 +101,51 @@ public interface  BugTrackerInterfaceDescriptor {
 	
 	
 	// ****************** issue tables labels ***********************
+
+
+	/**
+	 * @return the header for 'issue id' column in issues summary tables
+	 */
+	String getTableIssueIDHeader();
+
+	/**
+	 * @return the header for the 'summary' column in issues summary tables
+	 */
+	String getTableSummaryHeader();
 	
 	
-	String getStatusLabel();
+	/**
+	 * @return the header for the 'priority' column in issues summary tables
+	 */
+	String getTablePriorityHeader();
 	
-	String getIssueIdLabel();
-	String getSummaryNotMandatoryLabel();
-	String getDescriptionNotMandatoryLabel();
+	/**
+	 * @return the header for 'status' column in issues summary tables
+	 */
+	String getTableStatusHeader();
 	
-	String getReportedInLabel();
+	
+	/**
+	 * @return the header for the 'description' column in issues summary tables
+	 */
+	String getTableDescriptionHeader();
+	
+	
+	/**
+	 * @return the header for the 'assignee' column in issues summary tables
+	 */
+	String getTableAssigneeHeader();
+	
+	/**
+	 * @return the header for the 'reported in' column in issues summary tables
+	 */
+	String getTableReportedInHeader();
+
+	
+	/**
+	 * @return the label standing for the assignee when none was set
+	 */
+	String getTableNoAssigneeLabel();
 	
 
 }

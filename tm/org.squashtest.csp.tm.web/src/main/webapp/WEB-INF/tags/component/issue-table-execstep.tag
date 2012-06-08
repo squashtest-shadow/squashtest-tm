@@ -35,6 +35,7 @@
 
 
 <%--
+
 	columns are :
 	
 		- URL (not shown)
@@ -42,7 +43,6 @@
 		- owner
 		- Priority
 		- Summary
-
 
  --%>
 
@@ -71,16 +71,6 @@
 		var url = getIssueTableRowUrl(data);
 		addHLinkToCellText(td, url, true);
 	}
-	
-
-<%--
-	function issueTableDrawCallback(){
-		
-	}
-	
-	<jsp:attribute name="drawCallback">issueTableDrawCallback</jsp:attribute>
-	
---%>
 
 	
 </script>
@@ -101,9 +91,9 @@
 	<thead>
 		<tr>
 			<th>URL(not displayed)</th>
-			<th>${interfaceDescriptor.issueIdLabel}</th>
-			<th>${interfaceDescriptor.summaryNotMandatoryLabel}</th>
-			<th>${interfaceDescriptor.priorityLabel}</th>
+			<th>${interfaceDescriptor.tableIssueIDHeader}</th>
+			<th>${interfaceDescriptor.tableSummaryHeader}</th>
+			<th>${interfaceDescriptor.tablePriorityHeader}</th>
 		</tr>
 	</thead>
 	<tbody><%-- Will be populated through ajax --%></tbody>

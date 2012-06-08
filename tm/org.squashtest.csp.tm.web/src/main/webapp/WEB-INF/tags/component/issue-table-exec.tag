@@ -79,7 +79,7 @@
 	
 	<%-- we check the assignee only (for now) --%>
 	function checkEmptyValues(row, data){
-		var correctAssignee = handleEmptyValue(data, getIssueTableRowAssignee, "${interfaceDescriptor.noUserLabel}");
+		var correctAssignee = handleEmptyValue(data, getIssueTableRowAssignee, "${interfaceDescriptor.tableNoAssigneeLabel}");
 		var td=$(row).find("td:eq(6)");
 		$(td).html(correctAssignee);
 	}
@@ -94,17 +94,7 @@
 			return value;
 		}
 	} 
-	
 
-	
-<%--
-	function issueTableDrawCallback(){
-		
-	}
-	
-	<jsp:attribute name="drawCallback">issueTableDrawCallback</jsp:attribute>
-	
---%>
 
 	
 </script>
@@ -125,12 +115,12 @@
 	<thead>
 		<tr>
 			<th>URL(not displayed)</th>
-			<th>${interfaceDescriptor.issueIdLabel}</th>
-			<th>${interfaceDescriptor.summaryNotMandatoryLabel}</th>
-			<th>${interfaceDescriptor.priorityLabel}</th>
-			<th>${interfaceDescriptor.statusLabel}</th>
-			<th>${interfaceDescriptor.assigneeLabel}</th>
-			<th>${interfaceDescriptor.reportedInLabel}</th>
+			<th>${interfaceDescriptor.tableIssueIDHeader}</th>
+			<th>${interfaceDescriptor.tableSummaryHeader}</th>
+			<th>${interfaceDescriptor.tablePriorityHeader}</th>
+			<th>${interfaceDescriptor.tableStatusHeader}</th>
+			<th>${interfaceDescriptor.tableAssigneeHeader}</th>
+			<th>${interfaceDescriptor.tableReportedInHeader}</th>
 		</tr>
 	</thead>
 	<tbody><%-- Will be populated through ajax --%></tbody>

@@ -335,7 +335,7 @@ public class BugtrackerController {
 
 			BugTrackerInterfaceDescriptor descriptor = bugTrackerLocalService.getInterfaceDescriptor();
 			descriptor.setLocale(locale);
-
+			
 			ModelAndView mav = new ModelAndView("fragment/issues/bugtracker-panel");
 			mav.addObject("entity", entity);
 			mav.addObject("entityType", type);
@@ -442,7 +442,7 @@ public class BugtrackerController {
 
 		BugTrackerInterfaceDescriptor descriptor = bugTrackerLocalService.getInterfaceDescriptor();
 		descriptor.setLocale(locale);
-
+		
 		ModelAndView mav = new ModelAndView("fragment/issues/bugtracker-panel-debug");
 		mav.addObject("entity", bugged);
 		mav.addObject("entityType", "execution-step");
@@ -459,7 +459,7 @@ public class BugtrackerController {
 
 		BugTrackerInterfaceDescriptor descriptor = bugTrackerLocalService.getInterfaceDescriptor();
 		descriptor.setLocale(locale);
-
+		
 		ModelAndView mav = new ModelAndView("fragment/issues/bugtracker-panel-debug");
 		mav.addObject("entity", bugged);
 		mav.addObject("entityType", "execution");

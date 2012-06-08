@@ -27,6 +27,7 @@ import java.util.Locale;
 import javax.inject.Inject;
 
 import org.springframework.context.MessageSource;
+import org.springframework.context.i18n.LocaleContextHolder;
 import org.springframework.stereotype.Component;
 import org.squashtest.csp.core.bugtracker.spi.BugTrackerInterfaceDescriptor;
 
@@ -52,27 +53,27 @@ public class MantisInterfaceDescriptor implements BugTrackerInterfaceDescriptor 
 	private static final String strMantisNoUser = "squashtest.csp.tm.bugtracker.interface.mantis.nouser.label";
 	private static final String strMantisDescriptionNotMandatory ="squashtest.csp.tm.bugtracker.interface.mantis.descriptionnomandatory.label";
 	
+	
 	private final ThreadLocal<Locale> threadLocalLocale = new ThreadLocal<Locale>();
-
 	
 	@Inject 
 	private MessageSource messageSource;
 	
 	
 	public MantisInterfaceDescriptor(){
-		threadLocalLocale.set(Locale.getDefault());
+		threadLocalLocale.set(LocaleContextHolder.getLocale());
 	}
 	
 	
 	public void setMessageSource(MessageSource messageSource){
 		this.messageSource=messageSource;
 	}
+
 	
 	@Override
 	public void setLocale(Locale locale){
-		this.threadLocalLocale.set(locale);
+		threadLocalLocale.set(locale);
 	}
-	
 	
 	// ***************** labels for the issue report popup fields *******************
 	
@@ -133,39 +134,63 @@ public class MantisInterfaceDescriptor implements BugTrackerInterfaceDescriptor 
 	
 	// ****************** issue tables labels ***********************
 	
-	
+
 	@Override
-	public String getIssueIdLabel(){
-		return getValue(strMantisBugId);	
+	public String getTableIssueIDHeader() {
+		return getValue(strMantisBugId);
 	}
-	
+
+
 	@Override
-	public String getSummaryNotMandatoryLabel(){
+	public String getTableSummaryHeader() {
 		return getValue(strMantisSummaryNotMandatory);
 	}
 
 
 	@Override
-	public String getReportedInLabel() {
+	public String getTablePriorityHeader() {
+		// TODO Auto-generated method stub
+		return null;
+	}
+
+
+	@Override
+	public String getTableStatusHeader() {
+		return getValue(strMantisGetStatus);
+	}
+
+
+	@Override
+	public String getTableDescriptionHeader() {
+		return getValue(strMantisDescriptionNotMandatory);
+	}
+
+
+	@Override
+	public String getTableAssigneeHeader() {
+		// TODO Auto-generated method stub
+		return null;
+	}
+
+
+	@Override
+	public String getTableReportedInHeader() {
 		return getValue(strMantisReportedIn);
 	}
 
-	
-	@Override 
-	public String getStatusLabel(){
-		return getValue(strMantisGetStatus);
-	}
-	
+
 	@Override
-	public String getDescriptionNotMandatoryLabel(){
-		return getValue(strMantisDescriptionNotMandatory);
+	public String getTableNoAssigneeLabel() {
+		// TODO Auto-generated method stub
+		return null;
 	}
-	
+
 
 	
 	/* *************************** private stuffs ************************* */
 	private String getValue(String key){
 		return messageSource.getMessage(key, null, threadLocalLocale.get());	
 	}
+
 
 }
