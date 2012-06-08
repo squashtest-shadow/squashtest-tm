@@ -3,11 +3,11 @@
 	<parent>
 		<groupId>org.squashtest.csp</groupId>
 		<artifactId>squashtest-csp-core</artifactId>
-		<version>1.2.0.IT35-SNAPSHOT</version>
+		<version>1.2.0.IT35</version>
 	</parent>
 	<groupId>org.squashtest.csp</groupId>
 	<artifactId>squashtest-csp-launcher</artifactId>
-	<version>1.2.0.IT35-SNAPSHOT</version>
+	<version>1.2.0.IT35</version>
 	<name>squashtest-csp-launcher</name>
 	<description>Squashtest CSP easy launcher</description>
 
