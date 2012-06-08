@@ -20,6 +20,7 @@
  */
 package org.squashtest.csp.tm.internal.service.importer;
 
+import java.util.List;
 import java.util.Map;
 
 import org.apache.poi.ss.usermodel.Row;
@@ -39,6 +40,6 @@ interface RequirementParser {
 	String CREATED_ON_TAG = "CREATED_ON";
 	String CREATED_BY_TAG = "CREATED_BY_TAG";
 
-	PseudoRequirement parseRow(RequirementFolder root, Row row, ImportSummaryImpl summary, Map<String, Integer> columnsMapping) ;
+	void parseRow(RequirementFolder root, Row row, ImportSummaryImpl summary, Map<String, Integer> columnsMapping, Map<RequirementFolder, List<PseudoRequirement>> organizedRequirementLibraryNodes) ;
 	
 }

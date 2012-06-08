@@ -21,6 +21,8 @@
 package org.squashtest.csp.tm.internal.service.importer;
 
 import java.io.InputStream;
+import java.util.List;
+import java.util.Map;
 
 import javax.inject.Inject;
 
@@ -56,24 +58,22 @@ public class RequirementImporter {
 		RequirementHierarchyCreator creator = new RequirementHierarchyCreator();
 		creator.setParser(parser);
 		
-		creator.create(excelStream);
+		Map<RequirementFolder, List<PseudoRequirement>> organizedPseudoReqNodes = creator.create(excelStream);
 		
 		RequirementFolder root = creator.getNodes();
 		summary.add(creator.getSummary());
 		
 		
 //		/* phase 2 : merge with the actual database content */
-//		
-//		RequirementLibrary library = service.findLibrary(libraryId);	
-//		
-//		
+		
+//		RequirementLibrary library = service.findLibrary(libraryId);			
 //		RequirementLibraryMerger merger = new RequirementLibraryMerger();
 //		merger.setLibraryService(service);
-//		merger.mergeIntoLibrary(library, root);
+//		merger.mergeIntoLibrary(library, root, organizedPseudoReqNodes);
 //		
 //		summary.add(merger.getSummary());
-//		
-//		
+		
+		
 		return summary;
 	}
 

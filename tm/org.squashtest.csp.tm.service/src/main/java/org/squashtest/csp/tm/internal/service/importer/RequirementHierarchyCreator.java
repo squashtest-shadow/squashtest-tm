@@ -22,7 +22,9 @@ package org.squashtest.csp.tm.internal.service.importer;
 
 import java.io.IOException;
 import java.io.InputStream;
+import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
 import org.apache.poi.openxml4j.exceptions.InvalidFormatException;
@@ -55,17 +57,12 @@ class RequirementHierarchyCreator{
 	private static final Logger LOGGER = LoggerFactory.getLogger(RequirementHierarchyCreator.class);
 
 	private RequirementParser parser;
-	
-	private StringPathMap<RequirementLibraryNode> pathMap = new StringPathMap<RequirementLibraryNode>();
-		
 	private ImportSummaryImpl summary = new ImportSummaryImpl();
 	private RequirementFolder root;
 	
-	
 	public RequirementHierarchyCreator(){
 		root = new RequirementFolder();
-		root.setName("/");
-		pathMap.put("/", root);
+		
 	}
 
 	public void setParser(RequirementParser parser){
@@ -80,10 +77,12 @@ class RequirementHierarchyCreator{
 		return root;
 	}
 	
-	public void create(InputStream excelStream){
+	public Map<RequirementFolder, List<PseudoRequirement>> create(InputStream excelStream){
+		Map<RequirementFolder, List<PseudoRequirement>> organizedRequirementLibraryNodes = new HashMap<RequirementFolder, List<PseudoRequirement>>();
+		organizedRequirementLibraryNodes.put(root, new ArrayList<PseudoRequirement>());
 		try {
 			Workbook workbook = WorkbookFactory.create(excelStream);
-			parseFile(workbook);
+			parseFile(workbook, organizedRequirementLibraryNodes);
 			
 		} catch (InvalidFormatException e) {
 			LOGGER.warn(e.getMessage());
@@ -92,17 +91,20 @@ class RequirementHierarchyCreator{
 			LOGGER.warn(e.getMessage());
 			throw new SheetCorruptedException(e);
 		}
+		return organizedRequirementLibraryNodes;
 
 	}
 
-	private void parseFile(Workbook workbook) {
+	private void parseFile(Workbook workbook, Map<RequirementFolder, List<PseudoRequirement>> organizedRequirementLibraryNodes) {
 		Sheet sheet = workbook.getSheetAt(0);
 		Map<String, Integer> columnsMapping = mapColumns(sheet);
 		for (int r = 1; r < sheet.getLastRowNum(); r++) {
 			Row row = sheet.getRow(r);
-			PseudoRequirement pseudoRequirement = parser.parseRow(root, row, summary, columnsMapping);
-		}		
+			parser.parseRow(root, row, summary, columnsMapping, organizedRequirementLibraryNodes);
+		}
 	}
+
+	
 
 	private Map<String, Integer>  mapColumns (Sheet sheet) {
 		Map<String, Integer> columnsMapping = new HashMap<String, Integer>();
@@ -115,7 +117,7 @@ class RequirementHierarchyCreator{
 		return columnsMapping;
 				
 	}
+
 	
-		
 	
 }

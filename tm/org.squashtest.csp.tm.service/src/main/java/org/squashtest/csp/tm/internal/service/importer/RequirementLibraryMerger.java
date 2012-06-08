@@ -23,6 +23,7 @@ package org.squashtest.csp.tm.internal.service.importer;
 import java.util.Collection;
 import java.util.LinkedList;
 import java.util.List;
+import java.util.Map;
 import java.util.Set;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
@@ -126,8 +127,9 @@ class RequirementLibraryMerger {
 	 * 
 	 * @param library
 	 * @param root
+	 * @param organizedPseudoReqNodes 
 	 */
-	public void mergeIntoLibrary(RequirementLibrary library, RequirementFolder root){
+	public void mergeIntoLibrary(RequirementLibrary library, RequirementFolder root, Map<RequirementFolder, List<PseudoRequirement>> organizedPseudoReqNodes){
 		
 		//phase 1 : add the content of the root of the library
 		merger.setMergingContext(this);

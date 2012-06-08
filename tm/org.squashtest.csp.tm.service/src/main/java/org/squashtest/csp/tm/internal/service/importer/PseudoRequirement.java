@@ -22,18 +22,11 @@
 package org.squashtest.csp.tm.internal.service.importer;
 
 import java.util.ArrayList;
-import java.util.Date;
-import java.util.LinkedList;
 import java.util.List;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.squashtest.csp.tm.domain.requirement.RequirementCriticality;
 import org.squashtest.csp.tm.domain.requirement.RequirementFolder;
-import org.squashtest.csp.tm.domain.requirement.RequirementStatus;
-import org.squashtest.csp.tm.domain.testcase.ActionTestStep;
-import org.squashtest.csp.tm.domain.testcase.TestCaseImportance;
-import org.squashtest.csp.tm.domain.testcase.TestStep;
 
 /**
  * 
@@ -43,33 +36,31 @@ import org.squashtest.csp.tm.domain.testcase.TestStep;
 /* package-private */class PseudoRequirement {
 	private RequirementFolder folder = null;
 	private Double id = null;
-	private Double version = null;
-	private String label = null;
-	private String reference = null;
-	private RequirementCriticality criticality = RequirementCriticality.UNDEFINED;
-	private RequirementStatus state = RequirementStatus.UNDER_REVIEW;
-	private String description = null;
-	private Date createdOnDate = new Date();
-	private String createdBy = "import";
+	private List<PseudoRequirementVersion> pseudoRequirementVersions; 
 
 
 	private static final Logger LOGGER = LoggerFactory.getLogger(PseudoRequirement.class);
 	
 
-	public PseudoRequirement(String label2) {
-		setLabel(label2);
+	public PseudoRequirement(String label2, int rowNumber) {
+		PseudoRequirementVersion pseudoRequirementVersion = new PseudoRequirementVersion(label2, rowNumber, this);
+		pseudoRequirementVersions = new ArrayList<PseudoRequirementVersion>();
+		pseudoRequirementVersions.add(pseudoRequirementVersion);
 	}
 	
-	/* ***************************** formatters *********************************** */
-	public String formatDescription(String description) {
-		return description;
+	public void addVersion(PseudoRequirement newReq) {
+		List<PseudoRequirementVersion> newReqVersions = newReq.getPseudoRequirementVersions();
+		PseudoRequirementVersion newReqVersion = newReqVersions.get(0);
+		newReqVersion.setPseudoRequirement(this);
+		this.pseudoRequirementVersions.add(newReqVersion);
 	}
 
 	/* ***************************** getter and setters *********************************** */
+
 	public RequirementFolder getFolder() {
 		return folder;
 	}
-
+	
 	public void setFolder(RequirementFolder folder) {
 		this.folder = folder;
 	}
@@ -82,93 +73,15 @@ import org.squashtest.csp.tm.domain.testcase.TestStep;
 		this.id = id;
 	}
 
-	public Double getVersion() {
-		return version;
+	public List<PseudoRequirementVersion> getPseudoRequirementVersions() {
+		return pseudoRequirementVersions;
 	}
 
-	public void setVersion(Double version) {
-		this.version = version;
-	}
-
-	public String getLabel() {
-		return label;
-	}
-
-	public void setLabel(String label) {
-		this.label = label;
-	}
-
-	public String getReference() {
-		return reference;
-	}
-
-	public void setReference(String reference) {
-		this.reference = reference;
-	}
-
-	public RequirementCriticality getCriticality() {
-		return criticality;
-	}
-
-	public void setCriticality(String cricicality) {
-		try{
-			this.criticality = RequirementCriticality.valueOf(cricicality);
-		}catch(IllegalArgumentException iae){
-			LOGGER.warn(iae.getMessage());
-		}catch(NullPointerException npe){
-			LOGGER.warn(npe.getMessage());
-		}
+	public void setPseudoRequirementVersions(List<PseudoRequirementVersion> pseudoRequirementVersions) {
+		this.pseudoRequirementVersions = pseudoRequirementVersions;
 	}
 
 	
-	public RequirementStatus getState() {
-		return state;
-	}
-
-	public void setState(String state) {
-		try{
-			this.state = RequirementStatus.valueOf(state);
-		}catch(IllegalArgumentException iae){
-			LOGGER.warn(iae.getMessage());
-		}catch(NullPointerException npe){
-			LOGGER.warn(npe.getMessage());
-		}
-	}
-
-	public String getDescription() {
-		return description;
-	}
-
-	public void setDescription(String description) {
-		this.description = formatDescription(description);
-	}
-
-	public Date getCreatedOnDate() {
-		return createdOnDate;
-	}
-
-	public void setCreatedOnDate(Date createdOnDate) {
-		if(createdOnDate != null){
-		this.createdOnDate = createdOnDate;
-		}
-	}
-
-	public String getCreatedBy() {
-		return createdBy;
-	}
-
-	public void setCreatedBy(String createdBy) {
-		if(notEmpty(createdBy))
-		this.createdBy = createdBy;
-	}
-
-	
-	
-	
-	/* ***************************** end getter and setters *********************************** */
-	private boolean notEmpty(String string){
-		return (string != null && (!string.isEmpty()));
-	}
 
 
 }

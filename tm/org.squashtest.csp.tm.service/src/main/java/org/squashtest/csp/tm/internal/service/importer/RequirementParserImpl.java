@@ -22,32 +22,61 @@ package org.squashtest.csp.tm.internal.service.importer;
 
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
+import java.util.ArrayList;
 import java.util.Date;
 import java.util.LinkedList;
+import java.util.List;
 import java.util.Map;
+import java.util.Set;
 
 import org.apache.poi.ss.usermodel.Cell;
 import org.apache.poi.ss.usermodel.Row;
+import org.hibernate.engine.Versioning;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.squashtest.csp.tm.domain.requirement.RequirementFolder;
+import org.squashtest.csp.tm.domain.requirement.RequirementLibraryNode;
 
 public class RequirementParserImpl implements RequirementParser {
 
 	private static final Logger LOGGER = LoggerFactory.getLogger(RequirementParserImpl.class);
 
 	@Override
-	public PseudoRequirement parseRow(RequirementFolder root, Row row, ImportSummaryImpl summary,
-			Map<String, Integer> columnsMapping) {
-		summary.incrTotal();
-		PseudoRequirement pseudoRequirement = null;
+	public void parseRow(RequirementFolder root, Row row, ImportSummaryImpl summary,
+			Map<String, Integer> columnsMapping,
+			Map<RequirementFolder, List<PseudoRequirement>> organizedRequirementLibraryNodes) {
 		if (validateRow(row, columnsMapping)) {
-			RequirementFolder lastFolder = createHierarchy(readTextField(row, columnsMapping, PATH_TAG), root);
-			pseudoRequirement = createPseudoRequirement(row, columnsMapping, lastFolder);
-		} else {
-			summary.incrFailures();
+			summary.incrTotal();
+			RequirementFolder lastFolder = createHierarchy(readTextField(row, columnsMapping, PATH_TAG), root,
+					organizedRequirementLibraryNodes);
+			PseudoRequirement pseudoRequirement = createPseudoRequirement(row, columnsMapping, lastFolder);
+			if (pseudoRequirement != null) {
+				List<PseudoRequirement> lastFolderRequirements = organizedRequirementLibraryNodes.get(lastFolder);
+				if (pseudoRequirement.getId() == null) {
+					// requirement is not versioned simply put it
+					lastFolderRequirements.add(pseudoRequirement);
+				} else {
+					// look at folder list if there is already a requirement of this id...
+					mergeVersions(pseudoRequirement, lastFolderRequirements);
+				}
+			}
 		}
-		return pseudoRequirement;
+	}
+
+	private void mergeVersions(PseudoRequirement pseudoRequirement, List<PseudoRequirement> lastFolderRequirements) {
+		PseudoRequirement versionedPseudoRequirement = null;
+		for (PseudoRequirement lastFolderRequirement : lastFolderRequirements) {
+			if (lastFolderRequirement.getId() != null && lastFolderRequirement.getId() == pseudoRequirement.getId()) {
+				versionedPseudoRequirement = lastFolderRequirement;
+			}
+		}
+		if (versionedPseudoRequirement != null) {
+			// if there is add a version to the already existing pseudo requirement
+			versionedPseudoRequirement.addVersion(pseudoRequirement);
+		} else {
+			// else add the requirement to the folder list
+			lastFolderRequirements.add(pseudoRequirement);
+		}
 	}
 
 	private PseudoRequirement createPseudoRequirement(Row row, Map<String, Integer> columnsMapping,
@@ -55,7 +84,7 @@ public class RequirementParserImpl implements RequirementParser {
 		PseudoRequirement pseudoRequirement = null;
 		String label = readTextField(row, columnsMapping, LABEL_TAG);
 		if (notEmpty(label)) {
-			pseudoRequirement = new PseudoRequirement(label);
+			pseudoRequirement = new PseudoRequirement(label, row.getRowNum());
 			pseudoRequirement.setFolder(lastFolder);
 			fillPseudoRequirement(pseudoRequirement, row, columnsMapping);
 		}
@@ -65,37 +94,52 @@ public class RequirementParserImpl implements RequirementParser {
 	private void fillPseudoRequirement(PseudoRequirement pseudoRequirement, Row row, Map<String, Integer> columnsMapping) {
 		Double id = readNumericField(row, columnsMapping, ID_TAG);
 		pseudoRequirement.setId(id);
+		PseudoRequirementVersion pseudoRequirementVersion = pseudoRequirement.getPseudoRequirementVersions().get(0);
 		Double version = readNumericField(row, columnsMapping, VERSION_TAG);
-		pseudoRequirement.setVersion(version);
+		pseudoRequirementVersion.setVersion(version);
 		String ref = readTextField(row, columnsMapping, REF_TAG);
-		pseudoRequirement.setReference(ref);
+		pseudoRequirementVersion.setReference(ref);
 		String description = readTextField(row, columnsMapping, DESCRIPTION_TAG);
-		pseudoRequirement.setDescription(description);
+		pseudoRequirementVersion.setDescription(description);
 		String createdBy = readTextField(row, columnsMapping, CREATED_BY_TAG);
-		pseudoRequirement.setCreatedBy(createdBy);
+		pseudoRequirementVersion.setCreatedBy(createdBy);
 		String criticality = readTextField(row, columnsMapping, CRITICALITY_TAG);
-		pseudoRequirement.setCriticality(criticality);
+		pseudoRequirementVersion.setCriticality(criticality);
 		String state = readTextField(row, columnsMapping, STATE_TAG);
-		pseudoRequirement.setState(state);
+		pseudoRequirementVersion.setState(state);
 		Date createdOn = readDateField(row, columnsMapping, CREATED_ON_TAG);
-		pseudoRequirement.setCreatedOnDate(createdOn);
+		pseudoRequirementVersion.setCreatedOnDate(createdOn);
 
 	}
 
-	private RequirementFolder createHierarchy(String path, RequirementFolder root) {
+	private RequirementFolder createHierarchy(String path, RequirementFolder root,
+			Map<RequirementFolder, List<PseudoRequirement>> organizedRequirementLibraryNodes) {
 		RequirementFolder lastFolder = root;
 		if (notEmpty(path)) {
 			LinkedList<String> folderNames = UrlParser.extractFoldersNames(path);
-
 			for (String folderName : folderNames) {
-				RequirementFolder newFolder = new RequirementFolder();
-				newFolder.setName(folderName);
-				lastFolder.addContent(newFolder);
-				lastFolder = newFolder;
-
+				if (notEmpty(folderName)) {
+					RequirementFolder newFolder = findOrCreateFolder(lastFolder, folderName,
+							organizedRequirementLibraryNodes);
+					lastFolder = newFolder;
+				}
 			}
 		}
 		return lastFolder;
+	}
+
+	private RequirementFolder findOrCreateFolder(RequirementFolder lastFolder, String folderName,
+			Map<RequirementFolder, List<PseudoRequirement>> organizedRequirementLibraryNodes) {
+		// ! Here we getContent() returns non persisted Folders before the merge.
+		// we are sure the list is only of folders !
+		RequirementFolder newFolder = getFolderByName(folderName, lastFolder.getContent());
+		if (newFolder == null) {
+			newFolder = new RequirementFolder();
+			newFolder.setName(folderName);
+			organizedRequirementLibraryNodes.put(newFolder, new ArrayList<PseudoRequirement>());
+			lastFolder.addContent(newFolder);
+		}
+		return newFolder;
 	}
 
 	private boolean validateRow(Row row, Map<String, Integer> columnsMapping) {
@@ -109,7 +153,6 @@ public class RequirementParserImpl implements RequirementParser {
 		}
 		return isValid;
 	}
-
 
 	/* *****************************Fields Readers*********************************** */
 
@@ -197,4 +240,21 @@ public class RequirementParserImpl implements RequirementParser {
 		return (string != null && (!string.isEmpty()));
 	}
 
+	/**
+	 * !!! To use this method you must be sure that the content list is only of folders.<br>
+	 * 
+	 * @param name
+	 *            : the name of the RequirementFolder we are looking for
+	 * @param content
+	 *            : a list of RequirementLibraryNode that we know is only of RequirementFolders
+	 * @return
+	 */
+	private RequirementFolder getFolderByName(String name, Set<RequirementLibraryNode> content) {
+		for (RequirementLibraryNode requirementFolder : content) {
+			if (requirementFolder.getName().equals(name)) {
+				return (RequirementFolder) requirementFolder;
+			}
+		}
+		return null;
+	}
 }
