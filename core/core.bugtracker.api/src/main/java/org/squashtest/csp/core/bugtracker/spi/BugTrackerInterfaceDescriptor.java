@@ -34,25 +34,84 @@ import java.util.Locale;
  */
 public interface  BugTrackerInterfaceDescriptor {
 	
+	/**
+	 * sets the locale for the current thread.
+	 * 
+	 * @param locale
+	 */
 	void setLocale(Locale locale);
-	String getPriorityLabel();
-	String getVersionLabel();
-	String getAssigneeLabel();
-	String getSummaryLabel();
-	String getDescriptionLabel();
-	String getCommentLabel();
-	String getCategoryLabel();
-	String getStatusLabel();
 	
-	String getNoVersionLabel();
-	String getNoCategoryLabel();
+	
+	
+	// ***************** labels for the issue report popup fields *******************
+	
+	/**
+	 * @return the label for the issue priority level dropdown list in the reporting sheet 
+	 */
+	String getReportPriorityLabel();
+	
+	/**
+	 * @return the label for the project version dropdown list in the reporting sheet
+	 */
+	String getReportVersionLabel();
+	
+	/**
+	 * @return the label for the assignee dropdown list in the reporting sheet
+	 */
+	String getReportAssigneeLabel();
+	
+	
+	/**
+	 * @return the label for the project category dropdown list in the reporting sheet
+	 */
+	String getReportCategoryLabel();
+
+	/**
+	 * @return the label for the summary field in the reporting sheet
+	 */	
+	String getReportSummaryLabel();
+	
+	/**
+	 * @return the label for the issue description field in the reporting sheet
+	 */
+	String getReportDescriptionLabel();
+	
+	
+	/**
+	 * @return the label for the issue commentary field in the reporting sheet
+	 */
+	String getReportCommentLabel();
+	
+
+	/**
+	 * @return the dummy value to display in the version dropdown list when it's empty and/or unavailable
+	 */
+	String getEmptyVersionListLabel();
+	
+	
+	/**
+	 * @return the dummy value to display in the category dropdown list when it's empty and/or unavailable
+	 */
+	String getEmptyCategoryListLabel();
+	
+	
+	/**
+	 * @return the dummy value to display in the assignee dropdown list when it's empty and/or unavailable
+	 */
+	String getEmptyAssigneeListLabel();
+	
+	
+	
+	// ****************** issue tables labels ***********************
+	
+	
+	String getStatusLabel();
 	
 	String getIssueIdLabel();
 	String getSummaryNotMandatoryLabel();
 	String getDescriptionNotMandatoryLabel();
 	
 	String getReportedInLabel();
-	String getNoUserLabel();
 	
 
 }

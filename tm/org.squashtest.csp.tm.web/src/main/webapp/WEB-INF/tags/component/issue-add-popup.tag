@@ -109,12 +109,12 @@ The reason for that is that the parameters are urls already.
  		var jqCategory = $("#issue-report-select-category");
  		
  		var priorities = jsonData.priorities;
- 		var users = jsonData.users;
+ 		var users = jsonData.users;				//FIXME : that is prone to be empty too, treat that case ase well 
  		
  	 	<%-- those two next may represent empty lists so we handle them here --%>
  		
- 		var categories = handleEmptyList(jsonData.categories,"${ interfaceDescriptor.noCategoryLabel }");
- 		var versions = handleEmptyList(jsonData.versions,"${ interfaceDescriptor.noVersionLabel }");
+ 		var categories = handleEmptyList(jsonData.categories,"${ interfaceDescriptor.emptyCategoryListLabel }");
+ 		var versions = handleEmptyList(jsonData.versions,"${ interfaceDescriptor.emptyVersionListLabel }");
  		
  		populateSelect(jqPriority,priorities);
  		populateSelect(jqVersion,versions);
@@ -239,13 +239,13 @@ The reason for that is that the parameters are urls already.
 	 			<div class="display-table">
 	 				<div class="display-table-row">
 	 					<div class="display-table-cell">
-							<label>${interfaceDescriptor.priorityLabel}</label>
+							<label>${interfaceDescriptor.reportPriorityLabel}</label>
 						</div>
 						<div class="display-table-cell">
 							<select id="issue-report-select-priority" name="priorityId" style="width:100%;"></select>
 						</div>
 						<div class="display-table-cell">
-							<label>${interfaceDescriptor.categoryLabel}</label>
+							<label>${interfaceDescriptor.reportCategoryLabel}</label>
 						</div>
 						<div class="display-table-cell">
 							<select id="issue-report-select-category" name="categoryId" style="width:100%;"></select>
@@ -254,13 +254,13 @@ The reason for that is that the parameters are urls already.
 							
 	 				<div class="display-table-row">
  						<div class="display-table-cell">
-							<label>${interfaceDescriptor.versionLabel}</label>
+							<label>${interfaceDescriptor.reportVersionLabel}</label>
 						</div>
 						<div class="display-table-cell">	
 							<select id="issue-report-select-version" name="versionId" style="width:100%;"></select>
 						</div>
 						<div class="display-table-cell">
-							<label>${interfaceDescriptor.assigneeLabel}</label>
+							<label>${interfaceDescriptor.reportAssigneeLabel}</label>
 						</div>
 						<div  class="display-table-cell">	
 							<select id="issue-report-select-assignee" name="assigneeId" style="width:100%;"></select>
@@ -271,13 +271,13 @@ The reason for that is that the parameters are urls already.
 				<br/>
 				
 				<f:message var="summarySize" key="dialog.issue.report.summary.size"/>
-				<label>${interfaceDescriptor.summaryLabel}</label><input type="text" id="issue-report-summary" name="summary" maxlength="${summarySize}" style="width:100%"/> <br/>
+				<label>${interfaceDescriptor.reportSummaryLabel}</label><input type="text" id="issue-report-summary" name="summary" maxlength="${summarySize}" style="width:100%"/> <br/>
 				<br/>
 				
-				<label>${interfaceDescriptor.descriptionLabel}</label> <br/>
+				<label>${interfaceDescriptor.reportDescriptionLabel}</label> <br/>
 				<textarea id="issue-report-description" name="description"></textarea> <br/>
 				
-				<label>${interfaceDescriptor.commentLabel}</label><br/>
+				<label>${interfaceDescriptor.reportCommentLabel}</label><br/>
 				<textarea id="issue-report-comment" name="comment"></textarea>
 			</form>
 		</div>

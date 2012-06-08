@@ -58,6 +58,7 @@ public class MantisInterfaceDescriptor implements BugTrackerInterfaceDescriptor 
 	@Inject 
 	private MessageSource messageSource;
 	
+	
 	public MantisInterfaceDescriptor(){
 		threadLocalLocale.set(Locale.getDefault());
 	}
@@ -73,54 +74,65 @@ public class MantisInterfaceDescriptor implements BugTrackerInterfaceDescriptor 
 	}
 	
 	
+	// ***************** labels for the issue report popup fields *******************
+	
 	@Override
-	public String getPriorityLabel() {
+	public String getReportPriorityLabel() {
 		return getValue(strMantisGetPriority);
 
 	}
 
 	@Override
-	public String getVersionLabel() {
+	public String getReportVersionLabel() {
 		return getValue(strMantisGetVersion);
 	}
 
 	@Override
-	public String getAssigneeLabel() {
+	public String getReportAssigneeLabel() {
 		return getValue(strMantisGetAssignee);
 	}
 
 	@Override
-	public String getSummaryLabel() {
-		return getValue(strMantisGetSummary);
+	public String getReportCategoryLabel() {
+		return getValue(strMantisGetCategory);
 	}
 
 	@Override
-	public String getDescriptionLabel() {
+	public String getReportSummaryLabel() {
+		return getValue(strMantisGetSummary);
+	}
+	
+
+	@Override
+	public String getReportDescriptionLabel() {
 		return getValue(strMantisGetDescription);
 	}
 
 	@Override
-	public String getCommentLabel() {
+	public String getReportCommentLabel() {
 		return getValue(strMantisGetComment);
 	}
 
-
+	
 	@Override
-	public String getCategoryLabel() {
-		return getValue(strMantisGetCategory);
-	}
-
-
-	@Override
-	public String getNoVersionLabel() {
+	public String getEmptyVersionListLabel() {
 		return getValue(strMantisNoVersion);
 	}
 
-
 	@Override
-	public String getNoCategoryLabel() {
+	public String getEmptyCategoryListLabel() {
 		return getValue(strMantisNoCategory);
 	}
+	
+	@Override
+	public String getEmptyAssigneeListLabel(){
+		return getValue(strMantisNoUser);
+	}
+	
+	
+	
+	// ****************** issue tables labels ***********************
+	
 	
 	@Override
 	public String getIssueIdLabel(){
@@ -137,11 +149,7 @@ public class MantisInterfaceDescriptor implements BugTrackerInterfaceDescriptor 
 	public String getReportedInLabel() {
 		return getValue(strMantisReportedIn);
 	}
-	
-	@Override
-	public String getNoUserLabel(){
-		return getValue(strMantisNoUser);
-	}
+
 	
 	@Override 
 	public String getStatusLabel(){
