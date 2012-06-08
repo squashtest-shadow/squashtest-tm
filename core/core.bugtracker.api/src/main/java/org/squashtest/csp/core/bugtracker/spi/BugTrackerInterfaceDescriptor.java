@@ -41,6 +41,19 @@ public interface  BugTrackerInterfaceDescriptor {
 	void setLocale(Locale locale);
 	
 	
+	// ***************** basic userful info ************
+	
+	/**
+	 * @returns whether or not the backing bugtracker supports rich formated text for the description field
+	 */
+	boolean supportsRichDescription();
+	
+	/**
+	 * @returns whether or not the backing bugtracker supports rich formated text for the comment field
+	 */
+	boolean supportsRichComment();
+	
+	
 	// ***************** labels for the issue report popup fields *******************
 	
 	/**

@@ -35,25 +35,30 @@ import org.squashtest.csp.core.bugtracker.spi.BugTrackerInterfaceDescriptor;
 @Component("squashtest.core.bugtracker.BugTrackerInterfaceDescriptor")
 public class MantisInterfaceDescriptor implements BugTrackerInterfaceDescriptor {
 	
-	private static final String strMantisGetPriority = "squashtest.csp.tm.bugtracker.interface.mantis.priority.label";
-	private static final String strMantisGetVersion = "squashtest.csp.tm.bugtracker.interface.mantis.version.label";
-	private static final String strMantisGetAssignee = "squashtest.csp.tm.bugtracker.interface.mantis.assignee.label";
-	private static final String strMantisGetSummary = "squashtest.csp.tm.bugtracker.interface.mantis.summary.label";
-	private static final String strMantisGetDescription = "squashtest.csp.tm.bugtracker.interface.mantis.description.label";
-	private static final String strMantisGetComment = "squashtest.csp.tm.bugtracker.interface.mantis.comment.label";
-	private static final String strMantisGetCategory = "squashtest.csp.tm.bugtracker.interface.mantis.category.label";
-	private static final String strMantisGetStatus = "squashtest.csp.tm.bugtracker.interface.mantis.status.label";
+	private final static String REPORT_PRIORITY_LABEL  	 = "interface.report.priority.label";
+	private final static String REPORT_VERSION_LABEL  	 = "interface.report.version.label";
+	private final static String REPORT_ASSIGNEE_LABEL 	 = "interface.report.assignee.label";
+	private final static String REPORT_CATEGORY_LABEL 	 = "interface.report.category.label";
+	private final static String REPORT_SUMMARY_LABEL 	 = "interface.report.summary.label";
+	private final static String REPORT_DESCRIPTION_LABEL = "interface.report.description.label";
+	private final static String REPORT_COMMENT_LABEL 	 = "interface.report.comment.label";
 	
-	private static final String strMantisNoVersion = "squashtest.csp.tm.bugtracker.interface.mantis.noversion.label";
-	private static final String strMantisNoCategory = "squashtest.csp.tm.bugtracker.interface.mantis.nocategory.label";
+	private final static String REPORT_EMPTY_VERSION	 = "interface.report.lists.emptyversion.label";
+	private final static String REPORT_EMPTY_CATEGORY	 = "interface.report.lists.emptycategory.label";
+	private final static String REPORT_EMPTY_ASSIGNEE	 = "interface.report.lists.emptyassignee.label";
 	
-	private static final String strMantisBugId = "squashtest.csp.tm.bugtracker.interface.mantis.bugid.label";
-	private static final String strMantisSummaryNotMandatory = "squashtest.csp.tm.bugtracker.interface.mantis.summarynomandatory.label";
-	private static final String strMantisReportedIn = "squashtest.csp.tm.bugtracker.interface.mantis.reportedin.label";
-	private static final String strMantisNoUser = "squashtest.csp.tm.bugtracker.interface.mantis.nouser.label";
-	private static final String strMantisDescriptionNotMandatory ="squashtest.csp.tm.bugtracker.interface.mantis.descriptionnomandatory.label";
+	private final static String TABLE_ID_HEADER			 = "interface.table.issueid.header";
+	private final static String TABLE_SUMMARY_HEADER	 = "interface.table.summary.header";
+	private final static String TABLE_PRIORITY_HEADER	 = "interface.table.priority.header";
+	private final static String TABLE_STATUS_HEADER		 = "interface.table.status.header";
+	private final static String TABLE_ASSIGNEE_HEADER	 = "interface.table.assignee.header";
+	private final static String TABLE_REPORTEDIN_HEADER	 = "interface.table.reportedin.header";
+	private final static String TABLE_DESCRIPTION_HEADER = "interface.table.description.header";
+	
+	private final static String TABLE_EMPTY_ASSIGNEE	 = "interface.table.null.assignee.label";
 	
 	
+
 	private final ThreadLocal<Locale> threadLocalLocale = new ThreadLocal<Locale>();
 	
 	@Inject 
@@ -75,59 +80,72 @@ public class MantisInterfaceDescriptor implements BugTrackerInterfaceDescriptor 
 		threadLocalLocale.set(locale);
 	}
 	
+	
+	// ***************** basic userful info ************
+	
+	@Override
+	public boolean supportsRichDescription(){
+		return false;
+	}
+	
+	@Override
+	public boolean supportsRichComment(){
+		return false;
+	}
+	
+	
 	// ***************** labels for the issue report popup fields *******************
 	
 	@Override
 	public String getReportPriorityLabel() {
-		return getValue(strMantisGetPriority);
-
+		return getValue(REPORT_PRIORITY_LABEL);
 	}
 
 	@Override
 	public String getReportVersionLabel() {
-		return getValue(strMantisGetVersion);
+		return getValue(REPORT_VERSION_LABEL);
 	}
 
 	@Override
 	public String getReportAssigneeLabel() {
-		return getValue(strMantisGetAssignee);
+		return getValue(REPORT_ASSIGNEE_LABEL);
 	}
 
 	@Override
 	public String getReportCategoryLabel() {
-		return getValue(strMantisGetCategory);
+		return getValue(REPORT_CATEGORY_LABEL);
 	}
 
 	@Override
 	public String getReportSummaryLabel() {
-		return getValue(strMantisGetSummary);
+		return getValue(REPORT_SUMMARY_LABEL);
 	}
 	
 
 	@Override
 	public String getReportDescriptionLabel() {
-		return getValue(strMantisGetDescription);
+		return getValue(REPORT_DESCRIPTION_LABEL);
 	}
 
 	@Override
 	public String getReportCommentLabel() {
-		return getValue(strMantisGetComment);
+		return getValue(REPORT_COMMENT_LABEL);
 	}
 
 	
 	@Override
 	public String getEmptyVersionListLabel() {
-		return getValue(strMantisNoVersion);
+		return getValue(REPORT_EMPTY_VERSION);
 	}
 
 	@Override
 	public String getEmptyCategoryListLabel() {
-		return getValue(strMantisNoCategory);
+		return getValue(REPORT_EMPTY_CATEGORY);
 	}
 	
 	@Override
 	public String getEmptyAssigneeListLabel(){
-		return getValue(strMantisNoUser);
+		return getValue(REPORT_EMPTY_ASSIGNEE);
 	}
 	
 	
@@ -137,52 +155,47 @@ public class MantisInterfaceDescriptor implements BugTrackerInterfaceDescriptor 
 
 	@Override
 	public String getTableIssueIDHeader() {
-		return getValue(strMantisBugId);
+		return getValue(TABLE_ID_HEADER);
 	}
 
 
 	@Override
 	public String getTableSummaryHeader() {
-		return getValue(strMantisSummaryNotMandatory);
+		return getValue(TABLE_SUMMARY_HEADER);
 	}
 
 
 	@Override
 	public String getTablePriorityHeader() {
-		// TODO Auto-generated method stub
-		return null;
+		return getValue(TABLE_PRIORITY_HEADER);
 	}
 
 
 	@Override
 	public String getTableStatusHeader() {
-		return getValue(strMantisGetStatus);
+		return getValue(TABLE_STATUS_HEADER);
 	}
-
-
-	@Override
-	public String getTableDescriptionHeader() {
-		return getValue(strMantisDescriptionNotMandatory);
-	}
-
 
 	@Override
 	public String getTableAssigneeHeader() {
-		// TODO Auto-generated method stub
-		return null;
+		return getValue(TABLE_ASSIGNEE_HEADER);
 	}
 
 
 	@Override
 	public String getTableReportedInHeader() {
-		return getValue(strMantisReportedIn);
+		return getValue(TABLE_REPORTEDIN_HEADER);
+	}
+
+	@Override
+	public String getTableDescriptionHeader() {
+		return getValue(TABLE_DESCRIPTION_HEADER);
 	}
 
 
 	@Override
 	public String getTableNoAssigneeLabel() {
-		// TODO Auto-generated method stub
-		return null;
+		return getValue(TABLE_EMPTY_ASSIGNEE);
 	}
 
 
