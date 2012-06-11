@@ -63,7 +63,7 @@ function extractSelectData(jqSelect){
 }
 
 function handleEmptyList(jsList,emptyListLabel){
-		if (jsList[0].empty==true){
+		if (jsList[0].dummy==true){
 			var stubArray = new Array();
 			var stub = new btEntity(jsList[0].id,emptyListLabel);
 			stubArray.push(stub);

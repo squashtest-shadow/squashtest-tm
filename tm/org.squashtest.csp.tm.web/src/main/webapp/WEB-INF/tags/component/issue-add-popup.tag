@@ -44,6 +44,7 @@ The reason for that is that the parameters are urls already.
 --%>
 <c:set var="bugReport" value="${entityUrl}/bug-report"/>
 
+
 <script type="text/javascript" src="${ pageContext.servletContext.contextPath }/scripts/squashtest/bugtracker-dialog.js"></script>
 
 <%-- state manager code of the popup --%>
@@ -109,10 +110,10 @@ The reason for that is that the parameters are urls already.
  		var jqCategory = $("#issue-report-select-category");
  		
  		var priorities = jsonData.priorities;
- 		var users = jsonData.users;				//FIXME : that is prone to be empty too, treat that case ase well 
+ 		
  		
  	 	<%-- those two next may represent empty lists so we handle them here --%>
- 		
+ 	 	var users = handleEmptyList(jsonData.users,"${ interfaceDescriptor.emptyAssigneeListLabel }");
  		var categories = handleEmptyList(jsonData.categories,"${ interfaceDescriptor.emptyCategoryListLabel }");
  		var versions = handleEmptyList(jsonData.versions,"${ interfaceDescriptor.emptyVersionListLabel }");
  		
