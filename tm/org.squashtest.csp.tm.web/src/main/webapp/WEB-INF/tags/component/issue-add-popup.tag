@@ -47,23 +47,27 @@ The reason for that is that the parameters are urls already.
 
 <script type="text/javascript" src="${ pageContext.servletContext.contextPath }/scripts/squashtest/bugtracker-dialog.js"></script>
 
+ <!-- 
+<script type="text/javascript" src="http://localhost/scripts/report-issue-dialog.js"></script>
+ -->
+
 <%-- state manager code of the popup --%>
 <script type="text/javascript">
 	function flipToPleaseWait(){
-		$("#${ id }-pleasewait").removeClass("not-displayed");
-		$("#${ id }-content").addClass("not-displayed");		
+		$("#${ id } .pleasewait").removeClass("not-displayed");
+		$("#${ id } .content").addClass("not-displayed");		
 	}
 	
 	function flipToReport(){
-		$("#${ id }-pleasewait").addClass("not-displayed");
-		$("#${ id }-content").removeClass("not-displayed");			
+		$("#${ id } .pleasewait").addClass("not-displayed");
+		$("#${ id } .content").removeClass("not-displayed");			
 	}
 
 	
 
  	function toggleReportStyle(){
-		$("#${ id }-pleasewait").toggleClass("not-displayed");
-		$("#${ id }-content").toggleClass("not-displayed");	
+		$("#${ id } .pleasewait").toggleClass("not-displayed");
+		$("#${ id } .content").toggleClass("not-displayed");	
  	}
  	
  	<%--  init code section --%>
@@ -92,10 +96,10 @@ The reason for that is that the parameters are urls already.
 	}
 	
  	function flushReport(){
- 		var jqPriority = $("#issue-report-select-priority");
- 		var jqVersion = $("#issue-report-select-version");
- 		var jqAssignee = $("#issue-report-select-assignee");
- 		var jqCategory = $("#issue-report-select-category");
+ 		var jqPriority = $("#${id} .priority-select");
+ 		var jqVersion = $("#${id} .version-select");
+ 		var jqAssignee = $("#${id} .assignee-select");
+ 		var jqCategory = $("#${id} .category-select");
  		
  		flushSelect(jqPriority);
  		flushSelect(jqVersion);
@@ -104,10 +108,10 @@ The reason for that is that the parameters are urls already.
  	}
  	
  	function fillReport(jsonData){
- 		var jqPriority = $("#issue-report-select-priority");
- 		var jqVersion = $("#issue-report-select-version");
- 		var jqAssignee = $("#issue-report-select-assignee");
- 		var jqCategory = $("#issue-report-select-category");
+ 		var jqPriority = $("#${id} .priority-select");
+ 		var jqVersion = $("#${id} .version-select");
+ 		var jqAssignee = $("#${id} .assignee-select");
+ 		var jqCategory = $("#${id} .category-select");
  		
  		var priorities = jsonData.priorities;
  		
@@ -122,9 +126,9 @@ The reason for that is that the parameters are urls already.
  		populateSelect(jqAssignee,users);
  		populateSelect(jqCategory,categories);
  		
- 		$("#issue-report-description").val(jsonData.defaultDescription);
+ 		$("#${id} .description-text").val(jsonData.defaultDescription);
  		
- 		$("#issue-report-project").val(jsonData.projectId);
+ 		$("#${id} .project-id").val(jsonData.projectId);
  		
  		flipToReport();
  	}
@@ -167,22 +171,18 @@ The reason for that is that the parameters are urls already.
 	}
 
 	function makeProject(){
-		var id = $("#issue-report-project").val();
+		var id = $("#${id} .project-id").val();
 		var name = "${projectIdentifier}";
 		return new btEntity(id, name);
 	}
 
 	function prepareIssueData(){
-		<%-- would be beautyful if only we could... 
-		return $("#issue-report-form").serializeArray();
-		instead we go for the following : --%>
 		
-		var jqPriority = $("#issue-report-select-priority");
- 		var jqVersion = $("#issue-report-select-version");
- 		var jqAssignee = $("#issue-report-select-assignee");
- 		var jqCategory = $("#issue-report-select-category");
+ 		var jqPriority = $("#${id} .priority-select");
+ 		var jqVersion = $("#${id} .version-select");
+ 		var jqAssignee = $("#${id} .assignee-select");
+ 		var jqCategory = $("#${id} .category-select");
  		
- 		<%-- the following variables are of type btEntity, see squashtest/bugtracker-dialog.js--%>
  		var priority = extractSelectData(jqPriority);
  		var version = extractSelectData(jqVersion);
  		var assignee = extractSelectData(jqAssignee);
@@ -197,9 +197,10 @@ The reason for that is that the parameters are urls already.
  		issue.version=version.format();
  		issue.assignee=assignee.format();
  		issue.category=category.format();
-		issue.summary=$("#issue-report-summary").val();
-		issue.description=$("#issue-report-description").val();
-		issue.comment=$("#issue-report-comment").val();
+		
+ 		issue.summary=$("#${id} .summary-text").val();
+		issue.description=$("#${id} .description-text").val();
+		issue.comment=$("#${id} .comment-text").val();
 		
 		return issue;
 	}
@@ -226,63 +227,71 @@ The reason for that is that the parameters are urls already.
  		width : 550
  	</jsp:attribute>
  	<jsp:attribute name="body"> 
- 		<div id="${id}-pleasewait" style="vertical-align:middle;">
+ 	<div class="issue-report-dialog">
+ 		<div class="pleasewait" style="vertical-align:middle;">
  			<img src="${ pageContext.servletContext.contextPath }/images/ajax-loader.gif" />
 			<span style="font-size:1.5em;"><f:message key="squashtm.processing"/></span>
  		</div>
-		<span id="${id}-pleasewait" class="not-displayed please-wait-message" ><f:message key="dialog.issue.pleasewait"/></span>
 		
-	 	<div id="${id}-content" >	
-	 		<form id="issue-report-form" >
-	 			<input type="hidden" id="issue-report-project" name="projectId"/>
+	 	<div class="content" >	
+	 		<form>
+	 			<input type="hidden" class="project-id" name="projectId"/>
 	 			<comp:error-message forField="bugtracker" /><br/><br/>
 	 			
-	 			<div class="display-table">
-	 				<div class="display-table-row">
-	 					<div class="display-table-cell">
-							<label>${interfaceDescriptor.reportPriorityLabel}</label>
+	 			<div class="combo-options">
+		 			<div class="display-table">
+		 				<div>
+		 					<div>
+								<label class="priority-label">${interfaceDescriptor.reportPriorityLabel}</label>
+							</div>
+							<div>
+								<select class="priority-select" name="priorityId" style="width:100%;"></select>
+							</div>
+							<div>
+								<label class="category-label">${interfaceDescriptor.reportCategoryLabel}</label>
+							</div>
+							<div>
+								<select class="category-select" name="categoryId" style="width:100%;"></select>
+							</div>	
 						</div>
-						<div class="display-table-cell">
-							<select id="issue-report-select-priority" name="priorityId" style="width:100%;"></select>
-						</div>
-						<div class="display-table-cell">
-							<label>${interfaceDescriptor.reportCategoryLabel}</label>
-						</div>
-						<div class="display-table-cell">
-							<select id="issue-report-select-category" name="categoryId" style="width:100%;"></select>
-						</div>	
-					</div>
-							
-	 				<div class="display-table-row">
- 						<div class="display-table-cell">
-							<label>${interfaceDescriptor.reportVersionLabel}</label>
-						</div>
-						<div class="display-table-cell">	
-							<select id="issue-report-select-version" name="versionId" style="width:100%;"></select>
-						</div>
-						<div class="display-table-cell">
-							<label>${interfaceDescriptor.reportAssigneeLabel}</label>
-						</div>
-						<div  class="display-table-cell">	
-							<select id="issue-report-select-assignee" name="assigneeId" style="width:100%;"></select>
-							
+								
+		 				<div>
+	 						<div>
+								<label class="version-label">${interfaceDescriptor.reportVersionLabel}</label>
+							</div>
+							<div>	
+								<select class="version-select" name="versionId" style="width:100%;"></select>
+							</div>
+							<div>
+								<label class="assignee-label">${interfaceDescriptor.reportAssigneeLabel}</label>
+							</div>
+							<div>	
+								<select class="assignee-select" name="assigneeId" style="width:100%;"></select>
+								
+							</div>
 						</div>
 					</div>
 				</div>
-				<br/>
 				
 				<f:message var="summarySize" key="dialog.issue.report.summary.size"/>
-				<label>${interfaceDescriptor.reportSummaryLabel}</label><input type="text" id="issue-report-summary" name="summary" maxlength="${summarySize}" style="width:100%"/> <br/>
-				<br/>
 				
-				<label>${interfaceDescriptor.reportDescriptionLabel}</label> <br/>
-				<textarea id="issue-report-description" name="description"></textarea> <br/>
-				
-				<label>${interfaceDescriptor.reportCommentLabel}</label><br/>
-				<textarea id="issue-report-comment" name="comment"></textarea>
+				<div class="text-options">
+					<div>
+						<label>${interfaceDescriptor.reportSummaryLabel}</label>
+						<input type="text" class="summary-text" name="summary" maxlength="${summarySize}" style="width:100%"/> 
+					</div>
+					<div>
+						<label>${interfaceDescriptor.reportDescriptionLabel}</label>
+						<textarea class="description-text" name="description"></textarea>
+					</div>
+					<div>
+						<label>${interfaceDescriptor.reportCommentLabel}</label>
+						<textarea class="comment-text" name="comment"></textarea>
+					</div>
+				</div>
 			</form>
 		</div>
- 		
+ 	</div>
  	</jsp:attribute>
  </pop:popup>
 

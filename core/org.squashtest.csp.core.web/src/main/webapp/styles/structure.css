@@ -968,7 +968,8 @@ tr.nodrop td.drag-handle {
 	line-height: 2;
 }
 
-.display-table-cell, .display-table > div > div, .display-table > div > label, .display-table > div > span {
+.display-table-cell, .display-table > div > div, .display-table > div > label, .display-table > div > span, 
+.display-table > div > select {
 	display : table-cell;
 	padding-left : 10px;
 	padding-right : 10px;

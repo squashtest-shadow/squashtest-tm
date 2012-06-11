@@ -250,6 +250,16 @@ the display:block trick will implicitly add that property */
 }
 
 
+div.issue-report-dialog div.combo-options{
+	margin-bottom : 2em;	
+}
+
+div.issue-report-dialog div.text-options > div{
+	margin-top : 		1em;
+	margin-bottom : 	1em;
+}
+
+
 /*******************************
 	test suites management
 ********************************/
