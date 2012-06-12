@@ -57,6 +57,7 @@ import org.squashtest.csp.core.bugtracker.spi.BugTrackerInterfaceDescriptor;
 import org.squashtest.csp.tm.domain.bugtracker.BugTrackerStatus;
 import org.squashtest.csp.tm.domain.bugtracker.Bugged;
 import org.squashtest.csp.tm.domain.bugtracker.IssueOwnership;
+import org.squashtest.csp.tm.domain.campaign.Iteration;
 import org.squashtest.csp.tm.domain.execution.Execution;
 import org.squashtest.csp.tm.domain.execution.ExecutionStep;
 import org.squashtest.csp.tm.infrastructure.filter.CollectionSorting;
@@ -82,6 +83,7 @@ public class BugtrackerController {
 
 	private static final String EXECUTION_STEP_TYPE = "execution-step";
 	private static final String EXECUTION_TYPE = "execution";
+	private static final String ITERATION_TYPE = "iteration";
 
 	@Inject
 	private MessageSource messageSource;
@@ -235,9 +237,9 @@ public class BugtrackerController {
 	}
 
 	/**
-	 * will prepare a bug report for an execution step. The returned json infos will populate the form.
+	 * will prepare a bug report for an execution. The returned json infos will populate the form.
 	 *
-	 * @param stepId
+	 * @param execId
 	 * @return
 	 */
 
@@ -262,6 +264,63 @@ public class BugtrackerController {
 
 		return processIssue(jsonIssue, entity);
 	}
+	
+	
+	/* **************************************************************************************************************
+	 * 																												*
+	 *  								Iteration level section 													*
+	 *  																											*
+	 *  *********************************************************************************************************** */	
+	
+	
+
+	/**
+	 * returns the panel displaying the current bugs of that execution and the stub for the report form. Remember that
+	 * the report bug dialog will be populated later.
+	 *
+	 * @param stepId
+	 * @return
+	 */
+	@RequestMapping(value = ITERATION_TYPE + "/{iterId}", method = RequestMethod.GET)
+	public ModelAndView getIterationIssuePanel(@PathVariable Long iterId, Locale locale) {
+
+		Bugged bugged = bugTrackerLocalService.findBuggedEntity(iterId, Iteration.class);
+		return makeIssuePanel(bugged, ITERATION_TYPE, locale);
+	}
+
+	/**
+	 * json Data for the known issues table.
+	 */
+	@RequestMapping(value =ITERATION_TYPE + "/{iterId}/known-issues", method = RequestMethod.GET)
+	public @ResponseBody
+	DataTableModel getIterationKnownIssuesData(@PathVariable("iterId") Long iterId, final DataTableDrawParameters params,
+			final Locale locale) {
+
+		FilteredCollectionHolder<List<IssueOwnership<BTIssue>>> filteredCollection;
+
+		CollectionSorting sorter = createCollectionSorting(params);
+
+		try {
+			Bugged bugged = bugTrackerLocalService.findBuggedEntity(iterId, Iteration.class);
+
+			filteredCollection = bugTrackerLocalService.findBugTrackerIssues(bugged, sorter);
+
+		}
+
+		// no credentials exception are okay, the rest is to be treated as usual
+		catch (BugTrackerNoCredentialsException noCrdsException) {
+			filteredCollection = makeEmptyCollectionHolder(ITERATION_TYPE, iterId, noCrdsException);
+		} 
+		catch (NullArgumentException npException) {
+			filteredCollection = makeEmptyCollectionHolder(ITERATION_TYPE, iterId, npException);
+		}
+
+		return new IterationIssuesTableModel(locale).buildDataModel(filteredCollection, sorter.getFirstItemIndex() + 1, params.getsEcho());
+
+	}
+
+
+	
 
 	/* ************************* Generic code section ************************** */
 
@@ -403,13 +462,25 @@ public class BugtrackerController {
 		String name = "this is clearly a bug";
 
 		if (bugged instanceof ExecutionStep) {
-			Integer index = ((ExecutionStep) bugged).getExecutionStepOrder() + 1;
-			name = messageSource.getMessage("squashtm.generic.execstep.label", null, locale) + " #" + index.toString();
-		} else if (bugged instanceof Execution) {
-			name = ((Execution) bugged).getName();
+			ExecutionStep step = ((ExecutionStep) bugged);
+			Execution exec = step.getExecution();
+			name = buildExecName(exec)+" "+buildStepName(step, locale);
+		} 
+		else if (bugged instanceof Execution) {
+			Execution exec = ((Execution) bugged);
+			name = buildExecName(exec);
 		}
 
 		return name;
+	}
+	
+	private String buildExecName(Execution bugged){
+		return bugged.getName()+" #"+(bugged.getExecutionOrder()+1);
+	}
+	
+	private String buildStepName(ExecutionStep bugged, Locale locale){
+		Integer index = bugged.getExecutionStepOrder() + 1;
+		return messageSource.getMessage("squashtm.generic.execstep.label", null, locale) + " #" + index.toString();
 	}
 
 	/* ******************************** debug code section **************************** */
@@ -460,7 +531,38 @@ public class BugtrackerController {
 	
 	
 	/**
-	 * <p>the DataTableModel for an execution will hold :
+	 * <p>the DataTableModel for an execution will hold the same informations than IterationIssuesTableModel (for now) :
+	 *<ul>
+	 *	<li>the url of that issue,</li>
+	 *	<li>the id,</li>
+	 *	<li>the summary</li>,
+	 *	<li>the priority,</li>
+	 *	<li>the status,</li>
+	 *	<li>the assignee,</li>
+	 *	<li>the owning entity</li>
+	 *</ul>
+	 * </p>
+	 */
+	private class IterationIssuesTableModel extends DataTableModelHelper<IssueOwnership<BTIssue>>{
+		private final Locale locale;
+		
+		public IterationIssuesTableModel(Locale locale){
+			this.locale=locale;
+		}
+		
+		@Override
+		public Object[] buildItemData(IssueOwnership<BTIssue> ownership) {
+			return new Object[] {
+					bugTrackerLocalService.getIssueUrl(ownership.getIssue().getId()).toExternalForm(),
+					ownership.getIssue().getId(), ownership.getIssue().getSummary(),
+					ownership.getIssue().getPriority().getName(), ownership.getIssue().getStatus().getName(),
+					ownership.getIssue().getAssignee().getName(), buildOwnerName(ownership.getOwner(), locale) };
+		}	
+	}
+	
+	
+	/**
+	 * <p>the DataTableModel for an execution will hold the same informations than IterationIssuesTableModel (for now) :
 	 *<ul>
 	 *	<li>the url of that issue,</li>
 	 *	<li>the id,</li>

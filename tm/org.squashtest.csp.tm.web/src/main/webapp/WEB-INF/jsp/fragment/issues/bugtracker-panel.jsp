@@ -54,6 +54,10 @@
 	<c:set var="editable" value="${ true }" /> 
 </authz:authorized>
 
+<c:if test="${not entity.acceptsIssues }" >
+	<c:set var="editable" value="${false}"/>
+</c:if>
+
 <s:url var="bugTrackerUrl" value="/bugtracker/"/>
 
 <s:url var="entityUrl" value="/bugtracker/{entityType}/{id}" >

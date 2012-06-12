@@ -243,7 +243,11 @@ public class ExecutionStep implements AttachmentHolder, Bugged, TestStepVisitor 
 	public void visit(CallTestStep visited) {
 		// FIXME naive implementation so that app don't break
 		action = visited.getCalledTestCase().getName();
-
+	}
+	
+	@Override
+	public boolean isAcceptsIssues() {
+		return true;
 	}
 
 }

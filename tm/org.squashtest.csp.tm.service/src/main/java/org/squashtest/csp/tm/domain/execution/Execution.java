@@ -46,7 +46,6 @@ import javax.validation.constraints.NotNull;
 import org.hibernate.annotations.Formula;
 import org.hibernate.validator.constraints.NotBlank;
 import org.squashtest.csp.core.domain.Identified;
-import org.squashtest.csp.core.security.annotation.AclConstrainedObject;
 import org.squashtest.csp.tm.domain.attachment.Attachment;
 import org.squashtest.csp.tm.domain.attachment.AttachmentHolder;
 import org.squashtest.csp.tm.domain.attachment.AttachmentList;
@@ -57,9 +56,7 @@ import org.squashtest.csp.tm.domain.campaign.CampaignLibrary;
 import org.squashtest.csp.tm.domain.campaign.IterationTestPlanItem;
 import org.squashtest.csp.tm.domain.exception.ExecutionHasNoRunnableStepException;
 import org.squashtest.csp.tm.domain.exception.ExecutionHasNoStepsException;
-import org.squashtest.csp.tm.domain.library.Library;
 import org.squashtest.csp.tm.domain.project.Project;
-import org.squashtest.csp.tm.domain.project.ProjectResource;
 import org.squashtest.csp.tm.domain.testcase.TestCase;
 import org.squashtest.csp.tm.domain.testcase.TestCaseExecutionMode;
 import org.squashtest.csp.tm.domain.testcase.TestStep;
@@ -342,6 +339,13 @@ public class Execution implements AttachmentHolder, Bugged, Identified {
 
 		return list;
 	}
+	
+	@Override
+	public boolean isAcceptsIssues() {
+		return true;
+	}
+	
+	/* ***************** /Bugged implementation *********************** */
 
 	public void notifyAddedTo(IterationTestPlanItem testPlan) {
 		this.testPlan = testPlan;

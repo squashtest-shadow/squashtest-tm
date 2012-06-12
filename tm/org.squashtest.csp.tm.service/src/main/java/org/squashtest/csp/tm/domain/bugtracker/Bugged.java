@@ -78,5 +78,12 @@ public interface Bugged extends Identified{
 	 * 
 	 */
 	List<Bugged> getAllBuggeds();
+	
+	/**
+	 * @return true if can be directly attached issues, false if not. For instance an iteration cannot be directly 
+	 * attached while its executions can have iterations 
+	 */
+	boolean isAcceptsIssues();
+	
 
 }

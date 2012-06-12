@@ -57,6 +57,8 @@ import org.squashtest.csp.tm.domain.attachment.Attachment;
 import org.squashtest.csp.tm.domain.attachment.AttachmentHolder;
 import org.squashtest.csp.tm.domain.attachment.AttachmentList;
 import org.squashtest.csp.tm.domain.audit.Auditable;
+import org.squashtest.csp.tm.domain.bugtracker.Bugged;
+import org.squashtest.csp.tm.domain.bugtracker.IssueList;
 import org.squashtest.csp.tm.domain.execution.Execution;
 import org.squashtest.csp.tm.domain.project.Project;
 import org.squashtest.csp.tm.domain.softdelete.SoftDeletable;
@@ -65,7 +67,7 @@ import org.squashtest.csp.tm.domain.testcase.TestCase;
 @Auditable
 @Entity
 @SoftDeletable
-public class Iteration implements AttachmentHolder , Identified {
+public class Iteration implements AttachmentHolder , Identified, Bugged {
 
 	private static final String ITERATION_ID = "ITERATION_ID";
 
@@ -690,5 +692,54 @@ public class Iteration implements AttachmentHolder , Identified {
 			}
 		}
 
+	}
+
+	/* ***************** Bugged implementation *********************** */
+	
+	@Override
+	public IssueList getIssueList() {
+		return null;		//an iteration doesn't need an issue list
+	}
+
+	@Override
+	public Long getIssueListId() {
+		return null;		//an iteration doesn't need an issue list
+	}
+
+	@Override
+	public List<Long> getAllIssueListId() {
+		
+		List<Long> result = new LinkedList<Long>();
+		
+		for (IterationTestPlanItem item : testPlans){
+			for (Execution exec : item.getExecutions()){
+				result.addAll(exec.getAllIssueListId());
+			}
+		}
+		
+		return result;
+	}
+
+	@Override
+	public String getDefaultDescription() {
+		return "";	//never user either
+	}
+
+	@Override
+	public List<Bugged> getAllBuggeds() {
+		List<Bugged> result = new LinkedList<Bugged>();
+		
+		for (IterationTestPlanItem item : testPlans){
+			for (Execution exec : item.getExecutions()){
+				result.addAll(exec.getAllBuggeds());
+			}
+		}
+		
+		return result;		
+	}
+	
+	@Override
+	public boolean isAcceptsIssues() {
+		return false;
 	}
 }

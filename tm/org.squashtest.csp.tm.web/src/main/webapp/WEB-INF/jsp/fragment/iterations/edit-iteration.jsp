@@ -80,9 +80,16 @@
 </s:url>
 <s:url var="simulateDeletionUrl" value="/campaign-browser/delete-iterations/simulate" />
 <s:url var="confirmDeletionUrl" value="/campaign-browser/delete-iterations/confirm" />
+
 <s:url var="testSuitesUrl" value="/iterations/{iterId}/test-suites">
 	<s:param name="iterId" value="${iteration.id}"/>
 </s:url>
+
+<s:url var="bugTrackerUrl" value="/bugtracker/"/>
+<s:url var="btEntityUrl" value="/bugtracker/iteration/{id}" >
+	<s:param name="id" value="${iteration.id}"/>
+</s:url>
+
 
 
 <%-- ----------------------------------- Authorization ----------------------------------------------%>
@@ -246,6 +253,7 @@
 	<comp:opened-object otherViewers="${ otherViewers }" objectUrl="${ iterationUrl }" isContextual="${ ! param.isInfoPage }"/>
 	</c:if>
 </div>
+
 
 <comp:fragment-tabs />
 <div class="fragment-tabs fragment-body">
@@ -420,6 +428,39 @@
 
 <%------------------------------ Attachments bloc ------------------------------------------- --%> 
 <comp:attachment-tab tabId="tabs-3" entity="${ iteration }" editable="${ attachable }" />
+
+
+<%------------------------------ bugs section -------------------------------%>
+
+<%--
+	this section is loaded asynchronously, and in this case as a tab. The bugtracker might be out of reach indeed. Nothing will be loaded if no bugtracker was defined.
+ --%>	
+ <f:message key="tabs.label.issues" var="tabIssueLabel"/>
+ <script type="text/javascript">
+ 	$(function(){
+ 		
+ 		$.ajax({
+ 			url : "${bugTrackerUrl}/check",
+ 			method : "GET",
+ 			dataType : "json"
+ 		})
+ 		.done(function(json){
+ 			if (json.status !== "bt_undefined"){	
+	 			<%-- first : add the tab entry --%>
+	 			$("div.fragment-tabs").tabs( "add" , "#bugtracker-section-div" , "${tabIssueLabel}");
+	 			//$("div.fragment-tabs ul").append('<li class="ui-state-default ui-corner-top"><a href="#bugtracker-section-div">${tabIssueLabel}</a></li>');
+			
+	 			<%-- second : load the bugtracker section --%>
+	 			$("#bugtracker-section-div").load("${btEntityUrl}"); 	
+ 			}
+ 		}); 		
+ 	});
+ </script>
+<div id="bugtracker-section-div">
+</div>
+
+<%------------------------------ /bugs section -------------------------------%>
+
 <%-- ---------------------deletion popup------------------------------ --%>
 <c:if test="${deletable}">
 
