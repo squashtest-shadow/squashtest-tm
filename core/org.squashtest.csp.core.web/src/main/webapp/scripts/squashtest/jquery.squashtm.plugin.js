@@ -147,7 +147,7 @@ var squashtm ;
 						- lang : the desired language for the ckeditor (optional)
 						- styleUrl : the url for the ckeditor style.
 				}
-				
+				- usesRichEdit : boolean, tells whether it should automagically turn textarea into rich editors or not
 				- buttons : the button definition (mandatory)
 				
 		
@@ -166,7 +166,8 @@ var squashtm ;
 						modal : true,
 						width : 600,
 						title : "default popup",
-						position : ['center', 100]
+						position : ['center', 100],
+						usesRichEdit : true
 					}
 					
 					//merge the settings into the defaults;
@@ -196,22 +197,24 @@ var squashtm ;
 					};
 					
 					defaults.create = function(){
-						target.find('textarea').each(function(){
-							var jqT = $(this);
-							if (settings.isContextual){
-								jqT.addClass('is-contextual');
-							}
-							jqT.ckeditor(function(){}, 
-									
-								{
-									//in this context 'this' is the defaults object
-									//the following properties will appear
-									//once we merged with the user-provided settings
-									customConfig : settings.ckeditor.styleUrl || "/styles/ckeditor/ckeditor-config.js", 
-									language : settings.ckeditor.lang || "en"
+						if (defaults.usesRichEdit){
+							target.find('textarea').each(function(){
+								var jqT = $(this);
+								if (settings.isContextual){
+									jqT.addClass('is-contextual');
 								}
-							);
-						});		
+								jqT.ckeditor(function(){}, 
+										
+									{
+										//in this context 'this' is the defaults object
+										//the following properties will appear
+										//once we merged with the user-provided settings
+										customConfig : settings.ckeditor.styleUrl || "/styles/ckeditor/ckeditor-config.js", 
+										language : settings.ckeditor.lang || "en"
+									}
+								);
+							});	
+						}
 						if (userCreate!=undefined) userCreate.call(this);
 					};
 

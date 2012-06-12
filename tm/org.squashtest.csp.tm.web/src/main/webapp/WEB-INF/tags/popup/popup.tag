@@ -30,6 +30,8 @@
 <%@ attribute name="buttons" fragment="true" required="false" description="buttons definitions of this dialog, defined as object" %>
 <%@ attribute name="buttonsArray" fragment="true" required="false" description="buttons definitions of this dialog, defined as array. See jQuery documentation to understand the difference." %>
 <%@ attribute name="closeOnSuccess" description="Closes the popup on ajax request success. Default is true." %>
+<%@ attribute name="usesRichEdit" required="false"  type="java.lang.Boolean" description="a boolean telling whether textarea should be automagically turned to rich editors. Default is true." %>
+
 
 <%@ attribute name="additionalSetup" required="false" fragment="true" 
 	description="additional configuration at creation time. You must inline the attributes without brackets, 
@@ -56,6 +58,9 @@ $(function() {
 		</c:if>
 		<c:if test="${not empty isContextual and isContextual}">
 		isContextual : true,
+		</c:if>
+		<c:if test="${ not empty usesRichEdit and not usesRichEdit}">
+		usesRichEdit : false,
 		</c:if>
 		<c:if test="${ not empty closeOnSuccess }">
 		closeOnSuccess : ${closeOnSuccess},

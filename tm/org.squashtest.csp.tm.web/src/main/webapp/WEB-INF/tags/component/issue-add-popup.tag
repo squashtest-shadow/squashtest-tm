@@ -23,11 +23,8 @@
 <%@ tag description="Popup filling informations regarding issues" body-content="empty" %>
 	
 <%@ attribute name="id" required="true" description="the desired name for that popup" %>
-<%@ attribute name="url" required="true" description="the base url pointing to the bugtracker controller"%>
-<%@ attribute name="entity" type="java.lang.Object" required="true" description="the entity we need to attach a bug to"%>
 <%@ attribute name="entityUrl" required="true" description="the url of the entity (bugtracker-wise)"%>
 <%@ attribute name="interfaceDescriptor" type="java.lang.Object" required="true" description="an object holding the labels for the interface"%>
-<%@ attribute name="projectIdentifier" required="true" description="the String representation of the project identifier. The actual content depends on the choice of the controller." %>
 <%@ attribute name="successCallback" required="false" description="if set, that callback will be called on successfull completion. It must accept as a parameter a json object having an attribute named 'url'."%>
 
 <%@ tag language="java" pageEncoding="ISO-8859-1"%>
@@ -45,177 +42,16 @@ The reason for that is that the parameters are urls already.
 <c:set var="bugReport" value="${entityUrl}/bug-report"/>
 
 
-<script type="text/javascript" src="${ pageContext.servletContext.contextPath }/scripts/squashtest/bugtracker-dialog.js"></script>
-
- <!-- 
-<script type="text/javascript" src="http://localhost/scripts/report-issue-dialog.js"></script>
- -->
-
-<%-- state manager code of the popup --%>
-<script type="text/javascript">
-	function flipToPleaseWait(){
-		$("#${ id } .pleasewait").removeClass("not-displayed");
-		$("#${ id } .content").addClass("not-displayed");		
-	}
-	
-	function flipToReport(){
-		$("#${ id } .pleasewait").addClass("not-displayed");
-		$("#${ id } .content").removeClass("not-displayed");			
-	}
-
-	
-
- 	function toggleReportStyle(){
-		$("#${ id } .pleasewait").toggleClass("not-displayed");
-		$("#${ id } .content").toggleClass("not-displayed");	
- 	}
- 	
- 	<%--  init code section --%>
-	$(function(){
-		$("#${ id }").bind("dialogopen",function(){
-			$( '.post-issue-button' ).button('option', 'disabled', true);		
-			flipToPleaseWait();
-	 		getBugReportData()
-	 		.then(function(json){
-				flushReport();
-				fillReport(json);
-				$( '.post-issue-button' ).button('option', 'disabled', false);		
-	 		})
-	 		.fail(bugReportDataError);
-		});
-		
-	});
-
-	function getBugReportData(){
-
-		return $.ajax({
-			url : "${ bugReport }",
-			type : "GET",
-			dataType : "json"			
-		});
-	}
-	
- 	function flushReport(){
- 		var jqPriority = $("#${id} .priority-select");
- 		var jqVersion = $("#${id} .version-select");
- 		var jqAssignee = $("#${id} .assignee-select");
- 		var jqCategory = $("#${id} .category-select");
- 		
- 		flushSelect(jqPriority);
- 		flushSelect(jqVersion);
- 		flushSelect(jqAssignee);
- 		flushSelect(jqCategory);
- 	}
- 	
- 	function fillReport(jsonData){
- 		var jqPriority = $("#${id} .priority-select");
- 		var jqVersion = $("#${id} .version-select");
- 		var jqAssignee = $("#${id} .assignee-select");
- 		var jqCategory = $("#${id} .category-select");
- 		
- 		var priorities = jsonData.priorities;
- 		
- 		
- 	 	<%-- those two next may represent empty lists so we handle them here --%>
- 	 	var users = handleEmptyList(jsonData.users,"${ interfaceDescriptor.emptyAssigneeListLabel }");
- 		var categories = handleEmptyList(jsonData.categories,"${ interfaceDescriptor.emptyCategoryListLabel }");
- 		var versions = handleEmptyList(jsonData.versions,"${ interfaceDescriptor.emptyVersionListLabel }");
- 		
- 		populateSelect(jqPriority,priorities);
- 		populateSelect(jqVersion,versions);
- 		populateSelect(jqAssignee,users);
- 		populateSelect(jqCategory,categories);
- 		
- 		$("#${id} .description-text").val(jsonData.defaultDescription);
- 		
- 		$("#${id} .project-id").val(jsonData.projectId);
- 		
- 		flipToReport();
- 	}
- 	
- 	
- 	function bugReportDataError(jqXHR, textStatus, errorThrown){
- 		flipToReport();
- 	}
-
-	<%-- posting code section --%>
-	function prepareAndSubmit(){		
-		$( '.post-issue-button' ).button('option', 'disabled', true);		
-		var issue = prepareIssueData();
-		
-		submitIssue(issue)
-		.done(submitIssueSuccess)
-		.fail(submitIssueFails);
-	}
-	
-	function submitIssue(issue){
-		flipToPleaseWait();
-		
-		return $.ajax({
-			url: "${ bugReport }",
-			type:"POST",
-			dataType : "json",
-			data : issue
-		});
-	}
-	
-	function submitIssueSuccess(json){
-		$("#${ id }").dialog("close");
-		$( '.post-issue-button' ).button('option', 'disabled', false);		
-		<c:if test="${not empty successCallback}">${successCallback}(json);</c:if>
-	}
-	
-	function submitIssueFails(){
-		$( '.post-issue-button' ).button('option', 'disabled', false);		
-		flipToReport();
-	}
-
-	function makeProject(){
-		var id = $("#${id} .project-id").val();
-		var name = "${projectIdentifier}";
-		return new btEntity(id, name);
-	}
-
-	function prepareIssueData(){
-		
- 		var jqPriority = $("#${id} .priority-select");
- 		var jqVersion = $("#${id} .version-select");
- 		var jqAssignee = $("#${id} .assignee-select");
- 		var jqCategory = $("#${id} .category-select");
- 		
- 		var priority = extractSelectData(jqPriority);
- 		var version = extractSelectData(jqVersion);
- 		var assignee = extractSelectData(jqAssignee);
- 		var category = extractSelectData(jqCategory);
- 		var project = makeProject();
- 			
- 		<%-- setting the final data --%>
- 		var issue = new Object();
- 		
- 		issue.project=project.format();
- 		issue.priority=priority.format();
- 		issue.version=version.format();
- 		issue.assignee=assignee.format();
- 		issue.category=category.format();
-		
- 		issue.summary=$("#${id} .summary-text").val();
-		issue.description=$("#${id} .description-text").val();
-		issue.comment=$("#${id} .comment-text").val();
-		
-		return issue;
-	}
-</script>
-
 <pop:popup id="${id}" openedBy="none" isContextual="true" 
-		titleKey="dialog.issue.report.title" closeOnSuccess="false">
+		titleKey="dialog.issue.report.title" closeOnSuccess="false" usesRichEdit="${interfaceDescriptor.supportsRichDescription}">
 	<jsp:attribute name="buttonsArray">
 		{
-			text: '${ addIssueLabel }',
-			click: prepareAndSubmit, 
-			'class': 'post-issue-button'
-		}, {
-			text: "<f:message key='dialog.button.cancel.label'/>",
-			click: function() {
+			'text' : '${ addIssueLabel }',
+			'class' : 'post-issue-button'
+		}, 
+		{
+			'text' : "<f:message key='dialog.button.cancel.label'/>",
+			'click' : function() {
 				$( this )
 					.data('answer', 'cancel')
 					.dialog( 'close' );
@@ -235,7 +71,6 @@ The reason for that is that the parameters are urls already.
 		
 	 	<div class="content" >	
 	 		<form>
-	 			<input type="hidden" class="project-id" name="projectId"/>
 	 			<comp:error-message forField="bugtracker" /><br/><br/>
 	 			
 	 			<div class="combo-options">
@@ -295,6 +130,25 @@ The reason for that is that the parameters are urls already.
  	</jsp:attribute>
  </pop:popup>
 
+
+
+<%-- state manager code of the popup --%>
+<script type="text/javascript">
+	$(function(){
+		$.getScript("${ pageContext.servletContext.contextPath }/scripts/squashtest/jquery.squashtm.bugtracker-issue-dialog.js", function(){
+			
+			 $("#${id}").btIssueDialog({
+				url : "${bugReport}",
+				labels : {
+					emptyAssigneeLabel : "${interfaceDescriptor.emptyAssigneeListLabel}",
+					emptyCategoryLabel : "${interfaceDescriptor.emptyCategoryListLabel}",
+					emptyVersionLabel : "${interfaceDescriptor.emptyVersionListLabel}"
+				},
+				callback : ${successCallback}
+			});		
+		});
+	});
+</script>
 
 
 

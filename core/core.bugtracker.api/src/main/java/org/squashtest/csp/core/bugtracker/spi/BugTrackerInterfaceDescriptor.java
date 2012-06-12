@@ -46,12 +46,12 @@ public interface  BugTrackerInterfaceDescriptor {
 	/**
 	 * @returns whether or not the backing bugtracker supports rich formated text for the description field
 	 */
-	boolean supportsRichDescription();
+	boolean getSupportsRichDescription();
 	
 	/**
 	 * @returns whether or not the backing bugtracker supports rich formated text for the comment field
 	 */
-	boolean supportsRichComment();
+	boolean getSupportsRichComment();
 	
 	
 	// ***************** labels for the issue report popup fields *******************

@@ -20,12 +20,6 @@
  */
 package org.squashtest.csp.tm.web.internal.model.jquery;
 
-import org.squashtest.csp.core.bugtracker.domain.BTIssue;
-import org.squashtest.csp.core.bugtracker.domain.BTProject;
-import org.squashtest.csp.core.bugtracker.domain.Category;
-import org.squashtest.csp.core.bugtracker.domain.Priority;
-import org.squashtest.csp.core.bugtracker.domain.User;
-import org.squashtest.csp.core.bugtracker.domain.Version;
 
 /*
  * Note : we set the NOSONAR flag on the setters for Array-type properties otherwise it rings because we don't clone them.
@@ -38,14 +32,13 @@ import org.squashtest.csp.core.bugtracker.domain.Version;
 
 public class IssueModel {
 	
-	private static final String LABEL_UNUSED = "unused";
 	/* ** data sent from server to client ** */
 	private Object[] priorities;
 	private Object[] users;
 	private String defaultDescription;
 	private Object[] versions;
 	private Object[] categories;
-	private String projectId;
+	private Object project;
 	
 
 	/* ** data received from client ** */
@@ -104,12 +97,12 @@ public class IssueModel {
 		}
 
 
-	public String getProjectId() {
-		return projectId;
+	public Object getProject() {
+		return project;
 	}
 
-	public void setProjectId(String projectId) {
-		this.projectId = projectId;
+	public void setProject(Object project) {
+		this.project = project;
 	}
 
 	public String getAssigneeId() {
@@ -167,33 +160,28 @@ public class IssueModel {
 	public void setComment(String comment) {
 		this.comment = comment;
 	}
-
-
-
-	public BTIssue toIssue(){
+	
+	
+	
+	
+	
+	public static class ProjectModel{
+		private String id;
+		private String name;
 		
-		BTIssue issue = new BTIssue();
+		public String getId(){
+			return id;
+		}
 		
-		BTProject project = new BTProject(getProjectId(), LABEL_UNUSED);
-		User assignee = new User(getAssigneeId(), LABEL_UNUSED);
-		Priority priority = new Priority(getPriorityId(), LABEL_UNUSED);
-		Version version = new Version(getVersionId(),LABEL_UNUSED);
-		Category category = new Category(getCategoryId(),LABEL_UNUSED);
+		public String getName(){
+			return name;
+		}
 		
-		
-
-		issue.setProject(project);
-		issue.setAssignee(assignee);
-		issue.setPriority(priority);
-		issue.setVersion(version);
-		issue.setComment(getComment());
-		issue.setSummary(getSummary());
-		issue.setDescription(getDescription());
-		issue.setCategory(category);
-		
-		return issue;
+		public ProjectModel(String id, String name){
+			this.id=id;
+			this.name=name;
+		}
 		
 	}
-	
 	
 }

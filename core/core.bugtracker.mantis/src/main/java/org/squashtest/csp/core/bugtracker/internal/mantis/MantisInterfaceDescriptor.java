@@ -84,12 +84,12 @@ public class MantisInterfaceDescriptor implements BugTrackerInterfaceDescriptor 
 	// ***************** basic userful info ************
 	
 	@Override
-	public boolean supportsRichDescription(){
+	public boolean getSupportsRichDescription(){
 		return false;
 	}
 	
 	@Override
-	public boolean supportsRichComment(){
+	public boolean getSupportsRichComment(){
 		return false;
 	}
 	

@@ -259,6 +259,15 @@ div.issue-report-dialog div.text-options > div{
 	margin-bottom : 	1em;
 }
 
+div.issue-report-dialog div.text-options label{
+	display : block;	
+}
+
+div.issue-report-dialog div.text-options textarea{
+	width : 100%;
+	height : 175px;	
+}
+
 
 /*******************************
 	test suites management

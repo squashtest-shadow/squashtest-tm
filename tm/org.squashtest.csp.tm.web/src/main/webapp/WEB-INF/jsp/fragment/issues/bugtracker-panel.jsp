@@ -41,7 +41,6 @@
 	parameters : 
 		- entity : the instance of the entity we need to display current bugs and possible add new ones.
 		- entityType : a String being the REST name of that kind of resource, like in the regular workspaces.
-		- projectName : the String name of the project that entity belongs to 
 		- interfaceDescriptor : an instance of BugTrackerInterfaceDescriptor that will provide the bug report dialog
 			with the proper labels  
 		- bugTrackerStatus : a BugTrackerStatus that will set the initial status of that component :
@@ -99,79 +98,8 @@
 	}
 </script>
 
-<div id="issue-panel-bugcreated-area" class="not-displayed ui-corner-all ">
-	<span class="ui-icon ui-icon-info icon"></span><span id="issue-add-success-message"><f:message key="issue.add.success" />&nbsp;(<a href="" id="issue-url"></a>)</span>
-</div>
 
 
-<%-------------------------- displays the current bugs -------------------------%>
-
-
-<%-- init section for issue-panel-knownissues-div --%>
-<c:choose>
-	<c:when test="${bugTrackerStatus == 'BUGTRACKER_NEEDS_CREDENTIALS'}">
-		<c:set var="knownIssuesLabelInitCss" value="issue-panel-knownissues-displayed"/>
-		<c:set var="knownIssuesTableInitCss" value="class=\"not-displayed\"" />	
-	</c:when>
-	<c:otherwise>
-		<c:set var="knownIssuesLabelInitCss" value="issue-panel-knownissues-notdisplayed" />
-		<c:set var="knownIssuesTableInitCss" value="" />	
-	</c:otherwise>
-</c:choose>
-
-
-<%-- /init section for issue-panel-knownissues-div --%>
-
-<comp:toggle-panel id="issue-panel" titleKey="issue.panel.title" isContextual="true" open="true"  >
-	<jsp:attribute name="panelButtons">
-	<c:if test="${ editable }">
-		<f:message var="issueReportOpenButtonLabel" key="issue.button.opendialog.label" />
-		<input type="button" class="button" id="issue-report-dialog-openbutton" value="${issueReportOpenButtonLabel}"/>
-	</c:if>
-	</jsp:attribute>
-	
-	<jsp:attribute name="body">
-	
-		<div id="issue-panel-knownissues-div" class="${knownIssuesLabelInitCss}">
-			<span><f:message key="issue.panel.needscredentials.label"/></span>			
-			<f:message var="loginButtonLabel" key="issue.panel.login.label" />
-			<input type="button" class="button" id="issue-login-button" value="${loginButtonLabel}" />
-		</div>
-	
-		<div id="issue-panel-known-issue-table-div" ${knownIssuesTableInitCss}>
-			<c:choose>
-				<c:when test="${entityType == 'execution-step'}">
-					<comp:issue-table-execstep dataUrl="${tableUrl}" interfaceDescriptor="${interfaceDescriptor}"/>
-				</c:when>
-				<c:when test="${entityType == 'execution'}">
-					<comp:issue-table-exec dataUrl="${tableUrl}" interfaceDescriptor="${interfaceDescriptor}" />			
-				</c:when>
-			</c:choose>
-		</div>
-	</jsp:attribute>
-</comp:toggle-panel>
-
-
-<%-------------------------------- add issue popup code -----------------------------------%>
-<c:if test="${editable}">
-<comp:issue-add-popup id="issue-report-dialog" entity="${executionStep}" 
-					interfaceDescriptor="${interfaceDescriptor}"  
-					url="${bugTrackerUrl}" entityUrl="${entityUrl}" 
-					successCallback="issueReportSuccess"
-					projectIdentifier="${projectName}" />
-</c:if>
-<%-------------------------------- /add issue popup code -----------------------------------%>
-
-
-<%--------------------------------- login code ------------------------------------%>
-
-<%-- 
-note that the successCallback and failureCallback are in the present case two pointers to the actual callbacks, 
-check that in the next <script></script> tags 
---%>
-<comp:issue-credentials-popup url="${credentialsUrl}"  divId="issue-dialog-credentials"
-							successCallback="loginSuccess" failureCallback="loginFail"	
-								/>
 
 <%--------------------------------- /login code ------------------------------------%>
 
@@ -338,3 +266,76 @@ check that in the next <script></script> tags
 	
 	
 </script>
+
+
+<div id="issue-panel-bugcreated-area" class="not-displayed ui-corner-all ">
+	<span class="ui-icon ui-icon-info icon"></span><span id="issue-add-success-message"><f:message key="issue.add.success" />&nbsp;(<a href="" id="issue-url"></a>)</span>
+</div>
+
+
+<%-------------------------- displays the current bugs -------------------------%>
+
+
+<%-- init section for issue-panel-knownissues-div --%>
+<c:choose>
+	<c:when test="${bugTrackerStatus == 'BUGTRACKER_NEEDS_CREDENTIALS'}">
+		<c:set var="knownIssuesLabelInitCss" value="issue-panel-knownissues-displayed"/>
+		<c:set var="knownIssuesTableInitCss" value="class=\"not-displayed\"" />	
+	</c:when>
+	<c:otherwise>
+		<c:set var="knownIssuesLabelInitCss" value="issue-panel-knownissues-notdisplayed" />
+		<c:set var="knownIssuesTableInitCss" value="" />	
+	</c:otherwise>
+</c:choose>
+
+
+<%-- /init section for issue-panel-knownissues-div --%>
+
+<comp:toggle-panel id="issue-panel" titleKey="issue.panel.title" isContextual="true" open="true"  >
+	<jsp:attribute name="panelButtons">
+	<c:if test="${ editable }">
+		<f:message var="issueReportOpenButtonLabel" key="issue.button.opendialog.label" />
+		<input type="button" class="button" id="issue-report-dialog-openbutton" value="${issueReportOpenButtonLabel}"/>
+	</c:if>
+	</jsp:attribute>
+	
+	<jsp:attribute name="body">
+	
+		<div id="issue-panel-knownissues-div" class="${knownIssuesLabelInitCss}">
+			<span><f:message key="issue.panel.needscredentials.label"/></span>			
+			<f:message var="loginButtonLabel" key="issue.panel.login.label" />
+			<input type="button" class="button" id="issue-login-button" value="${loginButtonLabel}" />
+		</div>
+	
+		<div id="issue-panel-known-issue-table-div" ${knownIssuesTableInitCss}>
+			<c:choose>
+				<c:when test="${entityType == 'execution-step'}">
+					<comp:issue-table-execstep dataUrl="${tableUrl}" interfaceDescriptor="${interfaceDescriptor}"/>
+				</c:when>
+				<c:when test="${entityType == 'execution'}">
+					<comp:issue-table-exec dataUrl="${tableUrl}" interfaceDescriptor="${interfaceDescriptor}" />			
+				</c:when>
+			</c:choose>
+		</div>
+	</jsp:attribute>
+</comp:toggle-panel>
+
+
+<%-------------------------------- add issue popup code -----------------------------------%>
+<c:if test="${editable}">
+<comp:issue-add-popup id="issue-report-dialog" interfaceDescriptor="${interfaceDescriptor}"  
+					entityUrl="${entityUrl}" 
+					successCallback="issueReportSuccess" />
+</c:if>
+<%-------------------------------- /add issue popup code -----------------------------------%>
+
+
+<%--------------------------------- login code ------------------------------------%>
+
+<%-- 
+note that the successCallback and failureCallback are in the present case two pointers to the actual callbacks, 
+check that in the next <script></script> tags 
+--%>
+<comp:issue-credentials-popup url="${credentialsUrl}"  divId="issue-dialog-credentials"
+							successCallback="loginSuccess" failureCallback="loginFail"	
+								/>

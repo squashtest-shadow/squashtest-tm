@@ -91,7 +91,7 @@
 	<thead>
 		<tr>
 			<th>URL(not displayed)</th>
-			<th>${interfaceDescriptor.tableIssueIDHeader}</th>
+			<th style="cursor:pointer">${interfaceDescriptor.tableIssueIDHeader}</th>
 			<th>${interfaceDescriptor.tableSummaryHeader}</th>
 			<th>${interfaceDescriptor.tablePriorityHeader}</th>
 		</tr>

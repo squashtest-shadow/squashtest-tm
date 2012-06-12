@@ -305,7 +305,7 @@ public class BugtrackerController {
 		List<Priority> priorities = bugTrackerLocalService.getRemotePriorities();
 
 		String projectName = entity.getProject().getName();
-		BTProject project = bugTrackerLocalService.findRemoteProject(projectName);
+		final BTProject project = bugTrackerLocalService.findRemoteProject(projectName);
 
 		String defaultDescription = entity.getDefaultDescription();
 
@@ -315,7 +315,7 @@ public class BugtrackerController {
 		model.setVersions(project.getVersions().toArray());
 		model.setCategories(project.getCategories().toArray());
 		model.setDefaultDescription(defaultDescription);
-		model.setProjectId(project.getId());
+		model.setProject(new IssueModel.ProjectModel(project.getId(), project.getName()));
 
 		return model;
 	}
@@ -340,7 +340,6 @@ public class BugtrackerController {
 			mav.addObject("entity", entity);
 			mav.addObject("entityType", type);
 			mav.addObject("interfaceDescriptor", descriptor);
-			mav.addObject("projectName", entity.getProject().getName());
 			mav.addObject("bugTrackerStatus", status);
 			return mav;
 		}
@@ -447,7 +446,6 @@ public class BugtrackerController {
 		mav.addObject("entity", bugged);
 		mav.addObject("entityType", "execution-step");
 		mav.addObject("interfaceDescriptor", descriptor);
-		mav.addObject("projectName", bugged.getProject().getName());
 		mav.addObject("bugTrackerStatus", checkStatus());
 		return mav;
 	}
@@ -464,7 +462,6 @@ public class BugtrackerController {
 		mav.addObject("entity", bugged);
 		mav.addObject("entityType", "execution");
 		mav.addObject("interfaceDescriptor", descriptor);
-		mav.addObject("projectName", bugged.getProject().getName());
 		mav.addObject("bugTrackerStatus", checkStatus());
 		return mav;
 	}
