@@ -66,7 +66,7 @@ public class RequirementParserImpl implements RequirementParser {
 	private void mergeVersions(PseudoRequirement pseudoRequirement, List<PseudoRequirement> lastFolderRequirements) {
 		PseudoRequirement versionedPseudoRequirement = null;
 		for (PseudoRequirement lastFolderRequirement : lastFolderRequirements) {
-			if (lastFolderRequirement.getId() != null && lastFolderRequirement.getId() == pseudoRequirement.getId()) {
+			if (lastFolderRequirement.getId() != null && (lastFolderRequirement.getId().compareTo(pseudoRequirement.getId())==0) ){
 				versionedPseudoRequirement = lastFolderRequirement;
 			}
 		}

@@ -28,6 +28,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
+import org.squashtest.csp.tm.domain.DuplicateNameException;
 import org.squashtest.csp.tm.domain.requirement.Requirement;
 import org.squashtest.csp.tm.domain.requirement.RequirementFolder;
 import org.squashtest.csp.tm.domain.requirement.RequirementLibrary;
@@ -195,16 +196,14 @@ class RequirementLibraryMerger {
 
 		protected void addVersion(Requirement requirement, RequirementVersion newVersion) {
 			if (destLibrary != null) {
-				if (destLibrary.isContentNameAvailable(newVersion.getName())) {
-					context.service.createNewVersion(requirement, newVersion, destLibrary);
-				} else {
+				try{	context.service.createNewVersion(requirement, newVersion, destLibrary);
+				} catch(DuplicateNameException e) {
 					renameAndAddVersion(requirement, newVersion);
 				}
 
 			} else {
-				if (destFolder.isContentNameAvailable(newVersion.getName())) {
-					context.service.createNewVersion(requirement, newVersion, destFolder);
-				} else {
+				try{context.service.createNewVersion(requirement, newVersion, destFolder);
+				}catch(DuplicateNameException e){
 					renameAndAddVersion(requirement, newVersion);
 				}
 			}
@@ -249,6 +248,7 @@ class RequirementLibraryMerger {
 			setDestination(folder);
 			merge(pseudoRequirements);
 		}
+		
 		public void merge(List<PseudoRequirement> pseudoRequirements) {
 			for (PseudoRequirement pseudoRequirement : pseudoRequirements) {
 				List<PseudoRequirementVersion> pseudoRequirementVersions = pseudoRequirement

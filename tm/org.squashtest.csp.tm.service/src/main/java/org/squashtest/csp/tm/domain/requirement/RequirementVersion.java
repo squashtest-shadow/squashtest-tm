@@ -250,6 +250,9 @@ public class RequirementVersion extends Resource implements AttachmentHolder {
 	public int getVersionNumber() {
 		return versionNumber;
 	}
+	protected void setVersionNumber(int versionNumber) {
+		this.versionNumber =  versionNumber;
+	}
 
 	/**
 	 * Should be used once before this entity is persisted by the requirement to which this version is added.

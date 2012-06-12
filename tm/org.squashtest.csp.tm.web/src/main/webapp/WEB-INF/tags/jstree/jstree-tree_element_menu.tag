@@ -56,13 +56,19 @@
 	</div>
 	</div>	
 <sec:authorize access="hasRole('ROLE_TM_PROJECT_MANAGER') or hasRole('ROLE_ADMIN')">
+<c:if test="${workspace == 'test-case' }">
+<fmt:message var="importExcelLabel" key="tree.button.import-excel-zip.label" />
+</c:if>
+<c:if test="${ workspace == 'requirement' }">
+<fmt:message var="importExcelLabel" key="tree.button.import-excel.label" />
+</c:if>
 <c:if test="${workspace == 'test-case' || workspace == 'requirement' }">
 	<a id="tree-import-button" href="#tree-import-menu" class="button"><fmt:message key="squashtm.treemenu.import.label"/>...</a>
 	
 	<div class="not-displayed" >
 	<div id="tree-import-menu" >
 	<ul>
-		<li><a class="import-excel-tree-button" href="JavaScript:void(0);"><fmt:message key="tree.button.import-excel.label" /></a></li>
+		<li><a class="import-excel-tree-button" href="JavaScript:void(0);">${importExcelLabel}</a></li>
 	</ul>
 	</div>
 	</div>	

@@ -222,6 +222,7 @@ public class Requirement extends RequirementLibraryNode<RequirementVersion> impl
 	}
 	
 	public void increaseVersion(RequirementVersion newVersion) {
+		newVersion.setVersionNumber(resource.getVersionNumber() + 1);
 		resource = newVersion;
 		versions.add(0, newVersion);
 		newVersion.setRequirement(this);

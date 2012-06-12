@@ -21,7 +21,9 @@
 package org.squashtest.csp.tm.internal.service;
 
 import java.io.InputStream;
+import java.util.ArrayList;
 import java.util.List;
+import java.util.Set;
 
 import javax.inject.Inject;
 import javax.validation.constraints.NotNull;
@@ -56,7 +58,7 @@ public class RequirementLibraryNavigationServiceImpl extends
 		RequirementLibraryNavigationService {
 	@Inject
 	private RequirementLibraryDao requirementLibraryDao;
-	
+
 	@Inject
 	private SessionFactory sessionFactory;
 
@@ -66,13 +68,13 @@ public class RequirementLibraryNavigationServiceImpl extends
 	@Inject
 	@Qualifier("squashtest.tm.repository.RequirementLibraryNodeDao")
 	private LibraryNodeDao<RequirementLibraryNode> requirementLibraryNodeDao;
-	
+
 	@Inject
 	private RequirementDao requirementDao;
 
 	@Inject
 	private RequirementNodeDeletionHandler deletionHandler;
-	
+
 	@Inject
 	private RequirementImporter requirementImporter;
 
@@ -119,6 +121,7 @@ public class RequirementLibraryNavigationServiceImpl extends
 
 		return newReq;
 	}
+
 	@Override
 	@PreAuthorize("hasPermission(#libraryId, 'org.squashtest.csp.tm.domain.requirement.RequirementLibrary' , 'CREATE') "
 			+ "or hasRole('ROLE_ADMIN')")
@@ -156,6 +159,7 @@ public class RequirementLibraryNavigationServiceImpl extends
 
 		return newReq;
 	}
+
 	@Override
 	@PreAuthorize("hasPermission(#folderId, 'org.squashtest.csp.tm.domain.requirement.RequirementFolder' , 'CREATE') "
 			+ "or hasRole('ROLE_ADMIN')")
@@ -165,31 +169,51 @@ public class RequirementLibraryNavigationServiceImpl extends
 		if (!folder.isContentNameAvailable(requirement.getName())) {
 			throw new DuplicateNameException(requirement.getName(), requirement.getName());
 		}
-		
+
 		folder.addContent(requirement);
 		requirementDao.persist(requirement);
 
 		return requirement;
 	}
-	
+
 	@Override
-	@PreAuthorize("hasPermission(#requirementId, 'org.squashtest.csp.tm.domain.requirement.Requirement', 'CREATE') or hasRole('ROLE_ADMIN')")
 	public void createNewVersion(Requirement requirement, RequirementVersion newVersion, RequirementLibrary destination) {
-		if (!destination.isContentNameAvailable(requirement.getName())) {
-			throw new DuplicateNameException(requirement.getName(), requirement.getName());
-		}
-		requirement.increaseVersion(newVersion);
-		sessionFactory.getCurrentSession().persist(requirement.getCurrentVersion());
-	}
-	@Override
-	@PreAuthorize("hasPermission(#requirementId, 'org.squashtest.csp.tm.domain.requirement.Requirement', 'CREATE') or hasRole('ROLE_ADMIN')")
-	public void createNewVersion(Requirement requirement, RequirementVersion newVersion, RequirementFolder destination) {
-		if (!destination.isContentNameAvailable(newVersion.getName())) {
+		Set<RequirementLibraryNode> rlns = destination.getRootContent();
+		List<RequirementLibraryNode> homonymes = getHomonymes(rlns, newVersion.getName());
+		if (homonymesAreNotOnlyRequirement(requirement, homonymes)) {
+			requirement.increaseVersion(newVersion);
+			sessionFactory.getCurrentSession().persist(requirement.getCurrentVersion());
+		} else {
 			throw new DuplicateNameException(newVersion.getName(), newVersion.getName());
 		}
-		requirement.increaseVersion(newVersion);
-		sessionFactory.getCurrentSession().persist(requirement.getCurrentVersion());
 	}
+
+	private boolean homonymesAreNotOnlyRequirement(Requirement requirement, List<RequirementLibraryNode> homonymes) {
+		return (homonymes.size() == 1 && homonymes.get(0).equals(requirement)) || homonymes.size() == 0;
+	}
+
+	@Override
+	public void createNewVersion(Requirement requirement, RequirementVersion newVersion, RequirementFolder destination) {
+		Set<RequirementLibraryNode> rlns = destination.getContent();
+		List<RequirementLibraryNode> homonymes = getHomonymes(rlns, newVersion.getName());
+		if (homonymesAreNotOnlyRequirement(requirement, homonymes)) {
+			requirement.increaseVersion(newVersion);
+			sessionFactory.getCurrentSession().persist(requirement.getCurrentVersion());
+		} else {
+			throw new DuplicateNameException(newVersion.getName(), newVersion.getName());
+		}
+	}
+
+	private List<RequirementLibraryNode> getHomonymes(Set<RequirementLibraryNode> rlns, String name) {
+		List<RequirementLibraryNode> homonymes = new ArrayList<RequirementLibraryNode>();
+		for (RequirementLibraryNode rln : rlns) {
+			if (rln.getName().equals(name)) {
+				homonymes.add(rln);
+			}
+		}
+		return homonymes;
+	}
+
 	@Override
 	public List<ExportRequirementData> findRequirementsToExportFromLibrary(List<Long> libraryIds) {
 		return requirementDao.findRequirementToExportFromLibrary(libraryIds);
