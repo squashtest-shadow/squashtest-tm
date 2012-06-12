@@ -39,6 +39,7 @@ import org.squashtest.csp.tm.domain.requirement.RequirementLibraryNode;
 import org.squashtest.csp.tm.domain.requirement.RequirementLibraryNodeVisitor;
 import org.squashtest.csp.tm.domain.requirement.RequirementVersion;
 import org.squashtest.csp.tm.internal.service.AbstractLibraryNavigationService;
+import org.squashtest.csp.tm.internal.utils.library.LibraryUtils;
 import org.squashtest.csp.tm.service.RequirementLibraryNavigationService;
 import org.squashtest.csp.tm.service.importer.ImportSummary;
 
@@ -395,7 +396,7 @@ class RequirementLibraryMerger {
 	 **/
 	private static String generateUniqueName(List<String> names, String baseName) {
 		String token = "-import";
-		int importXNumber = AbstractLibraryNavigationService.generateUniqueCopyNumber(names, baseName, token);
+		int importXNumber = LibraryUtils.generateUniqueCopyNumber(names, baseName, token);
 		String newName = baseName + token + importXNumber;
 		return newName;
 	}

@@ -43,6 +43,7 @@ import org.squashtest.csp.tm.domain.library.NodeContainer;
 import org.squashtest.csp.tm.internal.repository.FolderDao;
 import org.squashtest.csp.tm.internal.repository.LibraryDao;
 import org.squashtest.csp.tm.internal.repository.LibraryNodeDao;
+import org.squashtest.csp.tm.internal.utils.library.LibraryUtils;
 import org.squashtest.csp.tm.service.LibraryNavigationService;
 import org.squashtest.csp.tm.service.deletion.SuppressionPreviewReport;
 
@@ -410,33 +411,10 @@ public abstract class AbstractLibraryNavigationService<LIBRARY extends Library<N
 
 	public int generateUniqueCopyNumber(List<String> copiesNames, String sourceName) {
 
-		return generateUniqueCopyNumber(copiesNames, sourceName, COPY_TOKEN);
+		return LibraryUtils.generateUniqueCopyNumber(copiesNames, sourceName, COPY_TOKEN);
 	}
 	
-	public static int generateUniqueCopyNumber(List<String> copiesNames, String sourceName, String copyToken) {
-
-		int lastCopy = 0;
-		// we want to match one or more digits following the first instance of substring -Copie
-		Pattern pattern = Pattern.compile(sourceName + copyToken + "(\\d+)");
-
-		for (String copyName : copiesNames) {
-
-			Matcher matcher = pattern.matcher(copyName);
-
-			if (matcher.find()) {
-
-				String copyNum = matcher.group(1);
-
-				if (lastCopy < Integer.parseInt(copyNum)) {
-					lastCopy = Integer.parseInt(copyNum);
-				}
-			}
-
-		}
-
-		int newCopy = lastCopy + 1;
-		return newCopy;
-	}
+	
 
 	@SuppressWarnings("unchecked")
 	public FOLDER createCopyFolder(long folderId) {
