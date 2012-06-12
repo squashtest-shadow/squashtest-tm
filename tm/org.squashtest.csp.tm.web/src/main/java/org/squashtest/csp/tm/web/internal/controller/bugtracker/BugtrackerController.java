@@ -54,7 +54,6 @@ import org.squashtest.csp.core.bugtracker.domain.Priority;
 import org.squashtest.csp.core.bugtracker.domain.User;
 import org.squashtest.csp.core.bugtracker.domain.Version;
 import org.squashtest.csp.core.bugtracker.spi.BugTrackerInterfaceDescriptor;
-import org.squashtest.csp.core.web.utils.HTMLCleanupUtils;
 import org.squashtest.csp.tm.domain.bugtracker.BugTrackerStatus;
 import org.squashtest.csp.tm.domain.bugtracker.Bugged;
 import org.squashtest.csp.tm.domain.bugtracker.IssueOwnership;
@@ -288,9 +287,7 @@ public class BugtrackerController {
 	// FIXME : check first if a bugtracker is defined and if the credentials are set
 	private Map<String, String> processIssue(BTIssue issue, Bugged entity) {
 
-		BTIssue cleanIssue = cleanHtmlFromIssue(issue);
-
-		final BTIssue postedIssue = bugTrackerLocalService.createIssue(entity, cleanIssue);
+		final BTIssue postedIssue = bugTrackerLocalService.createIssue(entity, issue);
 		final URL issueUrl = bugTrackerLocalService.getIssueUrl(postedIssue.getId());
 		
 		Map<String, String> result = new HashMap<String, String>();
@@ -347,23 +344,6 @@ public class BugtrackerController {
 
 	/* ******************************* private methods ********************************************** */
 
-	private BTIssue cleanHtmlFromIssue(BTIssue issue) {
-
-		String dirtyComment = issue.getComment();
-		String cleanComment = HTMLCleanupUtils.htmlToText(dirtyComment);
-		issue.setComment(cleanComment);
-
-		String dirtyDescription = issue.getDescription();
-		String cleanDescription = HTMLCleanupUtils.htmlToText(dirtyDescription);
-		issue.setDescription(cleanDescription);
-
-		String dirtySummary = issue.getSummary();
-		String cleanSummary = HTMLCleanupUtils.htmlToText(dirtySummary);
-		issue.setSummary(cleanSummary);
-
-		return issue;
-
-	}
 
 	private BugTrackerStatus checkStatus() {
 		return bugTrackerLocalService.checkBugTrackerStatus();
