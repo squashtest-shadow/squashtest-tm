@@ -38,7 +38,7 @@ interface RequirementParser {
 	String STATE_TAG = "STATE";
 	String DESCRIPTION_TAG = "DESCRIPTION";
 	String CREATED_ON_TAG = "CREATED_ON";
-	String CREATED_BY_TAG = "CREATED_BY_TAG";
+	String CREATED_BY_TAG = "CREATED_BY";
 
 	void parseRow(RequirementFolder root, Row row, ImportSummaryImpl summary, Map<String, Integer> columnsMapping, Map<RequirementFolder, List<PseudoRequirement>> organizedRequirementLibraryNodes) ;
 	
