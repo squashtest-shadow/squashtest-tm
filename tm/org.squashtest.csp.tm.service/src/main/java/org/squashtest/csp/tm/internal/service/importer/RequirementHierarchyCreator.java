@@ -83,7 +83,8 @@ class RequirementHierarchyCreator{
 		try {
 			Workbook workbook = WorkbookFactory.create(excelStream);
 			parseFile(workbook, organizedRequirementLibraryNodes);
-			
+			excelStream.close();
+						
 		} catch (InvalidFormatException e) {
 			LOGGER.warn(e.getMessage());
 			throw new SheetCorruptedException(e);

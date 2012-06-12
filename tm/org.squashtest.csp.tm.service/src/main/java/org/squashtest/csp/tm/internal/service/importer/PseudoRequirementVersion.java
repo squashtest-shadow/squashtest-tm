@@ -34,10 +34,10 @@ import org.squashtest.csp.tm.domain.requirement.RequirementStatus;
  * @author mpagnon
  *
  */
-/* package-private */class PseudoRequirementVersion {
-	private int rowNumber = 0;
+/* package-private */class PseudoRequirementVersion implements Comparable<PseudoRequirementVersion>{
+	private Integer rowNumber = 0;
 	private Double version = null;
-	private String label = null;
+	private String label = "untitled";
 	private String reference = null;
 	private RequirementCriticality criticality = RequirementCriticality.UNDEFINED;
 	private RequirementStatus state = RequirementStatus.UNDER_REVIEW;
@@ -62,7 +62,7 @@ import org.squashtest.csp.tm.domain.requirement.RequirementStatus;
 	}
 
 	/* ***************************** getter and setters *********************************** */
-	public int getRowNumber() {
+	public Integer getRowNumber() {
 		return rowNumber;
 	}
 
@@ -163,5 +163,31 @@ import org.squashtest.csp.tm.domain.requirement.RequirementStatus;
 		return (string != null && (!string.isEmpty()));
 	}
 
+	@Override
+	public int compareTo(PseudoRequirementVersion o2) {
+
+		Double o1Version = this.getVersion();
+		boolean o1Null = o1Version == null;
+		Double o2Version = o2.getVersion();
+		boolean o2Null = o2Version == null;
+		if( o1Null|| o2Null){
+			if( o1Null && o2Null){
+				return compareRowNumbers(this, o2);
+			}else{
+				if(o1Null){return -1;}
+				else{return +1;}
+			}
+		}else{
+			if(o1Version == o2Version){
+				return compareRowNumbers(this, o2);
+			}else{
+				return o1Version.compareTo(o2Version);
+			}
+		}
+	}
+	
+	private int compareRowNumbers(PseudoRequirementVersion o1, PseudoRequirementVersion o2){
+		return o1.getRowNumber().compareTo(o2.getRowNumber());
+	}
 
 }

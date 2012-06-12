@@ -20,7 +20,10 @@
  */
 package org.squashtest.csp.tm.domain.requirement;
 
+import java.util.Collection;
+import java.util.Date;
 import java.util.HashSet;
+import java.util.Iterator;
 import java.util.Set;
 
 import javax.persistence.CascadeType;
@@ -34,6 +37,7 @@ import javax.persistence.Transient;
 import javax.validation.constraints.NotNull;
 
 import org.apache.commons.lang.NullArgumentException;
+import org.squashtest.csp.tm.domain.audit.AuditableMixin;
 import org.squashtest.csp.tm.domain.library.Folder;
 import org.squashtest.csp.tm.domain.library.FolderSupport;
 import org.squashtest.csp.tm.domain.library.Library;
@@ -62,7 +66,14 @@ public class RequirementFolder extends RequirementLibraryNode<SimpleResource> im
 	public RequirementFolder() {
 		resource = new SimpleResource();
 	}
-
+	public RequirementFolder(Date createdOn, String createdBy) {
+		AuditableMixin audit = ((AuditableMixin) this);
+		
+		audit.setCreatedOn(createdOn);
+		audit.setCreatedBy(createdBy);
+		
+		resource = new SimpleResource();
+	}
 	@Override
 	public Set<RequirementLibraryNode> getContent() {
 		return content;
@@ -145,6 +156,10 @@ public class RequirementFolder extends RequirementLibraryNode<SimpleResource> im
 	@Override
 	public Library<?> getLibrary() {
 		return getProject().getRequirementLibrary();
+	}
+	public void emptyContent() {
+		this.content.clear();
+		
 	}
 
 }

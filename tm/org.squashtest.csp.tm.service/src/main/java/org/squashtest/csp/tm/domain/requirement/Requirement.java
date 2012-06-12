@@ -220,6 +220,13 @@ public class Requirement extends RequirementLibraryNode<RequirementVersion> impl
 		versions.add(0, next);
 		next.setRequirement(this);
 	}
+	
+	public void increaseVersion(RequirementVersion newVersion) {
+		resource = newVersion;
+		versions.add(0, newVersion);
+		newVersion.setRequirement(this);
+		
+	}
 
 	/**
 	 * returns this requirement's version which should be linked to a test case by default.
@@ -299,5 +306,7 @@ public class Requirement extends RequirementLibraryNode<RequirementVersion> impl
 	public Library<?> getLibrary() {
 		return getProject().getRequirementLibrary();
 	}
+
+	
 
 }

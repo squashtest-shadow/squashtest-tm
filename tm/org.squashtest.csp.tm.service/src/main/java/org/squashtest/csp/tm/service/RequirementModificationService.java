@@ -25,6 +25,7 @@ import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.transaction.annotation.Transactional;
 import org.squashtest.csp.tm.domain.requirement.Requirement;
 import org.squashtest.csp.tm.domain.requirement.RequirementStatus;
+import org.squashtest.csp.tm.domain.requirement.RequirementVersion;
 
 @Transactional
 public interface RequirementModificationService extends CustomRequirementModificationService {
@@ -40,4 +41,5 @@ public interface RequirementModificationService extends CustomRequirementModific
 	@Transactional(readOnly = true)
 	@PostAuthorize("hasPermission(returnObject,'READ') or hasRole('ROLE_ADMIN')")
 	Requirement findById(long reqId);
+
 }

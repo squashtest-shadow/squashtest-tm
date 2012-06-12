@@ -410,9 +410,14 @@ public abstract class AbstractLibraryNavigationService<LIBRARY extends Library<N
 
 	public int generateUniqueCopyNumber(List<String> copiesNames, String sourceName) {
 
+		return generateUniqueCopyNumber(copiesNames, sourceName, COPY_TOKEN);
+	}
+	
+	public static int generateUniqueCopyNumber(List<String> copiesNames, String sourceName, String copyToken) {
+
 		int lastCopy = 0;
 		// we want to match one or more digits following the first instance of substring -Copie
-		Pattern pattern = Pattern.compile(sourceName + COPY_TOKEN + "(\\d+)");
+		Pattern pattern = Pattern.compile(sourceName + copyToken + "(\\d+)");
 
 		for (String copyName : copiesNames) {
 

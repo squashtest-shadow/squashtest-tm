@@ -31,14 +31,17 @@ import org.squashtest.csp.tm.domain.requirement.Requirement;
 import org.squashtest.csp.tm.domain.requirement.RequirementFolder;
 import org.squashtest.csp.tm.domain.requirement.RequirementLibrary;
 import org.squashtest.csp.tm.domain.requirement.RequirementLibraryNode;
+import org.squashtest.csp.tm.domain.requirement.RequirementVersion;
 import org.squashtest.csp.tm.service.importer.ImportSummary;
 
 @SuppressWarnings("rawtypes")
 public interface RequirementLibraryNavigationService extends
-		LibraryNavigationService<RequirementLibrary, RequirementFolder, RequirementLibraryNode> {
+	LibraryNavigationService<RequirementLibrary, RequirementFolder, RequirementLibraryNode> {
 
+	Requirement addRequirementToRequirementLibrary(long libraryId, @NotNull Requirement requirement);
 	Requirement addRequirementToRequirementLibrary(long libraryId, @NotNull NewRequirementVersionDto newRequirement);
 
+	Requirement addRequirementToRequirementFolder(long folderId, @NotNull Requirement requirement);
 	Requirement addRequirementToRequirementFolder(long folderId, @NotNull NewRequirementVersionDto newRequirement);
 
 	Requirement findRequirement(long reqId);
@@ -46,6 +49,22 @@ public interface RequirementLibraryNavigationService extends
 	List<ExportRequirementData> findRequirementsToExportFromLibrary(@NotNull List<Long> libraryIds);
 
 	List<ExportRequirementData> findRequirementsToExportFromFolder(@NotNull List<Long> folderIds);
+	/**
+	 * Increase the current version of the given requirement to the newVersion params
+	 * checks if the name is available in the content
+	 * 
+	 * @param requirement
+	 * @param newVersion
+	 */
+	void createNewVersion(Requirement requirement, RequirementVersion newVersion, RequirementLibrary destination );
+	/**
+	 * Increase the current version of the given requirement to the newVersion params
+	 * checks if the name is available in the content
+	 * 
+	 * @param requirement
+	 * @param newVersion
+	 */
+	void createNewVersion(Requirement requirement, RequirementVersion newVersion, RequirementFolder destination );
 	/**
 	 * Accepts a stream to a .xls / .xlsx file info for requirement folders and requirements. Will
 	 * convert the test cases from excel to squash.
@@ -55,5 +74,4 @@ public interface RequirementLibraryNavigationService extends
 	 * @return a summary of the operations.
 	 */
 	ImportSummary importExcel(InputStream stream, Long projectId);
-
 }

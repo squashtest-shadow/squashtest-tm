@@ -134,7 +134,7 @@ public class RequirementParserImpl implements RequirementParser {
 		// we are sure the list is only of folders !
 		RequirementFolder newFolder = getFolderByName(folderName, lastFolder.getContent());
 		if (newFolder == null) {
-			newFolder = new RequirementFolder();
+			newFolder = new RequirementFolder(new Date(), "import");
 			newFolder.setName(folderName);
 			organizedRequirementLibraryNodes.put(newFolder, new ArrayList<PseudoRequirement>());
 			lastFolder.addContent(newFolder);

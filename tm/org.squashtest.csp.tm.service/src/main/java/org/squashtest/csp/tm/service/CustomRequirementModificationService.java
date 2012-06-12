@@ -24,7 +24,11 @@ package org.squashtest.csp.tm.service;
 import javax.validation.constraints.NotNull;
 
 import org.springframework.transaction.annotation.Transactional;
+import org.squashtest.csp.tm.domain.requirement.Requirement;
 import org.squashtest.csp.tm.domain.requirement.RequirementCriticality;
+import org.squashtest.csp.tm.domain.requirement.RequirementFolder;
+import org.squashtest.csp.tm.domain.requirement.RequirementLibrary;
+import org.squashtest.csp.tm.domain.requirement.RequirementVersion;
 
 /**
  * @author Gregory Fouquet
@@ -48,4 +52,6 @@ public interface CustomRequirementModificationService {
 	 * @param criticality
 	 */
 	void changeCriticality(long requirementId, @NotNull RequirementCriticality criticality);
+	
+	
 }

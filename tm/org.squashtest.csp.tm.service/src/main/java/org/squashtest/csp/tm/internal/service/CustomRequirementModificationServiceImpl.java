@@ -30,6 +30,7 @@ import org.squashtest.csp.tm.domain.requirement.Requirement;
 import org.squashtest.csp.tm.domain.requirement.RequirementCriticality;
 import org.squashtest.csp.tm.domain.requirement.RequirementFolder;
 import org.squashtest.csp.tm.domain.requirement.RequirementLibraryNode;
+import org.squashtest.csp.tm.domain.requirement.RequirementVersion;
 import org.squashtest.csp.tm.internal.repository.RequirementDao;
 import org.squashtest.csp.tm.service.CustomRequirementModificationService;
 import org.squashtest.csp.tm.service.TestCaseImportanceManagerService;
@@ -66,6 +67,7 @@ public class CustomRequirementModificationServiceImpl implements CustomRequireme
 		req.increaseVersion();
 		sessionFactory.getCurrentSession().persist(req.getCurrentVersion());
 	}
+	
 
 	@Override
 	@PreAuthorize("hasPermission(#requirementId, 'org.squashtest.csp.tm.domain.requirement.Requirement', 'SMALL_EDIT') or hasRole('ROLE_ADMIN')")
@@ -78,4 +80,6 @@ public class CustomRequirementModificationServiceImpl implements CustomRequireme
 				oldCriticality);
 
 	}
+
+	
 }

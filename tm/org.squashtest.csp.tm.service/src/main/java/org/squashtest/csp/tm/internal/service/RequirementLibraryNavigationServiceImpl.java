@@ -26,6 +26,7 @@ import java.util.List;
 import javax.inject.Inject;
 import javax.validation.constraints.NotNull;
 
+import org.hibernate.SessionFactory;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.security.access.prepost.PostAuthorize;
 import org.springframework.security.access.prepost.PreAuthorize;
@@ -38,6 +39,7 @@ import org.squashtest.csp.tm.domain.requirement.Requirement;
 import org.squashtest.csp.tm.domain.requirement.RequirementFolder;
 import org.squashtest.csp.tm.domain.requirement.RequirementLibrary;
 import org.squashtest.csp.tm.domain.requirement.RequirementLibraryNode;
+import org.squashtest.csp.tm.domain.requirement.RequirementVersion;
 import org.squashtest.csp.tm.internal.repository.LibraryNodeDao;
 import org.squashtest.csp.tm.internal.repository.RequirementDao;
 import org.squashtest.csp.tm.internal.repository.RequirementFolderDao;
@@ -54,6 +56,9 @@ public class RequirementLibraryNavigationServiceImpl extends
 		RequirementLibraryNavigationService {
 	@Inject
 	private RequirementLibraryDao requirementLibraryDao;
+	
+	@Inject
+	private SessionFactory sessionFactory;
 
 	@Inject
 	private RequirementFolderDao requirementFolderDao;
@@ -114,6 +119,21 @@ public class RequirementLibraryNavigationServiceImpl extends
 
 		return newReq;
 	}
+	@Override
+	@PreAuthorize("hasPermission(#libraryId, 'org.squashtest.csp.tm.domain.requirement.RequirementLibrary' , 'CREATE') "
+			+ "or hasRole('ROLE_ADMIN')")
+	public Requirement addRequirementToRequirementLibrary(long libraryId, @NotNull Requirement requirement) {
+		RequirementLibrary library = requirementLibraryDao.findById(libraryId);
+
+		if (!library.isContentNameAvailable(requirement.getName())) {
+			throw new DuplicateNameException(requirement.getName(), requirement.getName());
+		}
+
+		library.addRootContent(requirement);
+		requirementDao.persist(requirement);
+
+		return requirement;
+	}
 
 	private Requirement createRequirement(NewRequirementVersionDto newVersionData) {
 		return new Requirement(newVersionData.toRequirementVersion());
@@ -136,7 +156,40 @@ public class RequirementLibraryNavigationServiceImpl extends
 
 		return newReq;
 	}
+	@Override
+	@PreAuthorize("hasPermission(#folderId, 'org.squashtest.csp.tm.domain.requirement.RequirementFolder' , 'CREATE') "
+			+ "or hasRole('ROLE_ADMIN')")
+	public Requirement addRequirementToRequirementFolder(long folderId, @NotNull Requirement requirement) {
+		RequirementFolder folder = requirementFolderDao.findById(folderId);
 
+		if (!folder.isContentNameAvailable(requirement.getName())) {
+			throw new DuplicateNameException(requirement.getName(), requirement.getName());
+		}
+		
+		folder.addContent(requirement);
+		requirementDao.persist(requirement);
+
+		return requirement;
+	}
+	
+	@Override
+	@PreAuthorize("hasPermission(#requirementId, 'org.squashtest.csp.tm.domain.requirement.Requirement', 'CREATE') or hasRole('ROLE_ADMIN')")
+	public void createNewVersion(Requirement requirement, RequirementVersion newVersion, RequirementLibrary destination) {
+		if (!destination.isContentNameAvailable(requirement.getName())) {
+			throw new DuplicateNameException(requirement.getName(), requirement.getName());
+		}
+		requirement.increaseVersion(newVersion);
+		sessionFactory.getCurrentSession().persist(requirement.getCurrentVersion());
+	}
+	@Override
+	@PreAuthorize("hasPermission(#requirementId, 'org.squashtest.csp.tm.domain.requirement.Requirement', 'CREATE') or hasRole('ROLE_ADMIN')")
+	public void createNewVersion(Requirement requirement, RequirementVersion newVersion, RequirementFolder destination) {
+		if (!destination.isContentNameAvailable(newVersion.getName())) {
+			throw new DuplicateNameException(newVersion.getName(), newVersion.getName());
+		}
+		requirement.increaseVersion(newVersion);
+		sessionFactory.getCurrentSession().persist(requirement.getCurrentVersion());
+	}
 	@Override
 	public List<ExportRequirementData> findRequirementsToExportFromLibrary(List<Long> libraryIds) {
 		return requirementDao.findRequirementToExportFromLibrary(libraryIds);

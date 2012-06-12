@@ -22,6 +22,7 @@
 package org.squashtest.csp.tm.domain.requirement;
 
 import java.util.Collections;
+import java.util.Date;
 import java.util.HashSet;
 import java.util.Set;
 
@@ -44,6 +45,7 @@ import org.squashtest.csp.tm.domain.RequirementVersionNotLinkableException;
 import org.squashtest.csp.tm.domain.attachment.Attachment;
 import org.squashtest.csp.tm.domain.attachment.AttachmentHolder;
 import org.squashtest.csp.tm.domain.attachment.AttachmentList;
+import org.squashtest.csp.tm.domain.audit.AuditableMixin;
 import org.squashtest.csp.tm.domain.resource.Resource;
 import org.squashtest.csp.tm.domain.testcase.TestCase;
 
@@ -93,7 +95,13 @@ public class RequirementVersion extends Resource implements AttachmentHolder {
 	public RequirementVersion() {
 		super();
 	}
+	public RequirementVersion(Date createdOn, String createdBy) {
+		AuditableMixin audit = ((AuditableMixin) this);
 
+		audit.setCreatedOn(createdOn);
+		audit.setCreatedBy(createdBy);
+	}
+	
 	/**
 	 * @see org.squashtest.csp.tm.domain.attachment.AttachmentHolder#getAttachmentList()
 	 */
