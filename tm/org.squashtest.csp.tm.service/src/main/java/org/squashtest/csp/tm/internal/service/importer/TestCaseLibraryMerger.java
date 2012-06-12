@@ -27,11 +27,13 @@ import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
 
+import org.apache.commons.collections.ListUtils;
 import org.squashtest.csp.tm.domain.testcase.TestCase;
 import org.squashtest.csp.tm.domain.testcase.TestCaseFolder;
 import org.squashtest.csp.tm.domain.testcase.TestCaseLibrary;
 import org.squashtest.csp.tm.domain.testcase.TestCaseLibraryNode;
 import org.squashtest.csp.tm.domain.testcase.TestCaseLibraryNodeVisitor;
+import org.squashtest.csp.tm.internal.utils.library.LibraryUtils;
 import org.squashtest.csp.tm.service.TestCaseLibraryNavigationService;
 import org.squashtest.csp.tm.service.importer.ImportSummary;
 
@@ -275,7 +277,7 @@ class TestCaseLibraryMerger {
 
 	
 		public void merge(){
-			Collection<String> names = collectNames(getDestinationContent());
+			List<String> names = collectNames(getDestinationContent());
 			
 			if (names.contains(toMerge.getName())){
 				String newName = generateUniqueName(names, toMerge.getName());
@@ -316,7 +318,7 @@ class TestCaseLibraryMerger {
 		//in the case of a conflict with an existing test case we have to rename the transient folder then persist it
 		@Override
 		public void visit(TestCase persisted) {
-			Collection<String> allNames = collectNames(getDestinationContent());
+			List<String> allNames = collectNames(getDestinationContent());
 			
 			String newName = generateUniqueName(allNames, toMerge.getName());
 			toMerge.setName(newName);
@@ -342,7 +344,7 @@ class TestCaseLibraryMerger {
 	/* ******************************** util functions ************************************* */
 	
 	
-	private static Collection<String> collectNames(Collection<TestCaseLibraryNode> nodes){
+	private static List<String> collectNames(Collection<TestCaseLibraryNode> nodes){
 		List<String> res = new LinkedList<String>();
 		
 		for (TestCaseLibraryNode node : nodes){
@@ -353,33 +355,11 @@ class TestCaseLibraryMerger {
 	}
 	
 	
-	/* 
-	 * mostly copy pasta from AbstractLibraryNavigationService#generateUniqueCopyNumber(List<String>)
-	 *  
-	 */
-	private static String generateUniqueName(Collection<String> pickedNames, String baseName){
-		
-		int higherIndex = 0;
-		//we want to match one or more digits following the first instance of substring -Import
-		Pattern pattern = Pattern.compile(baseName+"-import(\\d+)");
-	
-		for (String copyName : pickedNames) {
-			
-			Matcher matcher = pattern.matcher(copyName);
-			
-			if (matcher.find()){
-								
-				String index = matcher.group(1);
-
-				if (higherIndex < Integer.parseInt(index)) {
-					higherIndex = Integer.parseInt(index);
-				}			
-			}
-
-		}
-		
-		int newIndex = higherIndex + 1;
-		return baseName+"-import"+newIndex;
+	private static String generateUniqueName(List<String> pickedNames, String baseName){
+		String copyToken = "-import";
+		int number = LibraryUtils.generateUniqueCopyNumber(pickedNames, baseName, copyToken);
+		String newName = baseName+copyToken+number;
+		return newName;
 	}
 	
 	private static TestCaseLibraryNode getByName(Collection<TestCaseLibraryNode> hayStack, String needle){
