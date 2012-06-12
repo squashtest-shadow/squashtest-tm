@@ -28,6 +28,9 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
+import javax.inject.Inject;
+
+import org.hibernate.SessionFactory;
 import org.squashtest.csp.tm.domain.DuplicateNameException;
 import org.squashtest.csp.tm.domain.requirement.Requirement;
 import org.squashtest.csp.tm.domain.requirement.RequirementFolder;
@@ -46,20 +49,16 @@ import org.squashtest.csp.tm.service.importer.ImportSummary;
 class RequirementLibraryMerger {
 
 	private RequirementLibraryNavigationService service;
+	
+	private SessionFactory sessionFactory;
 
 	private ImportSummaryImpl summary = new ImportSummaryImpl();
 
-	public RequirementLibraryMerger() {
-		super();
-	}
+	
 
-	public RequirementLibraryMerger(RequirementLibraryNavigationService service) {
-		this();
+	public RequirementLibraryMerger(RequirementLibraryNavigationService service, SessionFactory sessionFactory) {
 		this.service = service;
-	}
-
-	public void setLibraryService(RequirementLibraryNavigationService service2) {
-		this.service = service2;
+		this.sessionFactory = sessionFactory;
 	}
 
 	public ImportSummary getSummary() {
@@ -84,12 +83,12 @@ class RequirementLibraryMerger {
 
 		folderMerger.setMergingContext(this);
 		requirementMerger.setMergingContext(this);
-		
+
 		requirementMerger.merge(organizedPseudoReqNodes.get(root), library);
-		
+
 		Set<RequirementLibraryNode> rootContent = root.getContent();
 		for (RequirementLibraryNode node : rootContent) {
-			RequirementFolder folder = (RequirementFolder)	node;
+			RequirementFolder folder = (RequirementFolder) node;
 			Set<RequirementLibraryNode> nodes = copyContent(folder);
 			folder.emptyContent();
 			folderMerger.merge(folder, library);
@@ -102,13 +101,13 @@ class RequirementLibraryMerger {
 
 	}
 
-	
-
-	private void mergeContent(Set<RequirementLibraryNode> nodes, RequirementFolder persisted, 	Map<RequirementFolder, List<PseudoRequirement>> organizedPseudoReqNodes) {
+	private void mergeContent(Set<RequirementLibraryNode> nodes, RequirementFolder persisted,
+			Map<RequirementFolder, List<PseudoRequirement>> organizedPseudoReqNodes) {
 		for (RequirementLibraryNode node : nodes) {
-			RequirementFolder folder = (RequirementFolder)	node;
+			RequirementFolder folder = (RequirementFolder) node;
 			Set<RequirementLibraryNode> nodes2 = copyContent(folder);
-			folder.emptyContent();//must empty content so that subfolders don't get persisted along with their parents (need to do it one by one)
+			folder.emptyContent();// must empty content so that subfolders don't get persisted along with their parents
+									// (need to do it one by one)
 			folderMerger.merge(folder, persisted);
 			RequirementFolder persisted2 = folderMerger.persisted;
 			mergeContent(nodes2, persisted2, organizedPseudoReqNodes);
@@ -116,10 +115,8 @@ class RequirementLibraryMerger {
 			// make sure folder.getContent returns only folders
 			requirementMerger.merge(organizedPseudoReqNodes.get(folder), persisted2);
 		}
-		
+
 	}
-
-
 
 	/*
 	 * This class is an adapter to help with the API differences between Libraries and Folders
@@ -196,25 +193,48 @@ class RequirementLibraryMerger {
 
 		protected void addVersion(Requirement requirement, RequirementVersion newVersion) {
 			if (destLibrary != null) {
-				try{	context.service.createNewVersion(requirement, newVersion, destLibrary);
-				} catch(DuplicateNameException e) {
-					renameAndAddVersion(requirement, newVersion);
-				}
+				Set<RequirementLibraryNode> rlns = destLibrary.getRootContent();
+				renameIfNeededAndAddVersion(requirement, newVersion, rlns);
 
 			} else {
-				try{context.service.createNewVersion(requirement, newVersion, destFolder);
-				}catch(DuplicateNameException e){
-					renameAndAddVersion(requirement, newVersion);
-				}
+				Set<RequirementLibraryNode> rlns = destFolder.getContent();
+				renameIfNeededAndAddVersion(requirement, newVersion, rlns);
 			}
 		}
 
-		private void renameAndAddVersion(Requirement requirement, RequirementVersion newVersion) {
-			context.summary.incrRenamed();
-			String newName = generateUniqueName(getNamesAtDestination(), newVersion.getName());
-			newVersion.setName(newName);
-			addVersion(requirement, newVersion);
+		private void renameIfNeededAndAddVersion(Requirement requirement, RequirementVersion newVersion,
+				Set<RequirementLibraryNode> rlns) {
+			List<RequirementLibraryNode> homonymes = getHomonymes(rlns, newVersion.getName());
+			if (homonymesAreNotOnlyRequirement(requirement, homonymes)) {
+				addVersionWithNonConflictualName(requirement, newVersion);
+			} else {
+				context.summary.incrRenamed();
+				String newName = generateUniqueName(getNamesAtDestination(), newVersion.getName());
+				newVersion.setName(newName);
+				addVersionWithNonConflictualName(requirement, newVersion);
+			}
 		}
+
+		private void addVersionWithNonConflictualName(Requirement requirement, RequirementVersion newVersion) {
+			requirement.increaseVersion(newVersion);
+			context.sessionFactory.getCurrentSession().persist(requirement.getCurrentVersion());
+		}
+
+		private boolean homonymesAreNotOnlyRequirement(Requirement requirement, List<RequirementLibraryNode> homonymes) {
+			return (homonymes.size() == 1 && homonymes.get(0).equals(requirement)) || homonymes.size() == 0;
+		}
+
+		private List<RequirementLibraryNode> getHomonymes(Set<RequirementLibraryNode> rlns, String name) {
+			List<RequirementLibraryNode> homonymes = new ArrayList<RequirementLibraryNode>();
+			for (RequirementLibraryNode rln : rlns) {
+				if (rln.getName().equals(name)) {
+					homonymes.add(rln);
+				}
+			}
+			return homonymes;
+		}
+
+		
 
 		protected void persistFolder(RequirementFolder folder) {
 			if (destLibrary != null) {
@@ -238,17 +258,17 @@ class RequirementLibraryMerger {
 
 	private static class RequirementMerger extends DestinationManager {
 		protected RequirementLibraryMerger context;
-		
+
 		public void merge(List<PseudoRequirement> pseudoRequirements, RequirementLibrary library) {
 			setDestination(library);
 			merge(pseudoRequirements);
 		}
-		
+
 		public void merge(List<PseudoRequirement> pseudoRequirements, RequirementFolder folder) {
 			setDestination(folder);
 			merge(pseudoRequirements);
 		}
-		
+
 		public void merge(List<PseudoRequirement> pseudoRequirements) {
 			for (PseudoRequirement pseudoRequirement : pseudoRequirements) {
 				List<PseudoRequirementVersion> pseudoRequirementVersions = pseudoRequirement
@@ -304,7 +324,7 @@ class RequirementLibraryMerger {
 			persistFolder();
 
 		}
-		
+
 		public void merge(RequirementFolder visited, RequirementFolder folder) {
 			setDestination(folder);
 			applyConfigurationTo(this);
@@ -335,11 +355,10 @@ class RequirementLibraryMerger {
 
 		@Override
 		public void visit(RequirementFolder folder) {
-			
+
 			merger.persisted = folder;
 		}
 
-	
 		@Override
 		public void visit(Requirement requirement) {
 			String newName = generateUniqueName(merger.names, merger.toMerge.getName());
@@ -354,12 +373,11 @@ class RequirementLibraryMerger {
 	private Set<RequirementLibraryNode> copyContent(RequirementFolder folder) {
 		Set<RequirementLibraryNode> copy = new HashSet<RequirementLibraryNode>();
 		Set<RequirementLibraryNode> source = folder.getContent();
-		for(RequirementLibraryNode node : source){
+		for (RequirementLibraryNode node : source) {
 			copy.add(node);
 		}
 		return copy;
 	}
-
 
 	@SuppressWarnings("rawtypes")
 	private static List<String> collectNames(Set<RequirementLibraryNode> set) {

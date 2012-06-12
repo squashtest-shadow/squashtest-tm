@@ -26,6 +26,7 @@ import java.util.Map;
 
 import javax.inject.Inject;
 
+import org.hibernate.SessionFactory;
 import org.springframework.stereotype.Component;
 import org.squashtest.csp.tm.domain.requirement.RequirementFolder;
 import org.squashtest.csp.tm.domain.requirement.RequirementLibrary;
@@ -45,6 +46,8 @@ public class RequirementImporter {
 	
 	@Inject
 	private RequirementLibraryNavigationService service;
+	@Inject
+	private SessionFactory sessionFactory;
 	
 	private RequirementParser parser = new RequirementParserImpl();
 	
@@ -67,8 +70,7 @@ public class RequirementImporter {
 //		/* phase 2 : merge with the actual database content */
 		
 		RequirementLibrary library = service.findLibrary(libraryId);	
-		RequirementLibraryMerger merger = new RequirementLibraryMerger();
-		merger.setLibraryService(service);
+		RequirementLibraryMerger merger = new RequirementLibraryMerger(service, sessionFactory);
 		merger.mergeIntoLibrary(library, root, organizedPseudoReqNodes);
 		
 		summary.add(merger.getSummary());

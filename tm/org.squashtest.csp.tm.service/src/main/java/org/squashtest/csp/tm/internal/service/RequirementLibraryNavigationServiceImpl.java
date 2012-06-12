@@ -60,9 +60,6 @@ public class RequirementLibraryNavigationServiceImpl extends
 	private RequirementLibraryDao requirementLibraryDao;
 
 	@Inject
-	private SessionFactory sessionFactory;
-
-	@Inject
 	private RequirementFolderDao requirementFolderDao;
 
 	@Inject
@@ -175,45 +172,7 @@ public class RequirementLibraryNavigationServiceImpl extends
 
 		return requirement;
 	}
-
-	@Override
-	public void createNewVersion(Requirement requirement, RequirementVersion newVersion, RequirementLibrary destination) {
-		Set<RequirementLibraryNode> rlns = destination.getRootContent();
-		List<RequirementLibraryNode> homonymes = getHomonymes(rlns, newVersion.getName());
-		if (homonymesAreNotOnlyRequirement(requirement, homonymes)) {
-			requirement.increaseVersion(newVersion);
-			sessionFactory.getCurrentSession().persist(requirement.getCurrentVersion());
-		} else {
-			throw new DuplicateNameException(newVersion.getName(), newVersion.getName());
-		}
-	}
-
-	private boolean homonymesAreNotOnlyRequirement(Requirement requirement, List<RequirementLibraryNode> homonymes) {
-		return (homonymes.size() == 1 && homonymes.get(0).equals(requirement)) || homonymes.size() == 0;
-	}
-
-	@Override
-	public void createNewVersion(Requirement requirement, RequirementVersion newVersion, RequirementFolder destination) {
-		Set<RequirementLibraryNode> rlns = destination.getContent();
-		List<RequirementLibraryNode> homonymes = getHomonymes(rlns, newVersion.getName());
-		if (homonymesAreNotOnlyRequirement(requirement, homonymes)) {
-			requirement.increaseVersion(newVersion);
-			sessionFactory.getCurrentSession().persist(requirement.getCurrentVersion());
-		} else {
-			throw new DuplicateNameException(newVersion.getName(), newVersion.getName());
-		}
-	}
-
-	private List<RequirementLibraryNode> getHomonymes(Set<RequirementLibraryNode> rlns, String name) {
-		List<RequirementLibraryNode> homonymes = new ArrayList<RequirementLibraryNode>();
-		for (RequirementLibraryNode rln : rlns) {
-			if (rln.getName().equals(name)) {
-				homonymes.add(rln);
-			}
-		}
-		return homonymes;
-	}
-
+	
 	@Override
 	public List<ExportRequirementData> findRequirementsToExportFromLibrary(List<Long> libraryIds) {
 		return requirementDao.findRequirementToExportFromLibrary(libraryIds);

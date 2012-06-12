@@ -49,22 +49,8 @@ public interface RequirementLibraryNavigationService extends
 	List<ExportRequirementData> findRequirementsToExportFromLibrary(@NotNull List<Long> libraryIds);
 
 	List<ExportRequirementData> findRequirementsToExportFromFolder(@NotNull List<Long> folderIds);
-	/**
-	 * Increase the current version of the given requirement to the newVersion params
-	 * checks if the name is available in the content
-	 * 
-	 * @param requirement
-	 * @param newVersion
-	 */
-	void createNewVersion(Requirement requirement, RequirementVersion newVersion, RequirementLibrary destination );
-	/**
-	 * Increase the current version of the given requirement to the newVersion params
-	 * checks if the name is available in the content
-	 * 
-	 * @param requirement
-	 * @param newVersion
-	 */
-	void createNewVersion(Requirement requirement, RequirementVersion newVersion, RequirementFolder destination );
+	
+	
 	/**
 	 * Accepts a stream to a .xls / .xlsx file info for requirement folders and requirements. Will
 	 * convert the test cases from excel to squash.
