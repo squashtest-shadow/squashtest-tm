@@ -50,15 +50,21 @@ public class RequirementParserImpl implements RequirementParser {
 			RequirementFolder lastFolder = createHierarchy(readTextField(row, columnsMapping, PATH_TAG), root,
 					organizedRequirementLibraryNodes);
 			PseudoRequirement pseudoRequirement = createPseudoRequirement(row, columnsMapping, lastFolder);
-			if (pseudoRequirement != null) {
-				List<PseudoRequirement> lastFolderRequirements = organizedRequirementLibraryNodes.get(lastFolder);
-				if (pseudoRequirement.getId() == null) {
-					// requirement is not versioned simply put it
-					lastFolderRequirements.add(pseudoRequirement);
-				} else {
-					// look at folder list if there is already a requirement of this id...
-					mergeVersions(pseudoRequirement, lastFolderRequirements);
-				}
+			addPseudoRequirementToFolderList(organizedRequirementLibraryNodes, lastFolder, pseudoRequirement);
+		}
+	}
+
+	private void addPseudoRequirementToFolderList(
+			Map<RequirementFolder, List<PseudoRequirement>> organizedRequirementLibraryNodes,
+			RequirementFolder lastFolder, PseudoRequirement pseudoRequirement) {
+		if (pseudoRequirement != null) {
+			List<PseudoRequirement> lastFolderRequirements = organizedRequirementLibraryNodes.get(lastFolder);
+			if (pseudoRequirement.getId() == null) {
+				// requirement is not versioned simply put it
+				lastFolderRequirements.add(pseudoRequirement);
+			} else {
+				// look at folder list if there is already a requirement of this id...
+				mergeVersions(pseudoRequirement, lastFolderRequirements);
 			}
 		}
 	}

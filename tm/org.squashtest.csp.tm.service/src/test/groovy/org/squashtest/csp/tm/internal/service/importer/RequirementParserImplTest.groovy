@@ -269,6 +269,59 @@ class RequirementParserImplTest extends Specification {
 		then:
 		pseudoRequirement.id ==  12
 	}
+	/* ************************ mergeVersion **************************** */
+	def "should merge versions"(){
+		given : RequirementFolder root = new RequirementFolder()
+		RequirementFolder folder2 = new RequirementFolder()
+		folder2.setName("name2")
+		root.getContent().add (folder2)
+		RequirementFolder folder3 = new RequirementFolder()
+		folder3.setName("name3")
+		folder2.getContent().add (folder3)
+		Map<RequirementFolder, List<PseudoRequirement>> organizedRequirementLibraryNodes = new HashMap<RequirementFolder, List<PseudoRequirement>>()
+		organizedRequirementLibraryNodes.put(folder2, new ArrayList<PseudoRequirement>())
+		PseudoRequirement pseudoRequirement = new PseudoRequirement ("label", 13)
+		pseudoRequirement.setId(3)
+		organizedRequirementLibraryNodes.put(folder3, [pseudoRequirement])
+		PseudoRequirement newVersion = new PseudoRequirement ("label2", 12)
+		newVersion.setId(3)
+		when:
+		parser.addPseudoRequirementToFolderList(organizedRequirementLibraryNodes, folder3, newVersion)
+		then:
+		def pseudoReqs =  organizedRequirementLibraryNodes.get(folder3)
+		pseudoReqs.size() == 1
+		pseudoReqs[0].pseudoRequirementVersions.size() == 2
+	}
+	def "should not versions"(){
+		given : RequirementFolder root = new RequirementFolder()
+		RequirementFolder folder2 = new RequirementFolder()
+		folder2.setName("name2")
+		root.getContent().add (folder2)
+		RequirementFolder folder3 = new RequirementFolder()
+		folder3.setName("name3")
+		folder2.getContent().add (folder3)
+		
+		Map<RequirementFolder, List<PseudoRequirement>> organizedRequirementLibraryNodes = new HashMap<RequirementFolder, List<PseudoRequirement>>()
+		
+		PseudoRequirement pseudoRequirement = new PseudoRequirement ("label", 13)
+		pseudoRequirement.setId(3)
+		
+		organizedRequirementLibraryNodes.put(folder2, [pseudoRequirement])
+		organizedRequirementLibraryNodes.put(folder3, new ArrayList<PseudoRequirement>())
+		
+		PseudoRequirement newVersion = new PseudoRequirement ("label2", 12)
+		newVersion.setId(3)
+		
+		when:
+		parser.addPseudoRequirementToFolderList(organizedRequirementLibraryNodes, folder3, newVersion)
+		then:
+		def pseudoReqs =  organizedRequirementLibraryNodes.get(folder3)
+		pseudoReqs.size() == 1
+		pseudoReqs[0].pseudoRequirementVersions.size() == 1
+		def pseudoReqs2 =  organizedRequirementLibraryNodes.get(folder2)
+		pseudoReqs2.size() == 1
+		pseudoReqs2[0].pseudoRequirementVersions.size() == 1
+	}
 /* ************************ util **************************** */
 	def makeStringRow = { a, b ->
 		def row = Mock(Row)
