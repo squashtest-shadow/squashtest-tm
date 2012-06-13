@@ -356,7 +356,10 @@ public class BugtrackerController {
 		return result;
 	}
 
+	
+	
 	/* ********* generates a json model for an issue ******* */
+	
 	private IssueModel makeIssueModel(Bugged entity) {
 		List<Priority> priorities = bugTrackerLocalService.getRemotePriorities();
 
@@ -483,43 +486,10 @@ public class BugtrackerController {
 		return messageSource.getMessage("squashtm.generic.execstep.label", null, locale) + " #" + index.toString();
 	}
 
-	/* ******************************** debug code section **************************** */
-
-	/* debug for an execution step */
-	@RequestMapping(value = EXECUTION_STEP_TYPE + "/{stepId}/debug", method = RequestMethod.GET)
-	public ModelAndView getExecStepIssuePanelDebug(@PathVariable Long stepId, Locale locale) {
-		Bugged bugged = bugTrackerLocalService.findBuggedEntity(stepId, ExecutionStep.class);
-
-		BugTrackerInterfaceDescriptor descriptor = bugTrackerLocalService.getInterfaceDescriptor();
-		descriptor.setLocale(locale);
-		
-		ModelAndView mav = new ModelAndView("fragment/issues/bugtracker-panel-debug");
-		mav.addObject("entity", bugged);
-		mav.addObject("entityType", "execution-step");
-		mav.addObject("interfaceDescriptor", descriptor);
-		mav.addObject("bugTrackerStatus", checkStatus());
-		return mav;
-	}
-
-	/* debug for an execution */
-	@RequestMapping(value = EXECUTION_TYPE + "/{execId}/debug", method = RequestMethod.GET)
-	public ModelAndView getExecIssuePanelDebug(@PathVariable Long execId, Locale locale) {
-		Bugged bugged = bugTrackerLocalService.findBuggedEntity(execId, Execution.class);
-
-		BugTrackerInterfaceDescriptor descriptor = bugTrackerLocalService.getInterfaceDescriptor();
-		descriptor.setLocale(locale);
-		
-		ModelAndView mav = new ModelAndView("fragment/issues/bugtracker-panel-debug");
-		mav.addObject("entity", bugged);
-		mav.addObject("entityType", "execution");
-		mav.addObject("interfaceDescriptor", descriptor);
-		mav.addObject("bugTrackerStatus", checkStatus());
-		return mav;
-	}
-
+	
+	
 	
 	// **************************************** private utilities *******************************************************
-	
 	
 	
 	private FilteredCollectionHolder<List<IssueOwnership<BTIssue>>> makeEmptyCollectionHolder(String entityName, Long entityId, Exception cause){

@@ -319,6 +319,10 @@
 				<c:when test="${entityType == 'execution'}">
 					<comp:issue-table-exec dataUrl="${tableUrl}" interfaceDescriptor="${interfaceDescriptor}" />			
 				</c:when>
+				<c:when test="${entityType == 'iteration'}">
+					<%-- so far Iterations use the same table than exec so we're going lazy for now and reuse the same tag--%>
+					<comp:issue-table-exec dataUrl="${tableUrl}" interfaceDescriptor="${interfaceDescriptor}" />			
+				</c:when>				
 			</c:choose>
 		</div>
 	</jsp:attribute>
