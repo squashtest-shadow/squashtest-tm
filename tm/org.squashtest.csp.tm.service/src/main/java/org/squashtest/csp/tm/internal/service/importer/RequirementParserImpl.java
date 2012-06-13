@@ -169,7 +169,11 @@ public class RequirementParserImpl implements RequirementParser {
 			} else {
 				if (type == Cell.CELL_TYPE_NUMERIC) {
 					Double doubleVal = cell.getNumericCellValue();
+					if(doubleVal - doubleVal.intValue() == 0){
+						toReturn =""+doubleVal.intValue();
+					}else{
 					toReturn = doubleVal.toString();
+					}
 				}
 			}
 		}

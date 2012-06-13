@@ -40,7 +40,7 @@ import org.squashtest.csp.tm.domain.requirement.RequirementStatus;
 	private String label = "untitled";
 	private String reference = null;
 	private RequirementCriticality criticality = RequirementCriticality.UNDEFINED;
-	private RequirementStatus state = RequirementStatus.UNDER_REVIEW;
+	private RequirementStatus state = RequirementStatus.WORK_IN_PROGRESS;
 	private String description = null;
 	private Date createdOnDate = new Date();
 	private String createdBy = "import";
