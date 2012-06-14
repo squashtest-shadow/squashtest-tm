@@ -45,7 +45,7 @@ class DataTableModelTest extends Specification {
 		dataTableModel.addRow row
 		
 		then:
-		dataTableModel.aaData == Arrays.asList([row])
+		dataTableModel.aaData.contains(row)
 	}
 
 	def "Should display all the rows"() {

@@ -144,101 +144,8 @@
 			});
 	});
 
-	/* ******** step datatable additional javascript *** */
-	
-	function execStepTableDrawCallback(){
-		<c:if test="${ editable }">
-		decorateAttachmentButtons($('.manage-attachment-button', this));
-		decorateEmptyAttachmentButtons($('.manage-attachment-button-empty', this));
-		</c:if>
-		convertStatus(this);
-		<c:if test="${ editable }">
-		makeEditable(this);
-		</c:if>
-		addSmallFontsToCommentary(this);
-	}
-	
-	function execStepTableRowCallback(row, data, displayIndex){
-		<c:if test="${ editable }">
-		addAttachmentButtonToRowDoV(row, getStepsTableAttchNumber(data), 'manage-attachment-button', 'manage-attachment-button-empty');
-		</c:if>
-		return row;
-	}
-	
-	//return the number of attachment
-	function getStepsTableAttchNumber(rowData) {
-		return rowData[8];
-	}
-	
-	function convertStatus(dataTable){
-		var factory = new ExecutionStatusFactory();
-		
-		var rows=dataTable.fnGetNodes();
-		if (rows.length==0) return;
-		
-		$(rows).each(function(){
-			var col=$("td:eq(3)", this);
-			var oldContent=col.html();
-			
-			var newContent = factory.getDisplayableStatus(oldContent);	
-			
-			col.html(newContent);
-			
-		});		
-	}
-	
-	function makeEditable(dataTable){
-		
-		var rows = dataTable.fnGetNodes();
-		/* check if the data is fed */
-		if (rows.length==0) return;
-		
-		$(rows).each(function(){
-			var data = dataTable.fnGetData(this);
-			var esId = data[0];	
-			var columnComment = $("td:eq(6)", this);
-			turnToEditable(columnComment,"comment",esId);
-		});
+</script>	
 
-	}
-	
-	function turnToEditable(jqOColumn,strTarget,iid){
-		
-		var stUrl = "${ executionStepsUrl }/" + iid+"/"+strTarget; 
-		
-		var settings = {
-			url : stUrl,
-			ckeditor : { customConfig : '${ ckeConfigUrl }', language: '<f:message key="rich-edit.language.value" />' },
-			placeholder: '<f:message key="rich-edit.placeholder" />',
-			submit: '<f:message key="rich-edit.button.ok.label" />',
-			cancel: '<f:message key="rich-edit.button.cancel.label" />',
-			indicator : '<img src="${ pageContext.servletContext.contextPath }/scripts/jquery/indicator.gif" alt="processing..." />' 	
-		};
-		jqOColumn.richEditable(settings);	
-	}
-	
-	<%-- manage attachment button --%>
-	$(function() {
-		$('#execution-execution-steps-table .has-attachment-cell a').live('click', function() {
-			var listId = parseStepListId(this);
-			document.location.href = "${stepAttachmentManagerUrl}" + listId + "/attachments/manager?workspace=campaign";
-		});
-		
-	});
-	
-	function parseStepListId(element) {
-		var elementId = element.id;
-		return elementId.substr(elementId.indexOf(":") + 1);
-	}
-	
-	function addSmallFontsToCommentary(dataTable){
-		var rows = dataTable.fnGetNodes();
-		if (rows.length>0){
-			$(rows).find("td:eq(6)").addClass("smallfonts");
-		}
-	}
-
-</script>
 
 <div class="ui-widget-header ui-state-default ui-corner-all fragment-header">
 
@@ -304,25 +211,70 @@
 
 <%---------------------------- execution step summary status --------------------------------------%>
 
+<script type="text/javascript">
+
+/* ******** step datatable additional javascript *** */
+function execStepTableDrawCallback(){
+	convertStatus(this);
+	<c:if test="${ editable }">
+	makeEditable(this);
+	</c:if>
+}
+
+
+function convertStatus(dataTable){
+	var factory = new ExecutionStatusFactory();
+	
+	var rows=dataTable.fnGetNodes();
+	if (rows.length==0) return;
+	
+	$(rows).each(function(){
+		var col=$("td:eq(3)", this);
+		var oldContent=col.html();
+		
+		var newContent = factory.getDisplayableStatus(oldContent);	
+		
+		col.html(newContent);
+		
+	});		
+}
+
+function makeEditable(dataTable){
+	
+	var rows = dataTable.fnGetNodes();
+	/* check if the data is fed */
+	if (rows.length==0) return;
+	
+	$(rows).each(function(){
+		var data = dataTable.fnGetData(this);
+		var esId = data[0];	
+		var columnComment = $("td:eq(6)", this);
+		turnToEditable(columnComment,"comment",esId);
+	});
+
+}
+
+function turnToEditable(jqOColumn,strTarget,iid){
+	
+	var stUrl = "${ executionStepsUrl }/" + iid+"/"+strTarget; 
+	
+	var settings = {
+		url : stUrl,
+		ckeditor : { customConfig : '${ ckeConfigUrl }', language: '<f:message key="rich-edit.language.value" />' },
+		placeholder: '<f:message key="rich-edit.placeholder" />',
+		submit: '<f:message key="rich-edit.button.ok.label" />',
+		cancel: '<f:message key="rich-edit.button.cancel.label" />',
+		indicator : '<img src="${ pageContext.servletContext.contextPath }/scripts/jquery/indicator.gif" alt="processing..." />' 	
+	};
+	jqOColumn.richEditable(settings);	
+}
+
+
+
+</script>
+
 <comp:toggle-panel id="execution-steps-panel" titleKey="executions.execution-steps-summary.panel.title" isContextual="true" open="true">
 	<jsp:attribute name="body">
-		<comp:decorate-ajax-table url="${executionStepsUrl}" tableId="execution-execution-steps-table" paginate="true">		
-			<jsp:attribute name="drawCallback">execStepTableDrawCallback</jsp:attribute>
-			<jsp:attribute name="rowCallback">execStepTableRowCallback</jsp:attribute>
-			<jsp:attribute name="columnDefs">
-				<dt:column-definition targets="0" visible="false" width="2em"/>
-				<dt:column-definition targets="1" visible="true" cssClass="select-handle centered" width="2em"/>
-				<dt:column-definition targets="2,3,4,5,6" visible="true"/>
-				<dt:column-definition targets="7" visible="true"/>
-				<dt:column-definition targets="8" visible="false"/>
-				<c:if test="${ editable }">
-					<dt:column-definition targets="9" visible="true" lastDef="true" width="2em" cssClass="centered has-attachment-cell" />
-				</c:if>
-				<c:if test="${ !editable }">
-					<dt:column-definition targets="9" visible="false" lastDef="true" width="2em" cssClass="centered has-attachment-cell" />
-				</c:if>
-			</jsp:attribute>					
-		</comp:decorate-ajax-table>
 		<table id="execution-execution-steps-table">
 			<thead>
 				<tr>
@@ -343,12 +295,52 @@
 			</tbody>
 		</table>
 		<br />
-		<div id="execution-step-row-buttons" class="not-displayed">
-			<a id="manage-attachment-button" href="javascript:void(0)" class="manage-attachment-button"><f:message key="execution.step.manage-attachment.label" /></a>
-			<a id="manage-attachment-button-empty" href="javascript:void(0)" class="manage-attachment-button-empty"><f:message key="execution.step.add-attachment.label" /></a>
-		</div>
 	</jsp:attribute>
 </comp:toggle-panel>
+
+<script type="text/javascript">
+	$(function(){
+		
+		var tableSettings = {
+			"oLanguage":{
+				"sLengthMenu": '<f:message key="generics.datatable.lengthMenu" />',
+				"sZeroRecords": '<f:message key="generics.datatable.zeroRecords" />',
+				"sInfo": '<f:message key="generics.datatable.info" />',
+				"sInfoEmpty": '<f:message key="generics.datatable.infoEmpty" />',
+				"sInfoFiltered": '<f:message key="generics.datatable.infoFiltered" />',
+				"oPaginate":{
+					"sFirst":    '<f:message key="generics.datatable.paginate.first" />',
+					"sPrevious": '<f:message key="generics.datatable.paginate.previous" />',
+					"sNext":     '<f:message key="generics.datatable.paginate.next" />',
+					"sLast":     '<f:message key="generics.datatable.paginate.last" />'
+				}
+			},				
+			"sAjaxSource": "${executionStepsUrl}", 
+			"fnDrawCallback" : execStepTableDrawCallback,
+			"aoColumnDefs": [
+			{'bVisible': false, 'bSortable': false, 'sWidth': '2em', 'aTargets': [0], 'mDataProp' : 'entity-id'},
+			{'bVisible': true, 'bSortable': false, 'sWidth': '2em', 'sClass': 'select-handle centered', 'aTargets': [1], 'mDataProp' : 'entity-index'},
+			{'bVisible': true, 'bSortable': false, 'aTargets': [2], 'mDataProp' : 'action'},
+			{'bVisible': true, 'bSortable': false, 'aTargets': [3], 'mDataProp' : 'expected'},
+			{'bVisible': true, 'bSortable': false, 'aTargets': [4], 'mDataProp' : 'status'},
+			{'bVisible': true, 'bSortable': false, 'aTargets': [5], 'mDataProp' : 'last-exec-on'},
+			{'bVisible': true, 'bSortable': false, 'aTargets': [6], 'mDataProp' : 'last-exec-by'},
+			{'bVisible': true, 'bSortable': false, 'aTargets': [7], 'sClass' : 'smallfonts', 'mDataProp' : 'comment'},
+			{'bVisible': false, 'bSortable': false, 'aTargets': [8], 'mDataProp' : 'nb-attachments'},
+			{'bVisible': true, 'bSortable': false, 'sWidth': '2em', 'sClass': 'centered has-attachment-cell', 'aTargets': [9], 'mDataProp' : 'attach-list-id'}
+			]
+		};
+		
+		var squashSettings = {
+			enableDnD : true,
+			enableHover : true,
+			attachments : { url : "${stepAttachmentManagerUrl}/{attach-list-id}/attachments/manager?workspace=campaign"}
+		};
+		
+		
+		$("#execution-execution-steps-table").squashTable(tableSettings, squashSettings);
+	});
+</script>
 
 <%-------------------------------------- Comment --------------------------------------------------%>
 

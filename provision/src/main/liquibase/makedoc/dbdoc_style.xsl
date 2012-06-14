@@ -111,7 +111,7 @@ xmlns:lb="http://www.liquibase.org/xml/ns/dbchangelog">
 		<!--<xsl:variable name="liquiFiles" select="collection('file:/D:/bsiri/helios_workspace/squashtest-csp/database/src/main/liquibase/tm/?select=*.xml')">			
 			</xsl:variable>
 		-->
- 			<xsl:variable name="liquiFiles" select="collection('../../../../database/src/main/liquibase/tm/?select=*.xml')">			
+ 			<xsl:variable name="liquiFiles" select="collection('../../../../../database/src/main/liquibase/tm/?select=*.xml') | collection('../../../../../database/src/main/liquibase/core/?select=*.xml') ">			
 			</xsl:variable>		
 			<xsl:for-each select="$liquiFiles//lb:createTable">
 				<xsl:sort select="@tableName" />

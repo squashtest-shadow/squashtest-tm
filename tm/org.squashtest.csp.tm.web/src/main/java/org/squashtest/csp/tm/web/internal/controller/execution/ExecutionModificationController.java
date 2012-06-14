@@ -28,11 +28,12 @@ package org.squashtest.csp.tm.web.internal.controller.execution;
 
 import java.text.SimpleDateFormat;
 import java.util.Date;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Locale;
+import java.util.Map;
 
 import javax.inject.Inject;
-import javax.servlet.http.HttpServletResponse;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -103,11 +104,33 @@ public class ExecutionModificationController {
 
 		return new DataTableModelHelper<ExecutionStep>() {
 			@Override
-			public Object[] buildItemData(ExecutionStep item) {
-				return new Object[] { item.getId(), item.getExecutionStepOrder() + 1, item.getAction(),
-						item.getExpectedResult(), localizedStatus(item.getExecutionStatus(), locale),
-						formatDate(item.getLastExecutedOn(), locale), item.getLastExecutedBy(), item.getComment(),
-						item.getAttachmentList().size(), item.getAttachmentList().getId() };
+			public Map<String, ?> buildItemData(ExecutionStep item) {
+				/*return new Object[] { 
+						item.getId(), 
+						item.getExecutionStepOrder() + 1, 
+						item.getAction(),
+						item.getExpectedResult(), 
+						localizedStatus(item.getExecutionStatus(), locale),
+						formatDate(item.getLastExecutedOn(), locale), 
+						item.getLastExecutedBy(), 
+						item.getComment(),
+						item.getAttachmentList().size(), 
+						item.getAttachmentList().getId() 
+				};*/
+				
+				Map<String, Object> res = new HashMap<String, Object>();
+				res.put(DataTableModelHelper.DEFAULT_ENTITY_ID_KEY, item.getId());
+				res.put(DataTableModelHelper.DEFAULT_ENTITY_INDEX_KEY, item.getExecutionStepOrder()+1);
+				res.put("action", item.getAction());
+				res.put("expected", item.getExpectedResult());
+				res.put("status", localizedStatus(item.getExecutionStatus(), locale));
+				res.put("last-exec-on", formatDate(item.getLastExecutedOn(), locale));
+				res.put("last-exec-by", item.getLastExecutedBy());
+				res.put("comment", item.getComment());
+				res.put(DataTableModelHelper.DEFAULT_NB_ATTACH_KEY, item.getAttachmentList().size());
+				res.put(DEFAULT_ATTACH_LIST_ID_KEY, item.getAttachmentList().getId());
+				
+				return res;
 			}
 		}.buildDataModel(holder, filter.getFirstItemIndex() + 1, params.getsEcho());
 

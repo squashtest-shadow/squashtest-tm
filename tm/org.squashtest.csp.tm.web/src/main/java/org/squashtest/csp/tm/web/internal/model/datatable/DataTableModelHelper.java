@@ -27,6 +27,11 @@ import org.squashtest.csp.core.infrastructure.collection.PagedCollectionHolder;
 import org.squashtest.csp.tm.infrastructure.filter.FilteredCollectionHolder;
 
 public abstract class DataTableModelHelper<X> {
+	
+	public  final static String DEFAULT_ENTITY_ID_KEY = "entity-id";
+	public 	final static String DEFAULT_ENTITY_INDEX_KEY = "entity-index";
+	public  final static String DEFAULT_NB_ATTACH_KEY = "nb-attachments";
+	public  final static String DEFAULT_ATTACH_LIST_ID_KEY = "attach-list-id";
 
 	private long currentIndex = 0;
 
@@ -63,7 +68,7 @@ public abstract class DataTableModelHelper<X> {
 
 		for (X item : pagedItems) {
 
-			Object[] itemData = buildItemData(item);
+			Object itemData = buildItemData(item);
 
 			model.addRow(itemData);
 
@@ -76,5 +81,5 @@ public abstract class DataTableModelHelper<X> {
 		return currentIndex;
 	}
 
-	protected abstract Object[] buildItemData(X item);
+	protected abstract Object buildItemData(X item);
 }

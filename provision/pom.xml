@@ -99,11 +99,11 @@
 				<configuration>
 					<transformationSets>
 						<transformationSet>
-							<dir>${project.build.outputDirectory}/makedoc/</dir>
+							<dir>${project.basedir}/src/main/liquibase/makedoc/</dir>
 							<excludes>
 								<exclude>*.xsl</exclude>
 							</excludes>
-							<stylesheet>${project.build.outputDirectory}/makedoc/dbdoc_style.xsl</stylesheet>
+							<stylesheet>${project.basedir}/src/main/liquibase/makedoc/dbdoc_style.xsl</stylesheet>
 						</transformationSet>
 					</transformationSets>
 				</configuration>

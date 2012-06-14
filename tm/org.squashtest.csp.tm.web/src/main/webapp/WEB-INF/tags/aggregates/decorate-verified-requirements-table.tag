@@ -42,6 +42,43 @@
 <%@ taglib prefix="input" tagdir="/WEB-INF/tags/input"%>
 
 <script type="text/javascript">
+
+
+
+	function findRowStatus(dataTable, rowId, getRowId, getRowStatus) {
+		var rows = dataTable.fnGetNodes();
+		var status="";
+		
+		$(rows).each(function(index, row) {
+			var data = dataTable.fnGetData(row);
+			var id = getRowId(data)
+			if (id == rowId) {
+				status = getRowStatus(data);
+			}
+		});
+	
+		return status;
+	}
+
+
+	function getObsoleteStatusesOfSelectedTableRows(dataTable, getRowStatus) {
+		var rows = dataTable.fnGetNodes();
+		var obsoleteStatuses = new Array();
+		
+		$(rows).each(function(index, row) {
+			if ($(row).hasClass('ui-state-row-selected')) {
+				var data = dataTable.fnGetData(row);
+				var status = getRowStatus(data)
+				if (status == "OBSOLETE") {
+					obsoleteStatuses.push(status);
+				}
+			}
+		});
+
+		return obsoleteStatuses;
+	}
+
+	
 	$(function() {
 		<%-- single verified requirement removal --%>
 		$('#verified-requirements-table .delete-verified-requirement-button').die('click');
