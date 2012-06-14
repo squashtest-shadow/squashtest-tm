@@ -42,30 +42,53 @@
 
  
  /*
+	==========================================
+	Intoduction
+	==========================================
  
-	That table uses mPropData for its columns. More explictly, it uses json data as a map.
+	keys used for data lookup
+	-------------------------
 	
+	That table uses mPropData for its columns. More explictly, it uses json data as a map.
 	Specifically, keys we are looking for are :
 	
 	- 'entity-id' : the entity id
 	- 'entity-index' : the position of the entity when the list is sorted
- 
-	1/ datatableSettings :  required missing configuration for the datatable part : 
+	
+	In some cases more keys might be required for the modules decscribed below,
+	refer to the documentation if need be.
+	
+	
+	placeholders : 
+	--------------
+	
+	When configuring a module sometimes you will see that a given string supports 
+	placeholders. It means that anything between curly braces '{something}' 
+	are placeholders that will be replaced by the corresponding value from aoData["something"].
+	That's where the data keys are useful.
+	
+	==========================================
+	Regular Datatable settings
+	==========================================
+
+	the inherited part of the datatable is configured using the first parameter 
+	: 'datatableSettings'.
+	Any regular datatable configuration is supported. 
+	
+	It uses defaults values yet the following parameters are still REQUIRED :
 	
 	- "oLanguage" (internationalization),
 	- "sAjaxSource" (chargement ajax),
 	- "aoColumnDefs" (les colonnes)
 	
-	tous les autres paramètres peuvent bien sûr être surchargés.
+	
+	==========================================
+	Squash additional settings
+	==========================================
 	
 	
-	2/ squashSettings : required missing configuration for the squash part :
-	
-	when a parameter is function, the parameter must be stored in 
-	the member 'functions'. 'this' must be assumed to be the datatable 
-	instance unless specified otherwise
-	
-	May / should override the following defaults :
+	The squash specifics are configured using the second parameter : 
+	'squashSettings'. It is an object that accepts the following members : 
 
 	- functions.dropHandler : 
 			what : a function that must handle the row drop.
@@ -84,16 +107,26 @@
 			if coalesce to true, will enable lines color change when hovered. 
 			If coalesce to false, it will not.
 
+			
 	- attachments :
-		If the table finds tds having a given cssClass if will turn them into link to the attachment manager.
-		
+		If the table finds tds having a given cssClass (see cssMatcher) if will turn them into link to the attachment manager.
+		'attachments' is an object. It must define at least url. It may also override the others of course.
+			
+		* url : url where the attachment manager is. Accepts placeholders. Note : that one accepts no defaults ! 
 		* cssMatcher : the css class of cells that must be treated. defaults to 'has-attachment-cells'
 		* aoDataNbAttach : the name of the column in aoData where to look for how many attachment the row has. defaults to "nb-attachments"
-		* aoDataListId : the name of the column in aoData where to look for the attachment list id, defaults to "attach-list-id"		
-		* url : url where the attachment manager is. Note : that one accepts no defaults ! 
-			  note that anything between curly braces '{something}' are placeholders that 
-			  will be replaced by the corresponding value extracted from aoData["something"]
-	
+		* aoDataListId : the name of the column in aoData where to look for the attachment list id, defaults to "attach-list-id"	
+
+		
+	- rich editables configuration :
+		if a property 'richeditables' is set, will attempt to turn the cells to rich editables. If undefined, nothing will happen.
+		the property 'richeditables' is an compound object and must define at least 1 member for 'target'
+		
+		* conf : a regular object configuring the plugin $.ui.richEditable (see jquery.squashtm.jeditable.ext.js).
+		* targets : a map of key-values. A key represents a css class and the value represents an url supporting placeholders.
+					Any td having the given css class will be turned to a rich jeditable configured with 'conf' and posting to 
+					the supplied url.
+			  
  */
 (function($){
 
@@ -415,7 +448,6 @@
 	 */
 	function _attachButtonsCallback(){
 				
-		var instance = this.squashSettings.instance;
 		var attachConf = this.squashSettings.attachments;
 		
 		var self = this;
@@ -437,6 +469,37 @@
 			
 			$(cell).html(link);			
 		});
+	}
+	
+	/*
+		again 'this' is the table instance.
+	*/
+	function _configureRichEditables(){
+		
+		var editableConf = this.squashSettings.richeditables;
+		
+		if (! editableConf) return;
+		
+		var baseconf = editableConf.conf;
+		var targets  = editableConf.targets;
+		
+		
+		
+		if (! targets)  	return;
+		
+		for (var css in targets){
+			
+			var cells = $('td.'+css, this);
+			
+			$(cells).each(function(i,cell){
+				var data = self.fnGetData(cell.parentNode);
+				var url = _resolvePlaceholders.call(self, targets[css], data); 
+				var finalConf = $.extend(true,{ "url" : url}, baseconf);
+				$(cell).richEditable(finalConf);
+			});
+		}
+		
+		
 	}
 
 	 
@@ -504,6 +567,7 @@
 		var customDrawCallback = function (oSettings){
 			if (userDrawCallback) userDrawCallback.call(this, oSettings);
 			_attachButtonsCallback.call(this);
+			_configureRichEditables.call(this);
 		}
 		
 		datatableEffective["fnDrawCallback"] = customDrawCallback;
@@ -528,8 +592,3 @@
 	 }
 	 
 })(jQuery); 
-	 
-
-
-
-

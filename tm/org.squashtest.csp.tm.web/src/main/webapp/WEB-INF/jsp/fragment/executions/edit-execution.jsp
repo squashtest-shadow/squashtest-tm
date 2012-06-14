@@ -211,67 +211,7 @@
 
 <%---------------------------- execution step summary status --------------------------------------%>
 
-<script type="text/javascript">
 
-/* ******** step datatable additional javascript *** */
-function execStepTableDrawCallback(){
-	convertStatus(this);
-	<c:if test="${ editable }">
-	makeEditable(this);
-	</c:if>
-}
-
-
-function convertStatus(dataTable){
-	var factory = new ExecutionStatusFactory();
-	
-	var rows=dataTable.fnGetNodes();
-	if (rows.length==0) return;
-	
-	$(rows).each(function(){
-		var col=$("td:eq(3)", this);
-		var oldContent=col.html();
-		
-		var newContent = factory.getDisplayableStatus(oldContent);	
-		
-		col.html(newContent);
-		
-	});		
-}
-
-function makeEditable(dataTable){
-	
-	var rows = dataTable.fnGetNodes();
-	/* check if the data is fed */
-	if (rows.length==0) return;
-	
-	$(rows).each(function(){
-		var data = dataTable.fnGetData(this);
-		var esId = data[0];	
-		var columnComment = $("td:eq(6)", this);
-		turnToEditable(columnComment,"comment",esId);
-	});
-
-}
-
-function turnToEditable(jqOColumn,strTarget,iid){
-	
-	var stUrl = "${ executionStepsUrl }/" + iid+"/"+strTarget; 
-	
-	var settings = {
-		url : stUrl,
-		ckeditor : { customConfig : '${ ckeConfigUrl }', language: '<f:message key="rich-edit.language.value" />' },
-		placeholder: '<f:message key="rich-edit.placeholder" />',
-		submit: '<f:message key="rich-edit.button.ok.label" />',
-		cancel: '<f:message key="rich-edit.button.cancel.label" />',
-		indicator : '<img src="${ pageContext.servletContext.contextPath }/scripts/jquery/indicator.gif" alt="processing..." />' 	
-	};
-	jqOColumn.richEditable(settings);	
-}
-
-
-
-</script>
 
 <comp:toggle-panel id="execution-steps-panel" titleKey="executions.execution-steps-summary.panel.title" isContextual="true" open="true">
 	<jsp:attribute name="body">
@@ -298,7 +238,30 @@ function turnToEditable(jqOColumn,strTarget,iid){
 	</jsp:attribute>
 </comp:toggle-panel>
 
+
+
 <script type="text/javascript">
+
+	/* ******** step datatable additional javascript *** */
+
+
+	function convertStatus(dataTable){
+		var factory = new ExecutionStatusFactory();
+		
+		var rows=dataTable.fnGetNodes();
+		if (rows.length==0) return;
+		
+		$(rows).each(function(){
+			var col=$("td:eq(3)", this);
+			var oldContent=col.html();
+			
+			var newContent = factory.getDisplayableStatus(oldContent);	
+			
+			col.html(newContent);
+			
+		});		
+	}
+
 	$(function(){
 		
 		var tableSettings = {
@@ -316,7 +279,7 @@ function turnToEditable(jqOColumn,strTarget,iid){
 				}
 			},				
 			"sAjaxSource": "${executionStepsUrl}", 
-			"fnDrawCallback" : execStepTableDrawCallback,
+			"fnDrawCallback" : function(){ convertStatus(this); },
 			"aoColumnDefs": [
 			{'bVisible': false, 'bSortable': false, 'sWidth': '2em', 'aTargets': [0], 'mDataProp' : 'entity-id'},
 			{'bVisible': true, 'bSortable': false, 'sWidth': '2em', 'sClass': 'select-handle centered', 'aTargets': [1], 'mDataProp' : 'entity-index'},
@@ -325,16 +288,31 @@ function turnToEditable(jqOColumn,strTarget,iid){
 			{'bVisible': true, 'bSortable': false, 'aTargets': [4], 'mDataProp' : 'status'},
 			{'bVisible': true, 'bSortable': false, 'aTargets': [5], 'mDataProp' : 'last-exec-on'},
 			{'bVisible': true, 'bSortable': false, 'aTargets': [6], 'mDataProp' : 'last-exec-by'},
-			{'bVisible': true, 'bSortable': false, 'aTargets': [7], 'sClass' : 'smallfonts', 'mDataProp' : 'comment'},
+			{'bVisible': true, 'bSortable': false, 'aTargets': [7], 'sClass' : 'smallfonts rich-editable-comment', 'mDataProp' : 'comment'},
 			{'bVisible': false, 'bSortable': false, 'aTargets': [8], 'mDataProp' : 'nb-attachments'},
-			{'bVisible': true, 'bSortable': false, 'sWidth': '2em', 'sClass': 'centered has-attachment-cell', 'aTargets': [9], 'mDataProp' : 'attach-list-id'}
+			{'bVisible': ${editable}, 'bSortable': false, 'sWidth': '2em', 'sClass': 'centered has-attachment-cell', 'aTargets': [9], 'mDataProp' : 'attach-list-id'}
 			]
 		};
 		
 		var squashSettings = {
+				
 			enableDnD : true,
 			enableHover : true,
 			attachments : { url : "${stepAttachmentManagerUrl}/{attach-list-id}/attachments/manager?workspace=campaign"}
+			<c:if test="${ editable }">
+			,richeditables : {
+				conf : {
+					ckeditor : { customConfig : '${ ckeConfigUrl }', language: '<f:message key="rich-edit.language.value" />' },
+					placeholder: '<f:message key="rich-edit.placeholder" />',
+					submit: '<f:message key="rich-edit.button.ok.label" />',
+					cancel: '<f:message key="rich-edit.button.cancel.label" />',
+					indicator : '<img src="${ pageContext.servletContext.contextPath }/scripts/jquery/indicator.gif" alt="processing..." />' 				
+				},
+				targets : {
+					"rich-editable-comment" : "${ executionStepsUrl }/{entity-id}/comment"
+				}
+			}
+			</c:if>
 		};
 		
 		
