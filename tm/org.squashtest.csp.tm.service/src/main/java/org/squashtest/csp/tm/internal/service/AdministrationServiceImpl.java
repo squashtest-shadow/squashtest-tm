@@ -27,7 +27,10 @@ import javax.inject.Inject;
 
 import org.springframework.osgi.extensions.annotation.ServiceReference;
 import org.springframework.security.access.prepost.PreAuthorize;
+import org.springframework.security.authentication.encoding.PasswordEncoder;
 import org.springframework.security.core.GrantedAuthority;
+import org.springframework.security.core.context.SecurityContext;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.squashtest.csp.core.service.configuration.ConfigurationService;
@@ -205,5 +208,12 @@ public class AdministrationServiceImpl implements AdministrationService {
 			throw new LoginAlreadyExistsException();
 		}
 
+	}
+	
+	@Override
+	@PreAuthorize("hasRole('ROLE_ADMIN')")
+	public void resetUserPassword(long userId, String newPassword) {
+		User user = userDao.findById(userId);
+		adminService.resetUserPassword(user.getLogin(), newPassword);
 	}
 }

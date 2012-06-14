@@ -21,17 +21,23 @@
 package org.squashtest.csp.core.internal.security.security;
 
 import java.util.Collection;
+import java.util.Collections;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.osgi.extensions.annotation.ServiceReference;
+import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.authentication.encoding.PasswordEncoder;
+import org.springframework.security.core.Authentication;
 import org.springframework.security.core.GrantedAuthority;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.core.userdetails.User;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.provisioning.UserDetailsManager;
 import org.squashtest.csp.core.service.security.AdministratorAuthenticationService;
 
 public class AdministratorAuthenticationServiceImpl implements AdministratorAuthenticationService {
-
+	private static final Logger LOGGER = LoggerFactory.getLogger(AdministratorAuthenticationServiceImpl.class);
 	private UserDetailsManager userManager;
 	private PasswordEncoder encoder;
 	private Object salt = null;
@@ -72,6 +78,18 @@ public class AdministratorAuthenticationServiceImpl implements AdministratorAuth
 		UserDetails user = new User(login, encodedPassword, enabled, accountNonExpired, credentialsNonExpired,
 				accountNonLocked, autorities);
 		userManager.createUser(user);
+
+	}
+
+	@Override
+	public void resetUserPassword(String login, String plainTextPassword) {
+		UserDetails user2 = userManager.loadUserByUsername(login);
+				String encodedPassword = encoder.encodePassword(plainTextPassword, salt);
+		UserDetails user = new User(login, encodedPassword, user2.isEnabled(), true, true,
+				true, Collections.<GrantedAuthority>emptyList());
+		LOGGER.trace("reset password for user "+login);
+		userManager.updateUser(user);
+		
 
 	}
 

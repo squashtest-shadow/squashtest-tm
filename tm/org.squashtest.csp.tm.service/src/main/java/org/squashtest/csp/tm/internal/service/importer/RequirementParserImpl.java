@@ -36,11 +36,12 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.squashtest.csp.tm.domain.requirement.RequirementFolder;
 import org.squashtest.csp.tm.domain.requirement.RequirementLibraryNode;
+import org.squashtest.csp.tm.service.importer.ImportSummary;
 
 public class RequirementParserImpl implements RequirementParser {
 
 	private static final Logger LOGGER = LoggerFactory.getLogger(RequirementParserImpl.class);
-
+	
 	@Override
 	public void parseRow(RequirementFolder root, Row row, ImportSummaryImpl summary,
 			Map<String, Integer> columnsMapping,
@@ -51,6 +52,9 @@ public class RequirementParserImpl implements RequirementParser {
 					organizedRequirementLibraryNodes);
 			PseudoRequirement pseudoRequirement = createPseudoRequirement(row, columnsMapping, lastFolder);
 			addPseudoRequirementToFolderList(organizedRequirementLibraryNodes, lastFolder, pseudoRequirement);
+			if(lastFolder.equals(root)&& pseudoRequirement == null){
+				summary.incrFailures();
+			}
 		}
 	}
 

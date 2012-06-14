@@ -157,6 +157,22 @@
 			</beans:value>
 		</beans:property>
 		
+		<beans:property name="updateUserSql">
+			<beans:value>
+				update AUTH_USER
+				set PASSWORD = ?, ACTIVE = ?
+				where LOGIN = ?
+			</beans:value>
+		</beans:property>
+		
+<!-- 			<beans:property name="deleteUserSql"> -->
+<!-- 			<beans:value> -->
+<!-- 				delete from AUTH_USER -->
+<!-- 				where LOGIN = ? -->
+<!-- 			</beans:value> -->
+<!-- 		</beans:property> -->
+		
+		
 		<beans:property name="createUserSql">
 			<beans:value>
 				insert into AUTH_USER (LOGIN, PASSWORD, ACTIVE) values (?,?,?)
@@ -174,10 +190,13 @@
 			connect to the application, but without proper entry in acls he couldn't do much anyway.
 			
 			So we fetch both personal authorities for the default one, and the group authorities for the real ones. 
-			
+			//TODO explain why now false
 		-->		
-		<beans:property name="enableAuthorities" value="true"/>
+		<beans:property name="enableAuthorities" value="false"/>
 		<beans:property name="enableGroups" value="true" />
+		
+		
+		
 		
 	</beans:bean>
 	<beans:bean id="permissionFactory" class="org.squashtest.csp.core.security.acls.CustomPermissionFactory" />

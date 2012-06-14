@@ -51,6 +51,8 @@ import org.squashtest.csp.tm.infrastructure.filter.CollectionFilter;
 import org.squashtest.csp.tm.infrastructure.filter.FilteredCollectionHolder;
 import org.squashtest.csp.tm.service.AdministrationService;
 import org.squashtest.csp.tm.service.ProjectsPermissionManagementService;
+import org.squashtest.csp.tm.web.internal.controller.testcase.TestCaseModificationController;
+import org.squashtest.csp.tm.web.internal.controller.users.PasswordChangeForm;
 import org.squashtest.csp.tm.web.internal.model.datatable.DataTableDrawParameters;
 import org.squashtest.csp.tm.web.internal.model.datatable.DataTableModel;
 import org.squashtest.csp.tm.web.internal.model.datatable.DataTableModelHelper;
@@ -59,7 +61,7 @@ import org.squashtest.csp.tm.web.internal.model.datatable.DataTablePagedFilter;
 @Controller
 @RequestMapping("/users")
 public class UserAdministrationController {
-
+	
 	/**
 	 * Builds datatable model for users table
 	 */
@@ -188,6 +190,13 @@ public class UserAdministrationController {
 	public String updateEmail(@RequestParam("value") String email, @PathVariable long userId) {
 		adminService.modifyUserEmail(userId, email);
 		return HtmlUtils.htmlEscape(email);
+	}
+	
+	@RequestMapping(value = "/{userId}" ,method=RequestMethod.POST, params={"newPassword"})
+	@ResponseBody
+	public void resetPassword(@ModelAttribute @Valid PasswordResetForm form, @PathVariable long userId){
+		LOGGER.trace("Reset password for user #"+userId);
+		adminService.resetUserPassword(userId, form.getNewPassword());
 	}
 	
 	//*********************************************************************************

@@ -100,7 +100,7 @@ import org.squashtest.csp.tm.domain.requirement.RequirementStatus;
 
 	public void setCriticality(String cricicality) {
 		try{
-			this.criticality = RequirementCriticality.valueOf(cricicality);
+			this.criticality = RequirementCriticality.valueOf(cricicality.toUpperCase());
 		}catch(IllegalArgumentException iae){
 			LOGGER.warn(iae.getMessage());
 		}catch(NullPointerException npe){
@@ -115,7 +115,7 @@ import org.squashtest.csp.tm.domain.requirement.RequirementStatus;
 
 	public void setState(String state) {
 		try{
-			this.state = RequirementStatus.valueOf(state);
+			this.state = RequirementStatus.valueOf(state.toUpperCase());
 		}catch(IllegalArgumentException iae){
 			LOGGER.warn(iae.getMessage());
 		}catch(NullPointerException npe){

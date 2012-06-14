@@ -174,6 +174,11 @@
 				$("#permission-popup").empty();
 				$("#permission-popup").load("${permissionPopupUrl}");
 			}
+			
+			function resetPasswordCallback(){
+				<f:message var="passSuccess" key="user.account.changepass.success" />
+				displayInformationNotification("${passSuccess}");
+			}
 		</script>
 		
 
@@ -204,9 +209,16 @@
 	
 	
 		<div>
+			<div class="toolbar-information-panel">
 			<comp:general-information-panel auditableEntity="${user}" />
+			</div>
+			<div class="toolbar-button-panel">
+				<input type="button" value="<f:message key='user.button.reset.password' />" id="reset-password-button" class="button" />
+			</div>
+			<div style="clear: both;"></div>
 		</div>
-
+		
+		
 		<%----------------------------------- User Infos -----------------------------------------------%>
 		<br />
 		<comp:simple-jeditable targetUrl="${ userUrl }"
@@ -316,5 +328,7 @@
 		<%----------------------------------- /add Permission Popup-----------------------------------------------%>
 	</div>
 	<comp:decorate-buttons />
+	<comp:user-account-reset-password-popup openerId="reset-password-button" url="${userUrl}" successCallback="resetPasswordCallback"/>
+	
 	</jsp:attribute>
 </layout:info-page-layout>

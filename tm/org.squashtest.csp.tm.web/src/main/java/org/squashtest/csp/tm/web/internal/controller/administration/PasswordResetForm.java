@@ -18,30 +18,40 @@
  *     You should have received a copy of the GNU Lesser General Public License
  *     along with this software.  If not, see <http://www.gnu.org/licenses/>.
  */
-package org.squashtest.csp.core.service.security;
 
-import java.util.Collection;
+package org.squashtest.csp.tm.web.internal.controller.administration;
 
-import org.springframework.security.core.GrantedAuthority;
+import javax.validation.constraints.Size;
 
 /**
+ * Form bean for password change.
  * 
+ * @author mpagnon
  * 
- * Configuration should point to an LDAP service or an Squash ad-hoc service if no LDAP is available.
- * 
- * 
- * Security should ensure that only the current user or an ADMIN authority can actually perform the requested operation,
- * safe for the modification of a password (only the user may access it).
- * 
- * @author bsiri
- *  
  */
-public interface AdministratorAuthenticationService extends UserAuthenticationService {
-
-	void createNewUserPassword(String login, String plainTextPassword, boolean enabled, boolean accountNonExpired,
-			boolean credentialsNonExpired, boolean accountNonLocked, Collection<GrantedAuthority> autorities);
-
+public class PasswordResetForm {
 	
-	void resetUserPassword(String login, String plainTextPassword);
 
+	@Size(min = 6, max = 256)
+	private String newPassword;
+
+	public PasswordResetForm() {
+		super();
+	}
+
+
+	/**
+	 * @param newPassword
+	 *            the newPassword to set
+	 */
+	public void setNewPassword(String newPassword) {
+		this.newPassword = newPassword;
+	}
+
+	/**
+	 * @return the newPassword
+	 */
+	public String getNewPassword() {
+		return newPassword;
+	}
 }

@@ -87,4 +87,6 @@ public interface AdministrationService {
 	void modifyLoginMessage(String loginMessage);
 
 	String findLoginMessage();
+
+	void resetUserPassword(long userId, String newPassword);
 }
