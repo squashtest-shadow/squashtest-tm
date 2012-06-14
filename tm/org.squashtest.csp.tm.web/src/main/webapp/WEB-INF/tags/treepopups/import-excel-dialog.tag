@@ -197,7 +197,9 @@
 				<span><f:message key="dialog.import.summary.notes.label"/></span>
 				<ul>
 					<li class="import-excel-dialog-renamed"><span>${ importRenamed }</span></li>
-					<li class="import-excel-dialog-modified"><span>${ importRenamed }</span></li>	
+					<c:if  test="${workspace == 'test-case'}" >
+						<li class="import-excel-dialog-modified"><span>${ importModified }</span></li>	
+					</c:if>
 				</ul>		
 			</div>
 		</div>
