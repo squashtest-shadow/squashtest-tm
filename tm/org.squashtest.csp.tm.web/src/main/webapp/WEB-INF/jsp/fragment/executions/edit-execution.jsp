@@ -37,7 +37,6 @@
 
 <comp:rich-jeditable-header />
 <dt:datatables-header />
-<jq:execution-status-factory/> 
 
 <%-- ----------------------------------- Authorization ----------------------------------------------%>
 <c:set var="editable" value="${ false }" /> 
@@ -240,27 +239,14 @@
 
 
 
+<f:message var="statusBlocked" key="execution.execution-status.BLOCKED" />
+<f:message var="statusFailure" key="execution.execution-status.FAILURE" />
+<f:message var="statusSuccess" key="execution.execution-status.SUCCESS" />
+<f:message var="statusRunning" key="execution.execution-status.RUNNING" />
+<f:message var="statusReady" key="execution.execution-status.READY" />
+
 <script type="text/javascript">
 
-	/* ******** step datatable additional javascript *** */
-
-
-	function convertStatus(dataTable){
-		var factory = new ExecutionStatusFactory();
-		
-		var rows=dataTable.fnGetNodes();
-		if (rows.length==0) return;
-		
-		$(rows).each(function(){
-			var col=$("td:eq(3)", this);
-			var oldContent=col.html();
-			
-			var newContent = factory.getDisplayableStatus(oldContent);	
-			
-			col.html(newContent);
-			
-		});		
-	}
 
 	$(function(){
 		
@@ -279,15 +265,12 @@
 				}
 			},				
 			"sAjaxSource": "${executionStepsUrl}", 
-			"fnDrawCallback" : function(){ 
-				convertStatus(this); 
-			},
 			"aoColumnDefs": [
 			{'bVisible': false, 'bSortable': false, 'sWidth': '2em', 'aTargets': [0], 'mDataProp' : 'entity-id'},
 			{'bVisible': true, 'bSortable': false, 'sWidth': '2em', 'sClass': 'select-handle centered', 'aTargets': [1], 'mDataProp' : 'entity-index'},
 			{'bVisible': true, 'bSortable': false, 'aTargets': [2], 'mDataProp' : 'action'},
 			{'bVisible': true, 'bSortable': false, 'aTargets': [3], 'mDataProp' : 'expected'},
-			{'bVisible': true, 'bSortable': false, 'aTargets': [4], 'mDataProp' : 'status'},
+			{'bVisible': true, 'bSortable': false, 'aTargets': [4], 'mDataProp' : 'status', 'sClass' : 'has-status'},
 			{'bVisible': true, 'bSortable': false, 'aTargets': [5], 'mDataProp' : 'last-exec-on'},
 			{'bVisible': true, 'bSortable': false, 'aTargets': [6], 'mDataProp' : 'last-exec-by'},
 			{'bVisible': true, 'bSortable': false, 'aTargets': [7], 'sClass' : 'smallfonts rich-editable-comment', 'mDataProp' : 'comment'},
@@ -300,12 +283,19 @@
 				
 			enableDnD : true,
 			enableHover : true,
-			attachments : { url : "${stepAttachmentManagerUrl}/{attach-list-id}/attachments/manager?workspace=campaign"}
+			attachments : { url : "${stepAttachmentManagerUrl}/{attach-list-id}/attachments/manager?workspace=campaign"},
+			executionstatus : {
+				blocked : "${statusBlocked}",
+				failure : "${statusFailure}",
+				success : "${statusSuccess}",
+				running : "${statusRunning}",
+				ready : "${statusReady}"
+			}
 		};
 		
 		
 		<c:if test="${ editable }">
-		squashSettings.richeditables : {
+		squashSettings.richeditables = {
 			conf : {
 				ckeditor : { customConfig : '${ ckeConfigUrl }', language: '<f:message key="rich-edit.language.value" />' },
 				placeholder: '<f:message key="rich-edit.placeholder" />',
@@ -316,7 +306,7 @@
 			targets : {
 				"rich-editable-comment" : "${ executionStepsUrl }/{entity-id}/comment"
 			}
-		}
+		};
 		</c:if>
 		
 		

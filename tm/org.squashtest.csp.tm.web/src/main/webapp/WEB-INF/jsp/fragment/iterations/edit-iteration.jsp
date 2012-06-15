@@ -37,8 +37,6 @@
 <comp:rich-jeditable-header />
 <comp:datepicker-manager locale="${squashlocale}"/>
 
-<jq:execution-status-factory/> 
-
 <c:url var="ckeConfigUrl" value="/styles/ckeditor/ckeditor-config.js" />
 <s:url var="iterationUrl" value="/iterations/{iterId}">
 	<s:param name="iterId" value="${iteration.id}" />
@@ -365,9 +363,7 @@
 	</div>
 
 		<div class="table-tab-wrap" >
-		<%------ 
-			requires <jq:execution-status-factory/>
-		------%>
+
 	
 		<aggr:decorate-iteration-test-cases-table tableModelUrl="${iterationTestPlanUrl}" testPlanDetailsBaseUrl="${testCaseDetailsBaseUrl}" 
 			testPlansUrl="${testCasesUrl}" batchRemoveButtonId="remove-test-case-button" 
@@ -430,36 +426,7 @@
 <comp:attachment-tab tabId="tabs-3" entity="${ iteration }" editable="${ attachable }" />
 
 
-<%------------------------------ bugs section -------------------------------%>
 
-<%--
-	this section is loaded asynchronously, and in this case as a tab. The bugtracker might be out of reach indeed. Nothing will be loaded if no bugtracker was defined.
- --%>	
- <f:message key="tabs.label.issues" var="tabIssueLabel"/>
- <script type="text/javascript">
- 	$(function(){
- 		
- 		$.ajax({
- 			url : "${bugTrackerUrl}/check",
- 			method : "GET",
- 			dataType : "json"
- 		})
- 		.done(function(json){
- 			if (json.status !== "bt_undefined"){	
-	 			<%-- first : add the tab entry --%>
-	 			$("div.fragment-tabs").tabs( "add" , "#bugtracker-section-div" , "${tabIssueLabel}");
-	 			//$("div.fragment-tabs ul").append('<li class="ui-state-default ui-corner-top"><a href="#bugtracker-section-div">${tabIssueLabel}</a></li>');
-			
-	 			<%-- second : load the bugtracker section --%>
-	 			$("#bugtracker-section-div").load("${btEntityUrl}"); 	
- 			}
- 		}); 		
- 	});
- </script>
-<div id="bugtracker-section-div">
-</div>
-
-<%------------------------------ /bugs section -------------------------------%>
 
 <%-- ---------------------deletion popup------------------------------ --%>
 <c:if test="${deletable}">
@@ -521,6 +488,38 @@
 </c:if>
 </div>
 
+<%------------------------------ bugs section -------------------------------%>
+
+<%--
+	this section is loaded asynchronously, and in this case as a tab. The bugtracker might be out of reach indeed. Nothing will be loaded if no bugtracker was defined.
+ --%>	
+ <f:message key="tabs.label.issues" var="tabIssueLabel"/>
+ <script type="text/javascript">
+ 	$(function(){
+ 		
+ 		$.ajax({
+ 			url : "${bugTrackerUrl}/check",
+ 			method : "GET",
+ 			dataType : "json"
+ 		})
+ 		.done(function(json){
+ 			if (json.status !== "bt_undefined"){	
+	 			<%-- first : add the tab entry --%>
+	 			$("div.fragment-tabs").tabs( "add" , "#bugtracker-section-div" , "${tabIssueLabel}");
+	 			//$("div.fragment-tabs ul").append('<li class="ui-state-default ui-corner-top"><a href="#bugtracker-section-div">${tabIssueLabel}</a></li>');
+			
+	 			<%-- second : load the bugtracker section --%>
+	 			$("#bugtracker-section-div").load("${btEntityUrl}"); 	
+ 			}
+ 		}).fail(function(){
+ 			$("#bugtracker-section-div").remove();
+ 		});		
+ 	});
+ </script>
+<div id="bugtracker-section-div">
+</div>
+
+<%------------------------------ /bugs section -------------------------------%>
 <comp:decorate-buttons />
 <c:if test="${linkable}">
 <script type="text/javascript">

@@ -38,7 +38,6 @@
 <comp:rich-jeditable-header />
 <comp:datepicker-manager locale="${squashlocale}" />
 
-<jq:execution-status-factory />
 <c:url var="workspaceUrl" value="/campaign-workspace/#" />
 <c:url var="ckeConfigUrl" value="/styles/ckeditor/ckeditor-config.js" />
 
@@ -379,9 +378,7 @@
 	</div>
 
 		<div class="table-tab-wrap" >
-		
-		<%-- requires <jq:execution-status-factory/> --%>
-	
+
 		<aggr:decorate-test-suite-test-plan-table
 				tableModelUrl="${testSuiteTestPlanUrl}"
 				testPlanDetailsBaseUrl="${testCaseDetailsBaseUrl}"

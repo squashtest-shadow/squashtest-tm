@@ -61,6 +61,13 @@
 <f:message var="unauthorizedDeletion"
 	key="dialog.remove-testcase-association.unauthorized-deletion.message" />
 
+
+<f:message var="statusBlocked" key="execution.execution-status.BLOCKED" />
+<f:message var="statusFailure" key="execution.execution-status.FAILURE" />
+<f:message var="statusSuccess" key="execution.execution-status.SUCCESS" />
+<f:message var="statusRunning" key="execution.execution-status.RUNNING" />
+<f:message var="statusReady" key="execution.execution-status.READY" />
+
 <script type="text/javascript">
 	
 	var testPlansUrl = "${testPlansUrl}";
@@ -260,7 +267,13 @@
 	}
 
 	function convertExecutionStatus(dataTable) {
-		var factory = new ExecutionStatusFactory();
+		var factory = new squashtm.StatusFactory({
+			blocked : "${statusBlocked}",
+			failure : "${statusFailure}",
+			success : "${statusSuccess}",
+			running : "${statusRunning}",
+			ready : "${statusReady}"
+		});
 
 		var rows = dataTable.fnGetNodes();
 		if (rows.length == 0)
@@ -270,7 +283,7 @@
 			var col = $("td:eq(6)", this);
 			var oldContent = col.html();
 
-			var newContent = factory.getDisplayableStatus(oldContent);
+			var newContent = factory.getHtmlFor(oldContent);
 
 			col.html(newContent);
 
@@ -336,7 +349,11 @@
 		<dt:column-definition targets="1" sortable="false"
 			cssClass="centered ui-state-default drag-handle select-handle" />
 		<dt:column-definition targets="2, 3, 4" sortable="false" />
-		<dt:column-definition targets="5, 6, 7, 8, 9" sortable="false"
+		<dt:column-definition targets="5, 6" sortable="false"
+			width="10%" />
+		<dt:column-definition targets="7" sortable="false" cssClass="has-status"
+			width="10%" />
+				<dt:column-definition targets="8, 9" sortable="false"
 			width="10%" />
 		<dt:column-definition targets="10" sortable="false" visible="false" />
 		<dt:column-definition targets="11" sortable="false" width="2em"

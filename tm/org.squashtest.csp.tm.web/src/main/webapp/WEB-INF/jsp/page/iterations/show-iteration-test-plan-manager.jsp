@@ -50,7 +50,6 @@
 	<jsp:attribute name="head">
 	<link rel="stylesheet" type="text/css" href="${ pageContext.servletContext.contextPath }/styles/master.purple.css" />
 
-	<jq:execution-status-factory/> 
 	<dt:datatables-header />
 
 	<script type="text/javascript">

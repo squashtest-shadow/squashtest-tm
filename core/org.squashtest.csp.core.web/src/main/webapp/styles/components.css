@@ -132,6 +132,9 @@ table.datepicker-table td.datepicker-table-col {
 	padding-right:2em;	
 }
 
+/*******************************
+	information panel / description panel
+********************************/
 
 .execute-success{
 	background-image : url("../images/Button_Exec_Passed.png") !important;
@@ -145,29 +148,39 @@ table.datepicker-table td.datepicker-table-col {
 	background-image : url("../images/Button_Exec_stop.png") !important;
 }
 
+
+
+/** the following class is used in conjunction of one of the fifth images below : */
+
+.common-status-label{
+	padding-left: 26px;
+	display: block;
+	background-repeat: no-repeat;
+	height: 16px;	
+}
+
+
 .executions-status-bloqued-icon{
-	background :  url("../images/Icon_Yellow.png") no-repeat left !important;
+	background :  url("../images/Icon_Yellow.png") no-repeat ;
 }
 
 .executions-status-failure-icon{
-	background :  url("../images/Icon_Red.png") no-repeat left !important;
+	background :  url("../images/Icon_Red.png") no-repeat ;
 }
 
 .executions-status-success-icon{
-	background :  url("../images/Icon_Green.png") no-repeat left !important;
+	background :  url("../images/Icon_Green.png") no-repeat ;
 }
 
 .executions-status-running-icon{
-	background :  url("../images/Icon_Blue.png") no-repeat left !important;
+	background :  url("../images/Icon_Blue.png") no-repeat;
 }
 
 .executions-status-ready-icon{
-	background :  url("../images/Icon_Grey.png") no-repeat left !important;
+	background :  url("../images/Icon_Grey.png") no-repeat;
 }
-/* specific icon for attachment button if the list is empty */
-.attachIcon{
-    background-image: url('../images/attachmentsBlack16x16.png') !important;
-}
+
+
 .manage-attachment-button{
 	border:0 none;
 	background:none;

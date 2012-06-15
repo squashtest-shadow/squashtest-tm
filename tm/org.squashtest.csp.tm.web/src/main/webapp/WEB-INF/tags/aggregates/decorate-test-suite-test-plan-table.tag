@@ -45,6 +45,12 @@
 <%@ taglib prefix="authz" tagdir="/WEB-INF/tags/authz" %>
 
 
+<f:message var="statusBlocked" key="execution.execution-status.BLOCKED" />
+<f:message var="statusFailure" key="execution.execution-status.FAILURE" />
+<f:message var="statusSuccess" key="execution.execution-status.SUCCESS" />
+<f:message var="statusRunning" key="execution.execution-status.RUNNING" />
+<f:message var="statusReady" key="execution.execution-status.READY" />
+
 <s:url var ="showExecutionUrl" value="/executions"/>
 
 <f:message var="cannotCreateExecutionException" key="squashtm.action.exception.cannotcreateexecution.label" />
@@ -279,7 +285,13 @@ var nonBelongingTestPlansUrl = "${nonBelongingTestPlansUrl}";
 	
 	
 	function convertExecutionStatus(dataTable){
-		var factory = new ExecutionStatusFactory();
+		var factory = new squashtm.StatusFactory({
+			blocked : "${statusBlocked}",
+			failure : "${statusFailure}",
+			success : "${statusSuccess}",
+			running : "${statusRunning}",
+			ready : "${statusReady}"
+		});
 		
 		var rows=dataTable.fnGetNodes();
 		if (rows.length==0) return;
@@ -358,7 +370,8 @@ var nonBelongingTestPlansUrl = "${nonBelongingTestPlansUrl}";
 	<jsp:attribute name="columnDefs">
 		<dt:column-definition targets="0" visible="false" />
 		<dt:column-definition targets="1" sortable="false" cssClass="centered ui-state-default drag-handle select-handle" />
-		<dt:column-definition targets="2, 3, 4" sortable="false" />
+		<dt:column-definition targets="2, 3" sortable="false" />
+		<dt:column-definition targets="4" sortable="false" cssClass="has-status"/>
 		<dt:column-definition targets="5, 6, 7" sortable="false" width="12em"/>
 		<dt:column-definition targets="8" sortable="false" visible="false" />
 		<dt:column-definition targets="9" sortable="false" width="2em" lastDef="true" cssClass="centered"/>

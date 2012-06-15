@@ -105,19 +105,7 @@ public class ExecutionModificationController {
 		return new DataTableModelHelper<ExecutionStep>() {
 			@Override
 			public Map<String, ?> buildItemData(ExecutionStep item) {
-				/*return new Object[] { 
-						item.getId(), 
-						item.getExecutionStepOrder() + 1, 
-						item.getAction(),
-						item.getExpectedResult(), 
-						localizedStatus(item.getExecutionStatus(), locale),
-						formatDate(item.getLastExecutedOn(), locale), 
-						item.getLastExecutedBy(), 
-						item.getComment(),
-						item.getAttachmentList().size(), 
-						item.getAttachmentList().getId() 
-				};*/
-				
+
 				Map<String, Object> res = new HashMap<String, Object>();
 				res.put(DataTableModelHelper.DEFAULT_ENTITY_ID_KEY, item.getId());
 				res.put(DataTableModelHelper.DEFAULT_ENTITY_INDEX_KEY, item.getExecutionStepOrder()+1);

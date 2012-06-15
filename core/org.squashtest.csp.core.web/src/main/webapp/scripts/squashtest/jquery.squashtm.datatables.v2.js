@@ -27,6 +27,7 @@
 	tableDnD,
 	dataTables
 	KeyEventListener
+	statusFactory
  
  
  */
@@ -119,7 +120,7 @@
 
 		
 	- rich editables configuration :
-		if a property 'richeditables' is set, will attempt to turn the cells to rich editables. If undefined, nothing will happen.
+		if a property 'richeditables' is set, will attempt to turn some cells to rich editables. If undefined, nothing will happen.
 		the property 'richeditables' is an compound object and must define at least 1 member for 'target'
 		
 		* conf : a regular object configuring the plugin $.ui.richEditable (see jquery.squashtm.jeditable.ext.js).
@@ -127,6 +128,17 @@
 					Any td having the given css class will be turned to a rich jeditable configured with 'conf' and posting to 
 					the supplied url.
 			  
+	- execution status : 
+		If a property 'executionstatus' is set, will attempt to decorate some cells with execution statuses. If undefined,
+		nothing will happen. The matched cells are identified by css class 'has-status'. 
+		
+		'executionstatus' is an object defining the localized status text :
+			* blocked : internationalized version of status 'blocked'
+			* failure : internationalized version of status 'failure'
+			* success : internationalized version of status 'success'
+			* running : internationalized version of status 'running'
+			* ready : internationalized version of status 'ready'
+		
  */
 (function($){
 
@@ -477,14 +489,13 @@
 	function _configureRichEditables(){
 		
 		var editableConf = this.squashSettings.richeditables;
+		var self= this;
 		
 		if (! editableConf) return;
 		
 		var baseconf = editableConf.conf;
 		var targets  = editableConf.targets;
-		
-		
-		
+			
 		if (! targets)  	return;
 		
 		for (var css in targets){
@@ -498,10 +509,27 @@
 				$(cell).richEditable(finalConf);
 			});
 		}
-		
-		
 	}
 
+	
+	function _configureExecutionStatus(){
+	
+		var statusConf = this.squashSettings.executionstatus;
+		var self= this;
+		
+		if (! statusConf) return;
+		
+		var factory = new squashtm.StatusFactory(statusConf);
+		
+		var cells = $('td.has-status', this);
+
+		$(cells).each(function(i,cell){
+			var data = cell.innerText;
+			var newhtml = factory.getHtmlFor(data);
+			cell.innerHTML = newhtml;
+		});		
+		
+	}
 	 
 	 /******************************************************************
 	 
@@ -568,6 +596,7 @@
 			if (userDrawCallback) userDrawCallback.call(this, oSettings);
 			_attachButtonsCallback.call(this);
 			_configureRichEditables.call(this);
+			_configureExecutionStatus.call(this);
 		}
 		
 		datatableEffective["fnDrawCallback"] = customDrawCallback;
@@ -586,9 +615,14 @@
 		
 		if (squashSettings.enableHover){
 			_bindHover.call(this);
-		}
+		};
 
 		this.addClass("is-contextual");
 	 }
 	 
 })(jQuery); 
+	 
+
+
+
+
