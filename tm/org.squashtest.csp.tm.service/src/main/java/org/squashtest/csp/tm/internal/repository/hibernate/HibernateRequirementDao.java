@@ -156,6 +156,9 @@ public class HibernateRequirementDao extends HibernateEntityDao<Requirement> imp
 		if (!searchCriteria.getCriticalities().isEmpty()) {
 			versionCriteria.add(Restrictions.in("res.criticality", searchCriteria.getCriticalities()));
 		}
+		if (!searchCriteria.getCategories().isEmpty()) {
+			versionCriteria.add(Restrictions.in("res.category", searchCriteria.getCategories()));
+		}
 
 		addVerificationRestriction(searchCriteria, versionCriteria);
 

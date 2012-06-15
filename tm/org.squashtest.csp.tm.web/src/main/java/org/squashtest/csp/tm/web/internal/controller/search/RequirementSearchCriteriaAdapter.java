@@ -25,6 +25,7 @@ import java.util.Collection;
 import java.util.List;
 
 import org.apache.commons.lang.StringUtils;
+import org.squashtest.csp.tm.domain.requirement.RequirementCategory;
 import org.squashtest.csp.tm.domain.requirement.RequirementCriticality;
 import org.squashtest.csp.tm.domain.requirement.RequirementSearchCriteria;
 import org.squashtest.csp.tm.domain.requirement.VerificationCriterion;
@@ -37,10 +38,13 @@ import org.squashtest.csp.tm.domain.requirement.VerificationCriterion;
  */
 public class RequirementSearchCriteriaAdapter implements RequirementSearchCriteria {
 	private final RequirementSearchParams params;
+
 	private final List<RequirementCriticality> criticalities = new ArrayList<RequirementCriticality>(
 			RequirementCriticality.values().length);
+	private final List<RequirementCategory> categories = new ArrayList<RequirementCategory>(
+			RequirementCategory.values().length);
 
-	public RequirementSearchCriteriaAdapter(RequirementSearchParams params, boolean[] criticalitiesSelection) {
+	public RequirementSearchCriteriaAdapter(RequirementSearchParams params, boolean[] criticalitiesSelection, boolean[] categoriesSelection) {
 		super();
 		this.params = params;
 		int j=0;
@@ -49,6 +53,13 @@ public class RequirementSearchCriteriaAdapter implements RequirementSearchCriter
 				criticalities.add(RequirementCriticality.valueOf(i));
 			}
 			j++;
+		}
+		int k=0;
+		for (int i = 0 ; i < categoriesSelection.length ; i++) {
+			if (categoriesSelection[k]) {
+				categories.add(RequirementCategory.valueOf(i));
+			}
+			k++;
 		}
 	}
 
@@ -65,6 +76,10 @@ public class RequirementSearchCriteriaAdapter implements RequirementSearchCriter
 	@Override
 	public Collection<RequirementCriticality> getCriticalities() {
 		return criticalities;
+	}
+	@Override
+	public Collection<RequirementCategory> getCategories() {
+		return categories;
 	}
 
 	@Override

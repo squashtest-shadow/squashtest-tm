@@ -140,8 +140,9 @@
 		<f:message var="backButtonLabel" key="fragment.edit.header.button.back" />
 		<input type="button" class="button" value="${ backButtonLabel }" onClick="history.back();"/>	
 	</jsp:attribute>		
-	<comp:opened-object otherViewers="${ otherViewers }" objectUrl="${ testCaseUrl }" isContextual="false"/>
+	
 	<jsp:attribute name="tablePane">
+	<comp:opened-object otherViewers="${ otherViewers }" objectUrl="${ testCaseUrl }" isContextual="false"/>
 		<aggr:verified-requirements-table/>
 		<div id="add-summary-dialog" class="not-displayed" title="<f:message key='test-case.verified-requirement-version.add-summary-dialog.title' />">
 			<ul><li>summary message here</li></ul>

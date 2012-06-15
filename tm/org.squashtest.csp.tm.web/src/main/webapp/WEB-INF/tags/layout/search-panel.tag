@@ -110,7 +110,7 @@
 		var aString = $("#searchName").val();
 		var reference = $("#searchReference").val();
 		
-		if (aString.length == 0 && reference.length == 0 && !testEmptyCriticality ()) {
+		if (aString.length == 0 && reference.length == 0 && !testEmptyCriticality () && !testEmptyCategory ()) {
 			$.squash.openMessage("<f:message key='popup.title.error' />", "${InputEmptyMessage}");
 			return false;
 		}
@@ -141,6 +141,7 @@
 		<c:when test="${ (workspace eq 'requirement' || linkable eq 'requirement') }" >
 			data['name'] = rename;
 			data['criticalities'] = getCriticalityParams();
+			data['categories'] = getCategoryParams();
 			data['reference'] = $('#searchReference').val();
 			data['verification'] = $('#requirementVerification').val();
 			data['order'] = order;
@@ -389,6 +390,16 @@
 		critValue[3] = $('#crit-4').attr('checked');
 		return critValue;	
 	}
+	function getCategoryParams (){
+		var catValue = [];
+		catValue[0] = $('#cat-1').attr('checked');
+		catValue[1] = $('#cat-2').attr('checked');
+		catValue[2] = $('#cat-3').attr('checked');
+		catValue[3] = $('#cat-4').attr('checked');
+		catValue[4] = $('#cat-5').attr('checked');
+		catValue[5] = $('#cat-6').attr('checked');
+		return catValue;	
+	}
 	
 	function getImportanceParams(){
 		return $(".search-panel-tc-importance input:checked").collect(function(elt){
@@ -406,7 +417,16 @@
 		}
 		return false;
 	}
-	
+	function testEmptyCategory (){
+		var value = getCategoryParams (); 
+		for(var i = 0; i < value.length; i++)
+		{
+		    if (value[i] == true){
+		    	return true;
+		    }
+		}
+		return false;
+	}
 // 	</c:if>
 		function showHideReqProperties(){
 		if (testLinkableRequirementBoolean() != "true" && "${workspace}" != "requirement"){
@@ -532,7 +552,37 @@
 									</td>
 								</tr>
 							</table>
+							<span class="gray-text"><f:message
+							key="requirement.category.label" /> :</span>
+					<table>
+						<tr>
+							<td ><span> <input
+									type="checkbox" id="cat-1" value="1" /> <span> <f:message
+											key="requirement.category.FUNCTIONAL" /> </span> </span></td>
+							<td ><span> <input
+									type="checkbox" id="cat-2" value="2" /> <span> <f:message
+											key="requirement.category.NON_FUNCTIONAL" /> </span> </span></td>
+							</tr>
+						<tr>					<td ><span> <input
+									type="checkbox" id="cat-3" value="2" /> <span> <f:message
+											key="requirement.category.USE_CASE" /> </span> </span></td>
+					
+							<td ><span> <input
+									type="checkbox" id="cat-4" value="3" /> <span> <f:message
+											key="requirement.category.BUSINESS" /> </span> </span></td>
+							</tr>
+						<tr>	<td ><span> <input
+									type="checkbox" id="cat-5" value="4" /> <span> <f:message
+											key="requirement.category.TEST_REQUIREMENT" /> </span>
+							</span></td>
+							<td ><span> <input
+									type="checkbox" id="cat-6" value="4" /> <span> <f:message
+											key="requirement.category.UNDEFINED" /> </span>
+							</span></td>
+						</tr>
+					</table>
 						</div>
+						
 						<div class="requirementCriterion">
 							<select id="requirementVerification">
 								<c:forEach var="verificationCriterion"

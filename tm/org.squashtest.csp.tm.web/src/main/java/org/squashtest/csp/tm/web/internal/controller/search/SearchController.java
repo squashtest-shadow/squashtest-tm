@@ -130,13 +130,13 @@ public class SearchController {
 	 */
 	@RequestMapping(value = "/requirements", method = RequestMethod.GET)
 	public ModelAndView searchRequirements(@ModelAttribute final RequirementSearchParams params,
-			@RequestParam("criticalities[]") final boolean[] criticalitiesSelection) {
+			@RequestParam("criticalities[]") final boolean[] criticalitiesSelection, @RequestParam("categories[]") final boolean[] categoriesSelection) {
 
 		if (LOGGER.isDebugEnabled()) {
 			LOGGER.debug("Searching requirements using criteria " + params);
 		}
 
-		RequirementSearchCriteria criteria = new RequirementSearchCriteriaAdapter(params, criticalitiesSelection);
+		RequirementSearchCriteria criteria = new RequirementSearchCriteriaAdapter(params, criticalitiesSelection, categoriesSelection);
 		List<RequirementLibraryNode> resultList = searchService.findAllBySearchCriteria(criteria);
 
 		if (LOGGER.isTraceEnabled()) {
@@ -154,12 +154,13 @@ public class SearchController {
 
 	@RequestMapping(value = "/requirements", method = RequestMethod.GET, params = { "order=true" })
 	public ModelAndView searchOrderedRequirements(@ModelAttribute final RequirementSearchParams params,
-			@RequestParam("criticalities[]") final boolean[] criticalitiesSelection) {
+			@RequestParam("criticalities[]") final boolean[] criticalitiesSelection, @RequestParam("categories[]") final boolean[] categoriesSelection) {
 
 		if (LOGGER.isDebugEnabled()) {
 			LOGGER.debug("Searching requirements using criteria " + params);
 		}
-		RequirementSearchCriteria criteria = new RequirementSearchCriteriaAdapter(params, criticalitiesSelection);
+		RequirementSearchCriteria criteria = new RequirementSearchCriteriaAdapter(params, criticalitiesSelection, categoriesSelection);
+		
 		List<RequirementLibraryNode> resultList = searchService.findAllBySearchCriteriaOrderByProject(criteria);
 
 		if (LOGGER.isTraceEnabled()) {
@@ -205,10 +206,10 @@ public class SearchController {
 
 	@RequestMapping(value = "/tc-by-requirement", method = RequestMethod.GET, params = { "order" })
 	public ModelAndView searchTestCasesByRequirement(@ModelAttribute final RequirementSearchParams params,
-			@RequestParam("criticalities[]") final boolean[] criticalitiesSelection, @RequestParam String order) {
+			@RequestParam("criticalities[]") final boolean[] criticalitiesSelection, @RequestParam("categories[]") final boolean[] categoriesSelection,@RequestParam String order) {
 		boolean isProjectOrdered = Boolean.parseBoolean(order);
 
-		RequirementSearchCriteria criteria = new RequirementSearchCriteriaAdapter(params, criticalitiesSelection);
+		RequirementSearchCriteria criteria = new RequirementSearchCriteriaAdapter(params, criticalitiesSelection, categoriesSelection);
 		List<TestCase> resultList = searchService.findTestCaseByRequirement(criteria, isProjectOrdered);
 		ModelAndView mav;
 		if (isProjectOrdered) {

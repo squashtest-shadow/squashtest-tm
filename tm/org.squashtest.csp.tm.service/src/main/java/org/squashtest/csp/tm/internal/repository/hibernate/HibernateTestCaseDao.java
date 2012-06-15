@@ -365,6 +365,9 @@ public class HibernateTestCaseDao extends HibernateEntityDao<TestCase> implement
 		if (!criteria.getCriticalities().isEmpty()) {
 			reqCrit.add(Restrictions.in("criticality", criteria.getCriticalities()));
 		}
+		if (!criteria.getCategories().isEmpty()) {
+			reqCrit.add(Restrictions.in("category", criteria.getCategories()));
+		}
 		return crit;
 	}
 

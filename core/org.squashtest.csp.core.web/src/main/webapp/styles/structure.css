@@ -203,7 +203,7 @@ div#tabbed-pane > ul {
 }
 
 .search-div-requirement {
-    top: 5.8cm;
+    top: 8cm;
 }
 .search-div-campaign {
     top: 3cm;
@@ -220,6 +220,9 @@ img.search-image{
 }
 
 #search-input {
+	max-height:7.8cm;
+	overflow-y:auto;
+	overflow-x:hidden;
 	padding: 0;
 	position: relative;
 	top: -0.9cm;
@@ -259,6 +262,9 @@ img.search-image{
 
 
 #by-requirement-search-input {
+	max-height:7.8cm;
+	overflow-y:auto;
+	overflow-x:hidden;
 	padding: 0;
 	position: relative;
 	top: -0.9cm;

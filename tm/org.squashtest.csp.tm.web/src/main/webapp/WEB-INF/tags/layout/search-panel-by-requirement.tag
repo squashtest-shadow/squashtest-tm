@@ -79,7 +79,7 @@
 		var reference = $("#searchReference").val();
 
 		if (aString.length == 0 && reference.length == 0
-				&& !testEmptyCriticality()) {
+				&& !testEmptyCriticality() && !testEmptyCategory() ) {
 			$.squash.openMessage("<f:message key='popup.title.error' />", "${InputEmptyMessage}");
 			return false;
 		}
@@ -100,6 +100,7 @@
 		var data = {}
 		data['name'] = rename;
 		data['criticalities'] = getCriticalityParams();
+		data['categories'] = getCategoryParams();
 		data['reference'] = $('#searchReference').val();
 		data['order'] = order;
 		url = '${searchUrl}';
@@ -165,12 +166,42 @@
 							</span></td>
 						</tr>
 					</table>
+					<span class="gray-text"><f:message
+							key="requirement.category.label" /> :</span>
+					<table>
+						<tr>
+							<td ><span> <input
+									type="checkbox" id="cat-1" value="1" /> <span> <f:message
+											key="requirement.category.FUNCTIONAL" /> </span> </span></td>
+							<td ><span> <input
+									type="checkbox" id="cat-2" value="2" /> <span> <f:message
+											key="requirement.category.NON_FUNCTIONAL" /> </span> </span></td>
+							</tr>
+						<tr>					<td ><span> <input
+									type="checkbox" id="cat-3" value="2" /> <span> <f:message
+											key="requirement.category.USE_CASE" /> </span> </span></td>
+					
+							<td ><span> <input
+									type="checkbox" id="cat-4" value="3" /> <span> <f:message
+											key="requirement.category.BUSINESS" /> </span> </span></td>
+							</tr>
+						<tr>	<td ><span> <input
+									type="checkbox" id="cat-5" value="4" /> <span> <f:message
+											key="requirement.category.TEST_REQUIREMENT" /> </span>
+							</span></td>
+							<td ><span> <input
+									type="checkbox" id="cat-6" value="4" /> <span> <f:message
+											key="requirement.category.UNDEFINED" /> </span>
+							</span></td>
+						</tr>
+					</table>
 				</div>
 			</td>
 		</tr>
 
 		<tr>
-			<td><input type="checkbox" id="byReqProject-view" /> <span
+			<td>
+			<input type="checkbox" id="byReqProject-view" /> <span
 				class="gray-text"> <f:message key="search.project.view" /> </span></td>
 		</tr>
 		<f:message key="search.button.label" var="searchLabel" />

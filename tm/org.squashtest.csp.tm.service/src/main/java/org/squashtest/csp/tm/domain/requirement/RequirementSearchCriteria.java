@@ -58,4 +58,10 @@ public interface RequirementSearchCriteria {
 	VerificationCriterion getVerificationCriterion();
 
 	boolean libeleIsOnlyCriteria();
+	/**
+	 * Categories of searched Requirements.
+	 * 
+	 * @return List of {@link RequirementCategory}. Should never return null.
+	 */
+	Collection<RequirementCategory> getCategories();
 }
