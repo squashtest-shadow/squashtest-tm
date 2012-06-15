@@ -39,6 +39,7 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.util.HtmlUtils;
 import org.squashtest.csp.tm.domain.Level;
+import org.squashtest.csp.tm.domain.requirement.RequirementCategory;
 import org.squashtest.csp.tm.domain.requirement.RequirementCriticality;
 import org.squashtest.csp.tm.domain.requirement.RequirementStatus;
 import org.squashtest.csp.tm.domain.requirement.RequirementVersion;
@@ -56,6 +57,8 @@ import org.squashtest.csp.tm.web.internal.helper.LevelLabelFormatter;
 public class RequirementVersionManagerController {
 	@Inject
 	private Provider<RequirementCriticalityComboDataBuilder> criticalityComboBuilderProvider;
+	@Inject
+	private Provider<RequirementCategoryComboDataBuilder> categoryComboBuilderProvider;
 	@Inject
 	private Provider<RequirementStatusComboDataBuilder> statusComboDataBuilderProvider;
 	@Inject
@@ -91,6 +94,13 @@ public class RequirementVersionManagerController {
 		requirementVersionManager.changeCriticality(requirementVersionId, criticality);
 		return internationalize(criticality, locale);
 	}
+	@RequestMapping(method = RequestMethod.POST, params = { "id=requirement-category", VALUE })
+	@ResponseBody
+	public String changeCategory(@PathVariable long requirementVersionId,
+			@RequestParam(VALUE) RequirementCategory category, Locale locale) {
+		requirementVersionManager.changeCategory(requirementVersionId, category);
+		return internationalize(category, locale);
+	}
 
 	@RequestMapping(method = RequestMethod.POST, params = { "id=requirement-status", VALUE })
 	@ResponseBody
@@ -108,7 +118,7 @@ public class RequirementVersionManagerController {
 	}
 
 	/**
-	 * @param criticality
+	 * @param level
 	 * @param locale
 	 * @return
 	 */
@@ -128,6 +138,8 @@ public class RequirementVersionManagerController {
 
 		String criticalities = buildMarshalledCriticalities(locale);
 		model.addAttribute("jsonCriticalities", criticalities);
+		String categories = buildMarshalledCategories(locale);
+		model.addAttribute("jsonCategories", categories);
 	}
 
 	@RequestMapping(method = RequestMethod.GET, value = "/next-status")
@@ -153,7 +165,9 @@ public class RequirementVersionManagerController {
 	private String buildMarshalledCriticalities(Locale locale) {
 		return criticalityComboBuilderProvider.get().useLocale(locale).buildMarshalled();
 	}
-
+	private String buildMarshalledCategories(Locale locale) {
+		return categoryComboBuilderProvider.get().useLocale(locale).buildMarshalled();
+	}
 	@RequestMapping(method = RequestMethod.POST, params = { "newName" })
 	public @ResponseBody
 	Object rename(@PathVariable long requirementVersionId, @RequestParam("newName") String newName) {

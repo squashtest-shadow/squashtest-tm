@@ -686,5 +686,16 @@
 		</createIndex>		
 	
 	</changeSet>
+	<changeSet id="tm-1.2.0.36-01" author="mpagnon">
+		
+		<comment>table Requirement nows holds a Category attribute</comment>
+		
+		<addColumn tableName="REQUIREMENT_VERSION">
+			<column name="CATEGORY" type="java.sql.Types.VARCHAR(50)" defaultValue="UNDEFINED">
+				<constraints nullable="false" />
+			</column>
+		</addColumn>
+			
+	</changeSet>
 </databaseChangeLog>
  

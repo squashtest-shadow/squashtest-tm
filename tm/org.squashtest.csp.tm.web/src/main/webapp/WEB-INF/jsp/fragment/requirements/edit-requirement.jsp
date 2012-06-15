@@ -253,6 +253,20 @@ that page won't be editable if
 					</div>				
 				</div>
 				<div class="display-table-row">
+					<label for="requirement-category" class="display-table-cell"><f:message key="requirement.category.combo.label" /></label>
+					<div class="display-table-cell">
+						<c:choose>
+						<c:when test="${smallEditable }">
+						<div id="requirement-category"><comp:level-message level="${ requirement.category }"/></div>
+						<comp:select-jeditable componentId="requirement-category" jsonData="${categoryList}" targetUrl="${requirementUrl}" />
+						</c:when>
+						<c:otherwise>
+							<comp:level-message level="${ requirement.category }"/>
+						</c:otherwise>
+						</c:choose>
+					</div>				
+				</div>
+				<div class="display-table-row">
 					<label for="requirement-status" class="display-table-cell"><f:message key="requirement.status.combo.label" /></label>
 					<div class="display-table-cell">
 						<c:choose>

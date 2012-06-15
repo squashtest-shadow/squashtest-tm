@@ -166,6 +166,21 @@ public class Requirement extends RequirementLibraryNode<RequirementVersion> impl
 	public void setCriticality(RequirementCriticality criticality) {
 		resource.setCriticality(criticality);
 	}
+	/***
+	 * @return the requirement category
+	 */
+	public RequirementCategory getCategory() {
+		return resource.getCategory();
+	}
+
+	/***
+	 * Set the requirement category
+	 * 
+	 * @param category
+	 */
+	public void setCategory(RequirementCategory category) {
+		resource.setCategory(category);
+	}
 
 	public void setStatus(RequirementStatus status) {
 		resource.setStatus(status);

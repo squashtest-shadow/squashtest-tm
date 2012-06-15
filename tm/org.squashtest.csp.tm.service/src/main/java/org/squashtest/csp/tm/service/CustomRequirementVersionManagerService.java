@@ -28,6 +28,7 @@ import javax.validation.constraints.NotNull;
 import org.springframework.transaction.annotation.Transactional;
 import org.squashtest.csp.core.infrastructure.collection.PagedCollectionHolder;
 import org.squashtest.csp.core.infrastructure.collection.PagingAndSorting;
+import org.squashtest.csp.tm.domain.requirement.RequirementCategory;
 import org.squashtest.csp.tm.domain.requirement.RequirementCriticality;
 import org.squashtest.csp.tm.domain.requirement.RequirementVersion;
 
@@ -48,7 +49,7 @@ public interface CustomRequirementVersionManagerService {
 	 * @param criticality
 	 */
 	void changeCriticality(long requirementVersionId, @NotNull RequirementCriticality criticality);
-
+	
 	/**
 	 * Fetches the paged, sorted collection of versions for the given requirement.
 	 *

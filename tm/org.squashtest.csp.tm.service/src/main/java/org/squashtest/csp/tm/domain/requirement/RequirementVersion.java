@@ -74,6 +74,10 @@ public class RequirementVersion extends Resource implements AttachmentHolder {
 	@NotNull
 	@Enumerated(EnumType.STRING)
 	private RequirementCriticality criticality = RequirementCriticality.UNDEFINED;
+	
+	@NotNull
+	@Enumerated(EnumType.STRING)
+	private RequirementCategory category = RequirementCategory.UNDEFINED;
 
 	@NotNull
 	@Enumerated(EnumType.STRING)
@@ -184,7 +188,25 @@ public class RequirementVersion extends Resource implements AttachmentHolder {
 		checkModifiable();
 		this.criticality = criticality;
 	}
-
+	
+	/**
+	 * @return the requirement category
+	 */
+	public RequirementCategory getCategory() {
+		return category;
+	}
+	
+	/***
+	 * Set the requirement category
+	 * 
+	 * @param category
+	 */
+	public void setCategory(RequirementCategory category) {
+		checkModifiable();
+		this.category = category;
+	}
+	
+	
 	public void setStatus(RequirementStatus status) {
 		checkStatusAccess(status);
 		this.status = status;

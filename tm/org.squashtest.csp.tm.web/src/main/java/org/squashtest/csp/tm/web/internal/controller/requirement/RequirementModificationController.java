@@ -50,6 +50,7 @@ import org.squashtest.csp.core.infrastructure.collection.PagedCollectionHolder;
 import org.squashtest.csp.core.infrastructure.collection.PagingAndSorting;
 import org.squashtest.csp.tm.domain.Level;
 import org.squashtest.csp.tm.domain.requirement.Requirement;
+import org.squashtest.csp.tm.domain.requirement.RequirementCategory;
 import org.squashtest.csp.tm.domain.requirement.RequirementCriticality;
 import org.squashtest.csp.tm.domain.requirement.RequirementStatus;
 import org.squashtest.csp.tm.domain.requirement.RequirementVersion;
@@ -70,6 +71,9 @@ public class RequirementModificationController {
 
 	@Inject
 	private Provider<RequirementCriticalityComboDataBuilder> criticalityComboBuilderProvider;
+
+	@Inject
+	private Provider<RequirementCategoryComboDataBuilder> categoryComboBuilderProvider;
 	@Inject
 	private Provider<RequirementStatusComboDataBuilder> statusComboDataBuilderProvider;
 	@Inject
@@ -109,12 +113,17 @@ public class RequirementModificationController {
 
 		String criticalities = buildMarshalledCriticalities(locale);
 		mav.addObject("criticalityList", criticalities);
+		String categories = buildMarshalledCategories(locale);
+		mav.addObject("categoryList", categories);
 
 		return mav;
 	}
 
 	private String buildMarshalledCriticalities(Locale locale) {
 		return criticalityComboBuilderProvider.get().useLocale(locale).buildMarshalled();
+	}
+	private String buildMarshalledCategories(Locale locale) {
+		return categoryComboBuilderProvider.get().useLocale(locale).buildMarshalled();
 	}
 
 	// will return the fragment only
@@ -128,7 +137,8 @@ public class RequirementModificationController {
 		// build criticality list
 		String criticalities = buildMarshalledCriticalities(locale);
 		mav.addObject("criticalityList", criticalities);
-
+		String categories = buildMarshalledCategories(locale);
+		mav.addObject("categoryList", categories);
 		return mav;
 	}
 
@@ -160,7 +170,16 @@ public class RequirementModificationController {
 				criticality.name());
 		return formatCriticality(criticality, locale);
 	}
-
+	
+	@RequestMapping(method = RequestMethod.POST, params = { "id=requirement-category", VALUE })
+	@ResponseBody
+	public String changeCategory(@RequestParam(VALUE) String value, @PathVariable long requirementId, Locale locale) {
+		RequirementCategory category = RequirementCategory.valueOf(value);
+		requirementModService.changeCategory(requirementId, category);
+		LOGGER.debug("Requirement {} : requirement criticality changed, new value : {}", requirementId,
+				category.name());
+		return formatCategory(category, locale);
+	}
 	@RequestMapping(method = RequestMethod.POST, params = { "id=requirement-status", VALUE })
 	@ResponseBody
 	public String changeStatus(@RequestParam(VALUE) String value, @PathVariable long requirementId, Locale locale) {
@@ -267,6 +286,19 @@ public class RequirementModificationController {
 	private String formatCriticality(RequirementCriticality criticality, Locale locale) {
 		return internationalize(criticality, locale);
 	}
+	
+	/***
+	 * Method which returns category in the chosen language
+	 *
+	 * @param criticality
+	 *            the category
+	 * @param locale
+	 *            the locale with the chosen language
+	 * @return the category in the chosen language
+	 */
+	private String formatCategory(RequirementCategory category, Locale locale) {
+		return internationalize(category, locale);
+	}
 
 	private String internationalize(Level level, Locale locale) {
 		return levelFormatterProvider.get().useLocale(locale).formatLabel(level);
@@ -280,7 +312,7 @@ public class RequirementModificationController {
 		model.addAttribute("versions", req.getUnmodifiableVersions());
 		model.addAttribute("selectedVersion", req.getCurrentVersion());
 		model.addAttribute("jsonCriticalities", buildMarshalledCriticalities(locale));
-
+		model.addAttribute("jsonCategories", buildMarshalledCategories(locale));
 		return "page/requirements/versions-manager";
 	}
 

@@ -25,6 +25,7 @@ import javax.validation.constraints.NotNull;
 import org.springframework.security.access.prepost.PostAuthorize;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.transaction.annotation.Transactional;
+import org.squashtest.csp.tm.domain.requirement.RequirementCategory;
 import org.squashtest.csp.tm.domain.requirement.RequirementStatus;
 import org.squashtest.csp.tm.domain.requirement.RequirementVersion;
 
@@ -51,5 +52,8 @@ public interface RequirementVersionManagerService extends CustomRequirementVersi
 
 	@PreAuthorize("hasPermission(#arg0, 'org.squashtest.csp.tm.domain.requirement.RequirementVersion', 'SMALL_EDIT') or hasRole('ROLE_ADMIN')")
 	void changeName(long requirementVersionId, String newName);
+	
+	@PreAuthorize("hasPermission(#arg0, 'org.squashtest.csp.tm.domain.requirement.RequirementVersion', 'SMALL_EDIT') or hasRole('ROLE_ADMIN')")
+	void changeCategory(long requirementVersionId, RequirementCategory category);	
 
 }

@@ -23,6 +23,7 @@
 <%@ tag body-content="empty" %>
 <%@ attribute name="requirementVersion" required="true" type="java.lang.Object" rtexprvalue="true" %>
 <%@ attribute name="jsonCriticalities" required="true" rtexprvalue="true" %>
+<%@ attribute name="jsonCategories" required="true" rtexprvalue="true" %>
 <%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core" %>
 <%@ taglib prefix="jq" tagdir="/WEB-INF/tags/jquery" %>
 <%@ taglib prefix="comp" tagdir="/WEB-INF/tags/component" %>
@@ -145,6 +146,22 @@
 								</c:when>
 							<c:otherwise>
 								<comp:level-message level="${ requirementVersion.criticality }"/>
+							</c:otherwise>
+							</c:choose>
+						</div>
+					</div>				
+				</div>
+				<div>
+					<label for="requirement-category"><f:message key="requirement.category.combo.label" /></label>
+					<div>
+						<div id="requirement-category">
+							<c:choose>
+								<c:when test="${ smallEditable }">
+									<comp:level-message level="${ requirementVersion.category }"/>
+									<comp:select-jeditable componentId="requirement-category" jsonData="${ jsonCategories }" targetUrl="${ requirementUrl }" />
+								</c:when>
+							<c:otherwise>
+								<comp:level-message level="${ requirementVersion.category }"/>
 							</c:otherwise>
 							</c:choose>
 						</div>
