@@ -42,9 +42,11 @@ public class CampaignViewInterceptor extends ObjectViewsInterceptor {
 
 	@Override
 	public void postHandle(WebRequest request, ModelMap model) throws Exception {
-		Identified identified = (Identified) model.get("campaign");
-        boolean otherViewers = super.addViewerToEntity(Campaign.class.getSimpleName(), identified, request.getRemoteUser());
+		//check model is not null in case we are intercepting an ajax request on the campaign page
+		if (model != null) {Identified identified = (Identified) model.get("campaign");
+       boolean otherViewers = super.addViewerToEntity(Campaign.class.getSimpleName(), identified, request.getRemoteUser());
         model.addAttribute("otherViewers", otherViewers);
+       }
 	}
 
 	@Override

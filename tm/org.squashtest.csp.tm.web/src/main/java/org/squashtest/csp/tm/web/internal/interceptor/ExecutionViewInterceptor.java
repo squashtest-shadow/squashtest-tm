@@ -42,9 +42,11 @@ public class ExecutionViewInterceptor extends ObjectViewsInterceptor {
 
 	@Override
 	public void postHandle(WebRequest request, ModelMap model) throws Exception {
-		Identified identified = (Identified) model.get("execution");
-        boolean otherViewers = super.addViewerToEntity(Execution.class.getSimpleName(), identified, request.getRemoteUser());
-        model.addAttribute("otherViewers", otherViewers);
+
+		//check model is not null in case we are intercepting an ajax request on the page
+		if (model != null) {Identified identified = (Identified) model.get("execution");
+		 boolean otherViewers = super.addViewerToEntity(Execution.class.getSimpleName(), identified, request.getRemoteUser());
+        model.addAttribute("otherViewers", otherViewers);}
 	}
 
 	@Override

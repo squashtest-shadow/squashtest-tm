@@ -43,9 +43,11 @@ public class RequirementViewInterceptor extends ObjectViewsInterceptor {
 
 	@Override
 	public void postHandle(WebRequest request, ModelMap model) throws Exception {
+		//check model is not null in case we are intercepting an ajax request on the campaign page
+		if (model != null) {
 		Identified identified = (Identified) model.get("requirement");
-        boolean otherViewers = super.addViewerToEntity(Requirement.class.getSimpleName(), identified, request.getRemoteUser());
-        model.addAttribute("otherViewers", otherViewers);
+		   boolean otherViewers = super.addViewerToEntity(Requirement.class.getSimpleName(), identified, request.getRemoteUser());
+        model.addAttribute("otherViewers", otherViewers);}
 	}
 
 	@Override

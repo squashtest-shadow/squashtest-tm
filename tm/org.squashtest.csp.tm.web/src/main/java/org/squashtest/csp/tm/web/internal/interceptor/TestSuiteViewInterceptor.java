@@ -26,25 +26,30 @@ import org.springframework.ui.ModelMap;
 import org.springframework.web.context.request.WebRequest;
 import org.squashtest.csp.core.domain.Identified;
 import org.squashtest.csp.tm.domain.campaign.TestSuite;
+
 /**
  * 
  * @author mpagnon
- *
+ * 
  */
 public class TestSuiteViewInterceptor extends ObjectViewsInterceptor {
 
-	private static final Logger LOGGER = LoggerFactory.getLogger(TestSuiteViewInterceptor.class); 	
+	private static final Logger LOGGER = LoggerFactory.getLogger(TestSuiteViewInterceptor.class);
 
 	@Override
 	public void preHandle(WebRequest request) throws Exception {
-		
+
 	}
 
 	@Override
 	public void postHandle(WebRequest request, ModelMap model) throws Exception {
-		Identified identified = (Identified) model.get("testSuite");
-        boolean otherViewers = super.addViewerToEntity(TestSuite.class.getSimpleName(), identified, request.getRemoteUser());
-        model.addAttribute("otherViewers", otherViewers);
+		//check model is not null in case we are intercepting an ajax request on the campaign page
+		if (model != null) {Identified identified = (Identified) model.get("testSuite");
+		
+			boolean otherViewers = super.addViewerToEntity(TestSuite.class.getSimpleName(), identified,
+					request.getRemoteUser());
+			model.addAttribute("otherViewers", otherViewers);
+		}
 	}
 
 	@Override

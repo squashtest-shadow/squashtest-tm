@@ -44,12 +44,13 @@ public class TestCaseViewInterceptor extends ObjectViewsInterceptor {
 
 	@Override
 	public void postHandle(WebRequest request, ModelMap model) throws Exception {
-		LOGGER.debug("Viewer = "+request.getRemoteUser());
+		//check model is not null in case we are intercepting an ajax request on the campaign page
+		if (model != null) {LOGGER.debug("Viewer = "+request.getRemoteUser());
 		Identified tc = (Identified) model.get("testCase");
         LOGGER.debug("TestCase = "+tc);
         LOGGER.debug("TestCase contextPath = "+request.getContextPath()+" description "+request.getDescription(true));
-        boolean otherViewers = super.addViewerToEntity(TestCase.class.getSimpleName(), tc, request.getRemoteUser());
-        model.addAttribute("otherViewers", otherViewers);
+         boolean otherViewers = super.addViewerToEntity(TestCase.class.getSimpleName(), tc, request.getRemoteUser());
+        model.addAttribute("otherViewers", otherViewers);}
 	}
 
 	@Override
