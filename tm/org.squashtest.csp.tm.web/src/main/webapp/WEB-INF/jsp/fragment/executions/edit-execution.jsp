@@ -281,9 +281,7 @@
 		
 		var squashSettings = {
 				
-			enableDnD : true,
 			enableHover : true,
-			attachments : { url : "${stepAttachmentManagerUrl}/{attach-list-id}/attachments/manager?workspace=campaign"},
 			executionStatus : {
 				blocked : "${statusBlocked}",
 				failure : "${statusFailure}",
@@ -307,6 +305,10 @@
 				"rich-editable-comment" : "${ executionStepsUrl }/{entity-id}/comment"
 			}
 		};
+		squash.attachments = { 
+			url : "${stepAttachmentManagerUrl}/{attach-list-id}/attachments/manager?workspace=campaign"
+		}
+		
 		</c:if>
 		
 		

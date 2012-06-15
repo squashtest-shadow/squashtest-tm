@@ -74,37 +74,7 @@
 	var nonBelongingTestPlansUrl = "${nonBelongingTestPlansUrl}";
 	
 	$(function() {
-<%-- single test-plan removal --%>
-	$('#test-plans-table .delete-test-plan-button').die('click');
 
-		//single deletion buttons
-		$('#test-plans-table .delete-test-plan-button').live(
-				'click',
-				function() {
-					$("#${ testCaseSingleRemovalPopupId }")
-							.data('opener', this).dialog('open');
-				});
-
-		$("#${ testCaseSingleRemovalPopupId }").bind(
-				'dialogclose',
-				function() {
-					var answer = $("#${ testCaseSingleRemovalPopupId }").data(
-							"answer");
-					if (answer != "yes") {
-						return;
-					}
-					var bCaller = $.data(this, "opener");
-
-					$.ajax({
-						type : 'delete',
-						url : testPlansUrl + '/' + parseTestPlanId(bCaller),
-						dataType : 'text',
-						success : function(data) {
-							refreshTestPlans();
-							checkForbiddenDeletion(data);
-						}
-					});
-				});
 
 		//This function checks the response and inform the user if a deletion was impossible
 		function checkForbiddenDeletion(data) {
@@ -171,20 +141,7 @@
 		return false; //return false to prevent navigation in page (# appears at the end of the URL)
 	}
 
-	//for drag and drop test case feature
-	//row : selected row
-	//dropPosition : the new position
-	function testPlanDropHandler(rows, dropPosition) {
-		var itemIds = $(rows).collect(function(elt) {
-			return elt.id.split(':')[1];
-		});
-		$.post('${ updateTestPlanUrl }/move', {
-			newIndex : dropPosition,
-			itemIds : itemIds
-		}, function() {
-			refreshTestPlans();
-		});
-	}
+
 
 	function refreshTestPlans() {
 		var table = $('#test-plans-table').dataTable();
@@ -198,13 +155,7 @@
 	}
 
 	function testPlanTableDrawCallback() {
-		<c:if test="${ editable }">
-		enableTableDragAndDrop('test-plans-table', getTestPlanTableRowIndex,
-				testPlanDropHandler);
-		decorateDeleteButtons($('.delete-test-plan-button', this));
-		</c:if>
 		restoreTableSelection(this, getTestPlansTableRowId);
-		convertExecutionStatus(this);
 	}
 
 	function getTestPlansTableRowId(rowData) {
@@ -220,9 +171,6 @@
 	function testPlanTableRowCallback(row, data, displayIndex) {
 		addIdtoTestPlanRow(row, data);
 		<c:if test="${ editable }">
-		addDeleteButtonToRow(row, getTestPlansTableRowId(data),
-				'delete-test-plan-button');
-		addClickHandlerToSelectHandle(row, $("#test-plans-table"));
 		addLoginListToTestPlan(row, data);
 		</c:if>
 		addHLinkToTestPlanName(row, data);
@@ -266,29 +214,6 @@
 		}
 	}
 
-	function convertExecutionStatus(dataTable) {
-		var factory = new squashtm.StatusFactory({
-			blocked : "${statusBlocked}",
-			failure : "${statusFailure}",
-			success : "${statusSuccess}",
-			running : "${statusRunning}",
-			ready : "${statusReady}"
-		});
-
-		var rows = dataTable.fnGetNodes();
-		if (rows.length == 0)
-			return;
-
-		$(rows).each(function() {
-			var col = $("td:eq(6)", this);
-			var oldContent = col.html();
-
-			var newContent = factory.getHtmlFor(oldContent);
-
-			col.html(newContent);
-
-		});
-	}
 
 	function toggleExpandIcon(testPlanHyperlink) {
 
@@ -326,37 +251,87 @@
 	}
 
 	$(function() {
-		/*
-			could be optimized if we bind that in the datatableDrawCallback.		
-		 */
+		/* could be optimized if we bind that in the datatableDrawCallback.	*/
 		$('#test-plans-table tbody td a.test-case-name-hlink').die('click');
-<%-- binding the handler managing the collapse/expand test case icon--%>
-	$('#test-plans-table tbody td a.test-case-name-hlink').live('click',
-				function() {
-					toggleExpandIcon(this);
-					return false; //return false to prevent navigation in page (# appears at the end of the URL)
-				});
+		<%-- binding the handler managing the collapse/expand test case icon--%>
+		
+		$('#test-plans-table tbody td a.test-case-name-hlink').live('click', function() {
+				toggleExpandIcon(this);
+				return false; //return false to prevent navigation in page (# appears at the end of the URL)
+		});
 
+		var tableSettings = {
+				"oLanguage":{
+					"sLengthMenu": '<f:message key="generics.datatable.lengthMenu" />',
+					"sZeroRecords": '<f:message key="generics.datatable.zeroRecords" />',
+					"sInfo": '<f:message key="generics.datatable.info" />',
+					"sInfoEmpty": '<f:message key="generics.datatable.infoEmpty" />',
+					"sInfoFiltered": '<f:message key="generics.datatable.infoFiltered" />',
+					"oPaginate":{
+						"sFirst":    '<f:message key="generics.datatable.paginate.first" />',
+						"sPrevious": '<f:message key="generics.datatable.paginate.previous" />',
+						"sNext":     '<f:message key="generics.datatable.paginate.next" />',
+						"sLast":     '<f:message key="generics.datatable.paginate.last" />'
+					}
+				},				
+				"sAjaxSource" : "${tableModelUrl}", 
+				"fnRowCallback" : testPlanTableDrawCallback,
+				"fnDrawCallback" : testPlanTableRowCallback,
+				"aoColumnDefs": [
+					{'bSortable': false, 'bVisible': false, 'aTargets': [0], 'mDataProp' : 'entity-id'},
+					{'bSortable': false, 'sClass': 'centered ui-state-default drag-handle select-handle', 'aTargets': [1], 'mDataProp' : 'entity-index'},
+					{'bSortable': false, 'aTargets': [2], 'mDataProp' : 'project-name'},
+					{'bSortable': false, 'aTargets': [3], 'mDataProp' : 'tc-name'},
+					{'bSortable': false, 'aTargets': [4], 'mDataProp' : 'importance'},
+					{'bSortable': false, 'sWidth': '10%', 'aTargets': [5], 'mDataProp' : 'type'},
+					{'bSortable': false, 'sWidth': '10%', 'aTargets': [6], 'mDataProp' : 'suite'},
+					{'bSortable': false, 'sWidth': '10%', 'sClass': 'has-status', 'aTargets': [7], 'mDataProp' : 'status'},
+					{'bSortable': false, 'sWidth': '10%', 'aTargets': [8], 'mDataProp' : 'last-exec-by'},
+					{'bSortable': false, 'sWidth': '10%', 'aTargets': [9], 'mDataProp' : 'last-exec-on'},
+					{'bVisible': false, 'bSortable': false, 'aTargets': [10], 'mDataProp' : 'is-tc-deleted'},
+					{'bSortable': false, 'sWidth': '2em', 'sClass': 'centered delete-button', 'aTargets': [11], 'mDataProp' : 'empty-delete-holder'} 
+				]
+			};		
+		
+			var squashSettings = {
+					
+				enableHover : true,
+				executionStatus : {
+					blocked : "${statusBlocked}",
+					failure : "${statusFailure}",
+					success : "${statusSuccess}",
+					running : "${statusRunning}",
+					ready : "${statusReady}"
+				},
+				confirmDialog : {
+					oklabel : '<f:message key="attachment.button.delete.label" />',
+					cancellabel : '<f:message key="dialog.button.cancel.label" />'
+				},
+				functions : {
+					dropHandler : function(dropData){
+						$.post('${ updateTestPlanUrl }/move',dropData, function(){
+							refreshTestPlans();
+						});
+					}
+				}
+			};
+			
+			<c:if test="${editable}">
+			squashSettings.enableDnD = true;
+
+			squashSettings.deleteButton = {
+				
+				url : "${testPlansUrl}/{entity-id}",
+				popupmessage : '<f:message key="dialog.remove-testcase-association.message" />',
+				tooltip : '<f:message key="test-case.verified_requirement_item.remove.button.label" />',
+				success : function(data) {
+					refreshTestPlans();
+					checkForbiddenDeletion(data);					
+				}
+					
+			};
+			</c:if>
+					
+			$("#execution-execution-steps-table").squashTable(tableSettings, squashSettings);
 	});
 </script>
-
-<comp:decorate-ajax-table url="${ tableModelUrl }"
-	tableId="test-plans-table" paginate="true">
-	<jsp:attribute name="drawCallback">testPlanTableDrawCallback</jsp:attribute>
-	<jsp:attribute name="rowCallback">testPlanTableRowCallback</jsp:attribute>
-	<jsp:attribute name="columnDefs">
-		<dt:column-definition targets="0" visible="false" />
-		<dt:column-definition targets="1" sortable="false"
-			cssClass="centered ui-state-default drag-handle select-handle" />
-		<dt:column-definition targets="2, 3, 4" sortable="false" />
-		<dt:column-definition targets="5, 6" sortable="false"
-			width="10%" />
-		<dt:column-definition targets="7" sortable="false" cssClass="has-status"
-			width="10%" />
-				<dt:column-definition targets="8, 9" sortable="false"
-			width="10%" />
-		<dt:column-definition targets="10" sortable="false" visible="false" />
-		<dt:column-definition targets="11" sortable="false" width="2em"
-			lastDef="true" cssClass="centered delete-button" />
-	</jsp:attribute>
-</comp:decorate-ajax-table>

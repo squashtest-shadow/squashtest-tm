@@ -360,8 +360,10 @@ public class IterationModificationController {
 
 		return new DataTableModelHelper<IterationTestPlanItem>() {
 			@Override
-			public Object[] buildItemData(IterationTestPlanItem item) {
+			public Map<String, Object> buildItemData(IterationTestPlanItem item) {
 
+				Map<String, Object> res = new HashMap<String, Object>();
+				
 				String projectName;
 				String testCaseName;
 				String importance;
@@ -387,6 +389,7 @@ public class IterationModificationController {
 					testSuiteName = item.getTestSuite().getName();
 				}
 
+				/*
 				return new Object[] { 
 						item.getId(), 
 						getCurrentIndex(), 
@@ -401,7 +404,21 @@ public class IterationModificationController {
 						item.isTestCaseDeleted(), 
 						" "
 
-				};
+				};*/
+				res.put(DataTableModelHelper.DEFAULT_ENTITY_ID_KEY, item.getId());
+				res.put(DataTableModelHelper.DEFAULT_ENTITY_INDEX_KEY, getCurrentIndex());
+				res.put("project-name", projectName);
+				res.put("tc-name", testCaseName);
+				res.put("importance", importance);
+				res.put("type", testCaseExecutionMode);
+				res.put("suite", testSuiteName);
+				res.put("status", formatStatus(item.getExecutionStatus(), locale));
+				res.put("last-exec-by", formatString(item.getLastExecutedBy(), locale));
+				res.put("last-exec-on", formatDate(item.getLastExecutedOn(), locale));
+				res.put("is-tc-deleted", item.isTestCaseDeleted());
+				res.put("empty-delete-holder", " ") ;
+				
+				return res;
 			}
 		}.buildDataModel(holder, filter.getFirstItemIndex() + 1, params.getsEcho());
 

@@ -390,21 +390,6 @@
 	</jsp:attribute>
 </pop:popup>
 
-<%--- the openedBy attribute here is irrelevant and is just a dummy --%>
-<pop:popup id="delete-single-test-plan-dialog" openedBy="test-plans-table .delete-test-plan-button" titleKey="dialog.remove-testcase-association.title">
-	<jsp:attribute name="buttons">
-		<f:message var="label" key="attachment.button.delete.label" />
-				'${ label }' : function(){
-						$("#delete-single-test-plan-dialog").data("answer","yes");
-						$("#delete-single-test-plan-dialog").dialog("close");
-				},
-				
-		<pop:cancel-button />
-	</jsp:attribute>
-	<jsp:attribute name="body">
-		<f:message key="dialog.remove-testcase-association.message" />
-	</jsp:attribute>
-</pop:popup>
 </c:if>
 <%-- ------------------------- /Deletion confirmation popup for Test plan section --------------------------------- --%>
 

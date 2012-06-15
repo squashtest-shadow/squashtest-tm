@@ -28,7 +28,7 @@
 	dataTables
 	KeyEventListener
 	statusFactory
- 
+	jquery.squashtm.oneshotdialog.js
  
  */
  
@@ -108,6 +108,12 @@
 			if coalesce to true, will enable lines color change when hovered. 
 			If coalesce to false, it will not.
 
+	- confirmation popups :
+		if 'confirmPopup' is set, will configure any confirmation dialog used in that table.
+		it's an object
+		
+		* oklabel : label for okay buttons
+		* cancellabel : label for cancel buttons
 			
 	- attachments :
 		If the table finds tds having a given cssClass (see cssMatcher) if will turn them into link to the attachment manager.
@@ -120,8 +126,8 @@
 
 		
 	- rich editables configuration :
-		if a property 'richeditables' is set, will attempt to turn some cells to rich editables. If undefined, nothing will happen.
-		the property 'richeditables' is an compound object and must define at least 1 member for 'target'
+		if a property 'richEditables' is set, will attempt to turn some cells to rich editables. If undefined, nothing will happen.
+		the property 'richEditables' is an compound object and must define at least 1 member for 'target'
 		
 		* conf : a regular object configuring the plugin $.ui.richEditable (see jquery.squashtm.jeditable.ext.js).
 		* targets : a map of key-values. A key represents a css class and the value represents an url supporting placeholders.
@@ -129,21 +135,29 @@
 					the supplied url.
 			  
 	- execution status : 
-		If a property 'executionstatus' is set, will attempt to decorate some cells with execution statuses. If undefined,
+		If a property 'executionStatus' is set, will attempt to decorate some cells with execution statuses. If undefined,
 		nothing will happen. The matched cells are identified by css class 'has-status'. 
 		
-		'executionstatus' is an object defining the localized status text :
+		'executionStatus' is an object defining the localized status text :
 			* blocked : internationalized version of status 'blocked'
 			* failure : internationalized version of status 'failure'
 			* success : internationalized version of status 'success'
 			* running : internationalized version of status 'running'
 			* ready : internationalized version of status 'ready'
 		
+	- delete button :
+		if the property 'deleteButtons' is set then will look for cells having the css class 'delete-button'.
+		Configuration as follow :
+		* url : the url where to post the 'delete' instruction. Supports placeholders.
+		* popupmessage : the message that will be displayed
+		* tooltip : the tooltip displayed by the button
+		* success : a callback on the ajax call when successful
+		* fail : a callback on the ajax call when failed.
  */
 (function($){
 
 	squashtm = squashtm || {};
-	squashtm.keyEventListener == squashtm.keyEventListener || new KeyEventListener();
+	squashtm.keyEventListener = squashtm.keyEventListener || new KeyEventListener();
 	
 	/*********************
 	
@@ -159,21 +173,7 @@
 		
 	
 	**********************/
- 
-	/**
-	 * Adds a delete button in the last cell of a datatables row
-	 * 
-	 * @param row
-	 *            row where to add a delete button
-	 * @param buttonTemplateId
-	 *            html id of the <a> used as a template
-	 */
 
-	function _addDeleteButtonToRow(row, buttonTemplateId) {
-		var entityId = this.getODataId(row);
-		$('td:last', row).append($('#' + buttonTemplateId).clone()).find('a').attr(
-				'id', buttonTemplateId + ':' + entityId);
-	}
 
 	/*
 			what : a function that must handle the row drop.
@@ -274,9 +274,9 @@
 */ 
 	 
 
-	function _addClickHandlerToSelectHandle(nRow) {
+	function _bindClickHandlerToSelectHandle() {
 		var self = this;
-		$(nRow).find('.select-handle').click(function() {
+		this.delegate('td.select-handle', 'click', function() {
 			var row = this.parentNode;
 
 			var ctrl = squashtm.keyEventListener.ctrl;
@@ -488,7 +488,7 @@
 	*/
 	function _configureRichEditables(){
 		
-		var editableConf = this.squashSettings.richeditables;
+		var editableConf = this.squashSettings.richEditables;
 		var self= this;
 		
 		if (! editableConf) return;
@@ -514,7 +514,7 @@
 	
 	function _configureExecutionStatus(){
 	
-		var statusConf = this.squashSettings.executionstatus;
+		var statusConf = this.squashSettings.executionStatus;
 		var self= this;
 		
 		if (! statusConf) return;
@@ -528,8 +528,57 @@
 			var newhtml = factory.getHtmlFor(data);
 			cell.innerHTML = newhtml;
 		});		
+	};
+	 
+	 
+	function _configureDeleteButtons(){
+		var deleteConf = this.squashSettings.deleteButtons;
+		if (!deleteConf) return;
+		var self = this;
 		
-	}
+		var template = '<a href="javascript:void(0)">'+deleteConf.tooltip+'</a>';
+		
+		var cells = $('td.delete-button', this);
+		cells.html(template);
+		cells.find('a').button({
+			text:false, 		
+			icons : {
+				primary : "ui-icon-minus"
+			}
+		}
+		
+	};
+	 
+	function _bindDeleteButtons(){
+		var conf = this.squashSettings.deleteButtons;
+		var popconf = this.squashSettings.confirmPopup;
+		
+		if (! conf) return;
+		var self = this;
+
+		this.delegate('td.delete-button > a', 'click', function(){
+			var row = $(this).parent('tr');
+			var id = self.getODataId(row);
+			
+			oneShotConfirm(conf.tooltip || "",
+						   conf.popupmessage || "",
+						   popconf.oklabel, 
+						   popconf.cancellabel
+			).done(function(){
+				var finalUrl = _resolvePlaceholders.call(self, conf.url, self.fnGetData(row)); 
+				
+				var request = $.ajax({
+					type : 'delete',
+					url : finalUrl,
+					dataType : 'text'
+				});
+				
+				if (conf.success) request.done(conf.success);
+				if (conf.fail) request.fail(conf.fail);
+						   
+			});
+		});
+	};
 	 
 	 /******************************************************************
 	 
@@ -556,6 +605,10 @@
 			aoDataNbAttach : "nb-attachments",
 			aoDataListId : "attach-list-id"
 		},
+		confirmPopup :{
+			oklabel : "ok",
+			cancellabel : "cancel"
+		}
 	
 	};
 	
@@ -570,7 +623,6 @@
 		
 		this.squashSettings = squashEffective;
 		
-		this.addDeleteButtonToRow = _addDeleteButtonToRow;
 		this.dropHandler = _dropHandler;
 		this.getODataId = _getODataId;
 		this.addClickHandlerToSelectHandle = _addClickHandlerToSelectHandle;
@@ -597,6 +649,7 @@
 			_attachButtonsCallback.call(this);
 			_configureRichEditables.call(this);
 			_configureExecutionStatus.call(this);
+			_configureDeleteButtons.call(this);
 		}
 		
 		datatableEffective["fnDrawCallback"] = customDrawCallback;
@@ -609,12 +662,18 @@
 	 
 		/* ****** last : event binding ***** */
 		
-		if (squashSettings.enableDnD){
+		_bindClickHandlerToSelectHandle.call(this);
+		
+		if (squashEffective.enableDnD){
 			_enableTableDragAndDrop.call(this);
 		};
 		
-		if (squashSettings.enableHover){
+		if (squashEffective.enableHover){
 			_bindHover.call(this);
+		};
+		
+		if (squashEffective.deleteButtons){
+			_bindDeleteButtons.call(this);
 		};
 
 		this.addClass("is-contextual");
