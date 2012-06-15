@@ -279,7 +279,9 @@
 				}
 			},				
 			"sAjaxSource": "${executionStepsUrl}", 
-			"fnDrawCallback" : function(){ convertStatus(this); },
+			"fnDrawCallback" : function(){ 
+				convertStatus(this); 
+			},
 			"aoColumnDefs": [
 			{'bVisible': false, 'bSortable': false, 'sWidth': '2em', 'aTargets': [0], 'mDataProp' : 'entity-id'},
 			{'bVisible': true, 'bSortable': false, 'sWidth': '2em', 'sClass': 'select-handle centered', 'aTargets': [1], 'mDataProp' : 'entity-index'},
@@ -299,21 +301,23 @@
 			enableDnD : true,
 			enableHover : true,
 			attachments : { url : "${stepAttachmentManagerUrl}/{attach-list-id}/attachments/manager?workspace=campaign"}
-			<c:if test="${ editable }">
-			,richeditables : {
-				conf : {
-					ckeditor : { customConfig : '${ ckeConfigUrl }', language: '<f:message key="rich-edit.language.value" />' },
-					placeholder: '<f:message key="rich-edit.placeholder" />',
-					submit: '<f:message key="rich-edit.button.ok.label" />',
-					cancel: '<f:message key="rich-edit.button.cancel.label" />',
-					indicator : '<img src="${ pageContext.servletContext.contextPath }/scripts/jquery/indicator.gif" alt="processing..." />' 				
-				},
-				targets : {
-					"rich-editable-comment" : "${ executionStepsUrl }/{entity-id}/comment"
-				}
-			}
-			</c:if>
 		};
+		
+		
+		<c:if test="${ editable }">
+		squashSettings.richeditables : {
+			conf : {
+				ckeditor : { customConfig : '${ ckeConfigUrl }', language: '<f:message key="rich-edit.language.value" />' },
+				placeholder: '<f:message key="rich-edit.placeholder" />',
+				submit: '<f:message key="rich-edit.button.ok.label" />',
+				cancel: '<f:message key="rich-edit.button.cancel.label" />',
+				indicator : '<img src="${ pageContext.servletContext.contextPath }/scripts/jquery/indicator.gif" alt="processing..." />' 				
+			},
+			targets : {
+				"rich-editable-comment" : "${ executionStepsUrl }/{entity-id}/comment"
+			}
+		}
+		</c:if>
 		
 		
 		$("#execution-execution-steps-table").squashTable(tableSettings, squashSettings);
