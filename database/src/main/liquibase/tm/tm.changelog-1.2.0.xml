@@ -691,8 +691,10 @@
 		<comment>table Requirement nows holds a Category attribute</comment>
 		
 		<addColumn tableName="REQUIREMENT_VERSION">
-			<column name="CATEGORY" type="java.sql.Types.VARCHAR(50)" defaultValue="UNDEFINED">
-				<constraints nullable="false" />
+			<column name="CATEGORY" type="java.sql.Types.VARCHAR(50)" 
+			remarks="Requirement category. Althought this field is a variable character, the data will be the text representation of an enumeration"
+			defaultValue="UNDEFINED" >
+			<constraints nullable="false" />
 			</column>
 		</addColumn>
 			
