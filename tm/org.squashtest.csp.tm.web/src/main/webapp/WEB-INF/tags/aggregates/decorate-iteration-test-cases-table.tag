@@ -357,6 +357,6 @@
 			width="10%" />
 		<dt:column-definition targets="10" sortable="false" visible="false" />
 		<dt:column-definition targets="11" sortable="false" width="2em"
-			lastDef="true" cssClass="centered" />
+			lastDef="true" cssClass="centered delete-button" />
 	</jsp:attribute>
 </comp:decorate-ajax-table>

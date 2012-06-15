@@ -284,7 +284,7 @@
 			enableDnD : true,
 			enableHover : true,
 			attachments : { url : "${stepAttachmentManagerUrl}/{attach-list-id}/attachments/manager?workspace=campaign"},
-			executionstatus : {
+			executionStatus : {
 				blocked : "${statusBlocked}",
 				failure : "${statusFailure}",
 				success : "${statusSuccess}",
@@ -295,7 +295,7 @@
 		
 		
 		<c:if test="${ editable }">
-		squashSettings.richeditables = {
+		squashSettings.richEditables = {
 			conf : {
 				ckeditor : { customConfig : '${ ckeConfigUrl }', language: '<f:message key="rich-edit.language.value" />' },
 				placeholder: '<f:message key="rich-edit.placeholder" />',
