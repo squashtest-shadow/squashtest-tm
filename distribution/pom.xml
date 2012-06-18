@@ -625,7 +625,7 @@
 			<version>${project.version}</version>
 		</dependency>
 		<dependency>
-			<groupId>org.squashtest</groupId>
+			<groupId>org.squashtest.tm</groupId>
 			<artifactId>core.api</artifactId>
 			<version>${project.version}</version>
 		</dependency>

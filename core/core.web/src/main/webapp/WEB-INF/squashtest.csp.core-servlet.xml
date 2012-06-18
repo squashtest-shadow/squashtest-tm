@@ -39,24 +39,45 @@
 	<!-- Configures the @Controller programming model -->
 	<mvc:annotation-driven validator="validator" />
 
-	<bean id="validator"
-		class="org.springframework.validation.beanvalidation.CustomValidatorBean">
+	<bean id="validator" class="org.springframework.validation.beanvalidation.CustomValidatorBean">
 		<property name="validatorFactory" ref="javax.validation.ValidatorFactory" />
 	</bean>
 
 	<!-- Injects OSGi services in Controllers -->
-	<bean
-		class="org.springframework.osgi.extensions.annotation.ServiceReferenceInjectionBeanPostProcessor" />
+	<bean class="org.springframework.osgi.extensions.annotation.ServiceReferenceInjectionBeanPostProcessor" />
 
 	<!-- Resolves view names to protected .jsp resources within the /WEB-INF/jsp 
 		directory -->
-	<bean name="jspViewResolver"
-		class="org.springframework.web.servlet.view.InternalResourceViewResolver">
-		<property name="viewClass"
-			value="org.springframework.web.servlet.view.JstlView" />
+	<bean name="jsp.viewResolver" class="org.springframework.web.servlet.view.InternalResourceViewResolver">
+		<property name="viewClass" value="org.springframework.web.servlet.view.JstlView" />
 		<property name="prefix" value="/WEB-INF/jsp/" />
 		<property name="suffix" value=".jsp" />
+		<property name="order" value="2" />
 	</bean>
+
+
+	<!-- Thymeleaf Spring dialect -->
+	<bean id="thymeleaf.templateResolver" class="org.thymeleaf.templateresolver.ServletContextTemplateResolver">
+		<property name="prefix" value="/WEB-INF/templates/" />
+<!-- 		<property name="suffix" value=".html" />
+ -->		<property name="templateMode" value="HTML5" />
+	</bean>
+
+	<bean id="thymeleaf.templateEngine" class="org.thymeleaf.spring3.SpringTemplateEngine">
+		<property name="templateResolver" ref="thymeleaf.templateResolver" />
+	</bean>
+
+	<!-- Thymeleaf view resolver -->
+	<bean id="thymeleaf.viewResolver" class="org.thymeleaf.spring3.view.ThymeleafViewResolver">
+		<property name="templateEngine" ref="thymeleaf.templateEngine" />
+		<property name="order" value="1" />
+		<property name="viewNames" value="*.html" />
+	</bean>
+
+	<!-- static resources (optimized headers) -->
+	<mvc:resources location="/images/" mapping="/images/**" />
+	<mvc:resources location="/scripts/" mapping="/scripts/**" />
+	<mvc:resources location="/styles/" mapping="/styles/**" />
 
 	<!-- Message source for this context, loaded from localized "messages_xx" 
 		files. -->
@@ -90,7 +111,7 @@
 			<property name="includeClientInfo" value="true" />
 		</bean>
 		
-		<bean class="org.squashtest.csp.core.web.servlet.handler.SecurityExpressionEvaluatorExposerInterceptor" />
+		<bean class="org.squashtest.csp.core.web.servlet.handler.SecurityExpressionResolverExposerInterceptor" />
 	</mvc:interceptors>
 
 	<import resource="classpath*:WEB-INF/squashtest.csp.tm-servlet.xml"/>

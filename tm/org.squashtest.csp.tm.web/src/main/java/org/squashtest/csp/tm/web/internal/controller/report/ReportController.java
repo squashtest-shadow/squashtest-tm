@@ -64,7 +64,7 @@ public class ReportController {
 	public ModelAndView showReportWorkspace() {
 		List<ReportCategory> categoryList = reportService.findAllReportCategories();
 
-		ModelAndView mav = new ModelAndView("page/report-workspace");
+		ModelAndView mav = new ModelAndView("report-workspace.html");
 		mav.addObject("categories", categoryList);
 
 		return mav;

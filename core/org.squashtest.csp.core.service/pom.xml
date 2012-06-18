@@ -85,6 +85,10 @@
 			<groupId>org.aopalliance</groupId>
 			<artifactId>com.springsource.org.aopalliance</artifactId>
 		</dependency>
+		<dependency>
+			<groupId>org.springframework</groupId>
+			<artifactId>org.springframework.jdbc</artifactId>
+		</dependency>
 		<!-- ====== /SPRING FRAMEWORK ====== -->
 
 		<!-- ====== SPRING INTEGRATION TEST SUPPORT ====== -->
