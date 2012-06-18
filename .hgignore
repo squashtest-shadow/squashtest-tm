@@ -10,6 +10,11 @@ pom\.xml\.versionsBackup$
 acceptance-tests/META-INF$
 osgi-integration-test/META-INF$
 osgi-integration-tests/META-INF$
+/core\.web/images$
+/core\.web/META-INF$
+/core\.web/WEB-INF$
+/core\.web/scripts$
+/core\.web/styles$
 syntax: regexp
 /\.settings/
 syntax: regexp

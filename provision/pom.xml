@@ -304,14 +304,14 @@
 		
 
 		<dependency>
-			<groupId>${project.groupId}</groupId>
-			<artifactId>org.squashtest.csp.core.web</artifactId>
+			<groupId>org.squashtest.tm</groupId>
+			<artifactId>core.web</artifactId>
 			<version>${project.version}</version>
 			<type>war</type>
 		</dependency>
 		<dependency>
-			<groupId>${project.groupId}</groupId>
-			<artifactId>org.squashtest.csp.core.web</artifactId>
+			<groupId>org.squashtest.tm</groupId>
+			<artifactId>core.web</artifactId>
 			<version>${project.version}</version>
 			<type>pom</type>
 		</dependency>
@@ -321,7 +321,7 @@
 			<version>${project.version}</version>
 		</dependency>
 		<dependency>
-			<groupId>org.squashtest</groupId>
+			<groupId>org.squashtest.tm</groupId>
 			<artifactId>core.api</artifactId>
 			<version>${project.version}</version>
 		</dependency>

@@ -8,21 +8,21 @@
 		<relativePath>../parent-pom</relativePath>
 	</parent>
 
-	<groupId>org.squashtest.csp</groupId>
+	<groupId>org.squashtest.tm</groupId>
 	<artifactId>squashtest-csp-core</artifactId>
 	<version>1.2.0.IT36-SNAPSHOT</version>
 	<packaging>pom</packaging>
 	<name>squashtest-csp-core</name>
-	<description>Squashtest CSP - Core module</description>
+	<description>Core components of Squash TM (webapp core, api...)</description>
 
 	<modules>
 		<module>org.squashtest.csp.core.log4j</module>
+		<module>org.squashtest.csp.core.jetty.start.osgi</module>
 		<module>core.api</module>
-		<module>org.squashtest.csp.core.service</module>
-		<module>org.squashtest.csp.core.web</module>
 		<module>core.bugtracker.api</module>
 		<module>core.bugtracker.mantis</module>
-		<module>org.squashtest.csp.core.jetty.start.osgi</module>
+		<module>org.squashtest.csp.core.service</module>
+		<module>core.web</module>
 		<module>launcher</module>
 	</modules>
 </project>

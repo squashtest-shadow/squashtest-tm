@@ -48,12 +48,6 @@
 	value="/report-workspace/report/export-options?report=${report.id}">
 </s:url>
 
-<%-- 
-
-
-
- --%>
-
 <script type="text/javascript">
 
 	function serializeObject(obj){
@@ -271,15 +265,11 @@
 	<div style="clear: both;"></div>
 </div>
 
-
-
 <div class="fragment-body">
 
 	<comp:toggle-panel id="report-criteria-panel" isContextual="true"
 		titleKey="report.criteria.panel.title" open="true">
 		<jsp:attribute name="body">
-		
-		
 		<%-- 
 			TODO : make something smarter here, we need to load the correct tagfile corresponding to the current
 			report.		
@@ -335,7 +325,6 @@
 
 </div>
 
-
 <comp:decorate-buttons />
 
 <%-- post initialization javascript stuffs --%>
@@ -358,6 +347,4 @@ var selectedTab;
 		
 
 	});
-
-
 </script>

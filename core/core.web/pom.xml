@@ -4,19 +4,17 @@
 	<parent>
 		<artifactId>squashtest-csp-core</artifactId>
 		<groupId>org.squashtest.csp</groupId>
-		<version>1.2.0.IT36-SNAPSHOT</version>
+		<version>1.2.0.IT34-SNAPSHOT</version>
 	</parent>
 
-	<groupId>org.squashtest.csp</groupId>
-	<artifactId>org.squashtest.csp.core.web</artifactId>
-	<version>1.2.0.IT36-SNAPSHOT</version>
-	<name>Squashtest CSP - Core module - Web frontend component</name>
+	<groupId>org.squashtest.tm</groupId>
+	<artifactId>core.web</artifactId>
+	<version>1.2.0.IT34-SNAPSHOT</version>
+	<name>${project.groupId}.${project.artifactId}</name>
+	<description>Core of the Squash TM webapp - Provides infrastructure and cross-cutting components</description>
 	<packaging>war</packaging>
 
 	<properties>
-		<bundle.name>${project.artifactId}</bundle.name>
-		<bundle.symbolicName>${project.artifactId}</bundle.symbolicName>
-		<bundle.namespace>org.squashtest.csp.core.web</bundle.namespace>
 		<bundle.contextPath>squash</bundle.contextPath>
 
 		<logger.urlRewriteFilter>DEBUG</logger.urlRewriteFilter>
@@ -26,32 +24,32 @@
 	<dependencies>
 		<!-- ====== SQUASHTEST ====== -->
 		<dependency>
-			<groupId>org.squashtest.tm</groupId>
-			<artifactId>core.bugtracker.api</artifactId>
-			<version>${project.version}</version>
+			<groupId>${parent.groupId}</groupId>
+			<artifactId>org.squashtest.csp.core.bugtracker</artifactId>
+			<version>${parent.version}</version>
 		</dependency>
 		<dependency>
-			<groupId>${project.groupId}</groupId>
+			<groupId>${parent.groupId}</groupId>
 			<artifactId>org.squashtest.csp.core.service</artifactId>
-			<version>${project.version}</version>
+			<version>${parent.version}</version>
 		</dependency>
 		<dependency>
-			<groupId>${project.groupId}</groupId>
+			<groupId>${parent.groupId}</groupId>
 			<artifactId>springdm-bundle-dependencies</artifactId>
-			<version>${project.version}</version>
+			<version>${parent.version}</version>
 			<type>pom</type>
 		</dependency>
 		<dependency>
-			<groupId>${project.groupId}</groupId>
+			<groupId>${parent.groupId}</groupId>
 			<artifactId>spock-test-dependencies</artifactId>
-			<version>${project.version}</version>
+			<version>${parent.version}</version>
 			<type>pom</type>
 			<scope>test</scope>
 		</dependency>
 		<dependency>
-			<groupId>${project.groupId}</groupId>
+			<groupId>${parent.groupId}</groupId>
 			<artifactId>org.squashtest.csp.tools.unittest</artifactId>
-			<version>${project.version}</version>
+			<version>${parent.version}</version>
 			<scope>test</scope>
 		</dependency>
 		<!-- ====== /SQUASHTEST ====== -->
@@ -268,13 +266,7 @@
 				</executions>
 				<configuration>
 					<instructions>
-						<Bundle-SymbolicName>${bundle.symbolicName}</Bundle-SymbolicName>
-						<Bundle-Version>${project.version}</Bundle-Version>
-						<Export-Package>!${bundle.namespace}.internal.*,${bundle.namespace}.*;version="${project.version}"
-						</Export-Package>
-						<Private-Package>${bundle.namespace}.internal.*</Private-Package>
-						<Include-Resource>src/main/webapp,src/main/resources
-						</Include-Resource>
+						<Include-Resource>src/main/webapp,src/main/resources</Include-Resource>
 						<Bundle-ClassPath>.,WEB-INF/classes,WEB-INF/reports</Bundle-ClassPath>
 						<Web-ContextPath>${bundle.contextPath}</Web-ContextPath>
 						<Import-Package>
@@ -345,7 +337,6 @@
 							org.squashtest.csp.core.bugtracker.core,
 							org.squashtest.csp.core.bugtracker.service,
 							org.squashtest.csp.core.bugtracker.web,
-							org.squashtest.csp.core.security.acls,
 							org.h2;resolution:=optional,
 							com.mysql.jdbc;resolution:=optional
 						</Import-Package>
