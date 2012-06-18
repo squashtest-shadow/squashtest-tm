@@ -305,7 +305,7 @@
 				"rich-editable-comment" : "${ executionStepsUrl }/{entity-id}/comment"
 			}
 		};
-		squash.attachments = { 
+		squashSettings.attachments = { 
 			url : "${stepAttachmentManagerUrl}/{attach-list-id}/attachments/manager?workspace=campaign"
 		}
 		

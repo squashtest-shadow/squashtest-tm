@@ -73,45 +73,13 @@
 	var testPlansUrl = "${testPlansUrl}";
 	var nonBelongingTestPlansUrl = "${nonBelongingTestPlansUrl}";
 	
-	$(function() {
 
-
-		//This function checks the response and inform the user if a deletion was impossible
-		function checkForbiddenDeletion(data) {
-			if (data == "true") {
-				displayInformationNotification('${ unauthorizedDeletion }');
-			}
+	//This function checks the response and inform the user if a deletion was impossible
+	function checkForbiddenDeletion(data) {
+		if (data == "true") {
+			displayInformationNotification('${ unauthorizedDeletion }');
 		}
-<%-- selected test-plan removal --%>
-	//multiple deletion
-		$("#${ testCaseMultipleRemovalPopupId }").bind(
-				'dialogclose',
-				function() {
-					var answer = $("#${ testCaseMultipleRemovalPopupId }")
-							.data("answer");
-					if (answer != "yes") {
-						return;
-					}
-
-					var table = $('#test-plans-table').dataTable();
-					var ids = getIdsOfSelectedTableRows(table,
-							getTestPlansTableRowId);
-
-					if (ids.length > 0) {
-						$.post( nonBelongingTestPlansUrl , {
-							testPlanIds : ids
-						}, function(data) {
-							refreshTestPlans();
-							checkForbiddenDeletion(data);
-						});
-					}
-
-				});
-<%-- bind the new execution creation button to their event --%>
-	$('a[id|="new-exec"]').die('click');
-		$('a[id|="new-exec"]').live('click', newExecutionClickHandler);
-
-	});
+	}
 
 	function changeUserLogin(cbox) {
 		var jqBox = $(cbox);
@@ -144,32 +112,27 @@
 
 
 	function refreshTestPlans() {
-		var table = $('#test-plans-table').dataTable();
-		saveTableSelection(table, getTestPlansTableRowId);
-		table.fnDraw(false);
+		$('#test-plans-table').squashTable().refresh();
 	}
 
 	function refreshTestPlansWithoutSelection() {
-		var table = $('#test-plans-table').dataTable();
-		table.fnDraw(false);
+		var table = $('#test-plans-table').squashTable();
+		table.refresh();
+		table.deselectRows();
 	}
 
-	function testPlanTableDrawCallback() {
-		restoreTableSelection(this, getTestPlansTableRowId);
-	}
 
 	function getTestPlansTableRowId(rowData) {
-		return rowData[0];
+		return rowData['entity-id'];
 	}
 	function getTestPlanTableRowIndex(rowData) {
-		return rowData[1];
+		return rowData['entity-index'];
 	}
 	function isTestCaseDeleted(data) {
-		return (data[10] == "true");
+		return (data['is-tc-deleted'] == "true");
 	}
 
 	function testPlanTableRowCallback(row, data, displayIndex) {
-		addIdtoTestPlanRow(row, data);
 		<c:if test="${ editable }">
 		addLoginListToTestPlan(row, data);
 		</c:if>
@@ -179,14 +142,6 @@
 		return row;
 	}
 
-	function addIdtoTestPlanRow(nRow, aData) {
-		$(nRow).attr("id", "test-plan:" + getTestPlansTableRowId(aData));
-	}
-
-	function parseTestPlanId(element) {
-		var elementId = element.id;
-		return elementId.substr(elementId.indexOf(":") + 1);
-	}
 
 	function addHLinkToTestPlanName(row, data) {
 		var url = 'javascript:void(0)';
@@ -225,32 +180,64 @@
 		if (!$(testPlanHyperlink).hasClass("opened")) {
 			/* the row is closed - open it */
 			var nTr = table.fnOpen(ltr, "      ", "");
-			var url1 = "${testPlanExecutionsUrl}" + donnees[0];
-
-			$(nTr).load(url1);
+			var url1 = "${testPlanExecutionsUrl}" + donnees['entity-id'];
+			var jqnTr = $(nTr);
+			
+			jqnTr.load(url1);
 			if ($(this).parent().parent().hasClass("odd")) {
-				$(nTr).addClass("odd");
+				jqnTr.addClass("odd");
 			} else {
-				$(nTr).addClass("even");
+				jqnTr.addClass("even");
 			}
-			$(nTr).attr("style", "vertical-align:top;");
+			jqnTr.attr("style", "vertical-align:top;");
 
-			image
-					.attr("src",
+			image.attr("src",
 							"${pageContext.servletContext.contextPath}/images/arrow_down.gif");
 
 		} else {
 			/* This row is already open - close it */
 			table.fnClose(ltr);
-			image
-					.attr("src",
+			image.attr("src",
 							"${pageContext.servletContext.contextPath}/images/arrow_right.gif");
-		}
-		;
+		};
 		$(testPlanHyperlink).toggleClass("opened");
 	}
 
 	$(function() {
+		
+		/* ************************** various event handlers ******************* */
+
+		<%-- selected test-plan removal --%>
+		//multiple deletion
+		$("#${ testCaseMultipleRemovalPopupId }").bind(
+				'dialogclose',
+				function() {
+					var answer = $("#${ testCaseMultipleRemovalPopupId }")
+							.data("answer");
+					if (answer != "yes") {
+						return;
+					}
+
+					var table = $('#test-plans-table').dataTable();
+					var ids = getIdsOfSelectedTableRows(table,
+							getTestPlansTableRowId);
+
+					if (ids.length > 0) {
+						$.post( nonBelongingTestPlansUrl , {
+							testPlanIds : ids
+						}, function(data) {
+							refreshTestPlans();
+							checkForbiddenDeletion(data);
+						});
+					}
+
+				});
+	
+		<%-- bind the new execution creation button to their event --%>
+		$('a[id|="new-exec"]').die('click');
+		$('a[id|="new-exec"]').live('click', newExecutionClickHandler);
+		
+
 		/* could be optimized if we bind that in the datatableDrawCallback.	*/
 		$('#test-plans-table tbody td a.test-case-name-hlink').die('click');
 		<%-- binding the handler managing the collapse/expand test case icon--%>
@@ -260,6 +247,10 @@
 				return false; //return false to prevent navigation in page (# appears at the end of the URL)
 		});
 
+		
+		
+		/* ************************** datatable settings ********************* */
+		
 		var tableSettings = {
 				"oLanguage":{
 					"sLengthMenu": '<f:message key="generics.datatable.lengthMenu" />',
@@ -275,8 +266,7 @@
 					}
 				},				
 				"sAjaxSource" : "${tableModelUrl}", 
-				"fnRowCallback" : testPlanTableDrawCallback,
-				"fnDrawCallback" : testPlanTableRowCallback,
+				"fnRowCallback" : testPlanTableRowCallback,
 				"aoColumnDefs": [
 					{'bSortable': false, 'bVisible': false, 'aTargets': [0], 'mDataProp' : 'entity-id'},
 					{'bSortable': false, 'sClass': 'centered ui-state-default drag-handle select-handle', 'aTargets': [1], 'mDataProp' : 'entity-index'},
@@ -310,7 +300,7 @@
 				functions : {
 					dropHandler : function(dropData){
 						$.post('${ updateTestPlanUrl }/move',dropData, function(){
-							refreshTestPlans();
+							$("#test-plans-table").squashTable().refresh();
 						});
 					}
 				}
@@ -319,7 +309,7 @@
 			<c:if test="${editable}">
 			squashSettings.enableDnD = true;
 
-			squashSettings.deleteButton = {
+			squashSettings.deleteButtons = {
 				
 				url : "${testPlansUrl}/{entity-id}",
 				popupmessage : '<f:message key="dialog.remove-testcase-association.message" />',
@@ -332,6 +322,6 @@
 			};
 			</c:if>
 					
-			$("#execution-execution-steps-table").squashTable(tableSettings, squashSettings);
+			$("#test-plans-table").squashTable(tableSettings, squashSettings);
 	});
 </script>

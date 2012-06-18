@@ -211,6 +211,7 @@
 	 * @returns
 	 */
 	function _enableTableDragAndDrop() {
+		if (! this.squashSettings.enableDnD) return;
 		self = this;
 		this.tableDnD({
 			dragHandle : "drag-handle",
@@ -218,7 +219,7 @@
 				
 				rows.find('.drag-handle').addClass('ui-state-active');
 				
-				var offset = self.fnGetData(0)['entity-index'];
+				var offset = self.fnGetData(0)['entity-index'] -1;
 				
 				var index = rows.get(0).rowIndex - 1;
 				self.data("previousRank", index);
@@ -364,7 +365,7 @@
 		return [ rangeMin - 1, rangeMax - 1 ];
 	}
 
-	/* private */function memorizeLastSelectedRow(row) {
+	/* private */function _memorizeLastSelectedRow(row) {
 		if ($(row).hasClass('ui-state-row-selected')) {
 			this.data("lastSelectedRow", row);
 		}
@@ -391,14 +392,28 @@
 	
 
 	/* private */function _selectRows(ids) {
-		var rows = dataTable.fnGetNodes();
+		var rows = this.fnGetNodes();
+		
+		var self=this;
+		$(rows).filter(function(){ 
+			return self.getODataId(this);
+		}).addClass('ui-state-row-selected');
 
-		$(rows).each(function(index, row) {
-			var rowId = this.getODataId(row);
-			if (ids.indexOf(rowId) >= 0) {
-				$(row).addClass('ui-state-row-selected');
-			}
-		});
+	}
+	
+	//no arguments mean all rows
+	/* private */function _deselectRows(ids){
+		var rows = this.fnGetNodes();
+		
+		var self=this;
+		if (arguments.length==1){
+			$(rows).filter(function(){
+				return self.getODataId(this);
+			}).removeClass('ui-state-row-selected');
+		}
+		else{
+			$(rows).removeClass('ui-state-row-selected');
+		}
 	}
 	
 
@@ -545,7 +560,7 @@
 			icons : {
 				primary : "ui-icon-minus"
 			}
-		}
+		});
 		
 	};
 	 
@@ -557,7 +572,9 @@
 		var self = this;
 
 		this.delegate('td.delete-button > a', 'click', function(){
-			var row = $(this).parent('tr');
+			var row = this.parentNode.parentNode;	//hopefully, that's the 'tr' one
+			var jqRow = $(row);
+			jqRow.addClass('ui-state-row-selected');
 			var id = self.getODataId(row);
 			
 			oneShotConfirm(conf.tooltip || "",
@@ -576,6 +593,8 @@
 				if (conf.success) request.done(conf.success);
 				if (conf.fail) request.fail(conf.fail);
 						   
+			}).fail(function(){
+				jqRow.removeClass('ui-state-row-selected');
 			});
 		});
 	};
@@ -615,21 +634,38 @@
 		
 	$.fn.squashTable = function(datatableSettings, squashSettings){
 	 
+		/* 
+			are we in retrieve mode or init mode ? 
+			the answer is simple : no param means retrieve mode
+		*/
+		
+		if (arguments.length==0){
+			return $.fn.squashTable.instances[this.selector];
+		}
+		
+		/* 
+			else we will initialize a new instance.
+		*/
 		
 		var datatableEffective = $.extend(true, {}, datatableDefaults, datatableSettings);
 		var squashEffective = $.extend(true, {}, squashDefaults, squashSettings);
 		
 		/* ************** squash init first *********************** */
 		
+		//save the settings in that instance
 		this.squashSettings = squashEffective;
 		
 		this.dropHandler = _dropHandler;
 		this.getODataId = _getODataId;
-		this.addClickHandlerToSelectHandle = _addClickHandlerToSelectHandle;
 		this.saveTableSelection = _saveTableSelection;
 		this.restoreTableSelection = _restoreTableSelection;
 		this.getSelectedIds = _getSelectedIds;
 		this.addHLinkToCellText = _addHLinkToCellText;
+		this.selectRows = _selectRows;
+		this.deselectRows = _deselectRows;
+		this.refresh = function(){
+			this.fnDraw(false);
+		}
 
 				
 				
@@ -640,9 +676,23 @@
 		}
 				
 		
-		/* ************* prepare a custom rowcallback and drawcallback if needed ***** */
+		/* ************* prepare a custom rowcallback and drawcallback if needed ******** */
 		
-		var userDrawCallback = datatableEffective["fnDrawCallback"]
+		
+		//pre draw callback
+		var userPreDrawCallback = datatableEffective["fnPreDrawCallback"]
+		
+		var customPreDrawCallback = function(oSettings){
+			if (userPreDrawCallback) userPreDrawCallback.call(this, oSettings);
+			_saveTableSelection.call(this);
+		}
+				
+		datatableEffective["nfPreDrawCallback"] = customPreDrawCallback;
+		
+		
+		
+		//draw callback
+		var userDrawCallback = datatableEffective["fnDrawCallback"];
 		
 		var customDrawCallback = function (oSettings){
 			if (userDrawCallback) userDrawCallback.call(this, oSettings);
@@ -650,10 +700,14 @@
 			_configureRichEditables.call(this);
 			_configureExecutionStatus.call(this);
 			_configureDeleteButtons.call(this);
+			_enableTableDragAndDrop.call(this);
+			_restoreTableSelection.call(this);
 		}
 		
 		datatableEffective["fnDrawCallback"] = customDrawCallback;
-				
+		
+		
+
 		/* ************* now call the base plugin ***************** */		
 		
 
@@ -664,10 +718,6 @@
 		
 		_bindClickHandlerToSelectHandle.call(this);
 		
-		if (squashEffective.enableDnD){
-			_enableTableDragAndDrop.call(this);
-		};
-		
 		if (squashEffective.enableHover){
 			_bindHover.call(this);
 		};
@@ -677,6 +727,13 @@
 		};
 
 		this.addClass("is-contextual");
+		
+		
+		/* **************** store the new instance ***************** */
+		
+		$.fn.squashTable.instances = $.fn.squashTable.instance || {};
+		$.fn.squashTable.instances[this.selector]=this;
+		
 	 }
 	 
 })(jQuery); 
