@@ -31,7 +31,7 @@ import org.squashtest.plugin.api.report.form.InputDefinition;
  * @author Gregory Fouquet
  * 
  */
-public class ReportDefinition extends Labelled {
+public class ReportDefinition extends Labelled implements Report {
 	private StandardReportCategory category = StandardReportCategory.VARIOUS;
 	private StandardReportType type = StandardReportType.GENERIC;
 
@@ -41,8 +41,9 @@ public class ReportDefinition extends Labelled {
 	private InputDefinition[] form = {};
 
 	/**
-	 * @return the category
+	 * @see org.squashtest.plugin.api.report.Report#getCategory()
 	 */
+	@Override
 	public StandardReportCategory getCategory() {
 		return category;
 	}
@@ -56,8 +57,9 @@ public class ReportDefinition extends Labelled {
 	}
 
 	/**
-	 * @return the type
+	 * @see org.squashtest.plugin.api.report.Report#getType()
 	 */
+	@Override
 	public StandardReportType getType() {
 		return type;
 	}
@@ -71,8 +73,9 @@ public class ReportDefinition extends Labelled {
 	}
 
 	/**
-	 * @return the descriptionKey
+	 * @see org.squashtest.plugin.api.report.Report#getDescriptionKey()
 	 */
+	@Override
 	public String getDescriptionKey() {
 		return descriptionKey;
 	}
@@ -98,8 +101,9 @@ public class ReportDefinition extends Labelled {
 	}
 
 	/**
-	 * @return the views
+	 * @see org.squashtest.plugin.api.report.Report#getViews()
 	 */
+	@Override
 	public ReportView[] getViews() {
 		return views;
 	}
@@ -112,6 +116,10 @@ public class ReportDefinition extends Labelled {
 		this.defaultViewIndex = defaultViewIndex;
 	}
 
+	/**
+	 * @see org.squashtest.plugin.api.report.Report#getDescription()
+	 */
+	@Override
 	public String getDescription() {
 		return getMessage(descriptionKey);
 	}
@@ -125,8 +133,9 @@ public class ReportDefinition extends Labelled {
 	}
 
 	/**
-	 * @return the form
+	 * @see org.squashtest.plugin.api.report.Report#getForm()
 	 */
+	@Override
 	public InputDefinition[] getForm() {
 		return form;
 	}

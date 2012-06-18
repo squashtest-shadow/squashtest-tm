@@ -46,7 +46,7 @@ class ReportsRegistryTest extends Specification {
 		plugin.report = report
 
 		when:
-		registry.pluginRegistered plugin, null
+		registry.pluginRegistered plugin, ['osgi.service.blueprint.compname' : 'bar']
 
 		then:
 		registry.categories == new HashSet([PREPARATION_PHASE])
@@ -55,16 +55,17 @@ class ReportsRegistryTest extends Specification {
 	def "should register report"() {
 		given:
 		ReportDefinition report = new ReportDefinition()
+		report.labelKey = 'foo'
 		report.category = StandardReportCategory.PREPARATION_PHASE
 
 		ReportPlugin plugin = new ReportPlugin()
 		plugin.report = report
 
 		when:
-		registry.pluginRegistered plugin, null
+		registry.pluginRegistered plugin, ['osgi.service.blueprint.compname' : 'bar']
 
 		then:
-		registry.getReportsByCategory(PREPARATION_PHASE) == [report]
+		registry.getReports(PREPARATION_PHASE)*.labelKey == ['foo']
 	}
 
 	def "should unregister category"() {
@@ -76,10 +77,27 @@ class ReportsRegistryTest extends Specification {
 		plugin.report = report
 
 		when:
-		registry.pluginRegistered plugin, null
-		registry.pluginUnregistered plugin, null
+		registry.pluginRegistered plugin, ['osgi.service.blueprint.compname' : 'bar']
+		registry.pluginUnregistered plugin, ['osgi.service.blueprint.compname' : 'bar']
 
 		then:
 		registry.categories.empty
+	}
+	
+	def "should decorate reports with identifier"() {
+		given:
+		ReportDefinition report = new ReportDefinition()
+		report.labelKey = 'foo'
+		report.category = StandardReportCategory.PREPARATION_PHASE
+
+		ReportPlugin plugin = new ReportPlugin()
+		plugin.report = report
+
+		when:
+		registry.pluginRegistered plugin, ['osgi.service.blueprint.compname' : 'bar']
+
+		then:
+		registry.getReports(PREPARATION_PHASE)*.namespace == ['bar']
+		registry.getReports(PREPARATION_PHASE)*.index == [0]
 	}
 }

@@ -62,8 +62,10 @@
 		</div>
 		<div id="category-pane">
 			<div id="outer-category-frame">
-				<div th:each="cat : ${categories}" th:id="'category-panel-' + ${cat.name()}" title="Cat 1" th:title="#{${cat.i18nKey}}" class="report-category">
-					<div th:each="rpt : ${reports[__${cat}__]}" th:id="'report-item-' + ${rpt.hashCode()}" class="report-item">
+				<div th:each="cat : ${categories}" th:id="${#ids.seq('category-panel')}" title="Cat 1" th:title="#{${cat.i18nKey}}" class="report-category">
+					<div th:each="rpt : ${reports[__${cat}__]}" th:id="${#ids.seq('report-item')}" 
+						data-href="sample-report/0" th:attr="data-href=@{${rpt.namespace} + '/' + ${rpt.index}}"
+						class="report-item">
 						<div class="report-item-icon">
 							<img src="../../../../../../../core/core.web/src/main/webapp/images/report_spreadsheet.png" th:src="@{${rpt.type.iconUri}}" th:alt="#{${rpt.type.i18nKey}}" />
 						</div> 
@@ -76,8 +78,7 @@
 				</div>
 			</div> 
  		</div>
-		<div id="contextual-content" class="no-resizable-contextual-content">
-			<span th:remove="all">AREA POPULATED ON DEMAND</span>
+		<div id="contextual-content" class="no-resizable-contextual-content" th:remove="body">
 		</div>
 	</div>
 
@@ -151,10 +152,9 @@
 				cleanContextual();
 				$("#contextual-content").html('');
 				
-				var reportName=$(reportItem).attr("id");
-				var repId=findId(reportName);
+				var reportUrl = $(reportItem).data('href');
 				
-				$("#contextual-content").load("${reportUrl}?report="+repId);
+				$("#contextual-content").load(reportUrl);
 			}
 
 			return {

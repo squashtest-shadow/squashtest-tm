@@ -43,6 +43,8 @@ import org.squashtest.plugin.api.report.StandardReportCategory;
 public class ReportsRegistry {
 
 	private static final Logger LOGGER = LoggerFactory.getLogger(ReportsRegistry.class);
+	
+	private static final String NAMESPACE_KEY = "osgi.service.blueprint.compname";
 
 	private MultiValueMap reports = new MultiValueMap();
 
@@ -54,13 +56,20 @@ public class ReportsRegistry {
 	public void pluginRegistered(ReportPlugin plugin, Map<?, ?> properties) {
 		ReportDefinition report = plugin.getReport();
 		StandardReportCategory category = report.getCategory();
+		IdentifiedReportDecorator identifiedReport = createIdentifiedReport(report, properties);
 
 		synchronized (reports) {
-			reports.put(category, report);
+			reports.put(category, identifiedReport);
 		}
 
 		LOGGER.info("Registered report [{}] under Category [{}]", report.getLabelKey(), category.getI18nKey());
 		LOGGER.debug("{}", properties);
+	}
+
+	private IdentifiedReportDecorator createIdentifiedReport(ReportDefinition report, Map<?, ?> properties) {
+		String pluginNamespace = (String) properties.get(NAMESPACE_KEY);
+		IdentifiedReportDecorator identifiedReport = new IdentifiedReportDecorator(report, pluginNamespace, 0);
+		return identifiedReport;
 	}
 
 	/**
@@ -71,9 +80,10 @@ public class ReportsRegistry {
 	public void pluginUnregistered(ReportPlugin plugin, Map<?, ?> properties) {
 		ReportDefinition report = plugin.getReport();
 		StandardReportCategory category = report.getCategory();
+		IdentifiedReportDecorator identifiedReport = createIdentifiedReport(report, properties);
 
 		synchronized (reports) {
-			reports.remove(category, report);
+			reports.remove(category, identifiedReport);
 		}
 
 		LOGGER.info("Unregistered report [{}] from Category [{}]", report.getLabelKey(), category.getI18nKey());
@@ -86,9 +96,9 @@ public class ReportsRegistry {
 	}
 
 	@SuppressWarnings("unchecked")
-	public Collection<ReportDefinition> getReports(StandardReportCategory category) {
-		Collection<ReportDefinition> res = (Collection<ReportDefinition>) reports.get(category);
-		return res == null ? Collections.<ReportDefinition> emptyList() : res;
+	public Collection<IdentifiedReportDecorator> getReports(StandardReportCategory category) {
+		Collection<IdentifiedReportDecorator> res = (Collection<IdentifiedReportDecorator>) reports.get(category);
+		return res == null ? Collections.<IdentifiedReportDecorator> emptyList() : res;
 	}
 	
 	@SuppressWarnings("unchecked")

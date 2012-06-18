@@ -40,16 +40,16 @@
 	<bean name="executionProgressFollowUp" class="org.squashtest.plugin.api.report.ReportDefinition">
 		<property name="category" value="EXECUTION_PHASE" />
 		<property name="type" value="PROGRESS_FOLLOWUP" />
-		<property name="labelKey" value="report.report.executionprogressfollowup.name" />
-		<property name="descriptionKey" value="report.report.executionprogressfollowup.description" />
+		<property name="labelKey" value="report.executionprogressfollowup.name" />
+		<property name="descriptionKey" value="report.executionprogressfollowup.description" />
 		<property name="views">
 			<list>
 				<bean class="org.squashtest.plugin.api.report.ReportView">
-					<property name="labelKey" value="report.view.title.listtcbycampaign" />
+					<property name="labelKey" value="view.title.listtcbycampaign" />
 					<property name="formats" value="xls,ods,csv,pdf,html" />
 				</bean>
 				<bean class="org.squashtest.plugin.api.report.ReportView">
-					<property name="labelKey" value="report.view.title.campaigndashboard" />
+					<property name="labelKey" value="view.title.campaigndashboard" />
 					<property name="formats" value="pdf,html" />
 				</bean>
 			</list>
@@ -59,7 +59,7 @@
 				<bean class="org.squashtest.plugin.api.report.form.DateInputDefinition">
 					<property name="name" value="" />
 					<property name="labelKey" value="" />
-				</bean>
+				</bean> 
 			</list>
 		</property>
 	</bean>
