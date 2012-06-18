@@ -19,7 +19,7 @@
  *     along with this software.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-package org.squashtest.core.api.report.form;
+package org.squashtest.plugin.api.report.form;
 
 import java.util.List;
 

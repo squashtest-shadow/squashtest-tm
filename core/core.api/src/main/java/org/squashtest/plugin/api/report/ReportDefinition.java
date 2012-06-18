@@ -19,23 +19,22 @@
  *     along with this software.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-package org.squashtest.core.api.report;
+package org.squashtest.plugin.api.report;
 
 import javax.annotation.PostConstruct;
 
-import org.squashtest.core.api.report.form.FormDefinition;
-import org.squashtest.core.api.report.form.InputDefinition;
+import org.squashtest.core.api.internal.infrastructure.Labelled;
+import org.squashtest.plugin.api.report.form.InputDefinition;
 
 /**
  * @author bsiri
  * @author Gregory Fouquet
  * 
  */
-public class ReportDefinition {
-	private ReportCategory category = ReportCategory.VARIOUS;
-	private ReportType type = ReportType.GENERIC;
+public class ReportDefinition extends Labelled {
+	private StandardReportCategory category = StandardReportCategory.VARIOUS;
+	private StandardReportType type = StandardReportType.GENERIC;
 
-	private String nameKey;
 	private String descriptionKey;
 	private ReportView[] views = {};
 	private int defaultViewIndex = 0;
@@ -44,7 +43,7 @@ public class ReportDefinition {
 	/**
 	 * @return the category
 	 */
-	public ReportCategory getCategory() {
+	public StandardReportCategory getCategory() {
 		return category;
 	}
 
@@ -52,14 +51,14 @@ public class ReportDefinition {
 	 * @param category
 	 *            the category to set
 	 */
-	public void setCategory(ReportCategory category) {
+	public void setCategory(StandardReportCategory category) {
 		this.category = category;
 	}
 
 	/**
 	 * @return the type
 	 */
-	public ReportType getType() {
+	public StandardReportType getType() {
 		return type;
 	}
 
@@ -67,23 +66,8 @@ public class ReportDefinition {
 	 * @param type
 	 *            the type to set
 	 */
-	public void setType(ReportType type) {
+	public void setType(StandardReportType type) {
 		this.type = type;
-	}
-
-	/**
-	 * @return the nameKey
-	 */
-	public String getNameKey() {
-		return nameKey;
-	}
-
-	/**
-	 * @param nameKey
-	 *            the nameKey to set
-	 */
-	public void setNameKey(String nameKey) {
-		this.nameKey = nameKey;
 	}
 
 	/**
@@ -126,5 +110,24 @@ public class ReportDefinition {
 	 */
 	public void setDefaultViewIndex(int defaultViewIndex) {
 		this.defaultViewIndex = defaultViewIndex;
+	}
+
+	public String getDescription() {
+		return getMessage(descriptionKey);
+	}
+
+	/**
+	 * @param form
+	 *            the form to set
+	 */
+	public void setForm(InputDefinition[] form) {
+		this.form = form;
+	}
+
+	/**
+	 * @return the form
+	 */
+	public InputDefinition[] getForm() {
+		return form;
 	}
 }

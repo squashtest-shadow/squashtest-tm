@@ -33,8 +33,9 @@
 		file if you do not want to. The rationale for keeping these definitions separate 
 		is to facilitate integration testing of the bundle outside of an OSGi container -->
 		
-		
 	<bean class="org.springframework.osgi.extensions.annotation.ServiceReferenceInjectionBeanPostProcessor" />
+	
+	<osgi:service ref="squash.tm.plugin.report.executionProgressFollowUp" interface="org.squashtest.plugin.api.report.ReportPlugin" />
 
 </beans>
  

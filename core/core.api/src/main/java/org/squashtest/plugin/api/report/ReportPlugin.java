@@ -19,34 +19,28 @@
  *     along with this software.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-package org.squashtest.core.api.report;
+package org.squashtest.plugin.api.report;
 
-import org.squashtest.csp.api.infrastructure.Internationalizable;
+
 
 /**
- * @author bsiri
  * @author Gregory Fouquet
  *
  */
-public enum ReportCategory implements Internationalizable {
-	EXECUTION_PHASE("report.category.executionphase.name"), 
-	PREPARATION_PHASE("report.category.preparationphase.name"), 
-	VARIOUS("report.category.various.name");
+public  class ReportPlugin {
+	private ReportDefinition report;
 
-	private final String i18nKey;
-	
 	/**
-	 * @param i18nKey
+	 * @param report the report to set
 	 */
-	private ReportCategory(String i18nKey) {
-		this.i18nKey = i18nKey;
+	public void setReport(ReportDefinition report) {
+		this.report = report;
 	}
 
 	/**
-	 * @see org.squashtest.csp.api.infrastructure.Internationalizable#getI18nKey()
+	 * @return the report
 	 */
-	@Override
-	public String getI18nKey() {
-		return i18nKey;
+	public ReportDefinition getReport() {
+		return report;
 	}
 }

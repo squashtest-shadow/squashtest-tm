@@ -213,20 +213,27 @@
 		<!-- ====== /FILE UPLOAD ====== -->
 
 		<!-- ====== JASPER REPORTS ====== -->
-		<!-- We need this at runtime (OSGi bundle) -->
-		<dependency>
-			<groupId>net.sf.jasperreports</groupId>
-			<artifactId>jasperreports</artifactId>
-			<scope>provided</scope>
-		</dependency>
 		<!-- 
 			We need this to compile the reports. Our OSGi wrapped artifact wont 
 			work and plugin dependency wont be the one picked
 		-->
+		<dependency>
+			<groupId>net.sf.jasperreports</groupId>
+			<artifactId>jasperreports</artifactId>
+			<scope>provided</scope>
+			<optional>true</optional>
+		</dependency>
  	
+		<!-- We need this at runtime (OSGi bundle) -->
 		<dependency>
 			<groupId>net.sf.jasperreports</groupId>
 			<artifactId>org.squashtest.net.sf.jasperreports</artifactId>
+			<exclusions>
+				<exclusion>
+					<groupId>org.apache.commons</groupId>
+					<artifactId>com.springsource.org.apache.commons.logging</artifactId>
+				</exclusion>
+			</exclusions>
 			<scope>runtime</scope>
 		</dependency>
 		<dependency>
@@ -318,13 +325,10 @@
 						<!-- Runtime classes defined in config files such as web.xml and spring 
 							should be manually imported below -->
 						<Import-Package>
-							*,
-							net.sf.jasperreports.engine,
-							net.sf.jasperreports.engine.export,
 							<!-- some dependency needs the commons.lang version 2.5.0, however 
 								it is already used and exported as 2.4 in other bundles -->
-							org.apache.commons.lang;version="${commons.lang.version}",
-							org.squashtest.csp.core.web.utils; version="${project.version}"
+							org.squashtest.csp.core.web.utils; version="${project.version}",
+							*
 						</Import-Package>
 					</instructions>
 					<supportedProjectTypes>

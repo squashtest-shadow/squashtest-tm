@@ -19,45 +19,30 @@
  *     along with this software.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-package org.squashtest.core.api.internal.report.builder;
+package org.squashtest.plugin.api.report;
 
-import org.squashtest.core.api.report.ReportDefinition;
-import org.squashtest.core.api.report.ReportCategory;
-import org.squashtest.core.api.report.ReportType;
-import org.squashtest.core.api.report.builder.FormDefinitionBuilder;
-import org.squashtest.core.api.report.builder.ReportBuilder;
+import org.squashtest.core.api.internal.infrastructure.Labelled;
 
 /**
+ * @author bsiri
  * @author Gregory Fouquet
- *
+ * 
  */
-public class SimpleReportBuilder implements ReportBuilder {
-	public ReportBuilder category(ReportCategory category) {
-		return this;
-	}
+public class ReportView extends Labelled {
+	private String[] formats;
 
-	public ReportBuilder type(ReportType type) {
-		return this;
-	}
-
-	public ReportBuilder nameKey(String nameKey) {
-		return this;
-	}
-
-	public ReportBuilder descriptionKey(String descriptionKey) {
-		return this;
-	}
-
-	public ReportDefinition build() {
-		return null;
+	/**
+	 * @return the formats
+	 */
+	public String[] getFormats() {
+		return formats;
 	}
 
 	/**
-	 * @see org.squashtest.core.api.report.builder.ReportBuilder#form()
+	 * @param formats
+	 *            the formats to set
 	 */
-	@Override
-	public FormDefinitionBuilder form() {
-		return null;
+	public void setFormats(String[] formats) {
+		this.formats = formats;
 	}
-
 }

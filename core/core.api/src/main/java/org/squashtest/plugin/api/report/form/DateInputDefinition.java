@@ -19,7 +19,7 @@
  *     along with this software.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-package org.squashtest.core.api.report.form;
+package org.squashtest.plugin.api.report.form;
 
 /**
  * @author Gregory Fouquet
@@ -27,7 +27,7 @@ package org.squashtest.core.api.report.form;
  */
 public class DateInputDefinition extends BasicInputDefinition {
 	/**
-	 * @see org.squashtest.core.api.report.form.InputDefinition#getType()
+	 * @see org.squashtest.plugin.api.report.form.InputDefinition#getType()
 	 */
 	@Override
 	public InputType getType() {

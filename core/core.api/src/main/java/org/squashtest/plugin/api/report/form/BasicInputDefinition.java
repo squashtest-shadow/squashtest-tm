@@ -19,12 +19,29 @@
  *     along with this software.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-package org.squashtest.core.spi.report;
+package org.squashtest.plugin.api.report.form;
 
+import org.squashtest.core.api.internal.infrastructure.Labelled;
 
 /**
- * @author Gregory Fouquet
- *
+ * @author Gregory
+ * 
  */
-public abstract class ReportPlugin {
+abstract class BasicInputDefinition extends Labelled implements InputDefinition {
+	private String name;
+
+	/**
+	 * @return the name
+	 */
+	public String getName() {
+		return name;
+	}
+
+	/**
+	 * @param name
+	 *            the name to set
+	 */
+	public void setName(String name) {
+		this.name = name;
+	}
 }

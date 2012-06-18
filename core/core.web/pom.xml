@@ -312,6 +312,8 @@
 							org.springframework.aop.support.annotation;version="${spring.version}",
 							org.springframework.aop.target;version="${spring.version}",
 							org.springframework.aop.target.dynamic;version="${spring.version}",
+							org.springframework.beans.factory.xml;version="${spring.version}",
+							org.springframework.context.config;version="${spring.version}",
 							org.springframework.context.support;version="${spring.version}",
 							org.springframework.osgi.extensions.annotation;version="${springdm.version}",
 							org.springframework.osgi.web.context.support;version="${springdm.version}",

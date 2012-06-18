@@ -19,38 +19,35 @@
  *     along with this software.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-package org.squashtest.core.api.report.form;
+package org.squashtest.plugin.api.report;
+
+import org.squashtest.csp.api.infrastructure.Internationalizable;
 
 /**
- * @author Gregory
- * 
+ * @author bsiri
+ * @author Gregory Fouquet
+ *
  */
-abstract class BasicInputDefinition implements InputDefinition {
-	private String name;
-	private String labelKey;
+public enum StandardReportCategory implements Internationalizable {
+	EXECUTION_PHASE("report.category.executionphase.name"), 
+	PREPARATION_PHASE("report.category.preparationphase.name"), 
+	VARIOUS("report.category.various.name");
+
+	private final String i18nKey;
+	
 	/**
-	 * @return the name
+	 * @param i18nKey
 	 */
-	public String getName() {
-		return name;
+	private StandardReportCategory(String i18nKey) {
+		this.i18nKey = i18nKey;
 	}
+
 	/**
-	 * @param name the name to set
+	 * @see org.squashtest.csp.api.infrastructure.Internationalizable#getI18nKey()
 	 */
-	public void setName(String name) {
-		this.name = name;
-	}
-	/**
-	 * @return the labelKey
-	 */
-	public String getLabelKey() {
-		return labelKey;
-	}
-	/**
-	 * @param labelKey the labelKey to set
-	 */
-	public void setLabelKey(String labelKey) {
-		this.labelKey = labelKey;
+	@Override
+	public String getI18nKey() {
+		return i18nKey;
 	}
 
 }

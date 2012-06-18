@@ -19,7 +19,7 @@
  *     along with this software.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-package org.squashtest.core.api.repository;
+package org.squashtest.plugin.api.repository;
 
 import java.util.List;
 import java.util.Map;

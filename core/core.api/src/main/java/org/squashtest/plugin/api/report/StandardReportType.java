@@ -19,20 +19,38 @@
  *     along with this software.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-package org.squashtest.core.api.report.form;
+package org.squashtest.plugin.api.report;
+
+import org.squashtest.csp.api.infrastructure.Internationalizable;
 
 /**
+ * @author bsiri
  * @author Gregory Fouquet
  * 
  */
-public class TextInputDefinition extends BasicInputDefinition {
+public enum StandardReportType implements Internationalizable {
+	PROGRESS_FOLLOWUP() {
+		@Override
+		public String getI18nKey() {
+			return "report.type.progressfollowup.name";
+		}
 
-	/**
-	 * @see org.squashtest.core.api.report.form.InputDefinition#getType()
-	 */
-	@Override
-	public InputType getType() {
-		return InputType.TEXT;
-	}
+		@Override
+		public String getIconUri() {
+			return "/images/report_spreadsheet.png";
+		}
+	},
+	GENERIC() {
+		@Override
+		public String getI18nKey() {
+			return "report.type.generic.name";
+		}
 
+		@Override
+		public String getIconUri() {
+			return "/images/report_generic.png";
+		}
+	};
+
+	public abstract String getIconUri();
 }

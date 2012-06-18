@@ -54,19 +54,6 @@
 		<intercept-url requires-channel="${authentication.application.securablechannels}" pattern="/users/**" access="hasRole('ROLE_ADMIN')" />
 		<intercept-url requires-channel="${authentication.application.securablechannels}" pattern="/user-account" access="isAuthenticated()" />
 		<intercept-url requires-channel="${authentication.application.securablechannels}" pattern="/user-account/**" access="isAuthenticated()" />
-
-		 <!-- 
-		<intercept-url pattern="/projects" access="hasRole('ROLE_ADMIN')" />
-		<intercept-url pattern="/projects/**" access="hasRole('ROLE_ADMIN')" />
-		<intercept-url pattern="/admin" access="hasRole('ROLE_ADMIN')" />
-		<intercept-url pattern="/admin/**" access="hasRole('ROLE_ADMIN')" />
-		<intercept-url pattern="/administration" access="hasRole('ROLE_ADMIN')" />
-		<intercept-url pattern="/administration/**" access="hasRole('ROLE_ADMIN')" />
-		<intercept-url pattern="/users" access="hasRole('ROLE_ADMIN')" />
-		<intercept-url pattern="/users/**" access="hasRole('ROLE_ADMIN')" />
-		<intercept-url pattern="/user-account" access="isAuthenticated()" />
-		<intercept-url pattern="/user-account/**" access="isAuthenticated()" />
-		 -->
 			
 		<!--  images and stuff dont need authentication -->
 		<intercept-url pattern="/images/**" filters="none" />

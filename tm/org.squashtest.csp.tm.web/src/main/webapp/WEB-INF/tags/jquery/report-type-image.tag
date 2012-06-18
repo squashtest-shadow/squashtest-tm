@@ -25,7 +25,7 @@
 <%@ taglib prefix="c"  uri="http://java.sun.com/jsp/jstl/core"%>
 
 <%@ attribute name="reportType" type="java.lang.Object"  required="true" description="get the path to the image for a given
-																						ReportType"%>
+																						ReportType" %>
 																						
 <c:choose>
 	<c:when test="${reportType.resourceKeyName =='squashtest.report.reporttype.progressfollowup.name'}">

@@ -19,44 +19,20 @@
  *     along with this software.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-package org.squashtest.core.api.report;
+package org.squashtest.plugin.api.report.form;
 
 /**
- * @author bsiri
  * @author Gregory Fouquet
  * 
  */
-public class ReportView {
-	private String nameKey;
-	private String[] formats;
+public class TextInputDefinition extends BasicInputDefinition {
 
 	/**
-	 * @return the nameKey
+	 * @see org.squashtest.plugin.api.report.form.InputDefinition#getType()
 	 */
-	public String getNameKey() {
-		return nameKey;
+	@Override
+	public InputType getType() {
+		return InputType.TEXT;
 	}
 
-	/**
-	 * @param nameKey
-	 *            the nameKey to set
-	 */
-	public void setNameKey(String nameKey) {
-		this.nameKey = nameKey;
-	}
-
-	/**
-	 * @return the formats
-	 */
-	public String[] getFormats() {
-		return formats;
-	}
-
-	/**
-	 * @param formats
-	 *            the formats to set
-	 */
-	public void setFormats(String[] formats) {
-		this.formats = formats;
-	}
 }

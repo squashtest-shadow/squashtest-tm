@@ -27,9 +27,9 @@
 	xmlns:osgi="http://www.springframework.org/schema/osgi"
 	xmlns:osgix="http://www.springframework.org/schema/osgi-compendium"
 	xsi:schemaLocation="
-		http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans.xsd
-        http://www.springframework.org/schema/osgi http://www.springframework.org/schema/osgi/spring-osgi.xsd
-        http://www.springframework.org/schema/osgi-compendium http://www.springframework.org/schema/osgi-compendium/spring-osgi-compendium.xsd">
+		http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans-3.0.xsd
+        http://www.springframework.org/schema/osgi http://www.springframework.org/schema/osgi/spring-osgi-2.0-m1.xsd
+        http://www.springframework.org/schema/osgi-compendium http://www.springframework.org/schema/osgi-compendium/spring-osgi-compendium-2.0-m1.xsd">
 
 	<osgix:cm-properties id="squashtest.tm.uploadfilter.config"
 		persistent-id="org.squashtest.csp.tm.web.uploadfilter.config" />
@@ -124,5 +124,9 @@
 		bean-name="squashtest.tm.service.TestSuiteModificationService"
 		interface="org.squashtest.csp.tm.service.TestSuiteModificationService"
 		availability="mandatory" />	
+
+	<osgi:list id="squash.tm.report.ReportPlugins" interface="org.squashtest.plugin.api.report.ReportPlugin">
+		<osgi:listener ref="squash.tm.report.ReportsRegistry" bind-method="pluginRegistered" unbind-method="pluginUnregistered" />
+	</osgi:list>
 		
 </beans>

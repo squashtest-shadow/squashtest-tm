@@ -27,9 +27,9 @@
 	xmlns:osgi="http://www.springframework.org/schema/osgi"
 	xmlns:osgix="http://www.springframework.org/schema/osgi-compendium"
 	xsi:schemaLocation="
-		http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans.xsd
-		http://www.springframework.org/schema/osgi http://www.springframework.org/schema/osgi/spring-osgi.xsd
-		http://www.springframework.org/schema/osgi-compendium http://www.springframework.org/schema/osgi-compendium/spring-osgi-compendium.xsd">
+		http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans-3.0.xsd
+		http://www.springframework.org/schema/osgi http://www.springframework.org/schema/osgi/spring-osgi-2.0-m1.xsd
+		http://www.springframework.org/schema/osgi-compendium http://www.springframework.org/schema/osgi-compendium/spring-osgi-compendium-2.0-m1.xsd">
 
 	<!-- Definitions using elements of the osgi namespace can be included in 
 		this file. There is no requirement to keep these definitions in a separate 
@@ -73,14 +73,6 @@
 		interface="org.squashtest.csp.core.bugtracker.service.BugTrackerContextHolder"
 		availability="mandatory" />
 	
-	
-	<!--  
-	<osgi:reference id="squashtest.core.security.JdbcUserDetailsManager"
-		bean-name="squashtest.core.security.JdbcUserDetailsManager"
-		interface="org.springframework.security.provisioning.JdbcUserDetailsManager"
-		availability="mandatory"/>
-	-->		
-
 	<osgix:cm-properties id="squashtest.core.auth.config"
 		persistent-id="org.squashtest.csp.core.auth.config" />	
 		

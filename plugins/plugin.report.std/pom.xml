@@ -1,5 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
 	<modelVersion>4.0.0</modelVersion>
 	<parent>
 		<artifactId>squash-tm-plugins</artifactId>
@@ -13,39 +14,46 @@
 	<dependencies>
 		<!-- ====== DEPENDENCY POMS ====== -->
 		<dependency>
-			<groupId>${project.groupId}</groupId>
+			<groupId>org.squashtest.csp</groupId>
 			<artifactId>springdm-bundle-dependencies</artifactId>
 			<version>${project.version}</version>
 			<type>pom</type>
 		</dependency>
 		<dependency>
-			<groupId>${project.groupId}</groupId>
+			<groupId>org.squashtest.csp</groupId>
 			<artifactId>spock-test-dependencies</artifactId>
 			<version>${project.version}</version>
 			<type>pom</type>
 			<scope>test</scope>
 		</dependency>
 		<dependency>
-			<groupId>${project.groupId}</groupId>
+			<groupId>org.squashtest.csp</groupId>
 			<artifactId>hibernate-dependencies</artifactId>
 			<version>${project.version}</version>
 			<type>pom</type>
 		</dependency>
 		<dependency>
-			<groupId>${project.groupId}</groupId>
+			<groupId>org.squashtest.csp</groupId>
 			<artifactId>org.squashtest.csp.tools.unittest</artifactId>
 			<version>${project.version}</version>
 			<scope>test</scope>
 		</dependency>
 		<!-- ====== /DEPENDENCY POMS ====== -->
 
-		<!--======= SQUASHTEST MODULES ========-->
+		<!--======= SQUASHTEST MODULES ======== -->
 		<dependency>
 			<groupId>${project.groupId}</groupId>
 			<artifactId>core.api</artifactId>
 			<version>${project.version}</version>
 		</dependency>
-		<!--======= /SQUASHTEST MODULES ========-->
+		<!--======= /SQUASHTEST MODULES ======== -->
+
+		<dependency>
+			<groupId>org.springframework</groupId>
+			<artifactId>org.springframework.beans</artifactId>
+			<scope>runtime</scope>
+		</dependency>
+
 	</dependencies>
 
 	<build>
@@ -63,7 +71,7 @@
 			</testResource>
 		</testResources>
 
- 		<testSourceDirectory>src/test/groovy</testSourceDirectory>
+		<testSourceDirectory>src/test/groovy</testSourceDirectory>
 
 		<plugins>
 			<plugin>

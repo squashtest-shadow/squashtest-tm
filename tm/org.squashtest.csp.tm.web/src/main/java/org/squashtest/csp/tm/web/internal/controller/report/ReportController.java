@@ -21,7 +21,6 @@
 package org.squashtest.csp.tm.web.internal.controller.report;
 
 import java.util.Collection;
-import java.util.List;
 import java.util.Locale;
 import java.util.Map;
 import java.util.Map.Entry;
@@ -42,18 +41,21 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.servlet.ModelAndView;
 import org.squashtest.csp.tm.domain.report.Report;
-import org.squashtest.csp.tm.domain.report.ReportCategory;
 import org.squashtest.csp.tm.domain.report.query.ReportQuery;
 import org.squashtest.csp.tm.service.ReportService;
+import org.squashtest.csp.tm.web.internal.report.ReportsRegistry;
 
 @Controller
 @RequestMapping("/report-workspace")
 public class ReportController {
 
 	private ReportService reportService;
-	
+
 	@Inject
 	private MessageSource reportMessageSource;
+
+	@Inject
+	private ReportsRegistry reportsRegistry;
 
 	@ServiceReference
 	public void setReportService(ReportService reportService) {
@@ -62,10 +64,9 @@ public class ReportController {
 
 	@RequestMapping(method = RequestMethod.GET)
 	public ModelAndView showReportWorkspace() {
-		List<ReportCategory> categoryList = reportService.findAllReportCategories();
-
 		ModelAndView mav = new ModelAndView("report-workspace.html");
-		mav.addObject("categories", categoryList);
+		mav.addObject("categories", reportsRegistry.getCategories());
+		mav.addObject("reports", reportsRegistry.getReportsByCategory());
 
 		return mav;
 	}
@@ -82,7 +83,7 @@ public class ReportController {
 
 	}
 
-	//debug page
+	// debug page
 	@RequestMapping(value = "/report/info", method = RequestMethod.GET, params = { "report" })
 	public ModelAndView showReportInfo(@RequestParam("report") Integer reportId) {
 
@@ -94,46 +95,41 @@ public class ReportController {
 		return mav;
 
 	}
-	
-	
+
 	/*
-	 * will return an array containing the supported formats when exporting a given report for a given view 
-	 * 
+	 * will return an array containing the supported formats when exporting a given report for a given view
 	 */
-	
-	@RequestMapping(value="/report/export-options")
-	public @ResponseBody String[] getExportFormats(@RequestParam("report") Integer reportId, 
-			@RequestParam(value="view", required=false) Integer viewId){
+
+	@RequestMapping(value = "/report/export-options")
+	public @ResponseBody
+	String[] getExportFormats(@RequestParam("report") Integer reportId,
+			@RequestParam(value = "view", required = false) Integer viewId) {
 		Report report = reportService.findReportById(reportId);
-		
+
 		String formats[];
-		if (viewId!=null){
+		if (viewId != null) {
 			formats = report.getViewCatalog().findView(viewId).getFormats();
-		}else{
+		} else {
 			formats = report.getViewCatalog().getDefaultView().getFormats();
 		}
-		
+
 		return formats;
 	}
-	
-
 
 	/*
 	 * 
-	 * FIXME : find a way to make the reports completely independent of tm.web. That is, no resource bundle, 
-	 * no JasperReportsMultiFormatView etc.
+	 * FIXME : find a way to make the reports completely independent of tm.web. That is, no resource bundle, no
+	 * JasperReportsMultiFormatView etc.
 	 * 
-	 * for more informations about the localization of the report, see 
-	 * org.springframework.web.servlet.view.jasperreports.AbstractJasperReportsView:exposeLocalizationContext 
-	 *
+	 * for more informations about the localization of the report, see
+	 * org.springframework.web.servlet.view.jasperreports.AbstractJasperReportsView:exposeLocalizationContext
 	 */
 
 	@RequestMapping(value = "/report/generate", method = RequestMethod.GET, params = { "report" })
-	public ModelAndView generateReport(@RequestParam("report")Integer reportId, 
-										@RequestParam(value="view", required=false) Integer viewId, 
-										@RequestParam(value="format", required=false) String format,
-										HttpServletRequest httpRequest, 
-										Locale locale) {
+	public ModelAndView generateReport(@RequestParam("report") Integer reportId,
+			@RequestParam(value = "view", required = false) Integer viewId,
+			@RequestParam(value = "format", required = false) String format, HttpServletRequest httpRequest,
+			Locale locale) {
 
 		Report report = reportService.findReportById(reportId);
 
@@ -144,59 +140,47 @@ public class ReportController {
 		Collection<?> data = reportService.executeQuery(reportQuery);
 
 		String viewName;
-		if (viewId!=null){
+		if (viewId != null) {
 			viewName = report.getViewCatalog().findView(viewId).getModel();
-		}else{
+		} else {
 			viewName = report.getViewCatalog().getDefaultView().getModel();
 		}
-		
+
 		String formatName;
-		if (format!=null){
-			formatName=format;
-		}
-		else{
-			formatName="html";
+		if (format != null) {
+			formatName = format;
+		} else {
+			formatName = "html";
 		}
 
-		//test
+		// test
 		ModelAndView mav = new ModelAndView(viewName);
-		
-		//TODO to remove later
-		mav.getModel().put(JRParameter.REPORT_RESOURCE_BUNDLE, new MessageSourceResourceBundle(reportMessageSource, locale));
 
-		
-		
-		mav.addObject("data",data);
-		mav.addObject("format",formatName);
-		
-	
+		// TODO to remove later
+		mav.getModel().put(JRParameter.REPORT_RESOURCE_BUNDLE,
+				new MessageSourceResourceBundle(reportMessageSource, locale));
+
+		mav.addObject("data", data);
+		mav.addObject("format", formatName);
+
 		return mav;
 	}
 
-	
-	
 	/* **************************** private stuffs **************************************** */
-	
 
-
-	private ReportQuery parseParams(ReportQuery reportQuery, HttpServletRequest httpRequest){
+	private ReportQuery parseParams(ReportQuery reportQuery, HttpServletRequest httpRequest) {
 
 		Map<String, String[]> paramMap = httpRequest.getParameterMap();
 
 		Set<Entry<String, String[]>> entries = paramMap.entrySet();
 
-		for (Entry<String, String[]> entry : entries){
-			if (reportQuery.isCriterionExists(entry.getKey())){
+		for (Entry<String, String[]> entry : entries) {
+			if (reportQuery.isCriterionExists(entry.getKey())) {
 				reportQuery.setCriterion(entry.getKey(), (Object[]) entry.getValue());
 			}
 		}
 
 		return reportQuery;
 	}
-	
-	
 
-
-
-	
 }

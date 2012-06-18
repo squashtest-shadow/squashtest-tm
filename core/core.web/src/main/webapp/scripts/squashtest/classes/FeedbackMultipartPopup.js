@@ -157,7 +157,7 @@ function FeedbackMultipartPopup(settings) {
 			this.setState(FeedbackMultipartPopup.ERROR);
 		}
 
-	}
+	};
 
 	this.submit = function () {
 		// todo and please use Deferred.done() to set the ticket and perform the
@@ -287,8 +287,8 @@ function FeedbackMultipartPopup(settings) {
 
 /* ******************** Class constants *********************** */
 
-FeedbackMultipartPopup.PARAMETRIZATION = "parametrization"
-FeedbackMultipartPopup.CONFIRM = "confirm"
-FeedbackMultipartPopup.ERROR = "error"
-FeedbackMultipartPopup.PROGRESSION = "progression"
-FeedbackMultipartPopup.SUMMARY = "summary"
+FeedbackMultipartPopup.PARAMETRIZATION = "parametrization";
+FeedbackMultipartPopup.CONFIRM = "confirm";
+FeedbackMultipartPopup.ERROR = "error";
+FeedbackMultipartPopup.PROGRESSION = "progression";
+FeedbackMultipartPopup.SUMMARY = "summary";

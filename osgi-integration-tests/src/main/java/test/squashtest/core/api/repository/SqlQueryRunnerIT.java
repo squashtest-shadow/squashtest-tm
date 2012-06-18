@@ -34,7 +34,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.osgi.extensions.annotation.ServiceReference;
 import org.springframework.stereotype.Component;
-import org.squashtest.core.api.repository.SqlQueryRunner;
+import org.squashtest.plugin.api.repository.SqlQueryRunner;
 import org.squashtest.tool.osgitests.OsgiIntegrationTest;
 
 /**

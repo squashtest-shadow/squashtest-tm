@@ -19,15 +19,16 @@
  *     along with this software.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-package org.squashtest.core.api.report.form;
+package org.squashtest.plugin.api.report.form;
 
 /**
- * @author Gregory
- *
+ * @author Gregory Fouquet
+ * 
  */
-public enum InputType {
-	TEXT, 
-	DATE,
-	COMBO, 
-	RADIO_BUTTONS
+public interface InputDefinition {
+	String getName();
+
+	String getLabelKey();
+
+	InputType getType();
 }

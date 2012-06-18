@@ -19,16 +19,31 @@
  *     along with this software.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-package org.squashtest.core.api.report.form;
+package org.squashtest.core.api.internal.infrastructure;
 
 /**
- * @author Gregory Fouquet
+ * @author Gregory
  * 
  */
-public interface InputDefinition {
-	String getName();
+public class Labelled extends ContextBasedInternationalized {
+	private String labelKey;
 
-	String getLabelKey();
+	/**
+	 * @param labelKey
+	 *            the labelKey to set
+	 */
+	public final void setLabelKey(String labelKey) {
+		this.labelKey = labelKey;
+	}
 
-	InputType getType();
+	/**
+	 * @return the labelKey
+	 */
+	public final String getLabelKey() {
+		return labelKey;
+	}
+
+	public final String getLabel() {
+		return getMessage(labelKey);
+	}
 }

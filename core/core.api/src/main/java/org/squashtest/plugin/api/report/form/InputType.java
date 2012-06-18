@@ -19,34 +19,15 @@
  *     along with this software.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-package org.squashtest.core.api.report;
-
-import org.squashtest.csp.api.infrastructure.Internationalizable;
+package org.squashtest.plugin.api.report.form;
 
 /**
- * @author bsiri
- * @author Gregory Fouquet
- * 
+ * @author Gregory
+ *
  */
-public enum ReportType implements Internationalizable {
-	PROGRESS_FOLLOWUP("report.type.progressfollowup.name"), 
-	GENERIC("report.type.progressfollowup.name");
-
-	private final String i18nKey;
-
-	/**
-	 * @param i18nKey
-	 */
-	private ReportType(String i18nKey) {
-		this.i18nKey = i18nKey;
-	}
-
-	/**
-	 * @see org.squashtest.csp.api.infrastructure.Internationalizable#getI18nKey()
-	 */
-	@Override
-	public String getI18nKey() {
-		return i18nKey;
-	}
-
+public enum InputType {
+	TEXT, 
+	DATE,
+	COMBO, 
+	RADIO_BUTTONS
 }

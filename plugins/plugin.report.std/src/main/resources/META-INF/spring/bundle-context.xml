@@ -24,35 +24,48 @@
 <beans xmlns="http://www.springframework.org/schema/beans" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
 	xmlns:context="http://www.springframework.org/schema/context"
 	xmlns:util="http://www.springframework.org/schema/util"
-	xsi:schemaLocation="http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans.xsd
+	xsi:schemaLocation="http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans-3.0.xsd
   	http://www.springframework.org/schema/context http://www.springframework.org/schema/context/spring-context-3.0.xsd
 	http://www.springframework.org/schema/util http://www.springframework.org/schema/util/spring-util-3.0.xsd">
+	
+	
+<!-- 	<bean id="conversionService"
+	      class="org.springframework.context.support.ConversionServiceFactoryBean">
+	</bean> -->
+		
+	<bean name="squash.tm.plugin.report.executionProgressFollowUp" class="org.squashtest.plugin.api.report.ReportPlugin">
+		<property name="report" ref="executionProgressFollowUp" />
+	</bean>
 
-	<bean name="executionProgressFollowUp" class="org.squashtest.core.api.report.ReportDefinition">
+	<bean name="executionProgressFollowUp" class="org.squashtest.plugin.api.report.ReportDefinition">
 		<property name="category" value="EXECUTION_PHASE" />
-		<property name="type" value="PREPARATION_PHASE" />
-		<property name="nameKey" value="report.report.executionprogressfollowup.name" />
+		<property name="type" value="PROGRESS_FOLLOWUP" />
+		<property name="labelKey" value="report.report.executionprogressfollowup.name" />
 		<property name="descriptionKey" value="report.report.executionprogressfollowup.description" />
 		<property name="views">
 			<list>
-				<bean class="org.squashtest.core.api.report.ReportView">
-					<property name="nameKey" value="report.view.title.listtcbycampaign" />
+				<bean class="org.squashtest.plugin.api.report.ReportView">
+					<property name="labelKey" value="report.view.title.listtcbycampaign" />
 					<property name="formats" value="xls,ods,csv,pdf,html" />
 				</bean>
-				<bean class="org.squashtest.core.api.report.ReportView">
-					<property name="nameKey" value="report.view.title.campaigndashboard" />
+				<bean class="org.squashtest.plugin.api.report.ReportView">
+					<property name="labelKey" value="report.view.title.campaigndashboard" />
 					<property name="formats" value="pdf,html" />
 				</bean>
 			</list>
 		</property>
 		<property name="form">
 			<list>
-				<bean class="org.squashtest.core.api.report.form.DateInputDefinition">
+				<bean class="org.squashtest.plugin.api.report.form.DateInputDefinition">
 					<property name="name" value="" />
 					<property name="labelKey" value="" />
 				</bean>
 			</list>
 		</property>
 	</bean>
+	
+	<bean id="messageSource"
+		class="org.springframework.context.support.ReloadableResourceBundleMessageSource">
+		<property name="basename" value="classpath:i18n/messages" /> 
+	</bean>
 </beans>
-
