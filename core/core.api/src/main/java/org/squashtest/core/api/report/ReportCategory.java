@@ -18,18 +18,35 @@
  *     You should have received a copy of the GNU Lesser General Public License
  *     along with this software.  If not, see <http://www.gnu.org/licenses/>.
  */
-package org.squashtest.csp.tm.domain.testcase;
+
+package org.squashtest.core.api.report;
 
 import org.squashtest.csp.api.infrastructure.Internationalizable;
 
-public enum TestCaseExecutionMode implements Internationalizable {
-	AUTOMATED,
-	MANUAL;
+/**
+ * @author bsiri
+ * @author Gregory Fouquet
+ *
+ */
+public enum ReportCategory implements Internationalizable {
+	EXECUTION_PHASE("report.category.executionphase.name"), 
+	PREPARATION_PHASE("report.category.preparationphase.name"), 
+	VARIOUS("report.category.various.name");
 
-	private static final String I18N_KEY_ROOT = "test-case.execution-mode.";
+	private final String i18nKey;
+	
+	/**
+	 * @param i18nKey
+	 */
+	private ReportCategory(String i18nKey) {
+		this.i18nKey = i18nKey;
+	}
 
+	/**
+	 * @see org.squashtest.csp.api.infrastructure.Internationalizable#getI18nKey()
+	 */
 	@Override
 	public String getI18nKey() {
-		return I18N_KEY_ROOT + name();
+		return i18nKey;
 	}
 }

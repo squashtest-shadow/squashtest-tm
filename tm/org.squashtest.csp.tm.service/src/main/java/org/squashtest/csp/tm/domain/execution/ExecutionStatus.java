@@ -20,7 +20,7 @@
  */
 package org.squashtest.csp.tm.domain.execution;
 
-import org.squashtest.csp.tm.domain.Internationalizable;
+import org.squashtest.csp.api.infrastructure.Internationalizable;
 
 /**
  *

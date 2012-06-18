@@ -18,11 +18,45 @@
  *     You should have received a copy of the GNU Lesser General Public License
  *     along with this software.  If not, see <http://www.gnu.org/licenses/>.
  */
-package org.squashtest.csp.tm.domain;
 
-public interface Internationalizable {
+package org.squashtest.core.api.report;
+
+/**
+ * @author bsiri
+ * @author Gregory Fouquet
+ * 
+ */
+public class ReportView {
+	private String nameKey;
+	private String[] formats;
+
 	/**
-	 * @return the non null key used to get this object's i18n'd message.
+	 * @return the nameKey
 	 */
-	String getI18nKey();
+	public String getNameKey() {
+		return nameKey;
+	}
+
+	/**
+	 * @param nameKey
+	 *            the nameKey to set
+	 */
+	public void setNameKey(String nameKey) {
+		this.nameKey = nameKey;
+	}
+
+	/**
+	 * @return the formats
+	 */
+	public String[] getFormats() {
+		return formats;
+	}
+
+	/**
+	 * @param formats
+	 *            the formats to set
+	 */
+	public void setFormats(String[] formats) {
+		this.formats = formats;
+	}
 }

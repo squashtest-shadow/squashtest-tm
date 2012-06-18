@@ -18,18 +18,39 @@
  *     You should have received a copy of the GNU Lesser General Public License
  *     along with this software.  If not, see <http://www.gnu.org/licenses/>.
  */
-package org.squashtest.csp.tm.domain.testcase;
 
-import org.squashtest.csp.api.infrastructure.Internationalizable;
+package org.squashtest.core.api.report.form;
 
-public enum TestCaseExecutionMode implements Internationalizable {
-	AUTOMATED,
-	MANUAL;
-
-	private static final String I18N_KEY_ROOT = "test-case.execution-mode.";
-
-	@Override
-	public String getI18nKey() {
-		return I18N_KEY_ROOT + name();
+/**
+ * @author Gregory
+ * 
+ */
+abstract class BasicInputDefinition implements InputDefinition {
+	private String name;
+	private String labelKey;
+	/**
+	 * @return the name
+	 */
+	public String getName() {
+		return name;
 	}
+	/**
+	 * @param name the name to set
+	 */
+	public void setName(String name) {
+		this.name = name;
+	}
+	/**
+	 * @return the labelKey
+	 */
+	public String getLabelKey() {
+		return labelKey;
+	}
+	/**
+	 * @param labelKey the labelKey to set
+	 */
+	public void setLabelKey(String labelKey) {
+		this.labelKey = labelKey;
+	}
+
 }

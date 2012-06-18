@@ -21,6 +21,8 @@
 
 package org.squashtest.csp.tm.domain;
 
+import org.squashtest.csp.api.infrastructure.Internationalizable;
+
 /**
  * Something (more specifically an enum) which can be organized using a level and which is also internationalizable.
  * 

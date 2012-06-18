@@ -30,7 +30,7 @@ import org.apache.commons.lang.time.DateFormatUtils;
 import org.springframework.context.MessageSource;
 import org.springframework.util.ReflectionUtils;
 import org.springframework.web.util.HtmlUtils;
-import org.squashtest.csp.tm.domain.Internationalizable;
+import org.squashtest.csp.api.infrastructure.Internationalizable;
 import org.squashtest.csp.tm.domain.event.RequirementAuditEvent;
 import org.squashtest.csp.tm.domain.event.RequirementAuditEventVisitor;
 import org.squashtest.csp.tm.domain.event.RequirementCreation;

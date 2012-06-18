@@ -285,6 +285,7 @@
 		<module>database</module>
 		<module>core</module>
 		<module>tm</module>
+		<module>plugins</module>
 		<module>osgi-integration-tests</module>
 	</modules>
 

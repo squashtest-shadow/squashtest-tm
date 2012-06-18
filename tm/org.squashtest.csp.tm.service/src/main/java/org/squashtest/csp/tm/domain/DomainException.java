@@ -20,6 +20,8 @@
  */
 package org.squashtest.csp.tm.domain;
 
+import org.squashtest.csp.api.infrastructure.Internationalizable;
+
 public abstract class DomainException extends RuntimeException implements Internationalizable {
 
 	private static final long serialVersionUID = 5203532234097674488L;

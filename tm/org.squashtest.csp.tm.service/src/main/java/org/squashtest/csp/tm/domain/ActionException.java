@@ -20,6 +20,8 @@
  */
 package org.squashtest.csp.tm.domain;
 
+import org.squashtest.csp.api.infrastructure.Internationalizable;
+
 public class ActionException extends RuntimeException implements Internationalizable {
 
 	/**
