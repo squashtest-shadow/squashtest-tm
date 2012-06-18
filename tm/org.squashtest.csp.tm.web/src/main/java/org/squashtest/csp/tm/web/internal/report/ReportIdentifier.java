@@ -86,4 +86,12 @@ public class ReportIdentifier {
 	public int getIndex() {
 		return index;
 	}
+
+	/**
+	 * @see java.lang.Object#toString()
+	 */
+	@Override
+	public String toString() {
+		return "ReportIdentifier [namespace=" + namespace + ", index=" + index + "]";
+	}
 }

@@ -21,17 +21,27 @@
 
 package org.squashtest.plugin.api.report.form;
 
+import org.squashtest.core.api.internal.infrastructure.Labelled;
+
 /**
- * @author Gregory Fouquet
+ * @author Gregory
  * 
  */
-public class DateInputDefinition extends BasicInputDefinition {
+abstract class BasicInput extends Labelled implements FormInput {
+	private String name;
+
 	/**
-	 * @see org.squashtest.plugin.api.report.form.InputDefinition#getType()
+	 * @return the name
 	 */
-	@Override
-	public InputType getType() {
-		return InputType.DATE;
+	public String getName() {
+		return name;
 	}
 
+	/**
+	 * @param name
+	 *            the name to set
+	 */
+	public void setName(String name) {
+		this.name = name;
+	}
 }

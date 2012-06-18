@@ -116,86 +116,13 @@
 	<script th:remove="all" type="text/javascript" src="../../js/thymol.js"></script>
 	<script type="text/javascript" src="../../scripts/squash/squashtm.navbar.js" th:src="@{/scripts/squash/squashtm.navbar.js}"></script>
 	<script type="text/javascript" src="../../scripts/squash/squashtm.projectfilter.js" th:src="@{/scripts/squash/squashtm.projectfilter.js}"></script>
+	
+	<script type="text/javascript" src="../../scripts/squash/squashtm.reportworkspace.js" th:src="@{/scripts/squash/squashtm.reportworkspace.js}"></script>
 
 	<script type="text/javascript" th:inline="javascript">
-		var reportWorkspace = (function($) {
-			<!-- script managing the expand/normal state of this part of the workspace -->
-			function setEditReportNormalState(){
-				$("#contextual-content").removeClass("expanded");
-			}
-			
-			function setEditReportExpandState(){
-				$("#contextual-content").addClass("expanded");
-			}
-			
-			function toggleEditReportState(){
-				$("#contextual-content").toggleClass("expanded");
-			}
-			
-			function findId(name){
-				var idIndex = name.lastIndexOf("-")+1;
-				
-				return name.substring(idIndex);		
-			}
-
-			function cleanContextual(){
-				var contextualList = $(".is-contextual");
-				
-				if (contextualList.length==0) return;
-				
-				$('.is-contextual').each(function () {					
-					$(this).dialog("destroy").remove(); 
-				});
-			}
-			
-			function loadContextualReport(reportItem){
-				cleanContextual();
-				$("#contextual-content").html('');
-				
-				var reportUrl = $(reportItem).data('href');
-				
-				$("#contextual-content").load(reportUrl);
-			}
-
-			return {
-				/**
-					the function regarding the category panel are defined in edit-report.jsp,
-					because the button managing it is there too.
-					
-					If that's too confusing consider refractoring some day.
-				*/
-	
-				setReportWorkspaceNormalState : function() {
-					setCategoryFrameNormalState();
-					setEditReportNormalState();
-				},
-				
-				setReportWorkspaceExpandState : function() {
-					setCategoryFrameExpandState();
-					setEditReportExpandState();
-				},
-				
-				toggleReportWorkspaceState : function (){
-					toggleCategoryFrameState();
-					toggleEditReportState();							
-				},
-				
-				loadContextualReport : loadContextualReport
-			}
-		}(jQuery));
-
 		$(function() {
-			$(".report-category").togglePanel({});
-
-			$("#outer-category-frame .report-item").click(function(){
-				reportWorkspace.loadContextualReport(this);
-			});
-
 			/* navigation tag */
 			squashtm.navbar.initHighlighted('report');
-			
-			/* decorate buttons */
-			$.squash.decorateButtons();
 			
 			/* project filter */
 			var projectFilterConf = {
@@ -223,6 +150,12 @@
 			squashtm.notification.init({
 				infoTitle : /*[[#{popup.title.info}]]*/ 'Info', 
 				errorTitle: /*[[#{popup.title.error}]]*/ 'Erreur'
+			});
+			
+			/* this page */
+			squashtm.reportWorkspace.init({
+				expandSidebarLabel: /*[[ #{report.workspace.togglebutton.normal.label} ]]*/ '>>', 
+				collapseSidebarLabel: /*[[ #{report.workspace.togglebutton.expand.label} ]]*/ '<<'
 			});
 		});	
 	</script>

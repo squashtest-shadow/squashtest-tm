@@ -62,8 +62,8 @@ public class ReportsRegistry {
 			reports.put(category, identifiedReport);
 		}
 
-		LOGGER.info("Registered report [{}] under Category [{}]", report.getLabelKey(), category.getI18nKey());
-		LOGGER.debug("{}", properties);
+		LOGGER.info("Registered report [{}] under Category [{}]", report, category.getI18nKey());
+		LOGGER.debug("Report plugin registered along with properties [{}]", properties);
 	}
 
 	private IdentifiedReportDecorator createIdentifiedReport(ReportDefinition report, Map<?, ?> properties) {
@@ -86,8 +86,8 @@ public class ReportsRegistry {
 			reports.remove(category, identifiedReport);
 		}
 
-		LOGGER.info("Unregistered report [{}] from Category [{}]", report.getLabelKey(), category.getI18nKey());
-		LOGGER.debug("{}", properties);
+		LOGGER.info("Unregistered report [{}] from Category [{}]", report, category.getI18nKey());
+		LOGGER.debug("Report plugin unregistered along with properties [{}]", properties);
 	}
 
 	@SuppressWarnings("unchecked")

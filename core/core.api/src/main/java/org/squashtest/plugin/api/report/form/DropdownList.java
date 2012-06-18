@@ -21,27 +21,18 @@
 
 package org.squashtest.plugin.api.report.form;
 
-import org.squashtest.core.api.internal.infrastructure.Labelled;
-
 /**
  * @author Gregory
- * 
+ *
  */
-abstract class BasicInputDefinition extends Labelled implements InputDefinition {
-	private String name;
+public class DropdownList extends OptionsGroup {
 
 	/**
-	 * @return the name
+	 * @see org.squashtest.plugin.api.report.form.FormInput#getType()
 	 */
-	public String getName() {
-		return name;
+	@Override
+	public InputType getType() {
+		return InputType.DROPDOWN_LIST;
 	}
 
-	/**
-	 * @param name
-	 *            the name to set
-	 */
-	public void setName(String name) {
-		this.name = name;
-	}
 }

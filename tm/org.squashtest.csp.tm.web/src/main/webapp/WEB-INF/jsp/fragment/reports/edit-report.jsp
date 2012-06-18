@@ -320,7 +320,6 @@
 			<div id="view-content-panel-${view.model}" class="view-content-panel"
 				style="overflow: scroll;"></div>
 		</c:forEach>
-
 	</div>
 
 </div>

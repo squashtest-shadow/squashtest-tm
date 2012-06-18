@@ -1,0 +1,478 @@
+<!--
+
+        This file is part of the Squashtest platform.
+        Copyright (C) 2010 - 2011 Squashtest TM, Squashtest.org
+
+        See the NOTICE file distributed with this work for additional
+        information regarding copyright ownership.
+
+        This is free software: you can redistribute it and/or modify
+        it under the terms of the GNU Lesser General Public License as published by
+        the Free Software Foundation, either version 3 of the License, or
+        (at your option) any later version.
+
+        this software is distributed in the hope that it will be useful,
+        but WITHOUT ANY WARRANTY; without even the implied warranty of
+        MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+        GNU Lesser General Public License for more details.
+
+        You should have received a copy of the GNU Lesser General Public License
+        along with this software.  If not, see <http://www.gnu.org/licenses/>.
+
+-->
+<!DOCTYPE html SYSTEM "http://www.thymeleaf.org/dtd/xhtml1-transitional-thymeleaf-spring3-3.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml" xmlns:th="http://www.thymeleaf.org">
+<head>
+	<title th:text="#{workspace.report.title}">Espace rapports</title>
+	<meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
+	<!-- common head -->
+	<link rel="stylesheet" type="text/css" media="all" href="../../../../../../../core/core.web/src/main/webapp/styles/master.css" />
+	<!-- /common head -->
+	<!-- common script import -->
+	<link rel="stylesheet" type="text/css" media="all" href="../../../../../../../core/core.web/src/main/webapp/styles/squashtm.fg.menu.css" />
+	<!-- /common script import -->
+	<link rel="stylesheet" type="text/css" media="all" href="../../../../../../../core/core.web/src/main/webapp/styles/master.blue.css" />
+	<!-- rich jeditable header -->
+	<link rel="stylesheet" type="text/css" media="all" href="../../../../../../../core/core.web/src/main/webapp/styles/ckeditor.override.css" />
+
+	<!-- common script import -->
+	<!-- jq header -->
+	<script type="text/javascript" src="../../../../../../../core/core.web/src/main/webapp/scripts/jquery/jquery-1.5.2-dev.js"></script>
+	<script type="text/javascript" src="../../../../../../../core/core.web/src/main/webapp/scripts/jquery/jquery-ui-1.8.13.all.dev.js"></script>
+	<script type="text/javascript" src="../../../../../../../core/core.web/src/main/webapp/scripts/squashtest/jquery.squashtm.plugin.js"></script>
+	<script type="text/javascript" src="../../../../../../../core/core.web/src/main/webapp/scripts/squashtest/jquery.squash.togglepanels.js"></script> 
+	<script type="text/javascript" src="../../../../../../../core/core.web/src/main/webapp/scripts/squashtest/jquery.squash.messagedialog.js"></script>  
+	<script type="text/javascript" src="../../../../../../../core/core.web/src/main/webapp/scripts/squashtest/jquery.squash.confirmdialog.js"></script>  
+	<!-- /jq header -->
+	<!-- ckeditor import -->
+	<script type="text/javascript" src="../../../../../../../core/core.web/src/main/webapp/scripts/ckeditor/ckeditor.js"></script>
+	<script type="text/javascript" src="../../../../../../../core/core.web/src/main/webapp/scripts/ckeditor/adapters/jquery.js"></script>
+	<script type="text/javascript" src="../../../../../../../core/core.web/src/main/webapp/scripts/jquery/jquery.dialog-patch.js"></script>
+	<!-- /ckeditor import -->	
+	<script type="text/javascript" src="../../../../../../../core/core.web/src/main/webapp/scripts/squashtest/jquery.squashtm.oneshotdialog.js"></script>
+	<script type="text/javascript" src="../../../../../../../core/core.web/src/main/webapp/scripts/squashtest/classes/KeyEventListener.js"></script>
+	<script type="text/javascript" src="../../../../../../../core/core.web/src/main/webapp/scripts/squashtest/jquery.squashtm.contextual-content.js"></script>
+	<script type="text/javascript" src="../../../../../../../core/core.web/src/main/webapp/scripts/squashtest/jquery.squashtm.fg.menu.js"></script>
+	<script type="text/javascript" src="../../../../../../../core/core.web/src/main/webapp/scripts/squashtest/classes/Event.js"></script>
+	<script type="text/javascript" src="../../../../../../../core/core.web/src/main/webapp/scripts/squashtest/jquery.squash.squashbutton.js"></script>
+	<!-- /common script import -->
+	<!-- rich jeditable -->
+	<script type="text/javascript" src="../../../../../../../core/core.web/src/main/webapp/scripts/jquery/jquery.jeditable.js"></script>
+	<script type="text/javascript" src="../../../../../../../core/core.web/src/main/webapp/scripts/jquery/jquery.generateId.js"></script>
+	<script type="text/javascript" src="../../../../../../../core/core.web/src/main/webapp/scripts/jquery/jquery.jeditable.ckeditor.js"></script>
+	<script type="text/javascript" src="../../../../../../../core/core.web/src/main/webapp/scripts/squashtest/jquery.squashtm.jeditable.ext.js"></script>
+	<!-- menubar -->	
+	<script type="text/javascript" src="../../scripts/squash/squashtm.menubar.js"></script>
+	<!-- wtf -->
+	<script type="text/javascript" src="../../scripts/squash/squashtm.notification.js"></script>
+
+	<script th:remove="all" type="text/javascript" src="../../js/thymol.js"></script>
+	<script type="text/javascript" src="../../scripts/squash/squashtm.navbar.js"></script>
+	<script type="text/javascript" src="../../scripts/squash/squashtm.projectfilter.js"></script>
+
+	<script type="text/javascript" src="../../scripts/squash/squashtm.reportworkspace.js" th:src="@{/scripts/squash/squashtm.reportworkspace.js}"></script>
+
+	<script type="text/javascript" th:inline="javascript">
+		$(function() {
+			/* navigation tag */
+			squashtm.navbar.initHighlighted('report');
+			
+			/* project filter */
+			var projectFilterConf = {
+					url: /*[[ @{/global-filter/filter} ]]*/ '/global-filter/filter',
+					title : /*[[ #{dialog.settings.filter.title} ]]*/ 'Filtre de projets',
+					confirmLabel: /*[[ #{dialog.button.confirm.label} ]]*/ 'Confirmer',
+					cancelLabel: /*[[ #{dialog.button.cancel.label} ]]*/ 'Annuler',
+			};
+				
+			squashtm.projectfilter.init(projectFilterConf);
+			
+			/* menubar */
+			var menuBarConf = {
+				boxSelector : "#menu-toggle-filter-ckbox",
+				url : /*[[@{/global-filter/filter-status}]]*/ '/global-filter/filter-status',
+				linkSelector : "#menu-project-filter-link",
+				enabledTxt : /*[[#{workspace.menubar.filter.enabled.label}]]*/ 'Actif',
+				disabledTxt : /*[[#{workspace.menubar.filter.disabled.label}]]*/ 'Inactif',
+				enabledCallbacks : [ function(){ $("div.tree-filter-reminder-div > span").removeClass("not-displayed");} ]
+			}
+	
+			squashtm.menubar.init(menuBarConf);
+			
+			/* wtf */
+			squashtm.notification.init({
+				infoTitle : /*[[#{popup.title.info}]]*/ 'Info', 
+				errorTitle: /*[[#{popup.title.error}]]*/ 'Erreur'
+			});
+			
+			squashtm.reportWorkspace.init();
+		});	
+	</script>
+</head>
+<body>
+	<div id="navigation" th:include="navbar.frag :: navbar">
+		NAVBAR
+	</div>
+
+	<div id="workspace">
+		<div id="workspace-title">
+			<div class="snap-left">
+				<h2 th:text="#{workspace.report.title}">Espace Rapport</h2>	
+			</div>
+			<div class="snap-right">
+ 				<div class="main-menubar" th:include="menubar.frag :: menubar">
+ 					MENUBAR
+				</div>
+				<div style="display:inline-block;">
+					<div id="ajax-processing-indicator" class="ui-corner-all snap-right" style="display:inline-block">
+						<img src="../../../../../../../core/core.web/src/main/webapp/images/ajax-loader.gif" width="19px" height="19px" /> 
+						<span th:text="#{squashtm.processing}">En cours...</span>
+					</div>
+ 				</div>
+			</div>
+		</div>
+		
+		<div id="category-pane">
+			<div id="outer-category-frame">
+				<div th:each="cat : ${categories}" th:id="${#ids.seq('category-panel')}" title="Cat 1" th:title="#{${cat.i18nKey}}" class="report-category">
+					<div th:each="rpt : ${reports[__${cat}__]}" th:id="${#ids.seq('report-item')}" 
+						data-href="sample-report/0" th:attr="data-href=@{${rpt.namespace} + '/' + ${rpt.index}}"
+						class="report-item">
+						<div class="report-item-icon">
+							<img src="../../../../../../../core/core.web/src/main/webapp/images/report_spreadsheet.png" />
+						</div> 
+						<div class="report-item-description">
+							<label><b>Sample report</b><br/><b>(Sample type)</b></label><br/>
+							<span>This report does this and that</span>
+						</div>
+						<div class="unsnap"></div>
+					</div>
+				</div>
+			</div> 
+ 		</div>
+<!-- IT HAPPENS HERE -->
+		<div id="contextual-content" class="no-resizable-contextual-content" th:remove="tag">
+			<script type="text/javascript">
+				$(function(){
+					$("#report-criteria-panel").togglePanel({
+						initiallyOpen : true,
+						cssClasses : "is-contextual"
+					});
+					$("#contextual-content").decorateButtons();
+				});
+			</script>
+			<div id="report-name-div" class="ui-widget-header ui-corner-all ui-state-default fragment-header">			
+				<div id="category-frame-button" th:unless="${param.hasBackButton}">
+					<input type="button" class="button" id="toggle-expand-category-frame-button" value="<<" th:value="#{report.workspace.togglebutton.normal.label}" />
+				</div>
+			
+				<div class="snap-left" style="height: 100%;">
+					<h2>
+						<span th:text="#{report.header.title}">Rapport</span>&nbsp;:&nbsp;
+						<a href="report-viewer.html" th:href="@{'/report-viewer/' + ${report.namespace} + '/' + ${report.index}}">
+							<span th:text="#{${report.resourceKeyName}}">Sample report</span>&nbsp;(<span th:text="#{${report.reportType.resourceKeyName}}">Sample type</span>)
+						</a>
+					</h2>
+				</div>
+			
+				<div class="snap-right" th:if="${param.hasBackButton}">
+					<input id="back" type="button" th:value="#{fragment.edit.header.button.back}" value="Back" />
+				</div>
+			
+				<div class="unsnap"></div>
+			</div>
+			<div class="fragment-body">
+				<div id="report-criteria-panel" class="is-contextual" 
+					title="Report form" th:title="#{report.criteria.panel.title}">
+					<div th:each="input in ${report.form}" th:switch="${input.type}" th:object="${input}">
+						<span th:case="TEXT">
+							<label for="text-crit" th:for="*{name}" th:text="*{label}">Text criteria</label>
+							<input name="text-crit" th:id="*{name}" th:name="*{name}" type="text" value="" />
+						</span>
+						<span th:case="CHECKBOX">
+							<input name="chk-crit" th:id="*{name}" th:name="*{name}" type="checkbox" value="*{value}" th:checked="*{defaultSelected}" />
+							<label for="chk-crit" th:for="*{name}" th:text="*{label}">Checkbox criteria</label>
+						</span>
+						<span th:case="DATE">
+							<label for="date-crit" th:for="${input.name}" th:text="${input.label}">Text criteria</label>
+							<input name="date-crit" th:id="*{name}" th:name="${input.name}" type="text" value="" />
+						</span>
+						<div th:case="DROPDOWN_LIST">
+							<label for="drop-crit" th:for="${input.name}" th:text="${input.label}">Dropdown criteria</label>
+							<select name="drop-crit" th:name="*{name}" size="1">
+								<option th:each="opt in *{options}" th:id="${#ids.seq(${opt.name})}" th:name="${opt.name}" 
+									th:value="${opt.value}" th:selected="${opt.defaultSelected}" th:text=#{${opt.label}}>Option</option>
+							</select>
+						</div>
+						<div th:case="RADIO_BUTTONS_GROUP">
+							<span th:text="*{label}">Radio buttons group</span>
+							<ul>
+								<li th:each="opt in *{options}">
+									<input name="radio-crit" type="radio" value="${opt.value}" data-grouped="true"
+										th:id="${#ids.seq(${opt.name})}" th:name="${opt.name}" th:checked="${opt.defaultSelected}">
+									<label for="radio-crit" th:for="${#ids.prev(${opt.name})}" th:text="${opt.label}">Option</label>
+								</li>
+							</ul>
+						</div>
+						<div th:case="CHECKBOXES_GROUP">
+							<span th:text="*{label}">Checkboxes group</span>
+							<ul>
+								<li th:each="opt in *{options}">
+									<input name="cbxes-crit" type="checkbox" value="${opt.value}" data-grouped="true" 
+										th:id="${#ids.seq(${opt.name})}" th:name="${opt.name}" th:checked="${opt.defaultSelected}" />
+									<label for="cbxes-crit" th:for="${#ids.prev(${opt.name})}" th:text="${opt.label}">Checkbox</label>
+								</li>
+							</ul>
+						</div>
+					</div>
+					<div th:remove="all">
+						<span>
+							<label for="text-crit">Text criteria</label>
+							<input name="text-crit" type="text" value="" />
+						</span>
+					</div>
+					<div th:remove="all">
+						<span>
+							<input name="chk-crit" type="checkbox" value="chk-val" />
+							<label for="chk-crit">Checkbox criteria</label>
+						</span>
+					</div>
+					<div th:remove="all">
+						<div>
+							<span>Radio buttons group</span>
+							<ul>
+								<li>
+									<input name="radio-crit" type="radio" value="radio-val-0" data-grouped="true" />
+									<label for="radio-crit">Option 0</label>
+									<input name="radio-crit" type="radio" value="radio-val-1" data-grouped="true" />
+									<label for="radio-crit">Option 1</label>
+								</li>
+							</ul>
+						</div>
+					</div>
+					<div th:remove="all">
+						<div>
+							<span>Checkboxes group</span>
+							<ul>
+								<li>
+									<input name="cbxes-crit" type="checkbox" value="cbxes-val-0" data-grouped="true" />
+									<label for="cbxes-crit">Checkbox 0</label>
+								</li>
+								<li>
+									<input name="cbxes-crit" type="checkbox" value="cbxes-val-1" data-grouped="true" />
+									<label for="cbxes-crit">Checkbox 1</label>
+								</li>
+							</ul>
+						</div>
+					</div>
+					<div th:remove="all">
+						<div>
+							<label for="drop-crit">Dropdown list</label>
+							<select name="drop-crit" size="1">
+								<option>Option 0</option>
+								<option>Option 1</option>
+							</select>
+						</div>
+					</div>						
+					<div th:remove="all">
+						<div class="datepicker">
+							<label for="date-crit">Datepicker</label>
+							<div class="datepicker-date">
+							</div>
+						</div>
+					</div>						
+					
+					<input type="button" class="button snap-right" id="generate" value="Generate" th:value="#{report.criteria.panel.button.generate.label}" />
+					<div class="unsnap"></div>
+				</div>
+			
+				<div id="view-tabed-panel" th:class="not-displayed">
+					<ul>
+						<li th:each="view in ${report.views}">
+							<a href="#view-content-panel-sample" th:href="#view-content-panel-${view.model}" th:text="#{${view.codeKey}}">Sample view</a>
+						</li>
+						<li th:remove="all">
+							<a href="#view-content-panel-sample-2">Sample view 2</a>
+						</li>
+			
+						<div id="export-option-div" class="snap-right">
+							<span th:text="#{report.view.panel.label.export.label}">Export</span>
+							<select id="export-select" th:remove="body">
+								<option>pdf</option>
+								<option>csv</option>
+							</select>		
+							<input type="button" class="button" id="export" value="Go!" th:value="#{report.view.panel.button.export.label}" />
+			
+						</div>
+					</ul>
+					
+					<div th:each="view in ${report.views}" class="view-content-panel"
+						id="view-content-panel-sample" th:id="view-content-panel-${view.model}" 
+						style="overflow: scroll;">
+						VIEW HERE
+					</div>
+					<div th:remove="all" id="view-content-panel-sample-2" style="overflow: scroll;">
+						ANOTHER VIEW HERE
+					</div>
+				</div>
+			</div>
+		</div>
+				
+		<script type="text/javascript">
+			function serializeObject(obj){
+				var result="";
+				for (var ppt in obj){
+					//case of a property of type array
+					if (obj[ppt] instanceof Array){
+						var values = obj[ppt];
+						var i;
+						for (i=0;i<values.length;i++){
+							result+="&"+ppt+"[]="+values[i];
+						}
+					}
+					//case of a scalar property
+					else{
+						result+="&"+ppt+"="+obj[ppt];				
+					}
+				}
+				return result;
+			}
+		
+			function addViewOption(){
+				var viewOption = "&view="+$("#view-tabed-panel").data("selected");
+				return viewOption;
+			}
+			
+			//should be reworked later 
+			function report_create_url(){
+				var baseUrl = "${baseReportUrl}";
+				
+				//set view
+				baseUrl+=addViewOption();
+				
+				var params=getReportCriteria();
+				var serializedParams=serializeObject(params);
+				var finalUrl=baseUrl+serializedParams;
+				
+				return finalUrl;
+			}
+			
+			
+			//that one too
+			function report_create_exportoption_url(){
+				var baseUrl = "${baseReportExportOptionUrl}";
+				
+				baseUrl+=addViewOption();
+				
+				return baseUrl;
+			}
+			
+			function loadReport(){
+				loadOptionSelect().done(function(data){loadOptionSelectSuccess(data);});		
+			}
+			
+			function loadContent(){
+				var url = report_create_url();
+				url+="&format=html";
+				$(selectedTab.panel).load(url);
+			}
+			
+			function loadOptionSelectSuccess(data){
+				populateExportOptionSelect(data);
+				tabsOptionSelect[$("#view-tabed-panel").data("selected")] = data;
+				loadContent();
+			}
+			
+			function loadOptionSelect(){
+				var optionUrl=report_create_exportoption_url();		
+				return $.ajax({
+					'url' : optionUrl,
+					type : 'get',
+					data : [],
+					dataType : "json"});
+			}
+			
+			function loadReportFromTab(selected,generateHasBeenClicked ){
+				if(generateHasBeenClicked){
+					if(selected.panel.innerHTML == ""){
+					 	loadReport();
+					}else{
+					var selectedIndex = $("#view-tabed-panel").data("selected")
+					populateExportOptionSelect(tabsOptionSelect[selectedIndex]);
+					}
+				}
+			}
+			
+			function populateExportOptionSelect(jsonOptions){
+				$("#export-select").empty();
+				var i=0;
+				for (i=0;i<jsonOptions.length;i++){
+					$("#export-select").append("<option value=\""+jsonOptions[i]+"\">"+jsonOptions[i]+"</option>");
+				} 
+			}
+			
+			function foldCriteriaPanel(){		
+				var parent = $("#generate").parents(".toggle-panel").find("h3");
+				parent.click(); //folds the criteria panel
+						
+			} 
+			
+			function exportReport(){
+				var url = report_create_url();
+				url+="&format="+$("#export-select").val();
+				//$.get(url);
+				document.location.href=url;
+			}
+			var generateHasBeenClicked = false;
+			var tabsOptionSelect = new Array();
+			
+			$(function(){
+				$("#generate").click(function(){
+					//fold unused parts of the workspace
+					if(typeof setReportWorkspaceExpandState == 'function'){
+						setReportWorkspaceExpandState();
+					}
+					foldCriteriaPanel();
+					
+					if(generateHasBeenClicked == false){
+					//display the view
+					$("#view-tabed-panel").removeClass("not-displayed");
+					generateHasBeenClicked = true;
+					}else{
+						$('.view-content-panel').empty();
+					}
+					//fetch the view
+					loadReport();
+					
+				});		
+				
+				$("#export").click(function(){
+					exportReport();
+				});
+				
+			});
+		</script>
+		<script type="text/javascript" src="../../scripts/squash/squashtm.report.js" th:src="@{/scripts/squash/squashtm.report.js}"></script>
+		<script type="text/javascript" th:inline="javascript">
+		var selectedTab;
+			$(function(){
+				squashtm.report.init();
+				
+				var tabPanel=$("#view-tabed-panel");
+				tabPanel.tabs({
+						select: function(event, ui){
+							tabPanel.data("selected",ui.index);
+							selectedTab = ui;
+							loadReportFromTab(ui,generateHasBeenClicked);
+						}
+				});
+				
+				tabPanel.tabs("select", 1); //TODO find prettier solution :  if i don't do that the next line won't initiate the "selectedTab" var because tab[0] is already selected. 
+				tabPanel.tabs("select",/*[[ ${report.defaultViewIndex} ]]*/ 0);
+				tabPanel.data("selected", /*[[ ${report.viewCatalog.defaultViewIndex} ]]*/ 0);
+			});
+		</script>		
+<!-- IT ENDS HERE -->
+	</div>
+</body>
+</html>

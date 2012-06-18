@@ -22,12 +22,14 @@
 package org.squashtest.plugin.api.report.form;
 
 /**
- * @author Gregory
+ * @author Gregory 
  *
  */
 public enum InputType {
 	TEXT, 
 	DATE,
-	COMBO, 
-	RADIO_BUTTONS
+	DROPDOWN_LIST, 
+	RADIO_BUTTONS_GROUP, 
+	CHECKBOX,
+	CHECKBOXES_GROUP
 }

@@ -21,26 +21,17 @@
 
 package org.squashtest.plugin.api.report.form;
 
-import java.util.List;
-
 /**
- * @author Gregory Fouquet
- *
+ * @author Gregory
+ * 
  */
-public class FormDefinition {
-	private List<FormInput> inputs;
-
+public class RadioButtonsGroup extends OptionsGroup {
 	/**
-	 * @param inputs the inputs to set
+	 * @see org.squashtest.plugin.api.report.form.FormInput#getType()
 	 */
-	public void setInputs(List<FormInput> inputs) {
-		this.inputs = inputs;
+	@Override
+	public InputType getType() {
+		return InputType.RADIO_BUTTONS_GROUP;
 	}
 
-	/**
-	 * @return the inputs
-	 */
-	public List<FormInput> getInputs() {
-		return inputs;
-	}
 }

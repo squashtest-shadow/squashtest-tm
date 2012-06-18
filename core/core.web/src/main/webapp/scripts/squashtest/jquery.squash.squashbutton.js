@@ -70,12 +70,22 @@
 	});
 
 	/**
-	 * Adds functions in the $.squash namespace
+	 * Adds functions in the $.squash namespace : 
+	 * $.squash.decorateButtons() will decorate all links and buttons whit the "button" class with the squashButton widget.
 	 */
 	$.extend($.squash, {
 		decorateButtons : function () {
-			$("a.button, input:submit.button, input:button.button")
-					.squashButton();
+			$("a.button, input:submit.button, input:button.button").squashButton();
+		}
+	});
+	
+	/**
+	 * Adds methods to $() 
+	 * $().decorateButtons() will decorate all links and buttons whit the "button" class with the squashButton widget.
+	 */
+	$.fn.extend({
+		decorateButtons : function () {
+			$(this).find("a.button, input:submit.button, input:button.button").squashButton();
 		}
 	});
 }(jQuery));

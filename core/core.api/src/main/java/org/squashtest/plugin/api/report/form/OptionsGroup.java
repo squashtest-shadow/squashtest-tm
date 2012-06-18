@@ -21,26 +21,37 @@
 
 package org.squashtest.plugin.api.report.form;
 
+import java.util.Collections;
 import java.util.List;
 
-/**
- * @author Gregory Fouquet
- *
- */
-public class FormDefinition {
-	private List<FormInput> inputs;
+import javax.annotation.PostConstruct;
 
-	/**
-	 * @param inputs the inputs to set
-	 */
-	public void setInputs(List<FormInput> inputs) {
-		this.inputs = inputs;
+/**
+ * @author Gregory
+ * 
+ */
+abstract class OptionsGroup extends BasicInput {
+	private List<OptionInput> options = Collections.emptyList();
+
+	@PostConstruct
+	public void initialize() {
+		for (OptionInput option : options) {
+			option.addedTo(this);
+		}
 	}
 
 	/**
-	 * @return the inputs
+	 * @param options
+	 *            the options to set
 	 */
-	public List<FormInput> getInputs() {
-		return inputs;
+	public void setOptions(List<OptionInput> options) {
+		this.options = options;
+	}
+
+	/**
+	 * @return the options
+	 */
+	public List<OptionInput> getOptions() {
+		return options;
 	}
 }

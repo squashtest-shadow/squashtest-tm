@@ -21,14 +21,59 @@
 
 package org.squashtest.plugin.api.report.form;
 
+import org.squashtest.core.api.internal.infrastructure.Labelled;
+
 /**
  * @author Gregory Fouquet
  * 
  */
-public interface InputDefinition {
-	String getName();
+public class OptionInput extends Labelled {
+	private String name;
+	private String value = "";
+	private boolean defaultSelected = false;
 
-	String getLabelKey();
+	/**
+	 * @param value
+	 *            the value to set
+	 */
+	public void setValue(String value) {
+		this.value = value;
+	}
 
-	InputType getType();
+	/**
+	 * @return the value
+	 */
+	public String getValue() {
+		return value;
+	}
+
+	/**
+	 * Callback - should be called by a {@link OptionsGroup} then this object is added to the group.
+	 * 
+	 * @param group
+	 */
+	/* package */void addedTo(OptionsGroup group) {
+		this.name = group.getName();
+	}
+
+	/**
+	 * @return the name
+	 */
+	public String getName() {
+		return name;
+	}
+
+	/**
+	 * @param defaultChecked the defaultChecked to set
+	 */
+	public void setDefaultSelected(boolean defaultChecked) {
+		this.defaultSelected = defaultChecked;
+	}
+
+	/**
+	 * @return the defaultChecked
+	 */
+	public boolean isDefaultSelected() {
+		return defaultSelected;
+	}
 }

@@ -22,17 +22,16 @@
 package org.squashtest.plugin.api.report.form;
 
 /**
- * @author Gregory Fouquet
+ * @author Gregory
  * 
  */
-public class TextInputDefinition extends BasicInputDefinition {
-
+public class CheckboxInput extends OptionInput implements FormInput {
 	/**
-	 * @see org.squashtest.plugin.api.report.form.InputDefinition#getType()
+	 * @see org.squashtest.plugin.api.report.form.FormInput#getType()
 	 */
 	@Override
 	public InputType getType() {
-		return InputType.TEXT;
+		return InputType.CHECKBOX;
 	}
 
 }

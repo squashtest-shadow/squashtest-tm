@@ -24,7 +24,7 @@ package org.squashtest.plugin.api.report;
 import javax.annotation.PostConstruct;
 
 import org.squashtest.core.api.internal.infrastructure.Labelled;
-import org.squashtest.plugin.api.report.form.InputDefinition;
+import org.squashtest.plugin.api.report.form.FormInput;
 
 /**
  * @author bsiri
@@ -38,7 +38,7 @@ public class ReportDefinition extends Labelled implements Report {
 	private String descriptionKey;
 	private ReportView[] views = {};
 	private int defaultViewIndex = 0;
-	private InputDefinition[] form = {};
+	private FormInput[] form = {};
 
 	/**
 	 * @see org.squashtest.plugin.api.report.Report#getCategory()
@@ -128,7 +128,7 @@ public class ReportDefinition extends Labelled implements Report {
 	 * @param form
 	 *            the form to set
 	 */
-	public void setForm(InputDefinition[] form) {
+	public void setForm(FormInput[] form) {
 		this.form = form;
 	}
 
@@ -136,7 +136,14 @@ public class ReportDefinition extends Labelled implements Report {
 	 * @see org.squashtest.plugin.api.report.Report#getForm()
 	 */
 	@Override
-	public InputDefinition[] getForm() {
+	public FormInput[] getForm() {
 		return form;
+	}
+
+	/**
+	 * @return the defaultViewIndex
+	 */
+	public int getDefaultViewIndex() {
+		return defaultViewIndex;
 	}
 }

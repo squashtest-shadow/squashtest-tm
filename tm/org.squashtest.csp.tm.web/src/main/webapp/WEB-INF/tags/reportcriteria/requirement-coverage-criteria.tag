@@ -71,9 +71,6 @@
 			$("#project-selection-status").html("${projectSelectionSpecified}");
 		}
 	}
-	
-	
-
 </script>
 <div>
 	<label><f:message key="report.criteria.panel.projectlist.label" /></label>

@@ -21,26 +21,17 @@
 
 package org.squashtest.plugin.api.report.form;
 
-import java.util.List;
-
 /**
  * @author Gregory Fouquet
- *
+ * 
  */
-public class FormDefinition {
-	private List<FormInput> inputs;
-
+public class DateInput extends BasicInput {
 	/**
-	 * @param inputs the inputs to set
+	 * @see org.squashtest.plugin.api.report.form.FormInput#getType()
 	 */
-	public void setInputs(List<FormInput> inputs) {
-		this.inputs = inputs;
+	@Override
+	public InputType getType() {
+		return InputType.DATE;
 	}
 
-	/**
-	 * @return the inputs
-	 */
-	public List<FormInput> getInputs() {
-		return inputs;
-	}
 }
