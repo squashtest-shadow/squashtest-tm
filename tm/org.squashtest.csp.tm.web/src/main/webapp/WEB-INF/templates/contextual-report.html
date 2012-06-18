@@ -58,6 +58,7 @@
 	<!-- /common script import -->
 	<!-- rich jeditable -->
 	<script type="text/javascript" src="../../../../../../../core/core.web/src/main/webapp/scripts/jquery/jquery.jeditable.js"></script>
+	<script type="text/javascript" src="../../../../../../../core/core.web/src/main/webapp/scripts/jquery/jquery.jeditable.datepicker.js"></script>
 	<script type="text/javascript" src="../../../../../../../core/core.web/src/main/webapp/scripts/jquery/jquery.generateId.js"></script>
 	<script type="text/javascript" src="../../../../../../../core/core.web/src/main/webapp/scripts/jquery/jquery.jeditable.ckeditor.js"></script>
 	<script type="text/javascript" src="../../../../../../../core/core.web/src/main/webapp/scripts/squashtest/jquery.squashtm.jeditable.ext.js"></script>
@@ -195,7 +196,7 @@
 						</span>
 						<span th:case="DATE">
 							<label for="date-crit" th:for="${input.name}" th:text="${input.label}">Text criteria</label>
-							<input name="date-crit" th:id="*{name}" th:name="${input.name}" type="text" value="" />
+							<span class="date-crit" th:id="*{name}" th:name="${input.name}">01-02-2012</span>
 						</span>
 						<div th:case="DROPDOWN_LIST">
 							<label for="drop-crit" th:for="${input.name}" th:text="${input.label}">Dropdown criteria</label>
@@ -275,11 +276,10 @@
 						</div>
 					</div>						
 					<div th:remove="all">
-						<div class="datepicker">
-							<label for="date-crit">Datepicker</label>
-							<div class="datepicker-date">
-							</div>
-						</div>
+						<span th:case="DATE">
+							<label for="date-crit">Date criteria</label>
+							<span class="date-crit" id="date-crit" ></span>
+						</span>
 					</div>						
 					
 					<input type="button" class="button snap-right" id="generate" value="Generate" th:value="#{report.criteria.panel.button.generate.label}" />

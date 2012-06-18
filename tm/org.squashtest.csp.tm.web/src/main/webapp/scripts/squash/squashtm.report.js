@@ -22,6 +22,12 @@ var squashtm = squashtm || {};
 /**
  * Controller for the report panel
  * 
+ * depends on : 
+ * jquery
+ * jquery ui
+ * jquery.jeditable.js
+ * jquery.jeditable.datepicker.js
+ * 
  * @author Gregory Fouquet
  */
 squashtm.report = (function ($) {
@@ -73,6 +79,12 @@ squashtm.report = (function ($) {
 		formState[this.name] = this.value;
 	}
 
+	function onDatepickerChanged(value) {
+		formState[this.id] = value;
+		console.log(this.id);
+		console.log(formState[this.id]);
+	}
+
 	function init() {
 		var panel = $("#report-criteria-panel");
 		var checkboxes = panel.find("input:checkbox");
@@ -100,8 +112,19 @@ squashtm.report = (function ($) {
 		var texts = panel.find("input:text");
 		texts.blur(onTextBlurred);
 		texts.blur();
-
-		// initialiser le state
+		
+		var datepickers = panel.find(".date-crit");
+		datepickers.editable(function (value, settings) {
+			var self = this;
+			onDatepickerChanged.apply(self, [value]);
+			
+			return value;
+		}, {
+	        type      : 'datepicker',
+	        tooltip   : "Click to edit..."
+		});
+		// initialiser la date !
+		
 
 		$('#generate').click(function () {
 			console.log(formState);
