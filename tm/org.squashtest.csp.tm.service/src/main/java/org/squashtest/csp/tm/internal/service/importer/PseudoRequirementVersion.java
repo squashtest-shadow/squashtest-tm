@@ -25,6 +25,7 @@ import java.util.Date;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.squashtest.csp.tm.domain.requirement.RequirementCategory;
 import org.squashtest.csp.tm.domain.requirement.RequirementCriticality;
 import org.squashtest.csp.tm.domain.requirement.RequirementFolder;
 import org.squashtest.csp.tm.domain.requirement.RequirementStatus;
@@ -40,6 +41,7 @@ import org.squashtest.csp.tm.domain.requirement.RequirementStatus;
 	private String label = "untitled";
 	private String reference = null;
 	private RequirementCriticality criticality = RequirementCriticality.UNDEFINED;
+	private RequirementCategory category = RequirementCategory.UNDEFINED;
 	private RequirementStatus state = RequirementStatus.WORK_IN_PROGRESS;
 	private String description = null;
 	private Date createdOnDate = new Date();
@@ -106,9 +108,22 @@ import org.squashtest.csp.tm.domain.requirement.RequirementStatus;
 		}catch(NullPointerException npe){
 			LOGGER.warn(npe.getMessage());
 		}
+	}	
+	
+	public RequirementCategory getCategory() {
+		return category;
 	}
 
-	
+	public void setCategory(String category) {
+		try{
+			this.category = RequirementCategory.valueOf(category.toUpperCase());
+		}catch(IllegalArgumentException iae){
+			LOGGER.warn(iae.getMessage());
+		}catch(NullPointerException npe){
+			LOGGER.warn(npe.getMessage());
+		}
+	}
+
 	public RequirementStatus getState() {
 		return state;
 	}

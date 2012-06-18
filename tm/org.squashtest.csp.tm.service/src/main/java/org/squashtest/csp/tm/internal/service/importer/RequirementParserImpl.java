@@ -115,6 +115,8 @@ public class RequirementParserImpl implements RequirementParser {
 		pseudoRequirementVersion.setCreatedBy(createdBy);
 		String criticality = readTextField(row, columnsMapping, CRITICALITY_TAG);
 		pseudoRequirementVersion.setCriticality(criticality);
+		String category = readTextField(row, columnsMapping, CATEGORY_TAG);
+		pseudoRequirementVersion.setCategory(category);
 		String state = readTextField(row, columnsMapping, STATE_TAG);
 		pseudoRequirementVersion.setState(state);
 		Date createdOn = readDateField(row, columnsMapping, CREATED_ON_TAG);

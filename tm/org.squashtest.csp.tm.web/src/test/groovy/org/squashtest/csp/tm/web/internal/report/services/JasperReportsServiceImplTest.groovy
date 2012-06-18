@@ -18,21 +18,20 @@
  *     You should have received a copy of the GNU Lesser General Public License
  *     along with this software.  If not, see <http://www.gnu.org/licenses/>.
  */
+package org.squashtest.csp.tm.web.internal.report.services
 
+import java.io.BufferedReader
+import java.io.FileInputStream
 
-package org.squashtest.csp.tm.web.internal.report.services;
+import java.io.InputStreamReader
 
-import java.io.BufferedReader;
-import java.io.FileInputStream;
+import java.io.InputStream
 
-import java.io.InputStreamReader;
+import org.squashtest.csp.tm.domain.requirement.ExportRequirementData
+import org.squashtest.csp.tm.domain.requirement.RequirementCategory
+import org.squashtest.csp.tm.domain.requirement.RequirementCriticality
 
-import java.io.InputStream;
-
-import org.squashtest.csp.tm.domain.requirement.ExportRequirementData;
-import org.squashtest.csp.tm.domain.requirement.RequirementCriticality;
-
-import spock.lang.Specification;
+import spock.lang.Specification
 
 
 public class JasperReportsServiceImplTest extends Specification {
@@ -48,9 +47,9 @@ public class JasperReportsServiceImplTest extends Specification {
 			InputStream reportStream = new FileInputStream(file);
 			
 			
-			def data1 = generateExportData("a", RequirementCriticality.MAJOR, "a", "a", "a", "a");
-			def data2 = generateExportData("b", RequirementCriticality.MINOR, "b", "b", "b", "b");
-			def data3 = generateExportData("c", RequirementCriticality.UNDEFINED, "c", "c", "c", "c");
+			def data1 = generateExportData("a", RequirementCriticality.MAJOR, RequirementCategory.BUSINESS, "a", "a", "a", "a");
+			def data2 = generateExportData("b", RequirementCriticality.MINOR, RequirementCategory.NON_FUNCTIONAL, "b", "b", "b", "b");
+			def data3 = generateExportData("c", RequirementCriticality.UNDEFINED,RequirementCategory.FUNCTIONAL, "c", "c", "c", "c");
 			
 			def dataSource = [data1, data2, data3];		
 			
@@ -67,23 +66,24 @@ public class JasperReportsServiceImplTest extends Specification {
 		then :
 
 			
-			strData1 == "a,a,a,MAJOR,a,a"
-			strData2 == "b,b,b,MINOR,b,b"
-			strData3 == "c,c,c,UNDEFINED,c,c"
+			strData1 == "a,a,a,MAJOR,a,a,BUSINESS"
+			strData2 == "b,b,b,MINOR,b,b,NON_FUNCTIONAL"
+			strData3 == "c,c,c,UNDEFINED,c,c,FUNCTIONAL"
 	
 		
 		
 	}
 	
-	private ExportRequirementData generateExportData(String name, RequirementCriticality crit, String project, String foldername, String ref, String desc){
+	private ExportRequirementData generateExportData(String name, RequirementCriticality crit, RequirementCategory cat, String project, String foldername, String ref, String desc){
 		ExportRequirementData data = new ExportRequirementData();
-		data.setId(1l);
-		data.setCriticality(crit);
-		data.setDescription(desc);
-		data.setFolderName(foldername);
-		data.setName(name);
-		data.setProject(project);
-		data.setReference(ref);
+		data.setId(1l)
+		data.setCriticality(crit)
+		data.setCategory(cat)
+		data.setDescription(desc)
+		data.setFolderName(foldername)
+		data.setName(name)
+		data.setProject(project)
+		data.setReference(ref)
 		return data;
 	}
 	

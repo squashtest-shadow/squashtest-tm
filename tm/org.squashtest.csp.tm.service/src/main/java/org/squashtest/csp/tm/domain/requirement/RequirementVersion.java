@@ -311,6 +311,7 @@ public class RequirementVersion extends Resource implements AttachmentHolder {
 		copy.setName(this.getName());
 		copy.setDescription(this.getDescription());
 		copy.criticality = this.criticality;
+		copy.category = this.category;
 		copy.reference = this.reference;
 		return copy;
 	}

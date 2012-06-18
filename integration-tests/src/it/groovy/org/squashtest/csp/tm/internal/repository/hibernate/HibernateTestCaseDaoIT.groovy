@@ -24,6 +24,7 @@ import javax.inject.Inject
 
 import org.springframework.transaction.annotation.Transactional
 import org.squashtest.csp.core.infrastructure.collection.PagingAndSorting;
+import org.squashtest.csp.tm.domain.requirement.RequirementCategory;
 import org.squashtest.csp.tm.domain.requirement.RequirementCriticality
 import org.squashtest.csp.tm.domain.requirement.RequirementSearchCriteria
 import org.squashtest.csp.tm.domain.testcase.TestCaseImportance;
@@ -367,6 +368,19 @@ class HibernateTestCaseDaoIT extends DbunitDaoSpecification {
 			RequirementCriticality.MAJOR
 		]
 		req.categories >> []
+		when:
+		def res = testCaseDao.findAllByRequirement(req, false);
+
+		then:
+		res.size() == 3
+		res.containsSameIdentifiers([302L, 103L, 102L])
+	}
+	@DataSet("HibernateTestCaseDaoIT.should find test cases by requirement categories.xml")
+	def "should find test cases by requirement categories"() {
+		given:
+		RequirementSearchCriteria req = Mock()
+		req.criticalities >> []
+		req.categories >> [RequirementCategory.UNDEFINED, RequirementCategory.FUNCTIONAL]
 		when:
 		def res = testCaseDao.findAllByRequirement(req, false);
 

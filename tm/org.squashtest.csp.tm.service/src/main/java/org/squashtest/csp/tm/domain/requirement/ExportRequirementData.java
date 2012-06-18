@@ -27,6 +27,7 @@ public class ExportRequirementData {
 	private String reference;
 	private String folderName;
 	private RequirementCriticality criticality;
+	private RequirementCategory category;
 	private String project;
 	private String name;
 	private String description;
@@ -56,6 +57,14 @@ public class ExportRequirementData {
 
 	public void setCriticality(RequirementCriticality criticality) {
 		this.criticality = criticality;
+	}
+	
+	public RequirementCategory getCategory() {
+		return category;
+	}
+
+	public void setCategory(RequirementCategory category) {
+		this.category = category;
 	}
 
 	public String getProject() {
@@ -93,6 +102,7 @@ public class ExportRequirementData {
 		this.setId(requirement.getId());
 		this.setName(requirement.getName());
 		this.setCriticality(requirement.getCriticality());
+		this.setCategory(requirement.getCategory());
 		this.setDescription(requirement.getDescription());	
 		this.setProject(requirement.getProject().getName());
 		this.setReference(requirement.getReference());

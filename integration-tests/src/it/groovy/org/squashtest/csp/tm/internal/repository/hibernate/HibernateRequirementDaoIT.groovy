@@ -23,6 +23,7 @@ package org.squashtest.csp.tm.internal.repository.hibernate
 import javax.inject.Inject;
 
 import org.springframework.transaction.annotation.Transactional;
+import org.squashtest.csp.tm.domain.requirement.RequirementCategory;
 import org.squashtest.csp.tm.domain.requirement.RequirementCriticality;
 import org.squashtest.csp.tm.domain.requirement.RequirementSearchCriteria;
 import org.squashtest.csp.tm.domain.requirement.VerificationCriterion;
@@ -89,6 +90,21 @@ class HibernateRequirementDaoIT extends DbunitDaoSpecification {
 			RequirementCriticality.MAJOR
 		]
 		req.categories >> []
+		req.verificationCriterion >> VerificationCriterion.ANY
+
+		when:
+		def res = requirementDao.findAllBySearchCriteria(req)
+
+		then:
+		res.size() == 2
+		!res.collect({ it.id }).contains(30)
+	}
+	@DataSet("HibernateRequirementDaoIT.should find requirements by categories.xml")
+	def "should find requirements by categories"() {
+		given:
+		RequirementSearchCriteria req = Mock()
+		req.criticalities >> []
+		req.categories >> [RequirementCategory.UNDEFINED, RequirementCategory.FUNCTIONAL]
 		req.verificationCriterion >> VerificationCriterion.ANY
 
 		when:

@@ -21,9 +21,9 @@
         along with this software.  If not, see <http://www.gnu.org/licenses/>.
 
 -->
-<jasperReport xmlns="http://jasperreports.sourceforge.net/jasperreports" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://jasperreports.sourceforge.net/jasperreports http://jasperreports.sourceforge.net/xsd/jasperreport.xsd" name="requirement-export" pageWidth="1020" pageHeight="595" orientation="Landscape" columnWidth="1020" leftMargin="0" rightMargin="0" topMargin="0" bottomMargin="0" resourceBundle="/WEB-INF/messages/tm/messages" whenResourceMissingType="Key">
-	<property name="ireport.zoom" value="1.0"/>
-	<property name="ireport.x" value="189"/>
+<jasperReport xmlns="http://jasperreports.sourceforge.net/jasperreports" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://jasperreports.sourceforge.net/jasperreports http://jasperreports.sourceforge.net/xsd/jasperreport.xsd" name="requirement-export" pageWidth="1190" pageHeight="595" orientation="Landscape" columnWidth="1190" leftMargin="0" rightMargin="0" topMargin="0" bottomMargin="0" resourceBundle="/WEB-INF/messages/tm/messages" whenResourceMissingType="Key">
+	<property name="ireport.zoom" value="1.0000000000000004"/>
+	<property name="ireport.x" value="487"/>
 	<property name="ireport.y" value="0"/>
 	<property name="net.sf.jasperreports.text.truncate.at.char" value="Boolean.FALSE"/>
 	<style name="table">
@@ -67,6 +67,9 @@
 	</field>
 	<field name="reference" class="java.lang.String">
 		<fieldDescription><![CDATA[reference]]></fieldDescription>
+	</field>
+	<field name="category" class="java.lang.Enum">
+		<fieldDescription><![CDATA[category]]></fieldDescription>
 	</field>
 	<pageHeader>
 		<band height="20">
@@ -116,6 +119,13 @@
 				</textElement>
 				<textFieldExpression class="java.lang.String"><![CDATA[$R{report.requirementexport.description}]]></textFieldExpression>
 			</textField>
+			<textField>
+				<reportElement x="1020" y="0" width="170" height="20"/>
+				<textElement>
+					<font isBold="true"/>
+				</textElement>
+				<textFieldExpression class="java.lang.String"><![CDATA[$R{report.requirementexport.category}]]></textFieldExpression>
+			</textField>
 		</band>
 	</pageHeader>
 	<detail>
@@ -163,6 +173,17 @@ $R{requirement.criticality.UNKNOWN}]]></textFieldExpression>
 				</reportElement>
 				<textElement/>
 				<textFieldExpression class="java.lang.String"><![CDATA[$F{folderName}]]></textFieldExpression>
+			</textField>
+			<textField>
+				<reportElement x="1020" y="0" width="170" height="20"/>
+				<textElement/>
+				<textFieldExpression class="java.lang.String"><![CDATA[($F{category}.toString() == "FUNCTIONAL") ? $R{requirement.category.FUNCTIONAL} :
+($F{category}.toString() == "NON_FONCTIONAL") ? $R{requirement.category.NON_FONCTIONAL} :
+($F{category}.toString() == "USE_CASE") ? $R{requirement.category.USE_CASE} :
+($F{category}.toString() == "BUSINESS") ? $R{requirement.category.BUSINESS} :
+($F{category}.toString() == "TEST_REQUIREMENT") ? $R{requirement.category.TEST_REQUIREMENT} :
+($F{category}.toString() == "UNDEFINED") ? $R{requirement.category.UNDEFINED} :
+$R{requirement.category.UNKNOWN}]]></textFieldExpression>
 			</textField>
 		</band>
 	</detail>

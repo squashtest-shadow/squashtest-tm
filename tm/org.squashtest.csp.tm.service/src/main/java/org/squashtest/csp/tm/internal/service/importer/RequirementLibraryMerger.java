@@ -302,6 +302,7 @@ class RequirementLibraryMerger {
 			RequirementVersion req = new RequirementVersion(pseudoRequirementVersion.getCreatedOnDate(),
 					pseudoRequirementVersion.getCreatedBy());
 			req.setCriticality(pseudoRequirementVersion.getCriticality());
+			req.setCategory(pseudoRequirementVersion.getCategory());
 			req.setDescription(pseudoRequirementVersion.getDescription());
 			req.setName(pseudoRequirementVersion.getLabel());
 			req.setReference(pseudoRequirementVersion.getReference());
@@ -313,10 +314,10 @@ class RequirementLibraryMerger {
 
 	private static class FolderMerger extends DestinationManager {
 
-		public RequirementFolder toMerge;
-		public RequirementFolder persisted;
-		public FolderHomonymeVisitor visitor = new FolderHomonymeVisitor(this);
-		public List<String> names;
+		public RequirementFolder toMerge;//NOSONAR
+		public RequirementFolder persisted;//NOSONAR
+		public FolderHomonymeVisitor visitor = new FolderHomonymeVisitor(this);//NOSONAR
+		public List<String> names;//NOSONAR
 
 		public void merge(RequirementFolder visited, RequirementLibrary library) {
 			setDestination(library);
