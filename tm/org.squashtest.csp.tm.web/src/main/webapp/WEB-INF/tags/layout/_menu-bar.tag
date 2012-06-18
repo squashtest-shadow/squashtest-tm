@@ -28,7 +28,7 @@
 <%@ taglib uri="http://java.sun.com/jsp/jstl/core" prefix="c"%>
 <%@ taglib uri="http://www.springframework.org/security/tags" prefix="sec"%>
 
-<script type="text/javascript" src="${ pageContext.servletContext.contextPath }/scripts/squashtest/main-menubar.js"></script>
+<script type="text/javascript" src="${ pageContext.servletContext.contextPath }/scripts/squashtest/squashtm.menubar.js"></script>
 
 <c:url var="projectFilterStatusUrl" value="/global-filter/filter-status"/>
 <c:url var="administrationUrl" value="/administration"/>
@@ -39,9 +39,6 @@
 	<input type="checkbox" id="menu-toggle-filter-ckbox"></input>
 	<a id="menu-project-filter-link" href="#" ></a> 
 </div>
-<%--
-<div><a id="menu-settings-link" href="" ><f:message key="workspace.menubar.parameters.label"/></a></div>
- --%>
 <sec:authorize access="hasRole('ROLE_TM_PROJECT_MANAGER') or hasRole('ROLE_ADMIN')">
 <div><a id="menu-administration-link" href="${ administrationUrl }" ><f:message key="workspace.menubar.administration.label"/></a></div>
 </sec:authorize>
@@ -69,7 +66,7 @@
 
 	$(function(){
 		
-		var confFilter = {
+		var menuBarConf = {
 			boxSelector : "#menu-toggle-filter-ckbox",
 			url : "${projectFilterStatusUrl}",
 			linkSelector : "#menu-project-filter-link",
@@ -78,10 +75,7 @@
 			enabledCallbacks : [ function(){ $("div.tree-filter-reminder-div > span").removeClass("not-displayed");} ]
 		}
 
-		initMainMenuBar(confFilter);
-		
-
-		
+		squashtm.menubar.init(menuBarConf);
 	});
 
 </script>

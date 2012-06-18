@@ -30,6 +30,7 @@
 		http://www.springframework.org/schema/context http://www.springframework.org/schema/context/spring-context-3.0.xsd
 		http://www.springframework.org/schema/mvc http://www.springframework.org/schema/mvc/spring-mvc-3.0.xsd
 		http://www.springframework.org/schema/aop http://www.springframework.org/schema/aop/spring-aop-3.0.xsd">
+
 	<!-- Scans the classpath of this application for @Components to deploy as 
 		beans -->
 	<context:component-scan base-package="*" />
@@ -37,7 +38,7 @@
 		
 	<!-- Configures the @Controller programming model -->
 	<mvc:annotation-driven validator="validator" />
-	
+
 	<bean id="validator"
 		class="org.springframework.validation.beanvalidation.CustomValidatorBean">
 		<property name="validatorFactory" ref="javax.validation.ValidatorFactory" />
@@ -89,10 +90,8 @@
 			<property name="includeClientInfo" value="true" />
 		</bean>
 		
+		<bean class="org.squashtest.csp.core.web.servlet.handler.SecurityExpressionEvaluatorExposerInterceptor" />
 	</mvc:interceptors>
-	
-<import resource="classpath*:WEB-INF/squashtest.csp.tm-servlet.xml"/>
-	
-		
-</beans>
 
+	<import resource="classpath*:WEB-INF/squashtest.csp.tm-servlet.xml"/>
+</beans>

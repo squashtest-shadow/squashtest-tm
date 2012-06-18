@@ -66,8 +66,6 @@
 				return tab;
 			}
 		
-			
-			
 			$(function() {
 				$( "#add-summary-dialog" ).messageDialog();
 				
@@ -116,8 +114,6 @@
 		</script>
 	</jsp:attribute>
 	
-
-	
 	<jsp:attribute name="tree">
 		<tree:linkables-tree workspaceType="requirement" id="linkable-requirements-tree" rootModel="${ linkableLibrariesModel }"/>
 	</jsp:attribute>
@@ -149,4 +145,3 @@
 		</div>
 	</jsp:attribute>
 </layout:tree-picker-layout>
-
