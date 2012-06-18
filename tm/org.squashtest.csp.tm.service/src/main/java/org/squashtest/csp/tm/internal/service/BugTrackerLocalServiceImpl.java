@@ -217,4 +217,9 @@ public class BugTrackerLocalServiceImpl implements BugTrackerLocalService {
 
 	}
 
+	@Override
+	public URL getBugtrackerUrl() {
+		return remoteBugTrackerService.getBugTrackerUrl();
+	}
+
 }

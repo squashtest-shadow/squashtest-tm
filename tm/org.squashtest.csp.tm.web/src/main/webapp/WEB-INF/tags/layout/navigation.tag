@@ -32,9 +32,16 @@
 
 <script type="text/javascript">
 	<c:if test="${ not empty highlighted }">
-	$(function() {
-		navLinkHighlight('${ highlighted }-link');
-	});
+		<c:choose>
+			<c:when test="${ highlighted == 'bugtracker'}">
+				<c:set var="bugtrackerHighlighted" value="${ true }"/>
+			</c:when>
+			<c:otherwise>
+				$(function() {
+					navLinkHighlight('${ highlighted }-link');
+				});
+			</c:otherwise>
+		</c:choose>
 	</c:if>
 
 	var squashtest_nav_button_active;
@@ -94,7 +101,7 @@
 		<lay:_workspace-button imageName="Button_Nav_TestCase_off.png" resourceName="test-case" />
 		<lay:_workspace-button imageName="Button_Nav_Campaign_off.png" resourceName="campaign" />
 		<lay:_workspace-button imageName="Button_Nav_Reporting_off.png" resourceName="report" />
-
+		<lay:_workspace-button-bugtracker highlighted="${ bugtrackerHighlighted }"/>
 	</div>
 	
 	<div id="nav_logo">

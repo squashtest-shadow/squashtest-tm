@@ -60,9 +60,11 @@ import org.squashtest.csp.tm.domain.bugtracker.IssueOwnership;
 import org.squashtest.csp.tm.domain.campaign.Iteration;
 import org.squashtest.csp.tm.domain.execution.Execution;
 import org.squashtest.csp.tm.domain.execution.ExecutionStep;
+import org.squashtest.csp.tm.domain.requirement.RequirementLibrary;
 import org.squashtest.csp.tm.infrastructure.filter.CollectionSorting;
 import org.squashtest.csp.tm.infrastructure.filter.FilteredCollectionHolder;
 import org.squashtest.csp.tm.service.BugTrackerLocalService;
+import org.squashtest.csp.tm.web.internal.model.builder.JsTreeNodeListBuilder;
 import org.squashtest.csp.tm.web.internal.model.customeditors.CategoryPropertyEditorSupport;
 import org.squashtest.csp.tm.web.internal.model.customeditors.PriorityPropertyEditorSupport;
 import org.squashtest.csp.tm.web.internal.model.customeditors.ProjectPropertyEditorSupport;
@@ -72,6 +74,7 @@ import org.squashtest.csp.tm.web.internal.model.datatable.DataTableDrawParameter
 import org.squashtest.csp.tm.web.internal.model.datatable.DataTableModel;
 import org.squashtest.csp.tm.web.internal.model.datatable.DataTableModelHelper;
 import org.squashtest.csp.tm.web.internal.model.jquery.IssueModel;
+import org.squashtest.csp.tm.web.internal.model.jstree.JsTreeNode;
 
 @Controller
 @RequestMapping("/bugtracker")
@@ -106,7 +109,30 @@ public class BugtrackerController {
 		binder.registerCustomEditor(Category.class, new CategoryPropertyEditorSupport());
 		binder.registerCustomEditor(BTProject.class, new ProjectPropertyEditorSupport());
 	}
+	/* **************************************************************************************************************
+	 * 																												*
+	 *  								Navigation button           												*
+	 *  																											*
+	 *  *********************************************************************************************************** */
+	@RequestMapping(value = "workspace-button", method = RequestMethod.GET)
+	public ModelAndView getNavButton(Locale locale) {
+		BugTrackerStatus status = checkStatus();
 
+		if (status == BugTrackerStatus.BUGTRACKER_UNDEFINED) {
+			LOGGER.trace("no bugtracker");
+			return new ModelAndView("fragment/issues/bugtracker-panel-empty");			
+		} else {
+			LOGGER.trace("return bugtracker nav button");
+			return new ModelAndView("fragment/issues/bugtracker-nav-button");
+		}
+	}
+	
+	@RequestMapping(value = "workspace",method = RequestMethod.GET)
+	public ModelAndView showWorkspace() {
+		ModelAndView mav = new ModelAndView("page/bugtracker-workspace");
+		mav.addObject("bugtrackerUrl", bugTrackerLocalService.getBugtrackerUrl().toString());
+		return mav;
+	}
 	/* **************************************************************************************************************
 	 * 																												*
 	 *  								ExecutionStep level section 												*

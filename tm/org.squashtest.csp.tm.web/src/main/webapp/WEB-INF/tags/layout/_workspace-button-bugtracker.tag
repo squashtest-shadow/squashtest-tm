@@ -20,13 +20,22 @@
         along with this software.  If not, see <http://www.gnu.org/licenses/>.
 
 --%>
-<?xml version="1.0" encoding="ISO-8859-1" ?>
-<%@ page language="java" contentType="text/html; charset=ISO-8859-1"
-    pageEncoding="ISO-8859-1"%>
-<!--  
-	when no bugtracker is defined, no butrackerpanel is needed. That jsp is empty because that's exactly 
-	what we want to send back to the client.
- -->
+<%@ tag body-content="empty" %>
+<%@ attribute name="highlighted" type="java.lang.Boolean" required="true" %> %>
+<%@ taglib prefix="c"  uri="http://java.sun.com/jsp/jstl/core"%>
+<%@ taglib prefix="fmt" uri="http://java.sun.com/jsp/jstl/fmt" %>
 
-
-
+<c:url var="workspaceUrl" value="/bugtracker/workspace-button" />
+<%--
+	this section is loaded asynchronously. The bugtracker might be out of reach indeed.
+ --%>	
+ <script type="text/javascript">
+ 	$(function(){
+ 		$("#bugtracker-div").load("${workspaceUrl}", function(){
+ 			<c:if test="${highlighted}">
+ 				navLinkHighlight('bugtracker-link');
+ 			</c:if>
+ 		});
+ 	});
+ </script>
+<div id="bugtracker-div" ></div>

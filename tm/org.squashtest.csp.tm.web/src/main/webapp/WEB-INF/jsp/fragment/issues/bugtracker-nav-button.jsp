@@ -20,13 +20,18 @@
         along with this software.  If not, see <http://www.gnu.org/licenses/>.
 
 --%>
-<?xml version="1.0" encoding="ISO-8859-1" ?>
-<%@ page language="java" contentType="text/html; charset=ISO-8859-1"
-    pageEncoding="ISO-8859-1"%>
-<!--  
-	when no bugtracker is defined, no butrackerpanel is needed. That jsp is empty because that's exactly 
-	what we want to send back to the client.
- -->
+<%@ page language="java" contentType="text/html; charset=utf-8"
+	pageEncoding="utf-8"%>
+<%@ taglib prefix="fmt" uri="http://java.sun.com/jsp/jstl/fmt" %>
+<%@ taglib prefix="c"  uri="http://java.sun.com/jsp/jstl/core"%>
+
+<c:url var="workspaceUrl" value="/bugtracker/workspace" />
+<fmt:message var="bTitle" key="workspace.bugtracker.button.label" />
+
+<a id="bugtracker-link" class="nav_btn" href="${workspaceUrl }">
+	<img src="${ pageContext.servletContext.contextPath }/images/Button_Nav_Bugtracker_off.png" alt="${ bTitle }" title="${ bTitle }" border="0"/>
+</a>
+
 
 
 

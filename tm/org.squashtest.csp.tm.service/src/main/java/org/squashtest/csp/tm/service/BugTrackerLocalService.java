@@ -168,4 +168,7 @@ public interface BugTrackerLocalService {
 	 */
 	List<BTIssue> getIssues(List<String> issueKeyList);
 
+
+	URL getBugtrackerUrl();
+
 }

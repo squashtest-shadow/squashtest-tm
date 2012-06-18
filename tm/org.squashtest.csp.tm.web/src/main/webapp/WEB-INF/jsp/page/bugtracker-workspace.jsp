@@ -20,13 +20,7 @@
         along with this software.  If not, see <http://www.gnu.org/licenses/>.
 
 --%>
-<?xml version="1.0" encoding="ISO-8859-1" ?>
-<%@ page language="java" contentType="text/html; charset=ISO-8859-1"
-    pageEncoding="ISO-8859-1"%>
-<!--  
-	when no bugtracker is defined, no butrackerpanel is needed. That jsp is empty because that's exactly 
-	what we want to send back to the client.
- -->
-
-
-
+<%@ taglib prefix="layout" tagdir="/WEB-INF/tags/layout"  %>
+<%@ taglib prefix="comp" tagdir="/WEB-INF/tags/component" %>
+<%@ page language="java" contentType="text/html; charset=utf-8" pageEncoding="utf-8"%>
+<layout:iframe-layout resourceName="bugtracker" iframeUrl="${ bugtrackerUrl }"></layout:iframe-layout>
