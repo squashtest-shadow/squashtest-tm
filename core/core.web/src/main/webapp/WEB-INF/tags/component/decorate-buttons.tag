@@ -24,17 +24,10 @@
 <%@ tag body-content="empty" description="Applies jquery l'n'f to all buttons and links with the 'button' class" %>
 <script type="text/javascript">
 	$(function() {
-		$( "a.button, input:submit.button, input:button.button" ).button();
-		
-		$( "a.button, input:submit.button, input:button.button, .ui-button" ).click(function(){
-			$(this).removeClass("ui-state-focus ui-state-hover");
-		});
+		$.squash.decorateButtons();
 	});
 	
 	function decorateButton(domButton){
-		$(domButton).button();
-		$(domButton).click(function(){
-			$(this).removeClass("ui-state-focus ui-state-hover");
-		});
+		$(domButton).squashButton();
 	}
 </script>

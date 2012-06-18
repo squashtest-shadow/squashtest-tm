@@ -80,10 +80,34 @@
 	</div>
 	<!-- /navigation tag -->
 
+	<div id="workspace">
+		<div id="workspace-title">
+			<div class="snap-left">
+				<h2 th:text="#{workspace.report.title}">Espace Rapport</h2>	
+			</div>
+			<div class="snap-right">
+				<div style="display:inline-block;">
+					<layout:_ajax-notifications  cssClass="snap-right"/>
+				</div><div class="main-menubar">
+					<layout:_menu-bar />
+				</div>
+			
+			</div>
+		</div>
+		<div id="category-pane">
+			<comp:category-panel categories="${categories}" />
+		</div>
+		<div id="contextual-content" class="no-resizable-contextual-content">
+			<span th:remove="all">THis area will be populated on demand later</span>
+		</div>
+	</div>
+	<comp:rich-jeditable-header />
+	<comp:decorate-buttons />
+
 	<!-- common script import -->
 	<!-- jq header -->
-	<script type="text/javascript" src="https://ajax.googleapis.com/ajax/libs/jquery/1.5.2/jquery.js" th:src="@{/scripts/jquery/jquery-1.5.2.min.js}"></script>
-	<script type="text/javascript" src="https://ajax.googleapis.com/ajax/libs/jqueryui/1.8.13/jquery-ui.js" th:src="@{/scripts/jquery/jquery-ui-1.8.13.custom.min.js}"></script>
+	<script type="text/javascript" src="../../../../../../../../core/core.web/src/main/webapp/scripts/jquery/jquery-1.5.2-dev.js" th:src="@{/scripts/jquery/jquery-1.5.2.min.js}"></script>
+	<script type="text/javascript" src="../../../../../../../../core/core.web/src/main/webapp/scripts/jquery/jquery-ui-1.8.13.all.dev.js" th:src="@{/scripts/jquery/jquery-ui-1.8.13.custom.min.js}"></script>
 	<script type="text/javascript" src="../../../../../../../../core/core.web/src/main/webapp/scripts/squashtest/jquery.squashtm.plugin.js" th:src="@{/scripts/squashtest/jquery.squashtm.plugin.js}"></script>
 	<script type="text/javascript" src="../../../../../../../../core/core.web/src/main/webapp/scripts/squashtest/jquery.squashtm.togglepanels.js" th:src="@{/scripts/squashtest/jquery.squashtm.togglepanels.js}"></script> 
 	<script type="text/javascript" src="../../../../../../../../core/core.web/src/main/webapp/scripts/squashtest/jquery.squash.messagedialog.js" th:src="@{/scripts/squashtest/jquery.squash.messagedialog.js}"></script>  
@@ -99,6 +123,7 @@
 	<script type="text/javascript" src="../../../../../../../../core/core.web/src/main/webapp/scripts/squashtest/jquery.squashtm.contextual-content.js" th:src="@{/scripts/squashtest/jquery.squashtm.contextual-content.js}"></script>
 	<script type="text/javascript" src="../../../../../../../../core/core.web/src/main/webapp/scripts/squashtest/jquery.squashtm.fg.menu.js" th:src="@{/scripts/squashtest/jquery.squashtm.fg.menu.js}"></script>
 	<script type="text/javascript" src="../../../../../../../../core/core.web/src/main/webapp/scripts/squashtest/classes/Event.js" th:src="@{/scripts/squashtest/classes/Event.js}"></script>
+	<script type="text/javascript" src="../../../../../../../../core/core.web/src/main/webapp/scripts/squashtest/jquery.squash.squashbutton.js" th:src="@{/scripts/squashtest/jquery.squash.squashbutton.js}"></script>
 	<!-- /common script import -->
 	
 	<script th:remove="all" type="text/javascript" src="../../../js/thymol.js"></script>
@@ -145,9 +170,11 @@
 			}
 		}(jQuery));
 
-		<!-- navigation tag -->
 		$(function() {
+		<!-- navigation tag -->
 			squashtm.navbar.initHighlighted('report');
+			<!-- decorate buttons -->
+			$.squash.decorateButtons();
 		});	
 	</script>
 </body>
