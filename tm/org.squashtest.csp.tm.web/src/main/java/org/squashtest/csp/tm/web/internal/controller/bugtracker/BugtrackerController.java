@@ -84,6 +84,7 @@ public class BugtrackerController {
 	private static final String EXECUTION_STEP_TYPE = "execution-step";
 	private static final String EXECUTION_TYPE = "execution";
 	private static final String ITERATION_TYPE = "iteration";
+	
 
 	@Inject
 	private MessageSource messageSource;
@@ -120,10 +121,11 @@ public class BugtrackerController {
 	 * @return
 	 */
 	@RequestMapping(value = EXECUTION_STEP_TYPE + "/{stepId}", method = RequestMethod.GET)
-	public ModelAndView getExecStepIssuePanel(@PathVariable Long stepId, Locale locale) {
+	public ModelAndView getExecStepIssuePanel(@PathVariable Long stepId, Locale locale, 
+			@RequestParam(value="style", required=false, defaultValue="toggle") String panelStyle) {
 
 		Bugged bugged = bugTrackerLocalService.findBuggedEntity(stepId, ExecutionStep.class);
-		return makeIssuePanel(bugged, EXECUTION_STEP_TYPE, locale);
+		return makeIssuePanel(bugged, EXECUTION_STEP_TYPE, locale, panelStyle);
 	}
 
 	/**
@@ -199,10 +201,11 @@ public class BugtrackerController {
 	 * @return
 	 */
 	@RequestMapping(value = EXECUTION_TYPE + "/{execId}", method = RequestMethod.GET)
-	public ModelAndView getExecIssuePanel(@PathVariable Long execId, Locale locale) {
+	public ModelAndView getExecIssuePanel(@PathVariable Long execId, Locale locale, 
+			@RequestParam(value="style", required=false, defaultValue="toggle") String panelStyle) {
 
 		Bugged bugged = bugTrackerLocalService.findBuggedEntity(execId, Execution.class);
-		return makeIssuePanel(bugged, EXECUTION_TYPE, locale);
+		return makeIssuePanel(bugged, EXECUTION_TYPE, locale, panelStyle);
 	}
 
 	/**
@@ -232,7 +235,8 @@ public class BugtrackerController {
 			filteredCollection = makeEmptyCollectionHolder(EXECUTION_TYPE, execId, npException);
 		}
 
-		return new ExecutionIssuesTableModel(locale).buildDataModel(filteredCollection, sorter.getFirstItemIndex() + 1, params.getsEcho());
+		return new ExecutionIssuesTableModel(messageSource,locale)
+					.buildDataModel(filteredCollection, sorter.getFirstItemIndex() + 1, params.getsEcho());
 
 	}
 
@@ -282,10 +286,11 @@ public class BugtrackerController {
 	 * @return
 	 */
 	@RequestMapping(value = ITERATION_TYPE + "/{iterId}", method = RequestMethod.GET)
-	public ModelAndView getIterationIssuePanel(@PathVariable Long iterId, Locale locale) {
+	public ModelAndView getIterationIssuePanel(@PathVariable Long iterId, Locale locale, 
+			@RequestParam(value="style", required=false, defaultValue="toggle") String panelStyle) {
 
 		Bugged bugged = bugTrackerLocalService.findBuggedEntity(iterId, Iteration.class);
-		return makeIssuePanel(bugged, ITERATION_TYPE, locale);
+		return makeIssuePanel(bugged, ITERATION_TYPE, locale, panelStyle);
 	}
 
 	/**
@@ -315,7 +320,8 @@ public class BugtrackerController {
 			filteredCollection = makeEmptyCollectionHolder(ITERATION_TYPE, iterId, npException);
 		}
 
-		return new IterationIssuesTableModel(locale).buildDataModel(filteredCollection, sorter.getFirstItemIndex() + 1, params.getsEcho());
+		return new IterationIssuesTableModel(messageSource, locale)
+					.buildDataModel(filteredCollection, sorter.getFirstItemIndex() + 1, params.getsEcho());
 
 	}
 
@@ -384,7 +390,7 @@ public class BugtrackerController {
 	 *
 	 * If the bugtracker isn'st defined no panel will be sent at all.
 	 */
-	private ModelAndView makeIssuePanel(Bugged entity, String type, Locale locale) {
+	private ModelAndView makeIssuePanel(Bugged entity, String type, Locale locale, String panelStyle) {
 
 		BugTrackerStatus status = checkStatus();
 
@@ -399,6 +405,7 @@ public class BugtrackerController {
 			mav.addObject("entity", entity);
 			mav.addObject("entityType", type);
 			mav.addObject("interfaceDescriptor", descriptor);
+			mav.addObject("panelStyle", panelStyle);
 			mav.addObject("bugTrackerStatus", status);
 			return mav;
 		}
@@ -457,36 +464,109 @@ public class BugtrackerController {
 			}
 		};
 	}
+	
+	
+	/* ****************************** bug ownership naming *******************************/ 
+	
+	
+	private static interface IssueOwnershipNameBuilder{
+		void setMessageSource(MessageSource source);
+		void setLocale(Locale locale);
+		String buildName(Bugged bugged);
+	}
 
-	// FIXME : I'm too lazy to implement something serious for now.
-	// The solution is probably to add adequate methods in the Bugged interface, so that we don't
-	// have to rely on reflection here.
-	private String buildOwnerName(Bugged bugged, Locale locale) {
-		String name = "this is clearly a bug";
-
-		if (bugged instanceof ExecutionStep) {
-			ExecutionStep step = ((ExecutionStep) bugged);
-			Execution exec = step.getExecution();
-			name = buildExecName(exec)+" "+buildStepName(step, locale);
-		} 
-		else if (bugged instanceof Execution) {
-			Execution exec = ((Execution) bugged);
-			name = buildExecName(exec);
+	
+	private static class ExecutionModelOwnershipNamebuilder implements IssueOwnershipNameBuilder{
+		
+		private Locale locale;
+		private MessageSource messageSource;
+		
+		@Override
+		public void setLocale(Locale locale){
+			this.locale=locale;
+		}
+		
+		@Override
+		public void setMessageSource(MessageSource source){
+			this.messageSource=source;
+		}
+	
+		// FIXME : I'm too lazy to implement something serious for now.
+		// The solution is probably to add adequate methods in the Bugged interface, so that we don't
+		// have to rely on reflection here.
+		@Override
+		public String buildName(Bugged bugged) {
+			String name = "this is clearly a bug";
+	
+			if (bugged instanceof ExecutionStep) {
+				ExecutionStep step = ((ExecutionStep) bugged);
+				name = buildStepName(step);
+			} 
+			else if (bugged instanceof Execution) {
+				name = "";
+			}
+	
+			return name;
+		}
+		
+		
+		private String buildStepName(ExecutionStep bugged){
+			Integer index = bugged.getExecutionStepOrder() + 1;
+			return messageSource.getMessage("squashtm.generic.hierarchy.execution.step.name", 
+					new Object[]{index}, 
+					locale) ;
 		}
 
-		return name;
-	}
-	
-	private String buildExecName(Execution bugged){
-		return bugged.getName()+" #"+(bugged.getExecutionOrder()+1);
-	}
-	
-	private String buildStepName(ExecutionStep bugged, Locale locale){
-		Integer index = bugged.getExecutionStepOrder() + 1;
-		return messageSource.getMessage("squashtm.generic.execstep.label", null, locale) + " #" + index.toString();
+		
 	}
 
+
+	private static class IterationModelOwnershipNamebuilder implements IssueOwnershipNameBuilder{
+		
+		private Locale locale;
+		private MessageSource messageSource;
+		
+		@Override
+		public void setLocale(Locale locale){
+			this.locale=locale;
+		}
+		
+		@Override
+		public void setMessageSource(MessageSource source){
+			this.messageSource=source;
+		}
 	
+		// FIXME : I'm too lazy to implement something serious for now.
+		// The solution is probably to add adequate methods in the Bugged interface, so that we don't
+		// have to rely on reflection here.
+		@Override
+		public String buildName(Bugged bugged) {
+			String name = "this is clearly a bug";
+	
+			if (bugged instanceof ExecutionStep) {
+				ExecutionStep step = ((ExecutionStep) bugged);
+				name = buildExecName(step.getExecution());
+			} 
+			else if (bugged instanceof Execution) {
+				Execution exec = ((Execution) bugged);
+				name = buildExecName(exec);
+			}
+	
+			return name;
+		}
+		
+		//for a given execution we don't need to remind which one, so the name is ignored.
+		private String buildExecName(Execution bugged){
+			return messageSource.getMessage("squashtm.generic.hierarchy.execution.name", 
+								new Object[]{
+									bugged.getName(), 
+									bugged.getExecutionOrder()+1
+								},
+								locale);
+		}
+		
+		
+	}	
 	
 	
 	// **************************************** private utilities *******************************************************
@@ -514,10 +594,12 @@ public class BugtrackerController {
 	 * </p>
 	 */
 	private class IterationIssuesTableModel extends DataTableModelHelper<IssueOwnership<BTIssue>>{
-		private final Locale locale;
 		
-		public IterationIssuesTableModel(Locale locale){
-			this.locale=locale;
+		private IssueOwnershipNameBuilder nameBuilder = new IterationModelOwnershipNamebuilder();
+		
+		public IterationIssuesTableModel(MessageSource source, Locale locale){
+			nameBuilder.setMessageSource(source);
+			nameBuilder.setLocale(locale);
 		}
 		
 		@Override
@@ -526,7 +608,7 @@ public class BugtrackerController {
 					bugTrackerLocalService.getIssueUrl(ownership.getIssue().getId()).toExternalForm(),
 					ownership.getIssue().getId(), ownership.getIssue().getSummary(),
 					ownership.getIssue().getPriority().getName(), ownership.getIssue().getStatus().getName(),
-					ownership.getIssue().getAssignee().getName(), buildOwnerName(ownership.getOwner(), locale) };
+					ownership.getIssue().getAssignee().getName(), nameBuilder.buildName(ownership.getOwner()) };
 		}	
 	}
 	
@@ -546,10 +628,11 @@ public class BugtrackerController {
 	 */
 	private class ExecutionIssuesTableModel extends DataTableModelHelper<IssueOwnership<BTIssue>>{
 		
-		private final Locale locale;
+		private IssueOwnershipNameBuilder nameBuilder = new ExecutionModelOwnershipNamebuilder();
 		
-		public ExecutionIssuesTableModel(Locale locale){
-			this.locale=locale;
+		public ExecutionIssuesTableModel(MessageSource source, Locale locale){
+			nameBuilder.setMessageSource(source);
+			nameBuilder.setLocale(locale);
 		}
 		
 		@Override
@@ -558,13 +641,13 @@ public class BugtrackerController {
 					bugTrackerLocalService.getIssueUrl(ownership.getIssue().getId()).toExternalForm(),
 					ownership.getIssue().getId(), ownership.getIssue().getSummary(),
 					ownership.getIssue().getPriority().getName(), ownership.getIssue().getStatus().getName(),
-					ownership.getIssue().getAssignee().getName(), buildOwnerName(ownership.getOwner(), locale) };
+					ownership.getIssue().getAssignee().getName(), nameBuilder.buildName(ownership.getOwner()) };
 		}		
 	}
 	
 
 	/**
-	 * <p>the DataTableModel will hold :
+	 * <p>the DataTableModel will hold : 
 	 *	<ul>
 	 * 		<li>the url of that issue,</li>
 	 * 		<li>the id,</li>

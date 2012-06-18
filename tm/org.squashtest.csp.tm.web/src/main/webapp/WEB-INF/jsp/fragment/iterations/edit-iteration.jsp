@@ -491,10 +491,10 @@
  			if (json.status !== "bt_undefined"){	
 	 			<%-- first : add the tab entry --%>
 	 			$("div.fragment-tabs").tabs( "add" , "#bugtracker-section-div" , "${tabIssueLabel}");
-	 			//$("div.fragment-tabs ul").append('<li class="ui-state-default ui-corner-top"><a href="#bugtracker-section-div">${tabIssueLabel}</a></li>');
-			
+
 	 			<%-- second : load the bugtracker section --%>
-	 			$("#bugtracker-section-div").load("${btEntityUrl}"); 	
+	 			var btDiv = $("#bugtracker-section-div");
+	 			btDiv.load("${btEntityUrl}?style=fragment-tab", function(){btDiv.addClass("table-tab")}); 	
  			}
  		}).fail(function(){
  			$("#bugtracker-section-div").remove();

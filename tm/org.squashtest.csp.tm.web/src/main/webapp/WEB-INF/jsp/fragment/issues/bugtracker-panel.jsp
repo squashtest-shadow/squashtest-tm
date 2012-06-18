@@ -26,7 +26,10 @@
 <%@ taglib uri="http://java.sun.com/jsp/jstl/fmt" prefix="f"%>
 <%@ taglib uri="http://java.sun.com/jsp/jstl/core" prefix="c"%>
 <%@ taglib prefix="s" uri="http://www.springframework.org/tags"%>
+
 <%@ taglib tagdir="/WEB-INF/tags/component" prefix="comp"%>
+<%@ taglib tagdir="/WEB-INF/tags/aggregates" prefix="agg"%>
+<%@ taglib tagdir="/WEB-INF/tags/issues" prefix="is"%>
 <%@ taglib prefix="authz" tagdir="/WEB-INF/tags/authz" %>
 
 <%--
@@ -43,6 +46,7 @@
 		- entityType : a String being the REST name of that kind of resource, like in the regular workspaces.
 		- interfaceDescriptor : an instance of BugTrackerInterfaceDescriptor that will provide the bug report dialog
 			with the proper labels  
+		- panelStyle : must be either string among : 'toggle', 'fragment-tab', or null or empty
 		- bugTrackerStatus : a BugTrackerStatus that will set the initial status of that component :
 				* UNDEFINED : never happens, since the controller is not supposed to return the view in the first place,
 				* NEEDS_CREDENTIALS : a label will prompt the user for login,
@@ -295,7 +299,7 @@
 
 <%-- /init section for issue-panel-knownissues-div --%>
 
-<comp:toggle-panel id="issue-panel" titleKey="issue.panel.title" isContextual="true" open="true"  >
+<agg:structure-configurable-panel id="issue-panel" titleKey="issue.panel.title" isContextual="true" open="true" style="${panelStyle}" >
 	<jsp:attribute name="panelButtons">
 	<c:if test="${ editable }">
 		<f:message var="issueReportOpenButtonLabel" key="issue.button.opendialog.label" />
@@ -314,24 +318,24 @@
 		<div id="issue-panel-known-issue-table-div" ${knownIssuesTableInitCss}>
 			<c:choose>
 				<c:when test="${entityType == 'execution-step'}">
-					<comp:issue-table-execstep dataUrl="${tableUrl}" interfaceDescriptor="${interfaceDescriptor}"/>
+					<is:issue-table-execstep dataUrl="${tableUrl}" interfaceDescriptor="${interfaceDescriptor}"/>
 				</c:when>
 				<c:when test="${entityType == 'execution'}">
-					<comp:issue-table-exec dataUrl="${tableUrl}" interfaceDescriptor="${interfaceDescriptor}" />			
+					<is:issue-table-exec dataUrl="${tableUrl}" interfaceDescriptor="${interfaceDescriptor}" />			
 				</c:when>
 				<c:when test="${entityType == 'iteration'}">
 					<%-- so far Iterations use the same table than exec so we're going lazy for now and reuse the same tag--%>
-					<comp:issue-table-exec dataUrl="${tableUrl}" interfaceDescriptor="${interfaceDescriptor}" />			
+					<is:issue-table-iter dataUrl="${tableUrl}" interfaceDescriptor="${interfaceDescriptor}" />			
 				</c:when>				
 			</c:choose>
 		</div>
 	</jsp:attribute>
-</comp:toggle-panel>
+</agg:structure-configurable-panel>
 
 
 <%-------------------------------- add issue popup code -----------------------------------%>
 <c:if test="${editable}">
-<comp:issue-add-popup id="issue-report-dialog" interfaceDescriptor="${interfaceDescriptor}"  
+<is:issue-add-popup id="issue-report-dialog" interfaceDescriptor="${interfaceDescriptor}"  
 					entityUrl="${entityUrl}" 
 					successCallback="issueReportSuccess" />
 </c:if>
@@ -344,6 +348,6 @@
 note that the successCallback and failureCallback are in the present case two pointers to the actual callbacks, 
 check that in the next <script></script> tags 
 --%>
-<comp:issue-credentials-popup url="${credentialsUrl}"  divId="issue-dialog-credentials"
+<is:issue-credentials-popup url="${credentialsUrl}"  divId="issue-dialog-credentials"
 							successCallback="loginSuccess" failureCallback="loginFail"	
 								/>
