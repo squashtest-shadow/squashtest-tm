@@ -317,6 +317,7 @@ class HibernateTestCaseDaoIT extends DbunitDaoSpecification {
 		RequirementSearchCriteria req = Mock()
 		req.name >> "token"
 		req.criticalities >> []
+		req.categories >> []
 
 		when:
 		def res = testCaseDao.findAllByRequirement(req, false);
@@ -331,6 +332,7 @@ class HibernateTestCaseDaoIT extends DbunitDaoSpecification {
 		RequirementSearchCriteria req = Mock()
 		req.reference >> "token"
 		req.criticalities >> []
+		req.categories >> []
 
 		when:
 		def res = testCaseDao.findAllByRequirement(req, false);
@@ -346,6 +348,7 @@ class HibernateTestCaseDaoIT extends DbunitDaoSpecification {
 		req.reference >> "token"
 		req.name >> "foo"
 		req.criticalities >> []
+		req.categories >> []
 
 		when:
 		def res = testCaseDao.findAllByRequirement(req, false);
@@ -363,7 +366,7 @@ class HibernateTestCaseDaoIT extends DbunitDaoSpecification {
 			RequirementCriticality.MINOR,
 			RequirementCriticality.MAJOR
 		]
-
+		req.categories >> []
 		when:
 		def res = testCaseDao.findAllByRequirement(req, false);
 

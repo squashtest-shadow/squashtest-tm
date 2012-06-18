@@ -22,14 +22,14 @@ package org.squashtest.csp.tm.internal.repository.hibernate
 
 
 import javax.inject.Inject
-import org.hibernate.Session;
-import org.hibernate.SessionFactory;
-import org.springframework.test.context.ContextConfiguration;
-import org.springframework.test.context.transaction.TransactionConfiguration;
-import org.springframework.transaction.annotation.Transactional;
-import org.unitils.database.util.TransactionMode;
+import org.hibernate.Session
+import org.hibernate.SessionFactory
+import org.springframework.test.context.ContextConfiguration
+import org.springframework.test.context.transaction.TransactionConfiguration
+import org.springframework.transaction.annotation.Transactional
+import org.unitils.database.util.TransactionMode
 
-import spock.lang.Specification;
+import spock.lang.Specification
 
 /**
  * Superclass for a DB-driven DAO test. The test will populate the database using a DBUnit dataset with the same name as the test. 

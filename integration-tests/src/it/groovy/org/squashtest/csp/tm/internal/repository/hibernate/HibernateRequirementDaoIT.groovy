@@ -88,6 +88,7 @@ class HibernateRequirementDaoIT extends DbunitDaoSpecification {
 			RequirementCriticality.MINOR,
 			RequirementCriticality.MAJOR
 		]
+		req.categories >> []
 		req.verificationCriterion >> VerificationCriterion.ANY
 
 		when:
@@ -103,6 +104,7 @@ class HibernateRequirementDaoIT extends DbunitDaoSpecification {
 		given:
 		RequirementSearchCriteria req = Mock()
 		req.criticalities >> []
+		req.categories >> []
 		req.verificationCriterion >> VerificationCriterion.SHOULD_BE_VERIFIED
 
 		when:
@@ -118,6 +120,7 @@ class HibernateRequirementDaoIT extends DbunitDaoSpecification {
 		given:
 		RequirementSearchCriteria req = Mock()
 		req.criticalities >> []
+		req.categories >> []
 		req.verificationCriterion >> VerificationCriterion.SHOULD_NOT_BE_VERIFIED
 
 		when:
@@ -133,6 +136,7 @@ class HibernateRequirementDaoIT extends DbunitDaoSpecification {
 		given:
 		RequirementSearchCriteria req = Mock()
 		req.criticalities >> []
+		req.categories >> []
 		req.verificationCriterion >> VerificationCriterion.SHOULD_NOT_BE_VERIFIED
 
 		when:
@@ -147,6 +151,7 @@ class HibernateRequirementDaoIT extends DbunitDaoSpecification {
 		given:
 		RequirementSearchCriteria req = Mock()
 		req.criticalities >> []
+		req.categories >> []
 		req.verificationCriterion >> VerificationCriterion.ANY
 		req.libeleIsOnlyCriteria() >> true;
 		when:
@@ -161,6 +166,7 @@ class HibernateRequirementDaoIT extends DbunitDaoSpecification {
 		given:
 		RequirementSearchCriteria req = Mock()
 		req.criticalities >> []
+		req.categories >> []
 		req.verificationCriterion >> VerificationCriterion.ANY
 
 		when:
@@ -187,6 +193,7 @@ class HibernateRequirementDaoIT extends DbunitDaoSpecification {
 
 	def aLabelBasedCriteria() {
 		RequirementSearchCriteria req = Mock()
+		req.categories >> []
 		req.criticalities >> []
 		req.verificationCriterion >> VerificationCriterion.ANY
 		return req

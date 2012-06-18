@@ -20,23 +20,25 @@
  */
 package org.squashtest.csp.tm.web.internal.controller.requirement
 
-import java.util.Locale;
 
-import javax.inject.Provider;
+import java.util.Locale
+
+import javax.inject.Provider
 
 import org.springframework.context.MessageSource
 import org.springframework.ui.ExtendedModelMap
 import org.springframework.ui.Model
 import org.springframework.web.servlet.ModelAndView
 import org.squashtest.csp.tm.domain.requirement.Requirement
+import org.squashtest.csp.tm.domain.requirement.RequirementCategory
 import org.squashtest.csp.tm.domain.requirement.RequirementCriticality
 import org.squashtest.csp.tm.domain.requirement.RequirementStatus
-import org.squashtest.csp.tm.domain.requirement.RequirementVersion;
+import org.squashtest.csp.tm.domain.requirement.RequirementVersion
 import org.squashtest.csp.tm.service.RequirementModificationService
-import org.squashtest.csp.tm.web.internal.helper.LabelFormatter;
-import org.squashtest.csp.tm.web.internal.helper.LevelLabelFormatter;
+import org.squashtest.csp.tm.web.internal.helper.LabelFormatter
+import org.squashtest.csp.tm.web.internal.helper.LevelLabelFormatter
 
-import spock.lang.Specification;
+import spock.lang.Specification
 
 
 class RequirementModificationControllerTest extends Specification {
@@ -45,18 +47,29 @@ class RequirementModificationControllerTest extends Specification {
 	MessageSource messageSource = Mock()
 	LabelFormatter formatter = new LevelLabelFormatter(messageSource)
 	Provider criticalityBuilderProvider = criticalityBuilderProvider()
+	Provider categoryBuilderProvider = categoryBuilderProvider()
 	Provider statusBuilderProvider = statusBuilderProvider()
 	Provider levelFormatterProvider = levelFormatterProvider()
 
 	def setup() {
-		controller.requirementModificationService = requirementModificationService
+		controller.requirementModService = requirementModificationService
 		controller.criticalityComboBuilderProvider = criticalityBuilderProvider
+		controller.categoryComboBuilderProvider = categoryBuilderProvider
 		controller.statusComboDataBuilderProvider = statusBuilderProvider
 		controller.levelFormatterProvider = levelFormatterProvider
 	}
 
 	def criticalityBuilderProvider() {
 		RequirementCriticalityComboDataBuilder builder = new RequirementCriticalityComboDataBuilder()
+		builder.labelFormatter = formatter
+
+		Provider provider = Mock()
+		provider.get() >> builder
+
+		return provider
+	}
+	def categoryBuilderProvider() {
+		RequirementCategoryComboDataBuilder builder = new RequirementCategoryComboDataBuilder()
 		builder.labelFormatter = formatter
 
 		Provider provider = Mock()
@@ -87,6 +100,7 @@ class RequirementModificationControllerTest extends Specification {
 		Requirement req = Mock(Requirement.class)
 		req.getCriticality() >> RequirementCriticality.UNDEFINED
 		req.getStatus() >> RequirementStatus.WORK_IN_PROGRESS
+		req.getCategory() >> RequirementCategory.UNDEFINED
 		long reqId=15
 		requirementModificationService.findById(15) >> req
 
