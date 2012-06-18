@@ -38,7 +38,7 @@
 			</c:when>
 			<c:otherwise>
 	$(function() {
-		squashtm.navbar.initHighlighted('report');
+		squashtm.navbar.initHighlighted('${highlighted}');
 	});	
 			</c:otherwise>
 		</c:choose>

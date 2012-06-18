@@ -23,6 +23,7 @@
 <%@ tag body-content="empty" description="Add script which handles json content of ajax errors and populates error-message tagsaccordingly" %>
 <%@ attribute name="cssClass" description="additional css classes" %>
 <%@ taglib prefix="f" uri="http://java.sun.com/jsp/jstl/fmt" %>
+<%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core" %>
 
 <div id="ajax-processing-indicator" class="ui-corner-all ${cssClass} " style="display:inline-block">
 	<img src="${ pageContext.servletContext.contextPath }/images/ajax-loader.gif" width="19px" height="19px"/>
@@ -31,8 +32,8 @@
 <div id="generic-error-notification-area" class="ui-state-error ui-corner-all ${ cssClass } not-displayed ">
 	<span class="ui-icon ui-icon-alert icon"></span><span><f:message key="error.generic.label" />&nbsp;(<a href="#" id="show-generic-error-details"><f:message key="error.generic.button.details.label" /></a>)</span>
 </div>
-
-<script type="text/javascript" src="<c:url value='/scripts/squash/squashtm.notification.js' />"></script>
+<c:url var="libUrl" value="/scripts/squash/squashtm.notification.js" />
+<script type="text/javascript" src="${ libUrl }"></script>
 <script type="text/javascript">
 	$(function () {
 		squashtm.notification.init({

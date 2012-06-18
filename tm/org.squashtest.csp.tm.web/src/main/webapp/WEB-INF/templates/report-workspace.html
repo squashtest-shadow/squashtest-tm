@@ -63,8 +63,8 @@
 		</div>
 		<div id="category-pane">
 			<div id="outer-category-frame">
-				<div th:each="cat : ${categories}" th:id="category-panel-${cat.id}" title="Cat 1" th:title="#{category.resourceKeyName}" class="report-category">
-					<div th:each="rpt : ${reports[cat]}" th:id="report-item-${rpt.id}" class="report-item">
+				<div th:each="cat : ${categories}" th:id="'category-panel-' + ${cat.id}" title="Cat 1" th:title="#{category.resourceKeyName}" class="report-category">
+					<div th:each="rpt : ${reports[cat]}" th:id="'report-item-' + ${rpt.id}" class="report-item">
 						<div class="report-item-icon">
 							<img src="../../../../../../../core/core.web/src/main/webapp/images/report_spreadsheet.png" th:src="@{${rpt.type.iconUrl}}" th:alt="#{${rpt.reportType.resourceKeyName}}" />
 						</div> 
