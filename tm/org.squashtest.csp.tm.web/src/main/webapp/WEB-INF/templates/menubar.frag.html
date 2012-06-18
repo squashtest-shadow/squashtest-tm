@@ -1,0 +1,80 @@
+<!--
+
+        This file is part of the Squashtest platform.
+        Copyright (C) 2010 - 2011 Squashtest TM, Squashtest.org
+
+        See the NOTICE file distributed with this work for additional
+        information regarding copyright ownership.
+
+        This is free software: you can redistribute it and/or modify
+        it under the terms of the GNU Lesser General Public License as published by
+        the Free Software Foundation, either version 3 of the License, or
+        (at your option) any later version.
+
+        this software is distributed in the hope that it will be useful,
+        but WITHOUT ANY WARRANTY; without even the implied warranty of
+        MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+        GNU Lesser General Public License for more details.
+
+        You should have received a copy of the GNU Lesser General Public License
+        along with this software.  If not, see <http://www.gnu.org/licenses/>.
+
+-->
+<!DOCTYPE html SYSTEM "http://www.thymeleaf.org/dtd/xhtml1-strict-thymeleaf-spring3-3.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml" xmlns:th="http://www.thymeleaf.org">
+<head>
+	<link rel="stylesheet" type="text/css" media="all" href="../../../../../../../core/core.web/src/main/webapp/styles/master.css" th:href="@{/styles/master.css}" />
+	<!-- /common head -->
+	<!-- common script import -->
+	<link rel="stylesheet" type="text/css" media="all" href="../../../../../../../core/core.web/src/main/webapp/styles/squashtm.fg.menu.css" th:href="@{/styles/squashtm.fg.menu.css}" />
+	<!-- /common script import -->
+	<link rel="stylesheet" type="text/css" media="all" href="../../../../../../../core/core.web/src/main/webapp/styles/master.blue.css" th:href="@{/styles/master.blue.css}" />
+</head>
+<body>
+	<div class="main-menubar" th:fragment="menubar">
+		<div>
+			<input type="checkbox" id="menu-toggle-filter-ckbox"></input>
+			<a id="menu-project-filter-link" href="javascript:void(0)" >Inactif</a> 
+		</div>
+		<div th:if="${sec.hasRole('ROLE_TM_PROJECT_MANAGER')} or ${sec.hasRole('ROLE_ADMIN')}">
+			<a id="menu-administration-link" 
+				href="administration.html" th:href="@{/administration}" 
+				th:text="#{workspace.menubar.administration.label}">
+				Administration
+			</a>
+		</div>
+		<div>
+			<a id="menu-account-link" href="user-account.html" th:href="@{/user-account}">
+				<span th:text="#{workspace.menubar.account.label}">Mon compte</span>&nbsp;(<span th:text="${sec.authentication.name}">Zoltan</span>)
+			</a>
+		</div>
+		<div th:if="${sec.isAuthenticated()}">
+			<a id="menu-logout-link" href="logout.html" th:href="@{/logout}" th:text="#{workspace.menubar.logout.label}">logout</a>
+		</div>
+		<div id="project-filter-popup" class="popup-dialog">
+			<div class="project-item-template not-displayed">
+				<div class="project-item ">
+					<input type="checkbox" class="project-checkbox"/> <span class="project-name"></span>
+				</div>
+			</div>
+			<div id="dialog-settings-filter-maincontent">			
+				<div id="dialog-settings-filter-controls" class="project-filter-controls">
+					<a id="dialog-settings-filter-selectall" href="javascript:void(0)" th:text="#{dialog.settings.filter.controls.selectall}">
+						Select all
+					</a>
+					<a id="dialog-settings-filter-deselectall" href="javascript:void(0)" th:text="#{dialog.settings.filter.controls.deselectall}">
+						Unselect all
+					</a>
+					<a id="dialog-settings-filter-invertselect" href="javascript:void(0)" th:text="#{dialog.settings.filter.controls.invertselect}">
+						Invert sel
+					</a>				
+				</div>	
+				<hr/>
+				<div id="dialog-settings-filter-projectlist" class="project-filter-list">
+				
+				</div>
+				<div style="clear:both;display:hidden;"></div>
+			</div>
+		</div>
+	</div>
+</body>

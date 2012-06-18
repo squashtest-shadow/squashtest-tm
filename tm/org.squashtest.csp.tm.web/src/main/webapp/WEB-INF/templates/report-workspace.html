@@ -1,0 +1,232 @@
+<!--
+
+        This file is part of the Squashtest platform.
+        Copyright (C) 2010 - 2011 Squashtest TM, Squashtest.org
+
+        See the NOTICE file distributed with this work for additional
+        information regarding copyright ownership.
+
+        This is free software: you can redistribute it and/or modify
+        it under the terms of the GNU Lesser General Public License as published by
+        the Free Software Foundation, either version 3 of the License, or
+        (at your option) any later version.
+
+        this software is distributed in the hope that it will be useful,
+        but WITHOUT ANY WARRANTY; without even the implied warranty of
+        MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+        GNU Lesser General Public License for more details.
+
+        You should have received a copy of the GNU Lesser General Public License
+        along with this software.  If not, see <http://www.gnu.org/licenses/>.
+
+-->
+<!DOCTYPE html SYSTEM "http://www.thymeleaf.org/dtd/xhtml1-strict-thymeleaf-spring3-3.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml" xmlns:th="http://www.thymeleaf.org">
+<head>
+	<title th:text="#{workspace.report.title}">Espace rapports</title>
+	<meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
+	<!-- common head -->
+	<link rel="stylesheet" type="text/css" media="all" href="../../../../../../../core/core.web/src/main/webapp/styles/master.css" th:href="@{/styles/master.css}" />
+	<!-- /common head -->
+	<!-- common script import -->
+	<link rel="stylesheet" type="text/css" media="all" href="../../../../../../../core/core.web/src/main/webapp/styles/squashtm.fg.menu.css" th:href="@{/styles/squashtm.fg.menu.css}" />
+	<!-- /common script import -->
+	<link rel="stylesheet" type="text/css" media="all" href="../../../../../../../core/core.web/src/main/webapp/styles/master.blue.css" th:href="@{/styles/master.blue.css}" />
+	<!-- rich jeditable header -->
+	<link rel="stylesheet" type="text/css" media="all" href="../../../../../../../core/core.web/src/main/webapp/styles/ckeditor.override.css" th:href="@{/styles/ckeditor.override.css}" />
+</head>
+<body>
+	<div id="navigation" th:include="navbar.frag :: navbar">
+		NAVBAR
+	</div>
+
+	<div id="workspace">
+		<div id="workspace-title">
+			<div class="snap-left">
+				<h2 th:text="#{workspace.report.title}">Espace Rapport</h2>	
+			</div>
+			<div class="snap-right">
+				<div style="display:inline-block;">
+					<div id="ajax-processing-indicator" class="ui-corner-all snap-right" style="display:inline-block">
+						<img src="../../../../../../../core/core.web/src/main/webapp/images/ajax-loader.gif" width="19px" height="19px" th:alt="#{squashtm.processing}" /> 
+						<span th:text="#{squashtm.processing}">En cours...</span>
+					</div>
+					<div id="generic-error-notification-area" class="ui-state-error ui-corner-all snap-right not-displayed">
+						<span class="ui-icon ui-icon-alert icon"></span><span th:text="#{error.generic.label}">WTF ?!</span> &nbsp;(<a href="javascript:void(0)" id="show-generic-error-details" th:text="#{error.generic.button.details.label}">Details</a>)
+					</div>
+ 				</div>
+ 				<div class="main-menubar" th:include="menubar.frag :: menubar">
+ 					MENUBAR
+				</div>
+			
+			</div>
+		</div>
+		<div id="category-pane">
+			<div id="outer-category-frame">
+				<div th:each="cat : ${categories}" th:id="category-panel-${cat.id}" title="Cat 1" th:title="#{category.resourceKeyName}" class="report-category">
+					<div th:each="rpt : ${reports[cat]}" th:id="report-item-${rpt.id}" class="report-item">
+						<div class="report-item-icon">
+							<img src="../../../../../../../core/core.web/src/main/webapp/images/report_spreadsheet.png" th:src="@{${rpt.type.iconUrl}}" th:alt="#{${rpt.reportType.resourceKeyName}}" />
+						</div> 
+						<div class="report-item-description">
+							<label><b th:text="#{${rpt.resourceKeyName}}">Sample report</b><br/><b th:text="#{${rpt.reportType.resourceKeyName}}">(Report type)</b></label><br/>
+							<span th:text="#{${rpt.resourceKeyDescription}}">Report description</span>
+						</div>
+						<div class="unsnap"></div>
+					</div>
+				</div>
+			</div> 
+ 		</div>
+		<div id="contextual-content" class="no-resizable-contextual-content">
+			<span th:remove="all">AREA POPULATED ON DEMAND</span>
+		</div>
+	</div>
+
+	<!-- common script import -->
+	<!-- jq header -->
+	<script type="text/javascript" src="../../../../../../../core/core.web/src/main/webapp/scripts/jquery/jquery-1.5.2-dev.js" th:src="@{/scripts/jquery/jquery-1.5.2.min.js}"></script>
+	<script type="text/javascript" src="../../../../../../../core/core.web/src/main/webapp/scripts/jquery/jquery-ui-1.8.13.all.dev.js" th:src="@{/scripts/jquery/jquery-ui-1.8.13.custom.min.js}"></script>
+	<script type="text/javascript" src="../../../../../../../core/core.web/src/main/webapp/scripts/squashtest/jquery.squashtm.plugin.js" th:src="@{/scripts/squashtest/jquery.squashtm.plugin.js}"></script>
+	<script type="text/javascript" src="../../../../../../../core/core.web/src/main/webapp/scripts/squashtest/jquery.squashtm.togglepanels.js" th:src="@{/scripts/squashtest/jquery.squashtm.togglepanels.js}"></script> 
+	<script type="text/javascript" src="../../../../../../../core/core.web/src/main/webapp/scripts/squashtest/jquery.squash.messagedialog.js" th:src="@{/scripts/squashtest/jquery.squash.messagedialog.js}"></script>  
+	<script type="text/javascript" src="../../../../../../../core/core.web/src/main/webapp/scripts/squashtest/jquery.squash.confirmdialog.js" th:src="@{/scripts/squashtest/jquery.squash.confirmdialog.js}"></script>  
+	<!-- /jq header -->
+	<!-- ckeditor import -->
+	<script type="text/javascript" src="../../../../../../../core/core.web/src/main/webapp/scripts/ckeditor/ckeditor.js" th:src="@{/scripts/ckeditor/ckeditor.js}"></script>
+	<script type="text/javascript" src="../../../../../../../core/core.web/src/main/webapp/scripts/ckeditor/adapters/jquery.js" th:src="@{/scripts/ckeditor/adapters/jquery.js}"></script>
+	<script type="text/javascript" src="../../../../../../../core/core.web/src/main/webapp/scripts/jquery/jquery.dialog-patch.js" th:src="@{/scripts/jquery/jquery.dialog-patch.js}"></script>
+	<!-- /ckeditor import -->	
+	<script type="text/javascript" src="../../../../../../../core/core.web/src/main/webapp/scripts/squashtest/jquery.squashtm.oneshotdialog.js" th:src="@{/scripts/squashtest/jquery.squashtm.oneshotdialog.js}"></script>
+	<script type="text/javascript" src="../../../../../../../core/core.web/src/main/webapp/scripts/squashtest/classes/KeyEventListener.js" th:src="@{/scripts/squashtest/classes/KeyEventListener.js}"></script>
+	<script type="text/javascript" src="../../../../../../../core/core.web/src/main/webapp/scripts/squashtest/jquery.squashtm.contextual-content.js" th:src="@{/scripts/squashtest/jquery.squashtm.contextual-content.js}"></script>
+	<script type="text/javascript" src="../../../../../../../core/core.web/src/main/webapp/scripts/squashtest/jquery.squashtm.fg.menu.js" th:src="@{/scripts/squashtest/jquery.squashtm.fg.menu.js}"></script>
+	<script type="text/javascript" src="../../../../../../../core/core.web/src/main/webapp/scripts/squashtest/classes/Event.js" th:src="@{/scripts/squashtest/classes/Event.js}"></script>
+	<script type="text/javascript" src="../../../../../../../core/core.web/src/main/webapp/scripts/squashtest/jquery.squash.squashbutton.js" th:src="@{/scripts/squashtest/jquery.squash.squashbutton.js}"></script>
+	<!-- /common script import -->
+	<!-- rich jeditable -->
+	<script type="text/javascript" src="../../../../../../../core/core.web/src/main/webapp/scripts/jquery/jquery.jeditable.js" th:src="@{/scripts/jquery/jquery.jeditable.js}"></script>
+	<script type="text/javascript" src="../../../../../../../core/core.web/src/main/webapp/scripts/jquery/jquery.generateId.js" th:src="@{/scripts/jquery/jquery.generateId.js}"></script>
+	<script type="text/javascript" src="../../../../../../../core/core.web/src/main/webapp/scripts/jquery/jquery.jeditable.ckeditor.js" th:src="@{/scripts/jquery/jquery.jeditable.ckeditor.js}"></script>
+	<script type="text/javascript" src="../../../../../../../core/core.web/src/main/webapp/scripts/squashtest/jquery.squashtm.jeditable.ext.js" th:src="@{/scripts/squashtest/jquery.squashtm.jeditable.ext.js}"></script>
+	<!-- menubar -->	
+	<script type="text/javascript" src="../../scripts/squash/squashtm.menubar.js" th:src="@{/scripts/squashtest/squashtm.menubar.js}"></script>
+	<!-- wtf -->
+	<script type="text/javascript" src="../../scripts/squash/squashtm.notification.js" th:src="@{/scripts/squashtest/squashtm.notification.js}"></script>
+
+	<script th:remove="all" type="text/javascript" src="../../js/thymol.js"></script>
+	<script type="text/javascript" src="../../scripts/squash/squashtm.navbar.js" th:src="@{/scripts/squash/squashtm.navbar.js}"></script>
+	<script type="text/javascript" src="../../scripts/squash/squashtm.projectfilter.js" th:src="@{/scripts/squash/squashtm.projectfilter.js}"></script>
+
+	<script type="text/javascript">
+		var reportWorkspace = (function($) {
+			<!-- script managing the expand/normal state of this part of the workspace -->
+
+			function setEditReportNormalState(){
+				$("#contextual-content").removeClass("expanded");
+			}
+			
+			function setEditReportExpandState(){
+				$("#contextual-content").addClass("expanded");
+			}
+			
+			function toggleEditReportState(){
+				$("#contextual-content").toggleClass("expanded");
+			}
+			
+			function findId(name){
+				var idIndex = name.lastIndexOf("-")+1;
+				
+				return name.substring(idIndex);		
+			}
+
+			function cleanContextual(){
+				var contextualList = $(".is-contextual");
+				
+				if (contextualList.length==0) return;
+				
+				$('.is-contextual').each(function () {					
+					$(this).dialog("destroy").remove(); 
+				});
+			}
+			
+			function loadContextualReport(reportItem){
+				cleanContextual();
+				$("#contextual-content").html('');
+				
+				var reportName=$(reportItem).attr("id");
+				var repId=findId(reportName);
+				
+				$("#contextual-content").load("${reportUrl}?report="+repId);
+			}
+
+			return {
+				/**
+					the function regarding the category panel are defined in edit-report.jsp,
+					because the button managing it is there too.
+					
+					If that's too confusing consider refractoring some day.
+				*/
+	
+				setReportWorkspaceNormalState : function() {
+					setCategoryFrameNormalState();
+					setEditReportNormalState();
+				},
+				
+				setReportWorkspaceExpandState : function() {
+					setCategoryFrameExpandState();
+					setEditReportExpandState();
+				},
+				
+				toggleReportWorkspaceState : function (){
+					toggleCategoryFrameState();
+					toggleEditReportState();							
+				},
+				
+				loadContextualReport : loadContextualReport
+			}
+		}(jQuery));
+
+		$(function() {
+			$(".report-category").togglePanel({});
+
+			$("#outer-category-frame .report-item").click(function(){
+				reportWorkspace.loadContextualReport(this);
+			});
+
+			/* navigation tag */
+			squashtm.navbar.initHighlighted('report');
+			
+			/* decorate buttons */
+			$.squash.decorateButtons();
+			
+			/* project filter */
+			var projectFilterConf = {
+					url: /* [[@{/global-filter/filter}]] */ '/global-filter/filter',
+					title : /* [[#{dialog.settings.filter.title}]] */ 'Filtre de projets',
+					confirmLabel: /* [[#{dialog.button.confirm.label}]] */ 'Confirmer',
+					cancelLabel: /* [[#{dialog.button.cancel.label}]] */ 'Annuler',
+			}
+				
+			squashtm.projectfilter.init(projectFilterConf);
+			
+			/* menubar */
+			var menuBarConf = {
+				boxSelector : "#menu-toggle-filter-ckbox",
+				url : /* [[@{/global-filter/filter-status}]] */ '/global-filter/filter-status',
+				linkSelector : "#menu-project-filter-link",
+				enabledTxt : /* [[#{workspace.menubar.filter.enabled.label}]] */ 'Actif',
+				disabledTxt : /* [[#{workspace.menubar.filter.disabled.label}]] */ 'Inactif',
+				enabledCallbacks : [ function(){ $("div.tree-filter-reminder-div > span").removeClass("not-displayed");} ]
+			}
+	
+			squashtm.menubar.init(menuBarConf);
+			
+			/* wtf */
+			squashtm.notification.init({
+				infoTitle : /*[[#{popup.title.info}]] */ 'Info', 
+				errorTitle: /*[[#{popup.title.error}]] */ 'Erreur'
+			});
+		});	
+	</script>
+</body>
+</html>

@@ -19,59 +19,63 @@
  *     along with this software.  If not, see <http://www.gnu.org/licenses/>.
  */
 /**
- * ConfirmDialog widget.
- * A confirm dialog is a preconfigured modal dialog which shows a message and has a ok and a cancel button.
+ * ConfirmDialog widget. A confirm dialog is a preconfigured modal dialog which
+ * shows a message and has a ok and a cancel button.
  * 
- * If the div used to generate the dialog contains up to 2 <input type="button" /> elements, they are used as the ok and cancel buttons labels.
+ * If the div used to generate the dialog contains up to 2 <input type="button" />
+ * elements, they are used as the ok and cancel buttons labels.
  * 
- * If 
+ * If
  * 
  * @author Gregory Fouquet
  */
-(function($) {
-	$.widget( "squash.squashButton", $.ui.button, { 
+(function ($) {
+	$.widget("squash.squashButton", $.ui.button, {
 		options : {
 			autoOpen : false,
 			resizable : false,
 			modal : true,
 			width : 600,
 			position : [ 'center', 100 ],
-			buttons : [{ 
-				text: "Ok", // OK button does nothing by default 
-			    click: function() {} 
-			}, 
-			{ 
-				text: "Cancel", // cancel button closes by default // TODO ! need to be local dependent ! 
-			    click: function() { $(this).confirmDialog("close"); } 
-			}]
+			buttons : [ {
+				text : "Ok", // OK button does nothing by default
+				click : function () {
+				}
+			}, {
+				text : "Cancel", // cancel button closes by default // TODO !
+				// need to be local dependent !
+				click : function () {
+					$(this).confirmDialog("close");
+				}
+			} ]
 		},
 
-//		_create : function() {
-//			// we need to invoke prototype creation
-//			$.ui.dialog.prototype._create.apply(this);
-//		},
+		// _create : function () {
+		// // we need to invoke prototype creation
+		// $.ui.dialog.prototype._create.apply(this);
+		// },
 
-
-		_trigger : function(type, event, data) {
+		_trigger : function (type, event, data) {
 			// we need this otherwise events won't bubble
 			$.Widget.prototype._trigger.apply(this, arguments);
-			
+
 			$(this).removeClass("ui-state-focus ui-state-hover");
 		},
 
-		_setOption : function(key, value) {
+		_setOption : function (key, value) {
 			// In jQuery UI 1.8, you have to manually invoke the
 			// _setOption method from the base widget
 			$.Widget.prototype._setOption.apply(this, arguments);
 		}
 	});
-		
+
 	/**
 	 * Adds functions in the $.squash namespace
 	 */
 	$.extend($.squash, {
-		decorateButtons : function() {
-			$( "a.button, input:submit.button, input:button.button" ).squashButton();
+		decorateButtons : function () {
+			$("a.button, input:submit.button, input:button.button")
+					.squashButton();
 		}
 	});
-}(jQuery));	
+}(jQuery));

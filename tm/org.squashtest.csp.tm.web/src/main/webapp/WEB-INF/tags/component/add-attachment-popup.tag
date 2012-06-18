@@ -152,7 +152,7 @@
 			var maxSize = json.maxSize;		
 			var message = "${uploadErrorMessage} (" + formatToMegabyte(maxSize) + " ${megaByteLabel})";
 			
-			displayInformationNotification(message);
+			squashtm.notification.showInfo(message);
 			
 			exitUpload();
 		}

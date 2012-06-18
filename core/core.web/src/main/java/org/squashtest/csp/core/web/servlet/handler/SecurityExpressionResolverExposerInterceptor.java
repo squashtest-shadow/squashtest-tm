@@ -47,7 +47,7 @@ import org.springframework.web.servlet.handler.HandlerInterceptorAdapter;
  * @author http://forum.thymeleaf.org/Thymeleaf-and-Spring-Security-td3205099.html
  * 
  */
-public class SecurityExpressionEvaluatorExposerInterceptor extends HandlerInterceptorAdapter {
+public class SecurityExpressionResolverExposerInterceptor extends HandlerInterceptorAdapter {
 	private static final FilterChain DUMMY_CHAIN = new FilterChain() {
 		public void doFilter(ServletRequest request, ServletResponse response) throws IOException, ServletException {
 			throw new UnsupportedOperationException();

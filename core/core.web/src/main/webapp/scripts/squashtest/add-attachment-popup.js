@@ -18,179 +18,159 @@
  *     You should have received a copy of the GNU Lesser General Public License
  *     along with this software.  If not, see <http://www.gnu.org/licenses/>.
  */
-	
-	/* ***************** upload popup internal logic **************************** */
-	
-	/*
-	 * The file upload popup works like a repeater. It will append or remove lists of Items.
-	 * 
-	 * An Item is the following : 
-	 * 	- a file browser,
-	 *  - a button that will remove it when clicked.
-	 * 
-	 * The popup will always propose an empty Item for new inputs. When an item is not empty anymore, a new 
-	 * empty Item will be appended to the popup.
-	 * 
-	 * 
-	 * For the sake of clarity, let's mention here that a Form refers to a specific container (ie a div) of 
-	 * the popup (or whatever you wish anyway).
-	 *
-	 * 
-	 * @author bsiri
-	 */
 
+/* ***************** upload popup internal logic **************************** */
 
+/*
+ * The file upload popup works like a repeater. It will append or remove lists of Items.
+ * 
+ * An Item is the following : 
+ * 	- a file browser,
+ *  - a button that will remove it when clicked.
+ * 
+ * The popup will always propose an empty Item for new inputs. When an item is not empty anymore, a new 
+ * empty Item will be appended to the popup.
+ * 
+ * 
+ * For the sake of clarity, let's mention here that a Form refers to a specific container (ie a div) of 
+ * the popup (or whatever you wish anyway).
+ *
+ * 
+ * @author bsiri
+ */
 
+(function ($) {
 
-(function( $ ){
-	
 	/*
 	 * Here is an object wrapper for the JQuery version of an Item
 	 * 
 	 */
 
-	$.fn.uploadItem = function(jqContainer){
-		
-		//init
+	$.fn.uploadItem = function (jqContainer) {
+
+		// init
 		this.getFile = getFile;
 		this.getButton = getButton;
 		this.initialize = item_initialize;
 		this.container = jqContainer;
-		
-		//construction
-		this.initialize();
-		
-		return this;
-		
-		
-	}
-	
-	function item_initialize(){		
-		var myself = this;
-		
-		var myfile= this.getFile();
-		myfile.change(
-				function(){
-					inputFileOnChange(myself);
-				}
-		);				
-		
-		var mybutton = this.getButton();
-		
-		decorateButton(mybutton);
-		
-		mybutton.click(
-				function(){
-					myself.container.removeItem(myself); 				
-				}
-		);
-		
-	}
-	
 
-	//returns the File Browser part of an Item
-	function getFile(){
+		// construction
+		this.initialize();
+
+		return this;
+
+	}
+
+	function item_initialize() {
+		var myself = this;
+
+		var myfile = this.getFile();
+		myfile.change(function () {
+			inputFileOnChange(myself);
+		});
+
+		var mybutton = this.getButton();
+
+		decorateButton(mybutton);
+
+		mybutton.click(function () {
+			myself.container.removeItem(myself);
+		});
+
+	}
+
+	// returns the File Browser part of an Item
+	function getFile() {
 		return this.find("input[type='file']");
 	}
-	
-	
-	//returns the remove Button part of an Item
-	function getButton(){
+
+	// returns the remove Button part of an Item
+	function getButton() {
 		return this.find("input[type='button']");
 	}
 
-
-	//this handler will manage the state of an Item. 
-	//params : jqItem : the jQuery object corresponding to the Item
-	function inputFileOnChange(jqItem){
+	// this handler will manage the state of an Item.
+	// params : jqItem : the jQuery object corresponding to the Item
+	function inputFileOnChange(jqItem) {
 		var wasEmpty = jqItem.getFile().data("wasEmpty");
-		
-	
-		if (typeof(wasEmpty) == 'undefined'){
+
+		if (typeof (wasEmpty) == 'undefined') {
 			jqItem.container.appendItem();
 		}
-		
-		 jqItem.getFile().data("wasEmpty",false);
-		
+
+		jqItem.getFile().data("wasEmpty", false);
+
 	}
 
-
 	/*
-	 * the container is an object too. It job is to manage the various Items it contains. 
-
+	 * the container is an object too. It job is to manage the various Items it
+	 * contains.
+	 * 
 	 * 
 	 */
 
-	$.fn.uploadPopup = function(jqItemTemplate){
-		
-		//init
-		if (jqItemTemplate != 'undefined'){
+	$.fn.uploadPopup = function (jqItemTemplate) {
+
+		// init
+		if (jqItemTemplate != 'undefined') {
 			this.itemTemplate = jqItemTemplate;
 		}
-		
+
 		this.findLastItem = findLastItem;
 		this.removeItem = removeItem;
 		this.clear = attachementClear;
 		this.appendItem = appendItem;
-		
+
 		return this;
 	}
 
-	
-	//returns the last item of the list of files to upload
-	function findLastItem(){
+	// returns the last item of the list of files to upload
+	function findLastItem() {
 		var last = this.find(".attachment-item:last");
 		return last;
 	}
-	
 
-	
-	//the function below will remove an Item only if at least one more is available 
-	function removeItem(jqAttachItem){
-		//check if the item argument is actually different from the last one
+	// the function below will remove an Item only if at least one more is
+	// available
+	function removeItem(jqAttachItem) {
+		// check if the item argument is actually different from the last one
 		var lastItem = this.findLastItem();
-		
-		if ( (isFileBrowserEmpty(lastItem) == true) && (! attachementAreSame(jqAttachItem,lastItem))){
-			jqAttachItem.remove();			
-		}		
+
+		if ((isFileBrowserEmpty(lastItem) == true)
+				&& (!attachementAreSame(jqAttachItem, lastItem))) {
+			jqAttachItem.remove();
+		}
 	}
 
-	
-	function appendItem(){
+	function appendItem() {
 		var clone = this.itemTemplate.clone(true).generateId();
 		var jqClone = clone.uploadItem(this);
 		this.append(jqClone);
 	}
-	
-	function attachementClear(){
+
+	function attachementClear() {
 		this.empty();
 		this.appendItem();
 	}
 
+	/* ************** utility code ************** */
 
-    /* ************** utility code ************** */			
-			
-	function isFileBrowserEmpty(jqItem){
+	function isFileBrowserEmpty(jqItem) {
 		var content = jqItem.find("input [type='file'").val();
-		
-		if ((content == "") || (typeof(content) == 'undefined' )){
-			return true;
-		}
-		else{
-			return false;	
-		}
-	}					
 
-	
-	function attachementAreSame(obj1, obj2){
-		if (obj1.attr('id') == obj2.attr('id')){
+		if ((content == "") || (typeof (content) == 'undefined')) {
 			return true;
-		}
-		else{
+		} else {
 			return false;
 		}
 	}
 
+	function attachementAreSame(obj1, obj2) {
+		if (obj1.attr('id') == obj2.attr('id')) {
+			return true;
+		} else {
+			return false;
+		}
+	}
 
-})( jQuery );
-	
+})(jQuery);

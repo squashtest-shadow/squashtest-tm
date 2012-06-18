@@ -66,7 +66,8 @@
 <%-- 
 	code managing the initialization of the popup
  --%>
-<script type="text/javascript" src="<c:url value='/scripts/squash/squashtm.projectfilter.js' />"></script> 
+<c:url var="libUrl" value="/scripts/squash/squashtm.projectfilter.js" />
+<script type="text/javascript" src="${libUrl}"></script> 
 <script type="text/javascript">
 	var projectFilterConf = {
 			url: "${projectFilterUrl}",

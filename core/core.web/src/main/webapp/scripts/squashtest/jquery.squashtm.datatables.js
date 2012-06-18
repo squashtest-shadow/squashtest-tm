@@ -20,112 +20,132 @@
  */
 /**
  * This file contains functions used by squashtest dataTables-based components.
+ * 
  * @author Gregory Fouquet
  */
- 
- /*
-  * squashtm datatable pagination plugin.
-  * Based on the ExtJS style plugin by Zach Curtis (http://zachariahtimothy.wordpress.com/) and simplified according to our needs.
-  *
-  * @author bsiri. 
-  *
-  */
- 
- (function($){
-	 $.fn.dataTableExt.oPagination.iFullNumbersShowPages=1;
- 
-	 $.fn.dataTableExt.oPagination.squash = {
+
+/*
+ * squashtm datatable pagination plugin. Based on the ExtJS style plugin by Zach
+ * Curtis (http://zachariahtimothy.wordpress.com/) and simplified according to
+ * our needs.
+ * 
+ * @author bsiri.
+ * 
+ */
+
+(function ($) {
+	$.fn.dataTableExt.oPagination.iFullNumbersShowPages = 1;
+
+	$.fn.dataTableExt.oPagination.squash = {
 		/*
-		* Function: oPagination.squash.fnInit
-		* Purpose:  Initalise dom elements required for pagination with a list of the pages
-		* Returns:  -
-		* Inputs:   object:oSettings - dataTables settings object
-		*           node:nPaging - the DIV which contains this pagination control
-		*           function:fnCallbackDraw - draw function which must be called on update
-		*/
-		"fnInit": function (oSettings, nPaging, fnCallbackDraw) {
-			
-			var initButton = function(object, cssClass){
+		 * Function: oPagination.squash.fnInit Purpose: Initalise dom elements
+		 * required for pagination with a list of the pages Returns: - Inputs:
+		 * object:oSettings - dataTables settings object node:nPaging - the DIV
+		 * which contains this pagination control function:fnCallbackDraw - draw
+		 * function which must be called on update
+		 */
+		"fnInit" : function (oSettings, nPaging, fnCallbackDraw) {
+
+			var initButton = function (object, cssClass) {
 				object.button({
 					text : false,
-					icons: {
-						primary: cssClass
+					icons : {
+						primary : cssClass
 					}
 				});
 			}
 
-			var nFirst = $('<span />', { 'class': 'paginate_button first' });
-			var nPrevious = $('<span />', { 'class': 'paginate_button previous' });
-			var nNext = $('<span />', { 'class': 'paginate_button next' });
-			var nLast = $('<span />', { 'class': 'paginate_button last' });
-			var nPageTxt = $("<span />", { text: '1' });
+			var nFirst = $('<span />', {
+				'class' : 'paginate_button first'
+			});
+			var nPrevious = $('<span />', {
+				'class' : 'paginate_button previous'
+			});
+			var nNext = $('<span />', {
+				'class' : 'paginate_button next'
+			});
+			var nLast = $('<span />', {
+				'class' : 'paginate_button last'
+			});
+			var nPageTxt = $("<span />", {
+				text : '1'
+			});
 
-			$(nPaging)
-				.append(nFirst)
-				.append(nPrevious)
-				.append(nPageTxt)
-				.append(nNext)
-				.append(nLast);
-			
-			//utf8 code for character "◀" = U25C0 and for "▶" = U25B6
+			$(nPaging).append(nFirst).append(nPrevious).append(nPageTxt)
+					.append(nNext).append(nLast);
+
+			// utf8 code for character "◀" = U25C0 and for "▶" = U25B6
 			nFirst.text("◀◀");
 			nPrevious.text("◀");
 			nNext.text("▶");
 			nLast.text("▶▶");
 			$('.paginate_button').button({
 				disabled : false,
-				text : true				
-				}); 
-				
-			nFirst.click(function () {
-				oSettings.oApi._fnPageChange(oSettings, "first");
-				fnCallbackDraw(oSettings);
-				nPageTxt.text(parseInt(oSettings._iDisplayEnd / oSettings._iDisplayLength, 10)+1);
-			}).bind('selectstart', function () { return false; });
+				text : true
+			});
 
-			nPrevious.click(function () {
-				oSettings.oApi._fnPageChange(oSettings, "previous");
-				fnCallbackDraw(oSettings);
-				nPageTxt.text(parseInt(oSettings._iDisplayEnd / oSettings._iDisplayLength, 10)+1);
-			}).bind('selectstart', function () { return false; });
+			nFirst.click(
+					function () {
+						oSettings.oApi._fnPageChange(oSettings, "first");
+						fnCallbackDraw(oSettings);
+						nPageTxt.text(parseInt(oSettings._iDisplayEnd
+								/ oSettings._iDisplayLength, 10) + 1);
+					}).bind('selectstart', function () {
+				return false;
+			});
 
-			nNext.click(function () {
-				oSettings.oApi._fnPageChange(oSettings, "next");
-				fnCallbackDraw(oSettings);
-				nPageTxt.text(parseInt(oSettings._iDisplayEnd / oSettings._iDisplayLength, 10)+1);
-			}).bind('selectstart', function () { return false; });
+			nPrevious.click(
+					function () {
+						oSettings.oApi._fnPageChange(oSettings, "previous");
+						fnCallbackDraw(oSettings);
+						nPageTxt.text(parseInt(oSettings._iDisplayEnd
+								/ oSettings._iDisplayLength, 10) + 1);
+					}).bind('selectstart', function () {
+				return false;
+			});
 
-			nLast.click(function () {
-				oSettings.oApi._fnPageChange(oSettings, "last");
-				fnCallbackDraw(oSettings);
-				nPageTxt.text(parseInt(oSettings._iDisplayEnd / oSettings._iDisplayLength, 10)+1);
-			}).bind('selectstart', function () { return false; });
+			nNext.click(
+					function () {
+						oSettings.oApi._fnPageChange(oSettings, "next");
+						fnCallbackDraw(oSettings);
+						nPageTxt.text(parseInt(oSettings._iDisplayEnd
+								/ oSettings._iDisplayLength, 10) + 1);
+					}).bind('selectstart', function () {
+				return false;
+			});
 
-			
+			nLast.click(
+					function () {
+						oSettings.oApi._fnPageChange(oSettings, "last");
+						fnCallbackDraw(oSettings);
+						nPageTxt.text(parseInt(oSettings._iDisplayEnd
+								/ oSettings._iDisplayLength, 10) + 1);
+					}).bind('selectstart', function () {
+				return false;
+			});
+
 		},
 
 		/*
-		* Function: oPagination.extStyle.fnUpdate
-		* Purpose:  Update the list of page buttons shows
-		* Returns:  -
-		* Inputs:   object:oSettings - dataTables settings object
-		*           function:fnCallbackDraw - draw function which must be called on update
-		*/
-		"fnUpdate": function (oSettings, fnCallbackDraw) {
+		 * Function: oPagination.extStyle.fnUpdate Purpose: Update the list of
+		 * page buttons shows Returns: - Inputs: object:oSettings - dataTables
+		 * settings object function:fnCallbackDraw - draw function which must be
+		 * called on update
+		 */
+		"fnUpdate" : function (oSettings, fnCallbackDraw) {
 			if (!oSettings.aanFeatures.p) {
 				return;
 			}
 
 			/* Loop over each instance of the pager */
 			var an = oSettings.aanFeatures.p;
-			for (var i = 0, iLen = an.length; i < iLen; i++) {
-				//var buttons = an[i].getElementsByTagName('span');
+			for ( var i = 0, iLen = an.length; i < iLen; i++) {
+				// var buttons = an[i].getElementsByTagName('span');
 				var buttons = $(an[i]).find('span.paginate_button');
 				if (oSettings._iDisplayStart === 0) {
 					buttons.eq(0).button("option", "disabled", true);
 					buttons.eq(1).button("option", "disabled", true);
-				}
-				else {
+				} else {
 					buttons.eq(0).button("option", "disabled", false);
 					buttons.eq(1).button("option", "disabled", false);
 				}
@@ -133,17 +153,15 @@
 				if (oSettings.fnDisplayEnd() == oSettings.fnRecordsDisplay()) {
 					buttons.eq(2).button("option", "disabled", true);
 					buttons.eq(3).button("option", "disabled", true);
-				}
-				else {
+				} else {
 					buttons.eq(2).button("option", "disabled", false);
 					buttons.eq(3).button("option", "disabled", false);
 				}
 			}
 		}
 	};
-})(jQuery); 
- 
- 
+})(jQuery);
+
 /**
  * Adds a delete button in the last cell of a datatables row
  * 
@@ -164,10 +182,10 @@ function addDeleteButtonToRow(row, entityId, buttonTemplateId) {
  * Registers event handlers to enable rangle selection in tables.
  */
 function enableTableRangeSelection() {
-	$(document).keydown(function(evt) {
+	$(document).keydown(function (evt) {
 		handleCtrlDown(evt);
 		handleShiftDown(evt);
-	}).keyup(function(evt) {
+	}).keyup(function (evt) {
 		handleCtrlUp(evt);
 		handleShiftUp(evt);
 	});
@@ -223,41 +241,39 @@ function enableTableRangeSelection() {
 
 }
 
-
-
 /**
-* private to the DnD code.
-*
-* we need to fetch the rank of the first tr of the table
-* as an offset to which we'll add the position of lines we are moving around.
-*
-* @param domTable the dom table
-*
-* @returns the real index of the first row.
-*
-*/
-function getOffsetFromDomTable(domTable, fnGetRowIndex){
+ * private to the DnD code.
+ * 
+ * we need to fetch the rank of the first tr of the table as an offset to which
+ * we'll add the position of lines we are moving around.
+ * 
+ * @param domTable
+ *            the dom table
+ * 
+ * @returns the real index of the first row.
+ * 
+ */
+function getOffsetFromDomTable(domTable, fnGetRowIndex) {
 
-	var dataTable = $(domTable).dataTable( {
-		"bRetrieve": true
+	var dataTable = $(domTable).dataTable({
+		"bRetrieve" : true
 	});
-	
+
 	var firstData = dataTable.fnGetData(0);
-	
+
 	var position = fnGetRowIndex(firstData);
-	
-	return parseInt(position) -1;
+
+	return parseInt(position) - 1;
 
 }
-
-
 
 /**
  * Enables DnD on the given table.
  * 
- * Note : we calculate the 'offset' because the first displayed element is not necessarily the first item of the table.
- * 			For instance, if we are displaying page 3 and drop our rows at the top of the table view, the drop index is not 0
- * 			but (3*pagesize);
+ * Note : we calculate the 'offset' because the first displayed element is not
+ * necessarily the first item of the table. For instance, if we are displaying
+ * page 3 and drop our rows at the top of the table view, the drop index is not
+ * 0 but (3*pagesize);
  * 
  * @param tableId
  *            html id of the table
@@ -268,35 +284,38 @@ function getOffsetFromDomTable(domTable, fnGetRowIndex){
 function enableTableDragAndDrop(tableId, fnGetRowIndex, dropHandler) {
 	$('#' + tableId).tableDnD({
 		dragHandle : "drag-handle",
-		onDragStart : function(table, rows) { //remember that we are using our modified dnd : rows is a jQuery object 
-			
+		onDragStart : function (table, rows) { // remember that we are using
+												// our modified dnd : rows is a
+												// jQuery object
+
 			rows.find('.drag-handle').addClass('ui-state-active');
-			
+
 			var offset = getOffsetFromDomTable(table, fnGetRowIndex);
-			
+
 			var index = rows.get(0).rowIndex - 1;
 			$(table).data("previousRank", index);
 			$(table).data("offset", offset);
-			
+
 		},
-		
-		onDrop : function(table, rows) { //again, that is now a jQuery object
-				
+
+		onDrop : function (table, rows) { // again, that is now a jQuery
+											// object
+
 			var newInd = rows.get(0).rowIndex - 1;
 			var oldInd = $(table).data("previousRank");
 			var offset = $(table).data("offset");
 			if (newInd != oldInd) {
-				dropHandler(rows, newInd+offset);
+				dropHandler(rows, newInd + offset);
 			}
 		}
-		
+
 	});
 }
 
 function bindHover(dataTable) {
-	$('tbody tr', dataTable).live('mouseleave', function() {
+	$('tbody tr', dataTable).live('mouseleave', function () {
 		$(this).removeClass('ui-state-highlight');
-	}).live('mouseenter', function() {
+	}).live('mouseenter', function () {
 		if (!$(this).hasClass('ui-state-row-selected')) {
 			$(this).addClass('ui-state-highlight');
 		}
@@ -317,10 +336,8 @@ function decorateDeleteButtons(buttons) {
 	});
 }
 
-
-
 function addClickHandlerToSelectHandle(nRow, table) {
-	$(nRow).find('.select-handle').click(function() {
+	$(nRow).find('.select-handle').click(function () {
 		var row = this.parentNode;
 
 		var ctrl = $(window).data('ctrlPressed');
@@ -347,15 +364,14 @@ function addClickHandlerToSelectHandle(nRow, table) {
 	});
 }
 
-
 /*
-that method programatically remove the highlight due to native range selection.
-*/
-function clearRangeSelection(){
+ * that method programatically remove the highlight due to native range
+ * selection.
+ */
+function clearRangeSelection() {
 	if (window.getSelection) {
 		window.getSelection().removeAllRanges();
-	}
-	else if (document.selection) { // should come last; Opera!
+	} else if (document.selection) { // should come last; Opera!
 		document.selection.empty();
 	}
 }
@@ -427,18 +443,18 @@ function saveTableSelection(dataTable, getRowIdCallback) {
 /**
  * @param dataTable
  * @param getRowIdCallback
- *            function(rowData) which should determine id of row.
+ *            function (rowData) which should determine id of row.
  * @returns {Array} of ids of selected rows
  */
 function getIdsOfSelectedTableRows(dataTable, getRowIdCallback) {
 	var rows = dataTable.fnGetNodes();
 	var ids = new Array();
 
-	$(rows).each(function(index, row) {
+	$(rows).each(function (index, row) {
 		if ($(row).hasClass('ui-state-row-selected')) {
 			var data = dataTable.fnGetData(row);
 			var id = getRowIdCallback(data)
-			if ((id!="") && (! isNaN(id))){
+			if ((id != "") && (!isNaN(id))) {
 				ids.push(id);
 			}
 		}
@@ -449,9 +465,9 @@ function getIdsOfSelectedTableRows(dataTable, getRowIdCallback) {
 
 function findRowStatus(dataTable, rowId, getRowId, getRowStatus) {
 	var rows = dataTable.fnGetNodes();
-	var status="";
-	
-	$(rows).each(function(index, row) {
+	var status = "";
+
+	$(rows).each(function (index, row) {
 		var data = dataTable.fnGetData(row);
 		var id = getRowId(data)
 		if (id == rowId) {
@@ -465,8 +481,8 @@ function findRowStatus(dataTable, rowId, getRowId, getRowStatus) {
 function getObsoleteStatusesOfSelectedTableRows(dataTable, getRowStatus) {
 	var rows = dataTable.fnGetNodes();
 	var obsoleteStatuses = new Array();
-	
-	$(rows).each(function(index, row) {
+
+	$(rows).each(function (index, row) {
 		if ($(row).hasClass('ui-state-row-selected')) {
 			var data = dataTable.fnGetData(row);
 			var status = getRowStatus(data)
@@ -483,8 +499,8 @@ function getIdsOfSelectedAssociationTableRows(dataTable, getRowIdCallback) {
 	var rows = dataTable.fnGetNodes();
 	var ids = new Array();
 
-	for(var i =0; i < rows.length ; i++){
-		var row = rows[i]; 
+	for ( var i = 0; i < rows.length; i++) {
+		var row = rows[i];
 		if ($(row).hasClass('ui-state-row-selected')) {
 			var data = dataTable.fnGetData(row);
 			ids.push(getRowIdCallback(data));
@@ -504,7 +520,7 @@ function restoreTableSelection(dataTable, getRowIdCallback) {
 /* private */function selectTableRowsOfIds(dataTable, ids, getRowIdCallback) {
 	var rows = dataTable.fnGetNodes();
 
-	$(rows).each(function(index, row) {
+	$(rows).each(function (index, row) {
 		var data = dataTable.fnGetData(row);
 		var rowId = getRowIdCallback(data);
 		if (ids.indexOf(rowId) >= 0) {
@@ -513,14 +529,14 @@ function restoreTableSelection(dataTable, getRowIdCallback) {
 	});
 }
 function addHLinkToCellText(td, url, isOpenInTab) {
-	
+
 	var link = $('<a></a>');
 	link.attr('href', url);
 	if (isOpenInTab) {
 		link.attr('target', '_blank');
 	}
-	
-	$(td).contents().filter(function() {
+
+	$(td).contents().filter(function () {
 		// IE doesn't define the constant Node so we'll use constant value
 		// instead of Node.TEXT_NODE
 		return this.nodeType == 3;
@@ -565,8 +581,8 @@ function decorateEmptyAttachmentButtons(buttons) {
 
 /**
  * Adds a "manage attachment" link to the row cell(s) of class
- * has-attachment-cell. DoV for Depending on the Value : 
- * the button is different whether the attachment list is empty or not
+ * has-attachment-cell. DoV for Depending on the Value : the button is different
+ * whether the attachment list is empty or not
  * 
  * @param row
  *            row where to add an attachment button
@@ -575,19 +591,22 @@ function decorateEmptyAttachmentButtons(buttons) {
  * @param buttonTemplateId
  *            html id of the <a> used as a template
  * @param buttonTemplateEmptyId
- *            html id of the <a> used as a template if the attachment list is empty
+ *            html id of the <a> used as a template if the attachment list is
+ *            empty
  */
-function addAttachmentButtonToRowDoV(row, attCount, buttonTemplateId, buttonTemplateEmptyId) {
+function addAttachmentButtonToRowDoV(row, attCount, buttonTemplateId,
+		buttonTemplateEmptyId) {
 	var cell = $('td.has-attachment-cell', row);
 	var entityId = cell.text();
-	
-	//no attachment count means the cell cannot be attached at all.
-	if (attCount===""){
+
+	// no attachment count means the cell cannot be attached at all.
+	if (attCount === "") {
 		cell.html('');
-	}else if (attCount > 0) {
-		cell.html($('#' + buttonTemplateId).clone()).find('a').attr('id', buttonTemplateId + ':' + entityId);
-	}else{
-		cell.html($('#' + buttonTemplateEmptyId).clone()).find('a').attr('id', buttonTemplateEmptyId + ':' + entityId);
+	} else if (attCount > 0) {
+		cell.html($('#' + buttonTemplateId).clone()).find('a').attr('id',
+				buttonTemplateId + ':' + entityId);
+	} else {
+		cell.html($('#' + buttonTemplateEmptyId).clone()).find('a').attr('id',
+				buttonTemplateEmptyId + ':' + entityId);
 	}
 }
-

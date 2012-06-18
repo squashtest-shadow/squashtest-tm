@@ -60,5 +60,5 @@
 	</div>
 </div>
 
-<c:url var="navbarScript" value="/scripts/squashtest/squashtm.navbar.js" />
+<c:url var="navbarScript" value="/scripts/squash/squashtm.navbar.js" />
 <script type="text/javascript" src="${ navbarScript }"></script>

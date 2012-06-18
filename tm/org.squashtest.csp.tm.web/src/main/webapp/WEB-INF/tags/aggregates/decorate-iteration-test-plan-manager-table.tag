@@ -81,7 +81,7 @@
 	//This function checks the response and inform the user if a deletion was impossible
 	function checkForbiddenDeletion(data){
 		if(data=="true"){
-			displayInformationNotification('${ unauthorizedDeletion }');
+			squashtm.notification.showInfo('${ unauthorizedDeletion }');
 		}
 	}
 	

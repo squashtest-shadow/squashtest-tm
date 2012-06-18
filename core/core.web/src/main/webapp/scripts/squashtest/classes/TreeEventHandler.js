@@ -34,7 +34,7 @@
  
  	this.tree = settings.tree;
  
- 	this.update = function(event){
+ 	this.update = function (event){
 		// todo : make something smarter
 		switch(event.evt_name){
 			case "paste" : updateEventPaste(event, this.tree); break;
@@ -54,7 +54,7 @@
  	}
  	destination.children("ul").remove();
  	destination.load()
- 	.done(function(){	
+ 	.done(function (){	
  		if(event instanceof EventDuplicate){			
  			var source = tree.findNodes({ restype : event.evt_source.obj_restype , resid : event.evt_source.obj_id });
  			source.deselect();

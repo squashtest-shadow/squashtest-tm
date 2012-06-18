@@ -18,21 +18,21 @@
  *     You should have received a copy of the GNU Lesser General Public License
  *     along with this software.  If not, see <http://www.gnu.org/licenses/>.
  */
-function SquashEventObject(id, restype){
+function SquashEventObject(id, restype) {
 	this.obj_id = id;
 	this.obj_restype = restype;
 }
-function SquashEvent(name){
+function SquashEvent(name) {
 	this.evt_name = name;
 }
-function EventPaste(destination){
-	this.base = SquashEvent;  
-	this.base("paste");  
+function EventPaste(destination) {
+	this.base = SquashEvent;
+	this.base("paste");
 	this.evt_destination = destination;
 }
 EventPaste.prototype = new SquashEvent;
 
-function EventDuplicate(destination, duplicate, source){
+function EventDuplicate(destination, duplicate, source) {
 	this.base = EventPaste;
 	this.base(destination);
 	this.evt_duplicate = duplicate;

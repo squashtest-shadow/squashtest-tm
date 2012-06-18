@@ -25,8 +25,6 @@
  * 
  */
 
-
-
 /*
  * needed if you want to (inaccurately) support web browsers which can't word-break 
  * 
@@ -38,97 +36,92 @@
  */
 
 //@deprecated
-function brutalHyphenation(maxWidth, domElement){
-	
+function brutalHyphenation(maxWidth, domElement) {
+
 	var jqelt = $(domElement);
 	var eltWidth = jqelt.width();
 	var eltText = jqelt.text();
 	var eltTextLength = eltText.length;
-	
-	var newContent = eltText;
-	
-	//first step : approximate how many characters it takes to reach the maximal width.
-	//it will allow us to use the character as a width unit.
-	//note : we shorten the maxWidth just to be sure.
-	
-	var maxLength = (eltTextLength * maxWidth ) / eltWidth;
 
-	
-	//should be true if the browser doesn't support word-break, i.e. IE8
-	if (eltText.length > maxLength){
-	
+	var newContent = eltText;
+
+	// first step : approximate how many characters it takes to reach the
+	// maximal width.
+	// it will allow us to use the character as a width unit.
+	// note : we shorten the maxWidth just to be sure.
+
+	var maxLength = (eltTextLength * maxWidth) / eltWidth;
+
+	// should be true if the browser doesn't support word-break, i.e. IE8
+	if (eltText.length > maxLength) {
+
 		var tempText = eltText;
-		var builder="";
+		var builder = "";
 		var counter = 0;
-		while (tempText.length> maxLength){
-			builder+=tempText.substring(0,maxLength)+"<br//>";
-			tempText=tempText.substring(maxLength);
+		while (tempText.length > maxLength) {
+			builder += tempText.substring(0, maxLength) + "<br//>";
+			tempText = tempText.substring(maxLength);
 			counter++;
 		}
-		
-		newContent = builder+tempText; //we're adding the rest to it
-	}
-	
-	return newContent;	
-	
-}
 
+		newContent = builder + tempText; // we're adding the rest to it
+	}
+
+	return newContent;
+
+}
 
 /*
  * truncate a text to the given text length and add an ellipsis if needed.
  * 
  */
-//@deprecated
-function simpleHyphenation(maxLength,text){
-	
-	var newContent=text;
-	
-	if (text.length>maxLength){
-		newContent = text.substring(0,(maxLength-3))+"...";
+// @deprecated
+function simpleHyphenation(maxLength, text) {
+
+	var newContent = text;
+
+	if (text.length > maxLength) {
+		newContent = text.substring(0, (maxLength - 3)) + "...";
 	}
-	
+
 	return newContent;
 }
 
-
-
-
-function openAttachmentIfNotEmpty(){
+function openAttachmentIfNotEmpty() {
 	var imgs = $("#attachment-container img");
-	
-	if (imgs.length!=0){
+
+	if (imgs.length != 0) {
 		$("#attachment-panel").togglePanel("openContent");
 	}
 }
 
-function hyphenateAttachement(){
+function hyphenateAttachement() {
 	var attachmentsCaption = $(".div-attachments-item  a");
-	if (attachmentsCaption.length!=0){
-		var i=0;
+	if (attachmentsCaption.length != 0) {
+		var i = 0;
 		var itemWidth = $(".div-attachments-item:first").width();
-		for (i=0;i<attachmentsCaption.length;i++){ 
+		for (i = 0; i < attachmentsCaption.length; i++) {
 			var elt = attachmentsCaption[i];
-			var content = brutalHyphenation(itemWidth,elt);
+			var content = brutalHyphenation(itemWidth, elt);
 			$(elt).empty();
 			$(elt).append(content);
-							
+
 		}
 	}
 }
 
-
-
-function handleNotFoundImages(defaultImageUrl){
+function handleNotFoundImages(defaultImageUrl) {
 	var imgs = $("#attachment-container img");
-	
-	if (imgs.length==0) return;
-	
-	//reloading the image to re-get the error event if needed. If you find it ugly, well, you're right !
-	$(imgs).each(function(){
-		$(this).load().error(function(){
-			this.src=defaultImageUrl;
+
+	if (imgs.length == 0)
+		return;
+
+	// reloading the image to re-get the error event if needed. If you find it
+	// ugly, well, you're right !
+	$(imgs).each(function () {
+		$(this).load().error(function () {
+			this.src = defaultImageUrl;
 		});
 	});
-	
-}
 
+}

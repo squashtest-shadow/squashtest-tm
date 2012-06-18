@@ -19,88 +19,85 @@
  *     along with this software.  If not, see <http://www.gnu.org/licenses/>.
  */
 
+(function ($) {
 
-(function($){
-	
-	$.fn.contextualContent = function(settings){
-	
+	$.fn.contextualContent = function (settings) {
+
 		this.listeners = [];
 		this.currentUrl = "";
-		this.currentXhr = { readyState : 4, abort : function(){} };		// we initialize  it with a mock.
-//		this.isTestCaseUrl = function(){return this.currentUrl.match(/test-cases/)};
+		this.currentXhr = {
+			readyState : 4,
+			abort : function () {
+			}
+		}; // we initialize it with a mock.
 		this.onCleanContent = null;
 
 		/* ******************* private **************** */
-		
-		var cleanContent = $.proxy(function(){
-			$('.is-contextual').dialog("destroy").remove(); 
-			this.empty();		
+
+		var cleanContent = $.proxy(function () {
+			$('.is-contextual').dialog("destroy").remove();
+			this.empty();
 			this.listeners = [];
-			if(this.onCleanContent != null){
+			if (this.onCleanContent != null) {
 				this.onCleanContent();
 				this.onCleanContent = null;
 			}
 		}, this);
-		
-		var abortIfRunning = $.proxy(function(){
-			if (this.currentXhr.readyState!=4){
+
+		var abortIfRunning = $.proxy(function () {
+			if (this.currentXhr.readyState != 4) {
 				this.currentXhr.abort();
 			}
 		}, this);
-		
+
 		/* ******************* public **************** */
-		
-				
-		this.fire = function(origin, event){
-			for (var i in this.listeners){
+
+		this.fire = function (origin, event) {
+			for (var i in this.listeners) {
 				var listener = this.listeners[i];
-				if (listener !== origin){
+				if (listener !== origin) {
 					listener.update(event);
 				}
 			}
-		}
-				
-		this.addListener = function(listener){
+		};
+
+		this.addListener = function (listener) {
 			this.listeners.push(listener);
-		}
-		
-		
-		this.loadWith = function(url){
-			
+		};
+
+		this.loadWith = function (url) {
+
 			var defer = $.Deferred();
 			var self = this;
-			
-			if (url == this.currentUrl){
+
+			if (url == this.currentUrl) {
 				defer.reject;
-				return defer.promise();			
-			}else{
+				return defer.promise();
+			} else {
 				abortIfRunning();
 				this.currentXhr = $.ajax({
 					url : url,
-					type : 'GET', 
+					type : 'GET',
 					dataType : 'html'
-				})
-				.success(function(data){
+				}).success(function (data) {
 					cleanContent();
 					self.currentUrl = url;
 					self.html(data);
 				});
-				
+
 				return this.currentXhr;
 			}
-			
-		}
 
-		this.unload = function(){
+		};
+
+		this.unload = function () {
 			cleanContent();
 			this.currentUrl = "";
 			abortIfRunning();
-		}
-		
-		return this;
-	
-	}
+		};
 
+		return this;
+
+	};
 
 })(jQuery);
-

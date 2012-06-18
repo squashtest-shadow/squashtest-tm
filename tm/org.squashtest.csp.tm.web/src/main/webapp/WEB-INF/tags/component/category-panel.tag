@@ -116,6 +116,4 @@
 		</comp:toggle-panel>
 	
 	</c:forEach>
-
-
 </div>

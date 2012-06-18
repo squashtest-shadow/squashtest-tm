@@ -7,8 +7,6 @@
 		<groupId>org.squashtest.tm</groupId>
 		<version>1.1</version>
 	</parent>
-
-
 	<groupId>org.squashtest.csp</groupId>
 	<artifactId>squashtest-csp</artifactId>
 	<version>1.2.0.IT36-SNAPSHOT</version>
@@ -46,6 +44,9 @@
 
 	<properties>
 		<project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
+		<jdk.version>1.6</jdk.version>
+		<aopalliance.version>1.0.0</aopalliance.version>
+		<aspectj.version>1.6.5.RELEASE</aspectj.version>
 		<groovy.version>1.7.10</groovy.version>
 		<spock.version>0.5-groovy-1.7</spock.version>
 		<groovy-eclipse-compiler.version>2.5.2-01</groovy-eclipse-compiler.version>
@@ -244,6 +245,7 @@
 						<exclude>**/styles/datatables/**/*.*</exclude>
 						<exclude>**/styles/jquery/**/*.*</exclude>
 						<exclude>**/styles/jqgrid/**/*.*</exclude>
+						<exclude>**/styles/**/thymol.js</exclude>
 						<!-- third-party wslds -->
 						<exclude>**/mantisconnect.wsdl</exclude>
 						<!-- misc system / ide files -->
@@ -328,16 +330,21 @@
 		</profile>
 	</profiles>
 
-
 	<repositories>
 		<repository>
-			<id>squash-official-repo</id>
+			<id>squash-release-repo</id>
 			<url>http://repo.squashtest.org/maven2/releases</url>
 		</repository>
 		<repository>
-			<id>squash-DEV-repo</id>
+			<id>squash-snapshot-repo</id>
 			<url>http://repo.squashtest.org/maven2/snapshots</url>
-		</repository>		
+			<snapshots>
+				<enabled>true</enabled>
+			</snapshots>
+			<releases>
+				<enabled>false</enabled>
+			</releases>
+		</repository>
 	</repositories>
 
 </project>

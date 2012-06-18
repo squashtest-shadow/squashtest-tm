@@ -19,52 +19,50 @@
  *     along with this software.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-function oneShotConfirm(dialogTitle, domMessage, okText, koText, widthParam){
-	if(widthParam == null){
+function oneShotConfirm(dialogTitle, domMessage, okText, koText, widthParam) {
+	if (widthParam == null) {
 		widthParam = '300px';
 	}
 	var oneShotPopup = $("<div/>");
 	$(document).append(oneShotPopup);
-	
+
 	oneShotPopup.append(domMessage);
-	oneShotPopup.keypress(function(){
-		if (evt.which=='13'){
+	oneShotPopup.keypress(function () {
+		if (evt.which == '13') {
 			$('button', oneShotPopup).trigger('click');
 		}
 	});
 
 	this.defer = $.Deferred();
-	
-	oneShotPopup.dialog({ 
+
+	oneShotPopup.dialog({
 		width : widthParam,
 		resizable : false,
 		title : dialogTitle,
-		buttons : [{ 
-			'text': okText,
-			'click' : function(){ 
+		buttons : [ {
+			'text' : okText,
+			'click' : function () {
 				var jqDialog = $(this);
-				jqDialog.dialog('close'); 
+				jqDialog.dialog('close');
 				jqDialog.dialog('destroy');
 				oneShotPopup.remove();
 				defer.resolve();
 			}
-		},
-		{ 
-			'text': koText,
-			'click' : function(){ 
+		}, {
+			'text' : koText,
+			'click' : function () {
 				var jqDialog = $(this);
-				jqDialog.dialog('close'); 
+				jqDialog.dialog('close');
 				jqDialog.dialog('destroy');
 				oneShotPopup.remove();
 				defer.reject();
 			}
-		}
-		]
-			
+		} ]
+
 	});
-	
+
 	oneShotPopup.dialog('open');
-	
+
 	return this.defer.promise();
 
 }

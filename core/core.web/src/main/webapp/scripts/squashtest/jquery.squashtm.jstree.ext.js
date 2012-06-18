@@ -34,7 +34,7 @@
  *            a jQuery selector being the handle to the contextual content div.
  */
 
-(function($){
+(function ($){
 	/*
 	 * 
 	 * Override of jstree.dnd.dnd_show. We want it to always target "inside"
@@ -63,7 +63,7 @@
 	var overridenM;
 
 
-	$.jstree._fn.dnd_show = function(){
+	$.jstree._fn.dnd_show = function (){
 				
 			// that variable in the vanilla tree is part of the closure context
 			// we cannot access here, so we must fetch it by other means.
@@ -127,7 +127,7 @@
 	 * squash tree plugin
 	 */
 	 $.jstree.plugin("squash",{
-		__init : function(){
+		__init : function (){
 			
 			var tree= this;
 			var s = this._get_settings().squash;
@@ -154,9 +154,9 @@
 			 * dblclick handler.
 			 * 
 			 */
-			container.bindFirst("live", function(){
+			container.bindFirst("live", function (){
 			
-				container.delegate("a",'click', function(event, data) {
+				container.delegate("a",'click', function (event, data) {
 					if (event.detail && event.detail>1){
 						event.stopImmediatePropagation();		// cancel the
 																// multiple
@@ -170,7 +170,7 @@
 									// page (# appears at the end of the URL)
 				});
 				
-				container.delegate('a', 'dblclick ', function(event,data){
+				container.delegate('a', 'dblclick ', function (event,data){
 					handleNodeDblClick(tree, event);
 					return false; // return false to prevent navigation in
 									// page (# appears at the end of the URL)
@@ -200,7 +200,7 @@
 		},
 		_fn : {
 		
-			selectionIsEditable : function(selectedNodes){
+			selectionIsEditable : function (selectedNodes){
 			
 				// that variable will be set to true if at least one selected
 				// node is not editable.
@@ -257,7 +257,7 @@
 				else return "OK" ;
 			},
 			
-			selectionIsCopyable : function(selectedNodes){
+			selectionIsCopyable : function (selectedNodes){
 				// all nodes except libraries are copyable
 				// if iterations are selected with other nodes type the
 				// selection is not copyable
@@ -268,7 +268,7 @@
 				else return "OK";
 			},
 			
-			selectionIsCreateFolderAllowed : function(selectedNodes){
+			selectionIsCreateFolderAllowed : function (selectedNodes){
 				// need only one node selected
 				var isOneCreate = this.selectionIsOneCreatableNode(selectedNodes);
 				if(isOneCreate != "OK") return isOneCreate;
@@ -280,7 +280,7 @@
 					else return "createFolderNotHere";
 			},
 			
-			selectionIsCreateFileAllowed : function(selectedNodes){
+			selectionIsCreateFileAllowed : function (selectedNodes){
 				// need only one node selected
 				var isOneCreate = this.selectionIsOneCreatableNode(selectedNodes);
 				if(isOneCreate != "OK") {
@@ -298,7 +298,7 @@
 				}
 			},
 			
-			selectionIsCreateResourceAllowed : function(selectedNodes){
+			selectionIsCreateResourceAllowed : function (selectedNodes){
 				// need only one node selected
 				var isOneCreate = this.selectionIsOneCreatableNode(selectedNodes);
 				if(isOneCreate != "OK") return isOneCreate;
@@ -307,7 +307,7 @@
 				else return "createResNotHere"
 			},
 			
-			selectionIsRenamable : function(selectedNodes){
+			selectionIsRenamable : function (selectedNodes){
 				// need only one node selected
 				var isOneEdit = this.selectionIsOneEditableNode(selectedNodes);
 				if(isOneEdit != "OK") return isOneEdit;
@@ -316,7 +316,7 @@
 				else return "OK";
 			},
 			
-			selectionIsPasteAllowed : function(selectedNodes){
+			selectionIsPasteAllowed : function (selectedNodes){
 				return squashtm.treemenu.treeNodeCopier.mayPaste();
 			},
 			
@@ -325,7 +325,7 @@
 			// tested against the dom attributes of the nodes and returns those
 			// that match all the
 			// attributes of at least one of the objects.
-			findNodes : function(descriptor){
+			findNodes : function (descriptor){
 				var matchers;
 				
 				if (descriptor instanceof Array){
@@ -353,7 +353,7 @@
 				}
 			},
 			
-			get_selected : function(){
+			get_selected : function (){
 				var selected = this.__call_old();
 				if (selected.length>0){
 					return selected.treeNode();
@@ -362,7 +362,7 @@
 				}
 			},
 			
-			allowedOperations : function(){
+			allowedOperations : function (){
 				var selectedNodes = this.get_selected();
 				var operations = "import-excel ";		// one can always import
 														// excel files
@@ -405,7 +405,7 @@
 			var self=this;
 			
 			container
-				.bind("select_node.jstree", function(event, data){
+				.bind("select_node.jstree", function (event, data){
 				
 					unselectDescendantsAndOtherProjectsSelections(data.rslt.obj, self);
 					operations = data.inst.allowedOperations();
@@ -417,7 +417,7 @@
 					
 					if (selected.length==1){
 						squashtm.contextualContent.loadWith(resourceUrl)
-						.done(function(){
+						.done(function (){
 							squashtm.contextualContent.addListener(self.eventHandler);
 						});
 					}else{
@@ -426,7 +426,7 @@
 					
 					return true;
 				})
-				.bind("deselect_node.jstree", function(event, data){
+				.bind("deselect_node.jstree", function (event, data){
 					operations = data.inst.allowedOperations();
 					updateTreebuttons(operations);
 					return true;
@@ -437,7 +437,7 @@
 				 * postprocess mode_node like now, rather than preprocess it. At
 				 * least that event is triggered only once.
 				 */
-				.bind("move_node.jstree", function(event, data){			
+				.bind("move_node.jstree", function (event, data){			
 					var moveObject = data.args[0];
 					
 					if (moveObject !==null 
@@ -458,7 +458,7 @@
 							var newData = moveObjectToCopyData(data);
 							
 							copyNode(newData, url)
-							.fail(function(){
+							.fail(function (){
 								data.inst.refresh();
 							});
 						}
@@ -486,7 +486,7 @@
 		_fn : {
 			postNewNode : postNewNode,	// see below
 
-			refresh_selected : function(){
+			refresh_selected : function (){
 				var self = this;
 				var selected = this.get_selected();
 				selected.all('refresh');
@@ -514,9 +514,9 @@
 			}, this));
 		},
 		_fn : {
-			get_selected : function(){
+			get_selected : function (){
 				var selected = this.__call_old();
-				var sorted = selected.sort(function(a,b){
+				var sorted = selected.sort(function (a,b){
 					var order_a = $(a).attr('order');
 					var order_b = $(b).attr('order');
 					return order_a - order_b;
@@ -566,9 +566,9 @@
 			// in the cloned content.
 			var selector=".fg-menu-container "+params[getter];
 			var button = $(selector);
-			button.enable = function(){$(this).removeClass('menu-disabled');};
-			button.disable = function(){$(this).addClass('menu-disabled');};
-			button.click(function(event){event.preventDefault(); if ($(this).is('.menu-disabled')) event.stopImmediatePropagation();});
+			button.enable = function (){$(this).removeClass('menu-disabled');};
+			button.disable = function (){$(this).addClass('menu-disabled');};
+			button.click(function (event){event.preventDefault(); if ($(this).is('.menu-disabled')) event.stopImmediatePropagation();});
 			
 			this.buttons[getter] = button;
 		 }
@@ -636,7 +636,7 @@ function updateTreebuttons(strOperations){
 		if (event.ctrlKey) return true;
 		event.stopImmediatePropagation();
 	
-		tree.data.squash.clicktimer = setTimeout(function(){	
+		tree.data.squash.clicktimer = setTimeout(function (){	
 			target.trigger('click.jstree');
 		},tree.data.squash.timeout);
 	}
@@ -657,7 +657,7 @@ function updateTreebuttons(strOperations){
 }
 
 function clearContextualContent(targetSelector){
-	$('.is-contextual').each(function(){
+	$('.is-contextual').each(function (){
 		// todo : kill the damn ckeditor instances
 		$(this).dialog("destroy").remove(); 
 	});
@@ -704,7 +704,7 @@ function clearContextualContent(targetSelector){
 	
 	// ***************** function init ********************
 
-	var postNode = function(){
+	var postNode = function (){
 		return $.ajax({
 			url : url,
 			data : postParameters,
@@ -714,13 +714,13 @@ function clearContextualContent(targetSelector){
 		});
 	}
 	
-	var addNode = function(data){
+	var addNode = function (data){
 		var res = targetNode.appendNode(data);
 		newNode = res[0];
 		return res[1];
 	}
 	
-	var selectNode = function(){
+	var selectNode = function (){
 		targetNode.deselect();
 		origNode.deselect();
 		
@@ -729,7 +729,7 @@ function clearContextualContent(targetSelector){
 	}
 
 	
-	var createNode = function(){
+	var createNode = function (){
 		postNode()
 		.then(addNode)
 		.then(selectNode)
@@ -860,7 +860,7 @@ function treeCheckDnd(m){
  * 
  */
 function destroyJTreeCopies(object, tree){
-	object.oc.each(function(index, elt){
+	object.oc.each(function (index, elt){
 		tree.delete_node( elt);
 	});
 }
@@ -917,7 +917,7 @@ function copyNode(data, url){
 	
 	
 	$.when(tree.open_node(newParent))
-	.then(function(){
+	.then(function (){
 	
 		$.ajax({
 			type : 'POST',
@@ -925,7 +925,7 @@ function copyNode(data, url){
 			data : dataSent,
 			dataType : 'json'
 		})
-		.success(function(jsonData){
+		.success(function (jsonData){
 			insertCopiedNodes(jsonData, newParent, tree);
 			tree.open_node( newParent, deferred.resolve);
 		})
@@ -1007,7 +1007,7 @@ function unselectDescendants(liNode, tree){
 	var descendants = $(liNode).find('li');
 		
 	if(descendants.length > 0 ){
-		$(descendants).each(function(index, element) {
+		$(descendants).each(function (index, element) {
 			tree.deselect_node(element);
 		});
 	}
@@ -1032,7 +1032,7 @@ function unselectOtherProjectsSelections(liNode, tree, previouslySelected){
 	libraryOfSelectedNodeDescendants.push(libraryOfSelectedNode);
 	
 	var nodesToUnselect = previouslySelected.not(libraryOfSelectedNodeDescendants);
-	$(nodesToUnselect).each(function(index, element) {
+	$(nodesToUnselect).each(function (index, element) {
 			tree.deselect_node(element);
 	});
 	

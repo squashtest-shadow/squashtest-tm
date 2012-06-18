@@ -49,7 +49,7 @@ function TestSuiteModel(settings) {
 	
 	//we have to reimplement indexOf because IE8 doesn't support it
 	//returns -1 if not found
-	var indexById = $.proxy(function(id){
+	var indexById = $.proxy(function (id){
 		for (var i=0;i<this.data.length;i++){
 			if (this.data[i].id==id){
 				return i;
@@ -58,14 +58,14 @@ function TestSuiteModel(settings) {
 		return -1;
 	}, self);
 	
-	var renameSuite = $.proxy(function(json) {
+	var renameSuite = $.proxy(function (json) {
 		var index = indexById(json.id);
 		if (index!=-1){
 			this.data[index].name=json.name;
 		}
 	}, self);
 	
-	var removeSuites = $.proxy(function(list) {
+	var removeSuites = $.proxy(function (list) {
 		for (var i in list){
 			var index = indexById(list[i]);
 			if (index!=-1){
@@ -74,24 +74,24 @@ function TestSuiteModel(settings) {
 		}
 	}, self);
 	
-	var _getModel = function(){
+	var _getModel = function (){
 		return $.ajax({
 			'url' : self.getUrl,
 			type : 'GET',
 			dataType : 'json'
-		}).success(function(json){
+		}).success(function (json){
 			this.data=json;
 		});
 	}
 
-	var notifyListeners = $.proxy(function(evt) {
+	var notifyListeners = $.proxy(function (evt) {
 		for ( var i = 0; i < this.listeners.length; i++) {
 			this.listeners[i].update(evt);
 		}
 	}, self);
 	
 	
-	var notifyContextualContent = $.proxy(function(evt){
+	var notifyContextualContent = $.proxy(function (evt){
 		if (squashtm.contextualContent !== undefined){
 			squashtm.contextualContent.fire(this, evt);
 		}
@@ -100,7 +100,7 @@ function TestSuiteModel(settings) {
 	/* ************** public interface (slave) **************** */
 	
 	
-	this.update = function(event){
+	this.update = function (event){
 		//in any case we refetch the data. Perhaps we will refine this later.
 		this.getModel();
 	}	
@@ -108,16 +108,16 @@ function TestSuiteModel(settings) {
 	
 	/* ************** public interface (master) *************** */
 
-	this.addListener = function(listener) {
+	this.addListener = function (listener) {
 		this.listeners.push(listener);
 	}
 
-	this.getData = function() {
+	this.getData = function () {
 		return this.data;
 	}
 
 
-	this.postNew = function(name) {
+	this.postNew = function (name) {
 
 		return $.ajax({
 			'url' : self.createUrl,
@@ -126,7 +126,7 @@ function TestSuiteModel(settings) {
 				'name' : name
 			},
 			dataType : 'json'
-		}).success(function(json) {
+		}).success(function (json) {
 			self.data.push(json);
 			var evt = { evt_name : "add" };
 			notifyListeners(evt);
@@ -134,7 +134,7 @@ function TestSuiteModel(settings) {
 		})
 	}
 
-	this.postRename = function(toSend) {
+	this.postRename = function (toSend) {
 
 		var url = this.baseUpdateUrl + "/" + toSend.id + "/rename";
 
@@ -143,7 +143,7 @@ function TestSuiteModel(settings) {
 			type : 'POST',
 			data : toSend,
 			dataType : 'json'
-		}).success(function(json) {
+		}).success(function (json) {
 			renameSuite(json);
 			var evt = { evt_name : "rename" }
 			notifyListeners(evt);
@@ -151,7 +151,7 @@ function TestSuiteModel(settings) {
 		})
 	}
 	
-	this.postRemove = function(toSend) {
+	this.postRemove = function (toSend) {
 
 		var url = this.removeUrl;
 
@@ -160,7 +160,7 @@ function TestSuiteModel(settings) {
 			type : 'POST',
 			data : toSend,
 			dataType : 'json'
-		}).success(function(json) {
+		}).success(function (json) {
 			removeSuites(json);
 			var evt = { evt_name : "remove" } ;
 			notifyListeners(evt);
@@ -168,7 +168,7 @@ function TestSuiteModel(settings) {
 		})
 	}
 
-	this.postBind = function(toSend) {
+	this.postBind = function (toSend) {
 		var url = this.baseUpdateUrl + "/" + toSend.id + "/test-cases";
 
 		return $.ajax({
@@ -176,7 +176,7 @@ function TestSuiteModel(settings) {
 			type : 'POST',
 			data : toSend,
 			dataType : 'json'
-		}).success(function(json) {
+		}).success(function (json) {
 			var evt = { evt_name : "bind" };
 			notifyListeners(evt);
 			notifyContextualContent(evt);
@@ -184,8 +184,8 @@ function TestSuiteModel(settings) {
 	}
 	
 
-	this.getModel = function(){
-		_getModel().success(function() {
+	this.getModel = function (){
+		_getModel().success(function () {
 			notifyListeners({ evt_name : "refresh"});
 		});
 	}

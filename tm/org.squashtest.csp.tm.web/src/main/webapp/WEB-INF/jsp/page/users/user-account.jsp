@@ -62,7 +62,7 @@
 			
 			function changePasswordCallback(){
 				<f:message var="passSuccess" key="user.account.changepass.success" />
-				displayInformationNotification("${passSuccess}");
+				squashtm.notification.showInfo("${passSuccess}");
 			}
 				
 		</script>

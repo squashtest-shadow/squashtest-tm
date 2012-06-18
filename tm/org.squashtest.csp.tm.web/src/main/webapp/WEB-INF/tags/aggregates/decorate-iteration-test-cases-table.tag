@@ -38,7 +38,6 @@
 	description="base of the url to update the test case url"%>
 <%@ attribute name="editable" type="java.lang.Boolean"
 	description="Right to edit content. Default to false."%>
-	
 <%@ attribute name="assignableUsersUrl" required="true"
 	description="URL to manipulate user of the test-plans"%>
 <%@ attribute name="testCaseSingleRemovalPopupId" required="true"
@@ -61,7 +60,6 @@
 <f:message var="unauthorizedDeletion"
 	key="dialog.remove-testcase-association.unauthorized-deletion.message" />
 
-
 <f:message var="statusBlocked" key="execution.execution-status.BLOCKED" />
 <f:message var="statusFailure" key="execution.execution-status.FAILURE" />
 <f:message var="statusSuccess" key="execution.execution-status.SUCCESS" />
@@ -77,7 +75,7 @@
 	//This function checks the response and inform the user if a deletion was impossible
 	function checkForbiddenDeletion(data) {
 		if (data == "true") {
-			displayInformationNotification('${ unauthorizedDeletion }');
+				squashtm.notification.showInfo('${ unauthorizedDeletion }');
 		}
 	}
 

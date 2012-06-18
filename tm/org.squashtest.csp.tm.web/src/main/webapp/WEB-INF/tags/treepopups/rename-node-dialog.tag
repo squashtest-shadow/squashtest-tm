@@ -61,7 +61,7 @@
 			if (! operations.match("rename") ){
 				<f:message key="dialog.label.rename-node.rejected" var="renameForbiddenLabel"/>
 				$(this).dialog('close');
-				displayInformationNotification("${renameForbiddenLabel }");
+				squashtm.notification.showInfo("${renameForbiddenLabel }");
 			}
 			else{
 				var name = node.getName();

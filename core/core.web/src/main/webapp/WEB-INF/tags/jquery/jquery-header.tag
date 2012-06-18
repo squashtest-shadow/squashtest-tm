@@ -35,10 +35,7 @@
 </c:otherwise>
 </c:choose>
 
-
 <script type="text/javascript" src="${ pageContext.servletContext.contextPath }/scripts/squashtest/jquery.squashtm.plugin.js"></script>
-<%-- <script type="text/javascript" src="http://localhost/scripts/jquery.squashtm.plugin.js"></script> --%>
-<script type="text/javascript" src="${ pageContext.servletContext.contextPath }/scripts/squashtest/jquery.squashtm.togglepanels.js"></script> 
+<script type="text/javascript" src="${ pageContext.servletContext.contextPath }/scripts/squashtest/jquery.squash.togglepanels.js"></script> 
 <script type="text/javascript" src="${ pageContext.servletContext.contextPath }/scripts/squashtest/jquery.squash.messagedialog.js"></script>  
 <script type="text/javascript" src="${ pageContext.servletContext.contextPath }/scripts/squashtest/jquery.squash.confirmdialog.js"></script>  
-<%--<script type="text/javascript" src="http://localhost/scripts/jquery.squashtm.togglepanels.js"></script>--%>

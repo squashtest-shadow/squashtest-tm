@@ -41,7 +41,7 @@ function TestSuiteManagerControl(settings) {
 	
 	var oldVal = this.input.val;
 	
-	this.input.val = function() {
+	this.input.val = function () {
 		if (arguments.length > 0) {
 			oldVal.apply(this, arguments);
 			updateBtn();
@@ -52,49 +52,49 @@ function TestSuiteManagerControl(settings) {
 
 	/* ************** public *********** */
 
-	this.reset = function() {
+	this.reset = function () {
 		defaultState();
 		this.input.addClass('manager-control-ready');
 		this.input.removeClass('manager-control-disabled');
 	};
 
-	this.deactivate = function() {
+	this.deactivate = function () {
 		defaultState();
 		this.input.attr('disabled', 'disabled');
 		this.input.removeClass('manager-control-ready');
 		this.input.addClass('manager-control-disabled');
 	};
 
-	this.setText = function(text) {
+	this.setText = function (text) {
 		this.input.val(text);
 	}
 
-	this.setDefaultText = function() {
+	this.setDefaultText = function () {
 		this.input.val(this.defaultMessage);
 	}
 
 	/* ************* private ******** */
 
-	var defaultState = $.proxy(function() {
+	var defaultState = $.proxy(function () {
 		this.input.removeAttr('disabled');
 		this.input.val(this.defaultMessage);
 		this.button.button("disable");
 	}, self);
 
-	var editState = $.proxy(function() {
+	var editState = $.proxy(function () {
 		this.input.removeClass('manager-control-ready');
 		this.onfocus();
 	}, self);
 
 	/* ************* handlers ******** */
 
-	this.button.click(function() {
+	this.button.click(function () {
 		self.action();
 	});
 
 	// we're in competition here with the default 'enter' event bound to the
 	// close button
-	this.input.keypress(function(evt) {
+	this.input.keypress(function (evt) {
 		self.manager.instance.find('.error-message').html('');
 		if (evt.which == '13') {
 			evt.stopImmediatePropagation();
@@ -105,7 +105,7 @@ function TestSuiteManagerControl(settings) {
 		}
 	});
 
-	var updateBtn = function() {
+	var updateBtn = function () {
 		var button = self.button;
 		if (self.input.val().length > 0) {
 			button.button('enable');
@@ -115,7 +115,7 @@ function TestSuiteManagerControl(settings) {
 	};
 
 	// that one is better than change()
-	this.input.keyup(function(evt) {
+	this.input.keyup(function (evt) {
 		updateBtn();
 	});
 
@@ -140,11 +140,11 @@ function TestSuiteManagerView(settings) {
 
 	/* ****** private ********* */
 
-	var getAllItems = $.proxy(function() {
+	var getAllItems = $.proxy(function () {
 		return $('.suite-div', this.panel);
 	}, this);
 
-	var appendItem = $.proxy(function(data) {
+	var appendItem = $.proxy(function (data) {
 
 		var newSuite = $("<div/>", {
 			'class' : 'suite-div ui-corner-all'
@@ -159,10 +159,10 @@ function TestSuiteManagerView(settings) {
 
 	}, self);
 
-	var sortSuiteList = $.proxy(function() {
+	var sortSuiteList = $.proxy(function () {
 		var allSuites = $('.suite-div', this.panel);
 
-		var sorted = allSuites.sort(function(a, b) {
+		var sorted = allSuites.sort(function (a, b) {
 			var textA = getItemDomText(a);
 			var textB = getItemDomText(b);
 			return (textA < textB) ? -1 : 1;
@@ -171,7 +171,7 @@ function TestSuiteManagerView(settings) {
 		this.panel.append(sorted);
 	}, self);
 
-	var getItemDomId = function(elt) {
+	var getItemDomId = function (elt) {
 		if (elt.firstElementChild !== undefined) {
 			return elt.firstElementChild.getAttribute('data-suite-id');
 		} else {
@@ -179,7 +179,7 @@ function TestSuiteManagerView(settings) {
 		}
 	};
 
-	var getItemDomText = function(elt) {
+	var getItemDomText = function (elt) {
 		if (elt.firstElementChild !== undefined) {
 			return elt.firstElementChild.textContent;
 		} else {
@@ -189,17 +189,17 @@ function TestSuiteManagerView(settings) {
 
 	/* ********* public *********** */
 
-	this.getSelectedIds = function() {
-		var ids = this.getSelected().find('span').collect(function(elt) {
+	this.getSelectedIds = function () {
+		var ids = this.getSelected().find('span').collect(function (elt) {
 			return elt.getAttribute('data-suite-id');
 		});
 		return ids;
 	}
 
-	this.selectItems = function(selected) {
+	this.selectItems = function (selected) {
 		getAllItems()
 				.each(
-						function(i, elt) {
+						function (i, elt) {
 							for ( var j = 0; j < selected.length; j++) {
 								var id = getItemDomId(elt);
 								if (selected[j] == id) {
@@ -209,16 +209,16 @@ function TestSuiteManagerView(settings) {
 						});
 	}
 
-	this.getSelected = function() {
+	this.getSelected = function () {
 		return getAllItems().filter('.suite-selected');
 	};
 
-	this.deselectAllItems = function() {
+	this.deselectAllItems = function () {
 		getAllItems().removeClass(
 				"suite-selected ui-widget-header ui-state-default");
 	};
 
-	this.update = function(evt) {
+	this.update = function (evt) {
 
 		// the only evt ignored is "bind"
 		if ((evt === undefined) || 
@@ -249,7 +249,7 @@ function TestSuiteManagerView(settings) {
 	}
 
 	this.panel.delegate('.suite-div', 'click',
-			function() {
+			function () {
 				if (!self.manager.ctrlPressed) {
 					self.deselectAllItems();
 				}
@@ -266,7 +266,7 @@ function TestSuiteManager(settings) {
 
 	/* **************** public state management methods ******************** */
 
-	this.updatePopupState = function() {
+	this.updatePopupState = function () {
 
 		var allItems = this.view.getSelected();
 
@@ -292,10 +292,10 @@ function TestSuiteManager(settings) {
 
 	/* ----- suite creation ------- */
 
-	var postNewSuite = $.proxy(function() {
+	var postNewSuite = $.proxy(function () {
 		var name = this.create.control.input.val();
 
-		this.model.postNew(name).success(function() {
+		this.model.postNew(name).success(function () {
 			self.create.control.reset();
 		});
 
@@ -303,7 +303,7 @@ function TestSuiteManager(settings) {
 
 	/* ------- suite renaming -------- */
 
-	var postRenameSuite = $.proxy(function() {
+	var postRenameSuite = $.proxy(function () {
 
 		var suiteId = this.view.getSelectedIds()[0];
 		var newName = this.rename.control.input.val();
@@ -317,7 +317,7 @@ function TestSuiteManager(settings) {
 
 	/* ------- suites removing -------- */
 
-	var postRemoveSuites = $.proxy(function() {
+	var postRemoveSuites = $.proxy(function () {
 		
 		var toSend = {};
 		toSend['ids[]'] = this.view.getSelectedIds();
@@ -328,15 +328,15 @@ function TestSuiteManager(settings) {
 
 	/* ------- bind ctrl ------------ */
 
-	var bindCtrl = $.proxy(function() {
+	var bindCtrl = $.proxy(function () {
 		var jqDoc = $(document);
-		jqDoc.keydown(function(evt) {
+		jqDoc.keydown(function (evt) {
 			if (evt.which == 17) {
 				self.ctrlPressed = true;
 			}
 		});
 
-		jqDoc.keyup(function(evt) {
+		jqDoc.keyup(function (evt) {
 			if (evt.which = 17) {
 				self.ctrlPressed = false;
 			}
@@ -346,7 +346,7 @@ function TestSuiteManager(settings) {
 	/* ******************** init code ****************************** */
 
 	// executed every time the popup opens
-	this.init = function() {
+	this.init = function () {
 		this.view.deselectAllItems();
 		this.create.control.reset();
 		this.updatePopupState();
@@ -368,7 +368,7 @@ function TestSuiteManager(settings) {
 		defaultMessage : settings.defaultMessage,
 		panel : $(".create-suites-section", this.instance),
 		action : postNewSuite,
-		onfocus : function() {
+		onfocus : function () {
 			this.input.val('');
 		}
 	}
@@ -378,7 +378,7 @@ function TestSuiteManager(settings) {
 		defaultMessage : settings.defaultMessage,
 		panel : this.rename.panel = $(".rename-suites-section", this.instance),
 		action : postRenameSuite,
-		onfocus : function() {
+		onfocus : function () {
 		}
 	}
 
@@ -388,7 +388,7 @@ function TestSuiteManager(settings) {
 		defaultMessage : settings.defaultMessage,
 		panel : this.remove.panel = $(".remove-suites-section", this.instance),
 		action : postRemoveSuites,
-		onfocus : function() {
+		onfocus : function () {
 		}
 	}
 

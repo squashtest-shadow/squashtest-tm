@@ -19,84 +19,92 @@
  *     along with this software.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-(function($){
+(function ($) {
 
-
-	//Adding maxlength attribute for text
-	//thanks to http://blogpad-online.blogspot.com/2010/10/jeditable-maxlength_12.html
-	$.editable.types.text.element = function(settings, original) {
-        var input = $('<input />');
-        if (settings.width  != 'none') { input.width(settings.width);  }
-        if (settings.height != 'none') { input.height(settings.height); }
-        if (settings.maxlength != 'none') { input.attr('maxlength', settings.maxlength); }
-        input.attr('autocomplete','off');
-        $(this).append(input);
-        return(input);
+	// Adding maxlength attribute for text
+	// thanks to
+	// http://blogpad-online.blogspot.com/2010/10/jeditable-maxlength_12.html
+	$.editable.types.text.element = function (settings, original) {
+		var input = $('<input />');
+		if (settings.width != 'none') {
+			input.width(settings.width);
+		}
+		if (settings.height != 'none') {
+			input.height(settings.height);
+		}
+		if (settings.maxlength != 'none') {
+			input.attr('maxlength', settings.maxlength);
+		}
+		input.attr('autocomplete', 'off');
+		$(this).append(input);
+		return (input);
 	}
-	
-	
 
-	/*
-		custom rich jeditable for the type 'ckeditor'. The plugin jquery.jeditable.ckeditor.js must have been called beforehand. The purpose of it is that we hook the object with additional handlers that will enable or disable hyperlinks with respect to the state of the editable (edit-mode or display-mode).
-		
-		It accepts one object for argument, with the regular options of a jeditable.  : 
-			- this : a dome element javascript object. Not part of the settings.
-			- url : the url where to post.
-			- ckeditor : the config for the nested  ckeditor instance 
-			- placeholder : message displayed when the content is empty
-			- submit : text for the submit button
-			- cancel : text for the cancel button
-	
-	*/
-	
+	/**
+	 * custom rich jeditable for the type 'ckeditor'. The plugin
+	 * jquery.jeditable.ckeditor.js must have been called beforehand. The
+	 * purpose of it is that we hook the object with additional handlers that
+	 * will enable or disable hyperlinks with respect to the state of the
+	 * editable (edit-mode or display-mode).
+	 * 
+	 * It accepts one object for argument, with the regular options of a
+	 * jeditable. : - this : a dome element javascript object. Not part of the
+	 * settings. - url : the url where to post. - ckeditor : the config for the
+	 * nested ckeditor instance - placeholder : message displayed when the
+	 * content is empty - submit : text for the submit button - cancel : text
+	 * for the cancel button
+	 * 
+	 */
+
 	$.widget('ui.richEditable', {
-	
-		_bindLinks : function(){
+
+		_bindLinks : function () {
 			this.bindLinks.call(this.element);
 		},
-		
-		bindLinks : function(){
+
+		bindLinks : function () {
 			var elts = $('a', this);
-			
+
 			elts.unbind('click');
-			elts.click(function(event){
-				document.location.href=this.href;
+			elts.click(function (event) {
+				document.location.href = this.href;
 				event.stopPropagation();
 				return false;
-			});					
+			});
 		},
-	
-		options: {
+
+		options : {
 			type : 'ckeditor',
 			rows : 10,
 			cols : 80,
-			onblur : function(){},
-			callback : function(result, settings){
-				//'this' in this context is the div itself
+			onblur : function () {
+			},
+			callback : function (result, settings) {
+				// 'this' in this context is the div itself
 				$.ui.richEditable.prototype.bindLinks.call(this);
-			}		
+			}
 		},
-		
-		_init : function(){
+
+		_init : function () {
 			var self = this;
 			var element = this.element;
 			element.addClass("editable");
 			element.editable(this.options.url, this.options);
 			this._bindLinks();
-			
-			//hook the reset so that we bind links there too.
-			//unfortunately we cannot simply define the reset method in jquery.jeditable.ckeditor.js because jeditable calls the 
-			//callback in an place useless to us.
-			
-			//todo : make the reset thing available for all input types.
+
+			// hook the reset so that we bind links there too.
+			// unfortunately we cannot simply define the reset method in
+			// jquery.jeditable.ckeditor.js because jeditable calls the
+			// callback in an place useless to us.
+
+			// todo : make the reset thing available for all input types.
 			var domElement = element.get(0);
 			var oldReset = domElement.reset;
-			domElement.reset = function(){
+			domElement.reset = function () {
 				oldReset.call(this);
-				self._bindLinks();		
-			}					
+				self._bindLinks();
+			}
 		}
-	
+
 	});
 })(jQuery);
-

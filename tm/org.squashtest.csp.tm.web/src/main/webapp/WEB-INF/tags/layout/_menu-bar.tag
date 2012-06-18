@@ -28,7 +28,7 @@
 <%@ taglib uri="http://java.sun.com/jsp/jstl/core" prefix="c"%>
 <%@ taglib uri="http://www.springframework.org/security/tags" prefix="sec"%>
 
-<script type="text/javascript" src="${ pageContext.servletContext.contextPath }/scripts/squashtest/squashtm.menubar.js"></script>
+<script type="text/javascript" src="${ pageContext.servletContext.contextPath }/scripts/squash/squashtm.menubar.js"></script>
 
 <c:url var="projectFilterStatusUrl" value="/global-filter/filter-status"/>
 <c:url var="administrationUrl" value="/administration"/>

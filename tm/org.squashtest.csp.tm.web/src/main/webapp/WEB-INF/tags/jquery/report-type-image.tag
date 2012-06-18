@@ -31,13 +31,6 @@
 	<c:when test="${reportType.resourceKeyName =='squashtest.report.reporttype.progressfollowup.name'}">
 		<c:set var="imgPath" value="${ pageContext.servletContext.contextPath }/images/report_spreadsheet.png" />
 	</c:when>
-<%--<c:when test="${reportType.resourceKeyName =='REPORT_HISTORY'}">
-		<c:set var="imgPath" value="${ pageContext.servletContext.contextPath }/images/file_doc.png" />
-	</c:when>
-	<c:when test="${reportType.resourceKeyName =='REPORT_SIGNIFICANT_TRENDS'}">
-		<c:set var="imgPath" value="${ pageContext.servletContext.contextPath }/images/file_rtf.png" />
-	</c:when>
-	--%>
 </c:choose>
 
 <img src="${imgPath}" />

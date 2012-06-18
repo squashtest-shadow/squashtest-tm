@@ -19,32 +19,42 @@
  *     along with this software.  If not, see <http://www.gnu.org/licenses/>.
  */
 
+function KeyEventListener() {
 
-function KeyEventListener(){
+	this.ctrl = false;
+	this.shift = false;
+	this.enter = false;
 
-	this.ctrl=false;
-	this.shift=false;
-	this.enter=false;
-	
 	var self = this;
-	
-	$(document).keydown(function(evt){
-		switch(evt.which){
-			case 13 : self.enter=true;break;
-			case 17 : self.ctrl=true;break;
-			case 16 : self.shift=true;break;
-		}
-	});
-	
-	$(document).keyup(function(evt){
-		switch(evt.which){
-			case 13 : self.enter=false;break;
-			case 17 : self.ctrl=false;break;
-			case 16 : self.shift=false;break;
-		}
-	});
-	
-	return this;
 
+	$(document).keydown(function (evt) {
+		switch (evt.which) {
+		case 13:
+			self.enter = true;
+			break;
+		case 17:
+			self.ctrl = true;
+			break;
+		case 16:
+			self.shift = true;
+			break;
+		}
+	});
+
+	$(document).keyup(function (evt) {
+		switch (evt.which) {
+		case 13:
+			self.enter = false;
+			break;
+		case 17:
+			self.ctrl = false;
+			break;
+		case 16:
+			self.shift = false;
+			break;
+		}
+	});
+
+	return this;
 
 }

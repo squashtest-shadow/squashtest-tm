@@ -29,24 +29,24 @@ function TreeNodeCopier(initObj) {
 
 	// ***************** private methods *********************
 	
-	var displayError = function(){
+	var displayError = function (){
 		if (arguments.length==0){
-			displayInformationNotification(this.errMessage);
+			squashtm.notification.showInfo(this.errMessage);
 		}else{
-			displayInformationNotification(arguments[0]);
+			squashtm.notification.showInfo(arguments[0]);
 		}
 	};
 
-	var reset = function(){
+	var reset = function (){
 		$.cookie('squash-copy-nodes', null);
 	};
 	
-	var retrieve = function(){
+	var retrieve = function (){
 		var data = $.cookie('squash-copy-nodes');
 		return JSON.parse(data);
 	};
 
-	var store = function(nodesData, libraryId){
+	var store = function (nodesData, libraryId){
 	
 		var data = {
 			library : libraryId,
@@ -59,7 +59,7 @@ function TreeNodeCopier(initObj) {
 	};
 	
 	
-	var denyPaste = function(flag){
+	var denyPaste = function (flag){
 		switch (flag){
 			case "not-unique-editable" : displayError(initObj.notOneEditable); break;
 			case "wrong-library"	:	displayError(initObj.pasteNotSameProject); break;
@@ -74,7 +74,7 @@ function TreeNodeCopier(initObj) {
 	
 	// ****** returns a boolean *************
 	
-	this.mayCopy = function(){
+	this.mayCopy = function (){
 		
 		var nodes = this.tree.get_selected();
 		
@@ -90,7 +90,7 @@ function TreeNodeCopier(initObj) {
 		
 	}
 	
-	this.copyNodesToCookie = function(){
+	this.copyNodesToCookie = function (){
 		
 		reset();	
 		
@@ -110,7 +110,7 @@ function TreeNodeCopier(initObj) {
 	// *** that function checks that the operation is indeed allowed
 	// *** the returned value is a status as string giving informations about
 	// *** why the user can't perform the operation
-	this.mayPaste = function(){
+	this.mayPaste = function (){
 		
 		var data = retrieve();		
 		if (data == null) return "buffer-empty";
@@ -137,7 +137,7 @@ function TreeNodeCopier(initObj) {
 	};
 	
 	
-	this.preparePasteData = function(nodes, target){
+	this.preparePasteData = function (nodes, target){
 	
 		var destinationType;
 		var url;
@@ -181,7 +181,7 @@ function TreeNodeCopier(initObj) {
 	
 	};	
 	
-	this.pasteNodesFromCookie = function(){
+	this.pasteNodesFromCookie = function (){
 		
 		var flag = this.mayPaste();
 		

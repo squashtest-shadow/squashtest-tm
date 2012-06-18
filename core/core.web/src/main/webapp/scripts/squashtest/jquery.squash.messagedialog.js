@@ -18,7 +18,7 @@
  *     You should have received a copy of the GNU Lesser General Public License
  *     along with this software.  If not, see <http://www.gnu.org/licenses/>.
  */
-(function($) {
+(function ($) {
 	/**
 	 * MessageDialog widget.
 	 * A message dialog is a preconfigured modal dialog which shows a message and only has a close button.
@@ -38,11 +38,11 @@
 			closeOnEnter : true,
 			buttons : [{ 
 				text: "Ok", 
-			    click: function() { $(this).messageDialog("close"); } 
+			    click: function () { $(this).messageDialog("close"); } 
 			}]
 		},
 
-		_create : function() {
+		_create : function () {
 			// we need to invoke prototype creation
 			$.ui.dialog.prototype._create.apply(this);
 
@@ -51,7 +51,7 @@
 			self.uiDialog
 				.addClass("popup-dialog")
 				// allow closing by pressing the enter key
-				.keydown( function(event) {
+				.keydown( function (event) {
 					if (self.options.closeOnEnter
 							&& !event .isDefaultPrevented()
 							&& event.keyCode
@@ -65,7 +65,7 @@
 
 		},
 
-		_createButtons : function(buttons) {
+		_createButtons : function (buttons) {
 			var self = this;
 			var okButton = $("input:button", self.element);
 			
@@ -79,19 +79,19 @@
 			okButton.remove()
 		},
 
-		_setOption : function(key, value) {
+		_setOption : function (key, value) {
 			// In jQuery UI 1.8, you have to manually invoke the
 			// _setOption method from the base widget
 			$.Widget.prototype._setOption.apply(this, arguments);
 		},
 
-		_trigger : function(type, event, data) {
+		_trigger : function (type, event, data) {
 			if (type == 'open') {
 				var self = this;
 
 				if (self.overlay) {
 					// allow closing by pressing the enter key
-					$(document).bind('keydown.dialog-overlay', function(event) {
+					$(document).bind('keydown.dialog-overlay', function (event) {
 						if (self.options.closeOnEnter
 								&& !event .isDefaultPrevented()
 								&& event.keyCode
@@ -107,7 +107,7 @@
 			$.Widget.prototype._trigger.apply(this, arguments);
 		},
 		
-	    destroy: function() {
+	    destroy: function () {
 	    	// root dialog widget removed the title of the original elemnt. we put it back.
 	    	if (this.originalTitle != "") {
 	    		this.element.attr("title", this.originalTitle);
@@ -121,14 +121,14 @@
 	
 	/**
 	 * Opens a messageDialog created on the fly and discards it afterwards. 
-	 * eg : $('#dialogDef").openMessage().done(function() { console.log('closed') })
+	 * eg : $('#dialogDef").openMessage().done(function () { console.log('closed') })
 	 * @return a promise
 	 */
-	$.fn.openMessage = function() {
+	$.fn.openMessage = function () {
 		var self = this;
 		var deferred = $.Deferred();
 		
-		var close = function() {
+		var close = function () {
 			self.messageDialog('destroy');
 			deferred.resolve();
 		}
@@ -149,14 +149,14 @@
 		 * @param html chunk used as the body of the dialog.
 		 * @return a promise
 		 */
-		openMessage: function(title, htmlMessage) {		  
+		openMessage: function (title, htmlMessage) {		  
 			var dialog = $('<div></div>');
 			dialog.attr('title', title);
 			
 			dialog.append(htmlMessage);
 			$(document).append(dialog);
 			
-			var discardDialog = function() {
+			var discardDialog = function () {
 				dialog.remove();
 			}
 			

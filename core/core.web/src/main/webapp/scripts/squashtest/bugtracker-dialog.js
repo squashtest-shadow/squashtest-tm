@@ -19,57 +19,50 @@
  *     along with this software.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-
-
-function buildSelectOption(jsonOption){
+function buildSelectOption(jsonOption) {
 	var htmlOption = "<option value=\"";
-	htmlOption+=jsonOption.id+"\">";
-	htmlOption+=jsonOption.name+"</option>";
+	htmlOption += jsonOption.id + "\">";
+	htmlOption += jsonOption.name + "</option>";
 	return htmlOption;
 }
- 
 
-function flushSelect(jqSelect){
+function flushSelect(jqSelect) {
 	jqSelect.find("option").remove();
 }
 
+function populateSelect(jqSelect, jsonOptions) {
 
-function populateSelect(jqSelect, jsonOptions){
-	
-	var i=0;
-	for (i=0;i<jsonOptions.length;i++){
+	var i = 0;
+	for (i = 0; i < jsonOptions.length; i++) {
 		var htmlContent = buildSelectOption(jsonOptions[i]);
 		jqSelect.append(htmlContent);
 	}
 	return false;
-		
+
 }
 
-
-function btEntity(argId, argName){
+function btEntity(argId, argName) {
 	this.id = argId;
 	this.name = argName;
-	this.format= function(){
-		return "id="+this.id+",name="+this.name;
+	this.format = function () {
+		return "id=" + this.id + ",name=" + this.name;
 	};
 }
 
-
-function extractSelectData(jqSelect){
+function extractSelectData(jqSelect) {
 	var id = jqSelect.val();
-	var name= jqSelect.find("option:selected").text();
-	
+	var name = jqSelect.find("option:selected").text();
+
 	return new btEntity(id, name);
 }
 
-function handleEmptyList(jsList,emptyListLabel){
-		if (jsList[0].empty==true){
-			var stubArray = new Array();
-			var stub = new btEntity(jsList[0].id,emptyListLabel);
-			stubArray.push(stub);
-			return stubArray;
-		} 		
-		else{
-			return jsList;
-		}
+function handleEmptyList(jsList, emptyListLabel) {
+	if (jsList[0].empty == true) {
+		var stubArray = new Array();
+		var stub = new btEntity(jsList[0].id, emptyListLabel);
+		stubArray.push(stub);
+		return stubArray;
+	} else {
+		return jsList;
 	}
+}

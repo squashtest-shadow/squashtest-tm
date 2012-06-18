@@ -23,7 +23,7 @@
 function TestSuiteMenuControl(){
 	var self=this;
 	
-	var makeControl = $.proxy(function(){
+	var makeControl = $.proxy(function (){
 		var node = $("<div/>");
 		
 		var input = $("<input/>", { 'type' : 'text', 'class' : 'suite-manager-menu-input'} );
@@ -46,7 +46,7 @@ function TestSuiteMenuControl(){
 		
 	}, this);
 	
-	this.getControlHtml = function(){
+	this.getControlHtml = function (){
 		return this.control.html();
 	}
 	
@@ -64,12 +64,12 @@ function TestSuiteMenu(settings){
 	
 	var self = this;
 	
-	var makeList = $.proxy(function(){
+	var makeList = $.proxy(function (){
 		var list=$("<ul/>", { 'class' : 'suite-manager-menu-mainlist' });
 		return list;
 	}, this);
 	
-	var makeItem = $.proxy(function(json){
+	var makeItem = $.proxy(function (json){
 		var node=$("<li/>" );
 		var a = $("<a/>", { 'href' : '#', 'data-suite-id' : json.id });
 		node.append(a);
@@ -77,7 +77,7 @@ function TestSuiteMenu(settings){
 		return node;
 	}, this);
 
-	var getItemDomText = function(elt){		
+	var getItemDomText = function (elt){		
 		if (elt.firstElementChild!==undefined){
 			return elt.firstElementChild.textContent;		
 		}else{
@@ -85,7 +85,7 @@ function TestSuiteMenu(settings){
 		}	
 	};
 	
-	var getItemDomId = function(elt){
+	var getItemDomId = function (elt){
 		if (elt.firstElementChild!==undefined){
 			return elt.firstElementChild.getAttribute('data-suite-id');		
 		}else{
@@ -93,16 +93,16 @@ function TestSuiteMenu(settings){
 		}			
 	}
 	
-	var getSpanDomId = function(elt){
+	var getSpanDomId = function (elt){
 		return elt.getAttribute('data-suite-id');
 	}
 	
-	var getItemId = function(jqElt){
+	var getItemId = function (jqElt){
 		return $('span', jqElt).data('suite-id');
 	}
 	
 	
-	var initializeContent = $.proxy(function(){	
+	var initializeContent = $.proxy(function (){	
 		//generate new content
 		var model = this.model.getData();		
 		var list = makeList();
@@ -113,7 +113,7 @@ function TestSuiteMenu(settings){
 		}
 		
 		//sort new content
-		var sorted = $('li', list).sort(function(a, b){
+		var sorted = $('li', list).sort(function (a, b){
 			var textA = getItemDomText(a);
 			var textB = getItemDomText(b);
 			return (textA < textB) ? -1 : 1;
@@ -140,7 +140,7 @@ function TestSuiteMenu(settings){
 	 * else, we simply reset the 'menuExists' flag, and the popup will redraw itself next time 
 	 * we open it.
 	 */
-	var redrawIfNeeded = $.proxy(function(wasOpen){
+	var redrawIfNeeded = $.proxy(function (wasOpen){
 		if (wasOpen){
 			this.menu.create();
 		}else{
@@ -148,12 +148,12 @@ function TestSuiteMenu(settings){
 		}
 	}, this);
 	
-	var getDatatableSelected = $.proxy(function(){
+	var getDatatableSelected = $.proxy(function (){
 		var table = $(this.datatableSelector).dataTable( {'bRetrieve' : true});
 		return getIdsOfSelectedTableRows(table, getTestPlansTableRowId);
 	}, this);
 	
-	var displayAddSuiteError = $.proxy(function(xhr, text){
+	var displayAddSuiteError = $.proxy(function (xhr, text){
 		try{
 			var errContent = jQuery.parseJSON(xhr.responseText);
 			var message = $("<div/>", { 'margin-top' : 'auto', 'margin-bottom' : 'auto'});
@@ -178,7 +178,7 @@ function TestSuiteMenu(settings){
 	
 	/* **************************** public ****************************** */
 	
-	this.update = function(evt){
+	this.update = function (evt){
 		//the only event ignored is "bind"
 		if ((evt===undefined) || 
 			(evt.evt_name=="rename") || 
@@ -196,27 +196,27 @@ function TestSuiteMenu(settings){
 	
 	
 	
-	var addSuite = $.proxy(function(){
+	var addSuite = $.proxy(function (){
 		var self=this;
 		var name = this.menu.getContainer().find('.suite-manager-menu-input').val();
-		this.model.postNew(name).error(displayAddSuiteError).success(function(json) {
+		this.model.postNew(name).error(displayAddSuiteError).success(function (json) {
 			bindSuiteItemsGeneral(json.id);
 		});			
 	}, this);
 	
-	var bindSuiteItemsGeneral = $.proxy(function(itemId){
+	var bindSuiteItemsGeneral = $.proxy(function (itemId){
 		var self=this;
 		var toSend = {};
 		toSend.id = itemId;
 		toSend['test-cases[]'] = getDatatableSelected();
 		
 		self.model.postBind(toSend)
-		.success(function(){
+		.success(function (){
 			self.menu.kill();
 		});
 	},this);
-	var bindSuiteItems = $.proxy(function(){
-		this.menu.chooseItem = function(item){
+	var bindSuiteItems = $.proxy(function (){
+		this.menu.chooseItem = function (item){
 			var toSendId = getSpanDomId(item);
 			
 			if(getDatatableSelected().length ==  0) {
@@ -227,20 +227,20 @@ function TestSuiteMenu(settings){
 		}
 	}, this);
 	
-	var bindButton = $.proxy(function(){
+	var bindButton = $.proxy(function (){
 		var container = this.menu.getContainer();
-		container.delegate('.suite-manager-menu-button', 'click', function(evt){
+		container.delegate('.suite-manager-menu-button', 'click', function (evt){
 			evt.stopImmediatePropagation();
 			addSuite();
 		});
 	},this);
 	
-	var bindInput = $.proxy(function(){
+	var bindInput = $.proxy(function (){
 		var container = this.menu.getContainer();
-		container.delegate('.suite-manager-menu-input', 'click', function(evt){		
+		container.delegate('.suite-manager-menu-input', 'click', function (evt){		
 			evt.stopImmediatePropagation();
 		});
-		container.delegate('.suite-manager-menu-input', 'keypress', function(evt){
+		container.delegate('.suite-manager-menu-input', 'keypress', function (evt){
 			evt.stopImmediatePropagation();
 			if (evt.which == '13' ){
 				addSuite();
@@ -248,15 +248,15 @@ function TestSuiteMenu(settings){
 		});
 	}, this);
 	
-	var initHandlerBinding = $.proxy(function(){
+	var initHandlerBinding = $.proxy(function (){
 		bindSuiteItems();
 		bindButton();
 		bindInput();
 	}, this);
 	
-	var setContextual = $.proxy(function(){
+	var setContextual = $.proxy(function (){
 		var oldCreate = this.menu.create;
-		this.menu.create = function(){
+		this.menu.create = function (){
 			oldCreate.call(this);
 			this.getContainer().parent().addClass('is-contextual');
 		}
@@ -264,7 +264,7 @@ function TestSuiteMenu(settings){
 		
 	/* *********************** init ********************* */
 	//the goal is to init the menu to get a handler on it.
-	var initMenu = $.proxy(function(){
+	var initMenu = $.proxy(function (){
 		
 		this.instance.fgmenu({
 			content : '',

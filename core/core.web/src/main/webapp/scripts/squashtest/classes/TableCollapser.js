@@ -91,11 +91,11 @@ function TableCollapserEvent(){
 	this.eventHandlers = new Array();
 }
 
-TableCollapserEvent.prototype.addHandler = function(eventHandler){
+TableCollapserEvent.prototype.addHandler = function (eventHandler){
 	this.eventHandlers.push(eventHandler);
 }
 
-TableCollapserEvent.prototype.execute = function(args){
+TableCollapserEvent.prototype.execute = function (args){
 
 	for(var i = 0; i < this.eventHandlers.length; i++){
 	this.eventHandlers[i](args);

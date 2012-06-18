@@ -43,11 +43,11 @@
  */
   
 
-jQuery.tableDnD.adaptDragObject = function(allRows){
+jQuery.tableDnD.adaptDragObject = function (allRows){
 	//they all hopefully have the same parent
 	var delegateParentNode= allRows.first().parent();			
 
-	delegateParentNode.insertBefore = function(jqElts, where){
+	delegateParentNode.insertBefore = function (jqElts, where){
 
 		//check 1 : if target is defined then we insert our elements before it, else we insert at the end of this 
 		//(thus mimicking the regular insertBefore in javascript)
@@ -72,16 +72,16 @@ jQuery.tableDnD.adaptDragObject = function(allRows){
 
 
 
-jQuery.tableDnD.makeDraggable = function(table) {
+jQuery.tableDnD.makeDraggable = function (table) {
 
 
     var config = table.tableDnDConfig;
 	if (table.tableDnDConfig.dragHandle) {
 		// We only need to add the event to the specified cells
 		var cells = jQuery("td."+table.tableDnDConfig.dragHandle, table);
-		cells.each(function() {
+		cells.each(function () {
 			// The cell is bound to "this"
-            jQuery(this).mousedown(function(ev) {
+            jQuery(this).mousedown(function (ev) {
          	
 				var allRows = $(".ui-state-row-selected", table).add(this.parentNode);
 				allRows.addClass('nodrop');	
@@ -101,11 +101,11 @@ jQuery.tableDnD.makeDraggable = function(table) {
 	
 		// For backwards compatibility, we add the event to the whole row
         var rows = jQuery("tr", table); // get all the rows as a wrapped set
-        rows.each(function() {
+        rows.each(function () {
 			// Iterate through each row, the row is bound to "this"
 			var row = jQuery(this);
 			if (! row.hasClass("nodrag")) {
-                row.mousedown(function(ev) {
+                row.mousedown(function (ev) {
                     if (ev.target.tagName == "TD") {
                     	var allRows = $(".ui-state-row-selected", table);   
 						allRows.addClass('nodrop');						
@@ -127,7 +127,7 @@ jQuery.tableDnD.makeDraggable = function(table) {
 
 var tableDnDoldMouseUp = jQuery.tableDnD.mouseup;
 
-jQuery.tableDnD.mouseup = function(event){
+jQuery.tableDnD.mouseup = function (event){
 	if (jQuery.tableDnD.dragObject){
 		jQuery.tableDnD.dragObject.removeClass('nodrop');
 		document.body.style.cursor = "default";

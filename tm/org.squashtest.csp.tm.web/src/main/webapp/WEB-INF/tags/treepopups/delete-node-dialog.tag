@@ -74,7 +74,7 @@ $(function(){
 		.fail(function(){
 			<f:message var="deletionDeniedLabel" key="dialog.label.delete-node.rejected" />
 			jqThis.dialog("close");
-			displayInformationNotification("${deletionDeniedLabel}");			
+			squashtm.notification.showInfo("${deletionDeniedLabel}");			
 		});
 	
 	});
