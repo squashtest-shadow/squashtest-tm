@@ -172,15 +172,15 @@
 
 	function toggleExpandIcon(testPlanHyperlink) {
 
-		var table = $('#test-plans-table').dataTable();
-		var donnees = table.fnGetData(testPlanHyperlink.parentNode.parentNode);
+		var table = $('#test-plans-table').squashTable();
+		var data = table.fnGetData(testPlanHyperlink.parentNode.parentNode);
 		var image = $(testPlanHyperlink).parent().find("img");
 		var ltr = testPlanHyperlink.parentNode.parentNode;
 
 		if (!$(testPlanHyperlink).hasClass("opened")) {
 			/* the row is closed - open it */
 			var nTr = table.fnOpen(ltr, "      ", "");
-			var url1 = "${testPlanExecutionsUrl}" + donnees['entity-id'];
+			var url1 = "${testPlanExecutionsUrl}" + data['entity-id'];
 			var jqnTr = $(nTr);
 			
 			jqnTr.load(url1);
@@ -218,7 +218,7 @@
 						return;
 					}
 
-					var table = $('#test-plans-table').dataTable();
+					var table = $('#test-plans-table').squashTable();
 					var ids = getIdsOfSelectedTableRows(table,
 							getTestPlansTableRowId);
 

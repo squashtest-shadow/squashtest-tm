@@ -109,7 +109,6 @@
 <div class="fragment-body">
 				<input style="float: right;" type="button" value='<f:message key="project.button.add.label" />' id="new-project-button"/>
 				<div style="clear:both"></div>
-				<dt:datatables-header />
 				<comp:decorate-ajax-table url="${ projectsUrl }" tableId="projects-table" paginate="true">
 					<jsp:attribute name="drawCallback">tableDrawCallback</jsp:attribute>
 					<jsp:attribute name="initialSort">[[2,'asc']]</jsp:attribute>

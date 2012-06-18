@@ -22,6 +22,7 @@
 --%>
 <%@ taglib prefix="jq" tagdir="/WEB-INF/tags/jquery" %>
 <%@ taglib prefix="ck" tagdir="/WEB-INF/tags/ckeditor" %>
+<%@ taglib prefix="dt" tagdir="/WEB-INF/tags/datatables" %>
 
 <%-- the declaration oder does matter --%>
 
@@ -38,4 +39,6 @@
 
 <script type="text/javascript" src="${ pageContext.servletContext.contextPath }/scripts/squashtest/classes/Event.js"></script>
 
-<script type="text/javascript" src="http://localhost/scripts/StatusFactory.js"></script> 
+<script type="text/javascript" src="${ pageContext.servletContext.contextPath }/scripts/squashtest/classes/StatusFactory.js"></script>
+
+<dt:datatables-header/>

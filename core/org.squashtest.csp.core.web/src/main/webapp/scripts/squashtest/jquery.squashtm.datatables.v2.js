@@ -539,7 +539,7 @@
 		var cells = $('td.has-status', this);
 
 		$(cells).each(function(i,cell){
-			var data = cell.innerText;
+			var data = (cell.textContent) ? cell.textContent : cell.innerText;
 			var newhtml = factory.getHtmlFor(data);
 			cell.innerHTML = newhtml;
 		});		
@@ -631,7 +631,16 @@
 	
 	};
 	
-		
+	/* 
+	 temporary hack here : due to multiple inclusions of that file, 
+	 	the	variable $.fn.squashTable.instances might be redefined. 
+	 	Thus previously existing instances of a datatable would be lost 
+	 	(and we don't want that).
+	 	
+	 	 So we're saving it in case it already exists, and rebind it below.
+	*/
+	if ($.fn.squashTable) var existingInstances = $.fn.squashTable.instances;
+	
 	$.fn.squashTable = function(datatableSettings, squashSettings){
 	 
 		/* 
@@ -731,14 +740,11 @@
 		
 		/* **************** store the new instance ***************** */
 		
-		$.fn.squashTable.instances = $.fn.squashTable.instance || {};
 		$.fn.squashTable.instances[this.selector]=this;
 		
-	 }
+	 };
+	
+	 $.fn.squashTable.instances = existingInstances || {};	//end of the hack
 	 
 })(jQuery); 
 	 
-
-
-
-

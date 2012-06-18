@@ -28,8 +28,12 @@
 <script type="text/javascript" src="${ pageContext.servletContext.contextPath }/scripts/squashtest/jquery.squashtm.datatables.js"></script>
 
 <%-- transitional javascript --%>
-<script type="text/javascript" src="${ pageContext.servletContext.contextPath }/scripts/squashtest/jquery.squashtm.datatables.v2.js"></script>
 
+<script type="text/javascript" src="${ pageContext.servletContext.contextPath }/scripts/squashtest/jquery.squashtm.datatables.v2.js"></script>
+ <!-- 
+ <script type="text/javascript" src="http://localhost/scripts/jquery.squashtm.datatables.v2.js"></script>
+  -->
+  
 <script type="text/javascript" src="${ pageContext.servletContext.contextPath }/scripts/squashtest/jquery.squashtm.tableDnD.ext.js"></script> 
 
 

@@ -34,8 +34,6 @@
 
 <%-- @params : voir page/attachments/attachment-manager.jsp --%>
 
-<dt:datatables-header/>
-
 <script type="text/javascript" src="${ pageContext.servletContext.contextPath }/scripts/squashtest/attachment-bloc.js"></script>
 
 

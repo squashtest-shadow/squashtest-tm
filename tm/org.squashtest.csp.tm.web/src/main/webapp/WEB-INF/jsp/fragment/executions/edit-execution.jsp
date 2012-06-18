@@ -30,14 +30,11 @@
 <%@ taglib prefix="f" uri="http://java.sun.com/jsp/jstl/fmt" %>
 <%@ taglib prefix="aggr" tagdir="/WEB-INF/tags/aggregates" %>
 <%@ taglib prefix="pop" tagdir="/WEB-INF/tags/popup" %>
-<%@ taglib prefix="dt" tagdir="/WEB-INF/tags/datatables"%>
 <%@ taglib prefix="f" uri="http://java.sun.com/jsp/jstl/fmt" %>
 <%@ taglib prefix="authz" tagdir="/WEB-INF/tags/authz" %>
 
 
 <comp:rich-jeditable-header />
-<dt:datatables-header />
-
 <%-- ----------------------------------- Authorization ----------------------------------------------%>
 <c:set var="editable" value="${ false }" /> 
 <authz:authorized hasRole="ROLE_ADMIN" hasPermission="EXECUTE" domainObject="${ execution }">

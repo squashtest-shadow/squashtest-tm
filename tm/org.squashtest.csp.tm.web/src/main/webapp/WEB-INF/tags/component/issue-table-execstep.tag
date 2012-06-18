@@ -47,7 +47,6 @@
  --%>
 
 
-<dt:datatables-header />
 
 
 <script type="text/javascript">
