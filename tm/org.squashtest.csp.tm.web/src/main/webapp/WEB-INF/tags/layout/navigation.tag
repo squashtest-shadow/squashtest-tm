@@ -37,61 +37,12 @@
 				<c:set var="bugtrackerHighlighted" value="${ true }"/>
 			</c:when>
 			<c:otherwise>
-				$(function() {
-					navLinkHighlight('${ highlighted }-link');
-				});
+	$(function() {
+		squashtm.navbar.initHighlighted('report');
+	});	
 			</c:otherwise>
 		</c:choose>
 	</c:if>
-
-	var squashtest_nav_button_active;
-
-	/* init. Todo : find a better name */
-	function navLinkHighlight(link_name){
-		squashtest_nav_button_active=link_name;
-		navLinkOn(link_name);
-	}
-	
-	
-	function navLinkOn(link_name){
-		var thisLink=$('#'+link_name);
-		var imgName=$(thisLink).find('img').attr("src");
-		
-		imgName=imgName.replace("_off", "_on");
-		
-		$(thisLink).find('img').attr("src",imgName);		
-	}
-	
-	
-	function navLinkOff(link_name){
-		var thisLink=$('#'+link_name);
-		var imgName=$(thisLink).find('img').attr("src");
-		
-		imgName=imgName.replace("_on", "_off");
-		
-		$(thisLink).find('img').attr("src",imgName);			
-	}
-	
-	
-	$(function(){
-		$(".nav_btn").hover(
-			function(){
-				var link_name=$(this).attr("id");
-				
-				if (link_name!=squashtest_nav_button_active)					
-					navLinkOn(link_name);
-			},
-			function(){
-				var link_name=$(this).attr("id");
-				if (link_name!=squashtest_nav_button_active)	
-					navLinkOff(link_name);				
-				
-			}
-		
-		);
-	});
-	
-
 </script>
 
 <div id="navigation">
@@ -108,3 +59,6 @@
 		<img src="${ pageContext.servletContext.contextPath }/images/logo_squash30.png" alt="logo_squash" style="width:30px;"/>
 	</div>
 </div>
+
+<c:url var="navbarScript" value="/scripts/squashtest/squashtm.navbar.js" />
+<script type="text/javascript" src="${ navbarScript }"></script>

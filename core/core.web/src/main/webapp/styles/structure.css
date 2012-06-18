@@ -438,9 +438,14 @@ div#admin_nav {
 	width: 100%;
 }
 
-div#navigation .nav_btn img {
-	height: 30px;
+div#navigation .nav_btn > img {
 	width: 30px;
+	border-width: 0;
+	border-style: none;
+}
+
+#test_mgt_nav .nav_btn > img {
+	height: 30px;
 	margin-bottom: 0.5em;
 }
 
@@ -451,6 +456,8 @@ div#nav_logo {
 	text-align: center;
 	width: inherit;
 }
+
+
 
 /* ------------------------------------------*/
 /* ---------->>> WORKSPACE DIV <<<-----------*/

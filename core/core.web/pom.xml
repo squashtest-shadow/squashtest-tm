@@ -270,7 +270,6 @@
 						<Bundle-ClassPath>.,WEB-INF/classes,WEB-INF/reports</Bundle-ClassPath>
 						<Web-ContextPath>${bundle.contextPath}</Web-ContextPath>
 						<Import-Package>
-							*,
 							javax.servlet.jsp.jstl.core;version="${jstl.version}",
 							javax.servlet.jsp.jstl.fmt;version="${jstl.version}",
 							javax.servlet.jsp.jstl.tlv;version="${jstl.version}",
@@ -334,11 +333,18 @@
 							org.springframework.security.provisioning,
 							org.springframework.security.taglibs.authz,
 							org.springframework.security.acls.model,
-							org.squashtest.csp.core.bugtracker.core,
-							org.squashtest.csp.core.bugtracker.service,
-							org.squashtest.csp.core.bugtracker.web,
+							org.squashtest.csp.core.bugtracker.core;version:=${parent.version},
+							org.squashtest.csp.core.bugtracker.service;version:=${parent.version},
+							org.squashtest.csp.core.bugtracker.web;version:=${parent.version},
 							org.h2;resolution:=optional,
-							com.mysql.jdbc;resolution:=optional
+							com.mysql.jdbc;resolution:=optional,
+							org.thymeleaf.templateresolver,
+							org.thymeleaf.spring3,
+							org.thymeleaf.spring3.view,							
+							org.thymeleaf.dtd.standard,							
+							org.thymeleaf.dtd.thymeleaf,							
+							org.thymeleaf.dtd.thymeleaf-spring3,
+							*
 						</Import-Package>
 					</instructions>
 					<supportedProjectTypes>

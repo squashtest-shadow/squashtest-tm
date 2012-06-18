@@ -1,0 +1,154 @@
+<!--
+
+        This file is part of the Squashtest platform.
+        Copyright (C) 2010 - 2011 Squashtest TM, Squashtest.org
+
+        See the NOTICE file distributed with this work for additional
+        information regarding copyright ownership.
+
+        This is free software: you can redistribute it and/or modify
+        it under the terms of the GNU Lesser General Public License as published by
+        the Free Software Foundation, either version 3 of the License, or
+        (at your option) any later version.
+
+        this software is distributed in the hope that it will be useful,
+        but WITHOUT ANY WARRANTY; without even the implied warranty of
+        MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+        GNU Lesser General Public License for more details.
+
+        You should have received a copy of the GNU Lesser General Public License
+        along with this software.  If not, see <http://www.gnu.org/licenses/>.
+
+-->
+<!DOCTYPE html SYSTEM "http://www.thymeleaf.org/dtd/xhtml1-strict-thymeleaf-spring3-3.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml" xmlns:th="http://www.thymeleaf.org">
+<head>
+	<title th:text="#{workspace.report.title}">Espace rapports</title>
+	<meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
+	<!-- common head -->
+	<link rel="stylesheet" type="text/css" media="all" href="../../../../../../../../core/core.web/src/main/webapp/styles/master.css" th:href="@{/styles/master.css}" />
+	<!-- /common head -->
+	<!-- common script import -->
+	<link rel="stylesheet" type="text/css" media="all" href="../../../../../../../../core/core.web/src/main/webapp/styles/squashtm.fg.menu.css" th:href="@{/styles/squashtm.fg.menu.css}" />
+	<!-- /common script import -->
+	<link rel="stylesheet" type="text/css" media="all" href="../../../../../../../../core/core.web/src/main/webapp/styles/master.blue.css" th:href="@{/styles/master.blue.css}" />
+</head>
+<body>
+	<!-- /navigation tag -->
+	<div id="navigation">
+		<div id="test_mgt_nav">
+			<a id="home-link" class="nav_btn" href="home-workspace.html" th:href="@{/home-workspace}">
+				<img src="../../../images/Button_Nav_Home_off.png" 
+					th:src="@{/images/Button_Nav_Home_off.png}" 
+					th:alt="#{workspace.home.button.label}" 
+					th:title="#{workspace.home.button.label}" 
+				/>
+			</a>
+			<a id="requirement-link" class="nav_btn" href="requirement-workspace.html" th:href="@{/requirement-workspace}">
+				<img src="../../../images/Button_Nav_Requirement_off.png" 
+					th:src="@{/images/Button_Nav_Requirement_off.png}" 
+					th:alt="#{workspace.requirement.button.label}" 
+					th:title="#{workspace.requirement.button.label}" 
+				/>
+			</a>
+			<a id="test-case-link" class="nav_btn" href="test-case-workspace.html" th:href="@{/test-case-workspace}">
+				<img src="../../../images/Button_Nav_TestCase_off.png" 
+					th:src="@{/images/Button_Nav_TestCase_off.png}" 
+					th:alt="#{workspace.test-case.button.label}" 
+					th:title="#{workspace.test-case.button.label}" 
+				/>
+			</a>
+			<a id="campaign-link" class="nav_btn" href="campaign-workspace.html" th:href="@{/campaign-workspace}">
+				<img src="../../../images/Button_Nav_Campaign_off.png" 
+					th:src="@{/images/Button_Nav_Campaign_off.png}" 
+					th:alt="#{workspace.campaign.button.label}" 
+					th:title="#{workspace.campaign.button.label}" 
+				/>
+			</a>
+			<a id="report-link" class="nav_btn" href="report-workspace.html" th:href="@{/report-workspace}">
+				<img src="../../../images/Button_Nav_Reporting_off.png" 
+					th:src="@{/images/Button_Nav_Reporting_off.png}" 
+					th:alt="#{workspace.report.button.label}" 
+					th:title="#{workspace.report.button.label}" 
+				/>
+			</a>
+		</div>
+		
+		<div id="nav_logo" class="nav_btn">
+			<img src="../../../../../../../../core/core.web/src/main/webapp/images/logo_squash30.png" th:src="@{/images/logo_squash30.png}" alt="Logo Squash" />
+		</div>
+	</div>
+	<!-- /navigation tag -->
+
+	<!-- common script import -->
+	<!-- jq header -->
+	<script type="text/javascript" src="https://ajax.googleapis.com/ajax/libs/jquery/1.5.2/jquery.js" th:src="@{/scripts/jquery/jquery-1.5.2.min.js}"></script>
+	<script type="text/javascript" src="https://ajax.googleapis.com/ajax/libs/jqueryui/1.8.13/jquery-ui.js" th:src="@{/scripts/jquery/jquery-ui-1.8.13.custom.min.js}"></script>
+	<script type="text/javascript" src="../../../../../../../../core/core.web/src/main/webapp/scripts/squashtest/jquery.squashtm.plugin.js" th:src="@{/scripts/squashtest/jquery.squashtm.plugin.js}"></script>
+	<script type="text/javascript" src="../../../../../../../../core/core.web/src/main/webapp/scripts/squashtest/jquery.squashtm.togglepanels.js" th:src="@{/scripts/squashtest/jquery.squashtm.togglepanels.js}"></script> 
+	<script type="text/javascript" src="../../../../../../../../core/core.web/src/main/webapp/scripts/squashtest/jquery.squash.messagedialog.js" th:src="@{/scripts/squashtest/jquery.squash.messagedialog.js}"></script>  
+	<script type="text/javascript" src="../../../../../../../../core/core.web/src/main/webapp/scripts/squashtest/jquery.squash.confirmdialog.js" th:src="@{/scripts/squashtest/jquery.squash.confirmdialog.js}"></script>  
+	<!-- /jq header -->
+	<!-- ckeditor import -->
+	<script type="text/javascript" src="../../../../../../../../core/core.web/src/main/webapp/scripts/ckeditor/ckeditor.js" th:src="@{/scripts/ckeditor/ckeditor.js}"></script>
+	<script type="text/javascript" src="../../../../../../../../core/core.web/src/main/webapp/scripts/ckeditor/adapters/jquery.js" th:src="@{/scripts/ckeditor/adapters/jquery.js}"></script>
+	<script type="text/javascript" src="../../../../../../../../core/core.web/src/main/webapp/scripts/jquery/jquery.dialog-patch.js" th:src="@{/scripts/jquery/jquery.dialog-patch.js}"></script>
+	<!-- /ckeditor import -->	
+	<script type="text/javascript" src="../../../../../../../../core/core.web/src/main/webapp/scripts/squashtest/jquery.squashtm.oneshotdialog.js" th:src="@{/scripts/squashtest/jquery.squashtm.oneshotdialog.js}"></script>
+	<script type="text/javascript" src="../../../../../../../../core/core.web/src/main/webapp/scripts/squashtest/classes/KeyEventListener.js" th:src="@{/scripts/squashtest/classes/KeyEventListener.js}"></script>
+	<script type="text/javascript" src="../../../../../../../../core/core.web/src/main/webapp/scripts/squashtest/jquery.squashtm.contextual-content.js" th:src="@{/scripts/squashtest/jquery.squashtm.contextual-content.js}"></script>
+	<script type="text/javascript" src="../../../../../../../../core/core.web/src/main/webapp/scripts/squashtest/jquery.squashtm.fg.menu.js" th:src="@{/scripts/squashtest/jquery.squashtm.fg.menu.js}"></script>
+	<script type="text/javascript" src="../../../../../../../../core/core.web/src/main/webapp/scripts/squashtest/classes/Event.js" th:src="@{/scripts/squashtest/classes/Event.js}"></script>
+	<!-- /common script import -->
+	
+	<script th:remove="all" type="text/javascript" src="../../../js/thymol.js"></script>
+	<script type="text/javascript" src="../../../scripts/squash/squashtm.navbar.js" th:src="@{/scripts/squash/squashtm.navbar.js}"></script>
+
+	<script type="text/javascript">
+		var reportWorkspace = (function($) {
+			<!-- script managing the expand/normal state of this part of the workspace -->
+
+			function setEditReportNormalState(){
+				$("#contextual-content").removeClass("expanded");
+			}
+			
+			function setEditReportExpandState(){
+				$("#contextual-content").addClass("expanded");
+			}
+			
+			function toggleEditReportState(){
+				$("#contextual-content").toggleClass("expanded");
+			}
+			
+			return {
+					/**
+					the function regarding the category panel are defined in edit-report.jsp,
+					because the button managing it is there too.
+					
+					If that's too confusing consider refractoring some day.
+				*/
+	
+				setReportWorkspaceNormalState : function() {
+					setCategoryFrameNormalState();
+					setEditReportNormalState();
+				},
+				
+				setReportWorkspaceExpandState : function() {
+					setCategoryFrameExpandState();
+					setEditReportExpandState();
+				},
+				
+				toggleReportWorkspaceState : function (){
+					toggleCategoryFrameState();
+					toggleEditReportState();							
+				}
+			}
+		}(jQuery));
+
+		<!-- navigation tag -->
+		$(function() {
+			squashtm.navbar.initHighlighted('report');
+		});	
+	</script>
+</body>
+</html>
