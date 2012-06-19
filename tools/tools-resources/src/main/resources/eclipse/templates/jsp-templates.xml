@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8" standalone="no"?><templates><template autoinsert="true" context="jsp_new" deleted="false" description="JSP with html markup" enabled="true" id="org.eclipse.jst.jsp.ui.templates.jsphtml" name="New JSP File (html)">&lt;%--
 
         This file is part of the Squashtest platform.
-        Copyright (C) 2010 - 2011 Squashtest TM, Squashtest.org
+        Copyright (C) 2010 - 2012 Henix, henix.fr
 
         See the NOTICE file distributed with this work for additional
         information regarding copyright ownership.

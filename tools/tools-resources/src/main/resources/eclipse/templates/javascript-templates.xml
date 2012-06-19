@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="UTF-8" standalone="no"?><templates><template autoinsert="false" context="org.eclipse.jsdt.filecomment_context" deleted="false" description="Comment for created JavaScript files" enabled="true" id="org.eclipse.wst.jsdt.ui.text.codetemplates.filecomment" name="filecomment">/**
  *     This file is part of the Squashtest platform.
- *     Copyright (C) 2010 - 2011 Squashtest TM, Squashtest.org
+ *     Copyright (C) 2010 - 2012 Henix, henix.fr
  *
  *     See the NOTICE file distributed with this work for additional
  *     information regarding copyright ownership.

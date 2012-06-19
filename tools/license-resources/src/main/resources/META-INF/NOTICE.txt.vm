@@ -5,7 +5,7 @@
 
 #if ($projectName)$projectName#else${project.name}#end
 
-Copyright (C) ${projectTimespan}#if($project.organization.name) $project.organization.name#else Squashtest TM, Squashtest.org#end
+Copyright (C) ${projectTimespan}#if($project.organization.name) $project.organization.name#else Henix, Henix.fr#end
 
 #if($preProjectText)
 $preProjectText

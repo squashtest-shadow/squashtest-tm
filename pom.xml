@@ -16,7 +16,7 @@
 	<description>SquashTest Central Services Platform - root project</description>
 	<inceptionYear>2010</inceptionYear>
 	<organization>
-		<name>Squashtest TM, Squashtest.org</name>
+		<name>Henix, henix.fr</name>
 	</organization>
 	<licenses>
 		<license>
@@ -213,7 +213,7 @@
 							<validHeader>tools/tools-resources/src/main/resources/supported-licenses/jquery-header.txt</validHeader> -->
 					</validHeaders>
 					<properties>
-						<license.yearSpan>${project.inceptionYear} - 2011</license.yearSpan>
+						<license.yearSpan>${project.inceptionYear} - 2012</license.yearSpan>
 						<license.copyrightOwner>${project.organization.Name}</license.copyrightOwner>
 					</properties>
 					<excludes>

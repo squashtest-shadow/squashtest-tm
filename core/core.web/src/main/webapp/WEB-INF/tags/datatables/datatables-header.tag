@@ -1,7 +1,7 @@
 <%--
 
         This file is part of the Squashtest platform.
-        Copyright (C) 2010 - 2011 Squashtest TM, Squashtest.org
+        Copyright (C) 2010 - 2012 Henix, henix.fr
 
         See the NOTICE file distributed with this work for additional
         information regarding copyright ownership.
@@ -20,8 +20,6 @@
         along with this software.  If not, see <http://www.gnu.org/licenses/>.
 
 --%>
-
-
 <%@ tag body-content="empty" description="dataTables library imports. SHOULD BE IMPORTED BEFORE DATATABLE USAGE" %>
 <script type="text/javascript" src="${ pageContext.servletContext.contextPath }/scripts/datatables/jquery.dataTables.js"></script>
 <script type="text/javascript" src="${ pageContext.servletContext.contextPath }/scripts/jquery/jquery.tablednd_0_5.js"></script>
