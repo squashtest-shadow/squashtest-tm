@@ -59,7 +59,7 @@ it will insert sub-page-layout.tag between the top template and this one." %>
 <layout:tree-page-layout titleKey="squashtm" highlightedWorkspace="${ highlightedWorkspace }" isRequirementPaneSearchOn="${ isRequirementPaneSearchOn }" linkable="${linkable}" isSubPaged="${isSubPaged}">
 	
 	<jsp:attribute name="head">
-	
+		<script type="text/javascript" src="${ pageContext.servletContext.contextPath }/scripts/squash/jquery.squashtm.linkabletree.js"></script>
 			<%-- tree population callbacks --%>
 			<script type="text/javascript">
 				function libraryContentUrl(node) {
