@@ -189,12 +189,12 @@
 					<property name="options">
 						<list>
 							<bean class="org.squashtest.tm.api.report.form.OptionInput">
-								<property name="value" value="CAMPAIGN_ALL" />
-								<property name="labelKey" value="report.executionprogression.campaignstatus.CAMPAIGN_ALL" />
+								<property name="value" value="1" />
+								<property name="labelKey" value="report.criteria.panel.requirement.version.include.all.label" />
 							</bean>
 							<bean class="org.squashtest.tm.api.report.form.OptionInput">
-								<property name="value" value="CAMPAIGN_RUNNING" />
-								<property name="labelKey" value="report.executionprogression.campaignstatus.CAMPAIGN_RUNNING" />
+								<property name="value" value="2" />
+								<property name="labelKey" value="report.criteria.panel.requirement.version.include.last.label" />
 							</bean>
 						</list>
 					</property>
@@ -203,9 +203,8 @@
 			</list>
 		</property>
 	</bean>
-	
-	<bean name="requirementCoverageQuery" class="org.squashtest.tm.plugin.report.std.query.RequirementCoverageByTestsQueryAdapter">
-	</bean>
+
+	<bean name="requirementCoverageQuery" class="org.squashtest.tm.plugin.report.std.query.RequirementCoverageByTestsQueryAdapter" />
 
 	<bean name="legacyRequirementCoverageQuery" class="org.squashtest.tm.internal.domain.report.common.hibernate.HibernateRequirementCoverageByTestsQuery" scope="prototype" />
 	
