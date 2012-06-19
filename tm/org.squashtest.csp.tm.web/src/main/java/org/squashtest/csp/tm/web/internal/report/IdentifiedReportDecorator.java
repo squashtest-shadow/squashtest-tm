@@ -21,11 +21,11 @@
 
 package org.squashtest.csp.tm.web.internal.report;
 
-import org.squashtest.plugin.api.report.Report;
-import org.squashtest.plugin.api.report.ReportView;
-import org.squashtest.plugin.api.report.StandardReportCategory;
-import org.squashtest.plugin.api.report.StandardReportType;
-import org.squashtest.plugin.api.report.form.Input;
+import org.squashtest.tm.api.report.Report;
+import org.squashtest.tm.api.report.ReportView;
+import org.squashtest.tm.api.report.StandardReportCategory;
+import org.squashtest.tm.api.report.StandardReportType;
+import org.squashtest.tm.api.report.form.Input;
 
 /**
  * @author Gregory Fouquet
@@ -46,7 +46,7 @@ public class IdentifiedReportDecorator implements Report {
 
 	/**
 	 * @return
-	 * @see org.squashtest.plugin.api.report.Report#getCategory()
+	 * @see org.squashtest.tm.api.report.Report#getCategory()
 	 */
 	public StandardReportCategory getCategory() {
 		return report.getCategory();
@@ -54,7 +54,7 @@ public class IdentifiedReportDecorator implements Report {
 
 	/**
 	 * @return
-	 * @see org.squashtest.plugin.api.report.Report#getType()
+	 * @see org.squashtest.tm.api.report.Report#getType()
 	 */
 	public StandardReportType getType() {
 		return report.getType();
@@ -62,7 +62,7 @@ public class IdentifiedReportDecorator implements Report {
 
 	/**
 	 * @return
-	 * @see org.squashtest.plugin.api.report.Report#getDescriptionKey()
+	 * @see org.squashtest.tm.api.report.Report#getDescriptionKey()
 	 */
 	public String getDescriptionKey() {
 		return report.getDescriptionKey();
@@ -70,7 +70,7 @@ public class IdentifiedReportDecorator implements Report {
 
 	/**
 	 * @return
-	 * @see org.squashtest.plugin.api.report.Report#getViews()
+	 * @see org.squashtest.tm.api.report.Report#getViews()
 	 */
 	public ReportView[] getViews() {
 		return report.getViews();
@@ -78,7 +78,7 @@ public class IdentifiedReportDecorator implements Report {
 
 	/**
 	 * @return
-	 * @see org.squashtest.plugin.api.report.Report#getDescription()
+	 * @see org.squashtest.tm.api.report.Report#getDescription()
 	 */
 	public String getDescription() {
 		return report.getDescription();
@@ -86,7 +86,7 @@ public class IdentifiedReportDecorator implements Report {
 
 	/**
 	 * @return
-	 * @see org.squashtest.plugin.api.report.Report#getForm()
+	 * @see org.squashtest.tm.api.report.Report#getForm()
 	 */
 	public Input[] getForm() {
 		return report.getForm();
@@ -94,7 +94,7 @@ public class IdentifiedReportDecorator implements Report {
 
 	/**
 	 * @return
-	 * @see org.squashtest.plugin.api.report.Report#getLabelKey()
+	 * @see org.squashtest.tm.api.report.Report#getLabelKey()
 	 */
 	public String getLabelKey() {
 		return report.getLabelKey();
@@ -102,7 +102,7 @@ public class IdentifiedReportDecorator implements Report {
 
 	/**
 	 * @return
-	 * @see org.squashtest.plugin.api.report.Report#getLabel()
+	 * @see org.squashtest.tm.api.report.Report#getLabel()
 	 */
 	public String getLabel() {
 		return report.getLabel();

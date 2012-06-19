@@ -33,7 +33,8 @@ import org.hibernate.SessionFactory;
 import org.hibernate.StatelessSession;
 import org.hibernate.Transaction;
 import org.springframework.stereotype.Service;
-import org.squashtest.plugin.api.repository.SqlQueryRunner;
+import org.springframework.transaction.annotation.Transactional;
+import org.squashtest.tm.api.repository.SqlQueryRunner;
 
 /**
  * Hinernate based implementation of {@link SqlQueryRunner}. Plugins can query Squash's database through SQL using this
@@ -43,6 +44,7 @@ import org.squashtest.plugin.api.repository.SqlQueryRunner;
  * 
  */
 @Service("squash.api.repository.SqlQueryRunner")
+@Transactional(readOnly = true)
 public class HibernateSqlQueryRunner implements SqlQueryRunner {
 	private static final QueryExecution<Query> EXECUTE_LIST = new QueryExecution<Query>() {
 		@SuppressWarnings("unchecked")
@@ -62,7 +64,7 @@ public class HibernateSqlQueryRunner implements SqlQueryRunner {
 	private SessionFactory sessionFactory;
 
 	/**
-	 * @see org.squashtest.plugin.api.repository.SqlQueryRunner#executeSql(java.lang.String)
+	 * @see org.squashtest.tm.api.repository.SqlQueryRunner#executeSql(java.lang.String)
 	 */
 	@Override
 	public <T> List<T> executeSelect(String selectQuery) {
@@ -91,7 +93,7 @@ public class HibernateSqlQueryRunner implements SqlQueryRunner {
 	}
 
 	/**
-	 * @see org.squashtest.plugin.api.repository.SqlQueryRunner#executeUniqueSelect(java.lang.String)
+	 * @see org.squashtest.tm.api.repository.SqlQueryRunner#executeUniqueSelect(java.lang.String)
 	 */
 	@Override
 	public <T> T executeUniqueSelect(String selectQuery) {
@@ -99,7 +101,7 @@ public class HibernateSqlQueryRunner implements SqlQueryRunner {
 	}
 
 	/**
-	 * @see org.squashtest.plugin.api.repository.SqlQueryRunner#executeSelect(java.lang.String, java.util.Map)
+	 * @see org.squashtest.tm.api.repository.SqlQueryRunner#executeSelect(java.lang.String, java.util.Map)
 	 */
 	@Override
 	public <T> List<T> executeSelect(String selectQuery, Map<String, ?> namedParameters) {
@@ -107,7 +109,7 @@ public class HibernateSqlQueryRunner implements SqlQueryRunner {
 	}
 
 	/**
-	 * @see org.squashtest.plugin.api.repository.SqlQueryRunner#executeUniqueSelect(java.lang.String, java.util.Map)
+	 * @see org.squashtest.tm.api.repository.SqlQueryRunner#executeUniqueSelect(java.lang.String, java.util.Map)
 	 */
 	@Override
 	public <T> T executeUniqueSelect(String selectQuery, Map<String, ?> namedParameters) {

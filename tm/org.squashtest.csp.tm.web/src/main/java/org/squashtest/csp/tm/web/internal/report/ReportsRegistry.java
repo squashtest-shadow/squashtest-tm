@@ -30,10 +30,10 @@ import java.util.concurrent.ConcurrentHashMap;
 import org.apache.commons.collections.map.MultiValueMap;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.squashtest.plugin.api.report.Report;
-import org.squashtest.plugin.api.report.BasicReport;
-import org.squashtest.plugin.api.report.ReportPlugin;
-import org.squashtest.plugin.api.report.StandardReportCategory;
+import org.squashtest.tm.api.report.BasicReport;
+import org.squashtest.tm.api.report.Report;
+import org.squashtest.tm.api.report.ReportPlugin;
+import org.squashtest.tm.api.report.StandardReportCategory;
 
 /**
  * This class registers / unregisters {@link BasicReport} and their {@link StandardReportCategory} when

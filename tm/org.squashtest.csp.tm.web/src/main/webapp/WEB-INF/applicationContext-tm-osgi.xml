@@ -125,7 +125,7 @@
 		interface="org.squashtest.csp.tm.service.TestSuiteModificationService"
 		availability="mandatory" />	
 
-	<osgi:list id="squash.tm.report.ReportPlugins" interface="org.squashtest.plugin.api.report.ReportPlugin">
+	<osgi:list id="squash.tm.report.ReportPlugins" interface="org.squashtest.tm.api.report.ReportPlugin">
 		<osgi:listener ref="squash.tm.report.ReportsRegistry" bind-method="pluginRegistered" unbind-method="pluginUnregistered" />
 	</osgi:list>
 		

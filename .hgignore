@@ -17,6 +17,8 @@ osgi-integration-tests/META-INF$
 /core\.web/styles$
 plugin.report.std/META-INF$
 plugins/plugin.report.test/META-INF$
+core/core.report.api/META-INF$
+core/core.foundation/META-INF$
 syntax: regexp
 /\.settings/
 syntax: regexp

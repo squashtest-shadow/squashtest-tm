@@ -31,22 +31,22 @@
 	
 	<context:annotation-config />
 		
-	<bean name="squash.tm.plugin.report.test" class="org.squashtest.plugin.api.report.ReportPlugin">
+	<bean name="squash.tm.plugin.report.test" class="org.squashtest.tm.api.report.ReportPlugin">
 		<property name="report" ref="testReport" />
 	</bean>
 
-	<bean name="testReport" class="org.squashtest.plugin.api.report.BasicReport">
+	<bean name="testReport" class="org.squashtest.tm.api.report.BasicReport">
 		<property name="category" value="EXECUTION_PHASE" />
 		<property name="type" value="PROGRESS_FOLLOWUP" />
 		<property name="labelKey" value="test.report.label" />
 		<property name="descriptionKey" value="test.report.description" />
 		<property name="views">
 			<list>
-				<bean class="org.squashtest.plugin.api.report.ReportView">
+				<bean class="org.squashtest.tm.api.report.ReportView">
 					<property name="labelKey" value="test.view.one.label" />
 					<property name="formats" value="html,pdf" />
 				</bean>
-				<bean class="org.squashtest.plugin.api.report.ReportView">
+				<bean class="org.squashtest.tm.api.report.ReportView">
 					<property name="labelKey" value="test.view.two.label" />
 					<property name="formats" value="html,xls" />
 				</bean>
@@ -54,28 +54,28 @@
 		</property>
 		<property name="form">
 			<list>
-				<bean class="org.squashtest.plugin.api.report.form.TextInput">
+				<bean class="org.squashtest.tm.api.report.form.TextInput">
 					<property name="name" value="text" />
 					<property name="labelKey" value="test.report.form.text" />
 				</bean> 
-				<bean class="org.squashtest.plugin.api.report.form.DateInput">
+				<bean class="org.squashtest.tm.api.report.form.DateInput">
 					<property name="name" value="date" />
 					<property name="labelKey" value="test.report.form.date" />
 				</bean> 
-<!-- 				<bean class="org.squashtest.plugin.api.report.form.CheckboxInput">
+<!-- 				<bean class="org.squashtest.tm.api.report.form.CheckboxInput">
 					<property name="name" value="checkbox" />
 					<property name="labelKey" value="test.report.form.checkbox" />
 				</bean> 
- -->				<bean class="org.squashtest.plugin.api.report.form.RadioButtonsGroup">
+ -->				<bean class="org.squashtest.tm.api.report.form.RadioButtonsGroup">
 					<property name="name" value="radio-group" />
 					<property name="labelKey" value="test.report.form.radioGroup" />
 					<property name="options">
 						<list>
-							<bean class="org.squashtest.plugin.api.report.form.OptionInput">
+							<bean class="org.squashtest.tm.api.report.form.OptionInput">
 								<property name="value" value="COOL" />
 								<property name="labelKey" value="test.report.form.radioGroup.cool" />
 							</bean>
-							<bean class="org.squashtest.plugin.api.report.form.OptionInput">
+							<bean class="org.squashtest.tm.api.report.form.OptionInput">
 								<property name="value" value="YAY" />
 								<property name="labelKey" value="test.report.form.radioGroup.yay" />
 								<property name="defaultSelected" value="true" />
@@ -83,32 +83,32 @@
 						</list>
 					</property>
 				</bean> 
-				<bean class="org.squashtest.plugin.api.report.form.DropdownList">
+				<bean class="org.squashtest.tm.api.report.form.DropdownList">
 					<property name="name" value="dropdown" />
 					<property name="labelKey" value="test.report.form.dropdown" />
 					<property name="options">
 						<list>
-							<bean class="org.squashtest.plugin.api.report.form.OptionInput">
+							<bean class="org.squashtest.tm.api.report.form.OptionInput">
 								<property name="value" value="LEATHERPANTS" />
 								<property name="labelKey" value="test.report.form.dropdown.leatherpants" />
 							</bean>
-							<bean class="org.squashtest.plugin.api.report.form.OptionInput">
+							<bean class="org.squashtest.tm.api.report.form.OptionInput">
 								<property name="value" value="SPANDEX" />
 								<property name="labelKey" value="test.report.form.dropdown.spandex" />
 							</bean>
 						</list>
 					</property>
 				</bean>
-				<bean class="org.squashtest.plugin.api.report.form.CheckboxesGroup">
+				<bean class="org.squashtest.tm.api.report.form.CheckboxesGroup">
 					<property name="name" value="checkboxes-group" />
 					<property name="labelKey" value="test.report.form.checkboxesGroup" />
 					<property name="options">
 						<list>
-							<bean class="org.squashtest.plugin.api.report.form.OptionInput">
+							<bean class="org.squashtest.tm.api.report.form.OptionInput">
 								<property name="value" value="BATARANG" />
 								<property name="labelKey" value="test.report.form.dropdown.batarang" />
 							</bean>
-							<bean class="org.squashtest.plugin.api.report.form.OptionInput">
+							<bean class="org.squashtest.tm.api.report.form.OptionInput">
 								<property name="value" value="WEB_SHOOTER" />
 								<property name="labelKey" value="test.report.form.dropdown.webshooter" />
 							</bean>

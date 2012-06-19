@@ -27,8 +27,8 @@ import java.util.Map;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.squashtest.plugin.api.report.criteria.Criteria;
-import org.squashtest.plugin.api.report.form.InputType;
+import org.squashtest.tm.api.report.criteria.Criteria;
+import org.squashtest.tm.api.report.form.InputType;
 
 /**
  * This class builds a map of {@link Criteria} from the map of objects which was submitted by a report form.

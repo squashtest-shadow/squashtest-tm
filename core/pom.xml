@@ -18,7 +18,9 @@
 	<modules>
 		<module>org.squashtest.csp.core.log4j</module>
 		<module>org.squashtest.csp.core.jetty.start.osgi</module>
+		<module>core.foundation</module>
 		<module>core.api</module>
+		<module>core.report.api</module>
 		<module>core.bugtracker.api</module>
 		<module>core.bugtracker.mantis</module>
 		<module>org.squashtest.csp.core.service</module>

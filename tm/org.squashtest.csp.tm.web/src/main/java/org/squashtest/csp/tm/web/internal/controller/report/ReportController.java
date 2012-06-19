@@ -35,8 +35,8 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.squashtest.csp.tm.web.internal.report.ReportsRegistry;
 import org.squashtest.csp.tm.web.internal.report.criteria.FormToCriteriaConverter;
-import org.squashtest.plugin.api.report.Report;
-import org.squashtest.plugin.api.report.criteria.Criteria;
+import org.squashtest.tm.api.report.Report;
+import org.squashtest.tm.api.report.criteria.Criteria;
 
 /**
  * @author Gregory Fouquet

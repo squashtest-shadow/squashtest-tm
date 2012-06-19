@@ -41,7 +41,6 @@ import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.servlet.ModelAndView;
-import org.squashtest.csp.api.infrastructure.Internationalizable;
 import org.squashtest.csp.core.infrastructure.collection.PagedCollectionHolder;
 import org.squashtest.csp.core.infrastructure.collection.PagingAndSorting;
 import org.squashtest.csp.tm.domain.project.Project;
@@ -67,6 +66,7 @@ import org.squashtest.csp.tm.web.internal.model.datatable.DataTableModel;
 import org.squashtest.csp.tm.web.internal.model.datatable.DataTableModelHelper;
 import org.squashtest.csp.tm.web.internal.model.datatable.DataTablePagedFilter;
 import org.squashtest.csp.tm.web.internal.model.viewmapper.DataTableMapper;
+import org.squashtest.tm.core.i18n.Internationalizable;
 
 @Controller
 @RequestMapping("/test-cases/{testCaseId}")

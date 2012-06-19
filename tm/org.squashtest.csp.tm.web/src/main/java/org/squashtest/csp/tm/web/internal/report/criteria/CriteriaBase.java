@@ -23,8 +23,8 @@ package org.squashtest.csp.tm.web.internal.report.criteria;
 
 import org.apache.commons.lang.builder.ToStringBuilder;
 import org.apache.commons.lang.builder.ToStringStyle;
-import org.squashtest.plugin.api.report.criteria.Criteria;
-import org.squashtest.plugin.api.report.form.InputType;
+import org.squashtest.tm.api.report.criteria.Criteria;
+import org.squashtest.tm.api.report.form.InputType;
 
 /**
  * @author Gregory

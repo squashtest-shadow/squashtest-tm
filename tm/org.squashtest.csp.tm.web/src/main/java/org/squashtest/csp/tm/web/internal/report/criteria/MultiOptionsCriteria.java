@@ -28,8 +28,8 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-import org.squashtest.plugin.api.report.criteria.Criteria;
-import org.squashtest.plugin.api.report.form.InputType;
+import org.squashtest.tm.api.report.criteria.Criteria;
+import org.squashtest.tm.api.report.form.InputType;
 
 /**
  * @author Gregory Fouquet
@@ -61,7 +61,7 @@ public final class MultiOptionsCriteria extends CriteriaBase<Collection<String>>
 	}
 
 	/**
-	 * @see org.squashtest.plugin.api.report.criteria.Criteria#getValue()
+	 * @see org.squashtest.tm.api.report.criteria.Criteria#getValue()
 	 * 
 	 */
 	@Override
@@ -74,7 +74,7 @@ public final class MultiOptionsCriteria extends CriteriaBase<Collection<String>>
 	}
 
 	/**
-	 * @see org.squashtest.plugin.api.report.criteria.Criteria#hasValue()
+	 * @see org.squashtest.tm.api.report.criteria.Criteria#hasValue()
 	 */
 	@Override
 	public boolean hasValue() {

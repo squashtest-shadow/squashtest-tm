@@ -21,8 +21,8 @@
 
 package org.squashtest.csp.tm.web.internal.report.criteria;
 
-import org.squashtest.plugin.api.report.criteria.Criteria;
-import org.squashtest.plugin.api.report.form.InputType;
+import org.squashtest.tm.api.report.criteria.Criteria;
+import org.squashtest.tm.api.report.form.InputType;
 
 /**
  * @author Gregory
@@ -47,7 +47,7 @@ public final class SimpleCriteria<V> extends CriteriaBase<V> implements Criteria
 		return value;
 	}
 	/**
-	 * @see org.squashtest.plugin.api.report.criteria.Criteria#hasValue()
+	 * @see org.squashtest.tm.api.report.criteria.Criteria#hasValue()
 	 */
 	@Override
 	public boolean hasValue() {

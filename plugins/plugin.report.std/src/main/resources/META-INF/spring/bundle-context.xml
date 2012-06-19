@@ -35,22 +35,22 @@
 	
 	<context:annotation-config />
 		
-	<bean name="squash.tm.plugin.report.executionProgressFollowUp" class="org.squashtest.plugin.api.report.ReportPlugin">
+	<bean name="squash.tm.plugin.report.executionProgressFollowUp" class="org.squashtest.tm.api.report.ReportPlugin">
 		<property name="report" ref="executionProgressFollowUp" />
 	</bean>
 
-	<bean name="executionProgressFollowUp" class="org.squashtest.plugin.api.report.BasicReport">
+	<bean name="executionProgressFollowUp" class="org.squashtest.tm.api.report.BasicReport">
 		<property name="category" value="EXECUTION_PHASE" />
 		<property name="type" value="PROGRESS_FOLLOWUP" />
 		<property name="labelKey" value="report.executionprogressfollowup.name" />
 		<property name="descriptionKey" value="report.executionprogressfollowup.description" />
 		<property name="views">
 			<list>
-				<bean class="org.squashtest.plugin.api.report.ReportView">
+				<bean class="org.squashtest.tm.api.report.ReportView">
 					<property name="labelKey" value="view.title.listtcbycampaign" />
 					<property name="formats" value="xls,ods,csv,pdf,html" />
 				</bean>
-				<bean class="org.squashtest.plugin.api.report.ReportView">
+				<bean class="org.squashtest.tm.api.report.ReportView">
 					<property name="labelKey" value="view.title.campaigndashboard" />
 					<property name="formats" value="pdf,html" />
 				</bean>
@@ -58,36 +58,36 @@
 		</property>
 		<property name="form">
 			<list>
-				<bean class="org.squashtest.plugin.api.report.form.DateInput">
+				<bean class="org.squashtest.tm.api.report.form.DateInput">
 					<property name="name" value="scheduledStart" />
 					<property name="labelKey" value="campaign.scheduledStart.label" />
 				</bean> 
-				<bean class="org.squashtest.plugin.api.report.form.DateInput">
+				<bean class="org.squashtest.tm.api.report.form.DateInput">
 					<property name="name" value="actualStart" />
 					<property name="labelKey" value="campaign.actualStart.label" />
 				</bean> 
-				<bean class="org.squashtest.plugin.api.report.form.DateInput">
+				<bean class="org.squashtest.tm.api.report.form.DateInput">
 					<property name="name" value="scheduledEnd" />
 					<property name="labelKey" value="campaign.scheduledEnd.label" />
 				</bean> 
-				<bean class="org.squashtest.plugin.api.report.form.DateInput">
+				<bean class="org.squashtest.tm.api.report.form.DateInput">
 					<property name="name" value="actualEnd" />
 					<property name="labelKey" value="campaign.actualEnd.label" />
 				</bean> 
-				<bean class="org.squashtest.plugin.api.report.form.DropdownList">
+				<bean class="org.squashtest.tm.api.report.form.DropdownList">
 					<property name="name" value="campaignStatus" />
 					<property name="labelKey" value="campaignStatus.label" />
 					<property name="options">
 						<list>
-							<bean class="org.squashtest.plugin.api.report.form.OptionInput">
+							<bean class="org.squashtest.tm.api.report.form.OptionInput">
 								<property name="value" value="CAMPAIGN_ALL" />
 								<property name="labelKey" value="report.executionprogression.campaignstatus.CAMPAIGN_ALL" />
 							</bean>
-							<bean class="org.squashtest.plugin.api.report.form.OptionInput">
+							<bean class="org.squashtest.tm.api.report.form.OptionInput">
 								<property name="value" value="CAMPAIGN_RUNNING" />
 								<property name="labelKey" value="report.executionprogression.campaignstatus.CAMPAIGN_RUNNING" />
 							</bean>
-							<bean class="org.squashtest.plugin.api.report.form.OptionInput">
+							<bean class="org.squashtest.tm.api.report.form.OptionInput">
 								<property name="value" value="CAMPAIGN_OVER" />
 								<property name="labelKey" value="report.executionprogression.campaignstatus.CAMPAIGN_OVER" />
 							</bean>

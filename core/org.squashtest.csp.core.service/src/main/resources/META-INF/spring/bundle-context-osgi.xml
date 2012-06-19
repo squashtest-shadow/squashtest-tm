@@ -140,6 +140,6 @@
 		interface="org.squashtest.csp.core.service.security.AdministratorAuthenticationService" />
 	 
 	 <!-- ====== API SERVICES ====== -->
-	 <osgi:service ref="squash.api.repository.SqlQueryRunner" interface="org.squashtest.plugin.api.repository.SqlQueryRunner" />
+	 <osgi:service ref="squash.api.repository.SqlQueryRunner" interface="org.squashtest.tm.api.repository.SqlQueryRunner" />
 </beans>
  

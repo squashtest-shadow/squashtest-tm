@@ -30,7 +30,6 @@ import org.apache.commons.lang.time.DateFormatUtils;
 import org.springframework.context.MessageSource;
 import org.springframework.util.ReflectionUtils;
 import org.springframework.web.util.HtmlUtils;
-import org.squashtest.csp.api.infrastructure.Internationalizable;
 import org.squashtest.csp.tm.domain.event.RequirementAuditEvent;
 import org.squashtest.csp.tm.domain.event.RequirementAuditEventVisitor;
 import org.squashtest.csp.tm.domain.event.RequirementCreation;
@@ -39,6 +38,7 @@ import org.squashtest.csp.tm.domain.event.RequirementPropertyChange;
 import org.squashtest.csp.tm.domain.event.RequirementVersionModification;
 import org.squashtest.csp.tm.domain.requirement.RequirementVersion;
 import org.squashtest.csp.tm.web.internal.model.datatable.DataTableModelHelper;
+import org.squashtest.tm.core.i18n.Internationalizable;
 
 /**
  * Builder for datatable model showing {@link RequirementAuditEvent} objects. Not threadsafe, should be discarded after
