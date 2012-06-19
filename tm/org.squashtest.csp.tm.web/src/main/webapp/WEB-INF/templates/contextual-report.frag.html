@@ -259,7 +259,7 @@
 					<div th:remove="all">
 						<span th:case="DATE">
 							<span class="label">Date criteria</span>
-							<span class="date-crit" id="date-crit" ></span>
+							<span class="date-crit" id="date-crit">---</span>
 						</span>
 					</div>		
 					<div th:remove="all">
@@ -317,7 +317,9 @@
 
 				squashtm.report.init({
 					contextPath: /*[[ @{/} ]]*/ "../../../../../../../core/core.web/src/main/webapp", 
-					reportUrl: /*[[ @{'/reports/' + ${report.namespace} + '/' + ${report.index}} ]]*/ "/squash/reports"
+					reportUrl: /*[[ @{'/reports/' + ${report.namespace} + '/' + ${report.index}} ]]*/ "/squash/reports",
+					dateFormat: /*[[ #{squashtm.dateformatShort.js} ]]*/ "dd/mm/yy",
+					noDateLabel: /*[[ #{squashtm.nodata} ]]*/ "---"
 				});
 			});
 	    	/* ]]> */
@@ -458,26 +460,6 @@
 			}); */
 	    	/* ]]> */
 		</script>
-		<script type="text/javascript" th:inline="javascript" th:remove="all">
-		/* <![CDATA[ */
-	 /* 	var selectedTab;
-			$(function(){
-				var tabPanel=$("#view-tabed-panel");
-				tabPanel.tabs({
-						select: function(event, ui){
-							tabPanel.data("selected",ui.index);
-							selectedTab = ui;
-						//	loadReportFromTab(ui,generateHasBeenClicked);
-						}
-				});
-				
-				tabPanel.tabs("select", 1); //TODO find prettier solution :  if i don't do that the next line won't initiate the "selectedTab" var because tab[0] is already selected. 
-  */
- //tabPanel.tabs("select",/*[[ ${report.defaultViewIndex} ]]*/ 0);
-	//			tabPanel.data("selected", /*[[ ${report.viewCatalog.defaultViewIndex} ]]*/ 0);
-		//	});
-	    	/* ]]> */
-		</script>		
 		</div>
 <!-- IT ENDS HERE -->
 	</div>

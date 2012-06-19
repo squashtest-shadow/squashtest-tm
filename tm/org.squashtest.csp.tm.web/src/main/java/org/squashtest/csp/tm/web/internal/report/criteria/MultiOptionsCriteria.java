@@ -35,8 +35,7 @@ import org.squashtest.tm.api.report.form.InputType;
  * @author Gregory Fouquet
  * 
  */
-public final class MultiOptionsCriteria extends CriteriaBase<Collection<String>> implements
-		Criteria<Collection<String>> {
+public final class MultiOptionsCriteria extends CriteriaBase implements Criteria {
 	private final Map<String, Boolean> isSelectedByOption = new HashMap<String, Boolean>();
 	private final List<String> selectedOptions = new ArrayList<String>();
 
@@ -92,9 +91,10 @@ public final class MultiOptionsCriteria extends CriteriaBase<Collection<String>>
 	public boolean isSelected(String optionValue) throws IllegalArgumentException {
 		Boolean res = isSelectedByOption.get(optionValue);
 		if (res == null) {
-			throw new IllegalArgumentException('\'' + optionValue + "' does not belong to the known option values. Known values are : " + isSelectedByOption.values());
+			throw new IllegalArgumentException('\'' + optionValue
+					+ "' does not belong to the known option values. Known values are : " + isSelectedByOption.values());
 		}
-		
+
 		return res;
 	}
 }

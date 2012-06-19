@@ -21,26 +21,40 @@
 
 package org.squashtest.tm.api.report;
 
-
+import org.springframework.util.Assert;
 
 /**
+ * This class is used as the entrypoint to the plugin. There should be one {@link ReportPlugin} defined as an OSGi
+ * service. Squash TM uses this service to fetch the provided reports.
+ * 
  * @author Gregory Fouquet
- *
+ * 
  */
-public  class ReportPlugin {
-	private BasicReport report;
+public class ReportPlugin {
+	private Report[] reports;
 
 	/**
-	 * @param report the report to set
+	 * Shortcut for a plugin containing only one report. 
+	 * @param report
+	 *            the report to set
 	 */
-	public void setReport(BasicReport report) {
-		this.report = report;
+	public void setReport(Report report) {
+		Assert.notNull(report, "Report should not be null");
+		reports = new Report[] { report };
 	}
 
 	/**
-	 * @return the report
+	 * @return the reports
 	 */
-	public BasicReport getReport() {
-		return report;
+	public Report[] getReports() {
+		return reports;
+	}
+
+	/**
+	 * @param reports the reports to set
+	 */
+	public void setReports(Report[] reports) {
+		Assert.notNull(reports, "Reports array should not be null");
+		this.reports = reports;
 	}
 }

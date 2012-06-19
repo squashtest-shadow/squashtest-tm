@@ -21,6 +21,10 @@
 
 package org.squashtest.tm.api.report;
 
+import java.util.Map;
+
+import org.springframework.web.servlet.ModelAndView;
+import org.squashtest.tm.api.report.criteria.Criteria;
 import org.squashtest.tm.api.report.form.Input;
 
 /**
@@ -59,5 +63,13 @@ public interface Report {
 	String getLabelKey();
 
 	String getLabel();
+
+	/**
+	 * @param viewIndex
+	 * @param format
+	 * @param criteria
+	 * @return 
+	 */
+	ModelAndView buildModelAndView(int viewIndex, String format, Map<String, Criteria> criteria);
 
 }

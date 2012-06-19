@@ -33,6 +33,7 @@ import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
+import org.springframework.web.servlet.ModelAndView;
 import org.squashtest.csp.tm.web.internal.report.ReportsRegistry;
 import org.squashtest.csp.tm.web.internal.report.criteria.FormToCriteriaConverter;
 import org.squashtest.tm.api.report.Report;
@@ -89,11 +90,12 @@ public class ReportController {
 	}
 	
 	@RequestMapping(value="/views/{viewIndex}/formats/{format}", method = RequestMethod.POST)
-	public String generateReportView(@RequestBody Map<String, Object> form, Model model) {
+	public ModelAndView generateReportView(@PathVariable String namespace, @PathVariable int index, @PathVariable int viewIndex, @PathVariable String format, @RequestBody Map<String, Object> form) {
 		LOGGER.debug(form.toString());
-		Map<String, Criteria<?>> crit = (new FormToCriteriaConverter()).convert(form);
+		Map<String, Criteria> crit = (new FormToCriteriaConverter()).convert(form);
 		LOGGER.debug(crit.toString());
 		
-		return null;
+		Report report = reportsRegistry.findReport(namespace, index);
+		return report.buildModelAndView(viewIndex, format, crit);
 	}
 }

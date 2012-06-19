@@ -41,12 +41,12 @@
 	 -->
 
 	<!-- JasperReport BeanViewResolvers -->
-	<bean id="jasperReportsViewResolver"
+	<!-- <bean id="jasperReportsViewResolver"
 		class="org.springframework.web.servlet.view.BeanNameViewResolver">
 		<property name="order" value="1" />
-	</bean>
+	</bean> -->
 	
-	<util:map id="multiFormatViewMapping">
+	<!-- <util:map id="multiFormatViewMapping">
 		<entry key="pdf" >
 			<value type="java.lang.Class">org.springframework.web.servlet.view.jasperreports.JasperReportsPdfView</value>
 		</entry>
@@ -65,12 +65,12 @@
 		<entry key="ods" >
 			<value type="java.lang.Class">org.squashtest.csp.tm.web.internal.infrastructure.report.JasperReportsOdsView</value>
 		</entry>			
-	</util:map>
+	</util:map> -->
 	
 
 	
 	
-	<bean id="executionProgression1" class="org.springframework.web.servlet.view.jasperreports.JasperReportsMultiFormatView">
+	<!-- <bean id="executionProgression1" class="org.springframework.web.servlet.view.jasperreports.JasperReportsMultiFormatView">
 	
 	
 		<property name="contentDispositionMappings" ref="squashtest.tm.reporting.contentdispositionmapping"/>
@@ -95,9 +95,9 @@
 				</entry>
 			</map>
 		</property>	
-	</bean>
+	</bean> -->
 	
-	<bean id="executionProgression2"
+	<!-- <bean id="executionProgression2"
 		class="org.springframework.web.servlet.view.jasperreports.JasperReportsMultiFormatView">
 		
 		<property name="contentDispositionMappings" ref="squashtest.tm.reporting.contentdispositionmapping"/> 
@@ -121,9 +121,9 @@
 				</entry>
 			</map>
 		</property>
-	</bean>
+	</bean> -->
 	
-	<bean id="requirementCoverage1" class="org.springframework.web.servlet.view.jasperreports.JasperReportsMultiFormatView">
+	<!-- <bean id="requirementCoverage1" class="org.springframework.web.servlet.view.jasperreports.JasperReportsMultiFormatView">
 		<property name="contentDispositionMappings" ref="squashtest.tm.reporting.contentdispositionmapping"/> 
 		<property name="formatMappings" ref="multiFormatViewMapping" />
 				 
@@ -138,9 +138,9 @@
 				</entry>
 			</map>
 		</property>	
-	</bean>
+	</bean> -->
 	
-	<bean id="requirementCoverage2" class="org.springframework.web.servlet.view.jasperreports.JasperReportsMultiFormatView">
+	<!-- <bean id="requirementCoverage2" class="org.springframework.web.servlet.view.jasperreports.JasperReportsMultiFormatView">
 		<property name="contentDispositionMappings" ref="squashtest.tm.reporting.contentdispositionmapping"/> 
 		<property name="formatMappings" ref="multiFormatViewMapping" />
 				 
@@ -161,15 +161,15 @@
 				</entry>
 			</map>
 		</property>	
-	</bean>
+	</bean> -->
 
 	<!-- Message source for this context, loaded from localized "messages_xx" 
 		files. -->
-	<bean id="reportMessageSource"
+	<!-- <bean id="reportMessageSource"
 		class="org.springframework.context.support.ResourceBundleMessageSource">
 		<property name="basename"
 			value="/WEB-INF/reports/messages/execution-progression" />
-	</bean>
+	</bean> -->
 
 
 

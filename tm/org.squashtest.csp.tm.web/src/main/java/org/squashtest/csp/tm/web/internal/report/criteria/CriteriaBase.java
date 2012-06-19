@@ -31,7 +31,7 @@ import org.squashtest.tm.api.report.form.InputType;
  *
  * @param <V>
  */
-public abstract class CriteriaBase<V> implements Criteria<V> {
+public abstract class CriteriaBase implements Criteria {
 
 	protected final String name;
 	protected final InputType sourceInput;

@@ -20,6 +20,10 @@
  */
 var squashtm = squashtm || {};
 
+var module = (function($) {
+	return {/*module*/}
+}(jQuery));
+
 squashtm.navbar = (function ($) {
 	var highlightedButton;
 

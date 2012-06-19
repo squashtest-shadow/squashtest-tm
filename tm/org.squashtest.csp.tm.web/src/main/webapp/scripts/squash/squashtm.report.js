@@ -33,10 +33,21 @@ var squashtm = squashtm || {};
  */
 squashtm.report = (function ($) {
 	var config = {
-		contextPath: ""
+		contextPath: "",
+		dateFormat: "dd/mm/yy", 
+		noDateLabel: "---"
 	};
+	
 	var formState = {};
-	var selectedTab;
+	var selectedTab = false;
+
+	var postDateFormat = $.datepicker.ATOM;
+	var postNoDate = "--";
+	
+	function resetState() {
+		formState = {};
+		selectedTab = false;
+	}
 
 	function onSingleCheckboxChanged() {
 		var option = this;
@@ -72,16 +83,16 @@ squashtm.report = (function ($) {
 		}
 	}
 	
-	function onGroupedRadiosChanged () {
+	function onGroupedRadiosChanged() {
 		var option = this;
 		var name = option.name;
 		var value = option.value;
 
 		var res = $(formState[name]).each(function () {
 			if (this.value === value) {
-				this.selected = option.checked
+				this.selected = option.checked;
 			} else {
-				this.selected = false
+				this.selected = false;
 			}
 		});
 	}
@@ -102,7 +113,18 @@ squashtm.report = (function ($) {
 	}
 
 	function onDatepickerChanged(value) {
-		formState[this.id] = {value: value, type: 'DATE'};
+		var localizedDate = value;
+		
+		var postDate;
+		
+		if (config.noDateLabel === value) {
+			postDate = postNoDate;
+		} else {
+			var date = $.datepicker.parseDate(config.dateFormat, localizedDate);
+			postDate = $.datepicker.formatDate(postDateFormat, date);
+		}
+		
+		formState[this.id] = {value: postDate, type: 'DATE'};
 	}
 	
 	function initDropdowns(panel) {
@@ -118,6 +140,10 @@ squashtm.report = (function ($) {
 	}
 	
 	function initDatepickers(panel) {
+		var dateSettings = {
+			dateFormat: config.dateFormat
+		};
+		
 		var datepickers = panel.find(".date-crit");
 		datepickers.editable(function (value, settings) {
 			var self = this;
@@ -126,9 +152,14 @@ squashtm.report = (function ($) {
 			return value;
 		}, {
 	        type      : 'datepicker',
-	        tooltip   : "Click to edit..."
+	        tooltip   : "Click to edit...",
+	        datepicker: dateSettings
 		});
-		// initialiser la date !
+		
+		datepickers.each(function () {
+			var self = this;
+			onDatepickerChanged.apply(self, [self.innerText]);
+		});
 	}
 	
 	function initRadios(panel) {
@@ -167,12 +198,12 @@ squashtm.report = (function ($) {
 	}
 	
 	function generateView() {
+		console.log(formState);
 		var tabPanel = $("#view-tabed-panel");
 		if (!selectedTab) {
 			tabPanel.tabs('select', 0);			
 		}
 		$("#view-tabed-panel:hidden").show('blind', {}, 500);
-		console.log(formState)
 	}
 	
 	function buildViewUrl(index, format) {
@@ -186,7 +217,6 @@ squashtm.report = (function ($) {
 		tabs.find("#view-format-cmb-" + ui.index).removeClass('not-displayed');
 		
 		var url = buildViewUrl(ui.index, "html");	
-		console.log(url)
 		$.ajax({
 			type: 'post', 
 			url: url, 
@@ -198,12 +228,10 @@ squashtm.report = (function ($) {
 	}
 	
 	function doExport() {
-		console.log("todo")
 		var viewIndex = selectedTab.index;
 		var format = $("#view-format-cmb-" + viewIndex).val();
 
 		var url = buildViewUrl(ui.index, "html");	
-		console.log(url)
 		document.location.href = url;
 	}
  
@@ -215,6 +243,9 @@ squashtm.report = (function ($) {
 	}
 
 	function init(settings) {
+		resetState();
+		config = $.extend(config, settings);		
+		
 		var panel = $("#report-criteria-panel");
 
 		initCheckboxes(panel);
@@ -230,7 +261,6 @@ squashtm.report = (function ($) {
 			$("#" + dialogId).dialog('open');
 		});
 		
-		config = $.extend(config, settings);
 		treeSettings = $.extend({}, settings); 
 		treeSettings.workspaceType = "Campaign";
 		treeSettings.jsonData = [

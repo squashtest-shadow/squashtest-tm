@@ -28,7 +28,7 @@ import org.squashtest.tm.api.report.form.InputType;
  * @author Gregory
  * 
  */
-public final class SimpleCriteria<V> extends CriteriaBase<V> implements Criteria<V> {
+public final class SimpleCriteria<V> extends CriteriaBase implements Criteria {
 	private final V value;
 	/**
 	 * @param name

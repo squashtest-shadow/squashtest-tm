@@ -21,6 +21,10 @@
 
 package org.squashtest.csp.tm.web.internal.report.criteria;
 
+import static org.squashtest.tm.api.report.form.InputType.CHECKBOX;
+import static org.squashtest.tm.api.report.form.InputType.DATE;
+import static org.squashtest.tm.api.report.form.InputType.TEXT;
+
 import java.util.Collection;
 import java.util.HashMap;
 import java.util.Map;
@@ -37,7 +41,6 @@ import org.squashtest.tm.api.report.form.InputType;
  * 
  */
 public class FormToCriteriaConverter {
-
 	/**
 	 * 
 	 */
@@ -52,9 +55,24 @@ public class FormToCriteriaConverter {
 	private static final String INPUT_TYPE = "type";
 	private static final Logger LOGGER = LoggerFactory.getLogger(FormToCriteriaConverter.class);
 
+	private final Map<InputType, SimpleEntryConverter> simpleEntryConverterByType;
+	private final SimpleEntryConverter simpleEntryDefaultConverter = new GenericSimpleEntryConverter();
+
+	/**
+	 * @param simpleEntryConverterByType
+	 */
+	protected FormToCriteriaConverter() {
+		super();
+
+		this.simpleEntryConverterByType = new HashMap<InputType, SimpleEntryConverter>();
+		simpleEntryConverterByType.put(DATE, new DateEntryConverter());
+		simpleEntryConverterByType.put(CHECKBOX, new CheckboxEntryConverter());
+		simpleEntryConverterByType.put(TEXT, simpleEntryDefaultConverter);
+	}
+
 	@SuppressWarnings("unchecked")
-	public Map<String, Criteria<?>> convert(Map<String, Object> formValues) {
-		HashMap<String, Criteria<?>> res = new HashMap<String, Criteria<?>>();
+	public Map<String, Criteria> convert(Map<String, Object> formValues) {
+		HashMap<String, Criteria> res = new HashMap<String, Criteria>();
 
 		for (Map.Entry<String, Object> entry : formValues.entrySet()) {
 			String name = entry.getKey();
@@ -62,11 +80,11 @@ public class FormToCriteriaConverter {
 
 			if (inputValue instanceof Collection) {
 				Collection<Map<String, Object>> optionValues = (Collection<Map<String, Object>>) inputValue;
-				Criteria<?> crit = convertMultiValuedEntry(name, optionValues);
+				Criteria crit = convertMultiValuedEntry(name, optionValues);
 				res.put(name, crit);
 			} else if (inputValue instanceof Map) {
 				Map<String, Object> map = (Map<String, Object>) inputValue;
-				Criteria<?> crit = convertSimpleEntry(name, map);
+				Criteria crit = convertSimpleEntry(name, map);
 				res.put(name, crit);
 
 			} else {
@@ -83,7 +101,7 @@ public class FormToCriteriaConverter {
 	 * @param multiValued
 	 * @return
 	 */
-	private Criteria<?> convertMultiValuedEntry(String name, Collection<Map<String, Object>> multiValued) {
+	private Criteria convertMultiValuedEntry(String name, Collection<Map<String, Object>> multiValued) {
 		InputType inputType = extractInputType(multiValued);
 		return convertMultiValuedEntry(name, multiValued, inputType);
 	}
@@ -94,9 +112,9 @@ public class FormToCriteriaConverter {
 	 * @param inputType
 	 * @return
 	 */
-	private Criteria<?> convertMultiValuedEntry(String name, Collection<Map<String, Object>> multiValued,
+	private Criteria convertMultiValuedEntry(String name, Collection<Map<String, Object>> multiValued,
 			InputType inputType) {
-		Criteria<?> res;
+		Criteria res;
 		switch (inputType) {
 		case CHECKBOXES_GROUP:
 			res = createMultiOptionsCriteria(name, multiValued, inputType);
@@ -105,13 +123,13 @@ public class FormToCriteriaConverter {
 		case DROPDOWN_LIST:
 			res = createSingleOptionCriteria(name, multiValued, inputType);
 			break;
-		default :
-			res = EmptyCriteria.createEmptyCriteria(name, inputType); 
+		default:
+			res = EmptyCriteria.createEmptyCriteria(name, inputType);
 		}
 		return res;
 	}
 
-	private Criteria<?> createSingleOptionCriteria(String name, Collection<Map<String, Object>> multiValued,
+	private Criteria createSingleOptionCriteria(String name, Collection<Map<String, Object>> multiValued,
 			InputType inputType) {
 		for (Map<String, Object> valueItem : multiValued) {
 			Boolean selected = (Boolean) valueItem.get(INPUT_SELECTED);
@@ -122,7 +140,8 @@ public class FormToCriteriaConverter {
 		return new EmptyCriteria(name, inputType);
 	}
 
-	private Criteria<?> createMultiOptionsCriteria(String name, Collection<Map<String, Object>> multiValued, InputType inputType) {
+	private Criteria createMultiOptionsCriteria(String name, Collection<Map<String, Object>> multiValued,
+			InputType inputType) {
 		MultiOptionsCriteria crit = new MultiOptionsCriteria(name, inputType);
 		for (Map<String, Object> valueItem : multiValued) {
 			Boolean selected = (Boolean) valueItem.get(INPUT_SELECTED);
@@ -151,25 +170,23 @@ public class FormToCriteriaConverter {
 		return InputType.valueOf(type);
 	}
 
-	@SuppressWarnings({ "unchecked", "rawtypes" })
-	private Criteria<?> convertSimpleEntry(String name, Map<String, Object> entry) {
+	private Criteria convertSimpleEntry(String name, Map<String, Object> entry) {
+
 		String type = (String) entry.get(INPUT_TYPE);
 		InputType inputType = InputType.valueOf(type);
-		Object value = convertValue(entry, inputType);
-
-		return new SimpleCriteria(name, value, inputType);
+		return simpleEntryConverter(inputType).convertEntry(name, entry, inputType);
 	}
 
-	private Object convertValue(Map<String, Object> entry, InputType inputType) {
-		Object converted;
-		switch (inputType) {
-		case CHECKBOX:
-			converted = Boolean.parseBoolean((String) entry.get(INPUT_SELECTED));
-			break;
-		case TEXT:
-		default:
-			converted = entry.get(INPUT_VALUE);
+	/**
+	 * @param type
+	 */
+	private SimpleEntryConverter simpleEntryConverter(InputType type) {
+		SimpleEntryConverter converter = simpleEntryConverterByType.get(type);
+
+		if (converter == null) {
+			converter = simpleEntryDefaultConverter;
 		}
-		return converted;
+
+		return converter;
 	}
 }

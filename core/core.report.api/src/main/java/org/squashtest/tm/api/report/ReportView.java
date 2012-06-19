@@ -21,28 +21,27 @@
 
 package org.squashtest.tm.api.report;
 
-import org.squashtest.tm.core.i18n.Labelled;
+import java.util.Map;
+
+import org.springframework.web.servlet.View;
+import org.squashtest.tm.api.report.criteria.Criteria;
 
 /**
- * @author bsiri
- * @author Gregory Fouquet
+ * @author Gregory Fouquet.
  * 
  */
-public class ReportView extends Labelled {
-	private String[] formats;
+public interface ReportView {
 
 	/**
-	 * @return the formats
+	 * @return the list of formats this view can handle.
 	 */
-	public String[] getFormats() {
-		return formats;
-	}
+	String[] getFormats();
+
+	Map<String, Object> buildViewModel(String format, Map<String, Criteria> criteria);
 
 	/**
-	 * @param formats
-	 *            the formats to set
+	 * 
+	 * @return the Spring MVC View which should be used to generate the report.
 	 */
-	public void setFormats(String[] formats) {
-		this.formats = formats;
-	}
+	View getViewBean();
 }

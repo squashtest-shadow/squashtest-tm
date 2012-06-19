@@ -134,9 +134,6 @@
 	<osgi:service ref="squashtest.tm.service.CampaignFolderModificationService"
 		interface="org.squashtest.csp.tm.service.FolderModificationService" />
 
-	<osgi:service ref="squashtest.tm.service.ReportService"
-		interface="org.squashtest.csp.tm.service.ReportService" />
-
 	<osgi:service ref="squashtest.tm.service.ProjectFilterModificationService"
 		interface="org.squashtest.csp.tm.service.ProjectFilterModificationService" />
 

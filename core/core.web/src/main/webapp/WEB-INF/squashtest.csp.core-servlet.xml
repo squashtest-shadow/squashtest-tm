@@ -55,9 +55,14 @@
 		<property name="order" value="2" />
 	</bean>
 
-
 	<!-- Thymeleaf Spring dialect -->
-	<bean id="thymeleaf.templateResolver" class="org.thymeleaf.templateresolver.ServletContextTemplateResolver">
+	<bean id="thymeleaf.view.templateResolver" class="org.thymeleaf.templateresolver.ServletContextTemplateResolver">
+		<property name="prefix" value="/WEB-INF/templates/" />
+		<!-- no suffix because it's already in view name  -->
+		<property name="templateMode" value="HTML5" />
+	</bean>
+
+	<bean id="thymeleaf.fragment.templateResolver" class="org.thymeleaf.templateresolver.ServletContextTemplateResolver">
 		<property name="prefix" value="/WEB-INF/templates/" />
  		<property name="suffix" value=".html" />
 		<property name="templateMode" value="HTML5" />
@@ -66,7 +71,8 @@
 	<bean id="thymeleaf.templateEngine" class="org.thymeleaf.spring3.SpringTemplateEngine">
 		<property name="templateResolvers">
 			<list>
-				<ref bean="thymeleaf.templateResolver" />
+				<ref bean="thymeleaf.view.templateResolver" />
+				<ref bean="thymeleaf.fragment.templateResolver" />
 			</list>
 		</property>
 	</bean>
@@ -75,6 +81,7 @@
 	<bean id="thymeleaf.viewResolver" class="org.thymeleaf.spring3.view.ThymeleafViewResolver">
 		<property name="templateEngine" ref="thymeleaf.templateEngine" />
 		<property name="order" value="1" />
+		<!-- Thymeleaf view names end with html cos we need to differenciate from jsps -->
 		<property name="viewNames" value="*.html" />
 	</bean>
 

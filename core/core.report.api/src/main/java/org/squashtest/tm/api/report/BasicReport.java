@@ -21,8 +21,12 @@
 
 package org.squashtest.tm.api.report;
 
+import java.util.Map;
+
 import javax.annotation.PostConstruct;
 
+import org.springframework.web.servlet.ModelAndView;
+import org.squashtest.tm.api.report.criteria.Criteria;
 import org.squashtest.tm.api.report.form.Input;
 import org.squashtest.tm.core.i18n.Labelled;
 
@@ -145,5 +149,15 @@ public class BasicReport extends Labelled implements Report {
 	 */
 	public int getDefaultViewIndex() {
 		return defaultViewIndex;
+	}
+
+	/**
+	 * @see org.squashtest.tm.api.report.Report#buildModelAndView(int, java.lang.String, java.util.Map)
+	 */
+	@Override
+	public ModelAndView buildModelAndView(int viewIndex, String format, Map<String, Criteria> criteria) {
+		ReportView view = views[viewIndex];
+		Map<String, Object> model = view.buildViewModel(format, criteria);
+		return new ModelAndView(view.getViewBean(), model);
 	}
 }

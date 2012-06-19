@@ -35,7 +35,6 @@ import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.servlet.ModelAndView;
-import org.squashtest.csp.tm.domain.report.query.ReportQuery;
 import org.squashtest.csp.tm.web.internal.report.ReportsRegistry;
 
 @Controller
@@ -149,21 +148,5 @@ public class ReportWorkspaceController {
 		return null;
 	}
 
-	/* **************************** private stuffs **************************************** */
-
-	private ReportQuery parseParams(ReportQuery reportQuery, HttpServletRequest httpRequest) {
-
-		Map<String, String[]> paramMap = httpRequest.getParameterMap();
-
-		Set<Entry<String, String[]>> entries = paramMap.entrySet();
-
-		for (Entry<String, String[]> entry : entries) {
-			if (reportQuery.isCriterionExists(entry.getKey())) {
-				reportQuery.setCriterion(entry.getKey(), (Object[]) entry.getValue());
-			}
-		}
-
-		return reportQuery;
-	}
 
 }

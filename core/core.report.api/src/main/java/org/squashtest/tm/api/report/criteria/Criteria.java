@@ -27,12 +27,12 @@ import org.squashtest.tm.api.report.form.InputType;
  * @author Gregory Fouquet
  * 
  */
-public interface Criteria<V> {
+public interface Criteria {
 	Object NO_VALUE = new Object();
 
 	String getName();
 
-	V getValue();
+	Object getValue();
 
 	InputType getSourceInput();
 

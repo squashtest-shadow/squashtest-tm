@@ -42,11 +42,11 @@
 		<property name="descriptionKey" value="test.report.description" />
 		<property name="views">
 			<list>
-				<bean class="org.squashtest.tm.api.report.ReportView">
+				<bean class="org.squashtest.tm.api.report.jasperreports.JasperReportsView">
 					<property name="labelKey" value="test.view.one.label" />
 					<property name="formats" value="html,pdf" />
 				</bean>
-				<bean class="org.squashtest.tm.api.report.ReportView">
+				<bean class="org.squashtest.tm.api.report.jasperreports.JasperReportsView">
 					<property name="labelKey" value="test.view.two.label" />
 					<property name="formats" value="html,xls" />
 				</bean>
@@ -62,11 +62,11 @@
 					<property name="name" value="date" />
 					<property name="labelKey" value="test.report.form.date" />
 				</bean> 
-<!-- 				<bean class="org.squashtest.tm.api.report.form.CheckboxInput">
+ 				<bean class="org.squashtest.tm.api.report.form.CheckboxInput">
 					<property name="name" value="checkbox" />
 					<property name="labelKey" value="test.report.form.checkbox" />
 				</bean> 
- -->				<bean class="org.squashtest.tm.api.report.form.RadioButtonsGroup">
+				<bean class="org.squashtest.tm.api.report.form.RadioButtonsGroup">
 					<property name="name" value="radio-group" />
 					<property name="labelKey" value="test.report.form.radioGroup" />
 					<property name="options">

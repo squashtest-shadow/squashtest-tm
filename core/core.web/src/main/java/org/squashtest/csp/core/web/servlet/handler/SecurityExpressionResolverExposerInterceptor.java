@@ -30,6 +30,7 @@ import javax.servlet.ServletResponse;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
+import org.apache.commons.lang.StringUtils;
 import org.springframework.security.authentication.AuthenticationTrustResolver;
 import org.springframework.security.authentication.AuthenticationTrustResolverImpl;
 import org.springframework.security.core.Authentication;
@@ -63,7 +64,8 @@ public class SecurityExpressionResolverExposerInterceptor extends HandlerInterce
 	@Override
 	public void postHandle(HttpServletRequest request, HttpServletResponse response, Object handler,
 			ModelAndView modelAndView) throws Exception {
-		if (modelAndView != null && !modelAndView.getViewName().startsWith("redirect:")) {
+		if (modelAndView != null && modelAndView.hasView()
+				&& !StringUtils.startsWith(modelAndView.getViewName(), "redirect:")) {
 			FilterInvocation filterInvocation = new FilterInvocation(request, response, DUMMY_CHAIN);
 
 			Authentication authentication = SecurityContextHolder.getContext().getAuthentication();

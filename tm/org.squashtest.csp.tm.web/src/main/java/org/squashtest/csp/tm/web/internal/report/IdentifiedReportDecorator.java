@@ -21,10 +21,14 @@
 
 package org.squashtest.csp.tm.web.internal.report;
 
+import java.util.Map;
+
+import org.springframework.web.servlet.ModelAndView;
 import org.squashtest.tm.api.report.Report;
 import org.squashtest.tm.api.report.ReportView;
 import org.squashtest.tm.api.report.StandardReportCategory;
 import org.squashtest.tm.api.report.StandardReportType;
+import org.squashtest.tm.api.report.criteria.Criteria;
 import org.squashtest.tm.api.report.form.Input;
 
 /**
@@ -169,6 +173,16 @@ public class IdentifiedReportDecorator implements Report {
 	public String toString() {
 		return "IdentifiedReportDecorator [labelKey=" + getLabelKey() + ", namespace=" + getNamespace()
 				+ ", index=" + getIndex() + "]";
+	}
+
+	/**
+	 * @return 
+	 * @see org.squashtest.tm.api.report.Report#buildModelAndView(int, java.lang.String, java.util.Map)
+	 */
+	@Override
+	public ModelAndView buildModelAndView(int viewIndex, String format, Map<String, Criteria> criteria) {
+		return report.buildModelAndView(viewIndex, format, criteria);
+		
 	}
 
 }

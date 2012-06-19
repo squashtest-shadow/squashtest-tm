@@ -56,23 +56,25 @@ public class ReportsRegistry {
 	 * @param plugin
 	 * @param properties
 	 */
-	public void pluginRegistered(ReportPlugin plugin, Map<?, ?> properties) {
-		BasicReport report = plugin.getReport();
-		StandardReportCategory category = report.getCategory();
-		IdentifiedReportDecorator identifiedReport = createIdentifiedReport(report, properties);
+	public synchronized void pluginRegistered(ReportPlugin plugin, Map<?, ?> properties) {
+		Report[] reports = plugin.getReports();
+		
+		for (int i = 0; i < reports.length; i++) {
+			Report report =  reports[i];
+			StandardReportCategory category = report.getCategory();
+			IdentifiedReportDecorator identifiedReport = createIdentifiedReport(report, properties, i);
 
-		synchronized (reportsByCategory) {
 			reportsByCategory.put(category, identifiedReport);
 			reportByIdentifier.put(identifiedReport.getIdentifier(), identifiedReport);
-		}
 
-		LOGGER.info("Registered report [{}] under Category [{}]", report, category.getI18nKey());
-		LOGGER.debug("Report plugin registered along with properties [{}]", properties);
+			LOGGER.info("Registered report [{}] under Category [{}]", report, category.getI18nKey());
+			LOGGER.debug("Report plugin registered along with properties [{}]", properties);
+		}
 	}
 
-	private IdentifiedReportDecorator createIdentifiedReport(BasicReport report, Map<?, ?> properties) {
+	private IdentifiedReportDecorator createIdentifiedReport(Report report, Map<?, ?> properties, int index) {
 		String pluginNamespace = (String) properties.get(NAMESPACE_KEY);
-		IdentifiedReportDecorator identifiedReport = new IdentifiedReportDecorator(report, pluginNamespace, 0);
+		IdentifiedReportDecorator identifiedReport = new IdentifiedReportDecorator(report, pluginNamespace, index);
 		return identifiedReport;
 	}
 
@@ -81,18 +83,21 @@ public class ReportsRegistry {
 	 * @param plugin
 	 * @param properties
 	 */
-	public void pluginUnregistered(ReportPlugin plugin, Map<?, ?> properties) {
-		BasicReport report = plugin.getReport();
-		StandardReportCategory category = report.getCategory();
-		IdentifiedReportDecorator identifiedReport = createIdentifiedReport(report, properties);
+	public synchronized void pluginUnregistered(ReportPlugin plugin, Map<?, ?> properties) {
+		Report[] reports = plugin.getReports();
 
-		synchronized (reportsByCategory) {
+		for (int i = 0; i < reports.length; i++) {
+			Report report =  reports[i];
+
+			StandardReportCategory category = report.getCategory();
+			IdentifiedReportDecorator identifiedReport = createIdentifiedReport(report, properties, i);
+
 			reportsByCategory.remove(category, identifiedReport);
 			reportByIdentifier.remove(identifiedReport.getIdentifier());
-		}
 
-		LOGGER.info("Unregistered report [{}] from Category [{}]", report, category.getI18nKey());
-		LOGGER.debug("Report plugin unregistered along with properties [{}]", properties);
+			LOGGER.info("Unregistered report [{}] from Category [{}]", report, category.getI18nKey());
+			LOGGER.debug("Report plugin unregistered along with properties [{}]", properties);
+		}
 	}
 
 	@SuppressWarnings("unchecked")

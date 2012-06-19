@@ -22,13 +22,14 @@
 package org.squashtest.csp.tm.web.internal.report
 
 
-import org.squashtest.plugin.api.report.BasicReport;
-import org.squashtest.plugin.api.report.ReportPlugin;
-import org.squashtest.plugin.api.report.StandardReportCategory;
+
+import org.squashtest.tm.api.report.BasicReport;
+import org.squashtest.tm.api.report.ReportPlugin;
+import org.squashtest.tm.api.report.StandardReportCategory;
 
 import spock.lang.Specification;
 
-import static org.squashtest.plugin.api.report.StandardReportCategory.*
+import static org.squashtest.tm.api.report.StandardReportCategory.*
 
 /**
  * @author Gregory Fouquet
@@ -68,7 +69,29 @@ class ReportsRegistryTest extends Specification {
 		registry.findReports(PREPARATION_PHASE)*.labelKey == ['foo']
 	}
 
-	def "should unregister category"() {
+	def "should register reports"() {
+		given:
+		BasicReport report = new BasicReport()
+		report.labelKey = 'foo'
+		report.category = StandardReportCategory.PREPARATION_PHASE
+		
+		and:
+		BasicReport otherReport = new BasicReport()
+		otherReport.labelKey = 'foofoo'
+		otherReport.category = StandardReportCategory.PREPARATION_PHASE
+		
+		and:
+		ReportPlugin plugin = new ReportPlugin()
+		plugin.reports = [report, otherReport]
+
+		when:
+		registry.pluginRegistered plugin, ['osgi.service.blueprint.compname' : 'bar']
+
+		then:
+		registry.findReports(PREPARATION_PHASE)*.labelKey == ['foo', 'foofoo']
+	}
+
+		def "should unregister category"() {
 		given:
 		BasicReport report = new BasicReport()
 		report.category = StandardReportCategory.PREPARATION_PHASE

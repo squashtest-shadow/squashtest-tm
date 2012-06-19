@@ -24,7 +24,8 @@ package org.squashtest.csp.tm.web.internal.report.criteria;
 import static org.junit.Assert.*;
 
 import org.spockframework.compiler.model.Spec;
-import org.squashtest.plugin.api.report.form.InputType;
+import org.squashtest.tm.api.report.criteria.Criteria;
+import org.squashtest.tm.api.report.form.InputType;
 
 import spock.lang.Specification;
 
@@ -46,7 +47,7 @@ class FormToCriteriaConverterTest extends Specification {
 	} 
 	def "should build checkbox criteria"() {
 		when:
-		Map criteria = converter.convert([cbx: [value: "", selected: "true",  type: "CHECKBOX"]])
+		Map criteria = converter.convert([cbx: [value: "", selected: true,  type: "CHECKBOX"]])
 		
 		then:
 		criteria.cbx.name == "cbx"
@@ -55,7 +56,7 @@ class FormToCriteriaConverterTest extends Specification {
 	} 
 	def "should build radio criteria"() {
 		when:
-		Map criteria = converter.convert([outfit: [[value: "spandex tights", type: "RADIO_BUTTONS_GROUP", selected: "true"], [value: "leatherpants", type: "RADIO_BUTTONS_GROUP", selected: false]]])
+		Map criteria = converter.convert([outfit: [[value: "spandex tights", type: "RADIO_BUTTONS_GROUP", selected: true], [value: "leatherpants", type: "RADIO_BUTTONS_GROUP", selected: false]]])
 		
 		then:
 		criteria.outfit.name == "outfit"
@@ -64,7 +65,7 @@ class FormToCriteriaConverterTest extends Specification {
 	} 
 	def "should build dropdown criteria"() {
 		when:
-		Map criteria = converter.convert([outfit: [[value: "spandex tights", type: "DROPDOWN_LIST", selected: "true"], [value: "leatherpants", type: "DROPDOWN_LIST", selected: false]]])
+		Map criteria = converter.convert([outfit: [[value: "spandex tights", type: "DROPDOWN_LIST", selected: true], [value: "leatherpants", type: "DROPDOWN_LIST", selected: false]]])
 		
 		then:
 		criteria.outfit.name == "outfit"
@@ -74,9 +75,9 @@ class FormToCriteriaConverterTest extends Specification {
 	def "should build checkboxes group criteria"() {
 		when:
 		Map criteria = converter.convert([equipment: [
-			[value: "batarang", type: "CHECKBOXES_GROUP", selected: "true"], 
-			[value: "webshooters", type: "CHECKBOXES_GROUP", selected: "false"], 
-			[value: "utility-belt", type: "CHECKBOXES_GROUP", selected: "true"], 
+			[value: "batarang", type: "CHECKBOXES_GROUP", selected: true], 
+			[value: "webshooters", type: "CHECKBOXES_GROUP", selected: false], 
+			[value: "utility-belt", type: "CHECKBOXES_GROUP", selected: true], 
 		]])
 		
 		then:
@@ -87,5 +88,28 @@ class FormToCriteriaConverterTest extends Specification {
 		criteria.equipment.isSelected("batarang") == true
 		criteria.equipment.isSelected("webshooters") == false
 		criteria.equipment.isSelected("utility-belt") == true
+	} 
+	def "should build date criteria"() {
+		given: 
+		Calendar c = Calendar.instance
+		c.clear()
+		c.set(1974,06,31)
+		
+		when:
+		Map criteria = converter.convert([batman: [value: "1974-07-31", type: "DATE"]])
+		
+		then:
+		criteria.batman.name == "batman"
+		criteria.batman.value == c.time
+		criteria.batman.sourceInput == InputType.DATE
+	} 
+	def "should build no date criteria"() {
+		when:
+		Map criteria = converter.convert([batman: [value: "--", type: "DATE"]])
+		
+		then:
+		criteria.batman.name == "batman"
+		criteria.batman.value == Criteria.NO_VALUE
+		criteria.batman.sourceInput == InputType.DATE
 	} 
 }
