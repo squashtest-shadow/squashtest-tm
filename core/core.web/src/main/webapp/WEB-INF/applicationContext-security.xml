@@ -38,7 +38,7 @@
 		<!-- Logout page config; we have to set "home-workspace" instead of "/" for logout url to avoid "/null" url -->
 		<logout invalidate-session="true" logout-success-url="/home-workspace" logout-url="/logout"  />
 		
-		<request-cache ref="htppSessionRequestCache"/>
+		<request-cache ref="httpSessionRequestCache"/>
 
 		<!-- Pages restricted to admins -->
 
@@ -80,7 +80,7 @@
 	  <beans:property name="accessDeniedHandler" ref="accessDeniedHandler"/>
 	</beans:bean>
 	
-	<beans:bean id="htppSessionRequestCache" class="org.squashtest.csp.core.web.controller.authentication.LoginFormDiscardingHttpSessionRequestCache">
+	<beans:bean id="httpSessionRequestCache" class="org.squashtest.csp.core.web.controller.authentication.LoginFormDiscardingHttpSessionRequestCache">
 		<beans:property name="justUseSavedRequestOnGet" value="true"/>
 		<beans:property name="loginFormUrl" value="/login.jsp" />
 	</beans:bean>

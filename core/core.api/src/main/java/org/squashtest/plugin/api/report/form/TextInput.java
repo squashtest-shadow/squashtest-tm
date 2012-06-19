@@ -28,7 +28,7 @@ package org.squashtest.plugin.api.report.form;
 public class TextInput extends BasicInput {
 
 	/**
-	 * @see org.squashtest.plugin.api.report.form.FormInput#getType()
+	 * @see org.squashtest.plugin.api.report.form.Input#getType()
 	 */
 	@Override
 	public InputType getType() {

@@ -21,26 +21,14 @@
 
 package org.squashtest.plugin.api.report.form;
 
-import java.util.List;
-
 /**
  * @author Gregory Fouquet
- *
+ * 
  */
-public class FormDefinition {
-	private List<FormInput> inputs;
+public interface Input {
+	String getName();
 
-	/**
-	 * @param inputs the inputs to set
-	 */
-	public void setInputs(List<FormInput> inputs) {
-		this.inputs = inputs;
-	}
+	String getLabelKey();
 
-	/**
-	 * @return the inputs
-	 */
-	public List<FormInput> getInputs() {
-		return inputs;
-	}
+	InputType getType();
 }

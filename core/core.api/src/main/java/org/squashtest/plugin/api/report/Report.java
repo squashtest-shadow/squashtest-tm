@@ -21,7 +21,7 @@
 
 package org.squashtest.plugin.api.report;
 
-import org.squashtest.plugin.api.report.form.FormInput;
+import org.squashtest.plugin.api.report.form.Input;
 
 /**
  * @author Gregory Fouquet
@@ -54,7 +54,7 @@ public interface Report {
 	/**
 	 * @return the form
 	 */
-	FormInput[] getForm();
+	Input[] getForm();
 
 	String getLabelKey();
 

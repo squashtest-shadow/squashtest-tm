@@ -40,7 +40,7 @@ var squashtm = squashtm || {};
 			return $(a).is("[rel='file']");
 		},
 		campaign : function (a) {
-			return $(a).is("[rel='file'][restype='campaigns']")
+			return $(a).is("[rel='file'][restype='campaigns']");
 		},
 		node : function (a) {
 			return $(a).is("[rel='folder']") || $(a).is("[rel='file']");
@@ -75,7 +75,7 @@ var squashtm = squashtm || {};
 		}
 		return res;
 
-	}
+	};
 
 	$.fn.contains = function (domElt) {
 		var vThis = this.collect(function (e) {
@@ -140,76 +140,56 @@ var squashtm = squashtm || {};
 			return win;
 		}
 	});
-
-	/*
-	 * Squash TM domain name : variable $.fn.squashtm
-	 * 
+	/**
+	 * Creates a preconfigured popup dialog from the selector.
+	 * settings definition : see squashtm.popup(settings) function
 	 */
+	$.fn.createPopup = function (settings) {
+		var target = $(this);
+		target.addClass("popup-dialog");
 
-	/*
-	 * popup settings : - all normal $.ui.dialog valid options - selector :
-	 * jquery selector of the dom element we are targetting (mandatory) -
-	 * openedBy : selector for a clickable element that will open the popup
-	 * (optional) - title : the title of the popup (mandatory) - isContextual :
-	 * boolean telling if the said popup should be added the special class
-	 * 'is-contextual', that will mark him as a removable popup when the context
-	 * changes, - closeOnSuccess : boolean telling if the popup should be closed
-	 * if an ajax request succeeds (optional) - ckeditor : { - lang : the
-	 * desired language for the ckeditor (optional) - styleUrl : the url for the
-	 * ckeditor style. } - buttons : the button definition (mandatory)
-	 * 
-	 * 
-	 */
+		var defaults = {
+			autoOpen : false,
+			resizable : false,
+			modal : true,
+			width : 600,
+			title : "default popup",
+			position : [ 'center', 100 ],
+			usesRichEdit : true
+		};
 
-	squashtm.popup = {
-		// begin popup.create
-		create : function (settings) {
+		// merge the settings into the defaults;
+		$.extend(true, defaults, settings);
 
-			var target = $(settings.selector);
-			target.addClass("popup-dialog");
+		// add default open, close and create behaviour. The user
+		// defined callbacks will be invoked as a last operation if
+		// any.
+		var userOpen = defaults.open;
+		var userClose = defaults.close;
+		var userCreate = defaults.create;
 
-			var defaults = {
-				autoOpen : false,
-				resizable : false,
-				modal : true,
-				width : 600,
-				title : "default popup",
-				position : [ 'center', 100 ],
-				usesRichEdit : true
-			}
+		defaults.open = function () {
+			// cleanup
+			squashtm.popup.cleanup.call(target);
+			// forcible styling of the buttons
+			var buttons = target.eq(0).next().find('button');
+			buttons.filter(':last').addClass('ui-state-active');
+			buttons.filter(':first').removeClass('ui-state-active');
+			// user code
+			if (userOpen != undefined)
+				userOpen.call(this);
+		};
 
-			// merge the settings into the defaults;
-			$.extend(true, defaults, settings);
+		defaults.close = function () {
+			// cleanup
+			squashtm.popup.cleanup.call(target);
+			// usercode
+			if (userClose != undefined)
+				userClose.call(this);
+		};
 
-			// add default open, close and create behaviour. The user
-			// defined callbacks will be invoked as a last operation if
-			// any.
-			var userOpen = defaults.open;
-			var userClose = defaults.close;
-			var userCreate = defaults.create;
-
-			defaults.open = function () {
-				// cleanup
-				squashtm.popup.cleanup.call(target);
-				// forcible styling of the buttons
-				var buttons = target.eq(0).next().find('button');
-				buttons.filter(':last').addClass('ui-state-active');
-				buttons.filter(':first').removeClass('ui-state-active');
-				// user code
-				if (userOpen != undefined)
-					userOpen.call(this);
-			};
-
-			defaults.close = function () {
-				// cleanup
-				squashtm.popup.cleanup.call(target);
-				// usercode
-				if (userClose != undefined)
-					userClose.call(this);
-			};
-
-			defaults.create = function () {
-				if (defaults.usesRichEdit){
+		defaults.create = function () {
+			if (defaults.usesRichEdit) {
 				target.find('textarea')
 					.each(function () {
 						var jqT = $(this);
@@ -229,44 +209,76 @@ var squashtm = squashtm || {};
 							// the user-provided
 							// settings
 							customConfig : settings.ckeditor.styleUrl
-									|| "/styles/ckeditor/ckeditor-config.js",
+								|| "/styles/ckeditor/ckeditor-config.js",
 							language : settings.ckeditor.lang
-									|| "en"
+								|| "en"
 						});
 					});
 				if (userCreate != undefined)
 					userCreate.call(this);
-			};
-
-			// popup invokation
-			target.dialog(defaults);
-
-			if (settings.closeOnSuccess === undefined
-					|| settings.closeOnSuccess) {
-				target.ajaxSuccess(function () {
-					if (target.dialog('isOpen') === true)
-						target.dialog('close');
-				});
 			}
+		};
 
-			target.keypress(function (event) {
-				if (event.which == '13') {
-					var buttonPane = target.eq(0).next();
-					buttonPane.find('button').filter(':first').click();
-				}
+		// popup invokation
+		target.dialog(defaults);
+
+		if (settings.closeOnSuccess === undefined
+				|| settings.closeOnSuccess) {
+			target.ajaxSuccess(function () {
+				if (target.dialog('isOpen') === true)
+					target.dialog('close');
 			});
+		}
 
-			if (settings.openedBy) {
-				$(settings.openedBy).click(function () {
-					target.dialog('open');
-					return false;
-				});
+		target.keypress(function (event) {
+			if (event.which == '13') {
+				var buttonPane = target.eq(0).next();
+				buttonPane.find('button').filter(':first').click();
 			}
+		});
 
-			if (settings.isContextual) {
-				target.addClass('is-contextual');
-			}
+		if (settings.openedBy) {
+			$(settings.openedBy).click(function () {
+				target.dialog('open');
+				return false;
+			});
+		}
 
+		if (settings.isContextual) {
+			target.addClass('is-contextual');
+		}
+		
+		return self;
+	}
+	
+	/*
+	 * Squash TM domain name : variable $.fn.squashtm
+	 * 
+	 */
+	/**
+	 * squashtm.popup(settings) : creates a popup dialog from the given settings
+	 * 
+	 * popup settings : 
+	 * - all normal $.ui.dialog valid options 
+	 * - selector : jquery selector of the dom element we are targetting (mandatory) 
+	 * - openedBy : selector for a clickable element that will open the popup (optional) 
+	 * - title : the title of the popup (mandatory) 
+	 * - isContextual : boolean telling if the said popup should be added the special class
+	 * 'is-contextual', that will mark him as a removable popup when the context changes, 
+	 * - closeOnSuccess : boolean telling if the popup should be closed if an ajax request succeeds (optional) 
+	 * - ckeditor : { 
+	 * 	- lang : the desired language for the ckeditor (optional) 
+	 * 	- styleUrl : the url for the ckeditor style. 
+	 * } 
+	 * - buttons : the button definition (mandatory)
+	 * 
+	 * 
+	 */
+	squashtm.popup = {
+		// begin popup.create
+		create : function (settings) {
+			var target = $(settings.selector);
+			target.createPopup(settings);
 		}, // end popup.create
 		// begin popup.cleanup
 		cleanup : function () {

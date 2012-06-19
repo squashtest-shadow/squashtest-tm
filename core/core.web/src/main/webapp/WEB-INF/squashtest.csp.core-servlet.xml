@@ -59,11 +59,6 @@
 	<!-- Thymeleaf Spring dialect -->
 	<bean id="thymeleaf.templateResolver" class="org.thymeleaf.templateresolver.ServletContextTemplateResolver">
 		<property name="prefix" value="/WEB-INF/templates/" />
-<!-- 		<property name="suffix" value=".html" />
- -->		<property name="templateMode" value="HTML5" />
-	</bean>
-	<bean id="thymeleaf.fragment.templateResolver" class="org.thymeleaf.templateresolver.ServletContextTemplateResolver">
-		<property name="prefix" value="/WEB-INF/templates/" />
  		<property name="suffix" value=".html" />
 		<property name="templateMode" value="HTML5" />
 	</bean>
@@ -72,7 +67,6 @@
 		<property name="templateResolvers">
 			<list>
 				<ref bean="thymeleaf.templateResolver" />
-				<ref bean="thymeleaf.fragment.templateResolver" />
 			</list>
 		</property>
 	</bean>

@@ -132,8 +132,6 @@
 
 </div>
 
-
-
 <div>
 	<label><f:message key="report.criteria.panel.campaignlist.label" /></label>
 	<span id="campaign-selection-status">${campaignSelectionAll}</span>

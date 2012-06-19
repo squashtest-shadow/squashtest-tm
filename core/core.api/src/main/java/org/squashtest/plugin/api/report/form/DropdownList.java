@@ -28,7 +28,7 @@ package org.squashtest.plugin.api.report.form;
 public class DropdownList extends OptionsGroup {
 
 	/**
-	 * @see org.squashtest.plugin.api.report.form.FormInput#getType()
+	 * @see org.squashtest.plugin.api.report.form.Input#getType()
 	 */
 	@Override
 	public InputType getType() {

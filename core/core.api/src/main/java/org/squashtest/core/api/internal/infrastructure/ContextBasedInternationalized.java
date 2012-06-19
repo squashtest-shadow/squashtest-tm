@@ -54,11 +54,11 @@ public class ContextBasedInternationalized implements MessageSourceAware {
 	}
 
 	protected final String getMessage(String code) throws NoSuchMessageException {
-		return messageSource.getMessage(code, null, currentLocale());
+		return messageSource.getMessage(code, null, code, currentLocale());
 	}
 
 	protected final String getMessage(String code, Object[] args) throws NoSuchMessageException {
-		return messageSource.getMessage(code, args, currentLocale());
+		return messageSource.getMessage(code, args, code, currentLocale());
 	}
 
 	/**

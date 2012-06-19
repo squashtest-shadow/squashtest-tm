@@ -27,7 +27,7 @@ import org.squashtest.core.api.internal.infrastructure.Labelled;
  * @author Gregory
  * 
  */
-abstract class BasicInput extends Labelled implements FormInput {
+abstract class BasicInput extends Labelled implements Input {
 	private String name;
 
 	/**

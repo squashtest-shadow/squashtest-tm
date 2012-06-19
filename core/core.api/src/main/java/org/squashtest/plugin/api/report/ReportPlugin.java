@@ -28,19 +28,19 @@ package org.squashtest.plugin.api.report;
  *
  */
 public  class ReportPlugin {
-	private ReportDefinition report;
+	private BasicReport report;
 
 	/**
 	 * @param report the report to set
 	 */
-	public void setReport(ReportDefinition report) {
+	public void setReport(BasicReport report) {
 		this.report = report;
 	}
 
 	/**
 	 * @return the report
 	 */
-	public ReportDefinition getReport() {
+	public BasicReport getReport() {
 		return report;
 	}
 }

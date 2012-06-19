@@ -59,9 +59,7 @@
 	 * folders, libraries -> force 'inside'.
 	 * 
 	 */
-
 	var overridenM;
-
 
 	$.jstree._fn.dnd_show = function (){
 				
@@ -362,6 +360,21 @@
 				}
 			},
 			
+			get_selected_ids : function (restype) {
+				var self = this;
+				var nodes = self.get_selected();
+				
+				var filtered = $.filter(nodes, function () {
+					return $(this).attr('restype') == restype;
+				});
+				
+				var ids = $.map(nodes, function () {
+					$(this).attr('resid');
+				});
+				
+				return ids;
+			},
+
 			allowedOperations : function (){
 				var selectedNodes = this.get_selected();
 				var operations = "import-excel ";		// one can always import
@@ -983,9 +996,6 @@ function moveNode(data, url){
  * ******************************* leaf URL management code
  * *************************************
  */ 
-
-
-
 function unselectDescendantsAndOtherProjectsSelections(liNode, tree){
 	var previouslySelected = tree.get_selected();
 	if (previouslySelected.length > 0) {

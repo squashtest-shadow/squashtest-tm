@@ -53,74 +53,10 @@
 	</c:if>
 	
 	function initLinkableTree(jsonData) {
-		
-		//default icons
-		var tree_icons = {
-			drive_icon : "${ pageContext.servletContext.contextPath }/images/root.png",
-			folder_icon : "${ pageContext.servletContext.contextPath }/images/Icon_Tree_Folder.png",
-			file_icon : "${ pageContext.servletContext.contextPath }/images/Icon_Tree_${ su:hyphenedToCamelCase(workspaceType) }.png",
-			resource_icon : "${ pageContext.servletContext.contextPath }/images/Icon_Tree_Iteration.png",
-			view_icon : "${ pageContext.servletContext.contextPath }/images/Icon_Tree_TestSuite.png"				
-		};
-		
-		$("#${ id }")
-		.jstree({ 
-				"plugins" : ["json_data", "sort", "themes", "types", "cookies", "ui", "squash", "treepicker"],
-				"json_data" : { 
-					"data" : jsonData, 
-					"ajax" : {
-						"url": function (node) {
-								if ((node.is(':library')) || (node.is(':folder'))){
-									return node.treeNode().getContentUrl();
-								}else{
-									return null;
-								}
-							}, 
-						"data": { component : 'jstree' }
-					}
-				},
-				"types" : {
-					"max_depth" : -2, // unlimited without check
-					"max_children" : -2, // unlimited w/o check
-					"valid_children" : [ "drive" ],
-					"types" : {
-						"file" : {
-							"valid_children" : "none",
-							"icon" : {
-								"image" : tree_icons.file_icon
-							}
-						},
-						"folder" : {
-							"valid_children" : [ "file", "folder" ],
-							"icon" : {
-								"image" : tree_icons.folder_icon
-							}
-						},
-						"drive" : {
-							"valid_children" : [ "file", "folder" ],
-							"icon" : {
-								"image" : tree_icons.drive_icon
-							}
-						}
-					}
-				},
-				"core" : { 
-					"initially_open" : [ "${ selectedNode.attr['id'] }" ], 
-					"animation" : 0
-				}, 
-				"ui": {
-					select_multiple_modifier: "ctrl"
-				},				
-				"themes" : {
-					"theme" : "squashtest",
-					"dots" : true,
-					"icons" : true,
-					"url" : "${ pageContext.servletContext.contextPath }/styles/squashtree.css"					
-				},
-				"squash" : {
-					rootUrl : "${ pageContext.servletContext.contextPath }"
-				}			
-				
-			});
+		$("#${ id }")linkableTree({ 
+			contextPath = "${ pageContext.servletContext.contextPath }",
+			jsonData: jsonData, 
+			workspaceType: "${ workspaceType }"
+		});
 	};
 </script>

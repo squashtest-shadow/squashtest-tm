@@ -14,6 +14,7 @@
 	<description>This module builds standard Squash TM plugins</description>
 
 	<modules>
-		<module>plugins</module>
+		<module>plugin.report.std</module>
+		<module>plugin.report.test</module>
 	</modules>
 </project>

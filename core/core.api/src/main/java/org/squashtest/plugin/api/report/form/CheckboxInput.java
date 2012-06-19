@@ -25,9 +25,9 @@ package org.squashtest.plugin.api.report.form;
  * @author Gregory
  * 
  */
-public class CheckboxInput extends OptionInput implements FormInput {
+public class CheckboxInput extends BasicInput {
 	/**
-	 * @see org.squashtest.plugin.api.report.form.FormInput#getType()
+	 * @see org.squashtest.plugin.api.report.form.Input#getType()
 	 */
 	@Override
 	public InputType getType() {

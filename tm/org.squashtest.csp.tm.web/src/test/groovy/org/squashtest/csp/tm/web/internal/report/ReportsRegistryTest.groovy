@@ -22,7 +22,7 @@
 package org.squashtest.csp.tm.web.internal.report
 
 
-import org.squashtest.plugin.api.report.ReportDefinition;
+import org.squashtest.plugin.api.report.BasicReport;
 import org.squashtest.plugin.api.report.ReportPlugin;
 import org.squashtest.plugin.api.report.StandardReportCategory;
 
@@ -39,7 +39,7 @@ class ReportsRegistryTest extends Specification {
 
 	def "should register category"() {
 		given:
-		ReportDefinition report = new ReportDefinition()
+		BasicReport report = new BasicReport()
 		report.category = StandardReportCategory.PREPARATION_PHASE
 
 		ReportPlugin plugin = new ReportPlugin()
@@ -54,7 +54,7 @@ class ReportsRegistryTest extends Specification {
 
 	def "should register report"() {
 		given:
-		ReportDefinition report = new ReportDefinition()
+		BasicReport report = new BasicReport()
 		report.labelKey = 'foo'
 		report.category = StandardReportCategory.PREPARATION_PHASE
 
@@ -65,12 +65,12 @@ class ReportsRegistryTest extends Specification {
 		registry.pluginRegistered plugin, ['osgi.service.blueprint.compname' : 'bar']
 
 		then:
-		registry.getReports(PREPARATION_PHASE)*.labelKey == ['foo']
+		registry.findReports(PREPARATION_PHASE)*.labelKey == ['foo']
 	}
 
 	def "should unregister category"() {
 		given:
-		ReportDefinition report = new ReportDefinition()
+		BasicReport report = new BasicReport()
 		report.category = StandardReportCategory.PREPARATION_PHASE
 
 		ReportPlugin plugin = new ReportPlugin()
@@ -86,7 +86,7 @@ class ReportsRegistryTest extends Specification {
 	
 	def "should decorate reports with identifier"() {
 		given:
-		ReportDefinition report = new ReportDefinition()
+		BasicReport report = new BasicReport()
 		report.labelKey = 'foo'
 		report.category = StandardReportCategory.PREPARATION_PHASE
 
@@ -97,7 +97,26 @@ class ReportsRegistryTest extends Specification {
 		registry.pluginRegistered plugin, ['osgi.service.blueprint.compname' : 'bar']
 
 		then:
-		registry.getReports(PREPARATION_PHASE)*.namespace == ['bar']
-		registry.getReports(PREPARATION_PHASE)*.index == [0]
+		registry.findReports(PREPARATION_PHASE)*.namespace == ['bar']
+		registry.findReports(PREPARATION_PHASE)*.index == [0]
+	}
+	def "should find report from its namespaxce and index"() {
+		given:
+		BasicReport report = new BasicReport()
+		report.labelKey = 'foo'
+		report.category = StandardReportCategory.PREPARATION_PHASE
+
+		and:
+		ReportPlugin plugin = new ReportPlugin()
+		plugin.report = report
+
+		and:
+		registry.pluginRegistered plugin, ['osgi.service.blueprint.compname' : 'bar']
+
+		when:
+		def found = registry.findReport('bar', 0)
+
+		then:
+		found.labelKey == 'foo'
 	}
 }

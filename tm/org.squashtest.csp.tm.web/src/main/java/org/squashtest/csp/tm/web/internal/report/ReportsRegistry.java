@@ -25,16 +25,18 @@ import java.util.Collection;
 import java.util.Collections;
 import java.util.Map;
 import java.util.Set;
+import java.util.concurrent.ConcurrentHashMap;
 
 import org.apache.commons.collections.map.MultiValueMap;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.squashtest.plugin.api.report.ReportDefinition;
+import org.squashtest.plugin.api.report.Report;
+import org.squashtest.plugin.api.report.BasicReport;
 import org.squashtest.plugin.api.report.ReportPlugin;
 import org.squashtest.plugin.api.report.StandardReportCategory;
 
 /**
- * This class registers / unregisters {@link ReportDefinition} and their {@link StandardReportCategory} when
+ * This class registers / unregisters {@link BasicReport} and their {@link StandardReportCategory} when
  * {@link ReportPlugin} services are started / stopped.
  * 
  * @author Gregory Fouquet
@@ -46,7 +48,8 @@ public class ReportsRegistry {
 	
 	private static final String NAMESPACE_KEY = "osgi.service.blueprint.compname";
 
-	private MultiValueMap reports = new MultiValueMap();
+	private final MultiValueMap reportsByCategory = new MultiValueMap();
+	private final Map<ReportIdentifier, IdentifiedReportDecorator> reportByIdentifier = new ConcurrentHashMap<ReportIdentifier, IdentifiedReportDecorator>();
 
 	/**
 	 * OSGi context should be configured to call this method when a {@link ReportPlugin} service is started.
@@ -54,19 +57,20 @@ public class ReportsRegistry {
 	 * @param properties
 	 */
 	public void pluginRegistered(ReportPlugin plugin, Map<?, ?> properties) {
-		ReportDefinition report = plugin.getReport();
+		BasicReport report = plugin.getReport();
 		StandardReportCategory category = report.getCategory();
 		IdentifiedReportDecorator identifiedReport = createIdentifiedReport(report, properties);
 
-		synchronized (reports) {
-			reports.put(category, identifiedReport);
+		synchronized (reportsByCategory) {
+			reportsByCategory.put(category, identifiedReport);
+			reportByIdentifier.put(identifiedReport.getIdentifier(), identifiedReport);
 		}
 
 		LOGGER.info("Registered report [{}] under Category [{}]", report, category.getI18nKey());
 		LOGGER.debug("Report plugin registered along with properties [{}]", properties);
 	}
 
-	private IdentifiedReportDecorator createIdentifiedReport(ReportDefinition report, Map<?, ?> properties) {
+	private IdentifiedReportDecorator createIdentifiedReport(BasicReport report, Map<?, ?> properties) {
 		String pluginNamespace = (String) properties.get(NAMESPACE_KEY);
 		IdentifiedReportDecorator identifiedReport = new IdentifiedReportDecorator(report, pluginNamespace, 0);
 		return identifiedReport;
@@ -78,12 +82,13 @@ public class ReportsRegistry {
 	 * @param properties
 	 */
 	public void pluginUnregistered(ReportPlugin plugin, Map<?, ?> properties) {
-		ReportDefinition report = plugin.getReport();
+		BasicReport report = plugin.getReport();
 		StandardReportCategory category = report.getCategory();
 		IdentifiedReportDecorator identifiedReport = createIdentifiedReport(report, properties);
 
-		synchronized (reports) {
-			reports.remove(category, identifiedReport);
+		synchronized (reportsByCategory) {
+			reportsByCategory.remove(category, identifiedReport);
+			reportByIdentifier.remove(identifiedReport.getIdentifier());
 		}
 
 		LOGGER.info("Unregistered report [{}] from Category [{}]", report, category.getI18nKey());
@@ -92,17 +97,26 @@ public class ReportsRegistry {
 
 	@SuppressWarnings("unchecked")
 	public Set<StandardReportCategory> getCategories() {
-		return reports.keySet();
+		return reportsByCategory.keySet();
 	}
 
 	@SuppressWarnings("unchecked")
-	public Collection<IdentifiedReportDecorator> getReports(StandardReportCategory category) {
-		Collection<IdentifiedReportDecorator> res = (Collection<IdentifiedReportDecorator>) reports.get(category);
+	public Collection<IdentifiedReportDecorator> findReports(StandardReportCategory category) {
+		Collection<IdentifiedReportDecorator> res = (Collection<IdentifiedReportDecorator>) reportsByCategory.get(category);
 		return res == null ? Collections.<IdentifiedReportDecorator> emptyList() : res;
 	}
 	
 	@SuppressWarnings("unchecked")
-	public Map<StandardReportCategory, Collection<ReportDefinition>> getReportsByCategory() {
-		return reports;
+	public Map<StandardReportCategory, Collection<BasicReport>> getReportsByCategory() {
+		return reportsByCategory;
+	}
+
+	/**
+	 * @param namespace
+	 * @param index
+	 * @return
+	 */
+	public Report findReport(String namespace, int index) {
+		return reportByIdentifier.get(new ReportIdentifier(namespace, index));
 	}
 }

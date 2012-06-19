@@ -27,23 +27,29 @@ var squashtm = squashtm || {};
  * jquery ui
  * jquery.jeditable.js
  * jquery.jeditable.datepicker.js
+ * jquery.squashtm.plugin.js
  * 
  * @author Gregory Fouquet
  */
 squashtm.report = (function ($) {
+	var config = {
+		contextPath: ""
+	};
 	var formState = {};
+	var selectedTab;
 
-	function onSingleOptionChanged() {
+	function onSingleCheckboxChanged() {
 		var option = this;
 		var name = option.name;
 
 		formState[name] = {
 			value : option.value,
-			selected : option.checked
+			selected : option.checked, 
+			type: 'CHECKBOX'
 		};
 	}
 
-	function onGroupedOptionChanged() {
+	function onGroupedCheckboxesChanged() {
 		var option = this;
 		var name = option.name;
 		var value = option.value;
@@ -51,8 +57,8 @@ squashtm.report = (function ($) {
 		var groupState = formState[name] || [];
 		formState[name] = groupState;
 
-		var res = groupState.filter(function (item) {
-			return item.value === value;
+		var res = $(groupState).filter(function (index) {
+			return this.value === value;
 		});
 
 		if (res[0]) {
@@ -60,59 +66,58 @@ squashtm.report = (function ($) {
 		} else {
 			groupState.push({
 				value : value,
-				selected : option.checked
+				selected : option.checked,
+				type: 'CHECKBOXES_GROUP'
 			});
 		}
 	}
+	
+	function onGroupedRadiosChanged () {
+		var option = this;
+		var name = option.name;
+		var value = option.value;
+
+		var res = $(formState[name]).each(function () {
+			if (this.value === value) {
+				this.selected = option.checked
+			} else {
+				this.selected = false
+			}
+		});
+	}
 
 	function onListItemSelected() {
-		var dropdown = this;
+		var dropdown = $(this);
+		var options = dropdown.find("option");
 		
-		var state = $(dropdown.options).map(function (item) {
-			return { value: item.value, selected: item.selected  };
+		var state = $.map(options, function (item, index) {
+			return { value: item.value, selected: item.selected, type: 'DROPDOWN_LIST'  };
 		}); 
 		
-		formState[dropdown.name] = state;
+		formState[dropdown.attr('name')] = state;
 	}
 	
 	function onTextBlurred() {
-		formState[this.name] = this.value;
+		formState[this.name] = {value: this.value, type: 'TEXT'};
 	}
 
 	function onDatepickerChanged(value) {
-		formState[this.id] = value;
-		console.log(this.id);
-		console.log(formState[this.id]);
+		formState[this.id] = {value: value, type: 'DATE'};
 	}
-
-	function init() {
-		var panel = $("#report-criteria-panel");
-		var checkboxes = panel.find("input:checkbox");
-		
-		var groupedCheckboxes = checkboxes.filter(function (item) {
-			return $(item).data('grouped');
-		});
-		groupedCheckboxes.change(onGroupedOptionChanged);
-		groupedCheckboxes.change();
-		
-		var radios = panel.find("input:radio");
-		radios.change(onGroupedOptionChanged);
-		radios.change();
-		
-		var singleCheckboxes = checkboxes.filter(function (item) {
-			return !$(item).data('grouped');
-		});
-		singleCheckboxes.change(onSingleOptionChanged);
-		singleCheckboxes.change();
-		
+	
+	function initDropdowns(panel) {
 		var dropdowns = panel.find('select');
 		dropdowns.change(onListItemSelected);
 		dropdowns.change();
-		
+	}
+	
+	function initTexts(panel) {
 		var texts = panel.find("input:text");
 		texts.blur(onTextBlurred);
-		texts.blur();
-		
+		texts.blur();		
+	}
+	
+	function initDatepickers(panel) {
 		var datepickers = panel.find(".date-crit");
 		datepickers.editable(function (value, settings) {
 			var self = this;
@@ -124,11 +129,151 @@ squashtm.report = (function ($) {
 	        tooltip   : "Click to edit..."
 		});
 		// initialiser la date !
-		
-
-		$('#generate').click(function () {
-			console.log(formState);
+	}
+	
+	function initRadios(panel) {
+		var radios = panel.find("input:radio");
+		radios.change(onGroupedRadiosChanged)
+		.each(function () {
+			var option = this;
+			var name = option.name;
+			
+			formState[name] = formState[name] || [];
+			formState[name].push({
+				name: name,
+				value : option.value,
+				selected : option.checked,
+				type: 'RADIO_BUTTONS_GROUP'
+			});
 		});
+	}
+	
+	function initCheckboxes(panel) {
+		var checkboxes = panel.find("input:checkbox");
+		
+		var groupedCheckboxes = checkboxes.filter(function (index) {
+			var item = $(this);
+			return item.data('grouped');
+		});
+		groupedCheckboxes.change(onGroupedCheckboxesChanged);
+		groupedCheckboxes.change();
+		
+		var singleCheckboxes = checkboxes.filter(function (index) {
+			var item = $(this);
+			return !$(item).data('grouped');
+		});
+		singleCheckboxes.change(onSingleCheckboxChanged);
+		singleCheckboxes.change();
+	}
+	
+	function generateView() {
+		var tabPanel = $("#view-tabed-panel");
+		if (!selectedTab) {
+			tabPanel.tabs('select', 0);			
+		}
+		$("#view-tabed-panel:hidden").show('blind', {}, 500);
+		console.log(formState)
+	}
+	
+	function buildViewUrl(index, format) {
+		return 'http://' + document.location.host + config.reportUrl + "/views/" + index + "/formats/" + format;
+	}
+	
+	function selectViewTab(event, ui) {
+		selectedTab = ui;
+		var tabs = $(this);
+		tabs.find(".view-format-cmb").addClass('not-displayed');
+		tabs.find("#view-format-cmb-" + ui.index).removeClass('not-displayed');
+		
+		var url = buildViewUrl(ui.index, "html");	
+		console.log(url)
+		$.ajax({
+			type: 'post', 
+			url: url, 
+			data: JSON.stringify(formState),  
+			contentType: "application/json"
+		}).done(function (html) {
+			ui.panel.html(html);
+		});		
+	}
+	
+	function doExport() {
+		console.log("todo")
+		var viewIndex = selectedTab.index;
+		var format = $("#view-format-cmb-" + viewIndex).val();
+
+		var url = buildViewUrl(ui.index, "html");	
+		console.log(url)
+		document.location.href = url;
+	}
+ 
+	function initViewTabs() {
+		$("#view-tabed-panel").tabs({
+			selected: -1,
+			select: selectViewTab
+		});
+	}
+
+	function init(settings) {
+		var panel = $("#report-criteria-panel");
+
+		initCheckboxes(panel);
+		initRadios(panel);
+		initDropdowns(panel);
+		initTexts(panel);
+		initDatepickers(panel);
+		
+		panel.find('.nodes-crit-open').click(function () {
+			console.log($(this));
+			var dialogId = $(this).data('id-opened');
+			console.log(dialogId);
+			$("#" + dialogId).dialog('open');
+		});
+		
+		config = $.extend(config, settings);
+		treeSettings = $.extend({}, settings); 
+		treeSettings.workspaceType = "Campaign";
+		treeSettings.jsonData = [
+		         				{
+		        				    "data" : "A node",
+		        				    "metadata" : { id : 23 },
+		        				    "children" : [ "Child 1", "A Child 2" ]
+		        				},
+		        				{
+		        				    "attr" : { "id" : "li.node.id1" },
+		        				    "data" : {
+		        				        "title" : "Long format demo",
+		        				        "attr" : { "href" : "#" }
+		        				    }
+		        				}
+		        				];
+		
+		panel.find('.nodes-crit').linkableTree(treeSettings);
+					
+		var treeDialogs = panel.find(".nodes-crit-container");
+		treeDialogs.createPopup({
+			buttons: [{
+				text: /*[[ #{dialog.button.confirm.label} ]]*/ "Ok", 
+				click: function () {
+					var self = $(this);
+					self.dialog("close");		
+					var tree = self.find('.nodes-crit');
+					var ids = tree.jstree('get_selected_ids', 'campaigns');
+					var name = tree.attr('id');
+					formState[name] = ids;
+				}
+			}, {
+				text: /*[[ #{dialog.button.cancel.label} ]]*/ "Cancel", 
+				click: function () {
+					$(this).dialog('close');
+				}
+			}]
+		});
+		
+		initViewTabs();
+
+		$('#generate-view').click(generateView);
+		$('#export').click(doExport);
 	}
 
 	return {

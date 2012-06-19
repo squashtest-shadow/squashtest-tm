@@ -22,7 +22,7 @@
 package org.squashtest.plugin.api.report.form;
 
 /**
- * @author Gregory 
+ * @author Gregory Fouquet
  *
  */
 public enum InputType {
@@ -31,5 +31,6 @@ public enum InputType {
 	DROPDOWN_LIST, 
 	RADIO_BUTTONS_GROUP, 
 	CHECKBOX,
-	CHECKBOXES_GROUP
+	CHECKBOXES_GROUP, 
+	NODES
 }

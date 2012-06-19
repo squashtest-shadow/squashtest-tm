@@ -19,16 +19,42 @@
  *     along with this software.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-package org.squashtest.plugin.api.report.form;
+package org.squashtest.csp.tm.web.internal.report.criteria;
+
+import org.squashtest.plugin.api.report.criteria.Criteria;
+import org.squashtest.plugin.api.report.form.InputType;
 
 /**
- * @author Gregory Fouquet
+ * @author Gregory
  * 
  */
-public interface FormInput {
-	String getName();
+public final class EmptyCriteria extends CriteriaBase<Object> implements Criteria<Object> {
+	public static final Criteria<Object> createEmptyCriteria(String name, InputType sourceInput) {
+		return new EmptyCriteria(name, sourceInput);
+	}
 
-	String getLabelKey();
+	/**
+	 * @param name
+	 * @param sourceInput
+	 */
+	protected EmptyCriteria(String name, InputType sourceInput) {
+		super(name, sourceInput);
+	}
 
-	InputType getType();
+	/**
+	 * @see org.squashtest.plugin.api.report.criteria.Criteria#getValue()
+	 */
+	@Override
+	public Object getValue() {
+		return Criteria.NO_VALUE;
+	}
+
+	/**
+	 * @see org.squashtest.plugin.api.report.criteria.Criteria#hasValue()
+	 */
+	@Override
+	public boolean hasValue() {
+		return false;
+	}
+
 }

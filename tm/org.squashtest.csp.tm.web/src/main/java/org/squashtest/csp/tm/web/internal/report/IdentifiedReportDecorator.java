@@ -25,7 +25,7 @@ import org.squashtest.plugin.api.report.Report;
 import org.squashtest.plugin.api.report.ReportView;
 import org.squashtest.plugin.api.report.StandardReportCategory;
 import org.squashtest.plugin.api.report.StandardReportType;
-import org.squashtest.plugin.api.report.form.FormInput;
+import org.squashtest.plugin.api.report.form.Input;
 
 /**
  * @author Gregory Fouquet
@@ -38,7 +38,7 @@ public class IdentifiedReportDecorator implements Report {
 	/**
 	 * @param report
 	 */
-	/*package*/IdentifiedReportDecorator(Report report, String namespace, int index) {
+	/* package */IdentifiedReportDecorator(Report report, String namespace, int index) {
 		super();
 		this.report = report;
 		identifier = new ReportIdentifier(namespace, index);
@@ -88,7 +88,7 @@ public class IdentifiedReportDecorator implements Report {
 	 * @return
 	 * @see org.squashtest.plugin.api.report.Report#getForm()
 	 */
-	public FormInput[] getForm() {
+	public Input[] getForm() {
 		return report.getForm();
 	}
 
