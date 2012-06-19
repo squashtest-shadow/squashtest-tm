@@ -167,7 +167,13 @@
 			<version>${project.version}</version>
 			<scope>test</scope>
 		</dependency>
-		<dependency>
+<!-- 		<dependency>
+			<groupId>${project.groupId}</groupId>
+			<artifactId>plugin.report.std</artifactId>
+			<version>${project.version}</version>
+			<scope>test</scope>
+		</dependency>
+ -->		<dependency>
 			<groupId>${project.groupId}</groupId>
 			<artifactId>org.squashtest.csp.tools.unittest</artifactId>
 			<version>${project.version}</version>
@@ -402,6 +408,11 @@
 			<artifactId>com.springsource.javax.inject</artifactId>
 		</dependency>
 		<!-- ====== /JSE DI API ====== -->
+		<!-- <dependency>
+			<groupId>javax.servlet</groupId>
+			<artifactId>com.springsource.javax.servlet</artifactId>
+			<scope>test</scope>
+		</dependency> -->
 	</dependencies>
 
 	<profiles>

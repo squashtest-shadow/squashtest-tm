@@ -30,5 +30,6 @@
 	
 	<context:component-scan base-package="org.squashtest.csp.tm.internal.repository" />
 	<context:component-scan base-package="org.squashtest.csp.core.internal.api" />
-	<bean class="org.squashtest.csp.core.service.security.StubUserContextService" />
+<!-- 	<context:component-scan base-package="org.squashtest.tm.internal.repository" />
+ -->	<bean class="org.squashtest.csp.core.service.security.StubUserContextService" />
 </beans>

@@ -28,6 +28,7 @@ import org.springframework.test.context.transaction.TransactionConfiguration;
 import org.springframework.transaction.annotation.Isolation;
 import org.springframework.transaction.annotation.Transactional;
 import org.squashtest.csp.tm.internal.repository.hibernate.DbunitDaoSpecification;
+import org.squashtest.tm.api.repository.SqlQueryRunner;
 import org.unitils.dbunit.annotation.DataSet;
 
 import spock.lang.Specification;
