@@ -21,9 +21,6 @@
 package org.squashtest.csp.tm.web.internal.controller.report;
 
 import java.util.Locale;
-import java.util.Map;
-import java.util.Map.Entry;
-import java.util.Set;
 
 import javax.inject.Inject;
 import javax.servlet.http.HttpServletRequest;
@@ -33,7 +30,6 @@ import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
-import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.servlet.ModelAndView;
 import org.squashtest.csp.tm.web.internal.report.ReportsRegistry;
 
@@ -53,11 +49,7 @@ public class ReportWorkspaceController {
 
 	@RequestMapping(value = "/report", method = RequestMethod.GET, params = { "report" })
 	public ModelAndView showReport(@RequestParam("report") Integer reportId) {
-
-		// Report report = reportService.findReportById(reportId);
-
 		ModelAndView mav = new ModelAndView("fragment/reports/edit-report");
-		// mav.addObject("report", report);
 
 		return mav;
 
@@ -66,36 +58,32 @@ public class ReportWorkspaceController {
 	// debug page
 	@RequestMapping(value = "/report/info", method = RequestMethod.GET, params = { "report" })
 	public ModelAndView showReportInfo(@RequestParam("report") Integer reportId) {
-
-		// Report report = reportService.findReportById(reportId);
-
 		ModelAndView mav = new ModelAndView("page/report-libraries/show-report");
-		// mav.addObject("report", report);
 
 		return mav;
 
 	}
 
-	/*
-	 * will return an array containing the supported formats when exporting a given report for a given view
-	 */
-
-	@RequestMapping(value = "/report/export-options")
-	public @ResponseBody
-	String[] getExportFormats(@RequestParam("report") Integer reportId,
-			@RequestParam(value = "view", required = false) Integer viewId) {
-		// Report report = reportService.findReportById(reportId);
-
-		String formats[];
-		// if (viewId != null) {
-		// formats = report.getViewCatalog().findView(viewId).getFormats();
-		// } else {
-		// formats = report.getViewCatalog().getDefaultView().getFormats();
-		// }
-
-		// return formats;
-		return null;
-	}
+//	/*
+//	 * will return an array containing the supported formats when exporting a given report for a given view
+//	 */
+//
+//	@RequestMapping(value = "/report/export-options")
+//	public @ResponseBody
+//	String[] getExportFormats(@RequestParam("report") Integer reportId,
+//			@RequestParam(value = "view", required = false) Integer viewId) {
+//		// Report report = reportService.findReportById(reportId);
+//
+//		String formats[];
+//		// if (viewId != null) {
+//		// formats = report.getViewCatalog().findView(viewId).getFormats();
+//		// } else {
+//		// formats = report.getViewCatalog().getDefaultView().getFormats();
+//		// }
+//
+//		// return formats;
+//		return null;
+//	}
 
 	/*
 	 * 

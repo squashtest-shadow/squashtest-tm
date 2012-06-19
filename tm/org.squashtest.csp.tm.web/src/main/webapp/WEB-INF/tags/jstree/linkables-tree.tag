@@ -53,8 +53,8 @@
 	</c:if>
 	
 	function initLinkableTree(jsonData) {
-		$("#${ id }")linkableTree({ 
-			contextPath = "${ pageContext.servletContext.contextPath }",
+		$("#${ id }").linkableTree({ 
+			contextPath: "${ pageContext.servletContext.contextPath }",
 			jsonData: jsonData, 
 			workspaceType: "${ workspaceType }"
 		});

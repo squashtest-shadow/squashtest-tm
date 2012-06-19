@@ -47,7 +47,7 @@ class ReportsRegistryTest extends Specification {
 		plugin.report = report
 
 		when:
-		registry.pluginRegistered plugin, ['osgi.service.blueprint.compname' : 'bar']
+		registry.registerReportPlugin plugin, ['osgi.service.blueprint.compname' : 'bar']
 
 		then:
 		registry.categories == new HashSet([PREPARATION_PHASE])
@@ -63,7 +63,7 @@ class ReportsRegistryTest extends Specification {
 		plugin.report = report
 
 		when:
-		registry.pluginRegistered plugin, ['osgi.service.blueprint.compname' : 'bar']
+		registry.registerReportPlugin plugin, ['osgi.service.blueprint.compname' : 'bar']
 
 		then:
 		registry.findReports(PREPARATION_PHASE)*.labelKey == ['foo']
@@ -85,7 +85,7 @@ class ReportsRegistryTest extends Specification {
 		plugin.reports = [report, otherReport]
 
 		when:
-		registry.pluginRegistered plugin, ['osgi.service.blueprint.compname' : 'bar']
+		registry.registerReportPlugin plugin, ['osgi.service.blueprint.compname' : 'bar']
 
 		then:
 		registry.findReports(PREPARATION_PHASE)*.labelKey == ['foo', 'foofoo']
@@ -100,8 +100,8 @@ class ReportsRegistryTest extends Specification {
 		plugin.report = report
 
 		when:
-		registry.pluginRegistered plugin, ['osgi.service.blueprint.compname' : 'bar']
-		registry.pluginUnregistered plugin, ['osgi.service.blueprint.compname' : 'bar']
+		registry.registerReportPlugin plugin, ['osgi.service.blueprint.compname' : 'bar']
+		registry.unregisterReportPlugin plugin, ['osgi.service.blueprint.compname' : 'bar']
 
 		then:
 		registry.categories.empty
@@ -117,7 +117,7 @@ class ReportsRegistryTest extends Specification {
 		plugin.report = report
 
 		when:
-		registry.pluginRegistered plugin, ['osgi.service.blueprint.compname' : 'bar']
+		registry.registerReportPlugin plugin, ['osgi.service.blueprint.compname' : 'bar']
 
 		then:
 		registry.findReports(PREPARATION_PHASE)*.namespace == ['bar']
@@ -134,7 +134,7 @@ class ReportsRegistryTest extends Specification {
 		plugin.report = report
 
 		and:
-		registry.pluginRegistered plugin, ['osgi.service.blueprint.compname' : 'bar']
+		registry.registerReportPlugin plugin, ['osgi.service.blueprint.compname' : 'bar']
 
 		when:
 		def found = registry.findReport('bar', 0)

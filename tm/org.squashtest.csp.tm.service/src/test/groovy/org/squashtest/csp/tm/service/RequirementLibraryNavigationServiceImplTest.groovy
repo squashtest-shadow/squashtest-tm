@@ -22,6 +22,7 @@ package org.squashtest.csp.tm.service
 
 import org.squashtest.csp.core.service.security.PermissionEvaluationService 
 import org.squashtest.csp.tm.domain.DuplicateNameException;
+import org.squashtest.csp.tm.domain.projectfilter.ProjectFilter;
 import org.squashtest.csp.tm.domain.requirement.NewRequirementVersionDto;
 import org.squashtest.csp.tm.domain.requirement.Requirement;
 import org.squashtest.csp.tm.domain.requirement.RequirementFolder;
@@ -39,7 +40,8 @@ class RequirementLibraryNavigationServiceImplTest extends Specification {
 	RequirementLibraryDao requirementLibraryDao = Mock()
 	RequirementFolderDao requirementFolderDao = Mock()
 	RequirementDao requirementDao = Mock()
-	PermissionEvaluationService permissionService = Mock();
+	PermissionEvaluationService permissionService = Mock()
+	ProjectFilterModificationService projectFilterModificationService = Mock()
 
 	def setup() {
 		NewRequirementVersionDto.metaClass.sameAs = { 
@@ -53,6 +55,7 @@ class RequirementLibraryNavigationServiceImplTest extends Specification {
 		service.requirementFolderDao = requirementFolderDao
 		service.requirementDao = requirementDao
 		service.permissionService = permissionService;
+		service.projectFilterModificationService = projectFilterModificationService
 		permissionService.hasRoleOrPermissionOnObject(_, _, _) >> true
 	}
 
@@ -165,4 +168,21 @@ class RequirementLibraryNavigationServiceImplTest extends Specification {
 		then:
 		found == l
 	}
+	
+	def "should find libraries of linkable requirements"() {
+		given:
+		RequirementLibrary lib = Mock()
+		ProjectFilter pf = new ProjectFilter()
+		pf.setActivated(false)
+		projectFilterModificationService.findProjectFilterByUserLogin() >> pf
+		requirementLibraryDao.findAll() >> [lib]
+
+		when:
+		def res =
+		service.findLinkableRequirementLibraries()
+
+		then:
+		res == [lib]
+	}
+
 }

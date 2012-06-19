@@ -29,24 +29,16 @@ import javax.inject.Inject;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.springframework.beans.factory.annotation.Qualifier;
-import org.springframework.security.access.prepost.PostFilter;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.squashtest.csp.tm.domain.CyclicStepCallException;
-import org.squashtest.csp.tm.domain.projectfilter.ProjectFilter;
 import org.squashtest.csp.tm.domain.testcase.CallTestStep;
 import org.squashtest.csp.tm.domain.testcase.TestCase;
-import org.squashtest.csp.tm.domain.testcase.TestCaseLibrary;
-import org.squashtest.csp.tm.domain.testcase.TestCaseLibraryNode;
 import org.squashtest.csp.tm.infrastructure.filter.CollectionSorting;
-import org.squashtest.csp.tm.internal.infrastructure.strategy.LibrarySelectionStrategy;
 import org.squashtest.csp.tm.internal.repository.TestCaseDao;
-import org.squashtest.csp.tm.internal.repository.TestCaseLibraryDao;
 import org.squashtest.csp.tm.internal.repository.TestStepDao;
 import org.squashtest.csp.tm.service.CallStepManagerService;
-import org.squashtest.csp.tm.service.ProjectFilterModificationService;
 import org.squashtest.csp.tm.service.TestCaseImportanceManagerService;
 
 @Service("squashtest.tm.service.CallStepManagerService")
@@ -61,16 +53,7 @@ public class CallStepManagerServiceImpl implements CallStepManagerService, TestC
 	private TestStepDao testStepDao;
 
 	@Inject
-	private TestCaseLibraryDao testCaseLibraryDao;
-
-	@Inject
-	private ProjectFilterModificationService projectFilterModificationService;
-
-	@Inject
 	private TestCaseImportanceManagerService testCaseImportanceManagerService;
-	@Inject
-	@Qualifier("squashtest.tm.service.TestCaseLibrarySelectionStrategy")
-	private LibrarySelectionStrategy<TestCaseLibrary, TestCaseLibraryNode> libraryStrategy;
 
 	@Override
 	@PreAuthorize("(hasPermission(#parentTestCaseId, 'org.squashtest.csp.tm.domain.testcase.TestCase' , 'WRITE') "
@@ -108,14 +91,6 @@ public class CallStepManagerServiceImpl implements CallStepManagerService, TestC
 		return testCaseDao.findById(testCaseId);
 	}
 
-	@Override
-	@PostFilter("hasPermission(filterObject, 'READ') or hasRole('ROLE_ADMIN')")
-	public List<TestCaseLibrary> findLinkableTestCaseLibraries() {
-		ProjectFilter pf = projectFilterModificationService.findProjectFilterByUserLogin();
-		return pf.getActivated() ? libraryStrategy.getSpecificLibraries(pf.getProjects()) : testCaseLibraryDao
-				.findAll();
-
-	}
 	@Override
 	@PreAuthorize("hasPermission(#rootTcId, 'org.squashtest.csp.tm.domain.testcase.TestCase' , 'READ')"
 			+ " or hasRole('ROLE_ADMIN')	")

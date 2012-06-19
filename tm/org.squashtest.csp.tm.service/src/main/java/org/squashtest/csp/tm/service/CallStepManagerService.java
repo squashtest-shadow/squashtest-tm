@@ -25,23 +25,12 @@ import java.util.Set;
 
 import org.squashtest.csp.tm.domain.CyclicStepCallException;
 import org.squashtest.csp.tm.domain.testcase.TestCase;
-import org.squashtest.csp.tm.domain.testcase.TestCaseLibrary;
 import org.squashtest.csp.tm.infrastructure.filter.CollectionSorting;
 
 public interface CallStepManagerService {
 
 	TestCase findTestCase(long testCaseId);
 	
-	/**
-	 * Returns the collection of {@link TestCaseLibrary}s which TestCases can be linked by a {@link TestCase} via 
-	 * a CallTestStep
-	 * 
-	 * @return
-	 */
-	List<TestCaseLibrary> findLinkableTestCaseLibraries();
-	
-	
-
 	/**
 	 * will add a call test step.
 	 * 

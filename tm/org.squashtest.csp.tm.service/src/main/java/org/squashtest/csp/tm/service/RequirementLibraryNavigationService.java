@@ -36,7 +36,7 @@ import org.squashtest.csp.tm.service.importer.ImportSummary;
 
 @SuppressWarnings("rawtypes")
 public interface RequirementLibraryNavigationService extends
-	LibraryNavigationService<RequirementLibrary, RequirementFolder, RequirementLibraryNode> {
+		LibraryNavigationService<RequirementLibrary, RequirementFolder, RequirementLibraryNode>, RequirementLibraryFinderService {
 
 	Requirement addRequirementToRequirementLibrary(long libraryId, @NotNull Requirement requirement);
 	Requirement addRequirementToRequirementLibrary(long libraryId, @NotNull NewRequirementVersionDto newRequirement);
@@ -49,7 +49,6 @@ public interface RequirementLibraryNavigationService extends
 	List<ExportRequirementData> findRequirementsToExportFromLibrary(@NotNull List<Long> libraryIds);
 
 	List<ExportRequirementData> findRequirementsToExportFromFolder(@NotNull List<Long> folderIds);
-	
 	
 	/**
 	 * Accepts a stream to a .xls / .xlsx file info for requirement folders and requirements. Will

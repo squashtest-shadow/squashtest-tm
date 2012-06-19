@@ -51,6 +51,7 @@ public class ReqCoverageByTestProjectDto {
 		for (ReqCoverageByTestStatType reqStatType : ReqCoverageByTestStatType.values()) {
 			requirementNumbers.put(reqStatType, 0L);
 		}
+		
 		for (RequirementStatus status : RequirementStatus.values()) {
 			for (ReqCoverageByTestStatType reqStatType : ReqCoverageByTestStatType.values()) {
 				String key = status.toString() + reqStatType.toString();

@@ -77,7 +77,6 @@ LibraryNavigationController<CampaignLibrary, CampaignFolder, CampaignLibraryNode
 	@Inject
 	private Provider<TestSuiteNodeBuilder> suiteNodeBuilder;
 
-
 	private CampaignLibraryNavigationService campaignLibraryNavigationService;
 
 	@ServiceReference
@@ -256,28 +255,19 @@ LibraryNavigationController<CampaignLibrary, CampaignFolder, CampaignLibraryNode
 		return res;
 	}
 
-
-
-
-	@RequestMapping(value="/campaign-tree", method=RequestMethod.GET)
-	public @ResponseBody List<JsTreeNode> getRootModel(){
+	@RequestMapping(value="/drives", method=RequestMethod.GET, params = { "linkables" })
+	public @ResponseBody List<JsTreeNode> getLinkablesRootModel(){
 		List<CampaignLibrary> linkableLibraries = campaignLibraryNavigationService.findLinkableCampaignLibraries();
 		List<JsTreeNode> rootModel = createLinkableLibrariesModel(linkableLibraries);
 		return rootModel;
 	}
 
 	private List<JsTreeNode> createLinkableLibrariesModel(List<CampaignLibrary> linkableLibraries) {
-		// TODO use JsTreeListrWhatever builder instead
-		DriveNodeBuilder builder = driveNodeBuilder.get();
-		List<JsTreeNode> linkableLibrariesModel = new ArrayList<JsTreeNode>();
+		JsTreeNodeListBuilder<CampaignLibrary> listBuilder = new JsTreeNodeListBuilder<CampaignLibrary>(
+				driveNodeBuilder.get());
 
-		for (CampaignLibrary library : linkableLibraries) {
-			JsTreeNode libraryNode = builder.setModel(library).build();
-			linkableLibrariesModel.add(libraryNode);
-		}
-		return linkableLibrariesModel;
-	}
-	
+		return listBuilder.setModel(linkableLibraries).build();
+	}	
 
 	@RequestMapping(value="/delete-iterations/simulate", method = RequestMethod.POST, params = {"nodeIds[]"})
 	public @ResponseBody String simulateIterationDeletion(@RequestParam("nodeIds[]") List<Long> nodeIds, Locale locale){
@@ -342,20 +332,17 @@ LibraryNavigationController<CampaignLibrary, CampaignFolder, CampaignLibraryNode
 	}
 	
 	private List<JsTreeNode> copyNodes(Long[] itemIds, long destinationId, String destinationType, int nextNumberInDestination){		
-	
-		if (destinationType.equals("campaign")){
+		if (destinationType.equals("campaign")) {
 			List<Iteration> iterationsList;
 			iterationsList = campaignLibraryNavigationService.copyIterationsToCampaign(destinationId, itemIds);
 			return createCopiedIterationsModel(iterationsList, nextNumberInDestination);
-		}
-		else if (destinationType.equals("iteration") ){
+		} else if (destinationType.equals("iteration")) {
 			List<TestSuite> testSuiteList;
 			testSuiteList = iterationModificationService.copyPasteTestSuitesToIteration(itemIds, destinationId);
 			return createCopiedTestSuitesModel(testSuiteList);
+		} else {
+			throw new IllegalArgumentException("copy nodes : cannot paste item to : " + destinationType);
 		}
-        else {
-            throw new IllegalArgumentException("copy nodes : cannot paste item to : "+destinationType);
-        }
 	}
 
 }

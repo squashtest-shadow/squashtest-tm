@@ -61,7 +61,7 @@ public class FormToCriteriaConverter {
 	/**
 	 * @param simpleEntryConverterByType
 	 */
-	protected FormToCriteriaConverter() {
+	public FormToCriteriaConverter() {
 		super();
 
 		this.simpleEntryConverterByType = new HashMap<InputType, SimpleEntryConverter>();

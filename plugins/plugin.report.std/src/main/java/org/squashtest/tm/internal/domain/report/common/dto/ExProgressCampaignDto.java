@@ -28,36 +28,30 @@ import org.squashtest.csp.tm.domain.campaign.Campaign;
 import org.squashtest.csp.tm.domain.campaign.Iteration;
 
 public class ExProgressCampaignDto {
-	
+
 	private String name;
 	private ExProgressProjectDto project;
-	
 
 	private Date scheduledStartDate;
 	private Date scheduledEndDate;
 	private Date actualStartDate;
 	private Date actualEndDate;
-	
+
 	private List<ExProgressIterationDto> iterations = new LinkedList<ExProgressIterationDto>();
-	
-	
-	public ExProgressCampaignDto(){
-		
+
+	public ExProgressCampaignDto() {
+		super();
 	}
-	
-	
-	//full constructor
-	public ExProgressCampaignDto(Campaign campaign){
-		
+
+	public ExProgressCampaignDto(Campaign campaign) {
 		fillBasicInfos(campaign);
 		fillIterationsInfos(campaign);
 
 	}
-	
+
 	public ExProgressProjectDto getProject() {
 		return project;
 	}
-
 
 	public void setProject(ExProgressProjectDto project) {
 		this.project = project;
@@ -66,78 +60,88 @@ public class ExProgressCampaignDto {
 	public String getName() {
 		return name;
 	}
+
 	public void setName(String name) {
 		this.name = name;
 	}
+
 	public Date getScheduledStartDate() {
 		return scheduledStartDate;
 	}
+
 	public void setScheduledStartDate(Date scheduledStartDate) {
 		this.scheduledStartDate = scheduledStartDate;
 	}
+
 	public Date getScheduledEndDate() {
 		return scheduledEndDate;
 	}
+
 	public void setScheduledEndDate(Date scheduledEndDate) {
 		this.scheduledEndDate = scheduledEndDate;
 	}
+
 	public Date getActualStartDate() {
 		return actualStartDate;
 	}
+
 	public void setActualStartDate(Date actualStartDate) {
 		this.actualStartDate = actualStartDate;
 	}
+
 	public Date getActualEndDate() {
 		return actualEndDate;
 	}
+
 	public void setActualEndDate(Date actualEndDate) {
 		this.actualEndDate = actualEndDate;
 	}
-	public List<ExProgressIterationDto> getIterations(){
+
+	public List<ExProgressIterationDto> getIterations() {
 		return iterations;
 	}
-	public void setIterations(List<ExProgressIterationDto> iterations){
-		this.iterations=iterations;
+
+	public void setIterations(List<ExProgressIterationDto> iterations) {
+		this.iterations = iterations;
 	}
-	
-	public void addIterationDto(ExProgressIterationDto iterDto){
+
+	public void addIterationDto(ExProgressIterationDto iterDto) {
 		iterations.add(iterDto);
 	}
-	
-	
-	/* ********************************** computed properties *************************************/
-	
-	public Integer getTotalNumberTestCase(){
-		Integer sum=0;
-		for (ExProgressIterationDto iter : iterations){
-			sum+=iter.getNumberTestCase();
+
+	/* ********************************** computed properties ************************************ */
+
+	public Integer getTotalNumberTestCase() {
+		Integer sum = 0;
+		for (ExProgressIterationDto iter : iterations) {
+			sum += iter.getNumberTestCase();
 		}
-		
+
 		return sum;
 	}
-	
-	public ExProgressCampaignStatus getCampaignStatus(){
-		for (ExProgressIterationDto iter : iterations){
-			if (iter.getfPercentageProgress()<0.9999) return ExProgressCampaignStatus.CAMPAIGN_RUNNING;
+
+	public ExProgressCampaignStatus getCampaignStatus() {
+		for (ExProgressIterationDto iter : iterations) {
+			if (iter.getfPercentageProgress() < 0.9999)
+				return ExProgressCampaignStatus.CAMPAIGN_RUNNING;
 		}
 		return ExProgressCampaignStatus.CAMPAIGN_OVER;
 	}
-	
-	
-	public ExProgressCampaignDto fillBasicInfos(Campaign campaign){
-		this.name=campaign.getName();
-		this.scheduledStartDate=campaign.getScheduledStartDate();
-		this.scheduledEndDate=campaign.getScheduledEndDate();
-		this.actualStartDate=campaign.getActualStartDate();
-		this.actualEndDate=campaign.getActualEndDate();
+
+	public ExProgressCampaignDto fillBasicInfos(Campaign campaign) {
+		this.name = campaign.getName();
+		this.scheduledStartDate = campaign.getScheduledStartDate();
+		this.scheduledEndDate = campaign.getScheduledEndDate();
+		this.actualStartDate = campaign.getActualStartDate();
+		this.actualEndDate = campaign.getActualEndDate();
 		return this;
 	}
-	
-	public ExProgressCampaignDto fillIterationsInfos(Campaign campaign){
-		for (Iteration iteration : campaign.getIterations()){
+
+	public ExProgressCampaignDto fillIterationsInfos(Campaign campaign) {
+		for (Iteration iteration : campaign.getIterations()) {
 			ExProgressIterationDto iterDto = new ExProgressIterationDto(iteration);
 			iterations.add(iterDto);
-		}		
+		}
 		return this;
 	}
 }

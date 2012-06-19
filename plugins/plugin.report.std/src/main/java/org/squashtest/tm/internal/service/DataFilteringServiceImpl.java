@@ -32,7 +32,6 @@ import org.squashtest.tm.plugin.report.std.service.DataFilteringService;
 
 @Service("squashtest.tm.service.DataFilteringService")
 public class DataFilteringServiceImpl implements DataFilteringService {
-
 	private PermissionEvaluationService permissionService;
 	
 	private ProjectFilterModificationService userFilterService;

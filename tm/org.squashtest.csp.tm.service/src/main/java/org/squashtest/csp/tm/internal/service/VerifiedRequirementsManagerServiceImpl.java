@@ -29,7 +29,6 @@ import java.util.List;
 import javax.inject.Inject;
 
 import org.springframework.beans.factory.annotation.Qualifier;
-import org.springframework.security.access.prepost.PostFilter;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -37,18 +36,13 @@ import org.squashtest.csp.core.infrastructure.collection.PagedCollectionHolder;
 import org.squashtest.csp.core.infrastructure.collection.PagingAndSorting;
 import org.squashtest.csp.core.infrastructure.collection.PagingBackedPagedCollectionHolder;
 import org.squashtest.csp.tm.domain.VerifiedRequirementException;
-import org.squashtest.csp.tm.domain.projectfilter.ProjectFilter;
 import org.squashtest.csp.tm.domain.requirement.Requirement;
-import org.squashtest.csp.tm.domain.requirement.RequirementLibrary;
 import org.squashtest.csp.tm.domain.requirement.RequirementLibraryNode;
 import org.squashtest.csp.tm.domain.requirement.RequirementVersion;
 import org.squashtest.csp.tm.domain.testcase.TestCase;
-import org.squashtest.csp.tm.internal.infrastructure.strategy.LibrarySelectionStrategy;
 import org.squashtest.csp.tm.internal.repository.LibraryNodeDao;
-import org.squashtest.csp.tm.internal.repository.RequirementLibraryDao;
 import org.squashtest.csp.tm.internal.repository.RequirementVersionDao;
 import org.squashtest.csp.tm.internal.repository.TestCaseDao;
-import org.squashtest.csp.tm.service.ProjectFilterModificationService;
 import org.squashtest.csp.tm.service.TestCaseImportanceManagerService;
 import org.squashtest.csp.tm.service.VerifiedRequirementsManagerService;
 
@@ -59,34 +53,15 @@ public class VerifiedRequirementsManagerServiceImpl implements VerifiedRequireme
 	private TestCaseDao testCaseDao;
 
 	@Inject
-	private RequirementLibraryDao requirementLibraryDao;
-
-	@Inject
 	private RequirementVersionDao requirementVersionDao;
 
 	@Inject
 	private TestCaseImportanceManagerService testCaseImportanceManagerService;
 
-	@Inject
-	private ProjectFilterModificationService projectFilterModificationService;
-
-	@SuppressWarnings("rawtypes")
-	@Inject
-	@Qualifier("squashtest.tm.service.RequirementLibrarySelectionStrategy")
-	private LibrarySelectionStrategy<RequirementLibrary, RequirementLibraryNode> libraryStrategy;
-
 	@SuppressWarnings("rawtypes")
 	@Inject
 	@Qualifier("squashtest.tm.repository.RequirementLibraryNodeDao")
 	private LibraryNodeDao<RequirementLibraryNode> requirementLibraryNodeDao;
-
-	@Override
-	@PostFilter("hasPermission(filterObject, 'READ') or hasRole('ROLE_ADMIN')")
-	public List<RequirementLibrary> findLinkableRequirementLibraries() {
-		ProjectFilter pf = projectFilterModificationService.findProjectFilterByUserLogin();
-		return pf.getActivated() ? libraryStrategy.getSpecificLibraries(pf.getProjects()) : requirementLibraryDao
-				.findAll();
-	}
 
 	@SuppressWarnings("rawtypes")
 	@Override

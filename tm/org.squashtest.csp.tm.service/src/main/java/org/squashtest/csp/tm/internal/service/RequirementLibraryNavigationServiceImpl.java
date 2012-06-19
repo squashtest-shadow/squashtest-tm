@@ -31,22 +31,27 @@ import javax.validation.constraints.NotNull;
 import org.hibernate.SessionFactory;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.security.access.prepost.PostAuthorize;
+import org.springframework.security.access.prepost.PostFilter;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.squashtest.csp.tm.domain.DuplicateNameException;
+import org.squashtest.csp.tm.domain.projectfilter.ProjectFilter;
 import org.squashtest.csp.tm.domain.requirement.ExportRequirementData;
 import org.squashtest.csp.tm.domain.requirement.NewRequirementVersionDto;
 import org.squashtest.csp.tm.domain.requirement.Requirement;
 import org.squashtest.csp.tm.domain.requirement.RequirementFolder;
 import org.squashtest.csp.tm.domain.requirement.RequirementLibrary;
 import org.squashtest.csp.tm.domain.requirement.RequirementLibraryNode;
+import org.squashtest.csp.tm.internal.infrastructure.strategy.LibrarySelectionStrategy;
 import org.squashtest.csp.tm.domain.requirement.RequirementVersion;
 import org.squashtest.csp.tm.internal.repository.LibraryNodeDao;
 import org.squashtest.csp.tm.internal.repository.RequirementDao;
 import org.squashtest.csp.tm.internal.repository.RequirementFolderDao;
 import org.squashtest.csp.tm.internal.repository.RequirementLibraryDao;
 import org.squashtest.csp.tm.internal.service.importer.RequirementImporter;
+import org.squashtest.csp.tm.service.ProjectFilterModificationService;
+import org.squashtest.csp.tm.service.RequirementLibraryFinderService;
 import org.squashtest.csp.tm.service.RequirementLibraryNavigationService;
 import org.squashtest.csp.tm.service.importer.ImportSummary;
 
@@ -55,7 +60,7 @@ import org.squashtest.csp.tm.service.importer.ImportSummary;
 @Transactional
 public class RequirementLibraryNavigationServiceImpl extends
 		AbstractLibraryNavigationService<RequirementLibrary, RequirementFolder, RequirementLibraryNode> implements
-		RequirementLibraryNavigationService {
+		RequirementLibraryNavigationService, RequirementLibraryFinderService {
 	@Inject
 	private RequirementLibraryDao requirementLibraryDao;
 
@@ -74,6 +79,14 @@ public class RequirementLibraryNavigationServiceImpl extends
 
 	@Inject
 	private RequirementImporter requirementImporter;
+
+	@Inject
+	private ProjectFilterModificationService projectFilterModificationService;
+
+	@SuppressWarnings("rawtypes")
+	@Inject
+	@Qualifier("squashtest.tm.service.RequirementLibrarySelectionStrategy")
+	private LibrarySelectionStrategy<RequirementLibrary, RequirementLibraryNode> libraryStrategy;
 
 	@Override
 	protected NodeDeletionHandler<RequirementLibraryNode, RequirementFolder> getDeletionHandler() {
@@ -96,6 +109,7 @@ public class RequirementLibraryNavigationServiceImpl extends
 		return requirementFolderDao;
 	}
 
+	@SuppressWarnings("rawtypes")
 	@Override
 	protected final LibraryNodeDao<RequirementLibraryNode> getLibraryNodeDao() {
 		return requirementLibraryNodeDao;
@@ -181,6 +195,14 @@ public class RequirementLibraryNavigationServiceImpl extends
 	@Override
 	public List<ExportRequirementData> findRequirementsToExportFromFolder(List<Long> folderIds) {
 		return requirementDao.findRequirementToExportFromFolder(folderIds);
+	}
+	
+	@Override
+	@PostFilter("hasPermission(filterObject, 'READ') or hasRole('ROLE_ADMIN')")
+	public List<RequirementLibrary> findLinkableRequirementLibraries() {
+		ProjectFilter pf = projectFilterModificationService.findProjectFilterByUserLogin();
+		return pf.getActivated() ? libraryStrategy.getSpecificLibraries(pf.getProjects()) : requirementLibraryDao
+				.findAll();
 	}
 
 	@Override

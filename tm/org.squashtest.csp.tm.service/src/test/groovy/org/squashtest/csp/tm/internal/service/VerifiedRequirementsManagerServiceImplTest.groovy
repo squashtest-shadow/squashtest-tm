@@ -58,29 +58,11 @@ class VerifiedRequirementsManagerServiceImplTest extends Specification {
 		CollectionAssertions.declareContainsExactly()
 
 		service.testCaseDao = testCaseDao
-		service.requirementLibraryDao = requirementLibraryDao
 		service.requirementVersionDao = requirementVersionDao
-		service.projectFilterModificationService = projectFilterModificationService
-		service.libraryStrategy = libraryStrategy
 		service.requirementLibraryNodeDao = nodeDao
 		service.testCaseImportanceManagerService = testCaseImportanceManagerService
 	}
 
-	def "should find libraries of linkable requirements"() {
-		given:
-		RequirementLibrary lib = Mock()
-		ProjectFilter pf = new ProjectFilter()
-		pf.setActivated(false)
-		projectFilterModificationService.findProjectFilterByUserLogin() >> pf
-		requirementLibraryDao.findAll() >> [lib]
-
-		when:
-		def res =
-		service.findLinkableRequirementLibraries()
-
-		then:
-		res == [lib]
-	}
 
 	def "should add requirements to test case's verified requirements"() {
 		given:

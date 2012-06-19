@@ -28,10 +28,10 @@ public class ExProgressTestPlanDto {
 	private ExecutionStatus executionStatus;
 	private ExProgressIterationDto iteration;
 
-	public ExProgressTestPlanDto(){
-		
+	public ExProgressTestPlanDto() {
+
 	}
-	
+
 	public ExProgressIterationDto getIteration() {
 		return iteration;
 	}
@@ -40,35 +40,32 @@ public class ExProgressTestPlanDto {
 		this.iteration = iteration;
 	}
 
-	
-	public ExProgressTestPlanDto(String testCaseName,
-			ExecutionStatus executionStatus) {
+	public ExProgressTestPlanDto(String testCaseName, ExecutionStatus executionStatus) {
 		super();
 		this.testCaseName = testCaseName;
 		this.executionStatus = executionStatus;
 	}
-	
+
 	public String getTestCaseName() {
 		return testCaseName;
 	}
-	
+
 	public void setTestCaseName(String testCaseName) {
 		this.testCaseName = testCaseName;
 	}
-	
+
 	public ExecutionStatus getExecutionStatus() {
 		return executionStatus;
 	}
-	
+
 	public void setExecutionStatus(ExecutionStatus executionStatus) {
 		this.executionStatus = executionStatus;
 	}
-	
-	public ExProgressTestPlanDto fillBasicInfo(IterationTestPlanItem testPlan){
-		this.testCaseName=( testPlan.isTestCaseDeleted() ) ? null : testPlan.getReferencedTestCase().getName();
-		this.executionStatus=testPlan.getExecutionStatus();
+
+	public ExProgressTestPlanDto fillBasicInfo(IterationTestPlanItem testPlan) {
+		this.testCaseName = (testPlan.isTestCaseDeleted()) ? null : testPlan.getReferencedTestCase().getName();
+		this.executionStatus = testPlan.getExecutionStatus();
 		return this;
 	}
-	
-	
+
 }

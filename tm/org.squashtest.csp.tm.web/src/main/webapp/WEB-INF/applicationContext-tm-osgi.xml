@@ -49,8 +49,13 @@
 	<osgi:reference
 		id="squashtest.tm.service.TestCaseLibraryNavigationService" 
 		bean-name="squashtest.tm.service.TestCaseLibraryNavigationService"
-		interface="org.squashtest.csp.tm.service.TestCaseLibraryNavigationService"
-		availability="mandatory" />
+		availability="mandatory">
+		<osgi:interfaces>
+			<value>org.squashtest.csp.tm.service.TestCaseLibraryNavigationService</value>
+			<value>org.squashtest.csp.tm.service.TestCaseLibraryFinderService</value>
+		</osgi:interfaces>
+	</osgi:reference>
+		
 
 	<osgi:reference id="squashtest.tm.service.RequirementModificationService"
 		bean-name="squashtest.tm.service.RequirementModificationService"
@@ -60,8 +65,12 @@
 	<osgi:reference
 		id="squashtest.tm.service.RequirementLibraryNavigationService"
 		bean-name="squashtest.tm.service.RequirementLibraryNavigationService"
-		interface="org.squashtest.csp.tm.service.RequirementLibraryNavigationService"
-		availability="mandatory" />
+		availability="mandatory">
+		<osgi:interfaces>
+			<value>org.squashtest.csp.tm.service.RequirementLibraryNavigationService</value>
+			<value>org.squashtest.csp.tm.service.RequirementLibraryFinderService</value>
+		</osgi:interfaces>
+	</osgi:reference>
 
 	<osgi:reference id="squashtest.tm.service.CampaignModificationService"
 		bean-name="squashtest.tm.service.CampaignModificationService"

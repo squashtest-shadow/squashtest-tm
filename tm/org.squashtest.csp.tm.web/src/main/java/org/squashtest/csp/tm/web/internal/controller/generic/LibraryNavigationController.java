@@ -27,7 +27,6 @@ import java.util.List;
 import java.util.Locale;
 
 import javax.inject.Inject;
-import javax.servlet.http.HttpServletResponse;
 import javax.validation.Valid;
 
 import org.springframework.context.MessageSource;
@@ -66,7 +65,6 @@ public abstract class LibraryNavigationController<LIBRARY extends Library<? exte
 	 * @return
 	 */
 	protected abstract LibraryNavigationService<LIBRARY, FOLDER, NODE> getLibraryNavigationService();
-
 	
 	@Inject
 	private MessageSource messageSource;
@@ -166,9 +164,9 @@ public abstract class LibraryNavigationController<LIBRARY extends Library<? exte
 			@PathVariable Long folderId) {
 
 
-		getLibraryNavigationService().renameFolder(folderId, newName);
 		final String reNewName = newName;
-		return new Object(){ public String newName = reNewName ; };
+		getLibraryNavigationService().renameFolder(folderId, reNewName);
+		return new Object(){ public String newName = reNewName ; }; // NOSONAR readable by json marshaller
 
 
 	}

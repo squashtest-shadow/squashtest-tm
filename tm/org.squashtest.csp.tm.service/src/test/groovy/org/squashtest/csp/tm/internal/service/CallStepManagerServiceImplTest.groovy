@@ -40,11 +40,9 @@ class CallStepManagerServiceImplTest extends Specification {
 	ProjectFilterModificationService filterService = Mock();
 	TestCaseImportanceManagerServiceImpl testCaseImportanceManagerServiceImpl = Mock();
 
-
 	def setup(){
 		service.testCaseDao = testCaseDao;
 		service.testStepDao = testStepDao;
-		service.testCaseLibraryDao = testCaseLibraryDao;
 		service.testCaseImportanceManagerService = testCaseImportanceManagerServiceImpl
 	}
 

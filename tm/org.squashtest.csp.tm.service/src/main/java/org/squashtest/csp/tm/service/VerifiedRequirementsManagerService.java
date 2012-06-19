@@ -27,7 +27,6 @@ import org.springframework.transaction.annotation.Transactional;
 import org.squashtest.csp.core.infrastructure.collection.PagedCollectionHolder;
 import org.squashtest.csp.core.infrastructure.collection.PagingAndSorting;
 import org.squashtest.csp.tm.domain.VerifiedRequirementException;
-import org.squashtest.csp.tm.domain.requirement.RequirementLibrary;
 import org.squashtest.csp.tm.domain.requirement.RequirementVersion;
 import org.squashtest.csp.tm.domain.testcase.TestCase;
 
@@ -38,13 +37,6 @@ import org.squashtest.csp.tm.domain.testcase.TestCase;
  * 
  */
 public interface VerifiedRequirementsManagerService {
-	/**
-	 * Returns the collection of {@link RequirementLibrary}s which Requirements can be linked by a {@link TestCase}
-	 * 
-	 * @return
-	 */
-	List<RequirementLibrary> findLinkableRequirementLibraries();
-
 	/**
 	 * Adds a list of requirements to the ones verified by a test case. If a requirement is already verified, nothing
 	 * special happens.

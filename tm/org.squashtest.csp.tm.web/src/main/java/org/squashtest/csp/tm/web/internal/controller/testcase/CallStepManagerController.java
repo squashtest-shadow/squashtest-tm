@@ -37,31 +37,28 @@ import org.springframework.web.servlet.ModelAndView;
 import org.squashtest.csp.tm.domain.testcase.TestCase;
 import org.squashtest.csp.tm.domain.testcase.TestCaseLibrary;
 import org.squashtest.csp.tm.service.CallStepManagerService;
+import org.squashtest.csp.tm.service.TestCaseLibraryFinderService;
 import org.squashtest.csp.tm.web.internal.model.builder.DriveNodeBuilder;
 import org.squashtest.csp.tm.web.internal.model.jstree.JsTreeNode;
-
 
 @Controller
 public class CallStepManagerController {
 
-	@Inject 
+	@Inject
 	private Provider<DriveNodeBuilder> driveNodeBuilder;
-	
+
 	private CallStepManagerService callStepManagerService;
-	
+	private TestCaseLibraryFinderService testCaseLibraryFinder;
 
 	@ServiceReference
 	public void setCallStepManagerService(CallStepManagerService callStepManagerService) {
 		this.callStepManagerService = callStepManagerService;
 	}
 
-
-
-
 	@RequestMapping(value = "/test-cases/{testCaseId}/call", method = RequestMethod.GET)
 	public ModelAndView showManager(@PathVariable long testCaseId) {
 		TestCase testCase = callStepManagerService.findTestCase(testCaseId);
-		List<TestCaseLibrary> linkableLibraries = callStepManagerService.findLinkableTestCaseLibraries();
+		List<TestCaseLibrary> linkableLibraries = testCaseLibraryFinder.findLinkableTestCaseLibraries();
 
 		List<JsTreeNode> linkableLibrariesModel = createLinkableLibrariesModel(linkableLibraries);
 
@@ -71,16 +68,14 @@ public class CallStepManagerController {
 
 		return mav;
 	}
-	
-	
-	
-	
-	@RequestMapping(value="/test-cases/{callingTestCaseId}/call", method = RequestMethod.POST, params="called-test-case")
+
+	@RequestMapping(value = "/test-cases/{callingTestCaseId}/call", method = RequestMethod.POST, params = "called-test-case")
 	@ResponseBody
-	public void addCallTestStep(@PathVariable("callingTestCaseId") long callingTestCaseId, @RequestParam("called-test-case") long calledTestCaseId){
+	public void addCallTestStep(@PathVariable("callingTestCaseId") long callingTestCaseId,
+			@RequestParam("called-test-case") long calledTestCaseId) {
 		callStepManagerService.addCallTestStep(callingTestCaseId, calledTestCaseId);
 	}
-	
+
 	private List<JsTreeNode> createLinkableLibrariesModel(List<TestCaseLibrary> linkableLibraries) {
 		DriveNodeBuilder builder = driveNodeBuilder.get();
 		List<JsTreeNode> linkableLibrariesModel = new ArrayList<JsTreeNode>();
@@ -91,6 +86,12 @@ public class CallStepManagerController {
 		}
 		return linkableLibrariesModel;
 	}
-	
-	
+
+	/**
+	 * @param testCaseLibraryFinder
+	 *            the testCaseLibraryFinder to set
+	 */
+	public void setTestCaseLibraryFinder(TestCaseLibraryFinderService testCaseLibraryFinder) {
+		this.testCaseLibraryFinder = testCaseLibraryFinder;
+	}
 }

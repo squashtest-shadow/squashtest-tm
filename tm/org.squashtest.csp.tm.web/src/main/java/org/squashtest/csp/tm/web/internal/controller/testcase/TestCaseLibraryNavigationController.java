@@ -23,6 +23,7 @@ package org.squashtest.csp.tm.web.internal.controller.testcase;
 import java.io.IOException;
 import java.io.InputStream;
 import java.util.Arrays;
+import java.util.List;
 
 import javax.inject.Inject;
 import javax.inject.Provider;
@@ -49,6 +50,7 @@ import org.squashtest.csp.tm.service.TestCaseLibraryNavigationService;
 import org.squashtest.csp.tm.service.importer.ImportSummary;
 import org.squashtest.csp.tm.web.internal.controller.generic.LibraryNavigationController;
 import org.squashtest.csp.tm.web.internal.model.builder.DriveNodeBuilder;
+import org.squashtest.csp.tm.web.internal.model.builder.JsTreeNodeListBuilder;
 import org.squashtest.csp.tm.web.internal.model.builder.TestCaseLibraryTreeNodeBuilder;
 import org.squashtest.csp.tm.web.internal.model.jstree.JsTreeNode;
 
@@ -130,24 +132,36 @@ public class TestCaseLibraryNavigationController extends
 		return mav;
 	}
 
-	
 	@Override
 	protected String getShowLibraryViewName() {
 		return "page/test-case-libraries/show-test-case-library";
 	}
-	
-	
-	@RequestMapping(value="/import/upload", method = RequestMethod.POST,  params = "upload-ticket")
-	public @ResponseBody ImportSummary importArchive(@RequestParam("archive") MultipartFile archive, 
-			@RequestParam("projectId") Long projectId, @RequestParam("zipEncoding") String zipEncoding) throws IOException{
-		
+
+	@RequestMapping(value = "/import/upload", method = RequestMethod.POST, params = "upload-ticket")
+	public @ResponseBody
+	ImportSummary importArchive(@RequestParam("archive") MultipartFile archive,
+			@RequestParam("projectId") Long projectId, @RequestParam("zipEncoding") String zipEncoding)
+			throws IOException {
+
 		InputStream stream = archive.getInputStream();
-		
-		return testCaseLibraryNavigationService.importExcelTestCase(stream, projectId, zipEncoding);	
-		
+
+		return testCaseLibraryNavigationService.importExcelTestCase(stream, projectId, zipEncoding);
+
 	}
-	
-	
+
+	@RequestMapping(value = "/drives", method = RequestMethod.GET, params = { "linkables" })
+	public @ResponseBody
+	List<JsTreeNode> getLinkablesRootModel() {
+		List<TestCaseLibrary> linkableLibraries = testCaseLibraryNavigationService.findLinkableTestCaseLibraries();
+		List<JsTreeNode> rootModel = createLinkableLibrariesModel(linkableLibraries);
+		return rootModel;
+	}
+
+	private List<JsTreeNode> createLinkableLibrariesModel(List<TestCaseLibrary> linkableLibraries) {
+		JsTreeNodeListBuilder<TestCaseLibrary> listBuilder = new JsTreeNodeListBuilder<TestCaseLibrary>(
+				driveNodeBuilder.get());
+
+		return listBuilder.setModel(linkableLibraries).build();
+	}
 
 }
-

@@ -1,2 +1,3 @@
 -include: pom.xml
+-nouses: true
 Bundle-SymbolicName: ${pom.artifactId}

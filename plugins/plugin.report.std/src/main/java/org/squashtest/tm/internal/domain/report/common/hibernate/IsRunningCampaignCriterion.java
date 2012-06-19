@@ -47,8 +47,7 @@ import org.squashtest.tm.internal.domain.report.query.hibernate.ReportCriterion;
 public class IsRunningCampaignCriterion extends ReportCriterion {
 	
 	public IsRunningCampaignCriterion(){
-
-
+		super();
 		setOperator(QueryOperator.COMPARATOR_SPECIAL);
 		setParamClass(ExProgressCampaignStatus.class);				
 	}

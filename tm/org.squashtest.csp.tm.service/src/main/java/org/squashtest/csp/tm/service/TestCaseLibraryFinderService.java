@@ -18,41 +18,26 @@
  *     You should have received a copy of the GNU Lesser General Public License
  *     along with this software.  If not, see <http://www.gnu.org/licenses/>.
  */
+
 package org.squashtest.csp.tm.service;
 
-import java.io.InputStream;
+import java.util.List;
 
 import org.squashtest.csp.tm.domain.testcase.TestCase;
-import org.squashtest.csp.tm.domain.testcase.TestCaseFolder;
 import org.squashtest.csp.tm.domain.testcase.TestCaseLibrary;
-import org.squashtest.csp.tm.domain.testcase.TestCaseLibraryNode;
-import org.squashtest.csp.tm.service.importer.ImportSummary;
 
 /**
- * Service for navigation in a TestCase library use case.
- * 
- * @author Gregory Fouquet
- * 
+ * @author Gregory
+ *
  */
-public interface TestCaseLibraryNavigationService extends
-LibraryNavigationService<TestCaseLibrary, TestCaseFolder, TestCaseLibraryNode>, TestCaseLibraryFinderService {
-
-	void addTestCaseToLibrary(long libraryId, TestCase testCase);
-
-	TestCase findTestCase(long testCaseId);
-
-
-	void addTestCaseToFolder(long folderId, TestCase testCase);
+public interface TestCaseLibraryFinderService {
 
 	/**
-	 * Accepts a stream to a .zip file containing regular folders or excel files and nothing else. Will
-	 * convert the test cases from excel to squash.
+	 * Returns the collection of {@link TestCaseLibrary}s which TestCases can be linked by a {@link TestCase} via 
+	 * a CallTestStep
 	 * 
-	 * @param archiveStream
-	 * @param libraryId the identifier of the library we are importing test cases into.
-	 * @param encoding the encoding
-	 * @return a summary of the operations.
+	 * @return
 	 */
-	ImportSummary importExcelTestCase(InputStream archiveStream, long libraryId, String encoding);
-	
+	List<TestCaseLibrary> findLinkableTestCaseLibraries();
+
 }

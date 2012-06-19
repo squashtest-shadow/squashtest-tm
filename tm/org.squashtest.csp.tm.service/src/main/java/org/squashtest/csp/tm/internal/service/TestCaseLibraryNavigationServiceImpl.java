@@ -21,18 +21,22 @@
 package org.squashtest.csp.tm.internal.service;
 
 import java.io.InputStream;
+import java.util.List;
 
 import javax.inject.Inject;
 
 import org.springframework.beans.factory.annotation.Qualifier;
+import org.springframework.security.access.prepost.PostFilter;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.squashtest.csp.tm.domain.DuplicateNameException;
+import org.squashtest.csp.tm.domain.projectfilter.ProjectFilter;
 import org.squashtest.csp.tm.domain.testcase.TestCase;
 import org.squashtest.csp.tm.domain.testcase.TestCaseFolder;
 import org.squashtest.csp.tm.domain.testcase.TestCaseLibrary;
 import org.squashtest.csp.tm.domain.testcase.TestCaseLibraryNode;
+import org.squashtest.csp.tm.internal.infrastructure.strategy.LibrarySelectionStrategy;
 import org.squashtest.csp.tm.internal.repository.FolderDao;
 import org.squashtest.csp.tm.internal.repository.LibraryDao;
 import org.squashtest.csp.tm.internal.repository.LibraryNodeDao;
@@ -40,6 +44,7 @@ import org.squashtest.csp.tm.internal.repository.TestCaseDao;
 import org.squashtest.csp.tm.internal.repository.TestCaseFolderDao;
 import org.squashtest.csp.tm.internal.repository.TestCaseLibraryDao;
 import org.squashtest.csp.tm.internal.service.importer.TestCaseImporter;
+import org.squashtest.csp.tm.service.ProjectFilterModificationService;
 import org.squashtest.csp.tm.service.TestCaseLibraryNavigationService;
 import org.squashtest.csp.tm.service.importer.ImportSummary;
 
@@ -52,18 +57,24 @@ public class TestCaseLibraryNavigationServiceImpl extends
 	private TestCaseLibraryDao testCaseLibraryDao;
 	@Inject
 	private TestCaseFolderDao testCaseFolderDao;
-
+	@Inject
+	private TestCaseDao testCaseDao;
 	@Inject
 	@Qualifier("squashtest.tm.repository.TestCaseLibraryNodeDao")
 	private LibraryNodeDao<TestCaseLibraryNode> testCaseLibraryNodeDao;
 
 	@Inject
-	private TestCaseDao testCaseDao;
-
-	@Inject
 	private TestCaseImporter testCaseImporter;
+	
 	@Inject
 	private TestCaseNodeDeletionHandler deletionHandler;
+
+	@Inject
+	private ProjectFilterModificationService projectFilterModificationService;
+
+	@Inject
+	@Qualifier("squashtest.tm.service.TestCaseLibrarySelectionStrategy")
+	private LibrarySelectionStrategy<TestCaseLibrary, TestCaseLibraryNode> libraryStrategy;
 
 	@Override
 	protected NodeDeletionHandler<TestCaseLibraryNode, TestCaseFolder> getDeletionHandler() {
@@ -117,7 +128,6 @@ public class TestCaseLibraryNavigationServiceImpl extends
 			folder.addContent(testCase);
 			testCaseDao.persist(testCase);
 		}
-
 	}
 
 	@Override
@@ -125,6 +135,15 @@ public class TestCaseLibraryNavigationServiceImpl extends
 	public ImportSummary importExcelTestCase(InputStream archiveStream, long libraryId, String encoding) {
 
 		return testCaseImporter.importExcelTestCases(archiveStream, libraryId, encoding);
+	}
+
+	@Override
+	@PostFilter("hasPermission(filterObject, 'READ') or hasRole('ROLE_ADMIN')")
+	public List<TestCaseLibrary> findLinkableTestCaseLibraries() {
+		ProjectFilter pf = projectFilterModificationService.findProjectFilterByUserLogin();
+		return pf.getActivated() ? libraryStrategy.getSpecificLibraries(pf.getProjects()) : testCaseLibraryDao
+				.findAll();
+
 	}
 
 }

@@ -48,6 +48,7 @@ import org.squashtest.csp.tm.domain.requirement.RequirementCriticality;
 import org.squashtest.csp.tm.domain.requirement.RequirementLibrary;
 import org.squashtest.csp.tm.domain.requirement.RequirementVersion;
 import org.squashtest.csp.tm.domain.testcase.TestCase;
+import org.squashtest.csp.tm.service.RequirementLibraryFinderService;
 import org.squashtest.csp.tm.service.TestCaseModificationService;
 import org.squashtest.csp.tm.service.VerifiedRequirementsManagerService;
 import org.squashtest.csp.tm.web.internal.helper.VerifiedRequirementActionSummaryBuilder;
@@ -87,6 +88,7 @@ public class VerifiedRequirementsManagerController {
 	private MessageSource messageSource;
 
 	private VerifiedRequirementsManagerService verifiedRequirementsManagerService;
+	private RequirementLibraryFinderService requirementLibraryFinder;
 	private TestCaseModificationService testCaseFinder;
 
 	@ServiceReference
@@ -96,18 +98,18 @@ public class VerifiedRequirementsManagerController {
 	}
 
 	/**
-	 * @param testCaseFinder
-	 *            the testCaseFinder to set
+	 * @param requirementLibraryFinder
+	 *            the requirementLibraryFinder to set
 	 */
 	@ServiceReference
-	public void setTestCaseFinder(TestCaseModificationService testCaseFinder) {
-		this.testCaseFinder = testCaseFinder;
+	public void setRequirementLibraryFinder(RequirementLibraryFinderService requirementLibraryFinder) {
+		this.requirementLibraryFinder = requirementLibraryFinder;
 	}
 
 	@RequestMapping(value = "/test-cases/{testCaseId}/verified-requirement-versions/manager", method = RequestMethod.GET)
 	public String showManager(@PathVariable long testCaseId, Model model) {
 		TestCase testCase = testCaseFinder.findById(testCaseId);
-		List<RequirementLibrary> linkableLibraries = verifiedRequirementsManagerService
+		List<RequirementLibrary> linkableLibraries = requirementLibraryFinder
 				.findLinkableRequirementLibraries();
 
 		List<JsTreeNode> linkableLibrariesModel = createLinkableLibrariesModel(linkableLibraries);
@@ -201,4 +203,11 @@ public class VerifiedRequirementsManagerController {
 		return messageSource.getMessage(criticality.getI18nKey(), null, locale);
 	}
 
+	/**
+	 * @param testCaseFinder the testCaseFinder to set
+	 */
+	@ServiceReference
+	public void setTestCaseFinder(TestCaseModificationService testCaseFinder) {
+		this.testCaseFinder = testCaseFinder;
+	}
 }

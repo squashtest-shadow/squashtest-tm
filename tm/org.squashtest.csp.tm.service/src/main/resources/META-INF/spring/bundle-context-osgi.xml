@@ -64,15 +64,22 @@
 	<osgi:service ref="squashtest.tm.service.TestCaseModificationService"
 		interface="org.squashtest.csp.tm.service.TestCaseModificationService" />
 
-	<osgi:service ref="squashtest.tm.service.TestCaseLibraryNavigationService"
-		interface="org.squashtest.csp.tm.service.TestCaseLibraryNavigationService" />
+	<osgi:service ref="squashtest.tm.service.TestCaseLibraryNavigationService">
+		<osgi:interfaces>
+			<value>org.squashtest.csp.tm.service.TestCaseLibraryNavigationService</value>
+			<value>org.squashtest.csp.tm.service.TestCaseLibraryFinderService</value>
+		</osgi:interfaces>
+	</osgi:service>
 
 	<osgi:service ref="squashtest.tm.service.RequirementModificationService"
 		interface="org.squashtest.csp.tm.service.RequirementModificationService" />
 
-	<osgi:service
-		ref="squashtest.tm.service.RequirementLibraryNavigationService"
-		interface="org.squashtest.csp.tm.service.RequirementLibraryNavigationService" />
+	<osgi:service ref="squashtest.tm.service.RequirementLibraryNavigationService">
+		<osgi:interfaces>
+			<value>org.squashtest.csp.tm.service.RequirementLibraryNavigationService</value>
+			<value>org.squashtest.csp.tm.service.RequirementLibraryFinderService</value>
+		</osgi:interfaces>
+	</osgi:service>		
 
 	<osgi:service ref="squashtest.tm.service.CampaignModificationService"
 		interface="org.squashtest.csp.tm.service.CampaignModificationService" />

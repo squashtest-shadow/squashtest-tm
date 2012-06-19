@@ -48,7 +48,7 @@ public class ExProgressIterationDto {
 	
 	
 	public ExProgressIterationDto(){
-		
+		super();
 	}
 	
 	public ExProgressCampaignDto getCampaign() {

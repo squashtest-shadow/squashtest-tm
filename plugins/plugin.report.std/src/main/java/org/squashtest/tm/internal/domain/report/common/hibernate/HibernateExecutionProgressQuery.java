@@ -52,7 +52,6 @@ import org.squashtest.tm.internal.domain.report.query.hibernate.ReportCriterion;
 
 public class HibernateExecutionProgressQuery extends HibernateReportQuery {
 
-
 	public HibernateExecutionProgressQuery(){
 		Map<String, ReportCriterion> criterions = getCriterions();
 

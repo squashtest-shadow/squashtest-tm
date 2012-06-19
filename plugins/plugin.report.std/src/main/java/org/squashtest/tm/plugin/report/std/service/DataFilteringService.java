@@ -22,6 +22,7 @@ package org.squashtest.tm.plugin.report.std.service;
 
 import org.squashtest.csp.tm.domain.project.ProjectResource;
 
+
 /**
  * 
  * Internal user only. Should not be exposed through OSGI.
@@ -33,7 +34,6 @@ import org.squashtest.csp.tm.domain.project.ProjectResource;
  *
  */
 public interface DataFilteringService {
-	
 
 	/**
 	 * if that interface is modified in the future because of more filtering options, at least you can rely
@@ -64,7 +64,5 @@ public interface DataFilteringService {
 	 * @return true if the user wants the data, false if he filtered it out.
 	 */
 	boolean isAllowedByUser(ProjectResource object);
-	
-	
 
 }

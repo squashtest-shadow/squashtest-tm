@@ -66,6 +66,7 @@ import org.squashtest.csp.tm.service.RequirementLibraryNavigationService;
 import org.squashtest.csp.tm.service.importer.ImportSummary;
 import org.squashtest.csp.tm.web.internal.controller.generic.LibraryNavigationController;
 import org.squashtest.csp.tm.web.internal.model.builder.DriveNodeBuilder;
+import org.squashtest.csp.tm.web.internal.model.builder.JsTreeNodeListBuilder;
 import org.squashtest.csp.tm.web.internal.model.builder.RequirementLibraryTreeNodeBuilder;
 import org.squashtest.csp.tm.web.internal.model.jstree.JsTreeNode;
 import org.squashtest.csp.tm.web.internal.report.services.JasperReportsServiceImpl;
@@ -271,4 +272,21 @@ public class RequirementLibraryNavigationController extends
 		} while (readByte != EOF);
 
 	}
+	
+
+	@RequestMapping(value = "/drives", method = RequestMethod.GET, params = { "linkables" })
+	public @ResponseBody
+	List<JsTreeNode> getLinkablesRootModel() {
+		List<RequirementLibrary> linkableLibraries = requirementLibraryNavigationService.findLinkableRequirementLibraries();
+		List<JsTreeNode> rootModel = createLinkableLibrariesModel(linkableLibraries);
+		return rootModel;
+	}
+
+	private List<JsTreeNode> createLinkableLibrariesModel(List<RequirementLibrary> linkableLibraries) {
+		JsTreeNodeListBuilder<RequirementLibrary> listBuilder = new JsTreeNodeListBuilder<RequirementLibrary>(
+				driveNodeBuilder.get());
+
+		return listBuilder.setModel(linkableLibraries).build();
+	}
+	
 }

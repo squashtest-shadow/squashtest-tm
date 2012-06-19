@@ -31,6 +31,7 @@ import org.squashtest.csp.tm.domain.project.Project
 import org.squashtest.csp.tm.domain.requirement.Requirement
 import org.squashtest.csp.tm.domain.requirement.RequirementLibrary
 import org.squashtest.csp.tm.domain.testcase.TestCase
+import org.squashtest.csp.tm.service.RequirementLibraryFinderService;
 import org.squashtest.csp.tm.service.TestCaseModificationService;
 import org.squashtest.csp.tm.service.VerifiedRequirementsManagerService
 import org.squashtest.csp.tm.web.internal.model.builder.DriveNodeBuilder
@@ -42,17 +43,19 @@ class VerifiedRequirementsManagerControllerTest extends Specification{
 	VerifiedRequirementsManagerService verifiedRequirementsManagerService = Mock()
 	Provider driveNodeBuilder = Mock()
 	TestCaseModificationService testCaseFinder = Mock()
+	RequirementLibraryFinderService requirementLibraryFinder = Mock()
 
 	def setup() {
 		controller.verifiedRequirementsManagerService = verifiedRequirementsManagerService
 		controller.driveNodeBuilder = driveNodeBuilder
 		controller.testCaseFinder = testCaseFinder
+		controller.requirementLibraryFinder = requirementLibraryFinder
 		driveNodeBuilder.get() >> new DriveNodeBuilder(Mock(PermissionEvaluationService))
 	}
 
 	def "should show manager page"() {
 		given:
-		verifiedRequirementsManagerService.findLinkableRequirementLibraries() >> []
+		requirementLibraryFinder.findLinkableRequirementLibraries() >> []
 
 		when:
 		def res = controller.showManager(20L, Mock(Model))
@@ -71,7 +74,7 @@ class VerifiedRequirementsManagerControllerTest extends Specification{
 		lib.getClassSimpleName() >> "RequirementLibrary"
 		Project project = Mock()
 		lib.project >> project
-		verifiedRequirementsManagerService.findLinkableRequirementLibraries() >> [lib]
+		requirementLibraryFinder.findLinkableRequirementLibraries() >> [lib]
 
 		and:
 		def model = new ExtendedModelMap()

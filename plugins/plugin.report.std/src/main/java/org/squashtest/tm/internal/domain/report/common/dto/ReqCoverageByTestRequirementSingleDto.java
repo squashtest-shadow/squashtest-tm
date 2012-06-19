@@ -32,7 +32,6 @@ public class ReqCoverageByTestRequirementSingleDto {
 	 * The name of the folder which contains the requirement. Default value is " - "
 	 */
 	private String folder = " - ";
-
 	/***
 	 * The requirement reference and name
 	 */
