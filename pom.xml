@@ -7,7 +7,7 @@
 		<groupId>org.squashtest.tm</groupId>
 		<version>1.1</version>
 	</parent>
-	<groupId>org.squashtest.csp</groupId>
+	<groupId>org.squashtest.tm</groupId>
 	<artifactId>squashtest-csp</artifactId>
 	<version>1.2.0.IT36-SNAPSHOT</version>
 	<packaging>pom</packaging>

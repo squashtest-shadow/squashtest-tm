@@ -4,10 +4,10 @@
 	<modelVersion>4.0.0</modelVersion>
 	<parent>
 		<artifactId>squashtest-csp-core</artifactId>
-		<groupId>org.squashtest.csp</groupId>
+		<groupId>org.squashtest.tm</groupId>
 		<version>0.23.0.BUILD-SNAPSHOT</version>
 	</parent>
-	<groupId>org.squashtest.csp</groupId>
+	<groupId>org.squashtest.tm</groupId>
 	<artifactId>squashtest-core-integration-tests</artifactId>
 	<packaging>pom</packaging>
 	<name>Squashtest CSP - Core module - Integration tests</name>

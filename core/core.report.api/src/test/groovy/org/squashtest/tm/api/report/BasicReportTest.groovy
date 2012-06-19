@@ -59,7 +59,7 @@ class BasicReportTest extends Specification {
 
 		and:
 		View viewBean = Mock()
-		view.viewBean >> viewBean
+		view.springView >> viewBean
 		
 		when:
 		ModelAndView res = report.buildModelAndView(0, "pdf", Collections.emptyMap())

@@ -3,13 +3,11 @@
 	<modelVersion>4.0.0</modelVersion>
 	<parent>
 		<artifactId>squashtest-csp-core</artifactId>
-		<groupId>org.squashtest.csp</groupId>
-		<version>1.2.0.IT34-SNAPSHOT</version>
+		<groupId>org.squashtest.tm</groupId>
+		<version>1.2.0.IT36-SNAPSHOT</version>
 	</parent>
 
-	<groupId>org.squashtest.tm</groupId>
 	<artifactId>core.web</artifactId>
-	<version>1.2.0.IT34-SNAPSHOT</version>
 	<name>${project.groupId}.${project.artifactId}</name>
 	<description>Core of the Squash TM webapp - Provides infrastructure and cross-cutting components</description>
 	<packaging>war</packaging>
@@ -27,7 +25,7 @@
 		<!-- ====== SQUASHTEST ====== -->
 		<dependency>
 			<groupId>${parent.groupId}</groupId>
-			<artifactId>org.squashtest.csp.core.bugtracker</artifactId>
+			<artifactId>core.bugtracker.api</artifactId>
 			<version>${parent.version}</version>
 		</dependency>
 		<dependency>
@@ -36,20 +34,20 @@
 			<version>${parent.version}</version>
 		</dependency>
 		<dependency>
-			<groupId>${parent.groupId}</groupId>
+			<groupId>org.squashtest.tm</groupId>
 			<artifactId>springdm-bundle-dependencies</artifactId>
 			<version>${parent.version}</version>
 			<type>pom</type>
 		</dependency>
 		<dependency>
-			<groupId>${parent.groupId}</groupId>
+			<groupId>org.squashtest.tm</groupId>
 			<artifactId>spock-test-dependencies</artifactId>
 			<version>${parent.version}</version>
 			<type>pom</type>
 			<scope>test</scope>
 		</dependency>
 		<dependency>
-			<groupId>${parent.groupId}</groupId>
+			<groupId>org.squashtest.tm</groupId>
 			<artifactId>org.squashtest.csp.tools.unittest</artifactId>
 			<version>${parent.version}</version>
 			<scope>test</scope>

@@ -3,12 +3,11 @@
 	<parent>
 		<artifactId>squashtest-parent-pom</artifactId>
 		<groupId>org.squashtest.csp</groupId>
-		<version>1.2.0.IT34-SNAPSHOT</version>
+		<version>1.2.0.IT36-SNAPSHOT</version>
 		<relativePath>../parent-pom</relativePath>
 	</parent>
 	<groupId>org.squashtest.tm</groupId>
 	<artifactId>squash-tm-plugins</artifactId>
-	<version>1.2.0.IT34-SNAPSHOT</version>
 	<packaging>pom</packaging>
 	<name>squash-tm-plugins</name>
 	<description>This module builds standard Squash TM plugins</description>

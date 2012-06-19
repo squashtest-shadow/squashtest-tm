@@ -2,12 +2,10 @@
   <modelVersion>4.0.0</modelVersion>
   <parent>
     <artifactId>squashtest-csp</artifactId>
-    <groupId>org.squashtest.csp</groupId>
+    <groupId>org.squashtest.tm</groupId>
     <version>1.2.0.IT36-SNAPSHOT</version>
   </parent>
-  <groupId>org.squashtest.csp</groupId>
   <artifactId>squashtest-csp-dependencies</artifactId>
-  <version>1.2.0.IT36-SNAPSHOT</version>
   <packaging>pom</packaging>
   <name>squashtest-csp-dependencies</name>
   <description>This modules contains dependencies-grouping modules</description>

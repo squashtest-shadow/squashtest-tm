@@ -17,20 +17,20 @@
 	<dependencies>
 		<!-- ====== DEPENDENCY POMS ====== -->
 		<dependency>
-			<groupId>${project.groupId}</groupId>
+			<groupId>org.squashtest.tm</groupId>
 			<artifactId>springdm-bundle-dependencies</artifactId>
 			<version>${project.version}</version>
 			<type>pom</type>
 		</dependency>
 		<dependency>
-			<groupId>${project.groupId}</groupId>
+			<groupId>org.squashtest.tm</groupId>
 			<artifactId>spock-test-dependencies</artifactId>
 			<version>${project.version}</version>
 			<type>pom</type>
 			<scope>test</scope>
 		</dependency>
 		<dependency>
-			<groupId>${project.groupId}</groupId>
+			<groupId>org.squashtest.tm</groupId>
 			<artifactId>hibernate-dependencies</artifactId>
 			<version>${project.version}</version>
 			<type>pom</type>
@@ -39,7 +39,7 @@
 
 		<!--======= SQUASHTEST MODULES ======== -->
 		<dependency>
-			<groupId>${project.groupId}</groupId>
+			<groupId>org.squashtest.tm</groupId>
 			<artifactId>org.squashtest.csp.tools.unittest</artifactId>
 			<version>${project.version}</version>
 			<scope>test</scope>

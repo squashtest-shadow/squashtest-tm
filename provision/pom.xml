@@ -3,11 +3,11 @@
 	<modelVersion>4.0.0</modelVersion>
 	<parent>
 		<artifactId>squashtest-csp</artifactId>
-		<groupId>org.squashtest.csp</groupId>
+		<groupId>org.squashtest.tm</groupId>
 		<version>1.2.0.IT36-SNAPSHOT</version>
 	</parent>
 
-	<groupId>org.squashtest.csp</groupId>
+	<groupId>org.squashtest.tm</groupId>
 	<artifactId>squashtest-csp-provision</artifactId>
 	<packaging>pom</packaging>
 	<name>squashtest-csp-provision</name>
@@ -316,7 +316,7 @@
 			<type>pom</type>
 		</dependency>
 		<dependency>
-			<groupId>${project.groupId}</groupId>
+			<groupId>org.squashtest.tm</groupId>
 			<artifactId>org.squashtest.csp.core.service</artifactId>
 			<version>${project.version}</version>
 		</dependency>
