@@ -221,5 +221,10 @@ public class BugTrackerLocalServiceImpl implements BugTrackerLocalService {
 	public URL getBugtrackerUrl() {
 		return remoteBugTrackerService.getBugTrackerUrl();
 	}
+	
+	@Override
+	public Boolean getBugtrackerIframeFriendly() {
+		return new Boolean(remoteBugTrackerService.isIframeFriendly());
+	}
 
 }

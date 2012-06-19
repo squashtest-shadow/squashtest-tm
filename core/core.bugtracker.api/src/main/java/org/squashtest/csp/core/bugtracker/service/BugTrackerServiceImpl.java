@@ -100,7 +100,10 @@ public class BugTrackerServiceImpl implements BugTrackerService {
 	public String getBugTrackerName(){
 		return bugTracker.getName();
 	}
-	
+	@Override
+	public boolean isIframeFriendly() {
+		return bugTracker.isIframeFriendly();
+	}
 
 	@Override
 	public URL getViewIssueUrl(String issueId) {
@@ -191,4 +194,6 @@ public class BugTrackerServiceImpl implements BugTrackerService {
 		
 		return issues;
 	}
+
+	
 }

@@ -123,7 +123,10 @@ public class BugtrackerController {
 			return new ModelAndView("fragment/issues/bugtracker-panel-empty");			
 		} else {
 			LOGGER.trace("return bugtracker nav button");
-			return new ModelAndView("fragment/issues/bugtracker-nav-button");
+			ModelAndView mav =  new ModelAndView("fragment/issues/bugtracker-nav-button");
+			mav.addObject("bugtrackerUrl", bugTrackerLocalService.getBugtrackerUrl().toString());
+			mav.addObject("iframeFriendly", bugTrackerLocalService.getBugtrackerIframeFriendly());
+			return mav;
 		}
 	}
 	

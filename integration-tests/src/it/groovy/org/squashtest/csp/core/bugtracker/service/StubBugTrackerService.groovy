@@ -33,6 +33,16 @@ import org.squashtest.csp.core.bugtracker.spi.BugTrackerInterfaceDescriptor;
 class StubBugTrackerService implements BugTrackerService {
 
 	@Override
+	public boolean isIframeFriendly() {
+				return false;
+	}
+
+	@Override
+	public URL getBugTrackerUrl() {
+		return null;
+	}
+
+	@Override
 	public boolean isBugTrackerDefined() {
 		return false;
 	}
@@ -51,10 +61,7 @@ class StubBugTrackerService implements BugTrackerService {
 		return null;
 	}
 
-	@Override
-	public URL getBugTrackerUrl() {
-		return null;
-	}
+	
 
 	@Override
 	public URL getViewIssueUrl(String issueId) {

@@ -44,7 +44,12 @@ public interface BugTrackerService {
 	 */
 	boolean isBugTrackerDefined();
 	
-	
+	/**
+	 * Tells if a bug tracker is iframe friendly.
+	 *
+	 * @return
+	 */
+	boolean isIframeFriendly();
 	/**
 	 * 
 	 * 

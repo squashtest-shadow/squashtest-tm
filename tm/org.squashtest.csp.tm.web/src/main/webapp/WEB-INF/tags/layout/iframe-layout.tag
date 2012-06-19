@@ -20,55 +20,89 @@
         along with this software.  If not, see <http://www.gnu.org/licenses/>.
 
 --%>
-<%@ taglib prefix="layout" tagdir="/WEB-INF/tags/layout"  %>
-<%@ attribute name="head" fragment="true" description="Additional html head fragment" %>
-<%@ attribute name="footer" fragment="true" description="Additional html foot fragment" %>
-<%@ attribute name="resourceName" required="true" %>
-<%@ attribute name="iframeUrl" required="true" %>
-<%@ attribute name="foot" fragment="true" description="Pseudo html foot fragment where one can put inlined script and js libraries imports" %>
 
-<%@ taglib prefix="f" uri="http://java.sun.com/jsp/jstl/fmt" %>
-<%@ taglib prefix="comp" tagdir="/WEB-INF/tags/component"  %>
-<%@ taglib prefix="dt" tagdir="/WEB-INF/tags/datatables" %>
-<%@ taglib prefix="c"  uri="http://java.sun.com/jsp/jstl/core"%>
+<%@ attribute name="head" fragment="true"
+	description="Additional html head fragment"%>
+<%@ attribute name="footer" fragment="true"
+	description="Additional html foot fragment"%>
+<%@ attribute name="resourceName" required="true"%>
+<%@ attribute name="iframeUrl" required="true"%>
+<%@ attribute name="foot" fragment="true"
+	description="Pseudo html foot fragment where one can put inlined script and js libraries imports"%>
+	
+<%@ taglib prefix="layout" tagdir="/WEB-INF/tags/layout"%>
+<%@ taglib prefix="f" uri="http://java.sun.com/jsp/jstl/fmt"%>
+<%@ taglib prefix="comp" tagdir="/WEB-INF/tags/component"%>
+<%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core"%>
 <%@ taglib tagdir="/WEB-INF/tags/component" prefix="comp"%>
 
 
-<c:set var="titleKey" value="workspace.${resourceName}.title"/>
+<c:set var="titleKey" value="workspace.${resourceName}.title" />
 <c:set var="highlightedWorkspace" value="${resourceName}" />
 
 
 <html xmlns="http://www.w3.org/1999/xhtml">
 <head>
-		<title><f:message key="${titleKey }"/></title>
-		<layout:common-head />		
-		<layout:_common-script-import />
-		<jsp:invoke fragment="head" />
-	</head>
-	<body>
-	
-		<layout:navigation highlighted="${highlightedWorkspace }" />		
-		<div id="workspace">
-			
-				<div id="workspace-title">
-					<div class="snap-left">
-						<h2><f:message key="${titleKey }" /></h2>	
-					</div>
-					<div class="snap-right">
-						<div style="display:inline-block;">
-							<layout:_ajax-notifications  cssClass="snap-right"/>
-						</div><div class="main-menubar">
-							<layout:_menu-bar />
-						</div>
-					
-					</div>
+<title><f:message key="${titleKey }" />
+</title>
+<layout:common-head />
+<layout:_common-script-import />
+<jsp:invoke fragment="head" />
+</head>
+<body>
+
+	<layout:navigation highlighted="${highlightedWorkspace }" />
+	<div id="workspace">
+
+		<div id="workspace-title">
+			<div class="snap-left">
+				<h2>
+					<f:message key="${titleKey }" />
+				</h2>
+			</div>
+			<div class="snap-right">
+				<div style="display: inline-block;">
+					<layout:_ajax-notifications cssClass="snap-right" />
 				</div>
-				
-				<iframe src="${ bugtrackerUrl }" style="height:100%; width:100%; "></iframe>
-					
+				<div class="main-menubar">
+					<layout:_menu-bar />
+				</div>
+
+			</div>
 		</div>
-		<jsp:invoke fragment="footer" />
-	</body>
-	<comp:rich-jeditable-header />
-	<jsp:invoke fragment="foot" />
+		<div id="iframeDiv" style="bottom: 0;    position: absolute;    top: 1cm;    width: 100%;">
+		<f:message var="canotLoadMessage" key="iframe.cantLoad.message"/>
+		<f:message var="canotLoadLink" key="iframe.cantLoad.link"/>
+		<f:message var="canotLoadNote" key="iframe.cantLoad.note"/>
+		<iframe id="iframePpal" src="${ iframeUrl }" style="height: 100%; width: 100%;"></iframe></div>
+		<script type="text/javascript">
+ 			$(function() { 
+				if($("iframe#iframePpal").html() == ""){ 
+					var content = "<html><body>" + "<div id='canotLoad'><p>${canotLoadMessage} "
+					+"<br><br><a href='${ iframeUrl }' target='_blank'> ${canotLoadLink} </a>"
+					+"<br><br>${canotLoadNote }</p></div>"
+					+"</body></html>";
+					var iframe = document.getElementById("iframePpal");
+					var doc = iframe.document;
+					if(iframe.contentDocument) {doc = iframe.contentDocument; }// For NS6
+				    else {if(iframe.contentWindow) { doc = iframe.contentWindow.document; }}// For IE5.5 and IE6
+				    // Put the content in the iframe
+				    doc.open();
+				    doc.writeln(content);
+				    doc.close(); 
+				}
+ 			} );
+//  		   var iframe = document.createElement("iframe");
+// 		    var iframediv = document.getElementById("iframeDiv");
+// 		    iframediv.appendChild(iframe);
+ 		</script> 
+
+	</div>
+	<jsp:invoke fragment="footer" />
+</body>
+<comp:rich-jeditable-header />
+<jsp:invoke fragment="foot" />
+<div id="emptyIframe" style="display:none; ">
+<p style="vertical-align:middle; text-align:center; ">
+</p></div>
 </html>

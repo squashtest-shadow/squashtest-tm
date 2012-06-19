@@ -41,7 +41,8 @@
 	
 	<!--  creation of a property placeholder configurer with builtin defaults -->
 	
-	<util:properties id="squashtest.tm.bugtracker.default">		
+	<util:properties id="squashtest.tm.bugtracker.default">
+		<prop key="squashtest.bugtracker.iframeFriendly">true</prop>
 		<prop key="squashtest.bugtracker.kind">none</prop>	<!-- should refer to PropertiesBugTrackerFactoryBean#BUG_TRACKER_UNDEFINED_KIND -->
 		<prop key="squashtest.bugtracker.url">none</prop>   <!-- should refer to PropertiesBugTrackerFactoryBean#BUG_TRACKER_UNDEFINED_URL -->
 		<prop key="squashtest.bugtracker.name">default</prop><!-- should refer to PropertiesBugTrackerFactoryBean#BUG_TRACKER_UNDEFINED_NAME_DEFAULT -->
@@ -62,6 +63,7 @@
 	
 	<bean id="bugTracker"
 		class="org.squashtest.csp.core.bugtracker.service.PropertiesBugTrackerFactoryBean">
+		<property name="iframeFriendly" value="${squashtest.bugtracker.iframeFriendly}" />
 		<property name="kind" value="${squashtest.bugtracker.kind}" />
 		<property name="url" value="${squashtest.bugtracker.url}" />
 		<property name="name" value="${squashtest.bugtracker.name}" />

@@ -171,4 +171,7 @@ public interface BugTrackerLocalService {
 
 	URL getBugtrackerUrl();
 
+
+	Boolean getBugtrackerIframeFriendly();
+
 }

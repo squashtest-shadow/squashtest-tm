@@ -37,14 +37,15 @@ import org.squashtest.csp.core.bugtracker.domain.BugTracker;
 public class PropertiesBugTrackerFactoryBean implements FactoryBean<BugTracker>, InitializingBean {
 
 	private static final Logger LOGGER = LoggerFactory.getLogger(PropertiesBugTrackerFactoryBean.class);
-
+	
+	private static final String BUG_TRACKER_UNDEFINED_IFRAME_FRIENDLY = "true";
 	private static final String BUG_TRACKER_UNDEFINED_KIND = "none";
 	private static final String BUG_TRACKER_UNDEFINED_URL = "none";
 	private static final String BUG_TRACKER_UNSPECIFIED_NAME_DEFAULT = "default";
 	
 
 	private BugTracker bugTracker = BugTracker.NOT_DEFINED;
-
+	private String iframeFriendly;
 	private String kind;
 	private String url;
 	private String name;
@@ -71,7 +72,12 @@ public class PropertiesBugTrackerFactoryBean implements FactoryBean<BugTracker>,
 		if (isNullBugTracker(kind, url)) {
 			bugTracker = BugTracker.NOT_DEFINED;
 		} else {
-			BugTracker bt = new BugTracker(url, kind, name);
+			BugTracker bt = null;
+			if(iframeFriendly.equals("false")){
+			 bt = new BugTracker(url, kind, name, false);
+			}else{
+				 bt = new BugTracker(url, kind, name, true);
+			}
 			bugTracker = bt;
 		}
 
@@ -96,6 +102,11 @@ public class PropertiesBugTrackerFactoryBean implements FactoryBean<BugTracker>,
 			LOGGER.warn("Bug tracker name was not properly set, '" + BUG_TRACKER_UNSPECIFIED_NAME_DEFAULT
 					+ "' will be used instead");
 			name = BUG_TRACKER_UNSPECIFIED_NAME_DEFAULT;
+		}
+		if (isPropertyUnset(iframeFriendly, BUG_TRACKER_UNDEFINED_IFRAME_FRIENDLY)){
+			LOGGER.warn("Bug tracker iframe fiendly was not properly set, '" + BUG_TRACKER_UNDEFINED_IFRAME_FRIENDLY
+					+ "' will be used instead");
+			iframeFriendly = BUG_TRACKER_UNDEFINED_IFRAME_FRIENDLY;
 		}
 
 	}
@@ -150,5 +161,15 @@ public class PropertiesBugTrackerFactoryBean implements FactoryBean<BugTracker>,
 	public String getName(){
 		return name;
 	}
+
+	public String getIframeFriendly() {
+		return iframeFriendly;
+	}
+
+	public void setIframeFriendly(String iframeFriendly) {
+		this.iframeFriendly = iframeFriendly;
+	}
+	
+	
 
 }

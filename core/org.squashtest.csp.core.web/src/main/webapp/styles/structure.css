@@ -56,7 +56,10 @@ div#navigation {
 	margin-right: 0.4cm;
 }
 
-
+div#bugtracker-div{
+	margin-top:30px;
+	}
+	
 div#workspace {
 	bottom: 0.2cm;
 	left: 1.4cm;

@@ -20,15 +20,19 @@
         along with this software.  If not, see <http://www.gnu.org/licenses/>.
 
 --%>
-<%@ page language="java" contentType="text/html; charset=utf-8"
-	pageEncoding="utf-8"%>
+<%@ page language="java" contentType="text/html; charset=utf-8" pageEncoding="utf-8" %>
 <%@ taglib prefix="fmt" uri="http://java.sun.com/jsp/jstl/fmt" %>
-<%@ taglib prefix="c"  uri="http://java.sun.com/jsp/jstl/core"%>
-
+<%@ taglib prefix="c"  uri="http://java.sun.com/jsp/jstl/core" %>
 <c:url var="workspaceUrl" value="/bugtracker/workspace" />
 <fmt:message var="bTitle" key="workspace.bugtracker.button.label" />
-
-<a id="bugtracker-link" class="nav_btn" href="${workspaceUrl }">
+<c:choose>
+	<c:when test="${ iframeFriendly }">
+		<a id="bugtracker-link" class="nav_btn" href="${ workspaceUrl }">
+	</c:when>
+	<c:otherwise>
+		<a id="bugtracker-link" class="nav_btn" href="${ bugtrackerUrl }" target="_blank">
+	</c:otherwise>
+</c:choose>
 	<img src="${ pageContext.servletContext.contextPath }/images/Button_Nav_Bugtracker_off.png" alt="${ bTitle }" title="${ bTitle }" border="0"/>
 </a>
 

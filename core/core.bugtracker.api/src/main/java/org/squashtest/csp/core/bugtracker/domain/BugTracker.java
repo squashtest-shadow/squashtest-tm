@@ -21,17 +21,19 @@
 package org.squashtest.csp.core.bugtracker.domain;
 
 public class BugTracker {
-	public static final BugTracker NOT_DEFINED = new BugTracker("", "none", "");
-
+	public static final BugTracker NOT_DEFINED = new BugTracker("", "none", "", true);
+	
 	private final String url;
+	private final boolean iframeFriendly;
 	private final String kind;
 	private final String name;
 
-	public BugTracker(String bugTrackerUrl, String connectorKind, String name) {
+	public BugTracker(String bugTrackerUrl, String connectorKind, String name, boolean iframeFriendly) {
 		super();
 		this.url = bugTrackerUrl;
 		this.kind = connectorKind;
 		this.name = name;
+		this.iframeFriendly = iframeFriendly;
 	}
 
 	public final String getUrl() {
@@ -45,4 +47,9 @@ public class BugTracker {
 	public final String getName(){
 		return name;
 	}
+
+	public boolean isIframeFriendly() {
+		return iframeFriendly;
+	}
+	
 }
