@@ -199,6 +199,14 @@ public class MantisConnector implements BugTrackerConnector {
 		return issue;
 	}
 
+	
+	@Override
+	public BTIssue findIssue(String key){
+		IssueData mantisIssue = client.getIssue(credentialsHolder.get(), MantisEntityConverter.squash2MantisId(key));
+		BTIssue issue = MantisEntityConverter.mantis2squashIssue(mantisIssue);
+		return issue;
+	}
+	
 	@Override
 	public List<BTIssue> findIssues(List<String> issueKeyList) {
 		List<BTIssue> toReturn = new ArrayList<BTIssue>();

@@ -179,6 +179,14 @@ public class BugTrackerServiceImpl implements BugTrackerService {
 
 	}
 
+	
+	@Override
+	public BTIssue getIssue(String key){
+		BugTrackerConnector connector = bugTrackerConnectorFactory.createConnector(bugTracker);
+		connector.authenticate(getBugTrackerContext().getCredentials());
+		return connector.findIssue(key);
+	}
+	
 	@Override
 	public List<BTIssue> getIssues(List<String> issueKeyList) {
 		BugTrackerConnector connector = bugTrackerConnectorFactory.createConnector(bugTracker);

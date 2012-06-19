@@ -159,6 +159,14 @@ public interface BugTrackerLocalService {
 	 */
 	List<Priority> getRemotePriorities();
 
+	
+	/**
+	 * returns a remote issue using its key
+	 * @param issueKey
+	 * @return a remote issue
+	 */
+	BTIssue getIssue(String issueKey);
+	
 	/***
 	 * returns a list of BTIssu corresponding to the given string keys
 	 *

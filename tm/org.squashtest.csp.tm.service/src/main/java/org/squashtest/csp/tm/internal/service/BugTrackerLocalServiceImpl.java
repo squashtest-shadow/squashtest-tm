@@ -107,6 +107,13 @@ public class BugTrackerLocalServiceImpl implements BugTrackerLocalService {
 		return createdIssue;
 	}
 
+	
+
+	@Override
+	public BTIssue getIssue(String issueKey) {
+		return remoteBugTrackerService.getIssue(issueKey);
+	}
+	
 	@Override
 	public List<BTIssue> getIssues(List<String> issueKeyList) {
 		return remoteBugTrackerService.getIssues(issueKeyList);

@@ -23,6 +23,7 @@ package org.squashtest.csp.core.bugtracker.service;
 import java.net.URL;
 import java.util.List;
 
+import org.squashtest.csp.core.bugtracker.core.BugTrackerNotFoundException;
 import org.squashtest.csp.core.bugtracker.core.BugTrackerRemoteException;
 import org.squashtest.csp.core.bugtracker.domain.BTIssue;
 import org.squashtest.csp.core.bugtracker.domain.BTProject;
@@ -145,6 +146,17 @@ public interface BugTrackerService {
 	 */
 	BTIssue createIssue(BTIssue issue);
 
+	
+	
+	/**
+	 * given a key, returns an issue
+	 * 
+	 * @param key
+	 * @return the issue
+	 * @throws BugTrackerNotFoundException
+	 */
+	BTIssue getIssue(String key);
+	
 
 	/***
 	 * This method returns a BTIssue list corresponding to the given Squash Issue List

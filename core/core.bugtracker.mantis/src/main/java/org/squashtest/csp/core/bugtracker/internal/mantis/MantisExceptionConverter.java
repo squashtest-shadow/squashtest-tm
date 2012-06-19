@@ -30,6 +30,7 @@ import org.springframework.context.MessageSource;
 import org.springframework.context.i18n.LocaleContextHolder;
 import org.springframework.stereotype.Component;
 import org.squashtest.csp.core.bugtracker.core.BugTrackerNoCredentialsException;
+import org.squashtest.csp.core.bugtracker.core.BugTrackerNotFoundException;
 import org.squashtest.csp.core.bugtracker.core.BugTrackerRemoteException;
 
 
@@ -56,13 +57,15 @@ public class MantisExceptionConverter {
 	private interface MantisMessageKeys {
 		String WRONG_CREDENTIAL = "exception.remote.accessdenied";
 		String MANDATORY_SUMMARY_REQUIRED = "exception.remote.validation.mandatory.summary";
-		String MANDATORY_DESCRIPTION_REQUIRED = "exception.remote.validation.mandatory.description";		
+		String MANDATORY_DESCRIPTION_REQUIRED = "exception.remote.validation.mandatory.description";	
+		String ISSUE_NOT_FOUND = "exception.remote.notfound.issue";
 	}
 	
 	private interface SquashMessageKeys {
 		String WRONG_CREDENTIAL = "exception.squash.accessdenied";
 		String MANDATORY_SUMMARY_REQUIRED = "exception.squash.validation.mandatory.summary";
 		String MANDATORY_DESCRIPTION_REQUIRED = "exception.squash.validation.mandatory.description";
+		String ISSUE_NOT_FOUND = "exception.squash.notfound.issue";
 		
 		String UNKNOWN_EXCEPTION = "exception.squash.unknownexception";
 	}
@@ -76,6 +79,7 @@ public class MantisExceptionConverter {
 	private String REMOTE_WRONG_CREDENTIALS = "Access Denied";
 	private String REMOTE_SUMMARY_REQUIRED = "Mandatory field \'summary\'";
 	private String REMOTE_DESCRIPTION_REQUIRED = "Mandatory field \'description\'";	
+	private String REMOTE_ISSUE_NOT_FOUND = "Issue does not exist";
 	
 	
 	public MantisExceptionConverter(){
@@ -95,10 +99,13 @@ public class MantisExceptionConverter {
 		}
 		if (exception == null){
 			exception = setIfMandatoryDescriptionNotSet(remoteException);
+		}		
+		if (exception == null){
+			exception = setIssueNotFoundException(remoteException);
 		}
 		if (exception == null){
 			exception = setUnknownException(remoteException);
-		}		
+		}
 		
 		return exception;
 	}
@@ -126,6 +133,7 @@ public class MantisExceptionConverter {
 		REMOTE_WRONG_CREDENTIALS = messageSource.getMessage(MantisMessageKeys.WRONG_CREDENTIAL, null, REMOTE_WRONG_CREDENTIALS,locale);
 		REMOTE_SUMMARY_REQUIRED = messageSource.getMessage(MantisMessageKeys.MANDATORY_SUMMARY_REQUIRED, null, REMOTE_SUMMARY_REQUIRED, locale);
 		REMOTE_DESCRIPTION_REQUIRED = messageSource.getMessage(MantisMessageKeys.MANDATORY_DESCRIPTION_REQUIRED, null, REMOTE_DESCRIPTION_REQUIRED, locale);
+		REMOTE_ISSUE_NOT_FOUND = messageSource.getMessage(MantisMessageKeys.ISSUE_NOT_FOUND, null, REMOTE_ISSUE_NOT_FOUND, locale);
 	}
 	
 	private BugTrackerRemoteException setIfAccessDenied(RemoteException remoteException){
@@ -154,6 +162,16 @@ public class MantisExceptionConverter {
 		}
 		return null;		
 	}	
+	
+	private BugTrackerRemoteException setIssueNotFoundException(RemoteException remoteException){
+		String message = remoteException.getMessage();
+		if (message.contains(REMOTE_ISSUE_NOT_FOUND )){
+			String translation = messageSource.getMessage(SquashMessageKeys.ISSUE_NOT_FOUND, null, getLocale());
+			return new BugTrackerNotFoundException(translation, remoteException);
+		}
+		return null;		
+	}
+	
 	
 	private BugTrackerRemoteException setUnknownException(RemoteException remoteException){
 		String translation = messageSource.getMessage(SquashMessageKeys.UNKNOWN_EXCEPTION, null, getLocale());

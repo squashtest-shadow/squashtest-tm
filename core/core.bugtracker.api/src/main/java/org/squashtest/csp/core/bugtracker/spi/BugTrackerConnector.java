@@ -22,6 +22,7 @@ package org.squashtest.csp.core.bugtracker.spi;
 
 import java.util.List;
 
+import org.squashtest.csp.core.bugtracker.core.BugTrackerNotFoundException;
 import org.squashtest.csp.core.bugtracker.domain.BTIssue;
 import org.squashtest.csp.core.bugtracker.domain.BTProject;
 import org.squashtest.csp.core.bugtracker.domain.Category;
@@ -179,6 +180,14 @@ public interface BugTrackerConnector {
 	 */
 	BugTrackerInterfaceDescriptor getInterfaceDescriptor();
 
+	/**
+	 * 
+	 * @param key
+	 * @return the issue from the remote bugtracker
+	 * @throws BugTrackerNotFoundException
+	 */
+	BTIssue findIssue(String key);
+	
 	/***
 	 * will return a BTIssue List corresponding to a given squash issue key List
 	 *

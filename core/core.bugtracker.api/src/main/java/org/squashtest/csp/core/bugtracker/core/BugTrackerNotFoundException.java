@@ -20,7 +20,7 @@
  */
 package org.squashtest.csp.core.bugtracker.core;
 
-public class BugTrackerNotFoundException extends BugTrackerManagerException {
+public class BugTrackerNotFoundException extends BugTrackerRemoteException {
 
 	private static final long serialVersionUID = 6738012630408869671L;
 	
@@ -28,7 +28,7 @@ public class BugTrackerNotFoundException extends BugTrackerManagerException {
 	
 	
 	public BugTrackerNotFoundException(){
-		super(defaultMessage);
+		super(null);
 	}
 
 	public BugTrackerNotFoundException(String message, Throwable cause) {
