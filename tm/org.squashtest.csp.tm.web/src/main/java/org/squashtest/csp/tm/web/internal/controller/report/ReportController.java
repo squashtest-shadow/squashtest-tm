@@ -51,7 +51,7 @@ import org.squashtest.tm.api.report.criteria.Criteria;
 @Controller
 @RequestMapping("/reports/{namespace}/{index}")
 public class ReportController {
-	
+
 	private static final Logger LOGGER = LoggerFactory.getLogger(ReportController.class);
 	@Inject
 	private ReportsRegistry reportsRegistry;
@@ -69,7 +69,7 @@ public class ReportController {
 	@RequestMapping(value = "/panel", method = RequestMethod.GET)
 	public String showReportPanel(@PathVariable String namespace, @PathVariable int index, Model model) {
 		populateModelWithReport(namespace, index, model);
-		return "contextual-report.html";
+		return "report-panel.html";
 	}
 
 	private void populateModelWithReport(String namespace, int index, Model model) {
@@ -93,21 +93,47 @@ public class ReportController {
 		model.addAttribute("hasBackButton", Boolean.TRUE);
 		return "report-viewer.html";
 	}
-	
-	@RequestMapping(value="/views/{viewIndex}/formats/{format}", method = RequestMethod.POST)
-	public ModelAndView generateReportView(@PathVariable String namespace, @PathVariable int index, @PathVariable int viewIndex, @PathVariable String format, @RequestBody Map<String, Object> form) {
+
+	/**
+	 * Generates report view from a post with JSON payload
+	 * 
+	 * @param namespace
+	 * @param index
+	 * @param viewIndex
+	 * @param format
+	 * @param form
+	 * @return
+	 */
+	@RequestMapping(value = "/views/{viewIndex}/formats/{format}", method = RequestMethod.POST)
+	public ModelAndView generateReportView(@PathVariable String namespace, @PathVariable int index,
+			@PathVariable int viewIndex, @PathVariable String format, @RequestBody Map<String, Object> form) {
 		LOGGER.debug(form.toString());
 		Map<String, Criteria> crit = (new FormToCriteriaConverter()).convert(form);
 		LOGGER.debug(crit.toString());
-		
+
 		Report report = reportsRegistry.findReport(namespace, index);
 		return report.buildModelAndView(viewIndex, format, crit);
 	}
 
-	@RequestMapping(value="/views/{viewIndex}/formats/{format}", method = RequestMethod.POST, params={"data"})
-	public ModelAndView generateReportView(@PathVariable String namespace, @PathVariable int index, @PathVariable int viewIndex, @PathVariable String format, @RequestParam String data) throws JsonParseException, JsonMappingException, IOException {
+	/**
+	 * Generates report view from a standard post with a data attribute containing a serialized JSON form.
+	 * 
+	 * @param namespace
+	 * @param index
+	 * @param viewIndex
+	 * @param format
+	 * @param data
+	 * @return
+	 * @throws JsonParseException
+	 * @throws JsonMappingException
+	 * @throws IOException
+	 */
+	@RequestMapping(value = "/views/{viewIndex}/formats/{format}", method = RequestMethod.POST, params = { "data" })
+	public ModelAndView generateReportView(@PathVariable String namespace, @PathVariable int index,
+			@PathVariable int viewIndex, @PathVariable String format, @RequestParam String data)
+			throws JsonParseException, JsonMappingException, IOException {
 		Map<String, Object> form = JsonHelper.deserialize(data);
 		return generateReportView(namespace, index, viewIndex, format, form);
 	}
-	
+
 }

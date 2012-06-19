@@ -197,17 +197,30 @@ squashtm.report = (function ($) {
 		singleCheckboxes.change();
 	}
 	
-	function generateView() {
-		console.log(formState);
-		var tabPanel = $("#view-tabed-panel");
-		if (!selectedTab) {
-			tabPanel.tabs('select', 0);			
-		}
-		$("#view-tabed-panel:hidden").show('blind', {}, 500);
-	}
-	
 	function buildViewUrl(index, format) {
 		return 'http://' + document.location.host + config.reportUrl + "/views/" + index + "/formats/" + format;
+	}
+	
+	function loadTab(tab) {
+		var url = buildViewUrl(tab.index, "html");	
+		$.ajax({
+			type: 'post', 
+			url: url, 
+			data: JSON.stringify(formState),  
+			contentType: "application/json"
+		}).done(function (html) {
+			tab.panel.innerHTML = html;
+		});		
+	}
+	
+	function generateView() {
+		var tabPanel = $("#view-tabed-panel");
+		if (!selectedTab) {
+			tabPanel.tabs('select', 0);
+		} else {
+			loadTab(selectedTab);
+		}
+		$("#view-tabed-panel:hidden").show('blind', {}, 500);
 	}
 	
 	function selectViewTab(event, ui) {
@@ -216,15 +229,7 @@ squashtm.report = (function ($) {
 		tabs.find(".view-format-cmb").addClass('not-displayed');
 		tabs.find("#view-format-cmb-" + ui.index).removeClass('not-displayed');
 		
-		var url = buildViewUrl(ui.index, "html");	
-		$.ajax({
-			type: 'post', 
-			url: url, 
-			data: JSON.stringify(formState),  
-			contentType: "application/json"
-		}).done(function (html) {
-			ui.panel.innerHTML = html;
-		});		
+		loadTab(ui);
 	}
 	
 	function doExport() {
