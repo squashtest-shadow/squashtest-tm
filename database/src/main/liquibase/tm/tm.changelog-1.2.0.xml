@@ -669,7 +669,7 @@
 			and aoiCampaign.IDENTITY = p.CL_ID
 			and aoiCampaign.CLASS_ID = aclassCampaign.ID
 			and aclassCampaign.CLASSNAME = 'org.squashtest.csp.tm.domain.campaign.CampaignLibrary';</sql>
-	</changeSet>
+	</changeSet>	
 	
 	<changeSet id="tm-1.2.0.35-01" author="bsiri">
 		
@@ -688,13 +688,24 @@
 	</changeSet>
 	<changeSet id="tm-1.2.0.36-01" author="mpagnon">
 		
-		<comment>table Requirement nows holds a Category attribute</comment>
+		<comment>table RequirementVersion nows holds a Category attribute</comment>
 		
 		<addColumn tableName="REQUIREMENT_VERSION">
 			<column name="CATEGORY" type="java.sql.Types.VARCHAR(50)" 
 			remarks="Requirement category. Althought this field is a variable character, the data will be the text representation of an enumeration"
 			defaultValue="UNDEFINED" >
 			<constraints nullable="false" />
+			</column>
+		</addColumn>
+			
+	</changeSet>
+	<changeSet id="tm-1.2.0.36-02" author="mpagnon">
+		
+		<comment>table Test-Case nows holds a Reference attribute</comment>
+		
+		<addColumn tableName="TEST_CASE">
+			<column name="REFERENCE" type="java.sql.Types.VARCHAR(20)" defaultValue="" >
+			<constraints nullable="true" />
 			</column>
 		</addColumn>
 			

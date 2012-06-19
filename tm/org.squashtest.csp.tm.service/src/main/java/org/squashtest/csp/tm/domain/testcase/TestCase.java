@@ -68,7 +68,9 @@ public class TestCase extends TestCaseLibraryNode implements AttachmentHolder {
 
 	@Column(updatable = false)
 	private final int version = 1;
-
+	
+	private String reference = "";
+	
 	@Lob
 	private String prerequisite = "";
 
@@ -114,6 +116,22 @@ public class TestCase extends TestCaseLibraryNode implements AttachmentHolder {
 
 	public int getVersion() {
 		return version;
+	}
+	
+	/***
+	 * @return the reference of the test-case
+	 */
+	public String getReference() {
+		return reference;
+	}
+
+	/***
+	 * Set the test-case reference
+	 *
+	 * @param reference
+	 */
+	public void setReference(String reference) {
+		this.reference = reference;
 	}
 
 	public String getPrerequisite() {
@@ -279,6 +297,7 @@ public class TestCase extends TestCaseLibraryNode implements AttachmentHolder {
 		this.setDescription(source.getDescription());
 		this.executionMode = source.getExecutionMode();
 		this.importance = source.getImportance();
+		this.reference = source.getReference();
 	}
 
 	public int getPositionOfStep(long stepId) throws UnknownEntityException {

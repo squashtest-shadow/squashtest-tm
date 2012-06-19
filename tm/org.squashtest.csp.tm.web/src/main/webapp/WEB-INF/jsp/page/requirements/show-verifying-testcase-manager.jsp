@@ -137,7 +137,6 @@
 		</div>
 	</jsp:attribute>
 
-
 	<jsp:attribute name="subPageTitle">
 		<h2>${requirementVersion.name}&nbsp;:&nbsp;<f:message key="squashtm.library.verifying-test-cases.title" /></h2>
 	</jsp:attribute>

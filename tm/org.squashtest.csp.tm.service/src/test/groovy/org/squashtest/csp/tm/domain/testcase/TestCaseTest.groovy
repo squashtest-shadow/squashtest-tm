@@ -18,8 +18,8 @@
  *     You should have received a copy of the GNU Lesser General Public License
  *     along with this software.  If not, see <http://www.gnu.org/licenses/>.
  */
-
 package org.squashtest.csp.tm.domain.testcase
+
 
 import javax.swing.plaf.basic.BasicFileChooserUI.ApproveSelectionAction
 
@@ -234,6 +234,7 @@ class TestCaseTest extends Specification {
 		"description"   | "bar"
 		"executionMode" | TestCaseExecutionMode.AUTOMATED
 		"importance"    | TestCaseImportance.HIGH
+		"reference"     | "barfoo"
 	}
 
 	def "copy of a test case should have the same steps"() {

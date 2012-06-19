@@ -79,9 +79,10 @@ public class VerifyingTestCaseManagerController {
 	private RequirementVersionManagerService requirementVersionFinder;
 
 	private final DataTableMapper verifyingTcMapper = new DataTableMapper("verifying-test-cases", TestCase.class,
-			Project.class).initMapping(5).mapAttribute(Project.class, 2, "name", String.class)
-			.mapAttribute(TestCase.class, 3, "name", String.class)
-			.mapAttribute(TestCase.class, 4, "executionMode", TestCaseExecutionMode.class);
+			Project.class).initMapping(6).mapAttribute(Project.class, 2, "name", String.class)
+			.mapAttribute(TestCase.class, 3, "reference", String.class)
+			.mapAttribute(TestCase.class, 4, "name", String.class)
+			.mapAttribute(TestCase.class, 5, "executionMode", TestCaseExecutionMode.class);
 
 	@ServiceReference
 	public void setVerifyingTestCaseManager(VerifyingTestCaseManagerService verifyingTestCaseManagerService) {
@@ -175,7 +176,7 @@ public class VerifyingTestCaseManagerController {
 			type = formatExecutionMode(tc.getExecutionMode(), locale);
 
 			model.addRow(new Object[] { tc.getId(), holder.getFirstItemIndex() + i + 1, tc.getProject().getName(),
-					tc.getName(), type, "" });
+					tc.getReference(),tc.getName(), type, "" });
 		}
 
 		model.displayRowsFromTotalOf(holder.getTotalNumberOfItems());

@@ -34,6 +34,7 @@ import org.squashtest.csp.tm.domain.requirement.RequirementVersion
 import org.squashtest.csp.tm.domain.testcase.ActionTestStep
 import org.squashtest.csp.tm.domain.testcase.TestCase
 import org.squashtest.csp.tm.domain.testcase.TestCaseExecutionMode
+import org.squashtest.csp.tm.domain.testcase.TestCaseImportance;
 import org.squashtest.csp.tm.domain.testcase.TestCaseLibraryNode
 import org.squashtest.csp.tm.hibernate.mapping.HibernateMappingSpecification
 import org.squashtest.csp.tools.unittest.hibernate.HibernateOperationCategory
@@ -46,7 +47,9 @@ class TestCaseMappingIT extends HibernateMappingSpecification {
 
 		given: "a test case"
 		TestCase tc = new TestCase(name: "name", description: "description")
-
+		tc.reference = "ref"
+		tc.prerequisite = "prerequisite"
+		tc.importance = TestCaseImportance.HIGH
 		when:
 		doInTransaction({ session ->
 			session.persist(tc)
@@ -57,6 +60,9 @@ class TestCaseMappingIT extends HibernateMappingSpecification {
 
 		then:
 		obj != null
+		obj.reference == tc.reference
+		obj.prerequisite == tc.prerequisite	
+		obj.importance == tc.importance	
 		obj.name == tc.name
 		obj.description == tc.description
 		obj.createdOn != null

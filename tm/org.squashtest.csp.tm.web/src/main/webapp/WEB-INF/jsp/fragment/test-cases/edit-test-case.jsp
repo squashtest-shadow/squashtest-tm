@@ -29,6 +29,7 @@
 <%@ taglib prefix="dt" tagdir="/WEB-INF/tags/datatables" %>
 <%@ taglib prefix="sf" uri="http://www.springframework.org/tags/form" %>
 <%@ taglib prefix="aggr" tagdir="/WEB-INF/tags/aggregates" %>
+<%@ taglib prefix="fn" uri="http://java.sun.com/jsp/jstl/functions" %>
 <%@ taglib prefix="pop" tagdir="/WEB-INF/tags/popup" %>
 <%@ taglib prefix="authz" tagdir="/WEB-INF/tags/authz" %>
 
@@ -551,8 +552,17 @@ $(function() {
 <div id="test-case-name-div" class="ui-widget-header ui-corner-all ui-state-default fragment-header">
 
 <div style="float: left; height: 100%;">
-<h2><span><f:message key="test-case.header.title" />&nbsp;:&nbsp;</span><a id="test-case-name" href="${ testCaseUrl }/info"><c:out
-	value="${ testCase.name }" escapeXml="true" /></a></h2>
+<h2>
+	<span><f:message key="test-case.header.title" />&nbsp;:&nbsp;</span>
+			<c:set var="completeTestCaseName" value="${ testCase.name }" />
+			<c:if test="${not empty testCase.reference && fn:length(testCase.reference) > 0}" >
+				<c:set var="completeTestCaseName" value='${ testCase.reference } - ${ testCase.name }' />
+			</c:if>
+			<a id="test-case-name" href="${ testCaseUrl }/info"><c:out value="${ completeTestCaseName }" escapeXml="true"/></a>
+			<%-- raw reference and name because we need to get the name and only the name for modification, and then re-compose the title with the reference  --%>
+			<span id="test-case-raw-reference" style="display:none"><c:out value="${ testCase.reference }" escapeXml="true"/></span>
+			<span id="test-case-raw-name" style="display:none"><c:out value="${ testCase.name }" escapeXml="true"/></span>
+</h2>
 </div>
 
 
@@ -575,18 +585,18 @@ $(function() {
 		<pop:cancel-button />
 	</jsp:attribute>
 	<jsp:body>
-		<script type="text/javascript">
-	$("#rename-test-case-dialog").bind("dialogopen", function(event, ui) {
-		var name = $('#test-case-name').text();
-		$("#rename-test-case-input").val(name);
-	});
-</script>
-		<label><f:message key="dialog.rename.label" /></label>
-		<input type="text" id="rename-test-case-input" maxlength="255" />
-		<br />
-		<comp:error-message forField="name" />	
-
-	</jsp:body>
+				<script type="text/javascript">
+				$( "#rename-test-case-dialog" ).bind( "dialogopen", function(event, ui) {
+					var name = $('#test-case-raw-name').text();
+					$("#rename-test-case-input").val(name);
+					
+				});
+				</script>
+				<label><f:message key="dialog.rename.label" /></label>
+				<input type="text" id="rename-test-case-input" maxlength="255" /><br/>
+				<comp:error-message forField="name"/>
+			</jsp:body>
+	
 </comp:popup>
 </c:if>
 
@@ -625,6 +635,8 @@ $(function() {
 <%----------------------------------- Description -----------------------------------------------%>
 <c:if test="${ smallEditable }">
 	<comp:rich-jeditable targetUrl="${ testCaseUrl }" componentId="test-case-description" />
+	<comp:simple-jeditable targetUrl="${ testCaseUrl }" componentId="test-case-reference" submitCallback="updateReferenceInTitle" maxLength="20" />
+	
 	<comp:select-jeditable componentId="test-case-importance" jsonData="${ testCaseImportanceComboJson }" targetUrl="${ testCaseUrl }" />
 </c:if>
 
@@ -636,6 +648,10 @@ $(function() {
 				<label for="test-case-description" class="display-table-cell"><f:message key="test-case.description.label" /></label>
 				<div class="display-table-cell" id="test-case-description" >${ testCase.description }</div>
 			</div>
+			<div class="display-table-row">
+					<label class="display-table-cell"  for="test-case-reference"><f:message key="test-case.reference.label" /></label>
+					<div class="display-table-cell"  id="test-case-reference">${ testCase.reference }</div>
+				</div>
 			<div class="display-table-row">
 				<label for="test-case-importance" class="display-table-cell"><f:message key="test-case.importance.combo.label" /></label>
 				<div class="display-table-cell">
@@ -870,22 +886,31 @@ $(function() {
 	function nodeSetname(name) {
 		$('#test-case-name').html(name);
 	}
-
+	function updateRawNameHiddenField(name){
+		$('#test-case-raw-name').html(name);
+	}
 	/* renaming success handler */
 	function renameTestCaseSuccess(data) {
-		nodeSetname(data.newName);
-
-		if (typeof renameSelectedNreeNode == 'function') {
-			renameSelectedNreeNode(data.newName);
-		}
+		//Compose the real name
+		var checkedName = composeTestCaseName(data.newName);
+		//update name in panel
+		nodeSetname(checkedName);
+		//update name in tree
+		updateTreeDisplayedName(checkedName);
 		//change also the node name attribute
 		if (typeof updateSelectedNodeName == 'function'){
 			updateSelectedNodeName(data.newName);	
-		}
-
+		//and the hidden raw name
+		updateRawNameHiddenField(data.newName);
 		$('#rename-test-case-dialog').dialog('close');
+		}
 	}
-
+	/*update only the displayed node name*/
+	function updateTreeDisplayedName(newName){
+			if (typeof renameSelectedNreeNode == 'function'){
+				renameSelectedNreeNode(newName);
+			}
+		}
 	/* renaming failure handler */
 	function renameTestCaseFailure(xhr) {
 		$('#rename-test-case-dialog .popup-label-error').html(xhr.statusText);
@@ -904,6 +929,34 @@ $(function() {
 		</c:otherwise>
 		</c:choose>		
 	}
+	/* renaming after reference update */
+	/* args : reference : the html-escaped reference*/
+	function updateReferenceInTitle(reference){
+		//update hidden reference
+		var jqRawRef = $('#test-case-raw-reference');
+		jqRawRef.html(reference);
+		var escaped = jqRawRef.text();
+		var newName = "";
+		if(reference.length > 0)
+			{
+				newName += escaped + " - ";
+			}
+		newName += $('#test-case-raw-name').text();
+		//update name
+		nodeSetname(newName);
+		//update tree
+		updateTreeDisplayedName(newName);
+	}
+	
+	function composeTestCaseName(rawName)
+	{
+		var toReturn = rawName;
+		if($('#test-case-raw-reference').text().length > 0){
+			toReturn = $('#test-case-raw-reference').text() + " - " + rawName;
+		}
+		return toReturn;
+	}
+	
 	
 </script>
 

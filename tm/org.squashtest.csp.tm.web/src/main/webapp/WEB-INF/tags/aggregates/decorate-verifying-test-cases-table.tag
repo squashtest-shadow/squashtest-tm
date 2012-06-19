@@ -105,7 +105,7 @@
 	
 	function addHLinkToTestCaseName(row, data) {
 		var url= "<c:url value='/test-cases/' />" + getTestCasesTableRowId(data) + '/info';			
-		addHLinkToCellText($( 'td:eq(2)', row ), url);
+		addHLinkToCellText($( 'td:eq(3)', row ), url);
 	}	
 </script>
 <comp:decorate-ajax-table url="${ tableModelUrl }" tableId="verifying-test-cases-table" paginate="true">
@@ -115,7 +115,7 @@
 	<jsp:attribute name="columnDefs">
 		<dt:column-definition targets="0" visible="false" />
 		<dt:column-definition targets="1" sortable="false" cssClass="select-handle centered" width="2em"/>
-		<dt:column-definition targets="2, 3, 4" sortable="true" />
-		<dt:column-definition targets="5" sortable="false" width="2em" lastDef="true" cssClass="centered"/>
+		<dt:column-definition targets="2, 3, 4, 5" sortable="true" />
+		<dt:column-definition targets="6" sortable="false" width="2em" lastDef="true" cssClass="centered"/>
 	</jsp:attribute>
 </comp:decorate-ajax-table>

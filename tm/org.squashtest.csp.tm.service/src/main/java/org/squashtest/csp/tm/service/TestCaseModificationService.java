@@ -29,7 +29,10 @@ import org.squashtest.csp.tm.domain.testcase.TestCaseImportance;
 public interface TestCaseModificationService extends CustomTestCaseModificationService {
 	@PreAuthorize("hasPermission(#arg0, 'org.squashtest.csp.tm.domain.testcase.TestCase' , 'SMALL_EDIT') or hasRole('ROLE_ADMIN')")
 	void changeDescription(long testCaseId, String newDescription);
-
+	
+	@PreAuthorize("hasPermission(#arg0, 'org.squashtest.csp.tm.domain.testcase.TestCase' , 'SMALL_EDIT') or hasRole('ROLE_ADMIN')")
+	void changeReference(long testCaseId, String reference);
+	
 	@PreAuthorize("hasPermission(#arg0, 'org.squashtest.csp.tm.domain.testcase.TestCase' , 'WRITE') or hasRole('ROLE_ADMIN')")
 	void changeExecutionMode(long testCaseId, TestCaseExecutionMode mode);
 

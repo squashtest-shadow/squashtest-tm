@@ -276,6 +276,17 @@ public class TestCaseModificationController {
 
 		return testCaseDescription;
 	}
+	@RequestMapping(method = RequestMethod.POST, params = { "id=test-case-reference", "value" })
+	@ResponseBody
+	public String changeReference(@RequestParam("value") String testCaseReference, @PathVariable long testCaseId) {
+
+		testCaseModificationService.changeReference(testCaseId, testCaseReference);
+		if (LOGGER.isTraceEnabled()) {
+			LOGGER.trace("test case " + testCaseId + ": updated reference to " + testCaseReference);
+		}
+
+		return testCaseReference;
+	}
 
 	@ResponseBody
 	@RequestMapping(method = RequestMethod.POST, params = { "id=test-case-importance", "value" })

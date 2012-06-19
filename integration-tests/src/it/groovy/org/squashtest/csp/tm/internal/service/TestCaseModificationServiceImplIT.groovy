@@ -177,6 +177,17 @@ class TestCaseModificationServiceImplIT extends HibernateServiceSpecification {
 		then :
 		tc.description == tcNewDesc
 	}
+	
+	def "should change a test case reference"(){
+		given :
+		def tcNewRef = "the new ref"
+		when :
+		service.changeReference(testCaseId, tcNewRef)
+		def tc = service.findById(testCaseId)
+
+		then :
+		tc.reference == tcNewRef
+	}
 
 
 
