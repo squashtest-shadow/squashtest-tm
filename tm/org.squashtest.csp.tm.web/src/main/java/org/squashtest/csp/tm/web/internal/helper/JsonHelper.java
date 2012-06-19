@@ -21,8 +21,13 @@
 package org.squashtest.csp.tm.web.internal.helper;
 
 import java.io.IOException;
+import java.util.HashMap;
+import java.util.Map;
 
+import org.codehaus.jackson.JsonParseException;
+import org.codehaus.jackson.map.JsonMappingException;
 import org.codehaus.jackson.map.ObjectMapper;
+import org.codehaus.jackson.type.TypeReference;
 
 public final class JsonHelper {
 	private static final ObjectMapper OBJECT_MAPPER = new ObjectMapper();
@@ -37,5 +42,10 @@ public final class JsonHelper {
 		} catch (IOException e) {
 			throw new JsonMarshallerException(e);
 		}
+	}
+
+	public static Map<String, Object> deserialize(String json) throws JsonParseException, JsonMappingException, IOException {
+		TypeReference<HashMap<String, Object>> typeRef = new TypeReference<HashMap<String, Object>>() {};
+		return OBJECT_MAPPER.readValue(json, typeRef);
 	}
 }

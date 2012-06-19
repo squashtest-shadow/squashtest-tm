@@ -135,7 +135,8 @@
 		availability="mandatory" />	
 
 	<osgi:list id="squash.tm.report.ReportPlugins" interface="org.squashtest.tm.api.report.ReportPlugin">
-		<osgi:listener ref="squash.tm.report.ReportsRegistry" bind-method="pluginRegistered" unbind-method="pluginUnregistered" />
+		<osgi:listener ref="squash.tm.report.ReportsRegistry" bind-method="registerReports" unbind-method="unregisterReports" />
+		<osgi:listener ref="squash.tm.report.JasperReportsViewDefinitionsRegistry" bind-method="registerViews" unbind-method="registerViews" />
 	</osgi:list>
 		
 </beans>

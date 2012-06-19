@@ -32,8 +32,9 @@
 		http://www.springframework.org/schema/aop http://www.springframework.org/schema/aop/spring-aop-3.0.xsd
 		http://www.springframework.org/schema/util http://www.springframework.org/schema/util/spring-util-2.0.xsd">
 
-			<!-- we need to configure this bean here because  component-scan occurs when *-servlet.xml is read, which is later -->
-			<bean name="squash.tm.report.ReportsRegistry" class="org.squashtest.csp.tm.web.internal.report.ReportsRegistry" />
+		<!-- we need to configure this bean here because  component-scan occurs when *-servlet.xml is read, which is later -->
+		<bean name="squash.tm.report.ReportsRegistry" class="org.squashtest.csp.tm.web.internal.report.ReportsRegistry" />
+		<bean name="squash.tm.report.JasperReportsViewDefinitionsRegistry" class="org.squashtest.csp.tm.web.internal.report.ReportViewServletContextInitializer" />
 
 	<!-- 
 		FIXME : find a way to make the reports completely independent of tm.web. That is, no resource bundle, 

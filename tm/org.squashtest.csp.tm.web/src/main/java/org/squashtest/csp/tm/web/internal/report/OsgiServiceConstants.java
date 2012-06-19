@@ -19,29 +19,22 @@
  *     along with this software.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-package org.squashtest.tm.api.report;
-
-import java.util.Map;
-
-import org.springframework.web.servlet.View;
-import org.squashtest.tm.api.report.criteria.Criteria;
+package org.squashtest.csp.tm.web.internal.report;
 
 /**
- * @author Gregory Fouquet.
+ * Defines constants related to Osgi Services related properties.
+ * 
+ * @author Gregory Fouquet
  * 
  */
-public interface ReportView {
+final class OsgiServiceConstants {
+	private OsgiServiceConstants() {
+		super();
+	}
 
 	/**
-	 * @return the list of formats this view can handle.
+	 * Key to retrieve an OSGi service's id as passed to a service registration callback.
 	 */
-	String[] getFormats();
+	public static final String SERVICE_ID_KEY = "osgi.service.blueprint.compname";
 
-	Map<String, Object> buildViewModel(String format, Map<String, Criteria> criteria);
-
-	/**
-	 * 
-	 * @return the Spring MVC View which should be used to generate the report.
-	 */
-	View getSpringView();
 }

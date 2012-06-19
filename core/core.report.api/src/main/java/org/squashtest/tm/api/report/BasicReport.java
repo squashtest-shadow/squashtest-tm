@@ -158,6 +158,6 @@ public class BasicReport extends Labelled implements Report {
 	public ModelAndView buildModelAndView(int viewIndex, String format, Map<String, Criteria> criteria) {
 		ReportView view = views[viewIndex];
 		Map<String, Object> model = view.buildViewModel(format, criteria);
-		return new ModelAndView(view.getViewBean(), model);
+		return new ModelAndView(view.getSpringView(), model);
 	}
 }

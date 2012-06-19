@@ -45,7 +45,7 @@ import org.squashtest.tm.core.i18n.Labelled;
  */
 public final class JasperReportsView extends Labelled implements ReportView, InitializingBean, MessageSourceAware {
 	private String[] formats;
-	private View viewBean;
+	private View springView;
 	private ReportQuery query;
 	private MessageSource messageSource;
 
@@ -84,19 +84,19 @@ public final class JasperReportsView extends Labelled implements ReportView, Ini
 	/**
 	 * Sets the Spring MVC View bean. It should be a JasperReportMultiFormatView.
 	 * 
-	 * @param viewBean
+	 * @param springView
 	 *            the springView to set
 	 */
-	public void setViewBean(View viewBean) {
-		this.viewBean = viewBean;
+	public void setSpringView(View viewBean) {
+		this.springView = viewBean;
 	}
 
 	/**
 	 * @return the springView
 	 */
 	@Override
-	public View getViewBean() {
-		return viewBean;
+	public View getSpringView() {
+		return springView;
 	}
 
 	/**
@@ -114,7 +114,7 @@ public final class JasperReportsView extends Labelled implements ReportView, Ini
 	 */
 	@Override
 	public void afterPropertiesSet() {
-		Assert.notNull(viewBean, "viewBean must not be null");
+		Assert.notNull(springView, "springView must not be null");
 		Assert.notNull(query, "query must not be null");
 
 	}

@@ -46,8 +46,6 @@ public class ReportsRegistry {
 
 	private static final Logger LOGGER = LoggerFactory.getLogger(ReportsRegistry.class);
 	
-	private static final String NAMESPACE_KEY = "osgi.service.blueprint.compname";
-
 	private final MultiValueMap reportsByCategory = new MultiValueMap();
 	private final Map<ReportIdentifier, IdentifiedReportDecorator> reportByIdentifier = new ConcurrentHashMap<ReportIdentifier, IdentifiedReportDecorator>();
 
@@ -56,7 +54,7 @@ public class ReportsRegistry {
 	 * @param plugin
 	 * @param properties
 	 */
-	public synchronized void pluginRegistered(ReportPlugin plugin, Map<?, ?> properties) {
+	public synchronized void registerReports(ReportPlugin plugin, Map<?, ?> properties) {
 		Report[] reports = plugin.getReports();
 		
 		for (int i = 0; i < reports.length; i++) {
@@ -73,7 +71,7 @@ public class ReportsRegistry {
 	}
 
 	private IdentifiedReportDecorator createIdentifiedReport(Report report, Map<?, ?> properties, int index) {
-		String pluginNamespace = (String) properties.get(NAMESPACE_KEY);
+		String pluginNamespace = (String) properties.get(OsgiServiceConstants.SERVICE_ID_KEY);
 		IdentifiedReportDecorator identifiedReport = new IdentifiedReportDecorator(report, pluginNamespace, index);
 		return identifiedReport;
 	}
@@ -83,7 +81,7 @@ public class ReportsRegistry {
 	 * @param plugin
 	 * @param properties
 	 */
-	public synchronized void pluginUnregistered(ReportPlugin plugin, Map<?, ?> properties) {
+	public synchronized void unregisterReports(ReportPlugin plugin, Map<?, ?> properties) {
 		Report[] reports = plugin.getReports();
 
 		for (int i = 0; i < reports.length; i++) {

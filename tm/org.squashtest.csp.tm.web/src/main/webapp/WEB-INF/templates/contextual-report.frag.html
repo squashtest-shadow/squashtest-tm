@@ -294,7 +294,7 @@
 							<input type="button" class="button" id="export" value="Go!" th:value="#{report.view.panel.button.export.label}" />
 						</div>
 					</ul>
-					<div th:each="view, it : ${report.views}" class="view-content-panel"
+					<div th:each="view, it : ${report.views}" class="view-content-panel" th:remove="body"
 						id="view-content-panel-sample-0" th:id="'view-content-panel-' + ${it.index}" 
 						style="overflow: scroll;">
 						VIEW HERE

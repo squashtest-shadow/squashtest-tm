@@ -223,7 +223,7 @@ squashtm.report = (function ($) {
 			data: JSON.stringify(formState),  
 			contentType: "application/json"
 		}).done(function (html) {
-			ui.panel.html(html);
+			ui.panel.innerHTML = html;
 		});		
 	}
 	
@@ -231,8 +231,10 @@ squashtm.report = (function ($) {
 		var viewIndex = selectedTab.index;
 		var format = $("#view-format-cmb-" + viewIndex).val();
 
-		var url = buildViewUrl(ui.index, "html");	
-		document.location.href = url;
+		var url = buildViewUrl(viewIndex, format);	
+		var data = JSON.stringify(formState).replace(/"/g, '&quot;');
+		
+		$.open(url, {data: data}, {name: '_blank'});
 	}
  
 	function initViewTabs() {

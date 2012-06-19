@@ -53,6 +53,18 @@ class JsonHelperTest extends Specification {
 		then:
 		StringUtils.remove(res, " ") == '{"foo":"bar"}'
 	}
+	
+	def "should unmarshall complex data"() {
+		given:
+		def json = """{"campaignStatus":[{"value":"CAMPAIGN_ALL","selected":true,"type":"DROPDOWN_LIST"},{"value":"CAMPAIGN_RUNNING","selected":false,"type":"DROPDOWN_LIST"},{"value":"CAMPAIGN_OVER","selected":false,"type":"DROPDOWN_LIST"}],"scheduledStart":{"value":"--","type":"DATE"},"actualStart":{"value":"--","type":"DATE"},"scheduledEnd":{"value":"--","type":"DATE"},"actualEnd":{"value":"--","type":"DATE"}}""" 
+		
+		when:
+		def res = JsonHelper.deserialize(json)
+		
+		then:
+		res.campaignStatus[0].value == "CAMPAIGN_ALL"
+	}
+	
 }
 
 class Dummy {

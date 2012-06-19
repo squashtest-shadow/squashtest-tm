@@ -21,10 +21,13 @@
 
 package org.squashtest.csp.tm.web.internal.controller.report;
 
+import java.io.IOException;
 import java.util.Map;
 
 import javax.inject.Inject;
 
+import org.codehaus.jackson.JsonParseException;
+import org.codehaus.jackson.map.JsonMappingException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Controller;
@@ -33,7 +36,9 @@ import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.servlet.ModelAndView;
+import org.squashtest.csp.tm.web.internal.helper.JsonHelper;
 import org.squashtest.csp.tm.web.internal.report.ReportsRegistry;
 import org.squashtest.csp.tm.web.internal.report.criteria.FormToCriteriaConverter;
 import org.squashtest.tm.api.report.Report;
@@ -98,4 +103,11 @@ public class ReportController {
 		Report report = reportsRegistry.findReport(namespace, index);
 		return report.buildModelAndView(viewIndex, format, crit);
 	}
+
+	@RequestMapping(value="/views/{viewIndex}/formats/{format}", method = RequestMethod.POST, params={"data"})
+	public ModelAndView generateReportView(@PathVariable String namespace, @PathVariable int index, @PathVariable int viewIndex, @PathVariable String format, @RequestParam String data) throws JsonParseException, JsonMappingException, IOException {
+		Map<String, Object> form = JsonHelper.deserialize(data);
+		return generateReportView(namespace, index, viewIndex, format, form);
+	}
+	
 }

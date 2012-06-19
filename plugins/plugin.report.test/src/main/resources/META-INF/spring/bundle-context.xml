@@ -31,6 +31,11 @@
 	
 	<context:annotation-config />
 		
+	<bean id="messageSource"
+		class="org.springframework.context.support.ReloadableResourceBundleMessageSource">
+		<property name="basename" value="classpath:i18n/messages" /> 
+	</bean>
+
 	<bean name="squash.tm.plugin.report.test" class="org.squashtest.tm.api.report.ReportPlugin">
 		<property name="report" ref="testReport" />
 	</bean>
@@ -45,6 +50,7 @@
 				<bean class="org.squashtest.tm.api.report.jasperreports.JasperReportsView">
 					<property name="labelKey" value="test.view.one.label" />
 					<property name="formats" value="html,pdf" />
+					<property name="springView" ref="springView" />
 				</bean>
 				<bean class="org.squashtest.tm.api.report.jasperreports.JasperReportsView">
 					<property name="labelKey" value="test.view.two.label" />
@@ -119,8 +125,5 @@
 		</property>
 	</bean>
 	
-	<bean id="messageSource"
-		class="org.springframework.context.support.ReloadableResourceBundleMessageSource">
-		<property name="basename" value="classpath:i18n/messages" /> 
-	</bean>
+	<bean name="springView" class="org.squashtest.tm.api.report.jasperreports.JasperReportsView" />
 </beans>
