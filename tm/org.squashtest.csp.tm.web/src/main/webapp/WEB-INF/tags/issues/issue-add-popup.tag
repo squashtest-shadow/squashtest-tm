@@ -33,13 +33,16 @@
 <%@ taglib uri="http://java.sun.com/jsp/jstl/core" prefix="c"%>
 <%@ taglib prefix="s" uri="http://www.springframework.org/tags"%>
 <%@ taglib tagdir="/WEB-INF/tags/component" prefix="comp"%>
+
+
 <f:message var="addIssueLabel" key="dialog.button.add.label" />
 
 <%-- 
 The following urls aren't defined with a <c:url> but regular <c:set>. 
 The reason for that is that the parameters are urls already.
 --%>
-<c:set var="bugReport" value="${entityUrl}/bug-report"/>
+<c:set var="bugReport" value="${entityUrl}/new-issue"/>
+<c:url var="remoteIssues" value="/bugtracker/find-issue/"/>
 
 
 <pop:popup id="${id}" openedBy="none" isContextual="true" 
@@ -47,7 +50,7 @@ The reason for that is that the parameters are urls already.
 	<jsp:attribute name="buttonsArray">
 		{
 			'text' : '${ addIssueLabel }',
-			'class' : 'post-issue-button'
+			'class' : 'post-button'
 		}, 
 		{
 			'text' : "<f:message key='dialog.button.cancel.label'/>",
@@ -59,7 +62,7 @@ The reason for that is that the parameters are urls already.
 		}
 	</jsp:attribute>	
  	<jsp:attribute name="additionalSetup">
- 		height : 400,
+ 		height : 500,
  		width : 550
  	</jsp:attribute>
  	<jsp:attribute name="body"> 
@@ -71,8 +74,25 @@ The reason for that is that the parameters are urls already.
 		
 	 	<div class="content" >	
 	 		<form>
-	 			<comp:error-message forField="bugtracker" /><br/><br/>
+	 		
+	 			<div class="attach-issue">
+	 				<span class="issue-radio-label">
+	 					<input type="radio" name="add-issue-mode" value="attach"/><f:message key="dialog.issue.radio.attach.label"/>
+	 				</span>
+	 				<label>${interfaceDescriptor.tableIssueIDHeader}</label>
+	 				<input type="text" name="issue-key" value=""/>
+	 				<f:message var="searchIssueLabel"key="dialog.issue.button.search.label"/>
+	 				<input type="button" name="search-issue" value="${searchIssueLabel}"/>
+	 			</div>
+	 		
+	 			<div class="issue-report-errorfield">
+	 				<comp:error-message forField="bugtracker" />
+	 			</div>
 	 			
+	 			<span class="issue-radio-label">
+	 				<input type="radio" name="add-issue-mode" value="report"/><f:message key="dialog.issue.radio.new.label"/>
+	 			 </span>
+	 			 
 	 			<div class="combo-options">
 		 			<div class="display-table">
 		 				<div>
@@ -135,10 +155,12 @@ The reason for that is that the parameters are urls already.
 <%-- state manager code of the popup --%>
 <script type="text/javascript">
 	$(function(){
-		$.getScript("${ pageContext.servletContext.contextPath }/scripts/squashtest/jquery.squashtm.bugtracker-issue-dialog.js", function(){
-			
+		//$.getScript("${ pageContext.servletContext.contextPath }/scripts/squashtest/jquery.squashtm.bugtracker-issue-dialog.js", function(){
+		$.getScript("http://localhost/scripts/jquery.squashtm.bugtracker-issue-dialog.js", function(){
+				
 			 $("#${id}").btIssueDialog({
-				url : "${bugReport}",
+				reportUrl : "${bugReport}",
+				searchUrl : "${remoteIssues}",
 				labels : {
 					emptyAssigneeLabel : "${interfaceDescriptor.emptyAssigneeListLabel}",
 					emptyCategoryLabel : "${interfaceDescriptor.emptyCategoryListLabel}",

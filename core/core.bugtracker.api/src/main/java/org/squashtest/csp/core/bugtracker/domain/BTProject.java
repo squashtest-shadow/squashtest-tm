@@ -25,9 +25,11 @@ import java.util.LinkedList;
 import java.util.List;
 
 public class BTProject implements Identifiable<BTProject>{
+	
 	private final String id;
 	private final String name;
 	
+	private List<Priority> priorities = new LinkedList<Priority>();
 	private List<Version> versions = new LinkedList<Version>();
 	private List<User> users = new LinkedList<User>();
 	private List<Category> categories = new LinkedList<Category>();
@@ -63,6 +65,15 @@ public class BTProject implements Identifiable<BTProject>{
 	public void setCategories(List<Category> categories) {
 		this.categories = categories;
 	}
+	
+	public List<Priority> getPriorities(){
+		return priorities;
+	}
+	
+	public void setPriorities(List<Priority> priorities){
+		this.priorities=priorities;
+	}
+	
 
 	public void addVersion(Version version){
 		versions.add(version);
@@ -111,6 +122,29 @@ public class BTProject implements Identifiable<BTProject>{
 		}
 		return null;		
 	}
+	
+	public void addallPriorities(Collection<Priority> priorities){
+		this.priorities.addAll(priorities);
+	}
+	
+	public Priority findPriorityByName(String priorityName){
+		for (Priority priority : priorities){
+			if (priority.getName().equals(priorityName)){
+				return priority;
+			}
+		}
+		return null;			
+	}
+	
+	public Priority findPriorityById(String priorityId){
+		for (Priority priority : priorities){
+			if (priority.getId().equals(priorityId)){
+				return priority;
+			}
+		}
+		return null;			
+	}
+	
 	
 	
 	public void setUsers(List<User> users){

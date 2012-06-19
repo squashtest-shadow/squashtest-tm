@@ -234,4 +234,13 @@ public class BugTrackerLocalServiceImpl implements BugTrackerLocalService {
 		return new Boolean(remoteBugTrackerService.isIframeFriendly());
 	}
 
+	
+	@Override
+	public void attachIssue(Bugged bugged, String remoteIssueKey) {
+		Issue issue = new Issue();
+		issue.setBugtrackerName(remoteBugTrackerService.getBugTrackerName());
+		issue.setRemoteIssueId(remoteIssueKey);
+		bugged.getIssueList().addIssue(issue);
+	}
+
 }

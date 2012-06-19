@@ -227,6 +227,7 @@ public class MantisConnector implements BugTrackerConnector {
 		project.addAllVersions(findVersions(project));
 		project.addAllUsers(findUsers(project));
 		project.addAllCategories(findCategories(project));
+		project.addallPriorities(getPriorities());
 		return project;
 	}
 	

@@ -171,10 +171,13 @@ public interface BugTrackerLocalService {
 	 * returns a list of BTIssu corresponding to the given string keys
 	 *
 	 * @param issueKeyList
-	 *            the issue key list
+	 *            the remote issue key list
 	 * @return a BTIssue list
 	 */
 	List<BTIssue> getIssues(List<String> issueKeyList);
+	
+	
+	void attachIssue(Bugged bugged, String remoteIssueKey);
 
 
 	URL getBugtrackerUrl();

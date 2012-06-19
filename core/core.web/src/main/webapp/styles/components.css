@@ -281,6 +281,16 @@ div.issue-report-dialog div.text-options textarea{
 	height : 175px;	
 }
 
+div.issue-report-dialog span.issue-radio-label{
+	display: block;
+    margin-bottom: 1em;	
+}
+
+div.issue-report-dialog div.issue-report-errorfield{
+	display: block;
+    min-height: 2em;	
+}
+
 
 /*******************************
 	test suites management

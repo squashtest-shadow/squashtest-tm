@@ -58,13 +58,12 @@ import org.squashtest.csp.tm.domain.bugtracker.BugTrackerStatus;
 import org.squashtest.csp.tm.domain.bugtracker.Bugged;
 import org.squashtest.csp.tm.domain.bugtracker.IssueOwnership;
 import org.squashtest.csp.tm.domain.campaign.Iteration;
+import org.squashtest.csp.tm.domain.campaign.TestSuite;
 import org.squashtest.csp.tm.domain.execution.Execution;
 import org.squashtest.csp.tm.domain.execution.ExecutionStep;
-import org.squashtest.csp.tm.domain.requirement.RequirementLibrary;
 import org.squashtest.csp.tm.infrastructure.filter.CollectionSorting;
 import org.squashtest.csp.tm.infrastructure.filter.FilteredCollectionHolder;
 import org.squashtest.csp.tm.service.BugTrackerLocalService;
-import org.squashtest.csp.tm.web.internal.model.builder.JsTreeNodeListBuilder;
 import org.squashtest.csp.tm.web.internal.model.customeditors.CategoryPropertyEditorSupport;
 import org.squashtest.csp.tm.web.internal.model.customeditors.PriorityPropertyEditorSupport;
 import org.squashtest.csp.tm.web.internal.model.customeditors.ProjectPropertyEditorSupport;
@@ -73,8 +72,6 @@ import org.squashtest.csp.tm.web.internal.model.customeditors.VersionPropertyEdi
 import org.squashtest.csp.tm.web.internal.model.datatable.DataTableDrawParameters;
 import org.squashtest.csp.tm.web.internal.model.datatable.DataTableModel;
 import org.squashtest.csp.tm.web.internal.model.datatable.DataTableModelHelper;
-import org.squashtest.csp.tm.web.internal.model.jquery.IssueModel;
-import org.squashtest.csp.tm.web.internal.model.jstree.JsTreeNode;
 
 @Controller
 @RequestMapping("/bugtracker")
@@ -194,19 +191,19 @@ public class BugtrackerController {
 	 * @return
 	 */
 
-	@RequestMapping(value = EXECUTION_STEP_TYPE + "/{stepId}/bug-report")
+	@RequestMapping(value = EXECUTION_STEP_TYPE + "/{stepId}/new-issue")
 	@ResponseBody
-	public IssueModel getExecStepReportStub(@PathVariable Long stepId) {
+	public BTIssue getExecStepReportStub(@PathVariable Long stepId) {
 		Bugged bugged = bugTrackerLocalService.findBuggedEntity(stepId, ExecutionStep.class);
 
-		return makeIssueModel(bugged);
+		return makeReportIssueModel(bugged);
 	}
 
 	/**
 	 * gets the data of a new issue to be reported
 	 *
 	 */
-	@RequestMapping(value = EXECUTION_STEP_TYPE + "/{stepId}/bug-report", method = RequestMethod.POST)
+	@RequestMapping(value = EXECUTION_STEP_TYPE + "/{stepId}/new-issue", method = RequestMethod.POST)
 	@ResponseBody
 	public Object postExecStepIssueReport(@PathVariable("stepId") Long stepId, @ModelAttribute BTIssue jsonIssue) {
 		LOGGER.trace("BugTrackerController: posting a new issue for execution-step " + stepId);
@@ -276,19 +273,19 @@ public class BugtrackerController {
 	 * @return
 	 */
 
-	@RequestMapping(value = EXECUTION_TYPE + "/{execId}/bug-report")
+	@RequestMapping(value = EXECUTION_TYPE + "/{execId}/new-issue")
 	@ResponseBody
-	public IssueModel getExecReportStub(@PathVariable Long execId) {
+	public BTIssue getExecReportStub(@PathVariable Long execId) {
 		Bugged bugged = bugTrackerLocalService.findBuggedEntity(execId, Execution.class);
 
-		return makeIssueModel(bugged);
+		return makeReportIssueModel(bugged);
 	}
 
 	/**
 	 * gets the data of a new issue to be reported
 	 *
 	 */
-	@RequestMapping(value = EXECUTION_TYPE + "/{execId}/bug-report", method = RequestMethod.POST)
+	@RequestMapping(value = EXECUTION_TYPE + "/{execId}/new-issue", method = RequestMethod.POST)
 	@ResponseBody
 	public Object postExecIssueReport(@PathVariable("execId") Long execId, @ModelAttribute BTIssue jsonIssue) {
 		LOGGER.trace("BugTrackerController: posting a new issue for execution-step " + execId);
@@ -359,6 +356,15 @@ public class BugtrackerController {
 
 	/* ************************* Generic code section ************************** */
 
+	@RequestMapping(value ="/find-issue/{remoteKey}", method = RequestMethod.GET)
+	@ResponseBody
+	public BTIssue findIssue(@PathVariable("remoteKey") String remoteKey){		
+		BTIssue remoteIssue = bugTrackerLocalService.getIssue(remoteKey);
+		return remoteIssue;
+	}
+	
+	
+	
 	@RequestMapping(value = "/credentials", method = RequestMethod.POST, params = { "login", "password" })
 	public @ResponseBody
 	Map<String, String> setCredendials(@RequestParam("login") String login, @RequestParam("password") String password) {
@@ -395,24 +401,19 @@ public class BugtrackerController {
 	
 	/* ********* generates a json model for an issue ******* */
 	
-	private IssueModel makeIssueModel(Bugged entity) {
-		List<Priority> priorities = bugTrackerLocalService.getRemotePriorities();
-
+	private BTIssue makeReportIssueModel(Bugged entity) {
 		String projectName = entity.getProject().getName();
 		final BTProject project = bugTrackerLocalService.findRemoteProject(projectName);
 
 		String defaultDescription = entity.getDefaultDescription();
 
-		IssueModel model = new IssueModel();
-		model.setPriorities(priorities.toArray());
-		model.setUsers(project.getUsers().toArray());
-		model.setVersions(project.getVersions().toArray());
-		model.setCategories(project.getCategories().toArray());
-		model.setDefaultDescription(defaultDescription);
-		model.setProject(new IssueModel.ProjectModel(project.getId(), project.getName()));
-
-		return model;
+		BTIssue emptyIssue = new BTIssue();
+		emptyIssue.setProject(project);
+		
+		return emptyIssue;
 	}
+
+
 
 	/*
 	 * generates the ModelAndView for the bug section.
@@ -586,9 +587,13 @@ public class BugtrackerController {
 		
 		//for a given execution we don't need to remind which one, so the name is ignored.
 		private String buildExecName(Execution bugged){
+			TestSuite buggedSuite = bugged.getTestPlan().getTestSuite();
+			String suiteName = (buggedSuite!=null) ? buggedSuite.getName() : "";
+	
 			return messageSource.getMessage("squashtm.generic.hierarchy.execution.name", 
 								new Object[]{
-									bugged.getName(), 
+									bugged.getName(),
+									suiteName,
 									bugged.getExecutionOrder()+1
 								},
 								locale);
