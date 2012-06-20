@@ -598,8 +598,26 @@
 			<column name="CLASS_ID" valueComputed="(select ID from ACL_CLASS where CLASSNAME = 'org.squashtest.csp.tm.domain.campaign.CampaignLibrary')" />
 		</insert>
 	</changeSet>
-	
-	<changeSet  id="tm-1.2.0.34-10" author="mpagnon">
+		<changeSet id="tm-1.2.0.34-10" author="mpagnon">
+		<comment>Existing Data Update: Delete acls for deleted projects in 1.1.1</comment>
+		<sql>DELETE FROM ACL_RESPONSIBILITY_SCOPE_ENTRY
+			 WHERE OBJECT_IDENTITY_ID not in (
+				select aoi.ID from  ACL_OBJECT_IDENTITY aoi, ACL_CLASS ac , PROJECT p
+				where ac.CLASSNAME = 'org.squashtest.csp.tm.domain.project.Project' 
+				and ac.ID = aoi.CLASS_ID
+				and aoi.IDENTITY = p.PROJECT_ID
+			);
+			</sql>
+			<sql>
+			DELETE FROM ACL_OBJECT_IDENTITY
+			WHERE IDENTITY not in (
+				select  p.PROJECT_ID from PROJECT p
+			)
+			and CLASS_ID in (
+				select ac.ID from ACL_CLASS ac where ac.CLASSNAME = 'org.squashtest.csp.tm.domain.project.Project' 
+			);</sql>
+	</changeSet>
+	<changeSet  id="tm-1.2.0.34-11" author="mpagnon">
 		<comment>Existing Data Update for ACL_OBJECT_IDENTITY / REQUIREMENT_LIBRARY</comment>
 		<sql>insert into ACL_OBJECT_IDENTITY (IDENTITY, CLASS_ID)
 			select p.RL_ID, ac2.ID
@@ -609,7 +627,7 @@
 			and aoi.CLASS_ID = ac1.ID 
 			and ac1.CLASSNAME = 'org.squashtest.csp.tm.domain.project.Project';</sql>
 	</changeSet>
-	<changeSet  id="tm-1.2.0.34-11" author="mpagnon">
+	<changeSet  id="tm-1.2.0.34-12" author="mpagnon">
 		<comment>Existing Data Update for ACL_OBJECT_IDENTITY / TEST_CASE_LIBRARY</comment>
 		<sql>insert into ACL_OBJECT_IDENTITY (IDENTITY, CLASS_ID)
 			select p.TCL_ID, ac2.ID
@@ -619,7 +637,7 @@
 			and aoi.CLASS_ID = ac1.ID 
 			and ac1.CLASSNAME = 'org.squashtest.csp.tm.domain.project.Project';</sql>
 	</changeSet>
-	<changeSet  id="tm-1.2.0.34-12" author="mpagnon">
+	<changeSet  id="tm-1.2.0.34-13" author="mpagnon">
 		<comment>Existing Data Update for ACL_OBJECT_IDENTITY / CAMPAIGN_LIBRARY</comment>
 		<sql>insert into ACL_OBJECT_IDENTITY (IDENTITY, CLASS_ID)
 			select p.CL_ID, ac2.ID
@@ -629,7 +647,7 @@
 			and aoi.CLASS_ID = ac1.ID 
 			and ac1.CLASSNAME = 'org.squashtest.csp.tm.domain.project.Project';</sql>
 	</changeSet>
-	<changeSet  id="tm-1.2.0.34-13" author="mpagnon">
+	<changeSet  id="tm-1.2.0.34-14" author="mpagnon">
 		<comment>Existing Data Update for ACL_RESPONSIBILITY_SCOPE_ENTRY / REQUIREMENT_LIBRARY</comment>
 		<sql>insert into ACL_RESPONSIBILITY_SCOPE_ENTRY (USER_ID, ACL_GROUP_ID, OBJECT_IDENTITY_ID)
 			select arse.USER_ID, arse.ACL_GROUP_ID, aoiRequirement.ID
@@ -642,7 +660,7 @@
 			and aoiRequirement.CLASS_ID = aclassRequirement.ID
 			and aclassRequirement.CLASSNAME = 'org.squashtest.csp.tm.domain.requirement.RequirementLibrary';</sql>
 	</changeSet>
-	<changeSet  id="tm-1.2.0.34-14" author="mpagnon">
+	<changeSet  id="tm-1.2.0.34-15" author="mpagnon">
 		<comment>Existing Data Update for ACL_RESPONSIBILITY_SCOPE_ENTRY / TEST_CASE_LIBRARY</comment>
 		<sql>insert into ACL_RESPONSIBILITY_SCOPE_ENTRY (USER_ID, ACL_GROUP_ID, OBJECT_IDENTITY_ID)
 			select arse.USER_ID, arse.ACL_GROUP_ID, aoiTestCase.ID
@@ -655,7 +673,7 @@
 			and aoiTestCase.CLASS_ID = aclassTestCase.ID
 			and aclassTestCase.CLASSNAME = 'org.squashtest.csp.tm.domain.testcase.TestCaseLibrary';</sql>
 	</changeSet>
-	<changeSet  id="tm-1.2.0.34-15" author="mpagnon">
+	<changeSet  id="tm-1.2.0.34-16" author="mpagnon">
 		<comment>Existing Data Update for ACL_RESPONSIBILITY_SCOPE_ENTRY / CAMPAIGN_LIBRARY</comment>
 		<sql>insert into ACL_RESPONSIBILITY_SCOPE_ENTRY (USER_ID, ACL_GROUP_ID, OBJECT_IDENTITY_ID)
 			select arse.USER_ID, arse.ACL_GROUP_ID, aoiCampaign.ID
@@ -668,7 +686,7 @@
 			and aoiCampaign.CLASS_ID = aclassCampaign.ID
 			and aclassCampaign.CLASSNAME = 'org.squashtest.csp.tm.domain.campaign.CampaignLibrary';</sql>
 	</changeSet>	
-	
+
 	<changeSet id="tm-1.2.0.35-01" author="bsiri">
 		
 		<comment>table ISSUE nows holds the bugtracker name where the remote issues are hosted</comment>
