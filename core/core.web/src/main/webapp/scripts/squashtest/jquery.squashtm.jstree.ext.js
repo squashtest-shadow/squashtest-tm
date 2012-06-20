@@ -364,12 +364,12 @@
 				var self = this;
 				var nodes = self.get_selected();
 				
-				var filtered = $.filter(nodes, function () {
+				var filtered = $(nodes).filter(function () {
 					return $(this).attr('restype') == restype;
 				});
 				
-				var ids = $.map(nodes, function () {
-					$(this).attr('resid');
+				var ids = $.map(filtered, function (item) {
+					$(item).attr('resid');
 				});
 				
 				return ids;
