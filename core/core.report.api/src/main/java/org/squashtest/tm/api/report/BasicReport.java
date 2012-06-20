@@ -22,8 +22,6 @@ package org.squashtest.tm.api.report;
 
 import java.util.Map;
 
-import javax.annotation.PostConstruct;
-
 import org.springframework.web.servlet.ModelAndView;
 import org.squashtest.tm.api.report.criteria.Criteria;
 import org.squashtest.tm.api.report.form.Input;
@@ -89,10 +87,6 @@ public class BasicReport extends Labelled implements Report {
 	 */
 	public void setDescriptionKey(String descriptionKey) {
 		this.descriptionKey = descriptionKey;
-	}
-
-	@PostConstruct
-	protected void checkState() {
 	}
 
 	/**
