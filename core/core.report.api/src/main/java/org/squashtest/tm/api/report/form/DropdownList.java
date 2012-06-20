@@ -21,7 +21,7 @@
 package org.squashtest.tm.api.report.form;
 
 /**
- * @author Gregory
+ * @author Gregory Fouquet
  *
  */
 public class DropdownList extends OptionsGroup {

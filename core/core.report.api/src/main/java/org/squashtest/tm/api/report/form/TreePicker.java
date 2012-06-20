@@ -1,6 +1,6 @@
 /**
  *     This file is part of the Squashtest platform.
- *     Copyright (C) 2010 - 2012 Henix, henix.fr
+ *     Copyright (C) 2010 - 2011 Squashtest TM, Squashtest.org
  *
  *     See the NOTICE file distributed with this work for additional
  *     information regarding copyright ownership.
@@ -18,28 +18,49 @@
  *     You should have received a copy of the GNU Lesser General Public License
  *     along with this software.  If not, see <http://www.gnu.org/licenses/>.
  */
+
 package org.squashtest.tm.api.report.form;
 
-import org.squashtest.tm.core.i18n.Labelled;
+import org.springframework.beans.factory.InitializingBean;
+import org.springframework.util.Assert;
 
 /**
  * @author Gregory Fouquet
  * 
  */
-abstract class BasicInput extends Labelled implements Input {
-	private String name;
+public class TreePicker extends BasicInput implements InitializingBean {
+	private NodeType pickedNodeType;
 
 	/**
-	 * @return the name
+	 * @see org.squashtest.tm.api.report.form.Input#getType()
 	 */
-	public String getName() {
-		return name;
+	@Override
+	public InputType getType() {
+		return InputType.TREE_PICKER;
 	}
+
 	/**
-	 * @param name
-	 *            the name to set
+	 * @param pickedNodeType
+	 *            the pickedNodeType to set
 	 */
-	public void setName(String name) {
-		this.name = name;
+	public void setPickedNodeType(NodeType pickedNodeType) {
+		this.pickedNodeType = pickedNodeType;
 	}
+
+	/**
+	 * @return the pickedNodeType
+	 */
+	public NodeType getPickedNodeType() {
+		return pickedNodeType;
+	}
+
+	/**
+	 * @see org.springframework.beans.factory.InitializingBean#afterPropertiesSet()
+	 */
+	@Override
+	public void afterPropertiesSet() throws Exception {
+		Assert.notNull(pickedNodeType, "pickedNodeType should not be initialized");
+
+	}
+
 }

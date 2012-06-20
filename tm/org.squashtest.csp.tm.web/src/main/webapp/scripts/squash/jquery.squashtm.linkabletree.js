@@ -35,7 +35,15 @@
 		jsonData: {}, 
 		workspaceType: ""
 	};
-
+	
+	function workspaceToIconToken(workspaceType) {
+		var tokens = workspaceType.split("-");
+		var capitalized = $.map(tokens, function (token) {
+			return token.charAt(0).toUpperCase() + token.slice(1);
+		});
+		return capitalized.join("");
+	}
+	
 	$.fn.extend({
 		linkableTree: function (settings) {
 			settings = $.extend(defaultSettings, settings);
@@ -43,7 +51,7 @@
 			var icons = {
 				drive : settings.contextPath + "/images/root.png",
 				folder : settings.contextPath + "/images/Icon_Tree_Folder.png",
-				file : settings.contextPath + "/images/Icon_Tree_" + settings.workspaceType + ".png",
+				file : settings.contextPath + "/images/Icon_Tree_" + workspaceToIconToken(settings.workspaceType) + ".png",
 				resource : settings.contextPath + "/images/Icon_Tree_Iteration.png",
 				view : settings.contextPath + "/images/Icon_Tree_TestSuite.png" 
 			};

@@ -197,12 +197,14 @@
 								</li>
 							</ul>
 						</div>
-						<div th:case="'NODES'">
-							<div th:id="*{name}-dialog" th:title="Nodes criteria" class="nodes-crit-container popup-dialog is-contextual not-displayed">
-								<div th:id="*{name}" class="nodes-crit"></div>
+						<div th:case="'TREE_PICKER'">
+							<div th:id="*{name} + '-dialog'" th:title="#{report.form.tree-picker.dialog.title}" 
+								class="nodes-crit-container popup-dialog is-contextual not-displayed">
+								<div th:id="*{name}" class="nodes-crit" th:attr="data-node-type=*{pickedNodeType}"></div>
 							</div>
-							<label th:for="*{name}-open" th:text="*{label}">Nodes</label>
-							<input th:name="*{name}-open" type="button" class="button nodes-crit-open" value="Open tree" data-id-opened="*{name}-dialog" />
+							<label th:for="*{name} + '-open'" th:text="*{label}">Nodes</label>
+							<input th:name="*{name} + '-open'" type="button" class="button nodes-crit-open" 
+								th:value="#{report.form.tree-picker.button.label}" th:attr="data-id-opened=*{name} + '-dialog'" />
 						</div>
 					</div>
 					<div th:remove="all">
@@ -262,9 +264,27 @@
 					</div>		
 					<div th:remove="all">
 						<div id="nodes-crit-dialog" title="Nodes criteria" class="nodes-crit-container popup-dialog is-contextual not-displayed">
-							Nodes <div id="nodes-crit" class="nodes-crit"></div>
+							Nodes <div id="nodes-crit" class="nodes-crit" data-node-type="CAMPAIGN"></div>
 						</div>
 						<input type="button" class="button nodes-crit-open" value="Pick nodes" data-id-opened="nodes-crit-dialog" />
+					</div>
+					<div th:remove="all">
+						<div id="projects-crit-dialog" title="Projects criteria" class="projects-crit-container popup-dialog is-contextual not-displayed">
+							<div id="dialog-settings-project-selection-controls" class="project-filter-controls">
+								<a id="dialog-settings-project-selectall" href="javascript:void(0)">${selectallProjectLabel}</a>
+								<a id="dialog-settings-project-deselectall" href="javascript:void(0)">${deselectAllProjectLabel}</a>
+								<a id="dialog-settings-project-invertselect" href="javascript:void(0)">${invertSelectProjectLabel}</a>				
+							</div>	
+							<hr/>
+							<div class="project-report-list-template not-displayed">
+								<div class="project-item ">
+									<input type="checkbox" class="project-report-checkbox" checked="checked"/> <span class="project-name"></span>
+								</div>
+							</div>
+							<div id="report-project-list">
+							</div>
+						</div>
+						<input type="button" class="button projects-crit-open" value="Pick projects" data-id-opened="projects-crit-dialog" />
 					</div>
 					
 					<input type="button" class="button snap-right" id="generate-view" value="Generate" th:value="#{report.criteria.panel.button.generate.label}" />
@@ -316,10 +336,12 @@
 				$("#contextual-content").decorateButtons();
 
 				squashtm.report.init({
-					contextPath: /*[[ @{/} ]]*/ "../../../../../../../core/core.web/src/main/webapp", 
+					contextPath: /*[[ ${#ctx.servletContext.contextPath} ]]*/ "../../../../../../../core/core.web/src/main/webapp", 
 					reportUrl: /*[[ @{'/reports/' + ${report.namespace} + '/' + ${report.index}} ]]*/ "/squash/reports",
 					dateFormat: /*[[ #{squashtm.dateformatShort.js} ]]*/ "dd/mm/yy",
-					noDateLabel: /*[[ #{squashtm.nodata} ]]*/ "---"
+					noDateLabel: /*[[ #{squashtm.nodata} ]]*/ "---", 
+					okLabel: /*[[ #{dialog.button.confirm.label} ]]*/ "OK",
+					cancelLabel: /*[[ #{dialog.button.cancel.label} ]]*/ "Cancel"
 				});
 			});
 	    	/* ]]> */

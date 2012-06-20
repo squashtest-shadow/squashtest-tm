@@ -28,6 +28,7 @@ var squashtm = squashtm || {};
  * jquery.jeditable.js
  * jquery.jeditable.datepicker.js
  * jquery.squashtm.plugin.js
+ * jquery.squashtm.linkabletree.js
  * 
  * @author Gregory Fouquet
  */
@@ -35,7 +36,9 @@ squashtm.report = (function ($) {
 	var config = {
 		contextPath: "",
 		dateFormat: "dd/mm/yy", 
-		noDateLabel: "---"
+		noDateLabel: "---",
+		okLabel: "OK",
+		cancelLabel: "Cancel"
 	};
 	
 	var formState = {};
@@ -223,7 +226,7 @@ squashtm.report = (function ($) {
 		$("#view-tabed-panel:hidden").show('blind', {}, 500);
 	}
 	
-	function selectViewTab(event, ui) {
+	function onViewTabSelected(event, ui) {
 		selectedTab = ui;
 		var tabs = $(this);
 		tabs.find(".view-format-cmb").addClass('not-displayed');
@@ -245,8 +248,82 @@ squashtm.report = (function ($) {
 	function initViewTabs() {
 		$("#view-tabed-panel").tabs({
 			selected: -1,
-			select: selectViewTab
+			select: onViewTabSelected
 		});
+	}
+	/**
+	 * Converts a NODE_TYPE into a workspace-type
+	 */
+	function nodeTypeToWorkspaceType(nodeType) {
+		return nodeType.toLowerCase().replace(/_/g, "-");
+	}
+	/**
+	 * Fetches the workspace type from the given jquery object pointing to a treepicker
+	 */
+	function getWorkspaceType(treePicker) {
+		return nodeTypeToWorkspaceType(treePicker.data("node-type"));
+	}
+	
+	function setTreeState(tree, selectedIds) {
+		var name = tree.attr('id');
+		formState[name] = {value: selectedIds, type: 'TREE_PICKER'};
+	}
+
+	function initTreePickerCallback() {
+		var tree = $(this);
+		var workspaceType = getWorkspaceType(tree);
+		
+
+		$.get(config.contextPath + "/" + workspaceType + "-browser/drives", "linkables", "json")
+		.done(function (data) {
+			var settings = $.extend({}, config);
+			settings.workspaceType = workspaceType;
+			settings.jsonData = data;
+			tree.linkableTree(settings);
+		});
+	
+		setTreeState(tree, []);
+	}
+	
+	function onConfirmTreePickerDialog() {
+		var self = $(this);
+		self.dialog("close");	
+		
+		var tree = self.find('.nodes-crit');
+		var ids = tree.jstree('get_selected_ids', getWorkspaceType(tree) + "s");
+		
+		setTreeState(tree, ids);
+	}
+
+	function onCancelTreePickerDialog() {
+		$(this).dialog('close');
+	}
+
+	function initTreePickerDialogCallback() {
+		var dialog = $(this);
+		
+		dialog.createPopup({
+			buttons: [{
+				text: config.okLabel, 
+				click: onConfirmTreePickerDialog
+			}, {
+				text: config.cancelLabel, 
+				click: onCancelTreePickerDialog
+			}]
+		});	
+	}
+
+	function initTreePickers(panel, settings) {
+		panel.find('.nodes-crit-open').click(function () {
+			console.log($(this));
+			var dialogId = $(this).data('id-opened');
+			console.log(dialogId);
+			$("#" + dialogId).dialog('open');
+		});
+		
+		panel.find('.nodes-crit').each(initTreePickerCallback);
+					
+		panel.find(".nodes-crit-container").each(initTreePickerDialogCallback);
 	}
 
 	function init(settings) {
@@ -259,54 +336,8 @@ squashtm.report = (function ($) {
 		initRadios(panel);
 		initDropdowns(panel);
 		initTexts(panel);
-		initDatepickers(panel);
-		
-		panel.find('.nodes-crit-open').click(function () {
-			console.log($(this));
-			var dialogId = $(this).data('id-opened');
-			console.log(dialogId);
-			$("#" + dialogId).dialog('open');
-		});
-		
-		treeSettings = $.extend({}, settings); 
-		treeSettings.workspaceType = "Campaign";
-		treeSettings.jsonData = [
-		         				{
-		        				    "data" : "A node",
-		        				    "metadata" : { id : 23 },
-		        				    "children" : [ "Child 1", "A Child 2" ]
-		        				},
-		        				{
-		        				    "attr" : { "id" : "li.node.id1" },
-		        				    "data" : {
-		        				        "title" : "Long format demo",
-		        				        "attr" : { "href" : "#" }
-		        				    }
-		        				}
-		        				];
-		
-		panel.find('.nodes-crit').linkableTree(treeSettings);
-					
-		var treeDialogs = panel.find(".nodes-crit-container");
-		treeDialogs.createPopup({
-			buttons: [{
-				text: /*[[ #{dialog.button.confirm.label} ]]*/ "Ok", 
-				click: function () {
-					var self = $(this);
-					self.dialog("close");		
-					var tree = self.find('.nodes-crit');
-					var ids = tree.jstree('get_selected_ids', 'campaigns');
-					var name = tree.attr('id');
-					formState[name] = ids;
-				}
-			}, {
-				text: /*[[ #{dialog.button.cancel.label} ]]*/ "Cancel", 
-				click: function () {
-					$(this).dialog('close');
-				}
-			}]
-		});
-		
+		initDatepickers(panel);		
+		initTreePickers(panel);
 		initViewTabs();
 
 		$('#generate-view').click(generateView);
@@ -317,3 +348,124 @@ squashtm.report = (function ($) {
 		init : init
 	};
 })(jQuery);
+/*
+(function ($) {
+	$.fn.extend({
+		projectPicker: function () {
+			//We initiate the popup only once, this is the flag
+			var isPopupFilled = false;
+			//Total number of project
+			var numberOfProject = 0;
+			
+			function loadProjectList(){
+				//Check if the popup wasn't already filled
+				if(!isPopupFilled){
+					$.get("${projectFilterUrl}",populateReportProjectList,"json");
+					isPopupFilled = true;
+				}
+			}
+			
+			//Fill the popup with project list
+			function populateReportProjectList(jsonData){
+				
+				var cssClass="odd";
+				var i=0;
+				for (i=0;i<jsonData.projectData.length;i++){
+					appendProjectReportItem("report-project-list",jsonData.projectData[i], cssClass);
+					cssClass=swapCssClass(cssClass);
+				}
+				//total number of project
+				numberOfProject = jsonData.projectData.length;
+						
+			}
+			
+			//Alternate class
+			function swapCssClass(cssClass){
+				if (cssClass=="odd") return "even";
+				return "odd";
+			}
+			
+
+			//Set the html and css project list attributes
+			function appendProjectReportItem(containerId, projectItemData, cssClass){
+				var jqNewItem = $("#report-select-project-popup .project-report-list-template .project-item").clone();
+				jqNewItem.addClass(cssClass);
+				
+				var jqChkBx = jqNewItem.find(".project-report-checkbox");
+				jqChkBx.attr('id','project-report-checkbox-'+parseInt(projectItemData[0]));
+				
+				var jqName = jqNewItem.find(".project-name");
+				jqName.html(projectItemData[1]);
+				
+				$("#"+containerId).append(jqNewItem);
+			}
+			
+			//Get selected ids
+			function getSelectedReportProjectIds(){
+		 		var selectedBoxes = $("#report-project-list .project-report-checkbox:checked");
+		 		var zeids = new Array();
+		 		var i;
+		 		
+		 		for (i=0;i<selectedBoxes.length;i++){
+		 			var jqBox = $(selectedBoxes[i]);
+		 			zeids.push(extractProjectId(jqBox.attr('id')));
+		 		}
+		 		
+		 		return zeids;
+		 	}
+			
+			//Get the project id
+			function extractProjectId(strDomId){
+		 		var idTemplate = "project-report-checkbox-";	
+		 		var templateLength = idTemplate.length;
+		 		var extractedId = parseInt(strDomId.substring(templateLength));
+		 		return extractedId;
+		 	}
+			
+			function selectAllReportProjects(){
+				var boxes = $("#report-project-list .project-report-checkbox");
+				
+				if (boxes.length==0) return;
+				
+				$(boxes).each(function(){
+					setCheckBox($(this), true);
+				});
+			}
+			
+			function deselectAllReportProjects(){
+				var boxes = $("#report-project-list .project-report-checkbox");
+				
+				if (boxes.length==0) return;
+				
+				$(boxes).each(function(){
+					setCheckBox($(this), false);
+				});
+			}
+			
+			function invertAllReportProjects(){
+				var boxes = $("#report-project-list .project-report-checkbox");
+				
+				if (boxes.length==0) return;
+				
+				$(boxes).each(function(){
+					setCheckBox($(this), ! $(this).is(":checked"));
+				});		
+			}
+
+			$("#dialog-settings-project-selectall").click(function(){
+				selectAllReportProjects();
+			});
+			
+			$("#dialog-settings-project-deselectall").click(function(){
+				deselectAllReportProjects();
+			});
+			
+			$("#dialog-settings-project-invertselect").click(function(){
+				invertAllReportProjects();
+			});
+			
+			return this;
+		}
+	});
+})(jQuery);
+*/

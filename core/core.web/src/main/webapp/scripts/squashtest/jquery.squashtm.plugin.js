@@ -153,7 +153,6 @@ var squashtm = squashtm || {};
 			resizable : false,
 			modal : true,
 			width : 600,
-			title : "default popup",
 			position : [ 'center', 100 ],
 			usesRichEdit : true
 		};

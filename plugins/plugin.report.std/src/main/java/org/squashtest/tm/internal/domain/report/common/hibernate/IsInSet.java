@@ -36,56 +36,56 @@ import org.squashtest.tm.internal.domain.report.query.hibernate.ReportCriterion;
  */
 public abstract class IsInSet<T extends Number> extends ReportCriterion {
 
-	public IsInSet(){
+	public IsInSet() {
 		setOperator(QueryOperator.COMPARATOR_IN);
 		setParamClass(Long.class);
 	}
-	
-	public IsInSet(String criterionName,String attributePath, Class<?> entityClass, String entityAlias){
+
+	public IsInSet(String criterionName, String attributePath, Class<?> entityClass, String entityAlias) {
 		setCriterionName(criterionName);
 		setAttributePath(attributePath);
 		setEntityClass(entityClass);
 		setEntityAlias(entityAlias);
 	}
-	
+
 	@Override
 	public Criterion makeCriterion() {
 		Criterion criterion = null;
-		
+
 		List<?> values = getTypedParameters();
-		
-		if (values!=null){
-			criterion = Property.forName(getEntityAlias()+"."+getAttributePath()).in(values);
-			
+
+		if (values != null) {
+			criterion = Property.forName(getEntityAlias() + "." + getAttributePath()).in(values);
+
 		}
-		return criterion;		
-		
+		return criterion;
+
 	}
-	
+
 	/*
 	 * this method casts to the correct type the raw Object parameters using the closure implemented below.
-	 * 
 	 */
-	private List<?> getTypedParameters(){
+	private List<?> getTypedParameters() {
 
 		Object[] rawParameters = getParameters();
-		
-		if ((rawParameters==null)||(rawParameters.length==0)) return null;
-		try{
+
+		if ((rawParameters == null) || (rawParameters.length == 0))
+			return null;
+		try {
 			List<Object> typedValues = new LinkedList<Object>();
-			
-			for (Object o : rawParameters){
-				typedValues.add(fromValueToTypedValue(o));				
+
+			for (Object o : rawParameters) {
+				typedValues.add(fromValueToTypedValue(o));
 			}
-			
+
 			return typedValues;
-			
-		}catch(Exception e){
-			throw new IllegalArgumentException(this.getClass().getSimpleName()+" : cannot cast values to Long");
+
+		} catch (Exception e) {
+			throw new IllegalArgumentException(this.getClass().getSimpleName() + " : cannot cast values to Long", e);
 		}
-		
+
 	}
-	
+
 	/*
 	 * The cast closure (see comments above).
 	 */

@@ -27,7 +27,6 @@ import net.sf.jasperreports.engine.JRParameter;
 
 import org.springframework.beans.factory.InitializingBean;
 import org.springframework.context.MessageSource;
-import org.springframework.context.MessageSourceAware;
 import org.springframework.context.i18n.LocaleContextHolder;
 import org.springframework.context.support.MessageSourceResourceBundle;
 import org.springframework.util.Assert;
@@ -42,11 +41,15 @@ import org.squashtest.tm.core.i18n.Labelled;
  * @author Gregory Fouquet
  * 
  */
-public final class JasperReportsView extends Labelled implements ReportView, InitializingBean, MessageSourceAware {
+public final class JasperReportsView extends Labelled implements ReportView, InitializingBean {
 	private String[] formats;
 	private View springView;
 	private ReportQuery query;
 	private MessageSource messageSource;
+
+	public JasperReportsView() {
+		super();
+	}
 
 	/**
 	 * @see org.squashtest.tm.api.report.ReportView#getFormats()
@@ -119,11 +122,8 @@ public final class JasperReportsView extends Labelled implements ReportView, Ini
 	}
 
 	/**
-	 * (non-Javadoc)
-	 * 
-	 * @see
-	 * org.squashtest.tm.core.i18n.ContextBasedInternationalized#setMessageSource(org.springframework.context.MessageSource
-	 * )
+	 * @see org.squashtest.tm.core.i18n.ContextBasedInternationalized#setMessageSource(org.springframework.context.MessageSource
+	 *      )
 	 */
 	@Override
 	public void setMessageSource(MessageSource messageSource) {
