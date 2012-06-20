@@ -36,14 +36,7 @@ import org.apache.poi.ss.usermodel.WorkbookFactory;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.squashtest.csp.tm.domain.SheetCorruptedException;
-import org.squashtest.csp.tm.domain.library.structures.StringPathMap;
 import org.squashtest.csp.tm.domain.requirement.RequirementFolder;
-import org.squashtest.csp.tm.domain.requirement.RequirementLibraryNode;
-import org.squashtest.csp.tm.domain.testcase.TestCase;
-import org.squashtest.csp.tm.domain.testcase.TestCaseFolder;
-import org.squashtest.csp.tm.domain.testcase.TestCaseLibraryNode;
-import org.squashtest.csp.tm.internal.utils.archive.ArchiveReader;
-import org.squashtest.csp.tm.internal.utils.archive.Entry;
 
 /**
  * Must read an archive and make test cases from the files it includes.

@@ -30,13 +30,7 @@ import org.hibernate.SessionFactory;
 import org.springframework.stereotype.Component;
 import org.squashtest.csp.tm.domain.requirement.RequirementFolder;
 import org.squashtest.csp.tm.domain.requirement.RequirementLibrary;
-import org.squashtest.csp.tm.domain.testcase.TestCaseFolder;
-import org.squashtest.csp.tm.domain.testcase.TestCaseLibrary;
-import org.squashtest.csp.tm.internal.utils.archive.ArchiveReader;
-import org.squashtest.csp.tm.internal.utils.archive.ArchiveReaderFactory;
-import org.squashtest.csp.tm.internal.utils.archive.impl.ArchiveReaderFactoryImpl;
 import org.squashtest.csp.tm.service.RequirementLibraryNavigationService;
-import org.squashtest.csp.tm.service.TestCaseLibraryNavigationService;
 import org.squashtest.csp.tm.service.importer.ImportSummary;
 
 

@@ -28,10 +28,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
-import javax.inject.Inject;
-
 import org.hibernate.SessionFactory;
-import org.squashtest.csp.tm.domain.DuplicateNameException;
 import org.squashtest.csp.tm.domain.requirement.Requirement;
 import org.squashtest.csp.tm.domain.requirement.RequirementFolder;
 import org.squashtest.csp.tm.domain.requirement.RequirementLibrary;
@@ -397,8 +394,7 @@ class RequirementLibraryMerger {
 	private static String generateUniqueName(List<String> names, String baseName) {
 		String token = "-import";
 		int importXNumber = LibraryUtils.generateUniqueCopyNumber(names, baseName, token);
-		String newName = baseName + token + importXNumber;
-		return newName;
+		return baseName + token + importXNumber;
 	}
 
 	@SuppressWarnings("rawtypes")

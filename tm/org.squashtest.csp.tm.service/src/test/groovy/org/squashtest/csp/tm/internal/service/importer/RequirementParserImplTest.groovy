@@ -32,7 +32,7 @@ import org.squashtest.csp.tm.domain.requirement.RequirementFolder
 import org.squashtest.csp.tm.domain.requirement.RequirementLibraryNode
 import org.squashtest.csp.tm.domain.requirement.RequirementStatus
 import org.squashtest.csp.tm.domain.resource.Resource
-import org.squashtest.csp.tm.domain.testcase.TestCaseImportance
+
 
 import spock.lang.Specification
 import spock.lang.Unroll

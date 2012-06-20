@@ -460,8 +460,7 @@ public class IterationModificationController {
 	/* ************** private stuffs are below ********************** */
 
 	private CollectionSorting createCollectionSorting(final DataTableDrawParameters params, DataTableMapper mapper) {
-		CollectionSorting filter = new DataTableFilterSorter(params, mapper);
-		return filter;
+		return new DataTableFilterSorter(params, mapper);
 	}
 
 	/* ***************** data formatter *************************** */

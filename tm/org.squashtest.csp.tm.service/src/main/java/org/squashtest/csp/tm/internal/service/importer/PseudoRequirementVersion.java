@@ -26,7 +26,6 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.squashtest.csp.tm.domain.requirement.RequirementCategory;
 import org.squashtest.csp.tm.domain.requirement.RequirementCriticality;
-import org.squashtest.csp.tm.domain.requirement.RequirementFolder;
 import org.squashtest.csp.tm.domain.requirement.RequirementStatus;
 
 /**
@@ -52,9 +51,9 @@ import org.squashtest.csp.tm.domain.requirement.RequirementStatus;
 	
 
 	public PseudoRequirementVersion(String label2, int rowNumber, PseudoRequirement pseudoRequirement) {
-		setLabel(label2);
-		setRowNumber(rowNumber);
-		setPseudoRequirement(pseudoRequirement);
+		this.label = label2;
+		this.rowNumber = rowNumber;
+		this.pseudoRequirement = pseudoRequirement;
 	}
 	
 	/* ***************************** formatters *********************************** */
@@ -99,10 +98,11 @@ import org.squashtest.csp.tm.domain.requirement.RequirementStatus;
 		return criticality;
 	}
 
-	public void setCriticality(String cricicality) {
+	public void setCriticality(String criticality) {
 		if( criticality != null){
 		try{
-			this.criticality = RequirementCriticality.valueOf(cricicality.toUpperCase());
+			String criticalityUp = criticality.toUpperCase();
+			this.criticality = RequirementCriticality.valueOf(criticalityUp);
 		}catch(IllegalArgumentException iae){
 			LOGGER.warn(iae.getMessage());
 		}
@@ -179,25 +179,22 @@ import org.squashtest.csp.tm.domain.requirement.RequirementStatus;
 
 	@Override
 	public int compareTo(PseudoRequirementVersion o2) {
-
-		Double o1Version = this.getVersion();
-		boolean o1Null = o1Version == null;
-		Double o2Version = o2.getVersion();
-		boolean o2Null = o2Version == null;
-		if( o1Null|| o2Null){
-			if( o1Null && o2Null){
-				return compareRowNumbers(this, o2);
+		int toreturn;
+		if( (this.getVersion() == null)|| (o2.getVersion() == null)){
+			if( (this.getVersion() == null) && (o2.getVersion() == null)){
+				toreturn = compareRowNumbers(this, o2);
 			}else{
-				if(o1Null){return -1;}
-				else{return +1;}
+				if((this.getVersion() == null)){toreturn = -1;}
+				else{toreturn = +1;}
 			}
 		}else{
-			if(o1Version.equals(o2Version)){
-				return compareRowNumbers(this, o2);
+			if(this.getVersion().compareTo(o2.getVersion()) == 0){
+				toreturn = compareRowNumbers(this, o2);
 			}else{
-				return o1Version.compareTo(o2Version);
+				toreturn = this.getVersion().compareTo(o2.getVersion());
 			}
 		}
+		return toreturn;
 	}
 	
 	private int compareRowNumbers(PseudoRequirementVersion o1, PseudoRequirementVersion o2){
