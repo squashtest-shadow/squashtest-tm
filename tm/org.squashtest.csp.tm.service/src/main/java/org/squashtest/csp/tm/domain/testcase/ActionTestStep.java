@@ -22,6 +22,7 @@ package org.squashtest.csp.tm.domain.testcase;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Set;
 
 import javax.persistence.Basic;
 import javax.persistence.CascadeType;
@@ -111,5 +112,12 @@ public class ActionTestStep extends TestStep implements AttachmentHolder {
 		returnList.add(exec);
 		return returnList;
 	}
+	
+	public Set<Attachment>  getAllAttachments() {
+		
+		return attachmentList.getAllAttachments();
+	
+
+}
 
 }

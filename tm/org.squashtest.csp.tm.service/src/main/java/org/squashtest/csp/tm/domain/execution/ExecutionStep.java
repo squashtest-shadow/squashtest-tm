@@ -41,6 +41,7 @@ import javax.persistence.Temporal;
 import javax.persistence.TemporalType;
 
 import org.hibernate.annotations.Formula;
+import org.squashtest.csp.tm.domain.attachment.Attachment;
 import org.squashtest.csp.tm.domain.attachment.AttachmentHolder;
 import org.squashtest.csp.tm.domain.attachment.AttachmentList;
 import org.squashtest.csp.tm.domain.audit.Auditable;
@@ -110,9 +111,13 @@ public class ExecutionStep implements AttachmentHolder, Bugged, TestStepVisitor 
 		super();
 	}
 
-	public ExecutionStep(TestStep testStep) {
+	public ExecutionStep(ActionTestStep testStep) {
 		testStep.accept(this);
 		referencedTestStep = testStep;
+		for (Attachment actionStepAttach : testStep.getAllAttachments()) {
+			Attachment clone = actionStepAttach.hardCopy();
+			attachmentList.addAttachment(clone);
+		}
 	}
 
 	public TestStep getReferencedTestStep() {

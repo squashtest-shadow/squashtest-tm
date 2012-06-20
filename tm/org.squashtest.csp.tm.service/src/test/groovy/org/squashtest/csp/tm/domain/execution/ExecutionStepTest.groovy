@@ -20,6 +20,7 @@
  */
 package org.squashtest.csp.tm.domain.execution
 
+import org.squashtest.csp.tm.domain.attachment.Attachment;
 import org.squashtest.csp.tm.domain.testcase.ActionTestStep;
 
 import spock.lang.Specification;
@@ -28,7 +29,8 @@ class ExecutionStepTest extends Specification {
 	def "Should create an execution step for an ActionTestStep"() {
 		given:
 		ActionTestStep actionStep = new ActionTestStep(action: "action", expectedResult: "expectedResult")
-
+		Attachment attach1 = new Attachment("name")
+		actionStep.attachmentList.addAttachment(attach1)
 		when:
 		ExecutionStep execStep = new ExecutionStep(actionStep)
 
@@ -36,5 +38,6 @@ class ExecutionStepTest extends Specification {
 		execStep.action == actionStep.action
 		execStep.expectedResult == actionStep.expectedResult
 		execStep.referencedTestStep == actionStep
+		execStep.attachmentList.getAllAttachments().size() == 1
 	}
 }
