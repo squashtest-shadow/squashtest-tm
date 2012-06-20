@@ -38,14 +38,7 @@ public class HibernateRequirementFolderDao extends HibernateEntityDao<Requiremen
 	@SuppressWarnings("rawtypes")
 	@Override
 	public List<RequirementLibraryNode> findAllContentById(final long folderId) {
-		SetQueryParametersCallback setParams = new SetQueryParametersCallback() {
-
-			@Override
-			public void setQueryParameters(Query query) {
-				query.setLong("folderId", folderId);
-			}
-		};
-
+		SetQueryParametersCallback setParams = new SetFolderIdParameter(folderId);
 		return executeListNamedQuery("requirementFolder.findAllContentById", setParams);
 
 	}
@@ -53,13 +46,7 @@ public class HibernateRequirementFolderDao extends HibernateEntityDao<Requiremen
 	@SuppressWarnings("rawtypes")
 	@Override
 	public RequirementFolder findByContent(final RequirementLibraryNode node) {
-		SetQueryParametersCallback callback = new SetQueryParametersCallback() {
-
-			@Override
-			public void setQueryParameters(Query query) {
-				query.setParameter("content", node);
-			}
-		};
+		SetQueryParametersCallback callback = new SetNodeContentParameter(node);
 
 		return executeEntityNamedQuery("requirementFolder.findByContent", callback);
 	}

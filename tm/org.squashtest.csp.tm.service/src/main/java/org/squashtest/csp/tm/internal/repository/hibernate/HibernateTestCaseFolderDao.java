@@ -50,14 +50,7 @@ public class HibernateTestCaseFolderDao extends HibernateEntityDao<TestCaseFolde
 
 	@Override
 	public TestCaseFolder findByContent(final TestCaseLibraryNode node) {
-		SetQueryParametersCallback callback = new SetQueryParametersCallback() {
-
-			@Override
-			public void setQueryParameters(Query query) {
-				query.setParameter("content", node);
-			}
-		};
-
+		SetQueryParametersCallback callback = new SetNodeContentParameter(node);
 		return executeEntityNamedQuery("testCaseFolder.findByContent", callback);
 	}
 

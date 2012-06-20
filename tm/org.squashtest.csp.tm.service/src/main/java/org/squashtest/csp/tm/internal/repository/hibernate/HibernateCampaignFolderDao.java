@@ -50,17 +50,10 @@ public class HibernateCampaignFolderDao extends HibernateEntityDao<CampaignFolde
 
 	@Override
 	public CampaignFolder findByContent(final CampaignLibraryNode node) {
-		SetQueryParametersCallback callback = new SetQueryParametersCallback() {
-
-			@Override
-			public void setQueryParameters(Query query) {
-				query.setParameter("content", node);
-			}
-		};
-
+		SetQueryParametersCallback callback = new SetNodeContentParameter(node);
 		return executeEntityNamedQuery("campaignFolder.findByContent", callback);
 	}
-
+	
 	@Override
 	public List<String> findNamesInFolderStartingWith(final long folderId, final String nameStart) {
 		SetQueryParametersCallback newCallBack1 = new SetQueryParametersCallback() {
