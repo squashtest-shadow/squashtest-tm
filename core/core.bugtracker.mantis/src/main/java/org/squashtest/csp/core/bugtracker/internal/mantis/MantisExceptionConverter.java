@@ -32,6 +32,7 @@ import org.springframework.stereotype.Component;
 import org.squashtest.csp.core.bugtracker.core.BugTrackerNoCredentialsException;
 import org.squashtest.csp.core.bugtracker.core.BugTrackerNotFoundException;
 import org.squashtest.csp.core.bugtracker.core.BugTrackerRemoteException;
+import org.squashtest.csp.core.bugtracker.core.ProjectNotFoundException;
 
 
 /**
@@ -111,6 +112,12 @@ public class MantisExceptionConverter {
 	}
 	
 	
+	public ProjectNotFoundException makeProjectNotFound(String projName){
+		String translation = messageSource.getMessage("exception.squash.notfound.project", new Object[]{projName}, getLocale());
+		return new ProjectNotFoundException(translation, null);
+	}
+	
+
 	/* ********************* private stuffs ************************************** */
 	
 	

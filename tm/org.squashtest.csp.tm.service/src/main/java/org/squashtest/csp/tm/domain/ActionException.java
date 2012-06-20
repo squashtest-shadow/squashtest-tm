@@ -51,5 +51,9 @@ public class ActionException extends RuntimeException implements Internationaliz
 	public String getI18nKey() {
 		return GENERIC_ACTION_EXCEPTION_KEY;
 	}
+	
+	public Object[] messageArgs(){
+		return null;
+	}
 
 }

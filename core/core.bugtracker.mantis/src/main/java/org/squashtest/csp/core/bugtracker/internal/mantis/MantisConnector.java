@@ -60,6 +60,8 @@ public class MantisConnector implements BugTrackerConnector {
 	private final ThreadLocal<AuthenticationCredentials> credentialsHolder = new ThreadLocal<AuthenticationCredentials>();
 
 	private final MantisAxis1SoapClient client;
+	
+	private MantisExceptionConverter exConverter;
 
 	public MantisConnector(BugTracker bugTracker) {
 		super();
@@ -73,6 +75,7 @@ public class MantisConnector implements BugTrackerConnector {
 	}
 
 	public void setExceptionConverter(MantisExceptionConverter converter) {
+		this.exConverter = converter;
 		client.setMantisExceptionConverter(converter);
 	}
 
@@ -124,7 +127,7 @@ public class MantisConnector implements BugTrackerConnector {
 		if (found != null) {
 			return populateProject(found);
 		} else {
-			throw new ProjectNotFoundException();
+			throw exConverter.makeProjectNotFound(projectName);
 		}
 
 	}
@@ -139,7 +142,7 @@ public class MantisConnector implements BugTrackerConnector {
 		if (found != null) {
 			return populateProject(found);
 		} else {
-			throw new ProjectNotFoundException();
+			throw exConverter.makeProjectNotFound(projectId);
 		}
 	}
 

@@ -77,10 +77,10 @@ The reason for that is that the parameters are urls already.
 	 		
 	 			<div class="attach-issue">
 	 				<span class="issue-radio-label">
-	 					<input type="radio" name="add-issue-mode" value="attach"/><f:message key="dialog.issue.radio.attach.label"/>
+	 					<input type="radio" name="add-issue-mode" class="attach-radio" value="attach"/><f:message key="dialog.issue.radio.attach.label"/>
 	 				</span>
 	 				<label>${interfaceDescriptor.tableIssueIDHeader}</label>
-	 				<input type="text" name="issue-key" value=""/>
+	 				<input type="text" class="id-text" name="issue-key" value=""/>
 	 				<f:message var="searchIssueLabel"key="dialog.issue.button.search.label"/>
 	 				<input type="button" name="search-issue" value="${searchIssueLabel}"/>
 	 			</div>
@@ -90,7 +90,7 @@ The reason for that is that the parameters are urls already.
 	 			</div>
 	 			
 	 			<span class="issue-radio-label">
-	 				<input type="radio" name="add-issue-mode" value="report"/><f:message key="dialog.issue.radio.new.label"/>
+	 				<input type="radio" class="report-radio" name="add-issue-mode" value="report"/><f:message key="dialog.issue.radio.new.label"/>
 	 			 </span>
 	 			 
 	 			<div class="combo-options">

@@ -46,11 +46,6 @@ import org.squashtest.csp.tm.domain.ActionException;
  * @reviewed-on 2011-12-15
  */
 
-/*
- * TODO : inject the message source, the locale, and return a pre-formatted message instead of the raw i18n key.
- * 
- * modify the jsps accordingly when it's done
- */
 
 @Component
 public class HandlerActionExceptionResolver extends AbstractHandlerExceptionResolver {
@@ -106,7 +101,7 @@ public class HandlerActionExceptionResolver extends AbstractHandlerExceptionReso
 
 	private String getLocalizedMessage(Locale locale, ActionException actionEx) {
 		String key = actionEx.getI18nKey();
-		String message = messageSource.getMessage(key, null, locale);
+		String message = messageSource.getMessage(key, actionEx.messageArgs(), locale);
 		if(message != null ){
 			return message;
 		}else{
