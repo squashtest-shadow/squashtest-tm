@@ -20,8 +20,6 @@
  */
 package org.squashtest.csp.core.bugtracker.service
 
-import java.net.URL;
-import java.util.List;
 
 import org.squashtest.csp.core.bugtracker.domain.BTIssue;
 import org.squashtest.csp.core.bugtracker.domain.BTProject;
@@ -29,7 +27,7 @@ import org.squashtest.csp.core.bugtracker.domain.Permission;
 import org.squashtest.csp.core.bugtracker.domain.Priority;
 import org.squashtest.csp.core.bugtracker.spi.BugTrackerInterfaceDescriptor;
 
-//@Component
+
 class StubBugTrackerService implements BugTrackerService {
 
 	@Override
@@ -105,6 +103,11 @@ class StubBugTrackerService implements BugTrackerService {
 	
 	@Override
 	public String getBugTrackerName() {
+		return null;
+	}
+
+	@Override
+	public BTIssue getIssue(String key) {
 		return null;
 	}
 }
