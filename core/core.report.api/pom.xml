@@ -29,7 +29,7 @@
 			<version>${project.version}</version>
 		</dependency>
 		<dependency>
-			<groupId>org.squashtest.csp</groupId>
+			<groupId>org.squashtest.tm</groupId>
 			<artifactId>spock-test-dependencies</artifactId>
 			<version>${project.version}</version>
 			<type>pom</type>

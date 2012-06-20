@@ -12,7 +12,6 @@
   <name>core.bugtracker.mantis</name>
   <description>Squash TM connector for MantisBT bugtrackers</description>
   <properties>
-    <former.groupId>org.squashtest.csp</former.groupId>
     <bundle.name>${project.groupId}.${project.artifactId}</bundle.name>
     <bundle.symbolicName>${bundle.name}</bundle.symbolicName>
     <cxf.version>2.3.3</cxf.version>
@@ -22,20 +21,20 @@
   <dependencies>
 		<!-- ====== DEPENDENCY POMS ====== -->
     <dependency>
-      <groupId>${former.groupId}</groupId>
+      <groupId>org.squashtest.tm</groupId>
       <artifactId>springdm-bundle-dependencies</artifactId>
       <version>${project.version}</version>
       <type>pom</type>
     </dependency>
     <dependency>
-      <groupId>${former.groupId}</groupId>
+      <groupId>org.squashtest.tm</groupId>
       <artifactId>spock-test-dependencies</artifactId>
       <version>${project.version}</version>
       <type>pom</type>
       <scope>test</scope>
     </dependency>
     <dependency>
-      <groupId>${former.groupId}</groupId>
+      <groupId>org.squashtest.tm</groupId>
       <artifactId>org.squashtest.csp.tools.unittest</artifactId>
       <version>${project.version}</version>
       <scope>test</scope>
