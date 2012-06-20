@@ -325,6 +325,16 @@
 			<artifactId>core.api</artifactId>
 			<version>${project.version}</version>
 		</dependency>
+		<dependency>
+			<groupId>org.squashtest.tm</groupId>
+			<artifactId>core.report.api</artifactId>
+			<version>${project.version}</version>
+		</dependency>
+		<dependency>
+			<groupId>org.squashtest.tm</groupId>
+			<artifactId>plugin.report.std</artifactId>
+			<version>${project.version}</version>
+		</dependency>
 		<!-- Squashtest tm modules -->
 		<dependency>
 			<groupId>${project.groupId}</groupId>
