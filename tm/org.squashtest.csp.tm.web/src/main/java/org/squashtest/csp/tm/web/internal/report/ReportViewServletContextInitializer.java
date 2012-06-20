@@ -94,7 +94,10 @@ public class ReportViewServletContextInitializer implements ServletContextAware 
 	}
 
 	public void unregisterViews(ReportPlugin plugin, Map<?, ?> properties) {
-		apply(RegistrationAction.UNBIND_CONTEXT, plugin, properties);
+		// sometimes, plugin is null
+		if (plugin != null) {
+			apply(RegistrationAction.UNBIND_CONTEXT, plugin, properties);
+		}
 	}
 
 	/**

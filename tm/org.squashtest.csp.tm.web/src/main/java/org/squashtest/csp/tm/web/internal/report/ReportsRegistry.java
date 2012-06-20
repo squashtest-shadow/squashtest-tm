@@ -81,6 +81,12 @@ public class ReportsRegistry {
 	 * @param properties
 	 */
 	public synchronized void unregisterReports(ReportPlugin plugin, Map<?, ?> properties) {
+		// this sometimes happen
+		if (plugin == null) {
+			LOGGER.warn("Unregistered null plugin with properties {}", properties);
+			return;
+		}
+		
 		Report[] reports = plugin.getReports();
 
 		for (int i = 0; i < reports.length; i++) {
