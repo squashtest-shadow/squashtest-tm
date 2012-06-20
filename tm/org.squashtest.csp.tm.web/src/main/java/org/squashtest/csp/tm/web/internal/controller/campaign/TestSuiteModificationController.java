@@ -336,9 +336,4 @@ public class TestSuiteModificationController {
 	private String formatStatus(ExecutionStatus status, Locale locale) {
 		return messageSource.getMessage(status.getI18nKey(), null, locale);
 	}
-	
-	private String formatNone(Locale locale){
-		return messageSource.getMessage("squashtm.none.f", null, locale);	
-	}
-	
 }

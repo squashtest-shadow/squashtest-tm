@@ -51,8 +51,6 @@ import org.squashtest.csp.tm.infrastructure.filter.CollectionFilter;
 import org.squashtest.csp.tm.infrastructure.filter.FilteredCollectionHolder;
 import org.squashtest.csp.tm.service.AdministrationService;
 import org.squashtest.csp.tm.service.ProjectsPermissionManagementService;
-import org.squashtest.csp.tm.web.internal.controller.testcase.TestCaseModificationController;
-import org.squashtest.csp.tm.web.internal.controller.users.PasswordChangeForm;
 import org.squashtest.csp.tm.web.internal.model.datatable.DataTableDrawParameters;
 import org.squashtest.csp.tm.web.internal.model.datatable.DataTableModel;
 import org.squashtest.csp.tm.web.internal.model.datatable.DataTableModelHelper;

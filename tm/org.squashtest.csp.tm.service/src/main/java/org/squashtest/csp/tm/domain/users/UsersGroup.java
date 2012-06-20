@@ -26,28 +26,28 @@ import javax.persistence.Id;
 import javax.persistence.Table;
 
 @Entity
-@Table(name="CORE_GROUP")
+@Table(name = "CORE_GROUP")
 public class UsersGroup {
-	
+
 	@Id
 	@GeneratedValue
 	private Long id;
 	private String qualifiedName;
 	private transient String simpleName;
-	
-	public UsersGroup(){
-		if (qualifiedName != null){
+
+	public UsersGroup() {
+		if (qualifiedName != null) {
 			this.calculateSimpleName();
 		}
 	}
-	
+
 	public String getSimpleName() {
 		this.calculateSimpleName();
 		return simpleName;
 	}
 
 	public void calculateSimpleName() {
-		String theName = qualifiedName.substring(qualifiedName.lastIndexOf(".")+1);
+		String theName = qualifiedName.substring(qualifiedName.lastIndexOf(".") + 1);
 		this.simpleName = theName;
 	}
 
@@ -57,13 +57,13 @@ public class UsersGroup {
 
 	public String getQualifiedName() {
 		return qualifiedName;
-		
+
 	}
-	
+
 	public void setQualifiedName(String qualifiedName) {
 		this.qualifiedName = qualifiedName;
 	}
-	
+
 	public Long getId() {
 		return id;
 	}
