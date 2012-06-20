@@ -138,8 +138,7 @@ public abstract class AbstractNodeDeletionHandlerImpl<NODE extends LibraryNode, 
 			currentLayer = new LinkedList<Long>(CollectionUtils.collect(nextPairedLayer, new Transformer() {
 				@Override
 				public Object transform(Object input) {
-					Long value = (Long)((Object[])input)[1];
-					return value;
+					return (Long)((Object[])input)[1];
 				}
 			}));
 		}

@@ -96,8 +96,7 @@ class EntityModifierHandler<ENTITY> implements DynamicComponentInvocationHandler
 	private String extractModifiedPropertyName(Method method) {
 		Matcher m = ENTITY_MODIFIER_SERVICE_PATTERN.matcher(method.getName());
 		m.find();
-		String prop = m.group(1);
-		return prop;
+		return m.group(1);
 	}
 
 	private Method findSetter(String property, Class<?> paramType) throws NoSuchMethodException {

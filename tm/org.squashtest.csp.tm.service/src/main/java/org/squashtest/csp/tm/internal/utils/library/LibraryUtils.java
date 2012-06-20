@@ -49,7 +49,6 @@ public final class LibraryUtils {
 
 		}
 
-		int newCopy = lastCopy + 1;
-		return newCopy;
+		return lastCopy + 1;
 	}
 }

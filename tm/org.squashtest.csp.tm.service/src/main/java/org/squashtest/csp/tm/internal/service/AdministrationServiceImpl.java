@@ -122,8 +122,7 @@ public class AdministrationServiceImpl implements AdministrationService {
 	@Override
 	@PreAuthorize("hasRole('ROLE_ADMIN')")
 	public List<User> findAllUsers() {
-		List<User> userList = userDao.findAllUsers();
-		return userList;
+		return  userDao.findAllUsers();
 	}
 
 	@Override
@@ -137,8 +136,7 @@ public class AdministrationServiceImpl implements AdministrationService {
 	@Override
 	@PreAuthorize("hasRole('ROLE_ADMIN')")
 	public List<UsersGroup> findAllUsersGroup() {
-		List<UsersGroup> groupList = groupDao.findAllGroups();
-		return groupList;
+		return groupDao.findAllGroups();
 	}
 
 	@Override

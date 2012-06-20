@@ -86,8 +86,7 @@ public class TestCaseImportanceManagerServiceImpl implements TestCaseImportanceM
 	 */
 	private TestCaseImportance deduceImportanceAuto(long testCaseId) {
 		List<RequirementCriticality> rCriticalities = findAllDistinctRequirementsCriticalityByTestCaseId(testCaseId);
-		TestCaseImportance importance = TestCaseImportance.deduceTestCaseImportance(rCriticalities);
-		return importance;
+		return  TestCaseImportance.deduceTestCaseImportance(rCriticalities);
 	}
 
 	/**

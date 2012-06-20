@@ -249,8 +249,7 @@ public class CustomIterationModificationServiceImpl implements CustomIterationMo
 	@Override
 	@PostFilter("hasPermission(filterObject, 'READ') or hasRole('ROLE_ADMIN')")
 	public List<TestSuite> findAllTestSuites(long iterationId) {
-		List<TestSuite> allSuites = iterationDao.findAllTestSuites(iterationId);
-		return allSuites;
+		return iterationDao.findAllTestSuites(iterationId);
 	}
 
 	@Override
@@ -313,8 +312,7 @@ public class CustomIterationModificationServiceImpl implements CustomIterationMo
 		// check
 		checkPermissionsForAll(testSuites, "DELETE");
 		// proceed
-		List<Long> deletedIds = deletionHandler.deleteSuites(suitesIds);
-		return deletedIds;
+		return deletionHandler.deleteSuites(suitesIds);
 
 	}
 

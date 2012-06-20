@@ -258,8 +258,7 @@ LibraryNavigationController<CampaignLibrary, CampaignFolder, CampaignLibraryNode
 	@RequestMapping(value="/drives", method=RequestMethod.GET, params = { "linkables" })
 	public @ResponseBody List<JsTreeNode> getLinkablesRootModel(){
 		List<CampaignLibrary> linkableLibraries = campaignLibraryNavigationService.findLinkableCampaignLibraries();
-		List<JsTreeNode> rootModel = createLinkableLibrariesModel(linkableLibraries);
-		return rootModel;
+		return createLinkableLibrariesModel(linkableLibraries);
 	}
 
 	private List<JsTreeNode> createLinkableLibrariesModel(List<CampaignLibrary> linkableLibraries) {

@@ -144,8 +144,7 @@ public class CallStepManagerServiceImpl implements CallStepManagerService, TestC
 
 	private List<Long> findFirstCalledTestCasesIds(String[] copiedStepId) {
 		List<Long> copiedStepIds = parseLong(copiedStepId);
-		List<Long> firstCalledTestCases = testCaseDao.findCalledTestCaseOfCallSteps(copiedStepIds);
-		return firstCalledTestCases;
+		return testCaseDao.findCalledTestCaseOfCallSteps(copiedStepIds);
 	}
 
 	private List<Long> parseLong(String[] stringArray) {

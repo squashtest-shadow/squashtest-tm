@@ -84,8 +84,7 @@ public class JasperReportsServiceImpl {
 			throw new UnsupportedFormatException("no exporter defined for "+format);
 		}
 		try{
-			JRExporter exporter = exporterClass.newInstance();
-			return exporter;
+			return exporterClass.newInstance();
 		}catch(Exception e){
 			throw new RuntimeException(e);
 		}

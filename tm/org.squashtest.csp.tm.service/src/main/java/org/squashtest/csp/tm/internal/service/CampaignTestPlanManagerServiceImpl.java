@@ -149,8 +149,7 @@ public class CampaignTestPlanManagerServiceImpl implements CampaignTestPlanManag
 		entityRefs.add(oid);
 
 		List<String> loginList = aclService.findUsersWithExecutePermission(entityRefs);
-		List<User> usersList = userDao.findUsersByLoginList(loginList);
-		return usersList;
+		return userDao.findUsersByLoginList(loginList);
 	}
 
 	/**

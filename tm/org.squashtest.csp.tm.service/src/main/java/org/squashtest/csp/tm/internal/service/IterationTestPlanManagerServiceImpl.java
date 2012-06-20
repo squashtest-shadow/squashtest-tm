@@ -293,8 +293,7 @@ public class IterationTestPlanManagerServiceImpl implements IterationTestPlanMan
 	@Override
 	public IterationTestPlanItem findTestPlanItemByTestCaseId(long iterationId, long testCaseId) {
 		Iteration iteration = iterationDao.findById(iterationId);
-		IterationTestPlanItem itp = iteration.getTestPlanForTestCaseId(testCaseId);
-		return itp;
+		return iteration.getTestPlanForTestCaseId(testCaseId);
 	}
 
 	// FIXME : security

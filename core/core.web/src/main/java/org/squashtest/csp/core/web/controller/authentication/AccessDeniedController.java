@@ -30,8 +30,7 @@ public class AccessDeniedController {
 	
 	@RequestMapping(value="/accessDenied", method=RequestMethod.GET)
 	public ModelAndView accessDenied() {
-		ModelAndView mav = new ModelAndView("authentication/accessDenied");
-		return mav;
+		return new ModelAndView("authentication/accessDenied");
 	}
 
 

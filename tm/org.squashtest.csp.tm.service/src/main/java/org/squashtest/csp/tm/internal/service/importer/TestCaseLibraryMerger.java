@@ -354,8 +354,7 @@ class TestCaseLibraryMerger {
 	private static String generateUniqueName(List<String> pickedNames, String baseName){
 		String copyToken = "-import";
 		int number = LibraryUtils.generateUniqueCopyNumber(pickedNames, baseName, copyToken);
-		String newName = baseName+copyToken+number;
-		return newName;
+		return baseName+copyToken+number;
 	}
 	
 	private static TestCaseLibraryNode getByName(Collection<TestCaseLibraryNode> hayStack, String needle){
