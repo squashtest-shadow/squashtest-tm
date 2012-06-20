@@ -58,8 +58,10 @@ public class GenericWorkspaceService<LIBRARY extends Library<NODE>, NODE extends
 	@PostFilter("hasPermission(filterObject, 'READ') or hasRole('ROLE_ADMIN')")
 	public List<LIBRARY> findAllLibraries() {
 		ProjectFilter pf = projectFilterModificationService.findProjectFilterByUserLogin();
-		return pf.getActivated() == true ? libraryStrategy.getSpecificLibraries(pf.getProjects()) : libraryDao
-				.findAll();
+		if(pf.getActivated()){
+			return libraryStrategy.getSpecificLibraries(pf.getProjects());
+		}
+		return libraryDao.findAll();
 	}
 
 	@Override

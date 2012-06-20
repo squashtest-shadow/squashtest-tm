@@ -44,8 +44,13 @@ public class CampaignViewInterceptor extends ObjectViewsInterceptor {
 	public void postHandle(WebRequest request, ModelMap model) throws Exception {
 		//check model is not null in case we are intercepting an ajax request on the campaign page
 		if (model != null) {Identified identified = (Identified) model.get("campaign");
-       boolean otherViewers = super.addViewerToEntity(Campaign.class.getSimpleName(), identified, request.getRemoteUser());
-        model.addAttribute("otherViewers", otherViewers);
+			if (identified != null) {
+				LOGGER.debug("New view added for Campaign = " + identified.getId() + " Viewer = "
+						+ request.getRemoteUser());
+				LOGGER.trace("Campaign request  description " + request.getDescription(true));
+	     boolean otherViewers = super.addViewerToEntity(Campaign.class.getSimpleName(), identified, request.getRemoteUser());
+	     model.addAttribute("otherViewers", otherViewers);
+		}
        }
 	}
 

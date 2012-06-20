@@ -26,37 +26,40 @@ import org.springframework.ui.ModelMap;
 import org.springframework.web.context.request.WebRequest;
 import org.squashtest.csp.core.domain.Identified;
 import org.squashtest.csp.tm.domain.testcase.TestCase;
+
 /**
  * 
  * @author mpagnon
- *
+ * 
  */
 public class TestCaseViewInterceptor extends ObjectViewsInterceptor {
 
 	private static final Logger LOGGER = LoggerFactory.getLogger(TestCaseViewInterceptor.class);
-	
- 	
 
 	@Override
 	public void preHandle(WebRequest request) throws Exception {
-		
+
 	}
 
 	@Override
 	public void postHandle(WebRequest request, ModelMap model) throws Exception {
-		//check model is not null in case we are intercepting an ajax request on the campaign page
-		if (model != null) {LOGGER.debug("Viewer = "+request.getRemoteUser());
-		Identified tc = (Identified) model.get("testCase");
-        LOGGER.debug("TestCase = "+tc);
-        LOGGER.debug("TestCase contextPath = "+request.getContextPath()+" description "+request.getDescription(true));
-         boolean otherViewers = super.addViewerToEntity(TestCase.class.getSimpleName(), tc, request.getRemoteUser());
-        model.addAttribute("otherViewers", otherViewers);}
+		// check model is not null in case we are intercepting an ajax request on the campaign page
+		if (model != null) {
+			Identified tc = (Identified) model.get("testCase");
+			if (tc != null) {
+				LOGGER.debug("New view added for TestCase = " + tc.getId() + " Viewer = " + request.getRemoteUser());
+				LOGGER.trace("TestCase request  description " + request.getDescription(true));
+				boolean otherViewers = super.addViewerToEntity(TestCase.class.getSimpleName(), tc,
+						request.getRemoteUser());
+				model.addAttribute("otherViewers", otherViewers);
+			}
+		}
 	}
 
 	@Override
 	public void afterCompletion(WebRequest request, Exception ex) throws Exception {
 		// TODO Auto-generated method stub
-		
+
 	}
 
 }

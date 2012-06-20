@@ -26,27 +26,36 @@ import org.springframework.ui.ModelMap;
 import org.springframework.web.context.request.WebRequest;
 import org.squashtest.csp.core.domain.Identified;
 import org.squashtest.csp.tm.domain.campaign.Iteration;
+
 /**
  * 
  * @author mpagnon
- *
+ * 
  */
 public class IterationViewInterceptor extends ObjectViewsInterceptor {
 
-	private static final Logger LOGGER = LoggerFactory.getLogger(IterationViewInterceptor.class); 	
+	private static final Logger LOGGER = LoggerFactory.getLogger(IterationViewInterceptor.class);
 
 	@Override
 	public void preHandle(WebRequest request) throws Exception {
-		
+
 	}
 
 	@Override
 	public void postHandle(WebRequest request, ModelMap model) throws Exception {
 
-		//check model is not null in case we are intercepting an ajax request on the page
-		if (model != null) {Identified identified = (Identified) model.get("iteration");
-		   boolean otherViewers = super.addViewerToEntity(Iteration.class.getSimpleName(), identified, request.getRemoteUser());
-        model.addAttribute("otherViewers", otherViewers);}
+		// check model is not null in case we are intercepting an ajax request on the page
+		if (model != null) {
+			Identified identified = (Identified) model.get("iteration");
+			if (identified != null) {
+				LOGGER.debug("New view added for Iteration = " + identified.getId() + " Viewer = "
+						+ request.getRemoteUser());
+				LOGGER.trace("Iteration request  description " + request.getDescription(true));
+				boolean otherViewers = super.addViewerToEntity(Iteration.class.getSimpleName(), identified,
+						request.getRemoteUser());
+				model.addAttribute("otherViewers", otherViewers);
+			}
+		}
 	}
 
 	@Override

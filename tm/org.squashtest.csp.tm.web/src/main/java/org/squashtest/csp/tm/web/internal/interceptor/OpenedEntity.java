@@ -49,7 +49,7 @@ public class OpenedEntity {
 			numberOfViews++;
 			viewers.put(viewerLogin, numberOfViews);
 		} else {// else create input for this user
-			viewers.put(viewerLogin, new Integer(1));
+			viewers.put(viewerLogin, Integer.valueOf(1));
 		}
 		// if list of users is higher than 1 return true
 		if (viewers.size() > 1) {

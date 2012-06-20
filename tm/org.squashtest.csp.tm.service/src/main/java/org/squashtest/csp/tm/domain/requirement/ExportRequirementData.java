@@ -99,14 +99,14 @@ public class ExportRequirementData {
 	}
 	
 	public ExportRequirementData(Requirement requirement, String thefolderName) {
-		this.setId(requirement.getId());
-		this.setName(requirement.getName());
-		this.setCriticality(requirement.getCriticality());
-		this.setCategory(requirement.getCategory());
-		this.setDescription(requirement.getDescription());	
-		this.setProject(requirement.getProject().getName());
-		this.setReference(requirement.getReference());
-		this.setFolderName(thefolderName);
+		this.id = requirement.getId();
+		this.name = requirement.getName();
+		this.criticality = requirement.getCriticality();
+		this.category = requirement.getCategory();
+		this.description = requirement.getDescription();	
+		this.project = requirement.getProject().getName();
+		this.reference = requirement.getReference();
+		this.folderName = thefolderName;
 	}
 	
 }

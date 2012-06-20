@@ -27,27 +27,35 @@ import org.springframework.web.context.request.WebRequest;
 import org.squashtest.csp.core.domain.Identified;
 import org.squashtest.csp.tm.domain.requirement.Requirement;
 import org.squashtest.csp.tm.domain.testcase.TestCase;
+
 /**
  * 
  * @author mpagnon
- *
+ * 
  */
 public class RequirementViewInterceptor extends ObjectViewsInterceptor {
 
-	private static final Logger LOGGER = LoggerFactory.getLogger(RequirementViewInterceptor.class); 	
+	private static final Logger LOGGER = LoggerFactory.getLogger(RequirementViewInterceptor.class);
 
 	@Override
 	public void preHandle(WebRequest request) throws Exception {
-		
+
 	}
 
 	@Override
 	public void postHandle(WebRequest request, ModelMap model) throws Exception {
-		//check model is not null in case we are intercepting an ajax request on the campaign page
+		// check model is not null in case we are intercepting an ajax request on the campaign page
 		if (model != null) {
-		Identified identified = (Identified) model.get("requirement");
-		   boolean otherViewers = super.addViewerToEntity(Requirement.class.getSimpleName(), identified, request.getRemoteUser());
-        model.addAttribute("otherViewers", otherViewers);}
+			Identified identified = (Identified) model.get("requirement");
+			if (identified != null) {
+				LOGGER.debug("New view added for Requirement = " + identified.getId() + " Viewer = "
+						+ request.getRemoteUser());
+				LOGGER.trace("Requirement request  description " + request.getDescription(true));
+				boolean otherViewers = super.addViewerToEntity(Requirement.class.getSimpleName(), identified,
+						request.getRemoteUser());
+				model.addAttribute("otherViewers", otherViewers);
+			}
+		}
 	}
 
 	@Override

@@ -258,7 +258,6 @@ class RequirementLibraryMerger {
 	}
 
 	private static class RequirementMerger extends DestinationManager {
-		protected RequirementLibraryMerger context;
 
 		public void merge(List<PseudoRequirement> pseudoRequirements, RequirementLibrary library) {
 			setDestination(library);
@@ -286,7 +285,7 @@ class RequirementLibraryMerger {
 				} else {
 					PseudoRequirementVersion pseudoRequirementVersion = pseudoRequirement
 							.getPseudoRequirementVersions().get(0);
-					Requirement requirement = addRequirement(pseudoRequirementVersion);
+					addRequirement(pseudoRequirementVersion);
 				}
 			}
 		}

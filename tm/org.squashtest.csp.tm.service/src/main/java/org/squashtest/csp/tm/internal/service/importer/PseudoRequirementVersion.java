@@ -100,12 +100,12 @@ import org.squashtest.csp.tm.domain.requirement.RequirementStatus;
 	}
 
 	public void setCriticality(String cricicality) {
+		if( criticality != null){
 		try{
 			this.criticality = RequirementCriticality.valueOf(cricicality.toUpperCase());
 		}catch(IllegalArgumentException iae){
 			LOGGER.warn(iae.getMessage());
-		}catch(NullPointerException npe){
-			LOGGER.warn(npe.getMessage());
+		}
 		}
 	}	
 	
@@ -114,12 +114,12 @@ import org.squashtest.csp.tm.domain.requirement.RequirementStatus;
 	}
 
 	public void setCategory(String category) {
+		if( category != null){
 		try{
 			this.category = RequirementCategory.valueOf(category.toUpperCase());
 		}catch(IllegalArgumentException iae){
 			LOGGER.warn(iae.getMessage());
-		}catch(NullPointerException npe){
-			LOGGER.warn(npe.getMessage());
+		}
 		}
 	}
 
@@ -128,12 +128,12 @@ import org.squashtest.csp.tm.domain.requirement.RequirementStatus;
 	}
 
 	public void setState(String state) {
-		try{
-			this.state = RequirementStatus.valueOf(state.toUpperCase());
-		}catch(IllegalArgumentException iae){
-			LOGGER.warn(iae.getMessage());
-		}catch(NullPointerException npe){
-			LOGGER.warn(npe.getMessage());
+		if( state != null){
+			try{
+				this.state = RequirementStatus.valueOf(state.toUpperCase());
+			}catch(IllegalArgumentException iae){
+				LOGGER.warn(iae.getMessage());
+			}
 		}
 	}
 
@@ -161,7 +161,7 @@ import org.squashtest.csp.tm.domain.requirement.RequirementStatus;
 
 	public void setCreatedBy(String createdBy) {
 		if(notEmpty(createdBy))
-		this.createdBy = createdBy;
+		{this.createdBy = createdBy;}
 	}
 	
 	public PseudoRequirement getPseudoRequirement() {
@@ -192,7 +192,7 @@ import org.squashtest.csp.tm.domain.requirement.RequirementStatus;
 				else{return +1;}
 			}
 		}else{
-			if(o1Version == o2Version){
+			if(o1Version.equals(o2Version)){
 				return compareRowNumbers(this, o2);
 			}else{
 				return o1Version.compareTo(o2Version);
