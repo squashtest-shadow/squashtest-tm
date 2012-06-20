@@ -23,6 +23,7 @@ package org.squashtest.csp.tm.web.internal.report.criteria;
 import static org.squashtest.tm.api.report.form.InputType.CHECKBOX;
 import static org.squashtest.tm.api.report.form.InputType.DATE;
 import static org.squashtest.tm.api.report.form.InputType.TEXT;
+import static org.squashtest.tm.api.report.form.InputType.TREE_PICKER;
 
 import java.util.Collection;
 import java.util.HashMap;
@@ -67,6 +68,7 @@ public class FormToCriteriaConverter {
 		simpleEntryConverterByType.put(DATE, new DateEntryConverter());
 		simpleEntryConverterByType.put(CHECKBOX, new CheckboxEntryConverter());
 		simpleEntryConverterByType.put(TEXT, simpleEntryDefaultConverter);
+		simpleEntryConverterByType.put(TREE_PICKER, simpleEntryDefaultConverter);
 	}
 
 	@SuppressWarnings("unchecked")
