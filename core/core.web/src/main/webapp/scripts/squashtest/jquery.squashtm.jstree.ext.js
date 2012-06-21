@@ -369,7 +369,7 @@
 				});
 				
 				var ids = $.map(filtered, function (item) {
-					$(item).attr('resid');
+					return $(item).attr('resid');
 				});
 				
 				return ids;

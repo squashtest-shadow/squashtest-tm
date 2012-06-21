@@ -122,7 +122,6 @@
               </bean>
 
               <bean class="org.squashtest.tm.api.report.form.OptionInput">
-                <property name="defaultSelected" value="true" />
                 <property name="labelKey"
                   value="report.criteria.panel.campaignlist.selection.selected.label" />
                 <property name="value" value="TREE_PICKER" />
