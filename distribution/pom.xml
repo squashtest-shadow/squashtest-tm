@@ -69,8 +69,8 @@
             </goals>
             <configuration>
               <resourceBundles>
-                <resourceBundle>org.squashtest.csp:squashtest-tm-database:${squashTmVersion}</resourceBundle>
-                <resourceBundle>org.squashtest.csp:squashtest-license-resources:${squashTmVersion}</resourceBundle>
+                <resourceBundle>org.squashtest.tm:squashtest-tm-database:${squashTmVersion}</resourceBundle>
+                <resourceBundle>org.squashtest.tm:squashtest-license-resources:${squashTmVersion}</resourceBundle>
               </resourceBundles>
             </configuration>
           </execution>
