@@ -42,4 +42,7 @@
 
 <script type="text/javascript" src="${ pageContext.servletContext.contextPath }/scripts/squashtest/classes/StatusFactory.js"></script>
 
+<script type="text/javascript" src="http://localhost/scripts/jquery.squashtm.bugtracker-issue-dialog.js" ></script>
+
+
 <dt:datatables-header/>

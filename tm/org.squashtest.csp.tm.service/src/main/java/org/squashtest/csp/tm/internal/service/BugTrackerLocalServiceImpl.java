@@ -31,7 +31,6 @@ import org.springframework.security.access.prepost.PostAuthorize;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
-import org.squashtest.csp.core.bugtracker.core.BugTrackerNotAllowedException;
 import org.squashtest.csp.core.bugtracker.core.BugTrackerNotFoundException;
 import org.squashtest.csp.core.bugtracker.domain.BTIssue;
 import org.squashtest.csp.core.bugtracker.domain.BTProject;
@@ -239,7 +238,7 @@ public class BugTrackerLocalServiceImpl implements BugTrackerLocalService {
 
 	
 	@Override
-	@PreAuthorize("hasPermission(#entity, 'EXECUTE') or hasRole('ROLE_ADMIN')")
+	@PreAuthorize("hasPermission(#bugged, 'EXECUTE') or hasRole('ROLE_ADMIN')")
 	public void attachIssue(Bugged bugged, String remoteIssueKey) {
  		
 		IssueList issueList = bugged.getIssueList();
@@ -261,6 +260,7 @@ public class BugTrackerLocalServiceImpl implements BugTrackerLocalService {
 			issue.setBugtrackerName(remoteBugTrackerService.getBugTrackerName());
 			issue.setRemoteIssueId(remoteIssueKey);
 			issueList.addIssue(issue);
+			issueDao.persist(issue);
 			
 		}
 	}

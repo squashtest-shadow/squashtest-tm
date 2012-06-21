@@ -211,7 +211,7 @@
 	 */
 	function _enableTableDragAndDrop() {
 		if (! this.squashSettings.enableDnD) return;
-		self = this;
+		var self = this;
 		this.tableDnD({
 			dragHandle : "drag-handle",
 			onDragStart : function(table, rows) { //remember that we are using our modified dnd : rows is a jQuery object 

@@ -19,15 +19,47 @@
  *     along with this software.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-function BTEntity(argId, argName){
-	this.id = argId;
-	this.name = argName;
-	this.format= function(){
-		return "id="+this.id+",name="+this.name;
-	};
-}
 
 (function($){
+
+	function BTEntity(argId, argName){
+		this.id = argId;
+		this.name = argName;
+	}
+
+	
+	$.widget("squash.errorDisplay", {
+						
+		_create: function(){
+			var jqElt = this.element;
+		
+			jqElt.wrap('<div class="error-overlay error-hidden-state" />');
+			jqElt.addClass('error-style');
+
+			jqElt.click(function(){jqElt.hide();});
+			
+			return this;
+
+		},
+		
+		show : function(){
+			this.element.parent().removeClass('error-hidden-state');
+		},
+		
+		hide : function(){
+			this.element.parent().addClass('error-hidden-state');
+		},
+	
+		hangTo : function(target){
+			if (target.prepend){
+				target.prepend(this.element.parent());
+			}else{
+				$(target).prepend(this.element.parent());
+			}
+		}
+			
+	})
+	
 
 	$.fn.btCbox = function(emptyMessage){
 		
@@ -64,7 +96,7 @@ function BTEntity(argId, argName){
 				this.empty=true;
 			}
 			else{
-				this.enable();
+				//this.enable(); only the master control says if it's enabled
 				var  i=0;			
 				for (i=0;i<entityArray.length;i++){
 					var entity = entityArray[i];
@@ -106,8 +138,8 @@ function BTEntity(argId, argName){
 
 	}
 
-
-
+	
+	
 	/*
 	  report-issue-dialog is the javascript object handling the behaviour of the popup that will post 
 	  a new issue or attach an existing issue to the current entity.
@@ -135,8 +167,7 @@ function BTEntity(argId, argName){
 		
 		this.model={};
 		this.template=null;
-		
-		
+	
 		//urls
 		this.reportUrl = settings.reportUrl;
 		this.searchUrl = settings.searchUrl;
@@ -152,6 +183,8 @@ function BTEntity(argId, argName){
 				
 		//the issue id (if any)
 		this.idText = $(".id-text", this);
+		
+	
 		
 		//the four selects
 		this.prioritySelect = $(".priority-select", this.content).btCbox(settings.labels.emptyPriorityLabel);
@@ -171,44 +204,24 @@ function BTEntity(argId, argName){
 		//search issue buttons. We also turn it into a jQuery button on the fly.
 		this.searchButton = $('.attach-issue input[type="button"]', this).button();
 		
+		
+		//the error display
+	/*	this.errDisplay = $(".issue-report-error", this);
+		this.errDisplay.errorDisplay();
+		this.errDisplay.errorDisplay('hangTo', this.parent());		*/
+		
+		
 		//a callback when the post is a success
 		this.callback=settings.callback;
 			
-		//setting up the callbacks for the controls
-		with(this){
-			idText.keydown(function(){
-				self.model.id = $(this).val();
-			});
 			
-			prioritySelect.change(function(){
-				self.model.priority = this.getSelected();
-			});
-			
-			categorySelect.change(function(){
-				self.model.category = this.getSelected();
-			});
-			
-			versionSelect.change(function(){
-				self.model.version = this.getSelected();
-			});
-			
-			assigneeSelect.change(function(){
-				self.model.assignee = this.getSelected();
-			});	
-			
-			summaryText.keydown(function(){
-				self.model.summary = $(this).val();
-			});
-			
-			descriptionText.keydown=(function(){
-				self.model.description = $(this).val();
-			});
-			
-			commentText.keydown=(function(){
-				self.model.comment = $(this).val();
-			});
+		//bind the spans standing for label for the radio buttons
+		//(actual labels would have been preferable except for the default style)
+		this.find(".issue-radio-label").click(function(){
+			$(this).prev("input[type='radio']").click();
+		});
+		
 
-		}
 	
 	}
 
@@ -218,9 +231,9 @@ function BTEntity(argId, argName){
 		
 		init.call(this, settings);
 			
-
-		
-		/* ************* public popup state methods **************** */
+		var state = {};
+			
+		/* ************** some events ****************** */
 		
 		this.attachRadio.click(function(){
 			toAttachMode();
@@ -229,10 +242,31 @@ function BTEntity(argId, argName){
 		this.reportRadio.click(function(){
 			toReportMode();
 		});	
+	
+		this.searchButton.click(function(){
+			searchIssue();
+		});
+		
+		this.idText.keypress(function(evt){
+			if (evt.which == '13'){
+				searchIssue();
+				return false;
+			}
+		});
+				
+		/* ************* public popup state methods **************** */
+		
+		var isAttachMode = $.proxy(function(){
+			return this.attachRadio.is(':checked');
+		}, self);
+		
+		var isReportMode = $.proxy(function(){
+			return this.reportMode.is(':checked');
+		}, self);
+		
 		
 		var toAttachMode = $.proxy(function(){
 			flipToMain();
-			flushSheet();
 			enableIdSearch();
 			disableControls();
 			disablePost();
@@ -240,7 +274,6 @@ function BTEntity(argId, argName){
 		
 		var toReportMode = $.proxy(function(){
 			flipToMain();
-			flushSheet();
 			disableIdSearch();
 			enableControls();
 			enablePost();
@@ -269,17 +302,27 @@ function BTEntity(argId, argName){
 		}, self);
 
 		
+		var enableSearch = $.proxy(function(){
+			this.searchButton.button('option', 'disabled', false);
+		}, self);
+		
+		
+		var disableSearch = $.proxy(function(){
+			this.searchButton.button('option', 'disabled', true);
+		}, self);
+		
+		
 		var enableIdSearch = $.proxy(function(){
 			with(this){
 				idText.removeAttr('disabled');
-				searchButton.button('option', 'disabled', false);
+				enableSearch();
 			}
 		}, self);
 		
 		var disableIdSearch = $.proxy(function(){
 			with(this){
 				idText.attr('disabled', 'disabled');
-				searchButton.button('option', 'disabled', true);
+				disableSearch();
 			}
 		}, self);
 		
@@ -306,6 +349,8 @@ function BTEntity(argId, argName){
 				commentText.attr('disabled', 'disabled');
 			}
 		}, self);
+		
+
 	
 	
 		/* ********************** model management ************ */
@@ -343,14 +388,15 @@ function BTEntity(argId, argName){
 			})
 			.fail(bugReportError);
 		}, self);
-			
+		
+		
+		
 		var getBugReportTemplate = $.proxy(function(){
 			var jobDone = $.Deferred();
 				
 			
 			if (! this.template){
-			
-				
+
 				flipToPleaseWait();		
 				
 				$.ajax({
@@ -365,6 +411,7 @@ function BTEntity(argId, argName){
 				})
 				.fail(jobDone.reject)
 				.then(flipToMain);
+				
 			}
 			else{
 				jobDone.resolve();
@@ -373,14 +420,36 @@ function BTEntity(argId, argName){
 			return jobDone.promise();
 		}, self);
 
-
-
+		
 		
 		//we let the usual error handling do its job here
 		var bugReportError = $.proxy(function(jqXHR, textStatus, errorThrown){
 			flipToMain();
+			//this.errDisplay.errorDisplay('show');
 		}, self);
 		
+		
+		var searchIssue = $.proxy(function(){
+			var id = this.idText.val();
+			
+			flipToPleaseWait();
+			
+			$.ajax({
+				url : self.searchUrl+'/'+id,
+				type : 'GET',
+				dataType : 'json'
+			})
+			.done(function(response){
+				setModel(response);
+				enablePost();
+			})
+			.fail(bugReportError)
+			.then(flipToMain);
+			
+		}, self);
+		
+
+		//****************************** input managment ********************* */
 		
 		var flushSheet = $.proxy(function(){
 			this.model={};
@@ -396,44 +465,56 @@ function BTEntity(argId, argName){
 			this.assigneeSelect.flush();
 		}, self);
 		
+				
+		var readAllInputs = $.proxy(function(){
+			with(this){
+				model.id = idText.val();
+				model.priority = prioritySelect.getSelected();
+				model.category = categorySelect.getSelected();
+				model.version = versionSelect.getSelected();
+				model.assignee = assigneeSelect.getSelected();
+				model.summary = summaryText.val();
+				model.description = descriptionText.val();
+				model.comment = commentText.val();			
+			};
 		
-		var fillReport = $.proxy(function(json){
-			
-			
 		}, self);
 		
-		
-		var submit = $.proxy(function(){
-
-			
-		}, self);
-		
-		
-		var submitSuccess = $.proxy(function(json){
-
-		}, self);
-		
-		
-		var submitFails = $.proxy(function(){
-
-		}, self);
-		
-		var submit = $.proxy(function(){
-
-			
-		}, self);	
 
 		
 		/* ************* public ************************ */
 		
+		
+		
 		this.submitIssue = function(){
 			
+			readAllInputs();
+			
+			var strModel = JSON.stringify(self.model);
+			
+			$.ajax({
+				url : self.reportUrl,
+				type : 'POST',
+				data : strModel,
+				contentType: 'application/json',
+				dataType : 'json'
+			})
+			.done(function(){
+				self.dialog('close');
+				if (self.callback){
+					self.callback.apply(self, arguments);
+				}
+			})
+			.fail(function(){
+				bugReportError();
+			});
 		};
 		
 		/* ************* events ************************ */
 		
 		//the opening of the popup :
 		this.bind("dialogopen", function(){
+			flushSheet();
 			self.attachRadio.click();
 		});
 		
@@ -443,8 +524,8 @@ function BTEntity(argId, argName){
 		//we must prevent keypress=enter event inside a textarea to bubble out and reach 
 		//the submit button
 		$(".text-options", this.content).keypress(function(evt){
-			if (event.which == '13'){
-				$.Event(event).stopPropagation();
+			if (evt.which == '13'){
+				$.Event(evt).stopPropagation();
 			}
 		});
 		
