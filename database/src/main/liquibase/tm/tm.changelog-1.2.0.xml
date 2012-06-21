@@ -727,7 +727,7 @@
 		
 		<addColumn tableName="TEST_CASE">
 			<column name="REFERENCE" type="java.sql.Types.VARCHAR(20)" defaultValue="" >
-			<constraints nullable="true" />
+			<constraints nullable="false" />
 			</column>
 		</addColumn>
 			
