@@ -180,6 +180,11 @@ public class MantisExceptionConverter {
 	}
 	
 	
+	public BugTrackerRemoteException newIssueNotFoundException(){
+		String translation = messageSource.getMessage(SquashMessageKeys.ISSUE_NOT_FOUND, null, getLocale());
+		return new BugTrackerNotFoundException(translation, null);
+	}
+	
 	private BugTrackerRemoteException setUnknownException(RemoteException remoteException){
 		String translation = messageSource.getMessage(SquashMessageKeys.UNKNOWN_EXCEPTION, null, getLocale());
 		return new BugTrackerRemoteException(translation+remoteException.getMessage(), remoteException );

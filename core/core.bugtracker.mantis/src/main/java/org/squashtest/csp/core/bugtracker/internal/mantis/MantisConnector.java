@@ -205,8 +205,24 @@ public class MantisConnector implements BugTrackerConnector {
 	
 	@Override
 	public BTIssue findIssue(String key){
-		IssueData mantisIssue = client.getIssue(credentialsHolder.get(), MantisEntityConverter.squash2MantisId(key));
+		BigInteger remoteId = null;
+		try{
+			remoteId = MantisEntityConverter.squash2MantisId(key);
+		}catch(NumberFormatException ex){
+			throw exConverter.newIssueNotFoundException();
+		}
+		IssueData mantisIssue = client.getIssue(credentialsHolder.get(), remoteId);
 		BTIssue issue = MantisEntityConverter.mantis2squashIssue(mantisIssue);
+		BTProject project = findProject(issue.getProject().getName());
+		
+		
+		//let's fill the holes left by mantis2squashIssue
+		issue.setVersion(findInListByName(project.getVersions(), issue.getVersion().getName()));
+		issue.setCategory(findInListByName(project.getCategories(), issue.getCategory().getName()));
+		issue.setAssignee(findInListByName(project.getUsers(), issue.getAssignee().getName()));
+		
+		
+		issue.setProject(project);
 		return issue;
 	}
 	

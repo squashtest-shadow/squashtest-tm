@@ -258,7 +258,7 @@ public class BugTrackerLocalServiceImpl implements BugTrackerLocalService {
 		
 			Issue issue = new Issue();
 			issue.setBugtrackerName(remoteBugTrackerService.getBugTrackerName());
-			issue.setRemoteIssueId(remoteIssueKey);
+			issue.setRemoteIssueId(test.getId());
 			issueList.addIssue(issue);
 			issueDao.persist(issue);
 			

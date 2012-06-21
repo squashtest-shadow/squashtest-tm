@@ -165,20 +165,16 @@ The reason for that is that the parameters are urls already.
 <%-- state manager code of the popup --%>
 <script type="text/javascript">
 	$(function(){
-		//$.getScript("${ pageContext.servletContext.contextPath }/scripts/squashtest/jquery.squashtm.bugtracker-issue-dialog.js", function(){
-		//$.getScript("http://localhost/scripts/jquery.squashtm.bugtracker-issue-dialog.js", function(){
-				
-			 $("#${id}").btIssueDialog({
-				reportUrl : "${bugReport}",
-				searchUrl : "${remoteIssues}",
-				labels : {
-					emptyAssigneeLabel : "${interfaceDescriptor.emptyAssigneeListLabel}",
-					emptyCategoryLabel : "${interfaceDescriptor.emptyCategoryListLabel}",
-					emptyVersionLabel : "${interfaceDescriptor.emptyVersionListLabel}"
-				},
-				callback : ${successCallback}
-			});		
-		//});
+		 $("#${id}").btIssueDialog({
+			reportUrl : "${bugReport}",
+			searchUrl : "${remoteIssues}",
+			labels : {
+				emptyAssigneeLabel : "${interfaceDescriptor.emptyAssigneeListLabel}",
+				emptyCategoryLabel : "${interfaceDescriptor.emptyCategoryListLabel}",
+				emptyVersionLabel : "${interfaceDescriptor.emptyVersionListLabel}"
+			},
+			callback : ${successCallback}
+		});		
 	});
 </script>
 
