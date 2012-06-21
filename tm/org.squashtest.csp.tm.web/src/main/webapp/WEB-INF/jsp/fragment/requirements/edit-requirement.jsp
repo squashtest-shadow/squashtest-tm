@@ -383,7 +383,7 @@ that page won't be editable if
 	</script>		
 	</c:if>	
 <%--------------------------- Deletion confirmation popup -------------------------------------%>
-	<c:if test="${deletable} }">
+	<c:if test="${deletable}">
 	<comp:delete-contextual-node-dialog simulationUrl="${simulateDeletionUrl}" confirmationUrl="${confirmDeletionUrl}" 
 			itemId="${requirement.id}" successCallback="deleteRequirementSuccess" openedBy="delete-requirement-button" titleKey="dialog.delete-requirement.title"/>
 	</c:if>
