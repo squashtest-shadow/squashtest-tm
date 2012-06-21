@@ -60,7 +60,7 @@ public class BTIssue implements Identifiable<BTIssue>{
 	public BTIssue(){
 		
 	}
-	
+
 	public BTIssue(String id, String summary){
 		this.id=id;
 		this.summary=summary;
@@ -91,6 +91,10 @@ public class BTIssue implements Identifiable<BTIssue>{
 	@Override
 	public String getName(){
 		return summary;
+	}
+	
+	public void setName(String name){
+		this.summary=name;
 	}
 	
 
@@ -196,5 +200,18 @@ public class BTIssue implements Identifiable<BTIssue>{
 	public boolean isDummy(){
 		return false;
 	}
+	
+	
+	/** exists for the purpose of being java-bean compliant */
+	public void setDummy(Boolean dummy){
+		
+	}
 
+	public boolean hasBlankId(){
+		return (
+			(id==null) ||
+			(id.length()==0) ||
+			(id.matches("^\\s*$"))
+		);
+	}
 }

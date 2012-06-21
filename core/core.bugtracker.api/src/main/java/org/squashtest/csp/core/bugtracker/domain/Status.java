@@ -25,8 +25,13 @@ public class Status implements Identifiable<Status> {
 
 	public static final Status NO_STATUS = new Status(Identifiable.DUMMY_ID,Identifiable.DUMMY_NAME);
 	
-	private final String id;
-	private final String name;
+	private String id;
+	private String name;
+	
+	
+	public Status(){
+		
+	}
 	
 	public Status(String id, String name) {
 		super();
@@ -49,5 +54,19 @@ public class Status implements Identifiable<Status> {
 		return this.id.equals(NO_STATUS.id);
 	}
 
+
+	public void setId(String id) {
+		this.id = id;
+	}
+
+
+	public void setName(String name) {
+		this.name = name;
+	}
+	
+	/** exists for the purpose of being javabean compliant */
+	public void setDummy(Boolean dummy){
+		
+	}
 	
 }

@@ -21,9 +21,15 @@
 package org.squashtest.csp.core.bugtracker.domain;
 
 public class Priority implements Identifiable<Priority>{
-	private final String id;
-	private final String name;
+	
+	
+	private String id;
+	private String name;
 
+	public Priority(){
+		
+	}
+	
 	public Priority(String id, String name) {
 		super();
 		this.id = id;
@@ -52,6 +58,19 @@ public class Priority implements Identifiable<Priority>{
 	}
 	
 
+	public void setId(String id) {
+		this.id = id;
+	}
+
+
+	public void setName(String name) {
+		this.name = name;
+	}
+	
+	/** exists for the purpose of being javabean compliant */
+	public void setDummy(Boolean dummy){
+		
+	}
 }
 
 

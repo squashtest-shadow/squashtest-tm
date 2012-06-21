@@ -41,6 +41,7 @@ import org.springframework.web.bind.ServletRequestDataBinder;
 import org.springframework.web.bind.annotation.InitBinder;
 import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
@@ -96,15 +97,6 @@ public class BugtrackerController {
 		this.bugTrackerLocalService = bugTrackerLocalService;
 	}
 
-	@InitBinder
-	public void initBinder(HttpServletRequest request, ServletRequestDataBinder binder) throws ServletException {
-
-		binder.registerCustomEditor(User.class, new UserPropertyEditorSupport());
-		binder.registerCustomEditor(Priority.class, new PriorityPropertyEditorSupport());
-		binder.registerCustomEditor(Version.class, new VersionPropertyEditorSupport());
-		binder.registerCustomEditor(Category.class, new CategoryPropertyEditorSupport());
-		binder.registerCustomEditor(BTProject.class, new ProjectPropertyEditorSupport());
-	}
 
 	/* **************************************************************************************************************
 	 * *
@@ -135,10 +127,11 @@ public class BugtrackerController {
 	}
 
 	/* **************************************************************************************************************
-	 * *
-	 * ExecutionStep level section * *
-	 * ***********************************************************************************************************
-	 */
+	 * 																												*
+	 *  								ExecutionStep level section 												*
+	 *  																											*
+	 *  *********************************************************************************************************** */
+
 
 	/**
 	 * returns the panel displaying the current bugs of that execution step and the stub for the report form. Remember
@@ -205,19 +198,24 @@ public class BugtrackerController {
 	 */
 	@RequestMapping(value = EXECUTION_STEP_TYPE + "/{stepId}/new-issue", method = RequestMethod.POST)
 	@ResponseBody
-	public Object postExecStepIssueReport(@PathVariable("stepId") Long stepId, @ModelAttribute BTIssue jsonIssue) {
+	public Object postExecStepIssueReport(@PathVariable("stepId") Long stepId, @RequestBody BTIssue jsonIssue) {
 		LOGGER.trace("BugTrackerController: posting a new issue for execution-step " + stepId);
 
 		Bugged entity = bugTrackerLocalService.findBuggedEntity(stepId, ExecutionStep.class);
 
-		return processIssue(jsonIssue, entity);
+		if (jsonIssue.hasBlankId()){
+			return processIssue(jsonIssue, entity);			
+		}else{
+			return attachIssue(jsonIssue, entity);
+		}
 	}
 
 	/* **************************************************************************************************************
-	 * *
-	 * Execution level section * *
-	 * ***********************************************************************************************************
-	 */
+	 * 																												*
+	 *  								Execution level section 													*
+	 *  																											*
+	 *  *********************************************************************************************************** */
+
 
 	/**
 	 * returns the panel displaying the current bugs of that execution and the stub for the report form. Remember that
@@ -286,19 +284,23 @@ public class BugtrackerController {
 	 */
 	@RequestMapping(value = EXECUTION_TYPE + "/{execId}/new-issue", method = RequestMethod.POST)
 	@ResponseBody
-	public Object postExecIssueReport(@PathVariable("execId") Long execId, @ModelAttribute BTIssue jsonIssue) {
+	public Object postExecIssueReport(@PathVariable("execId") Long execId, @RequestBody BTIssue jsonIssue) {
 		LOGGER.trace("BugTrackerController: posting a new issue for execution-step " + execId);
 
 		Bugged entity = bugTrackerLocalService.findBuggedEntity(execId, Execution.class);
 
-		return processIssue(jsonIssue, entity);
+		if (jsonIssue.hasBlankId()){
+			return processIssue(jsonIssue, entity);			
+		}else{
+			return attachIssue(jsonIssue, entity);
+		}
 	}
 
 	/* **************************************************************************************************************
-	 * *
-	 * Iteration level section * *
-	 * ***********************************************************************************************************
-	 */
+	 * 																												*
+	 *  								Iteration level section 													*
+	 *  																											*
+	 *  *********************************************************************************************************** */	
 
 	/**
 	 * returns the panel displaying the current bugs of that execution and the stub for the report form. Remember that
@@ -386,6 +388,20 @@ public class BugtrackerController {
 		return result;
 	}
 
+	private Map<String, String> attachIssue(final BTIssue issue, Bugged entity){
+		
+		bugTrackerLocalService.attachIssue(entity, issue.getId());
+		final URL issueUrl =  bugTrackerLocalService.getIssueUrl(issue.getId());
+		
+		Map<String, String> result = new HashMap<String, String>();
+		result.put("url", issueUrl.toString());
+		result.put("issueId", issue.getId());
+		
+		return result;
+	}
+	
+	
+	
 	/* ********* generates a json model for an issue ******* */
 
 	private BTIssue makeReportIssueModel(Bugged entity) {
@@ -573,9 +589,8 @@ public class BugtrackerController {
 
 	}
 
-	// **************************************** private utilities
-	// *******************************************************
-
+	// **************************************** private utilities *******************************************************
+	
 	private FilteredCollectionHolder<List<IssueOwnership<BTIssue>>> makeEmptyCollectionHolder(String entityName,
 			Long entityId, Exception cause) {
 		LOGGER.trace("BugTrackerController : fetching known issues for  " + entityName + " " + entityId

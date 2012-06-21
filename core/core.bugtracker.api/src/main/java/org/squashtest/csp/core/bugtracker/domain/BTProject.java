@@ -26,17 +26,32 @@ import java.util.List;
 
 public class BTProject implements Identifiable<BTProject>{
 	
-	private final String id;
-	private final String name;
+	private String id;
+	private String name;
 	
 	private List<Priority> priorities = new LinkedList<Priority>();
 	private List<Version> versions = new LinkedList<Version>();
 	private List<User> users = new LinkedList<User>();
 	private List<Category> categories = new LinkedList<Category>();
 
+	
+	public BTProject(){
+		
+	}
+	
 	public BTProject(String id, String name) {
 		super();
 		this.id = id;
+		this.name = name;
+	}
+	
+	
+
+	public void setId(String id) {
+		this.id = id;
+	}
+
+	public void setName(String name) {
 		this.name = name;
 	}
 
@@ -189,6 +204,11 @@ public class BTProject implements Identifiable<BTProject>{
 	@Override
 	public boolean isDummy(){
 		return false;
+	}
+	
+	/** exists for the purpose of being java-bean compliant */
+	public void setDummy(Boolean dummy){
+		
 	}
 	
 

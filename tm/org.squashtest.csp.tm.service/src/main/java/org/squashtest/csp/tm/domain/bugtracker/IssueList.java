@@ -95,6 +95,13 @@ public class IssueList {
 		return getAllIssues().size();
 	}
 
-
+	public boolean hasRemoteIssue(String remoteKey){
+		for (Issue issue : issues){
+			if (issue.getRemoteIssueId().equals(remoteKey)){
+				return true;
+			}
+		}
+		return false;
+	}
 
 }

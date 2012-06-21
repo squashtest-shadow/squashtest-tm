@@ -26,9 +26,13 @@ public class Version implements Identifiable<Version>{
 
 	public static final Version NO_VERSION = new Version(Identifiable.DUMMY_ID, Identifiable.DUMMY_NAME);
 	
-	private final String id;
-	private final String name;
+	private String id;
+	private String name;
 
+	public Version(){
+		
+	}
+	
 	public Version(String id, String name) {
 		super();
 		this.id = id;
@@ -51,5 +55,18 @@ public class Version implements Identifiable<Version>{
 	}
 	
 
+	public void setId(String id) {
+		this.id = id;
+	}
+
+
+	public void setName(String name) {
+		this.name = name;
+	}
+	
+	/** exists for the purpose of being javabean compliant */
+	public void setDummy(Boolean dummy){
+		
+	}
 
 }

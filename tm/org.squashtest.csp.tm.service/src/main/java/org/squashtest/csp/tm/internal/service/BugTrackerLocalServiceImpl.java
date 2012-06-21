@@ -31,11 +31,14 @@ import org.springframework.security.access.prepost.PostAuthorize;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+import org.squashtest.csp.core.bugtracker.core.BugTrackerNotAllowedException;
+import org.squashtest.csp.core.bugtracker.core.BugTrackerNotFoundException;
 import org.squashtest.csp.core.bugtracker.domain.BTIssue;
 import org.squashtest.csp.core.bugtracker.domain.BTProject;
 import org.squashtest.csp.core.bugtracker.domain.Priority;
 import org.squashtest.csp.core.bugtracker.service.BugTrackerService;
 import org.squashtest.csp.core.bugtracker.spi.BugTrackerInterfaceDescriptor;
+import org.squashtest.csp.tm.domain.IssueAlreadyBoundException;
 import org.squashtest.csp.tm.domain.bugtracker.BugTrackerStatus;
 import org.squashtest.csp.tm.domain.bugtracker.Bugged;
 import org.squashtest.csp.tm.domain.bugtracker.Issue;
@@ -236,11 +239,32 @@ public class BugTrackerLocalServiceImpl implements BugTrackerLocalService {
 
 	
 	@Override
+	@PreAuthorize("hasPermission(#entity, 'EXECUTE') or hasRole('ROLE_ADMIN')")
 	public void attachIssue(Bugged bugged, String remoteIssueKey) {
-		Issue issue = new Issue();
-		issue.setBugtrackerName(remoteBugTrackerService.getBugTrackerName());
-		issue.setRemoteIssueId(remoteIssueKey);
-		bugged.getIssueList().addIssue(issue);
+ 		
+		IssueList issueList = bugged.getIssueList();
+		
+		//check that the issue exists
+		BTIssue test = getIssue(remoteIssueKey);
+
+		//at that point the service was supposed to fail if not found so we can move on
+		//but, in case of a wrong implementation of a connector here is a safety belt: 	
+		if (test==null){
+			throw new BugTrackerNotFoundException("issue "+remoteIssueKey+" could not be found", null);
+		}
+	
+		if (issueList.hasRemoteIssue(remoteIssueKey)){
+			throw new IssueAlreadyBoundException();
+		}else{
+		
+			Issue issue = new Issue();
+			issue.setBugtrackerName(remoteBugTrackerService.getBugTrackerName());
+			issue.setRemoteIssueId(remoteIssueKey);
+			issueList.addIssue(issue);
+			
+		}
 	}
+	
+
 
 }

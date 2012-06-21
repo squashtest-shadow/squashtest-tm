@@ -278,18 +278,24 @@ div.issue-report-dialog div.text-options label{
 
 div.issue-report-dialog div.text-options textarea{
 	width : 100%;
-	height : 175px;	
+	height : 145px;	
 }
 
-div.issue-report-dialog span.issue-radio-label{
+div.issue-report-dialog span.issue-radio{
 	display: block;
     margin-bottom: 1em;	
 }
 
-div.issue-report-dialog div.issue-report-errorfield{
-	display: block;
-    min-height: 2em;	
+span.issue-radio span.issue-radio-label{
+	cursor:pointer;	
 }
+
+div.issue-report-dialog div.issue-report-break{
+	display: block;
+	min-height: 2em;
+}
+
+
 
 
 /*******************************

@@ -35,6 +35,8 @@
 <%@ taglib tagdir="/WEB-INF/tags/component" prefix="comp"%>
 
 
+<link rel="stylesheet" type="text/css" href="http://localhost/scripts/error.css" />
+
 <f:message var="addIssueLabel" key="dialog.button.add.label" />
 
 <%-- 
@@ -63,7 +65,7 @@ The reason for that is that the parameters are urls already.
 	</jsp:attribute>	
  	<jsp:attribute name="additionalSetup">
  		height : 500,
- 		width : 550
+ 		width : 650
  	</jsp:attribute>
  	<jsp:attribute name="body"> 
  	<div class="issue-report-dialog">
@@ -76,8 +78,9 @@ The reason for that is that the parameters are urls already.
 	 		<form>
 	 		
 	 			<div class="attach-issue">
-	 				<span class="issue-radio-label">
-	 					<input type="radio" name="add-issue-mode" class="attach-radio" value="attach"/><f:message key="dialog.issue.radio.attach.label"/>
+	 				<span class="issue-radio">
+	 					<input type="radio" name="add-issue-mode" class="attach-radio" value="attach"/>
+	 					<span class="issue-radio-label"><f:message key="dialog.issue.radio.attach.label"/></span> <!--  I don't want a <label> here because of the default style -->
 	 				</span>
 	 				<label>${interfaceDescriptor.tableIssueIDHeader}</label>
 	 				<input type="text" class="id-text" name="issue-key" value=""/>
@@ -85,12 +88,19 @@ The reason for that is that the parameters are urls already.
 	 				<input type="button" name="search-issue" value="${searchIssueLabel}"/>
 	 			</div>
 	 		
-	 			<div class="issue-report-errorfield">
+	 		
+	 			<div class="issue-report-error">
 	 				<comp:error-message forField="bugtracker" />
 	 			</div>
 	 			
-	 			<span class="issue-radio-label">
-	 				<input type="radio" class="report-radio" name="add-issue-mode" value="report"/><f:message key="dialog.issue.radio.new.label"/>
+	 			
+	 			<div class="issue-report-break">
+	 				
+	 			</div>
+	 			
+	 			<span class="issue-radio">
+	 				<input type="radio" class="report-radio" name="add-issue-mode" value="report"/>
+	 				<span class="issue-radio-label"><f:message key="dialog.issue.radio.new.label"/></span>
 	 			 </span>
 	 			 
 	 			<div class="combo-options">
@@ -156,7 +166,7 @@ The reason for that is that the parameters are urls already.
 <script type="text/javascript">
 	$(function(){
 		//$.getScript("${ pageContext.servletContext.contextPath }/scripts/squashtest/jquery.squashtm.bugtracker-issue-dialog.js", function(){
-		$.getScript("http://localhost/scripts/jquery.squashtm.bugtracker-issue-dialog.js", function(){
+		//$.getScript("http://localhost/scripts/jquery.squashtm.bugtracker-issue-dialog.js", function(){
 				
 			 $("#${id}").btIssueDialog({
 				reportUrl : "${bugReport}",
@@ -168,7 +178,7 @@ The reason for that is that the parameters are urls already.
 				},
 				callback : ${successCallback}
 			});		
-		});
+		//});
 	});
 </script>
 

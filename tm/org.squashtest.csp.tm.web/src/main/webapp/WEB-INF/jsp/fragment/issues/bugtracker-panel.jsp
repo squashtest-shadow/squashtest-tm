@@ -32,6 +32,8 @@
 <%@ taglib tagdir="/WEB-INF/tags/issues" prefix="is"%>
 <%@ taglib prefix="authz" tagdir="/WEB-INF/tags/authz" %>
 
+<script type="text/javascript" src="http://localhost/scripts/jquery.squashtm.bugtracker-issue-dialog.js" ></script>
+
 <%--
 
 	That jsp generates the Bug section of the GUI. It's made of two components : the Issue panel, that displays the bugs

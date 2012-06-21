@@ -1,6 +1,6 @@
 /*
  *     This file is part of the Squashtest platform.
- *     Copyright (C) 2010 - 2012 Henix, henix.fr
+ *     Copyright (C) 2010 - 2011 Squashtest TM, Squashtest.org
  *
  *     See the NOTICE file distributed with this work for additional
  *     information regarding copyright ownership.
@@ -18,6 +18,7 @@
  *     You should have received a copy of the GNU Lesser General Public License
  *     along with this software.  If not, see <http://www.gnu.org/licenses/>.
  */
+
 function BTEntity(argId, argName){
 	this.id = argId;
 	this.name = argName;
@@ -30,7 +31,11 @@ function BTEntity(argId, argName){
 
 	$.fn.btCbox = function(emptyMessage){
 		
-		var self = this;
+		var self = this;		
+		
+		this.empty=true;
+		
+		this.changeCallback = function(){};
 		
 
 		this.flush = function(){
@@ -47,6 +52,8 @@ function BTEntity(argId, argName){
 		
 		this.populate = function(entityArray){
 			
+			this.flush();
+			
 			if ((entityArray.length == 1) && (entityArray[0].dummy)){
 				var option = $("<option/>", { 
 					'value' : entityArray[0].id, 
@@ -54,6 +61,7 @@ function BTEntity(argId, argName){
 				});
 				this.append(option);	
 				this.disable();
+				this.empty=true;
 			}
 			else{
 				this.enable();
@@ -66,14 +74,33 @@ function BTEntity(argId, argName){
 					});
 					this.append(option);			
 				}
+				this.empty=false;
 			}
 		}
+
 		
 		this.getSelected = function(){
 			var id = this.val();
 			var name = this.find("option:selected").text();
 			return new BTEntity(id, name);
 		}
+		
+		this.select = function(btEntity){
+			if (
+				this.isEmpty()	||
+				(arguments.length ==0) ||
+				(! btEntity)				
+			){
+				return;
+			}else{
+				this.val(btEntity.id);
+			}
+		}
+		
+		this.isEmpty = function(){
+			return this.empty;
+		};
+
 		
 		return this;
 
@@ -94,28 +121,44 @@ function BTEntity(argId, argName){
 			- emptyVersionLabel : same for version list
 			- emptyCategoryLabel : same for category list
 			- emptyPriorityLabel : same for priority
-		- url : the url where gets and posts should use
+		
+		- reportUrl : the url where to GET empty/POST filled bug reports
+		- findUrl : the url where to GET remote issues
+		
 		- callback : any callback function. Can accept one argument : the json status of the operation.
 
 	*/
-
-	$.fn.btIssueDialog = function(settings){
+	
+	function init(settings){
 
 		var self = this;
 		
-		this.url = settings.url;
+		this.model={};
+		this.template=null;
+		
+		
+		//urls
+		this.reportUrl = settings.reportUrl;
+		this.searchUrl = settings.searchUrl;
+		
 		
 		//main panels of the popup
 		this.pleaseWait = $(".pleasewait", this);
 		this.content = $(".content", this);
 
+		//the radio buttons
+		this.attachRadio = $(".attach-radio", this);
+		this.reportRadio = $(".report-radio", this);
+				
+		//the issue id (if any)
+		this.idText = $(".id-text", this);
 		
 		//the four selects
 		this.prioritySelect = $(".priority-select", this.content).btCbox(settings.labels.emptyPriorityLabel);
 		this.categorySelect = $(".category-select", this.content).btCbox("impossible - there cannot be no categories");
 		this.versionSelect  = $(".version-select",  this.content).btCbox(settings.labels.emptyVersionLabel);
 		this.assigneeSelect = $(".assignee-select", this.content).btCbox(settings.labels.emptyAssigneeLabel);
-
+		
 
 		//the three text area
 		this.summaryText = $(".summary-text", this.content);
@@ -123,128 +166,260 @@ function BTEntity(argId, argName){
 		this.commentText = $(".comment-text", this.content);
 		
 		//the submit button
-		this.postButton = $('.post-issue-button');
+		this.postButton = $('.post-button', this.next());
 		
-		//a variable where to hold the project entity
-		this.projectEntity = null;
+		//search issue buttons. We also turn it into a jQuery button on the fly.
+		this.searchButton = $('.attach-issue input[type="button"]', this).button();
+		
+		//a callback when the post is a success
 		this.callback=settings.callback;
+			
+		//setting up the callbacks for the controls
+		with(this){
+			idText.keydown(function(){
+				self.model.id = $(this).val();
+			});
+			
+			prioritySelect.change(function(){
+				self.model.priority = this.getSelected();
+			});
+			
+			categorySelect.change(function(){
+				self.model.category = this.getSelected();
+			});
+			
+			versionSelect.change(function(){
+				self.model.version = this.getSelected();
+			});
+			
+			assigneeSelect.change(function(){
+				self.model.assignee = this.getSelected();
+			});	
+			
+			summaryText.keydown(function(){
+				self.model.summary = $(this).val();
+			});
+			
+			descriptionText.keydown=(function(){
+				self.model.description = $(this).val();
+			});
+			
+			commentText.keydown=(function(){
+				self.model.comment = $(this).val();
+			});
+
+		}
+	
+	}
+
+	$.fn.btIssueDialog = function(settings){
+
+		var self = this;
 		
+		init.call(this, settings);
+			
+
 		
+		/* ************* public popup state methods **************** */
 		
-		/* ************* private methods **************** */
+		this.attachRadio.click(function(){
+			toAttachMode();
+		});
+			
+		this.reportRadio.click(function(){
+			toReportMode();
+		});	
 		
+		var toAttachMode = $.proxy(function(){
+			flipToMain();
+			flushSheet();
+			enableIdSearch();
+			disableControls();
+			disablePost();
+		}, self);
+		
+		var toReportMode = $.proxy(function(){
+			flipToMain();
+			flushSheet();
+			disableIdSearch();
+			enableControls();
+			enablePost();
+			resetModel();
+		}, self);
+		
+
 		var flipToPleaseWait = $.proxy(function(){
 			this.pleaseWait.show();
 			this.content.hide();
 		}, self);
 		
 		
-		var flipToReport = $.proxy(function(){
+		var flipToMain = $.proxy(function(){
 			this.content.show();
 			this.pleaseWait.hide();	
 		}, self);
-
-		
-		var getBugReportData = $.proxy(function(){
-			return $.ajax({
-				url : self.url,
-				type : "GET",
-				dataType : "json"			
-			});
-		}, self);
-
-		
-		var enableButton = $.proxy(function(){
+	
+		var enablePost = $.proxy(function(){
 			this.postButton.button('option', 'disabled', false);
 		}, self);
 		
 		
-		var disableButton = $.proxy(function(){
+		var disablePost = $.proxy(function(){
 			this.postButton.button('option', 'disabled', true);
 		}, self);
+
 		
+		var enableIdSearch = $.proxy(function(){
+			with(this){
+				idText.removeAttr('disabled');
+				searchButton.button('option', 'disabled', false);
+			}
+		}, self);
+		
+		var disableIdSearch = $.proxy(function(){
+			with(this){
+				idText.attr('disabled', 'disabled');
+				searchButton.button('option', 'disabled', true);
+			}
+		}, self);
+		
+		var enableControls = $.proxy(function(){
+			with(this){
+				prioritySelect.enable();
+				categorySelect.enable();
+				versionSelect.enable();
+				assigneeSelect.enable();
+				summaryText.removeAttr('disabled');
+				descriptionText.removeAttr('disabled');
+				commentText.removeAttr('disabled');
+			}		
+		}, self);
+		
+		var disableControls = $.proxy(function(){
+			with(this){
+				prioritySelect.disable();
+				categorySelect.disable();
+				versionSelect.disable();
+				assigneeSelect.disable();
+				summaryText.attr('disabled', 'disabled');
+				descriptionText.attr('disabled', 'disabled');
+				commentText.attr('disabled', 'disabled');
+			}
+		}, self);
+	
+	
+		/* ********************** model management ************ */
+			
+		var setModel = $.proxy(function(newModel){
+			
+			this.model = newModel;
+			
+			with(this){
+				
+				idText.val(model.id);
+				
+				prioritySelect.populate(model.project.priorities);
+				categorySelect.populate(model.project.categories);
+				versionSelect.populate(model.project.versions);
+				assigneeSelect.populate(model.project.users);
+				
+				prioritySelect.select(model.priority);
+				categorySelect.select(model.category);
+				versionSelect.select(model.version);
+				assigneeSelect.select(model.assignee);
+				
+				summaryText.val(model.summary);
+				descriptionText.val(model.description);
+				commentText.val(model.comment);				
+			}
+		}, self);
+			
+			
+		var resetModel = $.proxy(function(){
+			getBugReportTemplate()
+			.done(function(){
+				var copy = JSON.parse(JSON.stringify(self.template));
+				setModel(copy);	
+			})
+			.fail(bugReportError);
+		}, self);
+			
+		var getBugReportTemplate = $.proxy(function(){
+			var jobDone = $.Deferred();
+				
+			
+			if (! this.template){
+			
+				
+				flipToPleaseWait();		
+				
+				$.ajax({
+					url : self.reportUrl,
+					type : "GET",
+					dataType : "json"			
+				})
+				.done(function(response){
+					self.template = response;
+					flipToMain();
+					jobDone.resolve();
+				})
+				.fail(jobDone.reject)
+				.then(flipToMain);
+			}
+			else{
+				jobDone.resolve();
+			}
+			
+			return jobDone.promise();
+		}, self);
+
+
+
 		
 		//we let the usual error handling do its job here
-		var bugReportDataError = $.proxy(function(jqXHR, textStatus, errorThrown){
-			flipToReport();
+		var bugReportError = $.proxy(function(jqXHR, textStatus, errorThrown){
+			flipToMain();
 		}, self);
 		
 		
-		var flushReport = $.proxy(function(){
+		var flushSheet = $.proxy(function(){
+			this.model={};
+			
+			this.idText.val('');
+			this.summaryText.val('');
+			this.descriptionText.val('');
+			this.commentText.val('');
+			
 			this.prioritySelect.flush();
-			this.versionSelect.flush();
-			this.assigneeSelect.flush(),
 			this.categorySelect.flush();
+			this.versionSelect.flush();
+			this.assigneeSelect.flush();
 		}, self);
 		
 		
 		var fillReport = $.proxy(function(json){
 			
-			this.prioritySelect.populate(json.priorities);
-			this.versionSelect.populate(json.versions);
-			this.assigneeSelect.populate(json.users),
-			this.categorySelect.populate(json.categories);		
-		
-			this.descriptionText.val(json.defaultDescription);
-			this.projectEntity = new BTEntity(json.project.id, json.project.name);
 			
 		}, self);
 		
 		
 		var submit = $.proxy(function(){
-			
-			issue.project = this.projectEntity.format();
-			issue.priority = this.prioritySelect.getSelected().format();
-			issue.version = this.versionSelect.getSelected().format();
-			issue.assignee = this.assigneeSelect.getSelected().format();
-			issue.category = this.categorySelect.getSelected().format();
-			
-			issue.summary=this.summaryText.val();
-			issue.description=this.descriptionText.val();
-			issue.comment=this.commentText.val();
-			
-			return $.ajax({
-				url: this.url,
-				type:"POST",
-				dataType : "json",
-				data : issue
-			})
+
 			
 		}, self);
 		
 		
 		var submitSuccess = $.proxy(function(json){
-			this.dialog('close');
-			disableButton();
-			if (this.callback){
-				this.callback(json);
-			}
+
 		}, self);
 		
 		
 		var submitFails = $.proxy(function(){
-			enableButton();
-			flipToReport();
+
 		}, self);
 		
 		var submit = $.proxy(function(){
-			var issue ={};
-			issue.project = this.projectEntity.format();
-			issue.priority = this.prioritySelect.getSelected().format();
-			issue.version = this.versionSelect.getSelected().format();
-			issue.assignee = this.assigneeSelect.getSelected().format();
-			issue.category = this.categorySelect.getSelected().format();
-			
-			issue.summary=this.summaryText.val();
-			issue.description=this.descriptionText.val();
-			issue.comment=this.commentText.val();
-			
-			return $.ajax({
-				url: this.url,
-				type:"POST",
-				dataType : "json",
-				data : issue
-			})
+
 			
 		}, self);	
 
@@ -253,35 +428,13 @@ function BTEntity(argId, argName){
 		
 		this.submitIssue = function(){
 			
-			disableButton();
-			
-			flipToPleaseWait();
-			
-			submit()
-			.done(submitSuccess)
-			.fail(submitFails);
-		
 		};
 		
 		/* ************* events ************************ */
 		
 		//the opening of the popup :
 		this.bind("dialogopen", function(){
-			
-			disableButton();
-			
-			flipToPleaseWait();
-			
-			getBugReportData()
-			.then(function(json)
-			{		
-				flushReport();
-				fillReport(json);
-				flipToReport();
-				enableButton();
-			})
-			.fail(bugReportDataError);
-		
+			self.attachRadio.click();
 		});
 		
 		//the action bound to click on the first button
