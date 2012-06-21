@@ -33,7 +33,7 @@
  	$(function(){
  		$("#bugtracker-div").load("${workspaceUrl}", function(){
  			<c:if test="${highlighted}">
- 				navLinkHighlight('bugtracker-link');
+ 				squashtm.navbar.highlightOn('bugtracker-link');
  			</c:if>
  		});
  	});

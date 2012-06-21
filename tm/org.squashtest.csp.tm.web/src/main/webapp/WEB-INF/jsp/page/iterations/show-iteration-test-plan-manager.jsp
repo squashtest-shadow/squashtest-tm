@@ -55,7 +55,9 @@
 	<script type="text/javascript">
 		selection = new Array();
 		$(function(){
-			navLinkHighlight("campaign-link");
+			$(function() {
+				squashtm.navbar.highlightOn('campaign-link');
+			});	
 			
 			$( '#add-items-button' ).click(function() {
 				var tree = $( '#linkable-test-cases-tree' );
