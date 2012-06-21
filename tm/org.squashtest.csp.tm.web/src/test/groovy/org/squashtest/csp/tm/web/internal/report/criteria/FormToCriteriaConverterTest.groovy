@@ -88,6 +88,7 @@ class FormToCriteriaConverterTest extends Specification {
 		criteria.equipment.isSelected("webshooters") == false
 		criteria.equipment.isSelected("utility-belt") == true
 	} 
+	
 	def "should build date criteria"() {
 		given: 
 		Calendar c = Calendar.instance
@@ -102,6 +103,7 @@ class FormToCriteriaConverterTest extends Specification {
 		criteria.batman.value == c.time
 		criteria.batman.sourceInput == InputType.DATE
 	} 
+	
 	def "should build no date criteria"() {
 		when:
 		Map criteria = converter.convert([batman: [value: "--", type: "DATE"]])
@@ -110,5 +112,20 @@ class FormToCriteriaConverterTest extends Specification {
 		criteria.batman.name == "batman"
 		criteria.batman.value == Criteria.NO_VALUE
 		criteria.batman.sourceInput == InputType.DATE
+	} 
+	
+	def "should build nodes criteria"() {
+		when:
+		Map criteria = converter.convert([nodes: [
+			[value: 10, nodeType: "campaigns", type: "TREE_PICKER"], 
+			[value: 20, nodeType: "folders", type: "TREE_PICKER"],
+			[value: 30, nodeType: "folders", type: "TREE_PICKER"]
+		]])
+		
+		then:
+		criteria.nodes.name == "nodes"
+		criteria.nodes.value.campaigns == [10]
+		criteria.nodes.value.folders == [20,30]
+		criteria.nodes.sourceInput == InputType.TREE_PICKER
 	} 
 }

@@ -117,6 +117,9 @@ public class FormToCriteriaConverter {
 			InputType inputType) {
 		Criteria res;
 		switch (inputType) {
+		case TREE_PICKER:
+			res = createNodeMapCriteria(name, multiValued, inputType);
+			break;
 		case CHECKBOXES_GROUP:
 			res = createMultiOptionsCriteria(name, multiValued, inputType);
 			break;
@@ -128,6 +131,24 @@ public class FormToCriteriaConverter {
 			res = EmptyCriteria.createEmptyCriteria(name, inputType);
 		}
 		return res;
+	}
+
+	/**
+	 * @param name
+	 * @param multiValued
+	 * @param inputType
+	 * @return
+	 */
+	private Criteria createNodeMapCriteria(String name, Collection<Map<String, Object>> multiValued,
+			InputType inputType) {
+		MultiValuesCriteria crit = new MultiValuesCriteria(name, inputType);
+		
+		for (Map<String, Object> valueItem : multiValued) {
+			String nodeType = (String) valueItem.get("nodeType");
+			Object value = valueItem.get(INPUT_VALUE);
+			crit.addValue(nodeType, value);
+		}
+		return crit;
 	}
 
 	private Criteria createSingleOptionCriteria(String name, Collection<Map<String, Object>> multiValued,
@@ -144,6 +165,7 @@ public class FormToCriteriaConverter {
 	private Criteria createMultiOptionsCriteria(String name, Collection<Map<String, Object>> multiValued,
 			InputType inputType) {
 		MultiOptionsCriteria crit = new MultiOptionsCriteria(name, inputType);
+		
 		for (Map<String, Object> valueItem : multiValued) {
 			Boolean selected = (Boolean) valueItem.get(INPUT_SELECTED);
 			String value = (String) valueItem.get(INPUT_VALUE);

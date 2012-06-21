@@ -264,9 +264,20 @@ squashtm.report = (function ($) {
 		return nodeTypeToWorkspaceType(treePicker.data("node-type"));
 	}
 	
-	function setTreeState(tree, selectedIds) {
+	function setTreeState(tree, nodes) {
 		var name = tree.attr('id');
-		formState[name] = {value: selectedIds, type: 'TREE_PICKER'};
+		
+		formState[name] = [];
+		
+		if (nodes && nodes.length === 0) {
+			formState[name].push({value: "", nodeType: "", type: 'TREE_PICKER'});
+			return;
+		} 
+		
+		$(nodes).each(function () {
+			var node = $(this);
+			formState[name].push({value: node.attr("resid"), nodeType: node.attr("restype"), type: 'TREE_PICKER'});
+		});
 	}
 
 	function initTreePickerCallback() {
@@ -290,9 +301,9 @@ squashtm.report = (function ($) {
 		self.dialog("close");	
 		
 		var tree = self.find('.nodes-crit');
-		var ids = tree.jstree('get_selected_ids', getWorkspaceType(tree) + "s");
+		var nodes = tree.jstree('get_selected');
 		
-		setTreeState(tree, ids);
+		setTreeState(tree, nodes);
 	}
 
 	function onCancelTreePickerDialog() {
@@ -303,6 +314,7 @@ squashtm.report = (function ($) {
 		var dialog = $(this);
 		
 		dialog.createPopup({
+			height: 500,
 			buttons: [{
 				text: config.okLabel, 
 				click: onConfirmTreePickerDialog

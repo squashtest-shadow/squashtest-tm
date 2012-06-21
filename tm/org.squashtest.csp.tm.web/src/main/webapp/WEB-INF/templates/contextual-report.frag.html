@@ -200,7 +200,7 @@
 						<div th:case="'TREE_PICKER'">
 							<div th:id="*{name} + '-dialog'" th:title="#{report.form.tree-picker.dialog.title}" 
 								class="nodes-crit-container popup-dialog is-contextual not-displayed">
-								<div th:id="*{name}" class="nodes-crit" th:attr="data-node-type=*{pickedNodeType}"></div>
+								<div th:id="*{name}" class="nodes-crit tree selection-tree" th:attr="data-node-type=*{pickedNodeType}"></div>
 							</div>
 							<label th:for="*{name} + '-open'" th:text="*{label}">Nodes</label>
 							<input th:name="*{name} + '-open'" type="button" class="button nodes-crit-open" 

@@ -46,11 +46,11 @@ import org.squashtest.csp.tm.domain.ActionException;
  * @reviewed-on 2011-12-15
  */
 
-
 @Component
 public class HandlerActionExceptionResolver extends AbstractHandlerExceptionResolver {
 	@Inject
 	private MessageSource messageSource;
+
 	public HandlerActionExceptionResolver() {
 		super();
 	}
@@ -102,12 +102,12 @@ public class HandlerActionExceptionResolver extends AbstractHandlerExceptionReso
 	private String getLocalizedMessage(Locale locale, ActionException actionEx) {
 		String key = actionEx.getI18nKey();
 		String message = messageSource.getMessage(key, actionEx.messageArgs(), locale);
-		if(message != null ){
+		if (message != null) {
 			return message;
-		}else{
+		} else {
 			return messageSource.getMessage("error.generic.label", null, locale);
 		}
-		
+
 	}
 
 	private boolean exceptionIsHandled(Exception ex) {

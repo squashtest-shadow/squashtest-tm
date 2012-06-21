@@ -84,7 +84,6 @@ public class BugtrackerController {
 	private static final String EXECUTION_STEP_TYPE = "execution-step";
 	private static final String EXECUTION_TYPE = "execution";
 	private static final String ITERATION_TYPE = "iteration";
-	
 
 	@Inject
 	private MessageSource messageSource;
@@ -106,49 +105,51 @@ public class BugtrackerController {
 		binder.registerCustomEditor(Category.class, new CategoryPropertyEditorSupport());
 		binder.registerCustomEditor(BTProject.class, new ProjectPropertyEditorSupport());
 	}
+
 	/* **************************************************************************************************************
-	 * 																												*
-	 *  								Navigation button           												*
-	 *  																											*
-	 *  *********************************************************************************************************** */
+	 * *
+	 * Navigation button * *
+	 * ***********************************************************************************************************
+	 */
 	@RequestMapping(value = "workspace-button", method = RequestMethod.GET)
 	public ModelAndView getNavButton(Locale locale) {
 		BugTrackerStatus status = checkStatus();
 
 		if (status == BugTrackerStatus.BUGTRACKER_UNDEFINED) {
 			LOGGER.trace("no bugtracker");
-			return new ModelAndView("fragment/issues/bugtracker-panel-empty");			
+			return new ModelAndView("fragment/issues/bugtracker-panel-empty");
 		} else {
 			LOGGER.trace("return bugtracker nav button");
-			ModelAndView mav =  new ModelAndView("fragment/issues/bugtracker-nav-button");
+			ModelAndView mav = new ModelAndView("fragment/issues/bugtracker-nav-button");
 			mav.addObject("bugtrackerUrl", bugTrackerLocalService.getBugtrackerUrl().toString());
 			mav.addObject("iframeFriendly", bugTrackerLocalService.getBugtrackerIframeFriendly());
 			return mav;
 		}
 	}
-	
-	@RequestMapping(value = "workspace",method = RequestMethod.GET)
+
+	@RequestMapping(value = "workspace", method = RequestMethod.GET)
 	public ModelAndView showWorkspace() {
 		ModelAndView mav = new ModelAndView("page/bugtracker-workspace");
 		mav.addObject("bugtrackerUrl", bugTrackerLocalService.getBugtrackerUrl().toString());
 		return mav;
 	}
+
 	/* **************************************************************************************************************
-	 * 																												*
-	 *  								ExecutionStep level section 												*
-	 *  																											*
-	 *  *********************************************************************************************************** */
+	 * *
+	 * ExecutionStep level section * *
+	 * ***********************************************************************************************************
+	 */
 
 	/**
 	 * returns the panel displaying the current bugs of that execution step and the stub for the report form. Remember
 	 * that the report bug dialog will be populated later.
-	 *
+	 * 
 	 * @param stepId
 	 * @return
 	 */
 	@RequestMapping(value = EXECUTION_STEP_TYPE + "/{stepId}", method = RequestMethod.GET)
-	public ModelAndView getExecStepIssuePanel(@PathVariable Long stepId, Locale locale, 
-			@RequestParam(value="style", required=false, defaultValue="toggle") String panelStyle) {
+	public ModelAndView getExecStepIssuePanel(@PathVariable Long stepId, Locale locale,
+			@RequestParam(value = "style", required = false, defaultValue = "toggle") String panelStyle) {
 
 		Bugged bugged = bugTrackerLocalService.findBuggedEntity(stepId, ExecutionStep.class);
 		return makeIssuePanel(bugged, EXECUTION_STEP_TYPE, locale, panelStyle);
@@ -170,23 +171,22 @@ public class BugtrackerController {
 
 			filteredCollection = bugTrackerLocalService.findBugTrackerIssues(bugged, sorter);
 		}
-		
-		
+
 		// no credentials exception are okay, the rest is to be treated as usual
 		catch (BugTrackerNoCredentialsException noCrdsException) {
 			filteredCollection = makeEmptyCollectionHolder(EXECUTION_STEP_TYPE, stepId, noCrdsException);
-		} 
-		catch (NullArgumentException npException) {
+		} catch (NullArgumentException npException) {
 			filteredCollection = makeEmptyCollectionHolder(EXECUTION_STEP_TYPE, stepId, npException);
 		}
 
-		return new StepIssuesTableModel().buildDataModel(filteredCollection, sorter.getFirstItemIndex() + 1, params.getsEcho());
+		return new StepIssuesTableModel().buildDataModel(filteredCollection, sorter.getFirstItemIndex() + 1,
+				params.getsEcho());
 
 	}
 
 	/**
 	 * will prepare a bug report for an execution step. The returned json infos will populate the form.
-	 *
+	 * 
 	 * @param stepId
 	 * @return
 	 */
@@ -201,7 +201,7 @@ public class BugtrackerController {
 
 	/**
 	 * gets the data of a new issue to be reported
-	 *
+	 * 
 	 */
 	@RequestMapping(value = EXECUTION_STEP_TYPE + "/{stepId}/new-issue", method = RequestMethod.POST)
 	@ResponseBody
@@ -214,21 +214,21 @@ public class BugtrackerController {
 	}
 
 	/* **************************************************************************************************************
-	 * 																												*
-	 *  								Execution level section 													*
-	 *  																											*
-	 *  *********************************************************************************************************** */
+	 * *
+	 * Execution level section * *
+	 * ***********************************************************************************************************
+	 */
 
 	/**
 	 * returns the panel displaying the current bugs of that execution and the stub for the report form. Remember that
 	 * the report bug dialog will be populated later.
-	 *
+	 * 
 	 * @param stepId
 	 * @return
 	 */
 	@RequestMapping(value = EXECUTION_TYPE + "/{execId}", method = RequestMethod.GET)
-	public ModelAndView getExecIssuePanel(@PathVariable Long execId, Locale locale, 
-			@RequestParam(value="style", required=false, defaultValue="toggle") String panelStyle) {
+	public ModelAndView getExecIssuePanel(@PathVariable Long execId, Locale locale,
+			@RequestParam(value = "style", required = false, defaultValue = "toggle") String panelStyle) {
 
 		Bugged bugged = bugTrackerLocalService.findBuggedEntity(execId, Execution.class);
 		return makeIssuePanel(bugged, EXECUTION_TYPE, locale, panelStyle);
@@ -256,19 +256,18 @@ public class BugtrackerController {
 		// no credentials exception are okay, the rest is to be treated as usual
 		catch (BugTrackerNoCredentialsException noCrdsException) {
 			filteredCollection = makeEmptyCollectionHolder(EXECUTION_TYPE, execId, noCrdsException);
-		} 
-		catch (NullArgumentException npException) {
+		} catch (NullArgumentException npException) {
 			filteredCollection = makeEmptyCollectionHolder(EXECUTION_TYPE, execId, npException);
 		}
 
-		return new ExecutionIssuesTableModel(messageSource,locale)
-					.buildDataModel(filteredCollection, sorter.getFirstItemIndex() + 1, params.getsEcho());
+		return new ExecutionIssuesTableModel(messageSource, locale).buildDataModel(filteredCollection,
+				sorter.getFirstItemIndex() + 1, params.getsEcho());
 
 	}
 
 	/**
 	 * will prepare a bug report for an execution. The returned json infos will populate the form.
-	 *
+	 * 
 	 * @param execId
 	 * @return
 	 */
@@ -283,7 +282,7 @@ public class BugtrackerController {
 
 	/**
 	 * gets the data of a new issue to be reported
-	 *
+	 * 
 	 */
 	@RequestMapping(value = EXECUTION_TYPE + "/{execId}/new-issue", method = RequestMethod.POST)
 	@ResponseBody
@@ -294,26 +293,23 @@ public class BugtrackerController {
 
 		return processIssue(jsonIssue, entity);
 	}
-	
-	
+
 	/* **************************************************************************************************************
-	 * 																												*
-	 *  								Iteration level section 													*
-	 *  																											*
-	 *  *********************************************************************************************************** */	
-	
-	
+	 * *
+	 * Iteration level section * *
+	 * ***********************************************************************************************************
+	 */
 
 	/**
 	 * returns the panel displaying the current bugs of that execution and the stub for the report form. Remember that
 	 * the report bug dialog will be populated later.
-	 *
+	 * 
 	 * @param stepId
 	 * @return
 	 */
 	@RequestMapping(value = ITERATION_TYPE + "/{iterId}", method = RequestMethod.GET)
-	public ModelAndView getIterationIssuePanel(@PathVariable Long iterId, Locale locale, 
-			@RequestParam(value="style", required=false, defaultValue="toggle") String panelStyle) {
+	public ModelAndView getIterationIssuePanel(@PathVariable Long iterId, Locale locale,
+			@RequestParam(value = "style", required = false, defaultValue = "toggle") String panelStyle) {
 
 		Bugged bugged = bugTrackerLocalService.findBuggedEntity(iterId, Iteration.class);
 		return makeIssuePanel(bugged, ITERATION_TYPE, locale, panelStyle);
@@ -322,10 +318,10 @@ public class BugtrackerController {
 	/**
 	 * json Data for the known issues table.
 	 */
-	@RequestMapping(value =ITERATION_TYPE + "/{iterId}/known-issues", method = RequestMethod.GET)
+	@RequestMapping(value = ITERATION_TYPE + "/{iterId}/known-issues", method = RequestMethod.GET)
 	public @ResponseBody
-	DataTableModel getIterationKnownIssuesData(@PathVariable("iterId") Long iterId, final DataTableDrawParameters params,
-			final Locale locale) {
+	DataTableModel getIterationKnownIssuesData(@PathVariable("iterId") Long iterId,
+			final DataTableDrawParameters params, final Locale locale) {
 
 		FilteredCollectionHolder<List<IssueOwnership<BTIssue>>> filteredCollection;
 
@@ -341,30 +337,24 @@ public class BugtrackerController {
 		// no credentials exception are okay, the rest is to be treated as usual
 		catch (BugTrackerNoCredentialsException noCrdsException) {
 			filteredCollection = makeEmptyCollectionHolder(ITERATION_TYPE, iterId, noCrdsException);
-		} 
-		catch (NullArgumentException npException) {
+		} catch (NullArgumentException npException) {
 			filteredCollection = makeEmptyCollectionHolder(ITERATION_TYPE, iterId, npException);
 		}
 
-		return new IterationIssuesTableModel(messageSource, locale)
-					.buildDataModel(filteredCollection, sorter.getFirstItemIndex() + 1, params.getsEcho());
+		return new IterationIssuesTableModel(messageSource, locale).buildDataModel(filteredCollection,
+				sorter.getFirstItemIndex() + 1, params.getsEcho());
 
 	}
-
-
-	
 
 	/* ************************* Generic code section ************************** */
 
-	@RequestMapping(value ="/find-issue/{remoteKey}", method = RequestMethod.GET)
+	@RequestMapping(value = "/find-issue/{remoteKey}", method = RequestMethod.GET)
 	@ResponseBody
-	public BTIssue findIssue(@PathVariable("remoteKey") String remoteKey){		
+	public BTIssue findIssue(@PathVariable("remoteKey") String remoteKey) {
 		BTIssue remoteIssue = bugTrackerLocalService.getIssue(remoteKey);
 		return remoteIssue;
 	}
-	
-	
-	
+
 	@RequestMapping(value = "/credentials", method = RequestMethod.POST, params = { "login", "password" })
 	public @ResponseBody
 	Map<String, String> setCredendials(@RequestParam("login") String login, @RequestParam("password") String password) {
@@ -374,8 +364,7 @@ public class BugtrackerController {
 		Map<String, String> map = new HashMap<String, String>();
 		map.put("status", "ok");
 		return map;
-		
-		
+
 	}
 
 	@RequestMapping(value = "/check", method = RequestMethod.GET)
@@ -389,7 +378,7 @@ public class BugtrackerController {
 
 		final BTIssue postedIssue = bugTrackerLocalService.createIssue(entity, issue);
 		final URL issueUrl = bugTrackerLocalService.getIssueUrl(postedIssue.getId());
-		
+
 		Map<String, String> result = new HashMap<String, String>();
 		result.put("url", issueUrl.toString());
 		result.put("issueId", postedIssue.getId());
@@ -397,10 +386,8 @@ public class BugtrackerController {
 		return result;
 	}
 
-	
-	
 	/* ********* generates a json model for an issue ******* */
-	
+
 	private BTIssue makeReportIssueModel(Bugged entity) {
 		String projectName = entity.getProject().getName();
 		final BTProject project = bugTrackerLocalService.findRemoteProject(projectName);
@@ -409,15 +396,13 @@ public class BugtrackerController {
 
 		BTIssue emptyIssue = new BTIssue();
 		emptyIssue.setProject(project);
-		
+
 		return emptyIssue;
 	}
 
-
-
 	/*
 	 * generates the ModelAndView for the bug section.
-	 *
+	 * 
 	 * If the bugtracker isn'st defined no panel will be sent at all.
 	 */
 	private ModelAndView makeIssuePanel(Bugged entity, String type, Locale locale, String panelStyle) {
@@ -430,7 +415,7 @@ public class BugtrackerController {
 
 			BugTrackerInterfaceDescriptor descriptor = bugTrackerLocalService.getInterfaceDescriptor();
 			descriptor.setLocale(locale);
-			
+
 			ModelAndView mav = new ModelAndView("fragment/issues/bugtracker-panel");
 			mav.addObject("entity", entity);
 			mav.addObject("entityType", type);
@@ -443,20 +428,19 @@ public class BugtrackerController {
 
 	/* ******************************* private methods ********************************************** */
 
-
 	private BugTrackerStatus checkStatus() {
 		return bugTrackerLocalService.checkBugTrackerStatus();
 	}
 
 	private Object jsonStatus() {
-		String strStatus=null;
+		String strStatus = null;
 
 		BugTrackerStatus status = checkStatus();
 
 		if (status == BugTrackerStatus.BUGTRACKER_READY) {
 			strStatus = "ready";
 		} else if (status == BugTrackerStatus.BUGTRACKER_NEEDS_CREDENTIALS) {
-			strStatus ="needs_credentials";
+			strStatus = "needs_credentials";
 		} else {
 			strStatus = "bt_undefined";
 		}
@@ -494,211 +478,195 @@ public class BugtrackerController {
 			}
 		};
 	}
-	
-	
-	/* ****************************** bug ownership naming *******************************/ 
-	
-	
-	private static interface IssueOwnershipNameBuilder{
+
+	/* ****************************** bug ownership naming ****************************** */
+
+	private static interface IssueOwnershipNameBuilder {
 		void setMessageSource(MessageSource source);
+
 		void setLocale(Locale locale);
+
 		String buildName(Bugged bugged);
 	}
 
-	
-	private static class ExecutionModelOwnershipNamebuilder implements IssueOwnershipNameBuilder{
-		
+	private static class ExecutionModelOwnershipNamebuilder implements IssueOwnershipNameBuilder {
+
 		private Locale locale;
 		private MessageSource messageSource;
-		
+
 		@Override
-		public void setLocale(Locale locale){
-			this.locale=locale;
+		public void setLocale(Locale locale) {
+			this.locale = locale;
 		}
-		
+
 		@Override
-		public void setMessageSource(MessageSource source){
-			this.messageSource=source;
+		public void setMessageSource(MessageSource source) {
+			this.messageSource = source;
 		}
-	
+
 		// FIXME : I'm too lazy to implement something serious for now.
 		// The solution is probably to add adequate methods in the Bugged interface, so that we don't
 		// have to rely on reflection here.
 		@Override
 		public String buildName(Bugged bugged) {
 			String name = "this is clearly a bug";
-	
+
 			if (bugged instanceof ExecutionStep) {
 				ExecutionStep step = ((ExecutionStep) bugged);
 				name = buildStepName(step);
-			} 
-			else if (bugged instanceof Execution) {
+			} else if (bugged instanceof Execution) {
 				name = "";
 			}
-	
+
 			return name;
 		}
-		
-		
-		private String buildStepName(ExecutionStep bugged){
+
+		private String buildStepName(ExecutionStep bugged) {
 			Integer index = bugged.getExecutionStepOrder() + 1;
-			return messageSource.getMessage("squashtm.generic.hierarchy.execution.step.name", 
-					new Object[]{index}, 
-					locale) ;
+			return messageSource.getMessage("squashtm.generic.hierarchy.execution.step.name", new Object[] { index },
+					locale);
 		}
 
-		
 	}
 
+	private static class IterationModelOwnershipNamebuilder implements IssueOwnershipNameBuilder {
 
-	private static class IterationModelOwnershipNamebuilder implements IssueOwnershipNameBuilder{
-		
 		private Locale locale;
 		private MessageSource messageSource;
-		
+
 		@Override
-		public void setLocale(Locale locale){
-			this.locale=locale;
+		public void setLocale(Locale locale) {
+			this.locale = locale;
 		}
-		
+
 		@Override
-		public void setMessageSource(MessageSource source){
-			this.messageSource=source;
+		public void setMessageSource(MessageSource source) {
+			this.messageSource = source;
 		}
-	
+
 		// FIXME : I'm too lazy to implement something serious for now.
 		// The solution is probably to add adequate methods in the Bugged interface, so that we don't
 		// have to rely on reflection here.
 		@Override
 		public String buildName(Bugged bugged) {
 			String name = "this is clearly a bug";
-	
+
 			if (bugged instanceof ExecutionStep) {
 				ExecutionStep step = ((ExecutionStep) bugged);
 				name = buildExecName(step.getExecution());
-			} 
-			else if (bugged instanceof Execution) {
+			} else if (bugged instanceof Execution) {
 				Execution exec = ((Execution) bugged);
 				name = buildExecName(exec);
 			}
-	
+
 			return name;
 		}
-		
-		//for a given execution we don't need to remind which one, so the name is ignored.
-		private String buildExecName(Execution bugged){
+
+		// for a given execution we don't need to remind which one, so the name is ignored.
+		private String buildExecName(Execution bugged) {
 			TestSuite buggedSuite = bugged.getTestPlan().getTestSuite();
-			String suiteName = (buggedSuite!=null) ? buggedSuite.getName() : "";
-	
-			return messageSource.getMessage("squashtm.generic.hierarchy.execution.name", 
-								new Object[]{
-									bugged.getName(),
-									suiteName,
-									bugged.getExecutionOrder()+1
-								},
-								locale);
+			String suiteName = (buggedSuite != null) ? buggedSuite.getName() : "";
+
+			return messageSource.getMessage("squashtm.generic.hierarchy.execution.name",
+					new Object[] { bugged.getName(), suiteName, bugged.getExecutionOrder() + 1 }, locale);
 		}
-		
-		
-	}	
-	
-	
-	// **************************************** private utilities *******************************************************
-	
-	
-	private FilteredCollectionHolder<List<IssueOwnership<BTIssue>>> makeEmptyCollectionHolder(String entityName, Long entityId, Exception cause){
-		LOGGER.trace("BugTrackerController : fetching known issues for  " +entityName+" "+ entityId
+
+	}
+
+	// **************************************** private utilities
+	// *******************************************************
+
+	private FilteredCollectionHolder<List<IssueOwnership<BTIssue>>> makeEmptyCollectionHolder(String entityName,
+			Long entityId, Exception cause) {
+		LOGGER.trace("BugTrackerController : fetching known issues for  " + entityName + " " + entityId
 				+ " failed, exception : ", cause);
 		List<IssueOwnership<BTIssue>> emptyList = new LinkedList<IssueOwnership<BTIssue>>();
 		return new FilteredCollectionHolder<List<IssueOwnership<BTIssue>>>(0, emptyList);
 	}
-	
-	
+
 	/**
-	 * <p>the DataTableModel for an execution will hold the same informations than IterationIssuesTableModel (for now) :
-	 *<ul>
-	 *	<li>the url of that issue,</li>
-	 *	<li>the id,</li>
-	 *	<li>the summary</li>,
-	 *	<li>the priority,</li>
-	 *	<li>the status,</li>
-	 *	<li>the assignee,</li>
-	 *	<li>the owning entity</li>
-	 *</ul>
+	 * <p>
+	 * the DataTableModel for an execution will hold the same informations than IterationIssuesTableModel (for now) :
+	 * <ul>
+	 * <li>the url of that issue,</li>
+	 * <li>the id,</li>
+	 * <li>the summary</li>,
+	 * <li>the priority,</li>
+	 * <li>the status,</li>
+	 * <li>the assignee,</li>
+	 * <li>the owning entity</li>
+	 * </ul>
 	 * </p>
 	 */
-	private class IterationIssuesTableModel extends DataTableModelHelper<IssueOwnership<BTIssue>>{
-		
+	private class IterationIssuesTableModel extends DataTableModelHelper<IssueOwnership<BTIssue>> {
+
 		private IssueOwnershipNameBuilder nameBuilder = new IterationModelOwnershipNamebuilder();
-		
-		public IterationIssuesTableModel(MessageSource source, Locale locale){
+
+		public IterationIssuesTableModel(MessageSource source, Locale locale) {
 			nameBuilder.setMessageSource(source);
 			nameBuilder.setLocale(locale);
 		}
-		
+
 		@Override
 		public Object[] buildItemData(IssueOwnership<BTIssue> ownership) {
-			return new Object[] {
-					bugTrackerLocalService.getIssueUrl(ownership.getIssue().getId()).toExternalForm(),
+			return new Object[] { bugTrackerLocalService.getIssueUrl(ownership.getIssue().getId()).toExternalForm(),
 					ownership.getIssue().getId(), ownership.getIssue().getSummary(),
 					ownership.getIssue().getPriority().getName(), ownership.getIssue().getStatus().getName(),
 					ownership.getIssue().getAssignee().getName(), nameBuilder.buildName(ownership.getOwner()) };
-		}	
+		}
 	}
-	
-	
+
 	/**
-	 * <p>the DataTableModel for an execution will hold the same informations than IterationIssuesTableModel (for now) :
-	 *<ul>
-	 *	<li>the url of that issue,</li>
-	 *	<li>the id,</li>
-	 *	<li>the summary</li>,
-	 *	<li>the priority,</li>
-	 *	<li>the status,</li>
-	 *	<li>the assignee,</li>
-	 *	<li>the owning entity</li>
-	 *</ul>
+	 * <p>
+	 * the DataTableModel for an execution will hold the same informations than IterationIssuesTableModel (for now) :
+	 * <ul>
+	 * <li>the url of that issue,</li>
+	 * <li>the id,</li>
+	 * <li>the summary</li>,
+	 * <li>the priority,</li>
+	 * <li>the status,</li>
+	 * <li>the assignee,</li>
+	 * <li>the owning entity</li>
+	 * </ul>
 	 * </p>
 	 */
-	private class ExecutionIssuesTableModel extends DataTableModelHelper<IssueOwnership<BTIssue>>{
-		
+	private class ExecutionIssuesTableModel extends DataTableModelHelper<IssueOwnership<BTIssue>> {
+
 		private IssueOwnershipNameBuilder nameBuilder = new ExecutionModelOwnershipNamebuilder();
-		
-		public ExecutionIssuesTableModel(MessageSource source, Locale locale){
+
+		public ExecutionIssuesTableModel(MessageSource source, Locale locale) {
 			nameBuilder.setMessageSource(source);
 			nameBuilder.setLocale(locale);
 		}
-		
+
 		@Override
 		public Object[] buildItemData(IssueOwnership<BTIssue> ownership) {
-			return new Object[] {
-					bugTrackerLocalService.getIssueUrl(ownership.getIssue().getId()).toExternalForm(),
+			return new Object[] { bugTrackerLocalService.getIssueUrl(ownership.getIssue().getId()).toExternalForm(),
 					ownership.getIssue().getId(), ownership.getIssue().getSummary(),
 					ownership.getIssue().getPriority().getName(), ownership.getIssue().getStatus().getName(),
 					ownership.getIssue().getAssignee().getName(), nameBuilder.buildName(ownership.getOwner()) };
-		}		
+		}
 	}
-	
 
 	/**
-	 * <p>the DataTableModel will hold : 
-	 *	<ul>
-	 * 		<li>the url of that issue,</li>
-	 * 		<li>the id,</li>
-	 * 		<li>the summary,</li>
-	 * 		<li>the priority</li>
-	 * 	</ul>
+	 * <p>
+	 * the DataTableModel will hold :
+	 * <ul>
+	 * <li>the url of that issue,</li>
+	 * <li>the id,</li>
+	 * <li>the summary,</li>
+	 * <li>the priority</li>
+	 * </ul>
 	 * </p>
 	 */
-	private class StepIssuesTableModel extends DataTableModelHelper<IssueOwnership<BTIssue>>{
+	private class StepIssuesTableModel extends DataTableModelHelper<IssueOwnership<BTIssue>> {
 
 		@Override
 		public Object[] buildItemData(IssueOwnership<BTIssue> ownership) {
-			return new Object[] {
-					bugTrackerLocalService.getIssueUrl(ownership.getIssue().getId()).toExternalForm(),
+			return new Object[] { bugTrackerLocalService.getIssueUrl(ownership.getIssue().getId()).toExternalForm(),
 					ownership.getIssue().getId(), ownership.getIssue().getSummary(),
 					ownership.getIssue().getPriority().getName() };
-		}	
+		}
 	}
-	
+
 }
