@@ -37,4 +37,6 @@ public interface UserDao extends EntityDao<User> {
 	List<User> findUsersByLoginList(List<String> idList);
 
 	List<User> findByIdList(Collection<Long> idList);
+	
+	void checkLoginAvailability(String login) ;
 }

@@ -63,7 +63,7 @@ public class UserAdministrationController {
 	/**
 	 * Builds datatable model for users table
 	 */
-	private class UserDataTableModelBuilder extends DataTableModelHelper<User> {
+	private final class UserDataTableModelBuilder extends DataTableModelHelper<User> {
 		/**
 		 * 
 		 */
@@ -125,8 +125,6 @@ public class UserAdministrationController {
 
 	@RequestMapping(value="/add", method=RequestMethod.POST)
 	public @ResponseBody void addNewUser(@ModelAttribute("add-user") @Valid UserForm userForm){
-		// TODO should be in adduser not a separate service call
-		adminService.checkLoginAvailability(userForm.getUser().getLogin());
 		adminService.addUser(userForm.getUser(), userForm.getGroupId(), userForm.getPassword());
 	}
 	

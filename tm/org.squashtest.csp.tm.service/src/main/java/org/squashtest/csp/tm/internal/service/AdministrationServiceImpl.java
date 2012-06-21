@@ -143,6 +143,9 @@ public class AdministrationServiceImpl implements AdministrationService {
 	@PreAuthorize("hasRole('ROLE_ADMIN')")
 	public void addUser(User aUser, long groupId, String password) {
 		// FIXME : also check the auth part when time is come
+		
+		userDao.checkLoginAvailability(aUser.getLogin());
+		
 		UsersGroup group = groupDao.findById(groupId);
 
 		aUser.setGroup(group);
@@ -200,13 +203,7 @@ public class AdministrationServiceImpl implements AdministrationService {
 		return configurationService.findConfiguration(LOGIN_MESSAGE_KEY);
 	}
 
-	@Override
-	public void checkLoginAvailability(String login) {
-		if (userDao.findUserByLogin(login) != null) {
-			throw new LoginAlreadyExistsException();
-		}
-
-	}
+	
 	
 	@Override
 	@PreAuthorize("hasRole('ROLE_ADMIN')")

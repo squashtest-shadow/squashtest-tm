@@ -27,6 +27,7 @@ import java.util.List;
 
 import org.hibernate.Query;
 import org.springframework.stereotype.Repository;
+import org.squashtest.csp.tm.domain.LoginAlreadyExistsException;
 import org.squashtest.csp.tm.domain.users.User;
 import org.squashtest.csp.tm.infrastructure.filter.CollectionFilter;
 import org.squashtest.csp.tm.internal.repository.UserDao;
@@ -99,5 +100,13 @@ public class HibernateUserDao extends HibernateEntityDao<User> implements UserDa
 			}
 		};
 		return executeListNamedQuery("user.findAllByIdList", setParams);
+	}
+	
+	@Override
+	public void checkLoginAvailability(String login) {
+		if (findUserByLogin(login) != null) {
+			throw new LoginAlreadyExistsException();
+		}
+
 	}
 }

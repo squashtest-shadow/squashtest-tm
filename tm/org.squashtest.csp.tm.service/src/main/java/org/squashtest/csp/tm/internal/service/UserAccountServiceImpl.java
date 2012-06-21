@@ -22,11 +22,14 @@ package org.squashtest.csp.tm.internal.service;
 
 import javax.inject.Inject;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.osgi.extensions.annotation.ServiceReference;
 import org.springframework.security.access.AccessDeniedException;
 import org.springframework.security.authentication.BadCredentialsException;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+import org.squashtest.csp.core.internal.security.security.AdministratorAuthenticationServiceImpl;
 import org.squashtest.csp.core.service.security.UserAuthenticationService;
 import org.squashtest.csp.core.service.security.UserContextService;
 import org.squashtest.csp.tm.domain.PasswordChangeFailedException;
@@ -40,12 +43,10 @@ import org.squashtest.csp.tm.service.UserAccountService;
 @Service("squashtest.tm.service.UserAccountService")
 @Transactional
 public class UserAccountServiceImpl implements UserAccountService {
-
+	private static final Logger LOGGER = LoggerFactory.getLogger(UserAccountServiceImpl.class);
+	
 	@Inject
 	private UserDao userDao;
-
-	@Inject
-	private UsersGroupDao groupDao;
 
 	private UserContextService userContextService;
 	private UserAuthenticationService authService;
@@ -84,10 +85,18 @@ public class UserAccountServiceImpl implements UserAccountService {
 	public void modifyUserLogin(long userId, String newLogin) {
 		// fetch
 		User user = userDao.findById(userId);
-		// check
-		checkPermissions(user);
-		// proceed
-		user.setLogin(newLogin);
+		if(!newLogin.equals(user.getLogin())){
+			LOGGER.debug("change login for user "+user.getLogin()+" to "+newLogin);			
+			// check
+			checkPermissions(user);
+			// proceed
+			userDao.checkLoginAvailability(newLogin);
+			authService.changeUserlogin(newLogin, user.getLogin());
+			user.setLogin(newLogin);
+		}else{
+			LOGGER.trace("no change of user login because old and new are the same");
+			
+		}
 	}
 
 	@Override

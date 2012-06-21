@@ -82,8 +82,6 @@ public interface AdministrationService {
 
 	String findWelcomeMessage();
 
-	void checkLoginAvailability(String login);
-
 	void modifyLoginMessage(String loginMessage);
 
 	String findLoginMessage();

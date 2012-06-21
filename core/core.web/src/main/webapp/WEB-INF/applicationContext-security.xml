@@ -152,12 +152,12 @@
 			</beans:value>
 		</beans:property>
 		
-<!-- 			<beans:property name="deleteUserSql"> -->
-<!-- 			<beans:value> -->
-<!-- 				delete from AUTH_USER -->
-<!-- 				where LOGIN = ? -->
-<!-- 			</beans:value> -->
-<!-- 		</beans:property> -->
+			<beans:property name="deleteUserSql">
+			<beans:value>
+				delete from AUTH_USER
+				where LOGIN = ?
+			</beans:value>
+		</beans:property>
 		
 		
 		<beans:property name="createUserSql">
