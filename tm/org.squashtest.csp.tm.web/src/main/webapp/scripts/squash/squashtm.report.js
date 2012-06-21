@@ -147,7 +147,7 @@ squashtm.report = (function ($) {
 			dateFormat: config.dateFormat
 		};
 		
-		var datepickers = panel.find(".date-crit");
+		var datepickers = panel.find(".rpt-date-crit");
 		datepickers.editable(function (value, settings) {
 			var self = this;
 			onDatepickerChanged.apply(self, [value]);
@@ -300,7 +300,7 @@ squashtm.report = (function ($) {
 		var self = $(this);
 		self.dialog("close");	
 		
-		var tree = self.find('.nodes-crit');
+		var tree = self.find('.rpt-tree-crit');
 		var nodes = tree.jstree('get_selected');
 		
 		setTreeState(tree, nodes);
@@ -326,16 +326,16 @@ squashtm.report = (function ($) {
 	}
 
 	function initTreePickers(panel, settings) {
-		panel.find('.nodes-crit-open').click(function () {
+		panel.find('.rpt-tree-crit-open').click(function () {
 			console.log($(this));
 			var dialogId = $(this).data('id-opened');
 			console.log(dialogId);
 			$("#" + dialogId).dialog('open');
 		});
 		
-		panel.find('.nodes-crit').each(initTreePickerCallback);
+		panel.find('.rpt-tree-crit').each(initTreePickerCallback);
 					
-		panel.find(".nodes-crit-container").each(initTreePickerDialogCallback);
+		panel.find(".rpt-tree-crit-dialog").each(initTreePickerDialogCallback);
 	}
 
 	function init(settings) {

@@ -157,20 +157,20 @@
 					title="Report form" th:title="#{report.criteria.panel.title}">
 					<div th:each="input : ${report.form}" th:switch="${input.type.name()}" th:object="${input}">
 						<span th:case="'TEXT'">
-							<label for="text-crit" th:for="*{name}" th:text="*{label}">Text criteria</label>
-							<input name="text-crit" th:id="*{name}" th:name="*{name}" type="text" value="" />
+							<label for="rpt-text-crit" th:for="*{name}" th:text="*{label}">Text criteria</label>
+							<input name="rpt-text-crit" th:id="*{name}" th:name="*{name}" type="text" value="" />
 						</span>
 						<span th:case="'CHECKBOX'">
-							<input name="chk-crit" th:id="*{name}" th:name="*{name}" type="checkbox" value="*{value}" th:checked="*{defaultSelected}" />
-							<label for="chk-crit" th:for="*{name}" th:text="*{label}">Checkbox criteria</label>
+							<input name="rpt-chk-crit" th:id="*{name}" th:name="*{name}" type="checkbox" value="*{value}" th:checked="*{defaultSelected}" />
+							<label for="rpt-chk-crit" th:for="*{name}" th:text="*{label}">Checkbox criteria</label>
 						</span>
-						<div th:case="'DATE'">
+						<div th:case="'DATE'" class="rpt-date">
 							<label th:for="*{name}" th:text="*{label}">Date criteria</label>
-							<span class="date-crit" th:id="*{name}" th:name="*{name}" th:text="#{squashtm.nodata}">01-02-2012</span>
+							<span class="rpt-date-crit" th:id="*{name}" th:name="*{name}" th:text="#{squashtm.nodata}">01-02-2012</span>
 						</div>
 						<div th:case="'DROPDOWN_LIST'">
-							<label for="drop-crit" th:for="*{name}" th:text="*{label}">Dropdown criteria</label>
-							<select name="drop-crit" th:name="*{name}" size="1">
+							<label for="rpt-drop-crit" th:for="*{name}" th:text="*{label}">Dropdown criteria</label>
+							<select name="rpt-drop-crit" th:name="*{name}" size="1">
 								<option th:each="opt : *{options}" th:name="${opt.name}" 
 									th:value="${opt.value}" th:selected="${opt.defaultSelected}" th:text="${opt.label}">Option</option>
 							</select>
@@ -179,7 +179,7 @@
 							<label th:text="*{label}">Radio buttons group</label>
 							<ul>
 								<li th:each="opt : *{options}">
-									<input name="radio-crit" type="radio" th:value="${opt.value}" data-grouped="true" th:text="${opt.label}"
+									<input name="rpt-radio-crit" type="radio" th:value="${opt.value}" data-grouped="true" th:text="${opt.label}"
 										th:name="${opt.name}" th:checked="${opt.defaultSelected}">
 										Option
 									</input>
@@ -190,7 +190,7 @@
 							<label th:text="*{label}">Checkboxes group</label>
 							<ul>
 								<li th:each="opt : *{options}">
-									<input name="cbxes-crit" type="checkbox" th:value="${opt.value}" data-grouped="true" th:text="${opt.label}"
+									<input name="rpt-cbxes-crit" type="checkbox" th:value="${opt.value}" data-grouped="true" th:text="${opt.label}"
 										th:name="${opt.name}" th:checked="${opt.defaultSelected}">
 										Checkbox
 									</input>
@@ -199,24 +199,24 @@
 						</div>
 						<div th:case="'TREE_PICKER'">
 							<div th:id="*{name} + '-dialog'" th:title="#{report.form.tree-picker.dialog.title}" 
-								class="nodes-crit-container popup-dialog is-contextual not-displayed">
-								<div th:id="*{name}" class="nodes-crit tree selection-tree" th:attr="data-node-type=*{pickedNodeType}"></div>
+								class="rpt-tree-crit-dialog popup-dialog is-contextual not-displayed">
+								<div th:id="*{name}" class="rpt-tree-crit tree selection-tree" th:attr="data-node-type=*{pickedNodeType}"></div>
 							</div>
 							<label th:for="*{name} + '-open'" th:text="*{label}">Nodes</label>
-							<input th:name="*{name} + '-open'" type="button" class="button nodes-crit-open" 
+							<input th:name="*{name} + '-open'" type="button" class="button rpt-tree-crit-open" 
 								th:value="#{report.form.tree-picker.button.label}" th:attr="data-id-opened=*{name} + '-dialog'" />
 						</div>
 					</div>
 					<div th:remove="all">
 						<span>
-							<label for="text-crit">Text criteria</label>
-							<input name="text-crit" type="text" value="" />
+							<label for="rpt-text-crit">Text criteria</label>
+							<input name="rpt-text-crit" type="text" value="" />
 						</span>
 					</div>
 					<div th:remove="all">
 						<span>
-							<input name="chk-crit" type="checkbox" value="chk-val" />
-							<label for="chk-crit">Checkbox criteria</label>
+							<input name="rpt-chk-crit" type="checkbox" value="chk-val" />
+							<label for="rpt-chk-crit">Checkbox criteria</label>
 						</span>
 					</div>
 					<div th:remove="all">
@@ -224,10 +224,10 @@
 							<span>Radio buttons group</span>
 							<ul>
 								<li>
-									<input name="radio-crit" type="radio" value="radio-val-0" data-grouped="true" />
-									<label for="radio-crit">Option 0</label>
-									<input name="radio-crit" type="radio" value="radio-val-1" data-grouped="true" />
-									<label for="radio-crit">Option 1</label>
+									<input name="rpt-radio-crit" type="radio" value="radio-val-0" data-grouped="true" />
+									<label for="rpt-radio-crit">Option 0</label>
+									<input name="rpt-radio-crit" type="radio" value="radio-val-1" data-grouped="true" />
+									<label for="rpt-radio-crit">Option 1</label>
 								</li>
 							</ul>
 						</div>
@@ -237,20 +237,20 @@
 							<span>Checkboxes group</span>
 							<ul>
 								<li>
-									<input name="cbxes-crit" type="checkbox" value="cbxes-val-0" data-grouped="true" />
-									<label for="cbxes-crit">Checkbox 0</label>
+									<input name="rpt-cbxes-crit" type="checkbox" value="cbxes-val-0" data-grouped="true" />
+									<label for="rpt-cbxes-crit">Checkbox 0</label>
 								</li>
 								<li>
-									<input name="cbxes-crit" type="checkbox" value="cbxes-val-1" data-grouped="true" />
-									<label for="cbxes-crit">Checkbox 1</label>
+									<input name="rpt-cbxes-crit" type="checkbox" value="cbxes-val-1" data-grouped="true" />
+									<label for="rpt-cbxes-crit">Checkbox 1</label>
 								</li>
 							</ul>
 						</div>
 					</div>
 					<div th:remove="all">
 						<div>
-							<label for="drop-crit">Dropdown list</label>
-							<select name="drop-crit" size="1">
+							<label for="rpt-drop-crit">Dropdown list</label>
+							<select name="rpt-drop-crit" size="1">
 								<option>Option 0</option>
 								<option>Option 1</option>
 							</select>
@@ -259,17 +259,17 @@
 					<div th:remove="all">
 						<span th:case="DATE">
 							<span class="label">Date criteria</span>
-							<span class="date-crit" id="date-crit">---</span>
+							<span class="rpt-date-crit" id="rpt-date-crit">---</span>
 						</span>
 					</div>		
 					<div th:remove="all">
-						<div id="nodes-crit-dialog" title="Nodes criteria" class="nodes-crit-container popup-dialog is-contextual not-displayed">
-							Nodes <div id="nodes-crit" class="nodes-crit" data-node-type="CAMPAIGN"></div>
+						<div id="rpt-tree-crit-dialog" title="Nodes criteria" class="rpt-tree-crit-dialog popup-dialog is-contextual not-displayed">
+							Nodes <div id="rpt-tree-crit" class="rpt-tree-crit" data-node-type="CAMPAIGN"></div>
 						</div>
-						<input type="button" class="button nodes-crit-open" value="Pick nodes" data-id-opened="nodes-crit-dialog" />
+						<input type="button" class="button rpt-tree-crit-open" value="Pick nodes" data-id-opened="rpt-tree-crit-dialog" />
 					</div>
 					<div th:remove="all">
-						<div id="projects-crit-dialog" title="Projects criteria" class="projects-crit-container popup-dialog is-contextual not-displayed">
+						<div id="rpt-projects-crit-dialog" title="Projects criteria" class="rpt-projects-crit-container popup-dialog is-contextual not-displayed">
 							<div id="dialog-settings-project-selection-controls" class="project-filter-controls">
 								<a id="dialog-settings-project-selectall" href="javascript:void(0)">${selectallProjectLabel}</a>
 								<a id="dialog-settings-project-deselectall" href="javascript:void(0)">${deselectAllProjectLabel}</a>
@@ -284,7 +284,7 @@
 							<div id="report-project-list">
 							</div>
 						</div>
-						<input type="button" class="button projects-crit-open" value="Pick projects" data-id-opened="projects-crit-dialog" />
+						<input type="button" class="button rpt-projects-crit-open" value="Pick projects" data-id-opened="rpt-projects-crit-dialog" />
 					</div>
 					
 					<input type="button" class="button snap-right" id="generate-view" value="Generate" th:value="#{report.criteria.panel.button.generate.label}" />

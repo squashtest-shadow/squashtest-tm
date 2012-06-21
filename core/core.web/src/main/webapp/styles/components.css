@@ -22,268 +22,255 @@
 
 .popup-label-error {
 	font-size: 12px;
-  	color: red;		
-  	font-weight: bold;
-  	text-align: center; 
+	color: red;
+	font-weight: bold;
+	text-align: center;
 }
 
 .toolbar-class {
-	width : auto;
-	height : auto;
-	margin-top : 5px;
-	margin-left : 5px;
-	margin-right : 5px;
-	margin-bottom : 5px;
+	width: auto;
+	height: auto;
+	margin-top: 5px;
+	margin-left: 5px;
+	margin-right: 5px;
+	margin-bottom: 5px;
 }
 
-.toolbar-information-panel{
-	font-size : 100% !important;
-	text-align : left;
-	float:left;
-	margin-top : 5px;
-	margin-bottom : 5px;
-	font-size : 100%;
+.toolbar-information-panel {
+	font-size: 100% !important;
+	text-align: left;
+	float: left;
+	margin-top: 5px;
+	margin-bottom: 5px;
+	font-size: 100%;
 }
 
-.toolbar-information-panel label{
-	font-style:italic;	
+.toolbar-information-panel label {
+	font-style: italic;
 }
 
-.toolbar-button-panel{
-	text-align : right;
-	float:right;
-	margin-top : 5px;
-	margin-bottom : 5px;		
+.toolbar-button-panel {
+	text-align: right;
+	float: right;
+	margin-top: 5px;
+	margin-bottom: 5px;
 }
 
-div.toggle-panel > h3 {
-	font-size:95%;	
-	padding-left:0.7em;
-	padding-right:0.7em;
+div.toggle-panel>h3 {
+	font-size: 95%;
+	padding-left: 0.7em;
+	padding-right: 0.7em;
 }
 
-div.toggle-panel > h3 a.tg-link{
-	padding-left:0px;
+div.toggle-panel>h3 a.tg-link {
+	padding-left: 0px;
 }
 
 div.toggle-panel input {
-	padding-top:0.05em;
-	padding-bottom:0.05em;
-	margin-top:0.2em;
-	margin-bottom:0.2em	;
+	padding-top: 0.05em;
+	padding-bottom: 0.05em;
+	margin-top: 0.2em;
+	margin-bottom: 0.2em;
 }
 
 /* we need to override accordion and button default styles when using <a> tags in toggle-panel header */
-div.toggle-panel a.tg-panel-button{	
-	padding-top:0.05em;
-	padding-bottom:0.05em;
-	padding-left:1em;
-	padding-right:1em;
-	margin-top:0.2em;
-	margin-bottom:0.2em	;
-	display:inline-block;
+div.toggle-panel a.tg-panel-button {
+	padding-top: 0.05em;
+	padding-bottom: 0.05em;
+	padding-left: 1em;
+	padding-right: 1em;
+	margin-top: 0.2em;
+	margin-bottom: 0.2em;
+	display: inline-block;
 }
 
-a.tg-panel-button span.ui-button-text{
-	padding:0;	
+a.tg-panel-button span.ui-button-text {
+	padding: 0;
 }
 
 /* we override the overflow property with whatever values, as long as 
 the div stops displaying a useless scrollbar (that thing autoresize with content anyway)*/
-div.toggle-panel  div.ui-accordion-content{
-	padding: 0.7em 0.7em;	
-	overflow : auto; 
+div.toggle-panel  div.ui-accordion-content {
+	padding: 0.7em 0.7em;
+	overflow: auto;
 }
 
-
-div.execute-fragment-body div.toggle-panel  div.ui-accordion-content{
+div.execute-fragment-body div.toggle-panel  div.ui-accordion-content {
 	min-height: 85px;
 }
-div.datepicker-panel{
-	text-align:center;
-	margin:auto;	
+
+div.datepicker-panel {
+	text-align: center;
+	margin: auto;
 }
 
-div.datepicker-panel-field{
-	display:inline-block;
-	margin-left:4em;
-	margin-right:4em;	
+div.datepicker-panel-field {
+	display: inline-block;
+	margin-left: 4em;
+	margin-right: 4em;
 }
 
-div.datepicker-caption{
-	text-align:left;	
-	float:left;
+div.datepicker-caption {
+	text-align: left;
+	float: left;
 }
 
-div.datepicker-date{
-	text-align:right;	
-	float:left;
+div.datepicker-date {
+	text-align: right;
+	float: left;
 }
 
 table.datepicker-table {
-	width:50%;
-	min-width:50%;
-	max-width:80%;
-		
+	width: 50%;
+	min-width: 50%;
+	max-width: 80%;
 }
 
 table.datepicker-table td.datepicker-table-col {
-	min-width:25em;
-	padding-right:2em;	
+	min-width: 25em;
+	padding-right: 2em;
 }
 
 /*******************************
 	information panel / description panel
 ********************************/
-
-.execute-success{
-	background-image : url("../images/Button_Exec_Passed.png") !important;
+.execute-success {
+	background-image: url("../images/Button_Exec_Passed.png") !important;
 }
 
-.execute-failure{
-	background-image : url("../images/Button_Exec_Failed.png") !important;
+.execute-failure {
+	background-image: url("../images/Button_Exec_Failed.png") !important;
 }
 
-.execute-stop{
-	background-image : url("../images/Button_Exec_stop.png") !important;
+.execute-stop {
+	background-image: url("../images/Button_Exec_stop.png") !important;
 }
-
-
 
 /** the following class is used in conjunction of one of the fifth images below : */
-
-.common-status-label{
+.common-status-label {
 	padding-left: 26px;
 	display: block;
 	background-repeat: no-repeat;
-	height: 16px;	
+	height: 16px;
 }
 
-
-.executions-status-bloqued-icon{
-	background :  url("../images/Icon_Yellow.png") no-repeat ;
+.executions-status-bloqued-icon {
+	background: url("../images/Icon_Yellow.png") no-repeat;
 }
 
-.executions-status-failure-icon{
-	background :  url("../images/Icon_Red.png") no-repeat ;
+.executions-status-failure-icon {
+	background: url("../images/Icon_Red.png") no-repeat;
 }
 
-.executions-status-success-icon{
-	background :  url("../images/Icon_Green.png") no-repeat ;
+.executions-status-success-icon {
+	background: url("../images/Icon_Green.png") no-repeat;
 }
 
-.executions-status-running-icon{
-	background :  url("../images/Icon_Blue.png") no-repeat;
+.executions-status-running-icon {
+	background: url("../images/Icon_Blue.png") no-repeat;
 }
 
-.executions-status-ready-icon{
-	background :  url("../images/Icon_Grey.png") no-repeat;
+.executions-status-ready-icon {
+	background: url("../images/Icon_Grey.png") no-repeat;
 }
 
-
-.manage-attachment-button{
-	border:0 none;
-	background:none;
+.manage-attachment-button {
+	border: 0 none;
+	background: none;
 }
 
 /* the clause display:block is needed for IE. The word-wrap will be rendered on IE8 only if the element have the property hasLayout, 
 the display:block trick will implicitly add that property */
-.breakwords{
-	word-wrap: break-word;	
+.breakwords {
+	word-wrap: break-word;
 	display: block;
 }
 
-.project-filter-list{	
-	overflow-y : auto;
-	max-height : 7cm;
+.project-filter-list {
+	overflow-y: auto;
+	max-height: 7cm;
 }
 
-.project-filter-controls{
-	text-align:center;
-	vertical-align : middle;
-	padding-top : 1.5em;
-	padding-bottom : 1.5em;
+.project-filter-controls {
+	text-align: center;
+	vertical-align: middle;
+	padding-top: 1.5em;
+	padding-bottom: 1.5em;
 }
 
-.project-item{
-	padding-top:5px;
-	padding-bottom:5px;	
+.project-item {
+	padding-top: 5px;
+	padding-bottom: 5px;
 }
 
-.project-filter-controls a{
-	margin-left : 2em;;
-	margin-right : 2em;
-	color:#656565;
+.project-filter-controls a {
+	margin-left: 2em;;
+	margin-right: 2em;
+	color: #656565;
 }
 
-.project-item.even{
-	background-color : #C0C0C0;
+.project-item.even {
+	background-color: #C0C0C0;
 }
 
-.project-item.odd{
-	background-color : #E0E0E0;	
+.project-item.odd {
+	background-color: #E0E0E0;
 }
-
 
 /******************************
 	import section
 ******************************/
-
-
 .confirm-div {
-	margin-bottom:1em;	
+	margin-bottom: 1em;
 }
 
-.confirm-div span{
-	font-weight : bold;
+.confirm-div span {
+	font-weight: bold;
 }
 
-.confirm-div label{
-	font-size : 1.1em;		
+.confirm-div label {
+	font-size: 1.1em;
 }
 
 /******************************
 	issue section
 *******************************/
-
-
-.please-wait-message{
-	font-size:1.5em;
-	font-weight:bold;
-	vertical-align:center;
-	text-align:center;
+.please-wait-message {
+	font-size: 1.5em;
+	font-weight: bold;
+	vertical-align: center;
+	text-align: center;
 }
 
-.issue-panel-knownissues-displayed{
-	display:block;	
-}
-
-.issue-panel-knownissues-notdisplayed{
-	display:none;	
-}
-
-
-div.issue-report-dialog div.combo-options{
-	margin-bottom : 2em;	
-}
-
-div.issue-report-dialog div.text-options > div{
-	margin-top : 		1em;
-	margin-bottom : 	1em;
-}
-
-div.issue-report-dialog div.text-options label{
-	display : block;	
-}
-
-div.issue-report-dialog div.text-options textarea{
-	width : 100%;
-	height : 145px;	
-}
-
-div.issue-report-dialog span.issue-radio{
+.issue-panel-knownissues-displayed {
 	display: block;
-    margin-bottom: 1em;	
+}
+
+.issue-panel-knownissues-notdisplayed {
+	display: none;
+}
+
+div.issue-report-dialog div.combo-options {
+	margin-bottom: 2em;
+}
+
+div.issue-report-dialog div.text-options>div {
+	margin-top: 1em;
+	margin-bottom: 1em;
+}
+
+div.issue-report-dialog div.text-options label {
+	display: block;
+}
+
+div.issue-report-dialog div.text-options textarea {
+	width: 100%;
+	height: 175px;
+}
+
+div.issue-report-dialog span.issue-radio-label {
+	display: block;
+	margin-bottom: 1em;
 }
 
 span.issue-radio span.issue-radio-label{
@@ -295,88 +282,81 @@ div.issue-report-dialog div.issue-report-break{
 	min-height: 2em;
 }
 
-
-
-
 /*******************************
 	test suites management
 ********************************/
-
-.main-div-suites > div{
-	margin-left  : auto;
-	margin-right : auto;
+.main-div-suites>div {
+	margin-left: auto;
+	margin-right: auto;
 	margin-bottom: 1.5em;
-	text-align : center;
+	text-align: center;
 }
 
-
-.remove-suites-section input[type="button"]{
-	width: 99%;	
+.remove-suites-section input[type="button"] {
+	width: 99%;
 }
 
-.main-div-suites .display-suites-section{
-	border : 2px inset gray;
-	height : 300px;
-	overflow : auto;
+.main-div-suites .display-suites-section {
+	border: 2px inset gray;
+	height: 300px;
+	overflow: auto;
 }
 
-.remove-suites-section, .create-suites-section, .rename-suites-section{
-	width : 99%;
+.remove-suites-section,.create-suites-section,.rename-suites-section {
+	width: 99%;
 }
 
-.display-suites-section  .suite-div{
-	width : 80%;
-	margin-top : 0.5em;
-	margin-left : 0.5em;
-	margin-right : 0.5em;
-	cursor : pointer;
-	text-align : left;
-	padding-top : 2px;
-	padding-bottom : 2px;
+.display-suites-section  .suite-div {
+	width: 80%;
+	margin-top: 0.5em;
+	margin-left: 0.5em;
+	margin-right: 0.5em;
+	cursor: pointer;
+	text-align: left;
+	padding-top: 2px;
+	padding-bottom: 2px;
 }
 
-.display-suites-section .suite-div.suite-selected{
-	background-color : #A843E6;
-	color : white;
-	font-weight : bold;
+.display-suites-section .suite-div.suite-selected {
+	background-color: #A843E6;
+	color: white;
+	font-weight: bold;
 }
 
-.main-div-suites .manager-control-ready{
-	color : black;
+.main-div-suites .manager-control-ready {
+	color: black;
 }
 
-.main-div-suites .manager-control-disabled{
-	color : black;
+.main-div-suites .manager-control-disabled {
+	color: black;
 }
 
-
-.main-div-suites input[type="text"]{
+.main-div-suites input[type="text"] {
 	width: 68%;
-	margin-right:2%;
-	display : inline-block;
+	margin-right: 2%;
+	display: inline-block;
 }
 
-.main-div-suites input[type="button"]{
-	display : inline-block;
+.main-div-suites input[type="button"] {
+	display: inline-block;
 }
 
 /* ***************************** 
 	test suite menu
 ********************************/
-
-.suite-manager-menu-mainlist{
-	overflow-x : hidden;
-	overflow-y : auto;
-	max-height : 200px;		
+.suite-manager-menu-mainlist {
+	overflow-x: hidden;
+	overflow-y: auto;
+	max-height: 200px;
 }
 
-.suite-manager-menu-input{
+.suite-manager-menu-input {
 	vertical-align: top;
-	margin-right: 1em;	
+	margin-right: 1em;
 }
 
-.suite-manager-menu-button{
-	height : 24px;
+.suite-manager-menu-button {
+	height: 24px;
 }
 
 /* ***************************** 
@@ -431,25 +411,45 @@ div.error-inner{
 	information panel / description panel
 ********************************/
 .ui-widget-content.information-panel a {
-	color : #555555;
+	color: #555555;
 	font-size: 90%;
-    font-style: italic;
+	font-style: italic;
 }
 /*******************************
 	misc
 ********************************/
-.editable {border: 1px solid transparent;}
-.editable:HOVER {border: 1px solid #bbbbbb;}
-td.editable:HOVER {border: 1px solid transparent;}
-	
-span.span-red{
-	color : red;	
+.editable {
+	border: 1px solid transparent;
 }
 
-span.span-bold{
-	font-weight:bold;	
+.editable:HOVER {
+	border: 1px solid #bbbbbb;
 }
 
-span.span-green{
-	color : green;	
+td.editable:HOVER {
+	border: 1px solid transparent;
+}
+
+span.span-red {
+	color: red;
+}
+
+span.span-bold {
+	font-weight: bold;
+}
+
+span.span-green {
+	color: green;
+}
+
+/*******************************
+	REPORT FORM COMPONENTS
+********************************/
+.rpt-date-crit {
+	position: absolute;
+	margin-left: 4px;
+}
+
+#report-criteria-panel li {
+	list-style-type: none;
 }
