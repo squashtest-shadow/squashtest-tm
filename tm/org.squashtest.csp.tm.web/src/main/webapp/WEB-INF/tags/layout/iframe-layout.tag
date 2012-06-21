@@ -73,29 +73,13 @@
 		<f:message var="canotLoadMessage" key="iframe.cantLoad.message"/>
 		<f:message var="canotLoadLink" key="iframe.cantLoad.link"/>
 		<f:message var="canotLoadNote" key="iframe.cantLoad.note"/>
-		<iframe id="iframePpal" src="${ iframeUrl }" style="height: 100%; width: 100%;"></iframe></div>
-		<script type="text/javascript">
- 			$(function() { 
-				if($("iframe#iframePpal").html() == ""){ 
-					var content = "<html><body>" + "<div id='canotLoad'><p>${canotLoadMessage} "
-					+"<br><br><a href='${ iframeUrl }' target='_blank'> ${canotLoadLink} </a>"
-					+"<br><br>${canotLoadNote }</p></div>"
-					+"</body></html>";
-					var iframe = document.getElementById("iframePpal");
-					var doc = iframe.document;
-					if(iframe.contentDocument) {doc = iframe.contentDocument; }// For NS6
-				    else {if(iframe.contentWindow) { doc = iframe.contentWindow.document; }}// For IE5.5 and IE6
-				    // Put the content in the iframe
-				    doc.open();
-				    doc.writeln(content);
-				    doc.close(); 
-				}
- 			} );
-//  		   var iframe = document.createElement("iframe");
-// 		    var iframediv = document.getElementById("iframeDiv");
-// 		    iframediv.appendChild(iframe);
- 		</script> 
-
+		<iframe id="iframePpal" src="${ iframeUrl }" style="height: 100%; width: 100%;"></iframe>
+		</div>
+		
+<!-- 		Here is part to write if can detect iframe did not load -->
+<%-- 		<div id='canotLoad'><p>${canotLoadMessage}  --%>
+<%-- 		<br><br><a href='${ iframeUrl }' target='_blank'> ${canotLoadLink} </a> --%>
+<%-- 		<br><br>${canotLoadNote }</p></div> --%>
 	</div>
 	<jsp:invoke fragment="footer" />
 </body>
