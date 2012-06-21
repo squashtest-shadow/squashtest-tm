@@ -18,28 +18,32 @@
  *     You should have received a copy of the GNU Lesser General Public License
  *     along with this software.  If not, see <http://www.gnu.org/licenses/>.
  */
-package org.squashtest.csp.tm.internal.service;
+package org.squashtest.csp.tm.internal.service
 
-import static org.junit.Assert.*;
+import static org.junit.Assert.*
 
-import org.squashtest.csp.tm.domain.LoginAlreadyExistsException;
-import org.squashtest.csp.tm.domain.users.User;
-import org.squashtest.csp.tm.domain.users.UsersGroup;
-import org.squashtest.csp.tm.internal.repository.UserDao;
-import org.squashtest.csp.tm.internal.repository.UsersGroupDao;
-import org.squashtest.csp.tm.service.AdministrationService;
+import org.squashtest.csp.core.service.security.AdministratorAuthenticationService
+import org.squashtest.csp.tm.domain.LoginAlreadyExistsException
+import org.squashtest.csp.tm.domain.users.User
+import org.squashtest.csp.tm.domain.users.UsersGroup
+import org.squashtest.csp.tm.internal.repository.UserDao
+import org.squashtest.csp.tm.internal.repository.UsersGroupDao
+import org.squashtest.csp.tm.internal.repository.hibernate.HibernateUserDao
+import org.squashtest.csp.tm.service.AdministrationService
 
-import spock.lang.Specification;
+import spock.lang.Specification
 
 class AdministrationServiceImplTest extends Specification {
 
-	AdministrationService service = new AdministrationServiceImpl();
+	AdministrationService service = new AdministrationServiceImpl()
 	UserDao userDao = Mock()
 	UsersGroupDao groupDao = Mock()
+	AdministratorAuthenticationService adminService = Mock()
 
 	def setup(){
 		service.userDao = userDao
 		service.groupDao = groupDao
+		service.adminService = adminService
 	}
 
 	def "shoud add a group to a specific user" (){
@@ -58,16 +62,16 @@ class AdministrationServiceImplTest extends Specification {
 		user.group == group
 	}
 
-	def "should throw a LoginAlreadyExistException"(){
+	def "should check login availability"(){
 		given:
 		User user = new User()
+		user.setLogin("login")
 		String login = "login"
-		userDao.findUserByLogin("login")>> user
-
+		
 		when:
-		service.checkLoginAvailability("login")
+		service.addUser(user, 2L, "password")
 
 		then:
-		thrown LoginAlreadyExistsException
+		userDao.checkLoginAvailability("login")
 	}
 }
