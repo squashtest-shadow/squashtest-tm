@@ -67,27 +67,27 @@ http://www.springframework.org/schema/util http://www.springframework.org/schema
 		</property>
 		<property name="form">
 			<list>
-    <!-- Scheduled start date picker -->
+   				<!-- Scheduled start date picker -->
 				<bean class="org.squashtest.tm.api.report.form.DateInput">
 					<property name="name" value="scheduledStart" />
 					<property name="labelKey" value="campaign.scheduledStart.label" />
 				</bean>
-<!-- actual start date picker -->
+				<!-- actual start date picker -->
 				<bean class="org.squashtest.tm.api.report.form.DateInput">
 					<property name="name" value="actualStart" />
 					<property name="labelKey" value="campaign.actualStart.label" />
 				</bean>
-<!-- Scheduled end date picker -->
+				<!-- Scheduled end date picker -->
 				<bean class="org.squashtest.tm.api.report.form.DateInput">
 					<property name="name" value="scheduledEnd" />
 					<property name="labelKey" value="campaign.scheduledEnd.label" />
 				</bean>
-<!-- actual end date picker -->
+				<!-- actual end date picker -->
 				<bean class="org.squashtest.tm.api.report.form.DateInput">
 					<property name="name" value="actualEnd" />
 					<property name="labelKey" value="campaign.actualEnd.label" />
 				</bean>
-<!-- campaign status dropdown -->
+				<!-- campaign status dropdown -->
 				<bean class="org.squashtest.tm.api.report.form.DropdownList">
 					<property name="name" value="campaignStatus" />
 					<property name="labelKey" value="campaignStatus.label" />
@@ -206,12 +206,34 @@ http://www.springframework.org/schema/util http://www.springframework.org/schema
 		<property name="form">
 			<list>
 				<bean class="org.squashtest.tm.api.report.form.RadioButtonsGroup">
-					<property name="name" value="mode" />
+					<property name="name" value="selectionMode" />
+					<property name="labelKey" value="report.coverage.criteria.selectionMode.label" />
+					<property name="options">
+						<list>
+							<bean class="org.squashtest.tm.api.report.form.OptionInput">
+								<property name="value" value="EVERYTHING" />
+								<property name="defaultSelected" value="true" />
+								<property name="labelKey" value="report.coverage.criteria.selectionMode.everything.label" />
+							</bean>
+							<bean class="org.squashtest.tm.api.report.form.OptionInput">
+								<property name="value" value="PROJECT_PICKER" />
+								<property name="labelKey" value="report.coverage.criteria.selectionMode.projectPicker.label" />
+							</bean>
+						</list>
+					</property>
+				</bean>
+				<bean class="org.squashtest.tm.api.report.form.ProjectPicker">
+					<property name="name" value="projectIds" />
+					<property name="labelKey" value="report.criteria.panel.projectlist.label" />
+				</bean>
+				<bean class="org.squashtest.tm.api.report.form.RadioButtonsGroup">
+					<property name="name" value="versionManagement" />
 					<property name="labelKey" value="report.criteria.panel.requirement.version.label" />
 					<property name="options">
 						<list>
 							<bean class="org.squashtest.tm.api.report.form.OptionInput">
 								<property name="value" value="1" />
+								<property name="defaultSelected" value="true" />
 								<property name="labelKey" value="report.criteria.panel.requirement.version.include.all.label" />
 							</bean>
 							<bean class="org.squashtest.tm.api.report.form.OptionInput">
