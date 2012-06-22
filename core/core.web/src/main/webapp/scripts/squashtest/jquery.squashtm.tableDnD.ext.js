@@ -140,7 +140,7 @@ jQuery.tableDnD = {
     },
 
     /** This function makes all the rows on the table draggable apart from those marked as "NoDrag" */
-    makeDraggable: function(table) { //This is overriden below
+    makeDraggable: function(table) {
 //        var config = table.tableDnDConfig;
 //		if (table.tableDnDConfig.dragHandle) {
 //			// We only need to add the event to the specified cells
@@ -466,10 +466,13 @@ jQuery.tableDnD.makeDraggable = function (table) {
 		cells.each(function () {
 			// The cell is bound to "this"
             jQuery(this).mousedown(function (ev) {
-         	
-				var allRows = $(".ui-state-row-selected", table).add(this.parentNode);
+            	
+            	// ADDED CUSTOM PART             	
+				var allRows = $(".ui-state-row-selected", $(table)).add(this.parentNode);
 				allRows.addClass('nodrop');	
 				document.body.style.cursor = "n-resize";
+				// END ADDED CUSTOM PART 
+                
                 jQuery.tableDnD.dragObject = jQuery.tableDnD.adaptDragObject(allRows);
                 jQuery.tableDnD.currentTable = table;
 				
@@ -491,9 +494,12 @@ jQuery.tableDnD.makeDraggable = function (table) {
 			if (! row.hasClass("nodrag")) {
                 row.mousedown(function (ev) {
                     if (ev.target.tagName == "TD") {
-                    	var allRows = $(".ui-state-row-selected", table);   
+                    	
+                    	// ADDED CUSTOM PART 
+                    	var allRows = $(".ui-state-row-selected", $(table));   
 						allRows.addClass('nodrop');						
-                		
+                		// END ADDED CUSTOM PART 
+						
                         jQuery.tableDnD.dragObject = jQuery.tableDnD.adaptDragObject(allRows);
                         jQuery.tableDnD.currentTable = table;
                         jQuery.tableDnD.mouseOffset = jQuery.tableDnD.getMouseOffset(this, ev);
