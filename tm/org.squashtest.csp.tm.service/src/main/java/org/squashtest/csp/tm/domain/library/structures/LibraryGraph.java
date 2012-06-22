@@ -79,15 +79,16 @@ public class LibraryGraph<T extends GraphNode<T>> {
 	
 	
 	public T getNode(Long key){
-		if (key==null) return null;
+		 T toReturn = null;
+		if (key!=null){
 		
-		for (T node : nodes){
-			if (node.getKey().equals(key)){
-				return node;
+			for (T node : nodes){
+				if (node.getKey().equals(key)){
+					toReturn =  node;
+				}
 			}
 		}
-		
-		return null;
+		return toReturn;
 	}
 	
 	private T createIfNotExists(T data){

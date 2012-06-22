@@ -82,8 +82,8 @@ public class  LibraryTree<T extends TreeNode<T>>{
 	 */
 	public List<T> getLayer(Integer depth){
 		
-		if (depth<0) throw new IndexOutOfBoundsException("Below lower bound : "+depth);
-		if (depth > Collections.max(layers.keySet())) throw new IndexOutOfBoundsException("Above upper bound : "+depth);
+		if (depth<0){ throw new IndexOutOfBoundsException("Below lower bound : "+depth);}
+		if (depth > Collections.max(layers.keySet())){ throw new IndexOutOfBoundsException("Above upper bound : "+depth);}
 		
 		return layers.get(depth);		
 		
@@ -104,7 +104,7 @@ public class  LibraryTree<T extends TreeNode<T>>{
 		
 		if (parent==null){
 			
-			if (layers.get(0)==null) layers.put(0, new ArrayList<T>());
+			if (layers.get(0)==null){ layers.put(0, new ArrayList<T>());}
 			
 			childNode.setParent(null);
 			childNode.setTree(this);
@@ -115,7 +115,7 @@ public class  LibraryTree<T extends TreeNode<T>>{
 			parent.addChild(childNode);	
 			
 			int layerIndex =childNode.getDepth();
-			if (layers.get(layerIndex)==null) layers.put(layerIndex, new ArrayList<T>());
+			if (layers.get(layerIndex)==null){ layers.put(layerIndex, new ArrayList<T>());}
 			
 			layers.get(layerIndex).add(childNode);
 		}		
@@ -209,7 +209,7 @@ public class  LibraryTree<T extends TreeNode<T>>{
 		if (key == null) return null;
 		
 		for (T node : getAllNodes()){
-			if (node.getKey().equals(key)) return node;			
+			if (node.getKey().equals(key)) {return node;}		
 			
 		}	
 		

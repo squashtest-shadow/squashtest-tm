@@ -183,7 +183,7 @@ public class ZipReader implements ArchiveReader {
 
 	@Override
 	public Entry next() {
-		if (nextEntry == null) readNext();
+		if (nextEntry == null){ readNext();}
 		currentEntry = nextEntry;
 		nextEntry=null;
 		return currentEntry;

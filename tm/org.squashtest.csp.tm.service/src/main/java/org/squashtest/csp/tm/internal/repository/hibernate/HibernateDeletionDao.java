@@ -55,7 +55,7 @@ public abstract class HibernateDeletionDao implements DeletionDao {
 		
 		List<Object[]> attachmentContentIds ;
 		
-		if (attachmentListIds.isEmpty()) return;
+		if (attachmentListIds.isEmpty()) {return;}
 
 		// we handle the cascade ourselves to make sure that the deletion is carried properly
 		attachmentContentIds = executeSelectNamedQuery("attachment.getAttachmentAndContentIdsFromList", "listIds", attachmentListIds);
@@ -107,7 +107,7 @@ public abstract class HibernateDeletionDao implements DeletionDao {
 	 */
 	public void removeAttachmentList(AttachmentList list) {
 		
-		if (list == null ) return ;
+		if (list == null ) {return ;}
 		
 		List<AttachmentContent> contentList = new LinkedList<AttachmentContent>();
 		Set<Attachment> attachmentList = list.getAllAttachments();

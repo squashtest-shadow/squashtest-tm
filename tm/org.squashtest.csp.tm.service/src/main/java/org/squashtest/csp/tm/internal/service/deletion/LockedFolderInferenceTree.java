@@ -59,7 +59,7 @@ class LockedFolderInferenceTree extends LibraryTree<LockedFolderInferenceTree.No
 				Node node = (Node) input;
 				
 				//if the node is already locked we skip it.
-				if (! node.isDeletable()) return;
+				if (! node.isDeletable()){ return;}
 				
 				//otherwise let's loop. A node is locked if all at least one child is locked.
 				boolean isDeletable = true;

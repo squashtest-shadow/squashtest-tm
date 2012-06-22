@@ -69,8 +69,8 @@ public abstract class IsInSet<T extends Number> extends ReportCriterion {
 
 		Object[] rawParameters = getParameters();
 
-		if ((rawParameters == null) || (rawParameters.length == 0))
-			return null;
+		if ((rawParameters == null) || (rawParameters.length == 0)){
+			return null;}
 		try {
 			List<Object> typedValues = new LinkedList<Object>();
 

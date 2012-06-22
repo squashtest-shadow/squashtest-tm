@@ -54,11 +54,11 @@ public class GraphNode<T extends GraphNode<T>>{
 	}
 	
 	public void addParent(T parent){
-		if (parent!=null) parents.add(parent);
+		if (parent!=null){ parents.add(parent);}
 	}
 	
 	public void addChild(T child){
-		if (child!=null) children.add(child);
+		if (child!=null){ children.add(child);}
 	}
 
 	public Long getKey(){

@@ -51,7 +51,7 @@ public class AboveDateCriterion extends ReportCriterion {
 
 	private Date makeDate(){
 		Object[] values = getParameters();
-		if (values.length!=1) throw new IllegalArgumentException("Criterion of type "+this.getClass().getSimpleName()+" cannot have more than one argument");
+		if (values.length!=1){ throw new IllegalArgumentException("Criterion of type "+this.getClass().getSimpleName()+" cannot have more than one argument");}
 		String strDate = values[0].toString();
 		Long lDate = Long.parseLong(strDate);
 		

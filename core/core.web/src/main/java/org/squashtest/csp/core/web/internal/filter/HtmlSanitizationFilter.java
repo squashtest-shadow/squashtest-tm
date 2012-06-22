@@ -76,7 +76,7 @@ public class HtmlSanitizationFilter implements Filter {
 	}
 	
 	static 	protected String[] escapeValue(String[] orig){
-		if (orig== null) return null;
+		if (orig== null){ return null;}
 		
 		String[] aString = new String[orig.length];
 					
@@ -101,7 +101,7 @@ public class HtmlSanitizationFilter implements Filter {
 		@Override
 		public String getParameter(String name) {
 			String value = request.getParameter(name);
-			if (value==null) return null;
+			if (value==null){ return null;}
 			String[] cleaned = escapeValue(new String[] {value});
 			return (cleaned !=null) ? cleaned[0] : null;
 		}

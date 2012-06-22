@@ -43,7 +43,7 @@ public class LoginFormDiscardingHttpSessionRequestCache extends
 			HttpServletResponse response) {
 		
 		String path = request.getServletPath();
-		if (path.equals(loginFormUrl)) return;
+		if (path.equals(loginFormUrl)) {return;}
 		
 		super.saveRequest(request, response);
 	}

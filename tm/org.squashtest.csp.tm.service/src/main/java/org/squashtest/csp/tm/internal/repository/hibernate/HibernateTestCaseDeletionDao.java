@@ -147,8 +147,8 @@ public class HibernateTestCaseDeletionDao extends HibernateDeletionDao implement
 			Integer offset = ((BigInteger) pair[1]).intValue();
 
 			// we skip if the offset is 0
-			if (offset == 0)
-				continue;
+			if (offset == 0){
+				continue;}
 
 			if (!result.containsKey(offset)) {
 				result.put(offset, new LinkedList<Long>());

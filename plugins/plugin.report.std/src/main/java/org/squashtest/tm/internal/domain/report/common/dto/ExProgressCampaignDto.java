@@ -122,8 +122,8 @@ public class ExProgressCampaignDto {
 
 	public ExProgressCampaignStatus getCampaignStatus() {
 		for (ExProgressIterationDto iter : iterations) {
-			if (iter.getfPercentageProgress() < 0.9999)
-				return ExProgressCampaignStatus.CAMPAIGN_RUNNING;
+			if (iter.getfPercentageProgress() < 0.9999){
+				return ExProgressCampaignStatus.CAMPAIGN_RUNNING;}
 		}
 		return ExProgressCampaignStatus.CAMPAIGN_OVER;
 	}

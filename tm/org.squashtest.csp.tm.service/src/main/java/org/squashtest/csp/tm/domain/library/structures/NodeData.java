@@ -42,9 +42,9 @@ public abstract class NodeData<KEY_TYPE> {
 	}
 	
 	public final boolean equals(NodeData<KEY_TYPE> otherData){
-		if (otherData == null) return false;
-		if ((getKey()==null) && (otherData.getKey()!=null)) return false;
-		if ((getKey()==null) && (otherData.getKey())==null) return true;
+		if (otherData == null) {return false;}
+		if ((getKey()==null) && (otherData.getKey()!=null)) {return false;}
+		if ((getKey()==null) && (otherData.getKey())==null) {return true;}
 		return getKey().equals(otherData.getKey());
 	}
 	

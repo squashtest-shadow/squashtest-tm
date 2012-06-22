@@ -189,8 +189,8 @@ public enum RequirementStatus implements Level {
 
 	protected Set<RequirementStatus> defaultAvailableSet() {
 		Set<RequirementStatus> next = new TreeSet<RequirementStatus>();
-		if (RequirementStatus.OBSOLETE != this)
-			next.add(RequirementStatus.OBSOLETE);
+		if (RequirementStatus.OBSOLETE != this){
+			next.add(RequirementStatus.OBSOLETE);}
 		next.add(this);
 		return next;
 	}

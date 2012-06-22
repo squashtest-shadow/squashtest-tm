@@ -55,20 +55,15 @@ public class ReportIdentifier {
 	 */
 	@Override
 	public boolean equals(Object obj) {
-		if (this == obj)
-			return true;
-		if (obj == null)
-			return false;
-		if (getClass() != obj.getClass())
-			return false;
+		
+		if (this == obj){return true;}
+		if (obj == null){return false;}
+		if (getClass() != obj.getClass()){return false;}
 		ReportIdentifier other = (ReportIdentifier) obj;
-		if (index != other.index)
-			return false;
+		if (index != other.index){return false;}
 		if (namespace == null) {
-			if (other.namespace != null)
-				return false;
-		} else if (!namespace.equals(other.namespace))
-			return false;
+			if (other.namespace != null){return false;}
+		} else if (!namespace.equals(other.namespace)){	return false;}
 		return true;
 	}
 
