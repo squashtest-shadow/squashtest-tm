@@ -669,5 +669,36 @@ public class BugtrackerController {
 					ownership.getIssue().getPriority().getName() };
 		}
 	}
+/*
+	@RequestMapping(value = EXECUTION_TYPE + "/{execId}/debug", method = RequestMethod.GET)
+	public ModelAndView getExecIssuePanelDebug(@PathVariable Long execId, Locale locale,
+			@RequestParam(value = "style", required = false, defaultValue = "toggle") String panelStyle) {
 
+		Bugged bugged = bugTrackerLocalService.findBuggedEntity(execId, Execution.class);
+		return makeIssuePanelDebug(bugged, EXECUTION_TYPE, locale, panelStyle);
+	}
+	
+	private ModelAndView makeIssuePanelDebug(Bugged entity, String type, Locale locale, String panelStyle) {
+
+		BugTrackerStatus status = checkStatus();
+
+		if (status == BugTrackerStatus.BUGTRACKER_UNDEFINED) {
+			return new ModelAndView("fragment/issues/bugtracker-panel-empty");
+		} else {
+
+			BugTrackerInterfaceDescriptor descriptor = bugTrackerLocalService.getInterfaceDescriptor();
+			descriptor.setLocale(locale);
+
+			ModelAndView mav = new ModelAndView("fragment/issues/bugtracker-panel-debug");
+			mav.addObject("entity", entity);
+			mav.addObject("entityType", type);
+			mav.addObject("interfaceDescriptor", descriptor);
+			mav.addObject("panelStyle", panelStyle);
+			mav.addObject("bugTrackerStatus", status);
+			return mav;
+		}
+	}
+	*/
+
+	
 }

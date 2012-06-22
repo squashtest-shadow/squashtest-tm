@@ -379,6 +379,54 @@ div.issue-report-dialog div.issue-report-break{
 	height : 24px;
 }
 
+/* ***************************** 
+	popupError
+********************************/
+
+
+div.error-overlay{
+	position : absolute;
+	top	:	0;
+	bottom : 0;
+	left : 0;
+	right : 0;
+    z-index: 1000;
+	
+	background-color: lightgray;
+	opacity : 0.8;	/* we wont set the filter alpha for IE because it'll mess up the text */
+
+
+}
+
+
+div.error-style{
+    border: 1px solid black;
+    border-radius: 3px 3px 3px 3px;
+    left: 12.5%;
+	top : 40%;
+    max-width: 75%;
+	min-width: 75%;
+	-moz-box-shadow: 5px 5px 5px #111111;
+	-webkit-box-shadow: 5px 5px 5px #111111;
+	box-shadow: 5px 5px 5px #111111;
+	cursor : pointer;
+	text-align : center;	
+	opacity : 1.0;/* we wont set the filter alpha for IE because it'll mess up the text */
+	
+	position:absolute;
+	background-color:white;
+}
+
+
+div.error-inner{
+	padding : 10px 10px;
+	position:relative;
+}
+.error-hidden-state{
+	display : none;
+}
+
+
 /*******************************
 	information panel / description panel
 ********************************/

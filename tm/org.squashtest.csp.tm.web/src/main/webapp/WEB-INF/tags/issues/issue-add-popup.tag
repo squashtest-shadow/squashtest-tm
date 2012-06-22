@@ -34,9 +34,6 @@
 <%@ taglib prefix="s" uri="http://www.springframework.org/tags"%>
 <%@ taglib tagdir="/WEB-INF/tags/component" prefix="comp"%>
 
-
-<link rel="stylesheet" type="text/css" href="http://localhost/scripts/error.css" />
-
 <f:message var="addIssueLabel" key="dialog.button.add.label" />
 
 <%-- 
@@ -75,7 +72,14 @@ The reason for that is that the parameters are urls already.
  		</div>
 		
 	 	<div class="content" >	
+	
+	 			<div class="issue-report-error">
+	 				<comp:error-message forField="bugtracker" />
+	 			</div>
+	 				 	
+	 	
 	 		<form>
+	 		
 	 		
 	 			<div class="attach-issue">
 	 				<span class="issue-radio">
@@ -88,11 +92,7 @@ The reason for that is that the parameters are urls already.
 	 				<input type="button" name="search-issue" value="${searchIssueLabel}"/>
 	 			</div>
 	 		
-	 		
-	 			<div class="issue-report-error">
-	 				<comp:error-message forField="bugtracker" />
-	 			</div>
-	 			
+	 	
 	 			
 	 			<div class="issue-report-break">
 	 				

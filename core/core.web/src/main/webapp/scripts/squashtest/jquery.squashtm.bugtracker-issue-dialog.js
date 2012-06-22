@@ -27,38 +27,6 @@
 	}
 
 	
-	$.widget("squash.errorDisplay", {
-						
-		_create: function(){
-			var jqElt = this.element;
-		
-			jqElt.wrap('<div class="error-overlay error-hidden-state" />');
-			jqElt.addClass('error-style');
-
-			jqElt.click(function(){jqElt.hide();});
-			
-			return this;
-
-		},
-		
-		show : function(){
-			this.element.parent().removeClass('error-hidden-state');
-		},
-		
-		hide : function(){
-			this.element.parent().addClass('error-hidden-state');
-		},
-	
-		hangTo : function(target){
-			if (target.prepend){
-				target.prepend(this.element.parent());
-			}else{
-				$(target).prepend(this.element.parent());
-			}
-		}
-			
-	})
-	
 
 	$.fn.btCbox = function(emptyMessage){
 		
@@ -66,9 +34,7 @@
 		
 		this.empty=true;
 		
-		this.changeCallback = function(){};
-		
-
+	
 		this.flush = function(){
 			this.find("option").remove();
 		}
@@ -205,9 +171,9 @@
 		
 		
 		//the error display
-	/*	this.errDisplay = $(".issue-report-error", this);
-		this.errDisplay.errorDisplay();
-		this.errDisplay.errorDisplay('hangTo', this.parent());		*/
+		this.error = $(".issue-report-error", this);
+		this.error.popupError();
+		
 		
 		
 		//a callback when the post is a success
@@ -254,6 +220,7 @@
 		});
 				
 		/* ************* public popup state methods **************** */
+
 		
 		var isAttachMode = $.proxy(function(){
 			return this.attachRadio.is(':checked');
@@ -348,9 +315,7 @@
 				commentText.attr('disabled', 'disabled');
 			}
 		}, self);
-		
 
-	
 	
 		/* ********************** model management ************ */
 			
@@ -382,7 +347,7 @@
 		var resetModel = $.proxy(function(){
 			getBugReportTemplate()
 			.done(function(){
-				var copy = JSON.parse(JSON.stringify(self.template));
+				var copy = $.extend(true, {}, self.template);
 				setModel(copy);	
 			})
 			.fail(bugReportError);
@@ -424,7 +389,7 @@
 		//we let the usual error handling do its job here
 		var bugReportError = $.proxy(function(jqXHR, textStatus, errorThrown){
 			flipToMain();
-			//this.errDisplay.errorDisplay('show');
+			this.error.popupError('show');
 		}, self);
 		
 		
