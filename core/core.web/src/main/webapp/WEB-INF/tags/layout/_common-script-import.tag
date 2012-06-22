@@ -42,7 +42,26 @@
 
 <script type="text/javascript" src="${ pageContext.servletContext.contextPath }/scripts/squashtest/classes/StatusFactory.js"></script>
 
-<script type="text/javascript" src="http://localhost/scripts/jquery.squashtm.bugtracker-issue-dialog.js" ></script>
+
+<!-- --------------------DataTables library imports. SHOULD BE IMPORTED BEFORE DATATABLE USAGE--------------------------------------------- -->
+
+<script type="text/javascript" src="${ pageContext.servletContext.contextPath }/scripts/datatables/jquery.dataTables.js"></script>
+<script type="text/javascript" src="${ pageContext.servletContext.contextPath }/scripts/squashtest/jquery.squashtm.datatables.js"></script>
+
+<%-- transitional javascript --%>
+
+<script type="text/javascript" src="${ pageContext.servletContext.contextPath }/scripts/squashtest/jquery.squashtm.datatables.v2.js"></script>
+ <!-- 
+ <script type="text/javascript" src="http://localhost/scripts/jquery.squashtm.datatables.v2.js"></script>
+  -->
+  
+<script type="text/javascript" src="${ pageContext.servletContext.contextPath }/scripts/squashtest/jquery.squashtm.tableDnD.ext.js"></script> 
 
 
-<dt:datatables-header/>
+<script type="text/javascript">
+	$(function() {
+		enableTableRangeSelection();
+	});
+</script>
+
+<!-- -------------------- /DataTables library imports. SHOULD BE IMPORTED BEFORE DATATABLE USAGE--------------------------------------------- -->
