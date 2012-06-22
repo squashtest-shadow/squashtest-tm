@@ -79,4 +79,8 @@
 	<!-- the following is an heresy imposed by multi security contexts across OSGI bundles.-->
 	<osgi:service ref="squashtest.core.security.JdbcUserDetailsManager" 
 		interface="org.springframework.security.provisioning.UserDetailsManager" />
+		
+	<!--  hooks for event on authentication success -->
+	<osgi:list id="core.web.registry.authSuccessCallback" interface="org.squashtest.csp.core.web.servlet.handler.AuthenticationSuccessCallback"/>
+	
 </beans>

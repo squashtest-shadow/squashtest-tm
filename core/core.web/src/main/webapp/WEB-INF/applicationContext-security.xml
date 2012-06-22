@@ -91,7 +91,10 @@
 	</beans:bean>
 	
 	<beans:bean id="accessGrantedHandler" 
-				class="org.squashtest.csp.core.web.servlet.handler.AuthenticationSuccessCallbacksHandler" />
+				class="org.squashtest.csp.core.internal.security.web.authentication.AuthenticationSuccessCallbacksHandler" 
+				>
+		<beans:property name="callbacks" ref="core.web.registry.authSuccessCallback"/>		
+	</beans:bean>
 
 
 	<beans:bean id="authenticationProcessingFilterEntryPoint" class="org.squashtest.csp.core.internal.security.web.authentication.RedirectEntryPoint">

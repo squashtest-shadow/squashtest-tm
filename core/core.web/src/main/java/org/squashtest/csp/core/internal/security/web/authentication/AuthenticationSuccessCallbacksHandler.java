@@ -18,31 +18,35 @@
  *     You should have received a copy of the GNU Lesser General Public License
  *     along with this software.  If not, see <http://www.gnu.org/licenses/>.
  */
-package org.squashtest.csp.core.web.servlet.handler;
+package org.squashtest.csp.core.internal.security.web.authentication;
 
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Map;
 
 import javax.servlet.ServletException;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
+import javax.servlet.http.HttpSession;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.springframework.beans.BeansException;
-import org.springframework.beans.factory.BeanFactory;
-import org.springframework.beans.factory.BeanFactoryAware;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.web.authentication.SavedRequestAwareAuthenticationSuccessHandler;
 import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
+import org.squashtest.csp.core.web.servlet.handler.AuthenticationSuccessCallback;
 
 
 /**
  * 
- * That bean is plugged as a AuthenticationSuccessHandler to the web authentication filter and performs additional
- * operations once the user successfully logged in.
+ * <p>
+ * 	  That bean is plugged as a AuthenticationSuccessHandler to the web authentication filter and performs additional
+ *    operations once the user successfully logged in.
+ * </p>
+ * <p>
+ * 	  Also, it may be used as a osgi plugin registration listener 
+ * </p>
  * 
  */
 
@@ -54,13 +58,24 @@ public class AuthenticationSuccessCallbacksHandler extends
 	private String requestParamsPasswordKey = UsernamePasswordAuthenticationFilter.SPRING_SECURITY_FORM_PASSWORD_KEY;
 	private String requestParamsUsernameKey = UsernamePasswordAuthenticationFilter.SPRING_SECURITY_FORM_USERNAME_KEY;
 
-	private List<AuthenticationSuccessCallback> localActions = new ArrayList<AuthenticationSuccessCallback>();
+	private List<AuthenticationSuccessCallback> callbacks = new ArrayList<AuthenticationSuccessCallback>();
 
+
+	public List<AuthenticationSuccessCallback> getCallbacks() {
+		return callbacks;
+	}
+
+	public void setCallbacks(List<AuthenticationSuccessCallback> callbacks) {
+		this.callbacks = callbacks;
+	}
 
 	
-	@Autowired
-	public void setLocalActions(List<AuthenticationSuccessCallback> localActions){
-		this.localActions=localActions;
+	public void registerCallback(AuthenticationSuccessCallback callback, Map serviceProperties){
+		this.callbacks.add(callback);
+	}
+	
+	public void unregisterProvider(AuthenticationSuccessCallback callback, Map serviceProperties) {
+		this.callbacks.remove(callback);		
 	}
 	
 	@Override
@@ -70,10 +85,11 @@ public class AuthenticationSuccessCallbacksHandler extends
 		
 		String user = findLogin(request);
 		String password = findPassword(request);
+		HttpSession session = request.getSession();
 				
-		for (AuthenticationSuccessCallback action : localActions){
+		for (AuthenticationSuccessCallback action : callbacks){
 			try{
-				action.onSuccess(user, password);
+				action.onSuccess(user, password, session);
 			}catch(Exception ex){
 				logger.info("Authentication success callbacks : callback class '"
 							+action.getClass().getName()+"' raised an exception : ", ex 

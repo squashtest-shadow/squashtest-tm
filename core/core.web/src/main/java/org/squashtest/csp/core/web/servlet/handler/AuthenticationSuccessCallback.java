@@ -20,6 +20,8 @@
  */
 package org.squashtest.csp.core.web.servlet.handler;
 
+import javax.servlet.http.HttpSession;
+
 
 /**
  * Implementations, if published through OSGI, will be invoked when a user successfully authenticate. Credentials will be passed 
@@ -30,6 +32,5 @@ package org.squashtest.csp.core.web.servlet.handler;
  */
 public interface AuthenticationSuccessCallback {
 
-	void onSuccess(String username, String password);
-	
+	void onSuccess(String username, String password, HttpSession session);
 }

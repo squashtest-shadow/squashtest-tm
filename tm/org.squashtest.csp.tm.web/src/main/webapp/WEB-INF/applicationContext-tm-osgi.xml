@@ -137,5 +137,16 @@
 		<osgi:listener ref="squash.tm.report.ReportsRegistry" bind-method="registerReports" unbind-method="unregisterReports" />
 		<osgi:listener ref="squash.tm.report.JasperReportsViewDefinitionsRegistry" bind-method="registerViews" unbind-method="registerViews" />
 	</osgi:list>
+	
+	
+	<!--  yes : tm.web propose one service consumed by core.web -->
+	
+	<bean id="squashtest.tm.web.authSuccessCallback.btautoconnect" 
+		class="org.squashtest.csp.tm.web.internal.handler.BugtrackerAutoconnectCallback">
+		<property name="bugTrackerLocalService" ref="squashtest.tm.service.BugTrackerLocalService"/>
+	</bean>
+	
+	<osgi:service ref="squashtest.tm.web.authSuccessCallback.btautoconnect"
+		interface="org.squashtest.csp.core.web.servlet.handler.AuthenticationSuccessCallback" />
 		
 </beans>

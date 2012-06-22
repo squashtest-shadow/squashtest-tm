@@ -20,41 +20,50 @@
  */
 package org.squashtest.csp.tm.web.internal.handler;
 
+import javax.servlet.http.HttpSession;
+
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.springframework.beans.BeansException;
-import org.springframework.beans.factory.BeanFactory;
-import org.springframework.beans.factory.BeanFactoryAware;
-import org.springframework.osgi.extensions.annotation.ServiceReference;
-import org.springframework.stereotype.Component;
 import org.squashtest.csp.core.bugtracker.core.BugTrackerRemoteException;
+import org.squashtest.csp.core.bugtracker.net.AuthenticationCredentials;
+import org.squashtest.csp.core.bugtracker.service.BugTrackerContext;
+import org.squashtest.csp.core.bugtracker.web.BugTrackerContextPersistenceFilter;
 import org.squashtest.csp.core.web.servlet.handler.AuthenticationSuccessCallback;
 import org.squashtest.csp.tm.domain.bugtracker.BugTrackerStatus;
 import org.squashtest.csp.tm.service.BugTrackerLocalService;
 
 
-@Component
+/*
+ * 
+ * Warning : its job partly overlaps the one of BugTrackerContextPersistenceFilter because
+ * it creates a BugtrackerContext.
+ * 
+ * If you really want to know the reason is that when the hook is invoked we're still in the security chain, 
+ * not in the regular filter chain. So the context does not exist yet, therefore there is no place to store the 
+ * credentials even if the bugtracker auto auth is a success. 
+ * 
+ *
+ */
 public class BugtrackerAutoconnectCallback implements
 		AuthenticationSuccessCallback{
 	
 	private static final Logger logger = LoggerFactory.getLogger(BugtrackerAutoconnectCallback.class);
 
-	private BugTrackerLocalService service;
+	private BugTrackerLocalService bugTrackerLocalService;
 	
-	
-	@ServiceReference
+
 	public void setBugTrackerLocalService(BugTrackerLocalService service){
-		this.service=service;
+		this.bugTrackerLocalService=service;
 	}
 	
 	@Override
-	public void onSuccess(String username, String password) {
-		if (service==null){
+	public void onSuccess(String username, String password, HttpSession session) {
+		if (bugTrackerLocalService==null){
 			logger.info("bugtracker autoconnect : no bugtracker available (service not ready yet). Skipping autologging.");
 			return ;
 		}
 		
-		BugTrackerStatus status = service.checkBugTrackerStatus();
+		BugTrackerStatus status = bugTrackerLocalService.checkBugTrackerStatus();
 		
 		if (status == BugTrackerStatus.BUGTRACKER_UNDEFINED){
 			logger.info("bugtracker autoconnect : no bugtracker available (none configured). Skipping autologging.");
@@ -62,7 +71,11 @@ public class BugtrackerAutoconnectCallback implements
 		}
 		
 		try{
-			service.setCredentials(username, password);
+			bugTrackerLocalService.setCredentials(username, password);
+			
+			//if success, store the new context in the session
+			createBugTrackerContext(session, username, password);			
+			
 		}catch(BugTrackerRemoteException ex){
 			logger.info("bugtracker autoconnect : failed to connect user '"+username+"' to the bugtracker with the supplied "+
 					    "credentials. He will have to connect manually later. Exception thrown is :", ex
@@ -70,6 +83,14 @@ public class BugtrackerAutoconnectCallback implements
 			return;
 		}
 
+	}
+	
+	private void createBugTrackerContext(HttpSession session, String username, String password){
+		AuthenticationCredentials creds = new AuthenticationCredentials(username, password);
+		BugTrackerContext newContext = new BugTrackerContext();
+		newContext.setCredentials(creds);
+		
+		session.setAttribute(BugTrackerContextPersistenceFilter.BUG_TRACKER_CONTEXT_SESSION_KEY, newContext);
 	}
 
 }
