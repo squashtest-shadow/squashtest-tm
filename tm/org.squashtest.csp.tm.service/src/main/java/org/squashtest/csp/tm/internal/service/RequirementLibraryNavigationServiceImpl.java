@@ -198,7 +198,7 @@ public class RequirementLibraryNavigationServiceImpl extends
 	}
 	
 	@Override
-	@PostFilter("hasPermission(filterObject, 'READ') or hasRole('ROLE_ADMIN')")
+	@PostFilter("hasPermission(filterObject, 'LINK') or hasRole('ROLE_ADMIN')")
 	public List<RequirementLibrary> findLinkableRequirementLibraries() {
 		ProjectFilter pf = projectFilterModificationService.findProjectFilterByUserLogin();
 		return pf.getActivated() ? libraryStrategy.getSpecificLibraries(pf.getProjects()) : requirementLibraryDao
