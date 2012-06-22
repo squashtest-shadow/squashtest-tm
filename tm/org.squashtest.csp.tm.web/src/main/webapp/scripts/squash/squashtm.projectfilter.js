@@ -18,105 +18,17 @@
  *     You should have received a copy of the GNU Lesser General Public License
  *     along with this software.  If not, see <http://www.gnu.org/licenses/>.
  */
+/**
+ * requires : 
+ * * jquery.squashtm.projectpicker.js
+ */
 var squashtm = squashtm || {};
 
 squashtm.projectfilter = (function ($, window) {
-	var popupSelector = '#project-filter-popup';
+	var popupSelector = "#project-filter-popup";
+	var popupOpener = "#menu-project-filter-link";
 	var projectFilterUrl;
 
-	function setCheckBox(jqCheckbox, isEnabled) {
-		if (isEnabled) {
-			jqCheckbox.attr('checked', 'checked');
-		} else {
-			jqCheckbox.removeAttr('checked');
-		}
-	}
-
-	/** initializes the project filter popup */
-	function selectAllProjects() {
-		var boxes = $("#dialog-settings-filter-projectlist .project-checkbox");
-
-		if (boxes.length === 0) {
-			return;
-		}
-
-		$(boxes).each(function () {
-			setCheckBox($(this), true);
-		});
-	}
-
-	function deselectAllProjects() {
-		var boxes = $("#dialog-settings-filter-projectlist .project-checkbox");
-
-		if (boxes.length === 0) {
-			return;
-		}
-
-		$(boxes).each(function () {
-			setCheckBox($(this), false);
-		});
-	}
-
-	function invertAllProjects() {
-		var boxes = $("#dialog-settings-filter-projectlist .project-checkbox");
-
-		if (boxes.length === 0) {
-			return;
-		}
-
-		$(boxes).each(function () {
-			setCheckBox($(this), !$(this).is(":checked"));
-		});
-	}
-
-	/**
-	 * Code managing the loading phase of the popup. It expects the server to send the data as a json object, see
-	 * tm.web.internal.model.jquery.FilterModel
-	 * 
-	 * note : each project in the array is an array made of the following : { Long , String , Boolean )
-	 */
-	function clearFilterProject() {
-		$("#dialog-settings-filter-projectlist").empty();
-	}
-
-	function appendProjectItem(containerId, projectItemData, cssClass) {
-		var jqNewItem = $(popupSelector + " .project-item-template .project-item").clone();
-		jqNewItem.addClass(cssClass);
-
-		var jqChkBx = jqNewItem.find(".project-checkbox");
-		jqChkBx.attr('id', 'project-checkbox-' + parseInt(projectItemData[0]));
-
-		var jqName = jqNewItem.find(".project-name");
-		jqName.html(projectItemData[1]);
-
-		setCheckBox(jqChkBx, projectItemData[2]);
-
-		$("#" + containerId).append(jqNewItem);
-	}
-
-	function swapCssClass(cssClass) {
-		if (cssClass === "odd") {
-			return "even";
-		}
-		return "odd";
-	}
-	
-	function populateFilterProject(jsonData) {
-		var cssClass = "odd";
-		var i = 0;
-		for (i = 0; i < jsonData.projectData.length; i++) {
-			appendProjectItem("dialog-settings-filter-projectlist", jsonData.projectData[i], cssClass);
-			cssClass = swapCssClass(cssClass);
-		}
-		
-	}
-	
-	function loadFilterProject() {
-		clearFilterProject();
-		
-		$.get(projectFilterUrl, populateFilterProject, "json");
-	}
-	
 	function extractId(strDomId) {
 		var idTemplate = "project-checkbox-";
 		var templateLength = idTemplate.length;
@@ -158,30 +70,17 @@ squashtm.projectfilter = (function ($, window) {
 
 	function initPopup(conf) {
 		projectFilterUrl = conf.url;
-
-		var params = {
-			selector : popupSelector,
-			title : conf.title,
-			openedBy : '#menu-project-filter-link',
-			closeOnSuccess : false,
-			buttons : [ {
-				text : conf.confirmLabel,
-				click : sendNewFilter
-			}, {
-				text : conf.cancelLabel,
-				click : function () {
-					$(this).dialog('close');
-				}
-			} ],
-			width : 400,
-			open : loadFilterProject
-		};
-
-		squashtm.popup.create(params);
-
-		$("#dialog-settings-filter-selectall").click(selectAllProjects);
-		$("#dialog-settings-filter-deselectall").click(deselectAllProjects);
-		$("#dialog-settings-filter-invertselect").click(invertAllProjects);
+		
+		var picker = $(popupSelector).projectPicker({
+			url: conf.url, 
+			ok: { text: conf.confirmLabel, click: sendNewFilter }, 
+			cancel: { text: conf.cancelLabel }, 
+			width: 400
+		});
+		
+		$(popupOpener).click(function () { 
+			picker.projectPicker("open"); 
+		});
 	}
 
 	/**

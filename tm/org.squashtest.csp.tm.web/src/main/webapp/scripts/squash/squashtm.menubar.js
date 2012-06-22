@@ -23,6 +23,7 @@
  * 
  * requires jquery to be loaded prior use.
  * 
+ * 
  * @author bsiri
  * @author Gregory Fouquet
  */

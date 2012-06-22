@@ -50,9 +50,9 @@
 	</div>
 	<div id="dialog-settings-filter-maincontent">			
 		<div id="dialog-settings-filter-controls" class="project-filter-controls">
-			<a id="dialog-settings-filter-selectall" href="#">${selectallLabel}</a>
-			<a id="dialog-settings-filter-deselectall" href="#">${deselectAllLabel}</a>
-			<a id="dialog-settings-filter-invertselect" href="#">${invertselectLabel}</a>				
+			<a id="dialog-settings-filter-selectall" href="#" class="project-picker-selall">${selectallLabel}</a>
+			<a id="dialog-settings-filter-deselectall" href="#" class="project-picker-deselall">${deselectAllLabel}</a>
+			<a id="dialog-settings-filter-invertselect" href="#" class="project-picker-invsel">${invertselectLabel}</a>				
 		</div>	
 		<hr/>
 		<div id="dialog-settings-filter-projectlist" class="project-filter-list">

@@ -51,7 +51,7 @@
 		<div th:if="${sec.isAuthenticated()}">
 			<a id="menu-logout-link" href="logout.html" th:href="@{/logout}" th:text="#{workspace.menubar.logout.label}">logout</a>
 		</div>
-		<div id="project-filter-popup" class="popup-dialog">
+		<div id="project-filter-popup" class="project-picker popup-dialog not-displayed">
 			<div class="project-item-template not-displayed">
 				<div class="project-item ">
 					<input type="checkbox" class="project-checkbox"/> <span class="project-name"></span>
@@ -59,19 +59,24 @@
 			</div>
 			<div id="dialog-settings-filter-maincontent">			
 				<div id="dialog-settings-filter-controls" class="project-filter-controls">
-					<a id="dialog-settings-filter-selectall" href="javascript:void(0)" th:text="#{dialog.settings.filter.controls.selectall}">
+					<a id="dialog-settings-filter-selectall" href="javascript:void(0)" th:text="#{dialog.settings.filter.controls.selectall}" class="project-picker-selall">
 						Select all
 					</a>
-					<a id="dialog-settings-filter-deselectall" href="javascript:void(0)" th:text="#{dialog.settings.filter.controls.deselectall}">
+					<a id="dialog-settings-filter-deselectall" href="javascript:void(0)" th:text="#{dialog.settings.filter.controls.deselectall}" class="project-picker-deselall">
 						Unselect all
 					</a>
-					<a id="dialog-settings-filter-invertselect" href="javascript:void(0)" th:text="#{dialog.settings.filter.controls.invertselect}">
+					<a id="dialog-settings-filter-invertselect" href="javascript:void(0)" th:text="#{dialog.settings.filter.controls.invertselect}" class="project-picker-invsel">
 						Invert sel
 					</a>				
 				</div>	
 				<hr/>
-				<div id="dialog-settings-filter-projectlist" class="project-filter-list">
-				
+				<div id="dialog-settings-filter-projectlist" class="project-filter-list" th:remove="body">
+				<div class="project-item ">
+					<input type="checkbox" class="project-checkbox"/> <span class="project-name">Projet 1</span>
+				</div>
+				<div class="project-item ">
+					<input type="checkbox" class="project-checkbox"/> <span class="project-name">Projet 2</span>
+				</div>
 				</div>
 				<div style="clear:both;display:hidden;"></div>
 			</div>
