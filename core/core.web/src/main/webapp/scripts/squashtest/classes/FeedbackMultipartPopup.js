@@ -142,7 +142,7 @@ function FeedbackMultipartPopup(settings) {
 			var fileName = v.value;
 
 			$.each(self.parametrization.extensions, function (i, v) {
-				if (!fileName.match("." + v + "$")) {
+				if (fileName.match("." + v + "$")) {
 					validated = true;
 				}
 			});

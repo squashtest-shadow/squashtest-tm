@@ -300,7 +300,7 @@ var nonBelongingTestPlansUrl = "${nonBelongingTestPlansUrl}";
 			var col=$("td:eq(4)", this);
 			var oldContent=col.html();
 			
-			var newContent = factory.getDisplayableStatus(oldContent);	
+			var newContent = factory.getHtmlFor(oldContent);	
 			
 			col.html(newContent);
 			
