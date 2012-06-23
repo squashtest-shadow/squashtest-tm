@@ -71,8 +71,10 @@
 						</div> 
 						<div class="report-item-description">
 							<label>
-								<strong th:text="${rpt.label}">Sample report</strong><br/>
-								<strong th:text="#{${rpt.type.i18nKey}}">(Report type)</strong>
+								<strong>
+									<span th:text="${rpt.label}">Sample report</span><br/>
+									(<span th:text="#{${rpt.type.i18nKey}}">Report type</span>)
+								</strong>
 							</label>
 							<br/>
 							<span th:text="${rpt.description}">Report description</span>
