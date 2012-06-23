@@ -207,6 +207,33 @@
 							<input th:name="*{name} + '-open'" type="button" class="button rpt-tree-crit-open" 
 								th:value="#{report.form.tree-picker.button.label}" th:attr="data-id-opened=*{name} + '-dialog'" />
 						</div>
+						<div th:case="'PROJECT_PICKER'">
+							<div th:id="*{name}" th:title="#{report.form.project-picker.dialog.title}" class="rpt-projects-crit-container project-picker popup-dialog not-displayed">
+								<div class="project-item-template not-displayed">
+									<div class="project-item ">
+										<input type="checkbox" class="project-checkbox"/> <span class="project-name"></span>
+									</div>
+								</div>
+								<div>			
+									<div class="project-filter-controls">
+										<a href="javascript:void(0)" th:text="#{dialog.settings.filter.controls.selectall}" class="project-picker-selall">
+											Select all
+										</a>
+										<a href="javascript:void(0)" th:text="#{dialog.settings.filter.controls.deselectall}" class="project-picker-deselall">
+											Unselect all
+										</a>
+										<a href="javascript:void(0)" th:text="#{dialog.settings.filter.controls.invertselect}" class="project-picker-invsel">
+											Invert sel
+										</a>				
+									</div>	
+									<hr/>
+									<div class="project-filter-list"></div>
+									<div style="clear:both;display:hidden;"></div>
+								</div>
+							</div>
+							<label th:for="*{name} + '-open'" th:text="*{label}">Projects</label>
+							<input th:id="*{name} + '-open'" type="button" class="button rpt-projects-crit-open" th:value="#{report.form.project-picker.button.label}" th:attr="data-id-opened=*{name}" />
+						</div>
 					</div>
 					<div th:remove="all">
 						<span>
@@ -258,31 +285,48 @@
 						</div>
 					</div>						
 					<div th:remove="all">
-						<span th:case="DATE">
+						<span>
 							<span class="label">Date criteria</span>
 							<span class="rpt-date-crit" id="rpt-date-crit">---</span>
 						</span>
 					</div>		
 					<div th:remove="all">
-						<div id="rpt-tree-crit-dialog" title="Nodes criteria" class="rpt-tree-crit-dialog popup-dialog is-contextual not-displayed">
+						<div id="rpt-tree-crit-dialog" title="Nodes criteria" class="rpt-tree-crit-dialog popup-dialog is-contextual not-displayed"
+							data-node-type="CAMPAIGN">
 							Nodes <div id="rpt-tree-crit" class="rpt-tree-crit" data-node-type="CAMPAIGN"></div>
 						</div>
 						<input type="button" class="button rpt-tree-crit-open" value="Pick nodes" data-id-opened="rpt-tree-crit-dialog" />
 					</div>
 					<div th:remove="all">
-						<div id="rpt-projects-crit-dialog" title="Projects criteria" class="rpt-projects-crit-container popup-dialog is-contextual not-displayed">
-							<div id="dialog-settings-project-selection-controls" class="project-filter-controls">
-								<a id="dialog-settings-project-selectall" href="javascript:void(0)">${selectallProjectLabel}</a>
-								<a id="dialog-settings-project-deselectall" href="javascript:void(0)">${deselectAllProjectLabel}</a>
-								<a id="dialog-settings-project-invertselect" href="javascript:void(0)">${invertSelectProjectLabel}</a>				
-							</div>	
-							<hr/>
-							<div class="project-report-list-template not-displayed">
+						<!-- PROJECT PICKER -->
+						<div id="rpt-projects-crit-dialog" title="Projects criteria" class="rpt-projects-crit-container project-picker popup-dialog not-displayed">
+							<div class="project-item-template not-displayed">
 								<div class="project-item ">
-									<input type="checkbox" class="project-report-checkbox" checked="checked"/> <span class="project-name"></span>
+									<input type="checkbox" class="project-checkbox"/> <span class="project-name"></span>
 								</div>
 							</div>
-							<div id="report-project-list">
+							<div id="dialog-settings-filter-maincontent">			
+								<div id="dialog-settings-filter-controls" class="project-filter-controls">
+									<a id="dialog-settings-filter-selectall" href="javascript:void(0)" th:text="#{dialog.settings.filter.controls.selectall}" class="project-picker-selall">
+										Select all
+									</a>
+									<a id="dialog-settings-filter-deselectall" href="javascript:void(0)" th:text="#{dialog.settings.filter.controls.deselectall}" class="project-picker-deselall">
+										Unselect all
+									</a>
+									<a id="dialog-settings-filter-invertselect" href="javascript:void(0)" th:text="#{dialog.settings.filter.controls.invertselect}" class="project-picker-invsel">
+										Invert sel
+									</a>				
+								</div>	
+								<hr/>
+								<div id="dialog-settings-filter-projectlist" class="project-filter-list" th:remove="body">
+								<div class="project-item ">
+									<input type="checkbox" class="project-checkbox"/> <span class="project-name">Projet 1</span>
+								</div>
+								<div class="project-item ">
+									<input type="checkbox" class="project-checkbox"/> <span class="project-name">Projet 2</span>
+								</div>
+								</div>
+								<div style="clear:both;display:hidden;"></div>
 							</div>
 						</div>
 						<input type="button" class="button rpt-projects-crit-open" value="Pick projects" data-id-opened="rpt-projects-crit-dialog" />
@@ -337,12 +381,13 @@
 				$("#contextual-content").decorateButtons();
 
 				squashtm.report.init({
-					contextPath: /*[[ ${#ctx.servletContext.contextPath} ]]*/ "../../../../../../../core/core.web/src/main/webapp", 
+					contextPath: /*[[ ${#ctx.servletContext.contextPath} ]]*/ "http://localhost:8080/squash", 
 					reportUrl: /*[[ @{'/reports/' + ${report.namespace} + '/' + ${report.index}} ]]*/ "/squash/reports",
 					dateFormat: /*[[ #{squashtm.dateformatShort.js} ]]*/ "dd/mm/yy",
 					noDateLabel: /*[[ #{squashtm.nodata} ]]*/ "---", 
 					okLabel: /*[[ #{dialog.button.confirm.label} ]]*/ "OK",
-					cancelLabel: /*[[ #{dialog.button.cancel.label} ]]*/ "Cancel"
+					cancelLabel: /*[[ #{dialog.button.cancel.label} ]]*/ "Cancel", 
+					
 				});
 			});
 	    	/* ]]> */

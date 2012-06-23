@@ -26,6 +26,7 @@
  *     url: "the url where to get the projects", // required
  *     ok: { text: "ok button text", click: okClickHandler } // required
  *     cancel: { text: "cancel button text", click: cancelClickHandler } // optional, defaults to close
+ *     loadOnce: true // loads projects only once, defaults to false, loads on each open.
  * } 
  * 
  * It also forwards additional configuration to the internal popup dialog.
@@ -38,7 +39,7 @@
         autoOpen: false,
         resizable: false,
         modal: true,
-        width: 600
+        width: 600 
     };
 
     function eachCheckbox(domPicker, eachCallback) {
@@ -87,10 +88,10 @@
 
         var jqChkBx = jqNewItem.find(".project-checkbox");
         jqChkBx.attr('id', 'project-checkbox-' + parseInt(projectItemData[0]));
-        jqChkBx.data("projectId", projectItemData[0]);
+        jqChkBx.attr("value", projectItemData[0]);
 
         var jqName = jqNewItem.find(".project-name");
-        jqName.html(projectItemData[1]);
+        jqName.append(projectItemData[1]);
 
         // get() returns an array even id jqChkBx is not one
         jqChkBx.get()[0].checked = projectItemData[2];
@@ -105,10 +106,20 @@
             appendProjectItem(jqPicker, this, cssClass.swap());
         });
     }
+    
+    function itemToDataMapper() {
+        var item = $(this),
+        	jqCbx = item.find(".project-checkbox"),
+        	cbx = jqCbx.get()[0];
+        	name = item.find(".project-name").text();
+
+        return {id: cbx.value, name: name, selected: cbx.checked};
+    }
 
     $.widget("squash.projectPicker", {
         options: {
             url: "",
+            loadOnce : false,
             ok: {
                 text: "OK",
                 click: function () {}
@@ -125,13 +136,13 @@
             var self = this,
                 opt = self.options,
                 elem = self.element,
-                projectsList = elem.find(".project-filter-list"),
+                projectList = elem.find(".project-filter-list"),
                 selAll = elem.find(".project-picker-selall"),
                 unselAll = elem.find(".project-picker-deselall"),
                 invSel = elem.find(".project-picker-invsel");
 
             elem.addClass("popup-dialog");
-            self.projectsList = projectsList;
+            self.projectList = projectList;
 
             selAll.click(selectAllProjects);
             unselAll.click(deselectAllProjects);
@@ -168,17 +179,31 @@
                 picker = this.element,
                 opt = self.options, 
                 deferred = $.Deferred();
+            
+            if (opt.loadOnce && self.projectsLoaded) {
+        		deferred.resolve();
 
-            self.projectsList.empty();
-
-            $.getJSON(opt.url).done(function(data) {
-                populateFilterProject(picker, data);
-                deferred.resolve();
-            }).fail(function () {
-            	deferred.reject();
-            });
+            } else {
+            	self.projectList.empty();
+            	
+            	$.getJSON(opt.url).done(function(data) {
+            		populateFilterProject(picker, data);
+            		self.projectsLoaded = true;
+            		deferred.resolve();
+            	}).fail(function () {
+            		deferred.reject();
+            	});
+            	
+            }
             
             return deferred.promise();
+        }, 
+        
+        data: function () {
+            var self = this,
+                projectList = self.projectList;
+
+            return projectList.find(".project-item").map(itemToDataMapper);
         }
     });
 })(jQuery);

@@ -327,15 +327,50 @@ squashtm.report = (function ($) {
 
 	function initTreePickers(panel, settings) {
 		panel.find('.rpt-tree-crit-open').click(function () {
-			console.log($(this));
 			var dialogId = $(this).data('id-opened');
-			console.log(dialogId);
 			$("#" + dialogId).dialog('open');
 		});
 		
 		panel.find('.rpt-tree-crit').each(initTreePickerCallback);
 					
 		panel.find(".rpt-tree-crit-dialog").each(initTreePickerDialogCallback);
+	}
+
+	function onConfirmProjectPicker() {
+		var picker = $(this);
+		picker.projectPicker("close");
+		var projects = picker.projectPicker("data");
+
+		formState[this.id] = $.map(projects, function (item) {
+			return {value: item.id, selected: item.selected, type: "PROJECT_PICKER"};
+		});
+	}	
+	
+	function initProjectPickerCallback() {
+		var picker = $(this);
+		
+		picker.projectPicker({
+			url: config.contextPath + "/projects?format=picker", 
+			ok: {
+				text: config.okLabel, 
+				click: onConfirmProjectPicker
+			},
+			cancel: {
+				text: config.cancelLabel 
+			}, 
+			loadOnce: true
+		});	
+		
+		formState[this.id] = [{value: 0, selected: false, type: "PROJECT_PICKER"}];
+	}
+
+	function initProjectPickers(panel) {
+		panel.find(".rpt-projects-crit-open").click(function () {
+			var dialogId = $(this).data("id-opened");
+			$("#" + dialogId).projectPicker("open");
+		});
+		
+		panel.find(".rpt-projects-crit-container").each(initProjectPickerCallback);
 	}
 
 	function init(settings) {
@@ -351,6 +386,7 @@ squashtm.report = (function ($) {
 		initDatepickers(panel);		
 		initTreePickers(panel);
 		initViewTabs();
+		initProjectPickers(panel);
 
 		$('#generate-view').click(generateView);
 		$('#export').click(doExport);

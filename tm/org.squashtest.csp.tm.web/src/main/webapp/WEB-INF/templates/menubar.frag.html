@@ -51,7 +51,7 @@
 		<div th:if="${sec.isAuthenticated()}">
 			<a id="menu-logout-link" href="logout.html" th:href="@{/logout}" th:text="#{workspace.menubar.logout.label}">logout</a>
 		</div>
-		<div id="project-filter-popup" class="project-picker popup-dialog not-displayed">
+		<div id="project-filter-popup" class="project-picker popup-dialog not-displayed" th:title="#{dialog.settings.filter.title}">
 			<div class="project-item-template not-displayed">
 				<div class="project-item ">
 					<input type="checkbox" class="project-checkbox"/> <span class="project-name"></span>
