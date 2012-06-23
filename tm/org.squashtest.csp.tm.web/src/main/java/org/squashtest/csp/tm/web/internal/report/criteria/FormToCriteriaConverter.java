@@ -121,6 +121,7 @@ public class FormToCriteriaConverter {
 			res = createNodeMapCriteria(name, multiValued, inputType);
 			break;
 		case CHECKBOXES_GROUP:
+		case PROJECT_PICKER:
 			res = createMultiOptionsCriteria(name, multiValued, inputType);
 			break;
 		case RADIO_BUTTONS_GROUP:
@@ -168,7 +169,7 @@ public class FormToCriteriaConverter {
 		
 		for (Map<String, Object> valueItem : multiValued) {
 			Boolean selected = (Boolean) valueItem.get(INPUT_SELECTED);
-			String value = (String) valueItem.get(INPUT_VALUE);
+			Object value =  valueItem.get(INPUT_VALUE);
 			crit.addOption(value, selected);
 		}
 		return crit;

@@ -24,13 +24,14 @@ package org.squashtest.tm.api.report.form;
  * @author Gregory Fouquet
  *
  */
-public enum InputType {
-	TEXT, 
-	DATE,
-	DROPDOWN_LIST, 
-	RADIO_BUTTONS_GROUP, 
-	CHECKBOX,
-	CHECKBOXES_GROUP, 
-	TREE_PICKER, 
-	PROJECT_PICKER
+public class ProjectPicker extends BasicInput {
+
+	/**
+	 * @see org.squashtest.tm.api.report.form.Input#getType()
+	 */
+	@Override
+	public InputType getType() {
+		return InputType.PROJECT_PICKER;
+	}
+
 }

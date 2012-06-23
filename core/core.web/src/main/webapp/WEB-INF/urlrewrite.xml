@@ -32,6 +32,10 @@
 		<to>/images/nullpx</to>
 	</rule>
 	<rule>
+		<from>/nullpx</from>
+		<to>/images/nullpx</to>
+	</rule>
+	<rule>
 		<from>/styles/**</from>
 		<to>/styles/$1</to>
 	</rule>

@@ -227,7 +227,7 @@ http://www.springframework.org/schema/util http://www.springframework.org/schema
 					<property name="labelKey" value="report.criteria.panel.projectlist.label" />
 				</bean>
 				<bean class="org.squashtest.tm.api.report.form.RadioButtonsGroup">
-					<property name="name" value="versionManagement" />
+					<property name="name" value="mode" />
 					<property name="labelKey" value="report.criteria.panel.requirement.version.label" />
 					<property name="options">
 						<list>

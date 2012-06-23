@@ -35,8 +35,8 @@ import org.squashtest.tm.api.report.form.InputType;
  * 
  */
 public final class MultiOptionsCriteria extends CriteriaBase implements Criteria {
-	private final Map<String, Boolean> isSelectedByOption = new HashMap<String, Boolean>();
-	private final List<String> selectedOptions = new ArrayList<String>();
+	private final Map<Object, Boolean> isSelectedByOption = new HashMap<Object, Boolean>();
+	private final List<Object> selectedOptions = new ArrayList<Object>();
 
 	/**
 	 * @param name
@@ -50,7 +50,7 @@ public final class MultiOptionsCriteria extends CriteriaBase implements Criteria
 	 * @param optionValue
 	 * @param selected
 	 */
-	void addOption(String optionValue, boolean selected) {
+	void addOption(Object optionValue, boolean selected) {
 		isSelectedByOption.put(optionValue, selected);
 
 		if (selected) {
@@ -63,11 +63,11 @@ public final class MultiOptionsCriteria extends CriteriaBase implements Criteria
 	 * 
 	 */
 	@Override
-	public Collection<String> getValue() {
+	public Collection<Object> getValue() {
 		return Collections.unmodifiableList(selectedOptions);
 	}
 
-	public Collection<String> getSelectedOptions() {
+	public Collection<Object> getSelectedOptions() {
 		return getValue();
 	}
 

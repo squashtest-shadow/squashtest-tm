@@ -136,7 +136,7 @@ public class ProjectFilterController {
 		}
 		
 		//remember that projectData.toArray() actually returns an Object[][]
-		model.setProjectData(projectData.toArray());
+		model.setProjectData((Object[][]) projectData.toArray());
 		return model;		
 	}
 	

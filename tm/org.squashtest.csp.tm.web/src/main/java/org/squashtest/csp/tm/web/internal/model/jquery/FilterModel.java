@@ -20,6 +20,9 @@
  */
 package org.squashtest.csp.tm.web.internal.model.jquery;
 
+import java.util.ArrayList;
+import java.util.List;
+
 /*
  * Note : we set the NOSONAR flag on the setters for Array-type properties otherwise it rings because we don't clone them.
  * We can reasonably ignore those warnings because that class is meant to be serialized from/to json. Of course, that assumption holds
@@ -30,16 +33,15 @@ package org.squashtest.csp.tm.web.internal.model.jquery;
  */
 
 public class FilterModel {
-	private Object[] projectData;
+	private List<Object[]> projectData = new ArrayList<Object[]>();
 	private Boolean enabled;
 	
-	
-	
 	public Object[] getProjectData() {
-		return projectData;
+		return projectData.toArray();
 	}
-	public void setProjectData(Object[] projectData) {
-		this.projectData = projectData; //NOSONAR
+	public void setProjectData(Object[][] projectData) {
+		this.projectData = new ArrayList<Object[]>();
+		this.projectData.add(projectData);
 	}
 	public Boolean isEnabled() {
 		return enabled;
@@ -47,6 +49,8 @@ public class FilterModel {
 	public void setEnabled(Boolean activated) {
 		this.enabled = activated;
 	}
-	
+	public void addProject(long id, String name) {
+		projectData.add(new Object[] {id, name, false});
+	}
 	
 }

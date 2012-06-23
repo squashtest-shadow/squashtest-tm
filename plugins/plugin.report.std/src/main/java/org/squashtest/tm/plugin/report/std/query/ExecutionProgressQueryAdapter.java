@@ -27,63 +27,33 @@ import java.util.Map;
 import javax.inject.Inject;
 import javax.inject.Provider;
 
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import org.squashtest.tm.api.report.criteria.Criteria;
-import org.squashtest.tm.api.report.query.ReportQuery;
 import org.squashtest.tm.internal.domain.report.common.hibernate.HibernateExecutionProgressQuery;
-import org.squashtest.tm.plugin.report.std.service.ReportService;
+import org.squashtest.tm.internal.domain.report.query.hibernate.HibernateReportQuery;
 
 /**
  * @author Gregory Fouquet
  * 
  */
-public class ExecutionProgressQueryAdapter implements ReportQuery {
+public class ExecutionProgressQueryAdapter extends LegacyQueryAdapter<HibernateExecutionProgressQuery> {
 
-	private static final Logger LOGGER = LoggerFactory.getLogger(ExecutionProgressQueryAdapter.class);
-	/**
-	 * 
-	 */
-	private static final String CAMPAIGN_IDS = "campaignIds";
-	/**
-	 * 
-	 */
-	private static final String LEGACY_CAMPAIGN_IDS = "campaignIds[]";
-	/**
-	 * 
-	 */
-	private static final String CAMPAIGN_SELECTION_MODE = "campaignSelectionMode";
 	@Inject
 	private Provider<HibernateExecutionProgressQuery> legacyQueryProvider;
-	@Inject
-	private ReportService reportService;
-
 	/**
-	 * @see org.squashtest.tm.api.report.query.ReportQuery#executeQuery(java.util.Map, java.util.Map)
+	 * 
 	 */
-	@Override
-	public void executeQuery(Map<String, Criteria> criteria, Map<String, Object> model) {
-		HibernateExecutionProgressQuery legacyQuery = legacyQueryProvider.get();
-
-		processCampaignIds(criteria, legacyQuery);
-		processStandardCriteria(criteria, legacyQuery);
-
-		Collection<?> data = reportService.executeQuery(legacyQuery);
-		model.put("data", data);
-
-	}
-
-	private void processStandardCriteria(Map<String, Criteria> criteria, HibernateExecutionProgressQuery legacyQuery) {
-		for (Map.Entry<String, Criteria> entry : criteria.entrySet()) {
-			if (noAdaptationNeeded(entry.getKey())) {
-				LOGGER.warn(entry.getKey());
-				legacyQuery.setCriterion(entry.getKey(), entry.getValue().getValue());
-			}
-		}
-	}
+	static final String CAMPAIGN_IDS = "campaignIds";
+	/**
+	 * 
+	 */
+	static final String LEGACY_CAMPAIGN_IDS = "campaignIds[]";
+	/**
+	 * 
+	 */
+	static final String CAMPAIGN_SELECTION_MODE = "campaignSelectionMode";
 
 	@SuppressWarnings({ "rawtypes" })
-	private void processCampaignIds(Map<String, Criteria> criteria, HibernateExecutionProgressQuery legacyQuery) {
+	protected void processNonStandardCriteria(Map<String, Criteria> criteria, HibernateReportQuery legacyQuery) {
 		Criteria selMode = criteria.get(CAMPAIGN_SELECTION_MODE);
 		if ("EVERYTHING".equals(selMode.getValue())) {
 			setNoCampaignIds(legacyQuery);
@@ -104,7 +74,7 @@ public class ExecutionProgressQueryAdapter implements ReportQuery {
 		}
 	}
 
-	private void setNoCampaignIds(HibernateExecutionProgressQuery legacyQuery) {
+	private void setNoCampaignIds(HibernateReportQuery legacyQuery) {
 		legacyQuery.setCriterion(LEGACY_CAMPAIGN_IDS, (Object[]) null);
 	}
 
@@ -112,23 +82,15 @@ public class ExecutionProgressQueryAdapter implements ReportQuery {
 	 * @param criterionName
 	 * @return
 	 */
-	private boolean noAdaptationNeeded(String criterionName) {
+	@Override
+	protected boolean isStandardCriteria(String criterionName) {
 		return !(CAMPAIGN_IDS.equals(criterionName) || CAMPAIGN_SELECTION_MODE.equals(criterionName));
 	}
 
 	/**
-	 * @param legacyQueryProvider
-	 *            the legacyQuery to set
+	 * @return the legacyQueryProvider
 	 */
-	public void setLegacyQueryProvider(Provider<HibernateExecutionProgressQuery> legacyQueryProvider) {
-		this.legacyQueryProvider = legacyQueryProvider;
-	}
-
-	/**
-	 * @param reportService
-	 *            the reportService to set
-	 */
-	public void setReportService(ReportService reportService) {
-		this.reportService = reportService;
+	protected Provider<HibernateExecutionProgressQuery> getLegacyQueryProvider() {
+		return legacyQueryProvider;
 	}
 }

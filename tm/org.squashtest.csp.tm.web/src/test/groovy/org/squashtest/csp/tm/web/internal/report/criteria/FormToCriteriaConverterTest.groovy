@@ -128,4 +128,18 @@ class FormToCriteriaConverterTest extends Specification {
 		criteria.nodes.value.folders == [20,30]
 		criteria.nodes.sourceInput == InputType.TREE_PICKER
 	} 
+	
+	def "should build projects criteria"() {
+		when:
+		Map criteria = converter.convert([projects: [
+			[value: 10, selected: true, type: "PROJECT_PICKER"], 
+			[value: 20, selected: false, type: "PROJECT_PICKER"],
+			[value: 30, selected: true, type: "PROJECT_PICKER"]
+		]])
+		
+		then:
+		criteria.projects.name == "projects"
+		criteria.projects.selectedOptions == [10, 30]
+		criteria.projects.sourceInput == InputType.PROJECT_PICKER
+	} 
 }

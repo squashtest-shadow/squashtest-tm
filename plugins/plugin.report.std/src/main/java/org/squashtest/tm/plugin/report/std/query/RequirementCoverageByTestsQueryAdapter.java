@@ -27,51 +27,56 @@ import javax.inject.Inject;
 import javax.inject.Provider;
 
 import org.squashtest.tm.api.report.criteria.Criteria;
-import org.squashtest.tm.api.report.query.ReportQuery;
 import org.squashtest.tm.internal.domain.report.common.hibernate.HibernateRequirementCoverageByTestsQuery;
-import org.squashtest.tm.plugin.report.std.service.ReportService;
+import org.squashtest.tm.internal.domain.report.query.hibernate.HibernateReportQuery;
 
 /**
- * @author Gregory
+ * @author Gregory Fouquet
  * 
  */
-public class RequirementCoverageByTestsQueryAdapter implements ReportQuery {
+public class RequirementCoverageByTestsQueryAdapter extends LegacyQueryAdapter<HibernateRequirementCoverageByTestsQuery> {
+
 	@Inject
 	private Provider<HibernateRequirementCoverageByTestsQuery> legacyQueryProvider;
-	@Inject
-	private ReportService reportService;
 
 	/**
-	 * @see org.squashtest.tm.api.report.query.ReportQuery#executeQuery(java.util.Map, java.util.Map)
+	 * 
+	 */
+	private static final String LEGACY_PROJECT_IDS = "projectIds[]";
+
+	/**
+	 * @see org.squashtest.tm.plugin.report.std.query.LegacyQueryAdapter#processNonStandardCriteria(java.util.Map,
+	 *      org.squashtest.tm.internal.domain.report.query.hibernate.HibernateReportQuery)
 	 */
 	@Override
-	public void executeQuery(Map<String, Criteria> criteria, Map<String, Object> model) {
-		// mode
-		// projectIDs[]
-		HibernateRequirementCoverageByTestsQuery legacyQuery = legacyQueryProvider.get();
+	protected void processNonStandardCriteria(Map<String, Criteria> criteria, HibernateReportQuery legacyQuery) {
+		Criteria selMode = criteria.get("selectionMode");
 
-		for (Map.Entry<String, Criteria> entry : criteria.entrySet()) {
-			legacyQuery.setCriterion(entry.getKey(), entry.getValue().getValue());
+		if ("EVERYTHING".equals(selMode.getValue())) {
+			setNoProjectIds(legacyQuery);
+		} else {
+			Criteria idsCrit = criteria.get("projectIds");
+			legacyQuery.setCriterion(LEGACY_PROJECT_IDS, ((Collection<?>) idsCrit.getValue()).toArray());
 		}
 
-		Collection<?> data = reportService.executeQuery(legacyQuery);
+	}
 
-		model.put("data", data);
+	private void setNoProjectIds(HibernateReportQuery legacyQuery) {
+		legacyQuery.setCriterion(LEGACY_PROJECT_IDS, (Object[]) null);
 	}
 
 	/**
-	 * @param legacyQueryProvider
-	 *            the legacyQueryProvider to set
+	 * @see org.squashtest.tm.plugin.report.std.query.LegacyQueryAdapter#isStandardCriteria(java.lang.String)
 	 */
-	public void setLegacyQueryProvider(Provider<HibernateRequirementCoverageByTestsQuery> legacyQueryProvider) {
-		this.legacyQueryProvider = legacyQueryProvider;
+	@Override
+	protected boolean isStandardCriteria(String criterionName) {
+		return "mode".equals(criterionName);
 	}
 
 	/**
-	 * @param reportService
-	 *            the reportService to set
+	 * @return the legacyQueryProvider
 	 */
-	public void setReportService(ReportService reportService) {
-		this.reportService = reportService;
+	public Provider<HibernateRequirementCoverageByTestsQuery> getLegacyQueryProvider() {
+		return legacyQueryProvider;
 	}
 }

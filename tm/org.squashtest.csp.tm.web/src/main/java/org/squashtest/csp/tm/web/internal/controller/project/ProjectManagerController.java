@@ -34,23 +34,19 @@ import org.springframework.context.MessageSource;
 import org.springframework.osgi.extensions.annotation.ServiceReference;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.ModelAttribute;
-import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
-import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.servlet.ModelAndView;
-import org.springframework.web.util.HtmlUtils;
 import org.squashtest.csp.tm.domain.audit.AuditableMixin;
 import org.squashtest.csp.tm.domain.project.Project;
-import org.squashtest.csp.tm.domain.users.User;
-import org.squashtest.csp.tm.domain.users.UsersGroup;
 import org.squashtest.csp.tm.infrastructure.filter.CollectionSorting;
 import org.squashtest.csp.tm.infrastructure.filter.FilteredCollectionHolder;
 import org.squashtest.csp.tm.service.ProjectManagerService;
 import org.squashtest.csp.tm.web.internal.model.datatable.DataTableDrawParameters;
 import org.squashtest.csp.tm.web.internal.model.datatable.DataTableModel;
 import org.squashtest.csp.tm.web.internal.model.datatable.DataTableModelHelper;
+import org.squashtest.csp.tm.web.internal.model.jquery.FilterModel;
 import org.squashtest.csp.tm.web.internal.model.viewmapper.DataTableMapper;
 
 @Controller
@@ -105,6 +101,17 @@ public class ProjectManagerController {
 		return mav;
 	}
 
+	@RequestMapping(method = RequestMethod.GET, params="format=picker")
+	@ResponseBody public FilterModel getProjectPickerModel() {
+		List<Project> projects = projectManagerService.findAll();
+		FilterModel model = new FilterModel();
+		
+		for (Project project : projects) {
+			model.addProject(project.getId(), project.getName());
+		}
+		
+		return model;
+	}
 
 
 	@RequestMapping(value = "/list", params = "sEcho")
