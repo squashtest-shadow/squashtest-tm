@@ -19,4 +19,4 @@
 @REM     along with this software.  If not, see <http://www.gnu.org/licenses/>.
 @REM
 
-java -Dfelix.config.properties=file:../conf/felix.config.properties -Dfelix.system.properties=file:../conf/felix.system.properties -jar ${felix.artifactId}-${felix.version}.jar -Xms256m -Xmx512m 
+java -Xms128m -Xmx512m -XX:MaxPermSize=128m -Dfelix.config.properties=file:../conf/felix.config.properties -Dfelix.system.properties=file:../conf/felix.system.properties -jar ${felix.artifactId}-${felix.version}.jar 

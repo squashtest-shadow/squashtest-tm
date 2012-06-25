@@ -69,4 +69,4 @@ echo  "done";
 
 echo "$0 : starting Felix...";
 
-exec java -Dfelix.config.properties=file:../conf/felix.config.properties -Dfelix.system.properties=file:../conf/felix.system.properties -jar org.apache.felix.main-3.2.1.jar
+exec java -Xms128m -Xmx512m -XX:MaxPermSize=128m -Dfelix.config.properties=file:../conf/felix.config.properties -Dfelix.system.properties=file:../conf/felix.system.properties -jar org.apache.felix.main-3.2.1.jar
