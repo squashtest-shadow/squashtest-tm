@@ -43,7 +43,7 @@ function TableCollapser(dataTableP, columnsP) {
 	this.onOpen = new TableCollapserEvent();
 
 	function setCellsData() {
-		var rows = dataTableP.find('tbody tr');
+		var rows = dataTableP.children('tbody').children('tr');
 		
 		for (var i = 0; i < columns.length; i++) {
 			for (var j = 0; j < rows.length; j++) {
