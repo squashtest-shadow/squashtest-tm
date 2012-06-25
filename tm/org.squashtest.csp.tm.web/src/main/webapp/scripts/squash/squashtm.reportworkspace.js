@@ -113,13 +113,6 @@ squashtm.reportWorkspace = (function ($) {
 	}
 
 	return {
-		/**
-		 * the function regarding the category panel are defined in edit-report.jsp, because the button managing it is
-		 * there too.
-		 * 
-		 * If that's too confusing consider refractoring some day.
-		 */
-
 		setReportWorkspaceNormalState : function () {
 			setCategoryFrameNormalState();
 			setEditReportNormalState();
