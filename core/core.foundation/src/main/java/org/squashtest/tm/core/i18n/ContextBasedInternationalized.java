@@ -45,11 +45,24 @@ public class ContextBasedInternationalized implements MessageSourceAware {
 	/**
 	 * (non-Javadoc)
 	 * 
+	 * When the message source is set, this method sends a notification using
+	 * {@link #initializeMessageSource(MessageSource)}
+	 * 
 	 * @see org.springframework.context.MessageSourceAware#setMessageSource(org.springframework.context.MessageSource)
 	 */
 	@Override
-	public void setMessageSource(MessageSource messageSource) {
+	public final void setMessageSource(MessageSource messageSource) {
 		this.messageSource = messageSource;
+		initializeMessageSource(messageSource);
+	}
+
+	/**
+	 * This method is to be overriden by subclasses which need to do further initialization using the message source.
+	 * 
+	 * @param messageSource
+	 */
+	protected void initializeMessageSource(MessageSource messageSource) {
+		// NOOP
 	}
 
 	protected final String getMessage(String code) throws NoSuchMessageException {

@@ -22,17 +22,21 @@ package org.squashtest.tm.api.report;
 
 import java.util.Map;
 
+import org.springframework.beans.factory.InitializingBean;
+import org.springframework.util.Assert;
 import org.springframework.web.servlet.ModelAndView;
 import org.squashtest.tm.api.report.criteria.Criteria;
 import org.squashtest.tm.api.report.form.Input;
 import org.squashtest.tm.core.i18n.Labelled;
 
 /**
+ * Basic implementation od a {@link Report}. This class should be used in report plugins to describe reports.
+ * 
  * @author bsiri
  * @author Gregory Fouquet
  * 
  */
-public class BasicReport extends Labelled implements Report {
+public class BasicReport extends Labelled implements Report, InitializingBean {
 	private StandardReportCategory category = StandardReportCategory.VARIOUS;
 	private StandardReportType type = StandardReportType.GENERIC;
 
@@ -152,5 +156,26 @@ public class BasicReport extends Labelled implements Report {
 		ReportView view = views[viewIndex];
 		Map<String, Object> model = view.buildViewModel(format, criteria);
 		return new ModelAndView(view.getSpringView(), model);
+	}
+
+	/**
+	 * @see org.springframework.beans.factory.InitializingBean#afterPropertiesSet()
+	 */
+	@Override
+	public void afterPropertiesSet() throws Exception {
+		Assert.notNull(category, "Category property should not be null");
+
+		Assert.notNull(type, "Type property should not be null");
+
+		Assert.notNull(form, "Form property should not be null");
+
+		Assert.notNull(descriptionKey, "descriptionKey property should not be null");
+
+		Assert.notNull(getLabelKey(), "labelKey property should not be null");
+
+		Assert.notNull(views, "Views property should not be null");
+		Assert.notEmpty(views, "Views property should not be empty");
+		Assert.noNullElements(views, "Views property should contain null elements");
+
 	}
 }

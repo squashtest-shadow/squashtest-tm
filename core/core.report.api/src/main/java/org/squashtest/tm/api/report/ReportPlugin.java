@@ -20,25 +20,28 @@
  */
 package org.squashtest.tm.api.report;
 
+import org.springframework.beans.factory.InitializingBean;
 import org.springframework.util.Assert;
 
 /**
  * This class is used as the entrypoint to the plugin. There should be one {@link ReportPlugin} defined as an OSGi
  * service. Squash TM uses this service to fetch the provided reports.
  * 
+ * A report plugin should expose at least one report but it can expose as many as it needs.
+ * 
  * @author Gregory Fouquet
  * 
  */
-public class ReportPlugin {
+public class ReportPlugin implements InitializingBean {
 	private Report[] reports;
 
 	/**
-	 * Shortcut for a plugin containing only one report. 
+	 * Shortcut for a plugin containing only one report.
+	 * 
 	 * @param report
 	 *            the report to set
 	 */
 	public void setReport(Report report) {
-		Assert.notNull(report, "Report should not be null");
 		reports = new Report[] { report };
 	}
 
@@ -50,10 +53,21 @@ public class ReportPlugin {
 	}
 
 	/**
-	 * @param reports the reports to set
+	 * @param reports
+	 *            the reports to set
 	 */
 	public void setReports(Report[] reports) {
 		Assert.notNull(reports, "Reports array should not be null");
 		this.reports = reports;
+	}
+
+	/**
+	 * @see org.springframework.beans.factory.InitializingBean#afterPropertiesSet()
+	 */
+	@Override
+	public final void afterPropertiesSet() throws Exception {
+		Assert.notNull(reports, "Reports property should not be null");
+		Assert.notEmpty(reports, "Reports property should not be empty");
+		Assert.noNullElements(reports, "Reports property should not contain null elements");
 	}
 }

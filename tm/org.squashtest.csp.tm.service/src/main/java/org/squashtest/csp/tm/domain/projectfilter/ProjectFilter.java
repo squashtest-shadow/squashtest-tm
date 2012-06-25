@@ -99,7 +99,7 @@ public class ProjectFilter {
 		Iterator<Project> projectIterator = this.projects.iterator();
 		while (projectIterator.hasNext()) {
 			Project projectItem = projectIterator.next();
-			if (projectItem.getId() == project.getId()) {
+			if (projectItem.getId().equals(project.getId())) {
 				projectIterator.remove();
 			}
 		}

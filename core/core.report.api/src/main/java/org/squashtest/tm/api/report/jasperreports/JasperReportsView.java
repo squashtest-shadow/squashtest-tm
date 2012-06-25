@@ -122,12 +122,11 @@ public final class JasperReportsView extends Labelled implements ReportView, Ini
 	}
 
 	/**
-	 * @see org.squashtest.tm.core.i18n.ContextBasedInternationalized#setMessageSource(org.springframework.context.MessageSource
-	 *      )
+	 * @see org.squashtest.tm.core.i18n.ContextBasedInternationalized#initializeMessageSource(org.springframework.context.MessageSource)
 	 */
 	@Override
-	public void setMessageSource(MessageSource messageSource) {
-		super.setMessageSource(messageSource);
+	protected void initializeMessageSource(MessageSource messageSource) {
+		super.initializeMessageSource(messageSource);
 		this.messageSource = messageSource;
 	}
 
