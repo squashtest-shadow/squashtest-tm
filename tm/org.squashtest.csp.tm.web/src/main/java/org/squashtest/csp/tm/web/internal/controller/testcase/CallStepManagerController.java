@@ -91,6 +91,7 @@ public class CallStepManagerController {
 	 * @param testCaseLibraryFinder
 	 *            the testCaseLibraryFinder to set
 	 */
+	@ServiceReference
 	public void setTestCaseLibraryFinder(TestCaseLibraryFinderService testCaseLibraryFinder) {
 		this.testCaseLibraryFinder = testCaseLibraryFinder;
 	}
