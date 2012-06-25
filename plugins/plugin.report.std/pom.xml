@@ -10,7 +10,7 @@
 	<artifactId>plugin.report.std</artifactId>
 	<description>Standard (default) reports for Squash TM</description>
 	<packaging>bundle</packaging>
-	
+
 	<properties>
 		<jasperreports.build.outputDirectory>${project.build.outputDirectory}/jasperreports</jasperreports.build.outputDirectory>
 	</properties>
@@ -94,6 +94,12 @@
 				<directory>src/main/resources</directory>
 				<filtering>true</filtering>
 			</resource>
+<!-- 			<resource>
+				<directory>target/jasperreports-generated</directory>
+				<targetPath>target/jasperreports</targetPath>
+				<filtering>false</filtering>
+			</resource>
+ -->
 		</resources>
 
 		<testResources>
@@ -107,28 +113,23 @@
 
 		<plugins>
 			<plugin>
-				<groupId>org.apache.maven.plugins</groupId>
-				<artifactId>maven-compiler-plugin</artifactId>
-			</plugin>
-
-			<plugin>
 				<groupId>org.apache.felix</groupId>
 				<artifactId>maven-bundle-plugin</artifactId>
 				<extensions>true</extensions>
 				<configuration>
 					<instructions>
 						<_include>bnd.bnd</_include>
+						
 					</instructions>
 				</configuration>
 			</plugin>
-
 			<!-- ====== SPOCK TESTS ====== -->
 			<plugin>
 				<groupId>org.apache.maven.plugins</groupId>
 				<artifactId>maven-surefire-plugin</artifactId>
 			</plugin>
 			<!-- ====== /SPOCK TESTS ====== -->
-			
+
 			<plugin>
 				<groupId>org.codehaus.mojo</groupId>
 				<artifactId>jasperreports-maven-plugin</artifactId>
@@ -142,7 +143,7 @@
 						</configuration>
 					</execution>
 				</executions>
-			</plugin>			
+			</plugin>
 		</plugins>
 	</build>
 </project>
