@@ -268,7 +268,7 @@ div.issue-report-dialog div.text-options textarea {
 	height: 175px;
 }
 
-div.issue-report-dialog span.issue-radio-label {
+div.issue-report-dialog span.issue-radio{
 	display: block;
 	margin-bottom: 1em;
 }
