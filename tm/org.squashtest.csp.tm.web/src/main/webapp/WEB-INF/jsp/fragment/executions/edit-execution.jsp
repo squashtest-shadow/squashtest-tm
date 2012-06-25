@@ -145,7 +145,7 @@
 
 <div class="ui-widget-header ui-state-default ui-corner-all fragment-header">
 
-	<div style="float:left;height:100%;">
+	<div style="float:left;height:100%; width:90%;">
 		<h2>
 			<span><f:message key="execution.execute.header.title" />&nbsp;:&nbsp;</span><a id="execution-name" href="${ executionUrl }/info">&#35;<c:out value="${executionRank} - ${ execution.name }" escapeXml="true"/></a>
 		</h2>
