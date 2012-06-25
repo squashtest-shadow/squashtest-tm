@@ -72,7 +72,7 @@
 		var url = getIssueTableRowUrl(data);
 		addHLinkToCellText(td, url, true);
 	}
-	
+
 	
 	<%-- we check the assignee only (for now) --%>
 	function checkEmptyValues(row, data){
@@ -98,6 +98,7 @@
 <comp:decorate-ajax-table url="${dataUrl}" tableId="issue-table" paginate="true" >
 	<jsp:attribute name="initialSort">[[1,'desc']]</jsp:attribute>
 	<jsp:attribute name="rowCallback">issueTableRowCallback</jsp:attribute> 
+	<jsp:attribute name="freeSettings">iDeferLoading : 0</jsp:attribute>
 	<jsp:attribute name="columnDefs">
 		<dt:column-definition targets="0" visible="false" sortable="false" />
 		<dt:column-definition targets="1" width="2.5em" cssClass="select-handle centered" sortable="true" visible="true"/>

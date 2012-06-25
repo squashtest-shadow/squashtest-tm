@@ -270,7 +270,6 @@
 		</c:if>
 		$("#issue-login-button").click(bugTrackerLogin);
 
-																						
 	});	
 	
 	
@@ -325,7 +324,6 @@
 					<is:issue-table-exec dataUrl="${tableUrl}" interfaceDescriptor="${interfaceDescriptor}" />			
 				</c:when>
 				<c:when test="${entityType == 'iteration'}">
-					<%-- so far Iterations use the same table than exec so we're going lazy for now and reuse the same tag--%>
 					<is:issue-table-iter dataUrl="${tableUrl}" interfaceDescriptor="${interfaceDescriptor}" />			
 				</c:when>				
 			</c:choose>
@@ -352,3 +350,37 @@ check that in the next <script></script> tags
 <is:issue-credentials-popup url="${credentialsUrl}"  divId="issue-dialog-credentials"
 							successCallback="loginSuccess" failureCallback="loginFail"	
 								/>
+
+								
+<%-- init code, including copy pasta de decorate-button.tag, that will handle those two buttons only --%>
+<script type="text/javascript">
+
+	$(function() {
+		
+		<c:if test="${editable}">
+		$( "#issue-report-dialog-openbutton" ).button();		
+		$( "#issue-report-dialog-openbutton" ).click(function(){
+			$(this).removeClass("ui-state-focus ui-state-hover");
+		});
+		</c:if>
+		
+
+		$( "#issue-login-button" ).button();		
+		$( "#issue-login-button" ).click(function(){
+			$(this).removeClass("ui-state-focus ui-state-hover");
+		});
+		
+		
+		<c:if test="${editable}">
+		$("#issue-report-dialog-openbutton").click(checkAndReportIssue);
+		</c:if>
+		$("#issue-login-button").click(bugTrackerLogin);
+
+		<c:if test="${bugTrackerStatus == 'BUGTRACKER_READY'}">
+		refreshIssueTable();
+		</c:if>
+		
+	});	
+	
+	
+</script>
