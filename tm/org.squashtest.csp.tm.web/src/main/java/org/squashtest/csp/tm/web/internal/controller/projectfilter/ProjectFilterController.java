@@ -118,25 +118,27 @@ public class ProjectFilterController {
 	/* ************************************* private stuffs ************************************* */
 	
 	
-	private FilterModel buildFilterModel(List<Project> projects , ProjectFilter filter  ){
+	private FilterModel buildFilterModel(List<Project> projects , ProjectFilter filter) {
 		
 		FilterModel model = new FilterModel();
 		model.setEnabled(filter.getActivated());
 		
-		List<Object[]> projectData = new LinkedList<Object[]>();  
-		
+		Object[][] projectData = new Object[projects.size()][3];  
+		int i = 0;
 		
 		for (Project project : projects){
-			projectData.add(new Object[]{
+			projectData[i] = new Object[]{
 				project.getId(),
 				project.getName(),
 				filter.isProjectSelected(project)
-			});
+			};
+			
+			i++;
 			
 		}
 		
 		//remember that projectData.toArray() actually returns an Object[][]
-		model.setProjectData((Object[][]) projectData.toArray());
+		model.setProjectData((Object[][]) projectData);
 		return model;		
 	}
 	

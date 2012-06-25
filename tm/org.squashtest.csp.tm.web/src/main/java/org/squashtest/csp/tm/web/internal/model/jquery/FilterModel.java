@@ -40,8 +40,10 @@ public class FilterModel {
 		return projectData.toArray();
 	}
 	public void setProjectData(Object[][] projectData) {
-		this.projectData = new ArrayList<Object[]>();
-		this.projectData.add(projectData);
+		this.projectData = new ArrayList<Object[]>(projectData.length);
+		for(Object[] project : projectData) {
+			this.projectData.add(project);
+		}
 	}
 	public Boolean isEnabled() {
 		return enabled;
