@@ -367,12 +367,12 @@
 					key="campaign.test-plan.manage.button.label" />
 			<f:message var="removeLabel"
 					key="campaign.test-plan.remove.button.label" />
-<%-- 			<f:message var="assignLabel" key="campaign.test-plan.assign.button.label"/> --%>
+			<f:message var="assignLabel" key="campaign.test-plan.assign.button.label"/>
 			<input id="test-case-button" type="button" value="${associateLabel}"
 					class="button" />
 			<input id="remove-test-suite-test-case-button" type="button"
 					value="${removeLabel}" class="button" />
-<%-- 			<input id="assign-test-case-button" type="button" value="${assignLabel}" class="button"/> --%>
+			<input id="assign-test-case-button" type="button" value="${assignLabel}" class="button"/>
 			
 		</c:if>
 	</div>
@@ -481,9 +481,6 @@
 	</c:if>
 
 	<%--------------------------- Assign User popup -------------------------------------%>
-
-
-
 	<comp:popup id="batch-assign-test-case"
 		titleKey="dialog.assign-test-case.title" isContextual="true"
 		openedBy="assign-test-case-button" closeOnSuccess="false">
@@ -493,7 +490,7 @@
 			<f:message var="label" key="campaign.test-plan.assign.button.label" />
 			'${ label }': function() {
 				var url = "${assignTestCasesUrl}";
-				var table = $( '#test-plans-table' ).dataTable();
+				var table = $( '#test-suite-test-plans-table' ).dataTable();
 				var ids = getIdsOfSelectedTableRows(table, getTestPlansTableRowId);
 		
 				var user = $(".comboLogin").val();
@@ -507,13 +504,11 @@
 			<pop:cancel-button />
 		</jsp:attribute>
 		<jsp:body>
-			<f:message var="emptyMessage"
-				key="dialog.assign-user.selection.empty.label" />
-			<f:message var="confirmMessage"
-				key="dialog.assign-test-case.confirm.label" />
+			<f:message var="emptyMessage" key="dialog.assign-user.selection.empty.label" />
+			<f:message var="confirmMessage" key="dialog.assign-test-case.confirm.label" />
 			<script type="text/javascript">
 				$("#batch-assign-test-case").bind( "dialogopen", function(event, ui){
-					var table = $( '#test-plans-table' ).dataTable();
+					var table = $( '#test-suite-test-plans-table' ).dataTable();
 					var ids = getIdsOfSelectedTableRows(table, getTestPlansTableRowId);
 
 					if (ids.length > 0) {
@@ -534,7 +529,6 @@
 			</div>
 		</jsp:body>
 	</comp:popup>
-
 </div>
 
 <comp:decorate-buttons />

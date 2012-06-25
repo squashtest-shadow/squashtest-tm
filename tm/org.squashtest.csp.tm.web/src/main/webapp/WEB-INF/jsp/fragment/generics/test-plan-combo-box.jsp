@@ -20,15 +20,20 @@
         along with this software.  If not, see <http://www.gnu.org/licenses/>.
 
 --%>
-<%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core" %>
-<%@ taglib prefix="f" uri="http://java.sun.com/jsp/jstl/fmt" %>
-<?xml version="1.0" encoding="utf-8" ?>
-<%@ page language="java" contentType="text/html; charset=utf-8" pageEncoding="utf-8"%>
-<c:url value="${dataAssignUrl}" var="url"/>
+<%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core"%>
+<%@ taglib prefix="f" uri="http://java.sun.com/jsp/jstl/fmt"%>
 
-<select id="${selectIdentifier}" class="${selectClass}" data-assign-url="${url}" onchange="changeUserLogin(this)">
-	<option value="0" class="not-affected"> <f:message key="dialog.assign-user.not.affected.label"/></option>
-	
+<?xml version="1.0" encoding="utf-8" ?>
+<%@ page language="java" contentType="text/html; charset=utf-8"
+	pageEncoding="utf-8"%>
+<c:url value="${dataAssignUrl}" var="url" />
+
+<select id="${selectIdentifier}" class="${selectClass}"
+	data-assign-url="${url}" onchange="changeUserLogin(this)">
+	<option value="0" class="not-affected">
+		<f:message key="dialog.assign-user.not.affected.label" />
+	</option>
+
 	<c:forEach var="user" items="${usersList}">
 		<c:choose>
 			<c:when test="${testCaseAssignedLogin == user.login}">
@@ -38,6 +43,22 @@
 				<option value="${user.id}">${user.login}</option>
 			</c:otherwise>
 		</c:choose>
-		
+
 	</c:forEach>
 </select>
+<script>
+
+	function changeUserLogin(cbox){
+		<c:if test="${ not empty dataAssignUrl }">
+			var jqBox = $(cbox);
+			var url = jqBox.attr('data-assign-url');
+			$.ajax({
+					  type: 'POST',
+					  url: url,
+					  data: "userId="+jqBox.val(),
+					  dataType: 'json'
+			});
+		</c:if>
+	}
+
+</script>

@@ -84,7 +84,7 @@
 
 	<c:if
 		test="${ statisticsEntity.status == 'RUNNING' || statisticsEntity.status == 'READY'}">
-		<a tabindex="0" href="#start" class="button run-menu" id="start-resume-button" class="button">${startResumeLabel}</a>
+		<a tabindex="0" href="#start" class="button run-menu" id="start-resume-button" class="button" >${startResumeLabel}</a>
 		<div id="start" style="display: none">
 			<ul>
 				<li>

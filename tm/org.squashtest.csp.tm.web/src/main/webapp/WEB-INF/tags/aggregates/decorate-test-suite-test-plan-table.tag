@@ -153,25 +153,6 @@ var nonBelongingTestPlansUrl = "${nonBelongingTestPlansUrl}";
 	});
 	
 	
-	
-	
-	function changeUserLogin(cbox){
-		var jqBox = $(cbox);
-		var tr = jqBox.parents("tr");
-		var uncut = $(tr).attr("id");
-		var id = uncut.substring(uncut.indexOf(":") + 1);
-		var url = jqBox.attr('data-assign-url');
-		$.ajax({
-			  type: 'POST',
-			  url: url,
-			  data: "userId="+jqBox.val(),
-			  dataType: 'json'
-		});
-
-	}
-	
-	
-	
 	function newExecutionClickHandler(){
 		var url = $(this).attr('data-new-exec');
 		

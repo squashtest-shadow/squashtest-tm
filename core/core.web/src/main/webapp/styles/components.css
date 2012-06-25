@@ -359,6 +359,9 @@ div.issue-report-dialog div.issue-report-break{
 	height: 24px;
 }
 
+.button.run-menu {
+	padding: 0.4em 1em;
+}
 /* ***************************** 
 	popupError
 ********************************/
