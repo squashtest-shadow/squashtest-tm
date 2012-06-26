@@ -27,6 +27,7 @@ import javax.persistence.JoinColumn;
 import javax.persistence.JoinTable;
 import javax.persistence.OneToOne;
 import javax.persistence.Table;
+import javax.persistence.Transient;
 
 import org.hibernate.validator.constraints.NotBlank;
 import org.squashtest.csp.tm.domain.audit.Auditable;
@@ -35,6 +36,9 @@ import org.squashtest.csp.tm.domain.audit.Auditable;
 @Auditable
 @Table(name = "CORE_USER")
 public class User {
+	
+	@Transient
+	public static final Long NO_USER_ID = 0l;
 
 	@Id
 	@GeneratedValue

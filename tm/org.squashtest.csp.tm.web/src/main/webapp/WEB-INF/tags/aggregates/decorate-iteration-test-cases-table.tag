@@ -44,6 +44,7 @@
 	description="html id of the single test-case removal popup"%>
 <%@ attribute name="testCaseMultipleRemovalPopupId" required="true"
 	description="html id of the multiple test-case removal popup"%>
+<%@ attribute name="baseIterationURL" description="the base iteration url" %>
 
 <%@ taglib prefix="comp" tagdir="/WEB-INF/tags/component"%>
 <%@ taglib prefix="dt" tagdir="/WEB-INF/tags/datatables"%>
@@ -117,13 +118,16 @@
 	}
 
 	function testPlanTableRowCallback(row, data, displayIndex) {
-		<c:if test="${ editable }">
-		addLoginListToTestPlan(row, data);
-		</c:if>
 		addHLinkToTestPlanName(row, data);
 		addIconToTestPlanName(row, data);
 		addStyleToDeletedTestCaseRows(row, data);
 		return row;
+	}
+	
+	function testPlanDrawCallback(){
+		<c:if test="${ editable }">
+		addLoginListToTestPlan();
+		</c:if>		
 	}
 
 
@@ -139,14 +143,77 @@
 						'<img src="${pageContext.servletContext.contextPath}/images/arrow_right.gif"/>');
 	}
 
-	function addLoginListToTestPlan(row, data) {
-		if (!isTestCaseDeleted(data)) {
-			var id = getTestPlansTableRowId(data);
-			$('td:eq(7)', row).load(
-					"${assignableUsersUrl}" + "?testPlanId=" + id + "");
+	<c:if test="${ editable }">
+	function addLoginListToTestPlan(){
+			
+		var table = $("#test-plans-table").squashTable();
+		
+		//look first at the cache
+		var assignableList = table.data('assignable-list');
+		
+		if (assignableList!=null){
+			table.$('td.assignable-combo').loginCombo();
 		}
-	}
+		
+		$.get("${assignableUsersUrl}", "json")
+		.success(function(json){
+			table.data('assignable-list', json);
+			table.$('td.assignable-combo').loginCombo();
+		});
 
+	}
+	
+	//because of IE8 naturally trimming text nodes we will trim
+	//every string we must compare.
+	$.fn.loginCombo = function(assignableList){
+		
+		if (this.length==0) return;
+		var squashTable=this.eq(0).parents("table").squashTable();
+		var assignableList = squashTable.data('assignable-list');
+		if (! assignableList) return;
+		
+		//create the template
+		var template=$('<select/>');
+		for (var i=0;i<assignableList.length;i++){
+			var opt = '<option value="'+assignableList[i].id+'">'+assignableList[i].login+'</option>';
+			template.append(opt);
+		}
+		
+		template.change(function(){
+			$.ajax({
+				type : 'POST',
+				url : this.getAttribute('data-assign-url'),
+				data : "userId=" + this.value,
+				dataType : 'json'
+			});
+		});
+			
+		this.each(function(){
+			
+			var cloneSelect = template.clone(true);
+			
+			var jqTd = $(this);
+			var row = this.parentNode;
+			
+			
+			//sets the change url
+			var tpId = squashTable.getODataId(row);
+			var dataUrl = "${baseIterationURL}/test-case/"+tpId+"/assign-user";
+			
+			cloneSelect.attr('data-assign-url', dataUrl);
+		
+			//selects the assigned user
+			var assignedTo = squashTable.fnGetData(row)['assigned-to'] || "0";
+			cloneSelect.val(assignedTo);
+			
+			
+			//append the content
+			jqTd.empty().append(cloneSelect);
+			
+		});	
+	}
+	</c:if>
+	
 	function addStyleToDeletedTestCaseRows(row, data) {
 		if (isTestCaseDeleted(data)) {
 			$(row).addClass("test-case-deleted");
@@ -251,6 +318,7 @@
 				},				
 				"sAjaxSource" : "${tableModelUrl}", 
 				"fnRowCallback" : testPlanTableRowCallback,
+				"fnDrawCallback" : testPlanDrawCallback,
 				"aoColumnDefs": [
 					{'bSortable': false, 'bVisible': false, 'aTargets': [0], 'mDataProp' : 'entity-id'},
 					{'bSortable': false, 'sClass': 'centered ui-state-default drag-handle select-handle', 'aTargets': [1], 'mDataProp' : 'entity-index'},
@@ -260,10 +328,11 @@
 					{'bSortable': false, 'sWidth': '10%', 'aTargets': [5], 'mDataProp' : 'type'},
 					{'bSortable': false, 'sWidth': '10%', 'aTargets': [6], 'mDataProp' : 'suite'},
 					{'bSortable': false, 'sWidth': '10%', 'sClass': 'has-status', 'aTargets': [7], 'mDataProp' : 'status'},
-					{'bSortable': false, 'sWidth': '10%', 'aTargets': [8], 'mDataProp' : 'last-exec-by'},
-					{'bSortable': false, 'sWidth': '10%', 'aTargets': [9], 'mDataProp' : 'last-exec-on'},
-					{'bVisible': false, 'bSortable': false, 'aTargets': [10], 'mDataProp' : 'is-tc-deleted'},
-					{'bSortable': false, 'sWidth': '2em', 'sClass': 'centered delete-button', 'aTargets': [11], 'mDataProp' : 'empty-delete-holder'} 
+					{'bSortable': false, 'sWidth': '10%', 'sClass': 'assignable-combo', 'aTargets': [8], 'mDataProp' : 'last-exec-by'},
+					{'bSortable': false, 'bVisible' : false, 'sWidth': '10%', 'aTargets': [9], 'mDataProp' : 'assigned-to'},
+					{'bSortable': false, 'sWidth': '10%', 'aTargets': [10], 'mDataProp' : 'last-exec-on'},
+					{'bSortable': false, 'bVisible': false, 'aTargets': [11], 'mDataProp' : 'is-tc-deleted'},
+					{'bSortable': false, 'sWidth': '2em', 'sClass': 'centered delete-button', 'aTargets': [12], 'mDataProp' : 'empty-delete-holder'} 
 				]
 			};		
 		

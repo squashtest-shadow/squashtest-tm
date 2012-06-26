@@ -55,6 +55,7 @@ import org.squashtest.csp.tm.domain.project.Project;
 import org.squashtest.csp.tm.domain.testcase.TestCase;
 import org.squashtest.csp.tm.domain.testcase.TestCaseExecutionMode;
 import org.squashtest.csp.tm.domain.testcase.TestCaseImportance;
+import org.squashtest.csp.tm.domain.users.User;
 import org.squashtest.csp.tm.infrastructure.filter.CollectionSorting;
 import org.squashtest.csp.tm.infrastructure.filter.FilteredCollectionHolder;
 import org.squashtest.csp.tm.service.IterationModificationService;
@@ -95,7 +96,7 @@ public class IterationModificationController {
 	private MessageSource messageSource;
 
 	private final DataTableMapper testPlanMapper = new DataTableMapper("unused", IterationTestPlanItem.class,
-			TestCase.class, Project.class, TestSuite.class).initMapping(10)
+			TestCase.class, Project.class, TestSuite.class).initMapping(11)
 			.mapAttribute(Project.class, 2, NAME, String.class)
 			.mapAttribute(TestCase.class, 3, NAME, String.class)
 			.mapAttribute(TestCase.class, 4, "importance", TestCaseImportance.class)
@@ -103,7 +104,7 @@ public class IterationModificationController {
 			.mapAttribute(IterationTestPlanItem.class, 6, "executionStatus", ExecutionStatus.class)
 			.mapAttribute(TestSuite.class, 7, NAME, String.class)
 			.mapAttribute(IterationTestPlanItem.class, 8, "lastExecutedBy", String.class)
-			.mapAttribute(IterationTestPlanItem.class, 9, "lastExecutedOn", Date.class);
+			.mapAttribute(IterationTestPlanItem.class, 10, "lastExecutedOn", Date.class);
 
 	@RequestMapping(method = RequestMethod.GET)
 	public ModelAndView showIteration(@PathVariable long iterationId) {
@@ -370,6 +371,7 @@ public class IterationModificationController {
 				String testCaseExecutionMode;
 				
 				String testSuiteName;
+				Long assignedId = (item.getUser()!=null) ? item.getUser().getId() : User.NO_USER_ID;
 
 				if (item.isTestCaseDeleted()) {
 					projectName = formatNoData(locale);
@@ -389,22 +391,6 @@ public class IterationModificationController {
 					testSuiteName = item.getTestSuite().getName();
 				}
 
-				/*
-				return new Object[] { 
-						item.getId(), 
-						getCurrentIndex(), 
-						projectName, 
-						testCaseName,
-						importance,
-						testCaseExecutionMode, 
-						testSuiteName,
-						formatStatus(item.getExecutionStatus(), locale),
-						formatString(item.getLastExecutedBy(), locale), 
-						formatDate(item.getLastExecutedOn(), locale),
-						item.isTestCaseDeleted(), 
-						" "
-
-				};*/
 				res.put(DataTableModelHelper.DEFAULT_ENTITY_ID_KEY, item.getId());
 				res.put(DataTableModelHelper.DEFAULT_ENTITY_INDEX_KEY, getCurrentIndex());
 				res.put("project-name", projectName);
@@ -414,6 +400,7 @@ public class IterationModificationController {
 				res.put("suite", testSuiteName);
 				res.put("status", formatStatus(item.getExecutionStatus(), locale));
 				res.put("last-exec-by", formatString(item.getLastExecutedBy(), locale));
+				res.put("assigned-to", assignedId);
 				res.put("last-exec-on", formatDate(item.getLastExecutedOn(), locale));
 				res.put("is-tc-deleted", item.isTestCaseDeleted());
 				res.put("empty-delete-holder", " ") ;

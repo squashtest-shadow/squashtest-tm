@@ -644,11 +644,11 @@
 	 
 		/* 
 			are we in retrieve mode or init mode ? 
-			the answer is simple : no param means retrieve mode
+			the answer is simple : no param means retrieve mode. Note that the key is the dome element.
 		*/
 		
 		if (arguments.length==0){
-			return $.fn.squashTable.instances[this.selector];
+			return $.fn.squashTable.instances[this.get(0)];
 		}
 		
 		/* 
@@ -739,7 +739,7 @@
 		
 		/* **************** store the new instance ***************** */
 		
-		$.fn.squashTable.instances[this.selector]=this;
+		$.fn.squashTable.instances[this.get(0)]=this;
 		
 	 };
 	

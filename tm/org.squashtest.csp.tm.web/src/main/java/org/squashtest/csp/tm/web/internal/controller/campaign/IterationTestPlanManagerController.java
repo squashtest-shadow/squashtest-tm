@@ -22,8 +22,10 @@ package org.squashtest.csp.tm.web.internal.controller.campaign;
 
 import java.util.ArrayList;
 import java.util.Date;
+import java.util.LinkedList;
 import java.util.List;
 import java.util.Locale;
+import java.util.Map;
 
 import javax.inject.Inject;
 import javax.inject.Provider;
@@ -55,6 +57,7 @@ import org.squashtest.csp.tm.web.internal.model.datatable.DataTableDrawParameter
 import org.squashtest.csp.tm.web.internal.model.datatable.DataTableFilterSorter;
 import org.squashtest.csp.tm.web.internal.model.datatable.DataTableModel;
 import org.squashtest.csp.tm.web.internal.model.datatable.DataTableModelHelper;
+import org.squashtest.csp.tm.web.internal.model.jquery.TestPlanAssignableUser;
 import org.squashtest.csp.tm.web.internal.model.jstree.JsTreeNode;
 import org.squashtest.csp.tm.web.internal.model.viewmapper.DataTableMapper;
 
@@ -156,27 +159,21 @@ public class IterationTestPlanManagerController {
 	}
 
 	@RequestMapping(value = "/iterations/{iterationId}/assignable-user", method = RequestMethod.GET)
-	public ModelAndView getAssignUserForIterationTestPlanItem(@RequestParam("testPlanId") long testPlanId,
-			@PathVariable long iterationId, final Locale locale) {
-		List<Long> ids = new ArrayList<Long>();
-		ids.add(testPlanId);
+	public @ResponseBody List<TestPlanAssignableUser> getAssignUserForIterationTestPlanItem(@PathVariable long iterationId, final Locale locale) {
+		
 		List<User> usersList = iterationTestPlanManagerService.findAssignableUserForTestPlan(iterationId);
-		IterationTestPlanItem itp = iterationTestPlanManagerService.findTestPlanItem(iterationId, testPlanId);
-
-		ModelAndView mav = new ModelAndView("fragment/generics/test-plan-combo-box");
-
-		mav.addObject("usersList", usersList);
-		mav.addObject("selectIdentitier", "usersList" + testPlanId);
-		mav.addObject("selectClass", "userLogin");
-		mav.addObject("dataAssignUrl", "/iterations/" + iterationId + "/test-case/" + testPlanId + "/assign-user");
-
-		if (itp.getUser() != null) {
-			mav.addObject("testCaseAssignedLogin", itp.getUser().getLogin());
-		} else {
-			mav.addObject("testCaseAssignedLogin", null);
+		
+		String unassignedLabel = formatUnassigned(locale);
+		List<TestPlanAssignableUser> jsonUsers = new LinkedList<TestPlanAssignableUser>();
+		
+		jsonUsers.add(new TestPlanAssignableUser("0", unassignedLabel ));
+		
+		for (User user : usersList){
+			jsonUsers.add(new TestPlanAssignableUser(user));
 		}
+		
+		return jsonUsers;
 
-		return mav;
 	}
 
 	@RequestMapping(value = "/iterations/{iterationId}/batch-assignable-user", method = RequestMethod.GET)
@@ -250,6 +247,10 @@ public class IterationTestPlanManagerController {
 		return testSuiteName;
 	}
 
+	private String formatUnassigned(Locale locale){
+		return messageSource.getMessage("dialog.assign-user.not.affected.label", null, locale);
+	}
+	
 	private String formatNoData(Locale locale) {
 		return messageSource.getMessage("squashtm.nodata", null, locale);
 	}

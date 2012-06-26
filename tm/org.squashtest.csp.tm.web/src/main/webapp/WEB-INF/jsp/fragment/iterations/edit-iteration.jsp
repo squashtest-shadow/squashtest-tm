@@ -369,6 +369,7 @@
 			testPlansUrl="${testCasesUrl}" batchRemoveButtonId="remove-test-case-button" 
 			updateTestPlanUrl="${updateTestCaseUrl}" assignableUsersUrl="${assignableUsersUrl}"
 			nonBelongingTestPlansUrl="${nonBelongingTestCasesUrl}" testPlanExecutionsUrl="${testCaseExecutionsUrl}" editable="${ linkable }"  testCaseMultipleRemovalPopupId="delete-multiple-test-plan-dialog" 
+			baseIterationURL="${iterationUrl}" 
 			testCaseSingleRemovalPopupId="delete-single-test-plan-dialog" />
 		<aggr:iteration-test-cases-table/>
 	</div>

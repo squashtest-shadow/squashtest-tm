@@ -34,6 +34,7 @@
 			<th><f:message key="iteration.executions.table.column-header.suite.label" /></th>
 			<th><f:message key="iteration.executions.table.column-header.status.label" /></th>
 			<th><f:message key="iteration.executions.table.column-header.user.label" /></th>
+			<th>assigned user id (masked)</th>
 			<th><f:message key="iteration.executions.table.column-header.execution-date.label" /></th>
 			<th>is tc deleted (masked)</th>
 			<th>&nbsp;</th>				

@@ -18,49 +18,40 @@
  *     You should have received a copy of the GNU Lesser General Public License
  *     along with this software.  If not, see <http://www.gnu.org/licenses/>.
  */
-package org.squashtest.csp.tm.web.internal.model.customeditors;
+package org.squashtest.csp.tm.web.internal.model.jquery;
 
-import org.squashtest.csp.core.bugtracker.domain.Priority;
+import org.squashtest.csp.tm.domain.users.User;
 
-public class PriorityPropertyEditorSupport extends BugTrackerPropertyEditorSupport<Priority> {
-
+public class TestPlanAssignableUser {
+	private String id;
+	private String login;
 	
-	@Override
-	public void setValue(Object value) {
-		if (value instanceof String) {
-			String strObject = (String) value;
-
-			String id = getAttribute("id",strObject);
-			String name = getAttribute("name", strObject);
-			
-			Priority entity = new Priority(id, name);
-			super.setValue(entity);
-
-			
-		}
-		else{
-			super.setValue(null);
-		}
-
+	
+	public String getId() {
+		return id;
+	}
+	public void setId(String id) {
+		this.id = id;
+	}
+	public String getLogin() {
+		return login;
+	}
+	public void setLogin(String login) {
+		this.login = login;
 	}
 	
-	@Override
-	public String getAsText() {
-		Priority entity =(Priority) getValue();
-		return "id="+entity.getId()+",name="+entity.getName();
+	public TestPlanAssignableUser(){
+		super();
 	}
 	
-	@Override
-	public void setAsText(String text){		
-		String strObject = text;
-
-		String id = getAttribute("id",strObject);
-		String name = getAttribute("name", strObject);
-		
-		Priority entity = new Priority(id, name);
-		super.setValue(entity);		
+	public TestPlanAssignableUser(User user){
+		this.id=user.getId().toString();
+		this.login=user.getLogin();
 	}
 	
-
+	public TestPlanAssignableUser(String id, String login){
+		this.id=id;
+		this.login=login;
+	}
 	
 }
