@@ -102,11 +102,14 @@ class RequirementHierarchyCreator{
 
 	private Map<String, Integer>  mapColumns (Sheet sheet) {
 		Map<String, Integer> columnsMapping = new HashMap<String, Integer>();
+		
 		Row firstRow = sheet.getRow(0);
 		for(int c = 0 ; c < firstRow.getLastCellNum(); c++){
 			Cell headerCell =  firstRow.getCell(c);
+			if(headerCell != null){		
 			String headerTag = headerCell.getStringCellValue();
 			columnsMapping.put(headerTag.toUpperCase(), c);
+			}
 		}
 		return columnsMapping;
 				
