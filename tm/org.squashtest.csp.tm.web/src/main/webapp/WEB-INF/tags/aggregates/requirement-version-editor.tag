@@ -157,11 +157,11 @@
 						<div id="requirement-category">
 							<c:choose>
 								<c:when test="${ smallEditable }">
-									<comp:level-message level="${ requirementVersion.category }"/>
+									<s:message code="${ requirement.category.i18nKey }" htmlEscape="true" />
 									<comp:select-jeditable componentId="requirement-category" jsonData="${ jsonCategories }" targetUrl="${ requirementUrl }" />
 								</c:when>
 							<c:otherwise>
-								<comp:level-message level="${ requirementVersion.category }"/>
+								<s:message code="${ requirement.category.i18nKey }" htmlEscape="true" />
 							</c:otherwise>
 							</c:choose>
 						</div>

@@ -43,6 +43,7 @@ import org.squashtest.csp.tm.domain.requirement.RequirementCriticality;
 import org.squashtest.csp.tm.domain.requirement.RequirementStatus;
 import org.squashtest.csp.tm.domain.requirement.RequirementVersion;
 import org.squashtest.csp.tm.service.RequirementVersionManagerService;
+import org.squashtest.csp.tm.web.internal.helper.InternationalisableLabelFormatter;
 import org.squashtest.csp.tm.web.internal.helper.LevelLabelFormatter;
 
 /**
@@ -62,6 +63,8 @@ public class RequirementVersionManagerController {
 	private Provider<RequirementStatusComboDataBuilder> statusComboDataBuilderProvider;
 	@Inject
 	private Provider<LevelLabelFormatter> levelFormatterProvider;
+	@Inject
+	private Provider<InternationalisableLabelFormatter> internationalizableFormatterProvider;
 
 	private RequirementVersionManagerService requirementVersionManager;
 
@@ -98,7 +101,8 @@ public class RequirementVersionManagerController {
 	public String changeCategory(@PathVariable long requirementVersionId,
 			@RequestParam(VALUE) RequirementCategory category, Locale locale) {
 		requirementVersionManager.changeCategory(requirementVersionId, category);
-		return internationalize(category, locale);
+		return internationalizableFormatterProvider.get().useLocale(locale).formatLabel(category);
+
 	}
 
 	@RequestMapping(method = RequestMethod.POST, params = { "id=requirement-status", VALUE })
@@ -106,7 +110,7 @@ public class RequirementVersionManagerController {
 	public String changeStatus(@PathVariable long requirementVersionId, @RequestParam(VALUE) String value, Locale locale) {
 		RequirementStatus status = RequirementStatus.valueOf(value);
 		requirementVersionManager.changeStatus(requirementVersionId, status);
-		return internationalize(status, locale);
+		return internationalize(status, locale);	
 	}
 
 	@RequestMapping(method = RequestMethod.POST, params = { "id=requirement-reference", VALUE })

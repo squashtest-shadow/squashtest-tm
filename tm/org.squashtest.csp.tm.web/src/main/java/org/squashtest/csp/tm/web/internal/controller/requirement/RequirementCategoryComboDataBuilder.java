@@ -26,8 +26,7 @@ import org.springframework.context.annotation.Scope;
 import org.springframework.stereotype.Component;
 import org.squashtest.csp.tm.domain.LevelComparator;
 import org.squashtest.csp.tm.domain.requirement.RequirementCategory;
-import org.squashtest.csp.tm.domain.requirement.RequirementCriticality;
-import org.squashtest.csp.tm.web.internal.helper.LevelLabelFormatter;
+import org.squashtest.csp.tm.web.internal.helper.InternationalisableLabelFormatter;
 import org.squashtest.csp.tm.web.internal.model.builder.EnumJeditableComboDataBuilder;
 
 /**
@@ -46,7 +45,7 @@ public class RequirementCategoryComboDataBuilder extends EnumJeditableComboDataB
 	}
 
 	@Inject
-	public void setLabelFormatter(LevelLabelFormatter formatter) {
+	public void setLabelFormatter(InternationalisableLabelFormatter formatter) {
 		super.setLabelFormatter(formatter);
 	}
 

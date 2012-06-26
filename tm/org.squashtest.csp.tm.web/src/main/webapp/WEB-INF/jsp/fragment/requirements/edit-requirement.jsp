@@ -257,11 +257,11 @@ that page won't be editable if
 					<div class="display-table-cell">
 						<c:choose>
 						<c:when test="${smallEditable }">
-						<div id="requirement-category"><comp:level-message level="${ requirement.category }"/></div>
+						<div id="requirement-category"><s:message code="${ requirement.category.i18nKey }" htmlEscape="true" /></div>
 						<comp:select-jeditable componentId="requirement-category" jsonData="${categoryList}" targetUrl="${requirementUrl}" />
 						</c:when>
 						<c:otherwise>
-							<comp:level-message level="${ requirement.category }"/>
+							<s:message code="${ requirement.category.i18nKey }" htmlEscape="true" />
 						</c:otherwise>
 						</c:choose>
 					</div>				

@@ -56,6 +56,7 @@ import org.squashtest.csp.tm.domain.requirement.RequirementStatus;
 import org.squashtest.csp.tm.domain.requirement.RequirementVersion;
 import org.squashtest.csp.tm.service.RequirementModificationService;
 import org.squashtest.csp.tm.service.RequirementVersionManagerService;
+import org.squashtest.csp.tm.web.internal.helper.InternationalisableLabelFormatter;
 import org.squashtest.csp.tm.web.internal.helper.LevelLabelFormatter;
 import org.squashtest.csp.tm.web.internal.model.datatable.DataTableDrawParameters;
 import org.squashtest.csp.tm.web.internal.model.datatable.DataTableMapperPagingAndSortingAdapter;
@@ -78,6 +79,8 @@ public class RequirementModificationController {
 	private Provider<RequirementStatusComboDataBuilder> statusComboDataBuilderProvider;
 	@Inject
 	private Provider<LevelLabelFormatter> levelFormatterProvider;
+	@Inject
+	private Provider<InternationalisableLabelFormatter> internationalizableFormatterProvider;
 
 	private RequirementModificationService requirementModService;
 	private RequirementVersionManagerService versionFinder;
@@ -297,7 +300,7 @@ public class RequirementModificationController {
 	 * @return the category in the chosen language
 	 */
 	private String formatCategory(RequirementCategory category, Locale locale) {
-		return internationalize(category, locale);
+		return internationalizableFormatterProvider.get().useLocale(locale).formatLabel(category);
 	}
 
 	private String internationalize(Level level, Locale locale) {

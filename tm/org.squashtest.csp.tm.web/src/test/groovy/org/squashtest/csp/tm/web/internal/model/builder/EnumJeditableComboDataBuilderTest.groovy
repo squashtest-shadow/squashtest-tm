@@ -22,12 +22,12 @@ package org.squashtest.csp.tm.web.internal.model.builder;
 
 import static org.squashtest.csp.tm.web.internal.model.builder.DummyEnum.*
 
-import java.util.Locale;
+import java.util.Locale
 
-import org.apache.tools.ant.taskdefs.Javac.ImplementationSpecificArgument;
-import org.squashtest.csp.tm.web.internal.helper.LabelFormatter;
+import org.apache.poi.hssf.record.formula.functions.T
+import org.squashtest.csp.tm.web.internal.helper.LabelFormatter
 
-import spock.lang.Specification;
+import spock.lang.Specification
 
 /**
  * @author Gregory Fouquet
