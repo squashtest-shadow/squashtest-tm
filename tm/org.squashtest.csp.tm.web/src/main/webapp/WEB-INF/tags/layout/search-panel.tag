@@ -533,21 +533,21 @@
 							<table>
 								<tr>
 									<td class="requirement-UNDEFINED"><span> <input
-											type="checkbox" id="crit-1" value="1" /> <span> <f:message
+											type="checkbox" id="crit-1" value="1" checked="checked"/> <span> <f:message
 													key="requirement.criticality.UNDEFINED" /> </span> </span>
 									</td>
 									<td class="requirement-MINOR"><span> <input
-											type="checkbox" id="crit-2" value="2" /> <span> <f:message
+											type="checkbox" id="crit-2" value="2" checked="checked"/> <span> <f:message
 													key="requirement.criticality.MINOR" /> </span> </span>
 									</td>
 								</tr>
 								<tr>
 									<td class="requirement-MAJOR"><span> <input
-											type="checkbox" id="crit-3" value="3" /> <span> <f:message
+											type="checkbox" id="crit-3" value="3" checked="checked"/> <span> <f:message
 													key="requirement.criticality.MAJOR" /> </span> </span>
 									</td>
 									<td class="requirement-CRITICAL"><span> <input
-											type="checkbox" id="crit-4" value="4" /> <span> <f:message
+											type="checkbox" id="crit-4" value="4" checked="checked"/> <span> <f:message
 													key="requirement.criticality.CRITICAL" /> </span> </span>
 									</td>
 								</tr>
@@ -557,26 +557,26 @@
 					<table>
 						<tr>
 							<td ><span> <input
-									type="checkbox" id="cat-1" value="1" /> <span> <f:message
+									type="checkbox" id="cat-1" value="1" checked="checked"/> <span> <f:message
 											key="requirement.category.FUNCTIONAL" /> </span> </span></td>
 							<td ><span> <input
-									type="checkbox" id="cat-2" value="2" /> <span> <f:message
+									type="checkbox" id="cat-2" value="2" checked="checked"/> <span> <f:message
 											key="requirement.category.NON_FUNCTIONAL" /> </span> </span></td>
 							</tr>
 						<tr>					<td ><span> <input
-									type="checkbox" id="cat-3" value="2" /> <span> <f:message
+									type="checkbox" id="cat-3" value="3" checked="checked"/> <span> <f:message
 											key="requirement.category.USE_CASE" /> </span> </span></td>
 					
 							<td ><span> <input
-									type="checkbox" id="cat-4" value="3" /> <span> <f:message
+									type="checkbox" id="cat-4" value="4" checked="checked"/> <span> <f:message
 											key="requirement.category.BUSINESS" /> </span> </span></td>
 							</tr>
 						<tr>	<td ><span> <input
-									type="checkbox" id="cat-5" value="4" /> <span> <f:message
+									type="checkbox" id="cat-5" value="5" checked="checked"/> <span> <f:message
 											key="requirement.category.TEST_REQUIREMENT" /> </span>
 							</span></td>
 							<td ><span> <input
-									type="checkbox" id="cat-6" value="4" /> <span> <f:message
+									type="checkbox" id="cat-6" value="6" checked="checked"/> <span> <f:message
 											key="requirement.category.UNDEFINED" /> </span>
 							</span></td>
 						</tr>
@@ -621,15 +621,15 @@
 										key="test-case.importance.LOW" /> </span>
 							</div>
 							<div class="search-tc-importance-2">
-								<input type="checkbox" id="importance-2" data-value="MEDIUM" /><span><f:message
+								<input type="checkbox" id="importance-2" data-value="MEDIUM" checked="checked"/><span><f:message
 										key="test-case.importance.MEDIUM" /> </span>
 							</div>
 							<div class="search-tc-importance-3">
-								<input type="checkbox" id="importance-3" data-value="HIGH" /><span><f:message
+								<input type="checkbox" id="importance-3" data-value="HIGH" checked="checked"/><span><f:message
 										key="test-case.importance.HIGH" /> </span>
 							</div>
 							<div class="search-tc-importance-4">
-								<input type="checkbox" id="importance-4" data-value="VERY_HIGH" /><span><f:message
+								<input type="checkbox" id="importance-4" data-value="VERY_HIGH" checked="checked"/><span><f:message
 										key="test-case.importance.VERY_HIGH" /> </span>
 							</div>
 						</div>
