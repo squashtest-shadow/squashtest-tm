@@ -87,7 +87,6 @@
 		_init : function () {
 			var self = this;
 			var element = this.element;
-			element.addClass("editable");
 			element.editable(this.options.url, this.options);
 			this._bindLinks();
 

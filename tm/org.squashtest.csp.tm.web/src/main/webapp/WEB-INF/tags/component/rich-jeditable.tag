@@ -48,7 +48,7 @@
 								
 		}
 		
-		$('#${componentId}').richEditable(settings);
+		$('#${componentId}').richEditable(settings).addClass("editable");
 	})
 	
 </script>

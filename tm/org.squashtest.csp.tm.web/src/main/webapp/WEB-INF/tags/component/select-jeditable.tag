@@ -52,7 +52,7 @@
 			<c:if test="${not empty onSubmit}">onsubmit : ${onSubmit},</c:if>
 			indicator : '<img src="${ pageContext.servletContext.contextPath }/scripts/jquery/indicator.gif" alt="processing..." />',
 			
-		});
+		}).addClass("editable");
 	})
 	
 </script>

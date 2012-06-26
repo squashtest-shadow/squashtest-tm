@@ -56,7 +56,7 @@
 			</c:if>
 			indicator : '<img src="${ pageContext.servletContext.contextPath }/scripts/jquery/indicator.gif" alt="processing..." />' 
 			
-		});
+		}).addClass("editable");
 	})
 	
 </script>

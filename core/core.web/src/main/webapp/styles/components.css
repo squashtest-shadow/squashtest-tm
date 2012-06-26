@@ -429,6 +429,10 @@ div.error-inner{
 	border: 1px solid #bbbbbb;
 }
 
+.editable form	{
+	display:inline;
+}
+
 td.editable:HOVER {
 	border: 1px solid transparent;
 }
