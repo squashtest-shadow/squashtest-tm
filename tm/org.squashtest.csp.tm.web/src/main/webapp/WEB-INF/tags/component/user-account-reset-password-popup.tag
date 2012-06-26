@@ -45,7 +45,7 @@
 
 </c:choose>
 
-<pop:popup  id="${popupId}" openedBy="${openerId}" closeOnSuccess="false" titleKey="user.account.password.label" isContextual="true" >
+<pop:popup  id="${popupId}" openedBy="${openerId}" closeOnSuccess="false" titleKey="user.account.password.reset.label" isContextual="true" >
 
  	<jsp:attribute name="buttons"> 	
 		<f:message var="label" key="dialog.button.confirm.label" />

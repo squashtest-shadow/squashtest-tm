@@ -212,7 +212,6 @@
 			<comp:general-information-panel auditableEntity="${user}" />
 			</div>
 			<div class="toolbar-button-panel">
-				<input type="button" value="<f:message key='user.button.reset.password' />" id="reset-password-button" class="button" />
 			</div>
 			<div style="clear: both;"></div>
 		</div>
@@ -229,32 +228,34 @@
 		<comp:simple-jeditable targetUrl="${ userUrl }"
 			componentId="user-email" />
 
-		<comp:toggle-panel id="user-info-panel" titleKey="user.info.panel.title" isContextual="true" open="true">
+		<comp:toggle-panel id="user-info-panel"  classes="information-panel"  titleKey="user.info.panel.title" isContextual="true" open="true">
 
 			<jsp:attribute name="body">
-				<table id="user-infos-table">
-					<tr>
-						<td> <b><f:message key="dialog.add-user.login.label" /> : </b> </td>
-						<td>  <div id="user-login">${ user.login }</div> </td>
-					</tr>
-					<tr>
-						<td> <b><f:message key="dialog.add-user.firstname.label" /> : </b> </td>
-						<td> <div id="user-first-name">${ user.firstName }</div> </td>
-					</tr>
-					<tr>
-						<td> <b><f:message key="dialog.add-user.lastname.label" /> : </b> </td>
-						<td> <div id="user-last-name">${ user.lastName }</div> </td>
-					</tr>
-					<tr>
-						<td> <b><f:message key="dialog.add-user.email.label" /> : </b> </td> 
-						<td> <div id="user-email">${ user.email }</div> </td>
-					</tr>
-					
-					
-					<tr>
-						<td> <b><f:message key="dialog.add-user.users.group.label" /> : </b> </td> 
-						<td>
-							<select id="user-group">
+				<div class="display-table" id="user-infos-table">
+					<div class="display-table-row">
+						<label for="user-login"><f:message key="dialog.add-user.login.label" /></label>
+						<div id="user-login" class="display-table-cell">${ user.login }</div>
+					</div>
+					<div class="display-table-row">
+						<label for="reset-password-button"><f:message key="user.info.password.label"/></label>
+						<div class="display-table-cell" ><a  href="javascript:void(0)" id="reset-password-button"><f:message key='user.button.reset.password' /></a>
+					</div>
+					</div>
+					<div class="display-table-row">
+						<label for="user-first-name"><f:message key="dialog.add-user.firstname.label" /></label>
+						<div id="user-first-name" class="display-table-cell">${ user.firstName }</div>
+					</div>
+					<div class="display-table-row">
+						<label for="user-last-name"><f:message key="dialog.add-user.lastname.label" /></label>
+						<div id="user-last-name" class="display-table-cell">${ user.lastName }</div>
+					</div>
+					<div class="display-table-row">
+						<label for="user-email"><f:message key="dialog.add-user.email.label" /></label>
+						<div id="user-email" class="display-table-cell">${ user.email }</div>
+					</div>
+					<div class="display-table-row">
+						<label for="user-group"><f:message key="dialog.add-user.users.group.label" /></label>
+						<div class="display-table-cell"><select id="user-group" >
 								<c:forEach var="group" items="${ usersGroupList }">
 									<c:choose>
 										<c:when test="${ group.simpleName == user.group.simpleName }">
@@ -265,10 +266,9 @@
 										</c:otherwise>
 									</c:choose>
 								</c:forEach>
-							</select>
-						</td>
-					</tr>
-				</table>
+							</select></div>
+					</div>
+				</div>
 				<br />
 				<%--
 				<div>
