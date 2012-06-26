@@ -21,5 +21,5 @@
 
 
 start javaw -jar squash-launcher.jar
-java -Xms128m -Xmx512m -XX:MaxPermSize=128m -Dfelix.config.properties=file:../conf/felix.config.properties -Dfelix.system.properties=file:../conf/felix.system.properties -jar org.apache.felix.main-3.2.1.jar -Xms256m -Xmx512m 
+java -Xms128m -Xmx512m -XX:MaxPermSize=128m -Dfelix.config.properties=file:../conf/felix.config.properties -Dfelix.system.properties=file:../conf/felix.system.properties -jar org.apache.felix.main-3.2.1.jar
 
