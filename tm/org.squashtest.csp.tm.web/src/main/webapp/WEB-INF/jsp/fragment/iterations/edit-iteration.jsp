@@ -62,9 +62,7 @@
 <s:url var="assignableUsersUrl" value="/iterations/{iterId}/assignable-user" >
 		<s:param name="iterId" value="${iteration.id}" />
 </s:url>
-<s:url var="batchAssignableUsersUrl" value="/iterations/{iterId}/batch-assignable-user" >
-		<s:param name="iterId" value="${iteration.id}" />
-</s:url>
+
 <s:url var="assignTestCasesUrl" value="/iterations/{iterId}/batch-assign-user" >
 		<s:param name="iterId" value="${iteration.id}" />
 </s:url>
@@ -435,7 +433,7 @@
 				var table = $( '#test-plans-table' ).dataTable();
 				var ids = getIdsOfSelectedTableRows(table, getTestPlansTableRowId);
 		
-				var user = $(".comboLogin").val();
+				var user = $(".batch-select", this).val();
 			
 				$.post(url, { testPlanIds: ids, userId: user}, function(){
 					refreshTestPlansWithoutSelection();
@@ -447,17 +445,21 @@
 		</jsp:attribute>
 		<jsp:body>
 			<f:message var="emptyMessage" key="dialog.assign-user.selection.empty.label" />
-			<f:message var="confirmMessage" key="dialog.assign-test-case.confirm.label" />
 			<script type="text/javascript">
 				$("#batch-assign-test-case").bind( "dialogopen", function(event, ui){
 					var table = $( '#test-plans-table' ).dataTable();
 					var ids = getIdsOfSelectedTableRows(table, getTestPlansTableRowId);
-
+	
 					if (ids.length > 0) {
-						var comboBox = $.get("${batchAssignableUsersUrl}", false, function(){
-							$("#comboBox-div").html("${confirmMessage}");
-							$("#comboBox-div").append(comboBox.responseText);
-							$("#comboBox-div").show();
+						var pop = this;
+												
+						$.get("${assignableUsersUrl}","json")
+						.success(function(jsonList){
+							var select = $(".batch-select", pop);
+							select.empty();
+							for (var i=0;i<jsonList.length;i++){
+								select.append($('<option/>', {'value' : jsonList[i].id, 'text' : jsonList[i].login}));
+							}
 						});
 					}
 					else {
@@ -467,8 +469,9 @@
 					
 				});
 			</script>
-			<div id="comboBox-div">
-			</div>
+			<span><f:message key="dialog.assign-test-case.confirm.label" /></span>
+			<select class="batch-select">
+			</select>
 		</jsp:body>
 </comp:popup>
 </c:if>

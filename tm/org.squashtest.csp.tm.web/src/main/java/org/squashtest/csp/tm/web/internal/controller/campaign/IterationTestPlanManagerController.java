@@ -176,17 +176,6 @@ public class IterationTestPlanManagerController {
 
 	}
 
-	@RequestMapping(value = "/iterations/{iterationId}/batch-assignable-user", method = RequestMethod.GET)
-	public ModelAndView getAssignUserForIterationTestPlanItems(@PathVariable long iterationId, final Locale locale) {
-
-		List<User> userList = iterationTestPlanManagerService.findAssignableUserForTestPlan(iterationId);
-		ModelAndView mav = new ModelAndView("fragment/generics/test-plan-combo-box");
-		mav.addObject("usersList", userList);
-		mav.addObject("selectIdentitier", "comboUsersList");
-		mav.addObject("testCaseAssignedLogin", null);
-		mav.addObject("selectClass", "comboLogin");
-		return mav;
-	}
 
 	@RequestMapping(value = "/iterations/{iterationId}/test-cases/table", params = "sEcho")
 	public @ResponseBody
