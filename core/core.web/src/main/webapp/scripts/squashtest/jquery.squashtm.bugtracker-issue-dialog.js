@@ -386,8 +386,17 @@
 
 		
 		
-		//we let the usual error handling do its job here
+		// we let the usual error handling do its job here
+		// if the error is a field validation error, let's display in the error display
+		// we're doing it manually because in some context (ieo for instance) the general 
+		// error handler is not present.
 		var bugReportError = $.proxy(function(jqXHR, textStatus, errorThrown){
+			try{
+				var message = $.parseJSON(jqXHR.responseText).fieldValidationErrors[0].errorMessage;
+				this.error.find('.error-message').text(message);
+			}catch(ex){
+				// well maybe that wasn't for us after all
+			}
 			flipToMain();
 			this.error.popupError('show');
 		}, self);
@@ -471,9 +480,7 @@
 					self.callback.apply(self, arguments);
 				}
 			})
-			.fail(function(){
-				bugReportError();
-			});
+			.fail(bugReportError);
 		};
 		
 		/* ************* events ************************ */
