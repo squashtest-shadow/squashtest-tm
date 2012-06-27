@@ -21,6 +21,7 @@
 package org.squashtest.csp.tm.web.internal.controller.requirement
 
 
+
 import java.util.Locale
 
 import javax.inject.Provider
@@ -49,7 +50,7 @@ class RequirementModificationControllerTest extends Specification {
 	Provider criticalityBuilderProvider = criticalityBuilderProvider()
 	Provider categoryBuilderProvider = categoryBuilderProvider()
 	Provider statusBuilderProvider = statusBuilderProvider()
-	Provider levelFormatterProvider = levelFormatterProvider()
+	Provider levelFormatterProvider = levelFormatterProvider()	
 
 	def setup() {
 		controller.requirementModService = requirementModificationService
@@ -57,6 +58,7 @@ class RequirementModificationControllerTest extends Specification {
 		controller.categoryComboBuilderProvider = categoryBuilderProvider
 		controller.statusComboDataBuilderProvider = statusBuilderProvider
 		controller.levelFormatterProvider = levelFormatterProvider
+		controller.internationalizableFormatterProvider = levelFormatterProvider
 	}
 
 	def criticalityBuilderProvider() {

@@ -51,8 +51,8 @@
 		<lay:_workspace-button imageName="Button_Nav_Requirement_off.png" resourceName="requirement" />
 		<lay:_workspace-button imageName="Button_Nav_TestCase_off.png" resourceName="test-case" />
 		<lay:_workspace-button imageName="Button_Nav_Campaign_off.png" resourceName="campaign" />
-		<lay:_workspace-button imageName="Button_Nav_Reporting_off.png" resourceName="report" />
 		<lay:_workspace-button-bugtracker highlighted="${ bugtrackerHighlighted }"/>
+		<lay:_workspace-button imageName="Button_Nav_Reporting_off.png" resourceName="report" />
 	</div>
 	
 	<div id="nav_logo">

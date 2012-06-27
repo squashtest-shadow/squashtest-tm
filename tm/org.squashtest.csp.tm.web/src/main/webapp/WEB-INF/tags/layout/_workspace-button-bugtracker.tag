@@ -30,12 +30,14 @@
 	this section is loaded asynchronously. The bugtracker might be out of reach indeed.
  --%>	
  <script type="text/javascript">
+ 	
  	$(function(){
  		$("#bugtracker-div").load("${workspaceUrl}", function(){
- 			<c:if test="${highlighted}">
+ 			<c:if test="${ highlighted }">
  				squashtm.navbar.highlightOn('bugtracker-link');
  			</c:if>
  		});
+ 		
  	});
  </script>
 <div id="bugtracker-div" ></div>
