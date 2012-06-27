@@ -29,6 +29,7 @@ var squashtm = squashtm || {};
  * jquery.jeditable.datepicker.js
  * jquery.squashtm.plugin.js
  * jquery.squashtm.linkabletree.js
+ * squashtm.reportworkspace.js
  * 
  * @author Gregory Fouquet
  */
@@ -217,12 +218,19 @@ squashtm.report = (function ($) {
 	}
 	
 	function generateView() {
+		// collapses the form
+		$("#report-criteria-panel").togglePanel("closeContent"); 
+		// collapses the sidebar
+		squashtm.reportWorkspace.setReportWorkspaceExpandState();
+
 		var tabPanel = $("#view-tabed-panel");
+
 		if (!selectedTab) {
 			tabPanel.tabs('select', 0);
 		} else {
 			loadTab(selectedTab);
 		}
+
 		$("#view-tabed-panel:hidden").show('blind', {}, 500);
 	}
 	
@@ -378,6 +386,9 @@ squashtm.report = (function ($) {
 		config = $.extend(config, settings);		
 		
 		var panel = $("#report-criteria-panel");
+		panel.togglePanel({});
+
+		$("#contextual-content").decorateButtons();
 
 		initCheckboxes(panel);
 		initRadios(panel);

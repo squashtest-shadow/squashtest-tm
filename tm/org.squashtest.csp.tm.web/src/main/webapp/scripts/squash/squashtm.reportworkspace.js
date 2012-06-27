@@ -104,9 +104,7 @@ squashtm.reportWorkspace = (function ($) {
 			loadContextualReport(this);
 		});
 
-		$("#category-frame-button").delegate("#toggle-expand-category-frame-button", "click", function () {
-			toggleReportWorkspaceState();
-		});
+		$("#contextual-content").delegate("#toggle-expand-category-frame-button", "click", toggleReportWorkspaceState);
 
 		/* decorate buttons */
 		$.squash.decorateButtons();

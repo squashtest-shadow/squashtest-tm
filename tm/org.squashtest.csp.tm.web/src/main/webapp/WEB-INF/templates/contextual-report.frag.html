@@ -374,12 +374,6 @@
 		<script type="text/javascript" th:inline="javascript">
 		/* <![CDATA[ */
 			$(function(){
-				$("#report-criteria-panel").togglePanel({
-					initiallyOpen : true,
-					cssClasses : "is-contextual"
-				});
-				$("#contextual-content").decorateButtons();
-
 				squashtm.report.init({
 					contextPath: /*[[ ${#ctx.servletContext.contextPath} ]]*/ "http://localhost:8080/squash", 
 					reportUrl: /*[[ @{'/reports/' + ${report.namespace} + '/' + ${report.index}} ]]*/ "/squash/reports",
