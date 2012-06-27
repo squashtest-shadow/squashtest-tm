@@ -25,16 +25,135 @@
 <%@ attribute name="editable" type="java.lang.Boolean" description="Right to edit content. Default to false." %>
 <%@ attribute name="assignableUsersUrl" required="true" description="URL to manipulate user of the test-cases" %>
 <%@ attribute name="campaignUrl" required="true" description="the url to the campaign that hold all of these test cases" %>
-<%@ attribute name="testCaseSingleRemovalPopupId" required="true" description="html id of the single test-case removal popup" %>
 <%@ attribute name="testCaseMultipleRemovalPopupId" required="true" description="html id of the multiple test-case removal popup" %>
 
 <%@ taglib prefix="comp" tagdir="/WEB-INF/tags/component" %>
 <%@ taglib prefix="dt" tagdir="/WEB-INF/tags/datatables" %>
 <%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core"%>
+<%@ taglib prefix="f" uri="http://java.sun.com/jsp/jstl/fmt"%>
 
 <c:url var="testCaseDetailsBaseUrl" value="/test-cases" />
 
 <script type="text/javascript">
+
+
+	function refreshTestPlan() {
+		$('#test-cases-table').squashTable().refresh();
+	}
+	
+	function refreshTestPlanWithoutSelection(){
+		var table = $('#test-cases-table').squashTable();
+		table.refresh();
+		table.deselectRows();
+	}
+
+	function rowDataToItemId(rowData) {
+		return rowData['entity-id'];	
+	}
+
+	function rowDataToItemIndex(rowData){
+		return rowData['entity-index'];
+	}
+
+	function rowDataToTestCaseId(rowData){
+		return rowData['tc-id'];
+	}
+
+	function addIdtoTestCaseRow(nRow, aData){
+		$(nRow).attr("id", "test-plan-item:" + rowDataToItemId(aData));
+	}
+	
+	function testPlanRowCallback(row, data, displayIndex) {
+		addIdtoTestCaseRow(row, data);
+		addHLinkToTestCaseName(row, data);
+		return row;
+	}
+	
+
+	function testPlanDrawCallback() {
+		<c:if test="${ editable }">
+		addLoginListToTestPlan();
+		</c:if>
+	}
+	
+	<c:if test="${ editable }">
+	function addLoginListToTestPlan(){
+			
+		var table = $("#test-cases-table").squashTable();
+		
+		//look first at the cache
+		var assignableList = table.data('assignable-list');
+		
+		if (assignableList!=null){
+			table.$('td.assignable-combo').loginCombo();
+		}
+		
+		$.get("${assignableUsersUrl}", "json")
+		.success(function(json){
+			table.data('assignable-list', json);
+			table.$('td.assignable-combo').loginCombo();
+		});
+
+	}
+	
+	
+	$.fn.loginCombo = function(assignableList){
+		
+		if (this.length==0) return;
+		var squashTable=this.eq(0).parents("table").squashTable();
+		var assignableList = squashTable.data('assignable-list');
+		if (! assignableList) return;
+		
+		//create the template
+		var template=$('<select/>');
+		for (var i=0;i<assignableList.length;i++){
+			var opt = '<option value="'+assignableList[i].id+'">'+assignableList[i].login+'</option>';
+			template.append(opt);
+		}
+		
+		template.change(function(){
+			$.ajax({
+				type : 'POST',
+				url : this.getAttribute('data-assign-url'),
+				data : "userId=" + this.value,
+				dataType : 'json'
+			});
+		});
+			
+		this.each(function(){
+			
+			var cloneSelect = template.clone(true);
+			
+			var jqTd = $(this);
+			var row = this.parentNode;
+			
+			
+			//sets the change url
+			var tpId = squashTable.getODataId(row);
+			var dataUrl = "${campaignUrl}/test-plan/"+tpId+"/assign-user";
+			
+			cloneSelect.attr('data-assign-url', dataUrl);
+		
+			//selects the assigned user
+			var assignedTo = squashTable.fnGetData(row)['assigned-to'] || "0";
+			cloneSelect.val(assignedTo);
+			
+			
+			//append the content
+			jqTd.empty().append(cloneSelect);
+			
+		});	
+	}
+	</c:if>
+
+	
+	function addHLinkToTestCaseName(row, data) {
+		var url= '${ testCaseDetailsBaseUrl }/' + rowDataToTestCaseId(data) + '/info';			
+		addHLinkToCellText($( 'td:eq(2)', row ), url);
+	}	
+	
+	
+	
 	$(function() {
 		//multiple deletion
 		$( '#${ testCaseMultipleRemovalPopupId }' ).bind('dialogclose', function() {
@@ -47,7 +166,7 @@
 			var ids = getIdsOfSelectedTableRows(table, rowDataToItemId);
 			
 			if (ids.length > 0) {
-				$.post('${ campaignUrl }/test-plan', { action: 'remove', itemsIds: ids }, refreshTestPlan);
+				$.post('${ campaignUrl }/test-plan', { action: 'remove', itemIds: ids }, refreshTestPlan);
 			}
 		
 		});
@@ -59,102 +178,75 @@
 			$("#${ testCaseSingleRemovalPopupId }").data('opener', this).dialog('open');
 		});
 		
-		$("#${ testCaseSingleRemovalPopupId }").bind('dialogclose', function() {
-			var answer = $("#${ testCaseSingleRemovalPopupId }").data("answer");
-			if (answer != "yes") {
-				return;
-			}
-			var bCaller = $.data(this,"opener");
+
 		
-			$.ajax({
-				type : 'delete',
-				url : '${ campaignUrl }/test-plan/' + trToItemId(bCaller),
-				dataType : 'json',
-				success : refreshTestPlan
-			});
-		});
+		/* **************************** datatable settings ******************* */
+		
+		
+		var tableSettings = {
+				"oLanguage":{
+					"sLengthMenu": '<f:message key="generics.datatable.lengthMenu" />',
+					"sZeroRecords": '<f:message key="generics.datatable.zeroRecords" />',
+					"sInfo": '<f:message key="generics.datatable.info" />',
+					"sInfoEmpty": '<f:message key="generics.datatable.infoEmpty" />',
+					"sInfoFiltered": '<f:message key="generics.datatable.infoFiltered" />',
+					"oPaginate":{
+						"sFirst":    '<f:message key="generics.datatable.paginate.first" />',
+						"sPrevious": '<f:message key="generics.datatable.paginate.previous" />',
+						"sNext":     '<f:message key="generics.datatable.paginate.next" />',
+						"sLast":     '<f:message key="generics.datatable.paginate.last" />'
+					}
+				},				
+				"sAjaxSource" : "${ campaignUrl }/test-plan/table", 
+				"fnRowCallback" : testPlanRowCallback,
+				"fnDrawCallback" : testPlanDrawCallback,
+				"aoColumnDefs": [
+					{'bSortable': false, 'bVisible': false, 'aTargets': [0], 'mDataProp' : 'entity-id'},
+					{'bSortable': false, 'sWidth' : '2em', 'sClass': 'centered ui-state-default drag-handle select-handle', 'aTargets': [1], 'mDataProp' : 'entity-index'},
+					{'bSortable': false, 'aTargets': [2], 'mDataProp' : 'project-name'},
+					{'bSortable': false, 'aTargets': [3], 'mDataProp' : 'tc-name'},
+					{'bSortable': false, 'aTargets': [4], 'sClass' : 'assignable-combo', 'mDataProp' : 'assigned-user'},
+					{'bSortable': false, 'bVisible' : false, 'sWidth': '10%', 'aTargets': [5], 'mDataProp' : 'assigned-to'},
+					{'bSortable': false, 'aTargets': [6], 'mDataProp' : 'importance'},
+					{'bSortable': false, 'aTargets': [7], 'mDataProp' : 'exec-mode'},
+					{'bSortable': false, 'sWidth': '2em', 'sClass': 'centered delete-button', 'aTargets': [8], 'mDataProp' : 'empty-delete-holder'},
+					{'bSortable': false, 'bVisible' : false, 'aTargets': [9], 'mDataProp' : 'tc-id'},
+				]
+			};		
+		
+			var squashSettings = {
+					
+				enableHover : true,
+				confirmDialog : {
+					oklabel : '<f:message key="attachment.button.delete.label" />',
+					cancellabel : '<f:message key="dialog.button.cancel.label" />'
+				},
+				functions : {
+					dropHandler : function(dropData){
+						$.post('${ campaignUrl }/test-case/move',dropData, function(){
+							$("#test-cases-table").squashTable().refresh();
+						});
+					}
+				}
+			};
+			
+			<c:if test="${editable}">
+			squashSettings.enableDnD = true;
+
+			squashSettings.deleteButtons = {
+				
+				url : "${campaignUrl}/test-plan/{entity-id}",
+				popupmessage : '<f:message key="dialog.remove-testcase-association.message" />',
+				tooltip : '<f:message key="test-case.verified_requirement_item.remove.button.label" />',
+				success : function(data) {
+					refreshTestPlan();				
+				}
+					
+			};
+			</c:if>
+					
+			$("#test-cases-table").squashTable(tableSettings, squashSettings);		
+
 	});
 	
-	
-	function testPlanDropHandler(rows, dropPosition) {
-		var itemsIds = $( rows ).collect( trToItemId );
-		$.post('${ campaignUrl }/test-plan/index/' + dropPosition, { action : 'move', itemsIds : itemsIds }, refreshTestPlan);
-	}
-	
-	function refreshTestPlan() {
-		var table = $('#test-cases-table').dataTable();
-		saveTableSelection(table, rowDataToItemId);
-		table.fnDraw(false);
-	}
-	
-	function refreshTestPlanWithoutSelection(){
-		var table = $('#test-cases-table').dataTable();
-		saveTableSelection(table, rowDataToItemId);
-		table.fnDraw(false);
-	}
-
-	function testPlanDrawCallback() {
-		<c:if test="${ editable }">
-		enableTableDragAndDrop('test-cases-table', rowDataToItemIndex, testPlanDropHandler);
-		decorateDeleteButtons($('.delete-test-case-button', this));
-		</c:if>
-		restoreTableSelection(this, rowDataToItemId);
-	}
-
-	function rowDataToItemId(rowData) {
-		return rowData[0];	
-	}
-
-	function rowDataToItemIndex(rowData){
-		return rowData[1];
-	}
-
-	function rowDataToTestCaseId(rowData){
-		return rowData[8];
-	}
-
-	function addIdtoTestCaseRow(nRow, aData){
-		$(nRow).attr("id", "test-plan-item:" + rowDataToItemId(aData));
-	}
-	
-	function testPlanRowCallback(row, data, displayIndex) {
-		addIdtoTestCaseRow(row, data);
-		<c:if test="${ editable }">
-		<c:if test='${assignableUsersUrl != " " }'>
-		addLoginListToTestCase(row, data);
-		</c:if>
-		addDeleteButtonToRow(row, rowDataToItemId(data), 'delete-test-case-button');
-		</c:if>
-		addClickHandlerToSelectHandle(row, $("#test-cases-table"));
-		addHLinkToTestCaseName(row, data);
-		return row;
-	}
-	
-	function addLoginListToTestCase(row, data) {
-		var id = rowDataToItemId(data);
-		$('td:eq(3)', row).load("${assignableUsersUrl}" + "?itemId="+ id +"");
-	}
-	
-	function trToItemId(element) {
-		var elementId = element.id;
-		return elementId.substr(elementId.indexOf(":") + 1);
-	}
-	
-	function addHLinkToTestCaseName(row, data) {
-		var url= '${ testCaseDetailsBaseUrl }/' + rowDataToTestCaseId(data) + '/info';			
-		addHLinkToCellText($( 'td:eq(2)', row ), url);
-	}	
 </script>
-
-<comp:decorate-ajax-table url="${ campaignUrl }/test-plan/table" tableId="test-cases-table" paginate="true">
-	<jsp:attribute name="initialSort">[[3,'asc']]</jsp:attribute>
-	<jsp:attribute name="drawCallback">testPlanDrawCallback</jsp:attribute>
-	<jsp:attribute name="rowCallback">testPlanRowCallback</jsp:attribute>
-	<jsp:attribute name="columnDefs">
-		<dt:column-definition targets="0" visible="false" />
-		<dt:column-definition targets="1" sortable="false" cssClass="select-handle drag-handle centered" width="2em" />
-		<dt:column-definition targets="2,3,4,5,6" sortable="false" />
-		<dt:column-definition targets="7" sortable="false" width="2em" cssClass="centered" />
-		<dt:column-definition targets="8" visible="false" lastDef="true" />		
-	</jsp:attribute>
-</comp:decorate-ajax-table>

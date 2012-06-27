@@ -30,6 +30,7 @@
 			<th><f:message key="campaign.test-plan.table.column-header.project.label" /></th>
 			<th><f:message key="test-case.name.label" /></th>
 			<th><f:message key="test-case.user.combo.label" /></th>
+			<th>assigned user id (masked)</th>
 			<th><f:message key="test-case.importance.combo.label" /></th>
 			<th><f:message key="campaign.test-plan.table.column-header.type.label" /></th>
 			<th>&nbsp;</th>				

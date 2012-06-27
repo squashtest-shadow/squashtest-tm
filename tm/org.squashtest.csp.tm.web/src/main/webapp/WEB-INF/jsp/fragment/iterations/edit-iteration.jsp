@@ -59,7 +59,7 @@
 <s:url var="nonBelongingTestCasesUrl" value="/iterations/{iterId}/non-belonging-test-cases" >
 		<s:param name="iterId" value="${iteration.id}" />
 </s:url>
-<s:url var="assignableUsersUrl" value="/iterations/{iterId}/assignable-user" >
+<s:url var="assignableUsersUrl" value="/iterations/{iterId}/assignable-users" >
 		<s:param name="iterId" value="${iteration.id}" />
 </s:url>
 
@@ -67,14 +67,19 @@
 		<s:param name="iterId" value="${iteration.id}" />
 </s:url>
 <c:url var="testCaseDetailsBaseUrl" value="/test-case-libraries/1/test-cases" />
+
 <c:url var="workspaceUrl" value="/campaign-workspace/#" />
+
 <s:url var="testCaseExecutionsUrl" value="/iterations/{iterId}/test-case-executions/" >
 	<s:param name="iterId" value="${iteration.id}"/>
 </s:url>
+
 <s:url var="updateTestCaseUrl" value="/iterations/{iterId}/test-case/">
 	<s:param name="iterId" value="${iteration.id}" />
 </s:url>
+
 <s:url var="simulateDeletionUrl" value="/campaign-browser/delete-iterations/simulate" />
+
 <s:url var="confirmDeletionUrl" value="/campaign-browser/delete-iterations/confirm" />
 
 <s:url var="testSuitesUrl" value="/iterations/{iterId}/test-suites">

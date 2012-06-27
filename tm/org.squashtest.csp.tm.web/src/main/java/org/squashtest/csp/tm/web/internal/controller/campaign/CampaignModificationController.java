@@ -21,8 +21,10 @@
 package org.squashtest.csp.tm.web.internal.controller.campaign;
 
 import java.util.Date;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Locale;
+import java.util.Map;
 
 import javax.inject.Inject;
 import javax.servlet.http.HttpServletResponse;
@@ -44,6 +46,7 @@ import org.squashtest.csp.tm.domain.project.Project;
 import org.squashtest.csp.tm.domain.testcase.TestCase;
 import org.squashtest.csp.tm.domain.testcase.TestCaseExecutionMode;
 import org.squashtest.csp.tm.domain.testcase.TestCaseImportance;
+import org.squashtest.csp.tm.domain.users.User;
 import org.squashtest.csp.tm.infrastructure.filter.CollectionSorting;
 import org.squashtest.csp.tm.infrastructure.filter.FilteredCollectionHolder;
 import org.squashtest.csp.tm.service.CampaignModificationService;
@@ -283,15 +286,27 @@ public class CampaignModificationController {
 
 		return new DataTableModelHelper<CampaignTestPlanItem>() {
 			@Override
-			public Object[] buildItemData(CampaignTestPlanItem item) {
+			public Map<String, Object> buildItemData(CampaignTestPlanItem item) {
+				
+				Map<String, Object> result = new HashMap<String, Object>();
+				
 				TestCase testCase = item.getReferencedTestCase();
 				String user = (item.getUser() != null) ? item.getUser().getLogin() : formatNoData(locale); 
+				Long assigneeId = (item.getUser()!=null) ? item.getUser().getId() : User.NO_USER_ID;
+	
+				result.put(DataTableModelHelper.DEFAULT_ENTITY_ID_KEY, item.getId());
+				result.put(DataTableModelHelper.DEFAULT_ENTITY_INDEX_KEY, getCurrentIndex());
+				result.put("project-name", testCase.getProject().getName());
+				result.put("tc-name", testCase.getName());
+				result.put("assigned-user", user);
+				result.put("assigned-to", assigneeId);
+				result.put("importance", formatImportance(testCase.getImportance(), locale));
+				result.put("exec-mode",formatExecutionMode(testCase.getExecutionMode(), locale));
+				result.put("empty-delete-holder", " ");
+				result.put("tc-id", testCase.getId());
 				
-				return new Object[] { item.getId(), getCurrentIndex(), testCase.getProject().getName(),
-						testCase.getName(),
-						user,
-						formatImportance(testCase.getImportance(), locale),
-						formatExecutionMode(testCase.getExecutionMode(), locale), "", testCase.getId() };
+				return result;
+				
 			}
 		}.buildDataModel(holder, filter.getFirstItemIndex() + 1, params.getsEcho());
 	}

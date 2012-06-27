@@ -158,7 +158,7 @@ public class IterationTestPlanManagerController {
 		iterationTestPlanManagerService.assignUserToTestPlanItems(testPlanIds, iterationId, userId);
 	}
 
-	@RequestMapping(value = "/iterations/{iterationId}/assignable-user", method = RequestMethod.GET)
+	@RequestMapping(value = "/iterations/{iterationId}/assignable-users", method = RequestMethod.GET)
 	public @ResponseBody List<TestPlanAssignableUser> getAssignUserForIterationTestPlanItem(@PathVariable long iterationId, final Locale locale) {
 		
 		List<User> usersList = iterationTestPlanManagerService.findAssignableUserForTestPlan(iterationId);
@@ -166,7 +166,7 @@ public class IterationTestPlanManagerController {
 		String unassignedLabel = formatUnassigned(locale);
 		List<TestPlanAssignableUser> jsonUsers = new LinkedList<TestPlanAssignableUser>();
 		
-		jsonUsers.add(new TestPlanAssignableUser("0", unassignedLabel ));
+		jsonUsers.add(new TestPlanAssignableUser(User.NO_USER_ID.toString(), unassignedLabel ));
 		
 		for (User user : usersList){
 			jsonUsers.add(new TestPlanAssignableUser(user));

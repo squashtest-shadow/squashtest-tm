@@ -45,15 +45,11 @@
 <s:url var="campaignPlanningUrl" value="/campaigns/{campId}/planning">
 	<s:param name="campId" value="${campaign.id}" />
 </s:url>
-<s:url var="assignableUsersUrl" value="/campaigns/{campId}/assignable-user">
+<s:url var="assignableUsersUrl" value="/campaigns/{campId}/assignable-users">
 		<s:param name="campId" value="${campaign.id}" />
 </s:url>
 
-<s:url var="batchAssignableUsersUrl" value="/campaigns/{campId}/batch-assignable-user">
-		<s:param name="campId" value="${campaign.id}" />
-</s:url>
-
-<s:url var="assignTestCasesUrl" value="/campaigns/${ campaign.id }/test-plan" />
+<s:url var="assignTestCasesUrl" value="/campaigns/${ campaign.id }/batch-assign-user" />
 
 <c:url var="testCaseManagerUrl" value="/campaigns/${ campaign.id }/test-plan/manager" />
 
@@ -317,7 +313,7 @@
 <div class="table-tab-wrap" >
 		<aggr:decorate-campaign-test-plan-table 
 			batchRemoveButtonId="remove-test-case-button" editable="${ linkable }" assignableUsersUrl="${assignableUsersUrl}" 
-			campaignUrl="${ campaignUrl }" testCaseMultipleRemovalPopupId="delete-multiple-test-cases-dialog" testCaseSingleRemovalPopupId="delete-single-test-case-dialog" />
+			campaignUrl="${ campaignUrl }" testCaseMultipleRemovalPopupId="delete-multiple-test-cases-dialog"  />
 		<aggr:campaign-test-plan-table />
 </div>
 
@@ -339,21 +335,6 @@
 	</jsp:attribute>
 </pop:popup>
 
-<%--- the openedBy attribute here is irrelevant and is just a dummy --%>
-<pop:popup id="delete-single-test-case-dialog" openedBy="test-cases-table .delete-test-case-button" titleKey="dialog.remove-testcase-association.title">
-	<jsp:attribute name="buttons">
-		<f:message var="label" key="attachment.button.delete.label" />
-				'${ label }' : function(){
-						$("#delete-single-test-case-dialog").data("answer","yes");
-						$("#delete-single-test-case-dialog").dialog("close");
-				},
-				
-		<pop:cancel-button />
-	</jsp:attribute>
-	<jsp:attribute name="body">
-		<f:message key="dialog.remove-testcase-association.message" />
-	</jsp:attribute>
-</pop:popup>
 
 </div>
 
@@ -383,9 +364,10 @@
 				var url = "${ assignTestCasesUrl }";
 				var table = $( '#test-cases-table' ).dataTable();
 				var ids = getIdsOfSelectedTableRows(table, rowDataToItemId);
-				var user = $(".comboLogin").val();
+				
+				var user = $(".batch-select", this).val();
 			
-				$.post(url, { action: 'assign-user', itemsIds: ids, userId: user}, function(){
+				$.post(url, { itemIds: ids, userId: user}, function(){
 					refreshTestPlanWithoutSelection();
 					$("#batch-assign-test-case").dialog('close');
 				});
@@ -395,16 +377,20 @@
 		</jsp:attribute>
 		<jsp:body>
 			<f:message var="emptyMessage" key="dialog.assign-user.selection.empty.label" />
-			<f:message var="confirmMessage" key="dialog.assign-test-case.confirm.label" />
 			<script type="text/javascript">
 				$("#batch-assign-test-case").bind( "dialogopen", function(event, ui){
 					var table = $( '#test-cases-table' ).dataTable();
 					var ids = getIdsOfSelectedTableRows(table, rowDataToItemId);
 					if (ids.length > 0) {
-						var comboBox = $.get("${batchAssignableUsersUrl}", false, function(){
-							$("#comboBox-div").html("${confirmMessage}");
-							$("#comboBox-div").append(comboBox.responseText);
-							$("#comboBox-div").show();
+						var pop = this;
+												
+						$.get("${assignableUsersUrl}","json")
+						.success(function(jsonList){
+							var select = $(".batch-select", pop);
+							select.empty();
+							for (var i=0;i<jsonList.length;i++){
+								select.append($('<option/>', {'value' : jsonList[i].id, 'text' : jsonList[i].login}));
+							}
 						});
 					}
 					else {
@@ -414,7 +400,9 @@
 					
 				});
 			</script>
-			<div id="comboBox-div">
+			<span><f:message key="dialog.assign-test-case.confirm.label" /></span>
+			<select class="batch-select">
+			</select>
 			</div>
 		</jsp:body>
 </comp:popup>

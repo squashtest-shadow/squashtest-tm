@@ -20,11 +20,14 @@
  */
 package org.squashtest.csp.tm.web.internal.controller.campaign;
 
+import java.util.LinkedList;
 import java.util.List;
+import java.util.Locale;
 
 import javax.inject.Inject;
 import javax.inject.Provider;
 
+import org.springframework.context.MessageSource;
 import org.springframework.osgi.extensions.annotation.ServiceReference;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -34,12 +37,12 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.servlet.ModelAndView;
 import org.squashtest.csp.tm.domain.campaign.Campaign;
-import org.squashtest.csp.tm.domain.campaign.CampaignTestPlanItem;
 import org.squashtest.csp.tm.domain.testcase.TestCaseLibrary;
 import org.squashtest.csp.tm.domain.users.User;
 import org.squashtest.csp.tm.service.CampaignTestPlanManagerService;
 import org.squashtest.csp.tm.web.internal.model.builder.DriveNodeBuilder;
 import org.squashtest.csp.tm.web.internal.model.builder.JsTreeNodeListBuilder;
+import org.squashtest.csp.tm.web.internal.model.jquery.TestPlanAssignableUser;
 import org.squashtest.csp.tm.web.internal.model.jstree.JsTreeNode;
 
 /**
@@ -48,7 +51,7 @@ import org.squashtest.csp.tm.web.internal.model.jstree.JsTreeNode;
 @Controller
 public class CampaignTestPlanManagerController {
 
-	private static final String ITEMS_IDS_REQUEST_PARAM = "itemsIds[]";
+	private static final String ITEMS_IDS_REQUEST_PARAM = "itemIds[]";
 
 	private static final String TESTCASES_IDS_REQUEST_PARAM = "testCasesIds[]";
 
@@ -56,6 +59,10 @@ public class CampaignTestPlanManagerController {
 	private Provider<DriveNodeBuilder> driveNodeBuilder;
 
 	private CampaignTestPlanManagerService testPlanManager;
+	
+
+	@Inject
+	private MessageSource messageSource;
 
 	@ServiceReference
 	public void setTestPlanManager(CampaignTestPlanManagerService campaignTestPlanManagerService) {
@@ -104,58 +111,51 @@ public class CampaignTestPlanManagerController {
 		return listBuilder.setModel(linkableLibraries).build();
 	}
 
-	@RequestMapping(value = "/campaigns/{campaignId}/test-plan/{itemId}/assigned-user", method = RequestMethod.POST, params = "userId")
+	@RequestMapping(value = "/campaigns/{campaignId}/test-plan/{itemId}/assign-user", method = RequestMethod.POST, params = "userId")
 	public @ResponseBody
 	void assignUserToCampaignTestPlanItem(@PathVariable long itemId, @PathVariable long campaignId,
 			@RequestParam long userId) {
 		testPlanManager.assignUserToTestPlanItem(itemId, campaignId, userId);
 	}
 
-	@RequestMapping(value = "/campaigns/{campaignId}/assignable-user", method = RequestMethod.GET)
-	public ModelAndView getAssignUserForCampaignTestPlanItem(@RequestParam long itemId, @PathVariable long campaignId) {
+	
+	@RequestMapping(value = "/campaigns/{campaignId}/assignable-users", method = RequestMethod.GET)
+	public @ResponseBody List<TestPlanAssignableUser> getAssignUserForCampaignTestPlanItem(
+			@PathVariable("campaignId") long campaignId, final Locale locale) {
+		
 		List<User> usersList = testPlanManager.findAssignableUserForTestPlan(campaignId);
-		CampaignTestPlanItem itp = testPlanManager.findById(itemId);
-
-		ModelAndView mav = new ModelAndView("fragment/generics/test-plan-combo-box");
-
-		mav.addObject("usersList", usersList);
-		mav.addObject("selectIdentitier", "usersList");
-		mav.addObject("selectClass", "userLogin");
-		mav.addObject("dataAssignUrl", "/campaigns/" + campaignId + "/test-plan/" + itp.getId() + "/assigned-user");
-
-		if (itp.getUser() != null) {
-			mav.addObject("testCaseAssignedLogin", itp.getUser().getLogin());
-		} else {
-			mav.addObject("testCaseAssignedLogin", null);
+		
+		String unassignedLabel = formatUnassigned(locale);
+		List<TestPlanAssignableUser> jsonUsers = new LinkedList<TestPlanAssignableUser>();
+		
+		jsonUsers.add(new TestPlanAssignableUser(User.NO_USER_ID.toString(), unassignedLabel ));
+		
+		for (User user : usersList){
+			jsonUsers.add(new TestPlanAssignableUser(user));
 		}
-
-		return mav;
+		
+		return jsonUsers;
 	}
+	
 
-	@RequestMapping(value = "/campaigns/{campaignId}/batch-assignable-user", method = RequestMethod.GET)
-	public ModelAndView getAssignUserForCampaignTestPlanItems(@PathVariable long campaignId) {
-		List<User> userList = testPlanManager.findAssignableUserForTestPlan(campaignId);
-		ModelAndView mav = new ModelAndView("fragment/generics/test-plan-combo-box");
-		mav.addObject("usersList", userList);
-		mav.addObject("selectIdentitier", "comboUsersList");
-		mav.addObject("testCaseAssignedLogin", null);
-		mav.addObject("selectClass", "comboLogin");
-		return mav;
-	}
-
-	@RequestMapping(value = "/campaigns/{campaignId}/test-plan", method = RequestMethod.POST, params = {
-			"action=assign-user", ITEMS_IDS_REQUEST_PARAM, "userId" })
+	@RequestMapping(value = "/campaigns/{campaignId}/batch-assign-user", method = RequestMethod.POST, params = {
+			ITEMS_IDS_REQUEST_PARAM, "userId" })
 	public @ResponseBody
 	void assignUserToCampaignTestPlanItems(@RequestParam(ITEMS_IDS_REQUEST_PARAM) List<Long> itemsIds,
 			@PathVariable long campaignId, @RequestParam long userId) {
 		testPlanManager.assignUserToTestPlanItems(itemsIds, campaignId, userId);
 	}
 
-	@RequestMapping(value = "/campaigns/{campaignId}/test-plan/index/{targetIndex}", method = RequestMethod.POST, params = {
-			"action=move", ITEMS_IDS_REQUEST_PARAM })
+	@RequestMapping(value = "/campaigns/{campaignId}/test-case/move", method = RequestMethod.POST, 
+			params = {ITEMS_IDS_REQUEST_PARAM, "newIndex" })
 	@ResponseBody
-	public void moveTestPlanItems(@PathVariable long campaignId, @PathVariable int targetIndex,
+	public void moveTestPlanItems(@PathVariable long campaignId, @RequestParam("newIndex") int newIndex,
 			@RequestParam(ITEMS_IDS_REQUEST_PARAM) List<Long> itemsIds) {
-		testPlanManager.moveTestPlanItems(campaignId, targetIndex, itemsIds);
+		testPlanManager.moveTestPlanItems(campaignId, newIndex, itemsIds);
 	}
+	
+	private String formatUnassigned(Locale locale){
+		return messageSource.getMessage("dialog.assign-user.not.affected.label", null, locale);
+	}
+	
 }
