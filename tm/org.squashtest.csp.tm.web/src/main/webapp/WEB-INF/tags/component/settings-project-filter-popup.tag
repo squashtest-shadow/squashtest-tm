@@ -42,7 +42,7 @@
 <f:message var="deselectAllLabel" key="dialog.settings.filter.controls.deselectall" />
 <f:message var="invertselectLabel" key="dialog.settings.filter.controls.invertselect" />
 
-<div id="project-filter-popup" class="popup-dialog" title="<f:message key='dialog.settings.filter.title' />">
+<div id="project-filter-popup" class="popup-dialog project-picker" title="<f:message key='dialog.settings.filter.title' />">
 	<div class="project-item-template not-displayed">
 		<div class="project-item ">
 			<input type="checkbox" class="project-checkbox"/> <span class="project-name"></span>
