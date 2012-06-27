@@ -37,11 +37,11 @@ import org.squashtest.csp.tm.domain.requirement.RequirementStatus;
 	private Integer rowNumber = 0;
 	private Double version = null;
 	private String label = "untitled";
-	private String reference = null;
+	private String reference = "";
 	private RequirementCriticality criticality = RequirementCriticality.UNDEFINED;
 	private RequirementCategory category = RequirementCategory.UNDEFINED;
 	private RequirementStatus state = RequirementStatus.WORK_IN_PROGRESS;
-	private String description = null;
+	private String description = "";
 	private Date createdOnDate = new Date();
 	private String createdBy = "import";
 	private PseudoRequirement pseudoRequirement;
@@ -56,10 +56,7 @@ import org.squashtest.csp.tm.domain.requirement.RequirementStatus;
 		this.pseudoRequirement = pseudoRequirement;
 	}
 	
-	/* ***************************** formatters *********************************** */
-	public String formatDescription(String description) {
-		return description;
-	}
+	
 
 	/* ***************************** getter and setters *********************************** */
 	public Integer getRowNumber() {
@@ -83,7 +80,9 @@ import org.squashtest.csp.tm.domain.requirement.RequirementStatus;
 	}
 
 	public void setLabel(String label) {
+		if(notEmpty(label)){
 		this.label = label;
+		}
 	}
 
 	public String getReference() {
@@ -91,7 +90,9 @@ import org.squashtest.csp.tm.domain.requirement.RequirementStatus;
 	}
 
 	public void setReference(String reference) {
+		if(notEmpty(reference)){
 		this.reference = reference;
+		}
 	}
 
 	public RequirementCriticality getCriticality() {
@@ -142,7 +143,9 @@ import org.squashtest.csp.tm.domain.requirement.RequirementStatus;
 	}
 
 	public void setDescription(String description) {
-		this.description = formatDescription(description);
+		if(notEmpty(description)){
+		this.description = description;
+		}
 	}
 
 	public Date getCreatedOnDate() {
