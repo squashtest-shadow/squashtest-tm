@@ -133,9 +133,9 @@ class RequirementParserImplTest extends Specification {
 		PseudoRequirementVersion pseudoVersion = pseudoRequirement.pseudoRequirementVersions.get(0)
 		pseudoVersion.createdBy == "import"
 		pseudoVersion.criticality == RequirementCriticality.UNDEFINED
-		pseudoVersion.description == null
+		pseudoVersion.description == ""
 		pseudoVersion.label == "label"
-		pseudoVersion.reference == null
+		pseudoVersion.reference == ""
 		pseudoVersion.state == RequirementStatus.WORK_IN_PROGRESS
 		pseudoVersion.version == null
 	}
