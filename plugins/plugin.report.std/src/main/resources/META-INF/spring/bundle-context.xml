@@ -144,13 +144,11 @@ http://www.springframework.org/schema/util http://www.springframework.org/schema
 
 	<bean id="executionProgression1"
 		class="org.squashtest.tm.api.report.spring.view.jasperreports.JasperReportsExtMultiFormatView">
-		<property name="url" value="classpath:jasperreports/execution-progression-view0.jasper" />
+		<property name="url" value="classpath:jasperreports/execution-progression.jasper" />
 		<property name="reportDataKey" value="data" />
 		<property name="subReportUrls">
 			<map>
-				<entry key="subReportCampaign" value="classpath:jasperreports/execution-progression-view0_campaign.jasper" />
-				<entry key="subReportIteration_0"
-					value="classpath:jasperreports/execution-progression-view0_campaign_iterations.jasper" />
+				<entry key="executionProgressionSubReport" value="classpath:jasperreports/execution-progression_campaign.jasper" />
 			</map>
 		</property>
 		<property name="exporterParameters">
@@ -164,11 +162,13 @@ http://www.springframework.org/schema/util http://www.springframework.org/schema
 
 	<bean id="executionProgression2"
 		class="org.squashtest.tm.api.report.spring.view.jasperreports.JasperReportsExtMultiFormatView">
-		<property name="url" value="classpath:jasperreports/execution-progression.jasper" />
+		<property name="url" value="classpath:jasperreports/execution-progression-view0.jasper" />
 		<property name="reportDataKey" value="data" />
 		<property name="subReportUrls">
 			<map>
-				<entry key="executionProgressionSubReport" value="classpath:jasperreports/execution-progression_campaign.jasper" />
+				<entry key="subReportCampaign" value="classpath:jasperreports/execution-progression-view0_campaign.jasper" />
+				<entry key="subReportIteration_0"
+					value="classpath:jasperreports/execution-progression-view0_campaign_iterations.jasper" />
 			</map>
 		</property>
 
