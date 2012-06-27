@@ -176,7 +176,7 @@
 			
 			function resetPasswordCallback(){
 				<f:message var="passSuccess" key="user.account.changepass.success" />
-				displayInformationNotification("${passSuccess}");
+				squashtm.notification.showInfo("${passSuccess}");
 			}
 		</script>
 		
@@ -327,7 +327,7 @@
 		<%----------------------------------- /add Permission Popup-----------------------------------------------%>
 	</div>
 	<comp:decorate-buttons />
-	<comp:user-account-reset-password-popup openerId="reset-password-button" url="${userUrl}" successCallback="resetPasswordCallback"/>
+	<comp:user-account-reset-password-popup openerId="reset-password-button" url="${ userUrl }" successCallback="resetPasswordCallback" />
 	
 	</jsp:attribute>
 </layout:info-page-layout>
