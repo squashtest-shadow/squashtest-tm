@@ -36,6 +36,7 @@ import org.squashtest.csp.tm.domain.requirement.RequirementCriticality
 import org.squashtest.csp.tm.domain.requirement.RequirementStatus
 import org.squashtest.csp.tm.domain.requirement.RequirementVersion
 import org.squashtest.csp.tm.service.RequirementModificationService
+import org.squashtest.csp.tm.web.internal.helper.InternationalisableLabelFormatter;
 import org.squashtest.csp.tm.web.internal.helper.LabelFormatter
 import org.squashtest.csp.tm.web.internal.helper.LevelLabelFormatter
 
@@ -47,10 +48,12 @@ class RequirementModificationControllerTest extends Specification {
 	RequirementModificationService requirementModificationService= Mock()
 	MessageSource messageSource = Mock()
 	LabelFormatter formatter = new LevelLabelFormatter(messageSource)
+	LabelFormatter internationalformatter = new InternationalisableLabelFormatter(messageSource)
 	Provider criticalityBuilderProvider = criticalityBuilderProvider()
 	Provider categoryBuilderProvider = categoryBuilderProvider()
 	Provider statusBuilderProvider = statusBuilderProvider()
 	Provider levelFormatterProvider = levelFormatterProvider()	
+	Provider internationalFormatterProvider = internationalFormatterProvider()
 
 	def setup() {
 		controller.requirementModService = requirementModificationService
@@ -58,7 +61,7 @@ class RequirementModificationControllerTest extends Specification {
 		controller.categoryComboBuilderProvider = categoryBuilderProvider
 		controller.statusComboDataBuilderProvider = statusBuilderProvider
 		controller.levelFormatterProvider = levelFormatterProvider
-		controller.internationalizableFormatterProvider = levelFormatterProvider
+		controller.internationalizableFormatterProvider = internationalFormatterProvider
 	}
 
 	def criticalityBuilderProvider() {
@@ -72,7 +75,7 @@ class RequirementModificationControllerTest extends Specification {
 	}
 	def categoryBuilderProvider() {
 		RequirementCategoryComboDataBuilder builder = new RequirementCategoryComboDataBuilder()
-		builder.labelFormatter = formatter
+		builder.labelFormatter = internationalformatter
 
 		Provider provider = Mock()
 		provider.get() >> builder
@@ -95,6 +98,12 @@ class RequirementModificationControllerTest extends Specification {
 		provider.get() >> formatter
 
 		return provider
+	}
+	def internationalFormatterProvider(){
+		Provider provider = Mock()
+		provider.get() >> internationalformatter
+		
+		return provider	
 	}
 
 		def "should return requirement page fragment"() {
@@ -150,5 +159,6 @@ class RequirementModificationControllerTest extends Specification {
 		model.asMap()["versions"] != null
 		model.asMap()["selectedVersion"] != null
 		model.asMap()["jsonCriticalities"] != null
+		model.asMap()["jsonCategories"] != null
 	}
 }
