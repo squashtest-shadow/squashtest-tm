@@ -26,6 +26,7 @@ import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.Collection;
+import java.util.Collections;
 import java.util.List;
 
 import javax.sql.DataSource;
@@ -43,6 +44,7 @@ import org.springframework.security.acls.model.AccessControlEntry;
 import org.springframework.security.acls.model.Acl;
 import org.springframework.security.acls.model.AclCache;
 import org.springframework.security.acls.model.AlreadyExistsException;
+import org.springframework.security.acls.model.NotFoundException;
 import org.springframework.security.acls.model.ObjectIdentity;
 import org.springframework.security.acls.model.Permission;
 import org.springframework.security.acls.model.Sid;
@@ -63,9 +65,10 @@ import org.squashtest.csp.core.security.acls.model.ObjectAclService;
 
 /**
  * 
- * When one update the Acl of an object (ie the permissions of a user), one want to refresh the aclCache if there is one.
- * The right way to do this would have been to delegate such task to the LookupStrategy when it's relevant to do so. 
- * However we cannot subclass BasicLookupStrategy because it's final and duplicating its code for a class of ours would be illegal.
+ * When one update the Acl of an object (ie the permissions of a user), one want to refresh the aclCache if there is
+ * one. The right way to do this would have been to delegate such task to the LookupStrategy when it's relevant to do
+ * so. However we cannot subclass BasicLookupStrategy because it's final and duplicating its code for a class of ours
+ * would be illegal.
  * 
  * So we're bypassing the cache encapsulation and expose it right here.
  * 
@@ -75,13 +78,12 @@ import org.squashtest.csp.core.security.acls.model.ObjectAclService;
 public class JdbcManageableAclService extends JdbcAclService implements ObjectAclService {
 
 	private static final Logger LOGGER = LoggerFactory.getLogger(JdbcManageableAclService.class);
-	
+
 	private AclCache aclCache;
-	
-	public void setAclCache (AclCache aclCache){
+
+	public void setAclCache(AclCache aclCache) {
 		this.aclCache = aclCache;
 	}
-	
 
 	private final RowMapper<PermissionGroup> permissionGroupMapper = new RowMapper<PermissionGroup>() {
 		@Override
@@ -89,85 +91,72 @@ public class JdbcManageableAclService extends JdbcAclService implements ObjectAc
 			return new PermissionGroup(rs.getLong(1), rs.getString(2));
 		}
 	};
-	
+
 	private final RowMapper<Object[]> AclGroupMapper = new RowMapper<Object[]>() {
 		@Override
 		public Object[] mapRow(ResultSet rs, int rowNum) throws SQLException {
 			Object objTab[] = new Object[2];
 			objTab[0] = rs.getLong(1);
-			objTab[1] = new PermissionGroup(rs.getLong(2),rs.getString(3));
+			objTab[1] = new PermissionGroup(rs.getLong(2), rs.getString(3));
 			return objTab;
 		}
 	};
-
 
 	private final String insertObjectIdentity = "insert into ACL_OBJECT_IDENTITY (IDENTITY, CLASS_ID) values (?, ?)";
 	private final String selectObjectIdentityPrimaryKey = "select oid.ID from ACL_OBJECT_IDENTITY oid inner join ACL_CLASS c on c.ID = oid.CLASS_ID where c.CLASSNAME = ? and oid.IDENTITY = ?";
 	private final String selectClassPrimaryKey = "select ID from ACL_CLASS where CLASSNAME = ?";
 	private final String findAllAclGroupsByNamespace = "select ID, QUALIFIED_NAME from ACL_GROUP where QUALIFIED_NAME like ?";
-	
-	private final String insertAclResposablityScope = "insert into ACL_RESPONSIBILITY_SCOPE_ENTRY (USER_ID, ACL_GROUP_ID, OBJECT_IDENTITY_ID) values ((select ID from CORE_USER where login = ?), (select ID from ACL_GROUP where QUALIFIED_NAME = ?), "+
-	"(select oid.ID from ACL_OBJECT_IDENTITY oid inner join ACL_CLASS c on c.ID = oid.CLASS_ID where CLASSNAME = ?  and oid.IDENTITY = ? ))";
-	
-	private final String findAclForClassFromUser = "select oid.IDENTITY, ag.ID, ag.QUALIFIED_NAME from " +
-			"ACL_GROUP ag " +
-			"inner join ACL_RESPONSIBILITY_SCOPE_ENTRY arse on ag.ID = arse.ACL_GROUP_ID " +
-			"inner join CORE_USER cu on arse.USER_ID = cu.ID "+
-			"inner join ACL_OBJECT_IDENTITY oid on oid.ID = arse.OBJECT_IDENTITY_ID " +
-			"inner join ACL_CLASS ac on ac.ID = oid.CLASS_ID " +
-			"where cu.LOGIN = ? and ac.CLASSNAME = ?";
-	
-	private final String userAndAclClassFromProject= "select arse.USER_ID, ag.ID, ag.QUALIFIED_NAME from " +
-			"ACL_GROUP ag " +
-			"inner join ACL_RESPONSIBILITY_SCOPE_ENTRY arse on ag.ID = arse.ACL_GROUP_ID " +
-			"inner join ACL_OBJECT_IDENTITY oid on oid.ID = arse.OBJECT_IDENTITY_ID " +
-			"inner join ACL_CLASS ac on ac.ID = oid.CLASS_ID " +
-			"where oid.IDENTITY = ? and ac.CLASSNAME = ?";
-	
-	private final String deleteResponsablityEntry = "delete from ACL_RESPONSIBILITY_SCOPE_ENTRY "+
-													"where USER_ID = (select ID from CORE_USER where login = ?) " +
-													"and OBJECT_IDENTITY_ID = "+
-													"(select oid.ID from ACL_OBJECT_IDENTITY oid " +
-													"inner join ACL_CLASS c on c.ID = oid.CLASS_ID " +
-													"where oid.IDENTITY = ? and c.CLASSNAME = ?)";
+
+	private final String insertAclResposablityScope = "insert into ACL_RESPONSIBILITY_SCOPE_ENTRY (USER_ID, ACL_GROUP_ID, OBJECT_IDENTITY_ID) values ((select ID from CORE_USER where login = ?), (select ID from ACL_GROUP where QUALIFIED_NAME = ?), "
+			+ "(select oid.ID from ACL_OBJECT_IDENTITY oid inner join ACL_CLASS c on c.ID = oid.CLASS_ID where CLASSNAME = ?  and oid.IDENTITY = ? ))";
+
+	private final String findAclForClassFromUser = "select oid.IDENTITY, ag.ID, ag.QUALIFIED_NAME from "
+			+ "ACL_GROUP ag " + "inner join ACL_RESPONSIBILITY_SCOPE_ENTRY arse on ag.ID = arse.ACL_GROUP_ID "
+			+ "inner join CORE_USER cu on arse.USER_ID = cu.ID "
+			+ "inner join ACL_OBJECT_IDENTITY oid on oid.ID = arse.OBJECT_IDENTITY_ID "
+			+ "inner join ACL_CLASS ac on ac.ID = oid.CLASS_ID " + "where cu.LOGIN = ? and ac.CLASSNAME = ?";
+
+	private final String userAndAclClassFromProject = "select arse.USER_ID, ag.ID, ag.QUALIFIED_NAME from "
+			+ "ACL_GROUP ag " + "inner join ACL_RESPONSIBILITY_SCOPE_ENTRY arse on ag.ID = arse.ACL_GROUP_ID "
+			+ "inner join ACL_OBJECT_IDENTITY oid on oid.ID = arse.OBJECT_IDENTITY_ID "
+			+ "inner join ACL_CLASS ac on ac.ID = oid.CLASS_ID " + "where oid.IDENTITY = ? and ac.CLASSNAME = ?";
+
+	private final String deleteResponsablityEntry = "delete from ACL_RESPONSIBILITY_SCOPE_ENTRY "
+			+ "where USER_ID = (select ID from CORE_USER where login = ?) " + "and OBJECT_IDENTITY_ID = "
+			+ "(select oid.ID from ACL_OBJECT_IDENTITY oid " + "inner join ACL_CLASS c on c.ID = oid.CLASS_ID "
+			+ "where oid.IDENTITY = ? and c.CLASSNAME = ?)";
 	/*
-	private final String deleteResponsablityEntry = "delete from ACL_RESPONSIBILITY_SCOPE_ENTRY arse "+
-								"inner join ACL_OBJECT_IDENTITY oid on arse.OBJECT_IDENTITY_ID=oid.ID"+
-								"inner join ACL_CLASS ac on oid.CLASS_ID = ac.ID "+
-								"where arse.USER_ID = (select ID from CORE_USER where login = ?) " +
-								"and oid.IDENTITY = ? "+
-								"and ac.CLASSNAME = ?";
-	*/
-	private final String findObjectsWithoutPermission = "select nro.IDENTITY from ACL_OBJECT_IDENTITY nro " +
-			"inner join ACL_CLASS nrc on nro.CLASS_ID = nrc.ID " +
-			"where nrc.CLASSNAME = ? " +
-			"and not exists (select 1 " +
-				"from ACL_OBJECT_IDENTITY ro " +
-				"inner join ACL_CLASS rc on rc.ID = ro.CLASS_ID " +
-				"inner join ACL_RESPONSIBILITY_SCOPE_ENTRY r on r.OBJECT_IDENTITY_ID = ro.ID " +
-				"inner join CORE_USER u on u.ID = r.USER_ID " +
-				"where ro.ID = nro.ID and rc.ID = nrc.ID and u.LOGIN = ?) ";
-	
-	//private final String findObjectsWithoutPermission = "select oid.IDENTITY from ACL_OBJECT_IDENTITY oid inner join ACL_RESPONSIBILITY_SCOPE_ENTRY arse on arse.OBJECT_IDENTITY_ID = oid.ID inner join CORE_USER cu on cu.ID = arse.USER_ID inner join ACL_CLASS ac on oid.CLASS_ID = ac.ID right join ACL_OBJECT_IDENTITY aoc"+
-	//" where cu.LOGIN = ? and ac.CLASSNAME = ? and oid.ID is null";
-	
-	private final String findUsersWithoutPermissionByObject = "select u.ID from CORE_USER u "+
-			"where not exists (select 1 " +
-				"from ACL_OBJECT_IDENTITY aoi " +
-				"inner join ACL_CLASS ac on ac.ID = aoi.CLASS_ID " +
-				"inner join ACL_RESPONSIBILITY_SCOPE_ENTRY arse on arse.OBJECT_IDENTITY_ID = aoi.ID " +
-				"where u.ID = arse.USER_ID " +
-				"and ac.CLASSNAME = ? " +
-				"and aoi.IDENTITY = ?) ";
-	
-	
+	 * private final String deleteResponsablityEntry = "delete from ACL_RESPONSIBILITY_SCOPE_ENTRY arse "+
+	 * "inner join ACL_OBJECT_IDENTITY oid on arse.OBJECT_IDENTITY_ID=oid.ID"+
+	 * "inner join ACL_CLASS ac on oid.CLASS_ID = ac.ID "+
+	 * "where arse.USER_ID = (select ID from CORE_USER where login = ?) " + "and oid.IDENTITY = ? "+
+	 * "and ac.CLASSNAME = ?";
+	 */
+	private final String findObjectsWithoutPermission = "select nro.IDENTITY from ACL_OBJECT_IDENTITY nro "
+			+ "inner join ACL_CLASS nrc on nro.CLASS_ID = nrc.ID " + "where nrc.CLASSNAME = ? "
+			+ "and not exists (select 1 " + "from ACL_OBJECT_IDENTITY ro "
+			+ "inner join ACL_CLASS rc on rc.ID = ro.CLASS_ID "
+			+ "inner join ACL_RESPONSIBILITY_SCOPE_ENTRY r on r.OBJECT_IDENTITY_ID = ro.ID "
+			+ "inner join CORE_USER u on u.ID = r.USER_ID "
+			+ "where ro.ID = nro.ID and rc.ID = nrc.ID and u.LOGIN = ?) ";
+
+	// private final String findObjectsWithoutPermission =
+	// "select oid.IDENTITY from ACL_OBJECT_IDENTITY oid inner join ACL_RESPONSIBILITY_SCOPE_ENTRY arse on arse.OBJECT_IDENTITY_ID = oid.ID inner join CORE_USER cu on cu.ID = arse.USER_ID inner join ACL_CLASS ac on oid.CLASS_ID = ac.ID right join ACL_OBJECT_IDENTITY aoc"+
+	// " where cu.LOGIN = ? and ac.CLASSNAME = ? and oid.ID is null";
+
+	private final String findUsersWithoutPermissionByObject = "select u.ID from CORE_USER u "
+			+ "where not exists (select 1 " + "from ACL_OBJECT_IDENTITY aoi "
+			+ "inner join ACL_CLASS ac on ac.ID = aoi.CLASS_ID "
+			+ "inner join ACL_RESPONSIBILITY_SCOPE_ENTRY arse on arse.OBJECT_IDENTITY_ID = aoi.ID "
+			+ "where u.ID = arse.USER_ID " + "and ac.CLASSNAME = ? " + "and aoi.IDENTITY = ?) ";
+
 	public JdbcManageableAclService(DataSource dataSource, LookupStrategy lookupStrategy) {
 		super(dataSource, lookupStrategy);
 	}
 
 	/**
 	 * Creates (persists) a not noll, not existing object identity
-	 *
+	 * 
 	 * @param objectIdentity
 	 * @throws AlreadyExistsException
 	 */
@@ -189,7 +178,7 @@ public class JdbcManageableAclService extends JdbcAclService implements ObjectAc
 		}
 		jdbcTemplate.update(insertObjectIdentity, objectIdentifier, classId);
 	}
-	
+
 	private void checkObjectIdentityDoesNotExist(ObjectIdentity objectIdentity) {
 		if (retrieveObjectIdentityPrimaryKey(objectIdentity) != null) {
 			throw new AlreadyExistsException("Object identity '" + objectIdentity + "' already exists");
@@ -228,7 +217,7 @@ public class JdbcManageableAclService extends JdbcAclService implements ObjectAc
 
 	/**
 	 * Returns all permission groups for a namespace. A namespace is the start of a group's qualified name.
-	 *
+	 * 
 	 * @param namespace
 	 * @return
 	 */
@@ -240,115 +229,122 @@ public class JdbcManageableAclService extends JdbcAclService implements ObjectAc
 	/**
 	 * Removes all responsibilities a user might have on a entity. In other words, the given user will no longer have
 	 * any permission on the entity.
-	 *
+	 * 
 	 * @param userLogin
 	 * @param objectIdentity
 	 */
 	@Override
 	public void removeAllResponsibilities(@NotNull String userLogin, @NotNull ObjectIdentity entityRef) {
-		jdbcTemplate
-				.update(deleteResponsablityEntry,
-						new Object[] { userLogin, entityRef.getIdentifier(), entityRef.getType() });
-		
+		jdbcTemplate.update(deleteResponsablityEntry,
+				new Object[] { userLogin, entityRef.getIdentifier(), entityRef.getType() });
+
 		evictFromCache(entityRef);
 	}
+
 	@Override
-	public void addNewResponsibility(@NotNull String userLogin, @NotNull ObjectIdentity entityRef, @NotNull String qualifiedName) {
+	public void addNewResponsibility(@NotNull String userLogin, @NotNull ObjectIdentity entityRef,
+			@NotNull String qualifiedName) {
 		removeAllResponsibilities(userLogin, entityRef);
 		insertResponsibility(userLogin, entityRef, qualifiedName);
 	}
 
-	private void insertResponsibility(String userLogin,
-			ObjectIdentity entityRef, String permissionGroupName) {
-		jdbcTemplate
-		.update(insertAclResposablityScope, new Object[] { userLogin, permissionGroupName ,entityRef.getType(), entityRef.getIdentifier()});
-		
+	private void insertResponsibility(String userLogin, ObjectIdentity entityRef, String permissionGroupName) {
+		jdbcTemplate.update(insertAclResposablityScope,
+				new Object[] { userLogin, permissionGroupName, entityRef.getType(), entityRef.getIdentifier() });
+
 		evictFromCache(entityRef);
-	}
-	
-	@Override
-	public List<Object[]> retrieveClassAclGroupFromUserLogin(@NotNull String userLogin, String qualifiedClassName) {
-		return jdbcTemplate.query(findAclForClassFromUser,
-				new Object[] { userLogin, qualifiedClassName}, AclGroupMapper);
 	}
 
 	@Override
-	public List<Long> findObjectWithoutPermissionByLogin(String userLogin,
-			String qualifiedClass) {
-		List<BigInteger> reslult = jdbcTemplate.queryForList(findObjectsWithoutPermission,
-				new Object[] { qualifiedClass, userLogin}, BigInteger.class);
+	public List<Object[]> retrieveClassAclGroupFromUserLogin(@NotNull String userLogin, String qualifiedClassName) {
+		return jdbcTemplate.query(findAclForClassFromUser, new Object[] { userLogin, qualifiedClassName },
+				AclGroupMapper);
+	}
+
+	@Override
+	public List<Long> findObjectWithoutPermissionByLogin(String userLogin, String qualifiedClass) {
+		List<BigInteger> reslult = jdbcTemplate.queryForList(findObjectsWithoutPermission, new Object[] {
+				qualifiedClass, userLogin }, BigInteger.class);
 		List<Long> finalResult = new ArrayList<Long>();
 		for (BigInteger bigInteger : reslult) {
 			finalResult.add(bigInteger.longValue());
 		}
 		return finalResult;
 	}
-	
+
 	@Override
 	public List<String> findUsersWithExecutePermission(List<ObjectIdentity> entityRefs) {
 		List<Permission> permissions = new ArrayList<Permission>();
 		permissions.add(CustomPermission.EXECUTE);
-		return findUsersWithPermissions(entityRefs, permissions );
+		return findUsersWithPermissions(entityRefs, permissions);
 	}
-	
+
 	private List<String> findUsersWithPermissions(List<ObjectIdentity> entityRefs, List<Permission> permissionsList) {
-		List<String> resultSidList = new ArrayList<String>(); 
-		Collection<Acl> aclList = readAclsById(entityRefs).values();
-		
+		List<String> resultSidList = new ArrayList<String>();
+		Collection<Acl> aclList;
+		try {
+			aclList = readAclsById(entityRefs).values();
+		} catch (NotFoundException nfe) {
+			LOGGER.debug("Acl not found for entities.");
+			aclList = Collections.emptyList();
+		}
 		for (Acl acl : aclList) {
 			List<AccessControlEntry> aces = acl.getEntries();
-			
+
 			for (AccessControlEntry ctrlEntry : aces) {
-				
+
 				List<Sid> sids = new ArrayList<Sid>();
 				List<Permission> permissions = new ArrayList<Permission>();
-				for(Permission permission : permissionsList){
+				for (Permission permission : permissionsList) {
 					permissions.add(permission);
 				}
 				sids.add(ctrlEntry.getSid());
-				try{
-					if(acl.isGranted(permissions, sids, false)){
-						PrincipalSid principalSid = (PrincipalSid) ctrlEntry.getSid(); 
-						if(!resultSidList.contains(principalSid.getPrincipal())){
+				try {
+					if (acl.isGranted(permissions, sids, false)) {
+						PrincipalSid principalSid = (PrincipalSid) ctrlEntry.getSid();
+						if (!resultSidList.contains(principalSid.getPrincipal())) {
 							resultSidList.add(principalSid.getPrincipal());
 						}
 					}
-				}catch(Exception e){continue;}
+				} catch (Exception e) {
+					LOGGER.warn("Error while processing acl list ", e);
+					continue;
+				}
 			}
 		}
-		
+
 		return resultSidList;
 	}
-	
+
 	@Override
-	public List<String> findUsersWithWritePermission(@NotNull List<ObjectIdentity> entityRefs){
+	public List<String> findUsersWithWritePermission(@NotNull List<ObjectIdentity> entityRefs) {
 		List<Permission> permissions = new ArrayList<Permission>();
 		permissions.add(BasePermission.WRITE);
-		return findUsersWithPermissions(entityRefs, permissions );
+		return findUsersWithPermissions(entityRefs, permissions);
 	}
-	
-	protected void evictFromCache(ObjectIdentity oIdentity){
-		if (aclCache!=null){
+
+	protected void evictFromCache(ObjectIdentity oIdentity) {
+		if (aclCache != null) {
 			aclCache.evictFromCache(oIdentity);
 		}
 	}
 
 	@Override
 	public List<Object[]> retrieveUserAndAclClassFromProject(long projectId, String projectClassName) {
-		return jdbcTemplate.query(userAndAclClassFromProject,
-				new Object[] { projectId, projectClassName}, AclGroupMapper);
-		
+		return jdbcTemplate.query(userAndAclClassFromProject, new Object[] { projectId, projectClassName },
+				AclGroupMapper);
+
 	}
 
 	@Override
 	public List<Long> findUsersWithoutPermissionByObject(long objectId, String qualifiedClassName) {
-		List<BigInteger> result = jdbcTemplate.queryForList(findUsersWithoutPermissionByObject,
-				new Object[] { qualifiedClassName, objectId}, BigInteger.class);
+		List<BigInteger> result = jdbcTemplate.queryForList(findUsersWithoutPermissionByObject, new Object[] {
+				qualifiedClassName, objectId }, BigInteger.class);
 		List<Long> finalResult = new ArrayList<Long>();
 		for (BigInteger bigInteger : result) {
 			finalResult.add(bigInteger.longValue());
 		}
 		return finalResult;
 	}
-	
+
 }
