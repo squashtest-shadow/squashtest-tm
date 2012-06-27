@@ -49,6 +49,8 @@
 			panelHead.append(titlepanel);
 			
 			this.element.wrap(wrapper);
+
+			widget.panelHead = panelHead;
 			panelHead.insertBefore(this.element);
 			
 			panelHead.click($.proxy(function (event) {
@@ -63,7 +65,7 @@
 			var settings = this.options;
 			var title = settings.title || '&#160;';
 			
-			var panelHead = this.element.prev();
+			var panelHead = this.panelHead;
 			if (settings.initiallyOpen) {
 				panelHead.addClass('tg-open');
 			} else {
@@ -82,8 +84,7 @@
 		},
 		
 		toggleContent : function () {
-			//var panelHead = this.prev();
-			var panelHead = this.element.prev();
+			var panelHead = this.panelHead;
 			
 			if (!panelHead.length) {
 				return; 	//if the head is not found, that's usually because the body was detached due to the animating sequence. Sorry for this but the 			
@@ -99,8 +100,15 @@
 		},
 		
 		openContent : function () {
-			var panelHead = this.element.prev();
+			var panelHead = this.panelHead;
 			if (! panelHead.hasClass('tg-open')){
+				this.toggleContent();
+			}
+		},
+
+		closeContent : function () {
+			var panelHead = this.panelHead;
+			if (panelHead.hasClass('tg-open')){
 				this.toggleContent();
 			}
 		}
