@@ -181,68 +181,68 @@
 		
 		
 		var tableSettings = {
-				"oLanguage":{
-					"sLengthMenu": '<f:message key="generics.datatable.lengthMenu" />',
-					"sZeroRecords": '<f:message key="generics.datatable.zeroRecords" />',
-					"sInfo": '<f:message key="generics.datatable.info" />',
-					"sInfoEmpty": '<f:message key="generics.datatable.infoEmpty" />',
-					"sInfoFiltered": '<f:message key="generics.datatable.infoFiltered" />',
-					"oPaginate":{
-						"sFirst":    '<f:message key="generics.datatable.paginate.first" />',
-						"sPrevious": '<f:message key="generics.datatable.paginate.previous" />',
-						"sNext":     '<f:message key="generics.datatable.paginate.next" />',
-						"sLast":     '<f:message key="generics.datatable.paginate.last" />'
-					}
-				},				
-				"sAjaxSource" : "${ campaignUrl }/test-plan/table", 
-				"fnRowCallback" : testPlanRowCallback,
-				"fnDrawCallback" : testPlanDrawCallback,
-				"aoColumnDefs": [
-					{'bSortable': false, 'bVisible': false, 'aTargets': [0], 'mDataProp' : 'entity-id'},
-					{'bSortable': false, 'sWidth' : '2em', 'sClass': 'centered ui-state-default drag-handle select-handle', 'aTargets': [1], 'mDataProp' : 'entity-index'},
-					{'bSortable': false, 'aTargets': [2], 'mDataProp' : 'project-name'},
-					{'bSortable': false, 'aTargets': [3], 'mDataProp' : 'tc-name'},
-					{'bSortable': false, 'aTargets': [4], 'sClass' : 'assignable-combo', 'mDataProp' : 'assigned-user'},
-					{'bSortable': false, 'bVisible' : false, 'sWidth': '10%', 'aTargets': [5], 'mDataProp' : 'assigned-to'},
-					{'bSortable': false, 'aTargets': [6], 'mDataProp' : 'importance'},
-					{'bSortable': false, 'aTargets': [7], 'mDataProp' : 'exec-mode'},
-					{'bSortable': false, 'sWidth': '2em', 'sClass': 'centered delete-button', 'aTargets': [8], 'mDataProp' : 'empty-delete-holder'},
-					{'bSortable': false, 'bVisible' : false, 'aTargets': [9], 'mDataProp' : 'tc-id'},
-				]
-			};		
-		
-			var squashSettings = {
-					
-				enableHover : true,
-				confirmDialog : {
-					oklabel : '<f:message key="attachment.button.delete.label" />',
-					cancellabel : '<f:message key="dialog.button.cancel.label" />'
-				},
-				functions : {
-					dropHandler : function(dropData){
-						$.post('${ campaignUrl }/test-case/move',dropData, function(){
-							$("#test-cases-table").squashTable().refresh();
-						});
-					}
+			"oLanguage":{
+				"sLengthMenu": '<f:message key="generics.datatable.lengthMenu" />',
+				"sZeroRecords": '<f:message key="generics.datatable.zeroRecords" />',
+				"sInfo": '<f:message key="generics.datatable.info" />',
+				"sInfoEmpty": '<f:message key="generics.datatable.infoEmpty" />',
+				"sInfoFiltered": '<f:message key="generics.datatable.infoFiltered" />',
+				"oPaginate":{
+					"sFirst":    '<f:message key="generics.datatable.paginate.first" />',
+					"sPrevious": '<f:message key="generics.datatable.paginate.previous" />',
+					"sNext":     '<f:message key="generics.datatable.paginate.next" />',
+					"sLast":     '<f:message key="generics.datatable.paginate.last" />'
 				}
-			};
-			
-			<c:if test="${editable}">
-			squashSettings.enableDnD = true;
-
-			squashSettings.deleteButtons = {
+			},				
+			"sAjaxSource" : "${ campaignUrl }/test-plan/table", 
+			"fnRowCallback" : testPlanRowCallback,
+			"fnDrawCallback" : testPlanDrawCallback,
+			"aoColumnDefs": [
+				{'bSortable': false, 'bVisible': false, 'aTargets': [0], 'mDataProp' : 'entity-id'},
+				{'bSortable': false, 'sWidth' : '2em', 'sClass': 'centered ui-state-default drag-handle select-handle', 'aTargets': [1], 'mDataProp' : 'entity-index'},
+				{'bSortable': false, 'aTargets': [2], 'mDataProp' : 'project-name'},
+				{'bSortable': false, 'aTargets': [3], 'mDataProp' : 'tc-name'},
+				{'bSortable': false, 'aTargets': [4], 'sClass' : 'assignable-combo', 'mDataProp' : 'assigned-user'},
+				{'bSortable': false, 'bVisible' : false, 'sWidth': '10%', 'aTargets': [5], 'mDataProp' : 'assigned-to'},
+				{'bSortable': false, 'aTargets': [6], 'mDataProp' : 'importance'},
+				{'bSortable': false, 'aTargets': [7], 'mDataProp' : 'exec-mode'},
+				{'bSortable': false, 'sWidth': '2em', 'sClass': 'centered delete-button', 'aTargets': [8], 'mDataProp' : 'empty-delete-holder'},
+				{'bSortable': false, 'bVisible' : false, 'aTargets': [9], 'mDataProp' : 'tc-id'},
+			]
+		};		
+	
+		var squashSettings = {
 				
-				url : "${campaignUrl}/test-plan/{entity-id}",
-				popupmessage : '<f:message key="dialog.remove-testcase-association.message" />',
-				tooltip : '<f:message key="test-case.verified_requirement_item.remove.button.label" />',
-				success : function(data) {
-					refreshTestPlan();				
+			enableHover : true,
+			confirmDialog : {
+				oklabel : '<f:message key="attachment.button.delete.label" />',
+				cancellabel : '<f:message key="dialog.button.cancel.label" />'
+			},
+			functions : {
+				dropHandler : function(dropData){
+					$.post('${ campaignUrl }/test-case/move',dropData, function(){
+						$("#test-cases-table").squashTable().refresh();
+					});
 				}
-					
-			};
-			</c:if>
-					
-			$("#test-cases-table").squashTable(tableSettings, squashSettings);		
+			}
+		};
+		
+		<c:if test="${editable}">
+		squashSettings.enableDnD = true;
+
+		squashSettings.deleteButtons = {
+			
+			url : "${campaignUrl}/test-plan/{entity-id}",
+			popupmessage : '<f:message key="dialog.remove-testcase-association.message" />',
+			tooltip : '<f:message key="test-case.verified_requirement_item.remove.button.label" />',
+			success : function(data) {
+				refreshTestPlan();				
+			}
+				
+		};
+		</c:if>
+				
+		$("#test-cases-table").squashTable(tableSettings, squashSettings);		
 
 	});
 	
