@@ -166,18 +166,15 @@
 			var ids = getIdsOfSelectedTableRows(table, rowDataToItemId);
 			
 			if (ids.length > 0) {
-				$.post('${ campaignUrl }/test-plan', { action: 'remove', itemIds: ids }, refreshTestPlan);
+				$.ajax({
+					url : '${ campaignUrl }/test-plan',
+					type : 'POST',
+					data : { 'action' : 'remove', itemIds: ids }
+				})
+				.success(refreshTestPlan);
 			}
 		
 		});
-		<%-- single test-case removal --%>
-		$('#test-cases-table .delete-test-case-button').die('click');
-		
-		//single deletion buttons
-		$('#test-cases-table .delete-test-case-button').live('click', function() {
-			$("#${ testCaseSingleRemovalPopupId }").data('opener', this).dialog('open');
-		});
-		
 
 		
 		/* **************************** datatable settings ******************* */

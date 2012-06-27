@@ -463,7 +463,7 @@
 							var select = $(".batch-select", pop);
 							select.empty();
 							for (var i=0;i<jsonList.length;i++){
-								select.append($('<option/>', {'value' : jsonList[i].id, 'text' : jsonList[i].login}));
+								select.append('<option value="'+jsonList[i].id+'">'+jsonList[i].login+'</option>');
 							}
 						});
 					}

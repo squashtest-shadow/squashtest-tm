@@ -83,17 +83,18 @@ public class CampaignTestPlanManagerController {
 		return mav;
 	}
 
-	@RequestMapping(value = "/campaigns/{campaignId}/test-plan", method = RequestMethod.POST, params = TESTCASES_IDS_REQUEST_PARAM)
+	@RequestMapping(value = "/campaigns/{campaignId}/test-plan", method = RequestMethod.POST, 
+			params = TESTCASES_IDS_REQUEST_PARAM)
 	public @ResponseBody
 	void addTestCasesToCampaign(@RequestParam(TESTCASES_IDS_REQUEST_PARAM) List<Long> testCasesIds,
 			@PathVariable long campaignId) {
 		testPlanManager.addTestCasesToCampaignTestPlan(testCasesIds, campaignId);
 	}
 
-	@RequestMapping(value = "/campaigns/{campaignId}/test-plan", method = RequestMethod.POST, params = {
-			"action=remove", ITEMS_IDS_REQUEST_PARAM })
+	@RequestMapping(value = "/campaigns/{campaignId}/test-plan", method = RequestMethod.POST, 
+			params = {"action=remove", ITEMS_IDS_REQUEST_PARAM })
 	public @ResponseBody
-	void removeItemsFromTestPlan(@PathVariable long campaignId,
+	void removeItemsFromTestPlan(@PathVariable("campaignId") long campaignId,
 			@RequestParam(ITEMS_IDS_REQUEST_PARAM) List<Long> itemsIds) {
 		testPlanManager.removeTestPlanItems(campaignId, itemsIds);
 	}
