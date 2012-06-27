@@ -634,15 +634,19 @@ div#search-result .library {
 	cursor: pointer;
 }
 
-.report-item-icon{
+.report-item-icon {
 	float:left;	
 }
 
-.report-item-description{	
+.report-item-text {	
 	text-align:justify;
 }
 
-.report-item-description span{
+.report-item-name:after {	
+	content: " : ";
+}
+
+.report-item-description {
 	font-size:small;
 	font-style: italic;
 	color:	#98AFC7;
