@@ -29,7 +29,7 @@ import java.util.Date;
  *
  */
 
-public class BTIssue implements Identifiable<BTIssue>{
+public class BTIssue {
 	
 	private String id;
 	
@@ -66,7 +66,7 @@ public class BTIssue implements Identifiable<BTIssue>{
 		this.summary=summary;
 	}
 	
-	@Override
+
 	public String getId(){
 		return id;
 	}
@@ -84,19 +84,6 @@ public class BTIssue implements Identifiable<BTIssue>{
 		this.category = category;
 	}
 
-	/**
-	 * convenient alias for #getSummary()
-	 */
-
-	@Override
-	public String getName(){
-		return summary;
-	}
-	
-	public void setName(String name){
-		this.summary=name;
-	}
-	
 
 	public String getSummary() {
 		return summary;
@@ -193,14 +180,7 @@ public class BTIssue implements Identifiable<BTIssue>{
 		return bugtracker;
 	}
 	
-	/**
-	 * an issue is never a dummy
-	 */
-	@Override
-	public boolean isDummy(){
-		return false;
-	}
-	
+
 	
 	/** exists for the purpose of being java-bean compliant */
 	public void setDummy(Boolean dummy){

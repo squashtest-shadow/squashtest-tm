@@ -452,6 +452,8 @@
 		
 		this.submitIssue = function(){
 			
+			flipToPleaseWait();
+			
 			readAllInputs();
 			
 			var strModel = JSON.stringify(self.model);
@@ -479,7 +481,7 @@
 		//the opening of the popup :
 		this.bind("dialogopen", function(){
 			flushSheet();
-			self.attachRadio.click();
+			self.reportRadio.click();
 		});
 		
 		//the action bound to click on the first button
