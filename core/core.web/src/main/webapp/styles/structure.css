@@ -43,7 +43,7 @@ label{
 
 
 label:after {
-	content: " : ";
+	content: "\00a0: ";
 }
 label.afterDisabled:after {
 	content: "";	
@@ -643,7 +643,7 @@ div#search-result .library {
 }
 
 .report-item-name:after {	
-	content: " : ";
+	content: "\00a0: ";
 }
 
 .report-item-description {
