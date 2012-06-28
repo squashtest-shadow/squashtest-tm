@@ -34,9 +34,17 @@
  	$(function(){
  		$("#bugtracker-div").load("${workspaceUrl}", function(){
  			<c:if test="${ highlighted }">
- 				squashtm.navbar.highlightOn('bugtracker-link');
+ 				squashtm.navbar.initHighlighted('bugtracker');
  			</c:if>
+ 			$("#bugtracker-link").hover(function () {
+ 	 			squashtm.navbar.highlightOn("bugtracker-link");
+ 	 		}, function () {
+ 	 			squashtm.navbar.highlightOff("bugtracker-link");
+ 	 		}
+
+ 	 		);
  		});
+ 		
  		
  	});
  </script>
