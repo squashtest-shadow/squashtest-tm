@@ -23,6 +23,7 @@
 <%@ taglib prefix="jq" tagdir="/WEB-INF/tags/jquery" %>
 <%@ taglib prefix="ck" tagdir="/WEB-INF/tags/ckeditor" %>
 <%@ taglib prefix="dt" tagdir="/WEB-INF/tags/datatables" %>
+<%@ taglib prefix="f" uri="http://java.sun.com/jsp/jstl/fmt"%>
 
 <%-- the declaration oder does matter --%>
 
@@ -68,3 +69,12 @@
 </script>
 
 <!-- -------------------- /DataTables library imports. SHOULD BE IMPORTED BEFORE DATATABLE USAGE--------------------------------------------- -->
+<!-- -------------------- Waiting for better handle of locale in .js--------------------------------------------- -->
+<script>
+$(function(){
+	squashtm.message = new Object();
+	squashtm.message.cancel = "<f:message key='dialog.button.cancel.label'/>" ;
+	squashtm.message.confirm = "<f:message key='dialog.button.confirm.label'/>" ;
+});
+</script>
+<!-- -------------------- Waiting for better handle of locale in .js--------------------------------------------- -->

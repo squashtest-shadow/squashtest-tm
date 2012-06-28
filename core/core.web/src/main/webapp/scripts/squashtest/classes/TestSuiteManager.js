@@ -26,6 +26,8 @@
 function TestSuiteManagerControl(settings) {
 
 	this.manager = settings.manager;
+	this.confirmMessage = settings.confirmMessage;
+	this.confirmTitle = settings.confirmTitle;
 	this.defaultMessage = settings.defaultMessage;
 	this.panel = settings.panel;
 	this.action = settings.action;
@@ -88,7 +90,17 @@ function TestSuiteManagerControl(settings) {
 	/* ************* handlers ******** */
 
 	this.button.click(function () {
+		if(self.confirmMessage && self.confirmTitle){
+			oneShotConfirm(self.confirmTitle,
+					self.confirmMessage,
+					squashtm.message.confirm,
+					squashtm.message.cancel).done(
+					function() {
+						self.action();
+					});
+		}else{
 		self.action();
+		}
 	});
 
 	// we're in competition here with the default 'enter' event bound to the
@@ -384,6 +396,8 @@ function TestSuiteManager(settings) {
 	/* the remove control settings is special in the sense that it has no text input, just a button */
 	var removeControlSettings = {
 		manager : this,
+		confirmMessage : settings.deleteConfirmMessage,
+		confirmTitle : settings.deleteConfirmTitle,
 		defaultMessage : settings.defaultMessage,
 		panel : this.remove.panel = $(".remove-suites-section", this.instance),
 		action : postRemoveSuites,

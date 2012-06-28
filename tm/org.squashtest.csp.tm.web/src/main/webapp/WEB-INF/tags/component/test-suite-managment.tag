@@ -94,6 +94,8 @@
 <%-- ====================== /POPUP STRUCTURE DEFINITION  ========================= --%>
 
 <f:message var="defaultMessage" key="dialog.testsuites.defaultmessage" />
+<f:message var="deleteMessage" key="dialog.delete-test-suite.message" />
+<f:message var="deleteTitle" key="dialog.delete-test-suite.title" />
 
 <script type="text/javascript">
 	
@@ -159,7 +161,9 @@
 			var managerSettings = {
 				instance : $("#${popupId} .main-div-suites"),
 				model : squashtm.testSuiteManagement.testSuiteModel,
-				defaultMessage : "${defaultMessage}"					
+				defaultMessage : "${defaultMessage}",
+				deleteConfirmMessage : "${deleteMessage}",
+				deleteConfirmTitle : "${deleteTitle}"
 			};
 			
 			squashtm.testSuiteManagement.testSuiteManager = new TestSuiteManager(managerSettings);
