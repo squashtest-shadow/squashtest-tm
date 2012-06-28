@@ -292,7 +292,7 @@ class ExcelTestCaseParserImplTest extends Specification {
 		res.createdBy==null
 		res.steps.size()==1
 		res.description.contains("yeeeah")
-		res.importance == TestCaseImportance.MEDIUM;
+		res.importance == TestCaseImportance.defaultValue();
 		summary.modified == 2
 	}
 
