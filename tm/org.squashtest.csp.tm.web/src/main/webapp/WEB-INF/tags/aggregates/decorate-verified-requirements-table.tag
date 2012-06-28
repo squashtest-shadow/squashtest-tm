@@ -42,44 +42,157 @@
 <%@ taglib prefix="input" tagdir="/WEB-INF/tags/input"%>
 
 <script type="text/javascript">
-
-
-
-	function findRowStatus(dataTable, rowId, getRowId, getRowStatus) {
-		var rows = dataTable.fnGetNodes();
-		var status="";
-		
-		$(rows).each(function(index, row) {
-			var data = dataTable.fnGetData(row);
-			var id = getRowId(data)
-			if (id == rowId) {
-				status = getRowStatus(data);
-			}
-		});
-	
-		return status;
-	}
-
-
-	function getObsoleteStatusesOfSelectedTableRows(dataTable, getRowStatus) {
-		var rows = dataTable.fnGetNodes();
-		var obsoleteStatuses = new Array();
-		
-		$(rows).each(function(index, row) {
-			if ($(row).hasClass('ui-state-row-selected')) {
-				var data = dataTable.fnGetData(row);
-				var status = getRowStatus(data)
-				if (status == "OBSOLETE") {
-					obsoleteStatuses.push(status);
-				}
-			}
-		});
-
-		return obsoleteStatuses;
-	}
-
+	var squashtm = squashtm || {};
 	
 	$(function() {
+		function findRowStatus(dataTable, rowId, getRowId, getRowStatus) {
+			var rows = dataTable.fnGetNodes();
+			var status="";
+			
+			$(rows).each(function(index, row) {
+				var data = dataTable.fnGetData(row);
+				var id = getRowId(data);
+				if (id == rowId) {
+					status = getRowStatus(data);
+				}
+			});
+		
+			return status;
+		}
+
+		function getObsoleteStatusesOfSelectedTableRows(dataTable, getRowStatus) {
+			var rows = dataTable.fnGetNodes();
+			var obsoleteStatuses = [];
+			
+			$(rows).each(function(index, row) {
+				if ($(row).hasClass('ui-state-row-selected')) {
+					var data = dataTable.fnGetData(row);
+					var status = getRowStatus(data)
+					if (status == "OBSOLETE") {
+						obsoleteStatuses.push(status);
+					}
+				}
+			});
+
+			return obsoleteStatuses;
+		}
+
+		function deleteVerifiedRequirement(id){
+			$.ajax({
+				type : 'delete',
+				url : '${ verifiedRequirementsUrl }/' + id,
+				dataType : 'json',
+				success : function(){
+					refreshVerifiedRequirements();
+					<c:if test="${ not empty updateImportanceMethod }" >${ updateImportanceMethod }();</c:if>
+				   }
+			});
+		}
+		
+		function deleteVerifiedRequirements(ids){
+			if (ids.length > 0) {
+				$.post('${ nonVerifiedRequirementsUrl }', { requirementVersionsIds: ids }, refreshVerifiedRequirements)
+				<c:if test="${ not empty updateImportanceMethod }" >.success(function(){${ updateImportanceMethod }();})</c:if>
+				;
+			}
+		}
+		
+		function refreshVerifiedRequirements() {
+			var table = $('#verified-requirements-table').dataTable();
+			saveTableSelection(table, getRequirementsTableRowId);
+			table.fnDraw(false);
+		}
+
+		
+		function requirementsTableDrawCallback() {
+			decorateDeleteButtons($('.delete-verified-requirement-button', this));
+			restoreTableSelection(this, getRequirementsTableRowId);
+			discriminateDirectVerifications(this);
+		}
+
+		
+		function getRequirementsTableRowId(rowData) {
+			return rowData[0];	
+		}
+		
+		function getRequirementsTableRowStatus(rowData) {
+			return rowData[8];	
+		}
+
+		
+		function requirementsTableRowCallback(row, data, displayIndex) {
+			<c:if test="${ editable }">
+			addDeleteButtonToRow(row, getRequirementsTableRowId(data), 'delete-verified-requirement-button');
+			</c:if>
+			addClickHandlerToSelectHandle(row, $("#verified-requirements-table"));
+			addHLinkToRequirementName(row, data);
+			<c:if test="${ editable }">
+			addSelectEditableToVersionNumber(row, data);
+			</c:if>
+			return row;
+		}
+
+		
+		function parseRequirementId(element) {
+			var elementId = element.id;
+			return elementId.substr(elementId.indexOf(":") + 1);
+		}
+		
+		 
+		function addHLinkToRequirementName(row, data) {
+			var url='${ pageContext.servletContext.contextPath }/requirement-versions/' + getRequirementsTableRowId(data) + '/info';			
+			addHLinkToCellText($( 'td:eq(3)', row ), url);
+		}	
+		
+		function addSelectEditableToVersionNumber(row, data) {
+			var urlPOST='${ verifiedRequirementsUrl }/' + getRequirementsTableRowId(data);
+			var urlGET='${ pageContext.servletContext.contextPath }/requirements/' + getRequirementsTableRowId(data) + '/versions/version-number';
+			var table = $('#verified-requirements-table').dataTable();
+			if (data[9]!="false"){
+				<%-- the table needs to be redrawn after each return of the POST so we implement the posting workflow --%>
+				$( 'td:eq(4)', row ).editable(function(value, settings) {
+						var innerPOSTData;
+						$.post(urlPOST, {
+							value : value
+						}, function (data){
+							innerPOSTData = data;
+							table.fnDraw(false);
+						});
+						return(innerPOSTData);
+					}, {
+					type: 'select',	
+					<%-- placeholder: '<f:message key="rich-edit.placeholder" />', --%>
+					submit: '<f:message key="rich-edit.button.ok.label" />',
+					cancel: '<f:message key="rich-edit.button.cancel.label" />',	
+					onblur : function() {}, <%-- prevents the widget to return to unediting state on blur event --%> 
+					loadurl : urlGET,
+					onsubmit : function() {} <%-- do nothing for now --%>
+				});
+			}
+		}
+		
+		function discriminateDirectVerifications(dataTable){
+			var rows = dataTable.fnGetNodes();
+			var ids = new Array();
+
+			$(rows).each(function(index, row) {
+				var data = dataTable.fnGetData(row);
+				if (data[9]=="false"){
+					$(row).addClass("requirement-indirect-verification");
+					$('td:last', row).html(''); //remove the delete button
+				}else{
+					$(row).addClass("requirement-direct-verification");
+				}
+				
+			});		
+		}
+		
+		squashtm.verifiedRequirements = {
+				requirementsTableDrawCallback: requirementsTableDrawCallback,
+				requirementsTableRowCallback: requirementsTableRowCallback, 
+				refreshVerifiedRequirements: refreshVerifiedRequirements
+		};
+		
 		<%-- single verified requirement removal --%>
 		$('#verified-requirements-table .delete-verified-requirement-button').die('click');
 
@@ -126,121 +239,9 @@
 						"<f:message key='dialog.button.confirm.label'/>",
 						"<f:message key='dialog.button.cancel.label'/>", '600px').done(function(){deleteVerifiedRequirements(ids);});
 			}
-			
 		});
 		
 	});
-	
-	function deleteVerifiedRequirement(id){
-		$.ajax({
-			type : 'delete',
-			url : '${ verifiedRequirementsUrl }/' + id,
-			dataType : 'json',
-			success : function(){
-				refreshVerifiedRequirements();
-				<c:if test="${ not empty updateImportanceMethod }" >${ updateImportanceMethod }();</c:if>
-			   }
-		});
-	}
-	
-	function deleteVerifiedRequirements(ids){
-		if (ids.length > 0) {
-			$.post('${ nonVerifiedRequirementsUrl }', { requirementVersionsIds: ids }, refreshVerifiedRequirements)
-			<c:if test="${ not empty updateImportanceMethod }" >.success(function(){${ updateImportanceMethod }();})</c:if>
-			;
-		}
-	}
-	
-	function refreshVerifiedRequirements() {
-		var table = $('#verified-requirements-table').dataTable();
-		saveTableSelection(table, getRequirementsTableRowId);
-		table.fnDraw(false);
-	}
-
-	
-	function requirementsTableDrawCallback() {
-		decorateDeleteButtons($('.delete-verified-requirement-button', this));
-		restoreTableSelection(this, getRequirementsTableRowId);
-		discriminateDirectVerifications(this);
-	}
-
-	
-	function getRequirementsTableRowId(rowData) {
-		return rowData[0];	
-	}
-	
-	function getRequirementsTableRowStatus(rowData) {
-		return rowData[8];	
-	}
-
-	
-	function requirementsTableRowCallback(row, data, displayIndex) {
-		<c:if test="${ editable }">
-		addDeleteButtonToRow(row, getRequirementsTableRowId(data), 'delete-verified-requirement-button');
-		</c:if>
-		addClickHandlerToSelectHandle(row, $("#verified-requirements-table"));
-		addHLinkToRequirementName(row, data);
-		<c:if test="${ editable }">
-		addSelectEditableToVersionNumber(row, data);
-		</c:if>
-		return row;
-	}
-
-	
-	function parseRequirementId(element) {
-		var elementId = element.id;
-		return elementId.substr(elementId.indexOf(":") + 1);
-	}
-	
-	 
-	function addHLinkToRequirementName(row, data) {
-		var url='${ pageContext.servletContext.contextPath }/requirement-versions/' + getRequirementsTableRowId(data) + '/info';			
-		addHLinkToCellText($( 'td:eq(3)', row ), url);
-	}	
-	
-	function addSelectEditableToVersionNumber(row, data) {
-		var urlPOST='${ verifiedRequirementsUrl }/' + getRequirementsTableRowId(data);
-		var urlGET='${ pageContext.servletContext.contextPath }/requirements/' + getRequirementsTableRowId(data) + '/versions/version-number';
-		var table = $('#verified-requirements-table').dataTable();
-		if (data[9]!="false"){
-			<%-- the table needs to be redrawn after each return of the POST so we implement the posting workflow --%>
-			$( 'td:eq(4)', row ).editable(function(value, settings) {
-					var innerPOSTData;
-					$.post(urlPOST, {
-						value : value
-					}, function (data){
-						innerPOSTData = data;
-						table.fnDraw(false);
-					});
-					return(innerPOSTData);
-				}, {
-				type: 'select',	
-				<%-- placeholder: '<f:message key="rich-edit.placeholder" />', --%>
-				submit: '<f:message key="rich-edit.button.ok.label" />',
-				cancel: '<f:message key="rich-edit.button.cancel.label" />',	
-				onblur : function() {}, <%-- prevents the widget to return to unediting state on blur event --%> 
-				loadurl : urlGET,
-				onsubmit : function() {} <%-- do nothing for now --%>
-			});
-		}
-	}
-	
-	function discriminateDirectVerifications(dataTable){
-		var rows = dataTable.fnGetNodes();
-		var ids = new Array();
-
-		$(rows).each(function(index, row) {
-			var data = dataTable.fnGetData(row);
-			if (data[9]=="false"){
-				$(row).addClass("requirement-indirect-verification");
-				$('td:last', row).html(''); //remove the delete button
-			}else{
-				$(row).addClass("requirement-direct-verification");
-			}
-			
-		});		
-	}
-	
 </script>
 
 
@@ -248,8 +249,8 @@
 <comp:decorate-ajax-table url="${ tableModelUrl }"
 	tableId="verified-requirements-table" paginate="true">
 	<jsp:attribute name="initialSort">[[4,'asc']]</jsp:attribute>
-	<jsp:attribute name="drawCallback">requirementsTableDrawCallback</jsp:attribute>
-	<jsp:attribute name="rowCallback">requirementsTableRowCallback</jsp:attribute>
+	<jsp:attribute name="drawCallback">squashtm.verifiedRequirements.requirementsTableDrawCallback</jsp:attribute>
+	<jsp:attribute name="rowCallback">squashtm.verifiedRequirements.requirementsTableRowCallback</jsp:attribute>
 	<jsp:attribute name="columnDefs">
 		<dt:column-definition targets="0" visible="false" />
 		<dt:column-definition targets="1" sortable="false"

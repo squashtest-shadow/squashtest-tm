@@ -96,7 +96,8 @@
 				
 				var addHandler = function(data) {
 					showAddSummary(data);
-					refreshVerifiedRequirements();
+					<%-- uh, dependency on something defined in decorate-verified-requirements-table --%>
+					squashtm.verifiedRequirements.refreshVerifiedRequirements();
 				};
 					
 				<%-- verified requirements addition --%>
