@@ -199,7 +199,7 @@
 	</c:if>
 	</div>	
 	<div style="clear:both;"></div>	
-	<c:if test="${moreThanReadOnly }">
+	<c:if test="${ moreThanReadOnly }">
 		<comp:opened-object otherViewers="${ otherViewers }" objectUrl="${ campaignUrl }" isContextual="${ ! param.isInfoPage }"/>
 	</c:if>
 </div>
