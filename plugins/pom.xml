@@ -12,6 +12,7 @@
 	<description>This module builds standard Squash TM plugins</description>
 
 	<modules>
+		<module>plugin.bugtracker.mantis</module>
 		<module>plugin.report.std</module>
 		<module>plugin.report.test</module>
 	</modules>

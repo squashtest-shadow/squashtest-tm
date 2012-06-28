@@ -674,7 +674,7 @@
     </dependency>
     <dependency>
       <groupId>${project.groupId}</groupId>
-      <artifactId>core.bugtracker.mantis</artifactId>
+      <artifactId>plugin.bugtracker.mantis</artifactId>
       <version>${project.version}</version>
     </dependency>
     <dependency>

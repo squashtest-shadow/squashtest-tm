@@ -19,6 +19,8 @@ plugin.report.std/META-INF$
 plugins/plugin.report.test/META-INF$
 core/core.report.api/META-INF$
 core/core.foundation/META-INF$
+plugins/core.bugtracker.mantis/META-INF$
+plugins/plugin.bugtracker.mantis/META-INF$
 syntax: regexp
 /\.settings/
 syntax: regexp
