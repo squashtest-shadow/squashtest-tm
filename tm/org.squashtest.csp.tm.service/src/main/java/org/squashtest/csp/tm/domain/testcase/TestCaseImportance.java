@@ -63,7 +63,7 @@ public enum TestCaseImportance implements Level {
 	}
 
 	public static TestCaseImportance defaultValue() {
-		return MEDIUM;
+		return LOW;
 	}
 
 	/**
