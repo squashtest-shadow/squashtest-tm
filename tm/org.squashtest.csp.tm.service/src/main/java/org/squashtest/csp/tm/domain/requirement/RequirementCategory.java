@@ -20,13 +20,12 @@
  */
 package org.squashtest.csp.tm.domain.requirement;
 
-import java.util.Comparator;
-import java.util.List;
-
 import org.squashtest.csp.tm.domain.Level;
 
+
+// TODO does this need to implement LEvel ? I18nable not enough ?
 public enum RequirementCategory implements Level {
-	FUNCTIONAL(0), NON_FUNCTIONAL(1), USE_CASE(2),BUSINESS(3), TEST_REQUIREMENT(4), UNDEFINED(5);
+	FUNCTIONAL(0), NON_FUNCTIONAL(1), USE_CASE(2), BUSINESS(3), TEST_REQUIREMENT(4), UNDEFINED(5);
 
 	private static final String I18N_KEY_ROOT = "requirement.category.";
 	private final int level;

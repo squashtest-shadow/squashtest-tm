@@ -46,6 +46,6 @@
 	</jsp:attribute>
 	
 	<jsp:attribute name="informationContent">	
-		<gr:requirement-version-editor requirementVersion="${ requirementVersion }" jsonCriticalities="${ jsonCriticalities }" />
+		<gr:requirement-version-editor requirementVersion="${ requirementVersion }" jsonCriticalities="${ jsonCriticalities }" jsonCategories="${ jsonCategories }" />
 	</jsp:attribute>	
 </layout:info-page-layout>

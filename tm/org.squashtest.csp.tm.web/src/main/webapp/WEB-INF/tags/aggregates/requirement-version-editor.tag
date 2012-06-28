@@ -52,13 +52,13 @@
    * the user don't have the correct permission,
    * the requirement status doesn't allow it. --%>
  
-<authz:authorized hasRole="ROLE_ADMIN" hasPermission="ATTACH" domainObject="${ requirement }">
+<authz:authorized hasRole="ROLE_ADMIN" hasPermission="ATTACH" domainObject="${ requirementVersion }">
 	<c:set var="attachable" value="${ requirementVersion.modifiable }" />
 </authz:authorized>
-<authz:authorized hasRole="ROLE_ADMIN" hasPermission="SMALL_EDIT" domainObject="${ requirement }">
+<authz:authorized hasRole="ROLE_ADMIN" hasPermission="SMALL_EDIT" domainObject="${ requirementVersion }">
 	<c:set var="smallEditable" value="${requirementVersion.modifiable }"/>
 </authz:authorized>
-<authz:authorized hasRole="ROLE_ADMIN" hasPermission="LINK" domainObject="${ requirement }">
+<authz:authorized hasRole="ROLE_ADMIN" hasPermission="LINK" domainObject="${ requirementVersion }">
 	<c:set var="linkable" value="${ requirementVersion.linkable }" />
 </authz:authorized>
 <c:set var="editableStatus" value="${ smallEditable && requirementVersion.status.allowsStatusUpdate }"/>
@@ -157,11 +157,11 @@
 						<div id="requirement-category">
 							<c:choose>
 								<c:when test="${ smallEditable }">
-									<s:message code="${ requirement.category.i18nKey }" htmlEscape="true" />
+									<s:message code="${ requirementVersion.category.i18nKey }" htmlEscape="true" />
 									<comp:select-jeditable componentId="requirement-category" jsonData="${ jsonCategories }" targetUrl="${ requirementUrl }" />
 								</c:when>
 							<c:otherwise>
-								<s:message code="${ requirement.category.i18nKey }" htmlEscape="true" />
+								<s:message code="${ requirementVersion.category.i18nKey }" htmlEscape="true" />
 							</c:otherwise>
 							</c:choose>
 						</div>
