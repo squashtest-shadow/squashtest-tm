@@ -617,7 +617,7 @@
 						</div>
 						<div class="options">
 							<div class="search-tc-importance-1">
-								<input type="checkbox" id="importance-1" data-value="LOW" /><span><f:message
+								<input type="checkbox" id="importance-1" data-value="LOW" checked="checked"/><span><f:message
 										key="test-case.importance.LOW" /> </span>
 							</div>
 							<div class="search-tc-importance-2">
