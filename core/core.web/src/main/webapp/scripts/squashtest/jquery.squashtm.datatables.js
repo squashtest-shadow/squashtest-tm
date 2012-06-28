@@ -174,7 +174,7 @@
  */
 
 function addDeleteButtonToRow(row, entityId, buttonTemplateId) {
-	$('td:last', row).append($('#' + buttonTemplateId).clone()).find('a').attr(
+	$(row).find('td:last').append($('#' + buttonTemplateId).clone()).find('a').attr(
 			'id', buttonTemplateId + ':' + entityId);
 }
 
