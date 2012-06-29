@@ -18,27 +18,27 @@
  *     You should have received a copy of the GNU Lesser General Public License
  *     along with this software.  If not, see <http://www.gnu.org/licenses/>.
  */
-package org.squashtest.csp.tm.web.internal.controller.requirement;
+package org.squashtest.csp.tm.web.internal.controller.requirement
 
-import javax.inject.Inject;
-import javax.inject.Provider;
+import javax.inject.Inject
+import javax.inject.Provider
 
-import org.springframework.web.servlet.ModelAndView;
-import org.squashtest.csp.core.service.security.PermissionEvaluationService;
-import org.squashtest.csp.tools.unittest.reflection.ReflectionCategory;
-import org.squashtest.csp.tm.domain.requirement.NewRequirementVersionDto;
-import org.squashtest.csp.tm.domain.requirement.Requirement;
-import org.squashtest.csp.tm.domain.requirement.RequirementFolder;
-import org.squashtest.csp.tm.domain.requirement.RequirementLibrary;
-import org.squashtest.csp.tm.domain.requirement.RequirementLibraryNode;
-import org.squashtest.csp.tm.domain.requirement.RequirementVersion;
-import org.squashtest.csp.tm.internal.service.RequirementLibraryNavigationServiceImpl;
-import org.squashtest.csp.tm.service.RequirementLibraryNavigationService;
-import org.squashtest.csp.tm.web.internal.model.builder.DriveNodeBuilder;
-import org.squashtest.csp.tm.web.internal.model.builder.RequirementLibraryTreeNodeBuilder;
-import org.squashtest.csp.tm.web.internal.model.jstree.JsTreeNode;
+import org.springframework.web.servlet.ModelAndView
+import org.squashtest.csp.core.service.security.PermissionEvaluationService
+import org.squashtest.csp.tools.unittest.reflection.ReflectionCategory
+import org.squashtest.csp.tm.domain.requirement.NewRequirementVersionDto
+import org.squashtest.csp.tm.domain.requirement.Requirement
+import org.squashtest.csp.tm.domain.requirement.RequirementFolder
+import org.squashtest.csp.tm.domain.requirement.RequirementLibrary
+import org.squashtest.csp.tm.domain.requirement.RequirementLibraryNode
+import org.squashtest.csp.tm.domain.requirement.RequirementVersion
+import org.squashtest.csp.tm.internal.service.RequirementLibraryNavigationServiceImpl
+import org.squashtest.csp.tm.service.RequirementLibraryNavigationService
+import org.squashtest.csp.tm.web.internal.model.builder.DriveNodeBuilder
+import org.squashtest.csp.tm.web.internal.model.builder.RequirementLibraryTreeNodeBuilder
+import org.squashtest.csp.tm.web.internal.model.jstree.JsTreeNode
 
-import spock.lang.Specification;
+import spock.lang.Specification
 
 class RequirementLibraryNavigationControllerTest  extends Specification {
 	RequirementLibraryNavigationController controller = new RequirementLibraryNavigationController()

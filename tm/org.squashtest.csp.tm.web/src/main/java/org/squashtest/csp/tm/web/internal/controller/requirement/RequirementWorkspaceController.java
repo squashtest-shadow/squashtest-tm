@@ -32,6 +32,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.servlet.ModelAndView;
+import org.squashtest.csp.tm.domain.requirement.RequirementCategory;
 import org.squashtest.csp.tm.domain.requirement.RequirementCriticality;
 import org.squashtest.csp.tm.domain.requirement.RequirementLibrary;
 import org.squashtest.csp.tm.domain.testcase.TestCaseLibrary;
@@ -68,10 +69,35 @@ public class RequirementWorkspaceController extends WorkspaceController<Requirem
 	 *            the locale
 	 * @return the html code for the criticality(String)
 	 */
-	@RequestMapping(value = "/criticality-options", method = RequestMethod.GET)
+	@RequestMapping(value = "/combo-options", method = RequestMethod.GET)
 	@ResponseBody
-	String getCriticitySelectionList(Locale locale) {
-		return buildCriticitySelectionList(locale);
+	Combos getCriticitySelectionList(Locale locale) {
+		String criticities = buildCriticitySelectionList(locale);
+		String categories = buildCategorySelectionList(locale);
+		return new Combos(criticities, categories);
+	}
+	
+	private static class Combos {
+		private String categories ;
+		private String criticities;
+		protected Combos(String criticities , String categories ){
+			this.categories = categories;
+			this.criticities = criticities;
+			
+		}
+		public String getCategories() {
+			return categories;
+		}
+		public void setCategories(String categories) {
+			this.categories = categories;
+		}
+		public String getCriticities() {
+			return criticities;
+		}
+		public void setCriticities(String criticities) {
+			this.criticities = criticities;
+		}
+		
 	}
 
 	/***
@@ -86,47 +112,33 @@ public class RequirementWorkspaceController extends WorkspaceController<Requirem
 		for (RequirementCriticality criticality : RequirementCriticality.values()) {
 			toReturn.append("<option value = \"");
 			toReturn.append(criticality.toString());
-			toReturn.append("\">" + formatCriticality(criticality, locale) + "</option>");
+			toReturn.append("\">" +  messageSource.getMessage(criticality.getI18nKey(), null, locale) + "</option>");
 		}
 		toReturn.append("</select>");
 		return toReturn.toString();
 	}
 
+
+
 	/***
-	 * Method which returns criticality in the chosen language
+	 * Method which returns the category select options in the chosen language
 	 *
-	 * @param criticity
-	 *            the criticality
 	 * @param locale
-	 *            the locale with the chosen language
-	 * @return the criticality in the chosen language
+	 *            the Locale
+	 * @return the html select object
 	 */
-	private String formatCriticality(RequirementCriticality criticity, Locale locale) {
-		String toReturn;
-
-		switch (criticity) {
-		case MAJOR:
-			toReturn = messageSource.getMessage("requirement.criticality.MAJOR", null, locale);
-			break;
-
-		case CRITICAL:
-			toReturn = messageSource.getMessage("requirement.criticality.CRITICAL", null, locale);
-			break;
-
-		case MINOR:
-			toReturn = messageSource.getMessage("requirement.criticality.MINOR", null, locale);
-			break;
-
-		case UNDEFINED:
-			toReturn = messageSource.getMessage("requirement.criticality.UNDEFINED", null, locale);
-			break;
-
-		default:
-			toReturn = messageSource.getMessage("requirement.criticality.UNKNOWN", null, locale);
-			break;
+	private String buildCategorySelectionList(Locale locale) {
+		StringBuilder toReturn = new StringBuilder("<select id=\"add-requirement-category\" cssClass=\"combobox\">");
+		for (RequirementCategory category : RequirementCategory.values()) {
+			toReturn.append("<option value = \"");
+			toReturn.append(category.toString());
+			toReturn.append("\">" + messageSource.getMessage(category.getI18nKey(), null, locale) + "</option>");
 		}
-		return toReturn;
+		toReturn.append("</select>");
+		return toReturn.toString();
 	}
+
+	
 	
 	@Override
 	@RequestMapping(method = RequestMethod.GET)

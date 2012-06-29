@@ -26,6 +26,7 @@ import org.springframework.transaction.annotation.Transactional;
 import org.squashtest.csp.tm.service.CustomRequirementModificationService;
 import org.squashtest.csp.tm.service.RequirementModificationService;
 import org.squashtest.csp.tm.domain.DuplicateNameException;
+import org.squashtest.csp.tm.domain.requirement.RequirementCategory;
 import org.squashtest.csp.tm.domain.requirement.RequirementCriticality;
 
 import spock.unitils.UnitilsSupport;
@@ -69,6 +70,16 @@ class RequirementModificationServiceIT extends DbunitServiceSpecification {
 
 		then:
 		requirement.criticality == RequirementCriticality.CRITICAL
+	}
+	
+	@DataSet("RequirementModificationServiceIT.should change requirement category.xml")
+	def "should change requirement category"(){
+		when:
+		modService.changeCategory(requirementId, RequirementCategory.BUSINESS)
+		def requirement = modService.findById(requirementId)
+
+		then:
+		requirement.category == RequirementCategory.BUSINESS
 	}
 
 	@DataSet("RequirementModificationServiceIT.should change requirement reference.xml")

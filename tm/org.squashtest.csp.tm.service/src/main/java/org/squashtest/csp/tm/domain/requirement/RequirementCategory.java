@@ -25,7 +25,7 @@ import org.squashtest.csp.tm.domain.Level;
 
 // TODO does this need to implement LEvel ? I18nable not enough ?
 public enum RequirementCategory implements Level {
-	FUNCTIONAL(0), NON_FUNCTIONAL(1), USE_CASE(2), BUSINESS(3), TEST_REQUIREMENT(4), UNDEFINED(5);
+	UNDEFINED(0), FUNCTIONAL(1), NON_FUNCTIONAL(2), USE_CASE(3), BUSINESS(4), TEST_REQUIREMENT(5), ;
 
 	private static final String I18N_KEY_ROOT = "requirement.category.";
 	private final int level;
