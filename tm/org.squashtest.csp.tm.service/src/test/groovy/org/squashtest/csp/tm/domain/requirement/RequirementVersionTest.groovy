@@ -33,7 +33,7 @@ import spock.lang.Specification;
 import spock.lang.Unroll;
 
 /**
- * @author Gregory
+ * @author Gregory Fouquet
  *
  */
 class RequirementVersionTest extends Specification {
@@ -87,7 +87,7 @@ class RequirementVersionTest extends Specification {
 	def "should not allow modification for status APPROVED"(){
 
 		given :
-		requirementVersion.setStatus(UNDER_REVIEW)//needed because of the workflow
+		requirementVersion.setStatus(UNDER_REVIEW) //needed because of the workflow
 		requirementVersion.setStatus(APPROVED)
 
 		when :

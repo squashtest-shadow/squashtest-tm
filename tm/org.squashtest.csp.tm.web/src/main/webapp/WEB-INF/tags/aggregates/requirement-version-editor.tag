@@ -56,12 +56,12 @@
 	<c:set var="attachable" value="${ requirementVersion.modifiable }" />
 </authz:authorized>
 <authz:authorized hasRole="ROLE_ADMIN" hasPermission="SMALL_EDIT" domainObject="${ requirementVersion }">
-	<c:set var="smallEditable" value="${requirementVersion.modifiable }"/>
+	<c:set var="smallEditable" value="${ requirementVersion.modifiable }" />
+	<c:set var="editableStatus" value="${ requirementVersion.status.allowsStatusUpdate }" />
 </authz:authorized>
 <authz:authorized hasRole="ROLE_ADMIN" hasPermission="LINK" domainObject="${ requirementVersion }">
 	<c:set var="linkable" value="${ requirementVersion.linkable }" />
 </authz:authorized>
-<c:set var="editableStatus" value="${ smallEditable && requirementVersion.status.allowsStatusUpdate }"/>
 
 <%-- ----------------------------------- /Authorization ----------------------------------------------%>
 <%-- ----------------------------------- header ----------------------------------------------%>
@@ -173,10 +173,10 @@
 						<div id="requirement-status">
 						<c:choose>
 							<c:when test="${ editableStatus }">
-								<comp:level-message level="${ requirementVersion.status }"/>
+								<comp:level-message level="${ requirementVersion.status }" />
 								<comp:select-jeditable componentId="requirement-status" jsonUrl="${ getStatusComboContent }" 
 														targetUrl="${ requirementUrl }"	
-														onSubmit="statusSelect" submitCallback="statusSelectCallback"/>
+														onSubmit="statusSelect" submitCallback="statusSelectCallback" />
 							</c:when>
 							<c:otherwise>
 								<comp:level-message level="${ requirementVersion.status }"/>
