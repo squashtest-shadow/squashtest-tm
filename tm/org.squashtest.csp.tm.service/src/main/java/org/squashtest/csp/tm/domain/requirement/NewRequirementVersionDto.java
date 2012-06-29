@@ -55,6 +55,14 @@ public class NewRequirementVersionDto {
 	public void setCriticality(RequirementCriticality criticality) {
 		this.criticality = criticality;
 	}
+	
+	public RequirementCategory getCategory() {
+		return category;
+	}
+
+	public void setCategory(RequirementCategory category) {
+		this.category = category;
+	}
 
 	public String getReference() {
 		return reference;
@@ -69,7 +77,9 @@ public class NewRequirementVersionDto {
 	private String description;
 	@NotNull
 	private RequirementCriticality criticality = RequirementCriticality.UNDEFINED;
-
+	@NotNull
+	private RequirementCategory category = RequirementCategory.UNDEFINED;
+	
 	private String reference;
 
 	public RequirementVersion toRequirementVersion() {
@@ -77,6 +87,9 @@ public class NewRequirementVersionDto {
 		version.setName(name);
 		if (criticality != null) {
 			version.setCriticality(criticality);
+		}
+		if(category != null){
+			version.setCategory(category);
 		}
 		version.setReference(reference);
 		version.setDescription(description);

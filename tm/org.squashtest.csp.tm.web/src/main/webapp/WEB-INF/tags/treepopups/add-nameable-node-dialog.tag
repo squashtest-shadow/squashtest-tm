@@ -33,8 +33,8 @@
 	description="Name of the resource to add. Should be a lowercase, hyphened name. eg : 'test-case'"%>
 <%@ attribute name="treeNodeButton" required="true" description="the javascript button that will open the dialog" %>
 
-<c:url var="requirementCriticalityList"
-	value="/requirement-workspace/criticality-options" />
+<c:url var="requirementComboLists"
+	value="/requirement-workspace/combo-options" />
 
 <c:set var="handlerName"
 	value="add${ su:hyphenedToCamelCase(resourceName) }Handler" />
@@ -56,10 +56,11 @@
 <script type="text/javascript">
 $(function(){
 	$.ajax({
-		url: "${ requirementCriticalityList }",  
+		url: "${ requirementComboLists }",  
 		context: document.body,
 		success: function(data){
-			  $('#criticalityList').html(data);
+			  $('#criticalityList').html(data.criticities);
+			  $('#categoryList').html(data.categories);
 		  }
 		});
 });
@@ -96,6 +97,10 @@ $(function(){
 					<td><label for="add-requirement-criticality"><f:message key="requirement.criticality.combo.label" /></label></td>
 					<td><div id="criticalityList"></div></td>
 				</tr>
+				<tr>
+					<td><label for="add-requirement-category"><f:message key="requirement.category.combo.label" /></label></td>
+					<td><div id="categoryList"></div></td>
+				</tr>
 			</c:if>
 			<tr>
 				<td><label for="add-${ resourceName }-description"><f:message
@@ -117,7 +122,8 @@ $(function(){
 				name="#add-${ resourceName }-name" 
 				description="#add-${ resourceName }-description" 
 				reference="#add-requirement-reference" 
-				criticality="#add-requirement-criticality"/>;
+				criticality="#add-requirement-criticality"
+				category="#add-requirement-category"/>;
 			</c:when>
 			<c:otherwise>
 				var params = <jq:params-bindings 
