@@ -315,248 +315,7 @@
         </executions>
       </plugin>
 
-			<!-- We need to drop DBCHANGELOG tables otherwise they wont appear in 
-				generated DB scripts -->
-      <plugin>
-        <groupId>org.codehaus.mojo</groupId>
-        <artifactId>sql-maven-plugin</artifactId>
-        <version>1.5</version>
 
-        <dependencies>
-					<!-- Apparently, the driver hosted by springsource cannot be downloaded -->
-          <dependency>
-            <groupId>mysql</groupId>
-            <artifactId>mysql-connector-java</artifactId>
-            <version>${mysql.version}</version>
-          </dependency>
-        </dependencies>
-
-        <configuration>
-					<!-- When project packaging is pom, execution of this plugin is skipped AND the skip property is overridden to false. Thank God, we can override the overriding using <forceMojoExecution> -->
-          <forceMojoExecution>true</forceMojoExecution>
-          <driver>com.mysql.jdbc.Driver</driver>
-          <url>${liquibase.mysql.url}</url>
-          <username>${liquibase.mysql.username}</username>
-          <password>${liquibase.mysql.password}</password>
-        </configuration>
-
-        <executions>
-          <execution>
-            <id>mysql-remove-liquibase-tables</id>
-            <phase>generate-resources</phase>
-            <goals>
-              <goal>execute</goal>
-            </goals>
-            <configuration>
-              <sqlCommand>
-                drop table if exists DATABASECHANGELOGLOCK;
-                drop table if exists DATABASECHANGELOG;
-							</sqlCommand>
-            </configuration>
-          </execution>
-          <execution>
-          </execution>
-        </executions>
-      </plugin>
-
-			<!-- We first run a full install against MySQL -->
-      <plugin>
-        <groupId>org.liquibase</groupId>
-        <artifactId>liquibase-maven-plugin</artifactId>
-        <configuration>
-          <skip>${mysql.distro.skip}</skip>
-        </configuration>
-        <executions>
-          <execution>
-            <id>generate-mysql-full-install-script</id>
-            <phase>process-resources</phase>
-            <goals>
-              <goal>updateSQL</goal>
-            </goals>
-            <configuration>
-              <dropFirst>true</dropFirst>
-              <changeLogFile>${master.changelog}</changeLogFile>
-              <driver>com.mysql.jdbc.Driver</driver>
-              <url>${liquibase.mysql.url}</url>
-              <username>${liquibase.mysql.username}</username>
-              <password>${liquibase.mysql.password}</password>
-              <migrationSqlOutputFile>${database.script.directory}/mysql-full-install-version-${project.version}.sql</migrationSqlOutputFile>
-            </configuration>
-          </execution>
-        </executions>
-      </plugin>
-
-
-			<!-- We need to drop DBCHANGELOG tables AGAIN otherwise they wont appear 
-				in generated DB scripts -->
-      <plugin>
-        <groupId>org.codehaus.mojo</groupId>
-        <artifactId>sql-maven-plugin</artifactId>
-        <version>1.5</version>
-
-        <dependencies>
-					<!-- Apparently, the driver hosted by springsource cannot be downloaded -->
-          <dependency>
-            <groupId>mysql</groupId>
-            <artifactId>mysql-connector-java</artifactId>
-            <version>${mysql.version}</version>
-          </dependency>
-        </dependencies>
-
-        <configuration>
-          <forceMojoExecution>true</forceMojoExecution>
-          <driver>com.mysql.jdbc.Driver</driver>
-          <url>${liquibase.mysql.url}</url>
-          <username>${liquibase.mysql.username}</username>
-          <password>${liquibase.mysql.password}</password>
-        </configuration>
-
-        <executions>
-          <execution>
-            <id>mysql-remove-liquibase-tables-again</id>
-            <phase>process-classes</phase>
-            <goals>
-              <goal>execute</goal>
-            </goals>
-            <configuration>
-              <sqlCommand>
-                drop table if exists DATABASECHANGELOGLOCK;
-                drop table if exists DATABASECHANGELOG;
-							</sqlCommand>
-            </configuration>
-          </execution>
-          <execution>
-          </execution>
-        </executions>
-      </plugin>
-
-			<!-- We now run an incremental install against MySQL -->
-      <plugin>
-        <groupId>org.liquibase</groupId>
-        <artifactId>liquibase-maven-plugin</artifactId>
-        <configuration>
-          <skip>${mysql.distro.skip}</skip>
-        </configuration>
-        <executions>
-          <execution>
-            <id>generate-mysql-0.15.0-script</id>
-            <phase>prepare-package</phase>
-            <goals>
-              <goal>updateSQL</goal>
-            </goals>
-            <configuration>
-              <dropFirst>true</dropFirst>
-              <changeLogFile>${upgrade.0.15.0.changelog}</changeLogFile>
-              <driver>com.mysql.jdbc.Driver</driver>
-              <url>${liquibase.mysql.url}</url>
-              <username>${liquibase.mysql.username}</username>
-              <password>${liquibase.mysql.password}</password>
-              <migrationSqlOutputFile>${database.script.directory}/mysql-upgrade-to-0.15.0.sql</migrationSqlOutputFile>
-            </configuration>
-          </execution>
-
-          <execution>
-            <id>generate-mysql-0.17.0-script</id>
-            <phase>prepare-package</phase>
-            <goals>
-              <goal>updateSQL</goal>
-            </goals>
-            <configuration>
-              <dropFirst>false</dropFirst>
-              <changeLogFile>${upgrade.0.17.0.changelog}</changeLogFile>
-              <driver>com.mysql.jdbc.Driver</driver>
-              <url>${liquibase.mysql.url}</url>
-              <username>${liquibase.mysql.username}</username>
-              <password>${liquibase.mysql.password}</password>
-              <migrationSqlOutputFile>${database.script.directory}/mysql-upgrade-to-0.17.0.sql</migrationSqlOutputFile>
-            </configuration>
-          </execution>
-
-          <execution>
-            <id>generate-mysql-0.20.0-script</id>
-            <phase>prepare-package</phase>
-            <goals>
-              <goal>updateSQL</goal>
-            </goals>
-            <configuration>
-              <dropFirst>false</dropFirst>
-              <changeLogFile>${upgrade.0.20.0.changelog}</changeLogFile>
-              <driver>com.mysql.jdbc.Driver</driver>
-              <url>${liquibase.mysql.url}</url>
-              <username>${liquibase.mysql.username}</username>
-              <password>${liquibase.mysql.password}</password>
-              <migrationSqlOutputFile>${database.script.directory}/mysql-upgrade-to-0.20.0.sql</migrationSqlOutputFile>
-            </configuration>
-          </execution>
-
-          <execution>
-            <id>generate-mysql-0.23.0-script</id>
-            <phase>prepare-package</phase>
-            <goals>
-              <goal>updateSQL</goal>
-            </goals>
-            <configuration>
-              <dropFirst>false</dropFirst>
-              <changeLogFile>${upgrade.0.23.0.changelog}</changeLogFile>
-              <driver>com.mysql.jdbc.Driver</driver>
-              <url>${liquibase.mysql.url}</url>
-              <username>${liquibase.mysql.username}</username>
-              <password>${liquibase.mysql.password}</password>
-              <migrationSqlOutputFile>${database.script.directory}/mysql-upgrade-to-0.23.0.sql</migrationSqlOutputFile>
-            </configuration>
-          </execution>
-
-          <execution>
-            <id>generate-mysql-1.1.0-script</id>
-            <phase>prepare-package</phase>
-            <goals>
-              <goal>updateSQL</goal>
-            </goals>
-            <configuration>
-              <dropFirst>false</dropFirst>
-              <changeLogFile>${upgrade.1.1.0.changelog}</changeLogFile>
-              <driver>com.mysql.jdbc.Driver</driver>
-              <url>${liquibase.mysql.url}</url>
-              <username>${liquibase.mysql.username}</username>
-              <password>${liquibase.mysql.password}</password>
-              <migrationSqlOutputFile>${database.script.directory}/mysql-upgrade-to-1.1.0.sql</migrationSqlOutputFile>
-            </configuration>
-          </execution>
-
-          <execution>
-            <id>generate-mysql-1.1.1-script</id>
-            <phase>prepare-package</phase>
-            <goals>
-              <goal>updateSQL</goal>
-            </goals>
-            <configuration>
-              <dropFirst>false</dropFirst>
-              <changeLogFile>${upgrade.1.1.1.changelog}</changeLogFile>
-              <driver>com.mysql.jdbc.Driver</driver>
-              <url>${liquibase.mysql.url}</url>
-              <username>${liquibase.mysql.username}</username>
-              <password>${liquibase.mysql.password}</password>
-              <migrationSqlOutputFile>${database.script.directory}/mysql-upgrade-to-1.1.1.sql</migrationSqlOutputFile>
-            </configuration>
-          </execution>
-          <execution>
-            <id>generate-mysql-1.2.0-script</id>
-            <phase>prepare-package</phase>
-            <goals>
-              <goal>updateSQL</goal>
-            </goals>
-            <configuration>
-              <dropFirst>false</dropFirst>
-              <changeLogFile>${upgrade.1.2.0.changelog}</changeLogFile>
-              <driver>com.mysql.jdbc.Driver</driver>
-              <url>${liquibase.mysql.url}</url>
-              <username>${liquibase.mysql.username}</username>
-              <password>${liquibase.mysql.password}</password>
-              <migrationSqlOutputFile>${database.script.directory}/mysql-upgrade-to-${squashTmVersion}.sql</migrationSqlOutputFile>
-            </configuration>
-          </execution>
-        </executions>
-      </plugin>
     </plugins>
   </build>
 
@@ -835,4 +594,261 @@
       <scope>test</scope>
     </dependency>
   </dependencies>
+
+  <profiles>
+	  <profile>
+		  <id>build-mysql</id>
+		  <activation>
+			  <property>
+				  <name>!no.mysql</name>
+			  </property>
+	  </activation>
+		  <build>
+			  <plugins>
+				  			<!-- We need to drop DBCHANGELOG tables otherwise they wont appear in 
+				generated DB scripts -->
+      <plugin>
+        <groupId>org.codehaus.mojo</groupId>
+        <artifactId>sql-maven-plugin</artifactId>
+        <version>1.5</version>
+
+        <dependencies>
+					<!-- Apparently, the driver hosted by springsource cannot be downloaded -->
+          <dependency>
+            <groupId>mysql</groupId>
+            <artifactId>mysql-connector-java</artifactId>
+            <version>${mysql.version}</version>
+          </dependency>
+        </dependencies>
+
+        <configuration>
+					<!-- When project packaging is pom, execution of this plugin is skipped AND the skip property is overridden to false. Thank God, we can override the overriding using <forceMojoExecution> -->
+          <forceMojoExecution>true</forceMojoExecution>
+          <driver>com.mysql.jdbc.Driver</driver>
+          <url>${liquibase.mysql.url}</url>
+          <username>${liquibase.mysql.username}</username>
+          <password>${liquibase.mysql.password}</password>
+        </configuration>
+
+        <executions>
+          <execution>
+            <id>mysql-remove-liquibase-tables</id>
+            <phase>generate-resources</phase>
+            <goals>
+              <goal>execute</goal>
+            </goals>
+            <configuration>
+              <sqlCommand>
+                drop table if exists DATABASECHANGELOGLOCK;
+                drop table if exists DATABASECHANGELOG;
+							</sqlCommand>
+            </configuration>
+          </execution>
+          <execution>
+          </execution>
+        </executions>
+      </plugin>
+
+			<!-- We first run a full install against MySQL -->
+      <plugin>
+        <groupId>org.liquibase</groupId>
+        <artifactId>liquibase-maven-plugin</artifactId>
+        <configuration>
+          <skip>${mysql.distro.skip}</skip>
+        </configuration>
+        <executions>
+          <execution>
+            <id>generate-mysql-full-install-script</id>
+            <phase>process-resources</phase>
+            <goals>
+              <goal>updateSQL</goal>
+            </goals>
+            <configuration>
+              <dropFirst>true</dropFirst>
+              <changeLogFile>${master.changelog}</changeLogFile>
+              <driver>com.mysql.jdbc.Driver</driver>
+              <url>${liquibase.mysql.url}</url>
+              <username>${liquibase.mysql.username}</username>
+              <password>${liquibase.mysql.password}</password>
+              <migrationSqlOutputFile>${database.script.directory}/mysql-full-install-version-${project.version}.sql</migrationSqlOutputFile>
+            </configuration>
+          </execution>
+        </executions>
+      </plugin>
+
+
+			<!-- We need to drop DBCHANGELOG tables AGAIN otherwise they wont appear 
+				in generated DB scripts -->
+      <plugin>
+        <groupId>org.codehaus.mojo</groupId>
+        <artifactId>sql-maven-plugin</artifactId>
+        <version>1.5</version>
+
+        <dependencies>
+					<!-- Apparently, the driver hosted by springsource cannot be downloaded -->
+          <dependency>
+            <groupId>mysql</groupId>
+            <artifactId>mysql-connector-java</artifactId>
+            <version>${mysql.version}</version>
+          </dependency>
+        </dependencies>
+
+        <configuration>
+          <forceMojoExecution>true</forceMojoExecution>
+          <driver>com.mysql.jdbc.Driver</driver>
+          <url>${liquibase.mysql.url}</url>
+          <username>${liquibase.mysql.username}</username>
+          <password>${liquibase.mysql.password}</password>
+        </configuration>
+
+        <executions>
+          <execution>
+            <id>mysql-remove-liquibase-tables-again</id>
+            <phase>process-classes</phase>
+            <goals>
+              <goal>execute</goal>
+            </goals>
+            <configuration>
+              <sqlCommand>
+                drop table if exists DATABASECHANGELOGLOCK;
+                drop table if exists DATABASECHANGELOG;
+							</sqlCommand>
+            </configuration>
+          </execution>
+          <execution>
+          </execution>
+        </executions>
+      </plugin>
+
+			<!-- We now run an incremental install against MySQL -->
+      <plugin>
+        <groupId>org.liquibase</groupId>
+        <artifactId>liquibase-maven-plugin</artifactId>
+        <configuration>
+          <skip>${mysql.distro.skip}</skip>
+        </configuration>
+        <executions>
+          <execution>
+            <id>generate-mysql-0.15.0-script</id>
+            <phase>prepare-package</phase>
+            <goals>
+              <goal>updateSQL</goal>
+            </goals>
+            <configuration>
+              <dropFirst>true</dropFirst>
+              <changeLogFile>${upgrade.0.15.0.changelog}</changeLogFile>
+              <driver>com.mysql.jdbc.Driver</driver>
+              <url>${liquibase.mysql.url}</url>
+              <username>${liquibase.mysql.username}</username>
+              <password>${liquibase.mysql.password}</password>
+              <migrationSqlOutputFile>${database.script.directory}/mysql-upgrade-to-0.15.0.sql</migrationSqlOutputFile>
+            </configuration>
+          </execution>
+
+          <execution>
+            <id>generate-mysql-0.17.0-script</id>
+            <phase>prepare-package</phase>
+            <goals>
+              <goal>updateSQL</goal>
+            </goals>
+            <configuration>
+              <dropFirst>false</dropFirst>
+              <changeLogFile>${upgrade.0.17.0.changelog}</changeLogFile>
+              <driver>com.mysql.jdbc.Driver</driver>
+              <url>${liquibase.mysql.url}</url>
+              <username>${liquibase.mysql.username}</username>
+              <password>${liquibase.mysql.password}</password>
+              <migrationSqlOutputFile>${database.script.directory}/mysql-upgrade-to-0.17.0.sql</migrationSqlOutputFile>
+            </configuration>
+          </execution>
+
+          <execution>
+            <id>generate-mysql-0.20.0-script</id>
+            <phase>prepare-package</phase>
+            <goals>
+              <goal>updateSQL</goal>
+            </goals>
+            <configuration>
+              <dropFirst>false</dropFirst>
+              <changeLogFile>${upgrade.0.20.0.changelog}</changeLogFile>
+              <driver>com.mysql.jdbc.Driver</driver>
+              <url>${liquibase.mysql.url}</url>
+              <username>${liquibase.mysql.username}</username>
+              <password>${liquibase.mysql.password}</password>
+              <migrationSqlOutputFile>${database.script.directory}/mysql-upgrade-to-0.20.0.sql</migrationSqlOutputFile>
+            </configuration>
+          </execution>
+
+          <execution>
+            <id>generate-mysql-0.23.0-script</id>
+            <phase>prepare-package</phase>
+            <goals>
+              <goal>updateSQL</goal>
+            </goals>
+            <configuration>
+              <dropFirst>false</dropFirst>
+              <changeLogFile>${upgrade.0.23.0.changelog}</changeLogFile>
+              <driver>com.mysql.jdbc.Driver</driver>
+              <url>${liquibase.mysql.url}</url>
+              <username>${liquibase.mysql.username}</username>
+              <password>${liquibase.mysql.password}</password>
+              <migrationSqlOutputFile>${database.script.directory}/mysql-upgrade-to-0.23.0.sql</migrationSqlOutputFile>
+            </configuration>
+          </execution>
+
+          <execution>
+            <id>generate-mysql-1.1.0-script</id>
+            <phase>prepare-package</phase>
+            <goals>
+              <goal>updateSQL</goal>
+            </goals>
+            <configuration>
+              <dropFirst>false</dropFirst>
+              <changeLogFile>${upgrade.1.1.0.changelog}</changeLogFile>
+              <driver>com.mysql.jdbc.Driver</driver>
+              <url>${liquibase.mysql.url}</url>
+              <username>${liquibase.mysql.username}</username>
+              <password>${liquibase.mysql.password}</password>
+              <migrationSqlOutputFile>${database.script.directory}/mysql-upgrade-to-1.1.0.sql</migrationSqlOutputFile>
+            </configuration>
+          </execution>
+
+          <execution>
+            <id>generate-mysql-1.1.1-script</id>
+            <phase>prepare-package</phase>
+            <goals>
+              <goal>updateSQL</goal>
+            </goals>
+            <configuration>
+              <dropFirst>false</dropFirst>
+              <changeLogFile>${upgrade.1.1.1.changelog}</changeLogFile>
+              <driver>com.mysql.jdbc.Driver</driver>
+              <url>${liquibase.mysql.url}</url>
+              <username>${liquibase.mysql.username}</username>
+              <password>${liquibase.mysql.password}</password>
+              <migrationSqlOutputFile>${database.script.directory}/mysql-upgrade-to-1.1.1.sql</migrationSqlOutputFile>
+            </configuration>
+          </execution>
+          <execution>
+            <id>generate-mysql-1.2.0-script</id>
+            <phase>prepare-package</phase>
+            <goals>
+              <goal>updateSQL</goal>
+            </goals>
+            <configuration>
+              <dropFirst>false</dropFirst>
+              <changeLogFile>${upgrade.1.2.0.changelog}</changeLogFile>
+              <driver>com.mysql.jdbc.Driver</driver>
+              <url>${liquibase.mysql.url}</url>
+              <username>${liquibase.mysql.username}</username>
+              <password>${liquibase.mysql.password}</password>
+              <migrationSqlOutputFile>${database.script.directory}/mysql-upgrade-to-${squashTmVersion}.sql</migrationSqlOutputFile>
+            </configuration>
+          </execution>
+        </executions>
+</plugin>
+</plugins>
+</build>
+	 </profile>
+</profiles>
 </project>
