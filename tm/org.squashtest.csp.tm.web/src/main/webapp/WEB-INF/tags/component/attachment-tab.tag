@@ -67,8 +67,32 @@
 		});
 		
 		<%-- selected verified requirements removal --%>
-		$( '#delete-all-attachment-button' ).click(function() {
+		//overload the close handler
+		$("#delete-all-attachment-dialog").bind('dialogclose', function() {
+			var answer = $("#delete-all-attachment-dialog").data("answer");
+			if (answer != "yes") {
+				return;
+			}
+
+			var removeids = $("#delete-all-attachment-dialog").data("IDList");
+
+
+			$.ajax({
+				type : 'POST',
+				data : {
+					attachmentIds : removeids
+				},
+				url : "${attachmentRemoveListUrl}"
+
+			});
+
+			refreshAttachments();
+
+		});
+
+		$("#delete-all-attachment-button").click(function() {
 			deleteSelectedAttachments();
+			return false;
 		});
 		
 		<%-- renaming button--%>
@@ -114,39 +138,6 @@
 		addHLinkToCellText($( 'td:eq(1)', row ), url);
 	}	
 
-
-	
-	
-	$(function() {
-		//overload the close handler
-		$("#delete-all-attachment-dialog").bind('dialogclose', function() {
-			var answer = $("#delete-all-attachment-dialog").data("answer");
-			if (answer != "yes") {
-				return;
-			}
-
-			var removeids = $("#delete-all-attachment-dialog").data("IDList");
-
-
-			$.ajax({
-				type : 'POST',
-				data : {
-					attachmentIds : removeids
-				},
-				url : "${attachmentRemoveListUrl}"
-
-			});
-
-			refreshAttachments();
-
-		});
-
-		$("#delete-all-attachment-button").click(function() {
-			deleteSelectedAttachments();
-			return false;
-		});
-
-	});
 	
 	function deleteSelectedAttachments(){
 		
@@ -154,7 +145,11 @@
 		
 		var selectedIDs = getIdsOfSelectedTableRows(datatable,getAttachmentsTableRowId);
 		
-		if (selectedIDs.length==0) return false;
+		if (selectedIDs.length==0) {
+			<f:message var="removeAttachImpossible" key="dialog.attachment.remove.impossible.label"/>
+			$.squash.openMessage("<f:message key='popup.title.error' />", "${removeAttachImpossible}");
+			return false;
+		}
 		
 		var removedStepIds = new Array();
 		
