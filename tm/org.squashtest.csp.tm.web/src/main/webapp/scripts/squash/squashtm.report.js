@@ -162,7 +162,8 @@ squashtm.report = (function ($) {
 		
 		datepickers.each(function () {
 			var self = this;
-			onDatepickerChanged.apply(self, [self.innerText]);
+			var date =  self.innerText || config.noDateLabel;
+			onDatepickerChanged.apply(self, [date]);
 		});
 	}
 	
