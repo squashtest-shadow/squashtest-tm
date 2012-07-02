@@ -47,7 +47,7 @@
 			cancel: '<f:message key="rich-edit.button.cancel.label" />',	
 			onblur : function() {}, <%-- prevents the widget to return to unediting state on blur event --%> 					
 			<c:if test="${ not empty submitCallback }" >callback : function(value, settings){${submitCallback}(value, settings);},</c:if>
-			<c:if test="${not empty jsonData}">data : '${jsonData}',</c:if>
+			<c:if test="${not empty jsonData}">data : JSON.stringify(${jsonData}),</c:if>
 			<c:if test="${not empty jsonUrl}">loadurl : '${jsonUrl}',</c:if>
 			<c:if test="${not empty onSubmit}">onsubmit : ${onSubmit},</c:if>
 			indicator : '<img src="${ pageContext.servletContext.contextPath }/scripts/jquery/indicator.gif" alt="processing..." />',
