@@ -63,7 +63,7 @@ that page won't be editable if
 		<c:set var="moreThanReadOnly" value="${ true }" />
 </authz:authorized>
 <authz:authorized hasRole="ROLE_ADMIN" hasPermission="DELETE" domainObject="${ requirement }">
-	<c:set var="deletable" value="${requirement.modifiable }"/>
+	<c:set var="deletable" value="${true}"/>
 		<c:set var="moreThanReadOnly" value="${ true }" />
 </authz:authorized>
 <authz:authorized hasRole="ROLE_ADMIN" hasPermission="CREATE" domainObject="${ requirement }">
