@@ -26,7 +26,6 @@
 <%@ attribute name="workspace" required="true" %>
 <%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core" %>
 <%@ taglib prefix="fmt" uri="http://java.sun.com/jsp/jstl/fmt" %>
-<%@ taglib prefix="sec" uri="http://www.springframework.org/security/tags" %>
 	
 <div id="tree_element_menu" class="tree-top-toolbar">
 	<a id="tree-create-button" href="#tree-create-menu" class="button"><fmt:message key="squashtm.treemenu.create.label"/>...</a>
@@ -55,7 +54,7 @@
 	</ul>
 	</div>
 	</div>	
-<sec:authorize access="hasRole('ROLE_TM_PROJECT_MANAGER') or hasRole('ROLE_ADMIN')">
+
 <c:if test="${workspace == 'test-case' }">
 <fmt:message var="importExcelLabel" key="tree.button.import-excel-zip.label" />
 </c:if>
@@ -69,11 +68,14 @@
 	<div id="tree-import-menu" >
 	<ul>
 		<li><a class="import-excel-tree-button" href="JavaScript:void(0);">${importExcelLabel}</a></li>
+		<c:if test="${ workspace == 'requirement' }">
+			<li><a class="export-tree-button" href="JavaScript:void(0);"><fmt:message key='tree.button.export.label'/>...</a></li>
+		</c:if>
 	</ul>
 	</div>
 	</div>	
 </c:if>	
-</sec:authorize>
+
 </div>
 
 
@@ -113,17 +115,20 @@
 			
 		squashtm.treemenu.action = $('#tree-action-button').treeMenu("#tree-action-menu", actionOption, 320);
 
-		<sec:authorize access="hasRole('ROLE_TM_PROJECT_MANAGER') or hasRole('ROLE_ADMIN')">
-			<c:if test="${workspace == 'test-case' || workspace == 'requirement'}">
-				initButton("#tree-import-button", "ui-icon-transferthick-e-w");		
-				
-				var importOption = {
-					"import-excel" : ".import-excel-tree-button"
-				};
-				
-				squashtm.treemenu.importer = $('#tree-import-button').treeMenu('#tree-import-menu', importOption);
-			</c:if>
-		</sec:authorize>
+		<c:if test="${workspace == 'test-case' || workspace == 'requirement'}">
+			initButton("#tree-import-button", "ui-icon-transferthick-e-w");		
+			
+			var importOption = {
+				"import-excel" : ".import-excel-tree-button"
+				<c:if test="${ workspace == 'requirement' }">
+				,
+				"export" : ".export-tree-button"
+				</c:if>
+			};
+			
+			squashtm.treemenu.importer = $('#tree-import-button').treeMenu('#tree-import-menu', importOption);
+		</c:if>
+		
 		
 	});
 

@@ -23,9 +23,13 @@
 <%@ tag description="HTML skeleton for a standard tree. Tag for internal use only" %>
 <%@ attribute name="treeId" required="true" %>
 <%@ attribute name="topToolbar" fragment="true" description="html definition of the top toolbar" %>
-<%@ taglib uri="http://java.sun.com/jsp/jstl/fmt" prefix="f" %>
-
+<%@ taglib prefix="f" uri="http://java.sun.com/jsp/jstl/fmt"  %>
+<%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core" %>
+<%@ taglib prefix="sec" uri="http://www.springframework.org/security/tags" %>
+<sec:authorize access="hasRole('ROLE_TM_PROJECT_MANAGER') or hasRole('ROLE_ADMIN')">
+<c:set var="importable" value="${ true }"/>
+</sec:authorize>
 <div  class="tree-filter-reminder-div">
 	<span class="not-displayed"><f:message key="tabbed_panel.tree.pane.filter.enabled.label"/></span>
 </div>
-<div id="${ treeId }" class="tree"></div>
+<div id="${ treeId }" class="tree" data-importable="${ importable }"></div>

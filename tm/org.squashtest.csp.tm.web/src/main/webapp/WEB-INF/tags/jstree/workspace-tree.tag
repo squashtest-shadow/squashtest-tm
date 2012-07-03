@@ -43,7 +43,9 @@
 <tree:jstree-tree_element_menu workspace="${workspaceType}" newLeafButtonMessage="${ newLeafLabelKey }" newResourceButtonMessage="tree.button.new-iteration.label"/>
 
 
-<tree:_html-tree treeId="${ id }">
+<c:set var="importable" value="${ false }"/>
+
+<tree:_html-tree treeId="${ id }" >
 </tree:_html-tree>
 
 <script type="text/javascript">

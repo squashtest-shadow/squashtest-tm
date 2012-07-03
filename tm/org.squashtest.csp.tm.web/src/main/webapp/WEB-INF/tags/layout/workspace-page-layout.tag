@@ -161,7 +161,7 @@
 										treeNodeButtonCopy="squashtm.treemenu.action.buttons['copy']" treeNodeButtonPaste="squashtm.treemenu.action.buttons['paste']"/>
 
 		<c:if test="${ resourceName == 'requirement' }">		
-			<treepopup:export-requirement-dialog treeSelector="#tree"  />			
+			<treepopup:export-requirement-dialog treeSelector="#tree"  treeNodeButton="squashtm.treemenu.importer.buttons['export']" />			
 		</c:if>
 		<c:if test="${ resourceName == 'test-case' || resourceName == 'requirement' }">
 			<sec:authorize access="hasRole('ROLE_TM_PROJECT_MANAGER') or hasRole('ROLE_ADMIN')">

@@ -33,6 +33,7 @@
 
 <%@ attribute name="treeSelector"
 	description="jQuerySelector for the tree."%>
+<%@ attribute name="treeNodeButton"	required="true" description="the javascript button that will open the dialog" %>
 
 
 <script type="text/javascript"
@@ -46,6 +47,14 @@
 
 
 <script type="text/javascript">
+$(function(){
+	${treeNodeButton}.click(function(){
+		$('#export-requirement-node-dialog').dialog('open');
+			return false;		
+		});	
+			
+});
+
 	function customSerialize(array, name) {
 
 		var serialized = name + "=" + array[0];
@@ -60,8 +69,7 @@
 </script>
 
 <f:message var="crossProjectError" key="dialog.cross-project.error.label" />
-<pop:popup id="export-requirement-node-dialog"
-	titleKey="dialog.export-requirement.title" openedBy="export-link">
+<pop:popup id="export-requirement-node-dialog"	titleKey="dialog.export-requirement.title" >
 	<jsp:attribute name="buttons">
 	
 		<f:message var="label" key="dialog.export-requirement.title" />
