@@ -125,7 +125,7 @@ public class ExecutionModificationController {
 			}
 
 			private String createBugList(ExecutionStep item) {
-				String toReturn = "[";
+				String toReturn = "";
 				List<Issue> issueList = item.getIssueList().getAllIssues();
 				if(issueList.size() > 0){
 					toReturn+= issueList.get(0);
@@ -134,7 +134,6 @@ public class ExecutionModificationController {
 				for(int i=1;i<issueList.size(); i++){
 					toReturn+= "," +issueList.get(i).getRemoteIssueId();
 				}
-				toReturn+="]";
 				
 				return toReturn;
 			}
