@@ -23,6 +23,7 @@ package org.squashtest.csp.tm.domain.project;
 import java.util.Set;
 
 import org.apache.commons.lang.NullArgumentException;
+import org.squashtest.csp.core.security.annotation.AclConstrainedObject;
 import org.squashtest.csp.tm.domain.DuplicateNameException;
 import org.squashtest.csp.tm.domain.library.Library;
 import org.squashtest.csp.tm.domain.library.LibraryNode;
@@ -81,5 +82,10 @@ public abstract class GenericLibrary<NODE extends LibraryNode> implements Librar
 		addRootContent(contentToAdd);
 
 	}
-
+	
+	@AclConstrainedObject	
+	@Override
+	public Library<?> getLibrary() {
+		return this;
+	}
 }

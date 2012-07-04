@@ -56,7 +56,9 @@
 <c:url var="workspaceUrl" value="/campaign-workspace/#" />
 <s:url var="simulateDeletionUrl" value="/campaign-browser/delete-nodes/simulate" />
 <s:url var="confirmDeletionUrl" value="/campaign-browser/delete-nodes/confirm" />
-
+<s:url var="btEntityUrl" value="/bugtracker/campaign/{id}" >
+	<s:param name="id" value="${campaign.id}"/>
+</s:url>
 <%-- ----------------------------------- Authorization ----------------------------------------------%>
 <authz:authorized hasRole="ROLE_ADMIN" hasPermission="ATTACH" domainObject="${ campaign }">
 	<c:set var="attachable" value="${ true }" />
@@ -409,6 +411,11 @@
 <comp:decorate-buttons />
 </div>
 
+<%------------------------------ bugs section -------------------------------%>
+
+<comp:issues-tab btEntityUrl="${ btEntityUrl }"/>
+<comp:decorate-buttons />
+<%------------------------------ /bugs section -------------------------------%>
 
 
 

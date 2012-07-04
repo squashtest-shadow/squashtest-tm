@@ -41,6 +41,7 @@ import javax.persistence.Temporal;
 import javax.persistence.TemporalType;
 
 import org.hibernate.annotations.Formula;
+import org.squashtest.csp.core.security.annotation.AclConstrainedObject;
 import org.squashtest.csp.tm.domain.attachment.Attachment;
 import org.squashtest.csp.tm.domain.attachment.AttachmentHolder;
 import org.squashtest.csp.tm.domain.attachment.AttachmentList;
@@ -209,7 +210,7 @@ public class ExecutionStep implements AttachmentHolder, Bugged, TestStepVisitor 
 		return builder.toString();
 	}
 
-	@Override
+	@AclConstrainedObject
 	public CampaignLibrary getCampaignLibrary() {
 		return execution.getCampaignLibrary();
 	}

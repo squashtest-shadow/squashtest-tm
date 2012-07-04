@@ -30,21 +30,13 @@ import org.squashtest.csp.tm.domain.project.Project;
 public interface Bugged extends Identified{
 
 
-
 	/**
 	 * 
 	 * @return its IssueList
 	 */
 	IssueList getIssueList();
 
-	/**
-	 * 
-	 * will return the (Squash) campaign library that entity belongs to
-	 * 
-	 * @return the campaign library of that entity
-	 */
-	@AclConstrainedObject
-	CampaignLibrary getCampaignLibrary();
+	
 
 	/**
 	 * will return the (Squash) project that entity belongs to

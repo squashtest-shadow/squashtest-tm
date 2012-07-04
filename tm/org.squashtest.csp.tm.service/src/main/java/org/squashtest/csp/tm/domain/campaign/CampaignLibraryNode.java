@@ -27,8 +27,10 @@ import javax.persistence.Id;
 import javax.persistence.Inheritance;
 import javax.persistence.InheritanceType;
 
+import org.squashtest.csp.core.security.annotation.AclConstrainedObject;
 import org.squashtest.csp.tm.domain.audit.Auditable;
 import org.squashtest.csp.tm.domain.library.GenericLibraryNode;
+import org.squashtest.csp.tm.domain.library.Library;
 import org.squashtest.csp.tm.domain.softdelete.SoftDeletable;
 
 @Entity
@@ -66,5 +68,10 @@ public abstract class CampaignLibraryNode extends GenericLibraryNode {
 
 	@Override
 	public abstract CampaignLibraryNode createPastableCopy();
-
+	
+	@Override
+	@AclConstrainedObject
+	public Library<?> getLibrary() {
+		return getProject().getCampaignLibrary();
+	}
 }

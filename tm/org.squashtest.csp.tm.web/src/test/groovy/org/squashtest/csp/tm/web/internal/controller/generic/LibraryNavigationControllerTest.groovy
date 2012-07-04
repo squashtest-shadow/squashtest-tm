@@ -24,6 +24,7 @@ import java.util.Set
 
 import org.apache.commons.lang.NullArgumentException
 import org.springframework.web.servlet.ModelAndView
+import org.squashtest.csp.core.security.annotation.AclConstrainedObject;
 import org.squashtest.csp.tm.domain.DuplicateNameException
 import org.squashtest.csp.tm.domain.library.Folder
 import org.squashtest.csp.tm.domain.library.Library
@@ -209,6 +210,7 @@ class DummyLibrary implements Library<DummyNode> {
 		return null
 	}
 	@Override 
+	@AclConstrainedObject
 	public Library getLibrary(){
 		return this;
 	}

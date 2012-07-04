@@ -49,6 +49,7 @@ import org.squashtest.csp.core.bugtracker.spi.BugTrackerInterfaceDescriptor;
 import org.squashtest.csp.tm.domain.bugtracker.BugTrackerStatus;
 import org.squashtest.csp.tm.domain.bugtracker.Bugged;
 import org.squashtest.csp.tm.domain.bugtracker.IssueOwnership;
+import org.squashtest.csp.tm.domain.campaign.Campaign;
 import org.squashtest.csp.tm.domain.campaign.Iteration;
 import org.squashtest.csp.tm.domain.campaign.TestSuite;
 import org.squashtest.csp.tm.domain.execution.Execution;
@@ -71,6 +72,8 @@ public class BugtrackerController {
 	private static final String EXECUTION_STEP_TYPE = "execution-step";
 	private static final String EXECUTION_TYPE = "execution";
 	private static final String ITERATION_TYPE = "iteration";
+	private static final String CAMPAIGN_TYPE = "campaign";
+	private static final String TEST_SUITE_TYPE = "test-suite";
 
 	@Inject
 	private MessageSource messageSource;
@@ -289,10 +292,10 @@ public class BugtrackerController {
 	 *  *********************************************************************************************************** */	
 
 	/**
-	 * returns the panel displaying the current bugs of that execution and the stub for the report form. Remember that
+	 * returns the panel displaying the current bugs of that iteration and the stub for the report form. Remember that
 	 * the report bug dialog will be populated later.
 	 * 
-	 * @param stepId
+	 * @param iterId
 	 * @return
 	 */
 	@RequestMapping(value = ITERATION_TYPE + "/{iterId}", method = RequestMethod.GET)
@@ -304,19 +307,75 @@ public class BugtrackerController {
 	}
 
 	/**
+	 * returns the panel displaying the current bugs of that campaign and the stub for the report form. Remember that
+	 * the report bug dialog will be populated later.
+	 * 
+	 * @param iterId
+	 * @return
+	 */
+	@RequestMapping(value = CAMPAIGN_TYPE + "/{campId}", method = RequestMethod.GET)
+	public ModelAndView getCampaignIssuePanel(@PathVariable Long campId, Locale locale,
+			@RequestParam(value = "style", required = false, defaultValue = "toggle") String panelStyle) {
+
+		Bugged bugged = bugTrackerLocalService.findBuggedEntity(campId, Campaign.class);
+		return makeIssuePanel(bugged, CAMPAIGN_TYPE, locale, panelStyle);
+	}
+	
+	/**
+	 * returns the panel displaying the current bugs of that test-suite and the stub for the report form. Remember that
+	 * the report bug dialog will be populated later.
+	 * 
+	 * @param testSuiteId
+	 * @return
+	 */
+	@RequestMapping(value = TEST_SUITE_TYPE + "/{testSuiteId}", method = RequestMethod.GET)
+	public ModelAndView getTestSuiteIssuePanel(@PathVariable Long testSuiteId, Locale locale,
+			@RequestParam(value = "style", required = false, defaultValue = "toggle") String panelStyle) {
+
+		Bugged bugged = bugTrackerLocalService.findBuggedEntity(testSuiteId, TestSuite.class);
+		return makeIssuePanel(bugged, TEST_SUITE_TYPE, locale, panelStyle);
+	}
+
+	/**
 	 * json Data for the known issues table.
 	 */
 	@RequestMapping(value = ITERATION_TYPE + "/{iterId}/known-issues", method = RequestMethod.GET)
 	public @ResponseBody
 	DataTableModel getIterationKnownIssuesData(@PathVariable("iterId") Long iterId,
 			final DataTableDrawParameters params, final Locale locale) {
+		
+		return getBuggedKnownIssuesData(params, locale, Iteration.class, iterId, ITERATION_TYPE);
 
+	}
+	/**
+	 * json Data for the known issues table.
+	 */
+	@RequestMapping(value = TEST_SUITE_TYPE + "/{testSuiteId}/known-issues", method = RequestMethod.GET)
+	public @ResponseBody
+	DataTableModel getTestSuiteKnownIssuesData(@PathVariable("testSuiteId") Long testSuiteId,
+			final DataTableDrawParameters params, final Locale locale) {
+		
+		return getBuggedKnownIssuesData(params, locale, TestSuite.class, testSuiteId, TEST_SUITE_TYPE);
+	}
+	/**
+	 * json Data for the known issues table.
+	 */
+	@RequestMapping(value = CAMPAIGN_TYPE + "/{campId}/known-issues", method = RequestMethod.GET)
+	public @ResponseBody
+	DataTableModel getCampaignKnownIssuesData(@PathVariable("campId") Long campId,
+			final DataTableDrawParameters params, final Locale locale) {
+		
+		return getBuggedKnownIssuesData(params, locale, Campaign.class, campId, CAMPAIGN_TYPE);
+	}
+
+	private <X extends Bugged> DataTableModel getBuggedKnownIssuesData(final DataTableDrawParameters params, final Locale locale,
+			Class<X> classe, Long entityId, String type) {
 		FilteredCollectionHolder<List<IssueOwnership<BTIssue>>> filteredCollection;
-
 		CollectionSorting sorter = createCollectionSorting(params);
+		
 
 		try {
-			Bugged bugged = bugTrackerLocalService.findBuggedEntity(iterId, Iteration.class);
+			Bugged bugged = bugTrackerLocalService.findBuggedEntity(entityId, classe);
 
 			filteredCollection = bugTrackerLocalService.findBugTrackerIssues(bugged, sorter);
 
@@ -324,14 +383,13 @@ public class BugtrackerController {
 
 		// no credentials exception are okay, the rest is to be treated as usual
 		catch (BugTrackerNoCredentialsException noCrdsException) {
-			filteredCollection = makeEmptyCollectionHolder(ITERATION_TYPE, iterId, noCrdsException);
+			filteredCollection = makeEmptyCollectionHolder(type, entityId, noCrdsException);
 		} catch (NullArgumentException npException) {
-			filteredCollection = makeEmptyCollectionHolder(ITERATION_TYPE, iterId, npException);
+			filteredCollection = makeEmptyCollectionHolder(type, entityId, npException);
 		}
 
 		return new IterationIssuesTableModel(messageSource, locale).buildDataModel(filteredCollection,
 				sorter.getFirstItemIndex() + 1, params.getsEcho());
-
 	}
 
 	/* ************************* Generic code section ************************** */

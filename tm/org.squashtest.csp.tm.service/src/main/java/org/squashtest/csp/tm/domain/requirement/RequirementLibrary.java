@@ -107,9 +107,6 @@ public class RequirementLibrary extends GenericLibrary<RequirementLibraryNode> i
 		return (rootContent.size() > 0);
 	}
 
-	@Override
-	public Library<?> getLibrary() {
-		return this;
-	}
+	
 
 }

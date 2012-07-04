@@ -117,10 +117,5 @@ public class TestCaseFolder extends TestCaseLibraryNode implements Folder<TestCa
 	public boolean hasContent() {
 		return folderSupport.hasContent();
 	}
-
-	@Override
-	public Library<?> getLibrary() {
-		return getProject().getTestCaseLibrary();
-	}
-
+	
 }

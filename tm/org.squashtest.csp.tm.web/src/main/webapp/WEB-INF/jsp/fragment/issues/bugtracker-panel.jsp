@@ -323,7 +323,7 @@
 				<c:when test="${entityType == 'execution'}">
 					<is:issue-table-exec dataUrl="${tableUrl}" interfaceDescriptor="${interfaceDescriptor}" />			
 				</c:when>
-				<c:when test="${entityType == 'iteration'}">
+				<c:when test="${entityType == 'iteration'||entityType == 'test-suite'||entityType == 'campaign'}">
 					<is:issue-table-iter dataUrl="${tableUrl}" interfaceDescriptor="${interfaceDescriptor}" />			
 				</c:when>				
 			</c:choose>

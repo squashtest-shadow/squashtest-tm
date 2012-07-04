@@ -377,9 +377,6 @@ public class TestCase extends TestCaseLibraryNode implements AttachmentHolder {
 		addVerifiedRequirementVersion(candidate);
 	}
 
-	@Override
-	public Library<?> getLibrary() {
-		return getProject().getTestCaseLibrary();
-	}
+	
 
 }

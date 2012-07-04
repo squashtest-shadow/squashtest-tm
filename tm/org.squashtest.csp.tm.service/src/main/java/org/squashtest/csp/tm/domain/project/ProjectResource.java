@@ -36,7 +36,7 @@ public interface ProjectResource {
 	 */
 	Project getProject();
 
-	@AclConstrainedObject
+	
 	Library<?> getLibrary();
 
 	/**

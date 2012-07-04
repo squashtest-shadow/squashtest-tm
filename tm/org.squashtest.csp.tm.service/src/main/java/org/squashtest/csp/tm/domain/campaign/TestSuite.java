@@ -45,12 +45,16 @@ import org.squashtest.csp.tm.domain.TestPlanItemNotExecutableException;
 import org.squashtest.csp.tm.domain.attachment.Attachment;
 import org.squashtest.csp.tm.domain.attachment.AttachmentList;
 import org.squashtest.csp.tm.domain.audit.Auditable;
+import org.squashtest.csp.tm.domain.bugtracker.Bugged;
+import org.squashtest.csp.tm.domain.bugtracker.IssueList;
+import org.squashtest.csp.tm.domain.execution.Execution;
+import org.squashtest.csp.tm.domain.project.Project;
 import org.squashtest.csp.tm.domain.testcase.TestCase;
 
 @Auditable
 @Entity
 @InheritsAcls(constrainedClass = Iteration.class, collectionName = "testSuites")
-public class TestSuite implements Identified {
+public class TestSuite implements Identified, Bugged {
 
 	public TestSuite() {
 		super();
@@ -354,6 +358,60 @@ public class TestSuite implements Identified {
 
 		throw new IllegalArgumentException("Item[" + testPlanItemId + "] does not belong to test plan of TestSuite["
 				+ id + ']');
+	}
+
+	@Override
+	public IssueList getIssueList() {
+		return null;
+	}
+
+	@Override
+	public Project getProject() {
+		if (iteration != null) {
+			return iteration.getProject();
+		}
+		return null;
+	}
+
+	@Override
+	public Long getIssueListId() {
+		return null;
+	}
+
+	@Override
+	public List<Long> getAllIssueListId() {
+		List<Long> result = new LinkedList<Long>();
+
+		for (IterationTestPlanItem item : getTestPlan()) {
+			for (Execution exec : item.getExecutions()) {
+				result.addAll(exec.getAllIssueListId());
+			}
+		}
+
+		return result;
+	}
+
+	@Override
+	public String getDefaultDescription() {
+		return "";
+	}
+
+	@Override
+	public List<Bugged> getAllBuggeds() {
+		List<Bugged> result = new LinkedList<Bugged>();
+
+		for (IterationTestPlanItem item : getTestPlan()) {
+			for (Execution exec : item.getExecutions()) {
+				result.addAll(exec.getAllBuggeds());
+			}
+		}
+
+		return result;
+	}
+
+	@Override
+	public boolean isAcceptsIssues() {
+		return false;
 	}
 
 }

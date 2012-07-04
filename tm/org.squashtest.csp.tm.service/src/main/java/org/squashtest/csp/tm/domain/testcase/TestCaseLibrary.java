@@ -99,9 +99,6 @@ public class TestCaseLibrary extends GenericLibrary<TestCaseLibraryNode> impleme
 		return (rootContent.size() > 0);
 	}
 
-	@Override
-	public Library<?> getLibrary() {
-		return this;
-	}
+	
 
 }

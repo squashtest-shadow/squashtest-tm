@@ -27,9 +27,11 @@ import javax.persistence.Id;
 import javax.persistence.Inheritance;
 import javax.persistence.InheritanceType;
 
+import org.squashtest.csp.core.security.annotation.AclConstrainedObject;
 import org.squashtest.csp.tm.domain.SelfClassAware;
 import org.squashtest.csp.tm.domain.audit.Auditable;
 import org.squashtest.csp.tm.domain.library.GenericLibraryNode;
+import org.squashtest.csp.tm.domain.library.Library;
 import org.squashtest.csp.tm.domain.softdelete.SoftDeletable;
 
 /**
@@ -92,6 +94,11 @@ public abstract class TestCaseLibraryNode extends GenericLibraryNode implements 
 			return false;
 		}
 		return true;
+	}
+	@Override
+	@AclConstrainedObject
+	public Library<?> getLibrary() {
+		return getProject().getTestCaseLibrary();
 	}
 
 }

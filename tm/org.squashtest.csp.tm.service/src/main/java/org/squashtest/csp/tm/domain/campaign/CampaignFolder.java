@@ -104,8 +104,5 @@ public class CampaignFolder extends CampaignLibraryNode implements Folder<Campai
 		return folderSupport.hasContent();
 	}
 
-	@Override
-	public Library<?> getLibrary() {
-		return getProject().getCampaignLibrary();
-	}
+	
 }

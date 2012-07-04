@@ -46,6 +46,7 @@ import javax.validation.constraints.NotNull;
 import org.hibernate.annotations.Formula;
 import org.hibernate.validator.constraints.NotBlank;
 import org.squashtest.csp.core.domain.Identified;
+import org.squashtest.csp.core.security.annotation.AclConstrainedObject;
 import org.squashtest.csp.tm.domain.attachment.Attachment;
 import org.squashtest.csp.tm.domain.attachment.AttachmentHolder;
 import org.squashtest.csp.tm.domain.attachment.AttachmentList;
@@ -288,12 +289,13 @@ public class Execution implements AttachmentHolder, Bugged, Identified {
 		return testPlan;
 	}
 
-	/* ***************** Bugged implementation *********************** */
-	@Override
+	
+	@AclConstrainedObject
 	public CampaignLibrary getCampaignLibrary() {
 		return testPlan.getProject().getCampaignLibrary();
 	}
-
+	
+	/* ***************** Bugged implementation *********************** */
 	@Override
 	public Project getProject() {
 		return testPlan.getProject();

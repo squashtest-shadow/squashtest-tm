@@ -124,7 +124,9 @@
 	value="/iterations/{iterationId}/test-suites/delete">
 	<s:param name="iterationId" value="${testSuite.iteration.id}" />
 </s:url>
-
+<s:url var="btEntityUrl" value="/bugtracker/test-suite/{id}" >
+	<s:param name="id" value="${testSuite.id}"/>
+</s:url>
 
 <%-- ----------------------------------- Authorization ----------------------------------------------%>
 
@@ -530,8 +532,11 @@
 		</jsp:body>
 	</comp:popup>
 </div>
+<%------------------------------ bugs section -------------------------------%>
 
+<comp:issues-tab btEntityUrl="${ btEntityUrl }"/>
 <comp:decorate-buttons />
+<%------------------------------ /bugs section -------------------------------%>
 
 <script type="text/javascript">
 	$(function(){
