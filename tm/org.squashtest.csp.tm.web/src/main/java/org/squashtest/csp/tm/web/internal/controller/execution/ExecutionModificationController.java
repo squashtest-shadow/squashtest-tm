@@ -46,6 +46,8 @@ import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.servlet.ModelAndView;
+import org.squashtest.csp.tm.domain.bugtracker.Issue;
+import org.squashtest.csp.tm.domain.bugtracker.IssueList;
 import org.squashtest.csp.tm.domain.campaign.Iteration;
 import org.squashtest.csp.tm.domain.campaign.IterationTestPlanItem;
 import org.squashtest.csp.tm.domain.execution.Execution;
@@ -105,7 +107,7 @@ public class ExecutionModificationController {
 		return new DataTableModelHelper<ExecutionStep>() {
 			@Override
 			public Map<String, ?> buildItemData(ExecutionStep item) {
-
+				String bugged = createBugList(item);
 				Map<String, Object> res = new HashMap<String, Object>();
 				res.put(DataTableModelHelper.DEFAULT_ENTITY_ID_KEY, item.getId());
 				res.put(DataTableModelHelper.DEFAULT_ENTITY_INDEX_KEY, item.getExecutionStepOrder()+1);
@@ -115,10 +117,26 @@ public class ExecutionModificationController {
 				res.put("last-exec-on", formatDate(item.getLastExecutedOn(), locale));
 				res.put("last-exec-by", item.getLastExecutedBy());
 				res.put("comment", item.getComment());
+				res.put("bugged", bugged);
 				res.put(DataTableModelHelper.DEFAULT_NB_ATTACH_KEY, item.getAttachmentList().size());
 				res.put(DEFAULT_ATTACH_LIST_ID_KEY, item.getAttachmentList().getId());
 				
 				return res;
+			}
+
+			private String createBugList(ExecutionStep item) {
+				String toReturn = "[";
+				List<Issue> issueList = item.getIssueList().getAllIssues();
+				if(issueList.size() > 0){
+					toReturn+= issueList.get(0);
+				}
+				
+				for(int i=1;i<issueList.size(); i++){
+					toReturn+= "," +issueList.get(i).getRemoteIssueId();
+				}
+				toReturn+="]";
+				
+				return toReturn;
 			}
 		}.buildDataModel(holder, filter.getFirstItemIndex() + 1, params.getsEcho());
 

@@ -110,7 +110,7 @@ div.DataTables_sort_wrapper > span.ui-icon{
 	
 }
 
-td.has-attachment-cell > a{
+td.has-attachment-cell > a, td.bugged-cell > span {
     display: block;
     height: 16px;
     margin: auto;
@@ -123,4 +123,8 @@ a.manage-attachments{
 
 a.add-attachments{
 	background-image: url("../images/add.png");			
+}
+
+.hasBugs {
+	background-image: url("../images/bug.png");
 }

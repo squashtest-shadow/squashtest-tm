@@ -222,6 +222,7 @@
 					<th><f:message key="executions.steps.table.column-header.last-execution.label" /></th>
 					<th><f:message key="executions.steps.table.column-header.user.label" /></th>		
 					<th><f:message key="executions.steps.table.column-header.comment.label" /></th>
+					<th><f:message key="executions.steps.table.column-header.bugged.label" /></th>
 					<th>numberOfAttch(masked)</th>
 					<th><f:message key="executions.steps.table.column-header.attachment.label" /></th>
 				</tr>
@@ -271,8 +272,9 @@
 			{'bVisible': true, 'bSortable': false, 'aTargets': [5], 'mDataProp' : 'last-exec-on'},
 			{'bVisible': true, 'bSortable': false, 'aTargets': [6], 'mDataProp' : 'last-exec-by'},
 			{'bVisible': true, 'bSortable': false, 'aTargets': [7], 'sClass' : 'smallfonts rich-editable-comment', 'mDataProp' : 'comment'},
-			{'bVisible': false, 'bSortable': false, 'aTargets': [8], 'mDataProp' : 'nb-attachments'},
-			{'bVisible': ${editable}, 'bSortable': false, 'sWidth': '2em', 'sClass': 'centered has-attachment-cell', 'aTargets': [9], 'mDataProp' : 'attach-list-id'}
+			{'bVisible': true, 'bSortable': false, 'sWidth': '2em', 'sClass': 'centered bugged-cell', 'aTargets': [8], 'mDataProp' : 'bugged'},
+			{'bVisible': false, 'bSortable': false, 'aTargets': [9], 'mDataProp' : 'nb-attachments'},
+			{'bVisible': ${editable}, 'bSortable': false, 'sWidth': '2em', 'sClass': 'centered has-attachment-cell', 'aTargets': [10], 'mDataProp' : 'attach-list-id'}
 			]
 		};
 		
