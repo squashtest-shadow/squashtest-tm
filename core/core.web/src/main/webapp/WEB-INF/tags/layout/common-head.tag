@@ -21,3 +21,4 @@
 
 --%>
 <link rel="stylesheet" type="text/css" href="${ pageContext.servletContext.contextPath }/styles/master.css" />
+<link type="image/x-icon" rel="shortcut icon" href="${ pageContext.servletContext.contextPath }/images/favicon.ico">
