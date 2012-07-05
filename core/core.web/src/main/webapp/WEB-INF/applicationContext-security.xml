@@ -183,8 +183,20 @@
 			connect to the application, but without proper entry in acls he couldn't do much anyway.
 			
 			So we fetch both personal authorities for the default one, and the group authorities for the real ones. 
-			//TODO explain why now false
+			
 		-->		
+		<!-- 
+			Why did the property "enableAuthorities" changed from "true" to "false" ?
+		
+			The property "enableAuthorities" was at "true" because, at the beginning of squash, users were created "by hand" and for a non admin,  
+	 		no entry was put in the table "CORE_GROUP_MEMBER". In this case, if the property were at "false", the user could not access to  
+	 		the squash workspace.  
+			
+	 		Now that users are created with squash, an entry in the table CORE_GROUP_MEMBER is guaranteed. The property could have remained at "true" 
+	 		if it was not for the functionality that allows a user to change his login [Issue 806]. To do that, spring would make us delete the old AUTH_USER entry and create a 
+	 		new one. While deleting a user it would try to delete all his authorities, and that we don't want. Therefore, now enableAuthorities is "false". 
+	 		
+	 	-->
 		<beans:property name="enableAuthorities" value="false"/>
 		<beans:property name="enableGroups" value="true" />
 		
