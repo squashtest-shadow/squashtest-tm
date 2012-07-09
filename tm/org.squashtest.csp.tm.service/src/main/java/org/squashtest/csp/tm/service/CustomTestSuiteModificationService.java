@@ -32,7 +32,7 @@ import org.squashtest.csp.tm.domain.campaign.TestSuite;
 import org.squashtest.csp.tm.domain.campaign.TestSuiteStatistics;
 
 @Transactional
-public interface CustomTestSuiteModificationService {
+public interface CustomTestSuiteModificationService extends TestSuiteFinder{
 	
 	/**
 	 * That method will update the name of the suite with newName, identified by suiteId. Will throw a {@link DuplicateNameException} 
@@ -81,14 +81,6 @@ public interface CustomTestSuiteModificationService {
 	 * @param itemTestPlans
 	 */
 	void unbindTestPlanObj(TestSuite testSuite, List<IterationTestPlanItem> itemTestPlans);
-	
-	/**
-	 * That method will find the test Suite by its ID
-	 * 
-	 * @param suiteId
-	 */
-	TestSuite findById(long suiteId);
-	
 	
 	/**
 	 * <p>That method will retrieve the test plan items attached to a given test suite.</p>

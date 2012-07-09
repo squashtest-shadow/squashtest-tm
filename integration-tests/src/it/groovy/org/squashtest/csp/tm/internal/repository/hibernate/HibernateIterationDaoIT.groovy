@@ -18,32 +18,26 @@
  *     You should have received a copy of the GNU Lesser General Public License
  *     along with this software.  If not, see <http://www.gnu.org/licenses/>.
  */
-package org.squashtest.csp.tm.internal.repository;
+package org.squashtest.csp.tm.internal.repository.hibernate
 
-import java.util.List;
+import javax.inject.Inject
 
-import org.squashtest.csp.tm.domain.bugtracker.IssueDetector;
-import org.squashtest.csp.tm.domain.execution.Execution;
-import org.squashtest.csp.tm.domain.execution.ExecutionStatusReport;
-import org.squashtest.csp.tm.domain.execution.ExecutionStep;
-import org.squashtest.csp.tm.infrastructure.filter.CollectionFilter;
+import org.squashtest.csp.tm.internal.repository.IterationDao
+import org.unitils.dbunit.annotation.DataSet
 
-public interface ExecutionDao extends EntityDao<Execution> {
+import spock.unitils.UnitilsSupport
 
-	List<ExecutionStep> findExecutionSteps(long executionId);
-
-	Execution findAndInit(long executionId);
-
-	int findExecutionRank(long executionId);
-
-	ExecutionStatusReport getStatusReport(long executionId);
-
-	Integer countSuccess(long executionId);
-
-	Integer countReady(long executionId);
-
-	List<ExecutionStep> findStepsFiltered(Long executionId, CollectionFilter filter);
-
-	List<IssueDetector> findAllIssueDetectorsForExecution(Long execId);
-
-}
+@UnitilsSupport
+class HibernateIterationDaoIT extends DbunitDaoSpecification {
+	@Inject IterationDao iterationDao
+	
+	@DataSet("HibernateIterationDaoIT.should return list of executions.xml")
+	def "should return list of executions"(){
+		when:
+		def result = iterationDao.findAllExecutionByIterationId (2l)
+		
+		then:
+		result.size() == 3
+		result.each {it.name == "iteration2-execution"}
+	}
+}	

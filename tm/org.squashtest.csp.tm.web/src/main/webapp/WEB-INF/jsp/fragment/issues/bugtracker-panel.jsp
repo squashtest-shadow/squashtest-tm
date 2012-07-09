@@ -59,7 +59,7 @@
 	<c:set var="editable" value="${ true }" /> 
 </authz:authorized>
 
-<c:if test="${not entity.acceptsIssues }" >
+<c:if test="${entityType == 'iteration'||entityType == 'test-suite'||entityType == 'campaign'}" >
 	<c:set var="editable" value="${false}"/>
 </c:if>
 

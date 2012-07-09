@@ -29,6 +29,7 @@ import org.squashtest.csp.tm.infrastructure.filter.FilteredCollectionHolder;
 
 @Transactional
 public interface IterationTestPlanFinder {
+	
 	@Transactional(readOnly = true)
 	FilteredCollectionHolder<List<IterationTestPlanItem>> findTestPlan(long iterationId, CollectionSorting filter);
 

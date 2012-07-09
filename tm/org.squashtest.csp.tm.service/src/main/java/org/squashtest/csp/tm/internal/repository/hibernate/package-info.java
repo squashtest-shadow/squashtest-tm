@@ -96,16 +96,18 @@
 		@NamedQuery(name = "iteration.findTestPlanFiltered", query = "select tp from Iteration it join it.testPlans tp where it.id = :iterationId and index(tp) between :firstIndex and :lastIndex order by index(tp)"),
 		@NamedQuery(name = "iteration.findAllById", query = "from Iteration i where i.id in (:iterationIds)"),
 		@NamedQuery(name = "iteration.findAllTestSuites", query = "select ts from TestSuite ts join ts.iteration i where i.id = :iterationId order by ts.name asc"),
+		@NamedQuery(name = "iteration.findAllExecutions", query = "select exec from Iteration it join it.testPlans tp join tp.executions exec where it.id = :iterationId"),
 
 		// Queries on TestSuite
 		@NamedQuery(name = "TestSuite.findAllTestPlanItemsPaged", query = "select tp from TestSuite ts join ts.iteration it join it.testPlans tp where ts.id = ? and tp.testSuite.id = ts.id order by index(tp)"),
 		@NamedQuery(name = "TestSuite.countTestPlanItems", query = "select count(tp) from TestSuite ts join ts.iteration it join it.testPlans tp where ts.id = ? and tp.testSuite.id = ts.id"),
 		@NamedQuery(name = "testSuite.countStatus", query = "select count(tp) from TestSuite ts join ts.iteration it join it.testPlans tp where ts.id = :id and tp.testSuite.id = :id2 and tp.executionStatus = :status"),
 		@NamedQuery(name = "testSuite.findTestPlanPartition", query = "select plan from TestSuite ts join ts.iteration iter join iter.testPlans plan where plan.id in (:itemIds) and ts.id = :suiteId order by index(plan)"),
+		@NamedQuery(name = "testSuite.findAllExecutions", query = "select itpi.executions from IterationTestPlanItem itpi join itpi.testSuite ts where ts.id = ? "),
 
 		@NamedQuery(name = "testSuite.findAllByIterationId", query = "select ts from TestSuite ts join ts.iteration i where i.id = ?"),
 		@NamedQuery(name = "testSuite.findLaunchableTestPlan", query = "select tp from TestSuite ts join ts.iteration it join it.testPlans tp where ts.id = ? and tp.testSuite.id = ? and ((tp.referencedTestCase is not null) or (tp.executions is not empty)) order by index(tp)"),
-
+		
 		// Queries on TestCase
 		@NamedQuery(name = "testCase.findNamesInFolderStartingWith", query = "select c.name from TestCaseFolder f join f.content c where f.id = :containerId and c.name like :nameStart"),
 		@NamedQuery(name = "testCase.findNamesInLibraryStartingWith", query = "select c.name from TestCaseLibrary l join l.rootContent c where l.id = :containerId and c.name like :nameStart"),
@@ -139,6 +141,8 @@
 		@NamedQuery(name = "campaign.findCampaignByName", query = "from CampaignLibraryNode c where c.name like :campaignName order by c.name asc"),
 		@NamedQuery(name = "campaign.findTestPlanFiltered", query = "select tp from Campaign cp join cp.testPlan tp where cp.id = :campaignId and index(tp) between :firstIndex and :lastIndex order by index(tp)"),
 		@NamedQuery(name = "campaign.findAllById", query = "from Campaign c where c.id in (:campaignIds)"),
+		@NamedQuery(name = "campaign.findAllExecutions", query = "select exec from Campaign camp join camp.iterations it join it.testPlans tp join tp.executions exec where camp.id = :campaignId "),
+		
 		//Queries on TestStep
 		@NamedQuery(name = "testStep.findParentNode", query = "select testcase from TestCase as testcase join testcase.steps tcSteps where tcSteps.id= :childId "),
 		@NamedQuery(name = "testStep.findAllByParentId", query = "select step.id from TestCase testCase join testCase.steps step where testCase.id in (:testCaseIds)"),

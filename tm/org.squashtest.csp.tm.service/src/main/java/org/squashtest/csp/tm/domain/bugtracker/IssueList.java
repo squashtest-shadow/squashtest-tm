@@ -39,8 +39,6 @@ public class IssueList {
 	@Column(name = "ISSUE_LIST_ID")
 	private Long id;
 
-	/*@OneToMany(cascade = { CascadeType.ALL})
-	@JoinColumn(name = "ISSUE_LIST_ID")*/
 	@OneToMany(mappedBy="issueList")
 	private final List<Issue> issues = new ArrayList<Issue>();
 

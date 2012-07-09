@@ -22,41 +22,12 @@ package org.squashtest.csp.tm.internal.repository;
 
 import java.util.List;
 
-import org.squashtest.csp.tm.domain.bugtracker.Bugged;
 import org.squashtest.csp.tm.domain.bugtracker.Issue;
+import org.squashtest.csp.tm.domain.bugtracker.IssueDetector;
 import org.squashtest.csp.tm.domain.bugtracker.IssueOwnership;
 import org.squashtest.csp.tm.infrastructure.filter.CollectionSorting;
 
 public interface IssueDao extends EntityDao<Issue>{
-	
-	<X extends Bugged> X findBuggedEntity(Long entityId, Class<X> entityClass);
-	
-
-	/**
-	 * Will recursively find a sorted/filtered list of Issues paired with their owning Bugged entity, 
-	 * from the given bugged entity and its related Bugged entities.
-	 *  
-	 * The data will be sorted/filtered regardless of their owner.
-	 * 
-	 * @param entity the entity at the base of the bugged hierarchy
-	 * @param sorter a CollectionSoring object that will tell who we must sort the data
-	 * @return a non null but possibly empty list of IssueOwnership<Issue>, that will pair each Issue with their Owner.
-	 */
-	List<IssueOwnership<Issue>> findIssuesWithOwner(Bugged entity, CollectionSorting sorter);
-
-	
-	/**
-	 * Will recursively find a sorted/filtered list of Issues paired with their owning Bugged entity, 
-	 * from the given bugged entity and its related Bugged entities.
-	 *  
-	 * The data will be sorted/filtered regardless of their owner.
-	 * 
-	 * @param entity the entity at the base of the bugged hierarchy
-	 * @param sorter a CollectionSoring object that will tell who we must sort the data
-	 * @param bugtrackerName the name of the bugtracker we are filtering on
-	 * @return a non null but possibly empty list of IssueOwnership<Issue>, that will pair each Issue with their Owner.
-	 */
-	List<IssueOwnership<Issue>> findIssuesWithOwner(Bugged entity, CollectionSorting sorter, String bugtrackerName);
 	
 	/**
 	 * Will count the total number of issues related to the given IssueList.  
@@ -76,5 +47,9 @@ public interface IssueDao extends EntityDao<Issue>{
 	 * @return how many issues they hold.
 	 */
 	Integer countIssuesfromIssueList(List<Long> issueListIds, String bugtrackerName);
+
+
+	List<Object[]> findSortedIssuesFromIssuesLists(List<Long> issueListId, CollectionSorting sorter,
+			String bugTrackerName);
 
 }

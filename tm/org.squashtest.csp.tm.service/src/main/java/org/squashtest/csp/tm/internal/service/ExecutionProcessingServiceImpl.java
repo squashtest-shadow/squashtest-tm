@@ -107,7 +107,7 @@ public class ExecutionProcessingServiceImpl implements ExecutionProcessingServic
 
 	@Override
 	public Execution findExecution(Long executionId) {
-		return execModService.findExecution(executionId);
+		return execModService.findAndInitExecution(executionId);
 	}
 
 	@Override

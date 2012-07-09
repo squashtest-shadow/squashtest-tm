@@ -73,13 +73,17 @@
 
 	<osgi:reference id="squashtest.tm.service.CampaignModificationService"
 		bean-name="squashtest.tm.service.CampaignModificationService"
-		interface="org.squashtest.csp.tm.service.CampaignModificationService"
-		availability="mandatory" />
+		availability="mandatory" ><osgi:interfaces>
+			<value>org.squashtest.csp.tm.service.CampaignModificationService</value>
+			<value>org.squashtest.csp.tm.service.CampaignFinder</value>
+		</osgi:interfaces></osgi:reference>
 
 	<osgi:reference id="squashtest.tm.service.IterationModificationService"
 		bean-name="squashtest.tm.service.IterationModificationService"
-		interface="org.squashtest.csp.tm.service.IterationModificationService"
-		availability="mandatory" />
+		availability="mandatory" ><osgi:interfaces>
+			<value>org.squashtest.csp.tm.service.IterationModificationService</value>
+			<value>org.squashtest.csp.tm.service.IterationFinder</value>
+		</osgi:interfaces></osgi:reference>
 
 	<osgi:reference
 		id="squashtest.tm.service.CampaignLibraryNavigationService" 
@@ -130,8 +134,10 @@
 		
 	<osgi:reference id="squashtest.tm.service.TestSuiteModificationService"
 		bean-name="squashtest.tm.service.TestSuiteModificationService"
-		interface="org.squashtest.csp.tm.service.TestSuiteModificationService"
-		availability="mandatory" />	
+		availability="mandatory" ><osgi:interfaces>
+			<value>org.squashtest.csp.tm.service.TestSuiteModificationService</value>
+			<value>org.squashtest.csp.tm.service.TestSuiteFinder</value>
+		</osgi:interfaces></osgi:reference>
 
 	<osgi:list id="squash.tm.report.ReportPlugins" interface="org.squashtest.tm.api.report.ReportPlugin">
 		<osgi:listener ref="squash.tm.report.ReportsRegistry" bind-method="registerReports" unbind-method="unregisterReports" />

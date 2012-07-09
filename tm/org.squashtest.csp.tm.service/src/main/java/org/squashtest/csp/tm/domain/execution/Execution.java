@@ -51,7 +51,7 @@ import org.squashtest.csp.tm.domain.attachment.Attachment;
 import org.squashtest.csp.tm.domain.attachment.AttachmentHolder;
 import org.squashtest.csp.tm.domain.attachment.AttachmentList;
 import org.squashtest.csp.tm.domain.audit.Auditable;
-import org.squashtest.csp.tm.domain.bugtracker.Bugged;
+import org.squashtest.csp.tm.domain.bugtracker.IssueDetector;
 import org.squashtest.csp.tm.domain.bugtracker.IssueList;
 import org.squashtest.csp.tm.domain.campaign.CampaignLibrary;
 import org.squashtest.csp.tm.domain.campaign.IterationTestPlanItem;
@@ -64,7 +64,7 @@ import org.squashtest.csp.tm.domain.testcase.TestStep;
 
 @Auditable
 @Entity
-public class Execution implements AttachmentHolder, Bugged, Identified {
+public class Execution implements AttachmentHolder, IssueDetector, Identified {
 	@Id
 	@GeneratedValue
 	@Column(name = "EXECUTION_ID")
@@ -311,41 +311,13 @@ public class Execution implements AttachmentHolder, Bugged, Identified {
 		return issueList.getId();
 	}
 
-	@Override
-	public List<Long> getAllIssueListId() {
-		List<Long> list = new LinkedList<Long>();
-
-		list.add(issueList.getId());
-
-		for (ExecutionStep step : steps) {
-			list.addAll(step.getAllIssueListId());
-		}
-
-		return list;
-	}
 
 	@Override
 	public String getDefaultDescription() {
 		return "";
 	}
 
-	@Override
-	public List<Bugged> getAllBuggeds() {
-		List<Bugged> list = new LinkedList<Bugged>();
-
-		list.add(this);
-
-		for (ExecutionStep step : steps) {
-			list.addAll(step.getAllBuggeds());
-		}
-
-		return list;
-	}
 	
-	@Override
-	public boolean isAcceptsIssues() {
-		return true;
-	}
 	
 	/* ***************** /Bugged implementation *********************** */
 
@@ -385,5 +357,17 @@ public class Execution implements AttachmentHolder, Bugged, Identified {
 		}
 		return steps.get(steps.size() - 1);
 	}
+	@Override
+		public List<Long> getAllIssueListId() {
+			List<Long> list = new LinkedList<Long>();
+	
+			list.add(issueList.getId());
+	
+			for (ExecutionStep step : steps) {
+				list.addAll(step.getAllIssueListId());
+			}
+	
+			return list;
+		}
 
-}
+	}

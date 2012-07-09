@@ -25,12 +25,13 @@ import java.util.Collection;
 import java.util.Collections;
 import java.util.LinkedList;
 import java.util.List;
+
 import javax.inject.Inject;
 
 import org.springframework.stereotype.Component;
 import org.squashtest.csp.tm.domain.attachment.AttachmentList;
-import org.squashtest.csp.tm.domain.bugtracker.Bugged;
 import org.squashtest.csp.tm.domain.bugtracker.Issue;
+import org.squashtest.csp.tm.domain.bugtracker.IssueDetector;
 import org.squashtest.csp.tm.domain.bugtracker.IssueList;
 import org.squashtest.csp.tm.domain.campaign.Campaign;
 import org.squashtest.csp.tm.domain.campaign.CampaignFolder;
@@ -298,7 +299,7 @@ public class CampaignDeletionHandlerImpl extends AbstractNodeDeletionHandlerImpl
 		execution.getSteps().clear();
 	}
 
-	private void deleteIssues(Bugged bugged) {
+	private void deleteIssues(IssueDetector bugged) {
 		IssueList issueList = bugged.getIssueList();
 
 		for (Issue issue : issueList.getAllIssues()) {

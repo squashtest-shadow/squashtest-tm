@@ -48,11 +48,6 @@ public class ExecutionModificationServiceImpl implements ExecutionModificationSe
 	private CampaignNodeDeletionHandler deletionHandler;
 
 	@Override
-	public Execution findExecution(Long executionId) {
-		return executionDao.findAndInit(executionId);
-	}
-
-	@Override
 	public Execution findAndInitExecution(Long executionId) {
 		return executionDao.findAndInit(executionId);
 	}
@@ -107,6 +102,11 @@ public class ExecutionModificationServiceImpl implements ExecutionModificationSe
 	@Override
 	public Execution simpleGetExecutionById(Long id) {
 		return executionDao.findById(id);
+	}
+
+	@Override
+	public ExecutionStep findExecutionStepById(Long id) {
+		return executionStepDao.findById(id);
 	}
 
 }

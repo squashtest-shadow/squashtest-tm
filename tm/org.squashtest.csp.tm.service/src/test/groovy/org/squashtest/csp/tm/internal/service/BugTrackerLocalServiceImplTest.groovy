@@ -54,22 +54,6 @@ class BugTrackerLocalServiceImplTest extends Specification {
 		service.remoteBugTrackerService = remoteService;
 	}
 	
-	
-	def "should find an execution step"(){
-		
-		given :
-			ExecutionStep stubstep = Mock()
-			issueDao.findBuggedEntity(1l, ExecutionStep.class) >> stubstep
-		
-		when :
-			def result = service.findBuggedEntity(1l, ExecutionStep.class)
-		
-		then :
-			result == stubstep	
-		
-	}
-	
-	
 	def "should say bugtracker is undefined"(){
 		
 		given :
@@ -156,37 +140,6 @@ class BugTrackerLocalServiceImplTest extends Specification {
 	}
 	
 	
-	def "should return a list of paired Squash issue, shipped as a filtered collection holder"(){
-		
-		given :
-			
-			IssueOwnership<Issue> ownerShip1 = Mock()
-			IssueOwnership<Issue> ownerShip2 = Mock()
-			IssueOwnership<Issue> ownerShip3 = Mock()
-			
-		and :
-			
-			ExecutionStep step1 = Mock()
-
-			step1.getAllIssueListId() >> [1l, 2l, 3l] 
-			
-		and :
-			issueDao.findIssuesWithOwner(step1, null, _) >> [ownerShip1, ownerShip2, ownerShip3];
-			issueDao.countIssuesfromIssueList(_, _) >> 3		;	
-						
-		
-		when :
-		
-			FilteredCollectionHolder<List<IssueOwnership<Issue>>> result = service.findSquashIssues(step1, null);
-		
-		
-		then :
-			result.unfilteredResultCount == 3 
-			result.filteredCollection == [ ownerShip1, ownerShip2, ownerShip3 ]
-		
-	}
-	
-	
 	//TODO
 	def "should return a list of paired BTIssues, shipped as a filtered collection holder"(){
 		
@@ -238,26 +191,6 @@ class BugTrackerLocalServiceImplTest extends Specification {
 		
 	}
 
-	
-	def "should create a list of remote issue ownership sorted according to local issue ordering"(){
-		
-		given :
-			def ids = (1..5).collect{ return "ISSUE-0$it"}
-			def permutted = new ArrayList(ids)
-			Collections.shuffle(permutted)
-		and :
-
-			def remoteIssues = permutted.collect{remoteIssue(it)} 	//we shuffle the list before use.
-			def localOwnership = ids.collect{localOwnership(it)}	//here we maintain the specified order
-			
-		when :
-			def res = service.buildSortedBTIssueOwnership(remoteIssues, localOwnership)
-		then :
-			res.collect{it.issue.id} == ids	
-		
-		
-	}
-	
 	
 	def remoteIssue(id){
 		BTIssue rIssue = Mock()

@@ -107,40 +107,40 @@ public class ExecutionModificationController {
 		return new DataTableModelHelper<ExecutionStep>() {
 			@Override
 			public Map<String, ?> buildItemData(ExecutionStep item) {
-				String bugged = createBugList(item);
 				Map<String, Object> res = new HashMap<String, Object>();
 				res.put(DataTableModelHelper.DEFAULT_ENTITY_ID_KEY, item.getId());
-				res.put(DataTableModelHelper.DEFAULT_ENTITY_INDEX_KEY, item.getExecutionStepOrder()+1);
+				res.put(DataTableModelHelper.DEFAULT_ENTITY_INDEX_KEY, item.getExecutionStepOrder() + 1);
 				res.put("action", item.getAction());
 				res.put("expected", item.getExpectedResult());
 				res.put("status", localizedStatus(item.getExecutionStatus(), locale));
 				res.put("last-exec-on", formatDate(item.getLastExecutedOn(), locale));
 				res.put("last-exec-by", item.getLastExecutedBy());
 				res.put("comment", item.getComment());
-				res.put("bugged", bugged);
+				res.put("bugged", createBugList(item));
 				res.put(DataTableModelHelper.DEFAULT_NB_ATTACH_KEY, item.getAttachmentList().size());
 				res.put(DEFAULT_ATTACH_LIST_ID_KEY, item.getAttachmentList().getId());
-				
+
 				return res;
 			}
 
-			private String createBugList(ExecutionStep item) {
-				String toReturn = "";
-				List<Issue> issueList = item.getIssueList().getAllIssues();
-				if(issueList.size() > 0){
-					toReturn+= issueList.get(0);
-				}
-				
-				for(int i=1;i<issueList.size(); i++){
-					toReturn+= "," +issueList.get(i).getRemoteIssueId();
-				}
-				
-				return toReturn;
-			}
+			
 		}.buildDataModel(holder, filter.getFirstItemIndex() + 1, params.getsEcho());
 
 	}
-
+	
+	private String createBugList(ExecutionStep item) {
+		StringBuffer toReturn = new StringBuffer();
+		List<Issue> issueList = item.getIssueList().getAllIssues();
+		if (issueList.size() > 0) {
+			toReturn.append(issueList.get(0).getId());
+		}
+		for (int i = 1; i < issueList.size(); i++) {
+			toReturn.append(',');
+			toReturn.append(issueList.get(i).getId());
+		}
+		return toReturn.toString();
+	}
+	
 	private CollectionFilter createCollectionFilter(final DataTableDrawParameters params) {
 		return new DataTablePagedFilter(params);
 	}
@@ -213,23 +213,23 @@ public class ExecutionModificationController {
 		IterationTestPlanItem testPlan = execution.getTestPlan();
 		Iteration iteration = testPlan.getIteration();
 		executionModService.deleteExecution(execution);
-//		final IterationTestPlanItem reTestPlanItem = testPlan;
-		final Long reNewStartDate ;
+		// final IterationTestPlanItem reTestPlanItem = testPlan;
+		final Long reNewStartDate;
 		if (iteration.getActualStartDate() != null) {
 			reNewStartDate = iteration.getActualStartDate().getTime();
-		}else{
+		} else {
 			reNewStartDate = null;
 		}
 		final Long reNewEndDate;
 		if (iteration.getActualEndDate() != null) {
 			reNewEndDate = iteration.getActualEndDate().getTime();
-		}else{
+		} else {
 			reNewEndDate = null;
 		}
 		return new Object() {
 			public Long newStartDate = reNewStartDate; // NOSONAR unreadable field actually read by JSON marshaller.
 			public Long newEndDate = reNewEndDate;
-//			public IterationTestPlanItem testPlanItem = reTestPlanItem;
+			// public IterationTestPlanItem testPlanItem = reTestPlanItem;
 		};
 	}
 

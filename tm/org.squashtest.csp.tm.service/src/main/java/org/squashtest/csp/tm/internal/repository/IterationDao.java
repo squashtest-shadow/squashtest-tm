@@ -22,6 +22,7 @@ package org.squashtest.csp.tm.internal.repository;
 
 import java.util.List;
 
+import org.squashtest.csp.tm.domain.bugtracker.IssueDetector;
 import org.squashtest.csp.tm.domain.campaign.IterationTestPlanItem;
 import org.squashtest.csp.tm.domain.campaign.Iteration;
 import org.squashtest.csp.tm.domain.campaign.TestSuite;
@@ -58,5 +59,7 @@ public interface IterationDao extends EntityDao<Iteration> {
 	List<TestSuite> findAllTestSuites(long iterationId);
 
 	void persistIterationAndTestPlan(Iteration iteration);
+
+	List<Execution> findAllExecutionByIterationId(long iterationId);
 
 }

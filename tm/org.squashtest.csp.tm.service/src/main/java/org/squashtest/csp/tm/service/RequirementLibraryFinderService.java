@@ -27,12 +27,12 @@ import org.squashtest.csp.tm.domain.testcase.TestCase;
 
 /**
  * @author Gregory Fouquet
- *
+ * 
  */
 public interface RequirementLibraryFinderService {
 
 	/**
-	 * Returns the collection of {@link RequirementLibrary}s which Requirements can be linked by a {@link TestCase}
+	 * Returns the collection of {@link RequirementLibrary} which Requirements can be linked by a {@link TestCase}
 	 * 
 	 * @return
 	 */

@@ -18,32 +18,21 @@
  *     You should have received a copy of the GNU Lesser General Public License
  *     along with this software.  If not, see <http://www.gnu.org/licenses/>.
  */
-package org.squashtest.csp.tm.internal.repository;
+package org.squashtest.csp.tm.service;
 
 import java.util.List;
 
-import org.squashtest.csp.tm.domain.bugtracker.IssueDetector;
+import org.springframework.transaction.annotation.Transactional;
 import org.squashtest.csp.tm.domain.execution.Execution;
-import org.squashtest.csp.tm.domain.execution.ExecutionStatusReport;
 import org.squashtest.csp.tm.domain.execution.ExecutionStep;
-import org.squashtest.csp.tm.infrastructure.filter.CollectionFilter;
 
-public interface ExecutionDao extends EntityDao<Execution> {
+public interface ExecutionFinder {
+	@Transactional(readOnly = true)
+	Execution simpleGetExecutionById(Long id);
 
-	List<ExecutionStep> findExecutionSteps(long executionId);
+	@Transactional(readOnly = true)
+	List<ExecutionStep> getExecutionSteps(Long executionId);
 
-	Execution findAndInit(long executionId);
-
-	int findExecutionRank(long executionId);
-
-	ExecutionStatusReport getStatusReport(long executionId);
-
-	Integer countSuccess(long executionId);
-
-	Integer countReady(long executionId);
-
-	List<ExecutionStep> findStepsFiltered(Long executionId, CollectionFilter filter);
-
-	List<IssueDetector> findAllIssueDetectorsForExecution(Long execId);
-
+	@Transactional(readOnly = true)
+	ExecutionStep findExecutionStepById(Long id);
 }

@@ -30,158 +30,187 @@ import org.squashtest.csp.core.bugtracker.domain.BTProject;
 import org.squashtest.csp.core.bugtracker.domain.Priority;
 import org.squashtest.csp.core.bugtracker.spi.BugTrackerInterfaceDescriptor;
 import org.squashtest.csp.tm.domain.bugtracker.BugTrackerStatus;
-import org.squashtest.csp.tm.domain.bugtracker.Bugged;
 import org.squashtest.csp.tm.domain.bugtracker.Issue;
+import org.squashtest.csp.tm.domain.bugtracker.IssueDetector;
 import org.squashtest.csp.tm.domain.bugtracker.IssueOwnership;
 import org.squashtest.csp.tm.infrastructure.filter.CollectionSorting;
 import org.squashtest.csp.tm.infrastructure.filter.FilteredCollectionHolder;
 
-
 public interface BugTrackerLocalService {
 
-	/* ******************* Squash TM  - side methods ****************** */
-
-
-	/**
-	 * returns an instance of an entity that implements Bugged, provided its id and actual class.
-	 *
-	 * @param <X> : a .class of an implementor of bugged.
-	 * @param entityId : the id of that entity.
-	 * @param entityClass : the actual class of that entity.
-	 *
-	 *  @return : the entity if found, null if not found.
-	 */
-	<X extends Bugged> X findBuggedEntity(Long entityId, Class<X> entityClass);
-
+	/* ******************* Squash TM - side methods ****************** */
 
 	/**
-	 * adds a new Issue to the entity. The entity must implement Bugged.
-	 *
-	 * @param entityId : the id of that entity.
-	 * @param entityClass : the actual class of that entity, that implements Bugged.
-	 * @param issue : the issue to add
+	 * adds a new Issue to the entity. The entity must implement IssueDetector.
+	 * 
+	 * @param entityId
+	 *            : the id of that entity.
+	 * @param entityClass
+	 *            : the actual class of that entity, that implements IssueDetector.
+	 * @param issue
+	 *            : the issue to add
 	 * @return the BTIssue corresponding to the bug remotely created
 	 */
-	BTIssue createIssue(Bugged entity, BTIssue issue);
-
+	BTIssue createIssue(IssueDetector entity, BTIssue issue);
 
 	/**
 	 * 
 	 * Gets the url of a remote Issue given its Id
 	 * 
-	 * @param btIssueId the id of that issue
+	 * @param btIssueId
+	 *            the id of that issue
 	 * @return the URL where you may find that issue.
 	 */
 	URL getIssueUrl(String btIssueId);
-	
-	
+
 	/**
-	 * An InterfaceDescriptor contains informations relevant to the generation of a view/GUI.
-	 * See the class for more details.
-	 *
+	 * An InterfaceDescriptor contains informations relevant to the generation of a view/GUI. See the class for more
+	 * details.
+	 * 
 	 * @return an InterfaceDescriptor.
 	 */
 	BugTrackerInterfaceDescriptor getInterfaceDescriptor();
 
-
-
-	
 	/**
-	 * Given a Bugged Entity, returns a list of Issue (not BTIssue). That method will return the list of 
-	 *  - its own issues,
-	 *  - the issues of other Bugged entities it may be related to.  
+	 * Given an ExecutionStep, returns a list of linked BTIssue (not Issue). <br>
+	 * <br>
+	 * To keep track of which IssueDetector owns which issue, the data are wrapped in a IssueOwnership (that just pair
+	 * the informations together).
 	 * 
-	 * To keep track of which entity owns which issue, the data are wrapped in a IssueOwnership (that just pair the 
-	 * informations together). 
-	 * 
-	 * @param buggedEntity of which we need to get the issues,
-	 * @param sorter that tells us how we should sort and filter the data
-	 * @return a FilteredCollectionHolder containing a non-null but possibly empty list of IssueOwnership<Issue>, sorted and filtered according to the CollectionSorting.
+	 * @param buggedEntity
+	 *            of which we need to get the issues,
+	 * @param sorter
+	 *            that tells us how we should sort and filter the data
+	 * @return a FilteredCollectionHolder containing a non-null but possibly empty list of IssueOwnership<Issue>, sorted
+	 *         and filtered according to the CollectionSorting.
 	 */
-	FilteredCollectionHolder<List<IssueOwnership<Issue>>> findSquashIssues(Bugged buggedEntity, CollectionSorting sorter);
-	
-	
-	/**
-	 * Given a Bugged Entity, returns a list of BTIssue (not Issue). That method will return the list of 
-	 *  - its own issues,
-	 *  - the issues of other Bugged entities it may be related to.  
-	 * 
-	 * To keep track of which entity owns which issue, the data are wrapped in a IssueOwnership (that just pair the 
-	 * informations together). 
-	 * 
-	 * @param buggedEntity of which we need to get the issues,
-	 * @param sorter that tells us how we should sort and filter the data
-	 * @return a FilteredCollectionHolder containing a non-null but possibly empty list of IssueOwnership<Issue>, sorted and filtered according to the CollectionSorting.
-	 */
-	FilteredCollectionHolder<List<IssueOwnership<BTIssue>>> findBugTrackerIssues(Bugged buggedEntity, CollectionSorting sorter);	
-	
-		
+	FilteredCollectionHolder<List<IssueOwnership<BTIssue>>> findSortedIssueOwnerShipsForExecutionStep(Long stepId,
+			CollectionSorting sorter);
 
+	/**
+	 * Given an Execution, returns a list of linked BTIssue (not Issue).<br>
+	 * <br>
+	 * To keep track of which IssueDetector owns which issue, the data are wrapped in a IssueOwnership (that just pair
+	 * the informations together).
+	 * 
+	 * @param buggedEntity
+	 *            of which we need to get the issues,
+	 * @param sorter
+	 *            that tells us how we should sort and filter the data
+	 * @return a FilteredCollectionHolder containing a non-null but possibly empty list of IssueOwnership<Issue>, sorted
+	 *         and filtered according to the CollectionSorting.
+	 */
+	FilteredCollectionHolder<List<IssueOwnership<BTIssue>>> findSortedIssueOwnershipsforExecution(Long execId,
+			CollectionSorting sorter);
+
+	/**
+	 * Given an Iteration, returns a list of linked BTIssue (not Issue).<br>
+	 * <br>
+	 * To keep track of which IssueDetector owns which issue, the data are wrapped in a IssueOwnership (that just pair
+	 * the informations together).
+	 * 
+	 * @param buggedEntity
+	 *            of which we need to get the issues,
+	 * @param sorter
+	 *            that tells us how we should sort and filter the data
+	 * @return a FilteredCollectionHolder containing a non-null but possibly empty list of IssueOwnership<Issue>, sorted
+	 *         and filtered according to the CollectionSorting.
+	 */
+	FilteredCollectionHolder<List<IssueOwnership<BTIssue>>> findSortedIssueOwnershipForIteration(Long iterId,
+			CollectionSorting sorter);
+
+	/**
+	 * Given an Campaign, returns a list of linked BTIssue (not Issue)<br>
+	 * <br>
+	 * To keep track of which IssueDetector owns which issue, the data are wrapped in a IssueOwnership (that just pair
+	 * the informations together).
+	 * 
+	 * @param buggedEntity
+	 *            of which we need to get the issues,
+	 * @param sorter
+	 *            that tells us how we should sort and filter the data
+	 * @return a FilteredCollectionHolder containing a non-null but possibly empty list of IssueOwnership<Issue>, sorted
+	 *         and filtered according to the CollectionSorting.
+	 */
+	FilteredCollectionHolder<List<IssueOwnership<BTIssue>>> findSortedIssueOwnershipsForCampaigns(Long campId, CollectionSorting sorter);
+
+	/**
+	 * Given a TestSuite, returns a list of linked BTIssue (not Issue).<br>
+	 * <br>
+	 * To keep track of which IssueDetector owns which issue, the data are wrapped in a IssueOwnership (that just pair
+	 * the informations together).
+	 * 
+	 * @param TestSuite
+	 *            for which we need to get the issues,
+	 * @param sorter
+	 *            that tells us how we should sort and filter the data
+	 * @return a FilteredCollectionHolder containing a non-null but possibly empty list of IssueOwnership<Issue>, sorted
+	 *         and filtered according to the CollectionSorting.
+	 */
+	FilteredCollectionHolder<List<IssueOwnership<BTIssue>>> findSortedIssueOwnershipsForTestSuite(Long testSuiteId,
+			CollectionSorting sorter);
 	/* ****************** BugTracker - side methods ******************** */
-
 
 	/**
 	 * tests if the bugtracker is ready for use
-	 *
+	 * 
 	 * @return the status of the bugtracker
-	 *
+	 * 
 	 */
 	BugTrackerStatus checkBugTrackerStatus();
 
-
 	/**
 	 * sets the credentials of an user for authentication bugtracker-side.
+	 * 
 	 * @param username
 	 * @param password
-	 *
+	 * 
 	 * @return nothing
-	 * @throws BugTrackerRemoteException if the credentials are wrong
+	 * @throws BugTrackerRemoteException
+	 *             if the credentials are wrong
 	 */
 	void setCredentials(String username, String password);
 
-
-
 	/**
 	 * returns an instance of the remote project.
-	 *
-	 * @param name : the name of the project.
+	 * 
+	 * @param name
+	 *            : the name of the project.
 	 * @return the project filled with users and versions if found.
 	 * @throw BugTrackerManagerException and subtypes.
-	 *
+	 * 
 	 */
 	BTProject findRemoteProject(String name);
 
-
 	/**
 	 * returns the list of priorities .
+	 * 
 	 * @return the list of priorities. An empty list is returned if none are found.
-	 * @throws BugTrackerManagerException and subtypes.
+	 * @throws BugTrackerManagerException
+	 *             and subtypes.
 	 */
 	List<Priority> getRemotePriorities();
 
-	
 	/**
 	 * returns a remote issue using its key
+	 * 
 	 * @param issueKey
 	 * @return a remote issue
 	 */
 	BTIssue getIssue(String issueKey);
-	
+
 	/***
 	 * returns a list of BTIssu corresponding to the given string keys
-	 *
+	 * 
 	 * @param issueKeyList
 	 *            the remote issue key list
 	 * @return a BTIssue list
 	 */
 	List<BTIssue> getIssues(List<String> issueKeyList);
-	
-	
-	void attachIssue(Bugged bugged, String remoteIssueKey);
 
+	void attachIssue(IssueDetector bugged, String remoteIssueKey);
 
 	URL getBugtrackerUrl();
-
 
 	Boolean getBugtrackerIframeFriendly();
 

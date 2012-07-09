@@ -1,26 +1,15 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<!--
-
-        This file is part of the Squashtest platform.
-        Copyright (C) 2010 - 2012 Henix, henix.fr
-
-        See the NOTICE file distributed with this work for additional
-        information regarding copyright ownership.
-
-        This is free software: you can redistribute it and/or modify
-        it under the terms of the GNU Lesser General Public License as published by
-        the Free Software Foundation, either version 3 of the License, or
-        (at your option) any later version.
-
-        this software is distributed in the hope that it will be useful,
-        but WITHOUT ANY WARRANTY; without even the implied warranty of
-        MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
-        GNU Lesser General Public License for more details.
-
-        You should have received a copy of the GNU Lesser General Public License
-        along with this software.  If not, see <http://www.gnu.org/licenses/>.
-
--->
+<!-- This file is part of the Squashtest platform. Copyright (C) 2010 - 2012 
+	Henix, henix.fr See the NOTICE file distributed with this work for additional 
+	information regarding copyright ownership. This is free software: you can 
+	redistribute it and/or modify it under the terms of the GNU Lesser General 
+	Public License as published by the Free Software Foundation, either version 
+	3 of the License, or (at your option) any later version. this software is 
+	distributed in the hope that it will be useful, but WITHOUT ANY WARRANTY; 
+	without even the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR 
+	PURPOSE. See the GNU Lesser General Public License for more details. You 
+	should have received a copy of the GNU Lesser General Public License along 
+	with this software. If not, see <http://www.gnu.org/licenses/>. -->
 <beans xmlns="http://www.springframework.org/schema/beans"
 	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:osgi="http://www.springframework.org/schema/osgi"
 	xmlns:osgix="http://www.springframework.org/schema/osgi-compendium"
@@ -60,7 +49,7 @@
 	<!-- Application services -->
 	<osgi:service ref="squashtest.tm.service.ProjectModificationService"
 		interface="org.squashtest.csp.tm.service.ProjectModificationService" />
-	
+
 	<osgi:service ref="squashtest.tm.service.TestCaseModificationService"
 		interface="org.squashtest.csp.tm.service.TestCaseModificationService" />
 
@@ -74,18 +63,27 @@
 	<osgi:service ref="squashtest.tm.service.RequirementModificationService"
 		interface="org.squashtest.csp.tm.service.RequirementModificationService" />
 
-	<osgi:service ref="squashtest.tm.service.RequirementLibraryNavigationService">
+	<osgi:service
+		ref="squashtest.tm.service.RequirementLibraryNavigationService">
 		<osgi:interfaces>
 			<value>org.squashtest.csp.tm.service.RequirementLibraryNavigationService</value>
 			<value>org.squashtest.csp.tm.service.RequirementLibraryFinderService</value>
 		</osgi:interfaces>
-	</osgi:service>		
+	</osgi:service>
 
-	<osgi:service ref="squashtest.tm.service.CampaignModificationService"
-		interface="org.squashtest.csp.tm.service.CampaignModificationService" />
+	<osgi:service ref="squashtest.tm.service.CampaignModificationService">
+		<osgi:interfaces>
+			<value>org.squashtest.csp.tm.service.CampaignModificationService</value>
+			<value>org.squashtest.csp.tm.service.CampaignFinder</value>
+		</osgi:interfaces>
+	</osgi:service>
 
-	<osgi:service ref="squashtest.tm.service.IterationModificationService"
-		interface="org.squashtest.csp.tm.service.IterationModificationService" />
+	<osgi:service ref="squashtest.tm.service.IterationModificationService">
+		<osgi:interfaces>
+			<value>org.squashtest.csp.tm.service.IterationModificationService</value>
+			<value>org.squashtest.csp.tm.service.IterationFinder</value>
+		</osgi:interfaces>
+	</osgi:service>
 
 	<osgi:service ref="squashtest.tm.service.CampaignLibraryNavigationService"
 		interface="org.squashtest.csp.tm.service.CampaignLibraryNavigationService" />
@@ -103,8 +101,12 @@
 	<osgi:service ref="squashtest.tm.service.CampaignTestPlanManagerService"
 		interface="org.squashtest.csp.tm.service.CampaignTestPlanManagerService" />
 
-	<osgi:service ref="squashtest.tm.service.ExecutionModificationService"
-		interface="org.squashtest.csp.tm.service.ExecutionModificationService" />
+	<osgi:service ref="squashtest.tm.service.ExecutionModificationService">
+		<osgi:interfaces>
+			<value>org.squashtest.csp.tm.service.ExecutionModificationService</value>
+			<value>org.squashtest.csp.tm.service.ExecutionFinder</value>
+		</osgi:interfaces>
+	</osgi:service>
 
 	<osgi:service ref="squashtest.tm.service.ExecutionProcessingService"
 		interface="org.squashtest.csp.tm.service.ExecutionProcessingService" />
@@ -164,13 +166,18 @@
 	<osgi:service ref="squashtest.tm.service.RequirementVersionManagerService"
 		interface="org.squashtest.csp.tm.service.RequirementVersionManagerService" />
 
-	<osgi:service ref="squashtest.tm.service.TestSuiteModificationService"
-		interface="org.squashtest.csp.tm.service.TestSuiteModificationService" />
+	<osgi:service ref="squashtest.tm.service.TestSuiteModificationService">
+		<osgi:interfaces>
+			<value>org.squashtest.csp.tm.service.TestSuiteModificationService</value>
+			<value>org.squashtest.csp.tm.service.TestSuiteFinder</value>
+		</osgi:interfaces>
+	</osgi:service>
 
 	<osgi:service ref="squashtest.tm.service.TestSuiteTestPlanManagerService"
 		interface="org.squashtest.csp.tm.service.TestSuiteTestPlanManagerService" />
-		
-	<osgi:service ref="squashtest.tm.service.TestSuiteExecutionProcessingService"
+
+	<osgi:service
+		ref="squashtest.tm.service.TestSuiteExecutionProcessingService"
 		interface="org.squashtest.csp.tm.service.TestSuiteExecutionProcessingService" />
 
 	<!-- ====== SERVICES CONSUMED BY THIS BUNDLE ====== -->

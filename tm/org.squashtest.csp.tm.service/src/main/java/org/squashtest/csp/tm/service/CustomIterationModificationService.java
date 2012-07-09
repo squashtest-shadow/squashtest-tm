@@ -39,7 +39,7 @@ import org.squashtest.csp.tm.service.deletion.SuppressionPreviewReport;
  * 
  */
 @Transactional
-public interface CustomIterationModificationService {
+public interface CustomIterationModificationService extends IterationFinder{
 
 	/**
 	 * Adds an iteration to the list of iterations of a campaign.
@@ -50,11 +50,7 @@ public interface CustomIterationModificationService {
 	 */
 	int addIterationToCampaign(Iteration iteration, long campaignId);
 
-	@Transactional(readOnly = true)
-	List<Iteration> findIterationsByCampaignId(long campaignId);
-
-	@Transactional(readOnly = true)
-	Iteration findById(long iterationId);
+	
 
 	String delete(long iterationId);
 
@@ -68,14 +64,7 @@ public interface CustomIterationModificationService {
 
 	void changeTestPlanPosition(long iterationId, int newPosition, List<Long> itemIds);
 
-	@Transactional(readOnly = true)
-	List<Execution> findAllExecutions(long iterationId);
-
-	@Transactional(readOnly = true)
-	List<Execution> findExecutionsByTestPlan(long iterationId, long testPlanId);
-
-	@Transactional(readOnly = true)
-	List<TestCase> findPlannedTestCases(long iterationId);
+	
 
 	/**
 	 * that method should investigate the consequences of the deletion request, and return a report about what will

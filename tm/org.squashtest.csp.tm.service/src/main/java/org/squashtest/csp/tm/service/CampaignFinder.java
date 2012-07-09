@@ -18,32 +18,21 @@
  *     You should have received a copy of the GNU Lesser General Public License
  *     along with this software.  If not, see <http://www.gnu.org/licenses/>.
  */
-package org.squashtest.csp.tm.internal.repository;
+package org.squashtest.csp.tm.service;
 
 import java.util.List;
 
-import org.squashtest.csp.tm.domain.bugtracker.IssueDetector;
-import org.squashtest.csp.tm.domain.execution.Execution;
-import org.squashtest.csp.tm.domain.execution.ExecutionStatusReport;
-import org.squashtest.csp.tm.domain.execution.ExecutionStep;
-import org.squashtest.csp.tm.infrastructure.filter.CollectionFilter;
+import org.springframework.transaction.annotation.Transactional;
+import org.squashtest.csp.tm.domain.campaign.Campaign;
+import org.squashtest.csp.tm.domain.campaign.CampaignTestPlanItem;
+import org.squashtest.csp.tm.infrastructure.filter.CollectionSorting;
+import org.squashtest.csp.tm.infrastructure.filter.FilteredCollectionHolder;
 
-public interface ExecutionDao extends EntityDao<Execution> {
+public interface CampaignFinder {
+	@Transactional(readOnly = true)
+	Campaign findById(long campaignId);
 
-	List<ExecutionStep> findExecutionSteps(long executionId);
-
-	Execution findAndInit(long executionId);
-
-	int findExecutionRank(long executionId);
-
-	ExecutionStatusReport getStatusReport(long executionId);
-
-	Integer countSuccess(long executionId);
-
-	Integer countReady(long executionId);
-
-	List<ExecutionStep> findStepsFiltered(Long executionId, CollectionFilter filter);
-
-	List<IssueDetector> findAllIssueDetectorsForExecution(Long execId);
-
+	@Transactional(readOnly = true)
+	FilteredCollectionHolder<List<CampaignTestPlanItem>> findTestPlanByCampaignId(long campaignId,
+			CollectionSorting filter);
 }

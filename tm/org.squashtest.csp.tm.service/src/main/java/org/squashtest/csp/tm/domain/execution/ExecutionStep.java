@@ -41,12 +41,13 @@ import javax.persistence.Temporal;
 import javax.persistence.TemporalType;
 
 import org.hibernate.annotations.Formula;
+import org.squashtest.csp.core.domain.Identified;
 import org.squashtest.csp.core.security.annotation.AclConstrainedObject;
 import org.squashtest.csp.tm.domain.attachment.Attachment;
 import org.squashtest.csp.tm.domain.attachment.AttachmentHolder;
 import org.squashtest.csp.tm.domain.attachment.AttachmentList;
 import org.squashtest.csp.tm.domain.audit.Auditable;
-import org.squashtest.csp.tm.domain.bugtracker.Bugged;
+import org.squashtest.csp.tm.domain.bugtracker.IssueDetector;
 import org.squashtest.csp.tm.domain.bugtracker.IssueList;
 import org.squashtest.csp.tm.domain.campaign.CampaignLibrary;
 import org.squashtest.csp.tm.domain.project.Project;
@@ -57,7 +58,7 @@ import org.squashtest.csp.tm.domain.testcase.TestStepVisitor;
 
 @Entity
 @Auditable
-public class ExecutionStep implements AttachmentHolder, Bugged, TestStepVisitor {
+public class ExecutionStep implements AttachmentHolder, IssueDetector, TestStepVisitor, Identified {
 	@Id
 	@GeneratedValue
 	@Column(name = "EXECUTION_STEP_ID")
@@ -225,19 +226,6 @@ public class ExecutionStep implements AttachmentHolder, Bugged, TestStepVisitor 
 		return issueList;
 	}
 
-	@Override
-	public List<Long> getAllIssueListId() {
-		List<Long> ids = new LinkedList<Long>();
-		ids.add(issueList.getId());
-		return ids;
-	}
-
-	@Override
-	public List<Bugged> getAllBuggeds() {
-		List<Bugged> list = new LinkedList<Bugged>();
-		list.add(this);
-		return list;
-	}
 
 	@Override
 	public void visit(ActionTestStep visited) {
@@ -252,8 +240,10 @@ public class ExecutionStep implements AttachmentHolder, Bugged, TestStepVisitor 
 	}
 	
 	@Override
-	public boolean isAcceptsIssues() {
-		return true;
-	}
-
+		public List<Long> getAllIssueListId() {
+			List<Long> ids = new LinkedList<Long>();
+			ids.add(issueList.getId());
+			return ids;
+		}
+	
 }

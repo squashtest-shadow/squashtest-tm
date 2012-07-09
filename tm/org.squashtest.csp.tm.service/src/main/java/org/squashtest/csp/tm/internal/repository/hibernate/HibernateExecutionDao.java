@@ -20,6 +20,7 @@
  */
 package org.squashtest.csp.tm.internal.repository.hibernate;
 
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.LinkedList;
 import java.util.List;
@@ -29,6 +30,7 @@ import org.hibernate.Hibernate;
 import org.hibernate.Query;
 import org.hibernate.criterion.Restrictions;
 import org.springframework.stereotype.Repository;
+import org.squashtest.csp.tm.domain.bugtracker.IssueDetector;
 import org.squashtest.csp.tm.domain.campaign.IterationTestPlanItem;
 import org.squashtest.csp.tm.domain.execution.Execution;
 import org.squashtest.csp.tm.domain.execution.ExecutionStatus;
@@ -175,6 +177,16 @@ public class HibernateExecutionDao extends HibernateEntityDao<Execution> impleme
 		
 		return execution.getSteps().subList(startIndex,lastIndex);
 
+	}
+
+	@Override
+	public List<IssueDetector> findAllIssueDetectorsForExecution(Long execId) {
+		Execution execution = findById(execId);
+		List<ExecutionStep> steps = execution.getSteps();
+		List<IssueDetector> issueDetectors = new ArrayList<IssueDetector>(steps.size() +1);
+		issueDetectors.add(execution);
+		issueDetectors.addAll(steps);
+		return issueDetectors;
 	}
 
 }

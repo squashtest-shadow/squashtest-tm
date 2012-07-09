@@ -24,7 +24,6 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Date;
 import java.util.Iterator;
-import java.util.LinkedList;
 import java.util.List;
 
 import javax.persistence.CascadeType;
@@ -38,19 +37,14 @@ import javax.persistence.OrderColumn;
 import javax.persistence.PrimaryKeyJoinColumn;
 import javax.validation.constraints.NotNull;
 
-import org.squashtest.csp.core.security.annotation.AclConstrainedObject;
 import org.squashtest.csp.tm.domain.attachment.Attachment;
 import org.squashtest.csp.tm.domain.attachment.AttachmentHolder;
 import org.squashtest.csp.tm.domain.attachment.AttachmentList;
-import org.squashtest.csp.tm.domain.bugtracker.Bugged;
-import org.squashtest.csp.tm.domain.bugtracker.IssueList;
-import org.squashtest.csp.tm.domain.execution.Execution;
-import org.squashtest.csp.tm.domain.library.Library;
 import org.squashtest.csp.tm.domain.testcase.TestCase;
 
 @Entity
 @PrimaryKeyJoinColumn(name = "CLN_ID")
-public class Campaign extends CampaignLibraryNode implements AttachmentHolder, Bugged {
+public class Campaign extends CampaignLibraryNode implements AttachmentHolder{
 	@Embedded
 	private ScheduledTimePeriod scheduledPeriod = new ScheduledTimePeriod();
 	@Embedded
@@ -379,58 +373,6 @@ public class Campaign extends CampaignLibraryNode implements AttachmentHolder, B
 		testPlan.removeAll(moved);
 		testPlan.addAll(targetIndex, moved);
 	}
-
-	@Override
-	public IssueList getIssueList() {
-		return null;
-	}
-
-	@Override
-	public Long getIssueListId() {
-		return null;
-	}
-
-	@Override
-	public List<Long> getAllIssueListId() {
-
-		List<Long> result = new LinkedList<Long>();
-		List<Iteration> iterations = getIterations();
-		for (Iteration iteration : iterations) {
-			for (IterationTestPlanItem item : iteration.getTestPlans()) {
-				for (Execution exec : item.getExecutions()) {
-					result.addAll(exec.getAllIssueListId());
-				}
-			}
-		}
-
-		return result;
-	}
-
-	@Override
-	public String getDefaultDescription() {
-		return "";
-	}
-
-	@Override
-	public List<Bugged> getAllBuggeds() {
-		List<Bugged> result = new LinkedList<Bugged>();
-		List<Iteration> iterations = getIterations();
-		for (Iteration iteration : iterations) {
-			for (IterationTestPlanItem item : iteration.getTestPlans()) {
-				for (Execution exec : item.getExecutions()) {
-					result.addAll(exec.getAllBuggeds());
-				}
-			}
-		}
-
-		return result;
-	}
-
-	@Override
-	public boolean isAcceptsIssues() {
-		return false;
-	}
-
-	
+		
 
 }

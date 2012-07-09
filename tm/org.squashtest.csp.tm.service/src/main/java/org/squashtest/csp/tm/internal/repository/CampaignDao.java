@@ -22,9 +22,11 @@ package org.squashtest.csp.tm.internal.repository;
 
 import java.util.List;
 
+import org.squashtest.csp.tm.domain.bugtracker.IssueDetector;
 import org.squashtest.csp.tm.domain.campaign.Campaign;
 import org.squashtest.csp.tm.domain.campaign.CampaignLibraryNode;
 import org.squashtest.csp.tm.domain.campaign.CampaignTestPlanItem;
+import org.squashtest.csp.tm.domain.execution.Execution;
 import org.squashtest.csp.tm.infrastructure.filter.CollectionSorting;
 
 public interface CampaignDao extends EntityDao<Campaign> {
@@ -56,4 +58,14 @@ public interface CampaignDao extends EntityDao<Campaign> {
 	List<CampaignLibraryNode> findAllByNameContaining(String tokenInName, boolean groupByProject);
 	
 	List<Campaign> findAllByIdList(List<Long> campaignIds);
+
+	
+	/**
+	 * find all the campaign's iterations, and return all iteration's executions regardless of the campaign test-plan
+	 * 
+	 * @param campaignId
+	 * @return list of executions of all iterations
+	 */
+	List<Execution> findAllExecutionsByCampaignId(Long campaignId);
+
 }

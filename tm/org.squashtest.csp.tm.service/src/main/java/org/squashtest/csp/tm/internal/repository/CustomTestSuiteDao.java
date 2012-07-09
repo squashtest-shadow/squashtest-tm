@@ -25,6 +25,7 @@ import java.util.List;
 import org.squashtest.csp.tm.domain.campaign.IterationTestPlanItem;
 import org.squashtest.csp.tm.domain.campaign.TestSuite;
 import org.squashtest.csp.tm.domain.campaign.TestSuiteStatistics;
+import org.squashtest.csp.tm.domain.execution.Execution;
 
 public interface CustomTestSuiteDao {
 
@@ -45,5 +46,6 @@ public interface CustomTestSuiteDao {
 
 	List<IterationTestPlanItem> findTestPlanPartition(long testSuiteId,
 			List<Long> testPlanItemIds);
-
+	
+	List<Execution> findAllExecutionByTestSuite(long testSuiteId);
 }

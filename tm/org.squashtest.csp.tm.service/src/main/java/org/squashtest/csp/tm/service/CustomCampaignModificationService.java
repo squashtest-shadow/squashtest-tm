@@ -29,14 +29,11 @@ import org.squashtest.csp.tm.infrastructure.filter.CollectionSorting;
 import org.squashtest.csp.tm.infrastructure.filter.FilteredCollectionHolder;
 
 @Transactional
-public interface CustomCampaignModificationService {
-	@Transactional(readOnly=true)
-	Campaign findById(long campaignId);
+public interface CustomCampaignModificationService extends CampaignFinder{
+	
 
 	void rename(long campaignId, String newName);
 
-	@Transactional(readOnly=true)
-	FilteredCollectionHolder<List<CampaignTestPlanItem>> findTestPlanByCampaignId(long campaignId,
-			CollectionSorting filter);
+
 
 }

@@ -31,6 +31,7 @@ import org.squashtest.csp.core.infrastructure.collection.Paging;
 import org.squashtest.csp.tm.domain.campaign.IterationTestPlanItem;
 import org.squashtest.csp.tm.domain.campaign.TestSuite;
 import org.squashtest.csp.tm.domain.campaign.TestSuiteStatistics;
+import org.squashtest.csp.tm.domain.execution.Execution;
 import org.squashtest.csp.tm.domain.execution.ExecutionStatus;
 import org.squashtest.csp.tm.internal.repository.CustomTestSuiteDao;
 
@@ -149,6 +150,12 @@ public class HibernateTestSuiteDao extends HibernateEntityDao<TestSuite> impleme
 			}
 		};
 		return newCallBack;
+	}
+
+	@Override
+	public List<Execution> findAllExecutionByTestSuite(long testSuiteId) {
+		SetQueryParametersCallback callback = idParameter(testSuiteId);
+		return executeListNamedQuery("testSuite.findAllExecutions", callback);
 	}
 
 }

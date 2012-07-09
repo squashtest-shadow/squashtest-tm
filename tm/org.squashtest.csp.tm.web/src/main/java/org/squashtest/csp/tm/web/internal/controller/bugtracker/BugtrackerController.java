@@ -46,8 +46,9 @@ import org.squashtest.csp.core.bugtracker.core.BugTrackerNoCredentialsException;
 import org.squashtest.csp.core.bugtracker.domain.BTIssue;
 import org.squashtest.csp.core.bugtracker.domain.BTProject;
 import org.squashtest.csp.core.bugtracker.spi.BugTrackerInterfaceDescriptor;
+import org.squashtest.csp.core.domain.Identified;
 import org.squashtest.csp.tm.domain.bugtracker.BugTrackerStatus;
-import org.squashtest.csp.tm.domain.bugtracker.Bugged;
+import org.squashtest.csp.tm.domain.bugtracker.IssueDetector;
 import org.squashtest.csp.tm.domain.bugtracker.IssueOwnership;
 import org.squashtest.csp.tm.domain.campaign.Campaign;
 import org.squashtest.csp.tm.domain.campaign.Iteration;
@@ -57,6 +58,10 @@ import org.squashtest.csp.tm.domain.execution.ExecutionStep;
 import org.squashtest.csp.tm.infrastructure.filter.CollectionSorting;
 import org.squashtest.csp.tm.infrastructure.filter.FilteredCollectionHolder;
 import org.squashtest.csp.tm.service.BugTrackerLocalService;
+import org.squashtest.csp.tm.service.CampaignFinder;
+import org.squashtest.csp.tm.service.ExecutionFinder;
+import org.squashtest.csp.tm.service.IterationFinder;
+import org.squashtest.csp.tm.service.TestSuiteFinder;
 import org.squashtest.csp.tm.web.internal.model.datatable.DataTableDrawParameters;
 import org.squashtest.csp.tm.web.internal.model.datatable.DataTableModel;
 import org.squashtest.csp.tm.web.internal.model.datatable.DataTableModelHelper;
@@ -68,6 +73,10 @@ public class BugtrackerController {
 	private static final Logger LOGGER = LoggerFactory.getLogger(BugtrackerController.class);
 
 	private BugTrackerLocalService bugTrackerLocalService;
+	private CampaignFinder campaignFinder;
+	private IterationFinder iterationFinder;
+	private TestSuiteFinder testSuiteFinder;
+	private ExecutionFinder executionFinder;
 
 	private static final String EXECUTION_STEP_TYPE = "execution-step";
 	private static final String EXECUTION_TYPE = "execution";
@@ -79,13 +88,32 @@ public class BugtrackerController {
 	private MessageSource messageSource;
 
 	@ServiceReference
+	public void setCampaignFinder(CampaignFinder campaignFinder) {
+		this.campaignFinder = campaignFinder;
+	}
+
+	@ServiceReference
+	public void setIterationFinder(IterationFinder iterationFinder) {
+		this.iterationFinder = iterationFinder;
+	}
+
+	@ServiceReference
+	public void setTestSuiteFinder(TestSuiteFinder testSuiteFinder) {
+		this.testSuiteFinder = testSuiteFinder;
+	}
+
+	@ServiceReference
+	public void setExecutionFinder(ExecutionFinder executionFinder) {
+		this.executionFinder = executionFinder;
+	}
+
+	@ServiceReference
 	public void setBugTrackerLocalService(BugTrackerLocalService bugTrackerLocalService) {
 		if (bugTrackerLocalService == null) {
 			throw new IllegalArgumentException("BugTrackerController : no service provided");
 		}
 		this.bugTrackerLocalService = bugTrackerLocalService;
 	}
-
 
 	/* **************************************************************************************************************
 	 * *
@@ -116,11 +144,10 @@ public class BugtrackerController {
 	}
 
 	/* **************************************************************************************************************
-	 * 																												*
-	 *  								ExecutionStep level section 												*
-	 *  																											*
-	 *  *********************************************************************************************************** */
-
+	 * *
+	 * ExecutionStep level section * *
+	 * ***********************************************************************************************************
+	 */
 
 	/**
 	 * returns the panel displaying the current bugs of that execution step and the stub for the report form. Remember
@@ -133,8 +160,8 @@ public class BugtrackerController {
 	public ModelAndView getExecStepIssuePanel(@PathVariable Long stepId, Locale locale,
 			@RequestParam(value = "style", required = false, defaultValue = "toggle") String panelStyle) {
 
-		Bugged bugged = bugTrackerLocalService.findBuggedEntity(stepId, ExecutionStep.class);
-		return makeIssuePanel(bugged, EXECUTION_STEP_TYPE, locale, panelStyle);
+		ExecutionStep step = executionFinder.findExecutionStepById(stepId);
+		return makeIssuePanel(step, EXECUTION_STEP_TYPE, locale, panelStyle);
 	}
 
 	/**
@@ -149,9 +176,8 @@ public class BugtrackerController {
 		CollectionSorting sorter = createCollectionSorting(params);
 
 		try {
-			Bugged bugged = bugTrackerLocalService.findBuggedEntity(stepId, ExecutionStep.class);
-
-			filteredCollection = bugTrackerLocalService.findBugTrackerIssues(bugged, sorter);
+			
+			filteredCollection = bugTrackerLocalService.findSortedIssueOwnerShipsForExecutionStep(stepId, sorter);
 		}
 
 		// no credentials exception are okay, the rest is to be treated as usual
@@ -176,7 +202,7 @@ public class BugtrackerController {
 	@RequestMapping(value = EXECUTION_STEP_TYPE + "/{stepId}/new-issue")
 	@ResponseBody
 	public BTIssue getExecStepReportStub(@PathVariable Long stepId) {
-		Bugged bugged = bugTrackerLocalService.findBuggedEntity(stepId, ExecutionStep.class);
+		IssueDetector bugged = executionFinder.findExecutionStepById(stepId);
 
 		return makeReportIssueModel(bugged);
 	}
@@ -190,21 +216,20 @@ public class BugtrackerController {
 	public Object postExecStepIssueReport(@PathVariable("stepId") Long stepId, @RequestBody BTIssue jsonIssue) {
 		LOGGER.trace("BugTrackerController: posting a new issue for execution-step " + stepId);
 
-		Bugged entity = bugTrackerLocalService.findBuggedEntity(stepId, ExecutionStep.class);
+		IssueDetector entity = executionFinder.findExecutionStepById(stepId);
 
-		if (jsonIssue.hasBlankId()){
-			return processIssue(jsonIssue, entity);			
-		}else{
+		if (jsonIssue.hasBlankId()) {
+			return processIssue(jsonIssue, entity);
+		} else {
 			return attachIssue(jsonIssue, entity);
 		}
 	}
 
 	/* **************************************************************************************************************
-	 * 																												*
-	 *  								Execution level section 													*
-	 *  																											*
-	 *  *********************************************************************************************************** */
-
+	 * *
+	 * Execution level section * *
+	 * ***********************************************************************************************************
+	 */
 
 	/**
 	 * returns the panel displaying the current bugs of that execution and the stub for the report form. Remember that
@@ -217,7 +242,7 @@ public class BugtrackerController {
 	public ModelAndView getExecIssuePanel(@PathVariable Long execId, Locale locale,
 			@RequestParam(value = "style", required = false, defaultValue = "toggle") String panelStyle) {
 
-		Bugged bugged = bugTrackerLocalService.findBuggedEntity(execId, Execution.class);
+		Execution bugged = executionFinder.simpleGetExecutionById(execId);
 		return makeIssuePanel(bugged, EXECUTION_TYPE, locale, panelStyle);
 	}
 
@@ -234,9 +259,7 @@ public class BugtrackerController {
 		CollectionSorting sorter = createCollectionSorting(params);
 
 		try {
-			Bugged bugged = bugTrackerLocalService.findBuggedEntity(execId, Execution.class);
-
-			filteredCollection = bugTrackerLocalService.findBugTrackerIssues(bugged, sorter);
+			filteredCollection = bugTrackerLocalService.findSortedIssueOwnershipsforExecution(execId, sorter);
 
 		}
 
@@ -262,9 +285,9 @@ public class BugtrackerController {
 	@RequestMapping(value = EXECUTION_TYPE + "/{execId}/new-issue")
 	@ResponseBody
 	public BTIssue getExecReportStub(@PathVariable Long execId) {
-		Bugged bugged = bugTrackerLocalService.findBuggedEntity(execId, Execution.class);
+		Execution execution = executionFinder.simpleGetExecutionById(execId);
 
-		return makeReportIssueModel(bugged);
+		return makeReportIssueModel(execution);
 	}
 
 	/**
@@ -276,20 +299,20 @@ public class BugtrackerController {
 	public Object postExecIssueReport(@PathVariable("execId") Long execId, @RequestBody BTIssue jsonIssue) {
 		LOGGER.trace("BugTrackerController: posting a new issue for execution-step " + execId);
 
-		Bugged entity = bugTrackerLocalService.findBuggedEntity(execId, Execution.class);
+		Execution entity = executionFinder.simpleGetExecutionById(execId);
 
-		if (jsonIssue.hasBlankId()){
-			return processIssue(jsonIssue, entity);			
-		}else{
+		if (jsonIssue.hasBlankId()) {
+			return processIssue(jsonIssue, entity);
+		} else {
 			return attachIssue(jsonIssue, entity);
 		}
 	}
 
 	/* **************************************************************************************************************
-	 * 																												*
-	 *  								Iteration level section 													*
-	 *  																											*
-	 *  *********************************************************************************************************** */	
+	 * *
+	 * Iteration level section * *
+	 * ***********************************************************************************************************
+	 */
 
 	/**
 	 * returns the panel displaying the current bugs of that iteration and the stub for the report form. Remember that
@@ -302,9 +325,40 @@ public class BugtrackerController {
 	public ModelAndView getIterationIssuePanel(@PathVariable Long iterId, Locale locale,
 			@RequestParam(value = "style", required = false, defaultValue = "toggle") String panelStyle) {
 
-		Bugged bugged = bugTrackerLocalService.findBuggedEntity(iterId, Iteration.class);
-		return makeIssuePanel(bugged, ITERATION_TYPE, locale, panelStyle);
+		Iteration iteration = iterationFinder.findById(iterId);
+		return makeIssuePanel(iteration, ITERATION_TYPE, locale, panelStyle);
 	}
+
+	/**
+	 * json Data for the known issues table.
+	 */
+	@RequestMapping(value = ITERATION_TYPE + "/{iterId}/known-issues", method = RequestMethod.GET)
+	public @ResponseBody
+	DataTableModel getIterationKnownIssuesData(@PathVariable("iterId") Long iterId,
+			final DataTableDrawParameters params, final Locale locale) {
+
+		FilteredCollectionHolder<List<IssueOwnership<BTIssue>>> filteredCollection;
+		CollectionSorting sorter = createCollectionSorting(params);
+
+		try {
+			filteredCollection = bugTrackerLocalService.findSortedIssueOwnershipForIteration(iterId, sorter);
+		}
+		// no credentials exception are okay, the rest is to be treated as usual
+		catch (BugTrackerNoCredentialsException noCrdsException) {
+			filteredCollection = makeEmptyCollectionHolder(ITERATION_TYPE, iterId, noCrdsException);
+		} catch (NullArgumentException npException) {
+			filteredCollection = makeEmptyCollectionHolder(ITERATION_TYPE, iterId, npException);
+		}
+		return new IterationIssuesTableModel(messageSource, locale).buildDataModel(filteredCollection,
+				sorter.getFirstItemIndex() + 1, params.getsEcho());
+
+	}
+
+	/* **************************************************************************************************************
+	 * *
+	 * Campaign level section * *
+	 * ***********************************************************************************************************
+	 */
 
 	/**
 	 * returns the panel displaying the current bugs of that campaign and the stub for the report form. Remember that
@@ -317,10 +371,40 @@ public class BugtrackerController {
 	public ModelAndView getCampaignIssuePanel(@PathVariable Long campId, Locale locale,
 			@RequestParam(value = "style", required = false, defaultValue = "toggle") String panelStyle) {
 
-		Bugged bugged = bugTrackerLocalService.findBuggedEntity(campId, Campaign.class);
-		return makeIssuePanel(bugged, CAMPAIGN_TYPE, locale, panelStyle);
+		Campaign campaign = campaignFinder.findById(campId);
+		return makeIssuePanel(campaign, CAMPAIGN_TYPE, locale, panelStyle);
 	}
-	
+
+	/**
+	 * json Data for the known issues table.
+	 */
+	@RequestMapping(value = CAMPAIGN_TYPE + "/{campId}/known-issues", method = RequestMethod.GET)
+	public @ResponseBody
+	DataTableModel getCampaignKnownIssuesData(@PathVariable("campId") Long campId,
+			final DataTableDrawParameters params, final Locale locale) {
+
+		FilteredCollectionHolder<List<IssueOwnership<BTIssue>>> filteredCollection;
+		CollectionSorting sorter = createCollectionSorting(params);
+
+		try {
+			filteredCollection = bugTrackerLocalService.findSortedIssueOwnershipsForCampaigns(campId, sorter);
+		}
+		// no credentials exception are okay, the rest is to be treated as usual
+		catch (BugTrackerNoCredentialsException noCrdsException) {
+			filteredCollection = makeEmptyCollectionHolder(CAMPAIGN_TYPE, campId, noCrdsException);
+		} catch (NullArgumentException npException) {
+			filteredCollection = makeEmptyCollectionHolder(CAMPAIGN_TYPE, campId, npException);
+		}
+		return new IterationIssuesTableModel(messageSource, locale).buildDataModel(filteredCollection,
+				sorter.getFirstItemIndex() + 1, params.getsEcho());
+	}
+
+	/* **************************************************************************************************************
+	 * *
+	 * TestSuite level section * *
+	 * ***********************************************************************************************************
+	 */
+
 	/**
 	 * returns the panel displaying the current bugs of that test-suite and the stub for the report form. Remember that
 	 * the report bug dialog will be populated later.
@@ -332,21 +416,10 @@ public class BugtrackerController {
 	public ModelAndView getTestSuiteIssuePanel(@PathVariable Long testSuiteId, Locale locale,
 			@RequestParam(value = "style", required = false, defaultValue = "toggle") String panelStyle) {
 
-		Bugged bugged = bugTrackerLocalService.findBuggedEntity(testSuiteId, TestSuite.class);
-		return makeIssuePanel(bugged, TEST_SUITE_TYPE, locale, panelStyle);
+		TestSuite testSuite = testSuiteFinder.findById(testSuiteId);
+		return makeIssuePanel(testSuite, TEST_SUITE_TYPE, locale, panelStyle);
 	}
 
-	/**
-	 * json Data for the known issues table.
-	 */
-	@RequestMapping(value = ITERATION_TYPE + "/{iterId}/known-issues", method = RequestMethod.GET)
-	public @ResponseBody
-	DataTableModel getIterationKnownIssuesData(@PathVariable("iterId") Long iterId,
-			final DataTableDrawParameters params, final Locale locale) {
-		
-		return getBuggedKnownIssuesData(params, locale, Iteration.class, iterId, ITERATION_TYPE);
-
-	}
 	/**
 	 * json Data for the known issues table.
 	 */
@@ -354,40 +427,19 @@ public class BugtrackerController {
 	public @ResponseBody
 	DataTableModel getTestSuiteKnownIssuesData(@PathVariable("testSuiteId") Long testSuiteId,
 			final DataTableDrawParameters params, final Locale locale) {
-		
-		return getBuggedKnownIssuesData(params, locale, TestSuite.class, testSuiteId, TEST_SUITE_TYPE);
-	}
-	/**
-	 * json Data for the known issues table.
-	 */
-	@RequestMapping(value = CAMPAIGN_TYPE + "/{campId}/known-issues", method = RequestMethod.GET)
-	public @ResponseBody
-	DataTableModel getCampaignKnownIssuesData(@PathVariable("campId") Long campId,
-			final DataTableDrawParameters params, final Locale locale) {
-		
-		return getBuggedKnownIssuesData(params, locale, Campaign.class, campId, CAMPAIGN_TYPE);
-	}
 
-	private <X extends Bugged> DataTableModel getBuggedKnownIssuesData(final DataTableDrawParameters params, final Locale locale,
-			Class<X> classe, Long entityId, String type) {
 		FilteredCollectionHolder<List<IssueOwnership<BTIssue>>> filteredCollection;
 		CollectionSorting sorter = createCollectionSorting(params);
-		
 
 		try {
-			Bugged bugged = bugTrackerLocalService.findBuggedEntity(entityId, classe);
-
-			filteredCollection = bugTrackerLocalService.findBugTrackerIssues(bugged, sorter);
-
+			filteredCollection = bugTrackerLocalService.findSortedIssueOwnershipsForTestSuite(testSuiteId, sorter);
 		}
-
 		// no credentials exception are okay, the rest is to be treated as usual
 		catch (BugTrackerNoCredentialsException noCrdsException) {
-			filteredCollection = makeEmptyCollectionHolder(type, entityId, noCrdsException);
+			filteredCollection = makeEmptyCollectionHolder(TEST_SUITE_TYPE, testSuiteId, noCrdsException);
 		} catch (NullArgumentException npException) {
-			filteredCollection = makeEmptyCollectionHolder(type, entityId, npException);
+			filteredCollection = makeEmptyCollectionHolder(TEST_SUITE_TYPE, testSuiteId, npException);
 		}
-
 		return new IterationIssuesTableModel(messageSource, locale).buildDataModel(filteredCollection,
 				sorter.getFirstItemIndex() + 1, params.getsEcho());
 	}
@@ -420,7 +472,7 @@ public class BugtrackerController {
 	}
 
 	// FIXME : check first if a bugtracker is defined and if the credentials are set
-	private Map<String, String> processIssue(BTIssue issue, Bugged entity) {
+	private Map<String, String> processIssue(BTIssue issue, IssueDetector entity) {
 
 		final BTIssue postedIssue = bugTrackerLocalService.createIssue(entity, issue);
 		final URL issueUrl = bugTrackerLocalService.getIssueUrl(postedIssue.getId());
@@ -432,23 +484,21 @@ public class BugtrackerController {
 		return result;
 	}
 
-	private Map<String, String> attachIssue(final BTIssue issue, Bugged entity){
-		
+	private Map<String, String> attachIssue(final BTIssue issue, IssueDetector entity) {
+
 		bugTrackerLocalService.attachIssue(entity, issue.getId());
-		final URL issueUrl =  bugTrackerLocalService.getIssueUrl(issue.getId());
-		
+		final URL issueUrl = bugTrackerLocalService.getIssueUrl(issue.getId());
+
 		Map<String, String> result = new HashMap<String, String>();
 		result.put("url", issueUrl.toString());
 		result.put("issueId", issue.getId());
-		
+
 		return result;
 	}
-	
-	
-	
+
 	/* ********* generates a json model for an issue ******* */
 
-	private BTIssue makeReportIssueModel(Bugged entity) {
+	private BTIssue makeReportIssueModel(IssueDetector entity) {
 		String projectName = entity.getProject().getName();
 		final BTProject project = bugTrackerLocalService.findRemoteProject(projectName);
 
@@ -465,7 +515,7 @@ public class BugtrackerController {
 	 * 
 	 * If the bugtracker isn'st defined no panel will be sent at all.
 	 */
-	private ModelAndView makeIssuePanel(Bugged entity, String type, Locale locale, String panelStyle) {
+	private ModelAndView makeIssuePanel(Identified entity, String type, Locale locale, String panelStyle) {
 
 		BugTrackerStatus status = checkStatus();
 
@@ -546,7 +596,7 @@ public class BugtrackerController {
 
 		void setLocale(Locale locale);
 
-		String buildName(Bugged bugged);
+		String buildName(IssueDetector bugged);
 	}
 
 	private static class ExecutionModelOwnershipNamebuilder implements IssueOwnershipNameBuilder {
@@ -568,7 +618,7 @@ public class BugtrackerController {
 		// The solution is probably to add adequate methods in the Bugged interface, so that we don't
 		// have to rely on reflection here.
 		@Override
-		public String buildName(Bugged bugged) {
+		public String buildName(IssueDetector bugged) {
 			String name = "this is clearly a bug";
 
 			if (bugged instanceof ExecutionStep) {
@@ -608,7 +658,7 @@ public class BugtrackerController {
 		// The solution is probably to add adequate methods in the Bugged interface, so that we don't
 		// have to rely on reflection here.
 		@Override
-		public String buildName(Bugged bugged) {
+		public String buildName(IssueDetector bugged) {
 			String name = "this is clearly a bug";
 
 			if (bugged instanceof ExecutionStep) {
@@ -633,8 +683,9 @@ public class BugtrackerController {
 
 	}
 
-	// **************************************** private utilities *******************************************************
-	
+	// **************************************** private utilities
+	// *******************************************************
+
 	private FilteredCollectionHolder<List<IssueOwnership<BTIssue>>> makeEmptyCollectionHolder(String entityName,
 			Long entityId, Exception cause) {
 		LOGGER.trace("BugTrackerController : fetching known issues for  " + entityName + " " + entityId
@@ -700,10 +751,12 @@ public class BugtrackerController {
 
 		@Override
 		public Object[] buildItemData(IssueOwnership<BTIssue> ownership) {
-			return new Object[] { bugTrackerLocalService.getIssueUrl(ownership.getIssue().getId()).toExternalForm(),
-					ownership.getIssue().getId(), ownership.getIssue().getSummary(),
-					ownership.getIssue().getPriority().getName(), ownership.getIssue().getStatus().getName(),
-					ownership.getIssue().getAssignee().getName(), nameBuilder.buildName(ownership.getOwner()) };
+			BTIssue issue = ownership.getIssue();
+			
+			return new Object[] { bugTrackerLocalService.getIssueUrl(issue.getId()).toExternalForm(),
+					issue.getId(), issue.getSummary(),
+					issue.getPriority().getName(), issue.getStatus().getName(),
+					issue.getAssignee().getName(), nameBuilder.buildName(ownership.getOwner()) };
 		}
 	}
 
@@ -727,36 +780,28 @@ public class BugtrackerController {
 					ownership.getIssue().getPriority().getName() };
 		}
 	}
-/*
-	@RequestMapping(value = EXECUTION_TYPE + "/{execId}/debug", method = RequestMethod.GET)
-	public ModelAndView getExecIssuePanelDebug(@PathVariable Long execId, Locale locale,
-			@RequestParam(value = "style", required = false, defaultValue = "toggle") String panelStyle) {
+	/*
+	 * @RequestMapping(value = EXECUTION_TYPE + "/{execId}/debug", method = RequestMethod.GET) public ModelAndView
+	 * getExecIssuePanelDebug(@PathVariable Long execId, Locale locale,
+	 * 
+	 * @RequestParam(value = "style", required = false, defaultValue = "toggle") String panelStyle) {
+	 * 
+	 * Bugged bugged = bugTrackerLocalService.findBuggedEntity(execId, Execution.class); return
+	 * makeIssuePanelDebug(bugged, EXECUTION_TYPE, locale, panelStyle); }
+	 * 
+	 * private ModelAndView makeIssuePanelDebug(Bugged entity, String type, Locale locale, String panelStyle) {
+	 * 
+	 * BugTrackerStatus status = checkStatus();
+	 * 
+	 * if (status == BugTrackerStatus.BUGTRACKER_UNDEFINED) { return new
+	 * ModelAndView("fragment/issues/bugtracker-panel-empty"); } else {
+	 * 
+	 * BugTrackerInterfaceDescriptor descriptor = bugTrackerLocalService.getInterfaceDescriptor();
+	 * descriptor.setLocale(locale);
+	 * 
+	 * ModelAndView mav = new ModelAndView("fragment/issues/bugtracker-panel-debug"); mav.addObject("entity", entity);
+	 * mav.addObject("entityType", type); mav.addObject("interfaceDescriptor", descriptor); mav.addObject("panelStyle",
+	 * panelStyle); mav.addObject("bugTrackerStatus", status); return mav; } }
+	 */
 
-		Bugged bugged = bugTrackerLocalService.findBuggedEntity(execId, Execution.class);
-		return makeIssuePanelDebug(bugged, EXECUTION_TYPE, locale, panelStyle);
-	}
-	
-	private ModelAndView makeIssuePanelDebug(Bugged entity, String type, Locale locale, String panelStyle) {
-
-		BugTrackerStatus status = checkStatus();
-
-		if (status == BugTrackerStatus.BUGTRACKER_UNDEFINED) {
-			return new ModelAndView("fragment/issues/bugtracker-panel-empty");
-		} else {
-
-			BugTrackerInterfaceDescriptor descriptor = bugTrackerLocalService.getInterfaceDescriptor();
-			descriptor.setLocale(locale);
-
-			ModelAndView mav = new ModelAndView("fragment/issues/bugtracker-panel-debug");
-			mav.addObject("entity", entity);
-			mav.addObject("entityType", type);
-			mav.addObject("interfaceDescriptor", descriptor);
-			mav.addObject("panelStyle", panelStyle);
-			mav.addObject("bugTrackerStatus", status);
-			return mav;
-		}
-	}
-	*/
-
-	
 }

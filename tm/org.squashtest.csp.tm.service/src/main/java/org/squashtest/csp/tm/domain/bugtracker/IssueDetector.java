@@ -23,20 +23,15 @@ package org.squashtest.csp.tm.domain.bugtracker;
 import java.util.List;
 
 import org.squashtest.csp.core.domain.Identified;
-import org.squashtest.csp.core.security.annotation.AclConstrainedObject;
-import org.squashtest.csp.tm.domain.campaign.CampaignLibrary;
 import org.squashtest.csp.tm.domain.project.Project;
 
-public interface Bugged extends Identified{
-
+public interface IssueDetector {
 
 	/**
 	 * 
 	 * @return its IssueList
 	 */
 	IssueList getIssueList();
-
-	
 
 	/**
 	 * will return the (Squash) project that entity belongs to
@@ -52,12 +47,6 @@ public interface Bugged extends Identified{
 	Long getIssueListId();
 
 	/**
-	 * @return the list of ids of its own IssueList and the result of getAllIssueListIds of other Bugged entities to
-	 *         which that Bugged is bound to.
-	 */
-	List<Long> getAllIssueListId();
-
-	/**
 	 * used to prefill a bug report
 	 * 
 	 * @return a String representing the Description of a bug report.
@@ -65,17 +54,9 @@ public interface Bugged extends Identified{
 	String getDefaultDescription();
 
 	/**
-	 * 
-	 * @return all the bugged entities to which that one is linked, including itself.
-	 * 
+	 * @return the list of ids of its own IssueList and the result of getAllIssueListIds of other Bugged entities to
+	 *         which that Bugged is bound to.
 	 */
-	List<Bugged> getAllBuggeds();
-	
-	/**
-	 * @return true if can be directly attached issues, false if not. For instance an iteration cannot be directly 
-	 * attached while its executions can have iterations 
-	 */
-	boolean isAcceptsIssues();
-	
+	List<Long> getAllIssueListId();
 
 }

@@ -52,7 +52,6 @@ import org.squashtest.csp.tm.domain.attachment.Attachment;
 import org.squashtest.csp.tm.domain.attachment.AttachmentHolder;
 import org.squashtest.csp.tm.domain.attachment.AttachmentList;
 import org.squashtest.csp.tm.domain.audit.AuditableMixin;
-import org.squashtest.csp.tm.domain.library.Library;
 import org.squashtest.csp.tm.domain.requirement.Requirement;
 import org.squashtest.csp.tm.domain.requirement.RequirementVersion;
 
@@ -62,7 +61,7 @@ import org.squashtest.csp.tm.domain.requirement.RequirementVersion;
  */
 @Entity
 @PrimaryKeyJoinColumn(name = "TCLN_ID")
-public class TestCase extends TestCaseLibraryNode implements AttachmentHolder {
+public class TestCase extends TestCaseLibraryNode implements AttachmentHolder{
 	private static final String CLASS_NAME = "org.squashtest.csp.tm.domain.testcase.TestCase";
 	private static final String SIMPLE_CLASS_NAME = "TestCase";
 
@@ -376,7 +375,6 @@ public class TestCase extends TestCaseLibraryNode implements AttachmentHolder {
 		RequirementVersion candidate = requirement.getDefaultVerifiableVersion();
 		addVerifiedRequirementVersion(candidate);
 	}
-
 	
 
 }

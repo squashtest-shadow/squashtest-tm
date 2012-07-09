@@ -20,6 +20,7 @@
  */
 package org.squashtest.csp.tm.internal.repository.hibernate;
 
+import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 
@@ -31,9 +32,11 @@ import org.hibernate.criterion.Order;
 import org.hibernate.criterion.Restrictions;
 import org.hibernate.type.LongType;
 import org.springframework.stereotype.Repository;
+import org.squashtest.csp.tm.domain.bugtracker.IssueDetector;
 import org.squashtest.csp.tm.domain.campaign.Campaign;
 import org.squashtest.csp.tm.domain.campaign.CampaignLibraryNode;
 import org.squashtest.csp.tm.domain.campaign.CampaignTestPlanItem;
+import org.squashtest.csp.tm.domain.execution.Execution;
 import org.squashtest.csp.tm.infrastructure.filter.CollectionSorting;
 import org.squashtest.csp.tm.internal.repository.CampaignDao;
 
@@ -170,6 +173,13 @@ public class HibernateCampaignDao extends HibernateEntityDao<Campaign> implement
 			query.setParameterList("campaignIds", campaignIds, LongType.INSTANCE);
 			return query.list();
 		}
+	}
+
+	
+	@Override
+	public List<Execution> findAllExecutionsByCampaignId(Long campaignId) {
+		SetQueryParametersCallback callback = idParameter(campaignId);
+		return executeListNamedQuery("campaign.findAllExecutions", callback);
 	}
 
 

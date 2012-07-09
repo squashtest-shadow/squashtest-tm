@@ -20,13 +20,13 @@
  */
 package org.squashtest.csp.tm.internal.repository.hibernate
 
-import javax.inject.Inject;
+import javax.inject.Inject
 
-import org.squashtest.csp.tm.domain.campaign.Campaign;
-import org.squashtest.csp.tm.internal.repository.CampaignDao;
-import org.unitils.dbunit.annotation.DataSet;
+import org.squashtest.csp.tm.domain.campaign.Campaign
+import org.squashtest.csp.tm.internal.repository.CampaignDao
+import org.unitils.dbunit.annotation.DataSet
 
-import spock.unitils.UnitilsSupport;
+import spock.unitils.UnitilsSupport
 
 @UnitilsSupport
 class HibernateCampaignDaoIT extends DbunitDaoSpecification {
@@ -38,5 +38,15 @@ class HibernateCampaignDaoIT extends DbunitDaoSpecification {
 		def res = campaignDao.findNamesInFolderStartingWith(1, "foo-Copie")
 		then: 
 		res == ["foo-Copie1", "foo-Copie10"]
+	}
+	
+	@DataSet("HibernateCampaignDaoIT.should return list of executions.xml")
+	def "should return list of executions"(){
+		when:
+		def result = campaignDao.findAllExecutionsByCampaignId(1L)
+		
+		then:
+		result.size() == 5
+		result.each {it.name == "campaign1-execution"}
 	}
 }	

@@ -31,14 +31,14 @@ package org.squashtest.csp.tm.domain.bugtracker;
 public class IssueOwnership<ISSUE> {
 	
 	private final ISSUE issue;
-	private final Bugged owner;
+	private final IssueDetector owner;
 	
-	public IssueOwnership(ISSUE issue, Bugged owner){
+	public IssueOwnership(ISSUE issue, IssueDetector owner){
 		this.issue=issue;
 		this.owner=owner;
 	}
 	
-	public Bugged getOwner(){
+	public IssueDetector getOwner(){
 		return owner;
 	}
 	

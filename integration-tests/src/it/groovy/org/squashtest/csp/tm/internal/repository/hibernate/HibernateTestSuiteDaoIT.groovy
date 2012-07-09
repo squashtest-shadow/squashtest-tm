@@ -116,4 +116,15 @@ class HibernateTestSuiteDaoIT extends DbunitDaoSpecification {
 		
 	}
 	
+	@DataSet("HibernateTestSuiteDaoIT.should return list of executions.xml")
+	def "should return list of executions"(){
+		when:
+		def result = testSuiteDao.findAllExecutionByTestSuite(2l)
+		
+		then:
+		result.size() == 3
+		result.each {it.name == "testSuite2-execution"}
+	}
+	
+	
 }

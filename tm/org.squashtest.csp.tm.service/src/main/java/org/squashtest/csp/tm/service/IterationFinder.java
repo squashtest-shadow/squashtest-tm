@@ -18,32 +18,34 @@
  *     You should have received a copy of the GNU Lesser General Public License
  *     along with this software.  If not, see <http://www.gnu.org/licenses/>.
  */
-package org.squashtest.csp.tm.internal.repository;
+package org.squashtest.csp.tm.service;
 
 import java.util.List;
 
-import org.squashtest.csp.tm.domain.bugtracker.IssueDetector;
+import org.springframework.transaction.annotation.Transactional;
+import org.squashtest.csp.tm.domain.campaign.Campaign;
+import org.squashtest.csp.tm.domain.campaign.CampaignTestPlanItem;
+import org.squashtest.csp.tm.domain.campaign.Iteration;
 import org.squashtest.csp.tm.domain.execution.Execution;
-import org.squashtest.csp.tm.domain.execution.ExecutionStatusReport;
-import org.squashtest.csp.tm.domain.execution.ExecutionStep;
-import org.squashtest.csp.tm.infrastructure.filter.CollectionFilter;
+import org.squashtest.csp.tm.domain.testcase.TestCase;
+import org.squashtest.csp.tm.infrastructure.filter.CollectionSorting;
+import org.squashtest.csp.tm.infrastructure.filter.FilteredCollectionHolder;
 
-public interface ExecutionDao extends EntityDao<Execution> {
 
-	List<ExecutionStep> findExecutionSteps(long executionId);
+public interface IterationFinder {
+	
+	@Transactional(readOnly = true)
+	List<Iteration> findIterationsByCampaignId(long campaignId);
 
-	Execution findAndInit(long executionId);
+	@Transactional(readOnly = true)
+	Iteration findById(long iterationId);
 
-	int findExecutionRank(long executionId);
+	@Transactional(readOnly = true)
+	List<Execution> findAllExecutions(long iterationId);
 
-	ExecutionStatusReport getStatusReport(long executionId);
+	@Transactional(readOnly = true)
+	List<Execution> findExecutionsByTestPlan(long iterationId, long testPlanId);
 
-	Integer countSuccess(long executionId);
-
-	Integer countReady(long executionId);
-
-	List<ExecutionStep> findStepsFiltered(Long executionId, CollectionFilter filter);
-
-	List<IssueDetector> findAllIssueDetectorsForExecution(Long execId);
-
+	@Transactional(readOnly = true)
+	List<TestCase> findPlannedTestCases(long iterationId);
 }

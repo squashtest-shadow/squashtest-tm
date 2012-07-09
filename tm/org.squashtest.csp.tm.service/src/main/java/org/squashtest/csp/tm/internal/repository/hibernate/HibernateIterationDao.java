@@ -20,6 +20,7 @@
  */
 package org.squashtest.csp.tm.internal.repository.hibernate;
 
+import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 import java.util.ListIterator;
@@ -30,6 +31,7 @@ import org.hibernate.Session;
 import org.hibernate.criterion.Restrictions;
 import org.hibernate.type.LongType;
 import org.springframework.stereotype.Repository;
+import org.squashtest.csp.tm.domain.bugtracker.IssueDetector;
 import org.squashtest.csp.tm.domain.campaign.Campaign;
 import org.squashtest.csp.tm.domain.campaign.IterationTestPlanItem;
 import org.squashtest.csp.tm.domain.campaign.Iteration;
@@ -190,4 +192,11 @@ public class HibernateIterationDao extends HibernateEntityDao<Iteration> impleme
 			currentSession().persist(iterationTestPlanItem);
 		}
 	}
+
+	@Override
+	public List<Execution> findAllExecutionByIterationId(long iterationId) {
+		SetQueryParametersCallback callback = idParameter(iterationId);
+		return executeListNamedQuery("iteration.findAllExecutions", callback);
+	}
+
 }
