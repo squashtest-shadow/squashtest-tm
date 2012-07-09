@@ -661,7 +661,7 @@ class ExecutionModificationServiceIT extends HibernateServiceSpecification {
 
 		procservice.setExecutionStepStatus(blocked.id, ExecutionStatus.SUCCESS)
 
-		def failureExec = execService.findExecution(execution.id);
+		def failureExec = execService.findAndInitExecution(execution.id);
 
 
 		then :
