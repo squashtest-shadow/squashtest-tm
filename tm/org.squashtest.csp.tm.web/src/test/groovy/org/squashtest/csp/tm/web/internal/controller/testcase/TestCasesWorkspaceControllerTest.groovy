@@ -20,6 +20,8 @@
  */
 package org.squashtest.csp.tm.web.internal.controller.testcase;
 
+import javax.inject.Provider;
+
 import org.springframework.web.servlet.ModelAndView;
 import org.squashtest.csp.tm.domain.project.Project;
 import org.squashtest.csp.tm.domain.testcase.TestCaseLibrary;
@@ -35,11 +37,14 @@ import spock.lang.Specification;
 class TestCasesWorkspaceControllerTest extends Specification {
 	TestCaseWorkspaceController controller = new TestCaseWorkspaceController()
 	WorkspaceService service = Mock()
+	DriveNodeBuilder driveNodeBuilder = Mock()
+	Provider provider = Mock()
 
 	def setup() {
 		controller.workspaceService = service
+		provider.get() >> driveNodeBuilder
 		use(ReflectionCategory) {
-			WorkspaceController.set field: 'nodeBuilder', of: controller, to: Mock(DriveNodeBuilder)
+			WorkspaceController.set field: 'nodeBuilderProvider', of: controller, to: provider
 		}
 	}
 

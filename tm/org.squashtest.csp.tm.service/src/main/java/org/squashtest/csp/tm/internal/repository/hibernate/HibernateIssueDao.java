@@ -50,6 +50,7 @@ public class HibernateIssueDao extends HibernateEntityDao<Issue> implements Issu
 	public <X extends Bugged> X findBuggedEntity(Long entityId, Class<X> entityClass) {
 		Session session = currentSession();
 
+		// FIXME remplacer la requête par un session.load
 		X bugged = (X)session.createCriteria(entityClass)
 							.add(Restrictions.eq("id", entityId))
 							.uniqueResult();
@@ -61,14 +62,13 @@ public class HibernateIssueDao extends HibernateEntityDao<Issue> implements Issu
 	@Override
 	public Integer countIssuesfromIssueList(final List<Long> issueListIds) {
 		
-		if (! issueListIds.isEmpty()){			
+		if (!issueListIds.isEmpty()) {
 			Query query = currentSession().getNamedQuery("issueList.countIssues");
 			query.setParameterList("issueListIds", issueListIds);
-			Long result = (Long)query.uniqueResult();
-			
+			Long result = (Long) query.uniqueResult();
+
 			return result.intValue();
-		}
-		else{
+		} else {
 			return 0;
 		}
 		

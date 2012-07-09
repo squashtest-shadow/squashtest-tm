@@ -23,6 +23,7 @@ package org.squashtest.csp.tm.web.internal.controller.generic;
 import java.util.List;
 
 import javax.inject.Inject;
+import javax.inject.Provider;
 
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
@@ -36,7 +37,7 @@ import org.squashtest.csp.tm.web.internal.model.jstree.JsTreeNode;
 public abstract class WorkspaceController<LIBRARY extends Library<?>> {
 
 	@Inject
-	private DriveNodeBuilder nodeBuilder;
+	private Provider<DriveNodeBuilder> nodeBuilderProvider;
 
 	@RequestMapping(method = RequestMethod.GET)
 	public ModelAndView showWorkspace() {
@@ -45,6 +46,7 @@ public abstract class WorkspaceController<LIBRARY extends Library<?>> {
 
 		ModelAndView mav = new ModelAndView(getWorkspaceViewName());
 
+		DriveNodeBuilder nodeBuilder = nodeBuilderProvider.get();
 		List<JsTreeNode> rootNodes = new JsTreeNodeListBuilder<LIBRARY>(nodeBuilder).setModel(libraries).build();
 		mav.addObject("rootModel", rootNodes);
 		return mav;
