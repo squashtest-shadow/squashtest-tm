@@ -378,7 +378,7 @@
 			allowedOperations : function (){
 				var selectedNodes = this.get_selected();
 				var operations = "";
-				if( $(".jstree").data("importable")) operations += "import-excel ";
+				if( this.get_container().data("importable")) operations += "import-excel ";
 				if (selectedNodes.length==0) return operations;
 				operations += "export ";	
 				if(!this.selectionIsEditable(selectedNodes) == "OK") return operations; 
