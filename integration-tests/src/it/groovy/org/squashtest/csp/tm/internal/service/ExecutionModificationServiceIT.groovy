@@ -20,28 +20,28 @@
  */
 package org.squashtest.csp.tm.internal.service
 
-import javax.inject.Inject;
+import javax.inject.Inject
 
-import org.spockframework.util.NotThreadSafe;
-import org.squashtest.csp.tm.domain.campaign.Campaign;
-import org.squashtest.csp.tm.domain.campaign.IterationTestPlanItem;
-import org.squashtest.csp.tm.domain.campaign.Iteration;
-import org.squashtest.csp.tm.domain.execution.Execution;
-import org.squashtest.csp.tm.domain.execution.ExecutionStatus;
-import org.squashtest.csp.tm.domain.execution.ExecutionStatusReport;
-import org.squashtest.csp.tm.domain.execution.ExecutionStep;
-import org.squashtest.csp.tm.domain.testcase.TestCase;
-import org.squashtest.csp.tm.domain.testcase.ActionTestStep;
-import org.squashtest.csp.tm.service.CampaignLibrariesCrudService;
-import org.squashtest.csp.tm.service.CampaignLibraryNavigationService;
-import org.squashtest.csp.tm.service.CampaignModificationService;
-import org.squashtest.csp.tm.service.ExecutionModificationService;
-import org.squashtest.csp.tm.service.ExecutionProcessingService;
-import org.squashtest.csp.tm.service.IterationModificationService;
-import org.squashtest.csp.tm.service.IterationTestPlanManagerService 
-import org.squashtest.csp.tm.service.TestCaseLibrariesCrudService;
-import org.squashtest.csp.tm.service.TestCaseLibraryNavigationService;
-import org.squashtest.csp.tm.service.TestCaseModificationService;
+import org.spockframework.util.NotThreadSafe
+import org.squashtest.csp.tm.domain.campaign.Campaign
+import org.squashtest.csp.tm.domain.campaign.IterationTestPlanItem
+import org.squashtest.csp.tm.domain.campaign.Iteration
+import org.squashtest.csp.tm.domain.execution.Execution
+import org.squashtest.csp.tm.domain.execution.ExecutionStatus
+import org.squashtest.csp.tm.domain.execution.ExecutionStatusReport
+import org.squashtest.csp.tm.domain.execution.ExecutionStep
+import org.squashtest.csp.tm.domain.testcase.TestCase
+import org.squashtest.csp.tm.domain.testcase.ActionTestStep
+import org.squashtest.csp.tm.service.CampaignLibrariesCrudService
+import org.squashtest.csp.tm.service.CampaignLibraryNavigationService
+import org.squashtest.csp.tm.service.CampaignModificationService
+import org.squashtest.csp.tm.service.ExecutionModificationService
+import org.squashtest.csp.tm.service.ExecutionProcessingService
+import org.squashtest.csp.tm.service.IterationModificationService
+import org.squashtest.csp.tm.service.IterationTestPlanManagerService
+import org.squashtest.csp.tm.service.TestCaseLibrariesCrudService
+import org.squashtest.csp.tm.service.TestCaseLibraryNavigationService
+import org.squashtest.csp.tm.service.TestCaseModificationService
 
 
 @NotThreadSafe
@@ -240,7 +240,7 @@ class ExecutionModificationServiceIT extends HibernateServiceSpecification {
 		when :
 		execService.setExecutionDescription(execution.id, "wooohooo I just updated the description here !")
 
-		execution=execService.findExecution(execution.id)
+		execution=execService.findAndInitExecution(execution.id)
 
 
 		then :
@@ -450,7 +450,7 @@ class ExecutionModificationServiceIT extends HibernateServiceSpecification {
 		ExecutionStep toBlock = listSteps.get(2);
 		procservice.setExecutionStepStatus(toBlock.getId(), ExecutionStatus.BLOCKED)
 
-		Execution exec = execService.findExecution(execution.id)
+		Execution exec = execService.findAndInitExecution(execution.id)
 
 		then :
 		exec.getExecutionStatus() == ExecutionStatus.BLOCKED;
@@ -474,7 +474,7 @@ class ExecutionModificationServiceIT extends HibernateServiceSpecification {
 		ExecutionStep toBlock = listSteps.get(2);
 		procservice.setExecutionStepStatus(toBlock.getId(), ExecutionStatus.FAILURE)
 
-		Execution exec = execService.findExecution(execution.id)
+		Execution exec = execService.findAndInitExecution(execution.id)
 
 		then :
 		exec.getExecutionStatus() == ExecutionStatus.FAILURE;
@@ -499,7 +499,7 @@ class ExecutionModificationServiceIT extends HibernateServiceSpecification {
 			procservice.setExecutionStepStatus(estep.getId(), ExecutionStatus.SUCCESS)
 		}
 
-		Execution exec = execService.findExecution(execution.id)
+		Execution exec = execService.findAndInitExecution(execution.id)
 
 		then :
 		exec.getExecutionStatus() == ExecutionStatus.SUCCESS;
@@ -523,7 +523,7 @@ class ExecutionModificationServiceIT extends HibernateServiceSpecification {
 		ExecutionStep toBlock = listSteps.get(2);
 		procservice.setExecutionStepStatus(toBlock.getId(), ExecutionStatus.SUCCESS)
 
-		Execution exec = execService.findExecution(execution.id)
+		Execution exec = execService.findAndInitExecution(execution.id)
 
 		then :
 		exec.getExecutionStatus() == ExecutionStatus.RUNNING;
@@ -547,7 +547,7 @@ class ExecutionModificationServiceIT extends HibernateServiceSpecification {
 		ExecutionStep toBlock = listSteps.get(2);
 		procservice.setExecutionStepStatus(toBlock.getId(), ExecutionStatus.READY)
 
-		Execution exec = execService.findExecution(execution.id)
+		Execution exec = execService.findAndInitExecution(execution.id)
 
 		then :
 		exec.getExecutionStatus() == ExecutionStatus.READY;
@@ -569,11 +569,11 @@ class ExecutionModificationServiceIT extends HibernateServiceSpecification {
 		def blocked = listSteps.get(1)
 		procservice.setExecutionStepStatus(blocked.id, ExecutionStatus.BLOCKED);
 
-		def blockedExec = execService.findExecution(execution.id)
+		def blockedExec = execService.findAndInitExecution(execution.id)
 
 		procservice.setExecutionStepStatus(blocked.id, ExecutionStatus.SUCCESS)
 
-		def runningExec = execService.findExecution(execution.id);
+		def runningExec = execService.findAndInitExecution(execution.id)
 
 
 		then :
@@ -596,11 +596,11 @@ class ExecutionModificationServiceIT extends HibernateServiceSpecification {
 		def blocked = listSteps.get(1)
 		procservice.setExecutionStepStatus(blocked.id, ExecutionStatus.BLOCKED);
 
-		def blockedExec = execService.findExecution(execution.id)
+		def blockedExec = execService.findAndInitExecution(execution.id)
 
 		procservice.setExecutionStepStatus(blocked.id, ExecutionStatus.READY)
 
-		def readyExec = execService.findExecution(execution.id);
+		def readyExec = execService.findAndInitExecution(execution.id)
 
 
 		then :
@@ -626,11 +626,11 @@ class ExecutionModificationServiceIT extends HibernateServiceSpecification {
 		def blocked2 = listSteps.get(2)
 		procservice.setExecutionStepStatus(blocked2.id, ExecutionStatus.BLOCKED);
 
-		def blockedExec = execService.findExecution(execution.id)
+		def blockedExec = execService.findAndInitExecution(execution.id)
 
 		procservice.setExecutionStepStatus(blocked.id, ExecutionStatus.SUCCESS)
 
-		def stillBlockedExec = execService.findExecution(execution.id);
+		def stillBlockedExec = execService.findAndInitExecution(execution.id)
 
 
 		then :
@@ -657,7 +657,7 @@ class ExecutionModificationServiceIT extends HibernateServiceSpecification {
 		def blocked2 = listSteps.get(2)
 		procservice.setExecutionStepStatus(blocked2.id, ExecutionStatus.FAILURE);
 
-		def blockedExec = execService.findExecution(execution.id)
+		def blockedExec = execService.findAndInitExecution(execution.id)
 
 		procservice.setExecutionStepStatus(blocked.id, ExecutionStatus.SUCCESS)
 
@@ -688,11 +688,11 @@ class ExecutionModificationServiceIT extends HibernateServiceSpecification {
 		def blocked = listSteps.get(1)
 		procservice.setExecutionStepStatus(blocked.id, ExecutionStatus.BLOCKED);
 
-		def blockedExec = execService.findExecution(execution.id)
+		def blockedExec = execService.findAndInitExecution(execution.id)
 
 		procservice.setExecutionStepStatus(blocked.id, ExecutionStatus.SUCCESS)
 
-		def successExec = execService.findExecution(execution.id);
+		def successExec = execService.findAndInitExecution(execution.id)
 
 
 		then :
@@ -715,14 +715,14 @@ class ExecutionModificationServiceIT extends HibernateServiceSpecification {
 			procservice.setExecutionStepStatus(estep.id,ExecutionStatus.SUCCESS);
 		}
 
-		def successExec = execService.findExecution(execution.id)
+		def successExec = execService.findAndInitExecution(execution.id)
 
 
 		def blocked = listSteps.get(1)
 
 		procservice.setExecutionStepStatus(blocked.id, ExecutionStatus.READY)
 
-		def runningExec = execService.findExecution(execution.id);
+		def runningExec = execService.findAndInitExecution(execution.id)
 
 
 		then :
@@ -746,13 +746,13 @@ class ExecutionModificationServiceIT extends HibernateServiceSpecification {
 			procservice.setExecutionStepStatus(estep.id,ExecutionStatus.SUCCESS);
 		}
 
-		def successExec = execService.findExecution(execution.id)
+		def successExec = execService.findAndInitExecution(execution.id)
 
 		for (ExecutionStep estep : listSteps){
 			procservice.setExecutionStepStatus(estep.id,ExecutionStatus.RUNNING);
 		}
 
-		def readyExec = execService.findExecution(execution.id);
+		def readyExec = execService.findAndInitExecution(execution.id)
 
 
 		then :
@@ -776,13 +776,13 @@ class ExecutionModificationServiceIT extends HibernateServiceSpecification {
 			procservice.setExecutionStepStatus(estep.id,ExecutionStatus.FAILURE);
 		}
 
-		def failedExec = execService.findExecution(execution.id)
+		def failedExec = execService.findAndInitExecution(execution.id)
 
 		def execStatusList = [];
 
 		for (ExecutionStep estep : listSteps){
 			procservice.setExecutionStepStatus(estep.id,ExecutionStatus.SUCCESS);
-			execStatusList << execService.findExecution(execution.id).getExecutionStatus();
+			execStatusList << execService.findAndInitExecution(execution.id).getExecutionStatus();
 		}
 
 
