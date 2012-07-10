@@ -86,13 +86,14 @@ $(function(){
 					<comp:error-message forField="name" />
 				</td>
 			</tr>
-			<c:if test='${ resourceName == "requirement" }'>
+			<c:if test='${ resourceName == "requirement" || resourceName == "test-case"  }'>
 				<tr>
-					<td><label for="add-requirement-reference"><f:message key="requirement.reference.label" /></label></td>
+					<td><label for="add-${ resourceName }-reference"><f:message key="requirement.reference.label" /></label></td>
 					<td>
-						<input id="add-requirement-reference" type=text size="15" />
+						<input id="add-${ resourceName }-reference" type=text size="15" />
 					<td>
 				</tr>
+				<c:if test='${ resourceName == "requirement" }'>
 				<tr>
 					<td><label for="add-requirement-criticality"><f:message key="requirement.criticality.combo.label" /></label></td>
 					<td><div id="criticalityList"></div></td>
@@ -101,6 +102,7 @@ $(function(){
 					<td><label for="add-requirement-category"><f:message key="requirement.category.combo.label" /></label></td>
 					<td><div id="categoryList"></div></td>
 				</tr>
+				</c:if>
 			</c:if>
 			<tr>
 				<td><label for="add-${ resourceName }-description"><f:message
@@ -119,11 +121,17 @@ $(function(){
 		<c:choose>
 			<c:when test='${ resourceName eq "requirement" }'>
 				var params = <jq:params-bindings 
-				name="#add-${ resourceName }-name" 
-				description="#add-${ resourceName }-description" 
+				name="#add-requirement-name" 
+				description="#add-requirement-description" 
 				reference="#add-requirement-reference" 
 				criticality="#add-requirement-criticality"
 				category="#add-requirement-category"/>;
+			</c:when>
+			<c:when test='${ resourceName eq "test-case" }'>
+				var params = <jq:params-bindings 
+				name="#add-test-case-name" 
+				description="#add-test-case-description" 
+				reference="#add-test-case-reference"/>;
 			</c:when>
 			<c:otherwise>
 				var params = <jq:params-bindings 
