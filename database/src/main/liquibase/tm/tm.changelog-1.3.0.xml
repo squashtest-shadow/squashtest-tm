@@ -31,7 +31,7 @@
 			<column name="STR_KEY" value="squashtest.tm.database.version" />
 			<column name="VALUE" value="1.3.0" />
 			<where>STR_KEY = 'squashtest.tm.database.version'</where>
-		</insert>
+		</update>
 	</changeSet>
 
 	<changeSet id="tm-1.3.0.2" author="gfouquet">
