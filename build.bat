@@ -26,20 +26,20 @@ setlocal
 echo ......Starting private build
 echo ......Creating the private build repository
 
-if not exist C:\.privatebuild (
-	mkdir C:\.privatebuild
+if not exist C:\privatebuild (
+	mkdir C:\privatebuild
 )
-if not exist C:\.privatebuild\squashtest-csp (
-	hg clone . C:\.privatebuild\squashtest-csp
+if not exist C:\privatebuild\squash-tm (
+	hg clone . C:\privatebuild\squash-tm
 )
 
 echo ......Pulling incoming changes from local repository to private build repository
-cd C:\.privatebuild\squashtest-csp
+cd C:\privatebuild\squash-tm
 hg pull
 hg update -C
 
 echo ......Building the project
-mvn clean install > private-build.log
+mvn -q clean install -Pprivate-build > private-build.log
 
 endlocal
 

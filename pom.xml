@@ -286,7 +286,6 @@
 		<module>core</module>
 		<module>tm</module>
 		<module>plugins</module>
-		<module>osgi-integration-tests</module>
 	</modules>
 
 	<profiles>
@@ -315,10 +314,21 @@
 			</properties>
 
 			<modules>
+				<module>osgi-integration-tests</module>
 				<module>integration-tests</module>
 				<module>distribution</module>
 			</modules>
 		</profile>
+		
+		<!-- This profile aims to perform a build on the developper's machine before a push. It should not run anything against mysql -->
+		<profile>
+			<id>private-build</id>
+
+			<modules>
+				<module>integration-tests</module>
+			</modules>
+		</profile>
+
 		<profile>
 			<!-- When activated, this profile copies files required by Eclipse PDE 
 				to launch the bundles -->
