@@ -22,7 +22,11 @@ package org.squashtest.csp.core.bugtracker.spi;
 
 import java.util.List;
 
+import org.apache.commons.lang.NullArgumentException;
+import org.squashtest.csp.core.bugtracker.core.BugTrackerNoCredentialsException;
 import org.squashtest.csp.core.bugtracker.core.BugTrackerNotFoundException;
+import org.squashtest.csp.core.bugtracker.core.BugTrackerRemoteException;
+import org.squashtest.csp.core.bugtracker.core.ProjectNotFoundException;
 import org.squashtest.csp.core.bugtracker.domain.BTIssue;
 import org.squashtest.csp.core.bugtracker.domain.BTProject;
 import org.squashtest.csp.core.bugtracker.domain.Category;
@@ -31,169 +35,242 @@ import org.squashtest.csp.core.bugtracker.domain.User;
 import org.squashtest.csp.core.bugtracker.domain.Version;
 import org.squashtest.csp.core.bugtracker.net.AuthenticationCredentials;
 
+
 /**
- * Connector to a bug tracker.
+ * <p>Connector to a bug tracker.</p>
  * 
+ * <p>
+ * <strong>Item lists : </strong> An issue has several characteristics (priority, version etc) that can be picked 
+ * from a list. The content of those lists may vary from bugtracker to bugtracker and from project A to another 
+ * project B. Among those listable item the BugTrackerConnecter focus on four of them :
+ * <ul>
+ * 	<li> {@link Priority} </li>
+ *  <li>(assignable) {@link User} </li>
+ *  <li> {@link Version} </li>
+ *  <li> {@link Category} </li>
+ * </ul> 
+ * 
+ * In some cases those lists may be empty (no assignable users for instance). 
+ * For such cases, an implementation of {@link BugTrackerConnector} should never return the empty list : 
+ * the returned list should contain a specific singleton. See {@link User#NO_USER} or 
+ * {@link Version#NO_VERSION} for instance.
+ *  
+ * </p>
+ *
  * @author Gregory Fouquet
- * 
+ *
  */
 public interface BugTrackerConnector {
 	/**
 	 * Authenticates to the bug tracker with the given credentials. If authentication does not fail, it should not be
 	 * required again at least for the current thread.
-	 * 
+	 *
 	 * @param credentials
+	 * @throws NullArgumentException 
 	 */
 	void authenticate(AuthenticationCredentials credentials);
 
 	/**
 	 * will check if the current credentials are actually acknowledged by the bugtracker
-	 * 
+	 *
 	 * @param credentials
 	 * @return nothing
-	 * @throw BugTrackerRemoteException if the credentials are invalids
+	 * @throw {@link BugTrackerNoCredentialsException} if the credentials are invalid
+	 * @throw {@link BugTrackerRemoteException} for other network exceptions. 
 	 */
-	void checkCredentials(AuthenticationCredentials credentials);
+	void checkCredentials(AuthenticationCredentials credentials) throws BugTrackerNoCredentialsException, 
+																		BugTrackerRemoteException;
 
 	/**
-	 * will build the suffix of the url to view that issue on the remote bugtracker. Must be appended to the base url of
-	 * the bugtracker to be functionnal.
+	 * <p>Returns the path to an issue identified by 'issueId'. This suffix corresponds to the URL to 
+	 * that issue once the base URL of the bugtracker is removed. Since the base URL of the bugtracker includes
+	 * the procotol, authority, hostname and port, most of the time the suffix is simply the path to the issue. 
+	 * </p>
 	 * 
-	 * @param issueId
-	 *            the ID of an issue that is supposed to exist on the bugtracker (ie, with an not empty id)
-	 * @return an a suffix for an url if success, null if something failed.
+	 * @param issueId the ID of an issue that is supposed to exist on the bugtracker (ie, with an not empty id)
+	 * @return the path to the issue, relative to the host root directory.
 	 */
 	String makeViewIssueUrlSuffix(String issueId);
 
 	/**
-	 * returns the list of priorities.
-	 * 
+	 * Returns the list of priorities available on the remote bugtracker.
+	 *
 	 * @return a list of Priority
+	 * @throws BugTrackerRemoteException when something goes wrong with the remote call.
 	 */
-	List<Priority> getPriorities();
+	List<Priority> getPriorities() throws BugTrackerRemoteException;
+
 
 	/**
-	 * will return a project based on its name.
+	 * Returns a BTProject, identified by its name. The remote project name must perfectly match the argument.
+	 * If found, the following attributes of the BTProject must be populated :
+	 * <ul>
+	 * <li>id</li>
+	 * <li>name</li>
+	 * <li>version list</li>
+	 * <li>assignable users list (those that the requesting user can legally address)</li>
+	 * <li>categories list</li>
+	 * <li>priorities list</li>
+	 * </ul>
 	 * 
-	 * @return a project if found, BugTrackerNotFoundException if not found.
+	 * Note that the lists here must follow the rules stated in the top level documentation of this interface.
+	 *
+	 * @param projectName the name of the project.
+	 * @return a project properly configured
+	 * @throws ProjectNotFoundException if the project could not be found
+	 * @throws BugTrackerRemoteException when something goes wrong with the remote call
 	 */
-	BTProject findProject(String projectName);
+	BTProject findProject(String projectName) throws ProjectNotFoundException, BugTrackerRemoteException;
+
 
 	/**
-	 * will return a project based on its Id (bugtracker-sided Id, not the Squash-sided Id).
-	 * 
-	 * @return a project if found, BugTrackerNotFoundException if not found.
+	 * See {@link #findProject(String)}.
+	 *
+	 * @param projectId the id of the project
+	 * @return a project properly configured
+	 * @throws ProjectNotFoundException if the project could not be found
+	 * @throws BugTrackerRemoteException when something goes wrong with the remote call
 	 */
-	BTProject findProjectById(String projectId);
+	BTProject findProjectById(String projectId) throws ProjectNotFoundException, BugTrackerRemoteException;
+
 
 	/**
-	 * will return the list of the available version of the given project
-	 * 
-	 * @param projectName
-	 *            is the name of the project
-	 * @return the list of the version if found, BugTrackerNotFoundException if the project doesn't exist
+	 * Will return the list of the available versions of the given project (given its name). 
+	 *  
+	 * @param projectName is the name of the project
+	 * @return the list of the versions if any, or a list only containing {@link Version#NO_VERSION} when
+	 * none were found.
+	 * @throws ProjectNotFoundException if the project doesn't exist
+	 * @throws BugTrackerRemoteException when something goes wrong with the remote call.
 	 */
-	List<Version> findVersions(String projectName);
+	List<Version> findVersions(String projectName) throws ProjectNotFoundException, BugTrackerRemoteException;
+
 
 	/**
-	 * will return the list of the available version of the given project
-	 * 
-	 * @param projectId
-	 *            is the bugtracker id of the project
-	 * @return the list of the version if found, BugTrackerNotFoundException if the project doesn't exist
+	 * Will return the list of the available versions of the given project (given its id). 
+	 *  
+	 * @param projectId is the id of the project
+	 * @return the list of the versions if any, or a list only containing {@link Version#NO_VERSION} when
+	 * none were found.
+	 * @throws ProjectNotFoundException if the project doesn't exist
+	 * @throws BugTrackerRemoteException when something goes wrong with the remote call.
 	 */
-	List<Version> findVersionsById(String projectId);
+	List<Version> findVersionsById(String projectId) throws ProjectNotFoundException, BugTrackerRemoteException;
+
+	
+	/**
+	 * Will return the list of the available versions of the given project (given the project itself). 
+	 *  
+	 * @param project being the project
+	 * @return the list of the versions if any, or a list only containing {@link Version#NO_VERSION} when
+	 * none were found.
+	 * @throws ProjectNotFoundException if the project doesn't exist
+	 * @throws BugTrackerRemoteException when something goes wrong with the remote call.
+	 */
+	List<Version> findVersions(BTProject project) throws ProjectNotFoundException, BugTrackerRemoteException;
+
 
 	/**
-	 * will return the list of the available version of the given project
-	 * 
-	 * @param project
-	 *            is project of which we need the versions
-	 * @return the list of the version if found, BugTrackerNotFoundException if the project doesn't exist
+	 * Will return the list of the assignable users for the given project and current user (given the project name).
+	 * The users must be returned with their Permissions if they have some. 
+	 *  
+	 * @param projectName is the name of the project
+	 * @return the list of the versions if any, or a list only containing {@link User#NO_USER} when
+	 * none were found.
+	 * @throws ProjectNotFoundException if the project doesn't exist
+	 * @throws BugTrackerRemoteException when something goes wrong with the remote call.
 	 */
-	List<Version> findVersions(BTProject project);
+	List<User> findUsers(String projectName) throws ProjectNotFoundException, BugTrackerRemoteException;
 
-	/*
-	 * dev note : finding all the users for JIRA is possible but cumbersome.
-	 * 
-	 * Fecthing the project will give you the PermissionScheme. The PermissionScheme will give you the
-	 * PermissionMapping, which map each Permissions to a group of RemoteEntity (being either a RemoteGroup or a
-	 * RemoteUser).
-	 * 
-	 * So we'll need to fetch the PermissionMapping, iterate over all the Mapping to get the users, and eliminate their
-	 * occasional multiple occurence
-	 */
 
 	/**
-	 * will return the list of the users working on the given project. They'll be fed with their permissions for that
-	 * project.
-	 * 
-	 * @return the list of the users with permissions set if found, BugTrackerNotFoundException if the project doesn't
-	 *         exist
+	 * Will return the list of the assignable users for the given project and current user (given the project id). 
+	 * The users must be returned with their Permissions if they have some.  
+	 *  
+	 * @param projectID is the name of the project
+	 * @return the list of the versions if any, or a list only containing {@link User#NO_USER} when
+	 * none were found.
+	 * @throws ProjectNotFoundException if the project doesn't exist
+	 * @throws BugTrackerRemoteException when something goes wrong with the remote call.
 	 */
-	List<User> findUsers(String projectName);
+	List<User> findUsersById(String projectID) throws ProjectNotFoundException, BugTrackerRemoteException;
+
 
 	/**
-	 * will return the list of the users working on the given project.They'll be fed with their permissions for that
-	 * project.
-	 * 
-	 * @return the list of the users with permissions set if found, BugTrackerNotFoundException if the project doesn't
-	 *         exist
+	 * Will return the list of the assignable users for the given project and current user (given the project itself). 
+	 * The users must be returned with their Permissions if they have some.  
+	 *  
+	 * @param project being the project.
+	 * @return the list of the versions if any, or a list only containing {@link User#NO_USER} when
+	 * none were found.
+	 * @throws ProjectNotFoundException if the project doesn't exist
+	 * @throws BugTrackerRemoteException when something goes wrong with the remote call.
 	 */
-	List<User> findUsersById(String projectID);
+	List<User> findUsers(BTProject project) throws ProjectNotFoundException, BugTrackerRemoteException;
+
 
 	/**
-	 * will return the list of the users working on the given project. They'll be fed with their permissions for that
-	 * project.
-	 * 
-	 * @return the list of the users with permissions set if found, BugTrackerNotFoundException if the project doesn't
-	 *         exist
+	 * Will create an issue on the remote bugtracker. The detached issue, supplied as an argument, 
+	 * have no ID/key yet. Its {@link Priority}, {@link Version}, assignee ( {@link User} ) and {@link Category}
+	 * will be set, possibly to {@link Version#NO_VERSION}, {@link User#NO_USER}, or {@link Category#NO_CATEGORY}.
+	 * The summary, description or comment might be null or empty. 
+	 *
+	 * @param issue a squash Issue
+	 * @return the corresponding new remote Issue, of which the ID must be set.
+	 * @throws BugTrackerRemoteException when something goes wrong with the remote call, including validation exception.
+	 *
 	 */
-	List<User> findUsers(BTProject project);
+	BTIssue createIssue(BTIssue issue) throws BugTrackerRemoteException;
+
 
 	/**
-	 * will submit an issue to the bugtracker.
-	 * 
-	 * @param issue
-	 *            a squash Issue
-	 * @return the newly created issue
-	 * 
+	 *
+	 * Will return the list of the available categories for the given project (given the project itself). 
+	 *  
+	 * @param projectName is the name of the project
+	 * @return the list of the versions if any, or a list only containing {@link Category#NO_CATEGORY} when
+	 * none were found.
+	 * @throws ProjectNotFoundException if the project doesn't exist
+	 * @throws BugTrackerRemoteException when something goes wrong with the remote call.
+	 *
 	 */
-	BTIssue createIssue(BTIssue issue);
+	List<Category> findCategories(BTProject project) throws ProjectNotFoundException, BugTrackerRemoteException;
+
+
 
 	/**
-	 * 
-	 * will the categories for the given project
-	 * 
-	 * @param project
-	 *            : a Squash project.
-	 * @return : the list of the categories bound to that project (bugtracker-side).
-	 * 
-	 */
-	List<Category> findCategories(BTProject project);
-
-	/**
-	 * will return an object holding the label key corresponding to the various fields of the issue report interface
-	 * 
+	 * Returns an interface descriptor. 
+	 *
 	 * @return a BugTrackerInterfaceDescriptor
 	 */
 	BugTrackerInterfaceDescriptor getInterfaceDescriptor();
 
+	
 	/**
+	 * Returns a single issue. The returned issue must use {@link Version#NO_VERSION} and alike when the version etc aren't
+	 * set, instead of null. Furthermore, the {@link BTProject} returned by {@link BTIssue#getProject()} MUST be completely 
+	 * configured, as documented in {@link #findProject(String)}. 
 	 * 
-	 * @param key
+	 * 
+	 * @param key the key of the issue.
 	 * @return the issue from the remote bugtracker
-	 * @throws BugTrackerNotFoundException
+	 * @throws BugTrackerNotFoundException when the issue wasn't found
+	 * 
 	 */
 	BTIssue findIssue(String key);
-
+	
+	
 	/***
-	 * will return a BTIssue List corresponding to a given squash issue key List
-	 * 
+	 * Returns a list of BTIssue, identified by their key. The resulting list doesn't have to be sorted according to the 
+	 * input list. Returned issues must use {@link Version#NO_VERSION} and alike when the version etc aren't
+	 * set, instead of null. Unlike {@link #findIssue(String)}, their associated BTProject only needs their 'id' and 'name' 
+	 * attributes, and can let their other attribute to unspecified values.
+	 *
 	 * @param issueKeyList
 	 *            the given squash issue list (List<String>)
 	 * @return the corresponding BTIssue list
 	 */
 	List<BTIssue> findIssues(List<String> issueKeyList);
+
 
 }
