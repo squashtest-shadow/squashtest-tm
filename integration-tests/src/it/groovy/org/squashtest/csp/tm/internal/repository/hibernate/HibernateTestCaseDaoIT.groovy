@@ -18,24 +18,24 @@
  *     You should have received a copy of the GNU Lesser General Public License
  *     along with this software.  If not, see <http://www.gnu.org/licenses/>.
  */
-package org.squashtest.csp.tm.internal.repository.hibernate;
+package org.squashtest.csp.tm.internal.repository.hibernate
 
 import javax.inject.Inject
 
 import org.springframework.transaction.annotation.Transactional
-import org.squashtest.csp.core.infrastructure.collection.PagingAndSorting;
-import org.squashtest.csp.tm.domain.requirement.RequirementCategory;
+import org.squashtest.csp.core.infrastructure.collection.PagingAndSorting
+import org.squashtest.csp.tm.domain.requirement.RequirementCategory
 import org.squashtest.csp.tm.domain.requirement.RequirementCriticality
 import org.squashtest.csp.tm.domain.requirement.RequirementSearchCriteria
-import org.squashtest.csp.tm.domain.testcase.TestCaseImportance;
-import org.squashtest.csp.tm.domain.testcase.TestCaseSearchCriteria;
+import org.squashtest.csp.tm.domain.testcase.TestCaseImportance
+import org.squashtest.csp.tm.domain.testcase.TestCaseSearchCriteria
 import org.squashtest.csp.tm.infrastructure.filter.CollectionFilter
 import org.squashtest.csp.tm.infrastructure.filter.CollectionSorting
 import org.squashtest.csp.tm.internal.repository.TestCaseDao
-import org.squashtest.csp.tools.unittest.assertions.ListAssertions;
+import org.squashtest.csp.tools.unittest.assertions.ListAssertions
 import org.unitils.dbunit.annotation.DataSet
-import org.squashtest.csp.core.infrastructure.collection.PagingAndSorting;
-import org.squashtest.csp.core.infrastructure.collection.SortOrder;
+import org.squashtest.csp.core.infrastructure.collection.PagingAndSorting
+import org.squashtest.csp.core.infrastructure.collection.SortOrder
 
 
 import spock.unitils.UnitilsSupport
@@ -461,4 +461,14 @@ class HibernateTestCaseDaoIT extends DbunitDaoSpecification {
 	
 	}
 	
+	@DataSet("HibernateTestCaseDaoIT.should return list of executions.xml")
+	def "should return list of executions"(){
+		when:
+		def id = 10L;
+		def result = testCaseDao.findAllExecutionByTestCase(id)
+		
+		then:
+		result.size() == 3
+		result.each {it.name == "testCase1-execution"}
+	}
 }

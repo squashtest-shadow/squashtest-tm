@@ -1,0 +1,95 @@
+<!-- This file is part of the Squashtest platform. Copyright (C) 2010 - 2012 
+	Henix, henix.fr See the NOTICE file distributed with this work for additional 
+	information regarding copyright ownership. This is free software: you can 
+	redistribute it and/or modify it under the terms of the GNU Lesser General 
+	Public License as published by the Free Software Foundation, either version 
+	3 of the License, or (at your option) any later version. this software is 
+	distributed in the hope that it will be useful, but WITHOUT ANY WARRANTY; 
+	without even the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR 
+	PURPOSE. See the GNU Lesser General Public License for more details. You 
+	should have received a copy of the GNU Lesser General Public License along 
+	with this software. If not, see <http://www.gnu.org/licenses/>. -->
+<dataset>
+	<!-- TEST CASE 1 -->
+	<attachment_list attachment_list_id="1000" />
+	<test_case_library_node tcln_id="10" name="testCase1"
+		created_on="2011-01-01" created_by="dbu" />
+	<test_case tcln_id="10" version="1" attachment_list_id="1000" />
+
+	
+
+	<!-- TEST CASE 2 -->
+	<attachment_list attachment_list_id="2000" />
+	<test_case_library_node tcln_id="20" name="testCase2"
+		created_on="2011-01-01" created_by="dbu" />
+	<test_case tcln_id="20" version="1" attachment_list_id="2000" />
+	
+		
+<!-- 	CAMPAIGNS => EXEC -->
+
+	<ATTACHMENT_LIST ATTACHMENT_LIST_id="1" />
+	<campaign_library_node cln_id="1" name="campaign1" created_on="2010-02-01" created_by="dbu" />
+	<campaign cln_id="1" actual_start_auto="true" actual_end_auto="true" ATTACHMENT_LIST_ID="1" />
+	
+<!-- 	ITERATION 1 -->
+	<ATTACHMENT_LIST ATTACHMENT_LIST_id="11" />
+	<iteration iteration_id="1" name="iteration1" created_on="2010-02-01" created_by="dbu" actual_start_auto="true" actual_end_auto="true" ATTACHMENT_LIST_ID="11" />
+	<campaign_iteration campaign_id="1" iteration_id="1" iteration_order="0"/>
+	
+<!-- 	TPI 10 -->
+	<iteration_test_plan_item item_test_plan_id="10" created_on="2010-02-01" created_by="dbu" tcln_id="10"/>
+	<item_test_plan_list iteration_id="1" item_test_plan_id="10" item_test_plan_order="0"/>
+	
+	<ATTACHMENT_LIST ATTACHMENT_LIST_id="12" />
+	<execution execution_id="100" created_on="2010-02-01" created_by="dbu" name="testCase1-execution" prerequisite="" ATTACHMENT_LIST_ID="12" tcln_id="10"/>
+	<item_test_plan_execution item_test_plan_id="10" execution_id="100" execution_order="0"/>
+	
+	<ATTACHMENT_LIST ATTACHMENT_LIST_id="13" />
+	<execution execution_id="101" created_on="2010-02-01" created_by="dbu" name="testCase1-execution" prerequisite="" ATTACHMENT_LIST_ID="13" tcln_id="10"/>
+	<item_test_plan_execution item_test_plan_id="10" execution_id="101" execution_order="1"/>
+	
+<!-- 	ITERATION 2 -->
+	<ATTACHMENT_LIST ATTACHMENT_LIST_id="16" />
+	<iteration iteration_id="2" name="foo" created_on="2010-02-01" created_by="dbu" actual_start_auto="true" actual_end_auto="true" ATTACHMENT_LIST_ID="16"/>
+	<campaign_iteration campaign_id="1" iteration_id="2" iteration_order="1"/>
+	
+	<!-- 	TESTSUITE -->
+	<ATTACHMENT_LIST ATTACHMENT_LIST_id="20" />
+	
+	<test_suite id="2" name="foo" created_on="2010-02-01" created_by="dbu" ATTACHMENT_LIST_ID="20"/>
+	<iteration_test_suite iteration_id="2" test_suite_id="2"/>
+	
+<!-- 	TPI 20 -->
+	<iteration_test_plan_item item_test_plan_id="20" created_on="2010-02-01" created_by="dbu" test_suite="2" tcln_id="20"/>
+	<item_test_plan_list iteration_id="2" item_test_plan_id="20" item_test_plan_order="0"/>
+	
+	<ATTACHMENT_LIST ATTACHMENT_LIST_id="14" />
+	<execution execution_id="200" created_on="2010-02-01" created_by="dbu" name="foo" prerequisite="" ATTACHMENT_LIST_ID="14" tcln_id="20"/>
+	<item_test_plan_execution item_test_plan_id="20" execution_id="200" execution_order="0"/>
+	
+	<ATTACHMENT_LIST ATTACHMENT_LIST_id="15" />
+	<execution execution_id="201" created_on="2010-02-01" created_by="dbu" name="foo" prerequisite="" ATTACHMENT_LIST_ID="15" tcln_id="20"/>
+	<item_test_plan_execution item_test_plan_id="20" execution_id="201" execution_order="1"/>
+	
+	<!-- 	TPI 21 -->
+	<iteration_test_plan_item item_test_plan_id="40" created_on="2010-02-01" created_by="dbu" tcln_id="10"/>
+	<item_test_plan_list iteration_id="2" item_test_plan_id="40" item_test_plan_order="1"/>
+	
+	<ATTACHMENT_LIST ATTACHMENT_LIST_id="18" />
+	<execution execution_id="400" created_on="2010-02-01" created_by="dbu" name="testCase1-execution" prerequisite="" ATTACHMENT_LIST_ID="18" tcln_id="10"/>
+	<item_test_plan_execution item_test_plan_id="40" execution_id="400" execution_order="0"/>
+	
+	<!-- 	TPI 22 -->
+	<iteration_test_plan_item item_test_plan_id="22" created_on="2010-02-01" created_by="dbu" tcln_id="10"/>
+	<item_test_plan_list iteration_id="2" item_test_plan_id="22" item_test_plan_order="2"/>
+	
+	<!-- 	TPI 23 -->
+	<iteration_test_plan_item item_test_plan_id="23" created_on="2010-02-01" created_by="dbu" test_suite="2" tcln_id="20"/>
+	<item_test_plan_list iteration_id="2" item_test_plan_id="23" item_test_plan_order="3"/>
+	
+	<ATTACHMENT_LIST ATTACHMENT_LIST_id="19" />
+	<execution execution_id="230" created_on="2010-02-01" created_by="dbu" name="foo" prerequisite="" ATTACHMENT_LIST_ID="19" tcln_id="20"/>
+	<item_test_plan_execution item_test_plan_id="23" execution_id="230" execution_order="0"/>
+	<iteration_test_plan_item/>
+	<test_case />
+</dataset>
