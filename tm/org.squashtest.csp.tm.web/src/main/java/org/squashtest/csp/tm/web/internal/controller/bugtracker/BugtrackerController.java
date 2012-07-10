@@ -110,7 +110,7 @@ public class BugtrackerController {
 	public void setExecutionFinder(ExecutionFinder executionFinder) {
 		this.executionFinder = executionFinder;
 	}
-	
+
 	@ServiceReference
 	public void setTestCaseFinder(TestCaseFinder testCaseFinder) {
 		this.testCaseFinder = testCaseFinder;
@@ -185,7 +185,7 @@ public class BugtrackerController {
 		CollectionSorting sorter = createCollectionSorting(params);
 
 		try {
-			
+
 			filteredCollection = bugTrackerLocalService.findSortedIssueOwnerShipsForExecutionStep(stepId, sorter);
 		}
 
@@ -316,9 +316,10 @@ public class BugtrackerController {
 			return attachIssue(jsonIssue, entity);
 		}
 	}
+
 	/* **************************************************************************************************************
 	 * *
-	 * TestCase  level section * *
+	 * TestCase level section * *
 	 * ***********************************************************************************************************
 	 */
 
@@ -342,8 +343,8 @@ public class BugtrackerController {
 	 */
 	@RequestMapping(value = TEST_CASE_TYPE + "/{tcId}/known-issues", method = RequestMethod.GET)
 	public @ResponseBody
-	DataTableModel getTestCaseKnownIssuesData(@PathVariable("tcId") Long tcId,
-			final DataTableDrawParameters params, final Locale locale) {
+	DataTableModel getTestCaseKnownIssuesData(@PathVariable("tcId") Long tcId, final DataTableDrawParameters params,
+			final Locale locale) {
 
 		FilteredCollectionHolder<List<IssueOwnership<BTIssue>>> filteredCollection;
 		CollectionSorting sorter = createCollectionSorting(params);
@@ -671,6 +672,7 @@ public class BugtrackerController {
 		// FIXME : I'm too lazy to implement something serious for now.
 		// The solution is probably to add adequate methods in the Bugged interface, so that we don't
 		// have to rely on reflection here.
+		// Or use getExecution of IssueOwnership
 		@Override
 		public String buildName(IssueDetector bugged) {
 			String name = "this is clearly a bug";
@@ -711,6 +713,7 @@ public class BugtrackerController {
 		// FIXME : I'm too lazy to implement something serious for now.
 		// The solution is probably to add adequate methods in the Bugged interface, so that we don't
 		// have to rely on reflection here.
+		// Or use getExecution of IssueOwnership
 		@Override
 		public String buildName(IssueDetector bugged) {
 			String name = "this is clearly a bug";
@@ -729,15 +732,17 @@ public class BugtrackerController {
 		// for a given execution we don't need to remind which one, so the name is ignored.
 		private String buildExecName(Execution bugged) {
 			String suiteName = findTestSuiteName(bugged);
-
-			return messageSource.getMessage("squashtm.generic.hierarchy.execution.name",
-					new Object[] { bugged.getName(), suiteName, bugged.getExecutionOrder() + 1 }, locale);
+			if (suiteName.equals("")) {
+				return messageSource.getMessage("squashtm.generic.hierarchy.execution.name.noSuite", new Object[] {
+						bugged.getName(), bugged.getExecutionOrder() + 1 }, locale);
+			} else {
+				return messageSource.getMessage("squashtm.generic.hierarchy.execution.name",
+						new Object[] { bugged.getName(), suiteName, bugged.getExecutionOrder() + 1 }, locale);
+			}
 		}
-
 	}
-	
-	private static class TestCaseModelOwnershipNamebuilder implements IssueOwnershipNameBuilder {
 
+	private static class TestCaseModelOwnershipNamebuilder implements IssueOwnershipNameBuilder {
 
 		private Locale locale;
 		private MessageSource messageSource;
@@ -752,9 +757,22 @@ public class BugtrackerController {
 			this.messageSource = source;
 		}
 
+		private String buildExecName(Execution execution) {
+			String iterationName = findIterationName(execution);
+			String suiteName = findTestSuiteName(execution);
+			if (suiteName.equals("")) {
+				return messageSource.getMessage("squashtm.test-case.hierarchy.execution.name.noSuite", new Object[] {
+						iterationName, execution.getExecutionOrder() + 1 }, locale);
+			} else {
+				return messageSource.getMessage("squashtm.test-case.hierarchy.execution.name", new Object[] {
+						iterationName, suiteName, execution.getExecutionOrder() + 1 }, locale);
+			}
+		}
+
 		// FIXME : I'm too lazy to implement something serious for now.
 		// The solution is probably to add adequate methods in the Bugged interface, so that we don't
 		// have to rely on reflection here.
+		// Or use getExecution of IssueOwnership
 		@Override
 		public String buildName(IssueDetector bugged) {
 			String name = "this is clearly a bug";
@@ -770,22 +788,12 @@ public class BugtrackerController {
 			return name;
 		}
 
-		// for a given execution we don't need to remind which one, so the name is ignored.
-		private String buildExecName(Execution execution) {
-			String iterationName = findIterationName(execution);			
-			String suiteName = findTestSuiteName(execution);
-
-			return messageSource.getMessage("squashtm.test-case.hierarchy.execution.name",
-					new Object[] {iterationName, suiteName, execution.getExecutionOrder() + 1 }, locale);
-		}
-
-		
-		}
+	}
 
 	private static String findTestSuiteName(Execution execution) {
 		TestSuite buggedSuite = execution.getTestPlan().getTestSuite();
 		String suiteName = "";
-		if(buggedSuite != null){
+		if (buggedSuite != null) {
 			suiteName = buggedSuite.getName();
 		}
 		return suiteName;
@@ -793,12 +801,13 @@ public class BugtrackerController {
 
 	private static String findIterationName(Execution execution) {
 		Iteration iteration = execution.getTestPlan().getIteration();
-		String iterationName ="";
-		if(iteration!= null){
+		String iterationName = "";
+		if (iteration != null) {
 			iterationName = iteration.getName();
 		}
 		return iterationName;
 	}
+
 	// **************************************** private utilities
 	// *******************************************************
 
@@ -841,6 +850,7 @@ public class BugtrackerController {
 					ownership.getIssue().getAssignee().getName(), nameBuilder.buildName(ownership.getOwner()) };
 		}
 	}
+
 	/**
 	 * <p>
 	 * the DataTableModel for a TestCase will hold following informations :
@@ -866,12 +876,14 @@ public class BugtrackerController {
 
 		@Override
 		public Object[] buildItemData(IssueOwnership<BTIssue> ownership) {
-			return new Object[] { bugTrackerLocalService.getIssueUrl(ownership.getIssue().getId()).toExternalForm(),
-					ownership.getIssue().getId(), ownership.getIssue().getSummary(),
-					ownership.getIssue().getPriority().getName(), ownership.getIssue().getStatus().getName(),
-					ownership.getIssue().getAssignee().getName(), nameBuilder.buildName(ownership.getOwner()) };
+			BTIssue issue = ownership.getIssue();
+			return new Object[] { bugTrackerLocalService.getIssueUrl(issue.getId()).toExternalForm(), issue.getId(),
+					issue.getSummary(), issue.getPriority().getName(), issue.getStatus().getName(),
+					issue.getAssignee().getName(), nameBuilder.buildName(ownership.getOwner()),
+					ownership.getExecution().getId() };
 		}
 	}
+
 	/**
 	 * <p>
 	 * the DataTableModel for an execution will hold the same informations than IterationIssuesTableModel (for now) :
@@ -898,10 +910,9 @@ public class BugtrackerController {
 		@Override
 		public Object[] buildItemData(IssueOwnership<BTIssue> ownership) {
 			BTIssue issue = ownership.getIssue();
-			
-			return new Object[] { bugTrackerLocalService.getIssueUrl(issue.getId()).toExternalForm(),
-					issue.getId(), issue.getSummary(),
-					issue.getPriority().getName(), issue.getStatus().getName(),
+
+			return new Object[] { bugTrackerLocalService.getIssueUrl(issue.getId()).toExternalForm(), issue.getId(),
+					issue.getSummary(), issue.getPriority().getName(), issue.getStatus().getName(),
 					issue.getAssignee().getName(), nameBuilder.buildName(ownership.getOwner()) };
 		}
 	}

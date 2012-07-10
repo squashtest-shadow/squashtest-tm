@@ -20,30 +20,44 @@
  */
 package org.squashtest.csp.tm.domain.bugtracker;
 
+import org.squashtest.csp.tm.domain.execution.Execution;
+import org.squashtest.csp.tm.domain.execution.ExecutionStep;
 
 /**
- * Mainly used to pair a Bugged entity with an issue together. 
+ * Mainly used to pair a Bugged entity with an issue together.
  * 
  * @author bsiri
- *
- * @param <ISSUE> can be pretty much anything you need to pair with a bugged thing actually.
+ * 
+ * @param <ISSUE>
+ *            can be pretty much anything you need to pair with a bugged thing actually.
  */
 public class IssueOwnership<ISSUE> {
-	
+
 	private final ISSUE issue;
 	private final IssueDetector owner;
-	
-	public IssueOwnership(ISSUE issue, IssueDetector owner){
-		this.issue=issue;
-		this.owner=owner;
+
+	public IssueOwnership(ISSUE issue, IssueDetector owner) {
+		this.issue = issue;
+		this.owner = owner;
 	}
-	
-	public IssueDetector getOwner(){
+
+	public IssueDetector getOwner() {
 		return owner;
 	}
-	
-	public ISSUE getIssue(){
+
+	public ISSUE getIssue() {
 		return issue;
+	}
+
+	public Execution getExecution() {
+		Execution execution = null;
+		if (owner instanceof ExecutionStep) {
+			ExecutionStep step = ((ExecutionStep) owner);
+			execution = step.getExecution();
+		} else if (owner instanceof Execution) {
+			execution = ((Execution) owner);
+		}
+		return execution;
 	}
 
 }

@@ -20,7 +20,7 @@
         along with this software.  If not, see <http://www.gnu.org/licenses/>.
 
 --%>
-<%@ tag description="Table displaying the issues for an Iteration" body-content="empty" %>
+<%@ tag description="Table displaying the issues for a TestCase" body-content="empty" %>
 	
 <%@ tag language="java" pageEncoding="ISO-8859-1"%>
 <%@ taglib prefix="pop" tagdir="/WEB-INF/tags/popup" %>
@@ -32,6 +32,7 @@
 
 <%@ attribute name="interfaceDescriptor" type="java.lang.Object" required="true" description="an object holding the labels for the interface"%>
 <%@ attribute name="dataUrl" required="true" description="where the table will fetch its data" %>
+<c:url var="executionUrl" value="/executions/"/>
 <%-- 
 	columns are :
 	
@@ -58,9 +59,14 @@
 	function getIssueTableRowAssignee(rowData){
 		return rowData[6];
 	}
+	
+	function getIssueTableRowExecId(rowData){
+		return rowData[7];
+	}
 
 	function issueTableRowCallback(row, data, displayIndex) {
 		addHLinkToIdRow(row,data);
+		addHLinkToExecInfo(row, data);
 		checkEmptyValues(row, data);
 		return row;
 	}
@@ -70,6 +76,13 @@
 		var td = $(row).find("td:eq(0)");
 		var url = getIssueTableRowUrl(data);
 		addHLinkToCellText(td, url, true);
+	}
+	
+	function addHLinkToExecInfo(row, data){
+		var td = $(row).find("td:eq(5)");
+		var execLabel = td.find(".issueExecLink");
+		var url = "${executionUrl}"+getIssueTableRowExecId(data)+"/info";
+		addHLinkToCellText(execLabel, url, true);
 	}
 
 	
@@ -102,7 +115,8 @@
 		<dt:column-definition targets="0" visible="false" sortable="false" />
 		<dt:column-definition targets="1" width="2.5em" cssClass="select-handle centered" sortable="true" visible="true"/>
 		<dt:column-definition targets="2, 3, 4, 5" sortable="false" visible="true"/>
-		<dt:column-definition targets="6" sortable="false" visible="true" lastDef="true"/>
+		<dt:column-definition targets="6" sortable="false" visible="true" />
+		<dt:column-definition targets="7" sortable="false" visible="false" lastDef="true"/>
 	</jsp:attribute>
 </comp:decorate-ajax-table>
 
@@ -117,7 +131,8 @@
 			<th>${interfaceDescriptor.tablePriorityHeader}</th>
 			<th>${interfaceDescriptor.tableStatusHeader}</th>
 			<th>${interfaceDescriptor.tableAssigneeHeader}</th>
-			<th><f:message key="iteration.issues.table.column-header.reportedin.label" /></th>
+			<th><f:message key="test-case.issues.table.column-header.reportedin.label" /></th>
+			<th>Exec id</th>
 		</tr>
 	</thead>
 	<tbody><%-- Will be populated through ajax --%></tbody>

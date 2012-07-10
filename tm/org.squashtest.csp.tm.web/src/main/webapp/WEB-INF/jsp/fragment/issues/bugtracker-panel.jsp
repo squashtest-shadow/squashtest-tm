@@ -332,24 +332,11 @@
 				</c:when>
 				
 				<c:when
-					test="${entityType == 'iteration'||entityType == 'test-suite'||entityType == 'campaign'||entityType == 'test-case'}">
-					<c:choose>
-						<c:when test="${entityType == 'test-case'}">
-							<c:set var="reportedInHeader">
-								<f:message
-									key="test-case.issues.table.column-header.reportedin.label" />
-							</c:set>
-						</c:when>
-						<c:otherwise>
-							<c:set var="reportedInHeader">
-								<f:message
-									key="iteration.issues.table.column-header.reportedin.label" />
-							</c:set>
-						</c:otherwise>
-					</c:choose>
-					<is:issue-table-iter dataUrl="${tableUrl}"
-						interfaceDescriptor="${interfaceDescriptor}"
-						reportedInHeader="${ reportedInHeader }" />
+					test="${entityType == 'iteration'||entityType == 'test-suite'||entityType == 'campaign'}">
+					<is:issue-table-iter dataUrl="${tableUrl}" interfaceDescriptor="${interfaceDescriptor}" />
+				</c:when>
+				<c:when test="${entityType == 'test-case' }">
+					<is:issue-table-tc dataUrl="${tableUrl}" interfaceDescriptor="${interfaceDescriptor}" />
 				</c:when>
 			</c:choose>
 		</div>
