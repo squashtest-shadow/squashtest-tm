@@ -20,7 +20,7 @@
         along with this software.  If not, see <http://www.gnu.org/licenses/>.
 
 --%>
-<%@ tag description="Table displaying the issues for an ExecutionStep" body-content="empty" %>
+<%@ tag description="Table displaying the issues for an Iteration" body-content="empty" %>
 	
 <%@ tag language="java" pageEncoding="ISO-8859-1"%>
 <%@ taglib prefix="pop" tagdir="/WEB-INF/tags/popup" %>
@@ -32,7 +32,7 @@
 
 <%@ attribute name="interfaceDescriptor" type="java.lang.Object" required="true" description="an object holding the labels for the interface"%>
 <%@ attribute name="dataUrl" required="true" description="where the table will fetch its data" %>
-
+<%@ attribute name="reportedInHeader" required="true" description="just the header name for the reported-in column" %>
 <%-- 
 	columns are :
 	
@@ -118,7 +118,7 @@
 			<th>${interfaceDescriptor.tablePriorityHeader}</th>
 			<th>${interfaceDescriptor.tableStatusHeader}</th>
 			<th>${interfaceDescriptor.tableAssigneeHeader}</th>
-			<th><f:message key="iteration.issues.table.column-header.reportedin.label"/></th>
+			<th>${reportedInHeader}</th>
 		</tr>
 	</thead>
 	<tbody><%-- Will be populated through ajax --%></tbody>

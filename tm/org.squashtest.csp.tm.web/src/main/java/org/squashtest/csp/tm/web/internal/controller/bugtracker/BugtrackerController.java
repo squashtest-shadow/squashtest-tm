@@ -55,12 +55,14 @@ import org.squashtest.csp.tm.domain.campaign.Iteration;
 import org.squashtest.csp.tm.domain.campaign.TestSuite;
 import org.squashtest.csp.tm.domain.execution.Execution;
 import org.squashtest.csp.tm.domain.execution.ExecutionStep;
+import org.squashtest.csp.tm.domain.testcase.TestCase;
 import org.squashtest.csp.tm.infrastructure.filter.CollectionSorting;
 import org.squashtest.csp.tm.infrastructure.filter.FilteredCollectionHolder;
 import org.squashtest.csp.tm.service.BugTrackerLocalService;
 import org.squashtest.csp.tm.service.CampaignFinder;
 import org.squashtest.csp.tm.service.ExecutionFinder;
 import org.squashtest.csp.tm.service.IterationFinder;
+import org.squashtest.csp.tm.service.TestCaseFinder;
 import org.squashtest.csp.tm.service.TestSuiteFinder;
 import org.squashtest.csp.tm.web.internal.model.datatable.DataTableDrawParameters;
 import org.squashtest.csp.tm.web.internal.model.datatable.DataTableModel;
@@ -77,12 +79,14 @@ public class BugtrackerController {
 	private IterationFinder iterationFinder;
 	private TestSuiteFinder testSuiteFinder;
 	private ExecutionFinder executionFinder;
+	private TestCaseFinder testCaseFinder;
 
 	private static final String EXECUTION_STEP_TYPE = "execution-step";
 	private static final String EXECUTION_TYPE = "execution";
 	private static final String ITERATION_TYPE = "iteration";
 	private static final String CAMPAIGN_TYPE = "campaign";
 	private static final String TEST_SUITE_TYPE = "test-suite";
+	private static final String TEST_CASE_TYPE = "test-case";
 
 	@Inject
 	private MessageSource messageSource;
@@ -105,6 +109,11 @@ public class BugtrackerController {
 	@ServiceReference
 	public void setExecutionFinder(ExecutionFinder executionFinder) {
 		this.executionFinder = executionFinder;
+	}
+	
+	@ServiceReference
+	public void setTestCaseFinder(TestCaseFinder testCaseFinder) {
+		this.testCaseFinder = testCaseFinder;
 	}
 
 	@ServiceReference
@@ -306,6 +315,51 @@ public class BugtrackerController {
 		} else {
 			return attachIssue(jsonIssue, entity);
 		}
+	}
+	/* **************************************************************************************************************
+	 * *
+	 * TestCase  level section * *
+	 * ***********************************************************************************************************
+	 */
+
+	/**
+	 * returns the panel displaying the current bugs of that testCase and the stub for the report form. Remember that
+	 * the report bug dialog will be populated later.
+	 * 
+	 * @param tcId
+	 * @return
+	 */
+	@RequestMapping(value = TEST_CASE_TYPE + "/{tcId}", method = RequestMethod.GET)
+	public ModelAndView getTestCaseIssuePanel(@PathVariable Long tcId, Locale locale,
+			@RequestParam(value = "style", required = false, defaultValue = "toggle") String panelStyle) {
+
+		TestCase testCase = testCaseFinder.findById(tcId);
+		return makeIssuePanel(testCase, TEST_CASE_TYPE, locale, panelStyle);
+	}
+
+	/**
+	 * json Data for the known issues table.
+	 */
+	@RequestMapping(value = TEST_CASE_TYPE + "/{tcId}/known-issues", method = RequestMethod.GET)
+	public @ResponseBody
+	DataTableModel getTestCaseKnownIssuesData(@PathVariable("tcId") Long tcId,
+			final DataTableDrawParameters params, final Locale locale) {
+
+		FilteredCollectionHolder<List<IssueOwnership<BTIssue>>> filteredCollection;
+		CollectionSorting sorter = createCollectionSorting(params);
+
+		try {
+			filteredCollection = bugTrackerLocalService.findSortedIssueOwnershipForTestCase(tcId, sorter);
+		}
+		// no credentials exception are okay, the rest is to be treated as usual
+		catch (BugTrackerNoCredentialsException noCrdsException) {
+			filteredCollection = makeEmptyCollectionHolder(TEST_CASE_TYPE, tcId, noCrdsException);
+		} catch (NullArgumentException npException) {
+			filteredCollection = makeEmptyCollectionHolder(TEST_CASE_TYPE, tcId, npException);
+		}
+		return new TestCaseIssuesTableModel(messageSource, locale).buildDataModel(filteredCollection,
+				sorter.getFirstItemIndex() + 1, params.getsEcho());
+
 	}
 
 	/* **************************************************************************************************************
@@ -674,15 +728,77 @@ public class BugtrackerController {
 
 		// for a given execution we don't need to remind which one, so the name is ignored.
 		private String buildExecName(Execution bugged) {
-			TestSuite buggedSuite = bugged.getTestPlan().getTestSuite();
-			String suiteName = (buggedSuite != null) ? buggedSuite.getName() : "";
+			String suiteName = findTestSuiteName(bugged);
 
 			return messageSource.getMessage("squashtm.generic.hierarchy.execution.name",
 					new Object[] { bugged.getName(), suiteName, bugged.getExecutionOrder() + 1 }, locale);
 		}
 
 	}
+	
+	private static class TestCaseModelOwnershipNamebuilder implements IssueOwnershipNameBuilder {
 
+
+		private Locale locale;
+		private MessageSource messageSource;
+
+		@Override
+		public void setLocale(Locale locale) {
+			this.locale = locale;
+		}
+
+		@Override
+		public void setMessageSource(MessageSource source) {
+			this.messageSource = source;
+		}
+
+		// FIXME : I'm too lazy to implement something serious for now.
+		// The solution is probably to add adequate methods in the Bugged interface, so that we don't
+		// have to rely on reflection here.
+		@Override
+		public String buildName(IssueDetector bugged) {
+			String name = "this is clearly a bug";
+
+			if (bugged instanceof ExecutionStep) {
+				ExecutionStep step = ((ExecutionStep) bugged);
+				name = buildExecName(step.getExecution());
+			} else if (bugged instanceof Execution) {
+				Execution exec = ((Execution) bugged);
+				name = buildExecName(exec);
+			}
+
+			return name;
+		}
+
+		// for a given execution we don't need to remind which one, so the name is ignored.
+		private String buildExecName(Execution execution) {
+			String iterationName = findIterationName(execution);			
+			String suiteName = findTestSuiteName(execution);
+
+			return messageSource.getMessage("squashtm.test-case.hierarchy.execution.name",
+					new Object[] {iterationName, suiteName, execution.getExecutionOrder() + 1 }, locale);
+		}
+
+		
+		}
+
+	private static String findTestSuiteName(Execution execution) {
+		TestSuite buggedSuite = execution.getTestPlan().getTestSuite();
+		String suiteName = "";
+		if(buggedSuite != null){
+			suiteName = buggedSuite.getName();
+		}
+		return suiteName;
+	}
+
+	private static String findIterationName(Execution execution) {
+		Iteration iteration = execution.getTestPlan().getIteration();
+		String iterationName ="";
+		if(iteration!= null){
+			iterationName = iteration.getName();
+		}
+		return iterationName;
+	}
 	// **************************************** private utilities
 	// *******************************************************
 
@@ -725,7 +841,37 @@ public class BugtrackerController {
 					ownership.getIssue().getAssignee().getName(), nameBuilder.buildName(ownership.getOwner()) };
 		}
 	}
+	/**
+	 * <p>
+	 * the DataTableModel for a TestCase will hold following informations :
+	 * <ul>
+	 * <li>the url of that issue,</li>
+	 * <li>the id,</li>
+	 * <li>the summary</li>,
+	 * <li>the priority,</li>
+	 * <li>the status,</li>
+	 * <li>the assignee,</li>
+	 * <li>the iteration name</li>
+	 * </ul>
+	 * </p>
+	 */
+	private class TestCaseIssuesTableModel extends DataTableModelHelper<IssueOwnership<BTIssue>> {
 
+		private IssueOwnershipNameBuilder nameBuilder = new TestCaseModelOwnershipNamebuilder();
+
+		public TestCaseIssuesTableModel(MessageSource source, Locale locale) {
+			nameBuilder.setMessageSource(source);
+			nameBuilder.setLocale(locale);
+		}
+
+		@Override
+		public Object[] buildItemData(IssueOwnership<BTIssue> ownership) {
+			return new Object[] { bugTrackerLocalService.getIssueUrl(ownership.getIssue().getId()).toExternalForm(),
+					ownership.getIssue().getId(), ownership.getIssue().getSummary(),
+					ownership.getIssue().getPriority().getName(), ownership.getIssue().getStatus().getName(),
+					ownership.getIssue().getAssignee().getName(), nameBuilder.buildName(ownership.getOwner()) };
+		}
+	}
 	/**
 	 * <p>
 	 * the DataTableModel for an execution will hold the same informations than IterationIssuesTableModel (for now) :

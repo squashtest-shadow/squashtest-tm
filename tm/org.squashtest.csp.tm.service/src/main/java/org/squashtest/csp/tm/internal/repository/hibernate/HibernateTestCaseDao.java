@@ -43,6 +43,7 @@ import org.springframework.stereotype.Repository;
 import org.squashtest.csp.core.infrastructure.collection.PagingAndSorting;
 import org.squashtest.csp.core.infrastructure.hibernate.PagingUtils;
 import org.squashtest.csp.core.infrastructure.hibernate.SortingUtils;
+import org.squashtest.csp.tm.domain.execution.Execution;
 import org.squashtest.csp.tm.domain.requirement.RequirementSearchCriteria;
 import org.squashtest.csp.tm.domain.testcase.ActionTestStep;
 import org.squashtest.csp.tm.domain.testcase.TestCase;
@@ -471,5 +472,11 @@ public class HibernateTestCaseDao extends HibernateEntityDao<TestCase> implement
 	
 	private Criteria tcNodeRootedCriteria(TestCaseSearchCriteria criteria){
 		return currentSession().createCriteria(TestCaseLibraryNode.class);
+	}
+
+	@Override
+	public List<Execution> findAllExecutionByTestCase(Long tcId) {
+		SetQueryParametersCallback callback = idParameter(tcId);
+		return executeListNamedQuery("testCase.findAllExecutions", callback);
 	}
 }

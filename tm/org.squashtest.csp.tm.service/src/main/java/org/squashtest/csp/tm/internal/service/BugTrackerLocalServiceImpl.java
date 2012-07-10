@@ -54,6 +54,7 @@ import org.squashtest.csp.tm.internal.repository.ExecutionDao;
 import org.squashtest.csp.tm.internal.repository.ExecutionStepDao;
 import org.squashtest.csp.tm.internal.repository.IssueDao;
 import org.squashtest.csp.tm.internal.repository.IterationDao;
+import org.squashtest.csp.tm.internal.repository.TestCaseDao;
 import org.squashtest.csp.tm.internal.repository.TestSuiteDao;
 import org.squashtest.csp.tm.service.BugTrackerLocalService;
 
@@ -81,6 +82,9 @@ public class BugTrackerLocalServiceImpl implements BugTrackerLocalService {
 
 	@Inject
 	private TestSuiteDao testSuiteDao;
+	
+	@Inject
+	private TestCaseDao testCaseDao;
 
 	@Override
 	public BugTrackerInterfaceDescriptor getInterfaceDescriptor() {
@@ -283,7 +287,20 @@ public class BugTrackerLocalServiceImpl implements BugTrackerLocalService {
 		// create filtredCollection of IssueOwnership<BTIssue>
 		return createOwnershipsCollection(sorter, issueDetectors);
 	}
+	
+	/* ------------------------TestCase--------------------------------------- */
+	
+	@Override
+	public FilteredCollectionHolder<List<IssueOwnership<BTIssue>>> findSortedIssueOwnershipForTestCase(Long tcId,
+			CollectionSorting sorter) {
+		
+		// Find all concerned IssueDetector
+		List<Execution> executions = testCaseDao.findAllExecutionByTestCase(tcId);
+		List<IssueDetector> issueDetectors = collectIssueDetectorsFromExecution(executions);
 
+		// create filtredCollection of IssueOwnership<BTIssue>
+		return createOwnershipsCollection(sorter, issueDetectors);
+	}
 	/* ------------------------generic--------------------------------------- */
 
 	private List<IssueDetector> collectIssueDetectorsFromExecution(List<Execution> executions) {
@@ -358,4 +375,6 @@ public class BugTrackerLocalServiceImpl implements BugTrackerLocalService {
 		}
 		return issuesRemoteIds;
 	}
+
+	
 }

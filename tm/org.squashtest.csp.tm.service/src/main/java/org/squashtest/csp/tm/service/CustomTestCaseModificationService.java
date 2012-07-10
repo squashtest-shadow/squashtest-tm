@@ -37,19 +37,8 @@ import org.squashtest.csp.tm.infrastructure.filter.FilteredCollectionHolder;
  * 
  */
 @Transactional
-public interface CustomTestCaseModificationService {
-	@Transactional(readOnly = true)
-	TestCase findById(long testCaseId);
-
-	@Transactional(readOnly = true)
-	TestCase findTestCaseWithSteps(long testCaseId);
-
-	@Transactional(readOnly = true)
-	List<TestStep> findStepsByTestCaseId(long testCaseId);
-
-	@Transactional(readOnly = true)
-	FilteredCollectionHolder<List<TestStep>> findStepsByTestCaseIdFiltered(long testCaseId, CollectionFilter filter);
-
+public interface CustomTestCaseModificationService extends TestCaseFinder{
+	
 	void rename(long testCaseId, String newName);
 
 	TestStep addActionTestStep(long parentTestCaseId, ActionTestStep newTestStep);
@@ -76,31 +65,6 @@ public interface CustomTestCaseModificationService {
 	void removeStepFromTestCase(long testCaseId, long testStepId);
 
 	void removeListOfSteps(long testCaseId, List<Long> testStepIds);
-
-	/**
-	 * @param testCaseId
-	 * @param pas
-	 * @return
-	 */
-	@Deprecated
-	@Transactional(readOnly = true)
-	PagedCollectionHolder<List<VerifiedRequirement>> findAllVerifiedRequirementsByTestCaseId(long testCaseId,
-			PagingAndSorting pas);
-
-	/**
-	 * That method returns the list of test cases having at least one CallTestStep directly calling the test case
-	 * identified by testCaseId. The list is wrapped in a FilteredCollectionHolder, that contains meta informations
-	 * regarding the filtering, as usual.
-	 * 
-	 * @param testCaseId
-	 *            the Id of the called test case.
-	 * @param sorting
-	 *            the sorting parameters.
-	 * @return a non null but possibly empty FilteredCollectionHolder wrapping the list of first-level calling test
-	 *         cases.
-	 */
-	@Transactional(readOnly = true)
-	FilteredCollectionHolder<List<TestCase>> findCallingTestCases(long testCaseId, CollectionSorting sorting);
 
 	/**
 	 * will insert a test step into a test case script, possibly after a step (the position), given their Ids.

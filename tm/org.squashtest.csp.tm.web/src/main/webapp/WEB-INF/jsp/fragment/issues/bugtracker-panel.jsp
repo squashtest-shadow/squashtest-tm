@@ -21,16 +21,17 @@
 
 --%>
 <?xml version="1.0" encoding="utf-8" ?>
-<%@ page language="java" contentType="text/html; charset=utf-8" pageEncoding="utf-8"%>
-<%@ taglib prefix="pop" tagdir="/WEB-INF/tags/popup" %>
-<%@ taglib uri="http://java.sun.com/jsp/jstl/fmt" prefix="f"%>
-<%@ taglib uri="http://java.sun.com/jsp/jstl/core" prefix="c"%>
+<%@ page language="java" contentType="text/html; charset=utf-8"
+	pageEncoding="utf-8"%>
+<%@ taglib prefix="pop" tagdir="/WEB-INF/tags/popup"%>
+<%@ taglib prefix="f" uri="http://java.sun.com/jsp/jstl/fmt"%>
+<%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core"%>
 <%@ taglib prefix="s" uri="http://www.springframework.org/tags"%>
 
-<%@ taglib tagdir="/WEB-INF/tags/component" prefix="comp"%>
-<%@ taglib tagdir="/WEB-INF/tags/aggregates" prefix="agg"%>
-<%@ taglib tagdir="/WEB-INF/tags/issues" prefix="is"%>
-<%@ taglib prefix="authz" tagdir="/WEB-INF/tags/authz" %>
+<%@ taglib prefix="comp" tagdir="/WEB-INF/tags/component"%>
+<%@ taglib prefix="agg" tagdir="/WEB-INF/tags/aggregates"%>
+<%@ taglib prefix="is" tagdir="/WEB-INF/tags/issues"%>
+<%@ taglib prefix="authz" tagdir="/WEB-INF/tags/authz"%>
 
 
 <%--
@@ -54,56 +55,59 @@
 				* READY : nothing special, the component is fully functional.
  --%>
 <%-- ----------------------------------- Authorization ----------------------------------------------%>
-<c:set var="editable" value="${ false }" /> 
-<authz:authorized hasRole="ROLE_ADMIN" hasPermission="EXECUTE" domainObject="${ entity }">
-	<c:set var="editable" value="${ true }" /> 
+<c:set var="editable" value="${ false }" />
+<authz:authorized hasRole="ROLE_ADMIN" hasPermission="EXECUTE"
+	domainObject="${ entity }">
+	<c:set var="editable" value="${ true }" />
 </authz:authorized>
 
-<c:if test="${entityType == 'iteration'||entityType == 'test-suite'||entityType == 'campaign'}" >
-	<c:set var="editable" value="${false}"/>
+<c:if
+	test="${entityType == 'iteration'||entityType == 'test-suite'||entityType == 'campaign'||entityType == 'test-case'}">
+	<c:set var="editable" value="${false}" />
 </c:if>
 
-<s:url var="bugTrackerUrl" value="/bugtracker/"/>
+<s:url var="bugTrackerUrl" value="/bugtracker/" />
 
-<s:url var="entityUrl" value="/bugtracker/{entityType}/{id}" >
-	<s:param  name="entityType" value="${entityType}"/>
-	<s:param  name="id" value="${entity.id}"/>
+<s:url var="entityUrl" value="/bugtracker/{entityType}/{id}">
+	<s:param name="entityType" value="${entityType}" />
+	<s:param name="id" value="${entity.id}" />
 </s:url>
 
 <s:url var="credentialsUrl" value="/bugtracker/credentials" />
 
-<s:url var="tableUrl" value="/bugtracker/{entityType}/{id}/known-issues" >
-	<s:param name="entityType" value="${entityType}"/>
-	<s:param  name="id" value="${entity.id}"/>
+<s:url var="tableUrl" value="/bugtracker/{entityType}/{id}/known-issues">
+	<s:param name="entityType" value="${entityType}" />
+	<s:param name="id" value="${entity.id}" />
 </s:url>
- 
+
 
 <%-------------- a bug created successfully will be shown here -----------------------------%>
 
 <script type="text/javascript">
-	function displayNewIssue(json){
-		var issueUrl= json.url;
-		var issueId= json.issueId;
-		$("#issue-url").attr("href",issueUrl);
-		$("#issue-url").attr("target","_blank");
+	function displayNewIssue(json) {
+		var issueUrl = json.url;
+		var issueId = json.issueId;
+		$("#issue-url").attr("href", issueUrl);
+		$("#issue-url").attr("target", "_blank");
 		$("#issue-url").html(issueUrl);
-		setMessageIssueId(issueId); 
-		$("#issue-panel-bugcreated-area").fadeIn('slow').delay(20000).fadeOut('slow');	
+		setMessageIssueId(issueId);
+		$("#issue-panel-bugcreated-area").fadeIn('slow').delay(20000).fadeOut(
+				'slow');
 	}
-	
-	
+
 	//since IE8 doesn't support String.replace(), we're happily doing the job manually.
-	function setMessageIssueId(newId){
+	function setMessageIssueId(newId) {
 		var message = $("#issue-add-success-message").html();
-		
-		var beginIndex = message.indexOf("#",0)+1;
+
+		var beginIndex = message.indexOf("#", 0) + 1;
 		var messageRemainder = message.substr(beginIndex);
 		var endIndex = messageRemainder.indexOf(" ");
-		
-		var newMessage = message.substr(0,beginIndex)+newId+messageRemainder.substr(endIndex);
-		
+
+		var newMessage = message.substr(0, beginIndex) + newId
+				+ messageRemainder.substr(endIndex);
+
 		$("#issue-add-success-message").html(newMessage);
-	
+
 	}
 </script>
 
@@ -124,34 +128,32 @@
 	The rest is just standard functions.
 
  --%>
- 
- <script type="text/javascript" >
- 	function loginSuccess(){};
- 	function loginFail(){}; 
- 	
- 	
-	
-	function invokeCredentialPopup(fnSuccessHandler, fnFailureHandler){
-		loginSuccess=fnSuccessHandler;
-		loginFail=fnFailureHandler;
+
+<script type="text/javascript">
+	function loginSuccess() {
+	};
+	function loginFail() {
+	};
+
+	function invokeCredentialPopup(fnSuccessHandler, fnFailureHandler) {
+		loginSuccess = fnSuccessHandler;
+		loginFail = fnFailureHandler;
 		$("#issue-dialog-credentials").dialog("open");
 	}
-	 	
-	
+
 	function refreshIssueTable() {
-		var dataTable = $('#issue-table').dataTable(); 
+		var dataTable = $('#issue-table').dataTable();
 		dataTable.fnDraw();
 	}
-	
-	
-	function enableIssueTable(){
-		$("#issue-panel-knownissues-div").removeClass("issue-panel-knownissues-displayed");	
-		$("#issue-panel-knownissues-div").addClass("issue-panel-knownissues-notdisplayed");		
-		$("#issue-panel-known-issue-table-div").removeClass("not-displayed");		
+
+	function enableIssueTable() {
+		$("#issue-panel-knownissues-div").removeClass(
+				"issue-panel-knownissues-displayed");
+		$("#issue-panel-knownissues-div").addClass(
+				"issue-panel-knownissues-notdisplayed");
+		$("#issue-panel-known-issue-table-div").removeClass("not-displayed");
 	}
-	
- 	
- </script>
+</script>
 
 
 <%-- internal logic for loging in when one want to check the issues. Main function : checkAndReloadIssue.
@@ -159,23 +161,20 @@
 	Depending on the success of a call, one of another function will be called and the logic 
 	continues there.
  --%>
- 
-<script type="text/javascript" >
-	
-	function loginSuccessCheckIssues(){
+
+<script type="text/javascript">
+	function loginSuccessCheckIssues() {
 		enableIssueTable();
 		refreshIssueTable();
 	}
-	
-	function loginAbort(){
+
+	function loginAbort() {
 		return false;
 	}
-	
-	function bugTrackerLogin(){
-		invokeCredentialPopup(loginSuccessCheckIssues,loginAbort);
-	}
-	
 
+	function bugTrackerLogin() {
+		invokeCredentialPopup(loginSuccessCheckIssues, loginAbort);
+	}
 </script>
 
 
@@ -186,12 +185,12 @@
 	continues there.
  --%>
 <script type="text/javascript">
-
-	<%-- basic routine : if credentials are checked, proceed to bug report. If not, first hook into 
+	
+<%-- basic routine : if credentials are checked, proceed to bug report. If not, first hook into 
 	set credential routine
 	--%>
-	function checkAndReportIssue(){
-	
+	function checkAndReportIssue() {
+
 		//first step : check
 		$.ajax({
 			url : "${bugTrackerUrl}/check/",
@@ -201,83 +200,77 @@
 		});
 	}
 
-	function handleBugTrackerStatus(jsonCheck){
-		if (jsonCheck.status =="bt_undefined"){
-			<%-- the bugtracker is undefined. Why the hell should we log in ?--%>
+	function handleBugTrackerStatus(jsonCheck) {
+		if (jsonCheck.status == "bt_undefined") {
+<%-- the bugtracker is undefined. Why the hell should we log in ?--%>
+	return false;
+		}
+
+		if (jsonCheck.status == "needs_credentials") {
+			invokeCredentialPopup(loginSuccessOpenReport, abortReport);
+
 			return false;
 		}
-		
-		if (jsonCheck.status == "needs_credentials"){
-			invokeCredentialPopup(loginSuccessOpenReport,abortReport);
-			
-			return false;
-		}
-		
-		if (jsonCheck.status == "ready"){
+
+		if (jsonCheck.status == "ready") {
 			invokeBugReportPopup();
 			return false;
 		}
-		
+
 	}
-	
-	function abortReport(){
+
+	function abortReport() {
 		return false;
 	}
-	
-	
-	function issueReportSuccess(json){
+
+	function issueReportSuccess(json) {
 		displayNewIssue(json);
 		refreshIssueTable();
 	}
-	
-	function loginSuccessOpenReport(){
-		enableIssueTable();		
+
+	function loginSuccessOpenReport() {
+		enableIssueTable();
 		refreshIssueTable();
 		invokeBugReportPopup();
 	}
 
-	function invokeBugReportPopup(){
+	function invokeBugReportPopup() {
 		$("#issue-report-dialog").dialog("open");
 	}
-
-
-		
 </script>
 
 
 
 <%-- init code, including copy pasta de decorate-button.tag, that will handle those two buttons only --%>
 <script type="text/javascript">
-
 	$(function() {
-		
+
 		<c:if test="${editable}">
-		$( "#issue-report-dialog-openbutton" ).button();		
-		$( "#issue-report-dialog-openbutton" ).click(function(){
+		$("#issue-report-dialog-openbutton").button();
+		$("#issue-report-dialog-openbutton").click(function() {
 			$(this).removeClass("ui-state-focus ui-state-hover");
 		});
 		</c:if>
-		
 
-		$( "#issue-login-button" ).button();		
-		$( "#issue-login-button" ).click(function(){
+		$("#issue-login-button").button();
+		$("#issue-login-button").click(function() {
 			$(this).removeClass("ui-state-focus ui-state-hover");
 		});
-		
-		
+
 		<c:if test="${editable}">
 		$("#issue-report-dialog-openbutton").click(checkAndReportIssue);
 		</c:if>
 		$("#issue-login-button").click(bugTrackerLogin);
 
-	});	
-	
-	
+	});
 </script>
 
 
-<div id="issue-panel-bugcreated-area" class="not-displayed ui-corner-all ">
-	<span class="ui-icon ui-icon-info icon"></span><span id="issue-add-success-message"><f:message key="issue.add.success" />&nbsp;(<a href="" id="issue-url"></a>)</span>
+<div id="issue-panel-bugcreated-area"
+	class="not-displayed ui-corner-all ">
+	<span class="ui-icon ui-icon-info icon"></span><span
+		id="issue-add-success-message"><f:message
+			key="issue.add.success" />&nbsp;(<a href="" id="issue-url"></a>)</span>
 </div>
 
 
@@ -287,45 +280,77 @@
 <%-- init section for issue-panel-knownissues-div --%>
 <c:choose>
 	<c:when test="${bugTrackerStatus == 'BUGTRACKER_NEEDS_CREDENTIALS'}">
-		<c:set var="knownIssuesLabelInitCss" value="issue-panel-knownissues-displayed"/>
-		<c:set var="knownIssuesTableInitCss" value="class=\"not-displayed\"" />	
+		<c:set var="knownIssuesLabelInitCss"
+			value="issue-panel-knownissues-displayed" />
+		<c:set var="knownIssuesTableInitCss" value="class=\"not-displayed\"" />
 	</c:when>
 	<c:otherwise>
-		<c:set var="knownIssuesLabelInitCss" value="issue-panel-knownissues-notdisplayed" />
-		<c:set var="knownIssuesTableInitCss" value="" />	
+		<c:set var="knownIssuesLabelInitCss"
+			value="issue-panel-knownissues-notdisplayed" />
+		<c:set var="knownIssuesTableInitCss" value="" />
 	</c:otherwise>
 </c:choose>
 
 
 <%-- /init section for issue-panel-knownissues-div --%>
 
-<agg:structure-configurable-panel id="issue-panel" titleKey="issue.panel.title" isContextual="true" open="true" style="${panelStyle}" >
+<agg:structure-configurable-panel id="issue-panel"
+	titleKey="issue.panel.title" isContextual="true" open="true"
+	style="${panelStyle}">
+
 	<jsp:attribute name="panelButtons">
-	<c:if test="${ editable }">
-		<f:message var="issueReportOpenButtonLabel" key="issue.button.opendialog.label" />
-		<input type="button" class="button" id="issue-report-dialog-openbutton" value="${issueReportOpenButtonLabel}"/>
-	</c:if>
+		<c:if test="${ editable }">
+				<f:message var="issueReportOpenButtonLabel"
+				key="issue.button.opendialog.label" />
+				<input type="button" class="button"
+				id="issue-report-dialog-openbutton"
+				value="${issueReportOpenButtonLabel}" />
+		</c:if>
 	</jsp:attribute>
-	
+
+
 	<jsp:attribute name="body">
 	
-		<div id="issue-panel-knownissues-div" class="${knownIssuesLabelInitCss}">
-			<span><f:message key="issue.panel.needscredentials.label"/></span>			
+		<div id="issue-panel-knownissues-div"
+			class="${knownIssuesLabelInitCss}">
+			<span><f:message key="issue.panel.needscredentials.label" />
+			</span>			
 			<f:message var="loginButtonLabel" key="issue.panel.login.label" />
-			<input type="button" class="button" id="issue-login-button" value="${loginButtonLabel}" />
+			<input type="button" class="button" id="issue-login-button"
+				value="${loginButtonLabel}" />
 		</div>
 	
-		<div id="issue-panel-known-issue-table-div" ${knownIssuesTableInitCss}>
+		<div id="issue-panel-known-issue-table-div"${knownIssuesTableInitCss}>
 			<c:choose>
 				<c:when test="${entityType == 'execution-step'}">
-					<is:issue-table-execstep dataUrl="${tableUrl}" interfaceDescriptor="${interfaceDescriptor}"/>
+					<is:issue-table-execstep dataUrl="${tableUrl}"
+						interfaceDescriptor="${interfaceDescriptor}" />
 				</c:when>
 				<c:when test="${entityType == 'execution'}">
-					<is:issue-table-exec dataUrl="${tableUrl}" interfaceDescriptor="${interfaceDescriptor}" />			
+					<is:issue-table-exec dataUrl="${tableUrl}"
+						interfaceDescriptor="${interfaceDescriptor}" />			
 				</c:when>
-				<c:when test="${entityType == 'iteration'||entityType == 'test-suite'||entityType == 'campaign'}">
-					<is:issue-table-iter dataUrl="${tableUrl}" interfaceDescriptor="${interfaceDescriptor}" />			
-				</c:when>				
+				
+				<c:when
+					test="${entityType == 'iteration'||entityType == 'test-suite'||entityType == 'campaign'||entityType == 'test-case'}">
+					<c:choose>
+						<c:when test="${entityType == 'test-case'}">
+							<c:set var="reportedInHeader">
+								<f:message
+									key="test-case.issues.table.column-header.reportedin.label" />
+							</c:set>
+						</c:when>
+						<c:otherwise>
+							<c:set var="reportedInHeader">
+								<f:message
+									key="iteration.issues.table.column-header.reportedin.label" />
+							</c:set>
+						</c:otherwise>
+					</c:choose>
+					<is:issue-table-iter dataUrl="${tableUrl}"
+						interfaceDescriptor="${interfaceDescriptor}"
+						reportedInHeader="${ reportedInHeader }" />
+				</c:when>
 			</c:choose>
 		</div>
 	</jsp:attribute>
@@ -334,9 +359,9 @@
 
 <%-------------------------------- add issue popup code -----------------------------------%>
 <c:if test="${editable}">
-<is:issue-add-popup id="issue-report-dialog" interfaceDescriptor="${interfaceDescriptor}"  
-					entityUrl="${entityUrl}" 
-					successCallback="issueReportSuccess" />
+	<is:issue-add-popup id="issue-report-dialog"
+		interfaceDescriptor="${interfaceDescriptor}" entityUrl="${entityUrl}"
+		successCallback="issueReportSuccess" />
 </c:if>
 <%-------------------------------- /add issue popup code -----------------------------------%>
 
@@ -347,30 +372,27 @@
 note that the successCallback and failureCallback are in the present case two pointers to the actual callbacks, 
 check that in the next <script></script> tags 
 --%>
-<is:issue-credentials-popup url="${credentialsUrl}"  divId="issue-dialog-credentials"
-							successCallback="loginSuccess" failureCallback="loginFail"	
-								/>
+<is:issue-credentials-popup url="${credentialsUrl}"
+	divId="issue-dialog-credentials" successCallback="loginSuccess"
+	failureCallback="loginFail" />
 
-								
+
 <%-- init code, including copy pasta de decorate-button.tag, that will handle those two buttons only --%>
 <script type="text/javascript">
-
 	$(function() {
-		
+
 		<c:if test="${editable}">
-		$( "#issue-report-dialog-openbutton" ).button();		
-		$( "#issue-report-dialog-openbutton" ).click(function(){
+		$("#issue-report-dialog-openbutton").button();
+		$("#issue-report-dialog-openbutton").click(function() {
 			$(this).removeClass("ui-state-focus ui-state-hover");
 		});
 		</c:if>
-		
 
-		$( "#issue-login-button" ).button();		
-		$( "#issue-login-button" ).click(function(){
+		$("#issue-login-button").button();
+		$("#issue-login-button").click(function() {
 			$(this).removeClass("ui-state-focus ui-state-hover");
 		});
-		
-		
+
 		<c:if test="${editable}">
 		$("#issue-report-dialog-openbutton").click(checkAndReportIssue);
 		</c:if>
@@ -379,8 +401,6 @@ check that in the next <script></script> tags
 		<c:if test="${bugTrackerStatus == 'BUGTRACKER_READY'}">
 		refreshIssueTable();
 		</c:if>
-		
-	});	
-	
-	
+
+	});
 </script>

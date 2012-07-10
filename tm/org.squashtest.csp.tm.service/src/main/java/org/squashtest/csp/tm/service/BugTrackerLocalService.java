@@ -77,7 +77,7 @@ public interface BugTrackerLocalService {
 	 * To keep track of which IssueDetector owns which issue, the data are wrapped in a IssueOwnership (that just pair
 	 * the informations together).
 	 * 
-	 * @param buggedEntity
+	 * @param stepId
 	 *            of which we need to get the issues,
 	 * @param sorter
 	 *            that tells us how we should sort and filter the data
@@ -93,7 +93,7 @@ public interface BugTrackerLocalService {
 	 * To keep track of which IssueDetector owns which issue, the data are wrapped in a IssueOwnership (that just pair
 	 * the informations together).
 	 * 
-	 * @param buggedEntity
+	 * @param execId
 	 *            of which we need to get the issues,
 	 * @param sorter
 	 *            that tells us how we should sort and filter the data
@@ -109,7 +109,7 @@ public interface BugTrackerLocalService {
 	 * To keep track of which IssueDetector owns which issue, the data are wrapped in a IssueOwnership (that just pair
 	 * the informations together).
 	 * 
-	 * @param buggedEntity
+	 * @param iterId
 	 *            of which we need to get the issues,
 	 * @param sorter
 	 *            that tells us how we should sort and filter the data
@@ -125,7 +125,7 @@ public interface BugTrackerLocalService {
 	 * To keep track of which IssueDetector owns which issue, the data are wrapped in a IssueOwnership (that just pair
 	 * the informations together).
 	 * 
-	 * @param buggedEntity
+	 * @param campId
 	 *            of which we need to get the issues,
 	 * @param sorter
 	 *            that tells us how we should sort and filter the data
@@ -140,7 +140,7 @@ public interface BugTrackerLocalService {
 	 * To keep track of which IssueDetector owns which issue, the data are wrapped in a IssueOwnership (that just pair
 	 * the informations together).
 	 * 
-	 * @param TestSuite
+	 * @param testSuiteId
 	 *            for which we need to get the issues,
 	 * @param sorter
 	 *            that tells us how we should sort and filter the data
@@ -148,6 +148,21 @@ public interface BugTrackerLocalService {
 	 *         and filtered according to the CollectionSorting.
 	 */
 	FilteredCollectionHolder<List<IssueOwnership<BTIssue>>> findSortedIssueOwnershipsForTestSuite(Long testSuiteId,
+			CollectionSorting sorter);
+	/**
+	 * Given a TestCase, returns a list of linked BTIssue (not Issue).<br>
+	 * <br>
+	 * To keep track of which IssueDetector owns which issue, the data are wrapped in a IssueOwnership (that just pair
+	 * the informations together).
+	 * 
+	 * @param testCase id
+	 *            for which we need to get the issues,
+	 * @param sorter
+	 *            that tells us how we should sort and filter the data
+	 * @return a FilteredCollectionHolder containing a non-null but possibly empty list of IssueOwnership<Issue>, sorted
+	 *         and filtered according to the CollectionSorting.
+	 */
+	FilteredCollectionHolder<List<IssueOwnership<BTIssue>>> findSortedIssueOwnershipForTestCase(Long tcId,
 			CollectionSorting sorter);
 	/* ****************** BugTracker - side methods ******************** */
 
@@ -213,5 +228,7 @@ public interface BugTrackerLocalService {
 	URL getBugtrackerUrl();
 
 	Boolean getBugtrackerIframeFriendly();
+
+	
 
 }

@@ -164,7 +164,6 @@ div.fragment-tabs > div {
 }
 div.fragment-tabs > div.table-tab > div.toolbar {
 	font-size: 0.8em;
-    min-height: 30px;
     position: relative;
     text-align: right;
 }

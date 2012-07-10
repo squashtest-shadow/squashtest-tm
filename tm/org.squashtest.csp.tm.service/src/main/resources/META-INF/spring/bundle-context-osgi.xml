@@ -61,8 +61,12 @@
 	<osgi:service ref="squashtest.tm.service.ProjectModificationService"
 		interface="org.squashtest.csp.tm.service.ProjectModificationService" />
 
-	<osgi:service ref="squashtest.tm.service.TestCaseModificationService"
-		interface="org.squashtest.csp.tm.service.TestCaseModificationService" />
+	<osgi:service ref="squashtest.tm.service.TestCaseModificationService">
+		<osgi:interfaces>
+			<value>org.squashtest.csp.tm.service.TestCaseModificationService</value>
+			<value>org.squashtest.csp.tm.service.TestCaseFinder</value>
+		</osgi:interfaces>
+	</osgi:service>
 
 	<osgi:service ref="squashtest.tm.service.TestCaseLibraryNavigationService">
 		<osgi:interfaces>

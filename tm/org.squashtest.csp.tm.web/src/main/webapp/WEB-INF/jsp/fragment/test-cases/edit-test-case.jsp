@@ -57,6 +57,9 @@
 <s:url var="updateStepUrl" value="/test-cases/{tcId}/steps/">
 	<s:param name="tcId" value="${testCase.id}" />
 </s:url>
+<s:url var="btEntityUrl" value="/bugtracker/test-case/{id}" >
+	<s:param name="id" value="${testCase.id}"/>
+</s:url>
 <s:url var="verifiedReqsManagerUrl" value="/test-cases/${ testCase.id }/verified-requirement-versions/manager" />
 <c:url var="verifiedRequirementsUrl" value="/test-cases/${ testCase.id }/verified-requirement-versions" />
 <c:url var="nonVerifiedRequirementsUrl" value="/test-cases/${ testCase.id }/non-verified-requirement-versions" />
@@ -875,6 +878,11 @@ $(function() {
 
 
 
+<%------------------------------ bugs section -------------------------------%>
+
+<comp:issues-tab btEntityUrl="${ btEntityUrl }"/>
+
+<%------------------------------ /bugs section -------------------------------%>
 
 <comp:decorate-buttons />
 

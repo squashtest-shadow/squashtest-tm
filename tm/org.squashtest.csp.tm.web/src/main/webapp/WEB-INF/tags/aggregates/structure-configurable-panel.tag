@@ -43,9 +43,9 @@
 	<comp:fragment-tab-panel id="${id}" title="${title}" 
 					   titleKey="${titleKey}" open="${open}" 
 					   isContextual="${isContextual}" classes="${classes}">
-		<jsp:attribute name="panelButtons">
-			<jsp:invoke fragment="panelButtons"/>
-		</jsp:attribute>
+			<jsp:attribute name="panelButtons">
+				<jsp:invoke fragment="panelButtons"/>
+			</jsp:attribute>
 		<jsp:attribute name="body">
 			<jsp:invoke fragment="body"/>
 		</jsp:attribute>		
