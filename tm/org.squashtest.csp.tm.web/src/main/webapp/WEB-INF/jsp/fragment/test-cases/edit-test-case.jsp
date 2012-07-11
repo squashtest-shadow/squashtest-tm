@@ -476,13 +476,20 @@ $(function() {
 
 <%-- ------------------------------ Add Test Step Dialog ------------------------------------------------ --%>
 <comp:popup id="add-test-step-dialog" titleKey="dialog.add-test_step.title" isContextual="true"
-	openedBy="add-test-step-button">
+	openedBy="add-test-step-button" closeOnSuccess="${false}">
 	<jsp:attribute name="buttons">
 	
-		<f:message var="label" key="dialog.button.add.label" />
-		'${ label }': function() {
+		<f:message var="addLabel" key="dialog.button.add.label" />
+		'${ addLabel }': function() {
 			var url = "${ addStepUrl }";
-			<jq:ajaxcall url="url" dataType="json" httpMethod="POST" useData="true" successHandler="refreshSteps">		
+			<jq:ajaxcall url="url" dataType="json" httpMethod="POST" useData="true" successHandler="addTestStepSuccess">		
+				<jq:params-bindings action="#add-test-step-action" expectedResult="#add-test-step-result" />
+			</jq:ajaxcall>					
+		},
+		<f:message var="addAnotherLabel" key="dialog.button.add.another.label" />
+		'${ addAnotherLabel }': function() {
+			var url = "${ addStepUrl }";
+			<jq:ajaxcall url="url" dataType="json" httpMethod="POST" useData="true" successHandler="addTestStepSuccessAnother">		
 				<jq:params-bindings action="#add-test-step-action" expectedResult="#add-test-step-result" />
 			</jq:ajaxcall>					
 		},			
@@ -501,7 +508,18 @@ $(function() {
 
 	</jsp:body>
 </comp:popup>
+<script>
+function addTestStepSuccess(){
+	if ($("#add-test-step-dialog").dialog("isOpen")==true) $( "#add-test-step-dialog" ).dialog('close');
+	refreshSteps();
+}
 
+function addTestStepSuccessAnother(){
+	CKEDITOR.instances["add-test-step-action"].setData('');
+	CKEDITOR.instances["add-test-step-result"].setData('');
+	refreshSteps();
+}
+</script>
 <%------------------------ Test Step deletion dialogs ----------------------------------%>
 
 <%--- the openedBy attribute here is irrelevant and is just a dummy --%>
