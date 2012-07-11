@@ -55,6 +55,7 @@ import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.bind.annotation.ResponseStatus;
 import org.springframework.web.multipart.MultipartFile;
 import org.springframework.web.servlet.ModelAndView;
+import org.squashtest.csp.core.web.utils.HTMLCleanupUtils;
 import org.squashtest.csp.tm.domain.requirement.ExportRequirementData;
 import org.squashtest.csp.tm.domain.requirement.NewRequirementVersionDto;
 import org.squashtest.csp.tm.domain.requirement.Requirement;
@@ -206,13 +207,9 @@ public class RequirementLibraryNavigationController extends
 			// it seems JasperReports doesn't like '\n' and the likes so we'll HTML-encode that first.
 			// that solution is quite weak though.
 			for (ExportRequirementData data : dataSource) {
-				String replacedDescription = data.getDescription().replaceFirst("\n", "");
-				Source htmlSource = new Source(replacedDescription);
-				Segment htmlSegment = new Segment(htmlSource, 0, replacedDescription.length());
-				Renderer htmlRend = new Renderer(htmlSegment);
-				String encoded = htmlRend.toString();
-				String trimedEncoded = encoded.trim();
-				data.setDescription(trimedEncoded);
+				String htmlDescription = data.getDescription();
+				String description = HTMLCleanupUtils.htmlToText(htmlDescription);
+				data.setDescription(description);
 			}
 
 			// report generation parameters

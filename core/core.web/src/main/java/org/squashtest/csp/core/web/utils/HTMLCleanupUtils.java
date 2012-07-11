@@ -22,10 +22,10 @@ package org.squashtest.csp.core.web.utils;
 
 import net.htmlparser.jericho.HTMLElementName;
 import net.htmlparser.jericho.OutputDocument;
+import net.htmlparser.jericho.Renderer;
 import net.htmlparser.jericho.Segment;
 import net.htmlparser.jericho.Source;
 import net.htmlparser.jericho.Tag;
-import net.htmlparser.jericho.TextExtractor;
 
 import org.springframework.web.util.HtmlUtils;
 
@@ -38,9 +38,13 @@ public final class HTMLCleanupUtils {
 	//todo : better parsing / formatting for a better looking plain text ?  
 	public static String htmlToText(String html){
 		
-		TextExtractor extractor = new TextExtractor(new Segment(new Source(html), 0, html.length()));
+	String replacedDescription = html.replaceFirst("\n", "");
+	Source htmlSource = new Source(replacedDescription);
+	Segment htmlSegment = new Segment(htmlSource, 0, replacedDescription.length());
+	Renderer htmlRend = new Renderer(htmlSegment);
+	String encoded = htmlRend.toString();
+	return encoded.trim();
 	
-		return extractor.toString();
 	}
 	
 	/* note : Unescape is idempotent when applied on unescaped data. We use that trick to prevent double html encoding*/ 

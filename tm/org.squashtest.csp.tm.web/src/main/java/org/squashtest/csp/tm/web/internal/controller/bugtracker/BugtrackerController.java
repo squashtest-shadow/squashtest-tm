@@ -47,6 +47,7 @@ import org.squashtest.csp.core.bugtracker.domain.BTIssue;
 import org.squashtest.csp.core.bugtracker.domain.BTProject;
 import org.squashtest.csp.core.bugtracker.spi.BugTrackerInterfaceDescriptor;
 import org.squashtest.csp.core.domain.Identified;
+import org.squashtest.csp.core.web.utils.HTMLCleanupUtils;
 import org.squashtest.csp.tm.domain.bugtracker.BugTrackerStatus;
 import org.squashtest.csp.tm.domain.bugtracker.IssueDetector;
 import org.squashtest.csp.tm.domain.bugtracker.IssueOwnership;
@@ -210,10 +211,10 @@ public class BugtrackerController {
 
 	@RequestMapping(value = EXECUTION_STEP_TYPE + "/{stepId}/new-issue")
 	@ResponseBody
-	public BTIssue getExecStepReportStub(@PathVariable Long stepId) {
-		IssueDetector bugged = executionFinder.findExecutionStepById(stepId);
+	public BTIssue getExecStepReportStub(@PathVariable Long stepId, Locale locale) {
+		ExecutionStep step = executionFinder.findExecutionStepById(stepId);
 
-		return makeReportIssueModel(bugged);
+		return makeReportIssueModel(step, locale);
 	}
 
 	/**
@@ -293,10 +294,10 @@ public class BugtrackerController {
 
 	@RequestMapping(value = EXECUTION_TYPE + "/{execId}/new-issue")
 	@ResponseBody
-	public BTIssue getExecReportStub(@PathVariable Long execId) {
+	public BTIssue getExecReportStub(@PathVariable Long execId, Locale locale) {
 		Execution execution = executionFinder.simpleGetExecutionById(execId);
 
-		return makeReportIssueModel(execution);
+		return makeReportIssueModel(execution, locale);
 	}
 
 	/**
@@ -553,17 +554,38 @@ public class BugtrackerController {
 
 	/* ********* generates a json model for an issue ******* */
 
-	private BTIssue makeReportIssueModel(IssueDetector entity) {
+	private BTIssue makeReportIssueModel(Execution exec, Locale locale) {
+		String defaultDescription = BugtrackerControllerHelper.getDefaultDescription(exec, locale, messageSource);
+		return makeReportIssueModel(exec, defaultDescription);
+	}
+
+	private BTIssue makeReportIssueModel(ExecutionStep step, Locale locale) {
+		String defaultDescription = BugtrackerControllerHelper.getDefaultDescription(step, locale, messageSource);
+		String defaultAdditionalInformations = BugtrackerControllerHelper.getDefaultAdditionalInformations(step, locale, messageSource);
+		return makeReportIssueModel(step, defaultDescription, defaultAdditionalInformations, locale);
+	}
+
+	private BTIssue makeReportIssueModel(ExecutionStep step, String defaultDescription,
+			String defaultAdditionalInformations, Locale locale) {
+		BTIssue emptyIssue = makeReportIssueModel(step, defaultDescription);
+		String comment = BugtrackerControllerHelper.getDefaultAdditionalInformations(step, locale, messageSource);
+		emptyIssue.setComment(comment);
+		return emptyIssue;
+	}
+	
+	private BTIssue makeReportIssueModel(IssueDetector entity, String defaultDescription) {
 		String projectName = entity.getProject().getName();
 		final BTProject project = bugTrackerLocalService.findRemoteProject(projectName);
 
-		String defaultDescription = entity.getDefaultDescription();
-
 		BTIssue emptyIssue = new BTIssue();
 		emptyIssue.setProject(project);
+		emptyIssue.setDescription(defaultDescription);
 
 		return emptyIssue;
 	}
+
+	
+	
 
 	/*
 	 * generates the ModelAndView for the bug section.

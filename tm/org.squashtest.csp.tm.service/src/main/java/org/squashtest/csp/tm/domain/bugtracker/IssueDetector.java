@@ -46,12 +46,6 @@ public interface IssueDetector {
 	 */
 	Long getIssueListId();
 
-	/**
-	 * used to prefill a bug report
-	 * 
-	 * @return a String representing the Description of a bug report.
-	 */
-	String getDefaultDescription();
 
 	/**
 	 * @return the list of ids of its own IssueList and the result of getAllIssueListIds of other Bugged entities to

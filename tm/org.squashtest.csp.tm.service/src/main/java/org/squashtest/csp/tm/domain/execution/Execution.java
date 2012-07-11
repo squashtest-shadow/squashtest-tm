@@ -310,13 +310,6 @@ public class Execution implements AttachmentHolder, IssueDetector, Identified {
 	public Long getIssueListId() {
 		return issueList.getId();
 	}
-
-
-	@Override
-	public String getDefaultDescription() {
-		return "";
-	}
-
 	
 	
 	/* ***************** /Bugged implementation *********************** */

@@ -201,15 +201,6 @@ public class ExecutionStep implements AttachmentHolder, IssueDetector, TestStepV
 		return issueList.getId();
 	}
 
-	/* I know the following is not nice */
-	// TODO So find a way to remove it !! visitor, tagfile helper, whatever
-	@Override
-	public String getDefaultDescription() {
-		StringBuilder builder = new StringBuilder();
-		builder.append("<b>Action :</b>\n").append(action).append("\n\n");
-		builder.append("<b>Expected Result :</b>\n").append(expectedResult).append("\n\n");
-		return builder.toString();
-	}
 
 	@AclConstrainedObject
 	public CampaignLibrary getCampaignLibrary() {

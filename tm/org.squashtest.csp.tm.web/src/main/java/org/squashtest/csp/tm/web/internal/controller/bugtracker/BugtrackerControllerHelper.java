@@ -1,0 +1,146 @@
+package org.squashtest.csp.tm.web.internal.controller.bugtracker;
+
+import java.util.List;
+import java.util.Locale;
+
+import org.springframework.context.MessageSource;
+import org.squashtest.csp.core.web.utils.HTMLCleanupUtils;
+import org.squashtest.csp.tm.domain.execution.Execution;
+import org.squashtest.csp.tm.domain.execution.ExecutionStep;
+import org.squashtest.csp.tm.domain.testcase.TestCase;
+
+public class BugtrackerControllerHelper {
+
+	/**
+	 * Will build a string that shows all steps before the bugged step + the bugged step itself.<br>
+	 * The string will look like this : <br/>
+	 * <br>
+	 * <em>
+	 * 	[Step x/N :]<br>
+	 * 	=============<br>
+	 * 	action description<br>
+	 * <br>
+	 * 	==> expected result description<br>
+	 * <br>
+	 * <br>
+	 * 	[Step x+1/N :]<br>
+	 * 	=============<br>
+	 * 	...<br></em>
+	 * 
+	 * @param buggedStep
+	 *            the bugged step where the issue will be declared
+	 * @param locale
+	 * @param messageSource
+	 * @return the built string as described
+	 */
+	public static String getDefaultAdditionalInformations(ExecutionStep buggedStep, Locale locale,
+			MessageSource messageSource) {
+		Execution execution = buggedStep.getExecution();
+		List<ExecutionStep> steps = execution.getSteps();
+		int totalStepNumber = steps.size();
+		StringBuilder builder = new StringBuilder();
+		for (ExecutionStep step : steps) {
+			String actionText = HTMLCleanupUtils.htmlToText(step.getAction());
+			String expectedResult = HTMLCleanupUtils.htmlToText(step.getExpectedResult());
+			builder.append("[");
+			builder.append(messageSource.getMessage("issue.default.additionalInformation.step", null, locale));
+			builder.append(" ");
+			builder.append(step.getExecutionStepOrder()+1);
+			builder.append("/");
+			builder.append(totalStepNumber);
+			builder.append(" :]\n=============\n");
+			builder.append(actionText);
+			builder.append("\n\n==>");
+			builder.append(expectedResult);
+			builder.append("\n\n\n\n");
+			if (step.getId().equals(buggedStep.getId())) {
+				break;
+			}
+		}
+		return builder.toString();
+	}
+
+	/**
+	 * Will build a default description String that will look like this : <br/>
+	 * <br/>
+	 * <em># Test Case : [Reference] test case name <br/>
+	 * # Execution : execution link <br/>
+	 * <br/>
+	 * # Issue description :<br/></em>
+	 * 
+	 * @param execution
+	 *            an execution where the issue will be declared
+	 * @param locale
+	 * @param messageSource
+	 * @return the description string
+	 */
+	public static String getDefaultDescription(Execution execution, Locale locale, MessageSource messageSource) {
+		StringBuffer description = new StringBuffer();
+		appendTestCaseDesc(execution.getReferencedTestCase(), description, locale, messageSource);
+		appendExecutionDesc(description, locale, messageSource);
+		appendDescHeader(description, locale, messageSource);
+		return description.toString();
+	}
+
+	/**
+	 * Will build a default description String that will look like this : <br/>
+	 * <br/>
+	 * <em># Test Case : [Reference] test case name <br/>
+	 * # Execution : execution link <br/>
+	 * # Concerned Step : step n°/total step nb<br/>
+	 * <br/>
+	 * # Issue description :<br/></em>
+	 * 
+	 * @param step
+	 *            an execution step where the issue will be declared
+	 * @param locale
+	 * @param messageSource
+	 * @return the string built as described
+	 */
+	public static String getDefaultDescription(ExecutionStep step, Locale locale, MessageSource messageSource) {
+		StringBuffer description = new StringBuffer();
+		appendTestCaseDesc(step.getExecution().getReferencedTestCase(), description, locale, messageSource);
+		appendExecutionDesc(description, locale, messageSource);
+		appendStepDesc(step, description, locale, messageSource);
+		appendDescHeader(description, locale, messageSource);
+		return description.toString();
+	}
+
+	private static void appendDescHeader(StringBuffer description, Locale locale, MessageSource messageSource) {
+		description.append("\n# ");
+		description.append(messageSource.getMessage("issue.default.description.description", null, locale));
+		description.append(" :\n");
+	}
+
+	private static void appendStepDesc(ExecutionStep step, StringBuffer description, Locale locale,
+			MessageSource messageSource) {
+		description.append("# ");
+		description.append(messageSource.getMessage("issue.default.description.concernedStep", null, locale));
+		description.append(" : ");
+		description.append(step.getExecutionStepOrder()+1);
+		description.append("/");
+		description.append(step.getExecution().getSteps().size());
+		description.append("\n");
+	}
+
+	private static void appendExecutionDesc(StringBuffer description, Locale locale, MessageSource messageSource) {
+		description.append("# ");
+		description.append(messageSource.getMessage("issue.default.description.execution", null, locale));
+		description.append(": ");
+		description.append("url");
+		description.append("\n");
+	}
+
+	private static void appendTestCaseDesc(TestCase testCase, StringBuffer description, Locale locale,
+			MessageSource messageSource) {
+		if (testCase != null) {
+			description.append("# ");
+			description.append(messageSource.getMessage("issue.default.description.testCase", null, locale));
+			description.append(": [");
+			description.append(testCase.getReference());
+			description.append("] ");
+			description.append(testCase.getName());
+			description.append("\n");
+		}
+	}
+}
