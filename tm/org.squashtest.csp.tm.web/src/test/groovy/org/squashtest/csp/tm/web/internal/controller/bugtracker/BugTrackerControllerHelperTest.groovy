@@ -110,7 +110,7 @@ class BugTrackerControllerHelperTest extends spock.lang.Specification {
 		Locale locale = new Locale("en");
 		MessageSource messageSource = Mock()		
 		messageSource.getMessage("issue.default.additionalInformation.action", null, locale) >> "-------------------Action---------------------\n"
-		messageSource.getMessage("issue.default.additionalInformation.expectedResult", null, locale) >> "\n----------------Expected Result---------------\n"
+		messageSource.getMessage("issue.default.additionalInformation.expectedResult", null, locale) >> "\n\n----------------Expected Result---------------\n"
 		messageSource.getMessage("issue.default.additionalInformation.step", null, locale) >> "Step"
 		
 		when:
@@ -122,7 +122,7 @@ class BugTrackerControllerHelperTest extends spock.lang.Specification {
 				"=============================================\n"+
 				"-------------------Action---------------------\n"+
 				"action description"+
-				"\n----------------Expected Result---------------\n"+
+				"\n\n----------------Expected Result---------------\n"+
 				"expected result description\n\n\n"
 	}
 	
