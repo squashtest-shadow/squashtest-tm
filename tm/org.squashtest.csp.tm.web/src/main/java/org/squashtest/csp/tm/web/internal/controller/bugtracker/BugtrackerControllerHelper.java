@@ -76,7 +76,7 @@ public class BugtrackerControllerHelper {
 			builder.append(actionText);
 			builder.append(messageSource.getMessage("issue.default.additionalInformation.expectedResult", null, locale));
 			builder.append(expectedResult);
-			builder.append("\n\n\n\n");
+			builder.append("\n\n\n");
 			if (step.getId().equals(buggedStep.getId())) {
 				break;
 			}
@@ -169,7 +169,7 @@ public class BugtrackerControllerHelper {
 			MessageSource messageSource) {
 		description.append("# ");
 		description.append(messageSource.getMessage("issue.default.description.concernedStep", null, locale));
-		description.append(" : ");
+		description.append(": ");
 		description.append(step.getExecutionStepOrder()+1);
 		description.append("/");
 		description.append(step.getExecution().getSteps().size());
