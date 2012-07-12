@@ -168,8 +168,8 @@ var squashtm = squashtm || {};
 		var userCreate = defaults.create;
 
 		defaults.open = function () {
-			// cleanup
-			squashtm.popup.cleanup.call(target);
+//			// cleanup
+//			squashtm.popup.cleanup.call(target); 
 			// forcible styling of the buttons
 			var buttons = target.eq(0).next().find('button');
 			buttons.filter(':last').addClass('ui-state-active');
