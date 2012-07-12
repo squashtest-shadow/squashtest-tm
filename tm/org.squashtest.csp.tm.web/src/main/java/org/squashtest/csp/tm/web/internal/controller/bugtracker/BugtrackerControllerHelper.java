@@ -40,16 +40,21 @@ public class BugtrackerControllerHelper {
 	 * The string will look like this : <br/>
 	 * <br>
 	 * <em>
-	 * 	[Step x/N :]<br>
-	 * 	=============<br>
-	 * 	action description<br>
-	 * <br>
-	 * 	==> expected result description<br>
-	 * <br>
-	 * <br>
-	 * 	[Step x+1/N :]<br>
-	 * 	=============<br>
-	 * 	...<br></em>
+	 * 	=============================================<br>
+	 *  |    Step 1/N<br>
+	 *  =============================================<br>
+	 * 	-------------------Action---------------------<br>
+	 *	action description<br>
+	 *	<br>
+	 *	----------------Expected Result---------------<br>
+	 *	expected result description<br>
+	 *	<br>
+	 *	<br>
+	 *	=============================================<br>
+	 *	|    Step 2/N<br>
+	 *	=============================================<br>
+	 *	...<br>
+	 *	<br></em>
 	 * 
 	 * @param buggedStep
 	 *            the bugged step where the issue will be declared
@@ -66,15 +71,10 @@ public class BugtrackerControllerHelper {
 		for (ExecutionStep step : steps) {
 			String actionText = HTMLCleanupUtils.htmlToText(step.getAction());
 			String expectedResult = HTMLCleanupUtils.htmlToText(step.getExpectedResult());
-			builder.append("[");
-			builder.append(messageSource.getMessage("issue.default.additionalInformation.step", null, locale));
-			builder.append(" ");
-			builder.append(step.getExecutionStepOrder()+1);
-			builder.append("/");
-			builder.append(totalStepNumber);
-			builder.append(" :]\n=============\n");
+			appendStepTitle(locale, messageSource, totalStepNumber, builder, step);
+			builder.append(messageSource.getMessage("issue.default.additionalInformation.action", null, locale));
 			builder.append(actionText);
-			builder.append("\n\n==>");
+			builder.append(messageSource.getMessage("issue.default.additionalInformation.expectedResult", null, locale));
 			builder.append(expectedResult);
 			builder.append("\n\n\n\n");
 			if (step.getId().equals(buggedStep.getId())) {
@@ -82,6 +82,16 @@ public class BugtrackerControllerHelper {
 			}
 		}
 		return builder.toString();
+	}
+	private static void appendStepTitle(Locale locale, MessageSource messageSource, int totalStepNumber,
+			StringBuilder builder, ExecutionStep step) {
+		builder.append("=============================================\n|    ");
+		builder.append(messageSource.getMessage("issue.default.additionalInformation.step", null, locale));
+		builder.append(" ");
+		builder.append(step.getExecutionStepOrder()+1);
+		builder.append("/");
+		builder.append(totalStepNumber);
+		builder.append("\n=============================================\n");
 	}
 
 	/**
