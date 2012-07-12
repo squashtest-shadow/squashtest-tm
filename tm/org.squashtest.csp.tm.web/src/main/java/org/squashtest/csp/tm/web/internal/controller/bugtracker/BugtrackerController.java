@@ -28,6 +28,8 @@ import java.util.Locale;
 import java.util.Map;
 
 import javax.inject.Inject;
+import javax.servlet.ServletContext;
+import javax.servlet.http.HttpServletRequest;
 
 import org.apache.commons.lang.NullArgumentException;
 import org.slf4j.Logger;
@@ -41,6 +43,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
+import org.springframework.web.context.request.WebRequest;
 import org.springframework.web.servlet.ModelAndView;
 import org.squashtest.csp.core.bugtracker.core.BugTrackerNoCredentialsException;
 import org.squashtest.csp.core.bugtracker.domain.BTIssue;
@@ -211,11 +214,16 @@ public class BugtrackerController {
 
 	@RequestMapping(value = EXECUTION_STEP_TYPE + "/{stepId}/new-issue")
 	@ResponseBody
-	public BTIssue getExecStepReportStub(@PathVariable Long stepId, Locale locale) {
+	public BTIssue getExecStepReportStub(@PathVariable Long stepId, Locale locale, HttpServletRequest request) {
+
 		ExecutionStep step = executionFinder.findExecutionStepById(stepId);
 
-		return makeReportIssueModel(step, locale);
+		String executionUrl = BugtrackerControllerHelper.buildExecutionUrl(request, step.getExecution());
+		
+		return makeReportIssueModel(step, locale, executionUrl);
 	}
+
+	
 
 	/**
 	 * gets the data of a new issue to be reported
@@ -291,13 +299,12 @@ public class BugtrackerController {
 	 * @param execId
 	 * @return
 	 */
-
 	@RequestMapping(value = EXECUTION_TYPE + "/{execId}/new-issue")
 	@ResponseBody
-	public BTIssue getExecReportStub(@PathVariable Long execId, Locale locale) {
+	public BTIssue getExecReportStub(@PathVariable Long execId, Locale locale, HttpServletRequest request) {
 		Execution execution = executionFinder.simpleGetExecutionById(execId);
-
-		return makeReportIssueModel(execution, locale);
+		String executionUrl = BugtrackerControllerHelper.buildExecutionUrl(request,execution);
+		return makeReportIssueModel(execution, locale, executionUrl);
 	}
 
 	/**
@@ -554,14 +561,17 @@ public class BugtrackerController {
 
 	/* ********* generates a json model for an issue ******* */
 
-	private BTIssue makeReportIssueModel(Execution exec, Locale locale) {
-		String defaultDescription = BugtrackerControllerHelper.getDefaultDescription(exec, locale, messageSource);
+	private BTIssue makeReportIssueModel(Execution exec, Locale locale, String executionUrl) {
+		String defaultDescription = BugtrackerControllerHelper.getDefaultDescription(exec, locale, messageSource,
+				executionUrl);
 		return makeReportIssueModel(exec, defaultDescription);
 	}
 
-	private BTIssue makeReportIssueModel(ExecutionStep step, Locale locale) {
-		String defaultDescription = BugtrackerControllerHelper.getDefaultDescription(step, locale, messageSource);
-		String defaultAdditionalInformations = BugtrackerControllerHelper.getDefaultAdditionalInformations(step, locale, messageSource);
+	private BTIssue makeReportIssueModel(ExecutionStep step, Locale locale, String executionUrl) {
+		String defaultDescription = BugtrackerControllerHelper.getDefaultDescription(step, locale, messageSource,
+				executionUrl);
+		String defaultAdditionalInformations = BugtrackerControllerHelper.getDefaultAdditionalInformations(step,
+				locale, messageSource);
 		return makeReportIssueModel(step, defaultDescription, defaultAdditionalInformations, locale);
 	}
 
@@ -572,7 +582,7 @@ public class BugtrackerController {
 		emptyIssue.setComment(comment);
 		return emptyIssue;
 	}
-	
+
 	private BTIssue makeReportIssueModel(IssueDetector entity, String defaultDescription) {
 		String projectName = entity.getProject().getName();
 		final BTProject project = bugTrackerLocalService.findRemoteProject(projectName);
@@ -583,9 +593,6 @@ public class BugtrackerController {
 
 		return emptyIssue;
 	}
-
-	
-	
 
 	/*
 	 * generates the ModelAndView for the bug section.
