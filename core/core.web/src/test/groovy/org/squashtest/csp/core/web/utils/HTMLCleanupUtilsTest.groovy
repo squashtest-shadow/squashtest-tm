@@ -32,8 +32,8 @@ public class HTMLCleanupUtilsTest extends Specification {
 	def "should remove all html tags"(){
 		
 		given :
-			def dirtyString = "<div><ul><li>line1</li><li>line2</li>toto</div>";
-			def stripped = "line1 line2 toto"
+			def dirtyString = "<p>first paragraph</p><p><ul><li>secondParagraph</li></ul></p>";
+			def stripped = "first paragraph\r\n\r\n    * secondParagraph"
 		when :
 			def result = HTMLCleanupUtils.htmlToText(dirtyString);
 		
