@@ -26,15 +26,15 @@
 	xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog
                       http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-2.0.xsd">
 
-	<include file="${project.basedir}/../database/src/main/liquibase/upgrade/upgrade.changelog-up-to-0.15.0.xml" />
-	<include file="${project.basedir}/../database/src/main/liquibase/upgrade/upgrade.changelog-up-to-0.17.0.xml" />
-	<include file="${project.basedir}/../database/src/main/liquibase/upgrade/upgrade.changelog-up-to-0.20.0.xml" />
-	<include file="${project.basedir}/../database/src/main/liquibase/upgrade/upgrade.changelog-up-to-0.23.0.xml" />
-	<changeSet id="distributed-db-data.01" author="gfouquet">
+        <include file="../upgrade/upgrade.changelog-up-to-0.15.0.xml" relativeToChangelogFile="true" />
+	<include file="../upgrade/upgrade.changelog-up-to-0.17.0.xml" relativeToChangelogFile="true" />
+	<include file="../upgrade/upgrade.changelog-up-to-0.20.0.xml" relativeToChangelogFile="true" />
+	<include file="../upgrade/upgrade.changelog-up-to-0.23.0.xml" relativeToChangelogFile="true" />
+	<changeSet id="sample-db-data.01" author="gfouquet">
 		<!-- injects "demo" data in distributed db. Target schema should be 0.23.0 -->
-		<sqlFile path="distributed-db-data.sql" relativeToChangelogFile="true" endDelimiter=";"/>
+		<sqlFile path="sample-db-data.sql" relativeToChangelogFile="true" endDelimiter=";"/>
 	</changeSet>
-	<include file="${project.basedir}/../database/src/main/liquibase/upgrade/upgrade.changelog-up-to-1.1.0.xml" />
-	<include file="${project.basedir}/../database/src/main/liquibase/upgrade/upgrade.changelog-up-to-1.1.1.xml" />
-	<include file="${project.basedir}/../database/src/main/liquibase/upgrade/upgrade.changelog-up-to-1.2.0.xml" />
+	<include file="../upgrade/upgrade.changelog-up-to-1.1.0.xml" relativeToChangelogFile="true" />
+	<include file="../upgrade/upgrade.changelog-up-to-1.1.1.xml" relativeToChangelogFile="true" />
+	<include file="../upgrade/upgrade.changelog-up-to-1.2.0.xml" relativeToChangelogFile="true" />
 </databaseChangeLog> 

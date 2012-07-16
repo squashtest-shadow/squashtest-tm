@@ -142,6 +142,23 @@
 							<password>sa</password>
 						</configuration>
 					</execution>
+
+          <execution>
+            <id>generate-h2-sample-database</id>
+            <phase>prepare-package</phase>
+            <goals>
+              <goal>update</goal>
+            </goals>
+            <configuration>
+              <dropFirst>true</dropFirst>
+	      <changeLogFile>${project.build.outputDirectory}/sample/sample-db.changelog.xml</changeLogFile>
+              <driver>org.h2.Driver</driver>
+              <url>jdbc:h2:mem:squash-sample</url>
+              <username>sa</username>
+              <password>sa</password>
+            </configuration>
+          </execution>
+					
 				</executions>
 			</plugin>
 		</plugins>
