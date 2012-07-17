@@ -61,6 +61,7 @@
 							<!-- included resources *inside* the resource directory -->
 							<includes>
 								<include>**/*.xml</include>
+								<include>**/*.sql</include>
 							</includes>
 						</configuration>
 					</execution>
