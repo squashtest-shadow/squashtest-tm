@@ -34,6 +34,7 @@ import org.squashtest.csp.tm.internal.repository.ExecutionDao;
 import org.squashtest.csp.tm.internal.repository.ExecutionStepDao;
 import org.squashtest.csp.tm.service.ExecutionModificationService;
 import org.squashtest.csp.tm.service.deletion.SuppressionPreviewReport;
+import org.squashtest.tm.core.foundation.collection.Paging;
 
 @Service("squashtest.tm.service.ExecutionModificationService")
 public class ExecutionModificationServiceImpl implements ExecutionModificationService {
@@ -81,8 +82,7 @@ public class ExecutionModificationServiceImpl implements ExecutionModificationSe
 	@Override
 	public FilteredCollectionHolder<List<ExecutionStep>> findExecutionSteps(long executionId, CollectionFilter filter) {
 		List<ExecutionStep> list = executionDao.findStepsFiltered(executionId, filter);
-		// TODO replace by a count query. the following initializes the whole damn list !
-		long count = findExecutionSteps(executionId).size();
+		long count = executionDao.countExecutionSteps(executionId);
 		return new FilteredCollectionHolder<List<ExecutionStep>>(count, list);
 	}
 
@@ -108,6 +108,14 @@ public class ExecutionModificationServiceImpl implements ExecutionModificationSe
 	@Override
 	public ExecutionStep findExecutionStepById(long id) {
 		return executionStepDao.findById(id);
+	}
+
+	/**
+	 * @see org.squashtest.csp.tm.service.ExecutionFinder#findAllByTestCaseIdOrderByRunDate(long, org.squashtest.csp.core.infrastructure.collection.Paging)
+	 */
+	@Override
+	public List<Execution> findAllByTestCaseIdOrderByRunDate(long testCaseId, Paging paging) {
+		return executionDao.findAllByTestCaseIdOrderByRunDate(testCaseId, paging);
 	}
 
 }

@@ -31,31 +31,33 @@ var squashtm = squashtm || {};
 squashtm.fragmenttabs = (function ($, window) {
 	function calculateTopTableWrap() {
 		var tableWrap = $(' div.fragment-tabs > div.table-tab > div.table-tab-wrap ').not(':hidden');
+		
 		if (tableWrap) {
 			var tablePrev = tableWrap.prevAll().not(':hidden');
 			
 			if (tablePrev) {
 				var topPos = 0;
+				
 				for (var k = 0; k < tablePrev.length; k++) {
-// 					console.log('tablePrev '+k+' = ' + $(tablePrev[k]).outerHeight());
 					topPos += $(tablePrev[k]).outerHeight();
 				}
 				tableWrap.css('top', topPos);
 			}
 		}
 	}
+	
 	function calculateTopPositionsOfTabs() {
 		var selectors = [ '.fragment-tabs', '.fragment-tabs .ui-tabs-panel'];
+		
 		for (var i = 0; i < selectors.length; i++) {
 			var selectedElements = $(selectors[i]);
-//	 			console.log('selecteds '+i+' = ' + selectedElements);
+
 			for (var j = 0; j < selectedElements.length; j++) {
 				var element = $(selectedElements[j]);
-//	 				console.log('element '+j+' = ' + element);
 				var previous = element.prevAll().not(':hidden').not('.ui-tabs-panel');
 				var topPos = 0;
+				
 				for (var k = 0; k < previous.length; k++) {
-//	 					console.log('previous '+k+' = ' + $(previous[k]).outerHeight());
 					topPos += $(previous[k]).outerHeight();
 				}
 				element.css('top', topPos);

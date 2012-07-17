@@ -26,18 +26,14 @@ import org.springframework.transaction.annotation.Transactional;
 import org.squashtest.tm.core.foundation.collection.PagedCollectionHolder;
 import org.squashtest.tm.core.foundation.collection.PagingAndSorting;
 import org.squashtest.csp.tm.domain.testcase.ActionTestStep;
-import org.squashtest.csp.tm.domain.testcase.TestCase;
 import org.squashtest.csp.tm.domain.testcase.TestStep;
-import org.squashtest.csp.tm.infrastructure.filter.CollectionFilter;
-import org.squashtest.csp.tm.infrastructure.filter.CollectionSorting;
-import org.squashtest.csp.tm.infrastructure.filter.FilteredCollectionHolder;
 
 /**
  * @author Gregory Fouquet
  * 
  */
 @Transactional
-public interface CustomTestCaseModificationService extends TestCaseFinder{
+public interface CustomTestCaseModificationService extends TestCaseFinder {
 	
 	void rename(long testCaseId, String newName);
 

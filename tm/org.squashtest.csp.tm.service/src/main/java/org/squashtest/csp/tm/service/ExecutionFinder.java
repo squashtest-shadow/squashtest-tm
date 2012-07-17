@@ -22,9 +22,11 @@ package org.squashtest.csp.tm.service;
 
 import java.util.List;
 
+import org.springframework.security.access.prepost.PostFilter;
 import org.springframework.transaction.annotation.Transactional;
 import org.squashtest.csp.tm.domain.execution.Execution;
 import org.squashtest.csp.tm.domain.execution.ExecutionStep;
+import org.squashtest.tm.core.foundation.collection.Paging;
 
 @Transactional(readOnly = true)
 public interface ExecutionFinder {
@@ -33,4 +35,14 @@ public interface ExecutionFinder {
 	List<ExecutionStep> findExecutionSteps(long executionId);
 
 	ExecutionStep findExecutionStepById(long id);
+
+	/**
+	 * @param testCaseId
+	 * @param paging
+	 * @return
+	 */
+	@PostFilter("hasPermission(filterObject, 'READ') or hasRole('ROLE_ADMIN')")
+	List<Execution> findAllByTestCaseIdOrderByRunDate(long testCaseId, Paging paging);
+
+	int findExecutionRank(Long executionId);
 }

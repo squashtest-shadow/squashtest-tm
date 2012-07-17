@@ -23,17 +23,17 @@ package org.squashtest.csp.tm.service;
 import java.util.List;
 
 import org.springframework.transaction.annotation.Transactional;
-import org.squashtest.csp.tm.domain.campaign.Campaign;
 import org.squashtest.csp.tm.domain.campaign.CampaignTestPlanItem;
 import org.squashtest.csp.tm.infrastructure.filter.CollectionSorting;
 import org.squashtest.csp.tm.infrastructure.filter.FilteredCollectionHolder;
 
 @Transactional
-public interface CustomCampaignModificationService extends CampaignFinder{
-	
+public interface CustomCampaignModificationService {
 
 	void rename(long campaignId, String newName);
 
 
+	FilteredCollectionHolder<List<CampaignTestPlanItem>> findTestPlanByCampaignId(long campaignId,
+			CollectionSorting filter);
 
 }

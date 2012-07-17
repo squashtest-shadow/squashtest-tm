@@ -30,6 +30,7 @@ import org.hibernate.Hibernate;
 import org.hibernate.Query;
 import org.hibernate.criterion.Restrictions;
 import org.springframework.stereotype.Repository;
+import org.squashtest.csp.core.infrastructure.hibernate.PagingUtils;
 import org.squashtest.csp.tm.domain.bugtracker.IssueDetector;
 import org.squashtest.csp.tm.domain.campaign.IterationTestPlanItem;
 import org.squashtest.csp.tm.domain.execution.Execution;
@@ -38,6 +39,7 @@ import org.squashtest.csp.tm.domain.execution.ExecutionStatusReport;
 import org.squashtest.csp.tm.domain.execution.ExecutionStep;
 import org.squashtest.csp.tm.infrastructure.filter.CollectionFilter;
 import org.squashtest.csp.tm.internal.repository.ExecutionDao;
+import org.squashtest.tm.core.foundation.collection.Paging;
 
 @Repository
 public class HibernateExecutionDao extends HibernateEntityDao<Execution> implements ExecutionDao {
@@ -45,9 +47,9 @@ public class HibernateExecutionDao extends HibernateEntityDao<Execution> impleme
 	/*
 	 * as long as the ordering of a collection is managed by @OrderColumn, but you can't explicitely reference the
 	 * ordering column in the join table, initialize the collection itself is the only solution
-	 *
+	 * 
 	 * (non-Javadoc)
-	 *
+	 * 
 	 * @see org.squashtest.csp.tm.internal.repository.ExecutionDao#findOrderedExecutionStepsByExecutionId(long)
 	 */
 	@Override
@@ -73,8 +75,9 @@ public class HibernateExecutionDao extends HibernateEntityDao<Execution> impleme
 
 	@Override
 	public int findExecutionRank(long executionId) {
-		IterationTestPlanItem testPlan = (IterationTestPlanItem) currentSession().createCriteria(IterationTestPlanItem.class)
-				.createCriteria("executions").add(Restrictions.eq("id", executionId)).uniqueResult();
+		IterationTestPlanItem testPlan = (IterationTestPlanItem) currentSession()
+				.createCriteria(IterationTestPlanItem.class).createCriteria("executions")
+				.add(Restrictions.eq("id", executionId)).uniqueResult();
 
 		int index = 0;
 		for (Execution execution : testPlan.getExecutions()) {
@@ -149,33 +152,31 @@ public class HibernateExecutionDao extends HibernateEntityDao<Execution> impleme
 		return executeEntityNamedQuery("execution.Status", newCallBack);
 	}
 
-	
-	/* same than for HibernateTestCaseDao#findStepsByIdFiltered :
+	/*
+	 * same than for HibernateTestCaseDao#findStepsByIdFiltered :
 	 * 
-	 * because we need to get the ordered list and we can't access the join table to sort them (again),
-	 * we can't use the Criteria API. So we're playing it old good java here.
-	 * 
+	 * because we need to get the ordered list and we can't access the join table to sort them (again), we can't use the
+	 * Criteria API. So we're playing it old good java here.
 	 */
-	
+
 	@Override
-	public List<ExecutionStep> findStepsFiltered(final Long executionId,
-			final CollectionFilter filter) {
-		
+	public List<ExecutionStep> findStepsFiltered(final Long executionId, final CollectionFilter filter) {
+
 		Execution execution = findById(executionId);
-		int listSize=execution.getSteps().size();
-		
+		int listSize = execution.getSteps().size();
+
 		int startIndex = filter.getFirstItemIndex();
-		int lastIndex = filter.getFirstItemIndex()+filter.getMaxNumberOfItems();
-		
-		//prevent IndexOutOfBoundException :
-		if (startIndex>=listSize){
-			return new LinkedList<ExecutionStep>(); //ie resultset is empty
+		int lastIndex = filter.getFirstItemIndex() + filter.getMaxNumberOfItems();
+
+		// prevent IndexOutOfBoundException :
+		if (startIndex >= listSize) {
+			return new LinkedList<ExecutionStep>(); // ie resultset is empty
 		}
-		if (lastIndex>=listSize){
-			lastIndex=listSize;
+		if (lastIndex >= listSize) {
+			lastIndex = listSize;
 		}
-		
-		return execution.getSteps().subList(startIndex,lastIndex);
+
+		return execution.getSteps().subList(startIndex, lastIndex);
 
 	}
 
@@ -183,10 +184,34 @@ public class HibernateExecutionDao extends HibernateEntityDao<Execution> impleme
 	public List<IssueDetector> findAllIssueDetectorsForExecution(Long execId) {
 		Execution execution = findById(execId);
 		List<ExecutionStep> steps = execution.getSteps();
-		List<IssueDetector> issueDetectors = new ArrayList<IssueDetector>(steps.size() +1);
+		List<IssueDetector> issueDetectors = new ArrayList<IssueDetector>(steps.size() + 1);
 		issueDetectors.add(execution);
 		issueDetectors.addAll(steps);
 		return issueDetectors;
+	}
+
+	/**
+	 * (non-Javadoc)
+	 * 
+	 * @see org.squashtest.csp.tm.internal.repository.ExecutionDao#countExecutionSteps(long)
+	 */
+	@Override
+	public long countExecutionSteps(long executionId) {
+		executeEntityNamedQuery("execution.countExecutionSteps", "executionId", executionId);
+		return 0;
+	}
+
+	/**
+	 * @see org.squashtest.csp.tm.internal.repository.ExecutionDao#findAllByTestCaseIdOrderByRunDate(long, org.squashtest.csp.core.infrastructure.collection.Paging)
+	 */
+	@SuppressWarnings("unchecked")
+	@Override
+	public List<Execution> findAllByTestCaseIdOrderByRunDate(long testCaseId, Paging paging) {
+		Query query = currentSession().getNamedQuery("execution.findAllByTestCaseIdOrderByRunDate");
+		PagingUtils.addPaging(query, paging);
+		query.setParameter("testCaseId", testCaseId);
+		
+		return query.list();
 	}
 
 }

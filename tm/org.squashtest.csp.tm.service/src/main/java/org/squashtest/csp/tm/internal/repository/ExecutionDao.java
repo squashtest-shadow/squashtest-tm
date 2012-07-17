@@ -27,6 +27,7 @@ import org.squashtest.csp.tm.domain.execution.Execution;
 import org.squashtest.csp.tm.domain.execution.ExecutionStatusReport;
 import org.squashtest.csp.tm.domain.execution.ExecutionStep;
 import org.squashtest.csp.tm.infrastructure.filter.CollectionFilter;
+import org.squashtest.tm.core.foundation.collection.Paging;
 
 public interface ExecutionDao extends EntityDao<Execution> {
 
@@ -45,5 +46,14 @@ public interface ExecutionDao extends EntityDao<Execution> {
 	List<ExecutionStep> findStepsFiltered(Long executionId, CollectionFilter filter);
 
 	List<IssueDetector> findAllIssueDetectorsForExecution(Long execId);
+	
+	long countExecutionSteps(long executionId);
+
+	/**
+	 * @param testCaseId
+	 * @param paging
+	 * @return
+	 */
+	List<Execution> findAllByTestCaseIdOrderByRunDate(long testCaseId, Paging paging);
 
 }

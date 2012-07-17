@@ -26,7 +26,7 @@ import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.transaction.annotation.Transactional;
 
 @Transactional
-public interface CampaignModificationService extends CustomCampaignModificationService {
+public interface CampaignModificationService extends CustomCampaignModificationService, CampaignFinder {
 
 	@PreAuthorize("hasPermission(#arg0, 'org.squashtest.csp.tm.domain.campaign.Campaign' ,'SMALL_EDIT') "
 			+ "or hasRole('ROLE_ADMIN')")
@@ -55,4 +55,5 @@ public interface CampaignModificationService extends CustomCampaignModificationS
 	@PreAuthorize("hasPermission(#arg0, 'org.squashtest.csp.tm.domain.campaign.Campaign' ,'SMALL_EDIT') "
 			+ "or hasRole('ROLE_ADMIN')")
 	void changeActualEndAuto(long campaignId, boolean isAuto);
+	
 }

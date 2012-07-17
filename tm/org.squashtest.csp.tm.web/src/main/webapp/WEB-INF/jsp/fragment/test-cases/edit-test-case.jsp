@@ -651,6 +651,10 @@ function addTestStepSuccessAnother(){
 		<li><a href="#tabs-1"><f:message key="tabs.label.information" /></a></li>
 		<li><a href="#tabs-2"><f:message key="tabs.label.steps" /></a></li>
 		<li><a href="#tabs-3"><f:message key="tabs.label.attachments" /><c:if test="${ testCase.attachmentList.notEmpty }"><span class="hasAttach">!</span></c:if></a></li>
+		<c:url var="executionsTabUrl" value='/test-cases/${testCase.id}/executions'>
+			<c:param name="tab" value="" />
+		</c:url>
+		<li><a href="${executionsTabUrl}"><f:message key="label.executions" /></a></li>
 	</ul>
 	<div id="tabs-1">
 <%----------------------------------- Description -----------------------------------------------%>
@@ -883,7 +887,9 @@ function addTestStepSuccessAnother(){
 <%------------------------------ Attachments bloc ---------------------------------------------%> 
 
 <comp:attachment-tab tabId="tabs-3" entity="${ testCase }" editable="${ attachable }" />
+
 </div>
+
 <%--------------------------- Deletion confirmation popup -------------------------------------%> 
 
 <c:if test="${ deletable }">

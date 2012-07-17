@@ -34,6 +34,7 @@ import org.slf4j.LoggerFactory;
 import org.springframework.context.MessageSource;
 import org.springframework.osgi.extensions.annotation.ServiceReference;
 import org.springframework.stereotype.Controller;
+import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -41,8 +42,7 @@ import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.servlet.ModelAndView;
-import org.squashtest.tm.core.foundation.collection.PagedCollectionHolder;
-import org.squashtest.tm.core.foundation.collection.PagingAndSorting;
+import org.squashtest.csp.tm.domain.execution.Execution;
 import org.squashtest.csp.tm.domain.project.Project;
 import org.squashtest.csp.tm.domain.requirement.RequirementCriticality;
 import org.squashtest.csp.tm.domain.requirement.RequirementVersion;
@@ -55,6 +55,7 @@ import org.squashtest.csp.tm.infrastructure.filter.CollectionFilter;
 import org.squashtest.csp.tm.infrastructure.filter.CollectionSorting;
 import org.squashtest.csp.tm.infrastructure.filter.FilteredCollectionHolder;
 import org.squashtest.csp.tm.service.CallStepManagerService;
+import org.squashtest.csp.tm.service.ExecutionFinder;
 import org.squashtest.csp.tm.service.TestCaseModificationService;
 import org.squashtest.csp.tm.service.VerifiedRequirement;
 import org.squashtest.csp.tm.web.internal.combo.OptionTag;
@@ -91,6 +92,8 @@ public class TestCaseModificationController {
 
 	private TestCaseModificationService testCaseModificationService;
 
+	private ExecutionFinder executionFinder;
+
 	@Inject
 	private MessageSource messageSource;
 
@@ -114,7 +117,7 @@ public class TestCaseModificationController {
 
 		TestCase testCase = testCaseModificationService.findById(testCaseId);
 		populateModelWithTestCaseEditionData(mav, testCase, locale);
-		
+
 		return mav;
 	}
 
@@ -204,14 +207,13 @@ public class TestCaseModificationController {
 		}
 		LOGGER.trace("test case copied some Steps");
 	}
-	
+
 	@RequestMapping(value = "/steps/paste-last-index", method = RequestMethod.POST, params = { "copiedStepId[]" })
 	@ResponseBody
-	public void pasteStepLastIndex(@RequestParam("copiedStepId[]") String[] copiedStepId,
-			@PathVariable long testCaseId) {
+	public void pasteStepLastIndex(@RequestParam("copiedStepId[]") String[] copiedStepId, @PathVariable long testCaseId) {
 
 		callStepManager.checkForCyclicStepCallBeforePaste(testCaseId, copiedStepId);
-		
+
 		for (int i = 0; i < copiedStepId.length; i++) {
 			String id = copiedStepId[i];
 			testCaseModificationService.pasteCopiedTestStepToLastIndex(testCaseId, Long.parseLong(id));
@@ -280,6 +282,7 @@ public class TestCaseModificationController {
 
 		return testCaseDescription;
 	}
+
 	@RequestMapping(method = RequestMethod.POST, params = { "id=test-case-reference", "value" })
 	@ResponseBody
 	public String changeReference(@RequestParam("value") String testCaseReference, @PathVariable long testCaseId) {
@@ -383,13 +386,14 @@ public class TestCaseModificationController {
 		PagingAndSorting pas = createPagingAndSorting(params, verifiedReqMapper);
 
 		PagedCollectionHolder<List<VerifiedRequirement>> holder = testCaseModificationService
-				.findAllVerifiedRequirementsByTestCaseId(testCaseId, pas);
+		.findAllVerifiedRequirementsByTestCaseId(testCaseId, pas);
 
 		return new DataTableModelHelper<VerifiedRequirement>() {
 			@Override
 			public Object[] buildItemData(VerifiedRequirement item) {
 				return new Object[] { item.getId(), getCurrentIndex(), item.getProject().getName(),
-						item.getReference(), item.getName(), item.getDecoratedRequirement().getVersionNumber(), internationalize(item.getCriticality(), locale), "",
+						item.getReference(), item.getName(), item.getDecoratedRequirement().getVersionNumber(),
+						internationalize(item.getCriticality(), locale), "",
 						item.getDecoratedRequirement().getStatus().name(), item.isDirectVerification() };
 			}
 		}.buildDataModel(holder, params.getsEcho());
@@ -435,6 +439,33 @@ public class TestCaseModificationController {
 
 	private String internationalize(Internationalizable internationalizable, Locale locale) {
 		return messageSource.getMessage(internationalizable.getI18nKey(), null, locale);
+	}
+
+	/**
+	 * Returns the
+	 * 
+	 * @param model
+	 * @return
+	 */
+	@RequestMapping(value = "/executions", method = RequestMethod.GET, params = "tab")
+	public String getExecutionsTab(@PathVariable long testCaseId, Model model) {
+		Paging paging = DefaultPaging.FIRST_PAGE;
+
+		List<Execution> executions = executionFinder.findAllByTestCaseIdOrderByRunDate(testCaseId, paging);
+
+		model.addAttribute("executionsPageSize", paging.getPageSize());
+		model.addAttribute("testCaseId", testCaseId);
+
+		return "test-case-executions-tab.html";
+	}
+
+	/**
+	 * @param executionFinder
+	 *            the executionFinder to set
+	 */
+	@ServiceReference
+	public void setExecutionFinder(ExecutionFinder executionFinder) {
+		this.executionFinder = executionFinder;
 	}
 
 }

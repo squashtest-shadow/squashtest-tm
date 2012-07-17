@@ -22,17 +22,21 @@ package org.squashtest.csp.tm.service;
 
 import java.util.List;
 
+import org.springframework.security.access.prepost.PostAuthorize;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.transaction.annotation.Transactional;
 import org.squashtest.csp.tm.domain.campaign.Campaign;
 import org.squashtest.csp.tm.domain.campaign.CampaignTestPlanItem;
 import org.squashtest.csp.tm.infrastructure.filter.CollectionSorting;
 import org.squashtest.csp.tm.infrastructure.filter.FilteredCollectionHolder;
 
+@Transactional(readOnly = true)
 public interface CampaignFinder {
-	@Transactional(readOnly = true)
+	@PostAuthorize("hasPermission(returnObject,'READ') or hasRole('ROLE_ADMIN')")
 	Campaign findById(long campaignId);
 
-	@Transactional(readOnly = true)
+	@PreAuthorize("hasPermission(#arg0, 'org.squashtest.csp.tm.domain.campaign.Campaign' ,'READ') "
+			+ "or hasRole('ROLE_ADMIN')")
 	FilteredCollectionHolder<List<CampaignTestPlanItem>> findTestPlanByCampaignId(long campaignId,
 			CollectionSorting filter);
 }

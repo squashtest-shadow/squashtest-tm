@@ -460,3 +460,26 @@ span.span-green {
 #report-criteria-panel li {
 	list-style-type: none;
 }
+/*******************************
+	exec statuses - adds background icon  
+********************************/
+.exec-status-blocked {
+	background: transparent url(../images/Icon_Yellow.png) no-repeat center left;
+	padding-left: 20px;
+}
+.exec-status-failure {
+	background: transparent url(../images/Icon_Red.png) no-repeat center left;
+	padding-left: 20px;
+}
+.exec-status-success {
+	background: transparent url(../images/Icon_Green.png) no-repeat center left;
+	padding-left: 20px;
+}
+.exec-status-running {
+	background: transparent url(../images/Icon_Blue.png) no-repeat center left;
+	padding-left: 20px;
+}
+.exec-status-ready {
+	background: transparent url(../images/Icon_Grey.png) no-repeat center left;
+	padding-left: 20px;
+}

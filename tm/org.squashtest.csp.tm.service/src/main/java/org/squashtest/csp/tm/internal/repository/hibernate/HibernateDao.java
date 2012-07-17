@@ -131,6 +131,13 @@ public abstract class HibernateDao<ENTITY_TYPE> {
 	 * @return
 	 */
 	@SuppressWarnings("unchecked")
+	protected final <R> R executeEntityNamedQuery(String queryName, String paramName, Object paramValue) {
+		Query q = currentSession().getNamedQuery(queryName);
+		q.setParameter(paramName, paramValue);
+		return (R) q.uniqueResult();
+	}
+
+	@SuppressWarnings("unchecked")
 	protected final <R> R executeEntityNamedQuery(String queryName, SetQueryParametersCallback setParams) {
 		Query q = currentSession().getNamedQuery(queryName);
 		setParams.setQueryParameters(q);
