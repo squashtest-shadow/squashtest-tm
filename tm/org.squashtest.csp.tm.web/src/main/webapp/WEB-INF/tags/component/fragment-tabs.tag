@@ -21,57 +21,10 @@
 
 --%>
 <%@ tag description="activation of jquery-ui tabs"%>
+<%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core" %>
+<script type="text/javascript" src="<c:url value='/scripts/squash/squashtm.fragmenttabs.js' />"></script>
 <script type="text/javascript">
-	
 	$(function() {
-		function calculateTopPositionsOfTabs() {
-			var selectors = [ '.fragment-tabs', '.fragment-tabs .ui-tabs-panel'];
-			for ( var i = 0; i < selectors.length; i++) {
-				var selectedElements = $(selectors[i]);
-//	 			console.log('selecteds '+i+' = ' + selectedElements);
-				for ( var j = 0; j < selectedElements.length; j++) {
-					var element = $(selectedElements[j]);
-//	 				console.log('element '+j+' = ' + element);
-					var previous = element.prevAll().not(':hidden').not('.ui-tabs-panel');
-					var topPos = 0;
-					for ( var k = 0; k < previous.length; k++) {
-//	 					console.log('previous '+k+' = ' + $(previous[k]).outerHeight());
-						topPos += $(previous[k]).outerHeight();
-					}
-					element.css('top', topPos);
-				}
-			}
-			calculateTopTableWrap();		
-		}
-		
-		function calculateTopTableWrap() {
-			var tableWrap =$(' div.fragment-tabs > div.table-tab > div.table-tab-wrap ').not(':hidden');
-			if(tableWrap){
-				var tablePrev = tableWrap.prevAll().not(':hidden');
-				if(tablePrev){
-					var topPos = 0;
-					for ( var k = 0; k < tablePrev.length; k++) {
-//	 					console.log('tablePrev '+k+' = ' + $(tablePrev[k]).outerHeight());
-						topPos += $(tablePrev[k]).outerHeight();
-					}
-					tableWrap.css('top', topPos);
-				}
-			}
-		}
-
-		window.onresize = function () {
-			setTimeout(calculateTopPositionsOfTabs, 200);
-		};
-		calculateTopPositionsOfTabs();
-		
-		$('.fragment-tabs').tabs({
-			cookie: {
-				// store cookie for a day, without, it would be a session cookie
-				expires: 1
-			},
-			show : calculateTopTableWrap
-		});
+		squashtm.fragmenttabs.init();
 	});
-
-	
 </script>
