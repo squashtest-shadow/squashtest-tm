@@ -182,3 +182,5 @@ distribution/META-INF/COPYING.txt
 syntax: glob
 integration-tests/log/IT.log
 integration-tests/src/it/resources/log4j.properties
+syntax: regexp
+^tm/database\.h2\.fragment/META-INF.*$

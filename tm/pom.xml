@@ -16,5 +16,6 @@
 	<modules>
 		<module>org.squashtest.csp.tm.service</module>
 		<module>org.squashtest.csp.tm.web</module>
+		<module>database.h2.fragment</module>
 	</modules>
 </project>

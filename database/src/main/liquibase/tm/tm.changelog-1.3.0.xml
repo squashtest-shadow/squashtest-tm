@@ -54,9 +54,9 @@
 		</sql>
 	</changeSet>
 	
-	<!--  ==================================
-				Feat. 1112
-	======================================== -->
+	<!--  ======================================================================================================
+													Feat. 1112
+	============================================================================================================ -->
 	
 	
 	<changeSet id="tm-1.3-feat-1112.0" author="bsiri">
@@ -77,7 +77,8 @@
 	<changeSet id="tm-1.3-feat-1112.01" author="bsiri">
 	
 		<comment>
-			closure table for test case library nodes. Its content is set and modified by four triggers : ins_tcln_after, del_tcln_before, attach_tcln_after, detach_tcln_before.
+			closure table for test case library nodes. Its content is set and modified by four triggers, see 
+			changeset 'tm-1.3-feat-1112.05-mysql' or 'tm-1.3-feat-1112.05-h2'.
 		</comment>
 		
 		<createTable tableName="TCLN_RELATIONSHIP_CLOSURE">
@@ -115,7 +116,8 @@
 	<changeSet id="tm-1.3-feat-1112.02" author="bsiri">
 	
 		<comment>
-			closure table for requirement library nodes. Its content is set and modified by four triggers : ins_rln_after, del_rln_before, attach_rln_after, detach_rln_before.
+			closure table for requirement library nodes. Its content is set and modified by four triggers, see 
+			changeset 'tm-1.3-feat-1112.06-mysql' or 'tm-1.3-feat-1112.06-h2'.
 		</comment>
 		
 		<createTable tableName="RLN_RELATIONSHIP_CLOSURE">
@@ -155,7 +157,8 @@
 	<changeSet id="tm-1.3-feat-1112.03" author="bsiri">
 	
 		<comment>
-			closure table for campaign library nodes.
+			closure table for campaign library nodes. Its content is set and modified by four triggers, see 
+			changeset 'tm-1.3-feat-1112.07-mysql' or 'tm-1.3-feat-1112.07-h2'.
 		</comment>
 		
 		<createTable tableName="CLN_RELATIONSHIP_CLOSURE">
@@ -236,6 +239,10 @@
 		<sql>delete from CLN_RELATIONSHIP</sql>
 	
 	</changeSet>
+		
+		
+		<!--  ************** mysql triggers	****************  -->
+		
 		
 	<changeSet id="tm-1.3-feat-1112.05-mysql" author="bsiri" dbms="mysql">
 		<comment>mysql-triggers for TCLN_RELATIONSHIP_CLOSURE table</comment>
@@ -370,17 +377,119 @@
 		</sql>
 	</changeSet>	
 	
+		<!--  ************** /mysql triggers ***************  -->
+		
+		<!--  ************** h2 triggers	****************  -->
+		
 	
-	<!--  
+	<changeSet id="tm-1.3-feat-1112.05-h2" author="bsiri" dbms="h2">
+		
+		<comment>h2-triggers for TCLN_RELATIONSHIP_CLOSURE table</comment>
+		
+		<!-- after insertion of a tcl node : create auto reference in the closure table -->
+		<sql>
+			create trigger ins_tcln_after after insert on TEST_CASE_LIBRARY_NODE
+			    for each row call "org.squashtest.csp.h2.triggers.TCLNAfterInsert";		
+		</sql>
+		
+		
+		
+		<!-- before suppression of a tcl node : remove auto reference from the closure table -->
+		<sql>
+			create trigger del_tcln_before before delete on TEST_CASE_LIBRARY_NODE
+			for each row call "org.squashtest.csp.h2.triggers.TCLNBeforeDelete";
+		</sql>
+		
+		
+		<!-- when two tcl nodes are attached : attach the subtrees as well. -->
+		<sql>
+			create trigger attach_tcln_after after insert on TCLN_RELATIONSHIP
+			for each row call "org.squashtest.csp.h2.triggers.TCLNAfterAttach";
+		</sql>
 	
+		
+		<!--  when two tcl nodes are detached : detach the subtrees as well -->
+		<sql>
+			create trigger detach_tcln_before before delete on TCLN_RELATIONSHIP
+			for each row call "org.squashtest.csp.h2.triggers.TCLNBeforeDetach";
+		</sql>
+
+		
+	</changeSet>
+
 	
+	<changeSet id="tm-1.3-feat-1112.06-h2" author="bsiri" dbms="h2">
+		
+		<comment>h2-triggers for RLN_RELATIONSHIP_CLOSURE table</comment>
+		
+		<!-- after insertion of a rl node : create auto reference in the closure table -->
+		<sql>
+			create trigger ins_rln_after after insert on REQUIREMENT_LIBRARY_NODE
+			    for each row call "org.squashtest.csp.h2.triggers.RLNAfterInsert";		
+		</sql>
+		
+		
+		
+		<!-- before suppression of a rl node : remove auto reference from the closure table -->
+		<sql>
+			create trigger del_rln_before before delete on REQUIREMENT_LIBRARY_NODE
+			for each row call "org.squashtest.csp.h2.triggers.RLNBeforeDelete";
+		</sql>
+		
+		
+		<!-- when two rl nodes are attached : attach the subtrees as well. -->
+		<sql>
+			create trigger attach_rln_after after insert on RLN_RELATIONSHIP
+			for each row call "org.squashtest.csp.h2.triggers.RLNAfterAttach";
+		</sql>
 	
-				TODO : same changesets for H2 triggers 
+		
+		<!--  when two rl nodes are detached : detach the subtrees as well -->
+		<sql>
+			create trigger detach_rln_before before delete on RLN_RELATIONSHIP
+			for each row call "org.squashtest.csp.h2.triggers.RLNBeforeDetach";
+		</sql>
+
+		
+	</changeSet>	
 	
+
+	<changeSet id="tm-1.3-feat-1112.07-h2" author="bsiri" dbms="h2">
+		
+		<comment>h2-triggers for CLN_RELATIONSHIP_CLOSURE table</comment>
+		
+		<!-- after insertion of a cl node : create auto reference in the closure table -->
+		<sql>
+			create trigger ins_cln_after after insert on CAMPAIGN_LIBRARY_NODE
+			    for each row call "org.squashtest.csp.h2.triggers.CLNAfterInsert";		
+		</sql>
+		
+		
+		
+		<!-- before suppression of a cl node : remove auto reference from the closure table -->
+		<sql>
+			create trigger del_cln_before before delete on CAMPAIGN_LIBRARY_NODE
+			for each row call "org.squashtest.csp.h2.triggers.CLNBeforeDelete";
+		</sql>
+		
+		
+		<!-- when two cl nodes are attached : attach the subtrees as well. -->
+		<sql>
+			create trigger attach_cln_after after insert on CLN_RELATIONSHIP
+			for each row call "org.squashtest.csp.h2.triggers.CLNAfterAttach";
+		</sql>
 	
-	
-	
-	-->
+		
+		<!--  when two cl nodes are detached : detach the subtrees as well -->
+		<sql>
+			create trigger detach_cln_before before delete on CLN_RELATIONSHIP
+			for each row call "org.squashtest.csp.h2.triggers.CRLNBeforeDetach";
+		</sql>
+
+		
+	</changeSet>			
+		
+		<!--  ************** /h2 triggers	****************  -->
 	
 	<changeSet id="tm-1.3-feat-1112.08" author="bsiri">
 		<comment>we can now reinsert our data from the tmp tables and let the triggers do the job</comment>
@@ -410,5 +519,10 @@
 		<dropTable tableName="CLN_RELATIONSHIP_TMP"/>
 	
 	</changeSet>
+	
+	
+	<!--  ======================================================================================================
+													/ Feat. 1112
+	============================================================================================================ -->	
 </databaseChangeLog>
  
