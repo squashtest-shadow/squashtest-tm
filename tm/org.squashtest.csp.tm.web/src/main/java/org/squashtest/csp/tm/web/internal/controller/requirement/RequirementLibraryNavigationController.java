@@ -34,9 +34,6 @@ import javax.servlet.ServletOutputStream;
 import javax.servlet.http.HttpServletResponse;
 import javax.validation.Valid;
 
-import net.htmlparser.jericho.Renderer;
-import net.htmlparser.jericho.Segment;
-import net.htmlparser.jericho.Source;
 import net.sf.jasperreports.engine.JRExporterParameter;
 import net.sf.jasperreports.engine.JRParameter;
 import net.sf.jasperreports.engine.export.JRCsvExporterParameter;
