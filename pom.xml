@@ -156,6 +156,11 @@
 							<artifactId>liquibase-core</artifactId>
 							<version>${liquibase.version}</version>
 						</dependency>
+						<dependency>
+							<groupId>org.squashtest.tm</groupId>
+							<artifactId>database.h2.fragment</artifactId>
+							<version>${project.version}</version>
+						</dependency>
 					</dependencies>
 				</plugin>
 
@@ -282,6 +287,7 @@
 		<module>tools</module>
 		<module>parent-pom</module>
 		<module>dependencies</module>
+		<module>database.h2.fragment</module>
 		<module>database</module>
 		<module>core</module>
 		<module>tm</module>
