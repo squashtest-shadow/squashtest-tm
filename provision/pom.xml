@@ -15,7 +15,7 @@
 		Eclipse</description>
 
 	<properties>
-		<master.changelog>${project.build.directory}/maven-shared-archive-resources/global.changelog-master.xml</master.changelog>
+		<master.changelog>${project.build.directory}/maven-shared-archive-resources/sample/sample-db.changelog.xml</master.changelog>
 		<squashtest.rootDir>${project.build.directory}</squashtest.rootDir>
 		<cxf.version>2.3.3</cxf.version>
 		<!-- Default H2 database properties -->
@@ -114,8 +114,6 @@
 						<version>8.7</version>
 					</dependency>
 				</dependencies>
-
-
 			</plugin>
 
 			<!-- clean datasource properties -->
