@@ -77,7 +77,7 @@
 	<changeSet id="tm-1.3-feat-1112.01" author="bsiri">
 	
 		<comment>
-			closure table for test case library nodes. TODO: list the triggers that will populate it.
+			closure table for test case library nodes. Its content is set and modified by four triggers : ins_tcln_after, del_tcln_before, attach_tcln_after, detach_tcln_before.
 		</comment>
 		
 		<createTable tableName="TCLN_RELATIONSHIP_CLOSURE">
@@ -96,7 +96,7 @@
 			</column>
 			
 			<column name="DEPTH" type="java.sql.Types.TINYINT"
-				remarks="stores how deep is the descendant element nested in the subtree of the ancestor element"
+				remarks="stores how deep is the descendant element nested in the subtree of the ancestor element">
 				<constraints nullable="false"/>
 			</column>
 		</createTable>	
@@ -115,7 +115,7 @@
 	<changeSet id="tm-1.3-feat-1112.02" author="bsiri">
 	
 		<comment>
-			closure table for requirement library nodes
+			closure table for requirement library nodes. Its content is set and modified by four triggers : ins_rln_after, del_rln_before, attach_rln_after, detach_rln_before.
 		</comment>
 		
 		<createTable tableName="RLN_RELATIONSHIP_CLOSURE">
@@ -134,7 +134,7 @@
 			</column>
 			
 			<column name="DEPTH" type="java.sql.Types.TINYINT"
-				remarks="stores how deep is the descendant element nested in the subtree of the ancestor element"
+				remarks="stores how deep is the descendant element nested in the subtree of the ancestor element">
 				<constraints nullable="false"/>
 			</column>
 		</createTable>	
@@ -176,7 +176,7 @@
 			
 			
 			<column name="DEPTH" type="java.sql.Types.TINYINT"
-				remarks="stores how deep is the descendant element nested in the subtree of the ancestor element"
+				remarks="stores how deep is the descendant element nested in the subtree of the ancestor element">
 				<constraints nullable="false"/>
 			</column>
 		</createTable>	
@@ -230,49 +230,185 @@
 				select * from CLN_RELATIONSHIP
 		</sql>	
 		
+		<!-- TODO don't use truncate (supported since sql 2008+ only)  -->
 		<sql>delete from TCLN_RELATIONSHIP</sql>
 		<sql>delete from RLN_RELATIONSHIP</sql>
 		<sql>delete from CLN_RELATIONSHIP</sql>
 	
 	</changeSet>
 		
+	<changeSet id="tm-1.3-feat-1112.05-mysql" author="bsiri" dbms="mysql">
+		<comment>mysql-triggers for TCLN_RELATIONSHIP_CLOSURE table</comment>
 		
-<!-- 
-	TODO : put the following in the right place :
-
-
--- after insertion of a tcl node
-create trigger ins_tcln_after after insert on TEST_CASE_LIBRARY_NODE
-for each row insert into TCLN_RELATIONSHIP_CLOSURE values (new.tcln_id, new.tcln_id, 0);
-
-
--- before suppression of a tcl node
-create trigger del_tcln_after before delete on TEST_CASE_LIBRARY_NODE
-for each row delete from TCLN_RELATIONSHIP_CLOSURE where ancestor_id=old.tcln_id and descendant_id=ancestor_id;
-
-
--- when association of tcl node is created
-create trigger attach_tcln after insert on TCLN_RELATIONSHIP
-for each row insert into TCLN_RELATIONSHIP_CLOSURE 
-		select c1.ancestor_id, c2.descendant_id, c1.depth+c2.depth+1
-		from TCLN_RELATIONSHIP_CLOSURE c1
-		cross join TCLN_RELATIONSHIP_CLOSURE c2
-		where c1.descendant_id = new.ancestor_id
-		and c2.ancestor_id = new.descendant_id;
+		<!-- after insertion of a tcl node : create auto reference in the closure table -->
+		<sql>
+			create trigger ins_tcln_after after insert on TEST_CASE_LIBRARY_NODE
+			for each row insert into TCLN_RELATIONSHIP_CLOSURE values (new.tcln_id, new.tcln_id, 0);		
+		</sql>
 		
-
--- when association of tcl nodes are removed
-create trigger detach_tcln before delete on TCLN_RELATIONSHIP
-for each row delete clos1 from TCLN_RELATIONSHIP_CLOSURE clos1 
-		join TCLN_RELATIONSHIP_CLOSURE clos2 
-			on clos1.descendant_id=clos2.descendant_id
-		left join TCLN_RELATIONSHIP_CLOSURE clos3 
-			on clos3.ancestor_id = clos2.ancestor_id 
-			and clos3.descendant_id = clos1.ancestor_id
-		where clos2.ancestor_id = old.descendant_id 
-		and clos3.ancestor_id is null;
-
- -->
+		
+		
+		<!-- before suppression of a tcl node : remove auto reference from the closure table -->
+		<sql>
+			create trigger del_tcln_before before delete on TEST_CASE_LIBRARY_NODE
+			for each row delete from TCLN_RELATIONSHIP_CLOSURE where ancestor_id=old.tcln_id and descendant_id=old.tcln_id;	
+		</sql>
+		
+		
+		<!-- when two tcl nodes are attached : attach the subtrees as well. -->
+		<sql>
+			create trigger attach_tcln_after after insert on TCLN_RELATIONSHIP
+			for each row insert into TCLN_RELATIONSHIP_CLOSURE 
+					select c1.ancestor_id, c2.descendant_id, c1.depth+c2.depth+1
+					from TCLN_RELATIONSHIP_CLOSURE c1
+					cross join TCLN_RELATIONSHIP_CLOSURE c2
+					where c1.descendant_id = new.ancestor_id
+					and c2.ancestor_id = new.descendant_id;		
+		</sql>
 	
+		
+		<!--  when two tcl nodes are detached : detach the subtrees as well -->
+		<sql>
+			create trigger detach_tcln_before before delete on TCLN_RELATIONSHIP
+			for each row delete clos1 from TCLN_RELATIONSHIP_CLOSURE clos1 
+					join TCLN_RELATIONSHIP_CLOSURE clos2 
+						on clos1.descendant_id=clos2.descendant_id
+					left join TCLN_RELATIONSHIP_CLOSURE clos3 
+						on clos3.ancestor_id = clos2.ancestor_id 
+						and clos3.descendant_id = clos1.ancestor_id
+					where clos2.ancestor_id = old.descendant_id 
+					and clos3.ancestor_id is null;		
+		</sql>
+	</changeSet>	
+
+
+	<changeSet id="tm-1.3-feat-1112.06-mysql" author="bsiri" dbms="mysql">
+		<comment>mysql-triggers for RLN_RELATIONSHIP_CLOSURE table</comment>
+		
+		<!-- after insertion of a rl node : create auto reference in the closure table -->
+		<sql>
+			create trigger ins_rln_after after insert on REQUIREMENT_LIBRARY_NODE
+			for each row insert into RLN_RELATIONSHIP_CLOSURE values (new.rln_id, new.rln_id, 0);		
+		</sql>
+		
+		
+		
+		<!-- before suppression of a rl node : remove auto reference from the closure table -->
+		<sql>
+			create trigger del_rln_before before delete on REQUIREMENT_LIBRARY_NODE
+			for each row delete from RLN_RELATIONSHIP_CLOSURE where ancestor_id=old.rln_id and descendant_id=old.rln_id;	
+		</sql>
+		
+		
+		<!-- when two rl nodes are attached : attach the subtrees as well. -->
+		<sql>
+			create trigger attach_rln_after after insert on RLN_RELATIONSHIP
+			for each row insert into RLN_RELATIONSHIP_CLOSURE 
+					select c1.ancestor_id, c2.descendant_id, c1.depth+c2.depth+1
+					from RLN_RELATIONSHIP_CLOSURE c1
+					cross join RLN_RELATIONSHIP_CLOSURE c2
+					where c1.descendant_id = new.ancestor_id
+					and c2.ancestor_id = new.descendant_id;		
+		</sql>
+	
+		
+		<!--  when two rl nodes are detached : detach the subtrees as well -->
+		<sql>
+			create trigger detach_rln_before before delete on RLN_RELATIONSHIP
+			for each row delete clos1 from RLN_RELATIONSHIP_CLOSURE clos1 
+					join RLN_RELATIONSHIP_CLOSURE clos2 
+						on clos1.descendant_id=clos2.descendant_id
+					left join RLN_RELATIONSHIP_CLOSURE clos3 
+						on clos3.ancestor_id = clos2.ancestor_id 
+						and clos3.descendant_id = clos1.ancestor_id
+					where clos2.ancestor_id = old.descendant_id 
+					and clos3.ancestor_id is null;		
+		</sql>
+	</changeSet>	
+	
+	<changeSet id="tm-1.3-feat-1112.07-mysql" author="bsiri" dbms="mysql">
+		<comment>mysql-triggers for CLN_RELATIONSHIP_CLOSURE table</comment>
+		
+		<!-- after insertion of a cl node : create auto reference in the closure table -->
+		<sql>
+			create trigger ins_cln_after after insert on CAMPAIGN_LIBRARY_NODE
+			for each row insert into CLN_RELATIONSHIP_CLOSURE values (new.cln_id, new.cln_id, 0);		
+		</sql>
+		
+		
+		
+		<!-- before suppression of a cl node : remove auto reference from the closure table -->
+		<sql>
+			create trigger del_cln_before before delete on CAMPAIGN_LIBRARY_NODE
+			for each row delete from CLN_RELATIONSHIP_CLOSURE where ancestor_id=old.cln_id and descendant_id=old.cln_id;	
+		</sql>
+		
+		
+		<!-- when two rl nodes are attached : attach the subtrees as well. -->
+		<sql>
+			create trigger attach_cln_after after insert on CLN_RELATIONSHIP
+			for each row insert into CLN_RELATIONSHIP_CLOSURE 
+					select c1.ancestor_id, c2.descendant_id, c1.depth+c2.depth+1
+					from CLN_RELATIONSHIP_CLOSURE c1
+					cross join CLN_RELATIONSHIP_CLOSURE c2
+					where c1.descendant_id = new.ancestor_id
+					and c2.ancestor_id = new.descendant_id;		
+		</sql>
+	
+		
+		<!--  when two cl nodes are detached : detach the subtrees as well -->
+		<sql>
+			create trigger detach_cln_before before delete on CLN_RELATIONSHIP
+			for each row delete clos1 from CLN_RELATIONSHIP_CLOSURE clos1 
+					join CLN_RELATIONSHIP_CLOSURE clos2 
+						on clos1.descendant_id=clos2.descendant_id
+					left join CLN_RELATIONSHIP_CLOSURE clos3 
+						on clos3.ancestor_id = clos2.ancestor_id 
+						and clos3.descendant_id = clos1.ancestor_id
+					where clos2.ancestor_id = old.descendant_id 
+					and clos3.ancestor_id is null;		
+		</sql>
+	</changeSet>	
+	
+	
+	<!--  
+	
+	
+	
+				TODO : same changesets for H2 triggers 
+	
+	
+	
+	
+	-->
+	
+	<changeSet id="tm-1.3-feat-1112.08" author="bsiri">
+		<comment>we can now reinsert our data from the tmp tables and let the triggers do the job</comment>
+
+		<sql>
+			insert into TCLN_RELATIONSHIP
+				select * from TCLN_RELATIONSHIP_TMP
+		</sql>
+		
+		<sql>
+			insert into RLN_RELATIONSHIP
+				select * from RLN_RELATIONSHIP_TMP
+		</sql>
+		
+		<sql>
+			insert into CLN_RELATIONSHIP
+				select * from CLN_RELATIONSHIP_TMP
+		</sql>
+	
+	</changeSet> 
+	
+	<changeSet id="tm-1.3-feat-1112.09" author="bsiri">
+		<comment>If success, we can now drop our temp tables and complete the migration</comment>
+	
+		<dropTable tableName="TCLN_RELATIONSHIP_TMP"/>
+		<dropTable tableName="RLN_RELATIONSHIP_TMP"/>
+		<dropTable tableName="CLN_RELATIONSHIP_TMP"/>
+	
+	</changeSet>
 </databaseChangeLog>
  
