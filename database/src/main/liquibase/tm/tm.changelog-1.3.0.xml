@@ -492,8 +492,31 @@
 		<!--  ************** /h2 triggers	****************  -->
 	
 	<changeSet id="tm-1.3-feat-1112.08" author="bsiri">
+		<comment>this step is mandatory if we want the next one to work (triggers need the nodes to have self-reference in the closure tables)</comment>
+		<sql>
+			insert into TCLN_RELATIONSHIP_CLOSURE
+				select tcln_id, tcln_id, 0
+				from TEST_CASE_LIBRARY_NODE
+				where deleted_on is null;
+		</sql>
+		<sql>
+			insert into RLN_RELATIONSHIP_CLOSURE
+				select rln_id, rln_id, 0
+				from REQUIREMENT_LIBRARY_NODE
+				where deleted_on is null;
+		</sql>	
+		<sql>
+			insert into CLN_RELATIONSHIP_CLOSURE
+				select cln_id, cln_id, 0
+				from CAMPAIGN_LIBRARY_NODE
+				where deleted_on is null;
+		</sql>		
+	</changeSet>
+	
+	
+	<changeSet id="tm-1.3-feat-1112.09" author="bsiri">
 		<comment>we can now reinsert our data from the tmp tables and let the triggers do the job</comment>
-
+		
 		<sql>
 			insert into TCLN_RELATIONSHIP
 				select * from TCLN_RELATIONSHIP_TMP
@@ -511,7 +534,7 @@
 	
 	</changeSet> 
 	
-	<changeSet id="tm-1.3-feat-1112.09" author="bsiri">
+	<changeSet id="tm-1.3-feat-1112.10" author="bsiri">
 		<comment>If success, we can now drop our temp tables and complete the migration</comment>
 	
 		<dropTable tableName="TCLN_RELATIONSHIP_TMP"/>
