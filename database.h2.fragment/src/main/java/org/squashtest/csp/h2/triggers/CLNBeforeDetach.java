@@ -38,14 +38,14 @@ import org.h2.tools.TriggerAdapter;
 public class CLNBeforeDetach extends TriggerAdapter {
 
 	private static final String SQL = 
-		"delete clos1 from CLN_RELATIONSHIP_CLOSURE clos1\n"+ 
-		"join CLN_RELATIONSHIP_CLOSURE clos2\n"+ 
-			"on clos1.descendant_id = clos2.descendant_id\n"+
-		"left join CLN_RELATIONSHIP_CLOSURE clos3\n"+ 
-			"on clos3.ancestor_id = clos2.ancestor_id\n"+ 
-			"and clos3.descendant_id = clos1.ancestor_id\n"+
-		"where clos2.ancestor_id = ?\n"+ 
-		"and clos3.ancestor_id is null;";		
+		"delete from CLN_RELATIONSHIP_CLOSURE "+
+		"where descendant_id in ("+
+			"select descendant_id from CLN_RELATIONSHIP_CLOSURE where ancestor_id=?"+
+		") "+
+		"and ancestor_id not in ("+
+			"select descendant_id from CLN_RELATIONSHIP_CLOSURE where ancestor_id=?"+
+		")";
+	
 	
 	
 	@Override
@@ -54,8 +54,9 @@ public class CLNBeforeDetach extends TriggerAdapter {
 		
 		PreparedStatement stmt = conn.prepareStatement(SQL);
 		
-		Long detachedId = newRow.getLong(2);
-		stmt.setLong(1, detachedId);		
+		Long detachedId = oldRow.getLong(2);
+		stmt.setLong(1, detachedId);
+		stmt.setLong(2, detachedId);
 		
 		stmt.execute();
 

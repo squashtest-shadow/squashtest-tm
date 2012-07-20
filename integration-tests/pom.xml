@@ -108,6 +108,15 @@
 						</goals>
 					</execution>
 				</executions>
+				
+				<dependencies>
+					<dependency>
+						<artifactId>database.h2.fragment</artifactId>
+						<groupId>org.squashtest.tm</groupId>
+						<version>${project.version}</version>
+					</dependency>
+				
+				</dependencies>
 			</plugin>
 
 			<!-- Create and populate a database integration tests -->
@@ -167,13 +176,9 @@
 			<version>${project.version}</version>
 			<scope>test</scope>
 		</dependency>
-<!-- 		<dependency>
-			<groupId>${project.groupId}</groupId>
-			<artifactId>plugin.report.std</artifactId>
-			<version>${project.version}</version>
-			<scope>test</scope>
-		</dependency>
- -->		<dependency>
+		<!-- <dependency> <groupId>${project.groupId}</groupId> <artifactId>plugin.report.std</artifactId> 
+			<version>${project.version}</version> <scope>test</scope> </dependency> -->
+		<dependency>
 			<groupId>${project.groupId}</groupId>
 			<artifactId>org.squashtest.csp.tools.unittest</artifactId>
 			<version>${project.version}</version>
@@ -408,11 +413,14 @@
 			<artifactId>com.springsource.javax.inject</artifactId>
 		</dependency>
 		<!-- ====== /JSE DI API ====== -->
-		<!-- <dependency>
-			<groupId>javax.servlet</groupId>
-			<artifactId>com.springsource.javax.servlet</artifactId>
-			<scope>test</scope>
-		</dependency> -->
+		<!-- <dependency> <groupId>javax.servlet</groupId> <artifactId>com.springsource.javax.servlet</artifactId> 
+			<scope>test</scope> </dependency> -->
+
+		<dependency>
+			<groupId>org.squashtest.tm</groupId>
+			<artifactId>database.h2.fragment</artifactId>
+			<version>${project.version}</version>
+		</dependency>
 	</dependencies>
 
 	<profiles>
