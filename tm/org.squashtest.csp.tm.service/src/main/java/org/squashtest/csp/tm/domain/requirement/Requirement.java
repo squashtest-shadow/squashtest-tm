@@ -318,10 +318,7 @@ public class Requirement extends RequirementLibraryNode<RequirementVersion> impl
 		return null;
 	}
 
-	@Override
-	public Library<?> getLibrary() {
-		return getProject().getRequirementLibrary();
-	}
+
 
 	
 

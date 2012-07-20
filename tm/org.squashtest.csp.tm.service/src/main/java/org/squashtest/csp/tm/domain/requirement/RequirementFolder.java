@@ -20,10 +20,8 @@
  */
 package org.squashtest.csp.tm.domain.requirement;
 
-import java.util.Collection;
 import java.util.Date;
 import java.util.HashSet;
-import java.util.Iterator;
 import java.util.Set;
 
 import javax.persistence.CascadeType;
@@ -153,10 +151,6 @@ public class RequirementFolder extends RequirementLibraryNode<SimpleResource> im
 		return resource;
 	}
 
-	@Override
-	public Library<?> getLibrary() {
-		return getProject().getRequirementLibrary();
-	}
 	public void emptyContent() {
 		this.content.clear();
 		

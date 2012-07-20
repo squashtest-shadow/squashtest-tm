@@ -20,7 +20,6 @@
  */
 package org.squashtest.csp.tm.domain.project;
 
-import org.squashtest.csp.core.security.annotation.AclConstrainedObject;
 import org.squashtest.csp.tm.domain.library.Library;
 
 /**
@@ -40,7 +39,7 @@ public interface ProjectResource {
 	Library<?> getLibrary();
 
 	/**
-	 * Notifies this resource now belongs to the given project. {@kink ProjectResource#getProject()} should
+	 * Notifies this resource now belongs to the given project. {@link ProjectResource#getProject()} should
 	 * return this project afterwards.
 	 * 
 	 * @param project

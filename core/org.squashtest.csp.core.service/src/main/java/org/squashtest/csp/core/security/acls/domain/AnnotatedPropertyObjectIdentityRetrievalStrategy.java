@@ -22,6 +22,12 @@ package org.squashtest.csp.core.security.acls.domain;
 
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
+import java.util.Arrays;
+import java.util.HashSet;
+import java.util.LinkedList;
+import java.util.Map;
+import java.util.Set;
+import java.util.concurrent.ConcurrentHashMap;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -44,12 +50,24 @@ public class AnnotatedPropertyObjectIdentityRetrievalStrategy implements ObjectI
 			.getLogger(AnnotatedPropertyObjectIdentityRetrievalStrategy.class);
 
 	private ObjectIdentityRetrievalStrategy delegate = new ObjectIdentityRetrievalStrategyImpl();
+	
+	private Map<Class<?>, Method> identityMethodMap = new ConcurrentHashMap<Class<?>, Method>();
 
 	@Override
 	public ObjectIdentity getObjectIdentity(Object domainObject) {
 		Class<?> candidateClass = domainObject.getClass();
 
-		Method targetProperty = findAnnotatedProperty(candidateClass);
+		Method targetProperty = null;
+		
+		if (isMapped(candidateClass)){
+			targetProperty = identityMethodMap.get(candidateClass);
+		}
+		else{
+			targetProperty = findAnnotatedProperty(candidateClass);
+			if (targetProperty!=null){
+				mapClass(candidateClass, targetProperty);
+			}
+		}
 
 		Object identityHolder;
 
@@ -87,67 +105,39 @@ public class AnnotatedPropertyObjectIdentityRetrievalStrategy implements ObjectI
 	}
 
 	private Method findAnnotatedProperty(Class<?> candidateClass) {
-		if (LOGGER.isDebugEnabled()) {
-			LOGGER.trace("Looking for @AclConstrainedObject in class " + candidateClass.getName());
-		}
-
-		Method targetProperty = findAnnotatedPropertyInClass(candidateClass);
-
-		if (targetProperty == null) {
-			targetProperty = findAnnotatedPropertyInInterfacesOfClass(candidateClass);
-		}
-
-		if (targetProperty == null) {
-			targetProperty = findAnnotatedPropertyInInterfacesOfSuperclass(candidateClass);
-		}
-
-		return targetProperty;
-	}
-
-	private Method findAnnotatedPropertyInInterfacesOfSuperclass(Class<?> candidateClass) {
+		
+		Set<Class<?>> exploredClasses = new HashSet<Class<?>>(); 
+		
+		LinkedList<Class<?>> explorationQueue= new LinkedList<Class<?>>();
 		Method targetProperty = null;
-
-		Class<?> superClass = candidateClass.getSuperclass();
-
-		if (!Object.class.equals(superClass)) {
-			targetProperty = findAnnotatedPropertyInInterfacesOfClass(superClass);
-
-			if (targetProperty == null) {
-				targetProperty = findAnnotatedPropertyInInterfacesOfSuperclass(superClass);
+		Class<?> currentClass = null;
+		
+		explorationQueue.add(candidateClass);
+		
+		while ( (targetProperty == null) && (! explorationQueue.isEmpty())){
+			
+			currentClass = explorationQueue.removeFirst();
+			
+			if ( (currentClass==null) || (exploredClasses.contains(currentClass))) continue;
+						
+			if (LOGGER.isDebugEnabled()){
+				LOGGER.trace("Looking for @AclConstrainedObject in class '"+candidateClass.getName()+"'");
 			}
-		}
-
-		if (LOGGER.isDebugEnabled()) {
-			if (targetProperty != null) {
-				LOGGER.trace("Found @AclConstrainedObject in interfaces of superclass " + candidateClass.getName());
-			} else {
-				LOGGER.trace("@AclConstrainedObject not found in interfaces of superclass " + candidateClass.getName());
+			
+			targetProperty = findAnnotatedPropertyInClass(currentClass);
+			
+			//next step is to explore the interfaces and classes
+			if (targetProperty == null){
+				explorationQueue.addAll(Arrays.asList(currentClass.getInterfaces()));
+				explorationQueue.add(currentClass.getSuperclass());
 			}
+			
+			//remember the class
+			exploredClasses.add(currentClass);
 		}
-
+		
 		return targetProperty;
-	}
-
-	private Method findAnnotatedPropertyInInterfacesOfClass(Class<?> candidateClass) {
-		Method targetProperty = null;
-
-		for (Class<?> interf : candidateClass.getInterfaces()) {
-			targetProperty = findAnnotatedPropertyInClass(interf);
-
-			if (targetProperty != null) {
-				break;
-			}
-		}
-
-		if (LOGGER.isDebugEnabled()) {
-			if (targetProperty != null) {
-				LOGGER.trace("Found @AclConstrainedObject in interfaces class " + candidateClass.getName());
-			} else {
-				LOGGER.trace("@AclConstrainedObject not found in interfaces of class " + candidateClass.getName());
-			}
-		}
-
-		return targetProperty;
+		
 	}
 
 	private Method findAnnotatedPropertyInClass(Class<?> candidateClass) {
@@ -171,6 +161,29 @@ public class AnnotatedPropertyObjectIdentityRetrievalStrategy implements ObjectI
 		}
 
 		return targetProperty;
+	}
+
+	//*********************************
+
+	private boolean isMapped(Class<?> someClass){
+		return identityMethodMap.containsKey(someClass);
+	}
+	
+	private void mapClass(Class<?> someClass, Method identityMethod){
+		if (LOGGER.isDebugEnabled()){
+			LOGGER.debug("AnnotatedPropertyObjectIdentityRetrievalStrategy : identity method '"+identityMethod.getName()+"' found for class '"+someClass.getName()+"', registering now");
+		}
+		identityMethodMap.put(someClass, identityMethod);
+		nukeMapIfTooLarge();
+	}
+	
+	private void nukeMapIfTooLarge(){
+		if (identityMethodMap.size()>50){
+			if (LOGGER.isDebugEnabled()){
+				LOGGER.debug("AnnotatedPropertyObjectIdentityRetrievalStrategy : identity method registry grew too large, reseting it");
+			}
+			identityMethodMap.clear();
+		}
 	}
 
 }

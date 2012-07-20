@@ -29,7 +29,9 @@ import javax.persistence.InheritanceType;
 import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
 
+import org.squashtest.csp.core.security.annotation.AclConstrainedObject;
 import org.squashtest.csp.tm.domain.audit.Auditable;
+import org.squashtest.csp.tm.domain.library.Library;
 import org.squashtest.csp.tm.domain.library.LibraryNode;
 import org.squashtest.csp.tm.domain.project.Project;
 import org.squashtest.csp.tm.domain.resource.Resource;
@@ -77,6 +79,12 @@ public abstract class RequirementLibraryNode<RESOURCE extends Resource> implemen
 	@Override
 	public Long getId() {
 		return id;
+	}
+	
+	@Override
+	@AclConstrainedObject
+	public Library<?> getLibrary() {
+		return getProject().getRequirementLibrary();
 	}
 	
 	/**

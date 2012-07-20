@@ -483,7 +483,7 @@
 		<!--  when two cl nodes are detached : detach the subtrees as well -->
 		<sql>
 			create trigger detach_cln_before before delete on CLN_RELATIONSHIP
-			for each row call "org.squashtest.csp.h2.triggers.CRLNBeforeDetach";
+			for each row call "org.squashtest.csp.h2.triggers.CLNBeforeDetach";
 		</sql>
 
 		
