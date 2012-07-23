@@ -28,6 +28,11 @@
 	
 	<include file="../../../main/liquibase/tm/tm.changelog-1.3.0.xml" relativeToChangelogFile="true" />     
 
+
+	<!--  ========================================================================
+									TEST FEAT. 1112	
+	 ========================================================================  -->
+
 	<changeSet id="1.3.0.create-feat1112-test-tmp-table" author="bsiri">
 		<createTable tableName="FEAT_TMP_TABLE">
 			<column name="ancestor_id" type="BIGINT"/>
@@ -37,8 +42,15 @@
 	
 	</changeSet>
 
+
+	<!-- Testing TCLN migration.
+	
+		Here we compare FEAT_TMP_TABLE and a subset of TCLN_CLOSURE_TABLE restricted to some ids. Their content must be equal, we test this
+		by testing that each contain all the lines of the other one. 
+	-->
 	
 	<changeSet id="1.3.0.check-tcln-closure-setup" author="bsiri">
+		<!--  the following test data are based on a subset of TCLN ids declared in 'tm.data-0.15.0.sql' -->
 		<sql>
 			delete from FEAT_TMP_TABLE;
 			
@@ -67,11 +79,17 @@
 				(133, 137, 1),
 				(133, 138, 1) 
 		</sql>
+		<comment>
+			130 contains 131 and 133; 
+			131 contains 132;
+			133 contains 134, 135, 136, 317, 138.
+			The following test will ensure that the hierarchy was fully expanded in the closure table.
+		</comment>		
 	</changeSet>
+	
+	
 	<changeSet id="1.3.0.check-tcln-closure-test" author="bsiri">
 	
-		<!--  Here we compare FEAT_TMP_TABLE and a subset of TCLN_CLOSURE_TABLE restricted to some ids. Their content must be equal, we test this
-		by testing that each contain all the lines of the other one. -->
 		<preConditions>
 			<!--  check that there are no ancestor in the closure table that have a descendant not listed in the tmp table -->
 			<sqlCheck expectedResult="0">
@@ -100,16 +118,82 @@
 			</sqlCheck>	
 			
 		</preConditions>
+
+	</changeSet>
+	
+	
+	
+	<!-- Testing CLN migration.
+	
+		Here we compare FEAT_TMP_TABLE and a subset of CLN_CLOSURE_TABLE restricted to some ids. Their content must be equal, we test this
+		by testing that each contain all the lines of the other one. 
+	-->
+	
+	<changeSet id="1.3.0.check-cln-closure-setup" author="bsiri">
+		<!--  the following test data are based on a subset of CLN ids declared in 'tm.data-0.15.0.sql' -->
+		<sql>
+			delete from FEAT_TMP_TABLE;
+			
+			insert into FEAT_TMP_TABLE values
+				(10, 10, 0),
+				(11, 11, 0),
+				(12, 12, 0),
+				(13, 13, 0),
+				(10, 11, 1),
+				(10, 12, 2),
+				(10, 13, 3),
+				(11, 12, 1),
+				(11, 13, 2),
+				(12, 13, 1)				
+		</sql>
 		<comment>
-			130 contains 131 and 133; 
-			131 contains 132;
-			133 contains 134, 135, 136, 317, 138.
-			This test ensures that the hierarchy was fully expanded in the closure table.
+			10 contains 11
+			11 contains 12
+			12 contains 13		
 		</comment>
 	</changeSet>
 	
+	
+	<changeSet id="1.3.0.check-cln-closure-test" author="bsiri">
+	
+		<preConditions>
+			<!--  check that there are no ancestor in the closure table that have a descendant not listed in the tmp table -->
+			<sqlCheck expectedResult="0">
+				select count(clos1.ancestor_id) from CLN_RELATIONSHIP_CLOSURE clos1 
+				where 
+					clos1.ancestor_id in (10, 11, 12, 13)
+				and 
+					clos1.descendant_id not in (
+					select tmp.descendant_id from FEAT_TMP_TABLE tmp
+					where tmp.ancestor_id = clos1.ancestor_id	
+					and tmp.depth = clos1.depth
+				)
+			</sqlCheck>	 	
+			
+			<!--  complementary check : that there are no ancestor in the tmp table that have a descendant not listed in the closure table. -->
+			<sqlCheck expectedResult="0">
+				select count(tmp.ancestor_id) from FEAT_TMP_TABLE tmp 
+				where 
+					tmp.ancestor_id in (10, 11, 12, 13)
+				and 
+					tmp.descendant_id not in (
+					select clos1.descendant_id from CLN_RELATIONSHIP_CLOSURE clos1
+					where tmp.ancestor_id = clos1.ancestor_id	
+					and tmp.depth = clos1.depth
+				)
+			</sqlCheck>	
+			
+		</preConditions>
+	</changeSet>
+	
+		
 	<changeSet id="1.3.0.delete-feat1112-test-tmp-table" author="bsiri">
 		<dropTable tableName="FEAT_TMP_TABLE"/>	
 	</changeSet>
+	
+	
+		<!--  ========================================================================
+									/TEST FEAT. 1112	
+	 ========================================================================  -->
 		
 </databaseChangeLog>
