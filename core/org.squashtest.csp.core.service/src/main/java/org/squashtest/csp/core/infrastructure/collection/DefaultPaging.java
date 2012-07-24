@@ -18,38 +18,45 @@
  *     You should have received a copy of the GNU Lesser General Public License
  *     along with this software.  If not, see <http://www.gnu.org/licenses/>.
  */
-package org.squashtest.csp.tm.domain.bugtracker;
+package org.squashtest.csp.core.infrastructure.collection;
 
-import java.util.List;
+/**
+ * {@link Paging} of Squash TM default size.
+ * 
+ * @author Gregory Fouquet
+ * 
+ */
+public class DefaultPaging implements Paging {
+	/**
+	 * First page of default size.
+	 */
+	public static final Paging FIRST_PAGE = new DefaultPaging(0);
 
-import org.squashtest.csp.tm.domain.project.Project;
-
-public interface IssueDetector {
+	private final int firstItemIndex;
 
 	/**
+	 * @param firstItemIndex
+	 */
+	public DefaultPaging(int firstItemIndex) {
+		this.firstItemIndex = firstItemIndex;
+	}
+
+	/**
+	 * @see org.squashtest.csp.core.infrastructure.collection.Paging#getFirstItemIndex()
+	 */
+	@Override
+	public int getFirstItemIndex() {
+		return firstItemIndex;
+	}
+
+	/**
+	 * (non-Javadoc)
 	 * 
-	 * @return its IssueList
+	 * @see org.squashtest.csp.core.infrastructure.collection.Paging#getPageSize()
 	 */
-	IssueList getIssueList();
-
-	/**
-	 * will return the (Squash) project that entity belongs to
-	 * 
-	 * @return the project of that entity
-	 */
-	Project getProject();
-
-	/**
-	 * 
-	 * @return the Id of its IssueList
-	 */
-	Long getIssueListId();
-
-
-	/**
-	 * @return the list of ids of its own IssueList and the result of getAllIssueListIds of other Bugged entities to
-	 *         which that Bugged is bound to.
-	 */
-	List<Long> getAllIssueListId();
+	@Override
+	public int getPageSize() {
+		return 30;
+	}
 
 }
