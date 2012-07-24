@@ -24,8 +24,8 @@ import javax.inject.Inject
 
 import org.springframework.transaction.annotation.Transactional
 import org.hibernate.Query
-import org.squashtest.csp.core.infrastructure.collection.PagingAndSorting
-import org.squashtest.csp.core.infrastructure.collection.SortOrder
+import org.squashtest.tm.core.foundation.collection.PagingAndSorting
+import org.squashtest.tm.core.foundation.collection.SortOrder
 import org.squashtest.csp.tm.internal.repository.RequirementVersionDao
 import org.squashtest.csp.tm.internal.repository.RequirementDeletionDao
 import org.squashtest.csp.tools.unittest.assertions.CollectionAssertions

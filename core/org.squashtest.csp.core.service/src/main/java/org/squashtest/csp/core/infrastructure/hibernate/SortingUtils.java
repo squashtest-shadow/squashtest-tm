@@ -22,7 +22,7 @@ package org.squashtest.csp.core.infrastructure.hibernate;
 
 import org.hibernate.Criteria;
 import org.hibernate.criterion.Order;
-import org.squashtest.csp.core.infrastructure.collection.Sorting;
+import org.squashtest.tm.core.foundation.collection.Sorting;
 
 /**
  * Utility class to apply sorting to a Hibernate query.

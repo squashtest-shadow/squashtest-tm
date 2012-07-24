@@ -26,13 +26,13 @@ import javax.inject.Inject;
 
 import org.hibernate.SessionFactory;
 import org.springframework.stereotype.Service;
-import org.squashtest.csp.core.infrastructure.collection.PagedCollectionHolder;
-import org.squashtest.csp.core.infrastructure.collection.Paging;
-import org.squashtest.csp.core.infrastructure.collection.PagingBackedPagedCollectionHolder;
 import org.squashtest.csp.tm.domain.event.RequirementAuditEvent;
 import org.squashtest.csp.tm.domain.event.RequirementLargePropertyChange;
 import org.squashtest.csp.tm.internal.repository.RequirementAuditEventDao;
 import org.squashtest.csp.tm.service.audit.RequirementAuditTrailService;
+import org.squashtest.tm.core.foundation.collection.PagedCollectionHolder;
+import org.squashtest.tm.core.foundation.collection.Paging;
+import org.squashtest.tm.core.foundation.collection.PagingBackedPagedCollectionHolder;
 
 /**
  * @author Gregory Fouquet
@@ -47,7 +47,7 @@ public class RequirementAuditTrailServiceImpl implements RequirementAuditTrailSe
 
 	/**
 	 * @see org.squashtest.csp.tm.service.audit.RequirementAuditTrailService#findAllByRequirementVersionIdOrderedByDate(long,
-	 *      org.squashtest.csp.core.infrastructure.collection.Paging)
+	 *      org.squashtest.tm.core.foundation.collection.Paging)
 	 */
 	@Override
 	public PagedCollectionHolder<List<RequirementAuditEvent>> findAllByRequirementVersionIdOrderedByDate(long requirementVersionId,

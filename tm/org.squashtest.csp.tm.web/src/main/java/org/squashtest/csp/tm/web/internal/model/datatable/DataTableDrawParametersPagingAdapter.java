@@ -20,7 +20,7 @@
  */
 package org.squashtest.csp.tm.web.internal.model.datatable;
 
-import org.squashtest.csp.core.infrastructure.collection.Paging;
+import org.squashtest.tm.core.foundation.collection.Paging;
 
 /**
  * This class adapts a {@link DataTableDrawParameters} object into a {@link Paging}.

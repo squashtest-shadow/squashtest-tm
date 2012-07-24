@@ -18,18 +18,27 @@
  *     You should have received a copy of the GNU Lesser General Public License
  *     along with this software.  If not, see <http://www.gnu.org/licenses/>.
  */
-package org.squashtest.csp.core.infrastructure.collection;
-
-import java.util.Collection;
+package org.squashtest.tm.core.foundation.collection;
 
 /**
+ * Defines a paging to apply when querying for a collection.
  * @author Gregory Fouquet
- * 
+ *
  */
-public interface PagedCollectionHolder<COLLECTION extends Collection<?>> {
-	long getFirstItemIndex();
+public interface Paging {
 
-	long getTotalNumberOfItems();
+	/**
+	 * The 0-based index of the first returned item.
+	 * 
+	 * @return
+	 */
+	int getFirstItemIndex();
 
-	COLLECTION getPagedItems();
+	/**
+	 * The size of a page ie the max number of items in the returned collection.
+	 * 
+	 * @return
+	 */
+	int getPageSize();
+
 }

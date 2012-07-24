@@ -18,45 +18,31 @@
  *     You should have received a copy of the GNU Lesser General Public License
  *     along with this software.  If not, see <http://www.gnu.org/licenses/>.
  */
-package org.squashtest.csp.core.infrastructure.collection;
+package org.squashtest.tm.core.foundation.i18n;
 
 /**
- * {@link Paging} of Squash TM default size.
- * 
  * @author Gregory Fouquet
  * 
  */
-public class DefaultPaging implements Paging {
-	/**
-	 * First page of default size.
-	 */
-	public static final Paging FIRST_PAGE = new DefaultPaging(0);
-
-	private final int firstItemIndex;
+public class Labelled extends ContextBasedInternationalized {
+	private String labelKey;
 
 	/**
-	 * @param firstItemIndex
+	 * @param labelKey
+	 *            the labelKey to set
 	 */
-	public DefaultPaging(int firstItemIndex) {
-		this.firstItemIndex = firstItemIndex;
+	public final void setLabelKey(String labelKey) {
+		this.labelKey = labelKey;
 	}
 
 	/**
-	 * @see org.squashtest.csp.core.infrastructure.collection.Paging#getFirstItemIndex()
+	 * @return the labelKey
 	 */
-	@Override
-	public int getFirstItemIndex() {
-		return firstItemIndex;
+	public final String getLabelKey() {
+		return labelKey;
 	}
 
-	/**
-	 * (non-Javadoc)
-	 * 
-	 * @see org.squashtest.csp.core.infrastructure.collection.Paging#getPageSize()
-	 */
-	@Override
-	public int getPageSize() {
-		return 30;
+	public final String getLabel() {
+		return getMessage(labelKey);
 	}
-
 }

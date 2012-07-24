@@ -20,7 +20,7 @@
  */
 package org.squashtest.tm.api.report.form;
 
-import org.squashtest.tm.core.i18n.Labelled;
+import org.squashtest.tm.core.foundation.i18n.Labelled;
 
 /**
  * @author Gregory Fouquet

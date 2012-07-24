@@ -23,8 +23,8 @@ package org.squashtest.csp.tm.internal.repository;
 import java.util.Collection;
 import java.util.List;
 
-import org.squashtest.csp.core.infrastructure.collection.PagingAndSorting;
 import org.squashtest.csp.tm.domain.requirement.RequirementVersion;
+import org.squashtest.tm.core.foundation.collection.PagingAndSorting;
 
 public interface CustomRequirementVersionDao {
 	/**

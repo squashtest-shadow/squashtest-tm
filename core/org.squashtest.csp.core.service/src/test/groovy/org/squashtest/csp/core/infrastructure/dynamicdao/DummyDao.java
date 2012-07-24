@@ -22,7 +22,8 @@ package org.squashtest.csp.core.infrastructure.dynamicdao;
 
 import java.util.List;
 
-import org.squashtest.csp.core.infrastructure.collection.Paging;
+import org.squashtest.tm.core.foundation.collection.Paging;
+
 
 /**
  * @author Gregory Fouquet

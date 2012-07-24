@@ -20,7 +20,7 @@
  */
 package org.squashtest.csp.tm.domain.testcase;
 
-import org.squashtest.tm.core.i18n.Internationalizable;
+import org.squashtest.tm.core.foundation.i18n.Internationalizable;
 
 public enum TestCaseExecutionMode implements Internationalizable {
 	AUTOMATED,

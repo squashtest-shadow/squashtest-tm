@@ -317,7 +317,6 @@
           </execution>
         </executions>
         <configuration>
-					<!-- manifestLocation>META-INF</manifestLocation -->
           <instructions>
             <Bundle-SymbolicName>${bundle.symbolicName}</Bundle-SymbolicName>
             <Bundle-Version>${project.version}</Bundle-Version>

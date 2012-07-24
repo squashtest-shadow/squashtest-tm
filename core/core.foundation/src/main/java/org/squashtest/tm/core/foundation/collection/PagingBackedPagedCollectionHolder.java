@@ -18,7 +18,7 @@
  *     You should have received a copy of the GNU Lesser General Public License
  *     along with this software.  If not, see <http://www.gnu.org/licenses/>.
  */
-package org.squashtest.csp.core.infrastructure.collection;
+package org.squashtest.tm.core.foundation.collection;
 
 import java.util.Collection;
 
@@ -46,7 +46,7 @@ public class PagingBackedPagedCollectionHolder<COLLECTION extends Collection<?>>
 	}
 
 	/**
-	 * @see org.squashtest.csp.core.infrastructure.collection.PagedCollectionHolder#getFirstItemIndex()
+	 * @see org.squashtest.tm.core.foundation.collection.PagedCollectionHolder#getFirstItemIndex()
 	 */
 	@Override
 	public long getFirstItemIndex() {
@@ -54,7 +54,7 @@ public class PagingBackedPagedCollectionHolder<COLLECTION extends Collection<?>>
 	}
 
 	/**
-	 * @see org.squashtest.csp.core.infrastructure.collection.PagedCollectionHolder#getTotalNumberOfItems()
+	 * @see org.squashtest.tm.core.foundation.collection.PagedCollectionHolder#getTotalNumberOfItems()
 	 */
 	@Override
 	public long getTotalNumberOfItems() {
@@ -62,7 +62,7 @@ public class PagingBackedPagedCollectionHolder<COLLECTION extends Collection<?>>
 	}
 
 	/**
-	 * @see org.squashtest.csp.core.infrastructure.collection.PagedCollectionHolder#getPagedItems()
+	 * @see org.squashtest.tm.core.foundation.collection.PagedCollectionHolder#getPagedItems()
 	 */
 	@Override
 	public COLLECTION getPagedItems() {

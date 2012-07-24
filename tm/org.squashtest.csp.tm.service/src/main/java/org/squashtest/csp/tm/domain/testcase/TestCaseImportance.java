@@ -47,7 +47,7 @@ public enum TestCaseImportance implements Level {
 	/**
 	 * (non-Javadoc)
 	 * 
-	 * @see org.squashtest.tm.core.i18n.Internationalizable#getI18nKey()
+	 * @see org.squashtest.tm.core.foundation.i18n.Internationalizable#getI18nKey()
 	 */
 	@Override
 	public String getI18nKey() {

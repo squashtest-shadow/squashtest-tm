@@ -32,11 +32,11 @@ import org.hibernate.Session;
 import org.hibernate.SessionFactory;
 import org.hibernate.criterion.Restrictions;
 import org.springframework.stereotype.Repository;
-import org.squashtest.csp.core.infrastructure.collection.PagingAndSorting;
 import org.squashtest.csp.core.infrastructure.hibernate.PagingUtils;
 import org.squashtest.csp.core.infrastructure.hibernate.SortingUtils;
 import org.squashtest.csp.tm.domain.requirement.RequirementVersion;
 import org.squashtest.csp.tm.internal.repository.CustomRequirementVersionDao;
+import org.squashtest.tm.core.foundation.collection.PagingAndSorting;
 
 /**
  *
@@ -92,7 +92,7 @@ public class HibernateRequirementVersionDao implements CustomRequirementVersionD
 
 	/**
 	 * @see org.squashtest.csp.tm.internal.repository.CustomRequirementVersionDao#findAllVerifiedByTestCase(long,
-	 *      org.squashtest.csp.core.infrastructure.collection.PagingAndSorting)
+	 *      org.squashtest.tm.core.foundation.collection.PagingAndSorting)
 	 */
 	@SuppressWarnings("unchecked")
 	@Override
@@ -106,7 +106,7 @@ public class HibernateRequirementVersionDao implements CustomRequirementVersionD
 
 	/**
 	 * @see org.squashtest.csp.tm.internal.repository.CustomRequirementVersionDao#findAllByRequirement(long,
-	 *      org.squashtest.csp.core.infrastructure.collection.PagingAndSorting)
+	 *      org.squashtest.tm.core.foundation.collection.PagingAndSorting)
 	 */
 	@SuppressWarnings("unchecked")
 	@Override

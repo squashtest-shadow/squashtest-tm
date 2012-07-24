@@ -18,27 +18,13 @@
  *     You should have received a copy of the GNU Lesser General Public License
  *     along with this software.  If not, see <http://www.gnu.org/licenses/>.
  */
-package org.squashtest.csp.core.infrastructure.collection;
+package org.squashtest.tm.core.foundation.collection;
 
 /**
- * Defines a paging to apply when querying for a collection.
+ * Paging and Sorting specifications.
+ * 
  * @author Gregory Fouquet
- *
+ * 
  */
-public interface Paging {
-
-	/**
-	 * The 0-based index of the first returned item.
-	 * 
-	 * @return
-	 */
-	int getFirstItemIndex();
-
-	/**
-	 * The size of a page ie the max number of items in the returned collection.
-	 * 
-	 * @return
-	 */
-	int getPageSize();
-
+public interface PagingAndSorting extends Paging, Sorting {
 }

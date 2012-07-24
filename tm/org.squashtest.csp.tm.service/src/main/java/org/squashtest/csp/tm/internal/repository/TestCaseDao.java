@@ -23,7 +23,6 @@ package org.squashtest.csp.tm.internal.repository;
 import java.util.Collection;
 import java.util.List;
 
-import org.squashtest.csp.core.infrastructure.collection.PagingAndSorting;
 import org.squashtest.csp.tm.domain.execution.Execution;
 import org.squashtest.csp.tm.domain.requirement.RequirementSearchCriteria;
 import org.squashtest.csp.tm.domain.testcase.ActionTestStep;
@@ -34,6 +33,7 @@ import org.squashtest.csp.tm.domain.testcase.TestStep;
 import org.squashtest.csp.tm.infrastructure.filter.CollectionFilter;
 import org.squashtest.csp.tm.infrastructure.filter.CollectionSorting;
 import org.squashtest.csp.tm.service.CallStepManagerService;
+import org.squashtest.tm.core.foundation.collection.PagingAndSorting;
 
 public interface TestCaseDao extends EntityDao<TestCase> {
 

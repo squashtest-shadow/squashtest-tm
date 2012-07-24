@@ -22,7 +22,7 @@ package org.squashtest.csp.core.infrastructure.hibernate;
 
 import org.hibernate.Criteria;
 import org.hibernate.Query;
-import org.squashtest.csp.core.infrastructure.collection.Paging;
+import org.squashtest.tm.core.foundation.collection.Paging;
 
 /**
  * Utility clas for paging queries.

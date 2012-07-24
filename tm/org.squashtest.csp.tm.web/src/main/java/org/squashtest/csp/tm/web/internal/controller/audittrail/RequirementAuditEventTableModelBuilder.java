@@ -37,7 +37,7 @@ import org.squashtest.csp.tm.domain.event.RequirementPropertyChange;
 import org.squashtest.csp.tm.domain.event.RequirementVersionModification;
 import org.squashtest.csp.tm.domain.requirement.RequirementVersion;
 import org.squashtest.csp.tm.web.internal.model.datatable.DataTableModelHelper;
-import org.squashtest.tm.core.i18n.Internationalizable;
+import org.squashtest.tm.core.foundation.i18n.Internationalizable;
 
 /**
  * Builder for datatable model showing {@link RequirementAuditEvent} objects. Not threadsafe, should be discarded after

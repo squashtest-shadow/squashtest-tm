@@ -20,7 +20,7 @@
  */
 package org.squashtest.csp.tm.infrastructure.filter;
 
-import org.squashtest.csp.core.infrastructure.collection.Paging;
+import org.squashtest.tm.core.foundation.collection.Paging;
 
 /**
  * Defines a filter to apply when querying for a collection.

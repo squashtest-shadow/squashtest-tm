@@ -26,13 +26,13 @@ import javax.inject.Inject;
 
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.stereotype.Service;
-import org.squashtest.csp.core.infrastructure.collection.PagedCollectionHolder;
-import org.squashtest.csp.core.infrastructure.collection.PagingAndSorting;
-import org.squashtest.csp.core.infrastructure.collection.PagingBackedPagedCollectionHolder;
 import org.squashtest.csp.tm.domain.requirement.RequirementCriticality;
 import org.squashtest.csp.tm.domain.requirement.RequirementVersion;
 import org.squashtest.csp.tm.internal.repository.RequirementVersionDao;
 import org.squashtest.csp.tm.service.CustomRequirementVersionManagerService;
+import org.squashtest.tm.core.foundation.collection.PagedCollectionHolder;
+import org.squashtest.tm.core.foundation.collection.PagingAndSorting;
+import org.squashtest.tm.core.foundation.collection.PagingBackedPagedCollectionHolder;
 
 /**
  * @author Gregory Fouquet
@@ -58,7 +58,7 @@ public class CustomRequirementVersionManagerServiceImpl implements CustomRequire
 
 	/**
 	 * @see org.squashtest.csp.tm.service.CustomRequirementVersionManagerService#findAllByRequirement(long,
-	 *      org.squashtest.csp.core.infrastructure.collection.PagingAndSorting)
+	 *      org.squashtest.tm.core.foundation.collection.PagingAndSorting)
 	 */
 	@Override
 	@PreAuthorize("hasPermission(#requirementId, 'org.squashtest.csp.tm.domain.requirement.Requirement', 'READ') or hasRole('ROLE_ADMIN')")

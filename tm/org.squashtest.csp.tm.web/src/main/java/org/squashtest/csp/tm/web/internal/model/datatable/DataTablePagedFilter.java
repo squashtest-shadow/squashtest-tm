@@ -46,7 +46,7 @@ public final class DataTablePagedFilter implements CollectionFilter {
 	}
 
 	/**
-	 * @see org.squashtest.csp.core.infrastructure.collection.Paging#getPageSize()
+	 * @see org.squashtest.tm.core.foundation.collection.Paging#getPageSize()
 	 */
 	@Override
 	public int getPageSize() {

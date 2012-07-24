@@ -18,30 +18,11 @@
  *     You should have received a copy of the GNU Lesser General Public License
  *     along with this software.  If not, see <http://www.gnu.org/licenses/>.
  */
-package org.squashtest.csp.core.infrastructure.collection;
+package org.squashtest.tm.core.foundation.i18n;
 
-import javax.validation.constraints.NotNull;
-
-public enum SortOrder {
-	ASCENDING("asc"), DESCENDING("desc");
-
-	private final String code;
-
-	private SortOrder(String code) {
-		this.code = code;
-	}
-
-	public String getCode() {
-		return code;
-	}
-
-	public static SortOrder coerceFromCode(@NotNull String code) {
-		for (SortOrder order : values()) {
-			if (order.getCode().equals(code)) {
-				return order;
-			}
-		}
-
-		throw new IllegalArgumentException("Code '" + code + "' is unknown of SortingOrder enum");
-	}
+public interface Internationalizable {
+	/**
+	 * @return the non null key used to get this object's i18n'd message.
+	 */
+	String getI18nKey();
 }

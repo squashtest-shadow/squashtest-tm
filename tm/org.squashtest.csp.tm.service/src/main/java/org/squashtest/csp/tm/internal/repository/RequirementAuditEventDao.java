@@ -22,8 +22,8 @@ package org.squashtest.csp.tm.internal.repository;
 
 import java.util.List;
 
-import org.squashtest.csp.core.infrastructure.collection.Paging;
 import org.squashtest.csp.tm.domain.event.RequirementAuditEvent;
+import org.squashtest.tm.core.foundation.collection.Paging;
 
 public interface RequirementAuditEventDao {
 	void persist(RequirementAuditEvent event);

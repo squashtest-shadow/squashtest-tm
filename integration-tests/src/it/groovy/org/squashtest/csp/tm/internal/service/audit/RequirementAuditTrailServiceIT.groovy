@@ -26,12 +26,12 @@ import javax.inject.Inject;
 
 import org.spockframework.util.NotThreadSafe;
 import org.springframework.transaction.annotation.Transactional;
-import org.squashtest.csp.core.infrastructure.collection.Paging;
+import org.squashtest.tm.core.foundation.collection.Paging;
 import org.squashtest.csp.tm.domain.event.RequirementAuditEvent;
 import org.squashtest.csp.tm.internal.service.DbunitServiceSpecification;
 import org.squashtest.csp.tm.service.audit.RequirementAuditTrailService;
 import org.unitils.dbunit.annotation.DataSet;
-import org.squashtest.csp.core.infrastructure.collection.PagedCollectionHolder;
+import org.squashtest.tm.core.foundation.collection.PagedCollectionHolder;
 
 import spock.unitils.UnitilsSupport;
 

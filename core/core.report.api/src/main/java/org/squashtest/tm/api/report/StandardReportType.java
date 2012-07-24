@@ -20,7 +20,7 @@
  */
 package org.squashtest.tm.api.report;
 
-import org.squashtest.tm.core.i18n.Internationalizable;
+import org.squashtest.tm.core.foundation.i18n.Internationalizable;
 
 /**
  * @author bsiri

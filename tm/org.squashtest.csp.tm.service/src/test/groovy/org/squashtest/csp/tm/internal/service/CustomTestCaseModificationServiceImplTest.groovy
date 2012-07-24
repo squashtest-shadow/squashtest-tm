@@ -20,8 +20,6 @@
  */
 package org.squashtest.csp.tm.internal.service
 
-import org.squashtest.csp.core.infrastructure.collection.PagedCollectionHolder
-import org.squashtest.csp.core.infrastructure.collection.PagingAndSorting
 import org.squashtest.csp.tm.domain.requirement.Requirement
 import org.squashtest.csp.tm.domain.requirement.RequirementVersion
 import org.squashtest.csp.tm.domain.testcase.TestCaseExecutionMode
@@ -34,6 +32,8 @@ import org.squashtest.csp.tm.internal.repository.TestCaseDao
 import org.squashtest.csp.tm.internal.repository.TestStepDao
 import org.squashtest.csp.tm.service.CallStepManagerService
 import org.squashtest.csp.tools.unittest.assertions.CollectionAssertions
+import org.squashtest.tm.core.foundation.collection.PagedCollectionHolder;
+import org.squashtest.tm.core.foundation.collection.PagingAndSorting;
 
 
 import spock.lang.Specification

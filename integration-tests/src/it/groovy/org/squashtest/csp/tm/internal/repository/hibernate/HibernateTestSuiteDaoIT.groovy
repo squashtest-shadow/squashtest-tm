@@ -29,7 +29,7 @@ import org.squashtest.csp.tm.domain.testcase.TestCase;
 import org.squashtest.csp.tm.internal.repository.TestSuiteDao
 import org.unitils.dbunit.annotation.DataSet
 import org.hibernate.Query
-import org.squashtest.csp.core.infrastructure.collection.Paging
+import org.squashtest.tm.core.foundation.collection.Paging
 import org.squashtest.csp.tm.domain.campaign.IterationTestPlanItem
 import org.squashtest.csp.tm.domain.campaign.TestSuiteStatistics
 import org.squashtest.csp.tm.domain.execution.ExecutionStatus;

@@ -40,7 +40,6 @@ import org.hibernate.criterion.Restrictions;
 import org.hibernate.transform.ResultTransformer;
 import org.hibernate.type.LongType;
 import org.springframework.stereotype.Repository;
-import org.squashtest.csp.core.infrastructure.collection.PagingAndSorting;
 import org.squashtest.csp.core.infrastructure.hibernate.PagingUtils;
 import org.squashtest.csp.core.infrastructure.hibernate.SortingUtils;
 import org.squashtest.csp.tm.domain.execution.Execution;
@@ -54,6 +53,7 @@ import org.squashtest.csp.tm.domain.testcase.TestStep;
 import org.squashtest.csp.tm.infrastructure.filter.CollectionFilter;
 import org.squashtest.csp.tm.infrastructure.filter.CollectionSorting;
 import org.squashtest.csp.tm.internal.repository.TestCaseDao;
+import org.squashtest.tm.core.foundation.collection.PagingAndSorting;
 
 /**
  * DAO for org.squashtest.csp.tm.domain.testcase.TestCase
@@ -384,7 +384,7 @@ public class HibernateTestCaseDao extends HibernateEntityDao<TestCase> implement
 	 * (non-Javadoc)
 	 * 
 	 * @see org.squashtest.csp.tm.internal.repository.TestCaseDao#findAllVerifyingRequirementVersion(long,
-	 * org.squashtest.csp.core.infrastructure.collection.PagingAndSorting)
+	 * org.squashtest.tm.core.foundation.collection.PagingAndSorting)
 	 */
 	@SuppressWarnings("unchecked")
 	@Override

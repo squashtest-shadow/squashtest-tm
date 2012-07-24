@@ -29,7 +29,7 @@ import javax.validation.constraints.NotNull;
 import org.hibernate.Query;
 import org.hibernate.Session;
 import org.hibernate.SessionFactory;
-import org.squashtest.csp.core.infrastructure.collection.Paging;
+import org.squashtest.tm.core.foundation.collection.Paging;
 
 /**
  * This {@link InvocationHandler} looks up a hibernate named query which name matches <code>EntityType.methodName</code>

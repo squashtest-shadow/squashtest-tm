@@ -31,7 +31,6 @@ import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.ResponseBody;
-import org.squashtest.csp.core.infrastructure.collection.PagedCollectionHolder;
 import org.squashtest.csp.tm.domain.event.ChangedProperty;
 import org.squashtest.csp.tm.domain.event.RequirementAuditEvent;
 import org.squashtest.csp.tm.domain.event.RequirementLargePropertyChange;
@@ -39,6 +38,7 @@ import org.squashtest.csp.tm.service.audit.RequirementAuditTrailService;
 import org.squashtest.csp.tm.web.internal.model.datatable.DataTableDrawParameters;
 import org.squashtest.csp.tm.web.internal.model.datatable.DataTableDrawParametersPagingAdapter;
 import org.squashtest.csp.tm.web.internal.model.datatable.DataTableModel;
+import org.squashtest.tm.core.foundation.collection.PagedCollectionHolder;
 
 /**
  * This controller handles requests related to a requirement's audit trail (ie its collection of

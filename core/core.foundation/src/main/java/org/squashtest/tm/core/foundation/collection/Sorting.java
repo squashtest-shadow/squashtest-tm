@@ -18,37 +18,26 @@
  *     You should have received a copy of the GNU Lesser General Public License
  *     along with this software.  If not, see <http://www.gnu.org/licenses/>.
  */
-package org.squashtest.csp.tm.internal.service
+package org.squashtest.tm.core.foundation.collection;
 
-import org.squashtest.csp.tm.domain.DuplicateNameException;
-import org.squashtest.csp.tm.domain.campaign.CampaignLibrary;
-import java.util.Date;
-import org.squashtest.csp.tm.domain.campaign.Campaign;
-import org.squashtest.csp.tm.internal.repository.CampaignDao;
-import org.squashtest.csp.tm.internal.repository.CampaignLibraryDao;
+/**
+ * Defines sorting parameters to apply when querying for a collection.
+ * 
+ * @author Gregory Fouquet
+ * 
+ */
+public interface Sorting {
+	/**
+	 * Sorting information : which column should be sorted
+	 * 
+	 * @return
+	 */
+	String getSortedAttribute();
 
-import spock.lang.Specification;
-
-class CustomCampaignModificationServiceImplTest extends Specification {
-
-
-	CustomCampaignModificationServiceImpl service = new CustomCampaignModificationServiceImpl()
-
-	CampaignDao campaignDao = Mock()
-
-	def setup() {
-		service.campaignDao = campaignDao
-	}
-
-	def "should find a campaign"(){
-		given :
-		Campaign campaign = Mock();
-		campaignDao.findById(10) >> campaign;
-		when :
-		def obj = service.findById(10)
-
-		then :
-		obj == campaign;
-	}
-
+	/**
+	 * Sorting information : which order
+	 * 
+	 * @return
+	 */
+	SortOrder getSortOrder();
 }

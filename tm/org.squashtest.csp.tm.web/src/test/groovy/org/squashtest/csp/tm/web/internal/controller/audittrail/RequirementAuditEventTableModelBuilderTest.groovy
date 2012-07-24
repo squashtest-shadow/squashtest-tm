@@ -20,17 +20,18 @@
  */
 package org.squashtest.csp.tm.web.internal.controller.audittrail
 
-import org.springframework.context.MessageSource;
-import org.squashtest.csp.core.infrastructure.collection.PagedCollectionHolder
-import org.squashtest.csp.tm.domain.event.RequirementAuditEvent;
+import org.apache.poi.hssf.record.formula.functions.T
+import org.springframework.context.MessageSource
+import org.squashtest.csp.tm.domain.event.RequirementAuditEvent
 import org.squashtest.csp.tm.domain.event.RequirementCreation
-import org.squashtest.csp.tm.domain.event.RequirementLargePropertyChange;
-import org.squashtest.csp.tm.domain.event.RequirementPropertyChange;
-import org.squashtest.csp.tm.domain.requirement.RequirementStatus;
-import org.squashtest.csp.tm.domain.requirement.RequirementVersion;
-import org.squashtest.csp.tm.web.internal.helper.LabelFormatter;
-import org.squashtest.csp.tm.web.internal.model.datatable.DataTableModel;
-import org.squashtest.csp.tools.unittest.reflection.ReflectionCategory;
+import org.squashtest.csp.tm.domain.event.RequirementLargePropertyChange
+import org.squashtest.csp.tm.domain.event.RequirementPropertyChange
+import org.squashtest.csp.tm.domain.requirement.RequirementStatus
+import org.squashtest.csp.tm.domain.requirement.RequirementVersion
+import org.squashtest.csp.tm.web.internal.helper.LabelFormatter
+import org.squashtest.csp.tm.web.internal.model.datatable.DataTableModel
+import org.squashtest.csp.tools.unittest.reflection.ReflectionCategory
+import org.squashtest.tm.core.foundation.collection.PagedCollectionHolder
 
 import spock.lang.Specification
 /**
@@ -142,7 +143,7 @@ class RequirementAuditEventTableModelBuilderTest extends Specification {
 	def setIdAndDate(def event) {
 		use(ReflectionCategory) {
 			RequirementAuditEvent.set field: "id", of: event, to: 10L
-			
+
 			Calendar cal = new GregorianCalendar(2011, Calendar.DECEMBER, 31, 23, 55, 00, 00)
 			RequirementAuditEvent.set field: "date", of: event, to: cal.time
 		}
@@ -194,5 +195,5 @@ class RequirementAuditEventTableModelBuilderTest extends Specification {
 				"10"
 			]
 		]
-	}	
+	}
 }

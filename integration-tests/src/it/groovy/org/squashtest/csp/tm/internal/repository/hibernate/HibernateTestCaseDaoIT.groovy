@@ -23,7 +23,7 @@ package org.squashtest.csp.tm.internal.repository.hibernate
 import javax.inject.Inject
 
 import org.springframework.transaction.annotation.Transactional
-import org.squashtest.csp.core.infrastructure.collection.PagingAndSorting
+import org.squashtest.tm.core.foundation.collection.PagingAndSorting
 import org.squashtest.csp.tm.domain.requirement.RequirementCategory
 import org.squashtest.csp.tm.domain.requirement.RequirementCriticality
 import org.squashtest.csp.tm.domain.requirement.RequirementSearchCriteria
@@ -34,8 +34,8 @@ import org.squashtest.csp.tm.infrastructure.filter.CollectionSorting
 import org.squashtest.csp.tm.internal.repository.TestCaseDao
 import org.squashtest.csp.tools.unittest.assertions.ListAssertions
 import org.unitils.dbunit.annotation.DataSet
-import org.squashtest.csp.core.infrastructure.collection.PagingAndSorting
-import org.squashtest.csp.core.infrastructure.collection.SortOrder
+import org.squashtest.tm.core.foundation.collection.PagingAndSorting
+import org.squashtest.tm.core.foundation.collection.SortOrder
 
 
 import spock.unitils.UnitilsSupport

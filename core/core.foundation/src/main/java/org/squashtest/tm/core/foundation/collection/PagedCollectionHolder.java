@@ -18,11 +18,18 @@
  *     You should have received a copy of the GNU Lesser General Public License
  *     along with this software.  If not, see <http://www.gnu.org/licenses/>.
  */
-package org.squashtest.tm.core.i18n;
+package org.squashtest.tm.core.foundation.collection;
 
-public interface Internationalizable {
-	/**
-	 * @return the non null key used to get this object's i18n'd message.
-	 */
-	String getI18nKey();
+import java.util.Collection;
+
+/**
+ * @author Gregory Fouquet
+ * 
+ */
+public interface PagedCollectionHolder<COLLECTION extends Collection<?>> {
+	long getFirstItemIndex();
+
+	long getTotalNumberOfItems();
+
+	COLLECTION getPagedItems();
 }

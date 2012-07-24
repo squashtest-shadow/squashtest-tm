@@ -30,7 +30,7 @@ import org.spockframework.util.NotThreadSafe;
 import org.squashtest.csp.tm.domain.campaign.TestSuite;
 import org.squashtest.csp.tm.domain.campaign.Iteration;
 import org.springframework.transaction.annotation.Transactional;
-import org.squashtest.csp.core.infrastructure.collection.Paging;
+import org.squashtest.tm.core.foundation.collection.Paging;
 import org.squashtest.csp.tm.domain.execution.ExecutionStep
 import org.squashtest.csp.tm.internal.repository.TestSuiteDao;
 import org.squashtest.csp.tm.service.TestSuiteTestPlanManagerService;

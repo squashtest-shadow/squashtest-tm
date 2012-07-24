@@ -20,7 +20,7 @@
  */
 package org.squashtest.tm.api.report;
 
-import org.squashtest.tm.core.i18n.Internationalizable;
+import org.squashtest.tm.core.foundation.i18n.Internationalizable;
 
 /**
  * @author bsiri
@@ -42,7 +42,7 @@ public enum StandardReportCategory implements Internationalizable {
 	}
 
 	/**
-	 * @see org.squashtest.tm.core.i18n.Internationalizable#getI18nKey()
+	 * @see org.squashtest.tm.core.foundation.i18n.Internationalizable#getI18nKey()
 	 */
 	@Override
 	public String getI18nKey() {

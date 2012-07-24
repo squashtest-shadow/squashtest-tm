@@ -20,9 +20,9 @@
  */
 package org.squashtest.csp.tm.web.internal.model.datatable;
 
-import org.squashtest.csp.core.infrastructure.collection.PagingAndSorting;
 import org.squashtest.csp.tm.infrastructure.filter.CollectionSorting;
 import org.squashtest.csp.tm.web.internal.model.viewmapper.DataTableMapper;
+import org.squashtest.tm.core.foundation.collection.PagingAndSorting;
 /**
  * 
  * @author Gregory Fouquet

@@ -54,6 +54,11 @@
 			<artifactId>core.api</artifactId>
 			<version>${project.version}</version>
 		</dependency>
+		<dependency>
+			<groupId>org.squashtest.tm</groupId>
+			<artifactId>core.foundation</artifactId>
+			<version>${project.version}</version>
+		</dependency>
 		<!--======= /SQUASHTEST MODULES ======== -->
 
 		<!-- ====== FOUNDATION ====== -->

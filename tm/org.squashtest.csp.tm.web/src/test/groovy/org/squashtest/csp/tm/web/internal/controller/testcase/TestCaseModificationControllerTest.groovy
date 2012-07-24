@@ -26,7 +26,6 @@ import org.springframework.web.servlet.ModelAndView;
 import javax.inject.Provider;
 import javax.servlet.http.HttpServletRequest;
 
-import org.squashtest.csp.core.infrastructure.collection.PagedCollectionHolder;
 import org.squashtest.csp.tm.service.TestCaseModificationService;
 import org.squashtest.csp.tm.web.internal.helper.LevelLabelFormatter;
 import org.squashtest.csp.tm.web.internal.model.datatable.DataTableDrawParameters;
@@ -43,6 +42,7 @@ import spock.lang.Specification;
 import org.squashtest.csp.tm.domain.testcase.ActionTestStep;
 import org.squashtest.csp.tm.infrastructure.filter.FilteredCollectionHolder;
 import org.squashtest.csp.tools.unittest.reflection.ReflectionCategory;
+import org.squashtest.tm.core.foundation.collection.PagedCollectionHolder;
 
 class TestCaseModificationControllerTest extends Specification {
 	TestCaseModificationController controller = new TestCaseModificationController()
@@ -121,32 +121,8 @@ class TestCaseModificationControllerTest extends Specification {
 		then:
 		res.sEcho == "echo"
 		res.aaData == [
-			[
-				"",
-				1,
-				1,
-				5,
-				"a1",
-				"r1",
-				"",
-				"",
-				1,
-				"action",
-				null
-			],
-			[
-				"",
-				2,
-				2,
-				5,
-				"a2",
-				"r2",
-				"",
-				"",
-				1,
-				"action",
-				null
-			]
+			[ "", 1, 1, 5, "a1", "r1", "", "", 1, "action", null ],
+			[ "", 2, 2, 5, "a2", "r2", "", "", 1, "action", null ]
 		]
 	}
 	def "should change step index"() {

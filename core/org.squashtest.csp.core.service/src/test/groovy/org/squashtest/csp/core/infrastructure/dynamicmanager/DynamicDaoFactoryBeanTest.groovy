@@ -25,7 +25,6 @@ import org.hibernate.SessionFactory;
 import org.hibernate.classic.Session;
 import org.springframework.beans.factory.BeanFactory;
 import org.springframework.mock.web.portlet.MockActionRequest;
-import org.squashtest.csp.core.infrastructure.collection.Paging;
 import org.squashtest.csp.core.infrastructure.dynamicdao.CustomDummyDao;
 import org.squashtest.csp.core.infrastructure.dynamicdao.DummyDao;
 import org.squashtest.csp.core.infrastructure.dynamicdao.DummyEntity;
@@ -33,6 +32,7 @@ import org.squashtest.csp.core.infrastructure.dynamicdao.NoSuperclassDummyDao;
 import org.squashtest.csp.core.infrastructure.dynamicmanager.DynamicDaoFactoryBean;
 import org.squashtest.csp.core.infrastructure.dynamicmanager.DynamicManagerFactoryBean;
 import org.squashtest.csp.tools.unittest.reflection.ReflectionCategory;
+import org.squashtest.tm.core.foundation.collection.Paging;
 
 import spock.lang.Specification;
 

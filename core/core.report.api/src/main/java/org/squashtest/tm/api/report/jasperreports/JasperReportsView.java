@@ -34,7 +34,7 @@ import org.springframework.web.servlet.View;
 import org.squashtest.tm.api.report.ReportView;
 import org.squashtest.tm.api.report.criteria.Criteria;
 import org.squashtest.tm.api.report.query.ReportQuery;
-import org.squashtest.tm.core.i18n.Labelled;
+import org.squashtest.tm.core.foundation.i18n.Labelled;
 
 /**
  * @author bsiri
@@ -122,7 +122,7 @@ public final class JasperReportsView extends Labelled implements ReportView, Ini
 	}
 
 	/**
-	 * @see org.squashtest.tm.core.i18n.ContextBasedInternationalized#initializeMessageSource(org.springframework.context.MessageSource)
+	 * @see org.squashtest.tm.core.foundation.i18n.ContextBasedInternationalized#initializeMessageSource(org.springframework.context.MessageSource)
 	 */
 	@Override
 	protected void initializeMessageSource(MessageSource messageSource) {

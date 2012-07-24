@@ -20,14 +20,13 @@
  */
 package org.squashtest.csp.tm.web.internal.controller.audittrail;
 
-import org.apache.poi.hssf.record.formula.functions.T
 import org.springframework.context.MessageSource
-import org.squashtest.csp.core.infrastructure.collection.PagedCollectionHolder
 import org.squashtest.csp.tm.domain.event.RequirementCreation
-import org.squashtest.csp.tm.domain.event.RequirementLargePropertyChange;
+import org.squashtest.csp.tm.domain.event.RequirementLargePropertyChange
 import org.squashtest.csp.tm.service.audit.RequirementAuditTrailService
 import org.squashtest.csp.tm.web.internal.model.datatable.DataTableDrawParameters
 import org.squashtest.csp.tm.web.internal.model.datatable.DataTableModel
+import org.squashtest.tm.core.foundation.collection.PagedCollectionHolder
 
 import spock.lang.Specification
 
@@ -69,7 +68,7 @@ class RequirementAuditTrailControllerTest extends Specification {
 		event.oldValue >> "10.5"
 		event.newValue >> "13"
 		requirementAuditTrailService.findLargePropertyChangeById(10L) >> event
-		
+
 		when:
 		def res =  controller.getLargePropertyChangeEvent(10L)
 
