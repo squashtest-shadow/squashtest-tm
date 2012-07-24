@@ -47,7 +47,6 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.servlet.ModelAndView;
 import org.squashtest.csp.tm.domain.bugtracker.Issue;
-import org.squashtest.csp.tm.domain.bugtracker.IssueList;
 import org.squashtest.csp.tm.domain.campaign.Iteration;
 import org.squashtest.csp.tm.domain.campaign.IterationTestPlanItem;
 import org.squashtest.csp.tm.domain.execution.Execution;
@@ -93,7 +92,7 @@ public class ExecutionModificationController {
 
 	}
 
-	@RequestMapping(value = "/steps", method = RequestMethod.GET)
+	@RequestMapping(value = "/steps", method = RequestMethod.GET, params = "sEcho")
 	@ResponseBody
 	public DataTableModel getStepsTableModel(@PathVariable long executionId, DataTableDrawParameters params,
 			final Locale locale) {
@@ -123,11 +122,11 @@ public class ExecutionModificationController {
 				return res;
 			}
 
-			
+
 		}.buildDataModel(holder, filter.getFirstItemIndex() + 1, params.getsEcho());
 
 	}
-	
+
 	private String createBugList(ExecutionStep item) {
 		StringBuffer toReturn = new StringBuffer();
 		List<Issue> issueList = item.getIssueList().getAllIssues();
@@ -140,7 +139,7 @@ public class ExecutionModificationController {
 		}
 		return toReturn.toString();
 	}
-	
+
 	private CollectionFilter createCollectionFilter(final DataTableDrawParameters params) {
 		return new DataTablePagedFilter(params);
 	}
