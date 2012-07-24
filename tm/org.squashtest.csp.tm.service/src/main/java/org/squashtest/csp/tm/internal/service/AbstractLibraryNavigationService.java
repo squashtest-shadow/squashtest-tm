@@ -447,11 +447,11 @@ public abstract class AbstractLibraryNavigationService<LIBRARY extends Library<N
 	/* ************************* private stuffs ************************* */
 
 	/* **that class just performs the same, using a domainObject directly */
-	private class SecurityCheckableObject {
+	protected class SecurityCheckableObject {
 		private final Object domainObject;
 		private final String permission;
 
-		private SecurityCheckableObject(Object domainObject, String permission) {
+		protected SecurityCheckableObject(Object domainObject, String permission) {
 			this.domainObject = domainObject;
 			this.permission = permission;
 		}
@@ -466,7 +466,7 @@ public abstract class AbstractLibraryNavigationService<LIBRARY extends Library<N
 
 	}
 
-	private void checkPermission(SecurityCheckableObject... checkableObjects) {
+	protected void checkPermission(SecurityCheckableObject... checkableObjects) {
 		for (SecurityCheckableObject object : checkableObjects) {
 			if (!permissionService
 					.hasRoleOrPermissionOnObject("ROLE_ADMIN", object.getPermission(), object.getObject())) {

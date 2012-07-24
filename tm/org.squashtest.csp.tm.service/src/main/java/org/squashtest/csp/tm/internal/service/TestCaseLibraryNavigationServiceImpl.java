@@ -31,6 +31,7 @@ import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.squashtest.csp.tm.domain.DuplicateNameException;
+import org.squashtest.csp.tm.domain.campaign.CampaignLibraryNode;
 import org.squashtest.csp.tm.domain.projectfilter.ProjectFilter;
 import org.squashtest.csp.tm.domain.testcase.TestCase;
 import org.squashtest.csp.tm.domain.testcase.TestCaseFolder;
@@ -43,6 +44,7 @@ import org.squashtest.csp.tm.internal.repository.LibraryNodeDao;
 import org.squashtest.csp.tm.internal.repository.TestCaseDao;
 import org.squashtest.csp.tm.internal.repository.TestCaseFolderDao;
 import org.squashtest.csp.tm.internal.repository.TestCaseLibraryDao;
+import org.squashtest.csp.tm.internal.service.AbstractLibraryNavigationService.SecurityCheckableObject;
 import org.squashtest.csp.tm.internal.service.importer.TestCaseImporter;
 import org.squashtest.csp.tm.service.ProjectFilterModificationService;
 import org.squashtest.csp.tm.service.TestCaseLibraryNavigationService;
@@ -100,6 +102,29 @@ public class TestCaseLibraryNavigationServiceImpl extends
 	@PreAuthorize("hasPermission(#testCaseId, 'org.squashtest.csp.tm.domain.testcase.TestCase' , 'READ') or hasRole('ROLE_ADMIN')")
 	public TestCase findTestCase(long testCaseId) {
 		return testCaseDao.findById(testCaseId);
+	}
+	
+	@Override
+	public String getPathAsString(long entityId) {
+		//get
+		TestCaseLibraryNode node = getLibraryNodeDao().findById(entityId);
+		
+		//check
+		checkPermission(new SecurityCheckableObject(node, "READ"));
+		
+		//proceed
+		List<String> names = getLibraryNodeDao().getParentsName(entityId);
+		
+		return "/"+node.getProject().getName()+"/"+formatPath(names);
+		
+	}
+	
+	private String formatPath(List<String> names){
+		StringBuilder builder = new StringBuilder();
+		for (String name : names){
+			builder.append("/").append(name);
+		}
+		return builder.toString();		
 	}
 
 	@Override

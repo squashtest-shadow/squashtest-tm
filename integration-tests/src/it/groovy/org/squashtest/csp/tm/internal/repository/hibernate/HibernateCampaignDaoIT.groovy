@@ -49,4 +49,8 @@ class HibernateCampaignDaoIT extends DbunitDaoSpecification {
 		result.size() == 5
 		result.each {it.name == "campaign1-execution"}
 	}
+
+	
 }	
+
+

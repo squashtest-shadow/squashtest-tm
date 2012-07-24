@@ -20,8 +20,17 @@
  */
 package org.squashtest.csp.tm.internal.repository;
 
+import java.util.List;
+
 import org.squashtest.csp.tm.domain.library.LibraryNode;
 
 public interface LibraryNodeDao<NODE extends LibraryNode> extends EntityDao<NODE>{
 
+	/**
+	 * Returns the path of the given entity. The path is the concatenation of the ancestor names, sorted by ancestry. It does not begin with /&ltproject-name&gt; 
+	 * 
+	 * @param entityId
+	 * @return
+	 */
+	List<String> getParentsName(long entityId);	
 }

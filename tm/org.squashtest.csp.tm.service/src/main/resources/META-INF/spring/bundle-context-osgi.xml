@@ -100,8 +100,12 @@
 		</osgi:interfaces>
 	</osgi:service>
 
-	<osgi:service ref="squashtest.tm.service.CampaignLibraryNavigationService"
-		interface="org.squashtest.csp.tm.service.CampaignLibraryNavigationService" />
+	<osgi:service ref="squashtest.tm.service.CampaignLibraryNavigationService">
+		<osgi:interfaces>
+			<value>org.squashtest.csp.tm.service.CampaignLibraryNavigationService</value>
+			<value>org.squashtest.csp.tm.service.CampaignLibraryFinderService</value>
+		</osgi:interfaces>
+	</osgi:service>		
 
 	<osgi:service
 		ref="squashtest.tm.service.VerifiedRequirementsManagerService"

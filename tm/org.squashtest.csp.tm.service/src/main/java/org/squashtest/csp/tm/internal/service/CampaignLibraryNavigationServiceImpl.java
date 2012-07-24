@@ -33,7 +33,6 @@ import org.springframework.security.access.prepost.PostFilter;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
-import org.squashtest.csp.core.infrastructure.dynamicmanager.FindByIdHandler;
 import org.squashtest.csp.tm.domain.DuplicateNameException;
 import org.squashtest.csp.tm.domain.campaign.Campaign;
 import org.squashtest.csp.tm.domain.campaign.CampaignFolder;
@@ -50,6 +49,7 @@ import org.squashtest.csp.tm.internal.repository.CampaignLibraryDao;
 import org.squashtest.csp.tm.internal.repository.IterationDao;
 import org.squashtest.csp.tm.internal.repository.LibraryNodeDao;
 import org.squashtest.csp.tm.internal.repository.TestSuiteDao;
+import org.squashtest.csp.tm.internal.service.AbstractLibraryNavigationService.SecurityCheckableObject;
 import org.squashtest.csp.tm.internal.service.campaign.IterationTestPlanManager;
 import org.squashtest.csp.tm.service.CampaignLibraryNavigationService;
 import org.squashtest.csp.tm.service.IterationModificationService;
@@ -330,6 +330,29 @@ public class CampaignLibraryNavigationServiceImpl extends
 	@PostFilter("hasPermission(filterObject, 'READ') or hasRole('ROLE_ADMIN')")
 	public List<TestSuite> findIterationContent(long iterationId) {
 		return suiteDao.findAllByIterationId(iterationId);
+	}
+	
+	@Override
+	public String getPathAsString(long entityId) {
+		//get
+		CampaignLibraryNode node = getLibraryNodeDao().findById(entityId);
+		
+		//check
+		checkPermission(new SecurityCheckableObject(node, "READ"));
+		
+		//proceed
+		List<String> names = getLibraryNodeDao().getParentsName(entityId);
+		
+		return "/"+node.getProject().getName()+"/"+formatPath(names);
+		
+	}
+	
+	private String formatPath(List<String> names){
+		StringBuilder builder = new StringBuilder();
+		for (String name : names){
+			builder.append("/").append(name);
+		}
+		return builder.toString();		
 	}
 
 	/*

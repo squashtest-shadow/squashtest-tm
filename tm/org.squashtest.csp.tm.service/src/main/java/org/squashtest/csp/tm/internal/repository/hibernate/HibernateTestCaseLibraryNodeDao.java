@@ -20,6 +20,10 @@
  */
 package org.squashtest.csp.tm.internal.repository.hibernate;
 
+import java.util.List;
+
+import org.hibernate.SQLQuery;
+import org.hibernate.type.LongType;
 import org.springframework.stereotype.Repository;
 import org.squashtest.csp.tm.domain.testcase.TestCaseLibraryNode;
 import org.squashtest.csp.tm.internal.repository.LibraryNodeDao;
@@ -28,4 +32,14 @@ import org.squashtest.csp.tm.internal.repository.LibraryNodeDao;
 @Repository("squashtest.tm.repository.TestCaseLibraryNodeDao")
 public class HibernateTestCaseLibraryNodeDao extends HibernateEntityDao<TestCaseLibraryNode> implements LibraryNodeDao<TestCaseLibraryNode>{
 
+	
+
+	@Override
+	public List<String> getParentsName(long entityId) {
+		SQLQuery query = currentSession().createSQLQuery(NativeQueries.testCaseLibraryNode_findSortedParentNames);
+		query.setParameter("nodeId", entityId, LongType.INSTANCE);
+		return query.list();
+	}
+	
+	
 }

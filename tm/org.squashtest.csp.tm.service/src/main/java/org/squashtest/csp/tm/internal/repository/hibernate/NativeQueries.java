@@ -143,11 +143,10 @@ public class NativeQueries {
 
 	public static final String testCase_sql_removeCallingIterationItemTestPlan = "delete from ITERATION_TEST_PLAN_ITEM  where item_test_plan_id in (:itpHavingNoExecIds) ";
 
-	/*
-	 * ********************************************* /consequences of test case deletion on item test plans
-	 * *******************************************************
-	 */
+	
+	/* ************************************ /consequences of test case deletion on item test plans  ******************************************************* */
 
+	
 	public static final String testCase_sql_setNullCallingExecutions = "update EXECUTION exec set exec.tcln_id = null where exec.tcln_id in (:testCaseIds)";
 
 	public static final String testCase_sql_setNullCallingExecutionSteps = "update EXECUTION_STEP step set step.test_step_id = null where step.test_step_id in (:testStepIds)";
@@ -160,4 +159,26 @@ public class NativeQueries {
 			+ " where verified_req_version_id in ( "
 			+ " select req_v.res_id from REQUIREMENT_VERSION req_v where req_v.requirement_id in (:requirementIds) "
 			+ ")";
+	
+	
+	/* ********************************************* tree path queries ********************************************************************* */
+	
+	public static final String campaignLibraryNode_findSortedParentNames = "select cln.name from CAMPAIGN_LIBRARY_NODE cln "+
+																		   "inner join CLN_RELATIONSHIP_CLOSURE clos "+
+																		   "on clos.ancestor_id = cln.cln_id "+
+																		   "where clos.descendant_id = :nodeId "+
+																		   "order by clos.depth desc";
+	
+	public static final String testCaseLibraryNode_findSortedParentNames = "select tcln.name from TEST_CASE_LIBRARY_NODE cln "+
+																		   "inner join TCLN_RELATIONSHIP_CLOSURE clos "+
+																		   "on clos.ancestor_id = tcln.tcln_id "+
+																		   "where clos.descendant_id = :nodeId "+
+																		   "order by clos.depth desc";
+	
+	
+	public static final String requirementLibraryNode_findSortedParentNames = "select rln.name from REQUIREMENT_LIBRARY_NODE rln "+
+																			  "inner join RLN_RELATIONSHIP_CLOSURE clos "+
+																			  "on clos.ancestor_id = rln.rln_id "+
+																			  "where clos.descendant_id = :nodeId "+
+																			  "order by clos.depth desc";
 }

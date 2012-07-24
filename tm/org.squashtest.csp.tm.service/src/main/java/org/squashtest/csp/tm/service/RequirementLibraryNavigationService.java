@@ -31,7 +31,6 @@ import org.squashtest.csp.tm.domain.requirement.Requirement;
 import org.squashtest.csp.tm.domain.requirement.RequirementFolder;
 import org.squashtest.csp.tm.domain.requirement.RequirementLibrary;
 import org.squashtest.csp.tm.domain.requirement.RequirementLibraryNode;
-import org.squashtest.csp.tm.domain.requirement.RequirementVersion;
 import org.squashtest.csp.tm.service.importer.ImportSummary;
 
 @SuppressWarnings("rawtypes")
@@ -59,4 +58,6 @@ public interface RequirementLibraryNavigationService extends
 	 * @return a summary of the operations.
 	 */
 	ImportSummary importExcel(InputStream stream, Long projectId);
+	
+
 }

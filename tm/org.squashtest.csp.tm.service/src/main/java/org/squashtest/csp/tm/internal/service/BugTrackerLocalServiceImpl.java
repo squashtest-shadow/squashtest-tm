@@ -205,6 +205,7 @@ public class BugTrackerLocalServiceImpl implements BugTrackerLocalService {
 
 	/* ------------------------ExecutionStep--------------------------------------- */
 	@Override
+	@PreAuthorize("hasPermission(#stepId, 'org.squashtest.csp.tm.domain.execution.ExecutionStep', 'READ') or hasRole('ROLE_ADMIN')")
 	public FilteredCollectionHolder<List<IssueOwnership<BTIssue>>> findSortedIssueOwnerShipsForExecutionStep(
 			Long stepId, CollectionSorting sorter) {
 		// find the ExecutionStep's IssueList id
@@ -238,7 +239,7 @@ public class BugTrackerLocalServiceImpl implements BugTrackerLocalService {
 
 	/* ------------------------Execution--------------------------------------- */
 	@Override
-	@PreAuthorize("hasPermission(#buggedEntity, 'READ') or hasRole('ROLE_ADMIN')")
+	@PreAuthorize("hasPermission(#execId, 'org.squashtest.csp.tm.domain.execution.Execution', 'READ') or hasRole('ROLE_ADMIN')")
 	public FilteredCollectionHolder<List<IssueOwnership<BTIssue>>> findSortedIssueOwnershipsforExecution(Long execId,
 			CollectionSorting sorter) {
 		// Find all concerned IssueDetector
@@ -250,7 +251,7 @@ public class BugTrackerLocalServiceImpl implements BugTrackerLocalService {
 	/* ------------------------Iteration--------------------------------------- */
 
 	@Override
-	@PreAuthorize("hasPermission(#buggedEntity, 'READ') or hasRole('ROLE_ADMIN')")
+	@PreAuthorize("hasPermission(#iterId, 'org.squashtest.csp.tm.domain.campaign.Iteration', 'READ') or hasRole('ROLE_ADMIN')")
 	public FilteredCollectionHolder<List<IssueOwnership<BTIssue>>> findSortedIssueOwnershipForIteration(Long iterId,
 			CollectionSorting sorter) {
 
@@ -264,7 +265,7 @@ public class BugTrackerLocalServiceImpl implements BugTrackerLocalService {
 
 	/* ------------------------Campaign--------------------------------------- */
 	@Override
-	@PreAuthorize("hasPermission(#buggedEntity, 'READ') or hasRole('ROLE_ADMIN')")
+	@PreAuthorize("hasPermission(#campId, 'org.squashtest.csp.tm.domain.campaign.Campaign' ,'READ') or hasRole('ROLE_ADMIN')")
 	public FilteredCollectionHolder<List<IssueOwnership<BTIssue>>> findSortedIssueOwnershipsForCampaigns(Long campId,
 			CollectionSorting sorter) {
 		// Find all concerned IssueDetector
@@ -277,7 +278,7 @@ public class BugTrackerLocalServiceImpl implements BugTrackerLocalService {
 
 	/* ------------------------TestSuite--------------------------------------- */
 	@Override
-	@PreAuthorize("hasPermission(#buggedEntity, 'READ') or hasRole('ROLE_ADMIN')")
+	@PreAuthorize("hasPermission(#testSuiteId, 'org.squashtest.csp.tm.domain.campaign.TestSuite', 'READ') or hasRole('ROLE_ADMIN')")
 	public FilteredCollectionHolder<List<IssueOwnership<BTIssue>>> findSortedIssueOwnershipsForTestSuite(
 			Long testSuiteId, CollectionSorting sorter) {
 		// Find all concerned IssueDetector
@@ -291,6 +292,7 @@ public class BugTrackerLocalServiceImpl implements BugTrackerLocalService {
 	/* ------------------------TestCase--------------------------------------- */
 	
 	@Override
+	@PreAuthorize("hasPermission(#tcId, 'org.squashtest.csp.tm.domain.testcase.TestCase', 'READ') or hasRole('ROLE_ADMIN')")
 	public FilteredCollectionHolder<List<IssueOwnership<BTIssue>>> findSortedIssueOwnershipForTestCase(Long tcId,
 			CollectionSorting sorter) {
 		

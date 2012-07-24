@@ -20,12 +20,24 @@
  */
 package org.squashtest.csp.tm.internal.repository.hibernate;
 
+import java.util.List;
+
+import org.hibernate.SQLQuery;
+import org.hibernate.type.LongType;
 import org.springframework.stereotype.Repository;
 import org.squashtest.csp.tm.domain.requirement.RequirementLibraryNode;
 import org.squashtest.csp.tm.internal.repository.LibraryNodeDao;
 
 @Repository("squashtest.tm.repository.RequirementLibraryNodeDao")
-public class HibernateRequirementLibraryNodeDao extends HibernateEntityDao<RequirementLibraryNode>
-		implements LibraryNodeDao<RequirementLibraryNode> {
+public class HibernateRequirementLibraryNodeDao extends HibernateEntityDao<RequirementLibraryNode<?>>
+		implements LibraryNodeDao<RequirementLibraryNode<?>> {
 
+
+	@Override
+	public List<String> getParentsName(long entityId) {
+		SQLQuery query = currentSession().createSQLQuery(NativeQueries.requirementLibraryNode_findSortedParentNames);
+		query.setParameter("nodeId", entityId, LongType.INSTANCE);
+		return query.list();
+	}
+	
 }

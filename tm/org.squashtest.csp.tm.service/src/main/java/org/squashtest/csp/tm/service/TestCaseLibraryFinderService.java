@@ -39,4 +39,13 @@ public interface TestCaseLibraryFinderService {
 	 */
 	List<TestCaseLibrary> findLinkableTestCaseLibraries();
 
+	
+
+	/**
+	 * Returns the path of a TestCaseLibraryNode given its id. The format is standard, beginning with /&lt;project-name&gt;
+	 * 
+	 * @param entityId the id of the node.
+	 * @return the path of that node.
+	 */
+	String getPathAsString(long entityId);	
 }

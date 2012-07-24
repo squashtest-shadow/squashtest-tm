@@ -45,10 +45,12 @@ import org.squashtest.csp.tm.domain.requirement.RequirementLibrary;
 import org.squashtest.csp.tm.domain.requirement.RequirementLibraryNode;
 import org.squashtest.csp.tm.internal.infrastructure.strategy.LibrarySelectionStrategy;
 import org.squashtest.csp.tm.domain.requirement.RequirementVersion;
+import org.squashtest.csp.tm.domain.testcase.TestCaseLibraryNode;
 import org.squashtest.csp.tm.internal.repository.LibraryNodeDao;
 import org.squashtest.csp.tm.internal.repository.RequirementDao;
 import org.squashtest.csp.tm.internal.repository.RequirementFolderDao;
 import org.squashtest.csp.tm.internal.repository.RequirementLibraryDao;
+import org.squashtest.csp.tm.internal.service.AbstractLibraryNavigationService.SecurityCheckableObject;
 import org.squashtest.csp.tm.internal.service.importer.RequirementImporter;
 import org.squashtest.csp.tm.service.ProjectFilterModificationService;
 import org.squashtest.csp.tm.service.RequirementLibraryFinderService;
@@ -113,6 +115,30 @@ public class RequirementLibraryNavigationServiceImpl extends
 	@Override
 	protected final LibraryNodeDao<RequirementLibraryNode> getLibraryNodeDao() {
 		return requirementLibraryNodeDao;
+	}
+	
+	
+	@Override
+	public String getPathAsString(long entityId) {
+		//get
+		RequirementLibraryNode node = getLibraryNodeDao().findById(entityId);
+		
+		//check
+		checkPermission(new SecurityCheckableObject(node, "READ"));
+		
+		//proceed
+		List<String> names = getLibraryNodeDao().getParentsName(entityId);
+		
+		return "/"+node.getProject().getName()+"/"+formatPath(names);
+		
+	}
+	
+	private String formatPath(List<String> names){
+		StringBuilder builder = new StringBuilder();
+		for (String name : names){
+			builder.append("/").append(name);
+		}
+		return builder.toString();		
 	}
 
 	@Override

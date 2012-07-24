@@ -24,10 +24,12 @@ import org.apache.commons.lang.NullArgumentException;
 import org.hibernate.Hibernate;
 import org.squashtest.csp.tools.unittest.hibernate.HibernateOperationCategory;
 import org.squashtest.csp.tm.domain.campaign.Campaign;
+import org.squashtest.csp.tm.domain.campaign.CampaignFolder;
 import org.squashtest.csp.tm.domain.campaign.CampaignTestPlanItem;
 import org.squashtest.csp.tm.domain.campaign.Iteration;
 import org.squashtest.csp.tm.domain.testcase.TestCase;
 import org.squashtest.csp.tm.hibernate.mapping.HibernateMappingSpecification;
+import org.squashtest.csp.tm.internal.repository.hibernate.NativeQueries;
 
 
 class CampaignMappingIT extends HibernateMappingSpecification {
@@ -99,4 +101,10 @@ class CampaignMappingIT extends HibernateMappingSpecification {
 		then :
 		cmpgn.testPlan.size() == 1
 	}
+	
+	
+
+	
+	
+	
 }

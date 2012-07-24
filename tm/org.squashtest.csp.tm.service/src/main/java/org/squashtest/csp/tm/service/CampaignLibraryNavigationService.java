@@ -31,7 +31,7 @@ import org.squashtest.csp.tm.domain.campaign.TestSuite;
 import org.squashtest.csp.tm.service.deletion.SuppressionPreviewReport;
 
 public interface CampaignLibraryNavigationService extends
-		LibraryNavigationService<CampaignLibrary, CampaignFolder, CampaignLibraryNode> {
+		LibraryNavigationService<CampaignLibrary, CampaignFolder, CampaignLibraryNode>, CampaignLibraryFinderService {
 
 	void addCampaignToCampaignLibrary(long libraryId, Campaign campaign);
 

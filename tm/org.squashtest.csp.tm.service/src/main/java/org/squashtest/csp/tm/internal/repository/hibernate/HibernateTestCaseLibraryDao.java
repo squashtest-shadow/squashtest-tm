@@ -20,16 +20,14 @@
  */
 package org.squashtest.csp.tm.internal.repository.hibernate;
 
-import java.util.List;
-
 import org.springframework.stereotype.Repository;
-import org.squashtest.csp.tm.domain.library.NodeReference;
 import org.squashtest.csp.tm.domain.testcase.TestCaseLibrary;
 import org.squashtest.csp.tm.domain.testcase.TestCaseLibraryNode;
 import org.squashtest.csp.tm.internal.repository.TestCaseLibraryDao;
 
 @Repository
 public class HibernateTestCaseLibraryDao extends HibernateLibraryDao<TestCaseLibrary, TestCaseLibraryNode> implements TestCaseLibraryDao {
+	
 	@Override
 	public void persist(TestCaseLibrary testCaseLibrary) {
 		persistEntity(testCaseLibrary);
