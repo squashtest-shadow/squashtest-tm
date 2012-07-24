@@ -61,7 +61,7 @@ public class ExecutionModificationServiceImpl implements ExecutionModificationSe
 	}
 
 	@Override
-	public List<ExecutionStep> getExecutionSteps(Long executionId) {
+	public List<ExecutionStep> findExecutionSteps(long executionId) {
 		return executionDao.findExecutionSteps(executionId);
 	}
 
@@ -79,9 +79,10 @@ public class ExecutionModificationServiceImpl implements ExecutionModificationSe
 	}
 
 	@Override
-	public FilteredCollectionHolder<List<ExecutionStep>> getExecutionSteps(long executionId, CollectionFilter filter) {
+	public FilteredCollectionHolder<List<ExecutionStep>> findExecutionSteps(long executionId, CollectionFilter filter) {
 		List<ExecutionStep> list = executionDao.findStepsFiltered(executionId, filter);
-		long count = getExecutionSteps(executionId).size();
+		// TODO replace by a count query. the following initializes the whole damn list !
+		long count = findExecutionSteps(executionId).size();
 		return new FilteredCollectionHolder<List<ExecutionStep>>(count, list);
 	}
 
@@ -100,12 +101,12 @@ public class ExecutionModificationServiceImpl implements ExecutionModificationSe
 	}
 
 	@Override
-	public Execution simpleGetExecutionById(Long id) {
+	public Execution findById(long id) {
 		return executionDao.findById(id);
 	}
 
 	@Override
-	public ExecutionStep findExecutionStepById(Long id) {
+	public ExecutionStep findExecutionStepById(long id) {
 		return executionStepDao.findById(id);
 	}
 

@@ -29,7 +29,7 @@ import org.squashtest.csp.tm.infrastructure.filter.CollectionFilter;
 import org.squashtest.csp.tm.infrastructure.filter.FilteredCollectionHolder;
 import org.squashtest.csp.tm.service.deletion.SuppressionPreviewReport;
 
-@Transactional
+@Transactional(readOnly = false)
 public interface ExecutionModificationService extends ExecutionFinder{
 	
 	Execution findAndInitExecution(Long executionId);
@@ -39,7 +39,7 @@ public interface ExecutionModificationService extends ExecutionFinder{
 	/*********************************** Steps methods *****************************************/
 
 
-	FilteredCollectionHolder<List<ExecutionStep>> getExecutionSteps(long executionId, CollectionFilter filter);
+	FilteredCollectionHolder<List<ExecutionStep>> findExecutionSteps(long executionId, CollectionFilter filter);
 	
 	@Transactional(readOnly = true)
 	int findExecutionRank(Long executionId);

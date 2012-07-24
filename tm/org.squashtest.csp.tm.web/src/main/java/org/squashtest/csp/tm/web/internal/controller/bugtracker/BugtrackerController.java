@@ -257,7 +257,7 @@ public class BugtrackerController {
 	public ModelAndView getExecIssuePanel(@PathVariable Long execId, Locale locale,
 			@RequestParam(value = "style", required = false, defaultValue = "toggle") String panelStyle) {
 
-		Execution bugged = executionFinder.simpleGetExecutionById(execId);
+		Execution bugged = executionFinder.findById(execId);
 		return makeIssuePanel(bugged, EXECUTION_TYPE, locale, panelStyle);
 	}
 
@@ -299,7 +299,7 @@ public class BugtrackerController {
 	@RequestMapping(value = EXECUTION_TYPE + "/{execId}/new-issue")
 	@ResponseBody
 	public BTIssue getExecReportStub(@PathVariable Long execId, Locale locale, HttpServletRequest request) {
-		Execution execution = executionFinder.simpleGetExecutionById(execId);
+		Execution execution = executionFinder.findById(execId);
 		String executionUrl = BugtrackerControllerHelper.buildExecutionUrl(request,execution);
 		return makeReportIssueModel(execution, locale, executionUrl);
 	}
@@ -313,7 +313,7 @@ public class BugtrackerController {
 	public Object postExecIssueReport(@PathVariable("execId") Long execId, @RequestBody BTIssue jsonIssue) {
 		LOGGER.trace("BugTrackerController: posting a new issue for execution-step " + execId);
 
-		Execution entity = executionFinder.simpleGetExecutionById(execId);
+		Execution entity = executionFinder.findById(execId);
 
 		if (jsonIssue.hasBlankId()) {
 			return processIssue(jsonIssue, entity);

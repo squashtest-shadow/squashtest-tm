@@ -101,7 +101,7 @@ public class ExecutionModificationController {
 
 		CollectionFilter filter = createCollectionFilter(params);
 
-		FilteredCollectionHolder<List<ExecutionStep>> holder = executionModService.getExecutionSteps(executionId,
+		FilteredCollectionHolder<List<ExecutionStep>> holder = executionModService.findExecutionSteps(executionId,
 				filter);
 
 		return new DataTableModelHelper<ExecutionStep>() {
@@ -209,7 +209,7 @@ public class ExecutionModificationController {
 	@RequestMapping(method = RequestMethod.DELETE)
 	public @ResponseBody
 	Object removeExecution(@PathVariable long executionId) {
-		Execution execution = executionModService.simpleGetExecutionById(executionId);
+		Execution execution = executionModService.findById(executionId);
 		IterationTestPlanItem testPlan = execution.getTestPlan();
 		Iteration iteration = testPlan.getIteration();
 		executionModService.deleteExecution(execution);

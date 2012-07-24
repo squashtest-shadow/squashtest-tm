@@ -112,7 +112,7 @@ public class ExecutionProcessingServiceImpl implements ExecutionProcessingServic
 
 	@Override
 	public List<ExecutionStep> getExecutionSteps(Long executionId) {
-		return execModService.getExecutionSteps(executionId);
+		return execModService.findExecutionSteps(executionId);
 	}
 
 	@Override

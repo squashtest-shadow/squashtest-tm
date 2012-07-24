@@ -26,13 +26,11 @@ import org.springframework.transaction.annotation.Transactional;
 import org.squashtest.csp.tm.domain.execution.Execution;
 import org.squashtest.csp.tm.domain.execution.ExecutionStep;
 
+@Transactional(readOnly = true)
 public interface ExecutionFinder {
-	@Transactional(readOnly = true)
-	Execution simpleGetExecutionById(Long id);
+	Execution findById(long id);
 
-	@Transactional(readOnly = true)
-	List<ExecutionStep> getExecutionSteps(Long executionId);
+	List<ExecutionStep> findExecutionSteps(long executionId);
 
-	@Transactional(readOnly = true)
-	ExecutionStep findExecutionStepById(Long id);
+	ExecutionStep findExecutionStepById(long id);
 }
