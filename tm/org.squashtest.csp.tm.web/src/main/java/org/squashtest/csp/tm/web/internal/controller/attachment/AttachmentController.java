@@ -162,10 +162,8 @@ public class AttachmentController {
 	// by design the last file uploaded is empty and has no name. We'll strip that from the summary.
 	private List<UploadSummary> stripEmptySummary(List<UploadSummary> summary) {
 		int totalAttachment = summary.size();
-		if (totalAttachment > 0) {
-			if (summary.get(totalAttachment - 1).getName().isEmpty()) {
-				summary.remove(totalAttachment - 1);
-			}
+		if (totalAttachment > 0 && summary.get(totalAttachment - 1).getName().isEmpty()) {
+			summary.remove(totalAttachment - 1);
 		}
 		return summary;
 	}

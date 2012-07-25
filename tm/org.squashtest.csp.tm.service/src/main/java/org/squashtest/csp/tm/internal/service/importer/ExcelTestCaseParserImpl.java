@@ -111,7 +111,7 @@ public class ExcelTestCaseParserImpl implements ExcelTestCaseParser {
 
 	private final List<FieldPopulator> fieldPopulators = new ArrayList<ExcelTestCaseParserImpl.FieldPopulator>(6);
 
-	private final FieldPopulator DefaultPopulator = new FieldPopulator("") {
+	private final FieldPopulator defaultPopulator = new FieldPopulator("") {
 		public void doPopulate(PseudoTestCase pseudoTestCase, Row row) {
 			String tag = tagCell(row).getStringCellValue();
 			String value = valueCell(row).getStringCellValue();
@@ -240,7 +240,7 @@ public class ExcelTestCaseParserImpl implements ExcelTestCaseParser {
 		}
 
 		// default behaviour needs to override tag checking -> we call doPopulate
-		DefaultPopulator.doPopulate(pseudoTestCase, row);
+		defaultPopulator.doPopulate(pseudoTestCase, row);
 	}
 
 	private static String[] pairedString(String index0, String index1) {
@@ -333,20 +333,42 @@ public class ExcelTestCaseParserImpl implements ExcelTestCaseParser {
 		if (lessThan2Cells(lastCell, nbCell)) {
 			validated = false;
 		} else {
-			String text1 = (row.getCell(0) != null) ? row.getCell(0).getStringCellValue() : "";
-			Date date2 = null;
-			String text2 = "";
-			try {
-				text2 = (row.getCell(1) != null) ? row.getCell(1).getStringCellValue() : "";
-			} catch (IllegalStateException ise) {
-				date2 = row.getCell(1).getDateCellValue();
-			}
-
-			validated = (!text1.isEmpty() && ((text1.equals(CREATED_ON_TAG) && (!text2.isEmpty() || date2 != null)) || !text2
-					.isEmpty()));
+			validated = checkCellsContent(row);
 		}
 
 		return validated;
+	}
+
+	private boolean checkCellsContent(Row row) {
+		//first cell must be text
+		String text1 = findFirstCellValue(row);
+		
+		//second cell value must be text or date
+		Date date2 = null;
+		String text2 = "";
+		try {
+			if(row.getCell(1) != null){
+				text2 = row.getCell(1).getStringCellValue();
+			}
+		} catch (IllegalStateException ise) {
+			date2 = row.getCell(1).getDateCellValue();
+		}
+		
+		//compute cell content to validate row
+		boolean keyIsPresent = !text1.isEmpty();
+		boolean keyIsCreatedOn = text1.equals(CREATED_ON_TAG) ;
+		boolean valueIsTextOrDateDependingOnKey = ((keyIsCreatedOn && (!text2.isEmpty() || date2 != null)) || !text2
+				.isEmpty());
+		
+		return keyIsPresent && valueIsTextOrDateDependingOnKey;
+	}
+
+	private String findFirstCellValue(Row row) {
+		String text1 = "";
+		if (row.getCell(0) != null){
+			text1 = row.getCell(0).getStringCellValue();
+		}
+		return text1;
 	}
 
 	private boolean lessThan2Cells(int lastCell, int nbCell) {

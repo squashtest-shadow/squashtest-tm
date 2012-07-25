@@ -64,7 +64,7 @@ public class NodeReference {
 		this.directory = (Boolean) rawData[2];
 	}
 
-	@Override
+	@Override // NOSONAR generated code
 	public int hashCode() { // NOSONAR generated code
 		final int prime = 31;
 		int result = 1;
@@ -74,7 +74,7 @@ public class NodeReference {
 		return result;
 	}
 
-	@Override
+	@Override // NOSONAR generated code
 	public boolean equals(Object obj) { // NOSONAR generated code
 		if (this == obj) {
 			return true;
