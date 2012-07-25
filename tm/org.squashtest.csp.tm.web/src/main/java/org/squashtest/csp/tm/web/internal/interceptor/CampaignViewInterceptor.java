@@ -36,12 +36,12 @@ public class CampaignViewInterceptor extends ObjectViewsInterceptor {
 	private static final Logger LOGGER = LoggerFactory.getLogger(CampaignViewInterceptor.class); 	
 
 	@Override
-	public void preHandle(WebRequest request) throws Exception {
+	public void preHandle(WebRequest request) {
 		
 	}
 
 	@Override
-	public void postHandle(WebRequest request, ModelMap model) throws Exception {
+	public void postHandle(WebRequest request, ModelMap model) {
 		//check model is not null in case we are intercepting an ajax request on the campaign page
 		if (model != null) {Identified identified = (Identified) model.get("campaign");
 			if (identified != null) {
@@ -55,8 +55,8 @@ public class CampaignViewInterceptor extends ObjectViewsInterceptor {
 	}
 
 	@Override
-	public void afterCompletion(WebRequest request, Exception ex) throws Exception {
-		// TODO Auto-generated method stub
+	public void afterCompletion(WebRequest request, Exception ex) {
+
 	}
 
 }
