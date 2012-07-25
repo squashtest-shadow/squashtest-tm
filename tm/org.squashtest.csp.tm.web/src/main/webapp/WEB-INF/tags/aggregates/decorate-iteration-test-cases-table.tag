@@ -346,7 +346,7 @@
 					running : "${statusRunning}",
 					ready : "${statusReady}"
 				},
-				confirmDialog : {
+				confirmPopup : {
 					oklabel : '<f:message key="attachment.button.delete.label" />',
 					cancellabel : '<f:message key="dialog.button.cancel.label" />'
 				},
@@ -363,7 +363,6 @@
 			squashSettings.enableDnD = true;
 
 			squashSettings.deleteButtons = {
-				
 				url : "${testPlansUrl}/{entity-id}",
 				popupmessage : '<f:message key="dialog.remove-testcase-association.message" />',
 				tooltip : '<f:message key="test-case.verified_requirement_item.remove.button.label" />',

@@ -79,7 +79,7 @@ function sendContextualDeletionSimulationRequest(jqDialog){
 
 function confirmDeletion(){
 	
-	var jqDialog = $( "#delete-contextual-node-dialog" );
+	var jqDialog = $( "#delete-contextual-node-dialog_${openedBy}" );
 	var url = "${confirmationUrl}";
 
 	$.ajax({
@@ -100,7 +100,7 @@ function confirmDeletion(){
 
 
 
-<comp:popup id="delete-contextual-node-dialog" titleKey="${titleKey}" closeOnSuccess="false" openedBy="${openedBy}" isContextual="true">
+<comp:popup id="delete-contextual-node-dialog_${openedBy}"  titleKey="${titleKey}" closeOnSuccess="false" openedBy="${openedBy}" isContextual="true">
 	<jsp:attribute name="buttons">
 	
 		<f:message var="label" key="tree.button.delete-node.label" />
