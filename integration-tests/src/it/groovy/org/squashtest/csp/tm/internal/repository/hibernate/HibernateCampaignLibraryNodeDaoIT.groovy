@@ -34,7 +34,7 @@ import spock.unitils.UnitilsSupport;
 @UnitilsSupport
 class HibernateCampaignLibraryNodeDaoIT extends DbunitDaoSpecification {
 
-	
+	/*
 	@Inject
 	HibernateCampaignLibraryNodeDao dao;
 	
@@ -49,5 +49,5 @@ class HibernateCampaignLibraryNodeDaoIT extends DbunitDaoSpecification {
 		
 	}
 	
-	
+	*/
 }
