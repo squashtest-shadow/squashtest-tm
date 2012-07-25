@@ -44,7 +44,7 @@
 				'mode' : mode
 			};
 			var winDef = {
-				name : "classic-execution-runner",
+				name : "classicExecutionRunner",
 				features : "height=500, width=600, resizable, scrollbars, dialog, alwaysRaised"
 			};
 			$.open(url, data, winDef);

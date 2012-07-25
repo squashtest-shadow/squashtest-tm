@@ -132,8 +132,7 @@ var squashtm = squashtm || {};
 					+ '<input type=\"submit\" name=\"postFormSubmit\" value=\"\" />'
 					+ postData + '</form>';
 	
-			var win = window.open("about:blank", windowDef.name,
-					windowDef.features);
+			var win = window.open("about:blank", windowDef.name, windowDef.features);
 			win.document.write(form);
 			win.document.forms['postForm'].submit();
 	
