@@ -353,6 +353,12 @@
 			<artifactId>org.squashtest.csp.tm.service</artifactId>
 			<version>${project.version}</version>
 		</dependency>
+		
+		<dependency>
+			<groupId>${project.groupId}</groupId>
+			<artifactId>database.h2.fragment</artifactId>
+			<version>${project.version}</version>
+		</dependency>
 		<!-- ====== /SQUASHTEST ====== -->
 
 		<!-- ====== CONFIG ADMIN COMPENDIUM SERVICE ====== -->

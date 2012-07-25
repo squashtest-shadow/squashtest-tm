@@ -29,8 +29,8 @@ import org.squashtest.csp.tm.domain.requirement.RequirementLibraryNode;
 import org.squashtest.csp.tm.internal.repository.LibraryNodeDao;
 
 @Repository("squashtest.tm.repository.RequirementLibraryNodeDao")
-public class HibernateRequirementLibraryNodeDao extends HibernateEntityDao<RequirementLibraryNode<?>>
-		implements LibraryNodeDao<RequirementLibraryNode<?>> {
+public class HibernateRequirementLibraryNodeDao extends HibernateEntityDao<RequirementLibraryNode>
+		implements LibraryNodeDao<RequirementLibraryNode> {
 
 
 	@Override
