@@ -15,7 +15,6 @@
     <bundle.namespace>org.squashtest.csp.tm.web</bundle.namespace>
     <bundle.contextPath>tm</bundle.contextPath>
     <jasperreports.build.outputDirectory>${project.build.directory}/jasperreports/compiled</jasperreports.build.outputDirectory>
-    <jasperreports.messagesDirectory>${basedir}/src/main/jasperreports/messages</jasperreports.messagesDirectory>
   </properties>
 
   <dependencies>
@@ -377,10 +376,6 @@
               <targetPath>WEB-INF/reports</targetPath>
             </resource>
             <resource>
-              <directory>${jasperreports.messagesDirectory}</directory>
-              <targetPath>WEB-INF/reports/messages</targetPath>
-            </resource>
-            <resource>
               <directory>${project.build.outputDirectory}/META-INF</directory>
               <targetPath>META-INF</targetPath>
             </resource>
@@ -421,23 +416,6 @@
                   <resources>
                     <resource>
                       <directory>${jasperreports.build.outputDirectory}</directory>
-                    </resource>
-                  </resources>
-                </configuration>
-              </execution>
-              
-              <execution>
-                <id>copy-reports-messages-to-web-inf</id>
-                <phase>process-resources</phase>
-                <goals>
-                  <goal>copy-resources</goal>
-                </goals>
-                
-                <configuration>
-                  <outputDirectory>${basedir}/WEB-INF/reports/messages</outputDirectory>
-                  <resources>
-                    <resource>
-                      <directory>${jasperreports.messagesDirectory}</directory>
                     </resource>
                   </resources>
                 </configuration>
