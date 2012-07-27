@@ -138,14 +138,17 @@ public class TestCaseLibraryNavigationController extends
 	}
 
 	@RequestMapping(value = "/import/upload", method = RequestMethod.POST, params = "upload-ticket")
-	public @ResponseBody
-	ImportSummary importArchive(@RequestParam("archive") MultipartFile archive,
+	public ModelAndView importArchive(@RequestParam("archive") MultipartFile archive,
 			@RequestParam("projectId") Long projectId, @RequestParam("zipEncoding") String zipEncoding)
 			throws IOException {
 
 		InputStream stream = archive.getInputStream();
 
-		return testCaseLibraryNavigationService.importExcelTestCase(stream, projectId, zipEncoding);
+		ImportSummary summary =  testCaseLibraryNavigationService.importExcelTestCase(stream, projectId, zipEncoding);
+		ModelAndView mav =  new ModelAndView("fragment/import/import-summary");
+		mav.addObject("summary", summary);
+		mav.addObject("workspace", "test-case");
+		return mav;
 
 	}
 

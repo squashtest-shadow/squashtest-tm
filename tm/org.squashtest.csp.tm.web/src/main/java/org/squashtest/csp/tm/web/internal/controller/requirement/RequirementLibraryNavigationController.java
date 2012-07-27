@@ -249,12 +249,15 @@ public class RequirementLibraryNavigationController extends
 	}
 	
 	@RequestMapping(value="/import/upload", method = RequestMethod.POST,  params = "upload-ticket")
-	public @ResponseBody ImportSummary importArchive(@RequestParam("archive") MultipartFile archive, 
+	public ModelAndView importArchive(@RequestParam("archive") MultipartFile archive, 
 			@RequestParam("projectId") Long projectId) throws IOException{
 		
 		InputStream stream = archive.getInputStream();
-		
-		return requirementLibraryNavigationService.importExcel(stream, projectId);	
+		ImportSummary summary =  requirementLibraryNavigationService.importExcel(stream, projectId);
+		ModelAndView mav =  new ModelAndView("fragment/import/import-summary");
+		mav.addObject("summary", summary);
+		mav.addObject("workspace", "requirement");
+		return mav;
 		
 	}
 	/* ********************************** private stuffs ******************************* */
