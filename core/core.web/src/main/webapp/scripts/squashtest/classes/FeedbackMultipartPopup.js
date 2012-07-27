@@ -170,7 +170,7 @@ function FeedbackMultipartPopup(settings) {
 		var form = $("form", this.parametrization.panel);
 		form.ajaxSubmit({
 			url : this.parametrization.submitUrl + "?upload-ticket=" + this.ticket,
-			dataType : "json",
+			dataType : "text/html",
 			success : function () {
 			},
 			error : function () {
@@ -184,11 +184,9 @@ function FeedbackMultipartPopup(settings) {
 	};
 
 	this.displaySummary = function () {
-
-		var json = $.parseJSON(this.xhr.responseText);
-
+		var json = $.parseJSON($(this.xhr.responseText).text());
 		var errorMessage = this.errorHandler(json);
-
+		
 		if (errorMessage === null) {
 			this.summary.builder(json);
 			this.setState(FeedbackMultipartPopup.SUMMARY);
@@ -196,7 +194,8 @@ function FeedbackMultipartPopup(settings) {
 			displayError(errorMessage);
 			this.setState(FeedbackMultipartPopup.ERROR);
 		}
-
+		
+		
 	};
 
 	this.cancel = function () {
