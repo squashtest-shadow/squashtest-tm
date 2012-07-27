@@ -698,7 +698,9 @@ div#contextual-content >  div:first-child h2, .fragment-header h2 {
     bottom: 0; 
     left: auto;
     overflow-x: hidden;
-/*     overflow-y: scroll; */
+/* Important for IE8 */
+    overflow-y: auto; 
+/* End Important for IE8 */
     position: absolute;
     right: inherit;
     top: 0.9cm; 
