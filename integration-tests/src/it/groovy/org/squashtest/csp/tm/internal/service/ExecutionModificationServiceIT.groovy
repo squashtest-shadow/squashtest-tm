@@ -442,7 +442,7 @@ class ExecutionModificationServiceIT extends HibernateServiceSpecification {
 
 
 		and :
-		List<ExecutionStep> listSteps = execService.getExecutionSteps(execution.id);
+		List<ExecutionStep> listSteps = execService.findExecutionSteps(execution.id);
 
 
 
@@ -466,7 +466,7 @@ class ExecutionModificationServiceIT extends HibernateServiceSpecification {
 
 
 		and :
-		List<ExecutionStep> listSteps = execService.getExecutionSteps(execution.id);
+		List<ExecutionStep> listSteps = execService.findExecutionSteps(execution.id);
 
 
 
@@ -490,7 +490,7 @@ class ExecutionModificationServiceIT extends HibernateServiceSpecification {
 
 
 		and :
-		List<ExecutionStep> listSteps = execService.getExecutionSteps(execution.id);
+		List<ExecutionStep> listSteps = execService.findExecutionSteps(execution.id);
 
 
 
@@ -515,7 +515,7 @@ class ExecutionModificationServiceIT extends HibernateServiceSpecification {
 
 
 		and :
-		List<ExecutionStep> listSteps = execService.getExecutionSteps(execution.id);
+		List<ExecutionStep> listSteps = execService.findExecutionSteps(execution.id);
 
 
 
@@ -539,7 +539,7 @@ class ExecutionModificationServiceIT extends HibernateServiceSpecification {
 
 
 		and :
-		List<ExecutionStep> listSteps = execService.getExecutionSteps(execution.id);
+		List<ExecutionStep> listSteps = execService.findExecutionSteps(execution.id);
 
 
 
@@ -563,7 +563,7 @@ class ExecutionModificationServiceIT extends HibernateServiceSpecification {
 		def execution = execList.get(execList.size()-1)
 
 		and :
-		List<ExecutionStep> listSteps = execService.getExecutionSteps(execution.id);
+		List<ExecutionStep> listSteps = execService.findExecutionSteps(execution.id);
 
 		when :
 		def blocked = listSteps.get(1)
@@ -590,7 +590,7 @@ class ExecutionModificationServiceIT extends HibernateServiceSpecification {
 		def execution = execList.get(execList.size()-1)
 
 		and :
-		List<ExecutionStep> listSteps = execService.getExecutionSteps(execution.id);
+		List<ExecutionStep> listSteps = execService.findExecutionSteps(execution.id);
 
 		when :
 		def blocked = listSteps.get(1)
@@ -617,7 +617,7 @@ class ExecutionModificationServiceIT extends HibernateServiceSpecification {
 		def execution = execList.get(execList.size()-1)
 
 		and :
-		List<ExecutionStep> listSteps = execService.getExecutionSteps(execution.id);
+		List<ExecutionStep> listSteps = execService.findExecutionSteps(execution.id);
 
 		when :
 		def blocked = listSteps.get(1)
@@ -648,7 +648,7 @@ class ExecutionModificationServiceIT extends HibernateServiceSpecification {
 		def execution = execList.get(execList.size()-1)
 
 		and :
-		List<ExecutionStep> listSteps = execService.getExecutionSteps(execution.id);
+		List<ExecutionStep> listSteps = execService.findExecutionSteps(execution.id);
 
 		when :
 		def blocked = listSteps.get(1)
@@ -677,7 +677,7 @@ class ExecutionModificationServiceIT extends HibernateServiceSpecification {
 		def execution = execList.get(execList.size()-1)
 
 		and :
-		List<ExecutionStep> listSteps = execService.getExecutionSteps(execution.id);
+		List<ExecutionStep> listSteps = execService.findExecutionSteps(execution.id);
 
 		when :
 		for (ExecutionStep estep : listSteps){
@@ -708,7 +708,7 @@ class ExecutionModificationServiceIT extends HibernateServiceSpecification {
 		def execution = execList.get(execList.size()-1)
 
 		and :
-		List<ExecutionStep> listSteps = execService.getExecutionSteps(execution.id);
+		List<ExecutionStep> listSteps = execService.findExecutionSteps(execution.id);
 
 		when :
 		for (ExecutionStep estep : listSteps){
@@ -739,7 +739,7 @@ class ExecutionModificationServiceIT extends HibernateServiceSpecification {
 		def execution = execList.get(execList.size()-1)
 
 		and :
-		List<ExecutionStep> listSteps = execService.getExecutionSteps(execution.id);
+		List<ExecutionStep> listSteps = execService.findExecutionSteps(execution.id);
 
 		when :
 		for (ExecutionStep estep : listSteps){
@@ -769,7 +769,7 @@ class ExecutionModificationServiceIT extends HibernateServiceSpecification {
 		def execution = execList.get(execList.size()-1)
 
 		and :
-		List<ExecutionStep> listSteps = execService.getExecutionSteps(execution.id);
+		List<ExecutionStep> listSteps = execService.findExecutionSteps(execution.id);
 
 		when :
 		for (ExecutionStep estep : listSteps){
