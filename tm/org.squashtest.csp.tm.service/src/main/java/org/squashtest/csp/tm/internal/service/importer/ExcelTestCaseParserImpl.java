@@ -170,8 +170,11 @@ public class ExcelTestCaseParserImpl implements ExcelTestCaseParser {
 		fieldPopulators.add(new FieldPopulator(ACTION_STEP_TAG) {
 			protected void doPopulate(PseudoTestCase pseudoTestCase, Row row) {
 				String action = valueCell(row).getStringCellValue();
-				String expectation = row.getCell(2).getStringCellValue();
-
+				String expectation = "";
+				Cell cell2 = row.getCell(2);
+				if(cell2 != null){
+					expectation = cell2.getStringCellValue();
+				}
 				String[] stepInfo = pairedString(action, expectation);
 				pseudoTestCase.stepElements.add(stepInfo);
 			}
