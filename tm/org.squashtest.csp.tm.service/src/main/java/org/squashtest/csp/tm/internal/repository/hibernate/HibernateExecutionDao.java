@@ -197,7 +197,7 @@ public class HibernateExecutionDao extends HibernateEntityDao<Execution> impleme
 	 */
 	@Override
 	public long countExecutionSteps(long executionId) {
-		executeEntityNamedQuery("execution.countExecutionSteps", "executionId", executionId);
+		executeEntityNamedQuery("execution.countSteps", "executionId", executionId);
 		return 0;
 	}
 

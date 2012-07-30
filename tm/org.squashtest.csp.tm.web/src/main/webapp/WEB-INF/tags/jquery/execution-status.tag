@@ -23,7 +23,7 @@
 <%@ tag language="java" pageEncoding="ISO-8859-1"%>
 <%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core" %>
 <%@ taglib prefix="f" uri="http://java.sun.com/jsp/jstl/fmt" %>
-<%@ attribute name="status" type="javax.lang.Enuum"	description="execution status of the entity" %>
+<%@ attribute name="status" type="java.lang.Enum"	description="execution status of the entity" %>
 
 <f:message var="entityStatus" key="${status.i18nKey}" />
 <c:set var="statusClass" value="exec-status-${status}" />
