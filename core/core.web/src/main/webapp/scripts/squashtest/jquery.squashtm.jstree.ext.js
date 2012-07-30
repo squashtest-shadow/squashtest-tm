@@ -401,7 +401,7 @@
 		defaults : {
 			"item_h" : "ui-state-active",
 			"item_a" : "ui-state-default",
-			"timeout" : 500,
+			"timeout" : 500
 		}
 	 });
 	 

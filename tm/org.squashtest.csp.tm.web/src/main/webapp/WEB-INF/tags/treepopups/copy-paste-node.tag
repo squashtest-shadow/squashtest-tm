@@ -52,7 +52,7 @@
 											 pasteIterationNotHere :"${pasteIterationNotHere}",
 											 notOneEditable :"${notOneEditable}",
 											 url : "${copyUrl}",
-											 nothingToPaste: "${ nothingToPaste }",
+											 nothingToPaste: "${ nothingToPaste }"
 										});		
 		
 		${treeNodeButtonCopy}.click(function(){
