@@ -243,7 +243,7 @@
 		</tbody>
 	</table>
 	<div id="attachment-row-buttons" class="not-displayed">
-		<a id="delete-attachment-button" class="delete-attachment-button" href="javascript:void(0)">
+		<a id="delete-attachment-button" class="delete-attachment-button" >
 		<f:message key="attachment.button.remove.label" /></a>
 	</div>
 </div>
