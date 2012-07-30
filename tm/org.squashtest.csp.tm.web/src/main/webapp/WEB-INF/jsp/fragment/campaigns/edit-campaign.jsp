@@ -341,6 +341,7 @@
 <%------------------------------ Attachments bloc ---------------------------------------------%> 
 
 <comp:attachment-tab tabId="tabs-3" entity="${ campaign }" editable="${ attachable }" />
+</div>
 <%--------------------------- Deletion confirmation popup -------------------------------------%>
 <c:if test="${ deletable }">
 
@@ -401,13 +402,11 @@
 				});
 			</script>
 			<span><f:message key="dialog.assign-test-case.confirm.label" /></span>
-			<select class="batch-select">
-			</select>
-			</div>
+			<select class="batch-select"></select>
+			
 		</jsp:body>
 </comp:popup>
-<comp:decorate-buttons />
-</div>
+
 
 
 
