@@ -307,8 +307,13 @@ squashtm.report = (function ($) {
 	
 	function onConfirmTreePickerDialog() {
 		var self = $(this);
-		self.dialog("close");	
-		
+		self.dialog("close");
+//		IE specials
+		self.dialog().ajaxSuccess(
+						function(){
+							self.dialog('close');
+						});
+//		End IE specials
 		var tree = self.find('.rpt-tree-crit');
 		var nodes = tree.jstree('get_selected');
 		
@@ -337,7 +342,13 @@ squashtm.report = (function ($) {
 	function initTreePickers(panel, settings) {
 		panel.find('.rpt-tree-crit-open').click(function () {
 			var dialogId = $(this).data('id-opened');
-			$("#" + dialogId).dialog('open');
+			var treePickerPopup = $("#" + dialogId);
+//			IE specials
+			treePickerPopup.dialog().ajaxSuccess(function () {
+					treePickerPopup.dialog('open');
+			});
+//			End IE specials
+			treePickerPopup.dialog('open');
 		});
 		
 		panel.find('.rpt-tree-crit').each(initTreePickerCallback);
