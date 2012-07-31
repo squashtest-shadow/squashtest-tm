@@ -294,6 +294,7 @@ public class TestCase extends TestCaseLibraryNode implements AttachmentHolder{
 	private void setSimplePropertiesUsing(TestCase source) {
 		this.setName(source.getName());
 		this.setDescription(source.getDescription());
+		this.setPrerequisite(source.getPrerequisite());
 		this.executionMode = source.getExecutionMode();
 		this.importance = source.getImportance();
 		this.reference = source.getReference();
