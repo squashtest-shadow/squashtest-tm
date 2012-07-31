@@ -120,7 +120,8 @@
 			}).done( setStatusFailure );					
 		});
 		
-		$(parent.frameleft).unload( refreshParent );
+		/* $(parent.frameleft).unload( refreshParent ); */// see "comment[1]"
+
 	});
 	
 	function refreshParent(){
@@ -228,22 +229,25 @@
 	}
 	
 	function showStepAt(url) {
-		parent.frameleft.document.location.href = url
-		$(parent.frameleft).unload( refreshParent );
-		/* refreshParent(); */
+		parent.frameleft.document.location.href = url;
+		/* $(parent.frameleft).unload( refreshParent ); */
+		refreshParent();// see "comment[1]"
 	}
 
 	function testComplete(){
 		if (!isSuite) {
 			$.squash.openMessage("<f:message key='popup.title.info' />",  "${ completedMessage }" ).done(function() {
+				refreshParent();// see "comment[1]"
 				window.close();
 			});
 		} else if (hasNextTestCase) {
 			$('#execute-next-test-case').click();
+			refreshParent(); // see "comment[1]"
 		} else { // suite without next
 			$.squash.openMessage("<f:message key='popup.title.info' />","${ endTestSuiteMessage }").done(function() {
+				refreshParent();// see "comment[1]"
 				window.close();
-			});
+ 			});
 		}					
 	}
 	
@@ -274,3 +278,5 @@
 	<comp:decorate-buttons />
 </body>
 </html>
+
+<!-- comment[1] [Issue 1126] Had to use directly "refreshParent" instead of "iframe.unload(refreshParent)" beacause the latest do not work with IE 8  -->
