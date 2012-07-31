@@ -229,6 +229,7 @@ class TestCaseTest extends Specification {
 
 		where:
 		propName        | propValue
+		"prerequisite"  | "foobarfoo"
 		"name"          | "foo"
 		"description"   | "bar"
 		"executionMode" | TestCaseExecutionMode.AUTOMATED
