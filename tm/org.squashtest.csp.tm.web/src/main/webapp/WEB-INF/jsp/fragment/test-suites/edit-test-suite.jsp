@@ -422,6 +422,19 @@
 		<pop:cancel-button />
 	</jsp:attribute>
 		<jsp:attribute name="body">
+		<f:message var="emptyMessage" key="dialog.assign-user.selection.empty.label" />			
+		<script type="text/javascript">
+				$("#delete-test-suite-multiple-test-plan-dialog").bind( "dialogopen", function(event, ui){
+					var table = $( '#test-suite-test-plans-table' ).dataTable();
+					var ids = getIdsOfSelectedTableRows(table, getTestPlansTableRowId);
+	
+					if (ids.length == 0) {
+						$.squash.openMessage("<f:message key='popup.title.error' />", "${emptyMessage}");
+						$(this).dialog('close');
+					}
+					
+				});
+			</script>
 		<f:message key="dialog.remove-testcase-testsuite-associations.message" />
 	</jsp:attribute>
 	</pop:popup>
@@ -506,7 +519,6 @@
 			<pop:cancel-button />
 		</jsp:attribute>
 		<jsp:body>
-			<f:message var="emptyMessage" key="dialog.assign-user.selection.empty.label" />
 			<f:message var="confirmMessage" key="dialog.assign-test-case.confirm.label" />
 			<script type="text/javascript">
 				$("#batch-assign-test-case").bind( "dialogopen", function(event, ui){
