@@ -28,7 +28,7 @@
 	<changeSet author="gfouquet" id="core-dev-1">
 		<insert tableName="CORE_USER">
 			<column name="LOGIN" value="project.manager" />
-			<column name="FIRST_NAME " value="Project" />
+			<column name="FIRST_NAME" value="Project" />
 			<column name="LAST_NAME" value="de Manager" />
 			<column name="EMAIL" value="unknown" />
 			<column name="CREATED_ON" valueComputed="CURRENT_TIMESTAMP()" />
