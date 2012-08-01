@@ -143,11 +143,12 @@
 				data : {
 					attachmentIds : removeids
 				},
-				url : "${attachmentRemoveListUrl}"
+				url : "${attachmentRemoveListUrl}",
+				success : refreshAttachments
 
 			});
 
-			refreshAttachments();
+			
 
 		});
 
