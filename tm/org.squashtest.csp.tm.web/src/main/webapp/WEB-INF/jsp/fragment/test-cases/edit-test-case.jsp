@@ -575,7 +575,7 @@ $(function() {
 	openedBy="rename-test-case-button">
 	<jsp:attribute name="buttons">
 	
-		<f:message var="label" key="dialog.button.rename-tree-node.label" />
+		<f:message var="label" key="dialog.rename-test-case.title" />
 		'${ label }': function() {
 			var url = "${ testCaseUrl }";
 			<jq:ajaxcall url="url" dataType="json" httpMethod="POST" useData="true" successHandler="renameTestCaseSuccess">					
