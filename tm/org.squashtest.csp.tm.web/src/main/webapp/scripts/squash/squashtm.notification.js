@@ -39,7 +39,7 @@ squashtm.notification = (function ($) {
 						for (counter = 0; counter < validationErrorList.length; counter++) {
 							var fve = validationErrorList[counter];
 							var labelId = fve.fieldName + '-error';
-
+							labelId = labelId.replace(".", "-");// this is necessary because labelId is used as a css classname
 							var label = $('span.error-message.' + labelId);
 
 							if (label.length != 0) {
