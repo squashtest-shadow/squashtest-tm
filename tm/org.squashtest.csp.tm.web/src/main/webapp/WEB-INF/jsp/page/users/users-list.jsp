@@ -200,7 +200,7 @@
 					<input type="text" id="add-user-login" size="30"/></td>
 					</tr>
 					<tr>
-					<td> <comp:error-message forField="login" /> </td>
+					<td> <comp:error-message forField="user-login" /> </td>
 					 </tr>
 				<tr> <td>
 					<label style="font-weight: bold;" for="add-user-firstName"><f:message key="dialog.add-user.firstname.label" /></label>
@@ -209,7 +209,7 @@
 					<input type="text" id="add-user-firstName" size="30"/></td> 
 					</tr>
 					<tr>
-					<td><comp:error-message forField="firstName" /></td>
+					<td><comp:error-message forField="user-firstName" /></td>
 					</tr> 
 				<tr> <td>
 					<label style="font-weight: bold;" for="add-user-lastName"><f:message key="dialog.add-user.lastname.label" /></label>
@@ -219,7 +219,7 @@
 				</td>
 				</tr>
 					<tr>
-				<td><comp:error-message forField="lastName" /></td>
+				<td><comp:error-message forField="user-lastName" /></td>
 				 </tr>
 				<tr> <td>
 					<label style="font-weight: bold;" for="add-user-email"><f:message key="dialog.add-user.email.label" /></label>
@@ -229,7 +229,7 @@
 				</td>
 				</tr>
 					<tr>
-				<td><comp:error-message forField="email" /></td>
+				<td><comp:error-message forField="user-email" /></td>
 				 </tr>
 				<tr> <td>
 					<label style="font-weight: bold;" for="add-user-group"><f:message key="user.account.group.label" /></label>
