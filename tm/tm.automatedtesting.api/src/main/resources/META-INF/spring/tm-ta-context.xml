@@ -32,21 +32,5 @@
 	http://www.springframework.org/schema/util http://www.springframework.org/schema/util/spring-util-3.0.xsd
 	http://www.springframework.org/schema/tx http://www.springframework.org/schema/tx/spring-tx-3.0.xsd">
 	
-	
-	<context:property-placeholder properties-ref="squashtest.tm.ta.defaults" ignore-unresolvable="true"  />
-	
-	
-	<!-- default detached instance of an AutomatedTestProject -->
-	
-	<bean id="squashtest.tm.ta.defaultserver" class="org.squashtest.csp.tm.domain.automatest.AutomatedTestServer">
-		<!-- <property name="baseURL">
-			<bean class="java.net.URL" >
-				<constructor-arg value="${tm.test.automation.server.defaulturl}"/>
-			</bean>
-		</property> -->
-		<property name="login" value="${tm.test.automation.server.defaultlogin}"/>
-		<property name="password" value="${tm.test.automation.server.defaultpassword}"/>
-	
-	</bean>
-	
+
 </beans>

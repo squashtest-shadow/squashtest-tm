@@ -24,18 +24,25 @@
 			<version>${project.version}</version>
 			<type>pom</type>
 		</dependency>
+
+		<!-- ====== JSE DI API ====== -->
+		<dependency>
+			<groupId>javax.inject</groupId>
+			<artifactId>com.springsource.javax.inject</artifactId>
+		</dependency>
+
 	</dependencies>
 
 
 	<build>
-	
-	
+
+
 		<resources>
 			<resource>
 				<directory>${project.basedir}/src/main/resources</directory>
 			</resource>
 		</resources>
-	
+
 		<plugins>
 			<plugin>
 				<groupId>org.apache.felix</groupId>
@@ -45,7 +52,7 @@
 					<instructions>
 						<_include>bnd.bnd</_include>
 						<Export-Package>!*internal*,org.squashtest.csp.tm.*</Export-Package>
-						<Import-Package>*</Import-Package>						
+						<Import-Package>*</Import-Package>
 						<Fragment-Host>${bundle.hostname}</Fragment-Host>
 					</instructions>
 				</configuration>
