@@ -20,10 +20,14 @@
  */
 package org.squashtest.csp.tm.internal.conf;
 
+import java.net.MalformedURLException;
+import java.net.URL;
 import java.util.Properties;
 
 import javax.inject.Inject;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.FactoryBean;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.squashtest.csp.tm.domain.automatest.AutomatedTestServer;
@@ -36,6 +40,12 @@ import org.squashtest.csp.tm.domain.automatest.AutomatedTestServer;
  */
 public class PropertiesBasedDefaultAutomatedTestServerFactoryBean implements FactoryBean<AutomatedTestServer>{
 
+	private static final Logger logger = LoggerFactory.getLogger(PropertiesBasedDefaultAutomatedTestServerFactoryBean.class);
+	
+	private static final String DEFAULT_URL_KEY = "tm.test.automation.server.defaulturl";
+	private static final String DEFAULT_LOGIN_KEY = "tm.test.automation.server.defaultlogin";
+	private static final String DEFAULT_PASSWORD_KEY = "tm.test.automation.server.defaultpassword";
+	
 	
 	
 	@Inject
@@ -54,9 +64,17 @@ public class PropertiesBasedDefaultAutomatedTestServerFactoryBean implements Fac
 		//here because there will be only one call to that method.
 		
 		AutomatedTestServer defaultServer = new AutomatedTestServer();
+		
+		String baseStrUrl = defaultsProperties.getProperty(DEFAULT_URL_KEY, "");
 		/*
-		String basStrUrl = defaultsProperties.getProperty(arg0)
-		defaultServer.setBaseURL(baseURL)*/
+		try{
+			URL baseURL = new URL(baseStrUrl);
+		}catch(MalformedURLException ex){
+			if (LOGGER.)
+		}
+		
+		
+		defaultServer.setBaseURL(baseStrUrl)/*/
 		return null;
 	}
 

@@ -83,7 +83,7 @@ public class AutomatedTestServer {
 	 * The kind of the remote TA server. It'll help selecting the correct connector. Default is {@link #DEFAULT_KIND}
 	 */
 	@Column
-	private String kind;
+	private String kind = DEFAULT_KIND;
 	
 	
 	public Long getId() {

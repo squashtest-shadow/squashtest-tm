@@ -38,7 +38,9 @@ class AutomatedTestServerMappingIT extends HibernateMappingSpecification {
 		
 		and :
 			AutomatedTestServer server = new AutomatedTestServer()
-			server.setBaseURL(baseUrl)
+			server.baseURL = baseUrl
+			server.login = "bob"
+			server.password = "robert"
 			
 		when :
 			persistFixture server
