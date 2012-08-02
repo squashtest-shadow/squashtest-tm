@@ -28,16 +28,62 @@ import javax.persistence.GeneratedValue;
 import javax.persistence.Id;
 
 
+/**
+ * An AutomatedTestServer represents both a repository of automated tests, and an automated test execution platform. 
+ * 
+ * Like every entities in the package org.squashtest.csp.tm.domain.automatest, these are immutable : modifying servers, projects etc 
+ * could break existing data. For instance changing the URL of a server, or its kind, means that a new instance of AutomatedTestServer should 
+ * be persisted instead of altering the existing one. 
+ * 
+ * 
+ * @author bsiri
+ *
+ */
+
+
 @Entity
 public class AutomatedTestServer {
 	
+	
+	private static final String DEFAULT_KIND = "jenkins";
+	
+	/**
+	 * this is the ID (technical information)
+	 * 
+	 */
 	@Id
 	@GeneratedValue
 	@Column(name = "SERVER_ID")
 	private Long id;
 
+	
+	/**
+	 * This is the url where to reach the server. 
+	 */
 	@Column
 	private URL baseURL;
+	
+	
+	/**
+	 * The login that the TM server should use when dealing with the remote TA server.
+	 */
+	@Column
+	private String login;
+	
+	
+	/**
+	 * The password to be used with the login above
+	 */
+	//TODO : eeer... clear password in the database ? 
+	@Column
+	private String password;
+	
+	
+	/**
+	 * The kind of the remote TA server. It'll help selecting the correct connector. Default is {@link #DEFAULT_KIND}
+	 */
+	@Column
+	private String kind;
 	
 	
 	public Long getId() {
@@ -53,5 +99,38 @@ public class AutomatedTestServer {
 	public void setBaseURL(URL baseURL) {
 		this.baseURL = baseURL;
 	}
+
+
+	public String getLogin() {
+		return login;
+	}
+
+
+	public void setLogin(String login) {
+		this.login = login;
+	}
+
+
+	public String getPassword() {
+		return password;
+	}
+
+
+	public void setPassword(String password) {
+		this.password = password;
+	}
+
+
+	public String getKind() {
+		return kind;
+	}
+
+
+	public void setKind(String kind) {
+		this.kind = kind;
+	}
+	
+	
+	
 	
 }

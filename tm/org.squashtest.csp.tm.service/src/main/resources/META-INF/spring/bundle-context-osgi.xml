@@ -35,7 +35,6 @@
 	<!-- ====== SERVICES EXPOSED BY THIS BUNDLE ====== -->
 
 
-
 	<!-- service reference injection -->
 	<bean
 		class="org.springframework.osgi.extensions.annotation.ServiceReferenceInjectionBeanPostProcessor" />
