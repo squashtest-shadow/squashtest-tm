@@ -28,19 +28,35 @@ import org.springframework.beans.factory.FactoryBean;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.squashtest.csp.tm.domain.automatest.AutomatedTestServer;
 
+/*
+ * That class exists because the good old PropertyPlaceholderConfigurer won't work. There is another one 
+ * configured in the context of tm.service (the one configuring the bugtracker) that will fail 
+ * when the property is not set.
+ * 
+ */
 public class PropertiesBasedDefaultAutomatedTestServerFactoryBean implements FactoryBean<AutomatedTestServer>{
 
+	
+	
 	@Inject
 	@Qualifier("squashtest.tm.ta.defaults")
 	private Properties defaultsProperties;
 	
 	
-	private AutomatedTestServer defaultServer = null;
 	
-
+	public void setDefaultsProperties(Properties defaultsProperties) {
+		this.defaultsProperties = defaultsProperties;
+	}
 
 	@Override
 	public AutomatedTestServer getObject() throws Exception {
+		//there's no point in going through all the singleton synchronizing plumbing
+		//here because there will be only one call to that method.
+		
+		AutomatedTestServer defaultServer = new AutomatedTestServer();
+		/*
+		String basStrUrl = defaultsProperties.getProperty(arg0)
+		defaultServer.setBaseURL(baseURL)*/
 		return null;
 	}
 

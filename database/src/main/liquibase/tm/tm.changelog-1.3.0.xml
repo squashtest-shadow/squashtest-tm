@@ -565,6 +565,20 @@
 			<column name="BASE_URL" type="java.sql.Types.VARCHAR(255)" remarks="the url of the server">
 				<constraints nullable="false" />
 			</column>
+			
+			<column name="LOGIN" type="java.sql.Types.VARCHAR(50)" remarks="the login TM will use">
+				<constraints nullable="false"/>
+			</column>
+			
+			<column name="PASSWORD" type="java.sql.Types.VARCHAR(255)" remarks="yes, this is a plain clear password in the database. Until we have what it takes to make it better.">
+				<constraints nullable="false"/>		
+			</column>
+			
+			<column name="KIND" type="java.sql.Types.VARCHAR(30)" 
+			remarks="the kind of automated test server TM will deal with."
+			defaultValue="jenkins">
+				<constraints nullable="false"/>
+			</column>
 		
 		</createTable>
 		
