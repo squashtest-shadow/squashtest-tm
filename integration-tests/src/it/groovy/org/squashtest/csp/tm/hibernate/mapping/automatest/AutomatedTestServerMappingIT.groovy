@@ -18,40 +18,38 @@
  *     You should have received a copy of the GNU Lesser General Public License
  *     along with this software.  If not, see <http://www.gnu.org/licenses/>.
  */
-package org.squashtest.csp.tm.domain.automatest;
-
-import java.net.URL;
-
-import javax.persistence.Column;
-import javax.persistence.Entity;
-import javax.persistence.GeneratedValue;
-import javax.persistence.Id;
+package org.squashtest.csp.tm.hibernate.mapping.automatest
 
 
-@Entity
-public class AutomatedTestServer {
-	
-	@Id
-	@GeneratedValue
-	@Column(name = "SERVER_ID")
-	private Long id;
+import org.springframework.test.context.ContextConfiguration;
+import org.springframework.test.context.transaction.TransactionConfiguration;
+import org.squashtest.csp.tm.domain.automatest.AutomatedTestServer;
+import org.squashtest.csp.tm.hibernate.mapping.HibernateMappingSpecification
 
-	@Column
-	private URL baseURL;
+
+class AutomatedTestServerMappingIT extends HibernateMappingSpecification {
+
 	
 	
-	public Long getId() {
-		return id;
-	}
-
-
-	public URL getBaseURL() {
-		return baseURL;
-	}
-
-
-	public void setBaseURL(URL baseURL) {
-		this.baseURL = baseURL;
+	def "should persist a new AutomatedTestServer"(){
+		
+		given :
+			URL baseUrl = new URL("http://www.squashtest.org/")
+		
+		and :
+			AutomatedTestServer server = new AutomatedTestServer()
+			server.setBaseURL(baseUrl)
+			
+		when :
+			persistFixture server
+			def server2 = doInTransaction({it.get(AutomatedTestServer.class, server.id)})
+		
+		then :
+			server2.baseURL.equals(server.baseURL)
+			
+		cleanup :
+			deleteFixture server
+		
 	}
 	
 }

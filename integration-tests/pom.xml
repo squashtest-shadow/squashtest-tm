@@ -176,6 +176,12 @@
 			<version>${project.version}</version>
 			<scope>test</scope>
 		</dependency>
+		<dependency>
+			<groupId>${project.groupId}</groupId>
+			<artifactId>tm.automatedtesting.api</artifactId>
+			<version>${project.version}</version>
+			<scope>test</scope>
+		</dependency>		
 		<!-- <dependency> <groupId>${project.groupId}</groupId> <artifactId>plugin.report.std</artifactId> 
 			<version>${project.version}</version> <scope>test</scope> </dependency> -->
 		<dependency>

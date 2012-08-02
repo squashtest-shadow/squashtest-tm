@@ -35,6 +35,21 @@
 		
 		
 	<bean class="org.springframework.osgi.extensions.annotation.ServiceReferenceInjectionBeanPostProcessor" />
+	
+	
+	<!-- =================== free access scheduled thread pool ======================= -->
+	
+	
+	<osgi:service id="core.executor.service">
+		<osgi:interfaces>
+			 <value>org.springframework.scheduling.TaskScheduler</value>
+			 <value>org.springframework.core.task.TaskExecutor</value>
+			 <value>org.springframework.core.task.AsyncTaskExecutor</value>
+			 <value>org.springframework.scheduling.concurrent.ThreadPoolTaskScheduler</value>
+		</osgi:interfaces>
+		<bean class="org.springframework.scheduling.concurrent.ThreadPoolTaskScheduler" />
+	</osgi:service>
+	
 
 	<!-- ====== SERVICES EXPOSED BY THIS BUNDLE ====== -->
 	<osgi:service ref="squashtest.core.security.PermissionEvaluationService" 

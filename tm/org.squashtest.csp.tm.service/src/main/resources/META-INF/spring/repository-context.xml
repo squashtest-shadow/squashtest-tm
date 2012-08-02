@@ -101,6 +101,8 @@
 				<value>org.squashtest.csp.tm.domain.event.RequirementPropertyChange</value>
 				<value>org.squashtest.csp.tm.domain.event.RequirementLargePropertyChange</value>
 				
+				
+				<!--  the following entries come from fragment tm.automatedttesting.api -->
 				<value>org.squashtest.csp.tm.domain.automatest.AutomatedTestServer</value>
 				
 			</list>
