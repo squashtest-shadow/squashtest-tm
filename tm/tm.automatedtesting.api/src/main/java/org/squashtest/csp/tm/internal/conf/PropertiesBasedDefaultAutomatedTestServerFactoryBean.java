@@ -40,18 +40,16 @@ import org.squashtest.csp.tm.domain.automatest.AutomatedTestServer;
  */
 public class PropertiesBasedDefaultAutomatedTestServerFactoryBean implements FactoryBean<AutomatedTestServer>{
 
-	private static final Logger logger = LoggerFactory.getLogger(PropertiesBasedDefaultAutomatedTestServerFactoryBean.class);
+	private static final Logger LOGGER = LoggerFactory.getLogger(PropertiesBasedDefaultAutomatedTestServerFactoryBean.class);
 	
 	private static final String DEFAULT_URL_KEY = "tm.test.automation.server.defaulturl";
 	private static final String DEFAULT_LOGIN_KEY = "tm.test.automation.server.defaultlogin";
 	private static final String DEFAULT_PASSWORD_KEY = "tm.test.automation.server.defaultpassword";
 	
 	
-	
 	@Inject
 	@Qualifier("squashtest.tm.ta.defaults")
 	private Properties defaultsProperties;
-	
 	
 	
 	public void setDefaultsProperties(Properties defaultsProperties) {
@@ -65,17 +63,32 @@ public class PropertiesBasedDefaultAutomatedTestServerFactoryBean implements Fac
 		
 		AutomatedTestServer defaultServer = new AutomatedTestServer();
 		
-		String baseStrUrl = defaultsProperties.getProperty(DEFAULT_URL_KEY, "");
-		/*
+		
+		//default url
+		String baseStrUrl = defaultsProperties.getProperty(DEFAULT_URL_KEY, "");	
+		URL baseURL=null;
 		try{
-			URL baseURL = new URL(baseStrUrl);
+			baseURL = new URL(baseStrUrl);
 		}catch(MalformedURLException ex){
-			if (LOGGER.)
+			if (LOGGER.isErrorEnabled()){
+				LOGGER.error("default automated test server configuration : malformed url '"+baseStrUrl+"', proceeding with empty url");
+			}
+			baseURL=new URL("http://locahost");
+		}
+	
+		String defaultLogin = defaultsProperties.getProperty(DEFAULT_LOGIN_KEY, "");
+		String defaultPass = defaultsProperties.getProperty(DEFAULT_PASSWORD_KEY, "");
+		
+		
+		defaultServer.setBaseURL(baseURL);
+		defaultServer.setLogin(defaultLogin);
+		defaultServer.setPassword(defaultPass);
+		
+		if (LOGGER.isInfoEnabled()){
+			LOGGER.info("default automated test server configuration : url = '"+baseURL.toExternalForm()+"', login : '"+defaultLogin+"', password : '"+defaultPass.substring(0,2)+"...'");
 		}
 		
-		
-		defaultServer.setBaseURL(baseStrUrl)/*/
-		return null;
+		return defaultServer;
 	}
 
 	@Override
