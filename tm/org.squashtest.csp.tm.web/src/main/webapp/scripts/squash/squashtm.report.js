@@ -203,7 +203,9 @@ squashtm.report = (function ($) {
 	}
 	
 	function buildViewUrl(index, format) {
-		return 'http://' + document.location.host + config.reportUrl + "/views/" + index + "/formats/" + format;
+		// see [Issue 1205] for why "document.location.protocol"
+		return document.location.protocol + '//' + document.location.host + config.reportUrl + "/views/" + index + "/formats/" + format;
+
 	}
 	
 	function loadTab(tab) {
