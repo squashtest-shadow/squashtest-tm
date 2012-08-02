@@ -16,5 +16,6 @@
 	<modules>
 		<module>org.squashtest.csp.tm.service</module>
 		<module>org.squashtest.csp.tm.web</module>
+		<module>tm.automatedtesting.api</module>
 	</modules>
 </project>

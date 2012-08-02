@@ -184,3 +184,6 @@ integration-tests/log/IT.log
 integration-tests/src/it/resources/log4j.properties
 syntax: regexp
 ^database\.h2\.fragment/META-INF.*$
+syntax : regexp
+^tm/tm\.automatedtesting\.api/target$
+^tm/tm\.automatedtesting\.api/META-INF$

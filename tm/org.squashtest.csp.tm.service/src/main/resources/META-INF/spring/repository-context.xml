@@ -101,6 +101,8 @@
 				<value>org.squashtest.csp.tm.domain.event.RequirementPropertyChange</value>
 				<value>org.squashtest.csp.tm.domain.event.RequirementLargePropertyChange</value>
 				
+				<value>org.squashtest.csp.tm.domain.automatest.AutomatedTestServer</value>
+				
 			</list>
 		</property>
 		<property name="namingStrategy">
