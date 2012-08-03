@@ -21,11 +21,14 @@
 package org.squashtest.csp.tm.domain.automatest;
 
 import java.net.URL;
+import java.util.Iterator;
+import java.util.Set;
 
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
 import javax.persistence.Id;
+import javax.persistence.OneToMany;
 
 
 /**
@@ -86,6 +89,10 @@ public class AutomatedTestServer {
 	private String kind = DEFAULT_KIND;
 	
 	
+	@OneToMany(orphanRemoval=false, mappedBy="server")
+	private Set<AutomatedTestProject> projects;
+	
+	
 	public Long getId() {
 		return id;
 	}
@@ -129,8 +136,28 @@ public class AutomatedTestServer {
 	public void setKind(String kind) {
 		this.kind = kind;
 	}
+
+
+	public Set<AutomatedTestProject> getProjects() {
+		return projects;
+	}
+
+	
+	public void addProject(AutomatedTestProject project){
+		projects.add(project);
+	}
 	
 	
+	public void removeProject(AutomatedTestProject project){
+		Iterator<AutomatedTestProject> iter = projects.iterator();
+		while (iter.hasNext()){
+			AutomatedTestProject proj = iter.next();
+			if (proj.getId().equals(project.getId())){
+				iter.remove();
+				break;
+			}
+		}
+	}
 	
 	
 }
