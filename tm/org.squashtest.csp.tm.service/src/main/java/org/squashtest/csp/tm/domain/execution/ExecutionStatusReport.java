@@ -23,11 +23,13 @@ package org.squashtest.csp.tm.domain.execution;
 /* a good old bean used as a dto */
 public class ExecutionStatusReport {
 
-	private int bloqued;
-	private int failure;
-	private int success;
-	private int running;
-	private int ready;
+	private int bloqued=0;
+	private int failure=0;
+	private int success=0;
+	private int running=0;
+	private int ready=0;
+	private int warning=0;
+	private int error=0;
 
 	public int getBloqued() {
 		return bloqued;
@@ -68,12 +70,70 @@ public class ExecutionStatusReport {
 	public void setReady(int ready) {
 		this.ready = ready;
 	}
+	
+
+	public int getWarning() {
+		return warning;
+	}
+
+	public void setWarning(int warning) {
+		this.warning = warning;
+	}
+
+	public int getError() {
+		return error;
+	}
+
+	public void setError(int error) {
+		this.error = error;
+	}
 
 	public boolean areAllSuccess() {
-		if ((bloqued == 0) && (failure == 0) && (running == 0) && (ready == 0)) {
+		if (
+			(! hasAggregatedBlocked())  && 
+			(! hasFailure()) 			&&	
+		    (! hasRunning())			&&
+		    (! hasReady())
+		  ){
 			return true;
 		}
 		return false;
+	}
+	
+	public boolean hasBlocked(){
+		return bloqued > 0;
+	}
+	
+	public boolean hasError(){
+		return error > 0;
+	}
+	
+	public boolean hasFailure(){
+		return failure > 0;
+	}
+	
+	public boolean hasRunning(){
+		return running > 0;
+	}
+	
+	public boolean hasReady(){
+		return ready > 0;
+	}
+	
+	public boolean hasSuccess(){
+		return success > 0 ;
+	}
+	
+	public boolean hasWarning(){
+		return warning > 0;
+	}
+	
+	public boolean hasAggregatedBlocked(){
+		return (hasBlocked() || hasError());
+	}
+	
+	public boolean hasAggregatedSuccess(){
+		return (hasSuccess() || hasWarning());
 	}
 
 	public ExecutionStatusReport() {
@@ -88,5 +148,20 @@ public class ExecutionStatusReport {
 		this.running = running;
 		this.ready = ready;
 	}
+
+	public ExecutionStatusReport(int bloqued, int failure, int success,
+			int running, int ready, int warning, int error) {
+		super();
+		this.bloqued = bloqued;
+		this.failure = failure;
+		this.success = success;
+		this.running = running;
+		this.ready = ready;
+		this.warning = warning;
+		this.error = error;
+	}
+
+	
+	
 
 }

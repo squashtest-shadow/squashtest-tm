@@ -20,11 +20,17 @@
  */
 package org.squashtest.csp.tm.domain.execution;
 
+import java.util.ArrayList;
+import java.util.HashSet;
+import java.util.List;
+import java.util.Map;
+import java.util.Set;
+
 import org.squashtest.tm.core.foundation.i18n.Internationalizable;
 
 /**
  *
- * <p>This class declare the 5 executions status.
+ * <p>This class declare the 7 execution statuses, 5 of them being canonical.
  *
  * Also, it declares and additional methods to update the new execution status of an execution, based on the former
  * states of the execution, of the step, and the new status of the step. See their documentation for details.</p>
@@ -76,11 +82,36 @@ import org.squashtest.tm.core.foundation.i18n.Internationalizable;
  * Note 2 : see the method computeNewStatus for the simplest statement about what does this thing compute.
  */
 
+
+/*
+ * Feat 1181, 03/08/12 : the list of execution statuses is extended by two statuses designed for automated executions : TA_WARNING and TA_ERROR. 
+ * There are now 7 status, yet manual or automated statuses only uses a subset of them.
+ * 
+ * The set of valid statuses for manual executions is : BLOCKED, FAILURE, SUCCESS, RUNNING, READY
+ * The set of valid statuses for automated executions : TA_ERROR, FAILURE, TA_WARNING, SUCCESS, RUNNING, READY
+ * 
+ * 
+ * The status sets for manual and automated can still be compared to each other, but one have to normalize them first : BLOCKED, FAILURE, SUCCESS, RUNNING, READY
+ * is considered as the Canonical status set. To this end, TA_ERROR is considered equal to BLOCKED and TA_WARNING is considered equal to SUCCESS.
+ * 
+ * 
+ */
 public enum ExecutionStatus implements Internationalizable {
+	
 	BLOCKED() {
 		@Override
 		protected ExecutionStatus resolveStatus(ExecutionStatus formerExecutionStatus, ExecutionStatus formerStepStatus) {
 			return ExecutionStatus.BLOCKED;
+		}
+		
+		@Override
+		protected boolean isCanonical() {
+			return true;
+		}
+		
+		@Override
+		protected ExecutionStatus toCanonical() {
+			return BLOCKED;
 		}
 	},
 
@@ -89,6 +120,16 @@ public enum ExecutionStatus implements Internationalizable {
 		// the case 'former exec status blocked' is already ruled out in the trivialDeductions
 		protected ExecutionStatus resolveStatus(ExecutionStatus formerExecutionStatus, ExecutionStatus formerStepStatus) {
 			return ExecutionStatus.FAILURE;
+		}
+		
+		@Override
+		protected boolean isCanonical() {
+			return true;
+		}
+		
+		@Override
+		protected ExecutionStatus toCanonical() {
+			return FAILURE;
 		}
 	},
 
@@ -106,6 +147,16 @@ public enum ExecutionStatus implements Internationalizable {
 			}
 
 			return newStatus;
+		}
+		
+		@Override
+		protected boolean isCanonical() {
+			return true;
+		}
+		
+		@Override
+		protected ExecutionStatus toCanonical() {
+			return SUCCESS;
 		}
 	},
 
@@ -126,6 +177,16 @@ public enum ExecutionStatus implements Internationalizable {
 			}
 			return newStatus;
 		}
+		
+		@Override
+		protected boolean isCanonical() {
+			return true;
+		}
+		
+		@Override
+		protected ExecutionStatus toCanonical() {
+			return RUNNING;
+		}
 	},
 
 	READY() {
@@ -142,7 +203,61 @@ public enum ExecutionStatus implements Internationalizable {
 
 			return newStatus;
 		}
+		
+		@Override
+		protected boolean isCanonical() {
+			return true;
+		}
+		
+		@Override
+		protected ExecutionStatus toCanonical() {
+			return READY;
+		}
+	},
+	
+	TA_WARNING(){
+		//supposed to never happen because this operation requires canonical statuses and TA_WARNING is not one of them.
+		@Override
+		protected ExecutionStatus resolveStatus(ExecutionStatus formerExecutionStatus,ExecutionStatus formerStepStatus) {
+			throw new UnsupportedOperationException("ExecutionStatus.TA_WARNING#resolveStatus(...) should never have been invoked. That exception cleary results from faulty logic. If you read this message please "+
+					"report the issue at https://ci.squashtest.org/mantis/ Please put [ExecutionStatus - unsupported operation] as title for your report and explain what you did. Also please check that it hadn't been reported "+
+					"already. Thanks for your help and happy Squash !");
+		}
+		
+		@Override
+		protected boolean isCanonical() {
+			return false;
+		}
+		
+		@Override
+		protected ExecutionStatus toCanonical() {
+			return SUCCESS;
+		}
+	},
+	
+	TA_ERROR(){
+		@Override
+		protected ExecutionStatus resolveStatus(ExecutionStatus formerExecutionStatus, ExecutionStatus formerStepStatus) {
+			throw new UnsupportedOperationException("ExecutionStatus.TA_ERROR#resolveStatus(...) should never have been invoked. That exception cleary results from faulty logic. If you read this message please "+
+			"report the issue at https://ci.squashtest.org/mantis/ Please put [ExecutionStatus - unsupported operation] as title for your report and explain what you did. Also please check that it hadn't been reported "+
+			"already. Thanks for your help and happy Squash !");
+		}
+		
+		@Override
+		protected boolean isCanonical() {
+			return false;
+		}		
+		
+		@Override
+		protected ExecutionStatus toCanonical() {
+			return BLOCKED;
+		}
+		
 	};
+
+	
+	/* ************************* attributes ********************************** */
+
 
 	private static final String I18N_KEY_ROOT = "execution.execution-status.";
 
@@ -153,15 +268,94 @@ public enum ExecutionStatus implements Internationalizable {
 	protected static ExecutionStatus isAmbiguous = null;
 	protected static ExecutionStatus needsComputation = null;
 
+	
+	
+
+	/* *************************** abstract methods ********************************* */
+	
+	protected abstract ExecutionStatus resolveStatus(ExecutionStatus formerExecutionStatus,
+			ExecutionStatus formerStepStatus);
+	
+	protected abstract boolean isCanonical();
+	
+	protected abstract ExecutionStatus toCanonical();
+	
+	
+	/* **************************** static methods ***************************** */
+
+	public static List<ExecutionStatus> toCanonicalStatusList(List<ExecutionStatus> nonCanonical){
+		List<ExecutionStatus> canonical = new ArrayList<ExecutionStatus>();
+		for (ExecutionStatus nStatus : nonCanonical){
+			canonical.add(nStatus.toCanonical());
+		}
+		return canonical;
+	}
+	
+	public static Set<ExecutionStatus> getCanonicalStatusSet(){
+		Set<ExecutionStatus> set = new HashSet<ExecutionStatus>();
+		set.add(BLOCKED);
+		set.add(FAILURE);
+		set.add(SUCCESS);
+		set.add(RUNNING);
+		set.add(READY);	
+		return set;
+	}
+	
+	/* **************************** public instance methods ***************************** */
+
+
+
+	/***
+	 * This methods checks if the status is RUNNING or READY
+	 *
+	 * @return true if the status is neither RUNNING nor READY
+	 */
+	public boolean isTerminatedStatus() {
+		return this.toCanonical().isNoneOf(ExecutionStatus.RUNNING, ExecutionStatus.READY);
+	}
+
+	@Override
+	public String getI18nKey() {
+		return I18N_KEY_ROOT + name();
+	}
+	
+	
 	/**
+	 * 
+	 * 
+	 * 
 	 * will deduce the new status of an execution based on the former execution status and former step status. "this" is
 	 * here the new step status. In some case the deduction is impossible and a further computation will be necessary.
+	 * 
+	 * The method will first convert the argument to their canonical form before performing the comparison.
 	 *
 	 * @param formerExecutionStatus : the former execution status
 	 * @param formerStepStatus : the former step status
 	 * @return : the new execution status when possible, or null if it wasn't. The later usually means that a call to the database is needed.
 	 */
-	public ExecutionStatus deduceNewStatus(ExecutionStatus formerExecutionStatus, ExecutionStatus formerStepStatus) {
+	public ExecutionStatus deduceNewStatus(ExecutionStatus formerExecutionStatus, ExecutionStatus formerStepStatus){
+		return this.toCanonical()._deduceNewStatus(formerExecutionStatus.toCanonical(), formerStepStatus.toCanonical());
+	}
+	
+	/* *************************** class-private instance method (assumes canonical form) ******************** */
+	
+	
+	protected boolean isNoneOf(ExecutionStatus... status) {
+		for (ExecutionStatus state : status) {
+			if (this.equals(state)) {
+				return false;
+			}
+		}
+		return true;
+	}
+
+	protected boolean isOneOf(ExecutionStatus... status) {
+		return (!isNoneOf(status));
+	}
+	
+	
+	
+	protected ExecutionStatus _deduceNewStatus(ExecutionStatus formerExecutionStatus, ExecutionStatus formerStepStatus) {
 
 		ExecutionStatus newStatus;
 
@@ -200,15 +394,22 @@ public enum ExecutionStatus implements Internationalizable {
 
 		ExecutionStatus newStatus = ExecutionStatus.READY;
 
-		if (report.getBloqued() > 0) {
+		if (report.hasBlocked()) {
 			newStatus = ExecutionStatus.BLOCKED;
-		} else if (report.getFailure() > 0) {
+		} 
+		else if (report.hasError()){
+			newStatus = ExecutionStatus.TA_ERROR;
+		}
+		else if (report.getFailure() > 0) {
 			newStatus = ExecutionStatus.FAILURE;
-		} else if (report.areAllSuccess()) {
+		} 
+		else if (report.areAllSuccess()) {
 			newStatus = ExecutionStatus.SUCCESS;
-		} else if (report.getSuccess() > 0) {
+		} 
+		else if (report.hasSuccess() || report.hasWarning()) {
 			newStatus = ExecutionStatus.RUNNING;
-		} else {
+		} 
+		else {
 			newStatus = ExecutionStatus.READY;
 		}
 
@@ -217,7 +418,7 @@ public enum ExecutionStatus implements Internationalizable {
 
 	/* ************************************ tests ******************************************* */
 
-	// trivial tests who do not depend on the actual value of "this" (ie, new Step status)
+	// trivial tests who do not depend on the actual value of "this" (namely, the new Step status)
 	protected ExecutionStatus trivialDeductions(ExecutionStatus formerExecutionStatus, ExecutionStatus formerStepStatus) {
 		ExecutionStatus newStatus;
 
@@ -261,8 +462,6 @@ public enum ExecutionStatus implements Internationalizable {
 		return isMandatory;
 	}
 
-	protected abstract ExecutionStatus resolveStatus(ExecutionStatus formerExecutionStatus,
-			ExecutionStatus formerStepStatus);
 
 	/* *************************** Micro tests ************************************** */
 
@@ -296,32 +495,5 @@ public enum ExecutionStatus implements Internationalizable {
 		return (formerExecutionStatus == formerStepStatus);
 	}
 
-	/* *************************** Utils ******************************************** */
 
-	protected boolean isNoneOf(ExecutionStatus... status) {
-		for (ExecutionStatus state : status) {
-			if (this.equals(state)) {
-				return false;
-			}
-		}
-		return true;
-	}
-
-	protected boolean isOneOf(ExecutionStatus... status) {
-		return (!isNoneOf(status));
-	}
-
-	/***
-	 * This methods checks if the status is RUNNING or READY
-	 *
-	 * @return true if the status is not RUNNING or READY
-	 */
-	public boolean isTerminatedStatus() {
-		return isNoneOf(ExecutionStatus.RUNNING, ExecutionStatus.READY);
-	}
-
-	@Override
-	public String getI18nKey() {
-		return I18N_KEY_ROOT + name();
-	}
 }

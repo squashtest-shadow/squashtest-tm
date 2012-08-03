@@ -58,13 +58,13 @@
 
 	<!-- executions of iteration 1 -->
 	<issue_list issue_list_id="2020" />
-	<execution execution_id="1" tcln_id="1" created_by="dbu" created_on="2011-04-01" name="execution 1"
+	<execution execution_id="1" tcln_id="1" created_by="dbu" created_on="2011-04-01" name="execution 1" execution_status="READY"
 		attachment_list_id="1010" issue_list_id="2020"/>
 	<attachment_list attachment_list_id="1020" />
-	<execution execution_id="2" tcln_id="1" created_by="dbu" created_on="2011-04-01" name="execution 2"
+	<execution execution_id="2" tcln_id="1" created_by="dbu" created_on="2011-04-01" name="execution 2" execution_status="READY"
 		attachment_list_id="1020" issue_list_id="2020"/>
 	<attachment_list attachment_list_id="1030" />
-	<execution execution_id="3" tcln_id="1" created_by="dbu" created_on="2011-04-01" name="execution 3"
+	<execution execution_id="3" tcln_id="1" created_by="dbu" created_on="2011-04-01" name="execution 3" execution_status="READY"
 		attachment_list_id="1030" issue_list_id="2020"/>
 
 	<!-- link between test plan and executions -->
