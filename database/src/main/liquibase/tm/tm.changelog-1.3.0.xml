@@ -588,6 +588,33 @@
 	
 	</changeSet>	
 	
+	
+	<changeSet id="tm-1.3.0-feat-1181.02" author="bsiri">
+		<comment>creating table AUTOMATED_TEST_PROJECT</comment>
+	
+		<createTable tableName="AUTOMATED_TEST_PROJECT">
+			<column name="PROJECT_ID" type="BIGINT" autoIncrement="true">
+				<constraints primaryKey="true" nullable="false"/>
+			</column>		
+		
+			<column name="NAME" type="java.sql.VARCHAR(50)">
+				<constraints nullable="false"/>
+			</column>
+			
+			<column name="SERVER_ID" type="BIGINT" remarks="one ca">
+				<constraints nullable="true" references="AUTOMATED_TEST_SERVER(SERVER_ID)" 
+				foreignKeyName="fk_auto_test_project"/>
+			</column>
+		
+		
+		</createTable>
+	
+		<createIndex tableName="AUTOMATED_TEST_PROJECT" indexName="idx_auto_test_project">
+		    <column name="PROJECT_ID"/>
+		</createIndex>
+	
+	</changeSet>
+	
 
 	<!--  ======================================================================================================
 													 / Feat. 1181
