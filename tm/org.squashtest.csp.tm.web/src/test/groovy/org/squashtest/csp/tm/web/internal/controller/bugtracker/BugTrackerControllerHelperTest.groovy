@@ -20,13 +20,13 @@
  */
 package org.squashtest.csp.tm.web.internal.controller.bugtracker
 
-import static org.junit.Assert.*
 import javax.servlet.http.HttpServletRequest
+
+import org.springframework.context.MessageSource
 import org.squashtest.csp.tm.domain.execution.Execution
 import org.squashtest.csp.tm.domain.execution.ExecutionStep
-import org.squashtest.csp.tm.domain.requirement.NewRequirementVersionDto;
 import org.squashtest.csp.tm.domain.testcase.TestCase
-import org.springframework.context.MessageSource
+
 
 class BugTrackerControllerHelperTest extends spock.lang.Specification {
 

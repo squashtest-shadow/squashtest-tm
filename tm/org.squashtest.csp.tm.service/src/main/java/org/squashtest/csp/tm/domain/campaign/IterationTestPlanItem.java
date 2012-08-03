@@ -21,9 +21,13 @@
 package org.squashtest.csp.tm.domain.campaign;
 
 import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Collections;
 import java.util.Date;
+import java.util.HashSet;
 import java.util.List;
 import java.util.ListIterator;
+import java.util.Set;
 
 import javax.persistence.CascadeType;
 import javax.persistence.Column;
@@ -46,6 +50,7 @@ import org.squashtest.csp.tm.domain.TestPlanItemNotExecutableException;
 import org.squashtest.csp.tm.domain.audit.Auditable;
 import org.squashtest.csp.tm.domain.execution.Execution;
 import org.squashtest.csp.tm.domain.execution.ExecutionStatus;
+import org.squashtest.csp.tm.domain.library.HasExecutionStatus;
 import org.squashtest.csp.tm.domain.project.Project;
 import org.squashtest.csp.tm.domain.testcase.TestCase;
 import org.squashtest.csp.tm.domain.users.User;
@@ -54,7 +59,16 @@ import org.squashtest.csp.tm.internal.service.TestCaseCyclicCallChecker;
 @Entity
 @Auditable
 @InheritsAcls(constrainedClass = Iteration.class, collectionName = "testPlans")
-public class IterationTestPlanItem {
+public class IterationTestPlanItem implements HasExecutionStatus {
+	
+	
+	private static final Set<ExecutionStatus> LEGAL_EXEC_STATUS;
+	
+	static {
+		Set<ExecutionStatus> set = new HashSet<ExecutionStatus>(Arrays.asList(ExecutionStatus.values()));		
+		LEGAL_EXEC_STATUS = Collections.unmodifiableSet(set);		
+	}
+	
 	@Id
 	@GeneratedValue
 	@Column(name = "ITEM_TEST_PLAN_ID")
@@ -105,8 +119,14 @@ public class IterationTestPlanItem {
 		label = testCase.getName();
 	}
 
+	@Override
 	public ExecutionStatus getExecutionStatus() {
 		return executionStatus;
+	}
+	
+	@Override
+	public Set<ExecutionStatus> getLegalStatusSet() {
+		return LEGAL_EXEC_STATUS;
 	}
 
 	public void setExecutionStatus(ExecutionStatus executionStatus) {

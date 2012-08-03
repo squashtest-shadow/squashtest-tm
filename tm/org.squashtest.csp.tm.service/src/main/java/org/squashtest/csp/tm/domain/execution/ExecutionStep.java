@@ -20,9 +20,12 @@
  */
 package org.squashtest.csp.tm.domain.execution;
 
+import java.util.Collections;
 import java.util.Date;
+import java.util.HashSet;
 import java.util.LinkedList;
 import java.util.List;
+import java.util.Set;
 
 import javax.persistence.Basic;
 import javax.persistence.CascadeType;
@@ -50,6 +53,7 @@ import org.squashtest.csp.tm.domain.audit.Auditable;
 import org.squashtest.csp.tm.domain.bugtracker.IssueDetector;
 import org.squashtest.csp.tm.domain.bugtracker.IssueList;
 import org.squashtest.csp.tm.domain.campaign.CampaignLibrary;
+import org.squashtest.csp.tm.domain.library.HasExecutionStatus;
 import org.squashtest.csp.tm.domain.project.Project;
 import org.squashtest.csp.tm.domain.testcase.ActionTestStep;
 import org.squashtest.csp.tm.domain.testcase.CallTestStep;
@@ -58,7 +62,20 @@ import org.squashtest.csp.tm.domain.testcase.TestStepVisitor;
 
 @Entity
 @Auditable
-public class ExecutionStep implements AttachmentHolder, IssueDetector, TestStepVisitor, Identified {
+public class ExecutionStep implements AttachmentHolder, IssueDetector, TestStepVisitor, Identified, HasExecutionStatus {
+	
+	private static final Set<ExecutionStatus> LEGAL_EXEC_STATUS;
+	
+	static {
+		Set<ExecutionStatus> set = new HashSet<ExecutionStatus>();
+		set.add(ExecutionStatus.SUCCESS);
+		set.add(ExecutionStatus.BLOCKED);
+		set.add(ExecutionStatus.FAILURE);
+		set.add(ExecutionStatus.READY);
+		LEGAL_EXEC_STATUS = Collections.unmodifiableSet(set);		
+	}
+	
+	
 	@Id
 	@GeneratedValue
 	@Column(name = "EXECUTION_STEP_ID")
@@ -142,8 +159,14 @@ public class ExecutionStep implements AttachmentHolder, IssueDetector, TestStepV
 		this.expectedResult = expectedResult;
 	}
 
+	@Override
 	public ExecutionStatus getExecutionStatus() {
 		return executionStatus;
+	}
+	
+	@Override
+	public Set<ExecutionStatus> getLegalStatusSet() {
+		return LEGAL_EXEC_STATUS;
 	}
 
 	public void setExecutionStatus(ExecutionStatus executionStatus) {

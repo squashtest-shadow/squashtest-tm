@@ -90,7 +90,7 @@ public class ExecutionRunnerControllerHelper {
 		model.addAttribute("execution", execution);
 		model.addAttribute("executionStep", executionStep);
 		model.addAttribute("totalSteps", total );
-		model.addAttribute("executionStatus", ExecutionStatus.values());
+		model.addAttribute("executionStatus", executionStep.getLegalStatusSet() );
 		model.addAttribute("hasPreviousStep", stepOrder != 0);
 		model.addAttribute("hasNextStep", stepOrder != (total - 1));
 	}

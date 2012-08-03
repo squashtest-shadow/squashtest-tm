@@ -21,9 +21,12 @@
 package org.squashtest.csp.tm.domain.execution;
 
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.Date;
+import java.util.HashSet;
 import java.util.LinkedList;
 import java.util.List;
+import java.util.Set;
 
 import javax.persistence.CascadeType;
 import javax.persistence.Column;
@@ -57,6 +60,7 @@ import org.squashtest.csp.tm.domain.campaign.CampaignLibrary;
 import org.squashtest.csp.tm.domain.campaign.IterationTestPlanItem;
 import org.squashtest.csp.tm.domain.exception.ExecutionHasNoRunnableStepException;
 import org.squashtest.csp.tm.domain.exception.ExecutionHasNoStepsException;
+import org.squashtest.csp.tm.domain.library.HasExecutionStatus;
 import org.squashtest.csp.tm.domain.project.Project;
 import org.squashtest.csp.tm.domain.testcase.TestCase;
 import org.squashtest.csp.tm.domain.testcase.TestCaseExecutionMode;
@@ -64,7 +68,21 @@ import org.squashtest.csp.tm.domain.testcase.TestStep;
 
 @Auditable
 @Entity
-public class Execution implements AttachmentHolder, IssueDetector, Identified {
+public class Execution implements AttachmentHolder, IssueDetector, Identified, HasExecutionStatus {
+	
+	private static final Set<ExecutionStatus> LEGAL_EXEC_STATUS;
+	
+	static {
+		Set<ExecutionStatus> set = new HashSet<ExecutionStatus>();
+		set.add(ExecutionStatus.SUCCESS);
+		set.add(ExecutionStatus.BLOCKED);
+		set.add(ExecutionStatus.FAILURE);
+		set.add(ExecutionStatus.RUNNING);
+		set.add(ExecutionStatus.READY);
+		LEGAL_EXEC_STATUS = Collections.unmodifiableSet(set);		
+	}
+	
+	
 	@Id
 	@GeneratedValue
 	@Column(name = "EXECUTION_ID")
@@ -114,6 +132,8 @@ public class Execution implements AttachmentHolder, IssueDetector, Identified {
 	@OneToOne(cascade = { CascadeType.PERSIST, CascadeType.MERGE })
 	@JoinColumn(name = "ATTACHMENT_LIST_ID")
 	private final AttachmentList attachmentList = new AttachmentList();
+	
+	
 	/* *********************** / attachement attributes ************************ */
 
 	/* *********************** issues attributes ************************ */
@@ -160,9 +180,16 @@ public class Execution implements AttachmentHolder, IssueDetector, Identified {
 		}
 	}
 
+	@Override
 	public ExecutionStatus getExecutionStatus() {
 		return executionStatus;
 	}
+	
+	@Override
+	public Set<ExecutionStatus> getLegalStatusSet() {
+		return LEGAL_EXEC_STATUS;
+	}
+	
 
 	public void setExecutionStatus(ExecutionStatus status) {
 		executionStatus = status;
@@ -173,8 +200,8 @@ public class Execution implements AttachmentHolder, IssueDetector, Identified {
 		if (itp != null) {
 			itp.updateExecutionStatus();
 		}
-
 	}
+	
 
 	public Integer getExecutionOrder() {
 		return executionOrder;
