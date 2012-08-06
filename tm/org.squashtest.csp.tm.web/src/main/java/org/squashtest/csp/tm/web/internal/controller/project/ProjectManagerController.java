@@ -97,7 +97,7 @@ public class ProjectManagerController {
 	@RequestMapping(method = RequestMethod.GET)
 	public ModelAndView showProjects() {
 
-		ModelAndView mav = new ModelAndView("page/projects/show-project");
+		ModelAndView mav = new ModelAndView("page/projects/show-projects");
 		mav.addObject("projects", projectManagerService.findAll());
 		return mav;
 	}

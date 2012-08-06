@@ -164,7 +164,7 @@ LibraryNavigationController<CampaignLibrary, CampaignFolder, CampaignLibraryNode
 		Iteration newIteration = campaignLibraryNavigationService
 				.findIteration(iterationId);
 		int newIterationIndex = 0;
-		if (copy == false){
+		if (!copy){
 			newIterationIndex = campaignLibraryNavigationService
 			.addIterationToCampaign(newIteration, campaignId);
 		}else{
@@ -231,12 +231,12 @@ LibraryNavigationController<CampaignLibrary, CampaignFolder, CampaignLibraryNode
 	private @ResponseBody
 	List<JsTreeNode> createCopiedIterationsModel(
 			List<Iteration> newIterations, int nextIterationNumber) {
-		
+		int iterationIndex = nextIterationNumber;
 		List<JsTreeNode> res = new ArrayList<JsTreeNode>();
 		
 		for (Iteration iteration : newIterations) {
-			res.add(createIterationTreeNode(iteration, nextIterationNumber));
-			nextIterationNumber ++;
+			res.add(createIterationTreeNode(iteration, iterationIndex));
+			iterationIndex ++;
 		}
 
 		return res;

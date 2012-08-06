@@ -117,7 +117,7 @@ public class UserAdministrationController {
 	@RequestMapping(value="/list", method=RequestMethod.GET)
 	public ModelAndView getUserList() {
 		
-		ModelAndView mav = new ModelAndView("page/users/users-list");
+		ModelAndView mav = new ModelAndView("page/users/show-users");
 		List<UsersGroup> list = adminService.findAllUsersGroup();
 		mav.addObject("usersGroupList", list);
 		return mav;

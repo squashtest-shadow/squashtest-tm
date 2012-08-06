@@ -18,37 +18,36 @@
  *     You should have received a copy of the GNU Lesser General Public License
  *     along with this software.  If not, see <http://www.gnu.org/licenses/>.
  */
-package org.squashtest.csp.tm.domain;
+package org.squashtest.csp.tm.service;
 
-public class DuplicateNameException extends DomainException {
-	private static final long serialVersionUID = 2815263509542519285L;
-	private String i18nkey = "squashtm.domain.exception.duplicate.name";
-	private String name = "";
-	// note : this exception always reports an error on the name, hence the setField("name");
+import java.util.List;
 
-	public DuplicateNameException(String oldName, String newName) {
-		this("Cannot create/rename " + oldName + " : " + newName + " already exists within the same container");
-	}
+import org.squashtest.csp.core.bugtracker.domain.BugTracker;
+import org.squashtest.csp.tm.domain.DuplicateNameException;
+import org.squashtest.csp.tm.infrastructure.filter.CollectionSorting;
+import org.squashtest.csp.tm.infrastructure.filter.FilteredCollectionHolder;
+import org.squashtest.tm.core.foundation.collection.Paging;
 
-	public DuplicateNameException() {
-		super();
-		setField("name");
-	}
+public interface BugTrackerManagerService {
+	/**
+	 * 
+	 * @return all bugtrackers the user has read access to
+	 */
+	List<BugTracker> findAll();
 
-	public DuplicateNameException(String message) {
-		super(message);
-		setField("name");
-	}
-	
-	public DuplicateNameException(String message, String name, String i18key) {
-		this(message);
-		this.name = name;
-		this.i18nkey = i18key;
-	}
+	/**
+	 * add a new bugtracker in the database 
+	 * @throws DuplicateNameException
+	 * 
+	 * @param bugTracker
+	 */
+	void addBugTracker(BugTracker bugTracker);
 
-	@Override
-	public String getI18nKey() {
-		return i18nkey;
-	}
+	/**
+	 * 
+	 * @param filter
+	 * @return sorted list of bugtrackers the user has read access to
+	 */
+	FilteredCollectionHolder<List<BugTracker>> findSortedBugtrackers(CollectionSorting filter);
 
 }

@@ -31,6 +31,7 @@
 
 <c:url var="usersUrl" value="/users/list"/>
 <c:url var="projectsUrl" value="/projects"/>
+<c:url var="bugtrackerUrl" value="/bugtrackers"/>
 <c:url var="loginUrl" value="/configuration/login-message"/>
 <c:url var="welcomeUrl" value="/configuration/welcome-message"/>
 
@@ -52,6 +53,7 @@
 				</sec:authorize>
 				<tr><td><a href="${ projectsUrl }"><b><f:message key="admin.projects.management.url.label" /></b></a></td></tr>
 				<sec:authorize access=" hasRole('ROLE_ADMIN')">
+				<tr><td><a href="${ bugtrackerUrl }"><b><f:message key="admin.bugtracker.management.url.label" /></b></a></td></tr>
 				<tr><td><a href="${ loginUrl }"><b><f:message key="admin.login-message.management.url.label" /></b></a></td></tr>
 				<tr><td><a href="${ welcomeUrl }"><b><f:message key="admin.welcome-message.management.url.label" /></b></a></td></tr>
 				</sec:authorize>

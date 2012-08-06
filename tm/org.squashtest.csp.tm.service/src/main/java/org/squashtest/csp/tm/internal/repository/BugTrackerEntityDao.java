@@ -18,33 +18,27 @@
  *     You should have received a copy of the GNU Lesser General Public License
  *     along with this software.  If not, see <http://www.gnu.org/licenses/>.
  */
-package org.squashtest.csp.tm.infrastructure.filter;
+package org.squashtest.csp.tm.internal.repository;
 
-import org.squashtest.tm.core.foundation.collection.Paging;
+import java.util.Collection;
+import java.util.List;
 
-/**
- * Defines a filter to apply when querying for a collection.
- * 
- * Consider using the {@link Paging} api define in core module instead.
- * 
- * @author Gregory Fouquet
- * @deprecated use {@link Paging} instead 
- */
+import org.squashtest.csp.tm.domain.bugtracker.BugTrackerEntity;
+import org.squashtest.csp.tm.infrastructure.filter.CollectionSorting;
 
-public interface CollectionFilter extends Paging {
-
+public interface BugTrackerEntityDao extends EntityDao<BugTrackerEntity> {
+	
+	
 	/**
-	 * The 0-based index of the first returned item.
 	 * 
-	 * @return
+	 * @return number of all bugtracker entities in squash database
 	 */
-	int getFirstItemIndex();
-
+	long countBugTrackerEntities();
+	
 	/**
-	 * The max number of items in the returned collection.
 	 * 
-	 * @return
+	 * @param filter
+	 * @return a page of bugtracker entities according to the filter
 	 */
-	int getMaxNumberOfItems();
-
+	List<BugTrackerEntity> findSortedBugTrackerEntities(CollectionSorting filter);
 }
