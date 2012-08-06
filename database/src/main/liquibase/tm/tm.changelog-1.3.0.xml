@@ -61,9 +61,9 @@
 
 	<!-- ====================================================================================================== 
 															Feat. 1112 
+	====================================================================================================== -->
 
-
-	<changeSet id="tm-1.3-feat-1112.0" author="bsiri">
+	<changeSet id="tm-1.3.0-feat-1112.0" author="bsiri">
 		<comment>
 			The following serie of changeset labelled tm-1.3-feat-1112.x implements the closure table
 			modelization for tree-like data	at 
@@ -78,7 +78,7 @@
 
 
 
-	<changeSet id="tm-1.3-feat-1112.01" author="bsiri">
+	<changeSet id="tm-1.3.0-feat-1112.01" author="bsiri">
 
 		<comment>
 			closure table for test case library nodes. Its content is set and modified by four triggers, see 
@@ -117,7 +117,7 @@
 	</changeSet>
 
 
-	<changeSet id="tm-1.3-feat-1112.02" author="bsiri">
+	<changeSet id="tm-1.3.0-feat-1112.02" author="bsiri">
 
 		<comment>
 			closure table for requirement library nodes. Its content is set and modified by four triggers, see 
@@ -158,7 +158,7 @@
 
 
 
-	<changeSet id="tm-1.3-feat-1112.03" author="bsiri">
+	<changeSet id="tm-1.3.0-feat-1112.03" author="bsiri">
 
 		<comment>
 			closure table for campaign library nodes. Its content is set and modified by four triggers, see 
@@ -199,7 +199,7 @@
 	</changeSet>
 
 
-	<changeSet id="tm-1.3-feat-1112.04" author="bsiri">
+	<changeSet id="tm-1.3.0-feat-1112.04" author="bsiri">
 		<comment>
 			first step of the migration : creation of temporary tables in which we will dump 
 			the X_RELATIONSHIP tables, then truncate the later. We will reinsert the data once 
@@ -248,7 +248,7 @@
 	<!-- ************** mysql triggers **************** -->
 
 
-	<changeSet id="tm-1.3-feat-1112.05-mysql" author="bsiri"
+	<changeSet id="tm-1.3.0-feat-1112.05-mysql" author="bsiri"
 		dbms="mysql">
 		<comment>mysql-triggers for TCLN_RELATIONSHIP_CLOSURE table</comment>
 
@@ -304,7 +304,7 @@
 	</changeSet>
 
 
-	<changeSet id="tm-1.3-feat-1112.06-mysql" author="bsiri"
+	<changeSet id="tm-1.3.0-feat-1112.06-mysql" author="bsiri"
 		dbms="mysql">
 		<comment>mysql-triggers for RLN_RELATIONSHIP_CLOSURE table</comment>
 
@@ -358,7 +358,7 @@
 		</sql>
 	</changeSet>
 
-	<changeSet id="tm-1.3-feat-1112.07-mysql" author="bsiri"
+	<changeSet id="tm-1.3.0-feat-1112.07-mysql" author="bsiri"
 		dbms="mysql">
 		<comment>mysql-triggers for CLN_RELATIONSHIP_CLOSURE table</comment>
 
@@ -417,7 +417,7 @@
 	<!-- ************** h2 triggers **************** -->
 
 
-	<changeSet id="tm-1.3-feat-1112.05-h2" author="bsiri" dbms="h2">
+	<changeSet id="tm-1.3.0-feat-1112.05-h2" author="bsiri" dbms="h2">
 
 		<comment>h2-triggers for TCLN_RELATIONSHIP_CLOSURE table</comment>
 
@@ -462,7 +462,7 @@
 	</changeSet>
 
 
-	<changeSet id="tm-1.3-feat-1112.06-h2" author="bsiri" dbms="h2">
+	<changeSet id="tm-1.3.0-feat-1112.06-h2" author="bsiri" dbms="h2">
 
 		<comment>h2-triggers for RLN_RELATIONSHIP_CLOSURE table</comment>
 
@@ -505,7 +505,7 @@
 	</changeSet>
 
 
-	<changeSet id="tm-1.3-feat-1112.07-h2" author="bsiri" dbms="h2">
+	<changeSet id="tm-1.3.0-feat-1112.07-h2" author="bsiri" dbms="h2">
 
 		<comment>h2-triggers for CLN_RELATIONSHIP_CLOSURE table</comment>
 
@@ -549,7 +549,7 @@
 
 	<!-- ************** /h2 triggers **************** -->
 
-	<changeSet id="tm-1.3-feat-1112.08" author="bsiri">
+	<changeSet id="tm-1.3.0-feat-1112.08" author="bsiri">
 		<comment>this step is mandatory if we want the next one to work (triggers need the nodes to have self-reference in the closure tables)</comment>
 		<sql>
 			insert into TCLN_RELATIONSHIP_CLOSURE
@@ -572,7 +572,7 @@
 	</changeSet>
 
 
-	<changeSet id="tm-1.3-feat-1112.09" author="bsiri">
+	<changeSet id="tm-1.3.0-feat-1112.09" author="bsiri">
 		<comment>we can now reinsert our data from the tmp tables and let the triggers do the job</comment>
 
 		<sql>
@@ -592,7 +592,7 @@
 
 	</changeSet>
 
-	<changeSet id="tm-1.3-feat-1112.10" author="bsiri">
+	<changeSet id="tm-1.3.0-feat-1112.10" author="bsiri">
 		<comment>If success, we can now drop our temp tables and complete the migration</comment>
 
 		<dropTable tableName="TCLN_RELATIONSHIP_TMP" />
@@ -605,7 +605,9 @@
 	<!-- ====================================================================================================== 
 														/ Feat. 1112 
 	============================================================================================================ -->
-		Feat. 1207 ============================================================================================================ -->
+	<!-- ====================================================================================================== 
+		                                                 Feat. 1207 
+	============================================================================================================ -->
 	<changeSet id="tm-1.3.0-feat-1209.01" author="mpagnon">
 		<createTable tableName="BUGTRACKER"
 			remarks="To connect Squash TM to a bugtracker, you must provide the name and the url of the bugtracker. The mantis plugin is shipped with the application">
@@ -625,14 +627,15 @@
 		</createTable>
 	</changeSet>
 	<!-- ====================================================================================================== 
-		/ Feat. 1207 ============================================================================================================ -->
+													/ Feat. 1207 
+	============================================================================================================ -->
 
 
 	<!-- ====================================================================================================== 
 														Feat. 1181 
 	============================================================================================================ -->
 
-	<changeSet id="tm-1.3-feat-1181.01" author="bsiri">
+	<changeSet id="tm-1.3.0-feat-1181.01" author="bsiri">
 		<comment>creating table TEST_AUTOMATION_SERVER</comment>
 
 		<createTable tableName="TEST_AUTOMATION_SERVER">
