@@ -26,8 +26,12 @@ import javax.persistence.GeneratedValue;
 import javax.persistence.Id;
 import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
+import javax.persistence.NamedQueries;
+import javax.persistence.NamedQuery;
 
-
+@NamedQueries({
+	@NamedQuery(name="testAutomationProject.findById", query="from TestAutomationProject where id = :projectId"),
+})
 @Entity
 public class TestAutomationProject {
 

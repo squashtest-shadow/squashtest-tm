@@ -23,8 +23,10 @@ package org.squashtest.csp.tm.internal.repository.hibernate
 import javax.inject.Inject;
 
 import org.springframework.transaction.annotation.Transactional;
+import org.squashtest.csp.tm.domain.automatest.TestAutomationProject;
 import org.squashtest.csp.tm.domain.automatest.TestAutomationServer;
 import org.squashtest.csp.tm.internal.repository.NonUniqueEntityException;
+import org.squashtest.csp.tm.internal.repository.TestAutomationProjectDao
 import org.squashtest.csp.tm.internal.repository.TestAutomationServerDao
 import org.unitils.dbunit.annotation.DataSet;
 
@@ -32,84 +34,77 @@ import spock.unitils.UnitilsSupport;
 
 @UnitilsSupport
 @Transactional
-class HibernateTestAutomationServerDaoIT extends DbunitDaoSpecification {
+class HibernateTestAutomationProjectDaoIT extends DbunitDaoSpecification {
 	
 	@Inject  TestAutomationServerDao serverDao
+	@Inject	 TestAutomationProjectDao projectDao
 
 	@DataSet("HibernateTestAutomationDao.sandbox.xml")
-	def "should refuse to perist a server having similar characteristic to an already existing server"(){
+	def "should refuse to perist a server having similar characteristic to an already existing project"(){
 		given :
-			TestAutomationServer newServer = new TestAutomationServer(new URL("http://www.roberto.com"), "roberto", "passroberto");
+			TestAutomationServer server = serverDao.findById(1l)
+			TestAutomationProject newProject = new TestAutomationProject("roberto1", server)
+			
 		when :
-			serverDao.persist(newServer)
+			projectDao.persist(newProject)
 		then :
 			thrown(NonUniqueEntityException)
 	}
 	
 	@DataSet("HibernateTestAutomationDao.sandbox.xml")
-	def "should find a server by id"(){
+	def "should find a project by id"(){
 		
 		when :
-			def res = serverDao.findById(1l)
+			def res = projectDao.findById(11l)
 			
 		then :
-			res.id==1l
-			res.baseURL.equals(new URL("http://www.roberto.com"))
-			res.login == "roberto"
-			res.password == "passroberto"
-			res.kind=="jenkins"
+			res.id==11l
+			res.server.id==1l
+			res.name=="roberto1"
 		
 	}
 	
 	
 	@DataSet("HibernateTestAutomationDao.sandbox.xml")
-	def "should find a server by example"(){
+	def "should find a project by example"(){
 		given :
-			TestAutomationServer example = new TestAutomationServer(new URL("http://www.roberto.com"), "roberto", "passroberto");
+			TestAutomationServer server = serverDao.findById(1l)
+			TestAutomationProject project = new TestAutomationProject("roberto1", server)
+			 
 		when :
-			def res = serverDao.findByExample(example)
+			def res = projectDao.findByExample(project)
 			
 		then :
-			res.id==1l;
+			res.id==11l;
 	}
 	
 	
 	@DataSet("HibernateTestAutomationDao.sandbox.xml")
 	def "should not find a project because of unmatched example"(){
 		given :
-			TestAutomationServer example = new TestAutomationServer(null, "bobinio", "passbobinio");
+			TestAutomationProject example = new TestAutomationProject("roberto55", null);
 		
 		when :
-			def res = serverDao.findByExample(example)
+			def res = projectDao.findByExample(example)
 		
 		then :
 			res == null
 	}
 	
-	
+
 	@DataSet("HibernateTestAutomationDao.sandbox.xml")
 	def "should rant because too many matches for the given example"(){
 		given :
-			TestAutomationServer example = new TestAutomationServer(new URL("http://www.roberto.com"), null, null);
+			TestAutomationServer server = serverDao.findById(1l)
+			TestAutomationProject project = new TestAutomationProject(null, server)
 		
 		when :
-			def res = serverDao.findByExample(example)
+			def res = projectDao.findByExample(project)
 		
 		then :
 			thrown(NonUniqueEntityException)
 	}
 	
-	
-	@DataSet("HibernateTestAutomationDao.sandbox.xml")
-	def "should list the automation projects hosted on a given server"(){
-
-		when :
-			def res = serverDao.findAllHostedProjects(1l)
-		
-		then :
-			res.size()==3
-			res.collect{it.name} as Set == ["roberto1", "roberto2", "roberto3"] as Set
-	}
 	
 
 }

@@ -20,23 +20,18 @@
  */
 package org.squashtest.csp.tm.internal.repository;
 
-import java.util.List;
-
 import org.squashtest.csp.tm.domain.automatest.TestAutomationProject;
-import org.squashtest.csp.tm.domain.automatest.TestAutomationServer;
 
-
-
-public interface TestAutomationServerDao {
-
+public interface TestAutomationProjectDao {
+	
 	/**
-	 * Will persist a new {@link TestAutomationServer}. Note : each server must have different characteristics, more exactly each combination of 
+	 * Will persist a new {@link TestAutomationProject}. Note : each server must have different characteristics, more exactly each combination of 
 	 * attributes is unique. Therefore if the object to be persisted already exists in the database an exception will be raised instead.
 	 * 
-	 * @param server
+	 * @param newProject
 	 * @throws NonUniqueEntityException if the given server happen to exist already. 
 	 */
-	void persist(TestAutomationServer server);
+	void persist(TestAutomationProject newProject);
 	
 	
 	/**
@@ -45,23 +40,17 @@ public interface TestAutomationServerDao {
 	 * @param id
 	 * @return
 	 */
-	TestAutomationServer findById(Long id);
+	TestAutomationProject findById(Long projectId);
+	
 	
 	/**
-	 *	<p>Given a detached (or even attached) {@link TestAutomationServer} example, will fetch a {@link TestAutomationServer}
+	 *	<p>Given a detached (or even attached) {@link TestAutomationProject} example, will fetch a {@link TestAutomationProject}
 	 *	having the same characteristics. Null attributes will be discarded before the comparison. </p>
 	 *
-	 * @return a TestAutomation server if one was found, null if none was found.
+	 * @return a TestAutomation project if one was found, null if none was found.
 	 * @throws NonUniqueEntityException if more than one match. Causes are either a not restrictive enough example... or a bug.
-	 */
-	TestAutomationServer findByExample(TestAutomationServer example);
+	 */	
+	TestAutomationProject findByExample(TestAutomationProject example);
 	
-	/**
-	 * return all the projects that the given server hosts.
-	 * 
-	 * @param serverId
-	 * @return
-	 */
-	List<TestAutomationProject> findAllHostedProjects(long serverId);
-	
+		
 }

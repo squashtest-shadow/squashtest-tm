@@ -29,51 +29,52 @@ import org.hibernate.Query;
 import org.hibernate.Session;
 import org.hibernate.SessionFactory;
 import org.hibernate.criterion.Example;
+import org.hibernate.criterion.Restrictions;
 import org.springframework.stereotype.Repository;
 import org.squashtest.csp.tm.domain.automatest.TestAutomationProject;
-import org.squashtest.csp.tm.domain.automatest.TestAutomationServer;
 import org.squashtest.csp.tm.internal.repository.NonUniqueEntityException;
-import org.squashtest.csp.tm.internal.repository.TestAutomationServerDao;
+import org.squashtest.csp.tm.internal.repository.TestAutomationProjectDao;
 
 @Repository
-public class HibernateTestAutomationServerDao implements
-		TestAutomationServerDao {
+public class HibernateTestAutomationProjectDao implements
+		TestAutomationProjectDao {
 	
 	@Inject
 	private SessionFactory sessionFactory;
 
-	
 	@Override
-	public void persist(TestAutomationServer server) {
-		if (findByExample(server)==null){
-			sessionFactory.getCurrentSession().persist(server);
-		}
-		else{
-			throw new NonUniqueEntityException(); 
+	public void persist(TestAutomationProject newProject) {
+		if (findByExample(newProject)==null){
+			sessionFactory.getCurrentSession().persist(newProject);
+		}else{
+			throw new NonUniqueEntityException();
 		}
 	}
-
+	
 	
 	@Override
-	public TestAutomationServer findById(Long id) {
+	public TestAutomationProject findById(Long id) {
 		Session session = sessionFactory.getCurrentSession();
-		Query query = session.getNamedQuery("testAutomationServer.findById");
-		query.setParameter("serverId", id);
-		return (TestAutomationServer)query.uniqueResult();
+		Query query = session.getNamedQuery("testAutomationProject.findById");
+		query.setParameter("projectId", id);
+		return (TestAutomationProject)query.uniqueResult();
 	}
 	
-	
+
+
 	@Override
-	public TestAutomationServer findByExample(TestAutomationServer example) {
-		Criteria criteria = sessionFactory.getCurrentSession().createCriteria(TestAutomationServer.class);
-		criteria.add(Example.create(example));
+	public TestAutomationProject findByExample(TestAutomationProject example) {
+		Criteria criteria = sessionFactory.getCurrentSession().createCriteria(TestAutomationProject.class);
+		criteria = criteria.add(Example.create(example));
+		criteria = criteria.add(Restrictions.eq("server", example.getServer()));
+
 		List<?> res = criteria.list();
 		
 		if (res.isEmpty()){
 			return null;
 		}
 		else if (res.size()==1){
-			return (TestAutomationServer)res.get(0);
+			return (TestAutomationProject)res.get(0);
 		}
 		else{
 			throw new NonUniqueEntityException();
@@ -81,12 +82,6 @@ public class HibernateTestAutomationServerDao implements
 	}
 
 	
-	@Override
-	public List<TestAutomationProject> findAllHostedProjects(long serverId) {
-		Session session = sessionFactory.getCurrentSession();
-		Query query = session.getNamedQuery("testAutomationServer.findAllHostedProjects");
-		query.setParameter("serverId", serverId);
-		return (List<TestAutomationProject>)query.list();		
-	}
+
 
 }
