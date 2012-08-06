@@ -30,95 +30,98 @@ import java.util.Date;
  * 
  */
 public class TestSuiteExecutionStatus implements Serializable {
-	/**
-	 * for serialization.
-	 */
-	private static final long serialVersionUID = -7060255926451384204L;
+        /**
+         * for serialization.
+         */
+        private static final long serialVersionUID = -7060255926451384204L;
 
-	/**
-	 * Name of the test suite.
-	 */
-	private String suiteName;
-	/**
-	 * Start time. Mandatory.
-	 */
-	private Date startTime;
-	/**
-	 * End time. May be null (ex: updates to status RUNNING don't define end
-	 * time).
-	 */
-	private Date endTime;
+        /**
+         * Name of the test suite.
+         */
+        private String suiteName;
+        /**
+         * Start time. Mandatory.
+         */
+        private Date startTime;
+        /**
+         * End time. May be null (ex: updates to status RUNNING don't define end
+         * time).
+         */
+        private Date endTime;
 
-	/**
-	 * The new status of the test suite.
-	 */
-	private ExecutionStatus status;
+        /**
+         * The new status of the test suite.
+         */
+        private ExecutionStatus status;
 
-	/**
-	 * @return Name of the test suite.
-	 */
-	public String getSuiteName() {
-		return suiteName;
-	}
+        /**
+         * @return Name of the test suite.
+         */
+        public String getSuiteName() {
+                return suiteName;
+        }
 
-	/**
-	 * @param suiteName
-	 *            Name of the test suite.
-	 */
-	public void setSuiteName(String suiteName) {
-		this.suiteName = suiteName;
-	}
+        /**
+         * @param suiteName
+         *            Name of the test suite.
+         */
+        public void setSuiteName(String suiteName) {
+                if(suiteName==null){
+                        throw new IllegalArgumentException("test suite name cannot be null.");
+                }
+                this.suiteName = suiteName;
+        }
 
-	/**
-	 * @return Start time. Should always be defined.
-	 */
-	public Date getStartTime() {
-		return startTime;
-	}
+        /**
+         * @return Start time. Should always be defined.
+         */
+        public Date getStartTime() {
+                return startTime;
+        }
 
-	/**
-	 * @param startTime
-	 *            Start time. Never null.
-	 */
-	public void setStartTime(Date startTime) {
-		if (startTime == null) {
-			throw new IllegalArgumentException("Start time cannot be null.");
-		}
-		this.startTime = startTime;
-	}
+        /**
+         * @param startTime
+         *            Start time. Never null.
+         */
+        public void setStartTime(Date startTime) {
+                if (startTime == null) {
+                        throw new IllegalArgumentException("Start time cannot be null.");
+                }
+                this.startTime = startTime;
+        }
 
-	/**
-	 * @return End time. May be null (ex: updates to status RUNNING don't define
-	 *         end time).
-	 */
-	public Date getEndTime() {
-		return endTime;
-	}
+        /**
+         * @return End time. May be null (ex: updates to status RUNNING don't define
+         *         end time).
+         */
+        public Date getEndTime() {
+                return endTime;
+        }
 
-	/**
-	 * @param endTime
-	 *            End time. May be null (ex: updates to status RUNNING don't
-	 *            define end time).
-	 */
-	public void setEndTime(Date endTime) {
-		this.endTime = endTime;
-	}
+        /**
+         * @param endTime
+         *            End time. May be null (ex: updates to status RUNNING don't
+         *            define end time).
+         */
+        public void setEndTime(Date endTime) {
+                this.endTime = endTime;
+        }
 
-	/**
-	 * @return The new status of the test suite.
-	 */
-	public ExecutionStatus getStatus() {
-		return status;
-	}
+        /**
+         * @return The new status of the test suite.
+         */
+        public ExecutionStatus getStatus() {
+                return status;
+        }
 
-	/**
-	 * @param status The new status of the test suite. Cannot be null.
-	 */
-	public void setStatus(ExecutionStatus status) {
-		if(status==null){
-			throw new IllegalArgumentException("Status cannot be null.");
-		}
-		this.status = status;
-	}
+        /**
+         * @param status The new status of the test suite. Cannot be null.
+         */
+        public void setStatus(ExecutionStatus status) {
+                if(status==null){
+                        throw new IllegalArgumentException("Status cannot be null.");
+                }
+                this.status = status;
+        }
 
 }

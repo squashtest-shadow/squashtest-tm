@@ -30,36 +30,36 @@ import org.squashtest.tm.api.execution.dto.TestSuiteExecutionStatus;
  * 
  */
 public interface StatusUpdate {
-	/**
-	 * Method to update a test suite execution status.
-	 * 
-	 * @param executionHostname
-	 *            name of the execution host.
-	 * @param jobName
-	 *            name of the test job (automation project) in the host.
-	 * @param externalId
-	 *            external id given to the execution process when execution was
-	 *            required.
-	 * @param status
-	 *            new status of the test suite.
-	 */
-	void updateTestSuiteExecutionStatus(String executionHostname,
-			String jobName, String externalId, TestSuiteExecutionStatus status);
+        /**
+         * Method to update a test suite execution status.
+         * 
+         * @param executionHostname
+         *            name of the execution host.
+         * @param jobName
+         *            name of the test job (automation project) in the host.
+         * @param externalId
+         *            external id given to the execution process when execution was
+         *            required.
+         * @param status
+         *            new status of the test suite.
+         */
+        void updateTestSuiteExecutionStatus(String executionHostname,
+                        String jobName, String externalId, TestSuiteExecutionStatus status);
 
-	/**
-	 * 
-	 * @param executionHostname
-	 *            name of the execution host.
-	 * @param jobName
-	 *            name of the test job (automation project) in the host.
-	 * @param externalId
-	 *            external id given to the execution process when execution was
-	 *            required.
-	 * @param testGroupName name of the test group  the test belongs to.
-	 * @param testName name of the test.
-	 * @param status new status of the test.
-	 */
-	void updateTestExecutionStatus(String executionHostname, String jobName,
-			String externalId, String testGroupName, String testName,
-			TestExecutionStatus status);
+        /**
+         * Method to update a test execution status.
+         * @param executionHostname
+         *            name of the execution host.
+         * @param jobName
+         *            name of the test job (automation project) in the host.
+         * @param externalId
+         *            external id given to the execution process when execution was
+         *            required.
+         * @param testGroupName name of the test group  the test belongs to.
+         * @param testName name of the test.
+         * @param status new status of the test.
+         */
+        void updateTestExecutionStatus(String executionHostname, String jobName,
+                        String externalId, String testGroupName, String testName,
+                        TestExecutionStatus status);
 }

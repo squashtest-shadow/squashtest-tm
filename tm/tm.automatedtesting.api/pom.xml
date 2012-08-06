@@ -30,7 +30,16 @@
 			<groupId>javax.inject</groupId>
 			<artifactId>com.springsource.javax.inject</artifactId>
 		</dependency>
+		<!-- ====== /JSE DI API ====== -->
 
+		<!-- ====== SPRING STUFFS ====== -->
+		<dependency>
+			<groupId>org.springframework</groupId>
+			<artifactId>org.springframework.transaction</artifactId>
+			<scope>compile</scope>
+		</dependency>
+		<!-- ====== /SPRING STUFFS ====== -->
+		
 	</dependencies>
 
 

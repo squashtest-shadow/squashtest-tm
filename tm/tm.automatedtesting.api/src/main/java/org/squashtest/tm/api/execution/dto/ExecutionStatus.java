@@ -26,25 +26,25 @@ package org.squashtest.tm.api.execution.dto;
  *
  */
 public enum ExecutionStatus {
-	/**
-	 * The execution is currently running.
-	 */
-	RUNNING,
-	/**
-	 * Execution successfully completed.
-	 */
-	SUCCESS,
-	/**
-	 * Execution successful, but teardown failed, which means SUT maintenance
-	 * might be necessary (and subsequent tests may fail).
-	 */
-	WARNING,
-	/**
-	 * The test completed but the results did not meet functional expectations.
-	 */
-	FAILURE,
-	/**
-	 * The test failed due to a technical error.
-	 */
-	ERROR
+        /**
+         * The execution is currently running.
+         */
+        RUNNING,
+        /**
+         * Execution successfully completed.
+         */
+        SUCCESS,
+        /**
+         * Execution successful, but teardown failed, which means SUT maintenance
+         * might be necessary (and subsequent tests may fail).
+         */
+        WARNING,
+        /**
+         * The test completed but the results did not meet functional expectations.
+         */
+        FAILURE,
+        /**
+         * The test failed due to a technical error.
+         */
+        ERROR
 }

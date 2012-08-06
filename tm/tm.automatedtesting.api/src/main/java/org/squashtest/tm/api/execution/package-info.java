@@ -18,53 +18,10 @@
  *     You should have received a copy of the GNU Lesser General Public License
  *     along with this software.  If not, see <http://www.gnu.org/licenses/>.
  */
-package org.squashtest.csp.tm.domain.automatest;
-
-import javax.persistence.Column;
-import javax.persistence.Entity;
-import javax.persistence.GeneratedValue;
-import javax.persistence.Id;
-import javax.persistence.JoinColumn;
-import javax.persistence.ManyToOne;
-
-
-@Entity
-public class AutomatedTestProject {
-
-	
-	@Id
-	@GeneratedValue
-	@Column(name="PROJECT_ID")
-	private Long id;
-	
-	@Column
-	private String name;
-	
-	
-	@ManyToOne
-	@JoinColumn(name="SERVER_ID")
-	private AutomatedTestServer server;
-
-	
-	public Long getId() {
-		return id;
-	}
-
-	public String getName() {
-		return name;
-	}
-
-	public void setName(String name) {
-		this.name = name;
-	}
-
-	public AutomatedTestServer getServer() {
-		return server;
-	}
-
-
-	public void setId(Long id) {
-		this.id = id;
-	}
-	
-}
+/**
+ * This is the java binding of the REST API used by Squash TM 
+ * to receive execution status update messages.
+ * See the {@link org.squashtest.tm.api.execution.dto} 
+ * package for the data model.
+ */
+package org.squashtest.tm.api.execution;
