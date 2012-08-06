@@ -60,6 +60,11 @@
 			<artifactId>org.squashtest.csp.core.service</artifactId>
 			<version>${project.version}</version>
 		</dependency>
+		<dependency>
+			<groupId>org.squashtest.tm</groupId>
+			<artifactId>tm.automatedtesting.api</artifactId>
+			<version>${project.version}</version>
+		</dependency>
 		<!--======= /SQUASHTEST MODULES ========-->
 		
 		<!-- ====== FOUNDATION ====== -->

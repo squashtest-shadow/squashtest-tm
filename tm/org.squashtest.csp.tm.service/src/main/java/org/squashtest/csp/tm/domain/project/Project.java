@@ -20,6 +20,9 @@
  */
 package org.squashtest.csp.tm.domain.project;
 
+import java.util.Iterator;
+import java.util.Set;
+
 import javax.persistence.CascadeType;
 import javax.persistence.Column;
 import javax.persistence.Entity;
@@ -27,12 +30,15 @@ import javax.persistence.FetchType;
 import javax.persistence.GeneratedValue;
 import javax.persistence.Id;
 import javax.persistence.JoinColumn;
+import javax.persistence.JoinTable;
 import javax.persistence.Lob;
+import javax.persistence.ManyToMany;
 import javax.persistence.OneToOne;
 import javax.validation.constraints.Size;
 
 import org.hibernate.validator.constraints.NotBlank;
 import org.squashtest.csp.tm.domain.audit.Auditable;
+import org.squashtest.csp.tm.domain.automatest.AutomatedTestProject;
 import org.squashtest.csp.tm.domain.campaign.CampaignLibrary;
 import org.squashtest.csp.tm.domain.requirement.RequirementLibrary;
 import org.squashtest.csp.tm.domain.testcase.TestCaseLibrary;
@@ -67,7 +73,17 @@ public class Project {
 	@OneToOne(cascade = { CascadeType.ALL }, optional = false, fetch = FetchType.LAZY)
 	@JoinColumn(name = "CL_ID")
 	private CampaignLibrary campaignLibrary;
-
+	
+	
+	@ManyToMany(cascade = { CascadeType.ALL }, fetch = FetchType.LAZY)
+	@JoinTable(name="TM_TA_PROJECTS", joinColumns=@JoinColumn(name="TM_PROJECT_ID"), 
+			inverseJoinColumns=@JoinColumn(name="TA_PROJECT_ID"))
+	private Set<AutomatedTestProject> automatedProjects;
+	
+	private Boolean automatedTestsEnabled;
+	
+	
+	
 	public String getLabel() {
 		return label;
 	}
@@ -146,5 +162,41 @@ public class Project {
 			library.notifyAssociatedWithProject(this);
 		}
 	}
-
+	
+	
+	/* **************************** test automation project section **************************** */
+	
+	/** 
+	 * will add an AutomatedTestProject if it wasn't added already, or won't do anything if it was already bound to this.
+	 * 
+	 * @param project
+	 */
+	public void bindAutomatedTestProject(AutomatedTestProject project){
+		for (AutomatedTestProject proj : automatedProjects){
+			if (proj.getId().equals(project.getId())){
+				return ;
+			}
+		}
+		automatedProjects.add(project);
+	}
+	
+	public void unbindAutomatedTestProject(AutomatedTestProject project){
+		Iterator<AutomatedTestProject> iter = automatedProjects.iterator();
+		while (iter.hasNext()){
+			AutomatedTestProject proj = iter.next();
+			if (proj.getId().equals(project.getId())){
+				iter.remove();
+				break;
+			}
+		}
+	}
+	
+	public boolean isAutomatedTestsEnabled(){
+		return automatedTestsEnabled;
+	}
+	
+	public void setAutomatedTestsEnabled(boolean enabled){
+		automatedTestsEnabled = enabled;
+	}
+	
 }

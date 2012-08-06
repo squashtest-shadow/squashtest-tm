@@ -89,9 +89,6 @@ public class AutomatedTestServer {
 	private String kind = DEFAULT_KIND;
 	
 	
-	@OneToMany(orphanRemoval=false, mappedBy="server")
-	private Set<AutomatedTestProject> projects;
-	
 	
 	public Long getId() {
 		return id;
@@ -138,26 +135,5 @@ public class AutomatedTestServer {
 	}
 
 
-	public Set<AutomatedTestProject> getProjects() {
-		return projects;
-	}
-
-	
-	public void addProject(AutomatedTestProject project){
-		projects.add(project);
-	}
-	
-	
-	public void removeProject(AutomatedTestProject project){
-		Iterator<AutomatedTestProject> iter = projects.iterator();
-		while (iter.hasNext()){
-			AutomatedTestProject proj = iter.next();
-			if (proj.getId().equals(project.getId())){
-				iter.remove();
-				break;
-			}
-		}
-	}
-	
 	
 }
