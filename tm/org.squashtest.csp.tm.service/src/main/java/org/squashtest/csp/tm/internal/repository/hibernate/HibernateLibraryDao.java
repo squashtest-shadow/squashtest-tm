@@ -23,6 +23,7 @@ package org.squashtest.csp.tm.internal.repository.hibernate;
 import java.util.List;
 
 import org.apache.commons.lang.WordUtils;
+import org.hibernate.Criteria;
 import org.hibernate.Query;
 import org.squashtest.csp.tm.domain.library.Library;
 import org.squashtest.csp.tm.domain.library.LibraryNode;
@@ -49,7 +50,6 @@ HibernateDao<LIBRARY> implements LibraryDao<LIBRARY, NODE> {
 	public final LIBRARY findById(long id) {
 		return getEntity(id);
 	}
-
 	/**
 	 * Finds the library root content. Template method which invokes a named query named
 	 * "{libraryUnquilifiedClassName}.findAllRootContentById" with a parameter named "libraryId"
@@ -75,7 +75,6 @@ HibernateDao<LIBRARY> implements LibraryDao<LIBRARY, NODE> {
 	public final List<LIBRARY> findAll() {
 		return executeListNamedQuery(entityClassName + ".findAll");
 	}
-
 	
 	@Override
 	public LIBRARY findByRootContent(final NODE node) {

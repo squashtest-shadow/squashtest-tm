@@ -45,6 +45,7 @@ public class HibernateProjectDao extends HibernateEntityDao<Project> implements 
 	@Override
 	@SuppressWarnings("unchecked")
 	@PostFilter("hasPermission(filterObject, 'MANAGEMENT') or  hasRole('ROLE_ADMIN')")
+	//FIXME this posfilter breaks the paging
 	public List<Project> findSortedProjects(CollectionSorting filter) {
 		Session session = currentSession();
 
@@ -64,27 +65,18 @@ public class HibernateProjectDao extends HibernateEntityDao<Project> implements 
 
 		/* result range */
 		crit.setFirstResult(filter.getFirstItemIndex());
-		crit.setMaxResults(filter.getMaxNumberOfItems());
+		crit.setMaxResults(filter.getPageSize());
 
 		return crit.list();
 
 	}
-
+	
+	
 	@Override
 	public long countProjects() {
-		return (Long) executeEntityNamedQuery("project.countProjects", voidCallback());
-
+		return (Long) executeEntityNamedQuery("project.countProjects");
 	}
 
-	// empty stub of SetQueryParametersCallback so executeEntityNamedQuery above wont crash
-	private SetQueryParametersCallback voidCallback() {
-		return new SetQueryParametersCallback() {
-			@Override
-			public void setQueryParameters(Query query) {
-				// TODO never put code that modify the query.
-			}
-		};
-	}
 
 	@Override
 	public List<Project> findByIdList(final Collection<Long> list) {

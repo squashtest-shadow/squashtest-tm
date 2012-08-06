@@ -44,6 +44,7 @@ import org.squashtest.csp.tm.infrastructure.filter.CollectionSorting;
 import org.squashtest.csp.tm.infrastructure.filter.FilteredCollectionHolder;
 import org.squashtest.csp.tm.service.AttachmentManagerService;
 import org.squashtest.csp.tm.web.internal.model.datatable.DataTableDrawParameters;
+import org.squashtest.csp.tm.web.internal.model.datatable.DataTableFilterSorter;
 import org.squashtest.csp.tm.web.internal.model.datatable.DataTableModel;
 import org.squashtest.csp.tm.web.internal.model.datatable.DataTableModelHelper;
 import org.squashtest.csp.tm.web.internal.model.viewmapper.DataTableMapper;
@@ -93,7 +94,7 @@ public class AttachmentManagerController {
 	@RequestMapping(value="/details", method=RequestMethod.GET)
 	public @ResponseBody DataTableModel displayAttachmentDetails(@PathVariable("attachListId") long attachListId, final DataTableDrawParameters params,
 			final Locale locale){
-		CollectionSorting filter = createCollectionFilter(params, attachmentMapper);
+		CollectionSorting filter = createPaging(params, attachmentMapper);
 		FilteredCollectionHolder<List<Attachment>> attachList = attachmentManagerService.findFilteredAttachmentForList(attachListId, filter);
 
 		
@@ -162,30 +163,8 @@ public class AttachmentManagerController {
 
 	}
 	
-	private CollectionSorting createCollectionFilter(final DataTableDrawParameters params, final DataTableMapper dtMapper) {
-		CollectionSorting filter = new CollectionSorting() {
-			@Override
-			public int getMaxNumberOfItems() {
-				return params.getiDisplayLength();
-			}
-			@Override
-			public int getFirstItemIndex() {
-				return params.getiDisplayStart();
-			}
-			@Override
-			public String getSortedAttribute(){
-				return dtMapper.pathAt(params.getiSortCol_0());
-			}
-			@Override
-			public String getSortingOrder(){
-				return params.getsSortDir_0();
-			}
-			@Override
-			public int getPageSize() {
-				return getMaxNumberOfItems();
-			}
-		};
-		return filter;
+	private CollectionSorting createPaging(final DataTableDrawParameters params, final DataTableMapper mapper) {
+		return new DataTableFilterSorter(params, mapper);
 	}
 
 

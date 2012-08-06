@@ -24,13 +24,13 @@ import java.util.Collection;
 import java.util.List;
 
 import org.squashtest.csp.tm.domain.users.User;
-import org.squashtest.csp.tm.infrastructure.filter.CollectionFilter;
+import org.squashtest.tm.core.foundation.collection.Paging;
 
 public interface UserDao extends EntityDao<User> {
 
 	List<User> findAllUsers();
 
-	List<User> findAllUsersFiltered(CollectionFilter filter);
+	List<User> findAllUsersFiltered(Paging filter);
 
 	User findUserByLogin(String login);
 

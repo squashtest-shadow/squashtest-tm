@@ -233,11 +233,11 @@ class TestCaseModificationControllerTest extends Specification {
 		dtMapper.pathAt(2) >> "name"
 
 		when:
-		def filter = controller.createCollectionFilter(params,dtMapper)
+		def filter = controller.createPaging(params,dtMapper)
 
 		then:
 		filter.firstItemIndex == 5
-		filter.maxNumberOfItems == 10
+		filter.pageSize == 10
 		filter.sortedAttribute == "name"
 		filter.sortingOrder == "asc"
 	}

@@ -28,6 +28,7 @@ import org.squashtest.csp.tm.internal.repository.CampaignLibraryDao;
 @Repository
 public class HibernateCampaignLibraryDao extends HibernateLibraryDao<CampaignLibrary, CampaignLibraryNode>
 		implements CampaignLibraryDao {
+	
 
 	@Override
 	public void persist(CampaignLibrary library) {

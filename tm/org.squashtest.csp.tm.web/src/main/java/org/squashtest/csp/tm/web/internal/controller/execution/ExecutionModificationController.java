@@ -52,13 +52,13 @@ import org.squashtest.csp.tm.domain.campaign.IterationTestPlanItem;
 import org.squashtest.csp.tm.domain.execution.Execution;
 import org.squashtest.csp.tm.domain.execution.ExecutionStatus;
 import org.squashtest.csp.tm.domain.execution.ExecutionStep;
-import org.squashtest.csp.tm.infrastructure.filter.CollectionFilter;
 import org.squashtest.csp.tm.infrastructure.filter.FilteredCollectionHolder;
 import org.squashtest.csp.tm.service.ExecutionModificationService;
 import org.squashtest.csp.tm.web.internal.model.datatable.DataTableDrawParameters;
 import org.squashtest.csp.tm.web.internal.model.datatable.DataTableModel;
 import org.squashtest.csp.tm.web.internal.model.datatable.DataTableModelHelper;
 import org.squashtest.csp.tm.web.internal.model.datatable.DataTablePagedFilter;
+import org.squashtest.tm.core.foundation.collection.Paging;
 
 @Controller
 @RequestMapping("/executions/{executionId}")
@@ -98,7 +98,7 @@ public class ExecutionModificationController {
 			final Locale locale) {
 		LOGGER.trace("ExecutionModificationController: getStepsTableModel called ");
 
-		CollectionFilter filter = createCollectionFilter(params);
+		Paging filter = createPaging(params);
 
 		FilteredCollectionHolder<List<ExecutionStep>> holder = executionModService.findExecutionSteps(executionId,
 				filter);
@@ -140,7 +140,7 @@ public class ExecutionModificationController {
 		return toReturn.toString();
 	}
 
-	private CollectionFilter createCollectionFilter(final DataTableDrawParameters params) {
+	private Paging createPaging(final DataTableDrawParameters params) {
 		return new DataTablePagedFilter(params);
 	}
 

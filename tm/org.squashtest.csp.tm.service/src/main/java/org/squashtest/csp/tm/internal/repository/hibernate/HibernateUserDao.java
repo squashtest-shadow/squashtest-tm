@@ -29,8 +29,8 @@ import org.hibernate.Query;
 import org.springframework.stereotype.Repository;
 import org.squashtest.csp.tm.domain.LoginAlreadyExistsException;
 import org.squashtest.csp.tm.domain.users.User;
-import org.squashtest.csp.tm.infrastructure.filter.CollectionFilter;
 import org.squashtest.csp.tm.internal.repository.UserDao;
+import org.squashtest.tm.core.foundation.collection.Paging;
 
 @Repository
 public class HibernateUserDao extends HibernateEntityDao<User> implements UserDao {
@@ -41,13 +41,13 @@ public class HibernateUserDao extends HibernateEntityDao<User> implements UserDa
 	}
 
 	@Override
-	public List<User> findAllUsersFiltered(CollectionFilter filter) {
+	public List<User> findAllUsersFiltered(Paging filter) {
 
 		List<User> users = executeListNamedQuery("user.findAllUsers");
 		int listSize = users.size();
 
 		int startIndex = filter.getFirstItemIndex();
-		int lastIndex = filter.getFirstItemIndex() + filter.getMaxNumberOfItems();
+		int lastIndex = filter.getFirstItemIndex() + filter.getPageSize();
 
 		// prevent IndexOutOfBoundException :
 		if (startIndex >= listSize) {

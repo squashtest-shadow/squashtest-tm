@@ -28,7 +28,6 @@ import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.stereotype.Service;
 import org.squashtest.csp.tm.domain.execution.Execution;
 import org.squashtest.csp.tm.domain.execution.ExecutionStep;
-import org.squashtest.csp.tm.infrastructure.filter.CollectionFilter;
 import org.squashtest.csp.tm.infrastructure.filter.FilteredCollectionHolder;
 import org.squashtest.csp.tm.internal.repository.ExecutionDao;
 import org.squashtest.csp.tm.internal.repository.ExecutionStepDao;
@@ -80,7 +79,7 @@ public class ExecutionModificationServiceImpl implements ExecutionModificationSe
 	}
 
 	@Override
-	public FilteredCollectionHolder<List<ExecutionStep>> findExecutionSteps(long executionId, CollectionFilter filter) {
+	public FilteredCollectionHolder<List<ExecutionStep>> findExecutionSteps(long executionId, Paging filter) {
 		List<ExecutionStep> list = executionDao.findStepsFiltered(executionId, filter);
 		long count = executionDao.countExecutionSteps(executionId);
 		return new FilteredCollectionHolder<List<ExecutionStep>>(count, list);

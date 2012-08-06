@@ -29,11 +29,11 @@ import org.squashtest.csp.tm.domain.requirement.RequirementCriticality
 import org.squashtest.csp.tm.domain.requirement.RequirementSearchCriteria
 import org.squashtest.csp.tm.domain.testcase.TestCaseImportance
 import org.squashtest.csp.tm.domain.testcase.TestCaseSearchCriteria
-import org.squashtest.csp.tm.infrastructure.filter.CollectionFilter
 import org.squashtest.csp.tm.infrastructure.filter.CollectionSorting
 import org.squashtest.csp.tm.internal.repository.TestCaseDao
 import org.squashtest.csp.tools.unittest.assertions.ListAssertions
 import org.unitils.dbunit.annotation.DataSet
+import org.squashtest.tm.core.foundation.collection.Paging;
 import org.squashtest.tm.core.foundation.collection.PagingAndSorting
 import org.squashtest.tm.core.foundation.collection.SortOrder
 
@@ -58,9 +58,9 @@ class HibernateTestCaseDaoIT extends DbunitDaoSpecification {
 	@DataSet("HibernateTestCaseDaoIT.should find filtered steps by test case id.xml")
 	def "should find filtered steps by test case id"() {
 		given:
-		CollectionFilter filter = Mock()
+		Paging filter = Mock()
 		filter.firstItemIndex >> 1
-		filter.maxNumberOfItems >> 2
+		filter.pageSize >> 2
 
 		when:
 		def steps = testCaseDao.findAllStepsByIdFiltered(10, filter)

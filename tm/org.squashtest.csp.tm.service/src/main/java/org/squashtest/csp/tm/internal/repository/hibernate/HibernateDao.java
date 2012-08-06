@@ -26,10 +26,11 @@ import java.util.List;
 import javax.inject.Inject;
 import javax.validation.constraints.NotNull;
 
+import org.hibernate.Criteria;
 import org.hibernate.Query;
 import org.hibernate.Session;
 import org.hibernate.SessionFactory;
-import org.squashtest.csp.tm.infrastructure.filter.CollectionFilter;
+import org.squashtest.tm.core.foundation.collection.Paging;
 
 /**
  * To implement an Hibernate DAO, subclass this class, annotate it with @Repository and work with the Hibernate session
@@ -59,7 +60,7 @@ public abstract class HibernateDao<ENTITY_TYPE> {
 	protected final ENTITY_TYPE getEntity(long objectId) {
 		return (ENTITY_TYPE) currentSession().get(entityType, objectId);
 	}
-
+	
 	protected final void persistEntity(Object entity) {
 		currentSession().persist(entity);
 	}
@@ -107,13 +108,13 @@ public abstract class HibernateDao<ENTITY_TYPE> {
 	 */
 	@SuppressWarnings("unchecked")
 	protected final <R> List<R> executeListNamedQuery(@NotNull String queryName, @NotNull Object queryParam,
-			@NotNull CollectionFilter filter) {
+			@NotNull Paging filter) {
 		Session session = currentSession();
 
 		Query q = session.getNamedQuery(queryName);
 		q.setParameter(0, queryParam);
 		q.setFirstResult(filter.getFirstItemIndex());
-		q.setMaxResults(filter.getMaxNumberOfItems());
+		q.setMaxResults(filter.getPageSize());
 
 		return q.list();
 	}
@@ -141,6 +142,12 @@ public abstract class HibernateDao<ENTITY_TYPE> {
 	protected final <R> R executeEntityNamedQuery(String queryName, SetQueryParametersCallback setParams) {
 		Query q = currentSession().getNamedQuery(queryName);
 		setParams.setQueryParameters(q);
+		return (R) q.uniqueResult();
+	}
+	
+	@SuppressWarnings("unchecked")
+	protected final <R> R executeEntityNamedQuery(String queryName) {
+		Query q = currentSession().getNamedQuery(queryName);
 		return (R) q.uniqueResult();
 	}
 

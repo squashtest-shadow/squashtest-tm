@@ -135,7 +135,7 @@ public class HibernateAttachmentDao extends HibernateEntityDao<Attachment>
 
 		/* result range */
 		crit.setFirstResult(filter.getFirstItemIndex());
-		crit.setMaxResults(filter.getMaxNumberOfItems());
+		crit.setMaxResults(filter.getPageSize());
 
 
 		List<Map<String,?>> rawResult = crit.list();

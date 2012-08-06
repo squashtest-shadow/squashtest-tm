@@ -643,11 +643,7 @@ public class BugtrackerController {
 
 	private CollectionSorting createCollectionSorting(final DataTableDrawParameters params) {
 		return new CollectionSorting() {
-			@Override
-			public int getMaxNumberOfItems() {
-				return params.getiDisplayLength();
-			}
-
+			
 			@Override
 			public int getFirstItemIndex() {
 				return params.getiDisplayStart();
@@ -665,7 +661,7 @@ public class BugtrackerController {
 
 			@Override
 			public int getPageSize() {
-				return getMaxNumberOfItems();
+				return params.getiDisplayLength();
 			}
 		};
 	}

@@ -44,6 +44,7 @@ import org.squashtest.csp.tm.infrastructure.filter.CollectionSorting;
 import org.squashtest.csp.tm.infrastructure.filter.FilteredCollectionHolder;
 import org.squashtest.csp.tm.service.ProjectManagerService;
 import org.squashtest.csp.tm.web.internal.model.datatable.DataTableDrawParameters;
+import org.squashtest.csp.tm.web.internal.model.datatable.DataTableFilterSorter;
 import org.squashtest.csp.tm.web.internal.model.datatable.DataTableModel;
 import org.squashtest.csp.tm.web.internal.model.datatable.DataTableModelHelper;
 import org.squashtest.csp.tm.web.internal.model.jquery.FilterModel;
@@ -118,7 +119,7 @@ public class ProjectManagerController {
 	public @ResponseBody
 	DataTableModel getProjectsTableModel(final DataTableDrawParameters params, final Locale locale) {
 
-		CollectionSorting filter = createCollectionFilter(params, projectMapper);
+		CollectionSorting filter = createPaging(params, projectMapper);
 
 		FilteredCollectionHolder<List<Project>> holder = projectManagerService
 				.findSortedProjects(filter);
@@ -147,35 +148,9 @@ public class ProjectManagerController {
 	
 	/* ****************************** data formatters ********************************************** */
 
-	private CollectionSorting createCollectionFilter(final DataTableDrawParameters params,
-			final DataTableMapper dtMapper) {
-		CollectionSorting filter = new CollectionSorting() {
-			@Override
-			public int getMaxNumberOfItems() {
-				return params.getiDisplayLength();
-			}
-
-			@Override
-			public int getFirstItemIndex() {
-				return params.getiDisplayStart();
-			}
-
-			@Override
-			public String getSortedAttribute() {
-				return dtMapper.pathAt(params.getiSortCol_0());
-			}
-
-			@Override
-			public String getSortingOrder() {
-				return params.getsSortDir_0();
-			}
-
-			@Override
-			public int getPageSize() {
-				return getMaxNumberOfItems();
-			}
-		};
-		return filter;
+	private CollectionSorting createPaging(final DataTableDrawParameters params,
+			final DataTableMapper mapper) {
+		return new DataTableFilterSorter(params, mapper);
 	}
 
 

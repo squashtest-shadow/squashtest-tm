@@ -20,13 +20,15 @@
  */
 package org.squashtest.csp.tm.infrastructure.filter;
 
+import org.squashtest.tm.core.foundation.collection.Paging;
+
 /**
  * Defines sorting parameters to apply when querying for a collection.
  * 
  * @author Gregory Fouquet
  * 
  */
-public interface CollectionSorting extends CollectionFilter {
+public interface CollectionSorting extends Paging {
 	/**
 	 * Sorting information : which column should be sorted
 	 * 

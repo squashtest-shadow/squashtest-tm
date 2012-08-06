@@ -51,13 +51,11 @@ public class HibernateCampaignDao extends HibernateEntityDao<Campaign> implement
 	}
 
 	@Override
-	public List<CampaignTestPlanItem> findAllTestPlanByIdFiltered(final long campaignId,
-			final CollectionSorting filter) {
-		
-		
+	public List<CampaignTestPlanItem> findAllTestPlanByIdFiltered(final long campaignId, final CollectionSorting filter) {
+
 		final int firstIndex = filter.getFirstItemIndex();
-		final int lastIndex = filter.getFirstItemIndex() + filter.getMaxNumberOfItems() - 1;		
-		
+		final int lastIndex = filter.getFirstItemIndex() + filter.getPageSize() - 1;
+
 		SetQueryParametersCallback callback = new SetQueryParametersCallback() {
 
 			@Override
@@ -65,15 +63,14 @@ public class HibernateCampaignDao extends HibernateEntityDao<Campaign> implement
 
 				query.setParameter("campaignId", campaignId);
 				query.setParameter("firstIndex", firstIndex);
-				query.setParameter("lastIndex", lastIndex); 
+				query.setParameter("lastIndex", lastIndex);
 
 			}
 
 		};
 
 		return executeListNamedQuery("campaign.findTestPlanFiltered", callback);
-		
-	
+
 	}
 
 	@Override
@@ -124,8 +121,7 @@ public class HibernateCampaignDao extends HibernateEntityDao<Campaign> implement
 	}
 
 	@Override
-	public List<String> findNamesInLibraryStartingWith(final long libraryId,
-			final String nameStart) {
+	public List<String> findNamesInLibraryStartingWith(final long libraryId, final String nameStart) {
 		SetQueryParametersCallback newCallBack1 = new SetQueryParametersCallback() {
 
 			@Override
@@ -134,15 +130,13 @@ public class HibernateCampaignDao extends HibernateEntityDao<Campaign> implement
 				query.setParameter("nameStart", nameStart + "%");
 			}
 		};
-		return executeListNamedQuery("campaign.findNamesInLibraryStartingWith",
-				newCallBack1);
+		return executeListNamedQuery("campaign.findNamesInLibraryStartingWith", newCallBack1);
 	}
 
 	@SuppressWarnings("unchecked")
 	@Override
-	public List<Campaign> findAllCampaign(){
-		return currentSession().createCriteria(Campaign.class)
-								.list();
+	public List<Campaign> findAllCampaign() {
+		return currentSession().createCriteria(Campaign.class).list();
 	}
 
 	@SuppressWarnings("unchecked")
@@ -161,24 +155,10 @@ public class HibernateCampaignDao extends HibernateEntityDao<Campaign> implement
 		return criteria.list();
 	}
 
-	
-	@Override
-	public List<Campaign> findAllByIdList(List<Long> campaignIds) {
-		if (campaignIds.isEmpty()){
-			return Collections.emptyList();
-		}else{
-			Query query = currentSession().getNamedQuery("campaign.findAllById");
-			query.setParameterList("campaignIds", campaignIds, LongType.INSTANCE);
-			return query.list();
-		}
-	}
-
-	
 	@Override
 	public List<Execution> findAllExecutionsByCampaignId(Long campaignId) {
 		SetQueryParametersCallback callback = idParameter(campaignId);
 		return executeListNamedQuery("campaign.findAllExecutions", callback);
 	}
-
 
 }

@@ -51,7 +51,6 @@ import org.squashtest.csp.tm.domain.testcase.TestCase;
 import org.squashtest.csp.tm.domain.testcase.TestCaseExecutionMode;
 import org.squashtest.csp.tm.domain.testcase.TestCaseImportance;
 import org.squashtest.csp.tm.domain.testcase.TestStep;
-import org.squashtest.csp.tm.infrastructure.filter.CollectionFilter;
 import org.squashtest.csp.tm.infrastructure.filter.CollectionSorting;
 import org.squashtest.csp.tm.infrastructure.filter.FilteredCollectionHolder;
 import org.squashtest.csp.tm.service.CallStepManagerService;
@@ -165,7 +164,7 @@ public class TestCaseModificationController {
 
 		LOGGER.trace("TestCaseModificationController: getStepsTableModel called ");
 
-		CollectionFilter filter = createCollectionFilter(params);
+		Paging filter = createPaging(params);
 
 		FilteredCollectionHolder<List<TestStep>> holder = testCaseModificationService.findStepsByTestCaseIdFiltered(
 				testCaseId, filter);
@@ -411,7 +410,7 @@ public class TestCaseModificationController {
 
 		LOGGER.trace("TestCaseModificationController: getCallingTestCaseTableModel called ");
 
-		CollectionSorting filter = createCollectionFilter(params, referencingTestCaseMapper);
+		CollectionSorting filter = createPaging(params, referencingTestCaseMapper);
 
 		FilteredCollectionHolder<List<TestCase>> holder = testCaseModificationService.findCallingTestCases(testCaseId,
 				filter);
@@ -426,12 +425,12 @@ public class TestCaseModificationController {
 
 	}
 
-	private CollectionSorting createCollectionFilter(final DataTableDrawParameters params,
+	private CollectionSorting createPaging(final DataTableDrawParameters params,
 			final DataTableMapper dtMapper) {
 		return new DataTableMapperCollectionSortingAdapter(params, dtMapper);
 	}
 
-	private CollectionFilter createCollectionFilter(final DataTableDrawParameters params) {
+	private Paging createPaging(final DataTableDrawParameters params) {
 		return new DataTablePagedFilter(params);
 	}
 

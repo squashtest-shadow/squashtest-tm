@@ -383,7 +383,8 @@ public class CampaignLibraryNavigationServiceImpl extends
 	@PostFilter("hasPermission(filterObject, 'READ') or hasRole('ROLE_ADMIN')")
 	public List<CampaignLibrary> findLinkableCampaignLibraries() {
 		ProjectFilter pf = projectFilterModificationService.findProjectFilterByUserLogin();
-		return pf.getActivated() == true ? libraryStrategy.getSpecificLibraries(pf.getProjects()) : campaignLibraryDao
+		
+		return pf.getActivated() ? libraryStrategy.getSpecificLibraries(pf.getProjects()) : campaignLibraryDao
 				.findAll();
 	}
 

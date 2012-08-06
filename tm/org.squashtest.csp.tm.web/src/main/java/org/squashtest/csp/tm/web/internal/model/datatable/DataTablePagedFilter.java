@@ -20,24 +20,19 @@
  */
 package org.squashtest.csp.tm.web.internal.model.datatable;
 
-import org.squashtest.csp.tm.infrastructure.filter.CollectionFilter;
+import org.squashtest.tm.core.foundation.collection.Paging;
 
 /**
- * Implementation of a {@link CollectionFilter} which filters the data requested by a paged datatable.
+ * Implementation of a {@link Paging} which filters the data requested by a paged datatable.
  *
  * @author Gregory Fouquet
  *
  */
-public final class DataTablePagedFilter implements CollectionFilter {
+public final class DataTablePagedFilter implements Paging {
 	private final DataTableDrawParameters params;
 
 	public DataTablePagedFilter(DataTableDrawParameters params) {
 		this.params = params;
-	}
-
-	@Override
-	public int getMaxNumberOfItems() {
-		return params.getiDisplayLength();
 	}
 
 	@Override
@@ -50,6 +45,6 @@ public final class DataTablePagedFilter implements CollectionFilter {
 	 */
 	@Override
 	public int getPageSize() {
-		return getMaxNumberOfItems();
+		return params.getiDisplayLength();
 	}
 }

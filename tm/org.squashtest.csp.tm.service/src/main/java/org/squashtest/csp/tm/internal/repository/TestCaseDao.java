@@ -30,9 +30,9 @@ import org.squashtest.csp.tm.domain.testcase.TestCase;
 import org.squashtest.csp.tm.domain.testcase.TestCaseLibraryNode;
 import org.squashtest.csp.tm.domain.testcase.TestCaseSearchCriteria;
 import org.squashtest.csp.tm.domain.testcase.TestStep;
-import org.squashtest.csp.tm.infrastructure.filter.CollectionFilter;
 import org.squashtest.csp.tm.infrastructure.filter.CollectionSorting;
 import org.squashtest.csp.tm.service.CallStepManagerService;
+import org.squashtest.tm.core.foundation.collection.Paging;
 import org.squashtest.tm.core.foundation.collection.PagingAndSorting;
 
 public interface TestCaseDao extends EntityDao<TestCase> {
@@ -51,7 +51,7 @@ public interface TestCaseDao extends EntityDao<TestCase> {
 
 	TestCase findByIdWithInitializedSteps(long testCaseId);
 
-	List<TestStep> findAllStepsByIdFiltered(long testCaseId, CollectionFilter filter);
+	List<TestStep> findAllStepsByIdFiltered(long testCaseId, Paging filter);
 
 	/**
 	 * Finds all {@link TestCaseLibraryNode} which name contains the given token.

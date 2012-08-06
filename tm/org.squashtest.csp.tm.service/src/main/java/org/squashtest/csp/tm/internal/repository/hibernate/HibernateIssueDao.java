@@ -159,7 +159,7 @@ public class HibernateIssueDao extends HibernateEntityDao<Issue> implements Issu
 				crit = crit.addOrder(Order.desc(sortBy));
 			}
 
-			crit = crit.setFirstResult(sorter.getFirstItemIndex()).setMaxResults(sorter.getMaxNumberOfItems());
+			crit = crit.setFirstResult(sorter.getFirstItemIndex()).setMaxResults(sorter.getPageSize());
 			result = crit.list();
 			
 			

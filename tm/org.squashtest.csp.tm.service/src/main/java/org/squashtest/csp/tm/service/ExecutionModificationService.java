@@ -25,9 +25,9 @@ import java.util.List;
 import org.springframework.transaction.annotation.Transactional;
 import org.squashtest.csp.tm.domain.execution.Execution;
 import org.squashtest.csp.tm.domain.execution.ExecutionStep;
-import org.squashtest.csp.tm.infrastructure.filter.CollectionFilter;
 import org.squashtest.csp.tm.infrastructure.filter.FilteredCollectionHolder;
 import org.squashtest.csp.tm.service.deletion.SuppressionPreviewReport;
+import org.squashtest.tm.core.foundation.collection.Paging;
 
 @Transactional(readOnly = false)
 public interface ExecutionModificationService extends ExecutionFinder {
@@ -38,7 +38,7 @@ public interface ExecutionModificationService extends ExecutionFinder {
 
 	/*********************************** Steps methods *****************************************/
 
-	FilteredCollectionHolder<List<ExecutionStep>> findExecutionSteps(long executionId, CollectionFilter filter);
+	FilteredCollectionHolder<List<ExecutionStep>> findExecutionSteps(long executionId, Paging filter);
 
 	void setExecutionStepComment(Long executionStepId, String comment);
 

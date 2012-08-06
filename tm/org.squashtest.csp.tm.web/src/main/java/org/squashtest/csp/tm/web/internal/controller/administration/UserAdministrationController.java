@@ -47,7 +47,6 @@ import org.squashtest.csp.tm.domain.project.Project;
 import org.squashtest.csp.tm.domain.project.ProjectPermission;
 import org.squashtest.csp.tm.domain.users.User;
 import org.squashtest.csp.tm.domain.users.UsersGroup;
-import org.squashtest.csp.tm.infrastructure.filter.CollectionFilter;
 import org.squashtest.csp.tm.infrastructure.filter.FilteredCollectionHolder;
 import org.squashtest.csp.tm.service.AdministrationService;
 import org.squashtest.csp.tm.service.ProjectsPermissionManagementService;
@@ -55,6 +54,7 @@ import org.squashtest.csp.tm.web.internal.model.datatable.DataTableDrawParameter
 import org.squashtest.csp.tm.web.internal.model.datatable.DataTableModel;
 import org.squashtest.csp.tm.web.internal.model.datatable.DataTableModelHelper;
 import org.squashtest.csp.tm.web.internal.model.datatable.DataTablePagedFilter;
+import org.squashtest.tm.core.foundation.collection.Paging;
 
 @Controller
 @RequestMapping("/users")
@@ -133,7 +133,7 @@ public class UserAdministrationController {
 	public @ResponseBody DataTableModel getTable(final DataTableDrawParameters params, final Locale locale) {
 		LOGGER.trace("UserAdministrationController: getTable called ");
 
-		CollectionFilter filter = createCollectionFilter(params);
+		Paging filter = createPaging(params);
 
 		FilteredCollectionHolder<List<User>> holder = adminService.findAllUsersFiltered(filter);
 		
@@ -141,7 +141,7 @@ public class UserAdministrationController {
 		return new UserDataTableModelBuilder(locale).buildDataModel(holder, filter.getFirstItemIndex()+1, params.getsEcho());
 	}
 	
-	private CollectionFilter createCollectionFilter(final DataTableDrawParameters params) {
+	private Paging createPaging(final DataTableDrawParameters params) {
 		return new DataTablePagedFilter(params);
 	}
 	

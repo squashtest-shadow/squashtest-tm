@@ -35,13 +35,13 @@ import org.squashtest.csp.core.service.security.AdministratorAuthenticationServi
 import org.squashtest.csp.tm.domain.project.Project;
 import org.squashtest.csp.tm.domain.users.User;
 import org.squashtest.csp.tm.domain.users.UsersGroup;
-import org.squashtest.csp.tm.infrastructure.filter.CollectionFilter;
 import org.squashtest.csp.tm.infrastructure.filter.FilteredCollectionHolder;
 import org.squashtest.csp.tm.internal.repository.ProjectDao;
 import org.squashtest.csp.tm.internal.repository.UserDao;
 import org.squashtest.csp.tm.internal.repository.UsersGroupDao;
 import org.squashtest.csp.tm.service.AdministrationService;
 import org.squashtest.csp.tm.service.UserAccountService;
+import org.squashtest.tm.core.foundation.collection.Paging;
 
 /**
  * 
@@ -123,7 +123,7 @@ public class AdministrationServiceImpl implements AdministrationService {
 
 	@Override
 	@PreAuthorize("hasRole('ROLE_ADMIN')")
-	public FilteredCollectionHolder<List<User>> findAllUsersFiltered(CollectionFilter filter) {
+	public FilteredCollectionHolder<List<User>> findAllUsersFiltered(Paging filter) {
 		List<User> list = userDao.findAllUsersFiltered(filter);
 		long count = findAllUsers().size();
 		return new FilteredCollectionHolder<List<User>>(count, list);

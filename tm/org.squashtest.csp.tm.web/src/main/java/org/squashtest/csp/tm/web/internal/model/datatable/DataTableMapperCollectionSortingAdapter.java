@@ -35,11 +35,6 @@ public class DataTableMapperCollectionSortingAdapter implements CollectionSortin
 		delegate = new DataTableMapperPagingAndSortingAdapter(drawParams, mapper);
 	}
 
-	@Override
-	public int getMaxNumberOfItems() {
-		return delegate.getPageSize();
-	}
-
 	public String getSortedAttribute() {
 		return delegate.getSortedAttribute();
 	}

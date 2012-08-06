@@ -37,7 +37,6 @@ import org.squashtest.csp.tm.domain.execution.Execution;
 import org.squashtest.csp.tm.domain.execution.ExecutionStatus;
 import org.squashtest.csp.tm.domain.execution.ExecutionStatusReport;
 import org.squashtest.csp.tm.domain.execution.ExecutionStep;
-import org.squashtest.csp.tm.infrastructure.filter.CollectionFilter;
 import org.squashtest.csp.tm.internal.repository.ExecutionDao;
 import org.squashtest.tm.core.foundation.collection.Paging;
 
@@ -137,7 +136,7 @@ public class HibernateExecutionDao extends HibernateEntityDao<Execution> impleme
 			}
 		};
 
-		return executeEntityNamedQuery("execution.countStatus", newCallBack);
+		return executeEntityNamedQuery("execution.countStatus", newCallBack); 
 	}
 
 	@Override
@@ -162,13 +161,13 @@ public class HibernateExecutionDao extends HibernateEntityDao<Execution> impleme
 	 */
 
 	@Override
-	public List<ExecutionStep> findStepsFiltered(final Long executionId, final CollectionFilter filter) {
+	public List<ExecutionStep> findStepsFiltered(final Long executionId, final Paging filter) {
 
 		Execution execution = findById(executionId);
 		int listSize = execution.getSteps().size();
 
 		int startIndex = filter.getFirstItemIndex();
-		int lastIndex = filter.getFirstItemIndex() + filter.getMaxNumberOfItems();
+		int lastIndex = filter.getFirstItemIndex() + filter.getPageSize();
 
 		// prevent IndexOutOfBoundException :
 		if (startIndex >= listSize) {

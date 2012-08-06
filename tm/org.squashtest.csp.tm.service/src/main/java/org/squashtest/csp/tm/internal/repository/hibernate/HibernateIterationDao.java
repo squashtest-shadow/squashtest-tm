@@ -133,7 +133,7 @@ public class HibernateIterationDao extends HibernateEntityDao<Iteration> impleme
 	public List<IterationTestPlanItem> findTestPlanFiltered(final long iterationId, CollectionSorting filter) {
 
 		final int firstIndex = filter.getFirstItemIndex();
-		final int lastIndex = filter.getFirstItemIndex() + filter.getMaxNumberOfItems() - 1;
+		final int lastIndex = filter.getFirstItemIndex() + filter.getPageSize() - 1;
 
 		SetQueryParametersCallback callback = new SetQueryParametersCallback() {
 

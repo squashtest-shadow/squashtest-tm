@@ -45,13 +45,6 @@ public class DataTableFilterSorter extends DataTableDrawParametersPagingAdapter 
 	public String getSortingOrder() {
 		return params.getsSortDir_0();
 	}
-
-	/**
-	 * @see org.squashtest.csp.tm.infrastructure.filter.CollectionFilter#getMaxNumberOfItems()
-	 */
-	@Override
-	public int getMaxNumberOfItems() {
-		return getPageSize();
-	}
+	
 
 }

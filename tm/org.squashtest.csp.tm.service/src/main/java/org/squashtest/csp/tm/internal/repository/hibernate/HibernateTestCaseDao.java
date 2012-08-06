@@ -47,9 +47,9 @@ import org.squashtest.csp.tm.domain.testcase.TestCaseImportance;
 import org.squashtest.csp.tm.domain.testcase.TestCaseLibraryNode;
 import org.squashtest.csp.tm.domain.testcase.TestCaseSearchCriteria;
 import org.squashtest.csp.tm.domain.testcase.TestStep;
-import org.squashtest.csp.tm.infrastructure.filter.CollectionFilter;
 import org.squashtest.csp.tm.infrastructure.filter.CollectionSorting;
 import org.squashtest.csp.tm.internal.repository.TestCaseDao;
+import org.squashtest.tm.core.foundation.collection.Paging;
 import org.squashtest.tm.core.foundation.collection.PagingAndSorting;
 
 /**
@@ -165,9 +165,9 @@ public class HibernateTestCaseDao extends HibernateEntityDao<TestCase> implement
 	 */
 
 	@Override
-	public List<TestStep> findAllStepsByIdFiltered(final long testCaseId, final CollectionFilter filter) {
+	public List<TestStep> findAllStepsByIdFiltered(final long testCaseId, final Paging filter) {
 		final int firstIndex = filter.getFirstItemIndex();
-		final int lastIndex = filter.getFirstItemIndex() + filter.getMaxNumberOfItems() - 1;
+		final int lastIndex = filter.getFirstItemIndex() + filter.getPageSize() - 1;
 
 		SetQueryParametersCallback callback = new SetQueryParametersCallback() {
 
@@ -262,7 +262,7 @@ public class HibernateTestCaseDao extends HibernateEntityDao<TestCase> implement
 		query.setParameter("testCaseId", testCaseId);
 
 		if (sorting != null) {
-			query.setMaxResults(sorting.getMaxNumberOfItems());
+			query.setMaxResults(sorting.getPageSize());
 			query.setFirstResult(sorting.getFirstItemIndex());
 		}
 		return query.list();
