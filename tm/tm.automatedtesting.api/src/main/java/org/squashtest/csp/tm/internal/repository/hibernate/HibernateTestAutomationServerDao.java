@@ -73,7 +73,7 @@ public class HibernateTestAutomationServerDao implements
 			return null;
 		}
 		else if (res.size()==1){
-			return (TestAutomationServer)res.get(1);
+			return (TestAutomationServer)res.get(0);
 		}
 		else{
 			throw new NonUniqueEntityException();
