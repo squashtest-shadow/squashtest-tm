@@ -613,9 +613,9 @@
 	============================================================================================================ -->
 
 	<changeSet id="tm-1.3-feat-1181.01" author="bsiri">
-		<comment>creating table AUTOMATED_TEST_SERVER</comment>
+		<comment>creating table TEST_AUTOMATION_SERVER</comment>
 
-		<createTable tableName="AUTOMATED_TEST_SERVER">
+		<createTable tableName="TEST_AUTOMATION_SERVER">
 
 			<column name="SERVER_ID" type="BIGINT" autoIncrement="true">
 				<constraints primaryKey="true" nullable="false" />
@@ -644,7 +644,7 @@
 
 		</createTable>
 
-		<createIndex tableName="AUTOMATED_TEST_SERVER" indexName="idx_autotest_server">
+		<createIndex tableName="TEST_AUTOMATION_SERVER" indexName="idx_autotest_server">
 			<column name="SERVER_ID" />
 		</createIndex>
 
@@ -652,9 +652,9 @@
 
 
 	<changeSet id="tm-1.3.0-feat-1181.02" author="bsiri">
-		<comment>creating table AUTOMATED_TEST_PROJECT</comment>
+		<comment>creating table TEST_AUTOMATION_PROJECT</comment>
 
-		<createTable tableName="AUTOMATED_TEST_PROJECT">
+		<createTable tableName="TEST_AUTOMATION_PROJECT">
 			<column name="PROJECT_ID" type="BIGINT" autoIncrement="true">
 				<constraints primaryKey="true" nullable="false" />
 			</column>
@@ -665,14 +665,14 @@
 
 			<column name="SERVER_ID" type="BIGINT"
 				remarks="foreign key to an automated test server">
-				<constraints nullable="true" references="AUTOMATED_TEST_SERVER(SERVER_ID)"
+				<constraints nullable="true" references="TEST_AUTOMATION_SERVER(SERVER_ID)"
 					foreignKeyName="fk_auto_test_project" />
 			</column>
 
 
 		</createTable>
 
-		<createIndex tableName="AUTOMATED_TEST_PROJECT" indexName="idx_auto_test_project">
+		<createIndex tableName="TEST_AUTOMATION_PROJECT" indexName="idx_auto_test_project">
 			<column name="PROJECT_ID" />
 		</createIndex>
 
@@ -682,7 +682,7 @@
 		<comment>now a PROJECT may or may not have test automation enabled</comment>
 		
 		<addColumn tableName="PROJECT">
-	   		 <column name="AUTOMATED_TESTS_ENABLED" type="BOOLEAN" defaultValueBoolean="false">
+	   		 <column name="TEST_AUTOMATION_ENABLED" type="BOOLEAN" defaultValueBoolean="false">
 	   		 	<constraints nullable="false"/>
 	   		 </column>
 		</addColumn>
@@ -700,7 +700,7 @@
 
 			<column name="TA_PROJECT_ID" type="BIGINT">
 				<constraints nullable="false" foreignKeyName="fk_tm_ta_projects_ta"
-					references="AUTOMATED_TEST_PROJECT(PROJECT_ID)" />
+					references="TEST_AUTOMATION_PROJECT(PROJECT_ID)" />
 			</column>
 		</createTable>
 

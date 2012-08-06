@@ -18,14 +18,38 @@
  *     You should have received a copy of the GNU Lesser General Public License
  *     along with this software.  If not, see <http://www.gnu.org/licenses/>.
  */
-package org.squashtest.csp.tm.service;
+package org.squashtest.csp.tm.internal.service;
 
-import org.springframework.transaction.annotation.Transactional;
+import java.net.URL;
+import java.util.List;
+
+import javax.inject.Inject;
+
+import org.springframework.stereotype.Service;
+import org.squashtest.csp.tm.domain.automatest.TestAutomationProject;
+import org.squashtest.csp.tm.internal.repository.TestAutomationServerDao;
+import org.squashtest.csp.tm.service.TestAutomationManagementService;
 
 
-@Transactional
-public interface AutomatedTestProjectManagementService {
 
-	//void addProject
+@Service("squashtest.tm.service.TestAutomationManagementService")
+public class TestAutomationManagementServiceImpl implements TestAutomationManagementService {
+
+	@Inject
+	private TestAutomationServerDao serverDao;
 	
+	@Override
+	public List<TestAutomationProject> listProjectsOnServer(URL serverURL,
+			String login, String password) {
+		// TODO Auto-generated method stub
+		return null;
+	}
+
+	@Override
+	public void bindAutomatedProject(long TMprojectId,
+			TestAutomationProject remoteProject) {
+		// TODO Auto-generated method stub
+		
+	}
+
 }

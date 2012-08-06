@@ -18,53 +18,13 @@
  *     You should have received a copy of the GNU Lesser General Public License
  *     along with this software.  If not, see <http://www.gnu.org/licenses/>.
  */
-package org.squashtest.csp.tm.domain.automatest;
+package org.squashtest.csp.tm.internal.repository;
 
-import javax.persistence.Column;
-import javax.persistence.Entity;
-import javax.persistence.GeneratedValue;
-import javax.persistence.Id;
-import javax.persistence.JoinColumn;
-import javax.persistence.ManyToOne;
+public class NonUniqueEntityException extends RuntimeException {
 
+	/**
+	 * 
+	 */
+	private static final long serialVersionUID = 8040729467498732918L;
 
-@Entity
-public class AutomatedTestProject {
-
-	
-	@Id
-	@GeneratedValue
-	@Column(name="PROJECT_ID")
-	private Long id;
-	
-	@Column
-	private String name;
-	
-	
-	@ManyToOne
-	@JoinColumn(name="SERVER_ID")
-	private AutomatedTestServer server;
-
-	
-	public Long getId() {
-		return id;
-	}
-
-	public String getName() {
-		return name;
-	}
-
-	public void setName(String name) {
-		this.name = name;
-	}
-
-	public AutomatedTestServer getServer() {
-		return server;
-	}
-
-
-	public void setId(Long id) {
-		this.id = id;
-	}
-	
 }

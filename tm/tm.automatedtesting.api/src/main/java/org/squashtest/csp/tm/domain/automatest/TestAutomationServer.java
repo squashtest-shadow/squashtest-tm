@@ -21,14 +21,13 @@
 package org.squashtest.csp.tm.domain.automatest;
 
 import java.net.URL;
-import java.util.Iterator;
-import java.util.Set;
 
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
 import javax.persistence.Id;
-import javax.persistence.OneToMany;
+import javax.persistence.NamedQueries;
+import javax.persistence.NamedQuery;
 
 
 /**
@@ -36,7 +35,7 @@ import javax.persistence.OneToMany;
  * 
  * Like every entities in the package org.squashtest.csp.tm.domain.automatest, these are immutable : modifying servers, projects etc 
  * could break existing data. For instance changing the URL of a server, or its kind, means that a new instance of AutomatedTestServer should 
- * be persisted instead of altering the existing one. 
+ * be persisted instead of altering the existing one. In other words, our objects here are immutable.
  * 
  * 
  * @author bsiri
@@ -44,8 +43,12 @@ import javax.persistence.OneToMany;
  */
 
 
+@NamedQueries({
+	@NamedQuery(name="testAutomationServer.findById", query="from TestAutomationServer where id = :serverId"),
+	@NamedQuery(name="testAutomationServer.findAllHostedProjects", query="select p from TestAutomationProject p join p.server s where s.id = :serverId")
+})
 @Entity
-public class AutomatedTestServer {
+public class TestAutomationServer {
 	
 	
 	private static final String DEFAULT_KIND = "jenkins";
@@ -100,18 +103,8 @@ public class AutomatedTestServer {
 	}
 
 
-	public void setBaseURL(URL baseURL) {
-		this.baseURL = baseURL;
-	}
-
-
 	public String getLogin() {
 		return login;
-	}
-
-
-	public void setLogin(String login) {
-		this.login = login;
 	}
 
 
@@ -120,17 +113,58 @@ public class AutomatedTestServer {
 	}
 
 
-	public void setPassword(String password) {
+	public String getKind() {
+		return kind;
+	}
+	
+	
+	
+	
+
+	public TestAutomationServer(){
+		
+	}
+	
+	
+	
+
+
+	public TestAutomationServer(Long id, URL baseURL, String login,
+			String password) {
+		super();
+		this.id = id;
+		this.baseURL = baseURL;
+		this.login = login;
+		this.password = password;
+		this.kind=DEFAULT_KIND;
+	}
+
+
+	public TestAutomationServer(URL baseURL, String login, String password) {
+		super();
+		this.baseURL = baseURL;
+		this.login = login;
 		this.password = password;
 	}
 
 
-	public String getKind() {
-		return kind;
+	public TestAutomationServer(Long id, URL baseURL, String login,
+			String password, String kind) {
+		super();
+		this.id = id;
+		this.baseURL = baseURL;
+		this.login = login;
+		this.password = password;
+		this.kind = kind;
 	}
 
 
-	public void setKind(String kind) {
+	public TestAutomationServer(URL baseURL, String login, String password,
+			String kind) {
+		super();
+		this.baseURL = baseURL;
+		this.login = login;
+		this.password = password;
 		this.kind = kind;
 	}
 

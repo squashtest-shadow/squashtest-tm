@@ -38,7 +38,7 @@ import javax.validation.constraints.Size;
 
 import org.hibernate.validator.constraints.NotBlank;
 import org.squashtest.csp.tm.domain.audit.Auditable;
-import org.squashtest.csp.tm.domain.automatest.AutomatedTestProject;
+import org.squashtest.csp.tm.domain.automatest.TestAutomationProject;
 import org.squashtest.csp.tm.domain.campaign.CampaignLibrary;
 import org.squashtest.csp.tm.domain.requirement.RequirementLibrary;
 import org.squashtest.csp.tm.domain.testcase.TestCaseLibrary;
@@ -78,8 +78,10 @@ public class Project {
 	@ManyToMany(cascade = { CascadeType.ALL }, fetch = FetchType.LAZY)
 	@JoinTable(name="TM_TA_PROJECTS", joinColumns=@JoinColumn(name="TM_PROJECT_ID"), 
 			inverseJoinColumns=@JoinColumn(name="TA_PROJECT_ID"))
-	private Set<AutomatedTestProject> automatedProjects;
+	private Set<TestAutomationProject> automatedProjects;
 	
+	
+	@Column(name="TEST_AUTOMATION_ENABLED")
 	private Boolean automatedTestsEnabled;
 	
 	
@@ -171,8 +173,8 @@ public class Project {
 	 * 
 	 * @param project
 	 */
-	public void bindAutomatedTestProject(AutomatedTestProject project){
-		for (AutomatedTestProject proj : automatedProjects){
+	public void bindAutomatedTestProject(TestAutomationProject project){
+		for (TestAutomationProject proj : automatedProjects){
 			if (proj.getId().equals(project.getId())){
 				return ;
 			}
@@ -180,10 +182,10 @@ public class Project {
 		automatedProjects.add(project);
 	}
 	
-	public void unbindAutomatedTestProject(AutomatedTestProject project){
-		Iterator<AutomatedTestProject> iter = automatedProjects.iterator();
+	public void unbindAutomatedTestProject(TestAutomationProject project){
+		Iterator<TestAutomationProject> iter = automatedProjects.iterator();
 		while (iter.hasNext()){
-			AutomatedTestProject proj = iter.next();
+			TestAutomationProject proj = iter.next();
 			if (proj.getId().equals(project.getId())){
 				iter.remove();
 				break;

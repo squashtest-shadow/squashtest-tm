@@ -23,7 +23,7 @@ package org.squashtest.csp.tm.hibernate.mapping.automatest
 
 import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.transaction.TransactionConfiguration;
-import org.squashtest.csp.tm.domain.automatest.AutomatedTestServer;
+import org.squashtest.csp.tm.domain.automatest.TestAutomationServer;
 import org.squashtest.csp.tm.hibernate.mapping.HibernateMappingSpecification
 
 
@@ -37,14 +37,11 @@ class AutomatedTestServerMappingIT extends HibernateMappingSpecification {
 			URL baseUrl = new URL("http://www.squashtest.org/")
 		
 		and :
-			AutomatedTestServer server = new AutomatedTestServer()
-			server.baseURL = baseUrl
-			server.login = "bob"
-			server.password = "robert"
+			TestAutomationServer server = new TestAutomationServer(baseUrl, "bob", "robert")
 			
 		when :
 			persistFixture server
-			def server2 = doInTransaction({it.get(AutomatedTestServer.class, server.id)})
+			def server2 = doInTransaction({it.get(TestAutomationServer.class, server.id)})
 		
 		then :
 			server2.baseURL.equals(server.baseURL)

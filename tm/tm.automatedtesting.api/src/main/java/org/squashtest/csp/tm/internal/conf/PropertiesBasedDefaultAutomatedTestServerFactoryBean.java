@@ -30,7 +30,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.FactoryBean;
 import org.springframework.beans.factory.annotation.Qualifier;
-import org.squashtest.csp.tm.domain.automatest.AutomatedTestServer;
+import org.squashtest.csp.tm.domain.automatest.TestAutomationServer;
 
 /*
  * That class exists because the good old PropertyPlaceholderConfigurer won't work. There is another one 
@@ -38,7 +38,7 @@ import org.squashtest.csp.tm.domain.automatest.AutomatedTestServer;
  * when the property is not set.
  * 
  */
-public class PropertiesBasedDefaultAutomatedTestServerFactoryBean implements FactoryBean<AutomatedTestServer>{
+public class PropertiesBasedDefaultAutomatedTestServerFactoryBean implements FactoryBean<TestAutomationServer>{
 
 	private static final Logger LOGGER = LoggerFactory.getLogger(PropertiesBasedDefaultAutomatedTestServerFactoryBean.class);
 	
@@ -57,11 +57,10 @@ public class PropertiesBasedDefaultAutomatedTestServerFactoryBean implements Fac
 	}
 
 	@Override
-	public AutomatedTestServer getObject() throws Exception {
+	public TestAutomationServer getObject() throws Exception {
 		//there's no point in going through all the singleton synchronizing plumbing
 		//here because there will be only one call to that method.
 		
-		AutomatedTestServer defaultServer = new AutomatedTestServer();
 		
 		
 		//default url
@@ -79,10 +78,8 @@ public class PropertiesBasedDefaultAutomatedTestServerFactoryBean implements Fac
 		String defaultLogin = defaultsProperties.getProperty(DEFAULT_LOGIN_KEY, "");
 		String defaultPass = defaultsProperties.getProperty(DEFAULT_PASSWORD_KEY, "");
 		
-		
-		defaultServer.setBaseURL(baseURL);
-		defaultServer.setLogin(defaultLogin);
-		defaultServer.setPassword(defaultPass);
+
+		TestAutomationServer defaultServer = new TestAutomationServer(baseURL, defaultLogin, defaultPass);
 		
 		if (LOGGER.isInfoEnabled()){
 			LOGGER.info("default automated test server configuration : url = '"+baseURL.toExternalForm()+"', login : '"+defaultLogin+"', password : '"+defaultPass.substring(0,2)+"...'");
@@ -93,7 +90,7 @@ public class PropertiesBasedDefaultAutomatedTestServerFactoryBean implements Fac
 
 	@Override
 	public Class<?> getObjectType() {
-		return AutomatedTestServer.class;
+		return TestAutomationServer.class;
 	}
 
 	@Override
