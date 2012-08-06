@@ -118,7 +118,7 @@ public class UserAdministrationController {
 	public ModelAndView getUserList() {
 		
 		ModelAndView mav = new ModelAndView("page/users/show-users");
-		List<UsersGroup> list = adminService.findAllUsersGroup();
+		List<UsersGroup> list = adminService.findAllUsersGroupOrderedByQualifiedName();
 		mav.addObject("usersGroupList", list);
 		return mav;
 	}
@@ -148,7 +148,7 @@ public class UserAdministrationController {
 	@RequestMapping(value="/{userId}/info", method=RequestMethod.GET)
 	public ModelAndView getUserInfos(@PathVariable long userId){
 		User user = adminService.findUserById(userId);
-		List<UsersGroup> usersGroupList = adminService.findAllUsersGroup();
+		List<UsersGroup> usersGroupList = adminService.findAllUsersGroupOrderedByQualifiedName();
 		ModelAndView mav = new ModelAndView("page/users/user-info");	
 		mav.addObject("usersGroupList", usersGroupList);
 		mav.addObject("user", user);

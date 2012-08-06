@@ -30,8 +30,8 @@ import org.squashtest.csp.tm.internal.repository.UsersGroupDao;
 public class HibernateUsersGroupDao extends HibernateEntityDao<UsersGroup> implements UsersGroupDao{
 
 
-	@Override
-	public List<UsersGroup> findAllGroups() {
+	@Override 
+	public List<UsersGroup> findAllGroupsOrderedByQualifiedName() {
 		return executeListNamedQuery("usersGroup.findAllGroups");
 	}
 

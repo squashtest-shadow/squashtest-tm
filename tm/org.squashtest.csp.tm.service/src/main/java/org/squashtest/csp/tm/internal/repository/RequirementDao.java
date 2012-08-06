@@ -32,12 +32,14 @@ import org.squashtest.csp.tm.domain.requirement.RequirementVersion;
 
 public interface RequirementDao extends EntityDao<Requirement> {
 	/**
-	 * returns all the requirements matching the given ids.
+	 * returns all the requirements matching the given ids, ordered by name
 	 * 
 	 * @param requirementsIds
 	 * @return
+	 * @deprecated not used
 	 */
-	List<Requirement> findAllByIdList(List<Long> requirementsIds);
+	@Deprecated
+	List<Requirement> findAllByIdListOrderedByName(List<Long> requirementsIds);
 
 	/**
 	 * return all the test case directly verifying the requirement <br>
@@ -46,7 +48,7 @@ public interface RequirementDao extends EntityDao<Requirement> {
 	 * @return list of directly associated test-cases
 	 */
 	List<String> findNamesInFolderStartingWith(long folderId, String nameStart);
-
+	
 	List<String> findNamesInLibraryStartingWith(long libraryId, String nameStart);
 
 	@SuppressWarnings("rawtypes")
@@ -91,11 +93,5 @@ public interface RequirementDao extends EntityDao<Requirement> {
 	 */
 	List<RequirementVersion> findVersionsForAll(List<Long> requirementIds);
 	
-	 /* 
-	 * @param requirementLibrarieNodesIds
-	 * @return only requirements and not folders
-	 */
-	List<Requirement> findAllRequirements(List<Long> requirementLibrarieNodesIds);
-
-	
+	 	
 }

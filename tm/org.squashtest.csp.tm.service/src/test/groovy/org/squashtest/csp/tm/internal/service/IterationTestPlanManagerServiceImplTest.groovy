@@ -68,7 +68,7 @@ public class IterationTestPlanManagerServiceImplTest extends Specification {
 		folder1.addContent(folder2)
 		folder2.addContent(tc2)
 
-		nodeDao.findAllByIdList([1L, 5L]) >> [
+		nodeDao.findAllByIds([1L, 5L]) >> [
 			tc3,
 			folder1] //note that we reversed the order here to test the sorting
 		when: "the test cases are added to the campaign"

@@ -35,8 +35,11 @@ import org.squashtest.tm.core.foundation.collection.Paging;
 @Repository
 public class HibernateUserDao extends HibernateEntityDao<User> implements UserDao {
 
+	/**
+	 * @return users with all properties fetched, ordered by login
+	 */
 	@Override
-	public List<User> findAllUsers() {
+	public List<User> findAllUsersOrderedByLogin() {
 		return executeListNamedQuery("user.findAllUsers");
 	}
 
@@ -89,17 +92,6 @@ public class HibernateUserDao extends HibernateEntityDao<User> implements UserDa
 			};
 			return executeListNamedQuery("user.findUsersByLoginList", setParams);
 		}
-	}
-
-	@Override
-	public List<User> findByIdList(final Collection<Long> idList) {
-		SetQueryParametersCallback setParams = new SetQueryParametersCallback() {
-			@Override
-			public void setQueryParameters(Query query) {
-				query.setParameterList("idList", idList);
-			}
-		};
-		return executeListNamedQuery("user.findAllByIdList", setParams);
 	}
 	
 	@Override

@@ -86,14 +86,14 @@ class HibernateRequirementDeletionDaoIT extends DbunitDaoSpecification {
 		deletionDao.removeAttachmentsLists(requirementAttachmentIds)
 		
 		//then find all
-		def resReqVers = versionDao.findAllByIdList([10L, 11L, 12L, 13L, 14L, 15L, 20L, 21L, 22L, 23L, 24L, 25L, 30L, 40L])
-		def resReq = requirementDao.findAllByIdList([10L, 20L, 30L, 40L])
+		def resReqVers = versionDao.findAllByIds([10L, 11L, 12L, 13L, 14L, 15L, 20L, 21L, 22L, 23L, 24L, 25L, 30L, 40L])
+		def resReq = requirementDao.findAllByIdListOrderedByName([10L, 20L, 30L, 40L])
 		
 		String sql_select_resource = "select res_id from resource where res_id in (10, 11, 12, 13, 14, 15, 20, 21, 22, 23, 24, 25, 30, 40)";
 		Query query_select_resource = getSession().createSQLQuery(sql_select_resource);
 		def resources = query_select_resource.list()
 		
-		def resAttachList = attachmentListDao.findAllByIdList([10L, 11L, 12L, 13L, 14L, 15L, 20L, 21L, 22L, 23L, 24L, 25L, 30L, 40L])
+		def resAttachList = attachmentListDao.findAllByIds([10L, 11L, 12L, 13L, 14L, 15L, 20L, 21L, 22L, 23L, 24L, 25L, 30L, 40L])
 		
 		String sql_select_librairy_node = "select rln_id from requirement_library_node where rln_id in (10, 20, 30, 40)";
 		Query query_select_librairy_node = getSession().createSQLQuery(sql_select_librairy_node);

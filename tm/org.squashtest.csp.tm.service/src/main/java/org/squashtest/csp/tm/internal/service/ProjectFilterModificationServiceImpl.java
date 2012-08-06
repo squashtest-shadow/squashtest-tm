@@ -92,7 +92,7 @@ public class ProjectFilterModificationServiceImpl implements ProjectFilterModifi
 	}
 
 	/***
-	 * The method convert the project id list into project list
+	 * The method convert the project id list into project lists
 	 *
 	 * @param givenList
 	 *            the project id list (List<Long>)
@@ -112,7 +112,7 @@ public class ProjectFilterModificationServiceImpl implements ProjectFilterModifi
 	@Override
 	@PostFilter("hasPermission(filterObject, 'READ') or hasRole('ROLE_ADMIN')")
 	public List<Project> getAllProjects() {
-		return projectManagerService.findAll();
+		return projectManagerService.findAllOrderedByName();
 	}
 
 }

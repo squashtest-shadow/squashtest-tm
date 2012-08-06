@@ -121,7 +121,7 @@ public class CampaignTestPlanManagerServiceImpl implements CampaignTestPlanManag
 	@PreAuthorize(CAN_LINK_CAMPAIGN_BY_ID)
 	public void addTestCasesToCampaignTestPlan(final List<Long> testCasesIds, long campaignId) {
 		// nodes are returned unsorted
-		List<TestCaseLibraryNode> nodes = testCaseLibraryNodeDao.findAllByIdList(testCasesIds);
+		List<TestCaseLibraryNode> nodes = testCaseLibraryNodeDao.findAllByIds(testCasesIds);
 
 		// now we resort them according to the order in which the testcaseids were given
 		IdentifiersOrderComparator comparator = new IdentifiersOrderComparator(testCasesIds);
@@ -182,7 +182,7 @@ public class CampaignTestPlanManagerServiceImpl implements CampaignTestPlanManag
 			assignee = userDao.findById(userId);
 		}
 
-		List<CampaignTestPlanItem> items = campaignTestPlanItemDao.findAllByIdList(itemsIds);
+		List<CampaignTestPlanItem> items = campaignTestPlanItemDao.findAllByIds(itemsIds);
 
 		for (CampaignTestPlanItem item : items) {
 			item.setUser(assignee);

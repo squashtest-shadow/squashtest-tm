@@ -28,7 +28,7 @@ import org.squashtest.csp.tm.infrastructure.filter.FilteredCollectionHolder;
 
 public interface ProjectManagerService {
 
-	List<Project> findAll();
+	List<Project> findAllOrderedByName();
 
 	void addProject(Project project);
 

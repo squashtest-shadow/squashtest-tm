@@ -52,9 +52,7 @@ public interface IterationDao extends EntityDao<Iteration> {
 	List<IterationTestPlanItem> findTestPlanFiltered(long iterationId, CollectionSorting filter);
 
 	long countTestPlans(Long iterationId);
-
-	List<Iteration> findAllByIdList(List<Long> iterationIds);
-
+	
 	List<TestSuite> findAllTestSuites(long iterationId);
 
 	void persistIterationAndTestPlan(Iteration iteration);

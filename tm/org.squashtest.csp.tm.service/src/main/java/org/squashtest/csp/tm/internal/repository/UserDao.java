@@ -28,7 +28,7 @@ import org.squashtest.tm.core.foundation.collection.Paging;
 
 public interface UserDao extends EntityDao<User> {
 
-	List<User> findAllUsers();
+	List<User> findAllUsersOrderedByLogin();
 
 	List<User> findAllUsersFiltered(Paging filter);
 
@@ -36,7 +36,5 @@ public interface UserDao extends EntityDao<User> {
 
 	List<User> findUsersByLoginList(List<String> idList);
 
-	List<User> findByIdList(Collection<Long> idList);
-	
 	void checkLoginAvailability(String login) ;
 }

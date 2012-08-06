@@ -117,22 +117,22 @@ public class AdministrationServiceImpl implements AdministrationService {
 
 	@Override
 	@PreAuthorize("hasRole('ROLE_ADMIN')")
-	public List<User> findAllUsers() {
-		return  userDao.findAllUsers();
+	public List<User> findAllUsersOrderedByLogin() {
+		return  userDao.findAllUsersOrderedByLogin();
 	}
 
 	@Override
 	@PreAuthorize("hasRole('ROLE_ADMIN')")
 	public FilteredCollectionHolder<List<User>> findAllUsersFiltered(Paging filter) {
 		List<User> list = userDao.findAllUsersFiltered(filter);
-		long count = findAllUsers().size();
+		long count = userDao.findAll().size();
 		return new FilteredCollectionHolder<List<User>>(count, list);
 	}
 
 	@Override
 	@PreAuthorize("hasRole('ROLE_ADMIN')")
-	public List<UsersGroup> findAllUsersGroup() {
-		return groupDao.findAllGroups();
+	public List<UsersGroup> findAllUsersGroupOrderedByQualifiedName() {
+		return groupDao.findAllGroupsOrderedByQualifiedName();
 	}
 
 	@Override

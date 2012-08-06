@@ -88,7 +88,7 @@ public class VerifyingTestCaseManagerServiceImpl implements VerifyingTestCaseMan
 	public Collection<VerifiedRequirementException> addVerifyingTestCasesToRequirementVersion(List<Long> testCasesIds,
 			long requirementVersionId) {
 		// nodes are returned unsorted
-		List<TestCaseLibraryNode> nodes = testCaseLibraryNodeDao.findAllByIdList(testCasesIds);
+		List<TestCaseLibraryNode> nodes = testCaseLibraryNodeDao.findAllByIds(testCasesIds);
 
 		// now we resort them according to the order in which the testcaseids were given
 		IdentifiersOrderComparator comparator = new IdentifiersOrderComparator(testCasesIds);
@@ -125,7 +125,7 @@ public class VerifyingTestCaseManagerServiceImpl implements VerifyingTestCaseMan
 	@PreAuthorize("hasPermission(#requirementVersionId, 'org.squashtest.csp.tm.domain.requirement.RequirementVersion', 'LINK') or hasRole('ROLE_ADMIN')")
 	public void removeVerifyingTestCasesFromRequirementVersion(List<Long> testCasesIds, long requirementVersionId) {
 
-		List<TestCase> testCases = testCaseDao.findAllByIdList(testCasesIds);
+		List<TestCase> testCases = testCaseDao.findAllByIds(testCasesIds);
 
 		if (!testCases.isEmpty()) {
 			RequirementVersion requirementVersion = requirementVersionDao.findById(requirementVersionId);

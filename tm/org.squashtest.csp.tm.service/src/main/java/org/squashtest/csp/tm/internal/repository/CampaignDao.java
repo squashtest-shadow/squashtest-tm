@@ -45,8 +45,6 @@ public interface CampaignDao extends EntityDao<Campaign> {
 	
 	List<String> findAllNamesInCampaign(long campaignId);
 	
-	List<Campaign> findAllCampaign();
-
 	/**
 	 * Finds all {@link CampaignLibraryNode} which name contains the given token.
 	 * 
@@ -55,9 +53,6 @@ public interface CampaignDao extends EntityDao<Campaign> {
 	 * @return
 	 */
 	List<CampaignLibraryNode> findAllByNameContaining(String tokenInName, boolean groupByProject);
-	
-	List<Campaign> findAllByIdList(List<Long> campaignIds);
-
 	
 	/**
 	 * find all the campaign's iterations, and return all iteration's executions regardless of the campaign test-plan

@@ -192,7 +192,7 @@ public class CustomIterationModificationServiceImpl implements CustomIterationMo
 			+ "or hasRole('ROLE_ADMIN')")
 	public void changeTestPlanPosition(long iterationId, int newPosition, List<Long> itemIds) {
 		Iteration iteration = iterationDao.findById(iterationId);
-		List<IterationTestPlanItem> items = testPlanDao.findAllByIdList(itemIds);
+		List<IterationTestPlanItem> items = testPlanDao.findAllByIds(itemIds);
 
 		iteration.moveTestPlans(newPosition, items);
 	}
@@ -308,7 +308,7 @@ public class CustomIterationModificationServiceImpl implements CustomIterationMo
 
 	@Override
 	public List<Long> removeTestSuites(List<Long> suitesIds) {
-		List<TestSuite> testSuites = suiteDao.findAllByIdList(suitesIds);
+		List<TestSuite> testSuites = suiteDao.findAllByIds(suitesIds);
 		// check
 		checkPermissionsForAll(testSuites, "DELETE");
 		// proceed

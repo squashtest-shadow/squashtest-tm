@@ -20,6 +20,7 @@
  */
 package org.squashtest.csp.tm.internal.repository;
 
+import java.util.Collection;
 import java.util.List;
 
 import org.squashtest.csp.tm.domain.campaign.IterationTestPlanItem;
@@ -34,7 +35,7 @@ public interface TestSuiteDao extends CustomTestSuiteDao {
 
 	TestSuite findById(long testSuiteId);
 
-	List<TestSuite> findAllByIdList(List<Long> suitesIds);
+	List<TestSuite> findAllByIds(Collection<Long> suitesIds);
 
 	void persist(TestSuite suite);
 }

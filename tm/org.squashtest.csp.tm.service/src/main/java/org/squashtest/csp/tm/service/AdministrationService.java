@@ -66,11 +66,11 @@ public interface AdministrationService {
 
 	User findUserById(long userId);
 
-	List<User> findAllUsers();
+	List<User> findAllUsersOrderedByLogin();
 
 	FilteredCollectionHolder<List<User>> findAllUsersFiltered(Paging filter);
 
-	List<UsersGroup> findAllUsersGroup();
+	List<UsersGroup> findAllUsersGroupOrderedByQualifiedName();
 
 	void addUser(User aUser, long groupId, String password);
 

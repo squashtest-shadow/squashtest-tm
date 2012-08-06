@@ -20,6 +20,7 @@
  */
 package org.squashtest.csp.tm.internal.repository.hibernate;
 
+import java.util.Collection;
 import java.util.Collections;
 import java.util.List;
 
@@ -33,10 +34,21 @@ public class HibernateEntityDao<ENTITY_TYPE> extends HibernateDao<ENTITY_TYPE> i
 	public final ENTITY_TYPE findById(long id) {
 		return getEntity(id);
 	}
-
+	
+	/**
+	 * 
+	 * @return a list of all entities found in the database with no restriction 
+	 */
+	@SuppressWarnings("unchecked")
+	public List<ENTITY_TYPE> findAll() {
+			Criteria criteria = currentSession().createCriteria(entityType);
+			return criteria.list();
+		
+	}
+	
 	@SuppressWarnings("unchecked")
 	@Override
-	public List<ENTITY_TYPE> findAllByIdList(List<Long> ids) {
+	public List<ENTITY_TYPE> findAllByIds(Collection<Long> ids) {
 		if (ids.isEmpty()) {
 			return Collections.emptyList();
 		} else {

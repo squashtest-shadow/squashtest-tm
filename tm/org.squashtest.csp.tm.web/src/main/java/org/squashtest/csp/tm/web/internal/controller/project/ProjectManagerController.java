@@ -98,13 +98,13 @@ public class ProjectManagerController {
 	public ModelAndView showProjects() {
 
 		ModelAndView mav = new ModelAndView("page/projects/show-projects");
-		mav.addObject("projects", projectManagerService.findAll());
+		mav.addObject("projects", projectManagerService.findAllOrderedByName());
 		return mav;
 	}
 
 	@RequestMapping(method = RequestMethod.GET, params="format=picker")
 	@ResponseBody public FilterModel getProjectPickerModel() {
-		List<Project> projects = projectManagerService.findAll();
+		List<Project> projects = projectManagerService.findAllOrderedByName();
 		FilterModel model = new FilterModel();
 		
 		for (Project project : projects) {

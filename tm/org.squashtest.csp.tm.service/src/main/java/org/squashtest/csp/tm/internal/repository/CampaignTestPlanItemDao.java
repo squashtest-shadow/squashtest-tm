@@ -26,5 +26,4 @@ import org.squashtest.csp.tm.domain.campaign.CampaignTestPlanItem;
 
 public interface CampaignTestPlanItemDao extends EntityDao<CampaignTestPlanItem>{
 
-	List<CampaignTestPlanItem> findAllByIdList(List<Long> itemsIds);
 }

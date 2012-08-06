@@ -91,7 +91,7 @@ class VerifiedTestCasesManagerServiceImplTest extends Specification {
 		tc5.id >> 5
 		TestCase tc15 = new TestCase()
 		tc5.id >> 15
-		testCaseLibraryNodeDao.findAllByIdList([5, 15]) >> [tc5, tc15]
+		testCaseLibraryNodeDao.findAllByIds([5, 15]) >> [tc5, tc15]
 
 		when:
 		def rejected = service.addVerifyingTestCasesToRequirementVersion([5, 15], 10)
@@ -109,7 +109,7 @@ class VerifiedTestCasesManagerServiceImplTest extends Specification {
 		and:
 		TestCase tc5 = new TestCase()
 		tc5.id >> 5
-		testCaseLibraryNodeDao.findAllByIdList([5]) >> [tc5]
+		testCaseLibraryNodeDao.findAllByIds([5]) >> [tc5]
 
 		and:
 		def requirement = new Requirement(requirementVersion)
@@ -131,7 +131,7 @@ class VerifiedTestCasesManagerServiceImplTest extends Specification {
 		tc5.id >> 5
 		TestCase tc15 = new TestCase()
 		tc15.id >> 15
-		testCaseDao.findAllByIdList([15]) >> [tc15]
+		testCaseDao.findAllByIds([15]) >> [tc15]
 
 		and: " a test case which verifies these requirements"
 		RequirementVersion rv = new RequirementVersion()

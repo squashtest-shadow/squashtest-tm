@@ -26,7 +26,11 @@ import org.squashtest.csp.tm.domain.users.UsersGroup;
 
 public interface UsersGroupDao extends EntityDao<UsersGroup> {
 	
-	List<UsersGroup> findAllGroups();
+	/**
+	 * 
+	 * @return all UsersGroups with no restriction, ordered by {@linkplain UsersGroup#getQualifiedName()}
+	 */
+	List<UsersGroup> findAllGroupsOrderedByQualifiedName();
 	
 }
 

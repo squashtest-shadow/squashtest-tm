@@ -37,6 +37,7 @@ import org.squashtest.csp.tm.domain.campaign.CampaignTestPlanItem;
 import org.squashtest.csp.tm.domain.execution.Execution;
 import org.squashtest.csp.tm.infrastructure.filter.CollectionSorting;
 import org.squashtest.csp.tm.internal.repository.CampaignDao;
+import org.squashtest.csp.tm.internal.repository.EntityDao;
 
 @Repository
 public class HibernateCampaignDao extends HibernateEntityDao<Campaign> implements CampaignDao {
@@ -132,13 +133,7 @@ public class HibernateCampaignDao extends HibernateEntityDao<Campaign> implement
 		};
 		return executeListNamedQuery("campaign.findNamesInLibraryStartingWith", newCallBack1);
 	}
-
-	@SuppressWarnings("unchecked")
-	@Override
-	public List<Campaign> findAllCampaign() {
-		return currentSession().createCriteria(Campaign.class).list();
-	}
-
+	
 	@SuppressWarnings("unchecked")
 	@Override
 	public List<CampaignLibraryNode> findAllByNameContaining(final String tokenInName, boolean groupByProject) {
@@ -160,5 +155,7 @@ public class HibernateCampaignDao extends HibernateEntityDao<Campaign> implement
 		SetQueryParametersCallback callback = idParameter(campaignId);
 		return executeListNamedQuery("campaign.findAllExecutions", callback);
 	}
+
+	
 
 }

@@ -20,9 +20,6 @@
  */
 package org.squashtest.csp.tm.internal.repository.hibernate;
 
-import java.util.List;
-
-import org.hibernate.Query;
 import org.springframework.stereotype.Repository;
 import org.squashtest.csp.tm.domain.campaign.CampaignTestPlanItem;
 import org.squashtest.csp.tm.internal.repository.CampaignTestPlanItemDao;
@@ -31,15 +28,4 @@ import org.squashtest.csp.tm.internal.repository.CampaignTestPlanItemDao;
 public class HibernateCampaignTestPlanItemDao extends HibernateEntityDao<CampaignTestPlanItem>
 		implements CampaignTestPlanItemDao {
 
-	@Override
-	public List<CampaignTestPlanItem> findAllByIdList(final List<Long> itemsIds) {
-		SetQueryParametersCallback setParams = new SetQueryParametersCallback() {
-
-			@Override
-			public void setQueryParameters(Query query) {
-				query.setParameterList("testPlanIds", itemsIds);
-			}
-		};
-		return executeListNamedQuery("campaignTestPlanItem.findAllByIdList", setParams);
-	}
 }

@@ -57,7 +57,6 @@
 		@NamedQuery(name = "testCaseFolder.findAllContentById", query = "select f.content from TestCaseFolder f where f.id = :folderId"),
 		@NamedQuery(name = "testCaseFolder.findTestCasesFolderIdsInFolderContent", query = "select c.id from TestCaseFolder f join f.content c where f.id = :folderId and c.class = TestCaseFolder"),
 		@NamedQuery(name = "testCaseFolder.findByContent", query = "from TestCaseFolder where :content in elements(content)"),
-		@NamedQuery(name = "testCaseFolder.findAllFolders", query = "from TestCaseFolder folder where folder.id in (:folderIds)"),
 		@NamedQuery(name = "testCaseFolder.findParentOf", query = "select f from TestCaseFolder f join f.content c where c.id = :contentId "),
 
 		// Queries on a RequirementFolder
@@ -65,13 +64,12 @@
 		@NamedQuery(name = "requirementFolder.findNamesInLibraryStartingWith", query = "select c.resource.name from RequirementLibrary l join l.rootContent c where l.id = :containerId and c.resource.name like :nameStart"),
 		@NamedQuery(name = "requirementFolder.findAllContentById", query = "select f.content from RequirementFolder f where f.id = :folderId"),
 		@NamedQuery(name = "requirementFolder.findByContent", query = "from RequirementFolder where :content in elements(content)"),
-		@NamedQuery(name = "requirementFolder.findAllFolders", query = "from RequirementFolder folder where folder.id in (:folderIds)"),
 		@NamedQuery(name = "requirementFolder.findParentOf", query = "select f from RequirementFolder f join f.content c where c.id = :contentId "),
 
 		// Queries on a Requirement
 		@NamedQuery(name = "requirement.findNamesInFolderStartingWith", query = "select c.resource.name from RequirementFolder f join f.content c where f.id = :containerId and c.resource.name like :nameStart"),
 		@NamedQuery(name = "requirement.findNamesInLibraryStartingWith", query = "select c.resource.name from RequirementLibrary l join l.rootContent c where l.id = :containerId and c.resource.name like :nameStart"),
-		@NamedQuery(name = "requirement.findAllByIdList", query = "from Requirement r where id in (:requirementsIds) order by r.resource.name asc"),
+		@NamedQuery(name = "requirement.findAllByIdListOrderedByName", query = "from Requirement r where id in (:requirementsIds) order by r.resource.name asc"),
 		@NamedQuery(name = "requirement.findRequirementByName", query = "from RequirementLibraryNode r where r.resource.name like :requirementName order by r.resource.name asc"),
 		@NamedQuery(name = "requirement.findRequirementExportData", query = "select r, rf.resource.name from RequirementFolder rf join rf.content r where r.id in (:rIds)"),
 		@NamedQuery(name = "requirement.findRequirementInExportData", query = "select r.id from Requirement r where r.id in (:rIds)"),
@@ -80,21 +78,18 @@
 		@NamedQuery(name = "requirement.findAllRootContent", query = "select r.id from RequirementLibraryNode r where r.project.id in (:rIds)"),
 		@NamedQuery(name = "requirement.findVersions", query = "select rv from RequirementVersion rv where rv.requirement.id = :requirementId"),
 		@NamedQuery(name = "requirement.findVersionsForAll", query = "select rv from RequirementVersion rv join rv.requirement r where r.id in (:requirementIds)"),
-		@NamedQuery(name = "requirement.findAllRequirements", query = "from Requirement r where r.id in (:requirementsId)"),
 
 		// Queries on CampaignFolder
 		@NamedQuery(name = "campaignFolder.findAllContentById", query = "select f.content from CampaignFolder f where f.id = :folderId"),
 		@NamedQuery(name = "campaignFolder.findByContent", query = "from CampaignFolder where :content in elements(content)"),
 		@NamedQuery(name = "campaignFolder.findNamesInFolderStartingWith", query = "select c.name from CampaignFolder f join f.content c where f.id = :containerId and c.name like :nameStart"),
 		@NamedQuery(name = "campaignFolder.findNamesInLibraryStartingWith", query = "select c.name from CampaignLibrary l join l.rootContent c where l.id = :containerId and c.name like :nameStart"),
-		@NamedQuery(name = "campaignFolder.findAllFolders", query = "from CampaignFolder folder where folder.id in (:folderIds)"),
 		@NamedQuery(name = "campaignFolder.findParentOf", query = "select f from CampaignFolder f join f.content c where c.id = :contentId "),
 		// Queries on Iteration
 		@NamedQuery(name = "iterationDao.findAllInitializedByCampaignId", query = "select c.iterations from Campaign c join c.iterations fetch all properties where c.id = :campaignId"),
 		@NamedQuery(name = "iteration.countTestPlans", query = "select count(tps) from Iteration iter join iter.testPlans tps where iter.id = :iterationId"),
 		@NamedQuery(name = "iteration.findIterationByName", query = "from Iteration i where i.name like :iterationName order by i.name asc"),
 		@NamedQuery(name = "iteration.findTestPlanFiltered", query = "select tp from Iteration it join it.testPlans tp where it.id = :iterationId and index(tp) between :firstIndex and :lastIndex order by index(tp)"),
-		@NamedQuery(name = "iteration.findAllById", query = "from Iteration i where i.id in (:iterationIds)"),
 		@NamedQuery(name = "iteration.findAllTestSuites", query = "select ts from TestSuite ts join ts.iteration i where i.id = :iterationId order by ts.name asc"),
 		@NamedQuery(name = "iteration.findAllExecutions", query = "select exec from Iteration it join it.testPlans tp join tp.executions exec where it.id = :iterationId"),
 
@@ -111,8 +106,7 @@
 		// Queries on TestCase
 		@NamedQuery(name = "testCase.findNamesInFolderStartingWith", query = "select c.name from TestCaseFolder f join f.content c where f.id = :containerId and c.name like :nameStart"),
 		@NamedQuery(name = "testCase.findNamesInLibraryStartingWith", query = "select c.name from TestCaseLibrary l join l.rootContent c where l.id = :containerId and c.name like :nameStart"),
-		@NamedQuery(name = "testCase.findAllByIdList", query = "from TestCase tc where id in (:testCasesIds) order by tc.name asc"),
-		@NamedQuery(name = "testCase.findAllByIdListNonOrdered", query = "from TestCase tc where id in (:testCasesIds)"),
+		@NamedQuery(name = "testCase.findAllByIdListOrderedByName", query = "from TestCase tc where id in (:testCasesIds) order by tc.name asc"),
 		@NamedQuery(name = "testCase.findAllTestSteps", query = "select tcase.steps from TestCase tcase where tcase.id= :testCaseId"),
 		@NamedQuery(name = "testCase.findById", query = "from TestCase tc left join fetch tc.steps left join fetch tc.verifiedRequirementVersions where tc.id = :testCaseId"),
 		@NamedQuery(name = "testCase.findByIdWithInitializedSteps", query = "from TestCase tc left join fetch tc.steps s left join fetch s.attachmentList al left join fetch al.attachments where tc.id = :testCaseId"),
@@ -141,7 +135,6 @@
 		@NamedQuery(name = "campaign.countTestCasesById", query = "select count(tp) from Campaign c join c.testPlan tp where c.id = :campaignId"),
 		@NamedQuery(name = "campaign.findCampaignByName", query = "from CampaignLibraryNode c where c.name like :campaignName order by c.name asc"),
 		@NamedQuery(name = "campaign.findTestPlanFiltered", query = "select tp from Campaign cp join cp.testPlan tp where cp.id = :campaignId and index(tp) between :firstIndex and :lastIndex order by index(tp)"),
-		@NamedQuery(name = "campaign.findAllById", query = "from Campaign c where c.id in (:campaignIds)"),
 		@NamedQuery(name = "campaign.findAllExecutions", query = "select exec from Campaign camp join camp.iterations it join it.testPlans tp join tp.executions exec where camp.id = :campaignId "),
 
 		//Queries on TestStep
@@ -150,8 +143,7 @@
 		@NamedQuery(name = "testStep.findOrderedListById", query = "select step from TestCase testCase inner join testCase.steps step where step.id in (:testStepIds) order by index(step)"),
 
 		//Queries on CampaignTestPlanItem
-		@NamedQuery(name = "campaignTestPlanItem.findAllByIdList", query = "from CampaignTestPlanItem tp where tp.id in (:testPlanIds)"),
-
+		
 		//Queries on Execution
 		@NamedQuery(name = "execution.countStatus", query = "select count(exSteps.executionStatus) from Execution as execution join execution.steps as exSteps where execution.id =:execId and exSteps.executionStatus=:status"),
 		@NamedQuery(name = "execution.countSteps", query = "select count(steps) from Execution ex join ex.steps as steps where ex.id = :executionId"),
@@ -161,9 +153,8 @@
 		@NamedQuery(name = "executionStep.findParentNode", query = "select execution from Execution as execution join execution.steps exSteps where exSteps.id= :childId "),
 
 		//Queries on Project
-		@NamedQuery(name = "project.findAll", query = "from Project fetch all properties order by name"),
+		@NamedQuery(name = "project.findAllOrderedByName", query = "from Project fetch all properties order by name"),
 		@NamedQuery(name = "project.countProjects", query = "select count(p) from Project p"),
-		@NamedQuery(name = "project.findAllByIdList", query = "from Project p where p.id in (:idList)"),
 		@NamedQuery(name = "project.countNonFolderInCampaign", query = "select count(camp) from Campaign camp where camp.project.id = :projectId"),
 		@NamedQuery(name = "project.countNonFolderInTestCase", query = "select count(tc) from  TestCase tc where tc.project.id = :projectId "),
 		@NamedQuery(name = "project.countNonFolderInRequirement", query = "select count(req) from Requirement req where req.project.id = :projectId "),
@@ -188,8 +179,7 @@
 		@NamedQuery(name = "user.findAllUsers", query = "from User fetch all properties order by login"),
 		@NamedQuery(name = "user.findUsersByLoginList", query = "from User fetch all properties where login in (:userIds)"),
 		@NamedQuery(name = "user.findUserByLogin", query = "from User fetch all properties where login = :userLogin"),
-		@NamedQuery(name = "user.findAllByIdList", query = "from User u where u.id in (:idList)"),
-
+		
 		//Queries on RequirementAuditEvent
 		// XXX RequirementVersion
 		@NamedQuery(name = "RequirementAuditEvent.findAllByRequirementVersionIdOrderedByDate", query = "select rae from RequirementAuditEvent rae join rae.requirementVersion r where r.id = ? order by rae.date desc"),

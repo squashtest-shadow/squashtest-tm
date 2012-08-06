@@ -53,14 +53,6 @@ public interface FolderDao<FOLDER extends Folder<NODE>, NODE extends LibraryNode
 	List<Long[]> findPairedContentForList(List<Long> ids);
 
 	/**
-	 * will return a (non-null) list of test case folders given their ids
-	 * 
-	 * @param folderIds
-	 * @return
-	 */
-	List<FOLDER> findAllFolders(List<Long> folderIds);
-
-	/**
 	 * will return the parent folder of the node with the id parameter
 	 * 
 	 * @param id

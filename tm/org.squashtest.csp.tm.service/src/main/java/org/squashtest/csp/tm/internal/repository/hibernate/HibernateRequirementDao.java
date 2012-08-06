@@ -63,25 +63,30 @@ public class HibernateRequirementDao extends HibernateEntityDao<Requirement> imp
 				Restrictions.isEmpty("res.verifyingTestCases"));
 
 	}
-
+	
+	/**
+	 * @deprecated not used
+	 */
+	@Deprecated
 	@Override
-	public List<Requirement> findAllByIdList(final List<Long> requirementsIds) {
-		if (!requirementsIds.isEmpty()) {
-			SetQueryParametersCallback setParams = new SetQueryParametersCallback() {
-				@Override
-				public void setQueryParameters(Query query) {
-					query.setParameterList("requirementsIds", requirementsIds);
-				}
-			};
-			return executeListNamedQuery("requirement.findAllByIdList", setParams);
-
-		} else {
-			return Collections.emptyList();
-
+		public List<Requirement> findAllByIdListOrderedByName(final List<Long> requirementsIds) {
+			if (!requirementsIds.isEmpty()) {
+				SetQueryParametersCallback setParams = new SetQueryParametersCallback() {
+					@Override
+					public void setQueryParameters(Query query) {
+						query.setParameterList("requirementsIds", requirementsIds);
+					}
+				};
+				return executeListNamedQuery("requirement.findAllByIdListOrderedByName", setParams);
+	
+			} else {
+				return Collections.emptyList();
+	
+			}
+	
 		}
-
-	}
-
+	
+	
 	@Override
 	public List<String> findNamesInFolderStartingWith(final long folderId, final String nameStart) {
 		SetQueryParametersCallback newCallBack1 = new SetQueryParametersCallback() {
@@ -395,12 +400,5 @@ public class HibernateRequirementDao extends HibernateEntityDao<Requirement> imp
 
 	}
 
-	@SuppressWarnings("unchecked")
-	@Override
-	public List<Requirement> findAllRequirements(List<Long> requirementLibrarieNodesIds) {
-		Query query = currentSession().getNamedQuery("requirement.findAllRequirements");
-		query.setParameterList("requirementsId", requirementLibrarieNodesIds);
-		return query.list();
-	}
-
+	
 }

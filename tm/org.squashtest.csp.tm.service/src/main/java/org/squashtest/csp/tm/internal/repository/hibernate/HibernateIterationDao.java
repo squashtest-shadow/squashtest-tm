@@ -162,17 +162,6 @@ public class HibernateIterationDao extends HibernateEntityDao<Iteration> impleme
 	}
 
 	@Override
-	public List<Iteration> findAllByIdList(List<Long> iterationIds) {
-		if (iterationIds.isEmpty()) {
-			return Collections.emptyList();
-		} else {
-			Query query = currentSession().getNamedQuery("iteration.findAllById");
-			query.setParameterList("iterationIds", iterationIds, LongType.INSTANCE);
-			return query.list();
-		}
-	}
-
-	@Override
 	public List<TestSuite> findAllTestSuites(final long iterationId) {
 		SetQueryParametersCallback callback = idParameter(iterationId);
 		return executeListNamedQuery("iteration.findAllTestSuites", callback);

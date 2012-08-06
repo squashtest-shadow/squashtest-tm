@@ -112,21 +112,7 @@ public class HibernateCampaignFolderDao extends HibernateEntityDao<CampaignFolde
 
 		return query.list();
 	}
-
-	@Override
-	public List<CampaignFolder> findAllFolders(final List<Long> folderIds) {
-
-		SetQueryParametersCallback newCallBack = new SetQueryParametersCallback() {
-
-			@Override
-			public void setQueryParameters(Query query) {
-				query.setParameterList("folderIds", folderIds, LongType.INSTANCE);
-			}
-		};
-		return executeListNamedQuery("campaignFolder.findAllFolders", newCallBack);
-
-	}
-
+	
 	private List<Long[]> toArrayOfLong(List<Object[]> input) {
 		List<Long[]> result = new ArrayList<Long[]>();
 

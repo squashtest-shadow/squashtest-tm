@@ -20,7 +20,6 @@
  */
 package org.squashtest.csp.tm.internal.repository;
 
-import java.util.Collection;
 import java.util.List;
 
 import org.squashtest.csp.tm.domain.project.Project;
@@ -28,14 +27,11 @@ import org.squashtest.csp.tm.domain.projectfilter.ProjectFilter;
 import org.squashtest.csp.tm.infrastructure.filter.CollectionSorting;
 
 public interface ProjectDao extends EntityDao<Project> {
-
-	List<Project> findAll();
-
+	List<Project> findAllOrderedByName();
+	
 	List<Project> findSortedProjects(CollectionSorting filter);
 
 	long countProjects();
-
-	List<Project> findByIdList(Collection<Long> list);
 
 	long countNonFoldersInProject(long projectId);
 

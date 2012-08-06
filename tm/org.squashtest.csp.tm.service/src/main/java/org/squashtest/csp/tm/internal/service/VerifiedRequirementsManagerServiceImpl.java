@@ -68,7 +68,7 @@ public class VerifiedRequirementsManagerServiceImpl implements VerifiedRequireme
 	@PreAuthorize("hasPermission(#testCaseId, 'org.squashtest.csp.tm.domain.testcase.TestCase' , 'LINK') or hasRole('ROLE_ADMIN')")
 	public Collection<VerifiedRequirementException> addVerifiedRequirementsToTestCase(List<Long> requirementsIds,
 			long testCaseId) {
-		List<RequirementLibraryNode> nodes = requirementLibraryNodeDao.findAllByIdList(requirementsIds);
+		List<RequirementLibraryNode> nodes = requirementLibraryNodeDao.findAllByIds(requirementsIds);
 
 		if (!nodes.isEmpty()) {
 			return doAddVerifiedRequirementsToTestCase(nodes, testCaseId);
@@ -120,7 +120,7 @@ public class VerifiedRequirementsManagerServiceImpl implements VerifiedRequireme
 	@Override
 	@PreAuthorize("hasPermission(#testCaseId, 'org.squashtest.csp.tm.domain.testcase.TestCase' , 'LINK') or hasRole('ROLE_ADMIN')")
 	public void removeVerifiedRequirementVersionsFromTestCase(List<Long> requirementsIds, long testCaseId) {
-		List<RequirementVersion> reqs = requirementVersionDao.findAllByIdList(requirementsIds);
+		List<RequirementVersion> reqs = requirementVersionDao.findAllByIds(requirementsIds);
 
 		if (!reqs.isEmpty()) {
 			TestCase testCase = testCaseDao.findById(testCaseId);

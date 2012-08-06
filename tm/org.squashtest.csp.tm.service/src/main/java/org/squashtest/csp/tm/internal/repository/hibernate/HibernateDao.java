@@ -49,13 +49,14 @@ public abstract class HibernateDao<ENTITY_TYPE> {
 		return sessionFactory.getCurrentSession();
 	}
 
+	
 	@SuppressWarnings("unchecked")
 	public HibernateDao() {
 		super();
 		ParameterizedType type = (ParameterizedType) getClass().getGenericSuperclass();
 		entityType = (Class<ENTITY_TYPE>) type.getActualTypeArguments()[0];
 	}
-
+	
 	@SuppressWarnings("unchecked")
 	protected final ENTITY_TYPE getEntity(long objectId) {
 		return (ENTITY_TYPE) currentSession().get(entityType, objectId);

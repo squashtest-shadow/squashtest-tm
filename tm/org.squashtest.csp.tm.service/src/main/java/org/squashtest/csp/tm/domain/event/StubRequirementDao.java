@@ -20,6 +20,7 @@
  */
 package org.squashtest.csp.tm.domain.event;
 
+import java.util.Collection;
 import java.util.List;
 import java.util.Set;
 
@@ -38,10 +39,10 @@ import org.squashtest.csp.tm.internal.repository.RequirementDao;
 public class StubRequirementDao extends StubEntityDao<Requirement> implements RequirementDao {
 
 	/**
-	 * @see org.squashtest.csp.tm.internal.repository.RequirementDao#findAllByIdList(java.util.List)
+	 * @see org.squashtest.csp.tm.internal.repository.RequirementDao#findAllByIds(java.util.Collection)
 	 */
 	@Override
-	public List<Requirement> findAllByIdList(List<Long> requirementsIds) {
+	public List<Requirement> findAllByIds(Collection<Long> requirementsIds) {
 		return null;
 	}
 
@@ -120,17 +121,18 @@ public class StubRequirementDao extends StubEntityDao<Requirement> implements Re
 		return null;
 	}
 
-	/**
-	 * @see org.squashtest.csp.tm.internal.repository.RequirementDao#findAllRequirements(List)
-	 */
-	@Override
-	public List<Requirement> findAllRequirements(List<Long> requirementLibrarieNodesIds) {
-		return null;
-	}
-	
 	@Override
 	public List<RequirementVersion> findVersionsForAll(List<Long> requirementIds) {
-		// TODO Auto-generated method stub
+		return null;
+	}
+
+	@Override
+	public List<Requirement> findAll() {
+		return null;
+	}
+
+	@Override
+	public List<Requirement> findAllByIdListOrderedByName(List<Long> requirementsIds) {
 		return null;
 	}
 

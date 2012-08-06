@@ -68,12 +68,12 @@ HibernateDao<LIBRARY> implements LibraryDao<LIBRARY, NODE> {
 	}
 
 	/**
-	 * Finds all libraries. Template method which invokes a named query named "{libraryUnquilifiedClassName}.findAll"
-	 * with a parameter named "libraryId"
-	 */
-	@Override
-	public final List<LIBRARY> findAll() {
+	* Finds all libraries. Template method which invokes a named query named "{libraryUnquilifiedClassName}.findAll"
+	* with a parameter named "libraryId"
+	*/
+	public List<LIBRARY> findAll() {
 		return executeListNamedQuery(entityClassName + ".findAll");
+		
 	}
 	
 	@Override

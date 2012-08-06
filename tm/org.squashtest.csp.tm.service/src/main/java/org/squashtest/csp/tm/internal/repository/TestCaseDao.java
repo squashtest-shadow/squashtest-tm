@@ -31,6 +31,7 @@ import org.squashtest.csp.tm.domain.testcase.TestCaseLibraryNode;
 import org.squashtest.csp.tm.domain.testcase.TestCaseSearchCriteria;
 import org.squashtest.csp.tm.domain.testcase.TestStep;
 import org.squashtest.csp.tm.infrastructure.filter.CollectionSorting;
+import org.squashtest.csp.tm.internal.repository.hibernate.HibernateTestCaseDao;
 import org.squashtest.csp.tm.service.CallStepManagerService;
 import org.squashtest.tm.core.foundation.collection.Paging;
 import org.squashtest.tm.core.foundation.collection.PagingAndSorting;
@@ -41,10 +42,8 @@ public interface TestCaseDao extends EntityDao<TestCase> {
 
 	List<ActionTestStep> getTestCaseSteps(Long testCaseId);
 
-	List<TestCase> findAllByIdList(final List<Long> testCaseIds);
-
-	List<TestCase> findAllByIdListNonOrdered(final List<Long> testCaseIds);
-
+	List<TestCase> findAllByIdListOrderedByName(final List<Long> testCaseIds);
+	
 	List<String> findNamesInFolderStartingWith(long folderId, String nameStart);
 
 	List<String> findNamesInLibraryStartingWith(long libraryId, String nameStart);

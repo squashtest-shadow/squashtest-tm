@@ -121,20 +121,7 @@ public class HibernateTestCaseFolderDao extends HibernateEntityDao<TestCaseFolde
 
 		return query.list();
 	}
-
-	@Override
-	public List<TestCaseFolder> findAllFolders(final List<Long> folderIds) {
-
-		SetQueryParametersCallback newCallBack = new SetQueryParametersCallback() {
-
-			@Override
-			public void setQueryParameters(Query query) {
-				query.setParameterList("folderIds", folderIds, LongType.INSTANCE);
-			}
-		};
-		return executeListNamedQuery("testCaseFolder.findAllFolders", newCallBack);
-
-	}
+	
 
 	private List<Long[]> toArrayOfLong(List<Object[]> input) {
 		List<Long[]> result = new ArrayList<Long[]>();

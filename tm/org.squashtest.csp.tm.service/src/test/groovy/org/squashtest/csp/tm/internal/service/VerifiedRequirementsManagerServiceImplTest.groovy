@@ -79,12 +79,12 @@ class VerifiedRequirementsManagerServiceImplTest extends Specification {
 			Resource.set field: "id", of: rv15, to: 15L
 		}
 
-		requirementVersionDao.findAllByIdList([5, 15]) >> [rv5, rv15]
+		requirementVersionDao.findAllByIds([5, 15]) >> [rv5, rv15]
 
 		and:
 		Requirement req5 = new Requirement(rv5)
 		Requirement req15 = new Requirement(rv15)
-		nodeDao.findAllByIdList([5, 15]) >> [req5, req15]
+		nodeDao.findAllByIds([5, 15]) >> [req5, req15]
 
 		when:
 		service.addVerifiedRequirementsToTestCase([5, 15], 10)
@@ -109,12 +109,12 @@ class VerifiedRequirementsManagerServiceImplTest extends Specification {
 			Resource.set field: "id", of: rv15, to: 15L
 		}
 
-		requirementVersionDao.findAllByIdList([5, 15]) >> [rv5, rv15]
+		requirementVersionDao.findAllByIds([5, 15]) >> [rv5, rv15]
 
 		and:
 		Requirement req5 = new Requirement(rv5)
 		Requirement req15 = new Requirement(rv15)
-		nodeDao.findAllByIdList([5, 15]) >> [req5, req15]
+		nodeDao.findAllByIds([5, 15]) >> [req5, req15]
 
 		when:
 		service.addVerifiedRequirementsToTestCase([5, 15], 10)
@@ -134,7 +134,7 @@ class VerifiedRequirementsManagerServiceImplTest extends Specification {
 			Resource.set field: "id", of: req5, to: 5L
 			Resource.set field: "id", of: req15, to: 15L
 		}
-		requirementVersionDao.findAllByIdList([15]) >> [req15]
+		requirementVersionDao.findAllByIds([15]) >> [req15]
 
 		and: "a test case which verifies these requirements"
 		TestCase testCase = new TestCase()

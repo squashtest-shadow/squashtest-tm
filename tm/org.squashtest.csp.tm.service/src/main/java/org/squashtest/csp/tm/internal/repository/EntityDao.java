@@ -20,13 +20,17 @@
  */
 package org.squashtest.csp.tm.internal.repository;
 
+import java.util.Collection;
 import java.util.List;
 
 
 public interface EntityDao<ENTITY_TYPE> {
+	
 	ENTITY_TYPE findById(long id);
 
-	List<ENTITY_TYPE> findAllByIdList(List<Long> id);
+	List<ENTITY_TYPE> findAll();
+	
+	List<ENTITY_TYPE> findAllByIds(Collection<Long> id);
 	
 	void persist(ENTITY_TYPE transientEntity);
 	

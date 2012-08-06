@@ -132,7 +132,7 @@ public class CampaignDeletionHandlerImpl extends AbstractNodeDeletionHandlerImpl
 	 * by Nodes we mean the CampaignLibraryNodes.
 	 */
 	protected void batchDeleteNodes(List<Long> ids) {
-		List<Campaign> campaigns = campaignDao.findAllByIdList(ids);
+		List<Campaign> campaigns = campaignDao.findAllByIds(ids);
 
 		// saving the attachment list for later.
 		List<AttachmentList> attachLists = new LinkedList<AttachmentList>();
@@ -162,7 +162,7 @@ public class CampaignDeletionHandlerImpl extends AbstractNodeDeletionHandlerImpl
 	@Override
 	public List<Long> deleteIterations(List<Long> targetIds) {
 
-		List<Iteration> iterations = iterationDao.findAllByIdList(targetIds);
+		List<Iteration> iterations = iterationDao.findAllByIds(targetIds);
 
 		for (Iteration iteration : iterations) {
 			iteration.getCampaign().removeIteration(iteration);
@@ -176,7 +176,7 @@ public class CampaignDeletionHandlerImpl extends AbstractNodeDeletionHandlerImpl
 
 	@Override
 	public List<Long> deleteSuites(List<Long> testSuites) {
-		List<TestSuite> suites = suiteDao.findAllByIdList(testSuites);
+		List<TestSuite> suites = suiteDao.findAllByIds(testSuites);
 
 		doDeleteSuites(suites);
 

@@ -20,6 +20,7 @@
  */
 package org.squashtest.csp.tm.domain.event;
 
+import java.util.Collection;
 import java.util.List;
 
 import org.squashtest.csp.tm.internal.repository.EntityDao;
@@ -39,10 +40,10 @@ class StubEntityDao<ENTITY> implements EntityDao<ENTITY> {
 	}
 
 	/**
-	 * @see org.squashtest.csp.tm.internal.repository.EntityDao#findAllByIdList(java.util.List)
+	 * @see org.squashtest.csp.tm.internal.repository.EntityDao#findAllByIdd(java.util.Collection)
 	 */
 	@Override
-	public List<ENTITY> findAllByIdList(List<Long> id) {
+	public List<ENTITY> findAllByIds(Collection<Long> id) {
 		return null;
 	}
 
@@ -79,6 +80,11 @@ class StubEntityDao<ENTITY> implements EntityDao<ENTITY> {
 	public void persist(List<ENTITY> transientEntities) {
 		// NOOP
 		
+	}
+
+	@Override
+	public List<ENTITY> findAll() {
+		return null;
 	}
 
 }

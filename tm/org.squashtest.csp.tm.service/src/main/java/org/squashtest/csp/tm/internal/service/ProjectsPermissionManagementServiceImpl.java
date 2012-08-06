@@ -99,7 +99,7 @@ public class ProjectsPermissionManagementServiceImpl implements ProjectsPermissi
 		if (idList == null || idList.isEmpty()) {
 			return null;
 		}
-		return projectDao.findByIdList(idList);
+		return projectDao.findAllByIds(idList);
 	}
 
 	@Override
@@ -155,6 +155,6 @@ public class ProjectsPermissionManagementServiceImpl implements ProjectsPermissi
 		if (idList == null || idList.isEmpty()) {
 			return null;
 		}
-		return userDao.findByIdList(idList);
+		return userDao.findAllByIds(idList);
 	}
 }

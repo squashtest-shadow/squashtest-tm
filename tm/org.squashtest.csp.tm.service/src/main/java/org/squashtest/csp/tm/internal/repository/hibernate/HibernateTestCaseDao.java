@@ -108,31 +108,23 @@ public class HibernateTestCaseDao extends HibernateEntityDao<TestCase> implement
 	private SetQueryParametersCallback idParameter(final long testCaseId) {
 		return new SetIdParameter(testCaseId);
 	}
-
+	
+	/**
+	 * @deprecated not used
+	 */
+	@Deprecated
 	@Override
-	public List<TestCase> findAllByIdList(final List<Long> testCasesIds) {
-		SetQueryParametersCallback setParams = new SetQueryParametersCallback() {
-
-			@Override
-			public void setQueryParameters(Query query) {
-				query.setParameterList("testCasesIds", testCasesIds);
-			}
-		};
-		return executeListNamedQuery("testCase.findAllByIdList", setParams);
-	}
-
-	@Override
-	public List<TestCase> findAllByIdListNonOrdered(final List<Long> testCasesIds) {
-		SetQueryParametersCallback setParams = new SetQueryParametersCallback() {
-
-			@Override
-			public void setQueryParameters(Query query) {
-				query.setParameterList("testCasesIds", testCasesIds);
-			}
-		};
-		return executeListNamedQuery("testCase.findAllByIdListNonOrdered", setParams);
-	}
-
+		public List<TestCase> findAllByIdListOrderedByName(final List<Long> testCasesIds) {
+			SetQueryParametersCallback setParams = new SetQueryParametersCallback() {
+	
+				@Override
+				public void setQueryParameters(Query query) {
+					query.setParameterList("testCasesIds", testCasesIds);
+				}
+			};
+			return executeListNamedQuery("testCase.findAllByIdListOrderedByName", setParams);
+		}
+	
 	@Override
 	public List<String> findNamesInFolderStartingWith(final long folderId, final String nameStart) {
 		SetQueryParametersCallback newCallBack1 = new SetQueryParametersCallback() {

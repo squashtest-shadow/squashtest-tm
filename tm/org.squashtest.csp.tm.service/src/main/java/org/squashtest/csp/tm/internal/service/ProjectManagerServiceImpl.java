@@ -62,8 +62,8 @@ public class ProjectManagerServiceImpl implements ProjectManagerService {
 
 	@PostFilter("hasPermission(filterObject, 'READ') or  hasRole('ROLE_ADMIN')")
 	@Override
-	public List<Project> findAll() {
-		return projectDao.findAll();
+	public List<Project> findAllOrderedByName() {
+		return projectDao.findAllOrderedByName();
 	}
 
 	@Override

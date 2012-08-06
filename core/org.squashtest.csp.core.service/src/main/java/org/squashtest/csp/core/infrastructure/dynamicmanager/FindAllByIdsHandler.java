@@ -31,11 +31,11 @@ import org.hibernate.Criteria;
 import org.hibernate.SessionFactory;
 import org.hibernate.criterion.Restrictions;
 /**
- * {@link DynamicComponentInvocationHandler} which handles <code>List<ENTITY> findAllByIdList(Collection<Long> id)</code> method. Fetches all entities matching the ids of a collection.
+ * {@link DynamicComponentInvocationHandler} which handles <code>List<ENTITY> findAllByIds(Collection<Long> id)</code> method. Fetches all entities matching the ids of a collection.
  * @author Gregory Fouquet
  *
  */
-public class FindAllByIdListHandler<ENTITY> implements DynamicComponentInvocationHandler { // NOSONAR : I dont choose what JDK interfaces throw
+public class FindAllByIdsHandler<ENTITY> implements DynamicComponentInvocationHandler { // NOSONAR : I dont choose what JDK interfaces throw
 	private final Class<ENTITY> entityType;
 	private final SessionFactory sessionFactory;
 
@@ -43,7 +43,7 @@ public class FindAllByIdListHandler<ENTITY> implements DynamicComponentInvocatio
 	 * @param entityType
 	 * @param sessionFactory
 	 */
-	public FindAllByIdListHandler(@NotNull Class<ENTITY> entityType, @NotNull SessionFactory sessionFactory) {
+	public FindAllByIdsHandler(@NotNull Class<ENTITY> entityType, @NotNull SessionFactory sessionFactory) {
 		super();
 		this.entityType = entityType;
 		this.sessionFactory = sessionFactory;
@@ -80,7 +80,7 @@ public class FindAllByIdListHandler<ENTITY> implements DynamicComponentInvocatio
 	}
 
 	public boolean methodNameMatchesMethodPattern(Method method) {
-		return "findAllByIdList".equals(method.getName());
+		return "findAllByIds".equals(method.getName());
 	}
 
 	private boolean methodReturnTypeMatchesMethodPattern(Method method) {
