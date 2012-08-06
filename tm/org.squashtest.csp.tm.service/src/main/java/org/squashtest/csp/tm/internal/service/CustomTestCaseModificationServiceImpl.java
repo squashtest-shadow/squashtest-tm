@@ -41,7 +41,6 @@ import org.squashtest.csp.tm.domain.testcase.TestCase;
 import org.squashtest.csp.tm.domain.testcase.TestCaseFolder;
 import org.squashtest.csp.tm.domain.testcase.TestCaseLibraryNode;
 import org.squashtest.csp.tm.domain.testcase.TestStep;
-import org.squashtest.csp.tm.infrastructure.filter.CollectionFilter;
 import org.squashtest.csp.tm.infrastructure.filter.CollectionSorting;
 import org.squashtest.csp.tm.infrastructure.filter.FilteredCollectionHolder;
 import org.squashtest.csp.tm.internal.repository.RequirementVersionDao;
@@ -52,6 +51,7 @@ import org.squashtest.csp.tm.service.CustomTestCaseModificationService;
 import org.squashtest.csp.tm.service.TestCaseImportanceManagerService;
 import org.squashtest.csp.tm.service.VerifiedRequirement;
 import org.squashtest.tm.core.foundation.collection.PagedCollectionHolder;
+import org.squashtest.tm.core.foundation.collection.Paging;
 import org.squashtest.tm.core.foundation.collection.PagingAndSorting;
 import org.squashtest.tm.core.foundation.collection.PagingBackedPagedCollectionHolder;
 
@@ -200,7 +200,7 @@ public class CustomTestCaseModificationServiceImpl implements CustomTestCaseModi
 	@Override
 	@PreAuthorize("hasPermission(#testCaseId, 'org.squashtest.csp.tm.domain.testcase.TestCase' , 'READ') or hasRole('ROLE_ADMIN')")
 	public FilteredCollectionHolder<List<TestStep>> findStepsByTestCaseIdFiltered(long testCaseId,
-			CollectionFilter filter) {
+			Paging filter) {
 		List<TestStep> list = testCaseDao.findAllStepsByIdFiltered(testCaseId, filter);
 		long count = findStepsByTestCaseId(testCaseId).size();
 		return new FilteredCollectionHolder<List<TestStep>>(count, list);

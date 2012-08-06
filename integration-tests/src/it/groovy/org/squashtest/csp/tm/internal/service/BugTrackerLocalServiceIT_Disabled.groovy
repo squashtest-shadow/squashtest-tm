@@ -162,11 +162,7 @@ class BugTrackerLocalServiceIT_Disabled extends DbunitServiceSpecification  {
 			   }
 			
 
-			   public int getMaxNumberOfItems(){
-				   return 10;
-			   }
-
-			   public int getPageSize(){
+			    public int getPageSize(){
 				   return 10;
 			   }
 			   
@@ -209,11 +205,6 @@ class BugTrackerLocalServiceIT_Disabled extends DbunitServiceSpecification  {
 				   return 0;
 			   }
 			
-
-			   public int getMaxNumberOfItems(){
-				   return 10;
-			   }
-	
 			   public int getPageSize(){
 				   return 10;
 			   }

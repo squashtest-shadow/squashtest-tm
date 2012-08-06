@@ -134,21 +134,16 @@ class HibernateTestCaseDaoIT extends DbunitDaoSpecification {
 		CollectionSorting sorting = new CollectionSorting() {
 
 			@Override
-			public int getMaxNumberOfItems() {
-				return 10;
-			}
-
-			@Override
 			public int getFirstItemIndex() {
 				return 0;
 			}
 
 			@Override
 			public int getPageSize() {
-				return 0;
+				return 10;
 			}
 
-						@Override
+			@Override
 			public String getSortingOrder() {
 				return "asc";
 			}
