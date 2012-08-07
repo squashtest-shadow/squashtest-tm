@@ -21,6 +21,7 @@
 package org.squashtest.csp.tm.internal.repository;
 
 import org.squashtest.csp.tm.domain.automatest.TestAutomationProject;
+import org.squashtest.csp.tm.domain.automatest.TestAutomationServer;
 
 public interface TestAutomationProjectDao {
 	
@@ -33,6 +34,14 @@ public interface TestAutomationProjectDao {
 	 */
 	void persist(TestAutomationProject newProject);
 	
+	/**
+	 * Will persist a TestAutomationProject if really new (read {@link #persist(TestAutomationProject)} for more on this), or return the existing instance
+	 * if not. In all cases it returns the persisted project : this returned instance should replace the one supplied as argument in the client code.
+	 * 
+	 * @param newProject
+	 * @return a persistent version of that project.
+	 */
+	TestAutomationProject uniquePersist(TestAutomationProject newProject);
 	
 	/**
 	 * 

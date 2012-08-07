@@ -29,10 +29,11 @@ import javax.inject.Inject;
 import org.springframework.stereotype.Service;
 import org.squashtest.csp.tm.domain.automatest.TestAutomationProject;
 import org.squashtest.csp.tm.domain.automatest.TestAutomationServer;
+import org.squashtest.csp.tm.internal.repository.TestAutomationProjectDao;
 import org.squashtest.csp.tm.internal.repository.TestAutomationServerDao;
 import org.squashtest.csp.tm.service.TestAutomationManagementService;
 
-import squashtm.automatest.api.TestAutomationConnector;
+import squashtm.automatest.spi.TestAutomationConnector;
 
 
 
@@ -43,9 +44,11 @@ public class TestAutomationManagementServiceImpl implements TestAutomationManage
 	private TestAutomationServerDao serverDao;
 	
 	@Inject
+	private TestAutomationProjectDao projectDao;
+	
+	@Inject
 	private TestAutomationConnectorRegistry connectorRegistry;
-	
-	
+
 	
 	@Override
 	public Collection<TestAutomationProject> listProjectsOnServer(TestAutomationServer server) {
@@ -57,14 +60,13 @@ public class TestAutomationManagementServiceImpl implements TestAutomationManage
 		Collection<TestAutomationProject> projectsWithServer = new ArrayList<TestAutomationProject>();
 		
 		for (TestAutomationProject proj : projects){
-			projectsWithServer.add(proj.setServer(server));
+			projectsWithServer.add(proj.newWithServer(server));
 		}
 		
 		return projectsWithServer;
 	}
 	
 	
-	// TODO for now the kind is hardcoded to "jenkins". We can easily change that later.
 	@Override
 	public Collection<TestAutomationProject> listProjectsOnServer(URL serverURL, String login, String password) {
 		
@@ -76,9 +78,17 @@ public class TestAutomationManagementServiceImpl implements TestAutomationManage
 
 	
 	@Override
-	public void bindAutomatedProject(long TMprojectId, TestAutomationProject remoteProject) {
-		// TODO Auto-generated method stub
+	public TestAutomationProject persistNewProject(TestAutomationProject newProject) {
 		
+		TestAutomationServer soonPersistedServer = serverDao.findByExample(newProject.getServer());
+		
+		if (soonPersistedServer==null){
+			soonPersistedServer = serverDao.uniquePersist(newProject.getServer());
+		}
+		
+		TestAutomationProject soonPersistedProject = newProject.newWithServer(soonPersistedServer);
+		
+		return projectDao.uniquePersist(soonPersistedProject);
 	}
 
 }

@@ -647,6 +647,8 @@
 		<createIndex tableName="TEST_AUTOMATION_SERVER" indexName="idx_autotest_server">
 			<column name="SERVER_ID" />
 		</createIndex>
+		
+		<addUniqueConstraint tableName="TEST_AUTOMATION_SERVER" columnNames="BASE_URL, LOGIN, PASSWORD, KIND" constraintName="uni_autotest_server"/>
 
 	</changeSet>
 
@@ -675,6 +677,8 @@
 		<createIndex tableName="TEST_AUTOMATION_PROJECT" indexName="idx_auto_test_project">
 			<column name="PROJECT_ID" />
 		</createIndex>
+		
+		<addUniqueConstraint tableName="TEST_AUTOMATION_PROJECT" columnNames="NAME, SERVER_ID" constraintName="uni_autotest_project"/>
 
 	</changeSet>
 

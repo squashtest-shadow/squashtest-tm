@@ -27,10 +27,10 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Component;
 
-import squashtm.automatest.api.TestAutomationConnector;
+import squashtm.automatest.spi.TestAutomationConnector;
 
 
-@Component
+@Component("squashtest.automatset.connector-registry")
 public class TestAutomationConnectorRegistry {
 
 	private static final Logger LOGGER = LoggerFactory.getLogger(TestAutomationConnectorRegistry.class);
@@ -73,7 +73,7 @@ public class TestAutomationConnectorRegistry {
 	 *
 	 * @param provider
 	 */
-	public void unregisterProvider(TestAutomationConnector provider, Map serviceProperties) {
+	public void unregisterConnector(TestAutomationConnector provider, Map serviceProperties) {
 		String kind = provider.getConnectorKind();
 
 		LOGGER.info("Unregistering Connector provider for test automation platforms of kind '{}'", kind);

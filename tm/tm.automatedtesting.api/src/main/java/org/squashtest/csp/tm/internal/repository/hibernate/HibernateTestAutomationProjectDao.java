@@ -51,6 +51,18 @@ public class HibernateTestAutomationProjectDao implements
 		}
 	}
 	
+	@Override
+	public TestAutomationProject uniquePersist(TestAutomationProject newProject) {
+		TestAutomationProject reproj = findByExample(newProject);
+		if (reproj != null){
+			return reproj;
+		}
+		else{
+			sessionFactory.getCurrentSession().persist(newProject);
+			return newProject;
+		}
+	}
+	
 	
 	@Override
 	public TestAutomationProject findById(Long id) {

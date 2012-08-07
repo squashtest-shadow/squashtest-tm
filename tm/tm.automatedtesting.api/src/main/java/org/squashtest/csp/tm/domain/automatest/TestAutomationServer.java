@@ -119,20 +119,20 @@ public class TestAutomationServer {
 	}
 	
 	
-	public TestAutomationServer setBaseURL(URL baseURL){
+	public TestAutomationServer newWithURL(URL baseURL){
 		return new TestAutomationServer(baseURL, login, password, kind);
 	}
 	
-	public TestAutomationServer setLogin(String login){
+	public TestAutomationServer newWithLogin(String login){
 		return new TestAutomationServer(baseURL, login, password, kind);
 	}
 	
-	public TestAutomationServer setPassword(String password){
+	public TestAutomationServer newWithPassword(String password){
 		return new TestAutomationServer(baseURL, login, password, kind);
 	}
 	
 	
-	public TestAutomationServer setKind(String kind){
+	public TestAutomationServer newWithKind(String kind){
 		return new TestAutomationServer(baseURL, login, password, kind);
 	}
 

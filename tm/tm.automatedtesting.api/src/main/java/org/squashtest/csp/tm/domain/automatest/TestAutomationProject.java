@@ -75,11 +75,11 @@ public class TestAutomationProject {
 		return server;
 	}
 
-	public TestAutomationProject setName(String name){
+	public TestAutomationProject newWithName(String name){
 		return new TestAutomationProject(name, server);
 	}
 	
-	public TestAutomationProject setServer(TestAutomationServer server){
+	public TestAutomationProject newWithServer(TestAutomationServer server){
 		return new TestAutomationProject(name, server);
 	}
 	

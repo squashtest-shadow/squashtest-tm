@@ -21,7 +21,7 @@
 package org.squashtest.csp.tm.internal.service
 
 import spock.lang.Specification;
-import squashtm.automatest.api.TestAutomationConnector;
+import squashtm.automatest.spi.TestAutomationConnector;
 
 import org.squashtest.csp.tm.domain.automatest.TestAutomationProject
 import org.squashtest.csp.tm.domain.automatest.TestAutomationServer;

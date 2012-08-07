@@ -56,12 +56,20 @@ public interface TestAutomationManagementService {
 	
 	
 	/**
-	 * <p>Will persist the supplied remote TestAutomationProject and bind it to a TM project
+	 * <p>Will persist the supplied remote TestAutomationProject. The argument must be attached to a {@link TestAutomationServer} 
+	 * and return it using {@link TestAutomationProject#getServer()}.</p> 
+	 * 
+	 * <p>If the {@link TestAutomationServer} that the project is bound wasn't registered in the database yet it will be persisted too. 
+	 * 	a TestAutomationServer is considered unknown if there are no TestAutomationServer in the database having the same exact properties.
+	 * </p>
+	 * 
+	 * <p>That method returns the persisted instance of TestAutomationProject, that should be used in place of the one supplied in arguments 
+	 * from now on by the client code.</p>
 	 * 
 	 * @param remoteProject
 	 * @param TMprojectId
 	 */
 	//@PreAuthorize(some expression) TODO : harass someone who can make specs for that.
-	void bindAutomatedProject(long TMprojectId, TestAutomationProject remoteProject);
+	TestAutomationProject persistNewProject(TestAutomationProject newProject); 
 	
 }

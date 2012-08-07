@@ -39,4 +39,5 @@
 	
 	<bean id="tm.automated.test.server.default" class="org.squashtest.csp.tm.domain.automatest.AutomatedTestServer" />
 
+
 </beans>

@@ -29,4 +29,16 @@
 
 	<osgix:cm-properties id="squashtest.tm.ta.defaults"  persistent-id="tm.test.automation.server" /> 
 	
+	
+	<!--  
+		the listener here is declared using @Component 
+		(see class org.squashtest.csp.tm.internal.service.TestAutomationConnectorRegistry)
+	 -->
+	<osgi:list interface="squashtm.automatest.spi.TestAutomationConnector">
+		<osgi:listener ref="squashtest.automatset.connector-registry"
+					   bind-method="registerConnector" 
+					   unbind-method="unregisterConnector" />
+	</osgi:list>
+
+	
 </beans>
