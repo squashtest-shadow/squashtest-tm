@@ -35,7 +35,8 @@ import javax.persistence.NamedQuery;
  * 
  * Like every entities in the package org.squashtest.csp.tm.domain.automatest, these are immutable : modifying servers, projects etc 
  * could break existing data. For instance changing the URL of a server, or its kind, means that a new instance of AutomatedTestServer should 
- * be persisted instead of altering the existing one. In other words, our objects here are immutable.
+ * be persisted instead of altering the existing one. In other words, our objects here are immutable. When a setter is used, a new instance of 
+ * this will be returned, with a null ID because this instance is still unknown.
  * 
  * 
  * @author bsiri
@@ -118,16 +119,27 @@ public class TestAutomationServer {
 	}
 	
 	
+	public TestAutomationServer setBaseURL(URL baseURL){
+		return new TestAutomationServer(baseURL, login, password, kind);
+	}
+	
+	public TestAutomationServer setLogin(String login){
+		return new TestAutomationServer(baseURL, login, password, kind);
+	}
+	
+	public TestAutomationServer setPassword(String password){
+		return new TestAutomationServer(baseURL, login, password, kind);
+	}
 	
 	
+	public TestAutomationServer setKind(String kind){
+		return new TestAutomationServer(baseURL, login, password, kind);
+	}
 
 	public TestAutomationServer(){
 		
 	}
 	
-	
-	
-
 
 	public TestAutomationServer(Long id, URL baseURL, String login,
 			String password) {

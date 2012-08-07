@@ -40,6 +40,16 @@ public interface TestAutomationServerDao {
 	
 	
 	/**
+	 * Will persist a TestAutomationServer if really new (read {@link #persist(TestAutomationServer)} for more on this), or return the existing instance
+	 * if not. In all cases it returns the persisted server : this returned instance should replace the one supplied as argument in the client code.
+	 * 
+	 * @param server
+	 * @return a persistent version of that server.
+	 */
+	TestAutomationServer uniquePersist(TestAutomationServer server);
+	
+	
+	/**
 	 * 
 	 *  
 	 * @param id

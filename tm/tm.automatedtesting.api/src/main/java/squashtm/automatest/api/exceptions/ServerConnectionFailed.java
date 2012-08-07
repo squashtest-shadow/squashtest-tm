@@ -18,10 +18,31 @@
  *     You should have received a copy of the GNU Lesser General Public License
  *     along with this software.  If not, see <http://www.gnu.org/licenses/>.
  */
-/**
- * This is the java binding of the REST API used by Squash TM 
- * to receive execution status update messages.
- * See the {@link org.squashtest.tm.api.execution.dto} 
- * package for the data model.
- */
-package org.squashtest.tm.api.execution;
+package squashtm.automatest.api.exceptions;
+
+public class ServerConnectionFailed extends TestAutomationException {
+
+	/**
+	 * 
+	 */
+	private static final long serialVersionUID = -8208900275653805118L;
+
+	public ServerConnectionFailed() {
+		super();
+	}
+
+	public ServerConnectionFailed(String arg0, Throwable arg1) {
+		super(arg0, arg1);
+	}
+
+	public ServerConnectionFailed(String arg0) {
+		super(arg0);
+	}
+
+	public ServerConnectionFailed(Throwable arg0) {
+		super(arg0);
+	}
+	
+	
+
+}

@@ -53,6 +53,21 @@ public class HibernateTestAutomationServerDao implements
 		}
 	}
 
+
+
+	@Override
+	public TestAutomationServer uniquePersist(TestAutomationServer server) {
+		TestAutomationServer reserv = findByExample(server);
+		if (reserv != null){
+			return reserv;
+		}
+		else{
+			sessionFactory.getCurrentSession().persist(server);
+			return server;
+		}
+		
+	}
+	
 	
 	@Override
 	public TestAutomationServer findById(Long id) {
@@ -88,5 +103,6 @@ public class HibernateTestAutomationServerDao implements
 		query.setParameter("serverId", serverId);
 		return (List<TestAutomationProject>)query.list();		
 	}
+
 
 }

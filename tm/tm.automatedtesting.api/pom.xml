@@ -47,7 +47,13 @@
 		
 		
 		<!-- ====== /SPRING STUFFS ====== -->
-		
+		<dependency>
+			<groupId>${project.groupId}</groupId>
+			<artifactId>spock-test-dependencies</artifactId>
+			<version>${project.version}</version>
+			<type>pom</type>
+			<scope>test</scope>
+		</dependency>		
 	</dependencies>
 
 
@@ -59,8 +65,25 @@
 				<directory>${project.basedir}/src/main/resources</directory>
 			</resource>
 		</resources>
+		
+		<testSourceDirectory>src/test/groovy</testSourceDirectory>
 
 		<plugins>
+		
+			<!--  compile  -->
+			<plugin>
+				<groupId>org.apache.maven.plugins</groupId>
+				<artifactId>maven-compiler-plugin</artifactId>
+			</plugin>
+			
+			<!-- tests -->
+			<plugin>
+				<groupId>org.apache.maven.plugins</groupId>
+				<artifactId>maven-surefire-plugin</artifactId>
+			</plugin>			
+		
+		
+			<!--  package -->
 			<plugin>
 				<groupId>org.apache.felix</groupId>
 				<artifactId>maven-bundle-plugin</artifactId>

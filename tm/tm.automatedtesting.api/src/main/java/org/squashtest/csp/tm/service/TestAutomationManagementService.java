@@ -21,7 +21,7 @@
 package org.squashtest.csp.tm.service;
 
 import java.net.URL;
-import java.util.List;
+import java.util.Collection;
 
 import org.springframework.transaction.annotation.Transactional;
 import org.squashtest.csp.tm.domain.automatest.TestAutomationProject;
@@ -44,7 +44,15 @@ public interface TestAutomationManagementService {
 	 * @param password
 	 */
 	//no security needed here : the real endpoint of that operation is a remote test automation server, not Squash TM.
-	List<TestAutomationProject> listProjectsOnServer(URL serverURL, String login, String password);
+	Collection<TestAutomationProject> listProjectsOnServer(URL serverURL, String login, String password);
+	
+	/**
+	 * see {@link #listProjectsOnServer(URL, String, String)}, using a {@link TestAutomationServer} for argument
+	 * 
+	 * @param server
+	 * @return
+	 */
+	Collection<TestAutomationProject> listProjectsOnServer(TestAutomationServer server);
 	
 	
 	/**

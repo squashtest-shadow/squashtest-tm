@@ -19,7 +19,9 @@
  *     along with this software.  If not, see <http://www.gnu.org/licenses/>.
  */
 /**
- * This is the java binding of the data model 
- * of execution update messages received by Squash TM.
+ * This is the java binding of the REST API used by Squash TM 
+ * to receive execution status update messages.
+ * See the {@link squashtm.remoteapi.execution.dto} 
+ * package for the data model.
  */
-package org.squashtest.tm.api.execution.dto;
+package squashtm.remoteapi.execution;

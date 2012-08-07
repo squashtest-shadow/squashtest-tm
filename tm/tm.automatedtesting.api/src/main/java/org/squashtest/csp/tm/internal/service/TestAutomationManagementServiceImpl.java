@@ -21,14 +21,18 @@
 package org.squashtest.csp.tm.internal.service;
 
 import java.net.URL;
-import java.util.List;
+import java.util.ArrayList;
+import java.util.Collection;
 
 import javax.inject.Inject;
 
 import org.springframework.stereotype.Service;
 import org.squashtest.csp.tm.domain.automatest.TestAutomationProject;
+import org.squashtest.csp.tm.domain.automatest.TestAutomationServer;
 import org.squashtest.csp.tm.internal.repository.TestAutomationServerDao;
 import org.squashtest.csp.tm.service.TestAutomationManagementService;
+
+import squashtm.automatest.api.TestAutomationConnector;
 
 
 
@@ -38,16 +42,41 @@ public class TestAutomationManagementServiceImpl implements TestAutomationManage
 	@Inject
 	private TestAutomationServerDao serverDao;
 	
+	@Inject
+	private TestAutomationConnectorRegistry connectorRegistry;
+	
+	
+	
 	@Override
-	public List<TestAutomationProject> listProjectsOnServer(URL serverURL,
-			String login, String password) {
-		// TODO Auto-generated method stub
-		return null;
+	public Collection<TestAutomationProject> listProjectsOnServer(TestAutomationServer server) {
+		
+		TestAutomationConnector connector = connectorRegistry.getConnectorForKind(server.getKind());
+		
+		Collection<TestAutomationProject> projects = connector.listProjectsOnServer(server);
+
+		Collection<TestAutomationProject> projectsWithServer = new ArrayList<TestAutomationProject>();
+		
+		for (TestAutomationProject proj : projects){
+			projectsWithServer.add(proj.setServer(server));
+		}
+		
+		return projectsWithServer;
+	}
+	
+	
+	// TODO for now the kind is hardcoded to "jenkins". We can easily change that later.
+	@Override
+	public Collection<TestAutomationProject> listProjectsOnServer(URL serverURL, String login, String password) {
+		
+		TestAutomationServer server = new TestAutomationServer(serverURL, login, password);
+		
+		return listProjectsOnServer(server);
+		
 	}
 
+	
 	@Override
-	public void bindAutomatedProject(long TMprojectId,
-			TestAutomationProject remoteProject) {
+	public void bindAutomatedProject(long TMprojectId, TestAutomationProject remoteProject) {
 		// TODO Auto-generated method stub
 		
 	}
