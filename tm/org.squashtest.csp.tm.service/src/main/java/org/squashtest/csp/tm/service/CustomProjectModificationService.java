@@ -23,6 +23,7 @@ package org.squashtest.csp.tm.service;
 import java.util.List;
 
 import org.squashtest.csp.core.security.acls.PermissionGroup;
+import org.squashtest.csp.tm.domain.automatest.TestAutomationProject;
 import org.squashtest.csp.tm.domain.project.AdministrableProject;
 import org.squashtest.csp.tm.domain.project.Project;
 import org.squashtest.csp.tm.domain.users.User;
@@ -47,4 +48,11 @@ public interface CustomProjectModificationService {
 
 	User findUserByLogin(String userLogin);
 
+	/**
+	 * WYSIWYG. Warning : the argument must be a persisted instance of {@link TestAutomationProject}
+	 * 
+	 * @param TMprojectId
+	 * @param TAproject
+	 */
+	void bindTestAutomationProject(long TMprojectId, TestAutomationProject TAproject);
 }

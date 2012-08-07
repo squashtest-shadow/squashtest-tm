@@ -31,6 +31,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.squashtest.csp.core.security.acls.PermissionGroup;
 import org.squashtest.csp.tm.domain.CannotDeleteProjectException;
+import org.squashtest.csp.tm.domain.automatest.TestAutomationProject;
 import org.squashtest.csp.tm.domain.project.AdministrableProject;
 import org.squashtest.csp.tm.domain.project.Project;
 import org.squashtest.csp.tm.domain.users.User;
@@ -120,4 +121,12 @@ public class CustomProjectModificationServiceImpl implements CustomProjectModifi
 	public User findUserByLogin(String userLogin) {
 		return userDao.findUserByLogin(userLogin);
 	}
+	
+	
+	@Override
+	@PreAuthorize("hasPermission(#projectId, 'org.squashtest.csp.tm.domain.project.Project', 'MANAGEMENT') or hasRole('ROLE_ADMIN')")
+	public void bindTestAutomationProject(long TMprojectId, TestAutomationProject TAproject) {
+		projectDao.findById(TMprojectId).bindAutomatedTestProject(TAproject);
+	}
+	
 }

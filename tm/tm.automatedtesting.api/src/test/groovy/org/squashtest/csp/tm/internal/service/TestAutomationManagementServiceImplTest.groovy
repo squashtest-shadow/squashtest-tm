@@ -74,8 +74,6 @@ class TestAutomationManagementServiceImplTest extends Specification {
 			
 			//the elements have the specified names :
 			res.collect{it.name} == ["proj1", "proj2", "proj3"]
-			
-		
 	}
 		
 }

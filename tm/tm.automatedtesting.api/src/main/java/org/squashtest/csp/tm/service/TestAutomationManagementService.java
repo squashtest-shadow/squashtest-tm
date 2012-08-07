@@ -56,20 +56,32 @@ public interface TestAutomationManagementService {
 	
 	
 	/**
-	 * <p>Will persist the supplied remote TestAutomationProject. The argument must be attached to a {@link TestAutomationServer} 
-	 * and return it using {@link TestAutomationProject#getServer()}.</p> 
+	 * <p>
+	 * 	Will persist the supplied remote TestAutomationProject. The argument must be attached to a {@link TestAutomationServer} 
+	 * 	and return it using {@link TestAutomationProject#getServer()}.
+	 * </p> 
 	 * 
-	 * <p>If the {@link TestAutomationServer} that the project is bound wasn't registered in the database yet it will be persisted too. 
-	 * 	a TestAutomationServer is considered unknown if there are no TestAutomationServer in the database having the same exact properties.
+	 * <p>
+	 * 	The service will check if both the project and the server are unknown prior to persist it (them). A Server is considered unknown 
+	 * 	if there are no such server in the database having the same exact properties. Same goes for the projects : a project is unknown
+	 *  if there are no such project in the database having the same exact properties (including server instance).
+	 *  Their ID won't be considered in the process.
 	 * </p>
 	 * 
-	 * <p>That method returns the persisted instance of TestAutomationProject, that should be used in place of the one supplied in arguments 
-	 * from now on by the client code.</p>
+	 * <p>
+	 * 	Whenever one or both is (are) known from the database the persistent instance will be used in place of the argument.
+	 * In other words transient arguments will be merged if possible with persistent arguments.
+	 * </p>
+	 * 
+	 * <p>
+	 * 	That method returns the persisted instance of TestAutomationProject, that should be used in place of the one supplied in arguments 
+	 * 	from now on by the client code.
+	 * </p>
 	 * 
 	 * @param remoteProject
 	 * @param TMprojectId
 	 */
 	//@PreAuthorize(some expression) TODO : harass someone who can make specs for that.
-	TestAutomationProject persistNewProject(TestAutomationProject newProject); 
+	TestAutomationProject registerNewProject(TestAutomationProject newProject); 
 	
 }

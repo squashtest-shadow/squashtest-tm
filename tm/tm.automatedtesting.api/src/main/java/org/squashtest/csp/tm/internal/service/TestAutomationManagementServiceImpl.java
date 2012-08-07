@@ -78,17 +78,12 @@ public class TestAutomationManagementServiceImpl implements TestAutomationManage
 
 	
 	@Override
-	public TestAutomationProject persistNewProject(TestAutomationProject newProject) {
+	public TestAutomationProject registerNewProject(TestAutomationProject newProject) {
 		
-		TestAutomationServer soonPersistedServer = serverDao.findByExample(newProject.getServer());
+		TestAutomationServer inBaseServer = serverDao.uniquePersist(newProject.getServer());
+				
+		return projectDao.uniquePersist(newProject.newWithServer(inBaseServer));
 		
-		if (soonPersistedServer==null){
-			soonPersistedServer = serverDao.uniquePersist(newProject.getServer());
-		}
-		
-		TestAutomationProject soonPersistedProject = newProject.newWithServer(soonPersistedServer);
-		
-		return projectDao.uniquePersist(soonPersistedProject);
 	}
 
 }
