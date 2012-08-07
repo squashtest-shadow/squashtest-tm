@@ -187,3 +187,6 @@ syntax: regexp
 syntax : regexp
 ^tm/tm\.automatedtesting\.api/target$
 ^tm/tm\.automatedtesting\.api/META-INF$
+syntax: regexp
+^plugins/plugin\.automatedtesting\.jenkins/target$
+^plugins/plugin\.automatedtesting\.jenkins/META-INF$

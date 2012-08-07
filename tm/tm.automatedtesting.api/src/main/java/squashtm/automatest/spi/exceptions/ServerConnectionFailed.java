@@ -18,27 +18,31 @@
  *     You should have received a copy of the GNU Lesser General Public License
  *     along with this software.  If not, see <http://www.gnu.org/licenses/>.
  */
-package squashtm.automatest.api.exceptions;
+package squashtm.automatest.spi.exceptions;
 
-public class AccessDenied extends TestAutomationException {
+public class ServerConnectionFailed extends TestAutomationException {
 
+	/**
+	 * 
+	 */
+	private static final long serialVersionUID = -8208900275653805118L;
 
-	private static final long serialVersionUID = -5345068364658644042L;
-
-	public AccessDenied() {
+	public ServerConnectionFailed() {
 		super();
 	}
 
-	public AccessDenied(String message, Throwable cause) {
-		super(message, cause);
+	public ServerConnectionFailed(String arg0, Throwable arg1) {
+		super(arg0, arg1);
 	}
 
-	public AccessDenied(String message) {
-		super(message);
+	public ServerConnectionFailed(String arg0) {
+		super(arg0);
 	}
 
-	public AccessDenied(Throwable cause) {
-		super(cause);
+	public ServerConnectionFailed(Throwable arg0) {
+		super(arg0);
 	}
+	
+	
 
 }

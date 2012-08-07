@@ -18,28 +18,26 @@
  *     You should have received a copy of the GNU Lesser General Public License
  *     along with this software.  If not, see <http://www.gnu.org/licenses/>.
  */
-package squashtm.automatest.api.exceptions;
+package squashtm.automatest.spi.exceptions;
 
-import squashtm.automatest.api.exceptions.TestAutomationException;;
-
-public class UnreadableResponseException extends TestAutomationException {
+public class AccessDenied extends TestAutomationException {
 
 
-	private static final long serialVersionUID = -1001444250169674985L;
+	private static final long serialVersionUID = -5345068364658644042L;
 
-	public UnreadableResponseException() {
+	public AccessDenied() {
 		super();
 	}
 
-	public UnreadableResponseException(String message, Throwable cause) {
+	public AccessDenied(String message, Throwable cause) {
 		super(message, cause);
 	}
 
-	public UnreadableResponseException(String message) {
+	public AccessDenied(String message) {
 		super(message);
 	}
 
-	public UnreadableResponseException(Throwable cause) {
+	public AccessDenied(Throwable cause) {
 		super(cause);
 	}
 

@@ -18,31 +18,29 @@
  *     You should have received a copy of the GNU Lesser General Public License
  *     along with this software.  If not, see <http://www.gnu.org/licenses/>.
  */
-package squashtm.automatest.api.exceptions;
+package squashtm.automatest.spi.exceptions;
 
-public class ServerConnectionFailed extends TestAutomationException {
+import squashtm.automatest.spi.exceptions.TestAutomationException;
 
-	/**
-	 * 
-	 */
-	private static final long serialVersionUID = -8208900275653805118L;
+public class UnreadableResponseException extends TestAutomationException {
 
-	public ServerConnectionFailed() {
+
+	private static final long serialVersionUID = -1001444250169674985L;
+
+	public UnreadableResponseException() {
 		super();
 	}
 
-	public ServerConnectionFailed(String arg0, Throwable arg1) {
-		super(arg0, arg1);
+	public UnreadableResponseException(String message, Throwable cause) {
+		super(message, cause);
 	}
 
-	public ServerConnectionFailed(String arg0) {
-		super(arg0);
+	public UnreadableResponseException(String message) {
+		super(message);
 	}
 
-	public ServerConnectionFailed(Throwable arg0) {
-		super(arg0);
+	public UnreadableResponseException(Throwable cause) {
+		super(cause);
 	}
-	
-	
 
 }
