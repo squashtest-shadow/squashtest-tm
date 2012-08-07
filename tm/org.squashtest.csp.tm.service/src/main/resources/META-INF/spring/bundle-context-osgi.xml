@@ -45,6 +45,9 @@
 
 	<osgi:service ref="squashtest.tm.service.BugTrackerLocalService"
 		interface="org.squashtest.csp.tm.service.BugTrackerLocalService" />
+		
+	<osgi:service ref="squashtest.tm.service.BugTrackerManagerService"
+		interface="org.squashtest.csp.tm.service.BugTrackerManagerService" />
 
 	<!-- ========= /BUGTRACKER SERVICES ============= -->
 

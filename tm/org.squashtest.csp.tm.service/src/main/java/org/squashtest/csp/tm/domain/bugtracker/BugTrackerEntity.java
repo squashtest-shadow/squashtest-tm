@@ -24,13 +24,19 @@ import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
 import javax.persistence.Id;
-import javax.persistence.JoinColumn;
-import javax.persistence.ManyToOne;
+import javax.persistence.Table;
 
-import org.hibernate.validator.constraints.Email;
 import org.squashtest.csp.core.bugtracker.domain.BugTracker;
 
+/**
+ * The purpose of this entity is to store informations about BugTrackers management. <br>
+ * It's name has been changed from the table name to "BugTrackerEntity" for it to be distinguished from the {@linkplain BugTracker} class.<br>
+ * If it was not for Hibernate that doesn't allow to map objects from different projects we would have annotated the {@linkplain BugTracker} class instead of creating this one.
+ * @author mpagnon
+ *
+ */
 @Entity
+@Table(name = "BUGTRACKER")
 public class BugTrackerEntity {
 	@Id
 	@GeneratedValue

@@ -62,6 +62,10 @@
 						return rowData[0];	
 					}
 					
+					function bugtrackerTableRowCallback(row, data, displayIndex){
+						return row;
+					}
+					
 					function addHoverHandler(dataTable){
 						$( 'tbody tr', dataTable ).hover(
 							function() {

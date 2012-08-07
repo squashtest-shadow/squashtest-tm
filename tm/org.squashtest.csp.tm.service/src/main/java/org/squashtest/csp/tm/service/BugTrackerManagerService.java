@@ -26,7 +26,6 @@ import org.squashtest.csp.core.bugtracker.domain.BugTracker;
 import org.squashtest.csp.tm.domain.DuplicateNameException;
 import org.squashtest.csp.tm.infrastructure.filter.CollectionSorting;
 import org.squashtest.csp.tm.infrastructure.filter.FilteredCollectionHolder;
-import org.squashtest.tm.core.foundation.collection.Paging;
 
 public interface BugTrackerManagerService {
 	/**
@@ -46,7 +45,7 @@ public interface BugTrackerManagerService {
 	/**
 	 * 
 	 * @param filter
-	 * @return sorted list of bugtrackers the user has read access to
+	 * @return sorted list of bugtrackers
 	 */
 	FilteredCollectionHolder<List<BugTracker>> findSortedBugtrackers(CollectionSorting filter);
 
