@@ -20,12 +20,9 @@
  */
 package org.squashtest.csp.tm.internal.repository.hibernate;
 
-import java.util.List;
-
 import org.springframework.stereotype.Repository;
 import org.squashtest.csp.tm.domain.campaign.CampaignLibrary;
 import org.squashtest.csp.tm.domain.campaign.CampaignLibraryNode;
-import org.squashtest.csp.tm.domain.library.NodeReference;
 import org.squashtest.csp.tm.internal.repository.CampaignLibraryDao;
 
 @Repository

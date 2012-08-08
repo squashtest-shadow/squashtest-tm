@@ -22,7 +22,6 @@ package org.squashtest.csp.tm.internal.repository;
 
 import java.util.List;
 
-import org.squashtest.csp.tm.domain.bugtracker.IssueDetector;
 import org.squashtest.csp.tm.domain.campaign.Campaign;
 import org.squashtest.csp.tm.domain.campaign.CampaignLibraryNode;
 import org.squashtest.csp.tm.domain.campaign.CampaignTestPlanItem;

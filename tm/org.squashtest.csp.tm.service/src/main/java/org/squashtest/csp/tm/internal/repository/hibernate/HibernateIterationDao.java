@@ -20,7 +20,6 @@
  */
 package org.squashtest.csp.tm.internal.repository.hibernate;
 
-import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 import java.util.ListIterator;
@@ -31,10 +30,9 @@ import org.hibernate.Session;
 import org.hibernate.criterion.Restrictions;
 import org.hibernate.type.LongType;
 import org.springframework.stereotype.Repository;
-import org.squashtest.csp.tm.domain.bugtracker.IssueDetector;
 import org.squashtest.csp.tm.domain.campaign.Campaign;
-import org.squashtest.csp.tm.domain.campaign.IterationTestPlanItem;
 import org.squashtest.csp.tm.domain.campaign.Iteration;
+import org.squashtest.csp.tm.domain.campaign.IterationTestPlanItem;
 import org.squashtest.csp.tm.domain.campaign.TestSuite;
 import org.squashtest.csp.tm.domain.execution.Execution;
 import org.squashtest.csp.tm.infrastructure.filter.CollectionSorting;

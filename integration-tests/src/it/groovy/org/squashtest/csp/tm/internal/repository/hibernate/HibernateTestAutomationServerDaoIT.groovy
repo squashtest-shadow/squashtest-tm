@@ -23,7 +23,7 @@ package org.squashtest.csp.tm.internal.repository.hibernate
 import javax.inject.Inject;
 
 import org.springframework.transaction.annotation.Transactional;
-import org.squashtest.csp.tm.domain.automatest.TestAutomationServer;
+import org.squashtest.csp.tm.domain.testautomation.TestAutomationServer;
 import org.squashtest.csp.tm.internal.repository.NonUniqueEntityException;
 import org.squashtest.csp.tm.internal.repository.TestAutomationServerDao
 import org.unitils.dbunit.annotation.DataSet;

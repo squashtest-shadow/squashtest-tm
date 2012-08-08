@@ -33,7 +33,6 @@ import javax.persistence.JoinTable;
 import javax.persistence.OneToMany;
 import javax.persistence.OneToOne;
 
-import org.squashtest.csp.core.security.annotation.AclConstrainedObject;
 import org.squashtest.csp.tm.domain.library.Library;
 import org.squashtest.csp.tm.domain.project.GenericLibrary;
 import org.squashtest.csp.tm.domain.project.Project;

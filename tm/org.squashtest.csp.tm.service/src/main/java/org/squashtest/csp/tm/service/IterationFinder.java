@@ -23,13 +23,9 @@ package org.squashtest.csp.tm.service;
 import java.util.List;
 
 import org.springframework.transaction.annotation.Transactional;
-import org.squashtest.csp.tm.domain.campaign.Campaign;
-import org.squashtest.csp.tm.domain.campaign.CampaignTestPlanItem;
 import org.squashtest.csp.tm.domain.campaign.Iteration;
 import org.squashtest.csp.tm.domain.execution.Execution;
 import org.squashtest.csp.tm.domain.testcase.TestCase;
-import org.squashtest.csp.tm.infrastructure.filter.CollectionSorting;
-import org.squashtest.csp.tm.infrastructure.filter.FilteredCollectionHolder;
 
 
 public interface IterationFinder {

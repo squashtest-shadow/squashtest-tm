@@ -45,7 +45,6 @@ import org.squashtest.csp.tm.domain.TestPlanItemNotExecutableException;
 import org.squashtest.csp.tm.domain.attachment.Attachment;
 import org.squashtest.csp.tm.domain.attachment.AttachmentList;
 import org.squashtest.csp.tm.domain.audit.Auditable;
-import org.squashtest.csp.tm.domain.bugtracker.IssueDetector;
 import org.squashtest.csp.tm.domain.testcase.TestCase;
 
 @Auditable

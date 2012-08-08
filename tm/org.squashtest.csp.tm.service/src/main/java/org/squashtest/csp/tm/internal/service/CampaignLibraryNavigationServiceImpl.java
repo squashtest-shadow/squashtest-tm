@@ -49,7 +49,6 @@ import org.squashtest.csp.tm.internal.repository.CampaignLibraryDao;
 import org.squashtest.csp.tm.internal.repository.IterationDao;
 import org.squashtest.csp.tm.internal.repository.LibraryNodeDao;
 import org.squashtest.csp.tm.internal.repository.TestSuiteDao;
-import org.squashtest.csp.tm.internal.service.AbstractLibraryNavigationService.SecurityCheckableObject;
 import org.squashtest.csp.tm.internal.service.campaign.IterationTestPlanManager;
 import org.squashtest.csp.tm.service.CampaignLibraryNavigationService;
 import org.squashtest.csp.tm.service.IterationModificationService;

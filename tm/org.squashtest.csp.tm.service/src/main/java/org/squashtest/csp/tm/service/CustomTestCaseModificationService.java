@@ -23,8 +23,6 @@ package org.squashtest.csp.tm.service;
 import java.util.List;
 
 import org.springframework.transaction.annotation.Transactional;
-import org.squashtest.tm.core.foundation.collection.PagedCollectionHolder;
-import org.squashtest.tm.core.foundation.collection.PagingAndSorting;
 import org.squashtest.csp.tm.domain.testcase.ActionTestStep;
 import org.squashtest.csp.tm.domain.testcase.TestStep;
 

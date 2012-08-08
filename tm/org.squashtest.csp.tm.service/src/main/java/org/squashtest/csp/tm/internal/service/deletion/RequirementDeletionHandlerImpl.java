@@ -30,11 +30,9 @@ import org.springframework.stereotype.Component;
 import org.squashtest.csp.tm.domain.requirement.RequirementFolder;
 import org.squashtest.csp.tm.domain.requirement.RequirementLibraryNode;
 import org.squashtest.csp.tm.internal.repository.FolderDao;
-import org.squashtest.csp.tm.internal.repository.RequirementDao;
 import org.squashtest.csp.tm.internal.repository.RequirementDeletionDao;
 import org.squashtest.csp.tm.internal.repository.RequirementFolderDao;
 import org.squashtest.csp.tm.internal.service.RequirementNodeDeletionHandler;
-import org.squashtest.csp.tm.service.TestCaseImportanceManagerService;
 import org.squashtest.csp.tm.service.deletion.SuppressionPreviewReport;
 
 @Component("squashtest.tm.service.deletion.RequirementNodeDeletionHandler")

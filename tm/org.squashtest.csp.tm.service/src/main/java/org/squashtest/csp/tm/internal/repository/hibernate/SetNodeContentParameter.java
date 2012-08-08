@@ -22,7 +22,6 @@ package org.squashtest.csp.tm.internal.repository.hibernate;
 
 import org.hibernate.Query;
 import org.squashtest.csp.tm.domain.library.LibraryNode;
-import org.squashtest.csp.tm.domain.requirement.RequirementLibraryNode;
 
 /**
  * @author Gregory

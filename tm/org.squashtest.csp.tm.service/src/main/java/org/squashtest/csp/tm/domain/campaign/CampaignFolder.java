@@ -36,7 +36,6 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.squashtest.csp.tm.domain.library.Folder;
 import org.squashtest.csp.tm.domain.library.FolderSupport;
-import org.squashtest.csp.tm.domain.library.Library;
 import org.squashtest.csp.tm.domain.project.Project;
 
 @Entity

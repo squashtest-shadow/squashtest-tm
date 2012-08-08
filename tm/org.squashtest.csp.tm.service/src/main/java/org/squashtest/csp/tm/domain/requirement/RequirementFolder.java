@@ -38,7 +38,6 @@ import org.apache.commons.lang.NullArgumentException;
 import org.squashtest.csp.tm.domain.audit.AuditableMixin;
 import org.squashtest.csp.tm.domain.library.Folder;
 import org.squashtest.csp.tm.domain.library.FolderSupport;
-import org.squashtest.csp.tm.domain.library.Library;
 import org.squashtest.csp.tm.domain.project.Project;
 import org.squashtest.csp.tm.domain.resource.SimpleResource;
 

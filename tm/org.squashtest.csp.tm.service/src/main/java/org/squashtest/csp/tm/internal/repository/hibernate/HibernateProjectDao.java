@@ -28,7 +28,6 @@ import org.hibernate.Query;
 import org.hibernate.Session;
 import org.hibernate.criterion.Order;
 import org.springframework.security.access.prepost.PostFilter;
-import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.stereotype.Repository;
 import org.squashtest.csp.tm.domain.project.Project;
 import org.squashtest.csp.tm.domain.projectfilter.ProjectFilter;

@@ -29,7 +29,6 @@ import org.springframework.transaction.annotation.Transactional;
 import org.squashtest.csp.tm.domain.library.Library;
 import org.squashtest.csp.tm.domain.library.LibraryNode;
 import org.squashtest.csp.tm.domain.projectfilter.ProjectFilter;
-import org.squashtest.csp.tm.domain.testcase.TestCaseLibrary;
 import org.squashtest.csp.tm.internal.infrastructure.strategy.LibrarySelectionStrategy;
 import org.squashtest.csp.tm.internal.repository.LibraryDao;
 import org.squashtest.csp.tm.service.ProjectFilterModificationService;

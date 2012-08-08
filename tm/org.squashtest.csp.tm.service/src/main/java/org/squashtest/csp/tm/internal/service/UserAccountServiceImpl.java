@@ -29,15 +29,12 @@ import org.springframework.security.access.AccessDeniedException;
 import org.springframework.security.authentication.BadCredentialsException;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
-import org.squashtest.csp.core.internal.security.security.AdministratorAuthenticationServiceImpl;
 import org.squashtest.csp.core.service.security.UserAuthenticationService;
 import org.squashtest.csp.core.service.security.UserContextService;
-import org.squashtest.csp.tm.domain.PasswordChangeFailedException;
 import org.squashtest.csp.tm.domain.UnauthorizedPasswordChange;
 import org.squashtest.csp.tm.domain.WrongPasswordException;
 import org.squashtest.csp.tm.domain.users.User;
 import org.squashtest.csp.tm.internal.repository.UserDao;
-import org.squashtest.csp.tm.internal.repository.UsersGroupDao;
 import org.squashtest.csp.tm.service.UserAccountService;
 
 @Service("squashtest.tm.service.UserAccountService")

@@ -20,14 +20,12 @@
  */
 package org.squashtest.csp.tm.internal.repository.hibernate;
 
-import java.util.ArrayList;
 import java.util.List;
 
 import org.apache.commons.lang.WordUtils;
 import org.hibernate.Query;
 import org.squashtest.csp.tm.domain.library.Library;
 import org.squashtest.csp.tm.domain.library.LibraryNode;
-import org.squashtest.csp.tm.domain.library.NodeReference;
 import org.squashtest.csp.tm.internal.repository.LibraryDao;
 
 /**

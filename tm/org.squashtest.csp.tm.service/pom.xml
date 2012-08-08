@@ -62,7 +62,7 @@
 		</dependency>
 		<dependency>
 			<groupId>org.squashtest.tm</groupId>
-			<artifactId>tm.automatedtesting.api</artifactId>
+			<artifactId>tm.testautomation.api</artifactId>
 			<version>${project.version}</version>
 		</dependency>
 		<!--======= /SQUASHTEST MODULES ========-->

@@ -21,14 +21,11 @@
 package org.squashtest.csp.tm.internal.service;
 
 import java.io.InputStream;
-import java.util.ArrayList;
 import java.util.List;
-import java.util.Set;
 
 import javax.inject.Inject;
 import javax.validation.constraints.NotNull;
 
-import org.hibernate.SessionFactory;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.security.access.prepost.PostAuthorize;
 import org.springframework.security.access.prepost.PostFilter;
@@ -44,13 +41,10 @@ import org.squashtest.csp.tm.domain.requirement.RequirementFolder;
 import org.squashtest.csp.tm.domain.requirement.RequirementLibrary;
 import org.squashtest.csp.tm.domain.requirement.RequirementLibraryNode;
 import org.squashtest.csp.tm.internal.infrastructure.strategy.LibrarySelectionStrategy;
-import org.squashtest.csp.tm.domain.requirement.RequirementVersion;
-import org.squashtest.csp.tm.domain.testcase.TestCaseLibraryNode;
 import org.squashtest.csp.tm.internal.repository.LibraryNodeDao;
 import org.squashtest.csp.tm.internal.repository.RequirementDao;
 import org.squashtest.csp.tm.internal.repository.RequirementFolderDao;
 import org.squashtest.csp.tm.internal.repository.RequirementLibraryDao;
-import org.squashtest.csp.tm.internal.service.AbstractLibraryNavigationService.SecurityCheckableObject;
 import org.squashtest.csp.tm.internal.service.importer.RequirementImporter;
 import org.squashtest.csp.tm.service.ProjectFilterModificationService;
 import org.squashtest.csp.tm.service.RequirementLibraryFinderService;

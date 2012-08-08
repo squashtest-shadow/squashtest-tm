@@ -27,3 +27,4 @@ package org.squashtest.csp.tm.internal.infrastructure.hibernate;
 
 import org.hibernate.annotations.FilterDef;
 import org.hibernate.annotations.FilterDefs;
+

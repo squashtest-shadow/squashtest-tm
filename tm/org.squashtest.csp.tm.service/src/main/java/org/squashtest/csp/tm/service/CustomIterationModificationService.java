@@ -21,17 +21,11 @@
 package org.squashtest.csp.tm.service;
 
 import java.util.List;
-import java.util.Set;
 
-import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.transaction.annotation.Transactional;
 import org.squashtest.csp.tm.domain.campaign.Iteration;
-import org.squashtest.csp.tm.domain.campaign.IterationTestPlanItem;
 import org.squashtest.csp.tm.domain.campaign.TestSuite;
 import org.squashtest.csp.tm.domain.execution.Execution;
-import org.squashtest.csp.tm.domain.testcase.TestCase;
-import org.squashtest.csp.tm.infrastructure.filter.CollectionSorting;
-import org.squashtest.csp.tm.infrastructure.filter.FilteredCollectionHolder;
 import org.squashtest.csp.tm.service.deletion.SuppressionPreviewReport;
 
 /**

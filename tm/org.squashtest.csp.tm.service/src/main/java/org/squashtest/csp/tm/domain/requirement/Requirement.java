@@ -39,7 +39,6 @@ import javax.validation.constraints.NotNull;
 import org.squashtest.csp.tm.domain.NoVerifiableRequirementVersionException;
 import org.squashtest.csp.tm.domain.attachment.AttachmentHolder;
 import org.squashtest.csp.tm.domain.attachment.AttachmentList;
-import org.squashtest.csp.tm.domain.library.Library;
 
 /**
  * Entity requirement

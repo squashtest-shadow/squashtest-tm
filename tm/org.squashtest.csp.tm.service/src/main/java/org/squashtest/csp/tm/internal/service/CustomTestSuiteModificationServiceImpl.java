@@ -24,12 +24,8 @@ import java.util.List;
 
 import javax.inject.Inject;
 
-import org.springframework.osgi.extensions.annotation.ServiceReference;
-import org.springframework.security.access.AccessDeniedException;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.stereotype.Service;
-import org.squashtest.csp.core.service.security.PermissionEvaluationService;
-import org.squashtest.csp.core.service.security.PermissionEvaluationService;
 import org.squashtest.csp.tm.domain.DuplicateNameException;
 import org.squashtest.csp.tm.domain.campaign.IterationTestPlanItem;
 import org.squashtest.csp.tm.domain.campaign.TestSuite;

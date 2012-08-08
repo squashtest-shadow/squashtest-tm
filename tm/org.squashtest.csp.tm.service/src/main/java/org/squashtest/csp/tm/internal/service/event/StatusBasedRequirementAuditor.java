@@ -30,8 +30,8 @@ import org.squashtest.csp.tm.domain.event.RequirementAuditEvent;
 import org.squashtest.csp.tm.domain.event.RequirementAuditEventVisitor;
 import org.squashtest.csp.tm.domain.event.RequirementCreation;
 import org.squashtest.csp.tm.domain.event.RequirementLargePropertyChange;
-import org.squashtest.csp.tm.domain.event.RequirementVersionModification;
 import org.squashtest.csp.tm.domain.event.RequirementPropertyChange;
+import org.squashtest.csp.tm.domain.event.RequirementVersionModification;
 import org.squashtest.csp.tm.domain.requirement.RequirementStatus;
 import org.squashtest.csp.tm.internal.repository.RequirementAuditEventDao;
 

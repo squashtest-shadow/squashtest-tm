@@ -27,15 +27,11 @@ import javax.inject.Inject;
 
 import org.springframework.osgi.extensions.annotation.ServiceReference;
 import org.springframework.security.access.prepost.PreAuthorize;
-import org.springframework.security.authentication.encoding.PasswordEncoder;
 import org.springframework.security.core.GrantedAuthority;
-import org.springframework.security.core.context.SecurityContext;
-import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.squashtest.csp.core.service.configuration.ConfigurationService;
 import org.squashtest.csp.core.service.security.AdministratorAuthenticationService;
-import org.squashtest.csp.tm.domain.LoginAlreadyExistsException;
 import org.squashtest.csp.tm.domain.project.Project;
 import org.squashtest.csp.tm.domain.users.User;
 import org.squashtest.csp.tm.domain.users.UsersGroup;

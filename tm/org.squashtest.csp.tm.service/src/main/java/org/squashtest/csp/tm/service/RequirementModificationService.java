@@ -26,7 +26,6 @@ import org.springframework.transaction.annotation.Transactional;
 import org.squashtest.csp.tm.domain.requirement.Requirement;
 import org.squashtest.csp.tm.domain.requirement.RequirementCategory;
 import org.squashtest.csp.tm.domain.requirement.RequirementStatus;
-import org.squashtest.csp.tm.domain.requirement.RequirementVersion;
 
 @Transactional
 public interface RequirementModificationService extends CustomRequirementModificationService {

@@ -20,12 +20,10 @@
  */
 package org.squashtest.csp.tm.internal.service;
 
-import java.util.Collection;
 import java.util.List;
 
 import org.squashtest.csp.tm.domain.campaign.CampaignFolder;
 import org.squashtest.csp.tm.domain.campaign.CampaignLibraryNode;
-import org.squashtest.csp.tm.domain.campaign.TestSuite;
 import org.squashtest.csp.tm.domain.execution.Execution;
 import org.squashtest.csp.tm.service.deletion.SuppressionPreviewReport;
 

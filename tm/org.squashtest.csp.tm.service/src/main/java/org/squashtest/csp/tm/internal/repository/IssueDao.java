@@ -23,8 +23,6 @@ package org.squashtest.csp.tm.internal.repository;
 import java.util.List;
 
 import org.squashtest.csp.tm.domain.bugtracker.Issue;
-import org.squashtest.csp.tm.domain.bugtracker.IssueDetector;
-import org.squashtest.csp.tm.domain.bugtracker.IssueOwnership;
 import org.squashtest.csp.tm.infrastructure.filter.CollectionSorting;
 
 public interface IssueDao extends EntityDao<Issue>{

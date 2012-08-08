@@ -25,8 +25,8 @@ import javax.inject.Inject;
 import org.apache.poi.hssf.record.formula.functions.T
 import org.spockframework.util.NotThreadSafe;
 import org.springframework.transaction.annotation.Transactional;
-import org.squashtest.csp.tm.domain.automatest.TestAutomationProject
-import org.squashtest.csp.tm.domain.automatest.TestAutomationServer
+import org.squashtest.csp.tm.domain.testautomation.TestAutomationProject
+import org.squashtest.csp.tm.domain.testautomation.TestAutomationServer
 import org.squashtest.csp.tm.service.TestAutomationManagementService;
 import org.unitils.dbunit.annotation.DataSet;
 

@@ -22,7 +22,6 @@ package org.squashtest.csp.tm.service;
 
 import java.util.List;
 
-import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.transaction.annotation.Transactional;
 import org.squashtest.csp.tm.domain.DuplicateNameException;
 import org.squashtest.csp.tm.domain.campaign.IterationTestPlanItem;

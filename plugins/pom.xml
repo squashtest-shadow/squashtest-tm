@@ -15,6 +15,6 @@
 		<module>plugin.bugtracker.mantis</module>
 		<module>plugin.report.std</module>
 		<module>plugin.report.test</module>
-		<module>plugin.automatedtesting.jenkins</module>
+		<module>plugin.testautomation.jenkins</module>
 	</modules>
 </project>

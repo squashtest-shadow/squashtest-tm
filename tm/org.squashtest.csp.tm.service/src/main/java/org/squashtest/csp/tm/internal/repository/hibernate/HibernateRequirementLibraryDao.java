@@ -20,10 +20,7 @@
  */
 package org.squashtest.csp.tm.internal.repository.hibernate;
 
-import java.util.List;
-
 import org.springframework.stereotype.Repository;
-import org.squashtest.csp.tm.domain.library.NodeReference;
 import org.squashtest.csp.tm.domain.requirement.RequirementLibrary;
 import org.squashtest.csp.tm.domain.requirement.RequirementLibraryNode;
 import org.squashtest.csp.tm.internal.repository.RequirementLibraryDao;

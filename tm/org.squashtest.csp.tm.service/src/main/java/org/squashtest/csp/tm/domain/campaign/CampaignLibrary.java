@@ -35,7 +35,6 @@ import javax.persistence.OneToOne;
 
 import org.apache.commons.lang.NullArgumentException;
 import org.hibernate.annotations.Where;
-import org.squashtest.csp.core.security.annotation.AclConstrainedObject;
 import org.squashtest.csp.tm.domain.library.Library;
 import org.squashtest.csp.tm.domain.project.GenericLibrary;
 import org.squashtest.csp.tm.domain.project.Project;

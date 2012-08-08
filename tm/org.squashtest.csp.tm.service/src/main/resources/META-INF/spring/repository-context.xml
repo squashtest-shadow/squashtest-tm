@@ -103,8 +103,8 @@
 				
 				
 				<!--  the following entries come from fragment tm.automatedttesting.api -->
-				<value>org.squashtest.csp.tm.domain.automatest.TestAutomationServer</value>
-				<value>org.squashtest.csp.tm.domain.automatest.TestAutomationProject</value>
+				<value>org.squashtest.csp.tm.domain.testautomation.TestAutomationServer</value>
+				<value>org.squashtest.csp.tm.domain.testautomation.TestAutomationProject</value>
 				
 			</list>
 		</property>

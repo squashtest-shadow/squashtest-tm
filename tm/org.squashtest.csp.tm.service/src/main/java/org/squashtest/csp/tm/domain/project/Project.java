@@ -38,9 +38,9 @@ import javax.validation.constraints.Size;
 
 import org.hibernate.validator.constraints.NotBlank;
 import org.squashtest.csp.tm.domain.audit.Auditable;
-import org.squashtest.csp.tm.domain.automatest.TestAutomationProject;
 import org.squashtest.csp.tm.domain.campaign.CampaignLibrary;
 import org.squashtest.csp.tm.domain.requirement.RequirementLibrary;
+import org.squashtest.csp.tm.domain.testautomation.TestAutomationProject;
 import org.squashtest.csp.tm.domain.testcase.TestCaseLibrary;
 
 @Auditable

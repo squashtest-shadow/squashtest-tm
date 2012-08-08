@@ -24,7 +24,6 @@ import java.util.List;
 
 import org.squashtest.csp.tm.domain.library.Library;
 import org.squashtest.csp.tm.domain.library.LibraryNode;
-import org.squashtest.csp.tm.domain.library.NodeReference;
 
 /**
  * Defines a DAO for {@link Library} entities.
