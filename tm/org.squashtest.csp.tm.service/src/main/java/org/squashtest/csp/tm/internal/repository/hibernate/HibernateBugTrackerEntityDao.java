@@ -23,16 +23,22 @@ package org.squashtest.csp.tm.internal.repository.hibernate;
 import java.util.List;
 
 import org.hibernate.Criteria;
+import org.hibernate.Query;
 import org.hibernate.Session;
 import org.hibernate.criterion.Order;
 import org.springframework.stereotype.Repository;
+import org.squashtest.csp.tm.domain.BugTrackerNameAlreadyExistsException;
 import org.squashtest.csp.tm.domain.bugtracker.BugTrackerEntity;
+import org.squashtest.csp.tm.domain.users.User;
 import org.squashtest.csp.tm.infrastructure.filter.CollectionSorting;
 import org.squashtest.csp.tm.internal.repository.BugTrackerEntityDao;
 
 @Repository
 public class HibernateBugTrackerEntityDao extends HibernateEntityDao<BugTrackerEntity> implements BugTrackerEntityDao {
 
+	/**
+	 * @see BugTrackerEntityDao#findSortedBugTrackerEntities(String)
+	 */
 	@Override
 	@SuppressWarnings("unchecked")
 	public List<BugTrackerEntity> findSortedBugTrackerEntities(CollectionSorting filter) {
@@ -60,9 +66,34 @@ public class HibernateBugTrackerEntityDao extends HibernateEntityDao<BugTrackerE
 
 	}
 
+	/**
+	 * @see BugTrackerEntityDao#countBugTrackerEntities(String)
+	 */
 	@Override
 	public long countBugTrackerEntities() {
 		return (Long) executeEntityNamedQuery("bugtracker.count");
+	}
+	
+	/**
+	 * @see BugTrackerEntityDao#checkNameAvailability(String)
+	 */
+	@Override
+	public void checkNameAvailability(String name) {
+		if(findBugTrackerEntityByName(name) != null){
+			throw new BugTrackerNameAlreadyExistsException();
+		}
+		
+	}
+
+	private BugTrackerEntity findBugTrackerEntityByName(final String name) {
+			return executeEntityNamedQuery("bugtracker.findBugTrackerByName", new SetQueryParametersCallback() {
+
+				@Override
+				public void setQueryParameters(Query query) {
+					query.setParameter("name", name);
+				}
+			});
+		
 	}
 
 }

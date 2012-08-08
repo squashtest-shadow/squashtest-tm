@@ -22,11 +22,24 @@ package org.squashtest.csp.core.bugtracker.domain;
 
 public class BugTracker {
 	public static final BugTracker NOT_DEFINED = new BugTracker("", "none", "", true);
-	
-	private final String url;
-	private final boolean iframeFriendly;
-	private final String kind;
-	private final String name;
+	private long id;
+	private String url;
+	private boolean iframeFriendly;
+	private String kind;
+	private String name;
+
+	public BugTracker() {
+
+	}
+
+	public BugTracker(long id, String bugTrackerUrl, String connectorKind, String name, boolean iframeFriendly) {
+		super();
+		this.id = id;
+		this.url = bugTrackerUrl;
+		this.kind = connectorKind;
+		this.name = name;
+		this.iframeFriendly = iframeFriendly;
+	}
 
 	public BugTracker(String bugTrackerUrl, String connectorKind, String name, boolean iframeFriendly) {
 		super();
@@ -36,6 +49,30 @@ public class BugTracker {
 		this.iframeFriendly = iframeFriendly;
 	}
 
+	public void setId(long id) {
+		this.id = id;
+	}
+
+	public long getId() {
+		return this.id;
+	}
+
+	public void setUrl(String url) {
+		this.url = url;
+	}
+
+	public void setIframeFriendly(boolean iframeFriendly) {
+		this.iframeFriendly = iframeFriendly;
+	}
+
+	public void setKind(String kind) {
+		this.kind = kind;
+	}
+
+	public void setName(String name) {
+		this.name = name;
+	}
+
 	public final String getUrl() {
 		return url;
 	}
@@ -43,13 +80,13 @@ public class BugTracker {
 	public final String getKind() {
 		return kind;
 	}
-	
-	public final String getName(){
+
+	public final String getName() {
 		return name;
 	}
 
 	public boolean isIframeFriendly() {
 		return iframeFriendly;
 	}
-	
+
 }

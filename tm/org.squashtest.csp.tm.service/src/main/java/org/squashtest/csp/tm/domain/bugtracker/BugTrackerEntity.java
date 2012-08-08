@@ -25,7 +25,9 @@ import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
 import javax.persistence.Id;
 import javax.persistence.Table;
+import javax.validation.constraints.Size;
 
+import org.hibernate.validator.constraints.NotBlank;
 import org.squashtest.csp.core.bugtracker.domain.BugTracker;
 
 /**
@@ -44,12 +46,18 @@ public class BugTrackerEntity {
 	private Long id;
 	
 	@Column(name = "NAME")
+	@NotBlank
+	@Size(min = 0, max = 50)
 	private String name;
 	
 	@Column(name = "URL")
+	@NotBlank
+	@Size(min = 0, max = 255)
 	private String url;
 	
 	@Column(name = "KIND")
+	@NotBlank
+	@Size(min = 0, max = 50)
 	private String kind;
 	
 	@Column(name = "IFRAME_FRIENDLY")
@@ -103,7 +111,7 @@ public class BugTrackerEntity {
 	}
 
 	public BugTracker getDetachedBugTracker(){
-		return new BugTracker(url, kind, name, iframeFriendly);
+		return new BugTracker(id, url, kind, name, iframeFriendly);
 	}
 	
 }

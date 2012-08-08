@@ -20,7 +20,6 @@
  */
 package org.squashtest.csp.tm.internal.repository.hibernate;
 
-import java.util.Collection;
 import java.util.Collections;
 import java.util.LinkedList;
 import java.util.List;
@@ -65,7 +64,7 @@ public class HibernateUserDao extends HibernateEntityDao<User> implements UserDa
 	}
 
 	@Override
-	// FIXME : be careful of the filter
+	// FIXME : be careful of the filter 
 	public User findUserByLogin(final String login) {
 		return executeEntityNamedQuery("user.findUserByLogin", new SetQueryParametersCallback() {
 

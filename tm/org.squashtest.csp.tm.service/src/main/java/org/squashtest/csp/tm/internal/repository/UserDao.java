@@ -20,9 +20,9 @@
  */
 package org.squashtest.csp.tm.internal.repository;
 
-import java.util.Collection;
 import java.util.List;
 
+import org.squashtest.csp.tm.domain.LoginAlreadyExistsException;
 import org.squashtest.csp.tm.domain.users.User;
 import org.squashtest.tm.core.foundation.collection.Paging;
 
@@ -35,6 +35,11 @@ public interface UserDao extends EntityDao<User> {
 	User findUserByLogin(String login);
 
 	List<User> findUsersByLoginList(List<String> idList);
-
+	
+	/**
+	 * checks if a user already exist with the same login in the database.<br>
+	 * If so, raise a {@linkplain  LoginAlreadyExistsException}
+	 * @param login	 * 
+	 */
 	void checkLoginAvailability(String login) ;
 }

@@ -28,7 +28,7 @@
 <%@ taglib prefix="comp" tagdir="/WEB-INF/tags/component" %>
 <%@ taglib prefix="jq" tagdir="/WEB-INF/tags/jquery" %>
 <%@ taglib prefix="pop" tagdir="/WEB-INF/tags/popup" %>
-<layout:info-page-layout titleKey="squashtm.project.title">
+<layout:info-page-layout titleKey="squashtm.bugtrackers.title">
 	<jsp:attribute  name="head">	
 		<link rel="stylesheet" type="text/css" href="${ pageContext.servletContext.contextPath }/styles/master.purple.css" />	
 		
@@ -52,8 +52,7 @@
 						var table = $( '#bugtrackers-table' ).dataTable();
 						table.fnDraw(false);
 					}
-					
-		
+													
 					function tableDrawCallback() {
 						addHoverHandler(this);
 					}	
@@ -104,8 +103,8 @@
 					<jsp:attribute name="columnDefs">
 						<dt:column-definition targets="0" visible="false" />
 						<dt:column-definition targets="1" width="2em" cssClass="select-handle centered" sortable="false"/>
-						<dt:column-definition targets="2, 3" sortable="true"/>
-						<dt:column-definition targets="4" sortable="true" lastDef="true"/>
+						<dt:column-definition targets="2, 3, 4" sortable="true"/>
+						<dt:column-definition targets="5" sortable="false" lastDef="true"/>
 					</jsp:attribute>
 				</comp:decorate-ajax-table>
 				
@@ -134,7 +133,14 @@
 					 httpMethod="POST"
 					 useData="true"
 					 successHandler="refreshBugTrackers">
-						<jq:params-bindings name="#add-bugtracker-name" kind="#add-bugtracker-kind" url="#add-bugtracker-url" iframefriendly="#add-bugtracker-iframefriendly" />
+						{
+						name: $( '#add-bugtracker-name' ).val(),
+						url: $( '#add-bugtracker-url' ).val(),
+						kind: $( '#add-bugtracker-kind' ).val(),
+						iframeFriendly: $('#add-bugtracker-iframeFriendly').is(':checked')
+						
+						}
+
 					</jq:ajaxcall>
 				},							
 		<pop:cancel-button />
@@ -156,18 +162,19 @@
 					<tr>
 						<td><label for="add-bugtracker-url"><f:message
 							key="dialog.new-bugtracker.url.label" /></label></td>
-						<td><input id="add-bugtracker-url" type="text" size="255"/>
+						<td><input id="add-bugtracker-url" type="text" size="50"/>
 						<comp:error-message forField="url" /></td>
 					</tr>
 					<tr>
-						<td><label for="add-bugtracker-iframe"><f:message
+						<td><label for="add-bugtracker-iframeFriendly"><f:message
 							key="dialog.new-bugtracker.iframe.label" /></label></td>
-						<td><input id="add-bugtracker-url" type="checkbox" />
-						<comp:error-message forField="url" /></td>
+						<td><input id="add-bugtracker-iframeFriendly" type="checkbox" />
+						<comp:error-message forField="iframeFriendly" /></td>
 					</tr>
 				</table>
 			</jsp:body>
 </comp:popup>
+
 </div>
 </jsp:attribute>
 </layout:info-page-layout>

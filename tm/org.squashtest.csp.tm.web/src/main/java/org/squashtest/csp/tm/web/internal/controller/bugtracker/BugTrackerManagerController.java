@@ -53,13 +53,13 @@ public class BugTrackerManagerController {
 
 
 
-	/* see bug 33 for details, remove this comment when done */
-	/* remember that the indexes here are supposed to match the visible columns in the project view */
+/* remember that the indexes here are supposed to match the visible columns in the bugtracker view */
 	private DataTableMapper bugtrackerMapper=new DataTableMapper("bugtrackers-table", BugTracker.class)
-										.initMapping(9)
+										.initMapping(6)
 										.mapAttribute(BugTracker.class, 2, "name", String.class)
 										.mapAttribute(BugTracker.class, 3, "kind", String.class)
-										.mapAttribute(BugTracker.class, 4, "url", boolean.class);
+										.mapAttribute(BugTracker.class, 4, "url", String.class)
+										.mapAttribute(BugTracker.class, 5, "iframeFriendly", boolean.class);
 
 	@ServiceReference
 	public void setBugtrackerManagerService(BugTrackerManagerService bugTrackerManagerService) {
@@ -73,7 +73,7 @@ public class BugTrackerManagerController {
 
 		LOGGER.info("name " + bugtracker.getName());
 		LOGGER.info("kind " + bugtracker.getKind());
-		LOGGER.info("iframe " + bugtracker.getUrl());
+		LOGGER.info("iframe " + bugtracker.isIframeFriendly());
 		LOGGER.info("url " + bugtracker.getUrl());
 		bugTrackerManagerService.addBugTracker(bugtracker);
 
@@ -102,10 +102,12 @@ public class BugTrackerManagerController {
 			public Object[] buildItemData(BugTracker item) {
 
 					return new Object[]{
+						item.getId(),
 						getCurrentIndex(),
 						item.getName(),
 						item.getKind(),
-						item.getUrl()
+						item.getUrl(),
+						item.isIframeFriendly()
 				};
 			}
 		}.buildDataModel(holder, filter.getFirstItemIndex()+1, params.getsEcho());

@@ -174,6 +174,7 @@
 		
 		//Queries on BugTrackersEntities
 		@NamedQuery(name = "bugtracker.count", query = "select count(bte) from BugTrackerEntity bte"),
+		@NamedQuery(name = "bugtracker.findBugTrackerByName", query = "from BugTrackerEntity where name = :name "),
 		
 		//Queries on UsersGroup
 		@NamedQuery(name = "usersGroup.findAllGroups", query = "from UsersGroup fetch all properties order by qualifiedName"),

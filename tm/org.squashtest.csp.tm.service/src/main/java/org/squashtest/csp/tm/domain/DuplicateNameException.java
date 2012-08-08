@@ -22,8 +22,7 @@ package org.squashtest.csp.tm.domain;
 
 public class DuplicateNameException extends DomainException {
 	private static final long serialVersionUID = 2815263509542519285L;
-	private String i18nkey = "squashtm.domain.exception.duplicate.name";
-	private String name = "";
+	
 	// note : this exception always reports an error on the name, hence the setField("name");
 
 	public DuplicateNameException(String oldName, String newName) {
@@ -40,15 +39,9 @@ public class DuplicateNameException extends DomainException {
 		setField("name");
 	}
 	
-	public DuplicateNameException(String message, String name, String i18key) {
-		this(message);
-		this.name = name;
-		this.i18nkey = i18key;
-	}
-
 	@Override
 	public String getI18nKey() {
-		return i18nkey;
+		return "squashtm.domain.exception.duplicate.name";
 	}
 
 }

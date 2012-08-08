@@ -18,34 +18,34 @@
  *     You should have received a copy of the GNU Lesser General Public License
  *     along with this software.  If not, see <http://www.gnu.org/licenses/>.
  */
-package org.squashtest.csp.tm.internal.repository;
+package org.squashtest.csp.tm.domain;
 
-import java.util.List;
+public class BugTrackerNameAlreadyExistsException extends ActionException {
 
-import org.squashtest.csp.tm.domain.BugTrackerNameAlreadyExistsException;
-import org.squashtest.csp.tm.domain.bugtracker.BugTrackerEntity;
-import org.squashtest.csp.tm.infrastructure.filter.CollectionSorting;
-
-public interface BugTrackerEntityDao extends EntityDao<BugTrackerEntity> {
-	
-	
 	/**
 	 * 
-	 * @return number of all bugtracker entities in squash database
 	 */
-	long countBugTrackerEntities();
+	//FIXME add generated serial version UID , my eclipse couldn't do it (mpagnon)
+	private static final long serialVersionUID = 1L;
 	
-	/**
-	 * 
-	 * @param filter
-	 * @return a page of bugtracker entities according to the filter
-	 */
-	List<BugTrackerEntity> findSortedBugTrackerEntities(CollectionSorting filter);
 	
-	/**
-	 * checks if there is a BugtrackerEntity of the same name in the database.<br>
-	 * If so, raises a {@linkplain BugTrackerNameAlreadyExistsException}
-	 * @param name
-	 */
-	void checkNameAvailability(String name);
+	private final String bugtrackerNameExistsMessageKey = "squashtm.action.exception.bugtracker.name.exists.label";
+
+	public BugTrackerNameAlreadyExistsException(Exception ex) {
+		super(ex);
+	}
+
+	public BugTrackerNameAlreadyExistsException(String message) {
+		super(message);
+	}
+
+	public BugTrackerNameAlreadyExistsException() {
+
+	}
+
+	@Override
+	public String getI18nKey() {
+		return bugtrackerNameExistsMessageKey;
+	}
+
 }

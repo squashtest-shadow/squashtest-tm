@@ -46,7 +46,7 @@ public class BugTrackerManagerServiceImpl implements BugTrackerManagerService {
 	@PostFilter("hasPermission(filterObject, 'READ') or  hasRole('ROLE_ADMIN')")
 	@Override
 	public List<BugTracker> findAll() {
-//		List<BugTrackerEntity> bugTrackerEntities = bugTrackerDao.findAll();
+		// List<BugTrackerEntity> bugTrackerEntities = bugTrackerDao.findAll();
 		List<BugTrackerEntity> bugTrackerEntities = new ArrayList<BugTrackerEntity>();
 		return translateBTEntitiesIntoBTs(bugTrackerEntities);
 	}
@@ -54,8 +54,8 @@ public class BugTrackerManagerServiceImpl implements BugTrackerManagerService {
 	private List<BugTracker> translateBTEntitiesIntoBTs(List<BugTrackerEntity> bugTrackerEntities) {
 		List<BugTracker> bugTrackers = new ArrayList<BugTracker>(bugTrackerEntities.size());
 		for (BugTrackerEntity bugTrackerEntity : bugTrackerEntities) {
-			BugTracker bugTracker = new BugTracker(bugTrackerEntity.getUrl(), bugTrackerEntity.getKind(),
-					bugTrackerEntity.getName(), bugTrackerEntity.isIframeFriendly());
+			BugTracker bugTracker = new BugTracker(bugTrackerEntity.getId(), bugTrackerEntity.getUrl(),
+					bugTrackerEntity.getKind(), bugTrackerEntity.getName(), bugTrackerEntity.isIframeFriendly());
 			bugTrackers.add(bugTracker);
 		}
 		return bugTrackers;
@@ -64,6 +64,7 @@ public class BugTrackerManagerServiceImpl implements BugTrackerManagerService {
 	@Override
 	@PreAuthorize("hasRole('ROLE_ADMIN')")
 	public void addBugTracker(BugTracker bugTracker) {
+		bugTrackerDao.checkNameAvailability(bugTracker.getName());
 		BugTrackerEntity bugTrackerEntity = new BugTrackerEntity(bugTracker.getName(), bugTracker.getKind(),
 				bugTracker.getUrl(), bugTracker.isIframeFriendly());
 		bugTrackerDao.persist(bugTrackerEntity);
