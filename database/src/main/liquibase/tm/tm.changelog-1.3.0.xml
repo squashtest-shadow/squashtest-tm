@@ -609,21 +609,23 @@
 		                                                 Feat. 1207 
 	============================================================================================================ -->
 	<changeSet id="tm-1.3.0-feat-1209.01" author="mpagnon">
+	<comment>To connect Squash TM to a bugtracker, you must provide the name and the url of the bugtracker. The mantis plugin is shipped with the application
+	 IFRAME_FRIENDLY :tells if the bugtracker page can be accessed through an iframe : if the response header of the bugtracker page has the property [X-Frame-Options = DENY] the answer is false
+	 URL :  : must point to the base name of the end point. Eg : http://www.yourdomain.com/mantis . Tips : Prefer IPs over localhost and domain names over IPs. If you don't some minor issues may occur when reporting an issue.</comment>
 		<createTable tableName="BUGTRACKER"
-			remarks="To connect Squash TM to a bugtracker, you must provide the name and the url of the bugtracker. The mantis plugin is shipped with the application">
+			remarks="stores bugtrackers informations">
 			<column name="BUGTRACKER_ID" type="BIGINT" autoIncrement="true"
 				remarks="primary key, should be auto-generated.">
 				<constraints primaryKey="true" nullable="false" />
 			</column>
 			<column name="NAME" type="java.sql.Types.VARCHAR(50)"
-				remarks="the bugtracker name, that identifies the instance configured." />
+				remarks="identifies the instance configured." />
 			<column name="KIND" type="java.sql.Types.VARCHAR(50)"
-				remarks="the bugtracker kind : tells what kind of connector should be used" />
+				remarks="tells what kind of connector should be used" />
 			<column name="URL" type="java.sql.Types.VARCHAR(255)"
-				remarks="the bugtracker url : must point to the base name of the end point. Eg : http://www.yourdomain.com/mantis . Tips : Prefer IPs over localhost and domain names over IPs. If you don't some minor issues may occur when reporting an issue." />
+				remarks="the bugtracker url" />
 			<column name="IFRAME_FRIENDLY" type="BOOLEAN"
-				remarks="the bugtracker allows iframe :tells if the bugtracker page can be accessed through an iframe : 
-				if the response header of the bugtracker page has the property [X-Frame-Options = DENY] the answer is false" />
+				remarks="tells if the bugtracker page can be accessed through an iframe" />
 		</createTable>
 	</changeSet>
 	<!-- ====================================================================================================== 
