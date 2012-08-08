@@ -43,7 +43,7 @@
 <script type="text/javascript">
 
 $(function(){
-	$( "#delete-contextual-node-dialog" ).bind( "dialogopen", function(event, ui) {
+	$( "#delete-contextual-node-dialog_${openedBy}" ).bind( "dialogopen", function(event, ui) {
 		
 		var jqThis = $(this);
 		
