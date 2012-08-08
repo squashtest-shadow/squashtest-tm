@@ -31,9 +31,10 @@
 		<database.create.user>sa</database.create.user>
 		<database.create.password>sa</database.create.password>
 		
-		<master.changelog>${project.build.directory}/maven-shared-archive-resources/sample/sample-db.changelog.xml</master.changelog>
+		<master.changelog>${project.build.directory}/maven-shared-archive-resources/global.changelog-master.xml</master.changelog>
 		
 		<database.nocreate>false</database.nocreate>
+		<database.nopopulate>false</database.nopopulate>
 	</properties>
 
 	<build>
@@ -218,7 +219,7 @@
 						<groupId>org.liquibase</groupId>
 						<artifactId>liquibase-maven-plugin</artifactId>
 						<configuration>
-							<skip>${database.nocreate}</skip>
+							<skip>${database.nopopulate}</skip>
 						</configuration>						
 						<executions>
 							<execution>
