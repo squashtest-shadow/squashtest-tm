@@ -22,6 +22,7 @@ package org.squashtest.csp.tm.internal.service.bugtracker;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Set;
 
 import javax.inject.Inject;
 
@@ -29,6 +30,7 @@ import org.springframework.security.access.prepost.PostFilter;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+import org.squashtest.csp.core.bugtracker.core.BugTrackerConnectorFactory;
 import org.squashtest.csp.core.bugtracker.domain.BugTracker;
 import org.squashtest.csp.tm.domain.bugtracker.BugTrackerEntity;
 import org.squashtest.csp.tm.infrastructure.filter.CollectionSorting;
@@ -42,6 +44,12 @@ public class BugTrackerManagerServiceImpl implements BugTrackerManagerService {
 
 	@Inject
 	private BugTrackerEntityDao bugTrackerDao;
+	
+	@Inject
+	private BugTrackerConnectorFactory bugTrackerConnectorFactory;
+
+	
+	
 
 	@PostFilter("hasPermission(filterObject, 'READ') or  hasRole('ROLE_ADMIN')")
 	@Override
@@ -78,6 +86,11 @@ public class BugTrackerManagerServiceImpl implements BugTrackerManagerService {
 		List<BugTracker> bugtrackers = translateBTEntitiesIntoBTs(bugTrackerEntities);
 		long count = bugTrackerDao.countBugTrackerEntities();
 		return new FilteredCollectionHolder<List<BugTracker>>(count, bugtrackers);
+	}
+
+	@Override
+	public Set<String> findBugTrackerKinds() {
+		return bugTrackerConnectorFactory.getProviderKinds();
 	}
 
 }

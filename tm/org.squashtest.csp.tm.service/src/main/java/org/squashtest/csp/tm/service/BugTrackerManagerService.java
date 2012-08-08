@@ -21,6 +21,7 @@
 package org.squashtest.csp.tm.service;
 
 import java.util.List;
+import java.util.Set;
 
 import org.squashtest.csp.core.bugtracker.domain.BugTracker;
 import org.squashtest.csp.tm.domain.DuplicateNameException;
@@ -48,5 +49,11 @@ public interface BugTrackerManagerService {
 	 * @return sorted list of bugtrackers
 	 */
 	FilteredCollectionHolder<List<BugTracker>> findSortedBugtrackers(CollectionSorting filter);
+	
+	/**
+	 * 
+	 * @return a list of bugtracker kinds
+	 */
+	Set<String> findBugTrackerKinds();
 
 }

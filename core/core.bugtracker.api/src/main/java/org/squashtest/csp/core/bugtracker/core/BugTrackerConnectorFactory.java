@@ -21,6 +21,7 @@
 package org.squashtest.csp.core.bugtracker.core;
 
 import java.util.Map;
+import java.util.Set;
 import java.util.concurrent.ConcurrentHashMap;
 
 import org.apache.commons.lang.NullArgumentException;
@@ -52,7 +53,11 @@ public class BugTrackerConnectorFactory {
 	public void setProviderByKind(Map<String, BugTrackerConnectorProvider> providerByKind) {
 		this.providerByKind = providerByKind;
 	}
-
+	
+	public Set<String> getProviderKinds(){
+		return providerByKind.keySet();
+	}
+	
 	public BugTrackerConnector createConnector(BugTracker bugTracker) {
 		String kind = bugTracker.getKind();
 

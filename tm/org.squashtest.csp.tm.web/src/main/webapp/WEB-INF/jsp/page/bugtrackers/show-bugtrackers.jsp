@@ -156,7 +156,12 @@
 					<tr>
 						<td><label for="add-bugtracker-kind"><f:message
 							key="dialog.new-bugtracker.kind.label" /></label></td>
-						<td><input id="add-bugtracker-kind" type="text" size="50"/>
+						<td><select id="add-bugtracker-kind" class="combobox">
+						<c:forEach items="${ bugtrackerKinds }" var="kind" > 
+						<option value = "${kind}" >${kind}</option>
+						</c:forEach>
+						</select>
+						
 						<comp:error-message forField="kind" /></td>
 					</tr>
 					<tr>

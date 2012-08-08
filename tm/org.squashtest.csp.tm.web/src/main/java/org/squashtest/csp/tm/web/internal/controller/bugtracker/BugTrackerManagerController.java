@@ -22,6 +22,7 @@ package org.squashtest.csp.tm.web.internal.controller.bugtracker;
 
 import java.util.List;
 import java.util.Locale;
+import java.util.Set;
 
 import javax.validation.Valid;
 
@@ -82,9 +83,10 @@ public class BugTrackerManagerController {
 
 	@RequestMapping(method = RequestMethod.GET)
 	public ModelAndView showBugtrackers() {
-
+		Set<String> bugtrackerKinds = bugTrackerManagerService.findBugTrackerKinds();
 		ModelAndView mav = new ModelAndView("page/bugtrackers/show-bugtrackers");
 		mav.addObject("bugtrackers", bugTrackerManagerService.findAll());
+		mav.addObject("bugtrackerKinds", bugtrackerKinds);
 		return mav;
 	}
 
