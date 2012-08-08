@@ -34,7 +34,7 @@
 		the listener here is declared using @Component 
 		(see class org.squashtest.csp.tm.internal.service.TestAutomationConnectorRegistry)
 	 -->
-	<osgi:list interface="squashtm.testautomation.spi.TestAutomationConnector">
+	<osgi:list id="plugin.testautomation.registry" interface="squashtm.testautomation.spi.TestAutomationConnector" cardinality="0..N" >
 		<osgi:listener ref="squashtest.testautomation.connector-registry"
 					   bind-method="registerConnector" 
 					   unbind-method="unregisterConnector" />
