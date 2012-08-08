@@ -68,7 +68,7 @@
 <div class="ui-widget-header ui-corner-all ui-state-default fragment-header">
 	<div style="float:left;height:100%;">	
 		<h2>
-			<span><f:message key="requirement.header.title" />&nbsp;:&nbsp;</span>
+			<span><f:message key="requirement-version.header.title" />&nbsp;:&nbsp;</span>
 			<c:set var="completeRequirementName" value="${ requirementVersion.name }" />
 			<c:if test="${ not empty requirementVersion.reference && fn:length(requirementVersion.reference) > 0 }" >
 				<c:set var="completeRequirementName" value='${ requirementVersion.reference } - ${ requirementVersion.name }' />
@@ -126,6 +126,10 @@
 				<div>
 					<label for="requirement-version-number"><f:message key="requirement-version.version-number.label" /></label>
 					<div id="requirement-version-number">${ requirementVersion.versionNumber }</div>
+				</div>
+				<div class="display-table-row">
+					<label for="requirement-version-id">ID</label>
+					<div id="requirement-version-id">${ requirementVersion.id }</div>
 				</div>
 				<div>
 					<label for="requirement-description"><f:message key="requirement.description.label" /></label>

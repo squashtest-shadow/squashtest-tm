@@ -670,6 +670,10 @@ function addTestStepSuccessAnother(){
 	<jsp:attribute name="body">
 		<div id="test-case-description-table" class="display-table">
 			<div class="display-table-row">
+					<label for="test-case-id">ID</label>
+					<div class="display-table-cell" id="test-case-id">${ testCase.id }</div>
+				</div>
+			<div class="display-table-row">
 				<label for="test-case-description" class="display-table-cell"><f:message key="test-case.description.label" /></label>
 				<div class="display-table-cell" id="test-case-description" >${ testCase.description }</div>
 			</div>

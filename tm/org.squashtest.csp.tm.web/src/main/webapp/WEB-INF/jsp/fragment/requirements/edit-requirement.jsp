@@ -230,6 +230,10 @@ that page won't be editable if
 					<div class="display-table-cell" id="requirement-version-number">${ requirement.currentVersion.versionNumber }&nbsp;&nbsp;<a href="<c:url value='/requirements/${ requirement.id }/versions/manager' />"><f:message key="requirement.button.manage-versions.label" /></a></div>
 				</div>
 				<div class="display-table-row">
+					<label for="requirement-id">ID</label>
+					<div class="display-table-cell" id="requirement-id">${ requirement.id }</div>
+				</div>
+				<div class="display-table-row">
 					<label for="requirement-description" class="display-table-cell"><f:message key="requirement.description.label" /></label>
 					<div class="display-table-cell" id="requirement-description">${ requirement.description }</div>
 				</div>
