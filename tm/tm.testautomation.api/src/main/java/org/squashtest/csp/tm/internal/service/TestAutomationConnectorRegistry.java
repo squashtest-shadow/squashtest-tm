@@ -38,8 +38,7 @@ public class TestAutomationConnectorRegistry {
 	/**
 	 * Registered providers mapped by connector kind.
 	 */
-	private Map<String, TestAutomationConnector> availableConnectors = new ConcurrentHashMap<String, TestAutomationConnector>(
-			5);
+	private Map<String, TestAutomationConnector> availableConnectors = new ConcurrentHashMap<String, TestAutomationConnector>(5);
 
 
 
@@ -56,16 +55,16 @@ public class TestAutomationConnectorRegistry {
 	 *
 	 * @param provider
 	 */
-	public void registerConnector(TestAutomationConnector provider, Map serviceProperties) {
-		String kind = provider.getConnectorKind();
+	public void registerConnector(TestAutomationConnector connector, Map serviceProperties) {
+		String kind = connector.getConnectorKind();
 
 		if (kind == null) {
 			throw new IllegalArgumentException("TestAutomationConnector : kind is undefined");
 		}
 
-		LOGGER.info("Registering Connector provider for test automation platforms of kind '{}'", kind);
+		LOGGER.info("Registering connector for test automation platforms of kind '{}'", kind);
 
-		availableConnectors.put(kind, provider);
+		availableConnectors.put(kind, connector);
 	}
 
 	/**
@@ -73,10 +72,13 @@ public class TestAutomationConnectorRegistry {
 	 *
 	 * @param provider
 	 */
-	public void unregisterConnector(TestAutomationConnector provider, Map serviceProperties) {
-		String kind = provider.getConnectorKind();
+	public void unregisterConnector(TestAutomationConnector connector, Map serviceProperties) {
+		
+		if (connector==null) return;
+		
+		String kind = connector.getConnectorKind();
 
-		LOGGER.info("Unregistering Connector provider for test automation platforms of kind '{}'", kind);
+		LOGGER.info("Unregistering connector for test automation platforms of kind '{}'", kind);
 
 		availableConnectors.remove(kind);
 	}

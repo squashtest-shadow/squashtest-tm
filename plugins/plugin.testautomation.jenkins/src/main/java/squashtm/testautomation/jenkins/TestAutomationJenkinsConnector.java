@@ -20,12 +20,27 @@
  */
 package squashtm.testautomation.jenkins;
 
+import static org.apache.commons.httpclient.HttpStatus.SC_FORBIDDEN;
+import static org.apache.commons.httpclient.HttpStatus.SC_OK;
+import static org.apache.commons.httpclient.HttpStatus.SC_PROXY_AUTHENTICATION_REQUIRED;
+import static org.apache.commons.httpclient.HttpStatus.SC_UNAUTHORIZED;
+
+import java.io.IOException;
+import java.io.UnsupportedEncodingException;
+import java.net.URLEncoder;
 import java.util.Collection;
 
+import javax.inject.Inject;
+
+import org.apache.commons.httpclient.HttpClient;
+import org.apache.commons.httpclient.NameValuePair;
+import org.apache.commons.httpclient.methods.GetMethod;
 import org.springframework.stereotype.Service;
 import org.squashtest.csp.tm.domain.testautomation.TestAutomationProject;
 import org.squashtest.csp.tm.domain.testautomation.TestAutomationServer;
 
+import squashtm.testautomation.jenkins.internal.JsonParser;
+import squashtm.testautomation.jenkins.internal.net.HttpClientProvider;
 import squashtm.testautomation.spi.TestAutomationConnector;
 import squashtm.testautomation.spi.exceptions.AccessDenied;
 import squashtm.testautomation.spi.exceptions.ServerConnectionFailed;
@@ -33,27 +48,108 @@ import squashtm.testautomation.spi.exceptions.TestAutomationException;
 import squashtm.testautomation.spi.exceptions.UnreadableResponseException;
 
 
-@Service
+@Service("plugin.testautomation.jenkins-connector")
 public class TestAutomationJenkinsConnector implements TestAutomationConnector{
 	
+	private static final String JOBS_LIST_URI = "/api/json";
+	
+	private static final NameValuePair[] JOBS_LIST_QUERY = new NameValuePair[] { 
+																new NameValuePair("tree", "jobs[name]") 
+															};
+
 	private static final String CONNECTOR_KIND = "jenkins";
+	
+	
+	
+	@Inject
+	private HttpClientProvider clientProvider;
+	
+	@Inject
+	private JsonParser jsonParser;
+	
+	
 
 	@Override
 	public String getConnectorKind() {
 		return CONNECTOR_KIND;
 	}
-
+	
+	
 	@Override
 	public Collection<TestAutomationProject> listProjectsOnServer(TestAutomationServer server) 
 				throws  ServerConnectionFailed,
 						AccessDenied, 
 						UnreadableResponseException, 
 						TestAutomationException {
+			
+		HttpClient client = clientProvider.getClientFor(server);
 		
+		GetMethod getJobsMethod = newGetJobsMethod(server);
 		
+		try{
+			
+			int responseCode = client.executeMethod(getJobsMethod);
+			
+			checkResponseCode(responseCode);
+			
+			String jsonResponse = getJobsMethod.getResponseBodyAsString();	
+			
+			return jsonParser.readJobListFromJson(jsonResponse);
+			
+		}
+		catch(IOException ex){
+			throw new ServerConnectionFailed("Test automation - jenkins : could not connect to server '"+server+"' "+
+					 						 "due to technical error : ", ex);
+		}
+		catch(AccessDenied ex){
+			throw new AccessDenied("Test automation - jenkins : server '"+server+"' rejected the operation because of wrong credentials or insufficient privileges");
+		}
+		catch(UnreadableResponseException ex){
+			throw new UnreadableResponseException("Test automation - jenkins : server '"+server+"' returned malformed response : ", ex.getCause());
+		}
+		finally{
+			getJobsMethod.releaseConnection();
+		}
 		
-		return null;
 	} 
+	
+	
+	
+	// ************************************ private tools ************************** 
+
+	
+	private void checkResponseCode(int responseCode){
+		
+		if (responseCode == SC_OK){
+			return;
+		}
+		
+		
+		switch(responseCode){
+			case SC_FORBIDDEN :
+			case SC_UNAUTHORIZED :
+			case SC_PROXY_AUTHENTICATION_REQUIRED :
+				throw new AccessDenied();
+		}
+	}
+	
+	
+	private GetMethod newGetJobsMethod(TestAutomationServer server){
+		
+		StringBuilder urlBuilder= new StringBuilder();
+		
+		urlBuilder.append(server.getBaseURL().toExternalForm());
+		urlBuilder.append(JOBS_LIST_URI);
+
+
+		GetMethod method = new GetMethod();
+		
+		method.setPath(urlBuilder.toString());
+		method.setQueryString(JOBS_LIST_QUERY);
+
+		
+		return method;
+	}
 	
 	
 }

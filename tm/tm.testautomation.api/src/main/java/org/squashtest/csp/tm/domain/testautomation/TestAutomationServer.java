@@ -118,6 +118,10 @@ public class TestAutomationServer {
 		return kind;
 	}
 	
+	public String toString(){
+		return baseURL.toExternalForm();
+	}
+	
 	
 	public TestAutomationServer newWithURL(URL baseURL){
 		return new TestAutomationServer(baseURL, login, password, kind);
