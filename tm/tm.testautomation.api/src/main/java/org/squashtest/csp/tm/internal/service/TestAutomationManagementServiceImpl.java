@@ -50,7 +50,7 @@ public class TestAutomationManagementServiceImpl implements TestAutomationManage
 	private TestAutomationConnectorRegistry connectorRegistry;
 
 	
-	//@Inject
+	@Inject
 	private TestAutomationServer defaultServer;
 	
 	

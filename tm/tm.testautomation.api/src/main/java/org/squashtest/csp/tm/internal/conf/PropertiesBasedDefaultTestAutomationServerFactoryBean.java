@@ -82,7 +82,8 @@ public class PropertiesBasedDefaultTestAutomationServerFactoryBean implements Fa
 		TestAutomationServer defaultServer = new TestAutomationServer(baseURL, defaultLogin, defaultPass);
 		
 		if (LOGGER.isInfoEnabled()){
-			LOGGER.info("default automated test server configuration : url = '"+baseURL.toExternalForm()+"', login : '"+defaultLogin+"', password : '"+defaultPass.substring(0,2)+"...'");
+			String displayablePassword = (defaultPass.length() > 0) ? defaultPass.substring(0,1)+"****" : "(hidden)";
+			LOGGER.info("default automated test server configuration : url = '"+baseURL.toExternalForm()+"', login : '"+defaultLogin+"', password : '"+displayablePassword+"...'");
 		}
 		
 		return defaultServer;
