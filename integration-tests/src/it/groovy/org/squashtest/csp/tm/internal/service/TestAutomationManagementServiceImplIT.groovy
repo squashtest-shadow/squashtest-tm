@@ -50,7 +50,7 @@ class TestAutomationManagementServiceImplIT extends DbunitServiceSpecification {
 			def project = new TestAutomationProject("bobinio1", server)
 		
 		when :
-			def res = service.registerNewProject(project)
+			def res = service.fetchOrPersist(project)
 		
 		then :
 			res.id!=null
@@ -72,7 +72,7 @@ class TestAutomationManagementServiceImplIT extends DbunitServiceSpecification {
 			def project = new TestAutomationProject("roberto5", server)
 			
 		when :
-			def res = service.registerNewProject(project)
+			def res = service.fetchOrPersist(project)
 
 		then :
 			res.id != null
@@ -89,7 +89,7 @@ class TestAutomationManagementServiceImplIT extends DbunitServiceSpecification {
 			def project = new TestAutomationProject("roberto1", server)
 			
 		when :
-			def res = service.registerNewProject(project)
+			def res = service.fetchOrPersist(project)
 		
 		then :
 			res.id!=null
@@ -109,7 +109,7 @@ class TestAutomationManagementServiceImplIT extends DbunitServiceSpecification {
 			def project = new TestAutomationProject("mike2", server)
 			
 		when :
-			def res = service.registerNewProject(project)
+			def res = service.fetchOrPersist(project)
 		
 		then :
 			res.id == 22l

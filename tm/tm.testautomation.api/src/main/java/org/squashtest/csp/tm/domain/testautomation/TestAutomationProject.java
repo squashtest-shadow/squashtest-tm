@@ -89,15 +89,6 @@ public class TestAutomationProject {
 	}
 
 	
-	public TestAutomationProject(Long id, String name,
-			TestAutomationServer server) {
-		super();
-		this.id = id;
-		this.name = name;
-		this.server = server;
-	}
-
-	
 	public TestAutomationProject(String name, TestAutomationServer server) {
 		super();
 		this.name = name;

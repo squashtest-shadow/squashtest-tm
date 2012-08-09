@@ -21,11 +21,11 @@
 package org.squashtest.csp.tm.internal.service;
 
 import java.net.URL;
-import java.util.ArrayList;
 import java.util.Collection;
 
 import javax.inject.Inject;
 
+import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.stereotype.Service;
 import org.squashtest.csp.tm.domain.testautomation.TestAutomationProject;
 import org.squashtest.csp.tm.domain.testautomation.TestAutomationServer;
@@ -50,20 +50,17 @@ public class TestAutomationManagementServiceImpl implements TestAutomationManage
 	private TestAutomationConnectorRegistry connectorRegistry;
 
 	
+	@Inject
+	@Qualifier("tm.testautomation.server.default")
+	private TestAutomationServer defaultServer;
+	
+	
 	@Override
 	public Collection<TestAutomationProject> listProjectsOnServer(TestAutomationServer server) {
 		
 		TestAutomationConnector connector = connectorRegistry.getConnectorForKind(server.getKind());
 		
-		Collection<TestAutomationProject> projects = connector.listProjectsOnServer(server);
-
-		Collection<TestAutomationProject> projectsWithServer = new ArrayList<TestAutomationProject>();
-		
-		for (TestAutomationProject proj : projects){
-			projectsWithServer.add(proj.newWithServer(server));
-		}
-		
-		return projectsWithServer;
+		return connector.listProjectsOnServer(server);
 	}
 	
 	
@@ -78,7 +75,7 @@ public class TestAutomationManagementServiceImpl implements TestAutomationManage
 
 	
 	@Override
-	public TestAutomationProject registerNewProject(TestAutomationProject newProject) {
+	public TestAutomationProject fetchOrPersist(TestAutomationProject newProject) {
 		
 		TestAutomationServer inBaseServer = serverDao.uniquePersist(newProject.getServer());
 				

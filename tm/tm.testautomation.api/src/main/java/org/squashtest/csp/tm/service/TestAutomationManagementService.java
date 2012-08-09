@@ -36,9 +36,6 @@ public interface TestAutomationManagementService {
 	 * <p>Given the URL of the test automation server, and the credentials required to connect it, will return the list of 
 	 * project currently available on it.</p>
 	 * 
-	 * <p>Those instance of AutomatedTestProject will all come along with the instance of {@link TestAutomationServer} their are 
-	 * bound to.</p>
-	 * 
 	 * @param serverURL
 	 * @param login
 	 * @param password
@@ -82,6 +79,6 @@ public interface TestAutomationManagementService {
 	 * @param TMprojectId
 	 */
 	//@PreAuthorize(some expression) TODO : harass someone who can make specs for that.
-	TestAutomationProject registerNewProject(TestAutomationProject newProject); 
+	TestAutomationProject fetchOrPersist(TestAutomationProject newProject); 
 	
 }

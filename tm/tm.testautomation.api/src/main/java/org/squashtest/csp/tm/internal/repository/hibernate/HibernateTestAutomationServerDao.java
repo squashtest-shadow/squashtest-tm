@@ -57,10 +57,19 @@ public class HibernateTestAutomationServerDao implements
 
 	@Override
 	public TestAutomationServer uniquePersist(TestAutomationServer server) {
-		TestAutomationServer reserv = findByExample(server);
-		if (reserv != null){
-			return reserv;
+	
+		//id exists ?
+		if ((server.getId() != null) && (findById(server.getId())!=null)){
+			return server;
 		}
+		
+		//content exists ?
+		TestAutomationServer baseServer = findByExample(server);
+		if (baseServer != null){
+			return baseServer;
+		}
+		
+		//or else, persist
 		else{
 			sessionFactory.getCurrentSession().persist(server);
 			return server;
@@ -80,6 +89,7 @@ public class HibernateTestAutomationServerDao implements
 	
 	@Override
 	public TestAutomationServer findByExample(TestAutomationServer example) {
+		
 		Criteria criteria = sessionFactory.getCurrentSession().createCriteria(TestAutomationServer.class);
 		criteria.add(Example.create(example));
 		List<?> res = criteria.list();

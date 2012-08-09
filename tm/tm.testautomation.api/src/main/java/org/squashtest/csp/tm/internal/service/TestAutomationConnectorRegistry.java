@@ -20,6 +20,7 @@
  */
 package org.squashtest.csp.tm.internal.service;
 
+import java.util.Collection;
 import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
 
@@ -41,6 +42,9 @@ public class TestAutomationConnectorRegistry {
 	private Map<String, TestAutomationConnector> availableConnectors = new ConcurrentHashMap<String, TestAutomationConnector>(5);
 
 
+	public Collection<String> listRegisteredConnectors(){
+		return availableConnectors.keySet();
+	}
 
 	public TestAutomationConnector getConnectorForKind(String kind){
 		TestAutomationConnector connector = availableConnectors.get(kind);

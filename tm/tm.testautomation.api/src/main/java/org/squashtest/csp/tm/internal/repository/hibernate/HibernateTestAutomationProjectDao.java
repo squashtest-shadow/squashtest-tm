@@ -53,14 +53,24 @@ public class HibernateTestAutomationProjectDao implements
 	
 	@Override
 	public TestAutomationProject uniquePersist(TestAutomationProject newProject) {
-		TestAutomationProject reproj = findByExample(newProject);
-		if (reproj != null){
-			return reproj;
+		
+		//id exists ?
+		if ((newProject.getId() != null) && (findById(newProject.getId())!=null)){
+			return newProject;
 		}
+		
+		//content exists ?
+		TestAutomationProject baseServer = findByExample(newProject);
+		if (baseServer != null){
+			return newProject;
+		}
+		
+		//or else, persist
 		else{
 			sessionFactory.getCurrentSession().persist(newProject);
 			return newProject;
 		}
+		
 	}
 	
 	

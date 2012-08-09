@@ -40,6 +40,7 @@ import org.squashtest.csp.tm.internal.repository.ProjectDao;
 import org.squashtest.csp.tm.internal.repository.UserDao;
 import org.squashtest.csp.tm.service.CustomProjectModificationService;
 import org.squashtest.csp.tm.service.ProjectsPermissionManagementService;
+import org.squashtest.csp.tm.service.TestAutomationManagementService;
 
 /**
  * 
@@ -59,6 +60,8 @@ public class CustomProjectModificationServiceImpl implements CustomProjectModifi
 	private ProjectDeletionHandler projectDeletionHandler;
 	@Inject
 	private ProjectsPermissionManagementService permissionService;
+	@Inject
+	private TestAutomationManagementService autotestService;
 
 	@Override
 	@Transactional(readOnly = true)
@@ -125,8 +128,11 @@ public class CustomProjectModificationServiceImpl implements CustomProjectModifi
 	
 	@Override
 	@PreAuthorize("hasPermission(#projectId, 'org.squashtest.csp.tm.domain.project.Project', 'MANAGEMENT') or hasRole('ROLE_ADMIN')")
-	public void bindTestAutomationProject(long TMprojectId, TestAutomationProject TAproject) {
-		projectDao.findById(TMprojectId).bindAutomatedTestProject(TAproject);
+	public void bindTestAutomationProject(long TMprojectId, TestAutomationProject TAproject) {		
+		TestAutomationProject persistedProject = autotestService.fetchOrPersist(TAproject);
+		projectDao.findById(TMprojectId).bindTestAutomationProject(persistedProject);		
 	}
+
+	
 	
 }

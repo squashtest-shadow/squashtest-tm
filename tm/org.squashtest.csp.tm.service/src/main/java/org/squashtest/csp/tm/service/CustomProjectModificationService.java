@@ -49,10 +49,11 @@ public interface CustomProjectModificationService {
 	User findUserByLogin(String userLogin);
 
 	/**
-	 * WYSIWYG. Warning : the argument must be a persisted instance of {@link TestAutomationProject}
-	 * 
+	 * Will bind the TM project to a TA project. Will persist it if necessary.
+	 *  
 	 * @param TMprojectId
 	 * @param TAproject
 	 */
 	void bindTestAutomationProject(long TMprojectId, TestAutomationProject TAproject);
+	
 }

@@ -144,11 +144,20 @@ public class TestAutomationServer {
 		
 	}
 	
+	public TestAutomationServer(URL baseURL){
+		super();
+		this.baseURL = baseURL;
+	}
+	
+	public TestAutomationServer(URL baseURL, String kind){
+		super();
+		this.baseURL = baseURL;
+		this.kind = kind;
+	}
 
-	public TestAutomationServer(Long id, URL baseURL, String login,
+	public TestAutomationServer(URL baseURL, String login,
 			String password) {
 		super();
-		this.id = id;
 		this.baseURL = baseURL;
 		this.login = login;
 		this.password = password;
@@ -156,18 +165,10 @@ public class TestAutomationServer {
 	}
 
 
-	public TestAutomationServer(URL baseURL, String login, String password) {
-		super();
-		this.baseURL = baseURL;
-		this.login = login;
-		this.password = password;
-	}
 
-
-	public TestAutomationServer(Long id, URL baseURL, String login,
+	public TestAutomationServer(URL baseURL, String login,
 			String password, String kind) {
 		super();
-		this.id = id;
 		this.baseURL = baseURL;
 		this.login = login;
 		this.password = password;
@@ -175,14 +176,6 @@ public class TestAutomationServer {
 	}
 
 
-	public TestAutomationServer(URL baseURL, String login, String password,
-			String kind) {
-		super();
-		this.baseURL = baseURL;
-		this.login = login;
-		this.password = password;
-		this.kind = kind;
-	}
 
 
 	

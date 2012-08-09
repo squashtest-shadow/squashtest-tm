@@ -78,11 +78,11 @@ public class Project {
 	@ManyToMany(cascade = { CascadeType.ALL }, fetch = FetchType.LAZY)
 	@JoinTable(name="TM_TA_PROJECTS", joinColumns=@JoinColumn(name="TM_PROJECT_ID"), 
 			inverseJoinColumns=@JoinColumn(name="TA_PROJECT_ID"))
-	private Set<TestAutomationProject> automatedProjects;
+	private Set<TestAutomationProject> testAutomationProjects;
 	
 	
 	@Column(name="TEST_AUTOMATION_ENABLED")
-	private Boolean automatedTestsEnabled;
+	private Boolean testAutomationEnabled;
 	
 	
 	
@@ -169,21 +169,21 @@ public class Project {
 	/* **************************** test automation project section **************************** */
 	
 	/** 
-	 * will add an AutomatedTestProject if it wasn't added already, or won't do anything if it was already bound to this.
+	 * will add a TestAutomationProject if it wasn't added already, or won't do anything if it was already bound to this.
 	 * 
 	 * @param project
 	 */
-	public void bindAutomatedTestProject(TestAutomationProject project){
-		for (TestAutomationProject proj : automatedProjects){
+	public void bindTestAutomationProject(TestAutomationProject project){
+		for (TestAutomationProject proj : testAutomationProjects){
 			if (proj.getId().equals(project.getId())){
 				return ;
 			}
 		}
-		automatedProjects.add(project);
+		testAutomationProjects.add(project);
 	}
 	
-	public void unbindAutomatedTestProject(TestAutomationProject project){
-		Iterator<TestAutomationProject> iter = automatedProjects.iterator();
+	public void unbindTestAutomationProject(TestAutomationProject project){
+		Iterator<TestAutomationProject> iter = testAutomationProjects.iterator();
 		while (iter.hasNext()){
 			TestAutomationProject proj = iter.next();
 			if (proj.getId().equals(project.getId())){
@@ -193,12 +193,12 @@ public class Project {
 		}
 	}
 	
-	public boolean isAutomatedTestsEnabled(){
-		return automatedTestsEnabled;
+	public boolean isTestAutomationEnabled(){
+		return testAutomationEnabled;
 	}
 	
-	public void setAutomatedTestsEnabled(boolean enabled){
-		automatedTestsEnabled = enabled;
+	public void enableTestAutomation(boolean enabled){
+		testAutomationEnabled = enabled;
 	}
 	
 }

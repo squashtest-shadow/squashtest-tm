@@ -29,6 +29,7 @@ import org.slf4j.LoggerFactory;
 import org.springframework.osgi.extensions.annotation.ServiceReference;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
@@ -39,6 +40,7 @@ import org.squashtest.csp.tm.domain.LoginDoNotExistException;
 import org.squashtest.csp.tm.domain.UnknownEntityException;
 import org.squashtest.csp.tm.domain.project.AdministrableProject;
 import org.squashtest.csp.tm.domain.project.Project;
+import org.squashtest.csp.tm.domain.testautomation.TestAutomationProject;
 import org.squashtest.csp.tm.domain.users.User;
 import org.squashtest.csp.tm.domain.users.UserProjectPermissionsBean;
 import org.squashtest.csp.tm.service.ProjectModificationService;
@@ -46,12 +48,18 @@ import org.squashtest.csp.tm.service.ProjectModificationService;
 @Controller
 @RequestMapping("/projects/{projectId}")
 public class ProjectModificationController {
+	
 	private static final Logger LOGGER = LoggerFactory.getLogger(ProjectModificationController.class);
+	
 	private ProjectModificationService projectModificationService;
+	
+	
 	@ServiceReference
 	public void setProjectModificationService(ProjectModificationService projectModificationService) {
 		this.projectModificationService = projectModificationService;
 	}
+
+	
 	@RequestMapping(value="/info", method=RequestMethod.GET)
 	public ModelAndView getProjectInfos(@PathVariable long projectId){
 		AdministrableProject project = projectModificationService.findAdministrableProjectById(projectId);
@@ -59,6 +67,7 @@ public class ProjectModificationController {
 		mav.addObject("adminproject", project);
 		return mav;
 	}
+	
 	
 	@RequestMapping(method = RequestMethod.POST, params = { "id=project-label", "value" })
 	@ResponseBody
@@ -69,6 +78,7 @@ public class ProjectModificationController {
 		}
 		return projectLabel;
 	}
+	
 	
 	@RequestMapping(method = RequestMethod.POST, params = { "newName" })
 	@ResponseBody
@@ -82,6 +92,7 @@ public class ProjectModificationController {
 		};
 	}
 	
+	
 	@RequestMapping(method = RequestMethod.POST, params = { "isActive" })
 	@ResponseBody
 	public Object changeActive(HttpServletResponse response, @PathVariable long projectId, @RequestParam boolean isActive) {
@@ -93,6 +104,9 @@ public class ProjectModificationController {
 			public Boolean active = newIsActive; // NOSONAR unreadable field actually read by JSON marshaller.
 		};
 	}
+	
+	
+	
 	@RequestMapping(method = RequestMethod.POST, params = { "id=project-description", "value" })
 	@ResponseBody
 	public String changeDescription(@RequestParam("value") String projectDescription, @PathVariable long projectId) {
@@ -102,6 +116,8 @@ public class ProjectModificationController {
 		}
 		return projectDescription;
 	}
+	
+	
 	
 	@RequestMapping(value = "/general", method = RequestMethod.GET)
 	public ModelAndView refreshGeneralInfos(@PathVariable long projectId) {
@@ -119,17 +135,25 @@ public class ProjectModificationController {
 		return mav;
 	}
 	
+	
+	
 	@RequestMapping(method = RequestMethod.DELETE)
 	@ResponseBody
 	public void deleteProject(@PathVariable long projectId){
 		projectModificationService.deleteProject(projectId);
 	}
 	
+	
+	
 	//*********************Permission Management*********************
+	
 	@RequestMapping(value="/add-permission", method=RequestMethod.POST, params = { "user" })
 	public @ResponseBody void addNewPermission(@RequestParam long user, @PathVariable long projectId, @RequestParam String permission){
 		projectModificationService.addNewPermissionToProject(user, projectId, permission);
 	}
+	
+	
+	
 	@RequestMapping(value="/add-permission", method=RequestMethod.POST, params = { "userLogin" })
 	public @ResponseBody void addNewPermissionWithLogin(@RequestParam String userLogin, @PathVariable long projectId, @RequestParam String permission){
 		User user = projectModificationService.findUserByLogin(userLogin);
@@ -138,10 +162,15 @@ public class ProjectModificationController {
 		}
 		projectModificationService.addNewPermissionToProject(user.getId(), projectId, permission);
 	}
+	
+	
+	
 	@RequestMapping(value="/remove-permission", method=RequestMethod.POST)
 	public @ResponseBody void removePermission(@RequestParam("user") long userId, @PathVariable long projectId){
 		projectModificationService.removeProjectPermission(userId, projectId);
 	}
+	
+	
 	
 	@RequestMapping(value = "/permission-popup" ,method = RequestMethod.GET)
 	public ModelAndView getPermissionPopup(@PathVariable long projectId) {
@@ -156,6 +185,7 @@ public class ProjectModificationController {
 		return mav;
 	}
 	
+	
 	@RequestMapping(value = "/permission-table" ,method = RequestMethod.GET)
 	public ModelAndView getPermissionTable(@PathVariable long projectId) {
 		Project project = projectModificationService.findById(projectId);
@@ -167,6 +197,15 @@ public class ProjectModificationController {
 		mav.addObject("permissionList", permissionList);
 		mav.addObject("userPermissionList", userProjectPermissionsBean);
 		return mav;
+	}
+	
+	
+	//********************* test automation *********************
+	
+	@RequestMapping(value = "/test-automation-projects", method=RequestMethod.POST, headers = "Content-Type=application/json" )
+	@ResponseBody
+	public void bindTestAutomationProject(@PathVariable("projectId") long projectId, @RequestBody TestAutomationProject project){
+		projectModificationService.bindTestAutomationProject(projectId, project);
 	}
 	
 }
