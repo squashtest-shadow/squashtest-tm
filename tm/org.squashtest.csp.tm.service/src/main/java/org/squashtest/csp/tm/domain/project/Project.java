@@ -39,6 +39,7 @@ import javax.validation.constraints.Size;
 
 import org.hibernate.validator.constraints.NotBlank;
 import org.squashtest.csp.tm.domain.audit.Auditable;
+import org.squashtest.csp.tm.domain.bugtracker.BugTrackerProject;
 import org.squashtest.csp.tm.domain.campaign.CampaignLibrary;
 import org.squashtest.csp.tm.domain.requirement.RequirementLibrary;
 import org.squashtest.csp.tm.domain.testautomation.TestAutomationProject;
@@ -76,6 +77,9 @@ public class Project {
 	@JoinColumn(name = "CL_ID")
 	private CampaignLibrary campaignLibrary;
 	
+	@OneToOne(cascade = {CascadeType.ALL}, optional = true, fetch = FetchType.LAZY)
+	@JoinColumn(name="BUGTRACKER_PROJECT_ID")
+	private BugTrackerProject bugtrackerProject;
 	
 	@ManyToMany(cascade = { CascadeType.ALL }, fetch = FetchType.LAZY)
 	@JoinTable(name="TM_TA_PROJECTS", joinColumns=@JoinColumn(name="TM_PROJECT_ID"), 
@@ -127,6 +131,10 @@ public class Project {
 	public boolean isActive() {
 		return this.active;
 	}
+	
+	public boolean isBugtrackerConnected(){
+		return false; //TODO implement
+	}
 
 	public TestCaseLibrary getTestCaseLibrary() {
 		return testCaseLibrary;
@@ -135,7 +143,6 @@ public class Project {
 	public void setTestCaseLibrary(TestCaseLibrary testCaseLibrary) {
 		this.testCaseLibrary = testCaseLibrary;
 		notifyLibraryAssociation(testCaseLibrary);
-
 	}
 
 	public RequirementLibrary getRequirementLibrary() {
@@ -154,6 +161,14 @@ public class Project {
 	public void setCampaignLibrary(CampaignLibrary campaignLibrary) {
 		this.campaignLibrary = campaignLibrary;
 		notifyLibraryAssociation(campaignLibrary);
+	}	
+
+	public BugTrackerProject getBugtrackerProject() {
+		return bugtrackerProject;
+	}
+
+	public void setBugtrackerProject(BugTrackerProject bugtrackerProject) {
+		this.bugtrackerProject = bugtrackerProject;
 	}
 
 	/**

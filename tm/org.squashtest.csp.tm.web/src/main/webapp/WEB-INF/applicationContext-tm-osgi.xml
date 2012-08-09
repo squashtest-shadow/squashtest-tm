@@ -114,6 +114,14 @@
 	<osgi:reference id="squashtest.tm.service.BugTrackerLocalService"
 		bean-name="squashtest.tm.service.BugTrackerLocalService" interface="org.squashtest.csp.tm.service.BugTrackerLocalService"
 		availability="mandatory" />
+	<osgi:reference id="squashtest.tm.service.BugTrackerManagerService"
+		bean-name="squashtest.tm.service.BugTrackerManagerService"
+		availability="mandatory">
+		<osgi:interfaces>
+		<value>org.squashtest.csp.tm.service.BugTrackerManagerService</value>
+		<value>org.squashtest.csp.tm.service.BugTrackerFinderService</value>
+		</osgi:interfaces>
+	</osgi:reference>
 
 	<osgi:reference id="squashtest.tm.service.UserAccountService"
 		bean-name="squashtest.tm.service.UserAccountService" interface="org.squashtest.csp.tm.service.UserAccountService"

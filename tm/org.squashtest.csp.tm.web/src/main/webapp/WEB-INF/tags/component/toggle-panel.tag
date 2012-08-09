@@ -20,7 +20,7 @@
         along with this software.  If not, see <http://www.gnu.org/licenses/>.
 
 --%>
-<%@ tag body-content="empty" %>
+<%@ tag description="component for jquery toggle panel with buttons" %>
 <%@ attribute name="title" description="Title of the panel. Alternative : set the titleKey attribute"%>
 <%@ attribute name="titleKey" description="Key of the panel title. Alternative : set the title attribute" %>
 <%@ attribute name="open" description="true if the panel should be opened when rendered" %>

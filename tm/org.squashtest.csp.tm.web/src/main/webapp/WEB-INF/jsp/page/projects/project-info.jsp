@@ -20,17 +20,17 @@
         along with this software.  If not, see <http://www.gnu.org/licenses/>.
 
 --%>
-<%@ taglib uri="http://java.sun.com/jsp/jstl/core" prefix="c"%>
-<%@ taglib uri="http://java.sun.com/jsp/jstl/fmt" prefix="f"%>
-<%@ taglib tagdir="/WEB-INF/tags/jquery" prefix="jq"%>
+<%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core" %>
+<%@ taglib prefix="f" uri="http://java.sun.com/jsp/jstl/fmt" %>
+<%@ taglib prefix="jq" tagdir="/WEB-INF/tags/jquery" %>
 <%@ taglib prefix="s" uri="http://www.springframework.org/tags"%>
-<%@ taglib tagdir="/WEB-INF/tags/component" prefix="comp"%>
+<%@ taglib prefix="comp" tagdir="/WEB-INF/tags/component" %>
 <%@ taglib prefix="layout" tagdir="/WEB-INF/tags/layout"%>
 <%@ taglib prefix="dt" tagdir="/WEB-INF/tags/datatables"%>
 <%@ taglib prefix="pop" tagdir="/WEB-INF/tags/popup"%>
 <%@ taglib prefix="ta" tagdir="/WEB-INF/tags/testautomation"%>
+<%@ taglib prefix="sec" uri="http://www.springframework.org/security/tags" %>
 
-<%@ taglib uri="http://www.springframework.org/security/tags" prefix="sec"%>
 <%@ page language="java" contentType="text/html; charset=utf-8"
 	pageEncoding="utf-8"%>
 <%------------------------------------- URLs et back button ----------------------------------------------%>
@@ -219,6 +219,59 @@
 			</jsp:body>
 		</comp:popup>
 		<%----------------------------------- /add User Popup-----------------------------------------------%>
+		<%----------------------------------- BUGTRACKER PANEL -----------------------------------------------%>
+			<br />
+			<comp:simple-jeditable targetUrl="${ projectUrl }" componentId="project-bugtracker-project-name" />
+			<comp:toggle-panel id="project-bugtracker-panel"
+				titleKey="project.bugtracker.panel.title" isContextual="true" open="true"
+				classes="bugtacker-panel">
+				<jsp:attribute name="body">
+					<c:choose>
+						<c:when test="${bugtrackersListEmpty}">
+						<div id="bugtrackers-list-empty-message"><f:message key="project.bugtrackers.empty.list.message"/></div>
+						</c:when>
+						<c:otherwise>
+							<div id="project-bugtracker-table" class="display-table">
+								
+								<div class="display-table-row">
+									<label for="project-bugtracker-name" class="display-table-cell">
+										<f:message key="project.bugtracker.name.label" />
+									</label>
+									<div class="display-table-cell">
+										<div id="project-bugtracker-name">
+											<c:choose>
+												<c:when test="${ !adminproject.project.bugtrackerConnected }">
+													<f:message key="project.bugtracker.name.undefined"/>
+												</c:when>
+												<c:otherwise>
+													<s:message code="${ adminproject.project.bugtrackerProject.bugtracker.name }" htmlEscape="true" />							
+												</c:otherwise>
+											</c:choose>
+										</div>
+										<comp:select-jeditable componentId="project-bugtracker-name" jsonData="${bugtrackersList}" targetUrl="${projectUrl}" />
+									</div>
+								</div>
+								<div class="display-table-row" id="project-bugtracker-project-name-row" >
+									<label for="project-bugtracker-project-name" class="display-table-cell">
+										<f:message key="project.bugtracker.project.name.label" />
+									</label>
+									<div class="display-table-cell" id="project-bugtracker-project-name">
+										<c:choose>
+											<c:when test="${ adminproject.project.bugtrackerConnected }">
+												${ adminproject.project.bugtrackerProject.projectName }
+											</c:when>
+											<c:otherwise>
+												${ adminproject.project.name }
+											</c:otherwise>
+										</c:choose>
+									</div>
+								</div>
+							</div>
+						</c:otherwise>
+					</c:choose>
+				</jsp:attribute>
+			</comp:toggle-panel>
+		<%-----------------------------------END BUGTRACKER PANEL -----------------------------------------------%>
 		</div>
 		<%---------------------------------------------------------------END  BODY -----------------------------------------------%>
 	<comp:decorate-buttons />

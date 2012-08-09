@@ -54,8 +54,7 @@ public class BugTrackerManagerServiceImpl implements BugTrackerManagerService {
 	@PostFilter("hasPermission(filterObject, 'READ') or  hasRole('ROLE_ADMIN')")
 	@Override
 	public List<BugTracker> findAll() {
-		// List<BugTrackerEntity> bugTrackerEntities = bugTrackerDao.findAll();
-		List<BugTrackerEntity> bugTrackerEntities = new ArrayList<BugTrackerEntity>();
+		List<BugTrackerEntity> bugTrackerEntities = bugTrackerDao.findAll();
 		return translateBTEntitiesIntoBTs(bugTrackerEntities);
 	}
 

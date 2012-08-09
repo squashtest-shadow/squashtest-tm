@@ -46,8 +46,12 @@
 	<osgi:service ref="squashtest.tm.service.BugTrackerLocalService"
 		interface="org.squashtest.csp.tm.service.BugTrackerLocalService" />
 		
-	<osgi:service ref="squashtest.tm.service.BugTrackerManagerService"
-		interface="org.squashtest.csp.tm.service.BugTrackerManagerService" />
+	<osgi:service ref="squashtest.tm.service.BugTrackerManagerService">
+		<osgi:interfaces>
+			<value>org.squashtest.csp.tm.service.BugTrackerManagerService</value>
+			<value>org.squashtest.csp.tm.service.BugTrackerFinderService</value>
+		</osgi:interfaces>
+	</osgi:service>
 
 	<!-- ========= /BUGTRACKER SERVICES ============= -->
 
@@ -61,7 +65,10 @@
 
 	<!-- Application services -->
 	<osgi:service ref="squashtest.tm.service.ProjectModificationService"
-		interface="org.squashtest.csp.tm.service.ProjectModificationService" />
+		interface="org.squashtest.csp.tm.service.ProjectModificationService" />	
+	
+	<osgi:service ref="squashtest.tm.service.ProjectManagerService"
+		interface="org.squashtest.csp.tm.service.ProjectManagerService" />
 
 	<osgi:service ref="squashtest.tm.service.TestCaseModificationService">
 		<osgi:interfaces>
@@ -131,9 +138,6 @@
 
 	<osgi:service ref="squashtest.tm.service.ExecutionProcessingService"
 		interface="org.squashtest.csp.tm.service.ExecutionProcessingService" />
-
-	<osgi:service ref="squashtest.tm.service.ProjectManagerService"
-		interface="org.squashtest.csp.tm.service.ProjectManagerService" />
 
 	<osgi:service ref="squashtest.tm.service.IterationTestPlanManagerService">
 		<osgi:interfaces>

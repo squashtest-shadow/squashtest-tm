@@ -23,12 +23,16 @@ package org.squashtest.csp.tm.web.internal.controller.project;
 import java.net.MalformedURLException;
 import java.util.HashMap;
 import java.util.List;
+import java.util.Locale;
 import java.util.Map;
 
+import javax.inject.Inject;
 import javax.servlet.http.HttpServletResponse;
+
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.context.MessageSource;
 import org.springframework.osgi.extensions.annotation.ServiceReference;
 import org.springframework.stereotype.Controller;
 import org.springframework.validation.BindException;
@@ -39,6 +43,7 @@ import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.servlet.ModelAndView;
+import org.squashtest.csp.core.bugtracker.domain.BugTracker;
 import org.squashtest.csp.core.security.acls.PermissionGroup;
 import org.squashtest.csp.tm.domain.LoginDoNotExistException;
 import org.squashtest.csp.tm.domain.UnknownEntityException;
@@ -49,8 +54,10 @@ import org.squashtest.csp.tm.domain.testautomation.TestAutomationServer;
 import org.squashtest.csp.tm.domain.users.User;
 import org.squashtest.csp.tm.domain.users.UserProjectPermissionsBean;
 import org.squashtest.csp.tm.infrastructure.filter.FilteredCollectionHolder;
+import org.squashtest.csp.tm.service.BugTrackerFinderService;
 import org.squashtest.csp.tm.service.ProjectModificationService;
 import org.squashtest.csp.tm.web.internal.model.datatable.DataTableDrawParameters;
+import org.squashtest.csp.tm.web.internal.helper.JsonHelper;
 import org.squashtest.csp.tm.web.internal.model.datatable.DataTableModel;
 import org.squashtest.csp.tm.web.internal.model.datatable.DataTableModelHelper;
 import org.squashtest.csp.tm.web.internal.model.testautomation.TestAutomationProjectRegistrationForm;
@@ -61,6 +68,9 @@ public class ProjectModificationController {
 	
 	private static final Logger LOGGER = LoggerFactory.getLogger(ProjectModificationController.class);
 	
+	@Inject
+	private MessageSource messageSource;
+	
 	private ProjectModificationService projectModificationService;
 	
 	
@@ -68,24 +78,39 @@ public class ProjectModificationController {
 	public void setProjectModificationService(ProjectModificationService projectModificationService) {
 		this.projectModificationService = projectModificationService;
 	}
-
-	
+	private BugTrackerFinderService bugtrackerFinderService;
+		@ServiceReference
+	public void setBugTrackerLocalFinderService(BugTrackerFinderService bugtrackerFinderService) {
+		this.bugtrackerFinderService = bugtrackerFinderService;
+	}
 	@RequestMapping(value="/info", method=RequestMethod.GET)
-	public ModelAndView getProjectInfos(@PathVariable long projectId){
+	public ModelAndView getProjectInfos(@PathVariable long projectId, Locale locale){
 		
 		AdministrableProject adminProject = projectModificationService.findAdministrableProjectById(projectId);
 		TestAutomationServer taServerCoordinates = projectModificationService.getLastBoundServerOrDefault(adminProject.getProject().getId());
 		List<TestAutomationProject> boundProjects = projectModificationService.findBoundTestAutomationProjects(projectId);
 		
+		Map<Long, String> comboDataMap = createComboDataForBugtracker(locale);
+		
+		
 		ModelAndView mav = new ModelAndView("page/projects/project-info");	
 		
 		mav.addObject("adminproject", adminProject);
 		mav.addObject("taServer", taServerCoordinates);
+		mav.addObject("bugtrackersList", JsonHelper.serialize(comboDataMap));
+		mav.addObject("bugtrackersListEmpty", comboDataMap.size() == 1);
 		mav.addObject("boundTAProjects", boundProjects);
 		return mav;
 	}
 	
-	
+	private Map<Long, String> createComboDataForBugtracker(Locale locale) {
+		Map<Long, String> comboDataMap = new HashMap<Long, String>();
+		for(BugTracker b : bugtrackerFinderService.findAll()){
+			comboDataMap.put(b.getId(), b.getName());
+		}
+		comboDataMap.put(-1L, messageSource.getMessage("project.bugtracker.name.undefined", null, locale));
+		return comboDataMap;
+	}
 	@RequestMapping(method = RequestMethod.POST, params = { "id=project-label", "value" })
 	@ResponseBody
 	public String changeLabel(@RequestParam("value") String projectLabel, @PathVariable long projectId) {

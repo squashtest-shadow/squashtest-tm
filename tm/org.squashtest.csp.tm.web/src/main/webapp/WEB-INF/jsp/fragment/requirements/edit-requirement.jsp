@@ -253,19 +253,19 @@ that page won't be editable if
 							<comp:level-message level="${ requirement.criticality }"/>
 						</c:otherwise>
 						</c:choose>
-					</div>				
+					</div>
 				</div>
 				<div class="display-table-row">
 					<label for="requirement-category" class="display-table-cell"><f:message key="requirement.category.combo.label" /></label>
 					<div class="display-table-cell">
 						<c:choose>
-						<c:when test="${smallEditable }">
-						<div id="requirement-category"><s:message code="${ requirement.category.i18nKey }" htmlEscape="true" /></div>
-						<comp:select-jeditable componentId="requirement-category" jsonData="${categoryList}" targetUrl="${requirementUrl}" />
-						</c:when>
-						<c:otherwise>
-							<s:message code="${ requirement.category.i18nKey }" htmlEscape="true" />
-						</c:otherwise>
+							<c:when test="${smallEditable }">
+								<div id="requirement-category"><s:message code="${ requirement.category.i18nKey }" htmlEscape="true" /></div>
+								<comp:select-jeditable componentId="requirement-category" jsonData="${categoryList}" targetUrl="${requirementUrl}" />
+							</c:when>
+							<c:otherwise>
+								<s:message code="${ requirement.category.i18nKey }" htmlEscape="true" />
+							</c:otherwise>
 						</c:choose>
 					</div>				
 				</div>
@@ -283,7 +283,7 @@ that page won't be editable if
 							<comp:level-message level="${ requirement.status }"/>
 						</c:otherwise>
 						</c:choose>
-					</div>		
+					</div>
 
 				</div>				
 			</div>

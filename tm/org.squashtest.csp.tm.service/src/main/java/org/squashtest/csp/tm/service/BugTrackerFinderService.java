@@ -20,19 +20,32 @@
  */
 package org.squashtest.csp.tm.service;
 
-import org.squashtest.csp.core.bugtracker.domain.BugTracker;
-import org.squashtest.csp.tm.domain.DuplicateNameException;
+import java.util.List;
+import java.util.Set;
 
-public interface BugTrackerManagerService extends BugTrackerFinderService{
+import org.squashtest.csp.core.bugtracker.domain.BugTracker;
+import org.squashtest.csp.tm.infrastructure.filter.CollectionSorting;
+import org.squashtest.csp.tm.infrastructure.filter.FilteredCollectionHolder;
+
+
+public interface BugTrackerFinderService {
+
+	/**
+	 * 
+	 * @return all bugtrackers the user has read access to
+	 */
+	List<BugTracker> findAll();
 	
 	/**
-	 * add a new bugtracker in the database 
-	 * @throws DuplicateNameException
 	 * 
-	 * @param bugTracker
+	 * @param filter
+	 * @return sorted list of bugtrackers
 	 */
-	void addBugTracker(BugTracker bugTracker);
-
+	FilteredCollectionHolder<List<BugTracker>> findSortedBugtrackers(CollectionSorting filter);
 	
-
+	/**
+	 * 
+	 * @return a list of bugtracker kinds
+	 */
+	Set<String> findBugTrackerKinds();
 }
