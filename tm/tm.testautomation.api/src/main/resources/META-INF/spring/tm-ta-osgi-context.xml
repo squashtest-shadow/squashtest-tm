@@ -39,6 +39,9 @@
 					   bind-method="registerConnector" 
 					   unbind-method="unregisterConnector" />
 	</osgi:list>
+	
+	<osgi:service ref="squashtest.tm.service.TestAutomationManagementService"
+				  interface="org.squashtest.csp.tm.service.TestAutomationManagementService" />
 
 	
 </beans>

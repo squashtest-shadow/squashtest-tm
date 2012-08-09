@@ -50,8 +50,8 @@ public class TestAutomationManagementServiceImpl implements TestAutomationManage
 	private TestAutomationConnectorRegistry connectorRegistry;
 
 	
-	@Inject
-	@Qualifier("tm.testautomation.server.default")
+//	@Inject
+//	@Qualifier("tm.testautomation.server.default")
 	private TestAutomationServer defaultServer;
 	
 	
