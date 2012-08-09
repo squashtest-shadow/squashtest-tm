@@ -29,10 +29,9 @@
 
 
 	<!-- service reference injection -->
-	<bean
-		class="org.springframework.osgi.extensions.annotation.ServiceReferenceInjectionBeanPostProcessor" />
+	<bean class="org.springframework.osgi.extensions.annotation.ServiceReferenceInjectionBeanPostProcessor" />
 		
-	
-	<osgi:service ref="plugin.testautomation.jenkins-connector" interface="squashtm.testautomation.spi.TestAutomationConnector"/>
+					   
+	<osgi:service ref="plugin.testautomation.jenkins.connector" interface="squashtm.testautomation.spi.TestAutomationConnector"/>
 	
 </beans>

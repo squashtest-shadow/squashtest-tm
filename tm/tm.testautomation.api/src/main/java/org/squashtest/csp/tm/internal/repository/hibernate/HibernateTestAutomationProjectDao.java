@@ -60,9 +60,9 @@ public class HibernateTestAutomationProjectDao implements
 		}
 		
 		//content exists ?
-		TestAutomationProject baseServer = findByExample(newProject);
-		if (baseServer != null){
-			return newProject;
+		TestAutomationProject baseProject = findByExample(newProject);
+		if (baseProject != null){
+			return baseProject;
 		}
 		
 		//or else, persist

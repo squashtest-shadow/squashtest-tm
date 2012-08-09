@@ -42,4 +42,5 @@
 	<bean class="org.squashtest.csp.core.service.security.StubUserContextService" primary="true"/> 
 	<bean class="org.squashtest.csp.core.service.security.StubPermissionEvaluationService" primary="true"/>
 	<bean class="org.squashtest.csp.core.service.security.StubObjectIdentityService" primary="true"/>
+	<bean class="org.squashtest.csp.tm.domain.testautomation.TestAutomationServer" primary="true" />
 </beans>

@@ -122,7 +122,7 @@
 				<configuration>
 					<instructions>
 						<_include>bnd.bnd</_include>
-						<Export-Package>!*, !squashtm.testautomation.jenkins.internal.*, squashtm.testautomation.jenkins</Export-Package>
+						<Export-Package>!squashtm.testautomation.jenkins.internal.*, squashtm.testautomation.jenkins</Export-Package>
 						<Import-Package>*</Import-Package>
 					</instructions>
 				</configuration>

@@ -33,6 +33,6 @@
 	http://www.springframework.org/schema/tx http://www.springframework.org/schema/tx/spring-tx-3.0.xsd">
 	
 
-	<context:component-scan base-package="squashtm.testautomation.jenkins.*" />
+	<context:component-scan base-package="*" />
 
 </beans>

@@ -26,8 +26,6 @@ import static org.apache.commons.httpclient.HttpStatus.SC_PROXY_AUTHENTICATION_R
 import static org.apache.commons.httpclient.HttpStatus.SC_UNAUTHORIZED;
 
 import java.io.IOException;
-import java.io.UnsupportedEncodingException;
-import java.net.URLEncoder;
 import java.util.Collection;
 
 import javax.inject.Inject;
@@ -48,7 +46,7 @@ import squashtm.testautomation.spi.exceptions.TestAutomationException;
 import squashtm.testautomation.spi.exceptions.UnreadableResponseException;
 
 
-@Service("plugin.testautomation.jenkins-connector")
+@Service("plugin.testautomation.jenkins.connector")
 public class TestAutomationJenkinsConnector implements TestAutomationConnector{
 	
 	private static final String JOBS_LIST_URI = "/api/json";

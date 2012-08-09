@@ -32,9 +32,11 @@
 	http://www.springframework.org/schema/util http://www.springframework.org/schema/util/spring-util-3.0.xsd
 	http://www.springframework.org/schema/tx http://www.springframework.org/schema/tx/spring-tx-3.0.xsd">
 	
-<!--  
-	<bean id="tm.testautomation.server.default"
+  
+	<bean id="tm.testautomation.server.default.factory"
 		class="org.squashtest.csp.tm.internal.conf.PropertiesBasedDefaultTestAutomationServerFactoryBean">
 	</bean>
--->
+	
+	
+
 </beans>
