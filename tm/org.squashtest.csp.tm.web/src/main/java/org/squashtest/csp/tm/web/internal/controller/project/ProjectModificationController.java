@@ -20,7 +20,10 @@
  */
 package org.squashtest.csp.tm.web.internal.controller.project;
 
+import java.net.MalformedURLException;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 import javax.servlet.http.HttpServletResponse;
 
@@ -28,6 +31,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.osgi.extensions.annotation.ServiceReference;
 import org.springframework.stereotype.Controller;
+import org.springframework.validation.BindException;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -44,7 +48,12 @@ import org.squashtest.csp.tm.domain.testautomation.TestAutomationProject;
 import org.squashtest.csp.tm.domain.testautomation.TestAutomationServer;
 import org.squashtest.csp.tm.domain.users.User;
 import org.squashtest.csp.tm.domain.users.UserProjectPermissionsBean;
+import org.squashtest.csp.tm.infrastructure.filter.FilteredCollectionHolder;
 import org.squashtest.csp.tm.service.ProjectModificationService;
+import org.squashtest.csp.tm.web.internal.model.datatable.DataTableDrawParameters;
+import org.squashtest.csp.tm.web.internal.model.datatable.DataTableModel;
+import org.squashtest.csp.tm.web.internal.model.datatable.DataTableModelHelper;
+import org.squashtest.csp.tm.web.internal.model.testautomation.TestAutomationProjectRegistrationForm;
 
 @Controller
 @RequestMapping("/projects/{projectId}")
@@ -66,11 +75,13 @@ public class ProjectModificationController {
 		
 		AdministrableProject adminProject = projectModificationService.findAdministrableProjectById(projectId);
 		TestAutomationServer taServerCoordinates = projectModificationService.getLastBoundServerOrDefault(adminProject.getProject().getId());
+		List<TestAutomationProject> boundProjects = projectModificationService.findBoundTestAutomationProjects(projectId);
 		
 		ModelAndView mav = new ModelAndView("page/projects/project-info");	
 		
 		mav.addObject("adminproject", adminProject);
 		mav.addObject("taServer", taServerCoordinates);
+		mav.addObject("boundTAProjects", boundProjects);
 		return mav;
 	}
 	
@@ -194,6 +205,7 @@ public class ProjectModificationController {
 	
 	@RequestMapping(value = "/permission-table" ,method = RequestMethod.GET)
 	public ModelAndView getPermissionTable(@PathVariable long projectId) {
+		
 		Project project = projectModificationService.findById(projectId);
 		List<UserProjectPermissionsBean> userProjectPermissionsBean = projectModificationService.findUserPermissionsBeansByProject(projectId);
 		List<PermissionGroup> permissionList = projectModificationService.findAllPossiblePermission();
@@ -203,15 +215,78 @@ public class ProjectModificationController {
 		mav.addObject("permissionList", permissionList);
 		mav.addObject("userPermissionList", userProjectPermissionsBean);
 		return mav;
+		
 	}
 	
 	
 	//********************* test automation *********************
 	
+	
+	//filtering and sorting not supported for now
+	@RequestMapping(value = "/test-automation-projects", method=RequestMethod.GET, params = "sEcho")
+	@ResponseBody
+	public DataTableModel getProjectsTableModel(@PathVariable("projectId") long projectId, final DataTableDrawParameters params) {
+		List<TestAutomationProject> taProjects = projectModificationService.findBoundTestAutomationProjects(projectId);
+		
+		FilteredCollectionHolder<List<TestAutomationProject>> holder = 
+			new FilteredCollectionHolder<List<TestAutomationProject>>(taProjects.size(), taProjects);
+		
+		return new TestAutomationTableModel().buildDataModel(holder, 0, params.getsEcho());
+					
+	}
+	
 	@RequestMapping(value = "/test-automation-projects", method=RequestMethod.POST, headers = "Content-Type=application/json" )
 	@ResponseBody
-	public void bindTestAutomationProject(@PathVariable("projectId") long projectId, @RequestBody TestAutomationProject project){
-		projectModificationService.bindTestAutomationProject(projectId, project);
+	public void bindTestAutomationProject(@PathVariable("projectId") long projectId, @RequestBody TestAutomationProjectRegistrationForm project)
+	throws BindException{
+		try{
+			projectModificationService.bindTestAutomationProject(projectId, project.toTestAutomationProject());
+		}
+		catch(MalformedURLException ex){
+			//quick and dirty validation
+			//LOGGER.error(msg)	who needs to log that anyway
+			BindException be = new BindException(project, "ta-project");
+			be.rejectValue("serverBaseURL", "error.url.malformed");
+			throw be;
+		}
 	}
+	
+	@RequestMapping(value = "/test-automation-projects/{taProjectId}", method=RequestMethod.DELETE )
+	public void unbindProject(@PathVariable("projectId") Long projectId, @PathVariable("taProjectId") Long taProjectId){
+		throw new RuntimeException("not implemented yet");
+	}
+	
+	private final class TestAutomationTableModel extends DataTableModelHelper<TestAutomationProject>{
+
+		
+		@Override
+		protected Map<String, ?> buildItemData(TestAutomationProject item) {
+			Map<String, Object> res = new HashMap<String, Object>();
+			
+			res.put(DataTableModelHelper.DEFAULT_ENTITY_ID_KEY, item.getId());
+			res.put(DataTableModelHelper.DEFAULT_ENTITY_INDEX_KEY, getCurrentIndex() + 1);
+			res.put("name", item.getName());
+			res.put("server-url", item.getServer().getBaseURL());
+			res.put("server-kind", item.getServer().getKind());
+			res.put("empty-delete-holder", " ");
+			
+			return res;
+		}
+	}
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
 	
 }

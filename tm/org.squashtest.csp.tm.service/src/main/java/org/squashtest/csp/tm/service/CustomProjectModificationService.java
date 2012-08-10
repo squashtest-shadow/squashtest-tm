@@ -20,6 +20,7 @@
  */
 package org.squashtest.csp.tm.service;
 
+import java.util.Collection;
 import java.util.List;
 
 import org.squashtest.csp.core.security.acls.PermissionGroup;
@@ -67,5 +68,8 @@ public interface CustomProjectModificationService {
 	 * @param TAproject
 	 */
 	void bindTestAutomationProject(long TMprojectId, TestAutomationProject TAproject);
+	
+	
+	List<TestAutomationProject> findBoundTestAutomationProjects(long projectId);
 
 }

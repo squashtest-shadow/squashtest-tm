@@ -52,7 +52,7 @@ public class HttpClientProvider {
 		manager.getParams().setMaxTotalConnections(25);
 		
 		client = new HttpClient(manager);
-		client.getParams().setAuthenticationPreemptive(true);
+		//client.getParams().setAuthenticationPreemptive(true);
 	}
 	
 	/**

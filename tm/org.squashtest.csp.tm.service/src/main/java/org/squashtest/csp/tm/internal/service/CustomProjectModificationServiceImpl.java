@@ -20,6 +20,7 @@
  */
 package org.squashtest.csp.tm.internal.service;
 
+import java.util.Collection;
 import java.util.List;
 
 import javax.inject.Inject;
@@ -149,7 +150,14 @@ public class CustomProjectModificationServiceImpl implements CustomProjectModifi
 			return autotestService.getDefaultServer();
 		}
 	}
-
+	
+	
+	@Override
+	@PreAuthorize("hasPermission(#projectId, 'org.squashtest.csp.tm.domain.project.Project', 'MANAGEMENT') or hasRole('ROLE_ADMIN')")
+	public List<TestAutomationProject> findBoundTestAutomationProjects(
+			long projectId) {
+		return projectDao.findBoundTestAutomationProjects(projectId);
+	}
 	
 	
 }

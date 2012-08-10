@@ -145,6 +145,7 @@ public class TestAutomationJenkinsConnector implements TestAutomationConnector{
 		method.setPath(urlBuilder.toString());
 		method.setQueryString(JOBS_LIST_QUERY);
 
+		method.setDoAuthentication(true);
 		
 		return method;
 	}

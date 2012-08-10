@@ -24,6 +24,7 @@ import java.util.List;
 
 import org.squashtest.csp.tm.domain.project.Project;
 import org.squashtest.csp.tm.domain.projectfilter.ProjectFilter;
+import org.squashtest.csp.tm.domain.testautomation.TestAutomationProject;
 import org.squashtest.csp.tm.infrastructure.filter.CollectionSorting;
 
 public interface ProjectDao extends EntityDao<Project> {
@@ -36,4 +37,9 @@ public interface ProjectDao extends EntityDao<Project> {
 	long countNonFoldersInProject(long projectId);
 
 	List<ProjectFilter> findProjectFiltersContainingProject(Long id);
+	
+	
+	// ************************* test automation section **********************
+	
+	List<TestAutomationProject> findBoundTestAutomationProjects(long id);
 }

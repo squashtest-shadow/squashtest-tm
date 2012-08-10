@@ -29,6 +29,7 @@ import org.springframework.security.access.prepost.PostFilter;
 import org.springframework.stereotype.Repository;
 import org.squashtest.csp.tm.domain.project.Project;
 import org.squashtest.csp.tm.domain.projectfilter.ProjectFilter;
+import org.squashtest.csp.tm.domain.testautomation.TestAutomationProject;
 import org.squashtest.csp.tm.infrastructure.filter.CollectionSorting;
 import org.squashtest.csp.tm.internal.repository.ProjectDao;
 
@@ -91,5 +92,10 @@ public class HibernateProjectDao extends HibernateEntityDao<Project> implements 
 	@Override
 	public List<ProjectFilter> findProjectFiltersContainingProject(Long projectId) {
 		return executeListNamedQuery("project.findProjectFiltersContainingProject", idParameter(projectId));
+	}
+	
+	@Override
+	public List<TestAutomationProject> findBoundTestAutomationProjects(long id) {
+		return executeListNamedQuery("project.findBoundTestAutomationProjects", idParameter(id));
 	}
 }

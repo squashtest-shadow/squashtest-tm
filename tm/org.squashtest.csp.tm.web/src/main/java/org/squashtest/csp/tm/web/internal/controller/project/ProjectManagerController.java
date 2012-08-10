@@ -145,7 +145,7 @@ public class ProjectManagerController {
 		}.buildDataModel(holder, filter.getFirstItemIndex()+1, params.getsEcho());
 
 	}
-	
+
 	/* ****************************** data formatters ********************************************** */
 
 	private CollectionSorting createPaging(final DataTableDrawParameters params,
