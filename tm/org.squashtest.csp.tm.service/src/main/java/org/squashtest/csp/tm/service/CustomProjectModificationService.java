@@ -26,6 +26,7 @@ import org.squashtest.csp.core.security.acls.PermissionGroup;
 import org.squashtest.csp.tm.domain.project.AdministrableProject;
 import org.squashtest.csp.tm.domain.project.Project;
 import org.squashtest.csp.tm.domain.testautomation.TestAutomationProject;
+import org.squashtest.csp.tm.domain.testautomation.TestAutomationServer;
 import org.squashtest.csp.tm.domain.users.User;
 import org.squashtest.csp.tm.domain.users.UserProjectPermissionsBean;
 
@@ -48,6 +49,17 @@ public interface CustomProjectModificationService {
 
 	User findUserByLogin(String userLogin);
 
+	
+	//**************************** test automation extension ********************
+	
+	/**
+	 * Returns a TestAutomationServer instance. Either it is a persisted instance that 
+	 * the  tm project was bound to lastly (through a ta project), either it will be 
+	 * the default server configuration.
+	 * 
+	 */
+	TestAutomationServer getLastBoundServerOrDefault(long projectId);
+	
 	/**
 	 * Will bind the TM project to a TA project. Will persist it if necessary.
 	 *  
@@ -55,5 +67,5 @@ public interface CustomProjectModificationService {
 	 * @param TAproject
 	 */
 	void bindTestAutomationProject(long TMprojectId, TestAutomationProject TAproject);
-	
+
 }

@@ -27,7 +27,7 @@ import org.spockframework.util.NotThreadSafe;
 import org.springframework.transaction.annotation.Transactional;
 import org.squashtest.csp.tm.domain.testautomation.TestAutomationProject
 import org.squashtest.csp.tm.domain.testautomation.TestAutomationServer
-import org.squashtest.csp.tm.service.TestAutomationManagementService;
+import org.squashtest.csp.tm.service.TestAutomationFinderService;
 import org.unitils.dbunit.annotation.DataSet;
 
 import spock.unitils.UnitilsSupport;
@@ -38,7 +38,7 @@ import spock.unitils.UnitilsSupport;
 class TestAutomationManagementServiceImplIT extends DbunitServiceSpecification {
 
 	@Inject
-	TestAutomationManagementService service
+	InsecureTestAutomationManagementService service
 	
 	
 	
@@ -50,7 +50,7 @@ class TestAutomationManagementServiceImplIT extends DbunitServiceSpecification {
 			def project = new TestAutomationProject("bobinio1", server)
 		
 		when :
-			def res = service.fetchOrPersist(project)
+			def res = service.persistOrAttach(project)
 		
 		then :
 			res.id!=null
@@ -72,7 +72,7 @@ class TestAutomationManagementServiceImplIT extends DbunitServiceSpecification {
 			def project = new TestAutomationProject("roberto5", server)
 			
 		when :
-			def res = service.fetchOrPersist(project)
+			def res = service.persistOrAttach(project)
 
 		then :
 			res.id != null
@@ -89,7 +89,7 @@ class TestAutomationManagementServiceImplIT extends DbunitServiceSpecification {
 			def project = new TestAutomationProject("roberto1", server)
 			
 		when :
-			def res = service.fetchOrPersist(project)
+			def res = service.persistOrAttach(project)
 		
 		then :
 			res.id!=null
@@ -109,7 +109,7 @@ class TestAutomationManagementServiceImplIT extends DbunitServiceSpecification {
 			def project = new TestAutomationProject("mike2", server)
 			
 		when :
-			def res = service.fetchOrPersist(project)
+			def res = service.persistOrAttach(project)
 		
 		then :
 			res.id == 22l

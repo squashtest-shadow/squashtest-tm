@@ -34,13 +34,14 @@ import org.squashtest.csp.tm.domain.CannotDeleteProjectException;
 import org.squashtest.csp.tm.domain.project.AdministrableProject;
 import org.squashtest.csp.tm.domain.project.Project;
 import org.squashtest.csp.tm.domain.testautomation.TestAutomationProject;
+import org.squashtest.csp.tm.domain.testautomation.TestAutomationServer;
 import org.squashtest.csp.tm.domain.users.User;
 import org.squashtest.csp.tm.domain.users.UserProjectPermissionsBean;
 import org.squashtest.csp.tm.internal.repository.ProjectDao;
 import org.squashtest.csp.tm.internal.repository.UserDao;
 import org.squashtest.csp.tm.service.CustomProjectModificationService;
 import org.squashtest.csp.tm.service.ProjectsPermissionManagementService;
-import org.squashtest.csp.tm.service.TestAutomationManagementService;
+import org.squashtest.csp.tm.service.TestAutomationFinderService;
 
 /**
  * 
@@ -61,7 +62,7 @@ public class CustomProjectModificationServiceImpl implements CustomProjectModifi
 	@Inject
 	private ProjectsPermissionManagementService permissionService;
 	@Inject
-	private TestAutomationManagementService autotestService;
+	private InsecureTestAutomationManagementService autotestService;
 
 	@Override
 	@Transactional(readOnly = true)
@@ -125,12 +126,28 @@ public class CustomProjectModificationServiceImpl implements CustomProjectModifi
 		return userDao.findUserByLogin(userLogin);
 	}
 	
+	// ********************************** Test automation section *************************************
 	
 	@Override
 	@PreAuthorize("hasPermission(#projectId, 'org.squashtest.csp.tm.domain.project.Project', 'MANAGEMENT') or hasRole('ROLE_ADMIN')")
 	public void bindTestAutomationProject(long TMprojectId, TestAutomationProject TAproject) {		
-		TestAutomationProject persistedProject = autotestService.fetchOrPersist(TAproject);
+		TestAutomationProject persistedProject = autotestService.persistOrAttach(TAproject);
 		projectDao.findById(TMprojectId).bindTestAutomationProject(persistedProject);		
+	}
+
+	
+	@Override
+	@PreAuthorize("hasPermission(#projectId, 'org.squashtest.csp.tm.domain.project.Project', 'MANAGEMENT') or hasRole('ROLE_ADMIN')")
+	public TestAutomationServer getLastBoundServerOrDefault(long projectId) {
+		Project project = findById(projectId);
+		
+		if (project.hasTestAutomationProjects()){
+			return project.getServerOfLatestBoundProject();
+		}
+		
+		else{
+			return autotestService.getDefaultServer();
+		}
 	}
 
 	

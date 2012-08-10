@@ -41,6 +41,7 @@ import org.squashtest.csp.tm.domain.UnknownEntityException;
 import org.squashtest.csp.tm.domain.project.AdministrableProject;
 import org.squashtest.csp.tm.domain.project.Project;
 import org.squashtest.csp.tm.domain.testautomation.TestAutomationProject;
+import org.squashtest.csp.tm.domain.testautomation.TestAutomationServer;
 import org.squashtest.csp.tm.domain.users.User;
 import org.squashtest.csp.tm.domain.users.UserProjectPermissionsBean;
 import org.squashtest.csp.tm.service.ProjectModificationService;
@@ -62,9 +63,14 @@ public class ProjectModificationController {
 	
 	@RequestMapping(value="/info", method=RequestMethod.GET)
 	public ModelAndView getProjectInfos(@PathVariable long projectId){
-		AdministrableProject project = projectModificationService.findAdministrableProjectById(projectId);
+		
+		AdministrableProject adminProject = projectModificationService.findAdministrableProjectById(projectId);
+		TestAutomationServer taServerCoordinates = projectModificationService.getLastBoundServerOrDefault(adminProject.getProject().getId());
+		
 		ModelAndView mav = new ModelAndView("page/projects/project-info");	
-		mav.addObject("adminproject", project);
+		
+		mav.addObject("adminproject", adminProject);
+		mav.addObject("taServer", taServerCoordinates);
 		return mav;
 	}
 	

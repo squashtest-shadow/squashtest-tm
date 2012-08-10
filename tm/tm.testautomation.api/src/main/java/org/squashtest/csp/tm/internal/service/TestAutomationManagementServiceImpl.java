@@ -25,20 +25,16 @@ import java.util.Collection;
 
 import javax.inject.Inject;
 
-import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.stereotype.Service;
 import org.squashtest.csp.tm.domain.testautomation.TestAutomationProject;
 import org.squashtest.csp.tm.domain.testautomation.TestAutomationServer;
 import org.squashtest.csp.tm.internal.repository.TestAutomationProjectDao;
 import org.squashtest.csp.tm.internal.repository.TestAutomationServerDao;
-import org.squashtest.csp.tm.service.TestAutomationManagementService;
 
 import squashtm.testautomation.spi.TestAutomationConnector;
 
-
-
-@Service("squashtest.tm.service.TestAutomationManagementService")
-public class TestAutomationManagementServiceImpl implements TestAutomationManagementService {
+@Service("squashtest.tm.service.TestAutomationService")
+public class TestAutomationManagementServiceImpl implements  InsecureTestAutomationManagementService{
 
 	@Inject
 	private TestAutomationServerDao serverDao;
@@ -73,13 +69,21 @@ public class TestAutomationManagementServiceImpl implements TestAutomationManage
 	}
 
 	
+	//from the insecure interface
 	@Override
-	public TestAutomationProject fetchOrPersist(TestAutomationProject newProject) {
+	public TestAutomationProject persistOrAttach(TestAutomationProject newProject) {
 		
 		TestAutomationServer inBaseServer = serverDao.uniquePersist(newProject.getServer());
 				
 		return projectDao.uniquePersist(newProject.newWithServer(inBaseServer));
 		
+	}
+
+
+	//from the insecure interface
+	@Override
+	public TestAutomationServer getDefaultServer() {
+		return defaultServer;
 	}
 
 }

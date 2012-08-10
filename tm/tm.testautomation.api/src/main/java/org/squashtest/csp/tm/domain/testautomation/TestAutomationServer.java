@@ -33,12 +33,6 @@ import javax.persistence.NamedQuery;
 /**
  * An AutomatedTestServer represents both a repository of automated tests, and an automated test execution platform. 
  * 
- * Like every entities in the package org.squashtest.csp.tm.domain.testautomation, these are immutable : modifying servers, projects etc 
- * could break existing data. For instance changing the URL of a server, or its kind, means that a new instance of AutomatedTestServer should 
- * be persisted instead of altering the existing one. In other words, our objects here are immutable. When a setter is used, a new instance of 
- * this will be returned, with a null ID because this instance is still unknown.
- * 
- * 
  * @author bsiri
  *
  */

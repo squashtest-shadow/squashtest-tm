@@ -29,7 +29,7 @@ import org.squashtest.csp.tm.domain.testautomation.TestAutomationServer;
 
 
 @Transactional
-public interface TestAutomationManagementService {
+public interface TestAutomationFinderService {
 
 	
 	/**
@@ -51,34 +51,7 @@ public interface TestAutomationManagementService {
 	 */
 	Collection<TestAutomationProject> listProjectsOnServer(TestAutomationServer server);
 	
+
 	
-	/**
-	 * <p>
-	 * 	Will persist the supplied remote TestAutomationProject. The argument must be attached to a {@link TestAutomationServer} 
-	 * 	and return it using {@link TestAutomationProject#getServer()}.
-	 * </p> 
-	 * 
-	 * <p>
-	 * 	The service will check if both the project and the server are unknown prior to persist it (them). A Server is considered unknown 
-	 * 	if there are no such server in the database having the same exact properties. Same goes for the projects : a project is unknown
-	 *  if there are no such project in the database having the same exact properties (including server instance).
-	 *  Their ID won't be considered in the process.
-	 * </p>
-	 * 
-	 * <p>
-	 * 	Whenever one or both is (are) known from the database the persistent instance will be used in place of the argument.
-	 * In other words transient arguments will be merged if possible with persistent arguments.
-	 * </p>
-	 * 
-	 * <p>
-	 * 	That method returns the persisted instance of TestAutomationProject, that should be used in place of the one supplied in arguments 
-	 * 	from now on by the client code.
-	 * </p>
-	 * 
-	 * @param remoteProject
-	 * @param TMprojectId
-	 */
-	//@PreAuthorize(some expression) TODO : harass someone who can make specs for that.
-	TestAutomationProject fetchOrPersist(TestAutomationProject newProject); 
-	
+
 }

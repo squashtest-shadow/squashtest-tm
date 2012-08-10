@@ -31,23 +31,24 @@ import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
 import org.squashtest.csp.tm.domain.testautomation.TestAutomationProject;
-import org.squashtest.csp.tm.service.TestAutomationManagementService;
+import org.squashtest.csp.tm.service.TestAutomationFinderService;
 
 
 @Controller
 @RequestMapping("/test-automation")
-public class TestAutomationManagementController {
+public class TestAutomationFindingController {
 
 	
-	private TestAutomationManagementService testAutomationManagementService;
+	private TestAutomationFinderService testAutomationManagementService;
 
 	
 	@ServiceReference
 	public void setTestAutomationManagementService(
-			TestAutomationManagementService testAutomationManagementService) {
+			TestAutomationFinderService testAutomationManagementService) {
 		this.testAutomationManagementService = testAutomationManagementService;
 	}
-	
+
+
 
 	@RequestMapping(value = "/servers/projects-list", method = RequestMethod.GET, headers = "Accept=application/json", params = {"url", "login", "password"} )
 	@ResponseBody
@@ -58,6 +59,4 @@ public class TestAutomationManagementController {
 		return testAutomationManagementService.listProjectsOnServer(new URL(strURL), login, password);
 		
 	}
-	
-	
 }

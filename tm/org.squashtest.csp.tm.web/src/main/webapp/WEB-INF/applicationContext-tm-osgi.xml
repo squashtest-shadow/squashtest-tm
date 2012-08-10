@@ -132,6 +132,10 @@
 		bean-name="squashtest.tm.service.CallStepManagerService" interface="org.squashtest.csp.tm.service.CallStepManagerService"
 		availability="mandatory" />
 
+	<osgi:reference id="squashtest.tm.service.TestAutomationService"
+		bean-name="squashtest.tm.service.TestAutomationService" interface="org.squashtest.csp.tm.service.TestAutomationFinderService"
+		availability="mandatory" />		
+
 	<osgi:reference id="squashtest.tm.service.TestSuiteModificationService"
 		bean-name="squashtest.tm.service.TestSuiteModificationService"
 		availability="mandatory">

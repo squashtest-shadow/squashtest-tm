@@ -20,8 +20,9 @@
  */
 package org.squashtest.csp.tm.domain.project;
 
+import java.util.ArrayList;
 import java.util.Iterator;
-import java.util.Set;
+import java.util.List;
 
 import javax.persistence.CascadeType;
 import javax.persistence.Column;
@@ -41,6 +42,7 @@ import org.squashtest.csp.tm.domain.audit.Auditable;
 import org.squashtest.csp.tm.domain.campaign.CampaignLibrary;
 import org.squashtest.csp.tm.domain.requirement.RequirementLibrary;
 import org.squashtest.csp.tm.domain.testautomation.TestAutomationProject;
+import org.squashtest.csp.tm.domain.testautomation.TestAutomationServer;
 import org.squashtest.csp.tm.domain.testcase.TestCaseLibrary;
 
 @Auditable
@@ -78,7 +80,7 @@ public class Project {
 	@ManyToMany(cascade = { CascadeType.ALL }, fetch = FetchType.LAZY)
 	@JoinTable(name="TM_TA_PROJECTS", joinColumns=@JoinColumn(name="TM_PROJECT_ID"), 
 			inverseJoinColumns=@JoinColumn(name="TA_PROJECT_ID"))
-	private Set<TestAutomationProject> testAutomationProjects;
+	private List<TestAutomationProject> testAutomationProjects=new ArrayList<TestAutomationProject>();
 	
 	
 	@Column(name="TEST_AUTOMATION_ENABLED")
@@ -199,6 +201,19 @@ public class Project {
 	
 	public void enableTestAutomation(boolean enabled){
 		testAutomationEnabled = enabled;
+	}
+	
+	public boolean hasTestAutomationProjects(){
+		return ! testAutomationProjects.isEmpty();
+	}
+	
+	public TestAutomationServer getServerOfLatestBoundProject(){
+		if (testAutomationProjects.isEmpty()){
+			return null;
+		}
+		else{
+			return testAutomationProjects.get(testAutomationProjects.size()-1).getServer();
+		}
 	}
 	
 }

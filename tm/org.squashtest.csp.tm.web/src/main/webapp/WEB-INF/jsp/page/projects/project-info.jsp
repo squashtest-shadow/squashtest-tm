@@ -28,6 +28,8 @@
 <%@ taglib prefix="layout" tagdir="/WEB-INF/tags/layout"%>
 <%@ taglib prefix="dt" tagdir="/WEB-INF/tags/datatables"%>
 <%@ taglib prefix="pop" tagdir="/WEB-INF/tags/popup"%>
+<%@ taglib prefix="ta" tagdir="/WEB-INF/tags/testautomation"%>
+
 <%@ taglib uri="http://www.springframework.org/security/tags" prefix="sec"%>
 <%@ page language="java" contentType="text/html; charset=utf-8"
 	pageEncoding="utf-8"%>
@@ -179,6 +181,14 @@
 				</jsp:attribute>
 			</comp:toggle-panel>
 			<%-----------------------------------END USERS PANEL -----------------------------------------------%>
+			
+			
+			<%------------------------------ TEST AUTOMATION PROJECT -------------------------------------------%>
+
+			<ta:ta-admin-panel projectEntity="${adminproject.project}"/>
+			
+			<%----------------------------- /TEST AUTOMATION PROJECT -------------------------------------------%>					
+					
 			<%----------------------------------- add User Popup-----------------------------------------------%>
 		<comp:popup id="add-permission-dialog"
 			titleKey="dialog.add-permission.title" isContextual="true"
