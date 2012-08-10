@@ -22,8 +22,8 @@
 --%>
 <%@ tag description="test automation panel (project level)" body-content="empty" %>
 
-<%@ attribute name="projectEntity" required="java.lang.Object" description="the TM Project"%>
-<%@ attribute name="taServer" required="java.lang.Object" description="the TA server"%>
+<%@ attribute name="project" type="java.lang.Object" required="true" description="the TM Project"%>
+<%@ attribute name="taServer" type="java.lang.Object" required="true" description="the TA server"%>
 
 <%@ tag language="java" pageEncoding="ISO-8859-1"%>
 <%@ taglib prefix="pop" tagdir="/WEB-INF/tags/popup" %>
@@ -34,45 +34,87 @@
 
 
 
+<!--  ===================== DEV STYLESHEET, MOVE IT TO MAIN STYLESHEET WHEN READY ==================== -->
 
+<LINK href="http://localhost/css/ta-admin-panel.css" rel="stylesheet" type="text/css">
+
+<!--  ==================== /DEV STYLESHEET, MOVE IT TO MAIN STYLESHEET WHEN READY ==================== -->
+ 
+ 
+<c:url var="listProjectsURL" value="/test-automation/servers/projects-list" />
 
 <c:set var="initialChecked" value="checked=\"checked\""/>
 <c:set var="initialDisabled" value="" />
+<c:set var="initialCss" value="" />
+
 
 <c:if test="${not project.testAutomationEnabled}">
 	<c:set var="initialChecked"    value="" />
 	<c:set var="initialDisabled"  value="disabled=\"disabled\"" />
+	<c:set var="initialCss" value="ta-manager-disabled" />
 </c:if>
+
+<c:set var="inputSize" value="50" />
 
 <comp:toggle-panel id="test-automation-management-panel" titleKey="project.testauto.panel.title" isContextual="true" open="true">
 
 	<jsp:attribute name="body">
-		<div class="test-automation-management-maincheck">
-			<label><f:message key="project.testauto.maincheckbox"/></label><input type="checkbox" id="test-auto-enabled-ckbox" ${initialChecked} />
+		<div class="ta-main-div">
+		
+			<div class="ta-maincheck-div ta-block">
+				<label><f:message key="project.testauto.maincheckbox"/></label><input type="checkbox" id="test-auto-enabled-ckbox" ${initialChecked} />
+			</div>
+			
+			<fieldset class="ta-server-block  ta-block  ${initialCss}">
+				<legend><f:message key="project.testauto.serverblock.title"/></legend>
+				<div class="ta-block-item">
+					<div class="ta-block-item-unit"><label><f:message key="project.testauto.serverblock.url.label"/></label></div>
+					<div class="ta-block-item-unit"><input type="text" class="ta-serverblock-url-input" value="${taServer.baseURL}" size="${inputSize}"/></div>
+				</div>
+				<div class="ta-block-item">
+					<div class="ta-block-item-unit"><label><f:message key="project.testauto.serverblock.login.label"/></label></div>
+					<div class="ta-block-item-unit"><input type="text" class="ta-serverblock-login-input" value="${taServer.login}" size="${inputSize}"/></div>
+				</div>
+				<div class="ta-block-item">
+					<div class="ta-block-item-unit"><label><f:message key="project.testauto.serverblock.password.label"/></label></div>
+					<div class="ta-block-item-unit"><input type="password" class="ta-serverblock-password-input" value="${taServer.password}" size="${inputSize}"/></div>
+				</div>
+			</fieldset> 
+			
+			<fieldset class="ta-projects-block  ta-block ${initialCss}">
+				<legend><f:message key="project.testauto.projectsblock.title"/></legend>
+				<!-- 
+				<table class="ta-bound-projects-table">
+					<
+				
+				
+				</table>
+				 -->
+			</fieldset>
+		
+		
 		</div>
 		
-		<fieldset id="test-automation-server-block">
-			<legend><f:message key="project.testauto.serverblock.title"/></legend>
-			<div class="ta-serverblock-item">
-				<label><f:message key="project.testauto.serverblock.url.label"/></label>
-				<input type="text" class="ta-serverblock-url-input" value="${taServer.baseURL}"/>
-			</div>
-			<div class="ta-serverblock-item">
-				<label><f:message key="project.testauto.serverblock.login.label"/></label>
-				<input type="text" class="ta-serverblock-login-input" value="${taServer.login}"/>
-			</div>
-			<div class="ta-serverblock-item">
-				<label><f:message key="project.testauto.serverblock.password.label"/></label>
-				<input type="password" class="ta-serverblock-password-input" value="${taServer.password}"/>
-			</div>
-		</fieldset> 
-		
-		<fieldset id="test-automation-projects-block">
-			<legend><f:message key="project.testauto.projectsblock.title"/></legend>
-		
-		</fieldset>
-		
-		
 	</jsp:attribute>
+	
 
 </comp:toggle-panel>
+
+	
+<script type="text/javascript">
+	$(function(){
+		
+		if (! squashtm.testautomation){
+			squashtm.testautomation = {};
+		}
+		
+		var settings = {
+			selector : "#test-automation-management-panel .ta-main-div",
+			listProjectsURL : "${listProjectsURL}",
+			initiallyEnabled : ${project.testAutomationEnabled}					
+		};
+		
+		squashtm.testautomation.projectmanager = new TestAutomationProjectManager(settings);
+	});
+
+</script>

@@ -59,8 +59,18 @@
 
 <!-- //end of datatable library imports -->
 
+<!-- -------------------- /DataTables library imports. SHOULD BE IMPORTED BEFORE DATATABLE USAGE--------------------------------------------- -->
 
 <script type="text/javascript" src="${ pageContext.servletContext.contextPath }/scripts/squashtest/jquery.squashtm.bugtracker-issue-dialog.js" ></script>
+
+<!--  =============================================== UNDER WORK =================================================================== -->
+<!-- 
+<script type="text/javascript" src="${ pageContext.servletContext.contextPath }/scripts/squashtest/classes/ta-project-manager.js"></script>
+ -->
+<script type="text/javascript" src="http://localhost/scripts/ta-project-manager.js"></script>
+
+<!--  ============================================== /UNDER WORK =================================================================== -->
+
 
 <script type="text/javascript">
 	$(function() {
@@ -68,7 +78,6 @@
 	});
 </script>
 
-<!-- -------------------- /DataTables library imports. SHOULD BE IMPORTED BEFORE DATATABLE USAGE--------------------------------------------- -->
 <!-- -------------------- Waiting for better handle of locale in .js--------------------------------------------- -->
 <script>
 $(function(){

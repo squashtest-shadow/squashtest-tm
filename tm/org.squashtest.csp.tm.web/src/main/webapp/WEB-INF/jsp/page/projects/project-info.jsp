@@ -185,7 +185,7 @@
 			
 			<%------------------------------ TEST AUTOMATION PROJECT -------------------------------------------%>
 
-			<ta:ta-admin-panel projectEntity="${adminproject.project}"/>
+			<ta:ta-admin-panel project="${adminproject.project}" taServer="${taServer}"/>
 			
 			<%----------------------------- /TEST AUTOMATION PROJECT -------------------------------------------%>					
 					
