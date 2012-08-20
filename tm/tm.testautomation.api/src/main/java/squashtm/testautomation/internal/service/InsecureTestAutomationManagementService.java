@@ -18,12 +18,13 @@
  *     You should have received a copy of the GNU Lesser General Public License
  *     along with this software.  If not, see <http://www.gnu.org/licenses/>.
  */
-package org.squashtest.csp.tm.internal.service;
+package squashtm.testautomation.internal.service;
 
 import org.springframework.transaction.annotation.Transactional;
-import org.squashtest.csp.tm.domain.testautomation.TestAutomationProject;
-import org.squashtest.csp.tm.domain.testautomation.TestAutomationServer;
-import org.squashtest.csp.tm.service.TestAutomationFinderService;
+
+import squashtm.testautomation.domain.TestAutomationProject;
+import squashtm.testautomation.domain.TestAutomationServer;
+import squashtm.testautomation.service.TestAutomationFinderService;
 
 /**
  * That private interface contains methods that cannot be secured because the current ACL system doesn't encompass 
@@ -34,7 +35,6 @@ import org.squashtest.csp.tm.service.TestAutomationFinderService;
  * @author bsiri
  *
  */
-@Transactional
 public interface InsecureTestAutomationManagementService extends TestAutomationFinderService{
 
 	

@@ -27,10 +27,11 @@ import org.spockframework.util.NotThreadSafe;
 import org.springframework.transaction.annotation.Transactional;
 import org.squashtest.csp.tm.domain.testautomation.TestAutomationProject
 import org.squashtest.csp.tm.domain.testautomation.TestAutomationServer
-import org.squashtest.csp.tm.service.TestAutomationFinderService;
 import org.unitils.dbunit.annotation.DataSet;
 
 import spock.unitils.UnitilsSupport;
+import squashtm.testautomation.service.TestAutomationFinderService;
+import squashtm.testautomation.service.impl.InsecureTestAutomationManagementService;
 
 @NotThreadSafe
 @UnitilsSupport

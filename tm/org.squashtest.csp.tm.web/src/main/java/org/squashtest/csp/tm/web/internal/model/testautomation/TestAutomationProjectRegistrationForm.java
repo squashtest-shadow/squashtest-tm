@@ -23,8 +23,8 @@ package org.squashtest.csp.tm.web.internal.model.testautomation;
 import java.net.MalformedURLException;
 import java.net.URL;
 
-import org.squashtest.csp.tm.domain.testautomation.TestAutomationProject;
-import org.squashtest.csp.tm.domain.testautomation.TestAutomationServer;
+import squashtm.testautomation.domain.TestAutomationProject;
+import squashtm.testautomation.domain.TestAutomationServer;
 
 public class TestAutomationProjectRegistrationForm {
 	

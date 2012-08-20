@@ -18,7 +18,7 @@
  *     You should have received a copy of the GNU Lesser General Public License
  *     along with this software.  If not, see <http://www.gnu.org/licenses/>.
  */
-package org.squashtest.csp.tm.internal.repository.hibernate;
+package squashtm.testautomation.repository.hibernate;
 
 import java.util.List;
 
@@ -31,11 +31,12 @@ import org.hibernate.SessionFactory;
 import org.hibernate.criterion.Example;
 import org.hibernate.criterion.Restrictions;
 import org.springframework.stereotype.Repository;
-import org.squashtest.csp.tm.domain.testautomation.TestAutomationProject;
-import org.squashtest.csp.tm.internal.repository.NonUniqueEntityException;
-import org.squashtest.csp.tm.internal.repository.TestAutomationProjectDao;
 
-@Repository
+import squashtm.testautomation.domain.TestAutomationProject;
+import squashtm.testautomation.repository.NonUniqueEntityException;
+import squashtm.testautomation.repository.TestAutomationProjectDao;
+
+
 public class HibernateTestAutomationProjectDao implements
 		TestAutomationProjectDao {
 	

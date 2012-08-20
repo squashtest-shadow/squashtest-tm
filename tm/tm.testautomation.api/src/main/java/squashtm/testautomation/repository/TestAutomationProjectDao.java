@@ -18,9 +18,9 @@
  *     You should have received a copy of the GNU Lesser General Public License
  *     along with this software.  If not, see <http://www.gnu.org/licenses/>.
  */
-package org.squashtest.csp.tm.internal.repository;
+package squashtm.testautomation.repository;
 
-import org.squashtest.csp.tm.domain.testautomation.TestAutomationProject;
+import squashtm.testautomation.domain.TestAutomationProject;
 
 public interface TestAutomationProjectDao {
 	

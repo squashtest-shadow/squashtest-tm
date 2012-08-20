@@ -18,7 +18,7 @@
  *     You should have received a copy of the GNU Lesser General Public License
  *     along with this software.  If not, see <http://www.gnu.org/licenses/>.
  */
-package org.squashtest.csp.tm.internal.conf;
+package squashtm.testautomation.configuration;
 
 import java.net.MalformedURLException;
 import java.net.URL;
@@ -30,7 +30,8 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.FactoryBean;
 import org.springframework.beans.factory.annotation.Qualifier;
-import org.squashtest.csp.tm.domain.testautomation.TestAutomationServer;
+
+import squashtm.testautomation.domain.TestAutomationServer;
 
 /*
  * That class exists because the good old PropertyPlaceholderConfigurer won't work. There is another one 

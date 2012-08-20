@@ -18,22 +18,22 @@
  *     You should have received a copy of the GNU Lesser General Public License
  *     along with this software.  If not, see <http://www.gnu.org/licenses/>.
  */
-package org.squashtest.csp.tm.internal.service;
+package squashtm.testautomation.internal.service;
 
 import java.net.URL;
 import java.util.Collection;
 
 import javax.inject.Inject;
 
-import org.springframework.stereotype.Service;
-import org.squashtest.csp.tm.domain.testautomation.TestAutomationProject;
-import org.squashtest.csp.tm.domain.testautomation.TestAutomationServer;
-import org.squashtest.csp.tm.internal.repository.TestAutomationProjectDao;
-import org.squashtest.csp.tm.internal.repository.TestAutomationServerDao;
+import org.springframework.transaction.annotation.Transactional;
 
+import squashtm.testautomation.domain.TestAutomationProject;
+import squashtm.testautomation.domain.TestAutomationServer;
+import squashtm.testautomation.repository.TestAutomationProjectDao;
+import squashtm.testautomation.repository.TestAutomationServerDao;
 import squashtm.testautomation.spi.TestAutomationConnector;
 
-@Service("squashtest.tm.service.TestAutomationService")
+@Transactional
 public class TestAutomationManagementServiceImpl implements  InsecureTestAutomationManagementService{
 
 	@Inject

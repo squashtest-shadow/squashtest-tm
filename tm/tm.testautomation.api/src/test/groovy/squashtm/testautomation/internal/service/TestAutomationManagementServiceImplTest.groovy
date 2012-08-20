@@ -18,14 +18,14 @@
  *     You should have received a copy of the GNU Lesser General Public License
  *     along with this software.  If not, see <http://www.gnu.org/licenses/>.
  */
-package org.squashtest.csp.tm.internal.service
+package squashtm.testautomation.internal.service
 
 import spock.lang.Specification;
+import squashtm.testautomation.domain.TestAutomationProject;
+import squashtm.testautomation.domain.TestAutomationServer;
+import squashtm.testautomation.repository.TestAutomationServerDao;
 import squashtm.testautomation.spi.TestAutomationConnector;
 
-import org.squashtest.csp.tm.domain.testautomation.TestAutomationProject
-import org.squashtest.csp.tm.domain.testautomation.TestAutomationServer;
-import org.squashtest.csp.tm.internal.repository.TestAutomationServerDao;
 
 class TestAutomationManagementServiceImplTest extends Specification {
 

@@ -13,9 +13,6 @@
 	<description>Squash TM API / SPI for test automation frameworks</description>
 
 
-	<properties>
-		<bundle.hostname>org.squashtest.csp.tm.service</bundle.hostname>
-	</properties>
 
 	<dependencies>
 		<dependency>
@@ -59,13 +56,13 @@
 
 	<build>
 
-
+	<!-- 
 		<resources>
 			<resource>
 				<directory>${project.basedir}/src/main/resources</directory>
 			</resource>
 		</resources>
-		
+	 -->	
 		<testSourceDirectory>src/test/groovy</testSourceDirectory>
 
 		<plugins>
@@ -91,9 +88,15 @@
 				<configuration>
 					<instructions>
 						<_include>bnd.bnd</_include>
-						<Export-Package>!*internal*,org.squashtest.csp.tm.*, squashtm.testautomation.*, squashtm.remoteapi.*</Export-Package>
-						<Import-Package>!org.squashtest.*, !squashtm.testautomation.*, !squashtm.remoteapi.*, *</Import-Package>
-						<Fragment-Host>${bundle.hostname}</Fragment-Host>
+						<Export-Package>squashtm.testautomation.*, squashtm.remoteapi.*</Export-Package>
+						<Import-Package>
+							!org.squashtest.*, 
+							!squashtm.testautomation.*, 
+							!squashtm.remoteapi.*,
+							org.hibernate.proxy, 
+							javassist.util.proxy,
+							* 
+						</Import-Package>
 					</instructions>
 				</configuration>
 			</plugin>

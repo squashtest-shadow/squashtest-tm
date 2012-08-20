@@ -20,12 +20,9 @@
  */
 package squashtm.testautomation.jenkins
 
-import org.apache.commons.httpclient.HttpClient;
-import org.apache.commons.httpclient.methods.GetMethod;
-import org.apache.commons.httpclient.NameValuePair;
-import org.squashtest.csp.tm.domain.testautomation.TestAutomationServer;
 
 import spock.lang.Specification
+import squashtm.testautomation.domain.TestAutomationServer;
 
 class TestAutomationJenkinsConnectorTest extends Specification {
 	

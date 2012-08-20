@@ -29,7 +29,8 @@ import org.apache.commons.httpclient.MultiThreadedHttpConnectionManager;
 import org.apache.commons.httpclient.UsernamePasswordCredentials;
 import org.apache.commons.httpclient.auth.AuthScope;
 import org.springframework.stereotype.Component;
-import org.squashtest.csp.tm.domain.testautomation.TestAutomationServer;
+
+import squashtm.testautomation.domain.TestAutomationServer;
 
 
 /*

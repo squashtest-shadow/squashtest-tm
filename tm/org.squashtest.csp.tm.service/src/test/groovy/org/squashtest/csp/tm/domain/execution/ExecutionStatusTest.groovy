@@ -79,8 +79,8 @@ class ExecutionStatusTest extends Specification {
 		SUCCESS 	| "execution.execution-status.SUCCESS"
 		RUNNING 	| "execution.execution-status.RUNNING"
 		READY   	| "execution.execution-status.READY"
-		ERROR	| "execution.execution-status.TA_ERROR"
-		WARNING	| "execution.execution-status.TA_WARNING"
+		ERROR	| "execution.execution-status.ERROR"
+		WARNING	| "execution.execution-status.WARNING"
 	}
 	
 	def "should compute a new status (1)"(){

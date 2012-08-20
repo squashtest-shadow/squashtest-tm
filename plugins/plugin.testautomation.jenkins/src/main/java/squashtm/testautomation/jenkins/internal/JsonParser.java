@@ -28,8 +28,8 @@ import org.codehaus.jackson.JsonParseException;
 import org.codehaus.jackson.map.JsonMappingException;
 import org.codehaus.jackson.map.ObjectMapper;
 import org.springframework.stereotype.Component;
-import org.squashtest.csp.tm.domain.testautomation.TestAutomationProject;
 
+import squashtm.testautomation.domain.TestAutomationProject;
 import squashtm.testautomation.jenkins.internal.beans.Job;
 import squashtm.testautomation.jenkins.internal.beans.JobList;
 import squashtm.testautomation.spi.exceptions.UnreadableResponseException;

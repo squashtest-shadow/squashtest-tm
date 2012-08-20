@@ -18,7 +18,7 @@
  *     You should have received a copy of the GNU Lesser General Public License
  *     along with this software.  If not, see <http://www.gnu.org/licenses/>.
  */
-package org.squashtest.csp.tm.internal.service;
+package squashtm.testautomation.internal.service;
 
 import java.util.Collection;
 import java.util.Map;
@@ -26,12 +26,10 @@ import java.util.concurrent.ConcurrentHashMap;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.springframework.stereotype.Component;
 
 import squashtm.testautomation.spi.TestAutomationConnector;
 
 
-@Component("squashtest.testautomation.connector-registry")
 public class TestAutomationConnectorRegistry {
 
 	private static final Logger LOGGER = LoggerFactory.getLogger(TestAutomationConnectorRegistry.class);

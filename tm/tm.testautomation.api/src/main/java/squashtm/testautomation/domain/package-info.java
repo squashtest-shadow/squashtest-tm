@@ -27,7 +27,7 @@
 </p>
 
 <p>
-	{@link org.squashtest.csp.tm.domain.testautomation.TestAutomationServer}, {@link org.squashtest.csp.tm.domain.testautomation.TestAutomationProject}
+	{@link squashtm.testautomation.domain.TestAutomationServer}, {@link squashtm.testautomation.domain.TestAutomationProject}
 	etc represent remote entities. Those entities aren't managed by Squash TM, and Squash TM doesn't manage permanent synchronization with them.
 	Rather, they are considered as detached entities : whenever Squash TM fetches an entity from a remote endpoint it must consider that it could 
 	either already be represented in its database, either be completely new. 
@@ -53,4 +53,4 @@
 </p>
 
 */
-package org.squashtest.csp.tm.domain.testautomation;
+package squashtm.testautomation.domain;

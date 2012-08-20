@@ -34,9 +34,9 @@ import org.apache.commons.httpclient.HttpClient;
 import org.apache.commons.httpclient.NameValuePair;
 import org.apache.commons.httpclient.methods.GetMethod;
 import org.springframework.stereotype.Service;
-import org.squashtest.csp.tm.domain.testautomation.TestAutomationProject;
-import org.squashtest.csp.tm.domain.testautomation.TestAutomationServer;
 
+import squashtm.testautomation.domain.TestAutomationProject;
+import squashtm.testautomation.domain.TestAutomationServer;
 import squashtm.testautomation.jenkins.internal.JsonParser;
 import squashtm.testautomation.jenkins.internal.net.HttpClientProvider;
 import squashtm.testautomation.spi.TestAutomationConnector;

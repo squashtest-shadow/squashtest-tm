@@ -32,10 +32,23 @@
 	http://www.springframework.org/schema/util http://www.springframework.org/schema/util/spring-util-3.0.xsd
 	http://www.springframework.org/schema/tx http://www.springframework.org/schema/tx/spring-tx-3.0.xsd">
 	
-  
-	<bean id="tm.testautomation.server.default.factory"
-		class="org.squashtest.csp.tm.internal.conf.PropertiesBasedDefaultTestAutomationServerFactoryBean">
+  	<!-- ======================== OSGI plumbing============================== -->
+  	
+  	<bean id="squashtest.testautomation.connector-registry" class="squashtm.testautomation.internal.service.TestAutomationConnectorRegistry" />
+  	
+  	<bean id="tm.testautomation.server.default.factory"
+		class="squashtm.testautomation.configuration.PropertiesBasedDefaultTestAutomationServerFactoryBean">
 	</bean>
+  	
+  	<!-- ======================== service ================================== -->
+  	
+  	<bean id="squashtest.tm.service.TestAutomationService" class="squashtm.testautomation.internal.service.TestAutomationManagementServiceImpl" />
+  
+	<!-- ======================== DAOs ===================================== -->
+	
+	<bean id="squashtest.tm.service.TAProjectDao" class="squashtm.testautomation.repository.hibernate.HibernateTestAutomationProjectDao" />
+	
+	<bean id="squashtest.tm.service.TAServerDao" class="squashtm.testautomation.repository.hibernate.HibernateTestAutomationServerDao" />
 	
 	
 

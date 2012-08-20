@@ -22,9 +22,9 @@ package squashtm.testautomation.spi;
 
 import java.util.Collection;
 
-import org.squashtest.csp.tm.domain.testautomation.TestAutomationProject;
-import org.squashtest.csp.tm.domain.testautomation.TestAutomationServer;
 
+import squashtm.testautomation.domain.TestAutomationProject;
+import squashtm.testautomation.domain.TestAutomationServer;
 import squashtm.testautomation.spi.exceptions.AccessDenied;
 import squashtm.testautomation.spi.exceptions.NotFoundException;
 import squashtm.testautomation.spi.exceptions.ServerConnectionFailed;

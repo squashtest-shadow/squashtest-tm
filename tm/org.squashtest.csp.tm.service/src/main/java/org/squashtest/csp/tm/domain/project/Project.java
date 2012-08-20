@@ -43,9 +43,10 @@ import org.squashtest.csp.tm.domain.audit.Auditable;
 import org.squashtest.csp.tm.domain.bugtracker.BugTrackerProject;
 import org.squashtest.csp.tm.domain.campaign.CampaignLibrary;
 import org.squashtest.csp.tm.domain.requirement.RequirementLibrary;
-import org.squashtest.csp.tm.domain.testautomation.TestAutomationProject;
-import org.squashtest.csp.tm.domain.testautomation.TestAutomationServer;
 import org.squashtest.csp.tm.domain.testcase.TestCaseLibrary;
+
+import squashtm.testautomation.domain.TestAutomationProject;
+import squashtm.testautomation.domain.TestAutomationServer;
 
 @Auditable
 @Entity

@@ -41,7 +41,7 @@
 	</osgi:list>
 	
 	<osgi:service ref="squashtest.tm.service.TestAutomationService"
-				  interface="org.squashtest.csp.tm.service.TestAutomationFinderService" />
+				  interface="squashtm.testautomation.service.TestAutomationFinderService" />
 
 	
 </beans>
