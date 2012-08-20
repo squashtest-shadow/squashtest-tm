@@ -87,7 +87,7 @@ import org.squashtest.tm.core.foundation.i18n.Internationalizable;
  * There are now 7 status, yet manual or automated statuses only uses a subset of them.
  * 
  * The set of valid statuses for manual executions is : BLOCKED, FAILURE, SUCCESS, RUNNING, READY
- * The set of valid statuses for automated executions : TA_ERROR, FAILURE, TA_WARNING, SUCCESS, RUNNING, READY
+ * The set of valid statuses for automated executions : ERROR, FAILURE, WARNING, SUCCESS, RUNNING, READY
  * 
  * 
  * The status sets for manual and automated can still be compared to each other, but one have to normalize them first : BLOCKED, FAILURE, SUCCESS, RUNNING, READY
@@ -214,7 +214,7 @@ public enum ExecutionStatus implements Internationalizable {
 		}
 	},
 	
-	TA_WARNING(){
+	WARNING(){
 		//supposed to never happen because this operation requires canonical statuses and TA_WARNING is not one of them.
 		@Override
 		protected ExecutionStatus resolveStatus(ExecutionStatus formerExecutionStatus,ExecutionStatus formerStepStatus) {
@@ -234,7 +234,7 @@ public enum ExecutionStatus implements Internationalizable {
 		}
 	},
 	
-	TA_ERROR(){
+	ERROR(){
 		@Override
 		protected ExecutionStatus resolveStatus(ExecutionStatus formerExecutionStatus, ExecutionStatus formerStepStatus) {
 			throw new UnsupportedOperationException("ExecutionStatus.TA_ERROR#resolveStatus(...) should never have been invoked. That exception cleary results from faulty logic. If you read this message please "+
@@ -397,7 +397,7 @@ public enum ExecutionStatus implements Internationalizable {
 			newStatus = ExecutionStatus.BLOCKED;
 		} 
 		else if (report.hasError()){
-			newStatus = ExecutionStatus.TA_ERROR;
+			newStatus = ExecutionStatus.ERROR;
 		}
 		else if (report.getFailure() > 0) {
 			newStatus = ExecutionStatus.FAILURE;

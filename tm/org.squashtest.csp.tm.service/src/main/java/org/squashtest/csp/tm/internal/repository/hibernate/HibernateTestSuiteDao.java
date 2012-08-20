@@ -117,9 +117,9 @@ public class HibernateTestSuiteDao extends HibernateEntityDao<TestSuite> impleme
 		}
 
 		TestSuiteStatistics stats = new TestSuiteStatistics(nbTestPlans, 
-				statusMap.get(ExecutionStatus.BLOCKED.name())+statusMap.get(ExecutionStatus.TA_ERROR.name()),
+				statusMap.get(ExecutionStatus.BLOCKED.name())+statusMap.get(ExecutionStatus.ERROR.name()),
 				statusMap.get(ExecutionStatus.FAILURE.name()), 
-				statusMap.get(ExecutionStatus.SUCCESS.name())+statusMap.get(ExecutionStatus.TA_WARNING.name()),
+				statusMap.get(ExecutionStatus.SUCCESS.name())+statusMap.get(ExecutionStatus.WARNING.name()),
 				statusMap.get(ExecutionStatus.RUNNING.name()), 
 				statusMap.get(ExecutionStatus.READY.name()));
 

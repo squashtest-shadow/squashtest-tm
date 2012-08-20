@@ -119,8 +119,8 @@ public class HibernateExecutionDao extends HibernateEntityDao<Execution> impleme
 		report.setSuccess(statusMap.get(ExecutionStatus.SUCCESS.name()));
 		report.setRunning(statusMap.get(ExecutionStatus.RUNNING.name()));
 		report.setReady(statusMap.get(ExecutionStatus.READY.name()));
-		report.setWarning(statusMap.get(ExecutionStatus.TA_WARNING.name()));
-		report.setError(statusMap.get(ExecutionStatus.TA_ERROR.name()));
+		report.setWarning(statusMap.get(ExecutionStatus.WARNING.name()));
+		report.setError(statusMap.get(ExecutionStatus.ERROR.name()));
 
 		return report;
 	}

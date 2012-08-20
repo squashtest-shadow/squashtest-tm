@@ -52,7 +52,7 @@ class ExecutionStatusTest extends Specification {
 	def "should turn a list of ExecutionStatus to canonical status list"(){
 		
 		given :
-			def nonCanon = [RUNNING, TA_ERROR, BLOCKED, TA_WARNING ]
+			def nonCanon = [RUNNING, ERROR, BLOCKED, WARNING ]
 			
 		when :
 			def canon = ExecutionStatus.toCanonicalStatusList(nonCanon)
@@ -79,8 +79,8 @@ class ExecutionStatusTest extends Specification {
 		SUCCESS 	| "execution.execution-status.SUCCESS"
 		RUNNING 	| "execution.execution-status.RUNNING"
 		READY   	| "execution.execution-status.READY"
-		TA_ERROR	| "execution.execution-status.TA_ERROR"
-		TA_WARNING	| "execution.execution-status.TA_WARNING"
+		ERROR	| "execution.execution-status.TA_ERROR"
+		WARNING	| "execution.execution-status.TA_WARNING"
 	}
 	
 	def "should compute a new status (1)"(){
@@ -118,7 +118,7 @@ class ExecutionStatusTest extends Specification {
 			def res = ExecutionStatus.computeNewStatus(report)
 		
 		then :
-			res == TA_ERROR
+			res == ERROR
 	}
 	
 	def "should compute a new status (3)"(){
@@ -200,12 +200,12 @@ class ExecutionStatusTest extends Specification {
 	
 	def "should never invoke resolveStatus on non canon status when using plublic methods"(){
 		expect :
-			FAILURE == TA_WARNING.deduceNewStatus(FAILURE, RUNNING)
+			FAILURE == WARNING.deduceNewStatus(FAILURE, RUNNING)
 	}
 	
 	def "should crash when trying to resolveStatus on non canon status through class-protected methods"(){
 		when :
-			TA_WARNING.resolveStatus(FAILURE, RUNNING)
+			WARNING.resolveStatus(FAILURE, RUNNING)
 		then :
 			thrown(UnsupportedOperationException)
 	}

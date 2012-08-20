@@ -92,13 +92,6 @@ div.ta-main-div .ta-manager-disabled{
 }
 
 
-
-
-
-
-
-
-
  --%>	
 
 <!--  ==================== /DEV STYLESHEET, MOVE IT TO MAIN STYLESHEET WHEN READY ==================== -->
@@ -178,10 +171,15 @@ div.ta-main-div .ta-manager-disabled{
 				</div>
 			</fieldset> 
 			
-			<fieldset class="ta-projects-block  ta-block ${initialCss}">
+			<fieldset class="ta-projects-block  ta-block">
 				<legend>
 					<f:message key="project.testauto.projectsblock.title" />
 				</legend>
+				
+				<div class="ta-block-item">
+					<f:message var="addTAProjectLabel" key="project.testauto.projectsblock.add.button.label" />
+					<input id="ta-projectsblock-add-button" title="${addTAProjectLabel}" type="button" class="button" value="+"/>
+				</div>
 				
 				<table id="ta-projects-table" class="ta-projects-table">
 					<thead>
@@ -191,14 +189,12 @@ div.ta-main-div .ta-manager-disabled{
 							<th><f:message key="project.testauto.projectsblock.table.headers.name"/></th>
 							<th><f:message key="project.testauto.projectsblock.table.headers.serverurl"/></th>
 							<th><f:message key="project.testauto.projectsblock.table.headers.serverkind"/></th>
-							<th>remove button (masked)</th>
+							<th>&nbsp;</th>
 						</tr>
 					</thead>
 					<tbody>
-						<c:if test="${fn:length(boundProjects)} gt 0">
-						<c:forEach items="boundProjects" var="taproj" varStatus="status">
+						<c:forEach items="${boundProjects}" var="taproj" varStatus="status">
 						<tr>
-						
 							<td>${taproj.id}</td>
 							<td>${status.index}</td>
 							<td>${taproj.name}</td>
@@ -207,7 +203,6 @@ div.ta-main-div .ta-manager-disabled{
 							<td> </td>
 						</tr>
 						</c:forEach>
-						</c:if>
 					</tbody>
 				</table>
 				<br />
@@ -216,11 +211,61 @@ div.ta-main-div .ta-manager-disabled{
 	</div>
 	</jsp:attribute>
 
-
-
-
 </comp:toggle-panel>
 
+
+<%-- ================================================
+	Project add popup. 
+	
+	Dumb definition here, the code is elsewhere 
+================================================= --%>
+
+<pop:popup id="ta-projectsblock-popup" openedBy="ta-projectsblock-add-button" closeOnSuccess="false" 
+							   usesRichEdit="false" titleKey="project.testauto.projectsblock.add.popup.title" >
+							   
+	<jsp:attribute name="buttonsArray">
+		{
+			'text' 	: '<f:message var="label" key="dialog.button.confirm.label" />',
+			'class' : 'ta-projectsadd-popup-confirm'
+		},
+		{
+			'text'  : '<f:message var="label" key="dialog.button.cancel.label" />',
+			'class' : 'ta-projectsadd-popup-cancel'
+		}											
+	</jsp:attribute>
+	
+	<jsp:attribute name="body">
+	
+ 		<div class="ta-projectsadd-pleasewait" style="vertical-align:middle;">
+ 			<img src="${ pageContext.servletContext.contextPath }/images/ajax-loader.gif" />
+			<span style="font-size:1.5em;"><f:message key="squashtm.processing"/></span>
+ 		</div>
+	
+
+		<div class="ta-projectsadd-fatalerror">
+			<span> </span>
+		</div>
+		
+		<div class="ta-projectsadd-error">
+			<span> </span>
+		</div>
+			 	
+	
+		<div class="ta-projectsadd-maindiv">
+			<label><f:message key="project.testauto.projectsblock.add.popup.caption"/></label>
+			<div class="ta-projectsadd-listdiv">
+				
+			</div>
+		</div>
+		
+	</jsp:attribute>
+</pop:popup>
+
+
+
+<%-- ===================================
+	Js initialization
+==================================== --%>
 
 <script type="text/javascript">
 	$(function(){
@@ -231,13 +276,21 @@ div.ta-main-div .ta-manager-disabled{
 			squashtm.testautomation = {};
 		}
 		
-		var settings = {
+		var managerSettings = {
 			selector : "#test-automation-management-panel .ta-main-div",
-			listProjectsURL : "${listRemoteProjectsURL}",
 			initiallyEnabled : ${project.testAutomationEnabled}					
 		};
 		
-		squashtm.testautomation.projectmanager = new TestAutomationProjectManager(settings);
+		squashtm.testautomation.projectmanager = new TestAutomationProjectManager(managerSettings);
+		
+		
+		var popupSettings = {
+			selector : "#ta-projectsblock-popup",
+			manager : squashtm.testautomation.projectmanager,
+			listProjectsURL : "${listRemoteProjectsURL}",
+		}
+		
+		var projectAddPopup = new TestAutomationAddProjectPopup(popupSettings);
 		
 		//************************** table setup **********************
 		
@@ -263,7 +316,7 @@ div.ta-main-div .ta-manager-disabled{
 					{'bSortable': false, 'bVisible': true,  'aTargets': [2], 'mDataProp' : 'name'},
 					{'bSortable': false, 'bVisible': true,  'aTargets': [3], 'mDataProp' : 'server-url'},
 					{'bSortable': false, 'bVisible': true,  'aTargets': [4], 'mDataProp' : 'server-kind'},
-					{'bSortable': false, 'bVisible': false, 'aTargets': [5], 'mDataProp' : 'empty-delete-holder', 'sWidth': '2em', 'sClass': 'centered delete-button' }										
+					{'bSortable': false, 'bVisible': true, 'aTargets': [5], 'mDataProp' : 'empty-delete-holder', 'sWidth': '2em', 'sClass': 'centered delete-button' }										
 				]
 
 			};
@@ -286,6 +339,7 @@ div.ta-main-div .ta-manager-disabled{
 		}
 		
 		$("#ta-projects-table").squashTable(tableSettings, squashSettings);
+
 		
 	});
 
