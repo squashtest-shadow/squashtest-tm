@@ -18,40 +18,13 @@
  *     You should have received a copy of the GNU Lesser General Public License
  *     along with this software.  If not, see <http://www.gnu.org/licenses/>.
  */
-package org.squashtest.csp.tm.service;
+package org.squashtest.csp.tm.internal.repository.hibernate;
 
-import java.util.List;
-import java.util.Set;
+import org.springframework.stereotype.Repository;
+import org.squashtest.csp.tm.domain.bugtracker.BugTrackerProject;
+import org.squashtest.csp.tm.internal.repository.BugTrackerProjectDao;
 
-import org.squashtest.csp.core.bugtracker.domain.BugTracker;
-import org.squashtest.csp.tm.infrastructure.filter.CollectionSorting;
-import org.squashtest.csp.tm.infrastructure.filter.FilteredCollectionHolder;
+@Repository
+public class HibernateBugTrackerProjectDao extends HibernateEntityDao<BugTrackerProject> implements BugTrackerProjectDao {
 
-
-public interface BugTrackerFinderService {
-
-	/**
-	 * 
-	 * @return all bugtrackers the user has read access to
-	 */
-	List<BugTracker> findAll();
-	
-	/**
-	 * 
-	 * @param filter
-	 * @return sorted list of bugtrackers
-	 */
-	FilteredCollectionHolder<List<BugTracker>> findSortedBugtrackers(CollectionSorting filter);
-	
-	/**
-	 * 
-	 * @return a list of bugtracker kinds
-	 */
-	Set<String> findBugTrackerKinds();
-	
-	/**
-	 * @param bugtrackerId
-	 * @return the name of the bugtracker
-	 */
-	String findBugtrackerName(Long bugtrackerId);
 }

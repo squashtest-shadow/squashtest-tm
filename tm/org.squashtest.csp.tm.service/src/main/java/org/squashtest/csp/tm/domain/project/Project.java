@@ -37,6 +37,7 @@ import javax.persistence.ManyToMany;
 import javax.persistence.OneToOne;
 import javax.validation.constraints.Size;
 
+import org.hibernate.annotations.ForeignKey;
 import org.hibernate.validator.constraints.NotBlank;
 import org.squashtest.csp.tm.domain.audit.Auditable;
 import org.squashtest.csp.tm.domain.bugtracker.BugTrackerProject;
@@ -78,6 +79,7 @@ public class Project {
 	private CampaignLibrary campaignLibrary;
 	
 	@OneToOne(cascade = {CascadeType.ALL}, optional = true, fetch = FetchType.LAZY)
+	@ForeignKey(name="FK_Project_BugtrackerProject")
 	@JoinColumn(name="BUGTRACKER_PROJECT_ID")
 	private BugTrackerProject bugtrackerProject;
 	
@@ -133,7 +135,7 @@ public class Project {
 	}
 	
 	public boolean isBugtrackerConnected(){
-		return false; //TODO implement
+		return bugtrackerProject != null;
 	}
 
 	public TestCaseLibrary getTestCaseLibrary() {
@@ -229,6 +231,11 @@ public class Project {
 		else{
 			return testAutomationProjects.get(testAutomationProjects.size()-1).getServer();
 		}
+	}
+
+	public void removeBugTrackerProject() {
+		this.bugtrackerProject = null;
+		
 	}
 	
 }

@@ -72,4 +72,29 @@ public interface CustomProjectModificationService {
 	
 	List<TestAutomationProject> findBoundTestAutomationProjects(long projectId);
 
+
+	/**
+	 * Change the Bugtracker the Project is associated-to.<br>
+	 * If the Project had no Bugtracker, will add a new association.<br>
+	 * If the Project had a already a Bugtracker, it will keep the project-Name information
+	 * 
+	 * @param projectId
+	 * @param newBugtrackerId
+	 */
+	void changeBugTracker(long projectId, Long newBugtrackerId);
+
+	/**
+	 * Will remove the association the Project has to it's Bugtracker.
+	 * 
+	 * @param projectId
+	 */
+	void removeBugTracker(long projectId);
+	
+	/**
+	 * Will change a bugtracker connexion parameter : the name of the bugtracker's project it's associated to.
+	 * 
+	 * @param projectId the concerned project
+	 * @param projectBugTrackerName the name of the bugtracker's project, the Project is connected to
+	 */
+	void changeBugTrackerProjectName(long projectId, String projectBugTrackerName);
 }

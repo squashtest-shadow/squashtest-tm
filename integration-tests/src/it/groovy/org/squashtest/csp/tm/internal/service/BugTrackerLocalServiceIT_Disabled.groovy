@@ -21,26 +21,26 @@
 package org.squashtest.csp.tm.internal.service
 
 
-import java.net.URL;
+import java.net.URL
 
 import javax.inject.Inject 
 import org.spockframework.util.NotThreadSafe 
 import org.springframework.test.context.ContextConfiguration
-import org.springframework.transaction.annotation.Transactional;
+import org.springframework.transaction.annotation.Transactional
 import org.squashtest.csp.core.bugtracker.core.BugTrackerNotFoundException 
-import org.squashtest.csp.core.bugtracker.domain.BTIssue;
+import org.squashtest.csp.core.bugtracker.domain.BTIssue
 import org.squashtest.csp.core.bugtracker.domain.BTProject 
-import org.squashtest.csp.core.bugtracker.domain.Category;
-import org.squashtest.csp.core.bugtracker.domain.Priority;
-import org.squashtest.csp.core.bugtracker.domain.User;
-import org.squashtest.csp.core.bugtracker.domain.Version;
+import org.squashtest.csp.core.bugtracker.domain.Category
+import org.squashtest.csp.core.bugtracker.domain.Priority
+import org.squashtest.csp.core.bugtracker.domain.User
+import org.squashtest.csp.core.bugtracker.domain.Version
 import org.squashtest.csp.core.bugtracker.spi.BugTrackerInterfaceDescriptor 
 import org.squashtest.csp.tm.domain.bugtracker.BugTrackerStatus 
-import org.squashtest.csp.tm.domain.bugtracker.Issue;
+import org.squashtest.csp.tm.domain.bugtracker.Issue
 import org.squashtest.csp.tm.domain.bugtracker.IssueOwnership 
-import org.squashtest.csp.tm.domain.execution.Execution;
+import org.squashtest.csp.tm.domain.execution.Execution
 import org.squashtest.csp.tm.domain.execution.ExecutionStatus
-import org.squashtest.csp.tm.domain.execution.ExecutionStep;
+import org.squashtest.csp.tm.domain.execution.ExecutionStep
 import org.squashtest.csp.tm.infrastructure.filter.CollectionSorting 
 import org.squashtest.csp.tm.infrastructure.filter.FilteredCollectionHolder 
 import org.squashtest.csp.tm.service.BugTrackerLocalService 
@@ -79,7 +79,6 @@ class BugTrackerLocalServiceIT_Disabled extends DbunitServiceSpecification  {
 	/*
 	 *  should test the following methods :
 	 * 
-	 <X extends Bugged> X findBuggedEntity(Long entityId, Class<X> entityClass);
 	 void addIssue( Long entityId, Class<? extends Bugged> entityClass, Issue issue);
 	 String findProjectName(Bugged entity);
 	 BugTrackerStatus checkBugTrackerStatus();
@@ -89,48 +88,21 @@ class BugTrackerLocalServiceIT_Disabled extends DbunitServiceSpecification  {
 	 */	
 
 	@Inject
-	private BugTrackerLocalService btService;
+	private BugTrackerLocalService btService
+	
 
 
-	@DataSet("BugTrackerLocalServiceIT.execution-step-setup.xml")
-	def "should find an execution-step as a Bugged entity using its id"(){
-		given :
-		def execStepId = new Long(1);
-		when :
-		ExecutionStep estep = btService.findBuggedEntity(execStepId, ExecutionStep.class);
-		then :
-		estep!=null;
-		estep.id==1l
-		estep.action=="click"
-		estep.expectedResult=="should work"
-		estep.executionStatus==ExecutionStatus.FAILURE
-		estep.comment=="it's bugged"
-		estep.lastExecutedBy=="tester"
-	}
-
-
-	@DataSet("BugTrackerLocalServiceIT.execution-step-setup.xml")
-	def "should find the name of the project to which the bugged entity belongs to"(){
-		given :
-		ExecutionStep estep = btService.findBuggedEntity(1l, ExecutionStep.class)
-		when :
-		def name = estep.getProject().getName();
-		then :
-		name=="squashbt"
-
-
-	}
 	
 	@DataSet("BugTrackerLocalServiceIT.execution-step-setup.xml")
 	def "should get an issue from a given execution step"(){
 		given :
-			ExecutionStep estep = btService.findBuggedEntity(1l, ExecutionStep.class)
+			ExecutionStep estep = findEntity(ExecutionStep.class, 1l)
 		
 		when :
-			def issue = estep.getIssueList().findIssue(2l);
+			def issue = estep.getIssueList().findIssue(2l)
 		
 		then :
-			issue.id==2l;
+			issue.id==2l
 	}
 	
 	@DataSet("BugTrackerLocalServiceIT.execution-step-setup.xml")
@@ -138,13 +110,13 @@ class BugTrackerLocalServiceIT_Disabled extends DbunitServiceSpecification  {
 		
 		given :
 				
-			ExecutionStep estep = btService.findBuggedEntity(1l, ExecutionStep.class)		
+			ExecutionStep estep = findEntity(ExecutionStep.class, 1l)
 		when :
-			List<Issue> issues = estep.getIssueList().getAllIssues();
+			List<Issue> issues = estep.getIssueList().getAllIssues()
 		
 		then :
 			issues.size() == 3
-			issues.collect { it -> it.id } == [2l, 4l, 6l];
+			issues.collect { it -> it.id } == [2l, 4l, 6l]
 		
 	}
 	
@@ -152,37 +124,37 @@ class BugTrackerLocalServiceIT_Disabled extends DbunitServiceSpecification  {
 	def "should get a list of paired issues for a step"(){
 		
 		given :
-			ExecutionStep estep = btService.findBuggedEntity(1l, ExecutionStep.class)
+			ExecutionStep estep = findEntity(ExecutionStep.class, 1l)
 			
 			CollectionSorting sorter = new CollectionSorting(){
 				
 
 			   public int getFirstItemIndex(){
-				   return 0;
+				   return 0
 			   }
 			
 
 			    public int getPageSize(){
-				   return 10;
+				   return 10
 			   }
 			   
 			   String getSortedAttribute(){
-				   return "Issue.id";
+				   return "Issue.id"
 			   }
 		   
 
 			   String getSortingOrder(){
-				   return "desc";
+				   return "desc"
 			   }
 			}
 		
 		when :
 			FilteredCollectionHolder<List<IssueOwnership<Issue>>> ownedIssues = 
-					btService.findSquashIssues(estep, sorter);
+					btService.findSortedIssueOwnerShipsForExecutionStep(estep.id, sorter)
 		
 		then :
-			ownedIssues.unfilteredResultCount == 3;
-			List<IssueOwnership<Issue>> list = ownedIssues.filteredCollection;
+			ownedIssues.unfilteredResultCount == 3
+			List<IssueOwnership<Issue>> list = ownedIssues.filteredCollection
 			
 			list.collect { it -> it.issue.id} == [6l, 4l, 2l]
 		
@@ -194,51 +166,51 @@ class BugTrackerLocalServiceIT_Disabled extends DbunitServiceSpecification  {
 	def "should get a list of paired issues for an execution"(){
 		
 		given :
-			Execution exec = btService.findBuggedEntity(1l, Execution.class)
-			ExecutionStep step1 = btService.findBuggedEntity(1l, ExecutionStep.class)
-			ExecutionStep step2 = btService.findBuggedEntity(2l, ExecutionStep.class)
+			Execution exec = findEntity(Execution.class, 1l)
+			ExecutionStep step1 = findEntity(ExecutionStep.class, 1l)
+			ExecutionStep step2 = findEntity(ExecutionStep.class, 2l)
 			
 			CollectionSorting sorter = new CollectionSorting(){
 				
 
 			   public int getFirstItemIndex(){
-				   return 0;
+				   return 0
 			   }
 			
 			   public int getPageSize(){
-				   return 10;
+				   return 10
 			   }
 	
 			   String getSortedAttribute(){
-				   return "Issue.id";
+				   return "Issue.id"
 			   }
 		   
 
 			   String getSortingOrder(){
-				   return "desc";
+				   return "desc"
 			   }
 			}
 		
 		when :
 			FilteredCollectionHolder<List<IssueOwnership<Issue>>> ownedIssues =
-					btService.findSquashIssues(exec, sorter);
+					btService.findSortedIssueOwnershipsforExecution(exec.id, sorter)
 					
 			
 		
 		then :
-			ownedIssues.unfilteredResultCount == 8;
-			List<IssueOwnership<Issue>> list = ownedIssues.filteredCollection;
+			ownedIssues.unfilteredResultCount == 8
+			List<IssueOwnership<Issue>> list = ownedIssues.filteredCollection
 			
 			list.collect { it -> it.issue.id} == [8l, 7l, 6l, 5l, 4l, 3l,  2l, 1l]
 			
-			def ownership8 = list.get(0);
-			def ownership7 = list.get(1);
-			def ownership6 = list.get(2);
-			def ownership5 = list.get(3);
-			def ownership4 = list.get(4);
-			def ownership3 = list.get(5);
-			def ownership2 = list.get(6);
-			def ownership1 = list.get(7);
+			def ownership8 = list.get(0)
+			def ownership7 = list.get(1)
+			def ownership6 = list.get(2)
+			def ownership5 = list.get(3)
+			def ownership4 = list.get(4)
+			def ownership3 = list.get(5)
+			def ownership2 = list.get(6)
+			def ownership1 = list.get(7)
 			
 			ownership8.owner == ownership7.owner 
 			ownership7.owner == exec
@@ -258,13 +230,13 @@ class BugTrackerLocalServiceIT_Disabled extends DbunitServiceSpecification  {
 	@DataSet("BugTrackerLocalServiceIT.execution-step-setup.xml")
 	def "should not find an issue from a given execution step"(){
 		given :
-			ExecutionStep estep = btService.findBuggedEntity(1l, ExecutionStep.class)
+			ExecutionStep estep = findEntity(ExecutionStep.class, 1l)
 		
 		when :
-			def issue = estep.getIssueList().findIssue(8l);
+			def issue = estep.getIssueList().findIssue(8l)
 		
 		then :
-			issue==null;
+			issue==null
 	}
 
 
@@ -272,9 +244,9 @@ class BugTrackerLocalServiceIT_Disabled extends DbunitServiceSpecification  {
 		given :
 
 		when :
-		BugTrackerStatus status1 = btService.checkBugTrackerStatus();
+		BugTrackerStatus status1 = btService.checkBugTrackerStatus()
 		btService.setCredentials("administrator", "root")
-		BugTrackerStatus status2 = btService.checkBugTrackerStatus();
+		BugTrackerStatus status2 = btService.checkBugTrackerStatus()
 		then :
 		status1 == BugTrackerStatus.BUGTRACKER_NEEDS_CREDENTIALS
 		status2 == BugTrackerStatus.BUGTRACKER_READY
@@ -285,7 +257,7 @@ class BugTrackerLocalServiceIT_Disabled extends DbunitServiceSpecification  {
 		given :
 		btService.setCredentials("administrator", "root")
 		when :
-		def priorities = btService.getRemotePriorities();
+		def priorities = btService.getRemotePriorities()
 		then :
 		priorities.collect{it.name} == [
 			"feature",
@@ -312,8 +284,8 @@ class BugTrackerLocalServiceIT_Disabled extends DbunitServiceSpecification  {
 		then :
 		project != null
 		project.name == "squashbt"
-		project.users.collect {it.name}.contains ("administrator");
-		project.users.collect {it.name}.contains ("user");
+		project.users.collect {it.name}.contains ("administrator")
+		project.users.collect {it.name}.contains ("user")
 		
 		project.versions.collect { it.name } == ["1.02", "1.01", "1.0"]
 		project.categories.collect { it.name }== ["General", "Non Squash", "Squash", "Squash tm"]
@@ -333,9 +305,9 @@ class BugTrackerLocalServiceIT_Disabled extends DbunitServiceSpecification  {
 
 		for (User user : [user1, user2]){
 			if (user.name=="administrator"){
-				user.permissions.collect{it.name} == admPerms;
+				user.permissions.collect{it.name} == admPerms
 			}else{
-				user.permissions.collect{it.name} == userPerms;
+				user.permissions.collect{it.name} == userPerms
 			}
 		}
 
@@ -347,8 +319,8 @@ class BugTrackerLocalServiceIT_Disabled extends DbunitServiceSpecification  {
 		
 		and :
 			//need a bug tracker like mantis or JIRA and you have to know the issue id
-			String issueId1 = "1";
-			String issueId2 = "3";
+			String issueId1 = "1"
+			String issueId2 = "3"
 			List<String> issueIdList = new ArrayList<String>()
 			issueIdList.add(issueId1)
 			issueIdList.add(issueId2)
@@ -386,12 +358,12 @@ class BugTrackerLocalServiceIT_Disabled extends DbunitServiceSpecification  {
 
 
 		when :
-		BugTrackerInterfaceDescriptor descriptor = btService.getInterfaceDescriptor();
+		BugTrackerInterfaceDescriptor descriptor = btService.getInterfaceDescriptor()
 
 		then :
-		descriptor!=null;
-		descriptor.getCategoryLabel().contains("Cat")
-		descriptor.getCategoryLabel().contains("gor")
+		descriptor!=null
+		descriptor.getReportCategoryLabel().contains("Cat")
+		descriptor.getReportCategoryLabel().contains("gor")
 	}
 	
 
@@ -405,7 +377,7 @@ class BugTrackerLocalServiceIT_Disabled extends DbunitServiceSpecification  {
 			btService.setCredentials("administrator", "root")
 		
 		and :
-			ExecutionStep estep = btService.findBuggedEntity(1l, ExecutionStep.class)
+			ExecutionStep estep = findEntity(ExecutionStep.class, 1l)
 			
 			BTProject project = btService.findRemoteProject(estep.getProject().getName())
 			Version version = project.getVersions().get(0)
@@ -422,7 +394,7 @@ class BugTrackerLocalServiceIT_Disabled extends DbunitServiceSpecification  {
 			issue.setCategory(category)
 			issue.setPriority(priority)
 			issue.setSummary("test bug # 1")
-			issue.setDescription(estep.getDefaultDescription())
+			issue.setDescription("issue description")
 			issue.setComment("this is a comment for test bug # 1")
 			
 		
@@ -430,15 +402,18 @@ class BugTrackerLocalServiceIT_Disabled extends DbunitServiceSpecification  {
 			BTIssue reIssue = btService.createIssue(estep, issue)
 			
 			//we update the content of the step by refetching it
-			estep = btService.findBuggedEntity (1l, ExecutionStep.class)
+			estep = findEntity(ExecutionStep.class, 1l)
 					
 		then :
 			
-			reIssue.getId()!=null;
+			reIssue.getId()!=null
 			reIssue.getAssignee().getName()== assignee.getName()
 			reIssue.getVersion().getName() == version.getName()
-			
-			//etc
+			reIssue.getCategory() == category
+			reIssue.getPriority() == priority
+			reIssue.getSummary() == "test bug # 1"
+			reIssue.getDescription() == "issue description"
+			reIssue.getComment() == "this is a comment for test bug # 1"
 			
 		
 	}
@@ -461,5 +436,8 @@ class BugTrackerLocalServiceIT_Disabled extends DbunitServiceSpecification  {
 		
 	}
 	
+	private Object findEntity(Class<?> entityClass, Long id){
+		return getSession().get(entityClass, id)
+	}
 
 }

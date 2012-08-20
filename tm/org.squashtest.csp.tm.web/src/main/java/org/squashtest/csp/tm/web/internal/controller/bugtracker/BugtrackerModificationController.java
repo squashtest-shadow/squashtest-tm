@@ -18,40 +18,28 @@
  *     You should have received a copy of the GNU Lesser General Public License
  *     along with this software.  If not, see <http://www.gnu.org/licenses/>.
  */
-package org.squashtest.csp.tm.service;
+package org.squashtest.csp.tm.web.internal.controller.bugtracker;
 
-import java.util.List;
-import java.util.Set;
+import static org.squashtest.csp.tm.web.internal.helper.JEditablePostParams.VALUE;
 
-import org.squashtest.csp.core.bugtracker.domain.BugTracker;
-import org.squashtest.csp.tm.infrastructure.filter.CollectionSorting;
-import org.squashtest.csp.tm.infrastructure.filter.FilteredCollectionHolder;
+import org.springframework.stereotype.Controller;
+import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestMethod;
+import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.bind.annotation.ResponseBody;
+
+@Controller
+@RequestMapping("/bugtracker/{bugtrackerId}")
+public class BugtrackerModificationController {
+
+	@RequestMapping(value = "/name", method = RequestMethod.POST, params = { "id", VALUE })
+	@ResponseBody
+	public String changeName(@PathVariable long stepId, @RequestParam(VALUE) String newName) {
+			//TODO implement 
+			return newName;
+	}
 
 
-public interface BugTrackerFinderService {
 
-	/**
-	 * 
-	 * @return all bugtrackers the user has read access to
-	 */
-	List<BugTracker> findAll();
-	
-	/**
-	 * 
-	 * @param filter
-	 * @return sorted list of bugtrackers
-	 */
-	FilteredCollectionHolder<List<BugTracker>> findSortedBugtrackers(CollectionSorting filter);
-	
-	/**
-	 * 
-	 * @return a list of bugtracker kinds
-	 */
-	Set<String> findBugTrackerKinds();
-	
-	/**
-	 * @param bugtrackerId
-	 * @return the name of the bugtracker
-	 */
-	String findBugtrackerName(Long bugtrackerId);
 }

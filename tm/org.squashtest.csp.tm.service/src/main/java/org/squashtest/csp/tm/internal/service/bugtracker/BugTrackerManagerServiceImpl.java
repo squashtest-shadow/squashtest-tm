@@ -92,4 +92,9 @@ public class BugTrackerManagerServiceImpl implements BugTrackerManagerService {
 		return bugTrackerConnectorFactory.getProviderKinds();
 	}
 
+	@Override
+	public String findBugtrackerName(Long bugtrackerId) {
+		return bugTrackerDao.findById(bugtrackerId).getName();
+	}
+
 }

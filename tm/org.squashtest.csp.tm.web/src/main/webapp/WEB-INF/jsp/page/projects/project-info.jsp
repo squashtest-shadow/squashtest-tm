@@ -20,16 +20,17 @@
         along with this software.  If not, see <http://www.gnu.org/licenses/>.
 
 --%>
-<%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core" %>
-<%@ taglib prefix="f" uri="http://java.sun.com/jsp/jstl/fmt" %>
-<%@ taglib prefix="jq" tagdir="/WEB-INF/tags/jquery" %>
+<%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core"%>
+<%@ taglib prefix="f" uri="http://java.sun.com/jsp/jstl/fmt"%>
+<%@ taglib prefix="jq" tagdir="/WEB-INF/tags/jquery"%>
 <%@ taglib prefix="s" uri="http://www.springframework.org/tags"%>
-<%@ taglib prefix="comp" tagdir="/WEB-INF/tags/component" %>
+<%@ taglib prefix="comp" tagdir="/WEB-INF/tags/component"%>
 <%@ taglib prefix="layout" tagdir="/WEB-INF/tags/layout"%>
 <%@ taglib prefix="dt" tagdir="/WEB-INF/tags/datatables"%>
 <%@ taglib prefix="pop" tagdir="/WEB-INF/tags/popup"%>
 <%@ taglib prefix="ta" tagdir="/WEB-INF/tags/testautomation"%>
-<%@ taglib prefix="sec" uri="http://www.springframework.org/security/tags" %>
+<%@ taglib prefix="sec"
+	uri="http://www.springframework.org/security/tags"%>
 
 <%@ page language="java" contentType="text/html; charset=utf-8"
 	pageEncoding="utf-8"%>
@@ -41,19 +42,23 @@
 <s:url var="projectsUrl" value="/projects" />
 
 
-<s:url var="permissionTableUrl" value="/projects/{projectId}/permission-table">
+<s:url var="permissionTableUrl"
+	value="/projects/{projectId}/permission-table">
 	<s:param name="projectId" value="${adminproject.project.id}" />
 </s:url>
 
-<s:url var="permissionPopupUrl" value="/projects/{projectId}/permission-popup">
+<s:url var="permissionPopupUrl"
+	value="/projects/{projectId}/permission-popup">
 	<s:param name="projectId" value="${adminproject.project.id}" />
 </s:url>
 
-<s:url var="addPermissionUrl" value="/projects/{projectId}/add-permission">
-<s:param name="projectId" value="${adminproject.project.id}" />
+<s:url var="addPermissionUrl"
+	value="/projects/{projectId}/add-permission">
+	<s:param name="projectId" value="${adminproject.project.id}" />
 </s:url>
 
-<s:url var="removePermissionUrl" value="/projects/{projectId}/remove-permission">
+<s:url var="removePermissionUrl"
+	value="/projects/{projectId}/remove-permission">
 	<s:param name="projectId" value="${adminproject.project.id}" />
 </s:url>
 
@@ -97,9 +102,11 @@
 		<div class="fragment-body">
 			<%------------------------------------------------ BODY -----------------------------------------------%>
 	
-			<div id="project-toolbar" classes="toolbar-class ui-corner-all"><%---INFO + Toolbar ---------------------%>
+			<div id="project-toolbar" classes="toolbar-class ui-corner-all">
+				<%---INFO + Toolbar ---------------------%>
 			<div>
-				<comp:general-information-panel auditableEntity="${adminproject.project}"
+				<comp:general-information-panel
+						auditableEntity="${adminproject.project}"
 						entityUrl="${ projectUrl }" />
 			</div>
 				
@@ -107,12 +114,14 @@
 				<sec:authorize access=" hasRole('ROLE_ADMIN')">
 				<f:message var="rename" key="project.button.rename.label" />
 				<input type="button" value="${ rename }" id="rename-project-button"
-					class="button" />
+							class="button" />
 					<f:message var="delete" key='project.button.delete.label' />
-					<input type="button" value="${ delete }" id="delete-project-button" class="button" />
+					<input type="button" value="${ delete }" id="delete-project-button"
+							class="button" />
 					</sec:authorize>
 			</div>
-			</div><%-------------------------------------------------------------END INFO + Toolbar ---------------%>
+			</div>
+			<%-------------------------------------------------------------END INFO + Toolbar ---------------%>
 		
 			<%----------------------------------- INFORMATION PANEL -----------------------------------------------%>
 			<br />
@@ -145,15 +154,21 @@
 						<f:message var="activate" key="project.activate.label" />
 						<f:message var="inactive" key="project.inactive.label" />
 						<f:message var="inactivate" key="project.inactivate.label" />
-						<label for="project-active" class="display-table-cell "><f:message key="project.state.label"/></label>
+						<label for="project-active" class="display-table-cell "><f:message
+									key="project.state.label" />
+							</label>
 							<div class="display-table-cell" id="project-active">
 								<c:if test="${adminproject.project.active}">		
 								<span class="projectActive">${active} </span>
-										<sec:authorize access=" hasRole('ROLE_ADMIN')"><a id="activateProject" href="javascript:void(0);">[${inactivate}]</a></sec:authorize>
+										<sec:authorize access=" hasRole('ROLE_ADMIN')">
+										<a id="activateProject" href="javascript:void(0);">[${inactivate}]</a>
+									</sec:authorize>
 								</c:if>
 								<c:if test="${!adminproject.project.active}">
 								<span class="projectInactive">${inactive} </span>
-									<sec:authorize access=" hasRole('ROLE_ADMIN')">	<a id="activateProject" href="javascript:void(0);">[${activate}]</a></sec:authorize>
+									<sec:authorize access=" hasRole('ROLE_ADMIN')">	<a
+											id="activateProject" href="javascript:void(0);">[${activate}]</a>
+									</sec:authorize>
 								</c:if>
 							</div>
 						</div>
@@ -168,13 +183,15 @@
 				classes="users-panel">
 	
 				<jsp:attribute name="panelButtons">
-					<input id="add-permission-button" title="${addButtonTitle}" type="button" value="+" class="button"/>
+					<input id="add-permission-button" title="${addButtonTitle}"
+						type="button" value="+" class="button" />
 				</jsp:attribute>
 				
 				<jsp:attribute name="body">
 					<div id="permission-table"></div>
 					<div id="permission-row-buttons" class="not-displayed">
-						<a id="delete-permission-button" href="#" class="delete-permission-button">
+						<a id="delete-permission-button" href="#"
+							class="delete-permission-button">
 							<f:message key="tree.button.delete.label" />
 						</a>
 					</div> 
@@ -196,8 +213,8 @@
 					
 			<%----------------------------------- add User Popup-----------------------------------------------%>
 		<comp:popup id="add-permission-dialog"
-			titleKey="dialog.add-permission.title" isContextual="true"
-			openedBy="add-permission-button">
+				titleKey="dialog.add-permission.title" isContextual="true"
+				openedBy="add-permission-button">
 			<jsp:attribute name="buttons">
 			
 				<f:message var="label" key="dialog.add-permission.button.label" />
@@ -205,8 +222,9 @@
 					var url = "${ addPermissionUrl }";
 					
 					<jq:ajaxcall url="url" dataType="json" httpMethod="POST"
-					useData="true" successHandler="refreshTableAndPopup">					
-						<jq:params-bindings userLogin="#user-input" permission="#permission-input" />
+						useData="true" successHandler="refreshTableAndPopup">					
+						<jq:params-bindings userLogin="#user-input"
+							permission="#permission-input" />
 					</jq:ajaxcall>	
 					
 					
@@ -220,57 +238,66 @@
 		</comp:popup>
 		<%----------------------------------- /add User Popup-----------------------------------------------%>
 		<%----------------------------------- BUGTRACKER PANEL -----------------------------------------------%>
+			
+		<c:if test="${!bugtrackersListEmpty}">
 			<br />
-			<comp:simple-jeditable targetUrl="${ projectUrl }" componentId="project-bugtracker-project-name" />
 			<comp:toggle-panel id="project-bugtracker-panel"
-				titleKey="project.bugtracker.panel.title" isContextual="true" open="true"
-				classes="bugtacker-panel">
+					titleKey="project.bugtracker.panel.title" isContextual="true"
+					open="true" classes="bugtacker-panel">
 				<jsp:attribute name="body">
-					<c:choose>
-						<c:when test="${bugtrackersListEmpty}">
-						<div id="bugtrackers-list-empty-message"><f:message key="project.bugtrackers.empty.list.message"/></div>
-						</c:when>
-						<c:otherwise>
-							<div id="project-bugtracker-table" class="display-table">
+			
+					<div id="project-bugtracker-table" class="display-table">
+						
+						<div class="display-table-row">
+							<label for="project-bugtracker" class="display-table-cell">
+								<f:message key="project.bugtracker.label" />
+							</label>
+							<div class="display-table-cell">
+								<div id="project-bugtracker">
+									<c:choose>
+										<c:when test="${ !adminproject.project.bugtrackerConnected }">
+											<f:message key="project.bugtracker.name.undefined" />
+										</c:when>
+										<c:otherwise>
+											${ adminproject.project.bugtrackerProject.bugtracker.name }						
+										</c:otherwise>
+									</c:choose>
+								</div>
+									<script> function projectBugTrackerCallBack (value, settings) {
+								         if(value != "<f:message key='project.bugtracker.name.undefined'/>"){								        	 
+								        	 $("#project-bugtracker-project-name-row").show();
+												refreshBugTrackerProjectName();
+									     }else{
+								        	 $("#project-bugtracker-project-name-row").hide();								        	 
+								         }
+								         }</script>
+								<comp:select-jeditable componentId="project-bugtracker"
+										jsonData="${bugtrackersList}" targetUrl="${projectUrl}"
+										submitCallback="projectBugTrackerCallBack" />
 								
-								<div class="display-table-row">
-									<label for="project-bugtracker-name" class="display-table-cell">
-										<f:message key="project.bugtracker.name.label" />
-									</label>
-									<div class="display-table-cell">
-										<div id="project-bugtracker-name">
-											<c:choose>
-												<c:when test="${ !adminproject.project.bugtrackerConnected }">
-													<f:message key="project.bugtracker.name.undefined"/>
-												</c:when>
-												<c:otherwise>
-													<s:message code="${ adminproject.project.bugtrackerProject.bugtracker.name }" htmlEscape="true" />							
-												</c:otherwise>
-											</c:choose>
-										</div>
-										<comp:select-jeditable componentId="project-bugtracker-name" jsonData="${bugtrackersList}" targetUrl="${projectUrl}" />
-									</div>
-								</div>
-								<div class="display-table-row" id="project-bugtracker-project-name-row" >
-									<label for="project-bugtracker-project-name" class="display-table-cell">
-										<f:message key="project.bugtracker.project.name.label" />
-									</label>
-									<div class="display-table-cell" id="project-bugtracker-project-name">
-										<c:choose>
-											<c:when test="${ adminproject.project.bugtrackerConnected }">
-												${ adminproject.project.bugtrackerProject.projectName }
-											</c:when>
-											<c:otherwise>
-												${ adminproject.project.name }
-											</c:otherwise>
-										</c:choose>
-									</div>
-								</div>
 							</div>
-						</c:otherwise>
-					</c:choose>
+						</div>
+						<div class="display-table-row"
+								id="project-bugtracker-project-name-row"
+								<c:if test="${ !adminproject.project.bugtrackerConnected }">style="display:none"</c:if>>
+							<label for="project-bugtracker-project-name"
+									class="display-table-cell">
+								<f:message key="project.bugtracker.project.name.label" />
+							</label>
+							<comp:simple-jeditable targetUrl="${ projectUrl }"
+									componentId="project-bugtracker-project-name" />
+							<div class="display-table-cell"
+									id="project-bugtracker-project-name">
+								<c:choose>
+									<c:when test="${ adminproject.project.bugtrackerConnected }">${ adminproject.project.bugtrackerProject.projectName }</c:when>
+									<c:otherwise>${ adminproject.project.name }</c:otherwise>
+								</c:choose>
+							</div>
+						</div>
+					</div>
 				</jsp:attribute>
 			</comp:toggle-panel>
+		</c:if>
 		<%-----------------------------------END BUGTRACKER PANEL -----------------------------------------------%>
 		</div>
 		<%---------------------------------------------------------------END  BODY -----------------------------------------------%>
@@ -282,14 +309,25 @@
 
 //*********************************************************************NON ADMIN SCRIPT 
 //*****************Back button
-	$(function() {
-	
+	$(function() {		
 		$("#back").button().click(clickProjectBackButton);
 	});
+	
 	function clickProjectBackButton(){
 		document.location.href = "${projectsUrl}";
 	}
 //****************End Back button
+	function refreshBugTrackerProjectName() {
+		$.ajax({
+				type: 'GET',
+				 url: "${projectUrl}/bugtracker/projectName",
+		}  	
+		).done(function(data){
+			$( "#project-bugtracker-project-name").text(data);
+		});
+		
+	}
+    
 //***************Permission management
 	$(function(){
 		refreshTableAndPopup();
@@ -443,22 +481,22 @@
 
 <!-- --------------------------------RENAME POPUP--------------------------------------------------------- -->
 <sec:authorize access=" hasRole('ROLE_ADMIN')">
-<comp:popup id="rename-project-dialog"
-	titleKey="dialog.rename-project.title" isContextual="true"
-	openedBy="rename-project-button">
-	<jsp:attribute name="buttons">
+	<comp:popup id="rename-project-dialog"
+		titleKey="dialog.rename-project.title" isContextual="true"
+		openedBy="rename-project-button">
+		<jsp:attribute name="buttons">
 	
 		<f:message var="label" key="dialog.button.rename-tree-node.label" />
 		'${ label }': function() {
 			var url = "${ projectUrl }";
 			<jq:ajaxcall url="url" dataType="json" httpMethod="POST"
-			useData="true" successHandler="renameProjectSuccess">					
+				useData="true" successHandler="renameProjectSuccess">					
 				<jq:params-bindings newName="#rename-project-input" />
 			</jq:ajaxcall>					
 		},			
 		<pop:cancel-button />
 	</jsp:attribute>
-	<jsp:body>
+		<jsp:body>
 <script type="text/javascript">
 	$("#rename-project-dialog").bind("dialogopen", function(event, ui) {
 		var name = $('#project-name-header').text();
@@ -477,6 +515,6 @@
 		<br />
 		<comp:error-message forField="name" />
 	</jsp:body>
-</comp:popup>
+	</comp:popup>
 </sec:authorize>
 <!-- ------------------------------------END RENAME POPUP------------------------------------------------------- -->

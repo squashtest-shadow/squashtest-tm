@@ -21,6 +21,8 @@
 package org.squashtest.csp.tm.web.internal.controller.project;
 
 import java.net.MalformedURLException;
+import static org.squashtest.csp.tm.web.internal.helper.JEditablePostParams.VALUE;
+
 import java.util.HashMap;
 import java.util.List;
 import java.util.Locale;
@@ -28,7 +30,6 @@ import java.util.Map;
 
 import javax.inject.Inject;
 import javax.servlet.http.HttpServletResponse;
-
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -47,9 +48,11 @@ import org.squashtest.csp.core.bugtracker.domain.BugTracker;
 import org.squashtest.csp.core.security.acls.PermissionGroup;
 import org.squashtest.csp.tm.domain.LoginDoNotExistException;
 import org.squashtest.csp.tm.domain.UnknownEntityException;
+import org.squashtest.csp.tm.domain.bugtracker.BugTrackerProject;
 import org.squashtest.csp.tm.domain.project.AdministrableProject;
 import org.squashtest.csp.tm.domain.project.Project;
 import org.squashtest.csp.tm.domain.testautomation.TestAutomationProject;
+import org.squashtest.csp.tm.domain.requirement.RequirementCategory;
 import org.squashtest.csp.tm.domain.testautomation.TestAutomationServer;
 import org.squashtest.csp.tm.domain.users.User;
 import org.squashtest.csp.tm.domain.users.UserProjectPermissionsBean;
@@ -67,33 +70,38 @@ import org.squashtest.csp.tm.web.internal.model.testautomation.TestAutomationPro
 public class ProjectModificationController {
 	
 	private static final Logger LOGGER = LoggerFactory.getLogger(ProjectModificationController.class);
-	
+
+	private static final String PROJECT_BUGTRACKER_NAME_UNDEFINED = "project.bugtracker.name.undefined";
+
 	@Inject
 	private MessageSource messageSource;
-	
+
 	private ProjectModificationService projectModificationService;
-	
+
 	
 	@ServiceReference
 	public void setProjectModificationService(ProjectModificationService projectModificationService) {
 		this.projectModificationService = projectModificationService;
 	}
+
 	private BugTrackerFinderService bugtrackerFinderService;
-		@ServiceReference
+
+	@ServiceReference
 	public void setBugTrackerLocalFinderService(BugTrackerFinderService bugtrackerFinderService) {
 		this.bugtrackerFinderService = bugtrackerFinderService;
 	}
-	@RequestMapping(value="/info", method=RequestMethod.GET)
-	public ModelAndView getProjectInfos(@PathVariable long projectId, Locale locale){
+
+	@RequestMapping(value = "/info", method = RequestMethod.GET)
+	public ModelAndView getProjectInfos(@PathVariable long projectId, Locale locale) {
 		
 		AdministrableProject adminProject = projectModificationService.findAdministrableProjectById(projectId);
 		TestAutomationServer taServerCoordinates = projectModificationService.getLastBoundServerOrDefault(adminProject.getProject().getId());
 		List<TestAutomationProject> boundProjects = projectModificationService.findBoundTestAutomationProjects(projectId);
-		
+
 		Map<Long, String> comboDataMap = createComboDataForBugtracker(locale);
+
 		
-		
-		ModelAndView mav = new ModelAndView("page/projects/project-info");	
+		ModelAndView mav = new ModelAndView("page/projects/project-info");
 		
 		mav.addObject("adminproject", adminProject);
 		mav.addObject("taServer", taServerCoordinates);
@@ -102,25 +110,26 @@ public class ProjectModificationController {
 		mav.addObject("boundTAProjects", boundProjects);
 		return mav;
 	}
-	
+
 	private Map<Long, String> createComboDataForBugtracker(Locale locale) {
 		Map<Long, String> comboDataMap = new HashMap<Long, String>();
-		for(BugTracker b : bugtrackerFinderService.findAll()){
+		for (BugTracker b : bugtrackerFinderService.findAll()) {
 			comboDataMap.put(b.getId(), b.getName());
 		}
-		comboDataMap.put(-1L, messageSource.getMessage("project.bugtracker.name.undefined", null, locale));
+		comboDataMap.put(-1L, messageSource.getMessage(PROJECT_BUGTRACKER_NAME_UNDEFINED, null, locale));
 		return comboDataMap;
 	}
-	@RequestMapping(method = RequestMethod.POST, params = { "id=project-label", "value" })
+
+	@RequestMapping(method = RequestMethod.POST, params = { "id=project-label", VALUE })
 	@ResponseBody
-	public String changeLabel(@RequestParam("value") String projectLabel, @PathVariable long projectId) {
+	public String changeLabel(@RequestParam(VALUE) String projectLabel, @PathVariable long projectId) {
 		projectModificationService.changeLabel(projectId, projectLabel);
 		if (LOGGER.isTraceEnabled()) {
 			LOGGER.trace("project " + projectId + ": updated label to " + projectLabel);
 		}
 		return projectLabel;
 	}
-	
+
 	
 	@RequestMapping(method = RequestMethod.POST, params = { "newName" })
 	@ResponseBody
@@ -133,11 +142,12 @@ public class ProjectModificationController {
 			public String newName = reNewName; // NOSONAR unreadable field actually read by JSON marshaller.
 		};
 	}
-	
+
 	
 	@RequestMapping(method = RequestMethod.POST, params = { "isActive" })
 	@ResponseBody
-	public Object changeActive(HttpServletResponse response, @PathVariable long projectId, @RequestParam boolean isActive) {
+	public Object changeActive(HttpServletResponse response, @PathVariable long projectId,
+			@RequestParam boolean isActive) {
 
 		projectModificationService.changeActive(projectId, isActive);
 		LOGGER.info("Project modification : change project {} is active = {}", projectId, isActive);
@@ -146,12 +156,32 @@ public class ProjectModificationController {
 			public Boolean active = newIsActive; // NOSONAR unreadable field actually read by JSON marshaller.
 		};
 	}
-	
-	
-	
-	@RequestMapping(method = RequestMethod.POST, params = { "id=project-description", "value" })
+
+	@RequestMapping(method = RequestMethod.POST, params = { "id=project-bugtracker", VALUE })
 	@ResponseBody
-	public String changeDescription(@RequestParam("value") String projectDescription, @PathVariable long projectId) {
+	public String changeBugtracker(@RequestParam(VALUE) Long bugtrackerId, @PathVariable long projectId, Locale locale) {
+		String toReturn ;
+		if (bugtrackerId > 0) {
+			toReturn = bugtrackerFinderService.findBugtrackerName(bugtrackerId);
+			projectModificationService.changeBugTracker(projectId, bugtrackerId);
+			LOGGER.debug("Project {} : bugtracker changed, new value : {}", projectId, bugtrackerId);
+		} else {
+			toReturn = messageSource.getMessage(PROJECT_BUGTRACKER_NAME_UNDEFINED, null, locale);
+			projectModificationService.removeBugTracker(projectId);
+		}
+		return toReturn;
+	}
+	
+	@RequestMapping(method = RequestMethod.POST, params = { "id=project-bugtracker-project-name", VALUE })
+	@ResponseBody
+	public String changeBugtrackerProjectName(@RequestParam(VALUE) String projectBugTrackerName, @PathVariable long projectId, Locale locale) {
+		projectModificationService.changeBugTrackerProjectName(projectId, projectBugTrackerName);
+		return projectBugTrackerName;
+	}
+
+	@RequestMapping(method = RequestMethod.POST, params = { "id=project-description", VALUE })
+	@ResponseBody
+	public String changeDescription(@RequestParam(VALUE) String projectDescription, @PathVariable long projectId) {
 		projectModificationService.changeDescription(projectId, projectDescription);
 		if (LOGGER.isTraceEnabled()) {
 			LOGGER.trace("project " + projectId + ": updated description to " + projectDescription);
@@ -159,8 +189,16 @@ public class ProjectModificationController {
 		return projectDescription;
 	}
 	
-	
-	
+	@RequestMapping(value="bugtracker/projectName", method = RequestMethod.GET)
+	@ResponseBody
+	public String getBugtrackerProject(@PathVariable long projectId){
+		Project project = projectModificationService.findById(projectId);
+		if(project.isBugtrackerConnected()){
+			return project.getBugtrackerProject().getProjectName();
+		}else{
+			throw new UnknownEntityException(0, BugTrackerProject.class);
+		}
+	}
 	@RequestMapping(value = "/general", method = RequestMethod.GET)
 	public ModelAndView refreshGeneralInfos(@PathVariable long projectId) {
 
@@ -176,65 +214,69 @@ public class ProjectModificationController {
 
 		return mav;
 	}
-	
+
 	
 	
 	@RequestMapping(method = RequestMethod.DELETE)
 	@ResponseBody
-	public void deleteProject(@PathVariable long projectId){
+	public void deleteProject(@PathVariable long projectId) {
 		projectModificationService.deleteProject(projectId);
 	}
+
 	
 	
+	// *********************Permission Management*********************
 	
-	//*********************Permission Management*********************
-	
-	@RequestMapping(value="/add-permission", method=RequestMethod.POST, params = { "user" })
-	public @ResponseBody void addNewPermission(@RequestParam long user, @PathVariable long projectId, @RequestParam String permission){
+	@RequestMapping(value = "/add-permission", method = RequestMethod.POST, params = { "user" })
+	public @ResponseBody
+	void addNewPermission(@RequestParam long user, @PathVariable long projectId, @RequestParam String permission) {
 		projectModificationService.addNewPermissionToProject(user, projectId, permission);
 	}
+
 	
 	
-	
-	@RequestMapping(value="/add-permission", method=RequestMethod.POST, params = { "userLogin" })
-	public @ResponseBody void addNewPermissionWithLogin(@RequestParam String userLogin, @PathVariable long projectId, @RequestParam String permission){
+	@RequestMapping(value = "/add-permission", method = RequestMethod.POST, params = { "userLogin" })
+	public @ResponseBody
+	void addNewPermissionWithLogin(@RequestParam String userLogin, @PathVariable long projectId,
+			@RequestParam String permission) {
 		User user = projectModificationService.findUserByLogin(userLogin);
-		if(user == null){
+		if (user == null) {
 			throw new LoginDoNotExistException();
 		}
 		projectModificationService.addNewPermissionToProject(user.getId(), projectId, permission);
 	}
 	
 	
-	
-	@RequestMapping(value="/remove-permission", method=RequestMethod.POST)
-	public @ResponseBody void removePermission(@RequestParam("user") long userId, @PathVariable long projectId){
+	@RequestMapping(value = "/remove-permission", method = RequestMethod.POST)
+	public @ResponseBody
+	void removePermission(@RequestParam("user") long userId, @PathVariable long projectId) {
 		projectModificationService.removeProjectPermission(userId, projectId);
 	}
+
 	
 	
-	
-	@RequestMapping(value = "/permission-popup" ,method = RequestMethod.GET)
+	@RequestMapping(value = "/permission-popup", method = RequestMethod.GET)
 	public ModelAndView getPermissionPopup(@PathVariable long projectId) {
 		Project project = projectModificationService.findById(projectId);
 		List<PermissionGroup> permissionList = projectModificationService.findAllPossiblePermission();
 		List<User> userList = projectModificationService.findUserWithoutPermissionByProject(projectId);
-		
+
 		ModelAndView mav = new ModelAndView("fragment/project/project-permission-popup");
 		mav.addObject("project", project);
 		mav.addObject("userList", userList);
 		mav.addObject("permissionList", permissionList);
 		return mav;
 	}
+
 	
-	
-	@RequestMapping(value = "/permission-table" ,method = RequestMethod.GET)
+	@RequestMapping(value = "/permission-table", method = RequestMethod.GET)
 	public ModelAndView getPermissionTable(@PathVariable long projectId) {
 		
 		Project project = projectModificationService.findById(projectId);
-		List<UserProjectPermissionsBean> userProjectPermissionsBean = projectModificationService.findUserPermissionsBeansByProject(projectId);
+		List<UserProjectPermissionsBean> userProjectPermissionsBean = projectModificationService
+				.findUserPermissionsBeansByProject(projectId);
 		List<PermissionGroup> permissionList = projectModificationService.findAllPossiblePermission();
-		
+
 		ModelAndView mav = new ModelAndView("fragment/project/project-permission-table");
 		mav.addObject("project", project);
 		mav.addObject("permissionList", permissionList);
@@ -313,5 +355,5 @@ public class ProjectModificationController {
 	
 	
 	
-	
+
 }

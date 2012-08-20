@@ -32,12 +32,17 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.squashtest.csp.core.security.acls.PermissionGroup;
 import org.squashtest.csp.tm.domain.CannotDeleteProjectException;
+import org.squashtest.csp.tm.domain.UnknownEntityException;
+import org.squashtest.csp.tm.domain.bugtracker.BugTrackerEntity;
+import org.squashtest.csp.tm.domain.bugtracker.BugTrackerProject;
 import org.squashtest.csp.tm.domain.project.AdministrableProject;
 import org.squashtest.csp.tm.domain.project.Project;
 import org.squashtest.csp.tm.domain.testautomation.TestAutomationProject;
 import org.squashtest.csp.tm.domain.testautomation.TestAutomationServer;
 import org.squashtest.csp.tm.domain.users.User;
 import org.squashtest.csp.tm.domain.users.UserProjectPermissionsBean;
+import org.squashtest.csp.tm.internal.repository.BugTrackerEntityDao;
+import org.squashtest.csp.tm.internal.repository.BugTrackerProjectDao;
 import org.squashtest.csp.tm.internal.repository.ProjectDao;
 import org.squashtest.csp.tm.internal.repository.UserDao;
 import org.squashtest.csp.tm.service.CustomProjectModificationService;
@@ -58,6 +63,10 @@ public class CustomProjectModificationServiceImpl implements CustomProjectModifi
 	private ProjectDao projectDao;
 	@Inject
 	private UserDao userDao;
+	@Inject
+	private BugTrackerEntityDao bugTrackerEntityDao;
+	@Inject
+	private BugTrackerProjectDao bugTrackerProjectDao;
 	@Inject
 	private ProjectDeletionHandler projectDeletionHandler;
 	@Inject
@@ -126,9 +135,8 @@ public class CustomProjectModificationServiceImpl implements CustomProjectModifi
 	public User findUserByLogin(String userLogin) {
 		return userDao.findUserByLogin(userLogin);
 	}
-	
+
 	// ********************************** Test automation section *************************************
-	
 	@Override
 	@PreAuthorize("hasPermission(#projectId, 'org.squashtest.csp.tm.domain.project.Project', 'MANAGEMENT') or hasRole('ROLE_ADMIN')")
 	public void bindTestAutomationProject(long TMprojectId, TestAutomationProject TAproject) {		
@@ -159,5 +167,67 @@ public class CustomProjectModificationServiceImpl implements CustomProjectModifi
 		return projectDao.findBoundTestAutomationProjects(projectId);
 	}
 	
-	
+
+	@Override
+	public void changeBugTracker(long projectId, Long newBugtrackerId) {
+		LOGGER.debug("changeBugTracker for project " + projectId + " bt: " + newBugtrackerId);
+
+		Project project = projectDao.findById(projectId);
+		if(!project.isBugtrackerConnected()){
+			BugTrackerEntity newBugtrackerEntity = bugTrackerEntityDao.findById(newBugtrackerId);
+			if(newBugtrackerEntity != null){
+				BugTrackerProject newBugtrackerConnection = new BugTrackerProject(project.getName(), newBugtrackerEntity);
+				bugTrackerProjectDao.persist(newBugtrackerConnection);
+				project.setBugtrackerProject(newBugtrackerConnection);
+			}
+			else{
+				throw new UnknownEntityException(newBugtrackerId, BugTrackerEntity.class);
+			}
+		}
+		else{
+			if (projectBugTrackerChangesFromOneToAnother(newBugtrackerId, project)) {
+				BugTrackerEntity newBugtrackerEntity = bugTrackerEntityDao.findById(newBugtrackerId);
+				if(newBugtrackerEntity != null){
+				project.getBugtrackerProject().setBugtrackerEntity(newBugtrackerEntity);
+				}else{
+					throw new UnknownEntityException(newBugtrackerId, BugTrackerEntity.class);
+				}
+				
+			}
+		}
+
+	}
+
+	private boolean projectBugTrackerChangesFromOneToAnother(Long newBugtrackerId, Project project) {
+		boolean change = true;
+			BugTrackerProject bugtrackerProject = project.getBugtrackerProject();
+			long bugtrackerId = bugtrackerProject.getBugtrackerEntity().getId();
+			if (bugtrackerId == newBugtrackerId) {
+				change = false;
+			}
+		return change;
+	}
+
+	@Override
+	public void removeBugTracker(long projectId) {
+		LOGGER.debug("removeBugTracker for project " + projectId);
+		Project project = projectDao.findById(projectId);
+		if (project.isBugtrackerConnected()) {
+			BugTrackerProject bugtrackerProject = project.getBugtrackerProject();
+			project.removeBugTrackerProject();
+			bugTrackerProjectDao.remove(bugtrackerProject);
+		}
+
+	}
+
+	@Override
+	public void changeBugTrackerProjectName(long projectId, String projectBugTrackerName) {
+		Project project = projectDao.findById(projectId);
+		if(project.getBugtrackerProject() == null){
+			throw new UnknownEntityException(0, BugTrackerProject.class);
+		}
+		BugTrackerProject bugtrackerProject = project.getBugtrackerProject();
+		bugtrackerProject.setProjectName(projectBugTrackerName);
+	}
+
 }
