@@ -42,7 +42,7 @@ import spock.lang.Specification;
 import spock.unitils.UnitilsSupport;
 
 @UnitilsSupport
-
+@Transactional
 class HibernateBugTrackerProjectDaoIT extends DbunitDaoSpecification {
 	@Inject
 	BugTrackerProjectDao bugtrackerProjectDao
