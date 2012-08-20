@@ -20,6 +20,7 @@
  */
 package org.squashtest.csp.tm.web.internal.controller.campaign;
 
+import static org.squashtest.csp.tm.web.internal.helper.JEditablePostParams.VALUE;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
@@ -114,9 +115,9 @@ public class CampaignModificationController {
 		return mav;
 	}
 
-	@RequestMapping(method = RequestMethod.POST, params = { "id=campaign-description", "value" })
+	@RequestMapping(method = RequestMethod.POST, params = { "id=campaign-description", VALUE })
 	public @ResponseBody
-	String updateDescription(@RequestParam("value") String newDescription, @PathVariable long campaignId) {
+	String updateDescription(@RequestParam(VALUE) String newDescription, @PathVariable long campaignId) {
 
 		campaignModService.changeDescription(campaignId, newDescription);
 		LOGGER.trace("Campaign " + campaignId + ": updated description to " + newDescription);

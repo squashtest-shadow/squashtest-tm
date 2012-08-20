@@ -20,6 +20,8 @@
  */
 package org.squashtest.csp.tm.web.internal.controller.campaign;
 
+import static org.squashtest.csp.tm.web.internal.helper.JEditablePostParams.VALUE;
+
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Collection;
@@ -137,9 +139,9 @@ public class IterationModificationController {
 		return mav;
 	}
 
-	@RequestMapping(method = RequestMethod.POST, params = { "id=iteration-description", "value" })
+	@RequestMapping(method = RequestMethod.POST, params = { "id=iteration-description", VALUE })
 	@ResponseBody
-	public String updateDescription(@RequestParam("value") String newDescription, @PathVariable long iterationId) {
+	public String updateDescription(@RequestParam(VALUE) String newDescription, @PathVariable long iterationId) {
 
 		iterationModService.changeDescription(iterationId, newDescription);
 		LOGGER.trace("Iteration " + iterationId + ": updated description to " + newDescription);

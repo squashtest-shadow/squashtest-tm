@@ -20,6 +20,8 @@
  */
 package org.squashtest.csp.tm.web.internal.controller.campaign;
 
+import static org.squashtest.csp.tm.web.internal.helper.JEditablePostParams.VALUE;
+
 import java.text.SimpleDateFormat;
 import java.util.Date;
 import java.util.HashMap;
@@ -171,9 +173,9 @@ public class TestSuiteModificationController {
 		return mav;
 	}
 
-	@RequestMapping(method = RequestMethod.POST, params = { "id=test-suite-description", "value" })
+	@RequestMapping(method = RequestMethod.POST, params = { "id=test-suite-description", VALUE })
 	@ResponseBody
-	public String updateDescription(@RequestParam("value") String newDescription, @PathVariable long id) {
+	public String updateDescription(@RequestParam(VALUE) String newDescription, @PathVariable long id) {
 
 		service.changeDescription(id, newDescription);
 		LOGGER.trace("Test-suite " + id + ": updated description to " + newDescription);

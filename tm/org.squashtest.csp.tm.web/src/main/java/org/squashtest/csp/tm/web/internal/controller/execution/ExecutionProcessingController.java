@@ -20,6 +20,8 @@
  */
 package org.squashtest.csp.tm.web.internal.controller.execution;
 
+import static org.squashtest.csp.tm.web.internal.helper.JEditablePostParams.VALUE;
+
 import javax.inject.Inject;
 
 import org.slf4j.Logger;
@@ -106,9 +108,9 @@ public class ExecutionProcessingController {
 
 	}
 
-	@RequestMapping(value = "/step/{stepId}", method = RequestMethod.POST, params = { "id=execution-comment", "value" })
+	@RequestMapping(value = "/step/{stepId}", method = RequestMethod.POST, params = { "id=execution-comment", VALUE })
 	@ResponseBody
-	public String updateComment(@RequestParam("value") String newComment, @PathVariable("stepId") Long stepId) {
+	public String updateComment(@RequestParam(VALUE) String newComment, @PathVariable("stepId") Long stepId) {
 		executionProcService.setExecutionStepComment(stepId, newComment);
 		LOGGER.trace("ExecutionStep " + stepId.toString() + ": updated comment to " + newComment);
 		return newComment;

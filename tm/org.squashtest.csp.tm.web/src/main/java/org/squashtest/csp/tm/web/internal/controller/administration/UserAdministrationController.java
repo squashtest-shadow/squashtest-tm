@@ -20,6 +20,8 @@
  */
 package org.squashtest.csp.tm.web.internal.controller.administration;
 
+import static org.squashtest.csp.tm.web.internal.helper.JEditablePostParams.VALUE;
+
 import java.text.SimpleDateFormat;
 import java.util.Date;
 import java.util.List;
@@ -160,30 +162,30 @@ public class UserAdministrationController {
 		adminService.setUserGroupAuthority(userId, groupId);
 	}
 	
-	@RequestMapping(value = "/{userId}" ,method = RequestMethod.POST, params = { "id=user-login", "value" })
+	@RequestMapping(value = "/{userId}" ,method = RequestMethod.POST, params = { "id=user-login", VALUE })
 	@ResponseBody
-	public String updateLogin(@RequestParam("value") String userLogin, @PathVariable long userId) {
+	public String updateLogin(@RequestParam(VALUE) String userLogin, @PathVariable long userId) {
 		adminService.modifyUserLogin(userId, userLogin);
 		return HtmlUtils.htmlEscape(userLogin);
 	}
 	
-	@RequestMapping(value = "/{userId}" ,method = RequestMethod.POST, params = { "id=user-first-name", "value" })
+	@RequestMapping(value = "/{userId}" ,method = RequestMethod.POST, params = { "id=user-first-name", VALUE })
 	@ResponseBody
-	public String updateFirstName(@RequestParam("value") String firstName, @PathVariable long userId) {
+	public String updateFirstName(@RequestParam(VALUE) String firstName, @PathVariable long userId) {
 		adminService.modifyUserFirstName(userId, firstName);
 		return HtmlUtils.htmlEscape(firstName);
 	}
 	
-	@RequestMapping(value = "/{userId}" ,method = RequestMethod.POST, params = { "id=user-last-name", "value" })
+	@RequestMapping(value = "/{userId}" ,method = RequestMethod.POST, params = { "id=user-last-name", VALUE })
 	@ResponseBody
-	public String updateLastName(@RequestParam("value") String lastName, @PathVariable long userId) {
+	public String updateLastName(@RequestParam(VALUE) String lastName, @PathVariable long userId) {
 		adminService.modifyUserLastName(userId, lastName);
 		return HtmlUtils.htmlEscape(lastName);
 	}
 	
-	@RequestMapping(value = "/{userId}" ,method = RequestMethod.POST, params = { "id=user-email", "value" })
+	@RequestMapping(value = "/{userId}" ,method = RequestMethod.POST, params = { "id=user-email", VALUE })
 	@ResponseBody
-	public String updateEmail(@RequestParam("value") String email, @PathVariable long userId) {
+	public String updateEmail(@RequestParam(VALUE) String email, @PathVariable long userId) {
 		adminService.modifyUserEmail(userId, email);
 		return HtmlUtils.htmlEscape(email);
 	}

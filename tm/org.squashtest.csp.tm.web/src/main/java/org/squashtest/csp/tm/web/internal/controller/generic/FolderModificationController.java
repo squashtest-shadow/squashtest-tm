@@ -20,6 +20,8 @@
  */
 package org.squashtest.csp.tm.web.internal.controller.generic;
 
+import static org.squashtest.csp.tm.web.internal.helper.JEditablePostParams.VALUE;
+
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
@@ -66,9 +68,9 @@ public abstract class FolderModificationController<FOLDER extends Folder<?>> {
 
 	}
 
-	@RequestMapping(method = RequestMethod.POST, params = { "id", "value" })
+	@RequestMapping(method = RequestMethod.POST, params = { "id", VALUE })
 	public @ResponseBody
-	String updateDescription(@PathVariable long folderId, @RequestParam("value") String newDescription) {
+	String updateDescription(@PathVariable long folderId, @RequestParam(VALUE) String newDescription) {
 		getFolderModificationService().updateFolderDescription(folderId, newDescription);
 		return newDescription;
 	}

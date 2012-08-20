@@ -19,6 +19,8 @@
  *     along with this software.  If not, see <http://www.gnu.org/licenses/>.
  */
  package org.squashtest.csp.tm.web.internal.controller.welcome;
+ 
+ import static org.squashtest.csp.tm.web.internal.helper.JEditablePostParams.VALUE;
 
 import org.springframework.osgi.extensions.annotation.ServiceReference;
 import org.springframework.stereotype.Controller;
@@ -50,13 +52,13 @@ public class HomeController {
 	
 	@RequestMapping(value = "/configuration/modify-welcome-message", method=RequestMethod.POST)
 	public @ResponseBody
-	String modifyWelcomeMessage(@RequestParam("value") String welcomeMessage){
+	String modifyWelcomeMessage(@RequestParam(VALUE) String welcomeMessage){
 		administrationService.modifyWelcomeMessage(welcomeMessage);
 		return welcomeMessage;
 	}
 	@RequestMapping(value = "/configuration/modify-login-message", method=RequestMethod.POST)
 	public @ResponseBody
-	String modifyLoginMessage(@RequestParam("value") String loginMessage){
+	String modifyLoginMessage(@RequestParam(VALUE) String loginMessage){
 		administrationService.modifyLoginMessage(loginMessage);
 		return loginMessage;
 	}

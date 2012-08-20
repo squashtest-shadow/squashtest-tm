@@ -20,6 +20,8 @@
  */
 package org.squashtest.csp.tm.web.internal.controller.users;
 
+import static org.squashtest.csp.tm.web.internal.helper.JEditablePostParams.VALUE;
+
 import javax.validation.Valid;
 
 import org.springframework.osgi.extensions.annotation.ServiceReference;
@@ -62,9 +64,9 @@ public class UserAccountController {
 			userService.setCurrentUserPassword(form.getOldPassword(), form.getNewPassword());
 	}
 	
-	@RequestMapping(value="/update", method=RequestMethod.POST, params={"id=user-account-email", "value"})
+	@RequestMapping(value="/update", method=RequestMethod.POST, params={"id=user-account-email", VALUE})
 	@ResponseBody
-	public String updateUserEmail(@RequestParam("value") String email){
+	public String updateUserEmail(@RequestParam(VALUE) String email){
 		userService.setCurrentUserEmail(email);
 		return HtmlUtils.htmlEscape(email);
 	}

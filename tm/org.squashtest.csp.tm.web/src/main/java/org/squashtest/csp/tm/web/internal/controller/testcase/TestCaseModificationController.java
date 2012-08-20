@@ -20,6 +20,8 @@
  */
 package org.squashtest.csp.tm.web.internal.controller.testcase;
 
+import static org.squashtest.csp.tm.web.internal.helper.JEditablePostParams.VALUE;
+
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Locale;
@@ -246,17 +248,17 @@ public class TestCaseModificationController {
 		LOGGER.trace("test case " + testCaseId + ": removed step " + stepId);
 	}
 
-	@RequestMapping(value = "/steps/{stepId}/action", method = RequestMethod.POST, params = { "id", "value" })
+	@RequestMapping(value = "/steps/{stepId}/action", method = RequestMethod.POST, params = { "id", VALUE })
 	@ResponseBody
-	public String changeStepAction(@PathVariable long stepId, @RequestParam("value") String newAction) {
+	public String changeStepAction(@PathVariable long stepId, @RequestParam(VALUE) String newAction) {
 		testCaseModificationService.updateTestStepAction(stepId, newAction);
 		LOGGER.trace("TestCaseModificationController : updated action for step {}", stepId);
 		return newAction;
 	}
 
-	@RequestMapping(value = "/steps/{stepId}/result", method = RequestMethod.POST, params = { "id", "value" })
+	@RequestMapping(value = "/steps/{stepId}/result", method = RequestMethod.POST, params = { "id", VALUE })
 	@ResponseBody
-	public String changeStepDescription(@PathVariable long stepId, @RequestParam("value") String newResult) {
+	public String changeStepDescription(@PathVariable long stepId, @RequestParam(VALUE) String newResult) {
 		testCaseModificationService.updateTestStepExpectedResult(stepId, newResult);
 		LOGGER.trace("TestCaseModificationController : updated action for step {}", stepId);
 		return newResult;
@@ -270,9 +272,9 @@ public class TestCaseModificationController {
 		LOGGER.trace("TestCaseModificationController : removed a list of steps");
 	}
 
-	@RequestMapping(method = RequestMethod.POST, params = { "id=test-case-description", "value" })
+	@RequestMapping(method = RequestMethod.POST, params = { "id=test-case-description", VALUE })
 	@ResponseBody
-	public String changeDescription(@RequestParam("value") String testCaseDescription, @PathVariable long testCaseId) {
+	public String changeDescription(@RequestParam(VALUE) String testCaseDescription, @PathVariable long testCaseId) {
 
 		testCaseModificationService.changeDescription(testCaseId, testCaseDescription);
 		if (LOGGER.isTraceEnabled()) {
@@ -282,9 +284,9 @@ public class TestCaseModificationController {
 		return testCaseDescription;
 	}
 
-	@RequestMapping(method = RequestMethod.POST, params = { "id=test-case-reference", "value" })
+	@RequestMapping(method = RequestMethod.POST, params = { "id=test-case-reference", VALUE })
 	@ResponseBody
-	public String changeReference(@RequestParam("value") String testCaseReference, @PathVariable long testCaseId) {
+	public String changeReference(@RequestParam(VALUE) String testCaseReference, @PathVariable long testCaseId) {
 
 		testCaseModificationService.changeReference(testCaseId, testCaseReference);
 		if (LOGGER.isTraceEnabled()) {
@@ -295,8 +297,8 @@ public class TestCaseModificationController {
 	}
 
 	@ResponseBody
-	@RequestMapping(method = RequestMethod.POST, params = { "id=test-case-importance", "value" })
-	public String changeImportance(@PathVariable long testCaseId, @RequestParam("value") TestCaseImportance importance,
+	@RequestMapping(method = RequestMethod.POST, params = { "id=test-case-importance", VALUE })
+	public String changeImportance(@PathVariable long testCaseId, @RequestParam(VALUE) TestCaseImportance importance,
 			Locale locale) {
 		testCaseModificationService.changeImportance(testCaseId, importance);
 
@@ -312,9 +314,9 @@ public class TestCaseModificationController {
 		return formatImportance(testCase.getImportance(), locale);
 	}
 
-	@RequestMapping(method = RequestMethod.POST, params = { "id=test-case-prerequisite", "value" })
+	@RequestMapping(method = RequestMethod.POST, params = { "id=test-case-prerequisite", VALUE })
 	@ResponseBody
-	public String changePrerequisite(@RequestParam("value") String testCasePrerequisite, @PathVariable long testCaseId) {
+	public String changePrerequisite(@RequestParam(VALUE) String testCasePrerequisite, @PathVariable long testCaseId) {
 
 		testCaseModificationService.changePrerequisite(testCaseId, testCasePrerequisite);
 		if (LOGGER.isTraceEnabled()) {

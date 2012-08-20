@@ -25,6 +25,7 @@ package org.squashtest.csp.tm.web.internal.controller.execution;
  *
  *
  */
+import static org.squashtest.csp.tm.web.internal.helper.JEditablePostParams.VALUE;
 
 import java.text.SimpleDateFormat;
 import java.util.Date;
@@ -144,9 +145,9 @@ public class ExecutionModificationController {
 		return new DataTablePagedFilter(params);
 	}
 
-	@RequestMapping(value = "/steps/{stepId}/comment", method = RequestMethod.POST, params = { "id", "value" })
+	@RequestMapping(value = "/steps/{stepId}/comment", method = RequestMethod.POST, params = { "id", VALUE })
 	@ResponseBody
-	String updateStepComment(@PathVariable Long stepId, @RequestParam("value") String newComment) {
+	String updateStepComment(@PathVariable Long stepId, @RequestParam(VALUE) String newComment) {
 		executionModService.setExecutionStepComment(stepId, newComment);
 		LOGGER.trace("ExecutionModificationController : updated comment for step " + stepId);
 		return newComment;
@@ -181,9 +182,9 @@ public class ExecutionModificationController {
 		return mav;
 	}
 
-	@RequestMapping(method = RequestMethod.POST, params = { "id=execution-description", "value" })
+	@RequestMapping(method = RequestMethod.POST, params = { "id=execution-description", VALUE })
 	@ResponseBody
-	public String updateDescription(@RequestParam("value") String newDescription, @PathVariable long executionId) {
+	public String updateDescription(@RequestParam(VALUE) String newDescription, @PathVariable long executionId) {
 
 		executionModService.setExecutionDescription(executionId, newDescription);
 		LOGGER.trace("Execution " + executionId + ": updated description to " + newDescription);
