@@ -32,7 +32,7 @@ import spock.unitils.UnitilsSupport
 
 @UnitilsSupport
 @Transactional
-class ProjectModificationServiceIT extends DbunitServiceSpecification {
+class ProjectModificationServiceIT_Disabled extends DbunitServiceSpecification {
 
 	@Inject
 	ProjectModificationService modService
