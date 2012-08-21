@@ -68,8 +68,7 @@ class ProjectModificationServiceIT extends DbunitServiceSpecification {
 			modService.changeBugTracker(1L, 2L)
 	
 			then:
-			project = findEntity(Project.class, 1l)
-			project.getBugtrackerProject().getBugtracker().getId() == 2L;
+			project.getBugtrackerProject().getBugtracker().getId() == 2L
 		}
 		
 		private Object findEntity(Class<?> entityClass, Long id){
