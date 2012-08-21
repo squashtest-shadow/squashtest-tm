@@ -67,9 +67,11 @@ public class TestAutomationProjectRegistrationForm {
 	}
 	
 	public TestAutomationProject toTestAutomationProject() throws MalformedURLException{
-		TestAutomationServer server = new TestAutomationServer(new URL(serverBaseURL), serverLogin, serverPassword);
-		TestAutomationProject project = new TestAutomationProject(projectName, server);
-		return project;
+
+			TestAutomationServer server = new TestAutomationServer(new URL(serverBaseURL), serverLogin, serverPassword);
+			TestAutomationProject project = new TestAutomationProject(projectName, server);
+			return project;
+
 		
 	}
 	

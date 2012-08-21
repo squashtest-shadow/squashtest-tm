@@ -63,12 +63,11 @@
 
 <script type="text/javascript" src="${ pageContext.servletContext.contextPath }/scripts/squashtest/jquery.squashtm.bugtracker-issue-dialog.js" ></script>
 
-<!--  =============================================== UNDER WORK =================================================================== -->
-<!-- 
-<script type="text/javascript" src="${ pageContext.servletContext.contextPath }/scripts/squashtest/classes/ta-project-manager.js"></script>
- -->
-<script type="text/javascript" src="http://localhost/scripts/ta-project-manager.js"></script>
+<script type="text/javascript" src="${ pageContext.servletContext.contextPath }/scripts/squashtest/classes/ta-admin-panel.js"></script>
 
+
+<!--  =============================================== UNDER WORK =================================================================== -->
+<%-- nothing yet --%> %>
 <!--  ============================================== /UNDER WORK =================================================================== -->
 
 

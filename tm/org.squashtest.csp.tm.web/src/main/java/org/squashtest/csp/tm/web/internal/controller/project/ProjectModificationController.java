@@ -308,7 +308,7 @@ public class ProjectModificationController {
 	
 	@RequestMapping(value = "/test-automation-projects", method=RequestMethod.POST, headers = "Content-Type=application/json" )
 	@ResponseBody
-	public void bindTestAutomationProject(@PathVariable("projectId") long projectId, @RequestBody TestAutomationProjectRegistrationForm[] projects)
+	public void bindTestAutomationProject(@PathVariable("projectId") long projectId, @RequestBody TestAutomationProjectRegistrationForm[] projects, Locale locale)
 	throws BindException{
 		TestAutomationProjectRegistrationForm form=null;
 		try{
@@ -320,17 +320,28 @@ public class ProjectModificationController {
 		}
 		catch(MalformedURLException ex){
 			//quick and dirty validation
-			//LOGGER.error(msg)	who needs to log that anyway
-			BindException be = new BindException(form, "ta-project");
-			be.rejectValue("serverBaseURL", "error.url.malformed");
+			BindException be = new BindException(new TestAutomationServer(), "ta-project");
+			be.rejectValue("baseURL", null, findMessage(locale, "error.url.malformed"));
 			throw be;
-		}
+		}	
 	}
 	
-	@RequestMapping(value = "/test-automation-projects/{taProjectId}", method=RequestMethod.DELETE )
-	public void unbindProject(@PathVariable("projectId") Long projectId, @PathVariable("taProjectId") Long taProjectId){
-		throw new RuntimeException("not implemented yet");
+	
+	@RequestMapping(value="/test-automation-enabled", method=RequestMethod.POST, params = "enabled")
+	@ResponseBody
+	public void enableTestAutomation(@PathVariable("projectId") long projectId, @RequestParam("enabled") boolean isEnabled){
+		projectModificationService.changeTestAutomationEnabled(projectId, isEnabled);
 	}
+	
+	
+	
+	@RequestMapping(value = "/test-automation-projects/{taProjectId}", method=RequestMethod.DELETE )
+	@ResponseBody
+	public void unbindProject(@PathVariable("projectId") Long projectId, @PathVariable("taProjectId") Long taProjectId){
+		projectModificationService.unbindTestAutomationProject(projectId, taProjectId);
+	}
+	
+	
 	
 	private final class TestAutomationTableModel extends DataTableModelHelper<TestAutomationProject>{
 
@@ -354,7 +365,11 @@ public class ProjectModificationController {
 	
 	
 	
+	//***************** private utils *******************************
 	
+	private String findMessage(Locale locale, String key){
+		return messageSource.getMessage(key, null, locale);
+	}
 	
 	
 	

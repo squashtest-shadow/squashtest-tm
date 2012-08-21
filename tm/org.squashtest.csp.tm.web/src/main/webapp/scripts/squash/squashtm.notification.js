@@ -99,9 +99,31 @@ squashtm.notification = (function ($) {
 			spinner.hide();
 		});
 	}
+	
+	function getErrorMessage(request, index){
+		var json = $.parseJSON(request.responseText);
+		
+		if (json != null) {
+			if (json.actionValidationError != null) {
+				return json.actionValidationError.message;
+			} else {
+				if (json.fieldValidationErrors != null) {
+					/* IE8 requires low tech code */
+					var validationErrorList = json.fieldValidationErrors;
+					if (validationErrorList.length > 0) {
+						var ind = (index!==undefined) ? index : 0;
+						return validationErrorList[ind].errorMessage;
+					}
+				} else {
+					throw 'exception';
+				}
+			}
+		}		
+	}
 
 	return {
 		init : init, 
-		showInfo : displayInformationNotification
+		showInfo : displayInformationNotification,
+		getErrorMessage : getErrorMessage
 	};
 }(jQuery));

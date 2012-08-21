@@ -107,6 +107,9 @@ div.ta-main-div .ta-manager-disabled{
 	<s:param name="projectId" value="${project.id}"/>
 </s:url>
 
+<s:url var="enableTAURL" value="/projects/{projectId}/test-automation-enabled">
+	<s:param name="projectId" value="${project.id}"/>
+</s:url>
 
 <c:set var="initialChecked" value="checked=\"checked\"" />
 <c:set var="initialDisabled" value="" />
@@ -234,6 +237,10 @@ div.ta-main-div .ta-manager-disabled{
 		}											
 	</jsp:attribute>
 	
+	<jsp:attribute name="additionalSetup">
+		height : 500
+	</jsp:attribute>
+	
 	<jsp:attribute name="body">
 	
  		<div class="ta-projectsadd-pleasewait" style="vertical-align:middle;">
@@ -278,7 +285,8 @@ div.ta-main-div .ta-manager-disabled{
 		
 		var managerSettings = {
 			selector : "#test-automation-management-panel .ta-main-div",
-			initiallyEnabled : ${project.testAutomationEnabled}					
+			initiallyEnabled : ${project.testAutomationEnabled},
+			enableTAURL : "${enableTAURL}"
 		};
 		
 		squashtm.testautomation.projectmanager = new TestAutomationProjectManager(managerSettings);

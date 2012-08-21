@@ -213,11 +213,22 @@ public class Project {
 		}
 	}
 	
+	public void unbindTestAutomationProject(Long TAprojectId){
+		Iterator<TestAutomationProject> iter = testAutomationProjects.iterator();
+		while (iter.hasNext()){
+			TestAutomationProject proj = iter.next();
+			if (proj.getId().equals(TAprojectId)){
+				iter.remove();
+				break;
+			}
+		}		
+	}
+	
 	public boolean isTestAutomationEnabled(){
 		return testAutomationEnabled;
 	}
 	
-	public void enableTestAutomation(boolean enabled){
+	public void setTestAutomationEnabled(boolean enabled){
 		testAutomationEnabled = enabled;
 	}
 	

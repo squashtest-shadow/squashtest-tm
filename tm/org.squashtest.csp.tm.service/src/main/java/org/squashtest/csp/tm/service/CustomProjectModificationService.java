@@ -20,7 +20,6 @@
  */
 package org.squashtest.csp.tm.service;
 
-import java.util.Collection;
 import java.util.List;
 
 import org.squashtest.csp.core.security.acls.PermissionGroup;
@@ -72,8 +71,11 @@ public interface CustomProjectModificationService {
 	
 	
 	List<TestAutomationProject> findBoundTestAutomationProjects(long projectId);
+	
+	void unbindTestAutomationProject(long TMprojectId, long TAProjectId);
 
-
+	//******************************  bugtracker section ****************************
+	
 	/**
 	 * Change the Bugtracker the Project is associated-to.<br>
 	 * If the Project had no Bugtracker, will add a new association.<br>

@@ -166,8 +166,18 @@ public class CustomProjectModificationServiceImpl implements CustomProjectModifi
 			long projectId) {
 		return projectDao.findBoundTestAutomationProjects(projectId);
 	}
-	
 
+	
+	@Override
+	@PreAuthorize("hasPermission(#TMprojectId, 'org.squashtest.csp.tm.domain.project.Project', 'MANAGEMENT') or hasRole('ROLE_ADMIN')")
+	public void unbindTestAutomationProject(long TMprojectId, long TAProjectId) {
+		Project project = projectDao.findById(TMprojectId);
+		project.unbindTestAutomationProject(TAProjectId);
+	}
+	
+	
+	// ********************************** bugtracker section *************************************
+	
 	@Override
 	public void changeBugTracker(long projectId, Long newBugtrackerId) {
 		LOGGER.debug("changeBugTracker for project " + projectId + " bt: " + newBugtrackerId);

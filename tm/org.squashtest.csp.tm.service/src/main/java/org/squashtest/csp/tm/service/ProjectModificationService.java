@@ -36,5 +36,8 @@ public interface ProjectModificationService extends CustomProjectModificationSer
 
 	@PreAuthorize("hasRole('ROLE_ADMIN')")
 	void changeActive(long projectId, boolean isActive);
+	
+	@PreAuthorize("hasPermission(#arg0, 'org.squashtest.csp.tm.domain.project.Project', 'MANAGEMENT') or hasRole('ROLE_ADMIN')")
+	void changeTestAutomationEnabled(long projectId, boolean isEnabled);
 
 }

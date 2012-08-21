@@ -20,7 +20,7 @@
         along with this software.  If not, see <http://www.gnu.org/licenses/>.
 
 --%>
-<%@ tag body-content="empty" description="Add script which handles json content of ajax errors and populates error-message tagsaccordingly" %>
+<%@ tag body-content="empty" description="sets some global variable (mostly javascript utils)" %>
 
 
 <script type="text/javascript">
