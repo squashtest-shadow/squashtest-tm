@@ -23,7 +23,9 @@ package org.squashtest.csp.tm.web.internal.controller.project;
 import java.net.MalformedURLException;
 import static org.squashtest.csp.tm.web.internal.helper.JEditablePostParams.VALUE;
 
+import java.util.Arrays;
 import java.util.HashMap;
+import java.util.Iterator;
 import java.util.List;
 import java.util.Locale;
 import java.util.Map;
@@ -306,15 +308,20 @@ public class ProjectModificationController {
 	
 	@RequestMapping(value = "/test-automation-projects", method=RequestMethod.POST, headers = "Content-Type=application/json" )
 	@ResponseBody
-	public void bindTestAutomationProject(@PathVariable("projectId") long projectId, @RequestBody TestAutomationProjectRegistrationForm project)
+	public void bindTestAutomationProject(@PathVariable("projectId") long projectId, @RequestBody TestAutomationProjectRegistrationForm[] projects)
 	throws BindException{
+		TestAutomationProjectRegistrationForm form=null;
 		try{
-			projectModificationService.bindTestAutomationProject(projectId, project.toTestAutomationProject());
+			Iterator<TestAutomationProjectRegistrationForm> it = Arrays.asList(projects).listIterator();
+			while (it.hasNext()){
+				form = it.next();				
+				projectModificationService.bindTestAutomationProject(projectId, form.toTestAutomationProject());
+			}
 		}
 		catch(MalformedURLException ex){
 			//quick and dirty validation
 			//LOGGER.error(msg)	who needs to log that anyway
-			BindException be = new BindException(project, "ta-project");
+			BindException be = new BindException(form, "ta-project");
 			be.rejectValue("serverBaseURL", "error.url.malformed");
 			throw be;
 		}

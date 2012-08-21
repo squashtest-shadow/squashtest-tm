@@ -103,7 +103,7 @@ div.ta-main-div .ta-manager-disabled{
 	<s:param name="projectId" value="${project.id}" />
 </s:url>
 
-<s:url var="listLocalProjectsURL" value="/projects/{projectId}/test-automation-projects">
+<s:url var="localProjectsURL" value="/projects/{projectId}/test-automation-projects">
 	<s:param name="projectId" value="${project.id}"/>
 </s:url>
 
@@ -225,11 +225,11 @@ div.ta-main-div .ta-manager-disabled{
 							   
 	<jsp:attribute name="buttonsArray">
 		{
-			'text' 	: '<f:message var="label" key="dialog.button.confirm.label" />',
+			'text' 	: '<f:message key="dialog.button.confirm.label" />',
 			'class' : 'ta-projectsadd-popup-confirm'
 		},
 		{
-			'text'  : '<f:message var="label" key="dialog.button.cancel.label" />',
+			'text'  : '<f:message key="dialog.button.cancel.label" />',
 			'class' : 'ta-projectsadd-popup-cancel'
 		}											
 	</jsp:attribute>
@@ -288,6 +288,7 @@ div.ta-main-div .ta-manager-disabled{
 			selector : "#ta-projectsblock-popup",
 			manager : squashtm.testautomation.projectmanager,
 			listProjectsURL : "${listRemoteProjectsURL}",
+			bindProjectsURL : "${localProjectsURL}"
 		}
 		
 		var projectAddPopup = new TestAutomationAddProjectPopup(popupSettings);
@@ -309,7 +310,7 @@ div.ta-main-div .ta-manager-disabled{
 					}
 				},
 				"iDeferLoading": ${fn:length(boundProjects)},
-				"sAjaxSource": "${listLocalProjectsURL}", 
+				"sAjaxSource": "${localProjectsURL}", 
 				"aoColumnDefs":[
 					{'bSortable': false, 'bVisible': false, 'aTargets': [0], 'mDataProp' : 'entity-id'},
 					{'bSortable': false, 'bVisible': true,  'aTargets': [1], 'mDataProp' : 'entity-index', 'sClass' :'select-handle centered', 'sWidth' : '2em'},

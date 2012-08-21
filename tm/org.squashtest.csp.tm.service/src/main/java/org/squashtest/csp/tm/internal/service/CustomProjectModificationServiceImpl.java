@@ -138,7 +138,7 @@ public class CustomProjectModificationServiceImpl implements CustomProjectModifi
 
 	// ********************************** Test automation section *************************************
 	@Override
-	@PreAuthorize("hasPermission(#projectId, 'org.squashtest.csp.tm.domain.project.Project', 'MANAGEMENT') or hasRole('ROLE_ADMIN')")
+	@PreAuthorize("hasPermission(#TMprojectId, 'org.squashtest.csp.tm.domain.project.Project', 'MANAGEMENT') or hasRole('ROLE_ADMIN')")
 	public void bindTestAutomationProject(long TMprojectId, TestAutomationProject TAproject) {		
 		TestAutomationProject persistedProject = autotestService.persistOrAttach(TAproject);
 		projectDao.findById(TMprojectId).bindTestAutomationProject(persistedProject);		
