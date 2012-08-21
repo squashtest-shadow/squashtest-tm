@@ -18,17 +18,18 @@
  *     You should have received a copy of the GNU Lesser General Public License
  *     along with this software.  If not, see <http://www.gnu.org/licenses/>.
  */
-package org.squashtest.csp.tm.internal.repository.hibernate
+package squashtm.testautomation.repository.hibernate
 
 import javax.inject.Inject;
 
 import org.springframework.transaction.annotation.Transactional;
-import org.squashtest.csp.tm.domain.testautomation.TestAutomationServer;
-import org.squashtest.csp.tm.internal.repository.NonUniqueEntityException;
-import org.squashtest.csp.tm.internal.repository.TestAutomationServerDao
+import org.squashtest.csp.tm.internal.repository.hibernate.DbunitDaoSpecification;
 import org.unitils.dbunit.annotation.DataSet;
 
 import spock.unitils.UnitilsSupport;
+import squashtm.testautomation.domain.TestAutomationServer;
+import squashtm.testautomation.repository.NonUniqueEntityException;
+import squashtm.testautomation.repository.TestAutomationServerDao;
 
 @UnitilsSupport
 @Transactional

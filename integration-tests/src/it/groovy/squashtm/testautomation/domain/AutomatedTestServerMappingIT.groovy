@@ -18,14 +18,13 @@
  *     You should have received a copy of the GNU Lesser General Public License
  *     along with this software.  If not, see <http://www.gnu.org/licenses/>.
  */
-package org.squashtest.csp.tm.hibernate.mapping.testautomation
+package squashtm.testautomation.domain
 
 
 
-import org.springframework.test.context.ContextConfiguration;
-import org.springframework.test.context.transaction.TransactionConfiguration;
-import org.squashtest.csp.tm.domain.testautomation.TestAutomationServer;
 import org.squashtest.csp.tm.hibernate.mapping.HibernateMappingSpecification
+
+import squashtm.testautomation.domain.TestAutomationServer;
 
 
 class AutomatedTestServerMappingIT extends HibernateMappingSpecification {
