@@ -147,9 +147,7 @@ public class BugTrackerServiceImpl implements BugTrackerService {
 
 	@Override
 	public List<Priority> getPriorities() {
-		BugTrackerConnector connector = bugTrackerConnectorFactory.createConnector(bugTracker);
-		connector.authenticate(getBugTrackerContext().getCredentials());
-		return connector.getPriorities();
+		return connect().getPriorities();
 	}
 
 	
@@ -157,43 +155,36 @@ public class BugTrackerServiceImpl implements BugTrackerService {
 
 	@Override
 	public BTProject findProject(String name) {
-		BugTrackerConnector connector = bugTrackerConnectorFactory.createConnector(bugTracker);
-		connector.authenticate(getBugTrackerContext().getCredentials());
-
-		return connector.findProject(name);
+		return connect().findProject(name);
 	}
 
 	@Override
 	public BTProject findProjectById(String projectId) {
+		return connect().findProject(projectId);
+	}
+
+	private BugTrackerConnector connect() {
 		BugTrackerConnector connector = bugTrackerConnectorFactory.createConnector(bugTracker);
 		connector.authenticate(getBugTrackerContext().getCredentials());
-
-		return connector.findProject(projectId);
+		return connector;
 	}
 
 	@Override
 	public BTIssue createIssue(BTIssue issue) {
-		BugTrackerConnector connector = bugTrackerConnectorFactory.createConnector(bugTracker);
-		connector.authenticate(getBugTrackerContext().getCredentials());
-
-		return connector.createIssue(issue);
+			return connect().createIssue(issue);
 
 	}
 
 	
 	@Override
 	public BTIssue getIssue(String key){
-		BugTrackerConnector connector = bugTrackerConnectorFactory.createConnector(bugTracker);
-		connector.authenticate(getBugTrackerContext().getCredentials());
-		return connector.findIssue(key);
+		return connect().findIssue(key);
 	}
 	
 	@Override
 	public List<BTIssue> getIssues(List<String> issueKeyList) {
-		BugTrackerConnector connector = bugTrackerConnectorFactory.createConnector(bugTracker);
-		connector.authenticate(getBugTrackerContext().getCredentials());
-
-		List<BTIssue> issues = connector.findIssues(issueKeyList);
+		
+		List<BTIssue> issues = connect().findIssues(issueKeyList);
 		
 		String bugtrackerName = getBugTrackerName();
 		
