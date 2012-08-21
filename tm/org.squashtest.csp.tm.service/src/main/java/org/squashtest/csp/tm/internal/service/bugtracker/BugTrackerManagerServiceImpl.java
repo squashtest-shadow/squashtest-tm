@@ -45,11 +45,7 @@ public class BugTrackerManagerServiceImpl implements BugTrackerManagerService {
 	@Inject
 	private BugTrackerEntityDao bugTrackerDao;
 	
-	@Inject
 	private BugTrackerConnectorFactory bugTrackerConnectorFactory;
-
-	
-	
 
 	@PostFilter("hasPermission(filterObject, 'READ') or  hasRole('ROLE_ADMIN')")
 	@Override
