@@ -22,28 +22,28 @@ package org.squashtest.csp.tm.internal.repository;
 
 import java.util.List;
 
+import org.squashtest.csp.core.bugtracker.domain.BugTracker;
 import org.squashtest.csp.tm.domain.BugTrackerNameAlreadyExistsException;
-import org.squashtest.csp.tm.domain.bugtracker.BugTrackerEntity;
 import org.squashtest.csp.tm.infrastructure.filter.CollectionSorting;
 
-public interface BugTrackerEntityDao extends EntityDao<BugTrackerEntity> {
+public interface BugTrackerDao extends EntityDao<BugTracker> {
 	
 	
 	/**
 	 * 
-	 * @return number of all bugtracker entities in squash database
+	 * @return number of all bugtrackers in squash database
 	 */
-	long countBugTrackerEntities();
+	long countBugTrackers();
 	
 	/**
 	 * 
 	 * @param filter
-	 * @return a page of bugtracker entities according to the filter
+	 * @return a page of bugtrackers according to the filter
 	 */
-	List<BugTrackerEntity> findSortedBugTrackerEntities(CollectionSorting filter);
+	List<BugTracker> findSortedBugTrackers(CollectionSorting filter);
 	
 	/**
-	 * checks if there is a BugtrackerEntity of the same name in the database.<br>
+	 * checks if there is a Bugtracker of the same name in the database.<br>
 	 * If so, raises a {@linkplain BugTrackerNameAlreadyExistsException}
 	 * @param name
 	 */

@@ -20,7 +20,6 @@
  */
 package org.squashtest.csp.tm.internal.service;
 
-import java.util.Collection;
 import java.util.List;
 
 import javax.inject.Inject;
@@ -30,10 +29,10 @@ import org.slf4j.LoggerFactory;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+import org.squashtest.csp.core.bugtracker.domain.BugTracker;
 import org.squashtest.csp.core.security.acls.PermissionGroup;
 import org.squashtest.csp.tm.domain.CannotDeleteProjectException;
 import org.squashtest.csp.tm.domain.UnknownEntityException;
-import org.squashtest.csp.tm.domain.bugtracker.BugTrackerEntity;
 import org.squashtest.csp.tm.domain.bugtracker.BugTrackerProject;
 import org.squashtest.csp.tm.domain.project.AdministrableProject;
 import org.squashtest.csp.tm.domain.project.Project;
@@ -41,13 +40,12 @@ import org.squashtest.csp.tm.domain.testautomation.TestAutomationProject;
 import org.squashtest.csp.tm.domain.testautomation.TestAutomationServer;
 import org.squashtest.csp.tm.domain.users.User;
 import org.squashtest.csp.tm.domain.users.UserProjectPermissionsBean;
-import org.squashtest.csp.tm.internal.repository.BugTrackerEntityDao;
+import org.squashtest.csp.tm.internal.repository.BugTrackerDao;
 import org.squashtest.csp.tm.internal.repository.BugTrackerProjectDao;
 import org.squashtest.csp.tm.internal.repository.ProjectDao;
 import org.squashtest.csp.tm.internal.repository.UserDao;
 import org.squashtest.csp.tm.service.CustomProjectModificationService;
 import org.squashtest.csp.tm.service.ProjectsPermissionManagementService;
-import org.squashtest.csp.tm.service.TestAutomationFinderService;
 
 /**
  * 
@@ -64,7 +62,7 @@ public class CustomProjectModificationServiceImpl implements CustomProjectModifi
 	@Inject
 	private UserDao userDao;
 	@Inject
-	private BugTrackerEntityDao bugTrackerEntityDao;
+	private BugTrackerDao bugTrackerDao;
 	@Inject
 	private BugTrackerProjectDao bugTrackerProjectDao;
 	@Inject
@@ -174,21 +172,21 @@ public class CustomProjectModificationServiceImpl implements CustomProjectModifi
 
 		Project project = projectDao.findById(projectId);
 		if(!project.isBugtrackerConnected()){
-			BugTrackerEntity newBugtrackerEntity = bugTrackerEntityDao.findById(newBugtrackerId);
-			if(newBugtrackerEntity != null){
-				project.getBugtrackerProject().setBugtrackerEntity(newBugtrackerEntity);
+			BugTracker newBugtracker = bugTrackerDao.findById(newBugtrackerId);
+			if(newBugtracker != null){
+				project.getBugtrackerProject().setBugtracker(newBugtracker);
 			}
 			else{
-				throw new UnknownEntityException(newBugtrackerId, BugTrackerEntity.class);
+				throw new UnknownEntityException(newBugtrackerId, BugTracker.class);
 			}
 		}
 		else{
 			if (projectBugTrackerChangesFromOneToAnother(newBugtrackerId, project)) {
-				BugTrackerEntity newBugtrackerEntity = bugTrackerEntityDao.findById(newBugtrackerId);
-				if(newBugtrackerEntity != null){
-				project.getBugtrackerProject().setBugtrackerEntity(newBugtrackerEntity);
+				BugTracker newBugtracker = bugTrackerDao.findById(newBugtrackerId);
+				if(newBugtracker != null){
+				project.getBugtrackerProject().setBugtracker(newBugtracker);
 				}else{
-					throw new UnknownEntityException(newBugtrackerId, BugTrackerEntity.class);
+					throw new UnknownEntityException(newBugtrackerId, BugTracker.class);
 				}
 				
 			}
@@ -199,10 +197,10 @@ public class CustomProjectModificationServiceImpl implements CustomProjectModifi
 	private boolean projectBugTrackerChangesFromOneToAnother(Long newBugtrackerId, Project project) {
 		boolean change = true;
 			BugTrackerProject bugtrackerProject = project.getBugtrackerProject();
-			long bugtrackerId = bugtrackerProject.getBugtrackerEntity().getId();
-			if (bugtrackerId == newBugtrackerId) {
-				change = false;
-			}
+//			long bugtrackerId = bugtrackerProject.getBugtrackerEntity().getId();
+//			if (bugtrackerId == newBugtrackerId) {
+//				change = false;
+//			}
 		return change;
 	}
 

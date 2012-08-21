@@ -20,23 +20,19 @@
  */
 package org.squashtest.csp.tm.internal.service.bugtracker;
 
-import java.util.ArrayList;
 import java.util.List;
 import java.util.Set;
 
 import javax.inject.Inject;
 
-import org.springframework.osgi.extensions.annotation.ServiceReference;
 import org.springframework.security.access.prepost.PostFilter;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
-import org.squashtest.csp.core.bugtracker.core.BugTrackerConnectorFactory;
 import org.squashtest.csp.core.bugtracker.domain.BugTracker;
-import org.squashtest.csp.tm.domain.bugtracker.BugTrackerEntity;
 import org.squashtest.csp.tm.infrastructure.filter.CollectionSorting;
 import org.squashtest.csp.tm.infrastructure.filter.FilteredCollectionHolder;
-import org.squashtest.csp.tm.internal.repository.BugTrackerEntityDao;
+import org.squashtest.csp.tm.internal.repository.BugTrackerDao;
 import org.squashtest.csp.tm.service.BugTrackerLocalService;
 import org.squashtest.csp.tm.service.BugTrackerManagerService;
 
@@ -45,44 +41,33 @@ import org.squashtest.csp.tm.service.BugTrackerManagerService;
 public class BugTrackerManagerServiceImpl implements BugTrackerManagerService {
 
 	@Inject
-	private BugTrackerEntityDao bugTrackerDao;
+	private BugTrackerDao bugTrackerDao;
 	@Inject
 	private BugTrackerLocalService bugtrackerLocalService;
 	
 	@PostFilter("hasPermission(filterObject, 'READ') or  hasRole('ROLE_ADMIN')")
 	@Override
 	public List<BugTracker> findAll() {
-		List<BugTrackerEntity> bugTrackerEntities = bugTrackerDao.findAll();
-		return translateBTEntitiesIntoBTs(bugTrackerEntities);
+		return bugTrackerDao.findAll();
+		
 	}
 
-	private List<BugTracker> translateBTEntitiesIntoBTs(List<BugTrackerEntity> bugTrackerEntities) {
-		List<BugTracker> bugTrackers = new ArrayList<BugTracker>(bugTrackerEntities.size());
-		for (BugTrackerEntity bugTrackerEntity : bugTrackerEntities) {
-			BugTracker bugTracker = new BugTracker(bugTrackerEntity.getId(), bugTrackerEntity.getUrl(),
-					bugTrackerEntity.getKind(), bugTrackerEntity.getName(), bugTrackerEntity.isIframeFriendly());
-			bugTrackers.add(bugTracker);
-		}
-		return bugTrackers;
-	}
+	
 
 	@Override
 	@PreAuthorize("hasRole('ROLE_ADMIN')")
 	public void addBugTracker(BugTracker bugTracker) {
 		bugTrackerDao.checkNameAvailability(bugTracker.getName());
-		BugTrackerEntity bugTrackerEntity = new BugTrackerEntity(bugTracker.getName(), bugTracker.getKind(),
-				bugTracker.getUrl(), bugTracker.isIframeFriendly());
-		bugTrackerDao.persist(bugTrackerEntity);
+		bugTrackerDao.persist(bugTracker);
 
 	}
 
 	@Override
 	@PreAuthorize("hasRole('ROLE_ADMIN')")
 	public FilteredCollectionHolder<List<BugTracker>> findSortedBugtrackers(CollectionSorting filter) {
-		List<BugTrackerEntity> bugTrackerEntities = bugTrackerDao.findSortedBugTrackerEntities(filter);
-		List<BugTracker> bugtrackers = translateBTEntitiesIntoBTs(bugTrackerEntities);
-		long count = bugTrackerDao.countBugTrackerEntities();
-		return new FilteredCollectionHolder<List<BugTracker>>(count, bugtrackers);
+		List<BugTracker> bugTrackers = bugTrackerDao.findSortedBugTrackers(filter);
+		long count = bugTrackerDao.countBugTrackers();
+		return new FilteredCollectionHolder<List<BugTracker>>(count, bugTrackers);
 	}
 
 	@Override

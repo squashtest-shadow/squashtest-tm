@@ -58,16 +58,15 @@ public class BugTrackerProject {
 	@OneToOne(optional = false)
 	@ForeignKey(name="FK_BugtrackerProject_Bugtracker")
 	@JoinColumn(name="BUGTRACKER_ID")
-	private BugTrackerEntity bugtrackerEntity;
+	private BugTracker bugtracker;
 	
 	public BugTrackerProject(){
 		
 	}
 	
-	public BugTrackerProject(String projectName, BugTrackerEntity bugtrackerEntity) {
+	public BugTrackerProject(String projectName) {
 		super();
 		this.projectName = projectName;
-		this.bugtrackerEntity = bugtrackerEntity;
 	}
 
 
@@ -83,14 +82,12 @@ public class BugTrackerProject {
 		this.projectName = projectName;
 	}
 
-	public BugTrackerEntity getBugtrackerEntity() {
-		return bugtrackerEntity;
+	public BugTracker getBugtracker() {
+		return bugtracker;
 	}
-	public BugTracker getBugtracker(){
-		return new BugTracker(bugtrackerEntity.getId(), bugtrackerEntity.getUrl(), bugtrackerEntity.getKind(), bugtrackerEntity.getName(), bugtrackerEntity.isIframeFriendly());
-	}
-	public void setBugtrackerEntity(BugTrackerEntity bugtrackerEntity) {
-		this.bugtrackerEntity = bugtrackerEntity;
+	
+	public void setBugtracker(BugTracker bugtracker) {
+		this.bugtracker = bugtracker;
 	}
 
 	public Long getId() {

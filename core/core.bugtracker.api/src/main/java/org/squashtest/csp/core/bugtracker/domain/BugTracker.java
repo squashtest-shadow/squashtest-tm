@@ -20,19 +20,16 @@
  */
 package org.squashtest.csp.core.bugtracker.domain;
 
-import javax.persistence.Entity;
-import javax.persistence.Table;
+import javax.persistence.*;
+import javax.validation.constraints.Size;
+
+import org.hibernate.validator.constraints.NotBlank;
 
 @Entity
 @Table(name = "BUGTRACKER")
-public class BugTracker {
+public class BugTracker  {
 	public static final BugTracker NOT_DEFINED = new BugTracker("", "none", "", true);
-	private long id;
-	private String url;
-	private boolean iframeFriendly;
-	private String kind;
-	private String name;
-
+	
 	public BugTracker() {
 
 	}
@@ -53,45 +50,69 @@ public class BugTracker {
 		this.name = name;
 		this.iframeFriendly = iframeFriendly;
 	}
-
-	public void setId(long id) {
-		this.id = id;
-	}
-
-	public long getId() {
-		return this.id;
-	}
-
-	public void setUrl(String url) {
-		this.url = url;
-	}
-
-	public void setIframeFriendly(boolean iframeFriendly) {
-		this.iframeFriendly = iframeFriendly;
-	}
-
-	public void setKind(String kind) {
-		this.kind = kind;
+	@Id
+	@GeneratedValue
+	@Column(name = "BUGTRACKER_ID")
+	private Long id;
+	
+	@Column(name = "NAME")
+	@NotBlank
+	@Size(min = 0, max = 50)
+	private String name;
+	
+	@Column(name = "URL")
+	@NotBlank
+	@Size(min = 0, max = 255)
+	private String url;
+	
+	@Column(name = "KIND")
+	@NotBlank
+	@Size(min = 0, max = 50)
+	private String kind;
+	
+	@Column(name = "IFRAME_FRIENDLY")
+	private boolean iframeFriendly;
+	
+	public String getName() {
+		return name;
 	}
 
 	public void setName(String name) {
 		this.name = name;
 	}
 
-	public final String getUrl() {
+	public String getUrl() {
 		return url;
 	}
 
-	public final String getKind() {
+	public void setUrl(String url) {
+		this.url = url;
+	}
+
+	public String getKind() {
 		return kind;
 	}
 
-	public final String getName() {
-		return name;
+	public void setKind(String kind) {
+		this.kind = kind;
 	}
 
+	public Long getId() {
+		return id;
+	}
+	
+	
 	public boolean isIframeFriendly() {
 		return iframeFriendly;
 	}
+
+	public void setIframeFriendly(boolean iframeFriendly) {
+		this.iframeFriendly = iframeFriendly;
+	}
+
+	public BugTracker getDetachedBugTracker(){
+		return new BugTracker(id, url, kind, name, iframeFriendly);
+	}
+	
 
 }

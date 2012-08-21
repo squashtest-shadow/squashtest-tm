@@ -27,27 +27,26 @@ import org.hibernate.Query;
 import org.hibernate.Session;
 import org.hibernate.criterion.Order;
 import org.springframework.stereotype.Repository;
+import org.squashtest.csp.core.bugtracker.domain.BugTracker;
 import org.squashtest.csp.tm.domain.BugTrackerNameAlreadyExistsException;
-import org.squashtest.csp.tm.domain.bugtracker.BugTrackerEntity;
-import org.squashtest.csp.tm.domain.users.User;
 import org.squashtest.csp.tm.infrastructure.filter.CollectionSorting;
-import org.squashtest.csp.tm.internal.repository.BugTrackerEntityDao;
+import org.squashtest.csp.tm.internal.repository.BugTrackerDao;
 
 @Repository
-public class HibernateBugTrackerEntityDao extends HibernateEntityDao<BugTrackerEntity> implements BugTrackerEntityDao {
+public class HibernateBugTrackerDao extends HibernateEntityDao<BugTracker> implements BugTrackerDao {
 
 	/**
-	 * @see BugTrackerEntityDao#findSortedBugTrackerEntities(String)
+	 * @see BugTrackerEntityDao#findSortedBugTrackers(String)
 	 */
 	@Override
 	@SuppressWarnings("unchecked")
-	public List<BugTrackerEntity> findSortedBugTrackerEntities(CollectionSorting filter) {
+	public List<BugTracker> findSortedBugTrackers(CollectionSorting filter) {
 		Session session = currentSession();
 
 		String sortedAttribute = filter.getSortedAttribute();
 		String order = filter.getSortingOrder();
 
-		Criteria crit = session.createCriteria(BugTrackerEntity.class, "BugTracker");
+		Criteria crit = session.createCriteria(BugTracker.class, "BugTracker");
 
 		/* add ordering */
 		if (sortedAttribute != null) {
@@ -67,25 +66,25 @@ public class HibernateBugTrackerEntityDao extends HibernateEntityDao<BugTrackerE
 	}
 
 	/**
-	 * @see BugTrackerEntityDao#countBugTrackerEntities(String)
+	 * @see BugTrackerDao#countBugTrackers(String)
 	 */
 	@Override
-	public long countBugTrackerEntities() {
+	public long countBugTrackers() {
 		return (Long) executeEntityNamedQuery("bugtracker.count");
 	}
 	
 	/**
-	 * @see BugTrackerEntityDao#checkNameAvailability(String)
+	 * @see BugTrackerDao#checkNameAvailability(String)
 	 */
 	@Override
 	public void checkNameAvailability(String name) {
-		if(findBugTrackerEntityByName(name) != null){
+		if(findBugTrackerByName(name) != null){
 			throw new BugTrackerNameAlreadyExistsException();
 		}
 		
 	}
 
-	private BugTrackerEntity findBugTrackerEntityByName(final String name) {
+	private BugTracker findBugTrackerByName(final String name) {
 			return executeEntityNamedQuery("bugtracker.findBugTrackerByName", new SetQueryParametersCallback() {
 
 				@Override
