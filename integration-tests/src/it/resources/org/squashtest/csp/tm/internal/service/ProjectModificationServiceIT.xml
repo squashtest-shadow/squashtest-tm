@@ -24,11 +24,11 @@
 <dataset>
 	<bugtracker bugtracker_id="1" kind="kind" url="url" name="name" iframe_friendly="false" />
 	<bugtracker bugtracker_id="2" kind="kind2" url="url2" name="name2" iframe_friendly="true" />
-	<bugtracker_project bugtracker_project_id="1" bugtracker_id="1" project_name="project_name" />
+	<bugtracker_binding bugtracker_binding_id="1" bugtracker_id="1" project_name="project_name" />
 	
 	<test_case_library tcl_id="1" />
 	<campaign_library cl_id="1" />
 	<requirement_library rl_id="1" />
-	<project project_id="1" tcl_id="1" cl_id="1" rl_id="1" name="foo" created_by="dbu" created_on="2010-02-01" bugtracker_project_id="1" />
+	<project project_id="1" tcl_id="1" cl_id="1" rl_id="1" name="foo" created_by="dbu" created_on="2010-02-01" bugtracker_binding_id="1" />
 	
 </dataset>

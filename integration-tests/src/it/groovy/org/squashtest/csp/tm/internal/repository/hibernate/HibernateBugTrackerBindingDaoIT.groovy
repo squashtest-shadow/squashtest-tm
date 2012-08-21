@@ -22,41 +22,30 @@ package org.squashtest.csp.tm.internal.repository.hibernate
 
 import javax.inject.Inject
 
-import org.hibernate.SessionFactory
-import org.slf4j.Logger
-import org.slf4j.LoggerFactory
-import org.springframework.test.context.ContextConfiguration
-import org.springframework.test.context.transaction.TransactionConfiguration
 import org.springframework.transaction.annotation.Transactional
-import org.squashtest.csp.tm.domain.bugtracker.BugTrackerProject;
-import org.squashtest.csp.tm.domain.campaign.CampaignLibrary
-import org.squashtest.csp.tm.domain.project.Project
-import org.squashtest.csp.tm.domain.requirement.RequirementLibrary
-import org.squashtest.csp.tm.domain.testcase.TestCaseLibrary
-import org.squashtest.csp.tm.internal.repository.BugTrackerProjectDao
+import org.squashtest.csp.tm.domain.bugtracker.BugTrackerBinding
+import org.squashtest.csp.tm.internal.repository.BugTrackerBindingDao
 import org.squashtest.csp.tm.internal.repository.ProjectDao
 import org.unitils.dbunit.annotation.DataSet
-import org.unitils.spring.annotation.SpringApplicationContext
 
-import spock.lang.Specification;
-import spock.unitils.UnitilsSupport;
+import spock.unitils.UnitilsSupport
 
 @UnitilsSupport
 @Transactional
-class HibernateBugTrackerProjectDaoIT extends DbunitDaoSpecification {
+class HibernateBugTrackerBindingDaoIT extends DbunitDaoSpecification {
 	@Inject
-	BugTrackerProjectDao bugtrackerProjectDao
+	BugTrackerBindingDao bugtrackerBindingDao
 	@Inject
 	ProjectDao projectDao
 
-	@DataSet("HibernateBugTrackerProjectDaoIT.should delete bugtrackerProject.xml")
+	@DataSet("HibernateBugTrackerBindingDaoIT.should delete bugtrackerBinding.xml")
 	def "should delete bugtrackerProject" () {
 		
 		when:
-		bugtrackerProjectDao.remove(findEntity(BugTrackerProject.class, 1L));
+		bugtrackerBindingDao.remove(findEntity(BugTrackerBinding.class, 1L));
 
 		then:
-		!found(BugTrackerProject.class, 1L);
+		!found(BugTrackerBinding.class, 1L);
 	}
 	private boolean found(Class<?> entityClass, Long id){
 		return (getSession().get(entityClass, id) != null)

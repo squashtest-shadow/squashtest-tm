@@ -57,7 +57,7 @@ class ProjectModificationServiceIT extends DbunitServiceSpecification {
 			modService.changeBugTrackerProjectName(1L, "this")
 	
 			then:
-			project.getBugtrackerProject().getProjectName() == "this"
+			project.getBugtrackerBinding().getProjectName() == "this"
 		}
 		
 		@DataSet("ProjectModificationServiceIT.xml")
@@ -68,7 +68,7 @@ class ProjectModificationServiceIT extends DbunitServiceSpecification {
 			modService.changeBugTracker(1L, 2L)
 	
 			then:
-			project.getBugtrackerProject().getBugtracker().getId() == 2L
+			project.getBugtrackerBinding().getBugtracker().getId() == 2L
 		}
 		
 		private Object findEntity(Class<?> entityClass, Long id){

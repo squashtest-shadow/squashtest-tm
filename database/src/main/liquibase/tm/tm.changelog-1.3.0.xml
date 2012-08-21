@@ -772,14 +772,14 @@
 	<changeSet id="tm-1.3.0-feat-1194.01" author="mpagnon">
 		<comment>Bugtracker project represent the project's name in a configured bugtracker</comment>
 
-		<createTable tableName="BUGTRACKER_PROJECT">
-			<column name="BUGTRACKER_PROJECT_ID" type="BIGINT"
+		<createTable tableName="BUGTRACKER_BINDING">
+			<column name="BUGTRACKER_BINDING_ID" type="BIGINT"
 				autoIncrement="true">
 				<constraints primaryKey="true" nullable="false" />
 			</column>
 
 			<column name="BUGTRACKER_ID" type="BIGINT">
-				<constraints nullable="false" foreignKeyName="fk_bugtracker_project_bugtracker"
+				<constraints nullable="false" foreignKeyName="FK_BUGTRACKER_BINDING_BUGTRACKER"
 					references="BUGTRACKER(BUGTRACKER_ID)" />
 			</column>
 
@@ -791,9 +791,9 @@
 	
 	<changeSet id="tm-1.3.0-feat-1194.02" author="mpagnon">
 	<addColumn tableName="PROJECT">
-    		<column name="BUGTRACKER_PROJECT_ID" type="BIGINT"
+    		<column name="BUGTRACKER_BINDING_ID" type="BIGINT"
 			remarks="project's connexion to a bugtracker">
-				<constraints nullable="true" references="BUGTRACKER_PROJECT(BUGTRACKER_PROJECT_ID)"
+				<constraints nullable="true" references="BUGTRACKER_BINDING(BUGTRACKER_BINDING_ID)"
 				foreignKeyName="fk_project_bugtracker_projet"/>
 			</column>
 		</addColumn>

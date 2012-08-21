@@ -40,7 +40,7 @@ import javax.validation.constraints.Size;
 import org.hibernate.annotations.ForeignKey;
 import org.hibernate.validator.constraints.NotBlank;
 import org.squashtest.csp.tm.domain.audit.Auditable;
-import org.squashtest.csp.tm.domain.bugtracker.BugTrackerProject;
+import org.squashtest.csp.tm.domain.bugtracker.BugTrackerBinding;
 import org.squashtest.csp.tm.domain.campaign.CampaignLibrary;
 import org.squashtest.csp.tm.domain.requirement.RequirementLibrary;
 import org.squashtest.csp.tm.domain.testcase.TestCaseLibrary;
@@ -80,9 +80,9 @@ public class Project {
 	private CampaignLibrary campaignLibrary;
 	
 	@OneToOne(cascade = {CascadeType.ALL}, optional = true, fetch = FetchType.LAZY)
-	@ForeignKey(name="FK_Project_BugtrackerProject")
-	@JoinColumn(name="BUGTRACKER_PROJECT_ID")
-	private BugTrackerProject bugtrackerProject;
+	@ForeignKey(name="FK_Project_BugtrackerBinding")
+	@JoinColumn(name="BUGTRACKER_BINDING_ID")
+	private BugTrackerBinding bugtrackerBinding;
 	
 	@ManyToMany(cascade = { CascadeType.ALL }, fetch = FetchType.LAZY)
 	@JoinTable(name="TM_TA_PROJECTS", joinColumns=@JoinColumn(name="TM_PROJECT_ID"), 
@@ -136,7 +136,7 @@ public class Project {
 	}
 	
 	public boolean isBugtrackerConnected(){
-		return bugtrackerProject != null;
+		return bugtrackerBinding != null;
 	}
 
 	public TestCaseLibrary getTestCaseLibrary() {
@@ -166,12 +166,12 @@ public class Project {
 		notifyLibraryAssociation(campaignLibrary);
 	}	
 
-	public BugTrackerProject getBugtrackerProject() {
-		return bugtrackerProject;
+	public BugTrackerBinding getBugtrackerBinding() {
+		return bugtrackerBinding;
 	}
 
-	public void setBugtrackerProject(BugTrackerProject bugtrackerProject) {
-		this.bugtrackerProject = bugtrackerProject;
+	public void setBugtrackerProject(BugTrackerBinding bugtrackerBinding) {
+		this.bugtrackerBinding = bugtrackerBinding;
 	}
 
 	/**
@@ -245,8 +245,8 @@ public class Project {
 		}
 	}
 
-	public void removeBugTrackerProject() {
-		this.bugtrackerProject = null;
+	public void removeBugTrackerBinding() {
+		this.bugtrackerBinding = null;
 		
 	}
 	

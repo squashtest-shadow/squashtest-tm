@@ -33,13 +33,13 @@ import org.squashtest.csp.core.bugtracker.domain.BugTracker;
 import org.squashtest.csp.core.security.acls.PermissionGroup;
 import org.squashtest.csp.tm.domain.CannotDeleteProjectException;
 import org.squashtest.csp.tm.domain.UnknownEntityException;
-import org.squashtest.csp.tm.domain.bugtracker.BugTrackerProject;
+import org.squashtest.csp.tm.domain.bugtracker.BugTrackerBinding;
 import org.squashtest.csp.tm.domain.project.AdministrableProject;
 import org.squashtest.csp.tm.domain.project.Project;
 import org.squashtest.csp.tm.domain.users.User;
 import org.squashtest.csp.tm.domain.users.UserProjectPermissionsBean;
+import org.squashtest.csp.tm.internal.repository.BugTrackerBindingDao;
 import org.squashtest.csp.tm.internal.repository.BugTrackerDao;
-import org.squashtest.csp.tm.internal.repository.BugTrackerProjectDao;
 import org.squashtest.csp.tm.internal.repository.ProjectDao;
 import org.squashtest.csp.tm.internal.repository.UserDao;
 import org.squashtest.csp.tm.service.CustomProjectModificationService;
@@ -66,7 +66,7 @@ public class CustomProjectModificationServiceImpl implements CustomProjectModifi
 	@Inject
 	private BugTrackerDao bugTrackerDao;
 	@Inject
-	private BugTrackerProjectDao bugTrackerProjectDao;
+	private BugTrackerBindingDao bugTrackerBindingDao;
 	@Inject
 	private ProjectDeletionHandler projectDeletionHandler;
 	@Inject
@@ -186,7 +186,7 @@ public class CustomProjectModificationServiceImpl implements CustomProjectModifi
 		if(!project.isBugtrackerConnected()){
 			BugTracker newBugtracker = bugTrackerDao.findById(newBugtrackerId);
 			if(newBugtracker != null){
-				project.getBugtrackerProject().setBugtracker(newBugtracker);
+				project.getBugtrackerBinding().setBugtracker(newBugtracker);
 			}
 			else{
 				throw new UnknownEntityException(newBugtrackerId, BugTracker.class);
@@ -196,7 +196,7 @@ public class CustomProjectModificationServiceImpl implements CustomProjectModifi
 			if (projectBugTrackerChangesFromOneToAnother(newBugtrackerId, project)) {
 				BugTracker newBugtracker = bugTrackerDao.findById(newBugtrackerId);
 				if(newBugtracker != null){
-				project.getBugtrackerProject().setBugtracker(newBugtracker);
+				project.getBugtrackerBinding().setBugtracker(newBugtracker);
 				}else{
 					throw new UnknownEntityException(newBugtrackerId, BugTracker.class);
 				}
@@ -208,11 +208,11 @@ public class CustomProjectModificationServiceImpl implements CustomProjectModifi
 
 	private boolean projectBugTrackerChangesFromOneToAnother(Long newBugtrackerId, Project project) {
 		boolean change = true;
-			BugTrackerProject bugtrackerProject = project.getBugtrackerProject();
-//			long bugtrackerId = bugtrackerProject.getBugtrackerEntity().getId();
-//			if (bugtrackerId == newBugtrackerId) {
-//				change = false;
-//			}
+			BugTrackerBinding bugtrackerBinding = project.getBugtrackerBinding();
+			long bugtrackerId = bugtrackerBinding.getBugtracker().getId();
+			if (bugtrackerId == newBugtrackerId) {
+				change = false;
+			}
 		return change;
 	}
 
@@ -221,9 +221,9 @@ public class CustomProjectModificationServiceImpl implements CustomProjectModifi
 		LOGGER.debug("removeBugTracker for project " + projectId);
 		Project project = projectDao.findById(projectId);
 		if (project.isBugtrackerConnected()) {
-			BugTrackerProject bugtrackerProject = project.getBugtrackerProject();
-			project.removeBugTrackerProject();
-			bugTrackerProjectDao.remove(bugtrackerProject);
+			BugTrackerBinding bugtrackerBinding = project.getBugtrackerBinding();
+			project.removeBugTrackerBinding();
+			bugTrackerBindingDao.remove(bugtrackerBinding);
 		}
 
 	}
@@ -231,11 +231,11 @@ public class CustomProjectModificationServiceImpl implements CustomProjectModifi
 	@Override
 	public void changeBugTrackerProjectName(long projectId, String projectBugTrackerName) {
 		Project project = projectDao.findById(projectId);
-		if(project.getBugtrackerProject() == null){
-			throw new UnknownEntityException(0, BugTrackerProject.class);
+		if(project.getBugtrackerBinding() == null){
+			throw new UnknownEntityException(0, BugTrackerBinding.class);
 		}
-		BugTrackerProject bugtrackerProject = project.getBugtrackerProject();
-		bugtrackerProject.setProjectName(projectBugTrackerName);
+		BugTrackerBinding bugtrackerBinding = project.getBugtrackerBinding();
+		bugtrackerBinding.setProjectName(projectBugTrackerName);
 	}
 
 }

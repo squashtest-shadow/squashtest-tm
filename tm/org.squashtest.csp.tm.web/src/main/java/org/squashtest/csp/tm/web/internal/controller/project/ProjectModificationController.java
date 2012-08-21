@@ -20,10 +20,10 @@
  */
 package org.squashtest.csp.tm.web.internal.controller.project;
 
-import java.net.MalformedURLException;
 import static org.squashtest.csp.tm.web.internal.helper.JEditablePostParams.VALUE;
 
 import java.util.Arrays;
+import java.net.MalformedURLException;
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
@@ -50,7 +50,7 @@ import org.squashtest.csp.core.bugtracker.domain.BugTracker;
 import org.squashtest.csp.core.security.acls.PermissionGroup;
 import org.squashtest.csp.tm.domain.LoginDoNotExistException;
 import org.squashtest.csp.tm.domain.UnknownEntityException;
-import org.squashtest.csp.tm.domain.bugtracker.BugTrackerProject;
+import org.squashtest.csp.tm.domain.bugtracker.BugTrackerBinding;
 import org.squashtest.csp.tm.domain.project.AdministrableProject;
 import org.squashtest.csp.tm.domain.project.Project;
 
@@ -60,8 +60,8 @@ import org.squashtest.csp.tm.domain.users.UserProjectPermissionsBean;
 import org.squashtest.csp.tm.infrastructure.filter.FilteredCollectionHolder;
 import org.squashtest.csp.tm.service.BugTrackerFinderService;
 import org.squashtest.csp.tm.service.ProjectModificationService;
-import org.squashtest.csp.tm.web.internal.model.datatable.DataTableDrawParameters;
 import org.squashtest.csp.tm.web.internal.helper.JsonHelper;
+import org.squashtest.csp.tm.web.internal.model.datatable.DataTableDrawParameters;
 import org.squashtest.csp.tm.web.internal.model.datatable.DataTableModel;
 import org.squashtest.csp.tm.web.internal.model.datatable.DataTableModelHelper;
 import org.squashtest.csp.tm.web.internal.model.testautomation.TestAutomationProjectRegistrationForm;
@@ -198,9 +198,9 @@ public class ProjectModificationController {
 	public String getBugtrackerProject(@PathVariable long projectId){
 		Project project = projectModificationService.findById(projectId);
 		if(project.isBugtrackerConnected()){
-			return project.getBugtrackerProject().getProjectName();
+			return project.getBugtrackerBinding().getProjectName();
 		}else{
-			throw new UnknownEntityException(0, BugTrackerProject.class);
+			throw new UnknownEntityException(0, BugTrackerBinding.class);
 		}
 	}
 	@RequestMapping(value = "/general", method = RequestMethod.GET)

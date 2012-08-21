@@ -18,13 +18,12 @@
  *     You should have received a copy of the GNU Lesser General Public License
  *     along with this software.  If not, see <http://www.gnu.org/licenses/>.
  */
-package org.squashtest.csp.tm.internal.repository.hibernate;
+package org.squashtest.csp.tm.internal.repository;
 
-import org.springframework.stereotype.Repository;
-import org.squashtest.csp.tm.domain.bugtracker.BugTrackerProject;
-import org.squashtest.csp.tm.internal.repository.BugTrackerProjectDao;
+import org.squashtest.csp.tm.domain.bugtracker.BugTrackerBinding;
 
-@Repository
-public class HibernateBugTrackerProjectDao extends HibernateEntityDao<BugTrackerProject> implements BugTrackerProjectDao {
-
+public interface BugTrackerBindingDao extends EntityDao<BugTrackerBinding> {
+	
+	
+	
 }

@@ -43,11 +43,11 @@ import org.squashtest.csp.core.bugtracker.domain.BugTracker;
  *
  */
 @Entity
-@Table(name = "BUGTRACKER_PROJECT")
-public class BugTrackerProject {
+@Table(name = "BUGTRACKER_BINDING")
+public class BugTrackerBinding {
 	@Id
 	@GeneratedValue
-	@Column(name = "BUGTRACKER_PROJECT_ID")
+	@Column(name = "BUGTRACKER_BINDING_ID")
 	private Long id;
 	
 	@Column(name = "PROJECT_NAME")
@@ -56,15 +56,15 @@ public class BugTrackerProject {
 	private String projectName;
 	
 	@OneToOne(optional = false)
-	@ForeignKey(name="FK_BugtrackerProject_Bugtracker")
+	@ForeignKey(name="FK_BugtrackerBinding_Bugtracker")
 	@JoinColumn(name="BUGTRACKER_ID")
 	private BugTracker bugtracker;
 	
-	public BugTrackerProject(){
+	public BugTrackerBinding(){
 		
 	}
 	
-	public BugTrackerProject(String projectName) {
+	public BugTrackerBinding(String projectName) {
 		super();
 		this.projectName = projectName;
 	}
@@ -72,7 +72,7 @@ public class BugTrackerProject {
 
 	/**
 	 * 
-	 * @return the name of a project in the bugtracker ({@link BugTrackerProject#getBugtrackerEntity()})
+	 * @return the name of a project in the bugtracker ({@link BugTrackerBinding#getBugtracker()})
 	 */
 	public String getProjectName() {
 		return projectName;

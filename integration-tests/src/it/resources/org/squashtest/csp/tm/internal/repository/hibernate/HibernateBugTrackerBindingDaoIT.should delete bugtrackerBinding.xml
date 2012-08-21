@@ -23,7 +23,7 @@
 -->
 <dataset>
 	<bugtracker bugtracker_id="1" kind="kind" url="url" name="name" iframe_friendly="false" />
-	<bugtracker_project bugtracker_project_id="1" bugtracker_id="1" project_name="project_name" />
+	<bugtracker_binding bugtracker_binding_id="1" bugtracker_id="1" project_name="project_name" />
 	
 	
 </dataset>
