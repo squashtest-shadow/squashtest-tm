@@ -24,15 +24,15 @@ package org.squashtest.csp.tm.internal.service
 import javax.inject.Inject
 
 import org.springframework.transaction.annotation.Transactional
-import org.squashtest.csp.tm.domain.project.Project;
+import org.squashtest.csp.tm.domain.project.Project
 import org.squashtest.csp.tm.service.ProjectModificationService
-import org.unitils.dbunit.annotation.DataSet;
+import org.unitils.dbunit.annotation.DataSet
 
 import spock.unitils.UnitilsSupport
 
 @UnitilsSupport
 @Transactional
-class ProjectModificationServiceIT_Disabled extends DbunitServiceSpecification {
+class ProjectModificationServiceIT extends DbunitServiceSpecification {
 
 	@Inject
 	ProjectModificationService modService
@@ -68,6 +68,7 @@ class ProjectModificationServiceIT_Disabled extends DbunitServiceSpecification {
 			modService.changeBugTracker(1L, 2L)
 	
 			then:
+			project = findEntity(Project.class, 1l)
 			project.getBugtrackerProject().getBugtracker().getId() == 2L;
 		}
 		

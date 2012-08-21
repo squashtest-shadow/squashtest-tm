@@ -21,6 +21,8 @@
 package org.squashtest.csp.core.bugtracker.service
 
 
+import java.util.Set;
+
 import org.squashtest.csp.core.bugtracker.domain.BTIssue;
 import org.squashtest.csp.core.bugtracker.domain.BTProject;
 import org.squashtest.csp.core.bugtracker.domain.Permission;
@@ -29,6 +31,11 @@ import org.squashtest.csp.core.bugtracker.spi.BugTrackerInterfaceDescriptor;
 
 
 class StubBugTrackerService implements BugTrackerService {
+
+	@Override
+	public Set<String> getProviderKinds() {
+		return null;
+	}
 
 	@Override
 	public boolean isIframeFriendly() {

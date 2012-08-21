@@ -176,9 +176,7 @@ public class CustomProjectModificationServiceImpl implements CustomProjectModifi
 		if(!project.isBugtrackerConnected()){
 			BugTrackerEntity newBugtrackerEntity = bugTrackerEntityDao.findById(newBugtrackerId);
 			if(newBugtrackerEntity != null){
-				BugTrackerProject newBugtrackerConnection = new BugTrackerProject(project.getName(), newBugtrackerEntity);
-				bugTrackerProjectDao.persist(newBugtrackerConnection);
-				project.setBugtrackerProject(newBugtrackerConnection);
+				project.getBugtrackerProject().setBugtrackerEntity(newBugtrackerEntity);
 			}
 			else{
 				throw new UnknownEntityException(newBugtrackerId, BugTrackerEntity.class);

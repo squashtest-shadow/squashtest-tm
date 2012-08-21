@@ -87,7 +87,7 @@ public class BugTrackerProject {
 		return bugtrackerEntity;
 	}
 	public BugTracker getBugtracker(){
-		return new BugTracker(bugtrackerEntity.getUrl(), bugtrackerEntity.getKind(), bugtrackerEntity.getName(), bugtrackerEntity.isIframeFriendly());
+		return new BugTracker(bugtrackerEntity.getId(), bugtrackerEntity.getUrl(), bugtrackerEntity.getKind(), bugtrackerEntity.getName(), bugtrackerEntity.isIframeFriendly());
 	}
 	public void setBugtrackerEntity(BugTrackerEntity bugtrackerEntity) {
 		this.bugtrackerEntity = bugtrackerEntity;

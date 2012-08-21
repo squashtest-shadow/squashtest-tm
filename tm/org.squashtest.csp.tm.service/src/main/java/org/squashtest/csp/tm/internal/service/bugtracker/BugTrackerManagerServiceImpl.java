@@ -26,6 +26,7 @@ import java.util.Set;
 
 import javax.inject.Inject;
 
+import org.springframework.osgi.extensions.annotation.ServiceReference;
 import org.springframework.security.access.prepost.PostFilter;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.stereotype.Service;
@@ -36,6 +37,7 @@ import org.squashtest.csp.tm.domain.bugtracker.BugTrackerEntity;
 import org.squashtest.csp.tm.infrastructure.filter.CollectionSorting;
 import org.squashtest.csp.tm.infrastructure.filter.FilteredCollectionHolder;
 import org.squashtest.csp.tm.internal.repository.BugTrackerEntityDao;
+import org.squashtest.csp.tm.service.BugTrackerLocalService;
 import org.squashtest.csp.tm.service.BugTrackerManagerService;
 
 @Service("squashtest.tm.service.BugTrackerManagerService")
@@ -44,9 +46,9 @@ public class BugTrackerManagerServiceImpl implements BugTrackerManagerService {
 
 	@Inject
 	private BugTrackerEntityDao bugTrackerDao;
+	@Inject
+	private BugTrackerLocalService bugtrackerLocalService;
 	
-	private BugTrackerConnectorFactory bugTrackerConnectorFactory;
-
 	@PostFilter("hasPermission(filterObject, 'READ') or  hasRole('ROLE_ADMIN')")
 	@Override
 	public List<BugTracker> findAll() {
@@ -85,7 +87,7 @@ public class BugTrackerManagerServiceImpl implements BugTrackerManagerService {
 
 	@Override
 	public Set<String> findBugTrackerKinds() {
-		return bugTrackerConnectorFactory.getProviderKinds();
+		return bugtrackerLocalService.getProviderKinds();
 	}
 
 	@Override

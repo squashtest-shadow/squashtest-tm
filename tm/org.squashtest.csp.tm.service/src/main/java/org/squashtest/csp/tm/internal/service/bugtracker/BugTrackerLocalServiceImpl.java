@@ -378,5 +378,10 @@ public class BugTrackerLocalServiceImpl implements BugTrackerLocalService {
 		return issuesRemoteIds;
 	}
 
+	@Override
+	public Set<String> getProviderKinds() {
+		return remoteBugTrackerService.getProviderKinds();
+	}
+
 	
 }

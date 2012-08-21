@@ -22,6 +22,7 @@ package org.squashtest.csp.tm.service;
 
 import java.net.URL;
 import java.util.List;
+import java.util.Set;
 
 import org.squashtest.csp.core.bugtracker.core.BugTrackerManagerException;
 import org.squashtest.csp.core.bugtracker.core.BugTrackerRemoteException;
@@ -227,6 +228,8 @@ public interface BugTrackerLocalService {
 	URL getBugtrackerUrl();
 
 	Boolean getBugtrackerIframeFriendly();
+
+	Set<String> getProviderKinds();
 
 	
 

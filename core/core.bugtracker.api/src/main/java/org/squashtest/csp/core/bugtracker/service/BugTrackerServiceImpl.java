@@ -23,6 +23,7 @@ package org.squashtest.csp.core.bugtracker.service;
 import java.net.MalformedURLException;
 import java.net.URL;
 import java.util.List;
+import java.util.Set;
 
 import javax.inject.Inject;
 
@@ -201,6 +202,12 @@ public class BugTrackerServiceImpl implements BugTrackerService {
 		}
 		
 		return issues;
+	}
+
+	@Override
+	public Set<String> getProviderKinds() {
+		return bugTrackerConnectorFactory.getProviderKinds();
+		
 	}
 
 	
