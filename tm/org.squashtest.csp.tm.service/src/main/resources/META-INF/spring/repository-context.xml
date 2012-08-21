@@ -90,7 +90,7 @@
 				<value>org.squashtest.csp.tm.domain.attachment.Attachment</value>
 				<value>org.squashtest.csp.tm.domain.attachment.AttachmentContent</value>
 				
-				<value>org.squashtest.csp.tm.domain.bugtracker.BugTrackerEntity</value>
+				<value>org.squashtest.csp.core.bugtracker.domain.BugTracker</value>
 				<value>org.squashtest.csp.tm.domain.bugtracker.BugTrackerProject</value>
 				
 				<value>org.squashtest.csp.tm.domain.bugtracker.IssueList</value>

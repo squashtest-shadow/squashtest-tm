@@ -20,6 +20,11 @@
  */
 package org.squashtest.csp.core.bugtracker.domain;
 
+import javax.persistence.Entity;
+import javax.persistence.Table;
+
+@Entity
+@Table(name = "BUGTRACKER")
 public class BugTracker {
 	public static final BugTracker NOT_DEFINED = new BugTracker("", "none", "", true);
 	private long id;
