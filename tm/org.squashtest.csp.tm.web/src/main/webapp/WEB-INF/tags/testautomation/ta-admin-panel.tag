@@ -39,64 +39,6 @@
 <%@ taglib uri="http://java.sun.com/jsp/jstl/functions" prefix="fn" %>
 
 
-
-<!--  ===================== DEV STYLESHEET, MOVE IT TO MAIN STYLESHEET WHEN READY ==================== -->
-
-<link href="http://localhost/css/ta-admin-panel.css" rel="stylesheet"
-	type="text/css">
-	
-	
-<%--
-equivalent to : 
-
-
-div.ta-main-div .ta-block{
-	margin-top	: 0.8em;
-	margin-bottom : 0.8em;	
-	padding-top	:	0.2em;
-	padding-bottom : 0.2 em;
-}
-
-div.ta-main-div .ta-block-item{
-	margin-top	:	0.1em;
-	margin-bottom : 0.1em;
-	margin-right:	0.1em;
-}
-
-div.ta-main-div .ta-server-block{
-	display : table;
-}
-
-div.ta-main-div .ta-server-block .ta-block-item {
-	display : table-row;
-}
-
-div.ta-main-div .ta-server-block .ta-block-item-unit{
-	display : table-cell;
-	padding	:	0.2em;	
-}
-
-div.ta-main-div  .ta-maincheck-div{
-	padding-left : 2em;
-}
-
-div.ta-main-div .ta-maincheck-div input{
-	vertical-align : middle;
-}	
-
-
-div.ta-main-div .ta-manager-disabled{
-	background-color: lightgray;
-	opacity: 0.4;	
-	filter: alpha(opacity=40);		/* for IE8 */
-}
-
-
- --%>	
-
-<!--  ==================== /DEV STYLESHEET, MOVE IT TO MAIN STYLESHEET WHEN READY ==================== -->
-
-
 <c:url var="listRemoteProjectsURL" 	value="/test-automation/servers/projects-list" />
 
 <s:url var="projectUrl" value="/projects/{projectId}">
@@ -135,6 +77,9 @@ div.ta-main-div .ta-manager-disabled{
 				</label><input type="checkbox" id="test-auto-enabled-ckbox" ${initialChecked} />
 			</div>
 			
+			
+			<%-- =================================== server block =============================================================== --%>	
+		
 			<fieldset class="ta-server-block  ta-block  ${initialCss}">
 				<legend>
 					<f:message key="project.testauto.serverblock.title" />
@@ -173,16 +118,18 @@ div.ta-main-div .ta-manager-disabled{
 					</div>
 				</div>
 			</fieldset> 
+			<%-- =================================== /server block =============================================================== --%>	
+		
 			
+			<%-- =================================== projects block =============================================================== --%>
+			
+			<f:message var="addTAProjectLabel" key="project.testauto.projectsblock.add.button.label" />
 			<fieldset class="ta-projects-block  ta-block">
 				<legend>
 					<f:message key="project.testauto.projectsblock.title" />
-				</legend>
-				
-				<div class="ta-block-item">
-					<f:message var="addTAProjectLabel" key="project.testauto.projectsblock.add.button.label" />
 					<input id="ta-projectsblock-add-button" title="${addTAProjectLabel}" type="button" class="button" value="+"/>
-				</div>
+				</legend>
+
 				
 				<table id="ta-projects-table" class="ta-projects-table">
 					<thead>
@@ -209,8 +156,9 @@ div.ta-main-div .ta-manager-disabled{
 					</tbody>
 				</table>
 				<br />
-	
 		</fieldset>
+		<%-- =================================== /projects block =============================================================== --%>	
+		
 	</div>
 	</jsp:attribute>
 
