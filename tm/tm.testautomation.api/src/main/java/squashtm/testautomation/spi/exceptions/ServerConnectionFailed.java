@@ -23,6 +23,8 @@ package squashtm.testautomation.spi.exceptions;
 
 public class ServerConnectionFailed extends TestAutomationException {
 
+	private static final String CONNECTION_FAILED_KEY = "testautomation.exceptions.connectionfailed";
+	
 	/**
 	 * 
 	 */
@@ -44,6 +46,9 @@ public class ServerConnectionFailed extends TestAutomationException {
 		super(arg0);
 	}
 	
-	
+	@Override
+	public String getI18nKey() {
+		return CONNECTION_FAILED_KEY;
+	}
 
 }

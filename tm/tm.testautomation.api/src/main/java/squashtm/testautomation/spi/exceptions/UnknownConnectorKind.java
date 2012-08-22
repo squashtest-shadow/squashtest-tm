@@ -18,33 +18,55 @@
  *     You should have received a copy of the GNU Lesser General Public License
  *     along with this software.  If not, see <http://www.gnu.org/licenses/>.
  */
-package squashtm.testautomation.jenkins
+package squashtm.testautomation.spi.exceptions;
+
+import java.util.LinkedList;
+import java.util.List;
 
 
-import spock.lang.Specification
-import squashtm.testautomation.domain.TestAutomationServer;
 
-class TestAutomationJenkinsConnectorTest extends Specification {
+public class UnknownConnectorKind extends TestAutomationException {
+
+	/**
+	 * 
+	 */
+	private static final long serialVersionUID = -5396461746323466331L;
+
+	private static final String UNKNOWN_KIND_EXCEPTION = "testautomation.exceptions.unknownkind";
 	
-	private TestAutomationJenkinsConnector connector
 	
-	def setup(){
-		connector = new TestAutomationJenkinsConnector()
+	private List<String> args = new LinkedList<String>();
+
+	public UnknownConnectorKind() {
+		super();
+	}
+
+	public UnknownConnectorKind(String message, Throwable cause) {
+		super(message, cause);
+	}
+
+	public UnknownConnectorKind(String message) {
+		super(message);
+	}
+
+	public UnknownConnectorKind(Throwable cause) {
+		super(cause);
 	}
 	
-	def "should return a well formatted query"(){
-		
-		given :
-			TestAutomationServer server = new TestAutomationServer(new URL("http://ci.jruby.org"), "", "")
-			
-		when :
-			def method = connector.newGetJobsMethod(server)
-			
-		then :
-			method.path == "http://ci.jruby.org/api/json"
-			method.queryString == "tree=jobs%5Bname%2Ccolor%5D"
-		
-		
+	@Override
+	public Object[] messageArgs(){
+		return args.toArray();
 	}
+
+	public void addArg(String arg){
+		args.add(arg);
+	}
+
+	@Override
+	public String getI18nKey() {
+		return UNKNOWN_KIND_EXCEPTION;
+	}
+	
+	
 	
 }

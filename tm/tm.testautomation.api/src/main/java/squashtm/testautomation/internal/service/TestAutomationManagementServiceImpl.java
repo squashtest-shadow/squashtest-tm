@@ -55,13 +55,15 @@ public class TestAutomationManagementServiceImpl implements  InsecureTestAutomat
 		
 		TestAutomationConnector connector = connectorRegistry.getConnectorForKind(server.getKind());
 		
+		connector.checkCredentials(server);	
+		
 		return connector.listProjectsOnServer(server);
 	}
 	
 	
 	@Override
 	public Collection<TestAutomationProject> listProjectsOnServer(URL serverURL, String login, String password) {
-		
+			
 		TestAutomationServer server = new TestAutomationServer(serverURL, login, password);
 		
 		return listProjectsOnServer(server);

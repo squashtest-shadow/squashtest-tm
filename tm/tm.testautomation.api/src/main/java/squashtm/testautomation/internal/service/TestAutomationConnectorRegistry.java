@@ -28,6 +28,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import squashtm.testautomation.spi.TestAutomationConnector;
+import squashtm.testautomation.spi.exceptions.UnknownConnectorKind;
 
 
 public class TestAutomationConnectorRegistry {
@@ -47,7 +48,9 @@ public class TestAutomationConnectorRegistry {
 	public TestAutomationConnector getConnectorForKind(String kind){
 		TestAutomationConnector connector = availableConnectors.get(kind);
 		if (connector==null){
-			throw new IllegalArgumentException("TestAutomationConnector : unknown kind '"+kind+"'");
+			UnknownConnectorKind ex = new UnknownConnectorKind("TestAutomationConnector : unknown kind '"+kind+"'");
+			ex.addArg(kind);
+			throw ex;
 		}
 		return connector;
 	}

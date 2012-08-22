@@ -31,12 +31,12 @@ import java.util.Collection;
 import javax.inject.Inject;
 
 import org.apache.commons.httpclient.HttpClient;
-import org.apache.commons.httpclient.NameValuePair;
 import org.apache.commons.httpclient.methods.GetMethod;
 import org.springframework.stereotype.Service;
 
 import squashtm.testautomation.domain.TestAutomationProject;
 import squashtm.testautomation.domain.TestAutomationServer;
+import squashtm.testautomation.jenkins.internal.HttpRequestFactory;
 import squashtm.testautomation.jenkins.internal.JsonParser;
 import squashtm.testautomation.jenkins.internal.net.HttpClientProvider;
 import squashtm.testautomation.spi.TestAutomationConnector;
@@ -48,17 +48,7 @@ import squashtm.testautomation.spi.exceptions.UnreadableResponseException;
 
 @Service("plugin.testautomation.jenkins.connector")
 public class TestAutomationJenkinsConnector implements TestAutomationConnector{
-	
-	private static final String JOBS_LIST_URI = "/api/json";
-	
-	private static final NameValuePair[] JOBS_LIST_QUERY = new NameValuePair[] { 
-																new NameValuePair("tree", "jobs[name,color]") 
-															};
 
-	private static final NameValuePair[] TEST_LIST_QUERY = new NameValuePair[]{
-																new NameValuePair("tree", "suites[name,cases[name]]")	
-															};
-	
 	
 	private static final String CONNECTOR_KIND = "jenkins";
 	
@@ -69,6 +59,9 @@ public class TestAutomationJenkinsConnector implements TestAutomationConnector{
 	
 	@Inject
 	private JsonParser jsonParser;
+	
+	@Inject
+	private HttpRequestFactory requestFactory;
 	
 	
 	//****************************** let's roll ****************************************
@@ -83,7 +76,25 @@ public class TestAutomationJenkinsConnector implements TestAutomationConnector{
 	
 	public boolean checkCredentials(TestAutomationServer server) {
 		
-		return true;
+		HttpClient client = clientProvider.getClientFor(server);
+
+		GetMethod credCheck = requestFactory.newCheckCredentialsMethod(server);
+		
+		try {
+			int responseCode = client.executeMethod(credCheck);
+			
+			checkResponseCode(responseCode);
+			
+			return true;
+		}
+		catch(AccessDenied ex){
+			throw new AccessDenied("Test automation - jenkins : server '"+server+"' rejected the operation because of wrong credentials");
+		}
+		catch(IOException ex){
+			throw new ServerConnectionFailed("Test automation - jenkins : could not connect to server '"+server+"' "+
+					 						 "due to technical error : ", ex);
+		}		
+	
 	}
 	
 	
@@ -97,7 +108,7 @@ public class TestAutomationJenkinsConnector implements TestAutomationConnector{
 			
 		HttpClient client = clientProvider.getClientFor(server);
 		
-		GetMethod getJobsMethod = newGetJobsMethod(server);
+		GetMethod getJobsMethod = requestFactory.newGetJobsMethod(server);
 		
 		try{
 			
@@ -145,25 +156,6 @@ public class TestAutomationJenkinsConnector implements TestAutomationConnector{
 				throw new AccessDenied();
 		}
 	}
-	
-	
-	private GetMethod newGetJobsMethod(TestAutomationServer server){
-		
-		StringBuilder urlBuilder= new StringBuilder();
-		
-		urlBuilder.append(server.getBaseURL().toExternalForm());
-		urlBuilder.append(JOBS_LIST_URI);
 
-
-		GetMethod method = new GetMethod();
-		
-		method.setPath(urlBuilder.toString());
-		method.setQueryString(JOBS_LIST_QUERY);
-
-		method.setDoAuthentication(true);
-		
-		return method;
-	}
-	
 	
 }

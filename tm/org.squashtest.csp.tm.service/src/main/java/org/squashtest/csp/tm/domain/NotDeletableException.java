@@ -20,6 +20,8 @@
  */
 package org.squashtest.csp.tm.domain;
 
+import org.squashtest.tm.core.foundation.exception.ActionException;
+
 /**
  * Thrown when trying to delete a TestCase that is called by another TestCase.
  *

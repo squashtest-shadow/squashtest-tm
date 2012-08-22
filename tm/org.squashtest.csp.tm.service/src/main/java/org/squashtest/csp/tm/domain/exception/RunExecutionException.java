@@ -20,7 +20,7 @@
  */
 package org.squashtest.csp.tm.domain.exception;
 
-import org.squashtest.csp.tm.domain.ActionException;
+import org.squashtest.tm.core.foundation.exception.ActionException;
 
 /**
  * Something happened while trying to run an execution.

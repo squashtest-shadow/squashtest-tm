@@ -22,6 +22,8 @@ package squashtm.testautomation.spi.exceptions;
 
 public class NotFoundException extends TestAutomationException {
 
+	private static final String NOT_FOUND_EXCEPTION_KEY = "testautomation.exceptions.notfound";
+	
 	/**
 	 * 
 	 */
@@ -44,4 +46,9 @@ public class NotFoundException extends TestAutomationException {
 		super(cause);
 	}
 
+	@Override
+	public String getI18nKey() {
+		return NOT_FOUND_EXCEPTION_KEY;
+	}
+	
 }

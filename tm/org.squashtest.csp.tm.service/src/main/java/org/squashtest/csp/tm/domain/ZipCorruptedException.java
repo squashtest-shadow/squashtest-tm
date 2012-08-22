@@ -20,6 +20,8 @@
  */
 package org.squashtest.csp.tm.domain;
 
+import org.squashtest.tm.core.foundation.exception.ActionException;
+
 /**
  * thrown when a zip archive cannot be read (or maybe the file is no zip archive)
  * 

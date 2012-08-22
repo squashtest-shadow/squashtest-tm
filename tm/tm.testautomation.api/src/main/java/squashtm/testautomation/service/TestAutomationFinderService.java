@@ -23,10 +23,9 @@ package squashtm.testautomation.service;
 import java.net.URL;
 import java.util.Collection;
 
-import org.springframework.transaction.annotation.Transactional;
-
 import squashtm.testautomation.domain.TestAutomationProject;
 import squashtm.testautomation.domain.TestAutomationServer;
+import squashtm.testautomation.spi.exceptions.AccessDenied;
 
 
 public interface TestAutomationFinderService {
@@ -34,11 +33,14 @@ public interface TestAutomationFinderService {
 	
 	/**
 	 * <p>Given the URL of the test automation server, and the credentials required to connect it, will return the list of 
-	 * project currently available on it.</p>
+	 * project currently available on it. The credentials will be tested on the fly.</p>
 	 * 
 	 * @param serverURL
 	 * @param login
 	 * @param password
+	 * 
+	 * @return a collection of projects hosted on that server
+	 * @throws AccessDenied if the given credentials are invalid
 	 */
 	//no security needed here : the real endpoint of that operation is a remote test automation server, not Squash TM.
 	Collection<TestAutomationProject> listProjectsOnServer(URL serverURL, String login, String password);

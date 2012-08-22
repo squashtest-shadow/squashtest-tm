@@ -35,7 +35,7 @@ import org.springframework.web.servlet.ModelAndView;
 import org.springframework.web.servlet.handler.AbstractHandlerExceptionResolver;
 import org.springframework.web.servlet.view.AbstractView;
 import org.springframework.web.servlet.view.json.MappingJacksonJsonView;
-import org.squashtest.csp.tm.domain.ActionException;
+import org.squashtest.tm.core.foundation.exception.ActionException;
 
 /**
  * This handler will format ActionExceptions and subclasses in order to raise a popup clientside and display an
@@ -111,7 +111,8 @@ public class HandlerActionExceptionResolver extends AbstractHandlerExceptionReso
 	}
 
 	private boolean exceptionIsHandled(Exception ex) {
-		return ex instanceof ActionException;
+		//return ex instanceof ActionException;
+		return ActionException.class.isAssignableFrom(ex.getClass());
 	}
 
 	@SuppressWarnings("unchecked")

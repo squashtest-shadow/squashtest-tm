@@ -20,6 +20,8 @@
  */
 package org.squashtest.csp.tm.domain;
 
+import org.squashtest.tm.core.foundation.exception.ActionException;
+
 public class LoginDoNotExistException extends ActionException {
 
 	@Override

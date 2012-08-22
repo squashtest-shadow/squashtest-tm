@@ -15,11 +15,18 @@
 
 
 	<dependencies>
+	
 		<dependency>
 			<groupId>${project.groupId}</groupId>
 			<artifactId>hibernate-dependencies</artifactId>
 			<version>${project.version}</version>
 			<type>pom</type>
+		</dependency>
+		
+		<dependency>
+			<groupId>org.squashtest.tm</groupId>
+			<artifactId>core.foundation</artifactId>
+			<version>${project.version}</version>
 		</dependency>
 
 		<!-- ====== JSE DI API ====== -->
@@ -90,7 +97,6 @@
 						<_include>bnd.bnd</_include>
 						<Export-Package>squashtm.testautomation.*, squashtm.remoteapi.*</Export-Package>
 						<Import-Package>
-							!org.squashtest.*, 
 							!squashtm.testautomation.*, 
 							!squashtm.remoteapi.*,
 							org.hibernate.proxy, 

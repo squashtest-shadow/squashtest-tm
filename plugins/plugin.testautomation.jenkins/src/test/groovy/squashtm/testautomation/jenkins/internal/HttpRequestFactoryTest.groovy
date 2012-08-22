@@ -18,35 +18,34 @@
  *     You should have received a copy of the GNU Lesser General Public License
  *     along with this software.  If not, see <http://www.gnu.org/licenses/>.
  */
-package squashtm.testautomation.spi.exceptions;
+package squashtm.testautomation.jenkins.internal
 
 
-public class AccessDenied extends TestAutomationException {
+import spock.lang.Specification
+import squashtm.testautomation.domain.TestAutomationServer;
+import squashtm.testautomation.jenkins.TestAutomationJenkinsConnector;
 
-	private static final String ACCESS_DENIED_KEY = "testautomation.exceptions.accessdenied";
+class HttpRequestFactoryTest extends Specification {
 	
-	private static final long serialVersionUID = -5345068364658644042L;
-
-	public AccessDenied() {
-		super();
-	}
-
-	public AccessDenied(String message, Throwable cause) {
-		super(message, cause);
-	}
-
-	public AccessDenied(String message) {
-		super(message);
-	}
-
-	public AccessDenied(Throwable cause) {
-		super(cause);
-	}
-
-	@Override
-	public String getI18nKey() {
-		return ACCESS_DENIED_KEY;
+	private HttpRequestFactory factory
+	
+	def setup(){
+		factory = new HttpRequestFactory()
 	}
 	
+	def "should return a well formatted query"(){
+		
+		given :
+			TestAutomationServer server = new TestAutomationServer(new URL("http://ci.jruby.org"), "", "")
+			
+		when :
+			def method = factory.newGetJobsMethod(server)
+			
+		then :
+			method.path == "http://ci.jruby.org/api/json"
+			method.queryString == "tree=jobs%5Bname%2Ccolor%5D"
+		
+		
+	}
 	
 }

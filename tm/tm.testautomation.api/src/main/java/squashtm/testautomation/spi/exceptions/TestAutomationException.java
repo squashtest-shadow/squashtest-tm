@@ -20,9 +20,12 @@
  */
 package squashtm.testautomation.spi.exceptions;
 
-public class TestAutomationException extends RuntimeException{
+import org.squashtest.tm.core.foundation.exception.ActionException;
 
+public class TestAutomationException extends ActionException{
 
+	
+	private static String TEST_AUTOMATION_EXCEPTION_KEY = "testautomation.exceptions.generic";
 	private static final long serialVersionUID = 6313915492631424474L;
 
 	public TestAutomationException() {
@@ -41,6 +44,9 @@ public class TestAutomationException extends RuntimeException{
 		super(cause);
 	}
 
-	
+	@Override
+	public String getI18nKey() {
+		return TEST_AUTOMATION_EXCEPTION_KEY;
+	}
 	
 }
