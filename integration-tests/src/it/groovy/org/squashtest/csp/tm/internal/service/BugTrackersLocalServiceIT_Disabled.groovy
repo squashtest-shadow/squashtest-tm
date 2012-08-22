@@ -23,29 +23,30 @@ package org.squashtest.csp.tm.internal.service
 
 import java.net.URL
 
-import javax.inject.Inject 
-import org.spockframework.util.NotThreadSafe 
+import javax.inject.Inject
+
+import org.spockframework.util.NotThreadSafe
 import org.springframework.test.context.ContextConfiguration
 import org.springframework.transaction.annotation.Transactional
-import org.squashtest.csp.core.bugtracker.core.BugTrackerNotFoundException 
+import org.squashtest.csp.core.bugtracker.core.BugTrackerNotFoundException
 import org.squashtest.csp.core.bugtracker.domain.BTIssue
-import org.squashtest.csp.core.bugtracker.domain.BTProject 
+import org.squashtest.csp.core.bugtracker.domain.BTProject
 import org.squashtest.csp.core.bugtracker.domain.Category
 import org.squashtest.csp.core.bugtracker.domain.Priority
 import org.squashtest.csp.core.bugtracker.domain.User
 import org.squashtest.csp.core.bugtracker.domain.Version
-import org.squashtest.csp.core.bugtracker.spi.BugTrackerInterfaceDescriptor 
-import org.squashtest.csp.tm.domain.bugtracker.BugTrackerStatus 
+import org.squashtest.csp.core.bugtracker.spi.BugTrackerInterfaceDescriptor
+import org.squashtest.csp.tm.domain.bugtracker.BugTrackerStatus
 import org.squashtest.csp.tm.domain.bugtracker.Issue
-import org.squashtest.csp.tm.domain.bugtracker.IssueOwnership 
+import org.squashtest.csp.tm.domain.bugtracker.IssueOwnership
 import org.squashtest.csp.tm.domain.execution.Execution
-import org.squashtest.csp.tm.domain.execution.ExecutionStatus
 import org.squashtest.csp.tm.domain.execution.ExecutionStep
-import org.squashtest.csp.tm.infrastructure.filter.CollectionSorting 
-import org.squashtest.csp.tm.infrastructure.filter.FilteredCollectionHolder 
-import org.squashtest.csp.tm.service.BugTrackerLocalService 
-import org.unitils.dbunit.annotation.DataSet 
-import spock.unitils.UnitilsSupport 
+import org.squashtest.csp.tm.infrastructure.filter.CollectionSorting
+import org.squashtest.csp.tm.infrastructure.filter.FilteredCollectionHolder
+import org.squashtest.csp.tm.service.BugTrackersLocalService
+import org.unitils.dbunit.annotation.DataSet
+
+import spock.unitils.UnitilsSupport
 
 
 
@@ -73,7 +74,7 @@ import spock.unitils.UnitilsSupport
 @UnitilsSupport
 @ContextConfiguration(["classpath:bugtracker-core-context-IT.xml"])
 @Transactional
-class BugTrackerLocalServiceIT_Disabled extends DbunitServiceSpecification  {
+class BugTrackersLocalServiceIT_Disabled extends DbunitServiceSpecification  {
 
 
 	/*
@@ -88,7 +89,7 @@ class BugTrackerLocalServiceIT_Disabled extends DbunitServiceSpecification  {
 	 */	
 
 	@Inject
-	private BugTrackerLocalService btService
+	private BugTrackersLocalService btService
 	
 
 

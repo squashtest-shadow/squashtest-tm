@@ -91,7 +91,7 @@ public class ProjectModificationController {
 	private BugTrackerFinderService bugtrackerFinderService;
 
 	@ServiceReference
-	public void setBugTrackerLocalFinderService(BugTrackerFinderService bugtrackerFinderService) {
+	public void setBugTrackerFinderService(BugTrackerFinderService bugtrackerFinderService) {
 		this.bugtrackerFinderService = bugtrackerFinderService;
 	}
 

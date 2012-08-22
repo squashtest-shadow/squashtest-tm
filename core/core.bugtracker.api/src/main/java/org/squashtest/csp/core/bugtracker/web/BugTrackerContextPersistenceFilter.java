@@ -37,10 +37,10 @@ import org.squashtest.csp.core.bugtracker.service.BugTrackerContext;
 import org.squashtest.csp.core.bugtracker.service.BugTrackerContextHolder;
 
 /**
- * This filter is responsible for retrieving the {@link BugTrackerContext}, making it availlable to the current
+ * This filter is responsible for retrieving the {@link BugTrackerContext}, making it available to the current
  * request's thread and storing it for future use at the end of the request.
  *
- * It should be instanciated using Spring and accessed by the webapp through a DelegatingFilterProxy
+ * It should be instantiated using Spring and accessed by the webapp through a DelegatingFilterProxy
  *
  * @author Gregory Fouquet
  *
@@ -112,8 +112,6 @@ public final class BugTrackerContextPersistenceFilter implements Filter {
 	@Override
 	public void destroy() {
 		// NOOP
-
-
 	}
 
 	public void setContextHolder(BugTrackerContextHolder contextHolder) {

@@ -44,6 +44,7 @@ import javax.persistence.Temporal;
 import javax.persistence.TemporalType;
 
 import org.hibernate.annotations.Formula;
+import org.squashtest.csp.core.bugtracker.domain.BugTracker;
 import org.squashtest.csp.core.domain.Identified;
 import org.squashtest.csp.core.security.annotation.AclConstrainedObject;
 import org.squashtest.csp.tm.domain.attachment.Attachment;
@@ -259,5 +260,10 @@ public class ExecutionStep implements AttachmentHolder, IssueDetector, TestStepV
 			ids.add(issueList.getId());
 			return ids;
 		}
+
+	@Override
+	public BugTracker getBugTracker() {
+		return getProject().findBugTracker();
+	}
 	
 }

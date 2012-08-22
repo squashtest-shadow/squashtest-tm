@@ -22,6 +22,8 @@ package org.squashtest.csp.tm.domain.bugtracker;
 
 import java.util.List;
 
+import org.squashtest.csp.core.bugtracker.domain.BugTracker;
+import org.squashtest.csp.tm.domain.NoBugTrackerBindingException;
 import org.squashtest.csp.tm.domain.project.Project;
 
 public interface IssueDetector {
@@ -38,7 +40,13 @@ public interface IssueDetector {
 	 * @return the project of that entity
 	 */
 	Project getProject();
-
+	
+	/**
+	 * 
+	 * @return the bugTracker the entity is associated to
+	 * @throws NoBugTrackerBindingException if no BugTracker is found
+	 */
+	BugTracker getBugTracker();
 	/**
 	 * 
 	 * @return the Id of its IssueList

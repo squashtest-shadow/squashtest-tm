@@ -38,14 +38,12 @@ import org.squashtest.csp.core.bugtracker.spi.BugTrackerConnector;
 import org.squashtest.csp.core.bugtracker.spi.BugTrackerInterfaceDescriptor;
 
 /**
- * Basic impementation of {@link BugTrackerService}
- *
+ * Basic impementation of {@link BugTrackersService}
+ * 
  * @author Gregory Fouquet
- *
+ * 
  */
-public class BugTrackerServiceImpl implements BugTrackerService {
-	@Inject
-	private BugTracker bugTracker;
+public class BugTrackersServiceImpl implements BugTrackersService {
 
 	@Inject
 	private BugTrackerContextHolder contextHolder;
@@ -59,57 +57,24 @@ public class BugTrackerServiceImpl implements BugTrackerService {
 
 	@Override
 	public boolean isBugTrackerDefined() {
-		boolean undefined = bugTracker == null || BugTracker.NOT_DEFINED.equals(bugTracker);
-		return !undefined;
+		return false; // TODO
 	}
 
 	@Override
 	public boolean isCredentialsNeeded() {
-		return !getBugTrackerContext().hasCredentials();
+		return true; // TODO
 	}
 
 	@Override
-	public BugTrackerInterfaceDescriptor getInterfaceDescriptor() {
-		if (!isBugTrackerDefined()) {
-			// XXX should throw an exception or return an "undefined" impl of BTID
-			return null;
-		} else {
+	public BugTrackerInterfaceDescriptor getInterfaceDescriptor(BugTracker bugTracker) {
 			BugTrackerConnector connector = bugTrackerConnectorFactory.createConnector(bugTracker);
 			return connector.getInterfaceDescriptor();
-		}
-	}
-
-	@Override
-	public URL getBugTrackerUrl() {
-		URL url = null;
-
-		try {
-			if (isBugTrackerDefined()) {
-				String strUrl = bugTracker.getUrl();
-				url = new URL(strUrl);
-			}
-		} catch (MalformedURLException mue) {
-			// XXX should throw an exception
-			url = null;
-		}
-
-		return url;
-
 	}
 	
-	@Override 
-	public String getBugTrackerName(){
-		return bugTracker.getName();
-	}
 	@Override
-	public boolean isIframeFriendly() {
-		return bugTracker.isIframeFriendly();
-	}
-
-	@Override
-	public URL getViewIssueUrl(String issueId) {
+	public URL getViewIssueUrl(String issueId, BugTracker bugTracker) {
 		URL url = null;
-		URL baseUrl = getBugTrackerUrl();
+		URL baseUrl = bugTracker.getURL();
 		try {
 			if (baseUrl != null) {
 				BugTrackerConnector connector = bugTrackerConnectorFactory.createConnector(bugTracker);
@@ -126,12 +91,12 @@ public class BugTrackerServiceImpl implements BugTrackerService {
 		return url;
 	}
 
-	private BugTrackerContext getBugTrackerContext() {
+	private BugTrackerContext getBugTrackerContext() {// TODO BugTrackersContext
 		return contextHolder.getContext();
 	}
 
 	@Override
-	public void setCredentials(String username, String password) {
+	public void setCredentials(String username, String password, BugTracker bugTracker) {
 
 		AuthenticationCredentials credentials = new AuthenticationCredentials(username, password);
 		BugTrackerConnector connector = bugTrackerConnectorFactory.createConnector(bugTracker);
@@ -146,60 +111,55 @@ public class BugTrackerServiceImpl implements BugTrackerService {
 	}
 
 	@Override
-	public List<Priority> getPriorities() {
-		return connect().getPriorities();
-	}
-
-	
-	
-
-	@Override
-	public BTProject findProject(String name) {
-		return connect().findProject(name);
+	public List<Priority> getPriorities(BugTracker bugTracker) {
+		return connect(bugTracker).getPriorities();
 	}
 
 	@Override
-	public BTProject findProjectById(String projectId) {
-		return connect().findProject(projectId);
+	public BTProject findProject(String name, BugTracker bugTracker) {
+		return connect(bugTracker).findProject(name);
 	}
 
-	private BugTrackerConnector connect() {
+	@Override
+	public BTProject findProjectById(String projectId, BugTracker bugTracker) {
+		return connect(bugTracker).findProject(projectId);
+	}
+
+	private BugTrackerConnector connect(BugTracker bugTracker) {
 		BugTrackerConnector connector = bugTrackerConnectorFactory.createConnector(bugTracker);
 		connector.authenticate(getBugTrackerContext().getCredentials());
 		return connector;
 	}
 
 	@Override
-	public BTIssue createIssue(BTIssue issue) {
-			return connect().createIssue(issue);
+	public BTIssue createIssue(BTIssue issue, BugTracker bugTracker) {
+		return connect(bugTracker).createIssue(issue);
 
 	}
 
-	
 	@Override
-	public BTIssue getIssue(String key){
-		return connect().findIssue(key);
+	public BTIssue getIssue(String key, BugTracker bugTracker) {
+		return connect(bugTracker).findIssue(key);
 	}
-	
+
 	@Override
-	public List<BTIssue> getIssues(List<String> issueKeyList) {
-		
-		List<BTIssue> issues = connect().findIssues(issueKeyList);
-		
-		String bugtrackerName = getBugTrackerName();
-		
-		for (BTIssue issue : issues){
+	public List<BTIssue> getIssues(List<String> issueKeyList, BugTracker bugTracker) {
+
+		List<BTIssue> issues = connect(bugTracker).findIssues(issueKeyList);
+
+		String bugtrackerName = bugTracker.getName();
+
+		for (BTIssue issue : issues) {
 			issue.setBugtracker(bugtrackerName);
 		}
-		
+
 		return issues;
 	}
 
 	@Override
 	public Set<String> getProviderKinds() {
 		return bugTrackerConnectorFactory.getProviderKinds();
-		
+
 	}
 
-	
 }

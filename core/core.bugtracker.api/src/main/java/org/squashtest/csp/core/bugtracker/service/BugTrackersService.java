@@ -28,36 +28,24 @@ import org.squashtest.csp.core.bugtracker.core.BugTrackerNotFoundException;
 import org.squashtest.csp.core.bugtracker.core.BugTrackerRemoteException;
 import org.squashtest.csp.core.bugtracker.domain.BTIssue;
 import org.squashtest.csp.core.bugtracker.domain.BTProject;
+import org.squashtest.csp.core.bugtracker.domain.BugTracker;
 import org.squashtest.csp.core.bugtracker.domain.Priority;
 import org.squashtest.csp.core.bugtracker.spi.BugTrackerInterfaceDescriptor;
 
 
 /**
- * Service / Facade to access the bug-tracker from the rest of the application.
+ * Service / Facade to access the bug-trackers from the rest of the application.
  *
  * @author Gregory Fouquet
  *
  */
-public interface BugTrackerService {
+public interface BugTrackersService {
 	/**
 	 * Tells if a bug tracker is defined. If not, each bug tracker access method should throw an exception.
 	 *
 	 * @return
 	 */
 	boolean isBugTrackerDefined();
-	
-	/**
-	 * Tells if a bug tracker is iframe friendly.
-	 *
-	 * @return
-	 */
-	boolean isIframeFriendly();
-	/**
-	 * 
-	 * 
-	 * @return the name of this instance of bugtracker. The name is a symbolic name : not his kind, nor url.
-	 */
-	String getBugTrackerName();
 
 	/**
 	 * Tell if this service should be given authentication credentials before being able to perform any BT operation.
@@ -68,84 +56,80 @@ public interface BugTrackerService {
 
 	/**
 	 * Sets the credentials to use for bug tracker authentication. Once set,
-	 * {@link BugTrackerService#isCredentialsNeeded()} should no longer be <code>false</code> unless an authentication
+	 * {@link BugTrackersService#isCredentialsNeeded()} should no longer be <code>false</code> unless an authentication
 	 * error happens at some point.
 	 *
 	 * @param username
 	 * @param password
+	 * @param bugTracker the concerned BugTracker
 	 * @return nothing
 	 * @throws BugTrackerRemoteException if the credentials are invalid
 	 */
-	void  setCredentials(String username, String password);
+	void  setCredentials(String username, String password, BugTracker bugTracker);
 
 
 	/**
 	 *
 	 * returns a descriptor for the interface in TM
-	 *
+	 * @param bugTracker the concerned BugTracker
 	 * @return just what I said
 	 */
-
-	BugTrackerInterfaceDescriptor getInterfaceDescriptor();
-
-
-
-	/**
-	 * returns the URL of the registered bugtracker. That url is nothing less than the one defined
-	 * in the configuration files so there is no warranty that that URL will be valid.
-	 * @return the URL of that bugtracker or null if no bugtracker is defined or if malformed.
-	 */
-	URL getBugTrackerUrl();
-
+	BugTrackerInterfaceDescriptor getInterfaceDescriptor(BugTracker bugtracker);
+	
 
 	/**
 	 * returns an url like for getBugTrackerUrl. That method will build an url pointing to the issue
 	 * hosted on the remote bugtracker.
 	 *
 	 * @param issueId the ID of an issue that should already exist on the bugtracker (i.e., fed with an ID).
+	 * @param bugTracker the concerned BugTracker
 	 * @return the url if success, or null if no bugtracker is defined or if malformed.
 	 */
-	URL getViewIssueUrl(String issueId);
+	URL getViewIssueUrl(String issueId, BugTracker bugTracker);
 
 
 	/**
 	 * will return the list of the priorities one can set a bug to. The values actually returned depends on the
 	 * actual bugtracker at the other end of the line.
-	 *
+	 * 
+	 * @param bugTracker the concerned BugTracker
 	 * @return the list of Priority.
 	 */
-	List<Priority> getPriorities();
+	List<Priority> getPriorities(BugTracker bugTracker);
 
 
 
 
 	/**
 	 * will return a project, matching by its name
-	 *
+	 *	 * 
 	 * @param name of the project
+	 * @param bugTracker the concerned BugTracker
 	 * @return the project if found, shipped with all known versions, categories and users.
 	 * @throws various subclasses of BugTrackerManagerException
 	 */
-	BTProject findProject(String name);
+	BTProject findProject(String name, BugTracker bugTracker);
 
 
 	/**
 	 * will return a project, matching by its id. The id we look for is the one from the bugtracker, not from Squash.
 	 *
 	 * @param id of the project
+	 * @param bugTracker the concerned BugTracker
 	 * @return the project if found, shipped with all known versions, categories and users.
 	 * @throws various subclasses of BugTrackerManagerException
 	 */
-	BTProject findProjectById(String id);
+	BTProject findProjectById(String id, BugTracker bugTracker);
 
 	/**
 	 * will send an issue to the bugtracker.
 	 *
 	 * @param issue a squash Issue
+	 * @param bugTracker the concerned BugTracker
 	 * @return the newly created issue
 	 *
 	 */
-	BTIssue createIssue(BTIssue issue);
+	BTIssue createIssue(BTIssue issue, BugTracker bugTracker);
 
 	
 	
@@ -153,10 +137,11 @@ public interface BugTrackerService {
 	 * given a key, returns an issue
 	 * 
 	 * @param key
+	 * @param bugTracker the concerned BugTracker
 	 * @return the issue
 	 * @throws BugTrackerNotFoundException
 	 */
-	BTIssue getIssue(String key);
+	BTIssue getIssue(String key, BugTracker bugTracker);
 	
 
 	/***
@@ -164,9 +149,10 @@ public interface BugTrackerService {
 	 *
 	 * @param issueKeyList
 	 *            the Squash issue key List (List<String>)
+	 * @param bugTracker the concerned BugTracker
 	 * @return the corresponding BTIssue List
 	 */
-	List<BTIssue> getIssues(List<String> issueKeyList);
+	List<BTIssue> getIssues(List<String> issueKeyList, BugTracker bugTracker);
 
 	Set<String> getProviderKinds();
 

@@ -34,8 +34,8 @@
 	<context:component-scan base-package="org.squashtest.csp.tm.internal" />
 	
 	
-	<bean id="bugTrackerService" 
-		class="org.squashtest.csp.core.bugtracker.service.BugTrackerServiceImpl" >
+	<bean id="bugTrackersService" 
+		class="org.squashtest.csp.core.bugtracker.service.BugTrackersServiceImpl" >
 			<property name="bugTrackerConnectorFactory" ref="squashtest.core.bugtracker.BugTrackerConnectorFactory"/>
 	</bean>
 

@@ -20,18 +20,18 @@
  */
 package org.squashtest.csp.core.bugtracker.internal.service
 
-import org.squashtest.csp.core.bugtracker.core.BugTrackerConnectorFactory;
-import org.squashtest.csp.core.bugtracker.core.BugTrackerRemoteException;
-import org.squashtest.csp.core.bugtracker.domain.BugTracker;
-import org.squashtest.csp.core.bugtracker.service.BugTrackerContext;
-import org.squashtest.csp.core.bugtracker.service.BugTrackerContextHolder;
-import org.squashtest.csp.core.bugtracker.service.BugTrackerServiceImpl;
-import org.squashtest.csp.core.bugtracker.spi.BugTrackerConnector;
+import org.squashtest.csp.core.bugtracker.core.BugTrackerConnectorFactory
+import org.squashtest.csp.core.bugtracker.core.BugTrackerRemoteException
+import org.squashtest.csp.core.bugtracker.domain.BugTracker
+import org.squashtest.csp.core.bugtracker.service.BugTrackerContext
+import org.squashtest.csp.core.bugtracker.service.BugTrackerContextHolder
+import org.squashtest.csp.core.bugtracker.service.BugTrackersServiceImpl
+import org.squashtest.csp.core.bugtracker.spi.BugTrackerConnector
 
-import spock.lang.Specification;
+import spock.lang.Specification
 
-class BugTrackerServiceImplTest extends Specification {
-	BugTrackerServiceImpl service = new BugTrackerServiceImpl()
+class BugTrackersServiceImplTest_Disabled extends Specification {
+	BugTrackersServiceImpl service = new BugTrackersServiceImpl()
 	BugTrackerContextHolder contextHolder = Mock()
 
 	def setup() {

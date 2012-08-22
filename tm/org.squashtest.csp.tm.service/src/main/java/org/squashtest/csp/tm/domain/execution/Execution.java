@@ -48,6 +48,7 @@ import javax.validation.constraints.NotNull;
 
 import org.hibernate.annotations.Formula;
 import org.hibernate.validator.constraints.NotBlank;
+import org.squashtest.csp.core.bugtracker.domain.BugTracker;
 import org.squashtest.csp.core.domain.Identified;
 import org.squashtest.csp.core.security.annotation.AclConstrainedObject;
 import org.squashtest.csp.tm.domain.attachment.Attachment;
@@ -389,5 +390,10 @@ public class Execution implements AttachmentHolder, IssueDetector, Identified, H
 	
 			return list;
 		}
+
+	@Override
+	public BugTracker getBugTracker() {
+		return getProject().findBugTracker();
+	}
 
 	}

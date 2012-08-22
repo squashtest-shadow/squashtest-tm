@@ -21,31 +21,19 @@
 package org.squashtest.csp.core.bugtracker.service
 
 
-import java.util.Set;
+import java.net.URL;
+import java.util.List;
+import java.util.Set
 
-import org.squashtest.csp.core.bugtracker.domain.BTIssue;
-import org.squashtest.csp.core.bugtracker.domain.BTProject;
-import org.squashtest.csp.core.bugtracker.domain.Permission;
-import org.squashtest.csp.core.bugtracker.domain.Priority;
-import org.squashtest.csp.core.bugtracker.spi.BugTrackerInterfaceDescriptor;
+import org.squashtest.csp.core.bugtracker.domain.BTIssue
+import org.squashtest.csp.core.bugtracker.domain.BTProject
+import org.squashtest.csp.core.bugtracker.domain.BugTracker;
+import org.squashtest.csp.core.bugtracker.domain.Permission
+import org.squashtest.csp.core.bugtracker.domain.Priority
+import org.squashtest.csp.core.bugtracker.spi.BugTrackerInterfaceDescriptor
 
 
-class StubBugTrackerService implements BugTrackerService {
-
-	@Override
-	public Set<String> getProviderKinds() {
-		return null;
-	}
-
-	@Override
-	public boolean isIframeFriendly() {
-				return false;
-	}
-
-	@Override
-	public URL getBugTrackerUrl() {
-		return null;
-	}
+class StubBugTrackerService implements BugTrackersService {
 
 	@Override
 	public boolean isBugTrackerDefined() {
@@ -58,63 +46,53 @@ class StubBugTrackerService implements BugTrackerService {
 	}
 
 	@Override
-	public void setCredentials(String username, String password) {
+	public void setCredentials(String username, String password, BugTracker bugTracker) {
+		
 	}
 
 	@Override
-	public BugTrackerInterfaceDescriptor getInterfaceDescriptor() {
+	public BugTrackerInterfaceDescriptor getInterfaceDescriptor(BugTracker bugtracker) {
 		return null;
 	}
 
+	@Override
+	public URL getViewIssueUrl(String issueId, BugTracker bugTracker) {
+		return null;
+	}
+
+	@Override
+	public List<Priority> getPriorities(BugTracker bugTracker) {
+		return null;
+	}
+
+	@Override
+	public BTProject findProject(String name, BugTracker bugTracker) {
+		return null;
+	}
+
+	@Override
+	public BTProject findProjectById(String id, BugTracker bugTracker) {
+		return null;
+	}
+
+	@Override
+	public BTIssue createIssue(BTIssue issue, BugTracker bugTracker) {
+		return null;
+	}
+
+	@Override
+	public BTIssue getIssue(String key, BugTracker bugTracker) {
+		return null;
+	}
+
+	@Override
+	public List<BTIssue> getIssues(List<String> issueKeyList, BugTracker bugTracker) {
+		return null;
+	}
+
+	@Override
+	public Set<String> getProviderKinds() {
+		return null;
+	}
 	
-
-	@Override
-	public URL getViewIssueUrl(String issueId) {
-		return null;
-	}
-
-	@Override
-	public List<Priority> getPriorities() {
-		return null;
-	}
-
-	@Override
-	public List<Permission> getPermissions() {
-		return null;
-	}
-
-	@Override
-	public BTProject findProject(String name) {
-		return null;
-	}
-
-	@Override
-	public BTProject findProject(Long id) {
-		return null;
-	}
-
-	@Override
-	public BTIssue createIssue(BTIssue issue) {
-		return null;
-	}
-
-	@Override
-	public List<BTIssue> getIssues(List<String> issueKeyList){
-		return null;
-	}
-
-	@Override
-	public BTProject findProjectById(String id) {
-		return null;
-	}
-	
-	@Override
-	public String getBugTrackerName() {
-		return null;
-	}
-
-	@Override
-	public BTIssue getIssue(String key) {
-		return null;
-	}
 }

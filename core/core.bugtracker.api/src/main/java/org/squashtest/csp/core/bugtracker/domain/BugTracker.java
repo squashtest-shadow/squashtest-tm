@@ -20,6 +20,9 @@
  */
 package org.squashtest.csp.core.bugtracker.domain;
 
+import java.net.MalformedURLException;
+import java.net.URL;
+
 import javax.persistence.*;
 import javax.validation.constraints.Size;
 
@@ -84,7 +87,26 @@ public class BugTracker  {
 	public String getUrl() {
 		return url;
 	}
+	
+	/**
+	 * returns the URL of the registered bugtracker. That url is nothing less than the one defined
+	 * in the configuration files so there is no warranty that that URL will be valid.
+	 * @return the URL of that bugtracker or null if no bugtracker is defined or if malformed.
+	 */
+	public URL getURL() {
+		URL bugTrackerUrl = null;
 
+		try {
+			
+			bugTrackerUrl = new URL(url);
+			
+		} catch (MalformedURLException mue) {
+			// XXX should throw an exception
+			bugTrackerUrl = null;
+		}
+
+		return bugTrackerUrl;
+	}
 	public void setUrl(String url) {
 		this.url = url;
 	}

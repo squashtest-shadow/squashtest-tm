@@ -111,8 +111,8 @@
 		availability="mandatory " />
 
 	<!-- bug tracker services -->
-	<osgi:reference id="squashtest.tm.service.BugTrackerLocalService"
-		bean-name="squashtest.tm.service.BugTrackerLocalService" interface="org.squashtest.csp.tm.service.BugTrackerLocalService"
+	<osgi:reference id="squashtest.tm.service.BugTrackersLocalService"
+		bean-name="squashtest.tm.service.BugTrackersLocalService" interface="org.squashtest.csp.tm.service.BugTrackersLocalService"
 		availability="mandatory" />
 	<osgi:reference id="squashtest.tm.service.BugTrackerManagerService"
 		bean-name="squashtest.tm.service.BugTrackerManagerService"
@@ -165,7 +165,7 @@
 
 	<bean id="squashtest.tm.web.authSuccessCallback.btautoconnect"
 		class="org.squashtest.csp.tm.web.internal.handler.BugtrackerAutoconnectCallback">
-		<property name="bugTrackerLocalService" ref="squashtest.tm.service.BugTrackerLocalService" />
+		<property name="bugTrackersLocalService" ref="squashtest.tm.service.BugTrackersLocalService" />
 	</bean>
 
 	<osgi:service ref="squashtest.tm.web.authSuccessCallback.btautoconnect"

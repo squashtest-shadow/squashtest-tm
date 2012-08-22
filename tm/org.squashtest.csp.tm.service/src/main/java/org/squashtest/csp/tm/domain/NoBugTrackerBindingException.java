@@ -18,46 +18,34 @@
  *     You should have received a copy of the GNU Lesser General Public License
  *     along with this software.  If not, see <http://www.gnu.org/licenses/>.
  */
-package org.squashtest.csp.tm.service;
+package org.squashtest.csp.tm.domain;
 
-import java.util.List;
-import java.util.Set;
-
-import org.squashtest.csp.core.bugtracker.domain.BugTracker;
-import org.squashtest.csp.tm.infrastructure.filter.CollectionSorting;
-import org.squashtest.csp.tm.infrastructure.filter.FilteredCollectionHolder;
-
-
-public interface BugTrackerFinderService {
+public class NoBugTrackerBindingException extends ActionException {
 
 	/**
 	 * 
-	 * @return all bugtrackers the user has read access to
 	 */
-	List<BugTracker> findAll();
+	//FIXME add generated serial version UID , my eclipse couldn't do it (mpagnon)
+	private static final long serialVersionUID = 1L;
 	
-	/**
-	 * 
-	 * @param bugTrackerId
-	 * @return the bugTracker of the given id
-	 */
-	BugTracker findById(long bugTrackerId);
-	/**
-	 * 
-	 * @param filter
-	 * @return sorted list of bugtrackers
-	 */
-	FilteredCollectionHolder<List<BugTracker>> findSortedBugtrackers(CollectionSorting filter);
 	
-	/**
-	 * 
-	 * @return a list of bugtracker kinds
-	 */
-	Set<String> findBugTrackerKinds();
-	
-	/**
-	 * @param bugtrackerId
-	 * @return the name of the bugtracker
-	 */
-	String findBugtrackerName(Long bugtrackerId);
+	private final String bugtrackerNameExistsMessageKey = "squashtm.action.exception.bugtrackerBinding.notExist";
+
+	public NoBugTrackerBindingException(Exception ex) {
+		super(ex);
+	}
+
+	public NoBugTrackerBindingException(String message) {
+		super(message);
+	}
+
+	public NoBugTrackerBindingException() {
+
+	}
+
+	@Override
+	public String getI18nKey() {
+		return bugtrackerNameExistsMessageKey;
+	}
+
 }

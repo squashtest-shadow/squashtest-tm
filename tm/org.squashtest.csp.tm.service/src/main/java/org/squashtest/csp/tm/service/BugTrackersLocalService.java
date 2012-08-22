@@ -28,6 +28,7 @@ import org.squashtest.csp.core.bugtracker.core.BugTrackerManagerException;
 import org.squashtest.csp.core.bugtracker.core.BugTrackerRemoteException;
 import org.squashtest.csp.core.bugtracker.domain.BTIssue;
 import org.squashtest.csp.core.bugtracker.domain.BTProject;
+import org.squashtest.csp.core.bugtracker.domain.BugTracker;
 import org.squashtest.csp.core.bugtracker.domain.Priority;
 import org.squashtest.csp.core.bugtracker.spi.BugTrackerInterfaceDescriptor;
 import org.squashtest.csp.tm.domain.bugtracker.BugTrackerStatus;
@@ -36,7 +37,7 @@ import org.squashtest.csp.tm.domain.bugtracker.IssueOwnership;
 import org.squashtest.csp.tm.infrastructure.filter.CollectionSorting;
 import org.squashtest.csp.tm.infrastructure.filter.FilteredCollectionHolder;
 
-public interface BugTrackerLocalService {
+public interface BugTrackersLocalService {
 
 	/* ******************* Squash TM - side methods ****************** */
 
@@ -59,17 +60,21 @@ public interface BugTrackerLocalService {
 	 * 
 	 * @param btIssueId
 	 *            the id of that issue
+	 * @param bugTracker
+	 *            : the concerned BugTracker
 	 * @return the URL where you may find that issue.
 	 */
-	URL getIssueUrl(String btIssueId);
+	URL getIssueUrl(String btIssueId, BugTracker bugTracker);
 
 	/**
 	 * An InterfaceDescriptor contains informations relevant to the generation of a view/GUI. See the class for more
 	 * details.
 	 * 
+	 * @param bugTracker
+	 *            the concerned BugTracker
 	 * @return an InterfaceDescriptor.
 	 */
-	BugTrackerInterfaceDescriptor getInterfaceDescriptor();
+	BugTrackerInterfaceDescriptor getInterfaceDescriptor(BugTracker bugTracker);
 
 	/**
 	 * Given an ExecutionStep, returns a list of linked BTIssue (not Issue). <br>
@@ -97,6 +102,7 @@ public interface BugTrackerLocalService {
 	 *            of which we need to get the issues,
 	 * @param sorter
 	 *            that tells us how we should sort and filter the data
+	 * 
 	 * @return a FilteredCollectionHolder containing a non-null but possibly empty list of IssueOwnership<Issue>, sorted
 	 *         and filtered according to the CollectionSorting.
 	 */
@@ -113,6 +119,7 @@ public interface BugTrackerLocalService {
 	 *            of which we need to get the issues,
 	 * @param sorter
 	 *            that tells us how we should sort and filter the data
+	 * 
 	 * @return a FilteredCollectionHolder containing a non-null but possibly empty list of IssueOwnership<Issue>, sorted
 	 *         and filtered according to the CollectionSorting.
 	 */
@@ -129,10 +136,12 @@ public interface BugTrackerLocalService {
 	 *            of which we need to get the issues,
 	 * @param sorter
 	 *            that tells us how we should sort and filter the data
+	 * 
 	 * @return a FilteredCollectionHolder containing a non-null but possibly empty list of IssueOwnership<Issue>, sorted
 	 *         and filtered according to the CollectionSorting.
 	 */
-	FilteredCollectionHolder<List<IssueOwnership<BTIssue>>> findSortedIssueOwnershipsForCampaigns(Long campId, CollectionSorting sorter);
+	FilteredCollectionHolder<List<IssueOwnership<BTIssue>>> findSortedIssueOwnershipsForCampaigns(Long campId,
+			CollectionSorting sorter);
 
 	/**
 	 * Given a TestSuite, returns a list of linked BTIssue (not Issue).<br>
@@ -144,26 +153,30 @@ public interface BugTrackerLocalService {
 	 *            for which we need to get the issues,
 	 * @param sorter
 	 *            that tells us how we should sort and filter the data
+	 * 
 	 * @return a FilteredCollectionHolder containing a non-null but possibly empty list of IssueOwnership<Issue>, sorted
 	 *         and filtered according to the CollectionSorting.
 	 */
 	FilteredCollectionHolder<List<IssueOwnership<BTIssue>>> findSortedIssueOwnershipsForTestSuite(Long testSuiteId,
 			CollectionSorting sorter);
+
 	/**
 	 * Given a TestCase, returns a list of linked BTIssue (not Issue).<br>
 	 * <br>
 	 * To keep track of which IssueDetector owns which issue, the data are wrapped in a IssueOwnership (that just pair
 	 * the informations together).
 	 * 
-	 * @param testCase id
-	 *            for which we need to get the issues,
+	 * @param testCase
+	 *            id for which we need to get the issues,
 	 * @param sorter
 	 *            that tells us how we should sort and filter the data
+	 * 
 	 * @return a FilteredCollectionHolder containing a non-null but possibly empty list of IssueOwnership<Issue>, sorted
 	 *         and filtered according to the CollectionSorting.
 	 */
 	FilteredCollectionHolder<List<IssueOwnership<BTIssue>>> findSortedIssueOwnershipForTestCase(Long tcId,
 			CollectionSorting sorter);
+
 	/* ****************** BugTracker - side methods ******************** */
 
 	/**
@@ -179,58 +192,74 @@ public interface BugTrackerLocalService {
 	 * 
 	 * @param username
 	 * @param password
-	 * 
+	 * @param bugTracker
+	 *            : the concerned BugTracker
 	 * @return nothing
 	 * @throws BugTrackerRemoteException
 	 *             if the credentials are wrong
 	 */
-	void setCredentials(String username, String password);
+	void setCredentials(String username, String password, BugTracker bugTracker);
 
 	/**
 	 * returns an instance of the remote project.
 	 * 
 	 * @param name
 	 *            : the name of the project.
+	 * @param bugTracker
+	 *            : the concerned BugTracker
 	 * @return the project filled with users and versions if found.
 	 * @throw BugTrackerManagerException and subtypes.
 	 * 
 	 */
-	BTProject findRemoteProject(String name);
+	BTProject findRemoteProject(String name, BugTracker bugTracker);
 
 	/**
 	 * returns the list of priorities .
 	 * 
+	 * @param bugTracker
+	 *            : the concerned BugTracker
 	 * @return the list of priorities. An empty list is returned if none are found.
 	 * @throws BugTrackerManagerException
 	 *             and subtypes.
 	 */
-	List<Priority> getRemotePriorities();
+	List<Priority> getRemotePriorities(BugTracker bugTracker);
 
 	/**
 	 * returns a remote issue using its key
 	 * 
 	 * @param issueKey
+	 * @param bugTracker
+	 *            : the concerned BugTracker
 	 * @return a remote issue
 	 */
-	BTIssue getIssue(String issueKey);
+	BTIssue getIssue(String issueKey, BugTracker bugTracker);
 
 	/***
 	 * returns a list of BTIssu corresponding to the given string keys
 	 * 
 	 * @param issueKeyList
 	 *            the remote issue key list
+	 * @param bugTracker
+	 *            : the concerned BugTracker
 	 * @return a BTIssue list
 	 */
-	List<BTIssue> getIssues(List<String> issueKeyList);
+	List<BTIssue> getIssues(List<String> issueKeyList, BugTracker bugTracker);
 
+	/**
+	 * Will attach an existing issue to the issue detector
+	 * 
+	 * @param bugged
+	 *            : the furure issue holder
+	 * @param remoteIssueKey
+	 *            : the identificator of the issue in the BT
+	 * 
+	 */
 	void attachIssue(IssueDetector bugged, String remoteIssueKey);
 
-	URL getBugtrackerUrl();
-
-	Boolean getBugtrackerIframeFriendly();
-
+	/**
+	 * 
+	 * @return the list of all bugtracker kinds available
+	 */
 	Set<String> getProviderKinds();
-
-	
 
 }

@@ -39,6 +39,8 @@ import javax.validation.constraints.Size;
 
 import org.hibernate.annotations.ForeignKey;
 import org.hibernate.validator.constraints.NotBlank;
+import org.squashtest.csp.core.bugtracker.domain.BugTracker;
+import org.squashtest.csp.tm.domain.NoBugTrackerBindingException;
 import org.squashtest.csp.tm.domain.audit.Auditable;
 import org.squashtest.csp.tm.domain.bugtracker.BugTrackerBinding;
 import org.squashtest.csp.tm.domain.campaign.CampaignLibrary;
@@ -248,6 +250,19 @@ public class Project {
 	public void removeBugTrackerBinding() {
 		this.bugtrackerBinding = null;
 		
+	}
+	
+	/**
+	 * 
+	 * @return the BugTracker the Project is bound to
+	 * @throws NoBugTrackerBindingException if the project is not BugtrackerConnected
+	 */
+	public BugTracker findBugTracker(){
+		if(isBugtrackerConnected()){
+			return getBugtrackerBinding().getBugtracker();
+		}else{
+		throw new NoBugTrackerBindingException();
+		}
 	}
 	
 }

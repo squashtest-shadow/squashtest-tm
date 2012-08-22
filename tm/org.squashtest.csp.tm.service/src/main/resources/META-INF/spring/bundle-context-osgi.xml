@@ -43,8 +43,8 @@
 	<osgi:service ref="squashtest.core.bugtracker.BugTrackerContextHolder"
 		interface="org.squashtest.csp.core.bugtracker.service.BugTrackerContextHolder" />
 
-	<osgi:service ref="squashtest.tm.service.BugTrackerLocalService"
-		interface="org.squashtest.csp.tm.service.BugTrackerLocalService" />
+	<osgi:service ref="squashtest.tm.service.BugTrackersLocalService"
+		interface="org.squashtest.csp.tm.service.BugTrackersLocalService" />
 		
 	<osgi:service ref="squashtest.tm.service.BugTrackerManagerService">
 		<osgi:interfaces>

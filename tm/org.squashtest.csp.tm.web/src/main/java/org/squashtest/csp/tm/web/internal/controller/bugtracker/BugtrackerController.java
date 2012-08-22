@@ -46,6 +46,7 @@ import org.springframework.web.servlet.ModelAndView;
 import org.squashtest.csp.core.bugtracker.core.BugTrackerNoCredentialsException;
 import org.squashtest.csp.core.bugtracker.domain.BTIssue;
 import org.squashtest.csp.core.bugtracker.domain.BTProject;
+import org.squashtest.csp.core.bugtracker.domain.BugTracker;
 import org.squashtest.csp.core.bugtracker.spi.BugTrackerInterfaceDescriptor;
 import org.squashtest.csp.core.domain.Identified;
 import org.squashtest.csp.tm.domain.bugtracker.BugTrackerStatus;
@@ -59,7 +60,8 @@ import org.squashtest.csp.tm.domain.execution.ExecutionStep;
 import org.squashtest.csp.tm.domain.testcase.TestCase;
 import org.squashtest.csp.tm.infrastructure.filter.CollectionSorting;
 import org.squashtest.csp.tm.infrastructure.filter.FilteredCollectionHolder;
-import org.squashtest.csp.tm.service.BugTrackerLocalService;
+import org.squashtest.csp.tm.service.BugTrackerFinderService;
+import org.squashtest.csp.tm.service.BugTrackersLocalService;
 import org.squashtest.csp.tm.service.CampaignFinder;
 import org.squashtest.csp.tm.service.ExecutionFinder;
 import org.squashtest.csp.tm.service.IterationFinder;
@@ -75,12 +77,13 @@ public class BugtrackerController {
 
 	private static final Logger LOGGER = LoggerFactory.getLogger(BugtrackerController.class);
 
-	private BugTrackerLocalService bugTrackerLocalService;
+	private BugTrackersLocalService bugTrackersLocalService;
 	private CampaignFinder campaignFinder;
 	private IterationFinder iterationFinder;
 	private TestSuiteFinder testSuiteFinder;
 	private ExecutionFinder executionFinder;
 	private TestCaseFinder testCaseFinder;
+	private BugTrackerFinderService bugTrackerFinderService;
 
 	private static final String EXECUTION_STEP_TYPE = "execution-step";
 	private static final String EXECUTION_TYPE = "execution";
@@ -88,6 +91,7 @@ public class BugtrackerController {
 	private static final String CAMPAIGN_TYPE = "campaign";
 	private static final String TEST_SUITE_TYPE = "test-suite";
 	private static final String TEST_CASE_TYPE = "test-case";
+	private static final String BUGTRACKER_ID = "bugTrackerId";
 
 	@Inject
 	private MessageSource messageSource;
@@ -118,13 +122,17 @@ public class BugtrackerController {
 	}
 
 	@ServiceReference
-	public void setBugTrackerLocalService(BugTrackerLocalService bugTrackerLocalService) {
-		if (bugTrackerLocalService == null) {
+	public void setBugTrackersLocalService(BugTrackersLocalService bugTrackersLocalService) {
+		if (bugTrackersLocalService == null) {
 			throw new IllegalArgumentException("BugTrackerController : no service provided");
 		}
-		this.bugTrackerLocalService = bugTrackerLocalService;
+		this.bugTrackersLocalService = bugTrackersLocalService;
 	}
-
+	
+	@ServiceReference
+	public void setBugTrackerFinderService(BugTrackerFinderService bugTrackerFinderService) {
+		this.bugTrackerFinderService = bugTrackerFinderService;
+	}
 	/* **************************************************************************************************************
 	 * *
 	 * Navigation button * *
@@ -132,24 +140,27 @@ public class BugtrackerController {
 	 */
 	@RequestMapping(value = "workspace-button", method = RequestMethod.GET)
 	public ModelAndView getNavButton(Locale locale) {
-		BugTrackerStatus status = checkStatus();
+		// BugTrackerStatus status = checkStatus();
 
-		if (status == BugTrackerStatus.BUGTRACKER_UNDEFINED) {
-			LOGGER.trace("no bugtracker");
-			return new ModelAndView("fragment/issues/bugtracker-panel-empty");
-		} else {
-			LOGGER.trace("return bugtracker nav button");
-			ModelAndView mav = new ModelAndView("fragment/issues/bugtracker-nav-button");
-			mav.addObject("bugtrackerUrl", bugTrackerLocalService.getBugtrackerUrl().toString());
-			mav.addObject("iframeFriendly", bugTrackerLocalService.getBugtrackerIframeFriendly());
-			return mav;
-		}
+		// TODO [Feat 1208]
+		// if (status == BugTrackerStatus.BUGTRACKER_UNDEFINED) {
+		LOGGER.trace("no bugtracker");
+		return new ModelAndView("fragment/issues/bugtracker-panel-empty");
+		// } else {
+		// LOGGER.trace("return bugtracker nav button");
+		// ModelAndView mav = new ModelAndView("fragment/issues/bugtracker-nav-button");
+		// mav.addObject("bugtrackerUrl", bugTrackersLocalService.getBugtrackerUrl().toString());
+		// mav.addObject("iframeFriendly", bugTrackersLocalService.getBugtrackerIframeFriendly());
+		// return mav;
+		// }
 	}
 
 	@RequestMapping(value = "workspace", method = RequestMethod.GET)
 	public ModelAndView showWorkspace() {
 		ModelAndView mav = new ModelAndView("page/bugtracker-workspace");
-		mav.addObject("bugtrackerUrl", bugTrackerLocalService.getBugtrackerUrl().toString());
+		// mav.addObject("bugtrackerUrl", bugTrackersLocalService.getBugtrackerUrl().toString());
+		// TODO [Feat 1208]
+		mav.addObject("bugtrackerUrl", "TODO");
 		return mav;
 	}
 
@@ -171,7 +182,8 @@ public class BugtrackerController {
 			@RequestParam(value = "style", required = false, defaultValue = "toggle") String panelStyle) {
 
 		ExecutionStep step = executionFinder.findExecutionStepById(stepId);
-		return makeIssuePanel(step, EXECUTION_STEP_TYPE, locale, panelStyle);
+		BugTracker bugTracker = step.getBugTracker();
+		return makeIssuePanel(step, EXECUTION_STEP_TYPE, locale, panelStyle, bugTracker);
 	}
 
 	/**
@@ -183,22 +195,22 @@ public class BugtrackerController {
 			final DataTableDrawParameters params, final Locale locale) {
 
 		FilteredCollectionHolder<List<IssueOwnership<BTIssue>>> filteredCollection;
-		CollectionSorting sorter = createCollectionSorting(params);
+		CollectionSorting sorter = createCollectionSorting(params);		
+			try {
 
-		try {
+				filteredCollection = bugTrackersLocalService.findSortedIssueOwnerShipsForExecutionStep(stepId, sorter);
+			}
 
-			filteredCollection = bugTrackerLocalService.findSortedIssueOwnerShipsForExecutionStep(stepId, sorter);
-		}
+			// no credentials exception are okay, the rest is to be treated as usual
+			catch (BugTrackerNoCredentialsException noCrdsException) {
+				filteredCollection = makeEmptyCollectionHolder(EXECUTION_STEP_TYPE, stepId, noCrdsException);
+			} catch (NullArgumentException npException) {
+				filteredCollection = makeEmptyCollectionHolder(EXECUTION_STEP_TYPE, stepId, npException);
+			}
 
-		// no credentials exception are okay, the rest is to be treated as usual
-		catch (BugTrackerNoCredentialsException noCrdsException) {
-			filteredCollection = makeEmptyCollectionHolder(EXECUTION_STEP_TYPE, stepId, noCrdsException);
-		} catch (NullArgumentException npException) {
-			filteredCollection = makeEmptyCollectionHolder(EXECUTION_STEP_TYPE, stepId, npException);
-		}
-
-		return new StepIssuesTableModel().buildDataModel(filteredCollection, sorter.getFirstItemIndex() + 1,
-				params.getsEcho());
+			return new StepIssuesTableModel().buildDataModel(filteredCollection, sorter.getFirstItemIndex() + 1,
+					params.getsEcho());
+		
 
 	}
 
@@ -216,11 +228,9 @@ public class BugtrackerController {
 		ExecutionStep step = executionFinder.findExecutionStepById(stepId);
 
 		String executionUrl = BugtrackerControllerHelper.buildExecutionUrl(request, step.getExecution());
-		
+
 		return makeReportIssueModel(step, locale, executionUrl);
 	}
-
-	
 
 	/**
 	 * gets the data of a new issue to be reported
@@ -258,7 +268,8 @@ public class BugtrackerController {
 			@RequestParam(value = "style", required = false, defaultValue = "toggle") String panelStyle) {
 
 		Execution bugged = executionFinder.findById(execId);
-		return makeIssuePanel(bugged, EXECUTION_TYPE, locale, panelStyle);
+		BugTracker bugTracker = bugged.getBugTracker();
+		return makeIssuePanel(bugged, EXECUTION_TYPE, locale, panelStyle, bugTracker);
 	}
 
 	/**
@@ -272,22 +283,21 @@ public class BugtrackerController {
 		FilteredCollectionHolder<List<IssueOwnership<BTIssue>>> filteredCollection;
 
 		CollectionSorting sorter = createCollectionSorting(params);
+			try {
+				filteredCollection = bugTrackersLocalService.findSortedIssueOwnershipsforExecution(execId, sorter);
 
-		try {
-			filteredCollection = bugTrackerLocalService.findSortedIssueOwnershipsforExecution(execId, sorter);
+			}
 
-		}
+			// no credentials exception are okay, the rest is to be treated as usual
+			catch (BugTrackerNoCredentialsException noCrdsException) {
+				filteredCollection = makeEmptyCollectionHolder(EXECUTION_TYPE, execId, noCrdsException);
+			} catch (NullArgumentException npException) {
+				filteredCollection = makeEmptyCollectionHolder(EXECUTION_TYPE, execId, npException);
+			}
 
-		// no credentials exception are okay, the rest is to be treated as usual
-		catch (BugTrackerNoCredentialsException noCrdsException) {
-			filteredCollection = makeEmptyCollectionHolder(EXECUTION_TYPE, execId, noCrdsException);
-		} catch (NullArgumentException npException) {
-			filteredCollection = makeEmptyCollectionHolder(EXECUTION_TYPE, execId, npException);
-		}
-
-		return new ExecutionIssuesTableModel(messageSource, locale).buildDataModel(filteredCollection,
-				sorter.getFirstItemIndex() + 1, params.getsEcho());
-
+			return new ExecutionIssuesTableModel(messageSource, locale).buildDataModel(filteredCollection,
+					sorter.getFirstItemIndex() + 1, params.getsEcho());
+		
 	}
 
 	/**
@@ -300,7 +310,7 @@ public class BugtrackerController {
 	@ResponseBody
 	public BTIssue getExecReportStub(@PathVariable Long execId, Locale locale, HttpServletRequest request) {
 		Execution execution = executionFinder.findById(execId);
-		String executionUrl = BugtrackerControllerHelper.buildExecutionUrl(request,execution);
+		String executionUrl = BugtrackerControllerHelper.buildExecutionUrl(request, execution);
 		return makeReportIssueModel(execution, locale, executionUrl);
 	}
 
@@ -340,7 +350,8 @@ public class BugtrackerController {
 			@RequestParam(value = "style", required = false, defaultValue = "toggle") String panelStyle) {
 
 		TestCase testCase = testCaseFinder.findById(tcId);
-		return makeIssuePanel(testCase, TEST_CASE_TYPE, locale, panelStyle);
+		BugTracker bugTracker = testCase.getProject().findBugTracker();
+		return makeIssuePanel(testCase, TEST_CASE_TYPE, locale, panelStyle, bugTracker);
 	}
 
 	/**
@@ -353,18 +364,19 @@ public class BugtrackerController {
 
 		FilteredCollectionHolder<List<IssueOwnership<BTIssue>>> filteredCollection;
 		CollectionSorting sorter = createCollectionSorting(params);
+			try {
+				filteredCollection = bugTrackersLocalService.findSortedIssueOwnershipForTestCase(tcId, sorter);
+			}
+			// no credentials exception are okay, the rest is to be treated as usual
+			catch (BugTrackerNoCredentialsException noCrdsException) {
+				filteredCollection = makeEmptyCollectionHolder(TEST_CASE_TYPE, tcId, noCrdsException);
+			} catch (NullArgumentException npException) {
+				filteredCollection = makeEmptyCollectionHolder(TEST_CASE_TYPE, tcId, npException);
+			}
+			return new TestCaseIssuesTableModel(messageSource, locale).buildDataModel(filteredCollection,
+					sorter.getFirstItemIndex() + 1, params.getsEcho());
 
-		try {
-			filteredCollection = bugTrackerLocalService.findSortedIssueOwnershipForTestCase(tcId, sorter);
-		}
-		// no credentials exception are okay, the rest is to be treated as usual
-		catch (BugTrackerNoCredentialsException noCrdsException) {
-			filteredCollection = makeEmptyCollectionHolder(TEST_CASE_TYPE, tcId, noCrdsException);
-		} catch (NullArgumentException npException) {
-			filteredCollection = makeEmptyCollectionHolder(TEST_CASE_TYPE, tcId, npException);
-		}
-		return new TestCaseIssuesTableModel(messageSource, locale).buildDataModel(filteredCollection,
-				sorter.getFirstItemIndex() + 1, params.getsEcho());
+		
 
 	}
 
@@ -386,7 +398,8 @@ public class BugtrackerController {
 			@RequestParam(value = "style", required = false, defaultValue = "toggle") String panelStyle) {
 
 		Iteration iteration = iterationFinder.findById(iterId);
-		return makeIssuePanel(iteration, ITERATION_TYPE, locale, panelStyle);
+		BugTracker bugTracker = iteration.getProject().findBugTracker();
+		return makeIssuePanel(iteration, ITERATION_TYPE, locale, panelStyle, bugTracker);
 	}
 
 	/**
@@ -399,19 +412,18 @@ public class BugtrackerController {
 
 		FilteredCollectionHolder<List<IssueOwnership<BTIssue>>> filteredCollection;
 		CollectionSorting sorter = createCollectionSorting(params);
-
-		try {
-			filteredCollection = bugTrackerLocalService.findSortedIssueOwnershipForIteration(iterId, sorter);
-		}
-		// no credentials exception are okay, the rest is to be treated as usual
-		catch (BugTrackerNoCredentialsException noCrdsException) {
-			filteredCollection = makeEmptyCollectionHolder(ITERATION_TYPE, iterId, noCrdsException);
-		} catch (NullArgumentException npException) {
-			filteredCollection = makeEmptyCollectionHolder(ITERATION_TYPE, iterId, npException);
-		}
-		return new IterationIssuesTableModel(messageSource, locale).buildDataModel(filteredCollection,
-				sorter.getFirstItemIndex() + 1, params.getsEcho());
-
+			try {
+				filteredCollection = bugTrackersLocalService.findSortedIssueOwnershipForIteration(iterId, sorter);
+			}
+			// no credentials exception are okay, the rest is to be treated as usual
+			catch (BugTrackerNoCredentialsException noCrdsException) {
+				filteredCollection = makeEmptyCollectionHolder(ITERATION_TYPE, iterId, noCrdsException);
+			} catch (NullArgumentException npException) {
+				filteredCollection = makeEmptyCollectionHolder(ITERATION_TYPE, iterId, npException);
+			}
+			return new IterationIssuesTableModel(messageSource, locale).buildDataModel(filteredCollection,
+					sorter.getFirstItemIndex() + 1, params.getsEcho());
+		
 	}
 
 	/* **************************************************************************************************************
@@ -432,7 +444,8 @@ public class BugtrackerController {
 			@RequestParam(value = "style", required = false, defaultValue = "toggle") String panelStyle) {
 
 		Campaign campaign = campaignFinder.findById(campId);
-		return makeIssuePanel(campaign, CAMPAIGN_TYPE, locale, panelStyle);
+		BugTracker bugTracker = campaign.getProject().findBugTracker();
+		return makeIssuePanel(campaign, CAMPAIGN_TYPE, locale, panelStyle, bugTracker);
 	}
 
 	/**
@@ -445,9 +458,9 @@ public class BugtrackerController {
 
 		FilteredCollectionHolder<List<IssueOwnership<BTIssue>>> filteredCollection;
 		CollectionSorting sorter = createCollectionSorting(params);
-
 		try {
-			filteredCollection = bugTrackerLocalService.findSortedIssueOwnershipsForCampaigns(campId, sorter);
+			filteredCollection = bugTrackersLocalService.findSortedIssueOwnershipsForCampaigns(campId, sorter
+					);
 		}
 		// no credentials exception are okay, the rest is to be treated as usual
 		catch (BugTrackerNoCredentialsException noCrdsException) {
@@ -477,7 +490,8 @@ public class BugtrackerController {
 			@RequestParam(value = "style", required = false, defaultValue = "toggle") String panelStyle) {
 
 		TestSuite testSuite = testSuiteFinder.findById(testSuiteId);
-		return makeIssuePanel(testSuite, TEST_SUITE_TYPE, locale, panelStyle);
+		BugTracker bugTracker = testSuite.getIteration().getProject().findBugTracker();
+		return makeIssuePanel(testSuite, TEST_SUITE_TYPE, locale, panelStyle, bugTracker);
 	}
 
 	/**
@@ -490,34 +504,36 @@ public class BugtrackerController {
 
 		FilteredCollectionHolder<List<IssueOwnership<BTIssue>>> filteredCollection;
 		CollectionSorting sorter = createCollectionSorting(params);
-
-		try {
-			filteredCollection = bugTrackerLocalService.findSortedIssueOwnershipsForTestSuite(testSuiteId, sorter);
-		}
-		// no credentials exception are okay, the rest is to be treated as usual
-		catch (BugTrackerNoCredentialsException noCrdsException) {
-			filteredCollection = makeEmptyCollectionHolder(TEST_SUITE_TYPE, testSuiteId, noCrdsException);
-		} catch (NullArgumentException npException) {
-			filteredCollection = makeEmptyCollectionHolder(TEST_SUITE_TYPE, testSuiteId, npException);
-		}
-		return new IterationIssuesTableModel(messageSource, locale).buildDataModel(filteredCollection,
-				sorter.getFirstItemIndex() + 1, params.getsEcho());
+			try {
+				filteredCollection = bugTrackersLocalService.findSortedIssueOwnershipsForTestSuite(testSuiteId, sorter
+						);
+			}
+			// no credentials exception are okay, the rest is to be treated as usual
+			catch (BugTrackerNoCredentialsException noCrdsException) {
+				filteredCollection = makeEmptyCollectionHolder(TEST_SUITE_TYPE, testSuiteId, noCrdsException);
+			} catch (NullArgumentException npException) {
+				filteredCollection = makeEmptyCollectionHolder(TEST_SUITE_TYPE, testSuiteId, npException);
+			}
+			return new IterationIssuesTableModel(messageSource, locale).buildDataModel(filteredCollection,
+					sorter.getFirstItemIndex() + 1, params.getsEcho());
+		
 	}
 
 	/* ************************* Generic code section ************************** */
 
-	@RequestMapping(value = "/find-issue/{remoteKey}", method = RequestMethod.GET)
+	@RequestMapping(value = "/find-issue/{remoteKey}", method = RequestMethod.GET, params = {BUGTRACKER_ID})
 	@ResponseBody
-	public BTIssue findIssue(@PathVariable("remoteKey") String remoteKey) {
-		BTIssue remoteIssue = bugTrackerLocalService.getIssue(remoteKey);
+	public BTIssue findIssue(@PathVariable("remoteKey") String remoteKey, @RequestParam(BUGTRACKER_ID) long bugTrackerId) {
+		BugTracker bugTracker = bugTrackerFinderService.findById(bugTrackerId);
+		BTIssue remoteIssue = bugTrackersLocalService.getIssue(remoteKey, bugTracker);
 		return remoteIssue;
 	}
 
-	@RequestMapping(value = "/credentials", method = RequestMethod.POST, params = { "login", "password" })
+	@RequestMapping(value = "/credentials", method = RequestMethod.POST, params = { "login", "password", BUGTRACKER_ID })
 	public @ResponseBody
-	Map<String, String> setCredendials(@RequestParam("login") String login, @RequestParam("password") String password) {
-
-		bugTrackerLocalService.setCredentials(login, password);
+	Map<String, String> setCredendials(@RequestParam("login") String login, @RequestParam("password") String password,  @RequestParam(BUGTRACKER_ID) long bugTrackerId) {
+		BugTracker bugTracker = bugTrackerFinderService.findById(bugTrackerId);
+		bugTrackersLocalService.setCredentials(login, password, bugTracker);
 
 		Map<String, String> map = new HashMap<String, String>();
 		map.put("status", "ok");
@@ -534,8 +550,8 @@ public class BugtrackerController {
 	// FIXME : check first if a bugtracker is defined and if the credentials are set
 	private Map<String, String> processIssue(BTIssue issue, IssueDetector entity) {
 
-		final BTIssue postedIssue = bugTrackerLocalService.createIssue(entity, issue);
-		final URL issueUrl = bugTrackerLocalService.getIssueUrl(postedIssue.getId());
+		final BTIssue postedIssue = bugTrackersLocalService.createIssue(entity, issue);
+		final URL issueUrl = bugTrackersLocalService.getIssueUrl(postedIssue.getId(), entity.getBugTracker());
 
 		Map<String, String> result = new HashMap<String, String>();
 		result.put("url", issueUrl.toString());
@@ -546,8 +562,8 @@ public class BugtrackerController {
 
 	private Map<String, String> attachIssue(final BTIssue issue, IssueDetector entity) {
 
-		bugTrackerLocalService.attachIssue(entity, issue.getId());
-		final URL issueUrl = bugTrackerLocalService.getIssueUrl(issue.getId());
+		bugTrackersLocalService.attachIssue(entity, issue.getId());
+		final URL issueUrl = bugTrackersLocalService.getIssueUrl(issue.getId(), entity.getBugTracker());
 
 		Map<String, String> result = new HashMap<String, String>();
 		result.put("url", issueUrl.toString());
@@ -582,7 +598,7 @@ public class BugtrackerController {
 
 	private BTIssue makeReportIssueModel(IssueDetector entity, String defaultDescription) {
 		String projectName = entity.getProject().getName();
-		final BTProject project = bugTrackerLocalService.findRemoteProject(projectName);
+		final BTProject project = bugTrackersLocalService.findRemoteProject(projectName, entity.getBugTracker());
 
 		BTIssue emptyIssue = new BTIssue();
 		emptyIssue.setProject(project);
@@ -596,7 +612,7 @@ public class BugtrackerController {
 	 * 
 	 * If the bugtracker isn'st defined no panel will be sent at all.
 	 */
-	private ModelAndView makeIssuePanel(Identified entity, String type, Locale locale, String panelStyle) {
+	private ModelAndView makeIssuePanel(Identified entity, String type, Locale locale, String panelStyle, BugTracker bugTracker) {
 
 		BugTrackerStatus status = checkStatus();
 
@@ -604,7 +620,7 @@ public class BugtrackerController {
 			return new ModelAndView("fragment/issues/bugtracker-panel-empty");
 		} else {
 
-			BugTrackerInterfaceDescriptor descriptor = bugTrackerLocalService.getInterfaceDescriptor();
+			BugTrackerInterfaceDescriptor descriptor = bugTrackersLocalService.getInterfaceDescriptor(bugTracker);
 			descriptor.setLocale(locale);
 
 			ModelAndView mav = new ModelAndView("fragment/issues/bugtracker-panel");
@@ -620,7 +636,7 @@ public class BugtrackerController {
 	/* ******************************* private methods ********************************************** */
 
 	private BugTrackerStatus checkStatus() {
-		return bugTrackerLocalService.checkBugTrackerStatus();
+		return bugTrackersLocalService.checkBugTrackerStatus();
 	}
 
 	private Object jsonStatus() {
@@ -643,7 +659,7 @@ public class BugtrackerController {
 
 	private CollectionSorting createCollectionSorting(final DataTableDrawParameters params) {
 		return new CollectionSorting() {
-			
+
 			@Override
 			public int getFirstItemIndex() {
 				return params.getiDisplayStart();
@@ -866,7 +882,7 @@ public class BugtrackerController {
 
 		@Override
 		public Object[] buildItemData(IssueOwnership<BTIssue> ownership) {
-			return new Object[] { bugTrackerLocalService.getIssueUrl(ownership.getIssue().getId()).toExternalForm(),
+			return new Object[] { bugTrackersLocalService.getIssueUrl(ownership.getIssue().getId(), ownership.getOwner().getBugTracker()).toExternalForm(),
 					ownership.getIssue().getId(), ownership.getIssue().getSummary(),
 					ownership.getIssue().getPriority().getName(), ownership.getIssue().getStatus().getName(),
 					ownership.getIssue().getAssignee().getName(), nameBuilder.buildName(ownership.getOwner()) };
@@ -899,7 +915,7 @@ public class BugtrackerController {
 		@Override
 		public Object[] buildItemData(IssueOwnership<BTIssue> ownership) {
 			BTIssue issue = ownership.getIssue();
-			return new Object[] { bugTrackerLocalService.getIssueUrl(issue.getId()).toExternalForm(), issue.getId(),
+			return new Object[] { bugTrackersLocalService.getIssueUrl(issue.getId(), ownership.getOwner().getBugTracker()).toExternalForm(), issue.getId(),
 					issue.getSummary(), issue.getPriority().getName(), issue.getStatus().getName(),
 					issue.getAssignee().getName(), nameBuilder.buildName(ownership.getOwner()),
 					ownership.getExecution().getId() };
@@ -933,7 +949,7 @@ public class BugtrackerController {
 		public Object[] buildItemData(IssueOwnership<BTIssue> ownership) {
 			BTIssue issue = ownership.getIssue();
 
-			return new Object[] { bugTrackerLocalService.getIssueUrl(issue.getId()).toExternalForm(), issue.getId(),
+			return new Object[] { bugTrackersLocalService.getIssueUrl(issue.getId(), ownership.getOwner().getBugTracker()).toExternalForm(), issue.getId(),
 					issue.getSummary(), issue.getPriority().getName(), issue.getStatus().getName(),
 					issue.getAssignee().getName(), nameBuilder.buildName(ownership.getOwner()) };
 		}
@@ -954,7 +970,7 @@ public class BugtrackerController {
 
 		@Override
 		public Object[] buildItemData(IssueOwnership<BTIssue> ownership) {
-			return new Object[] { bugTrackerLocalService.getIssueUrl(ownership.getIssue().getId()).toExternalForm(),
+			return new Object[] { bugTrackersLocalService.getIssueUrl(ownership.getIssue().getId(), ownership.getOwner().getBugTracker() ).toExternalForm(),
 					ownership.getIssue().getId(), ownership.getIssue().getSummary(),
 					ownership.getIssue().getPriority().getName() };
 		}

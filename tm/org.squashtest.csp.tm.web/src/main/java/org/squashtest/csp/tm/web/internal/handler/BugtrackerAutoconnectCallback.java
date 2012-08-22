@@ -30,7 +30,7 @@ import org.squashtest.csp.core.bugtracker.service.BugTrackerContext;
 import org.squashtest.csp.core.bugtracker.web.BugTrackerContextPersistenceFilter;
 import org.squashtest.csp.core.web.servlet.handler.AuthenticationSuccessCallback;
 import org.squashtest.csp.tm.domain.bugtracker.BugTrackerStatus;
-import org.squashtest.csp.tm.service.BugTrackerLocalService;
+import org.squashtest.csp.tm.service.BugTrackersLocalService;
 
 
 /*
@@ -49,21 +49,21 @@ public class BugtrackerAutoconnectCallback implements
 	
 	private static final Logger logger = LoggerFactory.getLogger(BugtrackerAutoconnectCallback.class);
 
-	private BugTrackerLocalService bugTrackerLocalService;
+	private BugTrackersLocalService bugTrackersLocalService;
 	
 
-	public void setBugTrackerLocalService(BugTrackerLocalService service){
-		this.bugTrackerLocalService=service;
+	public void setBugTrackersLocalService(BugTrackersLocalService service){
+		this.bugTrackersLocalService=service;
 	}
 	
 	@Override
 	public void onSuccess(String username, String password, HttpSession session) {
-		if (bugTrackerLocalService==null){
+		if (bugTrackersLocalService==null){
 			logger.info("bugtracker autoconnect : no bugtracker available (service not ready yet). Skipping autologging.");
 			return ;
 		}
 		
-		BugTrackerStatus status = bugTrackerLocalService.checkBugTrackerStatus();
+		BugTrackerStatus status = bugTrackersLocalService.checkBugTrackerStatus();
 		
 		if (status == BugTrackerStatus.BUGTRACKER_UNDEFINED){
 			logger.info("bugtracker autoconnect : no bugtracker available (none configured). Skipping autologging.");
@@ -71,10 +71,11 @@ public class BugtrackerAutoconnectCallback implements
 		}
 		
 		try{
-			bugTrackerLocalService.setCredentials(username, password);
-			
-			//if success, store the new context in the session
-			createBugTrackerContext(session, username, password);			
+//			bugTrackersLocalService.setCredentials(username, password);
+//			
+//			//if success, store the new context in the session
+//			createBugTrackerContext(session, username, password);
+//			TODO [Feat 1194]
 			
 		}catch(BugTrackerRemoteException ex){
 			logger.info("bugtracker autoconnect : failed to connect user '"+username+"' to the bugtracker with the supplied "+

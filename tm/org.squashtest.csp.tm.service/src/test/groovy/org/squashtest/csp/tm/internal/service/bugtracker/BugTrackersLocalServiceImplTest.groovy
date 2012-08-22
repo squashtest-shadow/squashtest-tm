@@ -20,38 +20,35 @@
  */
 package org.squashtest.csp.tm.internal.service.bugtracker
 
-import org.squashtest.csp.core.bugtracker.service.BugTrackerService;
-import org.squashtest.csp.tm.domain.bugtracker.BugTrackerStatus;
-import org.squashtest.csp.tm.domain.execution.Execution 
-import org.squashtest.csp.tm.domain.execution.ExecutionStep 
-import org.squashtest.csp.tm.internal.repository.IssueDao;
-import org.squashtest.csp.core.bugtracker.domain.BTIssue;
-import org.squashtest.csp.core.bugtracker.domain.BTProject;
-import org.squashtest.csp.core.bugtracker.domain.Priority;
+import java.net.URL
+import java.util.List
 
-import java.net.URL;
-import org.squashtest.csp.tm.domain.bugtracker.Issue;
-import org.squashtest.csp.tm.infrastructure.filter.FilteredCollectionHolder;
-import org.squashtest.csp.tm.domain.bugtracker.IssueOwnership;
-import java.util.List;
+import org.squashtest.csp.core.bugtracker.domain.BTIssue
+import org.squashtest.csp.core.bugtracker.domain.BTProject
+import org.squashtest.csp.core.bugtracker.domain.BugTracker
+import org.squashtest.csp.core.bugtracker.domain.Priority
+import org.squashtest.csp.core.bugtracker.service.BugTrackersService
+import org.squashtest.csp.tm.domain.bugtracker.BugTrackerStatus
+import org.squashtest.csp.tm.domain.bugtracker.Issue
+import org.squashtest.csp.tm.domain.bugtracker.IssueList;
+import org.squashtest.csp.tm.domain.bugtracker.IssueOwnership
+import org.squashtest.csp.tm.domain.execution.Execution
+import org.squashtest.csp.tm.internal.repository.IssueDao
 
+import spock.lang.Specification
 
-
-
-import spock.lang.Specification;
-
-class BugTrackerLocalServiceImplTest extends Specification {
+class BugTrackersLocalServiceImplTest extends Specification {
 
 	IssueDao issueDao = Mock()
-	BugTrackerService remoteService = Mock()
+	BugTrackersService remoteService = Mock()
 	
 	
-	BugTrackerLocalServiceImpl service = new BugTrackerLocalServiceImpl();
+	BugTrackersLocalServiceImpl service = new BugTrackersLocalServiceImpl();
 	
 	
 	def setup(){
 		service.issueDao = issueDao;
-		service.remoteBugTrackerService = remoteService;
+		service.remoteBugTrackersService = remoteService;
 	}
 	
 	def "should say bugtracker is undefined"(){
@@ -102,15 +99,21 @@ class BugTrackerLocalServiceImplTest extends Specification {
 	def "should create an issue" () {
 		
 		given :
+		BugTracker bugTracker = Mock()
+		bugTracker.getName() >> "default"
 			BTIssue btIssue = Mock()
 			btIssue.getId() >> "1"
 			
-			remoteService.createIssue(_) >> btIssue
+			remoteService.createIssue(_,_) >> btIssue
 
 		
 		and :
-			Execution execution = new Execution();
+			Execution execution = Mock()
+			execution.getBugTracker() >> bugTracker
+			IssueList issueList = Mock()
+			execution.getIssueList()>> issueList
 			BTIssue issue = new BTIssue()
+			
 			
 		when :
 			BTIssue reissue = service.createIssue(execution, issue)
@@ -125,11 +128,12 @@ class BugTrackerLocalServiceImplTest extends Specification {
 	def "should retrieve the URL of a given issue"(){
 		
 		given :
+		BugTracker bugTracker = Mock()
 			URL url = new URL("http://www.mybugtracker.com/issues/1");
-			remoteService.getViewIssueUrl(_) >> url;
+			remoteService.getViewIssueUrl(_,_) >> url;
 		
 		when :
-			URL geturl = service.getIssueUrl("myissue")
+			URL geturl = service.getIssueUrl("myissue", bugTracker)
 		
 		
 		then :
@@ -149,11 +153,12 @@ class BugTrackerLocalServiceImplTest extends Specification {
 	def "should find a remote project"(){
 		
 		given :
+		BugTracker bugTracker = Mock()
 			BTProject project = Mock()
-			remoteService.findProject(_) >> project
+			remoteService.findProject(_,_) >> project
 		
 		when :
-			def reproject = service.findRemoteProject("squashbt")
+			def reproject = service.findRemoteProject("squashbt", bugTracker)
 		
 		then :
 			reproject == project
@@ -163,11 +168,12 @@ class BugTrackerLocalServiceImplTest extends Specification {
 	def "should get priorities"(){
 		
 		given :
+		BugTracker bugTracker = Mock()
 			List<Priority> priorities = Mock()
-			remoteService.getPriorities() >> priorities
+			remoteService.getPriorities(bugTracker) >> priorities
 			
 		when :
-			def priorityList = service.getRemotePriorities() 
+			def priorityList = service.getRemotePriorities(bugTracker) 
 		
 		then :
 			priorityList == priorities
@@ -180,14 +186,15 @@ class BugTrackerLocalServiceImplTest extends Specification {
 		given :
 			def name ="bob"
 			def password = "bobpassword"
+			BugTracker bugTracker = Mock()
 		
 		
 		when :
-			service.setCredentials(name, password)
+			service.setCredentials(name, password, bugTracker)
 		
 		
 		then :
-			1 * remoteService.setCredentials(name, password);
+			1 * remoteService.setCredentials(name, password, bugTracker);
 		
 	}
 

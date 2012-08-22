@@ -46,7 +46,7 @@ public interface BugTrackerConnectorProvider {
 	 * Creates a connector for the given bug tracker.
 	 *
 	 * @param bugTracker
-	 *            the bug tracker to connnect to. should not be <code>null</code>
+	 *            the bug tracker to connect to. should not be <code>null</code>
 	 * @return
 	 */
 	BugTrackerConnector createConnector(BugTracker bugTracker);

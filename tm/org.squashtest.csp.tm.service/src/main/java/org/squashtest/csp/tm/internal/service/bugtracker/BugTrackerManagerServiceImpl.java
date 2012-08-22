@@ -33,8 +33,8 @@ import org.squashtest.csp.core.bugtracker.domain.BugTracker;
 import org.squashtest.csp.tm.infrastructure.filter.CollectionSorting;
 import org.squashtest.csp.tm.infrastructure.filter.FilteredCollectionHolder;
 import org.squashtest.csp.tm.internal.repository.BugTrackerDao;
-import org.squashtest.csp.tm.service.BugTrackerLocalService;
 import org.squashtest.csp.tm.service.BugTrackerManagerService;
+import org.squashtest.csp.tm.service.BugTrackersLocalService;
 
 @Service("squashtest.tm.service.BugTrackerManagerService")
 @Transactional
@@ -42,17 +42,6 @@ public class BugTrackerManagerServiceImpl implements BugTrackerManagerService {
 
 	@Inject
 	private BugTrackerDao bugTrackerDao;
-	@Inject
-	private BugTrackerLocalService bugtrackerLocalService;
-	
-	@PostFilter("hasPermission(filterObject, 'READ') or  hasRole('ROLE_ADMIN')")
-	@Override
-	public List<BugTracker> findAll() {
-		return bugTrackerDao.findAll();
-		
-	}
-
-	
 
 	@Override
 	@PreAuthorize("hasRole('ROLE_ADMIN')")
@@ -61,7 +50,16 @@ public class BugTrackerManagerServiceImpl implements BugTrackerManagerService {
 		bugTrackerDao.persist(bugTracker);
 
 	}
-
+	@Inject
+	private BugTrackersLocalService bugtrackersLocalService;
+	
+	@PostFilter("hasPermission(filterObject, 'READ') or  hasRole('ROLE_ADMIN')")
+	@Override
+	public List<BugTracker> findAll() {
+		return bugTrackerDao.findAll();
+		
+	}
+	
 	@Override
 	@PreAuthorize("hasRole('ROLE_ADMIN')")
 	public FilteredCollectionHolder<List<BugTracker>> findSortedBugtrackers(CollectionSorting filter) {
@@ -72,7 +70,7 @@ public class BugTrackerManagerServiceImpl implements BugTrackerManagerService {
 
 	@Override
 	public Set<String> findBugTrackerKinds() {
-		return bugtrackerLocalService.getProviderKinds();
+		return bugtrackersLocalService.getProviderKinds();
 	}
 
 	@Override
@@ -80,4 +78,8 @@ public class BugTrackerManagerServiceImpl implements BugTrackerManagerService {
 		return bugTrackerDao.findById(bugtrackerId).getName();
 	}
 
+	@Override
+	public BugTracker findById(long bugTrackerId) {
+		return bugTrackerDao.findById(bugTrackerId);
+	}
 }
