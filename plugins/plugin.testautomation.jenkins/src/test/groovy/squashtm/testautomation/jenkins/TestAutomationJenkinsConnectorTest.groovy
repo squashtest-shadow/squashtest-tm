@@ -42,7 +42,7 @@ class TestAutomationJenkinsConnectorTest extends Specification {
 			
 		then :
 			method.path == "http://ci.jruby.org/api/json"
-			method.queryString == "tree=jobs%5Bname%5D"
+			method.queryString == "tree=jobs%5Bname%2Ccolor%5D"
 		
 		
 	}

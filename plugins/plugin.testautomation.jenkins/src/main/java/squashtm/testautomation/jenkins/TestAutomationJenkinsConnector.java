@@ -52,9 +52,14 @@ public class TestAutomationJenkinsConnector implements TestAutomationConnector{
 	private static final String JOBS_LIST_URI = "/api/json";
 	
 	private static final NameValuePair[] JOBS_LIST_QUERY = new NameValuePair[] { 
-																new NameValuePair("tree", "jobs[name]") 
+																new NameValuePair("tree", "jobs[name,color]") 
 															};
 
+	private static final NameValuePair[] TEST_LIST_QUERY = new NameValuePair[]{
+																new NameValuePair("tree", "suites[name,cases[name]]")	
+															};
+	
+	
 	private static final String CONNECTOR_KIND = "jenkins";
 	
 	
@@ -66,11 +71,21 @@ public class TestAutomationJenkinsConnector implements TestAutomationConnector{
 	private JsonParser jsonParser;
 	
 	
+	//****************************** let's roll ****************************************
+
 
 	@Override
 	public String getConnectorKind() {
 		return CONNECTOR_KIND;
 	}
+	
+	
+	
+	public boolean checkCredentials(TestAutomationServer server) {
+		
+		return true;
+	}
+	
 	
 	
 	@Override

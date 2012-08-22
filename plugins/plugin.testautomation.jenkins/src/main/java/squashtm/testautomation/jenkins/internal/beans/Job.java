@@ -23,6 +23,7 @@ package squashtm.testautomation.jenkins.internal.beans;
 public class Job {
 	
 	private String name;
+	private String color;
 
 	public String getName() {
 		return name;
@@ -31,5 +32,14 @@ public class Job {
 	public void setName(String name) {
 		this.name = name;
 	}
+
+	public String getColor() {
+		return color;
+	}
+
+	public void setColor(String color) {
+		this.color = color;
+	}
+	
 	
 }

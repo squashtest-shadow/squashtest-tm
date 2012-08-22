@@ -33,13 +33,22 @@ import squashtm.testautomation.spi.exceptions.UnreadableResponseException;
 
 
 public interface TestAutomationConnector {
-
+	
 	/**
 	 * A String indicating which kind of connector it is
 	 * 
 	 * @return
 	 */
 	String getConnectorKind();
+	
+	
+	/**
+	 * Checks that the given server configuration (including credentials) actually works.
+	 * 
+	 * @param server
+	 * @return true if the credentials work, false otherwise
+	 */
+	boolean checkCredentials(TestAutomationServer server);
 	
 	
 	/**

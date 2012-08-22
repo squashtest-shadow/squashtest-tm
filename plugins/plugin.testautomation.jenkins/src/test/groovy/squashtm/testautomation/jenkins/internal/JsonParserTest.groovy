@@ -36,13 +36,25 @@ class JsonParserTest extends Specification {
 	 def "should return a collection of projects"(){
 		 
 		 given :
-		 	def json ='{"jobs":[{"name":"bob"},{"name":"mike"},{"name":"robert"}]}'
+		 	def json ='{"jobs":[{"name":"bob","color":"bob"},{"name":"mike","color":"mike"},{"name":"robert","color":"robert"}]}'
 		 
 		 when : 
 		 	def res = parser.readJobListFromJson(json)
 		 
 		 then :
 		 	res.collect{it.name} == ["bob", "mike", "robert"]
+	 }
+
+	 def "should return a collection of projects excluding the disabled one"(){
+		 
+		 given :
+			 def json ='{"jobs":[{"name":"bob","color":"'+JsonParser.DISABLED_COLOR_STRING+'"},{"name":"mike","color":"mike"},{"name":"robert","color":"robert"}]}'
+		 
+		 when :
+			 def res = parser.readJobListFromJson(json)
+		 
+		 then :
+			 res.collect{it.name} == ["mike", "robert"]
 	 }
 
 

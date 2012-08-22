@@ -38,6 +38,8 @@ import squashtm.testautomation.spi.exceptions.UnreadableResponseException;
 
 @Component
 public class JsonParser {
+	
+	private static final String DISABLED_COLOR_STRING = "disabled";
 
 	private ObjectMapper objMapper = new ObjectMapper();
 	
@@ -46,9 +48,15 @@ public class JsonParser {
 	public Collection<TestAutomationProject> readJobListFromJson(String json){
 		
 		try {
+			
 			JobList list = objMapper.readValue(json, JobList.class);
 			
-			return toProjectList(list);
+			JobList filteredList = filterDisabledJobs(list);
+			
+			Collection<TestAutomationProject> projectsList = toProjectList(filteredList);
+			
+			return projectsList;
+			
 		} 
 		catch (JsonParseException e) {
 			throw new UnreadableResponseException(e);
@@ -62,6 +70,16 @@ public class JsonParser {
 		
 	}
 	
+	
+	protected JobList filterDisabledJobs(JobList fullList){
+		JobList newJobList = new JobList();
+		for (Job job : fullList.getJobs()){
+			if (! job.getColor().equals(DISABLED_COLOR_STRING)){
+				newJobList.getJobs().add(job);
+			}
+		}
+		return newJobList;
+	}
 	
 	
 	protected Collection<TestAutomationProject> toProjectList(JobList jobList){
