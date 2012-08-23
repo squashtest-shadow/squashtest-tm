@@ -31,6 +31,7 @@ import java.util.Collection;
 import javax.inject.Inject;
 
 import org.apache.commons.httpclient.HttpClient;
+import org.apache.commons.httpclient.HttpMethodBase;
 import org.apache.commons.httpclient.methods.GetMethod;
 import org.springframework.stereotype.Service;
 
@@ -93,7 +94,10 @@ public class TestAutomationJenkinsConnector implements TestAutomationConnector{
 		catch(IOException ex){
 			throw new ServerConnectionFailed("Test automation - jenkins : could not connect to server '"+server+"' "+
 					 						 "due to technical error : ", ex);
-		}		
+		}	
+		finally{
+			credCheck.releaseConnection();
+		}	
 	
 	}
 	

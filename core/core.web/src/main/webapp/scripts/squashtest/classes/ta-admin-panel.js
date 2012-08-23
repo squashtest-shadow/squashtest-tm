@@ -219,6 +219,7 @@ function TestAutomationAddProjectPopup(settings){
 			url : listProjectsURL,
 			type : 'GET',
 			dataType : 'json',
+			global : false,
 			data : { url : getURL, login : login, password : password }
 		})
 		.done(function(json){
@@ -283,13 +284,15 @@ function TestAutomationAddProjectPopup(settings){
 			type : 'POST',
 			contentType : 'application/json',
 			dataType : 'json',
+			global : false,
 			data : JSON.stringify(formData)
 		}).done(function(){
 			instance.dialog('close');
 			manager.getProjectsBlock().getTable().fnDraw();
-		}).fail(function(){
+		}).fail(function(jsonError){
 			flipToMain();
-			error.find('span').text("shit happens");
+			var message = squashtm.notification.getErrorMessage(jsonError);
+			error.find('span').text(message);
 			error.popupError('show');
 		});
 		
