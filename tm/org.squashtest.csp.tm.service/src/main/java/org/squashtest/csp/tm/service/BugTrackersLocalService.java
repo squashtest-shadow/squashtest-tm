@@ -34,6 +34,7 @@ import org.squashtest.csp.core.bugtracker.spi.BugTrackerInterfaceDescriptor;
 import org.squashtest.csp.tm.domain.bugtracker.BugTrackerStatus;
 import org.squashtest.csp.tm.domain.bugtracker.IssueDetector;
 import org.squashtest.csp.tm.domain.bugtracker.IssueOwnership;
+import org.squashtest.csp.tm.domain.project.Project;
 import org.squashtest.csp.tm.infrastructure.filter.CollectionSorting;
 import org.squashtest.csp.tm.infrastructure.filter.FilteredCollectionHolder;
 
@@ -182,10 +183,11 @@ public interface BugTrackersLocalService {
 	/**
 	 * tests if the bugtracker is ready for use
 	 * 
+	 * @param project : the concerned Project
 	 * @return the status of the bugtracker
 	 * 
 	 */
-	BugTrackerStatus checkBugTrackerStatus();
+	BugTrackerStatus checkBugTrackerStatus(Project project);
 
 	/**
 	 * sets the credentials of an user for authentication bugtracker-side.

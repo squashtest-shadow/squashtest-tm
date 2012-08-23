@@ -98,4 +98,9 @@ public class ProjectManagerServiceImpl implements ProjectManagerService {
 		return new FilteredCollectionHolder<List<Project>>(count, projects);
 	}
 
+	@Override
+	public Project findById(long projectId) {
+		return projectDao.findById(projectId);
+	}
+
 }

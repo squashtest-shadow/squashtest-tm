@@ -32,27 +32,16 @@
  --%>	
  <f:message key="tabs.label.issues" var="tabIssueLabel"/>
  <s:url var="bugTrackerUrl" value="/bugtracker/"/>
+ <div id="bugtracker-section-div">
  <script type="text/javascript">
  	$(function(){
- 		
- 		$.ajax({
- 			url : "${bugTrackerUrl}/check",
- 			method : "GET",
- 			dataType : "json"
- 		})
- 		.done(function(json){
- 			if (json.status !== "bt_undefined"){	
-	 			<%-- first : add the tab entry --%>
+ 				<%-- first : add the tab entry --%>
 	 			$("div.fragment-tabs").tabs( "add" , "#bugtracker-section-div" , "${tabIssueLabel}");
 
 	 			<%-- second : load the bugtracker section --%>
 	 			var btDiv = $("#bugtracker-section-div");
 	 			btDiv.load("${btEntityUrl}?style=fragment-tab", function(){btDiv.addClass("table-tab")}); 	
- 			}
- 		}).fail(function(){
- 			$("#bugtracker-section-div").remove();
- 		});		
+ 			
  	});
  </script>
-<div id="bugtracker-section-div">
 </div>

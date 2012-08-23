@@ -21,21 +21,22 @@
 
 --%>
 <?xml version="1.0" encoding="utf-8" ?>
-<%@ page language="java" contentType="text/html; charset=utf-8" pageEncoding="utf-8"%>
-<%@ taglib uri="http://java.sun.com/jsp/jstl/core" prefix="c" %>
-<%@ taglib tagdir="/WEB-INF/tags/jquery" prefix="jq" %>
-<%@ taglib tagdir="/WEB-INF/tags/component" prefix="comp" %>
-<%@ taglib prefix="s" uri="http://www.springframework.org/tags" %>
-<%@ taglib prefix="f" uri="http://java.sun.com/jsp/jstl/fmt" %>
-<%@ taglib prefix="aggr" tagdir="/WEB-INF/tags/aggregates" %>
-<%@ taglib prefix="pop" tagdir="/WEB-INF/tags/popup" %>
-<%@ taglib prefix="authz" tagdir="/WEB-INF/tags/authz" %>
-<%@ taglib prefix="comp" tagdir="/WEB-INF/tags/component" %>
+<%@ page language="java" contentType="text/html; charset=utf-8"
+	pageEncoding="utf-8"%>
+<%@ taglib uri="http://java.sun.com/jsp/jstl/core" prefix="c"%>
+<%@ taglib tagdir="/WEB-INF/tags/jquery" prefix="jq"%>
+<%@ taglib tagdir="/WEB-INF/tags/component" prefix="comp"%>
+<%@ taglib prefix="s" uri="http://www.springframework.org/tags"%>
+<%@ taglib prefix="f" uri="http://java.sun.com/jsp/jstl/fmt"%>
+<%@ taglib prefix="aggr" tagdir="/WEB-INF/tags/aggregates"%>
+<%@ taglib prefix="pop" tagdir="/WEB-INF/tags/popup"%>
+<%@ taglib prefix="authz" tagdir="/WEB-INF/tags/authz"%>
+<%@ taglib prefix="comp" tagdir="/WEB-INF/tags/component"%>
 
 <f:message var="squashlocale" key="squashtm.locale" />
 
 <comp:rich-jeditable-header />
-<comp:datepicker-manager locale="${squashlocale}"/>
+<comp:datepicker-manager locale="${squashlocale}" />
 
 <c:url var="ckeConfigUrl" value="/styles/ckeditor/ckeditor-config.js" />
 <c:url var="campaignUrl" value="/campaigns/${campaign.id}" />
@@ -45,126 +46,133 @@
 <s:url var="campaignPlanningUrl" value="/campaigns/{campId}/planning">
 	<s:param name="campId" value="${campaign.id}" />
 </s:url>
-<s:url var="assignableUsersUrl" value="/campaigns/{campId}/assignable-users">
-		<s:param name="campId" value="${campaign.id}" />
+<s:url var="assignableUsersUrl"
+	value="/campaigns/{campId}/assignable-users">
+	<s:param name="campId" value="${campaign.id}" />
 </s:url>
 
-<s:url var="assignTestCasesUrl" value="/campaigns/${ campaign.id }/batch-assign-user" />
+<s:url var="assignTestCasesUrl"
+	value="/campaigns/${ campaign.id }/batch-assign-user" />
 
-<c:url var="testCaseManagerUrl" value="/campaigns/${ campaign.id }/test-plan/manager" />
+<c:url var="testCaseManagerUrl"
+	value="/campaigns/${ campaign.id }/test-plan/manager" />
 
 <c:url var="workspaceUrl" value="/campaign-workspace/#" />
-<s:url var="simulateDeletionUrl" value="/campaign-browser/delete-nodes/simulate" />
-<s:url var="confirmDeletionUrl" value="/campaign-browser/delete-nodes/confirm" />
-<s:url var="btEntityUrl" value="/bugtracker/campaign/{id}" >
-	<s:param name="id" value="${campaign.id}"/>
+<s:url var="simulateDeletionUrl"
+	value="/campaign-browser/delete-nodes/simulate" />
+<s:url var="confirmDeletionUrl"
+	value="/campaign-browser/delete-nodes/confirm" />
+<s:url var="btEntityUrl" value="/bugtracker/campaign/{id}">
+	<s:param name="id" value="${campaign.id}" />
 </s:url>
 <%-- ----------------------------------- Authorization ----------------------------------------------%>
-<authz:authorized hasRole="ROLE_ADMIN" hasPermission="ATTACH" domainObject="${ campaign }">
+<authz:authorized hasRole="ROLE_ADMIN" hasPermission="ATTACH"
+	domainObject="${ campaign }">
 	<c:set var="attachable" value="${ true }" />
 	<c:set var="moreThanReadOnly" value="${ true }" />
 </authz:authorized>
-<authz:authorized hasRole="ROLE_ADMIN" hasPermission="SMALL_EDIT" domainObject="${ campaign }">
+<authz:authorized hasRole="ROLE_ADMIN" hasPermission="SMALL_EDIT"
+	domainObject="${ campaign }">
 	<c:set var="smallEditable" value="${ true }" />
 	<c:set var="moreThanReadOnly" value="${ true }" />
 </authz:authorized>
-<authz:authorized hasRole="ROLE_ADMIN" hasPermission="DELETE" domainObject="${ campaign }">
-	<c:set var="deletable" value="${true }"/>
+<authz:authorized hasRole="ROLE_ADMIN" hasPermission="DELETE"
+	domainObject="${ campaign }">
+	<c:set var="deletable" value="${true }" />
 	<c:set var="moreThanReadOnly" value="${ true }" />
 </authz:authorized>
-<authz:authorized hasRole="ROLE_ADMIN" hasPermission="CREATE" domainObject="${ campaign }">
-	<c:set var="creatable" value="${true }"/>
+<authz:authorized hasRole="ROLE_ADMIN" hasPermission="CREATE"
+	domainObject="${ campaign }">
+	<c:set var="creatable" value="${true }" />
 	<c:set var="moreThanReadOnly" value="${ true }" />
 </authz:authorized>
-<authz:authorized hasRole="ROLE_ADMIN" hasPermission="LINK" domainObject="${ campaign }">
+<authz:authorized hasRole="ROLE_ADMIN" hasPermission="LINK"
+	domainObject="${ campaign }">
 	<c:set var="linkable" value="${ true }" />
 	<c:set var="moreThanReadOnly" value="${ true }" />
 </authz:authorized>
- 
+
 
 <script type="text/javascript">
-
 	/* simple initialization for simple components */
-	$(function(){
+	$(function() {
 		$('#delete-campaign-button').button();
-		$('#rename-campaign-button').button();	
+		$('#rename-campaign-button').button();
 	});
-	
+
 	/* display the campaign name. Used for extern calls (like from the page who will include this fragment)
-	*  will refresh the general informations as well*/
-	function nodeSetname(name){
-		$('#campaign-name').html(name);		
+	 *  will refresh the general informations as well*/
+	function nodeSetname(name) {
+		$('#campaign-name').html(name);
 	}
-	
+
 	/* renaming success handler */
-	function renameCampaignSuccess(data){
+	function renameCampaignSuccess(data) {
 		nodeSetname(data.newName);
-		
-		if (typeof renameSelectedNreeNode == 'function'){
+
+		if (typeof renameSelectedNreeNode == 'function') {
 			renameSelectedNreeNode(data.newName);
 		}
 		//change also the node name attribute
-		if (typeof updateSelectedNodeName == 'function'){
-			updateSelectedNodeName(data.newName);	
+		if (typeof updateSelectedNodeName == 'function') {
+			updateSelectedNodeName(data.newName);
 		}
-						
-		$( '#rename-campaign-dialog' ).dialog( 'close' );
+
+		$('#rename-campaign-dialog').dialog('close');
 	}
-	
+
 	/* renaming failure handler */
-	function renameCampaignFailure(xhr){
-		$('#rename-campaign-dialog .popup-label-error')
-		.html(xhr.statusText);		
+	function renameCampaignFailure(xhr) {
+		$('#rename-campaign-dialog .popup-label-error').html(xhr.statusText);
 	}
-	
+
 	/* deletion success handler */
-	function deleteCampaignSuccess(){
+	function deleteCampaignSuccess() {
 		<c:choose>
-		<%-- case one : we were in a sub page context. We need to navigate back to the workspace. --%>
-		<c:when test="${param.isInfoPage}" >		
-		document.location.href="${workspaceUrl}" ;
+<%-- case one : we were in a sub page context. We need to navigate back to the workspace. --%>
+	<c:when test="${param.isInfoPage}" >
+		document.location.href = "${workspaceUrl}";
 		</c:when>
-		<%-- case two : we were already in the workspace. we simply reload it (todo : make something better). --%>
-		<c:otherwise>
+<%-- case two : we were already in the workspace. we simply reload it (todo : make something better). --%>
+	<c:otherwise>
 		location.reload(true);
 		</c:otherwise>
-		</c:choose>		
+		</c:choose>
 	}
-	
-	/* deletion failure handler */
-	function deleteCampaignFailure(xhr){
-		$.squash.openMessage("<f:message key='popup.title.error' />", xhr.statusText);		
-	}
-	
 
-	
+	/* deletion failure handler */
+	function deleteCampaignFailure(xhr) {
+		$.squash.openMessage("<f:message key='popup.title.error' />",
+				xhr.statusText);
+	}
 </script>
 
 
 
-<div class="ui-widget-header ui-state-default ui-corner-all fragment-header">
+<div
+	class="ui-widget-header ui-state-default ui-corner-all fragment-header">
 
-	<div style="float:left;height:100%;">
+	<div style="float: left; height: 100%;">
 		<h2>
-			<span ><f:message key="campaign.header.title" />&nbsp;:&nbsp;</span><a id="campaign-name" href="${ campaignUrl }/info"><c:out value="${ campaign.name }" escapeXml="true"/></a>
+			<span><f:message key="campaign.header.title" />&nbsp;:&nbsp;</span><a
+				id="campaign-name" href="${ campaignUrl }/info"><c:out
+					value="${ campaign.name }" escapeXml="true" />
+			</a>
 		</h2>
 	</div>
-	
-	<div style="clear:both;"></div>
+
+	<div style="clear: both;"></div>
 	<c:if test="${smallEditable}">
-		<comp:popup id="rename-campaign-dialog" titleKey="dialog.rename-campaign.title" 
-		            isContextual="true"   openedBy="rename-campaign-button">
+		<comp:popup id="rename-campaign-dialog"
+			titleKey="dialog.rename-campaign.title" isContextual="true"
+			openedBy="rename-campaign-button">
 			<jsp:attribute name="buttons">
 			
 				<f:message var="label" key="dialog.rename-campaign.title" />
 				'${ label }': function() {
 					var url = "${ campaignUrl }";
-					<jq:ajaxcall 
-						url="url"
-						dataType="json"
-						httpMethod="POST"
-						useData="true"
-						successHandler="renameCampaignSuccess">				
+					<jq:ajaxcall url="url" dataType="json" httpMethod="POST"
+					useData="true" successHandler="renameCampaignSuccess">				
 						<jq:params-bindings newName="#rename-campaign-name" />
 					</jq:ajaxcall>					
 				},			
@@ -172,158 +180,189 @@
 			</jsp:attribute>
 			<jsp:body>
 				<script type="text/javascript">
-				$( "#rename-campaign-dialog" ).bind( "dialogopen", function(event, ui) {
-					var name = $('#campaign-name').text();
-					$("#rename-campaign-name").val(name);
-					
-				});
+					$("#rename-campaign-dialog").bind("dialogopen",
+							function(event, ui) {
+								var name = $('#campaign-name').text();
+								$("#rename-campaign-name").val(name);
+
+							});
 				</script>			
-				<label><f:message key="dialog.rename.label" /></label>
-				<input type="text" id="rename-campaign-name" maxlength="255" /><br/>
-				<comp:error-message forField="name"/>	
+				<label><f:message key="dialog.rename.label" />
+				</label>
+				<input type="text" id="rename-campaign-name" maxlength="255" />
+				<br />
+				<comp:error-message forField="name" />	
 		
 			</jsp:body>
 		</comp:popup>
-	</c:if>	
+	</c:if>
 </div>
 
 
 
-<div id="campaign-toolbar" class="toolbar-class ui-corner-all " >
-	<div  class="toolbar-information-panel">
-		<comp:general-information-panel auditableEntity="${campaign}"/>
+<div id="campaign-toolbar" class="toolbar-class ui-corner-all ">
+	<div class="toolbar-information-panel">
+		<comp:general-information-panel auditableEntity="${campaign}" />
 	</div>
 	<div class="toolbar-button-panel">
-	<c:if test="${ smallEditable }">
-		<input type="button" value='<f:message key="campaign.button.rename.label" />' id="rename-campaign-button" /> 
-	</c:if><c:if test="${ deletable }">
-		<input type="button" value='<f:message key="campaign.button.remove.label" />' id="delete-campaign-button" />
-	</c:if>
-	</div>	
-	<div style="clear:both;"></div>	
+		<c:if test="${ smallEditable }">
+			<input type="button"
+				value='<f:message key="campaign.button.rename.label" />'
+				id="rename-campaign-button" />
+		</c:if>
+		<c:if test="${ deletable }">
+			<input type="button"
+				value='<f:message key="campaign.button.remove.label" />'
+				id="delete-campaign-button" />
+		</c:if>
+	</div>
+	<div style="clear: both;"></div>
 	<c:if test="${ moreThanReadOnly }">
-		<comp:opened-object otherViewers="${ otherViewers }" objectUrl="${ campaignUrl }" isContextual="${ ! param.isInfoPage }"/>
+		<comp:opened-object otherViewers="${ otherViewers }"
+			objectUrl="${ campaignUrl }" isContextual="${ ! param.isInfoPage }" />
 	</c:if>
 </div>
 <comp:fragment-tabs />
 <div class="fragment-tabs fragment-body">
 	<ul>
-		<li><a href="#tabs-1"><f:message key="tabs.label.information" /></a></li>
-		<li><a href="#tabs-2"><f:message key="tabs.label.test-plan" /></a></li>
-		<li><a href="#tabs-3"><f:message key="tabs.label.attachments" /><c:if test="${ campaign.attachmentList.notEmpty }"><span class="hasAttach">!</span></c:if></a></li>
+		<li><a href="#tabs-1"><f:message key="tabs.label.information" />
+		</a>
+		</li>
+		<li><a href="#tabs-2"><f:message key="tabs.label.test-plan" />
+		</a>
+		</li>
+		<li><a href="#tabs-3"><f:message key="tabs.label.attachments" />
+				<c:if test="${ campaign.attachmentList.notEmpty }">
+					<span class="hasAttach">!</span>
+				</c:if>
+		</a>
+		</li>
 	</ul>
 	<div id="tabs-1">
-<c:if test="${ smallEditable }">
-	<comp:rich-jeditable targetUrl="${ campaignUrl }" componentId="campaign-description" />
-</c:if>
+		<c:if test="${ smallEditable }">
+			<comp:rich-jeditable targetUrl="${ campaignUrl }"
+				componentId="campaign-description" />
+		</c:if>
 
-<script type="text/javascript">
-	$(function(){
-		$("#campaign-reset-description").button().click(function(){$("#campaign-description").html('');return false;});
-	});
-</script>
+		<script type="text/javascript">
+			$(function() {
+				$("#campaign-reset-description").button().click(function() {
+					$("#campaign-description").html('');
+					return false;
+				});
+			});
+		</script>
 
-<comp:toggle-panel id="campaign-description-panel" classes="information-panel" titleKey="generics.description.title" isContextual="true" open="true">
-	<jsp:attribute name="body">
-		<div id="campaign-description" >${ campaign.description }</div>
+		<comp:toggle-panel id="campaign-description-panel"
+			classes="information-panel" titleKey="generics.description.title"
+			isContextual="true" open="true">
+			<jsp:attribute name="body">
+		<div id="campaign-description">${ campaign.description }</div>
 	</jsp:attribute>
-</comp:toggle-panel>
+		</comp:toggle-panel>
 
 
-<%--------------------------- Planning section ------------------------------------%>
-<comp:toggle-panel id="datepicker-panel" titleKey="campaign.planning.panel.title" isContextual="true" open="true">
-	<jsp:attribute name="body">
+		<%--------------------------- Planning section ------------------------------------%>
+		<comp:toggle-panel id="datepicker-panel"
+			titleKey="campaign.planning.panel.title" isContextual="true"
+			open="true">
+			<jsp:attribute name="body">
 	<div class="datepicker-panel">
 		<table class="datepicker-table">
-			<tr >
+			<tr>
 				<td class="datepicker-table-col">
-					<comp:datepicker fmtLabel="dialog.label.campaign.scheduled_start.label" 
-						url="${campaignPlanningUrl}" datePickerId="scheduled-start" 
-						paramName="scheduledStart" isContextual="true"
-						initialDate="${campaign.scheduledStartDate.time}" editable="${ smallEditable }" >	
+					<comp:datepicker
+									fmtLabel="dialog.label.campaign.scheduled_start.label"
+									url="${campaignPlanningUrl}" datePickerId="scheduled-start"
+									paramName="scheduledStart" isContextual="true"
+									initialDate="${campaign.scheduledStartDate.time}"
+									editable="${ smallEditable }">	
 					</comp:datepicker>
 				</td>
 				<td class="datepicker-table-col">
-					<comp:datepicker-auto
-						datePickerId="actual-start"
-						url="${campaignPlanningUrl}"
-						fmtLabel="dialog.label.campaign.actual_start.label"
-						paramName="actualStart"
-						autosetParamName="setActualStartAuto"
-						isAuto="${campaign.actualStartAuto}"
-						initialDate="${campaign.actualStartDate.time}"
-						isContextual="true"
-						editable="${ smallEditable }" >
+					<comp:datepicker-auto datePickerId="actual-start"
+									url="${campaignPlanningUrl}"
+									fmtLabel="dialog.label.campaign.actual_start.label"
+									paramName="actualStart" autosetParamName="setActualStartAuto"
+									isAuto="${campaign.actualStartAuto}"
+									initialDate="${campaign.actualStartDate.time}"
+									isContextual="true" editable="${ smallEditable }">
 					</comp:datepicker-auto>
 				</td>
 			</tr>
 			<tr>
 				<td class="datepicker-table-col">
-					<comp:datepicker fmtLabel="dialog.label.campaign.scheduled_end.label" 
-						url="${campaignPlanningUrl}" datePickerId="scheduled-end" 
-						paramName="scheduledEnd" isContextual="true"
-						initialDate="${campaign.scheduledEndDate.time}" 
-						editable="${ smallEditable }"
-						>	
+					<comp:datepicker
+									fmtLabel="dialog.label.campaign.scheduled_end.label"
+									url="${campaignPlanningUrl}" datePickerId="scheduled-end"
+									paramName="scheduledEnd" isContextual="true"
+									initialDate="${campaign.scheduledEndDate.time}"
+									editable="${ smallEditable }">	
 					</comp:datepicker>				
 				</td>
 				<td class="datepicker-table-col">
-					<comp:datepicker-auto
-						datePickerId="actual-end"
-						url="${campaignPlanningUrl}"
-						fmtLabel="dialog.label.campaign.actual_end.label"
-						paramName="actualEnd"
-						autosetParamName="setActualEndAuto"
-						isAuto="${campaign.actualEndAuto}"
-						initialDate="${campaign.actualEndDate.time}"
-						isContextual="true"
-						editable="${ smallEditable }"
-						>
+					<comp:datepicker-auto datePickerId="actual-end"
+									url="${campaignPlanningUrl}"
+									fmtLabel="dialog.label.campaign.actual_end.label"
+									paramName="actualEnd" autosetParamName="setActualEndAuto"
+									isAuto="${campaign.actualEndAuto}"
+									initialDate="${campaign.actualEndDate.time}"
+									isContextual="true" editable="${ smallEditable }">
 					</comp:datepicker-auto>
 				</td>
 			</tr>
 		</table>
 	</div>
 	</jsp:attribute>
-</comp:toggle-panel>
-<%--------------------------- /Planning section ------------------------------------%>
+		</comp:toggle-panel>
+		<%--------------------------- /Planning section ------------------------------------%>
 
 
-</div>
-<div id="tabs-2" class="table-tab">
+	</div>
+	<div id="tabs-2" class="table-tab">
 
-<%--------------------------- Test plan section ------------------------------------%>
-<script type="text/javascript">
-	$(function(){
-		$("#test-case-button").button().click(function(){
-			document.location.href="${testCaseManagerUrl}";	
-		});
-		$("#remove-test-case-button").button();
-	});
-</script>
+		<%--------------------------- Test plan section ------------------------------------%>
+		<script type="text/javascript">
+			$(function() {
+				$("#test-case-button").button().click(function() {
+					document.location.href = "${testCaseManagerUrl}";
+				});
+				$("#remove-test-case-button").button();
+			});
+		</script>
 
-<div class="toolbar" >
-		<c:if test="${ linkable }">
-			<f:message var="associateLabel" key="campaign.test-plan.manage.button.label"/>
-			<f:message var="removeLabel" key="campaign.test-plan.remove.button.label"/>
-			<f:message var="assignLabel" key="campaign.test-plan.assign.button.label"/>
-			<input id="test-case-button" type="button" value="${associateLabel}" class="button"/>
-			<input id="remove-test-case-button" type="button" value="${removeLabel}" class="button"/>
-			<input id="assign-test-case-button" type="button" value="${assignLabel}" class="button"/>
-		</c:if>
-</div>
-<div class="table-tab-wrap" >
-		<aggr:decorate-campaign-test-plan-table 
-			batchRemoveButtonId="remove-test-case-button" editable="${ linkable }" assignableUsersUrl="${assignableUsersUrl}" 
-			campaignUrl="${ campaignUrl }" testCaseMultipleRemovalPopupId="delete-multiple-test-cases-dialog"  />
-		<aggr:campaign-test-plan-table />
-</div>
+		<div class="toolbar">
+			<c:if test="${ linkable }">
+				<f:message var="associateLabel"
+					key="campaign.test-plan.manage.button.label" />
+				<f:message var="removeLabel"
+					key="campaign.test-plan.remove.button.label" />
+				<f:message var="assignLabel"
+					key="campaign.test-plan.assign.button.label" />
+				<input id="test-case-button" type="button" value="${associateLabel}"
+					class="button" />
+				<input id="remove-test-case-button" type="button"
+					value="${removeLabel}" class="button" />
+				<input id="assign-test-case-button" type="button"
+					value="${assignLabel}" class="button" />
+			</c:if>
+		</div>
+		<div class="table-tab-wrap">
+			<aggr:decorate-campaign-test-plan-table
+				batchRemoveButtonId="remove-test-case-button"
+				editable="${ linkable }" assignableUsersUrl="${assignableUsersUrl}"
+				campaignUrl="${ campaignUrl }"
+				testCaseMultipleRemovalPopupId="delete-multiple-test-cases-dialog" />
+			<aggr:campaign-test-plan-table />
+		</div>
 
 
-<%--------------------------- Deletion confirmation popup for Test plan section ------------------------------------%>
+		<%--------------------------- Deletion confirmation popup for Test plan section ------------------------------------%>
 
-<pop:popup id="delete-multiple-test-cases-dialog" openedBy="remove-test-case-button" titleKey="dialog.remove-testcase-associations.title">
-	<jsp:attribute name="buttons">
+		<pop:popup id="delete-multiple-test-cases-dialog"
+			openedBy="remove-test-case-button"
+			titleKey="dialog.remove-testcase-associations.title">
+			<jsp:attribute name="buttons">
 		<f:message var="label" key="attachment.button.delete.label" />
 				'${ label }' : function(){
 						$("#delete-multiple-test-cases-dialog").data("answer","yes");
@@ -332,24 +371,29 @@
 				
 		<pop:cancel-button />
 	</jsp:attribute>
-	<jsp:attribute name="body">
+			<jsp:attribute name="body">
 		<f:message key="dialog.remove-testcase-associations.message" />
 	</jsp:attribute>
-</pop:popup>
+		</pop:popup>
 
 
-</div>
+	</div>
 
-<%------------------------------ Attachments bloc ---------------------------------------------%> 
+	<%------------------------------ Attachments bloc ---------------------------------------------%>
 
-<comp:attachment-tab tabId="tabs-3" entity="${ campaign }" editable="${ attachable }" />
+	<comp:attachment-tab tabId="tabs-3" entity="${ campaign }"
+		editable="${ attachable }" />
 </div>
 <%--------------------------- Deletion confirmation popup -------------------------------------%>
 <c:if test="${ deletable }">
 
 
-	<comp:delete-contextual-node-dialog simulationUrl="${simulateDeletionUrl}" confirmationUrl="${confirmDeletionUrl}" 
-			itemId="${campaign.id}" successCallback="deleteCampaignSuccess" openedBy="delete-campaign-button" titleKey="dialog.delete-campaign.title"/>
+	<comp:delete-contextual-node-dialog
+		simulationUrl="${simulateDeletionUrl}"
+		confirmationUrl="${confirmDeletionUrl}" itemId="${campaign.id}"
+		successCallback="deleteCampaignSuccess"
+		openedBy="delete-campaign-button"
+		titleKey="dialog.delete-campaign.title" />
 
 </c:if>
 
@@ -357,10 +401,10 @@
 <%--------------------------- Assign User popup -------------------------------------%>
 
 
-<comp:popup id="batch-assign-test-case" titleKey="dialog.assign-test-case.title" 
-	
-	isContextual="true" openedBy="assign-test-case-button" closeOnSuccess="false">
-		<jsp:attribute name="buttons">
+<comp:popup id="batch-assign-test-case"
+	titleKey="dialog.assign-test-case.title" isContextual="true"
+	openedBy="assign-test-case-button" closeOnSuccess="false">
+	<jsp:attribute name="buttons">
 		
 			<f:message var="label" key="dialog.assign-test-case.title" />
 			'${ label }': function() {
@@ -378,32 +422,49 @@
 			},			
 			<pop:cancel-button />
 		</jsp:attribute>
-		<jsp:body>
-			<f:message var="emptyMessage" key="dialog.assign-user.selection.empty.label" />
+	<jsp:body>
+			<f:message var="emptyMessage"
+			key="dialog.assign-user.selection.empty.label" />
 			<script type="text/javascript">
-				$("#batch-assign-test-case").bind( "dialogopen", function(event, ui){
-					var table = $( '#test-cases-table' ).dataTable();
-					var ids = getIdsOfSelectedTableRows(table, rowDataToItemId);
-					if (ids.length > 0) {
-						var pop = this;
-												
-						$.get("${assignableUsersUrl}","json")
-						.success(function(jsonList){
-							var select = $(".batch-select", pop);
-							select.empty();
-							for (var i=0;i<jsonList.length;i++){
-								select.append('<option value="'+jsonList[i].id+'">'+jsonList[i].login+'</option>');
-							}
-						});
-					}
-					else {
-						$.squash.openMessage("<f:message key='popup.title.error' />", "${emptyMessage}");
-						$(this).dialog('close');
-					}
-					
-				});
+				$("#batch-assign-test-case")
+						.bind(
+								"dialogopen",
+								function(event, ui) {
+									var table = $('#test-cases-table')
+											.dataTable();
+									var ids = getIdsOfSelectedTableRows(table,
+											rowDataToItemId);
+									if (ids.length > 0) {
+										var pop = this;
+
+										$
+												.get("${assignableUsersUrl}",
+														"json")
+												.success(
+														function(jsonList) {
+															var select = $(
+																	".batch-select",
+																	pop);
+															select.empty();
+															for ( var i = 0; i < jsonList.length; i++) {
+																select
+																		.append('<option value="'+jsonList[i].id+'">'
+																				+ jsonList[i].login
+																				+ '</option>');
+															}
+														});
+									} else {
+										$.squash
+												.openMessage(
+														"<f:message key='popup.title.error' />",
+														"${emptyMessage}");
+										$(this).dialog('close');
+									}
+
+								});
 			</script>
-			<span><f:message key="dialog.assign-test-case.confirm.label" /></span>
+			<span><f:message key="dialog.assign-test-case.confirm.label" />
+		</span>
 			<select class="batch-select"></select>
 			
 		</jsp:body>
@@ -411,11 +472,12 @@
 
 
 <%------------------------------ bugs section -------------------------------%>
+<c:if test="${campaign.project.bugTrackerConnected }">
+	<comp:issues-tab btEntityUrl="${ btEntityUrl }" />
+</c:if>
 
-<comp:issues-tab btEntityUrl="${ btEntityUrl }"/>
-<comp:decorate-buttons />
 <%------------------------------ /bugs section -------------------------------%>
-
+<comp:decorate-buttons />
 
 
 

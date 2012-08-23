@@ -135,6 +135,16 @@
 		bean-name="squashtest.tm.service.ProjectModificationService"
 		interface="org.squashtest.csp.tm.service.ProjectModificationService"
 		availability="mandatory" />
+	
+	<osgi:reference
+		id="squashtest.tm.service.ProjectManagerService" 
+		bean-name="squashtest.tm.service.ProjectManagerService"
+		availability="mandatory">
+		<osgi:interfaces>
+			<value>org.squashtest.csp.tm.service.ProjectManagerService</value>
+			<value>org.squashtest.csp.tm.service.ProjectFinder</value>
+		</osgi:interfaces>
+	</osgi:reference>
 
 	<osgi:reference id="squashtest.tm.service.CallStepManagerService"
 		bean-name="squashtest.tm.service.CallStepManagerService" interface="org.squashtest.csp.tm.service.CallStepManagerService"
@@ -164,7 +174,7 @@
 	<!-- yes : tm.web propose one service consumed by core.web -->
 
 	<bean id="squashtest.tm.web.authSuccessCallback.btautoconnect"
-		class="org.squashtest.csp.tm.web.internal.handler.BugtrackerAutoconnectCallback">
+		class="org.squashtest.csp.tm.web.internal.handler.BugTrackerAutoconnectCallback">
 		<property name="bugTrackersLocalService" ref="squashtest.tm.service.BugTrackersLocalService" />
 	</bean>
 

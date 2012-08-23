@@ -56,13 +56,8 @@ public class BugTrackersServiceImpl implements BugTrackersService {
 	}
 
 	@Override
-	public boolean isBugTrackerDefined() {
-		return false; // TODO
-	}
-
-	@Override
-	public boolean isCredentialsNeeded() {
-		return true; // TODO
+	public boolean isCredentialsNeeded(BugTracker bugTracker) {
+		return !getBugTrackerContext().hasCredentials(bugTracker);
 	}
 
 	@Override
@@ -102,11 +97,11 @@ public class BugTrackersServiceImpl implements BugTrackersService {
 		BugTrackerConnector connector = bugTrackerConnectorFactory.createConnector(bugTracker);
 
 		// setcredentials to null first. If the operation succeed then we'll set them in the context.
-		getBugTrackerContext().setCredentials(null);
+		getBugTrackerContext().setCredentials(bugTracker, null);
 
 		connector.checkCredentials(credentials);
 
-		getBugTrackerContext().setCredentials(credentials);
+		getBugTrackerContext().setCredentials(bugTracker, credentials);
 
 	}
 
@@ -127,7 +122,7 @@ public class BugTrackersServiceImpl implements BugTrackersService {
 
 	private BugTrackerConnector connect(BugTracker bugTracker) {
 		BugTrackerConnector connector = bugTrackerConnectorFactory.createConnector(bugTracker);
-		connector.authenticate(getBugTrackerContext().getCredentials());
+		connector.authenticate(getBugTrackerContext().getCredentials(bugTracker));
 		return connector;
 	}
 

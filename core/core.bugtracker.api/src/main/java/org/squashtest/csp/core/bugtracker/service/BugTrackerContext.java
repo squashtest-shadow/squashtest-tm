@@ -21,7 +21,10 @@
 package org.squashtest.csp.core.bugtracker.service;
 
 import java.io.Serializable;
+import java.util.HashMap;
+import java.util.Map;
 
+import org.squashtest.csp.core.bugtracker.domain.BugTracker;
 import org.squashtest.csp.core.bugtracker.net.AuthenticationCredentials;
 
 /**
@@ -32,17 +35,17 @@ import org.squashtest.csp.core.bugtracker.net.AuthenticationCredentials;
  */
 @SuppressWarnings("serial")
 public class BugTrackerContext implements Serializable {
-	private AuthenticationCredentials credentials;
+	Map<BugTracker, AuthenticationCredentials> bugTrackersCredentials = new HashMap<BugTracker, AuthenticationCredentials>();
 
-	public AuthenticationCredentials getCredentials() {
-		return credentials;
+	public AuthenticationCredentials getCredentials(BugTracker bugTracker) {
+		return bugTrackersCredentials.get(bugTracker);
 	}
 
-	public void setCredentials(AuthenticationCredentials credentials) {
-		this.credentials = credentials;
+	public void setCredentials(BugTracker bugTracker, AuthenticationCredentials credentials) {
+		bugTrackersCredentials.put(bugTracker, credentials);
 	}
 
-	public boolean hasCredentials() {
-		return credentials != null;
+	public boolean hasCredentials(BugTracker bugTracker) {
+		return bugTrackersCredentials.get(bugTracker) != null;
 	}
 }

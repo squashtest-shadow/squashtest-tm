@@ -51,6 +51,7 @@ import org.squashtest.csp.tm.domain.campaign.Iteration;
 import org.squashtest.csp.tm.domain.campaign.TestSuite;
 import org.squashtest.csp.tm.domain.execution.Execution;
 import org.squashtest.csp.tm.domain.execution.ExecutionStep;
+import org.squashtest.csp.tm.domain.project.Project;
 import org.squashtest.csp.tm.domain.testcase.TestCase;
 import org.squashtest.csp.tm.infrastructure.filter.CollectionSorting;
 import org.squashtest.csp.tm.infrastructure.filter.FilteredCollectionHolder;
@@ -97,12 +98,12 @@ public class BugTrackersLocalServiceImpl implements BugTrackersLocalService {
 	}
 
 	@Override
-	public BugTrackerStatus checkBugTrackerStatus() {
+	public BugTrackerStatus checkBugTrackerStatus(Project project) {
 		BugTrackerStatus status;
 
-		if (!remoteBugTrackersService.isBugTrackerDefined()) {
+		if (!project.isBugtrackerConnected()) {
 			status = BugTrackerStatus.BUGTRACKER_UNDEFINED;
-		} else if (remoteBugTrackersService.isCredentialsNeeded()) {
+		} else if (remoteBugTrackersService.isCredentialsNeeded(project.findBugTracker())) {
 			status = BugTrackerStatus.BUGTRACKER_NEEDS_CREDENTIALS;
 		} else {
 			status = BugTrackerStatus.BUGTRACKER_READY;

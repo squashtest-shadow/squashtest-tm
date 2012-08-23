@@ -67,7 +67,7 @@
 </c:if>
 
 <s:url var="bugTrackerUrl" value="/bugtracker/" />
-
+<s:url var="bugTrackerStatusUrl" value="/bugtracker/status"/>
 <s:url var="entityUrl" value="/bugtracker/{entityType}/{id}">
 	<s:param name="entityType" value="${entityType}" />
 	<s:param name="id" value="${entity.id}" />
@@ -193,8 +193,9 @@
 
 		//first step : check
 		$.ajax({
-			url : "${bugTrackerUrl}/check/",
+			url : "${bugTrackerStatusUrl}",
 			type : "GET",
+			data : {"projectId": ${project.id}},
 			dataType : "json",
 			success : handleBugTrackerStatus
 		});

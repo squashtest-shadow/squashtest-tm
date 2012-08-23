@@ -40,19 +40,14 @@ import org.squashtest.csp.core.bugtracker.spi.BugTrackerInterfaceDescriptor;
  *
  */
 public interface BugTrackersService {
-	/**
-	 * Tells if a bug tracker is defined. If not, each bug tracker access method should throw an exception.
-	 *
-	 * @return
-	 */
-	boolean isBugTrackerDefined();
+
 
 	/**
 	 * Tell if this service should be given authentication credentials before being able to perform any BT operation.
-	 *
+	 *@param bugTracker : the concerned BugTracker
 	 * @return
 	 */
-	boolean isCredentialsNeeded();
+	boolean isCredentialsNeeded(BugTracker bugTracker);
 
 	/**
 	 * Sets the credentials to use for bug tracker authentication. Once set,

@@ -45,7 +45,7 @@
 
 	<osgi:service ref="squashtest.tm.service.BugTrackersLocalService"
 		interface="org.squashtest.csp.tm.service.BugTrackersLocalService" />
-		
+
 	<osgi:service ref="squashtest.tm.service.BugTrackerManagerService">
 		<osgi:interfaces>
 			<value>org.squashtest.csp.tm.service.BugTrackerManagerService</value>
@@ -65,10 +65,14 @@
 
 	<!-- Application services -->
 	<osgi:service ref="squashtest.tm.service.ProjectModificationService"
-		interface="org.squashtest.csp.tm.service.ProjectModificationService" />	
-	
-	<osgi:service ref="squashtest.tm.service.ProjectManagerService"
-		interface="org.squashtest.csp.tm.service.ProjectManagerService" />
+		interface="org.squashtest.csp.tm.service.ProjectModificationService" />
+
+	<osgi:service ref="squashtest.tm.service.ProjectManagerService">
+		<osgi:interfaces>
+			<value>org.squashtest.csp.tm.service.ProjectManagerService</value>
+			<value>org.squashtest.csp.tm.service.ProjectFinder</value>
+		</osgi:interfaces>
+	</osgi:service>
 
 	<osgi:service ref="squashtest.tm.service.TestCaseModificationService">
 		<osgi:interfaces>
@@ -114,7 +118,7 @@
 			<value>org.squashtest.csp.tm.service.CampaignLibraryNavigationService</value>
 			<value>org.squashtest.csp.tm.service.CampaignLibraryFinderService</value>
 		</osgi:interfaces>
-	</osgi:service>		
+	</osgi:service>
 
 	<osgi:service
 		ref="squashtest.tm.service.VerifiedRequirementsManagerService"
