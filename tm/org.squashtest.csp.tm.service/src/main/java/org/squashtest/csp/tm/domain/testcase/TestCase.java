@@ -39,6 +39,7 @@ import javax.persistence.JoinColumn;
 import javax.persistence.JoinTable;
 import javax.persistence.Lob;
 import javax.persistence.ManyToMany;
+import javax.persistence.ManyToOne;
 import javax.persistence.OneToMany;
 import javax.persistence.OneToOne;
 import javax.persistence.OrderColumn;
@@ -54,6 +55,8 @@ import org.squashtest.csp.tm.domain.attachment.AttachmentList;
 import org.squashtest.csp.tm.domain.audit.AuditableMixin;
 import org.squashtest.csp.tm.domain.requirement.Requirement;
 import org.squashtest.csp.tm.domain.requirement.RequirementVersion;
+
+import squashtm.testautomation.domain.TestAutomationTest;
 
 /**
  * @author Gregory Fouquet
@@ -101,6 +104,15 @@ public class TestCase extends TestCaseLibraryNode implements AttachmentHolder{
 	 * Should the importance be automatically computed.
 	 */
 	private boolean importanceAuto = false;
+	
+	
+	@ManyToOne
+	@JoinColumn(name="TA_TEST")
+	private TestAutomationTest testAutomationTest;
+	
+	
+	//*************************** CODE *************************************
+	
 
 	public TestCase(Date createdOn, String createdBy) {
 		AuditableMixin audit = ((AuditableMixin) this);
@@ -376,6 +388,21 @@ public class TestCase extends TestCaseLibraryNode implements AttachmentHolder{
 		RequirementVersion candidate = requirement.getDefaultVerifiableVersion();
 		addVerifiedRequirementVersion(candidate);
 	}
-	
 
+
+
+	// *************** test automation section ******************
+	
+	
+	public TestAutomationTest getTestAutomationTest() {
+		return testAutomationTest;
+	}
+
+	public void setTestAutomationTest(TestAutomationTest testAutomationTest) {
+		this.testAutomationTest = testAutomationTest;
+	}
+	
+	
+	
+	
 }

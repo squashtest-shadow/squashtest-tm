@@ -29,74 +29,55 @@ import javax.persistence.ManyToOne;
 import javax.persistence.NamedQueries;
 import javax.persistence.NamedQuery;
 
-/**
- * 
- * Like every entities in the package org.squashtest.csp.tm.domain.testautomation, these are immutable : modifying servers, projects etc 
- * could break existing data. For instance changing the URL of a server, or its kind, means that a new instance of AutomatedTestServer should 
- * be persisted instead of altering the existing one. In other words, our objects here are immutable. When a setter is used, a new instance of 
- * this will be returned, with a null ID because this instance is still unknown.
- * 
- * 
- * @author bsiri
- *
- */
 
 @NamedQueries({
-	@NamedQuery(name="testAutomationProject.findById", query="from TestAutomationProject where id = :projectId"),
-	@NamedQuery(name="testAutomationProject.findAllKnownTests", query="select t from TestAutomationTest t join t.project p where p.id = :projectId")
+	@NamedQuery(name="testAutomationTest.findById", query="from TestAutomationTest where id = :testId")
 })
 @Entity
-public class TestAutomationProject {
+public class TestAutomationTest {
 
-	
 	@Id
 	@GeneratedValue
-	@Column(name="PROJECT_ID")
+	@Column(name="TEST_ID")
 	private Long id;
+	
+	@ManyToOne
+	@JoinColumn(name="PROJECT_ID")
+	private TestAutomationProject project;
 	
 	@Column
 	private String name;
-	
-	
-	@ManyToOne
-	@JoinColumn(name="SERVER_ID")
-	private TestAutomationServer server;
 
-	
+
 	public Long getId() {
 		return id;
 	}
+	
+	
+	public TestAutomationProject getProject() {
+		return project;
+	}
 
-	public String getName() {
+	public String getName(){
 		return name;
 	}
-
-
-	public TestAutomationServer getServer() {
-		return server;
-	}
-
-	public TestAutomationProject newWithName(String name){
-		return new TestAutomationProject(name, server);
+	
+	public TestAutomationTest newWithProject(TestAutomationProject project){
+		return new TestAutomationTest(name, project); 
 	}
 	
-	public TestAutomationProject newWithServer(TestAutomationServer server){
-		return new TestAutomationProject(name, server);
+	public TestAutomationTest newWithName(String name){
+		return new TestAutomationTest(name, project);
 	}
 	
-
-	public TestAutomationProject(){
+	public TestAutomationTest(){
 		
 	}
-
 	
-	public TestAutomationProject(String name, TestAutomationServer server) {
+	public TestAutomationTest(String name, TestAutomationProject project){
 		super();
-		this.name = name;
-		this.server = server;
+		this.name=name;
+		this.project=project;
 	}
-	
-	
-	
 	
 }
