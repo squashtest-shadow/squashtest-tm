@@ -172,7 +172,7 @@ public class Project {
 		return bugtrackerBinding;
 	}
 
-	public void setBugtrackerProject(BugTrackerBinding bugtrackerBinding) {
+	public void setBugtrackerBinding(BugTrackerBinding bugtrackerBinding) {
 		this.bugtrackerBinding = bugtrackerBinding;
 	}
 

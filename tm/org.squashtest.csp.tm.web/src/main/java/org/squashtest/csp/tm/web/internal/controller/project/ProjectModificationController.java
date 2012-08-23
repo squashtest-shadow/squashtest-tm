@@ -49,6 +49,7 @@ import org.springframework.web.servlet.ModelAndView;
 import org.squashtest.csp.core.bugtracker.domain.BugTracker;
 import org.squashtest.csp.core.security.acls.PermissionGroup;
 import org.squashtest.csp.tm.domain.LoginDoNotExistException;
+import org.squashtest.csp.tm.domain.NoBugTrackerBindingException;
 import org.squashtest.csp.tm.domain.UnknownEntityException;
 import org.squashtest.csp.tm.domain.bugtracker.BugTrackerBinding;
 import org.squashtest.csp.tm.domain.project.AdministrableProject;
@@ -200,7 +201,7 @@ public class ProjectModificationController {
 		if(project.isBugtrackerConnected()){
 			return project.getBugtrackerBinding().getProjectName();
 		}else{
-			throw new UnknownEntityException(0, BugTrackerBinding.class);
+			throw new NoBugTrackerBindingException();
 		}
 	}
 	@RequestMapping(value = "/general", method = RequestMethod.GET)

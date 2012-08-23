@@ -70,6 +70,11 @@ public class BugTrackerBinding {
 	}
 
 
+	public BugTrackerBinding(String name, BugTracker newBugtracker) {
+		this(name);
+		this.bugtracker = newBugtracker;
+	}
+
 	/**
 	 * 
 	 * @return the name of a project in the bugtracker ({@link BugTrackerBinding#getBugtracker()})

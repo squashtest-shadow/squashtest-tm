@@ -32,6 +32,7 @@ import org.springframework.transaction.annotation.Transactional;
 import org.squashtest.csp.core.bugtracker.domain.BugTracker;
 import org.squashtest.csp.core.security.acls.PermissionGroup;
 import org.squashtest.csp.tm.domain.CannotDeleteProjectException;
+import org.squashtest.csp.tm.domain.NoBugTrackerBindingException;
 import org.squashtest.csp.tm.domain.UnknownEntityException;
 import org.squashtest.csp.tm.domain.bugtracker.BugTrackerBinding;
 import org.squashtest.csp.tm.domain.project.AdministrableProject;
@@ -139,80 +140,73 @@ public class CustomProjectModificationServiceImpl implements CustomProjectModifi
 	// ********************************** Test automation section *************************************
 	@Override
 	@PreAuthorize("hasPermission(#TMprojectId, 'org.squashtest.csp.tm.domain.project.Project', 'MANAGEMENT') or hasRole('ROLE_ADMIN')")
-	public void bindTestAutomationProject(long TMprojectId, TestAutomationProject TAproject) {		
+	public void bindTestAutomationProject(long TMprojectId, TestAutomationProject TAproject) {
 		TestAutomationProject persistedProject = autotestService.persistOrAttach(TAproject);
-		projectDao.findById(TMprojectId).bindTestAutomationProject(persistedProject);		
+		projectDao.findById(TMprojectId).bindTestAutomationProject(persistedProject);
 	}
 
-	
 	@Override
 	@PreAuthorize("hasPermission(#projectId, 'org.squashtest.csp.tm.domain.project.Project', 'MANAGEMENT') or hasRole('ROLE_ADMIN')")
 	public TestAutomationServer getLastBoundServerOrDefault(long projectId) {
 		Project project = findById(projectId);
-		
-		if (project.hasTestAutomationProjects()){
+
+		if (project.hasTestAutomationProjects()) {
 			return project.getServerOfLatestBoundProject();
 		}
-		
-		else{
+
+		else {
 			return autotestService.getDefaultServer();
 		}
 	}
-	
-	
+
 	@Override
 	@PreAuthorize("hasPermission(#projectId, 'org.squashtest.csp.tm.domain.project.Project', 'MANAGEMENT') or hasRole('ROLE_ADMIN')")
-	public List<TestAutomationProject> findBoundTestAutomationProjects(
-			long projectId) {
+	public List<TestAutomationProject> findBoundTestAutomationProjects(long projectId) {
 		return projectDao.findBoundTestAutomationProjects(projectId);
 	}
 
-	
 	@Override
 	@PreAuthorize("hasPermission(#TMprojectId, 'org.squashtest.csp.tm.domain.project.Project', 'MANAGEMENT') or hasRole('ROLE_ADMIN')")
 	public void unbindTestAutomationProject(long TMprojectId, long TAProjectId) {
 		Project project = projectDao.findById(TMprojectId);
 		project.unbindTestAutomationProject(TAProjectId);
 	}
-	
-	
+
 	// ********************************** bugtracker section *************************************
-	
+
 	@Override
 	public void changeBugTracker(long projectId, Long newBugtrackerId) {
 		LOGGER.debug("changeBugTracker for project " + projectId + " bt: " + newBugtrackerId);
 
 		Project project = projectDao.findById(projectId);
-		if(!project.isBugtrackerConnected()){
-			BugTracker newBugtracker = bugTrackerDao.findById(newBugtrackerId);
-			if(newBugtracker != null){
-				project.getBugtrackerBinding().setBugtracker(newBugtracker);
+		BugTracker newBugtracker = bugTrackerDao.findById(newBugtrackerId);
+		
+		if (newBugtracker != null) {
+			// the project doesn't have bug-tracker connection yet
+			if (!project.isBugtrackerConnected()) {
+				BugTrackerBinding bugTrackerBinding = new BugTrackerBinding(project.getName(), newBugtracker);
+				project.setBugtrackerBinding(bugTrackerBinding);
 			}
-			else{
-				throw new UnknownEntityException(newBugtrackerId, BugTracker.class);
-			}
-		}
-		else{
-			if (projectBugTrackerChangesFromOneToAnother(newBugtrackerId, project)) {
-				BugTracker newBugtracker = bugTrackerDao.findById(newBugtrackerId);
-				if(newBugtracker != null){
-				project.getBugtrackerBinding().setBugtracker(newBugtracker);
-				}else{
-					throw new UnknownEntityException(newBugtrackerId, BugTracker.class);
+			// the project has a bug-tracker connection
+			else {
+				// and the new one is different from the old one
+				if (projectBugTrackerChanges(newBugtrackerId, project)) {
+					project.getBugtrackerBinding().setBugtracker(newBugtracker);
 				}
-				
 			}
+		} else {
+			throw new UnknownEntityException(newBugtrackerId, BugTracker.class);
 		}
 
 	}
 
-	private boolean projectBugTrackerChangesFromOneToAnother(Long newBugtrackerId, Project project) {
+	private boolean projectBugTrackerChanges(Long newBugtrackerId, Project project) {
 		boolean change = true;
-			BugTrackerBinding bugtrackerBinding = project.getBugtrackerBinding();
-			long bugtrackerId = bugtrackerBinding.getBugtracker().getId();
-			if (bugtrackerId == newBugtrackerId) {
-				change = false;
-			}
+		BugTrackerBinding bugtrackerBinding = project.getBugtrackerBinding();
+		long bugtrackerId = bugtrackerBinding.getBugtracker().getId();
+		if (bugtrackerId == newBugtrackerId) {
+			change = false;
+		}
 		return change;
 	}
 
@@ -231,10 +225,10 @@ public class CustomProjectModificationServiceImpl implements CustomProjectModifi
 	@Override
 	public void changeBugTrackerProjectName(long projectId, String projectBugTrackerName) {
 		Project project = projectDao.findById(projectId);
-		if(project.getBugtrackerBinding() == null){
-			throw new UnknownEntityException(0, BugTrackerBinding.class);
-		}
 		BugTrackerBinding bugtrackerBinding = project.getBugtrackerBinding();
+		if (bugtrackerBinding == null) {
+			throw new NoBugTrackerBindingException();
+		}
 		bugtrackerBinding.setProjectName(projectBugTrackerName);
 	}
 
