@@ -23,6 +23,10 @@ package squashtm.testautomation.internal.service
 import spock.lang.Specification;
 import squashtm.testautomation.domain.TestAutomationProject;
 import squashtm.testautomation.domain.TestAutomationServer;
+import squashtm.testautomation.internal.tasks.FetchTestListTask;
+import squashtm.testautomation.internal.thread.FetchTestListFuture;
+import squashtm.testautomation.internal.thread.TestAutomationTaskExecutor;
+import squashtm.testautomation.model.TestAutomationProjectContent;
 import squashtm.testautomation.repository.TestAutomationServerDao;
 import squashtm.testautomation.spi.TestAutomationConnector;
 
@@ -35,12 +39,16 @@ class TestAutomationManagementServiceImplTest extends Specification {
 	
 	TestAutomationManagementServiceImpl service;
 	
+	TestAutomationTaskExecutor executor;
+	
 	def setup(){
 		serverDao = Mock()
 		connectorRegistry = Mock()
+		executor = Mock()
 		service = new TestAutomationManagementServiceImpl()
 		service.serverDao = serverDao
 		service.connectorRegistry = connectorRegistry
+		service.executor = executor;
 	}
 
 	
@@ -76,4 +84,78 @@ class TestAutomationManagementServiceImplTest extends Specification {
 			res.collect{it.name} == ["proj1", "proj2", "proj3"]
 	}
 		
+	
+	def "should build a bunch of tasks to fetch the test lists"(){
+		
+		given :
+			List<TestAutomationProject> projects = [ Mock(TestAutomationProject),
+													 Mock(TestAutomationProject),
+													 Mock(TestAutomationProject)
+												   ]
+			
+		when :
+			def res = service.prepareAllFetchTestListTasks(projects)
+			
+		then :
+			res.collect { 
+				[it.project, it.connectorRegistry] 
+			} == [
+				[projects[0], connectorRegistry],
+				[projects[1], connectorRegistry],
+				[projects[2], connectorRegistry]				
+			]
+	}
+	
+	def "should submit a bunch of tasks"(){
+		
+		given :
+			List<FetchTestListTask> tasks = [ Mock(FetchTestListTask),
+											  Mock(FetchTestListTask),
+											  Mock(FetchTestListTask)
+											]
+			
+		and :
+			List<FetchTestListFuture> futures = [ Mock(FetchTestListFuture),
+												  Mock(FetchTestListFuture),
+												  Mock(FetchTestListFuture)				
+												]				
+			
+		and :
+			executor.sumbitFetchTestListTask(tasks[0]) >> futures[0]
+			executor.sumbitFetchTestListTask(tasks[1]) >> futures[1]
+			executor.sumbitFetchTestListTask(tasks[2]) >> futures[2]
+			
+		when :
+			def res = service.submitAllFetchTestListTasks(tasks)
+			
+		then :
+			res == futures
+			
+	}
+	
+	def "should collect test list results"(){
+		
+		given :
+			TestAutomationProjectContent content1 = Mock()
+			TestAutomationProjectContent content2 = Mock()
+		
+		and :
+			FetchTestListFuture fut1 =  Mock()
+			fut1.get(_,_) >> content1
+			
+			FetchTestListTask task2 = Mock()
+			task2.buildFailedResult(_) >> content2 
+			FetchTestListFuture fut2 = Mock()
+			
+			fut2.getTask() >> task2
+			fut2.get(_,_) >> { throw new Exception() }
+			
+		when :
+			def res = service.collectAllTestLists([fut1, fut2])
+			
+		then :
+			res == [content1, content2]
+		
+	}
+	
 }

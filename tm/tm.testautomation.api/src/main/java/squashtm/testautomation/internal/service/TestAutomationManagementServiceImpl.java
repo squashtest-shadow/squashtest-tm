@@ -23,12 +23,7 @@ package squashtm.testautomation.internal.service;
 import java.net.URL;
 import java.util.ArrayList;
 import java.util.Collection;
-import java.util.LinkedList;
-import java.util.concurrent.Callable;
-import java.util.concurrent.ExecutionException;
-import java.util.concurrent.Future;
 import java.util.concurrent.TimeUnit;
-import java.util.concurrent.TimeoutException;
 
 import javax.inject.Inject;
 
@@ -41,7 +36,6 @@ import org.springframework.transaction.annotation.Transactional;
 import squashtm.testautomation.domain.TestAutomationProject;
 import squashtm.testautomation.domain.TestAutomationServer;
 import squashtm.testautomation.internal.tasks.FetchTestListTask;
-import squashtm.testautomation.internal.tasks.TestAutomationConnectorTask;
 import squashtm.testautomation.internal.thread.FetchTestListFuture;
 import squashtm.testautomation.internal.thread.TestAutomationTaskExecutor;
 import squashtm.testautomation.model.TestAutomationProjectContent;
@@ -145,7 +139,7 @@ public class TestAutomationManagementServiceImpl implements  InsecureTestAutomat
 	
 	
 	
-	//****************************** private methods ****************************************
+	//****************************** fetch test list methods ****************************************
 	
 	private Collection<FetchTestListTask> prepareAllFetchTestListTasks(Collection<TestAutomationProject> projects){
 		Collection<FetchTestListTask> tasks = new ArrayList<FetchTestListTask>();

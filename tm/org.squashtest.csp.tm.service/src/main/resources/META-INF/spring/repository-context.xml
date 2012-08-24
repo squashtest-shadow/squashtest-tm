@@ -108,6 +108,7 @@
 				<!--  the following entries come from fragment tm.automatedttesting.api -->
 				<value>squashtm.testautomation.domain.TestAutomationServer</value>
 				<value>squashtm.testautomation.domain.TestAutomationProject</value>
+				<value>squashtm.testautomation.domain.TestAutomationTest</value>
 				
 			</list>
 		</property>
