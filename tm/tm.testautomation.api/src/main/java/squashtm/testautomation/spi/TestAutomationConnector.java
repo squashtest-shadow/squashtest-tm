@@ -25,6 +25,7 @@ import java.util.Collection;
 
 import squashtm.testautomation.domain.TestAutomationProject;
 import squashtm.testautomation.domain.TestAutomationServer;
+import squashtm.testautomation.domain.TestAutomationTest;
 import squashtm.testautomation.spi.exceptions.AccessDenied;
 import squashtm.testautomation.spi.exceptions.NotFoundException;
 import squashtm.testautomation.spi.exceptions.ServerConnectionFailed;
@@ -54,14 +55,13 @@ public interface TestAutomationConnector {
 	/**
 	 * <p>Given a server (that contains everything you need to connect it), returns the collection of {@link TestAutomationProject} 
 	 * that it hosts.</p>
-	 * 
-	 * <p>That method must be synchronous and perform its task within the calling thread.</p>
-	 * 
+	 *  
 	 * @param server
 	 * @return a Collection that may never be null if success
 	 * @throws ServerConnectionFailed if could not connect to the server
 	 * @throws AccessDenied if the server was reached but the used user could log in
-	 * @throws UnreadableResponseException if the server replied something that is not suitable for a response.
+	 * @throws UnreadableResponseException if the server replied something that is not suitable for a response or insulted you
+	 * @throws NotFoundException if the server could not find its projects
 	 * @throws TestAutomationException for anything that doesn't fit the exceptions above. 
 	 */
 	Collection<TestAutomationProject> listProjectsOnServer(TestAutomationServer server) 
@@ -70,5 +70,25 @@ public interface TestAutomationConnector {
 					   UnreadableResponseException,
 					   NotFoundException,
 					   TestAutomationException;
+	
+	
+	/**
+	 * <p>Given a project (that contains everything you need to connect it), returns the collection of {@link TestAutomationTest}
+	 * that are bundled with it</p>
+	 *
+	 * @param project
+	 * @return a Collection possibly empty but never null of TestAutomationTest if success
+	 * @throws ServerConnectionFailed if could not connect to the server
+	 * @throws AccessDenied if the server was reached but the used user could log in
+	 * @throws UnreadableResponseException if the server replied something that is not suitable for a response or was rude
+	 * @throws NotFoundException if the tests in that project cannot be found
+	 * @throws TestAutomationException for anything that doesn't fit the exceptions above. 
+	 */
+	Collection<TestAutomationTest> listTestsInProject(TestAutomationProject project)
+			   throws ServerConnectionFailed,
+			   		  AccessDenied,
+			   		  UnreadableResponseException,
+			   		  NotFoundException,
+			   		  TestAutomationException;
 	
 }

@@ -821,7 +821,7 @@
 		
 		</createTable>
 		
-		<addUniqueConstraint tableName="TEST_AUTOMATION_TEST" columnNames="TEST_NAME, PROJECT_ID"/>
+		<addUniqueConstraint tableName="TEST_AUTOMATION_TEST" columnNames="NAME, PROJECT_ID"/>
 	
 	</changeSet>
 	

@@ -20,8 +20,6 @@
  */
 package squashtm.testautomation.internal.service;
 
-import org.springframework.transaction.annotation.Transactional;
-
 import squashtm.testautomation.domain.TestAutomationProject;
 import squashtm.testautomation.domain.TestAutomationServer;
 import squashtm.testautomation.service.TestAutomationFinderService;
@@ -69,5 +67,8 @@ public interface InsecureTestAutomationManagementService extends TestAutomationF
 	 * @return the default instance of TestAutomationServer.
 	 */
 	TestAutomationServer getDefaultServer();	
+	
+	
+	
 	
 }

@@ -49,6 +49,14 @@
 			<scope>compile</scope>
 		</dependency>
 		
+		<dependency>
+			<artifactId>springdm-bundle-dependencies</artifactId>
+			<groupId>${project.groupId}</groupId>
+			<version>${project.version}</version>
+			<scope>compile</scope>
+			<type>pom</type>
+		</dependency>
+		
 		
 		<!-- ====== /SPRING STUFFS ====== -->
 		<dependency>

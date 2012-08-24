@@ -25,6 +25,8 @@ import java.util.Collection;
 
 import squashtm.testautomation.domain.TestAutomationProject;
 import squashtm.testautomation.domain.TestAutomationServer;
+import squashtm.testautomation.domain.TestAutomationTest;
+import squashtm.testautomation.model.TestAutomationProjectContent;
 import squashtm.testautomation.spi.exceptions.AccessDenied;
 
 
@@ -54,6 +56,13 @@ public interface TestAutomationFinderService {
 	Collection<TestAutomationProject> listProjectsOnServer(TestAutomationServer server);
 	
 
-	
+	/**
+	 * Given a collection of {@link TestAutomationProject}, will return the aggregated list of {@link TestAutomationTest} 
+	 * paired with their owner project.
+	 * 
+	 * @param projects
+	 * @return
+	 */
+	Collection<TestAutomationProjectContent> listTestsInProjects(Collection<TestAutomationProject> projects);
 
 }

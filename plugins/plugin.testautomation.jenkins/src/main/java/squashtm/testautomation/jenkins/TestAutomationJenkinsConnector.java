@@ -37,11 +37,13 @@ import org.springframework.stereotype.Service;
 
 import squashtm.testautomation.domain.TestAutomationProject;
 import squashtm.testautomation.domain.TestAutomationServer;
+import squashtm.testautomation.domain.TestAutomationTest;
 import squashtm.testautomation.jenkins.internal.HttpRequestFactory;
 import squashtm.testautomation.jenkins.internal.JsonParser;
 import squashtm.testautomation.jenkins.internal.net.HttpClientProvider;
 import squashtm.testautomation.spi.TestAutomationConnector;
 import squashtm.testautomation.spi.exceptions.AccessDenied;
+import squashtm.testautomation.spi.exceptions.NotFoundException;
 import squashtm.testautomation.spi.exceptions.ServerConnectionFailed;
 import squashtm.testautomation.spi.exceptions.TestAutomationException;
 import squashtm.testautomation.spi.exceptions.UnreadableResponseException;
@@ -141,6 +143,17 @@ public class TestAutomationJenkinsConnector implements TestAutomationConnector{
 		
 	} 
 	
+	
+	@Override
+	public Collection<TestAutomationTest> listTestsInProject(TestAutomationProject project) 
+				throws ServerConnectionFailed,
+					   AccessDenied, 
+					   UnreadableResponseException, 
+					   NotFoundException,
+					   TestAutomationException {
+		// TODO Auto-generated method stub
+		return null;
+	}
 	
 	
 	// ************************************ private tools ************************** 
