@@ -18,27 +18,21 @@
  *     You should have received a copy of the GNU Lesser General Public License
  *     along with this software.  If not, see <http://www.gnu.org/licenses/>.
  */
-package squashtm.testautomation.jenkins.internal.beans;
+package squashtm.testautomation.jenkins.beans;
 
-public class Job {
-	
-	private String name;
-	private String color;
+import java.util.ArrayList;
+import java.util.Collection;
 
-	public String getName() {
-		return name;
+public class JobList {
+
+	private Collection<Job> jobs = new ArrayList<Job>();
+
+	public Collection<Job> getJobs() {
+		return jobs;
 	}
 
-	public void setName(String name) {
-		this.name = name;
-	}
-
-	public String getColor() {
-		return color;
-	}
-
-	public void setColor(String color) {
-		this.color = color;
+	public void setJobs(Collection<Job> jobs) {
+		this.jobs = jobs;
 	}
 	
 	

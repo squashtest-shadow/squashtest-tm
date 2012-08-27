@@ -27,20 +27,26 @@ import static org.apache.commons.httpclient.HttpStatus.SC_UNAUTHORIZED;
 
 import java.io.IOException;
 import java.util.Collection;
+import java.util.Properties;
 
+import javax.annotation.PostConstruct;
 import javax.inject.Inject;
 
 import org.apache.commons.httpclient.HttpClient;
+import org.apache.commons.httpclient.HttpException;
 import org.apache.commons.httpclient.HttpMethodBase;
 import org.apache.commons.httpclient.methods.GetMethod;
+import org.apache.commons.httpclient.methods.PostMethod;
+import org.springframework.beans.factory.annotation.Qualifier;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 
 import squashtm.testautomation.domain.TestAutomationProject;
 import squashtm.testautomation.domain.TestAutomationServer;
 import squashtm.testautomation.domain.TestAutomationTest;
-import squashtm.testautomation.jenkins.internal.HttpRequestFactory;
 import squashtm.testautomation.jenkins.internal.JsonParser;
 import squashtm.testautomation.jenkins.internal.net.HttpClientProvider;
+import squashtm.testautomation.jenkins.internal.net.HttpRequestFactory;
 import squashtm.testautomation.spi.TestAutomationConnector;
 import squashtm.testautomation.spi.exceptions.AccessDenied;
 import squashtm.testautomation.spi.exceptions.NotFoundException;
@@ -54,6 +60,7 @@ public class TestAutomationJenkinsConnector implements TestAutomationConnector{
 
 	
 	private static final String CONNECTOR_KIND = "jenkins";
+	private static final int DEFAULT_SPAM_INTERVAL_MILLIS = 5000;
 	
 	
 	
@@ -65,6 +72,10 @@ public class TestAutomationJenkinsConnector implements TestAutomationConnector{
 	
 	@Inject
 	private HttpRequestFactory requestFactory;
+
+	
+	@Value("${tm.test.automation.pollinterval.millis}")
+	private int spamInterval = DEFAULT_SPAM_INTERVAL_MILLIS;
 	
 	
 	//****************************** let's roll ****************************************
@@ -76,6 +87,10 @@ public class TestAutomationJenkinsConnector implements TestAutomationConnector{
 	}
 	
 	
+	@PostConstruct
+	public void initialize(){
+		
+	}
 	
 	public boolean checkCredentials(TestAutomationServer server) {
 		
@@ -151,10 +166,13 @@ public class TestAutomationJenkinsConnector implements TestAutomationConnector{
 					   UnreadableResponseException, 
 					   NotFoundException,
 					   TestAutomationException {
-		// TODO Auto-generated method stub
+
 		return null;
+		
+
+		
 	}
-	
+
 	
 	// ************************************ private tools ************************** 
 

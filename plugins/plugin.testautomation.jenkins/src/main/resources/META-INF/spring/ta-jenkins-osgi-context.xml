@@ -30,7 +30,8 @@
 
 	<!-- service reference injection -->
 	<bean class="org.springframework.osgi.extensions.annotation.ServiceReferenceInjectionBeanPostProcessor" />
-		
+	
+	<osgix:cm-properties id="connector.conf"  persistent-id="tm.testautomation.conf" /> 	
 					   
 	<osgi:service ref="plugin.testautomation.jenkins.connector" interface="squashtm.testautomation.spi.TestAutomationConnector"/>
 	

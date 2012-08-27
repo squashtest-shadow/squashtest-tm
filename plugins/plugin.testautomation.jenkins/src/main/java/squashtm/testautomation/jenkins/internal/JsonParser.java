@@ -24,14 +24,16 @@ import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Collection;
 
+import org.codehaus.jackson.JsonGenerationException;
 import org.codehaus.jackson.JsonParseException;
 import org.codehaus.jackson.map.JsonMappingException;
 import org.codehaus.jackson.map.ObjectMapper;
 import org.springframework.stereotype.Component;
 
 import squashtm.testautomation.domain.TestAutomationProject;
-import squashtm.testautomation.jenkins.internal.beans.Job;
-import squashtm.testautomation.jenkins.internal.beans.JobList;
+import squashtm.testautomation.jenkins.beans.Job;
+import squashtm.testautomation.jenkins.beans.JobList;
+import squashtm.testautomation.spi.exceptions.TestAutomationException;
 import squashtm.testautomation.spi.exceptions.UnreadableResponseException;
 
 
@@ -68,6 +70,19 @@ public class JsonParser {
 			throw new UnreadableResponseException(e);
 		} 
 		
+	}
+	
+	
+	public String toJson(Object object){
+		try {
+			return objMapper.writeValueAsString(object);
+		} catch (JsonGenerationException e) {
+			throw new TestAutomationException("TestAutomationConnector : internal error, could not generate json", e);
+		} catch (JsonMappingException e) {
+			throw new TestAutomationException("TestAutomationConnector : internal error, could not generate json", e);
+		} catch (IOException e) {
+			throw new TestAutomationException("TestAutomationConnector : internal error, could not generate json", e);
+		}
 	}
 	
 	

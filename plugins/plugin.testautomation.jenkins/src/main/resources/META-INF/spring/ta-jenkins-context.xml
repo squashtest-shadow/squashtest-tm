@@ -34,5 +34,7 @@
 	
 
 	<context:component-scan base-package="*" />
+	
+	<context:property-placeholder ignore-unresolvable="true" properties-ref="connector.conf"/>
 
 </beans>
