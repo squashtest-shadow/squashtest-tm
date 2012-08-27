@@ -18,39 +18,26 @@
  *     You should have received a copy of the GNU Lesser General Public License
  *     along with this software.  If not, see <http://www.gnu.org/licenses/>.
  */
-package squashtm.testautomation.jenkins.beans;
+package squashtm.testautomation.jenkins.beans
 
-public class BuildList {
-	
-	private Build[] builds;
+import spock.lang.Specification
 
-	public Build[] getBuilds() {
-		return builds;
-	}
 
-	public void setBuilds(Build[] builds) {
-		this.builds = builds;
+class ParameterTest extends Specification {
+	
+	def "should return a new instance of Parameter that corresponds to getting the test list"(){
+		
+		expect :
+			Parameter.operationTestListParameter().name=="operation"
+			Parameter.operationTestListParameter().value=="test-list"
+		
 	}
 	
-	public BuildList(){
-		super();
+	def "should say that two parameters are equal"(){
+		
+		expect :
+			Parameter.operationTestListParameter().equals(Parameter.operationTestListParameter());
+		
 	}
 	
-	public Build findById(int id){
-		for (Build build : builds){
-			if (build.hasId(id)){
-				return build;
-			}
-		}
-		return null;
-	}
-	
-	public Build findByExternalId(String externalId){
-		for (Build build : builds){
-			if (build.hasExternalId(externalId)){
-				return build;
-			}
-		}
-		return null;
-	}
 }

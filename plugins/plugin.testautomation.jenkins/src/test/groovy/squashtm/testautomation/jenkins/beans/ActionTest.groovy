@@ -18,39 +18,44 @@
  *     You should have received a copy of the GNU Lesser General Public License
  *     along with this software.  If not, see <http://www.gnu.org/licenses/>.
  */
-package squashtm.testautomation.jenkins.beans;
+package squashtm.testautomation.jenkins.beans
 
-public class BuildList {
-	
-	private Build[] builds;
+import spock.lang.Specification
+import spock.lang.Unroll;
 
-	public Build[] getBuilds() {
-		return builds;
+class ActionTest extends Specification {
+
+	@Unroll("assert that this action having parameter (#name, #value) is #result")
+	def "should test whether that action has a parameter"(){
+		
+		given :
+			def needle = new Parameter(name, value)
+		
+		
+		and :
+			def haystack = makeHayStack()
+					   
+			def action = new Action(parameters:haystack);
+			
+		when :
+			def response = action.hasParameter(needle)
+		
+		then :
+			response == result
+			
+		where :
+			name			|	value			|	result
+			"some-name"		|	"some-value"	|	true
+			"bob"			|	"mike"			|	false
 	}
 
-	public void setBuilds(Build[] builds) {
-		this.builds = builds;
+	
+	def makeHayStack(){
+		return [
+				new Parameter("name", "value"), 
+				new Parameter("some-name", "some-value"),
+				new Parameter("noname", "novalue")
+			   ] as Parameter[];
 	}
 	
-	public BuildList(){
-		super();
-	}
-	
-	public Build findById(int id){
-		for (Build build : builds){
-			if (build.hasId(id)){
-				return build;
-			}
-		}
-		return null;
-	}
-	
-	public Build findByExternalId(String externalId){
-		for (Build build : builds){
-			if (build.hasExternalId(externalId)){
-				return build;
-			}
-		}
-		return null;
-	}
 }

@@ -18,39 +18,31 @@
  *     You should have received a copy of the GNU Lesser General Public License
  *     along with this software.  If not, see <http://www.gnu.org/licenses/>.
  */
-package squashtm.testautomation.jenkins.beans;
+package squashtm.testautomation.jenkins.beans
 
-public class BuildList {
-	
-	private Build[] builds;
+import spock.lang.Specification
 
-	public Build[] getBuilds() {
-		return builds;
-	}
+class BuildTest extends Specification {
 
-	public void setBuilds(Build[] builds) {
-		this.builds = builds;
+	def "should say that it has some external id"(){
+		
+		given :
+			def actions = [ mockAction(false), mockAction(true), mockAction(false)] as Action[]
+		
+			Build build = new Build(actions:actions)
+			
+		when :
+			def response = build.hasExternalId("12345")
+		
+		then :
+			response == true
+		
 	}
 	
-	public BuildList(){
-		super();
+	def mockAction(response){
+		Action action = Mock()
+		action.hasParameter(_) >> response
+		return action
 	}
 	
-	public Build findById(int id){
-		for (Build build : builds){
-			if (build.hasId(id)){
-				return build;
-			}
-		}
-		return null;
-	}
-	
-	public Build findByExternalId(String externalId){
-		for (Build build : builds){
-			if (build.hasExternalId(externalId)){
-				return build;
-			}
-		}
-		return null;
-	}
 }

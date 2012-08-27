@@ -23,7 +23,6 @@ package squashtm.testautomation.jenkins.internal
 
 
 import spock.lang.Specification
-import squashtm.testautomation.jenkins.internal.beans.FetchListBuildParams;
 
 class JsonParserTest extends Specification {
 
@@ -58,16 +57,6 @@ class JsonParserTest extends Specification {
 			 res.collect{it.name} == ["mike", "robert"]
 	 }
 
-	 def "should generate a fetch list build parameter"(){
-		 
-		 given :
-		 	def param = new FetchListBuildParams("12345");
-			 
-		when :
-			def res = parser.toJson(param)
-			
-		then :
-			res == '{"parameter":[{"name":"operation","value":"test-list"},{"name":"externalJobId","value":"12345"}]}'
-	 }
+
 
 }

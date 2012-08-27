@@ -21,21 +21,14 @@
 package squashtm.testautomation.jenkins.internal
 
 
-import java.net.URL;
-import java.util.Date;
 
 import org.apache.commons.httpclient.HttpClient;
 import org.apache.commons.httpclient.UsernamePasswordCredentials;
 import org.apache.commons.httpclient.auth.AuthScope;
-import org.apache.commons.httpclient.methods.GetMethod;
 import org.apache.commons.httpclient.methods.PostMethod;
-import org.codehaus.jackson.JsonFactory;
 
 import spock.lang.Specification
 import squashtm.testautomation.domain.TestAutomationServer;
-import squashtm.testautomation.jenkins.TestAutomationJenkinsConnector;
-import squashtm.testautomation.jenkins.internal.beans.FetchListBuildParams;
-import squashtm.testautomation.jenkins.internal.net.HttpClientProvider;
 import squashtm.testautomation.jenkins.internal.net.HttpRequestFactory;
 
 class HttpRequestFactoryTest extends Specification {
@@ -61,46 +54,6 @@ class HttpRequestFactoryTest extends Specification {
 	}
 	
 	
-	def "bigtest"(){
-		
-		given :
-			HttpClient client = new HttpClient();
-			JsonParser fact = new JsonParser()
-			
-		and :
-
-			PostMethod method = new PostMethod();
-			
-			FetchListBuildParams buildParams = new FetchListBuildParams(randomId());
-			String jsonifiedParams = fact.toJson(buildParams.getParameter());
-			
-			URL url = new URL("http://localhost:9080/jenkins/job/job-1/build")
-			
-			method.setPath(url.toString());
-			method.setParameter("parameter", jsonifiedParams);
-			
-			method.setDoAuthentication(true);
-			
-		and :
-			client.getState().setCredentials(new AuthScope(url.host, url.port, AuthScope.ANY_REALM),
-					new UsernamePasswordCredentials("bob", "bob"));
-				
-			client.getParams().setAuthenticationPreemptive(true);
-				
-		when :
-			int res = client.executeMethod(method);
-			
-		then :
-			println res
-			println method.getResponseBodyAsString();
-			true
-			
-		
-	}
-	
-	private String randomId(){
-		return new Long(new Date().getTime()).toString();
-	}
 
 }
 
