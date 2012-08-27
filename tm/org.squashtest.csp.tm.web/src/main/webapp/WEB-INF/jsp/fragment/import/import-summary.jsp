@@ -22,4 +22,4 @@
 --%>
 <!-- The form.ajaxSubmit() fakes to ask for json while it needs text/html. Chrome and FF handle well a repsonse in json but not IE. -->
 <%@ page language="java" contentType="text/html; charset=utf-8" pageEncoding="utf-8" %>
-<p>${'{' } "success" : ${ summary.success }, "failures" : ${ summary.failures }, "modified" : ${ summary.modified }, "renamed" : ${ summary.renamed } ${'}'}</p>
+<p>${'{' } "success" : ${ summary.success }, "total" : ${ summary.total }, "rejected" : ${ summary.rejected }, "failures" : ${ summary.failures }, "modified" : ${ summary.modified }, "renamed" : ${ summary.renamed } ${'}'}</p>

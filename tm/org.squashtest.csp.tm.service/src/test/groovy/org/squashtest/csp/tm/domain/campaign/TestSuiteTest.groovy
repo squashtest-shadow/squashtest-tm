@@ -310,7 +310,7 @@ class TestSuiteTest extends Specification {
 	}
 
 	def "item should be the last executable of test plan"() {
-		given:
+		given: 
 		TestSuite testSuite = aSuiteWithExecutableItems(10L, 20L)
 
 		and:

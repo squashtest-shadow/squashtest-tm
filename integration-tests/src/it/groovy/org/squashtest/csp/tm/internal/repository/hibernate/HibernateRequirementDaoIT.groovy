@@ -51,6 +51,7 @@ class HibernateRequirementDaoIT extends DbunitDaoSpecification {
 		res.size() == 1
 		res[0].id == 10
 	}
+	
 
 	@DataSet("HibernateRequirementDaoIT.should find requirements by reference token.xml")
 	def "should find requirements by reference token"() {

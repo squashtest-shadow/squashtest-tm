@@ -225,6 +225,7 @@ public class ExcelTestCaseParserImpl implements ExcelTestCaseParser {
 		return fullName.replaceAll("\\.xlsx$", "").replaceAll("\\.xls$", "");
 	}
 
+	
 	/* ********************************* private things **************************** */
 
 	private void parseRow(Row row, PseudoTestCase pseudoTestCase) {

@@ -127,25 +127,35 @@ class HierarchyCreator{
 			
 			//create the test case
 			TestCase testCase = parser.parseFile(entry.getStream(), summary);
-			testCase.setName(stripExtension(entry.getShortName()));
 			
-			//find or create the parent folder
-			TestCaseFolder parent = findOrCreateFolder(entry.getParent());
-			
-			parent.addContent(testCase);
-			
-			pathMap.put(entry.getName(), testCase);
+			//check whether the extension is correct 
+			if (hasValidExtension(entry)) {
+				testCase.setName(stripExtension(entry.getShortName()));
+
+				// find or create the parent folder
+				TestCaseFolder parent = findOrCreateFolder(entry.getParent());
+
+				parent.addContent(testCase);
+
+				pathMap.put(entry.getName(), testCase);
+			} else {
+				summary.incrRejected();
+			}
 			
 		}catch(SheetCorruptedException ex){
 			summary.incrFailures();
 		}
 		
 	}
+
+
+	private boolean hasValidExtension(Entry entry) {
+		return entry.getShortName().endsWith(".xls") || entry.getShortName().endsWith(".xlsx");
+	}
 	
 	private String stripExtension(String withExtension){
 		return parser.stripFileExtension(withExtension);
 	}
-	
 	
 	
 }
