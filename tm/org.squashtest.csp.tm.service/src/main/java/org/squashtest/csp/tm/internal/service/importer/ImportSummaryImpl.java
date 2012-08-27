@@ -28,6 +28,7 @@ public class ImportSummaryImpl implements ImportSummary {
 	private int renamed=0;
 	private int modified=0;
 	private int failures=0;
+	private int rejected=0;
 	
 	public ImportSummaryImpl(){
 		
@@ -49,6 +50,10 @@ public class ImportSummaryImpl implements ImportSummary {
 		modified++;
 	}
 
+	public void incrRejected(){
+		rejected++;
+	}
+	
 	@Override
 	public int getTotal() {
 		return total;
@@ -60,7 +65,7 @@ public class ImportSummaryImpl implements ImportSummary {
 
 	@Override
 	public int getSuccess() {
-		return total - failures;
+		return total - failures - rejected;
 	}
 
 
@@ -92,12 +97,21 @@ public class ImportSummaryImpl implements ImportSummary {
 	}
 
 	@Override
+	public int getRejected() {
+		return rejected;
+	}
+
+	public void setRejected(int rejected) {
+		this.rejected = rejected;
+	}
+	
+	@Override
 	public void add(ImportSummary summary) {
 		this.total+=summary.getTotal();
 		this.failures+=summary.getFailures();
 		this.modified+=summary.getModified();
 		this.renamed+=summary.getRenamed();
-		
+		this.rejected+=summary.getRejected();
 	}
 
 	

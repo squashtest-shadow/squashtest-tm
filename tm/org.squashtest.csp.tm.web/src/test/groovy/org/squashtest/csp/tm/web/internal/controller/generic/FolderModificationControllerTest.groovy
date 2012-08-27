@@ -29,6 +29,7 @@ import org.springframework.web.servlet.ModelAndView;
 import org.squashtest.csp.tm.domain.DuplicateNameException;
 import org.squashtest.csp.tm.domain.library.Folder;
 import org.squashtest.csp.tm.domain.library.LibraryNode;
+import org.squashtest.csp.tm.domain.testcase.TestCaseFolder;
 import org.squashtest.csp.tm.service.FolderModificationService;
 
 import spock.lang.Specification;
@@ -58,11 +59,11 @@ class FolderModificationControllerTest extends Specification {
 }
 
 
-class DummyFolderModificationController extends FolderModificationController {
+class DummyFolderModificationController extends FolderModificationController<TestCaseFolder> {
 	FolderModificationService service
 
 	@Override
-	protected FolderModificationService getFolderModificationService() {
+	protected FolderModificationService<TestCaseFolder> getFolderModificationService() {
 		return service;
 	}
 }

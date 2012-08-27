@@ -54,8 +54,10 @@
 		<f:message var="importTotal" key="dialog.import-excel.test-case.total"/>
 		<f:message var="importSuccess" key="dialog.import-excel.test-case.success"/>
 		<f:message var="importFailed" key="dialog.import-excel.test-case.failed"/>
+		<f:message var="importRejected" key="dialog.import-excel.test-case.rejected"/>
 		<f:message var="importRenamed" key="dialog.import-excel.test-case.warnings.renamed"/>
 		<f:message var="importModified" key="dialog.import-excel.test-case.warnings.modified"/>
+		<f:message var="importExtension" key="dialog.import-excel.test-case.warnings.extension"/>
 		<f:message var="importInputFileLabel" key="dialog.import-excel.test-case.filetype.message"/>
 		<c:set var="importFormatMIME" value="zip"/>
 		<c:set var="importFormatParam" value="'zip'"/>
@@ -186,6 +188,11 @@
 			<div>
 				<span>${ importSuccess }</span><span class="success-import span-bold span-green"></span>
 			</div>
+			<c:if  test="${workspace == 'test-case'}" >
+			<div>
+				<span>${ importRejected }</span><span class="rejected-import span-bold span-green"></span>
+			</div>
+			</c:if>
 			<div>
 				<span>${ importFailed }</span><span class="failures-import span-bold"></span>
 			</div>			
@@ -198,7 +205,8 @@
 				<ul>
 					<li class="import-excel-dialog-renamed"><span>${ importRenamed }</span></li>
 					<c:if  test="${workspace == 'test-case'}" >
-						<li class="import-excel-dialog-modified"><span>${ importModified }</span></li>	
+						<li class="import-excel-dialog-modified"><span>${ importModified }</span></li>
+						<li class="import-excel-dialog-extension"><span>${ importExtension }</span></li>	
 					</c:if>
 				</ul>		
 			</div>
@@ -223,6 +231,7 @@
 		//basic infos			
 		$(".total-import", panel).text(response.total);
 		$(".success-import", panel).text(response.success);
+		$(".rejected-import", panel).text(response.rejected);
 		
 		var failSpan = $(".failures-import", panel).text(response.failures);
 		if (response.failures==0){ failSpan.removeClass("span-red"); }else{	failSpan.addClass("span-red"); }
@@ -238,6 +247,9 @@
 
 			var modifiedDialog = $(".import-excel-dialog-modified", panel);
 			if (response.modified>0) { modifiedDialog.show(); } else { modifiedDialog.hide(); }
+			
+			var extensionDialog = $(".import-excel-dialog-extension", panel);
+			if (response.rejected>0) { extensionDialog.show(); } else { extensionDialog.hide(); }
 			
 		}
 		
