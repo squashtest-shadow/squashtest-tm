@@ -82,10 +82,11 @@ public class BugTrackerAutoconnectCallback implements AuthenticationSuccessCallb
 			
 			for (BugTracker bugTracker : bugTrackers) {
 				try {
+					LOGGER.debug("try connexion of bug-tracker : " + bugTracker.getName());
 					bugTrackersLocalService.setCredentials(username, password, bugTracker);
 					// if success, store the credential in context
+					LOGGER.debug("add credentials for bug-tracker : " + bugTracker.getName());
 					AuthenticationCredentials creds = new AuthenticationCredentials(username, password);
-					LOGGER.debug("add credentials for bugtracker : " + bugTracker.getName());
 					newContext.setCredentials(bugTracker, creds);
 					
 				} catch (BugTrackerRemoteException ex) {

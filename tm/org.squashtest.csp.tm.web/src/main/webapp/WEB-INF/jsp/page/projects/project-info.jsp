@@ -259,7 +259,7 @@
 											<f:message key="project.bugtracker.name.undefined" />
 										</c:when>
 										<c:otherwise>
-											${ adminproject.project.bugtrackerProject.bugtracker.name }						
+											${ adminproject.project.bugtrackerBinding.bugtracker.name }						
 										</c:otherwise>
 									</c:choose>
 								</div>
@@ -289,7 +289,7 @@
 							<div class="display-table-cell"
 									id="project-bugtracker-project-name">
 								<c:choose>
-									<c:when test="${ adminproject.project.bugtrackerConnected }">${ adminproject.project.bugtrackerProject.projectName }</c:when>
+									<c:when test="${ adminproject.project.bugtrackerConnected }">${ adminproject.project.bugtrackerBinding.projectName }</c:when>
 									<c:otherwise>${ adminproject.project.name }</c:otherwise>
 								</c:choose>
 							</div>

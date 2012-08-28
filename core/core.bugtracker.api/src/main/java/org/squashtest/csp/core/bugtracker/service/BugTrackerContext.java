@@ -35,17 +35,18 @@ import org.squashtest.csp.core.bugtracker.net.AuthenticationCredentials;
  */
 @SuppressWarnings("serial")
 public class BugTrackerContext implements Serializable {
-	Map<BugTracker, AuthenticationCredentials> bugTrackersCredentials = new HashMap<BugTracker, AuthenticationCredentials>();
+	Map<Long, AuthenticationCredentials> bugTrackersCredentials = new HashMap<Long, AuthenticationCredentials>();
 
 	public AuthenticationCredentials getCredentials(BugTracker bugTracker) {
-		return bugTrackersCredentials.get(bugTracker);
+		return bugTrackersCredentials.get(bugTracker.getId());
 	}
 
 	public void setCredentials(BugTracker bugTracker, AuthenticationCredentials credentials) {
-		bugTrackersCredentials.put(bugTracker, credentials);
+		bugTrackersCredentials.put(bugTracker.getId(), credentials);
 	}
 
 	public boolean hasCredentials(BugTracker bugTracker) {
-		return bugTrackersCredentials.get(bugTracker) != null;
+		AuthenticationCredentials credentials = bugTrackersCredentials.get(bugTracker.getId()) ;
+		return credentials != null;
 	}
 }
