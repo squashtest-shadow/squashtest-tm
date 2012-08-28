@@ -36,6 +36,11 @@ import org.squashtest.csp.core.bugtracker.spi.BugTrackerInterfaceDescriptor
 class StubBugTrackerService implements BugTrackersService {
 
 	@Override
+	public boolean isCredentialsNeeded(BugTracker bugTracker) {
+		return false;
+	}
+
+	@Override
 	public boolean isBugTrackerDefined() {
 		return false;
 	}

@@ -301,6 +301,7 @@ public class BugTrackersLocalServiceImpl implements BugTrackersLocalService {
 	@Override
 	@PreAuthorize("hasPermission(#tcId, 'org.squashtest.csp.tm.domain.testcase.TestCase', 'READ') or hasRole('ROLE_ADMIN')")
 	public FilteredCollectionHolder<List<IssueOwnership<BTIssue>>> findSortedIssueOwnershipForTestCase(Long tcId,
+			//FIXME [Feat 1194] we are supposed to return issues from different bugTrackers.
 			CollectionSorting sorter) {
 		// Find bug-tracker
 		TestCase testCase = testCaseDao.findById(tcId);
