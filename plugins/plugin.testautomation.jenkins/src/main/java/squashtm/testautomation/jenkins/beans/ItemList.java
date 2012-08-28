@@ -18,11 +18,27 @@
  *     You should have received a copy of the GNU Lesser General Public License
  *     along with this software.  If not, see <http://www.gnu.org/licenses/>.
  */
-package squashtm.testautomation.jenkins.internal.tasks;
+package squashtm.testautomation.jenkins.beans;
 
-
-public interface StepScheduler {
-
-	StepFuture schedule(BuildStep step, int millisDelay); 
+public class ItemList {
 	
+	private Item[] items;
+	
+	public Item findQueuedBuildByExtId(String projectName, String extId){
+		for (Item item : items){
+			if (item.representsProjectWithExtId(projectName, extId)){
+				return item;
+			}
+		}
+		return null;
+	}
+	
+	public Item findQueuedBuildById(String projectName, int id){
+		for (Item item : items){
+			if (item.representsProjectWithId(projectName, id)){
+				return item;
+			}
+		}
+		return null;
+	}
 }

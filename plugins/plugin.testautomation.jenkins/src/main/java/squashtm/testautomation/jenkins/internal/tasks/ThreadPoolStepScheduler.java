@@ -48,7 +48,7 @@ public class ThreadPoolStepScheduler implements StepScheduler{
 	
 	
 	@Override
-	public StepFuture schedule(RemoteBuildStep<?> step,	int millisDelay) throws Exception {
+	public StepFuture schedule(BuildStep step,	int millisDelay){
 		Date startTime = new Date(System.currentTimeMillis()+millisDelay);
 		
 		ScheduledFuture<?> future = scheduler.schedule(step, startTime);

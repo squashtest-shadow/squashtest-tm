@@ -24,12 +24,16 @@ package squashtm.testautomation.jenkins.internal.tasks;
 public class SameThreadStepScheduler implements StepScheduler {
 
 	@Override
-	public StepFuture schedule(RemoteBuildStep<?> step, int millisDelay) throws Exception {
+	public StepFuture schedule(BuildStep step, int millisDelay) {
 		
-		Thread.sleep(millisDelay);
-		step.run();
-		return new DumbRemoteBuildStepFuture();
-
+		try{
+			Thread.sleep(millisDelay);
+			step.run();
+			return new DumbRemoteBuildStepFuture();
+		}
+		catch(InterruptedException ex){
+			throw new RuntimeException(ex);
+		}
 	}
 	
 	private static class DumbRemoteBuildStepFuture implements StepFuture{

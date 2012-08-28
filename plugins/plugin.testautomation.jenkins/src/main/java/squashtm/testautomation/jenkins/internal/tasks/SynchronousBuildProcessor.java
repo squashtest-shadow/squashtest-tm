@@ -20,21 +20,39 @@
  */
 package squashtm.testautomation.jenkins.internal.tasks;
 
-public interface RemoteBuildStep<RESULT> extends Runnable{
+import squashtm.testautomation.spi.exceptions.TestAutomationException;
+
+public abstract class SynchronousBuildProcessor<RESULT> extends AbstractBuildProcessor<RESULT> {
+
+	@Override
+	public void run() {
+		
+		scheduleNextStep();
+		
+		while(! currentStep.isFinalStep() && ! isCanceled()){
+			scheduleNextStep();
+		}
+		
+		buildResult();
+	}
+
 	
-	/**
-	 * Tells whether the current step is complete, or the same step needs to be executed again at a later time.
-	 * 
-	 * @return true if needs rescheduling, false if we can move to the next step
-	 */
-	boolean needsRescheduling();
+	@Override
+	public void notifyStepDone() {
+		//nothing, let the method run loop
+	}
+
 	
-	
-	void setOwnerBuild(RemoteBuildWatcher<?> build);
-	
-	
-	RESULT getResult();
-	
-	
-	boolean isFinalStep();
+	@Override
+	public void notifyException(Exception ex) {
+		try{
+			throw ex;
+		}
+		catch(TestAutomationException exe){
+			throw exe;
+		}
+		catch(Exception exe){
+			throw new TestAutomationException(exe);
+		}
+	}
 }

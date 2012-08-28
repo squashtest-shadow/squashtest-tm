@@ -18,27 +18,33 @@
  *     You should have received a copy of the GNU Lesser General Public License
  *     along with this software.  If not, see <http://www.gnu.org/licenses/>.
  */
-package squashtm.testautomation.jenkins.beans;
+package squashtm.testautomation.jenkins.internal.tasks;
 
-public class ItemListModel {
+public interface BuildProcessor {
+
+	/**
+	 * cancels the build processing, no urgency needed
+	 * 
+	 */
+	void cancel();
 	
-	private Item[] items;
+	/**
+	 * a {@link BuildStep} should notify its processor that the job is done.
+	 * 
+	 */
+	public abstract void notifyStepDone();
 	
-	public Item findQueuedBuildByExtId(String projectName, String extId){
-		for (Item item : items){
-			if (item.representsProjectWithExtId(projectName, extId)){
-				return item;
-			}
-		}
-		return null;
-	}
+	/**
+	 * a {@link BuildStep} should notify its processor that the job got an error and should be cancelled.
+	 * @param ex
+	 */
+	public abstract void notifyException(Exception ex);
 	
-	public Item findQueuedBuildById(String projectName, int id){
-		for (Item item : items){
-			if (item.representsProjectWithId(projectName, id)){
-				return item;
-			}
-		}
-		return null;
-	}
+	
+	/**
+	 * a crucial part of probably every build is to find the jenkins build id.
+	 * 
+	 * @param id
+	 */
+	public void setBuildId(int id);
 }

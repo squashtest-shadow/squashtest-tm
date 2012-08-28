@@ -20,50 +20,36 @@
  */
 package squashtm.testautomation.jenkins.internal.tasks;
 
-public abstract class RemoteBuildWatcher<RESULT> {
-	 
-	protected StepScheduler scheduler;
-	
-	protected StepFactory stepFactory;
-	
-	protected StepFuture currentFuture;
-	
-	protected RemoteBuildStep<?> currentStep;
-	
-	protected RESULT result;
-	
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
-	public StepScheduler getScheduler() {
-		return scheduler;
-	}
-
-
-	public void setScheduler(StepScheduler scheduler) {
-		this.scheduler = scheduler;
-	}
-
-
-	public StepFactory getStepFactory() {
-		return stepFactory;
-	}
+public abstract class DelayedBuildProcessor<RESULT> extends AbstractBuildProcessor<RESULT> {
 
 	
-	public void setStepFactory(StepFactory stepFactory) {
-		this.stepFactory = stepFactory;
+	private static final Logger LOGGER = LoggerFactory.getLogger(AbstractBuildProcessor.class);
+	
+	
+	@Override
+	public void run() {
+		scheduleNextStep();
+		//then return immediately
 	}
 	
-	public RESULT getResult(){
-		return result;
+	@Override
+	//should be overriden by subclasses if a more appropriate treatment is needed
+	public void notifyException(Exception ex) {
+		if (LOGGER.isErrorEnabled()){
+			LOGGER.error(ex.getMessage(),ex);
+		}	
 	}
 	
-	
-	public abstract void run();
-
-	public abstract void notifyStepDone(RemoteBuildStep<?> step);
-	
-	public abstract void notifyException(RemoteBuildStep<?> step, Exception ex);
-	
-	public abstract void buildResult();
-	
-	
+	@Override
+	public void notifyStepDone() {
+		if (currentStep.isFinalStep()){
+			buildResult();
+		}
+		else if(! isCanceled()){
+			scheduleNextStep();
+		}
+	}
 }

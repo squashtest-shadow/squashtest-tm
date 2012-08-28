@@ -39,7 +39,7 @@ public class RequestExecutor {
 
 	public static final Logger LOGGER = LoggerFactory.getLogger(RequestExecutor.class);
 	
-	public static String execute(HttpClient client, HttpMethod method){
+	public String execute(HttpClient client, HttpMethod method){
 		try{
 			int responseCode = client.executeMethod(method);
 			
@@ -61,7 +61,7 @@ public class RequestExecutor {
 	}
 	
 	
-	static private void checkResponseCode(int responseCode){
+	private void checkResponseCode(int responseCode){
 		
 		if (responseCode == SC_OK){
 			return;

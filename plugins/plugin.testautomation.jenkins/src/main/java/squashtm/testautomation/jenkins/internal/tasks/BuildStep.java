@@ -20,9 +20,59 @@
  */
 package squashtm.testautomation.jenkins.internal.tasks;
 
-
-public interface StepScheduler {
-
-	StepFuture schedule(BuildStep step, int millisDelay); 
+public abstract class BuildStep implements Runnable{
 	
+	protected BuildProcessor processor;
+
+	
+	public void setBuildProcessor(BuildProcessor processor){
+		this.processor = processor;
+	}
+
+	
+	@Override
+	public void run(){
+		try{
+			perform();
+			processor.notifyStepDone();
+		}
+		catch(Exception ex){
+			processor.notifyException(ex);
+		}
+	}
+	
+	
+	
+	/**
+	 * Tells whether the current step is complete, or the same step needs to be executed again at a later time.
+	 * 
+	 * @return true if needs rescheduling, false if we can move to the next step
+	 */
+	public abstract boolean needsRescheduling();
+	
+	
+
+	/**
+	 * Tells whether the Task sequencer job is done, or not.
+	 * 
+	 * @return
+	 */
+	public abstract boolean isFinalStep();
+	
+	
+	/**
+	 * do the job
+	 * @throws Exception
+	 */
+	public abstract void perform() throws Exception;
+	
+	/**
+	 * sets the same object ready for reuse
+	 * 
+	 */
+	public abstract void reset();
+	
+	public abstract int suggestedReschedulingDelay();
+	
+
 }

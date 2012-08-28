@@ -31,6 +31,8 @@ import org.codehaus.jackson.map.ObjectMapper;
 import org.springframework.stereotype.Component;
 
 import squashtm.testautomation.domain.TestAutomationProject;
+import squashtm.testautomation.jenkins.beans.BuildList;
+import squashtm.testautomation.jenkins.beans.ItemList;
 import squashtm.testautomation.jenkins.beans.Job;
 import squashtm.testautomation.jenkins.beans.JobList;
 import squashtm.testautomation.spi.exceptions.TestAutomationException;
@@ -73,16 +75,45 @@ public class JsonParser {
 	}
 	
 	
+	public ItemList getQueuedListFromJson(String json){
+		return safeReadValue(json, ItemList.class);
+	}
+	
+	public BuildList getRunningBuildsFromJson(String json){
+		return safeReadValue(json, BuildList.class);
+	}
+	
+	
 	public String toJson(Object object){
 		try {
 			return objMapper.writeValueAsString(object);
-		} catch (JsonGenerationException e) {
+		} 
+		catch (JsonGenerationException e) {
 			throw new TestAutomationException("TestAutomationConnector : internal error, could not generate json", e);
-		} catch (JsonMappingException e) {
+		} 
+		catch (JsonMappingException e) {
 			throw new TestAutomationException("TestAutomationConnector : internal error, could not generate json", e);
-		} catch (IOException e) {
+		} 
+		catch (IOException e) {
 			throw new TestAutomationException("TestAutomationConnector : internal error, could not generate json", e);
 		}
+	}
+	
+	protected <R> R safeReadValue(String json, Class<R> clazz){
+	
+		try {
+			return objMapper.readValue(json, clazz);
+		} 
+		catch (JsonParseException e) {
+			throw new UnreadableResponseException("TestAutomationConnector : the response from the server couldn't be treated", e);
+		} 
+		catch (JsonMappingException e) {
+			throw new UnreadableResponseException("TestAutomationConnector : the response from the server couldn't be treated", e);
+		} 
+		catch (IOException e) {
+			throw new UnreadableResponseException("TestAutomationConnector : internal error :", e);
+		}
+
 	}
 	
 	

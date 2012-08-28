@@ -71,4 +71,8 @@ public class Build {
 		return (this.getNumber() == id);
 	}
 	
+	public int getId(){
+		return this.getNumber();
+	}
+	
 }

@@ -20,9 +20,8 @@
  */
 package squashtm.testautomation.jenkins.internal.tasks;
 
+import java.util.Enumeration;
 
-public interface StepScheduler {
-
-	StepFuture schedule(BuildStep step, int millisDelay); 
+public interface StepSequence extends Enumeration<BuildStep>{
 	
 }

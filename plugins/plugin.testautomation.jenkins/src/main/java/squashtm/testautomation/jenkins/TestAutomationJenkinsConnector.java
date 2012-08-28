@@ -79,6 +79,8 @@ public class TestAutomationJenkinsConnector implements TestAutomationConnector{
 	private int spamInterval = DEFAULT_SPAM_INTERVAL_MILLIS;
 	
 	
+	private RequestExecutor requestExecutor = new RequestExecutor();
+	
 	//****************************** let's roll ****************************************
 
 
@@ -99,7 +101,7 @@ public class TestAutomationJenkinsConnector implements TestAutomationConnector{
 
 		GetMethod credCheck = requestFactory.newCheckCredentialsMethod(server);
 		
-		RequestExecutor.execute(client, credCheck);
+		requestExecutor.execute(client, credCheck);
 		
 		//if everything went fine, we may return true. Or else let the exception go.
 		return true;
@@ -119,7 +121,7 @@ public class TestAutomationJenkinsConnector implements TestAutomationConnector{
 		
 		GetMethod getJobsMethod = requestFactory.newGetJobsMethod(server);
 		
-		String response = RequestExecutor.execute(client, getJobsMethod);
+		String response = requestExecutor.execute(client, getJobsMethod);
 		
 		try{
 			return jsonParser.readJobListFromJson(response);
