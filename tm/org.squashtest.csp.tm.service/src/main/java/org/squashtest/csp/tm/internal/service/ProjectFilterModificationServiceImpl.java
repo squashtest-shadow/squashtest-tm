@@ -34,6 +34,7 @@ import org.squashtest.csp.tm.domain.projectfilter.ProjectFilter;
 import org.squashtest.csp.tm.internal.repository.ProjectDao;
 import org.squashtest.csp.tm.internal.repository.ProjectFilterDao;
 import org.squashtest.csp.tm.service.ProjectFilterModificationService;
+import org.squashtest.csp.tm.service.ProjectFinder;
 import org.squashtest.csp.tm.service.ProjectManagerService;
 
 @Service("squashtest.tm.service.ProjectFilterModificationService")
@@ -48,6 +49,9 @@ public class ProjectFilterModificationServiceImpl implements ProjectFilterModifi
 
 	@Inject
 	private ProjectManagerService projectManagerService;
+	
+	@Inject
+	private ProjectFinder projectFinder;
 
 	@Inject
 	private UserContextService userContextService;
@@ -112,7 +116,7 @@ public class ProjectFilterModificationServiceImpl implements ProjectFilterModifi
 	@Override
 	@PostFilter("hasPermission(filterObject, 'READ') or hasRole('ROLE_ADMIN')")
 	public List<Project> getAllProjects() {
-		return projectManagerService.findAllOrderedByName();
+		return projectFinder.findAllOrderedByName();
 	}
 
 }

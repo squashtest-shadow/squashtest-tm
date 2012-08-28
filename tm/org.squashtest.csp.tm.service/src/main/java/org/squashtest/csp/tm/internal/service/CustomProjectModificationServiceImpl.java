@@ -26,6 +26,7 @@ import javax.inject.Inject;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.security.access.prepost.PostFilter;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -39,6 +40,8 @@ import org.squashtest.csp.tm.domain.project.AdministrableProject;
 import org.squashtest.csp.tm.domain.project.Project;
 import org.squashtest.csp.tm.domain.users.User;
 import org.squashtest.csp.tm.domain.users.UserProjectPermissionsBean;
+import org.squashtest.csp.tm.infrastructure.filter.CollectionSorting;
+import org.squashtest.csp.tm.infrastructure.filter.FilteredCollectionHolder;
 import org.squashtest.csp.tm.internal.repository.BugTrackerBindingDao;
 import org.squashtest.csp.tm.internal.repository.BugTrackerDao;
 import org.squashtest.csp.tm.internal.repository.ProjectDao;
@@ -230,6 +233,29 @@ public class CustomProjectModificationServiceImpl implements CustomProjectModifi
 			throw new NoBugTrackerBindingException();
 		}
 		bugtrackerBinding.setProjectName(projectBugTrackerName);
+	}
+	
+
+
+	@PostFilter("hasPermission(filterObject, 'READ') or  hasRole('ROLE_ADMIN')")
+	@Override
+	public List<Project> findAllOrderedByName() {
+		return projectDao.findAllOrderedByName();
+	}
+	
+
+	@Override
+	@PreAuthorize("hasRole('ROLE_TM_PROJECT_MANAGER') or hasRole('ROLE_ADMIN')")
+	public FilteredCollectionHolder<List<Project>> findSortedProjects(CollectionSorting filter) {
+		List<Project> projects = projectDao.findSortedProjects(filter);
+		long count = projectDao.countProjects();
+		return new FilteredCollectionHolder<List<Project>>(count, projects);
+	}
+
+	@Override
+	@PostFilter("hasPermission(filterObject, 'READ') or  hasRole('ROLE_ADMIN')")
+	public List<Project> findAllReadable() {
+		return projectDao.findAll();
 	}
 
 }

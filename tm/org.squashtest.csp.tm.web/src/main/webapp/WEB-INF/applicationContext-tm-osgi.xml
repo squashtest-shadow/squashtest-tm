@@ -118,8 +118,8 @@
 		bean-name="squashtest.tm.service.BugTrackerManagerService"
 		availability="mandatory">
 		<osgi:interfaces>
-		<value>org.squashtest.csp.tm.service.BugTrackerManagerService</value>
-		<value>org.squashtest.csp.tm.service.BugTrackerFinderService</value>
+			<value>org.squashtest.csp.tm.service.BugTrackerManagerService</value>
+			<value>org.squashtest.csp.tm.service.BugTrackerFinderService</value>
 		</osgi:interfaces>
 	</osgi:reference>
 
@@ -133,17 +133,16 @@
 
 	<osgi:reference id="squashtest.tm.service.ProjectModificationService"
 		bean-name="squashtest.tm.service.ProjectModificationService"
-		interface="org.squashtest.csp.tm.service.ProjectModificationService"
-		availability="mandatory" />
-	
-	<osgi:reference
-		id="squashtest.tm.service.ProjectManagerService" 
-		bean-name="squashtest.tm.service.ProjectManagerService"
 		availability="mandatory">
 		<osgi:interfaces>
-			<value>org.squashtest.csp.tm.service.ProjectManagerService</value>
+			<value>org.squashtest.csp.tm.service.ProjectModificationService</value>
 			<value>org.squashtest.csp.tm.service.ProjectFinder</value>
 		</osgi:interfaces>
+	</osgi:reference>
+
+	<osgi:reference id="squashtest.tm.service.ProjectManagerService"
+		bean-name="squashtest.tm.service.ProjectManagerService" interface="org.squashtest.csp.tm.service.ProjectManagerService"
+		availability="mandatory">
 	</osgi:reference>
 
 	<osgi:reference id="squashtest.tm.service.CallStepManagerService"
@@ -151,8 +150,9 @@
 		availability="mandatory" />
 
 	<osgi:reference id="squashtest.tm.service.TestAutomationService"
-		bean-name="squashtest.tm.service.TestAutomationService" interface="squashtm.testautomation.service.TestAutomationFinderService"
-		availability="mandatory" />		
+		bean-name="squashtest.tm.service.TestAutomationService"
+		interface="squashtm.testautomation.service.TestAutomationFinderService"
+		availability="mandatory" />
 
 	<osgi:reference id="squashtest.tm.service.TestSuiteModificationService"
 		bean-name="squashtest.tm.service.TestSuiteModificationService"
@@ -175,7 +175,9 @@
 
 	<bean id="squashtest.tm.web.authSuccessCallback.btautoconnect"
 		class="org.squashtest.csp.tm.web.internal.handler.BugTrackerAutoconnectCallback">
-		<property name="bugTrackersLocalService" ref="squashtest.tm.service.BugTrackersLocalService" />
+		<property name="bugTrackersLocalService"
+			ref="squashtest.tm.service.BugTrackersLocalService" />
+			
 	</bean>
 
 	<osgi:service ref="squashtest.tm.web.authSuccessCallback.btautoconnect"

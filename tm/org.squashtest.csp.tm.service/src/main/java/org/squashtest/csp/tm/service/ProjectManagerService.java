@@ -24,7 +24,7 @@ import org.springframework.transaction.annotation.Transactional;
 import org.squashtest.csp.tm.domain.project.Project;
 
 @Transactional(readOnly = false)
-public interface ProjectManagerService extends ProjectFinder{
+public interface ProjectManagerService {
 
 	
 	void addProject(Project project);

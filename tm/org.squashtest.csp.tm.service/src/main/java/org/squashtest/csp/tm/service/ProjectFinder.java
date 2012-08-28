@@ -33,9 +33,12 @@ import org.squashtest.csp.tm.infrastructure.filter.FilteredCollectionHolder;
  */
 @Transactional(readOnly = true)
 public interface ProjectFinder {
+	
 	Project findById(long projectId);
 
 	List<Project> findAllOrderedByName();
 
 	FilteredCollectionHolder<List<Project>> findSortedProjects(CollectionSorting filter);
+
+	List<Project> findAllReadable();
 }

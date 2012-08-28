@@ -20,11 +20,8 @@
  */
 package org.squashtest.csp.tm.internal.service;
 
-import java.util.List;
-
 import javax.inject.Inject;
 
-import org.springframework.security.access.prepost.PostFilter;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -33,8 +30,6 @@ import org.squashtest.csp.tm.domain.campaign.CampaignLibrary;
 import org.squashtest.csp.tm.domain.project.Project;
 import org.squashtest.csp.tm.domain.requirement.RequirementLibrary;
 import org.squashtest.csp.tm.domain.testcase.TestCaseLibrary;
-import org.squashtest.csp.tm.infrastructure.filter.CollectionSorting;
-import org.squashtest.csp.tm.infrastructure.filter.FilteredCollectionHolder;
 import org.squashtest.csp.tm.internal.repository.CampaignLibraryDao;
 import org.squashtest.csp.tm.internal.repository.ProjectDao;
 import org.squashtest.csp.tm.internal.repository.RequirementLibraryDao;
@@ -60,12 +55,6 @@ public class ProjectManagerServiceImpl implements ProjectManagerService {
 	@Inject
 	private ObjectIdentityService objectIdentityService;
 
-	@PostFilter("hasPermission(filterObject, 'READ') or  hasRole('ROLE_ADMIN')")
-	@Override
-	public List<Project> findAllOrderedByName() {
-		return projectDao.findAllOrderedByName();
-	}
-
 	@Override
 	@PreAuthorize("hasRole('ROLE_ADMIN')")
 	public void addProject(Project project) {
@@ -88,19 +77,6 @@ public class ProjectManagerServiceImpl implements ProjectManagerService {
 		objectIdentityService.addObjectIdentity(rl.getId(), rl.getClass());
 		objectIdentityService.addObjectIdentity(cl.getId(), cl.getClass());
 
-	}
-
-	@Override
-	@PreAuthorize("hasRole('ROLE_TM_PROJECT_MANAGER') or hasRole('ROLE_ADMIN')")
-	public FilteredCollectionHolder<List<Project>> findSortedProjects(CollectionSorting filter) {
-		List<Project> projects = projectDao.findSortedProjects(filter);
-		long count = projectDao.countProjects();
-		return new FilteredCollectionHolder<List<Project>>(count, projects);
-	}
-
-	@Override
-	public Project findById(long projectId) {
-		return projectDao.findById(projectId);
 	}
 
 }

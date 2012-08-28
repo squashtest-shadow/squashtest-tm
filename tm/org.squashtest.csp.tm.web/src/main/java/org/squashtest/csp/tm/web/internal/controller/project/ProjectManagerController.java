@@ -42,6 +42,7 @@ import org.squashtest.csp.tm.domain.audit.AuditableMixin;
 import org.squashtest.csp.tm.domain.project.Project;
 import org.squashtest.csp.tm.infrastructure.filter.CollectionSorting;
 import org.squashtest.csp.tm.infrastructure.filter.FilteredCollectionHolder;
+import org.squashtest.csp.tm.service.ProjectFinder;
 import org.squashtest.csp.tm.service.ProjectManagerService;
 import org.squashtest.csp.tm.web.internal.model.datatable.DataTableDrawParameters;
 import org.squashtest.csp.tm.web.internal.model.datatable.DataTableFilterSorter;
@@ -57,29 +58,26 @@ public class ProjectManagerController {
 	private ProjectManagerService projectManagerService;
 	private static final Logger LOGGER = LoggerFactory.getLogger(ProjectManagerController.class);
 
-
-
 	@Inject
 	private MessageSource messageSource;
 
+	@Inject
+	private ProjectFinder projectFinder;
 
 	/* see bug 33 for details, remove this comment when done */
 	/* remember that the indexes here are supposed to match the visible columns in the project view */
-	private DataTableMapper projectMapper=new DataTableMapper("projects-table", Project.class)
-										.initMapping(9)
-										.mapAttribute(Project.class, 2, "name", String.class)
-										.mapAttribute(Project.class, 3, "label", String.class)
-										.mapAttribute(Project.class, 4, "active", boolean.class)
-										.mapAttribute(Project.class, 5, "audit.createdOn", Date.class)
-										.mapAttribute(Project.class, 6, "audit.createdBy", String.class)
-										.mapAttribute(Project.class, 7, "audit.lastModifiedOn", Date.class)
-										.mapAttribute(Project.class, 8, "audit.lastModifiedBy", String.class);
+	private DataTableMapper projectMapper = new DataTableMapper("projects-table", Project.class).initMapping(9)
+			.mapAttribute(Project.class, 2, "name", String.class).mapAttribute(Project.class, 3, "label", String.class)
+			.mapAttribute(Project.class, 4, "active", boolean.class)
+			.mapAttribute(Project.class, 5, "audit.createdOn", Date.class)
+			.mapAttribute(Project.class, 6, "audit.createdBy", String.class)
+			.mapAttribute(Project.class, 7, "audit.lastModifiedOn", Date.class)
+			.mapAttribute(Project.class, 8, "audit.lastModifiedBy", String.class);
 
 	@ServiceReference
 	public void setProjectManagerService(ProjectManagerService projectService) {
 		this.projectManagerService = projectService;
 	}
-
 
 	@RequestMapping(value = "/add", method = RequestMethod.POST)
 	public @ResponseBody
@@ -93,27 +91,26 @@ public class ProjectManagerController {
 
 	}
 
-
 	@RequestMapping(method = RequestMethod.GET)
 	public ModelAndView showProjects() {
 
 		ModelAndView mav = new ModelAndView("page/projects/show-projects");
-		mav.addObject("projects", projectManagerService.findAllOrderedByName());
+		mav.addObject("projects", projectFinder.findAllOrderedByName());
 		return mav;
 	}
 
-	@RequestMapping(method = RequestMethod.GET, params="format=picker")
-	@ResponseBody public FilterModel getProjectPickerModel() {
-		List<Project> projects = projectManagerService.findAllOrderedByName();
+	@RequestMapping(method = RequestMethod.GET, params = "format=picker")
+	@ResponseBody
+	public FilterModel getProjectPickerModel() {
+		List<Project> projects = projectFinder.findAllOrderedByName();
 		FilterModel model = new FilterModel();
-		
+
 		for (Project project : projects) {
 			model.addProject(project.getId(), project.getName());
 		}
-		
+
 		return model;
 	}
-
 
 	@RequestMapping(value = "/list", params = "sEcho")
 	public @ResponseBody
@@ -121,71 +118,56 @@ public class ProjectManagerController {
 
 		CollectionSorting filter = createPaging(params, projectMapper);
 
-		FilteredCollectionHolder<List<Project>> holder = projectManagerService
-				.findSortedProjects(filter);
+		FilteredCollectionHolder<List<Project>> holder = projectFinder.findSortedProjects(filter);
 
-
-		return new DataTableModelHelper<Project>(){
+		return new DataTableModelHelper<Project>() {
 			@Override
 			public Object[] buildItemData(Project item) {
 
 				final AuditableMixin newP = (AuditableMixin) item;
-				return new Object[]{
-						item.getId(),
-						getCurrentIndex(),
-						formatString(item.getName(), locale),
-						formatString(item.getLabel(),locale),
-						formatBoolean((Boolean)item.isActive(),locale),
-						formatDate(newP.getCreatedOn(),locale),
-						formatString(newP.getCreatedBy(),locale),
-						formatDate(newP.getLastModifiedOn(),locale),
-						formatString(newP.getLastModifiedBy(),locale)
-				};
+				return new Object[] { item.getId(), getCurrentIndex(), formatString(item.getName(), locale),
+						formatString(item.getLabel(), locale), formatBoolean((Boolean) item.isActive(), locale),
+						formatDate(newP.getCreatedOn(), locale), formatString(newP.getCreatedBy(), locale),
+						formatDate(newP.getLastModifiedOn(), locale), formatString(newP.getLastModifiedBy(), locale) };
 			}
-		}.buildDataModel(holder, filter.getFirstItemIndex()+1, params.getsEcho());
+		}.buildDataModel(holder, filter.getFirstItemIndex() + 1, params.getsEcho());
 
 	}
 
 	/* ****************************** data formatters ********************************************** */
 
-	private CollectionSorting createPaging(final DataTableDrawParameters params,
-			final DataTableMapper mapper) {
+	private CollectionSorting createPaging(final DataTableDrawParameters params, final DataTableMapper mapper) {
 		return new DataTableFilterSorter(params, mapper);
 	}
 
-
-	private String formatString(String arg, Locale locale){
-		if (arg==null){
+	private String formatString(String arg, Locale locale) {
+		if (arg == null) {
 			return formatNoData(locale);
 		} else {
 			return arg;
 		}
 	}
 
-	private String formatDate(Date date, Locale locale){
-		try{
+	private String formatDate(Date date, Locale locale) {
+		try {
 			String format = messageSource.getMessage("squashtm.dateformat", null, locale);
 			return new SimpleDateFormat(format).format(date);
-		}
-		catch(Exception anyException){
+		} catch (Exception anyException) {
 			return formatNoData(locale);
 		}
 
 	}
 
-	private String formatBoolean(Boolean arg, Locale locale){
-		try{
-			return messageSource.getMessage("squashtm.yesno."+arg.toString(), null, locale);
-		}
-		catch(Exception anyException){
+	private String formatBoolean(Boolean arg, Locale locale) {
+		try {
+			return messageSource.getMessage("squashtm.yesno." + arg.toString(), null, locale);
+		} catch (Exception anyException) {
 			return formatNoData(locale);
 		}
 	}
 
-
-	private String formatNoData(Locale locale){
-		return messageSource.getMessage("squashtm.nodata",null, locale);
+	private String formatNoData(Locale locale) {
+		return messageSource.getMessage("squashtm.nodata", null, locale);
 	}
-
 
 }
