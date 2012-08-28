@@ -581,7 +581,7 @@
 </div>
 
 <%------------------------------ bugs section -------------------------------%>
-<c:if test="${iteration.project.bugTrackerConnected }">
+<c:if test="${iteration.project.bugtrackerConnected }">
 	<comp:issues-tab btEntityUrl="${ btEntityUrl }" />
 </c:if>
 <%------------------------------ /bugs section -------------------------------%>

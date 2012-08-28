@@ -565,7 +565,7 @@
 	</comp:popup>
 </div>
 <%------------------------------ bugs section -------------------------------%>
-<c:if test="${testSuite.iteration.project.bugTrackerConnected }">
+<c:if test="${testSuite.iteration.project.bugtrackerConnected }">
 	<comp:issues-tab btEntityUrl="${ btEntityUrl }" />
 </c:if>
 

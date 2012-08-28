@@ -453,7 +453,7 @@
 		</jsp:body>
 </comp:popup>
 <%------------------------------ bugs section -------------------------------%>
-<c:if test="${campaign.project.bugTrackerConnected }">
+<c:if test="${campaign.project.bugtrackerConnected }">
 	<comp:issues-tab btEntityUrl="${ btEntityUrl }" />
 </c:if>
 
