@@ -426,42 +426,25 @@
 			<f:message var="emptyMessage"
 			key="dialog.assign-user.selection.empty.label" />
 			<script type="text/javascript">
-				$("#batch-assign-test-case")
-						.bind(
-								"dialogopen",
-								function(event, ui) {
-									var table = $('#test-cases-table')
-											.dataTable();
-									var ids = getIdsOfSelectedTableRows(table,
-											rowDataToItemId);
-									if (ids.length > 0) {
-										var pop = this;
-
-										$
-												.get("${assignableUsersUrl}",
-														"json")
-												.success(
-														function(jsonList) {
-															var select = $(
-																	".batch-select",
-																	pop);
-															select.empty();
-															for ( var i = 0; i < jsonList.length; i++) {
-																select
-																		.append('<option value="'+jsonList[i].id+'">'
-																				+ jsonList[i].login
-																				+ '</option>');
-															}
-														});
-									} else {
-										$.squash
-												.openMessage(
-														"<f:message key='popup.title.error' />",
-														"${emptyMessage}");
-										$(this).dialog('close');
+				$("#batch-assign-test-case").bind("dialogopen",function(event, ui) {
+						var table = $('#test-cases-table').dataTable();
+						var ids = getIdsOfSelectedTableRows(table,rowDataToItemId);
+						if (ids.length > 0) {
+							var pop = this;
+							$.get("${assignableUsersUrl}","json")
+								.success(function(jsonList) {var select = $(".batch-select",pop);
+									select.empty();
+									for ( var i = 0; i < jsonList.length; i++) {
+										select.append('<option value="'+jsonList[i].id+'">'
+														+ jsonList[i].login
+														+ '</option>');
 									}
-
 								});
+						} else {
+							$.squash.openMessage("<f:message key='popup.title.error' />","${emptyMessage}");
+							$(this).dialog('close');
+						}
+					});
 			</script>
 			<span><f:message key="dialog.assign-test-case.confirm.label" />
 		</span>
@@ -469,8 +452,6 @@
 			
 		</jsp:body>
 </comp:popup>
-
-
 <%------------------------------ bugs section -------------------------------%>
 <c:if test="${campaign.project.bugTrackerConnected }">
 	<comp:issues-tab btEntityUrl="${ btEntityUrl }" />

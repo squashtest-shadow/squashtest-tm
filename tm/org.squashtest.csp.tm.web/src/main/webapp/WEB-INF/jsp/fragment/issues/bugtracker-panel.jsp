@@ -195,7 +195,7 @@
 		$.ajax({
 			url : "${bugTrackerStatusUrl}",
 			type : "GET",
-			data : {"projectId": ${project.id}},
+			data : {"projectId": ${project.id} },
 			dataType : "json",
 			success : handleBugTrackerStatus
 		});
@@ -362,7 +362,7 @@ check that in the next <script></script> tags
 --%>
 <is:issue-credentials-popup url="${credentialsUrl}"
 	divId="issue-dialog-credentials" successCallback="loginSuccess"
-	failureCallback="loginFail" />
+	failureCallback="loginFail" bugTrackerId="${bugTracker.id}"/>
 
 
 <%-- init code, including copy pasta de decorate-button.tag, that will handle those two buttons only --%>

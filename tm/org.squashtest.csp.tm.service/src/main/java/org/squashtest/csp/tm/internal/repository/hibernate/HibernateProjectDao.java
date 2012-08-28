@@ -21,12 +21,14 @@
 package org.squashtest.csp.tm.internal.repository.hibernate;
 
 import java.util.List;
+import java.util.Set;
 
 import org.hibernate.Criteria;
 import org.hibernate.Session;
 import org.hibernate.criterion.Order;
 import org.springframework.security.access.prepost.PostFilter;
 import org.springframework.stereotype.Repository;
+import org.squashtest.csp.core.bugtracker.domain.BugTracker;
 import org.squashtest.csp.tm.domain.project.Project;
 import org.squashtest.csp.tm.domain.projectfilter.ProjectFilter;
 import org.squashtest.csp.tm.infrastructure.filter.CollectionSorting;
@@ -37,15 +39,14 @@ import squashtm.testautomation.domain.TestAutomationProject;
 @Repository
 public class HibernateProjectDao extends HibernateEntityDao<Project> implements ProjectDao {
 	@Override
-		public List<Project> findAllOrderedByName() {
-			return executeListNamedQuery("project.findAllOrderedByName");
-		}
-	
-	
+	public List<Project> findAllOrderedByName() {
+		return executeListNamedQuery("project.findAllOrderedByName");
+	}
+
 	@Override
 	@SuppressWarnings("unchecked")
 	@PostFilter("hasPermission(filterObject, 'MANAGEMENT') or  hasRole('ROLE_ADMIN')")
-	//FIXME this posfilter breaks the paging
+	// FIXME this posfilter breaks the paging
 	public List<Project> findSortedProjects(CollectionSorting filter) {
 		Session session = currentSession();
 
@@ -70,8 +71,7 @@ public class HibernateProjectDao extends HibernateEntityDao<Project> implements 
 		return crit.list();
 
 	}
-	
-	
+
 	@Override
 	public long countProjects() {
 		return (Long) executeEntityNamedQuery("project.countProjects");
@@ -94,9 +94,10 @@ public class HibernateProjectDao extends HibernateEntityDao<Project> implements 
 	public List<ProjectFilter> findProjectFiltersContainingProject(Long projectId) {
 		return executeListNamedQuery("project.findProjectFiltersContainingProject", idParameter(projectId));
 	}
-	
+
 	@Override
 	public List<TestAutomationProject> findBoundTestAutomationProjects(long id) {
 		return executeListNamedQuery("project.findBoundTestAutomationProjects", idParameter(id));
 	}
+
 }

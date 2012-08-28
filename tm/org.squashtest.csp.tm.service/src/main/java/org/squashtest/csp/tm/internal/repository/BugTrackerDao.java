@@ -21,6 +21,7 @@
 package org.squashtest.csp.tm.internal.repository;
 
 import java.util.List;
+import java.util.Set;
 
 import org.squashtest.csp.core.bugtracker.domain.BugTracker;
 import org.squashtest.csp.tm.domain.BugTrackerNameAlreadyExistsException;
@@ -48,4 +49,11 @@ public interface BugTrackerDao extends EntityDao<BugTracker> {
 	 * @param name
 	 */
 	void checkNameAvailability(String name);
+	
+	/**
+	 * 
+	 * @param projectIds
+	 * @return the list of distinct BugTrackers concerned by the given projects;
+	 */
+	List<BugTracker> findDistinctBugTrackersForProjects(List<Long> projectIds);
 }

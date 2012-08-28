@@ -60,4 +60,11 @@ public interface BugTrackerFinderService {
 	 * @return the name of the bugtracker
 	 */
 	String findBugtrackerName(Long bugtrackerId);
+	
+	/**
+	 * 
+	 * @param projectIds
+	 * @return a list of distinct BugTrackers concerned by the given projects;
+	 */
+	List<BugTracker> findDistinctBugTrackersForProjects(List<Long> projectIds);
 }

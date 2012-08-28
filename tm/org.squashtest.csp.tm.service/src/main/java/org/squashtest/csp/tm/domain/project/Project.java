@@ -40,6 +40,7 @@ import javax.validation.constraints.Size;
 import org.hibernate.annotations.ForeignKey;
 import org.hibernate.validator.constraints.NotBlank;
 import org.squashtest.csp.core.bugtracker.domain.BugTracker;
+import org.squashtest.csp.core.domain.Identified;
 import org.squashtest.csp.tm.domain.NoBugTrackerBindingException;
 import org.squashtest.csp.tm.domain.audit.Auditable;
 import org.squashtest.csp.tm.domain.bugtracker.BugTrackerBinding;
@@ -52,7 +53,7 @@ import squashtm.testautomation.domain.TestAutomationServer;
 
 @Auditable
 @Entity
-public class Project {
+public class Project implements Identified {
 	@Id
 	@GeneratedValue
 	@Column(name = "PROJECT_ID")
@@ -264,5 +265,6 @@ public class Project {
 		throw new NoBugTrackerBindingException();
 		}
 	}
+
 	
 }

@@ -90,6 +90,3 @@
 	<comp:add-attachment-popup paramName="attachment" url="${uploadAttachmentUrl}"  
 				openedBy="upload-attachment-button"	submitCallback="reloadAttachments"/>
 </c:if>
-
-
-

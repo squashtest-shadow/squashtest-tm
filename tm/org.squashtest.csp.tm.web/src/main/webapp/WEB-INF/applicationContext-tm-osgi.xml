@@ -177,6 +177,10 @@
 		class="org.squashtest.csp.tm.web.internal.handler.BugTrackerAutoconnectCallback">
 		<property name="bugTrackersLocalService"
 			ref="squashtest.tm.service.BugTrackersLocalService" />
+			<property name="projectFinder"
+			ref="squashtest.tm.service.ProjectModificationService" />
+			<property name="bugTrackerFinder"
+			ref="squashtest.tm.service.BugTrackerManagerService" />
 			
 	</bean>
 

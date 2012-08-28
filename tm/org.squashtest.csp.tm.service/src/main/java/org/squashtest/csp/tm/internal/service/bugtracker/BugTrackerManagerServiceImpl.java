@@ -82,4 +82,9 @@ public class BugTrackerManagerServiceImpl implements BugTrackerManagerService {
 	public BugTracker findById(long bugTrackerId) {
 		return bugTrackerDao.findById(bugTrackerId);
 	}
+
+	@Override
+	public List<BugTracker> findDistinctBugTrackersForProjects(List<Long> projectIds) {
+		return bugTrackerDao.findDistinctBugTrackersForProjects(projectIds);
+	}
 }

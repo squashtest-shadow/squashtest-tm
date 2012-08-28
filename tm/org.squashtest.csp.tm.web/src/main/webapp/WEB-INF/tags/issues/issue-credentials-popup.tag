@@ -24,6 +24,7 @@
 <%@ attribute name="divId" required="true" description="the name you wish the popup to have"%>
 <%@ attribute name="successCallback" required="false" description="if set, that handler will be called on completion"%>
 <%@ attribute name="failureCallback" required="false" description="if set, that handler will be called for abnormal terminations"%>
+<%@ attribute name="bugTrackerId" %>
 
 <%@ tag language="java" pageEncoding="ISO-8859-1"%>
 <%@ taglib prefix="pop" tagdir="/WEB-INF/tags/popup" %>
@@ -80,7 +81,7 @@
 	function postIssueCredentials(){
 		var login = $("#dialog-issue-login").val();
 		var password = $("#dialog-issue-password").val();
-		$.post("${url}", {"login" : login, "password" : password}, postIssueCredentialsSuccess,"json");
+		$.post("${url}", {"login" : login, "password" : password, "bugTrackerId" : ${bugTrackerId}}, postIssueCredentialsSuccess,"json");
 	}
 
 </script>

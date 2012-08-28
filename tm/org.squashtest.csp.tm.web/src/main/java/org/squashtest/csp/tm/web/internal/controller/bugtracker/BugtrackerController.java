@@ -630,6 +630,8 @@ public class BugtrackerController {
 			mav.addObject("interfaceDescriptor", descriptor);
 			mav.addObject("panelStyle", panelStyle);
 			mav.addObject("bugTrackerStatus", status);
+			mav.addObject("project", project);
+			mav.addObject("bugTracker", project.findBugTracker());
 			return mav;
 		} else {
 			return new ModelAndView(EMPTY_BUGTRACKER_MAV);
