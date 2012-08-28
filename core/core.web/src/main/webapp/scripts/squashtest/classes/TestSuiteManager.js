@@ -79,12 +79,13 @@ function TestSuiteManagerControl(settings) {
 	var defaultState = $.proxy(function () {
 		this.input.removeAttr('disabled');
 		this.input.val(this.defaultMessage);
-		this.button.button("disable");
+		this.button.squashButton('disable');
 	}, self);
 
 	var editState = $.proxy(function () {
 		this.input.removeClass('manager-control-ready');
 		this.onfocus();
+		this.button.squashButton('enable');
 	}, self);
 
 	/* ************* handlers ******** */
@@ -109,8 +110,8 @@ function TestSuiteManagerControl(settings) {
 		self.manager.instance.find('.error-message').html('');
 		if (evt.which == '13') {
 			evt.stopImmediatePropagation();
-			var disabledStatus = self.button.button("option", "disabled");
-			if (disabledStatus === false) {
+			var disabledStatus = self.button.squashButton("option", "disabled");
+			if (disabledStatus == false) {
 				self.button.click();
 			}
 		}
@@ -119,9 +120,9 @@ function TestSuiteManagerControl(settings) {
 	var updateBtn = function () {
 		var button = self.button;
 		if (self.input.val().length > 0) {
-			button.button('enable');
+			button.squashButton('enable');
 		} else {
-			button.button('disable');
+			button.squashButton('disable');
 		}
 	};
 
@@ -278,19 +279,21 @@ function TestSuiteManager(settings) {
 	/* **************** public state management methods ******************** */
 
 	this.updatePopupState = function () {
-
+	
 		var allItems = this.view.getSelected();
 
 		switch (allItems.size()) {
 		case 0:
 			this.rename.control.deactivate();
-			this.remove.button.button('disable');
+			this.remove.button.squashButton('disable');
+			this.rename.control.button.squashButton('disable');
 			break;
 		case 1:
 			this.rename.control.reset();
 			var itemText = allItems.eq(0).find('span').text();
 			this.rename.control.setText(itemText);
-			this.remove.button.button('enable');
+			this.remove.button.squashButton('enable');
+			this.rename.control.button.squashButton('enable');
 			break;
 		default:
 			this.rename.control.deactivate();

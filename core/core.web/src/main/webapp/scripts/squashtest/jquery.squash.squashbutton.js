@@ -50,11 +50,7 @@
 			} ]
 		},
 
-		// _create : function () {
-		// // we need to invoke prototype creation
-		// $.ui.dialog.prototype._create.apply(this);
-		// },
-
+		
 		_trigger : function (type, event, data) {
 			// we need this otherwise events won't bubble
 			$.Widget.prototype._trigger.apply(this, arguments);
@@ -67,6 +63,7 @@
 			// _setOption method from the base widget
 			$.Widget.prototype._setOption.apply(this, arguments);
 		}
+		
 	});
 
 	/**
