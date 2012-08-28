@@ -1046,7 +1046,7 @@ function addTestStepSuccessAnother(){
 
 
 <%------------------------------ bugs section -------------------------------%>
-<c:if test="${testCase.project.bugTrackerConnected }">
+<c:if test="${testCase.project.bugtrackerConnected }">
 	<comp:issues-tab btEntityUrl="${ btEntityUrl }" />
 </c:if>
 
