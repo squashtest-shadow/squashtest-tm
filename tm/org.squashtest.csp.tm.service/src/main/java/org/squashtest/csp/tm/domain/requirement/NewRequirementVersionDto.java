@@ -22,6 +22,7 @@ package org.squashtest.csp.tm.domain.requirement;
 
 import javax.validation.constraints.NotNull;
 
+import org.hibernate.validator.constraints.Length;
 import org.hibernate.validator.constraints.NotBlank;
 
 /**
@@ -80,6 +81,7 @@ public class NewRequirementVersionDto {
 	@NotNull
 	private RequirementCategory category = RequirementCategory.UNDEFINED;
 	
+	@Length(max=20)
 	private String reference;
 
 	public RequirementVersion toRequirementVersion() {
