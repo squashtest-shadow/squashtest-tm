@@ -47,6 +47,7 @@ import squashtm.testautomation.domain.TestAutomationTest;
 import squashtm.testautomation.jenkins.internal.JsonParser;
 import squashtm.testautomation.jenkins.internal.net.HttpClientProvider;
 import squashtm.testautomation.jenkins.internal.net.HttpRequestFactory;
+import squashtm.testautomation.jenkins.internal.net.RequestExecutor;
 import squashtm.testautomation.spi.TestAutomationConnector;
 import squashtm.testautomation.spi.exceptions.AccessDenied;
 import squashtm.testautomation.spi.exceptions.NotFoundException;
@@ -98,23 +99,10 @@ public class TestAutomationJenkinsConnector implements TestAutomationConnector{
 
 		GetMethod credCheck = requestFactory.newCheckCredentialsMethod(server);
 		
-		try {
-			int responseCode = client.executeMethod(credCheck);
-			
-			checkResponseCode(responseCode);
-			
-			return true;
-		}
-		catch(AccessDenied ex){
-			throw new AccessDenied("Test automation - jenkins : server '"+server+"' rejected the operation because of wrong credentials");
-		}
-		catch(IOException ex){
-			throw new ServerConnectionFailed("Test automation - jenkins : could not connect to server '"+server+"' "+
-					 						 "due to technical error : ", ex);
-		}	
-		finally{
-			credCheck.releaseConnection();
-		}	
+		RequestExecutor.execute(client, credCheck);
+		
+		//if everything went fine, we may return true. Or else let the exception go.
+		return true;
 	
 	}
 	
@@ -131,29 +119,13 @@ public class TestAutomationJenkinsConnector implements TestAutomationConnector{
 		
 		GetMethod getJobsMethod = requestFactory.newGetJobsMethod(server);
 		
+		String response = RequestExecutor.execute(client, getJobsMethod);
+		
 		try{
-			
-			int responseCode = client.executeMethod(getJobsMethod);
-			
-			checkResponseCode(responseCode);
-			
-			String jsonResponse = getJobsMethod.getResponseBodyAsString();	
-			
-			return jsonParser.readJobListFromJson(jsonResponse);
-			
-		}
-		catch(IOException ex){
-			throw new ServerConnectionFailed("Test automation - jenkins : could not connect to server '"+server+"' "+
-					 						 "due to technical error : ", ex);
-		}
-		catch(AccessDenied ex){
-			throw new AccessDenied("Test automation - jenkins : server '"+server+"' rejected the operation because of wrong credentials or insufficient privileges");
+			return jsonParser.readJobListFromJson(response);
 		}
 		catch(UnreadableResponseException ex){
 			throw new UnreadableResponseException("Test automation - jenkins : server '"+server+"' returned malformed response : ", ex.getCause());
-		}
-		finally{
-			getJobsMethod.releaseConnection();
 		}
 		
 	} 
@@ -167,30 +139,11 @@ public class TestAutomationJenkinsConnector implements TestAutomationConnector{
 					   NotFoundException,
 					   TestAutomationException {
 
-		return null;
-		
-
-		
+		return null;	
 	}
 
 	
 	// ************************************ private tools ************************** 
-
-	
-	private void checkResponseCode(int responseCode){
-		
-		if (responseCode == SC_OK){
-			return;
-		}
-		
-		
-		switch(responseCode){
-			case SC_FORBIDDEN :
-			case SC_UNAUTHORIZED :
-			case SC_PROXY_AUTHENTICATION_REQUIRED :
-				throw new AccessDenied();
-		}
-	}
 
 	
 }
