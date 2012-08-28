@@ -99,7 +99,11 @@ public class BugtrackerController {
 
 	@Inject
 	private MessageSource messageSource;
-
+	
+	@ServiceReference
+	public void setProjectFinder(ProjectFinder projectFinder){
+		this.projectFinder = projectFinder;
+	}
 	@ServiceReference
 	public void setCampaignFinder(CampaignFinder campaignFinder) {
 		this.campaignFinder = campaignFinder;
@@ -542,7 +546,7 @@ public class BugtrackerController {
 
 	}
 
-	@RequestMapping(value = "status", method = RequestMethod.GET, params={"projectId"} )
+	@RequestMapping(value = "/status", method = RequestMethod.GET, params={"projectId"} )
 	public @ResponseBody
 	Object getBugTrackerStatus(@RequestParam("projectId")Long projectId) {
 		Project project = projectFinder.findById(projectId);
