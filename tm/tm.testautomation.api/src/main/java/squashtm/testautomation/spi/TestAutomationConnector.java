@@ -74,9 +74,10 @@ public interface TestAutomationConnector {
 	
 	/**
 	 * <p>Given a project (that contains everything you need to connect it), returns the collection of {@link TestAutomationTest}
-	 * that are bundled with it</p>
+	 * that it contains</p>
 	 *
 	 * @param project
+	 * 
 	 * @return a Collection possibly empty but never null of TestAutomationTest if success
 	 * @throws ServerConnectionFailed if could not connect to the server
 	 * @throws AccessDenied if the server was reached but the used user could log in

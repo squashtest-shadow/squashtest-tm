@@ -69,7 +69,7 @@ public class FetchTestListBuildProcessor extends SynchronousBuildProcessor<Colle
 		
 		if (currentStep.isFinalStep()){
 			
-			Collection<String> names= ((GatherTestList) currentStep).getTestNames();
+			Collection<String> names = ((GatherTestList) currentStep).getTestNames();
 			
 			for (String name : names){
 				TestAutomationTest test = new TestAutomationTest(name, project);

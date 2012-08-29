@@ -21,6 +21,7 @@
 package squashtm.testautomation.jenkins;
 
 import java.util.Collection;
+import java.util.Date;
 
 import javax.annotation.PostConstruct;
 
@@ -32,10 +33,12 @@ import org.springframework.stereotype.Service;
 import squashtm.testautomation.domain.TestAutomationProject;
 import squashtm.testautomation.domain.TestAutomationServer;
 import squashtm.testautomation.domain.TestAutomationTest;
+import squashtm.testautomation.jenkins.internal.FetchTestListBuildProcessor;
 import squashtm.testautomation.jenkins.internal.JsonParser;
 import squashtm.testautomation.jenkins.internal.net.HttpClientProvider;
 import squashtm.testautomation.jenkins.internal.net.HttpRequestFactory;
 import squashtm.testautomation.jenkins.internal.net.RequestExecutor;
+import squashtm.testautomation.jenkins.internal.tasksteps.BuildAbsoluteId;
 import squashtm.testautomation.spi.TestAutomationConnector;
 import squashtm.testautomation.spi.exceptions.AccessDenied;
 import squashtm.testautomation.spi.exceptions.NotFoundException;
@@ -127,11 +130,25 @@ public class TestAutomationJenkinsConnector implements TestAutomationConnector{
 					   NotFoundException,
 					   TestAutomationException {
 
-		return null;	
+		HttpClient client = clientProvider.getClientFor(project.getServer());
+		
+		FetchTestListBuildProcessor processor = new FetchTestListBuildProcessor();
+		
+		processor.setClient(client);
+		processor.setProject(project);
+		processor.setBuildAbsoluteId(new BuildAbsoluteId(project.getName(), generateNewId()));
+		processor.setDefaultReschedulingDelay(spamInterval);
+		
+		processor.run();
+		
+		return processor.getResult();
+		
 	}
 
 	
 	// ************************************ private tools ************************** 
 
-	
+	private String generateNewId(){
+		return new Long(new Date().getTime()).toString();
+	}
 }
