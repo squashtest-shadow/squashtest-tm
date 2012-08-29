@@ -20,22 +20,13 @@
  */
 package squashtm.testautomation.jenkins.internal.tasks;
 
-import java.util.NoSuchElementException;
 
 public abstract class AbstractBuildProcessor<RESULT> implements BuildProcessor {
 	 
 	protected StepScheduler scheduler = new SameThreadStepScheduler();
 
-	protected StepSequence stepSequence = new EmptySequence();
+	private int defaultReschedulingInterval = 3000;
 	
-	
-	private int defaultReschedulingDelay = 30000;
-	
-	private String externalId;
-	
-	private int buildId;	//will be found during the process
-	
-
 	
 	// ******* state variables *********
 	
@@ -60,33 +51,7 @@ public abstract class AbstractBuildProcessor<RESULT> implements BuildProcessor {
 	}
 	
 	public void setDefaultReschedulingDelay(int defaultReschedulingDelay) {
-		this.defaultReschedulingDelay = defaultReschedulingDelay;
-	}
-
-
-	public void setStepSequence(StepSequence stepSequence) {
-		this.stepSequence = stepSequence;
-	}
-
-	
-	public String getExternalId() {
-		return externalId;
-	}
-
-
-	public void setExternalId(String externalId) {
-		this.externalId = externalId;
-	}
-
-
-	public int getBuildId() {
-		return buildId;
-	}
-
-
-	@Override
-	public void setBuildId(int buildId) {
-		this.buildId = buildId;
+		this.defaultReschedulingInterval = defaultReschedulingDelay;
 	}
 
 
@@ -100,7 +65,7 @@ public abstract class AbstractBuildProcessor<RESULT> implements BuildProcessor {
 	
 
 	public int getDefaultReschedulingDelay() {
-		return defaultReschedulingDelay;
+		return defaultReschedulingInterval;
 	}
 
 	
@@ -123,92 +88,47 @@ public abstract class AbstractBuildProcessor<RESULT> implements BuildProcessor {
 	}
 
 	protected void scheduleNextStep(){
-		
-		BuildStep nextStep;		
-		int delay = 0;
+
 		
 		if (! taskHasBegun()){
-			delay = 0;
-			nextStep = stepSequence.nextElement(); 
+			currentStep = getStepSequence().nextElement();
+			scheduler.schedule(getStepSequence().nextElement());
 		}
 		else if (currentStep.needsRescheduling()){
-			delay = currentStep.suggestedReschedulingDelay();
-			nextStep = currentStep;
+			_reschedule();
 		}
 		else{
-			delay = 0;
-			nextStep = stepSequence.nextElement();
+			currentStep = getStepSequence().nextElement();
+			scheduler.schedule(getStepSequence().nextElement());
 		}
 		
-		
-		currentStep = nextStep;		
-		currentFuture = scheduler.schedule(currentStep, delay);
 		
 	}
 	
 	
+	protected void _reschedule(){
+		
+		int delay;
+		
+		if (currentStep.suggestedReschedulingInterval()!=null){ 
+			delay =currentStep.suggestedReschedulingInterval();
+		}
+		else{
+			delay = defaultReschedulingInterval;
+		}
+		
+		currentFuture = scheduler.schedule(currentStep, delay);
+	}
 	
 	public abstract void run();
 	
 	public abstract RESULT getResult();
 	
-	public abstract void buildResult();
+	protected abstract void buildResult();
+	
+	protected abstract StepSequence getStepSequence();
 	
 	
-	
-	
-	
-	// ************** private static stuff *************************
-	
-	private static class EmptySequence implements StepSequence{
 
-		private boolean wasCalled = false;
-		
-		@Override
-		public boolean hasMoreElements() {
-			return ! wasCalled;
-		}
-		
-		@Override
-		public BuildStep nextElement() {
-			if (! wasCalled){
-				wasCalled=true;
-				return new EmptyStep();
-			}
-			else{
-				throw new NoSuchElementException();
-			}
-		}
-				
-	}
-	
-	private static class EmptyStep extends BuildStep{
-
-		@Override
-		public boolean needsRescheduling() {
-			return false;
-		}
-
-		@Override
-		public boolean isFinalStep() {
-			return true;
-		}
-
-		@Override
-		public void perform() throws Exception {			
-		}
-
-		@Override
-		public void reset() {			
-		}
-
-		@Override
-		public int suggestedReschedulingDelay() {
-			return 0;
-		}
-
-
-
-	}
 	
 }

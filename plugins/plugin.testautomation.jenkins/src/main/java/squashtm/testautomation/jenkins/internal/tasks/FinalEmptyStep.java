@@ -20,32 +20,35 @@
  */
 package squashtm.testautomation.jenkins.internal.tasks;
 
+public class FinalEmptyStep extends BuildStep{
 
-public class SameThreadStepScheduler implements StepScheduler {
+	public FinalEmptyStep(BuildProcessor processor) {
+		super(processor);
+	}
 
 	@Override
-	public StepFuture schedule(BuildStep step, int millisDelay) {
-		
-		try{
-			Thread.sleep(millisDelay);
-			step.run();
-			return new DumbRemoteBuildStepFuture();
-		}
-		catch(InterruptedException ex){
-			throw new RuntimeException(ex);
-		}
+	public boolean needsRescheduling() {
+		return false;
 	}
-	
+
 	@Override
-	public StepFuture schedule(BuildStep step) {
-		return schedule(step, 0);
+	public boolean isFinalStep() {
+		return true;
 	}
-	
-	private static class DumbRemoteBuildStepFuture implements StepFuture{
-		@Override
-		public void cancel() {
-			//nothing. cannot cancel something that happened already.
-		}
+
+	@Override
+	public void perform() throws Exception {			
 	}
+
+	@Override
+	public void reset() {			
+	}
+
+	@Override
+	public Integer suggestedReschedulingInterval() {
+		return 0;
+	}
+
+
 
 }

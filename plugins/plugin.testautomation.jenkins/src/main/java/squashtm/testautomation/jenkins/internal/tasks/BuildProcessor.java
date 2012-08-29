@@ -40,11 +40,4 @@ public interface BuildProcessor {
 	 */
 	public abstract void notifyException(Exception ex);
 	
-	
-	/**
-	 * a crucial part of probably every build is to find the jenkins build id.
-	 * 
-	 * @param id
-	 */
-	public void setBuildId(int id);
 }

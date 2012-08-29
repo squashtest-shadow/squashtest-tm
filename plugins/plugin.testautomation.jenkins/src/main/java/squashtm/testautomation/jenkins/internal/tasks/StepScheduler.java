@@ -23,6 +23,8 @@ package squashtm.testautomation.jenkins.internal.tasks;
 
 public interface StepScheduler {
 
+	StepFuture schedule(BuildStep step);
+	
 	StepFuture schedule(BuildStep step, int millisDelay); 
 	
 }

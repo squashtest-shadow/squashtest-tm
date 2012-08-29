@@ -22,22 +22,28 @@ package squashtm.testautomation.jenkins.internal.tasks;
 
 public abstract class BuildStep implements Runnable{
 	
-	protected BuildProcessor processor;
-
+	protected BuildProcessor buildProcessor;
 	
+
 	public void setBuildProcessor(BuildProcessor processor){
-		this.processor = processor;
+		this.buildProcessor = processor;
 	}
 
+	
+	public BuildStep(BuildProcessor processor){
+		super();
+		this.buildProcessor = processor;
+	}
+	
 	
 	@Override
 	public void run(){
 		try{
 			perform();
-			processor.notifyStepDone();
+			buildProcessor.notifyStepDone();
 		}
 		catch(Exception ex){
-			processor.notifyException(ex);
+			buildProcessor.notifyException(ex);
 		}
 	}
 	
@@ -72,7 +78,15 @@ public abstract class BuildStep implements Runnable{
 	 */
 	public abstract void reset();
 	
-	public abstract int suggestedReschedulingDelay();
+	
+	/**
+	 * Returns a positive or null integer if it can suggest an adequate delay before next execution, if the task 
+	 * is unconclusive and must be rescheduled. Null should be returned if it has no opinion and let the processor decide
+	 * instead. 
+	 * 
+	 * @return
+	 */
+	public abstract Integer suggestedReschedulingInterval();
 	
 
 }

@@ -20,24 +20,12 @@
  */
 package squashtm.testautomation.jenkins;
 
-import static org.apache.commons.httpclient.HttpStatus.SC_FORBIDDEN;
-import static org.apache.commons.httpclient.HttpStatus.SC_OK;
-import static org.apache.commons.httpclient.HttpStatus.SC_PROXY_AUTHENTICATION_REQUIRED;
-import static org.apache.commons.httpclient.HttpStatus.SC_UNAUTHORIZED;
-
-import java.io.IOException;
 import java.util.Collection;
-import java.util.Properties;
 
 import javax.annotation.PostConstruct;
-import javax.inject.Inject;
 
 import org.apache.commons.httpclient.HttpClient;
-import org.apache.commons.httpclient.HttpException;
-import org.apache.commons.httpclient.HttpMethodBase;
 import org.apache.commons.httpclient.methods.GetMethod;
-import org.apache.commons.httpclient.methods.PostMethod;
-import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 
@@ -64,22 +52,20 @@ public class TestAutomationJenkinsConnector implements TestAutomationConnector{
 	private static final int DEFAULT_SPAM_INTERVAL_MILLIS = 5000;
 	
 	
+	private HttpClientProvider clientProvider = new HttpClientProvider();
 	
-	@Inject
-	private HttpClientProvider clientProvider;
 	
-	@Inject
-	private JsonParser jsonParser;
+	private JsonParser jsonParser = new JsonParser();
 	
-	@Inject
-	private HttpRequestFactory requestFactory;
+	
+	private HttpRequestFactory requestFactory = new HttpRequestFactory();
 
 	
 	@Value("${tm.test.automation.pollinterval.millis}")
 	private int spamInterval = DEFAULT_SPAM_INTERVAL_MILLIS;
 	
 	
-	private RequestExecutor requestExecutor = new RequestExecutor();
+	private RequestExecutor requestExecutor = RequestExecutor.getInstance();
 	
 	//****************************** let's roll ****************************************
 

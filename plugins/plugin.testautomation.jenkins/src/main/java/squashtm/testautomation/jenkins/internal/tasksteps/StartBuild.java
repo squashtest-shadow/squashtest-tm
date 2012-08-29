@@ -18,46 +18,53 @@
  *     You should have received a copy of the GNU Lesser General Public License
  *     along with this software.  If not, see <http://www.gnu.org/licenses/>.
  */
-package squashtm.testautomation.jenkins.internal.tasksimpl;
+package squashtm.testautomation.jenkins.internal.tasksteps;
 
 import org.apache.commons.httpclient.HttpClient;
-import org.apache.commons.httpclient.methods.PostMethod;
+import org.apache.commons.httpclient.HttpMethod;
 
+import squashtm.testautomation.jenkins.internal.JsonParser;
 import squashtm.testautomation.jenkins.internal.net.RequestExecutor;
+import squashtm.testautomation.jenkins.internal.tasks.BuildProcessor;
 import squashtm.testautomation.jenkins.internal.tasks.BuildStep;
-import squashtm.testautomation.jenkins.internal.tasks.AbstractBuildProcessor;
 
-class StartBuild extends BuildStep{
+public class StartBuild extends BuildStep implements HttpBasedStep{
 
-	private RequestExecutor requestExecutor = new RequestExecutor();
+	private RequestExecutor requestExecutor = RequestExecutor.getInstance();
 	
 	private HttpClient client;
 	
-	private PostMethod method;
+	private HttpMethod method;
 	
 	
-	StartBuild(){
-		super();
-	}
-	
-	StartBuild(HttpClient client, PostMethod method, AbstractBuildProcessor<?> processor){
-		
-		super();
-		
-		this.client = client;		
-		this.method = method;		
-		this.processor = processor;
-		
+
+	public StartBuild(BuildProcessor processor) {
+		super(processor);
 	}
 
+	@Override
 	public void setClient(HttpClient client) {
 		this.client = client;
 	}
 
-	public void setMethod(PostMethod method) {
+	@Override
+	public void setMethod(HttpMethod method) {
 		this.method = method;
 	}
 	
+	@Override
+	public void setParser(JsonParser parser) {
+		//nothing, no parser needed
+	}
+	
+	
+	@Override
+	public void setBuildAbsoluteId(BuildAbsoluteId absoluteId) {
+		//not needed here
+	}
+	
+	
+	//**************** code ********************
 
 	@Override
 	public boolean needsRescheduling() {
@@ -80,8 +87,8 @@ class StartBuild extends BuildStep{
 	}
 
 	@Override
-	public int suggestedReschedulingDelay() {
-		return 0;
+	public Integer suggestedReschedulingInterval() {
+		return null;
 	}
 	
 

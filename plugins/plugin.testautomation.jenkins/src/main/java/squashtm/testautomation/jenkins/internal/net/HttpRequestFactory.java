@@ -24,8 +24,6 @@ import java.net.MalformedURLException;
 import java.net.URL;
 import java.util.Date;
 
-import javax.inject.Inject;
-
 import org.apache.commons.codec.binary.Base64;
 import org.apache.commons.httpclient.Header;
 import org.apache.commons.httpclient.NameValuePair;
@@ -35,7 +33,6 @@ import org.apache.commons.httpclient.methods.PostMethod;
 import org.apache.commons.httpclient.util.URIUtil;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.springframework.stereotype.Component;
 
 import squashtm.testautomation.domain.TestAutomationProject;
 import squashtm.testautomation.domain.TestAutomationServer;
@@ -44,7 +41,6 @@ import squashtm.testautomation.jenkins.beans.ParameterArray;
 import squashtm.testautomation.jenkins.internal.JsonParser;
 
 
-@Component
 public class HttpRequestFactory {
 	
 	private static final Logger LOGGER = LoggerFactory.getLogger(HttpRequestFactory.class);
@@ -59,19 +55,17 @@ public class HttpRequestFactory {
 																new NameValuePair("tree","items[id,actions[parameters[name,value]],task[name]]")
 															};
 	
-	private static final NameValuePair[] TEST_LIST_QUERY = new NameValuePair[]{
-																new NameValuePair("tree", "suites[name,cases[name]]")	
-															};
 
 	private static final NameValuePair[] BUILD_LIST_QUERY = new NameValuePair[]{
 																new NameValuePair("depth", "1"),
 																new NameValuePair("tree", "builds[number,actions[parameters[name,value]]]")
 															};
 	
+	private static final NameValuePair[] TEST_LIST_QUERY = new NameValuePair[]{
+																new NameValuePair("tree", "suites[name,cases[name]]")	
+															};
 
-	
-	@Inject
-	private JsonParser jsonParser;
+	private JsonParser jsonParser = new JsonParser();
 	
 	
 	
@@ -148,7 +142,7 @@ public class HttpRequestFactory {
 	}
 	
 	
-	public GetMethod newListBuild(TestAutomationProject project){
+	public GetMethod newGetBuildsForProject(TestAutomationProject project){
 		
 		StringBuilder urlBuilder = new StringBuilder();
 		URL baseURL = project.getServer().getBaseURL();
@@ -166,6 +160,24 @@ public class HttpRequestFactory {
 		
 	}
 	
+	public GetMethod newGetTestListFromBuild(TestAutomationProject project, int buildId){
+		
+		StringBuilder urlBuilder = new StringBuilder();
+		URL baseURL = project.getServer().getBaseURL();
+		
+		urlBuilder.append(baseURL.toExternalForm());
+		urlBuilder.append("/job/"+project.getName()+"/"+buildId+"/testReport/"+API_URI);
+		
+		String finalURL = makeURL(urlBuilder.toString()).toExternalForm();
+		
+		GetMethod method = new GetMethod();
+		method.setPath(finalURL);
+		method.setQueryString(TEST_LIST_QUERY);
+		
+		return method;	
+		
+		
+	}
 	
 	//******************************* private stuffs ***********************
 	

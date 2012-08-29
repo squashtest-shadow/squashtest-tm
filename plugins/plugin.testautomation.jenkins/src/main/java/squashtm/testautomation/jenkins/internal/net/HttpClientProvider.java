@@ -39,7 +39,6 @@ import squashtm.testautomation.domain.TestAutomationServer;
  * 
  */
 
-@Component
 public class HttpClientProvider {
 
 	private Set<ServerKey> knownServers = new HashSet<ServerKey>();

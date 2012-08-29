@@ -18,92 +18,84 @@
  *     You should have received a copy of the GNU Lesser General Public License
  *     along with this software.  If not, see <http://www.gnu.org/licenses/>.
  */
-package squashtm.testautomation.jenkins.internal.tasksimpl;
+package squashtm.testautomation.jenkins.internal.tasksteps;
 
 import org.apache.commons.httpclient.HttpClient;
-import org.apache.commons.httpclient.methods.GetMethod;
+import org.apache.commons.httpclient.HttpMethod;
 
 import squashtm.testautomation.jenkins.beans.Build;
 import squashtm.testautomation.jenkins.beans.BuildList;
 import squashtm.testautomation.jenkins.internal.JsonParser;
 import squashtm.testautomation.jenkins.internal.net.RequestExecutor;
+import squashtm.testautomation.jenkins.internal.tasks.BuildProcessor;
 import squashtm.testautomation.jenkins.internal.tasks.BuildStep;
 import squashtm.testautomation.spi.exceptions.TestAutomationException;
 
-public class CheckBuildRunning extends BuildStep{
+public class CheckBuildRunning extends BuildStep implements HttpBasedStep{
 
-	/* *** technically needed for the computation **** */
+	/* ********* technically needed for the computation ************** */
 	
-	private RequestExecutor requestExecutor = new RequestExecutor();
+	private RequestExecutor requestExecutor = RequestExecutor.getInstance();
 	
 	private HttpClient client;
 	
-	private GetMethod method;
+	private HttpMethod method;
 	
 	private JsonParser parser;
-	
-	private int defaultReschedulingDelay = 2000;
-	
-	
-	// ***** input of the computation ******** */
-		
-	private String externalId;
-	
+
+	private BuildAbsoluteId absoluteId;
 	
 	
 	// **** output of the computation *** */
 	
+	
 	private boolean stillBuilding = true;
-	
-	private int buildId;
-	
-	private int suggestedReschedulingDelay = defaultReschedulingDelay;
 	
 	
 	// ****** accessors ********** */
 	
+	
+	@Override
 	public void setClient(HttpClient client) {
 		this.client = client;
 	}
 
-	public void setMethod(GetMethod method) {
+	@Override
+	public void setMethod(HttpMethod method) {
 		this.method = method;
 	}
 
+	@Override
 	public void setParser(JsonParser parser){
 		this.parser = parser;
 	}
+
+	@Override
+	public void setBuildAbsoluteId(BuildAbsoluteId absoluteId) {
+		this.absoluteId = absoluteId;
+	}
+
+
+	//************* constructor ******************
+
+	public CheckBuildRunning(BuildProcessor processor) {
+		super(processor);
+	}
 	
+	// ************ code ***************** 
 
-	public String getExternalId() {
-		return externalId;
-	}
-
-	public void setExternalId(String externalId) {
-		this.externalId = externalId;
-	}
-
-
-	public int getBuildId() {
-		return buildId;
-	}
 
 	@Override
 	public boolean needsRescheduling() {
 		return stillBuilding;
 	}
 
+
 	@Override
 	public boolean isFinalStep() {
 		return false;
 	}
 
-	
-	// ************ code ***************** 
-	
-	CheckBuildRunning(){
-		super();
-	}
 	
 	@Override
 	public void perform() throws Exception {
@@ -112,29 +104,26 @@ public class CheckBuildRunning extends BuildStep{
 		
 		BuildList buildList = parser.getRunningBuildsFromJson(json);
 		
-		Build buildOfInterest =  buildList.findByExternalId(externalId);
+		Build buildOfInterest =  buildList.findByExternalId(absoluteId.getExternalId());
 		
 		if (buildOfInterest!=null){
 			stillBuilding = buildOfInterest.isBuilding();
-			buildId = buildOfInterest.getId();			
-			processor.setBuildId(buildId);
+			int buildId = buildOfInterest.getId();			
+			absoluteId.setBuildId(buildId);
 		}
 		else{
-			throw new TestAutomationException("TestAutomationConnector : the requested build 'id '"+externalId+"' cannot be found");
+			throw new TestAutomationException("TestAutomationConnector : the requested build for project "+absoluteId.toString()+" cannot be found");
 		}
 	}
 
 	@Override
 	public void reset() {
 		stillBuilding = true;
-		suggestedReschedulingDelay = defaultReschedulingDelay;
-		buildId = 0;
-		
 	}
 
 	@Override
-	public int suggestedReschedulingDelay() {
-		return suggestedReschedulingDelay;
+	public Integer suggestedReschedulingInterval() {
+		return null;
 	}
 
 

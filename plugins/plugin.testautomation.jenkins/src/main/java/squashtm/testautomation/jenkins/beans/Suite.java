@@ -18,34 +18,31 @@
  *     You should have received a copy of the GNU Lesser General Public License
  *     along with this software.  If not, see <http://www.gnu.org/licenses/>.
  */
-package squashtm.testautomation.jenkins.internal.tasks;
+package squashtm.testautomation.jenkins.beans;
 
+public class Suite {
+	
+	private String name;
+	
+	private Case[] cases;
 
-public class SameThreadStepScheduler implements StepScheduler {
+	public String getName() {
+		return name;
+	}
 
-	@Override
-	public StepFuture schedule(BuildStep step, int millisDelay) {
-		
-		try{
-			Thread.sleep(millisDelay);
-			step.run();
-			return new DumbRemoteBuildStepFuture();
-		}
-		catch(InterruptedException ex){
-			throw new RuntimeException(ex);
-		}
+	public void setName(String name) {
+		this.name = name;
+	}
+
+	public Case[] getCases() {
+		return cases;
+	}
+
+	public void setCases(Case[] cases) {
+		this.cases = cases;
 	}
 	
-	@Override
-	public StepFuture schedule(BuildStep step) {
-		return schedule(step, 0);
+	public String getNameAsPath(){
+		return name.replace('.', '/');
 	}
-	
-	private static class DumbRemoteBuildStepFuture implements StepFuture{
-		@Override
-		public void cancel() {
-			//nothing. cannot cancel something that happened already.
-		}
-	}
-
 }

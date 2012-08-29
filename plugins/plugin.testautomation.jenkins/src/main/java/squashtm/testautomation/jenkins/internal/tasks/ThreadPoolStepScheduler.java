@@ -56,6 +56,10 @@ public class ThreadPoolStepScheduler implements StepScheduler{
 		return new ScheduledFutureWrapper(future);
 	}
 	
+	@Override
+	public StepFuture schedule(BuildStep step) {
+		return schedule(step, 0);
+	}
 	
 	
 	private static class ScheduledFutureWrapper implements StepFuture{

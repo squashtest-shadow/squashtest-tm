@@ -28,19 +28,16 @@ import org.codehaus.jackson.JsonGenerationException;
 import org.codehaus.jackson.JsonParseException;
 import org.codehaus.jackson.map.JsonMappingException;
 import org.codehaus.jackson.map.ObjectMapper;
-import org.springframework.stereotype.Component;
 
 import squashtm.testautomation.domain.TestAutomationProject;
 import squashtm.testautomation.jenkins.beans.BuildList;
 import squashtm.testautomation.jenkins.beans.ItemList;
 import squashtm.testautomation.jenkins.beans.Job;
 import squashtm.testautomation.jenkins.beans.JobList;
+import squashtm.testautomation.jenkins.beans.TestList;
 import squashtm.testautomation.spi.exceptions.TestAutomationException;
 import squashtm.testautomation.spi.exceptions.UnreadableResponseException;
 
-
-
-@Component
 public class JsonParser {
 	
 	private static final String DISABLED_COLOR_STRING = "disabled";
@@ -73,7 +70,7 @@ public class JsonParser {
 		} 
 		
 	}
-	
+		
 	
 	public ItemList getQueuedListFromJson(String json){
 		return safeReadValue(json, ItemList.class);
@@ -83,6 +80,9 @@ public class JsonParser {
 		return safeReadValue(json, BuildList.class);
 	}
 	
+	public TestList getTestListFromJson(String json){
+		return safeReadValue(json, TestList.class);
+	}
 	
 	public String toJson(Object object){
 		try {
