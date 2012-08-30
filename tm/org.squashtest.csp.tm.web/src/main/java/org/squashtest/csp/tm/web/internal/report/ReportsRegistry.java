@@ -71,8 +71,7 @@ public class ReportsRegistry {
 
 	private IdentifiedReportDecorator createIdentifiedReport(Report report, Map<?, ?> properties, int index) {
 		String pluginNamespace = (String) properties.get(OsgiServiceConstants.SERVICE_ID_KEY);
-		IdentifiedReportDecorator identifiedReport = new IdentifiedReportDecorator(report, pluginNamespace, index);
-		return identifiedReport;
+		return new IdentifiedReportDecorator(report, pluginNamespace, index);
 	}
 
 	/**

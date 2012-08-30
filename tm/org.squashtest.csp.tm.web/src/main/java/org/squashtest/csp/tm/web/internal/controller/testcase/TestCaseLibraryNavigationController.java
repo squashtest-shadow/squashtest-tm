@@ -156,8 +156,7 @@ public class TestCaseLibraryNavigationController extends
 	public @ResponseBody
 	List<JsTreeNode> getLinkablesRootModel() {
 		List<TestCaseLibrary> linkableLibraries = testCaseLibraryNavigationService.findLinkableTestCaseLibraries();
-		List<JsTreeNode> rootModel = createLinkableLibrariesModel(linkableLibraries);
-		return rootModel;
+		return createLinkableLibrariesModel(linkableLibraries);
 	}
 
 	private List<JsTreeNode> createLinkableLibrariesModel(List<TestCaseLibrary> linkableLibraries) {

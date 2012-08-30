@@ -274,8 +274,7 @@ public class RequirementLibraryNavigationController extends
 	public @ResponseBody
 	List<JsTreeNode> getLinkablesRootModel() {
 		List<RequirementLibrary> linkableLibraries = requirementLibraryNavigationService.findLinkableRequirementLibraries();
-		List<JsTreeNode> rootModel = createLinkableLibrariesModel(linkableLibraries);
-		return rootModel;
+		return createLinkableLibrariesModel(linkableLibraries);
 	}
 
 	private List<JsTreeNode> createLinkableLibrariesModel(List<RequirementLibrary> linkableLibraries) {

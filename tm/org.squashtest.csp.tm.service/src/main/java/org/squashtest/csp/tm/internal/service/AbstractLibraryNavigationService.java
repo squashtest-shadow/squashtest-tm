@@ -417,8 +417,7 @@ public abstract class AbstractLibraryNavigationService<LIBRARY extends Library<N
 	@SuppressWarnings("unchecked")
 	public FOLDER createCopyFolder(long folderId) {
 		FOLDER original = getFolderDao().findById(folderId);
-		FOLDER clone = (FOLDER) original.createPastableCopy();
-		return clone;
+		return (FOLDER) original.createPastableCopy();
 	}
 
 	/* ***************************** deletion operations *************************** */

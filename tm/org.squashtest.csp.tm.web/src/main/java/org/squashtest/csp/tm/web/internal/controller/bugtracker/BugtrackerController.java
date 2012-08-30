@@ -529,8 +529,7 @@ public class BugtrackerController {
 	@ResponseBody
 	public BTIssue findIssue(@PathVariable("remoteKey") String remoteKey, @RequestParam(BUGTRACKER_ID) long bugTrackerId) {
 		BugTracker bugTracker = bugTrackerFinderService.findById(bugTrackerId);
-		BTIssue remoteIssue = bugTrackersLocalService.getIssue(remoteKey, bugTracker);
-		return remoteIssue;
+		return bugTrackersLocalService.getIssue(remoteKey, bugTracker);
 	}
 
 	@RequestMapping(value = "/credentials", method = RequestMethod.POST, params = { "login", "password", BUGTRACKER_ID })

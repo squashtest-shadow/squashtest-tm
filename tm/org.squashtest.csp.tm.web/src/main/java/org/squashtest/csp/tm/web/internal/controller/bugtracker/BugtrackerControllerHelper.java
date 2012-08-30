@@ -156,8 +156,7 @@ public class BugtrackerControllerHelper {
 		requestUrl.append("/executions/");
 		requestUrl.append(execution.getId());
 		requestUrl.append("/info");
-		String executionUrl = requestUrl.toString();
-		return executionUrl;
+		return requestUrl.toString();
 	}
 	private static void appendDescHeader(StringBuffer description, Locale locale, MessageSource messageSource) {
 		description.append("\n# ");

@@ -106,8 +106,7 @@ public class BugTrackerAutoconnectCallback implements AuthenticationSuccessCallb
 	private List<BugTracker> findBugTrackers() {
 		List<Project> readableProjects = projectFinder.findAllReadable();
 		List<Long> projectIds = IdentifiedUtil.extractIds(readableProjects);
-		List<BugTracker> bugTrackers = bugTrackerFinder.findDistinctBugTrackersForProjects(projectIds);
-		return bugTrackers;
+		return bugTrackerFinder.findDistinctBugTrackersForProjects(projectIds);
 	}
 
 	
