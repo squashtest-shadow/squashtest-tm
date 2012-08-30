@@ -1,5 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
 	<modelVersion>4.0.0</modelVersion>
 
 	<parent>
@@ -8,7 +9,6 @@
 		<version>1.1</version>
 	</parent>
 	
-	<groupId>org.squashtest.tm</groupId>
 	<artifactId>squashtest-csp</artifactId>
 	<version>1.3.0.IT39-SNAPSHOT</version>
 	<packaging>pom</packaging>
@@ -321,8 +321,9 @@
 				<module>integration-tests</module>
 			</modules>
 		</profile>
-		
-		<!-- This profile aims to perform a build on the developper's machine before a push. It should not run anything against mysql -->
+
+		<!-- This profile aims to perform a build on the developper's machine before 
+			a push. It should not run anything against mysql -->
 		<profile>
 			<id>private-build</id>
 
@@ -332,14 +333,106 @@
 		</profile>
 
 		<profile>
-			<!-- When activated, this profile copies files required by Eclipse PDE 
-				to launch the bundles -->
 			<id>eclipse</id>
 			<activation>
 				<file>
 					<exists>${basedir}\.project</exists>
 				</file>
 			</activation>
+			<build>
+				<pluginManagement>
+					<plugins>
+						<!--This plugin's configuration is used to store Eclipse m2e settings 
+							only. It has no influence on the Maven build itself. -->
+						<plugin>
+							<groupId>org.eclipse.m2e</groupId>
+							<artifactId>lifecycle-mapping</artifactId>
+							<version>1.0.0</version>
+							<configuration>
+								<lifecycleMappingMetadata>
+									<pluginExecutions>
+										<pluginExecution>
+											<pluginExecutionFilter>
+												<groupId>org.codehaus.mojo</groupId>
+												<artifactId>aspectj-maven-plugin</artifactId>
+												<versionRange>[1.0,)</versionRange>
+												<goals>
+													<goal>test-compile</goal>
+													<goal>compile</goal>
+												</goals>
+											</pluginExecutionFilter>
+											<action>
+												<execute />
+											</action>
+										</pluginExecution>
+										
+					                    <pluginExecution>
+					                      <pluginExecutionFilter>
+					                        <groupId> com.springsource.bundlor </groupId>
+					                        <artifactId> com.springsource.bundlor.maven </artifactId>
+					                        <versionRange> [1.0.0.RC1,) </versionRange>
+					                        <goals>
+					                          <goal>bundlor</goal>
+					                        </goals>
+					                      </pluginExecutionFilter>
+					                      <action>
+					                        <execute />
+					                      </action>
+					                    </pluginExecution>
+
+					                    <pluginExecution>
+					                      <pluginExecutionFilter>
+											<groupId>org.apache.maven.plugins</groupId>
+											<artifactId>maven-resources-plugin</artifactId>
+					                        <versionRange> [1.2.0,) </versionRange>
+					                        <goals>
+					                          <goal>process</goal>
+					                        </goals>
+					                      </pluginExecutionFilter>
+					                      <action>
+					                        <execute>
+												<runOnIncremental>false</runOnIncremental>
+					                        </execute>
+					                      </action>
+					                    </pluginExecution>
+									</pluginExecutions>
+								</lifecycleMappingMetadata>
+							</configuration>
+						</plugin>
+
+			    		<plugin>
+			    			<groupId>org.eclipse.m2e</groupId>
+			    			<artifactId>lifecycle-mapping</artifactId>
+			    			<version>1.0.0</version>
+			    			<configuration>
+			    				<lifecycleMappingMetadata>
+			    					<pluginExecutions>
+			    						<pluginExecution>
+			    							<pluginExecutionFilter>
+			    								<groupId>org.codehaus.mojo</groupId>
+			    								<artifactId>
+			    									jasperreports-maven-plugin
+			    								</artifactId>
+			    								<versionRange>
+			    									[1.0,)
+			    								</versionRange>
+			    								<goals>
+			    									<goal>compile-reports</goal>
+			    								</goals>
+			    							</pluginExecutionFilter>
+			    							<action>
+						                        <execute>
+													<runOnIncremental>false</runOnIncremental>
+						                        </execute>
+			    							</action>
+			    						</pluginExecution>
+			    					</pluginExecutions>
+			    				</lifecycleMappingMetadata>
+			    			</configuration>
+			    		</plugin>
+					</plugins>
+				</pluginManagement>
+			</build>
 		</profile>
 
 		<profile>

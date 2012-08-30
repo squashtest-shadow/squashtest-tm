@@ -14,7 +14,6 @@
 		<bundle.symbolicName>${bundle.name}</bundle.symbolicName>
 		<cxf.version>2.3.3</cxf.version>
 		<project.build.sourceEncoding>ISO-8859-1</project.build.sourceEncoding>
-		<axis.generated-sources.directory>/generated-sources/axis-1.4</axis.generated-sources.directory>
 	</properties>
 	<dependencies>
 		<!-- ====== DEPENDENCY POMS ====== -->
@@ -197,7 +196,6 @@
 							<packageSpace>org.squashtest.csp.core.bugtracker.mantis.binding</packageSpace>
 							<testCases>false</testCases>
 							<serverSide>false</serverSide>
-							<outputDirectory>${project.build.directory}${axis.generated-sources.directory}</outputDirectory>
 							<typeMappingVersion>1.2</typeMappingVersion> <!-- corresponds to what the ant build was generating -->
 						</configuration>
 					</execution>
@@ -254,17 +252,6 @@
 		</plugins>
 	</build>
 	<profiles>
-		<profile>
-			<id>backslashed-properties</id>
-			<activation>
-				<os>
-					<family>windows</family>
-				</os>
-			</activation>
-			<properties>
-				<axis.generated-sources.directory>\generated-sources\axis-1.4</axis.generated-sources.directory>
-			</properties>
-		</profile>
 		<profile>
 			<id>eclipse</id>
 			<activation>

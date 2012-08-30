@@ -118,7 +118,6 @@
 				<configuration>
 					<instructions>
 						<_include>bnd.bnd</_include>
-						
 					</instructions>
 				</configuration>
 			</plugin>

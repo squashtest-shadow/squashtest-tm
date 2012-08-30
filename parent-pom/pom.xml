@@ -110,28 +110,6 @@
 								</configuration>
 							</execution>
 
-							<execution>
-								<!-- resources/META-INF should contain bundle's Spring DM config. We can copy it at project root just before compile 
-									lifecycle -->
-								<id>copy-meta-inf</id>
-								<phase>process-resources</phase>
-								<goals>
-									<goal>copy-resources</goal>
-								</goals>
-								<configuration>
-									<outputDirectory>${basedir}/META-INF</outputDirectory>
-									<resources>
-										<resource>
-											<directory>${basedir}/src/main/resources/META-INF</directory>
-											<filtering>true</filtering>
-										</resource>
-										<resource>
-											<directory>${project.build.outputDirectory}/META-INF</directory>
-											<filtering>true</filtering>
-										</resource>
-									</resources>
-								</configuration>
-							</execution>
 
 							<execution>
 								<!-- webapp/WEB-INF content should be copied at project root. We can do this at compile lifecycle -->
