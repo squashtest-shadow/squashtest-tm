@@ -21,7 +21,6 @@
 package org.squashtest.csp.tm.internal.repository.hibernate;
 
 import java.util.ArrayList;
-import java.util.Comparator;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.ListIterator;
@@ -43,7 +42,40 @@ import org.squashtest.csp.tm.internal.repository.IssueDao;
 @Repository
 public class HibernateIssueDao extends HibernateEntityDao<Issue> implements IssueDao {
 
-	private static final String ANY_BUGTRACKER = "_____any";
+	private static final String WHERE_CLAUSE_FOR_ISSUES_FROM_EXEC_AND_EXEC_STEP = 
+		//------------------------------------Where issues is from the given Executions
+		"where Issue.id in ( select issueExec.id " +
+		"from Execution exec " +
+		//way to issue id for exec
+			"join exec.issueList issueListExec " +
+			"join issueListExec.issues issueExec " +
+			"join issueExec.bugtracker issuExecBT "+
+		//way to bug-tracker for exec
+			"join exec.testPlan tp " +
+			"join tp.iteration iter " +
+			"join iter.campaign camp " +
+			"join camp.project project " +
+			"join project.bugtrackerBinding btb " +
+		//restriction for execution's bugtracker
+		"where exec.id in :executionsIds " +
+			"and btb.bugtracker.id = issuExecBT.id ) " +
+	//-----------------------------------------------Or from the given ExecutionSteps
+	"or Issue.id in (select issueExecStep.id " +
+		"from ExecutionStep execStep " +						
+		//way to issue id for execStep
+			"join execStep.issueList issueListExecStep " +
+			"join issueListExecStep.issues issueExecStep " +
+			"join issueExecStep.bugtracker issueExecStepBT " +
+		//way to bug-tracker for execStep
+			"join execStep.execution exec " +
+			"join exec.testPlan tp " +
+			"join tp.iteration iter " +
+			"join iter.campaign camp " +
+			"join camp.project project " +
+			"join project.bugtrackerBinding btb " +
+		//restriction for executionStep's bugtracker
+		"where execStep.id in :executionStepsIds " +
+			"and btb.bugtracker.id = issueExecStepBT.id) ";
 
 	@Override
 	public Integer countIssuesfromIssueList(final List<Long> issueListIds) {
@@ -65,7 +97,7 @@ public class HibernateIssueDao extends HibernateEntityDao<Issue> implements Issu
 		if (!issueListIds.isEmpty()) {
 			Query query = currentSession().getNamedQuery("issueList.countIssuesByTracker");
 			query.setParameterList("issueListIds", issueListIds);
-			query.setParameter("bugtrackerId", bugTrackerId);
+			query.setParameter("bugTrackerId", bugTrackerId);
 			Long result = (Long) query.uniqueResult();
 
 			return result.intValue();
@@ -74,69 +106,13 @@ public class HibernateIssueDao extends HibernateEntityDao<Issue> implements Issu
 		}
 	}
 
-	/* **************************** private code *********************************** */
-
-	private Comparator<IssueOwnership<Issue>> buildComparator(CollectionSorting sorter) {
-		String sortingOrder = sorter.getSortingOrder();
-
-		if (sortingOrder.equals("asc")) {
-			return new Comparator<IssueOwnership<Issue>>() {
-				@Override
-				public int compare(IssueOwnership<Issue> arg0, IssueOwnership<Issue> arg1) {
-					return (int) (arg0.getIssue().getId() - arg1.getIssue().getId());
-				}
-			};
-		} else {
-			return new Comparator<IssueOwnership<Issue>>() {
-				@Override
-				public int compare(IssueOwnership<Issue> arg0, IssueOwnership<Issue> arg1) {
-					return (int) (arg1.getIssue().getId() - arg0.getIssue().getId());
-				}
-			};
-		}
-	}
-
-	/*
-	 * returns the list of classes represented by a given list of Bugged entities . the list will contain each class
-	 * only once.
-	 */
-
-	private List<Class<? extends IssueDetector>> getActualClasses(List<IssueDetector> buggeds) {
-		List<Class<? extends IssueDetector>> classes = new LinkedList<Class<? extends IssueDetector>>();
-
-		for (IssueDetector bugged : buggeds) {
-			Class<? extends IssueDetector> clazz = bugged.getClass();
-			if (!classes.contains(clazz)) {
-				classes.add(clazz);
-			}
-		}
-
-		return classes;
-	}
-
-	private List<Long> collectIds(List<Issue> issues) {
-		List<Long> ids = new LinkedList<Long>();
-		for (Issue issue : issues) {
-			ids.add(issue.getId());
-		}
-		return ids;
-	}
-
+	
 	/**
-	 * will fetch all the issues that belong to the IssueList(s) which id is within the id list.
-	 * 
-	 * 
-	 * @param issueListIds
-	 *            the list of the ids of the IssueList
-	 * 
-	 * @param sorter
-	 *            will sort and filter the result set
-	 * 
-	 * @return a non-null but possibly empty list of Issue.
-	 **/
+	 * @see {@linkplain IssueDao#findSortedIssuesFromIssuesLists(List, CollectionSorting, Long)
+	 */
 	@Override
 	public List<Object[]> findSortedIssuesFromIssuesLists(final List<Long> issueListIds,
-			final CollectionSorting sorter, String bugtrackerName) {
+			final CollectionSorting sorter, Long bugtrackerId) {
 
 		List<Object[]> result = new ArrayList<Object[]>();
 
@@ -149,11 +125,9 @@ public class HibernateIssueDao extends HibernateEntityDao<Issue> implements Issu
 					.setProjection(
 							Projections.projectionList().add(Projections.property("IssueList.id"), "issueListId")
 									.add(Projections.property("Issue.remoteIssueId"), "remoteId"))
-					.add(Restrictions.in("IssueList.id", issueListIds));
-
-			if (bugtrackerName != ANY_BUGTRACKER) {
-				crit = crit.add(Restrictions.eq("Issue.bugtrackerName", bugtrackerName));
-			}
+					.add(Restrictions.in("IssueList.id", issueListIds))
+					.add(Restrictions.eq("Issue.bugtracker.id", bugtrackerId));
+			
 
 			String sortBy = sorter.getSortedAttribute();
 			String sortDirection = sorter.getSortingOrder();
@@ -220,6 +194,10 @@ public class HibernateIssueDao extends HibernateEntityDao<Issue> implements Issu
 		return result;
 
 	}
+
+	/**
+	 * @see {@linkplain IssueDao#findSortedIssuesFromExecutionAndExecutionSteps(List, List, CollectionSorting)
+	 */
 	
 	@Override
 	public List<Object[]> findSortedIssuesFromExecutionAndExecutionSteps(List<Long> executionsIds,
@@ -228,41 +206,9 @@ public class HibernateIssueDao extends HibernateEntityDao<Issue> implements Issu
 		
 		if (!executionsIds.isEmpty() && !executionStepsIds.isEmpty()) {
 			
-			String queryString = "select Issue.remoteIssueId , issueList.id " +
+			String queryString = "select issueList.id, Issue.remoteIssueId, Issue.bugtracker.id " +
 					"from IssueList issueList join issueList.issues Issue " +
-					//------------------------------------Where issues is from the given Executions
-					"where Issue.id in ( select issueExec.id " +
-						"from Execution exec " +
-						//way to issue id for exec
-							"join exec.issueList issueListExec " +
-							"join issueListExec.issues issueExec " +
-							"join issueExec.bugtracker issuExecBT "+
-						//way to bug-tracker for exec
-							"join exec.testPlan tp " +
-							"join tp.iteration iter " +
-							"join iter.campaign camp " +
-							"join camp.project project " +
-							"join project.bugtrackerBinding btb " +
-						//restriction for execution's bugtracker
-						"where exec.id in :executionsIds " +
-							"and btb.bugtracker.id = issuExecBT.id ) " +
-					//-----------------------------------------------Or from the given ExecutionSteps
-					"or Issue.id in (select issueExecStep.id " +
-						"from ExecutionStep execStep " +						
-						//way to issue id for execStep
-							"join execStep.issueList issueListExecStep " +
-							"join issueListExecStep.issues issueExecStep " +
-							"join issueExecStep.bugtracker issueExecStepBT " +
-						//way to bug-tracker for execStep
-							"join execStep.execution exec " +
-							"join exec.testPlan tp " +
-							"join tp.iteration iter " +
-							"join iter.campaign camp " +
-							"join camp.project project " +
-							"join project.bugtrackerBinding btb " +
-						//restriction for executionStep's bugtracker
-						"where execStep.id in :executionStepsIds " +
-							"and btb.bugtracker.id = issueExecStepBT.id) ";
+					WHERE_CLAUSE_FOR_ISSUES_FROM_EXEC_AND_EXEC_STEP;
 					
 			queryString += "order by "+ sorter.getSortedAttribute() + " " + sorter.getSortingOrder();
 			
@@ -276,6 +222,21 @@ public class HibernateIssueDao extends HibernateEntityDao<Issue> implements Issu
 		}
 
 		return result;
+	}
+
+	@Override
+	public Integer countIssuesfromExecutionAndExecutionSteps(List<Long> executionsIds, List<Long> executionStepsIds) {
+		if (!executionsIds.isEmpty() && !executionStepsIds.isEmpty()) {
+			String queryString = "select count(Issue)  " +
+			"from Issue Issue " + WHERE_CLAUSE_FOR_ISSUES_FROM_EXEC_AND_EXEC_STEP ;
+			Query query = currentSession().createQuery(queryString);
+			query.setParameterList("executionsIds", executionsIds);
+			query.setParameterList("executionStepsIds", executionStepsIds);
+			Long result = (Long) query.uniqueResult();
+			return result.intValue();
+		} else {
+			return 0;
+		}
 	}
 
 }

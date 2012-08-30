@@ -32,72 +32,140 @@ import spock.unitils.UnitilsSupport
 @UnitilsSupport
 class HibernateIssueDaoIT extends DbunitDaoSpecification {
 	@Inject IssueDao issueDao
-	
+
 	@DataSet("HibernateIssueDaoIT.should return sorted issues.xml")
-	def "should return sorted issues"(){
+	def "should return sorted issues from execs/exec-steps"(){
 		given:
 		List<Long> execIds = [101L, 400L, 201L, 100L]
 		List<Long> execStepIds = [1010L, 1011L, 2010L, 1000L]
 		CollectionSorting sorter = new CollectionSorting() {
 
-			@Override
-			public int getFirstItemIndex() {
-				return 0
-			}
+					@Override
+					public int getFirstItemIndex() {
+						return 0
+					}
 
-			@Override
-			public String getSortingOrder() {
-				return "asc"
-			}
+					@Override
+					public String getSortingOrder() {
+						return "asc"
+					}
 
-			@Override
-			public String getSortedAttribute() {
-				return "Issue.id"
-			}
+					@Override
+					public String getSortedAttribute() {
+						return "Issue.id"
+					}
 
-			@Override
-			public int getPageSize() {
-				return 2
-			}
-		}
+					@Override
+					public int getPageSize() {
+						return 2
+					}
+				}
 		when: def result = issueDao.findSortedIssuesFromExecutionAndExecutionSteps(execIds, execStepIds,sorter)
-		
+
 		then:
 		result.size() <= 2
-		result == [["11",100L], ["22", 1000L]]
+		result == [[100L, "11", 1L], [1000L, "22", 1L]]
 	}
-	
+
 	@DataSet("HibernateIssueDaoIT.should return sorted issues.xml")
-	def "should return sorted issues 2"(){
+	def "should return sorted issues from execs/exec-steps2"(){
 		given:
 		List<Long> execIds = [101L, 400L, 201L, 100L]
 		List<Long> execStepIds = [1010L, 1011L, 2010L, 1000L]
 		CollectionSorting sorter = new CollectionSorting() {
 
-			@Override
-			public int getFirstItemIndex() {
-				return 1
-			}
+					@Override
+					public int getFirstItemIndex() {
+						return 1
+					}
 
-			@Override
-			public String getSortingOrder() {
-				return "asc"
-			}
+					@Override
+					public String getSortingOrder() {
+						return "asc"
+					}
 
-			@Override
-			public String getSortedAttribute() {
-				return "Issue.id"
-			}
+					@Override
+					public String getSortedAttribute() {
+						return "Issue.id"
+					}
 
-			@Override
-			public int getPageSize() {
-				return 7
-			}
-		}
+					@Override
+					public int getPageSize() {
+						return 7
+					}
+				}
 		when: def result = issueDao.findSortedIssuesFromExecutionAndExecutionSteps(execIds, execStepIds,sorter)
-		
+
 		then:
 		result.size() <= 7
-		result == [ ["22", 1000L ], ["33", 1011L ], ["66", 2010L]]
+		result == [
+			[1000L, "22", 1L],
+			[1011L, "33", 1L],
+			[2010L, "66", 1L]
+		]
 	}
-}	
+
+	@DataSet("HibernateIssueDaoIT.should return sorted issues.xml")
+	def "should count issues for execution and execution steps"(){
+		given:
+		List<Long> execIds = [101L, 400L, 201L, 100L]
+		List<Long> execStepIds = [1010L, 1011L, 2010L, 1000L]
+
+		when: def result = issueDao.countIssuesfromExecutionAndExecutionSteps(execIds, execStepIds)
+
+		then:
+		result == 4
+	}
+	
+	@DataSet("HibernateIssueDaoIT.should return sorted issues.xml")
+	def "should return sorted issues from issue list ids"(){
+		given:
+		List<Long> issueListIds = [101L, 400L, 201L, 100L, 1011L, 2010L, 1000L]
+		def bugTrackerId = 1L
+		CollectionSorting sorter = new CollectionSorting() {
+
+					@Override
+					public int getFirstItemIndex() {
+						return 1
+					}
+
+					@Override
+					public String getSortingOrder() {
+						return "asc"
+					}
+
+					@Override
+					public String getSortedAttribute() {
+						return "Issue.id"
+					}
+
+					@Override
+					public int getPageSize() {
+						return 7
+					}
+				}
+		when: def result = issueDao.findSortedIssuesFromIssuesLists (issueListIds, sorter, bugTrackerId)
+
+		then:
+		result.size() <= 7
+		result == [
+			[1000L, "22"],
+			[1011L, "33"],
+			[2010L, "66"]
+		]
+	}
+	
+	@DataSet("HibernateIssueDaoIT.should return sorted issues.xml")
+	def "should count issues for issue list ids and bugtracker id"(){
+		given:
+		List<Long> issueListIds = [101L, 400L, 201L, 100L, 1010L, 1011L, 2010L, 1000L]
+		def bugTrackerId = 1L
+
+		when: def result = issueDao.countIssuesfromIssueList(issueListIds, bugTrackerId)
+
+		then:
+		result == 4
+	}
+	
+	
+}

@@ -26,6 +26,7 @@ import java.util.Arrays;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Map.Entry;
 import java.util.Set;
 
 import javax.inject.Inject;
@@ -53,9 +54,9 @@ import org.squashtest.csp.tm.domain.campaign.TestSuite;
 import org.squashtest.csp.tm.domain.execution.Execution;
 import org.squashtest.csp.tm.domain.execution.ExecutionStep;
 import org.squashtest.csp.tm.domain.project.Project;
-import org.squashtest.csp.tm.domain.testcase.TestCase;
 import org.squashtest.csp.tm.infrastructure.filter.CollectionSorting;
 import org.squashtest.csp.tm.infrastructure.filter.FilteredCollectionHolder;
+import org.squashtest.csp.tm.internal.repository.BugTrackerDao;
 import org.squashtest.csp.tm.internal.repository.CampaignDao;
 import org.squashtest.csp.tm.internal.repository.ExecutionDao;
 import org.squashtest.csp.tm.internal.repository.ExecutionStepDao;
@@ -92,6 +93,9 @@ public class BugTrackersLocalServiceImpl implements BugTrackersLocalService {
 
 	@Inject
 	private TestCaseDao testCaseDao;
+	
+	@Inject
+	private BugTrackerDao bugTrackerDao;
 
 	@Override
 	public BugTrackerInterfaceDescriptor getInterfaceDescriptor(BugTracker bugTracker) {
@@ -212,7 +216,7 @@ public class BugTrackersLocalServiceImpl implements BugTrackersLocalService {
 
 		// find the list of remoteIds out of the IssueListId
 		List<Object[]> sortedIssueListIdsAndIssueRemoteIds = issueDao.findSortedIssuesFromIssuesLists(issueListId,
-				sorter, bugTracker.getName());
+				sorter, bugTracker.getId());
 		List<String> issuesRemoteIds = extractRemoteIds(sortedIssueListIdsAndIssueRemoteIds);
 
 		// find the BT issues out of the remote ids
@@ -307,18 +311,22 @@ public class BugTrackersLocalServiceImpl implements BugTrackersLocalService {
 	@Override
 	@PreAuthorize("hasPermission(#tcId, 'org.squashtest.csp.tm.domain.testcase.TestCase', 'READ') or hasRole('ROLE_ADMIN')")
 	public FilteredCollectionHolder<List<IssueOwnership<BTIssue>>> findSortedIssueOwnershipForTestCase(Long tcId,
-	// FIXME [Feat 1194] we are supposed to return issues from different bugTrackers.
-			CollectionSorting sorter) {
-		// Find bug-tracker
-		TestCase testCase = testCaseDao.findById(tcId);
-		BugTracker bugTracker = testCase.getProject().findBugTracker();
+				CollectionSorting sorter) {
 
 		// Find all concerned IssueDetector
 		List<Execution> executions = testCaseDao.findAllExecutionByTestCase(tcId);
-		List<IssueDetector> issueDetectors = collectExecutionStepsFromExecution(executions);
+		List<ExecutionStep> executionSteps = collectExecutionStepsFromExecution(executions);
 
 		// create filtredCollection of IssueOwnership<BTIssue>
-		return createOwnershipsCollection(sorter, issueDetectors, bugTracker);
+		return createOwnershipsCollection(sorter, executions, executionSteps);
+	}
+
+	private List<ExecutionStep> collectExecutionStepsFromExecution(List<Execution> executions) {
+		List<ExecutionStep> executionSteps = new ArrayList<ExecutionStep>();
+		for(Execution execution : executions){
+			executionSteps.addAll(execution.getSteps());
+		}
+		return executionSteps;
 	}
 
 	/* ------------------------generic--------------------------------------- */
@@ -330,11 +338,6 @@ public class BugTrackersLocalServiceImpl implements BugTrackersLocalService {
 			issueDetectors.addAll(execution.getSteps());
 		}
 		return issueDetectors;
-	}
-
-	private List<IssueDetector> collectExecutionStepsFromExecution(List<Execution> executions) {
-		// TODO Auto-generated method stub
-		return null;
 	}
 
 	/**
@@ -356,7 +359,7 @@ public class BugTrackersLocalServiceImpl implements BugTrackersLocalService {
 		// Find the list of Issues RemoteIds out of the list of IssueList.id , but keep the information about the
 		// IssueList/remoteId association
 		List<Object[]> sortedIssueListIdsAndIssueRemoteIds = issueDao.findSortedIssuesFromIssuesLists(issueListIdsList,
-				sorter, bugTracker.getName());
+				sorter, bugTracker.getId());
 		List<String> issuesRemoteIds = extractRemoteIds(sortedIssueListIdsAndIssueRemoteIds);
 
 		// Find the BT issues out of the remote ids
@@ -384,40 +387,73 @@ public class BugTrackersLocalServiceImpl implements BugTrackersLocalService {
 	 */
 	private FilteredCollectionHolder<List<IssueOwnership<BTIssue>>> createOwnershipsCollection(
 			CollectionSorting sorter, List<Execution> executions, List<ExecutionStep> executionSteps) {
-		// Collect all IssueList.id out of the IssueDetector list, but keep the information about the
+		// Keep the information about the
 		// IssueDetector/IssueList association
-		Map<Long, IssueDetector> executionByListId = createIssueDetectorByListId(executions);
+		Map<Long, IssueDetector> issueDetectorByListId = createIssueDetectorByListId(executions);
 		Map<Long, IssueDetector> executionStepByListId = createIssueDetectorByListId(executionSteps);
-		Set<Long> executionIssueListIds = executionByListId.keySet();
-		Set<Long> executionStepIssueListIds = executionStepByListId.keySet();
-		List<Long> issueListIdsList = new ArrayList<Long>(executionIssueListIds.size() + executionStepIssueListIds.size());
-		issueListIdsList.addAll(executionIssueListIds);
-		issueListIdsList.addAll(executionIssueListIds);
+		issueDetectorByListId.putAll(executionStepByListId);
 		
-		//TODO comment
+		//Extract ids out of Executions and ExecutionSteps
 		List<Long> executionIds = IdentifiedUtil.extractIds(executions);
 		List<Long> executionStepsIds = IdentifiedUtil.extractIds(executionSteps);
 		
-		// Find the list of Issues RemoteIds out of the list of IssueList.id , but keep the information about the
+		// Find the list of Issues RemoteIds/BugTrackerId out of the list of IssueList.id , but keep the information about the
 		// IssueList/remoteId association
 		List<Object[]> sortedIssueListIdsAndIssueRemoteIds = issueDao.findSortedIssuesFromExecutionAndExecutionSteps(executionIds,
 				executionStepsIds, sorter);
-		List<String> issuesRemoteIds = extractRemoteIds(sortedIssueListIdsAndIssueRemoteIds);
-
+		
 		// Find the BT issues out of the remote ids
-		//TODO
-		//List<BTIssue> btIssues = remoteBugTrackersService.getIssues(issuesRemoteIds, bugTracker);
-
+		List<BTIssue> btIssues = findBTIssuesOutOfRemoteIdsAndBTIds(sortedIssueListIdsAndIssueRemoteIds);		
+		
 		// Bind the BT issues to their owner with the kept informations
-		List<IssueOwnership<BTIssue>> ownerships = new ArrayList<IssueOwnership<BTIssue>>();
-		//TODO
-		//= bindBTIssuesToOwner(btIssues, sortedIssueListIdsAndIssueRemoteIds,
-			//	issueDetectorByListId);
-
-		Integer totalIssues = 0;
-		//TODO
-		//= issueDao.countIssuesfromExecutionAndExecutionSteps(executions);
+		List<IssueOwnership<BTIssue>> ownerships = bindBTIssuesToOwner(btIssues, sortedIssueListIdsAndIssueRemoteIds,
+				issueDetectorByListId);
+		
+		Integer totalIssues = issueDao.countIssuesfromExecutionAndExecutionSteps(executionIds, executionStepsIds);
 		return new FilteredCollectionHolder<List<IssueOwnership<BTIssue>>>(totalIssues, ownerships);
+		
+	}
+
+	private List<BTIssue> findBTIssuesOutOfRemoteIdsAndBTIds(List<Object[]> sortedIssueListIdsAndIssueRemoteIds) {
+		Map<BugTracker, List<String>> issueRemoteIdsByBugTrackers = organizeIssueRemoteIdsByBugTrackers(sortedIssueListIdsAndIssueRemoteIds);
+		List<BTIssue> btIssues = new ArrayList<BTIssue>();
+		for(Entry<BugTracker, List<String>> remoteIdsByBugTracker : issueRemoteIdsByBugTrackers.entrySet()){
+			List<BTIssue> btIssuesOfBugTracker = remoteBugTrackersService.getIssues(remoteIdsByBugTracker.getValue(), remoteIdsByBugTracker.getKey());
+			btIssues.addAll(btIssuesOfBugTracker);
+		}
+		return btIssues;
+	}
+
+	private Map<BugTracker, List<String>> organizeIssueRemoteIdsByBugTrackers(
+			List<Object[]> sortedIssueListIdsAndIssueRemoteIds) {
+		Map<Long, List<String>> organizedRemoteIds = organizeRemoteIdsByBugTrackerId(sortedIssueListIdsAndIssueRemoteIds);
+		Map<BugTracker, List<String>> remoteIdsByBugTracker = replaceBugTrackerIdByBugtracker(organizedRemoteIds);
+		return remoteIdsByBugTracker;
+	}
+
+	private Map<BugTracker, List<String>> replaceBugTrackerIdByBugtracker(Map<Long, List<String>> organizedRemoteIds) {
+		Map<BugTracker, List<String>> remoteIdsByBugTracker = new HashMap<BugTracker, List<String>>(organizedRemoteIds.size());
+		for(Entry<Long, List<String>> remoteIdsByBugTrackerId : organizedRemoteIds.entrySet()){
+			BugTracker bugTracker = bugTrackerDao.findById(remoteIdsByBugTrackerId.getKey());
+			remoteIdsByBugTracker.put(bugTracker, remoteIdsByBugTrackerId.getValue());
+		}
+		return remoteIdsByBugTracker;
+	}
+
+	private Map<Long, List<String>> organizeRemoteIdsByBugTrackerId(List<Object[]> sortedIssueListIdsAndIssueRemoteIds) {
+		Map<Long, List<String>> organizedRemoteIds = new HashMap<Long, List<String>>(sortedIssueListIdsAndIssueRemoteIds.size());
+		for(Object[] object : sortedIssueListIdsAndIssueRemoteIds){
+			Long bugtrackerId = (Long) object[2];
+			List<String> remoteIds = organizedRemoteIds.get(bugtrackerId);
+			if( remoteIds != null){
+				remoteIds.add((String) object[1]);
+			}else{
+				remoteIds = new ArrayList<String>();
+				remoteIds.add((String) object[1]);
+				organizedRemoteIds.put(bugtrackerId, remoteIds);
+			}
+		}
+		return organizedRemoteIds;
 	}
 
 	private Map<Long, IssueDetector> createIssueDetectorByListId(List<? extends IssueDetector> issueDetectors) {

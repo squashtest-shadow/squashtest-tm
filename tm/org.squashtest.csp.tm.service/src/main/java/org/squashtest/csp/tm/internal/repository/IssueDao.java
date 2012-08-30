@@ -25,32 +25,69 @@ import java.util.List;
 import org.squashtest.csp.tm.domain.bugtracker.Issue;
 import org.squashtest.csp.tm.infrastructure.filter.CollectionSorting;
 
-public interface IssueDao extends EntityDao<Issue>{
-	
+public interface IssueDao extends EntityDao<Issue> {
+
 	/**
-	 * Will count the total number of issues related to the given IssueList.  
+	 * Will count the total number of issues related to the given IssueList.
 	 * 
 	 * 
-	 * @param issueListIds the id of the issue lists.
+	 * @param issueListIds
+	 *            the id of the issue lists.
 	 * @return how many issues they hold.
 	 */
 	Integer countIssuesfromIssueList(List<Long> issueListIds);
-	
+
 	/**
 	 * Will count the total number of issues related to the given IssueList, for the given bugtracker
 	 * 
 	 * 
-	 * @param issueListIds the id of the issue lists.
-	 * @param bugTrackerId the id of the bug-tracker we are filtering on
+	 * @param issueListIds
+	 *            the id of the issue lists.
+	 * @param bugTrackerId
+	 *            the id of the bug-tracker we are filtering on
 	 * @return how many issues they hold.
 	 */
 	Integer countIssuesfromIssueList(List<Long> issueListIds, Long bugTrackerId);
-
-
+	
+	/**
+	 * Will find all issues belonging to the issue-lists of the given ids, and, return a list of <code>Object[]</code> that have the following structure :  [IssueList.id, Issue.remoteIssueId]
+	 * <br><br>The issues are also filtered over the bug-tracker parameter: only issues linked to the bug-tracker of the given id are retained.
+	 * 
+	 * 
+	 * @param issueListIds
+	 *            the list of the ids of the IssueList
+	 * 
+	 * @param sorter
+	 *           : will sort and filter the result set
+	 *            
+	 * @param bugtrackerId 
+	 * 			 the id of the bug-tracker we want the issues to be connected-to
+	 * 
+	 * @return  non-null but possibly empty list of <code>Object[]</code> which have the following structure <b>[IssueList.id, Issue.remoteIssueId]</b>
+	 **/
 	List<Object[]> findSortedIssuesFromIssuesLists(List<Long> issueListId, CollectionSorting sorter,
-			String bugTrackerName);
-
+			Long bugTrackerId);
+	
+	/**
+	 * Will find all issues belonging to the executions/executionSteps of the given ids, and, return a list of <code>Object[]</code> that have the following structure :  [IssueList.id, Issue.remoteIssueId , Issue.bugtracker.id]
+	 * <br><br>The issues are also filtered over the bug-tracker parameter: only issues linked to the bug-tracker active for the given execution/executionSteps's project's bug-tracker are retained.
+	 * 
+	 * @param executionIds : ids of executions we will extract Issues from
+	 * @param executionStepsIds : ids of executionSteps we will extract Issues from
+	 * @param sorter : holds the sort parameters for the query
+	 * @return non-null but possibly empty list of <code>Object[]</code> which have the following structure <b>[IssueList.id, Issue.remoteIssueId , Issue.bugtracker.id]</b>
+	 */
 	List<Object[]> findSortedIssuesFromExecutionAndExecutionSteps(List<Long> executionIds,
 			List<Long> executionStepsIds, CollectionSorting sorter);
+
+	/**
+	 * Will count all Issues from the given executions and execution-steps <b>concerned by the active bug-tracker</b> for each
+	 * execution/execution-step's project.
+	 * 
+	 * @param executionsIds
+	 * @param executionStepsIds
+	 * @return the number of Issues detected by the given execution / execution Steps
+	 */
+	Integer countIssuesfromExecutionAndExecutionSteps(List<Long> executionsIds, List<Long> executionStepsIds);
 
 }
