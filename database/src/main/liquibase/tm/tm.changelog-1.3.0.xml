@@ -630,7 +630,7 @@
 	<changeSet id="tm-1.3.0-feat-1209.01" author="mpagnon">
 		<comment>To connect Squash TM to a bugtracker, you must provide the name and the url of the bugtracker. The mantis plugin is shipped with the application
 	 IFRAME_FRIENDLY :tells if the bugtracker page can be accessed through an iframe : if the response header of the bugtracker page has the property [X-Frame-Options = DENY] the answer is false
-	 URL :  : must point to the base name of the end point. Eg : http://www.yourdomain.com/mantis . Tips : Prefer IPs over localhost and domain names over IPs. If you don't some minor issues may occur when reporting an issue.</comment>
+	 URL : must point to the base name of the end point. Eg : http://www.yourdomain.com/mantis . Tips : Prefer IPs over localhost and domain names over IPs. If you don't some minor issues may occur when reporting an issue.</comment>
 		<createTable tableName="BUGTRACKER" remarks="stores bugtrackers informations">
 			<column name="BUGTRACKER_ID" type="BIGINT" autoIncrement="true"
 				remarks="primary key, should be auto-generated.">
@@ -640,14 +640,14 @@
 				<constraints nullable="false" />
 			</column>
 			<column name="KIND" type="java.sql.Types.VARCHAR(50)"
-				remarks="tells what kind of connector should be used">
+				remarks="tells what kind of connector should be used" defaultValue="mantis">
 				<constraints nullable="false" />
 			</column>
 			<column name="URL" type="java.sql.Types.VARCHAR(255)" remarks="the bugtracker url">
 				<constraints nullable="false" />
 			</column>
 			<column name="IFRAME_FRIENDLY" type="BOOLEAN"
-				remarks="tells if the bugtracker page can be accessed through an iframe">
+				remarks="tells if the bugtracker page can be accessed through an iframe" defaultValueBoolean="false">
 				<constraints nullable="false" />
 			</column>
 		</createTable>
@@ -791,9 +791,56 @@
     		<column name="BUGTRACKER_BINDING_ID" type="BIGINT"
 			remarks="project's connexion to a bugtracker">
 				<constraints nullable="true" references="BUGTRACKER_BINDING(BUGTRACKER_BINDING_ID)"
-				foreignKeyName="fk_project_bugtracker_projet"/>
+				foreignKeyName="fk_project_bugtracker_binding"/>
 			</column>
 		</addColumn>
+	</changeSet>
+	<changeSet id="tm-1.3.0-feat-1194.03" author="mpagnon" >
+	<comment>Data migration: add all bugtrackers that had an issue</comment>
+	<sql>insert into BUGTRACKER (NAME, KIND, URL, IFRAME_FRIENDLY) 
+		select distinct issues.BT_NAME , 'mantis', 'TO BE DEFINED', 0
+		from ISSUE issues;
+	</sql>
+	</changeSet>
+	<changeSet id="tm-1.3.0-feat-1194.04" author="mpagnon">
+	<comment>New foreign key in ISSUE table that points to a BUGTRACKER</comment>
+	<addColumn tableName="ISSUE">
+    		<column name="BUGTRACKER_ID" type="BIGINT"
+			remarks="Issue's bugtracker">
+				<constraints nullable="true" references="BUGTRACKER(BUGTRACKER_ID)"
+				foreignKeyName="fk_issue_bugtracker"/>
+			</column>
+		</addColumn>
+	</changeSet>
+	<changeSet id="tm-1.3.0-feat-1194.05" author="mpagnon">
+		<comment>Data migration : update issue's bugtracker FK with migrated BTs</comment>
+		<sql>
+			CREATE TABLE ISSUEBT
+			(
+			ISSUEID BIGINT,
+			BTID BIGINT
+			);
+				
+			Insert into ISSUEBT (ISSUEID, BTID)
+			select distinct iss.ISSUE_ID, bt.BUGTRACKER_ID
+			from ISSUE as iss, BUGTRACKER as bt
+			where iss.BT_NAME = bt.NAME;
+			
+			update ISSUE set ISSUE.BUGTRACKER_ID = (select BTID from ISSUEBT where ISSUEBT.ISSUEID = ISSUE.ISSUE_ID);
+			
+			DROP table ISSUEBT;
+		</sql>
+	</changeSet>
+	<changeSet id="tm-1.3.0-feat-1194.06" author="mpagnon">
+		<comment>Drop of column "BT_NAME" on table issue because it is not used anymore => use of FK to table BUGTRACKER instead</comment>
+		<dropColumn tableName="ISSUE" columnName="BT_NAME"/>
+	</changeSet>
+	<changeSet id="tm-1.3.0-feat-1194.07" author="mpagnon">
+		<comment>After Data migration : issue's bugtracker must not be null</comment>
+		<addNotNullConstraint
+		        tableName="ISSUE"
+		        columnName="BUGTRACKER_ID"
+		        columnDataType="BIGINT"/>
 	</changeSet>
 	<!-- ========================/ Feat. 1194 ============================================ -->
 	
@@ -835,6 +882,7 @@
 
 
 	<!-- ========================/ Feat. 1210 ============================================ -->
+	
 
 </databaseChangeLog>
  

@@ -32,6 +32,7 @@ import org.squashtest.csp.core.bugtracker.domain.BugTracker;
 import org.squashtest.csp.core.bugtracker.net.AuthenticationCredentials;
 import org.squashtest.csp.core.bugtracker.service.BugTrackerContext;
 import org.squashtest.csp.core.bugtracker.web.BugTrackerContextPersistenceFilter;
+import org.squashtest.csp.core.domain.IdentifiedUtil;
 import org.squashtest.csp.core.web.servlet.handler.AuthenticationSuccessCallback;
 import org.squashtest.csp.tm.domain.project.Project;
 import org.squashtest.csp.tm.service.BugTrackerFinderService;
@@ -104,18 +105,11 @@ public class BugTrackerAutoconnectCallback implements AuthenticationSuccessCallb
 
 	private List<BugTracker> findBugTrackers() {
 		List<Project> readableProjects = projectFinder.findAllReadable();
-		List<Long> projectIds = extractIds(readableProjects);
+		List<Long> projectIds = IdentifiedUtil.extractIds(readableProjects);
 		List<BugTracker> bugTrackers = bugTrackerFinder.findDistinctBugTrackersForProjects(projectIds);
 		return bugTrackers;
 	}
 
-	// FIXME put it in IdentifiedUtils
-	private List<Long> extractIds(List<Project> identifieds) {
-		List<Long> ids = new ArrayList<Long>(identifieds.size());
-		for (Project identified : identifieds) {
-			ids.add(identified.getId());
-		}
-		return ids;
-	}
+	
 
 }

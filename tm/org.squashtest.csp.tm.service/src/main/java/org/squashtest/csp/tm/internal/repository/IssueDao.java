@@ -41,13 +41,16 @@ public interface IssueDao extends EntityDao<Issue>{
 	 * 
 	 * 
 	 * @param issueListIds the id of the issue lists.
-	 * @param bugtrackerName the name of the bugtracker we are filtering on
+	 * @param bugTrackerId the id of the bug-tracker we are filtering on
 	 * @return how many issues they hold.
 	 */
-	Integer countIssuesfromIssueList(List<Long> issueListIds, String bugtrackerName);
+	Integer countIssuesfromIssueList(List<Long> issueListIds, Long bugTrackerId);
 
 
 	List<Object[]> findSortedIssuesFromIssuesLists(List<Long> issueListId, CollectionSorting sorter,
 			String bugTrackerName);
+
+	List<Object[]> findSortedIssuesFromExecutionAndExecutionSteps(List<Long> executionIds,
+			List<Long> executionStepsIds, CollectionSorting sorter);
 
 }

@@ -176,8 +176,68 @@
 				</jsp:attribute>
 			</comp:toggle-panel>
 			<%-----------------------------------END INFORMATION PANEL -----------------------------------------------%>
+					<%----------------------------------- BUGTRACKER PANEL -----------------------------------------------%>
+			
+		<c:if test="${!bugtrackersListEmpty}">
+			<comp:toggle-panel id="project-bugtracker-panel"
+					titleKey="project.bugtracker.panel.title" isContextual="true"
+					open="true" classes="bugtacker-panel">
+				<jsp:attribute name="body">
+			
+					<div id="project-bugtracker-table" class="display-table">
+						
+						<div class="display-table-row">
+							<label for="project-bugtracker" class="display-table-cell">
+								<f:message key="project.bugtracker.label" />
+							</label>
+							<div class="display-table-cell">
+								<div id="project-bugtracker">
+									<c:choose>
+										<c:when test="${ !adminproject.project.bugtrackerConnected }">
+											<f:message key="project.bugtracker.name.undefined" />
+										</c:when>
+										<c:otherwise>
+											${ adminproject.project.bugtrackerBinding.bugtracker.name }						
+										</c:otherwise>
+									</c:choose>
+								</div>
+									<script> function projectBugTrackerCallBack (value, settings) {
+								         if(value != "<f:message key='project.bugtracker.name.undefined'/>"){								        	 
+								        	 $("#project-bugtracker-project-name-row").show();
+												refreshBugTrackerProjectName();
+									     }else{
+								        	 $("#project-bugtracker-project-name-row").hide();								        	 
+								         }
+								         }</script>
+								<comp:select-jeditable componentId="project-bugtracker"
+										jsonData="${bugtrackersList}" targetUrl="${projectUrl}"
+										submitCallback="projectBugTrackerCallBack" />
+								
+							</div>
+						</div>
+						<div class="display-table-row"
+								id="project-bugtracker-project-name-row"
+								<c:if test="${ !adminproject.project.bugtrackerConnected }">style="display:none"</c:if>>
+							<label for="project-bugtracker-project-name"
+									class="display-table-cell">
+								<f:message key="project.bugtracker.project.name.label" />
+							</label>
+							<comp:simple-jeditable targetUrl="${ projectUrl }"
+									componentId="project-bugtracker-project-name" />
+							<div class="display-table-cell"
+									id="project-bugtracker-project-name">
+								<c:choose>
+									<c:when test="${ adminproject.project.bugtrackerConnected }">${ adminproject.project.bugtrackerBinding.projectName }</c:when>
+									<c:otherwise>${ adminproject.project.name }</c:otherwise>
+								</c:choose>
+							</div>
+						</div>
+					</div>
+				</jsp:attribute>
+			</comp:toggle-panel>
+		</c:if>
+		<%-----------------------------------END BUGTRACKER PANEL -----------------------------------------------%>
 				<%----------------------------------- USER PANEL -----------------------------------------------%>
-			<br />
 			<comp:toggle-panel id="project-users-panel"
 				titleKey="project.users.panel.title" isContextual="true" open="true"
 				classes="users-panel">
@@ -237,68 +297,7 @@
 			</jsp:body>
 		</comp:popup>
 		<%----------------------------------- /add User Popup-----------------------------------------------%>
-		<%----------------------------------- BUGTRACKER PANEL -----------------------------------------------%>
-			
-		<c:if test="${!bugtrackersListEmpty}">
-			<br />
-			<comp:toggle-panel id="project-bugtracker-panel"
-					titleKey="project.bugtracker.panel.title" isContextual="true"
-					open="true" classes="bugtacker-panel">
-				<jsp:attribute name="body">
-			
-					<div id="project-bugtracker-table" class="display-table">
-						
-						<div class="display-table-row">
-							<label for="project-bugtracker" class="display-table-cell">
-								<f:message key="project.bugtracker.label" />
-							</label>
-							<div class="display-table-cell">
-								<div id="project-bugtracker">
-									<c:choose>
-										<c:when test="${ !adminproject.project.bugtrackerConnected }">
-											<f:message key="project.bugtracker.name.undefined" />
-										</c:when>
-										<c:otherwise>
-											${ adminproject.project.bugtrackerBinding.bugtracker.name }						
-										</c:otherwise>
-									</c:choose>
-								</div>
-									<script> function projectBugTrackerCallBack (value, settings) {
-								         if(value != "<f:message key='project.bugtracker.name.undefined'/>"){								        	 
-								        	 $("#project-bugtracker-project-name-row").show();
-												refreshBugTrackerProjectName();
-									     }else{
-								        	 $("#project-bugtracker-project-name-row").hide();								        	 
-								         }
-								         }</script>
-								<comp:select-jeditable componentId="project-bugtracker"
-										jsonData="${bugtrackersList}" targetUrl="${projectUrl}"
-										submitCallback="projectBugTrackerCallBack" />
-								
-							</div>
-						</div>
-						<div class="display-table-row"
-								id="project-bugtracker-project-name-row"
-								<c:if test="${ !adminproject.project.bugtrackerConnected }">style="display:none"</c:if>>
-							<label for="project-bugtracker-project-name"
-									class="display-table-cell">
-								<f:message key="project.bugtracker.project.name.label" />
-							</label>
-							<comp:simple-jeditable targetUrl="${ projectUrl }"
-									componentId="project-bugtracker-project-name" />
-							<div class="display-table-cell"
-									id="project-bugtracker-project-name">
-								<c:choose>
-									<c:when test="${ adminproject.project.bugtrackerConnected }">${ adminproject.project.bugtrackerBinding.projectName }</c:when>
-									<c:otherwise>${ adminproject.project.name }</c:otherwise>
-								</c:choose>
-							</div>
-						</div>
-					</div>
-				</jsp:attribute>
-			</comp:toggle-panel>
-		</c:if>
-		<%-----------------------------------END BUGTRACKER PANEL -----------------------------------------------%>
+
 		</div>
 		<%---------------------------------------------------------------END  BODY -----------------------------------------------%>
 	<comp:decorate-buttons />

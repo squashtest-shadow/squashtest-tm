@@ -26,6 +26,10 @@ import javax.persistence.GeneratedValue;
 import javax.persistence.Id;
 import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
+import javax.persistence.OneToOne;
+
+import org.hibernate.annotations.ForeignKey;
+import org.squashtest.csp.core.bugtracker.domain.BugTracker;
 
 @Entity
 public class Issue {
@@ -34,14 +38,15 @@ public class Issue {
 	@Column(name = "ISSUE_ID")
 	private Long id;
 	
-	
 	@ManyToOne
 	@JoinColumn(name = "ISSUE_LIST_ID")
 	private IssueList issueList;
 	
+	@OneToOne(optional = false)
+	@ForeignKey(name="FK_Issue_Bugtracker")
+	@JoinColumn(name="BUGTRACKER_ID")
+	private BugTracker bugtracker;
 	
-	@Column(name = "BT_NAME")
-	private String bugtrackerName;
 	
 	private String remoteIssueId;
 
@@ -65,13 +70,16 @@ public class Issue {
 		this.issueList = issueList;
 	}
 
-	public String getBugtrackerName(){
-		return bugtrackerName;
+	public BugTracker getBugtracker() {
+		return bugtracker;
+	}
+
+	public void setBugtracker(BugTracker bugtracker) {
+		this.bugtracker = bugtracker;
 	}
 	
-	public void setBugtrackerName(String name){
-		bugtrackerName=  name;
-	}
+	
+	
 	
 	
 }

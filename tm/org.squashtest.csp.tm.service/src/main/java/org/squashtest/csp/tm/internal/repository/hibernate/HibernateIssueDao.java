@@ -61,11 +61,11 @@ public class HibernateIssueDao extends HibernateEntityDao<Issue> implements Issu
 	}
 
 	@Override
-	public Integer countIssuesfromIssueList(List<Long> issueListIds, String bugtrackerName) {
+	public Integer countIssuesfromIssueList(List<Long> issueListIds, Long bugTrackerId) {
 		if (!issueListIds.isEmpty()) {
 			Query query = currentSession().getNamedQuery("issueList.countIssuesByTracker");
 			query.setParameterList("issueListIds", issueListIds);
-			query.setParameter("bugtracker", bugtrackerName);
+			query.setParameter("bugtrackerId", bugTrackerId);
 			Long result = (Long) query.uniqueResult();
 
 			return result.intValue();
@@ -73,7 +73,7 @@ public class HibernateIssueDao extends HibernateEntityDao<Issue> implements Issu
 			return 0;
 		}
 	}
-	
+
 	/* **************************** private code *********************************** */
 
 	private Comparator<IssueOwnership<Issue>> buildComparator(CollectionSorting sorter) {
@@ -126,25 +126,30 @@ public class HibernateIssueDao extends HibernateEntityDao<Issue> implements Issu
 	 * will fetch all the issues that belong to the IssueList(s) which id is within the id list.
 	 * 
 	 * 
-	 * @param issueListIds the list of the ids of the IssueList
+	 * @param issueListIds
+	 *            the list of the ids of the IssueList
 	 * 
-	 * @param sorter will sort and filter the result set
+	 * @param sorter
+	 *            will sort and filter the result set
 	 * 
 	 * @return a non-null but possibly empty list of Issue.
 	 **/
 	@Override
-	public List<Object[]> findSortedIssuesFromIssuesLists(final List<Long> issueListIds, final CollectionSorting sorter,
-			String bugtrackerName) {
+	public List<Object[]> findSortedIssuesFromIssuesLists(final List<Long> issueListIds,
+			final CollectionSorting sorter, String bugtrackerName) {
 
 		List<Object[]> result = new ArrayList<Object[]>();
 
 		if (!issueListIds.isEmpty()) {
-			
-			//Issue alias is needed for sorting 
-			Criteria crit = currentSession().createCriteria(IssueList.class, "IssueList")
-											.createAlias("IssueList.issues", "Issue")
-											.setProjection(Projections.projectionList().add(Projections.property("IssueList.id"), "issueListId").add(Projections.property("Issue.remoteIssueId"), "remoteId"))
-											.add(Restrictions.in("IssueList.id", issueListIds));
+
+			// Issue alias is needed for sorting
+			Criteria crit = currentSession()
+					.createCriteria(IssueList.class, "IssueList")
+					.createAlias("IssueList.issues", "Issue")
+					.setProjection(
+							Projections.projectionList().add(Projections.property("IssueList.id"), "issueListId")
+									.add(Projections.property("Issue.remoteIssueId"), "remoteId"))
+					.add(Restrictions.in("IssueList.id", issueListIds));
 
 			if (bugtrackerName != ANY_BUGTRACKER) {
 				crit = crit.add(Restrictions.eq("Issue.bugtrackerName", bugtrackerName));
@@ -161,11 +166,10 @@ public class HibernateIssueDao extends HibernateEntityDao<Issue> implements Issu
 
 			crit = crit.setFirstResult(sorter.getFirstItemIndex()).setMaxResults(sorter.getPageSize());
 			result = crit.list();
-			
-			
+
 		}
 
-		return result ;
+		return result;
 
 	}
 
@@ -196,12 +200,9 @@ public class HibernateIssueDao extends HibernateEntityDao<Issue> implements Issu
 
 		if (issueIds.size() > 0) {
 
-			Criteria crit = currentSession()
-				.createCriteria(concreteClass, shortName)
-				.createAlias("issueList", "issueList")
-				.createAlias("issueList.issues", "issue")
-				.add(Restrictions.in("issue.id", issueIds))
-				.setResultTransformer(Criteria.ALIAS_TO_ENTITY_MAP);
+			Criteria crit = currentSession().createCriteria(concreteClass, shortName)
+					.createAlias("issueList", "issueList").createAlias("issueList.issues", "issue")
+					.add(Restrictions.in("issue.id", issueIds)).setResultTransformer(Criteria.ALIAS_TO_ENTITY_MAP);
 
 			List<Map<String, ?>> rawResult = crit.list();
 
@@ -218,6 +219,63 @@ public class HibernateIssueDao extends HibernateEntityDao<Issue> implements Issu
 		}
 		return result;
 
+	}
+	
+	@Override
+	public List<Object[]> findSortedIssuesFromExecutionAndExecutionSteps(List<Long> executionsIds,
+			List<Long> executionStepsIds, CollectionSorting sorter) {
+		List<Object[]> result = new ArrayList<Object[]>();
+		
+		if (!executionsIds.isEmpty() && !executionStepsIds.isEmpty()) {
+			
+			String queryString = "select Issue.remoteIssueId , issueList.id " +
+					"from IssueList issueList join issueList.issues Issue " +
+					//------------------------------------Where issues is from the given Executions
+					"where Issue.id in ( select issueExec.id " +
+						"from Execution exec " +
+						//way to issue id for exec
+							"join exec.issueList issueListExec " +
+							"join issueListExec.issues issueExec " +
+							"join issueExec.bugtracker issuExecBT "+
+						//way to bug-tracker for exec
+							"join exec.testPlan tp " +
+							"join tp.iteration iter " +
+							"join iter.campaign camp " +
+							"join camp.project project " +
+							"join project.bugtrackerBinding btb " +
+						//restriction for execution's bugtracker
+						"where exec.id in :executionsIds " +
+							"and btb.bugtracker.id = issuExecBT.id ) " +
+					//-----------------------------------------------Or from the given ExecutionSteps
+					"or Issue.id in (select issueExecStep.id " +
+						"from ExecutionStep execStep " +						
+						//way to issue id for execStep
+							"join execStep.issueList issueListExecStep " +
+							"join issueListExecStep.issues issueExecStep " +
+							"join issueExecStep.bugtracker issueExecStepBT " +
+						//way to bug-tracker for execStep
+							"join execStep.execution exec " +
+							"join exec.testPlan tp " +
+							"join tp.iteration iter " +
+							"join iter.campaign camp " +
+							"join camp.project project " +
+							"join project.bugtrackerBinding btb " +
+						//restriction for executionStep's bugtracker
+						"where execStep.id in :executionStepsIds " +
+							"and btb.bugtracker.id = issueExecStepBT.id) ";
+					
+			queryString += "order by "+ sorter.getSortedAttribute() + " " + sorter.getSortingOrder();
+			
+			Query query = currentSession().createQuery(queryString);
+			query.setParameterList("executionsIds", executionsIds);
+			query.setParameterList("executionStepsIds", executionStepsIds);
+			query.setFirstResult(sorter.getFirstItemIndex());
+			query.setMaxResults(sorter.getPageSize());
+			result = query.list();
+
+		}
+
+		return result;
 	}
 
 }
