@@ -6,8 +6,11 @@
 		<groupId>org.squashtest.tm</groupId>
 		<version>1.3.0.IT39-SNAPSHOT</version>
 	</parent>
-	<artifactId>org.squashtest.csp.core.service</artifactId>
-	<name>Squashtest CSP - Core module - Service component</name>
+	<artifactId>core.service</artifactId>
+	<name>${project.groupId}.${project.artifactId}</name>
+	<description>Squashtest CSP - Core module - Service component</description>
+	<packaging>bundle</packaging>
+	
 	<properties>
 		<bundle.name>${project.artifactId}</bundle.name>
 		<bundle.symbolicName>${project.artifactId}</bundle.symbolicName>
@@ -205,32 +208,15 @@
 			</plugin>
 
 			<plugin>
-				<groupId>com.springsource.bundlor</groupId>
-				<artifactId>com.springsource.bundlor.maven</artifactId>
-				<executions>
-					<execution>
-						<id>bundlor</id>
-						<goals>
-							<goal>bundlor</goal>
-						</goals>
-					</execution>
-				</executions>
+				<groupId>org.apache.felix</groupId>
+				<artifactId>maven-bundle-plugin</artifactId>
+				<extensions>true</extensions>
 				<configuration>
-					<removeNullHeaders>true</removeNullHeaders>
+					<instructions>
+						<_include>bnd.bnd</_include>
+					</instructions>
 				</configuration>
 			</plugin>
-
-			<plugin>
-				<groupId>org.apache.maven.plugins</groupId>
-				<artifactId>maven-jar-plugin</artifactId>
-				<configuration>
-					<archive>
-						<manifestFile>${project.build.outputDirectory}/META-INF/MANIFEST.MF</manifestFile>
-						<index />
-					</archive>
-				</configuration>
-			</plugin>
-
 			<!-- ====== SPOCK TESTS ====== -->
 			<plugin>
 				<groupId>org.apache.maven.plugins</groupId>
@@ -238,60 +224,5 @@
 			</plugin>
 			<!-- ====== /SPOCK TESTS ====== -->
 		</plugins>
-		<pluginManagement>
-			<plugins>
-				<!--This plugin's configuration is used to store Eclipse m2e settings only. It has no influence on the Maven build itself.-->
-				<plugin>
-					<groupId>org.eclipse.m2e</groupId>
-					<artifactId>lifecycle-mapping</artifactId>
-					<version>1.0.0</version>
-					<configuration>
-						<lifecycleMappingMetadata>
-							<pluginExecutions>
-								<pluginExecution>
-									<pluginExecutionFilter>
-										<groupId>
-											com.springsource.bundlor
-										</groupId>
-										<artifactId>
-											com.springsource.bundlor.maven
-										</artifactId>
-										<versionRange>
-											[1.0.0.RC1,)
-										</versionRange>
-										<goals>
-											<goal>bundlor</goal>
-										</goals>
-									</pluginExecutionFilter>
-									<action>
-										<ignore></ignore>
-									</action>
-								</pluginExecution>
-								<pluginExecution>
-									<pluginExecutionFilter>
-										<groupId>
-											org.codehaus.mojo
-										</groupId>
-										<artifactId>
-											aspectj-maven-plugin
-										</artifactId>
-										<versionRange>
-											[1.3,)
-										</versionRange>
-										<goals>
-											<goal>test-compile</goal>
-											<goal>compile</goal>
-										</goals>
-									</pluginExecutionFilter>
-									<action>
-										<ignore></ignore>
-									</action>
-								</pluginExecution>
-							</pluginExecutions>
-						</lifecycleMappingMetadata>
-					</configuration>
-				</plugin>
-			</plugins>
-		</pluginManagement>
 	</build>
 </project>
