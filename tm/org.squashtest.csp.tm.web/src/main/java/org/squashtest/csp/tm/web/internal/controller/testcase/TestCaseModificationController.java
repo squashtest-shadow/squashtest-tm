@@ -23,6 +23,7 @@ package org.squashtest.csp.tm.web.internal.controller.testcase;
 import static org.squashtest.csp.tm.web.internal.helper.JEditablePostParams.VALUE;
 
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.List;
 import java.util.Locale;
 
@@ -44,7 +45,11 @@ import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.servlet.ModelAndView;
+import org.squashtest.csp.tm.domain.campaign.Campaign;
+import org.squashtest.csp.tm.domain.campaign.Iteration;
+import org.squashtest.csp.tm.domain.campaign.TestSuite;
 import org.squashtest.csp.tm.domain.execution.Execution;
+import org.squashtest.csp.tm.domain.execution.ExecutionStatus;
 import org.squashtest.csp.tm.domain.project.Project;
 import org.squashtest.csp.tm.domain.requirement.RequirementCriticality;
 import org.squashtest.csp.tm.domain.requirement.RequirementVersion;
@@ -91,6 +96,18 @@ public class TestCaseModificationController {
 			.mapAttribute(TestCase.class, 3, "name", String.class)
 			.mapAttribute(TestCase.class, 4, "executionMode", TestCaseExecutionMode.class);
 
+	private final DataTableMapper execsTableMapper = new DataTableMapper("executions",
+			Execution.class, Project.class).initMapping(9)
+			.mapAttribute(Project.class, 0, "name", String.class)
+			.mapAttribute(Campaign.class, 1, "name", String.class)
+			.mapAttribute(Iteration.class, 2, "name", String.class)
+			.mapAttribute(Execution.class, 3, "name", String.class)
+			.mapAttribute(Execution.class, 4, "executionMode", TestCaseExecutionMode.class)
+			.mapAttribute(TestSuite.class, 5, "name", String.class)
+			.mapAttribute(Execution.class, 6, "executionStatus", ExecutionStatus.class)
+			.mapAttribute(Execution.class, 7, "lastExecutedBy", String.class)
+			.mapAttribute(Execution.class, 7, "lastExecutedOn", Date.class);
+	
 	private TestCaseModificationService testCaseModificationService;
 
 	private ExecutionFinder executionFinder;
@@ -448,7 +465,7 @@ public class TestCaseModificationController {
 	 * @param model
 	 * @return
 	 */
-	@RequestMapping(value = "/executions", method = RequestMethod.GET, params = "tab")
+	@RequestMapping(value = "/executions", method = RequestMethod.GET, params = "sEcho")
 	public String getExecutionsTab(@PathVariable long testCaseId, Model model) {
 		Paging paging = DefaultPaging.FIRST_PAGE;
 
@@ -470,4 +487,18 @@ public class TestCaseModificationController {
 		this.executionFinder = executionFinder;
 	}
 
+	@RequestMapping(value = "/executions", method = RequestMethod.GET, params = "tab")
+	@ResponseBody
+	public DataTableModel getExecutionsTableModel(@PathVariable long testCaseId, DataTableDrawParameters params, Locale locale) {
+		PagingAndSorting pas = createPagingAndSorting(params);
+
+		PagedCollectionHolder<List<Execution>> executions = executionFinder.findAllByTestCaseId(testCaseId, pas);
+		
+		return null;
+	}
+
+	private PagingAndSorting createPagingAndSorting(
+			DataTableDrawParameters params) {
+		return new DataTableMapperPagingAndSortingAdapter(params, execsTableMapper);
+	}
 }

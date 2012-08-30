@@ -24,6 +24,7 @@ import java.util.List;
 
 import javax.inject.Inject;
 
+import org.springframework.security.access.prepost.PostFilter;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.stereotype.Service;
 import org.squashtest.csp.tm.domain.execution.Execution;
@@ -33,7 +34,10 @@ import org.squashtest.csp.tm.internal.repository.ExecutionDao;
 import org.squashtest.csp.tm.internal.repository.ExecutionStepDao;
 import org.squashtest.csp.tm.service.ExecutionModificationService;
 import org.squashtest.csp.tm.service.deletion.SuppressionPreviewReport;
+import org.squashtest.tm.core.foundation.collection.PagedCollectionHolder;
 import org.squashtest.tm.core.foundation.collection.Paging;
+import org.squashtest.tm.core.foundation.collection.PagingAndSorting;
+import org.squashtest.tm.core.foundation.collection.PagingBackedPagedCollectionHolder;
 
 @Service("squashtest.tm.service.ExecutionModificationService")
 public class ExecutionModificationServiceImpl implements ExecutionModificationService {
@@ -115,6 +119,14 @@ public class ExecutionModificationServiceImpl implements ExecutionModificationSe
 	@Override
 	public List<Execution> findAllByTestCaseIdOrderByRunDate(long testCaseId, Paging paging) {
 		return executionDao.findAllByTestCaseIdOrderByRunDate(testCaseId, paging);
+	}
+
+	@Override
+	@PostFilter("hasPermission(filterObject, 'READ') or hasRole('ROLE_ADMIN')")
+	public PagedCollectionHolder<List<Execution>> findAllByTestCaseId(long testCaseId, PagingAndSorting pas) {
+		List<Execution> executions = executionDao.findAllByTestCaseId(testCaseId, pas);
+		long count = executionDao.countByTestCaseId(testCaseId);
+		return new PagingBackedPagedCollectionHolder<List<Execution>>(pas, count, executions);
 	}
 
 }

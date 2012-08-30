@@ -26,7 +26,10 @@ import org.springframework.security.access.prepost.PostFilter;
 import org.springframework.transaction.annotation.Transactional;
 import org.squashtest.csp.tm.domain.execution.Execution;
 import org.squashtest.csp.tm.domain.execution.ExecutionStep;
+import org.squashtest.csp.tm.infrastructure.filter.FilteredCollectionHolder;
+import org.squashtest.tm.core.foundation.collection.PagedCollectionHolder;
 import org.squashtest.tm.core.foundation.collection.Paging;
+import org.squashtest.tm.core.foundation.collection.PagingAndSorting;
 
 @Transactional(readOnly = true)
 public interface ExecutionFinder {
@@ -45,4 +48,15 @@ public interface ExecutionFinder {
 	List<Execution> findAllByTestCaseIdOrderByRunDate(long testCaseId, Paging paging);
 
 	int findExecutionRank(Long executionId);
+
+	/**
+	 * Fetches all the executions which ran a given test case and matching the given paging and sorting instructions.
+	 * 
+	 * @param testCaseId
+	 * @param pas
+	 *            Paging and sorting data, should not be <code>null</code>
+	 * @return a {@link FilteredCollectionHolder} holding the results. Should never return <code>null</code>
+	 */
+	@PostFilter("hasPermission(filterObject, 'READ') or hasRole('ROLE_ADMIN')")
+	PagedCollectionHolder<List<Execution>> findAllByTestCaseId(long testCaseId, PagingAndSorting pas);
 }

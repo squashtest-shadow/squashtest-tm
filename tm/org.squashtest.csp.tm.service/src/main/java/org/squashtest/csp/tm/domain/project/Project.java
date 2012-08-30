@@ -85,7 +85,7 @@ public class Project implements Identified {
 	@JoinColumn(name="BUGTRACKER_BINDING_ID")
 	private BugTrackerBinding bugtrackerBinding;
 	
-	@ManyToMany(cascade = { CascadeType.ALL }, fetch = FetchType.LAZY)
+	@ManyToMany(cascade = { CascadeType.ALL })
 	@JoinTable(name="TM_TA_PROJECTS", joinColumns=@JoinColumn(name="TM_PROJECT_ID"), 
 			inverseJoinColumns=@JoinColumn(name="TA_PROJECT_ID"))
 	private List<TestAutomationProject> testAutomationProjects=new ArrayList<TestAutomationProject>();

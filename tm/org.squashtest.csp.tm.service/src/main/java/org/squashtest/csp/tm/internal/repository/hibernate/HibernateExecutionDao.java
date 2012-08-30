@@ -26,11 +26,14 @@ import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
 
+import org.hibernate.Criteria;
+import org.hibernate.FetchMode;
 import org.hibernate.Hibernate;
 import org.hibernate.Query;
 import org.hibernate.criterion.Restrictions;
 import org.springframework.stereotype.Repository;
 import org.squashtest.csp.core.infrastructure.hibernate.PagingUtils;
+import org.squashtest.csp.core.infrastructure.hibernate.SortingUtils;
 import org.squashtest.csp.tm.domain.bugtracker.IssueDetector;
 import org.squashtest.csp.tm.domain.campaign.IterationTestPlanItem;
 import org.squashtest.csp.tm.domain.execution.Execution;
@@ -39,6 +42,7 @@ import org.squashtest.csp.tm.domain.execution.ExecutionStatusReport;
 import org.squashtest.csp.tm.domain.execution.ExecutionStep;
 import org.squashtest.csp.tm.internal.repository.ExecutionDao;
 import org.squashtest.tm.core.foundation.collection.Paging;
+import org.squashtest.tm.core.foundation.collection.PagingAndSorting;
 
 @Repository
 public class HibernateExecutionDao extends HibernateEntityDao<Execution> implements ExecutionDao {
@@ -213,6 +217,34 @@ public class HibernateExecutionDao extends HibernateEntityDao<Execution> impleme
 		query.setParameter("testCaseId", testCaseId);
 		
 		return query.list();
+	}
+
+	@SuppressWarnings("unchecked")
+	@Override
+	public List<Execution> findAllByTestCaseId(long testCaseId, PagingAndSorting pas) {
+		Criteria crit = currentSession().createCriteria(Execution.class, "Execution");
+		crit.createAlias("testPlan.iteration", "Iteration", Criteria.LEFT_JOIN);
+		crit.createAlias("Iteration.campaign", "Campaign", Criteria.LEFT_JOIN);
+		crit.createAlias("Campaign.project", "Project", Criteria.LEFT_JOIN);
+		crit.createAlias("referencedTestCase", "TestCase", Criteria.LEFT_JOIN);
+		crit.createAlias("testPlan.testSuite", "TestSuite", Criteria.LEFT_JOIN);
+
+		crit.add(Restrictions.eq("TestCase.id", Long.valueOf(testCaseId)));
+		
+//		crit.setFetchMode("TestCase.testAutomationTest", FetchMode.JOIN);
+//		crit.setFetchMode("testPlan.referencedTestCase.testAutomationTest", FetchMode.JOIN);
+		
+		crit.setResultTransformer(Criteria.DISTINCT_ROOT_ENTITY);
+
+		PagingUtils.addPaging(crit, pas);
+		SortingUtils.addOrder(crit, pas);
+
+		return crit.list();
+	}
+
+	@Override
+	public long countByTestCaseId(long testCaseId) {
+		return executeEntityNamedQuery("execution.countByTestCaseId", "testCaseId", testCaseId);
 	}
 
 }
