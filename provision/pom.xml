@@ -31,7 +31,7 @@
 		<database.create.user>sa</database.create.user>
 		<database.create.password>sa</database.create.password>
 		
-		<master.changelog>${project.build.directory}/maven-shared-archive-resources/global.changelog-master.xml</master.changelog>
+		<master.changelog>${project.build.directory}/maven-shared-archive-resources/sample/sample-db.changelog.xml</master.changelog>
 		
 		<database.nocreate>false</database.nocreate>
 		<database.nopopulate>false</database.nopopulate>
@@ -230,7 +230,7 @@
 									<goal>update</goal>
 								</goals>
 								<configuration>
-									<changeLogFile>${project.basedir}/../database/src/main/liquibase/dev/dev.changelog-master.xml</changeLogFile>
+									<changeLogFile>${master.changelog}</changeLogFile>
 									<driver>${database.driverClassName}</driver>
 									<url>${database.url}</url>
 									<username>${database.create.user}</username>
