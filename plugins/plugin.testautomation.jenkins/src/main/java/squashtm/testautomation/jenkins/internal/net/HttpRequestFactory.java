@@ -47,7 +47,7 @@ public class HttpRequestFactory {
 	
 	private static final String API_URI = "/api/json";
 	
-	private static final NameValuePair[] JOBS_LIST_QUERY = new NameValuePair[] { 
+	private static final NameValuePair[] JOB_LIST_QUERY = new NameValuePair[] { 
 																new NameValuePair("tree", "jobs[name,color]") 
 															};
 	
@@ -56,11 +56,11 @@ public class HttpRequestFactory {
 															};
 	
 
-	private static final NameValuePair[] BUILD_LIST_QUERY = new NameValuePair[]{
+	private static final NameValuePair[] EXISTING_BUILDS_QUERY = new NameValuePair[]{
 																new NameValuePair("tree", "builds[building,number,actions[parameters[name,value]]]")
 															};
 	
-	private static final NameValuePair[] TARGET_BUILD_QUERY = new NameValuePair[]{
+	private static final NameValuePair[] SINGLE_BUILD_QUERY = new NameValuePair[]{
 																new NameValuePair("tree", "building,number,actions[parameters[name,value]]")
 															};
 	
@@ -96,17 +96,12 @@ public class HttpRequestFactory {
 	
 	public GetMethod newGetJobsMethod(TestAutomationServer server){
 		
-		StringBuilder urlBuilder= new StringBuilder();
-		
-		urlBuilder.append(server.getBaseURL().toExternalForm());
-		urlBuilder.append(API_URI);
-
 		String path = toUrlPath(server, API_URI);
 		
 		GetMethod method = new GetMethod();
 		
 		method.setPath(path);
-		method.setQueryString(JOBS_LIST_QUERY);
+		method.setQueryString(JOB_LIST_QUERY);
 
 		method.setDoAuthentication(true);
 		
@@ -135,11 +130,10 @@ public class HttpRequestFactory {
 	
 	public GetMethod newCheckQueue(TestAutomationProject project){
 		
-		String strURL = project.getServer().getBaseURL().toExternalForm()+"/queue"+API_URI;
-		URL url = makeURL(strURL);
+		String path = toUrlPath(project.getServer(), "/queue"+API_URI);
 		
 		GetMethod method = new GetMethod();
-		method.setPath(url.toString());
+		method.setPath(path);
 		method.setQueryString(QUEUED_BUILDS_QUERY);
 		method.setDoAuthentication(true);
 		
@@ -149,17 +143,13 @@ public class HttpRequestFactory {
 	
 	public GetMethod newGetBuildsForProject(TestAutomationProject project){
 		
-		StringBuilder urlBuilder = new StringBuilder();
-		URL baseURL = project.getServer().getBaseURL();
-		
-		urlBuilder.append(baseURL.toExternalForm());
-		urlBuilder.append("/job/"+project.getName()+"/api/json");
-		
-		String finalURL = makeURL(urlBuilder.toString()).toExternalForm();
+		String path = toUrlPath(project.getServer(), "/job/"+project.getName()+API_URI);
 		
 		GetMethod method = new GetMethod();
-		method.setPath(finalURL);
-		method.setQueryString(BUILD_LIST_QUERY);
+		method.setPath(path);
+		method.setQueryString(EXISTING_BUILDS_QUERY);
+
+		method.setDoAuthentication(true);
 		
 		return method;	
 		
@@ -167,32 +157,26 @@ public class HttpRequestFactory {
 	
 	public GetMethod newGetBuild(TestAutomationProject project, int buildId){
 		
-		StringBuilder urlBuilder = new StringBuilder();
-		URL baseURL = project.getServer().getBaseURL();
+		String path = toUrlPath(project.getServer(), "/job/"+project.getName()+"/"+buildId+"/"+API_URI);
 		
-		urlBuilder.append(baseURL.toExternalForm());
-		urlBuilder.append("/job/"+project.getName()+"/"+buildId+"/"+API_URI);
+		GetMethod method = new GetMethod();
+		method.setPath(path);
+		method.setQueryString(SINGLE_BUILD_QUERY);
 		
-		String finalURL = makeURL(urlBuilder.toString()).toExternalForm();
+		method.setDoAuthentication(true);
 		
-		//Get
-		
-		return null;
+		return method;
 	}
 	
 	public GetMethod newGetBuildResults(TestAutomationProject project, int buildId){
 		
-		StringBuilder urlBuilder = new StringBuilder();
-		URL baseURL = project.getServer().getBaseURL();
-		
-		urlBuilder.append(baseURL.toExternalForm());
-		urlBuilder.append("/job/"+project.getName()+"/"+buildId+"/testReport/"+API_URI);
-		
-		String finalURL = makeURL(urlBuilder.toString()).toExternalForm();
+		String path = toUrlPath(project.getServer(), "/job/"+project.getName()+"/"+buildId+"/testReport/"+API_URI);
 		
 		GetMethod method = new GetMethod();
-		method.setPath(finalURL);
+		method.setPath(path);
 		method.setQueryString(BUILD_RESULT_QUERY);
+		
+		method.setDoAuthentication(true);
 		
 		return method;	
 		
@@ -203,18 +187,12 @@ public class HttpRequestFactory {
 	
 	protected PostMethod newStartBuild(TestAutomationProject project, ParameterArray params){
 		
-		StringBuilder urlBuilder = new StringBuilder();
-		URL baseURL = project.getServer().getBaseURL();
-		
-		urlBuilder.append(baseURL.toExternalForm());
-		urlBuilder.append("/job/"+project.getName()+"/build");
-		
-		URL finalURL = makeURL(urlBuilder.toString());
+		String path = toUrlPath(project.getServer(), "/job/"+project.getName()+"/build");
 		
 		String jsonParam = jsonParser.toJson(params);
 		
 		PostMethod method = new PostMethod();
-		method.setPath(finalURL.toString());
+		method.setPath(path);
 		method.setParameter("json", jsonParam);
 		
 		method.setDoAuthentication(true);

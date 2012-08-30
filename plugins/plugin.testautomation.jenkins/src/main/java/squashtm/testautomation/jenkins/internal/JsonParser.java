@@ -30,6 +30,7 @@ import org.codehaus.jackson.map.JsonMappingException;
 import org.codehaus.jackson.map.ObjectMapper;
 
 import squashtm.testautomation.domain.TestAutomationProject;
+import squashtm.testautomation.jenkins.beans.Build;
 import squashtm.testautomation.jenkins.beans.BuildList;
 import squashtm.testautomation.jenkins.beans.ItemList;
 import squashtm.testautomation.jenkins.beans.Job;
@@ -76,12 +77,16 @@ public class JsonParser {
 		return safeReadValue(json, ItemList.class);
 	}
 	
-	public BuildList getRunningBuildsFromJson(String json){
+	public BuildList getBuildListFromJson(String json){
 		return safeReadValue(json, BuildList.class);
 	}
 	
 	public TestList getTestListFromJson(String json){
 		return safeReadValue(json, TestList.class);
+	}
+	
+	public Build getBuildFromJson(String json){
+		return safeReadValue(json, Build.class);
 	}
 	
 	public String toJson(Object object){

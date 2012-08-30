@@ -80,7 +80,6 @@ class CheckBuildQueueTest extends Specification {
 		then :
 			checkQueue.buildIsQueued == true
 			checkQueue.needsRescheduling() == true
-			checkQueue.absoluteId.buildId == 13
 	}
 	
 	def "should check that the given build is not queued because the queue is empty"(){

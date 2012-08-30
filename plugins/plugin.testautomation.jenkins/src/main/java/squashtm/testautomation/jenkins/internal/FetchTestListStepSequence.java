@@ -36,6 +36,7 @@ import squashtm.testautomation.jenkins.internal.tasksteps.BuildAbsoluteId;
 import squashtm.testautomation.jenkins.internal.tasksteps.CheckBuildQueue;
 import squashtm.testautomation.jenkins.internal.tasksteps.CheckBuildRunning;
 import squashtm.testautomation.jenkins.internal.tasksteps.GatherTestList;
+import squashtm.testautomation.jenkins.internal.tasksteps.GetBuildID;
 import squashtm.testautomation.jenkins.internal.tasksteps.HttpBasedStep;
 import squashtm.testautomation.jenkins.internal.tasksteps.StartBuild;
 
@@ -103,10 +104,14 @@ class FetchTestListStepSequence implements StepSequence {
 				return newCheckQueue();
 				
 		case CHECK_QUEUE :
-				currentStage = BuildStage.CHECK_RUNNING;
+				currentStage = BuildStage.GET_BUILD_ID;
+				return newGetBuildID();
+				
+		case GET_BUILD_ID :
+				currentStage = BuildStage.CHECK_BUILD_RUNNING;
 				return newCheckBuildRunning();
 				
-		case CHECK_RUNNING :
+		case CHECK_BUILD_RUNNING :
 				currentStage = BuildStage.GATHER_RESULT;
 				return newGatherResults();
 				
@@ -146,11 +151,11 @@ class FetchTestListStepSequence implements StepSequence {
 	}
 	
 	
-	private CheckBuildRunning newCheckBuildRunning(){
+	private GetBuildID newGetBuildID(){
 		
 		GetMethod method = requestFactory.newGetBuildsForProject(project);
 		
-		CheckBuildRunning buildRunning = new CheckBuildRunning(processor);
+		GetBuildID buildRunning = new GetBuildID(processor);
 		
 		wireHttpSteps(buildRunning, method);
 		
@@ -158,6 +163,16 @@ class FetchTestListStepSequence implements StepSequence {
 		
 	}
 	
+	private BuildStep newCheckBuildRunning(){
+		
+		GetMethod method = requestFactory.newGetBuild(project, absoluteId.getBuildId());
+		
+		CheckBuildRunning running = new CheckBuildRunning(processor);
+		
+		wireHttpSteps(running, method);
+		
+		return running;
+	}
 	
 	private BuildStep newGatherResults(){
 		
@@ -200,7 +215,13 @@ class FetchTestListStepSequence implements StepSequence {
 				return false;
 			}
 		},
-		CHECK_RUNNING{
+		GET_BUILD_ID{
+			@Override
+			public boolean isTerminal() {
+				return false;
+			}
+		},
+		CHECK_BUILD_RUNNING{
 			@Override
 			public boolean isTerminal() {
 				return false;

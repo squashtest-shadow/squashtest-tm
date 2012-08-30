@@ -26,9 +26,9 @@ import org.apache.commons.httpclient.HttpMethod;
 import spock.lang.Specification
 import squashtm.testautomation.jenkins.internal.JsonParser;
 
-class CheckBuildRunningTest extends Specification {
+class GatherTestListTest extends Specification {
 
-	CheckBuildRunning checkRun;
+	GatherTestList gatherList;
 	HttpClient client;
 	HttpMethod method;
 	JsonParser parser;
@@ -41,57 +41,39 @@ class CheckBuildRunningTest extends Specification {
 		method = Mock()
 		parser = new JsonParser()
 		
-		checkRun = new CheckBuildRunning()
-		checkRun.client = client
-		checkRun.method = method
-		checkRun.parser = parser;
-		
+		gatherList = new GatherTestList()
+		gatherList.client = client
+		gatherList.method = method
+		gatherList.parser = parser;
 		
 	}
 	
-	
-	def "should say that the given build is still running, and need to be checked again"(){
+	def "should find a list of tests"(){
 		
 		given :
-			def json = makeBuildingJson()
+			def json = makeJson()
 			method.getResponseBodyAsString() >> json
 		
-		when :
-			checkRun.perform()
-		
-		then :
-			checkRun.stillBuilding == true
-			checkRun.needsRescheduling() == true
-		
-	}
-	
-	def "should say that the given build is over"(){
-		
-		given :
-			def json = makeFinishedJson()
-			method.getResponseBodyAsString() >> json
+		and :
+			def expected = [
+						  "tests/autrestests/othertest1.txt", 
+						  "tests/database-tests/dbtest-1.txt", 
+						  "tests/database-tests/dbtest-2.txt",
+						  "tests/vcs.txt"
+						  ]
 		
 		when :
-			checkRun.perform()
+			gatherList.perform()
 		
 		then :
-			checkRun.stillBuilding == false
-			checkRun.needsRescheduling() == false
+			gatherList.testNames == expected
 		
 	}
 	
-	def makeBuildingJson(){
-		return '{"actions":[{"parameters":[{"name":"operation","value":"test-list"},'+
-		'{"name":"externalJobId","value":"CorrectExternalID"},{"name":"callerId",'+
-		'"value":"anonymous@example.com"},{"name":"notificationURL","value":"file://dev/null"},{"name":"testList","value":"**/*"}]},{},{}],'+
-		'"building":true,"number":10}'
-	}
 	
-	def makeFinishedJson(){
-		return '{"actions":[{"parameters":[{"name":"operation","value":"test-list"},'+
-		'{"name":"externalJobId","value":"CorrectExternalID"},{"name":"callerId",'+
-		'"value":"anonymous@example.com"},{"name":"notificationURL","value":"file://dev/null"},{"name":"testList","value":"**/*"}]},{},{}],'+
-		'"building":false,"number":10}'
+	def makeJson(){
+		return '{"suites":[{"cases":[{"name":"othertest1.txt","status":"PASSED"}],"name":"tests.autrestests"},'+
+		'{"cases":[{"name":"dbtest-1.txt","status":"PASSED"},{"name":"dbtest-2.txt","status":"PASSED"}],'+
+		'"name":"tests.database-tests"},{"cases":[{"name":"vcs.txt","status":"PASSED"}],"name":"tests"}]}'
 	}
-	
 }

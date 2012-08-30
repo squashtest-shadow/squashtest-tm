@@ -24,12 +24,10 @@ import org.apache.commons.httpclient.HttpClient;
 import org.apache.commons.httpclient.HttpMethod;
 
 import squashtm.testautomation.jenkins.beans.Build;
-import squashtm.testautomation.jenkins.beans.BuildList;
 import squashtm.testautomation.jenkins.internal.JsonParser;
 import squashtm.testautomation.jenkins.internal.net.RequestExecutor;
 import squashtm.testautomation.jenkins.internal.tasks.BuildProcessor;
 import squashtm.testautomation.jenkins.internal.tasks.BuildStep;
-import squashtm.testautomation.spi.exceptions.TestAutomationException;
 
 public class CheckBuildRunning extends BuildStep implements HttpBasedStep{
 
@@ -42,12 +40,9 @@ public class CheckBuildRunning extends BuildStep implements HttpBasedStep{
 	private HttpMethod method;
 	
 	private JsonParser parser;
-
-	private BuildAbsoluteId absoluteId;
 	
 	
 	// **** output of the computation *** */
-	
 	
 	private boolean stillBuilding = true;
 	
@@ -72,48 +67,38 @@ public class CheckBuildRunning extends BuildStep implements HttpBasedStep{
 
 	@Override
 	public void setBuildAbsoluteId(BuildAbsoluteId absoluteId) {
-		this.absoluteId = absoluteId;
+		//not needed here
 	}
 
-
 	//************* constructor ******************
+	
 
 	public CheckBuildRunning(BuildProcessor processor) {
 		super(processor);
 	}
+
 	
 	// ************ code ***************** 
-
-
+	
 	@Override
 	public boolean needsRescheduling() {
-		return stillBuilding;
+		return (stillBuilding == true);
 	}
-
 
 	@Override
 	public boolean isFinalStep() {
 		return false;
 	}
 
-	
 	@Override
 	public void perform() throws Exception {
 		
-		String json = requestExecutor.execute(client, method);
+		String response = requestExecutor.execute(client, method);
 		
-		BuildList buildList = parser.getRunningBuildsFromJson(json);
+		Build build = parser.getBuildFromJson(response);
 		
-		Build buildOfInterest =  buildList.findByExternalId(absoluteId.getExternalId());
+		stillBuilding = build.isBuilding();
 		
-		if (buildOfInterest!=null){
-			stillBuilding = buildOfInterest.isBuilding();
-			int buildId = buildOfInterest.getId();			
-			absoluteId.setBuildId(buildId);
-		}
-		else{
-			throw new TestAutomationException("TestAutomationConnector : the requested build for project "+absoluteId.toString()+" cannot be found");
-		}
 	}
 
 	@Override
@@ -125,6 +110,7 @@ public class CheckBuildRunning extends BuildStep implements HttpBasedStep{
 	public Integer suggestedReschedulingInterval() {
 		return null;
 	}
-
-
+	
+	
+	
 }

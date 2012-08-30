@@ -44,18 +44,18 @@ public class BuildAbsoluteId {
 	
 	private String externalId;
 	
-	private int buildId;
+	private Integer buildId = null;
 	
 	public BuildAbsoluteId(String projectName, String externalId){
 		this.projectName = projectName;
 		this.externalId = externalId;
 	}
 
-	public int getBuildId() {
+	public Integer getBuildId() {
 		return buildId;
 	}
 
-	public void setBuildId(int buildId) {
+	public void setBuildId(Integer buildId) {
 		this.buildId = buildId;
 	}
 

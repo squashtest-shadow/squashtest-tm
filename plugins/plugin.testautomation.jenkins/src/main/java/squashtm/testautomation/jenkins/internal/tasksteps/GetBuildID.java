@@ -23,16 +23,17 @@ package squashtm.testautomation.jenkins.internal.tasksteps;
 import org.apache.commons.httpclient.HttpClient;
 import org.apache.commons.httpclient.HttpMethod;
 
-import squashtm.testautomation.jenkins.beans.Item;
-import squashtm.testautomation.jenkins.beans.ItemList;
+import squashtm.testautomation.jenkins.beans.Build;
+import squashtm.testautomation.jenkins.beans.BuildList;
 import squashtm.testautomation.jenkins.internal.JsonParser;
 import squashtm.testautomation.jenkins.internal.net.RequestExecutor;
 import squashtm.testautomation.jenkins.internal.tasks.BuildProcessor;
 import squashtm.testautomation.jenkins.internal.tasks.BuildStep;
+import squashtm.testautomation.spi.exceptions.TestAutomationException;
 
-public class CheckBuildQueue extends BuildStep implements HttpBasedStep{
+public class GetBuildID extends BuildStep implements HttpBasedStep{
 
-	/* *** technically needed for the computation **** */
+	/* ********* technically needed for the computation ************** */
 	
 	private RequestExecutor requestExecutor = RequestExecutor.getInstance();
 	
@@ -41,17 +42,15 @@ public class CheckBuildQueue extends BuildStep implements HttpBasedStep{
 	private HttpMethod method;
 	
 	private JsonParser parser;
-	
+
 	private BuildAbsoluteId absoluteId;
 	
-	// **** output of the computation *** */
-		
-	private boolean buildIsQueued = true;
-
+	
+	// ****** the output here is stored when available in the absolueId#setBuildId ***** 
 	
 	// ****** accessors ********** */
-
-
+	
+	
 	@Override
 	public void setClient(HttpClient client) {
 		this.client = client;
@@ -63,29 +62,28 @@ public class CheckBuildQueue extends BuildStep implements HttpBasedStep{
 	}
 
 	@Override
-	public void setParser(JsonParser parser) {
+	public void setParser(JsonParser parser){
 		this.parser = parser;
 	}
-
 
 	@Override
 	public void setBuildAbsoluteId(BuildAbsoluteId absoluteId) {
 		this.absoluteId = absoluteId;
 	}
-	
-	
+
+
 	//************* constructor ******************
-	
-	public CheckBuildQueue(BuildProcessor processor) {
+
+	public GetBuildID(BuildProcessor processor) {
 		super(processor);
 	}
 	
-	// *************** code ******************** */
+	// ************ code ***************** 
 
 
 	@Override
 	public boolean needsRescheduling() {
-		return buildIsQueued;
+		return (absoluteId.getBuildId() == null);
 	}
 
 
@@ -94,33 +92,34 @@ public class CheckBuildQueue extends BuildStep implements HttpBasedStep{
 		return false;
 	}
 
+	
 	@Override
 	public void perform() throws Exception {
 		
-		String result = requestExecutor.execute(client, method)	;
-	
-		ItemList queuedBuilds = parser.getQueuedListFromJson(result);
+		String json = requestExecutor.execute(client, method);
 		
-		Item buildOfInterest = queuedBuilds.findQueuedBuildByExtId(absoluteId.getProjectName(), absoluteId.getExternalId());
+		BuildList buildList = parser.getBuildListFromJson(json);
+		
+		Build buildOfInterest =  buildList.findByExternalId(absoluteId.getExternalId());
 		
 		if (buildOfInterest!=null){
-			buildIsQueued = true;
+			int buildId = buildOfInterest.getId();			
+			absoluteId.setBuildId(buildId);
 		}
 		else{
-			buildIsQueued = false;
+			throw new TestAutomationException("TestAutomationConnector : the requested build for project "+absoluteId.toString()+" cannot be found");
 		}
-		
 	}
 
 	@Override
 	public void reset() {
-		buildIsQueued = true;
+		
 	}
 
 	@Override
 	public Integer suggestedReschedulingInterval() {
 		return null;
 	}
-	
+
 
 }

@@ -44,7 +44,6 @@ public class GatherTestList extends BuildStep implements HttpBasedStep{
 		
 	private JsonParser parser;
 	
-	private BuildAbsoluteId absoluteId;
 	
 	//* ************ output of the computation ******
 	
@@ -72,7 +71,7 @@ public class GatherTestList extends BuildStep implements HttpBasedStep{
 
 	@Override
 	public void setBuildAbsoluteId(BuildAbsoluteId absoluteId) {
-		this.absoluteId = absoluteId;
+		//not needed here
 	}
 	
 	public Collection<String> getTestNames(){
