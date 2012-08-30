@@ -7,14 +7,10 @@
 		<version>1.3.0.IT39-SNAPSHOT</version>
 	</parent>
 
-	<groupId>org.squashtest.tm</groupId>
 	<artifactId>core.foundation</artifactId>
 	<name>${project.groupId}.${project.artifactId}</name>
 	<description>Library of foundation / low level / utility classes used by Squash TM</description>
 	<packaging>bundle</packaging>
-
-	<properties>
-	</properties>
 
 	<dependencies>
 		<!-- ====== SQUASHTEST ====== -->
