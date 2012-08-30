@@ -28,6 +28,7 @@ import javax.servlet.http.HttpServletRequest;
 
 import org.squashtest.csp.tm.service.TestCaseModificationService;
 import org.squashtest.csp.tm.web.internal.helper.LevelLabelFormatter;
+import org.squashtest.csp.tm.web.internal.i18n.InternationalizationHelper;
 import org.squashtest.csp.tm.web.internal.model.datatable.DataTableDrawParameters;
 import org.squashtest.csp.tm.web.internal.model.datatable.DataTableModelHelper;
 import org.squashtest.csp.tm.web.internal.model.viewmapper.DataTableMapper;
@@ -49,7 +50,7 @@ class TestCaseModificationControllerTest extends Specification {
 	
 	TestCaseModificationService testCaseModificationService = Mock()
 	HttpServletRequest request = Mock()
-	MessageSource messageSource = Mock()
+	InternationalizationHelper messageSource = Mock()
 	
 	TestCaseImportanceJeditableComboDataBuilder importanceComboBuilder = Mock()
 	Provider<TestCaseImportanceJeditableComboDataBuilder> importanceComboBuilderProvider = Mock()
@@ -60,7 +61,7 @@ class TestCaseModificationControllerTest extends Specification {
 		def setup() {
 		controller.testCaseModificationService = testCaseModificationService
 		request.getCharacterEncoding() >> "ISO-8859-1"
-		controller.messageSource = messageSource
+		controller.internationalizationHelper = messageSource
 
 		setupImportanceComboBuilder()
 		controller.importanceComboBuilderProvider = importanceComboBuilderProvider

@@ -74,7 +74,7 @@ class HibernateExecutionDaoIT extends DbunitDaoSpecification {
 		given: 
 		PagingAndSorting pas = Mock()
 		pas.firstItemIndex >> 0
-		pas.pageSize >> 50
+		pas.pageSize >> 3
 		pas.sortedAttribute >> sortedAttribute
 		pas.sortOrder >> SortOrder.ASCENDING
 		

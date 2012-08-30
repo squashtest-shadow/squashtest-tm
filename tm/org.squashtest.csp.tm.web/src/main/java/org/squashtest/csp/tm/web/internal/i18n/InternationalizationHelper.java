@@ -90,7 +90,7 @@ public class InternationalizationHelper implements MessageSource {
 	 * @return
 	 */
 	public String localizeShortDate(Date date, Locale locale) {
-		String formatKey = "squashtm.dateformat.short";
+		String formatKey = "squashtm.dateformatShort";
 		return localizeDate(date, locale, formatKey);
 	}
 

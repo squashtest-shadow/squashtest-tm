@@ -90,7 +90,7 @@ public class DataTableModel {
 		sColumns = sb.toString();
 	}
 
-	public String getSColumns() {
+	public String getsColumns() {
 		return sColumns;
 	}
 

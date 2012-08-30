@@ -34,7 +34,7 @@ class DataTableModelTest extends Specification {
 		dataTableModel.comumnNames = ['foo', 'bar', 'baz']
 		
 		then:
-		dataTableModel.getSColumns() == 'foo,bar,baz'
+		dataTableModel.getsColumns() == 'foo,bar,baz'
 	}
 	
 	def "Should add a row to the data"() {

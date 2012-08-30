@@ -136,7 +136,7 @@ public class DataTableMapper {
 
 		if (objectIndex == sourceClasses.length) {
 			throw new IllegalArgumentException(
-					"DataTableMapper : provided class is not supported by this instance. Be sure you provide the constructor with all the classes you map.");
+					"DataTableMapper : class " + clazz.getName() + " at index " + attributeIndex + " is not supported by this instance. Be sure you provide the constructor with all the classes you map.");
 		}
 
 		AttributeRegister register = new AttributeRegister();

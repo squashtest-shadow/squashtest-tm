@@ -141,13 +141,13 @@
 						<td th:text="*{testPlan.iteration.project.name}">Project XX</td>
 						<td th:text="*{testPlan.iteration.campaign.name}">Campaign YY</td>
 						<td th:text="*{testPlan.iteration.name}">Iteration YY</td>
-						<td class="exec-name"><a href="/executions/1/info" th:href="@{'/executions/' + *{id} + '/info'}" th:text="*{name}">Execution ZZ</a></td>
+						<td class="exec-name"><a href="/executions/1/info" th:href="@{'/executions/'} + *{id}" th:text="*{name}">Execution ZZ</a></td>
 						<td th:text="#{*{executionMode.i18nKey}}">Mode ??</td>
 						<td th:text="*{testPlan.testSuite} ? *{testPlan.testSuite.name} : ''">Test Suite AA</td>
 						<td th:text="*{executionStatus}"  class="not-displayed raw-exec-status">BLOCKED</td>
 						<td th:text="#{*{executionStatus.i18nKey}}" class="exec-status exec-status-blocked" th:class="*{'exec-status exec-status-' + #strings.toLowerCase(executionStatus)}">Status ??</td>
 						<td th:text="*{lastExecutedBy}">Peter Parker</td>
-						<td th:with="dfs=#{squashtm.dateformatShort}"  th:text="*{#dates.format(lastExecutedOn,#messages.msg('squashtm.dateformatShort'))}">01/02/2013</td>
+						<td th:text="*{lastExecutedOn == null ? #messages.msg('squashtm.nodata') : #dates.format(lastExecutedOn,#messages.msg('squashtm.dateformatShort'))}">01/02/2013</td>
 					</tr>
 					<tr th:remove="all">
 						<td class="not-displayed exec-id">1</td>
@@ -173,28 +173,23 @@
 			$(function(){
 				var execUrlRoot = /*[[ @{/executions} ]]*/ "http://localhost:8080/squash/executions";
 				
-				function addExecutionLink(row) {
-					var id = row.find("td.exec-id").text();
+				function addExecutionLink(row, data) {
+					var id = data["exec-id"];
 					var nameCell = row.find("td.exec-name");
-					var name = nameCell.text();
+					var name = data["exec-name"];
 					var href = execUrlRoot + "/" + id;
 					nameCell.html('<a href="' + href + '">' + name + '</a>');
 				}				
 				
-				function addStatusBall(row) {
-					var status = row.find("td.raw-exec-status").text().toLowerCase();
+				function addStatusBall(row, data) {
+					var status = data["raw-exec-status"].toLowerCase();
 					row.find("td.exec-status").addClass("exec-status-" + status);
 				}			
 				
-				function drawRaw() {
-					var row = $(this);
-					addExecutionLink(row);
-					addStatusBall(row);
-				}
-
-				function drawExecutionsTable(settings) {
-					var table = $(this);
-					table.find("tbody tr").each(drawRaw);
+				function drawExecutionRow(nRow, aData, iDisplayIndex, iDisplayIndexFull) {
+					var row = $(nRow);
+					addExecutionLink(row, aData);
+					addStatusBall(row, aData);
 				}
 				
 				var table = $("#execs-table").dataTable({
@@ -214,14 +209,20 @@
 					"bRetrieve": true,				
 					"sDom": 't<"dataTables_footer"lirp>',
  					"iDeferLoading": /*[[ ${#lists.size(execs)} ]]*/ 1,
-			        "aaSorting": [ [ 9, "desc" ] ],
-			        "fnDrawCallback": drawExecutionsTable,
+			        "aaSorting": [ [ 10, "desc" ] ],
+			        "fnRowCallback": drawExecutionRow,
 					"aoColumnDefs": [ 
-						{ "bVisible": false, "aTargets": [0], "sClass": "exec-id" },
-						{ "bVisible": false, "aTargets": [7], "sClass": "raw-exec-status" },
-						{ "bSortable": true, "aTargets": [1, 2, 3, 5, 6, 9, 10] },
-						{ "bSortable": true, "aTargets": [4], "sClass": "exec-name" },
-						{ "bSortable": true, "aTargets": [8], "sClass": "exec-status" }
+						{ "bVisible": false, "aTargets": [0], "sClass": "exec-id", "mDataProp": "exec-id" },
+						{ "bSortable": true, "aTargets": [1], "mDataProp": "project-name" },
+						{ "bSortable": true, "aTargets": [2], "mDataProp": "campaign-name" },
+						{ "bSortable": true, "aTargets": [3], "mDataProp": "iteration-name" },
+						{ "bSortable": true, "aTargets": [4], "sClass": "exec-name", "mDataProp": "exec-name" },
+						{ "bSortable": true, "aTargets": [5], "mDataProp": "exec-mode" },
+						{ "bSortable": true, "aTargets": [6], "mDataProp": "test-suite-name" },
+						{ "bVisible": false, "aTargets": [7], "sClass": "raw-exec-status", "mDataProp": "raw-exec-status" },
+						{ "bSortable": true, "aTargets": [8], "sClass": "exec-status", "mDataProp": "exec-status" },
+						{ "bSortable": true, "aTargets": [9], "mDataProp": "last-exec-by" },
+						{ "bSortable": true, "aTargets": [10], "mDataProp": "last-exec-on" }
 					] 
 				});	
 			});

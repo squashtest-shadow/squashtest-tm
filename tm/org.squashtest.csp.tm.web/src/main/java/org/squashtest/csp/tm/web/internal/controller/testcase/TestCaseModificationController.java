@@ -34,7 +34,6 @@ import javax.validation.Valid;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.springframework.context.MessageSource;
 import org.springframework.osgi.extensions.annotation.ServiceReference;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
@@ -66,6 +65,7 @@ import org.squashtest.csp.tm.service.TestCaseModificationService;
 import org.squashtest.csp.tm.service.VerifiedRequirement;
 import org.squashtest.csp.tm.web.internal.combo.OptionTag;
 import org.squashtest.csp.tm.web.internal.helper.LevelLabelFormatter;
+import org.squashtest.csp.tm.web.internal.i18n.InternationalizationHelper;
 import org.squashtest.csp.tm.web.internal.model.datatable.DataTableDrawParameters;
 import org.squashtest.csp.tm.web.internal.model.datatable.DataTableMapperCollectionSortingAdapter;
 import org.squashtest.csp.tm.web.internal.model.datatable.DataTableMapperPagingAndSortingAdapter;
@@ -77,7 +77,6 @@ import org.squashtest.tm.core.foundation.collection.DefaultPaging;
 import org.squashtest.tm.core.foundation.collection.PagedCollectionHolder;
 import org.squashtest.tm.core.foundation.collection.Paging;
 import org.squashtest.tm.core.foundation.collection.PagingAndSorting;
-import org.squashtest.tm.core.foundation.i18n.Internationalizable;
 
 @Controller
 @RequestMapping("/test-cases/{testCaseId}")
@@ -96,25 +95,24 @@ public class TestCaseModificationController {
 			.mapAttribute(TestCase.class, 3, "name", String.class)
 			.mapAttribute(TestCase.class, 4, "executionMode", TestCaseExecutionMode.class);
 
-	private final DataTableMapper execsTableMapper = new DataTableMapper("executions",
-			Execution.class, Project.class).initMapping(9)
-			.mapAttribute(Project.class, 0, "name", String.class)
-			.mapAttribute(Campaign.class, 1, "name", String.class)
-			.mapAttribute(Iteration.class, 2, "name", String.class)
-			.mapAttribute(Execution.class, 3, "name", String.class)
-			.mapAttribute(Execution.class, 4, "executionMode", TestCaseExecutionMode.class)
-			.mapAttribute(TestSuite.class, 5, "name", String.class)
-			.mapAttribute(Execution.class, 6, "executionStatus", ExecutionStatus.class)
-			.mapAttribute(Execution.class, 7, "lastExecutedBy", String.class)
-			.mapAttribute(Execution.class, 7, "lastExecutedOn", Date.class);
-	
+	private final DataTableMapper execsTableMapper = new DataTableMapper("executions", Execution.class, Project.class, Campaign.class, Iteration.class, TestSuite.class)
+			.initMapping(11).mapAttribute(Project.class, 1, "name", String.class)
+			.mapAttribute(Campaign.class, 2, "name", String.class)
+			.mapAttribute(Iteration.class, 3, "name", String.class)
+			.mapAttribute(Execution.class, 4, "name", String.class)
+			.mapAttribute(Execution.class, 5, "executionMode", TestCaseExecutionMode.class)
+			.mapAttribute(TestSuite.class, 6, "name", String.class)
+			.mapAttribute(Execution.class, 8, "executionStatus", ExecutionStatus.class)
+			.mapAttribute(Execution.class, 9, "lastExecutedBy", String.class)
+			.mapAttribute(Execution.class, 10, "lastExecutedOn", Date.class);
+
 	private TestCaseModificationService testCaseModificationService;
 
 	private ExecutionFinder executionFinder;
 
 	@Inject
-	private MessageSource messageSource;
-
+	private InternationalizationHelper internationalizationHelper;
+	
 	@Inject
 	private Provider<TestCaseImportanceJeditableComboDataBuilder> importanceComboBuilderProvider;
 
@@ -173,7 +171,7 @@ public class TestCaseModificationController {
 	}
 
 	private String formatExecutionMode(TestCaseExecutionMode mode, Locale locale) {
-		return internationalize(mode, locale);
+		return internationalizationHelper.internationalize(mode, locale);
 	}
 
 	@RequestMapping(value = "/steps-table", params = "sEcho")
@@ -188,7 +186,7 @@ public class TestCaseModificationController {
 		FilteredCollectionHolder<List<TestStep>> holder = testCaseModificationService.findStepsByTestCaseIdFiltered(
 				testCaseId, filter);
 
-		return new TestStepsTableModelBuilder(messageSource, locale).buildDataModel(holder,
+		return new TestStepsTableModelBuilder(internationalizationHelper, locale).buildDataModel(holder,
 				filter.getFirstItemIndex() + 1, params.getsEcho());
 
 	}
@@ -253,6 +251,7 @@ public class TestCaseModificationController {
 	public void changeStepsIndex(@RequestParam("stepIds[]") List<Long> stepIds, @RequestParam int newIndex,
 			@PathVariable long testCaseId) {
 
+		
 		testCaseModificationService.changeTestStepsPosition(testCaseId, newIndex, stepIds);
 
 	}
@@ -404,14 +403,14 @@ public class TestCaseModificationController {
 		PagingAndSorting pas = createPagingAndSorting(params, verifiedReqMapper);
 
 		PagedCollectionHolder<List<VerifiedRequirement>> holder = testCaseModificationService
-		.findAllVerifiedRequirementsByTestCaseId(testCaseId, pas);
+				.findAllVerifiedRequirementsByTestCaseId(testCaseId, pas);
 
 		return new DataTableModelHelper<VerifiedRequirement>() {
 			@Override
 			public Object[] buildItemData(VerifiedRequirement item) {
 				return new Object[] { item.getId(), getCurrentIndex(), item.getProject().getName(),
 						item.getReference(), item.getName(), item.getDecoratedRequirement().getVersionNumber(),
-						internationalize(item.getCriticality(), locale), "",
+						internationalizationHelper.internationalize(item.getCriticality(), locale), "",
 						item.getDecoratedRequirement().getStatus().name(), item.isDirectVerification() };
 			}
 		}.buildDataModel(holder, params.getsEcho());
@@ -438,14 +437,13 @@ public class TestCaseModificationController {
 			@Override
 			public Object[] buildItemData(TestCase item) {
 				return new Object[] { item.getId(), getCurrentIndex(), item.getProject().getName(), item.getName(),
-						internationalize(item.getExecutionMode(), locale) };
+						internationalizationHelper.internationalize(item.getExecutionMode(), locale) };
 			}
 		}.buildDataModel(holder, filter.getFirstItemIndex() + 1, params.getsEcho());
 
 	}
 
-	private CollectionSorting createPaging(final DataTableDrawParameters params,
-			final DataTableMapper dtMapper) {
+	private CollectionSorting createPaging(final DataTableDrawParameters params, final DataTableMapper dtMapper) {
 		return new DataTableMapperCollectionSortingAdapter(params, dtMapper);
 	}
 
@@ -454,18 +452,13 @@ public class TestCaseModificationController {
 	}
 
 	/* ********************************** localization stuffs ****************************** */
-
-	private String internationalize(Internationalizable internationalizable, Locale locale) {
-		return messageSource.getMessage(internationalizable.getI18nKey(), null, locale);
-	}
-
 	/**
 	 * Returns the
 	 * 
 	 * @param model
 	 * @return
 	 */
-	@RequestMapping(value = "/executions", method = RequestMethod.GET, params = "sEcho")
+	@RequestMapping(value = "/executions", method = RequestMethod.GET, params = "tab")
 	public String getExecutionsTab(@PathVariable long testCaseId, Model model) {
 		Paging paging = DefaultPaging.FIRST_PAGE;
 
@@ -487,18 +480,18 @@ public class TestCaseModificationController {
 		this.executionFinder = executionFinder;
 	}
 
-	@RequestMapping(value = "/executions", method = RequestMethod.GET, params = "tab")
+	@RequestMapping(value = "/executions", params = "sEcho")
 	@ResponseBody
-	public DataTableModel getExecutionsTableModel(@PathVariable long testCaseId, DataTableDrawParameters params, Locale locale) {
+	public DataTableModel getExecutionsTableModel(@PathVariable long testCaseId, DataTableDrawParameters params,
+			Locale locale) {
 		PagingAndSorting pas = createPagingAndSorting(params);
 
 		PagedCollectionHolder<List<Execution>> executions = executionFinder.findAllByTestCaseId(testCaseId, pas);
-		
-		return null;
+
+		return new ExecutionsTableModelBuilder(locale, internationalizationHelper).buildDataModel(executions, params.getsEcho());
 	}
 
-	private PagingAndSorting createPagingAndSorting(
-			DataTableDrawParameters params) {
+	private PagingAndSorting createPagingAndSorting(DataTableDrawParameters params) {
 		return new DataTableMapperPagingAndSortingAdapter(params, execsTableMapper);
 	}
 }

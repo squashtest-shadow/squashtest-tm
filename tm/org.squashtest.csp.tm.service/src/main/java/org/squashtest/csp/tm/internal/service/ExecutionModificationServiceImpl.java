@@ -24,7 +24,6 @@ import java.util.List;
 
 import javax.inject.Inject;
 
-import org.springframework.security.access.prepost.PostFilter;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.stereotype.Service;
 import org.squashtest.csp.tm.domain.execution.Execution;
@@ -122,7 +121,6 @@ public class ExecutionModificationServiceImpl implements ExecutionModificationSe
 	}
 
 	@Override
-	@PostFilter("hasPermission(filterObject, 'READ') or hasRole('ROLE_ADMIN')")
 	public PagedCollectionHolder<List<Execution>> findAllByTestCaseId(long testCaseId, PagingAndSorting pas) {
 		List<Execution> executions = executionDao.findAllByTestCaseId(testCaseId, pas);
 		long count = executionDao.countByTestCaseId(testCaseId);
