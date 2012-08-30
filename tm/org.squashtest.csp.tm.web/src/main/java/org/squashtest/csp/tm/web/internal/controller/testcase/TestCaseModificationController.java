@@ -456,6 +456,7 @@ public class TestCaseModificationController {
 
 		model.addAttribute("executionsPageSize", paging.getPageSize());
 		model.addAttribute("testCaseId", testCaseId);
+		model.addAttribute("execs", executions);
 
 		return "test-case-executions-tab.html";
 	}
