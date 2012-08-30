@@ -87,11 +87,6 @@ public class GetBuildID extends BuildStep implements HttpBasedStep{
 	}
 
 
-	@Override
-	public boolean isFinalStep() {
-		return false;
-	}
-
 	
 	@Override
 	public void perform() throws Exception {

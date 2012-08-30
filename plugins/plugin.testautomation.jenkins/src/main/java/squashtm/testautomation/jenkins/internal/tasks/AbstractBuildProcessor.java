@@ -45,10 +45,6 @@ public abstract class AbstractBuildProcessor<RESULT> implements BuildProcessor {
 		return scheduler;
 	}
 
-
-	public void setScheduler(StepScheduler scheduler) {
-		this.scheduler = scheduler;
-	}
 	
 	public void setDefaultReschedulingDelay(int defaultReschedulingDelay) {
 		this.defaultReschedulingInterval = defaultReschedulingDelay;
@@ -84,7 +80,7 @@ public abstract class AbstractBuildProcessor<RESULT> implements BuildProcessor {
 	}
 	
 	public boolean taskHasBegun(){
-		return currentStep == null;
+		return currentStep != null;
 	}
 
 	protected void scheduleNextStep(){
@@ -92,14 +88,14 @@ public abstract class AbstractBuildProcessor<RESULT> implements BuildProcessor {
 		
 		if (! taskHasBegun()){
 			currentStep = getStepSequence().nextElement();
-			scheduler.schedule(getStepSequence().nextElement());
+			scheduler.schedule(currentStep);
 		}
 		else if (currentStep.needsRescheduling()){
 			_reschedule();
 		}
 		else{
 			currentStep = getStepSequence().nextElement();
-			scheduler.schedule(getStepSequence().nextElement());
+			scheduler.schedule(currentStep);
 		}
 		
 		
@@ -120,7 +116,6 @@ public abstract class AbstractBuildProcessor<RESULT> implements BuildProcessor {
 		currentFuture = scheduler.schedule(currentStep, delay);
 	}
 	
-	public abstract void run();
 	
 	public abstract RESULT getResult();
 	

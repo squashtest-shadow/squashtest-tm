@@ -94,12 +94,6 @@ public class GatherTestList extends BuildStep implements HttpBasedStep{
 
 	
 	@Override
-	public boolean isFinalStep() {
-		return true;
-	}
-
-	
-	@Override
 	public void perform() throws Exception {
 		String response = requestExecutor.execute(client, method);
 		TestList testList = parser.getTestListFromJson(response);

@@ -90,11 +90,6 @@ public class CheckBuildQueue extends BuildStep implements HttpBasedStep{
 
 
 	@Override
-	public boolean isFinalStep() {
-		return false;
-	}
-
-	@Override
 	public void perform() throws Exception {
 		
 		String result = requestExecutor.execute(client, method)	;

@@ -22,16 +22,22 @@ package squashtm.testautomation.jenkins.internal.tasks;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.scheduling.TaskScheduler;
 
 public abstract class DelayedBuildProcessor<RESULT> extends AbstractBuildProcessor<RESULT> {
 
 	
 	private static final Logger LOGGER = LoggerFactory.getLogger(AbstractBuildProcessor.class);
 	
+	public DelayedBuildProcessor(TaskScheduler scheduler){
+		super();
+		this.scheduler = new ThreadPoolStepScheduler(scheduler);
+	}
+	
 	
 	@Override
 	public void run() {
-		scheduleNextStep();
+		notifyStepDone();
 		//then return immediately
 	}
 	
@@ -45,7 +51,7 @@ public abstract class DelayedBuildProcessor<RESULT> extends AbstractBuildProcess
 	
 	@Override
 	public void notifyStepDone() {
-		if (currentStep.isFinalStep()){
+		if (! getStepSequence().hasMoreElements()){
 			buildResult();
 		}
 		else if(! isCanceled()){

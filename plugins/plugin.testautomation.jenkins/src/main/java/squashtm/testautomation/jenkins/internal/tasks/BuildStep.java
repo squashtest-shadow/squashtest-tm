@@ -56,15 +56,7 @@ public abstract class BuildStep implements Runnable{
 	 */
 	public abstract boolean needsRescheduling();
 	
-	
 
-	/**
-	 * Tells whether the Task sequencer job is done, or not.
-	 * 
-	 * @return
-	 */
-	public abstract boolean isFinalStep();
-	
 	
 	/**
 	 * do the job

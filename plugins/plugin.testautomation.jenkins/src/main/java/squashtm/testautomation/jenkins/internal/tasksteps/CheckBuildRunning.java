@@ -85,10 +85,6 @@ public class CheckBuildRunning extends BuildStep implements HttpBasedStep{
 		return (stillBuilding == true);
 	}
 
-	@Override
-	public boolean isFinalStep() {
-		return false;
-	}
 
 	@Override
 	public void perform() throws Exception {

@@ -155,11 +155,11 @@ class FetchTestListStepSequence implements StepSequence {
 		
 		GetMethod method = requestFactory.newGetBuildsForProject(project);
 		
-		GetBuildID buildRunning = new GetBuildID(processor);
+		GetBuildID getBuildID = new GetBuildID(processor);
 		
-		wireHttpSteps(buildRunning, method);
+		wireHttpSteps(getBuildID, method);
 		
-		return buildRunning;
+		return getBuildID;
 		
 	}
 	

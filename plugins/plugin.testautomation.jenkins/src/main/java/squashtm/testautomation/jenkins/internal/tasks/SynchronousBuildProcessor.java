@@ -27,9 +27,7 @@ public abstract class SynchronousBuildProcessor<RESULT> extends AbstractBuildPro
 	@Override
 	public void run() {
 		
-		scheduleNextStep();
-		
-		while(! currentStep.isFinalStep() && ! isCanceled()){
+		while( getStepSequence().hasMoreElements() && ! isCanceled()){
 			scheduleNextStep();
 		}
 		

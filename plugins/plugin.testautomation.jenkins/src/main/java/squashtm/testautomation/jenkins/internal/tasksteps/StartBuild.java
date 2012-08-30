@@ -71,10 +71,6 @@ public class StartBuild extends BuildStep implements HttpBasedStep{
 		return false;
 	}
 
-	@Override
-	public boolean isFinalStep() {
-		return false;
-	}
 
 	@Override
 	public void perform() throws Exception {

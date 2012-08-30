@@ -21,6 +21,8 @@
 package squashtm.testautomation.jenkins.internal.tasks;
 
 public interface BuildProcessor {
+	
+	void run();
 
 	/**
 	 * cancels the build processing, no urgency needed

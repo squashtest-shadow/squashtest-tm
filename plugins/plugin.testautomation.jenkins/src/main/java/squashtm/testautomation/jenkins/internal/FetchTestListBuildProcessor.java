@@ -67,7 +67,7 @@ public class FetchTestListBuildProcessor extends SynchronousBuildProcessor<Colle
 	@Override
 	protected void buildResult() {
 		
-		if (currentStep.isFinalStep()){
+		if (! stepSequence.hasMoreElements()){
 			
 			Collection<String> names = ((GatherTestList) currentStep).getTestNames();
 			
@@ -77,7 +77,7 @@ public class FetchTestListBuildProcessor extends SynchronousBuildProcessor<Colle
 			}
 		}
 		else{
-			throw new RuntimeException("tried to build the result before the computation is over, prolly a thread bug. Enjoy !");
+			throw new RuntimeException("tried to build the result before the computation is over, probably due to a buggy thread");
 		}
 	}
 
