@@ -275,3 +275,16 @@
 	<comp:decorate-buttons />
 	</jsp:attribute>
 </layout:info-page-layout>
+
+<script type="text/javascript">
+
+	$(function(){
+		$("#add-user-dialog").bind( "dialogclose", cleanUp);
+	});
+	
+	function cleanUp(){
+		$("#add-user-password").val('');
+		$("#new-user-confirmpass").val('');		
+	}
+	
+</script>

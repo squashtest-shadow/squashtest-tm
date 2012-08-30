@@ -53,6 +53,7 @@ import org.squashtest.csp.tm.domain.execution.ExecutionStatus;
 import org.squashtest.csp.tm.domain.project.Project;
 import org.squashtest.csp.tm.domain.testcase.TestCase;
 import org.squashtest.csp.tm.domain.testcase.TestCaseExecutionMode;
+import org.squashtest.csp.tm.domain.testcase.TestCaseImportance;
 import org.squashtest.csp.tm.service.IterationModificationService;
 import org.squashtest.csp.tm.service.TestSuiteModificationService;
 import org.squashtest.csp.tm.web.internal.model.datatable.DataTableDrawParameters;
@@ -92,13 +93,14 @@ public class TestSuiteModificationController {
 	private MessageSource messageSource;
 	
 	private final DataTableMapper testPlanMapper = new DataTableMapper("unused", IterationTestPlanItem.class,
-			TestCase.class, Project.class, TestSuite.class).initMapping(9)
+			TestCase.class, Project.class, TestSuite.class).initMapping(10)
 			.mapAttribute(Project.class, 2, NAME, String.class)
 			.mapAttribute(TestCase.class, 3, NAME, String.class)
-			.mapAttribute(TestCase.class, 4, "executionMode", TestCaseExecutionMode.class)
-			.mapAttribute(IterationTestPlanItem.class, 5, "executionStatus", ExecutionStatus.class)
-			.mapAttribute(IterationTestPlanItem.class, 6, "lastExecutedBy", String.class)
-			.mapAttribute(IterationTestPlanItem.class, 7, "lastExecutedOn", Date.class);
+			.mapAttribute(TestCase.class, 4, "importance", TestCaseImportance.class)			
+			.mapAttribute(TestCase.class, 5, "executionMode", TestCaseExecutionMode.class)
+			.mapAttribute(IterationTestPlanItem.class, 6, "executionStatus", ExecutionStatus.class)
+			.mapAttribute(IterationTestPlanItem.class, 7, "lastExecutedBy", String.class)
+			.mapAttribute(IterationTestPlanItem.class, 8, "lastExecutedOn", Date.class);
 	
 	// will return the fragment only
 	@RequestMapping(method = RequestMethod.GET)
@@ -273,14 +275,17 @@ public class TestSuiteModificationController {
 				String projectName;
 				String testCaseName;
 				String testCaseExecutionMode;
+				String importance;
 
 				if (item.isTestCaseDeleted()) {
 					projectName = formatNoData(locale);
 					testCaseName = formatDeleted(locale);
+					importance = formatNoData(locale);
 					testCaseExecutionMode = formatNoData(locale);
 				} else {
 					projectName = item.getReferencedTestCase().getProject().getName();
 					testCaseName = item.getReferencedTestCase().getName();
+					importance = formatImportance(item.getReferencedTestCase().getImportance(), locale);
 					testCaseExecutionMode = formatExecutionMode(item.getReferencedTestCase().getExecutionMode(), locale);
 				}
 
@@ -288,6 +293,7 @@ public class TestSuiteModificationController {
 						getCurrentIndex(), 
 						projectName, 
 						testCaseName,
+						importance,
 						testCaseExecutionMode, 
 						formatStatus(item.getExecutionStatus(), locale),
 						formatString(item.getLastExecutedBy(), locale), 
@@ -338,4 +344,9 @@ public class TestSuiteModificationController {
 	private String formatStatus(ExecutionStatus status, Locale locale) {
 		return messageSource.getMessage(status.getI18nKey(), null, locale);
 	}
+	
+	private String formatImportance(TestCaseImportance importance, Locale locale) {
+		return messageSource.getMessage(importance.getI18nKey(), null, locale);
+	}
+	
 }
