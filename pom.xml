@@ -395,18 +395,7 @@
 					                        </execute>
 					                      </action>
 					                    </pluginExecution>
-									</pluginExecutions>
-								</lifecycleMappingMetadata>
-							</configuration>
-						</plugin>
 
-			    		<plugin>
-			    			<groupId>org.eclipse.m2e</groupId>
-			    			<artifactId>lifecycle-mapping</artifactId>
-			    			<version>1.0.0</version>
-			    			<configuration>
-			    				<lifecycleMappingMetadata>
-			    					<pluginExecutions>
 			    						<pluginExecution>
 			    							<pluginExecutionFilter>
 			    								<groupId>org.codehaus.mojo</groupId>
@@ -414,7 +403,7 @@
 			    									jasperreports-maven-plugin
 			    								</artifactId>
 			    								<versionRange>
-			    									[1.0,)
+			    									[1.0-beta-2,)
 			    								</versionRange>
 			    								<goals>
 			    									<goal>compile-reports</goal>
@@ -426,10 +415,10 @@
 						                        </execute>
 			    							</action>
 			    						</pluginExecution>
-			    					</pluginExecutions>
-			    				</lifecycleMappingMetadata>
-			    			</configuration>
-			    		</plugin>
+									</pluginExecutions>
+								</lifecycleMappingMetadata>
+							</configuration>
+						</plugin>
 					</plugins>
 				</pluginManagement>
 			</build>
