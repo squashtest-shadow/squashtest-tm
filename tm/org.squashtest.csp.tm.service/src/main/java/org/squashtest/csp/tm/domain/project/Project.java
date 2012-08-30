@@ -37,7 +37,6 @@ import javax.persistence.ManyToMany;
 import javax.persistence.OneToOne;
 import javax.validation.constraints.Size;
 
-import org.hibernate.annotations.ForeignKey;
 import org.hibernate.validator.constraints.NotBlank;
 import org.squashtest.csp.core.bugtracker.domain.BugTracker;
 import org.squashtest.csp.core.domain.Identified;
@@ -83,7 +82,6 @@ public class Project implements Identified {
 	private CampaignLibrary campaignLibrary;
 	
 	@OneToOne(cascade = {CascadeType.ALL}, optional = true, fetch = FetchType.LAZY)
-	@ForeignKey(name="FK_Project_BugtrackerBinding")
 	@JoinColumn(name="BUGTRACKER_BINDING_ID")
 	private BugTrackerBinding bugtrackerBinding;
 	
@@ -92,11 +90,8 @@ public class Project implements Identified {
 			inverseJoinColumns=@JoinColumn(name="TA_PROJECT_ID"))
 	private List<TestAutomationProject> testAutomationProjects=new ArrayList<TestAutomationProject>();
 	
-	
 	@Column(name="TEST_AUTOMATION_ENABLED")
 	private Boolean testAutomationEnabled;
-	
-	
 	
 	public String getLabel() {
 		return label;
@@ -239,12 +234,12 @@ public class Project implements Identified {
 		return ! testAutomationProjects.isEmpty();
 	}
 	
-	public TestAutomationServer getServerOfLatestBoundProject(){
-		if (testAutomationProjects.isEmpty()){
+	public TestAutomationServer getServerOfLatestBoundProject() {
+		if (testAutomationProjects.isEmpty()) {
 			return null;
-		}
-		else{
-			return testAutomationProjects.get(testAutomationProjects.size()-1).getServer();
+		} else {
+			return testAutomationProjects
+					.get(testAutomationProjects.size() - 1).getServer();
 		}
 	}
 
@@ -258,11 +253,11 @@ public class Project implements Identified {
 	 * @return the BugTracker the Project is bound to
 	 * @throws NoBugTrackerBindingException if the project is not BugtrackerConnected
 	 */
-	public BugTracker findBugTracker(){
-		if(isBugtrackerConnected()){
+	public BugTracker findBugTracker() {
+		if (isBugtrackerConnected()) {
 			return getBugtrackerBinding().getBugtracker();
-		}else{
-		throw new NoBugTrackerBindingException();
+		} else {
+			throw new NoBugTrackerBindingException();
 		}
 	}
 
