@@ -23,7 +23,11 @@ package org.squashtest.csp.core.bugtracker.domain;
 import java.net.MalformedURLException;
 import java.net.URL;
 
-import javax.persistence.*;
+import javax.persistence.Column;
+import javax.persistence.Entity;
+import javax.persistence.GeneratedValue;
+import javax.persistence.Id;
+import javax.persistence.Table;
 import javax.validation.constraints.Size;
 
 import org.hibernate.validator.constraints.NotBlank;
@@ -53,27 +57,24 @@ public class BugTracker  {
 		this.name = name;
 		this.iframeFriendly = iframeFriendly;
 	}
+	
 	@Id
 	@GeneratedValue
 	@Column(name = "BUGTRACKER_ID")
 	private Long id;
 	
-	@Column(name = "NAME")
 	@NotBlank
 	@Size(min = 0, max = 50)
 	private String name;
 	
-	@Column(name = "URL")
 	@NotBlank
 	@Size(min = 0, max = 255)
 	private String url;
 	
-	@Column(name = "KIND")
 	@NotBlank
 	@Size(min = 0, max = 50)
 	private String kind;
 	
-	@Column(name = "IFRAME_FRIENDLY")
 	private boolean iframeFriendly;
 	
 	public String getName() {
