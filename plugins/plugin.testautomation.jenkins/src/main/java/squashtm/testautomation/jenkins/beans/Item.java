@@ -69,12 +69,20 @@ public class Item {
 	}
 	
 	private boolean hasExternalId(String externalId){
+		
+		if (actions == null) return false;
+		
 		Parameter extIdParam = Parameter.newExtIdParameter(externalId);
+		
 		for (Action action : actions){
+			
+			if (action == null) continue;
+			
 			if (action.hasParameter(extIdParam)){
 				return true;
 			}
 		}
+		
 		return false;
 	}
 	

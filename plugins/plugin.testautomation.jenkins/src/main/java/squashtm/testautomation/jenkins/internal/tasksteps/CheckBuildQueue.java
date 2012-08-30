@@ -89,10 +89,6 @@ public class CheckBuildQueue extends BuildStep implements HttpBasedStep{
 	}
 
 
-	public boolean isBuildBeingExecuted(){
-		return (! buildIsQueued);
-	}
-
 	@Override
 	public boolean isFinalStep() {
 		return false;

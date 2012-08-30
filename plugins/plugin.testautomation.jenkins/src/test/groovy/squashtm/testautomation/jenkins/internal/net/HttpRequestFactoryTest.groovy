@@ -18,49 +18,42 @@
  *     You should have received a copy of the GNU Lesser General Public License
  *     along with this software.  If not, see <http://www.gnu.org/licenses/>.
  */
-package squashtm.testautomation.jenkins.beans;
+package squashtm.testautomation.jenkins.internal.net
 
-public class ItemList {
-	
-	private Item[] items;
-	
-	
-	
-	public Item[] getItems() {
-		return items;
-	}
 
-	public void setItems(Item[] items) {
-		this.items = items;
-	}
 
-	public Item findQueuedBuildByExtId(String projectName, String extId){
-		
-		if (items == null) return null;
-		
-		for (Item item : items){
-			
-			if (item == null) continue;
-			
-			if (item.representsProjectWithExtId(projectName, extId)){
-				return item;
-			}
-		}
-		return null;
+import org.apache.commons.httpclient.HttpClient;
+import org.apache.commons.httpclient.UsernamePasswordCredentials;
+import org.apache.commons.httpclient.auth.AuthScope;
+import org.apache.commons.httpclient.methods.PostMethod;
+
+import spock.lang.Specification
+import squashtm.testautomation.domain.TestAutomationServer;
+import squashtm.testautomation.jenkins.internal.net.HttpRequestFactory;
+
+class HttpRequestFactoryTest extends Specification {
+	
+	private HttpRequestFactory factory
+	
+	def setup(){
+		factory = new HttpRequestFactory()
 	}
 	
-	public Item findQueuedBuildById(String projectName, int id){
+	def "should return a well formatted query"(){
 		
-		if (items == null) return null;
+		given :
+			TestAutomationServer server = new TestAutomationServer(new URL("http://ci.jruby.org"), "", "")
+			
+		when :
+			def method = factory.newGetJobsMethod(server)
+			
+		then :
+			method.path == "http://ci.jruby.org/api/json"
+			method.queryString == "tree=jobs%5Bname%2Ccolor%5D"
 		
-		for (Item item : items){
-			
-			if (item == null) continue;
-			
-			if (item.representsProjectWithId(projectName, id)){
-				return item;
-			}
-		}
-		return null;
 	}
+	
+	
+
 }
+

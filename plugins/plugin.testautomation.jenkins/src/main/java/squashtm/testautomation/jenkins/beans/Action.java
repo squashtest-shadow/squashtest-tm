@@ -37,10 +37,17 @@ public class Action {
 	}
 	
 	public boolean hasParameter(Parameter parameter){
+		
+		if (parameters == null) return false;
+		
 		for (Parameter param : parameters){
+			
+			if (param == null) continue;
+			
 			if (param.equals(parameter)){
 				return true;
 			}
+			
 		}
 		return false;
 	}

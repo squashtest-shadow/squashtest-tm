@@ -35,7 +35,7 @@ import org.slf4j.LoggerFactory;
 import squashtm.testautomation.spi.exceptions.AccessDenied;
 import squashtm.testautomation.spi.exceptions.ServerConnectionFailed;
 
-public final class RequestExecutor {
+public class RequestExecutor {
 
 	public static final Logger LOGGER = LoggerFactory.getLogger(RequestExecutor.class);
 	

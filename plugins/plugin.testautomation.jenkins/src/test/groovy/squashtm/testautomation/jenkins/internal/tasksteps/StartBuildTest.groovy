@@ -18,42 +18,36 @@
  *     You should have received a copy of the GNU Lesser General Public License
  *     along with this software.  If not, see <http://www.gnu.org/licenses/>.
  */
-package squashtm.testautomation.jenkins.internal
-
-
+package squashtm.testautomation.jenkins.internal.tasksteps
 
 import org.apache.commons.httpclient.HttpClient;
-import org.apache.commons.httpclient.UsernamePasswordCredentials;
-import org.apache.commons.httpclient.auth.AuthScope;
-import org.apache.commons.httpclient.methods.PostMethod;
+import org.apache.commons.httpclient.HttpMethod;
 
 import spock.lang.Specification
-import squashtm.testautomation.domain.TestAutomationServer;
-import squashtm.testautomation.jenkins.internal.net.HttpRequestFactory;
+import squashtm.testautomation.jenkins.internal.net.RequestExecutor;
 
-class HttpRequestFactoryTest extends Specification {
-	
-	private HttpRequestFactory factory
+class StartBuildTest extends Specification {
+
+	StartBuild startBuild;
+	HttpClient client;
+	HttpMethod method;
 	
 	def setup(){
-		factory = new HttpRequestFactory()
+		client = Mock()
+		method = Mock()
+		
+		startBuild = new StartBuild()
+		startBuild.client = client
+		startBuild.method = method
 	}
 	
-	def "should return a well formatted query"(){
+	def "should simply start the build"(){
 		
-		given :
-			TestAutomationServer server = new TestAutomationServer(new URL("http://ci.jruby.org"), "", "")
-			
 		when :
-			def method = factory.newGetJobsMethod(server)
-			
+			startBuild.perform()
+		
 		then :
-			method.path == "http://ci.jruby.org/api/json"
-			method.queryString == "tree=jobs%5Bname%2Ccolor%5D"
+			1 * client.executeMethod(method)
 		
 	}
-	
-	
-
 }
-
