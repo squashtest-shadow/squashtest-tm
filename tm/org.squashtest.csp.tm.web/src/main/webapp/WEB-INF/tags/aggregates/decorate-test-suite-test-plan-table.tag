@@ -252,7 +252,7 @@ var nonBelongingTestPlansUrl = "${nonBelongingTestPlansUrl}";
 	function addLoginListToTestPlan(row, data){
 		if (! isTestCaseDeleted(data)){
 			var id = getTestPlansTableRowId(data);
-			$('td:eq(5)', row).load("${assignableUsersUrl}" + "?testPlanId="+ id +"");
+			$('td:eq(6)', row).load("${assignableUsersUrl}" + "?testPlanId="+ id +"");
 		}
 	}
 
@@ -278,7 +278,7 @@ var nonBelongingTestPlansUrl = "${nonBelongingTestPlansUrl}";
 		if (rows.length==0) return;
 		
 		$(rows).each(function(){
-			var col=$("td:eq(4)", this);
+			var col=$("td:eq(5)", this);
 			var oldContent=col.html();
 			
 			var newContent = factory.getHtmlFor(oldContent);	
@@ -351,10 +351,10 @@ var nonBelongingTestPlansUrl = "${nonBelongingTestPlansUrl}";
 	<jsp:attribute name="columnDefs">
 		<dt:column-definition targets="0" visible="false" />
 		<dt:column-definition targets="1" sortable="false" cssClass="centered ui-state-default drag-handle select-handle" />
-		<dt:column-definition targets="2, 3" sortable="false" />
-		<dt:column-definition targets="4" sortable="false" cssClass="has-status"/>
-		<dt:column-definition targets="5, 6, 7" sortable="false" width="12em"/>
-		<dt:column-definition targets="8" sortable="false" visible="false" />
-		<dt:column-definition targets="9" sortable="false" width="2em" lastDef="true" cssClass="centered"/>
+		<dt:column-definition targets="2, 3, 4, 5" sortable="false" />
+		<dt:column-definition targets="6" sortable="false" cssClass="has-status"/>
+		<dt:column-definition targets="7, 8" sortable="false" width="12em"/>
+		<dt:column-definition targets="9" sortable="false" visible="false" />
+		<dt:column-definition targets="10" sortable="false" width="2em" lastDef="true" cssClass="centered"/>
 	</jsp:attribute>
 </comp:decorate-ajax-table>

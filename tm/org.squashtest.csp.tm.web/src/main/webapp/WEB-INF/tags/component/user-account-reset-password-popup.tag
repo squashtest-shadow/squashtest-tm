@@ -34,7 +34,6 @@
 <%@ attribute name="successCallback" required="false" description="if defined, that function will be called after
 																	the popup is closed." %>
 
-
 <c:choose>
 	<c:when test="${not empty id}">
 		<c:set var="popupId" value="${id}" />
@@ -65,7 +64,7 @@
 			<div>
 				<label ><f:message key="user.account.newpass.label"/></label>
 				<input type="password" id="newPassword"/>
-				<comp:error-message forField="newPassword" />
+				<comp:error-message forField="newPassword"/>
 			</div>
 			
 			<div>

@@ -85,6 +85,7 @@ function TestSuiteManagerControl(settings) {
 	var editState = $.proxy(function () {
 		this.input.removeClass('manager-control-ready');
 		this.onfocus();
+		this.input.val('');
 		this.button.squashButton('enable');
 	}, self);
 
@@ -119,10 +120,10 @@ function TestSuiteManagerControl(settings) {
 
 	var updateBtn = function () {
 		var button = self.button;
-		if (self.input.val().length > 0) {
-			button.squashButton('enable');
-		} else {
+		if (self.input.val().length == 0) {
 			button.squashButton('disable');
+		} else {
+			button.squashButton('enable');
 		}
 	};
 

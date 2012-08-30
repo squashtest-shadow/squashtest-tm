@@ -221,6 +221,7 @@ public class RequirementVersion extends Resource implements AttachmentHolder {
 		}
 	}
 
+
 	private void checkStatusAccess(RequirementStatus newStatus) {
 		if ((!status.getAllowsStatusUpdate()) || (!status.isTransitionLegal(newStatus))) {
 			throw new IllegalRequirementModificationException();
