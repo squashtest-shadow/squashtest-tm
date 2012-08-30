@@ -161,7 +161,7 @@ class FetchTestListStepSequence implements StepSequence {
 	
 	private BuildStep newGatherResults(){
 		
-		GetMethod method = requestFactory.newGetTestListFromBuild(project, absoluteId.getBuildId());
+		GetMethod method = requestFactory.newGetBuildResults(project, absoluteId.getBuildId());
 		
 		GatherTestList gatherList = new GatherTestList(processor);
 		

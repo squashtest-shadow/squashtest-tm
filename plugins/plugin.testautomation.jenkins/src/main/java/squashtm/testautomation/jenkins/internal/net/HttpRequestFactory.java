@@ -57,12 +57,15 @@ public class HttpRequestFactory {
 	
 
 	private static final NameValuePair[] BUILD_LIST_QUERY = new NameValuePair[]{
-																new NameValuePair("depth", "1"),
-																new NameValuePair("tree", "builds[number,actions[parameters[name,value]]]")
+																new NameValuePair("tree", "builds[building,number,actions[parameters[name,value]]]")
 															};
 	
-	private static final NameValuePair[] TEST_LIST_QUERY = new NameValuePair[]{
-																new NameValuePair("tree", "suites[name,cases[name]]")	
+	private static final NameValuePair[] TARGET_BUILD_QUERY = new NameValuePair[]{
+																new NameValuePair("tree", "building,number,actions[parameters[name,value]]")
+															};
+	
+	private static final NameValuePair[] BUILD_RESULT_QUERY = new NameValuePair[]{
+																new NameValuePair("tree", "suites[name,cases[name,status]]")	
 															};
 
 	private JsonParser jsonParser = new JsonParser();
@@ -98,9 +101,11 @@ public class HttpRequestFactory {
 		urlBuilder.append(server.getBaseURL().toExternalForm());
 		urlBuilder.append(API_URI);
 
+		String path = toUrlPath(server, API_URI);
+		
 		GetMethod method = new GetMethod();
 		
-		method.setPath(urlBuilder.toString());
+		method.setPath(path);
 		method.setQueryString(JOBS_LIST_QUERY);
 
 		method.setDoAuthentication(true);
@@ -160,7 +165,22 @@ public class HttpRequestFactory {
 		
 	}
 	
-	public GetMethod newGetTestListFromBuild(TestAutomationProject project, int buildId){
+	public GetMethod newGetBuild(TestAutomationProject project, int buildId){
+		
+		StringBuilder urlBuilder = new StringBuilder();
+		URL baseURL = project.getServer().getBaseURL();
+		
+		urlBuilder.append(baseURL.toExternalForm());
+		urlBuilder.append("/job/"+project.getName()+"/"+buildId+"/"+API_URI);
+		
+		String finalURL = makeURL(urlBuilder.toString()).toExternalForm();
+		
+		//Get
+		
+		return null;
+	}
+	
+	public GetMethod newGetBuildResults(TestAutomationProject project, int buildId){
 		
 		StringBuilder urlBuilder = new StringBuilder();
 		URL baseURL = project.getServer().getBaseURL();
@@ -172,7 +192,7 @@ public class HttpRequestFactory {
 		
 		GetMethod method = new GetMethod();
 		method.setPath(finalURL);
-		method.setQueryString(TEST_LIST_QUERY);
+		method.setQueryString(BUILD_RESULT_QUERY);
 		
 		return method;	
 		
@@ -203,6 +223,17 @@ public class HttpRequestFactory {
 		
 	}
 
+	
+	private String toUrlPath(TestAutomationServer server, String path){
+		
+		StringBuilder urlBuilder = new StringBuilder();
+		URL baseURL = server.getBaseURL();
+		
+		urlBuilder.append(baseURL.toExternalForm());
+		urlBuilder.append(path);
+		
+		return makeURL(urlBuilder.toString()).toExternalForm();
+	}
 
 	
 	private URL makeURL(String unescaped){

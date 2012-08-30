@@ -99,6 +99,7 @@ class CheckBuildQueueTest extends Specification {
 	
 	
 	def makeQueueWithoutThatBuild(){
+		
 		return '{"items":[{"actions":[{"parameters":[{"name":"operation","value":"test-list"},'+
 		       '{"name":"externalJobId","value":"WrongExternalID"},{"name":"callerId","value":"anonymous@example.com"},'+
 			   '{"name":"notificationURL","value":"file://dev/null"},{"name":"testList","value":"**/*"}]},{}],'+
@@ -112,6 +113,7 @@ class CheckBuildQueueTest extends Specification {
 
 	
 	def makeQueueWithThatBuild(){
+		
 		return '{"items":[{"actions":[{"parameters":[{"name":"operation","value":"test-list"},'+
 			   '{"name":"externalJobId","value":"WrongExternalID"},{"name":"callerId","value":"anonymous@example.com"},'+
 			   '{"name":"notificationURL","value":"file://dev/null"},{"name":"testList","value":"**/*"}]},{}],'+

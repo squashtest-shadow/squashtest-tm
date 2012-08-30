@@ -18,30 +18,51 @@
  *     You should have received a copy of the GNU Lesser General Public License
  *     along with this software.  If not, see <http://www.gnu.org/licenses/>.
  */
-package squashtm.testautomation.jenkins.beans;
+package squashtm.testautomation.jenkins.internal.tasksteps
 
-public class Case {
-	
-	private String name;
-	
-	private String status;
+import org.apache.commons.httpclient.HttpClient;
+import org.apache.commons.httpclient.HttpMethod;
 
-	public String getName() {
-		return name;
+import spock.lang.Specification
+import squashtm.testautomation.jenkins.internal.JsonParser;
+
+class CheckBuildRunningTest extends Specification {
+
+	CheckBuildRunning checkRunning;
+	HttpClient client;
+	HttpMethod method;
+	BuildAbsoluteId absoluteId;
+	JsonParser parser;
+	
+	def setup(){
+		
+		client = Mock()
+		method = Mock()
+		parser = new JsonParser()
+		
+		checkRunning = new CheckBuildQueue()
+		checkRunning.client = client
+		checkRunning.method = method
+		checkRunning.parser = parser;
+		
+		checkRunning.absoluteId = new BuildAbsoluteId("CorrectJob", "CorrectExternalID")
+		
 	}
-
-	public void setName(String name) {
-		this.name = name;
-	}
-
-	public String getStatus() {
-		return status;
-	}
-
-	public void setStatus(String status) {
-		this.status = status;
+	
+	/*
+	def "should check that a build is still running and the step needs rescheduling"(){
+		
+		given :
+			
+		
+		when :
+		
+		
+		then :
+			
 	}
 	
 	
-	
+	def makeBuildRunningWithout
+	*/
 }
