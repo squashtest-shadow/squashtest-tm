@@ -490,6 +490,9 @@ div.ta-projectsadd-listdiv .listdiv-item input{
 	margin-right : 1em;
 }
 
+div.ta-projectsadd-listdiv .listdiv-item span{
+	cursor : pointer;	
+}
 
 
 div.ta-projectsadd-listdiv .listdiv-item.selected{

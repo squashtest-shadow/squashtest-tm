@@ -175,6 +175,12 @@ function TestAutomationAddProjectPopup(settings){
 		$(this).parent().toggleClass('selected');
 	}
 	
+	
+	var projnameClick = function(){
+		$(this).prev().click();
+	}
+	
+	
 	var newItem = function(jsonItem){
 		var item = $('<div class="listdiv-item"></div>');
 		
@@ -183,6 +189,8 @@ function TestAutomationAddProjectPopup(settings){
 		
 		chkbox.data('project-name', jsonItem.name);
 		chkbox.change(handleCkboxChange);
+		
+		projName.click(projnameClick);
 		
 		item.append(chkbox);
 		item.append(projName);
