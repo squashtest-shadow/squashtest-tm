@@ -73,8 +73,8 @@ import org.squashtest.csp.tm.web.internal.model.datatable.DataTableMapperPagingA
 import org.squashtest.csp.tm.web.internal.model.datatable.DataTableModel;
 import org.squashtest.csp.tm.web.internal.model.datatable.DataTableModelHelper;
 import org.squashtest.csp.tm.web.internal.model.datatable.DataTablePagedFilter;
-import org.squashtest.csp.tm.web.internal.model.testautomation.TAProjectContentListBuilder;
-import org.squashtest.csp.tm.web.internal.model.testautomation.TestAutomationProjectContentList;
+import org.squashtest.csp.tm.web.internal.model.testautomation.TATestNode;
+import org.squashtest.csp.tm.web.internal.model.testautomation.TATestNodeListBuilder;
 import org.squashtest.csp.tm.web.internal.model.viewmapper.DataTableMapper;
 import org.squashtest.tm.core.foundation.collection.DefaultPaging;
 import org.squashtest.tm.core.foundation.collection.PagedCollectionHolder;
@@ -464,11 +464,11 @@ public class TestCaseModificationController {
 
 	@RequestMapping(value="/test-automation/tests", method = RequestMethod.GET)
 	@ResponseBody
-	public TestAutomationProjectContentList findAssignableAutomatedTests(@PathVariable("testCaseId") Long testCaseId){
+	public Collection<TATestNode> findAssignableAutomatedTests(@PathVariable("testCaseId") Long testCaseId){
 		
 		Collection<TestAutomationProjectContent> projectContents = testCaseModificationService.findAssignableAutomationTests(testCaseId);
 		
-		return new TAProjectContentListBuilder().build(projectContents);
+		return new TATestNodeListBuilder().build(projectContents);
 	}
 	
 	
