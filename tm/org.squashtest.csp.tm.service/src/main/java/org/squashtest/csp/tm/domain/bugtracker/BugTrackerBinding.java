@@ -35,6 +35,7 @@ import org.hibernate.annotations.CascadeType;
 import org.hibernate.annotations.ForeignKey;
 import org.hibernate.validator.constraints.NotBlank;
 import org.squashtest.csp.core.bugtracker.domain.BugTracker;
+import org.squashtest.csp.tm.domain.project.Project;
 
 /**
  * The purpose of this entity is to store informations about A Project's connection to a BugTracker. <br>
@@ -59,6 +60,10 @@ public class BugTrackerBinding {
 	@ForeignKey(name="FK_BugtrackerBinding_Bugtracker")
 	@JoinColumn(name="BUGTRACKER_ID")
 	private BugTracker bugtracker;
+	
+	@OneToOne(optional = false)
+	@JoinColumn(name="PROJECT_ID")
+	private Project project;
 	
 	public BugTrackerBinding(){
 		
@@ -98,6 +103,16 @@ public class BugTrackerBinding {
 	public Long getId() {
 		return id;
 	}
+
+	public Project getProject() {
+		return project;
+	}
+
+	public void setProject(Project project) {
+		this.project = project;
+	}
+	
+	
 	
 	
 	

@@ -22,8 +22,9 @@
 
 -->
 <dataset>
+	<project project_id="1" name="name" active="false" created_by="dbu" created_on="2012-08-30"/>
 	<bugtracker bugtracker_id="1" kind="kind" url="url" name="name" iframe_friendly="false" />
-	<bugtracker_binding bugtracker_binding_id="1" bugtracker_id="1" project_name="project_name" />
+	<bugtracker_binding bugtracker_binding_id="1" bugtracker_id="1" project_name="project_name" project_id="1"/>
 	
 	
 </dataset>

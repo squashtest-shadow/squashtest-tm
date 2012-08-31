@@ -24,6 +24,7 @@ import javax.inject.Inject
 
 import org.springframework.transaction.annotation.Transactional
 import org.squashtest.csp.tm.domain.bugtracker.BugTrackerBinding
+import org.squashtest.csp.tm.domain.project.Project;
 import org.squashtest.csp.tm.internal.repository.BugTrackerBindingDao
 import org.squashtest.csp.tm.internal.repository.ProjectDao
 import org.unitils.dbunit.annotation.DataSet
@@ -39,13 +40,14 @@ class HibernateBugTrackerBindingDaoIT extends DbunitDaoSpecification {
 	ProjectDao projectDao
 
 	@DataSet("HibernateBugTrackerBindingDaoIT.should delete bugtrackerBinding.xml")
-	def "should delete bugtrackerProject" () {
+	def "should delete bugtrackerProject but not Project" () {
 		
 		when:
 		bugtrackerBindingDao.remove(findEntity(BugTrackerBinding.class, 1L));
 
 		then:
 		!found(BugTrackerBinding.class, 1L);
+		found(Project.class, 1L);
 	}
 	private boolean found(Class<?> entityClass, Long id){
 		return (getSession().get(entityClass, id) != null)

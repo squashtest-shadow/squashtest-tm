@@ -34,6 +34,7 @@ import javax.persistence.JoinColumn;
 import javax.persistence.JoinTable;
 import javax.persistence.Lob;
 import javax.persistence.ManyToMany;
+import javax.persistence.MappedSuperclass;
 import javax.persistence.OneToOne;
 import javax.validation.constraints.Size;
 
@@ -81,8 +82,7 @@ public class Project implements Identified {
 	@JoinColumn(name = "CL_ID")
 	private CampaignLibrary campaignLibrary;
 	
-	@OneToOne(cascade = {CascadeType.ALL}, optional = true, fetch = FetchType.LAZY)
-	@JoinColumn(name="BUGTRACKER_BINDING_ID")
+	@OneToOne(cascade = { CascadeType.ALL }, optional = true, fetch = FetchType.LAZY, mappedBy = "project")
 	private BugTrackerBinding bugtrackerBinding;
 	
 	@ManyToMany(cascade = { CascadeType.ALL })

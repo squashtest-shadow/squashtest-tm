@@ -22,16 +22,17 @@
 
 -->
 <dataset>
-	<bugtracker bugtracker_id="1" iframe_friendly="false" kind="mantis" name="mantis1" url="http://localhost/mantisbt" />
-	<bugtracker bugtracker_id="2" iframe_friendly="false" kind="mantis" name="mantis2" url="http://localhots/mantisbt2" />
-	
-	<bugtracker_binding bugtracker_binding_id="1" bugtracker_id="1" project_name="whatever" />
-	
 	<requirement_library rl_id="1" />
 	<campaign_library cl_id="1" />
 	<test_case_library tcl_id="1" />
 	
-	<project project_id="1" name="p1" active="true" created_by="machin" created_on="2010-02-01" cl_id="1" rl_id="1" tcl_id="1" bugtracker_binding_id="1"/>
+	<project project_id="1" name="p1" active="true" created_by="machin" created_on="2010-02-01" cl_id="1" rl_id="1" tcl_id="1" />
+	
+	<bugtracker bugtracker_id="1" iframe_friendly="false" kind="mantis" name="mantis1" url="http://localhost/mantisbt" />
+	<bugtracker bugtracker_id="2" iframe_friendly="false" kind="mantis" name="mantis2" url="http://localhots/mantisbt2" />
+	
+	<bugtracker_binding bugtracker_binding_id="1" bugtracker_id="1" project_name="whatever" project_id="1"/>
+	
 	
 	CAMPAIGN
 	<ATTACHMENT_LIST ATTACHMENT_LIST_id="1" />

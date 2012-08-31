@@ -647,7 +647,8 @@
 				<constraints nullable="false" />
 			</column>
 			<column name="IFRAME_FRIENDLY" type="BOOLEAN"
-				remarks="tells if the bugtracker page can be accessed through an iframe" defaultValueBoolean="false">
+				remarks="tells if the bugtracker page can be accessed through an iframe"
+				defaultValueBoolean="false">
 				<constraints nullable="false" />
 			</column>
 		</createTable>
@@ -782,37 +783,33 @@
 
 			<column name="PROJECT_NAME" type="java.sql.Types.VARCHAR(255)"
 				remarks="project-name in the bugtracker" />
+				
+			<column name="PROJECT_ID" type="BIGINT">
+				<constraints nullable="false" foreignKeyName="FK_BUGTRACKER_BINDING_PROJECT"
+					references="PROJECT(PROJECT_ID)" />
+			</column>
 		</createTable>
 
 	</changeSet>
+
 	
-	<changeSet id="tm-1.3.0-feat-1194.02" author="mpagnon">
-	<addColumn tableName="PROJECT">
-    		<column name="BUGTRACKER_BINDING_ID" type="BIGINT"
-			remarks="project's connexion to a bugtracker">
-				<constraints nullable="true" references="BUGTRACKER_BINDING(BUGTRACKER_BINDING_ID)"
-				foreignKeyName="fk_project_bugtracker_binding"/>
-			</column>
-		</addColumn>
-	</changeSet>
-	<changeSet id="tm-1.3.0-feat-1194.03" author="mpagnon" >
-	<comment>Data migration: add all bugtrackers that had an issue</comment>
-	<sql>insert into BUGTRACKER (NAME, KIND, URL, IFRAME_FRIENDLY) 
-		select distinct issues.BT_NAME , 'mantis', 'TO BE DEFINED', 0
-		from ISSUE issues;
+	<changeSet id="tm-1.3.0-feat-1194.04" author="mpagnon">
+		<comment>Data migration: add all bugtrackers that had an issue</comment>
+		<sql>insert into BUGTRACKER (NAME, KIND, URL, IFRAME_FRIENDLY)
+			select distinct issues.BT_NAME , 'mantis', 'TO BE DEFINED', 0
+			from ISSUE issues;
 	</sql>
 	</changeSet>
-	<changeSet id="tm-1.3.0-feat-1194.04" author="mpagnon">
-	<comment>New foreign key in ISSUE table that points to a BUGTRACKER</comment>
-	<addColumn tableName="ISSUE">
-    		<column name="BUGTRACKER_ID" type="BIGINT"
-			remarks="Issue's bugtracker">
+	<changeSet id="tm-1.3.0-feat-1194.05" author="mpagnon">
+		<comment>New foreign key in ISSUE table that points to a BUGTRACKER</comment>
+		<addColumn tableName="ISSUE">
+			<column name="BUGTRACKER_ID" type="BIGINT" remarks="Issue's bugtracker">
 				<constraints nullable="true" references="BUGTRACKER(BUGTRACKER_ID)"
-				foreignKeyName="fk_issue_bugtracker"/>
+					foreignKeyName="fk_issue_bugtracker" />
 			</column>
 		</addColumn>
 	</changeSet>
-	<changeSet id="tm-1.3.0-feat-1194.05" author="mpagnon">
+	<changeSet id="tm-1.3.0-feat-1194.06" author="mpagnon">
 		<comment>Data migration : update issue's bugtracker FK with migrated BTs</comment>
 		<sql>
 			CREATE TABLE ISSUEBT
@@ -820,69 +817,72 @@
 			ISSUEID BIGINT,
 			BTID BIGINT
 			);
-				
+
 			Insert into ISSUEBT (ISSUEID, BTID)
-			select distinct iss.ISSUE_ID, bt.BUGTRACKER_ID
+			select distinct iss.ISSUE_ID,
+			bt.BUGTRACKER_ID
 			from ISSUE as iss, BUGTRACKER as bt
-			where iss.BT_NAME = bt.NAME;
-			
-			update ISSUE set ISSUE.BUGTRACKER_ID = (select BTID from ISSUEBT where ISSUEBT.ISSUEID = ISSUE.ISSUE_ID);
-			
+			where iss.BT_NAME
+			= bt.NAME;
+
+			update ISSUE set ISSUE.BUGTRACKER_ID = (select BTID from ISSUEBT where
+			ISSUEBT.ISSUEID = ISSUE.ISSUE_ID);
+
 			DROP table ISSUEBT;
 		</sql>
 	</changeSet>
-	<changeSet id="tm-1.3.0-feat-1194.06" author="mpagnon">
-		<comment>Drop of column "BT_NAME" on table issue because it is not used anymore => use of FK to table BUGTRACKER instead</comment>
-		<dropColumn tableName="ISSUE" columnName="BT_NAME"/>
-	</changeSet>
 	<changeSet id="tm-1.3.0-feat-1194.07" author="mpagnon">
+		<comment>Drop of column "BT_NAME" on table issue because it is not used anymore => use of FK to table BUGTRACKER instead</comment>
+		<dropColumn tableName="ISSUE" columnName="BT_NAME" />
+	</changeSet>
+	<changeSet id="tm-1.3.0-feat-1194.08" author="mpagnon">
 		<comment>After Data migration : issue's bugtracker must not be null</comment>
-		<addNotNullConstraint
-		        tableName="ISSUE"
-		        columnName="BUGTRACKER_ID"
-		        columnDataType="BIGINT"/>
+		<addNotNullConstraint tableName="ISSUE"
+			columnName="BUGTRACKER_ID" columnDataType="BIGINT" />
 	</changeSet>
 	<!-- ========================/ Feat. 1194 ============================================ -->
-	
+
 	<!-- ========================= Feat. 1210 ============================================ -->
 
 	<changeSet id="tm-1.3.0-feat-1210.01" author="bsiri">
-		
+
 		<comment>Creation of the table TEST_AUTOMATION_TEST (yes I know it sounds stupid)</comment>
-	
+
 		<createTable tableName="TEST_AUTOMATION_TEST">
-			
+
 			<column name="TEST_ID" type="BIGINT" autoIncrement="true">
 				<constraints primaryKey="true" nullable="false" />
 			</column>
-			
+
 			<column name="NAME" type="java.sql.Types.VARCHAR(100)" />
-		
+
 			<column name="PROJECT_ID" type="BIGINT">
-				<constraints nullable="true" foreignKeyName="fk_test_automation_test_project" 
-				references="TEST_AUTOMATION_PROJECT(PROJECT_ID)" />
+				<constraints nullable="true" foreignKeyName="fk_test_automation_test_project"
+					references="TEST_AUTOMATION_PROJECT(PROJECT_ID)" />
 			</column>
-		
+
 		</createTable>
-		
-		<addUniqueConstraint tableName="TEST_AUTOMATION_TEST" columnNames="NAME, PROJECT_ID"/>
-	
+
+		<addUniqueConstraint tableName="TEST_AUTOMATION_TEST"
+			columnNames="NAME, PROJECT_ID" />
+
 	</changeSet>
-	
+
 	<changeSet id="tm-1.3.0-feat-1210.02" author="bsiri">
 		<comment>a TEST_CASE can now refer to 0 or 1 TEST_AUTOMATION_TEST </comment>
-	
+
 		<addColumn tableName="TEST_CASE">
 			<column name="TA_TEST" type="BIGINT" defaultValue="NULL">
-				<constraints nullable="true" foreignKeyName="fk_test_case_ta_test" references="TEST_AUTOMATION_TEST(TEST_ID)" />
+				<constraints nullable="true" foreignKeyName="fk_test_case_ta_test"
+					references="TEST_AUTOMATION_TEST(TEST_ID)" />
 			</column>
 		</addColumn>
-	
+
 	</changeSet>
 
 
 	<!-- ========================/ Feat. 1210 ============================================ -->
-	
+
 
 </databaseChangeLog>
  
