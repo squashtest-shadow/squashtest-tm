@@ -30,7 +30,7 @@
     </dependency>
     <dependency>
       <groupId>${project.groupId}</groupId>
-      <artifactId>org.squashtest.csp.core.service</artifactId>
+      <artifactId>core.service</artifactId>
       <version>${project.version}</version>
     </dependency>
     <dependency>

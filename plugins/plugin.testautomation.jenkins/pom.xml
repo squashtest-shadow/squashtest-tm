@@ -36,7 +36,7 @@
 
 		<dependency>
 			<groupId>org.squashtest.tm</groupId>
-			<artifactId>org.squashtest.csp.core.service</artifactId>
+			<artifactId>core.service</artifactId>
 			<version>${squash.dependencies.version}</version>
 		</dependency>
 
