@@ -27,7 +27,6 @@ import java.util.List;
 import java.util.Map;
 
 import org.hibernate.Criteria;
-import org.hibernate.FetchMode;
 import org.hibernate.Hibernate;
 import org.hibernate.Query;
 import org.hibernate.criterion.Restrictions;
@@ -202,8 +201,7 @@ public class HibernateExecutionDao extends HibernateEntityDao<Execution> impleme
 	 */
 	@Override
 	public long countExecutionSteps(long executionId) {
-		executeEntityNamedQuery("execution.countSteps", "executionId", executionId);
-		return 0;
+		return executeEntityNamedQuery("execution.countSteps", "executionId", executionId);
 	}
 
 	/**
