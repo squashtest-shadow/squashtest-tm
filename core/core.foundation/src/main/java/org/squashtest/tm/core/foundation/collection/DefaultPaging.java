@@ -56,7 +56,7 @@ public class DefaultPaging implements Paging {
 	 */
 	@Override
 	public int getPageSize() {
-		return 30;
+		return 50;
 	}
 
 }
