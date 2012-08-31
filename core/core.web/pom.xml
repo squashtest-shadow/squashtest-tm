@@ -28,11 +28,11 @@
       <artifactId>core.bugtracker.api</artifactId>
       <version>${project.version}</version>
     </dependency>
-    <dependency>
-      <groupId>${project.groupId}</groupId>
-      <artifactId>core.service</artifactId>
-      <version>${project.version}</version>
-    </dependency>
+	<dependency>
+		<groupId>${project.groupId}</groupId>
+		<artifactId>core.service</artifactId>
+		<version>${project.version}</version>
+	</dependency>
     <dependency>
       <groupId>${project.groupId}</groupId>
       <artifactId>springdm-bundle-dependencies</artifactId>
@@ -195,12 +195,10 @@
     <dependency>
       <groupId>org.aspectj</groupId>
       <artifactId>com.springsource.org.aspectj.runtime</artifactId>
-      <version>${aspectj.version}</version>
     </dependency>
     <dependency>
       <groupId>org.aspectj</groupId>
       <artifactId>com.springsource.org.aspectj.weaver</artifactId>
-      <version>${aspectj.version}</version>
     </dependency>
 		<!-- ===== /ASPECTJ ===== -->
 

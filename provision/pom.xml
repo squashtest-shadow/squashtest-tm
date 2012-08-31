@@ -483,24 +483,5 @@
 			<artifactId>h2</artifactId>
 		</dependency>
 		<!-- ====== /DATABASE ====== -->
-		
-		
-		
-		<!-- =================================================================================================== 
-		
-		
-			new dependencies here, that could become canon if added to squash-tm-dependencies/dependenciesManagement
-		
-		
-		 ==================================================================================================== -->
-		
-		
-		<!-- ====== Http Client ==== -->
-		<dependency>
-			<groupId>org.apache.commons</groupId>
-			<artifactId>com.springsource.org.apache.commons.httpclient</artifactId>
-			<version>3.1.0</version>
-		</dependency>
-		<!-- ====== Http Client ==== -->
 	</dependencies>
 </project>
