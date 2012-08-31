@@ -55,6 +55,9 @@ import org.squashtest.tm.core.foundation.collection.Paging;
 import org.squashtest.tm.core.foundation.collection.PagingAndSorting;
 import org.squashtest.tm.core.foundation.collection.PagingBackedPagedCollectionHolder;
 
+import squashtm.testautomation.internal.service.InsecureTestAutomationManagementService;
+import squashtm.testautomation.model.TestAutomationProjectContent;
+
 /**
  * @author Gregory Fouquet
  * 
@@ -84,6 +87,9 @@ public class CustomTestCaseModificationServiceImpl implements CustomTestCaseModi
 
 	@Inject
 	private TestCaseNodeDeletionHandler deletionHandler;
+	
+	@Inject
+	private InsecureTestAutomationManagementService taService;
 
 	/* *************** TestCase section ***************************** */
 
@@ -318,4 +324,14 @@ public class CustomTestCaseModificationServiceImpl implements CustomTestCaseModi
 		testCaseImportanceManagerService.changeImportanceIfIsAuto(testCaseId);
 	}
 
+	
+	@Override
+	@PreAuthorize("hasPermission(#testCaseId, 'org.squashtest.csp.tm.domain.testcase.TestCase' , 'WRITE') or hasRole('ROLE_ADMIN')")
+	public Collection<TestAutomationProjectContent> findAssignableAutomationTests(
+			long testCaseId) {
+		
+		TestCase testCase = testCaseDao.findById(testCaseId);
+		
+		return taService.listTestsInProjects(testCase.getProject().getTestAutomationProjects());
+	}
 }

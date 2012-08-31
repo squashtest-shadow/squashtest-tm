@@ -23,6 +23,7 @@ package org.squashtest.csp.tm.web.internal.controller.testcase;
 import static org.squashtest.csp.tm.web.internal.helper.JEditablePostParams.VALUE;
 
 import java.util.ArrayList;
+import java.util.Collection;
 import java.util.Date;
 import java.util.List;
 import java.util.Locale;
@@ -72,11 +73,16 @@ import org.squashtest.csp.tm.web.internal.model.datatable.DataTableMapperPagingA
 import org.squashtest.csp.tm.web.internal.model.datatable.DataTableModel;
 import org.squashtest.csp.tm.web.internal.model.datatable.DataTableModelHelper;
 import org.squashtest.csp.tm.web.internal.model.datatable.DataTablePagedFilter;
+import org.squashtest.csp.tm.web.internal.model.testautomation.TAProjectContentListBuilder;
+import org.squashtest.csp.tm.web.internal.model.testautomation.TestAutomationProjectContentList;
 import org.squashtest.csp.tm.web.internal.model.viewmapper.DataTableMapper;
 import org.squashtest.tm.core.foundation.collection.DefaultPaging;
 import org.squashtest.tm.core.foundation.collection.PagedCollectionHolder;
 import org.squashtest.tm.core.foundation.collection.Paging;
 import org.squashtest.tm.core.foundation.collection.PagingAndSorting;
+
+import squashtm.testautomation.model.TestAutomationProjectContent;
+import squashtm.testautomation.service.TestAutomationFinderService;
 
 @Controller
 @RequestMapping("/test-cases/{testCaseId}")
@@ -109,6 +115,12 @@ public class TestCaseModificationController {
 	private TestCaseModificationService testCaseModificationService;
 
 	private ExecutionFinder executionFinder;
+	
+	@Inject
+	private CallStepManagerService callStepManager;
+	
+	@Inject
+	private TestAutomationFinderService taFinderService;
 
 	@Inject
 	private InternationalizationHelper internationalizationHelper;
@@ -119,12 +131,15 @@ public class TestCaseModificationController {
 	@Inject
 	private Provider<LevelLabelFormatter> importanceLabelFormatterProvider;
 
-	@Inject
-	private CallStepManagerService callStepManager;
 
 	@ServiceReference
 	public void setTestCaseModificationService(TestCaseModificationService testCaseModificationService) {
 		this.testCaseModificationService = testCaseModificationService;
+	}
+	
+	@ServiceReference
+	public void setTestAutomationFinderService(TestAutomationFinderService taService){
+		this.taFinderService = taService;
 	}
 
 	@RequestMapping(method = RequestMethod.GET)
@@ -442,6 +457,24 @@ public class TestCaseModificationController {
 		}.buildDataModel(holder, filter.getFirstItemIndex() + 1, params.getsEcho());
 
 	}
+	
+	
+	//* ************************** test automation section **********************
+	
+
+	@RequestMapping(value="/test-automation/tests", method = RequestMethod.GET)
+	@ResponseBody
+	public TestAutomationProjectContentList findAssignableAutomatedTests(@PathVariable("testCaseId") Long testCaseId){
+		
+		Collection<TestAutomationProjectContent> projectContents = testCaseModificationService.findAssignableAutomationTests(testCaseId);
+		
+		return new TAProjectContentListBuilder().build(projectContents);
+	}
+	
+	
+	
+	
+	//* ************************** / test automation section **********************
 
 	private CollectionSorting createPaging(final DataTableDrawParameters params, final DataTableMapper dtMapper) {
 		return new DataTableMapperCollectionSortingAdapter(params, dtMapper);

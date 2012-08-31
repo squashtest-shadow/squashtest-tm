@@ -78,10 +78,12 @@ public class HttpRequestFactory {
 	
 	
 	public GetMethod newCheckCredentialsMethod(TestAutomationServer server){
+
+		String path = toUrlPath(server, API_URI);
 		
 		GetMethod method = new GetMethod();
-		
-		method.setPath(server.getBaseURL().toExternalForm());
+			
+		method.setPath(path);
 		
 		String logPass = server.getLogin()+":"+server.getPassword();
 		String auth = new String(Base64.encodeBase64(logPass.getBytes()));

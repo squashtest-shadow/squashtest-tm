@@ -21,6 +21,7 @@
 package org.squashtest.csp.tm.domain.project;
 
 import java.util.ArrayList;
+import java.util.Collection;
 import java.util.Iterator;
 import java.util.List;
 
@@ -242,6 +243,11 @@ public class Project implements Identified {
 					.get(testAutomationProjects.size() - 1).getServer();
 		}
 	}
+	
+	public Collection<TestAutomationProject> getTestAutomationProjects(){
+		return testAutomationProjects;
+	}
+	
 
 	public void removeBugTrackerBinding() {
 		this.bugtrackerBinding = null;

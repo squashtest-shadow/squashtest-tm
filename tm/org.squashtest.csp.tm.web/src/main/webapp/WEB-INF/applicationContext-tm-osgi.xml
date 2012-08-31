@@ -175,6 +175,7 @@
 	</osgi:list>
 
 
+
 	<!-- yes : tm.web propose one service consumed by core.web -->
 
 	<bean id="squashtest.tm.web.authSuccessCallback.btautoconnect"

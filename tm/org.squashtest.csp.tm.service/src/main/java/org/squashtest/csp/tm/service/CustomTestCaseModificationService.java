@@ -20,11 +20,14 @@
  */
 package org.squashtest.csp.tm.service;
 
+import java.util.Collection;
 import java.util.List;
 
 import org.springframework.transaction.annotation.Transactional;
 import org.squashtest.csp.tm.domain.testcase.ActionTestStep;
 import org.squashtest.csp.tm.domain.testcase.TestStep;
+
+import squashtm.testautomation.model.TestAutomationProjectContent;
 
 /**
  * @author Gregory Fouquet
@@ -91,4 +94,9 @@ public interface CustomTestCaseModificationService extends TestCaseFinder {
 	 * @param auto
 	 */
 	void changeImportanceAuto(long testCaseId, boolean auto);
+	
+	
+	// *************** test automation section ******************
+	
+	Collection<TestAutomationProjectContent> findAssignableAutomationTests(long testCaseId);
 }
