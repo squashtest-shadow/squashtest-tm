@@ -94,7 +94,7 @@ that page won't be editable if
 	note : Since summoning a dialog will not stop the rest of the code from executing, the second case returns false to ensure that the handler terminates quickly while the dialog
 	is still executed.
 	
-	'summoned' and 'confirm' are attributes of the dialog #requirement-status-confirm-dialog. When summoned the dialog will set 'confirm' 
+	'summoned' and 'confirm' are attributes of the dialog #. When summoned the dialog will set 'confirm' 
 	according to the user response and submit the select again. This will in turn call that hook again, which will eventually read the user response and then only decide whether 
 	the user input will be sent or not.
 	
@@ -112,7 +112,8 @@ that page won't be editable if
 			
 			if (isDisabled(selected)){
 				toReturn=false;
-				$.squash.openMessage("<f:message key='popup.title.error' />", "${StatusNotAllowedMessage}");
+				$.squash.openMessage("<f:message key='popup.title.error' />", "${StatusNotAllowedMessage}")
+				.done(function(){$("#requirement-status").editable().resetForm();});	
 			}
 			else if ("OBSOLETE" == selected) {
 				var jqDialog = $('#requirement-status-confirm-dialog');

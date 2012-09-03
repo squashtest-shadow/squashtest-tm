@@ -124,8 +124,9 @@
 	 * eg : $('#dialogDef").openMessage().done(function () { console.log('closed') })
 	 * @return a promise
 	 */
-	$.fn.openMessage = function () {
+	$.fn.openMessage = function (size) {
 		var self = this;
+		
 		var deferred = $.Deferred();
 		
 		var close = function () {
@@ -133,9 +134,16 @@
 			deferred.resolve();
 		}
 		
-		self.messageDialog()
-		.bind('messagedialogclose', close )
-		.messageDialog('open');		
+		if(size != null) {
+			self.messageDialog({width:size})
+			.bind('messagedialogclose', close )
+			.messageDialog('open');		
+		}
+		else {
+			self.messageDialog()
+			.bind('messagedialogclose', close )
+			.messageDialog('open');	
+		}
 		
 		return deferred.promise();
 	};
@@ -149,7 +157,7 @@
 		 * @param html chunk used as the body of the dialog.
 		 * @return a promise
 		 */
-		openMessage: function (title, htmlMessage) {		  
+		openMessage: function (title, htmlMessage,size) {		  
 			var dialog = $('<div></div>');
 			dialog.attr('title', title);
 			
@@ -162,8 +170,9 @@
 			
 			dialog.bind('destroy', discardDialog);
 			
-			return dialog.openMessage();
+			return dialog.openMessage(size);
 		}
 	});
+	
 
 }(jQuery));	

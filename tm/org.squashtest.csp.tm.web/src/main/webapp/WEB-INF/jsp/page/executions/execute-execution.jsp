@@ -111,14 +111,15 @@
 				}
 			
 				function testComplete() {	
+
 					if (!isOer) {
-						$.squash.openMessage("<f:message key='popup.title.info' />",  "${ completedMessage }" ).done(function() {
+						$.squash.openMessage("<f:message key='popup.title.info' />",  "${ completedMessage }","300").done(function() {
 							window.close();
 						});
 					} else if (hasNextTestCase) {
 						$('#execute-next-test-case').click();
 					} else { // oer without next
-						$.squash.openMessage("<f:message key='popup.title.info' />","${ endTestSuiteMessage }").done(function() {
+						$.squash.openMessage("<f:message key='popup.title.info' />","${ endTestSuiteMessage }","300").done(function() {
 							window.close();
 						});
 					}					
