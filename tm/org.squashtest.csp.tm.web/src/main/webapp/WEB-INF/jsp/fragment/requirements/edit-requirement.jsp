@@ -158,7 +158,6 @@ that page won't be editable if
 		}
 </script>
 </c:if>
-
 <%-- ----------------------------------- CONTENT ----------------------------------------------%>
 <%-- ----------------------------------- TITLE ----------------------------------------------%>
 <div class="ui-widget-header ui-corner-all ui-state-default fragment-header">

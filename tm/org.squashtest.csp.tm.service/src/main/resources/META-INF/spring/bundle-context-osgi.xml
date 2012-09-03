@@ -52,7 +52,9 @@
 			<value>org.squashtest.csp.tm.service.BugTrackerFinderService</value>
 		</osgi:interfaces>
 	</osgi:service>
-
+<osgi:service ref="squashtest.tm.service.BugTrackerModificationService"
+		interface="org.squashtest.csp.tm.service.BugTrackerModificationService" />
+	
 	<!-- ========= /BUGTRACKER SERVICES ============= -->
 
 

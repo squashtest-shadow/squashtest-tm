@@ -87,7 +87,10 @@
 		<property name="componentType" value="org.squashtest.csp.tm.service.ProjectModificationService" />
 		<property name="entityType" value="org.squashtest.csp.tm.domain.project.Project" />
 	</bean>
-
+<bean id="squashtest.tm.service.BugTrackerModificationService" class="org.squashtest.csp.core.infrastructure.dynamicmanager.DynamicManagerFactoryBean">
+		<property name="componentType" value="org.squashtest.csp.tm.service.BugTrackerModificationService" />
+		<property name="entityType" value="org.squashtest.csp.core.bugtracker.domain.BugTracker" />
+	</bean>
 	<bean id="squashtest.tm.service.internal.RequirementManagementService" class="org.squashtest.csp.tm.internal.service.GenericNodeManagementService">
 		<property name="nodeDao" ref="hibernateRequirementDao" />
 		<property name="folderDao" ref="hibernateRequirementFolderDao" />

@@ -41,7 +41,7 @@
 	<jsp:attribute name="informationContent">	
 		<c:url var="bugtrackersUrl" value="/bugtrackers/list" />
 		<c:url var="addBugtrackerUrl" value="/bugtrackers/add" />
-		<c:url var="bugtrackerDetailsBaseUrl" value="/bugtrackers" />
+		<c:url var="bugtrackerDetailsBaseUrl" value="/bugtracker" />
 		
 		<script type="text/javascript">
 					$(function() {
@@ -60,8 +60,12 @@
 					function getBugtrackerTableRowId(rowData) {
 						return rowData[0];	
 					}
-					
+					function addHLinkToBugtrackerName(row, data) {
+						var url= '${ bugtrackerDetailsBaseUrl }/' + getBugtrackerTableRowId(data) + '/info';			
+						addHLinkToCellText($( 'td:eq(1)', row ), url);
+					}	
 					function bugtrackerTableRowCallback(row, data, displayIndex){
+						addHLinkToBugtrackerName(row, data);
 						return row;
 					}
 					

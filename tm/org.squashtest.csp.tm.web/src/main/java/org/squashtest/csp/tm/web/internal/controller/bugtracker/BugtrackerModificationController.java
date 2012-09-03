@@ -22,24 +22,100 @@ package org.squashtest.csp.tm.web.internal.controller.bugtracker;
 
 import static org.squashtest.csp.tm.web.internal.helper.JEditablePostParams.VALUE;
 
+import java.util.HashMap;
+import java.util.Locale;
+import java.util.Map;
+import java.util.Set;
+
+import javax.inject.Inject;
+import javax.servlet.http.HttpServletResponse;
+
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
+import org.springframework.web.servlet.ModelAndView;
+import org.squashtest.csp.core.bugtracker.domain.BugTracker;
+import org.squashtest.csp.tm.service.BugTrackerFinderService;
+import org.squashtest.csp.tm.service.BugTrackerModificationService;
+import org.squashtest.csp.tm.web.internal.helper.JsonHelper;
 
 @Controller
 @RequestMapping("/bugtracker/{bugtrackerId}")
 public class BugtrackerModificationController {
+	private static final Logger LOGGER = LoggerFactory.getLogger(BugtrackerModificationController.class);
 
-	@RequestMapping(value = "/name", method = RequestMethod.POST, params = { "id", VALUE })
+	@Inject
+	private BugTrackerModificationService bugtrackerModificationService;
+	
+	@Inject
+	private BugTrackerFinderService bugtrackerFinder;
+
+	@RequestMapping(method = RequestMethod.POST, params = { "newName" })
 	@ResponseBody
-	public String changeName(@PathVariable long stepId, @RequestParam(VALUE) String newName) {
-			//TODO implement 
-			return newName;
+	public Object changeName(HttpServletResponse response, @PathVariable long bugtrackerId, @RequestParam String newName) {
+	bugtrackerModificationService.changeName(bugtrackerId, newName);
+	LOGGER.debug("BugTracker modification : change bugtracker {} name = {}", bugtrackerId, newName);
+	
+	final String reNewName = newName;
+	return new Object() {
+		public String newName = reNewName; // NOSONAR unreadable field actually read by JSON marshaller.
+	};
 	}
-
+	@RequestMapping( method = RequestMethod.POST, params = { "id=bugtracker-url", VALUE })
+	@ResponseBody
+	public String changeUrl(@PathVariable long bugtrackerId, @RequestParam(VALUE) String newUrl) {
+		bugtrackerModificationService.changeUrl(bugtrackerId, newUrl);
+		LOGGER.debug("BugTracker modification : change bugtracker {} url = {}", bugtrackerId, newUrl);
+		
+		return newUrl;
+	}
+	@RequestMapping(method = RequestMethod.POST, params = { "isIframeFriendly" })
+	@ResponseBody
+	public Object changeIframeFriendly(HttpServletResponse response, @PathVariable long bugtrackerId,
+			@RequestParam boolean isIframeFriendly) {
+		bugtrackerModificationService.changeIframeFriendly(bugtrackerId, isIframeFriendly);
+		LOGGER.debug("BugTracker modification : change bugtracker {} is iframe-friendly = {}", bugtrackerId, isIframeFriendly);
+		final Boolean newIsIframeFriendly = isIframeFriendly;
+		return new Object() {
+			public Boolean isIframeFriendly = newIsIframeFriendly; // NOSONAR unreadable field actually read by JSON marshaller.
+		};
+	}
+	
+	@RequestMapping(method = RequestMethod.POST, params = { "id=bugtracker-kind", VALUE })
+	@ResponseBody
+	public String changeKind(@RequestParam(VALUE) String kind, @PathVariable long bugtrackerId, Locale locale) {
+		LOGGER.debug("BugTracker modification : change bugtracker {} kind = {}", bugtrackerId,
+				kind);
+		bugtrackerModificationService.changeKind(bugtrackerId, kind);
+		
+		return kind;
+	}
+	
+	@RequestMapping(value = "/info", method = RequestMethod.GET)
+	public ModelAndView getProjectInfos(@PathVariable long bugtrackerId) {
+		
+		BugTracker bugTracker = bugtrackerFinder.findById(bugtrackerId);
+		String jsonBugtrackerKinds = findJsonBugTrackerKinds();
+		ModelAndView mav = new ModelAndView("page/bugtrackers/bugtracker-info");
+				mav.addObject("bugtracker", bugTracker);
+		mav.addObject("bugtrackerKinds",jsonBugtrackerKinds );
+		return mav;
+	}
+	
+	private String findJsonBugTrackerKinds() {
+		Set<String> bugtrackerKinds = bugtrackerFinder.findBugTrackerKinds();
+		Map<String, String> mapKinds = new HashMap<String, String>(bugtrackerKinds.size());
+		for(String kind : bugtrackerKinds){
+			mapKinds.put(kind, kind);
+		}
+		String jsonBugtrackerKinds = JsonHelper.serialize(mapKinds);
+		return jsonBugtrackerKinds;
+	}
 
 
 }
