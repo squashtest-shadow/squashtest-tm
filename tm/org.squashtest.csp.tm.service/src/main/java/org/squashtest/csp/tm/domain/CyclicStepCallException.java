@@ -28,7 +28,7 @@ public class CyclicStepCallException extends ActionException {
 	 * 
 	 */
 	private static final long serialVersionUID = 7668234787125033427L;
-	private final String cyclicMessageKey = "squashtm.action.exception.callstepcycle.label";
+	private static final String cyclicMessageKey = "squashtm.action.exception.callstepcycle.label";
 	
 	
 	public CyclicStepCallException(Exception ex){

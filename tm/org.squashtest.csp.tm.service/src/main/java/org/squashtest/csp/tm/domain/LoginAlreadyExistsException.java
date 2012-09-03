@@ -28,7 +28,7 @@ public class LoginAlreadyExistsException extends ActionException {
 	 * 
 	 */
 	private static final long serialVersionUID = -2679054987340981477L;
-	private final String loginExistsMessageKey = "squashtm.action.exception.login.exists.label";
+	private static final String loginExistsMessageKey = "squashtm.action.exception.login.exists.label";
 
 	public LoginAlreadyExistsException(Exception ex) {
 		super(ex);

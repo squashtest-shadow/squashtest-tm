@@ -29,7 +29,7 @@ public class IllegalRequirementModificationException extends ActionException {
 	 * 
 	 */
 	private static final long serialVersionUID = 4901610054565947807L;
-	private final String illegalReqModificationException = "squashtm.action.exception.illegalrequirementmodification.label";
+	private static final String illegalReqModificationException = "squashtm.action.exception.illegalrequirementmodification.label";
 	
 	
 	public IllegalRequirementModificationException(Exception ex){

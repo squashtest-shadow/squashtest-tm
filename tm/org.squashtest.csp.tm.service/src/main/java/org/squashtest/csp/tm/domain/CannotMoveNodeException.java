@@ -28,7 +28,7 @@ public class CannotMoveNodeException extends ActionException {
 	 * 
 	 */
 	private static final long serialVersionUID = 5665631267216911910L;	
-	private final String cannotModeNodeMessageKey = "squashtm.action.exception.cannotmovenode.label";
+	private static final String cannotModeNodeMessageKey = "squashtm.action.exception.cannotmovenode.label";
 	
 	
 	public CannotMoveNodeException(Exception ex){

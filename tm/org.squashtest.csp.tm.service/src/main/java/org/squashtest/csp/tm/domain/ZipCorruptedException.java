@@ -34,7 +34,7 @@ public class ZipCorruptedException extends ActionException {
 	 * 
 	 */
 	private static final long serialVersionUID = 9015267434405584486L;
-	private final String zipCorruptedMessageKey = "squashtm.action.exception.zipcorrupted.label";
+	private static final String zipCorruptedMessageKey = "squashtm.action.exception.zipcorrupted.label";
 
 	
 	public ZipCorruptedException(Throwable arg0) {
