@@ -110,7 +110,7 @@
 							<f:message key="bugtracker.url.label" />
 							</label>
 							<div class="display-table-cell" id="bugtracker-url">${ bugtracker.url }</div>
-							<comp:simple-jeditable targetUrl="${ bugtrackerUrl }" componentId="bugtracker-url" />
+							<comp:simple-jeditable targetUrl="${ bugtrackerUrl }" componentId="bugtracker-url" submitCallback="changeBugTrackerUrlCallback"/>
 						</div>
 						<div class="display-table-row">
 							<label for="bugtracker-iframeFriendly" class="display-table-cell">
@@ -135,7 +135,6 @@
 	<comp:decorate-buttons />
 	</jsp:attribute>
 </layout:info-page-layout>
-
 <script type="text/javascript">
 
 //*****************Back button
@@ -160,8 +159,15 @@
 			},
 			dataType : "json",
 			url : "${ bugtrackerUrl }"
-		});
+		}).done(function(){
+				//Update navigation menu
+						updateBugTrackerMenu(false);
+			});
 	 }
+	
+	function changeBugTrackerUrlCallback(){
+		updateBugTrackerMenu(false);
+	}
 
 </script>
 
@@ -190,6 +196,7 @@
 				});
 				/* renaming success handler */
 				function renameBugtrackerSuccess(data) {
+					updateBugTrackerMenu(false);
 					$('#bugtracker-name-header').html(data.newName);
 					$('#rename-bugtracker-dialog').dialog('close');
 				}

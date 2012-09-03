@@ -46,6 +46,7 @@
 </title>
 <layout:common-head />
 <layout:_common-script-import />
+<link rel="stylesheet" type="text/css" href="${ pageContext.servletContext.contextPath }/styles/master.blue.css" />	
 <jsp:invoke fragment="head" />
 </head>
 <body>

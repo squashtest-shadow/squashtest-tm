@@ -202,6 +202,7 @@
 									</c:choose>
 								</div>
 									<script> function projectBugTrackerCallBack (value, settings) {
+										updateBugTrackerMenu(false);
 								         if(value != "<f:message key='project.bugtracker.name.undefined'/>"){								        	 
 								        	 $("#project-bugtracker-project-name-row").show();
 												refreshBugTrackerProjectName();

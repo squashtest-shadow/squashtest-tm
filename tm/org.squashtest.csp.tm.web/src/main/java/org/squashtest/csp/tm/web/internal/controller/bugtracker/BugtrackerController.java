@@ -49,6 +49,7 @@ import org.squashtest.csp.core.bugtracker.domain.BTProject;
 import org.squashtest.csp.core.bugtracker.domain.BugTracker;
 import org.squashtest.csp.core.bugtracker.spi.BugTrackerInterfaceDescriptor;
 import org.squashtest.csp.core.domain.Identified;
+import org.squashtest.csp.core.domain.IdentifiedUtil;
 import org.squashtest.csp.tm.domain.bugtracker.BugTrackerStatus;
 import org.squashtest.csp.tm.domain.bugtracker.IssueDetector;
 import org.squashtest.csp.tm.domain.bugtracker.IssueOwnership;
@@ -149,27 +150,25 @@ public class BugtrackerController {
 	 */
 	@RequestMapping(value = "workspace-button", method = RequestMethod.GET)
 	public ModelAndView getNavButton(Locale locale) {
-		// BugTrackerStatus status = checkStatus();
-
-		// TODO [Feat 1208]
-		// if (status == BugTrackerStatus.BUGTRACKER_UNDEFINED) {
-		LOGGER.trace("no bugtracker");
-		return new ModelAndView("fragment/issues/bugtracker-panel-empty");
-		// } else {
-		// LOGGER.trace("return bugtracker nav button");
-		// ModelAndView mav = new ModelAndView("fragment/issues/bugtracker-nav-button");
-		// mav.addObject("bugtrackerUrl", bugTrackersLocalService.getBugtrackerUrl().toString());
-		// mav.addObject("iframeFriendly", bugTrackersLocalService.getBugtrackerIframeFriendly());
-		// return mav;
-		// }
+		List<Project> projects = projectFinder.findAllReadable();
+		List<Long> projectsIds = IdentifiedUtil.extractIds(projects); 
+		List<BugTracker> readableBugTrackers = bugTrackerFinderService.findDistinctBugTrackersForProjects(projectsIds);
+		 if (readableBugTrackers.isEmpty()) {
+			LOGGER.trace("no bugtracker");
+			return new ModelAndView("fragment/issues/bugtracker-panel-empty");
+		 } else {
+			 LOGGER.trace("return bugtracker nav button");
+			 ModelAndView mav = new ModelAndView("fragment/issues/bugtracker-nav-button");
+			 mav.addObject("bugtrackers", readableBugTrackers);
+			 return mav;
+		 }
 	}
 
-	@RequestMapping(value = "workspace", method = RequestMethod.GET)
-	public ModelAndView showWorkspace() {
+	@RequestMapping(value = "{bugtrackerId}/workspace", method = RequestMethod.GET)
+	public ModelAndView showWorkspace(@PathVariable Long bugtrackerId) {
+		BugTracker bugTracker = bugTrackerFinderService.findById(bugtrackerId);
 		ModelAndView mav = new ModelAndView("page/bugtracker-workspace");
-		// mav.addObject("bugtrackerUrl", bugTrackersLocalService.getBugtrackerUrl().toString());
-		// TODO [Feat 1208]
-		mav.addObject("bugtrackerUrl", "TODO");
+		 mav.addObject("bugtrackerUrl", bugTracker.getUrl().toString());
 		return mav;
 	}
 

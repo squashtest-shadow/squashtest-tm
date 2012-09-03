@@ -32,20 +32,25 @@
  <script type="text/javascript">
  	
  	$(function(){
- 		$("#bugtracker-div").load("${workspaceUrl}", function(){
+ 			var highlighted = false;
  			<c:if test="${ highlighted }">
- 				squashtm.navbar.initHighlighted('bugtracker');
+ 			highlighted = true;
  			</c:if>
- 			$("#bugtracker-link").hover(function () {
- 	 			squashtm.navbar.highlightOn("bugtracker-link");
- 	 		}, function () {
- 	 			squashtm.navbar.highlightOff("bugtracker-link");
+ 			updateBugTrackerMenu(highlighted);
+ 	});
+ 	
+ 	function updateBugTrackerMenu (highlighted){
+ 		
+ 		$("#bugtracker-div").load("${workspaceUrl}",
+	 			function(){
+ 			if(highlighted){
+ 	 			squashtm.navbar.initHighlighted('bugtracker');
  	 		}
-
+ 			$("#bugtracker-link").hover(
+	 						function () {squashtm.navbar.highlightOn("bugtracker-link");}, 
+	 						function () {squashtm.navbar.highlightOff("bugtracker-link");}
  	 		);
  		});
- 		
- 		
- 	});
+ 	}
  </script>
 <div id="bugtracker-div" ></div>
