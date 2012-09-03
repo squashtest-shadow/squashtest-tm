@@ -367,7 +367,7 @@ public class Execution implements AttachmentHolder, IssueDetector, Identified, H
 		}
 
 		for (ExecutionStep step : steps) {
-			if (step.getExecutionStatus().isNoneOf(ExecutionStatus.SUCCESS, ExecutionStatus.FAILURE)) {
+			if (step.getExecutionStatus().isNoneOf(ExecutionStatus.SUCCESS)) {
 				return step;
 			}
 		}
