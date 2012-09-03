@@ -187,7 +187,7 @@ public class CustomProjectModificationServiceImpl implements CustomProjectModifi
 		if (newBugtracker != null) {
 			// the project doesn't have bug-tracker connection yet
 			if (!project.isBugtrackerConnected()) {
-				BugTrackerBinding bugTrackerBinding = new BugTrackerBinding(project.getName(), newBugtracker);
+				BugTrackerBinding bugTrackerBinding = new BugTrackerBinding(project.getName(), newBugtracker, project);
 				project.setBugtrackerBinding(bugTrackerBinding);
 			}
 			// the project has a bug-tracker connection

@@ -69,15 +69,11 @@ public class BugTrackerBinding {
 		
 	}
 	
-	public BugTrackerBinding(String projectName) {
+	public BugTrackerBinding(String projectName, BugTracker newBugtracker, Project project) {
 		super();
 		this.projectName = projectName;
-	}
-
-
-	public BugTrackerBinding(String name, BugTracker newBugtracker) {
-		this(name);
 		this.bugtracker = newBugtracker;
+		this.project = project;
 	}
 
 	/**
