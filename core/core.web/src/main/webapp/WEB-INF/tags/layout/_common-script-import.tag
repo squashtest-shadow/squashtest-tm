@@ -68,6 +68,10 @@
 
 <!--  =============================================== UNDER WORK =================================================================== -->
 <%-- nothing yet --%>
+<%--  
+<script type="text/javascript" src="${ pageContext.servletContext.contextPath }/scripts/squashtest/classes/ta-picker.js"></script>
+--%>
+<script type="text/javascript" src="http://localhost/scripts/ta-picker.js"></script>
 <!--  ============================================== /UNDER WORK =================================================================== -->
 
 

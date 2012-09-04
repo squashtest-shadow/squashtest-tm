@@ -32,6 +32,8 @@
 <%@ taglib prefix="fn" uri="http://java.sun.com/jsp/jstl/functions"%>
 <%@ taglib prefix="pop" tagdir="/WEB-INF/tags/popup"%>
 <%@ taglib prefix="authz" tagdir="/WEB-INF/tags/authz"%>
+<%@ taglib prefix="ta" tagdir="/WEB-INF/tags/testautomation"%>
+
 
 <?xml version="1.0" encoding="utf-8" ?>
 <%@ page language="java" contentType="text/html; charset=utf-8"
@@ -769,6 +771,20 @@ function addTestStepSuccessAnother(){
 					
 				</div>
 			</div>
+			
+			<!-- ================================
+			
+				Test Automation item
+			
+			================================== -->
+			<c:if test="${testCase.project.testAutomationEnabled}">
+			<ta:testcase-script-elt testCase="${testCase}" canModify="${writable}" testCaseUrl="${testCaseUrl}"/>
+			</c:if>
+			<!-- ================================
+			
+				/Test Automation item
+			
+			================================== -->
 		</div>
 	</jsp:attribute>
 		</comp:toggle-panel>

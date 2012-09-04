@@ -501,6 +501,18 @@ div.ta-projectsadd-listdiv .listdiv-item.selected{
 }
 
 
+/*************************************
+	test automation picker
+**************************************/
+
+.ta-picker-structure-maindiv  > .has-standard-margin{
+	margin : 2em;
+}
+
+.ta-picker-structure-maindiv   .structure-tree{
+	border : none
+}
+
 
 /*******************************
 	information panel / description panel

@@ -96,7 +96,7 @@ public class TATestNodeListBuilder {
 		
 		TATestNode node = new TATestNode();
 		
-		node.setState(State.closed);
+		node.setState(State.leaf);
 		
 		Attr attr = new Attr();
 		Data data = new Data();

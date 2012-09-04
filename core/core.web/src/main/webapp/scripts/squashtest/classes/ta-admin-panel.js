@@ -43,7 +43,6 @@ function TestAutomationProjectManager(settings){
 	var inputs = serverBlock.find("input");
 	
 	
-	
 	// ************** enhance the attributes ************
 	
 	
@@ -151,7 +150,7 @@ function TestAutomationAddProjectPopup(settings){
 	
 	mainPanel.getListPanel = function(){
 		return mainPanel.find(".ta-projectsadd-listdiv");
-	}
+	};
 	
 	
 	
@@ -173,12 +172,12 @@ function TestAutomationAddProjectPopup(settings){
 	
 	var handleCkboxChange = function(){
 		$(this).parent().toggleClass('selected');
-	}
+	};
 	
 	
 	var projnameClick = function(){
 		$(this).prev().click();
-	}
+	};
 	
 	
 	var newItem = function(jsonItem){
@@ -261,7 +260,7 @@ function TestAutomationAddProjectPopup(settings){
 		};
 
 		return serverData;
-	}
+	};
 	
 	var getProjectNames = function(){
 		var selected = mainPanel.getListPanel().find("input:checked");
@@ -270,7 +269,7 @@ function TestAutomationAddProjectPopup(settings){
 				projectName : $(box).data('project-name')
 			}
 		});
-	}
+	};
 	
 	var submit = function(){
 		
@@ -304,7 +303,7 @@ function TestAutomationAddProjectPopup(settings){
 			error.popupError('show');
 		});
 		
-	}
+	};
 	
 	//**************** events ******************************
 	

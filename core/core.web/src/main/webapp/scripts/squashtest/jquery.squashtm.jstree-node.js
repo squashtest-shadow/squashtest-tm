@@ -72,39 +72,43 @@
 		// ************ basic getters
 		this.getTree = function () {
 			return this.tree;
-		}
+		};
 
 		this.getDomId = function () {
 			return this.reference.attr('id');
-		}
+		};
 
 		this.getDomType = function () {
 			return this.reference.attr('rel');
-		}
+		};
 
 		this.getResId = function () {
 			return this.reference.attr('resid');
-		}
+		};
 
 		this.getResType = function () {
 			return this.reference.attr('restype');
-		}
+		};
 		
 		this.isEditable = function(){
 			return this.reference.attr('smallEdit') === "true";
-		}
+		};
 		
 		this.isCreatable = function(){
 			return this.reference.attr('creatable') === "true";
-		}
+		};
 		
 		this.isDeletable = function(){
 			return this.reference.attr('deletable') === "true";
-		}
+		};
 
 		this.getName = function () {
 			return this.reference.attr('name');
-		}
+		};
+
+		this.getPath = function() {
+			return this.getParents().all('getName').join().replace(/,/g, '/');
+		};
 
 		// ************ relationships getters
 
@@ -115,25 +119,25 @@
 				var library = this.reference.parents(':library');
 				return library.treeNode();
 			}
-		}
+		};
 
 		this.getParent = function () {
 			return this.reference.parents("li").first().treeNode();
-		}
+		};
 
 		this.getWorkspace = function () {
 			return this.getLibrary().getResType().replace('-libraries', '');
-		}
+		};
 
 		this.getChildren = function () {
 			var children = this.tree._get_children(this);
 			return (children.length) ? children.treeNode() : $();
-		}
+		};
 
 		this.getPrevious = function () {
 			if (this.is(':library')) {
 				return this;
-			}
+			};
 
 			var prev = this.reference.prev();
 
@@ -142,18 +146,23 @@
 			} else {
 				return this.getParent();
 			}
-		}
+		};
+		
+		
+		this.getParents = function(){
+			return this.parents('li', this.tree).add(this).treeNode();
+		};
 
 		// ***************** tree actions
 
 		this.deselectChildren = function () {
 			this.tree.deselect_all(this);
-		}
+		};
 
 		this.refresh = function () {
 
 			this.tree.refresh(this);
-		}
+		};
 
 		this.isOpen = function () {
 			// isOpen returns true when open, but something not specified when
@@ -161,23 +170,23 @@
 			// hence the return thing below
 			var isOpen = this.tree.is_open(this);
 			return (isOpen != true) ? false : true;
-		}
+		};
 
 		this.open = function () {
 			var defer = $.Deferred();
 			this.tree.open_node(this, defer.resolve);
 			return defer.promise();
-		}
+		};
 
 		this.load = function () {
 			var defer = $.Deferred();
 			this.tree.load_node(this, defer.resolve, defer.reject);
 			return defer.promise();
-		}
+		};
 
 		this.close = function () {
 			this.tree.close_node(this);
-		}
+		};
 
 		this.appendNode = function (data) {
 			var defer = $.Deferred();
@@ -185,15 +194,15 @@
 					true);
 			var newNode = res.treeNode();
 			return [ newNode, defer.promise() ];
-		}
+		};
 
 		this.select = function () {
 			this.tree.select_node(this);
-		}
+		};
 
 		this.deselect = function () {
 			this.tree.deselect_node(this);
-		}
+		};
 
 		// *********** tests
 
@@ -201,17 +210,17 @@
 			var myParent = this.getParent();
 			var itsParent = otherNode.getParent();
 			return (myParent.getDomId() === itsParent.getDomId());
-		}
+		};
 
 		this.sameLib = function (otherNode) {
 			var myLib = this.getLibrary();
 			var itsLib = otherNode.getLibrary();
 			return (myLib.getDomId() == itsLib.getDomId());
-		}
+		};
 
 		this.isSame = function (otherNode) {
 			return (this.getDomId() == otherNode.getDomId());
-		}
+		};
 
 		this.match = function (matchObject) {
 			for ( var ppt in matchObject) {
@@ -219,7 +228,7 @@
 					return false;
 			}
 			return true;
-		}
+		};
 		
 		this.acceptsAsContent = function(nodes){
 			return (
@@ -228,7 +237,7 @@
 				( this.is(':file') && nodes.areResources() ) ||
 				( this.is(':resource') && nodes.areViews() )
 			);				
-		}
+		};
 
 		// ************* methods for multiple matched elements ************
 
