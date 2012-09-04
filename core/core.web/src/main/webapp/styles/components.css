@@ -537,6 +537,10 @@ div.ta-projectsadd-listdiv .listdiv-item.selected{
 	display:inline;
 }
 
+.editable form button {
+	line-height:1.2;
+}
+
 td.editable:HOVER {
 	border: 1px solid transparent;
 }
