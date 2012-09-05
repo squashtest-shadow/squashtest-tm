@@ -21,6 +21,8 @@
 package org.squashtest.csp.tm.domain.execution;
 
 import java.util.ArrayList;
+import java.util.Collection;
+import java.util.Collections;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
@@ -268,6 +270,38 @@ public enum ExecutionStatus implements Internationalizable {
 	protected static ExecutionStatus needsComputation = null;
 
 	
+	private static final Set<ExecutionStatus> CANONICAL_STATUSES;
+	private static final Set<ExecutionStatus> TERMINAL_STATUSES;
+	private static final Set<ExecutionStatus> NON_TERMINAL_STATUSES;
+	
+	
+	static{
+		
+		Set<ExecutionStatus> set = new HashSet<ExecutionStatus>();
+		set.add(BLOCKED);
+		set.add(FAILURE);
+		set.add(SUCCESS);
+		set.add(RUNNING);
+		set.add(READY);	
+		
+		CANONICAL_STATUSES = Collections.unmodifiableSet(set);
+		
+		Set<ExecutionStatus> terms = new HashSet<ExecutionStatus>();
+		terms.add(BLOCKED);
+		terms.add(FAILURE);
+		terms.add(SUCCESS);
+		terms.add(WARNING);
+		terms.add(ERROR);
+		
+		TERMINAL_STATUSES = Collections.unmodifiableSet(terms);	
+		
+		Set<ExecutionStatus> nonTerms = new HashSet<ExecutionStatus>();
+		nonTerms.add(RUNNING);
+		nonTerms.add(READY);
+		
+		NON_TERMINAL_STATUSES = Collections.unmodifiableSet(nonTerms);
+		
+	}
 	
 
 	/* *************************** abstract methods ********************************* */
@@ -291,13 +325,15 @@ public enum ExecutionStatus implements Internationalizable {
 	}
 	
 	public static Set<ExecutionStatus> getCanonicalStatusSet(){
-		Set<ExecutionStatus> set = new HashSet<ExecutionStatus>();
-		set.add(BLOCKED);
-		set.add(FAILURE);
-		set.add(SUCCESS);
-		set.add(RUNNING);
-		set.add(READY);	
-		return set;
+		return CANONICAL_STATUSES;
+	}
+	
+	public static Set<ExecutionStatus> getTerminatedStatusSet(){
+		return TERMINAL_STATUSES;
+	}
+	
+	public static Set<ExecutionStatus> getNonTerminatedStatusSet(){
+		return NON_TERMINAL_STATUSES;
 	}
 	
 	/* **************************** public instance methods ***************************** */
@@ -310,14 +346,14 @@ public enum ExecutionStatus implements Internationalizable {
 	 * @return true if the status is neither RUNNING nor READY
 	 */
 	public boolean isTerminatedStatus() {
-		return this.toCanonical().isNoneOf(ExecutionStatus.RUNNING, ExecutionStatus.READY);
+		return TERMINAL_STATUSES.contains(this.toCanonical());
 	}
 
 	@Override
 	public String getI18nKey() {
 		return I18N_KEY_ROOT + name();
 	}
-	
+
 	
 	/**
 	 * 

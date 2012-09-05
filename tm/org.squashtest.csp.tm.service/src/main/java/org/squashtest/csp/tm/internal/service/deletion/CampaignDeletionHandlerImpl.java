@@ -252,7 +252,7 @@ public class CampaignDeletionHandlerImpl extends AbstractNodeDeletionHandlerImpl
 			iteration.getTestSuites().clear();
 
 			deleteIterationTestPlan(iteration.getTestPlans());
-			iteration.getTestSuites().clear();
+			iteration.getTestSuites().clear();	//XXX isn't that supposed to be iteration.getTestPlans().clear();
 
 			deletionDao.removeAttachmentList(iteration.getAttachmentList());
 			deletionDao.removeEntity(iteration);

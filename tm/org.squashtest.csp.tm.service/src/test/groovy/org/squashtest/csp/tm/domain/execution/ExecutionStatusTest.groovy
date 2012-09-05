@@ -33,18 +33,19 @@ import static org.squashtest.csp.tm.domain.execution.ExecutionStatus.*
 class ExecutionStatusTest extends Specification {
 	
 	
-	def "two invokation of getCanonicalStatusSet should return same content yet different instances"(){
+	def "checks the constant sets"(){
 		
 		when :
-			def set1 = ExecutionStatus.getCanonicalStatusSet();
-			def set2 = ExecutionStatus.getCanonicalStatusSet();
+			def canonical = ExecutionStatus.getCanonicalStatusSet();
+			def terminal = ExecutionStatus.getTerminatedStatusSet();
+			def nonTerminal = ExecutionStatus.getNonTerminatedStatusSet();
 			
-			set1.remove(SUCCESS)
 			
 		then :
 			
-			set1 == [RUNNING, BLOCKED, FAILURE, READY] as Set
-			set2 == [SUCCESS, RUNNING, BLOCKED, FAILURE, READY] as Set
+			canonical == [SUCCESS, RUNNING, BLOCKED, FAILURE, READY] as Set
+			terminal == [SUCCESS, WARNING, BLOCKED, ERROR, FAILURE] as Set
+			nonTerminal == [RUNNING, READY] as Set
 		
 	}
 	

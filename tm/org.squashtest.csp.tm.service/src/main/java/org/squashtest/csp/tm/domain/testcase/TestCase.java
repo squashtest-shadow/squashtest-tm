@@ -48,12 +48,12 @@ import javax.validation.constraints.NotNull;
 
 import org.squashtest.csp.tm.domain.NoVerifiableRequirementVersionException;
 import org.squashtest.csp.tm.domain.RequirementAlreadyVerifiedException;
-import org.squashtest.csp.tm.domain.UnallowedTestAssociationException;
 import org.squashtest.csp.tm.domain.UnknownEntityException;
 import org.squashtest.csp.tm.domain.attachment.Attachment;
 import org.squashtest.csp.tm.domain.attachment.AttachmentHolder;
 import org.squashtest.csp.tm.domain.attachment.AttachmentList;
 import org.squashtest.csp.tm.domain.audit.AuditableMixin;
+import org.squashtest.csp.tm.domain.exception.UnallowedTestAssociationException;
 import org.squashtest.csp.tm.domain.requirement.Requirement;
 import org.squashtest.csp.tm.domain.requirement.RequirementVersion;
 
@@ -408,7 +408,9 @@ public class TestCase extends TestCaseLibraryNode implements AttachmentHolder{
 		}
 	}
 	
-	
+	public boolean isAutomated(){
+		return (testAutomationTest!=null);
+	}
 	
 	
 }

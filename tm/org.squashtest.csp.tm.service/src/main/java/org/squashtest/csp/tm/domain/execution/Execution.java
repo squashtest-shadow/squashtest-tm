@@ -35,6 +35,8 @@ import javax.persistence.EnumType;
 import javax.persistence.Enumerated;
 import javax.persistence.GeneratedValue;
 import javax.persistence.Id;
+import javax.persistence.Inheritance;
+import javax.persistence.InheritanceType;
 import javax.persistence.JoinColumn;
 import javax.persistence.JoinTable;
 import javax.persistence.Lob;
@@ -68,6 +70,7 @@ import org.squashtest.csp.tm.domain.testcase.TestCaseExecutionMode;
 import org.squashtest.csp.tm.domain.testcase.TestStep;
 
 @Auditable
+@Inheritance(strategy = InheritanceType.JOINED)
 @Entity
 public class Execution implements AttachmentHolder, IssueDetector, Identified, HasExecutionStatus {
 	
@@ -93,7 +96,7 @@ public class Execution implements AttachmentHolder, IssueDetector, Identified, H
 	private ExecutionStatus executionStatus = ExecutionStatus.READY;
 
 	@Enumerated(EnumType.STRING)
-	private TestCaseExecutionMode executionMode = TestCaseExecutionMode.MANUAL;
+	protected TestCaseExecutionMode executionMode = TestCaseExecutionMode.MANUAL;
 
 	@Lob
 	private String description;
@@ -181,6 +184,8 @@ public class Execution implements AttachmentHolder, IssueDetector, Identified, H
 		}
 	}
 
+	/* ******************** HasExecutionStatus implementation ************** */
+	
 	@Override
 	public ExecutionStatus getExecutionStatus() {
 		return executionStatus;
@@ -191,7 +196,10 @@ public class Execution implements AttachmentHolder, IssueDetector, Identified, H
 		return LEGAL_EXEC_STATUS;
 	}
 	
+	
+	/* ******************** /HasExecutionStatus implementation ************** */
 
+	
 	public void setExecutionStatus(ExecutionStatus status) {
 		executionStatus = status;
 		// update parentTestPlan status

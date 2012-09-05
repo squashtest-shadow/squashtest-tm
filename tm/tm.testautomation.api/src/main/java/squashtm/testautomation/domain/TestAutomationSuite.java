@@ -18,37 +18,30 @@
  *     You should have received a copy of the GNU Lesser General Public License
  *     along with this software.  If not, see <http://www.gnu.org/licenses/>.
  */
-package org.squashtest.csp.tm.domain;
+package squashtm.testautomation.domain;
 
-import org.squashtest.csp.tm.domain.testcase.TestCase;
-import org.squashtest.tm.core.foundation.exception.ActionException;
+import javax.persistence.Column;
+import javax.persistence.Entity;
+import javax.persistence.GeneratedValue;
+import javax.persistence.Id;
+import javax.persistence.NamedQueries;
+import javax.persistence.NamedQuery;
 
-import squashtm.testautomation.domain.TestAutomationTest;
-/**
- * <p>Thrown when one tries to bind a {@link TestAutomationTest} to a {@link TestCase}, while the test automation feature is disabled 
- * for the project hosting it.</p>
- * 
- * @author bsiri
- *
- */
-public class UnallowedTestAssociationException extends ActionException {
+@NamedQueries({
+	@NamedQuery(name="testAutomationSuite.findById", query="from TestAutomationSuite where id = :suiteId"),
+	@NamedQuery(name="testAutomationSuite.findAllExecutions", query="select e from TestAutomationExecution e join e.automatedSuite s where s.id = :suiteId"),
+	@NamedQuery(name="testAutomationSuite.findAllExecutionWhereStatusIs", query="select e from TestAutomationExecution e join e.automatedSuite s where s.id = :suiteId and e.executionStatus in (:statusList)")
+})
+@Entity
+public class TestAutomationSuite  {
 
+	@Id
+	@GeneratedValue
+	@Column(name = "SUITE_ID")
+	private Long id;
 
-	/**
-	 * 
-	 */
-	private static final long serialVersionUID = 1L;
 	
-	
-	private static final String MESSAGE_KEY = "testautomation.exceptions.unallowedassociation";
-	
-	
-	@Override
-	public String getI18nKey() {
-		return MESSAGE_KEY;
+	public Long getId(){
+		return id;
 	}
-	
-	
-	
-	
 }
