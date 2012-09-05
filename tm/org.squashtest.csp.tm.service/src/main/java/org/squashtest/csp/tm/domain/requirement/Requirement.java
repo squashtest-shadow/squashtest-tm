@@ -29,6 +29,7 @@ import java.util.List;
 
 import javax.persistence.CascadeType;
 import javax.persistence.Entity;
+import javax.persistence.EntityNotFoundException;
 import javax.persistence.JoinColumn;
 import javax.persistence.OneToMany;
 import javax.persistence.OneToOne;
@@ -315,6 +316,17 @@ public class Requirement extends RequirementLibraryNode<RequirementVersion> impl
 			}
 		}
 		return null;
+	}
+
+	public RequirementVersion findRequirementVersion(int versionNumber) {
+		int versionIndexInAscVersionList = versionNumber -1;
+		int indexOflastVersionInList = versions.size()-1;
+		int versionIndexInDescVersionList =  indexOflastVersionInList - versionIndexInAscVersionList;
+		try{
+		return versions.get(versionIndexInDescVersionList);
+		}catch(IndexOutOfBoundsException e){
+			throw new EntityNotFoundException("Version #"+versionNumber+" of Requirement #"+this.getId()+" do not exist");
+		}
 	}
 
 

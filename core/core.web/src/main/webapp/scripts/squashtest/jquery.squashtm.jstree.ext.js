@@ -378,7 +378,7 @@
 			allowedOperations : function (){
 				var selectedNodes = this.get_selected();
 				var operations = "";
-				if( this.get_container().data("importable")) operations += "import-excel ";
+				if( this.get_container().data("importable")) operations += "import-excel import-links-excel";
 				if (selectedNodes.length==0) return operations;
 				operations += "export ";	
 				if(!this.selectionIsEditable(selectedNodes) == "OK") return operations; 
@@ -418,7 +418,7 @@
 			
 			//with the import option an action can be done in the tree even with no selected node.
 			// when the import mecanism will be dependent on the selected node this two lines won't be necessary anymore
-			if( $(".jstree").data("importable")) updateTreebuttons("import-excel ");
+			if( $(".jstree").data("importable")) updateTreebuttons("import-excel import-links-excel");
 						
 			var self=this;
 			

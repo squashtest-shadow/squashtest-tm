@@ -24,7 +24,10 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collection;
 import java.util.Collections;
+import java.util.Iterator;
 import java.util.List;
+import java.util.Map;
+import java.util.Map.Entry;
 
 import javax.inject.Inject;
 
@@ -33,7 +36,6 @@ import org.springframework.security.access.prepost.PostFilter;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
-import org.squashtest.csp.core.domain.IdentifiersOrderComparator;
 import org.squashtest.csp.tm.domain.RequirementAlreadyVerifiedException;
 import org.squashtest.csp.tm.domain.VerifiedRequirementException;
 import org.squashtest.csp.tm.domain.projectfilter.ProjectFilter;
@@ -90,10 +92,6 @@ public class VerifyingTestCaseManagerServiceImpl implements VerifyingTestCaseMan
 		// nodes are returned unsorted
 		List<TestCaseLibraryNode> nodes = testCaseLibraryNodeDao.findAllByIds(testCasesIds);
 
-		// now we resort them according to the order in which the testcaseids were given
-		IdentifiersOrderComparator comparator = new IdentifiersOrderComparator(testCasesIds);
-		Collections.sort(nodes, comparator);
-
 		List<TestCase> testCases = new TestCaseNodeWalker().walk(nodes);
 
 		if (!testCases.isEmpty()) {
@@ -106,17 +104,27 @@ public class VerifyingTestCaseManagerServiceImpl implements VerifyingTestCaseMan
 	private Collection<VerifiedRequirementException> doAddVerifyingTestCasesToRequirementVersion(
 			List<TestCase> testCases, long requirementVersionId) {
 		RequirementVersion requirementVersion = requirementVersionDao.findById(requirementVersionId);
-
+		return doAddVerifyingTestCasesToRequirementVersion(testCases, requirementVersion);
+	}
+	
+	private Collection<VerifiedRequirementException> doAddVerifyingTestCasesToRequirementVersion(
+			List<TestCase> testCases, RequirementVersion requirementVersion) {
+		
 		List<VerifiedRequirementException> rejections = new ArrayList<VerifiedRequirementException>(testCases.size());
-
-		for (TestCase testCase : testCases) {
+		
+		Iterator<TestCase> iterator = testCases.iterator();
+		while(iterator.hasNext()){
+		TestCase testCase = iterator.next();
 			try {
 				requirementVersion.addVerifyingTestCase(testCase);
+				
 			} catch (RequirementAlreadyVerifiedException ex) {
 				rejections.add(ex);
+				iterator.remove();
 			}
-			testCaseImportanceManagerService.changeImportanceIfRelationsAddedToReq(testCases, requirementVersion);
+			
 		}
+		testCaseImportanceManagerService.changeImportanceIfRelationsAddedToReq(testCases, requirementVersion);
 
 		return rejections;
 	}
@@ -159,6 +167,17 @@ public class VerifyingTestCaseManagerServiceImpl implements VerifyingTestCaseMan
 		long verifiersCount = testCaseDao.countByVerifiedRequirementVersion(requirementVersionId);
 
 		return new PagingBackedPagedCollectionHolder<List<TestCase>>(pagingAndSorting, verifiersCount, verifiers);
+	}
+
+	@Override
+	public void addVerifyingTestCasesToRequirementVersions(
+			Map<RequirementVersion, List<TestCase>> testCaseListByRequirementVersions) {
+		for(Entry<RequirementVersion, List<TestCase>> tcListByReqV : testCaseListByRequirementVersions.entrySet()){
+			RequirementVersion requirementVersion = tcListByReqV.getKey();
+			List<TestCase> testCases = tcListByReqV.getValue();
+			doAddVerifyingTestCasesToRequirementVersion(testCases, requirementVersion);
+		}
+		
 	}
 
 }

@@ -18,39 +18,36 @@
  *     You should have received a copy of the GNU Lesser General Public License
  *     along with this software.  If not, see <http://www.gnu.org/licenses/>.
  */
-package org.squashtest.csp.core.service.security;
+package org.squashtest.csp.tm.domain;
 
-import org.squashtest.csp.core.domain.Identified;
+import org.squashtest.tm.core.foundation.exception.ActionException;
 
 /**
- * This service evaluates permissions of the current user.
- *
- * @author Gregory Fouquet
+ * thrown when a zip archive cannot be read (or maybe the file is no zip archive)
+ * 
+ * @author bsiri
  *
  */
-public interface PermissionEvaluationService {
-	/**
-	 * @param role
-	 * @param permission
-	 *            String representation of the permission.
-	 * @param object
-	 * @return true if the current user either has the given role or has the required permission on the given object.
-	 */
-	boolean hasRoleOrPermissionOnObject(String role, String permission, Object object);
+public class ColumnHeaderNotFoundException extends ActionException {
+
 	
 	/**
-	 * short hand for hasRoleOrPermissionOnObject('ROLE_ADMIN', 'READ', object);
-	 * 
-	 * @param object
-	 * @return
+	 * TODO my eclipse can't generate serialVersionUID thanks (mpagnon)
 	 */
-	boolean canRead(Object object);
+	private static final long serialVersionUID = 1L;
+	private static final String messageKey = "squashtm.action.exception.import.column.header.label";
+
 	
-	/**
-	 * return true if the user has more than readonly on the object
-	 * @param object
-	 * @return
-	 */
-	boolean hasMoreThanRead(Object object);
+	public ColumnHeaderNotFoundException() {
+		super();
+	}
+	public ColumnHeaderNotFoundException(String message) {
+		super(message);
+	}
 	
+	@Override
+	public String getI18nKey() {
+		return messageKey;
+	}
+
 }

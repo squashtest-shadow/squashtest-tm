@@ -206,13 +206,13 @@
 					<li class="import-excel-dialog-renamed"><span>${ importRenamed }</span></li>
 					<c:if  test="${workspace == 'test-case'}" >
 						<li class="import-excel-dialog-modified"><span>${ importModified }</span></li>
-						<li class="import-excel-dialog-extension"><span>${ importExtension }</span></li>	
+						<li class="import-excel-dialog-extension"><span>${ importExtension }</span></li>
 					</c:if>
-				</ul>		
+				</ul>
 			</div>
 		</div>
 		
-	</jsp:attribute>	
+	</jsp:attribute>
 
 </pop:popup>
 

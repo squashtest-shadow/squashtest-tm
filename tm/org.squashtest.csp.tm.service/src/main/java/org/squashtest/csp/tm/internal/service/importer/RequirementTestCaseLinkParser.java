@@ -18,39 +18,27 @@
  *     You should have received a copy of the GNU Lesser General Public License
  *     along with this software.  If not, see <http://www.gnu.org/licenses/>.
  */
-package org.squashtest.csp.core.service.security;
+package org.squashtest.csp.tm.internal.service.importer;
 
-import org.squashtest.csp.core.domain.Identified;
+import java.util.List;
+import java.util.Map;
 
-/**
- * This service evaluates permissions of the current user.
- *
- * @author Gregory Fouquet
- *
- */
-public interface PermissionEvaluationService {
-	/**
-	 * @param role
-	 * @param permission
-	 *            String representation of the permission.
-	 * @param object
-	 * @return true if the current user either has the given role or has the required permission on the given object.
-	 */
-	boolean hasRoleOrPermissionOnObject(String role, String permission, Object object);
+import org.apache.poi.ss.usermodel.Row;
+import org.squashtest.csp.tm.domain.ColumnHeaderNotFoundException;
+import org.squashtest.csp.tm.domain.requirement.RequirementVersion;
+import org.squashtest.csp.tm.domain.testcase.TestCase;
+
+interface RequirementTestCaseLinkParser {
 	
+	String ID_REQUIREMENT_TAG = "ID_REQ";
+	String ID_TEST_CASE_TAG = "ID_TC";
+	String VERSION_TAG = "VERSION";
+
+	void parseRow( Row row, ImportRequirementTestCaseLinksSummaryImpl summary, Map<String, Integer> columnsMapping, Map<RequirementVersion, List<TestCase>> testCaseListByRequirementVersion) ;
 	/**
-	 * short hand for hasRoleOrPermissionOnObject('ROLE_ADMIN', 'READ', object);
-	 * 
-	 * @param object
-	 * @return
+	 * @throws ColumnHeaderNotFoundException if one mandatory column is not found
+	 * @param columnsMapping
 	 */
-	boolean canRead(Object object);
-	
-	/**
-	 * return true if the user has more than readonly on the object
-	 * @param object
-	 * @return
-	 */
-	boolean hasMoreThanRead(Object object);
+	void checkColumnsMapping(Map<String, Integer> columnsMapping);
 	
 }

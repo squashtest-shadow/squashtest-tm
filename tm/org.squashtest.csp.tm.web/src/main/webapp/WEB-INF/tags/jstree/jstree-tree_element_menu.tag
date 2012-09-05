@@ -62,7 +62,8 @@
 	<div id="tree-import-menu" >
 	<ul>
 		<li><a class="import-excel-tree-button menu-disabled" href="JavaScript:void(0);"><fmt:message key="tree.button.import.label" />...</a></li>
-		<c:if test="${ workspace == 'requirement' }">
+		<li><a class="import-links-excel-tree-button menu-disabled" href="JavaScript:void(0);"><fmt:message key="tree.button.import.links.label" />...</a></li>
+				<c:if test="${ workspace == 'requirement' }">
 			<li><a class="export-tree-button menu-disabled" href="JavaScript:void(0);"><fmt:message key='tree.button.export.label'/>...</a></li>
 		</c:if>
 	</ul>
@@ -113,7 +114,8 @@
 			initButton("#tree-import-button", "ui-icon-transferthick-e-w");		
 			
 			var importOption = {
-				"import-excel" : ".import-excel-tree-button"
+				"import-excel" : ".import-excel-tree-button",
+				"import-links-excel" : ".import-links-excel-tree-button"
 				<c:if test="${ workspace == 'requirement' }">
 				,
 				"export" : ".export-tree-button"

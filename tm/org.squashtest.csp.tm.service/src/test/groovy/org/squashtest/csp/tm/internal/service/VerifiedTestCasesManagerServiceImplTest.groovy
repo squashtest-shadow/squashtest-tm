@@ -20,8 +20,6 @@
  */
 package org.squashtest.csp.tm.internal.service
 
-
-
 import org.squashtest.csp.tm.domain.projectfilter.ProjectFilter
 import org.squashtest.csp.tm.domain.requirement.RequirementVersion
 import org.squashtest.csp.tm.domain.requirement.Requirement;

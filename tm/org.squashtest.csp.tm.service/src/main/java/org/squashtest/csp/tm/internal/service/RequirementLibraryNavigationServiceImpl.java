@@ -46,9 +46,11 @@ import org.squashtest.csp.tm.internal.repository.RequirementDao;
 import org.squashtest.csp.tm.internal.repository.RequirementFolderDao;
 import org.squashtest.csp.tm.internal.repository.RequirementLibraryDao;
 import org.squashtest.csp.tm.internal.service.importer.RequirementImporter;
+import org.squashtest.csp.tm.internal.service.importer.RequirementTestCaseLinksImporter;
 import org.squashtest.csp.tm.service.ProjectFilterModificationService;
 import org.squashtest.csp.tm.service.RequirementLibraryFinderService;
 import org.squashtest.csp.tm.service.RequirementLibraryNavigationService;
+import org.squashtest.csp.tm.service.importer.ImportRequirementTestCaseLinksSummary;
 import org.squashtest.csp.tm.service.importer.ImportSummary;
 
 @SuppressWarnings("rawtypes")
@@ -83,6 +85,9 @@ public class RequirementLibraryNavigationServiceImpl extends
 	@Inject
 	@Qualifier("squashtest.tm.service.RequirementLibrarySelectionStrategy")
 	private LibrarySelectionStrategy<RequirementLibrary, RequirementLibraryNode> libraryStrategy;
+	
+	@Inject
+	private RequirementTestCaseLinksImporter requirementTestCaseLinksImporter;
 
 	@Override
 	protected NodeDeletionHandler<RequirementLibraryNode, RequirementFolder> getDeletionHandler() {
@@ -228,6 +233,11 @@ public class RequirementLibraryNavigationServiceImpl extends
 	@Override
 	public ImportSummary importExcel(InputStream stream, Long libraryId) {
 		return requirementImporter.importExcelRequirements(stream, libraryId);
+	}
+
+	@Override
+	public ImportRequirementTestCaseLinksSummary importLinksExcel(InputStream stream) {
+		return requirementTestCaseLinksImporter.importLinksExcel(stream);
 	}
 
 }

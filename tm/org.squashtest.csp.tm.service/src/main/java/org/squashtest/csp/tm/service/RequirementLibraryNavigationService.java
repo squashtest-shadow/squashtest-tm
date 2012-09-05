@@ -31,6 +31,7 @@ import org.squashtest.csp.tm.domain.requirement.Requirement;
 import org.squashtest.csp.tm.domain.requirement.RequirementFolder;
 import org.squashtest.csp.tm.domain.requirement.RequirementLibrary;
 import org.squashtest.csp.tm.domain.requirement.RequirementLibraryNode;
+import org.squashtest.csp.tm.service.importer.ImportRequirementTestCaseLinksSummary;
 import org.squashtest.csp.tm.service.importer.ImportSummary;
 
 @SuppressWarnings("rawtypes")
@@ -51,13 +52,22 @@ public interface RequirementLibraryNavigationService extends
 	
 	/**
 	 * Accepts a stream to a .xls / .xlsx file info for requirement folders and requirements. Will
-	 * convert the test cases from excel to squash.
+	 * convert the requirements from excel to squash.
 	 * 
 	 * @param ExcelStream
 	 * @param libraryId the identifier of the library we are importing requirements into.
 	 * @return a summary of the operations.
 	 */
 	ImportSummary importExcel(InputStream stream, Long projectId);
+	
+	/**
+	 * Accepts a stream to a .xls / .xlsx file info for requirement and test-case links. Will
+	 * convert the links from excel to squash.
+	 * 
+	 * @param ExcelStream
+	 * @return a summary of the operations.
+	 */
+	ImportRequirementTestCaseLinksSummary importLinksExcel(InputStream stream);
 	
 
 }

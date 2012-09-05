@@ -22,60 +22,50 @@ package org.squashtest.csp.tm.internal.service.importer;
 
 import java.io.IOException;
 import java.io.InputStream;
-import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+import javax.inject.Inject;
+
 import org.apache.poi.openxml4j.exceptions.InvalidFormatException;
-import org.apache.poi.ss.usermodel.Cell;
 import org.apache.poi.ss.usermodel.Row;
 import org.apache.poi.ss.usermodel.Sheet;
 import org.apache.poi.ss.usermodel.Workbook;
 import org.apache.poi.ss.usermodel.WorkbookFactory;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.stereotype.Component;
+import org.squashtest.csp.tm.domain.ColumnHeaderNotFoundException;
 import org.squashtest.csp.tm.domain.SheetCorruptedException;
-import org.squashtest.csp.tm.domain.requirement.RequirementFolder;
+import org.squashtest.csp.tm.domain.requirement.RequirementVersion;
+import org.squashtest.csp.tm.domain.testcase.TestCase;
+import org.squashtest.csp.tm.service.VerifyingTestCaseManagerService;
+import org.squashtest.csp.tm.service.importer.ImportRequirementTestCaseLinksSummary;
 
-/**
- * Must read an archive and make test cases from the files it includes.
- * 
- * regarding the summary : may increment total test cases, warnings and failures, but not success.
- * 
- * @author bsiri
- *
- */
-class RequirementHierarchyCreator{
-	private static final Logger LOGGER = LoggerFactory.getLogger(RequirementHierarchyCreator.class);
 
-	private RequirementParser parser;
-	private ImportSummaryImpl summary = new ImportSummaryImpl();
-	private RequirementFolder root;
+@Component
+public class RequirementTestCaseLinksImporter {
 	
-	public RequirementHierarchyCreator(){
-		root = new RequirementFolder();
+	private static final Logger LOGGER = LoggerFactory.getLogger(RequirementTestCaseLinksImporter.class);
+	
+	@Inject 
+	private VerifyingTestCaseManagerService verifyingTestCaseManagerService;
+	@Inject
+	private RequirementTestCaseLinkParser parser ;
+	
+	/**
+	 * @throws ColumnHeaderNotFoundException if one mandatory column header is not found
+	 * @param excelStream
+	 * @return
+	 */
+	public ImportRequirementTestCaseLinksSummary importLinksExcel(InputStream excelStream){
 		
-	}
-
-	public void setParser(RequirementParser parser){
-		this.parser = parser;
-	}
-	
-	public ImportSummaryImpl getSummary(){
-		return summary;
-	}
+		ImportRequirementTestCaseLinksSummaryImpl summary = new ImportRequirementTestCaseLinksSummaryImpl();
 		
-	public RequirementFolder getNodes(){
-		return root;
-	}
-	
-	public Map<RequirementFolder, List<PseudoRequirement>> create(InputStream excelStream){
-		Map<RequirementFolder, List<PseudoRequirement>> organizedRequirementLibraryNodes = new HashMap<RequirementFolder, List<PseudoRequirement>>();
-		organizedRequirementLibraryNodes.put(root, new ArrayList<PseudoRequirement>());
 		try {
 			Workbook workbook = WorkbookFactory.create(excelStream);
-			parseFile(workbook, organizedRequirementLibraryNodes);
+			parseFile(workbook, summary);
 			excelStream.close();
 						
 		} catch (InvalidFormatException e) {
@@ -85,22 +75,25 @@ class RequirementHierarchyCreator{
 			LOGGER.warn(e.getMessage());
 			throw new SheetCorruptedException(e);
 		}
-		return organizedRequirementLibraryNodes;
+		return summary;
 
 	}
-
-	private void parseFile(Workbook workbook, Map<RequirementFolder, List<PseudoRequirement>> organizedRequirementLibraryNodes) {
+	
+	private void parseFile(Workbook workbook, ImportRequirementTestCaseLinksSummaryImpl summary) {
 		Sheet sheet = workbook.getSheetAt(0);
+		//process column headers
 		Map<String, Integer> columnsMapping = ExcelRowReaderUtils.mapColumns(sheet);
+		parser.checkColumnsMapping(columnsMapping);
+		// change ids into Squash Entities and fill the summary
+		Map<RequirementVersion, List<TestCase>> testCaseListByRequirementVersion = new HashMap<RequirementVersion, List<TestCase>>();
 		for (int r = 1; r < sheet.getLastRowNum(); r++) {
 			Row row = sheet.getRow(r);
-			parser.parseRow(root, row, summary, columnsMapping, organizedRequirementLibraryNodes);
+			parser.parseRow( row, summary, columnsMapping, testCaseListByRequirementVersion);
 		}
+		//persist links
+		verifyingTestCaseManagerService.addVerifyingTestCasesToRequirementVersions(testCaseListByRequirementVersion);
 	}
 
-	
-
-	
 
 	
 	
