@@ -253,7 +253,7 @@ public class TestCase extends TestCaseLibraryNode implements AttachmentHolder{
 		Requirement req = version.getRequirement();
 
 		for (RequirementVersion verified : verifiedRequirementVersions) {
-			if (req.equals(verified.getRequirement())) {
+			if (req.getId().equals(verified.getRequirement().getId())) {
 				throw new RequirementAlreadyVerifiedException(version, this);
 			}
 		}

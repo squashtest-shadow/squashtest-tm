@@ -80,35 +80,65 @@ public class RequirementTestCaseLinkParserImpl implements RequirementTestCaseLin
 
 		// store information if ok
 		if (requirementVersion != null && testCase != null) {
-			List<RequirementVersion> requirementVersions = requirementVersionsByTestCaseList.get(testCase);
-			if (requirementVersions == null) {
-				requirementVersions = new ArrayList<RequirementVersion>();
-				requirementVersions.add(requirementVersion);
-				requirementVersionsByTestCaseList.put(testCase, requirementVersions);
-			} else {
-				if ( testCaseAlreadyBoundToRequirement(testCase, requirementVersion) || containsASisterVersion(requirementVersion, requirementVersions)) {
-						summary.incrFailures();
-						summary.addLinkAlreadyExist(getRowLineNumber(row));
-				}else{
-					requirementVersions.add(requirementVersion);
-					requirementVersionsByTestCaseList.put(testCase, requirementVersions);
-				}
-			}
-
+			checkLinkAlreadyExistAndStore(row, summary, requirementVersionsByTestCaseList, requirementVersion, testCase);
 		} else {
 			summary.incrFailures();
 		}
 
 	}
 
-	private boolean testCaseAlreadyBoundToRequirement(TestCase testCase, RequirementVersion requirementVersion) {
-		boolean alreadyBound = false;
-		try{
-			testCase.checkRequirementNotVerified(requirementVersion);
-		}catch(RequirementAlreadyVerifiedException e){
-			alreadyBound = true;
+	private void checkLinkAlreadyExistAndStore(Row row, ImportRequirementTestCaseLinksSummaryImpl summary,
+			Map<TestCase, List<RequirementVersion>> requirementVersionsByTestCaseList,
+			RequirementVersion requirementVersion, TestCase testCase) {
+
+		if (!testCaseAlreadyBoundToRequirement(testCase, requirementVersion)) {
+			checkIfASisterAndStore(row, summary, requirementVersionsByTestCaseList, requirementVersion, testCase);
+		} else {
+			summary.incrFailures();
+			summary.addLinkAlreadyExist(getRowLineNumber(row));
 		}
-		return alreadyBound;
+	}
+
+	private void checkIfASisterAndStore(Row row, ImportRequirementTestCaseLinksSummaryImpl summary,
+			Map<TestCase, List<RequirementVersion>> requirementVersionsByTestCaseList,
+			RequirementVersion requirementVersion, TestCase testCase) {
+		
+		List<RequirementVersion> requirementVersions = requirementVersionsByTestCaseList.get(testCase);
+		if (requirementVersions == null) {
+			requirementVersions = new ArrayList<RequirementVersion>();
+			storeRequirementVersion(requirementVersionsByTestCaseList, requirementVersion, testCase,
+					requirementVersions);
+		} else {
+			checkIfSisterInListAndStore(row, summary, requirementVersionsByTestCaseList, requirementVersion, testCase,
+					requirementVersions);
+		}
+	}
+
+	private void checkIfSisterInListAndStore(Row row, ImportRequirementTestCaseLinksSummaryImpl summary,
+			Map<TestCase, List<RequirementVersion>> requirementVersionsByTestCaseList,
+			RequirementVersion requirementVersion, TestCase testCase, List<RequirementVersion> requirementVersions) {
+		if (containsASisterVersion(requirementVersion, requirementVersions)) {
+			summary.incrFailures();
+			summary.addLinkAlreadyExist(getRowLineNumber(row));
+		} else {
+			storeRequirementVersion(requirementVersionsByTestCaseList, requirementVersion, testCase,
+					requirementVersions);
+		}
+	}
+
+	private void storeRequirementVersion(Map<TestCase, List<RequirementVersion>> requirementVersionsByTestCaseList,
+			RequirementVersion requirementVersion, TestCase testCase, List<RequirementVersion> requirementVersions) {
+		requirementVersions.add(requirementVersion);
+		requirementVersionsByTestCaseList.put(testCase, requirementVersions);
+	}
+
+	private boolean testCaseAlreadyBoundToRequirement(TestCase testCase, RequirementVersion requirementVersion) {
+		try {
+			testCase.checkRequirementNotVerified(requirementVersion);
+		} catch (RequirementAlreadyVerifiedException e) {
+			return true;
+		}
+		return false;
 	}
 
 	private boolean containsASisterVersion(RequirementVersion requirementVersion,

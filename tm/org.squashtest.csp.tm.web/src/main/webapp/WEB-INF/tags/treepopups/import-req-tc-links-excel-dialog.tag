@@ -123,12 +123,13 @@
 			
 			
 		<div class="summary">
+		<br/>
 			<div>
-				<span><f:message key="dialog.import-links-excel.success"/></span>
+				<span class="span-bold" ><f:message key="dialog.import-links-excel.success"/></span>
 				<span class="success-import span-bold span-green"></span>
 			</div>
 			<div>
-				<span><f:message key="dialog.import-links-excel.failed"/></span>
+				<span class="span-bold" ><f:message key="dialog.import-links-excel.failed"/></span>
 				<span class="failures-import span-bold"></span>
 			</div>			
 			
@@ -138,7 +139,7 @@
 				<span><f:message key="dialog.import.summary.notes.label"/><br>
 				<f:message key="dialog.import-links.summary.notes.lines"/>
 				</span>
-				<ul>
+				<ul  contenteditable="true" style="height:100px ; overflow : auto" >
 					<li class="import-links-excel-dialog-req-not-found">
 						<span><f:message key="dialog.import.summary.notes.req-not-found.label"/></span>
 						<span class="req-not-found-import"></span>

@@ -97,12 +97,7 @@
 			}
 		}
 		
-		function refreshVerifiedRequirements() {
-			var table = $('#verified-requirements-table').dataTable();
-			saveTableSelection(table, getRequirementsTableRowId);
-			table.fnDraw(false);
-		}
-
+		
 		
 		function requirementsTableDrawCallback() {
 			decorateDeleteButtons($('.delete-verified-requirement-button', this));
@@ -111,9 +106,7 @@
 		}
 
 		
-		function getRequirementsTableRowId(rowData) {
-			return rowData[0];	
-		}
+		
 		
 		function getRequirementsTableRowStatus(rowData) {
 			return rowData[8];	
@@ -242,6 +235,17 @@
 		});
 		
 	});
+	
+	function refreshVerifiedRequirements() {
+		var table = $('#verified-requirements-table').dataTable();
+		saveTableSelection(table, getRequirementsTableRowId);
+		table.fnDraw(false);
+	}
+	
+	function getRequirementsTableRowId(rowData) {
+		return rowData[0];	
+	}
+
 </script>
 
 
