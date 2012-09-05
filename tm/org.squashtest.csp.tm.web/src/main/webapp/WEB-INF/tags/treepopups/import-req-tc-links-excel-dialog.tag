@@ -151,6 +151,10 @@
 						<span><f:message key="dialog.import.summary.notes.version-not-found.label"/></span>
 						<span class="version-not-found-import"></span>
 					</li>
+					<li class="import-links-excel-dialog-link-already-exist">
+						<span><f:message key="dialog.import.summary.notes.link-already-exist.label"/></span>
+						<span class="link-already-exist-import"></span>
+					</li>
 					<li class="import-links-excel-dialog-obsolete">
 						<span><f:message key="dialog.import.summary.notes.obsolete.label"/></span>
 						<span class="obsolete-import"></span>
@@ -161,7 +165,7 @@
 					</li>
 					<li class="import-links-excel-dialog-tc-access-denied">
 						<span><f:message key="dialog.import.summary.notes.tc-access-denied.label"/></span>
-						<span class="tc-access-denied-import"></span>
+						<span class="link-already-exist-import"></span>
 					</li>
 				</ul>
 			</div>
@@ -231,7 +235,19 @@
 				versionNotFoundDialog.show(); 
 				} else { versionNotFoundDialog.hide(); }
 			
+			var linkAlreadyExistDialog = $(".import-links-excel-dialog-link-already-exist", panel);
+			if ($.trim(response.linkAlreadyExist) != "") { 
+				$(".link-already-exist-import", panel).text(response.linkAlreadyExist);
+				linkAlreadyExistDialog.show(); 
+				} else { linkAlreadyExistDialog.hide(); }
 			
+			if(eval("typeof " + "refreshVerifyingTestCases"+ " == 'function'")){
+				refreshVerifyingTestCases();
+			}else{
+				if(eval("typeof " + "refreshVerifiedRequirements"+ " == 'function'")){
+					refreshVerifiedRequirements();
+				}
+			}
 		}
 		
 	}

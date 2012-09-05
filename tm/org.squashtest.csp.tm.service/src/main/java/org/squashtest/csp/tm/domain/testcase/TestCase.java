@@ -247,8 +247,9 @@ public class TestCase extends TestCaseLibraryNode implements AttachmentHolder{
 
 	/**
 	 * @param version
+	 * @throws RequirementAlreadyVerifiedException
 	 */
-	private void checkRequirementNotVerified(RequirementVersion version) {
+	public void checkRequirementNotVerified(RequirementVersion version) throws RequirementAlreadyVerifiedException{
 		Requirement req = version.getRequirement();
 
 		for (RequirementVersion verified : verifiedRequirementVersions) {

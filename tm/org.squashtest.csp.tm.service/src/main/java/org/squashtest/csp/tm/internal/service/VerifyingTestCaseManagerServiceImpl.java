@@ -169,15 +169,6 @@ public class VerifyingTestCaseManagerServiceImpl implements VerifyingTestCaseMan
 		return new PagingBackedPagedCollectionHolder<List<TestCase>>(pagingAndSorting, verifiersCount, verifiers);
 	}
 
-	@Override
-	public void addVerifyingTestCasesToRequirementVersions(
-			Map<RequirementVersion, List<TestCase>> testCaseListByRequirementVersions) {
-		for(Entry<RequirementVersion, List<TestCase>> tcListByReqV : testCaseListByRequirementVersions.entrySet()){
-			RequirementVersion requirementVersion = tcListByReqV.getKey();
-			List<TestCase> testCases = tcListByReqV.getValue();
-			doAddVerifyingTestCasesToRequirementVersion(testCases, requirementVersion);
-		}
-		
-	}
+	
 
 }

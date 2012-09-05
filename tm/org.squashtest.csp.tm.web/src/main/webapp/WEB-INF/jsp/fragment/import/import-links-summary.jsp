@@ -26,7 +26,7 @@
 
 <p>${'{' } "success" : ${ summary.success }, 
 "total" : ${ summary.total }, 
-"failures" : ${ summary.failures }, 
+"failures" : ${ summary.failures },
 
 "obsolete" : "<c:forEach var="o" items="${summary.obsoletes }">${o},</c:forEach>",
 
@@ -38,6 +38,8 @@
 
 "testCaseNotFound" : "<c:forEach var="tcnf" items="${summary.testCaseNotFound }">${tcnf}, </c:forEach>",
 
-"versionNotFound" : "<c:forEach var="vnf" items="${summary.versionNotFound }">${vnf}, </c:forEach>"
+"versionNotFound" : "<c:forEach var="vnf" items="${summary.versionNotFound }">${vnf}, </c:forEach>",
+
+"linkAlreadyExist" : "<c:forEach var="lae" items="${summary.linkAlreadyExist }">${lae}, </c:forEach>"
 
 ${'}'}</p>

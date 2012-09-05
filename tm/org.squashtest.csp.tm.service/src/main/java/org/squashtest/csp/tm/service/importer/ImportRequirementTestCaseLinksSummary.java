@@ -20,6 +20,7 @@
  */
 package org.squashtest.csp.tm.service.importer;
 
+import java.util.Collection;
 import java.util.Set;
 
 public interface ImportRequirementTestCaseLinksSummary {
@@ -72,4 +73,9 @@ public interface ImportRequirementTestCaseLinksSummary {
 	 * adds the result of an import summary to this import summary 
 	 */
 	void add(ImportRequirementTestCaseLinksSummary summary);
+	/**
+	 * 
+	 * @return row numbers where the test case was already linked to a version of the same Requirement
+	 */
+	Set<Integer> getLinkAlreadyExist();
 }

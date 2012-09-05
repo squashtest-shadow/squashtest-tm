@@ -34,6 +34,7 @@ import org.springframework.osgi.extensions.annotation.ServiceReference;
 import org.springframework.stereotype.Component;
 import org.squashtest.csp.core.service.security.PermissionEvaluationService;
 import org.squashtest.csp.tm.domain.ColumnHeaderNotFoundException;
+import org.squashtest.csp.tm.domain.RequirementAlreadyVerifiedException;
 import org.squashtest.csp.tm.domain.requirement.Requirement;
 import org.squashtest.csp.tm.domain.requirement.RequirementVersion;
 import org.squashtest.csp.tm.domain.testcase.TestCase;
@@ -48,10 +49,9 @@ public class RequirementTestCaseLinkParserImpl implements RequirementTestCaseLin
 	private RequirementDao requirementDao;
 	@Inject
 	private TestCaseDao testCaseDao;
-	
+
 	private PermissionEvaluationService permissionService;
-	
-	
+
 	@ServiceReference
 	public void setPermissionService(PermissionEvaluationService permissionService) {
 		this.permissionService = permissionService;
@@ -60,39 +60,72 @@ public class RequirementTestCaseLinkParserImpl implements RequirementTestCaseLin
 	@Override
 	public void parseRow(Row row, ImportRequirementTestCaseLinksSummaryImpl summary,
 			Map<String, Integer> columnsMapping,
-			Map<RequirementVersion, List<TestCase>> testCaseListByRequirementVersion) {
+			Map<TestCase, List<RequirementVersion>> requirementVersionsByTestCaseList) {
 		if (validateRow(row, columnsMapping)) {
 			summary.incrTotal();
 			LOGGER.debug("Parse Row #" + getRowLineNumber(row));
-			doParseRow(row, summary, columnsMapping, testCaseListByRequirementVersion);
+			doParseRow(row, summary, columnsMapping, requirementVersionsByTestCaseList);
 		}
 	}
 
 	private void doParseRow(Row row, ImportRequirementTestCaseLinksSummaryImpl summary,
 			Map<String, Integer> columnsMapping,
-			Map<RequirementVersion, List<TestCase>> testCaseListByRequirementVersion) {
+			Map<TestCase, List<RequirementVersion>> requirementVersionsByTestCaseList) {
 
 		// find requirementVersion
 		RequirementVersion requirementVersion = findRequirementVersion(row, summary, columnsMapping);
-		
+
 		// find testCase
 		TestCase testCase = findTestCase(row, summary, columnsMapping);
-		// store information if ok 
-		if(requirementVersion !=null && testCase != null){
-			List<TestCase> testCases = testCaseListByRequirementVersion.get(requirementVersion);
-			if(testCases == null){
-				testCases = new ArrayList<TestCase>();
+
+		// store information if ok
+		if (requirementVersion != null && testCase != null) {
+			List<RequirementVersion> requirementVersions = requirementVersionsByTestCaseList.get(testCase);
+			if (requirementVersions == null) {
+				requirementVersions = new ArrayList<RequirementVersion>();
+				requirementVersions.add(requirementVersion);
+				requirementVersionsByTestCaseList.put(testCase, requirementVersions);
+			} else {
+				if ( testCaseAlreadyBoundToRequirement(testCase, requirementVersion) || containsASisterVersion(requirementVersion, requirementVersions)) {
+						summary.incrFailures();
+						summary.addLinkAlreadyExist(getRowLineNumber(row));
+				}else{
+					requirementVersions.add(requirementVersion);
+					requirementVersionsByTestCaseList.put(testCase, requirementVersions);
+				}
 			}
-			testCases.add(testCase);
-			testCaseListByRequirementVersion.put(requirementVersion, testCases);
-		}else{
+
+		} else {
 			summary.incrFailures();
 		}
 
 	}
-	
+
+	private boolean testCaseAlreadyBoundToRequirement(TestCase testCase, RequirementVersion requirementVersion) {
+		boolean alreadyBound = false;
+		try{
+			testCase.checkRequirementNotVerified(requirementVersion);
+		}catch(RequirementAlreadyVerifiedException e){
+			alreadyBound = true;
+		}
+		return alreadyBound;
+	}
+
+	private boolean containsASisterVersion(RequirementVersion requirementVersion,
+			List<RequirementVersion> potentialSisters) {
+		Requirement requirement = requirementVersion.getRequirement();
+		List<RequirementVersion> sisters = requirement.getRequirementVersions();
+		for (RequirementVersion potentialSister : potentialSisters) {
+			if (sisters.contains(potentialSister)) {
+				return true;
+			}
+		}
+		return false;
+	}
+
 	/**
-	 * will try to find the testCase. If testCase is not found or the user has no "link" access to it, will return <code>null</code>;
+	 * will try to find the testCase. If testCase is not found or the user has no "link" access to it, will return
+	 * <code>null</code>;
 	 * 
 	 * @param row
 	 * @param summary
@@ -116,15 +149,19 @@ public class RequirementTestCaseLinkParserImpl implements RequirementTestCaseLin
 
 		return null;
 	}
-	
+
 	/**
-	 * will try to find the requirement (see {@linkplain RequirementTestCaseLinkParserImpl#findRequirement(Row, ImportRequirementTestCaseLinksSummaryImpl, Map)}. <br>
+	 * will try to find the requirement (see
+	 * {@linkplain RequirementTestCaseLinkParserImpl#findRequirement(Row, ImportRequirementTestCaseLinksSummaryImpl, Map)}
+	 * . <br>
 	 * If the requirement is found, will find the requirementVersion and update the summary.<br>
 	 * If the requirement is found but is obsolete <code>null </code> is returned.
+	 * 
 	 * @param row
 	 * @param summary
 	 * @param columnsMapping
-	 * @return the requirementVersion or <code>null</code> row parameters are not suitable (not found, obsolete, no good access rights)
+	 * @return the requirementVersion or <code>null</code> row parameters are not suitable (not found, obsolete, no good
+	 *         access rights)
 	 */
 	private RequirementVersion findRequirementVersion(Row row, ImportRequirementTestCaseLinksSummaryImpl summary,
 			Map<String, Integer> columnsMapping) {
@@ -132,21 +169,21 @@ public class RequirementTestCaseLinkParserImpl implements RequirementTestCaseLin
 		// find Requirement
 		Requirement requirement = findRequirement(row, summary, columnsMapping);
 		if (requirement != null) {
-			
+
 			Double versionDoubleNumber = ExcelRowReaderUtils.readNumericField(row, columnsMapping, VERSION_TAG);
 			if (versionDoubleNumber == null) {
 				requirementVersion = requirement.getCurrentVersion();
 			} else {
 				int versionNumber = versionDoubleNumber.intValue();
-				try{
-				requirementVersion = requirement.findRequirementVersion(versionNumber);
-				}catch(EntityNotFoundException e){
+				try {
+					requirementVersion = requirement.findRequirementVersion(versionNumber);
+				} catch (EntityNotFoundException e) {
 					LOGGER.debug(e.getMessage());
 					summary.addVersionNotFound(getRowLineNumber(row));
 				}
 			}
-			if(requirementVersion != null) {
-				if(!requirementVersion.isNotObsolete()){
+			if (requirementVersion != null) {
+				if (!requirementVersion.isNotObsolete()) {
 					requirementVersion = null;
 					summary.addObsolete(getRowLineNumber(row));
 				}
@@ -156,10 +193,12 @@ public class RequirementTestCaseLinkParserImpl implements RequirementTestCaseLin
 	}
 
 	private int getRowLineNumber(Row row) {
-		return row.getRowNum()+1;
+		return row.getRowNum() + 1;
 	}
+
 	/**
-	 * will try to find the requirement. If requirement is not found or the user has no "link" access to it, will return <code>null</code>;
+	 * will try to find the requirement. If requirement is not found or the user has no "link" access to it, will return
+	 * <code>null</code>;
 	 * 
 	 * @param row
 	 * @param summary
@@ -198,13 +237,13 @@ public class RequirementTestCaseLinkParserImpl implements RequirementTestCaseLin
 
 	@Override
 	public void checkColumnsMapping(Map<String, Integer> columnsMapping) {
-		if(columnsMapping.get(ID_REQUIREMENT_TAG) == null ){
-			throw new ColumnHeaderNotFoundException("The mandatory column '"+ID_REQUIREMENT_TAG+"' is not found");
+		if (columnsMapping.get(ID_REQUIREMENT_TAG) == null) {
+			throw new ColumnHeaderNotFoundException("The mandatory column '" + ID_REQUIREMENT_TAG + "' is not found");
 		}
-		if( columnsMapping.get(ID_TEST_CASE_TAG) == null){
-			throw new ColumnHeaderNotFoundException("The mandatory column '"+ID_TEST_CASE_TAG+"' is not found");
+		if (columnsMapping.get(ID_TEST_CASE_TAG) == null) {
+			throw new ColumnHeaderNotFoundException("The mandatory column '" + ID_TEST_CASE_TAG + "' is not found");
 		}
-		
+
 	}
 
 }

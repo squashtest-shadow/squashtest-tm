@@ -35,7 +35,7 @@ public class ImportRequirementTestCaseLinksSummaryImpl implements ImportRequirem
 	private Set<Integer> testCaseNotFound = new HashSet<Integer>();
 	private Set<Integer> versionNotFound = new HashSet<Integer>();
 	private Set<Integer> obsoletes = new HashSet<Integer>();
-	
+	private Set<Integer> linkAlreadyExist = new HashSet<Integer>();
 	public ImportRequirementTestCaseLinksSummaryImpl(){
 		
 	}
@@ -48,28 +48,32 @@ public class ImportRequirementTestCaseLinksSummaryImpl implements ImportRequirem
 		failures++;
 	}
 	
-	public void addObsolete(Integer id){
-		this.obsoletes.add(id);
+	public void addObsolete(int number){
+		this.obsoletes.add(number);
 	}
 	
-	public void addRequirementAccessRejected(Integer id){
-		this.requirementAccessRejected.add(id);
+	public void addRequirementAccessRejected(int number){
+		this.requirementAccessRejected.add(number);
 	}
 	
-	public void addRequirementNotFound(Integer id){
-		this.requirementNotFound.add(id);
+	public void addRequirementNotFound(int number){
+		this.requirementNotFound.add(number);
 	}
 	
-	public void addTestCaseAccessRejected(Integer id){
-		this.testCaseAccessRejected.add(id);
+	public void addTestCaseAccessRejected(int number){
+		this.testCaseAccessRejected.add(number);
 	}
 	
-	public void addTestCaseNotFound(Integer id){
-		this.testCaseNotFound.add(id);
+	public void addTestCaseNotFound(int number){
+		this.testCaseNotFound.add(number);
 	}
 	
 	public void addVersionNotFound(int number){
 		this.versionNotFound.add(number);
+	}
+	
+	public void addLinkAlreadyExist(int number){
+		this.linkAlreadyExist.add(number);
 	}
 	
 	@Override
@@ -135,7 +139,12 @@ public class ImportRequirementTestCaseLinksSummaryImpl implements ImportRequirem
 		this.testCaseAccessRejected.addAll(summary.getTestCaseAccessRejected());
 		this.testCaseNotFound.addAll(summary.getTestCaseNotFound());
 		this.versionNotFound.addAll(summary.getVersionNotFound());
-		
+		this.linkAlreadyExist.addAll(summary.getLinkAlreadyExist());
+	}
+
+	@Override
+	public Set<Integer> getLinkAlreadyExist() {
+		return this.linkAlreadyExist;
 	}
 
 	

@@ -52,9 +52,9 @@ public class RequirementNodeWalker implements RequirementLibraryNodeVisitor{
 		outputList = new LinkedList<Requirement>();
 	}
 	
-	public List<Requirement> walk(List<RequirementLibraryNode> inputList){
+	public List<Requirement> walk(List<RequirementLibraryNode> nodes){
 		
-		for (RequirementLibraryNode node : inputList){
+		for (RequirementLibraryNode node : nodes){
 			node.accept(this);
 		}
 		

@@ -60,14 +60,6 @@ public interface VerifyingTestCaseManagerService {
 			long requirementVersionId);
 	
 	/**
-	 * for each map entry, Adds a list of test cases to the ones verified by a requirement. If a test-case is already verified, nothing
-	 * special happens.
-	 * @param testCaseListByRequirementVersion
-	 */
-	void addVerifyingTestCasesToRequirementVersions(
-			Map<RequirementVersion, List<TestCase>> testCaseListByRequirementVersion);
-
-	/**
 	 * Removes a list of test-cases from the ones verified by a requirment. If a test-case is not verified by the
 	 * test case, nothing special happens.
 	 *

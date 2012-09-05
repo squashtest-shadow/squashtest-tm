@@ -34,7 +34,7 @@ interface RequirementTestCaseLinkParser {
 	String ID_TEST_CASE_TAG = "ID_TC";
 	String VERSION_TAG = "VERSION";
 
-	void parseRow( Row row, ImportRequirementTestCaseLinksSummaryImpl summary, Map<String, Integer> columnsMapping, Map<RequirementVersion, List<TestCase>> testCaseListByRequirementVersion) ;
+	void parseRow( Row row, ImportRequirementTestCaseLinksSummaryImpl summary, Map<String, Integer> columnsMapping, Map<TestCase, List<RequirementVersion>> requirementVersionsByTestCaseList) ;
 	/**
 	 * @throws ColumnHeaderNotFoundException if one mandatory column is not found
 	 * @param columnsMapping

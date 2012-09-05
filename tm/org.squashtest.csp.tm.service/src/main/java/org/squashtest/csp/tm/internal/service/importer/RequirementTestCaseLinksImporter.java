@@ -40,7 +40,7 @@ import org.squashtest.csp.tm.domain.ColumnHeaderNotFoundException;
 import org.squashtest.csp.tm.domain.SheetCorruptedException;
 import org.squashtest.csp.tm.domain.requirement.RequirementVersion;
 import org.squashtest.csp.tm.domain.testcase.TestCase;
-import org.squashtest.csp.tm.service.VerifyingTestCaseManagerService;
+import org.squashtest.csp.tm.service.VerifiedRequirementsManagerService;
 import org.squashtest.csp.tm.service.importer.ImportRequirementTestCaseLinksSummary;
 
 
@@ -50,7 +50,7 @@ public class RequirementTestCaseLinksImporter {
 	private static final Logger LOGGER = LoggerFactory.getLogger(RequirementTestCaseLinksImporter.class);
 	
 	@Inject 
-	private VerifyingTestCaseManagerService verifyingTestCaseManagerService;
+	private VerifiedRequirementsManagerService verifiedRequirementsManagerService;
 	@Inject
 	private RequirementTestCaseLinkParser parser ;
 	
@@ -85,13 +85,13 @@ public class RequirementTestCaseLinksImporter {
 		Map<String, Integer> columnsMapping = ExcelRowReaderUtils.mapColumns(sheet);
 		parser.checkColumnsMapping(columnsMapping);
 		// change ids into Squash Entities and fill the summary
-		Map<RequirementVersion, List<TestCase>> testCaseListByRequirementVersion = new HashMap<RequirementVersion, List<TestCase>>();
+		Map<TestCase, List<RequirementVersion>> requirementVersionsByTestCase = new HashMap<TestCase, List<RequirementVersion>>();
 		for (int r = 1; r < sheet.getLastRowNum(); r++) {
 			Row row = sheet.getRow(r);
-			parser.parseRow( row, summary, columnsMapping, testCaseListByRequirementVersion);
+			parser.parseRow( row, summary, columnsMapping, requirementVersionsByTestCase);
 		}
 		//persist links
-		verifyingTestCaseManagerService.addVerifyingTestCasesToRequirementVersions(testCaseListByRequirementVersion);
+		verifiedRequirementsManagerService.addVerifyingRequirementVersionsToTestCase(requirementVersionsByTestCase);
 	}
 
 

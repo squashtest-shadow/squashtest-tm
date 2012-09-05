@@ -22,6 +22,7 @@ package org.squashtest.csp.tm.service;
 
 import java.util.Collection;
 import java.util.List;
+import java.util.Map;
 
 import org.springframework.transaction.annotation.Transactional;
 import org.squashtest.csp.tm.domain.VerifiedRequirementException;
@@ -47,6 +48,15 @@ public interface VerifiedRequirementsManagerService {
 	 */
 	Collection<VerifiedRequirementException> addVerifiedRequirementsToTestCase(List<Long> requirementsIds,
 			long testCaseId);
+	
+	/**
+	 * Adds a list of requirement-versions to the ones verified by a test case. If the version or a sister is already verified, nothing
+	 * special happens.
+	 * 
+	 * @param requirementVersionsByTestCase : list of requirementVersions mapped by test-case
+	 * @return 
+	 */
+	Collection<VerifiedRequirementException> addVerifyingRequirementVersionsToTestCase(Map<TestCase, List<RequirementVersion>> requirementVersionsByTestCase);
 
 	/**
 	 * Removes a list of requirements from the ones verified by a test case. If a requirement is not verified by the
@@ -87,4 +97,5 @@ public interface VerifiedRequirementsManagerService {
 	PagedCollectionHolder<List<RequirementVersion>> findAllDirectlyVerifiedRequirementsByTestCaseId(long testCaseId,
 			PagingAndSorting pas);
 
+	
 }

@@ -24,14 +24,20 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collection;
 import java.util.Collections;
+import java.util.Iterator;
 import java.util.List;
+import java.util.Map;
+import java.util.Map.Entry;
 
 import javax.inject.Inject;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+import org.squashtest.csp.tm.domain.RequirementAlreadyVerifiedException;
 import org.squashtest.csp.tm.domain.VerifiedRequirementException;
 import org.squashtest.csp.tm.domain.requirement.Requirement;
 import org.squashtest.csp.tm.domain.requirement.RequirementLibraryNode;
@@ -49,6 +55,10 @@ import org.squashtest.tm.core.foundation.collection.PagingBackedPagedCollectionH
 @Service("squashtest.tm.service.VerifiedRequirementsManagerService")
 @Transactional
 public class VerifiedRequirementsManagerServiceImpl implements VerifiedRequirementsManagerService {
+	
+	private static final Logger LOGGER = LoggerFactory.getLogger(VerifiedRequirementsManagerServiceImpl.class);
+
+	
 	@Inject
 	private TestCaseDao testCaseDao;
 
@@ -94,12 +104,14 @@ public class VerifiedRequirementsManagerServiceImpl implements VerifiedRequireme
 			List<Requirement> requirements, TestCase testCase) {
 		Collection<VerifiedRequirementException> rejections = new ArrayList<VerifiedRequirementException>(
 				requirements.size());
-
-		for (Requirement requirement : requirements) {
+		Iterator<Requirement> iterator = requirements.iterator();
+		while(iterator.hasNext()){
+		Requirement requirement = iterator.next();
 			try {
 				testCase.addVerifiedRequirement(requirement);
 			} catch (VerifiedRequirementException ex) {
 				rejections.add(ex);
+				iterator.remove();
 			}
 		}
 
@@ -201,5 +213,38 @@ public class VerifiedRequirementsManagerServiceImpl implements VerifiedRequireme
 		long verifiedCount = requirementVersionDao.countVerifiedByTestCase(testCaseId);
 		return new PagingBackedPagedCollectionHolder<List<RequirementVersion>>(pas, verifiedCount, verifiedReqs);
 	}
+	
+	@Override
+	public Collection<VerifiedRequirementException>  addVerifyingRequirementVersionsToTestCase(
+			Map<TestCase, List<RequirementVersion>> requirementVersionsByTestCase) {
+		Collection<VerifiedRequirementException> rejections = new ArrayList<VerifiedRequirementException>();
+		for(Entry<TestCase, List<RequirementVersion>> reqVsByTc : requirementVersionsByTestCase.entrySet()){
+			TestCase testCase = reqVsByTc.getKey();
+			List<RequirementVersion> requirementVersions = reqVsByTc.getValue();
+			Collection<VerifiedRequirementException> entrtyRejections = doAddVerifyingRequirementVersionsToTestCase(requirementVersions, testCase);
+			rejections.addAll(entrtyRejections);
+		}
+		return rejections;
+		
+	}
 
+	private Collection<VerifiedRequirementException>  doAddVerifyingRequirementVersionsToTestCase(List<RequirementVersion> requirementVersions,
+			TestCase testCase) {
+		Collection<VerifiedRequirementException> rejections = new ArrayList<VerifiedRequirementException>();
+		Iterator<RequirementVersion> iterator = requirementVersions.iterator();
+		while(iterator.hasNext()){
+			RequirementVersion requirementVersion = iterator.next();
+			try {
+				testCase.addVerifiedRequirementVersion(requirementVersion);
+			} catch (RequirementAlreadyVerifiedException ex) {
+				LOGGER.warn(ex.getMessage());
+				rejections.add(ex);
+				iterator.remove();
+			}
+		}
+		testCaseImportanceManagerService.changeImportanceIfRelationsAddedToTestCase(requirementVersions, testCase);
+		return rejections;
+		
+		
+	}
 }
