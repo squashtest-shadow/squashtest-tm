@@ -35,7 +35,6 @@ import javax.persistence.JoinColumn;
 import javax.persistence.JoinTable;
 import javax.persistence.Lob;
 import javax.persistence.ManyToMany;
-import javax.persistence.MappedSuperclass;
 import javax.persistence.OneToOne;
 import javax.validation.constraints.Size;
 
@@ -92,7 +91,7 @@ public class Project implements Identified {
 	private List<TestAutomationProject> testAutomationProjects=new ArrayList<TestAutomationProject>();
 	
 	@Column(name="TEST_AUTOMATION_ENABLED")
-	private Boolean testAutomationEnabled;
+	private boolean testAutomationEnabled = false;
 	
 	public String getLabel() {
 		return label;
