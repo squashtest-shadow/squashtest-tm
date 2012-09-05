@@ -30,7 +30,7 @@ public class NoBugTrackerBindingException extends ActionException {
 	//FIXME add generated serial version UID , my eclipse couldn't do it (mpagnon)
 	private static final long serialVersionUID = 1L;
 	
-	private final static String DEFAULT_MESSAGE = "No Bug-Tracker is bound to the concerned Project";
+	private final static String DEFAULT_MESSAGE = "No Bug-Tracker is bound to this Project";
 	private final String bugtrackerNameExistsMessageKey = "squashtm.action.exception.bugtrackerBinding.notExist";
 
 	public NoBugTrackerBindingException(Exception ex) {
