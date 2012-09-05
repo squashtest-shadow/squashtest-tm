@@ -55,6 +55,8 @@ import org.squashtest.tm.core.foundation.collection.Paging;
 import org.squashtest.tm.core.foundation.collection.PagingAndSorting;
 import org.squashtest.tm.core.foundation.collection.PagingBackedPagedCollectionHolder;
 
+import squashtm.testautomation.domain.TestAutomationProject;
+import squashtm.testautomation.domain.TestAutomationTest;
 import squashtm.testautomation.internal.service.InsecureTestAutomationManagementService;
 import squashtm.testautomation.model.TestAutomationProjectContent;
 
@@ -333,5 +335,22 @@ public class CustomTestCaseModificationServiceImpl implements CustomTestCaseModi
 		TestCase testCase = testCaseDao.findById(testCaseId);
 		
 		return taService.listTestsInProjects(testCase.getProject().getTestAutomationProjects());
+	}
+	
+	@Override
+	@PreAuthorize("hasPermission(#testCaseId, 'org.squashtest.csp.tm.domain.testcase.TestCase' , 'WRITE') or hasRole('ROLE_ADMIN')")
+	public TestAutomationTest bindAutomatedTest(Long testCaseId, Long taProjectId, String testName) {
+		
+		TestAutomationProject project = taService.findProjectById(taProjectId); 
+		
+		TestAutomationTest newTest = new TestAutomationTest(testName, project);
+		
+		TestAutomationTest persistedTest =  taService.persistOrAttach(newTest);
+		
+		TestCase testCase = testCaseDao.findById(testCaseId);
+		
+		testCase.setTestAutomationTest(persistedTest);
+		
+		return persistedTest;
 	}
 }

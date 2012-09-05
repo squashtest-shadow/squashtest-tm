@@ -81,6 +81,7 @@ import org.squashtest.tm.core.foundation.collection.PagedCollectionHolder;
 import org.squashtest.tm.core.foundation.collection.Paging;
 import org.squashtest.tm.core.foundation.collection.PagingAndSorting;
 
+import squashtm.testautomation.domain.TestAutomationTest;
 import squashtm.testautomation.model.TestAutomationProjectContent;
 import squashtm.testautomation.service.TestAutomationFinderService;
 
@@ -472,6 +473,13 @@ public class TestCaseModificationController {
 	}
 	
 	
+	@RequestMapping(value="/test-automation/tests", method = RequestMethod.POST, params = { "projectId", "name"})
+	@ResponseBody
+	public void bindAutomatedTest(@PathVariable("testCaseId") long testCaseId,@RequestParam("projectId") long projectId, @RequestParam("name") String testName){
+		
+		testCaseModificationService.bindAutomatedTest(testCaseId, projectId, testName);
+
+	}
 	
 	
 	//* ************************** / test automation section **********************

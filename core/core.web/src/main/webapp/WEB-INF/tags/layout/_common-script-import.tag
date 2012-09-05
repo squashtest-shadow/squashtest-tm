@@ -64,14 +64,13 @@
 <script type="text/javascript" src="${ pageContext.servletContext.contextPath }/scripts/squashtest/jquery.squashtm.bugtracker-issue-dialog.js" ></script>
 
 <script type="text/javascript" src="${ pageContext.servletContext.contextPath }/scripts/squashtest/classes/ta-admin-panel.js"></script>
+  
+<script type="text/javascript" src="${ pageContext.servletContext.contextPath }/scripts/squashtest/classes/ta-picker.js"></script>
 
 
 <!--  =============================================== UNDER WORK =================================================================== -->
 <%-- nothing yet --%>
-<%--  
-<script type="text/javascript" src="${ pageContext.servletContext.contextPath }/scripts/squashtest/classes/ta-picker.js"></script>
---%>
-<script type="text/javascript" src="http://localhost/scripts/ta-picker.js"></script>
+
 <!--  ============================================== /UNDER WORK =================================================================== -->
 
 

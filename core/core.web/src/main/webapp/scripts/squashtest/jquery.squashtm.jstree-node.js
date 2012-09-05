@@ -107,7 +107,7 @@
 		};
 
 		this.getPath = function() {
-			return this.getParents().all('getName').join().replace(/,/g, '/');
+			return this.getAncestors().all('getName').join().replace(/,/g, '/');
 		};
 
 		// ************ relationships getters
@@ -149,7 +149,7 @@
 		};
 		
 		
-		this.getParents = function(){
+		this.getAncestors = function(){
 			return this.parents('li', this.tree).add(this).treeNode();
 		};
 

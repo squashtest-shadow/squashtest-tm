@@ -31,64 +31,58 @@ import org.hibernate.SessionFactory;
 import org.hibernate.criterion.Example;
 import org.hibernate.criterion.Restrictions;
 
-import squashtm.testautomation.domain.TestAutomationProject;
+import squashtm.testautomation.domain.TestAutomationTest;
 import squashtm.testautomation.repository.NonUniqueEntityException;
-import squashtm.testautomation.repository.TestAutomationProjectDao;
+import squashtm.testautomation.repository.TestAutomationTestDao;
 
+public class HibernateTestAutomationTestDao implements TestAutomationTestDao {
 
-public class HibernateTestAutomationProjectDao implements
-		TestAutomationProjectDao {
-	
 	@Inject
 	private SessionFactory sessionFactory;
-
+	
+	
 	@Override
-	public void persist(TestAutomationProject newProject) {
-		if (findByExample(newProject)==null){
-			sessionFactory.getCurrentSession().persist(newProject);
+	public void persist(TestAutomationTest newTest) {
+		if (findByExample(newTest)==null){
+			sessionFactory.getCurrentSession().persist(newTest);
 		}else{
 			throw new NonUniqueEntityException();
 		}
 	}
-	
+
 	@Override
-	public TestAutomationProject uniquePersist(TestAutomationProject newProject) {
-		
-		//id exists ?
-		if ((newProject.getId() != null) && (findById(newProject.getId())!=null)){
-			return newProject;
+	public TestAutomationTest uniquePersist(TestAutomationTest newTest) {
+		if ((newTest.getId() != null) && (findById(newTest.getId())!=null)){
+			return newTest;
 		}
 		
 		//content exists ?
-		TestAutomationProject baseProject = findByExample(newProject);
-		if (baseProject != null){
-			return baseProject;
+		TestAutomationTest baseTest = findByExample(newTest);
+		if (baseTest != null){
+			return baseTest;
 		}
 		
 		//or else, persist
 		else{
-			sessionFactory.getCurrentSession().persist(newProject);
-			return newProject;
+			sessionFactory.getCurrentSession().persist(newTest);
+			return newTest;
 		}
-		
 	}
-	
-	
+
 	@Override
-	public TestAutomationProject findById(Long id) {
+	public TestAutomationTest findById(Long testId) {
 		Session session = sessionFactory.getCurrentSession();
-		Query query = session.getNamedQuery("testAutomationProject.findById");
-		query.setParameter("projectId", id);
-		return (TestAutomationProject)query.uniqueResult();
+		Query query = session.getNamedQuery("testAutomationTest.findById");
+		query.setParameter("testId", testId);
+		return (TestAutomationTest)query.uniqueResult();
 	}
-	
-
 
 	@Override
-	public TestAutomationProject findByExample(TestAutomationProject example) {
-		Criteria criteria = sessionFactory.getCurrentSession().createCriteria(TestAutomationProject.class);
+	public TestAutomationTest findByExample(TestAutomationTest example) {
+		
+		Criteria criteria = sessionFactory.getCurrentSession().createCriteria(TestAutomationTest.class);
 		criteria = criteria.add(Example.create(example));
-		criteria = criteria.add(Restrictions.eq("server", example.getServer()));
+		criteria = criteria.add(Restrictions.eq("project", example.getProject()));
 
 		List<?> res = criteria.list();
 		
@@ -96,14 +90,11 @@ public class HibernateTestAutomationProjectDao implements
 			return null;
 		}
 		else if (res.size()==1){
-			return (TestAutomationProject)res.get(0);
+			return (TestAutomationTest)res.get(0);
 		}
 		else{
 			throw new NonUniqueEntityException();
 		}
 	}
-
-	
-
 
 }

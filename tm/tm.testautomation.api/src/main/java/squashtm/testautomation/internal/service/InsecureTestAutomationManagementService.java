@@ -22,6 +22,7 @@ package squashtm.testautomation.internal.service;
 
 import squashtm.testautomation.domain.TestAutomationProject;
 import squashtm.testautomation.domain.TestAutomationServer;
+import squashtm.testautomation.domain.TestAutomationTest;
 import squashtm.testautomation.service.TestAutomationFinderService;
 
 /**
@@ -61,6 +62,25 @@ public interface InsecureTestAutomationManagementService extends TestAutomationF
 	
 	
 	/**
+	 * <p>Pretty much the same than {@link #persistOrAttach(TestAutomationProject)}. The argument must be attached to a persisted and 
+	 * session-bound {@link TestAutomationProject}.</p>
+	 * 
+	 * <p>Same principles and same results apply here</p>
+	 * 
+	 * 
+	 * @param newTest
+	 * @return a persisted TestAutomationTest, that should be used by the client code from now on.
+	 */
+	TestAutomationTest persistOrAttach(TestAutomationTest newTest);
+	
+	
+	TestAutomationProject findProjectById(long projectId);
+	
+	
+	TestAutomationTest findTestById(long testId);
+	
+	
+	/**
 	 * That method returns the default server configuration. It is classified as insecure because 
 	 * a TestAutomationServer isn't  a valid ACL entity, and yet it contains a password in clear (omg).
 	 *  
@@ -68,7 +88,5 @@ public interface InsecureTestAutomationManagementService extends TestAutomationF
 	 */
 	TestAutomationServer getDefaultServer();	
 	
-	
-	
-	
+
 }

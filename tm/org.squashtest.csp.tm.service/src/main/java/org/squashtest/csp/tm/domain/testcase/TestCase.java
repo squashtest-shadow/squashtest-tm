@@ -48,6 +48,7 @@ import javax.validation.constraints.NotNull;
 
 import org.squashtest.csp.tm.domain.NoVerifiableRequirementVersionException;
 import org.squashtest.csp.tm.domain.RequirementAlreadyVerifiedException;
+import org.squashtest.csp.tm.domain.UnallowedTestAssociationException;
 import org.squashtest.csp.tm.domain.UnknownEntityException;
 import org.squashtest.csp.tm.domain.attachment.Attachment;
 import org.squashtest.csp.tm.domain.attachment.AttachmentHolder;
@@ -399,7 +400,12 @@ public class TestCase extends TestCaseLibraryNode implements AttachmentHolder{
 	}
 
 	public void setTestAutomationTest(TestAutomationTest testAutomationTest) {
-		this.testAutomationTest = testAutomationTest;
+		if (getProject().isTestAutomationEnabled()){
+			this.testAutomationTest = testAutomationTest;
+		}
+		else{
+			throw new UnallowedTestAssociationException();
+		}
 	}
 	
 	

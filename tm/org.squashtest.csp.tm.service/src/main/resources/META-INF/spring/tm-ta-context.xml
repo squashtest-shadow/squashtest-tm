@@ -50,6 +50,6 @@
 	
 	<bean id="squashtest.tm.service.TAServerDao" class="squashtm.testautomation.repository.hibernate.HibernateTestAutomationServerDao" />
 	
-	
+	<bean id="squashtest.tm.service.TATestDao" class="squashtm.testautomation.repository.hibernate.HibernateTestAutomationTestDao" />	
 
 </beans>

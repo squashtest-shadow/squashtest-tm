@@ -39,27 +39,7 @@
 <%@ taglib uri="http://java.sun.com/jsp/jstl/functions" prefix="fn" %>
 
 
-<%-- ===================== DEV MODE (remove once its ready) ====================  --%>
 
-<link rel="stylesheet" href="http://localhost/css/ta-picker.css"></link>
-
-<%-- ==================== /DEV MODE (remove once its ready) ====================  --%>
- 			
-<div class="display-table-row">
-	
-	<label><f:message key="test-case.testautomation.section.label"/></label>
-	
-	<div class="display-table-cell">
-	<c:choose >
-	<c:when test="${testCase.testAutomationTest != null}">
-	<a id="ta-picker-link" href="javascript:void(0)"><c:out value="${testCase.testAutomationTest.name}"/></a>
-	</c:when>
-	<c:otherwise>
-	<a id="ta-picker-link" href="javascript:void(0)"><f:message key="test-case.testautomation.section.choose"/></a>
-	</c:otherwise>
-	</c:choose>	
-	</div>
-</div>
 
 <c:if test="${canModify == true}">
 	<pop:popup id="ta-picker-popup" closeOnSuccess="false" openedBy="ta-picker-link"
@@ -84,12 +64,12 @@
 	<jsp:attribute name="body">
 	<div class="ta-picker-structure-maindiv">
 	
-	 	<div class="pleasewait" style="vertical-align:middle;">
+	 	<div class="structure-pleasewait" style="vertical-align:middle;">
  			<img src="${ pageContext.servletContext.contextPath }/images/ajax-loader.gif" />
 			<span style="font-size:1.5em;"><f:message key="squashtm.processing"/></span>
  		</div>
 	
-		<div class="error">
+		<div class="structure-error">
 			<span> </span>
 		</div>
 	
@@ -103,18 +83,22 @@
 	</pop:popup>
 		
 	<script type="text/javascript">
+
 		$(function(){
-			
+
+		
 			var settings = {
 				selector : "#ta-picker-popup",
 				testAutomationURL : "${testCaseUrl}/test-automation/tests",
 				baseURL : "${pageContext.servletContext.contextPath}",
+				successCallback : function(newName){ $("#ta-picker-link").text(newName); },
 				messages : {
 					noTestSelected : '<f:message key="test-case.testautomation.popup.error.noselect"/>'
 				}
 			};
 			
 			new TestAutomationPicker(settings);
+
 		});
 	</script>
 </c:if>

@@ -27,6 +27,7 @@ import org.springframework.transaction.annotation.Transactional;
 import org.squashtest.csp.tm.domain.testcase.ActionTestStep;
 import org.squashtest.csp.tm.domain.testcase.TestStep;
 
+import squashtm.testautomation.domain.TestAutomationTest;
 import squashtm.testautomation.model.TestAutomationProjectContent;
 
 /**
@@ -99,4 +100,7 @@ public interface CustomTestCaseModificationService extends TestCaseFinder {
 	// *************** test automation section ******************
 	
 	Collection<TestAutomationProjectContent> findAssignableAutomationTests(long testCaseId);
+	
+	
+	TestAutomationTest bindAutomatedTest(Long testCaseId, Long taProjectId, String testName);
 }

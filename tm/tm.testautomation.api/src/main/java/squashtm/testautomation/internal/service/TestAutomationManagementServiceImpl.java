@@ -35,12 +35,14 @@ import org.springframework.transaction.annotation.Transactional;
 
 import squashtm.testautomation.domain.TestAutomationProject;
 import squashtm.testautomation.domain.TestAutomationServer;
+import squashtm.testautomation.domain.TestAutomationTest;
 import squashtm.testautomation.internal.tasks.FetchTestListTask;
 import squashtm.testautomation.internal.thread.FetchTestListFuture;
 import squashtm.testautomation.internal.thread.TestAutomationTaskExecutor;
 import squashtm.testautomation.model.TestAutomationProjectContent;
 import squashtm.testautomation.repository.TestAutomationProjectDao;
 import squashtm.testautomation.repository.TestAutomationServerDao;
+import squashtm.testautomation.repository.TestAutomationTestDao;
 import squashtm.testautomation.spi.TestAutomationConnector;
 
 @Transactional
@@ -56,6 +58,10 @@ public class TestAutomationManagementServiceImpl implements  InsecureTestAutomat
 	
 	@Inject
 	private TestAutomationProjectDao projectDao;
+	
+	@Inject
+	private TestAutomationTestDao testDao;
+	
 	
 	@Inject
 	private TestAutomationConnectorRegistry connectorRegistry;
@@ -129,6 +135,25 @@ public class TestAutomationManagementServiceImpl implements  InsecureTestAutomat
 		return projectDao.uniquePersist(newProject.newWithServer(inBaseServer));
 		
 	}
+	
+	
+	@Override
+	public TestAutomationTest persistOrAttach(TestAutomationTest newTest) {
+		return testDao.uniquePersist(newTest);
+	}
+	
+	
+	@Override
+	public TestAutomationProject findProjectById(long projectId) {
+		return projectDao.findById(projectId);
+	}
+	
+	
+	@Override
+	public TestAutomationTest findTestById(long testId) {
+		return testDao.findById(testId);
+	}
+	
 
 
 	//from the insecure interface
@@ -136,7 +161,6 @@ public class TestAutomationManagementServiceImpl implements  InsecureTestAutomat
 	public TestAutomationServer getDefaultServer() {
 		return defaultServer;
 	}
-	
 	
 	
 	//****************************** fetch test list methods ****************************************

@@ -695,7 +695,6 @@ function addTestStepSuccessAnother(){
 	</c:if>
 
 </div>
-<comp:fragment-tabs />
 <div class="fragment-tabs fragment-body">
 	<ul>
 		<li><a href="#tabs-1"><f:message key="tabs.label.information" />
@@ -710,6 +709,7 @@ function addTestStepSuccessAnother(){
 				</c:if>
 		</a>
 		</li>
+
 		<c:url var="executionsTabUrl"
 			value='/test-cases/${testCase.id}/executions'>
 			<c:param name="tab" value="" />
@@ -718,6 +718,7 @@ function addTestStepSuccessAnother(){
 					key="label.executions" />
 		</a>
 		</li>
+
 	</ul>
 	<div id="tabs-1">
 		<%----------------------------------- Description -----------------------------------------------%>
@@ -737,57 +738,71 @@ function addTestStepSuccessAnother(){
 		<comp:toggle-panel id="test-case-description-panel"
 			titleKey="generics.description.title" isContextual="true" open="true">
 			<jsp:attribute name="body">
-		<div id="test-case-description-table" class="display-table">
-			<div class="display-table-row">
-					<label for="test-case-id">ID</label>
-					<div class="display-table-cell" id="test-case-id">${ testCase.id }</div>
-				</div>
-			<div class="display-table-row">
-				<label for="test-case-description" class="display-table-cell"><f:message
-								key="test-case.description.label" />
+				<div id="test-case-description-table" class="display-table">
+					<div class="display-table-row">
+							<label class="display-table-cell" for="test-case-id">ID</label>
+							<div class="display-table-cell" id="test-case-id">${ testCase.id }</div>
+					</div>
+					
+					<div class="display-table-row">
+						<label for="test-case-description" class="display-table-cell"><f:message
+										key="test-case.description.label" />
+								</label>
+						<div class="display-table-cell" id="test-case-description">${ testCase.description }</div>
+					</div>
+					
+					<div class="display-table-row">
+							<label class="display-table-cell" for="test-case-reference"><f:message
+										key="test-case.reference.label" />
+								</label>
+							<div class="display-table-cell" id="test-case-reference">${ testCase.reference }</div>
+					</div>
+					
+					<div class="display-table-row">
+						<label for="test-case-importance" class="display-table-cell">
+							<f:message	key="test-case.importance.combo.label" />
 						</label>
-				<div class="display-table-cell" id="test-case-description">${ testCase.description }</div>
-			</div>
-			<div class="display-table-row">
-					<label class="display-table-cell" for="test-case-reference"><f:message
-								key="test-case.reference.label" />
-						</label>
-					<div class="display-table-cell" id="test-case-reference">${ testCase.reference }</div>
-				</div>
-			<div class="display-table-row">
-				<label for="test-case-importance" class="display-table-cell"><f:message
-								key="test-case.importance.combo.label" />
-						</label>
-				<div class="display-table-cell">
-					<span id="test-case-importance">${ testCaseImportanceLabel }</span>
-					<c:if test="${ smallEditable }">
-					<comp:select-jeditable-auto
-									associatedSelectJeditableId="test-case-importance"
-									url="${ importanceAutoUrl }"
-									isAuto="${ testCase.importanceAuto }"
-									paramName="importanceAuto" />
+						<div class="display-table-cell">
+							<span id="test-case-importance">${ testCaseImportanceLabel }</span>
+							<c:if test="${ smallEditable }">
+							<comp:select-jeditable-auto
+											associatedSelectJeditableId="test-case-importance"
+											url="${ importanceAutoUrl }"
+											isAuto="${ testCase.importanceAuto }"
+											paramName="importanceAuto" />
+							</c:if>
+							
+							
+						</div>
+					</div>
+						<%-- ================================
+							Test Automation structure
+						================================== --%>
+			
+					<c:if test="${testCase.project.testAutomationEnabled}">
+					<ta:testcase-script-elt-structure testCase="${testCase}" canModify="${writable}" testCaseUrl="${testCaseUrl}"/>
 					</c:if>
-					
-					
+					 
+						<%-- ================================
+							/Test Automation structure
+						================================== --%>
 				</div>
-			</div>
-			
-			<!-- ================================
-			
-				Test Automation item
-			
-			================================== -->
-			<c:if test="${testCase.project.testAutomationEnabled}">
-			<ta:testcase-script-elt testCase="${testCase}" canModify="${writable}" testCaseUrl="${testCaseUrl}"/>
-			</c:if>
-			<!-- ================================
-			
-				/Test Automation item
-			
-			================================== -->
-		</div>
 	</jsp:attribute>
 		</comp:toggle-panel>
+		
+		<%-- ================================
+			Test Automation code
+		================================== --%>	
+		
+		<c:if test="${testCase.project.testAutomationEnabled}">
+		<ta:testcase-script-elt-code testCase="${testCase}" canModify="${writable}" testCaseUrl="${testCaseUrl}"/>
+		</c:if>	
+		
+		<%-- ================================
+			/Test Automation code
+		================================== --%>				
+		
+		
 		<script>
 	function refreshTCImportance(){
 		$.ajax({
@@ -1067,9 +1082,9 @@ function addTestStepSuccessAnother(){
 </c:if>
 
 <%------------------------------ /bugs section -------------------------------%>
-
+<%--
 <comp:decorate-buttons />
-
+ --%>
 <script type="text/javascript">
 
 
@@ -1153,4 +1168,5 @@ function addTestStepSuccessAnother(){
 </script>
 
 
+<comp:fragment-tabs /> 
 

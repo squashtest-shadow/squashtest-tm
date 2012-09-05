@@ -19,12 +19,12 @@
  *     along with this software.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-
 /*
 	settings : 
 		- selector : an appropriate selector for the popup.
 		- testAutomationURL : the url where to GET - POST things.
 		- baseURL : the base url of the app.
+		- successCallback : a callback if the test association succeeds. Will be given 1 argument, the path of the associated automated test.
 		- messages : 
 			- noTestSelected : message that must be displayed when nothing is selected
 */
@@ -33,35 +33,34 @@ function TestAutomationPicker(settings){
 	var self=this;
 	
 	var instance = $(settings.selector);
-
 	var testAutomationURL = settings.testAutomationURL;
 	var baseURL = settings.baseURL;
+	var successCallback = settings.successCallback;
 	
-	var pleaseWaitPanel = instance.find(".pleasewait");
+	var pleaseWaitPanel = instance.find(".structure-pleasewait");
 	var mainPanel = instance.find(".structure-treepanel");
 	var tree = instance.find(".structure-tree");
 	
 	
-	var error = instance.find(".error").popupError();
+	var error = instance.find(".structure-error");
+	error.popupError();
 
-	
 	//cache
 	this.modelCache = undefined;
 
-	
 	// ************ state handling ******************
-	
+
 	var flipToPleaseWait = function(){
 		pleaseWaitPanel.removeClass("not-displayed");
 		mainPanel.addClass("not-displayed");
 		error.popup('hide');
 	};
-	
+
 	var flipToMain = function(){
 		pleaseWaitPanel.addClass("not-displayed");
 		mainPanel.removeClass("not-displayed");
 	};
-	
+
 	var getPostParams = function(){
 		
 		var node = tree.jstree('get_selected');
@@ -71,18 +70,15 @@ function TestAutomationPicker(settings){
 		};
 		
 		return {
-			path : node.getPath(),
-			libId : node.getLibrary().getDomId();
+			name : node.getPath(),
+			projectId : node.getLibrary().getDomId()
 		};
 	}
-	
-	
+
 	// ************ model *****************************
-	
-	
-	
+
 	var init = function(){
-		$.ajax({
+		return $.ajax({
 			url : testAutomationURL,
 			type : 'GET',
 			dataType : 'json'
@@ -93,12 +89,9 @@ function TestAutomationPicker(settings){
 			flipToMain();
 		})
 		.fail(function(jsonError){
-			var message = squashtm.notification.getErrorMessage(jsonError);
-			fatalError.find('span').text(message);
-			fatalError.popupError('show');				
+			handleAjaxError(jsonError);		
 		});
 	};
-	
 	
 	var setCache = function(model){
 		self.modelCache = model;
@@ -159,71 +152,78 @@ function TestAutomationPicker(settings){
 			
 			"plugins" : ["json_data", "types", "ui", "themes", "squash" ]
 			
-			
 		});			
 	
 	};
-	
 	
 	var reset = function(){
 		tree.jstree('get_selected').deselect();	
 	};
 	
+	//****************** transaction ************
+
+	var handleAjaxError = function(jsonError){
+		var message = squashtm.notification.getErrorMessage(jsonError);
+		fatalError.find('span').text(message);
+		fatalError.popupError('show');				
+	};
 	
 	var submit = function(){
 	
-		var name = getFullTestName();
-	
 		try{
-	
+		
+			var params = getPostParams();
 		
 			$.ajax({
+			
 				url : testAutomationURL,
 				type : 'POST',
-				params : { 
+				data : params,
+				dataType : 'json'
 				
+			})
+			.done(function(){
+				instance.dialog('close');
+				if (successCallback){
+					successCallback(params.name);
+				}
+			})
+			.fail(function(jsonError){
+				handleAjaxError(jsonError);
 			});
+			
 		}catch(exception){
 			if (exception == "no-selection"){
 				error.find("span").text(settings.messages.noTestSelected);
-				error.popupError('show');
-			};
+			}else{
+				error.find("span").text(exception);
+			}
+			error.popupError('show');
 		}
 		
 	};
 	
-	
 	// ************ events *********************
 	
-	var buttons = instance.dialog('option', 'buttons');
+	instance.dialog('option').buttons[0].click=submit;
 	
-	buttons[0].click = submit;
-	
-	buttons[1].click = function(){
+	instance.dialog('option').buttons[1].click=function(){
 		instance.dialog('close');
 	};
-	
-
-	/** put that on later
-	
+		
 	instance.bind("dialogopen", function(){
 		if (self.modelCache===undefined){
-			init();
+			self.initAjax = init();
 		}else{
 			reset();
 		}
 	});
-	
-	***/
-	
-	//debug
-	
-	this.modelCache = [{"state":"closed","data":{"title":"deuxième job"},"children":[{"state":"closed","data":{"title":"tests"},"children":[{"state":"closed","data":{"title":"moartests"},"children":[{"state":"leaf","data":{"title":"evenmoaar.txt"},"children":[],"attr":{"name":"evenmoaar.txt","id":null,"rel":"file","restype":"ta-test"}},{"state":"leaf","data":{"title":"moaaar.txt"},"children":[],"attr":{"name":"moaaar.txt","id":null,"rel":"file","restype":"ta-test"}}],"attr":{"name":"moartests","id":null,"rel":"folder","restype":"ta-folder"}},{"state":"leaf","data":{"title":"root-test.txt"},"children":[],"attr":{"name":"root-test.txt","id":null,"rel":"file","restype":"ta-test"}},{"state":"closed","data":{"title":"ça va être long"},"children":[{"state":"leaf","data":{"title":"testlong-1.txt"},"children":[],"attr":{"name":"testlong-1.txt","id":null,"rel":"file","restype":"ta-test"}},{"state":"leaf","data":{"title":"testlong-2.txt"},"children":[],"attr":{"name":"testlong-2.txt","id":null,"rel":"file","restype":"ta-test"}}],"attr":{"name":"ça va être long","id":null,"rel":"folder","restype":"ta-folder"}}],"attr":{"name":"tests","id":null,"rel":"folder","restype":"ta-folder"}}],"attr":{"name":"deuxième job","id":"2","rel":"drive","restype":"ta-project"}},{"state":"closed","data":{"title":"job-1"},"children":[{"state":"closed","data":{"title":"tests"},"children":[{"state":"closed","data":{"title":"autrestests"},"children":[{"state":"leaf","data":{"title":"othertest1.txt"},"children":[],"attr":{"name":"othertest1.txt","id":null,"rel":"file","restype":"ta-test"}}],"attr":{"name":"autrestests","id":null,"rel":"folder","restype":"ta-folder"}},{"state":"closed","data":{"title":"database-tests"},"children":[{"state":"leaf","data":{"title":"dbtest-1.txt"},"children":[],"attr":{"name":"dbtest-1.txt","id":null,"rel":"file","restype":"ta-test"}},{"state":"leaf","data":{"title":"dbtest-2.txt"},"children":[],"attr":{"name":"dbtest-2.txt","id":null,"rel":"file","restype":"ta-test"}}],"attr":{"name":"database-tests","id":null,"rel":"folder","restype":"ta-folder"}},{"state":"leaf","data":{"title":"vcs.txt"},"children":[],"attr":{"name":"vcs.txt","id":null,"rel":"file","restype":"ta-test"}}],"attr":{"name":"tests","id":null,"rel":"folder","restype":"ta-folder"}}],"attr":{"name":"job-1","id":"1","rel":"drive","restype":"ta-project"}}];
-	
-	createTree();
-	
-	flipToMain();
+
+	instance.bind('dialogclose', function(){
+		if (self.initAjax){
+			self.initAjax.abort();
+		};
+	});
 	
 }
-
 
