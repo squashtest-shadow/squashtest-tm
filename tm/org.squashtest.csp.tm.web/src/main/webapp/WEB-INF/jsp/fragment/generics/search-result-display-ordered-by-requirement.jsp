@@ -57,7 +57,7 @@
 					<td id="searchnode-${object.class.simpleName}Library-${object.project.id}" class="searched-project non-tree" style="border: none;"> 
 						<a style="color: white; text-decoration: none; border: none;" href="#">
 							<img class="search-image" src="${servContext}/images/root.png"/>
-							<span class="search-text">${object.project.name}</span>
+							<span class="search-text">${object.reference}-${object.project.name}</span>
 						</a>
 					</td> 
 					
@@ -91,7 +91,9 @@
 								<td>
 									${object.project.name }-${object.name }
 								</td>
-						
+								<td>
+									${object.project.name }-${object.reference }
+								</td>
 						</tr>
 					
 					
@@ -129,6 +131,7 @@
 			<dt:column-definition targets="0" sortable="false" visible="false" />
 			<dt:column-definition targets="1" sortable="false" />
 			<dt:column-definition targets="2" sortable="true" visible="false" />
-			<dt:column-definition targets="3" sortable="true" visible="false" lastDef="true"/>
+			<dt:column-definition targets="3" sortable="true" visible="false" />
+			<dt:column-definition targets="4" sortable="true" visible="false" lastDef="true"/>
 		</jsp:attribute>
 	</comp:decorate-ajax-search-table>

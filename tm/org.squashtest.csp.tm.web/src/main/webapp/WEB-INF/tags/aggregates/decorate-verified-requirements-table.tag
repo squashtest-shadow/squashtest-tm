@@ -141,7 +141,7 @@
 			var urlPOST='${ verifiedRequirementsUrl }/' + getRequirementsTableRowId(data);
 			var urlGET='${ pageContext.servletContext.contextPath }/requirements/' + getRequirementsTableRowId(data) + '/versions/version-number';
 			var table = $('#verified-requirements-table').dataTable();
-			if (data[9]!="false"){
+			if (data[9]!="false" && data[8] !="OBSOLETE"){
 				<%-- the table needs to be redrawn after each return of the POST so we implement the posting workflow --%>
 				$( 'td:eq(4)', row ).editable(function(value, settings) {
 						var innerPOSTData;

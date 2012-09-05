@@ -216,6 +216,9 @@
 						<option value="3" selected="selected">
 							<f:message key="search.name.label" />
 						</option>
+						<option value="4">
+							<f:message key="search.reference.label" />
+						</option>
 						<option value="2">
 							<f:message key="search.criticality.label" />
 						</option>

@@ -53,7 +53,8 @@
 		<dt:column-definition targets="0" sortable="false" visible="false" />
 		<dt:column-definition targets="1" sortable="false" />
 		<dt:column-definition targets="2" sortable="true" visible="false" />
-		<dt:column-definition targets="3" sortable="true" visible="false" lastDef="true"/>
+		<dt:column-definition targets="3" sortable="true" visible="false"/>
+		<dt:column-definition targets="4" sortable="true" visible="false" lastDef="true"/>
 	</jsp:attribute>
 </comp:decorate-ajax-search-table>
 </c:otherwise>
@@ -77,7 +78,7 @@
 						<td id="searchnode-${object.class.simpleName}-${object.id}" class="non-tree requirement-${object.criticality}" style="border: none;">
 							<a href="javascript:void(0)" style="text-decoration: none; border: none;">
 								<img class="search-image" src="${servContext}/images/Icon_Tree_TestCase.png"/>
-								<span class="search-text">${object.name}</span>
+								<span class="search-text">${object.reference}-${object.name}</span>
 							</a>
 						</td>
 						<td>
@@ -86,6 +87,9 @@
 						<td>
 							${object.name}
 						</td>	
+						<td>
+							${object.reference}
+						</td>
 			</c:when>
 			<c:when test="${object.class.simpleName== 'Iteration'}">
 				<td class = "objectId"> ${object.id}</td>

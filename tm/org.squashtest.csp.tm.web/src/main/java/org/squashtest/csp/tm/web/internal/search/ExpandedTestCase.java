@@ -58,6 +58,10 @@ public class ExpandedTestCase {
 		return this.testCase.getName();
 	}
 
+	public String getReference() {
+		return this.testCase.getReference();
+	}
+	
 	public Project getProject() {
 		return this.testCase.getProject();
 	}
