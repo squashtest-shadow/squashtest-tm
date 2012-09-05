@@ -105,10 +105,13 @@
 				<value>org.squashtest.csp.tm.domain.event.RequirementLargePropertyChange</value>
 				
 				
-				<!--  the following entries come from fragment tm.automatedttesting.api -->
+				<!--  the following entries come from fragment tm.testautomation.api (except for the TA execution) -->
+				
 				<value>squashtm.testautomation.domain.TestAutomationServer</value>
 				<value>squashtm.testautomation.domain.TestAutomationProject</value>
 				<value>squashtm.testautomation.domain.TestAutomationTest</value>
+				<value>squashtm.testautomation.domain.TestAutomationSuite</value>
+				<value>org.squashtest.csp.tm.domain.execution.TestAutomationExecution</value>
 				
 			</list>
 		</property>
