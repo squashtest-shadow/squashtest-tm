@@ -39,8 +39,8 @@ import org.squashtest.csp.tm.internal.repository.TestCaseLibraryDao
 import org.squashtest.csp.tm.service.TestCaseModificationService
 import org.squashtest.csp.tools.unittest.assertions.CollectionAssertions
 import org.squashtest.csp.tools.unittest.reflection.ReflectionCategory
-import org.squashtest.tm.core.foundation.collection.PagedCollectionHolder;
-import org.squashtest.tm.core.foundation.collection.PagingAndSorting;
+import org.squashtest.tm.core.foundation.collection.PagedCollectionHolder
+import org.squashtest.tm.core.foundation.collection.PagingAndSorting
 
 import spock.lang.Specification
 
