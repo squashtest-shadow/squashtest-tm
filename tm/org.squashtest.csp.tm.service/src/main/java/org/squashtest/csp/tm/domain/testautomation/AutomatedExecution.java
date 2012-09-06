@@ -32,6 +32,7 @@ import javax.persistence.Lob;
 import javax.persistence.ManyToOne;
 import javax.persistence.NamedQueries;
 import javax.persistence.NamedQuery;
+import javax.persistence.PrimaryKeyJoinColumn;
 
 import org.squashtest.csp.tm.domain.audit.Auditable;
 import org.squashtest.csp.tm.domain.execution.Execution;
@@ -47,13 +48,13 @@ import org.squashtest.csp.tm.domain.testcase.TestCaseExecutionMode;
  * @author bsiri
  *
  */
-
+/*
 @NamedQueries({
-	@NamedQuery(name="testAutomationExecution.findById", query="from TestAutomationExecution where id = :executionId")
+	@NamedQuery(name="automatedExecution.findById", query="from AutomatedExecution where id = :executionId")
 })
-@Auditable
 @Entity
-public class TestAutomationExecution extends Execution {
+@PrimaryKeyJoinColumn(name = "EXECUTION_ID")*/
+public class AutomatedExecution extends Execution {
 
 	private static final Set<ExecutionStatus> AUTOMATED_EXEC_STATUS;
 	
@@ -70,15 +71,15 @@ public class TestAutomationExecution extends Execution {
 	
 	@ManyToOne()
 	@JoinColumn(name = "TEST_ID", referencedColumnName="TEST_ID")
-	private TestAutomationTest automatedTest;
+	private AutomatedTest automatedTest;
 	
 	
 	@Column
 	private URL resultURL;
 	
 	@ManyToOne
-	@JoinColumn(name="")
-	private TestAutomationSuite automatedSuite;
+	@JoinColumn(name="SUITE_ID")
+	private AutomatedSuite automatedSuite;
 	
 	
 	@Lob
@@ -87,19 +88,19 @@ public class TestAutomationExecution extends Execution {
 	
 	/* ******************** constructors ***********************************/
 	
-	public TestAutomationExecution() {
+	public AutomatedExecution() {
 		super();
 		executionMode = TestCaseExecutionMode.AUTOMATED;
 	}
 
 
-	public TestAutomationExecution(TestCase testCase) {
+	public AutomatedExecution(TestCase testCase) {
 		super(testCase);
 		executionMode = TestCaseExecutionMode.AUTOMATED;
 		this.automatedTest = testCase.getTestAutomationTest();
 	}
 	
-	public TestAutomationExecution(TestCase testCase, TestAutomationSuite suite){
+	public AutomatedExecution(TestCase testCase, AutomatedSuite suite){
 		this(testCase);
 		automatedSuite = suite;
 	}
@@ -107,12 +108,12 @@ public class TestAutomationExecution extends Execution {
 	/* ******************** accessors *************************************/
 	
 
-	public TestAutomationTest getAutomatedTest() {
+	public AutomatedTest getAutomatedTest() {
 		return automatedTest;
 	}
 
 
-	public void setAutomatedTest(TestAutomationTest automatedTest) {
+	public void setAutomatedTest(AutomatedTest automatedTest) {
 		this.automatedTest = automatedTest;
 	}
 
@@ -127,12 +128,12 @@ public class TestAutomationExecution extends Execution {
 	}
 
 
-	public TestAutomationSuite getAutomatedSuite() {
+	public AutomatedSuite getAutomatedSuite() {
 		return automatedSuite;
 	}
 
 
-	public void setAutomatedSuite(TestAutomationSuite automatedSuite) {
+	public void setAutomatedSuite(AutomatedSuite automatedSuite) {
 		this.automatedSuite = automatedSuite;
 	}
 

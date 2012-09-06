@@ -18,94 +18,98 @@
  *     You should have received a copy of the GNU Lesser General Public License
  *     along with this software.  If not, see <http://www.gnu.org/licenses/>.
  */
-package org.squashtest.csp.tm.repository.hibernate
+package org.squashtest.csp.tm.internal.repository.hibernate
 
 import javax.inject.Inject;
 
 import org.springframework.transaction.annotation.Transactional;
-import org.squashtest.csp.tm.domain.testautomation.TestAutomationProject;
 import org.squashtest.csp.tm.domain.testautomation.TestAutomationServer;
-import org.squashtest.csp.tm.internal.repository.TestAutomationProjectDao
 import org.squashtest.csp.tm.internal.repository.TestAutomationServerDao
-import org.squashtest.csp.tm.internal.repository.hibernate.DbunitDaoSpecification;
-import org.squashtest.csp.tm.internal.repository.hibernate.NonUniqueEntityException
+import org.squashtest.csp.tm.internal.repository.hibernate.NonUniqueEntityException;
 import org.unitils.dbunit.annotation.DataSet;
 
 import spock.unitils.UnitilsSupport;
 
 @UnitilsSupport
 @Transactional
-class HibernateTestAutomationProjectDaoIT extends DbunitDaoSpecification {
+class HibernateTestAutomationServerDaoIT extends DbunitDaoSpecification {
 	
 	@Inject  TestAutomationServerDao serverDao
-	@Inject	 TestAutomationProjectDao projectDao
 
 	@DataSet("HibernateTestAutomationDao.sandbox.xml")
-	def "should refuse to perist a server having similar characteristic to an already existing project"(){
+	def "should refuse to perist a server having similar characteristic to an already existing server"(){
 		given :
-			TestAutomationServer server = serverDao.findById(1l)
-			TestAutomationProject newProject = new TestAutomationProject("roberto1", server)
-			
+			TestAutomationServer newServer = new TestAutomationServer(new URL("http://www.roberto.com"), "roberto", "passroberto");
 		when :
-			projectDao.persist(newProject)
+			serverDao.persist(newServer)
 		then :
 			thrown(NonUniqueEntityException)
 	}
 	
 	@DataSet("HibernateTestAutomationDao.sandbox.xml")
-	def "should find a project by id"(){
+	def "should find a server by id"(){
 		
 		when :
-			def res = projectDao.findById(11l)
+			def res = serverDao.findById(1l)
 			
 		then :
-			res.id==11l
-			res.server.id==1l
-			res.name=="roberto1"
+			res.id==1l
+			res.baseURL.equals(new URL("http://www.roberto.com"))
+			res.login == "roberto"
+			res.password == "passroberto"
+			res.kind=="jenkins"
 		
 	}
 	
 	
 	@DataSet("HibernateTestAutomationDao.sandbox.xml")
-	def "should find a project by example"(){
+	def "should find a server by example"(){
 		given :
-			TestAutomationServer server = serverDao.findById(1l)
-			TestAutomationProject project = new TestAutomationProject("roberto1", server)
-			 
+			TestAutomationServer example = new TestAutomationServer(new URL("http://www.roberto.com"), "roberto", "passroberto");
 		when :
-			def res = projectDao.findByExample(project)
+			def res = serverDao.findByExample(example)
 			
 		then :
-			res.id==11l;
+			res.id==1l;
 	}
 	
 	
 	@DataSet("HibernateTestAutomationDao.sandbox.xml")
 	def "should not find a project because of unmatched example"(){
 		given :
-			TestAutomationProject example = new TestAutomationProject("roberto55", null);
+			TestAutomationServer example = new TestAutomationServer(null, "bobinio", "passbobinio");
 		
 		when :
-			def res = projectDao.findByExample(example)
+			def res = serverDao.findByExample(example)
 		
 		then :
 			res == null
 	}
 	
-
+	
 	@DataSet("HibernateTestAutomationDao.sandbox.xml")
 	def "should rant because too many matches for the given example"(){
 		given :
-			TestAutomationServer server = serverDao.findById(1l)
-			TestAutomationProject project = new TestAutomationProject(null, server)
+			TestAutomationServer example = new TestAutomationServer(new URL("http://www.roberto.com"), null, null);
 		
 		when :
-			def res = projectDao.findByExample(project)
+			def res = serverDao.findByExample(example)
 		
 		then :
 			thrown(NonUniqueEntityException)
 	}
 	
+	
+	@DataSet("HibernateTestAutomationDao.sandbox.xml")
+	def "should list the automation projects hosted on a given server"(){
+
+		when :
+			def res = serverDao.findAllHostedProjects(1l)
+		
+		then :
+			res.size()==3
+			res.collect{it.name} as Set == ["roberto1", "roberto2", "roberto3"] as Set
+	}
 	
 
 }

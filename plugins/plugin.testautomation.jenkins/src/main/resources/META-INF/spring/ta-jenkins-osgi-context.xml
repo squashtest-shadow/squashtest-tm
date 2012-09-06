@@ -33,6 +33,6 @@
 	
 	<osgix:cm-properties id="connector.conf"  persistent-id="tm.testautomation.conf" /> 	
 					   
-	<osgi:service ref="plugin.testautomation.jenkins.connector" interface="squashtm.testautomation.spi.TestAutomationConnector"/>
+	<osgi:service ref="plugin.testautomation.jenkins.connector" interface="org.squashtest.csp.tm.testautomation.spi.TestAutomationConnector"/>
 	
 </beans>

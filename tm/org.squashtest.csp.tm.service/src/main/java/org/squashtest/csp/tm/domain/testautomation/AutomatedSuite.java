@@ -28,12 +28,12 @@ import javax.persistence.NamedQueries;
 import javax.persistence.NamedQuery;
 
 @NamedQueries({
-	@NamedQuery(name="testAutomationSuite.findById", query="from TestAutomationSuite where id = :suiteId"),
-	@NamedQuery(name="testAutomationSuite.findAllExecutions", query="select e from TestAutomationExecution e join e.automatedSuite s where s.id = :suiteId"),
-	@NamedQuery(name="testAutomationSuite.findAllExecutionWhereStatusIs", query="select e from TestAutomationExecution e join e.automatedSuite s where s.id = :suiteId and e.executionStatus in (:statusList)")
-})
+	@NamedQuery(name="automatedSuite.findById", query="from AutomatedSuite where id = :suiteId"),
+	/*@NamedQuery(name="automatedSuite.findAllExecutions", query="select e from AutomatedExecution e join e.automatedSuite s where s.id = :suiteId"),
+	@NamedQuery(name="automatedSuite.findAllExecutionWhereStatusIs", query="select e from AutomatedExecution e join e.automatedSuite s where s.id = :suiteId and e.executionStatus in (:statusList)")
+*/})
 @Entity
-public class TestAutomationSuite  {
+public class AutomatedSuite  {
 
 	@Id
 	@GeneratedValue

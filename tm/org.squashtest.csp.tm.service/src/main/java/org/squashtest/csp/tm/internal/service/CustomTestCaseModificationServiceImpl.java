@@ -36,7 +36,7 @@ import org.springframework.stereotype.Service;
 import org.squashtest.csp.tm.domain.DuplicateNameException;
 import org.squashtest.csp.tm.domain.requirement.RequirementVersion;
 import org.squashtest.csp.tm.domain.testautomation.TestAutomationProject;
-import org.squashtest.csp.tm.domain.testautomation.TestAutomationTest;
+import org.squashtest.csp.tm.domain.testautomation.AutomatedTest;
 import org.squashtest.csp.tm.domain.testcase.ActionTestStep;
 import org.squashtest.csp.tm.domain.testcase.CallTestStep;
 import org.squashtest.csp.tm.domain.testcase.TestCase;
@@ -339,13 +339,13 @@ public class CustomTestCaseModificationServiceImpl implements CustomTestCaseModi
 	
 	@Override
 	@PreAuthorize("hasPermission(#testCaseId, 'org.squashtest.csp.tm.domain.testcase.TestCase' , 'WRITE') or hasRole('ROLE_ADMIN')")
-	public TestAutomationTest bindAutomatedTest(Long testCaseId, Long taProjectId, String testName) {
+	public AutomatedTest bindAutomatedTest(Long testCaseId, Long taProjectId, String testName) {
 		
 		TestAutomationProject project = taService.findProjectById(taProjectId); 
 		
-		TestAutomationTest newTest = new TestAutomationTest(testName, project);
+		AutomatedTest newTest = new AutomatedTest(testName, project);
 		
-		TestAutomationTest persistedTest =  taService.persistOrAttach(newTest);
+		AutomatedTest persistedTest =  taService.persistOrAttach(newTest);
 		
 		TestCase testCase = testCaseDao.findById(testCaseId);
 		

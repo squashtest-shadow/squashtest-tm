@@ -56,7 +56,7 @@ import org.squashtest.csp.tm.domain.audit.AuditableMixin;
 import org.squashtest.csp.tm.domain.exception.UnallowedTestAssociationException;
 import org.squashtest.csp.tm.domain.requirement.Requirement;
 import org.squashtest.csp.tm.domain.requirement.RequirementVersion;
-import org.squashtest.csp.tm.domain.testautomation.TestAutomationTest;
+import org.squashtest.csp.tm.domain.testautomation.AutomatedTest;
 
 
 /**
@@ -109,7 +109,7 @@ public class TestCase extends TestCaseLibraryNode implements AttachmentHolder{
 	
 	@ManyToOne
 	@JoinColumn(name="TA_TEST")
-	private TestAutomationTest testAutomationTest;
+	private AutomatedTest testAutomationTest;
 	
 	
 	//*************************** CODE *************************************
@@ -395,11 +395,11 @@ public class TestCase extends TestCaseLibraryNode implements AttachmentHolder{
 	// *************** test automation section ******************
 	
 	
-	public TestAutomationTest getTestAutomationTest() {
+	public AutomatedTest getTestAutomationTest() {
 		return testAutomationTest;
 	}
 
-	public void setTestAutomationTest(TestAutomationTest testAutomationTest) {
+	public void setTestAutomationTest(AutomatedTest testAutomationTest) {
 		if (getProject().isTestAutomationEnabled()){
 			this.testAutomationTest = testAutomationTest;
 		}

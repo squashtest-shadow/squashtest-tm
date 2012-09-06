@@ -43,7 +43,7 @@ import javax.persistence.NamedQuery;
 
 @NamedQueries({
 	@NamedQuery(name="testAutomationProject.findById", query="from TestAutomationProject where id = :projectId"),
-	@NamedQuery(name="testAutomationProject.findAllKnownTests", query="select t from TestAutomationTest t join t.project p where p.id = :projectId")
+	@NamedQuery(name="testAutomationProject.findAllKnownTests", query="select t from AutomatedTest t join t.project p where p.id = :projectId")
 })
 @Entity
 public class TestAutomationProject {

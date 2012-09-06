@@ -22,13 +22,10 @@ package squashtm.testautomation.jenkins.internal.net
 
 
 
-import org.apache.commons.httpclient.HttpClient;
-import org.apache.commons.httpclient.UsernamePasswordCredentials;
-import org.apache.commons.httpclient.auth.AuthScope;
-import org.apache.commons.httpclient.methods.PostMethod;
+
+import org.squashtest.csp.tm.domain.testautomation.TestAutomationServer;
 
 import spock.lang.Specification
-import squashtm.testautomation.domain.TestAutomationServer;
 import squashtm.testautomation.jenkins.internal.net.HttpRequestFactory;
 
 class HttpRequestFactoryTest extends Specification {

@@ -26,7 +26,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.squashtest.csp.tm.domain.testautomation.TestAutomationProject;
 import org.squashtest.csp.tm.domain.testautomation.TestAutomationServer;
-import org.squashtest.csp.tm.domain.testautomation.TestAutomationTest;
+import org.squashtest.csp.tm.domain.testautomation.AutomatedTest;
 import org.squashtest.csp.tm.internal.testautomation.service.TestAutomationConnectorRegistry;
 import org.squashtest.csp.tm.testautomation.model.TestAutomationProjectContent;
 import org.squashtest.csp.tm.testautomation.spi.TestAutomationConnector;
@@ -50,7 +50,7 @@ public class FetchTestListTask implements TestAutomationConnectorTask<TestAutoma
 		TestAutomationServer server = project.getServer();
 		TestAutomationConnector connector = connectorRegistry.getConnectorForKind(server.getKind());
 		
-		Collection<TestAutomationTest> allTests =  connector.listTestsInProject(project);
+		Collection<AutomatedTest> allTests =  connector.listTestsInProject(project);
 		return new TestAutomationProjectContent(project, allTests);
 	}
 	

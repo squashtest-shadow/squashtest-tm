@@ -21,8 +21,9 @@
 package squashtm.testautomation.jenkins.internal.net
 
 
+import org.squashtest.csp.tm.domain.testautomation.TestAutomationServer;
+
 import spock.lang.Specification
-import squashtm.testautomation.domain.TestAutomationServer;
 import squashtm.testautomation.jenkins.internal.net.HttpClientProvider.ServerKey;
 
 class HttpClientProviderTest extends Specification {

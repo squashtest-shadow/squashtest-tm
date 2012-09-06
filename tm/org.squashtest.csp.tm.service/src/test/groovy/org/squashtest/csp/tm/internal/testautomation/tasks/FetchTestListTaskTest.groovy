@@ -23,7 +23,7 @@ package org.squashtest.csp.tm.internal.testautomation.tasks
 
 import org.squashtest.csp.tm.domain.testautomation.TestAutomationProject;
 import org.squashtest.csp.tm.domain.testautomation.TestAutomationServer;
-import org.squashtest.csp.tm.domain.testautomation.TestAutomationTest;
+import org.squashtest.csp.tm.domain.testautomation.AutomatedTest;
 import org.squashtest.csp.tm.internal.testautomation.service.TestAutomationConnectorRegistry;
 import org.squashtest.csp.tm.testautomation.spi.TestAutomationConnector;
 
@@ -40,7 +40,7 @@ class FetchTestListTaskTest extends Specification {
 			project.getServer() >> server
 			
 		and :
-			Collection<TestAutomationTest> allTests = []
+			Collection<AutomatedTest> allTests = []
 			
 		and :
 			TestAutomationConnector connector = Mock()

@@ -20,19 +20,19 @@
  */
 package org.squashtest.csp.tm.internal.repository;
 
-import org.squashtest.csp.tm.domain.testautomation.TestAutomationTest;
+import org.squashtest.csp.tm.domain.testautomation.AutomatedTest;
 import org.squashtest.csp.tm.internal.repository.hibernate.NonUniqueEntityException;
 
 public interface TestAutomationTestDao {
 	
 	/**
-	 * Will persist a new {@link TestAutomationTest}. Note : each server must have different characteristics, more exactly each combination of 
+	 * Will persist a new {@link AutomatedTest}. Note : each server must have different characteristics, more exactly each combination of 
 	 * attributes is unique. Therefore if the object to be persisted already exists in the database an exception will be raised instead.
 	 * 
 	 * @param newTest
 	 * @throws NonUniqueEntityException if the given server happen to exist already. 
 	 */
-	void persist(TestAutomationTest newTest);
+	void persist(AutomatedTest newTest);
 	
 	/**
 	 * Will persist a TestAutomationTest if really new, or return the existing instance
@@ -47,7 +47,7 @@ public interface TestAutomationTestDao {
 	 * @param newTest
 	 * @return a persistent version of that test.
 	 */
-	TestAutomationTest uniquePersist(TestAutomationTest newTest);
+	AutomatedTest uniquePersist(AutomatedTest newTest);
 	
 	/**
 	 * 
@@ -55,17 +55,17 @@ public interface TestAutomationTestDao {
 	 * @param id
 	 * @return
 	 */
-	TestAutomationTest findById(Long testId);
+	AutomatedTest findById(Long testId);
 	
 	
 	/**
-	 *	<p>Given a detached (or even attached) {@link TestAutomationTest} example, will fetch a {@link TestAutomationTest}
+	 *	<p>Given a detached (or even attached) {@link AutomatedTest} example, will fetch a {@link AutomatedTest}
 	 *	having the same characteristics. Null attributes will be discarded before the comparison. </p>
 	 *
 	 * @return a TestAutomation test if one was found, null if none was found.
 	 * @throws NonUniqueEntityException if more than one match. Causes are either a not restrictive enough example... or a bug.
 	 */	
-	TestAutomationTest findByExample(TestAutomationTest example);
+	AutomatedTest findByExample(AutomatedTest example);
 	
 		
 }

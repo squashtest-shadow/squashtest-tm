@@ -23,6 +23,7 @@ package org.squashtest.csp.tm.internal.service
 import javax.inject.Inject
 
 import org.spockframework.util.NotThreadSafe
+import org.springframework.transaction.annotation.Transactional;
 import org.squashtest.csp.tm.domain.campaign.Campaign
 import org.squashtest.csp.tm.domain.campaign.IterationTestPlanItem
 import org.squashtest.csp.tm.domain.campaign.Iteration
@@ -800,7 +801,7 @@ class ExecutionModificationServiceIT extends HibernateServiceSpecification {
 
 
 
-
+	@Transactional
 	def "should correctly update an item test plan status when the status of an execution is updated "(){
 		given :
 		TestCase tc1 = new TestCase(name:"tc1");

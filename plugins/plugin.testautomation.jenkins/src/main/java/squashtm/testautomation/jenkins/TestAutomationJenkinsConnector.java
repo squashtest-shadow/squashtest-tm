@@ -31,7 +31,7 @@ import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 import org.squashtest.csp.tm.domain.testautomation.TestAutomationProject;
 import org.squashtest.csp.tm.domain.testautomation.TestAutomationServer;
-import org.squashtest.csp.tm.domain.testautomation.TestAutomationTest;
+import org.squashtest.csp.tm.domain.testautomation.AutomatedTest;
 import org.squashtest.csp.tm.testautomation.spi.AccessDenied;
 import org.squashtest.csp.tm.testautomation.spi.NotFoundException;
 import org.squashtest.csp.tm.testautomation.spi.ServerConnectionFailed;
@@ -123,7 +123,7 @@ public class TestAutomationJenkinsConnector implements TestAutomationConnector{
 	
 	
 	@Override
-	public Collection<TestAutomationTest> listTestsInProject(TestAutomationProject project) 
+	public Collection<AutomatedTest> listTestsInProject(TestAutomationProject project) 
 				throws ServerConnectionFailed,
 					   AccessDenied, 
 					   UnreadableResponseException, 

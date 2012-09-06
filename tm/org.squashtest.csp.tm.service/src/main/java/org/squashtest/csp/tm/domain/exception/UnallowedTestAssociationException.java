@@ -20,12 +20,12 @@
  */
 package org.squashtest.csp.tm.domain.exception;
 
-import org.squashtest.csp.tm.domain.testautomation.TestAutomationTest;
+import org.squashtest.csp.tm.domain.testautomation.AutomatedTest;
 import org.squashtest.csp.tm.domain.testcase.TestCase;
 import org.squashtest.tm.core.foundation.exception.ActionException;
 
 /**
- * <p>Thrown when one tries to bind a {@link TestAutomationTest} to a {@link TestCase}, while the test automation feature is disabled 
+ * <p>Thrown when one tries to bind a {@link AutomatedTest} to a {@link TestCase}, while the test automation feature is disabled 
  * for the project hosting it.</p>
  * 
  * @author bsiri

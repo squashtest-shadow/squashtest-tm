@@ -22,22 +22,22 @@ package org.squashtest.csp.tm.internal.repository;
 
 import java.util.Collection;
 
-import org.squashtest.csp.tm.domain.testautomation.TestAutomationSuite;
+import org.squashtest.csp.tm.domain.testautomation.AutomatedSuite;
 
 
 public interface TestAutomationSuiteDao {
 
 	/**
-	 * @return a new {@link TestAutomationSuite}
+	 * @return a new {@link AutomatedSuite}
 	 */
-	TestAutomationSuite createNewSuite();
+	AutomatedSuite createNewSuite();
 	
 	/**
 	 * 
 	 * @param suiteId is the id of the suite to retrieve
 	 * @return the TestAutomationSuite having this id if found, null if not.
 	 */
-	TestAutomationSuite findById(long suiteId);
+	AutomatedSuite findById(long suiteId);
 	
 	 
 	

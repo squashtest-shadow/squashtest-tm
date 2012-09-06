@@ -22,7 +22,7 @@ package org.squashtest.csp.tm.internal.testautomation.service;
 
 import org.squashtest.csp.tm.domain.testautomation.TestAutomationProject;
 import org.squashtest.csp.tm.domain.testautomation.TestAutomationServer;
-import org.squashtest.csp.tm.domain.testautomation.TestAutomationTest;
+import org.squashtest.csp.tm.domain.testautomation.AutomatedTest;
 import org.squashtest.csp.tm.service.TestAutomationFinderService;
 
 
@@ -72,13 +72,13 @@ public interface InsecureTestAutomationManagementService extends TestAutomationF
 	 * @param newTest
 	 * @return a persisted TestAutomationTest, that should be used by the client code from now on.
 	 */
-	TestAutomationTest persistOrAttach(TestAutomationTest newTest);
+	AutomatedTest persistOrAttach(AutomatedTest newTest);
 	
 	
 	TestAutomationProject findProjectById(long projectId);
 	
 	
-	TestAutomationTest findTestById(long testId);
+	AutomatedTest findTestById(long testId);
 	
 	
 	/**

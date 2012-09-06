@@ -47,7 +47,7 @@ class TestAutomationManagementServiceImplIT extends DbunitServiceSpecification {
 		
 		given : 
 			def server = new TestAutomationServer(new URL("http://www.bobinio.com"), "bobinio", "passbobinio")
-			def project = new TestAutomationProjectContent("bobinio1", server)
+			def project = new TestAutomationProject("bobinio1", server)
 		
 		when :
 			def res = service.persistOrAttach(project)

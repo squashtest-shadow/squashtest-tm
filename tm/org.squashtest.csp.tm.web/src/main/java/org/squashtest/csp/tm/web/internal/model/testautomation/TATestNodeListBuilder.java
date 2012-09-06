@@ -27,7 +27,7 @@ import java.util.List;
 import java.util.ListIterator;
 
 import org.squashtest.csp.tm.domain.testautomation.TestAutomationProject;
-import org.squashtest.csp.tm.domain.testautomation.TestAutomationTest;
+import org.squashtest.csp.tm.domain.testautomation.AutomatedTest;
 import org.squashtest.csp.tm.testautomation.model.TestAutomationProjectContent;
 import org.squashtest.csp.tm.web.internal.model.jstree.JsTreeNode.State;
 import org.squashtest.csp.tm.web.internal.model.testautomation.TATestNode.Attr;
@@ -45,7 +45,7 @@ public class TATestNodeListBuilder {
 			
 			TATestNode projectNode = createProjectNode(content);
 			
-			for (TestAutomationTest test : content.getTests() ){
+			for (AutomatedTest test : content.getTests() ){
 				merge(projectNode, test);
 			}
 			
@@ -56,7 +56,7 @@ public class TATestNodeListBuilder {
 		
 	}
 
-	private void merge(TATestNode projectNode, TestAutomationTest test){
+	private void merge(TATestNode projectNode, AutomatedTest test){
 		
 		String[] pathArray = test.getName().trim().split("\\/");
 		List<String> path = Arrays.asList(pathArray); 

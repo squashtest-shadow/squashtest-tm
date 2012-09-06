@@ -23,14 +23,14 @@ package org.squashtest.csp.tm.testautomation.model;
 import java.util.Collection;
 
 import org.squashtest.csp.tm.domain.testautomation.TestAutomationProject;
-import org.squashtest.csp.tm.domain.testautomation.TestAutomationTest;
+import org.squashtest.csp.tm.domain.testautomation.AutomatedTest;
 
 
 public class TestAutomationProjectContent {
 
 	private TestAutomationProject project;
 	
-	private Collection<TestAutomationTest> tests;
+	private Collection<AutomatedTest> tests;
 
 	private Exception knownProblem = null;
 	
@@ -39,7 +39,7 @@ public class TestAutomationProjectContent {
 		return project;
 	}
 	
-	public Collection<TestAutomationTest> getTests() {
+	public Collection<AutomatedTest> getTests() {
 		return tests;
 	}
 	
@@ -56,7 +56,7 @@ public class TestAutomationProjectContent {
 	}
 
 	public TestAutomationProjectContent(TestAutomationProject project,
-			Collection<TestAutomationTest> tests) {
+			Collection<AutomatedTest> tests) {
 		super();
 		this.project = project;
 		this.tests = tests;

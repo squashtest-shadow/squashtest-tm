@@ -31,10 +31,10 @@ import javax.persistence.NamedQuery;
 
 
 @NamedQueries({
-	@NamedQuery(name="testAutomationTest.findById", query="from TestAutomationTest where id = :testId")
+	@NamedQuery(name="automatedTest.findById", query="from AutomatedTest where id = :testId")
 })
 @Entity
-public class TestAutomationTest {
+public class AutomatedTest {
 
 	@Id
 	@GeneratedValue
@@ -62,19 +62,19 @@ public class TestAutomationTest {
 		return name;
 	}
 	
-	public TestAutomationTest newWithProject(TestAutomationProject project){
-		return new TestAutomationTest(name, project); 
+	public AutomatedTest newWithProject(TestAutomationProject project){
+		return new AutomatedTest(name, project); 
 	}
 	
-	public TestAutomationTest newWithName(String name){
-		return new TestAutomationTest(name, project);
+	public AutomatedTest newWithName(String name){
+		return new AutomatedTest(name, project);
 	}
 	
-	public TestAutomationTest(){
+	public AutomatedTest(){
 		
 	}
 	
-	public TestAutomationTest(String name, TestAutomationProject project){
+	public AutomatedTest(String name, TestAutomationProject project){
 		super();
 		this.name=name;
 		this.project=project;

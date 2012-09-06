@@ -25,7 +25,7 @@ import java.util.Collection;
 
 import org.squashtest.csp.tm.domain.testautomation.TestAutomationProject;
 import org.squashtest.csp.tm.domain.testautomation.TestAutomationServer;
-import org.squashtest.csp.tm.domain.testautomation.TestAutomationTest;
+import org.squashtest.csp.tm.domain.testautomation.AutomatedTest;
 import org.squashtest.csp.tm.testautomation.model.TestAutomationProjectContent;
 import org.squashtest.csp.tm.testautomation.spi.AccessDenied;
 
@@ -58,7 +58,7 @@ public interface TestAutomationFinderService {
 	
 
 	/**
-	 * Given a collection of {@link TestAutomationProject}, will return the aggregated list of {@link TestAutomationTest} 
+	 * Given a collection of {@link TestAutomationProject}, will return the aggregated list of {@link AutomatedTest} 
 	 * paired with their owner project.
 	 * 
 	 * @param projects

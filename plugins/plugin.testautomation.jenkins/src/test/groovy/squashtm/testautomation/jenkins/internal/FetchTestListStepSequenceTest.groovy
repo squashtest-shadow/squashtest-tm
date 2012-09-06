@@ -22,9 +22,9 @@ package squashtm.testautomation.jenkins.internal
 
 import org.apache.commons.httpclient.HttpClient;
 import org.apache.commons.httpclient.HttpMethod;
+import org.squashtest.csp.tm.domain.testautomation.TestAutomationProject;
 
 import spock.lang.Specification
-import squashtm.testautomation.domain.TestAutomationProject;
 import squashtm.testautomation.jenkins.internal.net.HttpRequestFactory;
 import squashtm.testautomation.jenkins.internal.tasks.AbstractBuildProcessor;
 import squashtm.testautomation.jenkins.internal.tasksteps.BuildAbsoluteId;

@@ -24,7 +24,7 @@ import java.util.Collection;
 
 import org.squashtest.csp.tm.domain.testautomation.TestAutomationProject;
 import org.squashtest.csp.tm.domain.testautomation.TestAutomationServer;
-import org.squashtest.csp.tm.domain.testautomation.TestAutomationTest;
+import org.squashtest.csp.tm.domain.testautomation.AutomatedTest;
 
 
 
@@ -69,7 +69,7 @@ public interface TestAutomationConnector {
 	
 	
 	/**
-	 * <p>Given a project (that contains everything you need to connect it), returns the collection of {@link TestAutomationTest}
+	 * <p>Given a project (that contains everything you need to connect it), returns the collection of {@link AutomatedTest}
 	 * that it contains</p>
 	 *
 	 * @param project
@@ -81,7 +81,7 @@ public interface TestAutomationConnector {
 	 * @throws NotFoundException if the tests in that project cannot be found
 	 * @throws TestAutomationException for anything that doesn't fit the exceptions above. 
 	 */
-	Collection<TestAutomationTest> listTestsInProject(TestAutomationProject project)
+	Collection<AutomatedTest> listTestsInProject(TestAutomationProject project)
 			   throws ServerConnectionFailed,
 			   		  AccessDenied,
 			   		  UnreadableResponseException,

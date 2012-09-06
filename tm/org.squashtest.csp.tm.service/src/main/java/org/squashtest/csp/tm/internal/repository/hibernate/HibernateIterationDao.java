@@ -108,25 +108,35 @@ public class HibernateIterationDao extends HibernateEntityDao<Iteration> impleme
 
 	@Override
 	public List<Execution> findOrderedExecutionsByIterationId(long iterationId) {
-		Iteration iteration = getEntity(iterationId);
-		Hibernate.initialize(iteration.getExecutions());
-		return iteration.getExecutions();
+		return executeListNamedQuery("iteration.findAllExecutions", new SetIdParameter("iterationId",
+				iterationId));
 	}
 
 	@Override
-	public List<Execution> findOrderedExecutionsByIterationAndTestCase(long iterationId, long testCaseId) {
-		Iteration iter = findById(iterationId);
-		IterationTestPlanItem iterTP = iter.getTestPlanForTestCaseId(testCaseId);
-		Hibernate.initialize(iterTP.getExecutions());
-		return iterTP.getExecutions();
+	public List<Execution> findOrderedExecutionsByIterationAndTestCase(final long iterationId, final long testCaseId) {
+		return executeListNamedQuery("iteration.findAllExecutionsByTestCase", new SetQueryParametersCallback() {
+			
+			@Override
+			public void setQueryParameters(Query query) {
+				query.setParameter("iterationId", iterationId, LongType.INSTANCE);
+				query.setParameter("testCaseId", testCaseId, LongType.INSTANCE);
+				
+			}
+		});
+		
 	}
 
 	@Override
-	public List<Execution> findOrderedExecutionsByIterationAndTestPlan(long iterationId, long testPlanId) {
-		Iteration iter = findById(iterationId);
-		IterationTestPlanItem iterTP = iter.getTestPlan(testPlanId);
-		Hibernate.initialize(iterTP.getExecutions());
-		return iterTP.getExecutions();
+	public List<Execution> findOrderedExecutionsByIterationAndTestPlan(final long iterationId, final long testPlanId) {
+		return executeListNamedQuery("iteration.findAllExecutionsByTestPlan", new SetQueryParametersCallback() {
+			
+			@Override
+			public void setQueryParameters(Query query) {
+				query.setParameter("iterationId", iterationId, LongType.INSTANCE);
+				query.setParameter("testPlanId", testPlanId, LongType.INSTANCE);
+				
+			}
+		});
 	}
 
 	@Override

@@ -20,13 +20,12 @@
  */
 package squashtm.testautomation.jenkins.internal
 
-import org.apache.commons.httpclient.HttpClient
+
+import org.squashtest.csp.tm.domain.testautomation.AutomatedTest;
+import org.squashtest.csp.tm.domain.testautomation.TestAutomationProject;
 
 import spock.lang.Specification
-import squashtm.testautomation.domain.TestAutomationProject
-import squashtm.testautomation.domain.TestAutomationTest;
 import squashtm.testautomation.jenkins.internal.tasks.BuildProcessor;
-import squashtm.testautomation.jenkins.internal.tasksteps.BuildAbsoluteId
 import squashtm.testautomation.jenkins.internal.tasksteps.CheckBuildQueue
 import squashtm.testautomation.jenkins.internal.tasksteps.CheckBuildRunning
 import squashtm.testautomation.jenkins.internal.tasksteps.GatherTestList;
@@ -83,7 +82,7 @@ class FetchTestListBuildProcessorTest extends Specification {
 			1 * running.run()
 			gather.wasRan
 		
-			res.collect{it.class}.unique() == [TestAutomationTest] 
+			res.collect{it.class}.unique() == [AutomatedTest] 
 			res.collect{it.name} == names
 			res.collect{it.project}.unique() == [project]
 		
@@ -117,7 +116,7 @@ class FetchTestListBuildProcessorTest extends Specification {
 			2 * running.run()
 			gather.wasRan
 		
-			res.collect{it.class}.unique() == [TestAutomationTest]
+			res.collect{it.class}.unique() == [AutomatedTest]
 			res.collect{it.name} == names
 			res.collect{it.project}.unique() == [project]
 		

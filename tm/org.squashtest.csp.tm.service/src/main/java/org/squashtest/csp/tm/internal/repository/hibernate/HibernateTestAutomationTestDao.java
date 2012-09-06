@@ -31,7 +31,7 @@ import org.hibernate.SessionFactory;
 import org.hibernate.criterion.Example;
 import org.hibernate.criterion.Restrictions;
 import org.springframework.stereotype.Repository;
-import org.squashtest.csp.tm.domain.testautomation.TestAutomationTest;
+import org.squashtest.csp.tm.domain.testautomation.AutomatedTest;
 import org.squashtest.csp.tm.internal.repository.TestAutomationTestDao;
 
 @Repository
@@ -42,7 +42,7 @@ public class HibernateTestAutomationTestDao implements TestAutomationTestDao {
 	
 	
 	@Override
-	public void persist(TestAutomationTest newTest) {
+	public void persist(AutomatedTest newTest) {
 		if (findByExample(newTest)==null){
 			sessionFactory.getCurrentSession().persist(newTest);
 		}else{
@@ -51,13 +51,13 @@ public class HibernateTestAutomationTestDao implements TestAutomationTestDao {
 	}
 
 	@Override
-	public TestAutomationTest uniquePersist(TestAutomationTest newTest) {
+	public AutomatedTest uniquePersist(AutomatedTest newTest) {
 		if ((newTest.getId() != null) && (findById(newTest.getId())!=null)){
 			return newTest;
 		}
 		
 		//content exists ?
-		TestAutomationTest baseTest = findByExample(newTest);
+		AutomatedTest baseTest = findByExample(newTest);
 		if (baseTest != null){
 			return baseTest;
 		}
@@ -70,17 +70,17 @@ public class HibernateTestAutomationTestDao implements TestAutomationTestDao {
 	}
 
 	@Override
-	public TestAutomationTest findById(Long testId) {
+	public AutomatedTest findById(Long testId) {
 		Session session = sessionFactory.getCurrentSession();
-		Query query = session.getNamedQuery("testAutomationTest.findById");
+		Query query = session.getNamedQuery("automatedTest.findById");
 		query.setParameter("testId", testId);
-		return (TestAutomationTest)query.uniqueResult();
+		return (AutomatedTest)query.uniqueResult();
 	}
 
 	@Override
-	public TestAutomationTest findByExample(TestAutomationTest example) {
+	public AutomatedTest findByExample(AutomatedTest example) {
 		
-		Criteria criteria = sessionFactory.getCurrentSession().createCriteria(TestAutomationTest.class);
+		Criteria criteria = sessionFactory.getCurrentSession().createCriteria(AutomatedTest.class);
 		criteria = criteria.add(Example.create(example));
 		criteria = criteria.add(Restrictions.eq("project", example.getProject()));
 
@@ -90,7 +90,7 @@ public class HibernateTestAutomationTestDao implements TestAutomationTestDao {
 			return null;
 		}
 		else if (res.size()==1){
-			return (TestAutomationTest)res.get(0);
+			return (AutomatedTest)res.get(0);
 		}
 		else{
 			throw new NonUniqueEntityException();

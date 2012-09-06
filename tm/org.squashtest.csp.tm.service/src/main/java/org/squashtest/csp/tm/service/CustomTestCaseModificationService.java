@@ -24,7 +24,7 @@ import java.util.Collection;
 import java.util.List;
 
 import org.springframework.transaction.annotation.Transactional;
-import org.squashtest.csp.tm.domain.testautomation.TestAutomationTest;
+import org.squashtest.csp.tm.domain.testautomation.AutomatedTest;
 import org.squashtest.csp.tm.domain.testcase.ActionTestStep;
 import org.squashtest.csp.tm.domain.testcase.TestStep;
 import org.squashtest.csp.tm.testautomation.model.TestAutomationProjectContent;
@@ -102,5 +102,5 @@ public interface CustomTestCaseModificationService extends TestCaseFinder {
 	Collection<TestAutomationProjectContent> findAssignableAutomationTests(long testCaseId);
 	
 	
-	TestAutomationTest bindAutomatedTest(Long testCaseId, Long taProjectId, String testName);
+	AutomatedTest bindAutomatedTest(Long testCaseId, Long taProjectId, String testName);
 }

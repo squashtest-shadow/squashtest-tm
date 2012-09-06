@@ -35,7 +35,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.squashtest.csp.tm.domain.testautomation.TestAutomationProject;
 import org.squashtest.csp.tm.domain.testautomation.TestAutomationServer;
-import org.squashtest.csp.tm.domain.testautomation.TestAutomationTest;
+import org.squashtest.csp.tm.domain.testautomation.AutomatedTest;
 import org.squashtest.csp.tm.internal.repository.TestAutomationProjectDao;
 import org.squashtest.csp.tm.internal.repository.TestAutomationServerDao;
 import org.squashtest.csp.tm.internal.repository.TestAutomationTestDao;
@@ -140,7 +140,7 @@ public class TestAutomationManagementServiceImpl implements  InsecureTestAutomat
 	
 	
 	@Override
-	public TestAutomationTest persistOrAttach(TestAutomationTest newTest) {
+	public AutomatedTest persistOrAttach(AutomatedTest newTest) {
 		return testDao.uniquePersist(newTest);
 	}
 	
@@ -152,7 +152,7 @@ public class TestAutomationManagementServiceImpl implements  InsecureTestAutomat
 	
 	
 	@Override
-	public TestAutomationTest findTestById(long testId) {
+	public AutomatedTest findTestById(long testId) {
 		return testDao.findById(testId);
 	}
 	

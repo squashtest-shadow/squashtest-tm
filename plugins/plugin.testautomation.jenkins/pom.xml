@@ -51,7 +51,12 @@
 
 		<!--  ================= Spring dependencies ============================== -->
 		
-		<!--  none yet -->
+		<dependency>
+			<groupId>org.squashtest.tm</groupId>
+			<artifactId>springdm-bundle-dependencies</artifactId>
+			<type>pom</type>
+			<version>${project.version}</version>
+		</dependency>
 		
 		
 		<!--  ================ /Spring dependencies ============================== -->

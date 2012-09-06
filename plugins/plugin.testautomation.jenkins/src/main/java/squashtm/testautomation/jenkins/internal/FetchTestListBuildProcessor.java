@@ -25,14 +25,14 @@ import java.util.Collection;
 
 import org.apache.commons.httpclient.HttpClient;
 import org.squashtest.csp.tm.domain.testautomation.TestAutomationProject;
-import org.squashtest.csp.tm.domain.testautomation.TestAutomationTest;
+import org.squashtest.csp.tm.domain.testautomation.AutomatedTest;
 
 import squashtm.testautomation.jenkins.internal.tasks.StepSequence;
 import squashtm.testautomation.jenkins.internal.tasks.SynchronousBuildProcessor;
 import squashtm.testautomation.jenkins.internal.tasksteps.BuildAbsoluteId;
 import squashtm.testautomation.jenkins.internal.tasksteps.GatherTestList;
 
-public class FetchTestListBuildProcessor extends SynchronousBuildProcessor<Collection<TestAutomationTest>>{
+public class FetchTestListBuildProcessor extends SynchronousBuildProcessor<Collection<AutomatedTest>>{
 	
 	private FetchTestListStepSequence stepSequence = new FetchTestListStepSequence(this);
 	
@@ -56,11 +56,11 @@ public class FetchTestListBuildProcessor extends SynchronousBuildProcessor<Colle
 	
 	//******* the result we obtain once the computation is over *********
 	
-	private Collection<TestAutomationTest> tests = new ArrayList<TestAutomationTest>();
+	private Collection<AutomatedTest> tests = new ArrayList<AutomatedTest>();
 	
 	
 	@Override
-	public Collection<TestAutomationTest> getResult() {
+	public Collection<AutomatedTest> getResult() {
 		return tests;
 	}
 
@@ -72,7 +72,7 @@ public class FetchTestListBuildProcessor extends SynchronousBuildProcessor<Colle
 			Collection<String> names = ((GatherTestList) currentStep).getTestNames();
 			
 			for (String name : names){
-				TestAutomationTest test = new TestAutomationTest(name, project);
+				AutomatedTest test = new AutomatedTest(name, project);
 				tests.add(test);
 			}
 		}
