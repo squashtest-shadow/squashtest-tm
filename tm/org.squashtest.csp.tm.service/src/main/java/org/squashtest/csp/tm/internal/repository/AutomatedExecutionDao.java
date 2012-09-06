@@ -20,25 +20,12 @@
  */
 package org.squashtest.csp.tm.internal.repository;
 
-import java.util.Collection;
+import org.squashtest.csp.tm.domain.testautomation.AutomatedExecution;
 
-import org.squashtest.csp.tm.domain.testautomation.AutomatedSuite;
+public interface AutomatedExecutionDao {
 
-
-public interface TestAutomationSuiteDao {
-
-	/**
-	 * @return a new {@link AutomatedSuite}
-	 */
-	AutomatedSuite createNewSuite();
 	
-	/**
-	 * 
-	 * @param suiteId is the id of the suite to retrieve
-	 * @return the TestAutomationSuite having this id if found, null if not.
-	 */
-	AutomatedSuite findById(long suiteId);
+	AutomatedExecution findById(long executionId);
 	
-	 
 	
 }

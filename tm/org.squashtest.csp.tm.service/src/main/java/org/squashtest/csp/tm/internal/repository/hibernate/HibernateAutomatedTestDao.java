@@ -32,10 +32,10 @@ import org.hibernate.criterion.Example;
 import org.hibernate.criterion.Restrictions;
 import org.springframework.stereotype.Repository;
 import org.squashtest.csp.tm.domain.testautomation.AutomatedTest;
-import org.squashtest.csp.tm.internal.repository.TestAutomationTestDao;
+import org.squashtest.csp.tm.internal.repository.AutomatedTestDao;
 
 @Repository
-public class HibernateTestAutomationTestDao implements TestAutomationTestDao {
+public class HibernateAutomatedTestDao implements AutomatedTestDao {
 
 	@Inject
 	private SessionFactory sessionFactory;

@@ -23,7 +23,7 @@ package org.squashtest.csp.tm.internal.repository;
 import org.squashtest.csp.tm.domain.testautomation.AutomatedTest;
 import org.squashtest.csp.tm.internal.repository.hibernate.NonUniqueEntityException;
 
-public interface TestAutomationTestDao {
+public interface AutomatedTestDao {
 	
 	/**
 	 * Will persist a new {@link AutomatedTest}. Note : each server must have different characteristics, more exactly each combination of 

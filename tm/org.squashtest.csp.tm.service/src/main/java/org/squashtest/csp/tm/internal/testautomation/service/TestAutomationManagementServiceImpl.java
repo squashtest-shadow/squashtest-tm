@@ -38,7 +38,7 @@ import org.squashtest.csp.tm.domain.testautomation.TestAutomationServer;
 import org.squashtest.csp.tm.domain.testautomation.AutomatedTest;
 import org.squashtest.csp.tm.internal.repository.TestAutomationProjectDao;
 import org.squashtest.csp.tm.internal.repository.TestAutomationServerDao;
-import org.squashtest.csp.tm.internal.repository.TestAutomationTestDao;
+import org.squashtest.csp.tm.internal.repository.AutomatedTestDao;
 import org.squashtest.csp.tm.internal.testautomation.tasks.FetchTestListTask;
 import org.squashtest.csp.tm.internal.testautomation.thread.FetchTestListFuture;
 import org.squashtest.csp.tm.internal.testautomation.thread.TestAutomationTaskExecutor;
@@ -62,7 +62,7 @@ public class TestAutomationManagementServiceImpl implements  InsecureTestAutomat
 	private TestAutomationProjectDao projectDao;
 	
 	@Inject
-	private TestAutomationTestDao testDao;
+	private AutomatedTestDao testDao;
 	
 	
 	@Inject
