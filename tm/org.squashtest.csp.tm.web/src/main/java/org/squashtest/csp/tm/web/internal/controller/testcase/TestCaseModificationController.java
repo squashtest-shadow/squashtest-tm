@@ -53,6 +53,7 @@ import org.squashtest.csp.tm.domain.execution.ExecutionStatus;
 import org.squashtest.csp.tm.domain.project.Project;
 import org.squashtest.csp.tm.domain.requirement.RequirementCriticality;
 import org.squashtest.csp.tm.domain.requirement.RequirementVersion;
+import org.squashtest.csp.tm.domain.testautomation.TestAutomationTest;
 import org.squashtest.csp.tm.domain.testcase.ActionTestStep;
 import org.squashtest.csp.tm.domain.testcase.TestCase;
 import org.squashtest.csp.tm.domain.testcase.TestCaseExecutionMode;
@@ -62,8 +63,10 @@ import org.squashtest.csp.tm.infrastructure.filter.CollectionSorting;
 import org.squashtest.csp.tm.infrastructure.filter.FilteredCollectionHolder;
 import org.squashtest.csp.tm.service.CallStepManagerService;
 import org.squashtest.csp.tm.service.ExecutionFinder;
+import org.squashtest.csp.tm.service.TestAutomationFinderService;
 import org.squashtest.csp.tm.service.TestCaseModificationService;
 import org.squashtest.csp.tm.service.VerifiedRequirement;
+import org.squashtest.csp.tm.testautomation.model.TestAutomationProjectContent;
 import org.squashtest.csp.tm.web.internal.combo.OptionTag;
 import org.squashtest.csp.tm.web.internal.helper.LevelLabelFormatter;
 import org.squashtest.csp.tm.web.internal.i18n.InternationalizationHelper;
@@ -81,9 +84,6 @@ import org.squashtest.tm.core.foundation.collection.PagedCollectionHolder;
 import org.squashtest.tm.core.foundation.collection.Paging;
 import org.squashtest.tm.core.foundation.collection.PagingAndSorting;
 
-import squashtm.testautomation.domain.TestAutomationTest;
-import squashtm.testautomation.model.TestAutomationProjectContent;
-import squashtm.testautomation.service.TestAutomationFinderService;
 
 @Controller
 @RequestMapping("/test-cases/{testCaseId}")

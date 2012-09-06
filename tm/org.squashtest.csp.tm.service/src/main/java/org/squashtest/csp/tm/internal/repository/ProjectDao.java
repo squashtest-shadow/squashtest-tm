@@ -26,9 +26,9 @@ import java.util.Set;
 import org.squashtest.csp.core.bugtracker.domain.BugTracker;
 import org.squashtest.csp.tm.domain.project.Project;
 import org.squashtest.csp.tm.domain.projectfilter.ProjectFilter;
+import org.squashtest.csp.tm.domain.testautomation.TestAutomationProject;
 import org.squashtest.csp.tm.infrastructure.filter.CollectionSorting;
 
-import squashtm.testautomation.domain.TestAutomationProject;
 
 public interface ProjectDao extends EntityDao<Project> {
 	List<Project> findAllOrderedByName();

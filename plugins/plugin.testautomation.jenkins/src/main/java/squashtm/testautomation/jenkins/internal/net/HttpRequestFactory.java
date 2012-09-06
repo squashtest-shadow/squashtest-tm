@@ -33,9 +33,9 @@ import org.apache.commons.httpclient.methods.PostMethod;
 import org.apache.commons.httpclient.util.URIUtil;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.squashtest.csp.tm.domain.testautomation.TestAutomationProject;
+import org.squashtest.csp.tm.domain.testautomation.TestAutomationServer;
 
-import squashtm.testautomation.domain.TestAutomationProject;
-import squashtm.testautomation.domain.TestAutomationServer;
 import squashtm.testautomation.jenkins.beans.Parameter;
 import squashtm.testautomation.jenkins.beans.ParameterArray;
 import squashtm.testautomation.jenkins.internal.JsonParser;

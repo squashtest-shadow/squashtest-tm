@@ -107,11 +107,11 @@
 				
 				<!--  the following entries come from fragment tm.testautomation.api (except for the TA execution) -->
 				
-				<value>squashtm.testautomation.domain.TestAutomationServer</value>
-				<value>squashtm.testautomation.domain.TestAutomationProject</value>
-				<value>squashtm.testautomation.domain.TestAutomationTest</value>
-				<value>squashtm.testautomation.domain.TestAutomationSuite</value>
-				<value>org.squashtest.csp.tm.domain.execution.TestAutomationExecution</value>
+				<value>org.squashtest.csp.tm.domain.testautomation.TestAutomationServer</value>
+				<value>org.squashtest.csp.tm.domain.testautomation.TestAutomationProject</value>
+				<value>org.squashtest.csp.tm.domain.testautomation.TestAutomationTest</value>
+				<value>org.squashtest.csp.tm.domain.testautomation.TestAutomationSuite</value>
+				<value>org.squashtest.csp.tm.domain.testautomation.TestAutomationExecution</value>
 				
 			</list>
 		</property>

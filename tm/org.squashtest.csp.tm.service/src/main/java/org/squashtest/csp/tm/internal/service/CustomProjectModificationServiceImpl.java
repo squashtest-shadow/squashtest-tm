@@ -38,6 +38,8 @@ import org.squashtest.csp.tm.domain.UnknownEntityException;
 import org.squashtest.csp.tm.domain.bugtracker.BugTrackerBinding;
 import org.squashtest.csp.tm.domain.project.AdministrableProject;
 import org.squashtest.csp.tm.domain.project.Project;
+import org.squashtest.csp.tm.domain.testautomation.TestAutomationProject;
+import org.squashtest.csp.tm.domain.testautomation.TestAutomationServer;
 import org.squashtest.csp.tm.domain.users.User;
 import org.squashtest.csp.tm.domain.users.UserProjectPermissionsBean;
 import org.squashtest.csp.tm.infrastructure.filter.CollectionSorting;
@@ -46,12 +48,10 @@ import org.squashtest.csp.tm.internal.repository.BugTrackerBindingDao;
 import org.squashtest.csp.tm.internal.repository.BugTrackerDao;
 import org.squashtest.csp.tm.internal.repository.ProjectDao;
 import org.squashtest.csp.tm.internal.repository.UserDao;
+import org.squashtest.csp.tm.internal.testautomation.service.InsecureTestAutomationManagementService;
 import org.squashtest.csp.tm.service.CustomProjectModificationService;
 import org.squashtest.csp.tm.service.ProjectsPermissionManagementService;
 
-import squashtm.testautomation.domain.TestAutomationProject;
-import squashtm.testautomation.domain.TestAutomationServer;
-import squashtm.testautomation.internal.service.InsecureTestAutomationManagementService;
 
 /**
  * 

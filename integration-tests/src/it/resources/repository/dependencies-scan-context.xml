@@ -33,8 +33,5 @@
 <!-- 	<context:component-scan base-package="org.squashtest.tm.internal.repository" />
  -->	<bean class="org.squashtest.csp.core.service.security.StubUserContextService" />
  
- 	<!--  tm/ta beans -->
-	<bean id="squashtest.tm.service.TAProjectDao" class="squashtm.testautomation.repository.hibernate.HibernateTestAutomationProjectDao" />
-	<bean id="squashtest.tm.service.TAServerDao" class="squashtm.testautomation.repository.hibernate.HibernateTestAutomationServerDao" />
-	
+
 </beans>

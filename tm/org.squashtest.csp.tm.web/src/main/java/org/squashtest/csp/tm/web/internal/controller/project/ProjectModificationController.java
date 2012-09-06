@@ -56,6 +56,8 @@ import org.squashtest.csp.tm.domain.project.AdministrableProject;
 import org.squashtest.csp.tm.domain.project.Project;
 
 
+import org.squashtest.csp.tm.domain.testautomation.TestAutomationProject;
+import org.squashtest.csp.tm.domain.testautomation.TestAutomationServer;
 import org.squashtest.csp.tm.domain.users.User;
 import org.squashtest.csp.tm.domain.users.UserProjectPermissionsBean;
 import org.squashtest.csp.tm.infrastructure.filter.FilteredCollectionHolder;
@@ -67,8 +69,6 @@ import org.squashtest.csp.tm.web.internal.model.datatable.DataTableModel;
 import org.squashtest.csp.tm.web.internal.model.datatable.DataTableModelHelper;
 import org.squashtest.csp.tm.web.internal.model.testautomation.TestAutomationProjectRegistrationForm;
 
-import squashtm.testautomation.domain.TestAutomationProject;
-import squashtm.testautomation.domain.TestAutomationServer;
 
 @Controller
 @RequestMapping("/projects/{projectId}")

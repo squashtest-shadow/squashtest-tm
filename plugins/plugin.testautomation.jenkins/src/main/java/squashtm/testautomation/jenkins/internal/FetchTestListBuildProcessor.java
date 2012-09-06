@@ -24,9 +24,9 @@ import java.util.ArrayList;
 import java.util.Collection;
 
 import org.apache.commons.httpclient.HttpClient;
+import org.squashtest.csp.tm.domain.testautomation.TestAutomationProject;
+import org.squashtest.csp.tm.domain.testautomation.TestAutomationTest;
 
-import squashtm.testautomation.domain.TestAutomationProject;
-import squashtm.testautomation.domain.TestAutomationTest;
 import squashtm.testautomation.jenkins.internal.tasks.StepSequence;
 import squashtm.testautomation.jenkins.internal.tasks.SynchronousBuildProcessor;
 import squashtm.testautomation.jenkins.internal.tasksteps.BuildAbsoluteId;

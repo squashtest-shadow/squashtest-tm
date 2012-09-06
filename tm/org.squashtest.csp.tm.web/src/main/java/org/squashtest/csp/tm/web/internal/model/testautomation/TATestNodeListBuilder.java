@@ -26,13 +26,13 @@ import java.util.LinkedList;
 import java.util.List;
 import java.util.ListIterator;
 
+import org.squashtest.csp.tm.domain.testautomation.TestAutomationProject;
+import org.squashtest.csp.tm.domain.testautomation.TestAutomationTest;
+import org.squashtest.csp.tm.testautomation.model.TestAutomationProjectContent;
 import org.squashtest.csp.tm.web.internal.model.jstree.JsTreeNode.State;
 import org.squashtest.csp.tm.web.internal.model.testautomation.TATestNode.Attr;
 import org.squashtest.csp.tm.web.internal.model.testautomation.TATestNode.Data;
 
-import squashtm.testautomation.domain.TestAutomationProject;
-import squashtm.testautomation.domain.TestAutomationTest;
-import squashtm.testautomation.model.TestAutomationProjectContent;
 
 
 public class TATestNodeListBuilder {

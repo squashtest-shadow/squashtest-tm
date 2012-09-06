@@ -24,11 +24,11 @@ import java.util.Collection;
 import java.util.List;
 
 import org.springframework.transaction.annotation.Transactional;
+import org.squashtest.csp.tm.domain.testautomation.TestAutomationTest;
 import org.squashtest.csp.tm.domain.testcase.ActionTestStep;
 import org.squashtest.csp.tm.domain.testcase.TestStep;
+import org.squashtest.csp.tm.testautomation.model.TestAutomationProjectContent;
 
-import squashtm.testautomation.domain.TestAutomationTest;
-import squashtm.testautomation.model.TestAutomationProjectContent;
 
 /**
  * @author Gregory Fouquet

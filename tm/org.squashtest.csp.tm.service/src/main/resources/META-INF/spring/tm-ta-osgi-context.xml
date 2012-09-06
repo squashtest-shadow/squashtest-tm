@@ -29,19 +29,23 @@
 
 	<osgix:cm-properties id="squashtest.tm.ta.defaults"  persistent-id="tm.testautomation.conf" /> 
 	
-	
+	<!-- 
+	<bean id="tm.testautomation.server.default.factory"
+		class="squashtm.testautomation.configuration.PropertiesBasedDefaultTestAutomationServerFactoryBean">
+	</bean>	
+	 -->
 	<!--  
 		the listener here is declared using @Component 
 		(see class org.squashtest.csp.tm.internal.service.TestAutomationConnectorRegistry)
 	 -->
-	<osgi:list id="plugin.testautomation.registry" interface="squashtm.testautomation.spi.TestAutomationConnector" cardinality="0..N" >
+	<osgi:list id="plugin.testautomation.registry" interface="org.squashtest.csp.tm.testautomation.spi.TestAutomationConnector" cardinality="0..N" >
 		<osgi:listener ref="squashtest.testautomation.connector-registry"
 					   bind-method="registerConnector" 
 					   unbind-method="unregisterConnector" />
 	</osgi:list>
 	
 	<osgi:service ref="squashtest.tm.service.TestAutomationService"
-				  interface="squashtm.testautomation.service.TestAutomationFinderService" />
+				  interface="org.squashtest.csp.tm.service.TestAutomationFinderService" />
 
 	
 </beans>

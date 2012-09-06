@@ -22,6 +22,7 @@ package squashtm.testautomation.jenkins.internal.tasksteps;
 
 import org.apache.commons.httpclient.HttpClient;
 import org.apache.commons.httpclient.HttpMethod;
+import org.squashtest.csp.tm.testautomation.spi.TestAutomationException;
 
 import squashtm.testautomation.jenkins.beans.Build;
 import squashtm.testautomation.jenkins.beans.BuildList;
@@ -29,7 +30,6 @@ import squashtm.testautomation.jenkins.internal.JsonParser;
 import squashtm.testautomation.jenkins.internal.net.RequestExecutor;
 import squashtm.testautomation.jenkins.internal.tasks.BuildProcessor;
 import squashtm.testautomation.jenkins.internal.tasks.BuildStep;
-import squashtm.testautomation.spi.exceptions.TestAutomationException;
 
 public class GetBuildID extends BuildStep implements HttpBasedStep{
 

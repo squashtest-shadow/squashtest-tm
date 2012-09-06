@@ -56,8 +56,8 @@ import org.squashtest.csp.tm.domain.audit.AuditableMixin;
 import org.squashtest.csp.tm.domain.exception.UnallowedTestAssociationException;
 import org.squashtest.csp.tm.domain.requirement.Requirement;
 import org.squashtest.csp.tm.domain.requirement.RequirementVersion;
+import org.squashtest.csp.tm.domain.testautomation.TestAutomationTest;
 
-import squashtm.testautomation.domain.TestAutomationTest;
 
 /**
  * @author Gregory Fouquet

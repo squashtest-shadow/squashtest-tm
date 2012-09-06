@@ -26,8 +26,8 @@ import org.apache.commons.httpclient.HttpClient;
 import org.apache.commons.httpclient.HttpMethod;
 import org.apache.commons.httpclient.methods.GetMethod;
 import org.apache.commons.httpclient.methods.PostMethod;
+import org.squashtest.csp.tm.domain.testautomation.TestAutomationProject;
 
-import squashtm.testautomation.domain.TestAutomationProject;
 import squashtm.testautomation.jenkins.internal.net.HttpRequestFactory;
 import squashtm.testautomation.jenkins.internal.tasks.AbstractBuildProcessor;
 import squashtm.testautomation.jenkins.internal.tasks.BuildStep;

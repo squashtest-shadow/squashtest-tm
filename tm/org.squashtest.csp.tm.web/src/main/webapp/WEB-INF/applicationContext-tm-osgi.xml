@@ -155,7 +155,7 @@
 
 	<osgi:reference id="squashtest.tm.service.TestAutomationService"
 		bean-name="squashtest.tm.service.TestAutomationService"
-		interface="squashtm.testautomation.service.TestAutomationFinderService"
+		interface="org.squashtest.csp.tm.service.TestAutomationFinderService"
 		availability="mandatory" />
 
 	<osgi:reference id="squashtest.tm.service.TestSuiteModificationService"

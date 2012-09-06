@@ -11,73 +11,7 @@
 	<packaging>bundle</packaging>
 	<description>Squash TM API / SPI for test automation frameworks</description>
 
-
-
-	<dependencies>
-	
-		<dependency>
-			<groupId>${project.groupId}</groupId>
-			<artifactId>hibernate-dependencies</artifactId>
-			<version>${project.version}</version>
-			<type>pom</type>
-		</dependency>
-		
-		<dependency>
-			<groupId>org.squashtest.tm</groupId>
-			<artifactId>core.foundation</artifactId>
-			<version>${project.version}</version>
-		</dependency>
-
-		<!-- ====== JSE DI API ====== -->
-		<dependency>
-			<groupId>javax.inject</groupId>
-			<artifactId>com.springsource.javax.inject</artifactId>
-		</dependency>
-		<!-- ====== /JSE DI API ====== -->
-
-		<!-- ====== SPRING STUFFS ====== -->
-		<dependency>
-			<groupId>org.springframework</groupId>
-			<artifactId>org.springframework.transaction</artifactId>
-			<scope>compile</scope>
-		</dependency>
-		
-		<dependency>
-			<groupId>org.springframework.security</groupId>
-			<artifactId>org.springframework.security.core</artifactId>
-			<scope>compile</scope>
-		</dependency>
-		
-		<dependency>
-			<artifactId>springdm-bundle-dependencies</artifactId>
-			<groupId>${project.groupId}</groupId>
-			<version>${project.version}</version>
-			<scope>compile</scope>
-			<type>pom</type>
-		</dependency>
-		
-		
-		<!-- ====== /SPRING STUFFS ====== -->
-		<dependency>
-			<groupId>${project.groupId}</groupId>
-			<artifactId>spock-test-dependencies</artifactId>
-			<version>${project.version}</version>
-			<type>pom</type>
-			<scope>test</scope>
-		</dependency>		
-	</dependencies>
-
-
 	<build>
-
-	<!-- 
-		<resources>
-			<resource>
-				<directory>${project.basedir}/src/main/resources</directory>
-			</resource>
-		</resources>
-	 -->	
-		<testSourceDirectory>src/test/groovy</testSourceDirectory>
 
 		<plugins>
 		
@@ -87,12 +21,6 @@
 				<artifactId>maven-compiler-plugin</artifactId>
 			</plugin>
 			
-			<!-- tests -->
-			<plugin>
-				<groupId>org.apache.maven.plugins</groupId>
-				<artifactId>maven-surefire-plugin</artifactId>
-			</plugin>			
-		
 		
 			<!--  package -->
 			<plugin>
@@ -102,13 +30,10 @@
 				<configuration>
 					<instructions>
 						<_include>bnd.bnd</_include>
-						<Export-Package>squashtm.testautomation.*, squashtm.remoteapi.*</Export-Package>
+						<Export-Package>squashtm.remoteapi.*</Export-Package>
 						<Import-Package>
-							!squashtm.testautomation.*, 
 							!squashtm.remoteapi.*,
-							org.hibernate.proxy, 
-							javassist.util.proxy,
-							* 
+							*
 						</Import-Package>
 					</instructions>
 				</configuration>

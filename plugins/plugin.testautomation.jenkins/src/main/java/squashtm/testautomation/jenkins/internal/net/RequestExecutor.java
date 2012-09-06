@@ -31,9 +31,10 @@ import org.apache.commons.httpclient.HttpClient;
 import org.apache.commons.httpclient.HttpMethod;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.squashtest.csp.tm.testautomation.spi.AccessDenied;
+import org.squashtest.csp.tm.testautomation.spi.ServerConnectionFailed;
 
-import squashtm.testautomation.spi.exceptions.AccessDenied;
-import squashtm.testautomation.spi.exceptions.ServerConnectionFailed;
+
 
 public class RequestExecutor {
 

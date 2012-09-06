@@ -35,6 +35,8 @@ import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.stereotype.Service;
 import org.squashtest.csp.tm.domain.DuplicateNameException;
 import org.squashtest.csp.tm.domain.requirement.RequirementVersion;
+import org.squashtest.csp.tm.domain.testautomation.TestAutomationProject;
+import org.squashtest.csp.tm.domain.testautomation.TestAutomationTest;
 import org.squashtest.csp.tm.domain.testcase.ActionTestStep;
 import org.squashtest.csp.tm.domain.testcase.CallTestStep;
 import org.squashtest.csp.tm.domain.testcase.TestCase;
@@ -46,19 +48,17 @@ import org.squashtest.csp.tm.infrastructure.filter.FilteredCollectionHolder;
 import org.squashtest.csp.tm.internal.repository.RequirementVersionDao;
 import org.squashtest.csp.tm.internal.repository.TestCaseDao;
 import org.squashtest.csp.tm.internal.repository.TestStepDao;
+import org.squashtest.csp.tm.internal.testautomation.service.InsecureTestAutomationManagementService;
 import org.squashtest.csp.tm.service.CallStepManagerService;
 import org.squashtest.csp.tm.service.CustomTestCaseModificationService;
 import org.squashtest.csp.tm.service.TestCaseImportanceManagerService;
 import org.squashtest.csp.tm.service.VerifiedRequirement;
+import org.squashtest.csp.tm.testautomation.model.TestAutomationProjectContent;
 import org.squashtest.tm.core.foundation.collection.PagedCollectionHolder;
 import org.squashtest.tm.core.foundation.collection.Paging;
 import org.squashtest.tm.core.foundation.collection.PagingAndSorting;
 import org.squashtest.tm.core.foundation.collection.PagingBackedPagedCollectionHolder;
 
-import squashtm.testautomation.domain.TestAutomationProject;
-import squashtm.testautomation.domain.TestAutomationTest;
-import squashtm.testautomation.internal.service.InsecureTestAutomationManagementService;
-import squashtm.testautomation.model.TestAutomationProjectContent;
 
 /**
  * @author Gregory Fouquet

@@ -29,22 +29,22 @@ import org.apache.commons.httpclient.HttpClient;
 import org.apache.commons.httpclient.methods.GetMethod;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
+import org.squashtest.csp.tm.domain.testautomation.TestAutomationProject;
+import org.squashtest.csp.tm.domain.testautomation.TestAutomationServer;
+import org.squashtest.csp.tm.domain.testautomation.TestAutomationTest;
+import org.squashtest.csp.tm.testautomation.spi.AccessDenied;
+import org.squashtest.csp.tm.testautomation.spi.NotFoundException;
+import org.squashtest.csp.tm.testautomation.spi.ServerConnectionFailed;
+import org.squashtest.csp.tm.testautomation.spi.TestAutomationConnector;
+import org.squashtest.csp.tm.testautomation.spi.TestAutomationException;
+import org.squashtest.csp.tm.testautomation.spi.UnreadableResponseException;
 
-import squashtm.testautomation.domain.TestAutomationProject;
-import squashtm.testautomation.domain.TestAutomationServer;
-import squashtm.testautomation.domain.TestAutomationTest;
 import squashtm.testautomation.jenkins.internal.FetchTestListBuildProcessor;
 import squashtm.testautomation.jenkins.internal.JsonParser;
 import squashtm.testautomation.jenkins.internal.net.HttpClientProvider;
 import squashtm.testautomation.jenkins.internal.net.HttpRequestFactory;
 import squashtm.testautomation.jenkins.internal.net.RequestExecutor;
 import squashtm.testautomation.jenkins.internal.tasksteps.BuildAbsoluteId;
-import squashtm.testautomation.spi.TestAutomationConnector;
-import squashtm.testautomation.spi.exceptions.AccessDenied;
-import squashtm.testautomation.spi.exceptions.NotFoundException;
-import squashtm.testautomation.spi.exceptions.ServerConnectionFailed;
-import squashtm.testautomation.spi.exceptions.TestAutomationException;
-import squashtm.testautomation.spi.exceptions.UnreadableResponseException;
 
 
 @Service("plugin.testautomation.jenkins.connector")
