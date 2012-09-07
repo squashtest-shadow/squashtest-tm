@@ -229,12 +229,11 @@ public class RequirementLibraryNavigationServiceImpl extends
 			Long id = data.getFolderId();
 			//set the full path attribute
 			StringBuilder path = new StringBuilder();
-	
+			path.append(data.getProject());
 			for(String name : requirementLibraryNodeDao.getParentsName(id)) {
 				path.append('/'+name);
 			}
-			path.append('/'+data.getFolderName()+'/'+data.getName());
-			path.deleteCharAt(0);
+			path.append('/'+data.getName());
 			data.setFolderName(path.toString());
 		}
 		return dataset;

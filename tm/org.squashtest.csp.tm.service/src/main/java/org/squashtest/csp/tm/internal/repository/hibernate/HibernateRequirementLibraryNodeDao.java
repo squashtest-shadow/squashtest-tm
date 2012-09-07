@@ -38,29 +38,9 @@ public class HibernateRequirementLibraryNodeDao extends HibernateEntityDao<Requi
 
 	@Override
 	public List<String> getParentsName(long entityId) {
-		LinkedList<String> path = new LinkedList<String>();
-		boolean top = false;
-		long currentId = entityId;
-		while(top == false) {
-			List<Object> result = executeListNamedQuery("requirementLibraryNode.findParentFolderIfExists", idParameter(currentId));
-			if(!result.isEmpty()) {
-				RequirementFolder folder = (RequirementFolder) result.get(0);
-				path.addFirst(folder.getName());
-				currentId = folder.getId();
-			}
-			else {
-				result = executeListNamedQuery("requirementLibraryNode.findParentLibraryIfExists", idParameter(currentId));
-				if(!result.isEmpty()) {
-					RequirementLibrary library = (RequirementLibrary) result.get(0);
-					path.addFirst(library.getProject().getName());
-					currentId = library.getId();
-				}
-				else {
-					top = true;
-				}
-			}
-		}
-		return path;
+		SQLQuery query = currentSession().createSQLQuery(NativeQueries.requirementLibraryNode_findSortedParentNames);
+		query.setParameter("nodeId", entityId, LongType.INSTANCE);
+		return query.list();
 	}
 	
 	private SetQueryParametersCallback idParameter(final long id) {

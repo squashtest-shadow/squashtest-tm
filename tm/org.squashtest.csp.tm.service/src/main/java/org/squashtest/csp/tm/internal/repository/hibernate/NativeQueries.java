@@ -176,7 +176,11 @@ public class NativeQueries {
 																		   "order by clos.depth desc";
 	
 	
-	public static final String requirementLibraryNode_findSortedParentNames = "select rln.name from REQUIREMENT_LIBRARY_NODE rln "+
+	public static final String requirementLibraryNode_findSortedParentNames = "select rs.name from RESOURCE rs "+
+																			  "join REQUIREMENT_FOLDER rf "+
+			                                                                  "on rs.res_id = rf.res_id "+
+																			  "join REQUIREMENT_LIBRARY_NODE rln "+
+																			  "on rf.rln_id = rln.rln_id "+
 																			  "inner join RLN_RELATIONSHIP_CLOSURE clos "+
 																			  "on clos.ancestor_id = rln.rln_id "+
 																			  "where clos.descendant_id = :nodeId "+
