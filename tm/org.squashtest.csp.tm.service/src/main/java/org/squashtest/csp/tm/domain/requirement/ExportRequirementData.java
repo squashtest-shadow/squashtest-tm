@@ -20,6 +20,11 @@
  */
 package org.squashtest.csp.tm.domain.requirement;
 
+import java.util.Date;
+
+import org.squashtest.csp.tm.domain.audit.AuditableMixin;
+import org.squashtest.csp.tm.domain.library.Folder;
+import org.squashtest.csp.tm.domain.library.LibraryNode;
 
 public class ExportRequirementData {
 
@@ -31,6 +36,11 @@ public class ExportRequirementData {
 	private String project;
 	private String name;
 	private String description;
+	private Integer currentVersion;
+	private RequirementStatus status;
+	private Date createdOn;
+    private String createdBy;
+    private Long folderId;
 	
 	public ExportRequirementData() {
 	}
@@ -94,19 +104,66 @@ public class ExportRequirementData {
 	public String getFolderName() {
 		return folderName;
 	}
+	
 	public void setFolderName(String folderName) {
 		this.folderName = folderName;
 	}
 	
-	public ExportRequirementData(Requirement requirement, String thefolderName) {
+	public Integer getCurrentVersion() {
+		return currentVersion;
+	}
+
+	public void setCurrentVersion(Integer currentVersion) {
+		this.currentVersion = currentVersion;
+	}
+
+	public RequirementStatus getStatus() {
+		return status;
+	}
+
+	public void setStatus(RequirementStatus status) {
+		this.status = status;
+	}
+	
+	public Date getCreatedOn() {
+		return createdOn;
+	}
+
+	public void setCreatedOn(Date createdOn) {
+		this.createdOn = createdOn;
+	}
+
+	public String getCreatedBy() {
+		return createdBy;
+	}
+
+	public void setCreatedBy(String createdBy) {
+		this.createdBy = createdBy;
+	}
+	
+
+	public Long getFolderId() {
+		return folderId;
+	}
+
+	public void setFolderId(Long folderId) {
+		this.folderId = folderId;
+	}
+	
+	public ExportRequirementData(Requirement requirement, RequirementFolder folder) {
 		this.id = requirement.getId();
 		this.name = requirement.getName();
 		this.criticality = requirement.getCriticality();
 		this.category = requirement.getCategory();
-		this.description = requirement.getDescription();	
+		this.description = requirement.getDescription();
 		this.project = requirement.getProject().getName();
 		this.reference = requirement.getReference();
-		this.folderName = thefolderName;
-	}
-	
+		this.folderId = folder.getId();
+		this.folderName = folder.getName();
+		this.currentVersion = requirement.getCurrentVersion().getVersionNumber();
+		this.status = requirement.getStatus();	
+		AuditableMixin audit = ((AuditableMixin) requirement);	
+		this.createdOn = audit.getCreatedOn();
+		this.createdBy = audit.getCreatedBy();
+	}	
 }

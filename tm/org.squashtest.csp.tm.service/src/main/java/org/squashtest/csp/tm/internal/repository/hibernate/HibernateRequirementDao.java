@@ -299,7 +299,7 @@ public class HibernateRequirementDao extends HibernateEntityDao<Requirement> imp
 
 			for (Object[] tuple : list) {
 				Requirement req = (Requirement) tuple[0];
-				String folder = (String) tuple[1];
+				RequirementFolder folder = (RequirementFolder) tuple[1];
 				ExportRequirementData erd = new ExportRequirementData(req, folder);
 				exportList.add(erd);
 			}

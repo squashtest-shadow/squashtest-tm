@@ -71,7 +71,7 @@
 		@NamedQuery(name = "requirement.findNamesInLibraryStartingWith", query = "select c.resource.name from RequirementLibrary l join l.rootContent c where l.id = :containerId and c.resource.name like :nameStart"),
 		@NamedQuery(name = "requirement.findAllByIdListOrderedByName", query = "from Requirement r where id in (:requirementsIds) order by r.resource.name asc"),
 		@NamedQuery(name = "requirement.findRequirementByName", query = "from RequirementLibraryNode r where r.resource.name like :requirementName order by r.resource.name asc"),
-		@NamedQuery(name = "requirement.findRequirementExportData", query = "select r, rf.resource.name from RequirementFolder rf join rf.content r where r.id in (:rIds)"),
+		@NamedQuery(name = "requirement.findRequirementExportData", query = "select r, rf from RequirementFolder rf join rf.content r where r.id in (:rIds)"),
 		@NamedQuery(name = "requirement.findRequirementInExportData", query = "select r.id from Requirement r where r.id in (:rIds)"),
 		@NamedQuery(name = "requirement.findRootContentRequirement", query = "select r from RequirementLibrary rl join rl.rootContent r where r.id in (:paramIds) and r in (from Requirement)"),
 		@NamedQuery(name = "requirement.findRootContentExportData", query = "select r from RequirementLibrary rl join rl.rootContent r where rl.id in (:libIds) and r in (from Requirement)"),

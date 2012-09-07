@@ -20,11 +20,14 @@
  */
 package org.squashtest.csp.tm.internal.repository.hibernate;
 
+import java.util.LinkedList;
 import java.util.List;
 
 import org.hibernate.SQLQuery;
 import org.hibernate.type.LongType;
 import org.springframework.stereotype.Repository;
+import org.squashtest.csp.tm.domain.requirement.RequirementFolder;
+import org.squashtest.csp.tm.domain.requirement.RequirementLibrary;
 import org.squashtest.csp.tm.domain.requirement.RequirementLibraryNode;
 import org.squashtest.csp.tm.internal.repository.LibraryNodeDao;
 
@@ -35,9 +38,32 @@ public class HibernateRequirementLibraryNodeDao extends HibernateEntityDao<Requi
 
 	@Override
 	public List<String> getParentsName(long entityId) {
-		SQLQuery query = currentSession().createSQLQuery(NativeQueries.requirementLibraryNode_findSortedParentNames);
-		query.setParameter("nodeId", entityId, LongType.INSTANCE);
-		return query.list();
+		LinkedList<String> path = new LinkedList<String>();
+		boolean top = false;
+		long currentId = entityId;
+		while(top == false) {
+			List<Object> result = executeListNamedQuery("requirementLibraryNode.findParentFolderIfExists", idParameter(currentId));
+			if(!result.isEmpty()) {
+				RequirementFolder folder = (RequirementFolder) result.get(0);
+				path.addFirst(folder.getName());
+				currentId = folder.getId();
+			}
+			else {
+				result = executeListNamedQuery("requirementLibraryNode.findParentLibraryIfExists", idParameter(currentId));
+				if(!result.isEmpty()) {
+					RequirementLibrary library = (RequirementLibrary) result.get(0);
+					path.addFirst(library.getProject().getName());
+					currentId = library.getId();
+				}
+				else {
+					top = true;
+				}
+			}
+		}
+		return path;
 	}
 	
+	private SetQueryParametersCallback idParameter(final long id) {
+		return new SetIdParameter("libraryNodeId", id);
+	}
 }

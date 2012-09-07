@@ -21,6 +21,7 @@
 package org.squashtest.csp.tm.internal.service;
 
 import java.io.InputStream;
+import java.util.LinkedList;
 import java.util.List;
 
 import javax.inject.Inject;
@@ -214,12 +215,29 @@ public class RequirementLibraryNavigationServiceImpl extends
 	
 	@Override
 	public List<ExportRequirementData> findRequirementsToExportFromLibrary(List<Long> libraryIds) {
-		return requirementDao.findRequirementToExportFromLibrary(libraryIds);
+		return setFullFolderPath(requirementDao.findRequirementToExportFromLibrary(libraryIds));
 	}
 
 	@Override
 	public List<ExportRequirementData> findRequirementsToExportFromFolder(List<Long> folderIds) {
-		return requirementDao.findRequirementToExportFromFolder(folderIds);
+		return setFullFolderPath(requirementDao.findRequirementToExportFromFolder(folderIds));
+	}
+	
+	private List<ExportRequirementData> setFullFolderPath(List<ExportRequirementData> dataset) {
+		for(ExportRequirementData data : dataset) {
+			//get folder id
+			Long id = data.getFolderId();
+			//set the full path attribute
+			StringBuilder path = new StringBuilder();
+	
+			for(String name : requirementLibraryNodeDao.getParentsName(id)) {
+				path.append('/'+name);
+			}
+			path.append('/'+data.getFolderName()+'/'+data.getName());
+			path.deleteCharAt(0);
+			data.setFolderName(path.toString());
+		}
+		return dataset;
 	}
 	
 	@Override
@@ -239,5 +257,4 @@ public class RequirementLibraryNavigationServiceImpl extends
 	public ImportRequirementTestCaseLinksSummary importLinksExcel(InputStream stream) {
 		return requirementTestCaseLinksImporter.importLinksExcel(stream);
 	}
-
 }
