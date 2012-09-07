@@ -33,6 +33,7 @@ import javax.persistence.ManyToOne;
 import javax.persistence.NamedQueries;
 import javax.persistence.NamedQuery;
 import javax.persistence.PrimaryKeyJoinColumn;
+import javax.persistence.Table;
 
 import org.squashtest.csp.tm.domain.audit.Auditable;
 import org.squashtest.csp.tm.domain.execution.Execution;
@@ -48,12 +49,12 @@ import org.squashtest.csp.tm.domain.testcase.TestCaseExecutionMode;
  * @author bsiri
  *
  */
-/*
+
 @NamedQueries({
 	@NamedQuery(name="automatedExecution.findById", query="from AutomatedExecution where id = :executionId")
 })
 @Entity
-@PrimaryKeyJoinColumn(name = "EXECUTION_ID")*/
+@PrimaryKeyJoinColumn(name = "EXECUTION_ID")
 public class AutomatedExecution extends Execution {
 
 	private static final Set<ExecutionStatus> AUTOMATED_EXEC_STATUS;

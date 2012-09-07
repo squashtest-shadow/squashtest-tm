@@ -111,7 +111,7 @@
 				<value>org.squashtest.csp.tm.domain.testautomation.TestAutomationProject</value>
 				<value>org.squashtest.csp.tm.domain.testautomation.AutomatedTest</value>
 				<value>org.squashtest.csp.tm.domain.testautomation.AutomatedSuite</value>
-				<!-- <value>org.squashtest.csp.tm.domain.testautomation.AutomatedExecution</value>  -->
+				<value>org.squashtest.csp.tm.domain.testautomation.AutomatedExecution</value>
 				
 			</list>
 		</property>
