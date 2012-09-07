@@ -86,10 +86,25 @@
 		$.ajax({
 					type : 'POST',
 					url : url,
+					data : {"mode":"manual"},
 					dataType : "json"
 				})
 				.success(function(id) {
 					document.location.href = "${showExecutionUrl}/" + id;
+				});
+		return false; //return false to prevent navigation in page (# appears at the end of the URL)
+	}
+	
+	function newAutoExecutionClickHandler() {
+		var url = $(this).attr('data-new-exec');
+		$.ajax({
+					type : 'POST',
+					url : url,
+					data : {"mode":"auto"},
+					dataType : "json"
+				})
+				.success(function(ok) {
+					alert(ok);
 				});
 		return false; //return false to prevent navigation in page (# appears at the end of the URL)
 	}
@@ -287,6 +302,8 @@
 		<%-- bind the new execution creation button to their event --%>
 		$('a[id|="new-exec"]').die('click');
 		$('a[id|="new-exec"]').live('click', newExecutionClickHandler);
+		$('a[id|="new-auto-exec"]').die('click');
+		$('a[id|="new-auto-exec"]').live('click', newAutoExecutionClickHandler);
 		
 
 		/* could be optimized if we bind that in the datatableDrawCallback.	*/

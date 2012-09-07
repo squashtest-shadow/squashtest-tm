@@ -54,6 +54,7 @@ import org.squashtest.csp.tm.domain.campaign.TestSuite;
 import org.squashtest.csp.tm.domain.execution.Execution;
 import org.squashtest.csp.tm.domain.execution.ExecutionStatus;
 import org.squashtest.csp.tm.domain.project.Project;
+import org.squashtest.csp.tm.domain.testautomation.AutomatedExecution;
 import org.squashtest.csp.tm.domain.testcase.TestCase;
 import org.squashtest.csp.tm.domain.testcase.TestCaseExecutionMode;
 import org.squashtest.csp.tm.domain.testcase.TestCaseImportance;
@@ -321,13 +322,23 @@ public class IterationModificationController {
 	}
 
 	// returns the ID of the newly created execution
-	@RequestMapping(value = "/test-plan/{testPlanId}/new-execution", method = RequestMethod.POST)
+	@RequestMapping(value = "/test-plan/{testPlanId}/new-execution", method = RequestMethod.POST,  params = { "mode=manual"})
 	public @ResponseBody
-	String addExecution(@PathVariable("testPlanId") Long testPlanId, @PathVariable("iterationId") Long iterationId) {
+	String addManualExecution(@PathVariable("testPlanId") Long testPlanId, @PathVariable("iterationId") Long iterationId) {
 		iterationModService.addExecution(iterationId, testPlanId);
 		List<Execution> executionList = iterationModService.findExecutionsByTestPlan(iterationId, testPlanId);
 
 		return executionList.get(executionList.size() - 1).getId().toString();
+
+	}
+	
+	@RequestMapping(value = "/test-plan/{testPlanId}/new-execution", method = RequestMethod.POST,  params = { "mode=auto"})
+	public @ResponseBody
+	String addAutoExecution(@PathVariable("testPlanId") Long testPlanId, @PathVariable("iterationId") Long iterationId) {
+		//TODO [Feat 1211] make it work
+		
+		return "ok";
+
 
 	}
 
@@ -338,11 +349,11 @@ public class IterationModificationController {
 		// get the iteraction to check access rights
 		Iteration iter = iterationModService.findById(iterationId);
 		boolean editable = permissionService.hasRoleOrPermissionOnObject("ROLE_ADMIN", "WRITE", iter);
-
+		IterationTestPlanItem testPlanItem = testPlanFinder.findTestPlanItem(iterationId, testPlanId);
 		ModelAndView mav = new ModelAndView("fragment/iterations/iteration-test-plan-row");
 
 		mav.addObject("editableIteration", editable);
-		mav.addObject("testPlanId", testPlanId);
+		mav.addObject("testPlanItem", testPlanItem);
 		mav.addObject("iterationId", iterationId);
 		mav.addObject("iteration", iter);
 		mav.addObject("executions", executionList);

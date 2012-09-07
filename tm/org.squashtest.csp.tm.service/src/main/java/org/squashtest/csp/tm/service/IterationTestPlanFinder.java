@@ -27,10 +27,13 @@ import org.squashtest.csp.tm.domain.campaign.IterationTestPlanItem;
 import org.squashtest.csp.tm.infrastructure.filter.CollectionSorting;
 import org.squashtest.csp.tm.infrastructure.filter.FilteredCollectionHolder;
 
-@Transactional
+@Transactional(readOnly = true)
 public interface IterationTestPlanFinder {
 	
-	@Transactional(readOnly = true)
+	
 	FilteredCollectionHolder<List<IterationTestPlanItem>> findTestPlan(long iterationId, CollectionSorting filter);
+	
+	IterationTestPlanItem findTestPlanItem(Long iterationId, Long itemTestPlanId);
+
 
 }

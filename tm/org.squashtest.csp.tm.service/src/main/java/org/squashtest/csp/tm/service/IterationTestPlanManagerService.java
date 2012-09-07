@@ -74,8 +74,7 @@ public interface IterationTestPlanManagerService extends IterationTestPlanFinder
 	 */
 	IterationTestPlanItem findTestPlanItemByTestCaseId(long iterationId, long testCaseId);
 
-	IterationTestPlanItem findTestPlanItem(Long iterationId, Long itemTestPlanId);
-
+	
 	/**
 	 * Removes a list of test cases from a campaign excepted the test plans which were executed
 	 * 
