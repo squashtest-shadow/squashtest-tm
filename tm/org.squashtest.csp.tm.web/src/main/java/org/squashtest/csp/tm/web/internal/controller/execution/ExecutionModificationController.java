@@ -127,6 +127,40 @@ public class ExecutionModificationController {
 		}.buildDataModel(holder, filter.getFirstItemIndex() + 1, params.getsEcho());
 
 	}
+	@RequestMapping(value = "/auto-steps", method = RequestMethod.GET, params = "sEcho")
+	@ResponseBody
+	public DataTableModel getAutoStepsTableModel(@PathVariable long executionId, DataTableDrawParameters params,
+			final Locale locale) {
+		LOGGER.trace("ExecutionModificationController: getStepsTableModel called ");
+
+		Paging filter = createPaging(params);
+
+		FilteredCollectionHolder<List<ExecutionStep>> holder = executionModService.findExecutionSteps(executionId,
+				filter);
+
+		return new DataTableModelHelper<ExecutionStep>() {
+			@Override
+			public Map<String, ?> buildItemData(ExecutionStep item) {
+				Map<String, Object> res = new HashMap<String, Object>();
+				res.put(DataTableModelHelper.DEFAULT_ENTITY_ID_KEY, item.getId());
+				res.put(DataTableModelHelper.DEFAULT_ENTITY_INDEX_KEY, item.getExecutionStepOrder() + 1);
+				res.put("action", item.getAction());
+				res.put("expected", item.getExpectedResult());
+				res.put("status", "--");
+				res.put("last-exec-on", formatDate(item.getLastExecutedOn(), locale));
+				res.put("last-exec-by", item.getLastExecutedBy());
+				res.put("comment", item.getComment());
+				res.put("bugged", createBugList(item));
+				res.put(DataTableModelHelper.DEFAULT_NB_ATTACH_KEY, item.getAttachmentList().size());
+				res.put(DEFAULT_ATTACH_LIST_ID_KEY, item.getAttachmentList().getId());
+
+				return res;
+			}
+
+
+		}.buildDataModel(holder, filter.getFirstItemIndex() + 1, params.getsEcho());
+
+	}
 
 	private String createBugList(ExecutionStep item) {
 		StringBuffer toReturn = new StringBuffer();

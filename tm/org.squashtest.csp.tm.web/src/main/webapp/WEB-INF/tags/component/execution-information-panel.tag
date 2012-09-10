@@ -41,6 +41,8 @@
 	<div style="display:inline-block; margin-right:2em;">
 		<label><f:message key="auditable-entity.execution-status.label" /></label>
 		<jq:execution-status status="${auditableEntity.executionStatus}" />
+		<label><f:message key="auditable-entity.automated-execution-status.label"/></label>
+		--
 	</div>
 	
 	<div style="display:inline-block; margin-right:2em;">
