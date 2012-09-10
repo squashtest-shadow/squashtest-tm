@@ -115,7 +115,6 @@
 				<artifactId>maven-surefire-plugin</artifactId>
 			</plugin>
 
-
 			<!-- package -->
 			<plugin>
 				<groupId>org.apache.felix</groupId>

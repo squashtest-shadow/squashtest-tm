@@ -20,8 +20,6 @@
  */
 package org.squashtest.csp.core.service.security;
 
-import org.squashtest.csp.core.domain.Identified;
-
 /**
  * This service evaluates permissions of the current user.
  *

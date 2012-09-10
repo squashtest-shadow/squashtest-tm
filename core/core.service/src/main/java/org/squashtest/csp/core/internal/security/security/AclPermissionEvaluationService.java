@@ -27,7 +27,6 @@ import java.util.List;
 import javax.inject.Inject;
 
 import org.springframework.security.access.PermissionEvaluator;
-import org.springframework.security.acls.domain.BasePermission;
 import org.springframework.security.acls.domain.PermissionFactory;
 import org.springframework.security.acls.model.Permission;
 import org.springframework.security.core.Authentication;

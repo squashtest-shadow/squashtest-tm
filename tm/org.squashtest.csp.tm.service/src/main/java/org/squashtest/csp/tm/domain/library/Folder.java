@@ -39,7 +39,7 @@ public interface Folder<NODE extends LibraryNode> extends LibraryNode, NodeConta
 	 * @return
 	 */
 	Set<NODE> getContent();
-
+	
 	void removeContent(NODE contentToRemove) throws NullArgumentException;
 
 	boolean hasContent();
