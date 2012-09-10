@@ -27,6 +27,7 @@ import java.util.Set;
 
 import javax.persistence.Column;
 import javax.persistence.Entity;
+import javax.persistence.GeneratedValue;
 import javax.persistence.Id;
 import javax.persistence.JoinColumn;
 import javax.persistence.Lob;
@@ -70,6 +71,7 @@ public class AutomatedExecutionExtender{
 
 	@Id
 	@Column(name="EXTENDER_ID")
+	@GeneratedValue
 	private Long id;
 	
 	
@@ -91,7 +93,7 @@ public class AutomatedExecutionExtender{
 	
 	
 	@Lob
-	private String resultSummary;
+	private String resultSummary="";
 	
 	
 	/* ******************** constructors ***********************************/

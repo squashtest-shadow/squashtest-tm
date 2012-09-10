@@ -349,7 +349,7 @@ public class CustomTestCaseModificationServiceImpl implements CustomTestCaseModi
 		
 		TestCase testCase = testCaseDao.findById(testCaseId);
 		
-		testCase.setTestAutomationTest(persistedTest);
+		testCase.setAutomatedTest(persistedTest);
 		
 		return persistedTest;
 	}

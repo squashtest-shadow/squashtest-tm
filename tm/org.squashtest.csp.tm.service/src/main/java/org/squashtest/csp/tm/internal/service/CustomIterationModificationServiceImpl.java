@@ -43,6 +43,7 @@ import org.squashtest.csp.tm.domain.campaign.IterationTestPlanItem;
 import org.squashtest.csp.tm.domain.campaign.TestSuite;
 import org.squashtest.csp.tm.domain.execution.Execution;
 import org.squashtest.csp.tm.domain.testcase.TestCase;
+import org.squashtest.csp.tm.internal.repository.AutomatedExecutionExtenderDao;
 import org.squashtest.csp.tm.internal.repository.CampaignDao;
 import org.squashtest.csp.tm.internal.repository.ExecutionDao;
 import org.squashtest.csp.tm.internal.repository.ItemTestPlanDao;
@@ -66,8 +67,13 @@ public class CustomIterationModificationServiceImpl implements CustomIterationMo
 	private TestSuiteDao suiteDao;
 	@Inject
 	private ItemTestPlanDao testPlanDao;
+	
 	@Inject
 	private ExecutionDao executionDao;
+	
+	@Inject
+	private AutomatedExecutionExtenderDao executionExtenderDao;
+	
 	@Inject
 	private TestCaseCyclicCallChecker testCaseCyclicCallChecker;
 
@@ -154,6 +160,18 @@ public class CustomIterationModificationServiceImpl implements CustomIterationMo
 
 		return addExecution(item);
 	}
+	
+	@Override
+	@PreAuthorize("hasPermission(#iterationId, 'org.squashtest.csp.tm.domain.campaign.Iteration', 'EXECUTE') "
+			+ "or hasRole('ROLE_ADMIN')")
+	public Execution addAutomatedExecution(long iterationId, long testPlanId) {
+		
+		Iteration iteration = iterationDao.findAndInit(iterationId);
+		IterationTestPlanItem item = iteration.getTestPlan(testPlanId);
+		
+		return addAutomatedExecution(item);
+	}
+
 
 	/****
 	 * Method which change the index of test case in the selected iteration
@@ -365,6 +383,17 @@ public class CustomIterationModificationServiceImpl implements CustomIterationMo
 		item.addExecution(execution);
 
 		return execution;
+	}
+	
+	public Execution addAutomatedExecution(IterationTestPlanItem item) throws TestPlanItemNotExecutableException {
+		
+		Execution execution = item.createAutomatedExecution(testCaseCyclicCallChecker);
+		
+		executionDao.persist(execution);
+		item.addExecution(execution);
+		
+		return execution;
+		
 	}
 
 }

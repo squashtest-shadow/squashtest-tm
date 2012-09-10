@@ -70,10 +70,13 @@ public class AutomatedSuite  {
 	
 	public void addExtender(AutomatedExecutionExtender extender){
 		executionExtenders.add(extender);
+		extender.setAutomatedSuite(this);
 	}
 	
 	public void addExtenders(Collection<AutomatedExecutionExtender> extenders){
-		executionExtenders.addAll(extenders);
+		for (AutomatedExecutionExtender extender : extenders){
+			executionExtenders.add(extender);
+		}
 	}
 	
 }

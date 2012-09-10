@@ -51,6 +51,8 @@ public interface CustomIterationModificationService extends IterationFinder{
 	void rename(long iterationId, String newName);
 
 	Execution addExecution(long iterationId, long testPlanId);
+	
+	Execution addAutomatedExecution(long iterationId, long testPlanId);
 
 	@Deprecated
 	// use the other method instead when possible

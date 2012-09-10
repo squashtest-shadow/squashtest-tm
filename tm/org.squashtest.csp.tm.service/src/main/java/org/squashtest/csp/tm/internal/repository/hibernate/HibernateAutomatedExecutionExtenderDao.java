@@ -18,8 +18,37 @@
  *     You should have received a copy of the GNU Lesser General Public License
  *     along with this software.  If not, see <http://www.gnu.org/licenses/>.
  */
-package org.squashtest.csp.tm.domain.exception;
+package org.squashtest.csp.tm.internal.repository.hibernate;
 
-public class NotAutomatedExecutionException extends RuntimeException {
+import javax.inject.Inject;
 
+import org.hibernate.SessionFactory;
+import org.hibernate.classic.Session;
+import org.springframework.stereotype.Repository;
+import org.squashtest.csp.tm.domain.testautomation.AutomatedExecutionExtender;
+import org.squashtest.csp.tm.internal.repository.AutomatedExecutionExtenderDao;
+
+@Repository
+public class HibernateAutomatedExecutionExtenderDao implements AutomatedExecutionExtenderDao{
+
+	
+	@Inject
+	private SessionFactory factory;
+	
+	protected Session currentSession(){
+		return factory.getCurrentSession();
+	}
+	
+	@Override
+	public AutomatedExecutionExtender findById(long extenderId) {
+		return (AutomatedExecutionExtender)currentSession().get(AutomatedExecutionExtender.class, extenderId);
+	}
+
+	@Override
+	public void persist(AutomatedExecutionExtender extender) {
+		currentSession().persist(extender);
+	}
+
+	
+	
 }

@@ -27,6 +27,7 @@ import org.springframework.transaction.annotation.Transactional
 import org.squashtest.csp.tm.domain.attachment.AttachmentList
 import org.squashtest.csp.tm.domain.campaign.IterationTestPlanItem
 import org.squashtest.csp.tm.domain.campaign.TestSuite
+import org.squashtest.csp.tm.domain.execution.Execution;
 import org.squashtest.csp.tm.domain.execution.ExecutionStatus
 import org.squashtest.csp.tm.service.IterationModificationService
 import org.unitils.dbunit.annotation.DataSet
@@ -103,5 +104,18 @@ class IterationModificationServiceDbunitIT extends DbunitServiceSpecification {
 		copyOfSuites.get(1).getId()!= 2L
 		copyOfSuites.get(1).getId()!= null
 		
+	}
+	
+	@DataSet("IterationModificationServiceDbunitIT.testautomation.xml")
+	def "should create an automated execution"(){
+		
+		when :
+			Execution exec = iterService.addAutomatedExecution(1l, 1l)
+			
+		then :
+			def extender = exec.automatedExecutionExtender 
+			extender.id != null
+			extender.execution == exec
+			extender.automatedTest.id == 100l
 	}
 }

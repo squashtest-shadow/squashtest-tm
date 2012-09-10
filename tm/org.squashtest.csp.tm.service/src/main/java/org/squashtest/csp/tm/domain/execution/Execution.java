@@ -68,7 +68,7 @@ import org.squashtest.csp.tm.domain.campaign.IterationTestPlanItem;
 import org.squashtest.csp.tm.domain.exception.ExecutionHasNoRunnableStepException;
 import org.squashtest.csp.tm.domain.exception.ExecutionHasNoStepsException;
 import org.squashtest.csp.tm.domain.exception.IllegalExecutionStatusException;
-import org.squashtest.csp.tm.domain.exception.NotAutomatedExecutionException;
+import org.squashtest.csp.tm.domain.exception.NotAutomatedException;
 import org.squashtest.csp.tm.domain.library.HasExecutionStatus;
 import org.squashtest.csp.tm.domain.project.Project;
 import org.squashtest.csp.tm.domain.testautomation.AutomatedExecutionExtender;
@@ -140,7 +140,7 @@ public class Execution implements AttachmentHolder, IssueDetector, Identified, H
 	private Date lastExecutedOn;
 	
 
-	@OneToOne(mappedBy="execution", cascade = { CascadeType.REMOVE}, optional = true)
+	@OneToOne(mappedBy="execution", cascade = { CascadeType.REMOVE, CascadeType.PERSIST}, optional = true)
 	private AutomatedExecutionExtender automatedExecutionExtender;
 
 	/* *********************** attachment attributes ************************ */
@@ -466,28 +466,28 @@ public class Execution implements AttachmentHolder, IssueDetector, Identified, H
 			return automatedExecutionExtender.getAutomatedTest();
 		}
 		
-		throw new NotAutomatedExecutionException();
+		throw new NotAutomatedException();
 	}
 	
 	public URL getResultURL(){
 		if (! isAutomated()){
 			return automatedExecutionExtender.getResultURL();
 		}
-		throw new NotAutomatedExecutionException();
+		throw new NotAutomatedException();
 	}
 	
 	public AutomatedSuite getAutomatedSuite(){
 		if (! isAutomated()){
 			return automatedExecutionExtender.getAutomatedSuite();
 		}
-		throw new NotAutomatedExecutionException();		
+		throw new NotAutomatedException();		
 	}
 	
 	public String getResultSummary(){
 		if (! isAutomated()){
 			return automatedExecutionExtender.getResultSummary();
 		}
-		throw new NotAutomatedExecutionException();		
+		throw new NotAutomatedException();		
 	}
 	
 }

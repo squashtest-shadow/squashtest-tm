@@ -109,7 +109,7 @@ public class TestCase extends TestCaseLibraryNode implements AttachmentHolder{
 	
 	@ManyToOne
 	@JoinColumn(name="TA_TEST")
-	private AutomatedTest testAutomationTest;
+	private AutomatedTest automatedTest;
 	
 	
 	//*************************** CODE *************************************
@@ -396,13 +396,13 @@ public class TestCase extends TestCaseLibraryNode implements AttachmentHolder{
 	// *************** test automation section ******************
 	
 	
-	public AutomatedTest getTestAutomationTest() {
-		return testAutomationTest;
+	public AutomatedTest getAutomatedTest() {
+		return automatedTest;
 	}
 
-	public void setTestAutomationTest(AutomatedTest testAutomationTest) {
+	public void setAutomatedTest(AutomatedTest testAutomationTest) {
 		if (getProject().isTestAutomationEnabled()){
-			this.testAutomationTest = testAutomationTest;
+			this.automatedTest = testAutomationTest;
 		}
 		else{
 			throw new UnallowedTestAssociationException();
@@ -410,7 +410,7 @@ public class TestCase extends TestCaseLibraryNode implements AttachmentHolder{
 	}
 	
 	public boolean isAutomated(){
-		return (testAutomationTest!=null && getProject().isTestAutomationEnabled());
+		return (automatedTest!=null && getProject().isTestAutomationEnabled());
 	}
 	
 	

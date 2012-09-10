@@ -49,10 +49,12 @@ import javax.validation.constraints.NotNull;
 import org.squashtest.csp.core.security.annotation.InheritsAcls;
 import org.squashtest.csp.tm.domain.TestPlanItemNotExecutableException;
 import org.squashtest.csp.tm.domain.audit.Auditable;
+import org.squashtest.csp.tm.domain.exception.NotAutomatedException;
 import org.squashtest.csp.tm.domain.execution.Execution;
 import org.squashtest.csp.tm.domain.execution.ExecutionStatus;
 import org.squashtest.csp.tm.domain.library.HasExecutionStatus;
 import org.squashtest.csp.tm.domain.project.Project;
+import org.squashtest.csp.tm.domain.testautomation.AutomatedExecutionExtender;
 import org.squashtest.csp.tm.domain.testcase.TestCase;
 import org.squashtest.csp.tm.domain.users.User;
 import org.squashtest.csp.tm.internal.service.TestCaseCyclicCallChecker;
@@ -228,13 +230,39 @@ public class IterationTestPlanItem implements HasExecutionStatus {
 
 		return newExecution;
 	}
+	
+	
+	public Execution createAutomatedExecution(TestCaseCyclicCallChecker cyclicCallChecker)
+			throws TestPlanItemNotExecutableException {
 
+		if (! isAutomated()){
+			throw new NotAutomatedException();
+		}
+
+		Execution execution = createExecution(cyclicCallChecker);
+		
+		AutomatedExecutionExtender extender = new AutomatedExecutionExtender();
+		extender.setAutomatedTest(referencedTestCase.getAutomatedTest());
+		extender.setExecution(execution);
+		execution.setAutomatedExecutionExtender(extender);
+		
+		return execution;
+		
+	}
+	
+	
 	private void checkExecutable() throws TestPlanItemNotExecutableException {
 		if (!isExecutableThroughIteration()) {
 			throw new TestPlanItemNotExecutableException("Test case referenced by this item was deleted");
 		}
 
 	}
+	
+	
+	public boolean isAutomated(){
+		return referencedTestCase.isAutomated();
+	}
+	
 
 	private void resetIterationDates() {
 		Iteration it = getIteration();
