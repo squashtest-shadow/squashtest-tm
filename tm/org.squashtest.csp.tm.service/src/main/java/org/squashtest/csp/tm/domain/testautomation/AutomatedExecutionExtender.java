@@ -27,23 +27,21 @@ import java.util.Set;
 
 import javax.persistence.Column;
 import javax.persistence.Entity;
+import javax.persistence.Id;
 import javax.persistence.JoinColumn;
 import javax.persistence.Lob;
 import javax.persistence.ManyToOne;
 import javax.persistence.NamedQueries;
 import javax.persistence.NamedQuery;
-import javax.persistence.PrimaryKeyJoinColumn;
-import javax.persistence.Table;
+import javax.persistence.OneToOne;
 
-import org.squashtest.csp.tm.domain.audit.Auditable;
 import org.squashtest.csp.tm.domain.execution.Execution;
 import org.squashtest.csp.tm.domain.execution.ExecutionStatus;
-import org.squashtest.csp.tm.domain.testcase.TestCase;
-import org.squashtest.csp.tm.domain.testcase.TestCaseExecutionMode;
 
 
 /**
- * Unlike the rest of the squashtm.testautomation.domain.TestAutomation X entities, 
+ * this was meant to be a subclass of Execution; that's what the business says. But Hibernate says that doing so would trigger 
+ * a bug. So we came with an extender instead.
  *  
  * 
  * @author bsiri
@@ -51,11 +49,10 @@ import org.squashtest.csp.tm.domain.testcase.TestCaseExecutionMode;
  */
 
 @NamedQueries({
-	@NamedQuery(name="automatedExecution.findById", query="from AutomatedExecution where id = :executionId")
+	@NamedQuery(name="automatedExecutionExtender.findById", query="from AutomatedExecutionExtender where id = :executionId")
 })
 @Entity
-@PrimaryKeyJoinColumn(name = "EXECUTION_ID")
-public class AutomatedExecution extends Execution {
+public class AutomatedExecutionExtender{
 
 	private static final Set<ExecutionStatus> AUTOMATED_EXEC_STATUS;
 	
@@ -70,10 +67,20 @@ public class AutomatedExecution extends Execution {
 		AUTOMATED_EXEC_STATUS = Collections.unmodifiableSet(set);
 	}
 	
+
+	@Id
+	@Column(name="EXTENDER_ID")
+	private Long id;
+	
+	
 	@ManyToOne()
 	@JoinColumn(name = "TEST_ID", referencedColumnName="TEST_ID")
 	private AutomatedTest automatedTest;
 	
+	
+	@OneToOne
+	@JoinColumn(name="MASTER_EXECUTION_ID", referencedColumnName="EXECUTION_ID")
+	private Execution execution;
 	
 	@Column
 	private URL resultURL;
@@ -89,25 +96,27 @@ public class AutomatedExecution extends Execution {
 	
 	/* ******************** constructors ***********************************/
 	
-	public AutomatedExecution() {
+	public AutomatedExecutionExtender() {
 		super();
-		executionMode = TestCaseExecutionMode.AUTOMATED;
 	}
 
-
-	public AutomatedExecution(TestCase testCase) {
-		super(testCase);
-		executionMode = TestCaseExecutionMode.AUTOMATED;
-		this.automatedTest = testCase.getTestAutomationTest();
-	}
-	
-	public AutomatedExecution(TestCase testCase, AutomatedSuite suite){
-		this(testCase);
-		automatedSuite = suite;
-	}
 	
 	/* ******************** accessors *************************************/
+
+	public Long getId(){
+		return id;
+	}
 	
+	
+	public Execution getExecution() {
+		return execution;
+	}
+
+
+	public void setExecution(Execution execution) {
+		this.execution = execution;
+	}
+
 
 	public AutomatedTest getAutomatedTest() {
 		return automatedTest;
@@ -149,14 +158,12 @@ public class AutomatedExecution extends Execution {
 	}	
 	
 	
-	/* ********** override for HasExecutionStatus#getLegalStatusSet(); ****/
-	
-	@Override
 	public Set<ExecutionStatus> getLegalStatusSet(){
 		return AUTOMATED_EXEC_STATUS;
 	}
 
-
-
+	public void setExecutionStatus(ExecutionStatus status){
+		execution.setExecutionStatus(status);
+	}
 	
 }

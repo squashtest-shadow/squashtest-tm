@@ -410,7 +410,7 @@ public class TestCase extends TestCaseLibraryNode implements AttachmentHolder{
 	}
 	
 	public boolean isAutomated(){
-		return (testAutomationTest!=null);
+		return (testAutomationTest!=null && getProject().isTestAutomationEnabled());
 	}
 	
 	

@@ -22,8 +22,9 @@ package org.squashtest.csp.tm.internal.repository;
 
 import java.util.Collection;
 
+import org.squashtest.csp.tm.domain.execution.Execution;
 import org.squashtest.csp.tm.domain.execution.ExecutionStatus;
-import org.squashtest.csp.tm.domain.testautomation.AutomatedExecution;
+import org.squashtest.csp.tm.domain.testautomation.AutomatedExecutionExtender;
 import org.squashtest.csp.tm.domain.testautomation.AutomatedSuite;
 
 
@@ -43,12 +44,12 @@ public interface AutomatedSuiteDao {
 	
 	
 	/**
-	 * retrieve all the {@link AutomatedExecution} that this suite is bound to.
+	 * retrieve all the {@link Execution} that this suite is bound to.
 	 * 
 	 * @param suiteId
 	 * @return
 	 */
-	Collection<AutomatedExecution> findAllExecutions(long suiteId);
+	Collection<Execution> findAllExecutions(long suiteId);
 	 
 	/**
 	 * retrieve all executions currently waiting to be run by their test automation servers, for a given {@link AutomatedSuite}
@@ -56,7 +57,7 @@ public interface AutomatedSuiteDao {
 	 * @param suiteId
 	 * @return
 	 */
-	Collection<AutomatedExecution> findAllWaitingExecution(long suiteId);
+	Collection<Execution> findAllWaitingExecution(long suiteId);
 	
 	/**
 	 * retrieve all executions currently being run by their test automation servers, for a given {@link AutomatedSuite}
@@ -64,7 +65,7 @@ public interface AutomatedSuiteDao {
 	 * @param suiteId
 	 * @return
 	 */
-	Collection<AutomatedExecution> findAllRunningExecution(long suiteId);
+	Collection<Execution> findAllRunningExecution(long suiteId);
 	
 	/**
 	 * retrieve all executions which had been ran their test automation servers, for a given {@link AutomatedSuite}
@@ -72,7 +73,7 @@ public interface AutomatedSuiteDao {
 	 * @param suiteId
 	 * @return
 	 */
-	Collection<AutomatedExecution> findAllTreatedExecution(long suiteId);
+	Collection<Execution> findAllTreatedExecution(long suiteId);
 	
 	/**
 	 * retrieve all executions which status is one of the supplied status, for a given {@link AutomatedSuite}
@@ -80,5 +81,5 @@ public interface AutomatedSuiteDao {
 	 * @param suiteId
 	 * @return
 	 */
-	Collection<AutomatedExecution> findAllByStatus(long suiteId, Collection<ExecutionStatus> statusList);
+	Collection<Execution> findAllByStatus(long suiteId, Collection<ExecutionStatus> statusList);
 }

@@ -29,8 +29,8 @@ import javax.persistence.NamedQuery;
 
 @NamedQueries({
 	@NamedQuery(name="automatedSuite.findById", query="from AutomatedSuite where id = :suiteId"),
-	/*@NamedQuery(name="automatedSuite.findAllExecutions", query="select e from AutomatedExecution e join e.automatedSuite s where s.id = :suiteId"),
-	@NamedQuery(name="automatedSuite.findAllExecutionWhereStatusIs", query="select e from AutomatedExecution e join e.automatedSuite s where s.id = :suiteId and e.executionStatus in (:statusList)")
+	/*@NamedQuery(name="automatedSuite.findAllExecutions", query="select exe from AutomatedExecutionExtender ext join masterExecution exe join ext.automatedSuite s where s.id = :suiteId"),
+	@NamedQuery(name="automatedSuite.findAllExecutionWhereStatusIs", query="select exe from AutomatedExecutionExtender ext join masterExecution exe join ext.automatedSuite s where s.id = :suiteId and exe.executionStatus in (:statusList)")
 */})
 @Entity
 public class AutomatedSuite  {

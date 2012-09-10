@@ -18,14 +18,8 @@
  *     You should have received a copy of the GNU Lesser General Public License
  *     along with this software.  If not, see <http://www.gnu.org/licenses/>.
  */
-package org.squashtest.csp.tm.internal.repository;
+package org.squashtest.csp.tm.domain.exception;
 
-import org.squashtest.csp.tm.domain.testautomation.AutomatedExecution;
+public class NotAutomatedExecutionException extends RuntimeException {
 
-public interface AutomatedExecutionDao {
-
-	
-	AutomatedExecution findById(long executionId);
-	
-	
 }

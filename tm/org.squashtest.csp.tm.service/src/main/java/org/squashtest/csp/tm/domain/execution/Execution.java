@@ -20,6 +20,7 @@
  */
 package org.squashtest.csp.tm.domain.execution;
 
+import java.net.URL;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Date;
@@ -47,6 +48,7 @@ import javax.persistence.OneToOne;
 import javax.persistence.OrderColumn;
 import javax.persistence.Temporal;
 import javax.persistence.TemporalType;
+import javax.persistence.Transient;
 import javax.validation.constraints.NotNull;
 
 import org.hibernate.annotations.FetchMode;
@@ -65,14 +67,18 @@ import org.squashtest.csp.tm.domain.campaign.CampaignLibrary;
 import org.squashtest.csp.tm.domain.campaign.IterationTestPlanItem;
 import org.squashtest.csp.tm.domain.exception.ExecutionHasNoRunnableStepException;
 import org.squashtest.csp.tm.domain.exception.ExecutionHasNoStepsException;
+import org.squashtest.csp.tm.domain.exception.IllegalExecutionStatusException;
+import org.squashtest.csp.tm.domain.exception.NotAutomatedExecutionException;
 import org.squashtest.csp.tm.domain.library.HasExecutionStatus;
 import org.squashtest.csp.tm.domain.project.Project;
+import org.squashtest.csp.tm.domain.testautomation.AutomatedExecutionExtender;
+import org.squashtest.csp.tm.domain.testautomation.AutomatedSuite;
+import org.squashtest.csp.tm.domain.testautomation.AutomatedTest;
 import org.squashtest.csp.tm.domain.testcase.TestCase;
 import org.squashtest.csp.tm.domain.testcase.TestCaseExecutionMode;
 import org.squashtest.csp.tm.domain.testcase.TestStep;
 
 @Auditable
-@Inheritance(strategy = InheritanceType.JOINED)
 @Entity
 public class Execution implements AttachmentHolder, IssueDetector, Identified, HasExecutionStatus {
 	
@@ -132,6 +138,10 @@ public class Execution implements AttachmentHolder, IssueDetector, Identified, H
 	@Column(insertable = false)
 	@Temporal(TemporalType.TIMESTAMP)
 	private Date lastExecutedOn;
+	
+
+	@OneToOne(mappedBy="execution", cascade = { CascadeType.REMOVE}, optional = true)
+	private AutomatedExecutionExtender automatedExecutionExtender;
 
 	/* *********************** attachment attributes ************************ */
 
@@ -185,9 +195,13 @@ public class Execution implements AttachmentHolder, IssueDetector, Identified, H
 			}
 		}
 	}
+	
+
 
 	/* ******************** HasExecutionStatus implementation ************** */
 	
+
+
 	@Override
 	public ExecutionStatus getExecutionStatus() {
 		return executionStatus;
@@ -195,23 +209,18 @@ public class Execution implements AttachmentHolder, IssueDetector, Identified, H
 	
 	@Override
 	public Set<ExecutionStatus> getLegalStatusSet() {
-		return LEGAL_EXEC_STATUS;
+		/*if (isAutomated()){
+			return automatedExecutionExtender.getLegalStatusSet();
+		}
+		else{*/
+			return LEGAL_EXEC_STATUS;
+		//}
 	}
 	
 	
 	/* ******************** /HasExecutionStatus implementation ************** */
 
-	
-	public void setExecutionStatus(ExecutionStatus status) {
-		executionStatus = status;
-		// update parentTestPlan status
 
-		IterationTestPlanItem itp = getTestPlan();
-
-		if (itp != null) {
-			itp.updateExecutionStatus();
-		}
-	}
 	
 
 	public Integer getExecutionOrder() {
@@ -236,7 +245,6 @@ public class Execution implements AttachmentHolder, IssueDetector, Identified, H
 
 	private void setReferencedTestCase(TestCase testCase) {
 		referencedTestCase = testCase;
-		executionMode = testCase.getExecutionMode();
 
 		setName(testCase.getName());
 
@@ -406,4 +414,80 @@ public class Execution implements AttachmentHolder, IssueDetector, Identified, H
 		return getProject().findBugTracker();
 	}
 
+	
+	/* ************************** test automation section (delegate to AutomatedExecutionExtender ) ************************* */
+
+	public AutomatedExecutionExtender getAutomatedExecutionExtender() {
+		return automatedExecutionExtender;
 	}
+
+	
+	public void setAutomatedExecutionExtender(AutomatedExecutionExtender extender) {
+		this.automatedExecutionExtender = extender;
+		executionMode = TestCaseExecutionMode.AUTOMATED;
+	}
+	
+	
+	
+	public boolean isAutomated(){
+		return (executionMode == TestCaseExecutionMode.AUTOMATED && automatedExecutionExtender!=null);
+	}
+	
+	private boolean checkValidNewStatus(ExecutionStatus status){
+		if (isAutomated()){
+			return (automatedExecutionExtender.getLegalStatusSet().contains(status));
+		}
+		else{
+			return getLegalStatusSet().contains(status);
+		}
+	}
+	
+	
+	public void setExecutionStatus(ExecutionStatus status) {
+		
+		if ( ! checkValidNewStatus(status)){
+			throw new IllegalExecutionStatusException();
+		}
+		
+		executionStatus = status;
+		
+		// update parentTestPlan status
+
+		IterationTestPlanItem itp = getTestPlan();
+
+		if (itp != null) {
+			itp.updateExecutionStatus();
+		}
+	}
+	
+	
+	public AutomatedTest getAutomatedTest(){
+		if (!isAutomated()){
+			return automatedExecutionExtender.getAutomatedTest();
+		}
+		
+		throw new NotAutomatedExecutionException();
+	}
+	
+	public URL getResultURL(){
+		if (! isAutomated()){
+			return automatedExecutionExtender.getResultURL();
+		}
+		throw new NotAutomatedExecutionException();
+	}
+	
+	public AutomatedSuite getAutomatedSuite(){
+		if (! isAutomated()){
+			return automatedExecutionExtender.getAutomatedSuite();
+		}
+		throw new NotAutomatedExecutionException();		
+	}
+	
+	public String getResultSummary(){
+		if (! isAutomated()){
+			return automatedExecutionExtender.getResultSummary();
+		}
+		throw new NotAutomatedExecutionException();		
+	}
+	
+}
