@@ -23,136 +23,142 @@ package squashtm.remoteapi.execution.dto;
 import java.io.Serializable;
 import java.util.Date;
 
+import javax.validation.constraints.NotNull;
+
 /**
  * This class encapsulates test execution status updates.
  * 
  * @author edegenetais
  * 
  */
+/*
+ * TODO This is not per se a "status", we already have ExecutionStatus. It's more of a partial state. Rename as
+ * something else. AutomatedExecutionState ?
+ */
 public class TestExecutionStatus implements Serializable {
-        /**
-         * for serialization.
-         */
-        private static final long serialVersionUID = 7818656596437427978L;
-        /** Name of the test. */
-        private String testName;
-        /** Name of the group the test belongs to. */
-        private String testGroupName;
-        /** Start time. Mandatory. */
-        private Date startTime;
-        /**
-         * End time. May be null (while the execution is still running for example).
-         */
-        private Date endTime;
-        /** New status of the test. */
-        private ExecutionStatus status;
-        /** Explanation message if any (mostly, short versions of error messages). */
-        private String statusMessage;
+	/**
+	 * for serialization.
+	 */
+	private static final long serialVersionUID = 7818656596437427978L;
+	/** Name of the test. */
+	@NotNull
+	private String testName;
+	/** Name of the group the test belongs to. */
+	@NotNull
+	private String testGroupName;
+	/** Start time. Mandatory. */
+	@NotNull
+	private Date startTime;
+	/**
+	 * End time. May be null (while the execution is still running for example).
+	 */
+	private Date endTime;
+	/** New status of the test. */
+	@NotNull
+	private ExecutionStatus status;
+	/** Explanation message if any (mostly, short versions of error messages). */
+	@NotNull
+	private String statusMessage = "";
 
-        /**
-         * @return Name of the test.
-         */
-        public String getTestName() {
-                return testName;
-        }
+	/**
+	 * @return Name of the test.
+	 */
+	public String getTestName() {
+		return testName;
+	}
 
-        /**
-         * @param testName
-         *            Name of the test.
-         */
-        public void setTestName(String testName) {
-                if (testName == null) {
-                        throw new IllegalArgumentException("test name cannot be null.");
-                }
-                this.testName = testName;
-        }
+	/**
+	 * @param testName
+	 *            Name of the test.
+	 */
+	public void setTestName(String testName) {
+		if (testName == null) {
+			throw new IllegalArgumentException("test name cannot be null.");
+		}
+		this.testName = testName;
+	}
 
-        /**
-         * @return Name of the group the test belongs to.
-         */
-        public String getTestGroupName() {
-                return testGroupName;
-        }
+	/**
+	 * @return Name of the group the test belongs to.
+	 */
+	public String getTestGroupName() {
+		return testGroupName;
+	}
 
-        /**
-         * @param testGroupName
-         *            Name of the group the test belongs to.
-         */
-        public void setTestGroupName(String testGroupName) {
-                if (testGroupName == null) {
-                        throw new IllegalArgumentException(
-                                        "test group name cannot be null.");
-                }
-                this.testGroupName = testGroupName;
-        }
+	/**
+	 * @param testGroupName
+	 *            Name of the group the test belongs to.
+	 */
+	public void setTestGroupName(String testGroupName) {
+		if (testGroupName == null) {
+			throw new IllegalArgumentException("test group name cannot be null.");
+		}
+		this.testGroupName = testGroupName;
+	}
 
-        /**
-         * @return Start time. Mandatory.
-         */
-        public Date getStartTime() {
-                return startTime;
-        }
+	/**
+	 * @return Start time. Mandatory.
+	 */
+	public Date getStartTime() {
+		return startTime;
+	}
 
-        /**
-         * @param startTime
-         *            Start time. Mandatory.
-         */
-        public void setStartTime(Date startTime) {
-                if (startTime == null) {
-                        throw new IllegalArgumentException("start time cannot be null.");
-                }
-                this.startTime = startTime;
-        }
+	/**
+	 * @param startTime
+	 *            Start time. Mandatory.
+	 */
+	public void setStartTime(Date startTime) {
+		if (startTime == null) {
+			throw new IllegalArgumentException("start time cannot be null.");
+		}
+		this.startTime = startTime;
+	}
 
-        /**
-         * @return End time. May be null (while the execution is still running for
-         *         example)
-         */
-        public Date getEndTime() {
-                return endTime;
-        }
+	/**
+	 * @return End time. May be null (while the execution is still running for example)
+	 */
+	public Date getEndTime() {
+		return endTime;
+	}
 
-        /**
-         * @param endTime
-         *            End time. May be null (while the execution is still running
-         *            for example)
-         */
-        public void setEndTime(Date endTime) {
-                this.endTime = endTime;
-        }
+	/**
+	 * @param endTime
+	 *            End time. May be null (while the execution is still running for example)
+	 */
+	public void setEndTime(Date endTime) {
+		this.endTime = endTime;
+	}
 
-        /**
-         * @return New status of the test.
-         */
-        public ExecutionStatus getStatus() {
-                return status;
-        }
+	/**
+	 * @return New status of the test.
+	 */
+	public ExecutionStatus getStatus() {
+		return status;
+	}
 
-        /**
-         * @param status
-         *            New status of the test.
-         */
-        public void setStatus(ExecutionStatus status) {
-                if (testName == null) {
-                        throw new IllegalArgumentException("status cannot be null.");
-                }
-                this.status = status;
-        }
+	/**
+	 * @param status
+	 *            New status of the test.
+	 */
+	public void setStatus(ExecutionStatus status) {
+		if (testName == null) {
+			throw new IllegalArgumentException("status cannot be null.");
+		}
+		this.status = status;
+	}
 
-        /**
-         * @return Explanation message if any (mostly, short versions of error
-         *         messages).
-         */
-        public String getStatusMessage() {
-                return statusMessage;
-        }
+	/**
+	 * @return Explanation message if any (mostly, short versions of error messages).
+	 */
+	public String getStatusMessage() {
+		return statusMessage;
+	}
 
-        /**
-         * @param statusMessage
-         *            Explanation message if any (mostly, short versions of error
-         *            messages).
-         */
-        public void setStatusMessage(String statusMessage) {
-                this.statusMessage = statusMessage;
-        }
+	/**
+	 * @param statusMessage
+	 *            Explanation message if any (mostly, short versions of error messages).
+	 */
+	public void setStatusMessage(String statusMessage) {
+		this.statusMessage = statusMessage == null ? "" : statusMessage;
+	}
 }
