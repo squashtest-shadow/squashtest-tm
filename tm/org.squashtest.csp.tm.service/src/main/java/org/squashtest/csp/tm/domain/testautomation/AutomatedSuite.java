@@ -20,18 +20,23 @@
  */
 package org.squashtest.csp.tm.domain.testautomation;
 
+import java.util.ArrayList;
+import java.util.Collection;
+
+import javax.persistence.CascadeType;
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
 import javax.persistence.Id;
 import javax.persistence.NamedQueries;
 import javax.persistence.NamedQuery;
+import javax.persistence.OneToMany;
 
 @NamedQueries({
 	@NamedQuery(name="automatedSuite.findById", query="from AutomatedSuite where id = :suiteId"),
-	/*@NamedQuery(name="automatedSuite.findAllExecutions", query="select exe from AutomatedExecutionExtender ext join masterExecution exe join ext.automatedSuite s where s.id = :suiteId"),
-	@NamedQuery(name="automatedSuite.findAllExecutionWhereStatusIs", query="select exe from AutomatedExecutionExtender ext join masterExecution exe join ext.automatedSuite s where s.id = :suiteId and exe.executionStatus in (:statusList)")
-*/})
+	@NamedQuery(name="automatedSuite.findAllExtenders", query="select ext from AutomatedExecutionExtender ext join ext.automatedSuite s where s.id = :suiteId"),
+	@NamedQuery(name="automatedSuite.findAllExtendersHavingStatus", query="select ext from AutomatedExecutionExtender ext join ext.execution exe join ext.automatedSuite s where s.id = :suiteId and exe.executionStatus in (:statusList)")
+})
 @Entity
 public class AutomatedSuite  {
 
@@ -44,4 +49,21 @@ public class AutomatedSuite  {
 	public Long getId(){
 		return id;
 	}
+	
+	@OneToMany(mappedBy="automatedSuite", cascade = {CascadeType.ALL})
+	public Collection<AutomatedExecutionExtender> executionExtenders = new ArrayList<AutomatedExecutionExtender>();
+
+
+	public Collection<AutomatedExecutionExtender> getExecutionExtenders() {
+		return executionExtenders;
+	}
+
+
+	public void setExecutionExtenders(
+			Collection<AutomatedExecutionExtender> executionExtenders) {
+		this.executionExtenders = executionExtenders;
+	}
+	
+	
+	
 }

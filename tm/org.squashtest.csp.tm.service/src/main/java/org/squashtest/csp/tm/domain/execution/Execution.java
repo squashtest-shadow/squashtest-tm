@@ -206,16 +206,7 @@ public class Execution implements AttachmentHolder, IssueDetector, Identified, H
 	public ExecutionStatus getExecutionStatus() {
 		return executionStatus;
 	}
-	
-	@Override
-	public Set<ExecutionStatus> getLegalStatusSet() {
-		/*if (isAutomated()){
-			return automatedExecutionExtender.getLegalStatusSet();
-		}
-		else{*/
-			return LEGAL_EXEC_STATUS;
-		//}
-	}
+
 	
 	
 	/* ******************** /HasExecutionStatus implementation ************** */
@@ -460,6 +451,15 @@ public class Execution implements AttachmentHolder, IssueDetector, Identified, H
 		}
 	}
 	
+	@Override
+	public Set<ExecutionStatus> getLegalStatusSet() {
+		if (isAutomated()){
+			return automatedExecutionExtender.getLegalStatusSet();
+		}
+		else{
+			return LEGAL_EXEC_STATUS;
+		}
+	}
 	
 	public AutomatedTest getAutomatedTest(){
 		if (!isAutomated()){
