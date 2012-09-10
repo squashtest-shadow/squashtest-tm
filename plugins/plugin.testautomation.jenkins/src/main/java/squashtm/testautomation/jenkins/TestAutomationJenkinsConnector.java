@@ -146,9 +146,21 @@ public class TestAutomationJenkinsConnector implements TestAutomationConnector{
 	}
 
 	
+	@Override
+	public void executeTests(Collection<AutomatedTest> tests, String reference)
+			throws ServerConnectionFailed, AccessDenied,
+			UnreadableResponseException, NotFoundException,
+			TestAutomationException {
+		// TODO Auto-generated method stub
+		
+	}
+	
 	// ************************************ private tools ************************** 
 
 	private String generateNewId(){
 		return new Long(new Date().getTime()).toString();
 	}
+
+
+
 }

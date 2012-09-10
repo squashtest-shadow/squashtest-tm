@@ -57,6 +57,7 @@ public class TestAutomationConnectorRegistry {
 		return connector;
 	}
 
+
 	/**
 	 * Registers a new kind of connector connector.
 	 *

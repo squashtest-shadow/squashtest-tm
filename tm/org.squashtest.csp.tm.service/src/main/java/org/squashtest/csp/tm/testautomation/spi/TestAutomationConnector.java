@@ -51,6 +51,7 @@ public interface TestAutomationConnector {
 	/**
 	 * <p>Given a server (that contains everything you need to connect it), returns the collection of {@link TestAutomationProject} 
 	 * that it hosts.</p>
+	 * 
 	 *  
 	 * @param server
 	 * @return a Collection that may never be null if success
@@ -88,4 +89,21 @@ public interface TestAutomationConnector {
 			   		  NotFoundException,
 			   		  TestAutomationException;
 	
+	
+	/**
+	 * <p>Given a bunch of tests, must tell the remote server to execute them. These particular executions of those tests are grouped and must be 
+	 * identifiable by a reference.</p>
+	 * 
+	 * <p>That method must return immediately after initiating the test start sequence, it must not wait for their completion. However it may
+	 * possibly start a background task to oversee the remote executions from here.</p>
+	 * 
+	 * @param tests
+	 * @param reference
+	 */
+	void executeTests(Collection<AutomatedTest> tests, String reference)
+			 throws ServerConnectionFailed,
+					  AccessDenied,
+					  UnreadableResponseException,
+					  NotFoundException,
+					  TestAutomationException;
 }

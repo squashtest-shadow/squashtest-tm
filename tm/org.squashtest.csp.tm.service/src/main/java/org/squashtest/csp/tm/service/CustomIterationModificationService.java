@@ -20,12 +20,14 @@
  */
 package org.squashtest.csp.tm.service;
 
+import java.util.Collection;
 import java.util.List;
 
 import org.springframework.transaction.annotation.Transactional;
 import org.squashtest.csp.tm.domain.campaign.Iteration;
 import org.squashtest.csp.tm.domain.campaign.TestSuite;
 import org.squashtest.csp.tm.domain.execution.Execution;
+import org.squashtest.csp.tm.domain.testautomation.AutomatedSuite;
 import org.squashtest.csp.tm.service.deletion.SuppressionPreviewReport;
 
 /**
@@ -122,5 +124,23 @@ public interface CustomIterationModificationService extends IterationFinder{
 	 * @return the list containing all the copies of the test suites
 	 */
 	List<TestSuite> copyPasteTestSuitesToIteration(Long[] testSuiteIds, Long iterationId);
+	
+	
+	/**
+	 * Create an automated execution for every automated item test plan in the given iteration, group them in an 
+	 * automated suite and tells the connector to process them.
+	 * 
+	 * @return an {@link AutomatedSuite}
+	 */
+	AutomatedSuite createAndExecuteAutomatedSuite(long iterationId);
+	
+	/**
+	 * Create an automated execution for each of the test plan in arguments, group them in an automated suite and 
+	 * tells the connectors to process them .
+	 * 
+	 * @param testPlanIds
+	 * @return an {@link AutomatedSuite}
+	 */
+	AutomatedSuite createAndExecuteAutomatedSuite(Collection<Long> testPlanIds);
 
 }

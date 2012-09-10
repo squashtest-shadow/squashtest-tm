@@ -20,6 +20,7 @@
  */
 package org.squashtest.csp.tm.internal.testautomation.service;
 
+import org.squashtest.csp.tm.domain.testautomation.AutomatedSuite;
 import org.squashtest.csp.tm.domain.testautomation.TestAutomationProject;
 import org.squashtest.csp.tm.domain.testautomation.TestAutomationServer;
 import org.squashtest.csp.tm.domain.testautomation.AutomatedTest;
@@ -88,6 +89,14 @@ public interface InsecureTestAutomationManagementService extends TestAutomationF
 	 * @return the default instance of TestAutomationServer.
 	 */
 	TestAutomationServer getDefaultServer();	
+	
+	
+	/**
+	 * Will start a test suite, by dispatching the tests to the corresponding connectors.
+	 * 
+	 * @param suite
+	 */
+	void startAutomatedSuite(AutomatedSuite suite);
 	
 
 }

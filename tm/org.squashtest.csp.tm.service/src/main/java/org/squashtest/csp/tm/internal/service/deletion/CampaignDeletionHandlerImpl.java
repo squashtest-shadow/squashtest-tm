@@ -207,6 +207,7 @@ public class CampaignDeletionHandlerImpl extends AbstractNodeDeletionHandlerImpl
 		deleteExecSteps(execution);
 		IterationTestPlanItem testPlanItem = execution.getTestPlan();
 		testPlanItem.removeExecution(execution);
+		deleteAutomatedExecutionExtender(execution);
 		deletionDao.removeEntity(execution);
 	}
 
@@ -309,6 +310,12 @@ public class CampaignDeletionHandlerImpl extends AbstractNodeDeletionHandlerImpl
 
 		deletionDao.removeEntity(issueList);
 
+	}
+	
+	private void deleteAutomatedExecutionExtender(Execution execution){
+		if (execution.getAutomatedExecutionExtender()!=null){
+			deletionDao.removeEntity(execution.getAutomatedExecutionExtender());
+		}
 	}
 
 }

@@ -23,6 +23,11 @@ package org.squashtest.csp.tm.internal.testautomation.service;
 import java.net.URL;
 import java.util.ArrayList;
 import java.util.Collection;
+import java.util.HashMap;
+import java.util.Iterator;
+import java.util.LinkedList;
+import java.util.Map;
+import java.util.Map.Entry;
 import java.util.concurrent.TimeUnit;
 
 import javax.inject.Inject;
@@ -33,6 +38,9 @@ import org.springframework.core.task.AsyncTaskExecutor;
 import org.springframework.osgi.extensions.annotation.ServiceReference;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+import org.squashtest.csp.tm.domain.execution.ExecutionStatus;
+import org.squashtest.csp.tm.domain.testautomation.AutomatedExecutionExtender;
+import org.squashtest.csp.tm.domain.testautomation.AutomatedSuite;
 import org.squashtest.csp.tm.domain.testautomation.TestAutomationProject;
 import org.squashtest.csp.tm.domain.testautomation.TestAutomationServer;
 import org.squashtest.csp.tm.domain.testautomation.AutomatedTest;
@@ -44,6 +52,8 @@ import org.squashtest.csp.tm.internal.testautomation.thread.FetchTestListFuture;
 import org.squashtest.csp.tm.internal.testautomation.thread.TestAutomationTaskExecutor;
 import org.squashtest.csp.tm.testautomation.model.TestAutomationProjectContent;
 import org.squashtest.csp.tm.testautomation.spi.TestAutomationConnector;
+import org.squashtest.csp.tm.testautomation.spi.TestAutomationException;
+import org.squashtest.csp.tm.testautomation.spi.UnknownConnectorKind;
 
 
 @Transactional
@@ -164,6 +174,34 @@ public class TestAutomationManagementServiceImpl implements  InsecureTestAutomat
 		return defaultServer;
 	}
 	
+
+	@Override
+	public void startAutomatedSuite(AutomatedSuite suite) {
+		
+		ExtenderSorter sorter = new ExtenderSorter(suite);
+		
+		while (sorter.hasNext()){
+			
+			Entry<String, Collection<AutomatedExecutionExtender>> extendersByKind = sorter.getNextEntry();
+			
+			TestAutomationConnector connector = null;
+			
+			try{
+				connector = connectorRegistry.getConnectorForKind(extendersByKind.getKey());
+				Collection<AutomatedTest> tests = collectAutomatedTests(extendersByKind.getValue());
+				connector.executeTests(tests, suite.getId());
+			}
+			catch(UnknownConnectorKind ex){
+				notifyExecutionError(extendersByKind.getValue(), ex.getMessage());
+			}
+			catch(TestAutomationException ex){
+				notifyExecutionError(extendersByKind.getValue(), ex.getMessage());
+			}
+			
+		}
+	}
+
+
 	
 	//****************************** fetch test list methods ****************************************
 	
@@ -208,8 +246,74 @@ public class TestAutomationManagementServiceImpl implements  InsecureTestAutomat
 		
 	}
 
+	// ******************* dispatching methods **************************
 
 	
+	
+	private Collection<AutomatedTest> collectAutomatedTests(Collection<AutomatedExecutionExtender> extenders){
+		
+		Collection<AutomatedTest> tests = new LinkedList<AutomatedTest>();
+		
+		for (AutomatedExecutionExtender extender : extenders){
+			
+			tests.add(extender.getAutomatedTest());
+			
+		}
+		
+		return tests;
+		
+	}
 
+	
+	private void notifyExecutionError(Collection<AutomatedExecutionExtender> failedExecExtenders, String message){
+		for (AutomatedExecutionExtender extender : failedExecExtenders){
+			extender.setExecutionStatus(ExecutionStatus.ERROR);
+			extender.setResultSummary(message);
+		}
+	}
+	
+	private static class ExtenderSorter{
+		
+		private Map<String, Collection<AutomatedExecutionExtender>> extendersByKind
+			= new HashMap<String, Collection<AutomatedExecutionExtender>>();
+		
+		private Iterator<Entry<String, Collection<AutomatedExecutionExtender>>> iterator =null;
+		
+		
+		public ExtenderSorter(AutomatedSuite suite){
+			
+			for (AutomatedExecutionExtender extender : suite.getExecutionExtenders()){
+				
+				String serverKind = extender.getAutomatedTest().getProject().getServer().getKind();
+				
+				register(extender, serverKind);
+			
+			}	
+			
+			iterator = extendersByKind.entrySet().iterator();
+			
+		}
+		
+		public boolean hasNext(){
+			return iterator.hasNext();
+		}
+		
+		public Map.Entry<String, Collection<AutomatedExecutionExtender>> getNextEntry(){
+			
+			return iterator.next();
+					
+		}
+		
+		private void register(AutomatedExecutionExtender extender, String serverKind){
+			
+			if (! extendersByKind.containsKey(serverKind)){
+				extendersByKind.put(serverKind, new LinkedList<AutomatedExecutionExtender>());
+			}
+			
+			extendersByKind.get(serverKind).add(extender);
+			
+		}
+		
+	}
 
 }

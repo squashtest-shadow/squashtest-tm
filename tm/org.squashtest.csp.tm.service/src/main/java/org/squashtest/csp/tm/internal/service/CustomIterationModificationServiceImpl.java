@@ -21,6 +21,7 @@
 package org.squashtest.csp.tm.internal.service;
 
 import java.util.ArrayList;
+import java.util.Collection;
 import java.util.LinkedList;
 import java.util.List;
 
@@ -42,14 +43,17 @@ import org.squashtest.csp.tm.domain.campaign.Iteration;
 import org.squashtest.csp.tm.domain.campaign.IterationTestPlanItem;
 import org.squashtest.csp.tm.domain.campaign.TestSuite;
 import org.squashtest.csp.tm.domain.execution.Execution;
+import org.squashtest.csp.tm.domain.testautomation.AutomatedSuite;
 import org.squashtest.csp.tm.domain.testcase.TestCase;
 import org.squashtest.csp.tm.internal.repository.AutomatedExecutionExtenderDao;
+import org.squashtest.csp.tm.internal.repository.AutomatedSuiteDao;
 import org.squashtest.csp.tm.internal.repository.CampaignDao;
 import org.squashtest.csp.tm.internal.repository.ExecutionDao;
 import org.squashtest.csp.tm.internal.repository.ItemTestPlanDao;
 import org.squashtest.csp.tm.internal.repository.IterationDao;
 import org.squashtest.csp.tm.internal.repository.TestSuiteDao;
 import org.squashtest.csp.tm.internal.service.campaign.IterationTestPlanManager;
+import org.squashtest.csp.tm.internal.testautomation.service.InsecureTestAutomationManagementService;
 import org.squashtest.csp.tm.service.CustomIterationModificationService;
 import org.squashtest.csp.tm.service.IterationTestPlanManagerService;
 import org.squashtest.csp.tm.service.TestSuiteModificationService;
@@ -69,10 +73,17 @@ public class CustomIterationModificationServiceImpl implements CustomIterationMo
 	private ItemTestPlanDao testPlanDao;
 	
 	@Inject
-	private ExecutionDao executionDao;
+	private AutomatedSuiteDao autoSuiteDao;
 	
 	@Inject
-	private AutomatedExecutionExtenderDao executionExtenderDao;
+	private ExecutionDao executionDao;
+	
+	
+	
+	
+	@Inject
+	private InsecureTestAutomationManagementService automationService;
+	
 	
 	@Inject
 	private TestCaseCyclicCallChecker testCaseCyclicCallChecker;
@@ -170,6 +181,54 @@ public class CustomIterationModificationServiceImpl implements CustomIterationMo
 		IterationTestPlanItem item = iteration.getTestPlan(testPlanId);
 		
 		return addAutomatedExecution(item);
+	}
+	
+
+
+	@Override	
+	@PreAuthorize("hasPermission(#iterationId, 'org.squashtest.csp.tm.domain.campaign.Iteration', 'EXECUTE') "
+			+ "or hasRole('ROLE_ADMIN')")
+	public AutomatedSuite createAndExecuteAutomatedSuite(long iterationId) {
+		
+		AutomatedSuite newSuite = autoSuiteDao.createNewSuite();
+		
+		Iteration iteration = iterationDao.findById(iterationId);
+		
+		for (IterationTestPlanItem item : iteration.getTestPlans()){
+			if (item.isAutomated()){
+				Execution exec = addAutomatedExecution(item);
+				newSuite.addExtender(exec.getAutomatedExecutionExtender());
+			}			
+		}
+		
+		
+		automationService.startAutomatedSuite(newSuite);
+		
+		return newSuite;
+	}
+
+	
+	@Override
+	@PreAuthorize("hasPermission(#iterationId, 'org.squashtest.csp.tm.domain.campaign.Iteration', 'EXECUTE') "
+			+ "or hasRole('ROLE_ADMIN')")
+	public AutomatedSuite createAndExecuteAutomatedSuite(Collection<Long> testPlanIds) {
+		
+		AutomatedSuite newSuite = autoSuiteDao.createNewSuite();
+		
+		List<IterationTestPlanItem> items = testPlanDao.findAllByIds(testPlanIds);
+		
+		for (IterationTestPlanItem item : items){
+			if (item.isAutomated()){
+				Execution exec = addAutomatedExecution(item);
+				newSuite.addExtender(exec.getAutomatedExecutionExtender());
+			}
+			
+		}
+
+		automationService.startAutomatedSuite(newSuite);
+		
+		return newSuite;
+		
 	}
 
 
@@ -333,6 +392,30 @@ public class CustomIterationModificationServiceImpl implements CustomIterationMo
 		return deletionHandler.deleteSuites(suitesIds);
 
 	}
+	
+	@Override
+	public Execution addExecution(IterationTestPlanItem item) throws TestPlanItemNotExecutableException {
+		Execution execution = item.createExecution(testCaseCyclicCallChecker);
+		// if we dont persist before we add, add will trigger an update of item.testPlan which fail because execution
+		// has no id yet. this is caused by weird mapping (https://hibernate.onjira.com/browse/HHH-5732)
+		executionDao.persist(execution);
+		item.addExecution(execution);
+
+		return execution;
+	}
+	
+	public Execution addAutomatedExecution(IterationTestPlanItem item) throws TestPlanItemNotExecutableException {
+		
+		Execution execution = item.createAutomatedExecution(testCaseCyclicCallChecker);
+		
+		executionDao.persist(execution);
+		item.addExecution(execution);
+		
+		return execution;
+		
+	}
+	
+
 
 	/* ************************* security ************************* */
 
@@ -374,26 +457,6 @@ public class CustomIterationModificationServiceImpl implements CustomIterationMo
 
 	}
 
-	@Override
-	public Execution addExecution(IterationTestPlanItem item) throws TestPlanItemNotExecutableException {
-		Execution execution = item.createExecution(testCaseCyclicCallChecker);
-		// if we dont persist before we add, add will trigger an update of item.testPlan which fail because execution
-		// has no id yet. this is caused by weird mapping (https://hibernate.onjira.com/browse/HHH-5732)
-		executionDao.persist(execution);
-		item.addExecution(execution);
 
-		return execution;
-	}
-	
-	public Execution addAutomatedExecution(IterationTestPlanItem item) throws TestPlanItemNotExecutableException {
-		
-		Execution execution = item.createAutomatedExecution(testCaseCyclicCallChecker);
-		
-		executionDao.persist(execution);
-		item.addExecution(execution);
-		
-		return execution;
-		
-	}
 
 }

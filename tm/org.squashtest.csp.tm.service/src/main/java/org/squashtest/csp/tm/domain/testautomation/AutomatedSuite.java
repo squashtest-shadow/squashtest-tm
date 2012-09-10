@@ -33,6 +33,7 @@ import javax.persistence.NamedQuery;
 import javax.persistence.OneToMany;
 
 import org.hibernate.annotations.GenericGenerator;
+import org.squashtest.csp.tm.domain.execution.ExecutionStatus;
 
 @NamedQueries({
 	@NamedQuery(name="automatedSuite.findAll", query="from AutomatedSuite"),
@@ -77,6 +78,24 @@ public class AutomatedSuite  {
 		for (AutomatedExecutionExtender extender : extenders){
 			executionExtenders.add(extender);
 		}
+	}
+	
+	public boolean hasStarted(){
+		for (AutomatedExecutionExtender extender : executionExtenders){
+			if (extender.getExecution().getExecutionStatus() != ExecutionStatus.READY){
+				return true; 
+			}
+		}
+		return false;
+	}
+	
+	public boolean hasEnded(){
+		for (AutomatedExecutionExtender extender : executionExtenders){
+			if (! extender.getExecution().getExecutionStatus().isTerminatedStatus()){
+				return false; 
+			}
+		}
+		return true;
 	}
 	
 }

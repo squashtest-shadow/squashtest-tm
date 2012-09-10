@@ -20,16 +20,23 @@
  */
 package org.squashtest.csp.tm.internal.testautomation.service
 
+import org.squashtest.csp.tm.domain.execution.Execution;
+import org.squashtest.csp.tm.domain.execution.ExecutionStatus;
+import org.squashtest.csp.tm.domain.testautomation.AutomatedExecutionExtender;
+import org.squashtest.csp.tm.domain.testautomation.AutomatedSuite;
+import org.squashtest.csp.tm.domain.testautomation.AutomatedTest;
 import org.squashtest.csp.tm.domain.testautomation.TestAutomationProject;
 import org.squashtest.csp.tm.domain.testautomation.TestAutomationServer;
 import org.squashtest.csp.tm.internal.repository.TestAutomationServerDao;
 import org.squashtest.csp.tm.internal.testautomation.service.TestAutomationConnectorRegistry;
 import org.squashtest.csp.tm.internal.testautomation.service.TestAutomationManagementServiceImpl;
+import org.squashtest.csp.tm.internal.testautomation.service.TestAutomationManagementServiceImpl.ExtenderSorter;
 import org.squashtest.csp.tm.internal.testautomation.tasks.FetchTestListTask;
 import org.squashtest.csp.tm.internal.testautomation.thread.FetchTestListFuture;
 import org.squashtest.csp.tm.internal.testautomation.thread.TestAutomationTaskExecutor;
 import org.squashtest.csp.tm.testautomation.model.TestAutomationProjectContent;
 import org.squashtest.csp.tm.testautomation.spi.TestAutomationConnector;
+import org.squashtest.csp.tm.testautomation.spi.UnknownConnectorKind;
 
 import spock.lang.Specification;
 
@@ -158,6 +165,154 @@ class TestAutomationManagementServiceImplTest extends Specification {
 			
 		then :
 			res == [content1, content2]
+		
+	}
+	
+	def "extender sorter should sort extenders "(){
+		
+		given :
+			AutomatedSuite suite = makeSomeSuite()
+		
+		when :
+			def sorter = new ExtenderSorter(suite)
+		
+		then :
+			def col1 = sorter.getNextEntry();
+			def col2 = sorter.getNextEntry();
+			
+			col1.key == "jenkins"
+			col2.key == "qc"
+			
+			col1.value.size() == 10
+			col1.value.collect{ it.automatedTest.project }.unique().collect{ it.name} as Set == ["project-jenkins-1", "project-jenkins-2"] as Set
+			
+			col2.value.size() == 5
+			col2.value.collect{ it.automatedTest.project}.unique().collect{ it.name} as Set == ["project-qc-1"] as Set 
+		
+	}
+	
+	
+	def "should collect tests from extender list"(){
+		
+		given :
+			
+			def tests = [new AutomatedTest("bob", null), new AutomatedTest("mike", null), new AutomatedTest("robert", null) ]
+		
+			def exts = []
+			
+			tests.each{
+				def ex = new AutomatedExecutionExtender()
+				ex.automatedTest = it
+				exts << ex
+			}
+			
+		when :
+		
+			def res = service.collectAutomatedTests(exts)
+		
+		then :
+			res == tests
+	}
+	
+	
+	def "should start some tests"(){
+		
+		given :
+			AutomatedSuite suite = makeSomeSuite()
+		
+		and :
+			def jenConnector = Mock(TestAutomationConnector)
+			def qcConnector = Mock(TestAutomationConnector)
+
+		when :
+			service.startAutomatedSuite(suite)
+		
+		then :
+			
+			1 * connectorRegistry.getConnectorForKind("jenkins") >> jenConnector
+			1 * connectorRegistry.getConnectorForKind("qc") >> qcConnector
+			
+			1 * jenConnector.executeTests(_, "12345")
+			1 * qcConnector.executeTests(_, "12345")
+	
+	}
+	
+	
+	def "should notify some executions that an error occured before they could start"(){
+		
+		given :
+			AutomatedSuite suite = makeSomeSuite()
+			
+			suite.executionExtenders.each{
+		
+				def exec = new Execution()
+				exec.automatedExecutionExtender = it
+				it.execution = exec
+				
+			} 
+		
+		and :		
+			def jenConnector = Mock(TestAutomationConnector)
+			def qcConnector = Mock(TestAutomationConnector)
+			
+			connectorRegistry.getConnectorForKind("jenkins") >> jenConnector
+			connectorRegistry.getConnectorForKind("qc") >> { throw new UnknownConnectorKind("connector unknown") }
+			
+		when :
+			service.startAutomatedSuite(suite)	
+		
+		
+		then :
+			1 * jenConnector.executeTests(_, "12345")
+			
+			def executions = suite.executionExtenders.collect{it.execution}
+			executions.findAll{it.executionStatus == ExecutionStatus.ERROR }.size() == 5
+			executions.findAll{it.executionStatus == ExecutionStatus.READY }.size() == 10
+		
+		
+	}
+	
+	
+	def makeSomeSuite(){
+		
+		AutomatedSuite suite = new AutomatedSuite();
+		suite.id = "12345"
+		
+		TestAutomationServer serverJenkins = new TestAutomationServer(new URL("http://jenkins-ta"), "jenkins");
+		TestAutomationServer serverQC = new TestAutomationServer(new URL("http://qc-ta"), "qc");
+		
+		TestAutomationProject projectJ1 = new TestAutomationProject("project-jenkins-1", serverJenkins)
+		TestAutomationProject projectQC1 = new TestAutomationProject("project-qc-1", serverQC)
+		TestAutomationProject projectJ2 = new TestAutomationProject("project-jenkins-2", serverJenkins)		
+		
+		def allTests = []
+		
+		def projects = [projectJ1, projectQC1, projectJ2]
+		
+		projects.each{ proj ->
+			
+			5.times{ num ->
+				
+				AutomatedTest test = new AutomatedTest("${proj.name} - test $num", proj)
+				allTests << test			
+			}			
+		}
+		
+		def allExts = [];
+		
+		allTests.each{
+			
+			def ex = new AutomatedExecutionExtender()
+			ex.automatedTest = it
+			
+			allExts << ex
+			
+		}
+		
+		suite.addExtenders(allExts)
+		
+		return suite
+		
 		
 	}
 	
