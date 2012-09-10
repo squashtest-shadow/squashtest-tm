@@ -71,9 +71,6 @@
 	</c:otherwise>
 </c:choose>
 
-
-
-
 <s:url var="stepAttachmentManagerUrl" value="/attach-list/" />
 
 <s:url var="btEntityUrl" value="/bugtracker/execution/{id}">
@@ -273,19 +270,20 @@
 			{'bVisible': ${editable}, 'bSortable': false, 'sWidth': '2em', 'sClass': 'centered has-attachment-cell', 'aTargets': [10], 'mDataProp' : 'attach-list-id'}
 			]
 		};
-		<c:if test="${ automated }">
+		
 			var squashSettings = {
 					
-				enableHover : true,
-				executionStatus : {
+				enableHover : true
+				<c:if test="${ !automated }">
+				,executionStatus : {
 					blocked : "${statusBlocked}",
 					failure : "${statusFailure}",
 					success : "${statusSuccess}",
 					running : "${statusRunning}",
 					ready : "${statusReady}"
-				}
+				}	</c:if>
 			};
-		</c:if>
+	
 		
 		
 		<c:if test="${ editable }">
