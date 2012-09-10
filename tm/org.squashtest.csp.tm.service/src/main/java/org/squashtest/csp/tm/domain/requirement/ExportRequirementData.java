@@ -41,6 +41,7 @@ public class ExportRequirementData {
 	private Date createdOn;
     private String createdBy;
     private Long folderId;
+    public static final Long NO_FOLDER = -1l;
 	
 	public ExportRequirementData() {
 	}
@@ -158,12 +159,19 @@ public class ExportRequirementData {
 		this.description = requirement.getDescription();
 		this.project = requirement.getProject().getName();
 		this.reference = requirement.getReference();
-		this.folderId = folder.getId();
-		this.folderName = folder.getName();
 		this.currentVersion = requirement.getCurrentVersion().getVersionNumber();
 		this.status = requirement.getStatus();	
 		AuditableMixin audit = ((AuditableMixin) requirement);	
 		this.createdOn = audit.getCreatedOn();
 		this.createdBy = audit.getCreatedBy();
+		//folder is null if the requirement is located directly under the project root.
+		if(folder == null) {
+			this.folderId = NO_FOLDER;
+			this.folderName = "";
+		}
+		else {
+			this.folderId = folder.getId();
+			this.folderName = folder.getName();
+		}
 	}	
 }

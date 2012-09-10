@@ -347,7 +347,7 @@ public class HibernateRequirementDao extends HibernateEntityDao<Requirement> imp
 	private List<Object[]> addRootContentToExportData(List<Object> rootRequirement, List<Object[]> folderContent) {
 		for (Object obj : rootRequirement) {
 			Requirement objReq = (Requirement) obj;
-			Object[] tab = { objReq, objReq.getProject().getName() };
+			Object[] tab = { objReq, null };
 			folderContent.add(tab);
 		}
 		return folderContent;

@@ -230,8 +230,11 @@ public class RequirementLibraryNavigationServiceImpl extends
 			//set the full path attribute
 			StringBuilder path = new StringBuilder();
 			path.append(data.getProject());
-			for(String name : requirementLibraryNodeDao.getParentsName(id)) {
-				path.append('/'+name);
+			//if the requirement is not directly located under
+			if(id != ExportRequirementData.NO_FOLDER) {
+				for(String name : requirementLibraryNodeDao.getParentsName(id)) {
+					path.append('/'+name);
+				}
 			}
 			path.append('/'+data.getName());
 			data.setFolderName(path.toString());
