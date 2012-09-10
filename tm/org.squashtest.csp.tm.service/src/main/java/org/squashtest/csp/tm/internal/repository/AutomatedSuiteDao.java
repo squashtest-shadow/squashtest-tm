@@ -21,64 +21,64 @@
 package org.squashtest.csp.tm.internal.repository;
 
 import java.util.Collection;
+import java.util.List;
 
 import org.squashtest.csp.tm.domain.execution.ExecutionStatus;
 import org.squashtest.csp.tm.domain.testautomation.AutomatedExecutionExtender;
 import org.squashtest.csp.tm.domain.testautomation.AutomatedSuite;
 
 
-public interface AutomatedSuiteDao {
+public interface AutomatedSuiteDao{
 
-	/**
-	 * @return a new {@link AutomatedSuite}
-	 */
-	AutomatedSuite createNewSuite();
+
+	public AutomatedSuite createNewSuite();
 	
-	/**
-	 * 
-	 * @param suiteId is the id of the suite to retrieve
-	 * @return the TestAutomationSuite having this id if found, null if not.
-	 */
-	AutomatedSuite findById(long suiteId);
+	public AutomatedSuite findById(String id);
 	
+	
+	public List<AutomatedSuite> findAll();
+	
+	
+	public List<AutomatedSuite> findAllById(final Collection<String> ids);
 	
 	/**
 	 * retrieve all the {@link AutomatedExecutionExtender} that this suite is bound to.
 	 * 
-	 * @param suiteId
+	 * @param id
 	 * @return
 	 */
-	Collection<AutomatedExecutionExtender> findAllExtenders(long suiteId);
+	Collection<AutomatedExecutionExtender> findAllExtenders(String suiteId);
 	 
 	/**
 	 * retrieve all the extenders of executions currently waiting to be run by their test automation servers, for a given {@link AutomatedSuite}
 	 * 
-	 * @param suiteId
+	 * @param id
 	 * @return
 	 */
-	Collection<AutomatedExecutionExtender> findAllWaitingExtenders(long suiteId);
+	Collection<AutomatedExecutionExtender> findAllWaitingExtenders(String suiteId);
 	
 	/**
 	 * retrieve all the extenders of executions currently being run by their test automation servers, for a given {@link AutomatedSuite}
 	 * 
-	 * @param suiteId
+	 * @param id
 	 * @return
 	 */
-	Collection<AutomatedExecutionExtender> findAllRunningExtenders(long suiteId);
+	Collection<AutomatedExecutionExtender> findAllRunningExtenders(String suiteId);
 	
 	/**
 	 * retrieve all the extenders of executions which had been ran their test automation servers, for a given {@link AutomatedSuite}
 	 * 
-	 * @param suiteId
+	 * @param id
 	 * @return
 	 */
-	Collection<AutomatedExecutionExtender> findAllCompletedExtenders(long suiteId);
+	Collection<AutomatedExecutionExtender> findAllCompletedExtenders(String suiteId);
 	
 	/**
 	 * retrieve all the extenders of executions which status is one of the supplied status, for a given {@link AutomatedSuite}
 	 * 
-	 * @param suiteId
+	 * @param id
 	 * @return
 	 */
-	Collection<AutomatedExecutionExtender> findAllExtendersByStatus(long suiteId, Collection<ExecutionStatus> statusList);
+	Collection<AutomatedExecutionExtender> findAllExtendersByStatus(String suiteId, Collection<ExecutionStatus> statusList);
+	
 }

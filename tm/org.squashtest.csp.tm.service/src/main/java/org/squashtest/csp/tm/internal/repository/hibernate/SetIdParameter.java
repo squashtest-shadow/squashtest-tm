@@ -26,17 +26,35 @@ import org.hibernate.Query;
 
 class SetIdParameter implements SetQueryParametersCallback {
 	private final String parameterName;
-	private final long parameterValue;
+	private final long longParameterValue ;
+	private final String strParameterValue;
 
 	public SetIdParameter(@NotNull String parameterName, long parameterValue) {
 		super();
 		this.parameterName = parameterName;
-		this.parameterValue = parameterValue;
+		this.longParameterValue = parameterValue;
+		strParameterValue=null;
+	}
+	
+	public SetIdParameter(@NotNull String parameterName, String parameterValue) {
+		super();
+		this.parameterName = parameterName;
+		this.longParameterValue = 0;
+		strParameterValue=parameterValue;
 	}
 
+
+	private boolean isLongParam(){
+		return (strParameterValue==null);
+	}
+	
 	@Override
 	public void setQueryParameters(Query query) {
-		query.setLong(parameterName, parameterValue);
+		if (isLongParam()){
+			query.setLong(parameterName, longParameterValue);
+		}else{
+			query.setString(parameterName, strParameterValue);
+		}
 
 	}
 

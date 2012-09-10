@@ -356,7 +356,7 @@ public class Execution implements AttachmentHolder, IssueDetector, Identified, H
 	}
 
 	/**
-	 * @return the first step not in success or failure status.
+	 * @return the first step not in success.
 	 * @throws ExecutionHasNoStepsException
 	 * @throws ExecutionHasNoRunnableStepException
 	 */

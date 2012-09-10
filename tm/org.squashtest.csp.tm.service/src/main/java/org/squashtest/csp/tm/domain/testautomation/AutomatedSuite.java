@@ -32,26 +32,30 @@ import javax.persistence.NamedQueries;
 import javax.persistence.NamedQuery;
 import javax.persistence.OneToMany;
 
+import org.hibernate.annotations.GenericGenerator;
+
 @NamedQueries({
+	@NamedQuery(name="automatedSuite.findAll", query="from AutomatedSuite"),
 	@NamedQuery(name="automatedSuite.findById", query="from AutomatedSuite where id = :suiteId"),
+	@NamedQuery(name="automatedSuite.findAllById", query="from AutomatedSuite where id in (:suiteIds)"),
 	@NamedQuery(name="automatedSuite.findAllExtenders", query="select ext from AutomatedExecutionExtender ext join ext.automatedSuite s where s.id = :suiteId"),
 	@NamedQuery(name="automatedSuite.findAllExtendersHavingStatus", query="select ext from AutomatedExecutionExtender ext join ext.execution exe join ext.automatedSuite s where s.id = :suiteId and exe.executionStatus in (:statusList)")
-})
+	})
 @Entity
 public class AutomatedSuite  {
 
 	@Id
-	@GeneratedValue
 	@Column(name = "SUITE_ID")
-	private Long id;
+	@GeneratedValue(generator = "system-uuid")
+	@GenericGenerator(name="system-uuid", strategy = "uuid")
+	private String id;
 
-	
-	public Long getId(){
-		return id;
-	}
-	
 	@OneToMany(mappedBy="automatedSuite", cascade = {CascadeType.ALL})
 	public Collection<AutomatedExecutionExtender> executionExtenders = new ArrayList<AutomatedExecutionExtender>();
+
+	public String getId(){
+		return id;
+	}
 
 
 	public Collection<AutomatedExecutionExtender> getExecutionExtenders() {
@@ -64,6 +68,12 @@ public class AutomatedSuite  {
 		this.executionExtenders = executionExtenders;
 	}
 	
+	public void addExtender(AutomatedExecutionExtender extender){
+		executionExtenders.add(extender);
+	}
 	
+	public void addExtenders(Collection<AutomatedExecutionExtender> extenders){
+		executionExtenders.addAll(extenders);
+	}
 	
 }

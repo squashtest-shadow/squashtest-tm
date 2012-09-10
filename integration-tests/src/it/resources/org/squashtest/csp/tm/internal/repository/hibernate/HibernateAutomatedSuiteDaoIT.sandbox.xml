@@ -1,0 +1,58 @@
+<!--
+
+        This file is part of the Squashtest platform.
+        Copyright (C) 2010 - 2012 Henix, henix.fr
+
+        See the NOTICE file distributed with this work for additional
+        information regarding copyright ownership.
+
+        This is free software: you can redistribute it and/or modify
+        it under the terms of the GNU Lesser General Public License as published by
+        the Free Software Foundation, either version 3 of the License, or
+        (at your option) any later version.
+
+        this software is distributed in the hope that it will be useful,
+        but WITHOUT ANY WARRANTY; without even the implied warranty of
+        MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+        GNU Lesser General Public License for more details.
+
+        You should have received a copy of the GNU Lesser General Public License
+        along with this software.  If not, see <http://www.gnu.org/licenses/>.
+
+-->
+
+
+<dataset>
+	
+	<test_automation_server server_id="1" base_url="http://myserver" login="bob" password="bob" kind="jenkins"/>
+	
+	<test_automation_project project_id="1" name="first project" server_id="1"/>
+	<test_automation_project project_id="2" name="second project" server_id="1"/>
+	
+	<automated_test test_id="11" name="test_11" project_id="1" />
+	<automated_test test_id="12" name="test_12" project_id="1" />
+	<automated_test test_id="13" name="test_13" project_id="1" />
+	<automated_test test_id="21" name="test_21" project_id="2" />
+	<automated_test test_id="22" name="test_22" project_id="2" />
+	
+	
+	
+	<attachment_list attachment_list_id="1"/>
+	
+	<execution execution_id="11" created_by="bob" created_on="2012-09-09" name="exec - test11" execution_status="SUCCESS"/>
+	<execution execution_id="12" created_by="bob" created_on="2012-09-09" name="exec - test12" execution_status="ERROR"/>
+	<execution execution_id="13" created_by="bob" created_on="2012-09-09" name="exec - test13" execution_status="RUNNING"/>
+	<execution execution_id="21" created_by="bob" created_on="2012-09-09" name="exec - test21" execution_status="READY"/>
+	<execution execution_id="22" created_by="bob" created_on="2012-09-09" name="exec - test22" execution_status="FAILURE"/>
+	
+	
+	<automated_suite suite_id="12345"/>
+	
+	<automated_execution_extender extender_id="110" master_execution_id="11" test_id="11" suite_id="12345" />
+	<automated_execution_extender extender_id="120" master_execution_id="12" test_id="12" suite_id="12345" />
+	<automated_execution_extender extender_id="130" master_execution_id="13" test_id="13" suite_id="12345" />
+	<automated_execution_extender extender_id="210" master_execution_id="21" test_id="21" suite_id="12345" />
+	<automated_execution_extender extender_id="220" master_execution_id="22" test_id="22" suite_id="12345" />
+
+	
+</dataset>

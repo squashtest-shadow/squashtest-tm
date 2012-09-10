@@ -305,7 +305,7 @@ class ExecutionModificationServiceIT extends HibernateServiceSpecification {
 
 
 		then :
-		lastOne.action=="action 3"
+		lastOne.action=="action 2"
 	}
 
 	def "should tell that the requested execution is the second one of the set"(){
