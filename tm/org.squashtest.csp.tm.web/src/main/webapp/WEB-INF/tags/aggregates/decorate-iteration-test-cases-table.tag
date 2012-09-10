@@ -300,10 +300,12 @@
 				});
 	
 		<%-- bind the new execution creation button to their event --%>
-		$('a[id|="new-exec"]').die('click');
-		$('a[id|="new-exec"]').live('click', newExecutionClickHandler);
-		$('a[id|="new-auto-exec"]').die('click');
-		$('a[id|="new-auto-exec"]').live('click', newAutoExecutionClickHandler);
+		var newExecButtons = $('a.new-exec');
+		newExecButtons.die('click');
+		newExecButtons.live('click', newExecutionClickHandler);
+		var newExecAutoButtons = $('a.new-auto-exec');
+		newExecAutoButtons.die('click');
+		newExecAutoButtons.live('click', newAutoExecutionClickHandler);
 		
 
 		/* could be optimized if we bind that in the datatableDrawCallback.	*/

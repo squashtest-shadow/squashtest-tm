@@ -33,7 +33,7 @@
 <s:url var="newExecutionUrl"
 	value="/iterations/{iterId}/test-plan/{tpId}/new-execution">
 	<s:param name="iterId" value="${iterationId}" />
-	<s:param name="tpId" value="${testPlanId}" />
+	<s:param name="tpId" value="${testPlanItem.id}" />
 </s:url>
 
 
@@ -98,9 +98,16 @@
 
 		<c:if test="${ executable }">
 			<tr>
-				<td colspan="8" style="text-align: left;"> <a id="new-exec-${testPlanId}" style="font-size:0.8em;"
-						class="button" href="javascript:void(0)" data-new-exec="${newExecutionUrl}"><f:message
-								key="execution.iteration-test-plan-row.new" /> </a> </td>
+				<td colspan="8" style="text-align: left;"> <a id="new-exec-${testPlanItem.id}" style="font-size:0.8em;"
+						class="button new-exec" href="javascript:void(0)" data-new-exec="${newExecutionUrl}"><f:message
+								key="execution.iteration-test-plan-row.new" /> </a> 
+								
+								<c:if test="${ testPlanItem.project.testAutomationEnabled && testPlanItem.referencedTestCase.automated}"> 
+								<a	class="button new-auto-exec" style="font-size:0.8em;" id="new-auto-exec-${testPlanItem.id}"
+						href="javascript:void(0)" data-new-exec="${newExecutionUrl}"><f:message
+								key="execution.iteration-test-plan-row.new.auto" /></a>
+								</c:if>
+								</td>
 			</tr>
 		</c:if>
 		<!-- ---------------------------------------------END ROW NEW EXECUTION -->

@@ -55,6 +55,7 @@ import org.squashtest.csp.tm.domain.testcase.TestCase;
 import org.squashtest.csp.tm.domain.testcase.TestCaseExecutionMode;
 import org.squashtest.csp.tm.domain.testcase.TestCaseImportance;
 import org.squashtest.csp.tm.service.IterationModificationService;
+import org.squashtest.csp.tm.service.IterationTestPlanFinder;
 import org.squashtest.csp.tm.service.TestSuiteModificationService;
 import org.squashtest.csp.tm.web.internal.model.datatable.DataTableDrawParameters;
 import org.squashtest.csp.tm.web.internal.model.datatable.DataTableMapperPagingAndSortingAdapter;
@@ -73,11 +74,18 @@ public class TestSuiteModificationController {
 	private TestSuiteModificationService service;
 	
 	private IterationModificationService iterationModService;
+	
+	private IterationTestPlanFinder iterationTestPlanFinder;
 
 	@Inject
 	private PermissionEvaluationService permissionService;
 	
 	private static final Logger LOGGER = LoggerFactory.getLogger(TestSuiteModificationController.class);
+	
+	@ServiceReference
+	public void setIterationTestPlanFinder (IterationTestPlanFinder iterationTestPlanFinder){
+		this.iterationTestPlanFinder = iterationTestPlanFinder;
+	}
 	
 	@ServiceReference
 	public void setTestSuiteModificationService(TestSuiteModificationService service){
@@ -245,12 +253,13 @@ public class TestSuiteModificationController {
 		List<Execution> executionList = iterationModService.findExecutionsByTestPlan(iterationId, testPlanId);
 		// get the iteraction to check access rights
 		Iteration iter = iterationModService.findById(iterationId);
+		IterationTestPlanItem  iterationTestPlanItem = iterationTestPlanFinder.findTestPlanItem(iterationId, testPlanId);
 		boolean editable = permissionService.hasRoleOrPermissionOnObject("ROLE_ADMIN", "WRITE", iter);
 
 		ModelAndView mav = new ModelAndView("fragment/test-suites/test-suite-test-plan-row");
 
 		mav.addObject("editableIteration", editable);
-		mav.addObject("testPlanId", testPlanId);
+		mav.addObject("testPlanItem", iterationTestPlanItem);
 		mav.addObject("iterationId", iterationId);
 		mav.addObject("executions", executionList);
 		mav.addObject("testSuite", testSuite);

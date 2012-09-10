@@ -91,13 +91,13 @@
 		<c:if test="${ executable && !testPlanItem.testCaseDeleted }">
 			<tr>
 				<td colspan="10" style="text-align: left;"><b> <a
-						class="button" style="font-size:0.8em;" id="new-exec-${testPlanItem.id}"
+						class="button new-exec" style="font-size:0.8em;" id="new-exec-${testPlanItem.id}"
 						href="javascript:void(0)" data-new-exec="${newExecutionUrl}"><f:message
 								key="execution.iteration-test-plan-row.new" /> </a> 
 								
 
 								<c:if test="${ testPlanItem.project.testAutomationEnabled && testPlanItem.referencedTestCase.automated}"> 
-								<a	class="button" style="font-size:0.8em;" id="new-auto-exec-${testPlanItem.id}"
+								<a	class="button new-auto-exec" style="font-size:0.8em;" id="new-auto-exec-${testPlanItem.id}"
 						href="javascript:void(0)" data-new-exec="${newExecutionUrl}"><f:message
 								key="execution.iteration-test-plan-row.new.auto" /></a>
 								</c:if>

@@ -147,24 +147,39 @@ var nonBelongingTestPlansUrl = "${nonBelongingTestPlansUrl}";
 		});
 		
 		<%-- bind the new execution creation button to their event --%>
-		$('a[id|="new-exec"]').die('click');
-		$('a[id|="new-exec"]').live('click', newExecutionClickHandler);
-
+		var newExecButtons = $('a.new-exec');
+		newExecButtons.die('click');
+		newExecButtons.live('click', newExecutionClickHandler);
+		var newExecAutoButtons = $('a.new-auto-exec');
+		newExecAutoButtons.die('click');
+		newExecAutoButtons.live('click', newAutoExecutionClickHandler);
 	});
 	
 	
 	function newExecutionClickHandler(){
 		var url = $(this).attr('data-new-exec');
 		
-		$.ajax({type : 'POST', url : url, dataType : "json"})
+		$.ajax({type : 'POST', url : url, dataType : "json", data:{"mode":"manual"}})
 		.success(function(id){
 			document.location.href="${showExecutionUrl}/"+id;
 		});
 		return false; //return false to prevent navigation in page (# appears at the end of the URL)
 	}
 	
-	
-
+	function newAutoExecutionClickHandler() {
+				var url = $(this).attr('data-new-exec');
+				$.ajax({
+							type : 'POST',
+							url : url,
+							data : {"mode":"auto"},
+							dataType : "json"
+						})
+						.success(function(ok) {
+							alert(ok);
+						});
+				return false; //return false to prevent navigation in page (# appears at the end of the URL)
+	}
+		 
 
 	//for drag and drop test case feature
 	//row : selected row
