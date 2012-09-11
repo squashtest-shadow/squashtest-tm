@@ -81,6 +81,7 @@ public class UserAdministrationController {
 		@Override
 		public Object[] buildItemData(User item) {
 			AuditableMixin newP = (AuditableMixin) item;
+			// TODO use group's quialified name instead
 			String group = messageSource.getMessage("user.account.group."+item.getGroup().getSimpleName()+".label", null, locale);
 			if(group == null){
 				group = item.getGroup().getSimpleName();
