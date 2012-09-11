@@ -32,6 +32,7 @@ import javax.inject.Inject;
 import org.apache.commons.httpclient.HttpClient;
 import org.apache.commons.httpclient.methods.GetMethod;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.osgi.extensions.annotation.ServiceReference;
 import org.springframework.scheduling.TaskScheduler;
 import org.springframework.stereotype.Service;
 import org.squashtest.csp.tm.domain.testautomation.AutomatedTest;
@@ -63,7 +64,7 @@ public class TestAutomationJenkinsConnector implements TestAutomationConnector{
 	private static final int DEFAULT_SPAM_INTERVAL_MILLIS = 5000;
 	
 	
-	@Inject
+	//@Inject
 	private TaskScheduler taskScheduler;
 	
 	
@@ -85,6 +86,11 @@ public class TestAutomationJenkinsConnector implements TestAutomationConnector{
 	
 	//****************************** let's roll ****************************************
 
+	
+	@ServiceReference
+	public void setTaskScheduler(TaskScheduler taskScheduler){
+		this.taskScheduler=taskScheduler;
+	}
 
 	@Override
 	public String getConnectorKind() {
