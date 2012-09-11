@@ -21,21 +21,22 @@
 package squashtm.testautomation.jenkins;
 
 import java.util.Collection;
-import java.util.Date;
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.LinkedList;
 import java.util.Map;
 
 import javax.annotation.PostConstruct;
+import javax.inject.Inject;
 
 import org.apache.commons.httpclient.HttpClient;
 import org.apache.commons.httpclient.methods.GetMethod;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.scheduling.TaskScheduler;
 import org.springframework.stereotype.Service;
+import org.squashtest.csp.tm.domain.testautomation.AutomatedTest;
 import org.squashtest.csp.tm.domain.testautomation.TestAutomationProject;
 import org.squashtest.csp.tm.domain.testautomation.TestAutomationServer;
-import org.squashtest.csp.tm.domain.testautomation.AutomatedTest;
 import org.squashtest.csp.tm.testautomation.model.TestAutomationProjectContent;
 import org.squashtest.csp.tm.testautomation.spi.AccessDenied;
 import org.squashtest.csp.tm.testautomation.spi.BadConfiguration;
@@ -45,6 +46,7 @@ import org.squashtest.csp.tm.testautomation.spi.TestAutomationConnector;
 import org.squashtest.csp.tm.testautomation.spi.TestAutomationException;
 import org.squashtest.csp.tm.testautomation.spi.UnreadableResponseException;
 
+import squashtm.testautomation.jenkins.internal.ExecuteTestsBuildProcessor;
 import squashtm.testautomation.jenkins.internal.FetchTestListBuildProcessor;
 import squashtm.testautomation.jenkins.internal.JsonParser;
 import squashtm.testautomation.jenkins.internal.net.HttpClientProvider;
@@ -59,6 +61,10 @@ public class TestAutomationJenkinsConnector implements TestAutomationConnector{
 	
 	private static final String CONNECTOR_KIND = "jenkins";
 	private static final int DEFAULT_SPAM_INTERVAL_MILLIS = 5000;
+	
+	
+	@Inject
+	private TaskScheduler taskScheduler;
 	
 	
 	private HttpClientProvider clientProvider = new HttpClientProvider();
@@ -166,8 +172,27 @@ public class TestAutomationJenkinsConnector implements TestAutomationConnector{
 
 		TestSorter sorter = new TestSorter(tests);
 		
-		
+		while(sorter.hasNext()){
+			_startTestExecution(sorter.getNext(), reference);
+		}
 	
+	}
+	
+	private void _startTestExecution(TestAutomationProjectContent content, String externalID){
+		
+		TestAutomationProject project = content.getProject();
+		
+		HttpClient client = clientProvider.getClientFor(project.getServer());
+		
+		ExecuteTestsBuildProcessor processor = new ExecuteTestsBuildProcessor(taskScheduler);
+		
+		processor.setClient(client);
+		processor.setProjectContent(content);
+		processor.setBuildAbsoluteId(new BuildAbsoluteId(project.getName(), externalID));
+		processor.setDefaultReschedulingDelay(spamInterval);
+		
+		processor.run();
+		
 	}
 	
 	// ************************************ private tools ************************** 

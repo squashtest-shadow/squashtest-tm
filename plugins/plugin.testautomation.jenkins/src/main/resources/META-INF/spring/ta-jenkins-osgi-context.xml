@@ -35,4 +35,12 @@
 					   
 	<osgi:service ref="plugin.testautomation.jenkins.connector" interface="org.squashtest.csp.tm.testautomation.spi.TestAutomationConnector"/>
 	
+	
+	
+	<osgi:reference
+		id="core.executor.service" bean-name="core.executor.service"
+		interface="org.springframework.scheduling.TaskScheduler"
+		availability="mandatory" />
+	
+	
 </beans>
