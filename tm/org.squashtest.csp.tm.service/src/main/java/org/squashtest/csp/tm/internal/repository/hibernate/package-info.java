@@ -164,8 +164,6 @@
 		@NamedQuery(name = "project.findProjectFiltersContainingProject", query = "select pf from ProjectFilter pf join pf.projects p where p.id = :projectId "),
 		@NamedQuery(name = "project.findBoundTestAutomationProjects", query = "select tap from Project p join p.testAutomationProjects tap where p.id = :projectId order by tap.name"),
 
-		
-		
 		//Queries on Attachement et al
 		@NamedQuery(name = "attachment.findContentId", query = "select aContent.id from Attachment attachment join attachment.content aContent where attachment.id = :attachId"),
 		@NamedQuery(name = "attachment.removeContent", query = "delete from AttachmentContent where id = :contentId"),
@@ -205,6 +203,9 @@
 		@NamedQuery(name = "requirementVersion.findDistinctRequirementsCriticalitiesVerifiedByTestCases", query = "select distinct r.criticality from TestCase tc join tc.verifiedRequirementVersions r where tc.id in (:testCasesIds) "),
 		@NamedQuery(name = "requirementVersion.findDistinctRequirementsCriticalities", query = "select distinct r.criticality from RequirementVersion as r  where r.id in (:requirementsIds) "),
 		@NamedQuery(name = "RequirementVersion.countByRequirement", query = "select count(rv) from RequirementVersion rv join rv.requirement r where r.id = ?"),
+		
+		// Queries on AutomatedExecution
+		@NamedQuery(name = "AutomatedExecutionExtender.findAllBySuiteIdAndTestName", query = "from AutomatedExecutionExtender ex where ex.automatedSuite.id = ? and ex.automatedTest.name = ?"),
 
 		/* ********************************************** batch deletion-related queries **************************************************** */
 

@@ -25,7 +25,6 @@ import java.util.List;
 import javax.inject.Inject;
 
 import org.hibernate.Criteria;
-import org.hibernate.Query;
 import org.hibernate.Session;
 import org.hibernate.SessionFactory;
 import org.hibernate.criterion.Example;
@@ -39,31 +38,28 @@ public class HibernateAutomatedTestDao implements AutomatedTestDao {
 
 	@Inject
 	private SessionFactory sessionFactory;
-	
-	
+
 	@Override
 	public void persist(AutomatedTest newTest) {
-		if (findByExample(newTest)==null){
+		if (findByExample(newTest) == null) {
 			sessionFactory.getCurrentSession().persist(newTest);
-		}else{
+		} else {
 			throw new NonUniqueEntityException();
 		}
 	}
 
 	@Override
 	public AutomatedTest uniquePersist(AutomatedTest newTest) {
-		if ((newTest.getId() != null) && (findById(newTest.getId())!=null)){
+		if ((newTest.getId() != null) && (findById(newTest.getId()) != null)) {
 			return newTest;
 		}
-		
-		//content exists ?
+
+		// content exists ?
 		AutomatedTest baseTest = findByExample(newTest);
-		if (baseTest != null){
-			return baseTest;
-		}
 		
-		//or else, persist
-		else{
+		if (baseTest != null) {
+			return baseTest;
+		} else { // or else, persist
 			sessionFactory.getCurrentSession().persist(newTest);
 			return newTest;
 		}
@@ -72,27 +68,23 @@ public class HibernateAutomatedTestDao implements AutomatedTestDao {
 	@Override
 	public AutomatedTest findById(Long testId) {
 		Session session = sessionFactory.getCurrentSession();
-		Query query = session.getNamedQuery("automatedTest.findById");
-		query.setParameter("testId", testId);
-		return (AutomatedTest)query.uniqueResult();
+		return (AutomatedTest) session.load(AutomatedTest.class, testId);
 	}
 
 	@Override
 	public AutomatedTest findByExample(AutomatedTest example) {
-		
+
 		Criteria criteria = sessionFactory.getCurrentSession().createCriteria(AutomatedTest.class);
 		criteria = criteria.add(Example.create(example));
 		criteria = criteria.add(Restrictions.eq("project", example.getProject()));
 
 		List<?> res = criteria.list();
-		
-		if (res.isEmpty()){
+
+		if (res.isEmpty()) {
 			return null;
-		}
-		else if (res.size()==1){
-			return (AutomatedTest)res.get(0);
-		}
-		else{
+		} else if (res.size() == 1) {
+			return (AutomatedTest) res.get(0);
+		} else {
 			throw new NonUniqueEntityException();
 		}
 	}

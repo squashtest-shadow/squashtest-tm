@@ -26,13 +26,7 @@ import javax.persistence.GeneratedValue;
 import javax.persistence.Id;
 import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
-import javax.persistence.NamedQueries;
-import javax.persistence.NamedQuery;
 
-
-@NamedQueries({
-	@NamedQuery(name="automatedTest.findById", query="from AutomatedTest where id = :testId")
-})
 @Entity
 public class AutomatedTest {
 
@@ -45,14 +39,11 @@ public class AutomatedTest {
 	@JoinColumn(name="PROJECT_ID")
 	private TestAutomationProject project;
 	
-	@Column
 	private String name;
-
 
 	public Long getId() {
 		return id;
 	}
-	
 	
 	public TestAutomationProject getProject() {
 		return project;

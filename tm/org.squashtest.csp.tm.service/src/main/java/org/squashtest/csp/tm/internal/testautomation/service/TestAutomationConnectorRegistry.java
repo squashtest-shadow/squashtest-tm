@@ -30,8 +30,6 @@ import org.springframework.stereotype.Component;
 import org.squashtest.csp.tm.testautomation.spi.TestAutomationConnector;
 import org.squashtest.csp.tm.testautomation.spi.UnknownConnectorKind;
 
-
-
 @Component("squashtest.testautomation.connector-registry")
 public class TestAutomationConnectorRegistry {
 
@@ -40,17 +38,18 @@ public class TestAutomationConnectorRegistry {
 	/**
 	 * Registered providers mapped by connector kind.
 	 */
-	private Map<String, TestAutomationConnector> availableConnectors = new ConcurrentHashMap<String, TestAutomationConnector>(5);
+	private Map<String, TestAutomationConnector> availableConnectors = new ConcurrentHashMap<String, TestAutomationConnector>(
+			5);
 
-
-	public Collection<String> listRegisteredConnectors(){
+	public Collection<String> listRegisteredConnectors() {
 		return availableConnectors.keySet();
 	}
 
-	public TestAutomationConnector getConnectorForKind(String kind){
+	public TestAutomationConnector getConnectorForKind(String kind) {
 		TestAutomationConnector connector = availableConnectors.get(kind);
-		if (connector==null){
-			UnknownConnectorKind ex = new UnknownConnectorKind("TestAutomationConnector : unknown kind '"+kind+"'");
+		
+		if (connector == null) {
+			UnknownConnectorKind ex = new UnknownConnectorKind("TestAutomationConnector : unknown kind '" + kind + "'");
 			ex.addArg(kind);
 			throw ex;
 		}
@@ -60,10 +59,10 @@ public class TestAutomationConnectorRegistry {
 
 	/**
 	 * Registers a new kind of connector connector.
-	 *
+	 * 
 	 * @param provider
 	 */
-	public void registerConnector(TestAutomationConnector connector, Map serviceProperties) {
+	public void registerConnector(TestAutomationConnector connector, Map<?, ?> serviceProperties) {
 		String kind = connector.getConnectorKind();
 
 		if (kind == null) {
@@ -77,18 +76,20 @@ public class TestAutomationConnectorRegistry {
 
 	/**
 	 * Unregisters a kind of provider, making it no longer addressable by this registry
-	 *
+	 * 
 	 * @param provider
 	 */
-	public void unregisterConnector(TestAutomationConnector connector, Map serviceProperties) {
-		
-		if (connector==null) return;
-		
+	public void unregisterConnector(TestAutomationConnector connector, Map<?, ?> serviceProperties) {
+
+		if (connector == null) {
+			return;
+		}
+
 		String kind = connector.getConnectorKind();
 
 		LOGGER.info("Unregistering connector for test automation platforms of kind '{}'", kind);
 
 		availableConnectors.remove(kind);
 	}
-	
+
 }

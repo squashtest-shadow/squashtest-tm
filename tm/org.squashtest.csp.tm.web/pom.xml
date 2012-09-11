@@ -330,11 +330,10 @@
 						<!-- Runtime classes defined in config files such as web.xml and spring 
 							should be manually imported below -->
             <Import-Package>
-							<!-- some dependency needs the commons.lang version 2.5.0, however 
-								it is already used and exported as 2.4 in other bundles -->
-              org.squashtest.csp.core.web.utils;
-              version="${project.version}",
-              *
+				<!-- some dependency needs the commons.lang version 2.5.0, however it is 
+					already used and exported as 2.4 in other bundles -->
+				org.squashtest.csp.core.web.utils;version="${project.version}",
+				*
             </Import-Package>
           </instructions>
           <supportedProjectTypes>

@@ -166,6 +166,11 @@
 			<value>org.squashtest.csp.tm.service.TestSuiteFinder</value>
 		</osgi:interfaces>
 	</osgi:reference>
+	
+	<osgi:reference id="squashtest.tm.service.testautomation.AutomatedExecutionManagerService"
+		bean-name="squashtest.tm.service.testautomation.AutomatedExecutionManagerService"
+		interface="org.squashtest.csp.tm.service.testautomation.AutomatedExecutionManagerService"
+		availability="mandatory" />
 
 	<osgi:list id="squash.tm.report.ReportPlugins" interface="org.squashtest.tm.api.report.ReportPlugin">
 		<osgi:listener ref="squash.tm.report.ReportsRegistry"

@@ -63,7 +63,7 @@ public class AclPermissionEvaluationService implements PermissionEvaluationServi
 	public boolean hasRoleOrPermissionOnObject(String role, String permissionName, Object object) {
 		return hasRoleOrPermissionOnObject(role, permissionFactory.buildFromName(permissionName), object);
 	}
-	
+
 	@Override
 	public boolean canRead(Object object) {
 		return hasRoleOrPermissionOnObject("ROLE_ADMIN", "READ", object);
@@ -72,26 +72,28 @@ public class AclPermissionEvaluationService implements PermissionEvaluationServi
 	@Override
 	public boolean hasMoreThanRead(Object object) {
 		boolean hasMore = false;
-		if(userContextService.hasRole("ROLE_ADMIN")){
+		if (userContextService.hasRole("ROLE_ADMIN")) {
 			hasMore = true;
-		}else{
+		} else {
 			Authentication authentication = userContextService.getPrincipal();
-			  Field[] fields = CustomPermission.class.getFields();
-			  for (int i = 0; i < fields.length; i++) {
-				  try{
-				  if((!fields[i].getName().equals("READ"))&& permissionEvaluator.hasPermission(authentication, object, fields[i].getName())){
-					  return true;
-				  }
-				  }catch(IllegalArgumentException iaexecption){
-					  List<String> knownMessages = Arrays.asList("Unknown permission 'RESERVED_ON'","Unknown permission 'RESERVED_OFF'", "Unknown permission 'THIRTY_TWO_RESERVED_OFF'" );
-					  if(!(knownMessages.contains(iaexecption.getMessage()))){
-						  throw iaexecption;
-					  }
-				  }
-			  }
-			  
+			Field[] fields = CustomPermission.class.getFields();
+			for (int i = 0; i < fields.length; i++) {
+				try {
+					if ((!fields[i].getName().equals("READ"))
+							&& permissionEvaluator.hasPermission(authentication, object, fields[i].getName())) {
+						return true;
+					}
+				} catch (IllegalArgumentException iaexecption) {
+					List<String> knownMessages = Arrays.asList("Unknown permission 'RESERVED_ON'",
+							"Unknown permission 'RESERVED_OFF'", "Unknown permission 'THIRTY_TWO_RESERVED_OFF'");
+					if (!(knownMessages.contains(iaexecption.getMessage()))) {
+						throw iaexecption;
+					}
+				}
+			}
+
 		}
 		return hasMore;
 	}
-	
+
 }

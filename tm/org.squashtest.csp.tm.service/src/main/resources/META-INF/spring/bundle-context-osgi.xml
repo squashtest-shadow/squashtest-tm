@@ -211,6 +211,10 @@
 		ref="squashtest.tm.service.TestSuiteExecutionProcessingService"
 		interface="org.squashtest.csp.tm.service.TestSuiteExecutionProcessingService" />
 
+	<osgi:service
+		ref="squashtest.tm.service.testautomation.AutomatedExecutionManagerService"
+		interface="org.squashtest.csp.tm.service.testautomation.AutomatedExecutionManagerService" />
+
 	<!-- ====== SERVICES CONSUMED BY THIS BUNDLE ====== -->
 	<!-- Jdbc Datasource -->
 	<osgi:reference id="squashtest.core.persistence.jdbc.DataSource"
@@ -280,11 +284,11 @@
 		bean-name="squashtest.core.security.PermissionEvaluationService"
 		interface="org.squashtest.csp.core.service.security.PermissionEvaluationService"
 		availability="mandatory" />
-
+		
 
 	<!-- Validation services -->
 	<osgi:reference id="javax.validation.ValidatorFactory"
 		bean-name="javax.validation.ValidatorFactory" interface="javax.validation.ValidatorFactory"
-		availability="mandatory" />
+		availability="mandatory" />		
 
 </beans>

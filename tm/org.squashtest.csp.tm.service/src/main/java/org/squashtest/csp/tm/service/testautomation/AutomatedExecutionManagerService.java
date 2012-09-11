@@ -18,16 +18,28 @@
  *     You should have received a copy of the GNU Lesser General Public License
  *     along with this software.  If not, see <http://www.gnu.org/licenses/>.
  */
-package org.squashtest.csp.tm.internal.repository;
 
-import org.squashtest.csp.tm.domain.testautomation.AutomatedExecutionExtender;
+package org.squashtest.csp.tm.service.testautomation;
 
-public interface AutomatedExecutionExtenderDao {
+import javax.validation.constraints.NotNull;
 
-	
-	AutomatedExecutionExtender findById(long extenderId);
-	
-	void persist(AutomatedExecutionExtender extender);
-	
-	
+import org.springframework.security.access.prepost.PreAuthorize;
+
+import squashtm.remoteapi.execution.dto.TestExecutionStatus;
+
+/**
+ * @author Gregory Fouquet
+ * 
+ */
+public interface AutomatedExecutionManagerService {
+
+	/**
+	 * Changes the state of a set of executions to a new value.
+	 * 
+	 * @param setIdentifier
+	 * @param stateChange
+	 */
+	@PreAuthorize("hasRole('ROLE_TA_API_CLIENT')")
+	void changeExecutionsStates(@NotNull AutomatedExecutionSetIdentifier setIdentifier, @NotNull TestExecutionStatus stateChange);
+
 }

@@ -20,6 +20,7 @@
  */
 package org.squashtest.csp.core.infrastructure.dynamicmanager;
 
+import java.io.Serializable;
 import java.lang.reflect.Method;
 
 import javax.persistence.Entity;
@@ -29,11 +30,11 @@ import org.hibernate.SessionFactory;
 import org.springframework.core.annotation.AnnotationUtils;
 
 /**
- * {@link DynamicComponentInvocationHandler} which handles <code>@Entity findById(long id)</code> method. Fetches an entity using its id.
+ * {@link DynamicComponentInvocationHandler} which handles <code>@Entity findById(long id)</code> or <code>@Entity findById(Serializable id)</code> method. Fetches an entity using its id.
  * @author Gregory Fouquet
  * 
  */
-public class FindByIdHandler implements DynamicComponentInvocationHandler { // NOSONAR : I dont choose what JDK interfaces throw
+public class FindByIdHandler implements DynamicComponentInvocationHandler {
 	private final SessionFactory sessionFactory;
 
 	/**
@@ -50,11 +51,11 @@ public class FindByIdHandler implements DynamicComponentInvocationHandler { // N
 	 */
 	@Override
 	public Object invoke(Object proxy, Method method, Object[] args) {
-		return sessionFactory.getCurrentSession().load(method.getReturnType(), (Long) args[0]);
+		return sessionFactory.getCurrentSession().load(method.getReturnType(), (Serializable) args[0]);
 	}
 
 	/**
-	 * @return <code>true</code> if method signature is <code>ENTITY findById(long id)</code>
+	 * @return <code>true</code> if method signature is <code>ENTITY findById(long id)</code> or <code>ENTITY findById(Serializable id)</code>
 	 */
 	@Override
 	public boolean handles(Method method) {
@@ -64,7 +65,7 @@ public class FindByIdHandler implements DynamicComponentInvocationHandler { // N
 
 	private boolean mehtodParamsMatchMethodParams(Method method) {
 		Class<?>[] params = method.getParameterTypes();
-		return params.length == 1 && long.class.isAssignableFrom(params[0]);
+		return params.length == 1 && Serializable.class.isAssignableFrom(params[0]);
 	}
 
 	public boolean methodNameMatchesMethodPattern(Method method) {
