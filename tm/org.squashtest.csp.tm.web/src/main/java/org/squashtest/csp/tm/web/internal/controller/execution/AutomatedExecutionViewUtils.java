@@ -27,24 +27,29 @@ import java.util.Locale;
 import java.util.Map;
 
 import org.springframework.context.MessageSource;
+import org.springframework.web.util.HtmlUtils;
 import org.squashtest.csp.tm.domain.execution.Execution;
 import org.squashtest.csp.tm.web.internal.helper.JsonHelper;
 
 public class AutomatedExecutionViewUtils {
- private AutomatedExecutionViewUtils(){
-	 
- }
- public static  String buildExecInfo(List<Execution> executions, Locale locale, MessageSource messageSource) {
+	private AutomatedExecutionViewUtils() {
+
+	}
+
+	public static String buildExecInfo(List<Execution> executions, Locale locale, MessageSource messageSource) {
 		List<Map<String, Object>> executionInfos = new ArrayList<Map<String, Object>>(executions.size());
-		for(Execution execution : executions){
+		for (Execution execution : executions) {
 			Map<String, Object> infos = new HashMap<String, Object>(4);
 			infos.put("id", execution.getId());
 			infos.put("name", execution.getName());
 			infos.put("status", execution.getExecutionStatus());
-			infos.put("localizedStatus", messageSource.getMessage(execution.getExecutionStatus().getI18nKey(),null, locale));
+			String localisedMessage = messageSource.getMessage(execution.getExecutionStatus().getI18nKey(), null,
+					locale);
+			String htmlEscapedLocalizedMessage = HtmlUtils.htmlEscape(localisedMessage);
+			infos.put("localizedStatus", htmlEscapedLocalizedMessage);
 			executionInfos.add(infos);
 		}
 		return JsonHelper.serialize(executionInfos);
 	}
- 
+
 }
