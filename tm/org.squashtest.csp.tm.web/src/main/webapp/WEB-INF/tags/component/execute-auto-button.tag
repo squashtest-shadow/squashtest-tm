@@ -27,9 +27,52 @@
 <%@ attribute name="url" required="true"%>
 <%@ taglib prefix="f" uri="http://java.sun.com/jsp/jstl/fmt"%>
 <%@ taglib prefix="pop" tagdir="/WEB-INF/tags/popup"%>
+<%@ taglib prefix="s" uri="http://www.springframework.org/tags"%>
+
+<s:url var="automatedSuitesUrl" value="/automated-suites">
+</s:url>
 
 <!-- *************************INITIALISATION*********************** -->
 <script type="text/javascript">
+		
+		var autoUpdate;
+		var automatedSuiteId = "fails";
+		
+		function updateExecutionInfo() {
+			$.ajax({
+				type : 'GET', 
+				url : "${automatedSuitesUrl}/"+automatedSuiteId+"/executions", 
+				dataType : "json"
+			}).done(
+				function(executions){
+					var completed = true;					
+					var executionInfos = "";
+					for(i=0;i<executions.length;i++){
+						var execution = executions[i];
+						if(execution.status != "Success") {
+							completed = false;
+						}
+						executionInfos+="<div id='execution-info-"+ execution.id
+						+"'"
+						+" class='display-table-row' >"
+						+"<div class='executionName display-table-cell' >"
+						+ execution.name
+						+"</div>"
+						
+						+"<div class='"
+						+ execution.status
+						+" executionStatus display-table-cell' >"
+						+ execution.localizedStatus
+						+"</div>"
+						+"</div>";
+					}
+					$("#executions-auto-infos").html(executionInfos);
+					if(completed == true) {
+						clearInterval(autoUpdate);
+					}
+			});
+		}
+		
 	function executeAll() {
 		console.log("executeAll");
 		var ids = [];
@@ -95,7 +138,9 @@
 		}
 		$("#executions-auto-infos").html(executionInfos);
 		$("#execute-auto-dialog").dialog('open');
-
+			autoUpdate = setInterval(function() {
+					updateExecutionInfo();
+					}, 1000);	
 	}
 </script>
 
@@ -157,7 +202,8 @@
 			
 				<f:message var="label" key="CLOSE" />
 				'${ label }': function() {
-					$( this ).dialog( 'close' );				
+					$( this ).dialog( 'close' );	
+					clearInterval(autoUpdate);			
 				}		
 				
 			</jsp:attribute>
@@ -173,6 +219,7 @@
 				<f:message key="dialog.execute-auto.close.note" />
 				</div>
 				</div>
+				
 				
 			</jsp:attribute>
 </pop:popup>

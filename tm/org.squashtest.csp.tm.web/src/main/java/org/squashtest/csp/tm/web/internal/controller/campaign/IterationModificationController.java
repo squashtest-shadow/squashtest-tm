@@ -455,7 +455,8 @@ public class IterationModificationController {
 		return deletedIds;
 	}
 
-	/* ************** execute auto *********************************** */
+	/* ************** execute auto *********************************** */	
+
 	
 	@RequestMapping(method = RequestMethod.POST, params= {"id=execute-auto", "testPlanItemsIds[]"} )
 	public @ResponseBody String  executeSelectionAuto(@PathVariable long iterationId, @RequestParam("testPlanItemsIds[]") List<Long> ids , Locale locale){
