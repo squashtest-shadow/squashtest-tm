@@ -22,87 +22,107 @@
 --%>
 <%@ tag
 	description="general information panel for an auditable entity. Client can add more info in the body of this tag"
-	pageEncoding="utf-8" %>
-<%@ attribute name="testPlanTableId" required="true" %>
+	pageEncoding="utf-8"%>
+<%@ attribute name="testPlanTableId" required="true"%>
 <%@ attribute name="url" required="true"%>
 <%@ taglib prefix="f" uri="http://java.sun.com/jsp/jstl/fmt"%>
-<%@ taglib prefix="pop" tagdir="/WEB-INF/tags/popup" %>
+<%@ taglib prefix="pop" tagdir="/WEB-INF/tags/popup"%>
 
 <!-- *************************INITIALISATION*********************** -->
 <script type="text/javascript">
-		function executeAll() {
-			console.log("executeAll");
-			var ids = [];
+	function executeAll() {
+		console.log("executeAll");
+		var ids = [];
+		executeAuto(ids);
+
+	}
+
+	function executeSelection() {
+		console.log("executeSelected");
+		var table = $('#${testPlanTableId}').dataTable();
+		var ids = getIdsOfSelectedTableRows(table, getTestPlansTableRowId);
+		if (ids.length == 0) {
+			$.squash
+					.openMessage("<f:message key='popup.title.error' />",
+							"<f:message	key='dialog.assign-user.selection.empty.label'/>");
+		} else {
 			executeAuto(ids);
-			
 		}
-		function executeSelection() {
-			console.log("executeSelected");
-			var table = $('#${testPlanTableId}').dataTable();
-			var ids = getIdsOfSelectedTableRows(table, getTestPlansTableRowId);
-			executeAuto(ids);
-		}
-		function executeAuto(ids){
-			$.ajax({
-				type : 'POST', 
-				url : "${url}", 
-				dataType : "json", 
-				data:{"id":"execute-auto", "testPlanItemsIds":ids}
-			}).done(
-				function(executions){
-					openOverviewDialog(executions);
-			});
-		}
-		function openOverviewDialog	(executions){
-			var template = $("#execution-info-template").html();
-			var executionInfos = "";
-			for(i=0;i<executions.length;i++){
-				var execution = executions[i];
-				
-				executionInfos+="<div id='execution-info-"+ execution.id
+	}
+	function executeAuto(ids) {
+		$.ajax({
+			type : 'POST',
+			url : "${url}",
+			dataType : "json",
+			data : {
+				"id" : "execute-auto",
+				"testPlanItemsIds" : ids
+			}
+		}).done(function(executions) {
+			var id = 3;
+			initiateProgressBar(executions);
+			openOverviewDialog(executions);
+		});
+	}
+	function initiateProgressBar(executions) {
+		var progress = 0;
+		$("#execution-auto-progress-bar").progressbar({
+			value : 0
+		});
+		$("#execution-auto-progress-amount").text("0/"+executions.length);
+		//TODO refresh progress bar with new infos 
+	}
+	function openOverviewDialog(executions) {
+		var template = $("#execution-info-template").html();
+		var executionInfos = "";
+		for (i = 0; i < executions.length; i++) {
+			var execution = executions[i];
+
+			executionInfos += "<div id='execution-info-"+ execution.id
 				+"'"
 				
 				+" class='display-table-row' >"
-				+"<div class='executionName display-table-cell' >"
-				+ execution.name
-				+"</div>"
-				
-				+"<div class='"
+					+ "<div class='executionName display-table-cell' >"
+					+ execution.name
+					+ "</div>"
+
+					+ "<div class='"
 				+ execution.status
 				+" executionStatus display-table-cell' >"
-				+ execution.localizedStatus
-				+"</div>"
-				
-				+"</div>";
-			}
-			$("#executions-auto-infos").html(executionInfos);
-			$("#execute-auto-dialog").dialog('open');
-			
+					+ execution.localizedStatus + "</div>"
+
+					+ "</div>";
 		}
-	</script>
-	
-	<div id="execution-info-template" style="display:none">
-		<div class="display-table-row execution-info">
-			<div class="executionName display-table-cell"></div>
-			<div class="executionStatus display-table-cell"></div>
-		</div>
+		$("#executions-auto-infos").html(executionInfos);
+		$("#execute-auto-dialog").dialog('open');
+
+	}
+</script>
+
+<div id="execution-info-template" style="display: none">
+	<div class="display-table-row execution-info">
+		<div class="executionName display-table-cell"></div>
+		<div class="executionStatus display-table-cell"></div>
 	</div>
+</div>
 
 <!-- *************************/INITIALISATION*********************** -->
 <!-- *************************BUTTON*********************** -->
-<div id="iteration-suite-auto-execution-button" style="display: inline-block;">
-	
-	
+<div id="iteration-suite-auto-execution-button"
+	style="display: inline-block;">
+
+
 	<a tabindex="0" href="#execute-auto" class="button run-menu"
 		id="execute-auto-button" class="button"><f:message
-			key="iteration.suite.execution.auto.label" />
-	</a>
+			key="iteration.suite.execution.auto.label" /> </a>
 	<div id="execute-auto" style="display: none">
 		<ul>
 			<li><a class="execute-all" href="javascript:void(0)"><f:message
-						key="iteration.suite.execution.auto.all.label" /> </a></li>
+						key="iteration.suite.execution.auto.all.label" /> </a>
+			</li>
 			<li><a class="execute-selection" href="javascript:void(0)"><f:message
-						key='iteration.suite.execution.auto.selection.label' /> </a></li>
+						key='iteration.suite.execution.auto.selection.label' /> </a>
+			</li>
 		</ul>
 	</div>
 
@@ -131,9 +151,9 @@
 </div>
 <!-- *************************/BUTTON*********************** -->
 <!-- *************************POPUP*********************** -->
-<pop:popup id="execute-auto-dialog" 
-			titleKey="dialog.execute-auto.title" isContextual="true" closeOnSuccess="false">
-			<jsp:attribute name="buttons">
+<pop:popup id="execute-auto-dialog" titleKey="dialog.execute-auto.title"
+	isContextual="true" closeOnSuccess="false">
+	<jsp:attribute name="buttons">
 			
 				<f:message var="label" key="CLOSE" />
 				'${ label }': function() {
@@ -141,11 +161,19 @@
 				}		
 				
 			</jsp:attribute>
-			<jsp:attribute name="body">
-				<div style="max-height:400px; width:100%, overflow-y:auto" id="executions-auto-infos" class="display-table">
+	<jsp:attribute name="body">
+			<div>
+				<div style="max-height: 200px; width: 100%; overflow-y: auto" id="executions-auto-infos" class="display-table">
+				</div>
+				<div id="execution-auto-progress" style="width:60%; margin:auto; margin-top:40px">
+					<div style="width:80%;"><div id="execution-auto-progress-bar"></div></div>
+	 				<div id="execution-auto-progress-amount" style="width:20%;"></div>
+				</div>
+				<div class="popup-notification">
+				<f:message key="dialog.execute-auto.close.note" />
+				</div>
 				</div>
 				
-				<div id="execution-auto-progress-bar-container"></div>
 			</jsp:attribute>
 </pop:popup>
 <!-- *************************/POPUP*********************** -->
