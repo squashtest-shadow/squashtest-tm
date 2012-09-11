@@ -77,10 +77,10 @@ class DynamicDaoFactoryBeanTest extends Specification {
 
 		when:
 		factory.initializeFactory()
-		def res = factory.object.findByCoolness(10L, "übercool")
+		def res = factory.object.findByCoolness(10L, "ï¿½bercool")
 
 		then:
-		1 * delegateDao.findByCoolness(10L, "übercool") >> "yay!"
+		1 * delegateDao.findByCoolness(10L, "ï¿½bercool") >> "yay!"
 		res == "yay!"
 	}
 
@@ -94,10 +94,10 @@ class DynamicDaoFactoryBeanTest extends Specification {
 
 		when:
 		factory.initializeFactory()
-		factory.object.findByCoolness(10L, "übercool")
+		factory.object.findByCoolness(10L, "ï¿½bercool")
 
 		then:
-		1 * delegateDao.findByCoolness(10L, "übercool")
+		1 * delegateDao.findByCoolness(10L, "ï¿½bercool")
 	}
 
 	def "should not lookup the delegate manager when dao does not have superinterface"() {
@@ -118,7 +118,7 @@ class DynamicDaoFactoryBeanTest extends Specification {
 		factory.object
 	}
 
-	def "should dynamically find an entity by its id"() {
+	def "should dynamically find an entity by its long id"() {
 		given:
 		DummyEntity entity = new DummyEntity()
 		currentSession.load(DummyEntity, 10L) >> entity
@@ -126,6 +126,19 @@ class DynamicDaoFactoryBeanTest extends Specification {
 		when:
 		factory.initializeFactory()
 		def res = factory.object.findById(10L)
+
+		then:
+		res == entity
+	}
+
+	def "should dynamically find an entity by its string id"() {
+		given:
+		DummyEntity entity = new DummyEntity()
+		currentSession.load(DummyEntity, "10L") >> entity
+
+		when:
+		factory.initializeFactory()
+		def res = factory.object.findById("10L")
 
 		then:
 		res == entity

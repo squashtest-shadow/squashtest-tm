@@ -65,7 +65,11 @@ public class FindByIdHandler implements DynamicComponentInvocationHandler {
 
 	private boolean mehtodParamsMatchMethodParams(Method method) {
 		Class<?>[] params = method.getParameterTypes();
-		return params.length == 1 && Serializable.class.isAssignableFrom(params[0]);
+		return params.length == 1 && paramIsAValidId(params[0]);
+	}
+
+	private boolean paramIsAValidId(Class<?> param) {
+		return long.class.isAssignableFrom(param) || Serializable.class.isAssignableFrom(param);
 	}
 
 	public boolean methodNameMatchesMethodPattern(Method method) {

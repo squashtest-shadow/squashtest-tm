@@ -32,6 +32,8 @@ import org.squashtest.tm.core.foundation.collection.Paging;
 public interface DummyDao extends CustomDummyDao {
 	DummyEntity findById(long id);
 	
+	DummyEntity findById(String id);
+
 	DummyEntity findByNameAndSuperpower(String name, String superpower);
 	
 	DummyEntity findBySuperpowerPaged(String superpower, Paging paging);
