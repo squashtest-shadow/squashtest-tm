@@ -66,6 +66,8 @@
 <f:message var="statusSuccess" key="execution.execution-status.SUCCESS" />
 <f:message var="statusRunning" key="execution.execution-status.RUNNING" />
 <f:message var="statusReady" key="execution.execution-status.READY" />
+<f:message var="statusError" key="execution.execution-status.ERROR" />
+<f:message var="statusWarning" key="execution.execution-status.WARNING" />
 
 <script type="text/javascript">
 	
@@ -363,7 +365,9 @@
 					failure : "${statusFailure}",
 					success : "${statusSuccess}",
 					running : "${statusRunning}",
-					ready : "${statusReady}"
+					ready : "${statusReady}",
+					error : "${statusError}",
+					warning : "${statusWarning}",
 				},
 				confirmPopup : {
 					oklabel : '<f:message key="attachment.button.delete.label" />',

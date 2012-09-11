@@ -105,12 +105,12 @@ public enum ExecutionStatus implements Internationalizable {
 		}
 		
 		@Override
-		protected boolean isCanonical() {
+		public boolean isCanonical() {
 			return true;
 		}
 		
 		@Override
-		protected ExecutionStatus toCanonical() {
+		public ExecutionStatus getCanonicalStatus() {
 			return BLOCKED;
 		}
 	},
@@ -123,12 +123,12 @@ public enum ExecutionStatus implements Internationalizable {
 		}
 		
 		@Override
-		protected boolean isCanonical() {
+		public boolean isCanonical() {
 			return true;
 		}
 		
 		@Override
-		protected ExecutionStatus toCanonical() {
+		public ExecutionStatus getCanonicalStatus() {
 			return FAILURE;
 		}
 	},
@@ -150,12 +150,12 @@ public enum ExecutionStatus implements Internationalizable {
 		}
 		
 		@Override
-		protected boolean isCanonical() {
+		public boolean isCanonical() {
 			return true;
 		}
 		
 		@Override
-		protected ExecutionStatus toCanonical() {
+		public ExecutionStatus getCanonicalStatus() {
 			return SUCCESS;
 		}
 	},
@@ -179,12 +179,12 @@ public enum ExecutionStatus implements Internationalizable {
 		}
 		
 		@Override
-		protected boolean isCanonical() {
+		public boolean isCanonical() {
 			return true;
 		}
 		
 		@Override
-		protected ExecutionStatus toCanonical() {
+		public ExecutionStatus getCanonicalStatus() {
 			return RUNNING;
 		}
 	},
@@ -205,12 +205,12 @@ public enum ExecutionStatus implements Internationalizable {
 		}
 		
 		@Override
-		protected boolean isCanonical() {
+		public boolean isCanonical() {
 			return true;
 		}
 		
 		@Override
-		protected ExecutionStatus toCanonical() {
+		public ExecutionStatus getCanonicalStatus() {
 			return READY;
 		}
 	},
@@ -225,12 +225,12 @@ public enum ExecutionStatus implements Internationalizable {
 		}
 		
 		@Override
-		protected boolean isCanonical() {
+		public boolean isCanonical() {
 			return false;
 		}
 		
 		@Override
-		protected ExecutionStatus toCanonical() {
+		public ExecutionStatus getCanonicalStatus() {
 			return SUCCESS;
 		}
 	},
@@ -244,12 +244,12 @@ public enum ExecutionStatus implements Internationalizable {
 		}
 		
 		@Override
-		protected boolean isCanonical() {
+		public boolean isCanonical() {
 			return false;
 		}		
 		
 		@Override
-		protected ExecutionStatus toCanonical() {
+		public ExecutionStatus getCanonicalStatus() {
 			return BLOCKED;
 		}
 		
@@ -308,9 +308,9 @@ public enum ExecutionStatus implements Internationalizable {
 	protected abstract ExecutionStatus resolveStatus(ExecutionStatus formerExecutionStatus,
 			ExecutionStatus formerStepStatus);
 	
-	protected abstract boolean isCanonical();
+	public abstract boolean isCanonical();
 	
-	protected abstract ExecutionStatus toCanonical();
+	public abstract ExecutionStatus getCanonicalStatus();
 	
 	
 	/* **************************** static methods ***************************** */
@@ -318,7 +318,7 @@ public enum ExecutionStatus implements Internationalizable {
 	public static List<ExecutionStatus> toCanonicalStatusList(List<ExecutionStatus> nonCanonical){
 		List<ExecutionStatus> canonical = new ArrayList<ExecutionStatus>();
 		for (ExecutionStatus nStatus : nonCanonical){
-			canonical.add(nStatus.toCanonical());
+			canonical.add(nStatus.getCanonicalStatus());
 		}
 		return canonical;
 	}
@@ -345,7 +345,7 @@ public enum ExecutionStatus implements Internationalizable {
 	 * @return true if the status is neither RUNNING nor READY
 	 */
 	public boolean isTerminatedStatus() {
-		return TERMINAL_STATUSES.contains(this.toCanonical());
+		return TERMINAL_STATUSES.contains(this.getCanonicalStatus());
 	}
 
 	@Override
@@ -368,7 +368,7 @@ public enum ExecutionStatus implements Internationalizable {
 	 * @return : the new execution status when possible, or null if it wasn't. The later usually means that a call to the database is needed.
 	 */
 	public ExecutionStatus deduceNewStatus(ExecutionStatus formerExecutionStatus, ExecutionStatus formerStepStatus){
-		return this.toCanonical()._deduceNewStatus(formerExecutionStatus.toCanonical(), formerStepStatus.toCanonical());
+		return this.getCanonicalStatus()._deduceNewStatus(formerExecutionStatus.getCanonicalStatus(), formerStepStatus.getCanonicalStatus());
 	}
 	
 	/* *************************** class-private instance method (assumes canonical form) ******************** */

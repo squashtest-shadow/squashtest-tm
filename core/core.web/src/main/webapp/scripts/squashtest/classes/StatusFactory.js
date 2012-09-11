@@ -55,6 +55,14 @@
 					css = "executions-status-ready-icon";
 					break;	
 					
+				case conf.error :
+					css = "executions-status-error-icon";
+					break;
+					
+				case conf.warning :
+					css = "executions-status-warning-icon";
+					break;
+					
 				default : 
 					status="";
 					break;

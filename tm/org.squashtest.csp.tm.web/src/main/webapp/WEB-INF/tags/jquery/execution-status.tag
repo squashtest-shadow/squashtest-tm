@@ -27,4 +27,4 @@
 
 <f:message var="entityStatus" key="${status.i18nKey}" />
 <c:set var="statusClass" value="exec-status-${status}" />
-<span style="white-space:nowrap; display:inline-block;" class="${statusClass}" >${entityStatus}</span>
+<span style="white-space:nowrap; display:inline-block;" class="common-status-label ${statusClass}" >${entityStatus}</span>

@@ -40,11 +40,11 @@
 	
 	<div style="display:inline-block; margin-right:2em;vertical-align:top">
 		<label><f:message key="auditable-entity.execution-status.label" /></label>
-		<jq:execution-status status="${auditableEntity.executionStatus}" /> 
+		<jq:execution-status status="${auditableEntity.executionStatus.canonicalStatus}" /> 
 		<c:if test="${ auditableEntity.executionMode == 'AUTOMATED' }">
 		<br>
 		<label><f:message key="auditable-entity.automated-execution-status.label"/></label>
-		--
+		<jq:execution-status status="${auditableEntity.executionStatus}" />
 		</c:if>
 	</div>
 	
