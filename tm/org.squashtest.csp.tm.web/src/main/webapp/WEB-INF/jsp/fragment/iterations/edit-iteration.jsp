@@ -273,6 +273,9 @@
 				value='<f:message key="iteration.button.remove.label" />'
 				id="delete-iteration-button" class="button" />
 		</c:if>
+		<c:if test="${ executable && iteration.project.testAutomationEnabled }">
+			<comp:iteration-auto-execution-button iterationUrl="${ iterationUrl }" testPlanTableId="test-plans-table"/>
+		</c:if>
 	</div>
 	<div style="clear: both;"></div>
 	<c:if test="${ moreThanReadOnly }">
