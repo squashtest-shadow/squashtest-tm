@@ -210,8 +210,9 @@
 				<div style="max-height: 200px; width: 100%; overflow-y: auto" id="executions-auto-infos" class="display-table">
 				</div>
 				<div id="execution-auto-progress" style="width:60%; margin:auto; margin-top:40px">
-					<div style="width:80%;"><div id="execution-auto-progress-bar"></div></div>
-	 				<div id="execution-auto-progress-amount" style="width:20%;"></div>
+					<div style="width:70%; display:inline-block;vertical-align:middle">
+					<div id="execution-auto-progress-bar"></div></div>
+	 				<div id="execution-auto-progress-amount" style="width:20%;display:inline-block"></div>
 				</div>
 				<div class="popup-notification">
 				<f:message key="dialog.execute-auto.close.note" />
