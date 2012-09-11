@@ -414,7 +414,7 @@
 		<div class="table-tab-wrap">
 
 
-			<aggr:decorate-iteration-test-cases-table
+			<aggr:decorate-iteration-test-plan-table
 				tableModelUrl="${iterationTestPlanUrl}"
 				testPlanDetailsBaseUrl="${testCaseDetailsBaseUrl}"
 				testPlansUrl="${testCasesUrl}"
@@ -427,7 +427,7 @@
 				testCaseMultipleRemovalPopupId="delete-multiple-test-plan-dialog"
 				baseIterationURL="${iterationUrl}"
 				testCaseSingleRemovalPopupId="delete-single-test-plan-dialog" />
-			<aggr:iteration-test-cases-table />
+			<aggr:iteration-test-plan-table />
 		</div>
 
 		<%--------------------------- Deletion confirmation pup for Test plan section ------------------------------------%>

@@ -62,15 +62,14 @@ import org.squashtest.csp.tm.internal.service.TestCaseCyclicCallChecker;
 @Auditable
 @InheritsAcls(constrainedClass = Iteration.class, collectionName = "testPlans")
 public class IterationTestPlanItem implements HasExecutionStatus {
-	
-	
+
 	private static final Set<ExecutionStatus> LEGAL_EXEC_STATUS;
-	
+
 	static {
-		Set<ExecutionStatus> set = new HashSet<ExecutionStatus>(Arrays.asList(ExecutionStatus.values()));		
-		LEGAL_EXEC_STATUS = Collections.unmodifiableSet(set);		
+		Set<ExecutionStatus> set = new HashSet<ExecutionStatus>(Arrays.asList(ExecutionStatus.values()));
+		LEGAL_EXEC_STATUS = Collections.unmodifiableSet(set);
 	}
-	
+
 	@Id
 	@GeneratedValue
 	@Column(name = "ITEM_TEST_PLAN_ID")
@@ -125,7 +124,7 @@ public class IterationTestPlanItem implements HasExecutionStatus {
 	public ExecutionStatus getExecutionStatus() {
 		return executionStatus;
 	}
-	
+
 	@Override
 	public Set<ExecutionStatus> getLegalStatusSet() {
 		return LEGAL_EXEC_STATUS;
@@ -229,39 +228,38 @@ public class IterationTestPlanItem implements HasExecutionStatus {
 
 		return newExecution;
 	}
-	
-	
+
 	public Execution createAutomatedExecution(TestCaseCyclicCallChecker cyclicCallChecker)
 			throws TestPlanItemNotExecutableException {
 
-		if (! isAutomated()){
+		if (!isAutomated()) {
 			throw new NotAutomatedException();
 		}
 
 		Execution execution = createExecution(cyclicCallChecker);
-		
+
 		AutomatedExecutionExtender extender = new AutomatedExecutionExtender();
 		extender.setAutomatedTest(referencedTestCase.getAutomatedTest());
 		extender.setExecution(execution);
 		execution.setAutomatedExecutionExtender(extender);
-		
+
 		return execution;
-		
+
 	}
-	
-	
+
 	private void checkExecutable() throws TestPlanItemNotExecutableException {
 		if (!isExecutableThroughIteration()) {
 			throw new TestPlanItemNotExecutableException("Test case referenced by this item was deleted");
 		}
 
 	}
-	
-	
-	public boolean isAutomated(){
+
+	public boolean isAutomated() {
+		if (referencedTestCase == null) {
+			return false;
+		}
 		return referencedTestCase.isAutomated();
 	}
-	
 
 	private void resetIterationDates() {
 		Iteration it = getIteration();

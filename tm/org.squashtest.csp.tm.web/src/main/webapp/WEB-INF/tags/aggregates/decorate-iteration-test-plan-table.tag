@@ -73,7 +73,6 @@
 	
 	var testPlansUrl = "${testPlansUrl}";
 	var nonBelongingTestPlansUrl = "${nonBelongingTestPlansUrl}";
-	
 
 	//This function checks the response and inform the user if a deletion was impossible
 	function checkForbiddenDeletion(data) {
@@ -134,10 +133,27 @@
 		return (data['is-tc-deleted'] == "true");
 	}
 
+	function addIterationTestPlanItemExecModeIcon(row, data) {
+		var automationToolTips = {
+			"M" : "",
+			"A" : "<f:message key='label.automatedExecution' />"
+		};
+		var automationClass = {
+			"M" : "manual",
+			"A" : "automated"
+		};
+
+		var mode = data["exec-mode"];
+		$(row).find("td.exec-mode")
+			.addClass("exec-mode-" + automationClass[mode])
+			.attr("title", automationToolTips[mode]);
+	}			
+
 	function testPlanTableRowCallback(row, data, displayIndex) {
 		addHLinkToTestPlanName(row, data);
 		addIconToTestPlanName(row, data);
 		addStyleToDeletedTestCaseRows(row, data);
+		addIterationTestPlanItemExecModeIcon(row, data);
 		return row;
 	}
 	
@@ -146,8 +162,7 @@
 		addLoginListToTestPlan();
 		</c:if>		
 	}
-
-
+	
 	function addHLinkToTestPlanName(row, data) {
 		var url = 'javascript:void(0)';
 		addHLinkToCellText($('td:eq(2)', row), url);
@@ -324,36 +339,27 @@
 		/* ************************** datatable settings ********************* */
 		
 		var tableSettings = {
-				"oLanguage":{
-					"sLengthMenu": '<f:message key="generics.datatable.lengthMenu" />',
-					"sZeroRecords": '<f:message key="generics.datatable.zeroRecords" />',
-					"sInfo": '<f:message key="generics.datatable.info" />',
-					"sInfoEmpty": '<f:message key="generics.datatable.infoEmpty" />',
-					"sInfoFiltered": '<f:message key="generics.datatable.infoFiltered" />',
-					"oPaginate":{
-						"sFirst":    '<f:message key="generics.datatable.paginate.first" />',
-						"sPrevious": '<f:message key="generics.datatable.paginate.previous" />',
-						"sNext":     '<f:message key="generics.datatable.paginate.next" />',
-						"sLast":     '<f:message key="generics.datatable.paginate.last" />'
-					}
-				},				
+				"oLanguage": {
+					"sUrl": "<c:url value='/datatables/messages' />"
+				},
 				"sAjaxSource" : "${tableModelUrl}", 
 				"fnRowCallback" : testPlanTableRowCallback,
 				"fnDrawCallback" : testPlanDrawCallback,
 				"aoColumnDefs": [
 					{'bSortable': false, 'bVisible': false, 'aTargets': [0], 'mDataProp' : 'entity-id'},
 					{'bSortable': false, 'sClass': 'centered ui-state-default drag-handle select-handle', 'aTargets': [1], 'mDataProp' : 'entity-index'},
-					{'bSortable': false, 'aTargets': [2], 'mDataProp' : 'project-name'},
-					{'bSortable': false, 'aTargets': [3], 'mDataProp' : 'tc-name'},
-					{'bSortable': false, 'aTargets': [4], 'mDataProp' : 'importance'},
-					{'bSortable': false, 'sWidth': '10%', 'aTargets': [5], 'mDataProp' : 'type'},
-					{'bSortable': false, 'sWidth': '10%', 'aTargets': [6], 'mDataProp' : 'suite'},
-					{'bSortable': false, 'sWidth': '10%', 'sClass': 'has-status', 'aTargets': [7], 'mDataProp' : 'status'},
-					{'bSortable': false, 'sWidth': '10%', 'sClass': 'assignable-combo', 'aTargets': [8], 'mDataProp' : 'last-exec-by'},
-					{'bSortable': false, 'bVisible' : false, 'sWidth': '10%', 'aTargets': [9], 'mDataProp' : 'assigned-to'},
-					{'bSortable': false, 'sWidth': '10%', 'aTargets': [10], 'mDataProp' : 'last-exec-on'},
-					{'bSortable': false, 'bVisible': false, 'aTargets': [11], 'mDataProp' : 'is-tc-deleted'},
-					{'bSortable': false, 'sWidth': '2em', 'sClass': 'centered delete-button', 'aTargets': [12], 'mDataProp' : 'empty-delete-holder'} 
+					{'bSortable': false, 'aTargets': [2], 'mDataProp' : 'exec-mode', 'sWidth': '2em', 'sClass' : "exec-mode"},
+					{'bSortable': false, 'aTargets': [3], 'mDataProp' : 'project-name'},
+					{'bSortable': false, 'aTargets': [4], 'mDataProp' : 'tc-name'},
+					{'bSortable': false, 'aTargets': [5], 'mDataProp' : 'importance'},
+					{'bSortable': false, 'sWidth': '10%', 'aTargets': [6], 'mDataProp' : 'type'},
+					{'bSortable': false, 'sWidth': '10%', 'aTargets': [7], 'mDataProp' : 'suite'},
+					{'bSortable': false, 'sWidth': '10%', 'sClass': 'has-status', 'aTargets': [8], 'mDataProp' : 'status'},
+					{'bSortable': false, 'sWidth': '10%', 'sClass': 'assignable-combo', 'aTargets': [9], 'mDataProp' : 'last-exec-by'},
+					{'bSortable': false, 'bVisible' : false, 'sWidth': '10%', 'aTargets': [10], 'mDataProp' : 'assigned-to'},
+					{'bSortable': false, 'sWidth': '10%', 'aTargets': [11], 'mDataProp' : 'last-exec-on'},
+					{'bSortable': false, 'bVisible': false, 'aTargets': [12], 'mDataProp' : 'is-tc-deleted'},
+					{'bSortable': false, 'sWidth': '2em', 'sClass': 'centered delete-button', 'aTargets': [13], 'mDataProp' : 'empty-delete-holder'} 
 				]
 			};		
 		

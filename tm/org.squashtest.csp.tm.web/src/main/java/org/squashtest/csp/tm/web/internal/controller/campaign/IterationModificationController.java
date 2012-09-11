@@ -84,13 +84,14 @@ public class IterationModificationController {
 
 	@Inject
 	private PermissionEvaluationService permissionService;
-	
+
 	private IterationTestPlanFinder testPlanFinder;
 
 	@ServiceReference
 	public void setIterationModificationService(IterationModificationService iterationModificationService) {
 		this.iterationModService = iterationModificationService;
 	}
+
 	@ServiceReference
 	public void setIterationTestPlanFinder(IterationTestPlanFinder iterationTestPlanFinder) {
 		this.testPlanFinder = iterationTestPlanFinder;
@@ -100,15 +101,14 @@ public class IterationModificationController {
 	private MessageSource messageSource;
 
 	private final DataTableMapper testPlanMapper = new DataTableMapper("unused", IterationTestPlanItem.class,
-			TestCase.class, Project.class, TestSuite.class).initMapping(11)
-			.mapAttribute(Project.class, 2, NAME, String.class)
-			.mapAttribute(TestCase.class, 3, NAME, String.class)
-			.mapAttribute(TestCase.class, 4, "importance", TestCaseImportance.class)
-			.mapAttribute(TestCase.class, 5, "executionMode", TestCaseExecutionMode.class)
-			.mapAttribute(IterationTestPlanItem.class, 6, "executionStatus", ExecutionStatus.class)
-			.mapAttribute(TestSuite.class, 7, NAME, String.class)
-			.mapAttribute(IterationTestPlanItem.class, 8, "lastExecutedBy", String.class)
-			.mapAttribute(IterationTestPlanItem.class, 10, "lastExecutedOn", Date.class);
+			TestCase.class, Project.class, TestSuite.class).initMapping(12)
+			.mapAttribute(Project.class, 3, NAME, String.class).mapAttribute(TestCase.class, 4, NAME, String.class)
+			.mapAttribute(TestCase.class, 5, "importance", TestCaseImportance.class)
+			.mapAttribute(TestCase.class, 6, "executionMode", TestCaseExecutionMode.class)
+			.mapAttribute(IterationTestPlanItem.class, 7, "executionStatus", ExecutionStatus.class)
+			.mapAttribute(TestSuite.class, 8, NAME, String.class)
+			.mapAttribute(IterationTestPlanItem.class, 9, "lastExecutedBy", String.class)
+			.mapAttribute(IterationTestPlanItem.class, 11, "lastExecutedOn", Date.class);
 
 	@RequestMapping(method = RequestMethod.GET)
 	public ModelAndView showIteration(@PathVariable long iterationId) {
@@ -164,9 +164,10 @@ public class IterationModificationController {
 		};
 
 	}
-	
-	@RequestMapping(value="/duplicateTestSuite/{testSuiteId}", method=RequestMethod.POST)
-	public @ResponseBody Long duplicateTestSuite(@PathVariable("iterationId") Long iterationId , @PathVariable("testSuiteId") Long testSuiteId ){
+
+	@RequestMapping(value = "/duplicateTestSuite/{testSuiteId}", method = RequestMethod.POST)
+	public @ResponseBody
+	Long duplicateTestSuite(@PathVariable("iterationId") Long iterationId, @PathVariable("testSuiteId") Long testSuiteId) {
 		TestSuite duplicate = iterationModService.copyPasteTestSuiteToIteration(testSuiteId, iterationId);
 		return duplicate.getId();
 	}
@@ -304,8 +305,8 @@ public class IterationModificationController {
 	/***
 	 * Method called when you drag a test case and change its position in the selected iteration
 	 * 
-	 * @param testPlanId : 
-	 * 				the iteration owning the moving test plan items
+	 * @param testPlanId
+	 *            : the iteration owning the moving test plan items
 	 * 
 	 * @param itemIds
 	 *            the ids of the items we are trying to move
@@ -315,15 +316,16 @@ public class IterationModificationController {
 	 */
 	@RequestMapping(value = "/test-case/move", method = RequestMethod.POST, params = { "newIndex", "itemIds[]" })
 	@ResponseBody
-	public void moveTestPlanItems(@PathVariable("iterationId") long iterationId, @RequestParam int newIndex, @RequestParam("itemIds[]") List<Long> itemIds){
+	public void moveTestPlanItems(@PathVariable("iterationId") long iterationId, @RequestParam int newIndex,
+			@RequestParam("itemIds[]") List<Long> itemIds) {
 		iterationModService.changeTestPlanPosition(iterationId, newIndex, itemIds);
 		if (LOGGER.isTraceEnabled()) {
-			LOGGER.trace("iteration " + iterationId + ": moving "+itemIds.size()+" test plan items  to " + newIndex);
+			LOGGER.trace("iteration " + iterationId + ": moving " + itemIds.size() + " test plan items  to " + newIndex);
 		}
 	}
 
 	// returns the ID of the newly created execution
-	@RequestMapping(value = "/test-plan/{testPlanId}/executions/new", method = RequestMethod.POST,  params = { "mode=manual"})
+	@RequestMapping(value = "/test-plan/{testPlanId}/executions/new", method = RequestMethod.POST, params = { "mode=manual" })
 	public @ResponseBody
 	String addManualExecution(@PathVariable("testPlanId") long testPlanId, @PathVariable("iterationId") long iterationId) {
 		iterationModService.addExecution(iterationId, testPlanId);
@@ -332,17 +334,16 @@ public class IterationModificationController {
 		return executionList.get(executionList.size() - 1).getId().toString();
 
 	}
-	
-	@RequestMapping(value = "/test-plan/{testPlanId}/executions/new", method = RequestMethod.POST,  params = { "mode=auto" })
+
+	@RequestMapping(value = "/test-plan/{testPlanId}/executions/new", method = RequestMethod.POST, params = { "mode=auto" })
 	public @ResponseBody
 	String addAutoExecution(@PathVariable("testPlanId") long testPlanId, @PathVariable("iterationId") long iterationId) {
 		Collection<Long> testPlanIds = new ArrayList<Long>(1);
 		testPlanIds.add(testPlanId);
 		
 		AutomatedSuite suite = iterationModService.createAndExecuteAutomatedSuite(iterationId, testPlanIds);
-		
-		return "ok";
 
+		return "ok";
 
 	}
 
@@ -373,22 +374,22 @@ public class IterationModificationController {
 
 		CollectionSorting filter = createCollectionSorting(params, testPlanMapper);
 
-		FilteredCollectionHolder<List<IterationTestPlanItem>> holder = testPlanFinder.findTestPlan(
-				iterationId, filter);
+		FilteredCollectionHolder<List<IterationTestPlanItem>> holder = testPlanFinder.findTestPlan(iterationId, filter);
 
 		return new DataTableModelHelper<IterationTestPlanItem>() {
 			@Override
 			public Map<String, Object> buildItemData(IterationTestPlanItem item) {
 
 				Map<String, Object> res = new HashMap<String, Object>();
-				
+
 				String projectName;
 				String testCaseName;
 				String importance;
 				String testCaseExecutionMode;
-				
+				String automationMode = item.isAutomated() ? "A" : "M";
+
 				String testSuiteName;
-				Long assignedId = (item.getUser()!=null) ? item.getUser().getId() : User.NO_USER_ID;
+				Long assignedId = (item.getUser() != null) ? item.getUser().getId() : User.NO_USER_ID;
 
 				if (item.isTestCaseDeleted()) {
 					projectName = formatNoData(locale);
@@ -401,10 +402,10 @@ public class IterationModificationController {
 					importance = formatImportance(item.getReferencedTestCase().getImportance(), locale);
 					testCaseExecutionMode = formatExecutionMode(item.getReferencedTestCase().getExecutionMode(), locale);
 				}
-				
-				if (item.getTestSuite()==null){
+
+				if (item.getTestSuite() == null) {
 					testSuiteName = formatNone(locale);
-				}else{
+				} else {
 					testSuiteName = item.getTestSuite().getName();
 				}
 
@@ -420,8 +421,9 @@ public class IterationModificationController {
 				res.put("assigned-to", assignedId);
 				res.put("last-exec-on", formatDate(item.getLastExecutedOn(), locale));
 				res.put("is-tc-deleted", item.isTestCaseDeleted());
-				res.put("empty-delete-holder", " ") ;
-				
+				res.put("empty-delete-holder", " ");
+				res.put("exec-mode", automationMode);
+
 				return res;
 			}
 		}.buildDataModel(holder, filter.getFirstItemIndex() + 1, params.getsEcho());
@@ -429,17 +431,18 @@ public class IterationModificationController {
 	}
 
 	/* ********************** test suites **************************** */
-	
-	@RequestMapping(value = "/test-suites/new", params=NAME, method=RequestMethod.POST)
-	public @ResponseBody Map<String, String> addTestSuite(@PathVariable long iterationId,  @Valid @ModelAttribute("new-test-suite") TestSuite suite){
+
+	@RequestMapping(value = "/test-suites/new", params = NAME, method = RequestMethod.POST)
+	public @ResponseBody
+	Map<String, String> addTestSuite(@PathVariable long iterationId,
+			@Valid @ModelAttribute("new-test-suite") TestSuite suite) {
 		iterationModService.addTestSuite(iterationId, suite);
 		Map<String, String> res = new HashMap<String, String>();
 		res.put("id", suite.getId().toString());
 		res.put(NAME, suite.getName());
 		return res;
 	}
-	
-	
+
 	@RequestMapping(value = "/test-suites", method = RequestMethod.GET)
 	public @ResponseBody
 	List<TestSuiteModel> getTestSuites(@PathVariable long iterationId) {
@@ -451,52 +454,55 @@ public class IterationModificationController {
 		}
 		return result;
 	}
-	
-	@RequestMapping(value = "/test-suites/delete", method = RequestMethod.POST, params= {"ids[]"} )
-	public @ResponseBody List<Long> removeTestSuites(@RequestParam("ids[]") List<Long> ids ){
+
+	@RequestMapping(value = "/test-suites/delete", method = RequestMethod.POST, params = { "ids[]" })
+	public @ResponseBody
+	List<Long> removeTestSuites(@RequestParam("ids[]") List<Long> ids) {
 		List<Long> deletedIds = iterationModService.removeTestSuites(ids);
-		LOGGER.debug("removal of "+deletedIds.size()+" Test Suites");
+		LOGGER.debug("removal of " + deletedIds.size() + " Test Suites");
 		return deletedIds;
 	}
 
-	/* ************** execute auto *********************************** */	
+	/* ************** execute auto *********************************** */
 
-	
-	@RequestMapping(method = RequestMethod.POST, params= {"id=execute-auto", "testPlanItemsIds[]"} )
-	public @ResponseBody String  executeSelectionAuto(@PathVariable long iterationId, @RequestParam("testPlanItemsIds[]") List<Long> ids , Locale locale){
-		
+	@RequestMapping(method = RequestMethod.POST, params = { "id=execute-auto", "testPlanItemsIds[]" })
+	public @ResponseBody
+	String executeSelectionAuto(@PathVariable long iterationId, @RequestParam("testPlanItemsIds[]") List<Long> ids,
+			Locale locale) {
+
 		AutomatedSuite suite = iterationModService.createAndExecuteAutomatedSuite(iterationId, ids); 
-		
+
 		/*********************************************************
-		//TODO : replace the following with something appropriate
-		**********************************************************/
-		
+		 * //TODO : replace the following with something appropriate
+		 **********************************************************/
+
 		List<Execution> executions = null;
 		Iteration iteration = iterationModService.findById(iterationId);
 		executions = iteration.getExecutions();
-			LOGGER.debug("Iteration #"+iterationId+" : execute selected test plans");
-//		TODO	executions = iterationModService.executeAutoSelected(iterationId);
-			return 	AutomatedExecutionViewUtils.buildExecInfo(executions, locale, messageSource);
+		LOGGER.debug("Iteration #" + iterationId + " : execute selected test plans");
+		// TODO executions = iterationModService.executeAutoSelected(iterationId);
+		return AutomatedExecutionViewUtils.buildExecInfo(executions, locale, messageSource);
 	}
 
-	@RequestMapping(method = RequestMethod.POST, params= {"id=execute-auto", "testPlanItemsIds"} )
-	public @ResponseBody String executeAllAuto(@PathVariable long iterationId, Locale locale ){
-		
-		AutomatedSuite suite = iterationModService.createAndExecuteAutomatedSuite(iterationId); 
-		
+	@RequestMapping(method = RequestMethod.POST, params = { "id=execute-auto", "testPlanItemsIds" })
+	public @ResponseBody
+	String executeAllAuto(@PathVariable long iterationId, Locale locale) {
+
+		AutomatedSuite suite = iterationModService.createAndExecuteAutomatedSuite(iterationId);
+
 		/*********************************************************
-		//TODO : replace the following with something appropriate
-		**********************************************************/
-		
+		 * //TODO : replace the following with something appropriate
+		 **********************************************************/
+
 		List<Execution> executions = null;
 		Iteration iteration = iterationModService.findById(iterationId);
 		executions = iteration.getExecutions();
-		LOGGER.debug("Iteration #"+iterationId+" : execute all test plan auto");
-		return 	AutomatedExecutionViewUtils.buildExecInfo(executions, locale, messageSource);
+		LOGGER.debug("Iteration #" + iterationId + " : execute all test plan auto");
+		return AutomatedExecutionViewUtils.buildExecInfo(executions, locale, messageSource);
 	}
-	
+
 	/* ************** /execute auto *********************************** */
-	
+
 	/* ************** private stuffs are below ********************** */
 
 	private CollectionSorting createCollectionSorting(final DataTableDrawParameters params, DataTableMapper mapper) {
@@ -538,14 +544,13 @@ public class IterationModificationController {
 	private String formatStatus(ExecutionStatus status, Locale locale) {
 		return messageSource.getMessage(status.getI18nKey(), null, locale);
 	}
-	
-	
-	private String formatImportance(TestCaseImportance importance,  Locale locale){
+
+	private String formatImportance(TestCaseImportance importance, Locale locale) {
 		return messageSource.getMessage(importance.getI18nKey(), null, locale);
 	}
-	
-	private String formatNone(Locale locale){
-		return messageSource.getMessage("squashtm.none.f", null, locale);	
+
+	private String formatNone(Locale locale) {
+		return messageSource.getMessage("squashtm.none.f", null, locale);
 	}
 
 }

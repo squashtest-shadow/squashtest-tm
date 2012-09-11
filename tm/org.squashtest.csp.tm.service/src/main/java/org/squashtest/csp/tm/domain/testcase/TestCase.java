@@ -58,22 +58,21 @@ import org.squashtest.csp.tm.domain.requirement.Requirement;
 import org.squashtest.csp.tm.domain.requirement.RequirementVersion;
 import org.squashtest.csp.tm.domain.testautomation.AutomatedTest;
 
-
 /**
  * @author Gregory Fouquet
  * 
  */
 @Entity
 @PrimaryKeyJoinColumn(name = "TCLN_ID")
-public class TestCase extends TestCaseLibraryNode implements AttachmentHolder{
+public class TestCase extends TestCaseLibraryNode implements AttachmentHolder {
 	private static final String CLASS_NAME = "org.squashtest.csp.tm.domain.testcase.TestCase";
 	private static final String SIMPLE_CLASS_NAME = "TestCase";
 
 	@Column(updatable = false)
 	private final int version = 1;
-	
+
 	private String reference = "";
-	
+
 	@Lob
 	private String prerequisite = "";
 
@@ -105,15 +104,12 @@ public class TestCase extends TestCaseLibraryNode implements AttachmentHolder{
 	 * Should the importance be automatically computed.
 	 */
 	private boolean importanceAuto = false;
-	
-	
+
 	@ManyToOne
-	@JoinColumn(name="TA_TEST")
+	@JoinColumn(name = "TA_TEST")
 	private AutomatedTest automatedTest;
-	
-	
-	//*************************** CODE *************************************
-	
+
+	// *************************** CODE *************************************
 
 	public TestCase(Date createdOn, String createdBy) {
 		AuditableMixin audit = ((AuditableMixin) this);
@@ -129,7 +125,7 @@ public class TestCase extends TestCaseLibraryNode implements AttachmentHolder{
 	public int getVersion() {
 		return version;
 	}
-	
+
 	/***
 	 * @return the reference of the test-case
 	 */
@@ -139,7 +135,7 @@ public class TestCase extends TestCaseLibraryNode implements AttachmentHolder{
 
 	/***
 	 * Set the test-case reference
-	 *
+	 * 
 	 * @param reference
 	 */
 	public void setReference(String reference) {
@@ -249,7 +245,7 @@ public class TestCase extends TestCaseLibraryNode implements AttachmentHolder{
 	 * @param version
 	 * @throws RequirementAlreadyVerifiedException
 	 */
-	public void checkRequirementNotVerified(RequirementVersion version) throws RequirementAlreadyVerifiedException{
+	public void checkRequirementNotVerified(RequirementVersion version) throws RequirementAlreadyVerifiedException {
 		Requirement req = version.getRequirement();
 
 		for (RequirementVersion verified : verifiedRequirementVersions) {
@@ -391,27 +387,22 @@ public class TestCase extends TestCaseLibraryNode implements AttachmentHolder{
 		addVerifiedRequirementVersion(candidate);
 	}
 
-
-
 	// *************** test automation section ******************
-	
-	
+
 	public AutomatedTest getAutomatedTest() {
 		return automatedTest;
 	}
 
 	public void setAutomatedTest(AutomatedTest testAutomationTest) {
-		if (getProject().isTestAutomationEnabled()){
+		if (getProject().isTestAutomationEnabled()) {
 			this.automatedTest = testAutomationTest;
-		}
-		else{
+		} else {
 			throw new UnallowedTestAssociationException();
 		}
 	}
-	
-	public boolean isAutomated(){
-		return (automatedTest!=null && getProject().isTestAutomationEnabled());
+
+	public boolean isAutomated() {
+		return (automatedTest != null && getProject().isTestAutomationEnabled());
 	}
-	
-	
+
 }
