@@ -24,7 +24,7 @@
 	description="general information panel for an auditable entity. Client can add more info in the body of this tag"
 	pageEncoding="utf-8" %>
 <%@ attribute name="testPlanTableId" required="true" %>
-<%@ attribute name="iterationUrl" required="true"%>
+<%@ attribute name="url" required="true"%>
 <%@ taglib prefix="f" uri="http://java.sun.com/jsp/jstl/fmt"%>
 <%@ taglib prefix="pop" tagdir="/WEB-INF/tags/popup" %>
 

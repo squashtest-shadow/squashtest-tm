@@ -62,7 +62,7 @@ import org.squashtest.csp.tm.infrastructure.filter.CollectionSorting;
 import org.squashtest.csp.tm.infrastructure.filter.FilteredCollectionHolder;
 import org.squashtest.csp.tm.service.IterationModificationService;
 import org.squashtest.csp.tm.service.IterationTestPlanFinder;
-import org.squashtest.csp.tm.web.internal.helper.JsonHelper;
+import org.squashtest.csp.tm.web.internal.controller.execution.AutomatedExecutionViewUtils;
 import org.squashtest.csp.tm.web.internal.model.datatable.DataTableDrawParameters;
 import org.squashtest.csp.tm.web.internal.model.datatable.DataTableFilterSorter;
 import org.squashtest.csp.tm.web.internal.model.datatable.DataTableModel;
@@ -466,22 +466,9 @@ public class IterationModificationController {
 		//END REMOVE
 			LOGGER.debug("Iteration #"+iterationId+" : execute selected test plans");
 //		TODO	executions = iterationModService.executeAutoSelected(iterationId);
-			List<Map<String, Object>> executionsInfos = buildExecInfo(executions, locale);
-		return JsonHelper.serialize(executionsInfos);
+			return 	AutomatedExecutionViewUtils.buildExecInfo(executions, locale, messageSource);
 	}
-	
-	private List<Map<String, Object>> buildExecInfo(List<Execution> executions, Locale locale) {
-		List<Map<String, Object>> executionInfos = new ArrayList<Map<String, Object>>(executions.size());
-		for(Execution execution : executions){
-			Map<String, Object> infos = new HashMap<String, Object>(4);
-			infos.put("id", execution.getId());
-			infos.put("name", execution.getName());
-			infos.put("status", execution.getExecutionStatus());
-			infos.put("localizedStatus", messageSource.getMessage(execution.getExecutionStatus().getI18nKey(),null, locale));
-			executionInfos.add(infos);
-		}
-		return executionInfos;
-	}
+
 	@RequestMapping(method = RequestMethod.POST, params= {"id=execute-auto", "testPlanItemsIds"} )
 	public @ResponseBody String executeAllAuto(@PathVariable long iterationId, Locale locale ){
 		List<Execution> executions = null;
@@ -491,9 +478,11 @@ public class IterationModificationController {
 		//END REMOVE
 		LOGGER.debug("Iteration #"+iterationId+" : execute all test plan auto");
 //		TODO	executions = iterationModService.executeAutoAll(iterationId);
-		List<Map<String, Object>> executionsInfos = buildExecInfo(executions, locale);
-		return JsonHelper.serialize(executionsInfos);
+		return 	AutomatedExecutionViewUtils.buildExecInfo(executions, locale, messageSource);
 	}
+	
+	/* ************** /execute auto *********************************** */
+	
 	/* ************** private stuffs are below ********************** */
 
 	private CollectionSorting createCollectionSorting(final DataTableDrawParameters params, DataTableMapper mapper) {

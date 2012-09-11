@@ -57,6 +57,7 @@ import org.squashtest.csp.tm.domain.testcase.TestCaseImportance;
 import org.squashtest.csp.tm.service.IterationModificationService;
 import org.squashtest.csp.tm.service.IterationTestPlanFinder;
 import org.squashtest.csp.tm.service.TestSuiteModificationService;
+import org.squashtest.csp.tm.web.internal.controller.execution.AutomatedExecutionViewUtils;
 import org.squashtest.csp.tm.web.internal.model.datatable.DataTableDrawParameters;
 import org.squashtest.csp.tm.web.internal.model.datatable.DataTableMapperPagingAndSortingAdapter;
 import org.squashtest.csp.tm.web.internal.model.datatable.DataTableModel;
@@ -316,7 +317,36 @@ public class TestSuiteModificationController {
 
 	}
 	
-
+	/* ************** execute auto *********************************** */
+	
+	@RequestMapping(method = RequestMethod.POST, params= {"id=execute-auto", "testPlanItemsIds[]"} )
+	public @ResponseBody String  executeSelectionAuto(@PathVariable long suiteId, @RequestParam("testPlanItemsIds[]") List<Long> ids , Locale locale){
+		List<Execution> executions = null;
+		//TODO REMOVE
+		TestSuite suite = service.findById(suiteId);
+		executions = suite.getIteration().getExecutions();
+		//END REMOVE
+			LOGGER.debug("Test-Suite #"+suiteId+" : execute selected test plans");
+//		TODO	executions = service.executeAutoSelected(suiteId);
+			return 	AutomatedExecutionViewUtils.buildExecInfo(executions, locale, messageSource);
+		
+	}
+	
+	
+	@RequestMapping(method = RequestMethod.POST, params= {"id=execute-auto", "testPlanItemsIds"} )
+	public @ResponseBody String executeAllAuto(@PathVariable long iterationId, Locale locale ){
+		List<Execution> executions = null;
+		//TODO REMOVE
+		Iteration iteration = iterationModService.findById(iterationId);
+		executions = iteration.getExecutions();
+		//END REMOVE
+		LOGGER.debug("Test-Suite #"+iterationId+" : execute all test plan auto");
+//		TODO	executions = iterationModService.executeAutoAll(iterationId);
+		return 	AutomatedExecutionViewUtils.buildExecInfo(executions, locale, messageSource);
+		
+	}
+	
+	/* ************** /execute auto *********************************** */
 
 /* ***************** data formatter *************************** */
 

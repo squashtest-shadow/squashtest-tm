@@ -258,6 +258,9 @@
 		</div>
 	</div>
 	<div class="toolbar-button-panel">
+		<c:if test="${ executable && iteration.project.testAutomationEnabled }">
+			<comp:execute-auto-button url="${ iterationUrl }" testPlanTableId="test-plans-table"/>
+		</c:if>
 		<c:if test="${ writable }">
 			<input type="button"
 				value=' <f:message key="iteration.test-plan.testsuite.manage.label"/>'
@@ -273,9 +276,7 @@
 				value='<f:message key="iteration.button.remove.label" />'
 				id="delete-iteration-button" class="button" />
 		</c:if>
-		<c:if test="${ executable && iteration.project.testAutomationEnabled }">
-			<comp:iteration-auto-execution-button iterationUrl="${ iterationUrl }" testPlanTableId="test-plans-table"/>
-		</c:if>
+		
 	</div>
 	<div style="clear: both;"></div>
 	<c:if test="${ moreThanReadOnly }">

@@ -304,6 +304,9 @@
 				<comp:test-suite-execution-button testSuiteId="${ testSuite.id }"
 					statisticsEntity="${ statistics }" />
 			</div>
+			<c:if test="${ testSuite.iteration.project.testAutomationEnabled }">
+			<comp:execute-auto-button url="${ testSuiteUrl }" testPlanTableId="test-suite-test-plans-table"/>
+		</c:if>
 		</c:if>
 		<c:if test="${ smallEditable }">
 			<input type="button"
