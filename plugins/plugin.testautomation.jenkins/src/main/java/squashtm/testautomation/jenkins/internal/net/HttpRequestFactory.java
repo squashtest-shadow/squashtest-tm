@@ -22,6 +22,9 @@ package squashtm.testautomation.jenkins.internal.net;
 
 import java.net.MalformedURLException;
 import java.net.URL;
+import java.util.Collection;
+import java.util.Iterator;
+import java.util.LinkedList;
 
 import org.apache.commons.codec.binary.Base64;
 import org.apache.commons.httpclient.Header;
@@ -32,6 +35,7 @@ import org.apache.commons.httpclient.methods.PostMethod;
 import org.apache.commons.httpclient.util.URIUtil;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.squashtest.csp.tm.domain.testautomation.AutomatedTest;
 import org.squashtest.csp.tm.domain.testautomation.TestAutomationProject;
 import org.squashtest.csp.tm.domain.testautomation.TestAutomationServer;
 import org.squashtest.csp.tm.testautomation.model.TestAutomationProjectContent;
@@ -129,24 +133,26 @@ public class HttpRequestFactory {
 		
 	}
 	
-	/*
+	
 	public PostMethod newStartTestSuiteBuild(TestAutomationProjectContent content, String externalID){
 		
 		String strURL = callbackProvider.get().toExternalForm();
-		
-		
+		String testList = makeTestListParameter(content);
 		
 		ParameterArray params = new ParameterArray(
 				new Parameter[]{
-					Parameter.operationTestListParameter(),
+					Parameter.operationRunSuiteParameter(),
 					Parameter.newExtIdParameter(externalID),
-					
-				}
-		
+					Parameter.newCallbackURlParameter(strURL),
+					Parameter.newExecuteTestListParameter(testList)
+				}		
 		);
 		
+		PostMethod method = newStartBuild(content.getProject(), params);
+		
+		return method;
 	}
-	*/
+	
 	
 	
 	public GetMethod newCheckQueue(TestAutomationProject project){
@@ -255,13 +261,31 @@ public class HttpRequestFactory {
 	}
 	
 	// ********************* static class and stuffs ***************************
-	/*
+	
 	private String makeTestListParameter(TestAutomationProjectContent content){
 		
+		StringBuilder builder = new StringBuilder();
 		
+		Iterator<AutomatedTest> iterator = content.getTests().iterator(); 
+		
+		while( iterator.hasNext() ){
+			
+			String name = iterator.next().getName();
+			//one must also remove the root directory
+			String truncated = name.replaceFirst("^[^\\/]*\\/", "");
+			
+			builder.append(truncated);
+			
+			if (iterator.hasNext()){
+				builder.append(",");
+			}
+			
+		}
+		
+		return builder.toString();
 		
 	}
-	*/
+	
 	
 	
 	private static class CallbackURLProvider{

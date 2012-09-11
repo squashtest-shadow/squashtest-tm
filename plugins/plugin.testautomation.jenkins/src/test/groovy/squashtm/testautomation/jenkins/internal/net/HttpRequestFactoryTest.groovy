@@ -23,7 +23,10 @@ package squashtm.testautomation.jenkins.internal.net
 
 
 
+import org.squashtest.csp.tm.domain.testautomation.AutomatedTest;
+import org.squashtest.csp.tm.domain.testautomation.TestAutomationProject;
 import org.squashtest.csp.tm.domain.testautomation.TestAutomationServer;
+import org.squashtest.csp.tm.testautomation.model.TestAutomationProjectContent;
 
 import spock.lang.Specification
 import squashtm.testautomation.jenkins.internal.net.HttpRequestFactory;
@@ -48,6 +51,38 @@ class HttpRequestFactoryTest extends Specification {
 			method.path == "http://ci.jruby.org/api/json"
 			method.queryString == "tree=jobs%5Bname%2Ccolor%5D"
 		
+	}
+	
+	
+	def "should create a suitable test suite parameter"(){
+		
+		given :
+			
+			def project = Mock(TestAutomationProject)
+			project.getName() >> "the-test-project"
+		
+		and :
+			def tests = []
+			
+			[   "tests/base-test.txt", 
+				"tests/subfolder/folder-test.txt", 
+				"tests/refolder/another-test.txt" 
+			].each{
+				tests << new AutomatedTest(it, project)				
+			}
+			
+		and :
+			def content = new TestAutomationProjectContent(project, tests)
+			
+		and : 
+			def expected = "base-test.txt,subfolder/folder-test.txt,refolder/another-test.txt"
+		
+		when :
+			def param = factory.makeTestListParameter(content)
+		
+		then :
+			param == expected
+				
 	}
 	
 	
