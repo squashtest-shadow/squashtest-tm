@@ -74,14 +74,12 @@
 		}
 		
 	function executeAll() {
-		console.log("executeAll");
 		var ids = [];
 		executeAuto(ids);
 
 	}
 
 	function executeSelection() {
-		console.log("executeSelected");
 		var table = $('#${testPlanTableId}').dataTable();
 		var ids = getIdsOfSelectedTableRows(table, getTestPlansTableRowId);
 		if (ids.length == 0) {

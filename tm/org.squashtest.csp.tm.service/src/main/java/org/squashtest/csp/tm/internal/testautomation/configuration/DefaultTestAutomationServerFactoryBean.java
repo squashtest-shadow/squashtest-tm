@@ -75,7 +75,7 @@ public class DefaultTestAutomationServerFactoryBean implements FactoryBean<TestA
 			if (LOGGER.isErrorEnabled()){
 				LOGGER.error("default automated test server configuration : malformed url '"+baseStrUrl+"', proceeding with empty url");
 			}
-			baseURL=new URL("http://locahost");
+			baseURL=new URL("http://localhost");
 		}
 	
 		String defaultLogin = defaultsProperties.getProperty(DEFAULT_LOGIN_KEY, "");

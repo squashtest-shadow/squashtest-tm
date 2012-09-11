@@ -138,9 +138,10 @@ public interface CustomIterationModificationService extends IterationFinder{
 	 * Create an automated execution for each of the test plan in arguments, group them in an automated suite and 
 	 * tells the connectors to process them .
 	 * 
+	 * @param iterationId the id of the iteration that holds them all, and against which will be tested the user credentials 
 	 * @param testPlanIds
 	 * @return an {@link AutomatedSuite}
 	 */
-	AutomatedSuite createAndExecuteAutomatedSuite(Collection<Long> testPlanIds);
+	AutomatedSuite createAndExecuteAutomatedSuite(long iterationId, Collection<Long> testPlanIds);
 
 }

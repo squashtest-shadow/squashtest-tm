@@ -338,7 +338,8 @@ public class IterationModificationController {
 	String addAutoExecution(@PathVariable("testPlanId") long testPlanId, @PathVariable("iterationId") long iterationId) {
 		Collection<Long> testPlanIds = new ArrayList<Long>(1);
 		testPlanIds.add(testPlanId);
-		iterationModService.createAndExecuteAutomatedSuite(testPlanIds);
+		
+		AutomatedSuite suite = iterationModService.createAndExecuteAutomatedSuite(iterationId, testPlanIds);
 		
 		return "ok";
 
@@ -464,7 +465,7 @@ public class IterationModificationController {
 	@RequestMapping(method = RequestMethod.POST, params= {"id=execute-auto", "testPlanItemsIds[]"} )
 	public @ResponseBody String  executeSelectionAuto(@PathVariable long iterationId, @RequestParam("testPlanItemsIds[]") List<Long> ids , Locale locale){
 		
-		AutomatedSuite suite = iterationModService.createAndExecuteAutomatedSuite(ids); 
+		AutomatedSuite suite = iterationModService.createAndExecuteAutomatedSuite(iterationId, ids); 
 		
 		/*********************************************************
 		//TODO : replace the following with something appropriate

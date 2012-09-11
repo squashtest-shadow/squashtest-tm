@@ -63,7 +63,7 @@ import org.squashtest.csp.tm.testautomation.spi.UnknownConnectorKind;
 @Service("squashtest.tm.service.TestAutomationService")
 public class TestAutomationManagementServiceImpl implements  InsecureTestAutomationManagementService{
 	
-	private static final Logger LOGGER = LoggerFactory.getLogger(TestAutomationManagementServiceImpl.class);
+	private static final Logger LOGGER = LoggerFactory.getLogger(TestAutomationConnector.class);
 	private static final int DEFAULT_THREAD_TIMEOUT = 30000;	//timeout as milliseconds
 	
 	private int timeoutMillis = DEFAULT_THREAD_TIMEOUT;
@@ -114,8 +114,15 @@ public class TestAutomationManagementServiceImpl implements  InsecureTestAutomat
 		TestAutomationConnector connector = connectorRegistry.getConnectorForKind(server.getKind());
 		
 		connector.checkCredentials(server);	
-		
-		return connector.listProjectsOnServer(server);
+		try{
+			return connector.listProjectsOnServer(server);
+		}
+		catch(TestAutomationException ex){
+			if (LOGGER.isErrorEnabled()){
+				LOGGER.error("Test Automation : failed to list projects on server : ",ex);
+			}
+			throw ex;
+		}
 	}
 	
 	
@@ -209,9 +216,15 @@ public class TestAutomationManagementServiceImpl implements  InsecureTestAutomat
 				connector.executeTests(tests, suite.getId());
 			}
 			catch(UnknownConnectorKind ex){
+				if (LOGGER.isErrorEnabled()){
+					LOGGER.error("Test Automation : unknown connector :",ex);
+				}
 				notifyExecutionError(extendersByKind.getValue(), ex.getMessage());
 			}
 			catch(TestAutomationException ex){
+				if (LOGGER.isErrorEnabled()){
+					LOGGER.error("Test Automation : an error occured :",ex);
+				}
 				notifyExecutionError(extendersByKind.getValue(), ex.getMessage());
 			}
 			

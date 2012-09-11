@@ -34,7 +34,7 @@ import org.squashtest.csp.tm.testautomation.spi.TestAutomationConnector;
 
 public class FetchTestListTask implements TestAutomationConnectorTask<TestAutomationProjectContent> {
 	
-	private static final Logger LOGGER = LoggerFactory.getLogger(TestAutomationConnectorTask.class);
+	private static final Logger LOGGER = LoggerFactory.getLogger(TestAutomationConnector.class);
 
 	private TestAutomationConnectorRegistry connectorRegistry;
 	private TestAutomationProject project;

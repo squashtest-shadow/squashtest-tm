@@ -210,7 +210,7 @@ public class CustomIterationModificationServiceImpl implements CustomIterationMo
 	@Override
 	@PreAuthorize("hasPermission(#iterationId, 'org.squashtest.csp.tm.domain.campaign.Iteration', 'EXECUTE') "
 			+ "or hasRole('ROLE_ADMIN')")
-	public AutomatedSuite createAndExecuteAutomatedSuite(Collection<Long> testPlanIds) {
+	public AutomatedSuite createAndExecuteAutomatedSuite(long iterationId, Collection<Long> testPlanIds) {
 		
 		AutomatedSuite newSuite = autoSuiteDao.createNewSuite();
 		
