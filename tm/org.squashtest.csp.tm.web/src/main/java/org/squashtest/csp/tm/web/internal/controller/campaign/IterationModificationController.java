@@ -323,9 +323,9 @@ public class IterationModificationController {
 	}
 
 	// returns the ID of the newly created execution
-	@RequestMapping(value = "/test-plan/{testPlanId}/new-execution", method = RequestMethod.POST,  params = { "mode=manual"})
+	@RequestMapping(value = "/test-plan/{testPlanId}/executions/new", method = RequestMethod.POST,  params = { "mode=manual"})
 	public @ResponseBody
-	String addManualExecution(@PathVariable("testPlanId") Long testPlanId, @PathVariable("iterationId") Long iterationId) {
+	String addManualExecution(@PathVariable("testPlanId") long testPlanId, @PathVariable("iterationId") long iterationId) {
 		iterationModService.addExecution(iterationId, testPlanId);
 		List<Execution> executionList = iterationModService.findExecutionsByTestPlan(iterationId, testPlanId);
 
@@ -333,10 +333,12 @@ public class IterationModificationController {
 
 	}
 	
-	@RequestMapping(value = "/test-plan/{testPlanId}/new-execution", method = RequestMethod.POST,  params = { "mode=auto"})
+	@RequestMapping(value = "/test-plan/{testPlanId}/executions/new", method = RequestMethod.POST,  params = { "mode=auto" })
 	public @ResponseBody
-	String addAutoExecution(@PathVariable("testPlanId") Long testPlanId, @PathVariable("iterationId") Long iterationId) {
-		//TODO [Feat 1211] make it work
+	String addAutoExecution(@PathVariable("testPlanId") long testPlanId, @PathVariable("iterationId") long iterationId) {
+		Collection<Long> testPlanIds = new ArrayList<Long>(1);
+		testPlanIds.add(testPlanId);
+		iterationModService.createAndExecuteAutomatedSuite(testPlanIds);
 		
 		return "ok";
 

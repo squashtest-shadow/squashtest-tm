@@ -31,7 +31,7 @@
 <%@ page language="java" contentType="text/html; charset=utf-8"
 	pageEncoding="utf-8"%>
 <s:url var="newExecutionUrl"
-	value="/iterations/{iterId}/test-plan/{tpId}/new-execution">
+	value="/iterations/{iterId}/test-plan/{tpId}/executions/new">
 	<s:param name="iterId" value="${iterationId}" />
 	<s:param name="tpId" value="${testPlanItem.id}" />
 </s:url>

@@ -35,7 +35,7 @@
 	<c:set var="executable" value="${ true }" />
 </authz:authorized>
 <s:url var="newExecutionUrl"
-	value="/iterations/{iterId}/test-plan/{tpId}/new-execution">
+	value="/iterations/{iterId}/test-plan/{tpId}/executions/new">
 	<s:param name="iterId" value="${iterationId}" />
 	<s:param name="tpId" value="${testPlanItem.id}" />
 </s:url>
@@ -81,27 +81,26 @@
 						</c:otherwise>
 					</c:choose>
 				</td>
-				<td style="width: 2em;"><authz:authorized hasRole="ROLE_ADMIN" hasPermission="EXECUTE" domainObject="${ execution }">
-						<button id="delete-execution-table-button-${execution.id}"
-							class="delete-execution-table-button"></button>
+				<td style="width: 2em;">
+					<authz:authorized hasRole="ROLE_ADMIN" hasPermission="EXECUTE" domainObject="${ execution }">
+					<button id="delete-execution-table-button-${execution.id}" class="delete-execution-table-button"></button>
 					</authz:authorized>
 				</td>
 			</tr>
 		</c:forEach>
 		<c:if test="${ executable && !testPlanItem.testCaseDeleted }">
 			<tr>
-				<td colspan="10" style="text-align: left;"><b> <a
-						class="button new-exec" style="font-size:0.8em;" id="new-exec-${testPlanItem.id}"
-						href="javascript:void(0)" data-new-exec="${newExecutionUrl}"><f:message
-								key="execution.iteration-test-plan-row.new" /> </a> 
-								
-
-								<c:if test="${ testPlanItem.project.testAutomationEnabled && testPlanItem.referencedTestCase.automated}"> 
-								<a	class="button new-auto-exec" style="font-size:0.8em;" id="new-auto-exec-${testPlanItem.id}"
-						href="javascript:void(0)" data-new-exec="${newExecutionUrl}"><f:message
-								key="execution.iteration-test-plan-row.new.auto" /></a>
-								</c:if>
-								</b>
+				<td colspan="10" style="text-align: left;">
+					<strong>
+						<a class="button new-exec" style="font-size:0.8em;" id="new-exec-${ testPlanItem.id }" href="javascript:void(0)" data-new-exec="${ newExecutionUrl }">
+							<f:message key="execution.iteration-test-plan-row.new" />
+						</a> 
+						<c:if test="${testPlanItem.referencedTestCase.automated}"> 
+						<a	class="button new-auto-exec" style="font-size:0.8em;" id="new-auto-exec-${ testPlanItem.id }" href="javascript:void(0)" data-new-exec="${ newExecutionUrl }">
+							<f:message key="execution.iteration-test-plan-row.new.auto" />
+						</a>
+						</c:if>
+					</strong>
 				</td>
 				
 			</tr>
