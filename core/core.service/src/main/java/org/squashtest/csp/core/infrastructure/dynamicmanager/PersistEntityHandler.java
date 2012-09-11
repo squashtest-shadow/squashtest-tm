@@ -45,7 +45,7 @@ class PersistEntityHandler<ENTITY> implements DynamicComponentInvocationHandler 
 	}
 
 	/**
-	 * Performs an entity fetch using {@link #entityType} and the first arg as the entity id.
+	 * Performs persist using the first arg as the entity to persist.
 	 */
 	@Override
 	public Object invoke(Object proxy, Method method, Object[] args) {
@@ -58,20 +58,20 @@ class PersistEntityHandler<ENTITY> implements DynamicComponentInvocationHandler 
 	 */
 	@Override
 	public boolean handles(Method method) {
-		return methodNameMatchesChangeMethodPattern(method) && mehtodParamsMatchChangeMethodParams(method)
-				&& methodReturnTypeMatchesChangeMethodPattern(method);
+		return methodNameMatchesExpectedPattern(method) && mehtodParamsMatchExpectedParams(method)
+				&& methodReturnTypeMatchesExpectedType(method);
 	}
 
-	private boolean mehtodParamsMatchChangeMethodParams(Method method) {
+	private boolean mehtodParamsMatchExpectedParams(Method method) {
 		Class<?>[] params = method.getParameterTypes();
 		return params.length == 1 && entityType.isAssignableFrom(params[0]);
 	}
 
-	public boolean methodNameMatchesChangeMethodPattern(Method method) {
+	public boolean methodNameMatchesExpectedPattern(Method method) {
 		return "persist".equals(method.getName());
 	}
 
-	private boolean methodReturnTypeMatchesChangeMethodPattern(Method method) {
+	private boolean methodReturnTypeMatchesExpectedType(Method method) {
 		return Void.TYPE.equals(method.getReturnType());
 	}
 
