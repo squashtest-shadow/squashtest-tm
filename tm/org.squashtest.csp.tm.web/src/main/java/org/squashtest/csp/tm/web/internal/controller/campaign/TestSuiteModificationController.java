@@ -320,13 +320,13 @@ public class TestSuiteModificationController {
 	/* ************** execute auto *********************************** */
 	
 	@RequestMapping(method = RequestMethod.POST, params= {"id=execute-auto", "testPlanItemsIds[]"} )
-	public @ResponseBody String  executeSelectionAuto(@PathVariable long suiteId, @RequestParam("testPlanItemsIds[]") List<Long> ids , Locale locale){
+	public @ResponseBody String  executeSelectionAuto(@PathVariable long id, @RequestParam("testPlanItemsIds[]") List<Long> ids , Locale locale){
 		List<Execution> executions = null;
 		//TODO REMOVE
-		TestSuite suite = service.findById(suiteId);
+		TestSuite suite = service.findById(id);
 		executions = suite.getIteration().getExecutions();
 		//END REMOVE
-			LOGGER.debug("Test-Suite #"+suiteId+" : execute selected test plans");
+			LOGGER.debug("Test-Suite #"+id+" : execute selected test plans");
 //		TODO	executions = service.executeAutoSelected(suiteId);
 			return 	AutomatedExecutionViewUtils.buildExecInfo(executions, locale, messageSource);
 		
@@ -334,19 +334,19 @@ public class TestSuiteModificationController {
 	
 	
 	@RequestMapping(method = RequestMethod.POST, params= {"id=execute-auto", "testPlanItemsIds"} )
-	public @ResponseBody String executeAllAuto(@PathVariable long iterationId, Locale locale ){
+	public @ResponseBody String executeAllAuto(@PathVariable long id, Locale locale ){
 		List<Execution> executions = null;
 		//TODO REMOVE
-		Iteration iteration = iterationModService.findById(iterationId);
-		executions = iteration.getExecutions();
+		TestSuite suite = service.findById(id);
+		executions = suite.getIteration().getExecutions();
 		//END REMOVE
-		LOGGER.debug("Test-Suite #"+iterationId+" : execute all test plan auto");
+		LOGGER.debug("Test-Suite #"+id+" : execute all test plan auto");
 //		TODO	executions = iterationModService.executeAutoAll(iterationId);
 		return 	AutomatedExecutionViewUtils.buildExecInfo(executions, locale, messageSource);
 		
 	}
 	
-	/* ************** /execute auto *********************************** */
+/* ************** /execute auto *********************************** */
 
 /* ***************** data formatter *************************** */
 

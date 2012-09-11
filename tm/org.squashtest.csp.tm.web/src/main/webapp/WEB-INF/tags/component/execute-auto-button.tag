@@ -45,7 +45,7 @@
 		function executeAuto(ids){
 			$.ajax({
 				type : 'POST', 
-				url : "${iterationUrl}", 
+				url : "${url}", 
 				dataType : "json", 
 				data:{"id":"execute-auto", "testPlanItemsIds":ids}
 			}).done(
