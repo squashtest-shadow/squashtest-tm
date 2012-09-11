@@ -54,6 +54,7 @@ import org.squashtest.csp.tm.domain.campaign.TestSuite;
 import org.squashtest.csp.tm.domain.execution.Execution;
 import org.squashtest.csp.tm.domain.execution.ExecutionStatus;
 import org.squashtest.csp.tm.domain.project.Project;
+import org.squashtest.csp.tm.domain.testautomation.AutomatedSuite;
 import org.squashtest.csp.tm.domain.testcase.TestCase;
 import org.squashtest.csp.tm.domain.testcase.TestCaseExecutionMode;
 import org.squashtest.csp.tm.domain.testcase.TestCaseImportance;
@@ -460,11 +461,16 @@ public class IterationModificationController {
 	
 	@RequestMapping(method = RequestMethod.POST, params= {"id=execute-auto", "testPlanItemsIds[]"} )
 	public @ResponseBody String  executeSelectionAuto(@PathVariable long iterationId, @RequestParam("testPlanItemsIds[]") List<Long> ids , Locale locale){
+		
+		AutomatedSuite suite = iterationModService.createAndExecuteAutomatedSuite(ids); 
+		
+		/*********************************************************
+		//TODO : replace the following with something appropriate
+		**********************************************************/
+		
 		List<Execution> executions = null;
-		//TODO REMOVE
 		Iteration iteration = iterationModService.findById(iterationId);
 		executions = iteration.getExecutions();
-		//END REMOVE
 			LOGGER.debug("Iteration #"+iterationId+" : execute selected test plans");
 //		TODO	executions = iterationModService.executeAutoSelected(iterationId);
 			return 	AutomatedExecutionViewUtils.buildExecInfo(executions, locale, messageSource);
@@ -472,13 +478,17 @@ public class IterationModificationController {
 
 	@RequestMapping(method = RequestMethod.POST, params= {"id=execute-auto", "testPlanItemsIds"} )
 	public @ResponseBody String executeAllAuto(@PathVariable long iterationId, Locale locale ){
+		
+		AutomatedSuite suite = iterationModService.createAndExecuteAutomatedSuite(iterationId); 
+		
+		/*********************************************************
+		//TODO : replace the following with something appropriate
+		**********************************************************/
+		
 		List<Execution> executions = null;
-		//TODO REMOVE
 		Iteration iteration = iterationModService.findById(iterationId);
 		executions = iteration.getExecutions();
-		//END REMOVE
 		LOGGER.debug("Iteration #"+iterationId+" : execute all test plan auto");
-//		TODO	executions = iterationModService.executeAutoAll(iterationId);
 		return 	AutomatedExecutionViewUtils.buildExecInfo(executions, locale, messageSource);
 	}
 	

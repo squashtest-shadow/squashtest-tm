@@ -189,7 +189,7 @@ function TestAutomationPicker(settings){
 			.done(function(){
 				instance.dialog('close');
 				if (successCallback){
-					successCallback(params.name);
+					successCallback(tree.jstree('get_selected').getPath());
 				}
 			})
 			.fail(function(jsonError){

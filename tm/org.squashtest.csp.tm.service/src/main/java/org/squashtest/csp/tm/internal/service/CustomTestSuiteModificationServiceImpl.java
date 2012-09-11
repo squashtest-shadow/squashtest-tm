@@ -20,6 +20,7 @@
  */
 package org.squashtest.csp.tm.internal.service;
 
+import java.util.Collection;
 import java.util.List;
 
 import javax.inject.Inject;
@@ -30,6 +31,7 @@ import org.squashtest.csp.tm.domain.DuplicateNameException;
 import org.squashtest.csp.tm.domain.campaign.IterationTestPlanItem;
 import org.squashtest.csp.tm.domain.campaign.TestSuite;
 import org.squashtest.csp.tm.domain.campaign.TestSuiteStatistics;
+import org.squashtest.csp.tm.domain.testautomation.AutomatedSuite;
 import org.squashtest.csp.tm.internal.repository.TestSuiteDao;
 import org.squashtest.csp.tm.service.CustomTestSuiteModificationService;
 import org.squashtest.tm.core.foundation.collection.PagedCollectionHolder;
@@ -41,6 +43,10 @@ public class CustomTestSuiteModificationServiceImpl implements CustomTestSuiteMo
 
 	@Inject
 	private TestSuiteDao testSuiteDao;
+	
+	
+	
+	
 
 	@Override
 	@PreAuthorize("hasPermission(#suiteId, 'org.squashtest.csp.tm.domain.campaign.TestSuite', 'WRITE') or hasRole('ROLE_ADMIN')")
@@ -107,4 +113,5 @@ public class CustomTestSuiteModificationServiceImpl implements CustomTestSuiteMo
 		suite.reorderTestPlan(newIndex, items);
 	}
 
+	
 }

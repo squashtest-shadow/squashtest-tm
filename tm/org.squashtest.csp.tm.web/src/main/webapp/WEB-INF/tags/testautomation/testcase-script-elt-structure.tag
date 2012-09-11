@@ -45,8 +45,8 @@
 	
 	<div class="display-table-cell">
 	<c:choose >
-	<c:when test="${testCase.testAutomationTest != null}">
-	<a id="ta-picker-link" href="javascript:void(0)"><c:out value="${testCase.testAutomationTest.fullName}"/></a>
+	<c:when test="${testCase.automatedTest != null}">
+	<a id="ta-picker-link" href="javascript:void(0)"><c:out value="${testCase.automatedTest.fullName}"/></a>
 	</c:when>
 	<c:otherwise>
 	<a id="ta-picker-link" href="javascript:void(0)"><f:message key="test-case.testautomation.section.choose"/></a>
