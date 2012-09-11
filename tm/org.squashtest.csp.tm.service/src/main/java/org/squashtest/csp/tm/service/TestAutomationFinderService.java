@@ -22,7 +22,9 @@ package org.squashtest.csp.tm.service;
 
 import java.net.URL;
 import java.util.Collection;
+import java.util.List;
 
+import org.squashtest.csp.tm.domain.execution.Execution;
 import org.squashtest.csp.tm.domain.testautomation.TestAutomationProject;
 import org.squashtest.csp.tm.domain.testautomation.TestAutomationServer;
 import org.squashtest.csp.tm.domain.testautomation.AutomatedTest;
@@ -66,4 +68,13 @@ public interface TestAutomationFinderService {
 	 */
 	Collection<TestAutomationProjectContent> listTestsInProjects(Collection<TestAutomationProject> projects);
 
+	
+	/**
+	 * Given the id of an automated test suite, returns the list of executions associated to this automated test
+	 * suite.
+	 * 
+	 * @param automatedTestSuiteId
+	 * @return
+	 */
+	List<Execution> findExecutionsByAutomatedTestSuiteId(String automatedTestSuiteId);
 }

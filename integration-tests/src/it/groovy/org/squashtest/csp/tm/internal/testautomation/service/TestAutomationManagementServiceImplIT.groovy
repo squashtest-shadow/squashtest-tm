@@ -29,6 +29,7 @@ import org.squashtest.csp.tm.domain.testautomation.TestAutomationServer;
 import org.squashtest.csp.tm.internal.service.DbunitServiceSpecification;
 import org.squashtest.csp.tm.testautomation.model.TestAutomationProjectContent;
 import org.unitils.dbunit.annotation.DataSet;
+import org.squashtest.csp.tm.service.TestAutomationFinderService;
 
 import spock.unitils.UnitilsSupport;
 
@@ -40,8 +41,9 @@ class TestAutomationManagementServiceImplIT extends DbunitServiceSpecification {
 	@Inject
 	InsecureTestAutomationManagementService service
 	
-	
-	
+	@Inject
+	TestAutomationFinderService finderService
+		
 	@DataSet("TestAutomationService.sandbox.xml")
 	def "should persist a new TestAutomationProject along with a new TestAutomationServer"(){
 		
@@ -116,4 +118,18 @@ class TestAutomationManagementServiceImplIT extends DbunitServiceSpecification {
 			res.server.id == 2l
 		
 	}
+	
+	/* TODO complete and test
+	@DataSet("TestAutomationService.sandbox.xml")
+	def "should return executions associated to an automated test suite given its id"(){
+		
+		given:
+
+		when:
+			def res = finderService.findExecutionsByAutomatedTestSuiteId("suite1")
+			
+		then:
+			res.get(0).id == 40l
+			res.get(1).id == 41l
+	}*/
 }

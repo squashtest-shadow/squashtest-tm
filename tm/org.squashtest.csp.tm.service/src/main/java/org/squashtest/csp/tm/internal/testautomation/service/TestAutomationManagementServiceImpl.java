@@ -26,6 +26,7 @@ import java.util.Collection;
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.LinkedList;
+import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
 import java.util.concurrent.TimeUnit;
@@ -38,12 +39,14 @@ import org.springframework.core.task.AsyncTaskExecutor;
 import org.springframework.osgi.extensions.annotation.ServiceReference;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+import org.squashtest.csp.tm.domain.execution.Execution;
 import org.squashtest.csp.tm.domain.execution.ExecutionStatus;
 import org.squashtest.csp.tm.domain.testautomation.AutomatedExecutionExtender;
 import org.squashtest.csp.tm.domain.testautomation.AutomatedSuite;
 import org.squashtest.csp.tm.domain.testautomation.TestAutomationProject;
 import org.squashtest.csp.tm.domain.testautomation.TestAutomationServer;
 import org.squashtest.csp.tm.domain.testautomation.AutomatedTest;
+import org.squashtest.csp.tm.internal.repository.AutomatedSuiteDao;
 import org.squashtest.csp.tm.internal.repository.TestAutomationProjectDao;
 import org.squashtest.csp.tm.internal.repository.TestAutomationServerDao;
 import org.squashtest.csp.tm.internal.repository.AutomatedTestDao;
@@ -70,6 +73,9 @@ public class TestAutomationManagementServiceImpl implements  InsecureTestAutomat
 	
 	@Inject
 	private TestAutomationProjectDao projectDao;
+
+	@Inject
+	private AutomatedSuiteDao automatedSuiteDao;
 	
 	@Inject
 	private AutomatedTestDao testDao;
@@ -137,6 +143,17 @@ public class TestAutomationManagementServiceImpl implements  InsecureTestAutomat
 		
 	}
 
+	
+	@Override
+	public List<Execution> findExecutionsByAutomatedTestSuiteId(String automatedTestSuiteId) {
+
+		List<Execution> executions = new ArrayList<Execution>();
+		AutomatedSuite suite = automatedSuiteDao.findById(automatedTestSuiteId);
+		for(AutomatedExecutionExtender e : suite.getExecutionExtenders()) {
+			executions.add(e.getExecution());
+		}
+		return executions;
+	}
 	
 	//from the insecure interface
 	@Override
@@ -245,6 +262,7 @@ public class TestAutomationManagementServiceImpl implements  InsecureTestAutomat
 		return results;
 		
 	}
+
 
 	// ******************* dispatching methods **************************
 

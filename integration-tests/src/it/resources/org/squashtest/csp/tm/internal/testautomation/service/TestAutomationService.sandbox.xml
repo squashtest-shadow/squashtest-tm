@@ -39,6 +39,18 @@
 	<test_automation_project project_id="22" name="mike2" server_id="2" />
 	<test_automation_project project_id="23" name="roberto3" server_id="2" />
 	
-		
+	<!-- automated suites -->	
+	<!-- <automated_suite suite_id="suite1"/> -->
 	
+	<!-- automated execution extenders -->
+	<!-- <automated_execution_extender extender_id="30" suite_id="suite1" master_execution_id="40" test_id="50"/>
+	<automated_execution_extender extender_id="31" suite_id="suite1" master_execution_id="41" test_id="51"/>-->
+	
+	<!-- executions -->
+	<!-- <execution execution_id="40"/>
+	<execution execution_id="41"/>-->
+	
+	<!-- automated test -->
+	<!-- <automated_test test_id="50"/>
+	<automated_test test_id="51"/>-->
 </dataset>
