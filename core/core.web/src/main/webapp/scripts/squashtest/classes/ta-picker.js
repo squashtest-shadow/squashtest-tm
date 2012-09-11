@@ -69,8 +69,12 @@ function TestAutomationPicker(settings){
 			throw "no-selection";
 		};
 		
+		var nodePath = node.getPath();
+		//let's strip the 'library' part
+		var nodeName = nodePath.replace(/^[^\/]*\//,'');
+		
 		return {
-			name : node.getPath(),
+			name : nodeName,
 			projectId : node.getLibrary().getDomId()
 		};
 	}

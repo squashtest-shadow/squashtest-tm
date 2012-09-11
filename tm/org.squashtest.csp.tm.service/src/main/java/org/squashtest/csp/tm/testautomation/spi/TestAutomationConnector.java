@@ -59,6 +59,7 @@ public interface TestAutomationConnector {
 	 * @throws AccessDenied if the server was reached but the used user could log in
 	 * @throws UnreadableResponseException if the server replied something that is not suitable for a response or insulted you
 	 * @throws NotFoundException if the server could not find its projects
+	 * @Throws BadConfiguration if something went wrong due to the configuration
 	 * @throws TestAutomationException for anything that doesn't fit the exceptions above. 
 	 */
 	Collection<TestAutomationProject> listProjectsOnServer(TestAutomationServer server) 
@@ -66,6 +67,7 @@ public interface TestAutomationConnector {
 					   AccessDenied,
 					   UnreadableResponseException,
 					   NotFoundException,
+					   BadConfiguration,
 					   TestAutomationException;
 	
 	
@@ -80,6 +82,7 @@ public interface TestAutomationConnector {
 	 * @throws AccessDenied if the server was reached but the used user could log in
 	 * @throws UnreadableResponseException if the server replied something that is not suitable for a response or was rude
 	 * @throws NotFoundException if the tests in that project cannot be found
+	 * @Throws BadConfiguration if something went wrong due to the configuration
 	 * @throws TestAutomationException for anything that doesn't fit the exceptions above. 
 	 */
 	Collection<AutomatedTest> listTestsInProject(TestAutomationProject project)
@@ -87,6 +90,7 @@ public interface TestAutomationConnector {
 			   		  AccessDenied,
 			   		  UnreadableResponseException,
 			   		  NotFoundException,
+					  BadConfiguration,
 			   		  TestAutomationException;
 	
 	
@@ -99,11 +103,19 @@ public interface TestAutomationConnector {
 	 * 
 	 * @param tests
 	 * @param reference
+	 * 
+	 * @throws ServerConnectionFailed if could not connect to the server
+	 * @throws AccessDenied if the server was reached but the used user could log in
+	 * @throws UnreadableResponseException if the server replied something that is not suitable for a response or was rude
+	 * @throws NotFoundException if the tests in that project cannot be found
+	 * @Throws BadConfiguration if something went wrong due to the configuration
+	 * @throws TestAutomationException for anything that doesn't fit the exceptions above. 
 	 */
 	void executeTests(Collection<AutomatedTest> tests, String reference)
 			 throws ServerConnectionFailed,
 					  AccessDenied,
 					  UnreadableResponseException,
 					  NotFoundException,
+					  BadConfiguration,
 					  TestAutomationException;
 }

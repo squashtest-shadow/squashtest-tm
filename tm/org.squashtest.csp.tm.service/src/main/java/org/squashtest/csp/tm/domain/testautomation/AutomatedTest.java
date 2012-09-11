@@ -53,6 +53,10 @@ public class AutomatedTest {
 		return name;
 	}
 	
+	public String getFullName(){
+		return project.getName()+"/"+name;
+	}
+	
 	public AutomatedTest newWithProject(TestAutomationProject project){
 		return new AutomatedTest(name, project); 
 	}

@@ -22,6 +22,10 @@ package squashtm.testautomation.jenkins;
 
 import java.util.Collection;
 import java.util.Date;
+import java.util.HashMap;
+import java.util.Iterator;
+import java.util.LinkedList;
+import java.util.Map;
 
 import javax.annotation.PostConstruct;
 
@@ -32,7 +36,9 @@ import org.springframework.stereotype.Service;
 import org.squashtest.csp.tm.domain.testautomation.TestAutomationProject;
 import org.squashtest.csp.tm.domain.testautomation.TestAutomationServer;
 import org.squashtest.csp.tm.domain.testautomation.AutomatedTest;
+import org.squashtest.csp.tm.testautomation.model.TestAutomationProjectContent;
 import org.squashtest.csp.tm.testautomation.spi.AccessDenied;
+import org.squashtest.csp.tm.testautomation.spi.BadConfiguration;
 import org.squashtest.csp.tm.testautomation.spi.NotFoundException;
 import org.squashtest.csp.tm.testautomation.spi.ServerConnectionFailed;
 import org.squashtest.csp.tm.testautomation.spi.TestAutomationConnector;
@@ -66,6 +72,7 @@ public class TestAutomationJenkinsConnector implements TestAutomationConnector{
 	
 	@Value("${tm.test.automation.pollinterval.millis}")
 	private int spamInterval = DEFAULT_SPAM_INTERVAL_MILLIS;
+	
 	
 	
 	private RequestExecutor requestExecutor = RequestExecutor.getInstance();
@@ -103,7 +110,8 @@ public class TestAutomationJenkinsConnector implements TestAutomationConnector{
 	public Collection<TestAutomationProject> listProjectsOnServer(TestAutomationServer server) 
 				throws  ServerConnectionFailed,
 						AccessDenied, 
-						UnreadableResponseException, 
+						UnreadableResponseException,
+						BadConfiguration, 
 						TestAutomationException {
 			
 		HttpClient client = clientProvider.getClientFor(server);
@@ -128,6 +136,7 @@ public class TestAutomationJenkinsConnector implements TestAutomationConnector{
 					   AccessDenied, 
 					   UnreadableResponseException, 
 					   NotFoundException,
+					   BadConfiguration, 
 					   TestAutomationException {
 
 		HttpClient client = clientProvider.getClientFor(project.getServer());
@@ -148,19 +157,67 @@ public class TestAutomationJenkinsConnector implements TestAutomationConnector{
 	
 	@Override
 	public void executeTests(Collection<AutomatedTest> tests, String reference)
-			throws ServerConnectionFailed, AccessDenied,
-			UnreadableResponseException, NotFoundException,
+			throws ServerConnectionFailed, 
+			AccessDenied,
+			UnreadableResponseException, 
+			NotFoundException,
+			BadConfiguration, 
 			TestAutomationException {
-		// TODO Auto-generated method stub
+
+		TestSorter sorter = new TestSorter(tests);
 		
+		
+	
 	}
 	
 	// ************************************ private tools ************************** 
 
 	private String generateNewId(){
-		return new Long(new Date().getTime()).toString();
+		return new Long(System.currentTimeMillis()).toString();
 	}
 
 
+	private static class TestSorter{
+	
+		private Map<TestAutomationProject, TestAutomationProjectContent> testsByProject = new HashMap<TestAutomationProject, TestAutomationProjectContent>();
+		
+		private Iterator<TestAutomationProjectContent> iterator;
+		
+		public TestSorter(Collection<AutomatedTest> tests){
+			
+			for (AutomatedTest test : tests){
+				
+				TestAutomationProject project = test.getProject();
+				
+				register(project, test);
+				
+			}
+			
+			iterator = testsByProject.values().iterator();
+			
+		}
+		
+		public boolean hasNext(){
+			return iterator.hasNext();
+		}
+		
+		public TestAutomationProjectContent getNext(){
+			return iterator.next();
+		}
+		
+		private void register(TestAutomationProject project, AutomatedTest test){
+			
+			if (! testsByProject.containsKey(project)){
+				TestAutomationProjectContent newContent = new TestAutomationProjectContent(project, new LinkedList<AutomatedTest>());
+				testsByProject.put(project, newContent);
+			}
+			
+			TestAutomationProjectContent content = testsByProject.get(project);
+			
+			content.getTests().add(test);
+			
+		}
+		
+	}
 
 }

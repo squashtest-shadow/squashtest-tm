@@ -22,7 +22,6 @@ package squashtm.testautomation.jenkins.internal.net;
 
 import java.net.MalformedURLException;
 import java.net.URL;
-import java.util.Date;
 
 import org.apache.commons.codec.binary.Base64;
 import org.apache.commons.httpclient.Header;
@@ -35,6 +34,8 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.squashtest.csp.tm.domain.testautomation.TestAutomationProject;
 import org.squashtest.csp.tm.domain.testautomation.TestAutomationServer;
+import org.squashtest.csp.tm.testautomation.model.TestAutomationProjectContent;
+import org.squashtest.csp.tm.testautomation.spi.BadConfiguration;
 
 import squashtm.testautomation.jenkins.beans.Parameter;
 import squashtm.testautomation.jenkins.beans.ParameterArray;
@@ -70,10 +71,11 @@ public class HttpRequestFactory {
 
 	private JsonParser jsonParser = new JsonParser();
 	
+	private CallbackURLProvider callbackProvider = new CallbackURLProvider();
 	
 	
 	public String newRandomId(){
-		return new Long(new Date().getTime()).toString();
+		return new Long(System.currentTimeMillis()).toString();
 	}
 	
 	
@@ -121,13 +123,30 @@ public class HttpRequestFactory {
 			}
 		);
 		
-		
 		PostMethod method = newStartBuild(project, params);
 		
 		return method;
 		
 	}
 	
+	/*
+	public PostMethod newStartTestSuiteBuild(TestAutomationProjectContent content, String externalID){
+		
+		String strURL = callbackProvider.get().toExternalForm();
+		
+		
+		
+		ParameterArray params = new ParameterArray(
+				new Parameter[]{
+					Parameter.operationTestListParameter(),
+					Parameter.newExtIdParameter(externalID),
+					
+				}
+		
+		);
+		
+	}
+	*/
 	
 	
 	public GetMethod newCheckQueue(TestAutomationProject project){
@@ -229,10 +248,46 @@ public class HttpRequestFactory {
 		}
 		catch(MalformedURLException ex){
 			if (LOGGER.isErrorEnabled()){
-				LOGGER.error("HttpRequestFactory : the URI gave birth to invalid URL, and that was not supposed to happen.");
+				LOGGER.error("HttpRequestFactory : the URI corresponds to an invalid URL, and that was not supposed to happen.");
 			}
 			throw new RuntimeException(ex);
 		}
+	}
+	
+	// ********************* static class and stuffs ***************************
+	/*
+	private String makeTestListParameter(TestAutomationProjectContent content){
+		
+		
+		
+	}
+	*/
+	
+	
+	private static class CallbackURLProvider{
+		
+		public URL get(){
+			
+			CallbackURL callback = new CallbackURL();
+			
+			try{
+				
+				String strURL = callback.getValue();
+				URL url = new URL(strURL);	
+				return url;
+				
+			}
+			catch(MalformedURLException ex){
+				
+				BadConfiguration bc = new BadConfiguration(ex);
+				
+				bc.setPropertyName(callback.getConfPropertyName());
+				
+				throw bc;
+			}
+			
+		}
+		
 	}
 	
 }

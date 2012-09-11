@@ -20,6 +20,9 @@
  */
 package squashtm.testautomation.jenkins.beans;
 
+import java.util.Collection;
+import java.util.Iterator;
+
 public class Parameter {
 	
 	private String name;
@@ -56,11 +59,23 @@ public class Parameter {
 		return new Parameter("operation", "test-list");
 	}
 	
+	static public Parameter operationRunSuiteParameter(){
+		return new Parameter("operation", "run");
+	}
+	
 	static public Parameter newExtIdParameter(String externalId){
 		return new Parameter("externalJobId", externalId);
 	}
 	
-		
+	static public Parameter newCallbackURlParameter(String callback){
+		return new Parameter("notificationURL", callback);
+	}
+	
+	
+	static public Parameter newExecuteTestListParameter(String testListAsString){
+
+		return new Parameter("testList", testListAsString);
+	}
 	
 	@Override
 	public int hashCode() {

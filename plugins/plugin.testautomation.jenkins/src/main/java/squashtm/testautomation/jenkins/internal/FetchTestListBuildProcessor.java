@@ -75,6 +75,7 @@ public class FetchTestListBuildProcessor extends SynchronousBuildProcessor<Colle
 				AutomatedTest test = new AutomatedTest(name, project);
 				tests.add(test);
 			}
+			
 		}
 		else{
 			throw new RuntimeException("tried to build the result before the computation is over, probably due to a buggy thread");
