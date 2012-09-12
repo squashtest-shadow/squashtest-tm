@@ -306,7 +306,8 @@
 			</div>
 			<c:if test="${ testSuite.iteration.project.testAutomationEnabled }">
 			<comp:execute-auto-button url="${ testSuiteUrl }" testPlanTableId="test-suite-test-plans-table"/>
-		</c:if>
+			<comp:automated-suite-overview-popup />
+			</c:if>
 		</c:if>
 		<c:if test="${ smallEditable }">
 			<input type="button"

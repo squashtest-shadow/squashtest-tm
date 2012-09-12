@@ -26,42 +26,10 @@
 <%@ attribute name="testPlanTableId" required="true"%>
 <%@ attribute name="url" required="true"%>
 <%@ taglib prefix="f" uri="http://java.sun.com/jsp/jstl/fmt"%>
-<%@ taglib prefix="pop" tagdir="/WEB-INF/tags/popup"%>
-<%@ taglib prefix="s" uri="http://www.springframework.org/tags"%>
 
-<s:url var="automatedSuitesUrl" value="/automated-suites">
-</s:url>
 
 <!-- *************************INITIALISATION*********************** -->
 <script type="text/javascript">
-		
-		var autoUpdate;
-		
-		function updateExecutionInfo() {
-			var suiteId = $("#executions-auto-infos").attr('suiteId');
-			$.ajax({
-				type : 'GET', 
-				url : "${automatedSuitesUrl}/"+suiteId+"/executions", 
-				dataType : "json"
-			}).done(
-				function(suiteView){
-					var executions = suiteView.executions;
-					for(i=0;i<executions.length;i++){
-						var execution = executions[i];
-						var execInfo = $("#execution-info-"+execution.id);
-						var newExecStatus =  $("#execution-info-template .executionStatus").clone();
-						var execStatus = execInfo.find(".executionStatus");
-						newExecStatus.text(execution.localizedStatus);						
-						newExecStatus.addClass('executions-status-'+execution.status.toLowerCase()+'-icon');
-						execStatus.replaceWith(newExecStatus);
-						
-					}
-					updateProgress(suiteView)
-					if(suiteView.percentage == 100) {
-						clearInterval(autoUpdate);
-					}
-			});
-		}
 		
 	function executeAll() {
 		var ids = [];
@@ -95,54 +63,13 @@
 				.openMessage("<f:message key='popup.title.Info' />",
 						"<f:message	key='dialog.execution.auto.overview.error.none'/>");
 			}else{
-			updateProgress(suiteView);
-			openOverviewDialog(suiteView);
+				squashtm.automatedSuiteOverviewDialog.open(suiteView);
 			}
 		});
 	}
-	function updateProgress(suiteView) {
-		var executions = suiteView.executions;
-		var progress = suiteView.percentage;
-		var executionTerminated = progress/100*executions.length
-		$("#execution-auto-progress-bar").progressbar("value", progress);
-		$("#execution-auto-progress-amount").text(executionTerminated+"/"+executions.length);
-	}
-	function openOverviewDialog(suiteView) {
-		var executionAutoInfos = $("#executions-auto-infos");
-		executionAutoInfos.attr('suiteId', suiteView.suiteId);
-		var executions = suiteView.executions;
-		var template = $("#execution-info-template .display-table-row").clone()
-		for (i = 0; i < executions.length; i++) {
-			var execution = executions[i];
-			var executionHtml = template.clone();
-			executionHtml.attr('id', "execution-info"+execution.id);
-			executionHtml.find(".executionName").html(execution.name);
-			var executionStatus = executionHtml.find(".executionStatus");
-			executionStatus.html(execution.localizedStatus);
-			executionStatus.addClass('executions-status-'+execution.status.toLowerCase()+'-icon');
-			executionAutoInfos.append(executionHtml);
-		}
-		$("#execute-auto-dialog").dialog('open');
-		$("#execute-auto-dialog").bind( "dialogclose", function(event, ui) {
-			clearInterval(autoUpdate);
-			executionAutoInfos.empty();
-			$("#execution-auto-progress-bar").progressbar("value", 0);
-			$("#execution-auto-progress-amount").text(0+"/"+0);
-		});
-		if(suiteView.percentage < 100){
-			autoUpdate = setInterval(function() {
-					updateExecutionInfo();
-					}, 2000);
-		}
-	}
+	
+	
 </script>
-
-<div id="execution-info-template" style="display: hidden">
-	<div class="display-table-row">
-		<div class="executionName display-table-cell"></div>
-		<div class="display-table-cell"><span class="executionStatus common-status-label"></span></div>
-	</div>
-</div>
 
 <!-- *************************/INITIALISATION*********************** -->
 <!-- *************************BUTTON*********************** -->
@@ -186,41 +113,3 @@
 	</script>
 </div>
 <!-- *************************/BUTTON*********************** -->
-<!-- *************************POPUP*********************** -->
-<pop:popup id="execute-auto-dialog" titleKey="dialog.execute-auto.title"
-	isContextual="true" closeOnSuccess="false">
-	<jsp:attribute name="buttons">
-			
-				<f:message var="label" key="CLOSE" />
-				'${ label }': function() {
-					$( this ).dialog( 'close' );
-				}		
-				
-			</jsp:attribute>
-	<jsp:attribute name="body">
-			<div>
-				<div style="max-height: 200px; width: 100%; overflow-y: auto"
-				id="executions-auto-infos" suiteId="0" class="display-table">
-				</div>
-				<div id="execution-auto-progress"
-				style="width: 60%; margin: auto; margin-top: 40px">
-					<div
-					style="width: 70%; display: inline-block; vertical-align: middle">
-					<div id="execution-auto-progress-bar"></div>
-				</div>
-	 				<div id="execution-auto-progress-amount"
-					style="width: 20%; display: inline-block"></div>
-				</div>
-				<div class="popup-notification">
-				<f:message key="dialog.execute-auto.close.note" />
-				</div>
-				</div>
-				<script>
-				$("#execution-auto-progress-bar").progressbar({
-					value : 0
-				});
-				</script>
-				
-			</jsp:attribute>
-</pop:popup>
-<!-- *************************/POPUP*********************** -->
