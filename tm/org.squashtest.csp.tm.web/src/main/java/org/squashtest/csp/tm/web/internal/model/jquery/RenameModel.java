@@ -18,20 +18,20 @@
  *     You should have received a copy of the GNU Lesser General Public License
  *     along with this software.  If not, see <http://www.gnu.org/licenses/>.
  */
-package test.hibernate.softdelete.where
 
+package org.squashtest.csp.tm.web.internal.model.jquery;
 
-import javax.persistence.Entity;
-import javax.persistence.GeneratedValue;
-import javax.persistence.Id;
+/**
+ * Model returned when a Node is renamed
+ * @author Gregory Fouquet
+ *
+ */
+public class RenameModel {
+	public final String newName; 
 
-@Entity
-class Child {
-	@Id @GeneratedValue
-	Long id;
-	boolean deleted;
-
-	def dont_delete_it_might_not_compile_under_eclipse() {
-	
+	public RenameModel(String newName) {
+		super();
+		this.newName = newName;
 	}
+	
 }

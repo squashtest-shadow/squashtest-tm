@@ -62,6 +62,7 @@ import org.squashtest.csp.tm.web.internal.model.datatable.DataTableDrawParameter
 import org.squashtest.csp.tm.web.internal.model.datatable.DataTableMapperPagingAndSortingAdapter;
 import org.squashtest.csp.tm.web.internal.model.datatable.DataTableModel;
 import org.squashtest.csp.tm.web.internal.model.datatable.DataTableModelHelper;
+import org.squashtest.csp.tm.web.internal.model.jquery.RenameModel;
 import org.squashtest.csp.tm.web.internal.model.viewmapper.DataTableMapper;
 import org.squashtest.tm.core.foundation.collection.PagedCollectionHolder;
 import org.squashtest.tm.core.foundation.collection.Paging;
@@ -202,10 +203,7 @@ public class TestSuiteModificationController {
 
 		LOGGER.info("TestSuiteModificationController : renaming " + id + " as " + newName);
 		service.rename(id, newName);
-		final String reNewName = newName;
-		return new Object() {
-			public String newName = reNewName; // NOSONAR : field is actually read by JSON marshaller
-		};
+		return new RenameModel(newName);
 
 	}
 

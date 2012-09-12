@@ -60,6 +60,7 @@ import org.squashtest.csp.tm.web.internal.model.datatable.DataTableDrawParameter
 import org.squashtest.csp.tm.web.internal.model.datatable.DataTableMapperPagingAndSortingAdapter;
 import org.squashtest.csp.tm.web.internal.model.datatable.DataTableModel;
 import org.squashtest.csp.tm.web.internal.model.datatable.DataTableModelHelper;
+import org.squashtest.csp.tm.web.internal.model.jquery.RenameModel;
 import org.squashtest.csp.tm.web.internal.model.viewmapper.DataTableMapper;
 import org.squashtest.tm.core.foundation.collection.PagedCollectionHolder;
 import org.squashtest.tm.core.foundation.collection.PagingAndSorting;
@@ -160,8 +161,8 @@ public class RequirementModificationController {
 	Object rename(@RequestParam("newName") String newName, @PathVariable long requirementId) {
 		requirementModService.rename(requirementId, newName);
 		LOGGER.info("RequirementModificationController : renaming " + requirementId + " as " + newName);
-		final String newNameJson = newName;
-		return new Object(){ public String newName=newNameJson; };
+		
+		return new RenameModel(newName);
 	}
 
 	@RequestMapping(method = RequestMethod.POST, params = { "id=requirement-criticality", VALUE })

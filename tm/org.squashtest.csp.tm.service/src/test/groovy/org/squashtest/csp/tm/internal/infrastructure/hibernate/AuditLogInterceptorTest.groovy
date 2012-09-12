@@ -147,6 +147,7 @@ class AuditLogInterceptorTest extends Specification {
 		and:
 		AuditableEntity entity = new AuditableEntity()
 
+
 		use (HibernateOperationCategory) {
 			sf.doInSession { it.persist(entity) }
 		}

@@ -68,6 +68,7 @@ import org.squashtest.csp.tm.web.internal.model.datatable.DataTableDrawParameter
 import org.squashtest.csp.tm.web.internal.model.datatable.DataTableFilterSorter;
 import org.squashtest.csp.tm.web.internal.model.datatable.DataTableModel;
 import org.squashtest.csp.tm.web.internal.model.datatable.DataTableModelHelper;
+import org.squashtest.csp.tm.web.internal.model.jquery.RenameModel;
 import org.squashtest.csp.tm.web.internal.model.jquery.TestSuiteModel;
 import org.squashtest.csp.tm.web.internal.model.viewmapper.DataTableMapper;
 import org.squashtest.csp.tm.web.internal.utils.DateUtils;
@@ -158,10 +159,7 @@ public class IterationModificationController {
 
 		LOGGER.info("IterationModificationController : renaming " + iterationId + " as " + newName);
 		iterationModService.rename(iterationId, newName);
-		final String reNewName = newName;
-		return new Object() {
-			public String newName = reNewName; // NOSONAR : field is actually read by JSON marshaller
-		};
+		return new RenameModel(newName);
 
 	}
 
@@ -341,7 +339,7 @@ public class IterationModificationController {
 		Collection<Long> testPlanIds = new ArrayList<Long>(1);
 		testPlanIds.add(testPlanId);
 		
-		AutomatedSuite suite = iterationModService.createAndExecuteAutomatedSuite(iterationId, testPlanIds);
+		iterationModService.createAndExecuteAutomatedSuite(iterationId, testPlanIds);
 
 		return "ok";
 

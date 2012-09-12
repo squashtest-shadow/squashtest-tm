@@ -56,6 +56,7 @@ import org.squashtest.csp.tm.web.internal.model.datatable.DataTableDrawParameter
 import org.squashtest.csp.tm.web.internal.model.datatable.DataTableFilterSorter;
 import org.squashtest.csp.tm.web.internal.model.datatable.DataTableModel;
 import org.squashtest.csp.tm.web.internal.model.datatable.DataTableModelHelper;
+import org.squashtest.csp.tm.web.internal.model.jquery.RenameModel;
 import org.squashtest.csp.tm.web.internal.model.viewmapper.DataTableMapper;
 import org.squashtest.csp.tm.web.internal.utils.DateUtils;
 
@@ -131,10 +132,7 @@ public class CampaignModificationController {
 		LOGGER.info("Renaming Campaign " + campaignId + " as " + newName);
 
 		campaignModService.rename(campaignId, newName);
-		final String reNewName = newName;
-		return new Object() {
-			public String newName = reNewName; // NOSONAR : field is actually read by JSON marshaller
-		};
+		return new RenameModel(newName);
 
 	}
 
