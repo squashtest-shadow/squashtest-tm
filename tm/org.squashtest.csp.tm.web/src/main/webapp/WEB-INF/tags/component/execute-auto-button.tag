@@ -123,6 +123,12 @@
 			executionAutoInfos.append(executionHtml);
 		}
 		$("#execute-auto-dialog").dialog('open');
+		$("#execute-auto-dialog").bind( "dialogclose", function(event, ui) {
+			clearInterval(autoUpdate);
+			executionAutoInfos.empty();
+			$("#execution-auto-progress-bar").progressbar("value", 0);
+			$("#execution-auto-progress-amount").text(0+"/"+0);
+		});
 		if(suiteView.percentage < 100){
 			autoUpdate = setInterval(function() {
 					updateExecutionInfo();
@@ -187,8 +193,7 @@
 			
 				<f:message var="label" key="CLOSE" />
 				'${ label }': function() {
-					$( this ).dialog( 'close' );	
-					clearInterval(autoUpdate);			
+					$( this ).dialog( 'close' );
 				}		
 				
 			</jsp:attribute>
