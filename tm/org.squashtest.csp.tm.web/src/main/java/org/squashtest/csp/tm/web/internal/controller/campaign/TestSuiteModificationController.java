@@ -326,9 +326,11 @@ public class TestSuiteModificationController {
 	public @ResponseBody AutomatedSuiteOverview  executeSelectionAuto(@PathVariable long id, @RequestParam("testPlanItemsIds[]") List<Long> ids , Locale locale){
 		//TODO we were in a hurry when i did this but must remove iterationModService from here 
 		// must use iteration finder and create needed write methods in testSutiteModificationService.
-		AutomatedSuite suite = iterationModService.createAndExecuteAutomatedSuite(ids); 
+		TestSuite suite = service.findById(id);
+		long iterationId = suite.getIteration().getId();
+		AutomatedSuite autoSuite = iterationModService.createAndExecuteAutomatedSuite(iterationId, ids); 
 		LOGGER.debug("Test-Suite #"+id+" : execute selected test plans");
-			return 	AutomatedExecutionViewUtils.buildExecInfo(suite, locale, messageSource);
+			return 	AutomatedExecutionViewUtils.buildExecInfo(autoSuite, locale, messageSource);
 		
 	}
 	

@@ -470,7 +470,7 @@ public class IterationModificationController {
 	AutomatedSuiteOverview  executeSelectionAuto(@PathVariable long iterationId, @RequestParam("testPlanItemsIds[]") List<Long> ids , Locale locale){
 	
 
-			AutomatedSuite suite = iterationModService.createAndExecuteAutomatedSuite(ids); 
+			AutomatedSuite suite = iterationModService.createAndExecuteAutomatedSuite(iterationId, ids); 
 		LOGGER.debug("Iteration #" + iterationId + " : execute selected test plans");
 			return 	AutomatedExecutionViewUtils.buildExecInfo(suite, locale, messageSource);
 	}
@@ -479,7 +479,7 @@ public class IterationModificationController {
 	public @ResponseBody AutomatedSuiteOverview executeAllAuto(@PathVariable long iterationId, Locale locale ){
 
 
-		iterationModService.createAndExecuteAutomatedSuite(iterationId);
+		AutomatedSuite suite = iterationModService.createAndExecuteAutomatedSuite(iterationId);
 		LOGGER.debug("Iteration #" + iterationId + " : execute all test plan auto");
 		return 	AutomatedExecutionViewUtils.buildExecInfo(suite, locale, messageSource);
 	}
