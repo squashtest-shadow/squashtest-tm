@@ -152,6 +152,7 @@ table.datepicker-table td.datepicker-table-col {
 	display: block;
 	background-repeat: no-repeat;
 	height: 16px;
+	line-height: 1.2;
 }
 
 .executions-status-bloqued-icon {

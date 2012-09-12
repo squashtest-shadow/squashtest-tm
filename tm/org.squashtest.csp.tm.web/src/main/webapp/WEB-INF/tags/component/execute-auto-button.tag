@@ -49,9 +49,11 @@
 					for(i=0;i<executions.length;i++){
 						var execution = executions[i];
 						var execInfo = $("#execution-info-"+execution.id);
+						var newExecStatus =  $("#execution-info-template .executionStatus").clone();
 						var execStatus = execInfo.find(".executionStatus");
-						execStatus.text(execution.localizedStatus);
-						execStatus.attr("status", execution.status);
+						newExecStatus.text(execution.localizedStatus);						
+						newExecStatus.addClass('executions-status-'+execution.status.toLowerCase()+'-icon');
+						execStatus.replaceWith(newExecStatus);
 						
 					}
 					updateProgress(suiteView)
@@ -109,30 +111,19 @@
 		var executionAutoInfos = $("#executions-auto-infos");
 		executionAutoInfos.attr('suiteId', suiteView.suiteId);
 		var executions = suiteView.executions;
-		var template = $("#execution-info-template").html();
-		var executionInfos = "";
+		var template = $("#execution-info-template .display-table-row").clone()
 		for (i = 0; i < executions.length; i++) {
 			var execution = executions[i];
-
-			executionInfos += "<div id='execution-info-"+ execution.id
-				+"'"
-				
-				+" class='display-table-row' >"
-					+ "<div class='executionName display-table-cell' >"
-					+ execution.name
-					+ "</div>"
-
-					+ "<div class='executionStatus display-table-cell'" 
-					+ " status='"
-					+ execution.status
-					+ "'>"
-					+ execution.localizedStatus + "</div>"
-
-					+ "</div>";
+			var executionHtml = template.clone();
+			executionHtml.attr('id', "execution-info"+execution.id);
+			executionHtml.find(".executionName").html(execution.name);
+			var executionStatus = executionHtml.find(".executionStatus");
+			executionStatus.html(execution.localizedStatus);
+			executionStatus.addClass('executions-status-'+execution.status.toLowerCase()+'-icon');
+			executionAutoInfos.append(executionHtml);
 		}
-		executionAutoInfos.html(executionInfos);
 		$("#execute-auto-dialog").dialog('open');
-		if(suiteView.percentage < 100)
+		if(suiteView.percentage < 100){
 			autoUpdate = setInterval(function() {
 					updateExecutionInfo();
 					}, 2000);
@@ -141,9 +132,9 @@
 </script>
 
 <div id="execution-info-template" style="display: hidden">
-	<div id="execution-info" class="display-table-row">
+	<div class="display-table-row">
 		<div class="executionName display-table-cell"></div>
-		<div class="executionStatus display-table-cell"></div>
+		<div class="display-table-cell"><span class="executionStatus common-status-label"></span></div>
 	</div>
 </div>
 
