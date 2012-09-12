@@ -28,9 +28,6 @@
 <%@ taglib prefix="jq" tagdir="/WEB-INF/tags/jquery"%>
 <%@ taglib prefix="authz" tagdir="/WEB-INF/tags/authz" %>
 
-<?xml version="1.0" encoding="utf-8" ?>
-<%@ page language="java" contentType="text/html; charset=utf-8"
-	pageEncoding="utf-8"%>
 <authz:authorized hasRole="ROLE_ADMIN" hasPermission="EXECUTE" domainObject="${ iteration }">
 	<c:set var="executable" value="${ true }" />
 </authz:authorized>
@@ -44,42 +41,48 @@
 
 <c:set var="textcolor" value="#555555" />
 
-<td colspan="10">
+<td colspan="11">
 	<table class="executions-table">
 		<c:forEach items="${ executions }" var="execution" varStatus="status">
 			<tr>
-				<td colspan="4"
-					style="text-align:left;color: ${textcolor}; font-style:italic; text-decoration: underline"><a
-					href="${showExecutionUrl}/${execution.id}"><b>Exec.
-							${status.index + 1} :</b> ${ execution.name }</a></span></td>
-				<td style="width: 10%;"><span
-					style="color: ${textcolor}; font-style:italic;"><f:message
-							key="${ execution.executionMode.i18nKey }" />
+				<td colspan="5"
+					style="text-align:left;color: ${textcolor}; font-style:italic; text-decoration: underline">
+					<a href="${showExecutionUrl}/${execution.id}">
+						<b>Exec. ${status.index + 1} :</b> ${ execution.name }
+					</a>
+				</td>
+				<td style="width: 10%;">
+					<span style="color: ${textcolor}; font-style:italic;">
+						<f:message key="${ execution.executionMode.i18nKey }" />
+					</span>
 				</td>
 				<td style="width: 10%;"></td>
 				<td style="width: 10%; color: ${textcolor} font-style:italic;"><f:message
 						key="execution.execution-status.${execution.executionStatus}" />
 				</td>
-				<td style="width: 10%;"><span style="color: ${textcolor}">
-						<c:choose>
-							<c:when test="${ execution.lastExecutedBy != null }">
-								<i>${ execution.lastExecutedBy }</i>
-							</c:when>
-							<c:otherwise>
-								<i><f:message key="squashtm.nodata" /> </i>
-							</c:otherwise>
-						</c:choose> </span>
-				</td>
-				<td style="width: 10%;color: ${textcolor}"><c:choose>
-						<c:when test="${ execution.lastExecutedOn != null }">
-							<f:message var="dateFormat" key="squashtm.dateformat" />
-							<i><f:formatDate value="${ execution.lastExecutedOn }"
-									pattern="${dateFormat}" /> </i>
+				<td style="width: 10%;">
+					<span style="color: ${textcolor}">
+					<c:choose>
+						<c:when test="${ execution.lastExecutedBy != null }">
+							<i>${ execution.lastExecutedBy }</i>
 						</c:when>
 						<c:otherwise>
 							<i><f:message key="squashtm.nodata" /> </i>
 						</c:otherwise>
 					</c:choose>
+					</span>
+				</td>
+				<td style="width: 10%;color: ${textcolor}">
+				<c:choose>
+					<c:when test="${ execution.lastExecutedOn != null }">
+						<f:message var="dateFormat" key="squashtm.dateformat" />
+						<i><f:formatDate value="${ execution.lastExecutedOn }"
+								pattern="${dateFormat}" /> </i>
+					</c:when>
+					<c:otherwise>
+						<i><f:message key="squashtm.nodata" /> </i>
+					</c:otherwise>
+				</c:choose>
 				</td>
 				<td style="width: 2em;">
 					<authz:authorized hasRole="ROLE_ADMIN" hasPermission="EXECUTE" domainObject="${ execution }">
@@ -90,7 +93,7 @@
 		</c:forEach>
 		<c:if test="${ executable && !testPlanItem.testCaseDeleted }">
 			<tr>
-				<td colspan="10" style="text-align: left;">
+				<td colspan="11" style="text-align: left;">
 					<strong>
 						<a class="button new-exec" style="font-size:0.8em;" id="new-exec-${ testPlanItem.id }" href="javascript:void(0)" data-new-exec="${ newExecutionUrl }">
 							<f:message key="execution.iteration-test-plan-row.new" />

@@ -235,7 +235,7 @@
 		return rowData[1];
 	}
 	function isTestCaseDeleted(data){
-		return (data[9]=="true");
+		return (data[10]=="true");
 	}
 	
 	function addTestSuiteTestPlanItemExecModeIcon(row, data) {
@@ -248,7 +248,7 @@
 				"A" : "automated"
 		};
 
-		var mode = data[2];
+		var mode = data[3];
 		$(row).find("td.exec-mode")
 			.addClass("exec-mode-" + automationClass[mode])
 			.attr("title", automationToolTips[mode]);
@@ -279,20 +279,18 @@
 	
 	function addHLinkToTestPlanName(row, data) {
 		var url= 'javascript:void(0)';			
-		addHLinkToCellText($( 'td:eq(2)', row ), url);
-		$('td:eq(2) a', row).addClass('test-case-name-hlink');
+		addHLinkToCellText($( 'td:eq(3)', row ), url);
+		$('td:eq(3) a', row).addClass('test-case-name-hlink');
 	}
 	
 	function addIconToTestPlanName(row, data){
-		$('td:eq(2)', row).prepend('<img src="${pageContext.servletContext.contextPath}/images/arrow_right.gif"/>');	
-	}
-	
-
+		$('td:eq(3)', row).prepend('<img src="${pageContext.servletContext.contextPath}/images/arrow_right.gif"/>');	
+	}	
 
 	function addLoginListToTestPlan(row, data){
 		if (! isTestCaseDeleted(data)){
 			var id = getTestPlansTableRowId(data);
-			$('td:eq(6)', row).load("${assignableUsersUrl}" + "?testPlanId="+ id +"");
+			$('td:eq(7)', row).load("${assignableUsersUrl}" + "?testPlanId="+ id +"");
 		}
 	}
 
@@ -320,7 +318,7 @@
 		if (rows.length==0) return;
 		
 		$(rows).each(function(){
-			var col=$("td:eq(5)", this);
+			var col=$("td:eq(6)", this);
 			var oldContent=col.html();
 			
 			var newContent = factory.getHtmlFor(oldContent);	
@@ -393,8 +391,9 @@
 	<jsp:attribute name="columnDefs">
 		<dt:column-definition targets="0" visible="false" />
 		<dt:column-definition targets="1" sortable="false" cssClass="centered ui-state-default drag-handle select-handle" />
-		<dt:column-definition targets="2" sortable="false" cssClass="exec-mode" width="2em" />
-		<dt:column-definition targets="3, 4, 5, 6" sortable="false" />
+		<dt:column-definition targets="2" sortable="false" />
+		<dt:column-definition targets="3" sortable="false" cssClass="exec-mode" width="2em" />
+		<dt:column-definition targets="4, 5, 6" sortable="false" />
 		<dt:column-definition targets="7" sortable="false" cssClass="has-status"/>
 		<dt:column-definition targets="8, 9" sortable="false" width="12em"/>
 		<dt:column-definition targets="10" sortable="false" visible="false" />

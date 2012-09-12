@@ -106,7 +106,7 @@ public class TestSuiteModificationController {
 	
 	private final DataTableMapper testPlanMapper = new DataTableMapper("unused", IterationTestPlanItem.class,
 			TestCase.class, Project.class, TestSuite.class).initMapping(11)
-			.mapAttribute(Project.class, 3, NAME, String.class)
+			.mapAttribute(Project.class, 2, NAME, String.class)
 			.mapAttribute(TestCase.class, 4, NAME, String.class)
 			.mapAttribute(TestCase.class, 5, "importance", TestCaseImportance.class)			
 			.mapAttribute(TestCase.class, 6, "executionMode", TestCaseExecutionMode.class)
@@ -303,8 +303,8 @@ public class TestSuiteModificationController {
 
 				return new Object[] { item.getId(), 
 						getCurrentIndex(),
-						automationMode,
 						projectName, 
+						automationMode,
 						testCaseName,
 						importance,
 						testCaseExecutionMode, 

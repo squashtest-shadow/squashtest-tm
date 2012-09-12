@@ -27,8 +27,8 @@
 		<tr>
 			<th>Test Plan Id</th>
 			<th>#</th>
-			<th>&nbsp;</th><%-- exec mode icon --%>			
 			<th><f:message key="iteration.executions.table.column-header.project.label" /></th>
+			<th>&nbsp;</th><%-- exec mode icon --%>			
 			<th><f:message key="iteration.executions.table.column-header.test-case.label" /></th>
 			<th><f:message key="iteration.executions.table.column-header.importance.label" /></th>
 			<th><f:message key="iteration.executions.table.column-header.type.label" /></th>

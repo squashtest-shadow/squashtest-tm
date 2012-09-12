@@ -27,15 +27,11 @@
 <%@ taglib prefix="authz" tagdir="/WEB-INF/tags/authz" %>
 
 <%@ taglib prefix="jq" tagdir="/WEB-INF/tags/jquery"%>
-<?xml version="1.0" encoding="utf-8" ?>
-<%@ page language="java" contentType="text/html; charset=utf-8"
-	pageEncoding="utf-8"%>
 <s:url var="newExecutionUrl"
 	value="/iterations/{iterId}/test-plan/{tpId}/executions/new">
 	<s:param name="iterId" value="${iterationId}" />
 	<s:param name="tpId" value="${testPlanItem.id}" />
 </s:url>
-
 
 <s:url var="showExecutionUrl" value="/executions" />
 
@@ -46,16 +42,14 @@
 <c:set var="textcolor" value="#555555" />
 
 
-<td colspan="8"><table>
+<td colspan="10"><table>
 		<!-- -----------------------------------------------ROW OF EXECUTION -->
 		<c:forEach items="${ executions }" var="execution" varStatus="status">
 			<tr>
-				<td></td>
-				<td></td>
-				<td
-					style="margin-left: 10px; color: ${textcolor}; font-style:italic; text-decoration: underline"><a
-					href="${showExecutionUrl}/${execution.id}"><b>Exec.
-							${status.index + 1} :</b> ${ execution.name }</a>
+				<td style="margin-left: 10px; color: ${textcolor}; font-style:italic; text-decoration: underline" colspan="5">
+					<a href="${showExecutionUrl}/${execution.id}">
+						<b>Exec. ${status.index + 1} :</b> ${ execution.name }
+					</a>
 				</td>
 				<td style="width: 7.5em;color: ${textcolor}; font-style:italic;"><f:message
 						key="${ execution.executionMode.i18nKey }" />
@@ -64,25 +58,27 @@
 						key="execution.execution-status.${execution.executionStatus}" />
 
 				</td>
-				<td style="width: 12em; color: ${textcolor}"><c:choose>
-						<c:when test="${ execution.lastExecutedBy != null }">
-							<i>${ execution.lastExecutedBy }</i>
-						</c:when>
-						<c:otherwise>
-							<i><f:message key="squashtm.nodata" /> </i>
-						</c:otherwise>
-					</c:choose>
+				<td style="width: 12em; color: ${textcolor}">
+				<c:choose>
+					<c:when test="${ execution.lastExecutedBy != null }">
+						<i>${ execution.lastExecutedBy }</i>
+					</c:when>
+					<c:otherwise>
+						<i><f:message key="squashtm.nodata" /> </i>
+					</c:otherwise>
+				</c:choose>
 				</td>
-				<td style="width: 12em; color: ${textcolor}"><c:choose>
-						<c:when test="${ execution.lastExecutedOn != null }">
-							<f:message var="dateFormat" key="squashtm.dateformat" />
-							<i><f:formatDate value="${ execution.lastExecutedOn }"
-									pattern="${dateFormat}" /> </i>
-						</c:when>
-						<c:otherwise>
-							<i><f:message key="squashtm.nodata" /> </i>
-						</c:otherwise>
-					</c:choose>
+				<td style="width: 12em; color: ${textcolor}">
+				<c:choose>
+					<c:when test="${ execution.lastExecutedOn != null }">
+						<f:message var="dateFormat" key="squashtm.dateformat" />
+						<i><f:formatDate value="${ execution.lastExecutedOn }"
+								pattern="${dateFormat}" /> </i>
+					</c:when>
+					<c:otherwise>
+						<i><f:message key="squashtm.nodata" /> </i>
+					</c:otherwise>
+				</c:choose>
 				</td>
 				<td style="width: 2em;"><authz:authorized hasRole="ROLE_ADMIN" hasPermission="EXECUTE" domainObject="${ execution }">
 						<button id="delete-execution-table-button-${execution.id}"
@@ -93,12 +89,10 @@
 		</c:forEach>
 		<!-- ------------------------------------------END ROW OF EXECUTION -->
 
-
 		<!-- ---------------------------------------------ROW NEW EXECUTION -->
-
 		<c:if test="${ executable }">
 			<tr>
-				<td colspan="8" style="text-align: left;"> <a id="new-exec-${testPlanItem.id}" style="font-size:0.8em;"
+				<td colspan="10" style="text-align: left;"> <a id="new-exec-${testPlanItem.id}" style="font-size:0.8em;"
 						class="button new-exec" href="javascript:void(0)" data-new-exec="${newExecutionUrl}"><f:message
 								key="execution.iteration-test-plan-row.new" /> </a> 
 								

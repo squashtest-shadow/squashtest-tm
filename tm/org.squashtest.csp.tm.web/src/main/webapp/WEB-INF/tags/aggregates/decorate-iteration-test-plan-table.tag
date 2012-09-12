@@ -172,14 +172,13 @@
 	
 	function addHLinkToTestPlanName(row, data) {
 		var url = 'javascript:void(0)';
-		addHLinkToCellText($('td:eq(2)', row), url);
-		$('td:eq(2) a', row).addClass('test-case-name-hlink');
+		addHLinkToCellText($('td:eq(3)', row), url);
+		$('td:eq(3) a', row).addClass('test-case-name-hlink');
 	}
 
 	function addIconToTestPlanName(row, data) {
-		$('td:eq(2)', row)
-				.prepend(
-						'<img src="${pageContext.servletContext.contextPath}/images/arrow_right.gif"/>');
+		$('td:eq(3)', row)
+			.prepend('<img src="${pageContext.servletContext.contextPath}/images/arrow_right.gif"/>');
 	}
 
 	<c:if test="${ editable }">
@@ -355,8 +354,8 @@
 				"aoColumnDefs": [
 					{'bSortable': false, 'bVisible': false, 'aTargets': [0], 'mDataProp' : 'entity-id'},
 					{'bSortable': false, 'sClass': 'centered ui-state-default drag-handle select-handle', 'aTargets': [1], 'mDataProp' : 'entity-index'},
-					{'bSortable': false, 'aTargets': [2], 'mDataProp' : 'exec-mode', 'sWidth': '2em', 'sClass' : "exec-mode"},
-					{'bSortable': false, 'aTargets': [3], 'mDataProp' : 'project-name'},
+					{'bSortable': false, 'aTargets': [2], 'mDataProp' : 'project-name'},
+					{'bSortable': false, 'aTargets': [3], 'mDataProp' : 'exec-mode', 'sWidth': '2em', 'sClass' : "exec-mode"},
 					{'bSortable': false, 'aTargets': [4], 'mDataProp' : 'tc-name'},
 					{'bSortable': false, 'aTargets': [5], 'mDataProp' : 'importance'},
 					{'bSortable': false, 'sWidth': '10%', 'aTargets': [6], 'mDataProp' : 'type'},
