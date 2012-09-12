@@ -152,7 +152,7 @@
 			</div>
 		</div>
 		<div class="toolbar-button-panel">
-		<c:if test="${ editable }">
+		<c:if test="${ editable && not execution.automated }">
 				<comp:execution-execute-buttons execution="${ execution }"/>
 				<input type="button"
 					value='<f:message key="execution.execute.remove.button.label" />'
@@ -176,6 +176,20 @@
 		</div>
 	</jsp:attribute>
 	</comp:toggle-panel>
+	
+	
+
+	<%----------------------------------- result summary -----------------------------------------------%>
+
+	<c:if test="${execution.automated}">
+	<comp:toggle-panel id="auto-execution-result-summary-panel"
+		titleKey="label.resultSummary" isContextual="true"
+		open="${ not empty execution.prerequisite }">
+		<jsp:attribute name="body">
+			<span>${execution.resultSummary}</span>
+		</jsp:attribute>
+	</comp:toggle-panel>
+	</c:if>
 
 	<%---------------------------- execution step summary status --------------------------------------%>
 

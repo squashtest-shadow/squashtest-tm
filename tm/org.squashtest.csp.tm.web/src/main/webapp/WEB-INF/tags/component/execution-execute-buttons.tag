@@ -27,7 +27,6 @@
 <%@ taglib prefix="fmt" uri="http://java.sun.com/jsp/jstl/fmt"%>
 <%@ attribute name="execution" required="true" type="java.lang.Object"
 	description="The execution"%>
-<c:if test="${ execution.executionMode == 'MANUAL' }" >
 <c:url var="runnerUrl" value="/executions/${execution.id}/runner" />
 
 <c:choose>
@@ -91,4 +90,3 @@
 		});
 	});
 </script>
-</c:if>

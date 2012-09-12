@@ -41,7 +41,7 @@
 	<div style="display:inline-block; margin-right:2em;vertical-align:top">
 		<label><f:message key="auditable-entity.execution-status.label" /></label>
 		<jq:execution-status status="${auditableEntity.executionStatus.canonicalStatus}" /> 
-		<c:if test="${ auditableEntity.executionMode == 'AUTOMATED' }">
+		<c:if test="${ auditableEntity.automated }">
 		<br>
 		<label><f:message key="auditable-entity.automated-execution-status.label"/></label>
 		<jq:execution-status status="${auditableEntity.executionStatus}" />
@@ -62,3 +62,10 @@
 			</c:otherwise>
 		</c:choose>	
 	</div>
+	
+	<c:if test="${auditableEntity.automated}">
+	<div style="display:inline-block; margin-right:2em;vertical-align:top">
+		<label for="autoresult-url" ><f:message key="label.resultURL" /></label>
+		<a id="autoresult-url" href="${execution.resultURL}"></a>
+	</div>
+	</c:if>

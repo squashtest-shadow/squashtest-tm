@@ -462,7 +462,7 @@ public class Execution implements AttachmentHolder, IssueDetector, Identified, H
 	}
 	
 	public AutomatedTest getAutomatedTest(){
-		if (!isAutomated()){
+		if (isAutomated()){
 			return automatedExecutionExtender.getAutomatedTest();
 		}
 		
@@ -470,21 +470,21 @@ public class Execution implements AttachmentHolder, IssueDetector, Identified, H
 	}
 	
 	public URL getResultURL(){
-		if (! isAutomated()){
+		if ( isAutomated()){
 			return automatedExecutionExtender.getResultURL();
 		}
 		throw new NotAutomatedException();
 	}
 	
 	public AutomatedSuite getAutomatedSuite(){
-		if (! isAutomated()){
+		if ( isAutomated()){
 			return automatedExecutionExtender.getAutomatedSuite();
 		}
 		throw new NotAutomatedException();		
 	}
 	
 	public String getResultSummary(){
-		if (! isAutomated()){
+		if ( isAutomated()){
 			return automatedExecutionExtender.getResultSummary();
 		}
 		throw new NotAutomatedException();		
