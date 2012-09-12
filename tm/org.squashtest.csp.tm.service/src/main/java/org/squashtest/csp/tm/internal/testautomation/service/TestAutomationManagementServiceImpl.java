@@ -37,6 +37,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.core.task.AsyncTaskExecutor;
 import org.springframework.osgi.extensions.annotation.ServiceReference;
+import org.springframework.security.access.prepost.PostFilter;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.squashtest.csp.tm.domain.execution.Execution;
@@ -152,6 +153,8 @@ public class TestAutomationManagementServiceImpl implements  InsecureTestAutomat
 
 	
 	@Override
+	@PostFilter("hasPermission(filterObject, 'READ') or hasRole('ROLE_ADMIN')")
+	@Transactional(readOnly=true)
 	public List<Execution> findExecutionsByAutomatedTestSuiteId(String automatedTestSuiteId) {
 
 		List<Execution> executions = new ArrayList<Execution>();

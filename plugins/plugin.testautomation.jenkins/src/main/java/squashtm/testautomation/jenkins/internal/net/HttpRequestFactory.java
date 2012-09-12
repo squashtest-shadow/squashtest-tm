@@ -210,6 +210,19 @@ public class HttpRequestFactory {
 		
 	}
 	
+	public String buildResultURL(AutomatedTest test, Integer buildID){
+		
+		
+		TestAutomationProject project = test.getProject();
+	
+		String relativePath = _toRelativePath(test);
+		String urlPath = toUrlPath(project.getServer(), "/job/"+project.getName()+"/"+buildID+"/testReport/"+relativePath);
+		
+		return  urlPath;
+		
+	}
+	
+	
 	//******************************* private stuffs ***********************
 	
 	protected PostMethod newStartBuild(TestAutomationProject project, ParameterArray params){
@@ -260,6 +273,23 @@ public class HttpRequestFactory {
 		}
 	}
 	
+	
+	//XXX for now supports the crappy name format of surefire-formatted TA results. Remember to change
+	//that once the crappy name format changed.
+	private String _toRelativePath(AutomatedTest test) {
+		
+		String crappyName="";
+		
+		if (test.isAtTheRoot()){
+			crappyName = "(root)/";
+		}
+		
+		crappyName += test.getPath()+test.getName().replaceAll("[-.\\/]", "_");
+		
+		return crappyName;
+		
+	}
+	
 	// ********************* static class and stuffs ***************************
 	
 	private String makeTestListParameter(TestAutomationProjectContent content){
@@ -301,7 +331,9 @@ public class HttpRequestFactory {
 			}
 			catch(MalformedURLException ex){
 				
-				BadConfiguration bc = new BadConfiguration(ex);
+				BadConfiguration bc = new BadConfiguration("Test Automation configuration : The test could not be started because the service is not configured properly. " +
+						"The url specified at property '"+callback.getConfPropertyName()+"' in configuration file 'tm.testautomation.conf.properties' is malformed. Please " +
+						"contact the administration team.");
 				
 				bc.setPropertyName(callback.getConfPropertyName());
 				

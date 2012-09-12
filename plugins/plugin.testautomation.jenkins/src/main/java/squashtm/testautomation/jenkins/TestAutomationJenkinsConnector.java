@@ -20,6 +20,8 @@
  */
 package squashtm.testautomation.jenkins;
 
+import java.net.MalformedURLException;
+import java.net.URL;
 import java.util.Collection;
 import java.util.HashMap;
 import java.util.Iterator;
@@ -30,6 +32,8 @@ import javax.annotation.PostConstruct;
 
 import org.apache.commons.httpclient.HttpClient;
 import org.apache.commons.httpclient.methods.GetMethod;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.osgi.extensions.annotation.ServiceReference;
 import org.springframework.scheduling.TaskScheduler;
@@ -46,6 +50,8 @@ import org.squashtest.csp.tm.testautomation.spi.TestAutomationConnector;
 import org.squashtest.csp.tm.testautomation.spi.TestAutomationException;
 import org.squashtest.csp.tm.testautomation.spi.UnreadableResponseException;
 
+import squashtm.testautomation.jenkins.beans.Build;
+import squashtm.testautomation.jenkins.beans.BuildList;
 import squashtm.testautomation.jenkins.internal.ExecuteTestsBuildProcessor;
 import squashtm.testautomation.jenkins.internal.FetchTestListBuildProcessor;
 import squashtm.testautomation.jenkins.internal.JsonParser;
@@ -58,6 +64,7 @@ import squashtm.testautomation.jenkins.internal.tasksteps.BuildAbsoluteId;
 @Service("plugin.testautomation.jenkins.connector")
 public class TestAutomationJenkinsConnector implements TestAutomationConnector{
 
+	private static final Logger LOGGER = LoggerFactory.getLogger(TestAutomationConnector.class);
 	
 	private static final String CONNECTOR_KIND = "jenkins";
 	private static final int DEFAULT_SPAM_INTERVAL_MILLIS = 5000;
@@ -183,6 +190,44 @@ public class TestAutomationJenkinsConnector implements TestAutomationConnector{
 	
 	}
 	
+	@Override
+	public Map<AutomatedTest, URL> getResultURLs(Collection<AutomatedTest> tests, String reference) throws ServerConnectionFailed,
+					  AccessDenied,
+					  UnreadableResponseException,
+					  NotFoundException,
+					  BadConfiguration,
+					  TestAutomationException {
+		
+		Map<AutomatedTest, URL> resultMap = new HashMap<AutomatedTest, URL>();
+		
+		TestSorter sorter = new TestSorter(tests);
+		
+		while(sorter.hasNext()){
+
+			TestAutomationProjectContent content = sorter.getNext();
+			
+			try{
+			
+				Integer buildID = _optimisticGetBuildID(content.getProject(), reference);
+			
+				_createAndAddURLs(resultMap, content, buildID);
+			}
+			catch(TestAutomationException ex){
+				if (LOGGER.isErrorEnabled()){
+					LOGGER.error("Test Automation : could not create result url due to an inner error : ",ex );
+				}
+				for (AutomatedTest test : content.getTests()){
+					resultMap.put(test, null);
+				}
+			}
+			
+		}
+		
+		return resultMap;
+		
+	}
+	
+	
 	private void _startTestExecution(TestAutomationProjectContent content, String externalID){
 		
 		TestAutomationProject project = content.getProject();
@@ -197,6 +242,54 @@ public class TestAutomationJenkinsConnector implements TestAutomationConnector{
 		processor.setDefaultReschedulingDelay(spamInterval);
 		
 		processor.run();
+		
+	}
+	
+	
+	/*
+	 * that method is said optimistic because it will attempt to get the buildID of a given build without certainty of its existence 
+	 * (the lack of which is likely to bring the process to a disappointing conclusion).
+	 */
+	private Integer _optimisticGetBuildID(TestAutomationProject project, String externalID){
+		
+		HttpClient client = clientProvider.getClientFor(project.getServer());		
+		GetMethod method = requestFactory.newGetBuildsForProject(project);
+		
+		String json = requestExecutor.execute(client, method);		
+		BuildList buildList = jsonParser.getBuildListFromJson(json);		
+		Build buildOfInterest =  buildList.findByExternalId(externalID);
+		
+		if (buildOfInterest!=null){
+			return buildOfInterest.getId();			
+		}
+		else{
+			throw new NotFoundException("TestAutomationConnector : the requested build for project "+project.getName()+" externalID "+externalID+" cannot be found");
+		}		
+		
+	}
+	
+	
+	private void _createAndAddURLs(Map<AutomatedTest, URL> allURLs, TestAutomationProjectContent content, Integer buildID){
+		
+		for (AutomatedTest test : content.getTests()){
+			
+			String resultPath = requestFactory.buildResultURL(test, buildID);  
+			
+			URL resultURL;
+			
+			try {
+				resultURL = new URL(resultPath);
+			} 
+			catch (MalformedURLException e) {
+				if (LOGGER.isErrorEnabled()){
+					LOGGER.error("Test Automation : could not create result url from string '"+resultPath+"'");
+				}
+				resultURL = null;
+			}
+			
+			allURLs.put(test, resultURL);
+			
+		}
 		
 	}
 	
@@ -249,5 +342,6 @@ public class TestAutomationJenkinsConnector implements TestAutomationConnector{
 		}
 		
 	}
+	
 
 }

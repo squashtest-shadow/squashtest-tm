@@ -22,6 +22,7 @@ package squashtm.testautomation.jenkins.internal.tasksteps;
 
 import org.apache.commons.httpclient.HttpClient;
 import org.apache.commons.httpclient.HttpMethod;
+import org.squashtest.csp.tm.testautomation.spi.NotFoundException;
 import org.squashtest.csp.tm.testautomation.spi.TestAutomationException;
 
 import squashtm.testautomation.jenkins.beans.Build;
@@ -102,7 +103,7 @@ public class GetBuildID extends BuildStep implements HttpBasedStep{
 			absoluteId.setBuildId(buildId);
 		}
 		else{
-			throw new TestAutomationException("TestAutomationConnector : the requested build for project "+absoluteId.toString()+" cannot be found");
+			throw new NotFoundException("TestAutomationConnector : the requested build for project "+absoluteId.toString()+" cannot be found");
 		}
 	}
 

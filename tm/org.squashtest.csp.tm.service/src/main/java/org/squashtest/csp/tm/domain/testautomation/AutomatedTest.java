@@ -79,12 +79,23 @@ public class AutomatedTest {
 	
 	/**
 	 * 
-	 * @return name - first foldername
+	 * @return name - rootfolder
 	 */
 	public String getNameWithoutRoot(){
 		return name.replaceFirst("^[^\\/]*\\/", "");
 	}
 	
+	public String getRootFolderName(){
+		return name.replaceFirst("\\/.*$","/");
+	}
+	
+	/**
+	 * 
+	 * @return if the test is a direct child of the root folder
+	 */
+	public boolean isAtTheRoot(){
+		return (getPath().equals(getRootFolderName()));
+	}
 	
 	public AutomatedTest newWithProject(TestAutomationProject project){
 		return new AutomatedTest(name, project); 

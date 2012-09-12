@@ -70,5 +70,29 @@ class AutomatedTestTest extends Specification {
 			test.nameWithoutRoot == "subfolder/test.txt"
 	}
 	
+	def "should return the root folder name"(){
+		expect :
+			test.rootFolderName == "folder/"
+	}
+	
+	def "should say that test is not at the root"(){
+		expect :
+			test.atTheRoot == false
+		
+	}
+	
+	def "should say that test is at the root"(){
+		
+		given :
+			def test = new AutomatedTest("tests/my-test.txt", null)
+		
+		when :
+			def res = test.atTheRoot
+			
+		then :
+			res == true
+		
+	}
+
 	
 }

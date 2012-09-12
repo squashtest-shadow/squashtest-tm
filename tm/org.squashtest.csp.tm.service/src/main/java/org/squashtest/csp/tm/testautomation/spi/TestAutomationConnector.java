@@ -20,7 +20,9 @@
  */
 package org.squashtest.csp.tm.testautomation.spi;
 
+import java.net.URL;
 import java.util.Collection;
+import java.util.Map;
 
 import org.squashtest.csp.tm.domain.testautomation.TestAutomationProject;
 import org.squashtest.csp.tm.domain.testautomation.TestAutomationServer;
@@ -57,7 +59,7 @@ public interface TestAutomationConnector {
 	 * @return a Collection that may never be null if success
 	 * @throws ServerConnectionFailed if could not connect to the server
 	 * @throws AccessDenied if the server was reached but the used user could log in
-	 * @throws UnreadableResponseException if the server replied something that is not suitable for a response or insulted you
+	 * @throws UnreadableResponseException if the server replied something that is not suitable for a response or otherwise replied not nicely
 	 * @throws NotFoundException if the server could not find its projects
 	 * @Throws BadConfiguration if something went wrong due to the configuration
 	 * @throws TestAutomationException for anything that doesn't fit the exceptions above. 
@@ -80,7 +82,7 @@ public interface TestAutomationConnector {
 	 * @return a Collection possibly empty but never null of TestAutomationTest if success
 	 * @throws ServerConnectionFailed if could not connect to the server
 	 * @throws AccessDenied if the server was reached but the used user could log in
-	 * @throws UnreadableResponseException if the server replied something that is not suitable for a response or was rude
+	 * @throws UnreadableResponseException if the server replied something that is not suitable for a response or otherwise was rude to you
 	 * @throws NotFoundException if the tests in that project cannot be found
 	 * @Throws BadConfiguration if something went wrong due to the configuration
 	 * @throws TestAutomationException for anything that doesn't fit the exceptions above. 
@@ -101,12 +103,12 @@ public interface TestAutomationConnector {
 	 * <p>That method must return immediately after initiating the test start sequence, it must not wait for their completion. However it may
 	 * possibly start a background task to oversee the remote executions from here.</p>
 	 * 
-	 * @param tests
-	 * @param reference
+	 * @param tests the tests that must be executed
+	 * @param reference a reference that index the resulting executions of those tests
 	 * 
 	 * @throws ServerConnectionFailed if could not connect to the server
 	 * @throws AccessDenied if the server was reached but the used user could log in
-	 * @throws UnreadableResponseException if the server replied something that is not suitable for a response or was rude
+	 * @throws UnreadableResponseException if the server replied something that is not suitable for a response or otherwise thrown its garbages at you
 	 * @throws NotFoundException if the tests in that project cannot be found
 	 * @Throws BadConfiguration if something went wrong due to the configuration
 	 * @throws TestAutomationException for anything that doesn't fit the exceptions above. 
@@ -118,4 +120,28 @@ public interface TestAutomationConnector {
 					  NotFoundException,
 					  BadConfiguration,
 					  TestAutomationException;
+	
+	
+	
+	/**
+	 * <p>Given a bunch of tests, must return the URLs of their executions, that can be identified by the reference. The is a map associating 
+	 * each test to the corresponding URL.</p>
+	 * 
+	 * @param tests the group of tests we want to know the URL where to look for the results.
+	 * @param reference the reference of their executions.
+	 * 
+	 * @throws ServerConnectionFailed if could not connect to the server
+	 * @throws AccessDenied if the server was reached but the used user could log in
+	 * @throws UnreadableResponseException if the server replied something that is not suitable for a response or otherwise used mature language
+	 * @throws NotFoundException if the tests in that project cannot be found
+	 * @Throws BadConfiguration if something went wrong due to the configuration
+	 * @throws TestAutomationException for anything that doesn't fit the exceptions above. 
+	 */	
+	Map<AutomatedTest, URL> getResultURLs(Collection<AutomatedTest> tests, String reference)			 
+			throws ServerConnectionFailed,
+				  AccessDenied,
+				  UnreadableResponseException,
+				  NotFoundException,
+				  BadConfiguration,
+				  TestAutomationException;
 }
