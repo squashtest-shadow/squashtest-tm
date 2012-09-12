@@ -104,8 +104,15 @@
 					data : {"mode":"auto"},
 					dataType : "json"
 				})
-				.success(function(ok) {
-					alert(ok);
+				.done(function(suiteView) {
+					refreshTestPlans();
+					if(suiteView.executions.length == 0){
+						$.squash
+						.openMessage("<f:message key='popup.title.Info' />",
+								"<f:message	key='dialog.execution.auto.overview.error.none'/>");
+					}else{
+						squashtm.automatedSuiteOverviewDialog.open(suiteView);
+					}
 				});
 		return false; //return false to prevent navigation in page (# appears at the end of the URL)
 	}

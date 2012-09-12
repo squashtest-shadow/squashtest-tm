@@ -336,13 +336,13 @@ public class IterationModificationController {
 
 	@RequestMapping(value = "/test-plan/{testPlanId}/executions/new", method = RequestMethod.POST, params = { "mode=auto" })
 	public @ResponseBody
-	String addAutoExecution(@PathVariable("testPlanId") long testPlanId, @PathVariable("iterationId") long iterationId) {
+	AutomatedSuiteOverview addAutoExecution(@PathVariable("testPlanId") long testPlanId, @PathVariable("iterationId") long iterationId, Locale locale) {
 		Collection<Long> testPlanIds = new ArrayList<Long>(1);
 		testPlanIds.add(testPlanId);
 
-		iterationModService.createAndExecuteAutomatedSuite(iterationId, testPlanIds);
+		AutomatedSuite suite = iterationModService.createAndExecuteAutomatedSuite(iterationId, testPlanIds);
 
-		return "ok";
+		return AutomatedExecutionViewUtils.buildExecInfo(suite, locale, messageSource) ;
 
 	}
 
@@ -468,17 +468,13 @@ public class IterationModificationController {
 	@RequestMapping(method = RequestMethod.POST, params = { "id=execute-auto", "testPlanItemsIds[]" })
 	public @ResponseBody 
 	AutomatedSuiteOverview  executeSelectionAuto(@PathVariable long iterationId, @RequestParam("testPlanItemsIds[]") List<Long> ids , Locale locale){
-	
-
-			AutomatedSuite suite = iterationModService.createAndExecuteAutomatedSuite(iterationId, ids); 
+				AutomatedSuite suite = iterationModService.createAndExecuteAutomatedSuite(iterationId, ids); 
 		LOGGER.debug("Iteration #" + iterationId + " : execute selected test plans");
 			return 	AutomatedExecutionViewUtils.buildExecInfo(suite, locale, messageSource);
 	}
 
 	@RequestMapping(method = RequestMethod.POST, params = { "id=execute-auto", "testPlanItemsIds" })
 	public @ResponseBody AutomatedSuiteOverview executeAllAuto(@PathVariable long iterationId, Locale locale ){
-
-
 		AutomatedSuite suite = iterationModService.createAndExecuteAutomatedSuite(iterationId);
 		LOGGER.debug("Iteration #" + iterationId + " : execute all test plan auto");
 		return 	AutomatedExecutionViewUtils.buildExecInfo(suite, locale, messageSource);
