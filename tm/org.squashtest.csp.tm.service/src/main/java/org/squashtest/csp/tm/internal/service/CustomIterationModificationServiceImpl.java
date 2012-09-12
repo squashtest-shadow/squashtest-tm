@@ -331,7 +331,7 @@ public class CustomIterationModificationServiceImpl implements CustomIterationMo
 	@Override
 	@PreAuthorize("hasPermission(#iterationId, 'org.squashtest.csp.tm.domain.campaign.Iteration', 'CREATE') "
 			+ "or hasRole('ROLE_ADMIN')")
-	public TestSuite copyPasteTestSuiteToIteration(Long testSuiteId, Long iterationId) {
+	public TestSuite copyPasteTestSuiteToIteration(long testSuiteId, long iterationId) {
 		TestSuite testSuite = suiteDao.findById(testSuiteId);
 
 		List<IterationTestPlanItem> copyOfTestPlan = testSuite.createPastableCopyOfTestPlan();
@@ -351,7 +351,7 @@ public class CustomIterationModificationServiceImpl implements CustomIterationMo
 	@Override
 	@PreAuthorize("hasPermission(#iterationId, 'org.squashtest.csp.tm.domain.campaign.Iteration', 'CREATE') "
 			+ "or hasRole('ROLE_ADMIN')")
-	public List<TestSuite> copyPasteTestSuitesToIteration(Long[] testSuiteIds, Long iterationId) {
+	public List<TestSuite> copyPasteTestSuitesToIteration(Long[] testSuiteIds, long iterationId) {
 
 		List<TestSuite> createdTestSuites = new ArrayList<TestSuite>();
 

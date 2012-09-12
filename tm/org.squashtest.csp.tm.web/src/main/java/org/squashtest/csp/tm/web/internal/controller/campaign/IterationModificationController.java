@@ -22,7 +22,6 @@ package org.squashtest.csp.tm.web.internal.controller.campaign;
 
 import static org.squashtest.csp.tm.web.internal.helper.JEditablePostParams.VALUE;
 
-import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Date;
@@ -37,7 +36,6 @@ import javax.validation.Valid;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.springframework.context.MessageSource;
 import org.springframework.osgi.extensions.annotation.ServiceReference;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.ModelAttribute;
@@ -54,7 +52,6 @@ import org.squashtest.csp.tm.domain.campaign.TestSuite;
 import org.squashtest.csp.tm.domain.execution.Execution;
 import org.squashtest.csp.tm.domain.execution.ExecutionStatus;
 import org.squashtest.csp.tm.domain.project.Project;
-import org.squashtest.csp.tm.domain.testautomation.AutomatedSuite;
 import org.squashtest.csp.tm.domain.testcase.TestCase;
 import org.squashtest.csp.tm.domain.testcase.TestCaseExecutionMode;
 import org.squashtest.csp.tm.domain.testcase.TestCaseImportance;
@@ -64,6 +61,7 @@ import org.squashtest.csp.tm.infrastructure.filter.FilteredCollectionHolder;
 import org.squashtest.csp.tm.service.IterationModificationService;
 import org.squashtest.csp.tm.service.IterationTestPlanFinder;
 import org.squashtest.csp.tm.web.internal.controller.execution.AutomatedExecutionViewUtils;
+import org.squashtest.csp.tm.web.internal.i18n.InternationalizationHelper;
 import org.squashtest.csp.tm.web.internal.model.datatable.DataTableDrawParameters;
 import org.squashtest.csp.tm.web.internal.model.datatable.DataTableFilterSorter;
 import org.squashtest.csp.tm.web.internal.model.datatable.DataTableModel;
@@ -99,7 +97,7 @@ public class IterationModificationController {
 	}
 
 	@Inject
-	private MessageSource messageSource;
+	private InternationalizationHelper messageSource;
 
 	private final DataTableMapper testPlanMapper = new DataTableMapper("unused", IterationTestPlanItem.class,
 			TestCase.class, Project.class, TestSuite.class).initMapping(12)
@@ -338,7 +336,7 @@ public class IterationModificationController {
 	String addAutoExecution(@PathVariable("testPlanId") long testPlanId, @PathVariable("iterationId") long iterationId) {
 		Collection<Long> testPlanIds = new ArrayList<Long>(1);
 		testPlanIds.add(testPlanId);
-		
+
 		iterationModService.createAndExecuteAutomatedSuite(iterationId, testPlanIds);
 
 		return "ok";
@@ -397,8 +395,9 @@ public class IterationModificationController {
 				} else {
 					projectName = item.getReferencedTestCase().getProject().getName();
 					testCaseName = item.getReferencedTestCase().getName();
-					importance = formatImportance(item.getReferencedTestCase().getImportance(), locale);
-					testCaseExecutionMode = formatExecutionMode(item.getReferencedTestCase().getExecutionMode(), locale);
+					importance = messageSource.internationalize(item.getReferencedTestCase().getImportance(), locale);
+					testCaseExecutionMode = messageSource.internationalize(item.getReferencedTestCase()
+							.getExecutionMode(), locale);
 				}
 
 				if (item.getTestSuite() == null) {
@@ -414,10 +413,10 @@ public class IterationModificationController {
 				res.put("importance", importance);
 				res.put("type", testCaseExecutionMode);
 				res.put("suite", testSuiteName);
-				res.put("status", formatStatus(item.getExecutionStatus(), locale));
+				res.put("status", messageSource.internationalize(item.getExecutionStatus(), locale));
 				res.put("last-exec-by", formatString(item.getLastExecutedBy(), locale));
 				res.put("assigned-to", assignedId);
-				res.put("last-exec-on", formatDate(item.getLastExecutedOn(), locale));
+				res.put("last-exec-on", messageSource.localizeDate(item.getLastExecutedOn(), locale));
 				res.put("is-tc-deleted", item.isTestCaseDeleted());
 				res.put("empty-delete-holder", " ");
 				res.put("exec-mode", automationMode);
@@ -468,7 +467,7 @@ public class IterationModificationController {
 	String executeSelectionAuto(@PathVariable long iterationId, @RequestParam("testPlanItemsIds[]") List<Long> ids,
 			Locale locale) {
 
-		AutomatedSuite suite = iterationModService.createAndExecuteAutomatedSuite(iterationId, ids); 
+		iterationModService.createAndExecuteAutomatedSuite(iterationId, ids);
 
 		/*********************************************************
 		 * //TODO : replace the following with something appropriate
@@ -486,7 +485,7 @@ public class IterationModificationController {
 	public @ResponseBody
 	String executeAllAuto(@PathVariable long iterationId, Locale locale) {
 
-		AutomatedSuite suite = iterationModService.createAndExecuteAutomatedSuite(iterationId);
+		iterationModService.createAndExecuteAutomatedSuite(iterationId);
 
 		/*********************************************************
 		 * //TODO : replace the following with something appropriate
@@ -510,45 +509,19 @@ public class IterationModificationController {
 	/* ***************** data formatter *************************** */
 
 	private String formatString(String arg, Locale locale) {
-		if (arg == null) {
-			return formatNoData(locale);
-		} else {
-			return arg;
-		}
-	}
-
-	private String formatDate(Date date, Locale locale) {
-		try {
-			String format = messageSource.getMessage("squashtm.dateformat", null, locale);
-			return new SimpleDateFormat(format).format(date);
-		} catch (Exception anyException) {
-			return formatNoData(locale);
-		}
-
+		return arg == null ? formatNoData(locale) : arg;
 	}
 
 	private String formatNoData(Locale locale) {
-		return messageSource.getMessage("squashtm.nodata", null, locale);
+		return messageSource.internationalize("squashtm.nodata", locale);
 	}
 
 	private String formatDeleted(Locale locale) {
-		return messageSource.getMessage("squashtm.itemdeleted", null, locale);
-	}
-
-	private String formatExecutionMode(TestCaseExecutionMode mode, Locale locale) {
-		return messageSource.getMessage(mode.getI18nKey(), null, locale);
-	}
-
-	private String formatStatus(ExecutionStatus status, Locale locale) {
-		return messageSource.getMessage(status.getI18nKey(), null, locale);
-	}
-
-	private String formatImportance(TestCaseImportance importance, Locale locale) {
-		return messageSource.getMessage(importance.getI18nKey(), null, locale);
+		return messageSource.internationalize("squashtm.itemdeleted", locale);
 	}
 
 	private String formatNone(Locale locale) {
-		return messageSource.getMessage("squashtm.none.f", null, locale);
+		return messageSource.internationalize("squashtm.none.f", locale);
 	}
 
 }

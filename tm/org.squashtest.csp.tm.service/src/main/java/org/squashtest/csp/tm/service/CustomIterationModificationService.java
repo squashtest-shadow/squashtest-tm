@@ -109,7 +109,7 @@ public interface CustomIterationModificationService extends IterationFinder{
 	 *            = iteration where to add the copy of the test suite
 	 * @return the copy of the test suite
 	 */
-	TestSuite copyPasteTestSuiteToIteration(Long testSuiteId, Long iterationId);
+	TestSuite copyPasteTestSuiteToIteration(long testSuiteId, long iterationId);
 	
 	/**
 	 * <p>
@@ -123,7 +123,7 @@ public interface CustomIterationModificationService extends IterationFinder{
 	 *            = iteration where to add the copy of the test suite
 	 * @return the list containing all the copies of the test suites
 	 */
-	List<TestSuite> copyPasteTestSuitesToIteration(Long[] testSuiteIds, Long iterationId);
+	List<TestSuite> copyPasteTestSuitesToIteration(Long[] testSuiteIds, long iterationId);
 	
 	
 	/**
