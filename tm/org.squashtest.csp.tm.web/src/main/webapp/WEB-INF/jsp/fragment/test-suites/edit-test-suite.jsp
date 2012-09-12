@@ -306,7 +306,6 @@
 			</div>
 			<c:if test="${ testSuite.iteration.project.testAutomationEnabled }">
 			<comp:execute-auto-button url="${ testSuiteUrl }" testPlanTableId="test-suite-test-plans-table"/>
-			<comp:automated-suite-overview-popup />
 			</c:if>
 		</c:if>
 		<c:if test="${ smallEditable }">
@@ -568,6 +567,11 @@
 		</jsp:body>
 	</comp:popup>
 </div>
+<%------------------------------------------automated suite overview --------------------------------------------%>
+<c:if test="${ testSuite.iteration.project.testAutomationEnabled }">
+	<comp:automated-suite-overview-popup />
+	</c:if>
+	<%------------------------------------------/automated suite overview --------------------------------------------%>
 <%------------------------------ bugs section -------------------------------%>
 <c:if test="${testSuite.iteration.project.bugtrackerConnected }">
 	<comp:issues-tab btEntityUrl="${ btEntityUrl }" />

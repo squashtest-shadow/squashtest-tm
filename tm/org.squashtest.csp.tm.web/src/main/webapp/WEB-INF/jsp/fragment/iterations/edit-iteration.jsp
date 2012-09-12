@@ -260,7 +260,7 @@
 	<div class="toolbar-button-panel">
 		<c:if test="${ executable && iteration.project.testAutomationEnabled }">
 			<comp:execute-auto-button url="${ iterationUrl }" testPlanTableId="test-plans-table"/>
-			<comp:automated-suite-overview-popup />
+		
 		</c:if>
 		<c:if test="${ writable }">
 			<input type="button"
@@ -584,7 +584,11 @@
 		</comp:popup>
 	</c:if>
 </div>
-
+<%------------------------------------------automated suite overview --------------------------------------------%>
+<c:if test="${ executable && iteration.project.testAutomationEnabled }">		
+	<comp:automated-suite-overview-popup />
+	</c:if>
+	<%------------------------------------------/automated suite overview --------------------------------------------%>
 <%------------------------------ bugs section -------------------------------%>
 <c:if test="${iteration.project.bugtrackerConnected }">
 	<comp:issues-tab btEntityUrl="${ btEntityUrl }" />
