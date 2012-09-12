@@ -44,30 +44,19 @@
 				url : "${automatedSuitesUrl}/"+automatedSuiteId+"/executions", 
 				dataType : "json"
 			}).done(
-				function(executions){
-					var completed = true;					
-					var executionInfos = "";
+				function(updateInfos){
+					var executions = updateInfos.executions;
+					
 					for(i=0;i<executions.length;i++){
 						var execution = executions[i];
-						if(execution.status != "Success") {
-							completed = false;
-						}
-						executionInfos+="<div id='execution-info-"+ execution.id
-						+"'"
-						+" class='display-table-row' >"
-						+"<div class='executionName display-table-cell' >"
-						+ execution.name
-						+"</div>"
+						var execInfo = $("#execution-info-"+execution.id);
+						var execStatus = execInfo.find(".executionStatus");
+						execStatus.text(execution.localizedStatus);
+						execStatus.attr("status", execution.status);
 						
-						+"<div class='"
-						+ execution.status
-						+" executionStatus display-table-cell' >"
-						+ execution.localizedStatus
-						+"</div>"
-						+"</div>";
 					}
 					$("#executions-auto-infos").html(executionInfos);
-					if(completed == true) {
+					if(true) {
 						clearInterval(autoUpdate);
 					}
 			});
@@ -99,13 +88,19 @@
 				"id" : "execute-auto",
 				"testPlanItemsIds" : ids
 			}
-		}).done(function(executions) {
-			var id = 3;
-			initiateProgressBar(executions);
-			openOverviewDialog(executions);
+		}).done(function(suiteView) {
+			if(suiteView.executions.length == 0){
+				$.squash
+				.openMessage("<f:message key='popup.title.Info' />",
+						"<f:message	key='dialog.execution.auto.overview.error.none'/>");
+			}else{
+			initiateProgressBar(suiteView);
+			openOverviewDialog(suiteView);
+			}
 		});
 	}
-	function initiateProgressBar(executions) {
+	function initiateProgressBar(suiteView) {
+		var executions = suiteView.executions;
 		var progress = 0;
 		$("#execution-auto-progress-bar").progressbar({
 			value : 0
@@ -113,7 +108,8 @@
 		$("#execution-auto-progress-amount").text("0/"+executions.length);
 		//TODO refresh progress bar with new infos 
 	}
-	function openOverviewDialog(executions) {
+	function openOverviewDialog(suiteView) {
+		var executions = suiteView.executions;
 		var template = $("#execution-info-template").html();
 		var executionInfos = "";
 		for (i = 0; i < executions.length; i++) {
@@ -127,9 +123,10 @@
 					+ execution.name
 					+ "</div>"
 
-					+ "<div class='"
-				+ execution.status
-				+" executionStatus display-table-cell' >"
+					+ "<div class='executionStatus display-table-cell'" 
+					+ " status='"
+					+ execution.status
+					+ "'>"
 					+ execution.localizedStatus + "</div>"
 
 					+ "</div>";
@@ -142,8 +139,8 @@
 	}
 </script>
 
-<div id="execution-info-template" style="display: none">
-	<div class="display-table-row execution-info">
+<div id="execution-info-template" style="display: hidden">
+	<div id="execution-info" class="display-table-row">
 		<div class="executionName display-table-cell"></div>
 		<div class="executionStatus display-table-cell"></div>
 	</div>
