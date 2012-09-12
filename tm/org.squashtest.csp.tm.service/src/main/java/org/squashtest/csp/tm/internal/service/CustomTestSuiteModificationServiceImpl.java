@@ -20,7 +20,6 @@
  */
 package org.squashtest.csp.tm.internal.service;
 
-import java.util.Collection;
 import java.util.List;
 
 import javax.inject.Inject;
@@ -28,11 +27,16 @@ import javax.inject.Inject;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.stereotype.Service;
 import org.squashtest.csp.tm.domain.DuplicateNameException;
+import org.squashtest.csp.tm.domain.TestPlanItemNotExecutableException;
 import org.squashtest.csp.tm.domain.campaign.IterationTestPlanItem;
 import org.squashtest.csp.tm.domain.campaign.TestSuite;
 import org.squashtest.csp.tm.domain.campaign.TestSuiteStatistics;
+import org.squashtest.csp.tm.domain.execution.Execution;
 import org.squashtest.csp.tm.domain.testautomation.AutomatedSuite;
+import org.squashtest.csp.tm.internal.repository.AutomatedSuiteDao;
+import org.squashtest.csp.tm.internal.repository.ExecutionDao;
 import org.squashtest.csp.tm.internal.repository.TestSuiteDao;
+import org.squashtest.csp.tm.internal.testautomation.service.InsecureTestAutomationManagementService;
 import org.squashtest.csp.tm.service.CustomTestSuiteModificationService;
 import org.squashtest.tm.core.foundation.collection.PagedCollectionHolder;
 import org.squashtest.tm.core.foundation.collection.Paging;
@@ -44,8 +48,17 @@ public class CustomTestSuiteModificationServiceImpl implements CustomTestSuiteMo
 	@Inject
 	private TestSuiteDao testSuiteDao;
 	
+	@Inject
+	private AutomatedSuiteDao autoSuiteDao;
 	
+	@Inject
+	private InsecureTestAutomationManagementService automationService;
 	
+	@Inject
+	private TestCaseCyclicCallChecker testCaseCyclicCallChecker;
+
+	@Inject
+	private ExecutionDao executionDao;
 	
 
 	@Override
@@ -113,5 +126,41 @@ public class CustomTestSuiteModificationServiceImpl implements CustomTestSuiteMo
 		suite.reorderTestPlan(newIndex, items);
 	}
 
+	@Override	
+	@PreAuthorize("hasPermission(#suiteId, 'org.squashtest.csp.tm.domain.campaign.TestSuite', 'EXECUTE') "
+			+ "or hasRole('ROLE_ADMIN')")
+	public AutomatedSuite createAndExecuteAutomatedSuite(long suiteId) {
+				
+		TestSuite testSuite = testSuiteDao.findById(suiteId);
+		AutomatedSuite newSuite = autoSuiteDao.createNewSuite();
+		
+		List<IterationTestPlanItem> items = testSuite.getTestPlan();
+		
+		for (IterationTestPlanItem item : items){
+			if (item.isAutomated()){
+				Execution exec = addAutomatedExecution(item);
+				newSuite.addExtender(exec.getAutomatedExecutionExtender());
+			}
+			
+		}
+
+		automationService.startAutomatedSuite(newSuite);
+		
+		return newSuite;
+		
+		
+	}
+	
+	//TODO merge code with IterationModificationService.addAutomatedExecution
+	private Execution addAutomatedExecution(IterationTestPlanItem item) throws TestPlanItemNotExecutableException {
+		
+		Execution execution = item.createAutomatedExecution(testCaseCyclicCallChecker);
+		
+		executionDao.persist(execution);
+		item.addExecution(execution);
+		
+		return execution;
+		
+	}
 	
 }

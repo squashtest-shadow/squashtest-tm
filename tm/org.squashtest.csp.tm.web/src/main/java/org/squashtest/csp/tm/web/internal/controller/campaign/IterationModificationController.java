@@ -52,6 +52,8 @@ import org.squashtest.csp.tm.domain.campaign.TestSuite;
 import org.squashtest.csp.tm.domain.execution.Execution;
 import org.squashtest.csp.tm.domain.execution.ExecutionStatus;
 import org.squashtest.csp.tm.domain.project.Project;
+import org.squashtest.csp.tm.domain.testautomation.AutomatedSuite;
+import org.squashtest.csp.tm.domain.testautomation.AutomatedSuite;
 import org.squashtest.csp.tm.domain.testcase.TestCase;
 import org.squashtest.csp.tm.domain.testcase.TestCaseExecutionMode;
 import org.squashtest.csp.tm.domain.testcase.TestCaseImportance;
@@ -61,6 +63,7 @@ import org.squashtest.csp.tm.infrastructure.filter.FilteredCollectionHolder;
 import org.squashtest.csp.tm.service.IterationModificationService;
 import org.squashtest.csp.tm.service.IterationTestPlanFinder;
 import org.squashtest.csp.tm.web.internal.controller.execution.AutomatedExecutionViewUtils;
+import org.squashtest.csp.tm.web.internal.controller.execution.AutomatedExecutionViewUtils.AutomatedSuiteOverview;
 import org.squashtest.csp.tm.web.internal.i18n.InternationalizationHelper;
 import org.squashtest.csp.tm.web.internal.model.datatable.DataTableDrawParameters;
 import org.squashtest.csp.tm.web.internal.model.datatable.DataTableFilterSorter;
@@ -463,39 +466,22 @@ public class IterationModificationController {
 	/* ************** execute auto *********************************** */
 
 	@RequestMapping(method = RequestMethod.POST, params = { "id=execute-auto", "testPlanItemsIds[]" })
-	public @ResponseBody
-	String executeSelectionAuto(@PathVariable long iterationId, @RequestParam("testPlanItemsIds[]") List<Long> ids,
-			Locale locale) {
+	public @ResponseBody 
+	AutomatedSuiteOverview  executeSelectionAuto(@PathVariable long iterationId, @RequestParam("testPlanItemsIds[]") List<Long> ids , Locale locale){
+	
 
-		iterationModService.createAndExecuteAutomatedSuite(iterationId, ids);
-
-		/*********************************************************
-		 * //TODO : replace the following with something appropriate
-		 **********************************************************/
-
-		List<Execution> executions = null;
-		Iteration iteration = iterationModService.findById(iterationId);
-		executions = iteration.getExecutions();
+			AutomatedSuite suite = iterationModService.createAndExecuteAutomatedSuite(ids); 
 		LOGGER.debug("Iteration #" + iterationId + " : execute selected test plans");
-		// TODO executions = iterationModService.executeAutoSelected(iterationId);
-		return AutomatedExecutionViewUtils.buildExecInfo(executions, locale, messageSource);
+			return 	AutomatedExecutionViewUtils.buildExecInfo(suite, locale, messageSource);
 	}
 
 	@RequestMapping(method = RequestMethod.POST, params = { "id=execute-auto", "testPlanItemsIds" })
-	public @ResponseBody
-	String executeAllAuto(@PathVariable long iterationId, Locale locale) {
+	public @ResponseBody AutomatedSuiteOverview executeAllAuto(@PathVariable long iterationId, Locale locale ){
+
 
 		iterationModService.createAndExecuteAutomatedSuite(iterationId);
-
-		/*********************************************************
-		 * //TODO : replace the following with something appropriate
-		 **********************************************************/
-
-		List<Execution> executions = null;
-		Iteration iteration = iterationModService.findById(iterationId);
-		executions = iteration.getExecutions();
 		LOGGER.debug("Iteration #" + iterationId + " : execute all test plan auto");
-		return AutomatedExecutionViewUtils.buildExecInfo(executions, locale, messageSource);
+		return 	AutomatedExecutionViewUtils.buildExecInfo(suite, locale, messageSource);
 	}
 
 	/* ************** /execute auto *********************************** */

@@ -103,5 +103,14 @@ public interface CustomTestSuiteModificationService extends TestSuiteFinder{
 	void changeTestPlanPosition(Long testSuiteId, int newIndex, List<Long>itemIds);
 	
 
+	/**
+	 * Create an automated execution for every automated item test plan in the given test-suite, group them in an 
+	 * automated suite and tells the connector to process them.
+	 * 
+	 * @return an {@link AutomatedSuite}
+	 */
+	AutomatedSuite createAndExecuteAutomatedSuite(long id);
+	
+
 	
 }

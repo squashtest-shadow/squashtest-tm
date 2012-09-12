@@ -21,6 +21,7 @@
 package org.squashtest.csp.tm.web.internal.controller.execution;
 
 import java.util.ArrayList;
+import java.util.Collection;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Locale;
@@ -29,6 +30,9 @@ import java.util.Map;
 import org.springframework.context.MessageSource;
 import org.springframework.web.util.HtmlUtils;
 import org.squashtest.csp.tm.domain.execution.Execution;
+import org.squashtest.csp.tm.domain.execution.ExecutionStatus;
+import org.squashtest.csp.tm.domain.testautomation.AutomatedExecutionExtender;
+import org.squashtest.csp.tm.domain.testautomation.AutomatedSuite;
 import org.squashtest.csp.tm.web.internal.helper.JsonHelper;
 
 public class AutomatedExecutionViewUtils {
@@ -36,20 +40,96 @@ public class AutomatedExecutionViewUtils {
 
 	}
 
-	public static String buildExecInfo(List<Execution> executions, Locale locale, MessageSource messageSource) {
-		List<Map<String, Object>> executionInfos = new ArrayList<Map<String, Object>>(executions.size());
-		for (Execution execution : executions) {
-			Map<String, Object> infos = new HashMap<String, Object>(4);
-			infos.put("id", execution.getId());
-			infos.put("name", execution.getName());
-			infos.put("status", execution.getExecutionStatus());
-			String localisedMessage = messageSource.getMessage(execution.getExecutionStatus().getI18nKey(), null,
-					locale);
-			String htmlEscapedLocalizedMessage = HtmlUtils.htmlEscape(localisedMessage);
-			infos.put("localizedStatus", htmlEscapedLocalizedMessage);
-			executionInfos.add(infos);
+	public static AutomatedSuiteOverview buildExecInfo(AutomatedSuite suite, Locale locale, MessageSource messageSource) {
+		Collection<AutomatedExecutionExtender> executions = suite.getExecutionExtenders();
+		List<ExecutionAutoView> executionsViews = new ArrayList<ExecutionAutoView>(executions.size());
+		for (AutomatedExecutionExtender aee : executions) {
+			Execution execution = aee.getExecution();
+			String localisedStatus = messageSource
+					.getMessage(execution.getExecutionStatus().getI18nKey(), null, locale);
+
+			String htmlEscapedLocalizedStatus = HtmlUtils.htmlEscape(localisedStatus);
+			ExecutionAutoView execView = new ExecutionAutoView(execution.getId(), execution.getName(),
+					execution.getExecutionStatus(), htmlEscapedLocalizedStatus);
+			executionsViews.add(execView);
 		}
-		return JsonHelper.serialize(executionInfos);
+		return new AutomatedSuiteOverview(suite.getId(), executionsViews);
+
+	}
+
+	public static class AutomatedSuiteOverview {
+		private String suiteId;
+		private List<ExecutionAutoView> executions;
+
+		public AutomatedSuiteOverview(String suiteId, List<ExecutionAutoView> executions) {
+			this.suiteId = suiteId;
+			this.executions = executions;
+
+		}
+
+		public String getSuiteId() {
+			return suiteId;
+		}
+
+		public void setSuiteId(String suiteId) {
+			this.suiteId = suiteId;
+		}
+
+		public List<ExecutionAutoView> getExecutions() {
+			return executions;
+		}
+
+		public void setExecutions(List<ExecutionAutoView> executions) {
+			this.executions = executions;
+		}
+
+	}
+
+	public static class ExecutionAutoView {
+		private Long id;
+		private String name;
+		private ExecutionStatus status;
+		private String localizedStatus;
+
+		public ExecutionAutoView(Long id, String name, ExecutionStatus status, String localizedStatus) {
+			this.id = id;
+			this.name = name;
+			this.status = status;
+			this.localizedStatus = localizedStatus;
+		}
+
+		public Long getId() {
+			return id;
+		}
+
+		public void setId(Long id) {
+			this.id = id;
+		}
+
+		public String getName() {
+			return name;
+		}
+
+		public void setName(String name) {
+			this.name = name;
+		}
+
+		public ExecutionStatus getStatus() {
+			return status;
+		}
+
+		public void setStatus(ExecutionStatus status) {
+			this.status = status;
+		}
+
+		public String getLocalizedStatus() {
+			return localizedStatus;
+		}
+
+		public void setLocalizedStatus(String localizedStatus) {
+			this.localizedStatus = localizedStatus;
+		}
+
 	}
 
 }
