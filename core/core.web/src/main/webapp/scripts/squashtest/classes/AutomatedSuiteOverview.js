@@ -28,16 +28,17 @@ function AutomatedSuiteOverviewDialog(settings){
 	var self = this;
 	initialize();
 	var automatedSuiteBaseUrl = settings.automatedSuiteBaseUrl;
-		var executionRowTemplate = $("#execution-info-template .display-table-row");
-		
-		function initialize(){
-			self.popup.bind("dialogclose", function(event, ui) {
-				clearInterval(autoUpdate);
-				executionAutoInfos.empty();
-				$("#execution-auto-progress-bar").progressbar("value", 0);
-				$("#execution-auto-progress-amount").text(0 + "/" + 0);
-			});
-		}
+	var executionRowTemplate = $("#execution-info-template .display-table-row");
+	var executionAutoInfos = $("#executions-auto-infos");
+	
+	function initialize(){
+		self.popup.bind("dialogclose", function(event, ui) {
+			clearInterval(autoUpdate);
+			executionAutoInfos.empty();
+			$("#execution-auto-progress-bar").progressbar("value", 0);
+			$("#execution-auto-progress-amount").text(0 + "/" + 0);
+		});
+	}
 		
 	//---------------------------private -----------------------------------------
 		
@@ -72,8 +73,7 @@ function AutomatedSuiteOverviewDialog(settings){
 		
 		
 		function fillContent(suiteView){
-			var executionAutoInfos = $("#executions-auto-infos");
-			
+				
 			var executions = suiteView.executions;
 			
 			var template = executionRowTemplate.clone()
