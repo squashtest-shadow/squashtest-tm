@@ -36,17 +36,16 @@
 <script type="text/javascript">
 		
 		var autoUpdate;
-		var automatedSuiteId = "fails";
 		
 		function updateExecutionInfo() {
+			var suiteId = $("#executions-auto-infos").attr('suiteId');
 			$.ajax({
 				type : 'GET', 
-				url : "${automatedSuitesUrl}/"+automatedSuiteId+"/executions", 
+				url : "${automatedSuitesUrl}/"+suiteId+"/executions", 
 				dataType : "json"
 			}).done(
-				function(updateInfos){
-					var executions = updateInfos.executions;
-					
+				function(suiteView){
+					var executions = suiteView.executions;
 					for(i=0;i<executions.length;i++){
 						var execution = executions[i];
 						var execInfo = $("#execution-info-"+execution.id);
@@ -55,8 +54,8 @@
 						execStatus.attr("status", execution.status);
 						
 					}
-					$("#executions-auto-infos").html(executionInfos);
-					if(true) {
+					updateProgress(suiteView)
+					if(suiteView.percentage == 100) {
 						clearInterval(autoUpdate);
 					}
 			});
@@ -94,21 +93,21 @@
 				.openMessage("<f:message key='popup.title.Info' />",
 						"<f:message	key='dialog.execution.auto.overview.error.none'/>");
 			}else{
-			initiateProgressBar(suiteView);
+			updateProgress(suiteView);
 			openOverviewDialog(suiteView);
 			}
 		});
 	}
-	function initiateProgressBar(suiteView) {
+	function updateProgress(suiteView) {
 		var executions = suiteView.executions;
-		var progress = 0;
-		$("#execution-auto-progress-bar").progressbar({
-			value : 0
-		});
-		$("#execution-auto-progress-amount").text("0/"+executions.length);
-		//TODO refresh progress bar with new infos 
+		var progress = suiteView.percentage;
+		var executionTerminated = progress/100*executions.length
+		$("#execution-auto-progress-bar").progressbar("value", progress);
+		$("#execution-auto-progress-amount").text(executionTerminated+"/"+executions.length);
 	}
 	function openOverviewDialog(suiteView) {
+		var executionAutoInfos = $("#executions-auto-infos");
+		executionAutoInfos.attr('suiteId', suiteView.suiteId);
 		var executions = suiteView.executions;
 		var template = $("#execution-info-template").html();
 		var executionInfos = "";
@@ -131,11 +130,13 @@
 
 					+ "</div>";
 		}
-		$("#executions-auto-infos").html(executionInfos);
+		executionAutoInfos.html(executionInfos);
 		$("#execute-auto-dialog").dialog('open');
+		if(suiteView.percentage < 100)
 			autoUpdate = setInterval(function() {
 					updateExecutionInfo();
-					}, 1000);	
+					}, 2000);
+		}
 	}
 </script>
 
@@ -158,11 +159,9 @@
 	<div id="execute-auto" style="display: none">
 		<ul>
 			<li><a class="execute-all" href="javascript:void(0)"><f:message
-						key="iteration.suite.execution.auto.all.label" /> </a>
-			</li>
+						key="iteration.suite.execution.auto.all.label" /> </a></li>
 			<li><a class="execute-selection" href="javascript:void(0)"><f:message
-						key='iteration.suite.execution.auto.selection.label' /> </a>
-			</li>
+						key='iteration.suite.execution.auto.selection.label' /> </a></li>
 		</ul>
 	</div>
 
@@ -204,18 +203,27 @@
 			</jsp:attribute>
 	<jsp:attribute name="body">
 			<div>
-				<div style="max-height: 200px; width: 100%; overflow-y: auto" id="executions-auto-infos" class="display-table">
+				<div style="max-height: 200px; width: 100%; overflow-y: auto"
+				id="executions-auto-infos" suiteId="0" class="display-table">
 				</div>
-				<div id="execution-auto-progress" style="width:60%; margin:auto; margin-top:40px">
-					<div style="width:70%; display:inline-block;vertical-align:middle">
-					<div id="execution-auto-progress-bar"></div></div>
-	 				<div id="execution-auto-progress-amount" style="width:20%;display:inline-block"></div>
+				<div id="execution-auto-progress"
+				style="width: 60%; margin: auto; margin-top: 40px">
+					<div
+					style="width: 70%; display: inline-block; vertical-align: middle">
+					<div id="execution-auto-progress-bar"></div>
+				</div>
+	 				<div id="execution-auto-progress-amount"
+					style="width: 20%; display: inline-block"></div>
 				</div>
 				<div class="popup-notification">
 				<f:message key="dialog.execute-auto.close.note" />
 				</div>
 				</div>
-				
+				<script>
+				$("#execution-auto-progress-bar").progressbar({
+					value : 0
+				});
+				</script>
 				
 			</jsp:attribute>
 </pop:popup>

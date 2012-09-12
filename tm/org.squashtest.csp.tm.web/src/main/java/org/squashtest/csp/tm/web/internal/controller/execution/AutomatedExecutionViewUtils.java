@@ -43,27 +43,39 @@ public class AutomatedExecutionViewUtils {
 	public static AutomatedSuiteOverview buildExecInfo(AutomatedSuite suite, Locale locale, MessageSource messageSource) {
 		Collection<AutomatedExecutionExtender> executions = suite.getExecutionExtenders();
 		List<ExecutionAutoView> executionsViews = new ArrayList<ExecutionAutoView>(executions.size());
+		int totalExec = executions.size();
+		int totalTerminated = 0;
 		for (AutomatedExecutionExtender aee : executions) {
 			Execution execution = aee.getExecution();
-			String localisedStatus = messageSource
-					.getMessage(execution.getExecutionStatus().getI18nKey(), null, locale);
-
-			String htmlEscapedLocalizedStatus = HtmlUtils.htmlEscape(localisedStatus);
-			ExecutionAutoView execView = new ExecutionAutoView(execution.getId(), execution.getName(),
-					execution.getExecutionStatus(), htmlEscapedLocalizedStatus);
+			if(execution.getExecutionStatus().isTerminatedStatus()){
+				totalTerminated ++;
+			}
+			ExecutionAutoView execView = translateExecutionInView(execution, locale, messageSource);
 			executionsViews.add(execView);
 		}
-		return new AutomatedSuiteOverview(suite.getId(), executionsViews);
+		int percentage = totalTerminated/totalExec*100;
+		return new AutomatedSuiteOverview(percentage, suite.getId(), executionsViews);
 
+	}
+
+	public static ExecutionAutoView translateExecutionInView(Execution execution, Locale locale,
+			MessageSource messageSource) {
+		String localisedStatus = messageSource.getMessage(execution.getExecutionStatus().getI18nKey(), null, locale);
+		String htmlEscapedLocalizedStatus = HtmlUtils.htmlEscape(localisedStatus);
+		ExecutionAutoView execView = new ExecutionAutoView(execution.getId(), execution.getName(),
+				execution.getExecutionStatus(), htmlEscapedLocalizedStatus);
+		return execView;
 	}
 
 	public static class AutomatedSuiteOverview {
 		private String suiteId;
 		private List<ExecutionAutoView> executions;
+		private int percentage = 0;
 
-		public AutomatedSuiteOverview(String suiteId, List<ExecutionAutoView> executions) {
+		public AutomatedSuiteOverview(int percentage, String suiteId, List<ExecutionAutoView> executions) {
 			this.suiteId = suiteId;
 			this.executions = executions;
+			this.percentage = percentage;
 
 		}
 
@@ -82,6 +94,16 @@ public class AutomatedExecutionViewUtils {
 		public void setExecutions(List<ExecutionAutoView> executions) {
 			this.executions = executions;
 		}
+
+		public int getPercentage() {
+			return percentage;
+		}
+
+		public void setPercentage(int percentage) {
+			this.percentage = percentage;
+		}
+		
+		
 
 	}
 

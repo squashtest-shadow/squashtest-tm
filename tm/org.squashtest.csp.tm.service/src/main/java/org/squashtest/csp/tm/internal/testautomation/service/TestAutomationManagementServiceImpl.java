@@ -347,4 +347,10 @@ public class TestAutomationManagementServiceImpl implements  InsecureTestAutomat
 		
 	}
 
+	@Override
+	public AutomatedSuite findAutomatedTestSuiteById(String suiteId) {
+		LOGGER.trace("Find AutomatedSuite by Id = "+suiteId);
+		return automatedSuiteDao.findById(suiteId);
+	}
+
 }

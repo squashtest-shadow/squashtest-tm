@@ -25,6 +25,7 @@ import java.util.Collection;
 import java.util.List;
 
 import org.squashtest.csp.tm.domain.execution.Execution;
+import org.squashtest.csp.tm.domain.testautomation.AutomatedSuite;
 import org.squashtest.csp.tm.domain.testautomation.TestAutomationProject;
 import org.squashtest.csp.tm.domain.testautomation.TestAutomationServer;
 import org.squashtest.csp.tm.domain.testautomation.AutomatedTest;
@@ -77,4 +78,7 @@ public interface TestAutomationFinderService {
 	 * @return
 	 */
 	List<Execution> findExecutionsByAutomatedTestSuiteId(String automatedTestSuiteId);
+
+	AutomatedSuite findAutomatedTestSuiteById(String suiteId);
+
 }

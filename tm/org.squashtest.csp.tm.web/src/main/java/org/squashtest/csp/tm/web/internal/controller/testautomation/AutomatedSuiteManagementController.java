@@ -20,45 +20,42 @@
  */
 package org.squashtest.csp.tm.web.internal.controller.testautomation;
 
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
 import java.util.Locale;
-import java.util.Map;
 
+import javax.inject.Inject;
+
+import org.springframework.context.MessageSource;
+import org.springframework.osgi.extensions.annotation.ServiceReference;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
-import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
-import org.squashtest.csp.tm.web.internal.helper.JsonHelper;
+import org.squashtest.csp.tm.domain.testautomation.AutomatedSuite;
+import org.squashtest.csp.tm.service.TestAutomationFinderService;
+import org.squashtest.csp.tm.web.internal.controller.execution.AutomatedExecutionViewUtils;
+import org.squashtest.csp.tm.web.internal.controller.execution.AutomatedExecutionViewUtils.AutomatedSuiteOverview;
 
 @Controller
 @RequestMapping("/automated-suites/{suiteId}")
 public class AutomatedSuiteManagementController {
 
-	//MOCK
-	@RequestMapping(value = "/executions", method = RequestMethod.GET)
-	public @ResponseBody String updateExecutionInfo(@PathVariable String suiteId, Locale locale) {
-		List<Map<String, Object>> executionInfo = new ArrayList<Map<String, Object>>();
-		//TODO GET REAL INFO
-		for(int i=0; i<2; i++)
-		{
-			Map<String, Object> infos = new HashMap<String, Object>(4);
-			infos.put("id", "1");		
-			infos.put("name", "Test1");
-			if(suiteId == "fails") {
-				infos.put("status", "Failure");
-				infos.put("localizedStatus", "Failure");
-			}
-			else {
-				infos.put("status", "Success");
-				infos.put("localizedStatus", "Success");				
-			}
-			executionInfo.add(infos);
-		}
-
-		return JsonHelper.serialize(executionInfo);
+	@Inject
+	private MessageSource messageSource;
+	
+	private TestAutomationFinderService testAutomationManagementService;
+	
+	@ServiceReference
+	public void setTestAutomationManagementService(TestAutomationFinderService testAutomationManagementService) {
+		this.testAutomationManagementService = testAutomationManagementService;
 	}
+	
+	@RequestMapping(value = "/executions", method = RequestMethod.GET)
+	public @ResponseBody AutomatedSuiteOverview updateExecutionInfo(@PathVariable String suiteId, Locale locale) {
+		AutomatedSuite suite = testAutomationManagementService.findAutomatedTestSuiteById(suiteId);
+		return AutomatedExecutionViewUtils.buildExecInfo(suite, locale, messageSource);
+	}
+	
+	
+
 }
