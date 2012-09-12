@@ -21,33 +21,32 @@
 package org.squashtest.csp.tm.testautomation.model;
 
 import java.util.Collection;
+import java.util.Collections;
 
 import org.squashtest.csp.tm.domain.testautomation.TestAutomationProject;
 import org.squashtest.csp.tm.domain.testautomation.AutomatedTest;
 
-
 public class TestAutomationProjectContent {
 
 	private TestAutomationProject project;
-	
-	private Collection<AutomatedTest> tests;
+
+	private Collection<AutomatedTest> tests = Collections.emptyList();
 
 	private Exception knownProblem = null;
-	
-	
+
 	public TestAutomationProject getProject() {
 		return project;
 	}
-	
+
 	public Collection<AutomatedTest> getTests() {
 		return tests;
 	}
-	
+
 	public Exception getKnownProblem() {
 		return knownProblem;
 	}
-	
-	public boolean hadKnownProblems(){
+
+	public boolean hadKnownProblems() {
 		return knownProblem != null;
 	}
 
@@ -55,19 +54,16 @@ public class TestAutomationProjectContent {
 		this.knownProblem = knownProblem;
 	}
 
-	public TestAutomationProjectContent(TestAutomationProject project,
-			Collection<AutomatedTest> tests) {
+	public TestAutomationProjectContent(TestAutomationProject project, Collection<AutomatedTest> tests) {
 		super();
 		this.project = project;
 		this.tests = tests;
 	}
 
-	
-	public TestAutomationProjectContent(TestAutomationProject project, Exception knownProblem){
+	public TestAutomationProjectContent(TestAutomationProject project, Exception knownProblem) {
 		super();
 		this.project = project;
 		this.knownProblem = knownProblem;
 	}
-	
-	
+
 }
