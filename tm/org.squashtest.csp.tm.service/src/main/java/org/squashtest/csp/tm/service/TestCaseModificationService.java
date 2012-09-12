@@ -33,6 +33,7 @@ public interface TestCaseModificationService extends CustomTestCaseModificationS
 	@PreAuthorize("hasPermission(#arg0, 'org.squashtest.csp.tm.domain.testcase.TestCase' , 'SMALL_EDIT') or hasRole('ROLE_ADMIN')")
 	void changeReference(long testCaseId, String reference);
 	
+	@Deprecated
 	@PreAuthorize("hasPermission(#arg0, 'org.squashtest.csp.tm.domain.testcase.TestCase' , 'WRITE') or hasRole('ROLE_ADMIN')")
 	void changeExecutionMode(long testCaseId, TestCaseExecutionMode mode);
 

@@ -56,6 +56,7 @@ import org.squashtest.csp.tm.domain.library.HasExecutionStatus;
 import org.squashtest.csp.tm.domain.project.Project;
 import org.squashtest.csp.tm.domain.testautomation.AutomatedExecutionExtender;
 import org.squashtest.csp.tm.domain.testcase.TestCase;
+import org.squashtest.csp.tm.domain.testcase.TestCaseExecutionMode;
 import org.squashtest.csp.tm.domain.users.User;
 import org.squashtest.csp.tm.internal.service.TestCaseCyclicCallChecker;
 
@@ -384,6 +385,12 @@ public class IterationTestPlanItem implements HasExecutionStatus , Identified{
 			return executions.get(executions.size() - 1);
 		}
 		return null;
+	}
+	
+	public TestCaseExecutionMode getExecutionMode() {
+		Execution latest = getLatestExecution();
+		
+		return latest == null ? TestCaseExecutionMode.UNDEFINED : latest.getExecutionMode();
 	}
 
 }

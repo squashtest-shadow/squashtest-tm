@@ -464,7 +464,6 @@ public class Execution implements AttachmentHolder, IssueDetector, Identified, H
 		throw new NotAutomatedException();
 	}
 
-	
 	public URL getResultURL(){
 		if ( isAutomated()){
 			return automatedExecutionExtender.getResultURL();
@@ -485,6 +484,5 @@ public class Execution implements AttachmentHolder, IssueDetector, Identified, H
 		}
 		throw new NotAutomatedException();		
 	}
-	
 	
 }

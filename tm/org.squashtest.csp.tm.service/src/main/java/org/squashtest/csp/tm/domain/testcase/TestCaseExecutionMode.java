@@ -24,7 +24,8 @@ import org.squashtest.tm.core.foundation.i18n.Internationalizable;
 
 public enum TestCaseExecutionMode implements Internationalizable {
 	AUTOMATED,
-	MANUAL;
+	MANUAL,
+	UNDEFINED;
 
 	private static final String I18N_KEY_ROOT = "test-case.execution-mode.";
 

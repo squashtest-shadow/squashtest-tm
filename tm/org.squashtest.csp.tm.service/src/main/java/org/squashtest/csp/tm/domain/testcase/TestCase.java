@@ -146,10 +146,21 @@ public class TestCase extends TestCaseLibraryNode implements AttachmentHolder {
 		return prerequisite;
 	}
 
+	/**
+	 * @see #isAutomated()
+	 * @param exectionMode
+	 * @deprecated not set anymore in app
+	 */
+	@Deprecated
 	public void setExecutionMode(TestCaseExecutionMode exectionMode) {
 		this.executionMode = exectionMode;
 	}
 
+	/**
+	 * @see TestCase#isAutomated()
+	 * @return
+	 * TODO either replaced by isAutomated or should be synchronized with isAutomated
+	 */
 	public TestCaseExecutionMode getExecutionMode() {
 		return executionMode;
 	}

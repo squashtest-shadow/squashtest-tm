@@ -22,7 +22,6 @@ package org.squashtest.csp.tm.web.internal.controller.campaign;
 
 import static org.squashtest.csp.tm.web.internal.helper.JEditablePostParams.VALUE;
 
-import java.text.SimpleDateFormat;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
@@ -34,7 +33,6 @@ import javax.servlet.http.HttpServletResponse;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.springframework.context.MessageSource;
 import org.springframework.osgi.extensions.annotation.ServiceReference;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -60,6 +58,7 @@ import org.squashtest.csp.tm.service.IterationTestPlanFinder;
 import org.squashtest.csp.tm.service.TestSuiteModificationService;
 import org.squashtest.csp.tm.web.internal.controller.execution.AutomatedExecutionViewUtils;
 import org.squashtest.csp.tm.web.internal.controller.execution.AutomatedExecutionViewUtils.AutomatedSuiteOverview;
+import org.squashtest.csp.tm.web.internal.i18n.InternationalizationHelper;
 import org.squashtest.csp.tm.web.internal.model.datatable.DataTableDrawParameters;
 import org.squashtest.csp.tm.web.internal.model.datatable.DataTableMapperPagingAndSortingAdapter;
 import org.squashtest.csp.tm.web.internal.model.datatable.DataTableModel;
@@ -102,7 +101,7 @@ public class TestSuiteModificationController {
 	}
 
 	@Inject
-	private MessageSource messageSource;
+	private InternationalizationHelper messageSource;
 	
 	private final DataTableMapper testPlanMapper = new DataTableMapper("unused", IterationTestPlanItem.class,
 			TestCase.class, Project.class, TestSuite.class).initMapping(11)
@@ -285,20 +284,18 @@ public class TestSuiteModificationController {
 
 				String projectName;
 				String testCaseName;
-				String testCaseExecutionMode;
+				final String testCaseExecutionMode = messageSource.internationalize(item.getExecutionMode(), locale);
 				String importance;
-				String automationMode = item.isAutomated() ? "A" : "M";
+				final String automationMode = item.isAutomated() ? "A" : "M";
 
 				if (item.isTestCaseDeleted()) {
 					projectName = formatNoData(locale);
 					testCaseName = formatDeleted(locale);
 					importance = formatNoData(locale);
-					testCaseExecutionMode = formatNoData(locale);
 				} else {
 					projectName = item.getReferencedTestCase().getProject().getName();
 					testCaseName = item.getReferencedTestCase().getName();
-					importance = formatImportance(item.getReferencedTestCase().getImportance(), locale);
-					testCaseExecutionMode = formatExecutionMode(item.getReferencedTestCase().getExecutionMode(), locale);
+					importance = messageSource.internationalize(item.getReferencedTestCase().getImportance(), locale);
 				}
 
 				return new Object[] { item.getId(), 
@@ -308,12 +305,11 @@ public class TestSuiteModificationController {
 						testCaseName,
 						importance,
 						testCaseExecutionMode, 
-						formatStatus(item.getExecutionStatus(), locale),
+						messageSource.internationalize(item.getExecutionStatus(), locale),
 						formatString(item.getLastExecutedBy(), locale), 
-						formatDate(item.getLastExecutedOn(), locale),
+						messageSource.localizeDate(item.getLastExecutedOn(), locale),
 						item.isTestCaseDeleted(), 
 						" "
-
 				};
 			}
 		}.buildDataModel(holder, params.getsEcho());
@@ -334,13 +330,12 @@ public class TestSuiteModificationController {
 		
 	}
 	
-	
 	@RequestMapping(method = RequestMethod.POST, params= {"id=execute-auto", "testPlanItemsIds"} )
 	public @ResponseBody AutomatedSuiteOverview executeAllAuto(@PathVariable long id, Locale locale ){
 		AutomatedSuite suite = service.createAndExecuteAutomatedSuite(id);
 		LOGGER.debug("Test-Suite #"+id+" : execute all test plan auto");
 		return 	AutomatedExecutionViewUtils.buildExecInfo(suite, locale, messageSource);
-		
+
 	}
 	
 /* ************** /execute auto *********************************** */
@@ -355,34 +350,11 @@ public class TestSuiteModificationController {
 		}
 	}
 
-	private String formatDate(Date date, Locale locale) {
-		try {
-			String format = messageSource.getMessage("squashtm.dateformat", null, locale);
-			return new SimpleDateFormat(format).format(date);
-		} catch (Exception anyException) {
-			return formatNoData(locale);
-		}
-
-	}
-
 	private String formatNoData(Locale locale) {
-		return messageSource.getMessage("squashtm.nodata", null, locale);
+		return messageSource.internationalize("squashtm.nodata",locale);
 	}
 
 	private String formatDeleted(Locale locale) {
-		return messageSource.getMessage("squashtm.itemdeleted", null, locale);
+		return messageSource.internationalize("squashtm.itemdeleted",locale);
 	}
-
-	private String formatExecutionMode(TestCaseExecutionMode mode, Locale locale) {
-		return messageSource.getMessage(mode.getI18nKey(), null, locale);
-	}
-
-	private String formatStatus(ExecutionStatus status, Locale locale) {
-		return messageSource.getMessage(status.getI18nKey(), null, locale);
-	}
-	
-	private String formatImportance(TestCaseImportance importance, Locale locale) {
-		return messageSource.getMessage(importance.getI18nKey(), null, locale);
-	}
-	
 }

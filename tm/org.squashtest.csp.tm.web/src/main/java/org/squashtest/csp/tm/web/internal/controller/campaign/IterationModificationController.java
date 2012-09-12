@@ -53,7 +53,6 @@ import org.squashtest.csp.tm.domain.execution.Execution;
 import org.squashtest.csp.tm.domain.execution.ExecutionStatus;
 import org.squashtest.csp.tm.domain.project.Project;
 import org.squashtest.csp.tm.domain.testautomation.AutomatedSuite;
-import org.squashtest.csp.tm.domain.testautomation.AutomatedSuite;
 import org.squashtest.csp.tm.domain.testcase.TestCase;
 import org.squashtest.csp.tm.domain.testcase.TestCaseExecutionMode;
 import org.squashtest.csp.tm.domain.testcase.TestCaseImportance;
@@ -384,8 +383,8 @@ public class IterationModificationController {
 				String projectName;
 				String testCaseName;
 				String importance;
-				String testCaseExecutionMode;
-				String automationMode = item.isAutomated() ? "A" : "M";
+				final String latestExecutionMode = messageSource.internationalize(item.getExecutionMode(), locale);
+				final String automationMode = item.isAutomated() ? "A" : "M";
 
 				String testSuiteName;
 				Long assignedId = (item.getUser() != null) ? item.getUser().getId() : User.NO_USER_ID;
@@ -393,14 +392,11 @@ public class IterationModificationController {
 				if (item.isTestCaseDeleted()) {
 					projectName = formatNoData(locale);
 					testCaseName = formatDeleted(locale);
-					testCaseExecutionMode = formatNoData(locale);
 					importance = formatNoData(locale);
 				} else {
 					projectName = item.getReferencedTestCase().getProject().getName();
 					testCaseName = item.getReferencedTestCase().getName();
 					importance = messageSource.internationalize(item.getReferencedTestCase().getImportance(), locale);
-					testCaseExecutionMode = messageSource.internationalize(item.getReferencedTestCase()
-							.getExecutionMode(), locale);
 				}
 
 				if (item.getTestSuite() == null) {
@@ -414,7 +410,7 @@ public class IterationModificationController {
 				res.put("project-name", projectName);
 				res.put("tc-name", testCaseName);
 				res.put("importance", importance);
-				res.put("type", testCaseExecutionMode);
+				res.put("type", latestExecutionMode);
 				res.put("suite", testSuiteName);
 				res.put("status", messageSource.internationalize(item.getExecutionStatus(), locale));
 				res.put("last-exec-by", formatString(item.getLastExecutedBy(), locale));
