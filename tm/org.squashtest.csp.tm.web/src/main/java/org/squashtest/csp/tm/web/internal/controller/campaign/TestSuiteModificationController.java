@@ -102,14 +102,14 @@ public class TestSuiteModificationController {
 	private MessageSource messageSource;
 	
 	private final DataTableMapper testPlanMapper = new DataTableMapper("unused", IterationTestPlanItem.class,
-			TestCase.class, Project.class, TestSuite.class).initMapping(10)
-			.mapAttribute(Project.class, 2, NAME, String.class)
-			.mapAttribute(TestCase.class, 3, NAME, String.class)
-			.mapAttribute(TestCase.class, 4, "importance", TestCaseImportance.class)			
-			.mapAttribute(TestCase.class, 5, "executionMode", TestCaseExecutionMode.class)
-			.mapAttribute(IterationTestPlanItem.class, 6, "executionStatus", ExecutionStatus.class)
-			.mapAttribute(IterationTestPlanItem.class, 7, "lastExecutedBy", String.class)
-			.mapAttribute(IterationTestPlanItem.class, 8, "lastExecutedOn", Date.class);
+			TestCase.class, Project.class, TestSuite.class).initMapping(11)
+			.mapAttribute(Project.class, 3, NAME, String.class)
+			.mapAttribute(TestCase.class, 4, NAME, String.class)
+			.mapAttribute(TestCase.class, 5, "importance", TestCaseImportance.class)			
+			.mapAttribute(TestCase.class, 6, "executionMode", TestCaseExecutionMode.class)
+			.mapAttribute(IterationTestPlanItem.class, 7, "executionStatus", ExecutionStatus.class)
+			.mapAttribute(IterationTestPlanItem.class, 8, "lastExecutedBy", String.class)
+			.mapAttribute(IterationTestPlanItem.class, 9, "lastExecutedOn", Date.class);
 	
 	// will return the fragment only
 	@RequestMapping(method = RequestMethod.GET)
@@ -249,7 +249,7 @@ public class TestSuiteModificationController {
 	}
 	
 	@RequestMapping(value = "{iterationId}/test-case-executions/{testPlanId}", method = RequestMethod.GET)
-	public ModelAndView getExecutionsForTestPlan(@PathVariable Long id, @PathVariable Long iterationId, @PathVariable Long testPlanId) {
+	public ModelAndView getExecutionsForTestPlan(@PathVariable long id, @PathVariable long iterationId, @PathVariable long testPlanId) {
 		TestSuite testSuite = service.findById(id);
 		List<Execution> executionList = iterationModService.findExecutionsByTestPlan(iterationId, testPlanId);
 		// get the iteraction to check access rights
@@ -264,13 +264,14 @@ public class TestSuiteModificationController {
 		mav.addObject("iterationId", iterationId);
 		mav.addObject("executions", executionList);
 		mav.addObject("testSuite", testSuite);
+		
 		return mav;
 
 	}
 	
 	@RequestMapping(value = "/test-plan/table", params = "sEcho")
 	public @ResponseBody
-	DataTableModel getTestPlanModel(@PathVariable Long id, final DataTableDrawParameters params,
+	DataTableModel getTestPlanModel(@PathVariable long id, final DataTableDrawParameters params,
 			final Locale locale) {
 
 		Paging paging = new DataTableMapperPagingAndSortingAdapter(params, testPlanMapper);
@@ -286,6 +287,7 @@ public class TestSuiteModificationController {
 				String testCaseName;
 				String testCaseExecutionMode;
 				String importance;
+				String automationMode = item.isAutomated() ? "A" : "M";
 
 				if (item.isTestCaseDeleted()) {
 					projectName = formatNoData(locale);
@@ -300,7 +302,8 @@ public class TestSuiteModificationController {
 				}
 
 				return new Object[] { item.getId(), 
-						getCurrentIndex(), 
+						getCurrentIndex(),
+						automationMode,
 						projectName, 
 						testCaseName,
 						importance,

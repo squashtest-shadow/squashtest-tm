@@ -58,8 +58,8 @@
 <f:message var="cannotCreateExecutionException" key="squashtm.action.exception.cannotcreateexecution.label" />
 <f:message var="unauthorizedDeletion" key="dialog.remove-testcase-association.unauthorized-deletion.message"  />
 <script type="text/javascript">
-var removeTestPlansUrl = "${removeTestPlansUrl}";
-var nonBelongingTestPlansUrl = "${nonBelongingTestPlansUrl}";
+	var removeTestPlansUrl = "${removeTestPlansUrl}";
+	var nonBelongingTestPlansUrl = "${nonBelongingTestPlansUrl}";
 
 	$(function() {
 		<%-- single test-plan removal --%>
@@ -231,6 +231,21 @@ var nonBelongingTestPlansUrl = "${nonBelongingTestPlansUrl}";
 		return (data[9]=="true");
 	}
 	
+	function addTestSuiteTestPlanItemExecModeIcon(row, data) {
+		var automationToolTips = {
+				"M" : "",
+				"A" : "<f:message key='label.automatedExecution' />"
+		};
+		var automationClass = {
+				"M" : "manual",
+				"A" : "automated"
+		};
+
+		var mode = data[2];
+		$(row).find("td.exec-mode")
+			.addClass("exec-mode-" + automationClass[mode])
+			.attr("title", automationToolTips[mode]);
+	}			
 
 	function testPlanTableRowCallback(row, data, displayIndex) {
 		addIdtoTestPlanRow(row, data);
@@ -242,6 +257,7 @@ var nonBelongingTestPlansUrl = "${nonBelongingTestPlansUrl}";
 		addHLinkToTestPlanName(row, data);
 		addIconToTestPlanName(row, data);
 		addStyleToDeletedTestCaseRows(row, data);
+		addTestSuiteTestPlanItemExecModeIcon(row, data);
 		return row;
 	}
 	
@@ -370,10 +386,11 @@ var nonBelongingTestPlansUrl = "${nonBelongingTestPlansUrl}";
 	<jsp:attribute name="columnDefs">
 		<dt:column-definition targets="0" visible="false" />
 		<dt:column-definition targets="1" sortable="false" cssClass="centered ui-state-default drag-handle select-handle" />
-		<dt:column-definition targets="2, 3, 4, 5" sortable="false" />
-		<dt:column-definition targets="6" sortable="false" cssClass="has-status"/>
-		<dt:column-definition targets="7, 8" sortable="false" width="12em"/>
-		<dt:column-definition targets="9" sortable="false" visible="false" />
-		<dt:column-definition targets="10" sortable="false" width="2em" lastDef="true" cssClass="centered"/>
+		<dt:column-definition targets="2" sortable="false" cssClass="exec-mode" width="2em" />
+		<dt:column-definition targets="3, 4, 5, 6" sortable="false" />
+		<dt:column-definition targets="7" sortable="false" cssClass="has-status"/>
+		<dt:column-definition targets="8, 9" sortable="false" width="12em"/>
+		<dt:column-definition targets="10" sortable="false" visible="false" />
+		<dt:column-definition targets="11" sortable="false" width="2em" lastDef="true" cssClass="centered"/>
 	</jsp:attribute>
 </comp:decorate-ajax-table>

@@ -27,6 +27,7 @@
 <%@ attribute name="width" type="java.lang.String" %>
 <%@ attribute name="datatype" type="java.lang.String" %>
 <%@ attribute name="cssClass" type="java.lang.String" %>
+<%@ attribute name="dataProp" type="java.lang.String" %>
 <%@ attribute name="lastDef" type="java.lang.Boolean" %>
 <%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core" %>
 <c:if test="${ not empty visible }"><c:set var="visibleToken" value="'bVisible': ${ visible }, " /></c:if>
@@ -34,4 +35,5 @@
 <c:if test="${ not empty width }"><c:set var="widthToken" value="'sWidth': '${ width }', " /></c:if>
 <c:if test="${ not empty datatype }"><c:set var="dataTypeToken" value="'sSortDataType': '${ datatype }', " /></c:if>
 <c:if test="${ not empty cssClass }"><c:set var="classToken" value="'sClass': '${ cssClass }', " /></c:if>
-{${ visibleToken }${ sortableToken }${ widthToken }${dataTypeToken}${ classToken }'aTargets': [${targets}]}<c:if test="${ empty lastDef or not lastDef }">,</c:if>
+<c:if test="${ not empty dataProp }"><c:set var="dataPropToken" value="'mDataProp': '${ dataProp }', " /></c:if>
+{${ visibleToken }${ sortableToken }${ widthToken }${dataTypeToken}${ classToken }${ dataPropToken }'aTargets': [${targets}]}<c:if test="${ empty lastDef or not lastDef }">,</c:if>

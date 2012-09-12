@@ -42,18 +42,8 @@
 <script type="text/javascript">
 	$(function() {
 		var dataTable = $( "#${ tableId }" ).dataTable({
-			"oLanguage":{
-				"sLengthMenu": '<f:message key="generics.datatable.lengthMenu" />',
-				"sZeroRecords": '<f:message key="generics.datatable.zeroRecords" />',
-				"sInfo": '<f:message key="generics.datatable.info" />',
-				"sInfoEmpty": '<f:message key="generics.datatable.infoEmpty" />',
-				"sInfoFiltered": '<f:message key="generics.datatable.infoFiltered" />',
-				"oPaginate":{
-					"sFirst":    '<f:message key="generics.datatable.paginate.first" />',
-					"sPrevious": '<f:message key="generics.datatable.paginate.previous" />',
-					"sNext":     '<f:message key="generics.datatable.paginate.next" />',
-					"sLast":     '<f:message key="generics.datatable.paginate.last" />'
-				}
+			"oLanguage": {
+				"sUrl": "<c:url value='/datatables/messages' />"
 			},
 			"bJQueryUI": true,
 			"bAutoWidth": false,
