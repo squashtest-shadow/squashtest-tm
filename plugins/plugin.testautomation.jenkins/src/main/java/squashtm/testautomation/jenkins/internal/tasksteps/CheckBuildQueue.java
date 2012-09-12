@@ -100,6 +100,7 @@ public class CheckBuildQueue extends BuildStep implements HttpBasedStep{
 		
 		if (buildOfInterest!=null){
 			buildIsQueued = true;
+			//absoluteId.setBuildId(buildOfInterest.getId());
 		}
 		else{
 			buildIsQueued = false;

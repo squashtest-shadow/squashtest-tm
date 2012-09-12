@@ -53,9 +53,38 @@ public class AutomatedTest {
 		return name;
 	}
 	
+	/**
+	 * 
+	 * @return project.name + name
+	 */
 	public String getFullName(){
 		return project.getName()+"/"+name;
 	}
+	
+	/**
+	 * 
+	 * @return name - shortName
+	 */
+	public String getPath(){
+		return name.replaceAll("[^\\/]*$","");
+	}
+	
+	/**
+	 * 
+	 * @return returns name - path
+	 */
+	public String getShortName(){
+		return name.replaceAll(".*\\/", "");
+	}
+	
+	/**
+	 * 
+	 * @return name - first foldername
+	 */
+	public String getNameWithoutRoot(){
+		return name.replaceFirst("^[^\\/]*\\/", "");
+	}
+	
 	
 	public AutomatedTest newWithProject(TestAutomationProject project){
 		return new AutomatedTest(name, project); 

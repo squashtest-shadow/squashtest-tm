@@ -72,4 +72,8 @@ public class BuildAbsoluteId {
 		return "project '"+projectName+"', build : external id '"+externalId+"', jenkins id '"+buildId+"'";
 	}
 	
+	public boolean hasBuildIdSet(){
+		return (buildId != null);
+	}
+	
 }

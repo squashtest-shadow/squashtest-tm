@@ -34,11 +34,8 @@ import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.EnumType;
 import javax.persistence.Enumerated;
-import javax.persistence.FetchType;
 import javax.persistence.GeneratedValue;
 import javax.persistence.Id;
-import javax.persistence.Inheritance;
-import javax.persistence.InheritanceType;
 import javax.persistence.JoinColumn;
 import javax.persistence.JoinTable;
 import javax.persistence.Lob;
@@ -48,10 +45,8 @@ import javax.persistence.OneToOne;
 import javax.persistence.OrderColumn;
 import javax.persistence.Temporal;
 import javax.persistence.TemporalType;
-import javax.persistence.Transient;
 import javax.validation.constraints.NotNull;
 
-import org.hibernate.annotations.FetchMode;
 import org.hibernate.annotations.Formula;
 import org.hibernate.validator.constraints.NotBlank;
 import org.squashtest.csp.core.bugtracker.domain.BugTracker;
@@ -468,6 +463,7 @@ public class Execution implements AttachmentHolder, IssueDetector, Identified, H
 		
 		throw new NotAutomatedException();
 	}
+
 	
 	public URL getResultURL(){
 		if ( isAutomated()){
@@ -489,5 +485,6 @@ public class Execution implements AttachmentHolder, IssueDetector, Identified, H
 		}
 		throw new NotAutomatedException();		
 	}
+	
 	
 }

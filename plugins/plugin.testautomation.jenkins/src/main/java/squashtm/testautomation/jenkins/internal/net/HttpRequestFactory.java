@@ -270,11 +270,9 @@ public class HttpRequestFactory {
 		
 		while( iterator.hasNext() ){
 			
-			String name = iterator.next().getName();
-			//one must also remove the root directory
-			String truncated = name.replaceFirst("^[^\\/]*\\/", "");
+			String name = iterator.next().getNameWithoutRoot();
 			
-			builder.append(truncated);
+			builder.append(name);
 			
 			if (iterator.hasNext()){
 				builder.append(",");
