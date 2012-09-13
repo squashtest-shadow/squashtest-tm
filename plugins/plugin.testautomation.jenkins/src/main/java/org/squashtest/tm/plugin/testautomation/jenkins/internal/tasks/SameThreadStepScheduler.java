@@ -24,7 +24,7 @@ package org.squashtest.tm.plugin.testautomation.jenkins.internal.tasks;
 public class SameThreadStepScheduler implements StepScheduler {
 
 	@Override
-	public StepFuture schedule(BuildStep step, int millisDelay) {
+	public StepFuture schedule(BuildStep<?> step, int millisDelay) {
 		
 		try{
 			Thread.sleep(millisDelay);
@@ -37,7 +37,7 @@ public class SameThreadStepScheduler implements StepScheduler {
 	}
 	
 	@Override
-	public StepFuture schedule(BuildStep step) {
+	public StepFuture schedule(BuildStep<?> step) {
 		return schedule(step, 0);
 	}
 	

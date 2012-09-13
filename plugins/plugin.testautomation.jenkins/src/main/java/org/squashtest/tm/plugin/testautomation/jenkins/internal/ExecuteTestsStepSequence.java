@@ -20,20 +20,16 @@
  */
 package org.squashtest.tm.plugin.testautomation.jenkins.internal;
 
-import static squashtm.testautomation.jenkins.internal.BuildStage.START_BUILD;
-
 import java.util.NoSuchElementException;
 
 import org.apache.commons.httpclient.methods.PostMethod;
 import org.squashtest.csp.tm.testautomation.model.TestAutomationProjectContent;
-import org.squashtest.tm.plugin.testautomation.jenkins.internal.net.HttpRequestFactory;
 import org.squashtest.tm.plugin.testautomation.jenkins.internal.tasks.AbstractBuildProcessor;
 import org.squashtest.tm.plugin.testautomation.jenkins.internal.tasks.BuildStep;
 import org.squashtest.tm.plugin.testautomation.jenkins.internal.tasks.StepSequence;
-import org.squashtest.tm.plugin.testautomation.jenkins.internal.tasksteps.BuildAbsoluteId;
-import org.squashtest.tm.plugin.testautomation.jenkins.internal.tasksteps.HttpBasedStep;
 import org.squashtest.tm.plugin.testautomation.jenkins.internal.tasksteps.StartBuild;
 
+import static org.squashtest.tm.plugin.testautomation.jenkins.internal.BuildStage.START_BUILD;
 
 class ExecuteTestsStepSequence extends HttpBasedStepSequence implements StepSequence {
 	

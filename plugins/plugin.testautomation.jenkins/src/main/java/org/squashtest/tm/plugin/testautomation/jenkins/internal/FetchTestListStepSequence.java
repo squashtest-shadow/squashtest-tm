@@ -20,25 +20,18 @@
  */
 package org.squashtest.tm.plugin.testautomation.jenkins.internal;
 
-import static squashtm.testautomation.jenkins.internal.BuildStage.GATHER_RESULT;
-
 import java.util.NoSuchElementException;
 
 import org.apache.commons.httpclient.HttpClient;
 import org.apache.commons.httpclient.methods.PostMethod;
 import org.squashtest.csp.tm.domain.testautomation.TestAutomationProject;
-import org.squashtest.tm.plugin.testautomation.jenkins.internal.net.HttpRequestFactory;
 import org.squashtest.tm.plugin.testautomation.jenkins.internal.tasks.AbstractBuildProcessor;
 import org.squashtest.tm.plugin.testautomation.jenkins.internal.tasks.BuildStep;
 import org.squashtest.tm.plugin.testautomation.jenkins.internal.tasks.StepSequence;
 import org.squashtest.tm.plugin.testautomation.jenkins.internal.tasksteps.BuildAbsoluteId;
-import org.squashtest.tm.plugin.testautomation.jenkins.internal.tasksteps.CheckBuildQueue;
-import org.squashtest.tm.plugin.testautomation.jenkins.internal.tasksteps.CheckBuildRunning;
-import org.squashtest.tm.plugin.testautomation.jenkins.internal.tasksteps.GatherTestList;
-import org.squashtest.tm.plugin.testautomation.jenkins.internal.tasksteps.GetBuildID;
-import org.squashtest.tm.plugin.testautomation.jenkins.internal.tasksteps.HttpBasedStep;
 import org.squashtest.tm.plugin.testautomation.jenkins.internal.tasksteps.StartBuild;
 
+import static org.squashtest.tm.plugin.testautomation.jenkins.internal.BuildStage.GATHER_RESULT;
 
 class FetchTestListStepSequence extends HttpBasedStepSequence implements StepSequence {
 

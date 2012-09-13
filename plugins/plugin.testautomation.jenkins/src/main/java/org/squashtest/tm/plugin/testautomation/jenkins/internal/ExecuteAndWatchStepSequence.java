@@ -18,21 +18,21 @@
  *     You should have received a copy of the GNU Lesser General Public License
  *     along with this software.  If not, see <http://www.gnu.org/licenses/>.
  */
-package squashtm.testautomation.jenkins.internal;
-
-import static squashtm.testautomation.jenkins.internal.BuildStage.GET_BUILD_ID;
+package org.squashtest.tm.plugin.testautomation.jenkins.internal;
 
 import java.util.NoSuchElementException;
 
 import org.apache.commons.httpclient.methods.PostMethod;
 import org.squashtest.csp.tm.testautomation.model.TestAutomationProjectContent;
+import org.squashtest.tm.plugin.testautomation.jenkins.internal.tasks.AbstractBuildProcessor;
+import org.squashtest.tm.plugin.testautomation.jenkins.internal.tasks.BuildStep;
+import org.squashtest.tm.plugin.testautomation.jenkins.internal.tasks.StepEventListener;
+import org.squashtest.tm.plugin.testautomation.jenkins.internal.tasks.StepSequence;
+import org.squashtest.tm.plugin.testautomation.jenkins.internal.tasksteps.GetBuildID;
+import org.squashtest.tm.plugin.testautomation.jenkins.internal.tasksteps.StartBuild;
 
-import squashtm.testautomation.jenkins.internal.tasks.AbstractBuildProcessor;
-import squashtm.testautomation.jenkins.internal.tasks.BuildStep;
-import squashtm.testautomation.jenkins.internal.tasks.StepEventListener;
-import squashtm.testautomation.jenkins.internal.tasks.StepSequence;
-import squashtm.testautomation.jenkins.internal.tasksteps.GetBuildID;
-import squashtm.testautomation.jenkins.internal.tasksteps.StartBuild;
+import static org.squashtest.tm.plugin.testautomation.jenkins.internal.BuildStage.GET_BUILD_ID;
+
 
 class ExecuteAndWatchStepSequence extends HttpBasedStepSequence implements StepSequence {
 

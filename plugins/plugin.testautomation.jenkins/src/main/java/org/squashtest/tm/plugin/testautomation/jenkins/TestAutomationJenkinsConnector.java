@@ -50,15 +50,17 @@ import org.squashtest.csp.tm.testautomation.spi.TestAutomationException;
 import org.squashtest.csp.tm.testautomation.spi.UnreadableResponseException;
 import org.squashtest.tm.plugin.testautomation.jenkins.beans.Build;
 import org.squashtest.tm.plugin.testautomation.jenkins.beans.BuildList;
+import org.squashtest.tm.plugin.testautomation.jenkins.internal.ExecuteAndWatchBuildProcessor;
 import org.squashtest.tm.plugin.testautomation.jenkins.internal.ExecuteTestsBuildProcessor;
 import org.squashtest.tm.plugin.testautomation.jenkins.internal.FetchTestListBuildProcessor;
 import org.squashtest.tm.plugin.testautomation.jenkins.internal.JsonParser;
+import org.squashtest.tm.plugin.testautomation.jenkins.internal.TestByProjectSorter;
 import org.squashtest.tm.plugin.testautomation.jenkins.internal.net.HttpClientProvider;
 import org.squashtest.tm.plugin.testautomation.jenkins.internal.net.HttpRequestFactory;
 import org.squashtest.tm.plugin.testautomation.jenkins.internal.net.RequestExecutor;
+import org.squashtest.tm.plugin.testautomation.jenkins.internal.tasks.StepEventListener;
 import org.squashtest.tm.plugin.testautomation.jenkins.internal.tasksteps.BuildAbsoluteId;
-
-import squashtm.testautomation.jenkins.internal.tasksteps.GetBuildID;
+import org.squashtest.tm.plugin.testautomation.jenkins.internal.tasksteps.GetBuildID;
 
 
 @Service("plugin.testautomation.jenkins.connector")

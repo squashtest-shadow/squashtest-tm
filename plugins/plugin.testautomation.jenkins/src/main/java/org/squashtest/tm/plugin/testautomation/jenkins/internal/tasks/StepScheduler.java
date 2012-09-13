@@ -23,8 +23,8 @@ package org.squashtest.tm.plugin.testautomation.jenkins.internal.tasks;
 
 public interface StepScheduler {
 
-	StepFuture schedule(BuildStep step);
+	StepFuture schedule(BuildStep<?> step);
 	
-	StepFuture schedule(BuildStep step, int millisDelay); 
+	StepFuture schedule(BuildStep<?> step, int millisDelay); 
 	
 }

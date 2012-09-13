@@ -18,17 +18,16 @@
  *     You should have received a copy of the GNU Lesser General Public License
  *     along with this software.  If not, see <http://www.gnu.org/licenses/>.
  */
-package squashtm.testautomation.jenkins.internal;
+package org.squashtest.tm.plugin.testautomation.jenkins.internal;
 
 import org.apache.commons.httpclient.HttpClient;
 import org.springframework.scheduling.TaskScheduler;
 import org.squashtest.csp.tm.testautomation.model.TestAutomationProjectContent;
-
-import squashtm.testautomation.jenkins.internal.tasks.DelayedBuildProcessor;
-import squashtm.testautomation.jenkins.internal.tasks.StepEventListener;
-import squashtm.testautomation.jenkins.internal.tasks.StepSequence;
-import squashtm.testautomation.jenkins.internal.tasksteps.BuildAbsoluteId;
-import squashtm.testautomation.jenkins.internal.tasksteps.GetBuildID;
+import org.squashtest.tm.plugin.testautomation.jenkins.internal.tasks.DelayedBuildProcessor;
+import org.squashtest.tm.plugin.testautomation.jenkins.internal.tasks.StepEventListener;
+import org.squashtest.tm.plugin.testautomation.jenkins.internal.tasks.StepSequence;
+import org.squashtest.tm.plugin.testautomation.jenkins.internal.tasksteps.BuildAbsoluteId;
+import org.squashtest.tm.plugin.testautomation.jenkins.internal.tasksteps.GetBuildID;
 
 public class ExecuteAndWatchBuildProcessor extends 	DelayedBuildProcessor {
 

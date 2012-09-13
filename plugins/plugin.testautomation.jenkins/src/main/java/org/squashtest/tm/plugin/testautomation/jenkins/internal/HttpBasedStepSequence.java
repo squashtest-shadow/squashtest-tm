@@ -18,23 +18,20 @@
  *     You should have received a copy of the GNU Lesser General Public License
  *     along with this software.  If not, see <http://www.gnu.org/licenses/>.
  */
-package squashtm.testautomation.jenkins.internal;
+package org.squashtest.tm.plugin.testautomation.jenkins.internal;
 
 import org.apache.commons.httpclient.HttpClient;
 import org.apache.commons.httpclient.HttpMethod;
 import org.apache.commons.httpclient.methods.GetMethod;
-import org.apache.commons.httpclient.methods.PostMethod;
 import org.squashtest.csp.tm.domain.testautomation.TestAutomationProject;
-
-import squashtm.testautomation.jenkins.internal.net.HttpRequestFactory;
-import squashtm.testautomation.jenkins.internal.tasks.AbstractBuildProcessor;
-import squashtm.testautomation.jenkins.internal.tasksteps.BuildAbsoluteId;
-import squashtm.testautomation.jenkins.internal.tasksteps.CheckBuildQueue;
-import squashtm.testautomation.jenkins.internal.tasksteps.CheckBuildRunning;
-import squashtm.testautomation.jenkins.internal.tasksteps.GatherTestList;
-import squashtm.testautomation.jenkins.internal.tasksteps.GetBuildID;
-import squashtm.testautomation.jenkins.internal.tasksteps.HttpBasedStep;
-import squashtm.testautomation.jenkins.internal.tasksteps.StartBuild;
+import org.squashtest.tm.plugin.testautomation.jenkins.internal.net.HttpRequestFactory;
+import org.squashtest.tm.plugin.testautomation.jenkins.internal.tasks.AbstractBuildProcessor;
+import org.squashtest.tm.plugin.testautomation.jenkins.internal.tasksteps.BuildAbsoluteId;
+import org.squashtest.tm.plugin.testautomation.jenkins.internal.tasksteps.CheckBuildQueue;
+import org.squashtest.tm.plugin.testautomation.jenkins.internal.tasksteps.CheckBuildRunning;
+import org.squashtest.tm.plugin.testautomation.jenkins.internal.tasksteps.GatherTestList;
+import org.squashtest.tm.plugin.testautomation.jenkins.internal.tasksteps.GetBuildID;
+import org.squashtest.tm.plugin.testautomation.jenkins.internal.tasksteps.HttpBasedStep;
 
 public abstract class HttpBasedStepSequence {
 

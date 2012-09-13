@@ -18,7 +18,7 @@
  *     You should have received a copy of the GNU Lesser General Public License
  *     along with this software.  If not, see <http://www.gnu.org/licenses/>.
  */
-package squashtm.testautomation.jenkins.internal.tasks;
+package org.squashtest.tm.plugin.testautomation.jenkins.internal.tasks;
 
 public interface StepEventListener<S extends BuildStep<S>> {
 
