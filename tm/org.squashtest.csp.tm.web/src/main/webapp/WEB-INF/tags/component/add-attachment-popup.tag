@@ -307,7 +307,7 @@
  <pop:popup id="attachment-progress-dialog" openedBy="aezfsdfsfze" isContextual="true" 
  titleKey="title.UploadingPleaseWait" closeOnSuccess="false">
  	<jsp:attribute name="buttons">
-		 <f:message var="cancelLabel" key="dialog.button.cancel.label"/>
+		 <f:message var="cancelLabel" key="label.Cancel"/>
 		'${cancelLabel}': function() {
 			$( this ).dialog( 'close' );
 			window.location.reload();

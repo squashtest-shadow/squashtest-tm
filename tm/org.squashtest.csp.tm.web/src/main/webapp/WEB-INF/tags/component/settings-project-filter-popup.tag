@@ -72,8 +72,8 @@
 	var projectFilterConf = {
 			url: "${projectFilterUrl}",
 			title : '<f:message key="dialog.settings.filter.title" />',
-			confirmLabel: '<f:message key="dialog.button.confirm.label" />',
-			cancelLabel: '<f:message key="dialog.button.cancel.label"/>'
+			confirmLabel: '<f:message key="label.Confirm" />',
+			cancelLabel: '<f:message key="label.Cancel"/>'
 	}
 		
 	squashtm.projectfilter.init(projectFilterConf);

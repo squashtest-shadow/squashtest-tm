@@ -55,7 +55,7 @@
 <pop:popup id="import-links-excel-dialog" titleKey="dialog.import-links-excel.title" isContextual="false"  closeOnSuccess="false">
 	<jsp:attribute name="buttonsArray">	
 		<f:message var="confirmLabel" key="label.Import" />	
-		<f:message var="cancelLabel" key="dialog.button.cancel.label"/>
+		<f:message var="cancelLabel" key="label.Cancel"/>
 		<f:message var="okLabel" key="label.Ok"/>
 		{
 			text : "${confirmLabel}",

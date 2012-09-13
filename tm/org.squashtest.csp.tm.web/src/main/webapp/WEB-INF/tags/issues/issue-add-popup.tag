@@ -52,7 +52,7 @@ The reason for that is that the parameters are urls already.
 			'class' : 'post-button'
 		}, 
 		{
-			'text' : "<f:message key='dialog.button.cancel.label'/>",
+			'text' : "<f:message key='label.Cancel'/>",
 			'click' : function() {
 				$( this )
 					.data('answer', 'cancel')

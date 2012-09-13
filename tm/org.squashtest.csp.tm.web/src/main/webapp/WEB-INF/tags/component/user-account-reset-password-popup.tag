@@ -47,7 +47,7 @@
 <pop:popup  id="${popupId}" openedBy="${openerId}" closeOnSuccess="false" titleKey="user.account.password.reset.label" isContextual="true" >
 
  	<jsp:attribute name="buttons"> 	
-		<f:message var="label" key="dialog.button.confirm.label" />
+		<f:message var="label" key="label.Confirm" />
 		'${ label }': function() {
 			submitPassword();
 		},			

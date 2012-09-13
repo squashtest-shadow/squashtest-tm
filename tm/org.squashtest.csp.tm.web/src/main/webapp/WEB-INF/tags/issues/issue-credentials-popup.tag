@@ -40,7 +40,7 @@
 		'${ loginlabel }': function() {
 			postIssueCredentials();
 		},			
-		<f:message var="abortlabel" key="dialog.button.cancel.label"/>
+		<f:message var="abortlabel" key="label.Cancel"/>
 		'${ abortlabel }': function() {
 			$( this ).dialog( 'close' );
 			<c:if test="${not empty failureCallback}">${failureCallback}();</c:if>

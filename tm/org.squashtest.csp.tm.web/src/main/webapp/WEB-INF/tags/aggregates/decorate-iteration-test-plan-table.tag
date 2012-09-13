@@ -383,7 +383,7 @@
 				},
 				confirmPopup : {
 					oklabel : '<f:message key="label.Yes" />',
-					cancellabel : '<f:message key="dialog.button.cancel.label" />'
+					cancellabel : '<f:message key="label.Cancel" />'
 				},
 				functions : {
 					dropHandler : function(dropData){

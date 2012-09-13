@@ -176,11 +176,11 @@
 							   
 	<jsp:attribute name="buttonsArray">
 		{
-			'text' 	: '<f:message key="dialog.button.confirm.label" />',
+			'text' 	: '<f:message key="label.Confirm" />',
 			'class' : 'ta-projectsadd-popup-confirm'
 		},
 		{
-			'text'  : '<f:message key="dialog.button.cancel.label" />',
+			'text'  : '<f:message key="label.Cancel" />',
 			'class' : 'ta-projectsadd-popup-cancel'
 		}											
 	</jsp:attribute>
@@ -282,7 +282,7 @@
 			enableHover : true,
 			confirmPopup : {
 				oklabel : '<f:message key="label.Yes" />',
-				cancellabel : '<f:message key="dialog.button.cancel.label" />'
+				cancellabel : '<f:message key="label.Cancel" />'
 			},
 			enableDnD : false,
 			deleteButtons : {

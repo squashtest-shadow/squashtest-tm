@@ -498,8 +498,8 @@
 			$('#delete-test-suite-button').click(function(){
 				oneShotConfirm("<f:message key='dialog.delete-test-suite.title' />", 
 						"<f:message key='dialog.delete-test-suite.message' />",
-						"<f:message key='dialog.button.confirm.label' />",  
-						"<f:message key='dialog.button.cancel.label' />",
+						"<f:message key='label.Confirm' />",  
+						"<f:message key='label.Cancel' />",
 						'500px').done(function(){confirmTestSuiteDeletion().done(deleteTestSuiteSuccess).fail(deleteTestSuiteFailure)});
 			});
 		});

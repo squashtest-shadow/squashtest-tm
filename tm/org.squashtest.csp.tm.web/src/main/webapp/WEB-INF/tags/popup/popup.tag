@@ -43,7 +43,7 @@
 <%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core" %>
 
 <c:url var="ckeConfigUrl" value="/styles/ckeditor/ckeditor-config.js" />
-<f:message var="cancelLabel" key="dialog.button.cancel.label" />
+<f:message var="cancelLabel" key="label.Cancel" />
 <f:message var="ckeLang" key="rich-edit.language.value"/>
 <f:message var="title" key="${ titleKey }"/>
 

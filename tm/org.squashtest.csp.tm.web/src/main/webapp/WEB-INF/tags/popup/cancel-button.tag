@@ -22,7 +22,7 @@
 --%>
 <%@ tag body-content="empty" description="adds a cancel button to a popup" %>
 <%@ taglib prefix="f" uri="http://java.sun.com/jsp/jstl/fmt" %>
-<f:message var="label" key="dialog.button.cancel.label"/>
+<f:message var="label" key="label.Cancel"/>
 '${ label }': function() {
 	$( this ).data("answer","cancel");
 	$( this ).dialog( 'close' );

@@ -199,13 +199,13 @@
 			if (status == "OBSOLETE") {
 				oneShotConfirm("<f:message	key='dialog.obsolete.requirement.version.removal.confirm.title' />", 
 						"<f:message key='dialog.obsolete.requirement.version.removal.confirm.text' />",
-						"<f:message key='dialog.button.confirm.label'/>",
-						"<f:message key='dialog.button.cancel.label'/>", '600px').done(function(){deleteVerifiedRequirement(id);});
+						"<f:message key='label.Confirm'/>",
+						"<f:message key='label.Cancel'/>", '600px').done(function(){deleteVerifiedRequirement(id);});
 			} else {
 				oneShotConfirm("<f:message key='popup.title.confirm' />", 
 						"<f:message key='dialog.remove-requirement-version-association.message' />",
-						"<f:message key='dialog.button.confirm.label'/>",
-						"<f:message key='dialog.button.cancel.label'/>", '600px').done(function(){deleteVerifiedRequirement(id);});
+						"<f:message key='label.Confirm'/>",
+						"<f:message key='label.Cancel'/>", '600px').done(function(){deleteVerifiedRequirement(id);});
 			}
 		});
 		
@@ -224,13 +224,13 @@
 			if (obsoleteStatuses.length > 0){
 				oneShotConfirm("<f:message key='dialog.multiple.obsolete.requirement.versions.removal.confirm.title' />", 
 						"<f:message key='dialog.multiple.obsolete.requirement.versions.removal.confirm.text' />",
-						"<f:message key='dialog.button.confirm.label'/>",
-						"<f:message key='dialog.button.cancel.label'/>", '600px').done(function(){deleteVerifiedRequirements(ids);});
+						"<f:message key='label.Confirm'/>",
+						"<f:message key='label.Cancel'/>", '600px').done(function(){deleteVerifiedRequirements(ids);});
 			} else {
 				oneShotConfirm("<f:message key='popup.title.confirm' />", 
 						"<f:message key='dialog.remove-requirement-version-associations.message' />",
-						"<f:message key='dialog.button.confirm.label'/>",
-						"<f:message key='dialog.button.cancel.label'/>", '600px').done(function(){deleteVerifiedRequirements(ids);});
+						"<f:message key='label.Confirm'/>",
+						"<f:message key='label.Cancel'/>", '600px').done(function(){deleteVerifiedRequirements(ids);});
 			}
 		});
 		

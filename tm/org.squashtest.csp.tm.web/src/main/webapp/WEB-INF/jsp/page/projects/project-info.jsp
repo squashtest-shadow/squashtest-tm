@@ -456,8 +456,8 @@
 	<c:if test="${adminproject.deletable}">	
 		oneShotConfirm("<f:message key='dialog.delete-project.title'/>",
 		"<f:message key='dialog.delete-project.message'/>",
-		"<f:message key='dialog.button.confirm.label'/>",
-		"<f:message key='dialog.button.cancel.label'/>").done(function(){
+		"<f:message key='label.Confirm'/>",
+		"<f:message key='label.Cancel'/>").done(function(){
 			requestProjectDeletion().done(deleteProjectSuccess);
 			});
 		</c:if>

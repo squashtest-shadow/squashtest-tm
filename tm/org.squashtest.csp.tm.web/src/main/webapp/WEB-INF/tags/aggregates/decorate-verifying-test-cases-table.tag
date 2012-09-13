@@ -40,8 +40,8 @@
 			var savedThis = this;
 			oneShotConfirm("<f:message key='popup.title.confirm' />", 
 					"<f:message key='dialog.remove-testcase-requirement-association.message' />",
-					"<f:message key='dialog.button.confirm.label'/>",
-					"<f:message key='dialog.button.cancel.label'/>", '600px').done(	function(){deleteRequirementLink(savedThis);});
+					"<f:message key='label.Confirm'/>",
+					"<f:message key='label.Cancel'/>", '600px').done(	function(){deleteRequirementLink(savedThis);});
 			
 		});
 		<%-- selected verifying test-case removal --%>
@@ -52,8 +52,8 @@
 			if (ids.length > 0) {
 				oneShotConfirm("<f:message key='popup.title.confirm' />", 
 						"<f:message key='dialog.remove-testcase-requirement-associations.message' />",
-						"<f:message key='dialog.button.confirm.label'/>",
-						"<f:message key='dialog.button.cancel.label'/>", '600px').done(function(){deleteRequirementsLinks(ids);	});
+						"<f:message key='label.Confirm'/>",
+						"<f:message key='label.Cancel'/>", '600px').done(function(){deleteRequirementsLinks(ids);	});
 			}
 		});
 	});

@@ -394,8 +394,8 @@ that page won't be editable if
 	<c:if test="${status_editable}">
 	<pop:popup id="requirement-status-confirm-dialog" closeOnSuccess="false" titleKey="dialog.requirement.status.confirm.title" isContextual="true" >
 		<jsp:attribute name="buttons">
-			<f:message var="confirmLabel" key="dialog.button.confirm.label" />
-			<f:message var="cancelLabel" key="dialog.button.cancel.label"/>
+			<f:message var="confirmLabel" key="label.Confirm" />
+			<f:message var="cancelLabel" key="label.Cancel"/>
 				'${confirmLabel}' : function(){
 					var jqDiag = $(this);
 					jqDiag.dialog( 'close' );

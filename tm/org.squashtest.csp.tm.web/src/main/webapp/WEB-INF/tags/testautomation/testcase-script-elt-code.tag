@@ -52,7 +52,7 @@
 			'class' : 'ta-picker-confirm'
 		},
 		{
-			'text' : '<f:message key="dialog.button.cancel.label" />',
+			'text' : '<f:message key="label.Cancel" />',
 			'class': 'ta-picker-cancel'
 		}
 	</jsp:attribute>	

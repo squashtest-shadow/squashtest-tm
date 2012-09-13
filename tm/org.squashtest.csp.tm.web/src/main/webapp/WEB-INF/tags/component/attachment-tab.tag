@@ -257,7 +257,7 @@
 <%--- the openedBy attribute here is irrelevant and is just a dummy --%>
 <pop:popup id="delete-attachment-dialog" titleKey="title.RemoveAttachment" isContextual="true" openedBy="delete-attachment-button">
 	<jsp:attribute name="buttons">
-		<f:message var="label" key="dialog.button.confirm.label" />
+		<f:message var="label" key="label.Confirm" />
 
 		'${ label }': function() {
 		

@@ -582,7 +582,7 @@ function addTestStepSuccessAnother(){
 		openedBy="delete-step-button">
 		<jsp:attribute name="buttons">
 				
-				<f:message var="yesLabel" key="dialog.button.confirm.label" />
+				<f:message var="yesLabel" key="label.Confirm" />
 				
 				'${ yesLabel }' : function(){
 						$("#delete-all-steps-dialog").data("answer","yes");
