@@ -18,33 +18,21 @@
  *     You should have received a copy of the GNU Lesser General Public License
  *     along with this software.  If not, see <http://www.gnu.org/licenses/>.
  */
+package org.squashtest.csp.tm.service.testautomation;
 
-package org.squashtest.csp.tm.internal.repository.testautomation;
+import java.net.URL;
 
-import java.util.List;
+import org.squashtest.csp.tm.domain.execution.ExecutionStatus;
 
-import javax.validation.constraints.NotNull;
+public interface TestAutomationCallbackService {
 
-import org.squashtest.csp.tm.domain.testautomation.AutomatedExecutionExtender;
 
-/**
- * @author bsiri
- * @author Gregory Fouquet
- * 
- */
-public interface AutomatedExecutionExtenderDao {
-	AutomatedExecutionExtender findById(long executionId);
-	
-	void persist(AutomatedExecutionExtender extender);
-
-	/**
-	 * Returns the {@link AutomatedExecution}s which match the {@link AutomatedExecutionSetIdentifier}.
-	 * @param projectName 
-	 * 
-	 * @return
-	 */
-	List<AutomatedExecutionExtender> findAllBySuiteIdAndTestName(@NotNull String suiteId, @NotNull String testName, @NotNull String projectName);
+	void updateResultURL(AutomatedExecutionSetIdentifier execIdentifier, URL resultURL);
 	
 	
-	List<AutomatedExecutionExtender> findAllBySuiteIdAndProjectId(@NotNull String suiteId, @NotNull Long projectId);
+	void updateExecutionStatus(AutomatedExecutionSetIdentifier execIdentifier, ExecutionStatus newStatus);
+	
+	
+	void updateResultSummary(AutomatedExecutionSetIdentifier execIdentifier, String newSummary);
+	
 }

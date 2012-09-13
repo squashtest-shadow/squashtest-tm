@@ -102,12 +102,7 @@ public class TestAutomationJenkinsConnector implements TestAutomationConnector{
 	public String getConnectorKind() {
 		return CONNECTOR_KIND;
 	}
-	
-	
-	@PostConstruct
-	public void initialize(){
-		
-	}
+
 	
 	public boolean checkCredentials(TestAutomationServer server) {
 		
@@ -282,7 +277,7 @@ public class TestAutomationJenkinsConnector implements TestAutomationConnector{
 			} 
 			catch (MalformedURLException e) {
 				if (LOGGER.isErrorEnabled()){
-					LOGGER.error("Test Automation : could not create result url from string '"+resultPath+"'");
+					LOGGER.error("Test Automation : malformed URL, could not create result url from string '"+resultPath+"'",e);
 				}
 				resultURL = null;
 			}

@@ -44,13 +44,14 @@ import org.squashtest.csp.tm.domain.execution.Execution;
 import org.squashtest.csp.tm.domain.execution.ExecutionStatus;
 import org.squashtest.csp.tm.domain.testautomation.AutomatedExecutionExtender;
 import org.squashtest.csp.tm.domain.testautomation.AutomatedSuite;
+import org.squashtest.csp.tm.domain.testautomation.AutomatedTest;
 import org.squashtest.csp.tm.domain.testautomation.TestAutomationProject;
 import org.squashtest.csp.tm.domain.testautomation.TestAutomationServer;
-import org.squashtest.csp.tm.domain.testautomation.AutomatedTest;
 import org.squashtest.csp.tm.internal.repository.AutomatedSuiteDao;
+import org.squashtest.csp.tm.internal.repository.AutomatedTestDao;
 import org.squashtest.csp.tm.internal.repository.TestAutomationProjectDao;
 import org.squashtest.csp.tm.internal.repository.TestAutomationServerDao;
-import org.squashtest.csp.tm.internal.repository.AutomatedTestDao;
+import org.squashtest.csp.tm.internal.repository.testautomation.AutomatedExecutionExtenderDao;
 import org.squashtest.csp.tm.internal.testautomation.tasks.FetchTestListTask;
 import org.squashtest.csp.tm.internal.testautomation.thread.FetchTestListFuture;
 import org.squashtest.csp.tm.internal.testautomation.thread.TestAutomationTaskExecutor;
@@ -80,6 +81,9 @@ public class TestAutomationManagementServiceImpl implements  InsecureTestAutomat
 	
 	@Inject
 	private AutomatedTestDao testDao;
+	
+	@Inject
+	private AutomatedExecutionExtenderDao extenderDao;
 	
 	
 	@Inject
@@ -234,6 +238,38 @@ public class TestAutomationManagementServiceImpl implements  InsecureTestAutomat
 		}
 	}
 
+	
+
+	@Override
+	public AutomatedSuite findAutomatedTestSuiteById(String suiteId) {
+		LOGGER.trace("Find AutomatedSuite by Id = "+suiteId);
+		return automatedSuiteDao.findById(suiteId);
+	}
+	
+	
+	@Override
+	public void fetchAllResultURL(TestAutomationProject project, AutomatedSuite suite) {
+		
+		Collection<AutomatedExecutionExtender> extenders = extenderDao.findAllBySuiteIdAndProjectId(suite.getId(), project.getId());
+			
+		Collection<AutomatedTest> tests = testDao.findAllByExtender(extenders);
+		
+		try{
+			TestAutomationConnector connector = connectorRegistry.getConnectorForKind(project.getServer().getKind());
+			
+			Map<AutomatedTest, URL> urlMap = connector.getResultURLs(tests, suite.getId());
+			
+			_mergeResultURL(urlMap, extenders);
+			
+		}
+		catch(UnknownConnectorKind ex){
+			if (LOGGER.isErrorEnabled()){
+				LOGGER.error("Test Automation : cannot update the result URL for some executions due to unknown connector :",ex);
+			}			
+			throw ex;
+		}
+		
+	}
 
 	
 	//****************************** fetch test list methods ****************************************
@@ -278,6 +314,7 @@ public class TestAutomationManagementServiceImpl implements  InsecureTestAutomat
 		return results;
 		
 	}
+
 
 
 	// ******************* dispatching methods **************************
@@ -350,10 +387,20 @@ public class TestAutomationManagementServiceImpl implements  InsecureTestAutomat
 		
 	}
 
-	@Override
-	public AutomatedSuite findAutomatedTestSuiteById(String suiteId) {
-		LOGGER.trace("Find AutomatedSuite by Id = "+suiteId);
-		return automatedSuiteDao.findById(suiteId);
+	
+	// *************************  other private stuffs  ***********************
+	
+	private void _mergeResultURL(Map<AutomatedTest, URL> urlMap, Collection<AutomatedExecutionExtender> extenders){
+		
+		for (AutomatedExecutionExtender ext : extenders){
+			
+			AutomatedTest test = ext.getAutomatedTest();
+			URL resultURL = urlMap.get(test);
+			ext.setResultURL(resultURL);
+			
+		}
+		
 	}
+	
 
 }

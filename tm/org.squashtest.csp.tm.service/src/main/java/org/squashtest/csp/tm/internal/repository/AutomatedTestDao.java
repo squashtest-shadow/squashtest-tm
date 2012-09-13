@@ -20,6 +20,10 @@
  */
 package org.squashtest.csp.tm.internal.repository;
 
+import java.util.Collection;
+import java.util.List;
+
+import org.squashtest.csp.tm.domain.testautomation.AutomatedExecutionExtender;
 import org.squashtest.csp.tm.domain.testautomation.AutomatedTest;
 import org.squashtest.csp.tm.internal.repository.hibernate.NonUniqueEntityException;
 
@@ -67,5 +71,21 @@ public interface AutomatedTestDao {
 	 */	
 	AutomatedTest findByExample(AutomatedTest example);
 	
+	
+	/**
+	 * warning : return unique automated tests ( ie result.size() &lt;= argument.size() ) 
+	 * 
+	 * @param extenderIds
+	 * @return
+	 */
+	List<AutomatedTest> findAllByExtenderIds(List<Long> extenderIds);
+	
+	/**
+	 * Same than {@link #findAllByExtenderIds(List)}, but with the extenders themselves instead of their ids.
+	 * 
+	 * @param extenders 
+	 * @return
+	 */
+	List<AutomatedTest> findAllByExtender(Collection<AutomatedExecutionExtender> extenders);
 		
 }

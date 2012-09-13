@@ -21,20 +21,23 @@
 
 package org.squashtest.csp.tm.internal.service.testautomation;
 
+import java.net.URL;
 import java.util.List;
 
 import javax.inject.Inject;
 import javax.validation.constraints.NotNull;
 
+import org.springframework.osgi.extensions.annotation.ServiceReference;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+import org.squashtest.csp.core.service.security.PermissionEvaluationService;
 import org.squashtest.csp.tm.domain.execution.ExecutionStatus;
 import org.squashtest.csp.tm.domain.testautomation.AutomatedExecutionExtender;
 import org.squashtest.csp.tm.internal.repository.testautomation.AutomatedExecutionExtenderDao;
 import org.squashtest.csp.tm.service.testautomation.AutomatedExecutionManagerService;
 import org.squashtest.csp.tm.service.testautomation.AutomatedExecutionSetIdentifier;
+import org.squashtest.csp.tm.service.testautomation.TestAutomationCallbackService;
 import org.squashtest.tm.api.testautomation.execution.dto.TestExecutionStatus;
-
 
 /**
  * @author Gregory Fouquet
@@ -42,20 +45,75 @@ import org.squashtest.tm.api.testautomation.execution.dto.TestExecutionStatus;
  */
 @Service("squashtest.tm.service.testautomation.AutomatedExecutionManagerService")
 @Transactional
-public class AutomatedExecutionManagerServiceImpl implements AutomatedExecutionManagerService {
+public class AutomatedExecutionManagerServiceImpl implements AutomatedExecutionManagerService, TestAutomationCallbackService {
+	
 	@Inject private AutomatedExecutionExtenderDao automatedExecutionDao;
+	
+	private PermissionEvaluationService permissionService;
+	
+	@ServiceReference
+	public void setPermissionEvaluationService(PermissionEvaluationService permissionService){
+		this.permissionService = permissionService;
+	}
+	
+	
 	/**
 	 * @see org.squashtest.csp.tm.service.testautomation.AutomatedExecutionManagerService#changeExecutionsStates(org.squashtest.csp.tm.service.testautomation.AutomatedExecutionSetIdentifier, org.squashtest.tm.api.testautomation.execution.dto.TestExecutionStatus)
 	 */
 	@Override
 	public void changeExecutionsStates(@NotNull AutomatedExecutionSetIdentifier setIdentifier,
 			@NotNull TestExecutionStatus stateChange) {
-		List<AutomatedExecutionExtender> execs = automatedExecutionDao.findAllBySuiteIdAndTestName(setIdentifier.getAutomatedSuiteId(), setIdentifier.getAutomatedTestName(), setIdentifier.getTestAutomationProjectName());
-
+		List<AutomatedExecutionExtender> execs = findExtendersFor(setIdentifier);
+		
 		for (AutomatedExecutionExtender exec : execs) {
 			changeState(exec, stateChange);
 		}
 	}
+	
+	
+	@Override
+	public void updateExecutionStatus(AutomatedExecutionSetIdentifier execIdentifier, ExecutionStatus newStatus) {
+		
+		List<AutomatedExecutionExtender> execs = findExtendersFor(execIdentifier);
+		
+		for (AutomatedExecutionExtender exec : execs){
+			permissionService.hasRoleOrPermissionOnObject("ROLE_ADMIN", "EXECUTE", exec);
+			exec.setExecutionStatus(newStatus);
+		}
+
+	}
+	
+	
+	@Override
+	public void updateResultURL(AutomatedExecutionSetIdentifier execIdentifier,
+			URL resultURL) {
+		
+		List<AutomatedExecutionExtender> execs = findExtendersFor(execIdentifier);
+				
+		for (AutomatedExecutionExtender exec : execs){
+			permissionService.hasRoleOrPermissionOnObject("ROLE_ADMIN", "EXECUTE", exec);
+			exec.setResultURL(resultURL);
+		}	
+	}
+	
+	@Override
+	public void updateResultSummary(
+			AutomatedExecutionSetIdentifier execIdentifier, String newSummary) {
+		
+		List<AutomatedExecutionExtender> execs = findExtendersFor(execIdentifier);
+		
+		for (AutomatedExecutionExtender exec : execs){
+			permissionService.hasRoleOrPermissionOnObject("ROLE_ADMIN", "EXECUTE", exec);
+			exec.setResultSummary(newSummary);
+		}
+		
+	}
+	
+	
+	private List<AutomatedExecutionExtender> findExtendersFor(AutomatedExecutionSetIdentifier setIdentifier){
+		return automatedExecutionDao.findAllBySuiteIdAndTestName(setIdentifier.getAutomatedSuiteId(), setIdentifier.getAutomatedTestName(), setIdentifier.getTestAutomationProjectName());
+	}
+	
 	/**
 	 * @param exec
 	 * @param stateChange

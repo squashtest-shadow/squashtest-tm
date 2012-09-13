@@ -27,6 +27,7 @@ import java.util.Map;
 import org.squashtest.csp.tm.domain.testautomation.TestAutomationProject;
 import org.squashtest.csp.tm.domain.testautomation.TestAutomationServer;
 import org.squashtest.csp.tm.domain.testautomation.AutomatedTest;
+import org.squashtest.csp.tm.service.testautomation.TestAutomationCallbackService;
 
 
 
@@ -120,6 +121,39 @@ public interface TestAutomationConnector {
 					  NotFoundException,
 					  BadConfiguration,
 					  TestAutomationException;
+	
+	
+	/**
+	 * <p>
+	 * Same than {@link #executeTests(Collection, String)} (in particular, it must return as soon as the tests have 
+	 * started). Then, later on in an asynchronous process it may use the callback service to provide TM with updates 
+	 * on the given executions when they are available.
+	 *  </p>
+	 *  
+	 *  <p>
+	 *  	The {@link TestAutomationCallbackService} instance will handle the security context for you.
+	 *  </p>
+	 * 
+	 * @param tests the tests that must be executed. These entities are detached copies of the real entities, 
+	 * 		so they won't keep a session or transaction stuck forever.
+	 *   
+	 * @param reference a reference that index the resulting executions of those tests
+	 * 
+	 * @throws ServerConnectionFailed if could not connect to the server
+	 * @throws AccessDenied if the server was reached but the used user could log in
+	 * @throws UnreadableResponseException if the server replied something that is not suitable for a response or otherwise thrown its garbages at you
+	 * @throws NotFoundException if the tests in that project cannot be found
+	 * @Throws BadConfiguration if something went wrong due to the configuration
+	 * @throws TestAutomationException for anything that doesn't fit the exceptions above. 
+	 */
+	void executeTests(Collection<AutomatedTest> tests, String reference, TestAutomationCallbackService callbackService)
+			 throws ServerConnectionFailed,
+					  AccessDenied,
+					  UnreadableResponseException,
+					  NotFoundException,
+					  BadConfiguration,
+					  TestAutomationException;
+	
 	
 	
 	

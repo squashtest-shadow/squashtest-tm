@@ -20,16 +20,21 @@
  */
 package org.squashtest.csp.tm.internal.repository.hibernate;
 
+import java.util.Collection;
+import java.util.Collections;
 import java.util.List;
 
 import javax.inject.Inject;
 
 import org.hibernate.Criteria;
+import org.hibernate.Query;
 import org.hibernate.Session;
 import org.hibernate.SessionFactory;
 import org.hibernate.criterion.Example;
 import org.hibernate.criterion.Restrictions;
+import org.hibernate.type.LongType;
 import org.springframework.stereotype.Repository;
+import org.squashtest.csp.tm.domain.testautomation.AutomatedExecutionExtender;
 import org.squashtest.csp.tm.domain.testautomation.AutomatedTest;
 import org.squashtest.csp.tm.internal.repository.AutomatedTestDao;
 
@@ -87,6 +92,32 @@ public class HibernateAutomatedTestDao implements AutomatedTestDao {
 		} else {
 			throw new NonUniqueEntityException();
 		}
+	}
+	
+	@Override
+	public List<AutomatedTest> findAllByExtenderIds(List<Long> extenderIds) {
+		
+		if (extenderIds.isEmpty()){
+			return Collections.emptyList();
+		}
+		
+		Query query = sessionFactory.getCurrentSession().getNamedQuery("automatedTest.findAllByExtenderIds");
+		query.setParameterList("extenderIds", extenderIds, LongType.INSTANCE);
+		return (List<AutomatedTest>) query.list();
+		
+	}
+	
+	@Override
+	public List<AutomatedTest> findAllByExtender(Collection<AutomatedExecutionExtender> extenders) {
+		
+		if (extenders.isEmpty()){
+			return Collections.emptyList();
+		}
+		
+		Query query = sessionFactory.getCurrentSession().getNamedQuery("automatedTest.findAllByExtenders");
+		query.setParameterList("extenders", extenders); 
+		return (List<AutomatedTest>) query.list();
+		
 	}
 
 }

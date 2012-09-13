@@ -34,6 +34,7 @@ import javax.persistence.Lob;
 import javax.persistence.ManyToOne;
 import javax.persistence.OneToOne;
 
+import org.squashtest.csp.core.security.annotation.InheritsAcls;
 import org.squashtest.csp.tm.domain.execution.Execution;
 import org.squashtest.csp.tm.domain.execution.ExecutionStatus;
 
@@ -46,6 +47,7 @@ import org.squashtest.csp.tm.domain.execution.ExecutionStatus;
  * 
  */
 @Entity
+@InheritsAcls(constrainedClass=Execution.class, propertyName="automatedExecutionExtender")
 public class AutomatedExecutionExtender {
 
 	private static final Set<ExecutionStatus> AUTOMATED_EXEC_STATUS;

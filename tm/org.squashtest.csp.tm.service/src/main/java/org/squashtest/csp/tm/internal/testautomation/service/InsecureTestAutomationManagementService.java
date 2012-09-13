@@ -20,6 +20,12 @@
  */
 package org.squashtest.csp.tm.internal.testautomation.service;
 
+import java.net.URL;
+import java.util.Collection;
+import java.util.Map;
+
+import org.squashtest.csp.tm.domain.execution.Execution;
+import org.squashtest.csp.tm.domain.testautomation.AutomatedExecutionExtender;
 import org.squashtest.csp.tm.domain.testautomation.AutomatedSuite;
 import org.squashtest.csp.tm.domain.testautomation.TestAutomationProject;
 import org.squashtest.csp.tm.domain.testautomation.TestAutomationServer;
@@ -97,6 +103,18 @@ public interface InsecureTestAutomationManagementService extends TestAutomationF
 	 * @param suite
 	 */
 	void startAutomatedSuite(AutomatedSuite suite);
+	
+	
+	/**
+	 * Will (attempt to) retrieve the result url for all the executions that belongs to a given automated suite, 
+	 * and of which tests belongs to a given project.
+	 * 
+	 * @param project
+	 * @param suite
+	 */
+	void fetchAllResultURL(TestAutomationProject project, AutomatedSuite suite);
+	
+
 	
 
 }
