@@ -24,43 +24,47 @@
 	 
 	 squashtm.StatusFactory = squashtm.StatusFactory || function(conf){
 	 
-		this.getHtmlFor = function(textStatus){
-			var css = lookupCss(textStatus);
+				
+		this.getHtmlFor = function(textStatus, status){
+			var css;
+			if(status != null){
+				css = "executions-status-"+status+"-icon";
+			}else{
+				css = lookupCss(textStatus);
+			}
 			return makeHtml(css, textStatus);			
 		};
-					
-
 						
 		function lookupCss(textStatus){
 			var css;
 			
 			switch(textStatus){
 				case conf.blocked : 
-					css = "executions-status-bloqued-icon";
+					css = "executions-status-BLOQUED-icon";
 					break;
 				
 				case conf.failure :
-					css = "executions-status-failure-icon";
+					css = "executions-status-FAILURE-icon";
 					break;			
 					
 				case conf.success :
-					css = "executions-status-success-icon";
+					css = "executions-status-SUCCESS-icon";
 					break;			
 					
 				case conf.running :
-					css = "executions-status-running-icon";
+					css = "executions-status-RUNNING-icon";
 					break;			
 					
 				case conf.ready :
-					css = "executions-status-ready-icon";
+					css = "executions-status-READY-icon";
 					break;	
 					
 				case conf.error :
-					css = "executions-status-error-icon";
+					css = "executions-status-ERROR-icon";
 					break;
 					
 				case conf.warning :
-					css = "executions-status-warning-icon";
+					css = "executions-status-WARNING-icon";
 					break;
 					
 				default : 
@@ -80,4 +84,6 @@
 		
 
 	};
+	
+	squashtm.statusFactory = new squashtm.StatusFactory();
 })();

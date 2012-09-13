@@ -20,7 +20,7 @@
  */
 function AutomatedSuiteOverviewDialog(settings){
 	
-			//------------------------public -----------------------------
+	//------------------------public -----------------------------
 	this.open = openDialog;
 	this.popup = $("#execute-auto-dialog");
 		
@@ -81,14 +81,14 @@ function AutomatedSuiteOverviewDialog(settings){
 				var execution = executions[i];
 				var executionHtml = template.clone();
 				
+				//NAME
 				executionHtml.attr('id', "execution-info" + execution.id);
 				executionHtml.find(".executionName").html(execution.name);
-				//TODO change this for the use of statusFactory
+				//STATUS
 				var executionStatus = executionHtml.find(".executionStatus");
-				executionStatus.html(execution.localizedStatus);
-				executionStatus.addClass('executions-status-'
-						+ execution.status.toLowerCase() + '-icon');
-				//end TODO
+				var statusHtml = squashtm.statusFactory.getHtmlFor(execution.localizedStatus, execution.status);
+				executionStatus.html(statusHtml);
+				
 				
 				executionAutoInfos.append(executionHtml);
 				
@@ -105,22 +105,15 @@ function AutomatedSuiteOverviewDialog(settings){
 					//find executions in json
 					var executions = suiteView.executions;
 					for (i = 0; i < executions.length; i++) {
-						//update info for each execution in popup
+						//FIND EXEC
 						var execution = executions[i];
-						var execInfo = $("#execution-info-" + execution.id);
-						//TODO change this with use of StatusFactory
-						var newExecStatus = 
-								executionRowTemplate.find(" .executionStatus")
-								.clone();
-								
-						var execStatus = execInfo.find(".executionStatus");
+						var executionHtml = $("#execution-info-" + execution.id);
 						
-						newExecStatus.text(execution.localizedStatus);
-						newExecStatus.addClass('executions-status-'
-								+ execution.status.toLowerCase() + '-icon');
+						//CHANGE STATUS
+						var executionStatus = executionHtml.find(".executionStatus");
+						var statusHtml = squashtm.statusFactory.getHtmlFor( execution.localizedStatus, execution.status);
+						executionStatus.html(statusHtml);
 						
-						execStatus.replaceWith(newExecStatus);
-						//end TODO
 
 					}
 					updateProgress(suiteView)

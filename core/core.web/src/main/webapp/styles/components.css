@@ -155,31 +155,31 @@ table.datepicker-table td.datepicker-table-col {
 	line-height: 1.2;
 }
 
-.executions-status-bloqued-icon {
+.executions-status-BLOQUED-icon {
 	background: url("../images/Icon_Yellow.png") no-repeat;
 }
 
-.executions-status-failure-icon {
+.executions-status-FAILURE-icon {
 	background: url("../images/Icon_Red.png") no-repeat;
 }
 
-.executions-status-success-icon {
+.executions-status-SUCCESS-icon {
 	background: url("../images/Icon_Green.png") no-repeat;
 }
 
-.executions-status-running-icon {
+.executions-status-RUNNING-icon {
 	background: url("../images/Icon_Blue.png") no-repeat;
 }
 
-.executions-status-ready-icon {
+.executions-status-READY-icon {
 	background: url("../images/Icon_Grey.png") no-repeat;
 }
-
-.executions-status-error-icon {
+s
+.executions-status-ERROR-icon {
 	background: url("../images/Icon_Yellow.png") no-repeat;
 }
 
-.executions-status-warning-icon {
+.executions-status-WARNING-icon {
 	background: url("../images/Icon_Green.png") no-repeat;
 }
 

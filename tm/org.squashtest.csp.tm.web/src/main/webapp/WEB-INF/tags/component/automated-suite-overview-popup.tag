@@ -35,9 +35,7 @@
 <div id="execution-info-template" style="display: hidden">
 	<div class="display-table-row">
 		<div class="executionName display-table-cell"></div>
-		<div class="display-table-cell">
-			<span class="executionStatus common-status-label"></span>
-		</div>
+		<div class="executionStatus display-table-cell"></div>
 	</div>
 </div>
 
