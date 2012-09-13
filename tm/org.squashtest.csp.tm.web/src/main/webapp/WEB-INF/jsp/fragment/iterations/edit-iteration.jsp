@@ -323,7 +323,7 @@
 
 
 		<comp:toggle-panel id="datepicker-panel"
-			titleKey="campaign.planning.panel.title" isContextual="true"
+			titleKey="label.Planning" isContextual="true"
 			open="true">
 			<jsp:attribute name="body">
 	<div class="datepicker-panel">
@@ -395,11 +395,11 @@
 		<div class="toolbar">
 			<c:if test="${ linkable }">
 				<f:message var="associateLabel"
-					key="campaign.test-plan.manage.button.label" />
+					key="label.Add" />
 				<f:message var="removeLabel"
-					key="campaign.test-plan.remove.button.label" />
+					key="label.Remove" />
 				<f:message var="assignLabel"
-					key="campaign.test-plan.assign.button.label" />
+					key="label.Assign" />
 				<f:message var="manageTS" key='menu.test-suites.button.main' />
 				<input id="test-case-button" type="button" value="${associateLabel}"
 					class="button" />
@@ -437,7 +437,7 @@
 				openedBy="remove-test-case-button"
 				titleKey="dialog.remove-testcase-associations.title">
 				<jsp:attribute name="buttons">
-		<f:message var="label" key="attachment.button.delete.label" />
+		<f:message var="label" key="label.Yes" />
 				'${ label }' : function(){
 						$("#delete-multiple-test-plan-dialog").data("answer","yes");
 						$("#delete-multiple-test-plan-dialog").dialog("close");
@@ -447,7 +447,7 @@
 	</jsp:attribute>
 				<jsp:attribute name="body">
 	<f:message var="emptyMessage"
-						key="dialog.assign-user.selection.empty.label" />			
+						key="message.EmptyTableSelection" />			
 	<script type="text/javascript">
 		$("#delete-multiple-test-plan-dialog").bind(
 				"dialogopen",
@@ -515,12 +515,12 @@
 	<%--------------------------- Assign User popup -------------------------------------%>
 	<c:if test="${writable}">
 		<comp:popup id="batch-assign-test-case"
-			titleKey="dialog.assign-test-case.title" isContextual="true"
+			titleKey="label.AssignUser" isContextual="true"
 			openedBy="assign-test-case-button" closeOnSuccess="false">
 
 			<jsp:attribute name="buttons">
 		
-			<f:message var="label" key="campaign.test-plan.assign.button.label" />
+			<f:message var="label" key="label.Assign" />
 			'${ label }': function() {
 				var url = "${assignTestCasesUrl}";
 				var table = $( '#test-plans-table' ).dataTable();
@@ -576,7 +576,7 @@
 
 								});
 			</script>
-			<span><f:message key="dialog.assign-test-case.confirm.label" />
+			<span><f:message key="message.AssignTestCaseToUser" />
 				</span>
 			<select class="batch-select">
 			</select>

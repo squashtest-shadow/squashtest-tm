@@ -45,7 +45,7 @@
 	isContextual="true" closeOnSuccess="false">
 	<jsp:attribute name="buttons">
 			
-				<f:message var="label" key="CLOSE" />
+				<f:message var="label" key="label.upper.Close" />
 				'${ label }': function() {
 					$( this ).dialog( 'close' );
 				}		

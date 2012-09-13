@@ -86,7 +86,7 @@ public class RequirementAuditEventTableModelBuilder extends DataTableModelHelper
 	 */
 	@Override
 	public void visit(RequirementCreation event) {
-		String message = messageSource.getMessage("audit-trail.requirement.creation.label", null, locale);
+		String message = messageSource.getMessage("label.Creation", null, locale);
 		populateCurrentItemData(message, "creation", event);
 
 	}
@@ -103,7 +103,7 @@ public class RequirementAuditEventTableModelBuilder extends DataTableModelHelper
 	}
 
 	private String buildPropertyChangeMessageKey(RequirementVersionModification event) {
-		return "audit-trail.requirement.property-change." + event.getPropertyName() + ".label";
+		return "message.property-change." + event.getPropertyName() + ".label";
 	}
 
 	private Object[] buildMessageArgs(RequirementPropertyChange event) {

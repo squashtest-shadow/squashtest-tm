@@ -45,7 +45,7 @@
 	 - summary
  --%>
 
-<f:message var="uploadErrorMessage" key="dialog.attachment.summary.error" />
+<f:message var="uploadErrorMessage" key="message.AttachmentUploadSizeExceeded" />
 <f:message var="megaByteLabel" key="squashtm.megabyte.label" />			
 
 			
@@ -256,7 +256,7 @@
 <pop:popup id="attachment-upload-dialog" openedBy="${openedBy}" 
  				isContextual="true" titleKey="dialog.attachment.upload.title">
  	<jsp:attribute name="buttons"> 		
- 		<f:message var="attachSubmit" key="dialog.attachment.button.submit.label"/>
+ 		<f:message var="attachSubmit" key="label.Upload"/>
  		'${attachSubmit}' : function(){
  			setupAndBeginUpload();
  		},
@@ -305,7 +305,7 @@
  
 
  <pop:popup id="attachment-progress-dialog" openedBy="aezfsdfsfze" isContextual="true" 
- titleKey="dialog.attachment.pleasewait.title" closeOnSuccess="false">
+ titleKey="title.UploadingPleaseWait" closeOnSuccess="false">
  	<jsp:attribute name="buttons">
 		 <f:message var="cancelLabel" key="dialog.button.cancel.label"/>
 		'${cancelLabel}': function() {
@@ -318,7 +318,7 @@
 
  		 	
  		<div style="text-align:center;">
- 		<f:message var="pleaseWaitMessage" key="dialog.attachment.pleasewait.title" />
+ 		<f:message var="pleaseWaitMessage" key="title.UploadingPleaseWait" />
  			<h4 id="attachment-progress-message" style="text-align:center;"></h4>
  			<div id="attachment-progressbar"></div>
  			<span id="attachment-progress-percentage"></span>
@@ -374,7 +374,7 @@
  			uploadDisplayPercentage(data.percentage);
  			
 	 		if (data.percentage==100){
-	 			<f:message var="uploadCompleted" key="dialog.attachment.progressbar.complete" />
+	 			<f:message var="uploadCompleted" key="message.UploadComplete" />
 	 			uploadDisplayMessage("${uploadCompleted}");
 	 		}
  		}
@@ -410,7 +410,7 @@
  <%-- popup for the summary --%>
  <pop:popup id="attachment-upload-summary"  titleKey="dialog.attachment.summary.label"  openedBy="nothing" isContextual="true" closeOnSuccess="false">
  	 <jsp:attribute name="buttons">
-		 <f:message var="okLabel" key="dialog.attachment.add.button.acknowledge.label"/>
+		 <f:message var="okLabel" key="label.Ok"/>
 		'${okLabel}': function() {
 			$(this).dialog('close');
 		}		

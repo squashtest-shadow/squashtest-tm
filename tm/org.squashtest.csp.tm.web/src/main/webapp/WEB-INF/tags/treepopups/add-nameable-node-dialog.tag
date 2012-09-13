@@ -70,7 +70,7 @@ $(function(){
 <pop:popup id="add-${ resourceName }-dialog"
 	titleKey="dialog.new-${ resourceName }.title">
 	<jsp:attribute name="buttons">
-		<pop:button labelKey="dialog.button.add.label"
+		<pop:button labelKey="label.Add"
 			handler="${ handlerName }" />
 		<pop:cancel-button />
 	</jsp:attribute>

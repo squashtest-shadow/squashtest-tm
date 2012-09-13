@@ -79,9 +79,9 @@
 </c:choose>
 <pop:popup id="import-excel-dialog" titleKey="dialog.import-excel.title" isContextual="false"  closeOnSuccess="false">
 	<jsp:attribute name="buttonsArray">	
-		<f:message var="confirmLabel" key="dialog.import.confirm.label" />	
+		<f:message var="confirmLabel" key="label.Import" />	
 		<f:message var="cancelLabel" key="dialog.button.cancel.label"/>
-		<f:message var="okLabel" key="dialog.button.ok.label"/>
+		<f:message var="okLabel" key="label.Ok"/>
 		{
 			text : "${confirmLabel}",
 			"class" : FeedbackMultipartPopup.PARAMETRIZATION,

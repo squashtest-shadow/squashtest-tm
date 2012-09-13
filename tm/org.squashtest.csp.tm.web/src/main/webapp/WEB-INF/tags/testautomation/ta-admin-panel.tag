@@ -281,7 +281,7 @@
 		var squashSettings = {
 			enableHover : true,
 			confirmPopup : {
-				oklabel : '<f:message key="attachment.button.delete.label" />',
+				oklabel : '<f:message key="label.Yes" />',
 				cancellabel : '<f:message key="dialog.button.cancel.label" />'
 			},
 			enableDnD : false,

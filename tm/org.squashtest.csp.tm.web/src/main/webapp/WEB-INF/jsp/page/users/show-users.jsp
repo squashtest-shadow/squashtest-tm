@@ -146,11 +146,11 @@
 							<tr>
 								<th>Id</th>
 								<th>#</th>
-								<th><f:message key="dialog.add-user.login.label" /></th>
- 								<th><f:message key="dialog.add-user.group.label" /></th>
-								<th><f:message key="dialog.add-user.firstname.label" /></th>
-								<th><f:message key="dialog.add-user.lastname.label" /></th>
-								<th><f:message key="dialog.add-user.email.label" /></th>
+								<th><f:message key="label.Login" /></th>
+ 								<th><f:message key="label.Group" /></th>
+								<th><f:message key="label.FirstName" /></th>
+								<th><f:message key="label.LastName" /></th>
+								<th><f:message key="label.Email" /></th>
 								<th><f:message key="project.workspace.table.header.createdon.label" /></th>
 								<th><f:message key="project.workspace.table.header.createdby.label" /></th>
 								<th><f:message key="project.workspace.table.header.modifiedon.label" /></th>	
@@ -176,11 +176,11 @@
 	
 	</div>
 	<%-- ------------------------------ Add User Dialog ------------------------------------------------ --%>
-	<comp:popup id="add-user-dialog" titleKey="dialog.add-user.title" isContextual="true"
+	<comp:popup id="add-user-dialog" titleKey="title.AddUser" isContextual="true"
 		openedBy="add-user-button" width="400">
 		<jsp:attribute name="buttons">
 		
-			<f:message var="label" key="dialog.button.add.label" />
+			<f:message var="label" key="label.Add" />
 			'${ label }': function() {
 				if (! validatePassword()) return;
 				var url = "${ addUserUrl }";
@@ -194,7 +194,7 @@
 		<jsp:body>
 			<table id="add-user-table">
 				<tr> <td>
-					<label style="font-weight: bold;" for="add-user-login"><f:message key="dialog.add-user.login.label" /></label>
+					<label style="font-weight: bold;" for="add-user-login"><f:message key="label.Login" /></label>
 					</td>
 					<td>
 					<input type="text" id="add-user-login" size="30"/></td>
@@ -203,7 +203,7 @@
 					<td> <comp:error-message forField="user-login" /> </td>
 					 </tr>
 				<tr> <td>
-					<label style="font-weight: bold;" for="add-user-firstName"><f:message key="dialog.add-user.firstname.label" /></label>
+					<label style="font-weight: bold;" for="add-user-firstName"><f:message key="label.FirstName" /></label>
 					</td>
 					<td>
 					<input type="text" id="add-user-firstName" size="30"/></td> 
@@ -212,7 +212,7 @@
 					<td><comp:error-message forField="user-firstName" /></td>
 					</tr> 
 				<tr> <td>
-					<label style="font-weight: bold;" for="add-user-lastName"><f:message key="dialog.add-user.lastname.label" /></label>
+					<label style="font-weight: bold;" for="add-user-lastName"><f:message key="label.LastName" /></label>
 					</td>
 					<td>
 					<input type="text" id="add-user-lastName" size="30"/>
@@ -222,7 +222,7 @@
 				<td><comp:error-message forField="user-lastName" /></td>
 				 </tr>
 				<tr> <td>
-					<label style="font-weight: bold;" for="add-user-email"><f:message key="dialog.add-user.email.label" /></label>
+					<label style="font-weight: bold;" for="add-user-email"><f:message key="label.Email" /></label>
 					</td>
 					<td>
 					<input type="text" id="add-user-email" size="30"/>

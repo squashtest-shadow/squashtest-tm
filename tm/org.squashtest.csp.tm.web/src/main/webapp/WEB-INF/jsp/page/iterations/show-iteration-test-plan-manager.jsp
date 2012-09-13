@@ -167,7 +167,7 @@
 	
 				<div style="float:left;height:100%;">			
 					<h2>
-						<f:message var="title" key="campaign.test-plan.panel.title"/>
+						<f:message var="title" key="label.TestPlan"/>
 						<span>${title}</span>
 					</h2>
 				</div>	

@@ -34,7 +34,7 @@
 <%@ taglib prefix="s" uri="http://www.springframework.org/tags"%>
 <%@ taglib tagdir="/WEB-INF/tags/component" prefix="comp"%>
 
-<f:message var="addIssueLabel" key="dialog.button.add.label" />
+<f:message var="addIssueLabel" key="label.Add" />
 
 <%-- 
 The following urls aren't defined with a <c:url> but regular <c:set>. 
@@ -88,7 +88,7 @@ The reason for that is that the parameters are urls already.
 	 				</span>
 	 				<label>${interfaceDescriptor.tableIssueIDHeader}</label>
 	 				<input type="text" class="id-text" name="issue-key" value=""/>
-	 				<f:message var="searchIssueLabel"key="dialog.issue.button.search.label"/>
+	 				<f:message var="searchIssueLabel"key="label.Search"/>
 	 				<input type="button" name="search-issue" value="${searchIssueLabel}"/>
 	 			</div>
 	 		

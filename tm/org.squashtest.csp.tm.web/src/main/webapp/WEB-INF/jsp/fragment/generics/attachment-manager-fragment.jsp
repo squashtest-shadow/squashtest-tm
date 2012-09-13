@@ -203,7 +203,7 @@
 		var selectedIDs = getIdsOfSelectedTableRows(datatable,getAttachmentsTableRowId);		
 		
 		if (selectedIDs.length!=1){
-			<f:message var="renameAttachImpossible" key="dialog.attachment.rename.impossible.label"/>
+			<f:message var="renameAttachImpossible" key="message.CanRenameOnlyOneAttachment"/>
 			$.squash.openMessage("<f:message key='popup.title.error' />", "${renameAttachImpossible}");
 		}		
 		else{
@@ -229,7 +229,7 @@
 
 <div id="test-case-name-div" class="ui-widget-header ui-corner-all ui-state-default fragment-header">
 	<div style="float: left; height: 100%;">
-	<h2><span><f:message key="attachment.manager.table.title"/>&nbsp;:&nbsp;</span><a id="test-case-name" href="${ testCaseUrl }/info"><c:out
+	<h2><span><f:message key="label.CurrentAttachments"/>&nbsp;:&nbsp;</span><a id="test-case-name" href="${ testCaseUrl }/info"><c:out
 		value="${ testCase.name }" escapeXml="true" /></a></h2>
 	</div>	
 	<div style="float: right;">
@@ -249,7 +249,7 @@
 <div id="test-case-toolbar" class="toolbar-class ui-corner-all">
 	<div class="toolbar-information-panel"></div>
 	<div class="toolbar-button-panel">
-		<f:message var="uploadAttachment" key="attachment.button.upload.label" />
+		<f:message var="uploadAttachment" key="label.UploadAttachment" />
 		<input id="add-attachment" type="button" value="${uploadAttachment}" class="button"/>
 	</div>
 	<div style="clear: both;"></div>
@@ -258,7 +258,7 @@
 <%------------------------ Deletion dialogs ----------------------------------%>
 
 <%--- the openedBy attribute here is irrelevant and is just a dummy --%>
-<pop:popup id="delete-attachment-dialog" titleKey="dialog.attachment.remove.title" isContextual="true"
+<pop:popup id="delete-attachment-dialog" titleKey="title.RemoveAttachment" isContextual="true"
 	openedBy="delete-attachment-button">
 	<jsp:attribute name="buttons">
 		<f:message var="label" key="dialog.button.confirm.label" />
@@ -273,17 +273,17 @@
 		<pop:cancel-button />
 	</jsp:attribute>
 	<jsp:attribute name="body">
-		<b><f:message key="dialog.attachment.remove.caption" /></b>
+		<b><f:message key="message.ConfirmRemoveAttachment" /></b>
 		<br />				
 	</jsp:attribute>
 </pop:popup>
 
 
 <%--- the openedBy attribute here is irrelevant and is just a dummy --%>
-<pop:popup id="delete-all-attachment-dialog" titleKey="dialog.attachment.remove.title" isContextual="true"
+<pop:popup id="delete-all-attachment-dialog" titleKey="title.RemoveAttachment" isContextual="true"
 	openedBy="delete-attachment-button">
 	<jsp:attribute name="buttons">
-			<f:message var="label" key="attachment.button.delete.label" />
+			<f:message var="label" key="label.Yes" />
 				'${ label }' : function(){
 						$("#delete-all-attachment-dialog").data("answer","yes");
 						$("#delete-all-attachment-dialog").dialog("close");
@@ -293,7 +293,7 @@
 						
 	</jsp:attribute>
 	<jsp:attribute name="body">
-		<b><f:message key="dialog.attachment.remove-list.caption" /></b>
+		<b><f:message key="message.ConfirmRemoveAttachments" /></b>
 		<br />				
 	</jsp:attribute>
 </pop:popup>
@@ -303,11 +303,11 @@
 we need a hook before opening the dialog, hence we do not bind rename-attachment-button directly here.
 check the init function in the javascript above to find the real binding.
  --%>
-<comp:popup id="rename-attachment-dialog" titleKey="dialog.attachment.rename.title" isContextual="true"
+<comp:popup id="rename-attachment-dialog" titleKey="title.RenameAttachment" isContextual="true"
 	openedBy="delete-attachment-button">
 	<jsp:attribute name="buttons">
 	
-		<f:message var="label" key="dialog.attachment.button.rename.label" />
+		<f:message var="label" key="label.Rename" />
 		'${ label }': function() {
 			var id = $("#rename-attachment-dialog").data("attachId");
 			var url = "${ renameAttachmentUrl }/"+id;
@@ -337,11 +337,11 @@ check the init function in the javascript above to find the real binding.
 <%---------------------------------Attachments table ------------------------------------------------%>
 
 
-<comp:toggle-panel id="attachment-table-panel" titleKey="attachment.manager.table.title" isContextual="true" open="true" >
+<comp:toggle-panel id="attachment-table-panel" titleKey="label.CurrentAttachments" isContextual="true" open="true" >
 	<jsp:attribute name="panelButtons">	
-		<f:message var="renameAttachment" key="attachment.button.rename.label" />
+		<f:message var="renameAttachment" key="label.Rename" />
 		<input type="button" value="${renameAttachment}" id="rename-attachment-button" class="button" />
-		<f:message var="removeAttachment" key="attachment.button.remove.label" />
+		<f:message var="removeAttachment" key="label.Remove" />
 		<input type="button" value="${removeAttachment}" id="delete-all-attachment-button" class="button" />
 	</jsp:attribute>
 	<jsp:attribute name="body">
@@ -362,9 +362,9 @@ check the init function in the javascript above to find the real binding.
 					<th>Id</th>
 					<th>#</th>
 					<th>(notdisplayed)</th>	
-					<th><f:message key="attachment.manager.table.name"/></th>	
-					<th><f:message key="attachment.manager.table.size"/></th>
-					<th><f:message key="attachment.manager.table.date"/></th>
+					<th><f:message key="label.Name"/></th>	
+					<th><f:message key="label.SizeMb"/></th>
+					<th><f:message key="label.AddedOn"/></th>
 					<th>&nbsp;</th> 
 				</tr>
 			</thead>
@@ -374,7 +374,7 @@ check the init function in the javascript above to find the real binding.
 		</table>
 		<div id="attachment-row-buttons" class="not-displayed">
 			<a id="delete-attachment-button"	class="delete-attachment-button">
-			<f:message key="attachment.button.remove.label" />
+			<f:message key="label.Remove" />
 		</a>
 		</div>
 	</jsp:attribute>

@@ -98,7 +98,7 @@
  -->
 
 <div class="fragment-body">
-				<input style="float: right;" type="button" value='<f:message key="bugtracker.button.add.label" />' id="new-bugtracker-button"/>
+				<input style="float: right;" type="button" value='<f:message key="label.AddBugtracker" />' id="new-bugtracker-button"/>
 				<div style="clear:both"></div>
 				<comp:decorate-ajax-table url="${ bugtrackersUrl }" tableId="bugtrackers-table" paginate="true">
 					<jsp:attribute name="drawCallback">tableDrawCallback</jsp:attribute>
@@ -117,10 +117,10 @@
 						<tr>
 							<th>Id(not shown)</th> 
 							<th>#</th>
-							<th><f:message key="bugtracker.workspace.table.header.name.label" /></th>
-							<th><f:message key="bugtracker.workspace.table.header.kind.label" /></th>
-							<th><f:message key="bugtracker.workspace.table.header.url.label" /></th>
-							<th><f:message key="bugtracker.workspace.table.header.iframe.label" /></th>
+							<th><f:message key="label.Name" /></th>
+							<th><f:message key="label.Kind" /></th>
+							<th><f:message key="label.Url" /></th>
+							<th><f:message key="label.lower.iframe" /></th>
 						</tr>
 					</thead>
 					<tbody><%-- Will be populated through ajax --%></tbody>
@@ -129,7 +129,7 @@
 
 <comp:popup id="add-bugtracker-dialog" titleKey="dialog.new-bugtracker.title" openedBy="new-bugtracker-button">
 	<jsp:attribute name="buttons">
-		<f:message var="label1" key="dialog.button.add.label" />
+		<f:message var="label1" key="label.Add" />
 			'${ label1 }': function() {
 					var url = "${ addBugtrackerUrl }";
 					<jq:ajaxcall url="url"

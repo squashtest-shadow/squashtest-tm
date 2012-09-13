@@ -62,7 +62,7 @@
 	}
 </script>
 <c:url var="requirementAuditTrailTableModelUrl" value="/audit-trail/requirement-versions/${ requirementVersion.id }/events-table" />
-<cmp:toggle-panel id="requirement-audit-trail-panel" titleKey="audit-trail.requirement.panel.title" open="false">
+<cmp:toggle-panel id="requirement-audit-trail-panel" titleKey="title.EditHistory" open="false">
 	<jsp:attribute name="body">
 		<cmp:decorate-ajax-table url="${ requirementAuditTrailTableModelUrl }" tableId="requirement-audit-trail-table" paginate="true" displayLength="10">
 			<jsp:attribute name="rowCallback">auditTrailTableRowCallback</jsp:attribute>
@@ -76,9 +76,9 @@
 			<table id="requirement-audit-trail-table">
 				<thead>
 					<tr>
-						<th><f:message key="audit-trail.requirement.table.col-header.date.label" /></th>
-						<th><f:message key="audit-trail.requirement.table.col-header.author.label" /></th>
-						<th><f:message key="audit-trail.requirement.table.col-header.event.label" /></th>
+						<th><f:message key="label.Date" /></th>
+						<th><f:message key="label.User" /></th>
+						<th><f:message key="label.Event" /></th>
 						<th>&nbsp;</th>
 						<th>&nbsp;</th>
 					</tr>
@@ -97,7 +97,7 @@
 	</jsp:attribute>
 </cmp:toggle-panel>
 
-<span id="show-audit-event-details-template" class="not-displayed">&nbsp;<a id="show-audit-event-details" href="javascript:void(0)"><f:message key="audit-trail.requirement.property-change.show-details.label" /></a></span>
+<span id="show-audit-event-details-template" class="not-displayed">&nbsp;<a id="show-audit-event-details" href="javascript:void(0)"><f:message key="message.property-change.show-details.label" /></a></span>
 
 <script type="text/javascript">
 	$(function() {
@@ -114,15 +114,15 @@
 <%-- /AUDIT TRAIL --%>
 
 <%-- AUDIT EVENT DETAILS --%>	
-<f:message var="auditEventDetailsDialogTitle" key="audit-trail.requirement.property-change.show-details.title" />	
+<f:message var="auditEventDetailsDialogTitle" key="message.property-change.show-details.title" />	
 <div id="audit-event-details-dialog" class="not-displayed popup-dialog" title="${ auditEventDetailsDialogTitle }">
 	<div class="display-table">
 		<div>
-			<label for="audit-event-old-value"><f:message key="audit-trail.requirement.property-change.old-value.label" /></label>
+			<label for="audit-event-old-value"><f:message key="message.property-change.old-value.label" /></label>
 			<span id="audit-event-old-value">old value</span>
 		</div>
 		<div class="display-table-row">
-			<label for="audit-event-new-value"><f:message key="audit-trail.requirement.property-change.new-value.label" /></label>
+			<label for="audit-event-new-value"><f:message key="message.property-change.new-value.label" /></label>
 			<span id="audit-event-new-value">new value</span>
 		</div>
 		<input:ok />

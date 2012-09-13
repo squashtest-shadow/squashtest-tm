@@ -142,7 +142,7 @@
 
 <comp:popup id="add-project-dialog" titleKey="dialog.new-project.title" openedBy="new-project-button">
 	<jsp:attribute name="buttons">
-		<f:message var="label1" key="dialog.button.add.label" />
+		<f:message var="label1" key="label.Add" />
 			'${ label1 }': function() {
 					var url = "${ addProjectUrl }";
 					<jq:ajaxcall url="url"

@@ -49,13 +49,13 @@
 		<div id="admin-link-pane">
 			<table>
 			<sec:authorize access=" hasRole('ROLE_ADMIN')">
-				<tr><td><a href="${ usersUrl }"><b><f:message key="admin.users.management.url.label" /></b></a></td></tr>
+				<tr><td><a href="${ usersUrl }"><b><f:message key="label.capit.UserManagement" /></b></a></td></tr>
 				</sec:authorize>
-				<tr><td><a href="${ projectsUrl }"><b><f:message key="admin.projects.management.url.label" /></b></a></td></tr>
+				<tr><td><a href="${ projectsUrl }"><b><f:message key="label.capit.ProjectManagement" /></b></a></td></tr>
 				<sec:authorize access=" hasRole('ROLE_ADMIN')">
-				<tr><td><a href="${ bugtrackerUrl }"><b><f:message key="admin.bugtracker.management.url.label" /></b></a></td></tr>
-				<tr><td><a href="${ loginUrl }"><b><f:message key="admin.login-message.management.url.label" /></b></a></td></tr>
-				<tr><td><a href="${ welcomeUrl }"><b><f:message key="admin.welcome-message.management.url.label" /></b></a></td></tr>
+				<tr><td><a href="${ bugtrackerUrl }"><b><f:message key="label.capit.BugtrackerManagement" /></b></a></td></tr>
+				<tr><td><a href="${ loginUrl }"><b><f:message key="label.ConsultModifyLoginMessage" /></b></a></td></tr>
+				<tr><td><a href="${ welcomeUrl }"><b><f:message key="label.ConsultModifyWelcomeMessage" /></b></a></td></tr>
 				</sec:authorize>
 			</table>
 		</div>	

@@ -27,12 +27,12 @@
 		<tr>
 			<th>Item Id</th>
 			<th>#</th>
-			<th><f:message key="campaign.test-plan.table.column-header.project.label" /></th>
+			<th><f:message key="label.Project" /></th>
 			<th><f:message key="test-case.name.label" /></th>
 			<th><f:message key="test-case.user.combo.label" /></th>
 			<th>assigned user id (masked)</th>
 			<th><f:message key="test-case.importance.combo.label" /></th>
-			<th><f:message key="campaign.test-plan.table.column-header.type.label" /></th>
+			<th><f:message key="label.Type" /></th>
 			<th>&nbsp;</th>				
 			<th>TC Id</th>							
 		</tr>

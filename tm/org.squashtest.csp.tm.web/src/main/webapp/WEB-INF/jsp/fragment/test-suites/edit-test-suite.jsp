@@ -384,11 +384,11 @@
 		<div class="toolbar">
 			<c:if test="${ linkable }">
 				<f:message var="associateLabel"
-					key="campaign.test-plan.manage.button.label" />
+					key="label.Add" />
 				<f:message var="removeLabel"
-					key="campaign.test-plan.remove.button.label" />
+					key="label.Remove" />
 				<f:message var="assignLabel"
-					key="campaign.test-plan.assign.button.label" />
+					key="label.Assign" />
 				<input id="test-case-button" type="button" value="${associateLabel}"
 					class="button" />
 				<input id="remove-test-suite-test-case-button" type="button"
@@ -427,13 +427,13 @@
 			openedBy="remove-test-suite-test-case-button"
 			titleKey="dialog.remove-testcase-testsuite-associations.title">
 			<jsp:attribute name="buttons">
-		<f:message var="labelDelete" key="attachment.button.delete.label" />
+		<f:message var="labelDelete" key="label.Yes" />
 				'${ labelDelete }' : function(){						
 						$("#delete-test-suite-multiple-test-plan-dialog").data("answer","delete");
 						$("#delete-test-suite-multiple-test-plan-dialog").dialog("close");
 				},
 				
-		<f:message var="labelDetach" key="attachment.button.detach.label" />
+		<f:message var="labelDetach" key="label.No" />
 				'${ labelDetach }' : function(){
 						$("#delete-test-suite-multiple-test-plan-dialog").data("answer","detach");
 						$("#delete-test-suite-multiple-test-plan-dialog").dialog("close");
@@ -443,7 +443,7 @@
 	</jsp:attribute>
 			<jsp:attribute name="body">
 		<f:message var="emptyMessage"
-					key="dialog.assign-user.selection.empty.label" />			
+					key="message.EmptyTableSelection" />			
 		<script type="text/javascript">
 				$("#delete-test-suite-multiple-test-plan-dialog").bind( "dialogopen", function(event, ui){
 					var table = $( '#test-suite-test-plans-table' ).dataTable();
@@ -465,13 +465,13 @@
 			openedBy="test-suite-test-plans-table .delete-test-suite-test-plan-button"
 			titleKey="dialog.remove-testcase-testsuite-association.title">
 			<jsp:attribute name="buttons">
-		<f:message var="labelDelete" key="attachment.button.delete.label" />
+		<f:message var="labelDelete" key="label.Yes" />
 				'${ labelDelete }' : function(){
 						$("#delete-test-suite-single-test-plan-dialog").data("answer","delete");
 						$("#delete-test-suite-single-test-plan-dialog").dialog("close");
 				},
 				
-		<f:message var="labelDetach" key="attachment.button.detach.label" />
+		<f:message var="labelDetach" key="label.No" />
 				'${ labelDetach }' : function(){
 						$("#delete-test-suite-single-test-plan-dialog").data("answer","detach");
 						$("#delete-test-suite-single-test-plan-dialog").dialog("close");
@@ -519,7 +519,7 @@
 
 	<%--------------------------- Assign User popup -------------------------------------%>
 	<comp:popup id="batch-assign-test-case"
-		titleKey="dialog.assign-test-case.title" isContextual="true"
+		titleKey="label.AssignUser" isContextual="true"
 		openedBy="assign-test-case-button" closeOnSuccess="false">
 
 		<jsp:attribute name="buttons">
@@ -542,7 +542,7 @@
 		</jsp:attribute>
 		<jsp:body>
 			<f:message var="confirmMessage"
-				key="dialog.assign-test-case.confirm.label" />
+				key="message.AssignTestCaseToUser" />
 			<script type="text/javascript">
 				$("#batch-assign-test-case").bind( "dialogopen", function(event, ui){
 					var table = $( '#test-suite-test-plans-table' ).dataTable();

@@ -274,11 +274,11 @@
 					
 			<%----------------------------------- add User Popup-----------------------------------------------%>
 		<comp:popup id="add-permission-dialog"
-				titleKey="dialog.add-permission.title" isContextual="true"
+				titleKey="title.AddPermission" isContextual="true"
 				openedBy="add-permission-button">
 			<jsp:attribute name="buttons">
 			
-				<f:message var="label" key="dialog.add-permission.button.label" />
+				<f:message var="label" key="label.Add" />
 				'${ label }': function() {
 					var url = "${ addPermissionUrl }";
 					
@@ -336,7 +336,7 @@
 		$("#add-permission-dialog").bind("dialogopen", function(event, ui) {
 //  			if ($("#user-input option:last-child").html() == null){
 //  				$(this).dialog('close');
-//  				$.squash.openMessage("<f:message key='popup.title.error' />", "<f:message key='dialog.add-permission.project.empty.label' />");
+//  				$.squash.openMessage("<f:message key='popup.title.error' />", "<f:message key='message.AllUsersAlreadyLinkedToProject' />");
 //  			}
 		});
 		
@@ -486,7 +486,7 @@
 		openedBy="rename-project-button">
 		<jsp:attribute name="buttons">
 	
-		<f:message var="label" key="dialog.button.rename-tree-node.label" />
+		<f:message var="label" key="label.Rename" />
 		'${ label }': function() {
 			var url = "${ projectUrl }";
 			<jq:ajaxcall url="url" dataType="json" httpMethod="POST"

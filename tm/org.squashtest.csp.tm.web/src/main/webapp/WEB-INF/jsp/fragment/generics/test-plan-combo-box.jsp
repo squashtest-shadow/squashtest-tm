@@ -31,7 +31,7 @@
 <select id="${selectIdentifier}" class="${selectClass}"
 	data-assign-url="${url}" onchange="changeUserLogin(this)">
 	<option value="0" class="not-affected">
-		<f:message key="dialog.assign-user.not.affected.label" />
+		<f:message key="label.Unassigned" />
 	</option>
 
 	<c:forEach var="user" items="${usersList}">

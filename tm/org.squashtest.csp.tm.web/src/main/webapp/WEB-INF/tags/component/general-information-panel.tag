@@ -32,13 +32,13 @@
 
 <div id="general-information-panel" class="information-panel">
 	<c:if test="${ not withoutCreationInfo }">
-		<span ><f:message key="auditable_entity.created_on.label" />&nbsp;:&nbsp;</span>
+		<span ><f:message key="label.CreatedOn" />&nbsp;:&nbsp;</span>
 		<span id="created-on">
 			<f:formatDate value="${ auditableEntity.createdOn }" pattern="${dateFormat}"/> (${ auditableEntity.createdBy })
 		</span>
 		<br />
 	</c:if>
-	<span><f:message key="auditable_entity.last_modified_on.label" />&nbsp;:&nbsp;</span>
+	<span><f:message key="label.UpdatedOn" />&nbsp;:&nbsp;</span>
 	<c:choose>
 		<c:when test="${not empty auditableEntity.lastModifiedOn }">
 			<span id="last-modified-on">
@@ -46,7 +46,7 @@
 			</span>
 		</c:when>
 		<c:otherwise>
-			(<f:message key="auditable_entity.never_modified.label" />)
+			(<f:message key="label.lower.Never" />)
 		</c:otherwise>
 	</c:choose>
 	<br />

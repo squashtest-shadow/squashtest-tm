@@ -71,12 +71,12 @@
 		
 	</script>
 
-<comp:toggle-panel id="attachment-panel" titleKey="attachment.panel.title" isContextual="true" open="${ entity.attachmentList.notEmpty }">
+<comp:toggle-panel id="attachment-panel" titleKey="label.Attachments" isContextual="true" open="${ entity.attachmentList.notEmpty }">
 	<jsp:attribute name="panelButtons">
 		<c:if test="${ editable }">
-			<f:message var="uploadAttachment" key="attachment.button.upload.label" />
+			<f:message var="uploadAttachment" key="label.UploadAttachment" />
 			<input id="upload-attachment-button" type="button" value="${uploadAttachment}" class="button" />
-			<f:message var="manageAttachment" key="attachment.button.manage.label" />
+			<f:message var="manageAttachment" key="label.Organize" />
 			<input id="manage-attachment-bloc-button" type="button" value="${manageAttachment}" class="button" />
 		</c:if>
 	</jsp:attribute>	

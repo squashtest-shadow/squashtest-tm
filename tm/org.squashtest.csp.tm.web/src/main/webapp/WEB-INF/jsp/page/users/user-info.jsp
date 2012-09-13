@@ -56,7 +56,7 @@
 	<s:param name="userId" value="${user.id}" />
 </s:url>
 
-<f:message key="dialog.add-permission.empty.label" var="emptyMessage" />
+<f:message key="message.AllProjectsAlreadyLinkedToUser" var="emptyMessage" />
 
 <layout:info-page-layout titleKey="workspace.user.info.title">
 	<jsp:attribute  name="head">	
@@ -233,7 +233,7 @@
 			<jsp:attribute name="body">
 				<div class="display-table" id="user-infos-table">
 					<div class="display-table-row">
-						<label for="user-login"><f:message key="dialog.add-user.login.label" /></label>
+						<label for="user-login"><f:message key="label.Login" /></label>
 						<div id="user-login" class="display-table-cell">${ user.login }</div>
 					</div>
 					<div class="display-table-row">
@@ -242,19 +242,19 @@
 					</div>
 					</div>
 					<div class="display-table-row">
-						<label for="user-first-name"><f:message key="dialog.add-user.firstname.label" /></label>
+						<label for="user-first-name"><f:message key="label.FirstName" /></label>
 						<div id="user-first-name" class="display-table-cell">${ user.firstName }</div>
 					</div>
 					<div class="display-table-row">
-						<label for="user-last-name"><f:message key="dialog.add-user.lastname.label" /></label>
+						<label for="user-last-name"><f:message key="label.LastName" /></label>
 						<div id="user-last-name" class="display-table-cell">${ user.lastName }</div>
 					</div>
 					<div class="display-table-row">
-						<label for="user-email"><f:message key="dialog.add-user.email.label" /></label>
+						<label for="user-email"><f:message key="label.Email" /></label>
 						<div id="user-email" class="display-table-cell">${ user.email }</div>
 					</div>
 					<div class="display-table-row">
-						<label for="user-group"><f:message key="dialog.add-user.users.group.label" /></label>
+						<label for="user-group"><f:message key="label.UserGroup" /></label>
 						<div class="display-table-cell"><select id="user-group" >
 								<c:forEach var="group" items="${ usersGroupList }">
 									<c:choose>
@@ -282,7 +282,7 @@
 		<%-----------------------------------/ User Infos -----------------------------------------------%>
 		<%-----------------------------------Permissions -----------------------------------------------%>
 		<br />
-		<f:message key="dialog.add-permission.title" var="addButtonTitle" />
+		<f:message key="title.AddPermission" var="addButtonTitle" />
 		
 		<comp:toggle-panel id="project-permission-panel" titleKey="user.project-rights.title.label" isContextual="true" open="true">
 			<jsp:attribute name="panelButtons">
@@ -302,11 +302,11 @@
 		<%----------------------------------- /Permissions -----------------------------------------------%>
 		<%----------------------------------- add Permission Popup-----------------------------------------------%>
 		<comp:popup id="add-permission-dialog"
-			titleKey="dialog.add-permission.title" isContextual="true"
+			titleKey="title.AddPermission" isContextual="true"
 			openedBy="add-permission-button">
 			<jsp:attribute name="buttons">
 			
-				<f:message var="label" key="dialog.add-permission.button.label" />
+				<f:message var="label" key="label.Add" />
 				'${ label }': function() {
 					var url = "${ addPermissionUrl }";
 					

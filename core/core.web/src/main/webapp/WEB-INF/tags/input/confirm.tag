@@ -22,4 +22,4 @@
 --%>
 <%@ tag body-content="empty" %>
 <%@ taglib prefix="f" uri="http://java.sun.com/jsp/jstl/fmt" %>
-<input type="button" value="<f:message key='dialog.button.confirm.label' />" />
+<input type="button" value="<f:message key='label.Confirm' />" />

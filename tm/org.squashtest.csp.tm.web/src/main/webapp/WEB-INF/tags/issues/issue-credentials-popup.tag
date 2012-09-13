@@ -36,7 +36,7 @@
 
 <pop:popup isContextual="true" closeOnSuccess="false" titleKey="dialog.issue.credentials.title" id="${divId}" openedBy="nothing">
 	<jsp:attribute name="buttons" >
-		<f:message var="loginlabel" key="dialog.issue.credentials.button.login.label" />
+		<f:message var="loginlabel" key="label.LogIn" />
 		'${ loginlabel }': function() {
 			postIssueCredentials();
 		},			

@@ -85,8 +85,8 @@
 <script>
 $(function(){
 	squashtm.message = new Object();
-	squashtm.message.cancel = "<f:message key='dialog.button.cancel.label'/>" ;
-	squashtm.message.confirm = "<f:message key='dialog.button.confirm.label'/>" ;
+	squashtm.message.cancel = "<f:message key='label.Cancel'/>" ;
+	squashtm.message.confirm = "<f:message key='label.Confirm'/>" ;
 });
 </script>
 <!-- -------------------- Waiting for better handle of locale in .js--------------------------------------------- -->

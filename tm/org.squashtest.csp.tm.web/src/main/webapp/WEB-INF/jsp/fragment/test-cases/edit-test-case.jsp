@@ -163,7 +163,7 @@ $(function() {
 			collapseButton.click(function(){
 				if(collapser.isOpen){
 					if(oneCellIsInEditingState()){
-						$.squash.openMessage("<f:message key='popup.title.info' />", "<f:message key='collapser.error.editing-cell.opened' />");
+						$.squash.openMessage("<f:message key='popup.title.info' />", "<f:message key='message.CloseEditingFormsBeforeCollapse' />");
 					}else{
 						collapser.closeAll();
 						decorateStepTableButton("#collapse-steps-button", "ui-icon-zoomin");
@@ -495,11 +495,11 @@ $(function() {
 
 	<%-- ------------------------------ Add Test Step Dialog ------------------------------------------------ --%>
 	<comp:popup id="add-test-step-dialog"
-		titleKey="dialog.add-test_step.title" isContextual="true"
+		titleKey="title.AddTestStep" isContextual="true"
 		openedBy="add-test-step-button" closeOnSuccess="${false}">
 		<jsp:attribute name="buttons">
 	
-		<f:message var="addLabel" key="dialog.button.add.label" />
+		<f:message var="addLabel" key="label.Add" />
 		'${ addLabel }': function() {
 			var url = "${ addStepUrl }";
 			<jq:ajaxcall url="url" dataType="json" httpMethod="POST"
@@ -522,14 +522,14 @@ $(function() {
 		<jsp:body>
 		<div class="centered" style="text-align: center; margin-bottom: 2em;">
 			<label style="font-weight: bold;" for="add-test-step-action"><f:message
-						key="dialog.add-test_step.actions.label" />
+						key="label.Actions" />
 				</label>
 			<textarea id="add-test-step-action"></textarea>
 			<comp:error-message forField="action" />	
 		</div>
 		<div class="centered">
 			<label style="font-weight: bold;" for="add-test-step-result"><f:message
-						key="dialog.add-test_step.expected-results.label" />
+						key="label.ExpectedResults" />
 				</label>
 			<textarea id="add-test-step-result"></textarea>
 		</div>
@@ -555,7 +555,7 @@ function addTestStepSuccessAnother(){
 		isContextual="true" openedBy="delete-step-button">
 		<jsp:attribute name="buttons">
 	
-		<f:message var="label" key="dialog.button.delete-step.label" />
+		<f:message var="label" key="label.Remove" />
 
 		'${ label }': function() {
 		

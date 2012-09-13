@@ -43,7 +43,7 @@
 		if (ids.length == 0) {
 			$.squash
 					.openMessage("<f:message key='popup.title.error' />",
-							"<f:message	key='dialog.assign-user.selection.empty.label'/>");
+							"<f:message	key='message.EmptyTableSelection'/>");
 		} else {
 			executeAuto(ids);
 		}

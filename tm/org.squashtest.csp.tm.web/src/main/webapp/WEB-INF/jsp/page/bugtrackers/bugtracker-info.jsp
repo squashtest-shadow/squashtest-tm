@@ -58,7 +58,7 @@
 			<div style="float: left; height: 3em">
 				<h2>
 					<label for="bugtracker-name-header"><f:message
-							key="bugtracker.header.title" />
+							key="label.Bugtracker" />
 					</label><a id="bugtracker-name-header" href="javascript:void(0);"><c:out
 							value="${ bugtracker.name }" escapeXml="true" />
 					</a>
@@ -93,28 +93,28 @@
 			<br />
 			<br />
 			<comp:toggle-panel id="bugtracker-info-panel"
-				titleKey="bugtracker.info.panel.title" isContextual="true" open="true"
+				titleKey="label.BugtrackerInformations" isContextual="true" open="true"
 				classes="information-panel">
 	
 				<jsp:attribute name="body">
 					<div id="bugtracker-description-table" class="display-table">
 					<div class="display-table-row">
 							<label for="bugtracker-kind" class="display-table-cell">
-							<f:message key="bugtracker.kind.label" />
+							<f:message key="label.Kind" />
 							</label>
 							<div class="display-table-cell" id="bugtracker-kind">${ bugtracker.kind }</div>
 						<comp:select-jeditable componentId="bugtracker-kind" jsonData="${bugtrackerKinds}" targetUrl="${bugtrackerUrl}" />
 						</div>
 						<div class="display-table-row">
 							<label for="bugtracker-url" class="display-table-cell">
-							<f:message key="bugtracker.url.label" />
+							<f:message key="label.Url" />
 							</label>
 							<div class="display-table-cell" id="bugtracker-url">${ bugtracker.url }</div>
 							<comp:simple-jeditable targetUrl="${ bugtrackerUrl }" componentId="bugtracker-url" submitCallback="changeBugTrackerUrlCallback"/>
 						</div>
 						<div class="display-table-row">
 							<label for="bugtracker-iframeFriendly" class="display-table-cell">
-							<f:message key="bugtracker.iframeFriendly.label" />
+							<f:message key="label.DisplaysInIframe" />
 							</label>
 							<div class="display-table-cell" id="bugtracker-iframeFriendly" style="cursor:pointer">
 								<input id="bugtracker-iframeFriendly-checkbx" type="checkbox" 

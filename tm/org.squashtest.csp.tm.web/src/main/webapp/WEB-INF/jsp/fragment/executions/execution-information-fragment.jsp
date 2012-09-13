@@ -29,19 +29,19 @@
 
 
 	<div style="display:inline-block; margin-right:2em;">
-		<label><f:message key="auditable-entity.execution-mode.label" /></label>
+		<label><f:message key="label.ExecutionMode" /></label>
 		<span><f:message key="${ auditableEntity.executionMode.i18nKey }"/></span>
 	</div>
 
 	
 		
 	<div style="display:inline-block; margin-right:2em;">
-		<label><f:message key="auditable-entity.execution-status.label" /></label>
+		<label><f:message key="label.Status" /></label>
 		<jq:execution-status status="{auditableEntity.executionStatus}" />
 	</div>
 	
 	<div style="display:inline-block; margin-right:2em;">
-		<label for="last-executed-on" ><f:message key="auditable-entity.last-executed-on.label" /></label>
+		<label for="last-executed-on" ><f:message key="label.LastExecutionOn" /></label>
 		<c:choose>
 			<c:when test="${not empty auditableEntity.lastExecutedOn }">
 				<span id="last-executed-on">
@@ -51,7 +51,7 @@
 				</span>
 			</c:when>
 			<c:otherwise>
-				(<f:message key="auditable-entity.never-executed.label" />)
+				(<f:message key="label.lower.Never" />)
 			</c:otherwise>
 		</c:choose>	
 	</div>

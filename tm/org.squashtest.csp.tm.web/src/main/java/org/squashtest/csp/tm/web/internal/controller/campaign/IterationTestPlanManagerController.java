@@ -236,7 +236,7 @@ public class IterationTestPlanManagerController {
 	}
 
 	private String formatUnassigned(Locale locale){
-		return messageSource.getMessage("dialog.assign-user.not.affected.label", null, locale);
+		return messageSource.getMessage("label.Unassigned", null, locale);
 	}
 	
 	private String formatNoData(Locale locale) {

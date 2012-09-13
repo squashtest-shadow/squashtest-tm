@@ -69,10 +69,10 @@ $(function(){
 </script>
 
 <f:message var="crossProjectError" key="dialog.cross-project.error.label" />
-<pop:popup id="export-requirement-node-dialog"	titleKey="dialog.export-requirement.title" >
+<pop:popup id="export-requirement-node-dialog"	titleKey="label.Export" >
 	<jsp:attribute name="buttons">
 	
-		<f:message var="label" key="dialog.export-requirement.title" />
+		<f:message var="label" key="label.Export" />
 		'${ label }': function() {
 			var nodes = $("${treeSelector}").jstree("get_selected");
 			var url = (nodes.is(':library')) ? "${ exportLibraryUrl }" : "${ exportFolderUrl }";

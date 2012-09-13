@@ -28,7 +28,7 @@
 	
 	<f:message var="dateFormat" key="squashtm.dateformat"/>
 	
-	<label for="last-executed-on" ><f:message key="auditable-entity.last-executed-on.label" /></label>
+	<label for="last-executed-on" ><f:message key="label.LastExecutionOn" /></label>
 	<c:choose>
 	<c:when test="${not empty auditableEntity.lastExecutedOn }">
 	<span id="last-executed-on">
@@ -36,11 +36,11 @@
 	</span>
 	<br/>
 	<span id="last-executed-by">
-		<f:message key="auditable-entity.last-executed-by.label" /> : ${ auditableEntity.lastExecutedBy }
+		<f:message key="label.By" /> : ${ auditableEntity.lastExecutedBy }
 	</span>
 	</c:when>
 	<c:otherwise>
-	(<f:message key="auditable-entity.never-executed.label" />)
+	(<f:message key="label.lower.Never" />)
 	</c:otherwise>
 	</c:choose>
 	<br />

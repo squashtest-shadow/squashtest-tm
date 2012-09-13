@@ -154,7 +154,7 @@
 
 	<div style="float: left; height: 100%;">
 		<h2>
-			<span><f:message key="campaign.header.title" />&nbsp;:&nbsp;</span><a
+			<span><f:message key="label.Campaign" />&nbsp;:&nbsp;</span><a
 				id="campaign-name" href="${ campaignUrl }/info"><c:out
 					value="${ campaign.name }" escapeXml="true" />
 			</a>
@@ -207,12 +207,12 @@
 	<div class="toolbar-button-panel">
 		<c:if test="${ smallEditable }">
 			<input type="button"
-				value='<f:message key="campaign.button.rename.label" />'
+				value='<f:message key="label.Rename" />'
 				id="rename-campaign-button" />
 		</c:if>
 		<c:if test="${ deletable }">
 			<input type="button"
-				value='<f:message key="campaign.button.remove.label" />'
+				value='<f:message key="label.Remove" />'
 				id="delete-campaign-button" />
 		</c:if>
 	</div>
@@ -264,7 +264,7 @@
 
 		<%--------------------------- Planning section ------------------------------------%>
 		<comp:toggle-panel id="datepicker-panel"
-			titleKey="campaign.planning.panel.title" isContextual="true"
+			titleKey="label.Planning" isContextual="true"
 			open="true">
 			<jsp:attribute name="body">
 	<div class="datepicker-panel">
@@ -336,9 +336,9 @@
 				<f:message var="associateLabel"
 					key="campaign.test-plan.manage.button.label" />
 				<f:message var="removeLabel"
-					key="campaign.test-plan.remove.button.label" />
+					key="label.Remove" />
 				<f:message var="assignLabel"
-					key="campaign.test-plan.assign.button.label" />
+					key="label.Assign" />
 				<input id="test-case-button" type="button" value="${associateLabel}"
 					class="button" />
 				<input id="remove-test-case-button" type="button"
@@ -363,7 +363,7 @@
 			openedBy="remove-test-case-button"
 			titleKey="dialog.remove-testcase-associations.title">
 			<jsp:attribute name="buttons">
-		<f:message var="label" key="attachment.button.delete.label" />
+		<f:message var="label" key="label.Yes" />
 				'${ label }' : function(){
 						$("#delete-multiple-test-cases-dialog").data("answer","yes");
 						$("#delete-multiple-test-cases-dialog").dialog("close");
@@ -402,11 +402,11 @@
 
 
 <comp:popup id="batch-assign-test-case"
-	titleKey="dialog.assign-test-case.title" isContextual="true"
+	titleKey="label.AssignUser" isContextual="true"
 	openedBy="assign-test-case-button" closeOnSuccess="false">
 	<jsp:attribute name="buttons">
 		
-			<f:message var="label" key="dialog.assign-test-case.title" />
+			<f:message var="label" key="label.AssignUser" />
 			'${ label }': function() {
 				var url = "${ assignTestCasesUrl }";
 				var table = $( '#test-cases-table' ).dataTable();
@@ -424,7 +424,7 @@
 		</jsp:attribute>
 	<jsp:body>
 			<f:message var="emptyMessage"
-			key="dialog.assign-user.selection.empty.label" />
+			key="message.EmptyTableSelection" />
 			<script type="text/javascript">
 				$("#batch-assign-test-case").bind("dialogopen",function(event, ui) {
 						var table = $('#test-cases-table').dataTable();
@@ -446,7 +446,7 @@
 						}
 					});
 			</script>
-			<span><f:message key="dialog.assign-test-case.confirm.label" />
+			<span><f:message key="message.AssignTestCaseToUser" />
 		</span>
 			<select class="batch-select"></select>
 			
