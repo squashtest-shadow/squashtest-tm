@@ -205,7 +205,7 @@
 		@NamedQuery(name = "RequirementVersion.countByRequirement", query = "select count(rv) from RequirementVersion rv join rv.requirement r where r.id = ?"),
 		
 		// Queries on AutomatedExecution
-		@NamedQuery(name = "AutomatedExecutionExtender.findAllBySuiteIdAndTestName", query = "from AutomatedExecutionExtender ex where ex.automatedSuite.id = ? and ex.automatedTest.name = ?"),
+		@NamedQuery(name = "AutomatedExecutionExtender.findAllBySuiteIdAndTestName", query = "from AutomatedExecutionExtender ex where ex.automatedSuite.id = ? and ex.automatedTest.name = ? and ex.automatedTest.project.name = ?"),
 
 		/* ********************************************** batch deletion-related queries **************************************************** */
 

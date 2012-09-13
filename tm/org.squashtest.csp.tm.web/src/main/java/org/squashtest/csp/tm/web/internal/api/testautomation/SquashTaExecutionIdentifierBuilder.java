@@ -55,7 +55,7 @@ class SquashTaExecutionIdentifierBuilder {
 		checkState();
 		
 		String slashedPath = dottedTestPath.replace('.', '/');
-		final String testFullName = projectName + '/' + slashedPath + '/' + testName;
+		final String testFullName = slashedPath + '/' + testName;
 
 		return new AutomatedExecutionSetIdentifier() {
 

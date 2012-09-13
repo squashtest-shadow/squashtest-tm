@@ -50,7 +50,7 @@ public class AutomatedExecutionManagerServiceImpl implements AutomatedExecutionM
 	@Override
 	public void changeExecutionsStates(@NotNull AutomatedExecutionSetIdentifier setIdentifier,
 			@NotNull TestExecutionStatus stateChange) {
-		List<AutomatedExecutionExtender> execs = automatedExecutionDao.findAllBySuiteIdAndTestName(setIdentifier.getAutomatedSuiteId(), setIdentifier.getAutomatedTestName());
+		List<AutomatedExecutionExtender> execs = automatedExecutionDao.findAllBySuiteIdAndTestName(setIdentifier.getAutomatedSuiteId(), setIdentifier.getAutomatedTestName(), setIdentifier.getTestAutomationProjectName());
 
 		for (AutomatedExecutionExtender exec : execs) {
 			changeState(exec, stateChange);

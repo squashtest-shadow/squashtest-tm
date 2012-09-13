@@ -39,8 +39,9 @@ public interface AutomatedExecutionExtenderDao {
 
 	/**
 	 * Returns the {@link AutomatedExecution}s which match the {@link AutomatedExecutionSetIdentifier}.
+	 * @param projectName 
 	 * 
 	 * @return
 	 */
-	List<AutomatedExecutionExtender> findAllBySuiteIdAndTestName(@NotNull String suiteId, @NotNull String testName);
+	List<AutomatedExecutionExtender> findAllBySuiteIdAndTestName(@NotNull String suiteId, @NotNull String testName, @NotNull String projectName);
 }

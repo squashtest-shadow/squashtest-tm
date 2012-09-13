@@ -423,6 +423,7 @@ public class HibernateTestCaseDao extends HibernateEntityDao<TestCase> implement
 		return query.list();
 	}
 	
+	@SuppressWarnings("unchecked")
 	@Override
 	public List<TestCaseLibraryNode> findBySearchCriteria(TestCaseSearchCriteria criteria){
 		Criteria hCriteria;
