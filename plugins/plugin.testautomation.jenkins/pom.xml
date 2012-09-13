@@ -86,13 +86,9 @@
 	    </dependency>
 
 		<!--  ================ /Jackson dependencies ============================= -->
-
 	</dependencies>
 
-
 	<build>
-
-
 		<resources>
 			<resource>
 				<directory>${project.basedir}/src/main/resources</directory>
