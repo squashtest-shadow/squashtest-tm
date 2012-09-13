@@ -63,9 +63,11 @@
 		</c:choose>	
 	</div>
 	
+	
 	<c:if test="${auditableEntity.automated}">
+	<f:message var="resultNotAvailable" key="url.resultNotAvailable" />
 	<div style="display:inline-block; margin-right:2em;vertical-align:top">
 		<label for="autoresult-url" ><f:message key="label.resultURL" /></label>
-		<a id="autoresult-url" href="${execution.resultURL}"></a>
+		<a id="autoresult-url" href="${execution.resultURL}"><c:out value="${execution.resultURL}" default="${resultNotAvailable}" /></a>
 	</div>
 	</c:if>
