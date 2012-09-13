@@ -2,12 +2,12 @@
 <project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
 	<modelVersion>4.0.0</modelVersion>
 	<parent>
-		<artifactId>squashtest-csp-tm</artifactId>
+		<artifactId>squashtest-csp-core</artifactId>
 		<groupId>org.squashtest.tm</groupId>
 		<version>1.3.0.IT40-SNAPSHOT</version>
 	</parent>
 	
-	<artifactId>tm.testautomation.api</artifactId>
+	<artifactId>core.testautomation.api</artifactId>
 	<name>${project.groupId}.${project.artifactId}</name>
 	<packaging>bundle</packaging>
 	<description>Squash TM API / SPI for test automation frameworks</description>
@@ -36,18 +36,9 @@
 				<configuration>
 					<instructions>
 						<_include>bnd.bnd</_include>
-						<Export-Package>squashtm.remoteapi.*</Export-Package>
-						<Import-Package>
-							!squashtm.remoteapi.*,
-							*
-						</Import-Package>
 					</instructions>
 				</configuration>
 			</plugin>
-
 		</plugins>
-
 	</build>
-
-
 </project>

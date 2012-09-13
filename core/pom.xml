@@ -22,6 +22,7 @@
 		<module>core.api</module>
 		<module>core.report.api</module>
 		<module>core.bugtracker.api</module>
+		<module>core.testautomation.api</module>
 		<module>core.service</module>
 		<module>core.web</module>
 		<module>launcher</module>

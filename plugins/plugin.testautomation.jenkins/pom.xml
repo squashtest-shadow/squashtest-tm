@@ -22,7 +22,7 @@
 
 		<dependency>
 			<groupId>org.squashtest.tm</groupId>
-			<artifactId>tm.testautomation.api</artifactId>
+			<artifactId>core.testautomation.api</artifactId>
 			<version>${squash.dependencies.version}</version>
 		</dependency>
 
@@ -128,8 +128,5 @@
 			</plugin>
 
 		</plugins>
-
 	</build>
-
-
 </project>

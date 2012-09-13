@@ -178,7 +178,7 @@
 		</dependency>
 		<dependency>
 			<groupId>${project.groupId}</groupId>
-			<artifactId>tm.testautomation.api</artifactId>
+			<artifactId>core.testautomation.api</artifactId>
 			<version>${project.version}</version>
 			<scope>test</scope>
 		</dependency>		
