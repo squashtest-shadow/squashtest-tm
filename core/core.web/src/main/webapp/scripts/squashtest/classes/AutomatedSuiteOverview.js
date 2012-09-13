@@ -57,7 +57,7 @@ function AutomatedSuiteOverviewDialog(settings){
 			if (suiteView.percentage < 100) {
 				autoUpdate = setInterval(function() {
 					refreshContent();
-				}, 2000);
+				}, 5000);
 			}
 		}
 		

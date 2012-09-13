@@ -51,25 +51,31 @@
 				}		
 				
 			</jsp:attribute>
+			<jsp:attribute name="additionalSetup">
+			height: 530
+			</jsp:attribute>
 	<jsp:attribute name="body">
-			<div>
-				<div style="max-height: 200px; width: 100%; overflow-y: auto"
-				id="executions-auto-infos" class="display-table">
+			<div class="executions-auto-top" style="height:335px; width: 100%; overflow-y: scroll">
+				<div id="executions-auto-infos" class="display-table" style="width:100%">
 				</div>
+			</div>
+			<div class="executions-auto-bottom" style="min-height:45px; width: 100%; ">
+			
 				<div id="execution-auto-progress"
-				style="width: 60%; margin: auto; margin-top: 40px">
+				style="width: 80%; margin: auto; margin-top: 20px">
 					<div
-					style="width: 70%; display: inline-block; vertical-align: middle">
+					style="width: 80%; display: inline-block; vertical-align: middle">
 					<div id="execution-auto-progress-bar"></div>
 				</div>
 	 				<div id="execution-auto-progress-amount"
-					style="width: 20%; display: inline-block"></div>
+					style="width: 10%; display: inline-block"></div>
 				</div>
+				
 				<div class="popup-notification">
 				<f:message key="dialog.execute-auto.close.note" />
 				</div>
-				</div>
 				
+				</div>
 				
 			</jsp:attribute>
 </pop:popup>
