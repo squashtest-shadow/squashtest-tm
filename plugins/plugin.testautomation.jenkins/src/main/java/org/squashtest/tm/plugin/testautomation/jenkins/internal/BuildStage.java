@@ -18,10 +18,14 @@
  *     You should have received a copy of the GNU Lesser General Public License
  *     along with this software.  If not, see <http://www.gnu.org/licenses/>.
  */
-package org.squashtest.tm.plugin.testautomation.jenkins.internal.tasks;
+package squashtm.testautomation.jenkins.internal;
 
-import java.util.Enumeration;
-
-public interface StepSequence extends Enumeration<BuildStep<?>>{
+enum BuildStage{
 	
+	WAITING,
+	START_BUILD,
+	CHECK_QUEUE,
+	GET_BUILD_ID,
+	CHECK_BUILD_RUNNING,
+	GATHER_RESULT;
 }

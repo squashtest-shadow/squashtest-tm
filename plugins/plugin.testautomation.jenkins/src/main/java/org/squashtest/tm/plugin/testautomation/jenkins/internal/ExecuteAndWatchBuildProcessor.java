@@ -18,19 +18,22 @@
  *     You should have received a copy of the GNU Lesser General Public License
  *     along with this software.  If not, see <http://www.gnu.org/licenses/>.
  */
-package org.squashtest.tm.plugin.testautomation.jenkins.internal;
+package squashtm.testautomation.jenkins.internal;
 
 import org.apache.commons.httpclient.HttpClient;
 import org.springframework.scheduling.TaskScheduler;
 import org.squashtest.csp.tm.testautomation.model.TestAutomationProjectContent;
-import org.squashtest.tm.plugin.testautomation.jenkins.internal.tasks.DelayedBuildProcessor;
-import org.squashtest.tm.plugin.testautomation.jenkins.internal.tasks.StepSequence;
-import org.squashtest.tm.plugin.testautomation.jenkins.internal.tasksteps.BuildAbsoluteId;
 
+import squashtm.testautomation.jenkins.internal.tasks.DelayedBuildProcessor;
+import squashtm.testautomation.jenkins.internal.tasks.StepEventListener;
+import squashtm.testautomation.jenkins.internal.tasks.StepSequence;
+import squashtm.testautomation.jenkins.internal.tasksteps.BuildAbsoluteId;
+import squashtm.testautomation.jenkins.internal.tasksteps.GetBuildID;
 
-public class ExecuteTestsBuildProcessor extends DelayedBuildProcessor {
+public class ExecuteAndWatchBuildProcessor extends 	DelayedBuildProcessor {
 
-	private ExecuteTestsStepSequence stepSequence = new ExecuteTestsStepSequence(this);
+	
+	private ExecuteAndWatchStepSequence stepSequence = new ExecuteAndWatchStepSequence(this);
 	
 	
 	//******* collaborators *********
@@ -47,14 +50,18 @@ public class ExecuteTestsBuildProcessor extends DelayedBuildProcessor {
 		stepSequence.setAbsoluteId(absoluteId);
 	}
 	
+	public void setGetBuildIDListener(StepEventListener<GetBuildID> listener){
+		stepSequence.setBuildIDEventListener(listener);
+	}
 	
-	//************** ctor **************
+	// *********************** ctor *************
 	
-	public ExecuteTestsBuildProcessor(TaskScheduler scheduler) {
+	public ExecuteAndWatchBuildProcessor(TaskScheduler scheduler){
 		super(scheduler);
 	}
 	
-	
+
+
 	@Override
 	protected StepSequence getStepSequence() {
 		return stepSequence;

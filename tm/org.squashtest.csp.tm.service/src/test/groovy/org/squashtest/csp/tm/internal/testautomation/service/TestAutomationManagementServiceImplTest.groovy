@@ -232,8 +232,8 @@ class TestAutomationManagementServiceImplTest extends Specification {
 			1 * connectorRegistry.getConnectorForKind("jenkins") >> jenConnector
 			1 * connectorRegistry.getConnectorForKind("qc") >> qcConnector
 			
-			1 * jenConnector.executeTests(_, "12345")
-			1 * qcConnector.executeTests(_, "12345")
+			1 * jenConnector.executeTests(_, "12345", _)
+			1 * qcConnector.executeTests(_, "12345", _)
 	
 	}
 	
@@ -263,7 +263,7 @@ class TestAutomationManagementServiceImplTest extends Specification {
 		
 		
 		then :
-			1 * jenConnector.executeTests(_, "12345")
+			1 * jenConnector.executeTests(_, "12345", _)
 			
 			def executions = suite.executionExtenders.collect{it.execution}
 			executions.findAll{it.executionStatus == ExecutionStatus.ERROR }.size() == 5

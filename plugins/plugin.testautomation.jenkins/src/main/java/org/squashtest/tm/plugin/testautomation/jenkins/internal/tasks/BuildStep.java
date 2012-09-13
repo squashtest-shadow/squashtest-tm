@@ -20,9 +20,21 @@
  */
 package org.squashtest.tm.plugin.testautomation.jenkins.internal.tasks;
 
-public abstract class BuildStep implements Runnable{
+import java.util.Collection;
+import java.util.LinkedList;
+
+public abstract class BuildStep<S extends BuildStep<S>> implements Runnable{
 	
 	protected BuildProcessor buildProcessor;
+	
+	private Collection<StepEventListener<S>> eventListeners;
+	
+	public void addListener(StepEventListener<S> newListener){
+		if (eventListeners==null){
+			eventListeners = new LinkedList<StepEventListener<S>>();
+		}
+		eventListeners.add(newListener);
+	}
 	
 
 	public void setBuildProcessor(BuildProcessor processor){
@@ -40,13 +52,34 @@ public abstract class BuildStep implements Runnable{
 	public void run(){
 		try{
 			perform();
+			notifyListenerComplete();
 			buildProcessor.notifyStepDone();
+			
 		}
 		catch(Exception ex){
+			notifyListenerError(ex);
 			buildProcessor.notifyException(ex);
 		}
 	}
 	
+	@SuppressWarnings("unchecked")
+	private void notifyListenerComplete(){
+		if (eventListeners!=null){
+			for (StepEventListener<S> listener : eventListeners){
+				listener.onComplete((S)this);
+			}
+		}		
+	}
+	
+	
+	@SuppressWarnings("unchecked")
+	private void notifyListenerError(Exception ex){
+		if (eventListeners!=null){
+			for (StepEventListener<S> listener : eventListeners){
+				listener.onError((S)this, ex);
+			}
+		}		
+	}
 	
 	
 	/**

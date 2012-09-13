@@ -20,11 +20,11 @@
  */
 package org.squashtest.tm.plugin.testautomation.jenkins.internal;
 
+import static squashtm.testautomation.jenkins.internal.BuildStage.GATHER_RESULT;
+
 import java.util.NoSuchElementException;
 
 import org.apache.commons.httpclient.HttpClient;
-import org.apache.commons.httpclient.HttpMethod;
-import org.apache.commons.httpclient.methods.GetMethod;
 import org.apache.commons.httpclient.methods.PostMethod;
 import org.squashtest.csp.tm.domain.testautomation.TestAutomationProject;
 import org.squashtest.tm.plugin.testautomation.jenkins.internal.net.HttpRequestFactory;
@@ -40,28 +40,15 @@ import org.squashtest.tm.plugin.testautomation.jenkins.internal.tasksteps.HttpBa
 import org.squashtest.tm.plugin.testautomation.jenkins.internal.tasksteps.StartBuild;
 
 
-class FetchTestListStepSequence implements StepSequence {
+class FetchTestListStepSequence extends HttpBasedStepSequence implements StepSequence {
 
-	private HttpRequestFactory requestFactory = new HttpRequestFactory();
 	
-	private JsonParser jsonParser = new JsonParser();
-	
-	private BuildStage currentStage = BuildStage.WAITING;
-	
-	// ********* to be configured ************
-	
-	private HttpClient client;
-	
-	private TestAutomationProject project;
-	
-	private BuildAbsoluteId absoluteId;
-	
-	private AbstractBuildProcessor<?> processor;
+	private AbstractBuildProcessor processor;
 	
 	
 	// ************** constructor ****************
 		
-	FetchTestListStepSequence(AbstractBuildProcessor<?> processor) {
+	FetchTestListStepSequence(AbstractBuildProcessor processor) {
 		super();
 		this.processor=processor;
 	}
@@ -82,17 +69,23 @@ class FetchTestListStepSequence implements StepSequence {
 		this.absoluteId = absoluteId;
 	}
 	
+	// ************** getters *************
+	
+	@Override
+	protected AbstractBuildProcessor getProcessor() {
+		return processor;
+	}
 	
 	//*************** code ****************
 
 
 	@Override
 	public boolean hasMoreElements() {
-		return (! currentStage.isTerminal());
+		return (currentStage != GATHER_RESULT);
 	}
 
 	@Override
-	public BuildStep nextElement() {
+	public BuildStep<?> nextElement() {
 		switch(currentStage){
 		
 		case WAITING :
@@ -124,118 +117,17 @@ class FetchTestListStepSequence implements StepSequence {
 		}
 	}
 	
-
-	//************** private stuffs ****************
 	
-	private StartBuild newStartBuild(){
+	protected StartBuild newStartBuild(){
 		
 		PostMethod method = requestFactory.newStartFetchTestListBuild(project, absoluteId.getExternalId());
 		
-		StartBuild startBuild = new StartBuild(processor);
+		StartBuild startBuild = new StartBuild(getProcessor());
 		
 		wireHttpSteps(startBuild, method);
 		
 		return startBuild;
 		
 	}
-	
-	private CheckBuildQueue newCheckQueue(){
-		
-		GetMethod method = requestFactory.newCheckQueue(project);
-		
-		CheckBuildQueue checkQueue = new CheckBuildQueue(processor); 
-		
-		wireHttpSteps(checkQueue, method);
-		
-		return checkQueue;
-	}
-	
-	
-	private GetBuildID newGetBuildID(){
-		
-		GetMethod method = requestFactory.newGetBuildsForProject(project);
-		
-		GetBuildID getBuildID = new GetBuildID(processor);
-		
-		wireHttpSteps(getBuildID, method);
-		
-		return getBuildID;
-		
-	}
-	
-	private BuildStep newCheckBuildRunning(){
-		
-		GetMethod method = requestFactory.newGetBuild(project, absoluteId.getBuildId());
-		
-		CheckBuildRunning running = new CheckBuildRunning(processor);
-		
-		wireHttpSteps(running, method);
-		
-		return running;
-	}
-	
-	private BuildStep newGatherResults(){
-		
-		GetMethod method = requestFactory.newGetBuildResults(project, absoluteId.getBuildId());
-		
-		GatherTestList gatherList = new GatherTestList(processor);
-		
-		wireHttpSteps(gatherList, method);
-		
-		return gatherList; 
-		
-	}
-	
-	
-	private void wireHttpSteps(HttpBasedStep step, HttpMethod method){
-		step.setClient(client);
-		step.setMethod(method);
-		step.setParser(jsonParser);
-		step.setBuildAbsoluteId(absoluteId);		
-	}
-
-
-	private static enum BuildStage{
-		
-		WAITING{
-			@Override
-			public boolean isTerminal() {
-				return false;
-			}
-		},
-		START_BUILD{
-			@Override
-			public boolean isTerminal() {
-				return false;
-			}
-		},
-		CHECK_QUEUE{
-			@Override
-			public boolean isTerminal() {
-				return false;
-			}
-		},
-		GET_BUILD_ID{
-			@Override
-			public boolean isTerminal() {
-				return false;
-			}
-		},
-		CHECK_BUILD_RUNNING{
-			@Override
-			public boolean isTerminal() {
-				return false;
-			}
-		},
-		GATHER_RESULT{
-			@Override
-			public boolean isTerminal() {
-				return true;
-			}
-		};
-		
-		public abstract boolean isTerminal();
-	}
-	
 	
 }

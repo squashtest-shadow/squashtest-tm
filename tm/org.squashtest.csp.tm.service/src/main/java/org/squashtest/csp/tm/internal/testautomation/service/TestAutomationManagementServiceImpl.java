@@ -38,6 +38,8 @@ import org.slf4j.LoggerFactory;
 import org.springframework.core.task.AsyncTaskExecutor;
 import org.springframework.osgi.extensions.annotation.ServiceReference;
 import org.springframework.security.access.prepost.PostFilter;
+import org.springframework.security.core.context.SecurityContext;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.squashtest.csp.tm.domain.execution.Execution;
@@ -55,6 +57,8 @@ import org.squashtest.csp.tm.internal.repository.testautomation.AutomatedExecuti
 import org.squashtest.csp.tm.internal.testautomation.tasks.FetchTestListTask;
 import org.squashtest.csp.tm.internal.testautomation.thread.FetchTestListFuture;
 import org.squashtest.csp.tm.internal.testautomation.thread.TestAutomationTaskExecutor;
+import org.squashtest.csp.tm.service.testautomation.AutomatedExecutionSetIdentifier;
+import org.squashtest.csp.tm.service.testautomation.TestAutomationCallbackService;
 import org.squashtest.csp.tm.testautomation.model.TestAutomationProjectContent;
 import org.squashtest.csp.tm.testautomation.spi.TestAutomationConnector;
 import org.squashtest.csp.tm.testautomation.spi.TestAutomationException;
@@ -91,6 +95,11 @@ public class TestAutomationManagementServiceImpl implements  InsecureTestAutomat
 	
 	@Inject
 	private TestAutomationServer defaultServer;
+	
+	@Inject
+	private TestAutomationCallbackService callbackService;
+	
+	
 
 	private TestAutomationTaskExecutor executor ;
 
@@ -211,6 +220,8 @@ public class TestAutomationManagementServiceImpl implements  InsecureTestAutomat
 		
 		ExtenderSorter sorter = new ExtenderSorter(suite);
 		
+		TestAutomationCallbackService securedCallback = new CallbackServiceSecurityWrapper(callbackService);
+		
 		while (sorter.hasNext()){
 			
 			Entry<String, Collection<AutomatedExecutionExtender>> extendersByKind = sorter.getNextEntry();
@@ -220,7 +231,7 @@ public class TestAutomationManagementServiceImpl implements  InsecureTestAutomat
 			try{
 				connector = connectorRegistry.getConnectorForKind(extendersByKind.getKey());
 				Collection<AutomatedTest> tests = collectAutomatedTests(extendersByKind.getValue());
-				connector.executeTests(tests, suite.getId());
+				connector.executeTests(tests, suite.getId(), securedCallback);
 			}
 			catch(UnknownConnectorKind ex){
 				if (LOGGER.isErrorEnabled()){
@@ -345,13 +356,14 @@ public class TestAutomationManagementServiceImpl implements  InsecureTestAutomat
 	
 	private static class ExtenderSorter{
 		
-		private Map<String, Collection<AutomatedExecutionExtender>> extendersByKind
-			= new HashMap<String, Collection<AutomatedExecutionExtender>>();
+		private Map<String, Collection<AutomatedExecutionExtender>> extendersByKind;
 		
 		private Iterator<Entry<String, Collection<AutomatedExecutionExtender>>> iterator =null;
 		
 		
 		public ExtenderSorter(AutomatedSuite suite){
+			
+			extendersByKind = new HashMap<String, Collection<AutomatedExecutionExtender>>(suite.getExecutionExtenders().size());
 			
 			for (AutomatedExecutionExtender extender : suite.getExecutionExtenders()){
 				
@@ -398,6 +410,43 @@ public class TestAutomationManagementServiceImpl implements  InsecureTestAutomat
 			URL resultURL = urlMap.get(test);
 			ext.setResultURL(resultURL);
 			
+		}
+		
+	}
+	
+	
+	private static class CallbackServiceSecurityWrapper implements TestAutomationCallbackService{
+
+		private SecurityContext secContext;
+		
+		private TestAutomationCallbackService wrapped;
+		
+		CallbackServiceSecurityWrapper(TestAutomationCallbackService service){
+			secContext = SecurityContextHolder.getContext();
+			wrapped = service;
+		}
+		
+		@Override
+		public void updateResultURL(AutomatedExecutionSetIdentifier execIdentifier, URL resultURL) {
+			SecurityContextHolder.setContext(secContext);
+			wrapped.updateResultURL(execIdentifier, resultURL);
+		}
+
+		@Override
+		public void updateExecutionStatus(
+				AutomatedExecutionSetIdentifier execIdentifier,
+				ExecutionStatus newStatus) {
+			SecurityContextHolder.setContext(secContext);
+			wrapped.updateExecutionStatus(execIdentifier, newStatus);
+			
+		}
+
+		@Override
+		public void updateResultSummary(
+				AutomatedExecutionSetIdentifier execIdentifier,
+				String newSummary) {
+			SecurityContextHolder.setContext(secContext);
+			wrapped.updateResultSummary(execIdentifier, newSummary);
 		}
 		
 	}

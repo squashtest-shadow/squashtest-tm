@@ -30,7 +30,7 @@ import org.squashtest.tm.plugin.testautomation.jenkins.internal.tasks.BuildProce
 import org.squashtest.tm.plugin.testautomation.jenkins.internal.tasks.BuildStep;
 
 
-public class CheckBuildQueue extends BuildStep implements HttpBasedStep{
+public class CheckBuildQueue extends BuildStep<CheckBuildQueue> implements HttpBasedStep{
 
 	/* *** technically needed for the computation **** */
 	

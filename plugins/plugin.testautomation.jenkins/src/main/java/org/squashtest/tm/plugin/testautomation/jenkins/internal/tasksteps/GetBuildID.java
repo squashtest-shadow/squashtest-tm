@@ -23,7 +23,6 @@ package org.squashtest.tm.plugin.testautomation.jenkins.internal.tasksteps;
 import org.apache.commons.httpclient.HttpClient;
 import org.apache.commons.httpclient.HttpMethod;
 import org.squashtest.csp.tm.testautomation.spi.NotFoundException;
-import org.squashtest.csp.tm.testautomation.spi.TestAutomationException;
 import org.squashtest.tm.plugin.testautomation.jenkins.beans.Build;
 import org.squashtest.tm.plugin.testautomation.jenkins.beans.BuildList;
 import org.squashtest.tm.plugin.testautomation.jenkins.internal.JsonParser;
@@ -32,7 +31,7 @@ import org.squashtest.tm.plugin.testautomation.jenkins.internal.tasks.BuildProce
 import org.squashtest.tm.plugin.testautomation.jenkins.internal.tasks.BuildStep;
 
 
-public class GetBuildID extends BuildStep implements HttpBasedStep{
+public class GetBuildID extends BuildStep<GetBuildID> implements HttpBasedStep{
 
 	/* ********* technically needed for the computation ************** */
 	
@@ -71,7 +70,13 @@ public class GetBuildID extends BuildStep implements HttpBasedStep{
 	public void setBuildAbsoluteId(BuildAbsoluteId absoluteId) {
 		this.absoluteId = absoluteId;
 	}
-
+	
+	
+	// ************ getters ************
+	
+	public Integer getBuildID(){
+		return absoluteId.getBuildId();
+	}
 
 	//************* constructor ******************
 

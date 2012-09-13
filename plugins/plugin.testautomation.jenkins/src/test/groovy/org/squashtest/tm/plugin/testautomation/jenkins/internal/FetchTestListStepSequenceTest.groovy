@@ -44,7 +44,7 @@ class FetchTestListStepSequenceTest extends Specification {
 	HttpClient client
 	TestAutomationProject project
 	BuildAbsoluteId buildId
-	AbstractBuildProcessor<Object> processor
+	AbstractBuildProcessor processor
 	
 	
 	

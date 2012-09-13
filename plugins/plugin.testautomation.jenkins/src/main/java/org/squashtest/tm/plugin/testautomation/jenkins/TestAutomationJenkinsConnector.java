@@ -25,10 +25,7 @@ import java.net.URL;
 import java.util.Collection;
 import java.util.HashMap;
 import java.util.Iterator;
-import java.util.LinkedList;
 import java.util.Map;
-
-import javax.annotation.PostConstruct;
 
 import org.apache.commons.httpclient.HttpClient;
 import org.apache.commons.httpclient.methods.GetMethod;
@@ -41,6 +38,8 @@ import org.springframework.stereotype.Service;
 import org.squashtest.csp.tm.domain.testautomation.AutomatedTest;
 import org.squashtest.csp.tm.domain.testautomation.TestAutomationProject;
 import org.squashtest.csp.tm.domain.testautomation.TestAutomationServer;
+import org.squashtest.csp.tm.service.testautomation.AutomatedExecutionSetIdentifier;
+import org.squashtest.csp.tm.service.testautomation.TestAutomationCallbackService;
 import org.squashtest.csp.tm.testautomation.model.TestAutomationProjectContent;
 import org.squashtest.csp.tm.testautomation.spi.AccessDenied;
 import org.squashtest.csp.tm.testautomation.spi.BadConfiguration;
@@ -59,6 +58,7 @@ import org.squashtest.tm.plugin.testautomation.jenkins.internal.net.HttpRequestF
 import org.squashtest.tm.plugin.testautomation.jenkins.internal.net.RequestExecutor;
 import org.squashtest.tm.plugin.testautomation.jenkins.internal.tasksteps.BuildAbsoluteId;
 
+import squashtm.testautomation.jenkins.internal.tasksteps.GetBuildID;
 
 
 @Service("plugin.testautomation.jenkins.connector")
@@ -177,13 +177,30 @@ public class TestAutomationJenkinsConnector implements TestAutomationConnector{
 			BadConfiguration, 
 			TestAutomationException {
 
-		TestSorter sorter = new TestSorter(tests);
+		TestByProjectSorter sorter = new TestByProjectSorter(tests);
 		
 		while(sorter.hasNext()){
 			_startTestExecution(sorter.getNext(), reference);
 		}
 	
 	}
+	
+	
+	@Override
+	public void executeTests(Collection<AutomatedTest> tests, String reference,
+			TestAutomationCallbackService callbackService)
+			throws ServerConnectionFailed, AccessDenied,
+			UnreadableResponseException, NotFoundException, BadConfiguration,
+			TestAutomationException {
+		
+		TestByProjectSorter sorter = new TestByProjectSorter(tests);
+		
+		while(sorter.hasNext()){
+			_startTestExecution(sorter.getNext(), reference, callbackService);
+		}
+		
+	}
+	
 	
 	@Override
 	public Map<AutomatedTest, URL> getResultURLs(Collection<AutomatedTest> tests, String reference) throws ServerConnectionFailed,
@@ -193,9 +210,9 @@ public class TestAutomationJenkinsConnector implements TestAutomationConnector{
 					  BadConfiguration,
 					  TestAutomationException {
 		
-		Map<AutomatedTest, URL> resultMap = new HashMap<AutomatedTest, URL>();
+		Map<AutomatedTest, URL> resultMap = new HashMap<AutomatedTest, URL>(tests.size());
 		
-		TestSorter sorter = new TestSorter(tests);
+		TestByProjectSorter sorter = new TestByProjectSorter(tests);
 		
 		while(sorter.hasNext()){
 
@@ -222,6 +239,7 @@ public class TestAutomationJenkinsConnector implements TestAutomationConnector{
 		
 	}
 	
+	// ****************** private, second layer method *********************
 	
 	private void _startTestExecution(TestAutomationProjectContent content, String externalID){
 		
@@ -235,6 +253,26 @@ public class TestAutomationJenkinsConnector implements TestAutomationConnector{
 		processor.setProjectContent(content);
 		processor.setBuildAbsoluteId(new BuildAbsoluteId(project.getName(), externalID));
 		processor.setDefaultReschedulingDelay(spamInterval);
+		
+		processor.run();
+		
+	}
+	
+	private void _startTestExecution(TestAutomationProjectContent content, String externalID, TestAutomationCallbackService service){
+		
+		TestAutomationProject project = content.getProject();
+		
+		ResultURLUpdater updater = new ResultURLUpdater(service, content, externalID);
+		
+		HttpClient client = clientProvider.getClientFor(project.getServer());
+		
+		ExecuteAndWatchBuildProcessor processor = new ExecuteAndWatchBuildProcessor(taskScheduler);
+		
+		processor.setClient(client);
+		processor.setProjectContent(content);
+		processor.setBuildAbsoluteId(new BuildAbsoluteId(project.getName(), externalID));
+		processor.setDefaultReschedulingDelay(spamInterval);
+		processor.setGetBuildIDListener(updater);
 		
 		processor.run();
 		
@@ -288,55 +326,93 @@ public class TestAutomationJenkinsConnector implements TestAutomationConnector{
 		
 	}
 	
-	// ************************************ private tools ************************** 
+	// ************************************ other private stuffs ************************** 
 
 	private String generateNewId(){
 		return new Long(System.currentTimeMillis()).toString();
 	}
 
 
-	private static class TestSorter{
-	
-		private Map<TestAutomationProject, TestAutomationProjectContent> testsByProject = new HashMap<TestAutomationProject, TestAutomationProjectContent>();
+	private class ResultURLUpdater implements StepEventListener<GetBuildID>{
+
+		private TestAutomationCallbackService service;
+		private TestAutomationProjectContent content;
+		private String externalID;
 		
-		private Iterator<TestAutomationProjectContent> iterator;
 		
-		public TestSorter(Collection<AutomatedTest> tests){
+		ResultURLUpdater(TestAutomationCallbackService service, TestAutomationProjectContent content, String externalID){
+			this.service = service;
+			this.content = content;
+			this.externalID = externalID;
+		}
+		
+		
+		@Override
+		public void onComplete(GetBuildID step) {
 			
-			for (AutomatedTest test : tests){
+			Map<AutomatedTest, URL> resultUrlPerTest = new HashMap<AutomatedTest, URL>(content.getTests().size());
+			
+			Integer buildID = step.getBuildID();
+			
+			_createAndAddURLs(resultUrlPerTest, content, buildID);
+			
+			Iterator<Map.Entry<AutomatedTest, URL>> iterator = resultUrlPerTest.entrySet().iterator();
+			
+			while(iterator.hasNext()){
 				
-				TestAutomationProject project = test.getProject();
+				Map.Entry<AutomatedTest, URL> entry = iterator.next();
+								
+				AutomatedExecutionSetIdentifier identifier = toIdentifier(entry.getKey());
 				
-				register(project, test);
-				
+				service.updateResultURL(identifier, entry.getValue());
+					
 			}
 			
-			iterator = testsByProject.values().iterator();
-			
+		}
+
+		@Override
+		public void onError(GetBuildID step, Exception exception) {
+			//nothing special, the regular exception handling is good enough
 		}
 		
-		public boolean hasNext(){
-			return iterator.hasNext();
-		}
-		
-		public TestAutomationProjectContent getNext(){
-			return iterator.next();
-		}
-		
-		private void register(TestAutomationProject project, AutomatedTest test){
-			
-			if (! testsByProject.containsKey(project)){
-				TestAutomationProjectContent newContent = new TestAutomationProjectContent(project, new LinkedList<AutomatedTest>());
-				testsByProject.put(project, newContent);
-			}
-			
-			TestAutomationProjectContent content = testsByProject.get(project);
-			
-			content.getTests().add(test);
-			
+		private AutomatedExecutionSetIdentifier toIdentifier(AutomatedTest test){
+			return new SimpleAutoExecIdentifier(test.getProject().getName(), externalID, test.getName());
 		}
 		
 	}
 	
+	
+	private static class SimpleAutoExecIdentifier implements AutomatedExecutionSetIdentifier{
+
+		
+		private String testAutomationProjectName;
+		private String automatedSuiteId;
+		private String automatedTestName;
+		
+
+		public SimpleAutoExecIdentifier(String testAutomationProjectName,
+				String automatedSuiteId, String automatedTestName) {
+			super();
+			this.testAutomationProjectName = testAutomationProjectName;
+			this.automatedSuiteId = automatedSuiteId;
+			this.automatedTestName = automatedTestName;
+		}
+
+		@Override
+		public String getTestAutomationProjectName() {
+			return testAutomationProjectName;
+		}
+
+		@Override
+		public String getAutomatedSuiteId() {
+			return automatedSuiteId;
+		}
+
+		@Override
+		public String getAutomatedTestName() {
+			return automatedTestName;
+		}
+		
+	}
 
 }

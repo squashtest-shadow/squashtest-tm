@@ -21,7 +21,7 @@
 package org.squashtest.tm.plugin.testautomation.jenkins.internal.tasks;
 
 
-public abstract class AbstractBuildProcessor<RESULT> implements BuildProcessor {
+public abstract class AbstractBuildProcessor implements BuildProcessor {
 	 
 	protected StepScheduler scheduler = new SameThreadStepScheduler();
 
@@ -30,7 +30,7 @@ public abstract class AbstractBuildProcessor<RESULT> implements BuildProcessor {
 	
 	// ******* state variables *********
 	
-	protected BuildStep currentStep=null;
+	protected BuildStep<?> currentStep=null;
 	
 	protected StepFuture currentFuture=null;
 	
@@ -51,7 +51,7 @@ public abstract class AbstractBuildProcessor<RESULT> implements BuildProcessor {
 	}
 
 
-	protected BuildStep getCurrentStep(){
+	protected BuildStep<?> getCurrentStep(){
 		return currentStep;
 	}
 	
@@ -117,9 +117,6 @@ public abstract class AbstractBuildProcessor<RESULT> implements BuildProcessor {
 	}
 	
 	
-	public abstract RESULT getResult();
-	
-	protected abstract void buildResult();
 	
 	protected abstract StepSequence getStepSequence();
 	

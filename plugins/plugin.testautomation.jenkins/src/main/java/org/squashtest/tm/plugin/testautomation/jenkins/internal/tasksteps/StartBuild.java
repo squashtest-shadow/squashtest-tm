@@ -28,7 +28,7 @@ import org.squashtest.tm.plugin.testautomation.jenkins.internal.tasks.BuildProce
 import org.squashtest.tm.plugin.testautomation.jenkins.internal.tasks.BuildStep;
 
 
-public class StartBuild extends BuildStep implements HttpBasedStep{
+public class StartBuild extends BuildStep<StartBuild> implements HttpBasedStep{
 
 	private RequestExecutor requestExecutor = RequestExecutor.getInstance();
 	

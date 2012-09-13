@@ -22,7 +22,7 @@ package org.squashtest.tm.plugin.testautomation.jenkins.internal.tasks;
 
 import org.squashtest.csp.tm.testautomation.spi.TestAutomationException;
 
-public abstract class SynchronousBuildProcessor<RESULT> extends AbstractBuildProcessor<RESULT> {
+public abstract class SynchronousBuildProcessor<RESULT> extends AbstractBuildProcessor {
 
 	@Override
 	public void run() {
@@ -39,6 +39,12 @@ public abstract class SynchronousBuildProcessor<RESULT> extends AbstractBuildPro
 	public void notifyStepDone() {
 		//nothing, let the method run loop
 	}
+	
+	
+	abstract public RESULT getResult();
+
+	
+	abstract protected void buildResult();
 
 	
 	@Override

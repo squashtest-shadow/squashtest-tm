@@ -29,7 +29,7 @@ import org.squashtest.tm.plugin.testautomation.jenkins.internal.tasks.BuildProce
 import org.squashtest.tm.plugin.testautomation.jenkins.internal.tasks.BuildStep;
 
 
-public class CheckBuildRunning extends BuildStep implements HttpBasedStep{
+public class CheckBuildRunning extends BuildStep<CheckBuildRunning> implements HttpBasedStep{
 
 	/* ********* technically needed for the computation ************** */
 	

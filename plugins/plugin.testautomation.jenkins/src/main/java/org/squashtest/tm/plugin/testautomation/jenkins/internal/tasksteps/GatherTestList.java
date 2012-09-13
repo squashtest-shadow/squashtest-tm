@@ -31,7 +31,7 @@ import org.squashtest.tm.plugin.testautomation.jenkins.internal.tasks.BuildProce
 import org.squashtest.tm.plugin.testautomation.jenkins.internal.tasks.BuildStep;
 
 
-public class GatherTestList extends BuildStep implements HttpBasedStep{
+public class GatherTestList extends BuildStep<GatherTestList> implements HttpBasedStep{
 
 	
 	//* ************* collaborators ****************

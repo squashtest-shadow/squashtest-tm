@@ -18,41 +18,47 @@
  *     You should have received a copy of the GNU Lesser General Public License
  *     along with this software.  If not, see <http://www.gnu.org/licenses/>.
  */
-package org.squashtest.tm.plugin.testautomation.jenkins.internal;
+package squashtm.testautomation.jenkins.internal;
 
-import static squashtm.testautomation.jenkins.internal.BuildStage.START_BUILD;
+import static squashtm.testautomation.jenkins.internal.BuildStage.GET_BUILD_ID;
 
 import java.util.NoSuchElementException;
 
 import org.apache.commons.httpclient.methods.PostMethod;
 import org.squashtest.csp.tm.testautomation.model.TestAutomationProjectContent;
-import org.squashtest.tm.plugin.testautomation.jenkins.internal.net.HttpRequestFactory;
-import org.squashtest.tm.plugin.testautomation.jenkins.internal.tasks.AbstractBuildProcessor;
-import org.squashtest.tm.plugin.testautomation.jenkins.internal.tasks.BuildStep;
-import org.squashtest.tm.plugin.testautomation.jenkins.internal.tasks.StepSequence;
-import org.squashtest.tm.plugin.testautomation.jenkins.internal.tasksteps.BuildAbsoluteId;
-import org.squashtest.tm.plugin.testautomation.jenkins.internal.tasksteps.HttpBasedStep;
-import org.squashtest.tm.plugin.testautomation.jenkins.internal.tasksteps.StartBuild;
 
+import squashtm.testautomation.jenkins.internal.tasks.AbstractBuildProcessor;
+import squashtm.testautomation.jenkins.internal.tasks.BuildStep;
+import squashtm.testautomation.jenkins.internal.tasks.StepEventListener;
+import squashtm.testautomation.jenkins.internal.tasks.StepSequence;
+import squashtm.testautomation.jenkins.internal.tasksteps.GetBuildID;
+import squashtm.testautomation.jenkins.internal.tasksteps.StartBuild;
 
-class ExecuteTestsStepSequence extends HttpBasedStepSequence implements StepSequence {
-	
-	// ********* to be configured ************
+class ExecuteAndWatchStepSequence extends HttpBasedStepSequence implements StepSequence {
 
 	
+
 	private TestAutomationProjectContent projectContent;
 	
-	private AbstractBuildProcessor processor;
+	private ExecuteAndWatchBuildProcessor processor;
 	
 	
-	// ************* setters **************
+	private StepEventListener<GetBuildID> buildIDListener;
+
+	
+	// ************** setters *************
+	
+	public void setBuildIDEventListener(StepEventListener<GetBuildID> listener){
+		this.buildIDListener=listener;
+	}
+	
 
 	void setProjectContent(TestAutomationProjectContent content) {
 		this.projectContent = content;
 		setProject(content.getProject());
 	}
-
-	// ********** getters ****************
+	
+	// ************** getters *************
 	
 	@Override
 	protected AbstractBuildProcessor getProcessor() {
@@ -60,33 +66,42 @@ class ExecuteTestsStepSequence extends HttpBasedStepSequence implements StepSequ
 	}
 	
 	
-
-	//*************** code ****************
 	
+	// ************** constructor ****************
 	
-	ExecuteTestsStepSequence(AbstractBuildProcessor processor){
+	ExecuteAndWatchStepSequence(ExecuteAndWatchBuildProcessor processor) {
 		super();
 		this.processor=processor;
 	}
+
 	
+	//*************** code ****************
 	
 	@Override
 	public boolean hasMoreElements() {
-		return (currentStage != START_BUILD);
+		return (currentStage != GET_BUILD_ID);
 	}
 
-	
+
 	@Override
 	public BuildStep<?> nextElement() {
 		switch(currentStage){
 		
 		case WAITING :
-				currentStage = START_BUILD;
+				currentStage = BuildStage.START_BUILD;
 				return newStartBuild();
 				
 		case START_BUILD :
-				throw new NoSuchElementException();
+				currentStage = BuildStage.CHECK_QUEUE;
+				return newCheckQueue();
 				
+		case CHECK_QUEUE :
+				currentStage = BuildStage.GET_BUILD_ID;
+				return newGetBuildID();
+				
+		case GET_BUILD_ID :
+				throw new NoSuchElementException();
+				 
 		default : throw new NoSuchElementException();
 				
 			
@@ -94,8 +109,14 @@ class ExecuteTestsStepSequence extends HttpBasedStepSequence implements StepSequ
 	}
 	
 	
-	
-	//************** private stuffs ****************
+	// ********** some override **************** 
+
+	@Override
+	protected GetBuildID newGetBuildID(){
+		GetBuildID step = super.newGetBuildID();
+		step.addListener(buildIDListener);
+		return step;
+	}
 	
 	
 	protected StartBuild newStartBuild(){
@@ -109,8 +130,5 @@ class ExecuteTestsStepSequence extends HttpBasedStepSequence implements StepSequ
 		return startBuild;
 		
 	}
-
-
 	
-
 }

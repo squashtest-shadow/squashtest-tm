@@ -18,41 +18,12 @@
  *     You should have received a copy of the GNU Lesser General Public License
  *     along with this software.  If not, see <http://www.gnu.org/licenses/>.
  */
-package org.squashtest.tm.plugin.testautomation.jenkins.internal.tasks;
+package squashtm.testautomation.jenkins.internal.tasks;
 
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-import org.springframework.scheduling.TaskScheduler;
+public interface StepEventListener<S extends BuildStep<S>> {
 
-public abstract class DelayedBuildProcessor extends AbstractBuildProcessor {
-
+	void onComplete(S step);
 	
-	private static final Logger LOGGER = LoggerFactory.getLogger(AbstractBuildProcessor.class);
+	void onError(S step, Exception exception);
 	
-	public DelayedBuildProcessor(TaskScheduler scheduler){
-		super();
-		this.scheduler = new ThreadPoolStepScheduler(scheduler);
-	}
-	
-	
-	@Override
-	public void run() {
-		notifyStepDone();
-		//then return immediately
-	}
-	
-	@Override
-	//should be overriden by subclasses if a more appropriate treatment is needed
-	public void notifyException(Exception ex) {
-		if (LOGGER.isErrorEnabled()){
-			LOGGER.error(ex.getMessage(),ex);
-		}	
-	}
-	
-	@Override
-	public void notifyStepDone() {
-		if(getStepSequence().hasMoreElements() && (! isCanceled())){
-			scheduleNextStep();
-		}
-	}
 }

@@ -109,7 +109,7 @@ public interface TestAutomationConnector {
 	 * 
 	 * @throws ServerConnectionFailed if could not connect to the server
 	 * @throws AccessDenied if the server was reached but the used user could log in
-	 * @throws UnreadableResponseException if the server replied something that is not suitable for a response or otherwise thrown its garbages at you
+	 * @throws UnreadableResponseException if the server replied something that is not suitable for a response or otherwise thrown garbages at you
 	 * @throws NotFoundException if the tests in that project cannot be found
 	 * @Throws BadConfiguration if something went wrong due to the configuration
 	 * @throws TestAutomationException for anything that doesn't fit the exceptions above. 
@@ -141,7 +141,7 @@ public interface TestAutomationConnector {
 	 * 
 	 * @throws ServerConnectionFailed if could not connect to the server
 	 * @throws AccessDenied if the server was reached but the used user could log in
-	 * @throws UnreadableResponseException if the server replied something that is not suitable for a response or otherwise thrown its garbages at you
+	 * @throws UnreadableResponseException if the server replied something that is not suitable for a response or otherwise returned gibberish 
 	 * @throws NotFoundException if the tests in that project cannot be found
 	 * @Throws BadConfiguration if something went wrong due to the configuration
 	 * @throws TestAutomationException for anything that doesn't fit the exceptions above. 
@@ -166,7 +166,7 @@ public interface TestAutomationConnector {
 	 * 
 	 * @throws ServerConnectionFailed if could not connect to the server
 	 * @throws AccessDenied if the server was reached but the used user could log in
-	 * @throws UnreadableResponseException if the server replied something that is not suitable for a response or otherwise used mature language
+	 * @throws UnreadableResponseException if the server replied something that is not suitable for a response or otherwise used a too mature language for this audience
 	 * @throws NotFoundException if the tests in that project cannot be found
 	 * @Throws BadConfiguration if something went wrong due to the configuration
 	 * @throws TestAutomationException for anything that doesn't fit the exceptions above. 
