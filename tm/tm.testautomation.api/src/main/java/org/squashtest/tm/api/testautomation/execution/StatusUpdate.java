@@ -18,10 +18,10 @@
  *     You should have received a copy of the GNU Lesser General Public License
  *     along with this software.  If not, see <http://www.gnu.org/licenses/>.
  */
-package squashtm.remoteapi.execution;
+package org.squashtest.tm.api.testautomation.execution;
 
-import squashtm.remoteapi.execution.dto.TestExecutionStatus;
-import squashtm.remoteapi.execution.dto.TestSuiteExecutionStatus;
+import org.squashtest.tm.api.testautomation.execution.dto.TestExecutionStatus;
+import org.squashtest.tm.api.testautomation.execution.dto.TestSuiteExecutionStatus;
 
 /**
  * This interface defines operations for the execution API of Squash TM.

@@ -18,10 +18,33 @@
  *     You should have received a copy of the GNU Lesser General Public License
  *     along with this software.  If not, see <http://www.gnu.org/licenses/>.
  */
+package org.squashtest.tm.api.testautomation.execution.dto;
+
 /**
- * This is the java binding of the REST API used by Squash TM 
- * to receive execution status update messages.
- * See the {@link squashtm.remoteapi.execution.dto} 
- * package for the data model.
+ * Defines execution status values.
+ * @author edegenetais
+ *
  */
-package squashtm.remoteapi.execution;
+public enum ExecutionStatus {
+        /**
+         * The execution is currently running.
+         */
+        RUNNING,
+        /**
+         * Execution successfully completed.
+         */
+        SUCCESS,
+        /**
+         * Execution successful, but teardown failed, which means SUT maintenance
+         * might be necessary (and subsequent tests may fail).
+         */
+        WARNING,
+        /**
+         * The test completed but the results did not meet functional expectations.
+         */
+        FAILURE,
+        /**
+         * The test failed due to a technical error.
+         */
+        ERROR
+}

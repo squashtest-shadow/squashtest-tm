@@ -24,8 +24,8 @@ package org.squashtest.csp.tm.service.testautomation;
 import javax.validation.constraints.NotNull;
 
 import org.springframework.security.access.prepost.PreAuthorize;
+import org.squashtest.tm.api.testautomation.execution.dto.TestExecutionStatus;
 
-import squashtm.remoteapi.execution.dto.TestExecutionStatus;
 
 /**
  * @author Gregory Fouquet

@@ -39,11 +39,11 @@ class AutomatedExecutionManagerServiceImplTest extends Specification {
 		status == service.coerce(dto)
 		
 		where:
-		dto                                                      | status
-		squashtm.remoteapi.execution.dto.ExecutionStatus.ERROR   | ExecutionStatus.ERROR
-		squashtm.remoteapi.execution.dto.ExecutionStatus.FAILURE | ExecutionStatus.FAILURE
-		squashtm.remoteapi.execution.dto.ExecutionStatus.RUNNING | ExecutionStatus.RUNNING
-		squashtm.remoteapi.execution.dto.ExecutionStatus.SUCCESS | ExecutionStatus.SUCCESS
-		squashtm.remoteapi.execution.dto.ExecutionStatus.WARNING | ExecutionStatus.WARNING
+		dto																		   | status
+		org.squashtest.tm.api.testautomation.execution.dto.ExecutionStatus.ERROR   | ExecutionStatus.ERROR
+		org.squashtest.tm.api.testautomation.execution.dto.ExecutionStatus.FAILURE | ExecutionStatus.FAILURE
+		org.squashtest.tm.api.testautomation.execution.dto.ExecutionStatus.RUNNING | ExecutionStatus.RUNNING
+		org.squashtest.tm.api.testautomation.execution.dto.ExecutionStatus.SUCCESS | ExecutionStatus.SUCCESS
+		org.squashtest.tm.api.testautomation.execution.dto.ExecutionStatus.WARNING | ExecutionStatus.WARNING
 	}
 }

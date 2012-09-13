@@ -22,4 +22,4 @@
  * This is the java binding of the data model 
  * of execution update messages received by Squash TM.
  */
-package squashtm.remoteapi.execution.dto;
+package org.squashtest.tm.api.testautomation.execution.dto;

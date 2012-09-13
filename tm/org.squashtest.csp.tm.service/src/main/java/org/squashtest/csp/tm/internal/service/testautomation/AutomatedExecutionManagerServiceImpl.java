@@ -33,8 +33,8 @@ import org.squashtest.csp.tm.domain.testautomation.AutomatedExecutionExtender;
 import org.squashtest.csp.tm.internal.repository.testautomation.AutomatedExecutionExtenderDao;
 import org.squashtest.csp.tm.service.testautomation.AutomatedExecutionManagerService;
 import org.squashtest.csp.tm.service.testautomation.AutomatedExecutionSetIdentifier;
+import org.squashtest.tm.api.testautomation.execution.dto.TestExecutionStatus;
 
-import squashtm.remoteapi.execution.dto.TestExecutionStatus;
 
 /**
  * @author Gregory Fouquet
@@ -45,7 +45,7 @@ import squashtm.remoteapi.execution.dto.TestExecutionStatus;
 public class AutomatedExecutionManagerServiceImpl implements AutomatedExecutionManagerService {
 	@Inject private AutomatedExecutionExtenderDao automatedExecutionDao;
 	/**
-	 * @see org.squashtest.csp.tm.service.testautomation.AutomatedExecutionManagerService#changeExecutionsStates(org.squashtest.csp.tm.service.testautomation.AutomatedExecutionSetIdentifier, squashtm.remoteapi.execution.dto.TestExecutionStatus)
+	 * @see org.squashtest.csp.tm.service.testautomation.AutomatedExecutionManagerService#changeExecutionsStates(org.squashtest.csp.tm.service.testautomation.AutomatedExecutionSetIdentifier, org.squashtest.tm.api.testautomation.execution.dto.TestExecutionStatus)
 	 */
 	@Override
 	public void changeExecutionsStates(@NotNull AutomatedExecutionSetIdentifier setIdentifier,
@@ -69,7 +69,7 @@ public class AutomatedExecutionManagerServiceImpl implements AutomatedExecutionM
 	 * @param status
 	 * @return
 	 */
-	private ExecutionStatus coerce(squashtm.remoteapi.execution.dto.ExecutionStatus status) {
+	private ExecutionStatus coerce(org.squashtest.tm.api.testautomation.execution.dto.ExecutionStatus status) {
 		return ExecutionStatus.valueOf(status.name());
 	}
 
