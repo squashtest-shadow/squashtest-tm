@@ -220,11 +220,23 @@
       <groupId>org.thymeleaf</groupId>
       <artifactId>org.squashtest.org.thymeleaf</artifactId>
       <version>2.0.6</version>
+		<exclusions>
+			<exclusion>
+				<groupId>org.slf4j</groupId>
+				<artifactId>slf4j-api</artifactId>
+			</exclusion>
+		</exclusions>      
     </dependency>
     <dependency>
       <groupId>org.thymeleaf</groupId>
       <artifactId>org.squashtest.org.thymeleaf.spring3</artifactId>
       <version>2.0.6</version>
+		<exclusions>
+			<exclusion>
+				<groupId>org.slf4j</groupId>
+				<artifactId>slf4j-api</artifactId>
+			</exclusion>
+		</exclusions>      
     </dependency>
   </dependencies>
 
