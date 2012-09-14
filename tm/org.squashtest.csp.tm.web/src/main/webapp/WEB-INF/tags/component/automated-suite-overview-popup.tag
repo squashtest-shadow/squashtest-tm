@@ -45,14 +45,24 @@
 	isContextual="true" closeOnSuccess="false">
 	<jsp:attribute name="buttons">
 			
-				<f:message var="label" key="label.upper.Close" />
+				<f:message var="label" key="label.Close" />
 				'${ label }': function() {
-					$( this ).dialog( 'close' );
+					var selfDialog = $( this );
+					var progressBarValue = $('#execution-auto-progress-bar').progressbar('value');
+					if( progressBarValue < 100){
+					oneShotConfirm("<f:message key='popup.title.info'/>", "<f:message key='message.CloseAutomatedSuiteOverview'/>", 
+					"<f:message key='label.Confirm'/>", 
+					"<f:message key='label.Cancel'/>", 600).done(function(){
+						selfDialog.dialog( 'close' );
+					});
+					}else{
+						selfDialog.dialog( 'close' );
+					}
 				}		
 				
 			</jsp:attribute>
 			<jsp:attribute name="additionalSetup">
-			height: 530
+			height: 490
 			</jsp:attribute>
 	<jsp:attribute name="body">
 			<div class="executions-auto-top" style="height:335px; width: 100%; overflow-y: scroll">
@@ -65,14 +75,10 @@
 				style="width: 80%; margin: auto; margin-top: 20px">
 					<div
 					style="width: 80%; display: inline-block; vertical-align: middle">
-					<div id="execution-auto-progress-bar"></div>
+					<div id="execution-auto-progress-bar" ></div>
 				</div>
 	 				<div id="execution-auto-progress-amount"
 					style="width: 10%; display: inline-block"></div>
-				</div>
-				
-				<div class="popup-notification">
-				<f:message key="dialog.execute-auto.close.note" />
 				</div>
 				
 				</div>
@@ -80,9 +86,11 @@
 			</jsp:attribute>
 </pop:popup>
 <script>
-	$("#execution-auto-progress-bar").progressbar({
+	var executionProgressBar =  $("#execution-auto-progress-bar");
+	executionProgressBar.progressbar({
 		value : 0
 	});
+	executionProgressBar.find("div").addClass("ui-state-default");
 	
 	squashtm.automatedSuiteOverviewDialog = new AutomatedSuiteOverviewDialog({
 			automatedSuiteBaseUrl : "${automatedSuitesUrl}",

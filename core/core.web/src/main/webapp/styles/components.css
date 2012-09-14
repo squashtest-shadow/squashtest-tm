@@ -174,7 +174,7 @@ table.datepicker-table td.datepicker-table-col {
 .executions-status-READY-icon {
 	background: url("../images/Icon_Grey.png") no-repeat;
 }
-s
+
 .executions-status-ERROR-icon {
 	background: url("../images/Icon_Yellow.png") no-repeat;
 }
@@ -628,4 +628,17 @@ span.span-green {
 	display: block;
 	text-indent: -99999px;
 	background-repeat: no-repeat;
+}
+
+
+/****************************************
+* MISC
+****************************************/
+
+#executions-auto-infos.display-table {
+	border-collapse : collapse;
+}
+#executions-auto-infos.display-table  .display-table-row{
+	background-color : #E0E0E0;
+	border-bottom : 3px solid white;
 }
