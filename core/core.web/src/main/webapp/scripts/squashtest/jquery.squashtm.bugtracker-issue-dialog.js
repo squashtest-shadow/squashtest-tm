@@ -112,7 +112,7 @@
 
 	/*
 		the settings object must provide :
-		
+		- bugTrackerId : the id of the concerned bugtracker
 		- labels : an object such as
 			- emptyAssigneeLabel : label that should be displayed when the assignable user list is empty
 			- emptyVersionLabel : same for version list
@@ -136,7 +136,7 @@
 		//urls
 		this.reportUrl = settings.reportUrl;
 		this.searchUrl = settings.searchUrl;
-		
+		this.bugTrackerId = settings.bugTrackerId;
 		
 		//main panels of the popup
 		this.pleaseWait = $(".pleasewait", this);
@@ -408,9 +408,10 @@
 			flipToPleaseWait();
 			
 			$.ajax({
-				url : self.searchUrl+'/'+id,
+				url : self.searchUrl+id,
 				type : 'GET',
-				dataType : 'json'
+				dataType : 'json',
+				data : {"bugTrackerId" : self.bugTrackerId}
 			})
 			.done(function(response){
 				setModel(response);

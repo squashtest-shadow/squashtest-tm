@@ -26,7 +26,7 @@
 <%@ attribute name="entityUrl" required="true" description="the url of the entity (bugtracker-wise)"%>
 <%@ attribute name="interfaceDescriptor" type="java.lang.Object" required="true" description="an object holding the labels for the interface"%>
 <%@ attribute name="successCallback" required="false" description="if set, that callback will be called on successfull completion. It must accept as a parameter a json object having an attribute named 'url'."%>
-
+<%@ attribute name="bugTrackerId" required="true" description="id of the entity's project bug-tracker" %>
 <%@ tag language="java" pageEncoding="ISO-8859-1"%>
 <%@ taglib prefix="pop" tagdir="/WEB-INF/tags/popup" %>
 <%@ taglib uri="http://java.sun.com/jsp/jstl/fmt" prefix="f"%>
@@ -168,6 +168,7 @@ The reason for that is that the parameters are urls already.
 		 $("#${id}").btIssueDialog({
 			reportUrl : "${bugReport}",
 			searchUrl : "${remoteIssues}",
+			bugTrackerId : "${bugTrackerId}",
 			labels : {
 				emptyAssigneeLabel : "${interfaceDescriptor.emptyAssigneeListLabel}",
 				emptyCategoryLabel : "${interfaceDescriptor.emptyCategoryListLabel}",

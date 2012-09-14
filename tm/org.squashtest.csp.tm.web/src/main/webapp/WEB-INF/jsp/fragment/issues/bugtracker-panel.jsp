@@ -349,7 +349,7 @@
 <c:if test="${editable}">
 	<is:issue-add-popup id="issue-report-dialog"
 		interfaceDescriptor="${interfaceDescriptor}" entityUrl="${entityUrl}"
-		successCallback="issueReportSuccess" />
+		successCallback="issueReportSuccess" bugTrackerId="${bugTracker.id}"/>
 </c:if>
 <%-------------------------------- /add issue popup code -----------------------------------%>
 
