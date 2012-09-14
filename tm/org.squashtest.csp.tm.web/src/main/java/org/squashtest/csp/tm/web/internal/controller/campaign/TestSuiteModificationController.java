@@ -77,6 +77,10 @@ public class TestSuiteModificationController {
 
 	private TestSuiteModificationService service;
 	
+
+	//TODO : move to TestSuiteModificationService everything handled here bu the other services. In order to remove those 
+	//extra services.
+	
 	private IterationModificationService iterationModService;
 	
 	private IterationTestPlanFinder iterationTestPlanFinder;
@@ -330,20 +334,27 @@ public class TestSuiteModificationController {
 	
 	@RequestMapping(method = RequestMethod.POST, params= {"id=execute-auto", "testPlanItemsIds[]"} )
 	public @ResponseBody AutomatedSuiteOverview  executeSelectionAuto(@PathVariable long id, @RequestParam("testPlanItemsIds[]") List<Long> ids , Locale locale){
-		//TODO we were in a hurry when i did this but must remove iterationModService from here 
-		// must use iteration finder and create needed write methods in testSutiteModificationService.
+
 		TestSuite suite = service.findById(id);
 		long iterationId = suite.getIteration().getId();
-		AutomatedSuite autoSuite = iterationModService.createAndExecuteAutomatedSuite(iterationId, ids); 
+		
+		AutomatedSuite autoSuite = iterationModService.createAutomatedSuite(iterationId, ids); 
+		testAutomationService.startAutomatedSuite(autoSuite);
+		
+		
 		LOGGER.debug("Test-Suite #"+id+" : execute selected test plans");
-			return 	AutomatedExecutionViewUtils.buildExecInfo(autoSuite, locale, messageSource);
+		
+		return 	AutomatedExecutionViewUtils.buildExecInfo(autoSuite, locale, messageSource);
 		
 	}
 	
 	@RequestMapping(method = RequestMethod.POST, params= {"id=execute-auto", "testPlanItemsIds"} )
 	public @ResponseBody AutomatedSuiteOverview executeAllAuto(@PathVariable long id, Locale locale ){
-		AutomatedSuite suite = service.createAndExecuteAutomatedSuite(id);
+		AutomatedSuite suite = service.createAutomatedSuite(id);
+		testAutomationService.startAutomatedSuite(suite);
+		
 		LOGGER.debug("Test-Suite #"+id+" : execute all test plan auto");
+		
 		return 	AutomatedExecutionViewUtils.buildExecInfo(suite, locale, messageSource);
 
 	}

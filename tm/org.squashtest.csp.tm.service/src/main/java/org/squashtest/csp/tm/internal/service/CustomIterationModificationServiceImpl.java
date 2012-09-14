@@ -190,7 +190,7 @@ public class CustomIterationModificationServiceImpl implements CustomIterationMo
 	@Override	
 	@PreAuthorize(PERMISSION_EXECUTE_ITERATION
 			+ OR_HAS_ROLE_ADMIN)
-	public AutomatedSuite createAndExecuteAutomatedSuite(long iterationId) {
+	public AutomatedSuite createAutomatedSuite(long iterationId) {
 		
 		AutomatedSuite newSuite = autoSuiteDao.createNewSuite();
 		
@@ -210,7 +210,7 @@ public class CustomIterationModificationServiceImpl implements CustomIterationMo
 	@Override
 	@PreAuthorize(PERMISSION_EXECUTE_ITERATION
 			+ OR_HAS_ROLE_ADMIN)
-	public AutomatedSuite createAndExecuteAutomatedSuite(long iterationId, Collection<Long> testPlanIds) {
+	public AutomatedSuite createAutomatedSuite(long iterationId, Collection<Long> testPlanIds) {
 		
 		AutomatedSuite newSuite = autoSuiteDao.createNewSuite();
 		
