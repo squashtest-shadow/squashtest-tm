@@ -135,7 +135,7 @@
 	</jsp:attribute>
 	
 	<jsp:attribute name="subPageButtons">
-		<f:message var="backButtonLabel" key="fragment.edit.header.button.back" />
+		<f:message var="backButtonLabel" key="label.Back" />
 		<input type="button" class="button" value="${backButtonLabel}" onClick="history.back();"/>	
 	</jsp:attribute>		
 	
@@ -197,7 +197,7 @@
 </jsp:attribute>
 
 <jsp:attribute name="foot">
-		<f:message var ="addLabel" key="subpage.association.button.associate.label" />
+		<f:message var ="addLabel" key="label.Add" />
 		<f:message var ="removeLabel" key="subpage.association.button.disassociate.label" />
 		<script type="text/javascript">
 			$(function(){				

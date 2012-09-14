@@ -28,8 +28,8 @@
 <%@ taglib prefix="fmt" uri="http://java.sun.com/jsp/jstl/fmt" %>
 	
 <div id="tree_element_menu" class="tree-top-toolbar">
-	<a id="tree-create-button" href="#tree-create-menu" class="button"><fmt:message key="squashtm.treemenu.create.label"/>...</a>
-	<a id="tree-action-button" href="#tree-action-menu" class="button" ><fmt:message key="squashtm.treemenu.action.label"/>...</a> 
+	<a id="tree-create-button" href="#tree-create-menu" class="button"><fmt:message key="label.Add"/>...</a>
+	<a id="tree-action-button" href="#tree-action-menu" class="button" ><fmt:message key="label.Actions"/>...</a> 
 
 	<div class="not-displayed" >
 	<div id="tree-create-menu" >
@@ -61,10 +61,10 @@
 	<div class="not-displayed" >
 	<div id="tree-import-menu" >
 	<ul>
-		<li><a class="import-excel-tree-button menu-disabled" href="JavaScript:void(0);"><fmt:message key="tree.button.import.label" />...</a></li>
+		<li><a class="import-excel-tree-button menu-disabled" href="JavaScript:void(0);"><fmt:message key="label.Import" />...</a></li>
 		<li><a class="import-links-excel-tree-button menu-disabled" href="JavaScript:void(0);"><fmt:message key="tree.button.import.links.label" />...</a></li>
 				<c:if test="${ workspace == 'requirement' }">
-			<li><a class="export-tree-button menu-disabled" href="JavaScript:void(0);"><fmt:message key='tree.button.export.label'/>...</a></li>
+			<li><a class="export-tree-button menu-disabled" href="JavaScript:void(0);"><fmt:message key='label.Export'/>...</a></li>
 		</c:if>
 	</ul>
 	</div>

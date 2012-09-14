@@ -148,7 +148,7 @@
 				</div>
 			
 				<div class="snap-right" th:if="${hasBackButton}">
-					<input id="back" type="button" th:value="#{fragment.edit.header.button.back}" value="Back" />
+					<input id="back" type="button" th:value="#{label.Back}" value="Back" />
 				</div>
 			
 				<div class="unsnap"></div>
@@ -354,7 +354,7 @@
 								<option>pdf</option>
 								<option>csv</option>
 							</select>		
-							<input type="button" class="button" id="export" value="Go!" th:value="#{report.view.panel.button.export.label}" />
+							<input type="button" class="button" id="export" value="Go!" th:value="#{label.Export}" />
 						</div>
 					</ul>
 					<div th:each="view, it : ${report.views}" class="view-content-panel" th:remove="body"

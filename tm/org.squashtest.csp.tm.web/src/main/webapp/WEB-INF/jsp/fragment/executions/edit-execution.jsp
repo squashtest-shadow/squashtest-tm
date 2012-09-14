@@ -131,7 +131,7 @@
 	</div>
 
 	<div style="float: right;">
-		<f:message var="back" key="fragment.edit.header.button.back" />
+		<f:message var="back" key="label.Back" />
 		<input id="back" type="button" value="${ back }" class="button" />
 	</div>
 
@@ -305,7 +305,7 @@
 				ckeditor : { customConfig : '${ ckeConfigUrl }', language: '<f:message key="rich-edit.language.value" />' },
 				placeholder: '<f:message key="rich-edit.placeholder" />',
 				submit: '<f:message key="rich-edit.button.ok.label" />',
-				cancel: '<f:message key="rich-edit.button.cancel.label" />',
+				cancel: '<f:message key="label.Cancel" />',
 				indicator : '<img src="${ pageContext.servletContext.contextPath }/scripts/jquery/indicator.gif" alt="processing..." />' 				
 			},
 			targets : {

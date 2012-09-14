@@ -196,7 +196,7 @@
 			</div>
 
 			<div style="float: right;">
-				<f:message var="back" key="fragment.edit.header.button.back" />
+				<f:message var="back" key="label.Back" />
 				<input id="back" type="button" value="${ back }" />
 			</div>
 

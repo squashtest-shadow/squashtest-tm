@@ -128,7 +128,7 @@
 				</div>
 				
 				<div id="sub-page-buttons" class="sub-page-buttons">
-					<f:message var="backButtonLabel" key="fragment.edit.header.button.back" />
+					<f:message var="backButtonLabel" key="label.Back" />
 					<input type="button" class="button" value="${backButtonLabel}" onClick="history.back();"/>	
 				</div>
 				
@@ -144,7 +144,7 @@
 						<th>Id</th>
 						<th><f:message key="requirement.versions.table.col-header.version-number" /></th>
 						<th><f:message key="requirement.versions.table.col-header.reference" /></th>
-						<th><f:message key="requirement.versions.table.col-header.name" /></th>
+						<th><f:message key="label.Name" /></th>
 						<th><f:message key="requirement.versions.table.col-header.status" /></th>
 						<th>Id</th>
 					</thead>

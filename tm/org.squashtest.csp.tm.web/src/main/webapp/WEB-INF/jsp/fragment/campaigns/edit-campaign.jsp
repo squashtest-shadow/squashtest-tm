@@ -231,7 +231,7 @@
 		<li><a href="#tabs-2"><f:message key="tabs.label.test-plan" />
 		</a>
 		</li>
-		<li><a href="#tabs-3"><f:message key="tabs.label.attachments" />
+		<li><a href="#tabs-3"><f:message key="labelAttachments" />
 				<c:if test="${ campaign.attachmentList.notEmpty }">
 					<span class="hasAttach">!</span>
 				</c:if>
@@ -254,7 +254,7 @@
 		</script>
 
 		<comp:toggle-panel id="campaign-description-panel"
-			classes="information-panel" titleKey="generics.description.title"
+			classes="information-panel" titleKey="label.Description"
 			isContextual="true" open="true">
 			<jsp:attribute name="body">
 		<div id="campaign-description">${ campaign.description }</div>

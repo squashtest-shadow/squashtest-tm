@@ -41,7 +41,7 @@
 	</jsp:attribute>
 	
 	<jsp:attribute name="subPageButtons">
-		<f:message var="backButtonLabel" key="fragment.edit.header.button.back" />
+		<f:message var="backButtonLabel" key="label.Back" />
 		<input type="button" class="button" value="${backButtonLabel}" onClick="history.back();"/>	
 	</jsp:attribute>
 	

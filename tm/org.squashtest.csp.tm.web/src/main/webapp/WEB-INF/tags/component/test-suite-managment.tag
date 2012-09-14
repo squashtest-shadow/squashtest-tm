@@ -50,7 +50,7 @@
 <pop:popup id="${popupId}" isContextual="true"  openedBy="manage-test-suites-button" closeOnSuccess="false" titleKey="dialog.testsuites.title">
 
 	<jsp:attribute name="buttons">
-	<f:message var="closeLabel" key="dialog.testsuites.close" />
+	<f:message var="closeLabel" key="label.Close" />
 	'${ closeLabel }': function() {
 		$( this ).dialog( 'close' );
 	}		
@@ -69,7 +69,7 @@
 	<div class="main-div-suites not-displayed">
 	<c:if test="${ creatable }">
 		<div class="create-suites-section">
-			<f:message var="createLabel" key="dialog.testsuites.create.add" />
+			<f:message var="createLabel" key="label.Add" />
 			<input type="text" size="30"/><input type="button" class="button" value="${createLabel}" /><br/>
 			<comp:error-message forField="name" />			
 		</div>	

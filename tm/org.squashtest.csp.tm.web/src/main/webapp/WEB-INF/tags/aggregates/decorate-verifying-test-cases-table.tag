@@ -38,7 +38,7 @@
 		$('#verifying-test-cases-table .delete-verifying-test-case-button').die('click');
 		$('#verifying-test-cases-table .delete-verifying-test-case-button').live('click', function() {
 			var savedThis = this;
-			oneShotConfirm("<f:message key='popup.title.confirm' />", 
+			oneShotConfirm("<f:message key='label.Confirm' />", 
 					"<f:message key='dialog.remove-testcase-requirement-association.message' />",
 					"<f:message key='label.Confirm'/>",
 					"<f:message key='label.Cancel'/>", '600px').done(	function(){deleteRequirementLink(savedThis);});
@@ -50,7 +50,7 @@
 			var ids = getIdsOfSelectedTableRows(table, getTestCasesTableRowId);
 			
 			if (ids.length > 0) {
-				oneShotConfirm("<f:message key='popup.title.confirm' />", 
+				oneShotConfirm("<f:message key='label.Confirm' />", 
 						"<f:message key='dialog.remove-testcase-requirement-associations.message' />",
 						"<f:message key='label.Confirm'/>",
 						"<f:message key='label.Cancel'/>", '600px').done(function(){deleteRequirementsLinks(ids);	});

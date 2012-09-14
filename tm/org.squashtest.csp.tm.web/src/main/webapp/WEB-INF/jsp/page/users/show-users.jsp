@@ -136,7 +136,7 @@
 				
 				<div style="float: right;">
 				<a id="add-user-button" href="#" class="add-user-button"><f:message key="user.add.label" /></a>
-				<f:message var="back" key="fragment.edit.header.button.back" /> 
+				<f:message var="back" key="label.Back" /> 
 				<input id="back" type="button" value="${ back }" />
 				</div>
 				<div style="clear:both"></div>
@@ -151,7 +151,7 @@
 								<th><f:message key="label.FirstName" /></th>
 								<th><f:message key="label.LastName" /></th>
 								<th><f:message key="label.Email" /></th>
-								<th><f:message key="project.workspace.table.header.createdon.label" /></th>
+								<th><f:message key="label.CreatedOn" /></th>
 								<th><f:message key="project.workspace.table.header.createdby.label" /></th>
 								<th><f:message key="project.workspace.table.header.modifiedon.label" /></th>	
 								<th><f:message key="project.workspace.table.header.modifiedby.label" /></th>
@@ -232,7 +232,7 @@
 				<td><comp:error-message forField="user-email" /></td>
 				 </tr>
 				<tr> <td>
-					<label style="font-weight: bold;" for="add-user-group"><f:message key="user.account.group.label" /></label>
+					<label style="font-weight: bold;" for="add-user-group"><f:message key="label.Group" /></label>
 					</td>
 					<td>
 					<select id="add-user-group">

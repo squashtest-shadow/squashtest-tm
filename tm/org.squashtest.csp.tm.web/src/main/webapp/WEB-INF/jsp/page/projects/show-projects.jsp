@@ -127,10 +127,10 @@
 						<tr>
 							<th>Id(not shown)</th> 
 							<th>#</th>
-							<th><f:message key="project.workspace.table.header.name.label" /></th>
+							<th><f:message key="label.Name" /></th>
 							<th><f:message key="project.workspace.table.header.label.label" /></th>
 							<th><f:message key="project.workspace.table.header.active.label" /></th>
-							<th><f:message key="project.workspace.table.header.createdon.label" /></th>
+							<th><f:message key="label.CreatedOn" /></th>
 							<th><f:message key="project.workspace.table.header.createdby.label" /></th>
 							<th><f:message key="project.workspace.table.header.modifiedon.label" /></th>	
 							<th><f:message key="project.workspace.table.header.modifiedby.label" /></th>		
@@ -159,13 +159,13 @@
 				<table>
 					<tr>
 						<td><label for="add-project-name"><f:message
-							key="dialog.new-project.name.label" /></label></td>
+							key="label.Name" /></label></td>
 						<td><input id="add-project-name" type="text" size="50" />
 						<comp:error-message forField="name" /></td>
 					</tr>
 					<tr>
 						<td><label for="add-project-description"><f:message
-							key="dialog.new-project.description.label" /></label></td>
+							key="label.Description" /></label></td>
 						<td><textarea id="add-project-description"></textarea></td>
 					</tr>
 					<tr>

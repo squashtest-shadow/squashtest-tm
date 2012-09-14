@@ -233,7 +233,7 @@
 		value="${ testCase.name }" escapeXml="true" /></a></h2>
 	</div>	
 	<div style="float: right;">
-		<f:message var="back" key="fragment.edit.header.button.back" /> 
+		<f:message var="back" key="label.Back" /> 
 		<input id="back" type="button" value="${ back }" class="button"/>
 	</div>
 	<div style="clear: both;"></div>

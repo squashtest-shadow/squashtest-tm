@@ -156,7 +156,7 @@
 					type: 'select',	
 					<%-- placeholder: '<f:message key="rich-edit.placeholder" />', --%>
 					submit: '<f:message key="rich-edit.button.ok.label" />',
-					cancel: '<f:message key="rich-edit.button.cancel.label" />',	
+					cancel: '<f:message key="label.Cancel" />',	
 					onblur : function() {}, <%-- prevents the widget to return to unediting state on blur event --%> 
 					loadurl : urlGET,
 					onsubmit : function() {} <%-- do nothing for now --%>
@@ -202,7 +202,7 @@
 						"<f:message key='label.Confirm'/>",
 						"<f:message key='label.Cancel'/>", '600px').done(function(){deleteVerifiedRequirement(id);});
 			} else {
-				oneShotConfirm("<f:message key='popup.title.confirm' />", 
+				oneShotConfirm("<f:message key='label.Confirm' />", 
 						"<f:message key='dialog.remove-requirement-version-association.message' />",
 						"<f:message key='label.Confirm'/>",
 						"<f:message key='label.Cancel'/>", '600px').done(function(){deleteVerifiedRequirement(id);});
@@ -227,7 +227,7 @@
 						"<f:message key='label.Confirm'/>",
 						"<f:message key='label.Cancel'/>", '600px').done(function(){deleteVerifiedRequirements(ids);});
 			} else {
-				oneShotConfirm("<f:message key='popup.title.confirm' />", 
+				oneShotConfirm("<f:message key='label.Confirm' />", 
 						"<f:message key='dialog.remove-requirement-version-associations.message' />",
 						"<f:message key='label.Confirm'/>",
 						"<f:message key='label.Cancel'/>", '600px').done(function(){deleteVerifiedRequirements(ids);});

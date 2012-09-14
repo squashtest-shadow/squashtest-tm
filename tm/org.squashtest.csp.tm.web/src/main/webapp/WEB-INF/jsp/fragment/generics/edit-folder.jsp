@@ -57,7 +57,7 @@
 	targetUrl="${ folderUrl }" componentId="folder-description" />
 </c:if>
 <div class="fragment-body">
-	<comp:toggle-panel id="folder-description-panel" titleKey="folder.description.label" isContextual="true" open="true">
+	<comp:toggle-panel id="folder-description-panel" titleKey="label.Description" isContextual="true" open="true">
 		<jsp:attribute name="body">
 			<div id="folder-description">${ folder.description }</div>
 		</jsp:attribute>

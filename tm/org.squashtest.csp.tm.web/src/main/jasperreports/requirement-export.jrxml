@@ -117,7 +117,7 @@
 				<textElement>
 					<font isBold="true"/>
 				</textElement>
-				<textFieldExpression class="java.lang.String"><![CDATA[$R{report.requirementexport.description}]]></textFieldExpression>
+				<textFieldExpression class="java.lang.String"><![CDATA[$R{label.Description}]]></textFieldExpression>
 			</textField>
 			<textField>
 				<reportElement x="850" y="0" width="170" height="20"/>
@@ -145,7 +145,7 @@
 				<textElement>
 					<font isBold="true"/>
 				</textElement>
-				<textFieldExpression class="java.lang.String"><![CDATA[$R{report.requirementexport.createdOn}]]></textFieldExpression>
+				<textFieldExpression class="java.lang.String"><![CDATA[$R{label.CreatedOn}]]></textFieldExpression>
 			</textField>
 			<textField>
 				<reportElement x="1530" y="0" width="170" height="20"/>

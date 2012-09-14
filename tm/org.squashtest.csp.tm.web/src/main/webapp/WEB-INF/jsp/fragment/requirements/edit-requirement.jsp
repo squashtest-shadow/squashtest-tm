@@ -208,7 +208,7 @@ that page won't be editable if
 <div class="fragment-tabs fragment-body">
 	<ul>
 		<li><a href="#tabs-1"><f:message key="tabs.label.information" /></a></li>
-		<li><a href="#tabs-2"><f:message key="tabs.label.attachments" />
+		<li><a href="#tabs-2"><f:message key="labelAttachments" />
 		<c:if test="${ requirement.attachmentList.notEmpty }"><span class="hasAttach">!</span></c:if>
 		</a></li>
 	</ul>
@@ -234,7 +234,7 @@ that page won't be editable if
 					<div class="display-table-cell" id="requirement-id">${ requirement.id }</div>
 				</div>
 				<div class="display-table-row">
-					<label for="requirement-description" class="display-table-cell"><f:message key="requirement.description.label" /></label>
+					<label for="requirement-description" class="display-table-cell"><f:message key="label.Description" /></label>
 					<div class="display-table-cell" id="requirement-description">${ requirement.description }</div>
 				</div>
 				<div class="display-table-row">

@@ -42,7 +42,7 @@
 
 <div class="fragment-body">
 
-<comp:toggle-panel id="library-description-panel" titleKey="generics.description.title" isContextual="true" open="true">
+<comp:toggle-panel id="library-description-panel" titleKey="label.Description" isContextual="true" open="true">
 
 	<jsp:attribute name="body">
 		<div id="library-description" >${ library.project.description }</div>

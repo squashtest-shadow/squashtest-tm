@@ -342,7 +342,7 @@
 		<li><a href="#tabs-2"><f:message key="tabs.label.test-plan" />
 		</a>
 		</li>
-		<li><a href="#tabs-3"><f:message key="tabs.label.attachments" />
+		<li><a href="#tabs-3"><f:message key="labelAttachments" />
 				<c:if test="${ testSuite.attachmentList.notEmpty }">
 					<span class="hasAttach">!</span>
 				</c:if>
@@ -357,7 +357,7 @@
 		</c:if>
 
 		<comp:toggle-panel id="test-suite-description-panel"
-			titleKey="generics.description.title" isContextual="true"
+			titleKey="label.Description" isContextual="true"
 			open="${ not empty testSuite.description }">
 			<jsp:attribute name="body">
 		<div id="test-suite-description">${ testSuite.description }</div>

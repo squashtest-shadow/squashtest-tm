@@ -43,7 +43,7 @@
 			<c:otherwise> { customConfig : '${ ckeConfigUrl }', language: '<f:message key="rich-edit.language.value" />' } </c:otherwise> </c:choose>,				//same comment
 			placeholder: '<f:message key="rich-edit.placeholder" />',
 			submit: '<f:message key="rich-edit.button.ok.label" />',
-			cancel: '<f:message key="rich-edit.button.cancel.label" />',	
+			cancel: '<f:message key="label.Cancel" />',	
 			indicator : '<img src="${ pageContext.servletContext.contextPath }/scripts/jquery/indicator.gif" alt="processing..." />'
 								
 		}

@@ -41,7 +41,7 @@
 			max_size: 20,
 			placeholder: '<f:message key="rich-edit.placeholder" />',
 			submit: '<f:message key="rich-edit.button.ok.label" />',
-			cancel: '<f:message key="rich-edit.button.cancel.label" />',
+			cancel: '<f:message key="label.Cancel" />',
 			<c:if test="${ not empty maxLength }" >
 			maxlength: ${ maxLength },
 			</c:if>

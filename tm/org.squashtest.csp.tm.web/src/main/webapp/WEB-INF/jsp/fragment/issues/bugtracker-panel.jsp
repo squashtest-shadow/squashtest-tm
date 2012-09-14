@@ -316,7 +316,7 @@
 			class="${knownIssuesLabelInitCss}">
 			<span><f:message key="issue.panel.needscredentials.label" />
 			</span>			
-			<f:message var="loginButtonLabel" key="issue.panel.login.label" />
+			<f:message var="loginButtonLabel" key="label.LogIn" />
 			<input type="button" class="button" id="issue-login-button"
 				value="${loginButtonLabel}" />
 		</div>

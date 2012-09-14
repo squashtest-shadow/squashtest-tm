@@ -135,7 +135,7 @@
 
 		<tr>
 			<td><span class="gray-text"> <f:message
-						key="search.name.label" /> </span> : <input id="byReqSearchName" type="text"
+						key="label.Name" /> </span> : <input id="byReqSearchName" type="text"
 				class="std-height snap-right" style="width: 66%; margin-left: 2em;" />
 			</td>
 		</tr>
@@ -214,7 +214,7 @@
 					<span><f:message key="search.sort.choose.label" />
 					</span> <select id="byReqSortParam">
 						<option value="3" selected="selected">
-							<f:message key="search.name.label" />
+							<f:message key="label.Name" />
 						</option>
 						<option value="4">
 							<f:message key="search.reference.label" />

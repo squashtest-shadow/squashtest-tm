@@ -115,7 +115,7 @@ it will insert sub-page-layout.tag between the top template and this one." %>
 	
 	<jsp:attribute name="foot">
 		<jsp:invoke fragment="foot" />
-		<f:message var ="addLabel" key="subpage.association.button.associate.label" />
+		<f:message var ="addLabel" key="label.Add" />
 		<f:message var ="removeLabel" key="subpage.association.button.disassociate.label" />
 		<script type="text/javascript">
 			$(function(){				

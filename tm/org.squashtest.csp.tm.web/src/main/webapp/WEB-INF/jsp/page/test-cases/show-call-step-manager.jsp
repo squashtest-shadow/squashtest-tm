@@ -131,7 +131,7 @@
 	<jsp:attribute name="subPageButtons">
 		<f:message var="associateButtonLabel" key="subpage.test-case.callstep.button.call.label" />
 		<input id="call-step-associate-button" type="button" class="button" value="${associateButtonLabel}" />
-		<f:message var="backButtonLabel" key="fragment.edit.header.button.back" />
+		<f:message var="backButtonLabel" key="label.Back" />
 		<input type="button" class="button" value="${backButtonLabel}" onClick="navigateBackFromCallStepManager();"/> 
 	</jsp:attribute>	
 

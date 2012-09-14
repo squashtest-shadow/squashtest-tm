@@ -153,13 +153,13 @@
 				<table>
 					<tr>
 						<td><label for="add-bugtracker-name"><f:message
-							key="dialog.new-bugtracker.name.label" /></label></td>
+							key="label.Name" /></label></td>
 						<td><input id="add-bugtracker-name" type="text" size="50" />
 						<comp:error-message forField="name" /></td>
 					</tr>
 					<tr>
 						<td><label for="add-bugtracker-kind"><f:message
-							key="dialog.new-bugtracker.kind.label" /></label></td>
+							key="label.Kind" /></label></td>
 						<td><select id="add-bugtracker-kind" class="combobox">
 						<c:forEach items="${ bugtrackerKinds }" var="kind" > 
 						<option value = "${kind}" >${kind}</option>
@@ -176,7 +176,7 @@
 					</tr>
 					<tr>
 						<td><label for="add-bugtracker-iframeFriendly"><f:message
-							key="dialog.new-bugtracker.iframe.label" /></label></td>
+							key="label.DisplaysInIframe" /></label></td>
 						<td><input id="add-bugtracker-iframeFriendly" type="checkbox" />
 						<comp:error-message forField="iframeFriendly" /></td>
 					</tr>

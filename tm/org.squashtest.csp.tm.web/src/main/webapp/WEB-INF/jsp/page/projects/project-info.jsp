@@ -82,7 +82,7 @@
 			<div style="float: left; height: 3em">
 				<h2>
 					<label for="project-name-header"><f:message
-							key="project.header.title" />
+							key="label.Project" />
 					</label><a id="project-name-header" href="javascript:void(0);"><c:out
 							value="${ adminproject.project.name }" escapeXml="true" />
 					</a>
@@ -90,7 +90,7 @@
 			</div>
 
 			<div style="float: right;">
-				<f:message var="back" key="fragment.edit.header.button.back" />
+				<f:message var="back" key="label.Back" />
 				<input id="back" type="button" value="${ back }" />
 				
 			</div>
@@ -145,7 +145,7 @@
 						</div>
 						<div class="display-table-row">
 							<label for="project-description" class="display-table-cell">
-							<f:message key="project.description.label" />
+							<f:message key="label.Description" />
 							</label>
 							<div class="display-table-cell" id="project-description">${ adminproject.project.description }</div>
 						</div>
@@ -180,7 +180,7 @@
 			
 		<c:if test="${!bugtrackersListEmpty}">
 			<comp:toggle-panel id="project-bugtracker-panel"
-					titleKey="project.bugtracker.panel.title" isContextual="true"
+					titleKey="label.Bugtracker" isContextual="true"
 					open="true" classes="bugtacker-panel">
 				<jsp:attribute name="body">
 			
@@ -188,7 +188,7 @@
 						
 						<div class="display-table-row">
 							<label for="project-bugtracker" class="display-table-cell">
-								<f:message key="project.bugtracker.label" />
+								<f:message key="label.Bugtracker" />
 							</label>
 							<div class="display-table-cell">
 								<div id="project-bugtracker">

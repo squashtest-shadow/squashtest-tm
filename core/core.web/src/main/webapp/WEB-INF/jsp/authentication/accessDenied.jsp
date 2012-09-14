@@ -49,7 +49,7 @@
 		<div id="sub-page" class="sub-page " >
 					
 			<div id="sub-page-content" class="access-denied-page-content ui-corner-all">
-				<f:message var="backButtonLabel" key="fragment.edit.header.button.back" />
+				<f:message var="backButtonLabel" key="label.Back" />
 				<input type="button" class="button snap-right" value="${backButtonLabel}" onClick="history.back();"/>
 				<br/>
 				<br/>

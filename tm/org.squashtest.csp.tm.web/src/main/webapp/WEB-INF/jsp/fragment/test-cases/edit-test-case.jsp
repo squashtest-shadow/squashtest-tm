@@ -386,7 +386,7 @@ $(function() {
 			ckeditor : { customConfig : '${ ckeConfigUrl }', language: '<f:message key="rich-edit.language.value" />' },		
 			placeholder: '<f:message key="rich-edit.placeholder" />',
 			submit: '<f:message key="rich-edit.button.ok.label" />',
-			cancel: '<f:message key="rich-edit.button.cancel.label" />'	,
+			cancel: '<f:message key="label.Cancel" />'	,
 			indicator : '<img src="${ pageContext.servletContext.contextPath }/scripts/jquery/indicator.gif" alt="processing..." />' 
 				
 		};		
@@ -703,7 +703,7 @@ function addTestStepSuccessAnother(){
 		<li><a href="#tabs-2"><f:message key="tabs.label.steps" />
 		</a>
 		</li>
-		<li><a href="#tabs-3"><f:message key="tabs.label.attachments" />
+		<li><a href="#tabs-3"><f:message key="labelAttachments" />
 				<c:if test="${ testCase.attachmentList.notEmpty }">
 					<span class="hasAttach">!</span>
 				</c:if>
@@ -736,7 +736,7 @@ function addTestStepSuccessAnother(){
 
 
 		<comp:toggle-panel id="test-case-description-panel"
-			titleKey="generics.description.title" isContextual="true" open="true">
+			titleKey="label.Description" isContextual="true" open="true">
 			<jsp:attribute name="body">
 				<div id="test-case-description-table" class="display-table">
 					<div class="display-table-row">
@@ -746,7 +746,7 @@ function addTestStepSuccessAnother(){
 					
 					<div class="display-table-row">
 						<label for="test-case-description" class="display-table-cell"><f:message
-										key="test-case.description.label" />
+										key="label.Description" />
 								</label>
 						<div class="display-table-cell" id="test-case-description">${ testCase.description }</div>
 					</div>
@@ -923,10 +923,10 @@ function addTestStepSuccessAnother(){
 					<th>Id(masked)</th>
 					<th>#</th>
 					<th><f:message
-									key="test-case.calling-test-cases.table.project.label" />
+									key="label.Project" />
 							</th>
 					<th><f:message
-									key="test-case.calling-test-cases.table.name.label" />
+									key="label.Name" />
 							</th>
 					<th><f:message
 									key="test-case.calling-test-cases.table.execmode.label" />
@@ -1021,10 +1021,10 @@ function addTestStepSuccessAnother(){
 						<th><f:message key="table.column-header.has-attachment.label" />
 						</th>
 						<th><f:message
-								key="test-case.steps.table.column-header.actions.label" />
+								key="label.Actions" />
 						</th>
 						<th><f:message
-								key="test-case.steps.table.column-header.expected-results.label" />
+								key="label.ExpectedResults" />
 						</th>
 						<th>M</th>
 						<th>&nbsp;</th>

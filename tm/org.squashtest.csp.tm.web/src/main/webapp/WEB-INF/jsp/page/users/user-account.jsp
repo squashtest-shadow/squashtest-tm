@@ -77,7 +77,7 @@
 					<c:out value="${ user.login }" escapeXml="true" />
 				</h2>
 			</div>
-			<div style="float: right;"><f:message var="back" key="fragment.edit.header.button.back" /> 
+			<div style="float: right;"><f:message var="back" key="label.Back" /> 
 				<input id="back" type="button" value="${ back }" class="button"/>
 			</div>
 	
@@ -94,7 +94,7 @@
 				<jsp:attribute name="body">
 					
 					<div class="user-account-unmodifiable-field">
-						<label><f:message key="user.account.lastname.label"/></label>
+						<label><f:message key="label.LastName"/></label>
 						<span>${user.firstName } ${user.lastName}</span>
 					</div>					
 					
@@ -105,7 +105,7 @@
 					</style>
 					
 					<div>
-						<label ><f:message key="user.account.email.label"/></label>
+						<label ><f:message key="label.Email"/></label>
 						<span id="user-account-email">${user.email}</span>
 					</div>
 					

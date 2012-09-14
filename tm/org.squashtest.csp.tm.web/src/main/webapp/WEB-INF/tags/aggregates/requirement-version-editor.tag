@@ -107,7 +107,7 @@
 <div class="fragment-tabs fragment-body">
 	<ul>
 		<li><a href="#tabs-1"><f:message key="tabs.label.information" /></a></li>
-		<li><a href="#tabs-2"><f:message key="tabs.label.attachments" />
+		<li><a href="#tabs-2"><f:message key="labelAttachments" />
 		<c:if test="${ requirementVersion.attachmentList.notEmpty }"><span class="hasAttach">!</span></c:if>
 		</a></li>
 	</ul>
@@ -132,7 +132,7 @@
 					<div id="requirement-version-id">${ requirementVersion.id }</div>
 				</div>
 				<div>
-					<label for="requirement-description"><f:message key="requirement.description.label" /></label>
+					<label for="requirement-description"><f:message key="label.Description" /></label>
 					<div id="requirement-description">${ requirementVersion.description }</div>
 				</div>
 				<div>
