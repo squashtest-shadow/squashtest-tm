@@ -107,7 +107,7 @@ $(function(){
 			</c:if>
 			<tr>
 				<td><label for="add-${ resourceName }-description"><f:message
-							key="${ resourceName }.description.label" />
+							key="label.Description" />
 				</label>
 				</td>
 				<td><textarea id="add-${ resourceName }-description"></textarea>
