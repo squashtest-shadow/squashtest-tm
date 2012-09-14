@@ -44,7 +44,9 @@ import org.squashtest.csp.tm.internal.repository.TestCaseDeletionDao;
 
 @Repository
 public class HibernateTestCaseDeletionDao extends HibernateDeletionDao implements TestCaseDeletionDao {
-
+	
+	private static final String TEST_CASES_IDS = "testCaseIds";
+	private static final String TESTS_STEPS_IDS = "testStepIds";
 	@Override
 	public void removeEntities(final List<Long> entityIds) {
 		if (!entityIds.isEmpty()) {
@@ -54,7 +56,7 @@ public class HibernateTestCaseDeletionDao extends HibernateDeletionDao implement
 			query.setParameterList("descIds", entityIds, LongType.INSTANCE);
 			query.executeUpdate();
 
-			executeDeleteSQLQuery(NativeQueries.testCase_sql_removeFromLibrary, "testCaseIds", entityIds);
+			executeDeleteSQLQuery(NativeQueries.testCase_sql_removeFromLibrary, TEST_CASES_IDS, entityIds);
 
 			executeDeleteSQLQuery(NativeQueries.testCaseFolder_sql_remove, "nodeIds", entityIds);
 			executeDeleteSQLQuery(NativeQueries.testCase_sql_remove, "nodeIds", entityIds);
@@ -67,18 +69,18 @@ public class HibernateTestCaseDeletionDao extends HibernateDeletionDao implement
 	@Override
 	public void removeAllSteps(List<Long> testStepIds) {
 		if (!testStepIds.isEmpty()) {
-			executeDeleteSQLQuery(NativeQueries.testCase_sql_removeTestStepFromList, "testStepIds", testStepIds);
+			executeDeleteSQLQuery(NativeQueries.testCase_sql_removeTestStepFromList, TESTS_STEPS_IDS, testStepIds);
 
-			executeDeleteSQLQuery(NativeQueries.testStep_sql_removeActionSteps, "testStepIds", testStepIds);
-			executeDeleteSQLQuery(NativeQueries.testStep_sql_removeCallSteps, "testStepIds", testStepIds);
-			executeDeleteSQLQuery(NativeQueries.testStep_sql_removeTestSteps, "testStepIds", testStepIds);
+			executeDeleteSQLQuery(NativeQueries.testStep_sql_removeActionSteps, TESTS_STEPS_IDS, testStepIds);
+			executeDeleteSQLQuery(NativeQueries.testStep_sql_removeCallSteps, TESTS_STEPS_IDS, testStepIds);
+			executeDeleteSQLQuery(NativeQueries.testStep_sql_removeTestSteps, TESTS_STEPS_IDS, testStepIds);
 		}
 	}
 
 	@Override
 	public List<Long> findTestSteps(List<Long> testCaseIds) {
 		if (!testCaseIds.isEmpty()) {
-			return executeSelectNamedQuery("testCase.findAllSteps", "testCaseIds", testCaseIds);
+			return executeSelectNamedQuery("testCase.findAllSteps", TEST_CASES_IDS, testCaseIds);
 		}
 		return Collections.emptyList();
 	}
@@ -86,7 +88,7 @@ public class HibernateTestCaseDeletionDao extends HibernateDeletionDao implement
 	@Override
 	public List<Long> findTestCaseAttachmentListIds(List<Long> testCaseIds) {
 		if (!testCaseIds.isEmpty()) {
-			return executeSelectNamedQuery("testCase.findAllAttachmentLists", "testCaseIds", testCaseIds);
+			return executeSelectNamedQuery("testCase.findAllAttachmentLists", TEST_CASES_IDS, testCaseIds);
 		}
 		return Collections.emptyList();
 	}
@@ -94,7 +96,7 @@ public class HibernateTestCaseDeletionDao extends HibernateDeletionDao implement
 	@Override
 	public List<Long> findTestStepAttachmentListIds(List<Long> testStepIds) {
 		if (!testStepIds.isEmpty()) {
-			return executeSelectNamedQuery("testStep.findAllAttachmentLists", "testStepIds", testStepIds);
+			return executeSelectNamedQuery("testStep.findAllAttachmentLists", TESTS_STEPS_IDS, testStepIds);
 		}
 		return Collections.emptyList();
 	}
@@ -133,7 +135,7 @@ public class HibernateTestCaseDeletionDao extends HibernateDeletionDao implement
 			}
 
 			// now we can delete the items
-			executeDeleteSQLQuery(NativeQueries.testCase_sql_removeCallingCampaignItemTestPlan, "testCaseIds",
+			executeDeleteSQLQuery(NativeQueries.testCase_sql_removeCallingCampaignItemTestPlan, TEST_CASES_IDS,
 					testCaseIds);
 
 		}
@@ -178,13 +180,13 @@ public class HibernateTestCaseDeletionDao extends HibernateDeletionDao implement
 			SQLQuery query1 = getSession().createSQLQuery(
 					NativeQueries.testCase_sql_selectCallingIterationItemTestPlanHavingExecutions);
 			query1.addScalar("item_test_plan_id", LongType.INSTANCE);
-			query1.setParameterList("testCaseIds", testCaseIds, LongType.INSTANCE);
+			query1.setParameterList(TEST_CASES_IDS, testCaseIds, LongType.INSTANCE);
 			List<Long> itpHavingExecIds = query1.list();
 
 			SQLQuery query2 = getSession().createSQLQuery(
 					NativeQueries.testCase_sql_selectCallingIterationItemTestPlanHavingNoExecutions);
 			query2.addScalar("item_test_plan_id", LongType.INSTANCE);
-			query2.setParameterList("testCaseIds", testCaseIds, LongType.INSTANCE);
+			query2.setParameterList(TEST_CASES_IDS, testCaseIds, LongType.INSTANCE);
 			List<Long> itpHavingNoExecIds = query2.list();
 
 			setNullCallingIterationItemTestPlanHavingExecutions(itpHavingExecIds);
@@ -232,7 +234,7 @@ public class HibernateTestCaseDeletionDao extends HibernateDeletionDao implement
 	public void setNullCallingExecutionSteps(List<Long> testStepIds) {
 		if (!testStepIds.isEmpty()) {
 			Query query = getSession().createSQLQuery(NativeQueries.testCase_sql_setNullCallingExecutionSteps);
-			query.setParameterList("testStepIds", testStepIds, LongType.INSTANCE);
+			query.setParameterList(TESTS_STEPS_IDS, testStepIds, LongType.INSTANCE);
 			query.executeUpdate();
 		}
 	}
@@ -240,7 +242,7 @@ public class HibernateTestCaseDeletionDao extends HibernateDeletionDao implement
 	@Override
 	public void setNullCallingExecutions(List<Long> testCaseIds) {
 		Query query = getSession().createSQLQuery(NativeQueries.testCase_sql_setNullCallingExecutions);
-		query.setParameterList("testCaseIds", testCaseIds, LongType.INSTANCE);
+		query.setParameterList(TEST_CASES_IDS, testCaseIds, LongType.INSTANCE);
 		query.executeUpdate();
 	}
 
@@ -248,7 +250,7 @@ public class HibernateTestCaseDeletionDao extends HibernateDeletionDao implement
 	public void removeFromVerifyingTestCaseLists(List<Long> testCaseIds) {
 		if (!testCaseIds.isEmpty()) {
 			Query query = getSession().createSQLQuery(NativeQueries.testCase_sql_removeVerifyingTestCaseList);
-			query.setParameterList("testCaseIds", testCaseIds, LongType.INSTANCE);
+			query.setParameterList(TEST_CASES_IDS, testCaseIds, LongType.INSTANCE);
 			query.executeUpdate();
 
 		}

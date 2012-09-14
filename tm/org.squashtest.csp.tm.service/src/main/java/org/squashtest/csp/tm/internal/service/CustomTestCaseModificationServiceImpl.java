@@ -67,6 +67,7 @@ import org.squashtest.tm.core.foundation.collection.PagingBackedPagedCollectionH
 @Service("CustomTestCaseModificationService")
 public class CustomTestCaseModificationServiceImpl implements CustomTestCaseModificationService {
 	private static final Logger LOGGER = LoggerFactory.getLogger(CustomTestCaseModificationServiceImpl.class);
+	private static final String WRITE_TC_OR_ROLE_ADMIN = "hasPermission(#testCaseId, 'org.squashtest.csp.tm.domain.testcase.TestCase' , 'WRITE') or hasRole('ROLE_ADMIN')";
 
 	@Inject
 	private TestCaseDao testCaseDao;
@@ -146,7 +147,7 @@ public class CustomTestCaseModificationServiceImpl implements CustomTestCaseModi
 
 	@Override
 	@Deprecated
-	@PreAuthorize("hasPermission(#testCaseId, 'org.squashtest.csp.tm.domain.testcase.TestCase' , 'WRITE') or hasRole('ROLE_ADMIN')")
+	@PreAuthorize(WRITE_TC_OR_ROLE_ADMIN)
 	public void changeTestStepPosition(long testCaseId, long testStepId, int newStepPosition) {
 		TestCase testCase = testCaseDao.findById(testCaseId);
 		int index = findTestStepInTestCase(testCase, testStepId);
@@ -160,7 +161,7 @@ public class CustomTestCaseModificationServiceImpl implements CustomTestCaseModi
 	}
 
 	@Override
-	@PreAuthorize("hasPermission(#testCaseId, 'org.squashtest.csp.tm.domain.testcase.TestCase' , 'WRITE') or hasRole('ROLE_ADMIN')")
+	@PreAuthorize(WRITE_TC_OR_ROLE_ADMIN)
 	public void changeTestStepsPosition(long testCaseId, int newPosition, List<Long> stepIds) {
 
 		TestCase testCase = testCaseDao.findById(testCaseId);
@@ -171,7 +172,7 @@ public class CustomTestCaseModificationServiceImpl implements CustomTestCaseModi
 	}
 
 	@Override
-	@PreAuthorize("hasPermission(#testCaseId, 'org.squashtest.csp.tm.domain.testcase.TestCase' , 'WRITE') or hasRole('ROLE_ADMIN')")
+	@PreAuthorize(WRITE_TC_OR_ROLE_ADMIN)
 	public void removeStepFromTestCase(long testCaseId, long testStepId) {
 		TestCase testCase = testCaseDao.findById(testCaseId);
 		TestStep testStep = testStepDao.findById(testStepId);
@@ -194,7 +195,7 @@ public class CustomTestCaseModificationServiceImpl implements CustomTestCaseModi
 	}
 
 	@Override
-	@PreAuthorize("hasPermission(#testCaseId, 'org.squashtest.csp.tm.domain.testcase.TestCase' , 'WRITE') or hasRole('ROLE_ADMIN')")
+	@PreAuthorize(WRITE_TC_OR_ROLE_ADMIN)
 	public void removeListOfSteps(long testCaseId, List<Long> testStepIds) {
 		TestCase testCase = testCaseDao.findById(testCaseId);
 
@@ -215,7 +216,7 @@ public class CustomTestCaseModificationServiceImpl implements CustomTestCaseModi
 	}
 
 	@Override
-	@PreAuthorize("hasPermission(#testCaseId, 'org.squashtest.csp.tm.domain.testcase.TestCase' , 'WRITE') or hasRole('ROLE_ADMIN')")
+	@PreAuthorize(WRITE_TC_OR_ROLE_ADMIN)
 	public void pasteCopiedTestStep(long testCaseId, long idToCopyAfter, long copiedTestStepId) {
 		TestStep original = testStepDao.findById(copiedTestStepId);
 		// FIXME il faut vÃ©rifier un Ã©ventuel cycle ! // pour l'instant vérifié au niveau du controller
@@ -238,7 +239,7 @@ public class CustomTestCaseModificationServiceImpl implements CustomTestCaseModi
 	}
 
 	@Override
-	@PreAuthorize("hasPermission(#testCaseId, 'org.squashtest.csp.tm.domain.testcase.TestCase' , 'WRITE') or hasRole('ROLE_ADMIN')")
+	@PreAuthorize(WRITE_TC_OR_ROLE_ADMIN)
 	public void pasteCopiedTestStepToLastIndex(long testCaseId, long copiedTestStepId) {
 		TestStep original = testStepDao.findById(copiedTestStepId);
 		// FIXME il faut vÃ©rifier un Ã©ventuel cycle ! // pour l'instant vérifié au niveau du controller
@@ -319,7 +320,7 @@ public class CustomTestCaseModificationServiceImpl implements CustomTestCaseModi
 	}
 
 	@Override
-	@PreAuthorize("hasPermission(#testCaseId, 'org.squashtest.csp.tm.domain.testcase.TestCase' , 'WRITE') or hasRole('ROLE_ADMIN')")
+	@PreAuthorize(WRITE_TC_OR_ROLE_ADMIN)
 	public void changeImportanceAuto(long testCaseId, boolean auto) {
 		TestCase testCase = testCaseDao.findById(testCaseId);
 		testCase.setImportanceAuto(auto);
@@ -328,7 +329,7 @@ public class CustomTestCaseModificationServiceImpl implements CustomTestCaseModi
 
 	
 	@Override
-	@PreAuthorize("hasPermission(#testCaseId, 'org.squashtest.csp.tm.domain.testcase.TestCase' , 'WRITE') or hasRole('ROLE_ADMIN')")
+	@PreAuthorize(WRITE_TC_OR_ROLE_ADMIN)
 	public Collection<TestAutomationProjectContent> findAssignableAutomationTests(
 			long testCaseId) {
 		
@@ -338,7 +339,7 @@ public class CustomTestCaseModificationServiceImpl implements CustomTestCaseModi
 	}
 	
 	@Override
-	@PreAuthorize("hasPermission(#testCaseId, 'org.squashtest.csp.tm.domain.testcase.TestCase' , 'WRITE') or hasRole('ROLE_ADMIN')")
+	@PreAuthorize(WRITE_TC_OR_ROLE_ADMIN)
 	public AutomatedTest bindAutomatedTest(Long testCaseId, Long taProjectId, String testName) {
 		
 		TestAutomationProject project = taService.findProjectById(taProjectId); 

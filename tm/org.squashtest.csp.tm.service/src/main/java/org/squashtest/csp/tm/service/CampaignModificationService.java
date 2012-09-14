@@ -27,33 +27,28 @@ import org.springframework.transaction.annotation.Transactional;
 
 @Transactional
 public interface CampaignModificationService extends CustomCampaignModificationService, CampaignFinder {
+	static final String SMALL_EDIT_CAMAIGN_OR_ADMIN = "hasPermission(#arg0, 'org.squashtest.csp.tm.domain.campaign.Campaign' ,'SMALL_EDIT') "
+		+ "or hasRole('ROLE_ADMIN')";
 
-	@PreAuthorize("hasPermission(#arg0, 'org.squashtest.csp.tm.domain.campaign.Campaign' ,'SMALL_EDIT') "
-			+ "or hasRole('ROLE_ADMIN')")
+	@PreAuthorize(SMALL_EDIT_CAMAIGN_OR_ADMIN)
 	void changeDescription(long campaignId, String newDescription);
 
-	@PreAuthorize("hasPermission(#arg0, 'org.squashtest.csp.tm.domain.campaign.Campaign' ,'SMALL_EDIT') "
-			+ "or hasRole('ROLE_ADMIN')")
+	@PreAuthorize(SMALL_EDIT_CAMAIGN_OR_ADMIN)
 	void changeScheduledStartDate(long campaignId, Date scheduledStart);
 
-	@PreAuthorize("hasPermission(#arg0, 'org.squashtest.csp.tm.domain.campaign.Campaign' ,'SMALL_EDIT') "
-			+ "or hasRole('ROLE_ADMIN')")
+	@PreAuthorize(SMALL_EDIT_CAMAIGN_OR_ADMIN)
 	void changeScheduledEndDate(long campaignId, Date scheduledEnd);
 
-	@PreAuthorize("hasPermission(#arg0, 'org.squashtest.csp.tm.domain.campaign.Campaign' ,'SMALL_EDIT') "
-			+ "or hasRole('ROLE_ADMIN')")
+	@PreAuthorize(SMALL_EDIT_CAMAIGN_OR_ADMIN)
 	void changeActualStartDate(long campaignId, Date actualStart);
 
-	@PreAuthorize("hasPermission(#arg0, 'org.squashtest.csp.tm.domain.campaign.Campaign' ,'SMALL_EDIT') "
-			+ "or hasRole('ROLE_ADMIN')")
+	@PreAuthorize(SMALL_EDIT_CAMAIGN_OR_ADMIN)
 	void changeActualEndDate(long campaignId, Date actualEnd);
 
-	@PreAuthorize("hasPermission(#arg0, 'org.squashtest.csp.tm.domain.campaign.Campaign' ,'SMALL_EDIT') "
-			+ "or hasRole('ROLE_ADMIN')")
+	@PreAuthorize(SMALL_EDIT_CAMAIGN_OR_ADMIN)
 	void changeActualStartAuto(long campaignId, boolean isAuto);
 
-	@PreAuthorize("hasPermission(#arg0, 'org.squashtest.csp.tm.domain.campaign.Campaign' ,'SMALL_EDIT') "
-			+ "or hasRole('ROLE_ADMIN')")
+	@PreAuthorize(SMALL_EDIT_CAMAIGN_OR_ADMIN)
 	void changeActualEndAuto(long campaignId, boolean isAuto);
 	
 }

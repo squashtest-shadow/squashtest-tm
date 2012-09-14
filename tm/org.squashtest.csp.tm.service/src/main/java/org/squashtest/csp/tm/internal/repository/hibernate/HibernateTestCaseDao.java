@@ -65,6 +65,7 @@ public class HibernateTestCaseDao extends HibernateEntityDao<TestCase> implement
 	 * "Standard" name for a query parameter representing a test case id.
 	 */
 	private static final String TEST_CASE_ID_PARAM_NAME = "testCaseId";
+	private static final String PROJECT = "project";
 
 	private static class SetIdParameter implements SetQueryParametersCallback {
 		private final long testCaseId;
@@ -183,7 +184,7 @@ public class HibernateTestCaseDao extends HibernateEntityDao<TestCase> implement
 		List<TestCaseLibraryNode> result;
 
 		Criteria criteria = currentSession().createCriteria(TestCaseLibraryNode.class, "testCaseLibraryNode")
-				.createAlias("testCaseLibraryNode.project", "project")
+				.createAlias("testCaseLibraryNode.project", PROJECT)
 				.add(Restrictions.ilike("testCaseLibraryNode.name", tokenInName, MatchMode.ANYWHERE));
 
 		if (groupByProject) {
@@ -334,7 +335,7 @@ public class HibernateTestCaseDao extends HibernateEntityDao<TestCase> implement
 		DetachedCriteria crit = createFindAllByRequirementCriteria(criteria);
 
 		if (isProjectOrdered) {
-			crit.addOrder(Order.asc("project"));
+			crit.addOrder(Order.asc(PROJECT));
 		}
 
 		return crit.getExecutableCriteria(currentSession()).list();
@@ -393,7 +394,7 @@ public class HibernateTestCaseDao extends HibernateEntityDao<TestCase> implement
 		Criteria crit = currentSession().createCriteria(TestCase.class, "TestCase");
 		crit.createAlias("verifiedRequirementVersions", "RequirementVersion");
 		crit.createAlias("verifiedRequirementVersions.requirement", "Requirement", Criteria.LEFT_JOIN);
-		crit.createAlias("project", "Project", Criteria.LEFT_JOIN);
+		crit.createAlias(PROJECT, PROJECT, Criteria.LEFT_JOIN);
 
 		PagingUtils.addPaging(crit, sorting);
 		SortingUtils.addOrder(crit, sorting);
@@ -436,7 +437,7 @@ public class HibernateTestCaseDao extends HibernateEntityDao<TestCase> implement
 		
 		 
 		if (criteria.isGroupByProject()){
-			hCriteria.addOrder(Order.asc("project"));
+			hCriteria.addOrder(Order.asc(PROJECT));
 		}
 		
 		

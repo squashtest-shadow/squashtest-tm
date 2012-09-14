@@ -32,7 +32,7 @@ import org.squashtest.csp.tm.web.internal.model.jstree.JsTreeNode;
 public abstract class JsTreeNodeBuilder<MODEL, BUILDER extends JsTreeNodeBuilder<MODEL, ?>> {
 	private final PermissionEvaluationService permissionEvaluationService;
 	private MODEL model;
-
+	private static final String ROLE_ADMIN = "ROLE_ADMIN";
 	protected JsTreeNodeBuilder(PermissionEvaluationService permissionEvaluationService) {
 		super();
 		this.permissionEvaluationService = permissionEvaluationService;
@@ -46,15 +46,15 @@ public abstract class JsTreeNodeBuilder<MODEL, BUILDER extends JsTreeNodeBuilder
 
 	public JsTreeNode build() {
 		JsTreeNode node = new JsTreeNode();
-		boolean editable = (permissionEvaluationService.hasRoleOrPermissionOnObject("ROLE_ADMIN", "WRITE", model)) ;
+		boolean editable = (permissionEvaluationService.hasRoleOrPermissionOnObject(ROLE_ADMIN, "WRITE", model)) ;
 		node.addAttr("editable", String.valueOf(editable));
-		boolean smallEdit =permissionEvaluationService.hasRoleOrPermissionOnObject("ROLE_ADMIN", "SMALL_EDIT", model) ;
+		boolean smallEdit =permissionEvaluationService.hasRoleOrPermissionOnObject(ROLE_ADMIN, "SMALL_EDIT", model) ;
 		node.addAttr("smallEdit", String.valueOf(smallEdit));
-		boolean creatable = permissionEvaluationService.hasRoleOrPermissionOnObject("ROLE_ADMIN", "CREATE", model);
+		boolean creatable = permissionEvaluationService.hasRoleOrPermissionOnObject(ROLE_ADMIN, "CREATE", model);
 		node.addAttr("creatable", String.valueOf(creatable));
-		boolean deletable = permissionEvaluationService.hasRoleOrPermissionOnObject("ROLE_ADMIN", "DELETE", model);
+		boolean deletable = permissionEvaluationService.hasRoleOrPermissionOnObject(ROLE_ADMIN, "DELETE", model);
 		node.addAttr("deletable", String.valueOf(deletable));
-		boolean executable = permissionEvaluationService.hasRoleOrPermissionOnObject("ROLE_ADMIN", "EXECUTE", model);
+		boolean executable = permissionEvaluationService.hasRoleOrPermissionOnObject(ROLE_ADMIN, "EXECUTE", model);
 		node.addAttr("executable", String.valueOf(executable));
 		doBuild(node, model);
 		return node;

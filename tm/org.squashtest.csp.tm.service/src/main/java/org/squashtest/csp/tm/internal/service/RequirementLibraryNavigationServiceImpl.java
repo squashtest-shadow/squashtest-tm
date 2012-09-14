@@ -60,6 +60,8 @@ import org.squashtest.csp.tm.service.importer.ImportSummary;
 public class RequirementLibraryNavigationServiceImpl extends
 		AbstractLibraryNavigationService<RequirementLibrary, RequirementFolder, RequirementLibraryNode> implements
 		RequirementLibraryNavigationService, RequirementLibraryFinderService {
+	
+	private static final String OR_HAS_ROLE_ADMIN = "or hasRole('ROLE_ADMIN')";
 	@Inject
 	private RequirementLibraryDao requirementLibraryDao;
 
@@ -96,7 +98,7 @@ public class RequirementLibraryNavigationServiceImpl extends
 	}
 
 	@Override
-	@PostAuthorize("hasPermission(returnObject,'READ') or hasRole('ROLE_ADMIN')")
+	@PostAuthorize("hasPermission(returnObject,'READ') "+OR_HAS_ROLE_ADMIN)
 	public Requirement findRequirement(long reqId) {
 		return requirementDao.findById(reqId);
 	}
@@ -143,7 +145,7 @@ public class RequirementLibraryNavigationServiceImpl extends
 
 	@Override
 	@PreAuthorize("hasPermission(#libraryId, 'org.squashtest.csp.tm.domain.requirement.RequirementLibrary' , 'CREATE') "
-			+ "or hasRole('ROLE_ADMIN')")
+			+ OR_HAS_ROLE_ADMIN)
 	public Requirement addRequirementToRequirementLibrary(long libraryId, @NotNull NewRequirementVersionDto newVersion) {
 		RequirementLibrary library = requirementLibraryDao.findById(libraryId);
 
@@ -161,7 +163,7 @@ public class RequirementLibraryNavigationServiceImpl extends
 
 	@Override
 	@PreAuthorize("hasPermission(#libraryId, 'org.squashtest.csp.tm.domain.requirement.RequirementLibrary' , 'CREATE') "
-			+ "or hasRole('ROLE_ADMIN')")
+			+ OR_HAS_ROLE_ADMIN)
 	public Requirement addRequirementToRequirementLibrary(long libraryId, @NotNull Requirement requirement) {
 		RequirementLibrary library = requirementLibraryDao.findById(libraryId);
 
@@ -181,7 +183,7 @@ public class RequirementLibraryNavigationServiceImpl extends
 
 	@Override
 	@PreAuthorize("hasPermission(#folderId, 'org.squashtest.csp.tm.domain.requirement.RequirementFolder' , 'CREATE') "
-			+ "or hasRole('ROLE_ADMIN')")
+			+ OR_HAS_ROLE_ADMIN)
 	public Requirement addRequirementToRequirementFolder(long folderId, @NotNull NewRequirementVersionDto firstVersion) {
 		RequirementFolder folder = requirementFolderDao.findById(folderId);
 
@@ -199,7 +201,7 @@ public class RequirementLibraryNavigationServiceImpl extends
 
 	@Override
 	@PreAuthorize("hasPermission(#folderId, 'org.squashtest.csp.tm.domain.requirement.RequirementFolder' , 'CREATE') "
-			+ "or hasRole('ROLE_ADMIN')")
+			+ OR_HAS_ROLE_ADMIN)
 	public Requirement addRequirementToRequirementFolder(long folderId, @NotNull Requirement requirement) {
 		RequirementFolder folder = requirementFolderDao.findById(folderId);
 
@@ -243,7 +245,7 @@ public class RequirementLibraryNavigationServiceImpl extends
 	}
 	
 	@Override
-	@PostFilter("hasPermission(filterObject, 'LINK') or hasRole('ROLE_ADMIN')")
+	@PostFilter("hasPermission(filterObject, 'LINK') "+OR_HAS_ROLE_ADMIN)
 	public List<RequirementLibrary> findLinkableRequirementLibraries() {
 		ProjectFilter pf = projectFilterModificationService.findProjectFilterByUserLogin();
 		return pf.getActivated() ? libraryStrategy.getSpecificLibraries(pf.getProjects()) : requirementLibraryDao

@@ -77,10 +77,12 @@ public class CustomProjectModificationServiceImpl implements CustomProjectModifi
 	private ProjectsPermissionManagementService permissionService;
 	@Inject
 	private InsecureTestAutomationManagementService autotestService;
+	
+	private static final String MANAGE_PROJECT_OR_ROLE_ADMIN = "hasPermission(#projectId, 'org.squashtest.csp.tm.domain.project.Project', 'MANAGEMENT') or hasRole('ROLE_ADMIN')";
 
 	@Override
 	@Transactional(readOnly = true)
-	@PreAuthorize("hasPermission(#projectId, 'org.squashtest.csp.tm.domain.project.Project', 'MANAGEMENT') or hasRole('ROLE_ADMIN')")
+	@PreAuthorize(MANAGE_PROJECT_OR_ROLE_ADMIN)
 	public Project findById(long projectId) {
 		return projectDao.findById(projectId);
 	}
@@ -92,7 +94,7 @@ public class CustomProjectModificationServiceImpl implements CustomProjectModifi
 	}
 
 	@Override
-	@PreAuthorize("hasPermission(#projectId, 'org.squashtest.csp.tm.domain.project.Project', 'MANAGEMENT') or hasRole('ROLE_ADMIN')")
+	@PreAuthorize(MANAGE_PROJECT_OR_ROLE_ADMIN)
 	public AdministrableProject findAdministrableProjectById(long projectId) {
 		Project project = findById(projectId);
 		boolean isDeletable = true;
@@ -107,14 +109,14 @@ public class CustomProjectModificationServiceImpl implements CustomProjectModifi
 	}
 
 	@Override
-	@PreAuthorize("hasPermission(#projectId, 'org.squashtest.csp.tm.domain.project.Project', 'MANAGEMENT') or hasRole('ROLE_ADMIN')")
+	@PreAuthorize(MANAGE_PROJECT_OR_ROLE_ADMIN)
 	public void addNewPermissionToProject(long userId, long projectId, String permission) {
 		permissionService.addNewPermissionToProject(userId, projectId, permission);
 
 	}
 
 	@Override
-	@PreAuthorize("hasPermission(#projectId, 'org.squashtest.csp.tm.domain.project.Project', 'MANAGEMENT') or hasRole('ROLE_ADMIN')")
+	@PreAuthorize(MANAGE_PROJECT_OR_ROLE_ADMIN)
 	public void removeProjectPermission(long userId, long projectId) {
 		permissionService.removeProjectPermission(userId, projectId);
 
@@ -149,7 +151,7 @@ public class CustomProjectModificationServiceImpl implements CustomProjectModifi
 	}
 
 	@Override
-	@PreAuthorize("hasPermission(#projectId, 'org.squashtest.csp.tm.domain.project.Project', 'MANAGEMENT') or hasRole('ROLE_ADMIN')")
+	@PreAuthorize(MANAGE_PROJECT_OR_ROLE_ADMIN)
 	public TestAutomationServer getLastBoundServerOrDefault(long projectId) {
 		Project project = findById(projectId);
 
@@ -163,7 +165,7 @@ public class CustomProjectModificationServiceImpl implements CustomProjectModifi
 	}
 
 	@Override
-	@PreAuthorize("hasPermission(#projectId, 'org.squashtest.csp.tm.domain.project.Project', 'MANAGEMENT') or hasRole('ROLE_ADMIN')")
+	@PreAuthorize(MANAGE_PROJECT_OR_ROLE_ADMIN)
 	public List<TestAutomationProject> findBoundTestAutomationProjects(long projectId) {
 		return projectDao.findBoundTestAutomationProjects(projectId);
 	}

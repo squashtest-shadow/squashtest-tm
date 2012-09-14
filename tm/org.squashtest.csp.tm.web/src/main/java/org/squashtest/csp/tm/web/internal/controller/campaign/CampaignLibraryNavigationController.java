@@ -67,6 +67,7 @@ import org.squashtest.csp.tm.web.internal.model.jstree.JsTreeNode;
 public class CampaignLibraryNavigationController extends
 LibraryNavigationController<CampaignLibrary, CampaignFolder, CampaignLibraryNode> {
 	private static final Logger LOGGER = LoggerFactory.getLogger(CampaignLibraryNavigationController.class);
+	private static final String NODE_IDS = "nodeIds[]";
 
 	@Inject
 	private Provider<DriveNodeBuilder> driveNodeBuilder;
@@ -268,8 +269,8 @@ LibraryNavigationController<CampaignLibrary, CampaignFolder, CampaignLibraryNode
 		return listBuilder.setModel(linkableLibraries).build();
 	}	
 
-	@RequestMapping(value="/delete-iterations/simulate", method = RequestMethod.POST, params = {"nodeIds[]"})
-	public @ResponseBody String simulateIterationDeletion(@RequestParam("nodeIds[]") List<Long> nodeIds, Locale locale){
+	@RequestMapping(value="/delete-iterations/simulate", method = RequestMethod.POST, params = {NODE_IDS})
+	public @ResponseBody String simulateIterationDeletion(@RequestParam(NODE_IDS) List<Long> nodeIds, Locale locale){
 		List<SuppressionPreviewReport> reportList = campaignLibraryNavigationService.simulateIterationDeletion(nodeIds);
 		
 		StringBuilder builder = new StringBuilder();
@@ -283,14 +284,14 @@ LibraryNavigationController<CampaignLibrary, CampaignFolder, CampaignLibraryNode
 		
 	}
 
-	@RequestMapping(value="/delete-iterations/confirm", method=RequestMethod.DELETE, params= {"nodeIds[]"})
-	public @ResponseBody List<Long> confirmIterationsDeletion(@RequestParam("nodeIds[]") List<Long> nodeIds){
+	@RequestMapping(value="/delete-iterations/confirm", method=RequestMethod.DELETE, params= {NODE_IDS})
+	public @ResponseBody List<Long> confirmIterationsDeletion(@RequestParam(NODE_IDS) List<Long> nodeIds){
 		
 		return campaignLibraryNavigationService.deleteIterations(nodeIds);	
 	}
 	
-	@RequestMapping(value="/delete-test-suites/simulate", method = RequestMethod.POST, params = {"nodeIds[]"})
-	public @ResponseBody String simulateSuiteDeletion(@RequestParam("nodeIds[]") List<Long> nodeIds, Locale locale){
+	@RequestMapping(value="/delete-test-suites/simulate", method = RequestMethod.POST, params = {NODE_IDS})
+	public @ResponseBody String simulateSuiteDeletion(@RequestParam(NODE_IDS) List<Long> nodeIds, Locale locale){
 		List<SuppressionPreviewReport> reportList = campaignLibraryNavigationService.simulateSuiteDeletion(nodeIds);
 		
 		StringBuilder builder = new StringBuilder();
@@ -305,8 +306,8 @@ LibraryNavigationController<CampaignLibrary, CampaignFolder, CampaignLibraryNode
 	}
 	
 	
-	@RequestMapping(value="/delete-test-suites/confirm", method=RequestMethod.DELETE, params= {"nodeIds[]"})
-	public @ResponseBody List<Long> confirmSuitesDeletion(@RequestParam("nodeIds[]") List<Long> nodeIds){
+	@RequestMapping(value="/delete-test-suites/confirm", method=RequestMethod.DELETE, params= {NODE_IDS})
+	public @ResponseBody List<Long> confirmSuitesDeletion(@RequestParam(NODE_IDS) List<Long> nodeIds){
 		
 		return campaignLibraryNavigationService.deleteSuites(nodeIds);	
 	}	

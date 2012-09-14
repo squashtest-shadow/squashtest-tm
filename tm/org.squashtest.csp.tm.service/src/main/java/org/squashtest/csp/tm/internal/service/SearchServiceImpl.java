@@ -84,44 +84,44 @@ public class SearchServiceImpl implements SearchService {
 	 * org.squashtest.csp.tm.service.SearchService#findAllBySearchCriteria(org.squashtest.csp.tm.domain.requirement.
 	 * RequirementSearchCriteria)
 	 */
-
+	private static final String FILTRED_READ_OR_ADMIN = "hasPermission(filterObject, 'READ') or hasRole('ROLE_ADMIN')";
 	@Override
-	@PostFilter("hasPermission(filterObject, 'READ') or hasRole('ROLE_ADMIN')")
+	@PostFilter(FILTRED_READ_OR_ADMIN)
 	public List<CampaignLibraryNode> findCampaignByName(String aName, boolean groupByProject) {
 		List<CampaignLibraryNode> list = campaignDao.findAllByNameContaining(aName, groupByProject);
 		return applyProjectFilter(list);
 	}
 
 	@Override
-	@PostFilter("hasPermission(filterObject, 'READ') or hasRole('ROLE_ADMIN')")
+	@PostFilter(FILTRED_READ_OR_ADMIN)
 	public List<TestCaseLibraryNode> findTestCaseByName(String aName, boolean groupByProject) {
 		List<TestCaseLibraryNode> list = testCaseDao.findAllByNameContaining(aName, groupByProject);
 		return applyProjectFilter(list);
 	}
 
 	@Override
-	@PostFilter("hasPermission(filterObject, 'READ') or hasRole('ROLE_ADMIN')")
+	@PostFilter(FILTRED_READ_OR_ADMIN)
 	public List<TestCaseLibraryNode> findTestCase(TestCaseSearchCriteria criteria) {
 		List<TestCaseLibraryNode> list = testCaseDao.findBySearchCriteria(criteria);
 		return applyProjectFilter(list);
 	}
 
 	@Override
-	@PostFilter("hasPermission(filterObject, 'READ') or hasRole('ROLE_ADMIN')")
+	@PostFilter(FILTRED_READ_OR_ADMIN)
 	public List<RequirementLibraryNode> findAllBySearchCriteria(RequirementSearchCriteria criteria) {
 		List<RequirementLibraryNode> list = requirementDao.findAllBySearchCriteria(criteria);
 		return applyProjectFilter(list);
 	}
 
 	@Override
-	@PostFilter("hasPermission(filterObject, 'READ') or hasRole('ROLE_ADMIN')")
+	@PostFilter(FILTRED_READ_OR_ADMIN)
 	public List<RequirementLibraryNode> findAllBySearchCriteriaOrderByProject(RequirementSearchCriteria criteria) {
 		List<RequirementLibraryNode> list = requirementDao.findAllBySearchCriteriaOrderByProject(criteria);
 		return applyProjectFilter(list);
 	}
 
 	@Override
-	@PostFilter("hasPermission(filterObject, 'READ') or hasRole('ROLE_ADMIN')")
+	@PostFilter(FILTRED_READ_OR_ADMIN)
 	public List<TestCase> findTestCaseByRequirement(RequirementSearchCriteria criteria, boolean isProjectOrdered) {
 		List<TestCase> list = testCaseDao.findAllByRequirement(criteria, isProjectOrdered);
 		// get calling test cases

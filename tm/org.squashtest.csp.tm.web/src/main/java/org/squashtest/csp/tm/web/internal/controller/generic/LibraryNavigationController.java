@@ -66,6 +66,8 @@ public abstract class LibraryNavigationController<LIBRARY extends Library<? exte
 	 */
 	protected abstract LibraryNavigationService<LIBRARY, FOLDER, NODE> getLibraryNavigationService();
 	
+	private static final String NODE_IDS = "nodeIds[]";
+	
 	@Inject
 	private MessageSource messageSource;
 	
@@ -171,8 +173,8 @@ public abstract class LibraryNavigationController<LIBRARY extends Library<? exte
 
 	}
 	
-	@RequestMapping(value="/delete-nodes/simulate", method = RequestMethod.POST, params = {"nodeIds[]"})
-	public @ResponseBody String simulateNodeDeletion(@RequestParam("nodeIds[]") List<Long> nodeIds, Locale locale){
+	@RequestMapping(value="/delete-nodes/simulate", method = RequestMethod.POST, params = {NODE_IDS})
+	public @ResponseBody String simulateNodeDeletion(@RequestParam(NODE_IDS) List<Long> nodeIds, Locale locale){
 		List<SuppressionPreviewReport> reportList = getLibraryNavigationService().simulateDeletion(nodeIds);
 		
 		StringBuilder builder = new StringBuilder();
@@ -186,8 +188,8 @@ public abstract class LibraryNavigationController<LIBRARY extends Library<? exte
 		
 	}
 
-	@RequestMapping(value="/delete-nodes/confirm", method=RequestMethod.DELETE, params= {"nodeIds[]"})
-	public @ResponseBody List<Long> confirmNodeDeletion(@RequestParam("nodeIds[]") List<Long> nodeIds){
+	@RequestMapping(value="/delete-nodes/confirm", method=RequestMethod.DELETE, params= {NODE_IDS})
+	public @ResponseBody List<Long> confirmNodeDeletion(@RequestParam(NODE_IDS) List<Long> nodeIds){
 		
 		return getLibraryNavigationService().deleteNodes(nodeIds);	
 	}

@@ -54,24 +54,26 @@ public class TestSuiteTestPlanManagerServiceImpl implements TestSuiteTestPlanMan
 
 	@Inject
 	private ItemTestPlanDao itemTestPlanDao;
+	
+	private static final String OR_HAS_ROLE_ADMIN = "or hasRole('ROLE_ADMIN')";
 
 	@Override
 	@PreAuthorize("hasPermission(#testSuiteId, 'org.squashtest.csp.tm.domain.campaign.TestSuite', 'READ') "
-			+ "or hasRole('ROLE_ADMIN')")
+			+ OR_HAS_ROLE_ADMIN)
 	public TestSuite findTestSuite(long testSuiteId) {
 		return testSuiteDao.findById(testSuiteId);
 	}
 
 	@Override
 	@PreAuthorize("hasPermission(#suiteId, 'org.squashtest.csp.tm.domain.campaign.TestSuite', 'READ') "
-			+ "or hasRole('ROLE_ADMIN')")
+			+ OR_HAS_ROLE_ADMIN)
 	public PagedCollectionHolder<List<IterationTestPlanItem>> findTestPlan(long suiteId, Paging paging) {
 		return delegateTestSuiteModificationService.findTestSuiteTestPlan(suiteId, paging);
 	}
 
 	@Override
 	@PreAuthorize("hasPermission(#suiteId, 'org.squashtest.csp.tm.domain.campaign.TestSuite', 'LINK') "
-			+ "or hasRole('ROLE_ADMIN')")
+			+ OR_HAS_ROLE_ADMIN)
 	public void addTestCasesToIterationAndTestSuite(List<Long> testCaseIds, long suiteId) {
 
 		TestSuite testSuite = testSuiteDao.findById(suiteId);
@@ -86,7 +88,7 @@ public class TestSuiteTestPlanManagerServiceImpl implements TestSuiteTestPlanMan
 
 	@Override
 	@PreAuthorize("hasPermission(#suiteId, 'org.squashtest.csp.tm.domain.campaign.TestSuite', 'LINK') "
-			+ "or hasRole('ROLE_ADMIN')")
+			+ OR_HAS_ROLE_ADMIN)
 	public void detachTestPlanFromTestSuite(List<Long> testPlanIds, long suiteId) {
 
 		TestSuite testSuite = testSuiteDao.findById(suiteId);
@@ -102,7 +104,7 @@ public class TestSuiteTestPlanManagerServiceImpl implements TestSuiteTestPlanMan
 
 	@Override
 	@PreAuthorize("hasPermission(#suiteId, 'org.squashtest.csp.tm.domain.campaign.TestSuite', 'LINK') "
-			+ "or hasRole('ROLE_ADMIN')")
+			+ OR_HAS_ROLE_ADMIN)
 	public boolean detachTestPlanFromTestSuiteAndRemoveFromIteration(List<Long> testPlanIds, long suiteId) {
 		TestSuite testSuite = testSuiteDao.findById(suiteId);
 		List<IterationTestPlanItem> listTestPlanItems = new ArrayList<IterationTestPlanItem>();

@@ -90,6 +90,9 @@ import org.squashtest.csp.tm.service.deletion.SuppressionPreviewReport;
 @Transactional
 public abstract class AbstractLibraryNavigationService<LIBRARY extends Library<NODE>, FOLDER extends Folder<NODE>, NODE extends LibraryNode>
 		implements LibraryNavigationService<LIBRARY, FOLDER, NODE> {
+	
+	private static final String CREATE = "CREATE";
+	private static final String READ = "READ";
 	private abstract class PasteStrategy<CONTAINER extends NodeContainer<NODE>> {
 		@SuppressWarnings("unchecked")
 		public List<NODE> pasteNodes(long containerId, Long[] sourceNodesIds) {
@@ -100,8 +103,8 @@ public abstract class AbstractLibraryNavigationService<LIBRARY extends Library<N
 			// identity holder
 			for (Long id : sourceNodesIds) {
 				NODE node = getLibraryNodeDao().findById(id);
-				checkPermission(new SecurityCheckableObject(container, "CREATE"), new SecurityCheckableObject(node,
-						"READ"));
+				checkPermission(new SecurityCheckableObject(container, CREATE), new SecurityCheckableObject(node,
+						CREATE));
 			}
 
 			// proceed
@@ -205,7 +208,7 @@ public abstract class AbstractLibraryNavigationService<LIBRARY extends Library<N
 		// fetch
 		LIBRARY library = getLibraryDao().findById(libraryId);
 		// check
-		checkPermission(new SecurityCheckableObject(library, "READ"));
+		checkPermission(new SecurityCheckableObject(library, CREATE));
 		// proceed
 		return library;
 	}
@@ -216,7 +219,7 @@ public abstract class AbstractLibraryNavigationService<LIBRARY extends Library<N
 		// fetch
 		FOLDER folder = getFolderDao().findById(folderId);
 		// check
-		checkPermission(new SecurityCheckableObject(folder, "READ"));
+		checkPermission(new SecurityCheckableObject(folder, CREATE));
 		// proceed
 		return getFolderDao().findById(folderId);
 	}
@@ -254,7 +257,7 @@ public abstract class AbstractLibraryNavigationService<LIBRARY extends Library<N
 		// fetch
 		LIBRARY container = getLibraryDao().findById(destinationId);
 		// check
-		checkPermission(new SecurityCheckableObject(container, "CREATE"));
+		checkPermission(new SecurityCheckableObject(container, CREATE));
 
 		// proceed
 		container.addRootContent((NODE) newFolder);
@@ -267,7 +270,7 @@ public abstract class AbstractLibraryNavigationService<LIBRARY extends Library<N
 		// fetch
 		FOLDER container = getFolderDao().findById(destinationId);
 		// check
-		checkPermission(new SecurityCheckableObject(container, "CREATE"));
+		checkPermission(new SecurityCheckableObject(container, CREATE));
 
 		container.addContent((NODE) newFolder);
 		getFolderDao().persist(newFolder);
@@ -336,8 +339,8 @@ public abstract class AbstractLibraryNavigationService<LIBRARY extends Library<N
 
 			Object parentObject = (parentLib != null) ? parentLib : getFolderDao().findByContent(node);
 
-			checkPermission(new SecurityCheckableObject(destinationFolder, "CREATE"), new SecurityCheckableObject(
-					parentObject, "DELETE"), new SecurityCheckableObject(node, "READ"));
+			checkPermission(new SecurityCheckableObject(destinationFolder, CREATE), new SecurityCheckableObject(
+					parentObject, "DELETE"), new SecurityCheckableObject(node, CREATE));
 
 			nodesAndTheirParents.put(node, parentObject);
 
@@ -367,8 +370,8 @@ public abstract class AbstractLibraryNavigationService<LIBRARY extends Library<N
 			LIBRARY parentLib = getLibraryDao().findByRootContent(node);
 			Object parentObject = (parentLib != null) ? parentLib : getFolderDao().findByContent(node);
 
-			checkPermission(new SecurityCheckableObject(destinationLibrary, "CREATE"), new SecurityCheckableObject(
-					parentObject, "DELETE"), new SecurityCheckableObject(node, "READ"));
+			checkPermission(new SecurityCheckableObject(destinationLibrary, CREATE), new SecurityCheckableObject(
+					parentObject, "DELETE"), new SecurityCheckableObject(node, CREATE));
 
 			nodesAndTheirParents.put(node, parentObject);
 		}

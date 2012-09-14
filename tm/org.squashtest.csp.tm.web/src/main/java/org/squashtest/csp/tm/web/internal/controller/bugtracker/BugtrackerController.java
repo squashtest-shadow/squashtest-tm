@@ -97,6 +97,9 @@ public class BugtrackerController {
 	private static final String TEST_CASE_TYPE = "test-case";
 	private static final String BUGTRACKER_ID = "bugTrackerId";
 	private static final String EMPTY_BUGTRACKER_MAV = "fragment/issues/bugtracker-panel-empty";
+	
+	private static final String STYLE = "style";
+	private static final String TOGGLE = "toggle";
 
 	@Inject
 	private MessageSource messageSource;
@@ -187,7 +190,7 @@ public class BugtrackerController {
 	 */
 	@RequestMapping(value = EXECUTION_STEP_TYPE + "/{stepId}", method = RequestMethod.GET)
 	public ModelAndView getExecStepIssuePanel(@PathVariable Long stepId, Locale locale,
-			@RequestParam(value = "style", required = false, defaultValue = "toggle") String panelStyle) {
+			@RequestParam(value = STYLE, required = false, defaultValue = TOGGLE) String panelStyle) {
 
 		ExecutionStep step = executionFinder.findExecutionStepById(stepId);
 		return makeIssuePanel(step, EXECUTION_STEP_TYPE, locale, panelStyle, step.getProject());
@@ -272,7 +275,7 @@ public class BugtrackerController {
 	 */
 	@RequestMapping(value = EXECUTION_TYPE + "/{execId}", method = RequestMethod.GET)
 	public ModelAndView getExecIssuePanel(@PathVariable Long execId, Locale locale,
-			@RequestParam(value = "style", required = false, defaultValue = "toggle") String panelStyle) {
+			@RequestParam(value = STYLE, required = false, defaultValue = TOGGLE) String panelStyle) {
 
 		Execution bugged = executionFinder.findById(execId);
 		return makeIssuePanel(bugged, EXECUTION_TYPE, locale, panelStyle, bugged.getProject());
@@ -354,7 +357,7 @@ public class BugtrackerController {
 	 */
 	@RequestMapping(value = TEST_CASE_TYPE + "/{tcId}", method = RequestMethod.GET)
 	public ModelAndView getTestCaseIssuePanel(@PathVariable Long tcId, Locale locale,
-			@RequestParam(value = "style", required = false, defaultValue = "toggle") String panelStyle) {
+			@RequestParam(value = STYLE, required = false, defaultValue = TOGGLE) String panelStyle) {
 
 		TestCase testCase = testCaseFinder.findById(tcId);
 		return makeIssuePanel(testCase, TEST_CASE_TYPE, locale, panelStyle, testCase.getProject());
@@ -400,7 +403,7 @@ public class BugtrackerController {
 	 */
 	@RequestMapping(value = ITERATION_TYPE + "/{iterId}", method = RequestMethod.GET)
 	public ModelAndView getIterationIssuePanel(@PathVariable Long iterId, Locale locale,
-			@RequestParam(value = "style", required = false, defaultValue = "toggle") String panelStyle) {
+			@RequestParam(value = STYLE, required = false, defaultValue = TOGGLE) String panelStyle) {
 
 		Iteration iteration = iterationFinder.findById(iterId);
 		return makeIssuePanel(iteration, ITERATION_TYPE, locale, panelStyle, iteration.getProject());
@@ -446,7 +449,7 @@ public class BugtrackerController {
 	 */
 	@RequestMapping(value = CAMPAIGN_TYPE + "/{campId}", method = RequestMethod.GET)
 	public ModelAndView getCampaignIssuePanel(@PathVariable Long campId, Locale locale,
-			@RequestParam(value = "style", required = false, defaultValue = "toggle") String panelStyle) {
+			@RequestParam(value = STYLE, required = false, defaultValue = TOGGLE) String panelStyle) {
 
 		Campaign campaign = campaignFinder.findById(campId);
 		return makeIssuePanel(campaign, CAMPAIGN_TYPE, locale, panelStyle, campaign.getProject());
@@ -491,7 +494,7 @@ public class BugtrackerController {
 	 */
 	@RequestMapping(value = TEST_SUITE_TYPE + "/{testSuiteId}", method = RequestMethod.GET)
 	public ModelAndView getTestSuiteIssuePanel(@PathVariable Long testSuiteId, Locale locale,
-			@RequestParam(value = "style", required = false, defaultValue = "toggle") String panelStyle) {
+			@RequestParam(value = STYLE, required = false, defaultValue = TOGGLE) String panelStyle) {
 
 		TestSuite testSuite = testSuiteFinder.findById(testSuiteId);
 		return makeIssuePanel(testSuite, TEST_SUITE_TYPE, locale, panelStyle, testSuite.getIteration().getProject());
@@ -993,7 +996,7 @@ public class BugtrackerController {
 	 * @RequestMapping(value = EXECUTION_TYPE + "/{execId}/debug", method = RequestMethod.GET) public ModelAndView
 	 * getExecIssuePanelDebug(@PathVariable Long execId, Locale locale,
 	 * 
-	 * @RequestParam(value = "style", required = false, defaultValue = "toggle") String panelStyle) {
+	 * @RequestParam(value = STYLE, required = false, defaultValue = TOGGLE) String panelStyle) {
 	 * 
 	 * Bugged bugged = bugTrackerLocalService.findBuggedEntity(execId, Execution.class); return
 	 * makeIssuePanelDebug(bugged, EXECUTION_TYPE, locale, panelStyle); }

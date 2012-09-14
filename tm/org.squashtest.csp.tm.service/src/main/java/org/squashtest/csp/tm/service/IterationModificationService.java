@@ -27,32 +27,29 @@ import org.springframework.transaction.annotation.Transactional;
 
 @Transactional
 public interface IterationModificationService extends CustomIterationModificationService {
-	@PreAuthorize("hasPermission(#arg0, 'org.squashtest.csp.tm.domain.campaign.Iteration', 'SMALL_EDIT') "
-			+ "or hasRole('ROLE_ADMIN')")
+
+	static final String SMALLEDIT_ITERATION_OR_ADMIN = "hasPermission(#arg0, 'org.squashtest.csp.tm.domain.campaign.Iteration', 'SMALL_EDIT') "
+			+ "or hasRole('ROLE_ADMIN')";
+
+	@PreAuthorize(SMALLEDIT_ITERATION_OR_ADMIN)
 	void changeDescription(long iterationId, String newDescription);
 
-	@PreAuthorize("hasPermission(#arg0, 'org.squashtest.csp.tm.domain.campaign.Iteration', 'SMALL_EDIT') "
-			+ "or hasRole('ROLE_ADMIN')")
+	@PreAuthorize(SMALLEDIT_ITERATION_OR_ADMIN)
 	void changeScheduledStartDate(long iterationId, Date scheduledStart);
 
-	@PreAuthorize("hasPermission(#arg0, 'org.squashtest.csp.tm.domain.campaign.Iteration', 'SMALL_EDIT') "
-			+ "or hasRole('ROLE_ADMIN')")
+	@PreAuthorize(SMALLEDIT_ITERATION_OR_ADMIN)
 	void changeScheduledEndDate(long iterationId, Date scheduledEnd);
 
-	@PreAuthorize("hasPermission(#arg0, 'org.squashtest.csp.tm.domain.campaign.Iteration', 'SMALL_EDIT') "
-			+ "or hasRole('ROLE_ADMIN')")
+	@PreAuthorize(SMALLEDIT_ITERATION_OR_ADMIN)
 	void changeActualStartDate(long iterationId, Date actualStart);
 
-	@PreAuthorize("hasPermission(#arg0, 'org.squashtest.csp.tm.domain.campaign.Iteration', 'SMALL_EDIT') "
-			+ "or hasRole('ROLE_ADMIN')")
+	@PreAuthorize(SMALLEDIT_ITERATION_OR_ADMIN)
 	void changeActualEndDate(long iterationId, Date actualEnd);
 
-	@PreAuthorize("hasPermission(#arg0, 'org.squashtest.csp.tm.domain.campaign.Iteration', 'SMALL_EDIT') "
-			+ "or hasRole('ROLE_ADMIN')")
+	@PreAuthorize(SMALLEDIT_ITERATION_OR_ADMIN)
 	void changeActualStartAuto(long iterationId, boolean isAuto);
 
-	@PreAuthorize("hasPermission(#arg0, 'org.squashtest.csp.tm.domain.campaign.Iteration', 'SMALL_EDIT') "
-			+ "or hasRole('ROLE_ADMIN')")
+	@PreAuthorize(SMALLEDIT_ITERATION_OR_ADMIN)
 	void changeActualEndAuto(long iterationId, boolean isAuto);
 
 }

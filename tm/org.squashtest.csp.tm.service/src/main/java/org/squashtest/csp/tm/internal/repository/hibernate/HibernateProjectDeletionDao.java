@@ -41,7 +41,7 @@ public class HibernateProjectDeletionDao extends HibernateDeletionDao implements
 		// TODO Auto-generated method stub
 
 	}
-
+	private static final String CLASS_NAME = "className";
 	public void removeProject(Object entity) {
 				
 		//Set Queries
@@ -54,11 +54,11 @@ public class HibernateProjectDeletionDao extends HibernateDeletionDao implements
 		Long id = project.getId();
 		String className = Project.class.getName();
 		
-		removeARSE.setParameter("className",className, StringType.INSTANCE);
+		removeARSE.setParameter(CLASS_NAME,className, StringType.INSTANCE);
 		removeARSE.setParameter("id", id, LongType.INSTANCE);
 		removeARSE.executeUpdate();
 
-		removeAOI.setParameter("className", className, StringType.INSTANCE);
+		removeAOI.setParameter(CLASS_NAME, className, StringType.INSTANCE);
 		removeAOI.setParameter("id", id , LongType.INSTANCE);
 		removeAOI.executeUpdate();
 		
@@ -67,11 +67,11 @@ public class HibernateProjectDeletionDao extends HibernateDeletionDao implements
 		className = RequirementLibrary.class.getName();
 		
 		
-		removeARSE.setParameter("className",className, StringType.INSTANCE);
+		removeARSE.setParameter(CLASS_NAME,className, StringType.INSTANCE);
 		removeARSE.setParameter("id", id, LongType.INSTANCE);
 		removeARSE.executeUpdate();
 		
-		removeAOI.setParameter("className", className, StringType.INSTANCE);
+		removeAOI.setParameter(CLASS_NAME, className, StringType.INSTANCE);
 		removeAOI.setParameter("id", id , LongType.INSTANCE);
 		removeAOI.executeUpdate();
 		
@@ -79,11 +79,11 @@ public class HibernateProjectDeletionDao extends HibernateDeletionDao implements
 		id = project.getTestCaseLibrary().getId();
 		className = TestCaseLibrary.class.getName();
 				
-		removeARSE.setParameter("className",className, StringType.INSTANCE);
+		removeARSE.setParameter(CLASS_NAME,className, StringType.INSTANCE);
 		removeARSE.setParameter("id", id, LongType.INSTANCE);
 		removeARSE.executeUpdate();
 		
-		removeAOI.setParameter("className", className, StringType.INSTANCE);
+		removeAOI.setParameter(CLASS_NAME, className, StringType.INSTANCE);
 		removeAOI.setParameter("id", id , LongType.INSTANCE);
 		removeAOI.executeUpdate();
 		
@@ -91,11 +91,11 @@ public class HibernateProjectDeletionDao extends HibernateDeletionDao implements
 		id = project.getCampaignLibrary().getId();
 		className = CampaignLibrary.class.getName();
 		
-		removeARSE.setParameter("className",className, StringType.INSTANCE);
+		removeARSE.setParameter(CLASS_NAME,className, StringType.INSTANCE);
 		removeARSE.setParameter("id", id, LongType.INSTANCE);
 		removeARSE.executeUpdate();
 		
-		removeAOI.setParameter("className", className, StringType.INSTANCE);
+		removeAOI.setParameter(CLASS_NAME, className, StringType.INSTANCE);
 		removeAOI.setParameter("id", id , LongType.INSTANCE);
 		removeAOI.executeUpdate();
 		

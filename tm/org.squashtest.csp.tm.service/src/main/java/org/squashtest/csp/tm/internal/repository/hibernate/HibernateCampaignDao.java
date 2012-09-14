@@ -43,6 +43,7 @@ import org.squashtest.csp.tm.internal.repository.EntityDao;
 public class HibernateCampaignDao extends HibernateEntityDao<Campaign> implements CampaignDao {
 
 	private static final String CAMPAIGN_ID_PARAM_NAME = "campaignId";
+	private static final String CONTAINER_ID = "containerId";
 
 	@Override
 	public Campaign findByIdWithInitializedIterations(long campaignId) {
@@ -89,7 +90,7 @@ public class HibernateCampaignDao extends HibernateEntityDao<Campaign> implement
 
 			@Override
 			public void setQueryParameters(Query query) {
-				query.setParameter("containerId", folderId);
+				query.setParameter(CONTAINER_ID, folderId);
 				query.setParameter("nameStart", nameStart + "%");
 			}
 		};
@@ -102,7 +103,7 @@ public class HibernateCampaignDao extends HibernateEntityDao<Campaign> implement
 
 			@Override
 			public void setQueryParameters(Query query) {
-				query.setParameter("containerId", campaignId);
+				query.setParameter(CONTAINER_ID, campaignId);
 				query.setParameter("nameStart", nameStart + "%");
 			}
 		};
@@ -115,7 +116,7 @@ public class HibernateCampaignDao extends HibernateEntityDao<Campaign> implement
 
 			@Override
 			public void setQueryParameters(Query query) {
-				query.setParameter("containerId", campaignId);
+				query.setParameter(CONTAINER_ID, campaignId);
 			}
 		};
 		return executeListNamedQuery("campaign.findAllNamesInCampaign", newCallBack1);
@@ -127,7 +128,7 @@ public class HibernateCampaignDao extends HibernateEntityDao<Campaign> implement
 
 			@Override
 			public void setQueryParameters(Query query) {
-				query.setParameter("containerId", libraryId);
+				query.setParameter(CONTAINER_ID, libraryId);
 				query.setParameter("nameStart", nameStart + "%");
 			}
 		};

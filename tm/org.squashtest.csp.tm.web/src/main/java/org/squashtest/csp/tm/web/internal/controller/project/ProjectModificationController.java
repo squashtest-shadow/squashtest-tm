@@ -78,6 +78,8 @@ public class ProjectModificationController {
 
 	private static final String PROJECT_BUGTRACKER_NAME_UNDEFINED = "project.bugtracker.name.undefined";
 
+	private static final String PROJECT_ID = "projectId";
+
 	@Inject
 	private MessageSource messageSource;
 
@@ -297,7 +299,7 @@ public class ProjectModificationController {
 	//filtering and sorting not supported for now
 	@RequestMapping(value = "/test-automation-projects", method=RequestMethod.GET, params = "sEcho")
 	@ResponseBody
-	public DataTableModel getProjectsTableModel(@PathVariable("projectId") long projectId, final DataTableDrawParameters params) {
+	public DataTableModel getProjectsTableModel(@PathVariable(PROJECT_ID) long projectId, final DataTableDrawParameters params) {
 		List<TestAutomationProject> taProjects = projectModificationService.findBoundTestAutomationProjects(projectId);
 		
 		FilteredCollectionHolder<List<TestAutomationProject>> holder = 
@@ -309,7 +311,7 @@ public class ProjectModificationController {
 	
 	@RequestMapping(value = "/test-automation-projects", method=RequestMethod.POST, headers = "Content-Type=application/json" )
 	@ResponseBody
-	public void bindTestAutomationProject(@PathVariable("projectId") long projectId, @RequestBody TestAutomationProjectRegistrationForm[] projects, Locale locale)
+	public void bindTestAutomationProject(@PathVariable(PROJECT_ID) long projectId, @RequestBody TestAutomationProjectRegistrationForm[] projects, Locale locale)
 	throws BindException{
 		TestAutomationProjectRegistrationForm form=null;
 		try{
@@ -330,7 +332,7 @@ public class ProjectModificationController {
 	
 	@RequestMapping(value="/test-automation-enabled", method=RequestMethod.POST, params = "enabled")
 	@ResponseBody
-	public void enableTestAutomation(@PathVariable("projectId") long projectId, @RequestParam("enabled") boolean isEnabled){
+	public void enableTestAutomation(@PathVariable(PROJECT_ID) long projectId, @RequestParam("enabled") boolean isEnabled){
 		projectModificationService.changeTestAutomationEnabled(projectId, isEnabled);
 	}
 	
@@ -338,7 +340,7 @@ public class ProjectModificationController {
 	
 	@RequestMapping(value = "/test-automation-projects/{taProjectId}", method=RequestMethod.DELETE )
 	@ResponseBody
-	public void unbindProject(@PathVariable("projectId") Long projectId, @PathVariable("taProjectId") Long taProjectId){
+	public void unbindProject(@PathVariable(PROJECT_ID) Long projectId, @PathVariable("taProjectId") Long taProjectId){
 		projectModificationService.unbindTestAutomationProject(projectId, taProjectId);
 	}
 	

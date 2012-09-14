@@ -50,6 +50,8 @@ public class SearchController {
 	private static final String WORKSPACE = "workspace";
 	
 //	private static final String PROJECT_LIST = "projectList";
+	
+	private static final String NODE_NAME = "nodeName";
 
 	private static final String ICON = "icon";
 
@@ -63,9 +65,9 @@ public class SearchController {
 		this.searchService = searchService;
 	}
 	
-	@RequestMapping(value = "test-cases/breadcrumb", method = RequestMethod.POST, params = {"nodeName"})
+	@RequestMapping(value = "test-cases/breadcrumb", method = RequestMethod.POST, params = {NODE_NAME})
 	@ResponseBody
-	public List<String> findBreadCrumbTestCase(@RequestParam("nodeName") String nodeName){
+	public List<String> findBreadCrumbTestCase(@RequestParam(NODE_NAME) String nodeName){
 		LOGGER.trace("search breadcrumb");
 
 		String[] splitedNodeName = nodeName.split(NODE_NAME_REJEX);
@@ -73,9 +75,9 @@ public class SearchController {
 		Long nodeId = Long.parseLong(splitedNodeName[1]);
 		return searchService.findBreadCrumbForTestCase(className, nodeId, NODE_NAME_REJEX);
 	}
-	@RequestMapping(value = "requirements/breadcrumb", method = RequestMethod.POST, params = {"nodeName"})
+	@RequestMapping(value = "requirements/breadcrumb", method = RequestMethod.POST, params = {NODE_NAME})
 	@ResponseBody
-	public List<String> findBreadCrumbRequirement(@RequestParam("nodeName") String nodeName){
+	public List<String> findBreadCrumbRequirement(@RequestParam(NODE_NAME) String nodeName){
 		LOGGER.trace("search breadcrumb");
 
 		String[] splitedNodeName = nodeName.split(NODE_NAME_REJEX);
@@ -83,9 +85,9 @@ public class SearchController {
 		Long nodeId = Long.parseLong(splitedNodeName[1]);
 		return searchService.findBreadCrumbForRequirement(className, nodeId, NODE_NAME_REJEX);
 	}
-	@RequestMapping(value = "campaigns/breadcrumb", method = RequestMethod.POST, params = {"nodeName"})
+	@RequestMapping(value = "campaigns/breadcrumb", method = RequestMethod.POST, params = {NODE_NAME})
 	@ResponseBody
-	public List<String> findBreadCrumbCampaign(@RequestParam("nodeName") String nodeName){
+	public List<String> findBreadCrumbCampaign(@RequestParam(NODE_NAME) String nodeName){
 		LOGGER.trace("search breadcrumb");
 
 		String[] splitedNodeName = nodeName.split(NODE_NAME_REJEX);

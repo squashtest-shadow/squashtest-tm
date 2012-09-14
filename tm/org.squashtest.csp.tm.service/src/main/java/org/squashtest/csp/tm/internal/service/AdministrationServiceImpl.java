@@ -108,21 +108,21 @@ public class AdministrationServiceImpl implements AdministrationService {
 	}
 
 	/* ********************** proper admin section ******************* */
-
+	private static final String HAS_ROLE_ADMIN = "hasRole('ROLE_ADMIN')";
 	@Override
-	@PreAuthorize("hasRole('ROLE_ADMIN')")
+	@PreAuthorize(HAS_ROLE_ADMIN)
 	public User findUserById(long userId) {
 		return userDao.findById(userId);
 	}
 
 	@Override
-	@PreAuthorize("hasRole('ROLE_ADMIN')")
+	@PreAuthorize(HAS_ROLE_ADMIN)
 	public List<User> findAllUsersOrderedByLogin() {
 		return  userDao.findAllUsersOrderedByLogin();
 	}
 
 	@Override
-	@PreAuthorize("hasRole('ROLE_ADMIN')")
+	@PreAuthorize(HAS_ROLE_ADMIN)
 	public FilteredCollectionHolder<List<User>> findAllUsersFiltered(Paging filter) {
 		List<User> list = userDao.findAllUsersFiltered(filter);
 		long count = userDao.findAll().size();
@@ -130,13 +130,13 @@ public class AdministrationServiceImpl implements AdministrationService {
 	}
 
 	@Override
-	@PreAuthorize("hasRole('ROLE_ADMIN')")
+	@PreAuthorize(HAS_ROLE_ADMIN)
 	public List<UsersGroup> findAllUsersGroupOrderedByQualifiedName() {
 		return groupDao.findAllGroupsOrderedByQualifiedName();
 	}
 
 	@Override
-	@PreAuthorize("hasRole('ROLE_ADMIN')")
+	@PreAuthorize(HAS_ROLE_ADMIN)
 	public void addUser(User aUser, long groupId, String password) {
 		// FIXME : also check the auth part when time is come
 		
@@ -151,7 +151,7 @@ public class AdministrationServiceImpl implements AdministrationService {
 	}
 
 	@Override
-	@PreAuthorize("hasRole('ROLE_ADMIN')")
+	@PreAuthorize(HAS_ROLE_ADMIN)
 	public void modifyUserActiveParam(long userId, boolean active) {
 		// TODO : in CORE_USER or AUTH_USER ?
 		User user = userDao.findById(userId);
@@ -159,7 +159,7 @@ public class AdministrationServiceImpl implements AdministrationService {
 	}
 
 	@Override
-	@PreAuthorize("hasRole('ROLE_ADMIN')")
+	@PreAuthorize(HAS_ROLE_ADMIN)
 	public void setUserGroupAuthority(long userId, long groupId) {
 		UsersGroup group = groupDao.findById(groupId);
 		User user = userDao.findById(userId);
@@ -202,7 +202,7 @@ public class AdministrationServiceImpl implements AdministrationService {
 	
 	
 	@Override
-	@PreAuthorize("hasRole('ROLE_ADMIN')")
+	@PreAuthorize(HAS_ROLE_ADMIN)
 	public void resetUserPassword(long userId, String newPassword) {
 		User user = userDao.findById(userId);
 		adminService.resetUserPassword(user.getLogin(), newPassword);

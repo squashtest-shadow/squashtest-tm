@@ -80,6 +80,10 @@ public class IterationModificationController {
 	private static final String NAME = "name";
 
 	private static final Logger LOGGER = LoggerFactory.getLogger(IterationModificationController.class);
+	
+	private static final String ITERATION_KEY = "iteration";
+	private static final String ITERATION_ID_KEY = "iterationId";
+	private static final String PLANNING_URL = "/planning";
 
 	private IterationModificationService iterationModService;
 
@@ -117,7 +121,7 @@ public class IterationModificationController {
 		Iteration iteration = iterationModService.findById(iterationId);
 
 		ModelAndView mav = new ModelAndView("fragment/iterations/edit-iteration");
-		mav.addObject("iteration", iteration);
+		mav.addObject(ITERATION_KEY, iteration);
 
 		return mav;
 	}
@@ -131,12 +135,12 @@ public class IterationModificationController {
 		ModelAndView mav = new ModelAndView("page/campaign-libraries/show-iteration");
 
 		if (iteration != null) {
-			mav.addObject("iteration", iteration);
+			mav.addObject(ITERATION_KEY, iteration);
 		} else {
 			iteration = new Iteration();
 			iteration.setName("Not found");
 			iteration.setDescription("This iteration either do not exists, or was removed");
-			mav.addObject("iteration", new Iteration());
+			mav.addObject(ITERATION_KEY, new Iteration());
 
 		}
 		return mav;
@@ -165,7 +169,7 @@ public class IterationModificationController {
 
 	@RequestMapping(value = "/duplicateTestSuite/{testSuiteId}", method = RequestMethod.POST)
 	public @ResponseBody
-	Long duplicateTestSuite(@PathVariable("iterationId") Long iterationId, @PathVariable("testSuiteId") Long testSuiteId) {
+	Long duplicateTestSuite(@PathVariable(ITERATION_ID_KEY) Long iterationId, @PathVariable("testSuiteId") Long testSuiteId) {
 		TestSuite duplicate = iterationModService.copyPasteTestSuiteToIteration(testSuiteId, iterationId);
 		return duplicate.getId();
 	}
@@ -196,7 +200,7 @@ public class IterationModificationController {
 		return DateUtils.dateToMillisecondsAsString(date);
 	}
 
-	@RequestMapping(value = "/planning", params = { "scheduledStart" })
+	@RequestMapping(value = PLANNING_URL, params = { "scheduledStart" })
 	public @ResponseBody
 	String setScheduledStart(HttpServletResponse response, @PathVariable long iterationId,
 			@RequestParam(value = "scheduledStart") String strDate) {
@@ -213,7 +217,7 @@ public class IterationModificationController {
 
 	}
 
-	@RequestMapping(value = "/planning", params = { "scheduledEnd" })
+	@RequestMapping(value = PLANNING_URL, params = { "scheduledEnd" })
 	@ResponseBody
 	public String setScheduledEnd(HttpServletResponse response, @PathVariable long iterationId,
 			@RequestParam(value = "scheduledEnd") String strDate) {
@@ -221,7 +225,7 @@ public class IterationModificationController {
 		Date newScheduledEnd = strToDate(strDate);
 		String toReturn = dateToStr(newScheduledEnd);
 
-		LOGGER.info("IterationModificationController : setting scheduled start date for iteration " + iterationId
+		LOGGER.info("IterationModificationController : setting scheduled end date for iteration " + iterationId
 				+ ", new date : " + newScheduledEnd);
 
 		iterationModService.changeScheduledEndDate(iterationId, newScheduledEnd);
@@ -232,7 +236,7 @@ public class IterationModificationController {
 
 	/** the next functions may receive null arguments : empty string **/
 
-	@RequestMapping(value = "/planning", params = { "actualStart" })
+	@RequestMapping(value = PLANNING_URL, params = { "actualStart" })
 	@ResponseBody
 	public String setActualStart(HttpServletResponse response, @PathVariable long iterationId,
 			@RequestParam(value = "actualStart") String strDate) {
@@ -240,7 +244,7 @@ public class IterationModificationController {
 		Date newActualStart = strToDate(strDate);
 		String toReturn = dateToStr(newActualStart);
 
-		LOGGER.info("IterationModificationController : setting scheduled start date for iteration " + iterationId
+		LOGGER.info("IterationModificationController : setting actual start date for iteration " + iterationId
 				+ ", new date : " + newActualStart);
 
 		iterationModService.changeActualStartDate(iterationId, newActualStart);
@@ -249,7 +253,7 @@ public class IterationModificationController {
 
 	}
 
-	@RequestMapping(value = "/planning", params = { "actualEnd" })
+	@RequestMapping(value = PLANNING_URL, params = { "actualEnd" })
 	@ResponseBody
 	public String setActualEnd(HttpServletResponse response, @PathVariable long iterationId,
 			@RequestParam(value = "actualEnd") String strDate) {
@@ -257,7 +261,7 @@ public class IterationModificationController {
 		Date newActualEnd = strToDate(strDate);
 		String toReturn = dateToStr(newActualEnd);
 
-		LOGGER.info("IterationModificationController : setting scheduled start date for iteration " + iterationId
+		LOGGER.info("IterationModificationController : setting actual end date for iteration " + iterationId
 				+ ", new date : " + newActualEnd);
 
 		iterationModService.changeActualEndDate(iterationId, newActualEnd);
@@ -266,7 +270,7 @@ public class IterationModificationController {
 
 	}
 
-	@RequestMapping(value = "/planning", params = { "setActualStartAuto" })
+	@RequestMapping(value = PLANNING_URL, params = { "setActualStartAuto" })
 	@ResponseBody
 	public String setActualStartAuto(HttpServletResponse response, @PathVariable long iterationId,
 			@RequestParam(value = "setActualStartAuto") boolean auto) {
@@ -282,7 +286,7 @@ public class IterationModificationController {
 		return toreturn;
 	}
 
-	@RequestMapping(value = "/planning", params = { "setActualEndAuto" })
+	@RequestMapping(value = PLANNING_URL, params = { "setActualEndAuto" })
 	@ResponseBody
 	public String setActualEndAuto(HttpServletResponse response, @PathVariable long iterationId,
 			@RequestParam(value = "setActualEndAuto") boolean auto) {
@@ -314,7 +318,7 @@ public class IterationModificationController {
 	 */
 	@RequestMapping(value = "/test-case/move", method = RequestMethod.POST, params = { "newIndex", "itemIds[]" })
 	@ResponseBody
-	public void moveTestPlanItems(@PathVariable("iterationId") long iterationId, @RequestParam int newIndex,
+	public void moveTestPlanItems(@PathVariable(ITERATION_ID_KEY) long iterationId, @RequestParam int newIndex,
 			@RequestParam("itemIds[]") List<Long> itemIds) {
 		iterationModService.changeTestPlanPosition(iterationId, newIndex, itemIds);
 		if (LOGGER.isTraceEnabled()) {
@@ -325,7 +329,7 @@ public class IterationModificationController {
 	// returns the ID of the newly created execution
 	@RequestMapping(value = "/test-plan/{testPlanId}/executions/new", method = RequestMethod.POST, params = { "mode=manual" })
 	public @ResponseBody
-	String addManualExecution(@PathVariable("testPlanId") long testPlanId, @PathVariable("iterationId") long iterationId) {
+	String addManualExecution(@PathVariable("testPlanId") long testPlanId, @PathVariable(ITERATION_ID_KEY) long iterationId) {
 		iterationModService.addExecution(iterationId, testPlanId);
 		List<Execution> executionList = iterationModService.findExecutionsByTestPlan(iterationId, testPlanId);
 
@@ -335,7 +339,7 @@ public class IterationModificationController {
 
 	@RequestMapping(value = "/test-plan/{testPlanId}/executions/new", method = RequestMethod.POST, params = { "mode=auto" })
 	public @ResponseBody
-	AutomatedSuiteOverview addAutoExecution(@PathVariable("testPlanId") long testPlanId, @PathVariable("iterationId") long iterationId, Locale locale) {
+	AutomatedSuiteOverview addAutoExecution(@PathVariable("testPlanId") long testPlanId, @PathVariable(ITERATION_ID_KEY) long iterationId, Locale locale) {
 		Collection<Long> testPlanIds = new ArrayList<Long>(1);
 		testPlanIds.add(testPlanId);
 
@@ -357,8 +361,8 @@ public class IterationModificationController {
 
 		mav.addObject("editableIteration", editable);
 		mav.addObject("testPlanItem", testPlanItem);
-		mav.addObject("iterationId", iterationId);
-		mav.addObject("iteration", iter);
+		mav.addObject(ITERATION_ID_KEY, iterationId);
+		mav.addObject(ITERATION_KEY, iter);
 		mav.addObject("executions", executionList);
 
 		return mav;

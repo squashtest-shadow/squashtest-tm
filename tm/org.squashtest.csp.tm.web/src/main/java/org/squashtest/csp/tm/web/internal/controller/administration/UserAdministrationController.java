@@ -61,7 +61,7 @@ import org.squashtest.tm.core.foundation.collection.Paging;
 @Controller
 @RequestMapping("/users")
 public class UserAdministrationController {
-	
+
 	/**
 	 * Builds datatable model for users table
 	 */
@@ -82,152 +82,153 @@ public class UserAdministrationController {
 		public Object[] buildItemData(User item) {
 			AuditableMixin newP = (AuditableMixin) item;
 			// TODO use group's quialified name instead
-			String group = messageSource.getMessage("user.account.group."+item.getGroup().getSimpleName()+".label", null, locale);
-			if(group == null){
+			String group = messageSource.getMessage("user.account.group." + item.getGroup().getSimpleName() + ".label",
+					null, locale);
+			if (group == null) {
 				group = item.getGroup().getSimpleName();
 			}
-			return new Object[] { item.getId(),
-					getCurrentIndex(),
-					item.getLogin(),
-					group,
-					item.getFirstName(),
-					item.getLastName(),
-					item.getEmail(),
-					formatDate(newP.getCreatedOn(), locale),
-					formatString(newP.getCreatedBy(), locale),
-					formatDate(newP.getLastModifiedOn(), locale),
-					formatString(newP.getLastModifiedBy(), locale)};
+			return new Object[] { item.getId(), getCurrentIndex(), item.getLogin(), group, item.getFirstName(),
+					item.getLastName(), item.getEmail(), formatDate(newP.getCreatedOn(), locale),
+					formatString(newP.getCreatedBy(), locale), formatDate(newP.getLastModifiedOn(), locale),
+					formatString(newP.getLastModifiedBy(), locale) };
 		}
 	}
+
 	private static final Logger LOGGER = LoggerFactory.getLogger(UserAdministrationController.class);
+	private static final String USER_URL = "/{userId}";
 	
 	private AdministrationService adminService;
 	private ProjectsPermissionManagementService permissionService;
-	
+
 	@Inject
 	private MessageSource messageSource;
 
 	@ServiceReference
-	public void setAdministrationService(AdministrationService adminService){
+	public void setAdministrationService(AdministrationService adminService) {
 		this.adminService = adminService;
 	}
-	
+
 	@ServiceReference
-	public void setProjectsPermissionManagementService(ProjectsPermissionManagementService permissionService){
+	public void setProjectsPermissionManagementService(ProjectsPermissionManagementService permissionService) {
 		this.permissionService = permissionService;
 	}
-	
-	@RequestMapping(value="/list", method=RequestMethod.GET)
+
+	@RequestMapping(value = "/list", method = RequestMethod.GET)
 	public ModelAndView getUserList() {
-		
+
 		ModelAndView mav = new ModelAndView("page/users/show-users");
 		List<UsersGroup> list = adminService.findAllUsersGroupOrderedByQualifiedName();
 		mav.addObject("usersGroupList", list);
 		return mav;
 	}
 
-	@RequestMapping(value="/add", method=RequestMethod.POST)
-	public @ResponseBody void addNewUser(@ModelAttribute("add-user") @Valid UserForm userForm){
+	@RequestMapping(value = "/add", method = RequestMethod.POST)
+	public @ResponseBody
+	void addNewUser(@ModelAttribute("add-user") @Valid UserForm userForm) {
 		adminService.addUser(userForm.getUser(), userForm.getGroupId(), userForm.getPassword());
 	}
-	
-	
-	@RequestMapping(value="/table", method=RequestMethod.GET)
-	public @ResponseBody DataTableModel getTable(final DataTableDrawParameters params, final Locale locale) {
+
+	@RequestMapping(value = "/table", method = RequestMethod.GET)
+	public @ResponseBody
+	DataTableModel getTable(final DataTableDrawParameters params, final Locale locale) {
 		LOGGER.trace("UserAdministrationController: getTable called ");
 
 		Paging filter = createPaging(params);
 
 		FilteredCollectionHolder<List<User>> holder = adminService.findAllUsersFiltered(filter);
-		
-		
-		return new UserDataTableModelBuilder(locale).buildDataModel(holder, filter.getFirstItemIndex()+1, params.getsEcho());
+
+		return new UserDataTableModelBuilder(locale).buildDataModel(holder, filter.getFirstItemIndex() + 1,
+				params.getsEcho());
 	}
-	
+
 	private Paging createPaging(final DataTableDrawParameters params) {
 		return new DataTablePagedFilter(params);
 	}
-	
-	@RequestMapping(value="/{userId}/info", method=RequestMethod.GET)
-	public ModelAndView getUserInfos(@PathVariable long userId){
+
+	@RequestMapping(value = USER_URL+"/info", method = RequestMethod.GET)
+	public ModelAndView getUserInfos(@PathVariable long userId) {
 		User user = adminService.findUserById(userId);
 		List<UsersGroup> usersGroupList = adminService.findAllUsersGroupOrderedByQualifiedName();
-		ModelAndView mav = new ModelAndView("page/users/user-info");	
+		ModelAndView mav = new ModelAndView("page/users/user-info");
 		mav.addObject("usersGroupList", usersGroupList);
 		mav.addObject("user", user);
 		return mav;
 	}
-	
-	@RequestMapping(value="/{userId}/change-group", method=RequestMethod.POST)
-	public @ResponseBody void changeUserGroup(@PathVariable long userId, @RequestParam long groupId){
+
+	@RequestMapping(value = USER_URL+"/change-group", method = RequestMethod.POST)
+	public @ResponseBody
+	void changeUserGroup(@PathVariable long userId, @RequestParam long groupId) {
 		adminService.setUserGroupAuthority(userId, groupId);
 	}
-	
-	@RequestMapping(value = "/{userId}" ,method = RequestMethod.POST, params = { "id=user-login", VALUE })
+
+	@RequestMapping(value = USER_URL, method = RequestMethod.POST, params = { "id=user-login", VALUE })
 	@ResponseBody
 	public String updateLogin(@RequestParam(VALUE) String userLogin, @PathVariable long userId) {
 		adminService.modifyUserLogin(userId, userLogin);
 		return HtmlUtils.htmlEscape(userLogin);
 	}
-	
-	@RequestMapping(value = "/{userId}" ,method = RequestMethod.POST, params = { "id=user-first-name", VALUE })
+
+	@RequestMapping(value = USER_URL, method = RequestMethod.POST, params = { "id=user-first-name", VALUE })
 	@ResponseBody
 	public String updateFirstName(@RequestParam(VALUE) String firstName, @PathVariable long userId) {
 		adminService.modifyUserFirstName(userId, firstName);
 		return HtmlUtils.htmlEscape(firstName);
 	}
-	
-	@RequestMapping(value = "/{userId}" ,method = RequestMethod.POST, params = { "id=user-last-name", VALUE })
+
+	@RequestMapping(value = USER_URL, method = RequestMethod.POST, params = { "id=user-last-name", VALUE })
 	@ResponseBody
 	public String updateLastName(@RequestParam(VALUE) String lastName, @PathVariable long userId) {
 		adminService.modifyUserLastName(userId, lastName);
 		return HtmlUtils.htmlEscape(lastName);
 	}
-	
-	@RequestMapping(value = "/{userId}" ,method = RequestMethod.POST, params = { "id=user-email", VALUE })
+
+	@RequestMapping(value = USER_URL, method = RequestMethod.POST, params = { "id=user-email", VALUE })
 	@ResponseBody
 	public String updateEmail(@RequestParam(VALUE) String email, @PathVariable long userId) {
 		adminService.modifyUserEmail(userId, email);
 		return HtmlUtils.htmlEscape(email);
 	}
-	
-	@RequestMapping(value = "/{userId}" ,method=RequestMethod.POST, params={"newPassword"})
+
+	@RequestMapping(value = USER_URL, method = RequestMethod.POST, params = { "newPassword" })
 	@ResponseBody
-	public void resetPassword(@ModelAttribute @Valid PasswordResetForm form, @PathVariable long userId){
-		LOGGER.trace("Reset password for user #"+userId);
+	public void resetPassword(@ModelAttribute @Valid PasswordResetForm form, @PathVariable long userId) {
+		LOGGER.trace("Reset password for user #" + userId);
 		adminService.resetUserPassword(userId, form.getNewPassword());
 	}
-	
-	//*********************************************************************************
-	@RequestMapping(value="/{userId}/add-permission", method=RequestMethod.POST)
-	public @ResponseBody void addNewPermission(@RequestParam("project") long projectId, @PathVariable long userId, @RequestParam String permission){
+
+	// *********************************************************************************
+	@RequestMapping(value = USER_URL+"/add-permission", method = RequestMethod.POST)
+	public @ResponseBody
+	void addNewPermission(@RequestParam("project") long projectId, @PathVariable long userId,
+			@RequestParam String permission) {
 		permissionService.addNewPermissionToProject(userId, projectId, permission);
 	}
-	
-	@RequestMapping(value="/{userId}/remove-permission", method=RequestMethod.POST)
-	public @ResponseBody void removePermission(@RequestParam("project") long projectId, @PathVariable long userId){
+
+	@RequestMapping(value = USER_URL+"/remove-permission", method = RequestMethod.POST)
+	public @ResponseBody
+	void removePermission(@RequestParam("project") long projectId, @PathVariable long userId) {
 		permissionService.removeProjectPermission(userId, projectId);
 	}
-	
-	@RequestMapping(value = "/{userId}/permission-popup" ,method = RequestMethod.GET)
+
+	@RequestMapping(value = USER_URL+"/permission-popup", method = RequestMethod.GET)
 	public ModelAndView getPermissionPopup(@PathVariable long userId) {
 		User user = adminService.findUserById(userId);
 		List<PermissionGroup> permissionList = permissionService.findAllPossiblePermission();
 		List<Project> projectList = permissionService.findProjectWithoutPermissionByLogin(user.getLogin());
-		
+
 		ModelAndView mav = new ModelAndView("fragment/users/user-permission-popup");
 		mav.addObject("user", user);
 		mav.addObject("projectList", projectList);
 		mav.addObject("permissionList", permissionList);
 		return mav;
 	}
-	
-	@RequestMapping(value = "/{userId}/permission-table" ,method = RequestMethod.GET)
+
+	@RequestMapping(value = USER_URL+"/permission-table", method = RequestMethod.GET)
 	public ModelAndView getPermissionTable(@PathVariable long userId) {
 		User user = adminService.findUserById(userId);
 		List<ProjectPermission> projectPermissions = permissionService.findProjectPermissionByLogin(user.getLogin());
 		List<PermissionGroup> permissionList = permissionService.findAllPossiblePermission();
-		
+
 		ModelAndView mav = new ModelAndView("fragment/users/user-permission-table");
 		mav.addObject("user", user);
 		mav.addObject("permissionList", permissionList);
@@ -235,25 +236,25 @@ public class UserAdministrationController {
 		return mav;
 	}
 
-	private String formatString(String arg, Locale locale){
-		if (arg==null){
+	private String formatString(String arg, Locale locale) {
+		if (arg == null) {
 			return formatNoData(locale);
 		} else {
 			return arg;
 		}
 	}
 
-	private String formatDate(Date date, Locale locale){
-		try{
+	private String formatDate(Date date, Locale locale) {
+		try {
 			String format = messageSource.getMessage("squashtm.dateformat", null, locale);
 			return new SimpleDateFormat(format).format(date);
-		}
-		catch(Exception anyException){
+		} catch (Exception anyException) {
 			return formatNoData(locale);
 		}
 
 	}
-	private String formatNoData(Locale locale){
-		return messageSource.getMessage("squashtm.nodata",null, locale);
+
+	private String formatNoData(Locale locale) {
+		return messageSource.getMessage("squashtm.nodata", null, locale);
 	}
 }

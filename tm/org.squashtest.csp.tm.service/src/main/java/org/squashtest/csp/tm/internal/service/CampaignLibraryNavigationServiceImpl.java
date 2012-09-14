@@ -60,7 +60,9 @@ import org.squashtest.csp.tm.service.deletion.SuppressionPreviewReport;
 public class CampaignLibraryNavigationServiceImpl extends
 		AbstractLibraryNavigationService<CampaignLibrary, CampaignFolder, CampaignLibraryNode> implements
 		CampaignLibraryNavigationService {
-
+	
+	private static final String OR_HAS_ROLE_ADMIN = "or hasRole('ROLE_ADMIN')";
+	
 	@Inject
 	private CampaignLibraryDao campaignLibraryDao;
 
@@ -104,7 +106,7 @@ public class CampaignLibraryNavigationServiceImpl extends
 	@Override
 	@PreAuthorize("(hasPermission(#campaignId, 'org.squashtest.csp.tm.domain.campaign.Campaign', 'CREATE')"
 			+ "and hasPermission(#iterationId, 'org.squashtest.csp.tm.domain.campaign.Iteration', 'READ'))"
-			+ "or hasRole('ROLE_ADMIN')")
+			+ OR_HAS_ROLE_ADMIN)
 	public int copyIterationToCampaign(long campaignId, long iterationId) {
 		Iteration originalIteration = iterationDao.findById(iterationId);
 		Campaign campaign = campaignDao.findById(campaignId);
@@ -179,13 +181,13 @@ public class CampaignLibraryNavigationServiceImpl extends
 	}
 
 	@Override
-	@PostAuthorize("hasPermission(returnObject,'READ') or hasRole('ROLE_ADMIN')")
+	@PostAuthorize("hasPermission(returnObject,'READ') "+OR_HAS_ROLE_ADMIN)
 	public Campaign findCampaign(long reqId) {
 		return campaignDao.findById(reqId);
 	}
 
 	@Override
-	@PreAuthorize("hasPermission(#campaignId, 'org.squashtest.csp.tm.domain.campaign.Campaign', 'CREATE') or hasRole('ROLE_ADMIN')")
+	@PreAuthorize("hasPermission(#campaignId, 'org.squashtest.csp.tm.domain.campaign.Campaign', 'CREATE') "+OR_HAS_ROLE_ADMIN)
 	public int addIterationToCampaign(Iteration iteration, long campaignId) {
 		Campaign campaign = campaignDao.findById(campaignId);
 
@@ -219,7 +221,7 @@ public class CampaignLibraryNavigationServiceImpl extends
 	 * @see org.squashtest.csp.tm.service.CampaignLibraryNavigationService#findIterationsByCampaignId(long)
 	 */
 	@Override
-	@PreAuthorize("hasPermission(#campaignId, 'org.squashtest.csp.tm.domain.campaign.Campaign' , 'READ') or hasRole('ROLE_ADMIN')")
+	@PreAuthorize("hasPermission(#campaignId, 'org.squashtest.csp.tm.domain.campaign.Campaign' , 'READ') "+OR_HAS_ROLE_ADMIN)
 	public List<Iteration> findIterationsByCampaignId(long campaignId) {
 		return iterationModificationService.findIterationsByCampaignId(campaignId);
 	}
@@ -255,7 +257,7 @@ public class CampaignLibraryNavigationServiceImpl extends
 	 * for each iteration id because this couldn't be done with a list of ids in copyIterationsToCampaign. I suppose we
 	 * need to remove the public attribute and add a check step to the method copyIterationToCampaign
 	 */
-	@PreAuthorize("hasPermission(#iterationId, 'org.squashtest.csp.tm.domain.campaign.Iteration', 'READ') or hasRole('ROLE_ADMIN')")
+	@PreAuthorize("hasPermission(#iterationId, 'org.squashtest.csp.tm.domain.campaign.Iteration', 'READ') "+OR_HAS_ROLE_ADMIN)
 	public Iteration createCopyIteration(long iterationId) {
 		Iteration originalIteration = iterationModificationService.findById(iterationId);
 		return createCopyIteration(originalIteration);
@@ -291,7 +293,7 @@ public class CampaignLibraryNavigationServiceImpl extends
 
 	@Override
 	@PreAuthorize("hasPermission(#libraryId, 'org.squashtest.csp.tm.domain.campaign.CampaignLibrary', 'CREATE')"
-			+ "or hasRole('ROLE_ADMIN')")
+			+ OR_HAS_ROLE_ADMIN)
 	public void addCampaignToCampaignLibrary(long libraryId, Campaign newCampaign) {
 		CampaignLibrary library = campaignLibraryDao.findById(libraryId);
 
@@ -306,7 +308,7 @@ public class CampaignLibraryNavigationServiceImpl extends
 
 	@Override
 	@PreAuthorize("hasPermission(#folderId, 'org.squashtest.csp.tm.domain.campaign.CampaignFolder', 'CREATE')"
-			+ "or hasRole('ROLE_ADMIN')")
+			+ OR_HAS_ROLE_ADMIN)
 	public void addCampaignToCampaignFolder(long folderId, Campaign newCampaign) {
 		CampaignFolder folder = campaignFolderDao.findById(folderId);
 		if (!folder.isContentNameAvailable(newCampaign.getName())) {
@@ -365,7 +367,7 @@ public class CampaignLibraryNavigationServiceImpl extends
 	@PreAuthorize("(hasPermission(#newCampaignId, 'org.squashtest.csp.tm.domain.campaign.Campaign' , 'CREATE') "
 			+ "and hasPermission(#oldCampaignId, 'org.squashtest.csp.tm.domain.campaign.Campaign' , 'DELETE') "
 			+ "and hasPermission(#iterationId, 'org.squashtest.csp.tm.domain.campaign.Iteration' , 'READ' ) ) "
-			+ "or hasRole('ROLE_ADMIN')")
+			+ OR_HAS_ROLE_ADMIN)
 	public int moveIterationToNewCampaign(long newCampaignId, long oldCampaignId, long iterationId) {
 
 		Campaign destination = campaignDao.findById(newCampaignId);
@@ -380,7 +382,7 @@ public class CampaignLibraryNavigationServiceImpl extends
 	}
 
 	@Override
-	@PostFilter("hasPermission(filterObject, 'READ') or hasRole('ROLE_ADMIN')")
+	@PostFilter("hasPermission(filterObject, 'READ') "+OR_HAS_ROLE_ADMIN)
 	public List<CampaignLibrary> findLinkableCampaignLibraries() {
 		ProjectFilter pf = projectFilterModificationService.findProjectFilterByUserLogin();
 		

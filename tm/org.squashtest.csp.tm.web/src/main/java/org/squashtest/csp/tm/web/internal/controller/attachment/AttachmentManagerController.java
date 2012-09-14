@@ -59,6 +59,7 @@ public class AttachmentManagerController {
 	private AttachmentManagerService attachmentManagerService;
 	
 	private static final int INT_MAX_FILENAME_LENGTH = 50;
+	private static final String ATTACH_LIST_ID = "attachListId";
 	
 
 	@Inject
@@ -81,18 +82,18 @@ public class AttachmentManagerController {
 	/* ********************** data display *********************************** */
 	
 	@RequestMapping(value="/manager", method=RequestMethod.GET)
-	public ModelAndView showAttachmentManager(@PathVariable("attachListId") long attachListId, @RequestParam("workspace") String workspace){
+	public ModelAndView showAttachmentManager(@PathVariable(ATTACH_LIST_ID) long attachListId, @RequestParam("workspace") String workspace){
 
 		ModelAndView mav = new ModelAndView("page/attachments/attachment-manager");
 		mav.addObject("workspace",workspace);
-		mav.addObject("attachListId", attachListId);
+		mav.addObject(ATTACH_LIST_ID, attachListId);
 
 		return mav;
 
 	}
 
 	@RequestMapping(value="/details", method=RequestMethod.GET)
-	public @ResponseBody DataTableModel displayAttachmentDetails(@PathVariable("attachListId") long attachListId, final DataTableDrawParameters params,
+	public @ResponseBody DataTableModel displayAttachmentDetails(@PathVariable(ATTACH_LIST_ID) long attachListId, final DataTableDrawParameters params,
 			final Locale locale){
 		CollectionSorting filter = createPaging(params, attachmentMapper);
 		FilteredCollectionHolder<List<Attachment>> attachList = attachmentManagerService.findFilteredAttachmentForList(attachListId, filter);
@@ -119,7 +120,7 @@ public class AttachmentManagerController {
 	
 	@RequestMapping(value="/{attachmentId}", method=RequestMethod.DELETE)
 	@ResponseBody
-	public void removeAttachment(@PathVariable("attachListId") long attachListId, @PathVariable("attachmentId") long attachmentId ){
+	public void removeAttachment(@PathVariable(ATTACH_LIST_ID) long attachListId, @PathVariable("attachmentId") long attachmentId ){
 		attachmentManagerService.removeAttachmentFromList(attachListId, attachmentId);
 	}
 

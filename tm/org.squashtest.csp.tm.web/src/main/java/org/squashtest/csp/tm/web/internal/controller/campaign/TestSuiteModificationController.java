@@ -83,6 +83,7 @@ public class TestSuiteModificationController {
 	@Inject
 	private PermissionEvaluationService permissionService;
 	
+	private static final String TEST_SUITE = "testSuite";
 	private static final Logger LOGGER = LoggerFactory.getLogger(TestSuiteModificationController.class);
 	
 	@ServiceReference
@@ -120,7 +121,7 @@ public class TestSuiteModificationController {
 		TestSuiteStatistics testSuiteStats = service.findTestSuiteStatistics(id);
 		
 		ModelAndView mav = new ModelAndView("fragment/test-suites/edit-test-suite");
-		mav.addObject("testSuite", testSuite);
+		mav.addObject(TEST_SUITE, testSuite);
 		mav.addObject("statistics", testSuiteStats);
 		return mav;
 	}
@@ -136,13 +137,13 @@ public class TestSuiteModificationController {
 		ModelAndView mav = new ModelAndView("page/campaign-libraries/show-test-suite");
 
 		if (testSuite != null) {
-			mav.addObject("testSuite", testSuite);
+			mav.addObject(TEST_SUITE, testSuite);
 			mav.addObject("statistics", testSuiteStats);
 		} else {
 			testSuite = new TestSuite();
 			testSuite.setName("Not found");
 			testSuite.setDescription("This test suite either do not exists, or was removed");
-			mav.addObject("testSuite", testSuite);
+			mav.addObject(TEST_SUITE, testSuite);
 
 		}
 		return mav;
@@ -262,7 +263,7 @@ public class TestSuiteModificationController {
 		mav.addObject("testPlanItem", iterationTestPlanItem);
 		mav.addObject("iterationId", iterationId);
 		mav.addObject("executions", executionList);
-		mav.addObject("testSuite", testSuite);
+		mav.addObject(TEST_SUITE, testSuite);
 		
 		return mav;
 

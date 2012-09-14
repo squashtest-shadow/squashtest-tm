@@ -61,6 +61,9 @@ import org.squashtest.csp.tm.service.deletion.SuppressionPreviewReport;
 @Service("CustomIterationModificationService")
 public class CustomIterationModificationServiceImpl implements CustomIterationModificationService,
 		IterationTestPlanManager {
+	
+	private static final String OR_HAS_ROLE_ADMIN = "or hasRole('ROLE_ADMIN')";
+	private static final String PERMISSION_EXECUTE_ITERATION = "hasPermission(#iterationId, 'org.squashtest.csp.tm.domain.campaign.Iteration', 'EXECUTE') ";
 	private static final Logger LOGGER = LoggerFactory.getLogger(CustomIterationModificationServiceImpl.class);
 	@Inject
 	private CampaignDao campaignDao;
@@ -105,7 +108,7 @@ public class CustomIterationModificationServiceImpl implements CustomIterationMo
 
 	@Override
 	@PreAuthorize("hasPermission(#campaignId, 'org.squashtest.csp.tm.domain.campaign.Campaign', 'CREATE') "
-			+ "or hasRole('ROLE_ADMIN')")
+			+ OR_HAS_ROLE_ADMIN)
 	public int addIterationToCampaign(Iteration iteration, long campaignId) {
 		Campaign campaign = campaignDao.findById(campaignId);
 
@@ -124,20 +127,20 @@ public class CustomIterationModificationServiceImpl implements CustomIterationMo
 
 	@Override
 	@PreAuthorize("hasPermission(#campaignId, 'org.squashtest.csp.tm.domain.campaign.Campaign', 'READ') "
-			+ "or hasRole('ROLE_ADMIN')")
+			+ OR_HAS_ROLE_ADMIN)
 	public List<Iteration> findIterationsByCampaignId(long campaignId) {
 		return campaignDao.findByIdWithInitializedIterations(campaignId).getIterations();
 	}
 
 	@Override
-	@PostAuthorize("hasPermission(returnObject, 'READ') " + "or hasRole('ROLE_ADMIN')")
+	@PostAuthorize("hasPermission(returnObject, 'READ') " + OR_HAS_ROLE_ADMIN)
 	public Iteration findById(long iterationId) {
 		return iterationDao.findById(iterationId);
 	}
 
 	@Override
 	@PreAuthorize("hasPermission(#iterationId, 'org.squashtest.csp.tm.domain.campaign.Iteration', 'DELETE') "
-			+ "or hasRole('ROLE_ADMIN')")
+			+ OR_HAS_ROLE_ADMIN)
 	public String delete(long iterationId) {
 		Iteration iteration = iterationDao.findById(iterationId);
 		if (iteration == null) {
@@ -153,7 +156,7 @@ public class CustomIterationModificationServiceImpl implements CustomIterationMo
 
 	@Override
 	@PreAuthorize("hasPermission(#iterationId, 'org.squashtest.csp.tm.domain.campaign.Iteration', 'SMALL_EDIT') "
-			+ "or hasRole('ROLE_ADMIN')")
+			+ OR_HAS_ROLE_ADMIN)
 	public void rename(long iterationId, String newName) {
 		Iteration iteration = iterationDao.findById(iterationId);
 
@@ -161,8 +164,8 @@ public class CustomIterationModificationServiceImpl implements CustomIterationMo
 	}
 
 	@Override
-	@PreAuthorize("hasPermission(#iterationId, 'org.squashtest.csp.tm.domain.campaign.Iteration', 'EXECUTE') "
-			+ "or hasRole('ROLE_ADMIN')")
+	@PreAuthorize(PERMISSION_EXECUTE_ITERATION
+			+ OR_HAS_ROLE_ADMIN)
 	public Execution addExecution(long iterationId, long testPlanId) {
 
 		Iteration iteration = iterationDao.findAndInit(iterationId);
@@ -172,8 +175,8 @@ public class CustomIterationModificationServiceImpl implements CustomIterationMo
 	}
 	
 	@Override
-	@PreAuthorize("hasPermission(#iterationId, 'org.squashtest.csp.tm.domain.campaign.Iteration', 'EXECUTE') "
-			+ "or hasRole('ROLE_ADMIN')")
+	@PreAuthorize(PERMISSION_EXECUTE_ITERATION
+			+ OR_HAS_ROLE_ADMIN)
 	public Execution addAutomatedExecution(long iterationId, long testPlanId) {
 		
 		Iteration iteration = iterationDao.findAndInit(iterationId);
@@ -185,8 +188,8 @@ public class CustomIterationModificationServiceImpl implements CustomIterationMo
 
 
 	@Override	
-	@PreAuthorize("hasPermission(#iterationId, 'org.squashtest.csp.tm.domain.campaign.Iteration', 'EXECUTE') "
-			+ "or hasRole('ROLE_ADMIN')")
+	@PreAuthorize(PERMISSION_EXECUTE_ITERATION
+			+ OR_HAS_ROLE_ADMIN)
 	public AutomatedSuite createAndExecuteAutomatedSuite(long iterationId) {
 		
 		AutomatedSuite newSuite = autoSuiteDao.createNewSuite();
@@ -208,8 +211,8 @@ public class CustomIterationModificationServiceImpl implements CustomIterationMo
 
 	
 	@Override
-	@PreAuthorize("hasPermission(#iterationId, 'org.squashtest.csp.tm.domain.campaign.Iteration', 'EXECUTE') "
-			+ "or hasRole('ROLE_ADMIN')")
+	@PreAuthorize(PERMISSION_EXECUTE_ITERATION
+			+ OR_HAS_ROLE_ADMIN)
 	public AutomatedSuite createAndExecuteAutomatedSuite(long iterationId, Collection<Long> testPlanIds) {
 		
 		AutomatedSuite newSuite = autoSuiteDao.createNewSuite();
@@ -243,7 +246,7 @@ public class CustomIterationModificationServiceImpl implements CustomIterationMo
 	 */
 	@Override
 	@PreAuthorize("hasPermission(#iterationId, 'org.squashtest.csp.tm.domain.campaign.Iteration', 'LINK') "
-			+ "or hasRole('ROLE_ADMIN')")
+			+ OR_HAS_ROLE_ADMIN)
 	@Deprecated
 	public void changeTestPlanPosition(long iterationId, long testPlanId, int newTestPlanPosition) {
 
@@ -265,7 +268,7 @@ public class CustomIterationModificationServiceImpl implements CustomIterationMo
 	 */
 	@Override
 	@PreAuthorize("hasPermission(#iterationId, 'org.squashtest.csp.tm.domain.campaign.Iteration', 'LINK') "
-			+ "or hasRole('ROLE_ADMIN')")
+			+ OR_HAS_ROLE_ADMIN)
 	public void changeTestPlanPosition(long iterationId, int newPosition, List<Long> itemIds) {
 		Iteration iteration = iterationDao.findById(iterationId);
 		List<IterationTestPlanItem> items = testPlanDao.findAllByIds(itemIds);
@@ -275,7 +278,7 @@ public class CustomIterationModificationServiceImpl implements CustomIterationMo
 
 	@Override
 	@PreAuthorize("hasPermission(#iterationId, 'org.squashtest.csp.tm.domain.campaign.Iteration', 'READ') "
-			+ "or hasRole('ROLE_ADMIN')")
+			+ OR_HAS_ROLE_ADMIN)
 	public List<Execution> findAllExecutions(long iterationId) {
 		return iterationDao.findOrderedExecutionsByIterationId(iterationId);
 
@@ -283,7 +286,7 @@ public class CustomIterationModificationServiceImpl implements CustomIterationMo
 
 	@Override
 	@PreAuthorize("hasPermission(#iterationId, 'org.squashtest.csp.tm.domain.campaign.Iteration', 'READ') "
-			+ "or hasRole('ROLE_ADMIN')")
+			+ OR_HAS_ROLE_ADMIN)
 	public List<Execution> findExecutionsByTestPlan(long iterationId, long testPlanId) {
 		return iterationDao.findOrderedExecutionsByIterationAndTestPlan(iterationId, testPlanId);
 
@@ -291,7 +294,7 @@ public class CustomIterationModificationServiceImpl implements CustomIterationMo
 
 	@Override
 	@PreAuthorize("hasPermission(#iterationId, 'org.squashtest.csp.tm.domain.campaign.Iteration', 'READ') "
-			+ "or hasRole('ROLE_ADMIN')")
+			+ OR_HAS_ROLE_ADMIN)
 	public List<TestCase> findPlannedTestCases(long iterationId) {
 		Iteration iteration = iterationDao.findById(iterationId);
 		return iteration.getPlannedTestCase();
@@ -309,7 +312,7 @@ public class CustomIterationModificationServiceImpl implements CustomIterationMo
 
 	@Override
 	@PreAuthorize("hasPermission(#iterationId, 'org.squashtest.csp.tm.domain.campaign.Iteration', 'CREATE') "
-			+ "or hasRole('ROLE_ADMIN')")
+			+ OR_HAS_ROLE_ADMIN)
 	public void addTestSuite(long iterationId, TestSuite suite) {
 		Iteration iteration = iterationDao.findById(iterationId);
 		addTestSuite(iteration, suite);
@@ -330,7 +333,7 @@ public class CustomIterationModificationServiceImpl implements CustomIterationMo
 
 	@Override
 	@PreAuthorize("hasPermission(#iterationId, 'org.squashtest.csp.tm.domain.campaign.Iteration', 'CREATE') "
-			+ "or hasRole('ROLE_ADMIN')")
+			+ OR_HAS_ROLE_ADMIN)
 	public TestSuite copyPasteTestSuiteToIteration(long testSuiteId, long iterationId) {
 		TestSuite testSuite = suiteDao.findById(testSuiteId);
 
@@ -350,7 +353,7 @@ public class CustomIterationModificationServiceImpl implements CustomIterationMo
 
 	@Override
 	@PreAuthorize("hasPermission(#iterationId, 'org.squashtest.csp.tm.domain.campaign.Iteration', 'CREATE') "
-			+ "or hasRole('ROLE_ADMIN')")
+			+ OR_HAS_ROLE_ADMIN)
 	public List<TestSuite> copyPasteTestSuitesToIteration(Long[] testSuiteIds, long iterationId) {
 
 		List<TestSuite> createdTestSuites = new ArrayList<TestSuite>();

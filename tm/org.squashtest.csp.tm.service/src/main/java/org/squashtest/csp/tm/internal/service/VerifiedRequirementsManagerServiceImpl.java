@@ -55,10 +55,10 @@ import org.squashtest.tm.core.foundation.collection.PagingBackedPagedCollectionH
 @Service("squashtest.tm.service.VerifiedRequirementsManagerService")
 @Transactional
 public class VerifiedRequirementsManagerServiceImpl implements VerifiedRequirementsManagerService {
-	
-	private static final Logger LOGGER = LoggerFactory.getLogger(VerifiedRequirementsManagerServiceImpl.class);
 
-	
+	private static final Logger LOGGER = LoggerFactory.getLogger(VerifiedRequirementsManagerServiceImpl.class);
+	private static final String LINK_TC_OR_ROLE_ADMIN = "hasPermission(#testCaseId, 'org.squashtest.csp.tm.domain.testcase.TestCase' , 'LINK') or hasRole('ROLE_ADMIN')";
+
 	@Inject
 	private TestCaseDao testCaseDao;
 
@@ -75,7 +75,7 @@ public class VerifiedRequirementsManagerServiceImpl implements VerifiedRequireme
 
 	@SuppressWarnings("rawtypes")
 	@Override
-	@PreAuthorize("hasPermission(#testCaseId, 'org.squashtest.csp.tm.domain.testcase.TestCase' , 'LINK') or hasRole('ROLE_ADMIN')")
+	@PreAuthorize(LINK_TC_OR_ROLE_ADMIN)
 	public Collection<VerifiedRequirementException> addVerifiedRequirementsToTestCase(List<Long> requirementsIds,
 			long testCaseId) {
 		List<RequirementLibraryNode> nodes = requirementLibraryNodeDao.findAllByIds(requirementsIds);
@@ -105,8 +105,8 @@ public class VerifiedRequirementsManagerServiceImpl implements VerifiedRequireme
 		Collection<VerifiedRequirementException> rejections = new ArrayList<VerifiedRequirementException>(
 				requirements.size());
 		Iterator<Requirement> iterator = requirements.iterator();
-		while(iterator.hasNext()){
-		Requirement requirement = iterator.next();
+		while (iterator.hasNext()) {
+			Requirement requirement = iterator.next();
 			try {
 				testCase.addVerifiedRequirement(requirement);
 			} catch (VerifiedRequirementException ex) {
@@ -130,7 +130,7 @@ public class VerifiedRequirementsManagerServiceImpl implements VerifiedRequireme
 	}
 
 	@Override
-	@PreAuthorize("hasPermission(#testCaseId, 'org.squashtest.csp.tm.domain.testcase.TestCase' , 'LINK') or hasRole('ROLE_ADMIN')")
+	@PreAuthorize(LINK_TC_OR_ROLE_ADMIN)
 	public void removeVerifiedRequirementVersionsFromTestCase(List<Long> requirementsIds, long testCaseId) {
 		List<RequirementVersion> reqs = requirementVersionDao.findAllByIds(requirementsIds);
 
@@ -147,7 +147,7 @@ public class VerifiedRequirementsManagerServiceImpl implements VerifiedRequireme
 	}
 
 	@Override
-	@PreAuthorize("hasPermission(#testCaseId, 'org.squashtest.csp.tm.domain.testcase.TestCase' , 'LINK') or hasRole('ROLE_ADMIN')")
+	@PreAuthorize(LINK_TC_OR_ROLE_ADMIN)
 	public void removeVerifiedRequirementVersionFromTestCase(long requirementId, long testCaseId) {
 		RequirementVersion req = requirementVersionDao.findById(requirementId);
 		TestCase testCase = testCaseDao.findById(testCaseId);
@@ -168,7 +168,7 @@ public class VerifiedRequirementsManagerServiceImpl implements VerifiedRequireme
 	 * long, long)
 	 */
 	@Override
-	@PreAuthorize("hasPermission(#testCaseId, 'org.squashtest.csp.tm.domain.testcase.TestCase' , 'LINK') or hasRole('ROLE_ADMIN')")
+	@PreAuthorize(LINK_TC_OR_ROLE_ADMIN)
 	public int changeVerifiedRequirementVersionOnTestCase(long oldVerifiedRequirementVersionId,
 			long newVerifiedRequirementVersionId, long testCaseId) {
 		RequirementVersion oldReq = requirementVersionDao.findById(oldVerifiedRequirementVersionId);
@@ -213,26 +213,27 @@ public class VerifiedRequirementsManagerServiceImpl implements VerifiedRequireme
 		long verifiedCount = requirementVersionDao.countVerifiedByTestCase(testCaseId);
 		return new PagingBackedPagedCollectionHolder<List<RequirementVersion>>(pas, verifiedCount, verifiedReqs);
 	}
-	
+
 	@Override
-	public Collection<VerifiedRequirementException>  addVerifyingRequirementVersionsToTestCase(
+	public Collection<VerifiedRequirementException> addVerifyingRequirementVersionsToTestCase(
 			Map<TestCase, List<RequirementVersion>> requirementVersionsByTestCase) {
 		Collection<VerifiedRequirementException> rejections = new ArrayList<VerifiedRequirementException>();
-		for(Entry<TestCase, List<RequirementVersion>> reqVsByTc : requirementVersionsByTestCase.entrySet()){
+		for (Entry<TestCase, List<RequirementVersion>> reqVsByTc : requirementVersionsByTestCase.entrySet()) {
 			TestCase testCase = reqVsByTc.getKey();
 			List<RequirementVersion> requirementVersions = reqVsByTc.getValue();
-			Collection<VerifiedRequirementException> entrtyRejections = doAddVerifyingRequirementVersionsToTestCase(requirementVersions, testCase);
+			Collection<VerifiedRequirementException> entrtyRejections = doAddVerifyingRequirementVersionsToTestCase(
+					requirementVersions, testCase);
 			rejections.addAll(entrtyRejections);
 		}
 		return rejections;
-		
+
 	}
 
-	private Collection<VerifiedRequirementException>  doAddVerifyingRequirementVersionsToTestCase(List<RequirementVersion> requirementVersions,
-			TestCase testCase) {
+	private Collection<VerifiedRequirementException> doAddVerifyingRequirementVersionsToTestCase(
+			List<RequirementVersion> requirementVersions, TestCase testCase) {
 		Collection<VerifiedRequirementException> rejections = new ArrayList<VerifiedRequirementException>();
 		Iterator<RequirementVersion> iterator = requirementVersions.iterator();
-		while(iterator.hasNext()){
+		while (iterator.hasNext()) {
 			RequirementVersion requirementVersion = iterator.next();
 			try {
 				testCase.addVerifiedRequirementVersion(requirementVersion);
@@ -244,7 +245,6 @@ public class VerifiedRequirementsManagerServiceImpl implements VerifiedRequireme
 		}
 		testCaseImportanceManagerService.changeImportanceIfRelationsAddedToTestCase(requirementVersions, testCase);
 		return rejections;
-		
-		
+
 	}
 }

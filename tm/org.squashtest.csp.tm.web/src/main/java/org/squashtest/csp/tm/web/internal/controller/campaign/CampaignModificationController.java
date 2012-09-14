@@ -68,6 +68,9 @@ public class CampaignModificationController {
 	private CampaignModificationService campaignModService;
 	private IterationModificationService iterationModService;
 
+	private static final String PLANNING_URL = "/planning";
+	private static final String NEW_DATE_ = ", new date : ";
+
 	@Inject
 	private MessageSource messageSource;
 
@@ -175,7 +178,7 @@ public class CampaignModificationController {
 		return DateUtils.dateToMillisecondsAsString(date);
 	}
 
-	@RequestMapping(value = "/planning", params = { "scheduledStart" })
+	@RequestMapping(value = PLANNING_URL, params = { "scheduledStart" })
 	public @ResponseBody
 	String setScheduledStart(HttpServletResponse response, @PathVariable long campaignId,
 			@RequestParam(value = "scheduledStart") String strDate) {
@@ -183,7 +186,7 @@ public class CampaignModificationController {
 		Date newScheduledStart = strToDate(strDate);
 		String toReturn = dateToStr(newScheduledStart);
 
-		LOGGER.info("Setting scheduled start date for campaign " + campaignId + ", new date : " + newScheduledStart);
+		LOGGER.info("Setting scheduled start date for campaign " + campaignId + NEW_DATE_ + newScheduledStart);
 
 		campaignModService.changeScheduledStartDate(campaignId, newScheduledStart);
 
@@ -191,7 +194,7 @@ public class CampaignModificationController {
 
 	}
 
-	@RequestMapping(value = "/planning", params = { "scheduledEnd" })
+	@RequestMapping(value = PLANNING_URL, params = { "scheduledEnd" })
 	@ResponseBody
 	String setScheduledEnd(HttpServletResponse response, @PathVariable long campaignId,
 			@RequestParam(value = "scheduledEnd") String strDate) {
@@ -199,7 +202,7 @@ public class CampaignModificationController {
 		Date newScheduledEnd = strToDate(strDate);
 		String toReturn = dateToStr(newScheduledEnd);
 
-		LOGGER.info("Setting scheduled start date for campaign " + campaignId + ", new date : " + newScheduledEnd);
+		LOGGER.info("Setting scheduled start date for campaign " + campaignId + NEW_DATE_ + newScheduledEnd);
 
 		campaignModService.changeScheduledEndDate(campaignId, newScheduledEnd);
 
@@ -209,7 +212,7 @@ public class CampaignModificationController {
 
 	/** the next functions may receive null arguments : empty string **/
 
-	@RequestMapping(value = "/planning", params = { "actualStart" })
+	@RequestMapping(value = PLANNING_URL, params = { "actualStart" })
 	@ResponseBody
 	String setActualStart(HttpServletResponse response, @PathVariable long campaignId,
 			@RequestParam(value = "actualStart") String strDate) {
@@ -217,7 +220,7 @@ public class CampaignModificationController {
 		Date newActualStart = strToDate(strDate);
 		String toReturn = dateToStr(newActualStart);
 
-		LOGGER.info("Setting scheduled start date for campaign " + campaignId + ", new date : " + newActualStart);
+		LOGGER.info("Setting scheduled start date for campaign " + campaignId + NEW_DATE_ + newActualStart);
 
 		campaignModService.changeActualStartDate(campaignId, newActualStart);
 
@@ -225,7 +228,7 @@ public class CampaignModificationController {
 
 	}
 
-	@RequestMapping(value = "/planning", params = { "actualEnd" })
+	@RequestMapping(value = PLANNING_URL, params = { "actualEnd" })
 	@ResponseBody
 	String setActualEnd(HttpServletResponse response, @PathVariable long campaignId,
 			@RequestParam(value = "actualEnd") String strDate) {
@@ -233,7 +236,7 @@ public class CampaignModificationController {
 		Date newActualEnd = strToDate(strDate);
 		String toReturn = dateToStr(newActualEnd);
 
-		LOGGER.info("Setting scheduled start date for campaign " + campaignId + ", new date : " + newActualEnd);
+		LOGGER.info("Setting scheduled start date for campaign " + campaignId + NEW_DATE_ + newActualEnd);
 
 		campaignModService.changeActualEndDate(campaignId, newActualEnd);
 
@@ -241,7 +244,7 @@ public class CampaignModificationController {
 
 	}
 
-	@RequestMapping(value = "/planning", params = { "setActualStartAuto" })
+	@RequestMapping(value = PLANNING_URL, params = { "setActualStartAuto" })
 	@ResponseBody
 	String setActualStartAuto(HttpServletResponse response, @PathVariable long campaignId,
 			@RequestParam(value = "setActualStartAuto") Boolean auto) {
@@ -256,7 +259,7 @@ public class CampaignModificationController {
 		return toreturn;
 	}
 
-	@RequestMapping(value = "/planning", params = { "setActualEndAuto" })
+	@RequestMapping(value = PLANNING_URL, params = { "setActualEndAuto" })
 	@ResponseBody
 	String setActualEndAuto(HttpServletResponse response, @PathVariable long campaignId,
 			@RequestParam(value = "setActualEndAuto") Boolean auto) {

@@ -62,7 +62,7 @@ public class AttachmentController {
 
 	private static final int EOF = -1;
 	private static final int NO_PROGRESS = -1;
-
+	private static final String UPLOAD_URL = "/upload";
 	private static final Logger LOGGER = LoggerFactory.getLogger(AttachmentController.class);
 
 	private AttachmentManagerService attachmentManagerService;
@@ -111,14 +111,14 @@ public class AttachmentController {
 	 */
 
 	// prelude to the upload in order to get a ticket
-	@RequestMapping(value = "/upload", method = RequestMethod.POST, params = "!upload-ticket")
+	@RequestMapping(value = UPLOAD_URL, method = RequestMethod.POST, params = "!upload-ticket")
 	public @ResponseBody
 	String prepareUpload() {
 		return UploadProgressListenerUtils.generateUploadTicket();
 	}
 
 	// uploads the file themselves and build the upload summary on the fly
-	@RequestMapping(value = "/upload", method = RequestMethod.POST, params = "upload-ticket")
+	@RequestMapping(value = UPLOAD_URL, method = RequestMethod.POST, params = "upload-ticket")
 	public @ResponseBody
 	String uploadAttachment(HttpServletRequest servletRequest,
 			@RequestParam("attachment[]") List<Attachment> attachments, @PathVariable long attachListId, Locale locale)
@@ -169,7 +169,7 @@ public class AttachmentController {
 	}
 
 	// answers the polls regarding upload status
-	@RequestMapping(value = "/upload", method = RequestMethod.GET, params = "upload-ticket")
+	@RequestMapping(value = UPLOAD_URL, method = RequestMethod.GET, params = "upload-ticket")
 	public @ResponseBody
 	UploadProgress pollUploadStatus(HttpServletRequest request) {
 		String ticket = UploadProgressListenerUtils.getUploadTicket(request);
@@ -206,7 +206,7 @@ public class AttachmentController {
 
 	// finalize the upload and deallocate the resources.
 	@SuppressWarnings("unchecked")
-	@RequestMapping(value = "/upload", method = RequestMethod.DELETE, params = "upload-ticket")
+	@RequestMapping(value = UPLOAD_URL, method = RequestMethod.DELETE, params = "upload-ticket")
 	public @ResponseBody
 	List<UploadSummary> finalizeUpload(HttpServletRequest servletRequest) {
 

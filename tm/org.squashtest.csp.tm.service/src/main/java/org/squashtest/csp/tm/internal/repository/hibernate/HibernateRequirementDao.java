@@ -63,6 +63,7 @@ public class HibernateRequirementDao extends HibernateEntityDao<Requirement> imp
 				Restrictions.isEmpty("res.verifyingTestCases"));
 
 	}
+	private static final String RES_NAME = "res.name";
 	
 	/**
 	 * @deprecated not used
@@ -120,14 +121,14 @@ public class HibernateRequirementDao extends HibernateEntityDao<Requirement> imp
 		List<RequirementLibraryNode> resultList = new ArrayList<RequirementLibraryNode>();
 		// requirements
 		DetachedCriteria requirementCriteria = createRequirementCriteria(searchCriteria);
-		requirementCriteria.addOrder(Order.asc("res.name"));
+		requirementCriteria.addOrder(Order.asc(RES_NAME));
 		List<RequirementLibraryNode> requirementList = requirementCriteria.getExecutableCriteria(currentSession())
 				.list();
 		resultList.addAll(requirementList);
 		// requirement Folders
 		if (searchCriteria.libeleIsOnlyCriteria()) {
 			DetachedCriteria requirementFolderCriteria = createRequirementFolderCriteria(searchCriteria);
-			requirementFolderCriteria.addOrder(Order.asc("res.name"));
+			requirementFolderCriteria.addOrder(Order.asc(RES_NAME));
 			List<RequirementLibraryNode> requirementFolderList = requirementFolderCriteria.getExecutableCriteria(
 					currentSession()).list();
 			resultList.addAll(requirementFolderList);
@@ -141,7 +142,7 @@ public class HibernateRequirementDao extends HibernateEntityDao<Requirement> imp
 		criteria.createCriteria("resource", "res");
 
 		if (StringUtils.isNotBlank(searchCriteria.getName())) {
-			criteria.add(Restrictions.ilike("res.name", searchCriteria.getName(), MatchMode.ANYWHERE));
+			criteria.add(Restrictions.ilike(RES_NAME, searchCriteria.getName(), MatchMode.ANYWHERE));
 		}
 
 		return criteria;
@@ -153,7 +154,7 @@ public class HibernateRequirementDao extends HibernateEntityDao<Requirement> imp
 		versionCriteria.createCriteria("resource", "res");
 
 		if (StringUtils.isNotBlank(searchCriteria.getName())) {
-			versionCriteria.add(Restrictions.ilike("res.name", searchCriteria.getName(), MatchMode.ANYWHERE));
+			versionCriteria.add(Restrictions.ilike(RES_NAME, searchCriteria.getName(), MatchMode.ANYWHERE));
 		}
 		if (StringUtils.isNotBlank(searchCriteria.getReference())) {
 			versionCriteria.add(Restrictions.ilike("res.reference", searchCriteria.getReference(), MatchMode.ANYWHERE));

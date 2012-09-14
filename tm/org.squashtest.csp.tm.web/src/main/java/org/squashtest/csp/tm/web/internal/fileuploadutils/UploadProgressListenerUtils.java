@@ -54,6 +54,8 @@ import org.springframework.util.MultiValueMap;
 
 public final class UploadProgressListenerUtils {
 	
+	private static final String UPLOAD_LISTNER_MAP_KEY = "upload-listener-map";
+	private static final String UPLOAD_SUMMARY_MAP = "upload-summary-map";
 	private UploadProgressListenerUtils(){
 		
 	}
@@ -111,12 +113,12 @@ public final class UploadProgressListenerUtils {
 	 */
 	@SuppressWarnings("unchecked")
 	public static void registerListener(HttpSession session, String key,UploadProgressListener listener){
-		MultiValueMap<String,UploadProgressListener> listenerMap = (MultiValueMap<String,UploadProgressListener>)session.getAttribute("upload-listener-map");
+		MultiValueMap<String,UploadProgressListener> listenerMap = (MultiValueMap<String,UploadProgressListener>)session.getAttribute(UPLOAD_LISTNER_MAP_KEY);
 		
 		//create if doesn't exists already
 		if (listenerMap == null){
 			listenerMap = new LinkedMultiValueMap<String, UploadProgressListener>();
-			session.setAttribute("upload-listener-map", listenerMap);
+			session.setAttribute(UPLOAD_LISTNER_MAP_KEY, listenerMap);
 		}
 				
 		listenerMap.add(key, listener);	
@@ -139,7 +141,7 @@ public final class UploadProgressListenerUtils {
 	 */
 	@SuppressWarnings("unchecked")
 	public static void unregisterListeners(HttpSession session, String key){
-		MultiValueMap<String,UploadProgressListener> listenerMap = (MultiValueMap<String,UploadProgressListener>)session.getAttribute("upload-listener-map");
+		MultiValueMap<String,UploadProgressListener> listenerMap = (MultiValueMap<String,UploadProgressListener>)session.getAttribute(UPLOAD_LISTNER_MAP_KEY);
 		if (listenerMap != null){
 			listenerMap.remove(key);
 		}
@@ -157,7 +159,7 @@ public final class UploadProgressListenerUtils {
 	 */
 	@SuppressWarnings("unchecked")
 	public static List<UploadProgressListener> getRegisteredListener(HttpSession session, String ticket){
-		MultiValueMap<String,UploadProgressListener> listenerMap = (MultiValueMap<String,UploadProgressListener>)session.getAttribute("upload-listener-map");
+		MultiValueMap<String,UploadProgressListener> listenerMap = (MultiValueMap<String,UploadProgressListener>)session.getAttribute(UPLOAD_LISTNER_MAP_KEY);
 		
 		if (listenerMap == null){
 			return null;
@@ -177,12 +179,12 @@ public final class UploadProgressListenerUtils {
 	 */
 	@SuppressWarnings("unchecked")
 	public static void registerUploadSummary(HttpSession session, String key, List<UploadSummary> summary){
-		MultiValueMap<String,List<UploadSummary>> summaryMap = (MultiValueMap<String,List<UploadSummary>>)session.getAttribute("upload-summary-map");
+		MultiValueMap<String,List<UploadSummary>> summaryMap = (MultiValueMap<String,List<UploadSummary>>)session.getAttribute(UPLOAD_SUMMARY_MAP);
 		
 		//create if doesn't exists already
 		if (summaryMap == null){
 			summaryMap = new LinkedMultiValueMap<String, List<UploadSummary>>();
-			session.setAttribute("upload-summary-map", summaryMap);
+			session.setAttribute(UPLOAD_SUMMARY_MAP, summaryMap);
 		}
 				
 		summaryMap.add(key, summary);	
@@ -204,7 +206,7 @@ public final class UploadProgressListenerUtils {
 	 */
 	@SuppressWarnings("unchecked")
 	public static void unregisterUploadSummary(HttpSession session, String key){
-		MultiValueMap<String,List<UploadSummary>> summaryMap = (MultiValueMap<String,List<UploadSummary>>)session.getAttribute("upload-summary-map");
+		MultiValueMap<String,List<UploadSummary>> summaryMap = (MultiValueMap<String,List<UploadSummary>>)session.getAttribute(UPLOAD_SUMMARY_MAP);
 		if (summaryMap != null){
 			summaryMap.remove(key);
 		}
@@ -219,7 +221,7 @@ public final class UploadProgressListenerUtils {
 	 */
 	@SuppressWarnings("unchecked")
 	public static Object getUploadSummary(HttpSession session, String ticket){
-		MultiValueMap<String,List<UploadSummary>> summaryMap = (MultiValueMap<String,List<UploadSummary>>)session.getAttribute("upload-summary-map");
+		MultiValueMap<String,List<UploadSummary>> summaryMap = (MultiValueMap<String,List<UploadSummary>>)session.getAttribute(UPLOAD_SUMMARY_MAP);
 		
 		if (summaryMap == null){
 			return null;

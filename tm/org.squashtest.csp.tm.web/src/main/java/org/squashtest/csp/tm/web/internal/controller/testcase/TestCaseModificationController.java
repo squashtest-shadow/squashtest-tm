@@ -89,26 +89,31 @@ import org.squashtest.tm.core.foundation.collection.PagingAndSorting;
 @RequestMapping("/test-cases/{testCaseId}")
 public class TestCaseModificationController {
 	private static final Logger LOGGER = LoggerFactory.getLogger(TestCaseModificationController.class);
+	
+	private static final String NAME_KEY = "name";
+	private static final String S_ECHO_PARAM = "sEcho";
+	private static final String TEST_CASE_ = "test case ";
+	private static final String COPIED_STEP_ID_PARAM = "copiedStepId[]";
 
 	private final DataTableMapper verifiedReqMapper = new DataTableMapper("verified-requirement",
 			RequirementVersion.class, Project.class).initMapping(7)
-			.mapAttribute(Project.class, 2, "name", String.class)
+			.mapAttribute(Project.class, 2, NAME_KEY, String.class)
 			.mapAttribute(RequirementVersion.class, 3, "reference", String.class)
-			.mapAttribute(RequirementVersion.class, 4, "name", String.class)
+			.mapAttribute(RequirementVersion.class, 4, NAME_KEY, String.class)
 			.mapAttribute(RequirementVersion.class, 5, "criticality", RequirementCriticality.class);
 
 	private final DataTableMapper referencingTestCaseMapper = new DataTableMapper("referencing-test-cases",
-			TestCase.class, Project.class).initMapping(5).mapAttribute(Project.class, 2, "name", String.class)
-			.mapAttribute(TestCase.class, 3, "name", String.class)
+			TestCase.class, Project.class).initMapping(5).mapAttribute(Project.class, 2, NAME_KEY, String.class)
+			.mapAttribute(TestCase.class, 3, NAME_KEY, String.class)
 			.mapAttribute(TestCase.class, 4, "executionMode", TestCaseExecutionMode.class);
 
 	private final DataTableMapper execsTableMapper = new DataTableMapper("executions", Execution.class, Project.class, Campaign.class, Iteration.class, TestSuite.class)
-			.initMapping(11).mapAttribute(Project.class, 1, "name", String.class)
-			.mapAttribute(Campaign.class, 2, "name", String.class)
-			.mapAttribute(Iteration.class, 3, "name", String.class)
-			.mapAttribute(Execution.class, 4, "name", String.class)
+			.initMapping(11).mapAttribute(Project.class, 1, NAME_KEY, String.class)
+			.mapAttribute(Campaign.class, 2, NAME_KEY, String.class)
+			.mapAttribute(Iteration.class, 3, NAME_KEY, String.class)
+			.mapAttribute(Execution.class, 4, NAME_KEY, String.class)
 			.mapAttribute(Execution.class, 5, "executionMode", TestCaseExecutionMode.class)
-			.mapAttribute(TestSuite.class, 6, "name", String.class)
+			.mapAttribute(TestSuite.class, 6, NAME_KEY, String.class)
 			.mapAttribute(Execution.class, 8, "executionStatus", ExecutionStatus.class)
 			.mapAttribute(Execution.class, 9, "lastExecutedBy", String.class)
 			.mapAttribute(Execution.class, 10, "lastExecutedOn", Date.class);
@@ -190,7 +195,7 @@ public class TestCaseModificationController {
 		return internationalizationHelper.internationalize(mode, locale);
 	}
 
-	@RequestMapping(value = "/steps-table", params = "sEcho")
+	@RequestMapping(value = "/steps-table", params = S_ECHO_PARAM)
 	@ResponseBody
 	public DataTableModel getStepsTableModel(@PathVariable long testCaseId, DataTableDrawParameters params,
 			Locale locale) {
@@ -222,13 +227,13 @@ public class TestCaseModificationController {
 
 		testCaseModificationService.addActionTestStep(testCaseId, step);
 
-		LOGGER.trace("test case " + testCaseId + ": step added, action : " + step.getAction() + ", expected result : "
+		LOGGER.trace(TEST_CASE_ + testCaseId + ": step added, action : " + step.getAction() + ", expected result : "
 				+ step.getExpectedResult());
 	}
 
-	@RequestMapping(value = "/steps/paste", method = RequestMethod.POST, params = { "copiedStepId[]" })
+	@RequestMapping(value = "/steps/paste", method = RequestMethod.POST, params = { COPIED_STEP_ID_PARAM })
 	@ResponseBody
-	public void pasteStep(@RequestParam("copiedStepId[]") String[] copiedStepId,
+	public void pasteStep(@RequestParam(COPIED_STEP_ID_PARAM) String[] copiedStepId,
 			@RequestParam(value = "indexToCopy", required = true) Long positionId, @PathVariable long testCaseId) {
 
 		callStepManager.checkForCyclicStepCallBeforePaste(testCaseId, copiedStepId);
@@ -240,9 +245,9 @@ public class TestCaseModificationController {
 		LOGGER.trace("test case copied some Steps");
 	}
 
-	@RequestMapping(value = "/steps/paste-last-index", method = RequestMethod.POST, params = { "copiedStepId[]" })
+	@RequestMapping(value = "/steps/paste-last-index", method = RequestMethod.POST, params = { COPIED_STEP_ID_PARAM })
 	@ResponseBody
-	public void pasteStepLastIndex(@RequestParam("copiedStepId[]") String[] copiedStepId, @PathVariable long testCaseId) {
+	public void pasteStepLastIndex(@RequestParam(COPIED_STEP_ID_PARAM) String[] copiedStepId, @PathVariable long testCaseId) {
 
 		callStepManager.checkForCyclicStepCallBeforePaste(testCaseId, copiedStepId);
 
@@ -258,7 +263,7 @@ public class TestCaseModificationController {
 	public void changeStepIndex(@PathVariable long stepId, @RequestParam int newIndex, @PathVariable long testCaseId) {
 
 		testCaseModificationService.changeTestStepPosition(testCaseId, stepId, newIndex);
-		LOGGER.trace("test case " + testCaseId + ": step " + stepId + " moved to " + newIndex);
+		LOGGER.trace(TEST_CASE_ + testCaseId + ": step " + stepId + " moved to " + newIndex);
 
 	}
 
@@ -277,7 +282,7 @@ public class TestCaseModificationController {
 	public void deleteStep(@PathVariable long stepId, @PathVariable long testCaseId) {
 
 		testCaseModificationService.removeStepFromTestCase(testCaseId, stepId);
-		LOGGER.trace("test case " + testCaseId + ": removed step " + stepId);
+		LOGGER.trace(TEST_CASE_ + testCaseId + ": removed step " + stepId);
 	}
 
 	@RequestMapping(value = "/steps/{stepId}/action", method = RequestMethod.POST, params = { "id", VALUE })
@@ -310,7 +315,7 @@ public class TestCaseModificationController {
 
 		testCaseModificationService.changeDescription(testCaseId, testCaseDescription);
 		if (LOGGER.isTraceEnabled()) {
-			LOGGER.trace("test case " + testCaseId + ": updated description to " + testCaseDescription);
+			LOGGER.trace(TEST_CASE_ + testCaseId + ": updated description to " + testCaseDescription);
 		}
 
 		return testCaseDescription;
@@ -322,7 +327,7 @@ public class TestCaseModificationController {
 
 		testCaseModificationService.changeReference(testCaseId, testCaseReference);
 		if (LOGGER.isTraceEnabled()) {
-			LOGGER.trace("test case " + testCaseId + ": updated reference to " + testCaseReference);
+			LOGGER.trace(TEST_CASE_ + testCaseId + ": updated reference to " + testCaseReference);
 		}
 
 		return testCaseReference;
@@ -352,7 +357,7 @@ public class TestCaseModificationController {
 
 		testCaseModificationService.changePrerequisite(testCaseId, testCasePrerequisite);
 		if (LOGGER.isTraceEnabled()) {
-			LOGGER.trace("test case " + testCaseId + ": updated prerequisite to " + testCasePrerequisite);
+			LOGGER.trace(TEST_CASE_ + testCaseId + ": updated prerequisite to " + testCasePrerequisite);
 		}
 
 		return testCasePrerequisite;
@@ -409,7 +414,7 @@ public class TestCaseModificationController {
 		return testCase;
 	}
 
-	@RequestMapping(value = "/all-verified-requirements-table", params = "sEcho")
+	@RequestMapping(value = "/all-verified-requirements-table", params = S_ECHO_PARAM)
 	@ResponseBody
 	public DataTableModel getAllVerifiedRequirementsTableModel(@PathVariable long testCaseId,
 			final DataTableDrawParameters params, final Locale locale) {
@@ -435,7 +440,7 @@ public class TestCaseModificationController {
 		return new DataTableMapperPagingAndSortingAdapter(params, mapper);
 	}
 
-	@RequestMapping(value = "/calling-test-case-table", params = "sEcho")
+	@RequestMapping(value = "/calling-test-case-table", params = S_ECHO_PARAM)
 	@ResponseBody
 	public DataTableModel getCallingTestCaseTableModel(@PathVariable long testCaseId, DataTableDrawParameters params,
 			final Locale locale) {
@@ -471,9 +476,9 @@ public class TestCaseModificationController {
 	}
 	
 	
-	@RequestMapping(value="/test-automation/tests", method = RequestMethod.POST, params = { "projectId", "name"})
+	@RequestMapping(value="/test-automation/tests", method = RequestMethod.POST, params = { "projectId", NAME_KEY})
 	@ResponseBody
-	public void bindAutomatedTest(@PathVariable("testCaseId") long testCaseId,@RequestParam("projectId") long projectId, @RequestParam("name") String testName){
+	public void bindAutomatedTest(@PathVariable("testCaseId") long testCaseId,@RequestParam("projectId") long projectId, @RequestParam(NAME_KEY) String testName){
 		
 		testCaseModificationService.bindAutomatedTest(testCaseId, projectId, testName);
 
@@ -519,7 +524,7 @@ public class TestCaseModificationController {
 		this.executionFinder = executionFinder;
 	}
 
-	@RequestMapping(value = "/executions", params = "sEcho")
+	@RequestMapping(value = "/executions", params = S_ECHO_PARAM)
 	@ResponseBody
 	public DataTableModel getExecutionsTableModel(@PathVariable long testCaseId, DataTableDrawParameters params,
 			Locale locale) {

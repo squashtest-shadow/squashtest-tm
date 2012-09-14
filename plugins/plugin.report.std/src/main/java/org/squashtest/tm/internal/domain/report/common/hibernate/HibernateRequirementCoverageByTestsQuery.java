@@ -68,10 +68,12 @@ public class HibernateRequirementCoverageByTestsQuery extends HibernateReportQue
 	 * will take into account only the last version of the requirement
 	 */
 	private static final int REPORT_LAST_VERSION = 2;
+	
+	private static final String PROJECT_IDS = "projectIds[]";
 
 	public HibernateRequirementCoverageByTestsQuery() {
 		Map<String, ReportCriterion> criterions = getCriterions();
-		ReportCriterion projectIds = new IsInSet<Long>("projectIds[]", "id", Project.class, "projects") {
+		ReportCriterion projectIds = new IsInSet<Long>(PROJECT_IDS, "id", Project.class, "projects") {
 
 			@Override
 			public Long fromValueToTypedValue(Object o) {
@@ -80,7 +82,7 @@ public class HibernateRequirementCoverageByTestsQuery extends HibernateReportQue
 		};
 		// note : the name here follows the naming convention of http requests for array parameters. It allows the
 		// controller to directly map the http query string to that criterion.
-		criterions.put("projectIds[]", projectIds);
+		criterions.put(PROJECT_IDS, projectIds);
 
 		ReportCriterion reportMode = new RequirementReportTypeCriterion("mode", "on s'en fout");
 		criterions.put("mode", reportMode);
@@ -154,10 +156,10 @@ public class HibernateRequirementCoverageByTestsQuery extends HibernateReportQue
 
 	private boolean checkIfThereIsProjectsIds(List<Long> ids) {
 		boolean isProjectIds = false;
-		if (this.getCriterions().get("projectIds[]").getParameters() != null) {
+		if (this.getCriterions().get(PROJECT_IDS).getParameters() != null) {
 			isProjectIds = true;
 			// Put ids in a list
-			for (Object id : this.getCriterions().get("projectIds[]").getParameters()) {
+			for (Object id : this.getCriterions().get(PROJECT_IDS).getParameters()) {
 				ids.add(Long.parseLong((String) id));
 			}
 		}
