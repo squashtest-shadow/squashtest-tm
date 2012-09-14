@@ -109,7 +109,7 @@ public interface CustomTestSuiteModificationService extends TestSuiteFinder{
 	 * 
 	 * @return an {@link AutomatedSuite}
 	 */
-	AutomatedSuite createAndExecuteAutomatedSuite(long id);
+	AutomatedSuite createAutomatedSuite(long id);
 	
 
 	

@@ -203,9 +203,6 @@ public class CustomIterationModificationServiceImpl implements CustomIterationMo
 			}			
 		}
 		
-		
-		automationService.startAutomatedSuite(newSuite);
-		
 		return newSuite;
 	}
 
@@ -227,8 +224,6 @@ public class CustomIterationModificationServiceImpl implements CustomIterationMo
 			
 		}
 
-		automationService.startAutomatedSuite(newSuite);
-		
 		return newSuite;
 		
 	}

@@ -145,7 +145,7 @@
 		@NamedQuery(name = "testStep.findOrderedListById", query = "select step from TestCase testCase inner join testCase.steps step where step.id in (:testStepIds) order by index(step)"),
 
 		//Queries on CampaignTestPlanItem
-		
+
 		//Queries on Execution
 		@NamedQuery(name = "execution.countStatus", query = "select count(exSteps.executionStatus) from Execution as execution join execution.steps as exSteps where execution.id =:execId and exSteps.executionStatus=:status"),
 		@NamedQuery(name = "execution.countSteps", query = "select count(steps) from Execution ex join ex.steps as steps where ex.id = :executionId"),
@@ -175,12 +175,12 @@
 		//Queries on IssueList
 		@NamedQuery(name = "issueList.countIssues", query = "select count(issues) from IssueList issueList join issueList.issues issues where issueList.id in (:issueListIds)"),
 		@NamedQuery(name = "issueList.countIssuesByTracker", query = "select count(issues) from IssueList issueList join issueList.issues issues join issues.bugtracker bugTracker where issueList.id in (:issueListIds) and bugTracker.id = :bugTrackerId"),
-		
+
 		//Queries on BugTrackersEntities
 		@NamedQuery(name = "bugtracker.count", query = "select count(bte) from BugTracker bte"),
 		@NamedQuery(name = "bugtracker.findBugTrackerByName", query = "from BugTracker where name = :name "),
 		@NamedQuery(name = "bugtracker.findDistinctBugTrackersForProjects", query = "select bt from Project p join p.bugtrackerBinding btB join btB.bugtracker bt where p.id in (:projects)"),
-		
+
 		//Queries on UsersGroup
 		@NamedQuery(name = "usersGroup.findAllGroups", query = "from UsersGroup fetch all properties order by qualifiedName"),
 
@@ -188,7 +188,7 @@
 		@NamedQuery(name = "user.findAllUsers", query = "from User fetch all properties order by login"),
 		@NamedQuery(name = "user.findUsersByLoginList", query = "from User fetch all properties where login in (:userIds)"),
 		@NamedQuery(name = "user.findUserByLogin", query = "from User fetch all properties where login = :userLogin"),
-		
+
 		//Queries on RequirementAuditEvent
 		// XXX RequirementVersion
 		@NamedQuery(name = "RequirementAuditEvent.findAllByRequirementVersionIdOrderedByDate", query = "select rae from RequirementAuditEvent rae join rae.requirementVersion r where r.id = ? order by rae.date desc"),
@@ -203,15 +203,17 @@
 		@NamedQuery(name = "requirementVersion.findDistinctRequirementsCriticalitiesVerifiedByTestCases", query = "select distinct r.criticality from TestCase tc join tc.verifiedRequirementVersions r where tc.id in (:testCasesIds) "),
 		@NamedQuery(name = "requirementVersion.findDistinctRequirementsCriticalities", query = "select distinct r.criticality from RequirementVersion as r  where r.id in (:requirementsIds) "),
 		@NamedQuery(name = "RequirementVersion.countByRequirement", query = "select count(rv) from RequirementVersion rv join rv.requirement r where r.id = ?"),
-		
+
 		// Queries on AutomatedExecution
-		@NamedQuery(name = "AutomatedExecutionExtender.findAllBySuiteIdAndTestName",  query = "from AutomatedExecutionExtender ex where ex.automatedSuite.id = ? and ex.automatedTest.name = ? and ex.automatedTest.project.name = ?"),
+		@NamedQuery(name = "AutomatedExecutionExtender.findAllBySuiteIdAndTestName", query = "from AutomatedExecutionExtender ex where ex.automatedSuite.id = ? and ex.automatedTest.name = ? and ex.automatedTest.project.name = ?"),
 		@NamedQuery(name = "AutomatedExecutionExtender.findAllBySuiteIdAndProjectId", query = "from AutomatedExecutionExtender ex where ex.automatedSuite.id = ? and ex.automatedTest.project.id = ?"),
-	
+		@NamedQuery(name = "AutomatedExecutionExtender.completeInitialization", query = "select ext from AutomatedExecutionExtender ext join fetch ext.automatedSuite suite join fetch ext.automatedTest test " +
+																						"join fetch test.project project join fetch project.server server where ext in (:extenders)"),
+		
 		// Queries on AutomatedTest
 		@NamedQuery(name = "automatedTest.findAllByExtenderIds", query = "select distinct test from AutomatedExecutionExtender ext join ext.automatedTest test where ext.id in (:extenderIds)"),
 		@NamedQuery(name = "automatedTest.findAllByExtenders", query = "select distinct test from AutomatedExecutionExtender ext join ext.automatedTest test where ext in (:extenders)"),
-		
+
 		/* ********************************************** batch deletion-related queries **************************************************** */
 
 		@NamedQuery(name = "testCase.findAllAttachmentLists", query = "select testCase.attachmentList.id from TestCase testCase where testCase.id in (:testCaseIds)"),

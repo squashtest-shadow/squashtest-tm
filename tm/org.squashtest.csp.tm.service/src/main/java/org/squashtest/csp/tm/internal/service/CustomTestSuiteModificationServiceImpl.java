@@ -129,7 +129,7 @@ public class CustomTestSuiteModificationServiceImpl implements CustomTestSuiteMo
 	@Override	
 	@PreAuthorize("hasPermission(#suiteId, 'org.squashtest.csp.tm.domain.campaign.TestSuite', 'EXECUTE') "
 			+ "or hasRole('ROLE_ADMIN')")
-	public AutomatedSuite createAndExecuteAutomatedSuite(long suiteId) {
+	public AutomatedSuite createAutomatedSuite(long suiteId) {
 				
 		TestSuite testSuite = testSuiteDao.findById(suiteId);
 		AutomatedSuite newSuite = autoSuiteDao.createNewSuite();
@@ -143,8 +143,6 @@ public class CustomTestSuiteModificationServiceImpl implements CustomTestSuiteMo
 			}
 			
 		}
-
-		automationService.startAutomatedSuite(newSuite);
 		
 		return newSuite;
 		

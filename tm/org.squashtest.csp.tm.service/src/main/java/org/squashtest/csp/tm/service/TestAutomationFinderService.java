@@ -80,5 +80,14 @@ public interface TestAutomationFinderService {
 	List<Execution> findExecutionsByAutomatedTestSuiteId(String automatedTestSuiteId);
 
 	AutomatedSuite findAutomatedTestSuiteById(String suiteId);
+	
+
+	/**
+	 * Will start a test suite, by dispatching the tests to the corresponding connectors.
+	 * 
+	 * @param suite
+	 */
+	void startAutomatedSuite(AutomatedSuite suite);
+	
 
 }

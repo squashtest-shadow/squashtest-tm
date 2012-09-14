@@ -55,6 +55,7 @@ import org.squashtest.csp.tm.domain.testcase.TestCaseExecutionMode;
 import org.squashtest.csp.tm.domain.testcase.TestCaseImportance;
 import org.squashtest.csp.tm.service.IterationModificationService;
 import org.squashtest.csp.tm.service.IterationTestPlanFinder;
+import org.squashtest.csp.tm.service.TestAutomationFinderService;
 import org.squashtest.csp.tm.service.TestSuiteModificationService;
 import org.squashtest.csp.tm.web.internal.controller.execution.AutomatedExecutionViewUtils;
 import org.squashtest.csp.tm.web.internal.controller.execution.AutomatedExecutionViewUtils.AutomatedSuiteOverview;
@@ -83,8 +84,16 @@ public class TestSuiteModificationController {
 	@Inject
 	private PermissionEvaluationService permissionService;
 	
+	private TestAutomationFinderService testAutomationService;
+
+	
 	private static final String TEST_SUITE = "testSuite";
 	private static final Logger LOGGER = LoggerFactory.getLogger(TestSuiteModificationController.class);
+	
+	@ServiceReference
+	public void setTestAutomationFinderService (TestAutomationFinderService testAutomationService){
+		this.testAutomationService = testAutomationService;
+	}
 	
 	@ServiceReference
 	public void setIterationTestPlanFinder (IterationTestPlanFinder iterationTestPlanFinder){

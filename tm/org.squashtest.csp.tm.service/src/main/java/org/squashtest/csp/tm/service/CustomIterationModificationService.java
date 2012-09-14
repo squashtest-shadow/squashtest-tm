@@ -132,7 +132,7 @@ public interface CustomIterationModificationService extends IterationFinder{
 	 * 
 	 * @return an {@link AutomatedSuite}
 	 */
-	AutomatedSuite createAndExecuteAutomatedSuite(long iterationId);
+	AutomatedSuite createAutomatedSuite(long iterationId);
 	
 	/**
 	 * Create an automated execution for each of the test plan in arguments, group them in an automated suite and 
@@ -142,6 +142,6 @@ public interface CustomIterationModificationService extends IterationFinder{
 	 * @param testPlanIds
 	 * @return an {@link AutomatedSuite}
 	 */
-	AutomatedSuite createAndExecuteAutomatedSuite(long iterationId, Collection<Long> testPlanIds);
+	AutomatedSuite createAutomatedSuite(long iterationId, Collection<Long> testPlanIds);
 
 }
