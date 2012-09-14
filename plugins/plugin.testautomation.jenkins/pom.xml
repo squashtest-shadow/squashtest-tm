@@ -23,19 +23,19 @@
 		<dependency>
 			<groupId>org.squashtest.tm</groupId>
 			<artifactId>core.testautomation.api</artifactId>
-			<version>${squash.dependencies.version}</version>
+			<version>${project.version}</version>
 		</dependency>
 
 		<dependency>
 			<groupId>org.squashtest.tm</groupId>
 			<artifactId>org.squashtest.csp.tm.service</artifactId>
-			<version>${squash.dependencies.version}</version>
+			<version>${project.version}</version>
 		</dependency>
 
 		<dependency>
 			<groupId>org.squashtest.tm</groupId>
 			<artifactId>core.service</artifactId>
-			<version>${squash.dependencies.version}</version>
+			<version>${project.version}</version>
 		</dependency>
 
 		<!-- ================= /Squash TM dependencies ========================== -->
