@@ -204,12 +204,17 @@
 		@NamedQuery(name = "requirementVersion.findDistinctRequirementsCriticalities", query = "select distinct r.criticality from RequirementVersion as r  where r.id in (:requirementsIds) "),
 		@NamedQuery(name = "RequirementVersion.countByRequirement", query = "select count(rv) from RequirementVersion rv join rv.requirement r where r.id = ?"),
 
+		
+		//Queries on AutomatedSuite
+		@NamedQuery(name = "automatedSuite.completeInitializationById", query = "select suite from AutomatedSuite suite join fetch suite.executionExtenders ext join fetch ext.automatedTest test " +
+																				"join fetch test.project project join fetch project.server server where suite.id = :suiteId"),
+		
+		
 		// Queries on AutomatedExecution
 		@NamedQuery(name = "AutomatedExecutionExtender.findAllBySuiteIdAndTestName", query = "from AutomatedExecutionExtender ex where ex.automatedSuite.id = ? and ex.automatedTest.name = ? and ex.automatedTest.project.name = ?"),
 		@NamedQuery(name = "AutomatedExecutionExtender.findAllBySuiteIdAndProjectId", query = "from AutomatedExecutionExtender ex where ex.automatedSuite.id = ? and ex.automatedTest.project.id = ?"),
-		@NamedQuery(name = "AutomatedExecutionExtender.completeInitialization", query = "select ext from AutomatedExecutionExtender ext join fetch ext.automatedSuite suite join fetch ext.automatedTest test " +
-																						"join fetch test.project project join fetch project.server server where ext in (:extenders)"),
-		
+
+
 		// Queries on AutomatedTest
 		@NamedQuery(name = "automatedTest.findAllByExtenderIds", query = "select distinct test from AutomatedExecutionExtender ext join ext.automatedTest test where ext.id in (:extenderIds)"),
 		@NamedQuery(name = "automatedTest.findAllByExtenders", query = "select distinct test from AutomatedExecutionExtender ext join ext.automatedTest test where ext in (:extenders)"),

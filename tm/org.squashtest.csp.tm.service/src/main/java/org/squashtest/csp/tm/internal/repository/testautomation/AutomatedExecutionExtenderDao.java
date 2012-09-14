@@ -32,7 +32,8 @@ import org.squashtest.csp.tm.domain.testautomation.AutomatedExecutionExtender;
  * @author Gregory Fouquet
  * 
  */
-public interface AutomatedExecutionExtenderDao {
+public interface AutomatedExecutionExtenderDao{
+	
 	AutomatedExecutionExtender findById(long executionId);
 	
 	void persist(AutomatedExecutionExtender extender);

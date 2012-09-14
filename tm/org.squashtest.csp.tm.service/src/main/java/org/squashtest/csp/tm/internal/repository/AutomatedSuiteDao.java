@@ -26,6 +26,8 @@ import java.util.List;
 import org.squashtest.csp.tm.domain.execution.ExecutionStatus;
 import org.squashtest.csp.tm.domain.testautomation.AutomatedExecutionExtender;
 import org.squashtest.csp.tm.domain.testautomation.AutomatedSuite;
+import org.squashtest.csp.tm.domain.testautomation.TestAutomationProject;
+import org.squashtest.csp.tm.domain.testautomation.TestAutomationServer;
 
 
 public interface AutomatedSuiteDao{
@@ -80,5 +82,17 @@ public interface AutomatedSuiteDao{
 	 * @return
 	 */
 	Collection<AutomatedExecutionExtender> findAllExtendersByStatus(String suiteId, Collection<ExecutionStatus> statusList);
+	
+	
+	
+	/**
+	 * <p>Given the id of an AutomatedSuite, returns a detached instance with all dependencies initialized :
+	 * 	{@link AutomatedExecutionExtender}, {@link AutomatedTest}, {@link TestAutomationProject} and {@link TestAutomationServer}.
+	 * </p>
+	 * @param suiteToInit
+	 * @return
+	 */
+	AutomatedSuite initDetachedSuite(String suiteId);
+	
 	
 }

@@ -30,8 +30,11 @@ import java.util.List;
 
 import javax.inject.Inject;
 
+import org.hibernate.HibernateException;
 import org.hibernate.Query;
 import org.hibernate.SessionFactory;
+import org.hibernate.StatelessSession;
+import org.hibernate.Transaction;
 import org.hibernate.classic.Session;
 import org.hibernate.type.StringType;
 import org.springframework.stereotype.Repository;
@@ -140,6 +143,32 @@ public class HibernateAutomatedSuiteDao implements AutomatedSuiteDao{
 		
 	}
 	
+	
+	@Override
+	public AutomatedSuite initDetachedSuite(String suiteId) {
+
+				
+		StatelessSession s = factory.openStatelessSession();
+		Transaction tx = s.beginTransaction();
+		
+		try{
+			Query query = s.getNamedQuery("automatedSuite.completeInitializationById");
+			//query.setCacheMode(null);
+			query.setParameter("suiteId", suiteId);
+			AutomatedSuite detached = (AutomatedSuite) query.uniqueResult();
+			tx.commit();
+			return detached;
+		}
+		catch(HibernateException ex){
+			tx.rollback();
+			throw ex;
+		}
+		finally{
+			tx.commit();
+			s.close();
+		}
+		
+	}
 
 	
 	
