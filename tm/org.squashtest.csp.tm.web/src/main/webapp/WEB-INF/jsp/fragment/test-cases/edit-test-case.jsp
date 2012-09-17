@@ -1076,15 +1076,6 @@ function addTestStepSuccessAnother(){
 
 
 
-<%------------------------------ bugs section -------------------------------%>
-<c:if test="${testCase.project.bugtrackerConnected }">
-	<comp:issues-tab btEntityUrl="${ btEntityUrl }" />
-</c:if>
-
-<%------------------------------ /bugs section -------------------------------%>
-<%--
-<comp:decorate-buttons />
- --%>
 <script type="text/javascript">
 
 
@@ -1167,6 +1158,11 @@ function addTestStepSuccessAnother(){
 	
 </script>
 
-
 <comp:fragment-tabs /> 
 
+<%------------------------------ bugs section -------------------------------%>
+<c:if test="${testCase.project.bugtrackerConnected }">
+	<comp:issues-tab btEntityUrl="${ btEntityUrl }" />
+</c:if>
+
+<%------------------------------ /bugs section -------------------------------%>
