@@ -40,7 +40,7 @@
 	
 	<tr>
 	<td> 
-		<span> <f:message key="dialog.add-permission.permission.title" /> </span>
+		<span> <f:message key="label.Permission" /> </span>
 	</td>
 	<td> 
 	<select id="permission-input"> 
