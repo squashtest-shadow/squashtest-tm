@@ -78,7 +78,7 @@ $(function(){
 		<table>
 			<tr>
 				<td><label for="add-${ resourceName }-name"><f:message
-							key="${ resourceName }.name.label" />
+							key="label.Name" />
 				</label>
 				</td>
 				<td>

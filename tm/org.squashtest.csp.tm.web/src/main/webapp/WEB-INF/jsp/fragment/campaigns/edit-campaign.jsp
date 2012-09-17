@@ -231,7 +231,7 @@
 		<li><a href="#tabs-2"><f:message key="tabs.label.test-plan" />
 		</a>
 		</li>
-		<li><a href="#tabs-3"><f:message key="labelAttachments" />
+		<li><a href="#tabs-3"><f:message key="label.Attachments" />
 				<c:if test="${ campaign.attachmentList.notEmpty }">
 					<span class="hasAttach">!</span>
 				</c:if>
@@ -334,7 +334,7 @@
 		<div class="toolbar">
 			<c:if test="${ linkable }">
 				<f:message var="associateLabel"
-					key="campaign.test-plan.manage.button.label" />
+					key="label.Add" />
 				<f:message var="removeLabel"
 					key="label.Remove" />
 				<f:message var="assignLabel"

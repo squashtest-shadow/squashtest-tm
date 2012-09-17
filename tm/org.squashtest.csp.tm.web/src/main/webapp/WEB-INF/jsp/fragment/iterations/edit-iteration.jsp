@@ -296,7 +296,7 @@
 		<li><a href="#tabs-2"><f:message key="tabs.label.test-plan" />
 		</a>
 		</li>
-		<li><a href="#tabs-3"><f:message key="labelAttachments" />
+		<li><a href="#tabs-3"><f:message key="label.Attachments" />
 				<c:if test="${ iteration.attachmentList.notEmpty }">
 					<span class="hasAttach">!</span>
 				</c:if>
