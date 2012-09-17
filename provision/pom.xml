@@ -343,6 +343,11 @@
 			<artifactId>plugin.report.std</artifactId>
 			<version>${project.version}</version>
 		</dependency>
+		<dependency>
+			<groupId>org.squashtest.tm</groupId>
+			<artifactId>plugin.testautomation.jenkins</artifactId>
+			<version>${project.version}</version>
+		</dependency>
 		<!-- Squashtest tm modules -->
 		<dependency>
 			<groupId>${project.groupId}</groupId>
