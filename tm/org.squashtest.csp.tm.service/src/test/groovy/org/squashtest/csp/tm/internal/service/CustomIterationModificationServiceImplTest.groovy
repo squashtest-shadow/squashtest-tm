@@ -27,6 +27,7 @@ import org.squashtest.csp.tm.domain.campaign.IterationTestPlanItem
 import org.squashtest.csp.tm.domain.campaign.Iteration
 import org.squashtest.csp.tm.domain.testcase.TestCase
 import org.squashtest.csp.tm.domain.testcase.TestCaseExecutionMode
+import org.squashtest.csp.tm.domain.users.User
 import org.squashtest.csp.tm.internal.repository.CampaignDao
 import org.squashtest.csp.tm.internal.repository.ExecutionDao
 import org.squashtest.csp.tm.internal.repository.ExecutionStepDao
@@ -66,9 +67,12 @@ class CustomIterationModificationServiceImplTest extends Specification {
 		tc2.getId() >> 2
 
 		and:
+		User user = Mock()
 		Campaign campaign = new Campaign()
 		CampaignTestPlanItem itp1 = new CampaignTestPlanItem(tc1)
+		itp1.setUser(user)
 		CampaignTestPlanItem itp2 = new CampaignTestPlanItem(tc2)
+		itp2.setUser(user)
 		campaign.addToTestPlan(itp1)
 		campaign.addToTestPlan(itp2)
 		campaignDao.findById(10) >> campaign
@@ -80,6 +84,7 @@ class CustomIterationModificationServiceImplTest extends Specification {
 		campaign.iterations.contains(iteration)
 		1 * iterationDao.persistIterationAndTestPlan(iteration)
 		iteration.getPlannedTestCase() == [tc1, tc2]
+		iteration.getTestPlans().each{ it.getUser() == user};
 	}
 
 	def "should return indice of added iteration"() {

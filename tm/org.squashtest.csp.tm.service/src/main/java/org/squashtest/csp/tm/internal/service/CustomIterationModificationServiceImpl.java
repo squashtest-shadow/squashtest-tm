@@ -118,6 +118,7 @@ public class CustomIterationModificationServiceImpl implements CustomIterationMo
 
 		for (CampaignTestPlanItem campaignItem : campaignTestPlan) {
 			IterationTestPlanItem iterationItem = new IterationTestPlanItem(campaignItem.getReferencedTestCase());
+			iterationItem.setUser(campaignItem.getUser());
 			iteration.addTestPlan(iterationItem);
 		}
 		iterationDao.persistIterationAndTestPlan(iteration);
