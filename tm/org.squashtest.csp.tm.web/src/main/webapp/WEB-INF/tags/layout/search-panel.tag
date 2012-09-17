@@ -188,7 +188,7 @@
 				return;
 			}
 			<c:choose>
-			<c:when test="${linkableTestCase != 'null' || linkable eq 'requirement'}">	
+			<c:when test="${not empty linkable}">	
 				if(selectedTab == 2 && e.shiftKey){
 						multipleSelectDevice(this);
 				}else{
@@ -220,9 +220,13 @@
 				
 				var url = "${loadEntityUrl}/" + getRowId($(this).attr("id"));
 				
+				squashtm.contextualContent.loadWith(url);
+				
+				<%--
 				$.get(url, function(data) {
 					$("#contextual-content").html(data);	
 				});
+				--%>
 			</c:otherwise>
 			</c:choose>
 		});
@@ -503,27 +507,21 @@
 
 <div id="search-input">
 	<table>
-		<c:if
-			test="${ (workspace eq 'requirement' || linkable eq 'requirement')}">
-			<c:if test="${ not empty linkable && linkable != 'test-case' }">
-				<tr id="requirementReference" class="requirementCriterion">
-					<td><span class="gray-text"> <f:message
-								key="search.reference.label" /> </span> : <input id="searchReference"
-						type="text" class="std-height snap-right" style="width: 66%;" />
-					</td>
-				</tr>
-			</c:if>
+		<c:if test="${(workspace eq 'requirement' && empty linkable) || (linkable eq 'requirement')}">
+		<tr id="requirementReference" class="requirementCriterion">
+			<td><span class="gray-text"> <f:message	key="search.reference.label" /> </span> : <input id="searchReference"
+				type="text" class="std-height snap-right" style="width: 66%;" />
+			</td>
+		</tr>
 		</c:if>
 		<tr>
-			<td><span class="gray-text"> <f:message
-						key="label.Name" /> </span> : <input id="searchName" type="text"
+			<td><span class="gray-text"> <f:message	key="label.Name" /> </span> : 
+			<input id="searchName" type="text"
 				class="std-height snap-right" style="width: 66%; margin-left: 2em;" />
 			</td>
 		</tr>
 
-		<c:if
-			test="${ (workspace eq 'requirement' || linkable eq 'requirement')}">
-			<c:if test="${ not empty linkable && linkable != 'test-case' }">
+		<c:if test="${(workspace eq 'requirement' && empty linkable) || (linkable eq 'requirement')}">
 				<tr>
 					<td>
 						<div id="requirementProperties" class="requirementCriterion">
@@ -602,7 +600,6 @@
 						</div>
 					</td>
 				</tr>
-			</c:if>
 		</c:if>
 
 
@@ -651,9 +648,7 @@
 		</tr>
 
 
-		<c:if
-			test="${ (workspace eq 'requirement' || linkable eq 'requirement')}">
-			<c:if test="${ not empty linkable && linkable != 'test-case' }">
+		<c:if test="${(workspace eq 'requirement' && empty linkable) || (linkable eq 'requirement')}">
 				<tr>
 					<td>
 						<div id="sortingProperties" class="requirementCriterion">
@@ -673,7 +668,6 @@
 					</td>
 				</tr>
 			</c:if>
-		</c:if>
 	</table>
 </div>
 
@@ -681,5 +675,3 @@
 <div id="search">
 	<div id="search-result-pane"></div>
 </div>
-
-<comp:decorate-buttons />
