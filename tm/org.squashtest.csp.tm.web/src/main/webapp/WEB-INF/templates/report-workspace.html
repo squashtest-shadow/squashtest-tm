@@ -27,6 +27,7 @@
 	<meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
 	<!-- common head -->
 	<link rel="stylesheet" type="text/css" media="all" href="../../../../../../../core/core.web/src/main/webapp/styles/master.css" th:href="@{/styles/master.css}" />
+	<link rel="shortcut icon" type="image/x-icon" media="all" href="../../../../../../../core/core.web/src/main/webapp/images/favicon.ico" th:href="@{/images/favicon.ico}"/>
 	<!-- /common head -->
 	<!-- common script import -->
 	<link rel="stylesheet" type="text/css" media="all" href="../../../../../../../core/core.web/src/main/webapp/styles/squashtm.fg.menu.css" th:href="@{/styles/squashtm.fg.menu.css}" />
@@ -98,6 +99,13 @@
     	$(function() {
 			/* navigation tag */
 			squashtm.navbar.initHighlighted('report');
+			var workspaceUrl = document.location.protocol + '//' + document.location.host + "/squash/bugtracker/workspace-button";
+			$("#bugtracker-div").load(workspaceUrl,
+		 			function(){$("#bugtracker-link").hover(
+		 						function () {squashtm.navbar.highlightOn("bugtracker-link");}, 
+		 						function () {squashtm.navbar.highlightOff("bugtracker-link");}
+	 	 		);
+	 		});
 			
 			/* project filter */
 			var projectFilterConf = {

@@ -23,6 +23,7 @@
 <!DOCTYPE html SYSTEM "http://www.thymeleaf.org/dtd/xhtml1-transitional-thymeleaf-spring3-3.dtd">
 <html xmlns="http://www.w3.org/1999/xhtml" xmlns:th="http://www.thymeleaf.org">
 <head>
+	<!-- common head -->
 	<link rel="stylesheet" type="text/css" media="all" href="../../../../../../../core/core.web/src/main/webapp/styles/master.css" th:href="@{/styles/master.css}" />
 	<!-- /common head -->
 	<!-- common script import -->
@@ -61,6 +62,7 @@
 					th:title="#{workspace.campaign.button.label}" 
 				/>
 			</a>
+			<div id="bugtracker-div" ></div>
 			<a id="report-link" class="nav_btn" href="report-workspace.html" th:href="@{/report-workspace}">
 				<img src="../../images/Button_Nav_Reporting_off.png" 
 					th:src="@{/images/Button_Nav_Reporting_off.png}" 
