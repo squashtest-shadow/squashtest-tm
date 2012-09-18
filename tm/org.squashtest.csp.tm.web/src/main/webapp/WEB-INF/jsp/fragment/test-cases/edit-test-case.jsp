@@ -89,6 +89,10 @@
 </s:url>
 <s:url var="collapserScriptUrl"
 	value="/scripts/squashtest/classes/TableCollapser.js" />
+<c:url var="executionsTabUrl"
+	value='/test-cases/${testCase.id}/executions'>
+	<c:param name="tab" value="" />
+</c:url>
 
 <%-- ----------------------------------- Authorization ----------------------------------------------%>
 <%-- 
@@ -709,16 +713,10 @@ function addTestStepSuccessAnother(){
 				</c:if>
 		</a>
 		</li>
-
-		<c:url var="executionsTabUrl"
-			value='/test-cases/${testCase.id}/executions'>
-			<c:param name="tab" value="" />
-		</c:url>
 		<li><a href="${executionsTabUrl}"><f:message
 					key="label.executions" />
 		</a>
 		</li>
-
 	</ul>
 	<div id="tabs-1">
 		<%----------------------------------- Description -----------------------------------------------%>
@@ -1057,6 +1055,15 @@ function addTestStepSuccessAnother(){
 
 	<comp:attachment-tab tabId="tabs-3" entity="${ testCase }"
 		editable="${ attachable }" />
+		
+	<comp:fragment-tabs /> 
+
+<%------------------------------ bugs section -------------------------------%>
+<c:if test="${testCase.project.bugtrackerConnected }">
+	<comp:issues-tab btEntityUrl="${ btEntityUrl }" />
+</c:if>
+
+<%------------------------------ /bugs section -------------------------------%>
 
 </div>
 
@@ -1157,12 +1164,3 @@ function addTestStepSuccessAnother(){
 	
 	
 </script>
-
-<comp:fragment-tabs /> 
-
-<%------------------------------ bugs section -------------------------------%>
-<c:if test="${testCase.project.bugtrackerConnected }">
-	<comp:issues-tab btEntityUrl="${ btEntityUrl }" />
-</c:if>
-
-<%------------------------------ /bugs section -------------------------------%>
