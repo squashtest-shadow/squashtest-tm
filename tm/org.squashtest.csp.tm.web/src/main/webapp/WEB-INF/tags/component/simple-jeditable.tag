@@ -35,8 +35,10 @@
 <script type="text/javascript">
 
 	$(function() {
-		$( '#${componentId}' ).text($( '#${componentId}' ).text().trim());
-		$( '#${componentId}' ).editable( '${ targetUrl }', {
+		var component = $( '#${componentId}' );
+		var txt = component.text();
+		component.text($.trim(txt));
+		component.editable( '${ targetUrl }', {
 			type: 'text',												//this input type isn't standard, refers to jquery.jeditable.ckeditor.js
 			cols: 80,
 			max_size: 20,
