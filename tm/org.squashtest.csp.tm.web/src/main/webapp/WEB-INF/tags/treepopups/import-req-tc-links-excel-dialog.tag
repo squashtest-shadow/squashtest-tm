@@ -34,11 +34,6 @@
 <%@ attribute name="treeSelector" 		required="true" description="jquery selector of the tree instance" %>
 <%@ attribute name="treeNodeButton"		required="true" description="the javascript button that will open the dialog" %>
 
-<script type="text/javascript" src="${ pageContext.servletContext.contextPath }/scripts/jquery/jquery.form.js"></script>
-<script type="text/javascript" src="${ pageContext.servletContext.contextPath }/scripts/squashtest/classes/FeedbackMultipartPopup.js"></script>    
-<%--  <script type="text/javascript" src="http://localhost/scripts/FeedbackMultipartPopup.js"></script>  --%>
-
-
 <s:url var="importUrl" value="/req-tc/import-links/upload"/>
 
 <%-- 
@@ -184,7 +179,7 @@
 	var importLinksExcelFeedbackPopup = null;
 	
 	
-	function importSummaryBuilder(response){
+	function importLinksSummaryBuilder(response){
 			
 		var panel = $("#import-links-excel-dialog .summary");
 		
@@ -253,7 +248,7 @@
 		
 	}
 	
-	function importHandleErrors(json){
+	function importLinksHandleErrors(json){
 		//handling max size errors;
 		if ('maxSize' in json){
 			var errorMessage = "<f:message key='dialog.import.error.sizeexceeded'/>"
@@ -280,10 +275,10 @@
 			},
 			
 			summary : {
-				builder : importSummaryBuilder
+				builder : importLinksSummaryBuilder
 			}, 
 			
-			errorHandler : importHandleErrors
+			errorHandler : importLinksHandleErrors
 				
 		};
 		
