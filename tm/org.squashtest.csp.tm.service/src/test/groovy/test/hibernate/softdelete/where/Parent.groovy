@@ -43,6 +43,6 @@ class Parent {
 	@JoinTable(name="parent_child", joinColumns=@JoinColumn(name="parent_id"), inverseJoinColumns=@JoinColumn(name="child_id"))
 	@Where(clause = "deleted = 'false'")
 	List<Child> children = new ArrayList<Child>()
-	
+
 	boolean deleted;
 }
