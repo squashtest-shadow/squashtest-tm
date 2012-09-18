@@ -66,15 +66,15 @@ class RequirementLibraryNavigationServiceIT extends DbunitServiceSpecification {
 
 
 		export1.name == "1req"
-		export1.folderName == "projet1/folder/1req"
+		export1.folderName == "folder"
 		export1.project == "projet1"
 
 		export2.name == "req2"
-		export2.folderName == "projet1/folder/subfolder/req2"
+		export2.folderName == "folder/subfolder"
 		export2.project == "projet1"
 
 		export3.name == "req3"
-		export3.folderName == "projet1/req3"
+		export3.folderName == ""
 	}
 }
 
