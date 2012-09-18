@@ -85,6 +85,7 @@ public interface LibraryNavigationService<LIBRARY extends Library<? extends NODE
 	void renameFolder(long folderId, String newName);
 
 	LIBRARY findLibrary(long libraryId);
+	LIBRARY findCreatableLibrary(long libraryId);
 
 	/**
 	 * that method should investigate the consequences of the deletion request, and return a report about what will

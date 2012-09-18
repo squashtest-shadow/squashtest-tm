@@ -104,7 +104,7 @@ public abstract class AbstractLibraryNavigationService<LIBRARY extends Library<N
 			for (Long id : sourceNodesIds) {
 				NODE node = getLibraryNodeDao().findById(id);
 				checkPermission(new SecurityCheckableObject(container, CREATE), new SecurityCheckableObject(node,
-						CREATE));
+						READ));
 			}
 
 			// proceed
@@ -208,6 +208,16 @@ public abstract class AbstractLibraryNavigationService<LIBRARY extends Library<N
 		// fetch
 		LIBRARY library = getLibraryDao().findById(libraryId);
 		// check
+		checkPermission(new SecurityCheckableObject(library, READ));
+		// proceed
+		return library;
+	}
+	@SuppressWarnings("unchecked")
+	@Override
+	public final LIBRARY findCreatableLibrary(long libraryId) {
+		// fetch
+		LIBRARY library = getLibraryDao().findById(libraryId);
+		// check
 		checkPermission(new SecurityCheckableObject(library, CREATE));
 		// proceed
 		return library;
@@ -219,7 +229,7 @@ public abstract class AbstractLibraryNavigationService<LIBRARY extends Library<N
 		// fetch
 		FOLDER folder = getFolderDao().findById(folderId);
 		// check
-		checkPermission(new SecurityCheckableObject(folder, CREATE));
+		checkPermission(new SecurityCheckableObject(folder, READ));
 		// proceed
 		return getFolderDao().findById(folderId);
 	}
@@ -340,7 +350,7 @@ public abstract class AbstractLibraryNavigationService<LIBRARY extends Library<N
 			Object parentObject = (parentLib != null) ? parentLib : getFolderDao().findByContent(node);
 
 			checkPermission(new SecurityCheckableObject(destinationFolder, CREATE), new SecurityCheckableObject(
-					parentObject, "DELETE"), new SecurityCheckableObject(node, CREATE));
+					parentObject, "DELETE"), new SecurityCheckableObject(node, READ));
 
 			nodesAndTheirParents.put(node, parentObject);
 
@@ -371,7 +381,7 @@ public abstract class AbstractLibraryNavigationService<LIBRARY extends Library<N
 			Object parentObject = (parentLib != null) ? parentLib : getFolderDao().findByContent(node);
 
 			checkPermission(new SecurityCheckableObject(destinationLibrary, CREATE), new SecurityCheckableObject(
-					parentObject, "DELETE"), new SecurityCheckableObject(node, CREATE));
+					parentObject, "DELETE"), new SecurityCheckableObject(node, READ));
 
 			nodesAndTheirParents.put(node, parentObject);
 		}
