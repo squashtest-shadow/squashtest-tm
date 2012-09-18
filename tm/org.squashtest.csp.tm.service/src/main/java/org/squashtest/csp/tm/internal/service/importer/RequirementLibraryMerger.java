@@ -21,7 +21,6 @@
 package org.squashtest.csp.tm.internal.service.importer;
 
 import java.util.ArrayList;
-import java.util.Collections;
 import java.util.HashSet;
 import java.util.LinkedList;
 import java.util.List;
@@ -119,7 +118,7 @@ class RequirementLibraryMerger {
 	 * This class is an adapter to help with the API differences between Libraries and Folders
 	 */
 
-	private static class DestinationManager {
+	static class DestinationManager {
 
 		protected RequirementLibraryMerger context;
 
@@ -253,61 +252,6 @@ class RequirementLibraryMerger {
 			} else {
 				otherManager.setDestination(destFolder);
 			}
-		}
-
-	}
-
-	private static class RequirementMerger extends DestinationManager {
-
-		public void merge(List<PseudoRequirement> pseudoRequirements, RequirementLibrary library) {
-			setDestination(library);
-			merge(pseudoRequirements);
-		}
-
-		public void merge(List<PseudoRequirement> pseudoRequirements, RequirementFolder folder) {
-			setDestination(folder);
-			merge(pseudoRequirements);
-		}
-
-		public void merge(List<PseudoRequirement> pseudoRequirements) {
-			for (PseudoRequirement pseudoRequirement : pseudoRequirements) {
-				List<PseudoRequirementVersion> pseudoRequirementVersions = pseudoRequirement
-						.getPseudoRequirementVersions();
-				if (pseudoRequirementVersions.size() > 1) {
-					Collections.sort(pseudoRequirementVersions);
-					PseudoRequirementVersion pseudoRequirementVersion = pseudoRequirementVersions.get(0);
-					Requirement requirement = addRequirement(pseudoRequirementVersion);
-					for (int i = 1; i < pseudoRequirementVersions.size(); i++) {
-						RequirementVersion newVersion = createVersion(pseudoRequirementVersions.get(i));
-						addVersion(requirement, newVersion);
-					}
-
-				} else {
-					PseudoRequirementVersion pseudoRequirementVersion = pseudoRequirement
-							.getPseudoRequirementVersions().get(0);
-					addRequirement(pseudoRequirementVersion);
-				}
-			}
-		}
-
-		private Requirement addRequirement(PseudoRequirementVersion pseudoRequirementVersion) {
-			RequirementVersion firstVersion = createVersion(pseudoRequirementVersion);
-			Requirement requirement = new Requirement(firstVersion);
-			persistRequirement(requirement);
-			return requirement;
-		}
-
-		private RequirementVersion createVersion(PseudoRequirementVersion pseudoRequirementVersion) {
-			RequirementVersion req = new RequirementVersion(pseudoRequirementVersion.getCreatedOnDate(),
-					pseudoRequirementVersion.getCreatedBy());
-			req.setCriticality(pseudoRequirementVersion.getCriticality());
-			req.setCategory(pseudoRequirementVersion.getCategory());
-			req.setDescription(pseudoRequirementVersion.getDescription());
-			req.setName(pseudoRequirementVersion.getLabel());
-			req.setReference(pseudoRequirementVersion.getReference());
-			// STATUS ??
-
-			return req;
 		}
 
 	}
