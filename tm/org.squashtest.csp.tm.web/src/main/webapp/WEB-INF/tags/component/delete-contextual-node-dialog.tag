@@ -47,7 +47,7 @@ $(function(){
 		
 		var jqThis = $(this);
 		
-		sendContextualDeletionSimulationRequest(jqThis);			
+		sendContextualDeletionSimulationRequest(jqThis);
 	
 	});
 });	
@@ -61,9 +61,14 @@ function sendContextualDeletionSimulationRequest(jqDialog){
 	
 	var url = "${simulationUrl}";	
 
-	$.post(url, {"nodeIds[]": [${itemId}] })			
+	$.ajax({
+		url :url,
+		data :{"nodeIds[]": [${itemId}] },
+		type : 'post',
+		dataType : 'json'
+	})			
 	.success(function(data){
-		var message = data + "\n\n<b>${deleteMessage}</b>";
+		var message = data.message + "<b>${deleteMessage}</b>";
 		jqDialog.html(message);
 	})
 	.fail(function(){

@@ -41,6 +41,7 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.bind.annotation.ResponseStatus;
 import org.springframework.web.servlet.ModelAndView;
+import org.springframework.web.util.HtmlUtils;
 import org.squashtest.csp.tm.domain.library.Folder;
 import org.squashtest.csp.tm.domain.library.Library;
 import org.squashtest.csp.tm.domain.library.LibraryNode;
@@ -174,18 +175,28 @@ public abstract class LibraryNavigationController<LIBRARY extends Library<? exte
 	}
 	
 	@RequestMapping(value="/delete-nodes/simulate", method = RequestMethod.POST, params = {NODE_IDS})
-	public @ResponseBody String simulateNodeDeletion(@RequestParam(NODE_IDS) List<Long> nodeIds, Locale locale){
+	public @ResponseBody Message simulateNodeDeletion(@RequestParam(NODE_IDS) List<Long> nodeIds, Locale locale){
 		List<SuppressionPreviewReport> reportList = getLibraryNavigationService().simulateDeletion(nodeIds);
 		
 		StringBuilder builder = new StringBuilder();
 		
 		for (SuppressionPreviewReport report : reportList){
 			builder.append(report.toString(messageSource, locale));
-			builder.append("<br/>");
+			builder.append("<br><br>");
 		}
 		
-		return builder.toString();
+		return new Message(builder.toString());
 		
+	}
+	
+	public static class Message {
+		private String message ;
+		public Message (String message){
+			this.message = message;
+		}
+		public String getMessage(){
+			return this.message;
+		}
 	}
 
 	@RequestMapping(value="/delete-nodes/confirm", method=RequestMethod.DELETE, params= {NODE_IDS})

@@ -118,9 +118,7 @@ function getDeleteIds(strType, nodes){
 }
 
 
-function buildMessage(newText){
-	return $('<div>', {'text' : newText} );
-}
+
 
 
 /* ***************  /utilities  ***************** */ 
@@ -159,10 +157,12 @@ function initDeleteNodeDialog(jqDialog){
 function sendDeletionSimulationRequest(){
 
 	var jqDialog = $('#delete-node-dialog');
-	var message = $('<div/>');
+	jqDialog.hide();
 	
 	var vNodes = jqDialog.data("vNodes");
 	var types = getNodeCategories(vNodes);
+	
+	jqDialog.html("<span><strong>${deleteMessage}</strong></span>");
 	
 	for (var i in types){
 		var domtype = types[i];
@@ -170,23 +170,24 @@ function sendDeletionSimulationRequest(){
 			
 			var url = getUrl(types[i])+"/simulate";
 			var nodeIds = getDeleteIds(domtype, vNodes);
-			
-			$.post(url, { 'nodeIds[]' : nodeIds})				
-			.success(function(data){
-				var newMessage = buildMessage(data); 
-				message.append(newMessage);
+			$.ajax({
+				url: url,
+				data : {'nodeIds[]' : nodeIds},
+				type : 'post',
+				dataType : 'json'
+			})
+			.done(function(data){
+				jqDialog.html("<div>"+data.message+"</div>"+ jqDialog.html()); 
 			})
 			.fail(function(){
 				jqDialog.dialog("close"); <%-- the standard failure handler should kick in, no need for further treatment here. --%>
 				return ;
-			});		
+			}).then(function(){
+				
+			});
 		}
-	}	
-	
-	message.append("<span><strong>${deleteMessage}</strong></span>");
-		
-	jqDialog.html(message.html());
-	
+	}
+	jqDialog.show()
 	
 }
 </script>
