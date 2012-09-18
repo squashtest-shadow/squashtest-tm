@@ -604,7 +604,7 @@ public class BugtrackerController {
 	}
 
 	private BTIssue makeReportIssueModel(IssueDetector entity, String defaultDescription) {
-		String projectName = entity.getProject().getName();
+		String projectName = entity.getProject().getBugtrackerBinding().getProjectName();
 		final BTProject project = bugTrackersLocalService.findRemoteProject(projectName, entity.getBugTracker());
 
 		BTIssue emptyIssue = new BTIssue();
