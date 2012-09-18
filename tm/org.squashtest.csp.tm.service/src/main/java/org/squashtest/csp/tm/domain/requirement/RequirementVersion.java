@@ -21,7 +21,6 @@
 package org.squashtest.csp.tm.domain.requirement;
 
 import java.util.Collections;
-import java.util.Date;
 import java.util.HashSet;
 import java.util.Set;
 
@@ -50,9 +49,9 @@ import org.squashtest.csp.tm.domain.testcase.TestCase;
 
 /**
  * Represents a version of a requirement.
- *
+ * 
  * @author Gregory Fouquet
- *
+ * 
  */
 @Entity
 @PrimaryKeyJoinColumn(name = "RES_ID")
@@ -73,7 +72,7 @@ public class RequirementVersion extends Resource implements AttachmentHolder {
 	@NotNull
 	@Enumerated(EnumType.STRING)
 	private RequirementCriticality criticality = RequirementCriticality.UNDEFINED;
-	
+
 	@NotNull
 	@Enumerated(EnumType.STRING)
 	private RequirementCategory category = RequirementCategory.UNDEFINED;
@@ -98,13 +97,7 @@ public class RequirementVersion extends Resource implements AttachmentHolder {
 	public RequirementVersion() {
 		super();
 	}
-	public RequirementVersion(Date createdOn, String createdBy) {
-		AuditableMixin audit = ((AuditableMixin) this);
 
-		audit.setCreatedOn(createdOn);
-		audit.setCreatedBy(createdBy);
-	}
-	
 	/**
 	 * @see org.squashtest.csp.tm.domain.attachment.AttachmentHolder#getAttachmentList()
 	 */
@@ -133,7 +126,7 @@ public class RequirementVersion extends Resource implements AttachmentHolder {
 	}
 
 	/**
-	 *
+	 * 
 	 * @param testCase
 	 * @throws RequirementVersionNotLinkableException
 	 * @throws RequirementAlreadyVerifiedException
@@ -163,7 +156,7 @@ public class RequirementVersion extends Resource implements AttachmentHolder {
 
 	/***
 	 * Set the requirement reference
-	 *
+	 * 
 	 * @param reference
 	 */
 	public void setReference(String reference) {
@@ -180,21 +173,21 @@ public class RequirementVersion extends Resource implements AttachmentHolder {
 
 	/***
 	 * Set the requirement criticality
-	 *
+	 * 
 	 * @param criticality
 	 */
 	public void setCriticality(RequirementCriticality criticality) {
 		checkModifiable();
 		this.criticality = criticality;
 	}
-	
+
 	/**
 	 * @return the requirement category
 	 */
 	public RequirementCategory getCategory() {
 		return category;
 	}
-	
+
 	/***
 	 * Set the requirement category
 	 * 
@@ -204,8 +197,12 @@ public class RequirementVersion extends Resource implements AttachmentHolder {
 		checkModifiable();
 		this.category = category;
 	}
-	
-	
+
+	/**
+	 * Sets this object's status, following status transition rules.
+	 * 
+	 * @param status
+	 */
 	public void setStatus(RequirementStatus status) {
 		checkStatusAccess(status);
 		this.status = status;
@@ -221,7 +218,6 @@ public class RequirementVersion extends Resource implements AttachmentHolder {
 		}
 	}
 
-
 	private void checkStatusAccess(RequirementStatus newStatus) {
 		if ((!status.getAllowsStatusUpdate()) || (!status.isTransitionLegal(newStatus))) {
 			throw new IllegalRequirementModificationException();
@@ -229,7 +225,7 @@ public class RequirementVersion extends Resource implements AttachmentHolder {
 	}
 
 	/**
-	 *
+	 * 
 	 * @return <code>true</code> if this requirement can be (un)linked by new verifying testcases
 	 */
 	public boolean isLinkable() {
@@ -240,7 +236,7 @@ public class RequirementVersion extends Resource implements AttachmentHolder {
 	 * Tells if this requirement's "intrinsic" properties can be modified. The following are not considered as
 	 * "intrinsic" properties" : {@link #verifyingTestCases} are governed by the {@link #isLinkable()} state,
 	 * {@link #status} is governed by itself.
-	 *
+	 * 
 	 * @return <code>true</code> if this requirement's properties can be modified.
 	 */
 	public boolean isModifiable() {
@@ -254,7 +250,7 @@ public class RequirementVersion extends Resource implements AttachmentHolder {
 	}
 
 	public void notifyNoLongerVerifiedBy(@NotNull TestCase testCase) {
-//		checkLinkable();
+		// checkLinkable();
 		verifyingTestCases.remove(testCase);
 
 	}
@@ -272,13 +268,14 @@ public class RequirementVersion extends Resource implements AttachmentHolder {
 	public int getVersionNumber() {
 		return versionNumber;
 	}
+
 	protected void setVersionNumber(int versionNumber) {
-		this.versionNumber =  versionNumber;
+		this.versionNumber = versionNumber;
 	}
 
 	/**
 	 * Should be used once before this entity is persisted by the requirement to which this version is added.
-	 *
+	 * 
 	 * @param requirement
 	 */
 	/* package-private */void setRequirement(Requirement requirement) {
@@ -322,7 +319,7 @@ public class RequirementVersion extends Resource implements AttachmentHolder {
 
 	/**
 	 * Creates a {@link RequirementVersion} to be used as the one right after this RequirementVersion.
-	 *
+	 * 
 	 * @return
 	 */
 	/* package-private */RequirementVersion createNextVersion() {
@@ -334,5 +331,30 @@ public class RequirementVersion extends Resource implements AttachmentHolder {
 		attachCopiesOfAttachmentsTo(nextVersion);
 
 		return nextVersion;
+	}
+
+	/**
+	 * Factory methiod which creates a {@link RequirementVersion} from a memento objet which holds the new object's target
+	 * state. This method overrides any {@link RequirementStatus} workflow check.
+	 * 
+	 * @param memento
+	 * @return
+	 */
+	public static RequirementVersion createFromMemento(@NotNull RequirementVersionImportMemento memento) {
+		RequirementVersion res = new RequirementVersion();
+
+		res.setName(memento.getName());
+		res.setDescription(memento.getDescription());
+		res.criticality = memento.getCriticality();
+		res.category = memento.getCategory();
+		res.reference = memento.getReference();
+		res.status = memento.getStatus();
+
+		AuditableMixin audit = ((AuditableMixin) res);
+
+		audit.setCreatedOn(memento.getCreatedOn());
+		audit.setCreatedBy(memento.getCreatedBy());
+
+		return res;
 	}
 }

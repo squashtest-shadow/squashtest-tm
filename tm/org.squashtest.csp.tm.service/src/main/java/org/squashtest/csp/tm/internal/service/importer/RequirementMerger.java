@@ -71,15 +71,7 @@ class RequirementMerger extends DestinationManager {
 	}
 
 	private RequirementVersion createVersion(PseudoRequirementVersion pseudoRequirementVersion) {
-		RequirementVersion req = new RequirementVersion(pseudoRequirementVersion.getCreatedOnDate(),
-				pseudoRequirementVersion.getCreatedBy());
-		req.setCriticality(pseudoRequirementVersion.getCriticality());
-		req.setCategory(pseudoRequirementVersion.getCategory());
-		req.setDescription(pseudoRequirementVersion.getDescription());
-		req.setName(pseudoRequirementVersion.getLabel());
-		req.setReference(pseudoRequirementVersion.getReference());
-		// STATUS ??
-
+		RequirementVersion req = RequirementVersion.createFromMemento(pseudoRequirementVersion);
 		return req;
 	}
 

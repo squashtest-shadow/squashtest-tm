@@ -117,7 +117,7 @@ public class RequirementParserImpl implements RequirementParser {
 		String category = readTextField(row, columnsMapping, CATEGORY_TAG);
 		pseudoRequirementVersion.setCategory(category);
 		String state = readTextField(row, columnsMapping, STATE_TAG);
-		pseudoRequirementVersion.setState(state);
+		pseudoRequirementVersion.setStatus(state);
 		Date createdOn = readDateField(row, columnsMapping, CREATED_ON_TAG);
 		pseudoRequirementVersion.setCreatedOnDate(createdOn);
 

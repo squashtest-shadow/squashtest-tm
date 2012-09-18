@@ -27,36 +27,34 @@ import org.slf4j.LoggerFactory;
 import org.squashtest.csp.tm.domain.requirement.RequirementCategory;
 import org.squashtest.csp.tm.domain.requirement.RequirementCriticality;
 import org.squashtest.csp.tm.domain.requirement.RequirementStatus;
+import org.squashtest.csp.tm.domain.requirement.RequirementVersionImportMemento;
 
 /**
  * 
  * @author mpagnon
- *
+ * 
  */
-/* package-private */class PseudoRequirementVersion implements Comparable<PseudoRequirementVersion>{
+/* package-private */class PseudoRequirementVersion implements Comparable<PseudoRequirementVersion>,
+		RequirementVersionImportMemento {
 	private Integer rowNumber = 0;
 	private Double version = null;
 	private String label = "untitled";
 	private String reference = "";
 	private RequirementCriticality criticality = RequirementCriticality.UNDEFINED;
 	private RequirementCategory category = RequirementCategory.UNDEFINED;
-	private RequirementStatus state = RequirementStatus.WORK_IN_PROGRESS;
+	private RequirementStatus status = RequirementStatus.WORK_IN_PROGRESS;
 	private String description = "";
 	private Date createdOnDate = new Date();
 	private String createdBy = "import";
 	private PseudoRequirement pseudoRequirement;
 
-
 	private static final Logger LOGGER = LoggerFactory.getLogger(PseudoRequirementVersion.class);
-	
 
 	public PseudoRequirementVersion(String label2, int rowNumber, PseudoRequirement pseudoRequirement) {
 		this.label = label2;
 		this.rowNumber = rowNumber;
 		this.pseudoRequirement = pseudoRequirement;
 	}
-	
-	
 
 	/* ***************************** getter and setters *********************************** */
 	public Integer getRowNumber() {
@@ -75,13 +73,13 @@ import org.squashtest.csp.tm.domain.requirement.RequirementStatus;
 		this.version = version;
 	}
 
-	public String getLabel() {
+	public String getName() {
 		return label;
 	}
 
 	public void setLabel(String label) {
-		if(notEmpty(label)){
-		this.label = label;
+		if (notEmpty(label)) {
+			this.label = label;
 		}
 	}
 
@@ -90,8 +88,8 @@ import org.squashtest.csp.tm.domain.requirement.RequirementStatus;
 	}
 
 	public void setReference(String reference) {
-		if(notEmpty(reference)){
-		this.reference = reference;
+		if (notEmpty(reference)) {
+			this.reference = reference;
 		}
 	}
 
@@ -100,39 +98,39 @@ import org.squashtest.csp.tm.domain.requirement.RequirementStatus;
 	}
 
 	public void setCriticality(String criticality) {
-		if( criticality != null){
-		try{
-			String criticalityUp = criticality.toUpperCase();
-			this.criticality = RequirementCriticality.valueOf(criticalityUp);
-		}catch(IllegalArgumentException iae){
-			LOGGER.warn(iae.getMessage());
+		if (criticality != null) {
+			try {
+				String criticalityUp = criticality.toUpperCase();
+				this.criticality = RequirementCriticality.valueOf(criticalityUp);
+			} catch (IllegalArgumentException iae) {
+				LOGGER.warn(iae.getMessage());
+			}
 		}
-		}
-	}	
-	
+	}
+
 	public RequirementCategory getCategory() {
 		return category;
 	}
 
 	public void setCategory(String category) {
-		if( category != null){
-		try{
-			this.category = RequirementCategory.valueOf(category.toUpperCase());
-		}catch(IllegalArgumentException iae){
-			LOGGER.warn(iae.getMessage());
-		}
+		if (category != null) {
+			try {
+				this.category = RequirementCategory.valueOf(category.toUpperCase());
+			} catch (IllegalArgumentException iae) {
+				LOGGER.warn(iae.getMessage());
+			}
 		}
 	}
 
-	public RequirementStatus getState() {
-		return state;
+	public RequirementStatus getStatus() {
+		return status;
 	}
 
-	public void setState(String state) {
-		if( state != null){
-			try{
-				this.state = RequirementStatus.valueOf(state.toUpperCase());
-			}catch(IllegalArgumentException iae){
+	public void setStatus(String state) {
+		if (state != null) {
+			try {
+				this.status = RequirementStatus.valueOf(state.toUpperCase());
+			} catch (IllegalArgumentException iae) {
 				LOGGER.warn(iae.getMessage());
 			}
 		}
@@ -143,18 +141,18 @@ import org.squashtest.csp.tm.domain.requirement.RequirementStatus;
 	}
 
 	public void setDescription(String description) {
-		if(notEmpty(description)){
-		this.description = description;
+		if (notEmpty(description)) {
+			this.description = description;
 		}
 	}
 
-	public Date getCreatedOnDate() {
+	public Date getCreatedOn() {
 		return createdOnDate;
 	}
 
 	public void setCreatedOnDate(Date createdOnDate) {
-		if(createdOnDate != null){
-		this.createdOnDate = createdOnDate;
+		if (createdOnDate != null) {
+			this.createdOnDate = createdOnDate;
 		}
 	}
 
@@ -163,10 +161,11 @@ import org.squashtest.csp.tm.domain.requirement.RequirementStatus;
 	}
 
 	public void setCreatedBy(String createdBy) {
-		if(notEmpty(createdBy))
-		{this.createdBy = createdBy;}
+		if (notEmpty(createdBy)) {
+			this.createdBy = createdBy;
+		}
 	}
-	
+
 	public PseudoRequirement getPseudoRequirement() {
 		return pseudoRequirement;
 	}
@@ -176,31 +175,34 @@ import org.squashtest.csp.tm.domain.requirement.RequirementStatus;
 	}
 
 	/* ***************************** end getter and setters *********************************** */
-	private boolean notEmpty(String string){
+	private boolean notEmpty(String string) {
 		return (string != null && (!string.isEmpty()));
 	}
 
 	@Override
 	public int compareTo(PseudoRequirementVersion o2) {
 		int toreturn;
-		if( (this.getVersion() == null)|| (o2.getVersion() == null)){
-			if( (this.getVersion() == null) && (o2.getVersion() == null)){
+		if ((this.getVersion() == null) || (o2.getVersion() == null)) {
+			if ((this.getVersion() == null) && (o2.getVersion() == null)) {
 				toreturn = compareRowNumbers(this, o2);
-			}else{
-				if((this.getVersion() == null)){toreturn = -1;}
-				else{toreturn = +1;}
+			} else {
+				if ((this.getVersion() == null)) {
+					toreturn = -1;
+				} else {
+					toreturn = +1;
+				}
 			}
-		}else{
-			if(this.getVersion().compareTo(o2.getVersion()) == 0){
+		} else {
+			if (this.getVersion().compareTo(o2.getVersion()) == 0) {
 				toreturn = compareRowNumbers(this, o2);
-			}else{
+			} else {
 				toreturn = this.getVersion().compareTo(o2.getVersion());
 			}
 		}
 		return toreturn;
 	}
-	
-	private int compareRowNumbers(PseudoRequirementVersion o1, PseudoRequirementVersion o2){
+
+	private int compareRowNumbers(PseudoRequirementVersion o1, PseudoRequirementVersion o2) {
 		return o1.getRowNumber().compareTo(o2.getRowNumber());
 	}
 

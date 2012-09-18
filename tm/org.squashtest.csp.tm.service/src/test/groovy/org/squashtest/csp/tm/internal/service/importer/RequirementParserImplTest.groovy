@@ -136,7 +136,7 @@ class RequirementParserImplTest extends Specification {
 		pseudoVersion.description == ""
 		pseudoVersion.label == "label"
 		pseudoVersion.reference == ""
-		pseudoVersion.state == RequirementStatus.WORK_IN_PROGRESS
+		pseudoVersion.status == RequirementStatus.WORK_IN_PROGRESS
 		pseudoVersion.version == null
 	}
 	def "should parse minimum criticality"(){
@@ -176,7 +176,7 @@ class RequirementParserImplTest extends Specification {
 		PseudoRequirement pseudoRequirement = parser.createPseudoRequirement (row, columnsMapping, lastFolder)
 		then:
 		PseudoRequirementVersion pseudoVersion = pseudoRequirement.pseudoRequirementVersions.get(0)
-		pseudoVersion.state == RequirementStatus.UNDER_REVIEW
+		pseudoVersion.status == RequirementStatus.UNDER_REVIEW
 	}
 	def "should parse minimum state 2"(){
 		given :
@@ -189,7 +189,7 @@ class RequirementParserImplTest extends Specification {
 		PseudoRequirement pseudoRequirement = parser.createPseudoRequirement (row, columnsMapping, lastFolder)
 		then:
 		PseudoRequirementVersion pseudoVersion = pseudoRequirement.pseudoRequirementVersions.get(0)
-		pseudoVersion.state == RequirementStatus.WORK_IN_PROGRESS
+		pseudoVersion.status == RequirementStatus.WORK_IN_PROGRESS
 	}
 	def "should parse minimum ref"(){
 		given :
