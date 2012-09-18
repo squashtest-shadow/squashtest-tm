@@ -28,7 +28,6 @@ import java.util.List;
 import java.util.Map;
 
 import org.apache.poi.openxml4j.exceptions.InvalidFormatException;
-import org.apache.poi.ss.usermodel.Cell;
 import org.apache.poi.ss.usermodel.Row;
 import org.apache.poi.ss.usermodel.Sheet;
 import org.apache.poi.ss.usermodel.Workbook;
@@ -44,40 +43,40 @@ import org.squashtest.csp.tm.domain.requirement.RequirementFolder;
  * regarding the summary : may increment total test cases, warnings and failures, but not success.
  * 
  * @author bsiri
- *
+ * 
  */
-class RequirementHierarchyCreator{
+class RequirementHierarchyCreator {
 	private static final Logger LOGGER = LoggerFactory.getLogger(RequirementHierarchyCreator.class);
 
 	private RequirementParser parser;
 	private ImportSummaryImpl summary = new ImportSummaryImpl();
 	private RequirementFolder root;
-	
-	public RequirementHierarchyCreator(){
+
+	public RequirementHierarchyCreator() {
 		root = new RequirementFolder();
-		
+
 	}
 
-	public void setParser(RequirementParser parser){
+	public void setParser(RequirementParser parser) {
 		this.parser = parser;
 	}
-	
-	public ImportSummaryImpl getSummary(){
+
+	public ImportSummaryImpl getSummary() {
 		return summary;
 	}
-		
-	public RequirementFolder getNodes(){
+
+	public RequirementFolder getNodes() {
 		return root;
 	}
-	
-	public Map<RequirementFolder, List<PseudoRequirement>> create(InputStream excelStream){
+
+	public Map<RequirementFolder, List<PseudoRequirement>> create(InputStream excelStream) {
 		Map<RequirementFolder, List<PseudoRequirement>> organizedRequirementLibraryNodes = new HashMap<RequirementFolder, List<PseudoRequirement>>();
 		organizedRequirementLibraryNodes.put(root, new ArrayList<PseudoRequirement>());
 		try {
 			Workbook workbook = WorkbookFactory.create(excelStream);
 			parseFile(workbook, organizedRequirementLibraryNodes);
 			excelStream.close();
-						
+
 		} catch (InvalidFormatException e) {
 			LOGGER.warn(e.getMessage());
 			throw new SheetCorruptedException(e);
@@ -89,7 +88,8 @@ class RequirementHierarchyCreator{
 
 	}
 
-	private void parseFile(Workbook workbook, Map<RequirementFolder, List<PseudoRequirement>> organizedRequirementLibraryNodes) {
+	private void parseFile(Workbook workbook,
+			Map<RequirementFolder, List<PseudoRequirement>> organizedRequirementLibraryNodes) {
 		Sheet sheet = workbook.getSheetAt(0);
 		Map<String, Integer> columnsMapping = ExcelRowReaderUtils.mapColumns(sheet);
 		for (int r = 1; r < sheet.getLastRowNum(); r++) {
@@ -98,10 +98,4 @@ class RequirementHierarchyCreator{
 		}
 	}
 
-	
-
-	
-
-	
-	
 }

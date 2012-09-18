@@ -106,7 +106,8 @@ public class RequirementLibraryNavigationController extends
 	JsTreeNode addNewRequirementToLibraryRootContent(@PathVariable long libraryId,
 			@Valid @ModelAttribute("add-requirement") NewRequirementVersionDto firstVersion) {
 
-		Requirement req = requirementLibraryNavigationService.addRequirementToRequirementLibrary(libraryId, firstVersion);
+		Requirement req = requirementLibraryNavigationService.addRequirementToRequirementLibrary(libraryId,
+				firstVersion);
 
 		if (LOGGER.isDebugEnabled()) {
 			LOGGER.debug("RequirementCreationController : creation of a new requirement, name : "
@@ -241,19 +242,20 @@ public class RequirementLibraryNavigationController extends
 		}
 
 	}
-	
-	@RequestMapping(value="/import/upload", method = RequestMethod.POST,  params = "upload-ticket")
-	public ModelAndView importArchive(@RequestParam("archive") MultipartFile archive, 
-			@RequestParam("projectId") Long projectId) throws IOException{
-		
+
+	@RequestMapping(value = "/import/upload", method = RequestMethod.POST, params = "upload-ticket")
+	public ModelAndView importArchive(@RequestParam("archive") MultipartFile archive,
+			@RequestParam("projectId") long projectId) throws IOException {
+
 		InputStream stream = archive.getInputStream();
-		ImportSummary summary =  requirementLibraryNavigationService.importExcel(stream, projectId);
-		ModelAndView mav =  new ModelAndView("fragment/import/import-summary");
+		ImportSummary summary = requirementLibraryNavigationService.importExcel(stream, projectId);
+		ModelAndView mav = new ModelAndView("fragment/import/import-summary");
 		mav.addObject("summary", summary);
 		mav.addObject("workspace", "requirement");
 		return mav;
-		
+
 	}
+
 	/* ********************************** private stuffs ******************************* */
 
 	private void flushStreams(InputStream inStream, ServletOutputStream outStream) throws IOException {
@@ -268,12 +270,12 @@ public class RequirementLibraryNavigationController extends
 		} while (readByte != EOF);
 
 	}
-	
 
 	@RequestMapping(value = "/drives", method = RequestMethod.GET, params = { "linkables" })
 	public @ResponseBody
 	List<JsTreeNode> getLinkablesRootModel() {
-		List<RequirementLibrary> linkableLibraries = requirementLibraryNavigationService.findLinkableRequirementLibraries();
+		List<RequirementLibrary> linkableLibraries = requirementLibraryNavigationService
+				.findLinkableRequirementLibraries();
 		return createLinkableLibrariesModel(linkableLibraries);
 	}
 
@@ -283,5 +285,5 @@ public class RequirementLibraryNavigationController extends
 
 		return listBuilder.setModel(linkableLibraries).build();
 	}
-	
+
 }

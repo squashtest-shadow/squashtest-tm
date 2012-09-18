@@ -21,7 +21,6 @@
 package org.squashtest.csp.tm.internal.service;
 
 import java.io.InputStream;
-import java.util.LinkedList;
 import java.util.List;
 
 import javax.inject.Inject;
@@ -60,7 +59,7 @@ import org.squashtest.csp.tm.service.importer.ImportSummary;
 public class RequirementLibraryNavigationServiceImpl extends
 		AbstractLibraryNavigationService<RequirementLibrary, RequirementFolder, RequirementLibraryNode> implements
 		RequirementLibraryNavigationService, RequirementLibraryFinderService {
-	
+
 	private static final String OR_HAS_ROLE_ADMIN = "or hasRole('ROLE_ADMIN')";
 	@Inject
 	private RequirementLibraryDao requirementLibraryDao;
@@ -84,11 +83,10 @@ public class RequirementLibraryNavigationServiceImpl extends
 	@Inject
 	private ProjectFilterModificationService projectFilterModificationService;
 
-	@SuppressWarnings("rawtypes")
 	@Inject
 	@Qualifier("squashtest.tm.service.RequirementLibrarySelectionStrategy")
 	private LibrarySelectionStrategy<RequirementLibrary, RequirementLibraryNode> libraryStrategy;
-	
+
 	@Inject
 	private RequirementTestCaseLinksImporter requirementTestCaseLinksImporter;
 
@@ -98,7 +96,7 @@ public class RequirementLibraryNavigationServiceImpl extends
 	}
 
 	@Override
-	@PostAuthorize("hasPermission(returnObject,'READ') "+OR_HAS_ROLE_ADMIN)
+	@PostAuthorize("hasPermission(returnObject,'READ') " + OR_HAS_ROLE_ADMIN)
 	public Requirement findRequirement(long reqId) {
 		return requirementDao.findById(reqId);
 	}
@@ -113,34 +111,33 @@ public class RequirementLibraryNavigationServiceImpl extends
 		return requirementFolderDao;
 	}
 
-	@SuppressWarnings("rawtypes")
 	@Override
 	protected final LibraryNodeDao<RequirementLibraryNode> getLibraryNodeDao() {
 		return requirementLibraryNodeDao;
 	}
-	
-	
+
+	@SuppressWarnings("unchecked")
 	@Override
 	public String getPathAsString(long entityId) {
-		//get
+		// get
 		RequirementLibraryNode node = getLibraryNodeDao().findById(entityId);
-		
-		//check
+
+		// check
 		checkPermission(new SecurityCheckableObject(node, "READ"));
-		
-		//proceed
+
+		// proceed
 		List<String> names = getLibraryNodeDao().getParentsName(entityId);
-		
-		return "/"+node.getProject().getName()+"/"+formatPath(names);
-		
+
+		return "/" + node.getProject().getName() + "/" + formatPath(names);
+
 	}
-	
-	private String formatPath(List<String> names){
+
+	private String formatPath(List<String> names) {
 		StringBuilder builder = new StringBuilder();
-		for (String name : names){
+		for (String name : names) {
 			builder.append("/").append(name);
 		}
-		return builder.toString();		
+		return builder.toString();
 	}
 
 	@Override
@@ -214,7 +211,7 @@ public class RequirementLibraryNavigationServiceImpl extends
 
 		return requirement;
 	}
-	
+
 	@Override
 	public List<ExportRequirementData> findRequirementsToExportFromLibrary(List<Long> libraryIds) {
 		return setFullFolderPath(requirementDao.findRequirementToExportFromLibrary(libraryIds));
@@ -224,29 +221,28 @@ public class RequirementLibraryNavigationServiceImpl extends
 	public List<ExportRequirementData> findRequirementsToExportFromFolder(List<Long> folderIds) {
 		return setFullFolderPath(requirementDao.findRequirementToExportFromFolder(folderIds));
 	}
-	
+
 	private List<ExportRequirementData> setFullFolderPath(List<ExportRequirementData> dataset) {
-		for(ExportRequirementData data : dataset) {
-			//get folder id
+		for (ExportRequirementData data : dataset) {
+			// get folder id
 			Long id = data.getFolderId();
-			//set the full path attribute
+			// set the full path attribute
 			StringBuilder path = new StringBuilder();
-			//path.append(data.getProject());
-			//if the requirement is not directly located under
-			if(id != ExportRequirementData.NO_FOLDER) {
+
+			// if the requirement is not directly located under
+			if (id != ExportRequirementData.NO_FOLDER) {
 				for(String name : requirementLibraryNodeDao.getParentsName(id)) {
-					path.append('/'+name);
+					path.append('/' + name);
 				}
 				path.deleteCharAt(0);
 			}
-			//path.append('/'+data.getName());
 			data.setFolderName(path.toString());
 		}
 		return dataset;
 	}
-	
+
 	@Override
-	@PostFilter("hasPermission(filterObject, 'LINK') "+OR_HAS_ROLE_ADMIN)
+	@PostFilter("hasPermission(filterObject, 'LINK') " + OR_HAS_ROLE_ADMIN)
 	public List<RequirementLibrary> findLinkableRequirementLibraries() {
 		ProjectFilter pf = projectFilterModificationService.findProjectFilterByUserLogin();
 		return pf.getActivated() ? libraryStrategy.getSpecificLibraries(pf.getProjects()) : requirementLibraryDao
@@ -254,7 +250,7 @@ public class RequirementLibraryNavigationServiceImpl extends
 	}
 
 	@Override
-	public ImportSummary importExcel(InputStream stream, Long libraryId) {
+	public ImportSummary importExcel(InputStream stream, long libraryId) {
 		return requirementImporter.importExcelRequirements(stream, libraryId);
 	}
 

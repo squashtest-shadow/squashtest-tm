@@ -58,7 +58,7 @@ public interface RequirementLibraryNavigationService extends
 	 * @param libraryId the identifier of the library we are importing requirements into.
 	 * @return a summary of the operations.
 	 */
-	ImportSummary importExcel(InputStream stream, Long projectId);
+	ImportSummary importExcel(InputStream stream, long projectId);
 	
 	/**
 	 * Accepts a stream to a .xls / .xlsx file info for requirement and test-case links. Will

@@ -47,12 +47,10 @@ import org.squashtest.csp.tm.service.importer.ImportSummary;
 class RequirementLibraryMerger {
 
 	private RequirementLibraryNavigationService service;
-	
+
 	private SessionFactory sessionFactory;
 
 	private ImportSummaryImpl summary = new ImportSummaryImpl();
-
-	
 
 	public RequirementLibraryMerger(RequirementLibraryNavigationService service, SessionFactory sessionFactory) {
 		this.service = service;
@@ -99,6 +97,7 @@ class RequirementLibraryMerger {
 
 	}
 
+	@SuppressWarnings("rawtypes")
 	private void mergeContent(Set<RequirementLibraryNode> nodes, RequirementFolder persisted,
 			Map<RequirementFolder, List<PseudoRequirement>> organizedPseudoReqNodes) {
 		for (RequirementLibraryNode node : nodes) {
@@ -141,6 +140,7 @@ class RequirementLibraryMerger {
 			this.destLibrary = null;
 		}
 
+		@SuppressWarnings("rawtypes")
 		protected Set<RequirementLibraryNode> getDestinationContent() {
 			if (destLibrary != null) {
 				return destLibrary.getRootContent();
@@ -149,6 +149,7 @@ class RequirementLibraryMerger {
 			}
 		}
 
+		@SuppressWarnings("rawtypes")
 		protected List<String> getNamesAtDestination() {
 			Set<RequirementLibraryNode> nodes = null;
 			if (destLibrary != null) {
@@ -189,6 +190,7 @@ class RequirementLibraryMerger {
 
 		}
 
+		@SuppressWarnings("rawtypes")
 		protected void addVersion(Requirement requirement, RequirementVersion newVersion) {
 			if (destLibrary != null) {
 				Set<RequirementLibraryNode> rlns = destLibrary.getRootContent();
@@ -200,6 +202,7 @@ class RequirementLibraryMerger {
 			}
 		}
 
+		@SuppressWarnings("rawtypes")
 		private void renameIfNeededAndAddVersion(Requirement requirement, RequirementVersion newVersion,
 				Set<RequirementLibraryNode> rlns) {
 			List<RequirementLibraryNode> homonymes = getHomonymes(rlns, newVersion.getName());
@@ -218,10 +221,12 @@ class RequirementLibraryMerger {
 			context.sessionFactory.getCurrentSession().persist(requirement.getCurrentVersion());
 		}
 
+		@SuppressWarnings("rawtypes")
 		private boolean homonymesAreNotOnlyRequirement(Requirement requirement, List<RequirementLibraryNode> homonymes) {
 			return (homonymes.size() == 1 && homonymes.get(0).equals(requirement)) || homonymes.size() == 0;
 		}
 
+		@SuppressWarnings("rawtypes")
 		private List<RequirementLibraryNode> getHomonymes(Set<RequirementLibraryNode> rlns, String name) {
 			List<RequirementLibraryNode> homonymes = new ArrayList<RequirementLibraryNode>();
 			for (RequirementLibraryNode rln : rlns) {
@@ -231,8 +236,6 @@ class RequirementLibraryMerger {
 			}
 			return homonymes;
 		}
-
-		
 
 		protected void persistFolder(RequirementFolder folder) {
 			if (destLibrary != null) {
@@ -302,6 +305,7 @@ class RequirementLibraryMerger {
 			req.setDescription(pseudoRequirementVersion.getDescription());
 			req.setName(pseudoRequirementVersion.getLabel());
 			req.setReference(pseudoRequirementVersion.getReference());
+			// STATUS ??
 
 			return req;
 		}
@@ -310,10 +314,10 @@ class RequirementLibraryMerger {
 
 	private static class FolderMerger extends DestinationManager {
 
-		public RequirementFolder toMerge;//NOSONAR
-		public RequirementFolder persisted;//NOSONAR
-		public FolderHomonymeVisitor visitor = new FolderHomonymeVisitor(this);//NOSONAR
-		public List<String> names;//NOSONAR
+		public RequirementFolder toMerge;// NOSONAR
+		public RequirementFolder persisted;// NOSONAR
+		public FolderHomonymeVisitor visitor = new FolderHomonymeVisitor(this);// NOSONAR
+		public List<String> names;// NOSONAR
 
 		public void merge(RequirementFolder visited, RequirementLibrary library) {
 			setDestination(library);

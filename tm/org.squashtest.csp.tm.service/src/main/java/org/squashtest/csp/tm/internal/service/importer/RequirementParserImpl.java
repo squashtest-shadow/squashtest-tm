@@ -39,7 +39,7 @@ import org.squashtest.csp.tm.domain.requirement.RequirementLibraryNode;
 public class RequirementParserImpl implements RequirementParser {
 
 	private static final Logger LOGGER = LoggerFactory.getLogger(RequirementParserImpl.class);
-	
+
 	@Override
 	public void parseRow(RequirementFolder root, Row row, ImportSummaryImpl summary,
 			Map<String, Integer> columnsMapping,
@@ -50,7 +50,7 @@ public class RequirementParserImpl implements RequirementParser {
 					organizedRequirementLibraryNodes);
 			PseudoRequirement pseudoRequirement = createPseudoRequirement(row, columnsMapping, lastFolder);
 			addPseudoRequirementToFolderList(organizedRequirementLibraryNodes, lastFolder, pseudoRequirement);
-			if(lastFolder.equals(root)&& pseudoRequirement == null){
+			if (lastFolder.equals(root) && pseudoRequirement == null) {
 				summary.incrFailures();
 			}
 		}
@@ -74,7 +74,8 @@ public class RequirementParserImpl implements RequirementParser {
 	private void mergeVersions(PseudoRequirement pseudoRequirement, List<PseudoRequirement> lastFolderRequirements) {
 		PseudoRequirement versionedPseudoRequirement = null;
 		for (PseudoRequirement lastFolderRequirement : lastFolderRequirements) {
-			if (lastFolderRequirement.getId() != null && (lastFolderRequirement.getId().compareTo(pseudoRequirement.getId())==0) ){
+			if (lastFolderRequirement.getId() != null
+					&& (lastFolderRequirement.getId().compareTo(pseudoRequirement.getId()) == 0)) {
 				versionedPseudoRequirement = lastFolderRequirement;
 			}
 		}
@@ -179,10 +180,10 @@ public class RequirementParserImpl implements RequirementParser {
 			} else {
 				if (type == Cell.CELL_TYPE_NUMERIC) {
 					Double doubleVal = cell.getNumericCellValue();
-					if(doubleVal - doubleVal.intValue() == 0){
-						toReturn =""+doubleVal.intValue();
-					}else{
-					toReturn = doubleVal.toString();
+					if (doubleVal - doubleVal.intValue() == 0) {
+						toReturn = "" + doubleVal.intValue();
+					} else {
+						toReturn = doubleVal.toString();
 					}
 				}
 			}
@@ -263,6 +264,7 @@ public class RequirementParserImpl implements RequirementParser {
 	 *            : a list of RequirementLibraryNode that we know is only of RequirementFolders
 	 * @return
 	 */
+	@SuppressWarnings("rawtypes")
 	private RequirementFolder getFolderByName(String name, Set<RequirementLibraryNode> content) {
 		for (RequirementLibraryNode requirementFolder : content) {
 			if (requirementFolder.getName().equals(name)) {

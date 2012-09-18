@@ -33,47 +33,39 @@ import org.squashtest.csp.tm.domain.requirement.RequirementLibrary;
 import org.squashtest.csp.tm.service.RequirementLibraryNavigationService;
 import org.squashtest.csp.tm.service.importer.ImportSummary;
 
-
 @Component
 public class RequirementImporter {
-	
-	
+
 	@Inject
 	private RequirementLibraryNavigationService service;
 	@Inject
 	private SessionFactory sessionFactory;
-	
+
 	private RequirementParser parser = new RequirementParserImpl();
-	
-	
-	public ImportSummary importExcelRequirements(InputStream excelStream, Long libraryId){
-		
+
+	public ImportSummary importExcelRequirements(InputStream excelStream, long libraryId) {
+
 		ImportSummaryImpl summary = new ImportSummaryImpl();
-		
+
 		/* phase 1 : convert the content of the archive into Squash entities */
-		
+
 		RequirementHierarchyCreator creator = new RequirementHierarchyCreator();
 		creator.setParser(parser);
-		
+
 		Map<RequirementFolder, List<PseudoRequirement>> organizedPseudoReqNodes = creator.create(excelStream);
-		
+
 		RequirementFolder root = creator.getNodes();
 		summary.add(creator.getSummary());
-		
-		
-//		/* phase 2 : merge with the actual database content */
-		
+
+		// /* phase 2 : merge with the actual database content */
+
 		RequirementLibrary library = service.findCreatableLibrary(libraryId);	
 		RequirementLibraryMerger merger = new RequirementLibraryMerger(service, sessionFactory);
 		merger.mergeIntoLibrary(library, root, organizedPseudoReqNodes);
-		
+
 		summary.add(merger.getSummary());
-		
-		
+
 		return summary;
 	}
 
-
-	
-	
 }
