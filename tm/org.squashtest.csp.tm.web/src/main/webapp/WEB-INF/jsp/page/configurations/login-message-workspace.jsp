@@ -31,7 +31,7 @@
 <c:url var="editLoginMsgUrl" value="/configuration/modify-login-message"/>
 
 
-<layout:info-page-layout titleKey="admin.login-message.management.url.label" highlightedWorkspace="requirement" isSubPaged="true">
+<layout:info-page-layout titleKey="label.ConsultModifyLoginMessage" highlightedWorkspace="requirement" isSubPaged="true">
 	<jsp:attribute  name="head">
 		<link rel="stylesheet" type="text/css" href="${ pageContext.servletContext.contextPath }/styles/master.blue.css" />
 	</jsp:attribute>
@@ -41,7 +41,7 @@
 	</jsp:attribute>
 		
 	<jsp:attribute name="subPageTitle">
-		<h2><f:message key="admin.login-message.management.url.label" /></h2>
+		<h2><f:message key="label.ConsultModifyLoginMessage" /></h2>
 	</jsp:attribute>
 	
 	<jsp:attribute name="subPageButtons">
