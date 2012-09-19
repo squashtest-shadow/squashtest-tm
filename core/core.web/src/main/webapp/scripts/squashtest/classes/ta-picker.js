@@ -105,7 +105,7 @@ function TestAutomationPicker(settings){
 		var icons = {
 			drive : baseURL+"/images/root.png",
 			folder :  baseURL+"/images/Icon_Tree_Folder.png",
-			file : baseURL+"/images/Icon_Tree_TestSuite.png",
+			file : baseURL+"/images/cog.png",
 			mainstyle : baseURL+"/styles/squashtree.css"					
 		};
 	

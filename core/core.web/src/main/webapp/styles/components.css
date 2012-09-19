@@ -581,53 +581,48 @@ span.span-green {
 	exec statuses - adds background icon  
 ********************************/
 .exec-status-blocked, .exec-status-BLOCKED {
-	background: transparent url(../images/Icon_Yellow.png) no-repeat center left;
+	background: transparent url("../images/Icon_Yellow.png") no-repeat center left;
 	padding-left: 20px;
 }
 .exec-status-failure, .exec-status-FAILURE {
-	background: transparent url(../images/Icon_Red.png) no-repeat center left;
+	background: transparent url("../images/Icon_Red.png") no-repeat center left;
 	padding-left: 20px;
 }
 .exec-status-success, .exec-status-SUCCESS  {
-	background: transparent url(../images/Icon_Green.png) no-repeat center left;
+	background: transparent url("../images/Icon_Green.png") no-repeat center left;
 	padding-left: 20px;
 }
 .exec-status-running, .exec-status-RUNNING {
-	background: transparent url(../images/Icon_Blue.png) no-repeat center left;
+	background: transparent url("../images/Icon_Blue.png") no-repeat center left;
 	padding-left: 20px;
 }
 .exec-status-ready, .exec-status-READY  {
-	background: transparent url(../images/Icon_Grey.png) no-repeat center left;
+	background: transparent url("../images/Icon_Grey.png") no-repeat center left;
 	padding-left: 20px;
 }
 .exec-status-error, .exec-status-ERROR {
-	background: transparent url(../images/Icon_Yellow.png) no-repeat center left;
+	background: transparent url("../images/Icon_Yellow.png") no-repeat center left;
 	padding-left: 20px;
 }
 .exec-status-warning, .exec-status-WARNING  {
-	background: transparent url(../images/Icon_Green.png) no-repeat center left;
+	background: transparent url("../images/Icon_Green.png") no-repeat center left;
 	padding-left: 20px;
-}}
+}
+
 /*******************************
  * test case / execution mode 
  *******************************/
 .exec-mode-automated {
-	/* copy-pasta of ui-icon-gear */
-	background-image: url(jquery/ui/images/ui-icons_469bdd_256x240.png);
-	background-position: -192px -112px;
+	background: url("../images/cog.png") no-repeat center center
 }
 .exec-mode-manual {
 }
-.exec-mode-manual, .exec-mode-automated {
+.exec-mode.exec-mode-manual, .exec-mode.exec-mode-automated {
 	color: transparent;
 	overflow: hidden;
-	zoom: 133%;
-	/* copy-pasta of ui-icon */
-	width: 16px;
-	height: 16px;
+	min-width: 16px;
+	min-height: 16px;
 	display: block;
-	text-indent: -99999px;
-	background-repeat: no-repeat;
 }
 
 
