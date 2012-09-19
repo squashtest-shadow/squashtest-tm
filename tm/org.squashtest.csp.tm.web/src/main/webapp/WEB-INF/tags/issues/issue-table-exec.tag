@@ -24,15 +24,15 @@
 	
 <%@ tag language="java" pageEncoding="ISO-8859-1"%>
 <%@ taglib prefix="pop" tagdir="/WEB-INF/tags/popup" %>
-<%@ taglib uri="http://java.sun.com/jsp/jstl/fmt" prefix="f"%>
-<%@ taglib uri="http://java.sun.com/jsp/jstl/core" prefix="c"%>
+<%@ taglib prefix="f" uri="http://java.sun.com/jsp/jstl/fmt" %>
+<%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core" %>
 <%@ taglib prefix="s" uri="http://www.springframework.org/tags"%>
-<%@ taglib tagdir="/WEB-INF/tags/component" prefix="comp"%>	
+<%@ taglib prefix="comp" tagdir="/WEB-INF/tags/component" %>	
 <%@ taglib prefix="dt" tagdir="/WEB-INF/tags/datatables" %>
 
-<%@ attribute name="interfaceDescriptor" type="java.lang.Object" required="true" description="an object holding the labels for the interface"%>
+<%@ attribute name="interfaceDescriptor" type="java.lang.Object" required="true" description="an object holding the labels for the interface" %>
 <%@ attribute name="dataUrl" required="true" description="where the table will fetch its data" %>
-
+<%@ attribute name="freeSettings" required="true" description="added settings to issue table" %>
 <%-- 
 	columns are :
 	
@@ -93,10 +93,12 @@
 	} 
 
 </script>
+
+
 <comp:decorate-ajax-table url="${dataUrl}" tableId="issue-table" paginate="true" >
 	<jsp:attribute name="initialSort">[[1,'desc']]</jsp:attribute>
 	<jsp:attribute name="rowCallback">issueTableRowCallback</jsp:attribute> 
-	<jsp:attribute name="freeSettings">iDeferLoading : 0</jsp:attribute>
+	<jsp:attribute name="freeSettings">${ freeSettings }</jsp:attribute>
 	<jsp:attribute name="columnDefs">
 		<dt:column-definition targets="0" visible="false" sortable="false" />
 		<dt:column-definition targets="1" width="2.5em" cssClass="select-handle centered" sortable="true" visible="true"/>

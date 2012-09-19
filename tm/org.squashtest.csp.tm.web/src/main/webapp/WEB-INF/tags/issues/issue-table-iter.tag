@@ -32,7 +32,7 @@
 
 <%@ attribute name="interfaceDescriptor" type="java.lang.Object" required="true" description="an object holding the labels for the interface"%>
 <%@ attribute name="dataUrl" required="true" description="where the table will fetch its data" %>
-<%-- 
+<%@ attribute name="freeSettings" required="true" description="added settings to issue table" %><%-- 
 	columns are :
 	
 		- URL  (not shown)
@@ -94,10 +94,11 @@
 
 	
 </script>
+
 <comp:decorate-ajax-table url="${dataUrl}" tableId="issue-table" paginate="true" >
 	<jsp:attribute name="initialSort">[[1,'desc']]</jsp:attribute>
 	<jsp:attribute name="rowCallback">issueTableRowCallback</jsp:attribute> 
-	<jsp:attribute name="freeSettings">iDeferLoading : 0</jsp:attribute>
+	<jsp:attribute name="freeSettings">${ freeSettings }</jsp:attribute>
 	<jsp:attribute name="columnDefs">
 		<dt:column-definition targets="0" visible="false" sortable="false" />
 		<dt:column-definition targets="1" width="2.5em" cssClass="select-handle centered" sortable="true" visible="true"/>

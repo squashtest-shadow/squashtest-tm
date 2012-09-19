@@ -143,7 +143,7 @@
 
 	function refreshIssueTable() {
 		var dataTable = $('#issue-table').dataTable();
-		dataTable.fnDraw();
+		dataTable.fnDraw(false);
 	}
 
 	function enableIssueTable() {
@@ -320,24 +320,31 @@
 			<input type="button" class="button" id="issue-login-button"
 				value="${loginButtonLabel}" />
 		</div>
-	
+	<c:choose>
+		<c:when test="${ bugTrackerStatus == 'BUGTRACKER_READY' }">
+			<c:set var="freeSettings" value="iDeferLoading : null "/>
+		</c:when>
+		<c:otherwise>
+			<c:set var="freeSettings" value="iDeferLoading : 0 "/>
+		</c:otherwise>
+	</c:choose>
 		<div id="issue-panel-known-issue-table-div"${knownIssuesTableInitCss}>
 			<c:choose>
 				<c:when test="${entityType == 'execution-step'}">
 					<is:issue-table-execstep dataUrl="${tableUrl}"
-						interfaceDescriptor="${interfaceDescriptor}" />
+						interfaceDescriptor="${interfaceDescriptor}" freeSettings="${ freeSettings }" />
 				</c:when>
 				<c:when test="${entityType == 'execution'}">
 					<is:issue-table-exec dataUrl="${tableUrl}"
-						interfaceDescriptor="${interfaceDescriptor}" />			
+						interfaceDescriptor="${interfaceDescriptor}"  freeSettings="${ freeSettings }" />			
 				</c:when>
 				
 				<c:when
 					test="${entityType == 'iteration'||entityType == 'test-suite'||entityType == 'campaign'}">
-					<is:issue-table-iter dataUrl="${tableUrl}" interfaceDescriptor="${interfaceDescriptor}" />
+					<is:issue-table-iter dataUrl="${tableUrl}" interfaceDescriptor="${interfaceDescriptor}"  freeSettings="${ freeSettings }" />
 				</c:when>
 				<c:when test="${entityType == 'test-case' }">
-					<is:issue-table-tc dataUrl="${tableUrl}" interfaceDescriptor="${interfaceDescriptor}" />
+					<is:issue-table-tc dataUrl="${tableUrl}" interfaceDescriptor="${interfaceDescriptor}"  freeSettings="${ freeSettings }" />
 				</c:when>
 			</c:choose>
 		</div>
@@ -384,11 +391,7 @@ check that in the next <script></script> tags
 		<c:if test="${editable}">
 		$("#issue-report-dialog-openbutton").click(checkAndReportIssue);
 		</c:if>
-		$("#issue-login-button").click(bugTrackerLogin);
-
-		<c:if test="${bugTrackerStatus == 'BUGTRACKER_READY'}">
-		refreshIssueTable();
-		</c:if>
+		$("#issue-login-button").click(bugTrackerLogin);		
 
 	});
 </script>
