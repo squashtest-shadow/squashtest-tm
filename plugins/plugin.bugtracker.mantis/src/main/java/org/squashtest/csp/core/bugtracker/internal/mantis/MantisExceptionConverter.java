@@ -77,10 +77,10 @@ public class MantisExceptionConverter {
 
 	/* *************** keys that should match the Mantis error messages. Their initial values will hopefully match 
 	 * the error messages if the key wasn't found in the message source. ********************* */
-	private String REMOTE_WRONG_CREDENTIALS = "Access Denied";
-	private String REMOTE_SUMMARY_REQUIRED = "Mandatory field \'summary\'";
-	private String REMOTE_DESCRIPTION_REQUIRED = "Mandatory field \'description\'";	
-	private String REMOTE_ISSUE_NOT_FOUND = "Issue does not exist";
+	private String remoteWrongCredential = "Access Denied";
+	private String remoteSummaryRequired = "Mandatory field \'summary\'";
+	private String remoteDescriptionRequired = "Mandatory field \'description\'";	
+	private String remoteIssueNotFound = "Issue does not exist";
 	
 	
 	public MantisExceptionConverter(){
@@ -137,15 +137,15 @@ public class MantisExceptionConverter {
 	public void init(){
 		Locale locale = Locale.getDefault();
 		
-		REMOTE_WRONG_CREDENTIALS = messageSource.getMessage(MantisMessageKeys.WRONG_CREDENTIAL, null, REMOTE_WRONG_CREDENTIALS,locale);
-		REMOTE_SUMMARY_REQUIRED = messageSource.getMessage(MantisMessageKeys.MANDATORY_SUMMARY_REQUIRED, null, REMOTE_SUMMARY_REQUIRED, locale);
-		REMOTE_DESCRIPTION_REQUIRED = messageSource.getMessage(MantisMessageKeys.MANDATORY_DESCRIPTION_REQUIRED, null, REMOTE_DESCRIPTION_REQUIRED, locale);
-		REMOTE_ISSUE_NOT_FOUND = messageSource.getMessage(MantisMessageKeys.ISSUE_NOT_FOUND, null, REMOTE_ISSUE_NOT_FOUND, locale);
+		remoteWrongCredential = messageSource.getMessage(MantisMessageKeys.WRONG_CREDENTIAL, null, remoteWrongCredential,locale);
+		remoteSummaryRequired = messageSource.getMessage(MantisMessageKeys.MANDATORY_SUMMARY_REQUIRED, null, remoteSummaryRequired, locale);
+		remoteDescriptionRequired = messageSource.getMessage(MantisMessageKeys.MANDATORY_DESCRIPTION_REQUIRED, null, remoteDescriptionRequired, locale);
+		remoteIssueNotFound = messageSource.getMessage(MantisMessageKeys.ISSUE_NOT_FOUND, null, remoteIssueNotFound, locale);
 	}
 	
 	private BugTrackerRemoteException setIfAccessDenied(RemoteException remoteException){
 		String message = remoteException.getMessage();
-		if (message.equals(REMOTE_WRONG_CREDENTIALS )){
+		if (message.equals(remoteWrongCredential )){
 			String translation = messageSource.getMessage(SquashMessageKeys.WRONG_CREDENTIAL, null, getLocale());
 			return new BugTrackerNoCredentialsException(translation, remoteException);
 		}
@@ -154,7 +154,7 @@ public class MantisExceptionConverter {
 	
 	private BugTrackerRemoteException setIfMandatorySummaryNotSet(RemoteException remoteException){
 		String message = remoteException.getMessage();
-		if (message.contains(REMOTE_SUMMARY_REQUIRED )){
+		if (message.contains(remoteSummaryRequired )){
 			String translation = messageSource.getMessage(SquashMessageKeys.MANDATORY_SUMMARY_REQUIRED, null, getLocale());
 			return new BugTrackerRemoteException(translation, remoteException);
 		}
@@ -163,7 +163,7 @@ public class MantisExceptionConverter {
 	
 	private BugTrackerRemoteException setIfMandatoryDescriptionNotSet(RemoteException remoteException){
 		String message = remoteException.getMessage();
-		if (message.contains(REMOTE_DESCRIPTION_REQUIRED )){
+		if (message.contains(remoteDescriptionRequired )){
 			String translation = messageSource.getMessage(SquashMessageKeys.MANDATORY_DESCRIPTION_REQUIRED, null, getLocale());
 			return new BugTrackerRemoteException(translation, remoteException);
 		}
@@ -172,7 +172,7 @@ public class MantisExceptionConverter {
 	
 	private BugTrackerRemoteException setIssueNotFoundException(RemoteException remoteException){
 		String message = remoteException.getMessage();
-		if (message.contains(REMOTE_ISSUE_NOT_FOUND )){
+		if (message.contains(remoteIssueNotFound )){
 			String translation = messageSource.getMessage(SquashMessageKeys.ISSUE_NOT_FOUND, null, getLocale());
 			return new BugTrackerNotFoundException(translation, remoteException);
 		}

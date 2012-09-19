@@ -43,7 +43,7 @@ public class Activator implements BundleActivator {
 	/***
 	 * Specific location of log4j properties file
 	 */
-	private static String LOG_PROPERTIES_FILE_LOCATION = "/services/log4j.properties";
+	private static final String LOG_PROPERTIES_FILE_LOCATION = "/services/log4j.properties";
 
 	/***
 	 * This method load the log4j properties file

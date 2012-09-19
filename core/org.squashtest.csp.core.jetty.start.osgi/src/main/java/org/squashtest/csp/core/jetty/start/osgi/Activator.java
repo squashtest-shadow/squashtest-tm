@@ -61,7 +61,7 @@ public class Activator implements BundleActivator {
 	/***
 	 * Name of the global variable to get properties location
 	 */
-	private static String CONFIGURATION_LOCATION = "bundles.configuration.location";
+	private static final String CONFIGURATION_LOCATION = "bundles.configuration.location";
 
 	/***
 	 * Name of the global variable to get logs location
