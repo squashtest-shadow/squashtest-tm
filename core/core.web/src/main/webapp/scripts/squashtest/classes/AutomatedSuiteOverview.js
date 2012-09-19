@@ -37,6 +37,7 @@ function AutomatedSuiteOverviewDialog(settings){
 			executionAutoInfos.empty();
 			$("#execution-auto-progress-bar").progressbar("value", 0);
 			$("#execution-auto-progress-amount").text(0 + "/" + 0);
+			$('#test-plans-table').squashTable().refresh();
 		});
 	}
 		
@@ -82,7 +83,7 @@ function AutomatedSuiteOverviewDialog(settings){
 				var executionHtml = template.clone();
 				
 				//NAME
-				executionHtml.attr('id', "execution-info" + execution.id);
+				executionHtml.attr('id', "execution-info-" + execution.id);
 				executionHtml.find(".executionName").html(execution.name);
 				//STATUS
 				var executionStatus = executionHtml.find(".executionStatus");
