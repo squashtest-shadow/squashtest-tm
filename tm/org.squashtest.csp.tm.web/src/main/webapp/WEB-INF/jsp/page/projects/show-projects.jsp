@@ -28,6 +28,8 @@
 <%@ taglib prefix="comp" tagdir="/WEB-INF/tags/component" %>
 <%@ taglib prefix="jq" tagdir="/WEB-INF/tags/jquery" %>
 <%@ taglib prefix="pop" tagdir="/WEB-INF/tags/popup" %>
+<%@ taglib prefix="sec"
+	uri="http://www.springframework.org/security/tags"%>
 <layout:info-page-layout titleKey="squashtm.project.title">
 	<jsp:attribute  name="head">	
 		<link rel="stylesheet" type="text/css" href="${ pageContext.servletContext.contextPath }/styles/master.purple.css" />	
@@ -107,7 +109,9 @@
  -->
 
 <div class="fragment-body">
+				<sec:authorize access=" hasRole('ROLE_ADMIN')">
 				<input style="float: right;" type="button" value='<f:message key="project.button.add.label" />' id="new-project-button"/>
+				</sec:authorize>
 				<div style="clear:both"></div>
 				<comp:decorate-ajax-table url="${ projectsUrl }" tableId="projects-table" paginate="true">
 					<jsp:attribute name="drawCallback">tableDrawCallback</jsp:attribute>
@@ -139,7 +143,7 @@
 					<tbody><%-- Will be populated through ajax --%></tbody>
 				</table>
 
-
+<sec:authorize access=" hasRole('ROLE_ADMIN')">
 <comp:popup id="add-project-dialog" titleKey="dialog.new-project.title" openedBy="new-project-button">
 	<jsp:attribute name="buttons">
 		<f:message var="label1" key="label.Add" />
@@ -176,6 +180,7 @@
 				</table>
 			</jsp:body>
 </comp:popup>
+</sec:authorize>
 </div>
 </jsp:attribute>
 </layout:info-page-layout>
