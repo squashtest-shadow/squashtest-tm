@@ -184,7 +184,7 @@
 	<c:if test="${execution.automated}">
 	<comp:toggle-panel id="auto-execution-result-summary-panel"
 		titleKey="label.resultSummary" isContextual="true"
-		open="${ not empty execution.prerequisite }">
+		open="${ not empty execution.resultSummary }">
 		<jsp:attribute name="body">
 			<span>${execution.resultSummary}</span>
 		</jsp:attribute>
