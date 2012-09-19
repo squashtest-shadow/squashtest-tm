@@ -280,7 +280,7 @@ public class HttpRequestFactory {
 			name = "(root)/";
 		}
 		
-		name += test.getName().replaceAll("[-\\.]", "_");
+		name += test.getPath()+test.getShortName().replaceAll("[-\\.]", "_");
 		
 		return name;
 		

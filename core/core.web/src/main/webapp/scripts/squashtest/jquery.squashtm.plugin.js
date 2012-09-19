@@ -92,14 +92,14 @@ var squashtm = squashtm || {};
 
 	};
 
-	$.fn.bindFirst = function (event, closure) {
-		var handlers = this.data('events')[event];
-		this.data('events')[event] = [];
+	$.fn.bindFirst = function (type, closure) {
+		var saveHandlers = this.data('events')[type].slice(0);
+		this.data('events')[type] = [];		
 		closure();
 
-		for (var i in handlers) {
-			this.data('events')[event].push(handlers[i]);
-		}
+		for (var i=0; i<saveHandlers.length;i++) {
+			this.data('events')[type].push(saveHandlers[i]);
+		};
 	};
 
 	/* defines functions in the jQuery namespace */

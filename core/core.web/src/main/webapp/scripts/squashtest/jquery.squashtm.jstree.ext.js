@@ -156,22 +156,16 @@
 			
 				container.delegate("a",'click', function (event, data) {
 					if (event.detail && event.detail>1){
-						event.stopImmediatePropagation();		// cancel the
-																// multiple
-																// click event
-																// for ff and
-																// chrome
+						event.stopImmediatePropagation();		// cancel the multiple click event for ff and chrome
 					}else{
 						handleNodeClick(tree, event);
 					}
-					return false; // return false to prevent navigation in
-									// page (# appears at the end of the URL)
+					return false; // return false to prevent navigation in page (# appears at the end of the URL)
 				});
 				
 				container.delegate('a', 'dblclick ', function (event,data){
 					handleNodeDblClick(tree, event);
-					return false; // return false to prevent navigation in
-									// page (# appears at the end of the URL)
+					return false; // return false to prevent navigation in page (# appears at the end of the URL)
 				});
 			});
 			
