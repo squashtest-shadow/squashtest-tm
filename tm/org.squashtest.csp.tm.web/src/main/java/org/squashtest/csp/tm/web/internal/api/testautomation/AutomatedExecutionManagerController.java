@@ -59,7 +59,7 @@ public class AutomatedExecutionManagerController {
 	public @ResponseBody void changeExecutionsStates(@PathVariable String taProjectName, @PathVariable String automatedSuiteId, @PathVariable String automatedTestPath, @PathVariable String automatedTestName,  @RequestBody @Valid TestExecutionStatus stateChange) {
 		AutomatedExecutionSetIdentifier setIdentifier = SquashTaExecutionIdentifierBuilder.builder()
 			.automatedSuiteId(automatedSuiteId)
-			.automatedTestName(automatedTestName)
+			.automatedTestName(stateChange.getTestName())
 			.automatedTestPath(automatedTestPath)
 			.automationProjectName(taProjectName)
 			.build();

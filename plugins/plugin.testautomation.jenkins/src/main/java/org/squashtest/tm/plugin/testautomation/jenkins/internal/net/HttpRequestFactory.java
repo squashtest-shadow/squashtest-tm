@@ -272,19 +272,17 @@ public class HttpRequestFactory {
 	}
 	
 	
-	//XXX for now supports the crappy name format of surefire-formatted TA results. Remember to change
-	//that once the crappy name format changed.
 	private String _toRelativePath(AutomatedTest test) {
 		
-		String crappyName="";
+		String name="";
 		
 		if (test.isAtTheRoot()){
-			crappyName = "(root)/";
+			name = "(root)/";
 		}
 		
-		crappyName += test.getPath()+test.getName().replaceAll("[-.\\/]", "_");
+		name += test.getName().replaceAll("[-\\.]", "_");
 		
-		return crappyName;
+		return name;
 		
 	}
 	

@@ -86,7 +86,7 @@ class HttpRequestFactoryTest extends Specification {
 	}
 	
 	
-	def "should create the crappy result path for tests being at the root of the project"(){
+	def "should create the result path for tests being at the root of the project"(){
 		given :
 			AutomatedTest test = new AutomatedTest("tests/mon-test.txt", null)
 			
@@ -94,7 +94,7 @@ class HttpRequestFactoryTest extends Specification {
 			def res = factory._toRelativePath(test)
 			
 		then :
-			res == "(root)/tests/tests_mon_test_txt" 
+			res == "(root)/tests/mon_test_txt" 
 	}
 	
 	def "should create the crappy result path for tests being in deeper folders of the project"(){
@@ -106,7 +106,7 @@ class HttpRequestFactoryTest extends Specification {
 			def res = factory._toRelativePath(test)
 		
 		then :
-			res == "tests/subfolder/tests_subfolder_re_test_txt"
+			res == "tests/subfolder/re_test_txt"
 		
 	}
 
