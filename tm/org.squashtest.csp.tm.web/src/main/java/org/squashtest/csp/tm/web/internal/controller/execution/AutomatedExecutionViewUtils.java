@@ -35,7 +35,7 @@ import org.squashtest.csp.tm.domain.testautomation.AutomatedExecutionExtender;
 import org.squashtest.csp.tm.domain.testautomation.AutomatedSuite;
 import org.squashtest.csp.tm.web.internal.helper.JsonHelper;
 
-public class AutomatedExecutionViewUtils {
+public final class AutomatedExecutionViewUtils {
 	private AutomatedExecutionViewUtils() {
 
 	}

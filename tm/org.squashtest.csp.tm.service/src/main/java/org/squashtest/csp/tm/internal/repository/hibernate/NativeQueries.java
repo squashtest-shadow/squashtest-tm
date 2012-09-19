@@ -28,7 +28,7 @@ package org.squashtest.csp.tm.internal.repository.hibernate;
  * 
  */
 
-public class NativeQueries {
+public final class NativeQueries {
 	private NativeQueries() {
 
 	}

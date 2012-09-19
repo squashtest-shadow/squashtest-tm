@@ -30,7 +30,7 @@ import java.util.Comparator;
  * @author Gregory Fouquet
  *
  */
-public class LevelComparator implements Comparator<Level>, Serializable {
+public final class LevelComparator implements Comparator<Level>, Serializable {
 	private static final long serialVersionUID = 7546560298276311392L;
 	private static final LevelComparator INSTANCE = new LevelComparator();
 

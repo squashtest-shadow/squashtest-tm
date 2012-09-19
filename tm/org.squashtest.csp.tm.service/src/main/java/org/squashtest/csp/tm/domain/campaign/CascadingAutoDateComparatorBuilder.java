@@ -23,7 +23,7 @@ package org.squashtest.csp.tm.domain.campaign;
 import java.util.Comparator;
 import java.util.Date;
 
-class CascadingAutoDateComparatorBuilder {
+final class CascadingAutoDateComparatorBuilder {
 	
 	private CascadingAutoDateComparatorBuilder(){};
 	

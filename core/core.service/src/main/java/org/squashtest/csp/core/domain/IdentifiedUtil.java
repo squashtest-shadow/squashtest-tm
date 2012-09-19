@@ -23,7 +23,7 @@ package org.squashtest.csp.core.domain;
 import java.util.ArrayList;
 import java.util.List;
 
-public class IdentifiedUtil {
+public final class IdentifiedUtil {
  private IdentifiedUtil(){
 	 
  }

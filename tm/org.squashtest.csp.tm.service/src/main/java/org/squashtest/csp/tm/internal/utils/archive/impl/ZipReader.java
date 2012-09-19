@@ -71,7 +71,7 @@ public class ZipReader implements ArchiveReader {
 
 	/* ****************** nested entry impl****************** */
 	
-	private static class ZipReaderEntry implements Entry{
+	private static final class ZipReaderEntry implements Entry{
 		
 		private InputStream zipStream;
 		private String name;

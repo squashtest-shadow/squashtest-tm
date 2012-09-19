@@ -418,7 +418,7 @@ public class CustomIterationModificationServiceImpl implements CustomIterationMo
 	/* ************************* security ************************* */
 
 	/* **that class just performs the same, using a domainObject directly */
-	private static class SecurityCheckableObject {
+	private static final class SecurityCheckableObject {
 		private final Object domainObject;
 		private final String permission;
 

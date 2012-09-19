@@ -186,7 +186,7 @@ public class GenericNodeManagementService<MANAGED extends LibraryNode, NODE exte
 
 	/* ********************* security scaffolding ************************ */
 
-	private class SecurityCheckableObject {
+	private static final class SecurityCheckableObject {
 		private final Object domainObject;
 		private final String permission;
 

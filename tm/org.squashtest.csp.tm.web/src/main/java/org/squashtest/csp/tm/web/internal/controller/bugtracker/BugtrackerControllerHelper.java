@@ -31,7 +31,7 @@ import org.squashtest.csp.tm.domain.execution.Execution;
 import org.squashtest.csp.tm.domain.execution.ExecutionStep;
 import org.squashtest.csp.tm.domain.testcase.TestCase;
 
-public class BugtrackerControllerHelper {
+public final class BugtrackerControllerHelper {
 	private BugtrackerControllerHelper(){
 		
 	}
