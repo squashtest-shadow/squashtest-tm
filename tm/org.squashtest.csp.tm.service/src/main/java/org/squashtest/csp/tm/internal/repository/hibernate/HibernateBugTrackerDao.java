@@ -20,6 +20,7 @@
  */
 package org.squashtest.csp.tm.internal.repository.hibernate;
 
+import java.util.Collections;
 import java.util.List;
 import java.util.Set;
 
@@ -98,6 +99,7 @@ public class HibernateBugTrackerDao extends HibernateEntityDao<BugTracker> imple
 
 	@Override
 	public List<BugTracker> findDistinctBugTrackersForProjects(final List<Long> projectIds) {
+		if(!projectIds.isEmpty()){
 		return executeListNamedQuery("bugtracker.findDistinctBugTrackersForProjects", new SetQueryParametersCallback() {
 
 			@Override
@@ -105,6 +107,9 @@ public class HibernateBugTrackerDao extends HibernateEntityDao<BugTracker> imple
 				query.setParameterList("projects", projectIds);
 			}
 		});
+		}else{
+			return Collections.emptyList();
+		}
 	}
 
 }
