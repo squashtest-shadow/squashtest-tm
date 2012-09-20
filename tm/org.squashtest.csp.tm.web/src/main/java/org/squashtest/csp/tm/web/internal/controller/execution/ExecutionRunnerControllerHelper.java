@@ -20,6 +20,9 @@
  */
 package org.squashtest.csp.tm.web.internal.controller.execution;
 
+import java.util.Collections;
+import java.util.Set;
+
 import org.springframework.osgi.extensions.annotation.ServiceReference;
 import org.springframework.stereotype.Component;
 import org.springframework.ui.Model;
@@ -85,12 +88,17 @@ public class ExecutionRunnerControllerHelper {
 
 		ExecutionStep executionStep = command.execute(total);
 		
-		int stepOrder = executionStep == null ? 0 : executionStep.getExecutionStepOrder();
+		int stepOrder = 0;
+		Set<ExecutionStatus> statusSet = Collections.emptySet();
+		if(executionStep != null){
+			stepOrder = executionStep.getExecutionStepOrder();
+			statusSet = executionStep.getLegalStatusSet();
+		}
 
 		model.addAttribute("execution", execution);
 		model.addAttribute("executionStep", executionStep);
 		model.addAttribute("totalSteps", total );
-		model.addAttribute("executionStatus", executionStep.getLegalStatusSet() );
+		model.addAttribute("executionStatus", statusSet );
 		model.addAttribute("hasPreviousStep", stepOrder != 0);
 		model.addAttribute("hasNextStep", stepOrder != (total - 1));
 	}
