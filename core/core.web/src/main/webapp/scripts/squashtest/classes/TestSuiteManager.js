@@ -120,7 +120,7 @@ function TestSuiteManagerControl(settings) {
 
 	var updateBtn = function () {
 		var button = self.button;
-		if (self.input.val().length == 0) {
+		if (self.input.val().length == 0 || self.input.val() == self.manager.create.control.defaultMessage) {
 			button.squashButton('disable');
 		} else {
 			button.squashButton('enable');
