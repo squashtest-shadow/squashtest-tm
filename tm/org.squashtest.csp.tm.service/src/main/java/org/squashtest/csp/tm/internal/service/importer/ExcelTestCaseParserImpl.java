@@ -140,6 +140,13 @@ public class ExcelTestCaseParserImpl implements ExcelTestCaseParser {
 				pseudoTestCase.importance = value;
 			}
 		});
+		// created by populator
+		fieldPopulators.add(new FieldPopulator(CREATED_BY_TAG) {
+			protected void doPopulate(PseudoTestCase pseudoTestCase, Row row) {
+				String value = valueCell(row).getStringCellValue();
+				pseudoTestCase.createdBy = value;
+			}
+		});
 		// created on populator
 		fieldPopulators.add(new FieldPopulator(CREATED_ON_TAG) {
 			protected void doPopulate(PseudoTestCase pseudoTestCase, Row row) {
@@ -150,13 +157,6 @@ public class ExcelTestCaseParserImpl implements ExcelTestCaseParser {
 					Date value = valueCell(row).getDateCellValue();
 					pseudoTestCase.createdOnDate = value;
 				}
-			}
-		});
-		// created by populator
-		fieldPopulators.add(new FieldPopulator(CREATED_BY_TAG) {
-			protected void doPopulate(PseudoTestCase pseudoTestCase, Row row) {
-				String value = valueCell(row).getStringCellValue();
-				pseudoTestCase.createdBy = value;
 			}
 		});
 		// prerequisite populator
@@ -360,7 +360,7 @@ public class ExcelTestCaseParserImpl implements ExcelTestCaseParser {
 		
 		//compute cell content to validate row
 		boolean keyIsPresent = !text1.isEmpty();
-		boolean keyIsCreatedOn = text1.equals(CREATED_ON_TAG) ;
+		boolean keyIsCreatedOn = text1.equalsIgnoreCase(CREATED_ON_TAG);
 		boolean valueIsTextOrDateDependingOnKey = ((keyIsCreatedOn && (!text2.isEmpty() || date2 != null)) || !text2
 				.isEmpty());
 		
