@@ -28,6 +28,7 @@ import org.hibernate.Criteria;
 import org.hibernate.Query;
 import org.hibernate.Session;
 import org.hibernate.criterion.Order;
+import org.hibernate.type.LongType;
 import org.springframework.stereotype.Repository;
 import org.squashtest.csp.core.bugtracker.domain.BugTracker;
 import org.squashtest.csp.tm.domain.BugTrackerNameAlreadyExistsException;
@@ -104,7 +105,7 @@ public class HibernateBugTrackerDao extends HibernateEntityDao<BugTracker> imple
 
 			@Override
 			public void setQueryParameters(Query query) {
-				query.setParameterList("projects", projectIds);
+				query.setParameterList("projects", projectIds, LongType.INSTANCE);
 			}
 		});
 		}else{
