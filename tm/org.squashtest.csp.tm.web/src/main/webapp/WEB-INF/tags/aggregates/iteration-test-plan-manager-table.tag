@@ -1,4 +1,4 @@
-<%--
+l<%--
 
         This file is part of the Squashtest platform.
         Copyright (C) 2010 - 2012 Henix, henix.fr
@@ -30,7 +30,7 @@
 			<th><f:message key="label.Project" /></th>
 			<th><f:message key="iteration.executions.table.column-header.test-case.label" /></th>
 			<th><f:message key="iteration.executions.table.column-header.importance.label" /></th>
-			<th><f:message key="iteration.executions.table.column-header.type.label" /></th>
+			<th><f:message key="label.Mode" /></th>
 			<th><f:message key="iteration.executions.table.column-header.suite.label" /></th>
 			<th>test case id</th>
 			<th>is deleted</th>

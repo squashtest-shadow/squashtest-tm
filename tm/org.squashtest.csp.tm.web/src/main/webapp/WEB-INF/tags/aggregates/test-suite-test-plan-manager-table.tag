@@ -30,7 +30,7 @@
 			<th><f:message key="label.Project" /></th>
 			<th><f:message key="iteration.executions.table.column-header.test-case.label" /></th>
 			<th><f:message key="iteration.executions.table.column-header.importance.label" /></th>
-			<th><f:message key="iteration.executions.table.column-header.type.label" /></th>
+			<th><f:message key="label.Mode" /></th>
 			<th>test case id</th>
 			<th>is deleted</th>
 			<th>&nbsp;</th>				

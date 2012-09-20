@@ -30,7 +30,7 @@
 			<th><f:message key="label.Project" /></th>
 			<th><f:message key="test-case.name.label" /></th>
 			<th><f:message key="test-case.importance.combo.label" /></th>
-			<th><f:message key="label.Type" /></th>
+			<th><f:message key="label.Mode" /></th>
 			<th>&nbsp;</th>				
 			<th>TC Id</th>				
 		</tr>

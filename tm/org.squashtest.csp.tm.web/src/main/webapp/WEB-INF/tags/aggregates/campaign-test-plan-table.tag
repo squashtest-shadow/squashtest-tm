@@ -32,7 +32,7 @@
 			<th><f:message key="test-case.user.combo.label" /></th>
 			<th>assigned user id (masked)</th>
 			<th><f:message key="test-case.importance.combo.label" /></th>
-			<th><f:message key="label.Type" /></th>
+			<th><f:message key="label.Mode" /></th>
 			<th>&nbsp;</th>				
 			<th>TC Id</th>							
 		</tr>
