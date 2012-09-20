@@ -26,13 +26,17 @@ import java.util.List;
 import javax.inject.Inject;
 import javax.validation.constraints.NotNull;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.security.access.prepost.PostAuthorize;
 import org.springframework.security.access.prepost.PostFilter;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+import org.squashtest.csp.tm.domain.CopyPasteObsoleteException;
 import org.squashtest.csp.tm.domain.DuplicateNameException;
+import org.squashtest.csp.tm.domain.IllegalRequirementModificationException;
 import org.squashtest.csp.tm.domain.projectfilter.ProjectFilter;
 import org.squashtest.csp.tm.domain.requirement.ExportRequirementData;
 import org.squashtest.csp.tm.domain.requirement.NewRequirementVersionDto;
@@ -59,6 +63,7 @@ import org.squashtest.csp.tm.service.importer.ImportSummary;
 public class RequirementLibraryNavigationServiceImpl extends
 		AbstractLibraryNavigationService<RequirementLibrary, RequirementFolder, RequirementLibraryNode> implements
 		RequirementLibraryNavigationService, RequirementLibraryFinderService {
+	private static final Logger LOGGER = LoggerFactory.getLogger(RequirementLibraryNavigationServiceImpl.class);
 
 	private static final String OR_HAS_ROLE_ADMIN = "or hasRole('ROLE_ADMIN')";
 	@Inject
@@ -231,7 +236,7 @@ public class RequirementLibraryNavigationServiceImpl extends
 
 			// if the requirement is not directly located under
 			if (id != ExportRequirementData.NO_FOLDER) {
-				for(String name : requirementLibraryNodeDao.getParentsName(id)) {
+				for (String name : requirementLibraryNodeDao.getParentsName(id)) {
 					path.append('/' + name);
 				}
 				path.deleteCharAt(0);
@@ -257,5 +262,25 @@ public class RequirementLibraryNavigationServiceImpl extends
 	@Override
 	public ImportRequirementTestCaseLinksSummary importLinksExcel(InputStream stream) {
 		return requirementTestCaseLinksImporter.importLinksExcel(stream);
+	}
+
+	@Override
+	public List<RequirementLibraryNode> copyNodesToFolder(long destinationId, Long[] sourceNodesIds) {
+		try {
+			return super.copyNodesToFolder(destinationId, sourceNodesIds);
+		} catch (IllegalRequirementModificationException e) {
+			LOGGER.warn(e.getMessage());
+			throw new CopyPasteObsoleteException(e.getMessage());
+		}
+	}
+	
+	@Override
+	public List<RequirementLibraryNode> copyNodesToLibrary(long destinationId, Long[] targetId) {
+		try {
+			return super.copyNodesToLibrary(destinationId, targetId);
+		} catch (IllegalRequirementModificationException e) {
+			LOGGER.warn(e.getMessage());
+			throw new CopyPasteObsoleteException(e.getMessage());
+		}
 	}
 }

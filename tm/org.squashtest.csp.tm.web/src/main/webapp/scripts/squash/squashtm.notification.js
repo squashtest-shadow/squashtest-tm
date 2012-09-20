@@ -124,6 +124,8 @@ squashtm.notification = (function ($) {
 	return {
 		init : init, 
 		showInfo : displayInformationNotification,
-		getErrorMessage : getErrorMessage
+		getErrorMessage : getErrorMessage, 
+		handleJsonResponseError : handleJsonResponseError
+		
 	};
 }(jQuery));

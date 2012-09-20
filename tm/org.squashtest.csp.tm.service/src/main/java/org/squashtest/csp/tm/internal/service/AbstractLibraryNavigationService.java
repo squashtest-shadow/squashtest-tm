@@ -27,13 +27,17 @@ import java.util.Map;
 import java.util.Map.Entry;
 
 import org.apache.commons.lang.NullArgumentException;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.osgi.extensions.annotation.ServiceReference;
 import org.springframework.security.access.AccessDeniedException;
 import org.springframework.security.access.prepost.PostFilter;
 import org.springframework.transaction.annotation.Transactional;
 import org.squashtest.csp.core.service.security.PermissionEvaluationService;
 import org.squashtest.csp.tm.domain.CannotMoveNodeException;
+import org.squashtest.csp.tm.domain.CopyPasteObsoleteException;
 import org.squashtest.csp.tm.domain.DuplicateNameException;
+import org.squashtest.csp.tm.domain.IllegalRequirementModificationException;
 import org.squashtest.csp.tm.domain.library.Folder;
 import org.squashtest.csp.tm.domain.library.Library;
 import org.squashtest.csp.tm.domain.library.LibraryNode;
@@ -90,9 +94,10 @@ import org.squashtest.csp.tm.service.deletion.SuppressionPreviewReport;
 @Transactional
 public abstract class AbstractLibraryNavigationService<LIBRARY extends Library<NODE>, FOLDER extends Folder<NODE>, NODE extends LibraryNode>
 		implements LibraryNavigationService<LIBRARY, FOLDER, NODE> {
-	
+
 	private static final String CREATE = "CREATE";
 	private static final String READ = "READ";
+
 	private abstract class PasteStrategy<CONTAINER extends NodeContainer<NODE>> {
 		@SuppressWarnings("unchecked")
 		public List<NODE> pasteNodes(long containerId, Long[] sourceNodesIds) {
@@ -103,8 +108,7 @@ public abstract class AbstractLibraryNavigationService<LIBRARY extends Library<N
 			// identity holder
 			for (Long id : sourceNodesIds) {
 				NODE node = getLibraryNodeDao().findById(id);
-				checkPermission(new SecurityCheckableObject(container, CREATE), new SecurityCheckableObject(node,
-						READ));
+				checkPermission(new SecurityCheckableObject(container, CREATE), new SecurityCheckableObject(node, READ));
 			}
 
 			// proceed
@@ -212,6 +216,7 @@ public abstract class AbstractLibraryNavigationService<LIBRARY extends Library<N
 		// proceed
 		return library;
 	}
+
 	@SuppressWarnings("unchecked")
 	@Override
 	public final LIBRARY findCreatableLibrary(long libraryId) {
@@ -424,8 +429,6 @@ public abstract class AbstractLibraryNavigationService<LIBRARY extends Library<N
 
 		return LibraryUtils.generateUniqueCopyNumber(copiesNames, sourceName, COPY_TOKEN);
 	}
-	
-	
 
 	@SuppressWarnings("unchecked")
 	public FOLDER createCopyFolder(long folderId) {

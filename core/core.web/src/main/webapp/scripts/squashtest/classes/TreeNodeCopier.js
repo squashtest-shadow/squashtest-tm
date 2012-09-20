@@ -183,15 +183,15 @@ function TreeNodeCopier(initObj) {
 	this.pasteNodesFromCookie = function (){
 		
 		var flag = this.mayPaste();
-		
+		var tree = this.tree;
 		if ( flag!="OK" ){
 			denyPaste(flag);
 			return;
 		}
 		
-		var target = this.tree.get_selected();
+		var target = tree.get_selected();
 		var data = retrieve();
-		var nodes = this.tree.findNodes(data.nodes);
+		var nodes = tree.findNodes(data.nodes);
 		
 		target.open();
 		
@@ -199,7 +199,9 @@ function TreeNodeCopier(initObj) {
 
 		
 		//now we can proceed
-		copyNode(pasteData, pasteData.url).fail(this.tree.refresh);
+		copyNode(pasteData, pasteData.url).fail(function(json){
+				tree.refresh();
+				});
 	};
 	
 	
