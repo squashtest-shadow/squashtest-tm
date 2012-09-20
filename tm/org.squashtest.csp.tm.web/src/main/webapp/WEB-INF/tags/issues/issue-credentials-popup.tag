@@ -42,6 +42,8 @@
 		},			
 		<f:message var="abortlabel" key="label.Cancel"/>
 		'${ abortlabel }': function() {
+			$('#dialog-issue-login').val('');
+			$('#dialog-issue-password').val('');
 			$( this ).dialog( 'close' );
 			<c:if test="${not empty failureCallback}">${failureCallback}();</c:if>
 		}
