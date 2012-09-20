@@ -37,8 +37,7 @@ import spock.lang.Specification
 class RequirementMergerTest extends Specification {
 	RequirementMerger merger = new RequirementMerger()
 	RequirementLibraryNavigationService service = Mock()
-	SessionFactory sf = Mock()
-	RequirementLibraryMerger context = new RequirementLibraryMerger(service, sf)
+	RequirementLibraryMerger context = new RequirementLibraryMerger(service)
 		
 	def setup() {
 		merger.context = context
