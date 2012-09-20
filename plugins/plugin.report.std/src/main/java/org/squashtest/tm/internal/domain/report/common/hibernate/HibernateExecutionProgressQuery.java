@@ -71,12 +71,9 @@ public class HibernateExecutionProgressQuery extends HibernateReportQuery {
 		campaignStatus.setCriterionName("campaignStatus");
 		criterions.put("campaignStatus", campaignStatus);
 
-		ReportCriterion campaignIds = new IsInSet<Long>("campaignIds[]","id", Campaign.class, "campaigns") {
+		ReportCriterion campaignIds = new CampaignIdIsInIds("campaignIds[]","id", Campaign.class, "campaigns") {
 
-			@Override
-			public Long fromValueToTypedValue(Object o) {
-				return Long.parseLong(o.toString());
-			}
+			
 		};
 
 		//note : the name here follows the naming convention of http requests for array parameters. It allows the
@@ -84,7 +81,19 @@ public class HibernateExecutionProgressQuery extends HibernateReportQuery {
 		criterions.put("campaignIds[]", campaignIds);
 	}
 
+	private static class CampaignIdIsInIds extends IsInSet<Long> {
+		
+		public CampaignIdIsInIds(String criterionName, String attributePath, Class<?> entityClass, String entityAlias) {
+			super(criterionName, attributePath, entityClass, entityAlias);
+			
+		}
 
+		@Override
+		public Long fromValueToTypedValue(Object o) {
+			return Long.parseLong(o.toString());
+		}
+		
+	}
 	/*
 	 * Here is a typical implementation of createHibernateQuery :
 	 *

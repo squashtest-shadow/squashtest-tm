@@ -74,13 +74,18 @@ public class HibernateAttachmentDao extends HibernateEntityDao<Attachment>
 	}
 
 	private long getContentId(final Long attachmentId){
-		return (Long) executeEntityNamedQuery("attachment.findContentId", new SetQueryParametersCallback() {
-
-			@Override
-			public void setQueryParameters(Query query) {
-				query.setLong("attachId", attachmentId);
-			}
-		});
+		return (Long) executeEntityNamedQuery("attachment.findContentId", new AttachIdQueyParameterCallback(attachmentId));
+	}
+	
+	private class AttachIdQueyParameterCallback implements SetQueryParametersCallback {
+		private Long attachmentId;
+		private AttachIdQueyParameterCallback(Long attachmentId){
+			this.attachmentId = attachmentId;
+		}
+		@Override
+		public void setQueryParameters(Query query) {
+			query.setLong("attachId", attachmentId);
+		}
 	}
 
 	@Override

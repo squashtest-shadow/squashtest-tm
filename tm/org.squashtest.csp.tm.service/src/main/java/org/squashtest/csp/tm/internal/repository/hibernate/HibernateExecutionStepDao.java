@@ -50,13 +50,7 @@ public class HibernateExecutionStepDao extends HibernateEntityDao<ExecutionStep>
 
 	@Override
 	public Execution findParentExecution(final Long executionStepId) {
-		SetQueryParametersCallback newCallBack = new SetQueryParametersCallback() {
-
-			@Override
-			public void setQueryParameters(Query query) {
-				query.setLong("childId", executionStepId);
-			}
-		};
+		SetQueryParametersCallback newCallBack = new ChildIdQueryParameterCallback(executionStepId);
 
 		Execution exec = executeEntityNamedQuery("executionStep.findParentNode",
 				newCallBack);
@@ -67,7 +61,16 @@ public class HibernateExecutionStepDao extends HibernateEntityDao<ExecutionStep>
 		
 	}
 	
-	
+	private static class ChildIdQueryParameterCallback implements SetQueryParametersCallback{
+		private Long childId;
+		private ChildIdQueryParameterCallback(Long childId){
+			this.childId = childId;
+		}
+		@Override
+		public void setQueryParameters(Query query) {
+			query.setLong("childId", childId);
+		}
+	}
 
 
 }

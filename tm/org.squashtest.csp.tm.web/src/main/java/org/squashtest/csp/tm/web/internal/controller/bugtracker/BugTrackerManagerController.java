@@ -99,23 +99,23 @@ public class BugTrackerManagerController {
 		FilteredCollectionHolder<List<BugTracker>> holder = bugTrackerManagerService.findSortedBugtrackers(filter);
 
 
-		return new DataTableModelHelper<BugTracker>(){
-			@Override
-			public Object[] buildItemData(BugTracker item) {
-
-					return new Object[]{
-						item.getId(),
-						getCurrentIndex(),
-						item.getName(),
-						item.getKind(),
-						item.getUrl(),
-						item.isIframeFriendly()
-				};
-			}
-		}.buildDataModel(holder, filter.getFirstItemIndex()+1, params.getsEcho());
+		return new BugtrackerDataTableModelHelper().buildDataModel(holder, filter.getFirstItemIndex()+1, params.getsEcho());
 
 	}
-	
+	private static class BugtrackerDataTableModelHelper extends DataTableModelHelper<BugTracker>{
+		@Override
+		public Object[] buildItemData(BugTracker item) {
+
+				return new Object[]{
+					item.getId(),
+					getCurrentIndex(),
+					item.getName(),
+					item.getKind(),
+					item.getUrl(),
+					item.isIframeFriendly()
+			};
+		}
+	}
 	/* ****************************** data formatters ********************************************** */
 
 	private CollectionSorting createPaging(final DataTableDrawParameters params,

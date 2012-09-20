@@ -68,24 +68,30 @@ public class HibernateRequirementCoverageByTestsQuery extends HibernateReportQue
 	 * will take into account only the last version of the requirement
 	 */
 	private static final int REPORT_LAST_VERSION = 2;
-	
+
 	private static final String PROJECT_IDS = "projectIds[]";
 
 	public HibernateRequirementCoverageByTestsQuery() {
 		Map<String, ReportCriterion> criterions = getCriterions();
-		ReportCriterion projectIds = new IsInSet<Long>(PROJECT_IDS, "id", Project.class, "projects") {
-
-			@Override
-			public Long fromValueToTypedValue(Object o) {
-				return Long.parseLong(o.toString());
-			}
-		};
+		ReportCriterion projectIds = new ProjectIdsIsInIds(PROJECT_IDS, "id", Project.class, "projects");
 		// note : the name here follows the naming convention of http requests for array parameters. It allows the
 		// controller to directly map the http query string to that criterion.
 		criterions.put(PROJECT_IDS, projectIds);
 
 		ReportCriterion reportMode = new RequirementReportTypeCriterion("mode", "on s'en fout");
 		criterions.put("mode", reportMode);
+	}
+
+	private static class ProjectIdsIsInIds extends IsInSet<Long> {
+
+		public ProjectIdsIsInIds(String criterionName, String attributePath, Class<?> entityClass, String entityAlias) {
+			super(criterionName, attributePath, entityClass, entityAlias);
+		}
+
+		@Override
+		public Long fromValueToTypedValue(Object o) {
+			return Long.parseLong(o.toString());
+		}
 	}
 
 	@Override

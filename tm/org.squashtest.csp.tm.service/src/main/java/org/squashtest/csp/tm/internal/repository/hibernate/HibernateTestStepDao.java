@@ -100,21 +100,25 @@ public class HibernateTestStepDao extends HibernateDao<TestStep> implements Test
 	
 	@Override
 	public List<TestStep> findListById(final List<Long> testStepIds){
-		SetQueryParametersCallback callback = new SetQueryParametersCallback() {
-			
-			@Override
-			public void setQueryParameters(Query query) {
-				query.setParameterList("testStepIds", testStepIds, LongType.INSTANCE);
-				
-			}
-			
-		};
+		SetQueryParametersCallback callback = new TestStepIdsQueryParametersCallback(testStepIds);
 		
 		return executeListNamedQuery("testStep.findOrderedListById", callback);
 		
 	}
 	
-
+	private static class TestStepIdsQueryParametersCallback implements SetQueryParametersCallback  {
+		
+		private List<Long> testStepIds;
+		private TestStepIdsQueryParametersCallback(List<Long> testStepIds) {
+			this.testStepIds = testStepIds;
+		}
+		@Override
+		public void setQueryParameters(Query query) {
+			query.setParameterList("testStepIds", testStepIds, LongType.INSTANCE);
+			
+		}
+		
+	};
 
 
 }

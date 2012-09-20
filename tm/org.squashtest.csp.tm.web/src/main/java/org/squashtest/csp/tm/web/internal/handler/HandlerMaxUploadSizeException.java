@@ -35,72 +35,63 @@ import org.springframework.web.servlet.view.AbstractView;
 import org.springframework.web.servlet.view.json.MappingJacksonJsonView;
 
 @Component
-public class HandlerMaxUploadSizeException extends
-		AbstractHandlerExceptionResolver {
+public class HandlerMaxUploadSizeException extends AbstractHandlerExceptionResolver {
 
-
-	
 	public HandlerMaxUploadSizeException() {
 		super();
 	}
-	
 
 	@Override
 	protected ModelAndView doResolveException(HttpServletRequest request, HttpServletResponse response, Object handler,
 			Exception ex) {
-		if (exceptionIsHandled(ex)) {	
-			
+		if (exceptionIsHandled(ex)) {
+
 			response.setStatus(HttpServletResponse.SC_REQUEST_ENTITY_TOO_LARGE);
-			
-			MaxUploadSizeExceededException mex = (MaxUploadSizeExceededException) ex; // NOSONAR Type was checked earlier
-			
-			
-			if (clientAcceptsMIME(request, MimeType.APPLICATION_JSON)){
+
+			MaxUploadSizeExceededException mex = (MaxUploadSizeExceededException) ex; // NOSONAR Type was checked
+																						// earlier
+
+			if (clientAcceptsMIME(request, MimeType.APPLICATION_JSON)) {
 				return handleAsJson(mex);
-			}
-			else if (clientAcceptsMIME(request, MimeType.TEXT_PLAIN)){
+			} else if (clientAcceptsMIME(request, MimeType.TEXT_PLAIN)) {
 				return handleAsText(mex);
 			}
-			//special delivery for IE
-			else if (clientAcceptsMIME(request, MimeType.ANYTHING)){
+			// special delivery for IE
+			else if (clientAcceptsMIME(request, MimeType.ANYTHING)) {
 				return handleAsText(mex);
 			}
 		}
 
 		return null;
 	}
-	
-	
-	private ModelAndView handleAsJson(MaxUploadSizeExceededException mex){
+
+	private ModelAndView handleAsJson(MaxUploadSizeExceededException mex) {
 		MaxUploadSizeErrorModel error = new MaxUploadSizeErrorModel(mex);
-		return new ModelAndView(new MappingJacksonJsonView(), "maxUploadError", error);		
+		return new ModelAndView(new MappingJacksonJsonView(), "maxUploadError", error);
 	}
 
+	private ModelAndView handleAsText(MaxUploadSizeExceededException mex) {
 
-	private ModelAndView handleAsText(MaxUploadSizeExceededException mex){
-		
-		String error = "{ \"maxSize\" : " + mex.getMaxUploadSize() +"}";
-		
-		AbstractView view = new AbstractView() {
-					
-			@Override
-			protected void renderMergedOutputModel(Map<String, Object> model,HttpServletRequest request, HttpServletResponse response)
-					throws Exception {
-					response.getOutputStream().write(((String)model.get("actionValidationError")).getBytes());
-			}
-		};
-		
-		return new ModelAndView(view,"actionValidationError",error);
-				
+		String error = "{ \"maxSize\" : " + mex.getMaxUploadSize() + "}";
+
+		AbstractView view = new MaxSizeView();
+
+		return new ModelAndView(view, "actionValidationError", error);
+
 	}
-	
 
-	
+	private static class MaxSizeView extends AbstractView {
+		@Override
+		protected void renderMergedOutputModel(Map<String, Object> model, HttpServletRequest request,
+				HttpServletResponse response) throws Exception {
+			response.getOutputStream().write(((String) model.get("actionValidationError")).getBytes());
+		}
+	}
+
 	private boolean exceptionIsHandled(Exception ex) {
 		return ex instanceof MaxUploadSizeExceededException;
 	}
 
-	
 	@SuppressWarnings("unchecked")
 	private boolean clientAcceptsMIME(HttpServletRequest request, MimeType type) {
 		Enumeration<String> e = request.getHeaders("Accept");

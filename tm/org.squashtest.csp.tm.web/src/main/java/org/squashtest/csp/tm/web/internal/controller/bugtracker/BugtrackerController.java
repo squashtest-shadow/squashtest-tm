@@ -206,7 +206,7 @@ public class BugtrackerController {
 			final DataTableDrawParameters params, final Locale locale) {
 
 		FilteredCollectionHolder<List<IssueOwnership<BTIssue>>> filteredCollection;
-		CollectionSorting sorter = createCollectionSorting(params);
+		CollectionSorting sorter = new IssueCollectionSorting(params);
 		try {
 
 			filteredCollection = bugTrackersLocalService.findSortedIssueOwnerShipsForExecutionStep(stepId, sorter);
@@ -292,7 +292,7 @@ public class BugtrackerController {
 
 		FilteredCollectionHolder<List<IssueOwnership<BTIssue>>> filteredCollection;
 
-		CollectionSorting sorter = createCollectionSorting(params);
+		CollectionSorting sorter = new IssueCollectionSorting(params);
 		try {
 			filteredCollection = bugTrackersLocalService.findSortedIssueOwnershipsforExecution(execId, sorter);
 
@@ -373,7 +373,7 @@ public class BugtrackerController {
 			final Locale locale) {
 
 		FilteredCollectionHolder<List<IssueOwnership<BTIssue>>> filteredCollection;
-		CollectionSorting sorter = createCollectionSorting(params);
+		CollectionSorting sorter = new IssueCollectionSorting(params);
 		try {
 			filteredCollection = bugTrackersLocalService.findSortedIssueOwnershipForTestCase(tcId, sorter);
 		}
@@ -419,7 +419,7 @@ public class BugtrackerController {
 			final DataTableDrawParameters params, final Locale locale) {
 
 		FilteredCollectionHolder<List<IssueOwnership<BTIssue>>> filteredCollection;
-		CollectionSorting sorter = createCollectionSorting(params);
+		CollectionSorting sorter = new IssueCollectionSorting(params);
 		try {
 			filteredCollection = bugTrackersLocalService.findSortedIssueOwnershipForIteration(iterId, sorter);
 		}
@@ -465,7 +465,7 @@ public class BugtrackerController {
 			final DataTableDrawParameters params, final Locale locale) {
 
 		FilteredCollectionHolder<List<IssueOwnership<BTIssue>>> filteredCollection;
-		CollectionSorting sorter = createCollectionSorting(params);
+		CollectionSorting sorter = new IssueCollectionSorting(params);
 		try {
 			filteredCollection = bugTrackersLocalService.findSortedIssueOwnershipsForCampaigns(campId, sorter);
 		}
@@ -510,7 +510,7 @@ public class BugtrackerController {
 			final DataTableDrawParameters params, final Locale locale) {
 
 		FilteredCollectionHolder<List<IssueOwnership<BTIssue>>> filteredCollection;
-		CollectionSorting sorter = createCollectionSorting(params);
+		CollectionSorting sorter = new IssueCollectionSorting(params);
 		try {
 			filteredCollection = bugTrackersLocalService.findSortedIssueOwnershipsForTestSuite(testSuiteId, sorter);
 		}
@@ -667,31 +667,35 @@ public class BugtrackerController {
 		result.put("status", strStatus);
 		return result;
 	}
+	private class IssueCollectionSorting implements CollectionSorting{
+		
+		private DataTableDrawParameters params;
 
-	private CollectionSorting createCollectionSorting(final DataTableDrawParameters params) {
-		return new CollectionSorting() {
+		private IssueCollectionSorting(final DataTableDrawParameters params){
+			this.params = params;
+		}
+		@Override
+		public int getFirstItemIndex() {
+			return params.getiDisplayStart();
+		}
 
-			@Override
-			public int getFirstItemIndex() {
-				return params.getiDisplayStart();
-			}
+		@Override
+		public String getSortingOrder() {
+			return params.getsSortDir_0();
+		}
 
-			@Override
-			public String getSortingOrder() {
-				return params.getsSortDir_0();
-			}
+		@Override
+		public String getSortedAttribute() {
+			return "Issue.id";
+		}
 
-			@Override
-			public String getSortedAttribute() {
-				return "Issue.id";
-			}
-
-			@Override
-			public int getPageSize() {
-				return params.getiDisplayLength();
-			}
-		};
+		@Override
+		public int getPageSize() {
+			return params.getiDisplayLength();
+		}
+		
 	}
+	
 
 	/* ****************************** bug ownership naming ****************************** */
 

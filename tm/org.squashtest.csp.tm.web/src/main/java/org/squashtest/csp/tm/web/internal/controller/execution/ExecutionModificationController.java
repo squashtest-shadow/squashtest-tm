@@ -104,29 +104,49 @@ public class ExecutionModificationController {
 		FilteredCollectionHolder<List<ExecutionStep>> holder = executionModService.findExecutionSteps(executionId,
 				filter);
 
-		return new DataTableModelHelper<ExecutionStep>() {
-			@Override
-			public Map<String, ?> buildItemData(ExecutionStep item) {
-				Map<String, Object> res = new HashMap<String, Object>();
-				res.put(DataTableModelHelper.DEFAULT_ENTITY_ID_KEY, item.getId());
-				res.put(DataTableModelHelper.DEFAULT_ENTITY_INDEX_KEY, item.getExecutionStepOrder() + 1);
-				res.put("action", item.getAction());
-				res.put("expected", item.getExpectedResult());
-				res.put("status", localizedStatus(item.getExecutionStatus(), locale));
-				res.put("last-exec-on", formatDate(item.getLastExecutedOn(), locale));
-				res.put("last-exec-by", item.getLastExecutedBy());
-				res.put("comment", item.getComment());
-				res.put("bugged", createBugList(item));
-				res.put(DataTableModelHelper.DEFAULT_NB_ATTACH_KEY, item.getAttachmentList().size());
-				res.put(DEFAULT_ATTACH_LIST_ID_KEY, item.getAttachmentList().getId());
-
-				return res;
-			}
-
-
-		}.buildDataModel(holder, filter.getFirstItemIndex() + 1, params.getsEcho());
+		return new ManualExecutionStepDataTableModelHelper(locale, messageSource).buildDataModel(holder,
+				filter.getFirstItemIndex() + 1, params.getsEcho());
 
 	}
+	private static class ExecutionStepDataTableModelHelper extends DataTableModelHelper<ExecutionStep> {
+		private Locale locale;
+		private MessageSource messageSource;
+
+		private ExecutionStepDataTableModelHelper(Locale locale, MessageSource messageSource) {
+			this.locale = locale;
+			this.messageSource = messageSource;
+		}
+
+		@Override
+		public Map<String, Object> buildItemData(ExecutionStep item) {
+			Map<String, Object> res = new HashMap<String, Object>();
+			res.put(DataTableModelHelper.DEFAULT_ENTITY_ID_KEY, item.getId());
+			res.put(DataTableModelHelper.DEFAULT_ENTITY_INDEX_KEY, item.getExecutionStepOrder() + 1);
+			res.put("action", item.getAction());
+			res.put("expected", item.getExpectedResult());
+			res.put("last-exec-on", formatDate(item.getLastExecutedOn(), locale, messageSource));
+			res.put("last-exec-by", item.getLastExecutedBy());
+			res.put("comment", item.getComment());
+			res.put("bugged", createBugList(item));
+			res.put(DataTableModelHelper.DEFAULT_NB_ATTACH_KEY, item.getAttachmentList().size());
+			res.put(DEFAULT_ATTACH_LIST_ID_KEY, item.getAttachmentList().getId());
+			return res;
+		}
+	}
+	private static class ManualExecutionStepDataTableModelHelper extends ExecutionStepDataTableModelHelper {
+		private ManualExecutionStepDataTableModelHelper(Locale locale, MessageSource messageSource) {
+			super(locale, messageSource);
+		}
+
+		@Override
+		public Map<String, Object> buildItemData(ExecutionStep item) {
+			Map<String, Object> res = super.buildItemData(item);
+			res.put("status", localizedStatus(item.getExecutionStatus(), super.locale, super.messageSource));
+			return res;
+			
+		}
+	}
+
 	@RequestMapping(value = "/auto-steps", method = RequestMethod.GET, params = "sEcho")
 	@ResponseBody
 	public DataTableModel getAutoStepsTableModel(@PathVariable long executionId, DataTableDrawParameters params,
@@ -138,31 +158,24 @@ public class ExecutionModificationController {
 		FilteredCollectionHolder<List<ExecutionStep>> holder = executionModService.findExecutionSteps(executionId,
 				filter);
 
-		return new DataTableModelHelper<ExecutionStep>() {
-			@Override
-			public Map<String, ?> buildItemData(ExecutionStep item) {
-				Map<String, Object> res = new HashMap<String, Object>();
-				res.put(DataTableModelHelper.DEFAULT_ENTITY_ID_KEY, item.getId());
-				res.put(DataTableModelHelper.DEFAULT_ENTITY_INDEX_KEY, item.getExecutionStepOrder() + 1);
-				res.put("action", item.getAction());
-				res.put("expected", item.getExpectedResult());
-				res.put("status", "--");
-				res.put("last-exec-on", formatDate(item.getLastExecutedOn(), locale));
-				res.put("last-exec-by", item.getLastExecutedBy());
-				res.put("comment", item.getComment());
-				res.put("bugged", createBugList(item));
-				res.put(DataTableModelHelper.DEFAULT_NB_ATTACH_KEY, item.getAttachmentList().size());
-				res.put(DEFAULT_ATTACH_LIST_ID_KEY, item.getAttachmentList().getId());
-
-				return res;
-			}
-
-
-		}.buildDataModel(holder, filter.getFirstItemIndex() + 1, params.getsEcho());
+		return new AutomatedExecutionStepDataTableModelHelper(locale, messageSource).buildDataModel(holder, filter.getFirstItemIndex() + 1, params.getsEcho());
 
 	}
 
-	private String createBugList(ExecutionStep item) {
+	private static class AutomatedExecutionStepDataTableModelHelper extends ExecutionStepDataTableModelHelper {
+		private AutomatedExecutionStepDataTableModelHelper(Locale locale, MessageSource messageSource) {
+			super(locale, messageSource);
+		}
+
+		@Override
+		public Map<String, Object> buildItemData(ExecutionStep item) {
+			Map<String, Object> res = super.buildItemData(item);
+			res.put("status", "--");
+			return res;
+		}
+	}
+
+	private static String createBugList(ExecutionStep item) {
 		StringBuffer toReturn = new StringBuffer();
 		List<Issue> issueList = item.getIssueList().getAllIssues();
 		if (issueList.size() > 0) {
@@ -187,7 +200,7 @@ public class ExecutionModificationController {
 		return newComment;
 	}
 
-	private String localizedStatus(ExecutionStatus status, Locale locale) {
+	private static String localizedStatus(ExecutionStatus status, Locale locale, MessageSource messageSource) {
 		return messageSource.getMessage(status.getI18nKey(), null, locale);
 	}
 
@@ -267,17 +280,17 @@ public class ExecutionModificationController {
 		};
 	}
 
-	private String formatDate(Date date, Locale locale) {
+	private static String formatDate(Date date, Locale locale, MessageSource messageSource) {
 		try {
 			String format = messageSource.getMessage("squashtm.dateformat", null, locale);
 			return new SimpleDateFormat(format).format(date);
 		} catch (Exception anyException) {
-			return formatNoData(locale);
+			return formatNoData(locale, messageSource);
 		}
 
 	}
 
-	private String formatNoData(Locale locale) {
+	private static String formatNoData(Locale locale, MessageSource messageSource) {
 		return messageSource.getMessage("squashtm.nodata", null, locale);
 	}
 
