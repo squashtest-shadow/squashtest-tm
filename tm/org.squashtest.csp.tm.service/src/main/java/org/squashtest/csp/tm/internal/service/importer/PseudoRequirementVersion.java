@@ -77,9 +77,9 @@ import org.squashtest.csp.tm.domain.requirement.RequirementVersionImportMemento;
 		return label;
 	}
 
-	public void setLabel(String label) {
+	public void setName(String name) {
 		if (notEmpty(label)) {
-			this.label = label;
+			this.label = name;
 		}
 	}
 

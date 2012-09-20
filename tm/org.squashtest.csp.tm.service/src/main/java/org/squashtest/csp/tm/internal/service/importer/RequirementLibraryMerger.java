@@ -27,13 +27,11 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
-import org.hibernate.SessionFactory;
 import org.squashtest.csp.tm.domain.requirement.Requirement;
 import org.squashtest.csp.tm.domain.requirement.RequirementFolder;
 import org.squashtest.csp.tm.domain.requirement.RequirementLibrary;
 import org.squashtest.csp.tm.domain.requirement.RequirementLibraryNode;
 import org.squashtest.csp.tm.domain.requirement.RequirementLibraryNodeVisitor;
-import org.squashtest.csp.tm.domain.requirement.RequirementVersion;
 import org.squashtest.csp.tm.internal.service.AbstractLibraryNavigationService;
 import org.squashtest.csp.tm.internal.utils.library.LibraryUtils;
 import org.squashtest.csp.tm.service.RequirementLibraryNavigationService;
@@ -47,13 +45,11 @@ class RequirementLibraryMerger {
 
 	private RequirementLibraryNavigationService service;
 
-	private SessionFactory sessionFactory;
-
 	private ImportSummaryImpl summary = new ImportSummaryImpl();
 
-	public RequirementLibraryMerger(RequirementLibraryNavigationService service, SessionFactory sessionFactory) {
+	public RequirementLibraryMerger(RequirementLibraryNavigationService service) {
 		this.service = service;
-		this.sessionFactory = sessionFactory;
+		
 	}
 
 	public ImportSummary getSummary() {
@@ -163,77 +159,36 @@ class RequirementLibraryMerger {
 			return names;
 		}
 
-		protected Requirement persistRequirement(Requirement req) {
-			Requirement toReturn = null;
+		protected void renameLastVersion(List<PseudoRequirementVersion> pseudoRequirementVersions) {
+			PseudoRequirementVersion lastVersion = pseudoRequirementVersions.get(pseudoRequirementVersions.size() - 1);
 			if (destLibrary != null) {
-				if (destLibrary.isContentNameAvailable(req.getName())) {
-					toReturn = context.service.addRequirementToRequirementLibrary(destLibrary.getId(), req);
-				} else {
-					toReturn = renameAndPersistRequirement(req);
+				if (!destLibrary.isContentNameAvailable(lastVersion.getName())) {
+					rename(lastVersion);
 				}
 			} else {
-				if (destFolder.isContentNameAvailable(req.getName())) {
-					toReturn = context.service.addRequirementToRequirementFolder(destFolder.getId(), req);
-				} else {
-					toReturn = renameAndPersistRequirement(req);
+				if (!destFolder.isContentNameAvailable(lastVersion.getName())) {
+					rename(lastVersion);
 				}
+			}
+
+		}
+
+		protected Requirement persistRequirement(Requirement requirement) {
+
+			Requirement toReturn = null;
+
+			if (destLibrary != null) {
+				toReturn = context.service.addRequirementToRequirementLibrary(destLibrary.getId(), requirement);
+			} else {
+				toReturn = context.service.addRequirementToRequirementFolder(destFolder.getId(), requirement);
 			}
 			return toReturn;
 		}
 
-		private Requirement renameAndPersistRequirement(Requirement req) {
+		private void rename(PseudoRequirementVersion pseudoRequirementVersion) {
 			context.summary.incrRenamed();
-			String newName = generateUniqueName(getNamesAtDestination(), req.getName());
-			req.setName(newName);
-			return persistRequirement(req);
-
-		}
-
-		@SuppressWarnings("rawtypes")
-		protected void addVersion(Requirement requirement, RequirementVersion newVersion) {
-			if (destLibrary != null) {
-				Set<RequirementLibraryNode> rlns = destLibrary.getRootContent();
-				renameIfNeededAndAddVersion(requirement, newVersion, rlns);
-
-			} else {
-				Set<RequirementLibraryNode> rlns = destFolder.getContent();
-				renameIfNeededAndAddVersion(requirement, newVersion, rlns);
-			}
-		}
-
-		@SuppressWarnings("rawtypes")
-		private void renameIfNeededAndAddVersion(Requirement requirement, RequirementVersion newVersion,
-				Set<RequirementLibraryNode> rlns) {
-			List<RequirementLibraryNode> homonymes = getHomonymes(rlns, newVersion.getName());
-			if (homonymesAreNotOnlyRequirement(requirement, homonymes)) {
-				addVersionWithNonConflictualName(requirement, newVersion);
-			} else {
-				context.summary.incrRenamed();
-				String newName = generateUniqueName(getNamesAtDestination(), newVersion.getName());
-				newVersion.setName(newName);
-				addVersionWithNonConflictualName(requirement, newVersion);
-			}
-		}
-
-		private void addVersionWithNonConflictualName(Requirement requirement, RequirementVersion newVersion) {
-			requirement.increaseVersion(newVersion);
-			context.sessionFactory.getCurrentSession().persist(requirement.getCurrentVersion());
-		}
-
-		@SuppressWarnings("rawtypes")
-		private boolean homonymesAreNotOnlyRequirement(Requirement requirement, List<RequirementLibraryNode> homonymes) {
-			return (homonymes.size() == 1 && homonymes.get(0).equals(requirement)) || homonymes.size() == 0;
-		}
-
-		@SuppressWarnings("rawtypes")
-		private List<RequirementLibraryNode> getHomonymes(Set<RequirementLibraryNode> rlns, String name) {
-			List<RequirementLibraryNode> homonymes = new ArrayList<RequirementLibraryNode>();
-			for (RequirementLibraryNode rln : rlns) {
-				if (rln.getName().equals(name)) {
-					homonymes.add(rln);
-				}
-			}
-			return homonymes;
+			String newName = generateUniqueName(getNamesAtDestination(), pseudoRequirementVersion.getName());
+			pseudoRequirementVersion.setName(newName);
 		}
 
 		protected void persistFolder(RequirementFolder folder) {

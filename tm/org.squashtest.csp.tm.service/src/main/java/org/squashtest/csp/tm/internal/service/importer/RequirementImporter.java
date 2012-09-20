@@ -60,7 +60,7 @@ public class RequirementImporter {
 		// /* phase 2 : merge with the actual database content */
 
 		RequirementLibrary library = service.findCreatableLibrary(libraryId);	
-		RequirementLibraryMerger merger = new RequirementLibraryMerger(service, sessionFactory);
+		RequirementLibraryMerger merger = new RequirementLibraryMerger(service);
 		merger.mergeIntoLibrary(library, root, organizedPseudoReqNodes);
 
 		summary.add(merger.getSummary());

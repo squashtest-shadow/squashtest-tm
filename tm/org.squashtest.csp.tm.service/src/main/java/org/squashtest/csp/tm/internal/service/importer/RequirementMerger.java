@@ -44,35 +44,28 @@ class RequirementMerger extends DestinationManager {
 
 	public void merge(List<PseudoRequirement> pseudoRequirements) {
 		for (PseudoRequirement pseudoRequirement : pseudoRequirements) {
-			List<PseudoRequirementVersion> pseudoRequirementVersions = pseudoRequirement
-					.getPseudoRequirementVersions();
-			if (pseudoRequirementVersions.size() > 1) {
-				Collections.sort(pseudoRequirementVersions);
-				PseudoRequirementVersion pseudoRequirementVersion = pseudoRequirementVersions.get(0);
-				Requirement requirement = addRequirement(pseudoRequirementVersion);
-				for (int i = 1; i < pseudoRequirementVersions.size(); i++) {
-					RequirementVersion newVersion = createVersion(pseudoRequirementVersions.get(i));
-					addVersion(requirement, newVersion);
-				}
-
-			} else {
-				PseudoRequirementVersion pseudoRequirementVersion = pseudoRequirement
-						.getPseudoRequirementVersions().get(0);
-				addRequirement(pseudoRequirementVersion);
+			//order version and rename last one
+			List<PseudoRequirementVersion> pseudoRequirementVersions = pseudoRequirement.getPseudoRequirementVersions();
+			Collections.sort(pseudoRequirementVersions);
+			renameLastVersion(pseudoRequirementVersions);
+			//create requirement with first version
+			PseudoRequirementVersion pseudoRequirementVersion = pseudoRequirementVersions.get(0);
+			RequirementVersion firstVersion = RequirementVersion.createFromMemento(pseudoRequirementVersion);
+			Requirement requirement = new Requirement(firstVersion);
+			//add remaining versions
+			for (int i = 1; i < pseudoRequirementVersions.size(); i++) {
+				addVersion(requirement, pseudoRequirementVersions.get(i));
 			}
+			//persist
+			persistRequirement(requirement);
 		}
 	}
-
-	private Requirement addRequirement(PseudoRequirementVersion pseudoRequirementVersion) {
-		RequirementVersion firstVersion = createVersion(pseudoRequirementVersion);
-		Requirement requirement = new Requirement(firstVersion);
-		persistRequirement(requirement);
-		return requirement;
+	
+	private void addVersion(Requirement requirement, PseudoRequirementVersion pseudoVersion) {
+		requirement.increaseVersion(RequirementVersion.createFromMemento(pseudoVersion));
 	}
 
-	private RequirementVersion createVersion(PseudoRequirementVersion pseudoRequirementVersion) {
-		RequirementVersion req = RequirementVersion.createFromMemento(pseudoRequirementVersion);
-		return req;
-	}
+
+	
 
 }

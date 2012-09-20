@@ -229,11 +229,12 @@ public enum RequirementStatus implements Level {
 		}
 
 		private String removeDisableString(String o) {
+			String newString = o;
 			String disabled = "disabled.";
 			if (o.startsWith(disabled)) {
-				o = o.substring(disabled.length());
+				newString = o.substring(disabled.length());
 			}
-			return o;
+			return newString;
 		}
 	}
 
