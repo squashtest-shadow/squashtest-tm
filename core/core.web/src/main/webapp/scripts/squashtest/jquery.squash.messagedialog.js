@@ -23,8 +23,9 @@
 	 * MessageDialog widget.
 	 * A message dialog is a preconfigured modal dialog which shows a message and only has a close button.
 	 * 
-	 * If the div used to generate the dialog contains an <input type="button" /> element, its value is used as the massage dialog's ok button.
+	 * If the div used to generate the dialog contains an <input type="button" /> element, its value is used as the message dialog's ok button.
 	 * 
+	 * cf example below 
 	 * @author Gregory Fouquet
 	 */
 	$.widget( "squash.messageDialog", $.ui.dialog, { 
@@ -176,3 +177,28 @@
 	
 
 }(jQuery));	
+
+/*
+<div id="confirm-dialog" class="not-displayed popup-dialog" title="title">
+<strong>message</strong>
+<input:ok />
+<input:cancel />
+</div>
+<script>
+
+$(function(){
+var confirmHandler = function() {
+	actionAfterConfirm();
+};
+
+var dialog = $( "#confirm-dialog" );
+dialog.confirmDialog({confirm: confirmHandler});
+
+$('#button').click(function(){
+	dialog.confirmDialog( "open" );
+	return false;
+	
+});
+});
+</script>
+*/

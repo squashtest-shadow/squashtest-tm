@@ -585,11 +585,33 @@
 		$('#test-case-button').click(function(){
 			document.location.href="${testPlanManagerUrl}" ;	
 		});		
-		
-		$('#duplicate-test-suite-button').click(function(){
+	}
+</script>
+
+<c:if test="${ creatable }">
+	<div id="confirm-duplicate-test-suite-dialog" class="not-displayed popup-dialog" title="<f:message key="title.DupliateTestSuite" />">
+		<strong><f:message key="message.DuplicateTestSuite" /> "${testSuite.name}" ?</strong>
+		<input:ok />
+		<input:cancel />
+	</div>
+<script>
+
+	$(function(){
+		var confirmHandler = function() {
+			dialog.confirmDialog("close");
 			duplicateTestSuite().done(function(json){
 				duplicateTestSuiteSuccess(json);
 			});
+		};
+		
+		var dialog = $( "#confirm-duplicate-test-suite-dialog" );
+		dialog.confirmDialog({confirm: confirmHandler});
+		
+		$('#duplicate-test-suite-button').click(function(){
+			dialog.confirmDialog( "open" );
+			return false;
+			
 		});
 	});
 </script>
+</c:if>
