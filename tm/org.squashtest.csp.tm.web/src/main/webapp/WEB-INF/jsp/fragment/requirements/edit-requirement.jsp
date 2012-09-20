@@ -101,7 +101,8 @@ that page won't be editable if
 	See also the code in #requirement-status-confirm-dialog for details. 
 --%>
 <c:if test="${status_editable}">
-<f:message var="StatusNotAllowedMessage" key='requirement.status.notAllowed' />
+<f:message var="DefaultStatusNotAllowedMessage" key='requirement.status.notAllowed.default' />
+<f:message var="ApprovedStatusNotAllowedMessage" key='requirement.status.notAllowed.approved' />
 <script type="text/javascript">
 		function statusSelect(settings, widget){
 			
@@ -111,9 +112,17 @@ that page won't be editable if
 			var toReturn = true;
 			
 			if (isDisabled(selected)){
+				
 				toReturn=false;
-				$.squash.openMessage("<f:message key='popup.title.error' />", "${StatusNotAllowedMessage}")
-				.done(function(){$("#requirement-status").editable().resetForm();});	
+				
+				if("disabled.APPROVED"){
+					$.squash.openMessage("<f:message key='popup.title.error' />", "${ApprovedStatusNotAllowedMessage}")
+					.done(function(){$("#requirement-status").editable().resetForm();});
+				}
+				else{
+					$.squash.openMessage("<f:message key='popup.title.error' />", "${DefaultStatusNotAllowedMessage}")
+					.done(function(){$("#requirement-status").editable().resetForm();});
+				}
 			}
 			else if ("OBSOLETE" == selected) {
 				var jqDialog = $('#requirement-status-confirm-dialog');
