@@ -129,7 +129,7 @@
 				</div>
 				<div class="display-table-row">
 					<label for="requirement-version-id">ID</label>
-					<div id="requirement-version-id">${ requirementVersion.id }</div>
+					<div id="requirement-version-id">${ requirementVersion.requirement.id }</div>
 				</div>
 				<div>
 					<label for="requirement-description"><f:message key="label.Description" /></label>
