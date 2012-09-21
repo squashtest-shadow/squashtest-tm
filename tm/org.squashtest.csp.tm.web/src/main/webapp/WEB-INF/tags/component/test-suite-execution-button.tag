@@ -98,6 +98,7 @@
 
 		<script>
 			$(function() {
+				$( ".run-menu" ).button();
 				$("#start-resume-button").fgmenu({
 					content : $('#start-resume-button').next().html(),
 					showSpeed : 0,
