@@ -116,7 +116,8 @@
 	$(function() {
 		bindDeleteButtonsToFunctions();
 		decorateDeleteButtons($(".delete-execution-table-button"));
-		$('a.button').button();
+		$('a.button.new-auto-exec').button();
+		$('a.button.new-exec').button();
 	});
 
 	function bindDeleteButtonsToFunctions() {
