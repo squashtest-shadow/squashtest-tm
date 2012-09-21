@@ -109,7 +109,7 @@
 		
 		
 		function getRequirementsTableRowStatus(rowData) {
-			return rowData[8];	
+			return rowData[9];	
 		}
 
 		
@@ -141,7 +141,7 @@
 			var urlPOST='${ verifiedRequirementsUrl }/' + getRequirementsTableRowId(data);
 			var urlGET='${ pageContext.servletContext.contextPath }/requirements/' + getRequirementsTableRowId(data) + '/versions/version-number';
 			var table = $('#verified-requirements-table').dataTable();
-			if (data[9]!="false" && data[8] !="OBSOLETE"){
+			if (data[10]!="false" && data[9] !="OBSOLETE"){
 				<%-- the table needs to be redrawn after each return of the POST so we implement the posting workflow --%>
 				$( 'td:eq(4)', row ).editable(function(value, settings) {
 						var innerPOSTData;
@@ -170,7 +170,7 @@
 
 			$(rows).each(function(index, row) {
 				var data = dataTable.fnGetData(row);
-				if (data[9]=="false"){
+				if (data[10]=="false"){
 					$(row).addClass("requirement-indirect-verification");
 					$('td:last', row).html(''); //remove the delete button
 				}else{
@@ -243,7 +243,7 @@
 	}
 	
 	function getRequirementsTableRowId(rowData) {
-		return rowData[0];	
+		return rowData[2];	
 	}
 
 </script>
@@ -256,14 +256,13 @@
 	<jsp:attribute name="drawCallback">squashtm.verifiedRequirements.requirementsTableDrawCallback</jsp:attribute>
 	<jsp:attribute name="rowCallback">squashtm.verifiedRequirements.requirementsTableRowCallback</jsp:attribute>
 	<jsp:attribute name="columnDefs">
-		<dt:column-definition targets="0" visible="false" />
-		<dt:column-definition targets="1" sortable="false"
+		<dt:column-definition targets="0" sortable="false"
 			cssClass="select-handle centered" width="2em" />
-		<dt:column-definition targets="2, 3, 4, 5, 6" sortable="true" />
-		<dt:column-definition targets="7" sortable="false" width="2em"
+		<dt:column-definition targets="1, 2, 3, 4, 5, 6, 7" sortable="true" />
+		<dt:column-definition targets="8" sortable="false" width="2em"
 			cssClass="centered" />
-		<dt:column-definition targets="8" sortable="false" visible="false" />
-		<dt:column-definition targets="9" sortable="false" visible="false"
+		<dt:column-definition targets="9" sortable="false" visible="false" />
+		<dt:column-definition targets="10" sortable="false" visible="false"
 			lastDef="true" />
 
 	</jsp:attribute>

@@ -42,6 +42,7 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
 import org.squashtest.csp.tm.domain.VerifiedRequirementException;
 import org.squashtest.csp.tm.domain.project.Project;
+import org.squashtest.csp.tm.domain.requirement.RequirementCategory;
 import org.squashtest.csp.tm.domain.requirement.RequirementCriticality;
 import org.squashtest.csp.tm.domain.requirement.RequirementLibrary;
 import org.squashtest.csp.tm.domain.requirement.RequirementVersion;
@@ -76,11 +77,13 @@ public class VerifiedRequirementsManagerController {
 	private static final String REQUIREMENTS_IDS = "requirementsIds[]";
 
 	private final DataTableMapper verifiedReqMapper = new DataTableMapper("verified-requirement-version",
-			RequirementVersion.class, Project.class).initMapping(7)
+			RequirementVersion.class, Project.class).initMapping(9)
 			.mapAttribute(Project.class, 2, "name", String.class)
-			.mapAttribute(RequirementVersion.class, 3, "reference", String.class)
-			.mapAttribute(RequirementVersion.class, 4, "name", String.class)
-			.mapAttribute(RequirementVersion.class, 5, "criticality", RequirementCriticality.class);
+			.mapAttribute(RequirementVersion.class, 3, "id", Long.class)
+			.mapAttribute(RequirementVersion.class, 4, "reference", String.class)
+			.mapAttribute(RequirementVersion.class, 5, "name", String.class)
+			.mapAttribute(RequirementVersion.class, 6, "criticality", RequirementCriticality.class)
+			.mapAttribute(RequirementVersion.class, 7, "category", RequirementCategory.class);
 	
 	@Inject
 	private Provider<DriveNodeBuilder> driveNodeBuilder;
@@ -190,8 +193,8 @@ public class VerifiedRequirementsManagerController {
 		return new DataTableModelHelper<RequirementVersion>() {
 			@Override
 			public Object[] buildItemData(RequirementVersion item) {
-				return new Object[] { item.getId(), getCurrentIndex(), item.getRequirement().getProject().getName(),
-						item.getReference(), item.getName(), item.getVersionNumber(), internationalize(item.getCriticality(), locale), "", item.getStatus().name(), true // the
+				return new Object[] { getCurrentIndex(), item.getRequirement().getProject().getName(), item.getId(), 
+						item.getReference(), item.getName(), item.getVersionNumber(), internationalizeCriticality(item.getCriticality(), locale), internationalizeCategory(item.getCategory(), locale), "", item.getStatus().name(), true // the
 				};
 			}
 
@@ -199,8 +202,12 @@ public class VerifiedRequirementsManagerController {
 
 	}
 
-	private Object internationalize(RequirementCriticality criticality, Locale locale) {
+	private Object internationalizeCriticality(RequirementCriticality criticality, Locale locale) {
 		return messageSource.getMessage(criticality.getI18nKey(), null, locale);
+	}
+
+	private Object internationalizeCategory(RequirementCategory category, Locale locale) {
+		return messageSource.getMessage(category.getI18nKey(), null, locale);
 	}
 
 	/**

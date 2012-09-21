@@ -25,13 +25,14 @@
 <table id="verified-requirements-table">
 	<thead>
 		<tr>
-			<th>Id</th>
 			<th>#</th>
 			<th><f:message key="label.Project" /></th>
+			<th><f:message key="report.requirementexport.id"/></th>
 			<th><f:message key="requirement.reference.label"/></th>
 			<th><f:message key="requirement.name.label" /></th>
 			<th><f:message key="requirement-version.version-number.label" /></th>
 			<th><f:message key="requirement.criticality.label"/></th>
+			<th><f:message key="requirement.category.label"/></th>
 			<th>&nbsp;</th>		
 			<th>status(masked)</th>		
 			<th>isDirectlyVerified(masked)</th>	

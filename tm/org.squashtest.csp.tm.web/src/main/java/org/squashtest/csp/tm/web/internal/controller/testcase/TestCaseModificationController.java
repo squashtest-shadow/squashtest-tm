@@ -51,6 +51,7 @@ import org.squashtest.csp.tm.domain.campaign.TestSuite;
 import org.squashtest.csp.tm.domain.execution.Execution;
 import org.squashtest.csp.tm.domain.execution.ExecutionStatus;
 import org.squashtest.csp.tm.domain.project.Project;
+import org.squashtest.csp.tm.domain.requirement.RequirementCategory;
 import org.squashtest.csp.tm.domain.requirement.RequirementCriticality;
 import org.squashtest.csp.tm.domain.requirement.RequirementVersion;
 import org.squashtest.csp.tm.domain.testcase.ActionTestStep;
@@ -96,11 +97,13 @@ public class TestCaseModificationController {
 	private static final String COPIED_STEP_ID_PARAM = "copiedStepId[]";
 
 	private final DataTableMapper verifiedReqMapper = new DataTableMapper("verified-requirement",
-			RequirementVersion.class, Project.class).initMapping(7)
+			RequirementVersion.class, Project.class).initMapping(9)
 			.mapAttribute(Project.class, 2, NAME_KEY, String.class)
-			.mapAttribute(RequirementVersion.class, 3, "reference", String.class)
-			.mapAttribute(RequirementVersion.class, 4, NAME_KEY, String.class)
-			.mapAttribute(RequirementVersion.class, 5, "criticality", RequirementCriticality.class);
+			.mapAttribute(RequirementVersion.class, 3, "id", Long.class)
+			.mapAttribute(RequirementVersion.class, 4, "reference", String.class)
+			.mapAttribute(RequirementVersion.class, 5, NAME_KEY, String.class)
+			.mapAttribute(RequirementVersion.class, 6, "criticality", RequirementCriticality.class)
+			.mapAttribute(RequirementVersion.class, 7, "category", RequirementCategory.class);
 
 	private final DataTableMapper referencingTestCaseMapper = new DataTableMapper("referencing-test-cases",
 			TestCase.class, Project.class).initMapping(5).mapAttribute(Project.class, 2, NAME_KEY, String.class)
@@ -427,9 +430,10 @@ public class TestCaseModificationController {
 		return new DataTableModelHelper<VerifiedRequirement>() {
 			@Override
 			public Object[] buildItemData(VerifiedRequirement item) {
-				return new Object[] { item.getId(), getCurrentIndex(), item.getProject().getName(),
+				return new Object[] { getCurrentIndex(), item.getProject().getName(), item.getId(), 
 						item.getReference(), item.getName(), item.getDecoratedRequirement().getVersionNumber(),
-						internationalizationHelper.internationalize(item.getCriticality(), locale), "",
+						internationalizationHelper.internationalize(item.getCriticality(), locale), 
+						internationalizationHelper.internationalize(item.getCategory(), locale), "",
 						item.getDecoratedRequirement().getStatus().name(), item.isDirectVerification() };
 			}
 		}.buildDataModel(holder, params.getsEcho());

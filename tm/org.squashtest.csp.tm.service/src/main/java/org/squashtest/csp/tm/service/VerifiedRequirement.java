@@ -24,6 +24,7 @@ import javax.validation.constraints.NotNull;
 
 import org.squashtest.csp.tm.domain.project.Project;
 import org.squashtest.csp.tm.domain.requirement.Requirement;
+import org.squashtest.csp.tm.domain.requirement.RequirementCategory;
 import org.squashtest.csp.tm.domain.requirement.RequirementCriticality;
 import org.squashtest.csp.tm.domain.requirement.RequirementVersion;
 
@@ -65,6 +66,10 @@ public class VerifiedRequirement {
 
 	public RequirementCriticality getCriticality() {
 		return decoratedRequirement.getCriticality();
+	}
+	
+	public RequirementCategory getCategory() {
+		return decoratedRequirement.getCategory();
 	}
 
 	public boolean isDirectVerification() {
