@@ -373,7 +373,7 @@ public class TestCaseModificationController {
 		testCaseModificationService.rename(testCaseId, newName);
 		LOGGER.info("TestCaseModificationController : renaming {} as {}", testCaseId, newName);
 		
-		return new RenameModel(newName);
+		return new RenameModel(testCaseModificationService.findById(testCaseId).getReference()+" - "+newName);
 
 	}
 
