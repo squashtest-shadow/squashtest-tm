@@ -500,9 +500,12 @@
 						"<f:message key='dialog.delete-test-suite.message' />",
 						"<f:message key='label.Confirm' />",  
 						"<f:message key='label.Cancel' />",
-						'500px').done(function(){confirmTestSuiteDeletion().done(deleteTestSuiteSuccess).fail(deleteTestSuiteFailure)});
+						'500px').done(function(){confirmTestSuiteDeletion()
+							.done(deleteTestSuiteSuccess)
+							.fail(deleteTestSuiteFailure)});
 			});
 		});
+		
 		function confirmTestSuiteDeletion(){
 			return $.ajax({
 				'url' : '${confirmDeletionUrl}',
@@ -513,8 +516,6 @@
 		}
 		
 		</script>
-
-
 	</c:if>
 
 	<%--------------------------- Assign User popup -------------------------------------%>
@@ -537,7 +538,7 @@
 					$("#batch-assign-test-case").dialog('close');
 				});
 				
-			},			
+			},
 			<pop:cancel-button />
 		</jsp:attribute>
 		<jsp:body>
@@ -567,26 +568,21 @@
 		</jsp:body>
 	</comp:popup>
 </div>
+<script type="text/javascript">
+	$(function(){
+		$('#test-case-button').click(function(){ document.location.href = "${testPlanManagerUrl}" ; });	
+	});
+</script>
 <%------------------------------------------automated suite overview --------------------------------------------%>
 <c:if test="${ testSuite.iteration.project.testAutomationEnabled }">
 	<comp:automated-suite-overview-popup />
-	</c:if>
-	<%------------------------------------------/automated suite overview --------------------------------------------%>
+</c:if>
+<%------------------------------------------/automated suite overview --------------------------------------------%>
 <%------------------------------ bugs section -------------------------------%>
 <c:if test="${testSuite.iteration.project.bugtrackerConnected }">
 	<comp:issues-tab btEntityUrl="${ btEntityUrl }" />
 </c:if>
-
 <%------------------------------ /bugs section -------------------------------%>
-<comp:decorate-buttons />
-<script type="text/javascript">
-	$(function(){
-
-		$('#test-case-button').click(function(){
-			document.location.href="${testPlanManagerUrl}" ;	
-		});		
-	}
-</script>
 
 <c:if test="${ creatable }">
 	<div id="confirm-duplicate-test-suite-dialog" class="not-displayed popup-dialog" title="<f:message key="title.DupliateTestSuite" />">
@@ -595,7 +591,6 @@
 		<input:cancel />
 	</div>
 <script>
-
 	$(function(){
 		var confirmHandler = function() {
 			dialog.confirmDialog("close");
@@ -603,15 +598,13 @@
 				duplicateTestSuiteSuccess(json);
 			});
 		};
-		
 		var dialog = $( "#confirm-duplicate-test-suite-dialog" );
 		dialog.confirmDialog({confirm: confirmHandler});
-		
 		$('#duplicate-test-suite-button').click(function(){
 			dialog.confirmDialog( "open" );
 			return false;
-			
 		});
 	});
 </script>
 </c:if>
+<comp:decorate-buttons />

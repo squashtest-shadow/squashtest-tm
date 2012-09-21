@@ -30,22 +30,17 @@
 <s:url var="automatedSuitesUrl" value="/automated-suites">
 </s:url>
 
-
-
 <div id="execution-info-template" style="display: hidden">
 	<div class="display-table-row">
 		<div class="executionName display-table-cell"></div>
 		<div class="executionStatus display-table-cell"></div>
 	</div>
 </div>
-
-
 <!-- *************************POPUP*********************** -->
 <pop:popup id="execute-auto-dialog" titleKey="dialog.execute-auto.title"
 	isContextual="true" closeOnSuccess="false">
 	<jsp:attribute name="buttons">
-			
-				<f:message var="label" key="label.Close" />
+			<f:message var="label" key="label.Close" />
 				'${ label }': function() {
 					var selfDialog = $( this );
 					var progressBarValue = $('#execution-auto-progress-bar').progressbar('value');
@@ -58,8 +53,7 @@
 					}else{
 						selfDialog.dialog( 'close' );
 					}
-				}		
-				
+				}
 			</jsp:attribute>
 			<jsp:attribute name="additionalSetup">
 			height: 490
@@ -81,20 +75,13 @@
 					style="width: 10%; display: inline-block"></div>
 				</div>
 				
-				</div>
-				
-			</jsp:attribute>
+			</div>
+	</jsp:attribute>
 </pop:popup>
 <script>
 	var executionProgressBar =  $("#execution-auto-progress-bar");
-	executionProgressBar.progressbar({
-		value : 0
-	});
-	executionProgressBar.find("div").addClass("ui-state-default");
-	
-	squashtm.automatedSuiteOverviewDialog = new AutomatedSuiteOverviewDialog({
-			automatedSuiteBaseUrl : "${automatedSuitesUrl}",
-	});
-	
+	executionProgressBar.progressbar({value : 0});
+	executionProgressBar.find("div").addClass("ui-state-default");	
+	squashtm.automatedSuiteOverviewDialog = new AutomatedSuiteOverviewDialog({automatedSuiteBaseUrl : "${automatedSuitesUrl}"});
 </script>
 <!-- *************************/POPUP*********************** -->

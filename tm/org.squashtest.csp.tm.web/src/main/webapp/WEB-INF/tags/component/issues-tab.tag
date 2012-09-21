@@ -38,8 +38,7 @@
 	 			$("div.fragment-tabs").tabs( "add" , "#bugtracker-section-div" , "${tabIssueLabel}");
 	 			<%-- second : load the bugtracker section --%>
 	 			var btDiv = $("#bugtracker-section-div");
-	 			btDiv.load("${btEntityUrl}?style=fragment-tab", function(){btDiv.addClass("table-tab")});
- 			
+	 			btDiv.load("${btEntityUrl}?style=fragment-tab", function(){btDiv.addClass("table-tab");}); 			
  	});
  </script>
 </div>
