@@ -107,13 +107,22 @@ $(function(){
 	</jsp:attribute>
 
 	<jsp:attribute name="body">
-		<label><f:message key="dialog.rename.label" />
-		</label>
-		<input type="text" id="export-name-requirement-input" />
-		<br />
-		<select>
-			<option value="1">CSV</option>
-		</select>
+		<div class="display-table" style="width:100%">
+		<div style="display:table-column-group">
+		    <div style="display:table-column" ></div>
+		    <div style="display:table-column; width:70%" ></div>
+		  </div>
+			<div class="display-table-row">
+			<label><f:message key="dialog.rename.label" /></label>
+			<div class="display-table-cell" ><input type="text" id="export-name-requirement-input" style="width:100%"/></div>
+			</div>
+			<div class="display-table-row">		
+			<label><f:message key="label.ExportFormat" />
+			</label><div class="display-table-cell"><select id="export-option" >
+				<option value="1">CSV</option>
+			</select></div>
+			</div>
+		</div>
 	</jsp:attribute>
 </pop:popup>
 
