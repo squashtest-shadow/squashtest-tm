@@ -390,7 +390,7 @@ function TestSuiteManager(settings) {
 
 	var renameControlSettings = {
 		manager : this,
-		defaultMessage : settings.defaultMessage,
+		defaultMessage : '',
 		panel : this.rename.panel = $(".rename-suites-section", this.instance),
 		action : postRenameSuite,
 		onfocus : function () {

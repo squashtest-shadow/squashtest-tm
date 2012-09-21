@@ -69,8 +69,8 @@
 	<div class="main-div-suites not-displayed">
 	<c:if test="${ creatable }">
 		<div class="create-suites-section">
-			<f:message var="createLabel" key="label.Add" />
-			<input type="text" size="30"/><input type="button" class="button" value="${createLabel}" /><br/>
+			<f:message var="createLabel" key="label.Add"/>
+			<input type="text" size="30"/><input type="button" class="button" value="${createLabel}"/><br/>
 			<comp:error-message forField="name" />			
 		</div>	
 		</c:if>
