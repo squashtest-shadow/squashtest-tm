@@ -90,7 +90,7 @@
 	//dropPosition : the new position
 	function testPlanDropHandler(row, dropPosition) {
 		//first compose the url to update the order, then send a request attribute newIndex and call the refresh function
-		$.post('${ updateTestPlanUrl }' + parseTestPlanId(row), { newIndex : dropPosition }, function(){
+		$.post('${ updateTestPlanUrl }'+'/move', { itemIds: parseTestPlanIds(row), newIndex : dropPosition }, function(){
 			refreshTestPlans();
 		}) ;
 	}
@@ -136,6 +136,14 @@
 	
 	function addIdtoTestPlanRow(nRow, aData){
 		$(nRow).attr("id", "test-case:" + getTestPlansTableRowId(aData));
+	}
+	
+	function parseTestPlanIds(elements) {
+		var ids = new Array();
+		for(var i=0; i<elements.length; i++) {
+			ids.push(parseTestPlanId(elements[i]));
+		}
+		return ids;
 	}
 	
 	function parseTestPlanId(element) {
