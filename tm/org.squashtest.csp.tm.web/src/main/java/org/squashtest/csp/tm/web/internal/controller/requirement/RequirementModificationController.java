@@ -33,6 +33,9 @@ import java.util.Map;
 
 import javax.inject.Inject;
 import javax.inject.Provider;
+import javax.sound.sampled.spi.FormatConversionProvider;
+
+import org.jfree.layout.FormatLayout;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.context.MessageSource;
@@ -87,10 +90,12 @@ public class RequirementModificationController {
 	private RequirementVersionManagerService versionFinder;
 
 	private final DataTableMapper versionMapper = new DataTableMapper("requirement-version", RequirementVersion.class)
-			.initMapping(6).mapAttribute(RequirementVersion.class, 1, "versionNumber", int.class)
+			.initMapping(7).mapAttribute(RequirementVersion.class, 1, "versionNumber", int.class)
 			.mapAttribute(RequirementVersion.class, 2, "reference", String.class)
 			.mapAttribute(RequirementVersion.class, 3, "name", String.class)
-			.mapAttribute(RequirementVersion.class, 4, "criticality", RequirementCriticality.class);
+			.mapAttribute(RequirementVersion.class, 4, "status", RequirementStatus.class)
+			.mapAttribute(RequirementVersion.class, 5, "criticality", RequirementCriticality.class)
+			.mapAttribute(RequirementVersion.class, 6, "category", RequirementCategory.class);
 
 	@ServiceReference
 	public void setRequirementModificationService(RequirementModificationService service) {
@@ -101,10 +106,10 @@ public class RequirementModificationController {
 	public void setRequirementVersionManagerService(RequirementVersionManagerService service) {
 		versionFinder = service;
 	}
-	
+
 	@Inject
 	private MessageSource messageSource;
-	
+
 	// will return the Requirement in a full page
 	@RequestMapping(value = "/info", method = RequestMethod.GET)
 	public ModelAndView showRequirementInfo(@PathVariable long requirementId, Locale locale) {
@@ -126,6 +131,7 @@ public class RequirementModificationController {
 	private String buildMarshalledCriticalities(Locale locale) {
 		return criticalityComboBuilderProvider.get().useLocale(locale).buildMarshalled();
 	}
+
 	private String buildMarshalledCategories(Locale locale) {
 		return categoryComboBuilderProvider.get().useLocale(locale).buildMarshalled();
 	}
@@ -161,7 +167,7 @@ public class RequirementModificationController {
 	Object rename(@RequestParam("newName") String newName, @PathVariable long requirementId) {
 		requirementModService.rename(requirementId, newName);
 		LOGGER.info("RequirementModificationController : renaming " + requirementId + " as " + newName);
-		
+
 		return new RenameModel(newName);
 	}
 
@@ -174,23 +180,23 @@ public class RequirementModificationController {
 				criticality.name());
 		return formatCriticality(criticality, locale);
 	}
-	
+
 	@RequestMapping(method = RequestMethod.POST, params = { "id=requirement-category", VALUE })
 	@ResponseBody
 	public String changeCategory(@RequestParam(VALUE) String value, @PathVariable long requirementId, Locale locale) {
 		RequirementCategory category = RequirementCategory.valueOf(value);
 		requirementModService.changeCategory(requirementId, category);
-		LOGGER.debug("Requirement {} : requirement criticality changed, new value : {}", requirementId,
-				category.name());
-		return formatCategory(category, locale);
+		LOGGER.debug("Requirement {} : requirement criticality changed, new value : {}", requirementId, category.name());
+		return formatCategory(category, locale, internationalizableFormatterProvider);
 	}
+
 	@RequestMapping(method = RequestMethod.POST, params = { "id=requirement-status", VALUE })
 	@ResponseBody
 	public String changeStatus(@RequestParam(VALUE) String value, @PathVariable long requirementId, Locale locale) {
 		RequirementStatus status = RequirementStatus.valueOf(value);
 		requirementModService.changeStatus(requirementId, status);
 		LOGGER.debug("Requirement {} : requirement status changed, new value : {}", requirementId, status.name());
-		return internationalize(status, locale);
+		return internationalize(status, locale, levelFormatterProvider);
 	}
 
 	@RequestMapping(method = RequestMethod.GET, value = "/next-status")
@@ -216,59 +222,61 @@ public class RequirementModificationController {
 	public void createNewVersion(@PathVariable long requirementId) {
 		requirementModService.createNewVersion(requirementId);
 	}
-	
+
 	@RequestMapping(value = "/versions/version-number", method = RequestMethod.GET)
 	@ResponseBody
 	public Map<String, String> showAllVersions(Locale locale, @PathVariable long requirementId) {
 		Map<String, String> versionsNumbersById = new LinkedHashMap<String, String>();
-		
+
 		RequirementVersion requirementVersion = versionFinder.findById(requirementId);
-		
+
 		Requirement requirement = requirementVersion.getRequirement();
-		
-		//Retrieve all versions of the requirement
+
+		// Retrieve all versions of the requirement
 		List<RequirementVersion> requirementVersions = requirement.getRequirementVersions();
-		
-		//We duplicate the list before we sort it
-		List <RequirementVersion> cloneRequirementVersions = new ArrayList<RequirementVersion>();
-		
+
+		// We duplicate the list before we sort it
+		List<RequirementVersion> cloneRequirementVersions = new ArrayList<RequirementVersion>();
+
 		for (RequirementVersion rv : requirementVersions) {
 			cloneRequirementVersions.add(rv);
 		}
-		
+
 		Collections.sort(cloneRequirementVersions, new MyRequirementVersionsDecOrder());
 
 		String status = "";
-		
+
 		for (RequirementVersion version : cloneRequirementVersions) {
-			if (version.getStatus() != RequirementStatus.OBSOLETE){
+			if (version.getStatus() != RequirementStatus.OBSOLETE) {
 				status = messageSource.getMessage("requirement.status." + version.getStatus().name(), null, locale);
 				versionsNumbersById.put("" + version.getId(), "" + version.getVersionNumber() + " (" + status + ")");
 			}
 		}
 		versionsNumbersById.put("selected", "" + requirementId);
-		
+
 		return versionsNumbersById;
 	}
-	
+
 	/**
 	 * Comparator for RequieredVersions
+	 * 
 	 * @author FOG
-	 *
+	 * 
 	 */
-	public class MyRequirementVersionsDecOrder implements Comparator<RequirementVersion>{
-		 
-	    @Override
-	    public int compare(RequirementVersion rV1, RequirementVersion rV2) {
-	        return (rV1.getVersionNumber()>rV2.getVersionNumber() ? -1 : (rV1.getVersionNumber()==rV2.getVersionNumber() ? 0 : 1));
-	    }
+	public class MyRequirementVersionsDecOrder implements Comparator<RequirementVersion> {
+
+		@Override
+		public int compare(RequirementVersion rV1, RequirementVersion rV2) {
+			return (rV1.getVersionNumber() > rV2.getVersionNumber() ? -1 : (rV1.getVersionNumber() == rV2
+					.getVersionNumber() ? 0 : 1));
+		}
 	}
-	
+
 	/**
 	 * The change status combobox is filtered and only proposes the status to which it is legal to switch to. That
 	 * method will generate a map for that purpose. Pretty much like
 	 * {@link #initCriticitySelectionList(Locale, RequirementCriticality)};
-	 *
+	 * 
 	 * @param locale
 	 * @param status
 	 * @return
@@ -280,7 +288,7 @@ public class RequirementModificationController {
 
 	/***
 	 * Method which returns criticality in the chosen language
-	 *
+	 * 
 	 * @param criticality
 	 *            the criticality
 	 * @param locale
@@ -288,23 +296,24 @@ public class RequirementModificationController {
 	 * @return the criticality in the chosen language
 	 */
 	private String formatCriticality(RequirementCriticality criticality, Locale locale) {
-		return internationalize(criticality, locale);
+		return internationalize(criticality, locale, levelFormatterProvider);
 	}
-	
+
 	/***
 	 * Method which returns category in the chosen language
-	 *
+	 * 
 	 * @param criticality
 	 *            the category
 	 * @param locale
 	 *            the locale with the chosen language
 	 * @return the category in the chosen language
 	 */
-	private String formatCategory(RequirementCategory category, Locale locale) {
+	private static String formatCategory(RequirementCategory category, Locale locale, Provider<InternationalisableLabelFormatter> internationalizableFormatterProvider) {
 		return internationalizableFormatterProvider.get().useLocale(locale).formatLabel(category);
 	}
 
-	private String internationalize(Level level, Locale locale) {
+	private static String internationalize(Level level, Locale locale,
+			Provider<LevelLabelFormatter> levelFormatterProvider) {
 		return levelFormatterProvider.get().useLocale(locale).formatLabel(level);
 	}
 
@@ -328,13 +337,33 @@ public class RequirementModificationController {
 
 		PagedCollectionHolder<List<RequirementVersion>> holder = versionFinder.findAllByRequirement(requirementId, pas);
 
-		return new DataTableModelHelper<RequirementVersion>() {
-			@Override
-			public Object[] buildItemData(RequirementVersion version) {
-				return new Object[] { version.getId(), version.getVersionNumber(), version.getReference(),
-						version.getName(), internationalize(version.getStatus(), locale), "" };
-			}
-		}.buildDataModel(holder, params.getsEcho());
+		return new RequirementVersionDataTableModel(locale, levelFormatterProvider, internationalizableFormatterProvider).buildDataModel(holder,
+				params.getsEcho());
+	}
+
+	private static class RequirementVersionDataTableModel extends DataTableModelHelper<RequirementVersion> {
+		private Locale locale;
+		private Provider<LevelLabelFormatter> levelFormatterProvider;
+		private Provider<InternationalisableLabelFormatter> internationalizableFormatterProvider;
+
+		private RequirementVersionDataTableModel(Locale locale, Provider<LevelLabelFormatter> levelFormatterProvider, Provider<InternationalisableLabelFormatter> internationalizableFormatterProvider) {
+			this.locale = locale;
+			this.levelFormatterProvider = levelFormatterProvider;
+			this.internationalizableFormatterProvider = internationalizableFormatterProvider;
+		}
+
+		@Override
+		public Object[] buildItemData(RequirementVersion version) {
+			return new Object[] { version.getId(),
+					version.getVersionNumber(),
+					version.getReference(),
+					version.getName(), 
+					internationalize(version.getStatus(), locale, levelFormatterProvider), 
+					internationalize(version.getCriticality(), locale, levelFormatterProvider), 
+					formatCategory(version.getCategory(), locale, internationalizableFormatterProvider),
+					"" };
+		}
+
 	}
 
 	@ServiceReference

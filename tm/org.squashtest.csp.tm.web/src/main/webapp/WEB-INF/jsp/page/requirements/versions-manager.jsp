@@ -69,9 +69,9 @@
 			        "aaSorting": [[ 1, "desc" ]],
 			        "fnDrawCallback": function() { restoreTableSelection(this, getRowId); },
 					"aoColumnDefs": [ 
-						{ "bVisible": false, "aTargets": [0, 5] },
+						{ "bVisible": false, "aTargets": [0, 7] },
 						{ "bSortable": true, "aTargets": [1], "sClass": "select-handle centered", "sWidth": "6em" }, 
-						{ "bSortable": true, "aTargets": [2,3,4] } 
+						{ "bSortable": true, "aTargets": [2,3,4,5,6] } 
 					] 
 				});
 				
@@ -146,6 +146,8 @@
 						<th><f:message key="requirement.versions.table.col-header.reference" /></th>
 						<th><f:message key="label.Name" /></th>
 						<th><f:message key="requirement.versions.table.col-header.status" /></th>
+						<th><f:message key="requirement.versions.table.col-header.criticality" /></th>
+						<th><f:message key="requirement.versions.table.col-header.category" /></th>
 						<th>Id</th>
 					</thead>
 					<tbody >
@@ -164,6 +166,8 @@
 								<td>${ version.reference }</td>
 								<td>${ version.name }</td>
 								<td><comp:level-message level="${ version.status }" /></td>
+								<td><comp:level-message level="${ version.criticality }"/></td>
+								<td><s:message code="${ version.category.i18nKey }" htmlEscape="true" /></td>
 								<td>&nbsp;</td>
 							</tr>
 						</c:forEach>
