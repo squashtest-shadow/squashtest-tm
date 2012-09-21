@@ -125,12 +125,9 @@
 		
 			<%----------------------------------- INFORMATION PANEL -----------------------------------------------%>
 			<br />
-			<comp:rich-jeditable targetUrl="${ projectUrl }"
-				componentId="project-label" />
-			<comp:rich-jeditable targetUrl="${ projectUrl }"
-				componentId="project-description" />
+			<comp:simple-jeditable targetUrl="${ projectUrl }" componentId="project-label" maxLength="255" />
+			<comp:rich-jeditable targetUrl="${ projectUrl }" componentId="project-description" />
 			
-	
 			<comp:toggle-panel id="project-info-panel"
 				titleKey="project.info.panel.title" isContextual="true" open="true"
 				classes="information-panel">

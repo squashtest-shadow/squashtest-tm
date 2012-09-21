@@ -164,7 +164,7 @@
 					<tr>
 						<td><label for="add-project-name"><f:message
 							key="label.Name" /></label></td>
-						<td><input id="add-project-name" type="text" size="50" />
+						<td><input id="add-project-name" type="text" size="50" maxlength="255" />
 						<comp:error-message forField="name" /></td>
 					</tr>
 					<tr>
@@ -175,7 +175,7 @@
 					<tr>
 						<td><label for="add-project-label"><f:message
 							key="dialog.new-project.label.label" /></label></td>
-						<td><input id="add-project-label" type="text" size="50"/></td>
+						<td><input id="add-project-label" type="text" size="50" maxlength="255" /></td>
 					</tr>
 				</table>
 			</jsp:body>

@@ -32,6 +32,7 @@ import org.squashtest.csp.tm.domain.requirement.RequirementLibraryNodeVisitor;
 import org.squashtest.csp.tm.web.internal.model.jstree.JsTreeNode;
 import org.squashtest.csp.tm.web.internal.model.jstree.JsTreeNode.State;
 
+@SuppressWarnings("rawtypes")
 @Component
 @Scope("prototype")
 public class RequirementLibraryTreeNodeBuilder extends LibraryTreeNodeBuilder<RequirementLibraryNode> implements
