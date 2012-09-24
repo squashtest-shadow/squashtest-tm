@@ -223,7 +223,7 @@ $R{requirement.criticality.UNKNOWN}]]></textFieldExpression>
 				<reportElement x="1190" y="0" width="170" height="20"/>
 				<textElement/>
 				<textFieldExpression class="java.lang.String"><![CDATA[($F{category}.toString() == "FUNCTIONAL") ? $R{requirement.category.FUNCTIONAL} :
-($F{category}.toString() == "NON_FONCTIONAL") ? $R{requirement.category.NON_FONCTIONAL} :
+($F{category}.toString() == "NON_FUNCTIONAL") ? $R{requirement.category.NON_FUNCTIONAL} :
 ($F{category}.toString() == "USE_CASE") ? $R{requirement.category.USE_CASE} :
 ($F{category}.toString() == "BUSINESS") ? $R{requirement.category.BUSINESS} :
 ($F{category}.toString() == "TEST_REQUIREMENT") ? $R{requirement.category.TEST_REQUIREMENT} :
