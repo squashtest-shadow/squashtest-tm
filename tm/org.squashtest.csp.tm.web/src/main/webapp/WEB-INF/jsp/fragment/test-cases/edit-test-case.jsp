@@ -654,14 +654,14 @@ function addTestStepSuccessAnother(){
 		<jsp:body>
 				<script type="text/javascript">
 				$( "#rename-test-case-dialog" ).bind( "dialogopen", function(event, ui) {
-					var name = $('#test-case-raw-name').text();
+					var name = $.trim($('#test-case-raw-name').text());
 					$("#rename-test-case-input").val(name);
 					
 				});
 				</script>
 				<label><f:message key="dialog.rename.label" />
 			</label>
-				<input type="text" id="rename-test-case-input" maxlength="255" />
+				<input type="text" id="rename-test-case-input" maxlength="255" size="50" />
 			<br />
 				<comp:error-message forField="name" />
 			</jsp:body>

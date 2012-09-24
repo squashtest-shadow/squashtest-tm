@@ -273,14 +273,14 @@
 			<jsp:body>
 				<script type="text/javascript">
 				$( "#rename-test-suite-dialog" ).bind( "dialogopen", function(event, ui) {
-					var name = $('#test-suite-name').text();
+					var name = $.trim($('#test-suite-name').text());
 					$("#rename-test-suite-name").val(name);
 					
 				});
 				</script>			
 				<label><f:message key="dialog.rename.label" />
 				</label>
-				<input type="text" id="rename-test-suite-name" maxlength="255" />
+				<input type="text" id="rename-test-suite-name" maxlength="255" size="50" />
 				<br />
 				<comp:error-message forField="name" />	
 		

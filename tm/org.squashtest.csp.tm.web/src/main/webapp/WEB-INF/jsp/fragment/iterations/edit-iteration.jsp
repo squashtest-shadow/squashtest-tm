@@ -235,14 +235,14 @@
 				<script type="text/javascript">
 					$("#rename-iteration-dialog").bind("dialogopen",
 							function(event, ui) {
-								var name = $('#iteration-name').text();
+								var name = $.trim($('#iteration-name').text());
 								$("#rename-iteration-name").val(name);
 
 							});
 				</script>			
 				<label><f:message key="dialog.rename.label" />
 				</label>
-				<input type="text" id="rename-iteration-name" maxlength="255" />
+				<input type="text" id="rename-iteration-name" maxlength="255" size="50" />
 				<br />
 				<comp:error-message forField="name" />	
 		

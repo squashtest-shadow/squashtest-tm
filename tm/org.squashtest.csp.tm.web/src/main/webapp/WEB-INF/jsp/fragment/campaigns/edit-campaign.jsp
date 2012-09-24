@@ -182,14 +182,14 @@
 				<script type="text/javascript">
 					$("#rename-campaign-dialog").bind("dialogopen",
 							function(event, ui) {
-								var name = $('#campaign-name').text();
+								var name = $.trim($('#campaign-name').text());
 								$("#rename-campaign-name").val(name);
 
 							});
 				</script>			
 				<label><f:message key="dialog.rename.label" />
 				</label>
-				<input type="text" id="rename-campaign-name" maxlength="255" />
+				<input type="text" id="rename-campaign-name" maxlength="255" size="50" />
 				<br />
 				<comp:error-message forField="name" />	
 		

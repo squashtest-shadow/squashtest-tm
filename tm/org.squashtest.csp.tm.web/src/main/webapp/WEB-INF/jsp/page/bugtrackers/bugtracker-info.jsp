@@ -190,7 +190,7 @@
 		<jsp:body>
 			<script type="text/javascript">
 				$("#rename-bugtracker-dialog").bind("dialogopen", function(event, ui) {
-					var name = $('#bugtracker-name-header').text();
+					var name = $.trim($('#bugtracker-name-header').text());
 					$("#rename-bugtracker-input").val($.trim(name));
 			
 				});
@@ -202,7 +202,7 @@
 				}
 			</script>
 			<label><f:message key="dialog.rename.label" /></label>
-			<input type="text" id="rename-bugtracker-input" maxlength="255" />
+			<input type="text" id="rename-bugtracker-input" maxlength="255" size="50" />
 			<br />
 			<comp:error-message forField="name" />
 		</jsp:body>

@@ -355,13 +355,13 @@ that page won't be editable if
 			<jsp:body>
 				<script type="text/javascript">
 				$( "#rename-requirement-dialog" ).bind( "dialogopen", function(event, ui) {
-					var name = $('#requirement-raw-name').text();
+					var name = $.trim($('#requirement-raw-name').text());
 					$("#rename-requirement-input").val(name);
 					
 				});
 				</script>
 				<label><f:message key="dialog.rename.label" /></label>
-				<input type="text" id="rename-requirement-input" maxlength="255" /><br/>
+				<input type="text" id="rename-requirement-input" maxlength="255" size="50" /><br/>
 				<comp:error-message forField="name"/>
 			</jsp:body>
 		</comp:popup>

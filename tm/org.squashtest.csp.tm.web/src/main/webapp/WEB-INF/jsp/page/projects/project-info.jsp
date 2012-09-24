@@ -496,7 +496,7 @@
 		<jsp:body>
 <script type="text/javascript">
 	$("#rename-project-dialog").bind("dialogopen", function(event, ui) {
-		var name = $('#project-name-header').text();
+		var name = $.trim($('#project-name-header').text());
 		$("#rename-project-input").val(name);
 
 	});
@@ -508,7 +508,7 @@
 </script>
 		<label><f:message key="dialog.rename.label" />
 		</label>
-		<input type="text" id="rename-project-input" maxlength="255" />
+		<input type="text" id="rename-project-input" maxlength="255" size="50" />
 		<br />
 		<comp:error-message forField="name" />
 	</jsp:body>
