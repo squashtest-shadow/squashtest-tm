@@ -72,7 +72,7 @@
 			};
 			var winDef = {
 				name : "classicExecutionRunner",
-				features : "height=500, width=600, resizable, scrollbars, dialog, alwaysRaised"
+				features : "height=690, width=810, resizable, scrollbars, dialog, alwaysRaised"
 			};
 			$.open(url, data, winDef);
 		};

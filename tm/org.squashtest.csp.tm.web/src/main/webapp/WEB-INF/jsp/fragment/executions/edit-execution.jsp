@@ -318,7 +318,6 @@
 		
 		</c:if>
 		
-		
 		$("#execution-execution-steps-table").squashTable(tableSettings, squashSettings);
 	});
 </script>
@@ -326,13 +325,10 @@
 	<%-------------------------------------- Comment --------------------------------------------------%>
 
 	<c:if test="${ editable }">
-		<comp:rich-jeditable targetUrl="${ executionUrl }"
-			componentId="execution-description" />
+		<comp:rich-jeditable targetUrl="${ executionUrl }" componentId="execution-description" />
 	</c:if>
-	<f:message var="executionComment"
-		key="execution.description.panel.title" />
-	<comp:toggle-panel id="execution-description-panel"
-		title="${executionComment}" isContextual="true" open="false">
+	<f:message var="executionComment" key="execution.description.panel.title" />
+	<comp:toggle-panel id="execution-description-panel" title="${executionComment}" isContextual="true" open="false">
 		<jsp:attribute name="body">
 		<div id="execution-description">${ execution.description }</div>
 	</jsp:attribute>
@@ -340,8 +336,7 @@
 
 	<%------------------------------ Attachments bloc ---------------------------------------------%>
 
-	<comp:attachment-bloc entity="${execution}" workspaceName="campaign"
-		editable="${ editable }" />
+	<comp:attachment-bloc entity="${execution}" workspaceName="campaign" editable="${ editable }" />
 
 
 	<%------------------------------ bugs section -------------------------------%>
@@ -356,9 +351,6 @@
 	<div id="bugtracker-section-div"></div>
 
 	<%------------------------------ /bugs section -------------------------------%>
-
-
-	<comp:decorate-buttons />
 
 	<%--------------------------- Deletion confirmation popup -------------------------------------%>
 
@@ -387,10 +379,4 @@
 	<%--------------------------- /Deletion confirmation popup -------------------------------------%>
 
 </div>
-
-
-
-
-
-
 
