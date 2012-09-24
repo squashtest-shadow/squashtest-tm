@@ -214,6 +214,7 @@ function TestSuiteMenu(settings){
 			self.menu.kill();
 		});
 	},this);
+	
 	var bindSuiteItems = $.proxy(function (){
 		this.menu.chooseItem = function (item){
 			var toSendId = getSpanDomId(item);
@@ -224,6 +225,13 @@ function TestSuiteMenu(settings){
 				bindSuiteItemsGeneral(toSendId);				
 			}
 		}
+	}, this);
+	
+	var showMenuHandler = $.proxy(function (){
+			if(getDatatableSelected().length ==  0) {
+				this.menu.kill();
+				$(settings.emptySelectionMessageSelector).openMessage();
+			}
 	}, this);
 	
 	var bindButton = $.proxy(function (){
@@ -272,6 +280,7 @@ function TestSuiteMenu(settings){
 		});
 		
 		this.menu = allUIMenus[allUIMenus.length-1];
+		this.menu.onShow.addHandler(showMenuHandler);
 		
 	}, this);
 	

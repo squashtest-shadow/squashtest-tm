@@ -39,7 +39,7 @@ Dual licensed under the MIT (filamentgroup.com/examples/mit-license.txt) and GPL
  * - Made the content reloadable by allowing to set the content (see the new attribute this.content, + first lines of this.create).
  * - Exposed also the container throught getContainer() .
  * - Added a naive destroyer, see this.destroy()
- *
+ * - Added an onShow event (mpagnon)
  * @author bsiri
  */
 var allUIMenus = [];
@@ -61,6 +61,20 @@ $.fn.fgmenu = function(options){
 	});	
 };
 
+function MenuEvent() {
+	this.eventHandlers = [];
+};
+
+MenuEvent.prototype.addHandler = function (eventHandler) {
+	this.eventHandlers.push(eventHandler);
+};
+
+MenuEvent.prototype.execute = function (args) {
+	for (var i = 0; i < this.eventHandlers.length; i++) {
+		this.eventHandlers[i](args);
+	}
+};
+
 function Menu(caller, options){
 	var menu = this;
 	var caller = $(caller);
@@ -69,6 +83,7 @@ function Menu(caller, options){
 	this.menuOpen = false;
 	this.menuExists = false;
 	this.content=options.content;
+	this.onShow = new MenuEvent();
 	
 	this.getContainer = function (){
 		return container;		
@@ -215,6 +230,7 @@ function Menu(caller, options){
 
 	this.showMenu = function (){
 		killAllMenus();
+		menu.onShow.execute();
 		if (!menu.menuExists) { menu.create() };
 		caller
 			.addClass('fg-menu-open')
