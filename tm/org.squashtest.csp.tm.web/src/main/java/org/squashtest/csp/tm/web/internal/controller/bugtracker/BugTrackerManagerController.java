@@ -24,6 +24,7 @@ import java.util.List;
 import java.util.Locale;
 import java.util.Set;
 
+import javax.inject.Inject;
 import javax.validation.Valid;
 
 import org.slf4j.Logger;
@@ -39,16 +40,18 @@ import org.squashtest.csp.core.bugtracker.domain.BugTracker;
 import org.squashtest.csp.tm.infrastructure.filter.CollectionSorting;
 import org.squashtest.csp.tm.infrastructure.filter.FilteredCollectionHolder;
 import org.squashtest.csp.tm.service.BugTrackerManagerService;
+import org.squashtest.csp.tm.web.internal.i18n.InternationalizationHelper;
 import org.squashtest.csp.tm.web.internal.model.datatable.DataTableDrawParameters;
 import org.squashtest.csp.tm.web.internal.model.datatable.DataTableFilterSorter;
 import org.squashtest.csp.tm.web.internal.model.datatable.DataTableModel;
-import org.squashtest.csp.tm.web.internal.model.datatable.DataTableModelHelper;
 import org.squashtest.csp.tm.web.internal.model.viewmapper.DataTableMapper;
 
 @Controller
 @RequestMapping("/bugtrackers")
 public class BugTrackerManagerController {
 
+	@Inject
+	private InternationalizationHelper messageSource;
 	private BugTrackerManagerService bugTrackerManagerService;
 	private static final Logger LOGGER = LoggerFactory.getLogger(BugTrackerManagerController.class);
 
@@ -60,7 +63,7 @@ public class BugTrackerManagerController {
 										.mapAttribute(BugTracker.class, 2, "name", String.class)
 										.mapAttribute(BugTracker.class, 3, "kind", String.class)
 										.mapAttribute(BugTracker.class, 4, "url", String.class)
-										.mapAttribute(BugTracker.class, 5, "iframeFriendly", boolean.class);
+										.mapAttribute(BugTracker.class, 5, "iframeFriendly", String.class);
 
 	@ServiceReference
 	public void setBugtrackerManagerService(BugTrackerManagerService bugTrackerManagerService) {
@@ -99,23 +102,10 @@ public class BugTrackerManagerController {
 		FilteredCollectionHolder<List<BugTracker>> holder = bugTrackerManagerService.findSortedBugtrackers(filter);
 
 
-		return new BugtrackerDataTableModelHelper().buildDataModel(holder, filter.getFirstItemIndex()+1, params.getsEcho());
+		return new BugtrackerDataTableModelHelper(messageSource).buildDataModel(holder, filter.getFirstItemIndex()+1, params.getsEcho(), locale);
 
 	}
-	private static class BugtrackerDataTableModelHelper extends DataTableModelHelper<BugTracker>{
-		@Override
-		public Object[] buildItemData(BugTracker item) {
 
-				return new Object[]{
-					item.getId(),
-					getCurrentIndex(),
-					item.getName(),
-					item.getKind(),
-					item.getUrl(),
-					item.isIframeFriendly()
-			};
-		}
-	}
 	/* ****************************** data formatters ********************************************** */
 
 	private CollectionSorting createPaging(final DataTableDrawParameters params,
