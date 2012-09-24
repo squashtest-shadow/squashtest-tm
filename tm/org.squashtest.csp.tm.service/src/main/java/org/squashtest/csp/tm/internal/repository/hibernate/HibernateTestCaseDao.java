@@ -453,12 +453,15 @@ public class HibernateTestCaseDao extends HibernateEntityDao<TestCase> implement
 	}
 	
 	private boolean usesImportance(TestCaseSearchCriteria criteria){
-		return (criteria.getImportanceFilterSet().size() != TestCaseImportance.values().length);
+		return ((!criteria.getImportanceFilterSet().isEmpty())&&(criteria.getImportanceFilterSet().size() != TestCaseImportance.values().length));
 	}
 	
 	private Criteria testCaseRootedCriteria(TestCaseSearchCriteria criteria){
-		return currentSession().createCriteria(TestCase.class)
-									 .add(Restrictions.in("importance", criteria.getImportanceFilterSet()));		
+		Criteria crit = currentSession().createCriteria(TestCase.class);
+		if(!criteria.getImportanceFilterSet().isEmpty()){
+			crit.add(Restrictions.in("importance", criteria.getImportanceFilterSet()));
+		}
+		return crit;
 	}
 	
 	private Criteria tcNodeRootedCriteria(TestCaseSearchCriteria criteria){

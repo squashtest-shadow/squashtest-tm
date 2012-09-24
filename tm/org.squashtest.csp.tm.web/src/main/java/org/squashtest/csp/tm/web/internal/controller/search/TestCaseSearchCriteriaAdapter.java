@@ -59,11 +59,7 @@ public class TestCaseSearchCriteriaAdapter implements TestCaseSearchCriteria {
 	
 	@Override
 	public List<TestCaseImportance> getImportanceFilterSet() {		
-		
-		if (importances.length==0){
-			return Arrays.asList(TestCaseImportance.values());
-		}
-		
+			
 		List<TestCaseImportance> result = new LinkedList<TestCaseImportance>();
 		
 		for (String str : importances){
