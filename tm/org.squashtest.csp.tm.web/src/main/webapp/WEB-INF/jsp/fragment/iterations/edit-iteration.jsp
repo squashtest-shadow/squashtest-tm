@@ -501,15 +501,31 @@
 
 
 	<%-- ---------------------deletion popup------------------------------ --%>
-	<c:if test="${deletable}">
-
-		<comp:delete-contextual-node-dialog
-			simulationUrl="${simulateDeletionUrl}"
-			confirmationUrl="${confirmDeletionUrl}" itemId="${iteration.id}"
-			successCallback="deleteIterationSuccess"
-			openedBy="delete-iteration-button"
-			titleKey="dialog.delete-iteration.title" />
-
+	<c:if test="${ deletable }">
+		<script>
+		var iterationId = ${iteration.id};
+		$(function(){
+			$('#delete-iteration-button').click(function(){
+				oneShotConfirm("<f:message key='dialog.delete-iteration.title' />", 
+						"<f:message key='dialog.delete-iteration.message' />",
+						"<f:message key='label.Confirm' />",  
+						"<f:message key='label.Cancel' />",
+						'500px').done(function(){confirmIterationDeletion()
+							.done(deleteIterationSuccess)
+							.fail(deleteIterationFailure)});
+			});
+		});
+		
+		function confirmIterationDeletion(){
+			return $.ajax({
+				'url' : '${confirmDeletionUrl}',
+				type : 'POST',
+				data : {"nodeIds[]":[iterationId]},
+				dataType : 'json'
+			});
+		}
+		
+		</script>
 	</c:if>
 
 	<%--------------------------- Assign User popup -------------------------------------%>
