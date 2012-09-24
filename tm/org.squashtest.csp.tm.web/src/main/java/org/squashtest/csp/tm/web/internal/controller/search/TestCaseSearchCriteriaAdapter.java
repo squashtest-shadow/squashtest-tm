@@ -79,7 +79,7 @@ public class TestCaseSearchCriteriaAdapter implements TestCaseSearchCriteria {
 		this.groupByProject=groupByProject;
 	}
 	
-	public void setImportanceFilter(String[] importances){
+	public void setImportanceFilter(String[] importances){ //NOSONAR no, this array is definitely not stored directly.
 		if (importances == null){
 			this.importances=new String[0];
 		}else{

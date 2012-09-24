@@ -20,6 +20,8 @@
  */
 package org.squashtest.tm.plugin.testautomation.jenkins.beans;
 
+import java.util.Arrays;
+
 public class Suite {
 	
 	private String name;
@@ -38,8 +40,8 @@ public class Suite {
 		return cases;
 	}
 
-	public void setCases(Case[] cases) {
-		this.cases = cases;
+	public void setCases(Case[] cases) {	//NOSONAR no, this array is not stored directly
+		this.cases = Arrays.copyOf(cases, cases.length);
 	}
 	
 	public String getNameAsPath(){

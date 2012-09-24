@@ -22,6 +22,7 @@ package org.squashtest.tm.internal.domain.report.query.hibernate;
 
 import org.hibernate.criterion.Criterion;
 import org.squashtest.tm.internal.domain.report.query.QueryOperator;
+import java.util.Arrays;
 
 /**
  * This class explicitly designs a criterion for a HibernateReportQuery.
@@ -151,8 +152,8 @@ public abstract class ReportCriterion {
 		this.operator = operator;
 	}
 
-	protected void setParameters(Object[] parameters) {
-		this.parameters = parameters;
+	protected void setParameters(Object[] parameters) {	//NOSONAR no, this array is not stored directly
+		this.parameters = Arrays.copyOf(parameters, parameters.length);
 	}
 
 	/**

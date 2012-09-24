@@ -20,6 +20,8 @@
  */
 package org.squashtest.tm.plugin.testautomation.jenkins.beans;
 
+import java.util.Arrays;
+
 public class ParameterArray {
 	
 	private Parameter[] parameter;
@@ -28,12 +30,12 @@ public class ParameterArray {
 		return parameter;
 	}
 
-	public void setParameter(Parameter[] parameter) {
-		this.parameter = parameter;
+	public void setParameter(Parameter[] parameter) {//NOSONAR no, this array is not stored directly
+		this.parameter = Arrays.copyOf(parameter,parameter.length);
 	}
 	
 	public ParameterArray(Parameter[] parameter){
-		this.parameter = parameter;
+		setParameter(parameter);
 	}
 	
 }

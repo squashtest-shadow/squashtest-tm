@@ -57,7 +57,7 @@ public class NodeReference {
 	 * 
 	 * @param rawData
 	 */
-	public NodeReference(Object[] rawData) {
+	public NodeReference(Object[] rawData) {	//NOSONAR the array is not stored as is, and its data are immutable
 		super();
 		this.id = (Long) rawData[0];
 		this.name = (String) rawData[1];

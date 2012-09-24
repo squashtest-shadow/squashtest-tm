@@ -77,7 +77,7 @@ public class HttpRequestFactory {
 	
 	
 	public String newRandomId(){
-		return new Long(System.currentTimeMillis()).toString();
+		return Long.valueOf(System.currentTimeMillis()).toString();
 	}
 	
 	

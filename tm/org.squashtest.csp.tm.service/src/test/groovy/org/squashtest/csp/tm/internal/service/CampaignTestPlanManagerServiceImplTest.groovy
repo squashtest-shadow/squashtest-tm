@@ -34,13 +34,11 @@ import org.squashtest.csp.tm.internal.infrastructure.strategy.LibrarySelectionSt
 import org.squashtest.csp.tm.internal.repository.CampaignDao
 import org.squashtest.csp.tm.internal.repository.CampaignTestPlanItemDao
 import org.squashtest.csp.tm.internal.repository.LibraryNodeDao
-import org.squashtest.csp.tm.internal.repository.TestCaseDao
 import org.squashtest.csp.tm.internal.repository.TestCaseLibraryDao
 import org.squashtest.csp.tm.internal.repository.UserDao;
-import org.squashtest.csp.tools.unittest.assertions.CollectionAssertions;
 import org.squashtest.csp.tools.unittest.reflection.ReflectionCategory;
-
 import spock.lang.Specification
+
 
 class CampaignTestPlanManagerServiceImplTest extends Specification {
 
@@ -256,7 +254,7 @@ class CampaignTestPlanManagerServiceImplTest extends Specification {
 		Long overId
 		MockTC(Long id){
 			overId = id
-			name="don't care"
+			name="don't care "+id
 		}
 		MockTC(Long id, String name){
 			this(id)

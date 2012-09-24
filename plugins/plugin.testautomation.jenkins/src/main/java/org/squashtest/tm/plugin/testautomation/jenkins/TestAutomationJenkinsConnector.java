@@ -331,7 +331,7 @@ public class TestAutomationJenkinsConnector implements TestAutomationConnector{
 	// ************************************ other private stuffs ************************** 
 
 	private String generateNewId(){
-		return new Long(System.currentTimeMillis()).toString();
+		return Long.valueOf(System.currentTimeMillis()).toString();
 	}
 
 

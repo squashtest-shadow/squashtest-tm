@@ -20,6 +20,8 @@
  */
 package org.squashtest.tm.plugin.testautomation.jenkins.beans;
 
+import java.util.Arrays;
+
 public class Item {
 
 	private Action[] actions;
@@ -33,8 +35,8 @@ public class Item {
 		return actions;
 	}
 
-	public void setActions(Action[] actions) {
-		this.actions = actions;
+	public void setActions(Action[] actions) {	//NOSONAR no, this array is not stored directly
+		this.actions = Arrays.copyOf(actions, actions.length);
 	}
 
 	public Task getTask() {

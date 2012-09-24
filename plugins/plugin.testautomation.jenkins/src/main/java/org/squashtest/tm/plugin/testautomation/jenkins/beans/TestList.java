@@ -20,6 +20,7 @@
  */
 package org.squashtest.tm.plugin.testautomation.jenkins.beans;
 
+import java.util.Arrays;
 import java.util.Collection;
 import java.util.LinkedList;
 
@@ -31,8 +32,8 @@ public class TestList {
 		return suites;
 	}
 
-	public void setSuites(Suite[] suites) {
-		this.suites = suites;
+	public void setSuites(Suite[] suites) {	//NOSONAR no, this array is not stored directly
+		this.suites = Arrays.copyOf(suites, suites.length);
 	}
 	
 	public Collection<String> collectAllTestNames(){

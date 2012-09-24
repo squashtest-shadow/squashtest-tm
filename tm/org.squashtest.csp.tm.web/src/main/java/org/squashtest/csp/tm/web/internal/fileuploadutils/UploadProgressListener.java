@@ -27,9 +27,9 @@ import org.apache.commons.fileupload.ProgressListener;
 
 public class UploadProgressListener implements ProgressListener {
 
-	private static long bytesTransferred = 0;
+	private long bytesTransferred = 0;
 	
-	private static long fileSize = -100;
+	private long fileSize = -100;
 	
 	/** The total number of bytes, which have been read so far. */
 	private long totalBytesRead = 0;

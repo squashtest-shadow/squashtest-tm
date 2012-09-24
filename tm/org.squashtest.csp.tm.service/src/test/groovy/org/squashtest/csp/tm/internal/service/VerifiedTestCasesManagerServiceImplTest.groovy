@@ -36,8 +36,8 @@ import org.squashtest.csp.tm.service.VerifyingTestCaseManagerService
 import org.squashtest.csp.tools.unittest.assertions.CollectionAssertions
 import org.squashtest.csp.tm.service.VerifyingTestCaseManagerService
 import org.squashtest.csp.tools.unittest.assertions.CollectionAssertions
-
 import spock.lang.Specification
+
 
 class VerifiedTestCasesManagerServiceImplTest extends Specification {
 

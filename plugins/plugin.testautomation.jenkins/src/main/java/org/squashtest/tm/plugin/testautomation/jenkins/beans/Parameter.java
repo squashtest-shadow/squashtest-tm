@@ -84,8 +84,8 @@ public class Parameter {
 		return result;
 	}
 
-	@Override
-	public boolean equals(Object obj) {
+	@Override//NOSONAR code generation, assumed to be safe
+	public boolean equals(Object obj) {//NOSONAR code generation, assumed to be safe
 		if (this == obj)
 			return true;
 		if (obj == null)
