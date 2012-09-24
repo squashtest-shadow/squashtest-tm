@@ -109,11 +109,12 @@
 
 				startmenu.chooseItem = function(item) {
 					
-					if ($(item).hasClass('start-suite-classic')) {
+					var jqItem = $(item);
+					if (jqItem.hasClass('start-suite-classic')) {
 						checkTestSuiteExecutionDoable().done(
 								startResumeClassic);
 					} else {
-						if ($(item).hasClass('start-suite-optimized')) {
+						if (jqItem.hasClass('start-suite-optimized')) {
 							checkTestSuiteExecutionDoable().done(
 									startResumeOptimized);
 						}

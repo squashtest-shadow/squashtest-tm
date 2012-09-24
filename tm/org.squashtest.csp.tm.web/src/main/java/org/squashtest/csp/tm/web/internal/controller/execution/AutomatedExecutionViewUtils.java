@@ -22,10 +22,8 @@ package org.squashtest.csp.tm.web.internal.controller.execution;
 
 import java.util.ArrayList;
 import java.util.Collection;
-import java.util.HashMap;
 import java.util.List;
 import java.util.Locale;
-import java.util.Map;
 
 import org.springframework.context.MessageSource;
 import org.springframework.web.util.HtmlUtils;
@@ -33,7 +31,6 @@ import org.squashtest.csp.tm.domain.execution.Execution;
 import org.squashtest.csp.tm.domain.execution.ExecutionStatus;
 import org.squashtest.csp.tm.domain.testautomation.AutomatedExecutionExtender;
 import org.squashtest.csp.tm.domain.testautomation.AutomatedSuite;
-import org.squashtest.csp.tm.web.internal.helper.JsonHelper;
 
 public final class AutomatedExecutionViewUtils {
 	private AutomatedExecutionViewUtils() {
@@ -53,7 +50,7 @@ public final class AutomatedExecutionViewUtils {
 			ExecutionAutoView execView = translateExecutionInView(execution, locale, messageSource);
 			executionsViews.add(execView);
 		}
-		int percentage = totalTerminated/totalExec*100;
+		int percentage = (totalExec > 0) ?totalTerminated/totalExec*100 : 100;
 		return new AutomatedSuiteOverview(percentage, suite.getId(), executionsViews);
 
 	}

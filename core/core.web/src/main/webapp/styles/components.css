@@ -503,8 +503,7 @@ div.ta-projectsadd-listdiv .listdiv-item span{
 
 
 div.ta-projectsadd-listdiv .listdiv-item.selected{
-	font-family : impact;
-	background-color : yellow;
+	font-weight : bold;
 }
 
 
