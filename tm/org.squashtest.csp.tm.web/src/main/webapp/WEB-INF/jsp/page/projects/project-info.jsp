@@ -146,29 +146,7 @@
 							</label>
 							<div class="display-table-cell" id="project-description">${ adminproject.project.description }</div>
 						</div>
-						<div class="display-table-row">
-						<f:message var="active" key="project.active.label" />
-						<f:message var="activate" key="project.activate.label" />
-						<f:message var="inactive" key="project.inactive.label" />
-						<f:message var="inactivate" key="project.inactivate.label" />
-						<label for="project-active" class="display-table-cell "><f:message
-									key="project.state.label" />
-							</label>
-							<div class="display-table-cell" id="project-active">
-								<c:if test="${adminproject.project.active}">		
-								<span class="projectActive">${active} </span>
-										<sec:authorize access=" hasRole('ROLE_ADMIN')">
-										<a id="activateProject" href="javascript:void(0);">[${inactivate}]</a>
-									</sec:authorize>
-								</c:if>
-								<c:if test="${!adminproject.project.active}">
-								<span class="projectInactive">${inactive} </span>
-									<sec:authorize access=" hasRole('ROLE_ADMIN')">	<a
-											id="activateProject" href="javascript:void(0);">[${activate}]</a>
-									</sec:authorize>
-								</c:if>
-							</div>
-						</div>
+<%-- 	Waiting for implementation of deactivation	<comp:project-active adminproject="${ adminproject }"/> --%>
 					</div>
 				</jsp:attribute>
 			</comp:toggle-panel>
@@ -396,58 +374,11 @@
 
 
 <sec:authorize access=" hasRole('ROLE_ADMIN')">//**********************************ADMIN SCRIPT 
-	var changeActive = ${!adminproject.project.active};
 	
 	$(function() {
-
-		$('#activateProject').click(function() {
-			changeActiveProject(changeActive);
-		});
 		$('#delete-project-button').button().click(deleteProject);
 		
 	});
-	
-	
-	function changeActiveProject(active) {
-
-		requestProjectActivation(active).done(function(data) {
-			refreshProjectActivationSuccess(data);
-		});
-	}
-
-	function requestProjectActivation(active) {
-		return $.ajax({
-			type : 'post',
-			data : {
-				'isActive' : active
-			},
-			dataType : "json",
-			url : "${ projectUrl }"
-		});
-	}
-
-	function refreshProjectActivationSuccess(data) {
-		var isNowActive = data.active;
-		if (isNowActive) {
-			var labelInactive = $('#project-description-table .projectInactive');
-			labelInactive.removeClass('projectInactive');
-			labelInactive.addClass('projectActive');
-			labelInactive.text("${active}");
-
-			var linkActivate = $('#project-description-table a#activateProject');
-			linkActivate.text("[${inactivate}]");
-			changeActive = !isNowActive;
-		} else {
-			var labelInactive = $('#project-description-table .projectActive');
-			labelInactive.removeClass('projectActive');
-			labelInactive.addClass('projectInactive');
-			labelInactive.text("${inactive}");
-
-			var linkActivate = $('#project-description-table a#activateProject');
-			linkActivate.text("[${activate}]");
-			changeActive = !isNowActive;
-		}
-	}
 	
 	function deleteProject(){
 	<c:if test="${adminproject.deletable}">	

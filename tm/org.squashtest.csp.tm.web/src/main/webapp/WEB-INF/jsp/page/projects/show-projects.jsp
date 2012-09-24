@@ -120,7 +120,8 @@
 					<jsp:attribute name="columnDefs">
 						<dt:column-definition targets="0" visible="false" />
 						<dt:column-definition targets="1" width="2em" cssClass="select-handle centered" sortable="false"/>
-						<dt:column-definition targets="3, 4" sortable="false"/>
+						<dt:column-definition targets="3" sortable="false"/>
+						<dt:column-definition targets="4" sortable="false" visible="false"/>
 						<dt:column-definition targets="2, 5, 6, 7" sortable="true"/>
 						<dt:column-definition targets="8" sortable="true" lastDef="true"/>
 					</jsp:attribute>
