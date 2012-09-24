@@ -27,7 +27,7 @@
 <%@ attribute name="componentId" required="true" %>
 <%@ attribute name="submitCallback" required="false" %>
 <%@ attribute name="maxLength" required="false" description="max number of characters" %>
-
+<%@ attribute name="width" required="false" description="width of the input in px" %>
 <%@ taglib uri="http://java.sun.com/jsp/jstl/core" prefix="c" %>
 <%@ taglib prefix="f" uri="http://java.sun.com/jsp/jstl/fmt" %>
 
@@ -47,6 +47,9 @@
 			cancel: '<f:message key="label.Cancel" />',
 			<c:if test="${ not empty maxLength }" >
 			maxlength: ${ maxLength },
+			</c:if>
+			<c:if test="${ not empty width }">
+			width: ${width},
 			</c:if>
 			onblur : function(){},											//this disable the onBlur handler, which would close the jeditable 
 																			//when clicking in the rich editor (since it considers the click as			

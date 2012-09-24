@@ -187,8 +187,11 @@
 		interface="org.squashtest.csp.tm.service.AdministrationService" />
 
 	<osgi:service
-		ref="squashtest.tm.service.ProjectsPermissionManagementService"
-		interface="org.squashtest.csp.tm.service.ProjectsPermissionManagementService" />
+		ref="squashtest.tm.service.ProjectsPermissionManagementService">
+		<osgi:interfaces>
+			<value>org.squashtest.csp.tm.service.ProjectsPermissionManagementService</value>
+			<value>org.squashtest.csp.tm.service.ProjectsPermissionFinder</value>
+		</osgi:interfaces></osgi:service>
 
 	<osgi:service
 		ref="squashtest.tm.service.audit.RequirementAuditTrailService"

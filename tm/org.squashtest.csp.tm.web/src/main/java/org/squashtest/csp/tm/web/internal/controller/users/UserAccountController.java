@@ -22,6 +22,8 @@ package org.squashtest.csp.tm.web.internal.controller.users;
 
 import static org.squashtest.csp.tm.web.internal.helper.JEditablePostParams.VALUE;
 
+import java.util.List;
+
 import javax.validation.Valid;
 
 import org.springframework.osgi.extensions.annotation.ServiceReference;
@@ -33,7 +35,10 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.servlet.ModelAndView;
 import org.springframework.web.util.HtmlUtils;
+import org.squashtest.csp.core.security.acls.PermissionGroup;
+import org.squashtest.csp.tm.domain.project.ProjectPermission;
 import org.squashtest.csp.tm.domain.users.User;
+import org.squashtest.csp.tm.service.ProjectsPermissionFinder;
 import org.squashtest.csp.tm.service.UserAccountService;
 
 
@@ -43,6 +48,12 @@ public class UserAccountController {
 
 	private UserAccountService userService;
 	
+	private ProjectsPermissionFinder permissionFinder;
+
+	@ServiceReference
+	public void setProjectsPermissionFinderService(ProjectsPermissionFinder permissionFinder) {
+		this.permissionFinder = permissionFinder;
+	}
 	@ServiceReference
 	public void setUserAccountService(UserAccountService service){
 		this.userService=service;
@@ -51,9 +62,11 @@ public class UserAccountController {
 	@RequestMapping(method=RequestMethod.GET)
 	public ModelAndView getUserAccountDetails(){
 		User user = userService.findCurrentUser();
+		List<ProjectPermission> projectPermissions = permissionFinder.findProjectPermissionByLogin(user.getLogin());
 		
 		ModelAndView mav = new ModelAndView("page/users/user-account");
 		mav.addObject("user", user);
+		mav.addObject("projectPermissions", projectPermissions);
 		return mav;
 
 	}

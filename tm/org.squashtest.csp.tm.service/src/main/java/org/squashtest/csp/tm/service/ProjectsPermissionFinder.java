@@ -20,13 +20,29 @@
  */
 package org.squashtest.csp.tm.service;
 
+import java.util.List;
 
-public interface ProjectsPermissionManagementService extends ProjectsPermissionFinder {
+import org.springframework.transaction.annotation.Transactional;
+import org.squashtest.csp.core.security.acls.PermissionGroup;
+import org.squashtest.csp.tm.domain.project.Project;
+import org.squashtest.csp.tm.domain.project.ProjectPermission;
+import org.squashtest.csp.tm.domain.users.User;
+import org.squashtest.csp.tm.domain.users.UserProjectPermissionsBean;
 
-	void deleteUserProjectOldPermission(String userLogin, long projectId);
+/**
+ * @author mpagnon
+ * 
+ */
+@Transactional(readOnly = true)
+public interface ProjectsPermissionFinder {
 
-	void addNewPermissionToProject(long userId, long projectId, String permissionName);
+	List<PermissionGroup> findAllPossiblePermission();
 
-	void removeProjectPermission(long userId, long projectId);
+	List<ProjectPermission> findProjectPermissionByLogin(String userLogin);
 
+	List<Project> findProjectWithoutPermissionByLogin(String userLogin);
+
+	List<UserProjectPermissionsBean> findUserPermissionsBeanByProject(long projectId);
+
+	List<User> findUserWithoutPermissionByProject(long projectId);
 }

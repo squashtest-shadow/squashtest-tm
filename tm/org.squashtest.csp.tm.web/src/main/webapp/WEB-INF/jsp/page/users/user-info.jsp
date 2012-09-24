@@ -281,7 +281,6 @@
 		</comp:toggle-panel>
 		<%-----------------------------------/ User Infos -----------------------------------------------%>
 		<%-----------------------------------Permissions -----------------------------------------------%>
-		<br />
 		<f:message key="title.AddPermission" var="addButtonTitle" />
 		
 		<comp:toggle-panel id="project-permission-panel" titleKey="user.project-rights.title.label" isContextual="true" open="true">

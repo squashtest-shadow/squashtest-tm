@@ -30,6 +30,7 @@
 <%@ taglib prefix="s" uri="http://www.springframework.org/tags"%>
 <%@ taglib prefix="comp" tagdir="/WEB-INF/tags/component" %>
 <%@ taglib prefix="layout" tagdir="/WEB-INF/tags/layout"%>
+<%@ taglib prefix="dt" tagdir="/WEB-INF/tags/datatables"%>
 
 
 <f:message var="userAccountPasswordLabel" key='user.account.password.label'/>
@@ -49,76 +50,83 @@
 	<jsp:attribute name="informationContent">	
 		<comp:decorate-buttons />
 	
-		<script type="text/javascript">
-
+	<script type="text/javascript">
 			$(function(){
-
 				$("#back").button().click(function(){
 					history.back();
 				});
-
 			});
-			
-			
 			function changePasswordCallback(){
 				<f:message var="passSuccess" key="user.account.changepass.success" />
 				squashtm.notification.showInfo("${passSuccess}");
 			}
-				
-		</script>
-		
-
+	</script>
+	<div id="user-login-div" class="ui-widget-header ui-corner-all ui-state-default fragment-header">
 	
-		<div id="user-login-div" class="ui-widget-header ui-corner-all ui-state-default fragment-header">
-		
-			<div style="float: left; height: 3em">
-				<h2>
-					<label for="user-login-header"><f:message key="user.header.title" /></label>
-					<c:out value="${ user.login }" escapeXml="true" />
-				</h2>
-			</div>
-			<div style="float: right;"><f:message var="back" key="label.Back" /> 
-				<input id="back" type="button" value="${ back }" class="button"/>
-			</div>
-	
-			<div style="clear: both;"></div>
-		
+		<div style="float: left; height: 3em">
+			<h2>
+				<label for="user-login-header"><f:message key="user.header.title" /></label>
+				<c:out value="${ user.login }" escapeXml="true" />
+			</h2>
 		</div>
-	
-		<div class="fragment-body">
+		<div style="float: right;"><f:message var="back" key="label.Back" /> 
+			<input id="back" type="button" value="${ back }" class="button"/>
+		</div>
 
-			<comp:simple-jeditable  targetUrl="${userAccountUrl}" componentId="user-account-email" />
+		<div style="clear: both;"></div>
 	
-			<comp:toggle-panel id="basic-info-panel" titleKey="user.account.basicinfo.label" open="true">
-			
-				<jsp:attribute name="body">
-					
-					<div class="user-account-unmodifiable-field">
-						<label><f:message key="label.LastName"/></label>
-						<span>${user.firstName } ${user.lastName}</span>
-					</div>					
-					
-					<style type="text/css">
-						#user-account-email input{
-							width:200px ! important;
-						}					
-					</style>
-					
-					<div>
-						<label ><f:message key="label.Email"/></label>
-						<span id="user-account-email">${user.email}</span>
+	</div>
+	
+	<div class="fragment-body">
+
+		<comp:simple-jeditable  targetUrl="${userAccountUrl}" componentId="user-account-email" width="200" />
+	
+		<comp:toggle-panel id="basic-info-panel" titleKey="user.account.basicinfo.label" open="true" >
+			<jsp:attribute name="body">
+				<div class="display-table">
+					<div class="user-account-unmodifiable-field display-table-row">
+						<label><f:message key="label.Name"/></label>
+						<div class="display-table-cell"><span>${user.firstName } ${user.lastName}</span></div>
 					</div>
-					
-					<input type="button" id="change-password-button" value="${ userAccountPasswordLabel }" class="button" />									
-													
-				</jsp:attribute>
-			</comp:toggle-panel>			
-			
-		</div>
+					<div class="display-table-row">
+						<label ><f:message key="label.Email"/></label>
+						<div class="display-table-cell"><span id="user-account-email">${user.email}</span></div>
+					</div>
+					<div class="display-table-row">
+						<label ><f:message key="label.Group"/></label>
+						<div class="display-table-cell"><span><f:message key="user.account.group.${user.group.qualifiedName}.label" /></span></div>
+					</div>
+				</div>
+				<br/>
+				<input type="button" id="change-password-button" value="${ userAccountPasswordLabel }" class="button" />									
+			</jsp:attribute>
+		</comp:toggle-panel>	
+		<comp:toggle-panel id="project-permission-panel" titleKey="user.project-rights.title.label" isContextual="true" open="true">
+			<jsp:attribute name="body">
+				<table id="project-permission-table">
+				<thead>
+					<tr>
+						<th><f:message key="label.Project" /></th>
+						<th><f:message key="label.Permission" /></th>
+					</tr>
+				</thead>
+				<tbody>
+					<c:forEach var="projectPermission" items="${ projectPermissions }">
+					<tr><td>${ projectPermission.project.name }</td><td><f:message key="user.project-rights.${projectPermission.permissionGroup.simpleName}.label" /></td></tr>
+					</c:forEach>
+				</tbody>
+			</table>
+			</jsp:attribute>
+		</comp:toggle-panel>		
 		
+	</div>
 	<comp:user-account-password-popup openerId="change-password-button" url="${userAccountUrl}" successCallback="changePasswordCallback"/>
-		
-				
 	</jsp:attribute>
-
 </layout:info-page-layout>
+
+<comp:decorate-ajax-search-table tableId="project-permission-table" >
+	<jsp:attribute name="columnDefs">
+			<dt:column-definition targets="0" sortable="true" visible="true" />
+			<dt:column-definition targets="1" sortable="true" visible="true" lastDef="true" />
+	</jsp:attribute>
+</comp:decorate-ajax-search-table>		
