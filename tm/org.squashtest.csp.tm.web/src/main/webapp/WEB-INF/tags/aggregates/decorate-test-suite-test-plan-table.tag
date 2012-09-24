@@ -272,6 +272,14 @@
 		$(nRow).attr("id", "test-plan:" + getTestPlansTableRowId(aData));
 	}
 
+	function parseTestPlanIds(elements) {
+		var ids = new Array();
+		for(var i=0; i<elements.length; i++) {
+			ids.push(parseTestPlanId(elements[i]));
+		}
+		return ids;
+	}
+	
 	function parseTestPlanId(element) {
 		var elementId = element.id;
 		return elementId.substr(elementId.indexOf(":") + 1);

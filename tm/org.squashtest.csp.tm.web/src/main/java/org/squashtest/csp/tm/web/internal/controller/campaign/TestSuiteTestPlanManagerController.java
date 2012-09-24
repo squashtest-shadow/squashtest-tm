@@ -28,6 +28,8 @@ import java.util.Locale;
 import javax.inject.Inject;
 import javax.inject.Provider;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.context.MessageSource;
 import org.springframework.osgi.extensions.annotation.ServiceReference;
 import org.springframework.stereotype.Controller;
@@ -48,6 +50,7 @@ import org.squashtest.csp.tm.domain.testcase.TestCaseImportance;
 import org.squashtest.csp.tm.domain.testcase.TestCaseLibrary;
 import org.squashtest.csp.tm.domain.users.User;
 import org.squashtest.csp.tm.service.IterationTestPlanManagerService;
+import org.squashtest.csp.tm.service.TestSuiteModificationService;
 import org.squashtest.csp.tm.service.TestSuiteTestPlanManagerService;
 import org.squashtest.csp.tm.web.internal.model.builder.DriveNodeBuilder;
 import org.squashtest.csp.tm.web.internal.model.datatable.DataTableDrawParameters;
@@ -70,9 +73,12 @@ public class TestSuiteTestPlanManagerController {
 	private static final String TESTCASES_IDS_REQUEST_PARAM = "testCasesIds[]";
 	private static final String TESTPLANS_IDS_REQUEST_PARAM = "testPlanIds[]";
 	
+	@Inject
+	private TestSuiteModificationService service;
+	
 	private TestSuiteTestPlanManagerService testSuiteTestPlanManagerService;
 	private IterationTestPlanManagerService iterationTestPlanManagerService;
-	
+	private static final Logger LOGGER = LoggerFactory.getLogger(TestSuiteModificationController.class);
 	
 	private final DataTableMapper testPlanMapper = new DataTableMapper("unused", IterationTestPlanItem.class,
 			TestCase.class, Project.class, TestSuite.class).initMapping(10)
@@ -180,6 +186,17 @@ public class TestSuiteTestPlanManagerController {
 		mav.addObject("selectClass", "comboLogin");
 		return mav;
 	}
+
+
+	@RequestMapping(value = "/test-suites/{id}/{iterationId}/test-case/move", method = RequestMethod.POST, params = { "newIndex", "itemIds[]" })
+	@ResponseBody
+	public void changeTestPlanIndex(@PathVariable("id") long testSuiteId, @RequestParam int newIndex, @RequestParam("itemIds[]") List<Long> itemIds){
+		service.changeTestPlanPosition(testSuiteId, newIndex, itemIds);
+		if (LOGGER.isTraceEnabled()) {
+			LOGGER.trace("test-suite " + testSuiteId+ ": moving "+itemIds.size()+" test plan items  to " + newIndex);
+		}
+	}
+	
 	
 	@RequestMapping(value = "/test-suites/{id}/{iterationId}/test-cases", method = RequestMethod.POST, params = TESTCASES_IDS_REQUEST_PARAM)
 	public @ResponseBody
