@@ -21,15 +21,17 @@
 package org.squashtest.csp.tm.internal.repository.hibernate;
 
 import java.util.Collections;
-import java.util.LinkedList;
 import java.util.List;
 
+import org.hibernate.Criteria;
 import org.hibernate.Query;
+import org.hibernate.Session;
+import org.hibernate.criterion.Order;
 import org.springframework.stereotype.Repository;
 import org.squashtest.csp.tm.domain.LoginAlreadyExistsException;
 import org.squashtest.csp.tm.domain.users.User;
+import org.squashtest.csp.tm.infrastructure.filter.CollectionSorting;
 import org.squashtest.csp.tm.internal.repository.UserDao;
-import org.squashtest.tm.core.foundation.collection.Paging;
 
 @Repository
 public class HibernateUserDao extends HibernateEntityDao<User> implements UserDao {
@@ -42,25 +44,31 @@ public class HibernateUserDao extends HibernateEntityDao<User> implements UserDa
 		return executeListNamedQuery("user.findAllUsers");
 	}
 
+	@SuppressWarnings("unchecked")
 	@Override
-	public List<User> findAllUsersFiltered(Paging filter) {
-
-		List<User> users = executeListNamedQuery("user.findAllUsers");
-		int listSize = users.size();
-
-		int startIndex = filter.getFirstItemIndex();
-		int lastIndex = filter.getFirstItemIndex() + filter.getPageSize();
-
-		// prevent IndexOutOfBoundException :
-		if (startIndex >= listSize) {
-			return new LinkedList<User>(); // ie resultset is empty
+	public List<User> findAllUsersFiltered(CollectionSorting filter) {
+		Session session = currentSession();
+		
+		String sortedAttribute = filter.getSortedAttribute();
+		String order = filter.getSortingOrder();
+		
+		Criteria crit = session.createCriteria(User.class, "User");
+		
+		/* add ordering */
+		if (sortedAttribute != null) {
+			if (order.equals("asc")) {
+				crit.addOrder(Order.asc(sortedAttribute).ignoreCase());
+			} else {
+				crit.addOrder(Order.desc(sortedAttribute).ignoreCase());
+			}
 		}
+		
+		/* result range */
+		crit.setFirstResult(filter.getFirstItemIndex());
+		crit.setMaxResults(filter.getPageSize());
 
-		if (lastIndex >= listSize) {
-			lastIndex = listSize;
-		}
-
-		return users.subList(startIndex, lastIndex);
+		return crit.list();
+		
 	}
 
 	@Override

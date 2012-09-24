@@ -67,7 +67,8 @@ public class ProjectManagerController {
 	/* see bug 33 for details, remove this comment when done */
 	/* remember that the indexes here are supposed to match the visible columns in the project view */
 	private DataTableMapper projectMapper = new DataTableMapper("projects-table", Project.class).initMapping(9)
-			.mapAttribute(Project.class, 2, "name", String.class).mapAttribute(Project.class, 3, "label", String.class)
+			.mapAttribute(Project.class, 2, "name", String.class)
+			.mapAttribute(Project.class, 3, "label", String.class)
 			.mapAttribute(Project.class, 4, "active", boolean.class)
 			.mapAttribute(Project.class, 5, "audit.createdOn", Date.class)
 			.mapAttribute(Project.class, 6, "audit.createdBy", String.class)
@@ -112,61 +113,68 @@ public class ProjectManagerController {
 		return model;
 	}
 
-	@RequestMapping(value = "/list", params = "sEcho")
+	@RequestMapping(value = "/list", params = "sEcho", method = RequestMethod.GET)
 	public @ResponseBody
 	DataTableModel getProjectsTableModel(final DataTableDrawParameters params, final Locale locale) {
-
+		LOGGER.trace("getTable called ");
 		CollectionSorting filter = createPaging(params, projectMapper);
 
 		FilteredCollectionHolder<List<Project>> holder = projectFinder.findSortedProjects(filter);
 
-		return new DataTableModelHelper<Project>() {
-			@Override
-			public Object[] buildItemData(Project item) {
-
-				final AuditableMixin newP = (AuditableMixin) item;
-				return new Object[] { item.getId(), getCurrentIndex(), formatString(item.getName(), locale),
-						formatString(item.getLabel(), locale), formatBoolean((Boolean) item.isActive(), locale),
-						formatDate(newP.getCreatedOn(), locale), formatString(newP.getCreatedBy(), locale),
-						formatDate(newP.getLastModifiedOn(), locale), formatString(newP.getLastModifiedBy(), locale) };
-			}
-		}.buildDataModel(holder, filter.getFirstItemIndex() + 1, params.getsEcho());
+		return new ProjectDataTableModelHelper(locale, messageSource).buildDataModel(holder, filter.getFirstItemIndex() + 1, params.getsEcho());
 
 	}
+	
+	private static final class ProjectDataTableModelHelper extends DataTableModelHelper<Project> {
+		private MessageSource messageSource;
+		private Locale locale;
+		private ProjectDataTableModelHelper(Locale locale, MessageSource messageSource){
+			this.locale = locale;
+			this.messageSource = messageSource;
+		}
+		@Override
+		public Object[] buildItemData(Project item) {
 
+			final AuditableMixin newP = (AuditableMixin) item;
+			return new Object[] { item.getId(), getCurrentIndex(), formatString(item.getName(), locale, messageSource),
+					formatString(item.getLabel(), locale, messageSource), formatBoolean((Boolean) item.isActive(), locale, messageSource),
+					formatDate(newP.getCreatedOn(), locale, messageSource), formatString(newP.getCreatedBy(), locale, messageSource),
+					formatDate(newP.getLastModifiedOn(), locale, messageSource), formatString(newP.getLastModifiedBy(), locale, messageSource) };
+		}
+	}
 	/* ****************************** data formatters ********************************************** */
 
 	private CollectionSorting createPaging(final DataTableDrawParameters params, final DataTableMapper mapper) {
 		return new DataTableFilterSorter(params, mapper);
 	}
 
-	private String formatString(String arg, Locale locale) {
+	private static String formatString(String arg, Locale locale, MessageSource messageSource) {
 		if (arg == null) {
-			return formatNoData(locale);
+			return formatNoData(locale, messageSource);
 		} else {
 			return arg;
 		}
 	}
 
-	private String formatDate(Date date, Locale locale) {
+	private static String formatDate(Date date, Locale locale, MessageSource messageSource) {
 		try {
 			String format = messageSource.getMessage("squashtm.dateformat", null, locale);
 			return new SimpleDateFormat(format).format(date);
 		} catch (Exception anyException) {
-			return formatNoData(locale);
+			return formatNoData(locale, messageSource);
 		}
 
 	}
 
-	private String formatBoolean(Boolean arg, Locale locale) {
+	private static String formatBoolean(Boolean arg, Locale locale, MessageSource messageSource) {
 		try {
 			return messageSource.getMessage("squashtm.yesno." + arg.toString(), null, locale);
 		} catch (Exception anyException) {
-			return formatNoData(locale);
+			return formatNoData(locale, messageSource);
 		}
 	}
 
-	private String formatNoData(Locale locale) {
+	private static String formatNoData(Locale locale, MessageSource messageSource) {
 		return messageSource.getMessage("squashtm.nodata", null, locale);
 	}
 

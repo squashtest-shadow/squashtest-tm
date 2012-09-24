@@ -49,14 +49,15 @@ import org.squashtest.csp.tm.domain.project.Project;
 import org.squashtest.csp.tm.domain.project.ProjectPermission;
 import org.squashtest.csp.tm.domain.users.User;
 import org.squashtest.csp.tm.domain.users.UsersGroup;
+import org.squashtest.csp.tm.infrastructure.filter.CollectionSorting;
 import org.squashtest.csp.tm.infrastructure.filter.FilteredCollectionHolder;
 import org.squashtest.csp.tm.service.AdministrationService;
 import org.squashtest.csp.tm.service.ProjectsPermissionManagementService;
 import org.squashtest.csp.tm.web.internal.model.datatable.DataTableDrawParameters;
+import org.squashtest.csp.tm.web.internal.model.datatable.DataTableFilterSorter;
 import org.squashtest.csp.tm.web.internal.model.datatable.DataTableModel;
 import org.squashtest.csp.tm.web.internal.model.datatable.DataTableModelHelper;
-import org.squashtest.csp.tm.web.internal.model.datatable.DataTablePagedFilter;
-import org.squashtest.tm.core.foundation.collection.Paging;
+import org.squashtest.csp.tm.web.internal.model.viewmapper.DataTableMapper;
 
 @Controller
 @RequestMapping("/users")
@@ -81,13 +82,17 @@ public class UserAdministrationController {
 		@Override
 		public Object[] buildItemData(User item) {
 			AuditableMixin newP = (AuditableMixin) item;
-			// TODO use group's quialified name instead
-			String group = messageSource.getMessage("user.account.group." + item.getGroup().getSimpleName() + ".label",
+			String group = messageSource.getMessage("user.account.group." + item.getGroup().getQualifiedName() + ".label",
 					null, locale);
 			if (group == null) {
 				group = item.getGroup().getSimpleName();
 			}
-			return new Object[] { item.getId(), getCurrentIndex(), item.getLogin(), group, item.getFirstName(),
+			return new Object[] { 
+					item.getId(), 
+					getCurrentIndex(), 
+					item.getLogin(), 
+					group, 
+					item.getFirstName(),
 					item.getLastName(), item.getEmail(), formatDate(newP.getCreatedOn(), locale),
 					formatString(newP.getCreatedBy(), locale), formatDate(newP.getLastModifiedOn(), locale),
 					formatString(newP.getLastModifiedBy(), locale) };
@@ -102,6 +107,17 @@ public class UserAdministrationController {
 
 	@Inject
 	private MessageSource messageSource;
+	
+	private DataTableMapper userMapper = new DataTableMapper("users-list-table", User.class).initMapping(13)
+	.mapAttribute(User.class, 2, "login", String.class)
+	.mapAttribute(User.class, 3, "group", UsersGroup.class)
+	.mapAttribute(User.class, 4, "firstName", String.class)
+	.mapAttribute(User.class, 5, "lastName", String.class)
+	.mapAttribute(User.class, 6, "email", String.class)
+	.mapAttribute(User.class, 7, "audit.createdOn", Date.class)
+	.mapAttribute(User.class, 9, "audit.createdBy", String.class)
+	.mapAttribute(User.class, 10, "audit.lastModifiedOn", Date.class)
+	.mapAttribute(User.class, 12, "audit.lastModifiedBy", String.class);
 
 	@ServiceReference
 	public void setAdministrationService(AdministrationService adminService) {
@@ -128,12 +144,12 @@ public class UserAdministrationController {
 		adminService.addUser(userForm.getUser(), userForm.getGroupId(), userForm.getPassword());
 	}
 
-	@RequestMapping(value = "/table", method = RequestMethod.GET)
+	@RequestMapping(value = "/table", params = "sEcho", method = RequestMethod.GET)
 	public @ResponseBody
 	DataTableModel getTable(final DataTableDrawParameters params, final Locale locale) {
-		LOGGER.trace("UserAdministrationController: getTable called ");
+		LOGGER.trace("getTable called ");
 
-		Paging filter = createPaging(params);
+		CollectionSorting filter = createPaging(params, userMapper);
 
 		FilteredCollectionHolder<List<User>> holder = adminService.findAllUsersFiltered(filter);
 
@@ -141,8 +157,8 @@ public class UserAdministrationController {
 				params.getsEcho());
 	}
 
-	private Paging createPaging(final DataTableDrawParameters params) {
-		return new DataTablePagedFilter(params);
+	private CollectionSorting createPaging(final DataTableDrawParameters params, final DataTableMapper mapper) {
+		return new DataTableFilterSorter(params, mapper);
 	}
 
 	@RequestMapping(value = USER_URL+"/info", method = RequestMethod.GET)

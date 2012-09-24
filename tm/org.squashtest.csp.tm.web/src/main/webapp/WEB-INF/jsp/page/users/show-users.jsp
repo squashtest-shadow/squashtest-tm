@@ -169,7 +169,7 @@
 						<dt:column-definition targets="0" visible="false" />
 						<dt:column-definition targets="1" sortable="false" cssClass="select-handle centered" width="2em"/>
 						<dt:column-definition targets="2, 3, 4, 5, 6, 7, 8, 9" sortable="true" />
-						<dt:column-definition targets="10" sortable="false" width="2em" lastDef="true"/>
+						<dt:column-definition targets="10" sortable="true" width="2em" lastDef="true"/>
 					</jsp:attribute>
 				</comp:decorate-ajax-table>	
 				
@@ -239,10 +239,10 @@
 						<c:forEach var="group" items="${ usersGroupList }">
 							<c:choose>
 								<c:when test="${ group.simpleName == 'User' }">
-									<option id="${group.qualifiedName}" value="${group.id}" selected="selected"><f:message key="user.account.group.${group.simpleName}.label" /></option>
+									<option id="${group.qualifiedName}" value="${group.id}" selected="selected"><f:message key="user.account.group.${group.qualifiedName}.label" /></option>
 								</c:when>
 								<c:otherwise>
-									<option id="${group.qualifiedName}" value="${group.id}"><f:message key="user.account.group.${group.simpleName}.label" /></option>
+									<option id="${group.qualifiedName}" value="${group.id}"><f:message key="user.account.group.${group.qualifiedName}.label" /></option>
 								</c:otherwise>
 							</c:choose>
 						</c:forEach>

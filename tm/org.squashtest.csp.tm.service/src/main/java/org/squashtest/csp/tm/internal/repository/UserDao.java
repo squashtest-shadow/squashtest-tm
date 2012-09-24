@@ -24,13 +24,13 @@ import java.util.List;
 
 import org.squashtest.csp.tm.domain.LoginAlreadyExistsException;
 import org.squashtest.csp.tm.domain.users.User;
-import org.squashtest.tm.core.foundation.collection.Paging;
+import org.squashtest.csp.tm.infrastructure.filter.CollectionSorting;
 
 public interface UserDao extends EntityDao<User> {
 
 	List<User> findAllUsersOrderedByLogin();
 
-	List<User> findAllUsersFiltered(Paging filter);
+	List<User> findAllUsersFiltered(CollectionSorting filter);
 
 	User findUserByLogin(String login);
 

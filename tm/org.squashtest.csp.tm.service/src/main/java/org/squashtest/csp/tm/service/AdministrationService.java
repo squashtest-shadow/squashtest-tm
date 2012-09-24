@@ -25,8 +25,8 @@ import java.util.List;
 import org.squashtest.csp.tm.domain.project.Project;
 import org.squashtest.csp.tm.domain.users.User;
 import org.squashtest.csp.tm.domain.users.UsersGroup;
+import org.squashtest.csp.tm.infrastructure.filter.CollectionSorting;
 import org.squashtest.csp.tm.infrastructure.filter.FilteredCollectionHolder;
-import org.squashtest.tm.core.foundation.collection.Paging;
 
 /**
  * 
@@ -68,7 +68,7 @@ public interface AdministrationService {
 
 	List<User> findAllUsersOrderedByLogin();
 
-	FilteredCollectionHolder<List<User>> findAllUsersFiltered(Paging filter);
+	FilteredCollectionHolder<List<User>> findAllUsersFiltered(CollectionSorting filter);
 
 	List<UsersGroup> findAllUsersGroupOrderedByQualifiedName();
 
