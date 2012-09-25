@@ -453,7 +453,7 @@ public class HibernateTestCaseDao extends HibernateEntityDao<TestCase> implement
 	}
 	
 	private boolean usesImportance(TestCaseSearchCriteria criteria){
-		return ((!criteria.getImportanceFilterSet().isEmpty())&&(criteria.getImportanceFilterSet().size() != TestCaseImportance.values().length));
+		return (!criteria.getImportanceFilterSet().isEmpty());
 	}
 	
 	private Criteria testCaseRootedCriteria(TestCaseSearchCriteria criteria){
