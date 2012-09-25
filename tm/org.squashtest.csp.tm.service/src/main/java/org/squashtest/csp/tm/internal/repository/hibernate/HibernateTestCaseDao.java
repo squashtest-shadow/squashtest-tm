@@ -109,46 +109,39 @@ public class HibernateTestCaseDao extends HibernateEntityDao<TestCase> implement
 	private SetQueryParametersCallback idParameter(final long testCaseId) {
 		return new SetIdParameter(testCaseId);
 	}
-	
+
 	/**
 	 * @deprecated not used
 	 */
 	@Deprecated
 	@Override
-		public List<TestCase> findAllByIdListOrderedByName(final List<Long> testCasesIds) {
-			SetQueryParametersCallback setParams = new SetQueryParametersCallback() {
-	
-				@Override
-				public void setQueryParameters(Query query) {
-					query.setParameterList("testCasesIds", testCasesIds);
-				}
-			};
-			return executeListNamedQuery("testCase.findAllByIdListOrderedByName", setParams);
+	public List<TestCase> findAllByIdListOrderedByName(final List<Long> testCasesIds) {
+		SetQueryParametersCallback setParams = new SetIdsParameter(testCasesIds);
+		return executeListNamedQuery("testCase.findAllByIdListOrderedByName", setParams);
+	}
+
+	private static class SetIdsParameter implements SetQueryParametersCallback {
+		private List<Long> testCasesIds;
+
+		private SetIdsParameter(List<Long> testCasesIds) {
+			this.testCasesIds = testCasesIds;
 		}
-	
+
+		@Override
+		public void setQueryParameters(Query query) {
+			query.setParameterList("testCasesIds", testCasesIds);
+		}
+	}
+
 	@Override
 	public List<String> findNamesInFolderStartingWith(final long folderId, final String nameStart) {
-		SetQueryParametersCallback newCallBack1 = new SetQueryParametersCallback() {
-
-			@Override
-			public void setQueryParameters(Query query) {
-				query.setParameter("containerId", folderId);
-				query.setParameter("nameStart", nameStart + "%");
-			}
-		};
+		SetQueryParametersCallback newCallBack1 = new ContainerIdNameStartParameterCallback(folderId, nameStart);
 		return executeListNamedQuery("testCase.findNamesInFolderStartingWith", newCallBack1);
 	}
 
 	@Override
 	public List<String> findNamesInLibraryStartingWith(final long libraryId, final String nameStart) {
-		SetQueryParametersCallback newCallBack1 = new SetQueryParametersCallback() {
-
-			@Override
-			public void setQueryParameters(Query query) {
-				query.setParameter("containerId", libraryId);
-				query.setParameter("nameStart", nameStart + "%");
-			}
-		};
+		SetQueryParametersCallback newCallBack1 = new ContainerIdNameStartParameterCallback(libraryId, nameStart);
 		return executeListNamedQuery("testCase.findNamesInLibraryStartingWith", newCallBack1);
 	}
 
@@ -162,20 +155,30 @@ public class HibernateTestCaseDao extends HibernateEntityDao<TestCase> implement
 		final int firstIndex = filter.getFirstItemIndex();
 		final int lastIndex = filter.getFirstItemIndex() + filter.getPageSize() - 1;
 
-		SetQueryParametersCallback callback = new SetQueryParametersCallback() {
-
-			@Override
-			public void setQueryParameters(Query query) {
-
-				query.setParameter("testCaseId", testCaseId);
-				query.setParameter("firstIndex", firstIndex);
-				query.setParameter("lastIndex", lastIndex);
-
-			}
-
-		};
+		SetQueryParametersCallback callback = new SetIdsIndexesParameters(testCaseId, firstIndex, lastIndex);
 
 		return executeListNamedQuery("testCase.findAllStepsByIdFiltered", callback);
+	}
+
+	private static class SetIdsIndexesParameters implements SetQueryParametersCallback {
+		private int firstIndex;
+		private long testCaseId;
+		private int lastIndex;
+
+		private SetIdsIndexesParameters(long testCaseId, int firstIndex, int lastIndex) {
+			this.testCaseId = testCaseId;
+			this.firstIndex = firstIndex;
+			this.lastIndex = lastIndex;
+		}
+
+		@Override
+		public void setQueryParameters(Query query) {
+
+			query.setParameter("testCaseId", testCaseId);
+			query.setParameter("firstIndex", firstIndex);
+			query.setParameter("lastIndex", lastIndex);
+
+		}
 	}
 
 	@SuppressWarnings("unchecked")
@@ -298,13 +301,7 @@ public class HibernateTestCaseDao extends HibernateEntityDao<TestCase> implement
 		// otherwise a second query is necessary.
 		final List<Long> nonCalledIds = new LinkedList<Long>(CollectionUtils.subtract(testCaseIds, calledIds));
 
-		SetQueryParametersCallback secondQueryCallback = new SetQueryParametersCallback() {
-			@Override
-			public void setQueryParameters(Query query) {
-				query.setParameterList("nonCalledIds", nonCalledIds, new LongType());
-				query.setReadOnly(true);
-			}
-		};
+		SetQueryParametersCallback secondQueryCallback = new SetNonCalledIdsParameter(nonCalledIds);
 
 		List<Object[]> nonCalledDetails = executeListNamedQuery("testCase.findTestCasesHavingNoCallerDetails",
 				secondQueryCallback);
@@ -313,6 +310,20 @@ public class HibernateTestCaseDao extends HibernateEntityDao<TestCase> implement
 		calledDetails.addAll(nonCalledDetails);
 		return calledDetails;
 
+	}
+
+	private static class SetNonCalledIdsParameter implements SetQueryParametersCallback {
+		private List<Long> nonCalledIds;
+
+		private SetNonCalledIdsParameter(List<Long> nonCalledIds) {
+			this.nonCalledIds = nonCalledIds;
+		}
+
+		@Override
+		public void setQueryParameters(Query query) {
+			query.setParameterList("nonCalledIds", nonCalledIds, new LongType());
+			query.setReadOnly(true);
+		}
 	}
 
 	private List<Long> getCalledDetailsIds(List<Object[]> calledDetails) {
@@ -406,14 +417,22 @@ public class HibernateTestCaseDao extends HibernateEntityDao<TestCase> implement
 	 */
 	@Override
 	public long countByVerifiedRequirementVersion(final long verifiedId) {
-		return (Long) executeEntityNamedQuery("testCase.countByVerifiedRequirementVersion",
-				new SetQueryParametersCallback() {
-					@Override
-					public void setQueryParameters(Query query) {
-						query.setLong("verifiedId", verifiedId);
+		return (Long) executeEntityNamedQuery("testCase.countByVerifiedRequirementVersion", new SetVerifiedIdParameter(
+				verifiedId));
+	}
 
-					}
-				});
+	private static class SetVerifiedIdParameter implements SetQueryParametersCallback {
+		private long verifiedId;
+
+		private SetVerifiedIdParameter(long verifiedId) {
+			this.verifiedId = verifiedId;
+		}
+
+		@Override
+		public void setQueryParameters(Query query) {
+			query.setLong("verifiedId", verifiedId);
+
+		}
 	}
 
 	@SuppressWarnings("unchecked")
@@ -423,48 +442,45 @@ public class HibernateTestCaseDao extends HibernateEntityDao<TestCase> implement
 		query.setParameter("requirementVersionId", requirementVersionId);
 		return query.list();
 	}
-	
+
 	@SuppressWarnings("unchecked")
 	@Override
-	public List<TestCaseLibraryNode> findBySearchCriteria(TestCaseSearchCriteria criteria){
+	public List<TestCaseLibraryNode> findBySearchCriteria(TestCaseSearchCriteria criteria) {
 		Criteria hCriteria;
-		
-		if (usesImportance(criteria)){
+
+		if (usesImportance(criteria)) {
 			hCriteria = testCaseRootedCriteria(criteria);
-		}else{
-			hCriteria = tcNodeRootedCriteria(criteria); 
+		} else {
+			hCriteria = tcNodeRootedCriteria(criteria);
 		}
-		
-		 
-		if (criteria.isGroupByProject()){
+
+		if (criteria.isGroupByProject()) {
 			hCriteria.addOrder(Order.asc(PROJECT));
 		}
-		
-		
-		if (StringUtils.isNotBlank(criteria.getName())){
+
+		if (StringUtils.isNotBlank(criteria.getName())) {
 			hCriteria.add(Restrictions.ilike("name", criteria.getName(), MatchMode.ANYWHERE));
 		}
 
 		hCriteria.addOrder(Order.asc("name"));
-		
+
 		return hCriteria.list();
-		
-											
+
 	}
-	
-	private boolean usesImportance(TestCaseSearchCriteria criteria){
+
+	private boolean usesImportance(TestCaseSearchCriteria criteria) {
 		return (!criteria.getImportanceFilterSet().isEmpty());
 	}
-	
-	private Criteria testCaseRootedCriteria(TestCaseSearchCriteria criteria){
+
+	private Criteria testCaseRootedCriteria(TestCaseSearchCriteria criteria) {
 		Criteria crit = currentSession().createCriteria(TestCase.class);
-		if(!criteria.getImportanceFilterSet().isEmpty()){
+		if (!criteria.getImportanceFilterSet().isEmpty()) {
 			crit.add(Restrictions.in("importance", criteria.getImportanceFilterSet()));
 		}
 		return crit;
 	}
-	
-	private Criteria tcNodeRootedCriteria(TestCaseSearchCriteria criteria){
+
+	private Criteria tcNodeRootedCriteria(TestCaseSearchCriteria criteria) {
 		return currentSession().createCriteria(TestCaseLibraryNode.class);
 	}
 

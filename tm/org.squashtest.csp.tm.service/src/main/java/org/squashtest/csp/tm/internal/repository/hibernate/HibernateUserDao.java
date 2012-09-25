@@ -74,13 +74,18 @@ public class HibernateUserDao extends HibernateEntityDao<User> implements UserDa
 	@Override
 	// FIXME : be careful of the filter 
 	public User findUserByLogin(final String login) {
-		return executeEntityNamedQuery("user.findUserByLogin", new SetQueryParametersCallback() {
-
-			@Override
-			public void setQueryParameters(Query query) {
-				query.setParameter("userLogin", login);
-			}
-		});
+		return executeEntityNamedQuery("user.findUserByLogin", new SetUserLoginParameterCallback(login));
+	}
+	
+	private static class SetUserLoginParameterCallback implements SetQueryParametersCallback {
+		private String login;
+		private SetUserLoginParameterCallback(String login){
+			this.login = login;
+		}
+		@Override
+		public void setQueryParameters(Query query) {
+			query.setParameter("userLogin", login);
+		}
 	}
 
 	@Override
@@ -90,14 +95,18 @@ public class HibernateUserDao extends HibernateEntityDao<User> implements UserDa
 			return Collections.emptyList();
 		} else {
 
-			SetQueryParametersCallback setParams = new SetQueryParametersCallback() {
-
-				@Override
-				public void setQueryParameters(Query query) {
-					query.setParameterList("userIds", idList);
-				}
-			};
+			SetQueryParametersCallback setParams = new SetUserIdsParameterCallback(idList);
 			return executeListNamedQuery("user.findUsersByLoginList", setParams);
+		}
+	}
+	private static class SetUserIdsParameterCallback implements SetQueryParametersCallback{
+		private List<String> idList;
+		private SetUserIdsParameterCallback(List<String> idList){
+			this.idList = idList;
+		}
+		@Override
+		public void setQueryParameters(Query query) {
+			query.setParameterList("userIds", idList);
 		}
 	}
 	

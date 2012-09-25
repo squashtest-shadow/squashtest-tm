@@ -273,11 +273,24 @@ public class ExecutionModificationController {
 		} else {
 			reNewEndDate = null;
 		}
-		return new Object() {
-			public Long newStartDate = reNewStartDate; // NOSONAR unreadable field actually read by JSON marshaller.
-			public Long newEndDate = reNewEndDate;
-			// public IterationTestPlanItem testPlanItem = reTestPlanItem;
-		};
+		return new StartEndDate(reNewStartDate, reNewEndDate);
+	}
+	private static class StartEndDate{
+		private Long newStartDate;
+		private Long newEndDate;
+
+		private StartEndDate(Long newStartDate, Long newEndDate){
+			this.newStartDate = newStartDate;
+			this.newEndDate = newEndDate;
+		}
+		@SuppressWarnings("unused")
+		public Long getNewStartDate(){
+			return this.newStartDate;
+		}
+		@SuppressWarnings("unused")
+		public Long getNewEndDate() {
+			return this.newEndDate;
+		}
 	}
 
 	private static String formatDate(Date date, Locale locale, MessageSource messageSource) {

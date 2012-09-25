@@ -56,27 +56,13 @@ public class HibernateTestCaseFolderDao extends HibernateEntityDao<TestCaseFolde
 
 	@Override
 	public List<String> findNamesInFolderStartingWith(final long folderId, final String nameStart) {
-		SetQueryParametersCallback newCallBack1 = new SetQueryParametersCallback() {
-
-			@Override
-			public void setQueryParameters(Query query) {
-				query.setParameter("containerId", folderId);
-				query.setParameter("nameStart", nameStart + "%");
-			}
-		};
+		SetQueryParametersCallback newCallBack1 = new ContainerIdNameStartParameterCallback(folderId, nameStart);
 		return executeListNamedQuery("testCaseFolder.findNamesInFolderStartingWith", newCallBack1);
 	}
 
 	@Override
 	public List<String> findNamesInLibraryStartingWith(final long libraryId, final String nameStart) {
-		SetQueryParametersCallback newCallBack1 = new SetQueryParametersCallback() {
-
-			@Override
-			public void setQueryParameters(Query query) {
-				query.setParameter("containerId", libraryId);
-				query.setParameter("nameStart", nameStart + "%");
-			}
-		};
+		SetQueryParametersCallback newCallBack1 = new ContainerIdNameStartParameterCallback(libraryId, nameStart);
 		return executeListNamedQuery("testCaseFolder.findNamesInLibraryStartingWith", newCallBack1);
 	}
 

@@ -25,6 +25,7 @@ import java.util.Collections;
 import java.util.List;
 
 import org.hibernate.Criteria;
+import org.hibernate.Query;
 import org.hibernate.criterion.Restrictions;
 import org.squashtest.csp.tm.internal.repository.EntityDao;
 
@@ -84,5 +85,20 @@ public class HibernateEntityDao<ENTITY_TYPE> extends HibernateDao<ENTITY_TYPE> i
 			persistEntity(transientEntity);
 		}
 	}
+	
+	protected static class ContainerIdNameStartParameterCallback implements SetQueryParametersCallback{
+		private long containerId;
+		private String nameStart;
+		ContainerIdNameStartParameterCallback(long containerId, String nameStart){
+			this.containerId = containerId;
+			this.nameStart = nameStart;
+		}
+		@Override
+		public void setQueryParameters(Query query) {
+			query.setParameter("containerId", containerId);
+			query.setParameter("nameStart", nameStart + "%");
+		}
+	}
+
 
 }

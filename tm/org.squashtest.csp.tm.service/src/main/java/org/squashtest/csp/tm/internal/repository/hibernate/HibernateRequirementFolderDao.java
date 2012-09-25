@@ -53,27 +53,13 @@ public class HibernateRequirementFolderDao extends HibernateEntityDao<Requiremen
 
 	@Override
 	public List<String> findNamesInFolderStartingWith(final long folderId, final String nameStart) {
-		SetQueryParametersCallback newCallBack1 = new SetQueryParametersCallback() {
-
-			@Override
-			public void setQueryParameters(Query query) {
-				query.setParameter("containerId", folderId);
-				query.setParameter("nameStart", nameStart + "%");
-			}
-		};
+		SetQueryParametersCallback newCallBack1 = new ContainerIdNameStartParameterCallback(folderId, nameStart);
 		return executeListNamedQuery("requirementFolder.findNamesInFolderStartingWith", newCallBack1);
 	}
-
+	
 	@Override
 	public List<String> findNamesInLibraryStartingWith(final long libraryId, final String nameStart) {
-		SetQueryParametersCallback newCallBack1 = new SetQueryParametersCallback() {
-
-			@Override
-			public void setQueryParameters(Query query) {
-				query.setParameter("containerId", libraryId);
-				query.setParameter("nameStart", nameStart + "%");
-			}
-		};
+		SetQueryParametersCallback newCallBack1 = new ContainerIdNameStartParameterCallback(libraryId, nameStart);
 		return executeListNamedQuery("requirementFolder.findNamesInLibraryStartingWith", newCallBack1);
 	}
 
@@ -124,14 +110,19 @@ public class HibernateRequirementFolderDao extends HibernateEntityDao<Requiremen
 
 	@Override
 	public RequirementFolder findParentOf(final Long id) {
-		SetQueryParametersCallback newCallBack = new SetQueryParametersCallback() {
-
-			@Override
-			public void setQueryParameters(Query query) {
-				query.setParameter("contentId", id, LongType.INSTANCE);
-			}
-		};
+		SetQueryParametersCallback newCallBack = new ContentIdParametterCallback(id);
 		return executeEntityNamedQuery("requirementFolder.findParentOf", newCallBack);
+	}
+	
+	private static class ContentIdParametterCallback implements SetQueryParametersCallback {
+		private long contentId;
+		private ContentIdParametterCallback(long contentId){
+			this.contentId = contentId;
+		}
+		@Override
+		public void setQueryParameters(Query query) {
+			query.setParameter("contentId", contentId, LongType.INSTANCE);
+		}
 	}
 
 }

@@ -67,21 +67,10 @@ public abstract class HibernateDeletionDao implements DeletionDao {
 		if (! attachmentContentIds.isEmpty()){
 
 			Collection<Long> attachIds = CollectionUtils.collect(attachmentContentIds,
-					new Transformer() {
-
-						@Override
-						public Object transform(Object input) {
-							return ((Object[]) input)[0];
-						}
-					});
+					new CellTableTransformer(0));
 
 			Collection<Long> contentIds = CollectionUtils.collect(attachmentContentIds,
-					new Transformer() {
-						@Override
-						public Object transform(Object input) {
-							return ((Object[]) input)[1];
-						}
-					});
+					new CellTableTransformer(1));
 
 			executeDeleteNamedQuery("attachment.removeAttachments", "attachIds", attachIds);
 			executeDeleteNamedQuery("attachment.removeContents", "contentIds", contentIds);
@@ -90,7 +79,16 @@ public abstract class HibernateDeletionDao implements DeletionDao {
 		executeDeleteNamedQuery("attachment.deleteAttachmentLists", "listIds", attachmentListIds);
 
 	}
-
+	private static class CellTableTransformer implements Transformer {
+		private int cellIndex;
+		private CellTableTransformer(int cellIndex){
+			this.cellIndex = cellIndex;
+		}
+		@Override
+		public Object transform(Object input) {
+			return ((Object[]) input)[cellIndex];
+		}
+	}
 	
 
 	@Override

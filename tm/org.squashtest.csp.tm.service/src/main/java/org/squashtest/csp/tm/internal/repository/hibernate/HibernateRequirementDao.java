@@ -72,12 +72,7 @@ public class HibernateRequirementDao extends HibernateEntityDao<Requirement> imp
 	@Override
 		public List<Requirement> findAllByIdListOrderedByName(final List<Long> requirementsIds) {
 			if (!requirementsIds.isEmpty()) {
-				SetQueryParametersCallback setParams = new SetQueryParametersCallback() {
-					@Override
-					public void setQueryParameters(Query query) {
-						query.setParameterList("requirementsIds", requirementsIds);
-					}
-				};
+				SetQueryParametersCallback setParams = new SetRequirementsIdsParameterCallback(requirementsIds);
 				return executeListNamedQuery("requirement.findAllByIdListOrderedByName", setParams);
 	
 			} else {
@@ -87,31 +82,25 @@ public class HibernateRequirementDao extends HibernateEntityDao<Requirement> imp
 	
 		}
 	
-	
+	private static class SetRequirementsIdsParameterCallback implements SetQueryParametersCallback{
+		private List<Long> requirementsIds;
+		private SetRequirementsIdsParameterCallback(List<Long> requirementsIds){
+			this.requirementsIds = requirementsIds;
+		}
+		@Override
+		public void setQueryParameters(Query query) {
+			query.setParameterList("requirementsIds", requirementsIds);
+		}
+	}
 	@Override
 	public List<String> findNamesInFolderStartingWith(final long folderId, final String nameStart) {
-		SetQueryParametersCallback newCallBack1 = new SetQueryParametersCallback() {
-
-			@Override
-			public void setQueryParameters(Query query) {
-				query.setParameter("containerId", folderId);
-				query.setParameter("nameStart", nameStart + "%");
-			}
-		};
+		SetQueryParametersCallback newCallBack1 = new ContainerIdNameStartParameterCallback(folderId, nameStart);
 		return executeListNamedQuery("requirement.findNamesInFolderStartingWith", newCallBack1);
 	}
-
+	
 	@Override
 	public List<String> findNamesInLibraryStartingWith(final long libraryId, final String nameStart) {
-		SetQueryParametersCallback callBack = new SetQueryParametersCallback() {
-
-			@Override
-			public void setQueryParameters(Query query) {
-				query.setParameter("containerId", libraryId);
-				query.setParameter("nameStart", nameStart + "%");
-			}
-		};
-
+		SetQueryParametersCallback callBack = new ContainerIdNameStartParameterCallback(libraryId, nameStart);
 		return executeListNamedQuery("requirement.findNamesInLibraryStartingWith", callBack);
 	}
 
@@ -331,17 +320,23 @@ public class HibernateRequirementDao extends HibernateEntityDao<Requirement> imp
 	public List<ExportRequirementData> findRequirementToExportFromLibrary(final List<Long> libIds) {
 
 		if (!libIds.isEmpty()) {
-			SetQueryParametersCallback newCallBack1 = new SetQueryParametersCallback() {
-				@Override
-				public void setQueryParameters(Query query) {
-					query.setParameterList("rIds", libIds, new LongType());
-				}
-			};
+			SetQueryParametersCallback newCallBack1 = new SetRIdsParameterCallback(libIds);
 			List<Long> result = executeListNamedQuery("requirement.findAllRootContent", newCallBack1);
 
 			return findRequirementToExportFromFolder(result);
 		} else {
 			return Collections.emptyList();
+		}
+	}
+	
+	private static class SetRIdsParameterCallback implements SetQueryParametersCallback {
+		private List<Long> libIds;
+		private SetRIdsParameterCallback(List<Long> libIds){
+			this.libIds = libIds;
+		}
+		@Override
+		public void setQueryParameters(Query query) {
+			query.setParameterList("rIds", libIds, new LongType());
 		}
 	}
 

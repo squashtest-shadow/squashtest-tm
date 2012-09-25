@@ -67,6 +67,7 @@ import org.squashtest.csp.tm.web.internal.helper.JsonHelper;
 import org.squashtest.csp.tm.web.internal.model.datatable.DataTableDrawParameters;
 import org.squashtest.csp.tm.web.internal.model.datatable.DataTableModel;
 import org.squashtest.csp.tm.web.internal.model.datatable.DataTableModelHelper;
+import org.squashtest.csp.tm.web.internal.model.jquery.RenameModel;
 import org.squashtest.csp.tm.web.internal.model.testautomation.TestAutomationProjectRegistrationForm;
 
 
@@ -144,24 +145,28 @@ public class ProjectModificationController {
 
 		projectModificationService.changeName(projectId, newName);
 		LOGGER.info("Project modification : renaming {} as {}", projectId, newName);
-		final String reNewName = newName;
-		return new Object() {
-			public String newName = reNewName; // NOSONAR unreadable field actually read by JSON marshaller.
-		};
+		return new RenameModel(newName);
 	}
 
 	
 	@RequestMapping(method = RequestMethod.POST, params = { "isActive" })
 	@ResponseBody
-	public Object changeActive(HttpServletResponse response, @PathVariable long projectId,
+	public Active changeActive(HttpServletResponse response, @PathVariable long projectId,
 			@RequestParam boolean isActive) {
 
 		projectModificationService.changeActive(projectId, isActive);
 		LOGGER.info("Project modification : change project {} is active = {}", projectId, isActive);
-		final Boolean newIsActive = isActive;
-		return new Object() {
-			public Boolean active = newIsActive; // NOSONAR unreadable field actually read by JSON marshaller.
-		};
+		return new Active(isActive);
+	}
+	private class Active {
+		private Boolean active;
+		private Active(Boolean active){
+			this.active = active;
+		}
+		@SuppressWarnings("unused")
+		public Boolean isActive(){
+			return active;
+		}
 	}
 
 	@RequestMapping(method = RequestMethod.POST, params = { "id=project-bugtracker", VALUE })

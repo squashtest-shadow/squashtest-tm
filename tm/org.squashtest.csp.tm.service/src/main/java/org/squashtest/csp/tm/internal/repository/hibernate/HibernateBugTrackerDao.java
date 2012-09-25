@@ -88,28 +88,37 @@ public class HibernateBugTrackerDao extends HibernateEntityDao<BugTracker> imple
 	}
 
 	private BugTracker findBugTrackerByName(final String name) {
-			return executeEntityNamedQuery("bugtracker.findBugTrackerByName", new SetQueryParametersCallback() {
-
-				@Override
-				public void setQueryParameters(Query query) {
-					query.setParameter("name", name);
-				}
-			});
-		
+			return executeEntityNamedQuery("bugtracker.findBugTrackerByName", new SetNameParameterCallback(name));
+	}
+	
+	private static class SetNameParameterCallback implements SetQueryParametersCallback{
+		private String name;
+		private SetNameParameterCallback (String name){
+			this.name = name;
+		}
+		@Override
+		public void setQueryParameters(Query query) {
+			query.setParameter("name", name);
+		}
 	}
 
 	@Override
 	public List<BugTracker> findDistinctBugTrackersForProjects(final List<Long> projectIds) {
 		if(!projectIds.isEmpty()){
-		return executeListNamedQuery("bugtracker.findDistinctBugTrackersForProjects", new SetQueryParametersCallback() {
-
-			@Override
-			public void setQueryParameters(Query query) {
-				query.setParameterList("projects", projectIds, LongType.INSTANCE);
-			}
-		});
+		return executeListNamedQuery("bugtracker.findDistinctBugTrackersForProjects", new SetProjectsParametersCallback(projectIds));
 		}else{
 			return Collections.emptyList();
+		}
+	}
+	
+	private static class SetProjectsParametersCallback implements SetQueryParametersCallback {
+		private List<Long> projectIds;
+		private SetProjectsParametersCallback(List<Long> projectIds){
+			this.projectIds = projectIds;
+		}
+		@Override
+		public void setQueryParameters(Query query) {
+			query.setParameterList("projects", projectIds, LongType.INSTANCE);
 		}
 	}
 

@@ -86,27 +86,13 @@ public class HibernateCampaignDao extends HibernateEntityDao<Campaign> implement
 
 	@Override
 	public List<String> findNamesInFolderStartingWith(final long folderId, final String nameStart) {
-		SetQueryParametersCallback newCallBack1 = new SetQueryParametersCallback() {
-
-			@Override
-			public void setQueryParameters(Query query) {
-				query.setParameter(CONTAINER_ID, folderId);
-				query.setParameter("nameStart", nameStart + "%");
-			}
-		};
+		SetQueryParametersCallback newCallBack1 = new ContainerIdNameStartParameterCallback(folderId, nameStart);
 		return executeListNamedQuery("campaign.findNamesInFolderStartingWith", newCallBack1);
 	}
 
 	@Override
 	public List<String> findNamesInCampaignStartingWith(final long campaignId, final String nameStart) {
-		SetQueryParametersCallback newCallBack1 = new SetQueryParametersCallback() {
-
-			@Override
-			public void setQueryParameters(Query query) {
-				query.setParameter(CONTAINER_ID, campaignId);
-				query.setParameter("nameStart", nameStart + "%");
-			}
-		};
+		SetQueryParametersCallback newCallBack1 = new ContainerIdNameStartParameterCallback(campaignId, nameStart);
 		return executeListNamedQuery("campaign.findNamesInCampaignStartingWith", newCallBack1);
 	}
 
@@ -124,14 +110,7 @@ public class HibernateCampaignDao extends HibernateEntityDao<Campaign> implement
 
 	@Override
 	public List<String> findNamesInLibraryStartingWith(final long libraryId, final String nameStart) {
-		SetQueryParametersCallback newCallBack1 = new SetQueryParametersCallback() {
-
-			@Override
-			public void setQueryParameters(Query query) {
-				query.setParameter(CONTAINER_ID, libraryId);
-				query.setParameter("nameStart", nameStart + "%");
-			}
-		};
+		SetQueryParametersCallback newCallBack1 = new ContainerIdNameStartParameterCallback(libraryId, nameStart);
 		return executeListNamedQuery("campaign.findNamesInLibraryStartingWith", newCallBack1);
 	}
 	
