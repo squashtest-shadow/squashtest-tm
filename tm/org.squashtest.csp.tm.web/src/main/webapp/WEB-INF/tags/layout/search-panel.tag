@@ -47,7 +47,8 @@
 	value="/search/requirements/breadcrumb" />
 <s:url var="searchReqUrl" value="/search/requirements" />
 <s:url var="searchTCUrl" value="/search/test-cases" />
-<s:url var="loadEntityUrl" value="/${workspace}s" />
+
+<s:url var="baseURL" value="/" />
 
 <f:message var="InputFailMessage" key='search.validate.failure.label' />
 <f:message var="InputEmptyMessage" key='search.validate.empty.label' />
@@ -218,7 +219,7 @@
 				});
 				$(this).addClass("jstree-clicked ui-state-default");
 				
-				var url = "${loadEntityUrl}/" + getRowId($(this).attr("id"));
+				var url = getEntityURL($(this));
 				
 				squashtm.contextualContent.loadWith(url);
 				
@@ -231,6 +232,17 @@
 			</c:choose>
 		});
 	}
+	
+	function getEntityURL(jqRow){
+		var expr = /([a-z])(?=[A-Z])/g
+		var idParts = jqRow.attr("id").split("-");
+		
+		var lowerCase = idParts[1].replace(expr, "$1-").toLowerCase()+"s";
+		var id = idParts[2];
+		
+		return "${baseURL}/"+lowerCase+"/"+id;
+	} 
+	
 	
 	function findIdsOfSelectedSearchRow(){
 		var dataTable = $("#search-result-datatable").dataTable();
