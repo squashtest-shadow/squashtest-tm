@@ -49,6 +49,17 @@ public enum StandardReportType implements Internationalizable {
 		public String getIconUri() {
 			return "/images/report_generic.png";
 		}
+	},
+	SPECIFICATION_BOOK(){
+		@Override
+		public String getI18nKey() {
+			return "report.type.specbook.name";
+		}
+
+		@Override
+		public String getIconUri() {
+			return "/images/report_word.png";
+		}		
 	};
 
 	public abstract String getIconUri();
