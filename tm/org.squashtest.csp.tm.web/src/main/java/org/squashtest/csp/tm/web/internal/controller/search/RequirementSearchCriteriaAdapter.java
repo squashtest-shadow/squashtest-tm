@@ -54,12 +54,10 @@ public class RequirementSearchCriteriaAdapter implements RequirementSearchCriter
 			}
 			j++;
 		}
-		int k=0;
 		for (int i = 0 ; i < categoriesSelection.length ; i++) {
-			if (categoriesSelection[k]) {
+			if (categoriesSelection[i]) {
 				categories.add(RequirementCategory.valueOf(i));
 			}
-			k++;
 		}
 	}
 
@@ -93,7 +91,7 @@ public class RequirementSearchCriteriaAdapter implements RequirementSearchCriter
 
 	@Override
 	public boolean libeleIsOnlyCriteria() {
-		return (!StringUtils.isNotBlank(getReference()))&& getCriticalities().isEmpty();
+		return (!StringUtils.isNotBlank(getReference()))&& getCriticalities().isEmpty() && getCategories().isEmpty();
 	}
 
 }
