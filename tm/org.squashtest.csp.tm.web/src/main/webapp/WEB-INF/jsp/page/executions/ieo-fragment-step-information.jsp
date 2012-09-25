@@ -72,7 +72,16 @@
 
 <body class="execute-html-body ieo-body">
 	<f:message var="completedMessage" key="execute.alert.test.complete" />
-	
+	<c:if test="${ execution.project.bugtrackerConnected }">
+	<c:choose>
+	<c:when test="${ execution.bugTracker.iframeFriendly } }">
+		<c:set var="bugLinkTarget" value="frameright" />
+	</c:when>
+	<c:otherwise>
+		<c:set var="bugLinkTarget" value="_blank" />
+		</c:otherwise>
+	</c:choose>
+	</c:if>
 	<script type="text/javascript">
 		$(function(){
 			$("#execute-next-button").button({
@@ -109,7 +118,7 @@
 			});
 			
 			$("#bugtracker-section-div a").live('click', function(){
-				$(this).attr('target', "frameright");
+				$(this).attr('target', "${bugLinkTarget}");
 			});			
 
 			$("#execute-next-test-case").button({
