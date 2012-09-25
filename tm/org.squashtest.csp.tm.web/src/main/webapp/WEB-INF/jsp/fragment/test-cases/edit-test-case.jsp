@@ -1053,8 +1053,7 @@ function addTestStepSuccessAnother(){
 
 	<%------------------------------ Attachments bloc ---------------------------------------------%>
 
-	<comp:attachment-tab tabId="tabs-3" entity="${ testCase }"
-		editable="${ attachable }" />
+	<comp:attachment-tab tabId="tabs-3" entity="${ testCase }"	editable="${ attachable }" />
 		
 	<comp:fragment-tabs /> 
 

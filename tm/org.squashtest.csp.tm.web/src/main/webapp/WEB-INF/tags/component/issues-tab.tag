@@ -31,7 +31,7 @@
 	this section is loaded asynchronously, and in this case as a tab. The bugtracker might be out of reach indeed. Nothing will be loaded if no bugtracker was defined.
  --%>	
  <f:message key="tabs.label.issues" var="tabIssueLabel"/>
- <div id="bugtracker-section-div">
+ <div id="bugtracker-section-div"></div>
  <script type="text/javascript">
  	$(function(){
  				<%-- first : add the tab entry --%>
@@ -41,4 +41,3 @@
 	 			btDiv.load("${btEntityUrl}?style=fragment-tab", function(){btDiv.addClass("table-tab");}); 			
  	});
  </script>
-</div>
