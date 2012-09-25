@@ -23,8 +23,7 @@
 		options : {
 			initiallyOpen : true,
 			title : "",
-			cssClasses : "",
-			panelButtonsSelector : ""
+			cssClasses : ""
 		},
 		
 		_create : function () {
@@ -36,28 +35,42 @@
 			this.options.title = this.options.title || this.originalTitle;
 			
 			var widget = this;
-					
-			var wrapper = $('<div/>', {'class': "toggle-panel ui-accordion ui-widget ui-helper-reset ui-accordion-icons"});
+			
+			//build the necessary components
 			var panelHead = $('<h3/>', {'class': "ui-accordion-header ui-helper-reset ui-state-default ui-state-focus ui-corner-top"});
 			var titlepanel = $('<div/>', {'style': "overflow:hidden;"});
 			var snapleft = $('<div class="snap-left"><a class="tg-link" href="javascript:void(0)"></a></div>');
-			var snapright = $('<div/>', {'class': "snap-right"});			
-			this.element.addClass("ui-accordion-content ui-helper-reset ui-widget-content ui-corner-bottom ui-accordion-content-active");				
+			var snapright = $('<div/>', {'class': "snap-right"});						
 		
-			titlepanel.append(snapleft)
-				.append(snapright);
+		
+			//find the wrapper or create it if not exists. It's best if the wrapper exists, because inserting the content into it won't be necessary. This will prevent 
+			//the double javascript execution bug, see #1291
+			var wrapper = this.element.parent('div.toggle-panel');
+			if (wrapper.length>0){
+				wrapper.addClass("ui-accordion ui-widget ui-helper-reset ui-accordion-icons");
+				var wCreate=false;
+			}
+			else{
+				var wrapper = $('<div/>', {'class': "toggle-panel ui-accordion ui-widget ui-helper-reset ui-accordion-icons"});
+				wCreate=true;
+			}
+			
+			//finish the creation of the structure
+			this.element.addClass("ui-accordion-content ui-helper-reset ui-widget-content ui-corner-bottom ui-accordion-content-active");	
+			
+			titlepanel.append(snapleft).append(snapright);
 			panelHead.append(titlepanel);
 			
-			this.element.wrap(wrapper);
+			if (wCreate) this.element.wrap(wrapper);
 
 			widget.panelHead = panelHead;
 			panelHead.insertBefore(this.element);
 			
 			panelHead.click($.proxy(function (event) {
 				event.stopImmediatePropagation();
-				//widget.toggleContent.call(this.element);
 				widget.toggleContent();
 			}, this));
+						
 		
 		}, 
 		
@@ -75,23 +88,23 @@
 			
 			panelHead.find(".snap-left a").text(title);				
 			panelHead.parent().addClass(settings.cssClasses);
+						
+			var inputs = $('.toggle-panel-buttons', this.element);
+			inputs.click(function (event) { event.stopPropagation(); });
+			panelHead.find('.snap-right').append(inputs);
 			
-			if (settings.panelButtonsSelector) {
-				var inputs = $(settings.panelButtonsSelector);
-				inputs.click(function (event) { event.stopPropagation(); });
-				panelHead.find('.snap-right').append(inputs);
-			}	
 		},
 		
 		toggleContent : function () {
-			var panelHead = this.panelHead;
 			
-			if (!panelHead.length) {
-				return; 	//if the head is not found, that's usually because the body was detached due to the animating sequence. Sorry for this but the 			
-				//(:animated) selector wouldn't work
-			}
+			//skip if already being toggled
+			if (this.element.parent().hasClass('ui-effects-wrapper')) {
+				return; 	
+			};
 			
-			this.element.toggle('blind', 500);			
+			var panelHead=this.panelHead;
+			
+			this.element.toggle('blind', 500);	
 			panelHead.toggleClass("ui-state-focus ui-state-active ui-corner-top ui-corner-all tg-open");
 			
 			//now disable the buttons. 

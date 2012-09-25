@@ -31,16 +31,20 @@
 <%@ attribute name="classes" description="classes the panel" %>
 <%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core" %>
 <%@ taglib prefix="f" uri="http://java.sun.com/jsp/jstl/fmt" %>
+
+
 <c:if test="${ not empty titleKey }">
 	<f:message var="title" key="${ titleKey }" />
 </c:if>
 <%-- dirty trick is dirty --%>
 <c:if test="${not empty isContextual}"><c:set var="additionalClasses" value="is-contextual" /></c:if>
-
 <c:if test="${not empty classes}"><c:set var="classesToDiv" value="${classes}" /></c:if>
-<div id="${id}" class="${classesToDiv}">
-	<span class="not-displayed ${id}-buttons"><jsp:invoke fragment="panelButtons"/></span>
-	<jsp:invoke fragment="body"/>
+
+<div class="toggle-panel">
+	<span class="not-displayed toggle-panel-buttons"><jsp:invoke fragment="panelButtons"/></span>
+	<div id="${id}" class="${classesToDiv} toggle-panel-main">
+		<jsp:invoke fragment="body"/>
+	</div>
 </div>
 
 <script type="text/javascript">
@@ -50,7 +54,6 @@
 				<c:if test="${not empty open}">initiallyOpen : ${open},</c:if>
 				title : "${title}",
 				<c:if test="${not empty isContextual}">cssClasses : "is-contextual",</c:if>
-				panelButtonsSelector : ".${id}-buttons .button"	
 		}
 		
 		$("#${id}").togglePanel(settings);
