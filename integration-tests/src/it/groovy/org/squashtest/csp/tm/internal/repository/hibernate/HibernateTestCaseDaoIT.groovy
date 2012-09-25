@@ -388,11 +388,11 @@ class HibernateTestCaseDaoIT extends DbunitDaoSpecification {
 	def "should find the test cases and folders ordered by names, not grouped by project and no importance filter"(){
 		
 		given :
-			def importances = TestCaseImportance.values(); 
+			
 			def criteria = Mock(TestCaseSearchCriteria)
 			criteria.getName() >> "roject"
 			criteria.isGroupByProject() >> false
-			criteria.getImportanceFilterSet() >> Arrays.asList(importances);
+			criteria.getImportanceFilterSet() >> Collections.emptyList();
 		
 		when :
 			def result = testCaseDao.findBySearchCriteria(criteria)
@@ -414,11 +414,11 @@ class HibernateTestCaseDaoIT extends DbunitDaoSpecification {
 	def "should find the test cases and folders ordered by names, grouped by project and no importance filter"(){
 		
 		given :
-			def importances = TestCaseImportance.values();
+			
 			def criteria = Mock(TestCaseSearchCriteria)
 			criteria.getName() >> "roject"
 			criteria.isGroupByProject() >> true
-			criteria.getImportanceFilterSet() >> Arrays.asList(importances);
+			criteria.getImportanceFilterSet() >> Collections.emptyList();
 		
 		when :
 			def result = testCaseDao.findBySearchCriteria(criteria)
