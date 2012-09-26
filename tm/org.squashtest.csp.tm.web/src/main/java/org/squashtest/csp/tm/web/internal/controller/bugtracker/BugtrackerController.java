@@ -550,8 +550,21 @@ public class BugtrackerController {
 	@RequestMapping(value = "/status", method = RequestMethod.GET, params={"projectId"} )
 	public @ResponseBody
 	Object getBugTrackerStatus(@RequestParam("projectId")Long projectId) {
-		Project project = projectFinder.findById(projectId);
-		return jsonStatus(project);
+		String strStatus = null;
+
+		BugTrackerStatus status = checkStatus(projectId);
+
+		if (status == BugTrackerStatus.BUGTRACKER_READY) {
+			strStatus = "ready";
+		} else if (status == BugTrackerStatus.BUGTRACKER_NEEDS_CREDENTIALS) {
+			strStatus = "needs_credentials";
+		} else {
+			strStatus = "bt_undefined";
+		}
+
+		Map<String, String> result = new HashMap<String, String>();
+		result.put("status", strStatus);
+		return result;
 	}
 
 	// FIXME : check first if a bugtracker is defined and if the credentials are set
@@ -619,10 +632,9 @@ public class BugtrackerController {
 	 * 
 	 * If the bugtracker isn'st defined no panel will be sent at all.
 	 */
-	private ModelAndView makeIssuePanel(Identified entity, String type, Locale locale, String panelStyle,
-			Project project) {
+	private ModelAndView makeIssuePanel(Identified entity, String type, Locale locale, String panelStyle, Project project) {
 		if (project.isBugtrackerConnected()) {
-			BugTrackerStatus status = checkStatus(project);
+			BugTrackerStatus status = checkStatus(project.getId());
 			// JSON STATUS TODO
 
 			BugTrackerInterfaceDescriptor descriptor = bugTrackersLocalService.getInterfaceDescriptor(project
@@ -646,27 +658,11 @@ public class BugtrackerController {
 
 	/* ******************************* private methods ********************************************** */
 
-	private BugTrackerStatus checkStatus(Project project) {
-		return bugTrackersLocalService.checkBugTrackerStatus(project);
+	private BugTrackerStatus checkStatus(long projectId) {
+		return bugTrackersLocalService.checkBugTrackerStatus(projectId);
 	}
 
-	private Object jsonStatus(Project project) {
-		String strStatus = null;
-
-		BugTrackerStatus status = checkStatus(project);
-
-		if (status == BugTrackerStatus.BUGTRACKER_READY) {
-			strStatus = "ready";
-		} else if (status == BugTrackerStatus.BUGTRACKER_NEEDS_CREDENTIALS) {
-			strStatus = "needs_credentials";
-		} else {
-			strStatus = "bt_undefined";
-		}
-
-		Map<String, String> result = new HashMap<String, String>();
-		result.put("status", strStatus);
-		return result;
-	}
+	
 	private class IssueCollectionSorting implements CollectionSorting{
 		
 		private DataTableDrawParameters params;

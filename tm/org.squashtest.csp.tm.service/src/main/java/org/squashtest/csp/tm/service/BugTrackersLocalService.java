@@ -188,6 +188,16 @@ public interface BugTrackersLocalService {
 	 * 
 	 */
 	BugTrackerStatus checkBugTrackerStatus(Project project);
+	
+	
+	/**
+	 * same as {@link #checkBugTrackerStatus(Project)}, using the id of the project
+	 * instead. 
+	 * 
+	 * @param projectId
+	 * @return
+	 */
+	BugTrackerStatus checkBugTrackerStatus(Long projectId);
 
 	/**
 	 * sets the credentials of an user for authentication bugtracker-side.

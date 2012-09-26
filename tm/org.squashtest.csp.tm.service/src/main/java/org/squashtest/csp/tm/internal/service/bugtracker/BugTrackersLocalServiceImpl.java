@@ -62,6 +62,7 @@ import org.squashtest.csp.tm.internal.repository.ExecutionDao;
 import org.squashtest.csp.tm.internal.repository.ExecutionStepDao;
 import org.squashtest.csp.tm.internal.repository.IssueDao;
 import org.squashtest.csp.tm.internal.repository.IterationDao;
+import org.squashtest.csp.tm.internal.repository.ProjectDao;
 import org.squashtest.csp.tm.internal.repository.TestCaseDao;
 import org.squashtest.csp.tm.internal.repository.TestSuiteDao;
 import org.squashtest.csp.tm.service.BugTrackersLocalService;
@@ -96,6 +97,9 @@ public class BugTrackersLocalServiceImpl implements BugTrackersLocalService {
 	
 	@Inject
 	private BugTrackerDao bugTrackerDao;
+	
+	@Inject
+	private ProjectDao projectDao;
 
 	@Override
 	public BugTrackerInterfaceDescriptor getInterfaceDescriptor(BugTracker bugTracker) {
@@ -103,6 +107,7 @@ public class BugTrackersLocalServiceImpl implements BugTrackersLocalService {
 	}
 
 	@Override
+	@PreAuthorize("hasPermission(#entity, 'EXECUTE') or hasRole('ROLE_ADMIN')")	
 	public BugTrackerStatus checkBugTrackerStatus(Project project) {
 		BugTrackerStatus status;
 
@@ -115,9 +120,14 @@ public class BugTrackersLocalServiceImpl implements BugTrackersLocalService {
 		}
 		return status;
 	}
+	
+	@Override	
+	public BugTrackerStatus checkBugTrackerStatus(Long projectId) {
+		Project project = projectDao.findById(projectId);
+		return checkBugTrackerStatus(project);
+	}
 
 	@Override
-	@PreAuthorize("hasPermission(#entity, 'EXECUTE') or hasRole('ROLE_ADMIN')")
 	public BTIssue createIssue(IssueDetector entity, BTIssue btIssue) {
 		BugTracker bugTracker = entity.getBugTracker();
 		String btName = bugTracker.getName();
