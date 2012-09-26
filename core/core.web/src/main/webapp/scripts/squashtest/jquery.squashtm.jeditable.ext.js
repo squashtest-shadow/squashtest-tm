@@ -66,7 +66,11 @@
 
 			elts.unbind('click');
 			elts.click(function (event) {
-				document.location.href = this.href;
+				if(this.onclick){
+					this.onclick();
+				}else{
+					document.location.href = this.href;
+				}
 				event.stopPropagation();
 				return false;
 			});
