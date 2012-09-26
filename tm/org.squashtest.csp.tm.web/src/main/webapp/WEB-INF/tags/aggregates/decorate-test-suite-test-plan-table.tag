@@ -248,8 +248,9 @@
 				"A" : "automated"
 		};
 
-		var mode = data[3];
+		var mode = data["exec-mode"];
 		$(row).find("td.exec-mode")
+			.text('')
 			.addClass("exec-mode-" + automationClass[mode])
 			.attr("title", automationToolTips[mode]);
 	}			
