@@ -31,7 +31,7 @@
             http://www.springframework.org/schema/osgi
             http://www.springframework.org/schema/osgi/spring-osgi.xsd">
 
-	<osgi:list id="bugtracker.plugins.registry" interface="org.squashtest.csp.core.bugtracker.spi.BugTrackerConnectorProvider">
+	<osgi:list id="bugtracker.plugins.registry" interface="org.squashtest.csp.core.bugtracker.spi.BugTrackerConnectorProvider" cardinality="0..N">
 		<osgi:listener ref="squashtest.core.bugtracker.BugTrackerConnectorFactory"
 					   bind-method="registerProvider" unbind-method="unregisterProvider" />
 	</osgi:list>
