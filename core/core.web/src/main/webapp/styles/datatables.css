@@ -128,3 +128,9 @@ a.add-attachments{
 .hasBugs {
 	background-image: url("../images/bug.png");
 }
+
+div.dataTables_wrapper td a.delete-execution-table-button[role="button"] {
+	
+height:8px;
+
+}

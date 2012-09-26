@@ -84,9 +84,9 @@
 					</c:otherwise>
 				</c:choose>
 				</td>
-				<td style="width: 2em;">
+				<td style="width: 1.5em;" class="centered">
 					<authz:authorized hasRole="ROLE_ADMIN" hasPermission="EXECUTE" domainObject="${ execution }">
-					<button id="delete-execution-table-button-${execution.id}" class="delete-execution-table-button" title='<f:message key="label.removeExecution"/>'></button>
+					<a id="delete-execution-table-button-${execution.id}" href="javascript:void(0)" class="delete-execution-table-button" title='<f:message key="label.removeExecution"/>'></a>
 					</authz:authorized>
 				</td>
 			</tr>

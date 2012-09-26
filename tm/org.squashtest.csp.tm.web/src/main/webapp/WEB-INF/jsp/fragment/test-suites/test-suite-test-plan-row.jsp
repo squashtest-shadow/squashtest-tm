@@ -54,7 +54,7 @@
 				<td style="width: 7.5em;color: ${textcolor}; font-style:italic;"><f:message
 						key="${ execution.executionMode.i18nKey }" />
 				</td>
-				<td style="width: 12em; color: ${textcolor} font-style:italic;"><f:message
+				<td style="width: 10em; color: ${textcolor} font-style:italic;"><f:message
 						key="execution.execution-status.${execution.executionStatus}" />
 
 				</td>
@@ -80,9 +80,9 @@
 					</c:otherwise>
 				</c:choose>
 				</td>
-				<td style="width: 2em;"><authz:authorized hasRole="ROLE_ADMIN" hasPermission="EXECUTE" domainObject="${ execution }">
-						<button id="delete-execution-table-button-${execution.id}"
-							class="delete-execution-table-button" title='<f:message key="label.removeExecution"/>' ></button>
+				<td style="width: 1.5em;" class="centered"><authz:authorized hasRole="ROLE_ADMIN" hasPermission="EXECUTE" domainObject="${ execution }">
+						<a id="delete-execution-table-button-${execution.id}" href="javascript:void(0)"
+							class="delete-execution-table-button" title='<f:message key="label.removeExecution"/>' ></a>
 					</authz:authorized>
 				</td>
 			</tr>
