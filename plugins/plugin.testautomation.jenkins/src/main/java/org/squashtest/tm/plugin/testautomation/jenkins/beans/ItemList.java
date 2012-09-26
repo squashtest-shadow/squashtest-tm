@@ -20,6 +20,8 @@
  */
 package org.squashtest.tm.plugin.testautomation.jenkins.beans;
 
+import java.util.Arrays;
+
 public class ItemList {
 	
 	private Item[] items;
@@ -30,8 +32,8 @@ public class ItemList {
 		return items;
 	}
 
-	public void setItems(Item[] items) {
-		this.items = items;
+	public void setItems(Item[] items) {	//NOSONAR that array is definitely not stored directly
+		this.items = Arrays.copyOf(items, items.length);
 	}
 
 	public Item findQueuedBuildByExtId(String projectName, String extId){
