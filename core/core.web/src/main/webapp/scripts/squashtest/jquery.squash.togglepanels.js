@@ -64,8 +64,15 @@
 			if (wCreate) this.element.wrap(wrapper);
 
 			widget.panelHead = panelHead;
-			panelHead.insertBefore(this.element);
+			panelHead.insertBefore(this.element);			
+					
+			//the buttons now
+			var inputs = $('.toggle-panel-buttons input', wrapper);
+			inputs.squashButton();
+			inputs.click(function (event) { event.stopPropagation(); });
+			panelHead.find('.snap-right').append(inputs);
 			
+			//click event
 			panelHead.click($.proxy(function (event) {
 				event.stopImmediatePropagation();
 				widget.toggleContent();
@@ -88,10 +95,7 @@
 			
 			panelHead.find(".snap-left a").text(title);				
 			panelHead.parent().addClass(settings.cssClasses);
-						
-			var inputs = $('.toggle-panel-buttons', this.element);
-			inputs.click(function (event) { event.stopPropagation(); });
-			panelHead.find('.snap-right').append(inputs);
+
 			
 		},
 		
@@ -107,9 +111,9 @@
 			this.element.toggle('blind', 500);	
 			panelHead.toggleClass("ui-state-focus ui-state-active ui-corner-top ui-corner-all tg-open");
 			
-			//now disable the buttons. 
+			//now disable or enable the buttons. 
 			var disabled = (panelHead.hasClass('tg-open')) ? false : true;
-			panelHead.find(':button, .button').button("option", "disabled", disabled);
+			panelHead.find(':button, .button').squashButton("option", "disabled", disabled);
 		},
 		
 		openContent : function () {

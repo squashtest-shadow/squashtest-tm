@@ -377,7 +377,7 @@ check that in the next <script></script> tags
 	$(function() {
 
 		<c:if test="${editable}">
-		$("#issue-report-dialog-openbutton").button();
+		$("#issue-report-dialog-openbutton").squashButton();
 		$("#issue-report-dialog-openbutton").click(function() {
 			$(this).removeClass("ui-state-focus ui-state-hover");
 		});
@@ -392,6 +392,8 @@ check that in the next <script></script> tags
 		$("#issue-report-dialog-openbutton").click(checkAndReportIssue);
 		</c:if>
 		$("#issue-login-button").click(bugTrackerLogin);		
+		
+		
 
 	});
 </script>
