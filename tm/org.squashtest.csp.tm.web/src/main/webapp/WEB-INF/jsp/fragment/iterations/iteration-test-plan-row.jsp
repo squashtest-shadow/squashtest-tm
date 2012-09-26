@@ -86,7 +86,7 @@
 				</td>
 				<td style="width: 2em;">
 					<authz:authorized hasRole="ROLE_ADMIN" hasPermission="EXECUTE" domainObject="${ execution }">
-					<button id="delete-execution-table-button-${execution.id}" class="delete-execution-table-button"></button>
+					<button id="delete-execution-table-button-${execution.id}" class="delete-execution-table-button" title='<f:message key="label.removeExecution"/>'></button>
 					</authz:authorized>
 				</td>
 			</tr>
