@@ -35,7 +35,7 @@
 <s:url var="bugtrackerUrl" value="/bugtracker/{bugtrackerId}">
 	<s:param name="bugtrackerId" value="${bugtracker.id}" />
 </s:url>
-<s:url var="bugtrackersUrl" value="/bugtrackers" />
+<s:url var="bugtrackersUrl" value="/administration/bugtrackers" />
 
 
 <layout:info-page-layout titleKey="workspace.bugtracker.info.title">

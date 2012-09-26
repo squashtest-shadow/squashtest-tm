@@ -29,9 +29,9 @@
 <%@ taglib prefix="pop" tagdir="/WEB-INF/tags/popup" %>
 <%@ taglib uri="http://www.springframework.org/security/tags" prefix="sec"%>
 
-<c:url var="usersUrl" value="/users/list"/>
-<c:url var="projectsUrl" value="/projects"/>
-<c:url var="bugtrackerUrl" value="/bugtrackers"/>
+<c:url var="usersUrl" value="/administration/users/list"/>
+<c:url var="projectsUrl" value="/administration/projects"/>
+<c:url var="bugtrackerUrl" value="/administration/bugtrackers"/>
 <c:url var="loginUrl" value="/configuration/login-message"/>
 <c:url var="welcomeUrl" value="/configuration/welcome-message"/>
 

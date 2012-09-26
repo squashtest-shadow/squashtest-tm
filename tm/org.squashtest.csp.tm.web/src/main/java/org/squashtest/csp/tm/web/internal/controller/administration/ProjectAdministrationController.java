@@ -18,7 +18,7 @@
  *     You should have received a copy of the GNU Lesser General Public License
  *     along with this software.  If not, see <http://www.gnu.org/licenses/>.
  */
-package org.squashtest.csp.tm.web.internal.controller.project;
+package org.squashtest.csp.tm.web.internal.controller.administration;
 
 import java.text.SimpleDateFormat;
 import java.util.Date;
@@ -52,11 +52,11 @@ import org.squashtest.csp.tm.web.internal.model.jquery.FilterModel;
 import org.squashtest.csp.tm.web.internal.model.viewmapper.DataTableMapper;
 
 @Controller
-@RequestMapping("/projects")
-public class ProjectManagerController {
+@RequestMapping("/administration/projects")
+public class ProjectAdministrationController {
 
 	private ProjectManagerService projectManagerService;
-	private static final Logger LOGGER = LoggerFactory.getLogger(ProjectManagerController.class);
+	private static final Logger LOGGER = LoggerFactory.getLogger(ProjectAdministrationController.class);
 
 	@Inject
 	private MessageSource messageSource;
@@ -98,19 +98,6 @@ public class ProjectManagerController {
 		ModelAndView mav = new ModelAndView("page/projects/show-projects");
 		mav.addObject("projects", projectFinder.findAllOrderedByName());
 		return mav;
-	}
-
-	@RequestMapping(method = RequestMethod.GET, params = "format=picker")
-	@ResponseBody
-	public FilterModel getProjectPickerModel() {
-		List<Project> projects = projectFinder.findAllOrderedByName();
-		FilterModel model = new FilterModel();
-
-		for (Project project : projects) {
-			model.addProject(project.getId(), project.getName());
-		}
-
-		return model;
 	}
 
 	@RequestMapping(value = "/list", params = "sEcho", method = RequestMethod.GET)

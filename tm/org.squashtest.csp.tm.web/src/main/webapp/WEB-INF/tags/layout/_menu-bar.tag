@@ -33,7 +33,7 @@
 
 <c:url var="projectFilterStatusUrl" value="/global-filter/filter-status"/>
 <c:url var="administrationUrl" value="/administration"/>
-<c:url var="projectUrl" value="/projects"/>
+<c:url var="projectUrl" value="/administration/projects"/>
 <c:url var="userAccountUrl" value="/user-account" />
 
 <div>

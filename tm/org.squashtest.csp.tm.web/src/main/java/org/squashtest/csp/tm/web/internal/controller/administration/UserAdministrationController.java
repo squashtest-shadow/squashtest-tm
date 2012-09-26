@@ -60,7 +60,7 @@ import org.squashtest.csp.tm.web.internal.model.datatable.DataTableModelHelper;
 import org.squashtest.csp.tm.web.internal.model.viewmapper.DataTableMapper;
 
 @Controller
-@RequestMapping("/users")
+@RequestMapping("/administration/users")
 public class UserAdministrationController {
 
 	/**

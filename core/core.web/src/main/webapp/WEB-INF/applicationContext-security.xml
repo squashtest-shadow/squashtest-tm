@@ -41,20 +41,19 @@
 		<request-cache ref="httpSessionRequestCache"/>
 
 		<!-- Pages restricted to admins -->
-		
-		<intercept-url requires-channel="${authentication.application.securablechannels}" pattern="/bugtrackers" access="hasRole('ROLE_ADMIN')" />
-		<intercept-url requires-channel="${authentication.application.securablechannels}" pattern="/bugtrackers/**" access="hasRole('ROLE_ADMIN')" />
-		<intercept-url requires-channel="${authentication.application.securablechannels}" pattern="/projects" access="hasRole('ROLE_TM_PROJECT_MANAGER') or hasRole('ROLE_ADMIN')" />
-		<intercept-url requires-channel="${authentication.application.securablechannels}" pattern="/projects/**" access="hasRole('ROLE_TM_PROJECT_MANAGER') or hasRole('ROLE_ADMIN')" />
 		<intercept-url requires-channel="${authentication.application.securablechannels}" pattern="/admin" access="hasRole('ROLE_ADMIN')" />
 		<intercept-url requires-channel="${authentication.application.securablechannels}" pattern="/admin/**" access="hasRole('ROLE_ADMIN')" />
 		<intercept-url requires-channel="${authentication.application.securablechannels}" pattern="/administration" access="hasRole('ROLE_TM_PROJECT_MANAGER') or hasRole('ROLE_ADMIN')" />
 		<intercept-url requires-channel="${authentication.application.securablechannels}" pattern="/administration/**" access="hasRole('ROLE_ADMIN')" />
 		<intercept-url requires-channel="${authentication.application.securablechannels}" pattern="/configuration" access="hasRole('ROLE_ADMIN')" />
 		<intercept-url requires-channel="${authentication.application.securablechannels}" pattern="/configuration/**" access="hasRole('ROLE_ADMIN')" />
-		<intercept-url requires-channel="${authentication.application.securablechannels}" pattern="/users" access="hasRole('ROLE_ADMIN')" />
-		<intercept-url requires-channel="${authentication.application.securablechannels}" pattern="/users/**" access="hasRole('ROLE_ADMIN')" />
-			
+		<intercept-url requires-channel="${authentication.application.securablechannels}" pattern="/administration/bugtrackers" access="hasRole('ROLE_ADMIN')" />
+		<intercept-url requires-channel="${authentication.application.securablechannels}" pattern="/administration/bugtrackers/**" access="hasRole('ROLE_ADMIN')" />
+		<intercept-url requires-channel="${authentication.application.securablechannels}" pattern="/administration/projects" access="hasRole('ROLE_TM_PROJECT_MANAGER') or hasRole('ROLE_ADMIN')" />
+ 		<intercept-url requires-channel="${authentication.application.securablechannels}" pattern="/administration/projects/**" access="hasRole('ROLE_TM_PROJECT_MANAGER') or hasRole('ROLE_ADMIN')" />
+ 		<intercept-url requires-channel="${authentication.application.securablechannels}" pattern="/administration/users" access="hasRole('ROLE_ADMIN')" />
+		<intercept-url requires-channel="${authentication.application.securablechannels}" pattern="/administration/users/**" access="hasRole('ROLE_ADMIN')" />
+		
 		<!--  images and stuff dont need authentication -->
 		<intercept-url pattern="/images/**" filters="none" />
 		<intercept-url pattern="/styles/**" filters="none" />

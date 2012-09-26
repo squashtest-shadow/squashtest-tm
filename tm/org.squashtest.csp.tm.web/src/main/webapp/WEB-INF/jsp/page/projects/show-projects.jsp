@@ -41,9 +41,9 @@
 	</jsp:attribute>
 	
 	<jsp:attribute name="informationContent">	
-		<c:url var="projectsUrl" value="/projects/list" />
-		<c:url var="addProjectUrl" value="/projects/add" />
-		<c:url var="projectDetailsBaseUrl" value="/projects" />
+		<c:url var="projectsUrl" value="/administration/projects/list" />
+		<c:url var="addProjectUrl" value="/administration/projects/add" />
+		<c:url var="projectDetailsBaseUrl" value="/administration/projects" />
 		
 		<script type="text/javascript">
 					$(function() {

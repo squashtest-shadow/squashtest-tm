@@ -33,9 +33,9 @@
 <%@ taglib prefix="sf" uri="http://www.springframework.org/tags/form" %>
 <%@ taglib prefix="pop" tagdir="/WEB-INF/tags/popup" %>
 
-<s:url var="userListTableUrl" value="/users/table" />
-<s:url var="userDetailsBaseUrl" value="/users" />
-<s:url var="addUserUrl" value="/users/add" />
+<s:url var="userListTableUrl" value="/administration/users/table" />
+<s:url var="userDetailsBaseUrl" value="/administration/users" />
+<s:url var="addUserUrl" value="/administration/users/add" />
 <s:url var="administrationUrl" value="/administration" />
 
 <layout:info-page-layout titleKey="workspace.user.title">

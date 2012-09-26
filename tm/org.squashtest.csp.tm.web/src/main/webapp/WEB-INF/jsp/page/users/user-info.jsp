@@ -31,28 +31,28 @@
 <%@ page language="java" contentType="text/html; charset=utf-8" pageEncoding="utf-8"%>
 <%------------------------------------- URLs et back button ----------------------------------------------%>
 <c:url var="ckeConfigUrl" value="/styles/ckeditor/ckeditor-config.js" />
-<s:url var="userUrl" value="/users/{userId}">
+<s:url var="userUrl" value="/administration/users/{userId}">
 	<s:param name="userId" value="${user.id}" />
 </s:url>
-<c:url var="usersUrl" value="/users/list" />
+<c:url var="usersUrl" value="/administration/users/list" />
 
-<s:url var="permissionTableUrl" value="/users/{userId}/permission-table">
-	<s:param name="userId" value="${user.id}" />
-</s:url>
-
-<s:url var="permissionPopupUrl" value="/users/{userId}/permission-popup">
+<s:url var="permissionTableUrl" value="/administration/users/{userId}/permission-table">
 	<s:param name="userId" value="${user.id}" />
 </s:url>
 
-<s:url var="addPermissionUrl" value="/users/{userId}/add-permission">
+<s:url var="permissionPopupUrl" value="/administration/users/{userId}/permission-popup">
 	<s:param name="userId" value="${user.id}" />
 </s:url>
 
-<s:url var="removePermissionUrl" value="/users/{userId}/remove-permission">
+<s:url var="addPermissionUrl" value="/administration/users/{userId}/add-permission">
 	<s:param name="userId" value="${user.id}" />
 </s:url>
 
-<s:url var="changeUserGroupUrl" value="/users/{userId}/change-group">
+<s:url var="removePermissionUrl" value="/administration/users/{userId}/remove-permission">
+	<s:param name="userId" value="${user.id}" />
+</s:url>
+
+<s:url var="changeUserGroupUrl" value="/administration/users/{userId}/change-group">
 	<s:param name="userId" value="${user.id}" />
 </s:url>
 

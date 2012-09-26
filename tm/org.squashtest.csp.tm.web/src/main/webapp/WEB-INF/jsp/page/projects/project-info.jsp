@@ -36,29 +36,29 @@
 	pageEncoding="utf-8"%>
 <%------------------------------------- URLs et back button ----------------------------------------------%>
 <c:url var="ckeConfigUrl" value="/styles/ckeditor/ckeditor-config.js" />
-<s:url var="projectUrl" value="/projects/{projectId}">
+<s:url var="projectUrl" value="/administration/projects/{projectId}">
 	<s:param name="projectId" value="${adminproject.project.id}" />
 </s:url>
-<s:url var="projectsUrl" value="/projects" />
+<s:url var="projectsUrl" value="/administration/projects" />
 
 
 <s:url var="permissionTableUrl"
-	value="/projects/{projectId}/permission-table">
+	value="/administration/projects/{projectId}/permission-table">
 	<s:param name="projectId" value="${adminproject.project.id}" />
 </s:url>
 
 <s:url var="permissionPopupUrl"
-	value="/projects/{projectId}/permission-popup">
+	value="/administration/projects/{projectId}/permission-popup">
 	<s:param name="projectId" value="${adminproject.project.id}" />
 </s:url>
 
 <s:url var="addPermissionUrl"
-	value="/projects/{projectId}/add-permission">
+	value="/administration/projects/{projectId}/add-permission">
 	<s:param name="projectId" value="${adminproject.project.id}" />
 </s:url>
 
 <s:url var="removePermissionUrl"
-	value="/projects/{projectId}/remove-permission">
+	value="/administration/projects/{projectId}/remove-permission">
 	<s:param name="projectId" value="${adminproject.project.id}" />
 </s:url>
 
@@ -214,13 +214,13 @@
 		</c:if>
 		<%-----------------------------------END BUGTRACKER PANEL -----------------------------------------------%>
 				<%----------------------------------- USER PANEL -----------------------------------------------%>
+			<f:message key="title.AddPermission" var="addButtonTitle" />
 			<comp:toggle-panel id="project-users-panel"
 				titleKey="project.users.panel.title" isContextual="true" open="true"
 				classes="users-panel">
 	
 				<jsp:attribute name="panelButtons">
-					<input id="add-permission-button" title="${addButtonTitle}"
-						type="button" value="+" class="button" />
+					<input id="add-permission-button" title="${addButtonTitle}"	type="button" value="+" class="button" />
 				</jsp:attribute>
 				
 				<jsp:attribute name="body">
@@ -276,10 +276,10 @@
 
 		</div>
 		<%---------------------------------------------------------------END  BODY -----------------------------------------------%>
-	<comp:decorate-buttons />
+	
+<comp:decorate-buttons />
 	</jsp:attribute>
 </layout:info-page-layout>
-
 <script type="text/javascript">
 
 //*********************************************************************NON ADMIN SCRIPT 

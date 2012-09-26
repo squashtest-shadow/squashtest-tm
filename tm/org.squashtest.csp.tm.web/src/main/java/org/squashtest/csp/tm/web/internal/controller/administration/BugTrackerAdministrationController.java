@@ -18,7 +18,7 @@
  *     You should have received a copy of the GNU Lesser General Public License
  *     along with this software.  If not, see <http://www.gnu.org/licenses/>.
  */
-package org.squashtest.csp.tm.web.internal.controller.bugtracker;
+package org.squashtest.csp.tm.web.internal.controller.administration;
 
 import java.util.List;
 import java.util.Locale;
@@ -47,13 +47,13 @@ import org.squashtest.csp.tm.web.internal.model.datatable.DataTableModel;
 import org.squashtest.csp.tm.web.internal.model.viewmapper.DataTableMapper;
 
 @Controller
-@RequestMapping("/bugtrackers")
-public class BugTrackerManagerController {
+@RequestMapping("/administration/bugtrackers")
+public class BugTrackerAdministrationController {
 
 	@Inject
 	private InternationalizationHelper messageSource;
 	private BugTrackerManagerService bugTrackerManagerService;
-	private static final Logger LOGGER = LoggerFactory.getLogger(BugTrackerManagerController.class);
+	private static final Logger LOGGER = LoggerFactory.getLogger(BugTrackerAdministrationController.class);
 
 
 

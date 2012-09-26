@@ -72,7 +72,7 @@ import org.squashtest.csp.tm.web.internal.model.testautomation.TestAutomationPro
 
 
 @Controller
-@RequestMapping("/projects/{projectId}")
+@RequestMapping("/administration/projects/{projectId}")
 public class ProjectModificationController {
 	
 	private static final Logger LOGGER = LoggerFactory.getLogger(ProjectModificationController.class);
