@@ -110,9 +110,9 @@
 		<fieldDescription><![CDATA[name]]></fieldDescription>
 	</field>
 	<detail>
-		<band height="20" splitType="Stretch">
+		<band height="20">
 			<componentElement>
-				<reportElement key="table" style="table" x="0" y="0" width="736" height="20"/>
+				<reportElement key="table" style="table" stretchType="RelativeToTallestObject" x="0" y="0" width="736" height="20"/>
 				<jr:table xmlns:jr="http://jasperreports.sourceforge.net/jasperreports/components" xsi:schemaLocation="http://jasperreports.sourceforge.net/jasperreports/components http://jasperreports.sourceforge.net/xsd/components.xsd">
 					<datasetRun subDataset="testplan_dataset">
 						<datasetParameter name="project_name_l3">
@@ -155,10 +155,8 @@
 					</datasetRun>
 					<jr:column width="56">
 						<jr:detailCell style="table_TD" height="20" rowSpan="1">
-							<textField>
-								<reportElement x="0" y="0" width="56" height="20">
-									<property name="net.sf.jasperreports.print.keep.full.text" value="true"/>
-								</reportElement>
+							<textField isStretchWithOverflow="true" evaluationTime="Auto">
+								<reportElement stretchType="RelativeToBandHeight" x="0" y="0" width="56" height="20"/>
 								<textElement textAlignment="Center" verticalAlignment="Middle">
 									<font fontName="Arial" size="10"/>
 								</textElement>
@@ -168,10 +166,8 @@
 					</jr:column>
 					<jr:column width="66">
 						<jr:detailCell style="table_TD" height="20" rowSpan="1">
-							<textField>
-								<reportElement x="0" y="0" width="66" height="20">
-									<property name="net.sf.jasperreports.print.keep.full.text" value="true"/>
-								</reportElement>
+							<textField isStretchWithOverflow="true" evaluationTime="Auto">
+								<reportElement stretchType="RelativeToBandHeight" x="0" y="0" width="66" height="20"/>
 								<textElement textAlignment="Center" verticalAlignment="Middle">
 									<font fontName="Arial" size="10"/>
 								</textElement>
@@ -181,8 +177,8 @@
 					</jr:column>
 					<jr:column width="56">
 						<jr:detailCell style="table_TD" height="20" rowSpan="1">
-							<textField>
-								<reportElement x="0" y="0" width="56" height="20"/>
+							<textField isStretchWithOverflow="true" evaluationTime="Auto">
+								<reportElement stretchType="RelativeToBandHeight" x="0" y="0" width="56" height="20"/>
 								<textElement textAlignment="Center" verticalAlignment="Middle">
 									<font fontName="Arial" size="9"/>
 								</textElement>
@@ -192,8 +188,8 @@
 					</jr:column>
 					<jr:column width="56">
 						<jr:detailCell style="table_TD" height="20" rowSpan="1">
-							<textField>
-								<reportElement x="0" y="0" width="56" height="20"/>
+							<textField isStretchWithOverflow="true" evaluationTime="Auto">
+								<reportElement stretchType="RelativeToBandHeight" x="0" y="0" width="56" height="20"/>
 								<textElement textAlignment="Center" verticalAlignment="Middle">
 									<font fontName="Arial" size="9"/>
 								</textElement>
@@ -203,8 +199,8 @@
 					</jr:column>
 					<jr:column width="56">
 						<jr:detailCell style="table_TD" height="20" rowSpan="1">
-							<textField>
-								<reportElement x="0" y="0" width="56" height="20"/>
+							<textField isStretchWithOverflow="true" evaluationTime="Auto">
+								<reportElement stretchType="RelativeToBandHeight" x="0" y="0" width="56" height="20"/>
 								<textElement textAlignment="Center" verticalAlignment="Middle">
 									<font fontName="Arial" size="9"/>
 								</textElement>
@@ -214,8 +210,8 @@
 					</jr:column>
 					<jr:column width="56">
 						<jr:detailCell style="table_TD" height="20" rowSpan="1">
-							<textField>
-								<reportElement x="0" y="0" width="56" height="20"/>
+							<textField isStretchWithOverflow="true" evaluationTime="Auto">
+								<reportElement stretchType="RelativeToBandHeight" x="0" y="0" width="56" height="20"/>
 								<textElement textAlignment="Center" verticalAlignment="Middle">
 									<font fontName="Arial" size="9"/>
 								</textElement>
@@ -225,10 +221,8 @@
 					</jr:column>
 					<jr:column width="56">
 						<jr:detailCell style="table_TD" height="20" rowSpan="1">
-							<textField>
-								<reportElement x="0" y="0" width="56" height="20">
-									<property name="net.sf.jasperreports.print.keep.full.text" value="true"/>
-								</reportElement>
+							<textField isStretchWithOverflow="true" evaluationTime="Auto">
+								<reportElement stretchType="RelativeToBandHeight" x="0" y="0" width="56" height="20"/>
 								<textElement textAlignment="Center" verticalAlignment="Middle">
 									<font fontName="Arial" size="10"/>
 								</textElement>
@@ -238,8 +232,8 @@
 					</jr:column>
 					<jr:column width="56">
 						<jr:detailCell style="table_TD" height="20" rowSpan="1">
-							<textField>
-								<reportElement x="0" y="0" width="56" height="20"/>
+							<textField isStretchWithOverflow="true" evaluationTime="Auto">
+								<reportElement stretchType="RelativeToBandHeight" x="0" y="0" width="56" height="20"/>
 								<textElement textAlignment="Center" verticalAlignment="Middle">
 									<font fontName="Arial" size="9"/>
 								</textElement>
@@ -249,8 +243,8 @@
 					</jr:column>
 					<jr:column width="56">
 						<jr:detailCell style="table_TD" height="20" rowSpan="1">
-							<textField>
-								<reportElement x="0" y="0" width="56" height="20"/>
+							<textField isStretchWithOverflow="true" evaluationTime="Auto">
+								<reportElement stretchType="RelativeToBandHeight" x="0" y="0" width="56" height="20"/>
 								<textElement textAlignment="Center" verticalAlignment="Middle">
 									<font fontName="Arial" size="9"/>
 								</textElement>
@@ -260,8 +254,8 @@
 					</jr:column>
 					<jr:column width="56">
 						<jr:detailCell style="table_TD" height="20" rowSpan="1">
-							<textField>
-								<reportElement x="0" y="0" width="56" height="20"/>
+							<textField isStretchWithOverflow="true" evaluationTime="Auto">
+								<reportElement stretchType="RelativeToBandHeight" x="0" y="0" width="56" height="20"/>
 								<textElement textAlignment="Center" verticalAlignment="Middle">
 									<font fontName="Arial" size="9"/>
 								</textElement>
@@ -271,8 +265,8 @@
 					</jr:column>
 					<jr:column width="56">
 						<jr:detailCell style="table_TD" height="20" rowSpan="1">
-							<textField>
-								<reportElement x="0" y="0" width="56" height="20"/>
+							<textField isStretchWithOverflow="true" evaluationTime="Auto">
+								<reportElement stretchType="RelativeToBandHeight" x="0" y="0" width="56" height="20"/>
 								<textElement textAlignment="Center" verticalAlignment="Middle">
 									<font fontName="Arial" size="9"/>
 								</textElement>
@@ -282,10 +276,8 @@
 					</jr:column>
 					<jr:column width="56">
 						<jr:detailCell style="table_TD" height="20" rowSpan="1">
-							<textField>
-								<reportElement x="0" y="0" width="56" height="20">
-									<property name="net.sf.jasperreports.print.keep.full.text" value="true"/>
-								</reportElement>
+							<textField isStretchWithOverflow="true" evaluationTime="Auto">
+								<reportElement stretchType="RelativeToBandHeight" x="0" y="0" width="56" height="20"/>
 								<textElement textAlignment="Center" verticalAlignment="Middle">
 									<font fontName="Arial" size="10"/>
 								</textElement>
@@ -295,10 +287,8 @@
 					</jr:column>
 					<jr:column width="56">
 						<jr:detailCell style="table_TD" height="20" rowSpan="1">
-							<textField>
-								<reportElement x="0" y="0" width="56" height="20">
-									<property name="net.sf.jasperreports.print.keep.full.text" value="true"/>
-								</reportElement>
+							<textField isStretchWithOverflow="true" evaluationTime="Auto">
+								<reportElement stretchType="RelativeToBandHeight" x="0" y="0" width="56" height="20"/>
 								<textElement textAlignment="Center" verticalAlignment="Middle">
 									<font fontName="Arial" size="10"/>
 								</textElement>

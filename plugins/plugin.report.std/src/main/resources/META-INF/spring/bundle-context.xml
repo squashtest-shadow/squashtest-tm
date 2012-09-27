@@ -177,6 +177,17 @@ http://www.springframework.org/schema/util http://www.springframework.org/schema
 				<entry key="net.sf.jasperreports.engine.export.JRHtmlExporterParameter.ZOOM_RATIO">
 					<value type="java.lang.Float">1.4</value>
 				</entry>
+				 <entry key="net.sf.jasperreports.engine.export.JRHtmlExporterParameter.HTML_HEADER">
+			        <value>
+			          &lt;style&gt; table td span {
+								-moz-hyphens: auto;
+								-webkit-hyphens: auto;
+								hyphens: auto;
+								hyphenate: auto;
+			          }
+			          &lt;/style&gt;
+			        </value>
+			      </entry>
 			</map>
 		</property>
 	</bean>
@@ -281,6 +292,17 @@ http://www.springframework.org/schema/util http://www.springframework.org/schema
 				<entry key="net.sf.jasperreports.engine.export.JRHtmlExporterParameter.ZOOM_RATIO">
 					<value type="java.lang.Float">1.4</value>
 				</entry>
+				<entry key="net.sf.jasperreports.engine.export.JRHtmlExporterParameter.HTML_HEADER">
+			        <value>
+			          &lt;style&gt; table td span {
+								-moz-hyphens: auto;
+								-webkit-hyphens: auto;
+								hyphens: auto;
+								hyphenate: auto;
+			          }
+			          &lt;/style&gt;
+			        </value>
+			      </entry>
 			</map>
 		</property>
 	</bean>
