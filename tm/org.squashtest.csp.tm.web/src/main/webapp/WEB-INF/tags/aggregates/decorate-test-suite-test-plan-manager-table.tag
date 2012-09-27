@@ -111,11 +111,11 @@
 	}
 	
 	function isTestCaseDeleted(rowData){
-		return (rowData[6]=="true");
+		return (rowData[7]=="true");
 	}
 	
 	function getTestCaseId(rowData){
-		return rowData[5];
+		return rowData[6];
 	}
 	
 	
