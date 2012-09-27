@@ -518,9 +518,8 @@
 		
 		function confirmIterationDeletion(){
 			return $.ajax({
-				'url' : '${confirmDeletionUrl}',
-				type : 'POST',
-				data : {"nodeIds[]":[iterationId]},
+				'url' : '${confirmDeletionUrl}'+"?nodeIds[]="+iterationId,
+				type : 'DELETE',
 				dataType : 'json'
 			});
 		}

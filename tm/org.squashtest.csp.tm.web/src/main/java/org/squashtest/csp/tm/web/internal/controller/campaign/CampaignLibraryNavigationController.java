@@ -284,7 +284,7 @@ LibraryNavigationController<CampaignLibrary, CampaignFolder, CampaignLibraryNode
 		
 	}
 
-	@RequestMapping(value="/delete-iterations/confirm", method=RequestMethod.POST, params= {NODE_IDS})
+	@RequestMapping(value="/delete-iterations/confirm", method=RequestMethod.DELETE, params= {NODE_IDS})
 	public @ResponseBody List<Long> confirmIterationsDeletion(@RequestParam(NODE_IDS) List<Long> nodeIds){
 		
 		return campaignLibraryNavigationService.deleteIterations(nodeIds);	

@@ -199,7 +199,7 @@
 								<f:message key="project.bugtracker.project.name.label" />
 							</label>
 							<comp:simple-jeditable targetUrl="${ projectUrl }"
-									componentId="project-bugtracker-project-name" />
+									componentId="project-bugtracker-project-name" width="200"/>
 							<div class="display-table-cell"
 									id="project-bugtracker-project-name">
 								<c:choose>

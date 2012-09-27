@@ -225,7 +225,7 @@
 					<label style="font-weight: bold;" for="add-user-email"><f:message key="label.Email" /></label>
 					</td>
 					<td>
-					<input type="text" id="add-user-email" size="30"/>
+					<input type="email" id="add-user-email" size="30"/>
 				</td>
 				</tr>
 					<tr>

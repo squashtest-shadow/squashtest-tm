@@ -177,7 +177,9 @@ function sendDeletionSimulationRequest(){
 				dataType : 'json'
 			})
 			.done(function(data){
+				if(data !== null){
 				jqDialog.html("<div>"+data.message+"</div>"+ jqDialog.html()); 
+				}
 			})
 			.fail(function(){
 				jqDialog.dialog("close"); <%-- the standard failure handler should kick in, no need for further treatment here. --%>
