@@ -372,6 +372,20 @@
 		<pop:cancel-button />
 	</jsp:attribute>
 			<jsp:attribute name="body">
+			<f:message var="emptyMessage"
+					key="message.EmptyTableSelection" />			
+		<script type="text/javascript">
+				$("#delete-multiple-test-cases-dialog").bind( "dialogopen", function(event, ui){
+					var table = $( '#test-cases-table' ).dataTable();
+					var ids = getIdsOfSelectedTableRows(table, rowDataToItemId);
+	
+					if (ids.length == 0) {
+						$.squash.openMessage("<f:message key='popup.title.error' />", "${emptyMessage}");
+						$(this).dialog('close');
+					}
+					
+				});
+			</script>
 		<f:message key="dialog.remove-testcase-associations.message" />
 	</jsp:attribute>
 		</pop:popup>
