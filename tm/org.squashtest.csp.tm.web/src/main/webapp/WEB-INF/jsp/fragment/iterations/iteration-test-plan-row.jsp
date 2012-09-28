@@ -86,7 +86,8 @@
 				</td>
 				<td style="width: 1.5em;" class="centered">
 					<authz:authorized hasRole="ROLE_ADMIN" hasPermission="EXECUTE" domainObject="${ execution }">
-					<a id="delete-execution-table-button-${execution.id}" href="javascript:void(0)" class="delete-execution-table-button" title='<f:message key="label.removeExecution"/>'></a>
+					<f:message var="labelRemoveExec" key="label.removeExecution"/>
+					<a id="delete-execution-table-button-${execution.id}" href="javascript:void(0)" class="delete-execution-table-button" title="${labelRemoveExec}"></a>
 					</authz:authorized>
 				</td>
 			</tr>
