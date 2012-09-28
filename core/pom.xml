@@ -4,13 +4,13 @@
 	<parent>
 		<artifactId>squashtest-parent-pom</artifactId>
 		<groupId>org.squashtest.tm</groupId>
-		<version>1.3.0.RELEASE</version>
+		<version>1.4.0.IT41-SNAPSHOT</version>
 		<relativePath>../parent-pom</relativePath>
 	</parent>
 
 	<groupId>org.squashtest.tm</groupId>
 	<artifactId>squashtest-csp-core</artifactId>
-	<version>1.3.0.RELEASE</version>
+	<version>1.4.0.IT41-SNAPSHOT</version>
 	<packaging>pom</packaging>
 	<name>squashtest-csp-core</name>
 	<description>Core components of Squash TM (webapp core, api...)</description>
