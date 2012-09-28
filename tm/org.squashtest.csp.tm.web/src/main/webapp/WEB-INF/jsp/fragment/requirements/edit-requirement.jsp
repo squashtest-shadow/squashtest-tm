@@ -59,7 +59,7 @@ that page won't be editable if
 	<c:set var="moreThanReadOnly" value="${ true }" />
 </authz:authorized>
 <authz:authorized hasRole="ROLE_ADMIN" hasPermission="SMALL_EDIT" domainObject="${ requirement }">
-	<c:set var="smallEditable" value="${requirement.modifiable }"/>
+	<c:set var="smallEditable" value="${ requirement.modifiable }"/>
 		<c:set var="moreThanReadOnly" value="${ true }" />
 </authz:authorized>
 <authz:authorized hasRole="ROLE_ADMIN" hasPermission="DELETE" domainObject="${ requirement }">
@@ -74,7 +74,7 @@ that page won't be editable if
 	<c:set var="linkable" value="${ requirement.linkable }" />
 		<c:set var="moreThanReadOnly" value="${ true }" />
 </authz:authorized>
-<c:set var="status_editable" value="${ requirement.status.allowsStatusUpdate }"/>
+<c:set var="status_editable" value="${ moreThanReadOnly and requirement.status.allowsStatusUpdate }"/>
 <%-- ----------------------------------- Init ----------------------------------------------%>
 <%-- 
 	Code managing the status of a requirement. It is a handler for the 'onsubmit' of a jeditable (see documentation for details).
