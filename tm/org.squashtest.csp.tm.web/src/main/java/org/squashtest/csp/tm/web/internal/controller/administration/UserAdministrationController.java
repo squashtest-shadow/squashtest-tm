@@ -115,9 +115,9 @@ public class UserAdministrationController {
 	.mapAttribute(User.class, 5, "lastName", String.class)
 	.mapAttribute(User.class, 6, "email", String.class)
 	.mapAttribute(User.class, 7, "audit.createdOn", Date.class)
-	.mapAttribute(User.class, 9, "audit.createdBy", String.class)
-	.mapAttribute(User.class, 10, "audit.lastModifiedOn", Date.class)
-	.mapAttribute(User.class, 12, "audit.lastModifiedBy", String.class);
+	.mapAttribute(User.class, 8, "audit.createdBy", String.class)
+	.mapAttribute(User.class, 9, "audit.lastModifiedOn", Date.class)
+	.mapAttribute(User.class, 10, "audit.lastModifiedBy", String.class);
 
 	@ServiceReference
 	public void setAdministrationService(AdministrationService adminService) {
