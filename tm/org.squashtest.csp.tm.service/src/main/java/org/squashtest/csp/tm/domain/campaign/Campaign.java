@@ -235,7 +235,8 @@ public class Campaign extends CampaignLibraryNode implements AttachmentHolder{
 		if (this.getScheduledEndDate() != null) {
 			copy.setScheduledEndDate((Date) this.getScheduledEndDate().clone());
 		}
-
+		copy.setActualEndAuto(this.isActualEndAuto());
+		copy.setActualStartAuto(this.isActualStartAuto());
 		for (Attachment tcAttach : this.getAttachmentList().getAllAttachments()) {
 			Attachment atCopy = tcAttach.hardCopy();
 			copy.getAttachmentList().addAttachment(atCopy);
