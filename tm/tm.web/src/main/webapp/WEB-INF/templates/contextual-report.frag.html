@@ -1,0 +1,404 @@
+<!--
+
+        This file is part of the Squashtest platform.
+        Copyright (C) 2010 - 2012 Henix, henix.fr
+
+        See the NOTICE file distributed with this work for additional
+        information regarding copyright ownership.
+
+        This is free software: you can redistribute it and/or modify
+        it under the terms of the GNU Lesser General Public License as published by
+        the Free Software Foundation, either version 3 of the License, or
+        (at your option) any later version.
+
+        this software is distributed in the hope that it will be useful,
+        but WITHOUT ANY WARRANTY; without even the implied warranty of
+        MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+        GNU Lesser General Public License for more details.
+
+        You should have received a copy of the GNU Lesser General Public License
+        along with this software.  If not, see <http://www.gnu.org/licenses/>.
+
+-->
+<!DOCTYPE html SYSTEM "http://www.thymeleaf.org/dtd/xhtml1-transitional-thymeleaf-spring3-3.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml" xmlns:th="http://www.thymeleaf.org">
+<head>
+	<title th:text="#{workspace.report.title}">Espace rapports</title>
+	<meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
+	<!-- common head -->
+	<link rel="stylesheet" type="text/css" media="all" href="../../../../../../../core/core.web/src/main/webapp/styles/master.css" />
+	<link rel="shortcut icon" type="image/x-icon" media="all" href="../../../../../../../core/core.web/src/main/webapp/images/favicon.ico" th:href="@{/images/favicon.ico}"/>
+	<!-- /common head -->
+	<!-- common script import -->
+	<link rel="stylesheet" type="text/css" media="all" href="../../../../../../../core/core.web/src/main/webapp/styles/squashtm.fg.menu.css" />
+	<!-- /common script import -->
+	<link rel="stylesheet" type="text/css" media="all" href="../../../../../../../core/core.web/src/main/webapp/styles/master.blue.css" />
+	<!-- rich jeditable header -->
+	<link rel="stylesheet" type="text/css" media="all" href="../../../../../../../core/core.web/src/main/webapp/styles/ckeditor.override.css" />
+
+	<div th:remove="all">
+		<script type="text/javascript" src="../../../../../../../core/core.web/src/main/webapp/scripts/jquery/jquery-1.5.2-dev.js" th:src="@{/scripts/jquery/jquery-1.5.2.min.js}"></script>
+		<script type="text/javascript" src="../../../../../../../core/core.web/src/main/webapp/scripts/jquery/jquery-ui-1.8.13.all.dev.js" th:src="@{/scripts/jquery/jquery-ui-1.8.13.custom.min.js}"></script>
+		<script type="text/javascript" src="../../../../../../../core/core.web/src/main/webapp/scripts/ckeditor/ckeditor.js" th:src="@{/scripts/ckeditor/ckeditor.js}"></script>
+		<script type="text/javascript" src="../../../../../../../core/core.web/src/main/webapp/scripts/ckeditor/adapters/jquery.js" th:src="@{/scripts/ckeditor/adapters/jquery.js}"></script>
+		<script type="text/javascript" src="../../../../../../../core/core.web/src/main/webapp/scripts/jquery/jquery.jeditable.js" th:src="@{/scripts/jquery/jquery.jeditable.js}"></script>
+		<script type="text/javascript" src="../../../../../../../core/core.web/src/main/webapp/scripts/jquery/jquery.generateId.js" th:src="@{/scripts/jquery/jquery.generateId.js}"></script>
+		<script type="text/javascript" src="../../../../../../../core/core.web/src/main/webapp/scripts/jquery/jquery.jeditable.ckeditor.js" th:src="@{/scripts/jquery/jquery.jeditable.ckeditor.js}"></script>
+		<script type="text/javascript" src="../../../../../../../core/core.web/src/main/webapp/scripts/jquery/jquery.jeditable.datepicker.js" th:src="@{/scripts/jquery/jquery.jeditable.datepicker.js}"></script>
+		<script type="text/javascript" src="../../../../../../../core/core.web/src/main/webapp/scripts/jquery/jquery.cookie.js" th:src="@{/scripts/jquery/jquery.cookie.js}"></script>
+		<script type="text/javascript" src="../../../../../../../core/core.web/src/main/webapp/scripts/jquery/jquery.hotkeys-0.8.js" th:src="@{/scripts/jquery/jquery.hotkeys-0.8.js}"></script>
+		<script type="text/javascript" src="../../../../../../../core/core.web/src/main/webapp/scripts/jquery/jquery.jstree.js" th:src="@{/scripts/jquery/jquery.jstree.js}"></script>
+		<script type="text/javascript" src="../../../../../../../core/core.web/src/main/webapp/scripts/squashtest/jquery.squashtm.plugin.js" th:src="@{/scripts/squashtest/jquery.squashtm.plugin.js}"></script>
+		<script type="text/javascript" src="../../../../../../../core/core.web/src/main/webapp/scripts/squashtest/jquery.squash.togglepanels.js" th:src="@{/scripts/squashtest/jquery.squash.togglepanels.js}"></script> 
+		<script type="text/javascript" src="../../../../../../../core/core.web/src/main/webapp/scripts/squashtest/jquery.squash.messagedialog.js" th:src="@{/scripts/squashtest/jquery.squash.messagedialog.js}"></script>  
+		<script type="text/javascript" src="../../../../../../../core/core.web/src/main/webapp/scripts/squashtest/jquery.squash.confirmdialog.js" th:src="@{/scripts/squashtest/jquery.squash.confirmdialog.js}"></script>  
+		<script type="text/javascript" src="../../../../../../../core/core.web/src/main/webapp/scripts/squashtest/jquery.squashtm.oneshotdialog.js" th:src="@{/scripts/squashtest/jquery.squashtm.oneshotdialog.js}"></script>
+		<script type="text/javascript" src="../../../../../../../core/core.web/src/main/webapp/scripts/squashtest/classes/KeyEventListener.js" th:src="@{/scripts/squashtest/classes/KeyEventListener.js}"></script>
+		<script type="text/javascript" src="../../../../../../../core/core.web/src/main/webapp/scripts/squashtest/jquery.squashtm.contextual-content.js" th:src="@{/scripts/squashtest/jquery.squashtm.contextual-content.js}"></script>
+		<script type="text/javascript" src="../../../../../../../core/core.web/src/main/webapp/scripts/squashtest/jquery.squashtm.fg.menu.js" th:src="@{/scripts/squashtest/jquery.squashtm.fg.menu.js}"></script>
+		<script type="text/javascript" src="../../../../../../../core/core.web/src/main/webapp/scripts/squashtest/classes/Event.js" th:src="@{/scripts/squashtest/classes/Event.js}"></script>
+		<script type="text/javascript" src="../../../../../../../core/core.web/src/main/webapp/scripts/squashtest/jquery.squash.squashbutton.js" th:src="@{/scripts/squashtest/jquery.squash.squashbutton.js}"></script>
+		<script type="text/javascript" src="../../../../../../../core/core.web/src/main/webapp/scripts/squashtest/jquery.squashtm.jeditable.ext.js" th:src="@{/scripts/squashtest/jquery.squashtm.jeditable.ext.js}"></script>
+		<script type="text/javascript" src="../../../../../../../core/core.web/src/main/webapp/scripts/squashtest/classes/TreeEventHandler.js" th:src="@{/scripts/squashtest/classes/TreeEventHandler.js}"></script>
+		<script type="text/javascript" src="../../../../../../../core/core.web/src/main/webapp/scripts/squashtest/classes/TreeNodeCopier.js" th:src="@{/scripts/squashtest/classes/TreeNodeCopier.js}"></script>
+		<script type="text/javascript" src="../../../../../../../core/core.web/src/main/webapp/scripts/squashtest/jquery.squashtm.jstree-node.js" th:src="@{/scripts/squashtest/jquery.squashtm.jstree-node.js}"></script>
+		<script type="text/javascript" src="../../../../../../../core/core.web/src/main/webapp/scripts/squashtest/jquery.squashtm.jstree.ext.js" th:src="@{/scripts/squashtest/jquery.squashtm.jstree.ext.js}"></script>
+		<script type="text/javascript" src="../../scripts/squash/jquery.squashtm.linkabletree.js" th:src="@{/scripts/squash/jquery.squashtm.linkabletree.js}"></script>
+		<script type="text/javascript" src="../../scripts/squash/jquery.squashtm.projectpicker.js" th:src="@{/scripts/squash/jquery.squashtm.projectpicker.js}"></script>
+		<script type="text/javascript" src="../../scripts/squash/squashtm.navbar.js" th:src="@{/scripts/squash/squashtm.navbar.js}"></script>
+		<script type="text/javascript" src="../../scripts/squash/squashtm.menubar.js" th:src="@{/scripts/squash/squashtm.menubar.js}"></script>
+		<script type="text/javascript" src="../../scripts/squash/squashtm.notification.js" th:src="@{/scripts/squash/squashtm.notification.js}"></script>
+		<script type="text/javascript" src="../../scripts/squash/squashtm.projectfilter.js" th:src="@{/scripts/squash/squashtm.projectfilter.js}"></script>
+	</div>
+
+	<script th:remove="all" type="text/javascript" src="../../js/thymol.js"></script>
+	<script type="text/javascript" src="../../scripts/squash/squashtm.navbar.js"></script>
+	<script type="text/javascript" src="../../scripts/squash/squashtm.projectfilter.js"></script>
+
+	<script type="text/javascript" src="../../scripts/squash/squashtm.reportworkspace.js" th:src="@{/scripts/squash/squashtm.reportworkspace.js}"></script>
+	<script type="text/javascript" src="../../scripts/squash/squashtm.report.js" th:src="@{/scripts/squash/squashtm.report.js}"></script>
+
+	<script type="text/javascript" th:inline="javascript">
+		$(function() {
+			/* navigation tag */
+			squashtm.navbar.initHighlighted('report');
+			var workspaceUrl = document.location.protocol + '//' + document.location.host + "/squash/bugtracker/workspace-button";
+			$("#bugtracker-div").load(workspaceUrl,
+		 			function(){$("#bugtracker-link").hover(
+		 						function () {squashtm.navbar.highlightOn("bugtracker-link");}, 
+		 						function () {squashtm.navbar.highlightOff("bugtracker-link");}
+	 	 		);
+	 		});
+				
+			/* wtf */
+			squashtm.notification.init({
+				infoTitle: /*[[#{popup.title.info}]]*/ 'Info', 
+				errorTitle: /*[[#{popup.title.error}]]*/ 'Erreur'
+			});
+
+			
+			
+			
+			squashtm.reportWorkspace.init();
+		});	
+	</script>
+</head>
+<body>
+	<div id="navigation" th:include="navbar.frag :: navbar">
+		NAVBAR
+	</div>
+
+	<div id="workspace">
+		<div id="workspace-title">
+			<div class="snap-left">
+				<h2 th:text="#{workspace.report.title}">Espace Rapport</h2>	
+			</div>
+			<div class="snap-right">
+ 				<div class="main-menubar" th:include="menubar.frag :: menubar">
+ 					MENUBAR
+				</div>
+				<div style="display:inline-block;">
+					<div id="ajax-processing-indicator" class="ui-corner-all snap-right" style="display:inline-block">
+						<img src="../../../../../../../core/core.web/src/main/webapp/images/ajax-loader.gif" width="19px" height="19px" alt="processing" /> 
+						<span th:text="#{squashtm.processing}">En cours...</span>
+					</div>
+ 				</div>
+			</div>
+		</div>
+		
+		<div id="category-pane">
+			<div id="outer-category-frame">
+				<div title="Cat 1" class="report-category">
+					<div data-href="sample-report/0" class="report-item">
+						<div class="report-item-icon">
+							<img src="../../../../../../../core/core.web/src/main/webapp/images/report_spreadsheet.png" alt="report" />
+						</div> 
+						<div class="report-item-description">
+							<label><b>Sample report</b><br/><b>(Sample type)</b></label><br/>
+							<span>This report does this and that</span>
+						</div>
+						<div class="unsnap"></div>
+					</div>
+				</div>
+			</div> 
+ 		</div>
+<!-- REPORT -->
+		<div id="contextual-content" class="no-resizable-contextual-content" th:fragment="report">
+			<div id="report-name-div" class="ui-widget-header ui-corner-all ui-state-default fragment-header">			
+				<div id="category-frame-button" th:unless="${hasBackButton}">
+					<input type="button" class="button" id="toggle-expand-category-frame-button" value="&lt;&lt;" th:value="#{report.workspace.togglebutton.normal.label}" />
+				</div>
+			
+				<div class="snap-left" style="height: 100%;">
+					<h2>
+						<span th:text="#{report.header.title}">Rapport</span>&nbsp;:&nbsp;
+						<a id="view-report" href="report-viewer.html" th:href="@{'/reports/' + ${report.namespace} + '/' + ${report.index} + '/viewer'}">
+							<span th:text="${report.label}">Sample report</span>&nbsp;(<span th:text="#{${report.type.i18nKey}}">Sample type</span>)
+						</a>
+					</h2>
+				</div>
+			
+				<div class="snap-right" th:if="${hasBackButton}">
+					<input id="back" type="button" th:value="#{label.Back}" value="Back" />
+				</div>
+			
+				<div class="unsnap"></div>
+			</div>
+			<div class="fragment-body">
+				<div id="report-criteria-panel" class="is-contextual" 
+					title="Report form" th:title="#{report.criteria.panel.title}">
+					<div th:each="input : ${report.form}" th:switch="${input.type.name()}" th:object="${input}">
+						<span th:case="'TEXT'">
+							<label for="rpt-text-crit" th:for="*{name}" th:text="*{label}">Text criteria</label>
+							<input name="rpt-text-crit" th:id="*{name}" th:name="*{name}" type="text" value="" />
+						</span>
+						<span th:case="'CHECKBOX'">
+							<input name="rpt-chk-crit" th:id="*{name}" th:name="*{name}" type="checkbox" value="*{value}" th:checked="*{defaultSelected}" />
+							<label for="rpt-chk-crit" th:for="*{name}" th:text="*{label}">Checkbox criteria</label>
+						</span>
+						<div th:case="'DATE'" class="rpt-date">
+							<label th:for="*{name}" th:text="*{label}">Date criteria</label>
+							<span class="rpt-date-crit" th:id="*{name}" th:name="*{name}" th:text="#{squashtm.nodata}">01-02-2012</span>
+						</div>
+						<div th:case="'DROPDOWN_LIST'">
+							<label for="rpt-drop-crit" th:for="*{name}" th:text="*{label}">Dropdown criteria</label>
+							<select name="rpt-drop-crit" th:name="*{name}" size="1">
+								<option th:each="opt : *{options}" th:name="${opt.name}" 
+									th:value="${opt.value}" th:selected="${opt.defaultSelected}" th:text="${opt.label}">Option</option>
+							</select>
+						</div>
+						<div th:case="'RADIO_BUTTONS_GROUP'">
+							<label th:text="*{label}">Radio buttons group</label>
+							<ul>
+								<li th:each="opt : *{options}">
+									<input name="rpt-radio-crit" type="radio" th:value="${opt.value}" data-grouped="true" th:text="${opt.label}"
+										th:name="${opt.name}" th:checked="${opt.defaultSelected}">
+										Option
+									</input>
+								</li>
+							</ul>
+						</div>
+						<div th:case="'CHECKBOXES_GROUP'">
+							<label th:text="*{label}">Checkboxes group</label>
+							<ul>
+								<li th:each="opt : *{options}">
+									<input name="rpt-cbxes-crit" type="checkbox" th:value="${opt.value}" data-grouped="true" th:text="${opt.label}"
+										th:name="${opt.name}" th:checked="${opt.defaultSelected}">
+										Checkbox
+									</input>
+								</li>
+							</ul>
+						</div>
+						<div th:case="'TREE_PICKER'">
+							<div th:id="*{name} + '-dialog'" th:title="#{report.form.tree-picker.dialog.title}" 
+								class="rpt-tree-crit-dialog popup-dialog is-contextual not-displayed">
+								<div th:id="*{name}" class="rpt-tree-crit tree selection-tree" th:attr="data-node-type=*{pickedNodeType}"></div>
+							</div>
+							<label th:for="*{name} + '-open'" th:text="*{label}">Nodes</label>
+							<input th:name="*{name} + '-open'" type="button" class="button rpt-tree-crit-open" 
+								th:value="#{report.form.tree-picker.button.label}" th:attr="data-id-opened=*{name} + '-dialog'" />
+						</div>
+						<div th:case="'PROJECT_PICKER'">
+							<div th:id="*{name}" th:title="#{report.form.project-picker.dialog.title}" class="rpt-projects-crit-container project-picker popup-dialog not-displayed">
+								<div class="project-item-template not-displayed">
+									<div class="project-item ">
+										<input type="checkbox" class="project-checkbox"/> <span class="project-name"></span>
+									</div>
+								</div>
+								<div>			
+									<div class="project-filter-controls">
+										<a href="javascript:void(0)" th:text="#{dialog.settings.filter.controls.selectall}" class="project-picker-selall">
+											Select all
+										</a>
+										<a href="javascript:void(0)" th:text="#{dialog.settings.filter.controls.deselectall}" class="project-picker-deselall">
+											Unselect all
+										</a>
+										<a href="javascript:void(0)" th:text="#{dialog.settings.filter.controls.invertselect}" class="project-picker-invsel">
+											Invert sel
+										</a>				
+									</div>	
+									<hr/>
+									<div class="project-filter-list"></div>
+									<div style="clear:both;display:hidden;"></div>
+								</div>
+							</div>
+							<label th:for="*{name} + '-open'" th:text="*{label}">Projects</label>
+							<input th:id="*{name} + '-open'" type="button" class="button rpt-projects-crit-open" th:value="#{report.form.project-picker.button.label}" th:attr="data-id-opened=*{name}" />
+						</div>
+					</div>
+					<div th:remove="all">
+						<span>
+							<label for="rpt-text-crit">Text criteria</label>
+							<input name="rpt-text-crit" type="text" value="" />
+						</span>
+					</div>
+					<div th:remove="all">
+						<span>
+							<input name="rpt-chk-crit" type="checkbox" value="chk-val" />
+							<label for="rpt-chk-crit">Checkbox criteria</label>
+						</span>
+					</div>
+					<div th:remove="all">
+						<div>
+							<span>Radio buttons group</span>
+							<ul>
+								<li>
+									<input name="rpt-radio-crit" type="radio" value="radio-val-0" data-grouped="true" />
+									<label for="rpt-radio-crit">Option 0</label>
+									<input name="rpt-radio-crit" type="radio" value="radio-val-1" data-grouped="true" />
+									<label for="rpt-radio-crit">Option 1</label>
+								</li>
+							</ul>
+						</div>
+					</div>
+					<div th:remove="all">
+						<div>
+							<span>Checkboxes group</span>
+							<ul>
+								<li>
+									<input name="rpt-cbxes-crit" type="checkbox" value="cbxes-val-0" data-grouped="true" />
+									<label for="rpt-cbxes-crit">Checkbox 0</label>
+								</li>
+								<li>
+									<input name="rpt-cbxes-crit" type="checkbox" value="cbxes-val-1" data-grouped="true" />
+									<label for="rpt-cbxes-crit">Checkbox 1</label>
+								</li>
+							</ul>
+						</div>
+					</div>
+					<div th:remove="all">
+						<div>
+							<label for="rpt-drop-crit">Dropdown list</label>
+							<select name="rpt-drop-crit" size="1">
+								<option>Option 0</option>
+								<option>Option 1</option>
+							</select>
+						</div>
+					</div>						
+					<div th:remove="all">
+						<span>
+							<span class="label">Date criteria</span>
+							<span class="rpt-date-crit" id="rpt-date-crit">---</span>
+						</span>
+					</div>		
+					<div th:remove="all">
+						<div id="rpt-tree-crit-dialog" title="Nodes criteria" class="rpt-tree-crit-dialog popup-dialog is-contextual not-displayed"
+							data-node-type="CAMPAIGN">
+							Nodes <div id="rpt-tree-crit" class="rpt-tree-crit" data-node-type="CAMPAIGN"></div>
+						</div>
+						<input type="button" class="button rpt-tree-crit-open" value="Pick nodes" data-id-opened="rpt-tree-crit-dialog" />
+					</div>
+					<div th:remove="all">
+						<!-- PROJECT PICKER -->
+						<div id="rpt-projects-crit-dialog" title="Projects criteria" class="rpt-projects-crit-container project-picker popup-dialog not-displayed">
+							<div class="project-item-template not-displayed">
+								<div class="project-item ">
+									<input type="checkbox" class="project-checkbox"/> <span class="project-name"></span>
+								</div>
+							</div>
+							<div id="dialog-settings-filter-maincontent">			
+								<div id="dialog-settings-filter-controls" class="project-filter-controls">
+									<a id="dialog-settings-filter-selectall" href="javascript:void(0)" th:text="#{dialog.settings.filter.controls.selectall}" class="project-picker-selall">
+										Select all
+									</a>
+									<a id="dialog-settings-filter-deselectall" href="javascript:void(0)" th:text="#{dialog.settings.filter.controls.deselectall}" class="project-picker-deselall">
+										Unselect all
+									</a>
+									<a id="dialog-settings-filter-invertselect" href="javascript:void(0)" th:text="#{dialog.settings.filter.controls.invertselect}" class="project-picker-invsel">
+										Invert sel
+									</a>				
+								</div>	
+								<hr/>
+								<div id="dialog-settings-filter-projectlist" class="project-filter-list" th:remove="body">
+								<div class="project-item ">
+									<input type="checkbox" class="project-checkbox"/> <span class="project-name">Projet 1</span>
+								</div>
+								<div class="project-item ">
+									<input type="checkbox" class="project-checkbox"/> <span class="project-name">Projet 2</span>
+								</div>
+								</div>
+								<div style="clear:both;display:hidden;"></div>
+							</div>
+						</div>
+						<input type="button" class="button rpt-projects-crit-open" value="Pick projects" data-id-opened="rpt-projects-crit-dialog" />
+					</div>
+					
+					<input type="button" class="button snap-right" id="generate-view" value="Generate" th:value="#{report.criteria.panel.button.generate.label}" />
+					<div class="unsnap"></div>
+				</div>
+			
+				<div id="view-tabed-panel" class="not-displayed">
+					<ul>
+						<li th:each="view, it : ${report.views}">
+							<a href="#view-content-panel-sample-0" th:href="'#view-content-panel-' + ${it.index}" th:text="${view.label}">Sample view</a>
+						</li>
+						<li th:remove="all">
+							<a href="#view-content-panel-sample-1">Sample view 2</a>
+						</li>
+			
+						<div id="view-formats-panel" class="snap-right">
+							<span th:text="#{report.view.panel.label.export.label}">Export</span>
+							<select id="view-format-cmb-0"  th:id="'view-format-cmb-' + ${it.index}" th:each="view, it : ${report.views}" class="not-displayed view-format-cmb">
+								<option th:each="format : ${view.formats}" th:text="${format}">pdf</option>
+							</select>		
+							<select id="view-format-cmb-1"  th:remove="all" class="not-displayed view-format-cmb">
+								<option>pdf</option>
+								<option>csv</option>
+							</select>		
+							<input type="button" class="button" id="export" value="Go!" th:value="#{label.Export}" />
+						</div>
+					</ul>
+					<div th:each="view, it : ${report.views}" class="view-content-panel" th:remove="body"
+						id="view-content-panel-sample-0" th:id="'view-content-panel-' + ${it.index}" 
+						style="overflow: scroll;">
+						VIEW HERE
+					</div>
+					<div th:remove="all" id="view-content-panel-sample-1" style="overflow: scroll;">
+						ANOTHER VIEW HERE
+					</div>
+				</div>
+			</div>
+		</div>
+<!-- /REPORT FRAGMENT -->
+<!-- SCRIPT FRAGMENT -->
+		<div th:fragment="script">
+		<script type="text/javascript" th:inline="javascript">
+		/* <![CDATA[ */
+			$(function(){
+				squashtm.report.init({
+					contextPath: /*[[ ${#ctx.servletContext.contextPath} ]]*/ "http://localhost:8080/squash", 
+					reportUrl: /*[[ @{'/reports/' + ${report.namespace} + '/' + ${report.index}} ]]*/ "/squash/reports",
+					dateFormat: /*[[ #{squashtm.dateformatShort.js} ]]*/ "dd/mm/yy",
+					noDateLabel: /*[[ #{squashtm.nodata} ]]*/ "---", 
+					okLabel: /*[[ #{label.Confirm} ]]*/ "OK",
+					cancelLabel: /*[[ #{label.Cancel} ]]*/ "Cancel", 
+					
+				});
+			});
+	    	/* ]]> */
+		</script>		
+		</div>
+<!-- /SCRIPT FRAGMENT -->
+	</div>
+</body>
+</html>

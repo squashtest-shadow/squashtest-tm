@@ -14,7 +14,7 @@
 	<description>Umbrella project for the CSP Test Management module</description>
 
 	<modules>
-		<module>org.squashtest.csp.tm.service</module>
-		<module>org.squashtest.csp.tm.web</module>
+		<module>tm.service</module>
+		<module>tm.web</module>
 	</modules>
 </project>
