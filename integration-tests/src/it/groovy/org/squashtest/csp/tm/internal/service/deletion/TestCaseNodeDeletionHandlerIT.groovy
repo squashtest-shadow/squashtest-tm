@@ -44,9 +44,7 @@ public class TestCaseNodeDeletionHandlerIT extends DbunitServiceSpecification {
 
 	@Inject
 	private TestCaseNodeDeletionHandlerImpl deletionHandler;
-
-
-
+	
 	@Inject
 	private TestCaseLibraryNavigationService tcNavService;
 
@@ -129,8 +127,42 @@ public class TestCaseNodeDeletionHandlerIT extends DbunitServiceSpecification {
 		def lib = findEntity(TestCaseLibrary.class, 1l)
 		lib.rootContent.size() == 0
 	}
-
-
+	
+	@DataSet("TestCaseNodeDeletionHandlerIT.should delete a test-step along with its attachments.xml")
+	def "should delete a test-step along with its attachments"(){
+		given:
+		TestCase owner = findEntity(TestCase.class, 11L);
+		TestStep tStep = findEntity (TestStep.class, 111L);
+		
+		
+		when :
+		deletionHandler.deleteStep (owner, tStep);
+		
+		then : 
+		allDeleted("TestStep", [111L])
+		allDeleted("AttachmentList", [111L])
+		allDeleted("Attachment", [1111L])
+		allDeleted("AttachmentContent", [1111L])
+		
+	}
+	
+	@DataSet("TestCaseNodeDeletionHandlerIT.should delete a test-step along with its attachments.xml")
+	def "should delete a call step "(){
+		given:
+		TestCase owner = findEntity(TestCase.class, 11L)
+		TestStep tStep = findEntity (TestStep.class, 112L)
+		
+		
+		when :
+		deletionHandler.deleteStep (owner, tStep)
+		
+		then :
+		allDeleted("TestStep", [112L])
+		
+	}
+	
+	
+/*-------------------------------------------Private stuff-----------------------------------*/
 	private boolean found(String tableName, String idColumnName, Long id){
 		String sql = "select count(*) from "+tableName+" where "+idColumnName+" = :id";
 		Query query = getSession().createSQLQuery(sql);

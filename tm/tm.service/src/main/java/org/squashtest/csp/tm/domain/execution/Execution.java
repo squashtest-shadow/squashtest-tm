@@ -149,7 +149,7 @@ public class Execution implements AttachmentHolder, IssueDetector, Identified, H
 
 	/* *********************** issues attributes ************************ */
 
-	@OneToOne(cascade = { CascadeType.PERSIST, CascadeType.MERGE })
+	@OneToOne(cascade = { CascadeType.PERSIST, CascadeType.MERGE, CascadeType.REMOVE })
 	@JoinColumn(name = "ISSUE_LIST_ID")
 	private final IssueList issueList = new IssueList();
 

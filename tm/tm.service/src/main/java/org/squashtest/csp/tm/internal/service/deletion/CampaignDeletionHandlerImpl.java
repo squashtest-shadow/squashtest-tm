@@ -202,12 +202,13 @@ public class CampaignDeletionHandlerImpl extends AbstractNodeDeletionHandlerImpl
 
 	@Override
 	public void deleteExecution(Execution execution) {
-		deleteIssues(execution);
-		deletionDao.removeAttachmentList(execution.getAttachmentList());
 		deleteExecSteps(execution);
+		
 		IterationTestPlanItem testPlanItem = execution.getTestPlan();
 		testPlanItem.removeExecution(execution);
 		deleteAutomatedExecutionExtender(execution);
+		
+		deletionDao.removeAttachmentList(execution.getAttachmentList());		
 		deletionDao.removeEntity(execution);
 	}
 
@@ -290,28 +291,14 @@ public class CampaignDeletionHandlerImpl extends AbstractNodeDeletionHandlerImpl
 	public void deleteExecSteps(Execution execution) {
 
 		for (ExecutionStep step : execution.getSteps()) {
+			
 			deletionDao.removeAttachmentList(step.getAttachmentList());
-
-			deleteIssues(step);
-
 			deletionDao.removeEntity(step);
 		}
 
 		execution.getSteps().clear();
 	}
 
-	private void deleteIssues(IssueDetector bugged) {
-		IssueList issueList = bugged.getIssueList();
-
-		for (Issue issue : issueList.getAllIssues()) {
-			deletionDao.removeEntity(issue);
-		}
-		issueList.getAllIssues().clear();
-
-		deletionDao.removeEntity(issueList);
-
-	}
-	
 	private void deleteAutomatedExecutionExtender(Execution execution){
 		if (execution.getAutomatedExecutionExtender()!=null){
 			deletionDao.removeEntity(execution.getAutomatedExecutionExtender());

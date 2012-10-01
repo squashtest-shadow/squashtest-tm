@@ -24,6 +24,7 @@ import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
 
+import javax.persistence.CascadeType;
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
@@ -39,7 +40,7 @@ public class IssueList {
 	@Column(name = "ISSUE_LIST_ID")
 	private Long id;
 
-	@OneToMany(mappedBy="issueList")
+	@OneToMany(mappedBy="issueList", cascade={CascadeType.REMOVE})
 	private final List<Issue> issues = new ArrayList<Issue>();
 
 	public Long getId() {
