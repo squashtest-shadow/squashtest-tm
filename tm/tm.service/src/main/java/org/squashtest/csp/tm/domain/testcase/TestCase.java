@@ -158,8 +158,7 @@ public class TestCase extends TestCaseLibraryNode implements AttachmentHolder {
 
 	/**
 	 * @see TestCase#isAutomated()
-	 * @return
-	 * TODO either replaced by isAutomated or should be synchronized with isAutomated
+	 * @return TODO either replaced by isAutomated or should be synchronized with isAutomated
 	 */
 	public TestCaseExecutionMode getExecutionMode() {
 		return executionMode;
@@ -308,7 +307,9 @@ public class TestCase extends TestCaseLibraryNode implements AttachmentHolder {
 
 	private void verifiesRequirementsVerifiedBy(TestCase source) {
 		for (RequirementVersion requirement : source.verifiedRequirementVersions) {
-			this.addVerifiedRequirementVersion(requirement);
+			if (requirement.getStatus().isRequirementLinkable()) {
+				this.addVerifiedRequirementVersion(requirement);
+			}
 		}
 	}
 
