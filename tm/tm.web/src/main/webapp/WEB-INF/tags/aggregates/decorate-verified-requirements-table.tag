@@ -41,6 +41,8 @@
 <%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core"%>
 <%@ taglib prefix="input" tagdir="/WEB-INF/tags/input"%>
 
+<f:message var="emptyMessage" key="message.EmptyTableSelection" />
+				
 <script type="text/javascript">
 	var squashtm = squashtm || {};
 	
@@ -216,21 +218,25 @@
 		$( '#${ batchRemoveButtonId }' ).click(function() {
 			var table = $( '#verified-requirements-table' ).dataTable();
 			var ids = getIdsOfSelectedTableRows(table, getRequirementsTableRowId);
-			var obsoleteStatuses = getObsoleteStatusesOfSelectedTableRows(table, getRequirementsTableRowStatus);
-			var indirects = $("tr.requirement-indirect-verification.ui-state-row-selected", table);
-			if (indirects.length >0){
-				$.squash.openMessage("<f:message key='popup.title.error' />", '<f:message key="verified-requirements.table.indirectverifiedrequirements.removalattemptsforbidden.label"/>');
-			}
-			if (obsoleteStatuses.length > 0){
-				oneShotConfirm("<f:message key='dialog.multiple.obsolete.requirement.versions.removal.confirm.title' />", 
-						"<f:message key='dialog.multiple.obsolete.requirement.versions.removal.confirm.text' />",
-						"<f:message key='label.Confirm'/>",
-						"<f:message key='label.Cancel'/>", '600px').done(function(){deleteVerifiedRequirements(ids);});
-			} else {
-				oneShotConfirm("<f:message key='label.Confirm' />", 
-						"<f:message key='dialog.remove-requirement-version-associations.message' />",
-						"<f:message key='label.Confirm'/>",
-						"<f:message key='label.Cancel'/>", '600px').done(function(){deleteVerifiedRequirements(ids);});
+			if(ids.length > 0){
+				var obsoleteStatuses = getObsoleteStatusesOfSelectedTableRows(table, getRequirementsTableRowStatus);
+				var indirects = $("tr.requirement-indirect-verification.ui-state-row-selected", table);
+				if (indirects.length >0){
+					$.squash.openMessage("<f:message key='popup.title.error' />", '<f:message key="verified-requirements.table.indirectverifiedrequirements.removalattemptsforbidden.label"/>');
+				}
+				if (obsoleteStatuses.length > 0){
+					oneShotConfirm("<f:message key='dialog.multiple.obsolete.requirement.versions.removal.confirm.title' />", 
+							"<f:message key='dialog.multiple.obsolete.requirement.versions.removal.confirm.text' />",
+							"<f:message key='label.Confirm'/>",
+							"<f:message key='label.Cancel'/>", '600px').done(function(){deleteVerifiedRequirements(ids);});
+				} else {
+					oneShotConfirm("<f:message key='label.Confirm' />", 
+							"<f:message key='dialog.remove-requirement-version-associations.message' />",
+							"<f:message key='label.Confirm'/>",
+							"<f:message key='label.Cancel'/>", '600px').done(function(){deleteVerifiedRequirements(ids);});
+				}
+			}else{
+				$.squash.openMessage("<f:message key='popup.title.error' />","${emptyMessage}");
 			}
 		});
 		

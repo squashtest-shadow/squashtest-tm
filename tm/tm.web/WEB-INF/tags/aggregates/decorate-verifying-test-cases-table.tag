@@ -31,7 +31,8 @@
 <%@ taglib prefix="comp" tagdir="/WEB-INF/tags/component" %>
 <%@ taglib prefix="dt" tagdir="/WEB-INF/tags/datatables" %>
 <%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core"%>
-
+<f:message var="emptyMessage" key="message.EmptyTableSelection" />
+				
 <script type="text/javascript">
 	$(function() {
 		<%-- single verifying test-case removal --%>
@@ -54,6 +55,9 @@
 						"<f:message key='dialog.remove-testcase-requirement-associations.message' />",
 						"<f:message key='label.Confirm'/>",
 						"<f:message key='label.Cancel'/>", '600px').done(function(){deleteRequirementsLinks(ids);	});
+			}else{
+				$.squash.openMessage("<f:message key='popup.title.error' />","${emptyMessage}");
+				
 			}
 		});
 	});
