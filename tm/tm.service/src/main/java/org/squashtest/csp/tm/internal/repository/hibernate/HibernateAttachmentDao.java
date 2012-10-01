@@ -35,6 +35,7 @@ import org.hibernate.criterion.Order;
 import org.hibernate.criterion.Restrictions;
 import org.springframework.stereotype.Repository;
 import org.squashtest.csp.tm.domain.attachment.Attachment;
+import org.squashtest.csp.tm.domain.attachment.AttachmentContent;
 import org.squashtest.csp.tm.domain.attachment.AttachmentList;
 import org.squashtest.csp.tm.infrastructure.filter.CollectionSorting;
 import org.squashtest.csp.tm.internal.repository.AttachmentDao;
@@ -93,20 +94,14 @@ public class HibernateAttachmentDao extends HibernateEntityDao<Attachment>
 
 		Attachment attachment = findById(attachmentId);
 
-		Long contentId=getContentId(attachmentId);
-
-		//remove the attachment first because of referential integrity constraints
-		remove(attachment);
-
-		//now force the session to commit changes because the damn entity is still 'alive' in the session cache or
-		//whatsoever
-		currentSession().flush();
-		currentSession().evict(attachment);
-
-		Query q = currentSession().getNamedQuery("attachment.removeContent");
-		q.setLong("contentId", contentId);
-		q.executeUpdate();
-
+//		//[Issue 1456 problem with h2 database that will try to delete 2 times the same lob in lobs.db]
+		AttachmentContent content = attachment.getContent();
+		content.setContent(null);
+		
+		flush();
+//		//End [Issue 1456]
+		
+		removeEntity(attachment);
 
 	}
 

@@ -22,7 +22,6 @@ package org.squashtest.csp.tm.internal.repository.hibernate;
 
 import java.util.Collection;
 import java.util.Collections;
-import java.util.LinkedList;
 import java.util.List;
 import java.util.Set;
 
@@ -40,56 +39,58 @@ import org.squashtest.csp.tm.domain.attachment.AttachmentList;
 import org.squashtest.csp.tm.internal.repository.DeletionDao;
 
 public abstract class HibernateDeletionDao implements DeletionDao {
-	
+
 	@Inject
 	private SessionFactory sessionFactory;
-	
+
 	protected Session getSession() {
 		return sessionFactory.getCurrentSession();
 	}
-	
 
 	@Override
 	@SuppressWarnings("unchecked")
 	public void removeAttachmentsLists(final List<Long> attachmentListIds) {
-		
-		List<Object[]> attachmentContentIds ;
-		
-		if (attachmentListIds.isEmpty()) {return;}
+
+		List<Object[]> attachmentContentIds;
+
+		if (attachmentListIds.isEmpty()) {
+			return;
+		}
 
 		// we handle the cascade ourselves to make sure that the deletion is carried properly
-		attachmentContentIds = executeSelectNamedQuery("attachment.getAttachmentAndContentIdsFromList", "listIds", attachmentListIds);
+		attachmentContentIds = executeSelectNamedQuery("attachment.getAttachmentAndContentIdsFromList", "listIds",
+				attachmentListIds);
 
 		// due to foreign key constraints and the like, the following
 		// operations
 		// must be carried in that order :
-	
-		if (! attachmentContentIds.isEmpty()){
 
-			Collection<Long> attachIds = CollectionUtils.collect(attachmentContentIds,
-					new CellTableTransformer(0));
+		if (!attachmentContentIds.isEmpty()) {
 
-			Collection<Long> contentIds = CollectionUtils.collect(attachmentContentIds,
-					new CellTableTransformer(1));
+			Collection<Long> attachIds = CollectionUtils.collect(attachmentContentIds, new CellTableTransformer(0));
+
+			Collection<Long> contentIds = CollectionUtils.collect(attachmentContentIds, new CellTableTransformer(1));
 
 			executeDeleteNamedQuery("attachment.removeAttachments", "attachIds", attachIds);
 			executeDeleteNamedQuery("attachment.removeContents", "contentIds", contentIds);
 		}
-		
+
 		executeDeleteNamedQuery("attachment.deleteAttachmentLists", "listIds", attachmentListIds);
 
 	}
+
 	private static class CellTableTransformer implements Transformer {
 		private int cellIndex;
-		private CellTableTransformer(int cellIndex){
+
+		private CellTableTransformer(int cellIndex) {
 			this.cellIndex = cellIndex;
 		}
+
 		@Override
 		public Object transform(Object input) {
 			return ((Object[]) input)[cellIndex];
 		}
 	}
-	
 
 	@Override
 	public void removeEntity(Object entity) {
@@ -98,81 +99,68 @@ public abstract class HibernateDeletionDao implements DeletionDao {
 	}
 
 	@Override
-	/*
-	 * dev note : if the damn fks in the DB were correctly set we wouldn't do the awkward 
-	 * treatment here. Well, hibernate mapping decided it.
-	 * 
-	 */
 	public void removeAttachmentList(AttachmentList list) {
-		
-		if (list == null ) {return ;}
-		
-		List<AttachmentContent> contentList = new LinkedList<AttachmentContent>();
-		Set<Attachment> attachmentList = list.getAllAttachments();
-	
-		for (Attachment attachment : attachmentList){
-			contentList.add(attachment.getContent());
-		}
-		
-		
-		for (Attachment attachment : attachmentList){
-			removeEntity(attachment);
-		}
-		
-		for (AttachmentContent content : contentList){
-			removeEntity(content);
-		}
-		
 
-		removeEntity(list);
+		if (list == null) {
+			return;
+		}
 		
+		//[Issue 1456 problem with h2 database that will try to delete 2 times the same lob]
+		Set<Attachment> attachmentList = list.getAllAttachments();
+		
+		for (Attachment attachment : attachmentList) {
+			AttachmentContent content = attachment.getContent();
+			content.setContent(null);
+		}
+		
+		flush();
+		//End [Issue 1456]
+		
+		removeEntity(list);
+
 	}
-	
+
 	@Override
-	public void flush(){
+	public void flush() {
 		getSession().flush();
 	}
-	
-	
-/* **************** convenient shorthands **************************************************** */
-	
-	protected void executeDeleteNamedQuery(String namedQuery, String paramName, Collection<Long> ids){
-		if (! ids.isEmpty()){
+
+	/* **************** convenient shorthands **************************************************** */
+
+	protected void executeDeleteNamedQuery(String namedQuery, String paramName, Collection<Long> ids) {
+		if (!ids.isEmpty()) {
 			Query query = getSession().getNamedQuery(namedQuery);
 			query.setParameterList(paramName, ids, LongType.INSTANCE);
-			query.executeUpdate();		
+			query.executeUpdate();
 		}
 	}
-	
-	
-	protected <R> List<R> executeSelectNamedQuery(String namedQuery, String paramName, Collection<Long> ids){
-		if (! ids.isEmpty()){
+
+	protected <R> List<R> executeSelectNamedQuery(String namedQuery, String paramName, Collection<Long> ids) {
+		if (!ids.isEmpty()) {
 			Query query = getSession().getNamedQuery(namedQuery);
 			query.setParameterList(paramName, ids, LongType.INSTANCE);
-			return query.list();		
-		}else{
+			return query.list();
+		} else {
 			return Collections.emptyList();
 		}
 	}
-	
-	protected void executeDeleteSQLQuery(String queryString, String paramName, Collection<Long> ids){
-		if (! ids.isEmpty()){
+
+	protected void executeDeleteSQLQuery(String queryString, String paramName, Collection<Long> ids) {
+		if (!ids.isEmpty()) {
 			Query query = getSession().createSQLQuery(queryString);
 			query.setParameterList(paramName, ids, LongType.INSTANCE);
-			query.executeUpdate();		
+			query.executeUpdate();
 		}
 	}
-	
-	
-	protected <R> List<R> executeSelectSQLQuery(String queryString, String paramName, Collection<Long> ids){
-		if (! ids.isEmpty()){
+
+	protected <R> List<R> executeSelectSQLQuery(String queryString, String paramName, Collection<Long> ids) {
+		if (!ids.isEmpty()) {
 			Query query = getSession().createSQLQuery(queryString);
 			query.setParameterList(paramName, ids, LongType.INSTANCE);
-			return query.list();		
-		}else{
+			return query.list();
+		} else {
 			return Collections.emptyList();
 		}
 	}
-	
 
 }
