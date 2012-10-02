@@ -172,7 +172,7 @@
 		</dependency>
 		<dependency>
 			<groupId>${project.groupId}</groupId>
-			<artifactId>org.squashtest.csp.tm.service</artifactId>
+			<artifactId>tm.service</artifactId>
 			<version>${project.version}</version>
 			<scope>test</scope>
 		</dependency>
