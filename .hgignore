@@ -107,9 +107,9 @@ core/core.service/META-INF$
 \.swp$
 tm/tm\.testautomation\.api/META-INF$
 ^core/core.testautomation.api/META-INF$
-tm/tm.web/WEB-INF*
-tm/tm.web/META-INF*
-tm/tm.service/META-INF*
+/tm\.service/META-INF$
+/tm\.web/META-INF$
+/tm\.web/WEB-INF$
 syntax: glob
 integration-tests/log/IT.log
 integration-tests/src/it/resources/log4j.properties
@@ -117,12 +117,6 @@ syntax : regexp
 ^tm/tm\.testautomation\.api/target$
 ^tm/tm\.testautomation\.api/META-INF$
 core/core.service/META-INF$
-^tm/tm\.web/WEB-INF$
-^tm/tm\.service/META-INF$
-^tm/tm\.web/META-INF$
-tm/tm\.service/META-INF/NOTICE.txt
-tm/tm\.service/META-INF/MANIFEST.MF
-tm/tm\.service/META-INF/COPYING.txt
 syntax: regexp
 ^plugins/plugin\.testautomation\.jenkins/target$
 ^plugins/plugin\.testautomation\.jenkins/META-INF$
