@@ -63,9 +63,7 @@
 	<ul>
 		<li><a class="import-excel-tree-button menu-disabled" href="JavaScript:void(0);"><fmt:message key="label.Import" />...</a></li>
 		<li><a class="import-links-excel-tree-button menu-disabled" href="JavaScript:void(0);"><fmt:message key="tree.button.import.links.label" />...</a></li>
-				<c:if test="${ workspace == 'requirement' }">
-			<li><a class="export-tree-button menu-disabled" href="JavaScript:void(0);"><fmt:message key='label.Export'/>...</a></li>
-		</c:if>
+		<li><a class="export-tree-button menu-disabled" href="JavaScript:void(0);"><fmt:message key='label.Export'/>...</a></li>
 	</ul>
 	</div>
 	</div>	
@@ -115,11 +113,8 @@
 			
 			var importOption = {
 				"import-excel" : ".import-excel-tree-button",
-				"import-links-excel" : ".import-links-excel-tree-button"
-				<c:if test="${ workspace == 'requirement' }">
-				,
+				"import-links-excel" : ".import-links-excel-tree-button",
 				"export" : ".export-tree-button"
-				</c:if>
 			};
 			
 			squashtm.treemenu.importer = $('#tree-import-button').treeMenu('#tree-import-menu', importOption);

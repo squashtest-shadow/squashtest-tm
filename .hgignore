@@ -101,7 +101,7 @@ build/classes$
 ^.metadata/.*$
 distribution/META-INF/NOTICE.txt
 distribution/META-INF/COPYING.txt
-^database\.h2\.fragment/META-INF.*$
+^database\.h2\.fragment/META-INF$
 .*/bin$
 core/core.service/META-INF$
 \.swp$
@@ -114,6 +114,9 @@ syntax : regexp
 ^tm/tm\.testautomation\.api/target$
 ^tm/tm\.testautomation\.api/META-INF$
 core/core.service/META-INF$
+^tm/tm\.web/WEB-INF$
+^tm/tm\.service/META-INF$
+^tm/tm\.web/META-INF$
 syntax: regexp
 ^plugins/plugin\.testautomation\.jenkins/target$
 ^plugins/plugin\.testautomation\.jenkins/META-INF$

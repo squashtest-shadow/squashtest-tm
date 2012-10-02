@@ -102,7 +102,7 @@
 						return $('#tree').jstree("get_selected").attr('iterationIndex');
 					}
 				</c:when>
-				<c:when test="${ resourceName eq 'requirement' }">
+				<c:when test="${ resourceName eq 'requirement' || resourceName eq 'test-case' }">
 					function getRealNodeName(name, node){
 						var toReturn = name;
 						//check if there's a reference
@@ -157,17 +157,15 @@
 		<treepopup:rename-node-dialog treeSelector="#tree" successCallback="rename_from_tree_sucess" treeNodeButton="squashtm.treemenu.action.buttons['rename']"/>
 		<treepopup:delete-node-dialog treeSelector="#tree" resourceName="${resourceName}" treeNodeButton="squashtm.treemenu.action.buttons['delete']"/>
 
-		<treepopup:copy-paste-node 	  treeSelector="#tree" resourceName="${resourceName}" 
+		<treepopup:copy-paste-node treeSelector="#tree" resourceName="${resourceName}" 
 										treeNodeButtonCopy="squashtm.treemenu.action.buttons['copy']" treeNodeButtonPaste="squashtm.treemenu.action.buttons['paste']"/>
 
-		<c:if test="${ resourceName == 'requirement' }">		
-			<treepopup:export-requirement-dialog treeSelector="#tree"  treeNodeButton="squashtm.treemenu.importer.buttons['export']" />			
-		</c:if>
 		<c:if test="${ resourceName == 'test-case' || resourceName == 'requirement' }">
+			<treepopup:export-dialog treeSelector="#tree"  treeNodeButton="squashtm.treemenu.importer.buttons['export']" resourceName="${resourceName}"/>	
 			<sec:authorize access="hasRole('ROLE_TM_PROJECT_MANAGER') or hasRole('ROLE_ADMIN')">
-			<treepopup:import-excel-dialog treeSelector="#tree" treeNodeButton="squashtm.treemenu.importer.buttons['import-excel']" workspace="${resourceName}"  targetLibraries="${editableLibraries}"/>
-			<treepopup:import-req-tc-links-excel-dialog treeSelector="#tree" 
-			treeNodeButton="squashtm.treemenu.importer.buttons['import-links-excel']" />
+				<treepopup:import-excel-dialog treeSelector="#tree" treeNodeButton="squashtm.treemenu.importer.buttons['import-excel']" workspace="${resourceName}"  targetLibraries="${editableLibraries}"/>
+				<treepopup:import-req-tc-links-excel-dialog treeSelector="#tree" 
+				treeNodeButton="squashtm.treemenu.importer.buttons['import-links-excel']" />
 			</sec:authorize>
 		</c:if>
 
