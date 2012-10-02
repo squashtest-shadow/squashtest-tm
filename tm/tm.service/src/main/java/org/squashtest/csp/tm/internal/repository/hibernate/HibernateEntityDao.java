@@ -20,13 +20,17 @@
  */
 package org.squashtest.csp.tm.internal.repository.hibernate;
 
+import java.math.BigInteger;
+import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.List;
 
 import org.hibernate.Criteria;
 import org.hibernate.Query;
+import org.hibernate.Session;
 import org.hibernate.criterion.Restrictions;
+import org.hibernate.type.LongType;
 import org.squashtest.csp.tm.internal.repository.EntityDao;
 
 public class HibernateEntityDao<ENTITY_TYPE> extends HibernateDao<ENTITY_TYPE> implements EntityDao<ENTITY_TYPE> {
@@ -59,7 +63,7 @@ public class HibernateEntityDao<ENTITY_TYPE> extends HibernateDao<ENTITY_TYPE> i
 			return criteria.list();
 		}
 	}
-
+	
 	public String getIdPropertyName() {
 		return "id";
 	}
@@ -99,6 +103,62 @@ public class HibernateEntityDao<ENTITY_TYPE> extends HibernateDao<ENTITY_TYPE> i
 			query.setParameter("nameStart", nameStart + "%");
 		}
 	}
+	
+	protected static class SetProjectIdsParameterCallback implements SetQueryParametersCallback {
+		private List<Long> projectIds;
+		protected SetProjectIdsParameterCallback(List<Long> projectIds){
+			this.projectIds = projectIds;
+		}
+		@Override
+		public void setQueryParameters(Query query) {
+			query.setParameterList("projectIds", projectIds, new LongType());
+		}
+	}
+	
+	protected static class SetParamIdsParametersCallback implements SetQueryParametersCallback{
+		private List<Long> params;
+		protected SetParamIdsParametersCallback(List<Long> params){
+			this.params = params;
+		}
+		@Override
+		public void setQueryParameters(Query query) {
+			query.setParameterList("paramIds", params, new LongType());
+		}
+	}
+	
+	@SuppressWarnings("unchecked")
+	protected List<Long> findDescendantIds(List<Long> params, String sql) {
+		if (!params.isEmpty()) {
+			Session session = currentSession();
+			
 
+			List<BigInteger> list;
+			List<Long> result = new ArrayList<Long>();
+			result.addAll(params); // the inputs are also part of the output.
+			List<Long> local = params;
+
+			do {
+				Query sqlQuery = session.createSQLQuery(sql);
+				sqlQuery.setParameterList("list", local, new LongType());
+				list = sqlQuery.list();
+				if (!list.isEmpty()) {
+					local.clear();
+					for (BigInteger bint : list) {
+						local.add(bint.longValue());
+						result.add(bint.longValue());
+					}
+				}
+			} while (!list.isEmpty());
+			if (result.isEmpty()) {
+				return null;
+			}
+			return result;
+
+		} else {
+			return Collections.emptyList();
+
+		}
+
+	}
 
 }

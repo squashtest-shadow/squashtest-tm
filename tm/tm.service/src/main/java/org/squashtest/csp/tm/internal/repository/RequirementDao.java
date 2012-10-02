@@ -57,9 +57,9 @@ public interface RequirementDao extends EntityDao<Requirement> {
 	@SuppressWarnings("rawtypes")
 	List<RequirementLibraryNode> findAllBySearchCriteriaOrderByProject(RequirementSearchCriteria criteria);
 
-	List<ExportRequirementData> findRequirementToExportFromFolder(List<Long> folderIds);
+	List<ExportRequirementData> findRequirementToExportFromNodes(List<Long> folderIds);
 
-	List<ExportRequirementData> findRequirementToExportFromLibrary(List<Long> folderIds);
+	List<ExportRequirementData> findRequirementToExportFromProject(List<Long> projectIds);
 
 	/**
 	 * Returns collection of distinct requirements criticalities verified by any of the given verifiers.

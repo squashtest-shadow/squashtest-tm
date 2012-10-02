@@ -87,12 +87,11 @@ public class RequirementLibraryNavigationController extends
 	@Inject
 	private Provider<RequirementLibraryTreeNodeBuilder> requirementLibraryTreeNodeBuilder;
 
-	@Inject
-	private JasperReportsServiceImpl jrServices;
-
+	
 	private RequirementLibraryNavigationService requirementLibraryNavigationService;
+	
+	private static final String JASPER_EXPORT_FILE = "/WEB-INF/reports/requirement-export.jasper";
 
-	private static final int EOF = -1;
 
 	@ServiceReference
 	public void setRequirementLibraryNavigationService(
@@ -181,9 +180,9 @@ public class RequirementLibraryNavigationController extends
 	void exportRequirements(@RequestParam("tab[]") List<Long> ids, @RequestParam("name") String filename,
 			HttpServletResponse response, Locale locale) {
 		List<ExportRequirementData> dataSource = requirementLibraryNavigationService
-				.findRequirementsToExportFromFolder(ids);
+				.findRequirementsToExportFromNodes(ids);
 
-		printExport(dataSource, filename, response, locale);
+		printExport(dataSource, filename, JASPER_EXPORT_FILE, response, locale);
 
 	}
 
@@ -193,53 +192,9 @@ public class RequirementLibraryNavigationController extends
 			HttpServletResponse response, Locale locale) {
 
 		List<ExportRequirementData> dataSource = requirementLibraryNavigationService
-				.findRequirementsToExportFromLibrary(libraryIds);
-
-		printExport(dataSource, filename, response, locale);
-
-	}
-
-	protected void printExport(List<ExportRequirementData> dataSource, String filename, HttpServletResponse response,
-			Locale locale) {
-		try {
-			// it seems JasperReports doesn't like '\n' and the likes so we'll HTML-encode that first.
-			// that solution is quite weak though.
-			for (ExportRequirementData data : dataSource) {
-				String htmlDescription = data.getDescription();
-				String description = HTMLCleanupUtils.htmlToText(htmlDescription);
-				data.setDescription(description);
-			}
-
-			// report generation parameters
-			Map<String, Object> reportParameter = new HashMap<String, Object>();
-			reportParameter.put(JRParameter.REPORT_LOCALE, locale);
-
-			// exporter parameters
-			// TODO : defining an export parameter specific to csv while in the future we could export to other formats
-			// is unsatisfying. Find something else.
-			Map<JRExporterParameter, Object> exportParameter = new HashMap<JRExporterParameter, Object>();
-			exportParameter.put(JRCsvExporterParameter.FIELD_DELIMITER, ";");
-			exportParameter.put(JRExporterParameter.CHARACTER_ENCODING, "ISO-8859-1");
-
-			InputStream jsStream = Thread.currentThread().getContextClassLoader()
-					.getResourceAsStream("/WEB-INF/reports/requirement-export.jasper");
-			InputStream reportStream = jrServices.getReportAsStream(jsStream, "csv", dataSource, reportParameter,
-					exportParameter);
-
-			// print it.
-			ServletOutputStream servletStream = response.getOutputStream();
-
-			response.setContentType("application/octet-stream");
-			response.setHeader("Content-Disposition", "attachment; filename=" + filename + ".csv");
-
-			flushStreams(reportStream, servletStream);
-
-			reportStream.close();
-			servletStream.close();
-
-		} catch (IOException ioe) {
-			throw new RuntimeException(ioe);
-		}
+				.findRequirementsToExportFromProject(libraryIds);
+		
+		printExport(dataSource, filename, JASPER_EXPORT_FILE, response, locale);
 
 	}
 
@@ -258,18 +213,7 @@ public class RequirementLibraryNavigationController extends
 
 	/* ********************************** private stuffs ******************************* */
 
-	private void flushStreams(InputStream inStream, ServletOutputStream outStream) throws IOException {
-		int readByte;
-
-		do {
-			readByte = inStream.read();
-
-			if (readByte != EOF) {
-				outStream.write(readByte);
-			}
-		} while (readByte != EOF);
-
-	}
+	
 
 	@RequestMapping(value = "/drives", method = RequestMethod.GET, params = { "linkables" })
 	public @ResponseBody

@@ -37,6 +37,7 @@ import org.springframework.transaction.annotation.Transactional;
 import org.squashtest.csp.tm.domain.CopyPasteObsoleteException;
 import org.squashtest.csp.tm.domain.DuplicateNameException;
 import org.squashtest.csp.tm.domain.IllegalRequirementModificationException;
+import org.squashtest.csp.tm.domain.library.ExportData;
 import org.squashtest.csp.tm.domain.projectfilter.ProjectFilter;
 import org.squashtest.csp.tm.domain.requirement.ExportRequirementData;
 import org.squashtest.csp.tm.domain.requirement.NewRequirementVersionDto;
@@ -217,34 +218,18 @@ public class RequirementLibraryNavigationServiceImpl extends
 		return requirement;
 	}
 
+	@SuppressWarnings("unchecked")
 	@Override
-	public List<ExportRequirementData> findRequirementsToExportFromLibrary(List<Long> libraryIds) {
-		return setFullFolderPath(requirementDao.findRequirementToExportFromLibrary(libraryIds));
+	public List<ExportRequirementData> findRequirementsToExportFromProject(List<Long> libraryIds) {
+		return (List<ExportRequirementData>) setFullFolderPath(requirementDao.findRequirementToExportFromProject(libraryIds));
 	}
 
+	@SuppressWarnings("unchecked")
 	@Override
-	public List<ExportRequirementData> findRequirementsToExportFromFolder(List<Long> folderIds) {
-		return setFullFolderPath(requirementDao.findRequirementToExportFromFolder(folderIds));
+	public List<ExportRequirementData> findRequirementsToExportFromNodes(List<Long> folderIds) {
+		return (List<ExportRequirementData>) setFullFolderPath(requirementDao.findRequirementToExportFromNodes(folderIds));
 	}
-
-	private List<ExportRequirementData> setFullFolderPath(List<ExportRequirementData> dataset) {
-		for (ExportRequirementData data : dataset) {
-			// get folder id
-			Long id = data.getFolderId();
-			// set the full path attribute
-			StringBuilder path = new StringBuilder();
-
-			// if the requirement is not directly located under
-			if (id != ExportRequirementData.NO_FOLDER) {
-				for (String name : requirementLibraryNodeDao.getParentsName(id)) {
-					path.append('/' + name);
-				}
-				path.deleteCharAt(0);
-			}
-			data.setFolderName(path.toString());
-		}
-		return dataset;
-	}
+	
 
 	@Override
 	@PostFilter("hasPermission(filterObject, 'LINK') " + OR_HAS_ROLE_ADMIN)

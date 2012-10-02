@@ -20,14 +20,24 @@
  */
 package org.squashtest.csp.tm.web.internal.controller.generic;
 
+import java.io.IOException;
+import java.io.InputStream;
 import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.Collection;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Locale;
+import java.util.Map;
 
 import javax.inject.Inject;
+import javax.servlet.ServletOutputStream;
+import javax.servlet.http.HttpServletResponse;
 import javax.validation.Valid;
+
+import net.sf.jasperreports.engine.JRExporterParameter;
+import net.sf.jasperreports.engine.JRParameter;
+import net.sf.jasperreports.engine.export.JRCsvExporterParameter;
 
 import org.springframework.context.MessageSource;
 import org.springframework.http.HttpStatus;
@@ -42,12 +52,16 @@ import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.bind.annotation.ResponseStatus;
 import org.springframework.web.servlet.ModelAndView;
 import org.springframework.web.util.HtmlUtils;
+import org.squashtest.csp.core.web.utils.HTMLCleanupUtils;
+import org.squashtest.csp.tm.domain.library.ExportData;
 import org.squashtest.csp.tm.domain.library.Folder;
 import org.squashtest.csp.tm.domain.library.Library;
 import org.squashtest.csp.tm.domain.library.LibraryNode;
+import org.squashtest.csp.tm.domain.requirement.ExportRequirementData;
 import org.squashtest.csp.tm.service.LibraryNavigationService;
 import org.squashtest.csp.tm.service.deletion.SuppressionPreviewReport;
 import org.squashtest.csp.tm.web.internal.model.jstree.JsTreeNode;
+import org.squashtest.csp.tm.web.internal.report.services.JasperReportsServiceImpl;
 
 /**
  * Superclass for library navigation controllers. This controller handles : library root retrieval, folder content
@@ -71,6 +85,11 @@ public abstract class LibraryNavigationController<LIBRARY extends Library<? exte
 	
 	@Inject
 	private MessageSource messageSource;
+	
+	@Inject
+	private JasperReportsServiceImpl jrServices;
+	
+	private static final int EOF = -1;
 	
 	protected MessageSource getMessageSource(){
 		return messageSource;
@@ -245,6 +264,62 @@ public abstract class LibraryNavigationController<LIBRARY extends Library<? exte
 		}
 		
 		
+	}
+	
+	protected void printExport(List<? extends ExportData> dataSource, String filename,String jasperFile, HttpServletResponse response,
+			Locale locale) {
+		try {
+			// it seems JasperReports doesn't like '\n' and the likes so we'll HTML-encode that first.
+			// that solution is quite weak though.
+			for (ExportData data : dataSource) {
+				String htmlDescription = data.getDescription();
+				String description = HTMLCleanupUtils.htmlToText(htmlDescription);
+				data.setDescription(description);
+			}
+
+			// report generation parameters
+			Map<String, Object> reportParameter = new HashMap<String, Object>();
+			reportParameter.put(JRParameter.REPORT_LOCALE, locale);
+
+			// exporter parameters
+			// TODO : defining an export parameter specific to csv while in the future we could export to other formats
+			// is unsatisfying. Find something else.
+			Map<JRExporterParameter, Object> exportParameter = new HashMap<JRExporterParameter, Object>();
+			exportParameter.put(JRCsvExporterParameter.FIELD_DELIMITER, ";");
+			exportParameter.put(JRExporterParameter.CHARACTER_ENCODING, "ISO-8859-1");
+
+			InputStream jsStream = Thread.currentThread().getContextClassLoader()
+					.getResourceAsStream(jasperFile);
+			InputStream reportStream = jrServices.getReportAsStream(jsStream, "csv", dataSource, reportParameter,
+					exportParameter);
+
+			// print it.
+			ServletOutputStream servletStream = response.getOutputStream();
+
+			response.setContentType("application/octet-stream");
+			response.setHeader("Content-Disposition", "attachment; filename=" + filename + ".csv");
+
+			flushStreams(reportStream, servletStream);
+
+			reportStream.close();
+			servletStream.close();
+
+		} catch (IOException ioe) {
+			throw new RuntimeException(ioe);
+		}
+
+	}
+	protected void flushStreams(InputStream inStream, ServletOutputStream outStream) throws IOException {
+		int readByte;
+
+		do {
+			readByte = inStream.read();
+
+			if (readByte != EOF) {
+				outStream.write(readByte);
+			}
+		} while (readByte != EOF);
+
 	}
 
 }

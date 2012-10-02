@@ -24,9 +24,11 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.util.Arrays;
 import java.util.List;
+import java.util.Locale;
 
 import javax.inject.Inject;
 import javax.inject.Provider;
+import javax.servlet.http.HttpServletResponse;
 import javax.validation.Valid;
 
 import org.slf4j.Logger;
@@ -41,6 +43,8 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.multipart.MultipartFile;
 import org.springframework.web.servlet.ModelAndView;
+import org.squashtest.csp.tm.domain.requirement.ExportRequirementData;
+import org.squashtest.csp.tm.domain.testcase.ExportTestCaseData;
 import org.squashtest.csp.tm.domain.testcase.TestCase;
 import org.squashtest.csp.tm.domain.testcase.TestCaseFolder;
 import org.squashtest.csp.tm.domain.testcase.TestCaseLibrary;
@@ -67,6 +71,9 @@ public class TestCaseLibraryNavigationController extends
 	private Provider<DriveNodeBuilder> driveNodeBuilder;
 
 	private TestCaseLibraryNavigationService testCaseLibraryNavigationService;
+	
+	private static final String JASPER_EXPORT_FILE = "/WEB-INF/reports/test-case-export.jasper";
+
 
 	@ServiceReference
 	public void setTestCaseLibraryNavigationService(TestCaseLibraryNavigationService testCaseLibraryNavigationService) {
@@ -164,6 +171,29 @@ public class TestCaseLibraryNavigationController extends
 				driveNodeBuilder.get());
 
 		return listBuilder.setModel(linkableLibraries).build();
+	}
+	
+	@RequestMapping(value = "/export-folder", method = RequestMethod.GET)
+	public @ResponseBody
+	void exportRequirements(@RequestParam("tab[]") List<Long> ids, @RequestParam("name") String filename,
+			HttpServletResponse response, Locale locale) {
+		List<ExportTestCaseData> dataSource = testCaseLibraryNavigationService
+				.findTestCasesToExportFromNodes(ids);
+
+		printExport(dataSource, filename,JASPER_EXPORT_FILE, response, locale);
+
+	}
+
+	@RequestMapping(value = "/export-library", method = RequestMethod.GET)
+	public @ResponseBody
+	void exportLibrary(@RequestParam("tab[]") List<Long> libraryIds, @RequestParam("name") String filename,
+			HttpServletResponse response, Locale locale) {
+
+		List<ExportTestCaseData> dataSource = testCaseLibraryNavigationService
+				.findTestCasesToExportFromProject(libraryIds);
+
+		printExport(dataSource, filename,JASPER_EXPORT_FILE, response, locale);
+
 	}
 
 }

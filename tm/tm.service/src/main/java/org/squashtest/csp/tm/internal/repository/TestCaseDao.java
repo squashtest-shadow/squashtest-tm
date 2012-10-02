@@ -26,6 +26,7 @@ import java.util.List;
 import org.squashtest.csp.tm.domain.execution.Execution;
 import org.squashtest.csp.tm.domain.requirement.RequirementSearchCriteria;
 import org.squashtest.csp.tm.domain.testcase.ActionTestStep;
+import org.squashtest.csp.tm.domain.testcase.ExportTestCaseData;
 import org.squashtest.csp.tm.domain.testcase.TestCase;
 import org.squashtest.csp.tm.domain.testcase.TestCaseLibraryNode;
 import org.squashtest.csp.tm.domain.testcase.TestCaseSearchCriteria;
@@ -185,5 +186,9 @@ public interface TestCaseDao extends EntityDao<TestCase> {
 	 * @return
 	 */
 	List<Execution> findAllExecutionByTestCase(Long tcId);
+	
+	List<ExportTestCaseData> findTestCaseToExportFromProject(List<Long> projectIds);
+
+	List<ExportTestCaseData> findTestCaseToExportFromNodes(List<Long> nodesIds);
 
 }

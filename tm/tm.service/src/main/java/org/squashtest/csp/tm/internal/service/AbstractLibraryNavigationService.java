@@ -38,6 +38,7 @@ import org.squashtest.csp.tm.domain.CannotMoveNodeException;
 import org.squashtest.csp.tm.domain.CopyPasteObsoleteException;
 import org.squashtest.csp.tm.domain.DuplicateNameException;
 import org.squashtest.csp.tm.domain.IllegalRequirementModificationException;
+import org.squashtest.csp.tm.domain.library.ExportData;
 import org.squashtest.csp.tm.domain.library.Folder;
 import org.squashtest.csp.tm.domain.library.Library;
 import org.squashtest.csp.tm.domain.library.LibraryNode;
@@ -491,6 +492,25 @@ public abstract class AbstractLibraryNavigationService<LIBRARY extends Library<N
 	@SuppressWarnings("unchecked")
 	protected NODE createPastableCopy(NODE node) {
 		return (NODE) node.createPastableCopy();
+	}
+	
+	protected List<? extends ExportData> setFullFolderPath(List<? extends ExportData> dataset) {
+		for (ExportData data : dataset) {
+			// get folder id
+			Long id = data.getFolderId();
+			// set the full path attribute
+			StringBuilder path = new StringBuilder();
+
+			// if the requirement is not directly located under
+			if (id != ExportData.NO_FOLDER) {
+				for (String name : getLibraryNodeDao().getParentsName(id)) {
+					path.append('/' + name);
+				}
+				path.deleteCharAt(0);
+			}
+			data.setFolderName(path.toString());
+		}
+		return dataset;
 	}
 
 }

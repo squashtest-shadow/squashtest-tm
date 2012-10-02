@@ -45,10 +45,18 @@ public interface RequirementLibraryNavigationService extends
 	Requirement addRequirementToRequirementFolder(long folderId, @NotNull NewRequirementVersionDto newRequirement);
 
 	Requirement findRequirement(long reqId);
-
-	List<ExportRequirementData> findRequirementsToExportFromLibrary(@NotNull List<Long> libraryIds);
-
-	List<ExportRequirementData> findRequirementsToExportFromFolder(@NotNull List<Long> folderIds);
+	/**
+	 * Will find all requirements found in the given projects and return their information as a list of {@linkplain ExportRequirementData}
+	 * @param libraryIds ids of {@linkplain Project}
+	 * @return a list of {@linkplain ExportRequirementData}
+	 */
+	List<ExportRequirementData> findRequirementsToExportFromProject(@NotNull List<Long> libraryIds);
+	/**
+	 * Will find all requirements of the given ids and contained in folders of the given ids, and return their information as a list of {@linkplain ExportRequirementData}
+	 * @param nodesIds ids of {@linkplain RequirementLibraryNode}
+	 * @return a list of {@linkplain ExportRequirementData}
+	 */
+	List<ExportRequirementData> findRequirementsToExportFromNodes(@NotNull List<Long> nodesIds);
 	
 	/**
 	 * Accepts a stream to a .xls / .xlsx file info for requirement folders and requirements. Will

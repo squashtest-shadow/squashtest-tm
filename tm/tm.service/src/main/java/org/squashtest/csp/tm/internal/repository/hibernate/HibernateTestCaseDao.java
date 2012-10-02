@@ -20,6 +20,7 @@
  */
 package org.squashtest.csp.tm.internal.repository.hibernate;
 
+import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.LinkedList;
@@ -37,13 +38,15 @@ import org.hibernate.criterion.Order;
 import org.hibernate.criterion.Restrictions;
 import org.hibernate.type.LongType;
 import org.springframework.stereotype.Repository;
+import org.squashtest.csp.core.domain.IdentifiedUtil;
 import org.squashtest.csp.core.infrastructure.hibernate.PagingUtils;
 import org.squashtest.csp.core.infrastructure.hibernate.SortingUtils;
 import org.squashtest.csp.tm.domain.execution.Execution;
 import org.squashtest.csp.tm.domain.requirement.RequirementSearchCriteria;
 import org.squashtest.csp.tm.domain.testcase.ActionTestStep;
+import org.squashtest.csp.tm.domain.testcase.ExportTestCaseData;
 import org.squashtest.csp.tm.domain.testcase.TestCase;
-import org.squashtest.csp.tm.domain.testcase.TestCaseImportance;
+import org.squashtest.csp.tm.domain.testcase.TestCaseFolder;
 import org.squashtest.csp.tm.domain.testcase.TestCaseLibraryNode;
 import org.squashtest.csp.tm.domain.testcase.TestCaseSearchCriteria;
 import org.squashtest.csp.tm.domain.testcase.TestStep;
@@ -66,6 +69,7 @@ public class HibernateTestCaseDao extends HibernateEntityDao<TestCase> implement
 	 */
 	private static final String TEST_CASE_ID_PARAM_NAME = "testCaseId";
 	private static final String PROJECT = "project";
+	private static final String FIND_DESCENDANT_QUERY = "select DESCENDANT_ID from TCLN_RELATIONSHIP where ANCESTOR_ID in (:list)";
 
 	private static class SetIdParameter implements SetQueryParametersCallback {
 		private final long testCaseId;
@@ -489,4 +493,112 @@ public class HibernateTestCaseDao extends HibernateEntityDao<TestCase> implement
 		SetQueryParametersCallback callback = idParameter(tcId);
 		return executeListNamedQuery("testCase.findAllExecutions", callback);
 	}
+
+	/* ----------------------------------------------------EXPORT METHODS----------------------------------------- */
+	//TODO try to avoid duplicate code with requirementExport
+	@Override
+	public List<ExportTestCaseData> findTestCaseToExportFromProject(List<Long> projectIds) {
+		if (!projectIds.isEmpty()) {
+			SetQueryParametersCallback newCallBack1 = new SetProjectIdsParameterCallback(projectIds);
+			List<Long> result = executeListNamedQuery("testCase.findAllRootContent", newCallBack1);
+
+			return findTestCaseToExportFromNodes(result);
+		} else {
+			return Collections.emptyList();
+		}
+	}
+
+	@Override
+	public List<ExportTestCaseData> findTestCaseToExportFromNodes(List<Long> params) {
+		if (!params.isEmpty()) {
+			return doFindTestCaseToExportFromNodes(params);
+
+		} else {
+			return Collections.emptyList();
+
+		}
+	}
+
+	private List<ExportTestCaseData> doFindTestCaseToExportFromNodes(List<Long> params) {
+		// find root leafs
+		List<TestCase> rootTestCases = findRootContentTestCase(params);
+		// find all leafs contained in ids and contained by folders in ids
+		List<Long> descendantIds = findDescendantIds(params, FIND_DESCENDANT_QUERY);
+
+		// Case 1. Only root leafs are found
+		if (descendantIds == null || descendantIds.isEmpty()) {
+			List<Object[]> testCasesWithParentFolder = new ArrayList<Object[]>();
+			return formatExportResult(mergeRootWithTestCasesWithParentFolder(rootTestCases, testCasesWithParentFolder));
+		}
+
+		// Case 2. More than root leafs are found
+		List<Long> tcIds = findTestCaseIdsInIdList(descendantIds);
+		List<Object[]> testCasesWithParentFolder = findTestCaseAndParentFolder(tcIds);
+
+		if (!rootTestCases.isEmpty()) {
+			mergeRootWithTestCasesWithParentFolder(rootTestCases, testCasesWithParentFolder);
+		}
+
+		return formatExportResult(testCasesWithParentFolder);
+	}
+
+	private List<Object[]> findTestCaseAndParentFolder(List<Long> tcIds) {
+		if (!tcIds.isEmpty()) {
+			SetQueryParametersCallback newCallBack1 = new SetIdsParameter(tcIds);
+			return executeListNamedQuery("testCase.findTestCasesWithParentFolder", newCallBack1);
+
+		} else {
+			return Collections.emptyList();
+		}
+	}
+
+	private List<Long> findTestCaseIdsInIdList(List<Long> nodesIds) {
+		if (!nodesIds.isEmpty()) {
+
+			List<TestCase> resultList = findAllByIds(nodesIds);
+			return IdentifiedUtil.extractIds(resultList);
+
+		} else {
+			return Collections.emptyList();
+		}
+	}
+
+	private List<Object[]> mergeRootWithTestCasesWithParentFolder(List<TestCase> rootTestCases,
+			List<Object[]> testCasesWithParentFolder) {
+		for (TestCase testCase : rootTestCases) {
+			Object[] testCaseWithNullParentFolder = { testCase, null };
+			testCasesWithParentFolder.add(testCaseWithNullParentFolder);
+		}
+		return testCasesWithParentFolder;
+	}
+
+	private List<TestCase> findRootContentTestCase(final List<Long> params) {
+		if (!params.isEmpty()) {
+			SetQueryParametersCallback newCallBack1 = new SetParamIdsParametersCallback(params);
+			return executeListNamedQuery("testCase.findRootContentTestCase", newCallBack1);
+
+		} else {
+			return Collections.emptyList();
+
+		}
+	}
+
+	private List<ExportTestCaseData> formatExportResult(List<Object[]> list) {
+		if (!list.isEmpty()) {
+			List<ExportTestCaseData> exportList = new ArrayList<ExportTestCaseData>();
+
+			for (Object[] tuple : list) {
+				TestCase tc = (TestCase) tuple[0];
+				TestCaseFolder folder = (TestCaseFolder) tuple[1];
+				ExportTestCaseData etcd = new ExportTestCaseData(tc, folder);
+				exportList.add(etcd);
+			}
+
+			return exportList;
+		} else {
+			return Collections.emptyList();
+		}
+	}
+	/* ----------------------------------------------------/EXPORT METHODS----------------------------------------- */
+
 }

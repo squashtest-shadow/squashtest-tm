@@ -20,46 +20,21 @@
  */
 package org.squashtest.csp.tm.domain.requirement;
 
-import java.util.Date;
+import org.squashtest.csp.tm.domain.library.ExportData;
+/**
+ * 
+ * Data support for jasper Requirement Export
+ *
+ */
+public class ExportRequirementData extends ExportData{
 
-import org.squashtest.csp.tm.domain.audit.AuditableMixin;
-import org.squashtest.csp.tm.domain.library.Folder;
-import org.squashtest.csp.tm.domain.library.LibraryNode;
-
-public class ExportRequirementData {
-
-	private Long id;
-	private String reference;
-	private String folderName;
 	private RequirementCriticality criticality;
 	private RequirementCategory category;
-	private String project;
-	private String name;
-	private String description;
 	private Integer currentVersion;
 	private RequirementStatus status;
-	private Date createdOn;
-    private String createdBy;
-    private Long folderId;
-    public static final Long NO_FOLDER = -1l;
 	
 	public ExportRequirementData() {
-	}
-	
-	public Long getId() {
-		return id;
-	}
-
-	public void setId(Long id) {
-		this.id = id;
-	}
-
-	public String getReference() {
-		return reference;
-	}
-
-	public void setReference(String reference) {
-		this.reference = reference;
+		super();
 	}
 
 	public RequirementCriticality getCriticality() {
@@ -78,37 +53,6 @@ public class ExportRequirementData {
 		this.category = category;
 	}
 
-	public String getProject() {
-		return project;
-	}
-
-	public void setProject(String project) {
-		this.project = project;
-	}
-
-	public String getName() {
-		return name;
-	}
-
-	public void setName(String name) {
-		this.name = name;
-	}
-
-	public String getDescription() {
-		return description;
-	}
-
-	public void setDescription(String description) {
-		this.description = description;
-	}
-
-	public String getFolderName() {
-		return folderName;
-	}
-	
-	public void setFolderName(String folderName) {
-		this.folderName = folderName;
-	}
 	
 	public Integer getCurrentVersion() {
 		return currentVersion;
@@ -126,52 +70,14 @@ public class ExportRequirementData {
 		this.status = status;
 	}
 	
-	public Date getCreatedOn() {
-		return createdOn;
-	}
 
-	public void setCreatedOn(Date createdOn) {
-		this.createdOn = createdOn;
-	}
-
-	public String getCreatedBy() {
-		return createdBy;
-	}
-
-	public void setCreatedBy(String createdBy) {
-		this.createdBy = createdBy;
-	}
-	
-
-	public Long getFolderId() {
-		return folderId;
-	}
-
-	public void setFolderId(Long folderId) {
-		this.folderId = folderId;
-	}
 	
 	public ExportRequirementData(Requirement requirement, RequirementFolder folder) {
-		this.id = requirement.getId();
-		this.name = requirement.getName();
+		super(requirement, folder);
 		this.criticality = requirement.getCriticality();
 		this.category = requirement.getCategory();
-		this.description = requirement.getDescription();
-		this.project = requirement.getProject().getName();
-		this.reference = requirement.getReference();
 		this.currentVersion = requirement.getCurrentVersion().getVersionNumber();
 		this.status = requirement.getStatus();	
-		AuditableMixin audit = ((AuditableMixin) requirement);	
-		this.createdOn = audit.getCreatedOn();
-		this.createdBy = audit.getCreatedBy();
-		//folder is null if the requirement is located directly under the project root.
-		if(folder == null) {
-			this.folderId = NO_FOLDER;
-			this.folderName = "";
-		}
-		else {
-			this.folderId = folder.getId();
-			this.folderName = folder.getName();
-		}
+		
 	}	
 }
