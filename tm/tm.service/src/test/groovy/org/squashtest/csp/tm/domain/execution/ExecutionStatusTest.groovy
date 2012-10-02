@@ -43,8 +43,8 @@ class ExecutionStatusTest extends Specification {
 			
 		then :
 			
-			canonical == [SUCCESS, RUNNING, BLOCKED, FAILURE, READY] as Set
-			terminal == [SUCCESS, WARNING, BLOCKED, ERROR, FAILURE] as Set
+			canonical == [UNTESTABLE, SUCCESS, RUNNING, BLOCKED, FAILURE, READY] as Set
+			terminal == [UNTESTABLE, SUCCESS, WARNING, BLOCKED, ERROR, FAILURE] as Set
 			nonTerminal == [RUNNING, READY] as Set
 		
 	}
@@ -75,6 +75,7 @@ class ExecutionStatusTest extends Specification {
 		
 		where: 
 		status  	| key
+		UNTESTABLE  | "execution.execution-status.UNTESTABLE"
 		BLOCKED 	| "execution.execution-status.BLOCKED"
 		FAILURE 	| "execution.execution-status.FAILURE"
 		SUCCESS 	| "execution.execution-status.SUCCESS"
@@ -88,6 +89,7 @@ class ExecutionStatusTest extends Specification {
 		
 		given :
 			ExecutionStatusReport report = new ExecutionStatusReport()
+			report.untestable = 0
 			report.success = 3
 			report.bloqued = 1
 			report.failure = 2
@@ -107,6 +109,7 @@ class ExecutionStatusTest extends Specification {
 		
 		given :
 			ExecutionStatusReport report = new ExecutionStatusReport()
+			report.untestable = 0
 			report.success = 3
 			report.bloqued = 0
 			report.failure = 2
@@ -126,6 +129,7 @@ class ExecutionStatusTest extends Specification {
 		
 		given :
 			ExecutionStatusReport report = new ExecutionStatusReport()
+			report.untestable = 0
 			report.success = 3
 			report.bloqued = 0
 			report.failure = 2
@@ -145,6 +149,7 @@ class ExecutionStatusTest extends Specification {
 		
 		given :
 			ExecutionStatusReport report = new ExecutionStatusReport()
+			report.untestable = 0
 			report.success = 3
 			report.bloqued = 0
 			report.failure = 0
@@ -164,6 +169,7 @@ class ExecutionStatusTest extends Specification {
 		
 		given :
 			ExecutionStatusReport report = new ExecutionStatusReport()
+			report.untestable = 0
 			report.success = 3
 			report.bloqued = 0
 			report.failure = 0
@@ -183,6 +189,7 @@ class ExecutionStatusTest extends Specification {
 		
 		given :
 			ExecutionStatusReport report = new ExecutionStatusReport()
+			report.untestable = 0
 			report.success = 0
 			report.bloqued = 0
 			report.failure = 0

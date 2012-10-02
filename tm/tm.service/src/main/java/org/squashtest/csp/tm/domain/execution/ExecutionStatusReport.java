@@ -23,6 +23,7 @@ package org.squashtest.csp.tm.domain.execution;
 /* a good old bean used as a dto */
 public class ExecutionStatusReport {
 
+	private int untestable=0;
 	private int bloqued=0;
 	private int failure=0;
 	private int success=0;
@@ -31,6 +32,14 @@ public class ExecutionStatusReport {
 	private int warning=0;
 	private int error=0;
 
+	public int getUntestable() {
+		return untestable;
+	}
+
+	public void setUntestable(int untestable) {
+		this.untestable = untestable;
+	}
+	
 	public int getBloqued() {
 		return bloqued;
 	}
@@ -90,6 +99,7 @@ public class ExecutionStatusReport {
 
 	public boolean areAllSuccess() {
 		if (
+			(! hasUntestable())			&&
 			(! hasAggregatedBlocked())  && 
 			(! hasFailure()) 			&&	
 		    (! hasRunning())			&&
@@ -98,6 +108,10 @@ public class ExecutionStatusReport {
 			return true;
 		}
 		return false;
+	}
+	
+	public boolean hasUntestable(){
+		return untestable > 0;
 	}
 	
 	public boolean hasBlocked(){
@@ -140,8 +154,9 @@ public class ExecutionStatusReport {
 
 	}
 
-	public ExecutionStatusReport(int bloqued, int failure, int success, int running, int ready) {
+	public ExecutionStatusReport(int untestable, int bloqued, int failure, int success, int running, int ready) {
 		super();
+		this.untestable = untestable;
 		this.bloqued = bloqued;
 		this.failure = failure;
 		this.success = success;
@@ -149,9 +164,10 @@ public class ExecutionStatusReport {
 		this.ready = ready;
 	}
 
-	public ExecutionStatusReport(int bloqued, int failure, int success,
+	public ExecutionStatusReport(int untestable, int bloqued, int failure, int success,
 			int running, int ready, int warning, int error) {
 		super();
+		this.untestable = untestable;
 		this.bloqued = bloqued;
 		this.failure = failure;
 		this.success = success;
@@ -160,8 +176,5 @@ public class ExecutionStatusReport {
 		this.warning = warning;
 		this.error = error;
 	}
-
-	
-	
 
 }

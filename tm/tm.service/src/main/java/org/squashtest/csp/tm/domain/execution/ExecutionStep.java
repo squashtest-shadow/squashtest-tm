@@ -69,6 +69,7 @@ public class ExecutionStep implements AttachmentHolder, IssueDetector, TestStepV
 	
 	static {
 		Set<ExecutionStatus> set = new HashSet<ExecutionStatus>();
+		set.add(ExecutionStatus.UNTESTABLE);
 		set.add(ExecutionStatus.SUCCESS);
 		set.add(ExecutionStatus.BLOCKED);
 		set.add(ExecutionStatus.FAILURE);

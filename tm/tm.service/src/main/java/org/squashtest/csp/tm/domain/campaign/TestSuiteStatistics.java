@@ -32,6 +32,7 @@ public class TestSuiteStatistics {
 	private BigDecimal progression;
 	private BigDecimal nbSuccess;
 	private BigDecimal nbFailure;
+	private BigDecimal nbUntestable;
 	private BigDecimal nbBloqued;
 	private BigDecimal nbReady;
 	private BigDecimal nbRunning;
@@ -70,6 +71,14 @@ public class TestSuiteStatistics {
 		this.nbFailure = new BigDecimal(nbFailure);
 	}
 
+	public BigDecimal getNbUntestable() {
+		return nbUntestable;
+	}
+
+	public void setNbUntestable(BigDecimal nbUntestable) {
+		this.nbUntestable = nbUntestable;
+	}
+	
 	public int getNbBloqued() {
 		return nbBloqued.intValue();
 	}
@@ -114,9 +123,10 @@ public class TestSuiteStatistics {
 
 	}
 
-	public TestSuiteStatistics(long nbTestCases, int nbBloqued, int nbFailure, int nbSuccess, int nbRunning, int nbReady) {
+	public TestSuiteStatistics(long nbTestCases, int nbUntestable, int nbBloqued, int nbFailure, int nbSuccess, int nbRunning, int nbReady) {
 		super();
 		this.nbTestCases = new BigDecimal(nbTestCases);
+		this.nbUntestable = new BigDecimal(nbUntestable);
 		this.nbBloqued = new BigDecimal(nbBloqued);
 		this.nbFailure = new BigDecimal(nbFailure);
 		this.nbSuccess = new BigDecimal(nbSuccess);
@@ -133,9 +143,9 @@ public class TestSuiteStatistics {
 	}
 
 	private void findStatus() {
-		if ((nbBloqued.add(nbFailure).add(nbSuccess).add(nbRunning)).intValue() == 0) {
+		if ((nbUntestable.add(nbBloqued).add(nbFailure).add(nbSuccess).add(nbRunning)).intValue() == 0) {
 			status = ExecutionStatus.READY;
-		} else if ((nbBloqued.add(nbFailure).add(nbSuccess)).equals(nbTestCases)) {
+		} else if ((nbUntestable.add(nbBloqued).add(nbFailure).add(nbSuccess)).equals(nbTestCases)) {
 			status = ExecutionStatus.SUCCESS;
 		} else {
 			status = ExecutionStatus.RUNNING;
@@ -144,7 +154,7 @@ public class TestSuiteStatistics {
 
 	private void findProgression() {
 		if (!nbTestCases.equals(BigDecimal.ZERO)) {
-			progression = (nbBloqued.add(nbFailure).add(nbSuccess)).divide(nbTestCases, 2, RoundingMode.HALF_UP)
+			progression = (nbUntestable.add(nbBloqued).add(nbFailure).add(nbSuccess)).divide(nbTestCases, 2, RoundingMode.HALF_UP)
 					.multiply(new BigDecimal(100));
 		} else {
 			progression = BigDecimal.ZERO;
@@ -156,7 +166,6 @@ public class TestSuiteStatistics {
 	// }
 
 	private void findDone() {
-		nbDone = nbBloqued.add(nbFailure).add(nbSuccess);
+		nbDone = nbUntestable.add(nbBloqued).add(nbFailure).add(nbSuccess);
 	}
-
 }

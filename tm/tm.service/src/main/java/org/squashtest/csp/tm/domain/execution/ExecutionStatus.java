@@ -98,6 +98,24 @@ import org.squashtest.tm.core.foundation.i18n.Internationalizable;
  */
 public enum ExecutionStatus implements Internationalizable {
 	
+	
+	UNTESTABLE() {
+		@Override
+		protected ExecutionStatus resolveStatus(ExecutionStatus formerExecutionStatus, ExecutionStatus formerStepStatus) {
+			return ExecutionStatus.UNTESTABLE;
+		}
+		
+		@Override
+		public boolean isCanonical() {
+			return true;
+		}
+		
+		@Override
+		public ExecutionStatus getCanonicalStatus() {
+			return UNTESTABLE;
+		}
+	},
+	
 	BLOCKED() {
 		@Override
 		protected ExecutionStatus resolveStatus(ExecutionStatus formerExecutionStatus, ExecutionStatus formerStepStatus) {
@@ -282,6 +300,7 @@ public enum ExecutionStatus implements Internationalizable {
 		set.add(SUCCESS);
 		set.add(RUNNING);
 		set.add(READY);	
+		set.add(UNTESTABLE);
 		
 		CANONICAL_STATUSES = Collections.unmodifiableSet(set);
 		
@@ -291,6 +310,7 @@ public enum ExecutionStatus implements Internationalizable {
 		terms.add(SUCCESS);
 		terms.add(WARNING);
 		terms.add(ERROR);
+		terms.add(UNTESTABLE);
 		
 		TERMINAL_STATUSES = Collections.unmodifiableSet(terms);	
 		
@@ -428,7 +448,10 @@ public enum ExecutionStatus implements Internationalizable {
 
 		ExecutionStatus newStatus = ExecutionStatus.READY;
 
-		if (report.hasBlocked()) {
+		if(report.hasUntestable()) {
+			newStatus = ExecutionStatus.UNTESTABLE;
+		}
+		else if (report.hasBlocked()) {
 			newStatus = ExecutionStatus.BLOCKED;
 		} 
 		else if (report.hasError()){

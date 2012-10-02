@@ -45,6 +45,7 @@
 <%@ taglib prefix="authz" tagdir="/WEB-INF/tags/authz" %>
 
 
+<f:message var="statusUntestable" key="execution.execution-status.UNTESTABLE" />
 <f:message var="statusBlocked" key="execution.execution-status.BLOCKED" />
 <f:message var="statusFailure" key="execution.execution-status.FAILURE" />
 <f:message var="statusSuccess" key="execution.execution-status.SUCCESS" />
@@ -314,6 +315,7 @@
 	
 	function convertExecutionStatus(dataTable){
 		var factory = new squashtm.StatusFactory({
+			untestable : "${statusUntestable}",
 			blocked : "${statusBlocked}",
 			failure : "${statusFailure}",
 			success : "${statusSuccess}",

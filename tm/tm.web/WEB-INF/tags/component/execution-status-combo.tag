@@ -26,6 +26,7 @@
 <%@ taglib prefix="f" uri="http://java.sun.com/jsp/jstl/fmt" %>
 
 <select id="${ id }" name="${ name }" class="execution-status-combo-class">
+	<option value="UNTESTABLE" class="executions-status-bloqued-icon"><f:message key="execution.execution-status.UNTESTABLE" /></option>
 	<option value="BLOCKED" class="executions-status-bloqued-icon"><f:message key="execution.execution-status.BLOCKED" /></option>
 	<option value="FAILURE" class="executions-status-failure-icon"><f:message key="execution.execution-status.FAILURE" /></option>
 	<option value="SUCCESS" class="executions-status-success-icon"><f:message key="execution.execution-status.SUCCESS" /></option>
