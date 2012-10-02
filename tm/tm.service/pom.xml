@@ -13,12 +13,6 @@
 	<description>Squash TM services module - Provides Test management related internal services</description>
 	<packaging>bundle</packaging>
 	
-	<properties>
-		<bundle.name>${project.artifactId}</bundle.name>
-		<bundle.symbolicName>${project.artifactId}</bundle.symbolicName>
-		<bundle.namespace>tm.service</bundle.namespace>
-	</properties>
-
 	<dependencies>
 		<!-- ====== DEPENDENCY POMS ====== -->
 		<dependency>
@@ -216,21 +210,6 @@
 					<instructions>
 						<_include>bnd.bnd</_include>
 						<Export-Package>!*internal*,org.squashtest.csp.tm.*</Export-Package>
-						<Import-Package>
-							com.mysql.jdbc;resolution:=optional,
-							javassist.util.proxy,
-							javax.transaction,
-							org.aopalliance.aop,
-							org.apache.commons.dbcp,
-							org.h2;resolution:=optional,
-							org.hibernate.dialect,
-							org.hibernate.proxy,
-							org.hibernate.validator,
-							org.springframework.aop,
-							org.springframework.aop.framework,
-							!org.squashtest.csp.tm*,
-							*
-						</Import-Package>
 					</instructions>
 				</configuration>
 			</plugin>

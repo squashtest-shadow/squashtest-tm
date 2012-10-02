@@ -317,27 +317,7 @@
         </executions>
         <configuration>
           <instructions>
-            <Bundle-SymbolicName>${bundle.symbolicName}</Bundle-SymbolicName>
-            <Bundle-Version>${project.version}</Bundle-Version>
-            <Export-Package>
-              !${bundle.namespace}.internal.*,
-              ${bundle.namespace}.*;version="${project.version}"
-			</Export-Package>
-            <Private-Package>${bundle.namespace}.internal.*</Private-Package>
-            <Include-Resource>
-              src/main/webapp,
-              src/main/resources
-            </Include-Resource>
-            <Bundle-ClassPath>.,WEB-INF/classes,WEB-INF/reports</Bundle-ClassPath>
-            <Fragment-Host>org.squashtest.tm.core.web</Fragment-Host>
-						<!-- Runtime classes defined in config files such as web.xml and spring 
-							should be manually imported below -->
-            <Import-Package>
-				<!-- some dependency needs the commons.lang version 2.5.0, however it is 
-					already used and exported as 2.4 in other bundles -->
-				org.squashtest.csp.core.web.utils;version="${project.version}",
-				*
-            </Import-Package>
+          	<_include>bnd.bnd</_include>
           </instructions>
           <supportedProjectTypes>
             <supportedProjectType>jar</supportedProjectType>
