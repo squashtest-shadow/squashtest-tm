@@ -56,7 +56,7 @@
 		</dependency>
 		<dependency>
 			<groupId>org.squashtest.tm</groupId>
-			<artifactId>org.squashtest.csp.tm.service</artifactId>
+			<artifactId>tm.service</artifactId>
 			<version>${project.version}</version>
 		</dependency>
 		<!--======= /SQUASHTEST MODULES ======== -->

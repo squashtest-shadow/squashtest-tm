@@ -356,19 +356,19 @@
 		<!-- Squashtest tm modules -->
 		<dependency>
 			<groupId>${project.groupId}</groupId>
-			<artifactId>org.squashtest.csp.tm.web</artifactId>
+			<artifactId>tm.web</artifactId>
 			<version>${project.version}</version>
 			<type>war</type>
 		</dependency>
 		<dependency>
 			<groupId>${project.groupId}</groupId>
-			<artifactId>org.squashtest.csp.tm.web</artifactId>
+			<artifactId>tm.web</artifactId>
 			<version>${project.version}</version>
 			<type>pom</type>
 		</dependency>
 		<dependency>
 			<groupId>${project.groupId}</groupId>
-			<artifactId>org.squashtest.csp.tm.service</artifactId>
+			<artifactId>tm.service</artifactId>
 			<version>${project.version}</version>
 		</dependency>
 		
