@@ -53,7 +53,7 @@ class RequirementLibraryNavigationServiceIT extends DbunitServiceSpecification {
 		listReq.add(250l)
 
 		when :
-		def reqs = navService.findRequirementsToExportFromFolder (listReq)
+		def reqs = navService.findRequirementsToExportFromNodes (listReq)
 		println reqs.toString()
 
 		then :
