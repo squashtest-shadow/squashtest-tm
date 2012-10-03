@@ -55,19 +55,19 @@
 	</field>
 	<field name="id" class="java.lang.Long">
 		<fieldDescription><![CDATA[id]]></fieldDescription>
-	</field>	
-		<field name="currentVersion" class="java.lang.Integer">
+	</field>
+	<field name="currentVersion" class="java.lang.Integer">
 		<fieldDescription><![CDATA[currentVersion]]></fieldDescription>
 	</field>
 	<field name="reference" class="java.lang.String">
 		<fieldDescription><![CDATA[reference]]></fieldDescription>
-	</field>	
+	</field>
 	<field name="name" class="java.lang.String">
 		<fieldDescription><![CDATA[name]]></fieldDescription>
 	</field>
 	<field name="description" class="java.lang.String">
 		<fieldDescription><![CDATA[description]]></fieldDescription>
-	</field>		
+	</field>
 	<field name="criticality" class="java.lang.Enum">
 		<fieldDescription><![CDATA[criticality]]></fieldDescription>
 	</field>
@@ -98,28 +98,28 @@
 					<font isBold="true"/>
 				</textElement>
 				<textFieldExpression class="java.lang.String"><![CDATA[$R{report.requirementexport.id}]]></textFieldExpression>
-			</textField>			
+			</textField>
 			<textField>
 				<reportElement x="340" y="0" width="170" height="20"/>
 				<textElement>
 					<font isBold="true"/>
 				</textElement>
 				<textFieldExpression class="java.lang.String"><![CDATA[$R{report.requirementexport.currentVersion}]]></textFieldExpression>
-			</textField>	
+			</textField>
 			<textField>
 				<reportElement x="510" y="0" width="170" height="20"/>
 				<textElement>
 					<font isBold="true"/>
 				</textElement>
 				<textFieldExpression class="java.lang.String"><![CDATA[$R{report.requirementexport.reference}]]></textFieldExpression>
-			</textField>	
+			</textField>
 			<textField>
 				<reportElement x="680" y="0" width="170" height="20"/>
 				<textElement>
 					<font isBold="true"/>
 				</textElement>
 				<textFieldExpression class="java.lang.String"><![CDATA[$R{label.Label}]]></textFieldExpression>
-			</textField>			
+			</textField>
 			<textField pattern="">
 				<reportElement x="850" y="0" width="170" height="20">
 					<property name="net.sf.jasperreports.print.keep.full.text" value="true"/>
@@ -229,7 +229,7 @@ $R{requirement.criticality.UNKNOWN}]]></textFieldExpression>
 ($F{category}.toString() == "TEST_REQUIREMENT") ? $R{requirement.category.TEST_REQUIREMENT} :
 ($F{category}.toString() == "UNDEFINED") ? $R{requirement.category.UNDEFINED} :
 $R{requirement.category.UNKNOWN}]]></textFieldExpression>
-			</textField>	
+			</textField>
 			<textField>
 				<reportElement x="1360" y="0" width="170" height="20"/>
 				<textElement/>

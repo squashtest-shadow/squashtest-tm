@@ -23,8 +23,6 @@ package org.squashtest.csp.tm.domain.library;
 import java.util.Date;
 
 import org.squashtest.csp.tm.domain.audit.AuditableMixin;
-import org.squashtest.csp.tm.domain.library.Folder;
-import org.squashtest.csp.tm.domain.library.LibraryNode;
 /**
  * Common DataSource for jasper Node Export
  * @author mpagnon

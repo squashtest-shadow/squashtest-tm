@@ -21,8 +21,8 @@
         along with this software.  If not, see <http://www.gnu.org/licenses/>.
 
 -->
-<jasperReport xmlns="http://jasperreports.sourceforge.net/jasperreports" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://jasperreports.sourceforge.net/jasperreports http://jasperreports.sourceforge.net/xsd/jasperreport.xsd" name="test-case-export" pageWidth="1190" pageHeight="595" orientation="Landscape" columnWidth="1190" leftMargin="0" rightMargin="0" topMargin="0" bottomMargin="0" resourceBundle="/WEB-INF/messages/tm/messages" whenResourceMissingType="Key">
-	<property name="ireport.zoom" value="0.683013455365071"/>
+<jasperReport xmlns="http://jasperreports.sourceforge.net/jasperreports" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://jasperreports.sourceforge.net/jasperreports http://jasperreports.sourceforge.net/xsd/jasperreport.xsd" name="test-case-export" pageWidth="2000" pageHeight="595" orientation="Landscape" columnWidth="2000" leftMargin="0" rightMargin="0" topMargin="0" bottomMargin="0" resourceBundle="/WEB-INF/messages/tm/messages" whenResourceMissingType="Key">
+	<property name="ireport.zoom" value="0.6209213230591557"/>
 	<property name="ireport.x" value="0"/>
 	<property name="ireport.y" value="0"/>
 	<property name="net.sf.jasperreports.text.truncate.at.char" value="Boolean.FALSE"/>
@@ -77,8 +77,17 @@
 	<field name="prerequisite" class="java.lang.String">
 		<fieldDescription><![CDATA[prerequisite]]></fieldDescription>
 	</field>
+	<field name="firstAction" class="java.lang.String">
+		<fieldDescription><![CDATA[firstAction]]></fieldDescription>
+	</field>
+	<field name="firstExpectedResult" class="java.lang.String">
+		<fieldDescription><![CDATA[firstExpectedResult]]></fieldDescription>
+	</field>
+	<field name="steps" class="java.util.List">
+		<fieldDescription><![CDATA[steps]]></fieldDescription>
+	</field>
 	<title>
-		<band height="20">
+		<band height="20" splitType="Prevent">
 			<textField isStretchWithOverflow="true" isBlankWhenNull="true">
 				<reportElement mode="Opaque" x="0" y="0" width="170" height="20" forecolor="#FFFFFF" backcolor="#7DAAD6"/>
 				<textElement textAlignment="Center" verticalAlignment="Middle">
@@ -146,10 +155,24 @@
 				</textElement>
 				<textFieldExpression class="java.lang.String"><![CDATA["PRE_REQUISITE"]]></textFieldExpression>
 			</textField>
+			<textField isStretchWithOverflow="true">
+				<reportElement mode="Opaque" x="1700" y="0" width="170" height="20" forecolor="#FFFFFF" backcolor="#7DAAD6"/>
+				<textElement textAlignment="Center" verticalAlignment="Middle">
+					<font isBold="true"/>
+				</textElement>
+				<textFieldExpression class="java.lang.String"><![CDATA["EXPECTED_RESULT"]]></textFieldExpression>
+			</textField>
+			<textField isStretchWithOverflow="true">
+				<reportElement mode="Opaque" x="1530" y="0" width="170" height="20" forecolor="#FFFFFF" backcolor="#7DAAD6"/>
+				<textElement textAlignment="Center" verticalAlignment="Middle">
+					<font isBold="true"/>
+				</textElement>
+				<textFieldExpression class="java.lang.String"><![CDATA["ACTION"]]></textFieldExpression>
+			</textField>
 		</band>
 	</title>
 	<detail>
-		<band height="20" splitType="Stretch">
+		<band height="20" splitType="Prevent">
 			<textField isStretchWithOverflow="true">
 				<reportElement mode="Transparent" x="0" y="0" width="170" height="20">
 					<property name="net.sf.jasperreports.print.keep.full.text" value="true"/>
@@ -213,6 +236,33 @@
 				<textElement verticalAlignment="Top" markup="none"/>
 				<textFieldExpression class="java.lang.String"><![CDATA[$F{createdBy}]]></textFieldExpression>
 			</textField>
+			<textField isStretchWithOverflow="true">
+				<reportElement mode="Transparent" x="1530" y="0" width="170" height="20">
+					<property name="net.sf.jasperreports.print.keep.full.text" value="true"/>
+				</reportElement>
+				<textElement verticalAlignment="Top" markup="none"/>
+				<textFieldExpression class="java.lang.String"><![CDATA[$F{firstAction}]]></textFieldExpression>
+			</textField>
+			<textField isStretchWithOverflow="true">
+				<reportElement mode="Transparent" x="1700" y="0" width="170" height="20">
+					<property name="net.sf.jasperreports.print.keep.full.text" value="true"/>
+				</reportElement>
+				<textElement verticalAlignment="Top" markup="none"/>
+				<textFieldExpression class="java.lang.String"><![CDATA[$F{firstExpectedResult}]]></textFieldExpression>
+			</textField>
+		</band>
+		<band height="20" splitType="Prevent">
+			<subreport>
+				<reportElement stretchType="RelativeToTallestObject" x="0" y="0" width="1190" height="20" isRemoveLineWhenBlank="true"/>
+				<subreportParameter name="REPORT_RESOURCE_BUNDLE">
+					<subreportParameterExpression><![CDATA[$P{REPORT_RESOURCE_BUNDLE}]]></subreportParameterExpression>
+				</subreportParameter>
+				<subreportParameter name="id">
+					<subreportParameterExpression><![CDATA[$F{id}]]></subreportParameterExpression>
+				</subreportParameter>
+				<dataSourceExpression><![CDATA[new net.sf.jasperreports.engine.data.JRBeanCollectionDataSource($F{steps})]]></dataSourceExpression>
+				<subreportExpression class="java.lang.String"><![CDATA["test-case-export-steps.jasper"]]></subreportExpression>
+			</subreport>
 		</band>
 	</detail>
 </jasperReport>

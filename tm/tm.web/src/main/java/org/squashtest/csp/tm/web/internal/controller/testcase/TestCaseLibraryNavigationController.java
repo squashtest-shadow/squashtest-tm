@@ -47,6 +47,7 @@ import org.squashtest.csp.core.web.utils.HTMLCleanupUtils;
 import org.squashtest.csp.tm.domain.library.ExportData;
 import org.squashtest.csp.tm.domain.requirement.ExportRequirementData;
 import org.squashtest.csp.tm.domain.testcase.ExportTestCaseData;
+import org.squashtest.csp.tm.domain.testcase.ExportTestStepData;
 import org.squashtest.csp.tm.domain.testcase.TestCase;
 import org.squashtest.csp.tm.domain.testcase.TestCaseFolder;
 import org.squashtest.csp.tm.domain.testcase.TestCaseLibrary;
@@ -188,9 +189,31 @@ public class TestCaseLibraryNavigationController extends
 
 	private void escapePrerequisite(List<ExportTestCaseData> dataSource) {
 		for (ExportTestCaseData data : dataSource) {
+			//escape prerequisite
 			String htmlPrerequisite = data.getPrerequisite();
 			String prerequisite = HTMLCleanupUtils.htmlToText(htmlPrerequisite);
 			data.setPrerequisite(prerequisite);
+			
+			//escape first step
+			String htmlFirstAction = data.getFirstAction();
+			String firstAction = HTMLCleanupUtils.htmlToText(htmlFirstAction);
+			data.setFirstAction(firstAction);
+			
+			String htmlFirstResult = data.getFirstExpectedResult();
+			String firstResult = HTMLCleanupUtils.htmlToText(htmlFirstResult);
+			data.setFirstExpectedResult(firstResult);
+			
+			//escape other steps
+			for(ExportTestStepData step : data.getSteps()){
+				String htmlAction = step.getAction();
+				String action = HTMLCleanupUtils.htmlToText(htmlAction);
+				step.setAction(action);
+				
+				String htmlExpectedResult = step.getExpectedResult();
+				String expectedResult = HTMLCleanupUtils.htmlToText(htmlExpectedResult);
+				step.setExpectedResult(expectedResult);
+			}
+			
 		}
 	}
 
