@@ -294,6 +294,7 @@
 								</textElement>
 								<textFieldExpression class="java.lang.String"><![CDATA[($F{executionStatus}.toString() == "READY") ? $R{report.executionprogression.main.ready.label} :
 ($F{executionStatus}.toString() == "RUNNING") ? $R{report.executionprogression.main.running.label} :
+($F{executionStatus}.toString() == "UNTESTABLE") ? $R{report.executionprogression.main.untestable.label} :
 ($F{executionStatus}.toString() == "BLOCKED") ? $R{report.executionprogression.main.bloqued.label} :
 ($F{executionStatus}.toString() == "FAILURE") ? $R{report.executionprogression.main.failure.label} :
 $R{report.executionprogression.main.success.label}]]></textFieldExpression>

@@ -31,10 +31,11 @@ class TestSuiteStatisticsTest extends Specification {
 	def "should return the good values and status RUNNING"(){
 		
 		when :
-			def stats = new TestSuiteStatistics(10L, 2, 1, 4, 2, 1)
+			def stats = new TestSuiteStatistics(10L, 0, 2, 1, 4, 2, 1)
 			
 		then :
 			stats.nbTestCases == 10L
+			stats.nbUntestable == 0
 			stats.nbBloqued == 2
 			stats.nbFailure == 1
 			stats.nbSuccess == 4
@@ -48,10 +49,11 @@ class TestSuiteStatisticsTest extends Specification {
 	def "should return the good values and status READY"(){
 		
 		when :
-			def stats = new TestSuiteStatistics(10L, 0, 0, 0, 0, 10)
+			def stats = new TestSuiteStatistics(10L, 0, 0, 0, 0, 0, 10)
 			
 		then :
 			stats.nbTestCases == 10L
+			stats.nbUntestable == 0
 			stats.nbBloqued == 0
 			stats.nbFailure == 0
 			stats.nbSuccess == 0
@@ -65,10 +67,11 @@ class TestSuiteStatisticsTest extends Specification {
 	def "should return the good values and status SUCCESS"(){
 		
 		when :
-			def stats = new TestSuiteStatistics(10L, 3, 2, 5, 0, 0)
+			def stats = new TestSuiteStatistics(10L, 0, 3, 2, 5, 0, 0)
 			
 		then :
 			stats.nbTestCases == 10L
+			stats.nbUntestable == 0
 			stats.nbBloqued == 3
 			stats.nbFailure == 2
 			stats.nbSuccess == 5

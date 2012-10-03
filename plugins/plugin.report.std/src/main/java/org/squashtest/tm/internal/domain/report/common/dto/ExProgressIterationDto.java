@@ -45,7 +45,7 @@ public class ExProgressIterationDto {
 	private Integer iCountStatusBloqued;
 	private Integer iCountStatusFailure;
 	private Integer iCountStatusSuccess;
-	
+	private Integer iCountStatusUntestable;	
 	
 	public ExProgressIterationDto(){
 		super();
@@ -132,6 +132,14 @@ public class ExProgressIterationDto {
 	public void setiCountStatusSuccess(Integer iCountStatusSuccess) {
 		this.iCountStatusSuccess = iCountStatusSuccess;
 	}
+
+	public Integer getiCountStatusUntestable() {
+		return iCountStatusUntestable;
+	}
+
+	public void setiCountStatusUntestable(Integer iCountStatusUntestable) {
+		this.iCountStatusUntestable = iCountStatusUntestable;
+	}
 	
 	public void addTestPlanDto(ExProgressTestPlanDto testPlanDto){
 		testPlans.add(testPlanDto);
@@ -144,7 +152,8 @@ public class ExProgressIterationDto {
 				+ iCountStatusRunning
 				+ iCountStatusBloqued
 				+ iCountStatusFailure
-				+ iCountStatusSuccess;
+				+ iCountStatusSuccess
+				+ iCountStatusUntestable;
 	}
 	
 
@@ -199,8 +208,19 @@ public class ExProgressIterationDto {
 		}
 	}
 	
+	public float getfPercentageStatusUntestable(){
+		Integer total = getNumberTestCase();
+		if (total==0) {
+			return 0;
+		}
+		else{
+			return ((float)getiCountStatusUntestable()/(float)total); 
+		}
+	}
+	
 	public float getfPercentageProgress(){
 		return 	  getfPercentageStatusBloqued()
+				+ getfPercentageStatusUntestable()
 				+ getfPercentageStatusFailure()
 				+ getfPercentageStatusSuccess();
 	}
@@ -217,13 +237,14 @@ public class ExProgressIterationDto {
 	
 	public ExProgressIterationDto fillStatusInfos(Iteration iteration){
 		
-		int ready,running, bloqued, failure, success;
+		int ready,running, bloqued, failure, success,untestable;
 		
 		ready=0;
 		running=0;
 		bloqued=0;
 		failure=0;
 		success=0;
+		untestable=0;
 		
 		for (IterationTestPlanItem testPlan : iteration.getTestPlans()){
 			switch(testPlan.getExecutionStatus()){
@@ -232,6 +253,7 @@ public class ExProgressIterationDto {
 			case BLOCKED : 	bloqued++;	break;
 			case FAILURE : 	failure++;	break;
 			case SUCCESS : 	success++; break;
+			case UNTESTABLE: untestable++; break;
 			}
 		}
 		
@@ -240,10 +262,9 @@ public class ExProgressIterationDto {
 		setiCountStatusReady(ready);
 		setiCountStatusRunning(running);
 		setiCountStatusSuccess(success);
+		setiCountStatusUntestable(untestable);
 		
 		return this;
-	}
-
-	
+	}	
 	
 }
