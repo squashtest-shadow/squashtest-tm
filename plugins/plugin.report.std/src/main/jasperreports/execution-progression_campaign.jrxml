@@ -238,7 +238,7 @@
 							<textField>
 								<reportElement x="0" y="0" width="113" height="20"/>
 								<textElement verticalAlignment="Middle">
-									<font fontName="Arial" size="10" isBold="true"/>
+									<font fontName="Arial" size="9" isBold="true"/>
 								</textElement>
 								<textFieldExpression class="java.lang.String"><![CDATA["Cpg : "+$P{campaign_name}]]></textFieldExpression>
 							</textField>
@@ -247,99 +247,99 @@
 							<textField>
 								<reportElement x="14" y="0" width="99" height="20"/>
 								<textElement verticalAlignment="Middle">
-									<font fontName="Arial" size="10" isBold="true"/>
+									<font fontName="Arial" size="9" isBold="true"/>
 								</textElement>
 								<textFieldExpression class="java.lang.String"><![CDATA["#"+$V{REPORT_COUNT}+" - "+$F{name}]]></textFieldExpression>
 							</textField>
 						</jr:detailCell>
 					</jr:column>
-					<jr:column width="65">
+					<jr:column width="60">
 						<jr:columnHeader style="table_CH" height="20" rowSpan="1">
 							<textField pattern="">
-								<reportElement x="0" y="0" width="65" height="20"/>
+								<reportElement x="0" y="0" width="60" height="20"/>
 								<textElement textAlignment="Center" verticalAlignment="Middle">
-									<font fontName="Arial" size="10" isBold="true"/>
+									<font fontName="Arial" size="9" isBold="true"/>
 								</textElement>
 								<textFieldExpression class="java.lang.String"><![CDATA[($P{campaign_schedstart}==null) ? $R{report.executionprogression.date.nodata} : new java.text.SimpleDateFormat($R{report.executionprogression.date.format}).format($P{campaign_schedstart})]]></textFieldExpression>
 							</textField>
 						</jr:columnHeader>
 						<jr:detailCell style="table_TD" height="20" rowSpan="1">
 							<textField pattern="">
-								<reportElement style="styleIterSchedStart" x="0" y="0" width="65" height="20"/>
+								<reportElement style="styleIterSchedStart" x="0" y="0" width="60" height="20"/>
 								<textElement textAlignment="Center" verticalAlignment="Middle">
-									<font fontName="Arial" size="10"/>
+									<font fontName="Arial" size="9"/>
 								</textElement>
 								<textFieldExpression class="java.lang.String"><![CDATA[($F{scheduledStartDate}==null) ? $R{report.executionprogression.date.nodata} : new java.text.SimpleDateFormat($R{report.executionprogression.date.format}).format($F{scheduledStartDate})]]></textFieldExpression>
 							</textField>
 						</jr:detailCell>
 					</jr:column>
-					<jr:column width="65">
+					<jr:column width="60">
 						<jr:columnHeader style="table_CH" height="20" rowSpan="1">
 							<textField pattern="">
-								<reportElement x="0" y="0" width="65" height="20"/>
+								<reportElement x="0" y="0" width="60" height="20"/>
 								<textElement textAlignment="Center" verticalAlignment="Middle">
-									<font fontName="Arial" size="10" isBold="true"/>
+									<font fontName="Arial" size="9" isBold="true"/>
 								</textElement>
 								<textFieldExpression class="java.lang.String"><![CDATA[($P{campaign_schedend}==null) ? $R{report.executionprogression.date.nodata} : new java.text.SimpleDateFormat($R{report.executionprogression.date.format}).format($P{campaign_schedend})]]></textFieldExpression>
 							</textField>
 						</jr:columnHeader>
 						<jr:detailCell style="table_TD" height="20" rowSpan="1">
 							<textField pattern="">
-								<reportElement style="styleIterSchedEnd" x="0" y="0" width="65" height="20"/>
+								<reportElement style="styleIterSchedEnd" x="0" y="0" width="60" height="20"/>
 								<textElement textAlignment="Center" verticalAlignment="Middle">
-									<font fontName="Arial" size="10"/>
+									<font fontName="Arial" size="9"/>
 								</textElement>
 								<textFieldExpression class="java.lang.String"><![CDATA[($F{scheduledEndDate}==null) ? $R{report.executionprogression.date.nodata} : new java.text.SimpleDateFormat($R{report.executionprogression.date.format}).format($F{scheduledEndDate})]]></textFieldExpression>
 							</textField>
 						</jr:detailCell>
 					</jr:column>
-					<jr:column width="65">
+					<jr:column width="60">
 						<jr:columnHeader style="table_CH" height="20" rowSpan="1">
 							<textField pattern="" isBlankWhenNull="true">
-								<reportElement x="0" y="0" width="65" height="20"/>
+								<reportElement x="0" y="0" width="60" height="20"/>
 								<textElement textAlignment="Center" verticalAlignment="Middle">
-									<font fontName="Arial" size="10" isBold="true"/>
+									<font fontName="Arial" size="9" isBold="true"/>
 								</textElement>
 								<textFieldExpression class="java.lang.String"><![CDATA[($P{campaign_actstart}==null) ? $R{report.executionprogression.date.nodata} : new java.text.SimpleDateFormat($R{report.executionprogression.date.format}).format($P{campaign_actstart})]]></textFieldExpression>
 							</textField>
 						</jr:columnHeader>
 						<jr:detailCell style="table_TD" height="20" rowSpan="1">
 							<textField pattern="">
-								<reportElement style="styleIterActStart" x="0" y="0" width="65" height="20"/>
+								<reportElement style="styleIterActStart" x="0" y="0" width="60" height="20"/>
 								<textElement textAlignment="Center" verticalAlignment="Middle">
-									<font fontName="Arial" size="10"/>
+									<font fontName="Arial" size="9"/>
 								</textElement>
 								<textFieldExpression class="java.lang.String"><![CDATA[($F{actualStartDate}==null) ? $R{report.executionprogression.date.nodata} : new java.text.SimpleDateFormat($R{report.executionprogression.date.format}).format($F{actualStartDate})]]></textFieldExpression>
 							</textField>
 						</jr:detailCell>
 					</jr:column>
-					<jr:column width="65">
+					<jr:column width="60">
 						<jr:columnHeader style="table_CH" height="20" rowSpan="1">
 							<textField pattern="">
-								<reportElement x="0" y="0" width="65" height="20"/>
+								<reportElement x="0" y="0" width="60" height="20"/>
 								<textElement textAlignment="Center" verticalAlignment="Middle">
-									<font fontName="Arial" size="10" isBold="true"/>
+									<font fontName="Arial" size="9" isBold="true"/>
 								</textElement>
 								<textFieldExpression class="java.lang.String"><![CDATA[($P{campaign_actend}==null) ? $R{report.executionprogression.date.nodata} : new java.text.SimpleDateFormat($R{report.executionprogression.date.format}).format($P{campaign_actend})]]></textFieldExpression>
 							</textField>
 						</jr:columnHeader>
 						<jr:detailCell style="table_TD" height="20" rowSpan="1">
 							<textField pattern="" isBlankWhenNull="true">
-								<reportElement style="styleIterActEnd" x="0" y="0" width="65" height="20"/>
+								<reportElement style="styleIterActEnd" x="0" y="0" width="60" height="20"/>
 								<textElement textAlignment="Center" verticalAlignment="Middle">
-									<font fontName="Arial" size="10"/>
+									<font fontName="Arial" size="9"/>
 								</textElement>
 								<textFieldExpression class="java.lang.String"><![CDATA[($F{actualEndDate}==null) ? $R{report.executionprogression.date.nodata} : new java.text.SimpleDateFormat($R{report.executionprogression.date.format}).format($F{actualEndDate})]]></textFieldExpression>
 							</textField>
 						</jr:detailCell>
 					</jr:column>
-					<jr:column width="50">
+					<jr:column width="41">
 						<jr:columnHeader style="table_CH" height="20" rowSpan="1"/>
 						<jr:detailCell style="table_TD" height="20" rowSpan="1">
 							<textField>
 								<reportElement x="0" y="0" width="20" height="20"/>
 								<textElement textAlignment="Center" verticalAlignment="Middle">
-									<font fontName="Arial" size="10"/>
+									<font fontName="Arial" size="9"/>
 								</textElement>
 								<textFieldExpression class="java.lang.Integer"><![CDATA[$F{iCountStatusReady}]]></textFieldExpression>
 							</textField>
@@ -352,13 +352,13 @@
 							</textField>
 						</jr:detailCell>
 					</jr:column>
-					<jr:column width="50">
+					<jr:column width="41">
 						<jr:columnHeader style="table_CH" height="20" rowSpan="1"/>
 						<jr:detailCell style="table_TD" height="20" rowSpan="1">
 							<textField>
 								<reportElement x="0" y="0" width="20" height="20"/>
 								<textElement textAlignment="Center" verticalAlignment="Middle">
-									<font fontName="Arial" size="10"/>
+									<font fontName="Arial" size="9"/>
 								</textElement>
 								<textFieldExpression class="java.lang.Integer"><![CDATA[$F{iCountStatusRunning}]]></textFieldExpression>
 							</textField>
@@ -371,13 +371,13 @@
 							</textField>
 						</jr:detailCell>
 					</jr:column>
-					<jr:column width="50">
+					<jr:column width="45">
 						<jr:columnHeader style="table_CH" height="20" rowSpan="1"/>
 						<jr:detailCell style="table_TD" height="20" rowSpan="1">
 							<textField>
 								<reportElement x="0" y="0" width="20" height="20"/>
 								<textElement textAlignment="Center" verticalAlignment="Middle">
-									<font fontName="Arial" size="10"/>
+									<font fontName="Arial" size="9"/>
 								</textElement>
 								<textFieldExpression class="java.lang.Integer"><![CDATA[$F{iCountStatusUntestable}]]></textFieldExpression>
 							</textField>
@@ -390,13 +390,13 @@
 							</textField>
 						</jr:detailCell>
 					</jr:column>
-					<jr:column width="50">
+					<jr:column width="41">
 						<jr:columnHeader style="table_CH" height="20" rowSpan="1"/>
 						<jr:detailCell style="table_TD" height="20" rowSpan="1">
 							<textField>
 								<reportElement x="0" y="0" width="20" height="20"/>
 								<textElement textAlignment="Center" verticalAlignment="Middle">
-									<font fontName="Arial" size="10"/>
+									<font fontName="Arial" size="9"/>
 								</textElement>
 								<textFieldExpression class="java.lang.Integer"><![CDATA[$F{iCountStatusBloqued}]]></textFieldExpression>
 							</textField>
@@ -409,13 +409,13 @@
 							</textField>
 						</jr:detailCell>
 					</jr:column>
-					<jr:column width="50">
+					<jr:column width="41">
 						<jr:columnHeader style="table_CH" height="20" rowSpan="1"/>
 						<jr:detailCell style="table_TD" height="20" rowSpan="1">
 							<textField>
 								<reportElement x="0" y="0" width="20" height="20" forecolor="#FB3333"/>
 								<textElement textAlignment="Center" verticalAlignment="Middle">
-									<font fontName="Arial" size="10"/>
+									<font fontName="Arial" size="9"/>
 								</textElement>
 								<textFieldExpression class="java.lang.Integer"><![CDATA[$F{iCountStatusFailure}]]></textFieldExpression>
 							</textField>
@@ -428,13 +428,13 @@
 							</textField>
 						</jr:detailCell>
 					</jr:column>
-					<jr:column width="50">
+					<jr:column width="41">
 						<jr:columnHeader style="table_CH" height="20" rowSpan="1"/>
 						<jr:detailCell style="table_TD" height="20" rowSpan="1">
 							<textField>
 								<reportElement x="0" y="0" width="20" height="20" forecolor="#009900"/>
 								<textElement textAlignment="Center" verticalAlignment="Middle">
-									<font fontName="Arial" size="10"/>
+									<font fontName="Arial" size="9"/>
 								</textElement>
 								<textFieldExpression class="java.lang.Integer"><![CDATA[$F{iCountStatusSuccess}]]></textFieldExpression>
 							</textField>
@@ -447,21 +447,21 @@
 							</textField>
 						</jr:detailCell>
 					</jr:column>
-					<jr:column width="50">
+					<jr:column width="42">
 						<jr:columnHeader style="table_CH" height="20" rowSpan="1">
 							<textField>
-								<reportElement x="0" y="0" width="50" height="20"/>
+								<reportElement x="0" y="0" width="42" height="20"/>
 								<textElement textAlignment="Center" verticalAlignment="Middle">
-									<font fontName="Arial" size="10" isBold="true"/>
+									<font fontName="Arial" size="9" isBold="true"/>
 								</textElement>
 								<textFieldExpression class="java.lang.Integer"><![CDATA[$P{campaign_total}]]></textFieldExpression>
 							</textField>
 						</jr:columnHeader>
 						<jr:detailCell style="table_TD" height="20" rowSpan="1">
 							<textField>
-								<reportElement x="0" y="0" width="50" height="20"/>
+								<reportElement x="0" y="0" width="42" height="20"/>
 								<textElement textAlignment="Center" verticalAlignment="Middle">
-									<font fontName="Arial" size="10"/>
+									<font fontName="Arial" size="9"/>
 								</textElement>
 								<textFieldExpression class="java.lang.Integer"><![CDATA[$F{numberTestCase}]]></textFieldExpression>
 							</textField>
@@ -472,7 +472,7 @@
 							<textField>
 								<reportElement x="0" y="0" width="63" height="20"/>
 								<textElement textAlignment="Center" verticalAlignment="Middle">
-									<font fontName="Arial" size="10" isBold="true"/>
+									<font fontName="Arial" size="9" isBold="true"/>
 								</textElement>
 								<textFieldExpression class="java.lang.String"><![CDATA[($P{campaign_status}.toString()=="CAMPAIGN_RUNNING") ? $R{report.executionprogression.campaignstatus.CAMPAIGN_RUNNING} : $R{report.executionprogression.campaignstatus.CAMPAIGN_OVER}]]></textFieldExpression>
 							</textField>
@@ -481,7 +481,7 @@
 							<textField pattern="#,##0 %">
 								<reportElement x="0" y="0" width="63" height="20"/>
 								<textElement textAlignment="Center" verticalAlignment="Middle">
-									<font fontName="Arial" size="10" isBold="true"/>
+									<font fontName="Arial" size="9" isBold="true"/>
 								</textElement>
 								<textFieldExpression class="java.lang.Float"><![CDATA[($F{fPercentageProgress}==null ? 0.0f : $F{fPercentageProgress})]]></textFieldExpression>
 							</textField>
