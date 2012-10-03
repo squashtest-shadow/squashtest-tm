@@ -29,6 +29,8 @@ import org.squashtest.csp.tm.domain.library.ExportData;
 public class ExportTestCaseData extends ExportData {
 	private String prerequisite;
 	private TestCaseImportance weight;
+	private String reference;
+	
 
 	public String getPrerequisite() {
 		return prerequisite;
@@ -49,9 +51,19 @@ public class ExportTestCaseData extends ExportData {
 	public ExportTestCaseData() {
 		super();
 	}
+	
+	public String getReference() {
+		return reference;
+	}
+
+	public void setReference(String reference) {
+		this.reference = reference;
+	}
+
 
 	public ExportTestCaseData(TestCase testCase, TestCaseFolder folder) {
 		super(testCase, folder);
+		this.reference = testCase.getReference();
 		this.prerequisite = testCase.getPrerequisite();
 		this.weight = testCase.getImportance();
 	}

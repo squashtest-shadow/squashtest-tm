@@ -33,7 +33,6 @@ import org.squashtest.csp.tm.domain.library.LibraryNode;
 public abstract class ExportData {
 
 	private Long id;
-	private String reference;
 	private String folderName;
 	private String project;
 	private String name;
@@ -52,14 +51,6 @@ public abstract class ExportData {
 
 	public void setId(Long id) {
 		this.id = id;
-	}
-
-	public String getReference() {
-		return reference;
-	}
-
-	public void setReference(String reference) {
-		this.reference = reference;
 	}
 
 	public String getProject() {

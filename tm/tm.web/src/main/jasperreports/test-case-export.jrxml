@@ -21,9 +21,9 @@
         along with this software.  If not, see <http://www.gnu.org/licenses/>.
 
 -->
-<jasperReport xmlns="http://jasperreports.sourceforge.net/jasperreports" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://jasperreports.sourceforge.net/jasperreports http://jasperreports.sourceforge.net/xsd/jasperreport.xsd" name="requirement-export" pageWidth="1550" pageHeight="595" orientation="Landscape" columnWidth="1550" leftMargin="0" rightMargin="0" topMargin="0" bottomMargin="0" resourceBundle="/WEB-INF/messages/tm/messages" whenResourceMissingType="Key">
-	<property name="ireport.zoom" value="1.210000000000002"/>
-	<property name="ireport.x" value="501"/>
+<jasperReport xmlns="http://jasperreports.sourceforge.net/jasperreports" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://jasperreports.sourceforge.net/jasperreports http://jasperreports.sourceforge.net/xsd/jasperreport.xsd" name="test-case-export" pageWidth="1190" pageHeight="595" orientation="Landscape" columnWidth="1190" leftMargin="0" rightMargin="0" topMargin="0" bottomMargin="0" resourceBundle="/WEB-INF/messages/tm/messages" whenResourceMissingType="Key">
+	<property name="ireport.zoom" value="0.683013455365071"/>
+	<property name="ireport.x" value="0"/>
 	<property name="ireport.y" value="0"/>
 	<property name="net.sf.jasperreports.text.truncate.at.char" value="Boolean.FALSE"/>
 	<style name="table">
@@ -77,145 +77,141 @@
 	<field name="prerequisite" class="java.lang.String">
 		<fieldDescription><![CDATA[prerequisite]]></fieldDescription>
 	</field>
-	<pageHeader>
+	<title>
 		<band height="20">
-			<textField isBlankWhenNull="true">
-				<reportElement x="0" y="0" width="170" height="20"/>
-				<textElement>
+			<textField isStretchWithOverflow="true" isBlankWhenNull="true">
+				<reportElement mode="Opaque" x="0" y="0" width="170" height="20" forecolor="#FFFFFF" backcolor="#7DAAD6"/>
+				<textElement textAlignment="Center" verticalAlignment="Middle">
 					<font isBold="true"/>
 				</textElement>
-				<textFieldExpression class="java.lang.String"><![CDATA[$R{label.Path}]]></textFieldExpression>
+				<textFieldExpression class="java.lang.String"><![CDATA["PATH"]]></textFieldExpression>
 			</textField>
-			<textField>
-				<reportElement x="170" y="0" width="170" height="20"/>
-				<textElement>
+			<textField isStretchWithOverflow="true">
+				<reportElement mode="Opaque" x="170" y="0" width="170" height="20" forecolor="#FFFFFF" backcolor="#7DAAD6"/>
+				<textElement textAlignment="Center" verticalAlignment="Middle">
 					<font isBold="true"/>
 				</textElement>
-				<textFieldExpression class="java.lang.String"><![CDATA[$R{label.id}]]></textFieldExpression>
+				<textFieldExpression class="java.lang.String"><![CDATA["ID"]]></textFieldExpression>
 			</textField>
-			<textField>
-				<reportElement x="510" y="0" width="170" height="20"/>
-				<textElement>
+			<textField isStretchWithOverflow="true">
+				<reportElement mode="Opaque" x="510" y="0" width="170" height="20" forecolor="#FFFFFF" backcolor="#7DAAD6"/>
+				<textElement textAlignment="Center" verticalAlignment="Middle">
 					<font isBold="true"/>
 				</textElement>
-				<textFieldExpression class="java.lang.String"><![CDATA[$R{label.reference}]]></textFieldExpression>
+				<textFieldExpression class="java.lang.String"><![CDATA["LABEL"]]></textFieldExpression>
 			</textField>
-			<textField>
-				<reportElement x="680" y="0" width="170" height="20"/>
-				<textElement>
+			<textField isStretchWithOverflow="true">
+				<reportElement mode="Opaque" x="680" y="0" width="170" height="20" forecolor="#FFFFFF" backcolor="#7DAAD6"/>
+				<textElement textAlignment="Center" verticalAlignment="Middle">
 					<font isBold="true"/>
 				</textElement>
-				<textFieldExpression class="java.lang.String"><![CDATA[$R{label.Label}]]></textFieldExpression>
+				<textFieldExpression class="java.lang.String"><![CDATA["WEIGHT"]]></textFieldExpression>
 			</textField>
-			<textField pattern="">
-				<reportElement x="850" y="0" width="170" height="20">
+			<textField isStretchWithOverflow="true" pattern="">
+				<reportElement mode="Opaque" x="850" y="0" width="170" height="20" forecolor="#FFFFFF" backcolor="#7DAAD6">
 					<property name="net.sf.jasperreports.print.keep.full.text" value="true"/>
 				</reportElement>
-				<textElement>
+				<textElement textAlignment="Center" verticalAlignment="Middle">
 					<font isBold="true"/>
 				</textElement>
-				<textFieldExpression class="java.lang.String"><![CDATA[$R{label.Description}]]></textFieldExpression>
+				<textFieldExpression class="java.lang.String"><![CDATA["DESCRIPTION"]]></textFieldExpression>
 			</textField>
-			<textField>
-				<reportElement x="1190" y="0" width="170" height="20"/>
-				<textElement>
+			<textField isStretchWithOverflow="true">
+				<reportElement mode="Opaque" x="1190" y="0" width="170" height="20" forecolor="#FFFFFF" backcolor="#7DAAD6"/>
+				<textElement textAlignment="Center" verticalAlignment="Middle">
 					<font isBold="true"/>
 				</textElement>
-				<textFieldExpression class="java.lang.String"><![CDATA[$R{label.CreatedOn}]]></textFieldExpression>
+				<textFieldExpression class="java.lang.String"><![CDATA["CREATED_ON"]]></textFieldExpression>
 			</textField>
-			<textField>
-				<reportElement x="1360" y="0" width="170" height="20"/>
-				<textElement>
+			<textField isStretchWithOverflow="true">
+				<reportElement mode="Opaque" x="1360" y="0" width="170" height="20" forecolor="#FFFFFF" backcolor="#7DAAD6"/>
+				<textElement textAlignment="Center" verticalAlignment="Middle">
 					<font isBold="true"/>
 				</textElement>
-				<textFieldExpression class="java.lang.String"><![CDATA[$R{label.createdBy}]]></textFieldExpression>
+				<textFieldExpression class="java.lang.String"><![CDATA["CREATED_BY"]]></textFieldExpression>
 			</textField>
-			<textField>
-				<reportElement x="340" y="0" width="170" height="20"/>
-				<textElement>
+			<textField isStretchWithOverflow="true">
+				<reportElement mode="Opaque" x="340" y="0" width="170" height="20" forecolor="#FFFFFF" backcolor="#7DAAD6"/>
+				<textElement textAlignment="Center" verticalAlignment="Middle">
 					<font isBold="true"/>
 				</textElement>
-				<textFieldExpression class="java.lang.String"><![CDATA[$R{label.weight}]]></textFieldExpression>
+				<textFieldExpression class="java.lang.String"><![CDATA["REFERENCE"]]></textFieldExpression>
 			</textField>
-			<textField pattern="">
-				<reportElement x="1020" y="0" width="170" height="20">
+			<textField isStretchWithOverflow="true" pattern="">
+				<reportElement mode="Opaque" x="1020" y="0" width="170" height="20" forecolor="#FFFFFF" backcolor="#7DAAD6">
 					<property name="net.sf.jasperreports.print.keep.full.text" value="true"/>
 				</reportElement>
-				<textElement>
+				<textElement textAlignment="Center" verticalAlignment="Middle">
 					<font isBold="true"/>
 				</textElement>
-				<textFieldExpression class="java.lang.String"><![CDATA[$R{label.prerequisite}]]></textFieldExpression>
+				<textFieldExpression class="java.lang.String"><![CDATA["PRE_REQUISITE"]]></textFieldExpression>
 			</textField>
 		</band>
-	</pageHeader>
+	</title>
 	<detail>
 		<band height="20" splitType="Stretch">
-			<textField>
-				<reportElement x="0" y="0" width="170" height="20">
+			<textField isStretchWithOverflow="true">
+				<reportElement mode="Transparent" x="0" y="0" width="170" height="20">
 					<property name="net.sf.jasperreports.print.keep.full.text" value="true"/>
 				</reportElement>
-				<textElement/>
+				<textElement verticalAlignment="Top"/>
 				<textFieldExpression class="java.lang.String"><![CDATA[$F{folderName}]]></textFieldExpression>
 			</textField>
-			<textField>
-				<reportElement x="170" y="0" width="170" height="20">
+			<textField isStretchWithOverflow="true">
+				<reportElement mode="Transparent" x="170" y="0" width="170" height="20">
 					<property name="net.sf.jasperreports.print.keep.full.text" value="true"/>
 				</reportElement>
-				<textElement/>
+				<textElement verticalAlignment="Top"/>
 				<textFieldExpression class="java.lang.Long"><![CDATA[$F{id}]]></textFieldExpression>
 			</textField>
-			<textField>
-				<reportElement x="680" y="0" width="170" height="20">
+			<textField isStretchWithOverflow="true">
+				<reportElement mode="Transparent" x="340" y="0" width="170" height="20">
 					<property name="net.sf.jasperreports.print.keep.full.text" value="true"/>
 				</reportElement>
-				<textElement/>
-				<textFieldExpression class="java.lang.String"><![CDATA[$F{name}]]></textFieldExpression>
-			</textField>
-			<textField>
-				<reportElement mode="Opaque" x="850" y="0" width="170" height="20">
-					<property name="net.sf.jasperreports.print.keep.full.text" value="true"/>
-				</reportElement>
-				<textElement markup="none"/>
-				<textFieldExpression class="java.lang.String"><![CDATA[$F{description}]]></textFieldExpression>
-			</textField>
-			<textField>
-				<reportElement mode="Opaque" x="1190" y="0" width="170" height="20">
-					<property name="net.sf.jasperreports.print.keep.full.text" value="true"/>
-				</reportElement>
-				<textElement markup="none"/>
-				<textFieldExpression class="java.util.Date"><![CDATA[$F{createdOn}]]></textFieldExpression>
-			</textField>
-			<textField>
-				<reportElement mode="Opaque" x="1360" y="0" width="170" height="20">
-					<property name="net.sf.jasperreports.print.keep.full.text" value="true"/>
-				</reportElement>
-				<textElement markup="none"/>
-				<textFieldExpression class="java.lang.String"><![CDATA[$F{createdBy}]]></textFieldExpression>
-			</textField>
-			<textField>
-				<reportElement x="510" y="0" width="170" height="20">
-					<property name="net.sf.jasperreports.print.keep.full.text" value="true"/>
-				</reportElement>
-				<textElement/>
+				<textElement verticalAlignment="Top"/>
 				<textFieldExpression class="java.lang.String"><![CDATA[$F{reference}]]></textFieldExpression>
 			</textField>
-			<textField>
-				<reportElement x="340" y="0" width="170" height="20">
+			<textField isStretchWithOverflow="true" isBlankWhenNull="true">
+				<reportElement mode="Transparent" x="510" y="0" width="170" height="20">
 					<property name="net.sf.jasperreports.print.keep.full.text" value="true"/>
 				</reportElement>
-				<textElement/>
-				<textFieldExpression class="java.lang.String"><![CDATA[($F{weight}.toString() == "LOW") ? $R{test-case.importance.LOW} :
-($F{weight}.toString() == "MEDIUM") ? $R{test-case.importance.MEDIUM} :
-($F{weight}.toString() == "HIGH") ? $R{test-case.importance.HIGH} :
-($F{weight}.toString() == "VERY_HIGH") ? $R{test-case.importance.VERY_HIGH} :
-$R{requirement.criticality.UNKNOWN}]]></textFieldExpression>
+				<textElement verticalAlignment="Top"/>
+				<textFieldExpression class="java.lang.String"><![CDATA[$F{name}]]></textFieldExpression>
 			</textField>
-			<textField>
-				<reportElement mode="Opaque" x="1020" y="0" width="170" height="20">
+			<textField isStretchWithOverflow="true">
+				<reportElement mode="Transparent" x="680" y="0" width="170" height="20">
 					<property name="net.sf.jasperreports.print.keep.full.text" value="true"/>
 				</reportElement>
-				<textElement markup="none"/>
+				<textElement verticalAlignment="Top"/>
+				<textFieldExpression class="java.lang.String"><![CDATA[$F{weight}.name()]]></textFieldExpression>
+			</textField>
+			<textField isStretchWithOverflow="true">
+				<reportElement mode="Transparent" x="850" y="0" width="170" height="20">
+					<property name="net.sf.jasperreports.print.keep.full.text" value="true"/>
+				</reportElement>
+				<textElement verticalAlignment="Top" markup="none"/>
+				<textFieldExpression class="java.lang.String"><![CDATA[$F{description}]]></textFieldExpression>
+			</textField>
+			<textField isStretchWithOverflow="true">
+				<reportElement mode="Transparent" x="1020" y="0" width="170" height="20">
+					<property name="net.sf.jasperreports.print.keep.full.text" value="true"/>
+				</reportElement>
+				<textElement verticalAlignment="Top" markup="none"/>
 				<textFieldExpression class="java.lang.String"><![CDATA[$F{prerequisite}]]></textFieldExpression>
+			</textField>
+			<textField isStretchWithOverflow="true">
+				<reportElement mode="Transparent" x="1190" y="0" width="170" height="20">
+					<property name="net.sf.jasperreports.print.keep.full.text" value="true"/>
+				</reportElement>
+				<textElement verticalAlignment="Top" markup="none"/>
+				<textFieldExpression class="java.util.Date"><![CDATA[$F{createdOn}]]></textFieldExpression>
+			</textField>
+			<textField isStretchWithOverflow="true">
+				<reportElement mode="Transparent" x="1360" y="0" width="170" height="20">
+					<property name="net.sf.jasperreports.print.keep.full.text" value="true"/>
+				</reportElement>
+				<textElement verticalAlignment="Top" markup="none"/>
+				<textFieldExpression class="java.lang.String"><![CDATA[$F{createdBy}]]></textFieldExpression>
 			</textField>
 		</band>
 	</detail>

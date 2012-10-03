@@ -35,15 +35,14 @@ public final class HTMLCleanupUtils {
 		
 	}
 
-	//todo : better parsing / formatting for a better looking plain text ?  
 	public static String htmlToText(String html){
 		
-	String replacedDescription = html.replaceFirst("\n", "");
-	Source htmlSource = new Source(replacedDescription);
-	Segment htmlSegment = new Segment(htmlSource, 0, replacedDescription.length());
-	Renderer htmlRend = new Renderer(htmlSegment);
-	String encoded = htmlRend.toString();
-	return encoded.trim();
+		String replacedDescription = html.replaceFirst("\n", "");
+		Source htmlSource = new Source(replacedDescription);
+		Segment htmlSegment = new Segment(htmlSource, 0, replacedDescription.length());
+		Renderer htmlRend = new Renderer(htmlSegment);
+		String encoded = htmlRend.toString();
+		return encoded.trim();
 	
 	}
 	

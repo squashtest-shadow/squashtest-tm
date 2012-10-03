@@ -21,18 +21,20 @@
 package org.squashtest.csp.tm.domain.requirement;
 
 import org.squashtest.csp.tm.domain.library.ExportData;
+
 /**
  * 
  * Data support for jasper Requirement Export
- *
+ * 
  */
-public class ExportRequirementData extends ExportData{
+public class ExportRequirementData extends ExportData {
 
 	private RequirementCriticality criticality;
 	private RequirementCategory category;
 	private Integer currentVersion;
 	private RequirementStatus status;
-	
+	private String reference;
+
 	public ExportRequirementData() {
 		super();
 	}
@@ -44,7 +46,7 @@ public class ExportRequirementData extends ExportData{
 	public void setCriticality(RequirementCriticality criticality) {
 		this.criticality = criticality;
 	}
-	
+
 	public RequirementCategory getCategory() {
 		return category;
 	}
@@ -53,7 +55,6 @@ public class ExportRequirementData extends ExportData{
 		this.category = category;
 	}
 
-	
 	public Integer getCurrentVersion() {
 		return currentVersion;
 	}
@@ -69,15 +70,22 @@ public class ExportRequirementData extends ExportData{
 	public void setStatus(RequirementStatus status) {
 		this.status = status;
 	}
-	
 
-	
+	public String getReference() {
+		return reference;
+	}
+
+	public void setReference(String reference) {
+		this.reference = reference;
+	}
+
 	public ExportRequirementData(Requirement requirement, RequirementFolder folder) {
 		super(requirement, folder);
+		this.reference = requirement.getReference();
 		this.criticality = requirement.getCriticality();
 		this.category = requirement.getCategory();
 		this.currentVersion = requirement.getCurrentVersion().getVersionNumber();
-		this.status = requirement.getStatus();	
-		
-	}	
+		this.status = requirement.getStatus();
+
+	}
 }

@@ -43,6 +43,8 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.multipart.MultipartFile;
 import org.springframework.web.servlet.ModelAndView;
+import org.squashtest.csp.core.web.utils.HTMLCleanupUtils;
+import org.squashtest.csp.tm.domain.library.ExportData;
 import org.squashtest.csp.tm.domain.requirement.ExportRequirementData;
 import org.squashtest.csp.tm.domain.testcase.ExportTestCaseData;
 import org.squashtest.csp.tm.domain.testcase.TestCase;
@@ -179,9 +181,17 @@ public class TestCaseLibraryNavigationController extends
 			HttpServletResponse response, Locale locale) {
 		List<ExportTestCaseData> dataSource = testCaseLibraryNavigationService
 				.findTestCasesToExportFromNodes(ids);
-
+		escapePrerequisite(dataSource);
 		printExport(dataSource, filename,JASPER_EXPORT_FILE, response, locale);
 
+	}
+
+	private void escapePrerequisite(List<ExportTestCaseData> dataSource) {
+		for (ExportTestCaseData data : dataSource) {
+			String htmlPrerequisite = data.getPrerequisite();
+			String prerequisite = HTMLCleanupUtils.htmlToText(htmlPrerequisite);
+			data.setPrerequisite(prerequisite);
+		}
 	}
 
 	@RequestMapping(value = "/export-library", method = RequestMethod.GET)
@@ -191,7 +201,7 @@ public class TestCaseLibraryNavigationController extends
 
 		List<ExportTestCaseData> dataSource = testCaseLibraryNavigationService
 				.findTestCasesToExportFromProject(libraryIds);
-
+		escapePrerequisite(dataSource);
 		printExport(dataSource, filename,JASPER_EXPORT_FILE, response, locale);
 
 	}
