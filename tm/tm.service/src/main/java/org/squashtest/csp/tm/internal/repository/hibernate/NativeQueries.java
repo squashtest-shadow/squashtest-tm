@@ -169,7 +169,7 @@ public final class NativeQueries {
 																		   "where clos.descendant_id = :nodeId "+
 																		   "order by clos.depth desc";
 	
-	public static final String testCaseLibraryNode_findSortedParentNames = "select tcln.name from TEST_CASE_LIBRARY_NODE cln "+
+	public static final String testCaseLibraryNode_findSortedParentNames = "select tcln.name from TEST_CASE_LIBRARY_NODE tcln "+
 																		   "inner join TCLN_RELATIONSHIP_CLOSURE clos "+
 																		   "on clos.ancestor_id = tcln.tcln_id "+
 																		   "where clos.descendant_id = :nodeId "+
