@@ -448,12 +448,12 @@ public enum ExecutionStatus implements Internationalizable {
 
 		ExecutionStatus newStatus = ExecutionStatus.READY;
 
-		if(report.hasUntestable()) {
-			newStatus = ExecutionStatus.UNTESTABLE;
-		}
-		else if (report.hasBlocked()) {
+		if (report.hasBlocked()) {
 			newStatus = ExecutionStatus.BLOCKED;
 		} 
+		else if(report.hasUntestable()) {
+			newStatus = ExecutionStatus.UNTESTABLE;
+		}
 		else if (report.hasError()){
 			newStatus = ExecutionStatus.ERROR;
 		}
