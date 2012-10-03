@@ -342,6 +342,24 @@ class ExecutionModificationServiceIT extends HibernateServiceSpecification {
 		report.ready==5;
 	}
 
+	def "should set an execution status for an execution to UNTESTABLE"(){
+		given :
+		iterService.addExecution(iterationId, testPlanId);
+		def execList = iterService.findAllExecutions(iterationId)
+		def execution = execList.get(execList.size()-1)
+
+		when :
+		ExecutionStatusReport report = new ExecutionStatusReport(1, 0, 0, 4, 0, 0);
+
+		procservice.setExecutionStatus(execution.id, report);
+
+		def reExec = execService.findAndInitExecution(execution.id);
+
+
+		then :
+		reExec.executionStatus == ExecutionStatus.UNTESTABLE;
+	}
+	
 	def "should set an execution status for an execution to BLOCKED"(){
 		given :
 		iterService.addExecution(iterationId, testPlanId);
@@ -349,7 +367,7 @@ class ExecutionModificationServiceIT extends HibernateServiceSpecification {
 		def execution = execList.get(execList.size()-1)
 
 		when :
-		ExecutionStatusReport report = new ExecutionStatusReport(0, 1, 0, 4, 0, 0);
+		ExecutionStatusReport report = new ExecutionStatusReport(1, 1, 0, 4, 0, 0);
 
 		procservice.setExecutionStatus(execution.id, report);
 
