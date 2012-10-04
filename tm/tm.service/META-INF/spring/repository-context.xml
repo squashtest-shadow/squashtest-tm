@@ -104,16 +104,18 @@
 				<value>org.squashtest.csp.tm.domain.event.RequirementPropertyChange</value>
 				<value>org.squashtest.csp.tm.domain.event.RequirementLargePropertyChange</value>
 				
-				
 				<!--  the following entries come from fragment tm.testautomation.api (except for the TA execution) -->
-				
 				<value>org.squashtest.csp.tm.domain.testautomation.TestAutomationServer</value>
 				<value>org.squashtest.csp.tm.domain.testautomation.TestAutomationProject</value>
 				<value>org.squashtest.csp.tm.domain.testautomation.AutomatedTest</value>
 				<value>org.squashtest.csp.tm.domain.testautomation.AutomatedSuite</value>
 				<value>org.squashtest.csp.tm.domain.testautomation.AutomatedExecutionExtender</value>
-				
-			</list>
+
+                <!-- Custom Fields -->
+                <value>org.squashtest.csp.tm.domain.customfield.CustomField</value>
+                <value>org.squashtest.csp.tm.domain.customfield.SingleSelectField</value>
+                <value>org.squashtest.csp.tm.domain.customfield.CustomFieldOption</value>
+            </list>
 		</property>
 		<property name="namingStrategy">
 			<bean class="org.squashtest.csp.tm.internal.infrastructure.hibernate.UppercaseUnderscoreNamingStrategy" />
