@@ -110,6 +110,9 @@ tm/tm\.testautomation\.api/META-INF$
 /tm\.service/META-INF$
 /tm\.web/META-INF$
 /tm\.web/WEB-INF$
+^\.idea$
+/\.idea$
+\.iml$
 syntax: glob
 integration-tests/log/IT.log
 integration-tests/src/it/resources/log4j.properties
@@ -117,6 +120,5 @@ syntax : regexp
 ^tm/tm\.testautomation\.api/target$
 ^tm/tm\.testautomation\.api/META-INF$
 core/core.service/META-INF$
-syntax: regexp
 ^plugins/plugin\.testautomation\.jenkins/target$
 ^plugins/plugin\.testautomation\.jenkins/META-INF$
