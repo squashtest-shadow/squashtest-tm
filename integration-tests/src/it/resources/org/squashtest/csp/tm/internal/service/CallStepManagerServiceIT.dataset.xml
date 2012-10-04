@@ -1,0 +1,145 @@
+<?xml version='1.0' encoding='UTF-8'?>
+<!--
+
+        This file is part of the Squashtest platform.
+        Copyright (C) 2010 - 2012 Henix, henix.fr
+
+        See the NOTICE file distributed with this work for additional
+        information regarding copyright ownership.
+
+        This is free software: you can redistribute it and/or modify
+        it under the terms of the GNU Lesser General Public License as published by
+        the Free Software Foundation, either version 3 of the License, or
+        (at your option) any later version.
+
+        this software is distributed in the hope that it will be useful,
+        but WITHOUT ANY WARRANTY; without even the implied warranty of
+        MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+        GNU Lesser General Public License for more details.
+
+        You should have received a copy of the GNU Lesser General Public License
+        along with this software.  If not, see <http://www.gnu.org/licenses/>.
+
+-->
+<!--  
+	that dataset describes the following initial conditions :
+
+1) a call tree like the following : 
+	
+		- all the test cases are in the same project, at the root of the library.
+		- 'top test case' will call 'first level 1'
+		- 'first level 1' will call 'second level 1' and 'second level 2'
+		- 'second level 1' will call 'third level 1'
+		- 'second level 2' will call 'third level 2'
+		- the third level test cases call no one.
+		
+	the ids for the test cases follow the given template : id = <level index><test case index>. For instance 'second level 1' have id 21.
+	the ids for the test steps equals the ids of the called test case.
+	
+2) test case of id 10 is added : it will be our guinea pig (about call step insertion and whatnots).
+
+3) three test cases pointing to a particular one :
+
+	- first test case (101) -> bottom test case (100)
+	- second test case (102) -> bottom test case (100)
+	- third test case (103) -> bottom test case (100)
+	
+	the ids for the test steps equals the ids of the calling test case.
+	
+
+
+
+ -->
+<dataset>
+
+	<!--  dummy attachment list, the same for everyone that need one. -->
+	
+	<attachment_list attachment_list_id="1" />
+
+
+	<!--  the test case library nodes -->
+
+	<test_case_library_node tcln_id="1" name="top test case" created_by="IT" created_on="2011-07-26" />
+	<test_case_library_node tcln_id="11" name="first level 1" created_by="IT" created_on="2011-07-26" />
+	<test_case_library_node tcln_id="21" name="second level 1" created_by="IT" created_on="2011-07-26" />
+	<test_case_library_node tcln_id="22" name="second level 2" created_by="IT" created_on="2011-07-26" />
+	<test_case_library_node tcln_id="31" name="third level 1" created_by="IT" created_on="2011-07-26" />
+	<test_case_library_node tcln_id="32" name="third level 2" created_by="IT" created_on="2011-07-26" />
+	
+	<test_case_library_node tcln_id="10" name="guinea pig" created_by="IT" created_on="2011-07-26" />	
+	
+	<test_case_library_node tcln_id="100" name="bottom test case" created_by="IT" created_on="2011-07-26" />	
+	<test_case_library_node tcln_id="101" name="first test case" created_by="IT" created_on="2011-07-26" />	
+	<test_case_library_node tcln_id="102" name="second test case" created_by="IT" created_on="2011-07-26" />		
+	<test_case_library_node tcln_id="103" name="third test case" created_by="IT" created_on="2011-07-26" />		
+	
+	<!--  the test cases now -->
+	
+	<test_case tcln_id="1"  version="1" 	attachment_list_id="1" />
+	<test_case tcln_id="11" version="1" 	attachment_list_id="1" />
+	<test_case tcln_id="21" version="1" 	attachment_list_id="1" />
+	<test_case tcln_id="22" version="1" 	attachment_list_id="1" />
+	<test_case tcln_id="31" version="1" 	attachment_list_id="1" />
+	<test_case tcln_id="32" version="1" 	attachment_list_id="1" />
+	
+	<test_case tcln_id="10" version="1" 	attachment_list_id="1" />
+	
+	<test_case tcln_id="100" version="1" 	attachment_list_id="1" />	
+	<test_case tcln_id="101" version="1" 	attachment_list_id="1" />
+	<test_case tcln_id="102" version="1" 	attachment_list_id="1" />
+	<test_case tcln_id="103" version="1" 	attachment_list_id="1" />
+	
+	<!--  the test steps -->
+	
+	<test_step test_step_id="11" />
+	<test_step test_step_id="21" />
+	<test_step test_step_id="22" />
+	<test_step test_step_id="31" />
+	<test_step test_step_id="32" />
+	
+	<test_step test_step_id="101" />
+	<test_step test_step_id="102" />
+	<test_step test_step_id="103" />	
+	
+	<test_step test_step_id="1000" /> <!--  that one is an action test step, so that we can test Hibernate cast -->
+	
+	
+	<!--  the call test steps -->
+	
+	<call_test_step test_step_id="11" called_test_case_id="11"/>
+	<call_test_step test_step_id="21" called_test_case_id="21"/>
+	<call_test_step test_step_id="22" called_test_case_id="22"/>
+	<call_test_step test_step_id="31" called_test_case_id="31"/>
+	<call_test_step test_step_id="32" called_test_case_id="32"/>
+	
+	<call_test_step test_step_id="101" called_test_case_id="100" />
+	<call_test_step test_step_id="102" called_test_case_id="100"/>
+	<call_test_step test_step_id="103" called_test_case_id="100"/>		
+	
+	<!--  the only one action test step -->
+	<action_test_step test_step_id="1000" action="the one and only action test step"/>
+	
+	
+	<!--  associate them to the test cases -->
+	
+	<test_case_steps test_case_id="1" step_id="11" step_order="1"/>
+	<test_case_steps test_case_id="11" step_id="21" step_order="1"/>
+	<test_case_steps test_case_id="11" step_id="22" step_order="2"/>
+	<test_case_steps test_case_id="21" step_id="31" step_order="1"/>
+	<test_case_steps test_case_id="22" step_id="32" step_order="1"/>
+	
+	<test_case_steps test_case_id="101" step_id="101" step_order="1"/>
+	<test_case_steps test_case_id="102" step_id="102" step_order="1"/>
+	<test_case_steps test_case_id="103" step_id="103" step_order="1"/>	
+	
+	<test_case_steps test_case_id="101" step_id="1000" step_order="2" />
+	
+	
+	
+	<!--  cleanup of previously entered data -->
+	
+	<test_case_folder/>
+	<tcln_relationship/>
+	<test_case_library_content/>
+
+</dataset>

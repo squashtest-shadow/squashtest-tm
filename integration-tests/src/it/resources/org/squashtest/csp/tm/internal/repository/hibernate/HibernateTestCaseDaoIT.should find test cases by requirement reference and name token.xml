@@ -1,0 +1,51 @@
+<?xml version='1.0' encoding='UTF-8'?>
+<!--
+
+        This file is part of the Squashtest platform.
+        Copyright (C) 2010 - 2012 Henix, henix.fr
+
+        See the NOTICE file distributed with this work for additional
+        information regarding copyright ownership.
+
+        This is free software: you can redistribute it and/or modify
+        it under the terms of the GNU Lesser General Public License as published by
+        the Free Software Foundation, either version 3 of the License, or
+        (at your option) any later version.
+
+        this software is distributed in the hope that it will be useful,
+        but WITHOUT ANY WARRANTY; without even the implied warranty of
+        MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+        GNU Lesser General Public License for more details.
+
+        You should have received a copy of the GNU Lesser General Public License
+        along with this software.  If not, see <http://www.gnu.org/licenses/>.
+
+-->
+<dataset>
+  <ATTACHMENT_LIST ATTACHMENT_LIST_id="101"/>
+  <resource res_id="101" name="requirement foo 101" created_on="2012-01-02" created_by="dbu"/>
+  <requirement_version attachment_list_id="101" res_id="101" reference="before token after"/>
+  <requirement_library_node created_by="dbu" rln_id="101" created_on="2010-02-01"/>
+  <requirement rln_id="101" current_version_id="101"/>
+  
+  <ATTACHMENT_LIST ATTACHMENT_LIST_id="102"/>
+  <test_case_library_node created_by="dbu" tcln_id="102" created_on="2011-01-01" name="tc 102"/>
+  <test_case tcln_id="102" attachment_list_id="102" version="1"/>
+  
+  <ATTACHMENT_LIST ATTACHMENT_LIST_id="103"/>
+  <test_case_library_node created_by="dbu" tcln_id="103" created_on="2011-01-01" name="tc 103"/>
+  <test_case tcln_id="103" attachment_list_id="103" version="1"/>
+  <test_case_verified_requirement_version verifying_test_case_id="102" verified_req_version_id="101"/>
+  <test_case_verified_requirement_version verifying_test_case_id="103" verified_req_version_id="101"/>
+  
+  <ATTACHMENT_LIST ATTACHMENT_LIST_id="201"/>
+  <resource res_id="201" name="requirement 201" created_on="2012-01-02" created_by="dbu"/>
+  <requirement_version attachment_list_id="201" res_id="201" reference="before token after"/>
+  <requirement_library_node created_by="dbu" rln_id="201" created_on="2010-02-01"/>
+  <requirement rln_id="201" current_version_id="201"/>
+  
+  <ATTACHMENT_LIST ATTACHMENT_LIST_id="202"/>
+  <test_case_library_node created_by="dbu" tcln_id="202" created_on="2011-01-01" name="tc 202"/>
+  <test_case tcln_id="202" attachment_list_id="202" version="1"/>
+  <test_case_verified_requirement_version verifying_test_case_id="202" verified_req_version_id="201"/>
+</dataset>

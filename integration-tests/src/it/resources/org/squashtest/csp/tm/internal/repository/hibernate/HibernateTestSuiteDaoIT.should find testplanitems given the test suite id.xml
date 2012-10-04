@@ -1,0 +1,99 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+
+        This file is part of the Squashtest platform.
+        Copyright (C) 2010 - 2012 Henix, henix.fr
+
+        See the NOTICE file distributed with this work for additional
+        information regarding copyright ownership.
+
+        This is free software: you can redistribute it and/or modify
+        it under the terms of the GNU Lesser General Public License as published by
+        the Free Software Foundation, either version 3 of the License, or
+        (at your option) any later version.
+
+        this software is distributed in the hope that it will be useful,
+        but WITHOUT ANY WARRANTY; without even the implied warranty of
+        MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+        GNU Lesser General Public License for more details.
+
+        You should have received a copy of the GNU Lesser General Public License
+        along with this software.  If not, see <http://www.gnu.org/licenses/>.
+
+-->
+<dataset>
+  <attachment_list attachment_list_id="2"/>
+  <attachment_list attachment_list_id="3"/>
+  <attachment_list attachment_list_id="4"/>
+  <attachment_list attachment_list_id="5"/>
+  <attachment_list attachment_list_id="6"/>
+  <attachment_list attachment_list_id="7"/>
+  <attachment_list attachment_list_id="8"/>
+  <attachment_list attachment_list_id="9"/>
+  <attachment_list attachment_list_id="10"/>
+  <attachment_list attachment_list_id="11"/>
+  <attachment_list attachment_list_id="12"/>
+  <attachment_list attachment_list_id="13"/>
+  <attachment_list attachment_list_id="14"/>
+  
+  <test_suite id="1" name="suite de test 1" description="ma description 1" attachment_list_id="2" created_on="2012-02-09" created_by="dbu"/>
+  <test_suite id="2" name="suite de test 2" description="ma description 2" attachment_list_id="8" created_on="2012-02-09" created_by="dbu"/>
+  
+  <project project_id="2" name="mon projet" description="ma description" created_on="2012-02-09" created_by="dbu" />
+  
+  <test_case_library_node tcln_id="2" description="ma description" name="tcln" created_on="2012-02-09" created_by="dbu" project_id="2"/>
+  <test_case_library_node tcln_id="3" description="ma description" name="tcln" created_on="2012-02-09" created_by="dbu" project_id="2"/>
+  <test_case_library_node tcln_id="4" description="ma description" name="tcln" created_on="2012-02-09" created_by="dbu" project_id="2"/>
+  <test_case_library_node tcln_id="5" description="ma description" name="tcln" created_on="2012-02-09" created_by="dbu" project_id="2"/>
+  <test_case_library_node tcln_id="6" description="ma description" name="tcln" created_on="2012-02-09" created_by="dbu" project_id="2"/>
+  <test_case_library_node tcln_id="7" description="ma description" name="tcln" created_on="2012-02-09" created_by="dbu" project_id="2"/>
+  <test_case_library_node tcln_id="8" description="ma description" name="tcln" created_on="2012-02-09" created_by="dbu" project_id="2"/>
+  <test_case_library_node tcln_id="9" description="ma description" name="tcln" created_on="2012-02-09" created_by="dbu" project_id="2"/>
+  <test_case_library_node tcln_id="10" description="ma description" name="tcln" created_on="2012-02-09" created_by="dbu" project_id="2"/>
+  <test_case_library_node tcln_id="11" description="ma description" name="tcln" created_on="2012-02-09" created_by="dbu" project_id="2"/>
+  
+  <test_case tcln_id="2" attachment_list_id="4" version="1"/>
+  <test_case tcln_id="3" attachment_list_id="5" version="1"/>
+  <test_case tcln_id="4" attachment_list_id="6" version="1"/>
+  <test_case tcln_id="5" attachment_list_id="7" version="1"/>
+  <test_case tcln_id="6" attachment_list_id="9" version="1"/>
+  <test_case tcln_id="7" attachment_list_id="10" version="1"/>
+  <test_case tcln_id="8" attachment_list_id="11" version="1"/>
+  <test_case tcln_id="9" attachment_list_id="12" version="1"/>
+  <test_case tcln_id="10" attachment_list_id="13" version="1"/>
+  <test_case tcln_id="11" attachment_list_id="14" version="1"/>
+  
+  <iteration iteration_id="2" description="ma description" name="iteration" created_on="2012-02-09" created_by="dbu" actual_end_auto="0" ACTUAL_START_AUTO="0" attachment_list_id="3"/>
+  
+  <campaign_library_node cln_id="2" name="campagne" created_on="2012-02-09" created_by="dbu" project_id="2"/>
+  
+  <campaign cln_id="2" attachment_list_id="8" ACTUAL_END_AUTO="0" ACTUAL_START_AUTO="0"/>
+  
+  <campaign_iteration campaign_id="2" iteration_id="2" iteration_order="0"/>
+  
+  <iteration_test_suite iteration_id="2" test_suite_id="1"/>
+  <iteration_test_suite iteration_id="2" test_suite_id="2"/>
+
+  <iteration_test_plan_item item_test_plan_id="2" test_suite="1" execution_status="RUNNING" tcln_id="2" label ="Cas de test 2" created_on="2012-02-09" created_by="dbu"/>
+  <iteration_test_plan_item item_test_plan_id="3" test_suite="2" execution_status="BLOCKED" tcln_id="3" label ="Cas de test 3" created_on="2012-02-09" created_by="dbu"/>
+  <iteration_test_plan_item item_test_plan_id="4" test_suite="2" execution_status="FAILURE" tcln_id="4" label ="Cas de test 4" created_on="2012-02-09" created_by="dbu"/>
+  <iteration_test_plan_item item_test_plan_id="5" execution_status="RUNNING" tcln_id="5" label ="Cas de test 5" created_on="2012-02-09" created_by="dbu"/>
+  <iteration_test_plan_item item_test_plan_id="6" test_suite="1" execution_status="READY" tcln_id="6" label ="Cas de test 2" created_on="2012-02-09" created_by="dbu"/>
+  <iteration_test_plan_item item_test_plan_id="7" test_suite="2" execution_status="FAILURE" tcln_id="7" label ="Cas de test 3" created_on="2012-02-09" created_by="dbu"/>
+  <iteration_test_plan_item item_test_plan_id="8" test_suite="2" execution_status="SUCCESS" tcln_id="8" label ="Cas de test 4" created_on="2012-02-09" created_by="dbu"/>
+  <iteration_test_plan_item item_test_plan_id="9" test_suite="1" execution_status="BLOCKED" tcln_id="9" label ="Cas de test 2" created_on="2012-02-09" created_by="dbu"/>
+  <iteration_test_plan_item item_test_plan_id="10" test_suite="2" execution_status="READY" tcln_id="10" label ="Cas de test 3" created_on="2012-02-09" created_by="dbu"/>
+  <iteration_test_plan_item item_test_plan_id="11" test_suite="2" execution_status="SUCCESS" tcln_id="11" label ="Cas de test 4" created_on="2012-02-09" created_by="dbu"/>
+  
+  <item_test_plan_list iteration_id="2" item_test_plan_id="2" item_test_plan_order="0"/>
+  <item_test_plan_list iteration_id="2" item_test_plan_id="3" item_test_plan_order="1"/>
+  <item_test_plan_list iteration_id="2" item_test_plan_id="4" item_test_plan_order="2"/>
+  <item_test_plan_list iteration_id="2" item_test_plan_id="5" item_test_plan_order="3"/> 
+  <item_test_plan_list iteration_id="2" item_test_plan_id="6" item_test_plan_order="4"/>
+  <item_test_plan_list iteration_id="2" item_test_plan_id="7" item_test_plan_order="5"/>
+  <item_test_plan_list iteration_id="2" item_test_plan_id="8" item_test_plan_order="6"/>
+  <item_test_plan_list iteration_id="2" item_test_plan_id="9" item_test_plan_order="7"/>
+  <item_test_plan_list iteration_id="2" item_test_plan_id="10" item_test_plan_order="8"/>
+  <item_test_plan_list iteration_id="2" item_test_plan_id="11" item_test_plan_order="9"/> 
+  
+</dataset>

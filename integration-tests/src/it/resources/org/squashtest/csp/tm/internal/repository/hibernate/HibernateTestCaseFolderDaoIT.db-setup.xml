@@ -1,0 +1,79 @@
+<!--
+
+        This file is part of the Squashtest platform.
+        Copyright (C) 2010 - 2012 Henix, henix.fr
+
+        See the NOTICE file distributed with this work for additional
+        information regarding copyright ownership.
+
+        This is free software: you can redistribute it and/or modify
+        it under the terms of the GNU Lesser General Public License as published by
+        the Free Software Foundation, either version 3 of the License, or
+        (at your option) any later version.
+
+        this software is distributed in the hope that it will be useful,
+        but WITHOUT ANY WARRANTY; without even the implied warranty of
+        MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+        GNU Lesser General Public License for more details.
+
+        You should have received a copy of the GNU Lesser General Public License
+        along with this software.  If not, see <http://www.gnu.org/licenses/>.
+
+-->
+<dataset>
+
+	<!--  dummy attachment list, the same for everyone that need one. -->
+	
+	<attachment_list attachment_list_id="1" />
+
+
+	<!--  test case library nodes ... -->
+
+	<test_case_library_node tcln_id="1" name="folder 1" created_by="IT" created_on="2011-08-03" />
+	<test_case_library_node tcln_id="2" name="test case 2" created_by="IT" created_on="2011-08-03" />	
+	
+	<test_case_library_node tcln_id="11" name="folder 11" created_by="IT" created_on="2011-08-03" />	
+	<test_case_library_node tcln_id="12" name="folder 12" created_by="IT" created_on="2011-08-03" />	
+	
+	<test_case_library_node tcln_id="13" name="test case 13" created_by="IT" created_on="2011-08-03" />	
+	<test_case_library_node tcln_id="14" name="test case 14" created_by="IT" created_on="2011-08-03" />		
+	
+	<test_case_library_node tcln_id="21" name="test case 21" created_by="IT" created_on="2011-08-03" />	
+	<test_case_library_node tcln_id="22" name="test case 22" created_by="IT" created_on="2011-08-03" />	
+	
+	
+	<!--  test cases -->
+	
+	<test_case tcln_id="2" version="1" attachment_list_id="1" />
+	<test_case tcln_id="13" version="1" attachment_list_id="1" />
+	<test_case tcln_id="14" version="1" attachment_list_id="1" />
+	<test_case tcln_id="21" version="1" attachment_list_id="1" />
+	<test_case tcln_id="22" version="1" attachment_list_id="1" />
+	
+	
+	<!--  folder -->
+	
+	<test_case_folder tcln_id="1" />
+	<test_case_folder tcln_id="11" />
+	<test_case_folder tcln_id="12" />
+	
+	<!--  relationships -->
+	
+	<tcln_relationship ancestor_id="1" descendant_id="11" />
+	<tcln_relationship ancestor_id="1" descendant_id="12" />
+	<tcln_relationship ancestor_id="1" descendant_id="13" />
+	<tcln_relationship ancestor_id="1" descendant_id="14" />
+	
+	<tcln_relationship ancestor_id="11" descendant_id="21" />
+	<tcln_relationship ancestor_id="12" descendant_id="22" />
+	
+	
+	<!--  cleanup of possible previously data spoiling the database -->
+	<test_step/>
+	<action_test_step/>
+	<call_test_step/>
+	<test_case_steps/>
+	
+	<test_case_library_content/>
+	
+</dataset>

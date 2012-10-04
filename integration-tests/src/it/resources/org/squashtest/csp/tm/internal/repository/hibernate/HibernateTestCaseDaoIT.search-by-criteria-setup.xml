@@ -1,0 +1,75 @@
+<?xml version='1.0' encoding='UTF-8'?>
+<!--
+
+        This file is part of the Squashtest platform.
+        Copyright (C) 2010 - 2012 Henix, henix.fr
+
+        See the NOTICE file distributed with this work for additional
+        information regarding copyright ownership.
+
+        This is free software: you can redistribute it and/or modify
+        it under the terms of the GNU Lesser General Public License as published by
+        the Free Software Foundation, either version 3 of the License, or
+        (at your option) any later version.
+
+        this software is distributed in the hope that it will be useful,
+        but WITHOUT ANY WARRANTY; without even the implied warranty of
+        MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+        GNU Lesser General Public License for more details.
+
+        You should have received a copy of the GNU Lesser General Public License
+        along with this software.  If not, see <http://www.gnu.org/licenses/>.
+
+-->
+<dataset>
+
+  <!--  attachment list -->
+
+  <attachment_list attachment_list_id="1" />
+  
+  
+  <!--  projects  -->
+
+  <test_case_library tcl_id="1"/>
+  <requirement_library rl_id="1"/>
+  <campaign_library cl_id="1"/>
+  <project created_by="IT" rl_id="1" tcl_id="1" created_on="2012-02-17" project_id="1" name="Project Ion" active="true" cl_id="1"/>
+ 
+ 
+  <test_case_library tcl_id="2"/>
+  <requirement_library rl_id="2"/>
+  <campaign_library cl_id="2"/>
+  <project created_by="IT" rl_id="2" tcl_id="2" created_on="2012-02-17" project_id="2" name="Project Ed" active="true" cl_id="2"/>
+
+
+
+  <!-- project 1 nodes -->
+
+  <test_case_library_node tcln_id="121" name="aaa project Ion folder 1" project_id="1" created_by="dbu" created_on="2012-02-17" />
+  <test_case_library_node tcln_id="111" name="bbb project Ion test case 1" project_id="1" created_by="dbu" created_on="2012-02-17" />
+  <test_case_library_node tcln_id="112" name="aaa project Ion test case 2" project_id="1" created_by="dbu" created_on="2012-02-17" />
+  <test_case_library_node tcln_id="113" name="completely different name" project_id="1" created_by="dbu" created_on="2012-02-17" />
+  
+  <test_case_folder tcln_id="121" />
+  
+  <test_case tcln_id="111" attachment_list_id="1"  version="1" importance="VERY_HIGH"/>
+  <test_case tcln_id="112" attachment_list_id="1"  version="1" importance="MEDIUM"/>
+  <test_case tcln_id="113" attachment_list_id="1"  version="1" importance="MEDIUM"/>
+  
+  
+  
+  <!-- project 1 nodes -->
+  
+  <test_case_library_node tcln_id="221" name="bbb project Ed folder 1" project_id="2" created_by="dbu" created_on="2012-02-17" />
+  <test_case_library_node tcln_id="211" name="aaa project Ed test case 1" project_id="2" created_by="dbu" created_on="2012-02-17" />
+  <test_case_library_node tcln_id="212" name="bbb project Ed test case 2" project_id="2" created_by="dbu" created_on="2012-02-17" />
+  <test_case_library_node tcln_id="213" name="another completely different name" project_id="2" created_by="dbu" created_on="2012-02-17" />
+  
+  <test_case_folder tcln_id="221" />
+  
+  <test_case tcln_id="211" attachment_list_id="1"  version="1" importance="LOW"/>
+  <test_case tcln_id="212" attachment_list_id="1"  version="1" importance="HIGH"/>
+  <test_case tcln_id="213" attachment_list_id="1"  version="1" importance="HIGH"/>
+  
+
+</dataset>

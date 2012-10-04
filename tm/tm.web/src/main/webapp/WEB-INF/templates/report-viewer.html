@@ -1,0 +1,166 @@
+<!--
+
+        This file is part of the Squashtest platform.
+        Copyright (C) 2010 - 2012 Henix, henix.fr
+
+        See the NOTICE file distributed with this work for additional
+        information regarding copyright ownership.
+
+        This is free software: you can redistribute it and/or modify
+        it under the terms of the GNU Lesser General Public License as published by
+        the Free Software Foundation, either version 3 of the License, or
+        (at your option) any later version.
+
+        this software is distributed in the hope that it will be useful,
+        but WITHOUT ANY WARRANTY; without even the implied warranty of
+        MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+        GNU Lesser General Public License for more details.
+
+        You should have received a copy of the GNU Lesser General Public License
+        along with this software.  If not, see <http://www.gnu.org/licenses/>.
+
+-->
+<!DOCTYPE html SYSTEM "http://www.thymeleaf.org/dtd/xhtml1-transitional-thymeleaf-spring3-3.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml" xmlns:th="http://www.thymeleaf.org">
+<head>
+	<title th:text="#{squashtm.library.requirement.title}">Report viewer</title>
+	<meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
+	<!-- common head -->
+	<link rel="stylesheet" type="text/css" media="all" href="../../../../../../../core/core.web/src/main/webapp/styles/master.css" th:href="@{/styles/master.css}" />
+	<link rel="shortcut icon" type="image/x-icon" media="all" href="../../../../../../../core/core.web/src/main/webapp/images/favicon.ico" th:href="@{/images/favicon.ico}"/>
+	<!-- /common head -->
+	<!-- common script import -->
+	<link rel="stylesheet" type="text/css" media="all" href="../../../../../../../core/core.web/src/main/webapp/styles/squashtm.fg.menu.css" th:href="@{/styles/squashtm.fg.menu.css}" />
+	<!-- /common script import -->
+	<!-- rich jeditable header -->
+	<link rel="stylesheet" type="text/css" media="all" href="../../../../../../../core/core.web/src/main/webapp/styles/ckeditor.override.css" th:href="@{/styles/ckeditor.override.css}" />
+	<!-- /rich jeditable header -->
+	<link rel="stylesheet" type="text/css" media="all" href="../../../../../../../core/core.web/src/main/webapp/styles/master.blue.css" th:href="@{/styles/master.blue.css}" />
+	<link rel="stylesheet" type="text/css" media="all" href="../../../../../../../core/core.web/src/main/webapp/styles/tabbed-pane.blue.css" th:href="@{/styles/tabbed-pane.blue.css}" />
+	<!-- subpage -->
+	<link rel="stylesheet" type="text/css" media="all" href="../../../../../../../core/core.web/src/main/webapp/styles/structure.override.css" th:href="@{/styles/structure.override.css}" />
+	<link rel="stylesheet" type="text/css" media="all" href="../../../../../../../core/core.web/src/main/webapp/styles/structure.subpageoverride.css" th:href="@{/styles/structure.subpageoverride.css}" />
+	<!-- /subpage -->
+</head>
+<body>
+	<div th:remove="all">
+		<script type="text/javascript" src="../../../../../../../core/core.web/src/main/webapp/scripts/jquery/jquery-1.5.2-dev.js" th:src="@{/scripts/jquery/jquery-1.5.2.min.js}"></script>
+		<script type="text/javascript" src="../../../../../../../core/core.web/src/main/webapp/scripts/jquery/jquery-ui-1.8.13.all.dev.js" th:src="@{/scripts/jquery/jquery-ui-1.8.13.custom.min.js}"></script>
+		<script type="text/javascript" src="../../../../../../../core/core.web/src/main/webapp/scripts/ckeditor/ckeditor.js" th:src="@{/scripts/ckeditor/ckeditor.js}"></script>
+		<script type="text/javascript" src="../../../../../../../core/core.web/src/main/webapp/scripts/ckeditor/adapters/jquery.js" th:src="@{/scripts/ckeditor/adapters/jquery.js}"></script>
+		<script type="text/javascript" src="../../../../../../../core/core.web/src/main/webapp/scripts/jquery/jquery.jeditable.js" th:src="@{/scripts/jquery/jquery.jeditable.js}"></script>
+		<script type="text/javascript" src="../../../../../../../core/core.web/src/main/webapp/scripts/jquery/jquery.generateId.js" th:src="@{/scripts/jquery/jquery.generateId.js}"></script>
+		<script type="text/javascript" src="../../../../../../../core/core.web/src/main/webapp/scripts/jquery/jquery.jeditable.ckeditor.js" th:src="@{/scripts/jquery/jquery.jeditable.ckeditor.js}"></script>
+		<script type="text/javascript" src="../../../../../../../core/core.web/src/main/webapp/scripts/jquery/jquery.jeditable.datepicker.js" th:src="@{/scripts/jquery/jquery.jeditable.datepicker.js}"></script>
+		<script type="text/javascript" src="../../../../../../../core/core.web/src/main/webapp/scripts/jquery/jquery.cookie.js" th:src="@{/scripts/jquery/jquery.cookie.js}"></script>
+		<script type="text/javascript" src="../../../../../../../core/core.web/src/main/webapp/scripts/jquery/jquery.hotkeys-0.8.js" th:src="@{/scripts/jquery/jquery.hotkeys-0.8.js}"></script>
+		<script type="text/javascript" src="../../../../../../../core/core.web/src/main/webapp/scripts/jquery/jquery.jstree.js" th:src="@{/scripts/jquery/jquery.jstree.js}"></script>
+		<script type="text/javascript" src="../../../../../../../core/core.web/src/main/webapp/scripts/squashtest/jquery.squashtm.plugin.js" th:src="@{/scripts/squashtest/jquery.squashtm.plugin.js}"></script>
+		<script type="text/javascript" src="../../../../../../../core/core.web/src/main/webapp/scripts/squashtest/jquery.squash.togglepanels.js" th:src="@{/scripts/squashtest/jquery.squash.togglepanels.js}"></script> 
+		<script type="text/javascript" src="../../../../../../../core/core.web/src/main/webapp/scripts/squashtest/jquery.squash.messagedialog.js" th:src="@{/scripts/squashtest/jquery.squash.messagedialog.js}"></script>  
+		<script type="text/javascript" src="../../../../../../../core/core.web/src/main/webapp/scripts/squashtest/jquery.squash.confirmdialog.js" th:src="@{/scripts/squashtest/jquery.squash.confirmdialog.js}"></script>  
+		<script type="text/javascript" src="../../../../../../../core/core.web/src/main/webapp/scripts/squashtest/jquery.squashtm.oneshotdialog.js" th:src="@{/scripts/squashtest/jquery.squashtm.oneshotdialog.js}"></script>
+		<script type="text/javascript" src="../../../../../../../core/core.web/src/main/webapp/scripts/squashtest/classes/KeyEventListener.js" th:src="@{/scripts/squashtest/classes/KeyEventListener.js}"></script>
+		<script type="text/javascript" src="../../../../../../../core/core.web/src/main/webapp/scripts/squashtest/jquery.squashtm.contextual-content.js" th:src="@{/scripts/squashtest/jquery.squashtm.contextual-content.js}"></script>
+		<script type="text/javascript" src="../../../../../../../core/core.web/src/main/webapp/scripts/squashtest/jquery.squashtm.fg.menu.js" th:src="@{/scripts/squashtest/jquery.squashtm.fg.menu.js}"></script>
+		<script type="text/javascript" src="../../../../../../../core/core.web/src/main/webapp/scripts/squashtest/classes/Event.js" th:src="@{/scripts/squashtest/classes/Event.js}"></script>
+		<script type="text/javascript" src="../../../../../../../core/core.web/src/main/webapp/scripts/squashtest/jquery.squash.squashbutton.js" th:src="@{/scripts/squashtest/jquery.squash.squashbutton.js}"></script>
+		<script type="text/javascript" src="../../../../../../../core/core.web/src/main/webapp/scripts/squashtest/jquery.squashtm.jeditable.ext.js" th:src="@{/scripts/squashtest/jquery.squashtm.jeditable.ext.js}"></script>
+		<script type="text/javascript" src="../../../../../../../core/core.web/src/main/webapp/scripts/squashtest/classes/TreeEventHandler.js" th:src="@{/scripts/squashtest/classes/TreeEventHandler.js}"></script>
+		<script type="text/javascript" src="../../../../../../../core/core.web/src/main/webapp/scripts/squashtest/classes/TreeNodeCopier.js" th:src="@{/scripts/squashtest/classes/TreeNodeCopier.js}"></script>
+		<script type="text/javascript" src="../../../../../../../core/core.web/src/main/webapp/scripts/squashtest/jquery.squashtm.jstree-node.js" th:src="@{/scripts/squashtest/jquery.squashtm.jstree-node.js}"></script>
+		<script type="text/javascript" src="../../../../../../../core/core.web/src/main/webapp/scripts/squashtest/jquery.squashtm.jstree.ext.js" th:src="@{/scripts/squashtest/jquery.squashtm.jstree.ext.js}"></script>
+		<script type="text/javascript" src="../../scripts/squash/jquery.squashtm.linkabletree.js" th:src="@{/scripts/squash/jquery.squashtm.linkabletree.js}"></script>
+		<script type="text/javascript" src="../../scripts/squash/jquery.squashtm.projectpicker.js" th:src="@{/scripts/squash/jquery.squashtm.projectpicker.js}"></script>
+		<script type="text/javascript" src="../../scripts/squash/squashtm.navbar.js" th:src="@{/scripts/squash/squashtm.navbar.js}"></script>
+		<script type="text/javascript" src="../../scripts/squash/squashtm.menubar.js" th:src="@{/scripts/squash/squashtm.menubar.js}"></script>
+		<script type="text/javascript" src="../../scripts/squash/squashtm.notification.js" th:src="@{/scripts/squash/squashtm.notification.js}"></script>
+		<script type="text/javascript" src="../../scripts/squash/squashtm.projectfilter.js" th:src="@{/scripts/squash/squashtm.projectfilter.js}"></script>
+	</div>
+	<div id="navigation" th:include="navbar.frag :: navbar">
+		NAVBAR
+	</div>
+
+	<div id="workspace">
+		<div id="workspace-title">
+			<div class="snap-left">
+				<h2 th:text="#{squashtm.library.requirement.title}">Report viewer</h2>	
+			</div>
+			<div class="snap-right">
+ 				<div class="main-menubar" th:include="menubar.frag :: menubar">
+ 					MENUBAR
+				</div>
+				<div style="display:inline-block;">
+					<div id="ajax-processing-indicator" class="ui-corner-all snap-right" style="display:inline-block">
+						<img src="../../../../../../../core/core.web/src/main/webapp/images/ajax-loader.gif" width="19px" height="19px" alt="processing" th:alt="#{squashtm.processing}" th:src="@{/images/ajax-loader.gif}" /> 
+						<span th:text="#{squashtm.processing}">Processing...</span>
+					</div>
+					<div id="generic-error-notification-area" class="ui-state-error ui-corner-all snap-right not-displayed">
+						<span class="ui-icon ui-icon-alert icon"></span><span th:text="#{error.generic.label}">WTF ?</span> &nbsp;(<a href="javascript:void(0)" id="show-generic-error-details" th:text="#{error.generic.button.details.label}">Details</a>)
+					</div>
+ 				</div>
+			</div>
+		</div>
+		<div id="information-content" th:include="contextual-report.frag :: report">
+		</div>
+	</div>
+
+	<div class="not-displayed" th:include="js.includes.frag :: jquery"></div>	
+	<div class="not-displayed" th:include="js.includes.frag :: squash"></div>
+	<script th:remove="all" type="text/javascript" src="../../js/thymol.js"></script>
+	<script type="text/javascript" src="../../scripts/squash/squashtm.reportworkspace.js" th:src="@{/scripts/squash/squashtm.reportworkspace.js}"></script>
+	<script type="text/javascript" src="../../scripts/squash/squashtm.report.js" th:src="@{/scripts/squash/squashtm.report.js}"></script>
+
+	<script type="text/javascript" th:inline="javascript">
+		/* <![CDATA[ */
+    	$(function() {
+			/* navigation tag */
+			squashtm.navbar.initHighlighted('report');
+			var workspaceUrl = document.location.protocol + '//' + document.location.host + "/squash/bugtracker/workspace-button";
+			$("#bugtracker-div").load(workspaceUrl,
+		 			function(){$("#bugtracker-link").hover(
+		 						function () {squashtm.navbar.highlightOn("bugtracker-link");}, 
+		 						function () {squashtm.navbar.highlightOff("bugtracker-link");}
+	 	 		);
+	 		});
+			
+			/* project filter */
+			var projectFilterConf = {
+					url: /*[[ @{/global-filter/filter} ]]*/ '/global-filter/filter',
+					title: /*[[ #{dialog.settings.filter.title} ]]*/ 'Projects filter',
+					confirmLabel: /*[[ #{label.Confirm} ]]*/ 'Confirm',
+					cancelLabel: /*[[ #{label.Cancel} ]]*/ 'Cancel',
+			};
+				
+			squashtm.projectfilter.init(projectFilterConf);
+			
+			/* menubar */
+			var menuBarConf = {
+				boxSelector: "#menu-toggle-filter-ckbox",
+				url: /*[[@{/global-filter/filter-status}]]*/ '/global-filter/filter-status',
+				linkSelector: "#menu-project-filter-link",
+				enabledTxt: /*[[#{workspace.menubar.filter.enabled.label}]]*/ 'Active',
+				disabledTxt: /*[[#{workspace.menubar.filter.disabled.label}]]*/ 'Inactive',
+				enabledCallbacks: [ function(){ $("div.tree-filter-reminder-div > span").removeClass("not-displayed");} ]
+			}
+	
+			squashtm.menubar.init(menuBarConf);
+			
+			/* wtf */
+			squashtm.notification.init({
+				infoTitle: /*[[#{popup.title.info}]]*/ 'Info', 
+				errorTitle: /*[[#{popup.title.error}]]*/ 'Error'
+			});			
+
+			/* this page */
+			squashtm.reportWorkspace.init({
+				expandSidebarLabel: /*[[ #{report.workspace.togglebutton.normal.label} ]]*/ '>>', 
+				collapseSidebarLabel: /*[[ #{report.workspace.togglebutton.expand.label} ]]*/ '<<'
+			});
+		});	
+    	/* ]]> */
+	</script>
+	<div class="not-displayed" th:include="contextual-report.frag :: script">
+	</div>	
+</body>
+</html>

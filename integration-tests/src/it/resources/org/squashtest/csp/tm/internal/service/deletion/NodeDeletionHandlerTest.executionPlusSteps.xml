@@ -1,0 +1,114 @@
+<?xml version='1.0' encoding='UTF-8'  ?>
+<!--
+
+        This file is part of the Squashtest platform.
+        Copyright (C) 2010 - 2012 Henix, henix.fr
+
+        See the NOTICE file distributed with this work for additional
+        information regarding copyright ownership.
+
+        This is free software: you can redistribute it and/or modify
+        it under the terms of the GNU Lesser General Public License as published by
+        the Free Software Foundation, either version 3 of the License, or
+        (at your option) any later version.
+
+        this software is distributed in the hope that it will be useful,
+        but WITHOUT ANY WARRANTY; without even the implied warranty of
+        MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+        GNU Lesser General Public License for more details.
+
+        You should have received a copy of the GNU Lesser General Public License
+        along with this software.  If not, see <http://www.gnu.org/licenses/>.
+
+-->
+<dataset >
+
+	<!-- ========================= attachment lists ========================= -->
+
+	<attachment_list attachment_list_id="500" />
+	<attachment_list attachment_list_id="6001" />
+	<attachment_list attachment_list_id="6002" />
+	<attachment_list attachment_list_id="6003" />
+	
+	<!-- ======================= the content of those lists ================= -->
+
+	<attachment_content attachment_content_id="5001" stream_content="aaaaa" />
+	<attachment_content attachment_content_id="5002" stream_content="aaaaa" />	
+	<attachment_content attachment_content_id="60011" stream_content="aaaaa" />
+	<attachment_content attachment_content_id="60012" stream_content="aaaaa" />
+	<attachment_content attachment_content_id="60021" stream_content="aaaaa" />
+	<attachment_content attachment_content_id="60022" stream_content="aaaaa" />
+	<attachment_content attachment_content_id="60031" stream_content="aaaaa" />
+	<attachment_content attachment_content_id="60032" stream_content="aaaaa" />
+
+	<attachment attachment_id="5001" name="atta" type="txt" size="5" added_on="2011-08-23" content_id="5001" attachment_list_id="500"/>
+	<attachment attachment_id="5002" name="atta" type="txt" size="5" added_on="2011-08-23" content_id="5002" attachment_list_id="500"/>	
+	<attachment attachment_id="60011" name="atta" type="txt" size="5" added_on="2011-08-23" content_id="60011" attachment_list_id="6001"/>
+	<attachment attachment_id="60012" name="atta" type="txt" size="5" added_on="2011-08-23" content_id="60012" attachment_list_id="6001"/>
+	<attachment attachment_id="60021" name="atta" type="txt" size="5" added_on="2011-08-23" content_id="60021" attachment_list_id="6002"/>
+	<attachment attachment_id="60022" name="atta" type="txt" size="5" added_on="2011-08-23" content_id="60022" attachment_list_id="6002"/>
+	<attachment attachment_id="60031" name="atta" type="txt" size="5" added_on="2011-08-23" content_id="60031" attachment_list_id="6003"/>
+	<attachment attachment_id="60032" name="atta" type="txt" size="5" added_on="2011-08-23" content_id="60032" attachment_list_id="6003"/>
+	
+
+	<!--  ============== the issue lists ============================= -->
+	
+	<issue_list issue_list_id="500" />
+	<issue_list issue_list_id="6001" />
+	<issue_list issue_list_id="6002" />
+	<issue_list issue_list_id="6003" />
+	
+	<!--  =============== their content ================================ -->
+	
+	<bugtracker bugtracker_id="1" kind="mantis" name="mantis" url="http://localhost/mantisbt" iframe_friendly="false" />	
+	<issue issue_id="5001" remote_issue_id="5001" issue_list_id="500" 	  bugtracker_id="1"/>
+	<issue issue_id="5002" remote_issue_id="5002" issue_list_id="500"  	  bugtracker_id="1"/>
+	<issue issue_id="60011" remote_issue_id="60011" issue_list_id="6001"  bugtracker_id="1"/>
+	<issue issue_id="60012" remote_issue_id="60012" issue_list_id="6001"  bugtracker_id="1"/>
+	<issue issue_id="60021" remote_issue_id="60021" issue_list_id="6002"  bugtracker_id="1"/>
+	<issue issue_id="60022" remote_issue_id="60022" issue_list_id="6002"  bugtracker_id="1"/>
+	<issue issue_id="60031" remote_issue_id="60031" issue_list_id="6003"  bugtracker_id="1"/>
+	<issue issue_id="60032" remote_issue_id="60032" issue_list_id="6003"  bugtracker_id="1"/>
+
+	
+	
+	
+	<!-- ================= item test plan ================================= -->
+	
+	<iteration_test_plan_item item_test_plan_id="9999" created_by="IT" created_on="2011-08-23" />
+	
+	
+	<!--  ================ execution + steps ============================== -->
+		
+	<execution execution_id="500" created_by="IT" created_on="2011-08-23" name="exec 1" 
+			attachment_list_id="500" issue_list_id="500"/>
+	
+	<execution_step execution_step_id="6001" action="step 1" created_by="IT" created_on="2011-08-03" 
+			attachment_list_id="6001" issue_list_id="6001"/>
+	<execution_step execution_step_id="6002" action="step 2" created_by="IT" created_on="2011-08-03" 
+			attachment_list_id="6002" issue_list_id="6002"/>
+	<execution_step execution_step_id="6003" action="step 3" created_by="IT" created_on="2011-08-03"
+			attachment_list_id="6003" issue_list_id="6003"/>
+			
+	<execution_execution_steps execution_id="500" execution_step_id="6001" execution_step_order="0" />
+	<execution_execution_steps execution_id="500" execution_step_id="6002" execution_step_order="1" />
+	<execution_execution_steps execution_id="500" execution_step_id="6003" execution_step_order="2" />
+	
+	<item_test_plan_execution item_test_plan_id="9999" execution_id="500" execution_order="0" />
+	
+	
+	<!--  cleanup -->
+	
+	<test_case_library_node/>
+	<test_case/>
+	<test_case_folder/>
+	<tcln_relationship/>
+	<test_case_library_content/>
+	
+	<test_step/>
+	<action_test_step/>
+	<call_test_step/>
+	<test_case_steps/>
+	
+	
+</dataset>

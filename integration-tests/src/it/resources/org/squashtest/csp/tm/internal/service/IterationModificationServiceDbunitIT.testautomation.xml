@@ -1,0 +1,57 @@
+<!--
+
+        This file is part of the Squashtest platform.
+        Copyright (C) 2010 - 2012 Henix, henix.fr
+
+        See the NOTICE file distributed with this work for additional
+        information regarding copyright ownership.
+
+        This is free software: you can redistribute it and/or modify
+        it under the terms of the GNU Lesser General Public License as published by
+        the Free Software Foundation, either version 3 of the License, or
+        (at your option) any later version.
+
+        this software is distributed in the hope that it will be useful,
+        but WITHOUT ANY WARRANTY; without even the implied warranty of
+        MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+        GNU Lesser General Public License for more details.
+
+        You should have received a copy of the GNU Lesser General Public License
+        along with this software.  If not, see <http://www.gnu.org/licenses/>.
+
+-->
+
+<dataset>
+
+	<attachment_list attachment_list_id="1"/>
+	
+	
+	<!--  TA side -->
+	
+	<test_automation_server server_id="1" base_url="http://bob.com" login="bob" password="bob" kind="jenkins"/>
+	
+	<test_automation_project project_id="1" name="ta-project" server_id="1" />
+	
+	<automated_test test_id="100" project_id="1" name="tests/my/tests/bob.txt" />
+	
+	
+	
+	
+	<!--  TM side  -->
+	
+	<test_case_library tcl_id="1" />
+	
+	<project project_id="1" name="project" active="1" created_by="bob" created_on="2012-09-09" test_automation_enabled="1" tcl_id="1"/>
+	
+	<test_case_library_node tcln_id="20"  created_by="bob" created_on="2012-09-09" name="test-case" project_id="1"/>
+	<test_case tcln_id="20" version="1" attachment_list_id="1" importance="LOW" importance_auto="0" reference="aaa"  ta_test="100"/>
+
+	<test_case_library_content library_id="1" content_id="20" />
+
+	<iteration_test_plan_item item_test_plan_id="1" created_by="bob" created_on="2012-09-09" tcln_id="20"/>
+
+	<iteration iteration_id="1" name="iter" created_by="bob" created_on="2012-09-09" actual_end_auto="false" actual_start_auto="false" />
+
+	<item_test_plan_list iteration_id="1" item_test_plan_id="1" item_test_plan_order="0"/>
+
+</dataset>

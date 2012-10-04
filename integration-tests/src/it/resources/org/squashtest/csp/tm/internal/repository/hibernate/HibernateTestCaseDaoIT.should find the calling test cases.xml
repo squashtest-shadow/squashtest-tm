@@ -1,0 +1,103 @@
+<!--
+
+        This file is part of the Squashtest platform.
+        Copyright (C) 2010 - 2012 Henix, henix.fr
+
+        See the NOTICE file distributed with this work for additional
+        information regarding copyright ownership.
+
+        This is free software: you can redistribute it and/or modify
+        it under the terms of the GNU Lesser General Public License as published by
+        the Free Software Foundation, either version 3 of the License, or
+        (at your option) any later version.
+
+        this software is distributed in the hope that it will be useful,
+        but WITHOUT ANY WARRANTY; without even the implied warranty of
+        MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+        GNU Lesser General Public License for more details.
+
+        You should have received a copy of the GNU Lesser General Public License
+        along with this software.  If not, see <http://www.gnu.org/licenses/>.
+
+-->
+<dataset>
+
+	<!--  dummy attachment list, the same for everyone that need one. -->
+	
+	<attachment_list attachment_list_id="1" />
+
+
+	<!--  test case library nodes ... -->
+
+
+	<test_case_library_node tcln_id="50" name="other bottom test case" created_by="IT" created_on="2011-07-26" />		
+	<test_case_library_node tcln_id="100" name="bottom test case" created_by="IT" created_on="2011-07-26" />	
+	<test_case_library_node tcln_id="101" name="first test case" created_by="IT" created_on="2011-07-26" />	
+	<test_case_library_node tcln_id="102" name="second test case" created_by="IT" created_on="2011-07-26" />		
+	<test_case_library_node tcln_id="103" name="third test case" created_by="IT" created_on="2011-07-26" />
+	
+	
+	<!-- ... being all test cases -->
+
+	<test_case tcln_id="50" version="1" 	attachment_list_id="1" />		
+	<test_case tcln_id="100" version="1" 	attachment_list_id="1" />	
+	<test_case tcln_id="101" version="1" 	attachment_list_id="1" />
+	<test_case tcln_id="102" version="1" 	attachment_list_id="1" />
+	<test_case tcln_id="103" version="1" 	attachment_list_id="1" />
+	
+	
+	<!--  test steps... -->
+		
+	<test_step test_step_id="101" />
+	<test_step test_step_id="102" />
+	<test_step test_step_id="103" />		
+		
+	<test_step test_step_id="1000" />
+	
+	
+	<test_step test_step_id="151" />
+	<test_step test_step_id="152" />
+	<test_step test_step_id="153" />
+	
+	<!-- ... being all call steps -->
+	
+	<call_test_step test_step_id="101" called_test_case_id="100" />
+	<call_test_step test_step_id="102" called_test_case_id="100"/>
+	<call_test_step test_step_id="103" called_test_case_id="100"/>	
+	
+	<call_test_step test_step_id="151" called_test_case_id="50" />
+	<call_test_step test_step_id="152" called_test_case_id="50"/>
+	<call_test_step test_step_id="153" called_test_case_id="50"/>	
+	
+	<!--  those above are duplicated. The calling test cases will all call the called test case twice. -->
+		
+	<test_step test_step_id="1010" />
+	<test_step test_step_id="1020" />
+	<test_step test_step_id="1030" />	
+	
+	<call_test_step test_step_id="1010" called_test_case_id="100" />
+	<call_test_step test_step_id="1020" called_test_case_id="100"/>
+	<call_test_step test_step_id="1030" called_test_case_id="100"/>	
+	
+	
+	<!--  except for this one -->
+	<action_test_step test_step_id="1000" action="the one and only action test step"/>
+	
+	
+	<!--  test case steps association -->
+	<test_case_steps test_case_id="101" step_id="101" step_order="1"/>
+	<test_case_steps test_case_id="102" step_id="102" step_order="1"/>
+	<test_case_steps test_case_id="103" step_id="103" step_order="1"/>	
+	
+	<test_case_steps test_case_id="101" step_id="1010" step_order="2"/>
+	<test_case_steps test_case_id="102" step_id="1020" step_order="2"/>
+	<test_case_steps test_case_id="103" step_id="1030" step_order="2"/>	
+	
+	
+	<test_case_steps test_case_id="101" step_id="151" step_order="1"/>
+	<test_case_steps test_case_id="102" step_id="152" step_order="1"/>
+	<test_case_steps test_case_id="103" step_id="153" step_order="1"/>		
+		
+	<test_case_steps test_case_id="101" step_id="1000" step_order="3" />
+	
+</dataset>
