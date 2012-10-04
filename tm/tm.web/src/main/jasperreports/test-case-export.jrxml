@@ -21,27 +21,18 @@
         along with this software.  If not, see <http://www.gnu.org/licenses/>.
 
 -->
-<jasperReport xmlns="http://jasperreports.sourceforge.net/jasperreports" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://jasperreports.sourceforge.net/jasperreports http://jasperreports.sourceforge.net/xsd/jasperreport.xsd" name="test-case-export" pageWidth="2000" pageHeight="595" orientation="Landscape" columnWidth="2000" leftMargin="0" rightMargin="0" topMargin="0" bottomMargin="0" resourceBundle="/WEB-INF/messages/tm/messages" whenResourceMissingType="Key">
+<jasperReport xmlns="http://jasperreports.sourceforge.net/jasperreports" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://jasperreports.sourceforge.net/jasperreports http://jasperreports.sourceforge.net/xsd/jasperreport.xsd" name="test-case-export" pageWidth="2000" pageHeight="40" orientation="Landscape" columnWidth="2000" leftMargin="0" rightMargin="0" topMargin="0" bottomMargin="0" resourceBundle="/WEB-INF/messages/tm/messages" whenResourceMissingType="Key">
 	<property name="ireport.zoom" value="0.6209213230591557"/>
 	<property name="ireport.x" value="0"/>
 	<property name="ireport.y" value="0"/>
 	<property name="net.sf.jasperreports.text.truncate.at.char" value="Boolean.FALSE"/>
-	<style name="table">
-		<box>
-			<pen lineWidth="1.0" lineColor="#000000"/>
-		</box>
-	</style>
-	<style name="table_TH" mode="Opaque" backcolor="#F0F8FF">
+	<property name="net.sf.jasperreports.export.xls.white.page.background" value="false"/>
+	<style name="table_TH" mode="Opaque" forecolor="#FFFFFF" backcolor="#7DAAD6">
 		<box>
 			<pen lineWidth="0.5" lineColor="#000000"/>
 		</box>
 	</style>
-	<style name="table_CH" mode="Opaque" backcolor="#BFE1FF">
-		<box>
-			<pen lineWidth="0.5" lineColor="#000000"/>
-		</box>
-	</style>
-	<style name="table_TD" mode="Opaque" backcolor="#FFFFFF">
+	<style name="table_TD" mode="Transparent">
 		<box>
 			<pen lineWidth="0.5" lineColor="#000000"/>
 		</box>
@@ -89,35 +80,35 @@
 	<title>
 		<band height="20" splitType="Prevent">
 			<textField isStretchWithOverflow="true" isBlankWhenNull="true">
-				<reportElement mode="Opaque" x="0" y="0" width="170" height="20" forecolor="#FFFFFF" backcolor="#7DAAD6"/>
+				<reportElement style="table_TH" stretchType="RelativeToBandHeight" mode="Opaque" x="0" y="0" width="170" height="20"/>
 				<textElement textAlignment="Center" verticalAlignment="Middle">
 					<font isBold="true"/>
 				</textElement>
 				<textFieldExpression class="java.lang.String"><![CDATA["PATH"]]></textFieldExpression>
 			</textField>
 			<textField isStretchWithOverflow="true">
-				<reportElement mode="Opaque" x="170" y="0" width="170" height="20" forecolor="#FFFFFF" backcolor="#7DAAD6"/>
+				<reportElement style="table_TH" stretchType="RelativeToBandHeight" mode="Opaque" x="170" y="0" width="170" height="20"/>
 				<textElement textAlignment="Center" verticalAlignment="Middle">
 					<font isBold="true"/>
 				</textElement>
 				<textFieldExpression class="java.lang.String"><![CDATA["ID"]]></textFieldExpression>
 			</textField>
 			<textField isStretchWithOverflow="true">
-				<reportElement mode="Opaque" x="510" y="0" width="170" height="20" forecolor="#FFFFFF" backcolor="#7DAAD6"/>
+				<reportElement style="table_TH" stretchType="RelativeToBandHeight" mode="Opaque" x="510" y="0" width="170" height="20"/>
 				<textElement textAlignment="Center" verticalAlignment="Middle">
 					<font isBold="true"/>
 				</textElement>
 				<textFieldExpression class="java.lang.String"><![CDATA["LABEL"]]></textFieldExpression>
 			</textField>
 			<textField isStretchWithOverflow="true">
-				<reportElement mode="Opaque" x="680" y="0" width="170" height="20" forecolor="#FFFFFF" backcolor="#7DAAD6"/>
+				<reportElement style="table_TH" stretchType="RelativeToBandHeight" mode="Opaque" x="680" y="0" width="170" height="20"/>
 				<textElement textAlignment="Center" verticalAlignment="Middle">
 					<font isBold="true"/>
 				</textElement>
 				<textFieldExpression class="java.lang.String"><![CDATA["WEIGHT"]]></textFieldExpression>
 			</textField>
 			<textField isStretchWithOverflow="true" pattern="">
-				<reportElement mode="Opaque" x="850" y="0" width="170" height="20" forecolor="#FFFFFF" backcolor="#7DAAD6">
+				<reportElement style="table_TH" stretchType="RelativeToBandHeight" mode="Opaque" x="850" y="0" width="170" height="20">
 					<property name="net.sf.jasperreports.print.keep.full.text" value="true"/>
 				</reportElement>
 				<textElement textAlignment="Center" verticalAlignment="Middle">
@@ -126,28 +117,28 @@
 				<textFieldExpression class="java.lang.String"><![CDATA["DESCRIPTION"]]></textFieldExpression>
 			</textField>
 			<textField isStretchWithOverflow="true">
-				<reportElement mode="Opaque" x="1190" y="0" width="170" height="20" forecolor="#FFFFFF" backcolor="#7DAAD6"/>
+				<reportElement style="table_TH" stretchType="RelativeToBandHeight" mode="Opaque" x="1190" y="0" width="170" height="20"/>
 				<textElement textAlignment="Center" verticalAlignment="Middle">
 					<font isBold="true"/>
 				</textElement>
 				<textFieldExpression class="java.lang.String"><![CDATA["CREATED_ON"]]></textFieldExpression>
 			</textField>
 			<textField isStretchWithOverflow="true">
-				<reportElement mode="Opaque" x="1360" y="0" width="170" height="20" forecolor="#FFFFFF" backcolor="#7DAAD6"/>
+				<reportElement style="table_TH" stretchType="RelativeToBandHeight" mode="Opaque" x="1360" y="0" width="170" height="20"/>
 				<textElement textAlignment="Center" verticalAlignment="Middle">
 					<font isBold="true"/>
 				</textElement>
 				<textFieldExpression class="java.lang.String"><![CDATA["CREATED_BY"]]></textFieldExpression>
 			</textField>
 			<textField isStretchWithOverflow="true">
-				<reportElement mode="Opaque" x="340" y="0" width="170" height="20" forecolor="#FFFFFF" backcolor="#7DAAD6"/>
+				<reportElement style="table_TH" stretchType="RelativeToBandHeight" mode="Opaque" x="340" y="0" width="170" height="20"/>
 				<textElement textAlignment="Center" verticalAlignment="Middle">
 					<font isBold="true"/>
 				</textElement>
 				<textFieldExpression class="java.lang.String"><![CDATA["REFERENCE"]]></textFieldExpression>
 			</textField>
 			<textField isStretchWithOverflow="true" pattern="">
-				<reportElement mode="Opaque" x="1020" y="0" width="170" height="20" forecolor="#FFFFFF" backcolor="#7DAAD6">
+				<reportElement style="table_TH" stretchType="RelativeToBandHeight" mode="Opaque" x="1020" y="0" width="170" height="20">
 					<property name="net.sf.jasperreports.print.keep.full.text" value="true"/>
 				</reportElement>
 				<textElement textAlignment="Center" verticalAlignment="Middle">
@@ -156,14 +147,14 @@
 				<textFieldExpression class="java.lang.String"><![CDATA["PRE_REQUISITE"]]></textFieldExpression>
 			</textField>
 			<textField isStretchWithOverflow="true">
-				<reportElement mode="Opaque" x="1700" y="0" width="170" height="20" forecolor="#FFFFFF" backcolor="#7DAAD6"/>
+				<reportElement style="table_TH" stretchType="RelativeToBandHeight" mode="Opaque" x="1700" y="0" width="170" height="20"/>
 				<textElement textAlignment="Center" verticalAlignment="Middle">
 					<font isBold="true"/>
 				</textElement>
 				<textFieldExpression class="java.lang.String"><![CDATA["EXPECTED_RESULT"]]></textFieldExpression>
 			</textField>
 			<textField isStretchWithOverflow="true">
-				<reportElement mode="Opaque" x="1530" y="0" width="170" height="20" forecolor="#FFFFFF" backcolor="#7DAAD6"/>
+				<reportElement style="table_TH" stretchType="RelativeToBandHeight" mode="Opaque" x="1530" y="0" width="170" height="20"/>
 				<textElement textAlignment="Center" verticalAlignment="Middle">
 					<font isBold="true"/>
 				</textElement>
@@ -173,78 +164,89 @@
 	</title>
 	<detail>
 		<band height="20" splitType="Prevent">
-			<textField isStretchWithOverflow="true">
-				<reportElement mode="Transparent" x="0" y="0" width="170" height="20">
+			<textField>
+				<reportElement style="table_TD" stretchType="RelativeToBandHeight" mode="Transparent" x="0" y="0" width="170" height="20">
+					<property name="net.sf.jasperreports.export.xls.ignore.cell.background" value="true"/>
 					<property name="net.sf.jasperreports.print.keep.full.text" value="true"/>
 				</reportElement>
 				<textElement verticalAlignment="Top"/>
 				<textFieldExpression class="java.lang.String"><![CDATA[$F{folderName}]]></textFieldExpression>
 			</textField>
-			<textField isStretchWithOverflow="true">
-				<reportElement mode="Transparent" x="170" y="0" width="170" height="20">
+			<textField>
+				<reportElement style="table_TD" stretchType="RelativeToBandHeight" mode="Transparent" x="170" y="0" width="170" height="20">
+					<property name="net.sf.jasperreports.export.xls.ignore.cell.background" value="true"/>
 					<property name="net.sf.jasperreports.print.keep.full.text" value="true"/>
 				</reportElement>
 				<textElement verticalAlignment="Top"/>
 				<textFieldExpression class="java.lang.Long"><![CDATA[$F{id}]]></textFieldExpression>
 			</textField>
-			<textField isStretchWithOverflow="true">
-				<reportElement mode="Transparent" x="340" y="0" width="170" height="20">
+			<textField>
+				<reportElement style="table_TD" stretchType="RelativeToBandHeight" mode="Transparent" x="340" y="0" width="170" height="20">
+					<property name="net.sf.jasperreports.export.xls.ignore.cell.background" value="true"/>
 					<property name="net.sf.jasperreports.print.keep.full.text" value="true"/>
 				</reportElement>
 				<textElement verticalAlignment="Top"/>
 				<textFieldExpression class="java.lang.String"><![CDATA[$F{reference}]]></textFieldExpression>
 			</textField>
-			<textField isStretchWithOverflow="true" isBlankWhenNull="true">
-				<reportElement mode="Transparent" x="510" y="0" width="170" height="20">
+			<textField isBlankWhenNull="true">
+				<reportElement style="table_TD" stretchType="RelativeToBandHeight" mode="Transparent" x="510" y="0" width="170" height="20">
+					<property name="net.sf.jasperreports.export.xls.ignore.cell.background" value="true"/>
 					<property name="net.sf.jasperreports.print.keep.full.text" value="true"/>
 				</reportElement>
 				<textElement verticalAlignment="Top"/>
 				<textFieldExpression class="java.lang.String"><![CDATA[$F{name}]]></textFieldExpression>
 			</textField>
-			<textField isStretchWithOverflow="true">
-				<reportElement mode="Transparent" x="680" y="0" width="170" height="20">
+			<textField>
+				<reportElement style="table_TD" stretchType="RelativeToBandHeight" mode="Transparent" x="680" y="0" width="170" height="20">
+					<property name="net.sf.jasperreports.export.xls.ignore.cell.background" value="true"/>
 					<property name="net.sf.jasperreports.print.keep.full.text" value="true"/>
 				</reportElement>
 				<textElement verticalAlignment="Top"/>
 				<textFieldExpression class="java.lang.String"><![CDATA[$F{weight}.name()]]></textFieldExpression>
 			</textField>
-			<textField isStretchWithOverflow="true">
-				<reportElement mode="Transparent" x="850" y="0" width="170" height="20">
+			<textField>
+				<reportElement style="table_TD" stretchType="RelativeToBandHeight" mode="Transparent" x="850" y="0" width="170" height="20">
+					<property name="net.sf.jasperreports.export.xls.ignore.cell.background" value="true"/>
 					<property name="net.sf.jasperreports.print.keep.full.text" value="true"/>
 				</reportElement>
 				<textElement verticalAlignment="Top" markup="none"/>
 				<textFieldExpression class="java.lang.String"><![CDATA[$F{description}]]></textFieldExpression>
 			</textField>
-			<textField isStretchWithOverflow="true">
-				<reportElement mode="Transparent" x="1020" y="0" width="170" height="20">
+			<textField>
+				<reportElement style="table_TD" stretchType="RelativeToBandHeight" mode="Transparent" x="1020" y="0" width="170" height="20">
+					<property name="net.sf.jasperreports.export.xls.ignore.cell.background" value="true"/>
 					<property name="net.sf.jasperreports.print.keep.full.text" value="true"/>
 				</reportElement>
 				<textElement verticalAlignment="Top" markup="none"/>
 				<textFieldExpression class="java.lang.String"><![CDATA[$F{prerequisite}]]></textFieldExpression>
 			</textField>
-			<textField isStretchWithOverflow="true">
-				<reportElement mode="Transparent" x="1190" y="0" width="170" height="20">
+			<textField>
+				<reportElement style="table_TD" stretchType="RelativeToBandHeight" mode="Transparent" x="1190" y="0" width="170" height="20">
+					<property name="net.sf.jasperreports.export.xls.ignore.cell.background" value="true"/>
 					<property name="net.sf.jasperreports.print.keep.full.text" value="true"/>
 				</reportElement>
 				<textElement verticalAlignment="Top" markup="none"/>
 				<textFieldExpression class="java.util.Date"><![CDATA[$F{createdOn}]]></textFieldExpression>
 			</textField>
-			<textField isStretchWithOverflow="true">
-				<reportElement mode="Transparent" x="1360" y="0" width="170" height="20">
+			<textField>
+				<reportElement style="table_TD" stretchType="RelativeToBandHeight" mode="Transparent" x="1360" y="0" width="170" height="20">
+					<property name="net.sf.jasperreports.export.xls.ignore.cell.background" value="true"/>
 					<property name="net.sf.jasperreports.print.keep.full.text" value="true"/>
 				</reportElement>
 				<textElement verticalAlignment="Top" markup="none"/>
 				<textFieldExpression class="java.lang.String"><![CDATA[$F{createdBy}]]></textFieldExpression>
 			</textField>
-			<textField isStretchWithOverflow="true">
-				<reportElement mode="Transparent" x="1530" y="0" width="170" height="20">
+			<textField>
+				<reportElement style="table_TD" stretchType="RelativeToBandHeight" mode="Transparent" x="1530" y="0" width="170" height="20">
+					<property name="net.sf.jasperreports.export.xls.ignore.cell.background" value="true"/>
 					<property name="net.sf.jasperreports.print.keep.full.text" value="true"/>
 				</reportElement>
 				<textElement verticalAlignment="Top" markup="none"/>
 				<textFieldExpression class="java.lang.String"><![CDATA[$F{firstAction}]]></textFieldExpression>
 			</textField>
-			<textField isStretchWithOverflow="true">
-				<reportElement mode="Transparent" x="1700" y="0" width="170" height="20">
+			<textField>
+				<reportElement style="table_TD" stretchType="RelativeToBandHeight" mode="Transparent" x="1700" y="0" width="170" height="20">
+					<property name="net.sf.jasperreports.export.xls.ignore.cell.background" value="true"/>
 					<property name="net.sf.jasperreports.print.keep.full.text" value="true"/>
 				</reportElement>
 				<textElement verticalAlignment="Top" markup="none"/>
@@ -253,7 +255,7 @@
 		</band>
 		<band height="20" splitType="Prevent">
 			<subreport>
-				<reportElement stretchType="RelativeToTallestObject" x="0" y="0" width="1190" height="20" isRemoveLineWhenBlank="true"/>
+				<reportElement stretchType="RelativeToTallestObject" mode="Transparent" x="0" y="0" width="1190" height="20" isRemoveLineWhenBlank="true"/>
 				<subreportParameter name="REPORT_RESOURCE_BUNDLE">
 					<subreportParameterExpression><![CDATA[$P{REPORT_RESOURCE_BUNDLE}]]></subreportParameterExpression>
 				</subreportParameter>

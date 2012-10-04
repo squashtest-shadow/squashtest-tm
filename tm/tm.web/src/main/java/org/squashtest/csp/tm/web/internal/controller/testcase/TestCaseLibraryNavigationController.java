@@ -178,16 +178,16 @@ public class TestCaseLibraryNavigationController extends
 	
 	@RequestMapping(value = "/export-folder", method = RequestMethod.GET)
 	public @ResponseBody
-	void exportRequirements(@RequestParam("tab[]") List<Long> ids, @RequestParam("name") String filename,
+	void exportTestCasess(@RequestParam("tab[]") List<Long> ids, @RequestParam("name") String filename, @RequestParam("format") String format,
 			HttpServletResponse response, Locale locale) {
 		List<ExportTestCaseData> dataSource = testCaseLibraryNavigationService
 				.findTestCasesToExportFromNodes(ids);
-		escapePrerequisite(dataSource);
-		printExport(dataSource, filename,JASPER_EXPORT_FILE, response, locale);
+		escapePrerequisiteAndSteps(dataSource);
+		printExport(dataSource, filename,JASPER_EXPORT_FILE, response, locale, format);
 
 	}
 
-	private void escapePrerequisite(List<ExportTestCaseData> dataSource) {
+	private void escapePrerequisiteAndSteps(List<ExportTestCaseData> dataSource) {
 		for (ExportTestCaseData data : dataSource) {
 			//escape prerequisite
 			String htmlPrerequisite = data.getPrerequisite();
@@ -219,13 +219,13 @@ public class TestCaseLibraryNavigationController extends
 
 	@RequestMapping(value = "/export-library", method = RequestMethod.GET)
 	public @ResponseBody
-	void exportLibrary(@RequestParam("tab[]") List<Long> libraryIds, @RequestParam("name") String filename,
+	void exportLibrary(@RequestParam("tab[]") List<Long> libraryIds, @RequestParam("name") String filename, @RequestParam("format") String format,
 			HttpServletResponse response, Locale locale) {
 
 		List<ExportTestCaseData> dataSource = testCaseLibraryNavigationService
 				.findTestCasesToExportFromProject(libraryIds);
-		escapePrerequisite(dataSource);
-		printExport(dataSource, filename,JASPER_EXPORT_FILE, response, locale);
+		escapePrerequisiteAndSteps(dataSource);
+		printExport(dataSource, filename,JASPER_EXPORT_FILE, response, locale, format);
 
 	}
 

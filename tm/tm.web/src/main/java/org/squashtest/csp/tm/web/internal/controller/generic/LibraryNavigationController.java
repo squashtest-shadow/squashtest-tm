@@ -38,6 +38,7 @@ import javax.validation.Valid;
 import net.sf.jasperreports.engine.JRExporterParameter;
 import net.sf.jasperreports.engine.JRParameter;
 import net.sf.jasperreports.engine.export.JRCsvExporterParameter;
+import net.sf.jasperreports.engine.export.JRXlsExporterParameter;
 
 import org.springframework.context.MessageSource;
 import org.springframework.http.HttpStatus;
@@ -267,7 +268,7 @@ public abstract class LibraryNavigationController<LIBRARY extends Library<? exte
 	}
 	
 	protected void printExport(List<? extends ExportData> dataSource, String filename,String jasperFile, HttpServletResponse response,
-			Locale locale) {
+			Locale locale, String format) {
 		try {
 			// it seems JasperReports doesn't like '\n' and the likes so we'll HTML-encode that first.
 			// that solution is quite weak though.
@@ -287,17 +288,18 @@ public abstract class LibraryNavigationController<LIBRARY extends Library<? exte
 			Map<JRExporterParameter, Object> exportParameter = new HashMap<JRExporterParameter, Object>();
 			exportParameter.put(JRCsvExporterParameter.FIELD_DELIMITER, ";");
 			exportParameter.put(JRExporterParameter.CHARACTER_ENCODING, "ISO-8859-1");
+			exportParameter.put(JRXlsExporterParameter.IS_WHITE_PAGE_BACKGROUND, Boolean.FALSE);
 
 			InputStream jsStream = Thread.currentThread().getContextClassLoader()
 					.getResourceAsStream(jasperFile);
-			InputStream reportStream = jrServices.getReportAsStream(jsStream, "csv", dataSource, reportParameter,
+			InputStream reportStream = jrServices.getReportAsStream(jsStream, format, dataSource, reportParameter,
 					exportParameter);
 
 			// print it.
 			ServletOutputStream servletStream = response.getOutputStream();
 
 			response.setContentType("application/octet-stream");
-			response.setHeader("Content-Disposition", "attachment; filename=" + filename + ".csv");
+			response.setHeader("Content-Disposition", "attachment; filename=" + filename + "."+format);
 
 			flushStreams(reportStream, servletStream);
 

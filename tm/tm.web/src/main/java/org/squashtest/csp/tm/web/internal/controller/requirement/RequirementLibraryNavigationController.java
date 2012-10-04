@@ -178,23 +178,23 @@ public class RequirementLibraryNavigationController extends
 	@RequestMapping(value = "/export-folder", method = RequestMethod.GET)
 	public @ResponseBody
 	void exportRequirements(@RequestParam("tab[]") List<Long> ids, @RequestParam("name") String filename,
-			HttpServletResponse response, Locale locale) {
+			HttpServletResponse response, Locale locale, @RequestParam("format") String format) {
 		List<ExportRequirementData> dataSource = requirementLibraryNavigationService
 				.findRequirementsToExportFromNodes(ids);
 
-		printExport(dataSource, filename, JASPER_EXPORT_FILE, response, locale);
+		printExport(dataSource, filename, JASPER_EXPORT_FILE, response, locale, format);
 
 	}
 
 	@RequestMapping(value = "/export-library", method = RequestMethod.GET)
 	public @ResponseBody
 	void exportLibrary(@RequestParam("tab[]") List<Long> libraryIds, @RequestParam("name") String filename,
-			HttpServletResponse response, Locale locale) {
+			HttpServletResponse response, Locale locale, @RequestParam("format") String format) {
 
 		List<ExportRequirementData> dataSource = requirementLibraryNavigationService
 				.findRequirementsToExportFromProject(libraryIds);
 		
-		printExport(dataSource, filename, JASPER_EXPORT_FILE, response, locale);
+		printExport(dataSource, filename, JASPER_EXPORT_FILE, response, locale, format);
 
 	}
 

@@ -38,6 +38,7 @@ import net.sf.jasperreports.engine.JasperFillManager;
 import net.sf.jasperreports.engine.JasperPrint;
 import net.sf.jasperreports.engine.data.JRBeanCollectionDataSource;
 import net.sf.jasperreports.engine.export.JRCsvExporter;
+import net.sf.jasperreports.engine.export.JRXlsExporter;
 
 import org.springframework.stereotype.Service;
 
@@ -55,7 +56,8 @@ public class JasperReportsServiceImpl {
 	
 	//todo : make it Spring configurable instead.
 	public JasperReportsServiceImpl(){
-			registerFormat("csv", JRCsvExporter.class);		
+			registerFormat("csv", JRCsvExporter.class);
+			registerFormat("xls", JRXlsExporter.class);
 	}
 	
 	
@@ -110,7 +112,6 @@ public class JasperReportsServiceImpl {
 			//create the jasper print
 			JRDataSource jasperDataSource = new JRBeanCollectionDataSource(dataSource);		
 			JasperPrint jPrint = JasperFillManager.fillReport(jasperStream, reportParameter, jasperDataSource);
-				
 
 			//export it
 			File reportFile = File.createTempFile("export",format);

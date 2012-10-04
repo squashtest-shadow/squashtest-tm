@@ -89,7 +89,8 @@ $(function(){
 			if ((nodes.length) && (nodes.areSameLibs())){
 				var tab = nodes.all('getResId');
 				var filename = $('#export-name-input').val();
-				url+="?name="+filename+"&"+customSerialize(tab,"tab[]");
+				var exportFormat = $('#export-option').val();
+				url+="?name="+filename+"&"+customSerialize(tab,"tab[]")+"&format="+exportFormat;
 				document.location.href = url;
 			}else{
 				$.squash.openMessage("<f:message key='popup.title.error' />", "${crossProjectError}");
@@ -129,7 +130,8 @@ $(function(){
 			<div class="display-table-row">		
 			<label><f:message key="label.ExportFormat" />
 			</label><div class="display-table-cell"><select id="export-option" >
-				<option value="1">CSV</option>
+				<option value="csv">csv</option>
+				<option value="xls">xls</option>
 			</select></div>
 			</div>
 		</div>
