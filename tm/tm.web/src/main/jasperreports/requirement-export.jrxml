@@ -22,7 +22,7 @@
 
 -->
 <jasperReport xmlns="http://jasperreports.sourceforge.net/jasperreports" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://jasperreports.sourceforge.net/jasperreports http://jasperreports.sourceforge.net/xsd/jasperreport.xsd" name="requirement-export" pageWidth="1900" pageHeight="595" orientation="Landscape" columnWidth="1900" leftMargin="0" rightMargin="0" topMargin="0" bottomMargin="0" resourceBundle="/WEB-INF/messages/tm/messages" whenResourceMissingType="Key">
-	<property name="ireport.zoom" value="0.5644739300537776"/>
+	<property name="ireport.zoom" value="1.0000000000000009"/>
 	<property name="ireport.x" value="0"/>
 	<property name="ireport.y" value="0"/>
 	<property name="net.sf.jasperreports.text.truncate.at.char" value="Boolean.FALSE"/>
@@ -80,35 +80,35 @@
 				<textElement>
 					<font isBold="true"/>
 				</textElement>
-				<textFieldExpression class="java.lang.String"><![CDATA[$R{report.requirementexport.folder}]]></textFieldExpression>
+				<textFieldExpression class="java.lang.String"><![CDATA["PATH"]]></textFieldExpression>
 			</textField>
 			<textField>
 				<reportElement style="table_TH" mode="Opaque" x="170" y="0" width="170" height="20"/>
 				<textElement>
 					<font isBold="true"/>
 				</textElement>
-				<textFieldExpression class="java.lang.String"><![CDATA[$R{report.requirementexport.id}]]></textFieldExpression>
+				<textFieldExpression class="java.lang.String"><![CDATA["ID"]]></textFieldExpression>
 			</textField>
 			<textField>
 				<reportElement style="table_TH" mode="Opaque" x="340" y="0" width="170" height="20"/>
 				<textElement>
 					<font isBold="true"/>
 				</textElement>
-				<textFieldExpression class="java.lang.String"><![CDATA[$R{report.requirementexport.currentVersion}]]></textFieldExpression>
+				<textFieldExpression class="java.lang.String"><![CDATA["VERSION"]]></textFieldExpression>
 			</textField>
 			<textField>
 				<reportElement style="table_TH" mode="Opaque" x="510" y="0" width="170" height="20"/>
 				<textElement>
 					<font isBold="true"/>
 				</textElement>
-				<textFieldExpression class="java.lang.String"><![CDATA[$R{report.requirementexport.reference}]]></textFieldExpression>
+				<textFieldExpression class="java.lang.String"><![CDATA["REF"]]></textFieldExpression>
 			</textField>
 			<textField>
 				<reportElement style="table_TH" mode="Opaque" x="680" y="0" width="170" height="20"/>
 				<textElement>
 					<font isBold="true"/>
 				</textElement>
-				<textFieldExpression class="java.lang.String"><![CDATA[$R{label.Label}]]></textFieldExpression>
+				<textFieldExpression class="java.lang.String"><![CDATA["LABEL"]]></textFieldExpression>
 			</textField>
 			<textField pattern="">
 				<reportElement style="table_TH" mode="Opaque" x="850" y="0" width="170" height="20">
@@ -117,42 +117,42 @@
 				<textElement>
 					<font isBold="true"/>
 				</textElement>
-				<textFieldExpression class="java.lang.String"><![CDATA[$R{label.Description}]]></textFieldExpression>
+				<textFieldExpression class="java.lang.String"><![CDATA["DESCRIPTION"]]></textFieldExpression>
 			</textField>
 			<textField>
 				<reportElement style="table_TH" mode="Opaque" x="1020" y="0" width="170" height="20"/>
 				<textElement>
 					<font isBold="true"/>
 				</textElement>
-				<textFieldExpression class="java.lang.String"><![CDATA[$R{report.requirementexport.criticality}]]></textFieldExpression>
+				<textFieldExpression class="java.lang.String"><![CDATA["CRITICALITY"]]></textFieldExpression>
 			</textField>
 			<textField>
 				<reportElement style="table_TH" mode="Opaque" x="1190" y="0" width="170" height="20"/>
 				<textElement>
 					<font isBold="true"/>
 				</textElement>
-				<textFieldExpression class="java.lang.String"><![CDATA[$R{report.requirementexport.category}]]></textFieldExpression>
+				<textFieldExpression class="java.lang.String"><![CDATA["CATEGORY"]]></textFieldExpression>
 			</textField>
 			<textField>
 				<reportElement style="table_TH" mode="Opaque" x="1360" y="0" width="170" height="20"/>
 				<textElement>
 					<font isBold="true"/>
 				</textElement>
-				<textFieldExpression class="java.lang.String"><![CDATA[$R{report.requirementexport.status}]]></textFieldExpression>
+				<textFieldExpression class="java.lang.String"><![CDATA["STATE"]]></textFieldExpression>
 			</textField>
 			<textField>
 				<reportElement style="table_TH" mode="Opaque" x="1530" y="0" width="170" height="20"/>
 				<textElement>
 					<font isBold="true"/>
 				</textElement>
-				<textFieldExpression class="java.lang.String"><![CDATA[$R{label.CreatedOn}]]></textFieldExpression>
+				<textFieldExpression class="java.lang.String"><![CDATA["CREATED_ON"]]></textFieldExpression>
 			</textField>
 			<textField>
 				<reportElement style="table_TH" mode="Opaque" x="1700" y="0" width="170" height="20"/>
 				<textElement>
 					<font isBold="true"/>
 				</textElement>
-				<textFieldExpression class="java.lang.String"><![CDATA[$R{report.requirementexport.createdBy}]]></textFieldExpression>
+				<textFieldExpression class="java.lang.String"><![CDATA["CREATED_BY"]]></textFieldExpression>
 			</textField>
 		</band>
 	</pageHeader>
@@ -212,11 +212,7 @@
 					<property name="net.sf.jasperreports.print.keep.full.text" value="true"/>
 				</reportElement>
 				<textElement/>
-				<textFieldExpression class="java.lang.String"><![CDATA[($F{criticality}.toString() == "MINOR") ? $R{requirement.criticality.MINOR} :
-($F{criticality}.toString() == "CRITICAL") ? $R{requirement.criticality.CRITICAL} :
-($F{criticality}.toString() == "MAJOR") ? $R{requirement.criticality.MAJOR} :
-($F{criticality}.toString() == "UNDEFINED") ? $R{requirement.criticality.UNDEFINED} :
-$R{requirement.criticality.UNKNOWN}]]></textFieldExpression>
+				<textFieldExpression class="java.lang.String"><![CDATA[$F{criticality}.name()]]></textFieldExpression>
 			</textField>
 			<textField>
 				<reportElement style="table_TD" mode="Transparent" x="1190" y="0" width="170" height="20">
@@ -224,13 +220,7 @@ $R{requirement.criticality.UNKNOWN}]]></textFieldExpression>
 					<property name="net.sf.jasperreports.print.keep.full.text" value="true"/>
 				</reportElement>
 				<textElement/>
-				<textFieldExpression class="java.lang.String"><![CDATA[($F{category}.toString() == "FUNCTIONAL") ? $R{requirement.category.FUNCTIONAL} :
-($F{category}.toString() == "NON_FUNCTIONAL") ? $R{requirement.category.NON_FUNCTIONAL} :
-($F{category}.toString() == "USE_CASE") ? $R{requirement.category.USE_CASE} :
-($F{category}.toString() == "BUSINESS") ? $R{requirement.category.BUSINESS} :
-($F{category}.toString() == "TEST_REQUIREMENT") ? $R{requirement.category.TEST_REQUIREMENT} :
-($F{category}.toString() == "UNDEFINED") ? $R{requirement.category.UNDEFINED} :
-$R{requirement.category.UNKNOWN}]]></textFieldExpression>
+				<textFieldExpression class="java.lang.String"><![CDATA[$F{category}.name()]]></textFieldExpression>
 			</textField>
 			<textField>
 				<reportElement style="table_TD" mode="Transparent" x="1360" y="0" width="170" height="20">
@@ -238,11 +228,7 @@ $R{requirement.category.UNKNOWN}]]></textFieldExpression>
 					<property name="net.sf.jasperreports.print.keep.full.text" value="true"/>
 				</reportElement>
 				<textElement/>
-				<textFieldExpression class="java.lang.String"><![CDATA[($F{status}.toString() == "WORK_IN_PROGRESS") ? $R{requirement.status.WORK_IN_PROGRESS} :
-($F{status}.toString() == "UNDER_REVIEW") ? $R{requirement.status.UNDER_REVIEW} :
-($F{status}.toString() == "APPROVED") ? $R{requirement.status.APPROVED} :
-($F{status}.toString() == "OBSOLETE") ? $R{requirement.status.OBSOLETE} :
-$R{requirement.status.UNKNOWN}]]></textFieldExpression>
+				<textFieldExpression class="java.lang.String"><![CDATA[$F{status}.name()]]></textFieldExpression>
 			</textField>
 			<textField>
 				<reportElement style="table_TD" mode="Transparent" x="1530" y="0" width="170" height="20">
