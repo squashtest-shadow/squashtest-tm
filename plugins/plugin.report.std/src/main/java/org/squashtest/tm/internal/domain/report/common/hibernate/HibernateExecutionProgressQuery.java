@@ -25,6 +25,7 @@ import java.util.HashMap;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
+import java.util.Map.Entry;
 
 import org.hibernate.Session;
 import org.hibernate.criterion.DetachedCriteria;
@@ -176,18 +177,26 @@ public class HibernateExecutionProgressQuery extends HibernateReportQuery {
 			campDto.setProject(projectDto);
 			projectDto.addCampaignDto(campDto);
 		}
-
+		
 		//phase 3 : return the list and we're done !
 
 		List<ExProgressProjectDto> projectList = new LinkedList<ExProgressProjectDto>();
 		projectList.addAll(projectMap.values());
 		
-		
+		fillProjectStatusInfos(projectMap);
 		return projectList;
 
 
 	}
 	
+	private void fillProjectStatusInfos(Map<Long, ExProgressProjectDto> projectMap) {
+		for(Entry<Long, ExProgressProjectDto> entry : projectMap.entrySet()){
+			ExProgressProjectDto projectDto = entry.getValue();
+			projectDto.fillStatusInfos();
+		}
+		
+	}
+
 	protected List<Campaign> filterUnwantedDataOut(List<Campaign> list){
 		List<Campaign> toReturn = new LinkedList<Campaign>();
 		for (Campaign campaign : list){

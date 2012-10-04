@@ -111,16 +111,16 @@
 		<parameter name="campaign_actend" class="java.util.Date" isForPrompting="false"/>
 		<parameter name="campaign_total" class="java.lang.Integer" isForPrompting="false"/>
 		<parameter name="campaign_status" class="java.lang.Enum" isForPrompting="false"/>
-        <parameter name="campaign_cCountStatusSuccess" class="java.lang.Integer" isForPrompting="false"/>
-        <parameter name="campaign_cCountStatusReady" class="java.lang.Integer" isForPrompting="false"/>
-        <parameter name="campaign_cCountStatusRunning" class="java.lang.Integer" isForPrompting="false"/>
-        <parameter name="campaign_cCountStatusBloqued" class="java.lang.Integer" isForPrompting="false"/>
-        <parameter name="campaign_cCountStatusFailure" class="java.lang.Integer" isForPrompting="false"/>
-        <parameter name="campaign_cfPercentageStatusReady" class="java.lang.Float" isForPrompting="false"/>
-        <parameter name="campaign_cfPercentageStatusSuccess" class="java.lang.Float" isForPrompting="false"/>
-        <parameter name="campaign_cfPercentageStatusBloqued" class="java.lang.Float" isForPrompting="false"/>
-        <parameter name="campaign_cfPercentageStatusRunning" class="java.lang.Float" isForPrompting="false"/>
-        <parameter name="campaign_cfPercentageStatusFailure" class="java.lang.Float" isForPrompting="false"/>
+		<parameter name="campaign_cCountStatusSuccess" class="java.lang.Integer" isForPrompting="false"/>
+		<parameter name="campaign_cCountStatusReady" class="java.lang.Integer" isForPrompting="false"/>
+		<parameter name="campaign_cCountStatusRunning" class="java.lang.Integer" isForPrompting="false"/>
+		<parameter name="campaign_cCountStatusBloqued" class="java.lang.Integer" isForPrompting="false"/>
+		<parameter name="campaign_cCountStatusFailure" class="java.lang.Integer" isForPrompting="false"/>
+		<parameter name="campaign_cfPercentageStatusReady" class="java.lang.Float" isForPrompting="false"/>
+		<parameter name="campaign_cfPercentageStatusSuccess" class="java.lang.Float" isForPrompting="false"/>
+		<parameter name="campaign_cfPercentageStatusBloqued" class="java.lang.Float" isForPrompting="false"/>
+		<parameter name="campaign_cfPercentageStatusRunning" class="java.lang.Float" isForPrompting="false"/>
+		<parameter name="campaign_cfPercentageStatusFailure" class="java.lang.Float" isForPrompting="false"/>
 		<queryString>
 			<![CDATA[]]>
 		</queryString>
@@ -142,7 +142,7 @@
 		<field name="iCountStatusFailure" class="java.lang.Integer">
 			<fieldDescription><![CDATA[iCountStatusFailure]]></fieldDescription>
 		</field>
-        <field name="fPercentageProgress" class="java.lang.Float">
+		<field name="fPercentageProgress" class="java.lang.Float">
 			<fieldDescription><![CDATA[fPercentageProgress]]></fieldDescription>
 		</field>
 		<field name="fPercentageStatusBloqued" class="java.lang.Float">
@@ -265,36 +265,36 @@
 						<datasetParameter name="campaign_status">
 							<datasetParameterExpression><![CDATA[$F{campaignStatus}]]></datasetParameterExpression>
 						</datasetParameter>
-<datasetParameter name="campaign_cCountStatusSuccess" >
-		<datasetParameterExpression><![CDATA[$F{cCountStatusSuccess}]]></datasetParameterExpression>
-	</datasetParameter>
-	<datasetParameter name="campaign_cCountStatusReady" >
-		<datasetParameterExpression><![CDATA[$F{cCountStatusReady}]]></datasetParameterExpression>
-	</datasetParameter>
-	<datasetParameter name="campaign_cCountStatusRunning" >
-		<datasetParameterExpression><![CDATA[$F{cCountStatusRunning}]]></datasetParameterExpression>
-	</datasetParameter>
-	<datasetParameter name="campaign_cCountStatusBloqued" >
-		<datasetParameterExpression><![CDATA[$F{cCountStatusBloqued}]]></datasetParameterExpression>
-	</datasetParameter>
-	<datasetParameter name="campaign_cCountStatusFailure" >
-		<datasetParameterExpression><![CDATA[$F{cCountStatusFailure}]]></datasetParameterExpression>
-	</datasetParameter>
-	<datasetParameter name="campaign_cfPercentageStatusReady" >
-		<datasetParameterExpression><![CDATA[$F{cfPercentageStatusReady}]]></datasetParameterExpression>
-	</datasetParameter>
-	<datasetParameter name="campaign_cfPercentageStatusSuccess" >
-		<datasetParameterExpression><![CDATA[$F{cfPercentageStatusSuccess}]]></datasetParameterExpression>
-	</datasetParameter>
-	<datasetParameter name="campaign_cfPercentageStatusBloqued" >
-		<datasetParameterExpression><![CDATA[$F{cfPercentageStatusBloqued}]]></datasetParameterExpression>
-	</datasetParameter>
-	<datasetParameter name="campaign_cfPercentageStatusRunning" >
-		<datasetParameterExpression><![CDATA[$F{cfPercentageStatusRunning}]]></datasetParameterExpression>
-	</datasetParameter>
-	<datasetParameter name="campaign_cfPercentageStatusFailure" >
-		<datasetParameterExpression><![CDATA[$F{cfPercentageStatusFailure}]]></datasetParameterExpression>
-	</datasetParameter>
+						<datasetParameter name="campaign_cCountStatusSuccess">
+							<datasetParameterExpression><![CDATA[$F{cCountStatusSuccess}]]></datasetParameterExpression>
+						</datasetParameter>
+						<datasetParameter name="campaign_cCountStatusReady">
+							<datasetParameterExpression><![CDATA[$F{cCountStatusReady}]]></datasetParameterExpression>
+						</datasetParameter>
+						<datasetParameter name="campaign_cCountStatusRunning">
+							<datasetParameterExpression><![CDATA[$F{cCountStatusRunning}]]></datasetParameterExpression>
+						</datasetParameter>
+						<datasetParameter name="campaign_cCountStatusBloqued">
+							<datasetParameterExpression><![CDATA[$F{cCountStatusBloqued}]]></datasetParameterExpression>
+						</datasetParameter>
+						<datasetParameter name="campaign_cCountStatusFailure">
+							<datasetParameterExpression><![CDATA[$F{cCountStatusFailure}]]></datasetParameterExpression>
+						</datasetParameter>
+						<datasetParameter name="campaign_cfPercentageStatusReady">
+							<datasetParameterExpression><![CDATA[$F{cfPercentageStatusReady}]]></datasetParameterExpression>
+						</datasetParameter>
+						<datasetParameter name="campaign_cfPercentageStatusSuccess">
+							<datasetParameterExpression><![CDATA[$F{cfPercentageStatusSuccess}]]></datasetParameterExpression>
+						</datasetParameter>
+						<datasetParameter name="campaign_cfPercentageStatusBloqued">
+							<datasetParameterExpression><![CDATA[$F{cfPercentageStatusBloqued}]]></datasetParameterExpression>
+						</datasetParameter>
+						<datasetParameter name="campaign_cfPercentageStatusRunning">
+							<datasetParameterExpression><![CDATA[$F{cfPercentageStatusRunning}]]></datasetParameterExpression>
+						</datasetParameter>
+						<datasetParameter name="campaign_cfPercentageStatusFailure">
+							<datasetParameterExpression><![CDATA[$F{cfPercentageStatusFailure}]]></datasetParameterExpression>
+						</datasetParameter>
 						<dataSourceExpression><![CDATA[new net.sf.jasperreports.engine.data.JRBeanCollectionDataSource($F{iterations})]]></dataSourceExpression>
 					</datasetRun>
 					<jr:column width="113">

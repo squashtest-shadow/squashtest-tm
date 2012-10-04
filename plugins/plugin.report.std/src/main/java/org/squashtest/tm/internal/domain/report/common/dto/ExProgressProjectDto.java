@@ -24,11 +24,16 @@ import java.util.LinkedList;
 import java.util.List;
 
 public class ExProgressProjectDto {
-	
+
 	private String name;
+	private Integer iCountStatusReady = 0;
+	private Integer iCountStatusRunning = 0;
+	private Integer iCountStatusBloqued = 0;
+	private Integer iCountStatusFailure = 0;
+	private Integer iCountStatusSuccess = 0;
 
 	private List<ExProgressCampaignDto> campaigns = new LinkedList<ExProgressCampaignDto>();
-	
+
 	public String getName() {
 		return name;
 	}
@@ -44,13 +49,130 @@ public class ExProgressProjectDto {
 	public void setCampaigns(List<ExProgressCampaignDto> campaigns) {
 		this.campaigns = campaigns;
 	}
-	
-	public void addCampaignDto(ExProgressCampaignDto campaignDto){
+
+	public Integer getiCountStatusReady() {
+		return iCountStatusReady;
+	}
+
+	public void setiCountStatusReady(Integer iCountStatusReady) {
+		this.iCountStatusReady = iCountStatusReady;
+	}
+
+	public Integer getiCountStatusRunning() {
+		return iCountStatusRunning;
+	}
+
+	public void setiCountStatusRunning(Integer iCountStatusRunning) {
+		this.iCountStatusRunning = iCountStatusRunning;
+	}
+
+	public Integer getiCountStatusBloqued() {
+		return iCountStatusBloqued;
+	}
+
+	public void setiCountStatusBloqued(Integer iCountStatusBloqued) {
+		this.iCountStatusBloqued = iCountStatusBloqued;
+	}
+
+	public Integer getiCountStatusFailure() {
+		return iCountStatusFailure;
+	}
+
+	public void setiCountStatusFailure(Integer iCountStatusFailure) {
+		this.iCountStatusFailure = iCountStatusFailure;
+	}
+
+	public Integer getiCountStatusSuccess() {
+		return iCountStatusSuccess;
+	}
+
+	public void setiCountStatusSuccess(Integer iCountStatusSuccess) {
+		this.iCountStatusSuccess = iCountStatusSuccess;
+	}
+
+	public void addCampaignDto(ExProgressCampaignDto campaignDto) {
 		this.campaigns.add(campaignDto);
 	}
+
+	public void fillStatusInfos() {
+		for(ExProgressCampaignDto campaignDto : this.campaigns ){
+			this.iCountStatusBloqued += campaignDto.getcCountStatusBloqued();
+			this.iCountStatusFailure += campaignDto.getcCountStatusFailure();
+			this.iCountStatusReady += campaignDto.getcCountStatusReady();
+			this.iCountStatusRunning += campaignDto.getcCountStatusRunning();
+			this.iCountStatusSuccess += campaignDto.getcCountStatusSuccess();
+		}
+	}
 	
-	
-	
+	public Integer getNumberTestCase(){
+		return    iCountStatusReady 
+				+ iCountStatusRunning
+				+ iCountStatusBloqued
+				+ iCountStatusFailure
+				+ iCountStatusSuccess;
+	}
 	
 
+	
+	public float getfPercentageStatusReady(){
+		Integer total = getNumberTestCase();
+		if (total==0) {
+			return 0;
+		}
+		else{
+			return ((float)getiCountStatusReady()/(float)total);
+		}
+	}
+	
+	public float getfPercentageStatusRunning(){
+		Integer total = getNumberTestCase();
+		if (total==0) {
+			return 0;
+		}
+		else{
+			return ((float)getiCountStatusRunning()/(float)total); 
+		}
+	}
+	
+	public float getfPercentageStatusBloqued(){
+		Integer total = getNumberTestCase();
+		if (total==0) {
+			return 0;
+		}
+		else{
+			return ((float)getiCountStatusBloqued()/(float)total); 
+		}
+	}
+	
+	public float getfPercentageStatusFailure(){
+		Integer total = getNumberTestCase();
+		if (total==0) {
+			return 0;
+		}
+		else{
+			return ((float)getiCountStatusFailure()/(float)total); 
+		}
+	}
+	public float getfPercentageStatusSuccess(){
+		Integer total = getNumberTestCase();
+		if (total==0) {
+			return 0;
+		}
+		else{
+			return ((float)getiCountStatusSuccess()/(float)total); 
+		}
+	}
+	
+	public float getfPercentageProgress(){
+		return 	  getfPercentageStatusBloqued()
+				+ getfPercentageStatusFailure()
+				+ getfPercentageStatusSuccess();
+	}
+	
+	public ExProgressCampaignStatus getStatus() {
+		if((iCountStatusBloqued + iCountStatusFailure + iCountStatusSuccess)== getNumberTestCase()){
+				return ExProgressCampaignStatus.CAMPAIGN_RUNNING;
+		}
+		return ExProgressCampaignStatus.CAMPAIGN_OVER;
+	}
 }
