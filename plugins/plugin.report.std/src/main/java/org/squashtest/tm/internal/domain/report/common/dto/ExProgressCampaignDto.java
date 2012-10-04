@@ -39,6 +39,14 @@ public class ExProgressCampaignDto {
 
 	private List<ExProgressIterationDto> iterations = new LinkedList<ExProgressIterationDto>();
 
+	private Integer cCountStatusReady = 0;
+	private Integer cCountStatusRunning = 0;
+	private Integer cCountStatusBloqued = 0;
+	private Integer cCountStatusFailure = 0;
+	private Integer cCountStatusSuccess = 0;
+	
+	
+
 	public ExProgressCampaignDto() {
 		super();
 	}
@@ -46,7 +54,6 @@ public class ExProgressCampaignDto {
 	public ExProgressCampaignDto(Campaign campaign) {
 		fillBasicInfos(campaign);
 		fillIterationsInfos(campaign);
-
 	}
 
 	public ExProgressProjectDto getProject() {
@@ -111,6 +118,95 @@ public class ExProgressCampaignDto {
 
 	/* ********************************** computed properties ************************************ */
 
+	public Integer getcCountStatusReady() {
+		return cCountStatusReady;
+	}
+
+	public void setcCountStatusReady(Integer cCountStatusReady) {
+		this.cCountStatusReady = cCountStatusReady;
+	}
+
+	public Integer getcCountStatusRunning() {
+		return cCountStatusRunning;
+	}
+
+	public void setcCountStatusRunning(Integer cCountStatusRunning) {
+		this.cCountStatusRunning = cCountStatusRunning;
+	}
+
+	public Integer getcCountStatusBloqued() {
+		return cCountStatusBloqued;
+	}
+
+	public void setcCountStatusBloqued(Integer cCountStatusBloqued) {
+		this.cCountStatusBloqued = cCountStatusBloqued;
+	}
+
+	public Integer getcCountStatusFailure() {
+		return cCountStatusFailure;
+	}
+
+	public void setcCountStatusFailure(Integer cCountStatusFailure) {
+		this.cCountStatusFailure = cCountStatusFailure;
+	}
+
+	public Integer getcCountStatusSuccess() {
+		return cCountStatusSuccess;
+	}
+
+	public void setcCountStatusSuccess(Integer cCountStatusSuccess) {
+		this.cCountStatusSuccess = cCountStatusSuccess;
+	}
+
+	public Float getCfPercentageStatusReady() {
+		Integer total = getTotalNumberTestCase();
+		if (total == 0) {
+			return 0F;
+		} else {
+			return ((float) getcCountStatusReady() / (float) total);
+		}
+	}
+
+	public Float getCfPercentageStatusRunning() {
+		Integer total =  getTotalNumberTestCase();
+		if (total == 0) {
+			return 0F;
+		} else {
+			return ((float) getcCountStatusRunning() / (float) total);
+		}
+	}
+
+	public Float getCfPercentageStatusBloqued() {
+		Integer total =  getTotalNumberTestCase();
+		if (total == 0) {
+			return 0F;
+		} else {
+			return ((float) getcCountStatusBloqued() / (float) total);
+		}
+	}
+
+	public Float getCfPercentageStatusFailure() {
+		Integer total = getTotalNumberTestCase();
+		if (total == 0) {
+			return 0F;
+		} else {
+			return ((float) getcCountStatusFailure() / (float) total);
+		}
+	}
+
+	public Float getCfPercentageStatusSuccess() {
+		Integer total =  getTotalNumberTestCase();
+		if (total == 0) {
+			return 0F;
+		} else {
+			return ((float) getcCountStatusSuccess() / (float) total);
+		}
+	}
+
+	public Float getCfPercentageProgress() {
+		return getCfPercentageStatusBloqued() + getCfPercentageStatusFailure() + getCfPercentageStatusSuccess();
+	}
+
 	public Integer getTotalNumberTestCase() {
 		Integer sum = 0;
 		for (ExProgressIterationDto iter : iterations) {
@@ -122,8 +218,9 @@ public class ExProgressCampaignDto {
 
 	public ExProgressCampaignStatus getCampaignStatus() {
 		for (ExProgressIterationDto iter : iterations) {
-			if (iter.getfPercentageProgress() < 0.9999){
-				return ExProgressCampaignStatus.CAMPAIGN_RUNNING;}
+			if (iter.getfPercentageProgress() < 0.9999) {
+				return ExProgressCampaignStatus.CAMPAIGN_RUNNING;
+			}
 		}
 		return ExProgressCampaignStatus.CAMPAIGN_OVER;
 	}
@@ -134,6 +231,7 @@ public class ExProgressCampaignDto {
 		this.scheduledEndDate = campaign.getScheduledEndDate();
 		this.actualStartDate = campaign.getActualStartDate();
 		this.actualEndDate = campaign.getActualEndDate();
+
 		return this;
 	}
 
@@ -142,6 +240,34 @@ public class ExProgressCampaignDto {
 			ExProgressIterationDto iterDto = new ExProgressIterationDto(iteration);
 			iterations.add(iterDto);
 		}
+		return this;
+	}
+
+	public ExProgressCampaignDto fillStatusInfos() {
+		int ready, running, bloqued, failure, success;
+
+		ready = 0;
+		running = 0;
+		bloqued = 0;
+		failure = 0;
+		success = 0;
+
+		for (ExProgressIterationDto iterationDto : this.iterations) {
+
+			ready += iterationDto.getiCountStatusReady();
+			running += iterationDto.getiCountStatusRunning();
+			bloqued += iterationDto.getiCountStatusBloqued();
+			failure += iterationDto.getiCountStatusFailure();
+			success += iterationDto.getiCountStatusSuccess();
+
+		}
+
+		setcCountStatusBloqued(bloqued);
+		setcCountStatusFailure(failure);
+		setcCountStatusReady(ready);
+		setcCountStatusRunning(running);
+		setcCountStatusSuccess(success);
+
 		return this;
 	}
 }
