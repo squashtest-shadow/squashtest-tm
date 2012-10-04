@@ -219,7 +219,7 @@ public class CustomTestCaseModificationServiceImpl implements CustomTestCaseModi
 	@PreAuthorize(WRITE_TC_OR_ROLE_ADMIN)
 	public void pasteCopiedTestStep(long testCaseId, long idToCopyAfter, long copiedTestStepId) {
 		TestStep original = testStepDao.findById(copiedTestStepId);
-		// FIXME il faut vérifier un éventuel cycle ! // pour l'instant v�rifi� au niveau du controller
+		// FIXME il faut vérifier un éventuel cycle ! // pour l'instant vérifié au niveau du controller
 		TestStep copyStep = original.createCopy();
 
 		testStepDao.persist(copyStep);
@@ -242,7 +242,7 @@ public class CustomTestCaseModificationServiceImpl implements CustomTestCaseModi
 	@PreAuthorize(WRITE_TC_OR_ROLE_ADMIN)
 	public void pasteCopiedTestStepToLastIndex(long testCaseId, long copiedTestStepId) {
 		TestStep original = testStepDao.findById(copiedTestStepId);
-		// FIXME il faut vérifier un éventuel cycle ! // pour l'instant v�rifi� au niveau du controller
+		// FIXME il faut vérifier un éventuel cycle ! // pour l'instant vérifié au niveau du controller
 		TestStep copyStep = original.createCopy();
 
 		testStepDao.persist(copyStep);

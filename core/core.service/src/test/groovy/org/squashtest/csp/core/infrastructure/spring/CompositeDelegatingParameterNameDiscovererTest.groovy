@@ -25,7 +25,6 @@ import java.lang.reflect.Method;
 import org.junit.runner.RunWith;
 import org.spockframework.runtime.Sputnik;
 import org.springframework.core.ParameterNameDiscoverer;
-import org.springframework.mock.web.portlet.MockActionRequest;
 
 import spock.lang.Specification;
 

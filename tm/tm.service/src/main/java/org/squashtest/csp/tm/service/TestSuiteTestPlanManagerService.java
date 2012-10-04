@@ -31,7 +31,7 @@ import org.squashtest.tm.core.foundation.collection.Paging;
 /**
  * Service that aims at managing the test cases of a campaign (i.e. its test plan)
  * 
- * @author François Gaillard
+ * @author FranÃ§ois Gaillard
  */
 @Transactional
 public interface TestSuiteTestPlanManagerService {

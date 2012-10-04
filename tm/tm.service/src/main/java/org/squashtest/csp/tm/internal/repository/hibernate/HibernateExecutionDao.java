@@ -202,7 +202,7 @@ public class HibernateExecutionDao extends HibernateEntityDao<Execution> impleme
 	 */
 	@Override
 	public long countExecutionSteps(long executionId) {
-		return executeEntityNamedQuery("execution.countSteps", "executionId", executionId);
+		return (Long) executeEntityNamedQuery("execution.countSteps", "executionId", executionId);
 	}
 
 	/**
@@ -243,7 +243,7 @@ public class HibernateExecutionDao extends HibernateEntityDao<Execution> impleme
 
 	@Override
 	public long countByTestCaseId(long testCaseId) {
-		return executeEntityNamedQuery("execution.countByTestCaseId", "testCaseId", testCaseId);
+		return (Long) executeEntityNamedQuery("execution.countByTestCaseId", "testCaseId", testCaseId);
 	}
 
 }

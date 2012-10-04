@@ -78,7 +78,7 @@ public class HibernateSqlQueryRunner implements SqlQueryRunner {
 
 		try {
 			SQLQuery q = s.createSQLQuery(selectQuery);
-			res = execution.executeQuery(q);
+			res = execution.<T>executeQuery(q);
 			tx.commit();
 		} catch (HibernateException e) {
 			tx.rollback();
@@ -96,7 +96,7 @@ public class HibernateSqlQueryRunner implements SqlQueryRunner {
 	 */
 	@Override
 	public <T> T executeUniqueSelect(String selectQuery) {
-		return executeQuery(selectQuery, EXECUTE_SINGLE);
+		return (T) executeQuery(selectQuery, EXECUTE_SINGLE);
 	}
 
 	/**
@@ -104,7 +104,7 @@ public class HibernateSqlQueryRunner implements SqlQueryRunner {
 	 */
 	@Override
 	public <T> List<T> executeSelect(String selectQuery, Map<String, ?> namedParameters) {
-		return executeQuery(selectQuery, new NamedParamsListExecution(namedParameters));
+		return (List<T>) executeQuery(selectQuery, new NamedParamsListExecution(namedParameters));
 	}
 
 	/**
@@ -112,7 +112,7 @@ public class HibernateSqlQueryRunner implements SqlQueryRunner {
 	 */
 	@Override
 	public <T> T executeUniqueSelect(String selectQuery, Map<String, ?> namedParameters) {
-		return executeQuery(selectQuery, new NamedParamsUniqueResultExecution(namedParameters));
+		return (T) executeQuery(selectQuery, new NamedParamsUniqueResultExecution(namedParameters));
 	}
 
 }
