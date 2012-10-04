@@ -107,6 +107,9 @@ core/core.service/META-INF$
 \.swp$
 tm/tm\.testautomation\.api/META-INF$
 ^core/core.testautomation.api/META-INF$
+tm/tm.web/WEB-INF*
+tm/tm.web/META-INF*
+tm/tm.service/META-INF*
 syntax: glob
 integration-tests/log/IT.log
 integration-tests/src/it/resources/log4j.properties

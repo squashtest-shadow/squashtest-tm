@@ -207,7 +207,7 @@ public class HibernateExecutionProgressQuery extends HibernateReportQuery {
 			campDto.addIterationDto(iterDto);
 			iterDto.setCampaign(campDto);
 		}
-
+		campDto.fillStatusInfos();
 		return campDto;
 
 	}
