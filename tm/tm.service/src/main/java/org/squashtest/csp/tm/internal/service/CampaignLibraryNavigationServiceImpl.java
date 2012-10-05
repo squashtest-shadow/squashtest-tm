@@ -188,13 +188,13 @@ public class CampaignLibraryNavigationServiceImpl extends
 
 	@Override
 	@PreAuthorize("hasPermission(#campaignId, 'org.squashtest.csp.tm.domain.campaign.Campaign', 'CREATE') "+OR_HAS_ROLE_ADMIN)
-	public int addIterationToCampaign(Iteration iteration, long campaignId) {
+	public int addIterationToCampaign(Iteration iteration, long campaignId, boolean copyTestPlan) {
 		Campaign campaign = campaignDao.findById(campaignId);
 
 		if (!campaign.isContentNameAvailable(iteration.getName())) {
 			throw new DuplicateNameException(iteration.getName(), iteration.getName());
 		}
-		return iterationModificationService.addIterationToCampaign(iteration, campaignId);
+		return iterationModificationService.addIterationToCampaign(iteration, campaignId, copyTestPlan);
 	}
 
 	@Override

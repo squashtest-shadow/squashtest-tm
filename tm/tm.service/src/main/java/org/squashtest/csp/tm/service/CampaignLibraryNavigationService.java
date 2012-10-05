@@ -46,7 +46,7 @@ public interface CampaignLibraryNavigationService extends
 	 * @param campaignId
 	 * @return
 	 */
-	int addIterationToCampaign(Iteration iteration, long campaignId);
+	int addIterationToCampaign(Iteration iteration, long campaignId, boolean copyTestPlan);
 
 	List<Iteration> findIterationsByCampaignId(long campaignId);
 

@@ -57,6 +57,7 @@ $(function(){
 		  }
 		});
 });
+
 </script>
 </c:if>
 <c:choose>
@@ -100,10 +101,22 @@ $(function(){
 				</label></td>
 				<td><textarea id="add-${ resourceName }-description"></textarea></td>
 			</tr>
+			<c:if test='${ resourceName == "iteration"}'>
+				<tr>
+					<td></td>
+					<td><label for="copy-test-plan"><f:message key="dialog.new-iteration.copy"/></label>
+					<input id="copy-test-plan-box" name="copy-test-plan-box" type="checkbox" onClick="setCopyTestPlan()"/>
+					<input type=hidden id="copy-test-plan" value="false"></input></td>
+				</tr>
+			</c:if>
 		</table>
 	</jsp:attribute>
 </pop:popup>
 <script type="text/javascript">
+
+	function setCopyTestPlan(){
+		$('#copy-test-plan').val($('#copy-test-plan-box').is(':checked'));
+	}
 
 	function ${ handlerName }() {
 		var params = ${genericHandlerName}();
@@ -138,6 +151,12 @@ $(function(){
 			name="#add-test-case-name" 
 			description="#add-test-case-description" 
 			reference="#add-test-case-reference"/>;
+			</c:when>
+			<c:when test='${ resourceName eq "iteration" }'>
+				var params = <jq:params-bindings 
+				name="#add-iteration-name" 
+				description="#add-iteration-description"
+				copyTestPlan="#copy-test-plan"/>;
 		</c:when>
 		<c:otherwise>
 			var params = <jq:params-bindings 

@@ -266,13 +266,13 @@
 				<database.dialect>org.hibernate.dialect.MySQLDialect</database.dialect>
 				<database.driverClassName>com.mysql.jdbc.Driver</database.driverClassName>
 				<database.url>
-					jdbc:mysql://localhost/squashtest_dev
+					jdbc:mysql://localhost/squashtest
 		        </database.url>
-				<database.user>squash_app</database.user>
-				<database.password>_squash_app</database.password>
+				<database.user>root</database.user>
+				<database.password></database.password>
 				<!-- for database generation only -->
-				<database.create.user>squash_app</database.create.user>
-				<database.create.password>_squash_app</database.create.password>
+				<database.create.user>root</database.create.user>
+				<database.create.password></database.create.password>
 			</properties>
 			<dependencies>
 				<dependency>

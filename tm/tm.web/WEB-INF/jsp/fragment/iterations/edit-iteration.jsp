@@ -101,7 +101,6 @@
 </s:url>
 
 
-
 <%-- ----------------------------------- Authorization ----------------------------------------------%>
 <authz:authorized hasRole="ROLE_ADMIN" hasPermission="WRITE"
 	domainObject="${ iteration }">

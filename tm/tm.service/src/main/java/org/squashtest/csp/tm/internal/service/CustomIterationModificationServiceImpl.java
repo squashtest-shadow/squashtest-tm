@@ -109,17 +109,25 @@ public class CustomIterationModificationServiceImpl implements CustomIterationMo
 	@Override
 	@PreAuthorize("hasPermission(#campaignId, 'org.squashtest.csp.tm.domain.campaign.Campaign', 'CREATE') "
 			+ OR_HAS_ROLE_ADMIN)
-	public int addIterationToCampaign(Iteration iteration, long campaignId) {
+	public int addIterationToCampaign(Iteration iteration, long campaignId, boolean copyTestPlan) {
 		Campaign campaign = campaignDao.findById(campaignId);
 
 		// copy the campaign test plan in the iteration
 
 		List<CampaignTestPlanItem> campaignTestPlan = campaign.getTestPlan();
 
-		for (CampaignTestPlanItem campaignItem : campaignTestPlan) {
-			IterationTestPlanItem iterationItem = new IterationTestPlanItem(campaignItem.getReferencedTestCase());
-			iterationItem.setUser(campaignItem.getUser());
-			iteration.addTestPlan(iterationItem);
+		if(copyTestPlan){
+			for (CampaignTestPlanItem campaignItem : campaignTestPlan) {
+				IterationTestPlanItem iterationItem = new IterationTestPlanItem(campaignItem.getReferencedTestCase());
+				iterationItem.setUser(campaignItem.getUser());
+				iteration.addTestPlan(iterationItem);
+			}
+		}
+		else{
+			for (CampaignTestPlanItem campaignItem : campaignTestPlan) {
+				IterationTestPlanItem iterationItem = new IterationTestPlanItem(campaignItem.getReferencedTestCase());
+				iterationItem.setUser(campaignItem.getUser());
+			}
 		}
 		iterationDao.persistIterationAndTestPlan(iteration);
 		campaign.addIteration(iteration);

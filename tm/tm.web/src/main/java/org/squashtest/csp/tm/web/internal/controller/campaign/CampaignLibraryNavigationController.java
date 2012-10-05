@@ -148,9 +148,9 @@ LibraryNavigationController<CampaignLibrary, CampaignFolder, CampaignLibraryNode
 	}
 
 	@RequestMapping(value = "/files/{campaignId}/content/new-iteration", method = RequestMethod.POST)
-	public @ResponseBody JsTreeNode addNewIterationToCampaign(@Valid @ModelAttribute("add-iteration") Iteration newIteration, @PathVariable long campaignId) {
+	public @ResponseBody JsTreeNode addNewIterationToCampaign(@Valid @ModelAttribute("add-iteration") Iteration newIteration, @PathVariable long campaignId, boolean copyTestPlan) {
 		
-		int newIterationIndex = campaignLibraryNavigationService.addIterationToCampaign(newIteration, campaignId);
+		int newIterationIndex = campaignLibraryNavigationService.addIterationToCampaign(newIteration, campaignId, copyTestPlan);
 		
 		
 		return createIterationTreeNode(newIteration, newIterationIndex);
@@ -167,7 +167,7 @@ LibraryNavigationController<CampaignLibrary, CampaignFolder, CampaignLibraryNode
 		int newIterationIndex = 0;
 		if (!copy){
 			newIterationIndex = campaignLibraryNavigationService
-			.addIterationToCampaign(newIteration, campaignId);
+			.addIterationToCampaign(newIteration, campaignId,true);
 		}else{
 			newIterationIndex = campaignLibraryNavigationService
 			.copyIterationToCampaign(campaignId, iterationId);

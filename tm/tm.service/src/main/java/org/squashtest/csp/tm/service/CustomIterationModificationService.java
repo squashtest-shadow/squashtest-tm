@@ -44,7 +44,7 @@ public interface CustomIterationModificationService extends IterationFinder{
 	 * @param campaignId
 	 * @return the index of the added iteration.
 	 */
-	int addIterationToCampaign(Iteration iteration, long campaignId);
+	int addIterationToCampaign(Iteration iteration, long campaignId, boolean copyTestPlan);
 
 	
 
