@@ -24,7 +24,7 @@ import java.util.LinkedList;
 import java.util.List;
 
 public class ExProgressProjectDto {
-
+	private Long id;
 	private String name;
 	private Integer iCountStatusReady = 0;
 	private Integer iCountStatusRunning = 0;
@@ -33,6 +33,14 @@ public class ExProgressProjectDto {
 	private Integer iCountStatusSuccess = 0;
 
 	private List<ExProgressCampaignDto> campaigns = new LinkedList<ExProgressCampaignDto>();
+
+	public Long getId() {
+		return id;
+	}
+
+	public void setId(Long id) {
+		this.id = id;
+	}
 
 	public String getName() {
 		return name;
