@@ -33,22 +33,16 @@
 	description="Name of the resource to add. Should be a lowercase, hyphened name. eg : 'test-case'"%>
 <%@ attribute name="treeNodeButton" required="true" description="the javascript button that will open the dialog" %>
 
-<c:url var="requirementComboLists"
-	value="/requirement-workspace/combo-options" />
+<c:url var="requirementComboLists"	value="/requirement-workspace/combo-options" />
 
-<c:set var="handlerName"
-	value="add${ su:hyphenedToCamelCase(resourceName) }Handler" />
+<c:set var="handlerName" value="add${ su:hyphenedToCamelCase(resourceName) }Handler" />
+<c:set var="addAnotherHandlerName"	value="addAnother${ su:hyphenedToCamelCase(resourceName) }Handler" />
+<c:set var="genericHandlerName"	value="genericAdd${ su:hyphenedToCamelCase(resourceName) }Handler" />
 <c:choose>
-	<c:when
-		test="${ (resourceName eq 'test-case') or (resourceName eq 'campaign') or (resourceName eq 'requirement') }">
-		<c:set var="openButtonId" value="new-leaf-tree-button" />
-	</c:when>
-	<c:when test="${ (resourceName eq 'folder') }">
-		<c:set var="openButtonId" value="new-folder-tree-button" />
-	</c:when>
-	<c:otherwise>
-		<c:set var="openButtonId" value="new-resource-tree-button" />
-	</c:otherwise>
+	<c:when	test="${ (resourceName eq 'test-case') or (resourceName eq 'campaign') or (resourceName eq 'requirement') }">
+		<c:set var="openButtonId" value="new-leaf-tree-button" /></c:when>
+	<c:when test="${ (resourceName eq 'folder') }"><c:set var="openButtonId" value="new-folder-tree-button" /></c:when>
+	<c:otherwise><c:set var="openButtonId" value="new-resource-tree-button" /></c:otherwise>
 </c:choose>
 
 
@@ -58,18 +52,25 @@ $(function(){
 	$.ajax({
 		url: "${ requirementComboLists }",  
 		context: document.body,
-		success: function(data){
-			  $('#criticalityList').html(data.criticities);
+		success: function(data){ $('#criticalityList').html(data.criticities);
 			  $('#categoryList').html(data.categories);
 		  }
 		});
 });
 </script>
 </c:if>
+<c:choose>
+<c:when test="${ (resourceName eq 'folder') || (resourceName eq 'test-case') }">
+<c:set var="addAnotherLabelKey" value="label.addAnother"/></c:when>
+<c:otherwise>
+<c:set var="addAnotherLabelKey" value="label.fem.addAnother"/></c:otherwise>
+</c:choose>
 
 <pop:popup id="add-${ resourceName }-dialog"
-	titleKey="dialog.new-${ resourceName }.title">
+	titleKey="dialog.new-${ resourceName }.title" closeOnSuccess="${false}">
 	<jsp:attribute name="buttons">
+		<pop:button labelKey="${addAnotherLabelKey}"
+			handler="${ addAnotherHandlerName }" />
 		<pop:button labelKey="label.Add"
 			handler="${ handlerName }" />
 		<pop:cancel-button />
@@ -77,41 +78,27 @@ $(function(){
 	<jsp:attribute name="body">
 		<table>
 			<tr>
-				<td><label for="add-${ resourceName }-name"><f:message
-							key="label.Name" />
-				</label>
-				</td>
-				<td>
-					<input id="add-${ resourceName }-name" type="text" size="50" maxlength="255" /><br />
-					<comp:error-message forField="name" />
-				</td>
+				<td><label for="add-${ resourceName }-name"><f:message key="label.Name" /></label></td>
+				<td><input id="add-${ resourceName }-name" type="text" size="50" maxlength="255" /><br />
+					<comp:error-message forField="name" /></td>
 			</tr>
 			<c:if test='${ resourceName == "requirement" || resourceName == "test-case"  }'>
 				<tr>
 					<td><label for="add-${ resourceName }-reference"><f:message key="requirement.reference.label" /></label></td>
-					<td>
-						<input id="add-${ resourceName }-reference" type=text size="15" maxlength="20"/><br />
-						<comp:error-message forField="reference" />
-					<td>
+					<td><input id="add-${ resourceName }-reference" type=text size="15" maxlength="20"/><br />
+						<comp:error-message forField="reference" />	<td>
 				</tr>
 				<c:if test='${ resourceName == "requirement" }'>
-				<tr>
-					<td><label for="add-requirement-criticality"><f:message key="requirement.criticality.combo.label" /></label></td>
-					<td><div id="criticalityList"></div></td>
-				</tr>
-				<tr>
-					<td><label for="add-requirement-category"><f:message key="requirement.category.combo.label" /></label></td>
-					<td><div id="categoryList"></div></td>
-				</tr>
+				<tr><td><label for="add-requirement-criticality"><f:message key="requirement.criticality.combo.label" /></label></td>
+					<td><div id="criticalityList"></div></td></tr>
+				<tr><td><label for="add-requirement-category"><f:message key="requirement.category.combo.label" /></label></td>
+					<td><div id="categoryList"></div></td></tr>
 				</c:if>
 			</c:if>
 			<tr>
-				<td><label for="add-${ resourceName }-description"><f:message
-							key="label.Description" />
-				</label>
-				</td>
-				<td><textarea id="add-${ resourceName }-description"></textarea>
-				</td>
+				<td><label for="add-${ resourceName }-description"><f:message key="label.Description" />
+				</label></td>
+				<td><textarea id="add-${ resourceName }-description"></textarea></td>
 			</tr>
 		</table>
 	</jsp:attribute>
@@ -119,28 +106,46 @@ $(function(){
 <script type="text/javascript">
 
 	function ${ handlerName }() {
+		var params = ${genericHandlerName}();
+		$('#tree').jstree('postNewNode','new-${ resourceName }', params).then(function(){
+			$("#add-${ resourceName }-dialog").dialog('close');
+		});
+	}
+	function ${ addAnotherHandlerName }() {
+		var params = ${genericHandlerName}();
+		$('#tree').jstree('postNewNode','new-${ resourceName }', params, false).then(function(){
+			$('#add-${ resourceName }-name').val("");
+			CKEDITOR.instances["add-${ resourceName }-description"].setData('');
+			<c:if test='${ resourceName == "requirement" || resourceName == "test-case"  }'>
+			$('#add-${ resourceName }-reference').val("");
+			</c:if>
+			$('.error-message').text("");
+		});
+	}
+	
+	function ${genericHandlerName}(){
 		<c:choose>
-			<c:when test='${ resourceName eq "requirement" }'>
-				var params = <jq:params-bindings 
-				name="#add-requirement-name" 
-				description="#add-requirement-description" 
-				reference="#add-requirement-reference" 
-				criticality="#add-requirement-criticality"
-				category="#add-requirement-category"/>;
-			</c:when>
-			<c:when test='${ resourceName eq "test-case" }'>
-				var params = <jq:params-bindings 
-				name="#add-test-case-name" 
-				description="#add-test-case-description" 
-				reference="#add-test-case-reference"/>;
-			</c:when>
-			<c:otherwise>
-				var params = <jq:params-bindings 
-				name="#add-${ resourceName }-name" 
-				description="#add-${ resourceName }-description"/>;
-			</c:otherwise>
-		</c:choose>
-		$('#tree').jstree('postNewNode','new-${ resourceName }', params);
+		<c:when test='${ resourceName eq "requirement" }'>
+		var params = <jq:params-bindings 
+			name="#add-requirement-name" 
+			description="#add-requirement-description" 
+			reference="#add-requirement-reference" 
+			criticality="#add-requirement-criticality"
+			category="#add-requirement-category"/>;
+		</c:when>
+		<c:when test='${ resourceName eq "test-case" }'>
+		var params = <jq:params-bindings 
+			name="#add-test-case-name" 
+			description="#add-test-case-description" 
+			reference="#add-test-case-reference"/>;
+		</c:when>
+		<c:otherwise>
+			var params = <jq:params-bindings 
+			name="#add-${ resourceName }-name" 
+			description="#add-${ resourceName }-description"/>;
+		</c:otherwise>
+	</c:choose>
+		return params;
 	}
 	
 	$(function(){

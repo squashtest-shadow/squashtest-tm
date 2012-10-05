@@ -692,10 +692,14 @@ function clearContextualContent(targetSelector){
  *            created)
  * @param postParameters
  *            map of post params
+ * @param selectNewNode 
+ * 			 optional, default = true
  */
  
- function postNewNode(contentDiscriminator, postParameters) {
-
+ function postNewNode(contentDiscriminator, postParameters, selectNewNode) {
+	 if(selectNewNode === undefined){
+		 selectNewNode = true;
+	 }
 	// **************** variables init ******************
 
 	var origNode = this.get_selected();		
@@ -742,22 +746,27 @@ function clearContextualContent(targetSelector){
 
 	
 	var createNode = function (){
-		postNode()
-		.then(addNode)
-		.then(selectNode)
-		
+		if(selectNewNode){
+			return postNode()
+			.then(addNode)
+			.then(selectNode);
+		}
+		else{
+			return postNode()
+			.then(addNode);
+		}
 	}
 
 	// ********** actual code. ******************
 	
 	var isOpen = targetNode.isOpen();
 	if (isOpen != true){
-		targetNode.open()			// first call will make the node load if
+		return targetNode.open()			// first call will make the node load if
 									// necessary.
 		.then(createNode);
 	}
 	else{
-		createNode();
+		return createNode();
 	}
 
 }
