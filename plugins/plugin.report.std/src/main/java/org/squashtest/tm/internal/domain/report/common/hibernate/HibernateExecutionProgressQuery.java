@@ -159,13 +159,14 @@ public class HibernateExecutionProgressQuery extends HibernateReportQuery {
 			if (! projectMap.keySet().contains(project.getId())){
 				ExProgressProjectDto projectDto = new ExProgressProjectDto();
 				projectDto.setName(project.getName());
+				projectDto.setId(project.getId());
 				projectMap.put(project.getId(), projectDto);
 			}
 			
 		}
 
 		//phase 2 : we generate the other dtos (campaigns and so on) and add them to the right instances of
-		//the project dto, using the map defined above. Again, we build here the projects using the campaingns.
+		//the project dto, using the map defined above. Again, we build here the projects using the campaigns.
 
 
 		for(Campaign campaign : campaignList){
@@ -180,10 +181,9 @@ public class HibernateExecutionProgressQuery extends HibernateReportQuery {
 		
 		//phase 3 : return the list and we're done !
 
-		List<ExProgressProjectDto> projectList = new LinkedList<ExProgressProjectDto>();
-		projectList.addAll(projectMap.values());
-		
+		List<ExProgressProjectDto> projectList = new LinkedList<ExProgressProjectDto>();		
 		fillProjectStatusInfos(projectMap);
+		projectList.addAll(projectMap.values());
 		return projectList;
 
 
