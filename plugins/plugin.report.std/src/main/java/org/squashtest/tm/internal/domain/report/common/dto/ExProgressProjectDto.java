@@ -171,8 +171,9 @@ public class ExProgressProjectDto {
 	
 	public ExProgressCampaignStatus getStatus() {
 		if((iCountStatusBloqued + iCountStatusFailure + iCountStatusSuccess)== getNumberTestCase()){
-				return ExProgressCampaignStatus.CAMPAIGN_RUNNING;
+			return ExProgressCampaignStatus.CAMPAIGN_OVER;
 		}
-		return ExProgressCampaignStatus.CAMPAIGN_OVER;
+		return ExProgressCampaignStatus.CAMPAIGN_RUNNING;
+		
 	}
 }
