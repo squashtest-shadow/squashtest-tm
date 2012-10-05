@@ -1,3 +1,0 @@
-IMPORTANT !
-
-Incremental DB scripts names SHOULD NOT be modified between releases. It would break debian / redhat packages incremental upgrade.  
