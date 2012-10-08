@@ -20,33 +20,54 @@
  */
 package org.squashtest.tm.internal.domain.report.common.dto;
 
+import java.util.Date;
 import java.util.LinkedList;
 import java.util.List;
 
-public class ExProgressProjectDto extends ExProgressAbstractDto {
-	private Long id;
+import org.squashtest.csp.tm.domain.campaign.Campaign;
+import org.squashtest.csp.tm.domain.campaign.Iteration;
 
-	private List<ExProgressCampaignDto> campaigns = new LinkedList<ExProgressCampaignDto>();
+public class ExProgressScheduledAbstractDto extends ExProgressAbstractDto{
 
-	public Long getId() {
-		return id;
+	
+	protected Date scheduledStartDate;
+	protected Date scheduledEndDate;
+	protected Date actualStartDate;
+	protected Date actualEndDate;
+
+	
+	public Date getScheduledStartDate() {
+		return scheduledStartDate;
 	}
 
-	public void setId(Long id) {
-		this.id = id;
+	public void setScheduledStartDate(Date scheduledStartDate) {
+		this.scheduledStartDate = scheduledStartDate;
 	}
 
-	public List<ExProgressCampaignDto> getCampaigns() {
-		return campaigns;
+	public Date getScheduledEndDate() {
+		return scheduledEndDate;
 	}
 
-	public void setCampaigns(List<ExProgressCampaignDto> campaigns) {
-		this.campaigns = campaigns;
+	public void setScheduledEndDate(Date scheduledEndDate) {
+		this.scheduledEndDate = scheduledEndDate;
 	}
 
-	public void addCampaignDto(ExProgressCampaignDto campaignDto) {
-		this.campaigns.add(campaignDto);
+	public Date getActualStartDate() {
+		return actualStartDate;
 	}
 
+	public void setActualStartDate(Date actualStartDate) {
+		this.actualStartDate = actualStartDate;
+	}
+
+	public Date getActualEndDate() {
+		return actualEndDate;
+	}
+
+	public void setActualEndDate(Date actualEndDate) {
+		this.actualEndDate = actualEndDate;
+	}
+
+	
 	
 }

@@ -192,7 +192,7 @@ public class HibernateExecutionProgressQuery extends HibernateReportQuery {
 	private void fillProjectStatusInfos(Map<Long, ExProgressProjectDto> projectMap) {
 		for(Entry<Long, ExProgressProjectDto> entry : projectMap.entrySet()){
 			ExProgressProjectDto projectDto = entry.getValue();
-			projectDto.fillStatusInfos();
+			projectDto.fillStatusInfosWithChildren(projectDto.getCampaigns());
 		}
 		
 	}
@@ -216,14 +216,13 @@ public class HibernateExecutionProgressQuery extends HibernateReportQuery {
 			campDto.addIterationDto(iterDto);
 			iterDto.setCampaign(campDto);
 		}
-		campDto.fillStatusInfos();
+		campDto.fillStatusInfosWithChildren(campDto.getIterations());
 		return campDto;
 
 	}
 
 	private ExProgressIterationDto makeIterationDto(Iteration iteration){
-		ExProgressIterationDto iterDto = new ExProgressIterationDto().fillBasicInfos(iteration)
-																	 .fillStatusInfos(iteration);
+		ExProgressIterationDto iterDto = new ExProgressIterationDto(iteration);
 
 		for (IterationTestPlanItem testPlan : iteration.getTestPlans()){
 			ExProgressTestPlanDto testPlanDto = makeTestPlanDto(testPlan);
