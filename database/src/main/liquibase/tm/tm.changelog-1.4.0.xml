@@ -84,4 +84,44 @@
             </column>
         </createTable>
     </changeSet>
+
+    <changeSet author="gfouquet" id="tm-1.4.0-feat-1390.01">
+        <comment>Creates a table for Custom Fields Binding</comment>
+        <createTable tableName="CUSTOM_FIELD_BINDING">
+            <column name="CFB_ID" type="BIGINT" autoIncrement="true">
+                <constraints primaryKey="true" nullable="false" primaryKeyName="pk_cfb_option" />
+            </column>
+
+            <column name="CF_ID" type="BIGINT">
+                <constraints nullable="false" references="CUSTOM_FIELD(CF_ID)" foreignKeyName="fk_cfb_cf"/>
+            </column>
+
+            <column name="BOUND_ENTITY" type="VARCHAR(30)">
+                <constraints nullable="false" />
+            </column>
+
+            <column name="BOUND_PROJECT_ID" type="BIGINT">
+                <constraints nullable="false"  references="PROJECT(PROJECT_ID)" foreignKeyName="fk_cfb_bound_project"/>
+            </column>
+
+            <column name="POSITION" type="INT">
+                <constraints nullable="true" />
+            </column>
+        </createTable>
+
+        <addUniqueConstraint tableName="CUSTOM_FIELD_BINDING" columnNames="BOUND_PROJECT_ID, BOUND_ENTITY, CF_ID" constraintName="uc_cf_entity_proj_bnd" />
+    </changeSet>
+
+    <changeSet author="gfouquet" id="tm-1.4.0-feat-1390.02">
+        <comment>Creates a table for rendering locations of a bound custom field</comment>
+        <createTable tableName="CUSTOM_FIELD_RENDERING_LOCATION">
+            <column name="CFB_ID" type="BIGINT">
+                <constraints nullable="false" references="CUSTOM_FIELD_BINDING(CFB_ID)" foreignKeyName="fk_cfb_render_loc_cfb"/>
+            </column>
+
+            <column name="RENDERING_LOCATION" type="VARCHAR(30)">
+                <constraints nullable="false" />
+            </column>
+        </createTable>
+    </changeSet>
 </databaseChangeLog>

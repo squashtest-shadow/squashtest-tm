@@ -115,6 +115,7 @@
                 <value>org.squashtest.csp.tm.domain.customfield.CustomField</value>
                 <value>org.squashtest.csp.tm.domain.customfield.SingleSelectField</value>
                 <value>org.squashtest.csp.tm.domain.customfield.CustomFieldOption</value>
+                <value>org.squashtest.csp.tm.domain.customfield.CustomFieldBinding</value>
             </list>
 		</property>
 		<property name="namingStrategy">
