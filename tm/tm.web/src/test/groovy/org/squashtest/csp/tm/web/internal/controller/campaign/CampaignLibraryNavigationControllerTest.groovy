@@ -57,7 +57,7 @@ class CampaignLibraryNavigationControllerTest extends spock.lang.Specification {
 		service.findIteration(_) >> iter;
 
 		when:
-		JsTreeNode res = controller.addNewIterationToCampaign(iter, 10)
+		JsTreeNode res = controller.addNewIterationToCampaign(iter, 10,true)
 
 		then:
 		1 * service.addIterationToCampaign(iter, 10)
