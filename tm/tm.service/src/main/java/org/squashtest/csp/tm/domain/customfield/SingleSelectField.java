@@ -20,34 +20,56 @@
  */
 package org.squashtest.csp.tm.domain.customfield;
 
-import org.hibernate.validator.constraints.NotBlank;
-
-import javax.persistence.DiscriminatorValue;
-import javax.persistence.Embedded;
-import javax.persistence.Entity;
-import javax.persistence.MappedSuperclass;
 import java.util.ArrayList;
 import java.util.Collections;
+import java.util.Iterator;
 import java.util.List;
+
+import javax.persistence.CollectionTable;
+import javax.persistence.DiscriminatorValue;
+import javax.persistence.ElementCollection;
+import javax.persistence.Entity;
+import javax.persistence.JoinColumn;
+import javax.persistence.OrderColumn;
+
+import org.hibernate.validator.constraints.NotBlank;
 
 /**
  * A CustomField which stores a single option selected from a list.
+ * 
  * @author Gregory Fouquet
  */
 @Entity
 @DiscriminatorValue("SSF")
 public class SingleSelectField extends CustomField {
-    @Embedded
-    private List<CustomFieldOption> options = new ArrayList<CustomFieldOption>();
+	@ElementCollection
+	@CollectionTable(name = "CUSTOM_FIELD_OPTION", joinColumns = @JoinColumn(name = "CF_ID"))
+	@OrderColumn(name = "POSITION")
+	private List<CustomFieldOption> options = new ArrayList<CustomFieldOption>();
 
-    public void addOption(@NotBlank String label) {
-       options.add(new CustomFieldOption(label));
-    }
-    public void removeOption(@NotBlank String label) {
+	/**
+	 * Created a SingleSelectField with a 
+	 */
+	public SingleSelectField() {
+		super(InputType.DROPDOWN_LIST);
+	}
+	
+	public void addOption(@NotBlank String label) {
+		options.add(new CustomFieldOption(label));
+	}
 
-    }
+	public void removeOption(@NotBlank String label) {
+		Iterator<CustomFieldOption> it = options.iterator();
 
-    public List<CustomFieldOption> getOptions() {
-        return Collections.unmodifiableList(options);
-    }
+		while (it.hasNext()) {
+			if (label.equals(it.next().getLabel())) {
+				it.remove();
+				return;
+			}
+		}
+	}
+
+	public List<CustomFieldOption> getOptions() {
+		return Collections.unmodifiableList(options);
+	}
 }

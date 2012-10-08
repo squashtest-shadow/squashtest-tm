@@ -18,6 +18,8 @@
  *     You should have received a copy of the GNU Lesser General Public License
  *     along with this software.  If not, see <http://www.gnu.org/licenses/>.
  */
+package org.squashtest.csp.tm.hibernate.mapping.customfield
+ 
 import org.squashtest.csp.tm.hibernate.mapping.HibernateMappingSpecification
 import org.squashtest.csp.tm.domain.customfield.CustomField
 import org.squashtest.csp.tools.unittest.hibernate.HibernateOperationCategory
@@ -50,7 +52,6 @@ class CustomFieldMappingIT extends HibernateMappingSpecification {
         given:
         def cf = new SingleSelectField();
         cf.name = "batman"
-        cf.inputType = InputType.DROPDOWN_LIST
 
         when:
         persistFixture cf
@@ -62,25 +63,83 @@ class CustomFieldMappingIT extends HibernateMappingSpecification {
         res != null
     }
 
-    def "should add option to a single select field"() {
+    def "should add options to a single select field"() {
         given:
         def cf = new SingleSelectField();
         cf.name = "batman"
-        cf.inputType = InputType.DROPDOWN_LIST
         cf.addOption("leatherpants")
+        cf.addOption("batarang")
         persistFixture cf
 
         when:
         def res = use (HibernateOperationCategory) {
             sessionFactory.doInSession {
-                it.get(CustomField, cf.id)
-                Hibernate.initialize(cf)
-                return cf
+                def r = it.get(CustomField, cf.id)
+                r.options.each { it.label }
+                return r
             }
         }
 
         then:
-        res.options*.label == ["leatherpants"]
+        res.options*.label == ["leatherpants", "batarang"]
     }
+
+    def "should remove options from a single select field"() {
+        given:
+        def cf = new SingleSelectField();
+        cf.name = "batman"
+        cf.addOption("leatherpants")
+        cf.addOption("batarang")
+        persistFixture cf
+
+        when:
+		def removeOption = {
+            def res = it.get(CustomField, cf.id)
+			res.removeOption("batarang")
+		}
+		
+		def loadFixture = {
+            def res = it.get(CustomField, cf.id)
+            res.options.each { it.label }
+            return res
+		}
+		
+        def res = use (HibernateOperationCategory) {
+            sessionFactory.doInSession removeOption
+            sessionFactory.doInSession(loadFixture)
+       }
+
+		then:
+		res.options*.label == ["leatherpants"]
+    }
+	
+	def "should change the label of a single select field's option"() {
+		given:
+		def cf = new SingleSelectField();
+		cf.name = "batman"
+		cf.addOption("leatherpants")
+		cf.addOption("batarang")
+		persistFixture cf
+
+		when:
+		def changeOptionLabel = {
+			def r = it.get(CustomField, cf.id)
+			r.options[1].label = "bataring"
+		}
+		
+		def loadFixture = {
+            def res = it.get(CustomField, cf.id)
+            res.options.each { it.label }
+            return res
+		}
+
+		def res = use (HibernateOperationCategory) {
+			sessionFactory.doInSession changeOptionLabel
+			sessionFactory.doInSession loadFixture
+		}
+
+		then:
+		res.options*.label == ["leatherpants", "bataring"]
+	}
 }
 

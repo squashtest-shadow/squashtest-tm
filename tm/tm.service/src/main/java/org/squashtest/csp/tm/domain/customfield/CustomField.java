@@ -44,64 +44,78 @@ import javax.validation.constraints.Size;
 @DiscriminatorColumn(name = "FIELD_TYPE", discriminatorType = DiscriminatorType.STRING)
 @DiscriminatorValue("CF")
 public class CustomField {
-    @Id @GeneratedValue @Column(name = "CF_ID")
-    private Long id;
+	@Id
+	@GeneratedValue
+	@Column(name = "CF_ID")
+	private Long id;
 
-    @NotBlank @Size(min=0, max=255)
-    private String name;
+	@NotBlank
+	@Size(min = 0, max = 255)
+	private String name;
 
-    @NotNull @Size(min=0, max=255)
-    private String label = "";
+	@NotNull
+	@Size(min = 0, max = 255)
+	private String label = "";
 
-    private boolean optional = true;
+	private boolean optional = true;
 
-    @Size(min=0, max=255)
-    private String defaultValue;
+	@Size(min = 0, max = 255)
+	private String defaultValue;
 
-    @NotNull @Enumerated(EnumType.STRING) @Column(updatable = false)
-    private InputType inputType = InputType.PLAIN_TEXT;
+	@NotNull
+	@Enumerated(EnumType.STRING)
+	@Column(updatable = false)
+	private InputType inputType = InputType.PLAIN_TEXT;
 
-    public String getName() {
-        return name;
-    }
+	/**
+	 * For ORM purposes.
+	 */
+	protected CustomField() {
+		super();
+	}
+	
+	public CustomField(@NotNull InputType inputType) {
+		super();
+		this.inputType = inputType;
+	}
 
-    public void setName(String name) {
-        this.name = name;
-    }
+	public String getName() {
+		return name;
+	}
 
-    public String getLabel() {
-        return label;
-    }
+	public void setName(String name) {
+		this.name = name;
+	}
 
-    public void setLabel(String label) {
-        this.label = label;
-    }
+	public String getLabel() {
+		return label;
+	}
 
-    public boolean isOptional() {
-        return optional;
-    }
+	public void setLabel(String label) {
+		this.label = label;
+	}
 
-    public void setOptional(boolean optional) {
-        this.optional = optional;
-    }
+	public boolean isOptional() {
+		return optional;
+	}
 
-    public String getDefaultValue() {
-        return defaultValue;
-    }
+	public void setOptional(boolean optional) {
+		this.optional = optional;
+	}
 
-    public void setDefaultValue(String defaultValue) {
-        this.defaultValue = defaultValue;
-    }
+	public String getDefaultValue() {
+		return defaultValue;
+	}
 
-    public Long getId() {
-        return id;
-    }
+	public void setDefaultValue(String defaultValue) {
+		this.defaultValue = defaultValue;
+	}
 
-    public InputType getInputType() {
-        return inputType;
-    }
+	public Long getId() {
+		return id;
+	}
 
-    public void setInputType(InputType inputType) {
-        this.inputType = inputType;
-    }
+	public InputType getInputType() {
+		return inputType;
+	}
 }

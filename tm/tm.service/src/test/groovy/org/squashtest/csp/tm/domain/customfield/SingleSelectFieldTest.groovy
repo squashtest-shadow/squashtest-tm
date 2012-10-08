@@ -18,37 +18,35 @@
  *     You should have received a copy of the GNU Lesser General Public License
  *     along with this software.  If not, see <http://www.gnu.org/licenses/>.
  */
+
 package org.squashtest.csp.tm.domain.customfield;
 
-import org.hibernate.validator.constraints.NotBlank;
+import spock.lang.Specification;
 
-import javax.persistence.Embeddable;
 
 /**
- * Defines an option which can be selected among a list and set as a custom field's value.
- * 
- * @author Gregory Fouquet
+ * @author Gregory
+ *
  */
-@Embeddable
-public class CustomFieldOption {
-	@NotBlank
-	private String label;
+class SingleSelectFieldTest extends Specification {
+	def "should add and remove options"() {
+		given: 
+		SingleSelectField field = new SingleSelectField()
+		field.inputType = InputType.DROPDOWN_LIST
+		
+		when:
+		field.addOption("batman")
+		field.addOption("robin")
+		 
+		then:
+		field.options*.label == ["batman", "robin"]
 
-	/**
-	 * For Hibernate.
-	 */
-	protected CustomFieldOption() {
-		super();
+		when:
+		field.removeOption("batman")
+		
+		then:
+		field.options*.label == ["robin"]
+		
 	}
 
-	public CustomFieldOption(String label) {
-		this.label = label;
-	}
-
-	/**
-	 * @return the label
-	 */
-	public String getLabel() {
-		return label;
-	}
 }
