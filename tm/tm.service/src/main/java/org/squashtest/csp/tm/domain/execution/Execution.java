@@ -152,7 +152,7 @@ public class Execution implements AttachmentHolder, IssueDetector, Identified, H
 
 	@OneToOne(cascade = { CascadeType.PERSIST, CascadeType.MERGE, CascadeType.REMOVE })
 	@JoinColumn(name = "ISSUE_LIST_ID")
-	private final IssueList issueList = new IssueList();
+	private IssueList issueList = new IssueList();
 
 	/* *********************** /issues attributes ************************ */
 
@@ -344,6 +344,10 @@ public class Execution implements AttachmentHolder, IssueDetector, Identified, H
 		return issueList.getId();
 	}
 	
+	@Override
+	public void detachIssue(Long id){
+		issueList.removeIssue(id);
+	}
 	
 	/* ***************** /Bugged implementation *********************** */
 

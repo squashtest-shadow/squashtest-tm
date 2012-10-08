@@ -60,4 +60,9 @@ public interface IssueDetector {
 	 */
 	List<Long> getAllIssueListId();
 
+	
+	/**
+	 * removes the link between an issue and its issue detector.
+	 */
+	void detachIssue(Long id);
 }

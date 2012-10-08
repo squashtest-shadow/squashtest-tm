@@ -437,6 +437,39 @@ class BugTrackersLocalServiceIT_Disabled extends DbunitServiceSpecification  {
 		
 	}
 	
+	
+	def "should detach an issue from an execution"(){
+		
+		given:
+			Execution ex = findEntity(Execution.class,1l)
+			
+		when:
+			ex.getIssueList().findIssue(7l) != null
+			btService.detachIssue(ex, 7l)
+			def linkedIssue = ex.getIssueList().findIssue(7l)
+			def issue = findEntity(Issue.class, 7l)
+			
+		then:
+			linkedIssue==null
+			issue!=null
+	}
+	
+	def "should detach an issue from an execution step"(){
+	
+		given:
+			ExecutionStep estep = findEntity(Execution.class,1l)
+		
+		when:
+			estep.getIssueList().findIssue(5l) != null
+			btService.detachIssue(estep, 5l)
+			def linkedIssue = estep.getIssueList().findIssue(5l)
+			def issue = findEntity(Issue.class, 5l)
+		
+		then:
+			linkedIssue==null
+			issue!=null
+	}
+	
 	private Object findEntity(Class<?> entityClass, Long id){
 		return getSession().get(entityClass, id)
 	}

@@ -213,6 +213,14 @@ public class BugTrackersLocalServiceImpl implements BugTrackersLocalService {
 
 		}
 	}
+	
+	@Override
+	@PreAuthorize("hasPermission(#bugged, 'EXECUTE') or hasRole('ROLE_ADMIN')")
+	public void detachIssue(IssueDetector bugged, Long issueId){
+		
+		IssueList issueList = bugged.getIssueList();
+		issueList.removeIssue(issueId);
+	}
 
 	/* ------------------------ExecutionStep--------------------------------------- */
 	@Override

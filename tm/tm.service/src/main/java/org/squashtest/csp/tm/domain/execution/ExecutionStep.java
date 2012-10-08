@@ -123,7 +123,7 @@ public class ExecutionStep implements AttachmentHolder, IssueDetector, TestStepV
 
 	@OneToOne(cascade = { CascadeType.PERSIST, CascadeType.MERGE, CascadeType.REMOVE })
 	@JoinColumn(name = "ISSUE_LIST_ID")
-	private final IssueList issueList = new IssueList();
+	private IssueList issueList = new IssueList();
 
 	/**
 	 * Hibernate needs this.
@@ -242,7 +242,11 @@ public class ExecutionStep implements AttachmentHolder, IssueDetector, TestStepV
 		return issueList;
 	}
 
-
+	@Override
+	public void detachIssue(Long id){
+		issueList.removeIssue(id);
+	}
+	
 	@Override
 	public void visit(ActionTestStep visited) {
 		action = visited.getAction();

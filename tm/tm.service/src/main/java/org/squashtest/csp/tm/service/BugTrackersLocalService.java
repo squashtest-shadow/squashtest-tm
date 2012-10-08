@@ -261,7 +261,7 @@ public interface BugTrackersLocalService {
 	 * Will attach an existing issue to the issue detector
 	 * 
 	 * @param bugged
-	 *            : the furure issue holder
+	 *            : the future issue holder
 	 * @param remoteIssueKey
 	 *            : the identificator of the issue in the BT
 	 * 
@@ -273,5 +273,16 @@ public interface BugTrackersLocalService {
 	 * @return the list of all bugtracker kinds available
 	 */
 	Set<String> getProviderKinds();
+
+	
+	/**
+	 * Will detach an existing issue from an issue detector
+	 * 
+	 * @param bugged
+	 * 			: the current issue holder
+	 * @param issueId
+	 * 			: the id of the issue in Squash TM
+	 */
+	void detachIssue(IssueDetector bugged, Long issueId);
 
 }
