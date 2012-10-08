@@ -101,7 +101,7 @@ class ExecutionModificationServiceIT extends HibernateServiceSpecification {
 		campaignNavService.addCampaignToCampaignLibrary(camplib.id, campaign)
 
 		Iteration iteration = new Iteration(name:"exec iteration");
-		campaignNavService.addIterationToCampaign(iteration,campaign.id)
+		campaignNavService.addIterationToCampaign(iteration,campaign.id,true)
 
 		iterationId=iteration.id
 

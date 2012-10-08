@@ -78,7 +78,7 @@ class CustomIterationModificationServiceImplTest extends Specification {
 		campaignDao.findById(10) >> campaign
 
 		when:
-		service.addIterationToCampaign(iteration, 10)
+		service.addIterationToCampaign(iteration, 10, true)
 
 		then:
 		campaign.iterations.contains(iteration)
@@ -97,7 +97,7 @@ class CustomIterationModificationServiceImplTest extends Specification {
 		campaignDao.findById(10) >> campaign
 
 		when:
-		def index = service.addIterationToCampaign(iteration, 10)
+		def index = service.addIterationToCampaign(iteration, 10, true)
 
 		then:
 		index == 1

@@ -188,9 +188,9 @@ class CampaignModificationServiceIT extends HibernateServiceSpecification {
 		Iteration iter2 = new Iteration(name:"it2")
 		Iteration iter3 = new Iteration(name:"it3")
 
-		navService.addIterationToCampaign(iter1, campaign1.id)
-		navService.addIterationToCampaign(iter2, campaign1.id)
-		navService.addIterationToCampaign(iter3, campaign1.id)
+		navService.addIterationToCampaign(iter1, campaign1.id,true)
+		navService.addIterationToCampaign(iter2, campaign1.id,true)
+		navService.addIterationToCampaign(iter3, campaign1.id,true)
 
 		when :
 		iterService.delete(iter3.id);

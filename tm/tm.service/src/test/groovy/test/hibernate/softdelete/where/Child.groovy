@@ -29,7 +29,7 @@ class Child {
 	@Id @GeneratedValue
 	Long id;
 	boolean deleted;
-
+	
 	def dont_delete_it_might_not_compile_under_eclipse() {
 	
 	}
