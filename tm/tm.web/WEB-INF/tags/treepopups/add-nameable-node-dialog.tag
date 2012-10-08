@@ -73,7 +73,7 @@ $(function(){
 	<jsp:attribute name="buttons">
 		<pop:button labelKey="label.Add"
 			handler="${ handlerName }" />
-		<pop:cancel-button />
+		<pop:cancel-button/>
 	</jsp:attribute>
 	<jsp:attribute name="body">
 		<table>
@@ -152,6 +152,7 @@ $(function(){
 				name="#add-iteration-name" 
 				description="#add-iteration-description"
 				copyTestPlan="#copy-test-plan"/>;
+				$('#copy-test-plan-box').attr('checked', false);
 			</c:when>
 			<c:otherwise>
 				var params = <jq:params-bindings 
@@ -160,11 +161,19 @@ $(function(){
 			</c:otherwise>
 		</c:choose>
 		$('#tree').jstree('postNewNode','new-${ resourceName }', params);
+		
+	}
+	
+	function cleanup(){
+		<c:if test='${ resourceName eq "iteration" }'>
+			$('#copy-test-plan-box').attr('checked', false);
+		</c:if>
 	}
 	
 	$(function(){
 		${treeNodeButton}.click(function(){
 			$('#add-${ resourceName }-dialog').dialog('open');
+			cleanup();
 			return false;
 		});
 	});
