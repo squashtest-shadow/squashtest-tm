@@ -27,7 +27,7 @@ import org.squashtest.csp.tm.domain.campaign.Iteration;
 import org.squashtest.csp.tm.domain.campaign.TestSuite;
 
 public class ExProgressIterationDto extends ExProgressScheduledAbstractDto {
-	
+
 	private ExProgressCampaignDto campaign;
 	private List<ExProgressTestPlanDto> testPlans = new LinkedList<ExProgressTestPlanDto>();
 	private List<ExProgressTestSuiteDto> testSuites = new LinkedList<ExProgressTestSuiteDto>();
@@ -75,6 +75,11 @@ public class ExProgressIterationDto extends ExProgressScheduledAbstractDto {
 		return this;
 	}
 
-	
+	public List<ExProgressTestSuiteDto> getTestSuites() {
+		return testSuites;
+	}
 
+	public void setTestSuites(List<ExProgressTestSuiteDto> testSuites) {
+		this.testSuites = testSuites;
+	}
 }

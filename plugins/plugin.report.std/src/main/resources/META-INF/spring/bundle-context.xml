@@ -148,7 +148,8 @@ http://www.springframework.org/schema/util http://www.springframework.org/schema
 		<property name="reportDataKey" value="data" />
 		<property name="subReportUrls">
 			<map>
-				<entry key="executionProgressionSubReport" value="classpath:jasperreports/execution-progression_campaign.jasper" />
+				<entry key="executionProgressionCampaign" value="classpath:jasperreports/execution-progression_campaign.jasper" />
+				<entry key="executionProgressionIteration" value="classpath:jasperreports/execution-progression_iteration.jasper" />
 			</map>
 		</property>
 		<property name="exporterParameters">
