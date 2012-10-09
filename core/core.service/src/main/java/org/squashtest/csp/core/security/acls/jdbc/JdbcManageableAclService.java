@@ -102,26 +102,26 @@ public class JdbcManageableAclService extends JdbcAclService implements ObjectAc
 		}
 	};
 
-	private final String insertObjectIdentity = "insert into ACL_OBJECT_IDENTITY (IDENTITY, CLASS_ID) values (?, ?)";
-	private final String selectObjectIdentityPrimaryKey = "select oid.ID from ACL_OBJECT_IDENTITY oid inner join ACL_CLASS c on c.ID = oid.CLASS_ID where c.CLASSNAME = ? and oid.IDENTITY = ?";
-	private final String selectClassPrimaryKey = "select ID from ACL_CLASS where CLASSNAME = ?";
-	private final String findAllAclGroupsByNamespace = "select ID, QUALIFIED_NAME from ACL_GROUP where QUALIFIED_NAME like ?";
+	private static final String INSERT_OBJECT_IDENTITY = "insert into ACL_OBJECT_IDENTITY (IDENTITY, CLASS_ID) values (?, ?)";
+	private static final String SELECT_OBJECT_IDENTITY_PRIMARY_KEY = "select oid.ID from ACL_OBJECT_IDENTITY oid inner join ACL_CLASS c on c.ID = oid.CLASS_ID where c.CLASSNAME = ? and oid.IDENTITY = ?";
+	private static final String SELECT_CLASS_PRIMARY_KEY = "select ID from ACL_CLASS where CLASSNAME = ?";
+	private static final String FIND_ALL_ACL_GROUPS_BY_NAMESPACE = "select ID, QUALIFIED_NAME from ACL_GROUP where QUALIFIED_NAME like ?";
 
-	private final String insertAclResposablityScope = "insert into ACL_RESPONSIBILITY_SCOPE_ENTRY (USER_ID, ACL_GROUP_ID, OBJECT_IDENTITY_ID) values ((select ID from CORE_USER where login = ?), (select ID from ACL_GROUP where QUALIFIED_NAME = ?), "
+	private static final String INSERT_ACL_RESPONSABILITY_SCOPE = "insert into ACL_RESPONSIBILITY_SCOPE_ENTRY (USER_ID, ACL_GROUP_ID, OBJECT_IDENTITY_ID) values ((select ID from CORE_USER where login = ?), (select ID from ACL_GROUP where QUALIFIED_NAME = ?), "
 			+ "(select oid.ID from ACL_OBJECT_IDENTITY oid inner join ACL_CLASS c on c.ID = oid.CLASS_ID where CLASSNAME = ?  and oid.IDENTITY = ? ))";
 
-	private final String findAclForClassFromUser = "select oid.IDENTITY, ag.ID, ag.QUALIFIED_NAME from "
+	private static final String FIND_ACL_FOR_CLASS_FROM_USER = "select oid.IDENTITY, ag.ID, ag.QUALIFIED_NAME from "
 			+ "ACL_GROUP ag " + "inner join ACL_RESPONSIBILITY_SCOPE_ENTRY arse on ag.ID = arse.ACL_GROUP_ID "
 			+ "inner join CORE_USER cu on arse.USER_ID = cu.ID "
 			+ "inner join ACL_OBJECT_IDENTITY oid on oid.ID = arse.OBJECT_IDENTITY_ID "
 			+ "inner join ACL_CLASS ac on ac.ID = oid.CLASS_ID " + "where cu.LOGIN = ? and ac.CLASSNAME = ?";
 
-	private final String userAndAclClassFromProject = "select arse.USER_ID, ag.ID, ag.QUALIFIED_NAME from "
+	private static final String USER_AND_ACL_CLASS_FROM_PROJECT = "select arse.USER_ID, ag.ID, ag.QUALIFIED_NAME from "
 			+ "ACL_GROUP ag " + "inner join ACL_RESPONSIBILITY_SCOPE_ENTRY arse on ag.ID = arse.ACL_GROUP_ID "
 			+ "inner join ACL_OBJECT_IDENTITY oid on oid.ID = arse.OBJECT_IDENTITY_ID "
 			+ "inner join ACL_CLASS ac on ac.ID = oid.CLASS_ID " + "where oid.IDENTITY = ? and ac.CLASSNAME = ?";
 
-	private final String deleteResponsablityEntry = "delete from ACL_RESPONSIBILITY_SCOPE_ENTRY "
+	private static final String DELETE_RESPONSABILITY_ENTRY = "delete from ACL_RESPONSIBILITY_SCOPE_ENTRY "
 			+ "where USER_ID = (select ID from CORE_USER where login = ?) " + "and OBJECT_IDENTITY_ID = "
 			+ "(select oid.ID from ACL_OBJECT_IDENTITY oid " + "inner join ACL_CLASS c on c.ID = oid.CLASS_ID "
 			+ "where oid.IDENTITY = ? and c.CLASSNAME = ?)";
@@ -132,7 +132,7 @@ public class JdbcManageableAclService extends JdbcAclService implements ObjectAc
 	 * "where arse.USER_ID = (select ID from CORE_USER where login = ?) " + "and oid.IDENTITY = ? "+
 	 * "and ac.CLASSNAME = ?";
 	 */
-	private final String findObjectsWithoutPermission = "select nro.IDENTITY from ACL_OBJECT_IDENTITY nro "
+	private static final String FIND_OBJECT_WITHOUT_PERMISSION = "select nro.IDENTITY from ACL_OBJECT_IDENTITY nro "
 			+ "inner join ACL_CLASS nrc on nro.CLASS_ID = nrc.ID " + "where nrc.CLASSNAME = ? "
 			+ "and not exists (select 1 " + "from ACL_OBJECT_IDENTITY ro "
 			+ "inner join ACL_CLASS rc on rc.ID = ro.CLASS_ID "
@@ -144,7 +144,7 @@ public class JdbcManageableAclService extends JdbcAclService implements ObjectAc
 	// "select oid.IDENTITY from ACL_OBJECT_IDENTITY oid inner join ACL_RESPONSIBILITY_SCOPE_ENTRY arse on arse.OBJECT_IDENTITY_ID = oid.ID inner join CORE_USER cu on cu.ID = arse.USER_ID inner join ACL_CLASS ac on oid.CLASS_ID = ac.ID right join ACL_OBJECT_IDENTITY aoc"+
 	// " where cu.LOGIN = ? and ac.CLASSNAME = ? and oid.ID is null";
 
-	private final String findUsersWithoutPermissionByObject = "select u.ID from CORE_USER u "
+	private static final String FIND_USERS_WITHOUT_PERMISSION_BY_OBJECT = "select u.ID from CORE_USER u "
 			+ "where not exists (select 1 " + "from ACL_OBJECT_IDENTITY aoi "
 			+ "inner join ACL_CLASS ac on ac.ID = aoi.CLASS_ID "
 			+ "inner join ACL_RESPONSIBILITY_SCOPE_ENTRY arse on arse.OBJECT_IDENTITY_ID = aoi.ID "
@@ -173,10 +173,10 @@ public class JdbcManageableAclService extends JdbcAclService implements ObjectAc
 
 	private void createObjectIdentity(Serializable objectIdentifier, long classId) {
 		if (LOGGER.isDebugEnabled()) {
-			LOGGER.debug("Will attempt to perform '" + insertObjectIdentity + "' with args [" + objectIdentifier + ','
+			LOGGER.debug("Will attempt to perform '" + INSERT_OBJECT_IDENTITY + "' with args [" + objectIdentifier + ','
 					+ classId + ']');
 		}
-		jdbcTemplate.update(insertObjectIdentity, objectIdentifier, classId);
+		jdbcTemplate.update(INSERT_OBJECT_IDENTITY, objectIdentifier, classId);
 	}
 
 	private void checkObjectIdentityDoesNotExist(ObjectIdentity objectIdentity) {
@@ -187,9 +187,9 @@ public class JdbcManageableAclService extends JdbcAclService implements ObjectAc
 
 	private Long retrieveClassPrimaryKey(String type) throws UnknownAclClassException {
 		if (LOGGER.isDebugEnabled()) {
-			LOGGER.debug("Will attempt to perform '" + selectClassPrimaryKey + "' with args [" + type + ']');
+			LOGGER.debug("Will attempt to perform '" + SELECT_CLASS_PRIMARY_KEY + "' with args [" + type + ']');
 		}
-		List<Long> classIds = jdbcTemplate.queryForList(selectClassPrimaryKey, new Object[] { type }, Long.class);
+		List<Long> classIds = jdbcTemplate.queryForList(SELECT_CLASS_PRIMARY_KEY, new Object[] { type }, Long.class);
 
 		if (!classIds.isEmpty()) {
 			if (LOGGER.isDebugEnabled()) {
@@ -203,12 +203,12 @@ public class JdbcManageableAclService extends JdbcAclService implements ObjectAc
 
 	private Long retrieveObjectIdentityPrimaryKey(ObjectIdentity objectIdentity) {
 		if (LOGGER.isDebugEnabled()) {
-			LOGGER.debug("Will attempt to perform '" + selectObjectIdentityPrimaryKey + "' with args ["
+			LOGGER.debug("Will attempt to perform '" + SELECT_OBJECT_IDENTITY_PRIMARY_KEY + "' with args ["
 					+ objectIdentity.getType() + ',' + objectIdentity.getIdentifier() + ']');
 		}
 
 		try {
-			return Long.valueOf(jdbcTemplate.queryForLong(selectObjectIdentityPrimaryKey,
+			return Long.valueOf(jdbcTemplate.queryForLong(SELECT_OBJECT_IDENTITY_PRIMARY_KEY,
 					new Object[] { objectIdentity.getType(), objectIdentity.getIdentifier() }));
 		} catch (DataAccessException notFound) {
 			return null;
@@ -223,7 +223,7 @@ public class JdbcManageableAclService extends JdbcAclService implements ObjectAc
 	 */
 	@Override
 	public List<PermissionGroup> findAllPermissionGroupsByNamespace(@NotNull String namespace) {
-		return jdbcTemplate.query(findAllAclGroupsByNamespace, new Object[] { namespace + '%' }, permissionGroupMapper);
+		return jdbcTemplate.query(FIND_ALL_ACL_GROUPS_BY_NAMESPACE, new Object[] { namespace + '%' }, permissionGroupMapper);
 	}
 
 	/**
@@ -235,7 +235,7 @@ public class JdbcManageableAclService extends JdbcAclService implements ObjectAc
 	 */
 	@Override
 	public void removeAllResponsibilities(@NotNull String userLogin, @NotNull ObjectIdentity entityRef) {
-		jdbcTemplate.update(deleteResponsablityEntry,
+		jdbcTemplate.update(DELETE_RESPONSABILITY_ENTRY,
 				new Object[] { userLogin, entityRef.getIdentifier(), entityRef.getType() });
 
 		evictFromCache(entityRef);
@@ -249,7 +249,7 @@ public class JdbcManageableAclService extends JdbcAclService implements ObjectAc
 	}
 
 	private void insertResponsibility(String userLogin, ObjectIdentity entityRef, String permissionGroupName) {
-		jdbcTemplate.update(insertAclResposablityScope,
+		jdbcTemplate.update(INSERT_ACL_RESPONSABILITY_SCOPE,
 				new Object[] { userLogin, permissionGroupName, entityRef.getType(), entityRef.getIdentifier() });
 
 		evictFromCache(entityRef);
@@ -257,13 +257,13 @@ public class JdbcManageableAclService extends JdbcAclService implements ObjectAc
 
 	@Override
 	public List<Object[]> retrieveClassAclGroupFromUserLogin(@NotNull String userLogin, String qualifiedClassName) {
-		return jdbcTemplate.query(findAclForClassFromUser, new Object[] { userLogin, qualifiedClassName },
+		return jdbcTemplate.query(FIND_ACL_FOR_CLASS_FROM_USER, new Object[] { userLogin, qualifiedClassName },
 				AclGroupMapper);
 	}
 
 	@Override
 	public List<Long> findObjectWithoutPermissionByLogin(String userLogin, String qualifiedClass) {
-		List<BigInteger> reslult = jdbcTemplate.queryForList(findObjectsWithoutPermission, new Object[] {
+		List<BigInteger> reslult = jdbcTemplate.queryForList(FIND_OBJECT_WITHOUT_PERMISSION, new Object[] {
 				qualifiedClass, userLogin }, BigInteger.class);
 		List<Long> finalResult = new ArrayList<Long>();
 		for (BigInteger bigInteger : reslult) {
@@ -331,14 +331,14 @@ public class JdbcManageableAclService extends JdbcAclService implements ObjectAc
 
 	@Override
 	public List<Object[]> retrieveUserAndAclClassFromProject(long projectId, String projectClassName) {
-		return jdbcTemplate.query(userAndAclClassFromProject, new Object[] { projectId, projectClassName },
+		return jdbcTemplate.query(USER_AND_ACL_CLASS_FROM_PROJECT, new Object[] { projectId, projectClassName },
 				AclGroupMapper);
 
 	}
 
 	@Override
 	public List<Long> findUsersWithoutPermissionByObject(long objectId, String qualifiedClassName) {
-		List<BigInteger> result = jdbcTemplate.queryForList(findUsersWithoutPermissionByObject, new Object[] {
+		List<BigInteger> result = jdbcTemplate.queryForList(FIND_USERS_WITHOUT_PERMISSION_BY_OBJECT, new Object[] {
 				qualifiedClassName, objectId }, BigInteger.class);
 		List<Long> finalResult = new ArrayList<Long>();
 		for (BigInteger bigInteger : result) {

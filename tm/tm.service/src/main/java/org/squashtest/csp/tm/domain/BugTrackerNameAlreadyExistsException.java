@@ -31,7 +31,7 @@ public class BugTrackerNameAlreadyExistsException extends ActionException {
 	private static final long serialVersionUID = 1L;
 	
 	
-	private final String bugtrackerNameExistsMessageKey = "squashtm.action.exception.bugtracker.name.exists.label";
+	private static final String BUGTRAKER_NAME_ALREADY_EXIST_MESSAGE_KEY = "squashtm.action.exception.bugtracker.name.exists.label";
 
 	public BugTrackerNameAlreadyExistsException(Exception ex) {
 		super(ex);
@@ -47,7 +47,7 @@ public class BugTrackerNameAlreadyExistsException extends ActionException {
 
 	@Override
 	public String getI18nKey() {
-		return bugtrackerNameExistsMessageKey;
+		return BUGTRAKER_NAME_ALREADY_EXIST_MESSAGE_KEY;
 	}
 
 }

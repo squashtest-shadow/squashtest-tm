@@ -31,7 +31,7 @@ public class NoBugTrackerBindingException extends ActionException {
 	private static final long serialVersionUID = 1L;
 	
 	private final static String DEFAULT_MESSAGE = "No Bug-Tracker is bound to this Project";
-	private final String bugtrackerNameExistsMessageKey = "squashtm.action.exception.bugtrackerBinding.notExist";
+	private final static String BUGTRACKER_NAME_EXISTS_MESSAGE_KEY = "squashtm.action.exception.bugtrackerBinding.notExist";
 
 	public NoBugTrackerBindingException(Exception ex) {
 		super(ex);
@@ -47,7 +47,7 @@ public class NoBugTrackerBindingException extends ActionException {
 
 	@Override
 	public String getI18nKey() {
-		return bugtrackerNameExistsMessageKey;
+		return BUGTRACKER_NAME_EXISTS_MESSAGE_KEY;
 	}
 
 }
