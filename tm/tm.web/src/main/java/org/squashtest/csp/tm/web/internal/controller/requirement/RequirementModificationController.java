@@ -341,7 +341,7 @@ public class RequirementModificationController {
 				params.getsEcho());
 	}
 
-	private static class RequirementVersionDataTableModel extends DataTableModelHelper<RequirementVersion> {
+	private static final class RequirementVersionDataTableModel extends DataTableModelHelper<RequirementVersion> {
 		private Locale locale;
 		private Provider<LevelLabelFormatter> levelFormatterProvider;
 		private Provider<InternationalisableLabelFormatter> internationalizableFormatterProvider;

@@ -61,7 +61,7 @@ public class HibernateExecutionStepDao extends HibernateEntityDao<ExecutionStep>
 		
 	}
 	
-	private static class ChildIdQueryParameterCallback implements SetQueryParametersCallback{
+	private static final class ChildIdQueryParameterCallback implements SetQueryParametersCallback{
 		private Long childId;
 		private ChildIdQueryParameterCallback(Long childId){
 			this.childId = childId;

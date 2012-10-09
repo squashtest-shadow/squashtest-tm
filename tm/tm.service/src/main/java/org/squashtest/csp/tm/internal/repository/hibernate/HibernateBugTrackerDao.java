@@ -91,7 +91,7 @@ public class HibernateBugTrackerDao extends HibernateEntityDao<BugTracker> imple
 			return executeEntityNamedQuery("bugtracker.findBugTrackerByName", new SetNameParameterCallback(name));
 	}
 	
-	private static class SetNameParameterCallback implements SetQueryParametersCallback{
+	private static final class SetNameParameterCallback implements SetQueryParametersCallback{
 		private String name;
 		private SetNameParameterCallback (String name){
 			this.name = name;
@@ -111,7 +111,7 @@ public class HibernateBugTrackerDao extends HibernateEntityDao<BugTracker> imple
 		}
 	}
 	
-	private static class SetProjectsParametersCallback implements SetQueryParametersCallback {
+	private static final class SetProjectsParametersCallback implements SetQueryParametersCallback {
 		private List<Long> projectIds;
 		private SetProjectsParametersCallback(List<Long> projectIds){
 			this.projectIds = projectIds;

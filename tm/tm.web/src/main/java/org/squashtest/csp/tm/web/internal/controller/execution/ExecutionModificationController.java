@@ -108,6 +108,7 @@ public class ExecutionModificationController {
 				filter.getFirstItemIndex() + 1, params.getsEcho());
 
 	}
+	
 	private static class ExecutionStepDataTableModelHelper extends DataTableModelHelper<ExecutionStep> {
 		private Locale locale;
 		private MessageSource messageSource;
@@ -133,7 +134,7 @@ public class ExecutionModificationController {
 			return res;
 		}
 	}
-	private static class ManualExecutionStepDataTableModelHelper extends ExecutionStepDataTableModelHelper {
+	private static final class ManualExecutionStepDataTableModelHelper extends ExecutionStepDataTableModelHelper {
 		private ManualExecutionStepDataTableModelHelper(Locale locale, MessageSource messageSource) {
 			super(locale, messageSource);
 		}
@@ -162,7 +163,7 @@ public class ExecutionModificationController {
 
 	}
 
-	private static class AutomatedExecutionStepDataTableModelHelper extends ExecutionStepDataTableModelHelper {
+	private static final class AutomatedExecutionStepDataTableModelHelper extends ExecutionStepDataTableModelHelper {
 		private AutomatedExecutionStepDataTableModelHelper(Locale locale, MessageSource messageSource) {
 			super(locale, messageSource);
 		}
@@ -275,7 +276,7 @@ public class ExecutionModificationController {
 		}
 		return new StartEndDate(reNewStartDate, reNewEndDate);
 	}
-	private static class StartEndDate{
+	private static final class StartEndDate{
 		private Long newStartDate;
 		private Long newEndDate;
 

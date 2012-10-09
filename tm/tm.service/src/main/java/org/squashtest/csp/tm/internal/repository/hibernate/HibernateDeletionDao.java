@@ -79,7 +79,7 @@ public abstract class HibernateDeletionDao implements DeletionDao {
 
 	}
 
-	private static class CellTableTransformer implements Transformer {
+	private static final class CellTableTransformer implements Transformer {
 		private int cellIndex;
 
 		private CellTableTransformer(int cellIndex) {
@@ -135,6 +135,7 @@ public abstract class HibernateDeletionDao implements DeletionDao {
 		}
 	}
 
+	@SuppressWarnings("unchecked")
 	protected <R> List<R> executeSelectNamedQuery(String namedQuery, String paramName, Collection<Long> ids) {
 		if (!ids.isEmpty()) {
 			Query query = getSession().getNamedQuery(namedQuery);
@@ -153,6 +154,7 @@ public abstract class HibernateDeletionDao implements DeletionDao {
 		}
 	}
 
+	@SuppressWarnings("unchecked")
 	protected <R> List<R> executeSelectSQLQuery(String queryString, String paramName, Collection<Long> ids) {
 		if (!ids.isEmpty()) {
 			Query query = getSession().createSQLQuery(queryString);

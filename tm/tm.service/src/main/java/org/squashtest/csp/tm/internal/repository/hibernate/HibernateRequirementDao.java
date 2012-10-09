@@ -82,7 +82,7 @@ public class HibernateRequirementDao extends HibernateEntityDao<Requirement> imp
 
 	}
 
-	private static class SetRequirementsIdsParameterCallback implements SetQueryParametersCallback {
+	private static final class SetRequirementsIdsParameterCallback implements SetQueryParametersCallback {
 		private List<Long> requirementsIds;
 
 		private SetRequirementsIdsParameterCallback(List<Long> requirementsIds) {

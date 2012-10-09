@@ -158,7 +158,8 @@ public class ProjectModificationController {
 		LOGGER.info("Project modification : change project {} is active = {}", projectId, isActive);
 		return new Active(isActive);
 	}
-	private class Active {
+	
+	private final class Active {
 		private Boolean active;
 		private Active(Boolean active){
 			this.active = active;

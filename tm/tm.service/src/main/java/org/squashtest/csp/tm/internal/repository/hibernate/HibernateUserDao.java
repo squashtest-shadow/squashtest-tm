@@ -77,7 +77,7 @@ public class HibernateUserDao extends HibernateEntityDao<User> implements UserDa
 		return executeEntityNamedQuery("user.findUserByLogin", new SetUserLoginParameterCallback(login));
 	}
 	
-	private static class SetUserLoginParameterCallback implements SetQueryParametersCallback {
+	private static final class SetUserLoginParameterCallback implements SetQueryParametersCallback {
 		private String login;
 		private SetUserLoginParameterCallback(String login){
 			this.login = login;
@@ -99,7 +99,7 @@ public class HibernateUserDao extends HibernateEntityDao<User> implements UserDa
 			return executeListNamedQuery("user.findUsersByLoginList", setParams);
 		}
 	}
-	private static class SetUserIdsParameterCallback implements SetQueryParametersCallback{
+	private static final class SetUserIdsParameterCallback implements SetQueryParametersCallback{
 		private List<String> idList;
 		private SetUserIdsParameterCallback(List<String> idList){
 			this.idList = idList;

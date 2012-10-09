@@ -48,7 +48,7 @@ public class HibernateProjectFilterDao extends HibernateEntityDao<ProjectFilter>
 		persistEntity(givenProjectFilter);
 	}
 	
-	private static class GivenUserParametersCallback implements SetQueryParametersCallback{
+	private static final class GivenUserParametersCallback implements SetQueryParametersCallback{
 		
 		private String givenUserLogin;
 		private GivenUserParametersCallback(String givenUserLogin){

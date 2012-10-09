@@ -71,7 +71,7 @@ public class HibernateTestCaseDao extends HibernateEntityDao<TestCase> implement
 	private static final String PROJECT = "project";
 	private static final String FIND_DESCENDANT_QUERY = "select DESCENDANT_ID from TCLN_RELATIONSHIP where ANCESTOR_ID in (:list)";
 
-	private static class SetIdParameter implements SetQueryParametersCallback {
+	private static final class SetIdParameter implements SetQueryParametersCallback {
 		private final long testCaseId;
 
 		public SetIdParameter(long testCaseId) {
@@ -124,7 +124,7 @@ public class HibernateTestCaseDao extends HibernateEntityDao<TestCase> implement
 		return executeListNamedQuery("testCase.findAllByIdListOrderedByName", setParams);
 	}
 
-	private static class SetIdsParameter implements SetQueryParametersCallback {
+	private static final class SetIdsParameter implements SetQueryParametersCallback {
 		private List<Long> testCasesIds;
 
 		private SetIdsParameter(List<Long> testCasesIds) {
@@ -164,7 +164,7 @@ public class HibernateTestCaseDao extends HibernateEntityDao<TestCase> implement
 		return executeListNamedQuery("testCase.findAllStepsByIdFiltered", callback);
 	}
 
-	private static class SetIdsIndexesParameters implements SetQueryParametersCallback {
+	private static final class SetIdsIndexesParameters implements SetQueryParametersCallback {
 		private int firstIndex;
 		private long testCaseId;
 		private int lastIndex;
@@ -316,7 +316,7 @@ public class HibernateTestCaseDao extends HibernateEntityDao<TestCase> implement
 
 	}
 
-	private static class SetNonCalledIdsParameter implements SetQueryParametersCallback {
+	private static final class SetNonCalledIdsParameter implements SetQueryParametersCallback {
 		private List<Long> nonCalledIds;
 
 		private SetNonCalledIdsParameter(List<Long> nonCalledIds) {
@@ -425,7 +425,7 @@ public class HibernateTestCaseDao extends HibernateEntityDao<TestCase> implement
 				verifiedId));
 	}
 
-	private static class SetVerifiedIdParameter implements SetQueryParametersCallback {
+	private static final class SetVerifiedIdParameter implements SetQueryParametersCallback {
 		private long verifiedId;
 
 		private SetVerifiedIdParameter(long verifiedId) {

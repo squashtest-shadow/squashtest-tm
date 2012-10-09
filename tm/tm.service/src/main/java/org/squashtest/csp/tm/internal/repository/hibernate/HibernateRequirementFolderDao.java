@@ -114,7 +114,7 @@ public class HibernateRequirementFolderDao extends HibernateEntityDao<Requiremen
 		return executeEntityNamedQuery("requirementFolder.findParentOf", newCallBack);
 	}
 	
-	private static class ContentIdParametterCallback implements SetQueryParametersCallback {
+	private static final class ContentIdParametterCallback implements SetQueryParametersCallback {
 		private long contentId;
 		private ContentIdParametterCallback(long contentId){
 			this.contentId = contentId;

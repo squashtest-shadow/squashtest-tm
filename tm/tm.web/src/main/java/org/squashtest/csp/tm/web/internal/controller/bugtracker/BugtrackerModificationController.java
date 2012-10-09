@@ -82,7 +82,7 @@ public class BugtrackerModificationController {
 		return new IframeFriendly(isIframeFriendly);
 	}
 
-	private static class IframeFriendly {
+	private static final class IframeFriendly {
 		private Boolean iframeFriendly;
 
 		private IframeFriendly(boolean iframeFriendly) {

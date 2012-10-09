@@ -29,7 +29,6 @@ import java.util.Set;
 
 import org.hibernate.Criteria;
 import org.hibernate.Hibernate;
-import org.hibernate.Query;
 import org.hibernate.Session;
 import org.hibernate.criterion.Order;
 import org.hibernate.criterion.Restrictions;
@@ -72,21 +71,6 @@ public class HibernateAttachmentDao extends HibernateEntityDao<Attachment>
 		return attachs;
 
 
-	}
-
-	private long getContentId(final Long attachmentId){
-		return (Long) executeEntityNamedQuery("attachment.findContentId", new AttachIdQueyParameterCallback(attachmentId));
-	}
-	
-	private class AttachIdQueyParameterCallback implements SetQueryParametersCallback {
-		private Long attachmentId;
-		private AttachIdQueyParameterCallback(Long attachmentId){
-			this.attachmentId = attachmentId;
-		}
-		@Override
-		public void setQueryParameters(Query query) {
-			query.setLong("attachId", attachmentId);
-		}
 	}
 
 	@Override

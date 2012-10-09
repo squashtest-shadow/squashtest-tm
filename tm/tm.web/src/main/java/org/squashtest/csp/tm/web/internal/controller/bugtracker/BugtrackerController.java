@@ -663,7 +663,7 @@ public class BugtrackerController {
 	}
 
 	
-	private class IssueCollectionSorting implements CollectionSorting{
+	private final class IssueCollectionSorting implements CollectionSorting{
 		
 		private DataTableDrawParameters params;
 

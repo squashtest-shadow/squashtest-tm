@@ -106,7 +106,7 @@ public class HibernateTestStepDao extends HibernateDao<TestStep> implements Test
 		
 	}
 	
-	private static class TestStepIdsQueryParametersCallback implements SetQueryParametersCallback  {
+	private static final class TestStepIdsQueryParametersCallback implements SetQueryParametersCallback  {
 		
 		private List<Long> testStepIds;
 		private TestStepIdsQueryParametersCallback(List<Long> testStepIds) {
