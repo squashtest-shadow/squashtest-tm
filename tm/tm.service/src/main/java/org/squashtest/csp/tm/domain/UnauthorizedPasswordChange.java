@@ -22,6 +22,11 @@ package org.squashtest.csp.tm.domain;
 
 public class UnauthorizedPasswordChange extends PasswordChangeFailedException {
 
+	/**
+	 * 
+	 */
+	private static final long serialVersionUID = 1L;
+
 	public UnauthorizedPasswordChange() {
 		super();
 	}

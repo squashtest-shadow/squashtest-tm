@@ -30,8 +30,8 @@ import org.springframework.context.MessageSource;
 
 public class NotDeletablePreviewReport implements SuppressionPreviewReport {
 
-	private static final String nodeNamesMessageKey = "squashtm.deletion.preview.notdeletable.whichnodes";
-	private static final String whyMessageKey = "squashtm.deletion.preview.notdeletable.why";
+	private static final String NODES_NAMES_MESSAGE_KEY = "squashtm.deletion.preview.notdeletable.whichnodes";
+	private static final String WHY_MESSAGE_KEY = "squashtm.deletion.preview.notdeletable.why";
 	
 	
 	private final List<String> nodeNames = new ArrayList<String>();
@@ -43,12 +43,12 @@ public class NotDeletablePreviewReport implements SuppressionPreviewReport {
 		
 		if (! nodeNames.isEmpty()){
 		
-			builder.append(source.getMessage(nodeNamesMessageKey, null, locale));
+			builder.append(source.getMessage(NODES_NAMES_MESSAGE_KEY, null, locale));
 			builder.append(" : ");
 			builder.append(listToString(nodeNames));
 			builder.append("\n\n");
 			
-			builder.append(source.getMessage(whyMessageKey, null, locale));
+			builder.append(source.getMessage(WHY_MESSAGE_KEY, null, locale));
 			builder.append(" : ");
 			builder.append(listToString(why));
 			builder.append("\n");

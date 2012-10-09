@@ -26,7 +26,7 @@ public class IssueAlreadyBoundException extends DomainException {
 	 * 
 	 */
 	private static final long serialVersionUID = 1L;
-	private static final String key = "issue.exception.report.alreadybound";
+	private static final String KEY = "issue.exception.report.alreadybound";
 	
 	
 	public IssueAlreadyBoundException(){
@@ -36,7 +36,7 @@ public class IssueAlreadyBoundException extends DomainException {
 	
 	@Override
 	public String getI18nKey() {
-		return key;
+		return KEY;
 	}
 
 }

@@ -28,7 +28,7 @@ public class SheetCorruptedException extends ActionException {
 	 * 
 	 */
 	private static final long serialVersionUID = -7715538440055669474L;
-	private static final String sheetCorruptedMessageKey = "squashtm.action.exception.sheetcorrupted.label";
+	private static final String MESSAGE_KEY = "squashtm.action.exception.sheetcorrupted.label";
 	
 
 	public SheetCorruptedException() {
@@ -54,7 +54,7 @@ public class SheetCorruptedException extends ActionException {
 
 	@Override
 	public String getI18nKey() {
-		return sheetCorruptedMessageKey;
+		return MESSAGE_KEY;
 	}
 	
 	

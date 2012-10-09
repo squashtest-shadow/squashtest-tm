@@ -53,7 +53,7 @@ import org.squashtest.csp.core.web.servlet.handler.AuthenticationSuccessCallback
 public class AuthenticationSuccessCallbacksHandler extends
 		SavedRequestAwareAuthenticationSuccessHandler {
 
-	private static final Logger logger = LoggerFactory.getLogger(AuthenticationSuccessCallbacksHandler.class);
+	private static final Logger LOGGER = LoggerFactory.getLogger(AuthenticationSuccessCallbacksHandler.class);
 	
 	private String requestParamsPasswordKey = UsernamePasswordAuthenticationFilter.SPRING_SECURITY_FORM_PASSWORD_KEY;
 	private String requestParamsUsernameKey = UsernamePasswordAuthenticationFilter.SPRING_SECURITY_FORM_USERNAME_KEY;
@@ -91,7 +91,7 @@ public class AuthenticationSuccessCallbacksHandler extends
 			try{
 				action.onSuccess(user, password, session);
 			}catch(Exception ex){
-				logger.info("Authentication success callbacks : callback class '"
+				LOGGER.info("Authentication success callbacks : callback class '"
 							+action.getClass().getName()+"' raised an exception : ", ex 
 				);
 			}

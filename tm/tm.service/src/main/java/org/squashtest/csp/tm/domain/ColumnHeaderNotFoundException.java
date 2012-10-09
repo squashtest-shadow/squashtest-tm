@@ -35,7 +35,7 @@ public class ColumnHeaderNotFoundException extends ActionException {
 	 * TODO my eclipse can't generate serialVersionUID thanks (mpagnon)
 	 */
 	private static final long serialVersionUID = 1L;
-	private static final String messageKey = "squashtm.action.exception.import.column.header.label";
+	private static final String MESSAGE_KEY = "squashtm.action.exception.import.column.header.label";
 
 	
 	public ColumnHeaderNotFoundException() {
@@ -47,7 +47,7 @@ public class ColumnHeaderNotFoundException extends ActionException {
 	
 	@Override
 	public String getI18nKey() {
-		return messageKey;
+		return MESSAGE_KEY;
 	}
 
 }

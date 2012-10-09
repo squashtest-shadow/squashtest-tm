@@ -22,6 +22,11 @@ package org.squashtest.csp.tm.domain;
 
 public class WrongPasswordException extends PasswordChangeFailedException {
 
+	/**
+	 * 
+	 */
+	private static final long serialVersionUID = 1L;
+
 	public WrongPasswordException() {
 		super();
 	}
