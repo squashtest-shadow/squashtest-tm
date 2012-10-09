@@ -20,7 +20,6 @@
  */
 package org.squashtest.csp.tm.internal.repository.hibernate;
 
-import java.util.Collections;
 import java.util.List;
 import java.util.ListIterator;
 

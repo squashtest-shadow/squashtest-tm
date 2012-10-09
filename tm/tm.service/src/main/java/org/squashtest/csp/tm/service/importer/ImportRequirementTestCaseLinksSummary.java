@@ -20,7 +20,6 @@
  */
 package org.squashtest.csp.tm.service.importer;
 
-import java.util.Collection;
 import java.util.Set;
 
 public interface ImportRequirementTestCaseLinksSummary {

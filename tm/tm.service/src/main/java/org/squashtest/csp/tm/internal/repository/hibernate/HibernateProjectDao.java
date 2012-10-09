@@ -21,14 +21,12 @@
 package org.squashtest.csp.tm.internal.repository.hibernate;
 
 import java.util.List;
-import java.util.Set;
 
 import org.hibernate.Criteria;
 import org.hibernate.Session;
 import org.hibernate.criterion.Order;
 import org.springframework.security.access.prepost.PostFilter;
 import org.springframework.stereotype.Repository;
-import org.squashtest.csp.core.bugtracker.domain.BugTracker;
 import org.squashtest.csp.tm.domain.project.Project;
 import org.squashtest.csp.tm.domain.projectfilter.ProjectFilter;
 import org.squashtest.csp.tm.domain.testautomation.TestAutomationProject;

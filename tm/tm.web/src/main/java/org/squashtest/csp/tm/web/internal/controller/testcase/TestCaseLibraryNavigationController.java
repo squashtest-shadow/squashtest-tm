@@ -44,8 +44,6 @@ import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.multipart.MultipartFile;
 import org.springframework.web.servlet.ModelAndView;
 import org.squashtest.csp.core.web.utils.HTMLCleanupUtils;
-import org.squashtest.csp.tm.domain.library.ExportData;
-import org.squashtest.csp.tm.domain.requirement.ExportRequirementData;
 import org.squashtest.csp.tm.domain.testcase.ExportTestCaseData;
 import org.squashtest.csp.tm.domain.testcase.ExportTestStepData;
 import org.squashtest.csp.tm.domain.testcase.TestCase;

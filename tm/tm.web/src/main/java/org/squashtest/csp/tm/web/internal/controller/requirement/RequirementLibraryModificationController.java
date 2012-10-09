@@ -27,9 +27,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.servlet.ModelAndView;
 import org.squashtest.csp.tm.domain.requirement.RequirementLibrary;
-import org.squashtest.csp.tm.domain.testcase.TestCaseLibrary;
 import org.squashtest.csp.tm.service.RequirementLibraryNavigationService;
-import org.squashtest.csp.tm.service.TestCaseLibraryNavigationService;
 
 @Controller
 @RequestMapping("/requirement-libraries/{libraryId}")

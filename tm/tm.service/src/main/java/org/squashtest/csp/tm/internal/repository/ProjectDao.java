@@ -21,9 +21,7 @@
 package org.squashtest.csp.tm.internal.repository;
 
 import java.util.List;
-import java.util.Set;
 
-import org.squashtest.csp.core.bugtracker.domain.BugTracker;
 import org.squashtest.csp.tm.domain.project.Project;
 import org.squashtest.csp.tm.domain.projectfilter.ProjectFilter;
 import org.squashtest.csp.tm.domain.testautomation.TestAutomationProject;

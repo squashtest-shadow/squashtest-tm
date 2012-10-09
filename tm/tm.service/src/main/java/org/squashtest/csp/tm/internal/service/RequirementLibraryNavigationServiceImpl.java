@@ -37,7 +37,6 @@ import org.springframework.transaction.annotation.Transactional;
 import org.squashtest.csp.tm.domain.CopyPasteObsoleteException;
 import org.squashtest.csp.tm.domain.DuplicateNameException;
 import org.squashtest.csp.tm.domain.IllegalRequirementModificationException;
-import org.squashtest.csp.tm.domain.library.ExportData;
 import org.squashtest.csp.tm.domain.projectfilter.ProjectFilter;
 import org.squashtest.csp.tm.domain.requirement.ExportRequirementData;
 import org.squashtest.csp.tm.domain.requirement.NewRequirementVersionDto;

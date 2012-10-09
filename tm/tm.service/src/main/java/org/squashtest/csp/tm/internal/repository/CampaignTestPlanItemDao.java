@@ -20,8 +20,6 @@
  */
 package org.squashtest.csp.tm.internal.repository;
 
-import java.util.List;
-
 import org.squashtest.csp.tm.domain.campaign.CampaignTestPlanItem;
 
 public interface CampaignTestPlanItemDao extends EntityDao<CampaignTestPlanItem>{

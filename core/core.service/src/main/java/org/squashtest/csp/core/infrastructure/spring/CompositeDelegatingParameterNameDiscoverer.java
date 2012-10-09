@@ -22,8 +22,6 @@ package org.squashtest.csp.core.infrastructure.spring;
 
 import java.lang.reflect.Constructor;
 import java.lang.reflect.Method;
-import java.util.Collections;
-import java.util.LinkedList;
 import java.util.List;
 
 import org.slf4j.Logger;

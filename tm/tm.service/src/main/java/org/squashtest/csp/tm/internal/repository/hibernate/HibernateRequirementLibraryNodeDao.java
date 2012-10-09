@@ -20,14 +20,11 @@
  */
 package org.squashtest.csp.tm.internal.repository.hibernate;
 
-import java.util.LinkedList;
 import java.util.List;
 
 import org.hibernate.SQLQuery;
 import org.hibernate.type.LongType;
 import org.springframework.stereotype.Repository;
-import org.squashtest.csp.tm.domain.requirement.RequirementFolder;
-import org.squashtest.csp.tm.domain.requirement.RequirementLibrary;
 import org.squashtest.csp.tm.domain.requirement.RequirementLibraryNode;
 import org.squashtest.csp.tm.internal.repository.LibraryNodeDao;
 

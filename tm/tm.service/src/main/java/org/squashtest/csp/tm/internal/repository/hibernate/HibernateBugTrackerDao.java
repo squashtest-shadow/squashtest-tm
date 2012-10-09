@@ -22,7 +22,6 @@ package org.squashtest.csp.tm.internal.repository.hibernate;
 
 import java.util.Collections;
 import java.util.List;
-import java.util.Set;
 
 import org.hibernate.Criteria;
 import org.hibernate.Query;

@@ -22,9 +22,6 @@ package org.squashtest.csp.core.security.acls.model;
 
 import java.util.List;
 
-import javax.validation.constraints.NotNull;
-
-import org.springframework.security.acls.model.AlreadyExistsException;
 import org.springframework.security.acls.model.ObjectIdentity;
 import org.squashtest.csp.core.security.acls.PermissionGroup;
 

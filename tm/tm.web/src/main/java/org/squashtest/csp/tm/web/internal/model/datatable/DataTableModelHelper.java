@@ -22,14 +22,8 @@ package org.squashtest.csp.tm.web.internal.model.datatable;
 
 import java.util.Collection;
 import java.util.List;
-import java.util.Locale;
 
-import javax.inject.Inject;
-import javax.validation.constraints.NotNull;
-
-import org.springframework.context.MessageSource;
 import org.squashtest.csp.tm.infrastructure.filter.FilteredCollectionHolder;
-import org.squashtest.csp.tm.web.internal.i18n.InternationalizationHelper;
 import org.squashtest.tm.core.foundation.collection.PagedCollectionHolder;
 
 public abstract class DataTableModelHelper<X> {

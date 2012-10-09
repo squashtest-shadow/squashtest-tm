@@ -20,7 +20,6 @@
  */
 package org.squashtest.csp.tm.internal.repository.hibernate;
 
-import java.util.Collections;
 import java.util.List;
 
 import org.hibernate.Criteria;
@@ -29,7 +28,6 @@ import org.hibernate.Query;
 import org.hibernate.criterion.MatchMode;
 import org.hibernate.criterion.Order;
 import org.hibernate.criterion.Restrictions;
-import org.hibernate.type.LongType;
 import org.springframework.stereotype.Repository;
 import org.squashtest.csp.tm.domain.campaign.Campaign;
 import org.squashtest.csp.tm.domain.campaign.CampaignLibraryNode;
@@ -37,7 +35,6 @@ import org.squashtest.csp.tm.domain.campaign.CampaignTestPlanItem;
 import org.squashtest.csp.tm.domain.execution.Execution;
 import org.squashtest.csp.tm.infrastructure.filter.CollectionSorting;
 import org.squashtest.csp.tm.internal.repository.CampaignDao;
-import org.squashtest.csp.tm.internal.repository.EntityDao;
 
 @Repository
 public class HibernateCampaignDao extends HibernateEntityDao<Campaign> implements CampaignDao {

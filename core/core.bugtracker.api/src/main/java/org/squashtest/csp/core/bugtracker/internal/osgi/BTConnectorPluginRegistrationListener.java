@@ -25,7 +25,6 @@ import java.util.Map;
 import javax.inject.Inject;
 
 import org.springframework.osgi.service.exporter.OsgiServiceRegistrationListener;
-import org.springframework.stereotype.Component;
 import org.squashtest.csp.core.bugtracker.core.BugTrackerConnectorFactory;
 import org.squashtest.csp.core.bugtracker.spi.BugTrackerConnectorProvider;
 

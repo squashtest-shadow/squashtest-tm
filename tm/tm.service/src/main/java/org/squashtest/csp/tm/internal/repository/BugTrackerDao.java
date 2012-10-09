@@ -21,7 +21,6 @@
 package org.squashtest.csp.tm.internal.repository;
 
 import java.util.List;
-import java.util.Set;
 
 import org.squashtest.csp.core.bugtracker.domain.BugTracker;
 import org.squashtest.csp.tm.domain.BugTrackerNameAlreadyExistsException;

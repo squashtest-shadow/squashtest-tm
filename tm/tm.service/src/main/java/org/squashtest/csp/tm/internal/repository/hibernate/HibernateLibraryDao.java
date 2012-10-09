@@ -23,7 +23,6 @@ package org.squashtest.csp.tm.internal.repository.hibernate;
 import java.util.List;
 
 import org.apache.commons.lang.WordUtils;
-import org.hibernate.Criteria;
 import org.hibernate.Query;
 import org.squashtest.csp.tm.domain.library.Library;
 import org.squashtest.csp.tm.domain.library.LibraryNode;

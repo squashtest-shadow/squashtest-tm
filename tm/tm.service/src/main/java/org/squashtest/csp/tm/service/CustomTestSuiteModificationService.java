@@ -20,7 +20,6 @@
  */
 package org.squashtest.csp.tm.service;
 
-import java.util.Collection;
 import java.util.List;
 
 import org.springframework.transaction.annotation.Transactional;

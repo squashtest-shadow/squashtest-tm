@@ -23,8 +23,6 @@ package org.squashtest.csp.tm.web.internal.controller.administration;
 import java.util.List;
 import java.util.Locale;
 
-import javax.inject.Inject;
-
 import org.squashtest.csp.core.bugtracker.domain.BugTracker;
 import org.squashtest.csp.tm.infrastructure.filter.FilteredCollectionHolder;
 import org.squashtest.csp.tm.web.internal.i18n.InternationalizationHelper;

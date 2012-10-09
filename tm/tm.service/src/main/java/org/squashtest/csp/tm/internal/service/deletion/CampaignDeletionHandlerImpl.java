@@ -30,9 +30,6 @@ import javax.inject.Inject;
 
 import org.springframework.stereotype.Component;
 import org.squashtest.csp.tm.domain.attachment.AttachmentList;
-import org.squashtest.csp.tm.domain.bugtracker.Issue;
-import org.squashtest.csp.tm.domain.bugtracker.IssueDetector;
-import org.squashtest.csp.tm.domain.bugtracker.IssueList;
 import org.squashtest.csp.tm.domain.campaign.Campaign;
 import org.squashtest.csp.tm.domain.campaign.CampaignFolder;
 import org.squashtest.csp.tm.domain.campaign.CampaignLibraryNode;
