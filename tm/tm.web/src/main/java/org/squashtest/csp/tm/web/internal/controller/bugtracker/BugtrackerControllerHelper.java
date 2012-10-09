@@ -26,15 +26,23 @@ import java.util.Locale;
 import javax.servlet.http.HttpServletRequest;
 
 import org.springframework.context.MessageSource;
+import org.squashtest.csp.core.bugtracker.domain.BTIssue;
 import org.squashtest.csp.core.web.utils.HTMLCleanupUtils;
+import org.squashtest.csp.tm.domain.bugtracker.IssueDetector;
+import org.squashtest.csp.tm.domain.bugtracker.IssueOwnership;
+import org.squashtest.csp.tm.domain.campaign.Iteration;
+import org.squashtest.csp.tm.domain.campaign.TestSuite;
 import org.squashtest.csp.tm.domain.execution.Execution;
 import org.squashtest.csp.tm.domain.execution.ExecutionStep;
 import org.squashtest.csp.tm.domain.testcase.TestCase;
+import org.squashtest.csp.tm.service.BugTrackersLocalService;
+import org.squashtest.csp.tm.web.internal.model.datatable.DataTableModelHelper;
 
 public final class BugtrackerControllerHelper {
-	private BugtrackerControllerHelper(){
-		
+	private BugtrackerControllerHelper() {
+
 	}
+
 	/**
 	 * Will build a string that shows all steps before the bugged step + the bugged step itself.<br>
 	 * The string will look like this : <br/>
@@ -44,17 +52,17 @@ public final class BugtrackerControllerHelper {
 	 *  |    Step 1/N<br>
 	 *  =============================================<br>
 	 * 	-------------------Action---------------------<br>
-	 *	action description<br>
-	 *	<br>
-	 *	----------------Expected Result---------------<br>
-	 *	expected result description<br>
-	 *	<br>
-	 *	<br>
-	 *	=============================================<br>
-	 *	|    Step 2/N<br>
-	 *	=============================================<br>
-	 *	...<br>
-	 *	<br></em>
+	 * 	action description<br>
+	 * 	<br>
+	 * 	----------------Expected Result---------------<br>
+	 * 	expected result description<br>
+	 * 	<br>
+	 * 	<br>
+	 * 	=============================================<br>
+	 * 	|    Step 2/N<br>
+	 * 	=============================================<br>
+	 * 	...<br>
+	 * 	<br></em>
 	 * 
 	 * @param buggedStep
 	 *            the bugged step where the issue will be declared
@@ -83,12 +91,13 @@ public final class BugtrackerControllerHelper {
 		}
 		return builder.toString();
 	}
+
 	private static void appendStepTitle(Locale locale, MessageSource messageSource, int totalStepNumber,
 			StringBuilder builder, ExecutionStep step) {
 		builder.append("=============================================\n|    ");
 		builder.append(messageSource.getMessage("issue.default.additionalInformation.step", null, locale));
 		builder.append(" ");
-		builder.append(step.getExecutionStepOrder()+1);
+		builder.append(step.getExecutionStepOrder() + 1);
 		builder.append("/");
 		builder.append(totalStepNumber);
 		builder.append("\n=============================================\n");
@@ -108,7 +117,8 @@ public final class BugtrackerControllerHelper {
 	 * @param messageSource
 	 * @return the description string
 	 */
-	public static String getDefaultDescription(Execution execution, Locale locale, MessageSource messageSource, String executionUrl) {
+	public static String getDefaultDescription(Execution execution, Locale locale, MessageSource messageSource,
+			String executionUrl) {
 		StringBuffer description = new StringBuffer();
 		appendTestCaseDesc(execution.getReferencedTestCase(), description, locale, messageSource);
 		appendExecutionDesc(description, locale, messageSource, executionUrl);
@@ -129,10 +139,11 @@ public final class BugtrackerControllerHelper {
 	 *            an execution step where the issue will be declared
 	 * @param locale
 	 * @param messageSource
-	 * @param executionUrl 
+	 * @param executionUrl
 	 * @return the string built as described
 	 */
-	public static String getDefaultDescription(ExecutionStep step, Locale locale, MessageSource messageSource, String executionUrl) {
+	public static String getDefaultDescription(ExecutionStep step, Locale locale, MessageSource messageSource,
+			String executionUrl) {
 		StringBuffer description = new StringBuffer();
 		appendTestCaseDesc(step.getExecution().getReferencedTestCase(), description, locale, messageSource);
 		appendExecutionDesc(description, locale, messageSource, executionUrl);
@@ -140,9 +151,10 @@ public final class BugtrackerControllerHelper {
 		appendDescHeader(description, locale, messageSource);
 		return description.toString();
 	}
-	
+
 	/**
-	 * build the url of the execution 
+	 * build the url of the execution
+	 * 
 	 * @param request
 	 * @param step
 	 * @return <b>"http://</b>serverName<b>:</b>serverPort/contextPath<b>/executions/</b>executionId<b>/info"</b>
@@ -158,6 +170,7 @@ public final class BugtrackerControllerHelper {
 		requestUrl.append("/info");
 		return requestUrl.toString();
 	}
+
 	private static void appendDescHeader(StringBuffer description, Locale locale, MessageSource messageSource) {
 		description.append("\n# ");
 		description.append(messageSource.getMessage("issue.default.description.description", null, locale));
@@ -169,13 +182,14 @@ public final class BugtrackerControllerHelper {
 		description.append("# ");
 		description.append(messageSource.getMessage("issue.default.description.concernedStep", null, locale));
 		description.append(": ");
-		description.append(step.getExecutionStepOrder()+1);
+		description.append(step.getExecutionStepOrder() + 1);
 		description.append("/");
 		description.append(step.getExecution().getSteps().size());
 		description.append("\n");
 	}
 
-	private static void appendExecutionDesc(StringBuffer description, Locale locale, MessageSource messageSource, String executionUrl) {
+	private static void appendExecutionDesc(StringBuffer description, Locale locale, MessageSource messageSource,
+			String executionUrl) {
 		description.append("# ");
 		description.append(messageSource.getMessage("issue.default.description.execution", null, locale));
 		description.append(": ");
@@ -195,4 +209,283 @@ public final class BugtrackerControllerHelper {
 			description.append("\n");
 		}
 	}
+
+	/**
+	 * <p>
+	 * the DataTableModel for an execution will hold the same informations than IterationIssuesTableModel (for now) :
+	 * <ul>
+	 * <li>the url of that issue,</li>
+	 * <li>the id,</li>
+	 * <li>the summary</li>,
+	 * <li>the priority,</li>
+	 * <li>the status,</li>
+	 * <li>the assignee,</li>
+	 * <li>the owning entity</li>
+	 * </ul>
+	 * </p>
+	 */
+	static final class IterationIssuesTableModel extends DataTableModelHelper<IssueOwnership<BTIssue>> {
+
+		private IssueOwnershipNameBuilder nameBuilder = new IterationModelOwnershipNamebuilder();
+		private BugTrackersLocalService bugTrackersLocalService;
+
+		public IterationIssuesTableModel(BugTrackersLocalService bugTrackersLocalService, MessageSource source,
+				Locale locale) {
+			nameBuilder.setMessageSource(source);
+			nameBuilder.setLocale(locale);
+			this.bugTrackersLocalService = bugTrackersLocalService;
+		}
+
+		@Override
+		public Object[] buildItemData(IssueOwnership<BTIssue> ownership) {
+			return new Object[] {
+					bugTrackersLocalService.getIssueUrl(ownership.getIssue().getId(),
+							ownership.getOwner().getBugTracker()).toExternalForm(), ownership.getIssue().getId(),
+					ownership.getIssue().getSummary(), ownership.getIssue().getPriority().getName(),
+					ownership.getIssue().getStatus().getName(), ownership.getIssue().getAssignee().getName(),
+					nameBuilder.buildName(ownership.getOwner()) };
+		}
+	}
+
+	/**
+	 * <p>
+	 * the DataTableModel for a TestCase will hold following informations :
+	 * <ul>
+	 * <li>the url of that issue,</li>
+	 * <li>the id,</li>
+	 * <li>the summary</li>,
+	 * <li>the priority,</li>
+	 * <li>the status,</li>
+	 * <li>the assignee,</li>
+	 * <li>the iteration name</li>
+	 * </ul>
+	 * </p>
+	 */
+	static final class TestCaseIssuesTableModel extends DataTableModelHelper<IssueOwnership<BTIssue>> {
+
+		private IssueOwnershipNameBuilder nameBuilder = new TestCaseModelOwnershipNamebuilder();
+		private BugTrackersLocalService bugTrackersLocalService;
+
+		public TestCaseIssuesTableModel(BugTrackersLocalService bugTrackersLocalService, MessageSource source,
+				Locale locale) {
+			nameBuilder.setMessageSource(source);
+			nameBuilder.setLocale(locale);
+			this.bugTrackersLocalService = bugTrackersLocalService;
+		}
+
+		@Override
+		public Object[] buildItemData(IssueOwnership<BTIssue> ownership) {
+			BTIssue issue = ownership.getIssue();
+			return new Object[] {
+					bugTrackersLocalService.getIssueUrl(issue.getId(), ownership.getOwner().getBugTracker())
+							.toExternalForm(), issue.getId(), issue.getSummary(), issue.getPriority().getName(),
+					issue.getStatus().getName(), issue.getAssignee().getName(),
+					nameBuilder.buildName(ownership.getOwner()), ownership.getExecution().getId() };
+		}
+	}
+
+	/**
+	 * <p>
+	 * the DataTableModel for an execution will hold the same informations than IterationIssuesTableModel (for now) :
+	 * <ul>
+	 * <li>the url of that issue,</li>
+	 * <li>the id,</li>
+	 * <li>the summary</li>,
+	 * <li>the priority,</li>
+	 * <li>the status,</li>
+	 * <li>the assignee,</li>
+	 * <li>the owning entity</li>
+	 * </ul>
+	 * </p>
+	 */
+	static final class ExecutionIssuesTableModel extends DataTableModelHelper<IssueOwnership<BTIssue>> {
+
+		private IssueOwnershipNameBuilder nameBuilder = new ExecutionModelOwnershipNamebuilder();
+		private BugTrackersLocalService bugTrackersLocalService;
+
+		public ExecutionIssuesTableModel(BugTrackersLocalService bugTrackersLocalService, MessageSource source,
+				Locale locale) {
+			nameBuilder.setMessageSource(source);
+			nameBuilder.setLocale(locale);
+			this.bugTrackersLocalService = bugTrackersLocalService;
+		}
+
+		@Override
+		public Object[] buildItemData(IssueOwnership<BTIssue> ownership) {
+			BTIssue issue = ownership.getIssue();
+
+			return new Object[] {
+					bugTrackersLocalService.getIssueUrl(issue.getId(), ownership.getOwner().getBugTracker())
+							.toExternalForm(), issue.getId(), issue.getSummary(), issue.getPriority().getName(),
+					issue.getStatus().getName(), issue.getAssignee().getName(),
+					nameBuilder.buildName(ownership.getOwner()) };
+		}
+	}
+
+	/**
+	 * <p>
+	 * the DataTableModel will hold :
+	 * <ul>
+	 * <li>the url of that issue,</li>
+	 * <li>the id,</li>
+	 * <li>the summary,</li>
+	 * <li>the priority</li>
+	 * </ul>
+	 * </p>
+	 */
+	static final class StepIssuesTableModel extends DataTableModelHelper<IssueOwnership<BTIssue>> {
+		private BugTrackersLocalService bugTrackersLocalService;
+
+		StepIssuesTableModel(BugTrackersLocalService bugTrackerLocalService) {
+			this.bugTrackersLocalService = bugTrackerLocalService;
+		}
+
+		@Override
+		public Object[] buildItemData(IssueOwnership<BTIssue> ownership) {
+			return new Object[] {
+					bugTrackersLocalService.getIssueUrl(ownership.getIssue().getId(),
+							ownership.getOwner().getBugTracker()).toExternalForm(), ownership.getIssue().getId(),
+					ownership.getIssue().getSummary(), ownership.getIssue().getPriority().getName() };
+		}
+	}
+
+	/**
+	 * 
+	 * Build a different description String depending on IssueDetectorType.
+	 *
+	 */
+	private interface IssueOwnershipNameBuilder {
+		void setMessageSource(MessageSource source);
+
+		void setLocale(Locale locale);
+
+		String buildName(IssueDetector bugged);
+	}
+	
+	/**
+	 * 
+	 * Holds generic code to differentiate IssueDetectorTypes
+	 *
+	 */
+	private abstract static class IssueOwnershipAbstractNameBuilder implements IssueOwnershipNameBuilder {
+		protected Locale locale;
+		protected MessageSource messageSource;
+
+		@Override
+		public void setLocale(Locale locale) {
+			this.locale = locale;
+		}
+
+		@Override
+		public void setMessageSource(MessageSource source) {
+			this.messageSource = source;
+		}
+		
+		@Override
+		public String buildName(IssueDetector bugged) {
+			String name = "this is clearly a bug";
+
+			if (bugged instanceof ExecutionStep) {
+				ExecutionStep step = ((ExecutionStep) bugged);
+				name = buildStepName(step);
+			} else if (bugged instanceof Execution) {
+				Execution exec = ((Execution) bugged);
+				name = buildExecName(exec);
+			}
+
+			return name;
+		}
+		
+		abstract String buildStepName(ExecutionStep executionStep);
+		abstract String buildExecName(Execution execution) ;
+		
+	}
+	/**
+	 * 
+	 * Implements builder for IssueDetector's description to display in Iteration's Issues table.
+	 *
+	 */
+	private static final class IterationModelOwnershipNamebuilder extends IssueOwnershipAbstractNameBuilder {
+		@Override
+		String buildExecName(Execution bugged) {
+			String suiteName = findTestSuiteName(bugged);
+			if (suiteName.equals("")) {
+				return messageSource.getMessage("squashtm.generic.hierarchy.execution.name.noSuite", new Object[] {
+						bugged.getName(), bugged.getExecutionOrder() + 1 }, locale);
+			} else {
+				return messageSource.getMessage("squashtm.generic.hierarchy.execution.name",
+						new Object[] { bugged.getName(), suiteName, bugged.getExecutionOrder() + 1 }, locale);
+			}
+		}
+
+		@Override
+		String buildStepName(ExecutionStep executionStep) {
+			return buildExecName(executionStep.getExecution());
+		}
+	}
+	/**
+	 * 
+	 * Implements builder for IssueDetector's description to display in Execution's Issues table.
+	 *
+	 */
+	private static final class ExecutionModelOwnershipNamebuilder extends IssueOwnershipAbstractNameBuilder {
+		@Override
+		public String buildExecName(Execution bugged) {
+			 return "";
+		}
+		
+		@Override
+		String buildStepName(ExecutionStep bugged) {
+			Integer index = bugged.getExecutionStepOrder() + 1;
+			return messageSource.getMessage("squashtm.generic.hierarchy.execution.step.name", new Object[] { index },
+					locale);
+		}
+
+		
+
+	}
+	/**
+	 * 
+	 * Implements builder for IssueDetector's description to display in TestCase's Issues table.
+	 *
+	 */
+	private static final class TestCaseModelOwnershipNamebuilder extends IssueOwnershipAbstractNameBuilder {
+
+		String buildExecName(Execution execution) {
+			String iterationName = findIterationName(execution);
+			String suiteName = findTestSuiteName(execution);
+			if (suiteName.equals("")) {
+				return messageSource.getMessage("squashtm.test-case.hierarchy.execution.name.noSuite", new Object[] {
+						iterationName, execution.getExecutionOrder() + 1 }, locale);
+			} else {
+				return messageSource.getMessage("squashtm.test-case.hierarchy.execution.name", new Object[] {
+						iterationName, suiteName, execution.getExecutionOrder() + 1 }, locale);
+			}
+		}
+
+		@Override
+		String buildStepName(ExecutionStep executionStep) {
+			return buildExecName(executionStep.getExecution());
+		}
+
+	}
+
+	private static String findTestSuiteName(Execution execution) {
+		TestSuite buggedSuite = execution.getTestPlan().getTestSuite();
+		String suiteName = "";
+		if (buggedSuite != null) {
+			suiteName = buggedSuite.getName();
+		}
+		return suiteName;
+	}
+
+	private static String findIterationName(Execution execution) {
+		Iteration iteration = execution.getTestPlan().getIteration();
+		String iterationName = "";
+		if (iteration != null) {
+			iterationName = iteration.getName();
+		}
+		return iterationName;
+	}
+
 }

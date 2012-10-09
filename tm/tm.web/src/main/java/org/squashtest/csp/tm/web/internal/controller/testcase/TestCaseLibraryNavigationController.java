@@ -176,7 +176,7 @@ public class TestCaseLibraryNavigationController extends
 	
 	@RequestMapping(value = "/export-folder", method = RequestMethod.GET)
 	public @ResponseBody
-	void exportTestCasess(@RequestParam("tab[]") List<Long> ids, @RequestParam("name") String filename, @RequestParam("format") String format,
+	void exportTestCases(@RequestParam("tab[]") List<Long> ids, @RequestParam("name") String filename, @RequestParam("format") String format,
 			HttpServletResponse response, Locale locale) {
 		List<ExportTestCaseData> dataSource = testCaseLibraryNavigationService
 				.findTestCasesToExportFromNodes(ids);
