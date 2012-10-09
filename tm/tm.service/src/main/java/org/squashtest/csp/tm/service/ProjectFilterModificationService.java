@@ -32,7 +32,7 @@ public interface ProjectFilterModificationService {
 	 * 
 	 * @return a projectFilter
 	 */
-	public ProjectFilter findProjectFilterByUserLogin();
+	ProjectFilter findProjectFilterByUserLogin();
 	
 	
 	/***
@@ -40,7 +40,7 @@ public interface ProjectFilterModificationService {
 	 * @param projectIdList the list of project in the "white list" (to be display)
 	 * @param isActive the status (activated or not)
 	 */
-	public void saveOrUpdateProjectFilter(List<Long> projectIdList, boolean isActive);
+	void saveOrUpdateProjectFilter(List<Long> projectIdList, boolean isActive);
 	
 	
 	/***
@@ -48,13 +48,13 @@ public interface ProjectFilterModificationService {
 	 * 
 	 * @param status the project filter status
 	 */
-	public void updateProjectFilterStatus(boolean status);
+	void updateProjectFilterStatus(boolean status);
 	
 	
 	/***
 	 * Get the list of all existing projects
 	 * @return the list of all projects (List<Projects>)
 	 */
-	public List<Project> getAllProjects();
+	List<Project> getAllProjects();
 	
 }

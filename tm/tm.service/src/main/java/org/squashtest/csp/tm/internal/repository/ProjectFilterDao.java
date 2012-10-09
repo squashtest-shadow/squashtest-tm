@@ -29,13 +29,13 @@ public interface ProjectFilterDao {
 	 * @param givenUserLogin the user login (String)
 	 * @return null or a ProjectFilter
 	 */
-	public ProjectFilter findProjectFilterByUserLogin(String givenUserLogin);
+	ProjectFilter findProjectFilterByUserLogin(String givenUserLogin);
 	
 	/***
 	 * Method which creates a project filter 
 	 * @param givenProjectFilter
 	 */
-	public void persistProjectFilter(ProjectFilter givenProjectFilter);
+	void persistProjectFilter(ProjectFilter givenProjectFilter);
 	
 	
 }

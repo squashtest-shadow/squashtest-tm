@@ -28,7 +28,7 @@ import org.springframework.transaction.annotation.Transactional;
 @Transactional
 public interface IterationModificationService extends CustomIterationModificationService {
 
-	static final String SMALLEDIT_ITERATION_OR_ADMIN = "hasPermission(#arg0, 'org.squashtest.csp.tm.domain.campaign.Iteration', 'SMALL_EDIT') "
+	final String SMALLEDIT_ITERATION_OR_ADMIN = "hasPermission(#arg0, 'org.squashtest.csp.tm.domain.campaign.Iteration', 'SMALL_EDIT') "
 			+ "or hasRole('ROLE_ADMIN')";
 
 	@PreAuthorize(SMALLEDIT_ITERATION_OR_ADMIN)

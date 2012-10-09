@@ -695,7 +695,7 @@ public class BugtrackerController {
 
 	/* ****************************** bug ownership naming ****************************** */
 
-	private static interface IssueOwnershipNameBuilder {
+	private interface IssueOwnershipNameBuilder {
 		void setMessageSource(MessageSource source);
 
 		void setLocale(Locale locale);

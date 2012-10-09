@@ -26,13 +26,13 @@ import org.squashtest.csp.tm.domain.execution.ExecutionStatus;
 
 public interface HasExecutionStatus {
 	
-	public ExecutionStatus getExecutionStatus();
+	ExecutionStatus getExecutionStatus();
 	
 	/**
 	 * @return which ExecutionStatus are available for the implementor : among all {@link ExecutionStatus} available not all might be relevant for that entity.
 	 * The given collection is unmodifiable.
 	 */
-	public Set<ExecutionStatus> getLegalStatusSet();
+	Set<ExecutionStatus> getLegalStatusSet();
 	
 	
 	

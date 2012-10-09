@@ -29,9 +29,9 @@ import java.util.List;
  */
 public interface TestCaseSearchCriteria {
 
-	public String getName();
+	String getName();
 	
-	public boolean isGroupByProject();
+	boolean isGroupByProject();
 	
 	
 	/**
@@ -40,5 +40,5 @@ public interface TestCaseSearchCriteria {
 	 * 
 	 * @return
 	 */
-	public List<TestCaseImportance> getImportanceFilterSet();
+	List<TestCaseImportance> getImportanceFilterSet();
 }

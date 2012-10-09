@@ -34,12 +34,12 @@ public interface BuildProcessor {
 	 * a {@link BuildStep} should notify its processor that the job is done.
 	 * 
 	 */
-	public abstract void notifyStepDone();
+	abstract void notifyStepDone();
 	
 	/**
 	 * a {@link BuildStep} should notify its processor that the job got an error and should be cancelled.
 	 * @param ex
 	 */
-	public abstract void notifyException(Exception ex);
+	abstract void notifyException(Exception ex);
 	
 }

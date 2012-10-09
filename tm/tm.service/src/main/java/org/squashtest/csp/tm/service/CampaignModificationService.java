@@ -27,7 +27,7 @@ import org.springframework.transaction.annotation.Transactional;
 
 @Transactional
 public interface CampaignModificationService extends CustomCampaignModificationService, CampaignFinder {
-	static final String SMALL_EDIT_CAMAIGN_OR_ADMIN = "hasPermission(#arg0, 'org.squashtest.csp.tm.domain.campaign.Campaign' ,'SMALL_EDIT') "
+	final String SMALL_EDIT_CAMAIGN_OR_ADMIN = "hasPermission(#arg0, 'org.squashtest.csp.tm.domain.campaign.Campaign' ,'SMALL_EDIT') "
 		+ "or hasRole('ROLE_ADMIN')";
 
 	@PreAuthorize(SMALL_EDIT_CAMAIGN_OR_ADMIN)

@@ -33,15 +33,14 @@ import org.squashtest.csp.tm.domain.testautomation.TestAutomationServer;
 public interface AutomatedSuiteDao{
 
 
-	public AutomatedSuite createNewSuite();
+	AutomatedSuite createNewSuite();
 	
-	public AutomatedSuite findById(String id);
-	
-	
-	public List<AutomatedSuite> findAll();
+	AutomatedSuite findById(String id);
 	
 	
-	public List<AutomatedSuite> findAllById(final Collection<String> ids);
+	List<AutomatedSuite> findAll();
+		
+	List<AutomatedSuite> findAllById(final Collection<String> ids);
 	
 	/**
 	 * retrieve all the {@link AutomatedExecutionExtender} that this suite is bound to.

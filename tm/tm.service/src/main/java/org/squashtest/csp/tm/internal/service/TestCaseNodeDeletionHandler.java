@@ -27,6 +27,6 @@ import org.squashtest.csp.tm.domain.testcase.TestStep;
 
 public interface TestCaseNodeDeletionHandler extends NodeDeletionHandler<TestCaseLibraryNode, TestCaseFolder> {
 
-	public void deleteStep(TestCase ower, TestStep step);
+	void deleteStep(TestCase ower, TestStep step);
 
 }

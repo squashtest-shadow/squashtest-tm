@@ -40,15 +40,15 @@ import java.io.InputStream;
  */
 public interface Entry {
 
-	public String getName();
+	String getName();
 	
-	public String getShortName();
+	String getShortName();
 	
-	public Entry getParent();
+	Entry getParent();
 	
-	public boolean isDirectory();
+	boolean isDirectory();
 	
-	public boolean isFile();
+	boolean isFile();
 	
 	/**
 	 * must return null if it's a directory, otherwise must return the stream
