@@ -50,33 +50,29 @@
 		</box>
 	</style>
 	<style name="table_TD" mode="Opaque" backcolor="#FFFFFF">
+		<pen lineWidth="0.0" lineStyle="Double" lineColor="#FFFFFF"/>
 		<box>
 			<topPen lineWidth="0.5" lineColor="#FFFFFF"/>
 			<bottomPen lineWidth="0.12" lineColor="#999999"/>
 		</box>
 	</style>
 	<style name="table 1">
-		<box>
-			<topPen lineWidth="1.0" lineColor="#000000"/>
-			<bottomPen lineWidth="1.0" lineColor="#000000"/>
-		</box>
+		<pen lineStyle="Double" lineColor="#FFFFFF"/>
 	</style>
 	<style name="table 1_TH" mode="Opaque" backcolor="#F0F8FF">
-		<box>
-			<topPen lineWidth="0.5" lineColor="#000000"/>
-			<bottomPen lineWidth="0.5" lineColor="#000000"/>
-		</box>
+		<pen lineColor="#FFFFFF"/>
 	</style>
 	<style name="table 1_CH" mode="Opaque" backcolor="#BFE1FF">
-		<box>
-			<topPen lineWidth="0.5" lineColor="#000000"/>
-			<bottomPen lineWidth="0.5" lineColor="#000000"/>
-		</box>
+		<pen lineColor="#FFFFFF"/>
 	</style>
 	<style name="table 1_TD" mode="Opaque" backcolor="#FFFFFF">
+		<pen lineColor="#FFFFFF"/>
 		<box>
-			<topPen lineWidth="0.5" lineColor="#000000"/>
-			<bottomPen lineWidth="0.5" lineColor="#000000"/>
+			<pen lineStyle="Dashed"/>
+			<topPen lineWidth="0.0" lineStyle="Dashed" lineColor="#999999"/>
+			<leftPen lineStyle="Dashed"/>
+			<bottomPen lineWidth="0.5" lineStyle="Dashed" lineColor="#BDBDBD"/>
+			<rightPen lineStyle="Dashed"/>
 		</box>
 	</style>
 	<style name="styleIterSchedStart">
@@ -113,6 +109,7 @@
 		<parameter name="iteration_status" class="java.lang.Enum" isForPrompting="false"/>
 		<parameter name="iteration_iCountStatusSuccess" class="java.lang.Integer" isForPrompting="false"/>
 		<parameter name="iteration_iCountStatusReady" class="java.lang.Integer" isForPrompting="false"/>
+		<parameter name="iteration_iCountStatusUntestable" class="java.lang.Integer" isForPrompting="false"/>
 		<parameter name="iteration_iCountStatusRunning" class="java.lang.Integer" isForPrompting="false"/>
 		<parameter name="iteration_iCountStatusBloqued" class="java.lang.Integer" isForPrompting="false"/>
 		<parameter name="iteration_iCountStatusFailure" class="java.lang.Integer" isForPrompting="false"/>
@@ -120,6 +117,7 @@
 		<parameter name="iteration_fPercentageStatusSuccess" class="java.lang.Float" isForPrompting="false"/>
 		<parameter name="iteration_fPercentageStatusBloqued" class="java.lang.Float" isForPrompting="false"/>
 		<parameter name="iteration_fPercentageStatusRunning" class="java.lang.Float" isForPrompting="false"/>
+		<parameter name="iteration_fPercentageStatusUntestable" class="java.lang.Float" isForPrompting="false"/>
 		<parameter name="iteration_fPercentageStatusFailure" class="java.lang.Float" isForPrompting="false"/>
 		<parameter name="iteration_fPercentageProgress" class="java.lang.Float" isForPrompting="false"/>
 		<parameter name="iteration_number" class="java.lang.Integer" isForPrompting="false"/>
@@ -147,6 +145,9 @@
 		<field name="fPercentageStatusRunning" class="java.lang.Float">
 			<fieldDescription><![CDATA[fPercentageStatusRunning]]></fieldDescription>
 		</field>
+		<field name="fPercentageStatusUntestable" class="java.lang.Float">
+			<fieldDescription><![CDATA[fPercentageStatusUntestable]]></fieldDescription>
+		</field>
 		<field name="fPercentageStatusFailure" class="java.lang.Float">
 			<fieldDescription><![CDATA[fPercentageStatusFailure]]></fieldDescription>
 		</field>
@@ -161,6 +162,9 @@
 		</field>
 		<field name="iCountStatusRunning" class="java.lang.Integer">
 			<fieldDescription><![CDATA[iCountStatusRunning]]></fieldDescription>
+		</field>
+		<field name="iCountStatusUntestable" class="java.lang.Integer">
+			<fieldDescription><![CDATA[iCountStatusUntestable]]></fieldDescription>
 		</field>
 		<field name="name" class="java.lang.String">
 			<fieldDescription><![CDATA[name]]></fieldDescription>
@@ -205,6 +209,9 @@
 	<field name="iCountStatusRunning" class="java.lang.Integer">
 		<fieldDescription><![CDATA[iCountStatusRunning]]></fieldDescription>
 	</field>
+	<field name="iCountStatusUntestable" class="java.lang.Integer">
+		<fieldDescription><![CDATA[iCountStatusUntestable]]></fieldDescription>
+	</field>
 	<field name="iCountStatusBloqued" class="java.lang.Integer">
 		<fieldDescription><![CDATA[iCountStatusBloqued]]></fieldDescription>
 	</field>
@@ -222,6 +229,9 @@
 	</field>
 	<field name="fPercentageStatusRunning" class="java.lang.Float">
 		<fieldDescription><![CDATA[fPercentageStatusRunning]]></fieldDescription>
+	</field>
+	<field name="fPercentageStatusUntestable" class="java.lang.Float">
+		<fieldDescription><![CDATA[fPercentageStatusUntestable]]></fieldDescription>
 	</field>
 	<field name="fPercentageStatusFailure" class="java.lang.Float">
 		<fieldDescription><![CDATA[fPercentageStatusFailure]]></fieldDescription>
@@ -265,6 +275,9 @@
 						<datasetParameter name="iteration_iCountStatusRunning">
 							<datasetParameterExpression><![CDATA[$F{iCountStatusRunning}]]></datasetParameterExpression>
 						</datasetParameter>
+						<datasetParameter name="iteration_iCountStatusUntestable">
+							<datasetParameterExpression><![CDATA[$F{iCountStatusUntestable}]]></datasetParameterExpression>
+						</datasetParameter>
 						<datasetParameter name="iteration_iCountStatusBloqued">
 							<datasetParameterExpression><![CDATA[$F{iCountStatusBloqued}]]></datasetParameterExpression>
 						</datasetParameter>
@@ -283,6 +296,9 @@
 						<datasetParameter name="iteration_fPercentageStatusRunning">
 							<datasetParameterExpression><![CDATA[$F{fPercentageStatusRunning}]]></datasetParameterExpression>
 						</datasetParameter>
+						<datasetParameter name="iteration_fPercentageStatusUntestable">
+							<datasetParameterExpression><![CDATA[$F{fPercentageStatusUntestable}]]></datasetParameterExpression>
+						</datasetParameter>
 						<datasetParameter name="iteration_fPercentageStatusFailure">
 							<datasetParameterExpression><![CDATA[$F{fPercentageStatusFailure}]]></datasetParameterExpression>
 						</datasetParameter>
@@ -299,9 +315,9 @@
 							<textField>
 								<reportElement x="0" y="0" width="113" height="20"/>
 								<textElement verticalAlignment="Middle">
-									<font fontName="Arial" isBold="true"/>
+									<font fontName="Arial" size="9" isBold="true"/>
 								</textElement>
-								<textFieldExpression class="java.lang.String"><![CDATA["Iter # "+$P{iteration_number}+" - "+$P{iteration_name}]]></textFieldExpression>
+								<textFieldExpression class="java.lang.String"><![CDATA["It # "+$P{iteration_number}+" - "+$P{iteration_name}]]></textFieldExpression>
 							</textField>
 						</jr:columnHeader>
 						<jr:detailCell style="table_TD" height="0" rowSpan="1"/>
@@ -311,7 +327,7 @@
 							<textField pattern="">
 								<reportElement x="0" y="0" width="65" height="20"/>
 								<textElement textAlignment="Center" verticalAlignment="Middle">
-									<font fontName="Arial" isBold="true"/>
+									<font fontName="Arial" size="9" isBold="true"/>
 								</textElement>
 								<textFieldExpression class="java.lang.String"><![CDATA[($P{iteration_schedstart}==null) ? $R{report.executionprogression.date.nodata} : new java.text.SimpleDateFormat($R{report.executionprogression.date.format}).format($P{iteration_schedstart})]]></textFieldExpression>
 							</textField>
@@ -323,7 +339,7 @@
 							<textField pattern="">
 								<reportElement x="0" y="0" width="65" height="20"/>
 								<textElement textAlignment="Center" verticalAlignment="Middle">
-									<font fontName="Arial" isBold="true"/>
+									<font fontName="Arial" size="9" isBold="true"/>
 								</textElement>
 								<textFieldExpression class="java.lang.String"><![CDATA[($P{iteration_schedend}==null) ? $R{report.executionprogression.date.nodata} : new java.text.SimpleDateFormat($R{report.executionprogression.date.format}).format($P{iteration_schedend})]]></textFieldExpression>
 							</textField>
@@ -335,7 +351,7 @@
 							<textField pattern="" isBlankWhenNull="true">
 								<reportElement x="0" y="0" width="65" height="20"/>
 								<textElement textAlignment="Center" verticalAlignment="Middle">
-									<font fontName="Arial" isBold="true"/>
+									<font fontName="Arial" size="9" isBold="true"/>
 								</textElement>
 								<textFieldExpression class="java.lang.String"><![CDATA[($P{iteration_actstart}==null) ? $R{report.executionprogression.date.nodata} : new java.text.SimpleDateFormat($R{report.executionprogression.date.format}).format($P{iteration_actstart})]]></textFieldExpression>
 							</textField>
@@ -347,102 +363,121 @@
 							<textField pattern="">
 								<reportElement x="0" y="0" width="65" height="20"/>
 								<textElement textAlignment="Center" verticalAlignment="Middle">
-									<font fontName="Arial" isBold="true"/>
+									<font fontName="Arial" size="9" isBold="true"/>
 								</textElement>
 								<textFieldExpression class="java.lang.String"><![CDATA[($P{iteration_actend}==null) ? $R{report.executionprogression.date.nodata} : new java.text.SimpleDateFormat($R{report.executionprogression.date.format}).format($P{iteration_actend})]]></textFieldExpression>
 							</textField>
 						</jr:columnHeader>
 						<jr:detailCell style="table_TD" height="0" rowSpan="1"/>
 					</jr:column>
-					<jr:column width="50">
+					<jr:column width="41">
 						<jr:columnHeader style="table_TD" height="20" rowSpan="1">
 							<textField>
 								<reportElement x="0" y="0" width="20" height="20"/>
 								<textElement textAlignment="Center" verticalAlignment="Middle">
-									<font fontName="Arial" size="10"/>
+									<font fontName="Arial" size="9"/>
 								</textElement>
 								<textFieldExpression class="java.lang.Integer"><![CDATA[$P{iteration_iCountStatusReady}]]></textFieldExpression>
 							</textField>
 							<textField pattern="#,##0 %">
-								<reportElement x="20" y="0" width="30" height="20" forecolor="#999999"/>
+								<reportElement x="20" y="0" width="21" height="20" forecolor="#999999"/>
 								<textElement textAlignment="Justified" verticalAlignment="Middle">
-									<font fontName="Arial" size="8"/>
+									<font fontName="Arial" size="7"/>
 								</textElement>
 								<textFieldExpression class="java.lang.Float"><![CDATA[$P{iteration_fPercentageStatusReady}]]></textFieldExpression>
 							</textField>
 						</jr:columnHeader>
 						<jr:detailCell style="table_TD" height="0" rowSpan="1"/>
 					</jr:column>
-					<jr:column width="50">
+					<jr:column width="41">
 						<jr:columnHeader style="table_TD" height="20" rowSpan="1">
 							<textField>
 								<reportElement x="0" y="0" width="20" height="20"/>
 								<textElement textAlignment="Center" verticalAlignment="Middle">
-									<font fontName="Arial" size="10"/>
+									<font fontName="Arial" size="9"/>
 								</textElement>
 								<textFieldExpression class="java.lang.Integer"><![CDATA[$P{iteration_iCountStatusRunning}]]></textFieldExpression>
 							</textField>
 							<textField pattern="#,##0 %">
-								<reportElement x="20" y="0" width="30" height="20" forecolor="#999999"/>
+								<reportElement x="20" y="0" width="21" height="20" forecolor="#999999"/>
 								<textElement textAlignment="Justified" verticalAlignment="Middle">
-									<font fontName="Arial" size="8"/>
+									<font fontName="Arial" size="7"/>
 								</textElement>
 								<textFieldExpression class="java.lang.Float"><![CDATA[$P{iteration_fPercentageStatusRunning}]]></textFieldExpression>
 							</textField>
 						</jr:columnHeader>
 						<jr:detailCell style="table_TD" height="0" rowSpan="1"/>
 					</jr:column>
-					<jr:column width="50">
+					<jr:column width="41">
 						<jr:columnHeader style="table_TD" height="20" rowSpan="1">
 							<textField>
 								<reportElement x="0" y="0" width="20" height="20"/>
 								<textElement textAlignment="Center" verticalAlignment="Middle">
-									<font fontName="Arial" size="10"/>
+									<font fontName="Arial" size="9"/>
+								</textElement>
+								<textFieldExpression class="java.lang.Integer"><![CDATA[$P{iteration_iCountStatusUntestable}]]></textFieldExpression>
+							</textField>
+							<textField pattern="#,##0 %">
+								<reportElement x="20" y="0" width="21" height="20" forecolor="#999999"/>
+								<textElement textAlignment="Justified" verticalAlignment="Middle">
+									<font fontName="Arial" size="7"/>
+								</textElement>
+								<textFieldExpression class="java.lang.Float"><![CDATA[$P{iteration_fPercentageStatusUntestable}]]></textFieldExpression>
+							</textField>
+						</jr:columnHeader>
+						<jr:detailCell style="table_TD" height="0" rowSpan="1"/>
+					</jr:column>
+					<jr:column width="41">
+						<jr:columnHeader style="table_TD" height="20" rowSpan="1">
+							<textField>
+								<reportElement x="0" y="0" width="20" height="20"/>
+								<textElement textAlignment="Center" verticalAlignment="Middle">
+									<font fontName="Arial" size="9"/>
 								</textElement>
 								<textFieldExpression class="java.lang.Integer"><![CDATA[$P{iteration_iCountStatusBloqued}]]></textFieldExpression>
 							</textField>
 							<textField pattern="#,##0 %">
-								<reportElement x="20" y="0" width="30" height="20" forecolor="#999999"/>
+								<reportElement x="20" y="0" width="21" height="20" forecolor="#999999"/>
 								<textElement textAlignment="Justified" verticalAlignment="Middle">
-									<font fontName="Arial" size="8"/>
+									<font fontName="Arial" size="7"/>
 								</textElement>
 								<textFieldExpression class="java.lang.Float"><![CDATA[$P{iteration_fPercentageStatusBloqued}]]></textFieldExpression>
 							</textField>
 						</jr:columnHeader>
 						<jr:detailCell style="table_TD" height="0" rowSpan="1"/>
 					</jr:column>
-					<jr:column width="50">
+					<jr:column width="41">
 						<jr:columnHeader style="table_TD" height="20" rowSpan="1">
 							<textField>
 								<reportElement x="0" y="0" width="20" height="20" forecolor="#FB3333"/>
 								<textElement textAlignment="Center" verticalAlignment="Middle">
-									<font fontName="Arial" size="10"/>
+									<font fontName="Arial" size="9"/>
 								</textElement>
 								<textFieldExpression class="java.lang.Integer"><![CDATA[$P{iteration_iCountStatusFailure}]]></textFieldExpression>
 							</textField>
 							<textField pattern="#,##0 %">
-								<reportElement x="20" y="0" width="30" height="20" forecolor="#999999"/>
+								<reportElement x="20" y="0" width="21" height="20" forecolor="#999999"/>
 								<textElement textAlignment="Justified" verticalAlignment="Middle">
-									<font fontName="Arial" size="8"/>
+									<font fontName="Arial" size="7"/>
 								</textElement>
 								<textFieldExpression class="java.lang.Float"><![CDATA[$P{iteration_fPercentageStatusFailure}]]></textFieldExpression>
 							</textField>
 						</jr:columnHeader>
 						<jr:detailCell style="table_TD" height="0" rowSpan="1"/>
 					</jr:column>
-					<jr:column width="50">
+					<jr:column width="41">
 						<jr:columnHeader style="table_TD" height="20" rowSpan="1">
 							<textField>
 								<reportElement x="0" y="0" width="20" height="20" forecolor="#009900"/>
 								<textElement textAlignment="Center" verticalAlignment="Middle">
-									<font fontName="Arial" size="10"/>
+									<font fontName="Arial" size="9"/>
 								</textElement>
 								<textFieldExpression class="java.lang.Integer"><![CDATA[$P{iteration_iCountStatusSuccess}]]></textFieldExpression>
 							</textField>
 							<textField pattern="#,##0 %">
-								<reportElement x="20" y="0" width="30" height="20" forecolor="#999999"/>
+								<reportElement x="20" y="0" width="21" height="20" forecolor="#999999"/>
 								<textElement textAlignment="Justified" verticalAlignment="Middle">
-									<font fontName="Arial" size="8"/>
+									<font fontName="Arial" size="7"/>
 								</textElement>
 								<textFieldExpression class="java.lang.Float"><![CDATA[$P{iteration_fPercentageStatusSuccess}]]></textFieldExpression>
 							</textField>
@@ -454,7 +489,7 @@
 							<textField>
 								<reportElement x="0" y="0" width="50" height="20"/>
 								<textElement textAlignment="Center" verticalAlignment="Middle">
-									<font fontName="Arial" isBold="true"/>
+									<font fontName="Arial" size="9" isBold="true"/>
 								</textElement>
 								<textFieldExpression class="java.lang.Integer"><![CDATA[$P{iteration_numberTestCase}]]></textFieldExpression>
 							</textField>
@@ -466,7 +501,7 @@
 							<textField pattern="#,##0 %">
 								<reportElement x="0" y="0" width="63" height="20"/>
 								<textElement textAlignment="Center" verticalAlignment="Middle">
-									<font fontName="Arial" isBold="false"/>
+									<font fontName="Arial" size="9" isBold="false"/>
 								</textElement>
 								<textFieldExpression class="java.lang.Float"><![CDATA[($P{iteration_fPercentageProgress}==null ? 0.0f : $P{iteration_fPercentageProgress})]]></textFieldExpression>
 							</textField>
@@ -476,39 +511,55 @@
 				</jr:table>
 			</componentElement>
 		</band>
-		<band height="20" splitType="Stretch">
+		<band height="18" splitType="Stretch">
 			<componentElement>
-				<reportElement key="table" style="table" stretchType="RelativeToBandHeight" x="0" y="0" width="736" height="20" isRemoveLineWhenBlank="true">
-                <printWhenExpression><![CDATA[(($F{testSuites}!=null) &&($F{testSuites}.size()>0))]]></printWhenExpression>
-                </reportElement>
+				<reportElement key="table" style="table 1" stretchType="RelativeToBandHeight" x="44" y="0" width="683" height="18" isRemoveLineWhenBlank="true">
+					<printWhenExpression><![CDATA[(($F{testSuites}!=null) &&($F{testSuites}.size()>0))]]></printWhenExpression>
+				</reportElement>
 				<jr:table xmlns:jr="http://jasperreports.sourceforge.net/jasperreports/components" xsi:schemaLocation="http://jasperreports.sourceforge.net/jasperreports/components http://jasperreports.sourceforge.net/xsd/components.xsd">
 					<datasetRun subDataset="IterationDataSet">
 						<dataSourceExpression><![CDATA[new net.sf.jasperreports.engine.data.JRBeanCollectionDataSource($F{testSuites})]]></dataSourceExpression>
 					</datasetRun>
-					<jr:column width="373">
-						<jr:columnHeader style="table_CH" height="0" rowSpan="1"/>
-						<jr:detailCell style="table_TD" height="20" rowSpan="1">
+					<jr:column width="330">
+						<jr:columnHeader style="table 1_TH" height="0" rowSpan="1">
+							<box>
+								<pen lineColor="#FFFFFF"/>
+								<topPen lineColor="#FFFFFF"/>
+								<leftPen lineColor="#FFFFFF"/>
+								<bottomPen lineColor="#FFFFFF"/>
+								<rightPen lineColor="#FFFFFF"/>
+							</box>
+						</jr:columnHeader>
+						<jr:detailCell style="table 1_TD" height="18" rowSpan="1">
 							<textField>
-								<reportElement x="0" y="0" width="373" height="20"/>
+								<reportElement x="0" y="0" width="330" height="18" forecolor="#666666"/>
 								<textElement verticalAlignment="Middle">
-									<font fontName="Arial" size="10" isBold="false"/>
+									<font fontName="Arial" size="9" isBold="false"/>
 								</textElement>
-								<textFieldExpression class="java.lang.String"><![CDATA["Suite #"+$V{REPORT_COUNT}+" - "+$F{name}]]></textFieldExpression>
+								<textFieldExpression class="java.lang.String"><![CDATA["Suite : "+$F{name}]]></textFieldExpression>
 							</textField>
 						</jr:detailCell>
 					</jr:column>
-					<jr:column width="50">
-						<jr:columnHeader style="table_CH" height="0" rowSpan="1"/>
-						<jr:detailCell style="table_TD" height="20" rowSpan="1">
+					<jr:column width="41">
+						<jr:columnHeader style="table 1_TH" height="0" rowSpan="1">
+							<box>
+								<pen lineColor="#FFFFFF"/>
+								<topPen lineColor="#FFFFFF"/>
+								<leftPen lineColor="#FFFFFF"/>
+								<bottomPen lineColor="#FFFFFF"/>
+								<rightPen lineColor="#FFFFFF"/>
+							</box>
+						</jr:columnHeader>
+						<jr:detailCell style="table 1_TD" height="18" rowSpan="1">
 							<textField>
-								<reportElement x="0" y="0" width="20" height="20"/>
+								<reportElement x="0" y="0" width="20" height="18" forecolor="#666666"/>
 								<textElement textAlignment="Center" verticalAlignment="Middle">
-									<font fontName="Arial" size="10" isBold="false"/>
+									<font fontName="Arial" size="9" isBold="false"/>
 								</textElement>
 								<textFieldExpression class="java.lang.Integer"><![CDATA[$F{iCountStatusReady}]]></textFieldExpression>
 							</textField>
 							<textField pattern="#,##0 %">
-								<reportElement x="20" y="0" width="30" height="20" forecolor="#999999"/>
+								<reportElement x="20" y="0" width="21" height="18" forecolor="#999999"/>
 								<textElement textAlignment="Justified" verticalAlignment="Middle">
 									<font fontName="Arial" size="7" isBold="false"/>
 								</textElement>
@@ -516,18 +567,26 @@
 							</textField>
 						</jr:detailCell>
 					</jr:column>
-					<jr:column width="50">
-						<jr:columnHeader style="table_CH" height="0" rowSpan="1"/>
-						<jr:detailCell style="table_TD" height="20" rowSpan="1">
+					<jr:column width="41">
+						<jr:columnHeader style="table 1_TH" height="0" rowSpan="1">
+							<box>
+								<pen lineColor="#FFFFFF"/>
+								<topPen lineColor="#FFFFFF"/>
+								<leftPen lineColor="#FFFFFF"/>
+								<bottomPen lineColor="#FFFFFF"/>
+								<rightPen lineColor="#FFFFFF"/>
+							</box>
+						</jr:columnHeader>
+						<jr:detailCell style="table 1_TD" height="18" rowSpan="1">
 							<textField>
-								<reportElement x="0" y="0" width="20" height="20"/>
+								<reportElement x="0" y="0" width="20" height="18" forecolor="#666666"/>
 								<textElement textAlignment="Center" verticalAlignment="Middle">
-									<font fontName="Arial" size="10" isBold="false"/>
+									<font fontName="Arial" size="9" isBold="false"/>
 								</textElement>
 								<textFieldExpression class="java.lang.Integer"><![CDATA[$F{iCountStatusRunning}]]></textFieldExpression>
 							</textField>
 							<textField pattern="#,##0 %">
-								<reportElement x="20" y="0" width="30" height="20" forecolor="#999999"/>
+								<reportElement x="20" y="0" width="21" height="18" forecolor="#999999"/>
 								<textElement textAlignment="Justified" verticalAlignment="Middle">
 									<font fontName="Arial" size="7" isBold="false"/>
 								</textElement>
@@ -535,18 +594,53 @@
 							</textField>
 						</jr:detailCell>
 					</jr:column>
-					<jr:column width="50">
-						<jr:columnHeader style="table_CH" height="0" rowSpan="1"/>
-						<jr:detailCell style="table_TD" height="20" rowSpan="1">
+					<jr:column width="41">
+						<jr:columnHeader style="table 1_TH" height="0" rowSpan="1">
+							<box>
+								<pen lineColor="#FFFFFF"/>
+								<topPen lineColor="#FFFFFF"/>
+								<leftPen lineColor="#FFFFFF"/>
+								<bottomPen lineColor="#FFFFFF"/>
+								<rightPen lineColor="#FFFFFF"/>
+							</box>
+						</jr:columnHeader>
+						<jr:detailCell style="table 1_TD" height="18" rowSpan="1">
 							<textField>
-								<reportElement x="0" y="0" width="20" height="20"/>
+								<reportElement x="0" y="0" width="20" height="18" forecolor="#666666"/>
 								<textElement textAlignment="Center" verticalAlignment="Middle">
-									<font fontName="Arial" size="10" isBold="false"/>
+									<font fontName="Arial" size="9" isBold="false"/>
+								</textElement>
+								<textFieldExpression class="java.lang.Integer"><![CDATA[$F{iCountStatusUntestable}]]></textFieldExpression>
+							</textField>
+							<textField pattern="#,##0 %">
+								<reportElement x="20" y="0" width="21" height="18" forecolor="#999999"/>
+								<textElement textAlignment="Justified" verticalAlignment="Middle">
+									<font fontName="Arial" size="7" isBold="false"/>
+								</textElement>
+								<textFieldExpression class="java.lang.Float"><![CDATA[$F{fPercentageStatusUntestable}]]></textFieldExpression>
+							</textField>
+						</jr:detailCell>
+					</jr:column>
+					<jr:column width="41">
+						<jr:columnHeader style="table 1_TH" height="0" rowSpan="1">
+							<box>
+								<pen lineColor="#FFFFFF"/>
+								<topPen lineColor="#FFFFFF"/>
+								<leftPen lineColor="#FFFFFF"/>
+								<bottomPen lineColor="#FFFFFF"/>
+								<rightPen lineColor="#FFFFFF"/>
+							</box>
+						</jr:columnHeader>
+						<jr:detailCell style="table 1_TD" height="18" rowSpan="1">
+							<textField>
+								<reportElement x="0" y="0" width="20" height="18" forecolor="#666666"/>
+								<textElement textAlignment="Center" verticalAlignment="Middle">
+									<font fontName="Arial" size="9" isBold="false"/>
 								</textElement>
 								<textFieldExpression class="java.lang.Integer"><![CDATA[$F{iCountStatusBloqued}]]></textFieldExpression>
 							</textField>
 							<textField pattern="#,##0 %">
-								<reportElement x="20" y="0" width="30" height="20" forecolor="#999999"/>
+								<reportElement x="20" y="0" width="21" height="18" forecolor="#999999"/>
 								<textElement textAlignment="Justified" verticalAlignment="Middle">
 									<font fontName="Arial" size="7" isBold="false"/>
 								</textElement>
@@ -554,18 +648,26 @@
 							</textField>
 						</jr:detailCell>
 					</jr:column>
-					<jr:column width="50">
-						<jr:columnHeader style="table_CH" height="0" rowSpan="1"/>
-						<jr:detailCell style="table_TD" height="20" rowSpan="1">
+					<jr:column width="41">
+						<jr:columnHeader style="table 1_TH" height="0" rowSpan="1">
+							<box>
+								<pen lineColor="#FFFFFF"/>
+								<topPen lineColor="#FFFFFF"/>
+								<leftPen lineColor="#FFFFFF"/>
+								<bottomPen lineColor="#FFFFFF"/>
+								<rightPen lineColor="#FFFFFF"/>
+							</box>
+						</jr:columnHeader>
+						<jr:detailCell style="table 1_TD" height="18" rowSpan="1">
 							<textField>
-								<reportElement x="0" y="0" width="20" height="20" forecolor="#FB3333"/>
+								<reportElement x="0" y="0" width="20" height="18" forecolor="#FE6565"/>
 								<textElement textAlignment="Center" verticalAlignment="Middle">
-									<font fontName="Arial" size="10" isBold="false"/>
+									<font fontName="Arial" size="9" isBold="false"/>
 								</textElement>
 								<textFieldExpression class="java.lang.Integer"><![CDATA[$F{iCountStatusFailure}]]></textFieldExpression>
 							</textField>
 							<textField pattern="#,##0 %">
-								<reportElement x="20" y="0" width="30" height="20" forecolor="#999999"/>
+								<reportElement x="20" y="0" width="21" height="18" forecolor="#999999"/>
 								<textElement textAlignment="Justified" verticalAlignment="Middle">
 									<font fontName="Arial" size="7" isBold="false"/>
 								</textElement>
@@ -573,18 +675,26 @@
 							</textField>
 						</jr:detailCell>
 					</jr:column>
-					<jr:column width="50">
-						<jr:columnHeader style="table_CH" height="0" rowSpan="1"/>
-						<jr:detailCell style="table_TD" height="20" rowSpan="1">
+					<jr:column width="41">
+						<jr:columnHeader style="table 1_TH" height="0" rowSpan="1">
+							<box>
+								<pen lineColor="#FFFFFF"/>
+								<topPen lineColor="#FFFFFF"/>
+								<leftPen lineColor="#FFFFFF"/>
+								<bottomPen lineColor="#FFFFFF"/>
+								<rightPen lineColor="#FFFFFF"/>
+							</box>
+						</jr:columnHeader>
+						<jr:detailCell style="table 1_TD" height="18" rowSpan="1">
 							<textField>
-								<reportElement x="0" y="0" width="20" height="20" forecolor="#009900"/>
+								<reportElement x="0" y="0" width="20" height="18" forecolor="#61BE61"/>
 								<textElement textAlignment="Center" verticalAlignment="Middle">
-									<font fontName="Arial" size="10" isBold="false"/>
+									<font fontName="Arial" size="9" isBold="false"/>
 								</textElement>
 								<textFieldExpression class="java.lang.Integer"><![CDATA[$F{iCountStatusSuccess}]]></textFieldExpression>
 							</textField>
 							<textField pattern="#,##0 %">
-								<reportElement x="20" y="0" width="30" height="20" forecolor="#999999"/>
+								<reportElement x="20" y="0" width="21" height="18" forecolor="#999999"/>
 								<textElement textAlignment="Justified" verticalAlignment="Middle">
 									<font fontName="Arial" size="7" isBold="false"/>
 								</textElement>
@@ -593,24 +703,40 @@
 						</jr:detailCell>
 					</jr:column>
 					<jr:column width="50">
-						<jr:columnHeader style="table_CH" height="0" rowSpan="1"/>
-						<jr:detailCell style="table_TD" height="20" rowSpan="1">
+						<jr:columnHeader style="table 1_TH" height="0" rowSpan="1">
+							<box>
+								<pen lineColor="#FFFFFF"/>
+								<topPen lineColor="#FFFFFF"/>
+								<leftPen lineColor="#FFFFFF"/>
+								<bottomPen lineColor="#FFFFFF"/>
+								<rightPen lineColor="#FFFFFF"/>
+							</box>
+						</jr:columnHeader>
+						<jr:detailCell style="table 1_TD" height="18" rowSpan="1">
 							<textField>
-								<reportElement x="0" y="0" width="50" height="20"/>
+								<reportElement x="0" y="0" width="50" height="18" forecolor="#666666"/>
 								<textElement textAlignment="Center" verticalAlignment="Middle">
-									<font fontName="Arial" size="10" isBold="false"/>
+									<font fontName="Arial" size="9" isBold="false"/>
 								</textElement>
 								<textFieldExpression class="java.lang.Integer"><![CDATA[$F{numberTestCase}]]></textFieldExpression>
 							</textField>
 						</jr:detailCell>
 					</jr:column>
 					<jr:column width="63">
-						<jr:columnHeader style="table_CH" height="0" rowSpan="1"/>
-						<jr:detailCell style="table_TD" height="20" rowSpan="1">
+						<jr:columnHeader style="table 1_TH" height="0" rowSpan="1">
+							<box>
+								<pen lineColor="#FFFFFF"/>
+								<topPen lineColor="#FFFFFF"/>
+								<leftPen lineColor="#FFFFFF"/>
+								<bottomPen lineColor="#FFFFFF"/>
+								<rightPen lineColor="#FFFFFF"/>
+							</box>
+						</jr:columnHeader>
+						<jr:detailCell style="table 1_TD" height="18" rowSpan="1">
 							<textField pattern="#,##0 %">
-								<reportElement x="0" y="0" width="63" height="20"/>
+								<reportElement x="0" y="0" width="63" height="18" forecolor="#666666"/>
 								<textElement textAlignment="Center" verticalAlignment="Middle">
-									<font fontName="Arial" isBold="false"/>
+									<font fontName="Arial" size="9" isBold="false"/>
 								</textElement>
 								<textFieldExpression class="java.lang.Float"><![CDATA[($F{fPercentageProgress}==null ? 0.0f : $F{fPercentageProgress})]]></textFieldExpression>
 							</textField>
