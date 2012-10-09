@@ -52,6 +52,7 @@ import org.squashtest.csp.tm.domain.users.User;
 import org.squashtest.csp.tm.service.IterationTestPlanManagerService;
 import org.squashtest.csp.tm.service.TestSuiteModificationService;
 import org.squashtest.csp.tm.service.TestSuiteTestPlanManagerService;
+import org.squashtest.csp.tm.web.internal.i18n.InternationalizationHelper;
 import org.squashtest.csp.tm.web.internal.model.builder.DriveNodeBuilder;
 import org.squashtest.csp.tm.web.internal.model.datatable.DataTableDrawParameters;
 import org.squashtest.csp.tm.web.internal.model.datatable.DataTableMapperPagingAndSortingAdapter;
@@ -251,60 +252,71 @@ public class TestSuiteTestPlanManagerController {
 		PagedCollectionHolder<List<IterationTestPlanItem>> holder = testSuiteTestPlanManagerService.findTestPlan(
 				id, paging);
 		
-		return new DataTableModelHelper<IterationTestPlanItem>() {
-			@Override
-			public Object[] buildItemData(IterationTestPlanItem item) {
+		return new IterationTestPlanItemDataTableModelHelper(messageSource, locale).buildDataModel(holder, params.getsEcho());
 
-				String projectName;
-				String testCaseName;
-				String testCaseExecutionMode;
-				String importance;
-				String testCaseId;
+	}
+	
+	private static class IterationTestPlanItemDataTableModelHelper extends DataTableModelHelper<IterationTestPlanItem>{
+		
+		private MessageSource messageSource;
+		private Locale locale;
 
-				if (item.isTestCaseDeleted()) {
-					projectName = formatNoData(locale);
-					testCaseName = formatDeleted(locale);
-					importance = formatNoData(locale);
-					testCaseExecutionMode = formatNoData(locale);
-					testCaseId = "";
-				} else {
-					projectName = item.getReferencedTestCase().getProject().getName();
-					testCaseName = item.getReferencedTestCase().getName();
-					importance = formatImportance(item.getReferencedTestCase().getImportance(), locale);
-					testCaseExecutionMode = formatExecutionMode(item.getReferencedTestCase().getExecutionMode(), locale);
-					testCaseId = item.getReferencedTestCase().getId().toString();
-				}
-				
-				return new Object[] { item.getId(), 
-						getCurrentIndex(), 
-						projectName, 
-						testCaseName,
-						importance,
-						testCaseExecutionMode, 
-						testCaseId, 
-						item.isTestCaseDeleted(), 
-						" "
-				};
+		private IterationTestPlanItemDataTableModelHelper(MessageSource messageSource, Locale locale){
+			this.messageSource = messageSource;
+			this.locale = locale;
+		}
+		
+		@Override
+		public Object[] buildItemData(IterationTestPlanItem item) {
+
+			String projectName;
+			String testCaseName;
+			String testCaseExecutionMode;
+			String importance;
+			String testCaseId;
+
+			if (item.isTestCaseDeleted()) {
+				projectName = formatNoData(locale, messageSource);
+				testCaseName = formatDeleted(locale, messageSource);
+				importance = formatNoData(locale, messageSource);
+				testCaseExecutionMode = formatNoData(locale, messageSource);
+				testCaseId = "";
+			} else {
+				projectName = item.getReferencedTestCase().getProject().getName();
+				testCaseName = item.getReferencedTestCase().getName();
+				importance = formatImportance(item.getReferencedTestCase().getImportance(), locale, messageSource);
+				testCaseExecutionMode = formatExecutionMode(item.getReferencedTestCase().getExecutionMode(), locale, messageSource);
+				testCaseId = item.getReferencedTestCase().getId().toString();
 			}
-		}.buildDataModel(holder, params.getsEcho());
-
+			
+			return new Object[] { item.getId(), 
+					getCurrentIndex(), 
+					projectName, 
+					testCaseName,
+					importance,
+					testCaseExecutionMode, 
+					testCaseId, 
+					item.isTestCaseDeleted(), 
+					" "
+			};
+		}
 	}
 	
 /* ***************** data formatter *************************** */
 
-	private String formatNoData(Locale locale) {
+	private static String formatNoData(Locale locale, MessageSource messageSource) {
 		return messageSource.getMessage("squashtm.nodata", null, locale);
 	}
 
-	private String formatDeleted(Locale locale) {
+	private static String formatDeleted(Locale locale, MessageSource messageSource) {
 		return messageSource.getMessage("squashtm.itemdeleted", null, locale);
 	}
 
-	private String formatImportance(TestCaseImportance importance, Locale locale) {
+	private static String formatImportance(TestCaseImportance importance, Locale locale, MessageSource messageSource) {
 		return messageSource.getMessage(importance.getI18nKey(), null, locale);
 	}
 	
-	private String formatExecutionMode(TestCaseExecutionMode mode, Locale locale) {
+	private static String formatExecutionMode(TestCaseExecutionMode mode, Locale locale, MessageSource messageSource) {
 		return messageSource.getMessage(mode.getI18nKey(), null, locale);
 	}
 }

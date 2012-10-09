@@ -57,17 +57,7 @@ public class AnnotatedPropertyObjectIdentityRetrievalStrategy implements ObjectI
 	public ObjectIdentity getObjectIdentity(Object domainObject) {
 		Class<?> candidateClass = domainObject.getClass();
 
-		Method targetProperty = null;
-		
-		if (isMapped(candidateClass)){
-			targetProperty = identityMethodMap.get(candidateClass);
-		}
-		else{
-			targetProperty = findAnnotatedProperty(candidateClass);
-			if (targetProperty!=null){
-				mapClass(candidateClass, targetProperty);
-			}
-		}
+		Method targetProperty = getTargetProperty(candidateClass);
 
 		Object identityHolder;
 
@@ -88,6 +78,21 @@ public class AnnotatedPropertyObjectIdentityRetrievalStrategy implements ObjectI
 		}
 
 		return delegate.getObjectIdentity(identityHolder);
+	}
+
+	private Method getTargetProperty(Class<?> candidateClass) {
+		Method targetProperty = null;
+		
+		if (isMapped(candidateClass)){
+			targetProperty = identityMethodMap.get(candidateClass);
+		}
+		else{
+			targetProperty = findAnnotatedProperty(candidateClass);
+			if (targetProperty!=null){
+				mapClass(candidateClass, targetProperty);
+			}
+		}
+		return targetProperty;
 	}
 
 	private Object getIdentityHolder(Method targetProperty, Object domainObject) {

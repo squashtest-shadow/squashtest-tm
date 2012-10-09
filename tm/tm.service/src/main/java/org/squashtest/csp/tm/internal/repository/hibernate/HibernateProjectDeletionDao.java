@@ -35,72 +35,72 @@ import org.squashtest.csp.tm.internal.repository.ProjectDeletionDao;
 @Repository
 public class HibernateProjectDeletionDao extends HibernateDeletionDao implements ProjectDeletionDao {
 
-
 	@Override
 	public void removeEntities(List<Long> entityIds) {
 		// TODO Auto-generated method stub
 
 	}
+
 	private static final String CLASS_NAME = "className";
+
 	public void removeProject(Object entity) {
-				
-		//Set Queries
+		Project project = (Project) entity;
+		// Set Queries
 		Query removeARSE = getSession().createSQLQuery(
 				NativeQueries.aclResponsibilityScopeEntry_remove_all_concerning_class);
 		Query removeAOI = getSession().createSQLQuery(NativeQueries.aclObjectIdentity_remove_all_concerning_class);
-		
-		//Remove Project Acls
-		Project project = (Project) entity;
+
+		// Remove Acls
+		removeProjectAcls(removeARSE, removeAOI, project);
+		removeRequirementLibraryAcls(removeARSE, removeAOI, project);
+		removeTestCaseLibraryAcls(removeARSE, removeAOI, project);
+		removeCampaignLibraryAcls(removeARSE, removeAOI, project);
+
+		// Remove entity
+		removeEntity(entity);
+	}
+
+	private void removeProjectAcls(Query removeARSE, Query removeAOI, Project project) {
 		Long id = project.getId();
 		String className = Project.class.getName();
-		
-		removeARSE.setParameter(CLASS_NAME,className, StringType.INSTANCE);
-		removeARSE.setParameter("id", id, LongType.INSTANCE);
-		removeARSE.executeUpdate();
 
-		removeAOI.setParameter(CLASS_NAME, className, StringType.INSTANCE);
-		removeAOI.setParameter("id", id , LongType.INSTANCE);
-		removeAOI.executeUpdate();
-		
-		//Remove RequirementLibrary Acls
-		id = project.getRequirementLibrary().getId();
-		className = RequirementLibrary.class.getName();
-		
-		
-		removeARSE.setParameter(CLASS_NAME,className, StringType.INSTANCE);
-		removeARSE.setParameter("id", id, LongType.INSTANCE);
-		removeARSE.executeUpdate();
-		
-		removeAOI.setParameter(CLASS_NAME, className, StringType.INSTANCE);
-		removeAOI.setParameter("id", id , LongType.INSTANCE);
-		removeAOI.executeUpdate();
-		
-		//Remove TestCaseLibrary Acls
-		id = project.getTestCaseLibrary().getId();
-		className = TestCaseLibrary.class.getName();
-				
-		removeARSE.setParameter(CLASS_NAME,className, StringType.INSTANCE);
-		removeARSE.setParameter("id", id, LongType.INSTANCE);
-		removeARSE.executeUpdate();
-		
-		removeAOI.setParameter(CLASS_NAME, className, StringType.INSTANCE);
-		removeAOI.setParameter("id", id , LongType.INSTANCE);
-		removeAOI.executeUpdate();
-		
-		//Remove CampaignLibrary Acls
-		id = project.getCampaignLibrary().getId();
-		className = CampaignLibrary.class.getName();
-		
-		removeARSE.setParameter(CLASS_NAME,className, StringType.INSTANCE);
-		removeARSE.setParameter("id", id, LongType.INSTANCE);
-		removeARSE.executeUpdate();
-		
-		removeAOI.setParameter(CLASS_NAME, className, StringType.INSTANCE);
-		removeAOI.setParameter("id", id , LongType.INSTANCE);
-		removeAOI.executeUpdate();
-		
-		//RemoveProject
-		removeEntity(entity);
+		executeUpdateWithIdAndClassName(removeARSE, id, className);
+		executeUpdateWithIdAndClassName(removeAOI, id, className);
+
+	}
+
+	private void removeRequirementLibraryAcls(Query removeARSE, Query removeAOI, Project project) {
+		Long id = project.getRequirementLibrary().getId();
+		String className = RequirementLibrary.class.getName();
+
+		executeUpdateWithIdAndClassName(removeARSE, id, className);
+		executeUpdateWithIdAndClassName(removeAOI, id, className);
+
+	}
+
+	private void removeTestCaseLibraryAcls(Query removeARSE, Query removeAOI, Project project) {
+		Long id = project.getTestCaseLibrary().getId();
+		String className = TestCaseLibrary.class.getName();
+
+		executeUpdateWithIdAndClassName(removeARSE, id, className);
+		executeUpdateWithIdAndClassName(removeAOI, id, className);
+
+	}
+
+	private void removeCampaignLibraryAcls(Query removeARSE, Query removeAOI, Project project) {
+		Long id = project.getCampaignLibrary().getId();
+		String className = CampaignLibrary.class.getName();
+
+		executeUpdateWithIdAndClassName(removeARSE, id, className);
+		executeUpdateWithIdAndClassName(removeAOI, id, className);
+
+	}
+
+	private void executeUpdateWithIdAndClassName(Query query, Long id, String className) {
+		query.setParameter(CLASS_NAME, className, StringType.INSTANCE);
+		query.setParameter("id", id, LongType.INSTANCE);
+		query.executeUpdate();
+
 	}
 
 }

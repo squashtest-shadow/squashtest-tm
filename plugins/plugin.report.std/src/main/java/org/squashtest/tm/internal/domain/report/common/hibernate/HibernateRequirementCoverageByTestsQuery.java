@@ -110,32 +110,45 @@ public class HibernateRequirementCoverageByTestsQuery extends HibernateReportQue
 
 		// Forced to get data with two requests so :
 		// get requirement and requirementLibraryNode
-		String hqlQueryFirstStep = "select r, rld from Requirement r, RequirementLibraryNode rld where r.id = rld.id";
-		// get the folders
-		String hqlQuerySecondStep = "from RequirementFolder";
+		Query queryReqAndRLN = createReqAndRLNQuery(isProjectIds, session, ids);
 
-		// Add projects id parameter if defined
-		if (isProjectIds) {
-			hqlQueryFirstStep += " and r.project in (:projectIds)";
-			hqlQuerySecondStep += " where project in (:projectIds)";
-		}
+		// create folders query
+		Query queryFolders = createFoldersQuery(isProjectIds, session, ids);
 
-		Query queryFirstStep = session.createQuery(hqlQueryFirstStep);
-		Query querySecondStep = session.createQuery(hqlQuerySecondStep);
-
-		// Set the parameter if defined
-		if (isProjectIds) {
-			queryFirstStep.setParameterList("projectIds", ids, LongType.INSTANCE);
-			querySecondStep.setParameterList("projectIds", ids, LongType.INSTANCE);
-		}
 		// Get the folders
-		List<RequirementFolder> folderList = querySecondStep.list();
+		List<RequirementFolder> folderList = queryFolders.list();
 
 		// Initiate result list
 		List<Object[]> results = new ArrayList<Object[]>();
-		fillResultListWithRequirementAndFolders(queryFirstStep, folderList, results);
+		fillResultListWithRequirementAndFolders(queryReqAndRLN, folderList, results);
 
 		return results;
+	}
+	
+	private Query createFoldersQuery(boolean isProjectIds, Session session, List<Long> ids){
+		String hqlQueryFolders = "from RequirementFolder";
+		// Add projects id parameter if defined
+		if (isProjectIds) {
+			hqlQueryFolders += " where project in (:projectIds)";
+		}
+		Query queryFolders = session.createQuery(hqlQueryFolders);
+		// Set the parameter if defined
+		if (isProjectIds) {
+			queryFolders.setParameterList("projectIds", ids, LongType.INSTANCE);
+		}
+		return queryFolders;
+	}
+	
+	private Query createReqAndRLNQuery(boolean isProjectIds, Session session, List<Long> ids) {
+		String hqlQueryReqAndRLN = "select r, rld from Requirement r, RequirementLibraryNode rld where r.id = rld.id";
+		if (isProjectIds) {
+			hqlQueryReqAndRLN += " and r.project in (:projectIds)";
+		}
+		Query queryReqAndRLN = session.createQuery(hqlQueryReqAndRLN);
+		if (isProjectIds) {
+			queryReqAndRLN.setParameterList("projectIds", ids, LongType.INSTANCE);
+		}
+		return queryReqAndRLN;
 	}
 
 	@SuppressWarnings("unchecked")
@@ -387,44 +400,63 @@ public class HibernateRequirementCoverageByTestsQuery extends HibernateReportQue
 	 *            the project to modify
 	 */
 	private void calculateProjectCoverageRates(ReqCoverageByTestProjectDto givenProject) {
-		// Global rate
-		givenProject.setGlobalRequirementCoverage(calculateAndRoundRate(
-				givenProject.getTotalVerifiedRequirementNumber(), givenProject.getTotalRequirementNumber()));
-		// Critical rate
-		givenProject.setCriticalRequirementCoverage(calculateAndRoundRate(
-				givenProject.getCriticalVerifiedRequirementNumber(), givenProject.getCriticalRequirementNumber()));
-		// Major rate
-		givenProject.setMajorRequirementCoverage(calculateAndRoundRate(
-				givenProject.getMajorVerifiedRequirementNumber(), givenProject.getMajorRequirementNumber()));
-		// Minor rate
-		givenProject.setMinorRequirementCoverage(calculateAndRoundRate(
-				givenProject.getMinorVerifiedRequirementNumber(), givenProject.getMinorRequirementNumber()));
-		// Undefined rate
-		givenProject.setUndefinedRequirementCoverage(calculateAndRoundRate(
-				givenProject.getUndefinedVerifiedRequirementNumber(), givenProject.getUndefinedRequirementNumber()));
-		/*----------Work-in-progress-----------*/
-		// Global rate
-		givenProject.setWorkInProgressGlobalRequirementCoverage(calculateAndRoundRate(
-				givenProject.getWorkInProgressTotalVerifiedRequirementNumber(),
-				givenProject.getWorkInProgressTotalRequirementNumber()));
-		// Critical rate
-		givenProject.setWorkInProgressCriticalRequirementCoverage(calculateAndRoundRate(
-				givenProject.getWorkInProgressCriticalVerifiedRequirementNumber(),
-				givenProject.getWorkInProgressCriticalRequirementNumber()));
-		// Major rate
-		givenProject.setWorkInProgressMajorRequirementCoverage(calculateAndRoundRate(
-				givenProject.getWorkInProgressMajorVerifiedRequirementNumber(),
-				givenProject.getWorkInProgressMajorRequirementNumber()));
-		// Minor rate
-		givenProject.setWorkInProgressMinorRequirementCoverage(calculateAndRoundRate(
-				givenProject.getWorkInProgressMinorVerifiedRequirementNumber(),
-				givenProject.getWorkInProgressMinorRequirementNumber()));
-		// Undefined rate
-		givenProject.setWorkInProgressUndefinedRequirementCoverage(calculateAndRoundRate(
-				givenProject.getWorkInProgressUndefinedVerifiedRequirementNumber(),
-				givenProject.getWorkInProgressUndefinedRequirementNumber()));
+		calculateProjectCoverageRatesAllStatus(givenProject);
+		calculateProjectCoverageRatesWorkInProgress(givenProject);
+		calculateProjectCoverageRateUnderReview(givenProject);
+		calculateProjectCoverageRateApproved(givenProject);
+		calculateProjectCoverageRateObsolete(givenProject);
 
-		/*------------Under Review ------------*/
+	}
+
+	private void calculateProjectCoverageRateObsolete(ReqCoverageByTestProjectDto givenProject) {
+		// Global rate
+		givenProject.setObsoleteGlobalRequirementCoverage(calculateAndRoundRate(
+				givenProject.getObsoleteTotalVerifiedRequirementNumber(),
+				givenProject.getObsoleteTotalRequirementNumber()));
+		// Critical rate
+		givenProject.setObsoleteCriticalRequirementCoverage(calculateAndRoundRate(
+				givenProject.getObsoleteCriticalVerifiedRequirementNumber(),
+				givenProject.getObsoleteCriticalRequirementNumber()));
+		// Major rate
+		givenProject.setObsoleteMajorRequirementCoverage(calculateAndRoundRate(
+				givenProject.getObsoleteMajorVerifiedRequirementNumber(),
+				givenProject.getObsoleteMajorRequirementNumber()));
+		// Minor rate
+		givenProject.setObsoleteMinorRequirementCoverage(calculateAndRoundRate(
+				givenProject.getObsoleteMinorVerifiedRequirementNumber(),
+				givenProject.getObsoleteMinorRequirementNumber()));
+		// Undefined rate
+		givenProject.setObsoleteUndefinedRequirementCoverage(calculateAndRoundRate(
+				givenProject.getObsoleteUndefinedVerifiedRequirementNumber(),
+				givenProject.getObsoleteUndefinedRequirementNumber()));
+		
+	}
+
+	private void calculateProjectCoverageRateApproved(ReqCoverageByTestProjectDto givenProject) {
+		// Global rate
+		givenProject.setApprovedGlobalRequirementCoverage(calculateAndRoundRate(
+				givenProject.getApprovedTotalVerifiedRequirementNumber(),
+				givenProject.getApprovedTotalRequirementNumber()));
+		// Critical rate
+		givenProject.setApprovedCriticalRequirementCoverage(calculateAndRoundRate(
+				givenProject.getApprovedCriticalVerifiedRequirementNumber(),
+				givenProject.getApprovedCriticalRequirementNumber()));
+		// Major rate
+		givenProject.setApprovedMajorRequirementCoverage(calculateAndRoundRate(
+				givenProject.getApprovedMajorVerifiedRequirementNumber(),
+				givenProject.getApprovedMajorRequirementNumber()));
+		// Minor rate
+		givenProject.setApprovedMinorRequirementCoverage(calculateAndRoundRate(
+				givenProject.getApprovedMinorVerifiedRequirementNumber(),
+				givenProject.getApprovedMinorRequirementNumber()));
+		// Undefined rate
+		givenProject.setApprovedUndefinedRequirementCoverage(calculateAndRoundRate(
+				givenProject.getApprovedUndefinedVerifiedRequirementNumber(),
+				givenProject.getApprovedUndefinedRequirementNumber()));
+		
+	}
+
+	private void calculateProjectCoverageRateUnderReview(ReqCoverageByTestProjectDto givenProject) {
 		// Global rate
 		givenProject.setUnderReviewGlobalRequirementCoverage(calculateAndRoundRate(
 				givenProject.getUnderReviewTotalVerifiedRequirementNumber(),
@@ -446,50 +478,49 @@ public class HibernateRequirementCoverageByTestsQuery extends HibernateReportQue
 				givenProject.getUnderReviewUndefinedVerifiedRequirementNumber(),
 				givenProject.getUnderReviewUndefinedRequirementNumber()));
 
-		/*--------------Approved---------------*/
-		// Global rate
-		givenProject.setApprovedGlobalRequirementCoverage(calculateAndRoundRate(
-				givenProject.getApprovedTotalVerifiedRequirementNumber(),
-				givenProject.getApprovedTotalRequirementNumber()));
-		// Critical rate
-		givenProject.setApprovedCriticalRequirementCoverage(calculateAndRoundRate(
-				givenProject.getApprovedCriticalVerifiedRequirementNumber(),
-				givenProject.getApprovedCriticalRequirementNumber()));
-		// Major rate
-		givenProject.setApprovedMajorRequirementCoverage(calculateAndRoundRate(
-				givenProject.getApprovedMajorVerifiedRequirementNumber(),
-				givenProject.getApprovedMajorRequirementNumber()));
-		// Minor rate
-		givenProject.setApprovedMinorRequirementCoverage(calculateAndRoundRate(
-				givenProject.getApprovedMinorVerifiedRequirementNumber(),
-				givenProject.getApprovedMinorRequirementNumber()));
-		// Undefined rate
-		givenProject.setApprovedUndefinedRequirementCoverage(calculateAndRoundRate(
-				givenProject.getApprovedUndefinedVerifiedRequirementNumber(),
-				givenProject.getApprovedUndefinedRequirementNumber()));
+		
+	}
 
-		/*--------------Obsolete---------------*/
+	private void calculateProjectCoverageRatesWorkInProgress(ReqCoverageByTestProjectDto givenProject) {
 		// Global rate
-		givenProject.setObsoleteGlobalRequirementCoverage(calculateAndRoundRate(
-				givenProject.getObsoleteTotalVerifiedRequirementNumber(),
-				givenProject.getObsoleteTotalRequirementNumber()));
+		givenProject.setWorkInProgressGlobalRequirementCoverage(calculateAndRoundRate(
+				givenProject.getWorkInProgressTotalVerifiedRequirementNumber(),
+				givenProject.getWorkInProgressTotalRequirementNumber()));
 		// Critical rate
-		givenProject.setObsoleteCriticalRequirementCoverage(calculateAndRoundRate(
-				givenProject.getObsoleteCriticalVerifiedRequirementNumber(),
-				givenProject.getObsoleteCriticalRequirementNumber()));
+		givenProject.setWorkInProgressCriticalRequirementCoverage(calculateAndRoundRate(
+				givenProject.getWorkInProgressCriticalVerifiedRequirementNumber(),
+				givenProject.getWorkInProgressCriticalRequirementNumber()));
 		// Major rate
-		givenProject.setObsoleteMajorRequirementCoverage(calculateAndRoundRate(
-				givenProject.getObsoleteMajorVerifiedRequirementNumber(),
-				givenProject.getObsoleteMajorRequirementNumber()));
+		givenProject.setWorkInProgressMajorRequirementCoverage(calculateAndRoundRate(
+				givenProject.getWorkInProgressMajorVerifiedRequirementNumber(),
+				givenProject.getWorkInProgressMajorRequirementNumber()));
 		// Minor rate
-		givenProject.setObsoleteMinorRequirementCoverage(calculateAndRoundRate(
-				givenProject.getObsoleteMinorVerifiedRequirementNumber(),
-				givenProject.getObsoleteMinorRequirementNumber()));
+		givenProject.setWorkInProgressMinorRequirementCoverage(calculateAndRoundRate(
+				givenProject.getWorkInProgressMinorVerifiedRequirementNumber(),
+				givenProject.getWorkInProgressMinorRequirementNumber()));
 		// Undefined rate
-		givenProject.setObsoleteUndefinedRequirementCoverage(calculateAndRoundRate(
-				givenProject.getObsoleteUndefinedVerifiedRequirementNumber(),
-				givenProject.getObsoleteUndefinedRequirementNumber()));
+		givenProject.setWorkInProgressUndefinedRequirementCoverage(calculateAndRoundRate(
+				givenProject.getWorkInProgressUndefinedVerifiedRequirementNumber(),
+				givenProject.getWorkInProgressUndefinedRequirementNumber()));
+		
+	}
 
+	private void calculateProjectCoverageRatesAllStatus(ReqCoverageByTestProjectDto givenProject) {
+		// Global rate
+		givenProject.setGlobalRequirementCoverage(calculateAndRoundRate(
+				givenProject.getTotalVerifiedRequirementNumber(), givenProject.getTotalRequirementNumber()));
+		// Critical rate
+		givenProject.setCriticalRequirementCoverage(calculateAndRoundRate(
+				givenProject.getCriticalVerifiedRequirementNumber(), givenProject.getCriticalRequirementNumber()));
+		// Major rate
+		givenProject.setMajorRequirementCoverage(calculateAndRoundRate(
+				givenProject.getMajorVerifiedRequirementNumber(), givenProject.getMajorRequirementNumber()));
+		// Minor rate
+		givenProject.setMinorRequirementCoverage(calculateAndRoundRate(
+				givenProject.getMinorVerifiedRequirementNumber(), givenProject.getMinorRequirementNumber()));
+		// Undefined rate
+		givenProject.setUndefinedRequirementCoverage(calculateAndRoundRate(
+				givenProject.getUndefinedVerifiedRequirementNumber(), givenProject.getUndefinedRequirementNumber()));
 	}
 
 	/***

@@ -33,6 +33,7 @@ import javax.servlet.http.HttpServletResponse;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.context.MessageSource;
 import org.springframework.osgi.extensions.annotation.ServiceReference;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -292,44 +293,52 @@ public class TestSuiteModificationController {
 		PagedCollectionHolder<List<IterationTestPlanItem>> holder = service.findTestSuiteTestPlan(
 				id, paging);
 		
-		return new DataTableModelHelper<IterationTestPlanItem>() {
-			@Override
-			public Object[] buildItemData(IterationTestPlanItem item) {
-
-				String projectName;
-				String testCaseName;
-				final String testCaseExecutionMode = messageSource.internationalize(item.getExecutionMode(), locale);
-				String importance;
-				final String automationMode = item.isAutomated() ? "A" : "M";
-
-				if (item.isTestCaseDeleted()) {
-					projectName = formatNoData(locale);
-					testCaseName = formatDeleted(locale);
-					importance = formatNoData(locale);
-				} else {
-					projectName = item.getReferencedTestCase().getProject().getName();
-					testCaseName = item.getReferencedTestCase().getName();
-					importance = messageSource.internationalize(item.getReferencedTestCase().getImportance(), locale);
-				}
-
-				return new Object[] { item.getId(), 
-						getCurrentIndex(),
-						projectName, 
-						automationMode,
-						testCaseName,
-						importance,
-						testCaseExecutionMode, 
-						messageSource.internationalize(item.getExecutionStatus(), locale),
-						formatString(item.getLastExecutedBy(), locale), 
-						messageSource.localizeDate(item.getLastExecutedOn(), locale),
-						item.isTestCaseDeleted(), 
-						" "
-				};
-			}
-		}.buildDataModel(holder, params.getsEcho());
+		return new IterationTestPlanItemDataTableModelHelper(messageSource, locale).buildDataModel(holder, params.getsEcho());
 
 	}
 	
+	private static class IterationTestPlanItemDataTableModelHelper extends DataTableModelHelper<IterationTestPlanItem>{
+		private InternationalizationHelper messageSource;
+		private Locale locale;
+
+		private IterationTestPlanItemDataTableModelHelper(InternationalizationHelper messageSource, Locale locale){
+			this.messageSource = messageSource;
+			this.locale = locale;
+		}
+		@Override
+		public Object[] buildItemData(IterationTestPlanItem item) {
+
+			String projectName;
+			String testCaseName;
+			final String testCaseExecutionMode = messageSource.internationalize(item.getExecutionMode(), locale);
+			String importance;
+			final String automationMode = item.isAutomated() ? "A" : "M";
+
+			if (item.isTestCaseDeleted()) {
+				projectName = formatNoData(locale, messageSource);
+				testCaseName = formatDeleted(locale, messageSource);
+				importance = formatNoData(locale, messageSource);
+			} else {
+				projectName = item.getReferencedTestCase().getProject().getName();
+				testCaseName = item.getReferencedTestCase().getName();
+				importance = messageSource.internationalize(item.getReferencedTestCase().getImportance(), locale);
+			}
+
+			return new Object[] { item.getId(), 
+					getCurrentIndex(),
+					projectName, 
+					automationMode,
+					testCaseName,
+					importance,
+					testCaseExecutionMode, 
+					messageSource.internationalize(item.getExecutionStatus(), locale),
+					formatString(item.getLastExecutedBy(), locale, messageSource), 
+					messageSource.localizeDate(item.getLastExecutedOn(), locale),
+					item.isTestCaseDeleted(), 
+					" "
+			};
+		}
+	}
 	/* ************** execute auto *********************************** */
 	
 	@RequestMapping(method = RequestMethod.POST, params= {"id=execute-auto", "testPlanItemsIds[]"} )
@@ -363,19 +372,19 @@ public class TestSuiteModificationController {
 
 /* ***************** data formatter *************************** */
 
-	private String formatString(String arg, Locale locale) {
+	private static String formatString(String arg, Locale locale, InternationalizationHelper messageSource) {
 		if (arg == null) {
-			return formatNoData(locale);
+			return formatNoData(locale, messageSource);
 		} else {
 			return arg;
 		}
 	}
 
-	private String formatNoData(Locale locale) {
+	private static String formatNoData(Locale locale, InternationalizationHelper messageSource) {
 		return messageSource.internationalize("squashtm.nodata",locale);
 	}
 
-	private String formatDeleted(Locale locale) {
+	private static String formatDeleted(Locale locale, InternationalizationHelper messageSource) {
 		return messageSource.internationalize("squashtm.itemdeleted",locale);
 	}
 }
