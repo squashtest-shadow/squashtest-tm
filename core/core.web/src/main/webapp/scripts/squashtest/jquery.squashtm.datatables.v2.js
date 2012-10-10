@@ -586,12 +586,29 @@ jquery.squashtm.oneshotdialog.js
 						var finalUrl = _resolvePlaceholders.call(self,
 								conf.url, self.fnGetData(row));
 
-						var request = $.ajax({
-							type : 'delete',
-							url : finalUrl,
-							dataType : 'text'
-						});
-
+						var request;
+						
+						if(conf.operation == 'detach-issues'){
+							
+							var id = $(row).find('td:eq(0)').text();
+							
+							request = $.ajax({
+								type : 'post',
+								url : finalUrl,
+								dataType : 'text',
+								data : {entitytype : conf.data.entitytype,
+									    entityid : conf.data.entityid,
+									    issueid : id}
+							});
+						}
+						else{
+							request = $.ajax({
+								type : 'delete',
+								url : finalUrl,
+								dataType : 'text'
+							});
+						}
+						
 						if (conf.success)
 							request.done(conf.success);
 						if (conf.fail)

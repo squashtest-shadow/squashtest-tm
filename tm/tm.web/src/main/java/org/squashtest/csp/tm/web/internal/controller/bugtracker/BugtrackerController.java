@@ -595,20 +595,22 @@ public class BugtrackerController {
 	}
 	
 	@RequestMapping(value = "/detach", method = RequestMethod.POST)
-	public void detachIssue(Long entityId, String entityType, Long issueId) {
+	public @ResponseBody 
+	void detachIssue(Long entityid, String entitytype, String issueid) {
 		
 		IssueDetector issueDetector = null;
 				
-		if(entityType.equals(EXECUTION_TYPE)) {
-			issueDetector = executionFinder.findById(entityId);
+		if(entitytype.equals(EXECUTION_TYPE)) {
+			issueDetector = executionFinder.findById(entityid);
 		}
 		else {
-			issueDetector = executionFinder.findExecutionStepById(entityId);
+			issueDetector = executionFinder.findExecutionStepById(entityid);
 		}
 		
 		if(issueDetector != null) {
-			bugTrackersLocalService.detachIssue(issueDetector, issueId);
+			bugTrackersLocalService.detachIssue(issueDetector, issueid);
 		}
+		
 	}
 
 	/* ********* generates a json model for an issue ******* */
@@ -668,6 +670,7 @@ public class BugtrackerController {
 			mav.addObject("bugTrackerStatus", status);
 			mav.addObject("project", project);
 			mav.addObject("bugTracker", project.findBugTracker());
+			mav.addObject("delete","");
 			return mav;
 		} else {
 			return new ModelAndView(EMPTY_BUGTRACKER_MAV);

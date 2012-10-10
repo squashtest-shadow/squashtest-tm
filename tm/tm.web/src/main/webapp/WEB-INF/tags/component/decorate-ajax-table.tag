@@ -52,7 +52,8 @@
 			"iDisplayLength": ${ displayLength },
 			"bProcessing": true,
 			"bServerSide": true,
-			"sAjaxSource": '${ url }', 
+			"sAjaxSource": '${ url }',
+			
 			/* 
 			 * For some reasons when the DOM is modified around the table 
 			 * (ie because of jQuery.wrap()) the datatable constructor is called again.

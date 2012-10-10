@@ -21,7 +21,7 @@
 
 --%>
 <%@ tag description="Table displaying the issues for an ExecutionStep" body-content="empty" %>
-	
+
 <%@ tag language="java" pageEncoding="ISO-8859-1"%>
 <%@ taglib prefix="pop" tagdir="/WEB-INF/tags/popup" %>
 <%@ taglib prefix="f" uri="http://java.sun.com/jsp/jstl/fmt" %>
@@ -32,6 +32,8 @@
 
 <%@ attribute name="interfaceDescriptor" type="java.lang.Object" required="true" description="an object holding the labels for the interface" %>
 <%@ attribute name="dataUrl" required="true" description="where the table will fetch its data" %>
+<%@ attribute name="bugTrackerUrl" required="true" description="where the delete buttons send the delete instruction" %>
+<%@ attribute name="entityId" required="true" description="id of the current execution" %>
 <%@ attribute name="freeSettings" required="true" description="added settings to issue table" %>
 <%-- 
 	columns are :
@@ -48,6 +50,10 @@
 
 <script type="text/javascript">
 	
+	function refreshTestPlan() {
+		$('#issue-table').squashTable().refresh();
+	}
+
 	function getIssueTableRowUrl(rowData){
 		return rowData[0];
 	}
@@ -92,22 +98,60 @@
 		}
 	} 
 
+	
+	/* ************************** datatable settings ********************* */
+
+
+	$(function() {
+		
+		var tableSettings = {
+				"oLanguage": {
+					"sUrl": "<c:url value='/datatables/messages' />",
+					"oPaginate":{
+						"sFirst":    '<f:message key="generics.datatable.paginate.first" />',
+						"sPrevious": '<f:message key="generics.datatable.paginate.previous" />',
+						"sNext":     '<f:message key="generics.datatable.paginate.next" />',
+						"sLast":     '<f:message key="generics.datatable.paginate.last" />'
+					}
+				},
+				"sAjaxSource" : "${dataUrl}", 
+				"aaSorting" : [[1,'desc']],
+				"fnRowCallback" : issueTableRowCallback,
+				"aoColumnDefs": [
+					{'bSortable': false, 'bVisible': false, 'aTargets': [0]},
+					{'bSortable': true, 'sClass': 'select-handle centered', 'aTargets': [1]},
+					{'bSortable': false, 'aTargets': [2]},
+					{'bSortable': false, 'aTargets': [3], 'sWidth': '2em'},
+					{'bSortable': false, 'aTargets': [4]},
+					{'bSortable': false, 'aTargets': [5]},
+					{'bSortable': false, 'aTargets': [6]},
+					{'bSortable': false, 'sWidth': '2em', 'aTargets': [7], 'sClass' : 'centered delete-button'}
+				]
+			};		
+		
+			var squashSettings = {
+
+			};
+			
+			squashSettings.enableDnD = false;
+	
+			squashSettings.deleteButtons = {
+				url : '${bugTrackerUrl}detach',
+				popupmessage : '<f:message key="dialog.remove-testcase-association.message" />',
+				tooltip : '<f:message key="test-case.verified_requirement_item.remove.button.label" />',
+				operation : 'detach-issues',
+				data: {issueid : '', 
+					   entityid : '${entityId}',
+					   entitytype: 'execution'},
+				success : function(data) {
+					refreshTestPlan();
+				}					
+			};
+					
+			$("#issue-table").squashTable(tableSettings, squashSettings);
+	});
+	
 </script>
-
-
-<comp:decorate-ajax-table url="${dataUrl}" tableId="issue-table" paginate="true" >
-	<jsp:attribute name="initialSort">[[1,'desc']]</jsp:attribute>
-	<jsp:attribute name="rowCallback">issueTableRowCallback</jsp:attribute> 
-	<jsp:attribute name="freeSettings">${ freeSettings }</jsp:attribute>
-	<jsp:attribute name="columnDefs">
-		<dt:column-definition targets="0" visible="false" sortable="false" />
-		<dt:column-definition targets="1" width="2.5em" cssClass="select-handle centered" sortable="true" visible="true"/>
-		<dt:column-definition targets="2, 3, 4, 5" sortable="false" visible="true"/>
-		<dt:column-definition targets="6" sortable="false" visible="true" lastDef="true"/>
-	</jsp:attribute>
-</comp:decorate-ajax-table>
-
-
 	
 <table id="issue-table">
 	<thead>
