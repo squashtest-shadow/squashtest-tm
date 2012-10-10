@@ -97,9 +97,21 @@ public class ExecutionStatusReport {
 		this.error = error;
 	}
 
+	public boolean areAllUntestable(){
+		if (
+		    (! hasSuccess())			&&
+			(! hasAggregatedBlocked())  && 
+			(! hasFailure()) 			&&	
+			(! hasRunning())			&&
+			(! hasReady())
+		){
+			return true;
+		}
+		return false;
+	}
+	
 	public boolean areAllSuccess() {
 		if (
-			(! hasUntestable())			&&
 			(! hasAggregatedBlocked())  && 
 			(! hasFailure()) 			&&	
 		    (! hasRunning())			&&

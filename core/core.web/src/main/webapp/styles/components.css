@@ -167,6 +167,10 @@ table.datepicker-table td.datepicker-table-col {
 	background: url("../images/Icon_Green.png") no-repeat;
 }
 
+.executions-status-UNTESTABLE-icon {
+	background: url("../images/Icon_White.png") no-repeat;
+}
+
 .executions-status-RUNNING-icon {
 	background: url("../images/Icon_Blue.png") no-repeat;
 }
@@ -587,6 +591,10 @@ span.span-green {
 }
 .exec-status-success, .exec-status-SUCCESS  {
 	background: transparent url("../images/Icon_Green.png") no-repeat center left;
+	padding-left: 20px;
+}
+.exec-status-untestable, .exec-status-UNTESTABLE  {
+	background: transparent url("../images/Icon_White.png") no-repeat center left;
 	padding-left: 20px;
 }
 .exec-status-running, .exec-status-RUNNING {

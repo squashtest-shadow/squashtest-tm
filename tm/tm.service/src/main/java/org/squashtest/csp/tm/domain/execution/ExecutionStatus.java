@@ -451,7 +451,7 @@ public enum ExecutionStatus implements Internationalizable {
 		if (report.hasBlocked()) {
 			newStatus = ExecutionStatus.BLOCKED;
 		} 
-		else if(report.hasUntestable()) {
+		else if(report.areAllUntestable()) {
 			newStatus = ExecutionStatus.UNTESTABLE;
 		}
 		else if (report.hasError()){

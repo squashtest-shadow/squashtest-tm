@@ -66,6 +66,10 @@
 				case conf.warning :
 					css = "executions-status-WARNING-icon";
 					break;
+
+				case conf.untestable :
+					css = "executions-status-UNTESTABLE-icon";
+					break;
 					
 				default : 
 					status="";
