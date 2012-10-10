@@ -24,10 +24,12 @@ import java.util.Collection;
 import java.util.List;
 
 import org.squashtest.csp.tm.domain.execution.Execution;
+import org.squashtest.csp.tm.domain.library.Library;
 import org.squashtest.csp.tm.domain.requirement.RequirementSearchCriteria;
 import org.squashtest.csp.tm.domain.testcase.ActionTestStep;
 import org.squashtest.csp.tm.domain.testcase.ExportTestCaseData;
 import org.squashtest.csp.tm.domain.testcase.TestCase;
+import org.squashtest.csp.tm.domain.testcase.TestCaseFolder;
 import org.squashtest.csp.tm.domain.testcase.TestCaseLibraryNode;
 import org.squashtest.csp.tm.domain.testcase.TestCaseSearchCriteria;
 import org.squashtest.csp.tm.domain.testcase.TestStep;
@@ -44,8 +46,23 @@ public interface TestCaseDao extends EntityDao<TestCase> {
 
 	List<TestCase> findAllByIdListOrderedByName(final List<Long> testCaseIds);
 	
+	/**
+	 * Will find all names of folderes content starting with the input string.
+	 * Will not return sub-folder's content names.
+	 * 
+	 * @param folderId the id of a {@link TestCaseFolder}
+	 * @param nameStart the search param
+	 * @return
+	 */
 	List<String> findNamesInFolderStartingWith(long folderId, String nameStart);
-
+	/**
+	 * Will find all names of library root content starting with the input string.
+	 * Will not return library folders and sub-folder's content names.
+	 * 
+	 * @param libraryId the id of a {@link TestCaseLibrary}
+	 * @param nameStart the search param
+	 * @return
+	 */
 	List<String> findNamesInLibraryStartingWith(long libraryId, String nameStart);
 
 	TestCase findByIdWithInitializedSteps(long testCaseId);

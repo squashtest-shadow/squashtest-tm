@@ -33,7 +33,7 @@ import org.squashtest.csp.tm.infrastructure.filter.CollectionSorting
 import org.squashtest.csp.tm.internal.repository.TestCaseDao
 import org.squashtest.csp.tools.unittest.assertions.ListAssertions
 import org.unitils.dbunit.annotation.DataSet
-import org.squashtest.tm.core.foundation.collection.Paging;
+import org.squashtest.tm.core.foundation.collection.Paging
 import org.squashtest.tm.core.foundation.collection.PagingAndSorting
 import org.squashtest.tm.core.foundation.collection.SortOrder
 
@@ -465,5 +465,31 @@ class HibernateTestCaseDaoIT extends DbunitDaoSpecification {
 		then:
 		result.size() == 3
 		result.each {it.name == "testCase1-execution"}
+	}
+	
+	@DataSet("HibernateTestCaseDaoIT.should find names in -- starting with.xml")
+	def "should find names in folder starting with"(){
+		when:
+		def folderId = 1L
+		def nameStart = "nameStart"
+		def result = testCaseDao.findNamesInFolderStartingWith(folderId, nameStart)
+		
+		then:
+		result.size() == 2
+		result.any {((String) it) == "nameStart-deux" }
+		result.any {((String) it) == "nameStart-quatre" }
+	}
+	
+	@DataSet("HibernateTestCaseDaoIT.should find names in -- starting with.xml")
+	def "should find names in library starting with"(){
+		when:
+		def libraryId = 1L
+		def nameStart = "nameStart"
+		def result = testCaseDao.findNamesInLibraryStartingWith(libraryId, nameStart)
+		
+		then:
+		result.size() == 2
+		result.any {((String) it) == "nameStart-cinq" }
+		result.any {((String) it) == "nameStart-six" }
 	}
 }

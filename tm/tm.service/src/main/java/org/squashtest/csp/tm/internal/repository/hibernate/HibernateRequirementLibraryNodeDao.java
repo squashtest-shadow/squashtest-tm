@@ -28,11 +28,13 @@ import org.springframework.stereotype.Repository;
 import org.squashtest.csp.tm.domain.requirement.RequirementLibraryNode;
 import org.squashtest.csp.tm.internal.repository.LibraryNodeDao;
 
+@SuppressWarnings("rawtypes")
 @Repository("squashtest.tm.repository.RequirementLibraryNodeDao")
 public class HibernateRequirementLibraryNodeDao extends HibernateEntityDao<RequirementLibraryNode>
 		implements LibraryNodeDao<RequirementLibraryNode> {
 
 
+	@SuppressWarnings("unchecked")
 	@Override
 	public List<String> getParentsName(long entityId) {
 		SQLQuery query = currentSession().createSQLQuery(NativeQueries.requirementLibraryNode_findSortedParentNames);
@@ -40,7 +42,4 @@ public class HibernateRequirementLibraryNodeDao extends HibernateEntityDao<Requi
 		return query.list();
 	}
 	
-	private SetQueryParametersCallback idParameter(final long id) {
-		return new SetIdParameter("libraryNodeId", id);
-	}
 }

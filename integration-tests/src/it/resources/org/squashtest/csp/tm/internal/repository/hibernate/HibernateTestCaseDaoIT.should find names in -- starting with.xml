@@ -1,0 +1,66 @@
+<!--
+
+        This file is part of the Squashtest platform.
+        Copyright (C) 2010 - 2012 Henix, henix.fr
+
+        See the NOTICE file distributed with this work for additional
+        information regarding copyright ownership.
+
+        This is free software: you can redistribute it and/or modify
+        it under the terms of the GNU Lesser General Public License as published by
+        the Free Software Foundation, either version 3 of the License, or
+        (at your option) any later version.
+
+        this software is distributed in the hope that it will be useful,
+        but WITHOUT ANY WARRANTY; without even the implied warranty of
+        MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+        GNU Lesser General Public License for more details.
+
+        You should have received a copy of the GNU Lesser General Public License
+        along with this software.  If not, see <http://www.gnu.org/licenses/>.
+
+-->
+<dataset>
+
+	<!--  dummy attachment list, the same for everyone that need one. -->
+	<attachment_list attachment_list_id="1" />
+	<test_case_library tcl_id="1"/>
+	<project name="project" created_by="dbunit" created_on="2012-10-09" tcl_id="1"/>
+
+<!-- 	ROOT   -->
+	<test_case_library_node tcln_id="1" name="un-nameStart" created_by="dbunit" created_on="2012-10-09"/>
+	<test_case_folder tcln_id="1"/>
+	<test_case_library_content library_id="1" content_id="1"/>
+	
+	<test_case_library_node tcln_id="5" name="nameStart-cinq" created_by="dbunit" created_on="2012-10-09"/>
+	<test_case tcln_id="5" version="1" attachment_list_id="1" />
+	<test_case_library_content library_id="1" content_id="5"/>
+	
+	<test_case_library_node tcln_id="6" name="nameStart-six" created_by="dbunit" created_on="2012-10-09"/>
+	<test_case tcln_id="6" version="1" attachment_list_id="1" />
+	<test_case_library_content library_id="1" content_id="6"/>
+	
+<!-- 	FOLDER 1 CONTENT -->
+	<test_case_library_node tcln_id="2" name="nameStart-deux" created_by="dbunit" created_on="2012-10-09"/>
+	<test_case tcln_id="2" version="1" attachment_list_id="1" />
+	<tcln_relationship ancestor_id="1" descendant_id="2"/>
+	
+	<test_case_library_node tcln_id="3" name="trois" created_by="dbunit" created_on="2012-10-09"/>
+	<test_case_folder tcln_id="3"/>
+	<tcln_relationship ancestor_id="1" descendant_id="3"/>
+	
+	<test_case_library_node tcln_id="4" name="nameStart-quatre" created_by="dbunit" created_on="2012-10-09"/>
+	<test_case_folder tcln_id="4"/>
+	<tcln_relationship ancestor_id="1" descendant_id="4"/>
+	
+	
+<!-- 	FOLDER 4 CONTENT -->
+	<test_case_library_node tcln_id="7" name="nameStartsept" created_by="dbunit" created_on="2012-10-09"/>
+	<test_case tcln_id="7" version="1" attachment_list_id="1" />
+	<tcln_relationship ancestor_id="4" descendant_id="7"/>
+	
+	<test_case_library_node tcln_id="8" name="huitnameStart" created_by="dbunit" created_on="2012-10-09"/>
+	<test_case_folder tcln_id="8"/>
+	<tcln_relationship ancestor_id="4" descendant_id="8"/>
+	
+</dataset>
