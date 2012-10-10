@@ -21,7 +21,7 @@
         along with this software.  If not, see <http://www.gnu.org/licenses/>.
 
 -->
-<!DOCTYPE dataset SYSTEM "../../../../../../../dtd/squash-tm.0.20.0.dtd">
+<!DOCTYPE dataset SYSTEM "../../../../../../../dtd/squash-tm.1.3.0.dtd">
 
 <dataset>
 
@@ -44,9 +44,9 @@
 <EXECUTION_STEP ACTION="ata" CREATED_ON="2011-08-30" CREATED_BY="IT" EXECUTION_STEP_ID="23" TEST_STEP_ID="13"/>
 <EXECUTION_STEP ACTION="ata" CREATED_ON="2011-08-30" CREATED_BY="IT" EXECUTION_STEP_ID="24" TEST_STEP_ID="14"/>
 
-	<call_test_step></call_test_step>
-	<test_case_library_content/>
-	<test_case_folder/>
+	<CALL_TEST_STEP></CALL_TEST_STEP>
+	<TEST_CASE_LIBRARY_CONTENT/>
+	<TEST_CASE_FOLDER/>
 	<TCLN_RELATIONSHIP/>
-	<test_case_steps/>
+	<TEST_CASE_STEPS/>
 </dataset>

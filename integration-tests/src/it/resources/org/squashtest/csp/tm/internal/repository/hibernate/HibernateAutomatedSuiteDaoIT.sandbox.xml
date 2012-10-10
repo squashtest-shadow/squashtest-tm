@@ -20,39 +20,38 @@
         along with this software.  If not, see <http://www.gnu.org/licenses/>.
 
 -->
-
+<!DOCTYPE dataset SYSTEM "../../../../../../../dtd/squash-tm.1.3.0.dtd">
 
 <dataset>
+	<TEST_AUTOMATION_SERVER SERVER_ID="1" BASE_URL="http://myserver" LOGIN="bob" PASSWORD="bob" KIND="jenkins"/>
 	
-	<test_automation_server server_id="1" base_url="http://myserver" login="bob" password="bob" kind="jenkins"/>
+	<TEST_AUTOMATION_PROJECT PROJECT_ID="1" NAME="first project" SERVER_ID="1"/>
+	<TEST_AUTOMATION_PROJECT PROJECT_ID="2" NAME="second project" SERVER_ID="1"/>
 	
-	<test_automation_project project_id="1" name="first project" server_id="1"/>
-	<test_automation_project project_id="2" name="second project" server_id="1"/>
-	
-	<automated_test test_id="11" name="test_11" project_id="1" />
-	<automated_test test_id="12" name="test_12" project_id="1" />
-	<automated_test test_id="13" name="test_13" project_id="1" />
-	<automated_test test_id="21" name="test_21" project_id="2" />
-	<automated_test test_id="22" name="test_22" project_id="2" />
-	
+	<AUTOMATED_TEST TEST_ID="11" NAME="test_11" PROJECT_ID="1" />
+	<AUTOMATED_TEST TEST_ID="12" NAME="test_12" PROJECT_ID="1" />
+	<AUTOMATED_TEST TEST_ID="13" NAME="test_13" PROJECT_ID="1" />
+	<AUTOMATED_TEST TEST_ID="21" NAME="test_21" PROJECT_ID="2" />
+	<AUTOMATED_TEST TEST_ID="22" NAME="test_22" PROJECT_ID="2" />
 	
 	
-	<attachment_list attachment_list_id="1"/>
 	
-	<execution execution_id="11" created_by="bob" created_on="2012-09-09" name="exec - test11" execution_status="SUCCESS"/>
-	<execution execution_id="12" created_by="bob" created_on="2012-09-09" name="exec - test12" execution_status="ERROR"/>
-	<execution execution_id="13" created_by="bob" created_on="2012-09-09" name="exec - test13" execution_status="RUNNING"/>
-	<execution execution_id="21" created_by="bob" created_on="2012-09-09" name="exec - test21" execution_status="READY"/>
-	<execution execution_id="22" created_by="bob" created_on="2012-09-09" name="exec - test22" execution_status="FAILURE"/>
+	<ATTACHMENT_LIST ATTACHMENT_LIST_ID="1"/>
+	
+	<EXECUTION EXECUTION_ID="11" CREATED_BY="bob" CREATED_ON="2012-09-09" NAME="exec - test11" EXECUTION_STATUS="SUCCESS"/>
+	<EXECUTION EXECUTION_ID="12" CREATED_BY="bob" CREATED_ON="2012-09-09" NAME="exec - test12" EXECUTION_STATUS="ERROR"/>
+	<EXECUTION EXECUTION_ID="13" CREATED_BY="bob" CREATED_ON="2012-09-09" NAME="exec - test13" EXECUTION_STATUS="RUNNING"/>
+	<EXECUTION EXECUTION_ID="21" CREATED_BY="bob" CREATED_ON="2012-09-09" NAME="exec - test21" EXECUTION_STATUS="READY"/>
+	<EXECUTION EXECUTION_ID="22" CREATED_BY="bob" CREATED_ON="2012-09-09" NAME="exec - test22" EXECUTION_STATUS="FAILURE"/>
 	
 	
-	<automated_suite suite_id="12345"/>
+	<AUTOMATED_SUITE SUITE_ID="12345"/>
 	
-	<automated_execution_extender extender_id="110" master_execution_id="11" test_id="11" suite_id="12345" />
-	<automated_execution_extender extender_id="120" master_execution_id="12" test_id="12" suite_id="12345" />
-	<automated_execution_extender extender_id="130" master_execution_id="13" test_id="13" suite_id="12345" />
-	<automated_execution_extender extender_id="210" master_execution_id="21" test_id="21" suite_id="12345" />
-	<automated_execution_extender extender_id="220" master_execution_id="22" test_id="22" suite_id="12345" />
+	<AUTOMATED_EXECUTION_EXTENDER EXTENDER_ID="110" MASTER_EXECUTION_ID="11" TEST_ID="11" SUITE_ID="12345" />
+	<AUTOMATED_EXECUTION_EXTENDER EXTENDER_ID="120" MASTER_EXECUTION_ID="12" TEST_ID="12" SUITE_ID="12345" />
+	<AUTOMATED_EXECUTION_EXTENDER EXTENDER_ID="130" MASTER_EXECUTION_ID="13" TEST_ID="13" SUITE_ID="12345" />
+	<AUTOMATED_EXECUTION_EXTENDER EXTENDER_ID="210" MASTER_EXECUTION_ID="21" TEST_ID="21" SUITE_ID="12345" />
+	<AUTOMATED_EXECUTION_EXTENDER EXTENDER_ID="220" MASTER_EXECUTION_ID="22" TEST_ID="22" SUITE_ID="12345" />
 
 	
 </dataset>
