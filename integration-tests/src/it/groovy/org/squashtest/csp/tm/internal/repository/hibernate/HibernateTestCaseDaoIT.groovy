@@ -22,8 +22,8 @@ package org.squashtest.csp.tm.internal.repository.hibernate
 
 import javax.inject.Inject
 
+import org.apache.poi.hssf.record.formula.functions.T
 import org.springframework.transaction.annotation.Transactional
-import org.squashtest.tm.core.foundation.collection.PagingAndSorting
 import org.squashtest.csp.tm.domain.requirement.RequirementCategory
 import org.squashtest.csp.tm.domain.requirement.RequirementCriticality
 import org.squashtest.csp.tm.domain.requirement.RequirementSearchCriteria
@@ -32,11 +32,8 @@ import org.squashtest.csp.tm.domain.testcase.TestCaseSearchCriteria
 import org.squashtest.csp.tm.infrastructure.filter.CollectionSorting
 import org.squashtest.csp.tm.internal.repository.TestCaseDao
 import org.squashtest.csp.tools.unittest.assertions.ListAssertions
-import org.unitils.dbunit.annotation.DataSet
 import org.squashtest.tm.core.foundation.collection.Paging
-import org.squashtest.tm.core.foundation.collection.PagingAndSorting
-import org.squashtest.tm.core.foundation.collection.SortOrder
-
+import org.unitils.dbunit.annotation.DataSet
 
 import spock.unitils.UnitilsSupport
 
@@ -467,7 +464,7 @@ class HibernateTestCaseDaoIT extends DbunitDaoSpecification {
 		result.each {it.name == "testCase1-execution"}
 	}
 	
-	@DataSet("HibernateTestCaseDaoIT.should find names in -- starting with.xml")
+	@DataSet("HibernateTestCaseDaoIT.should find on name.xml")
 	def "should find names in folder starting with"(){
 		when:
 		def folderId = 1L
@@ -480,7 +477,7 @@ class HibernateTestCaseDaoIT extends DbunitDaoSpecification {
 		result.any {((String) it) == "nameStart-quatre" }
 	}
 	
-	@DataSet("HibernateTestCaseDaoIT.should find names in -- starting with.xml")
+	@DataSet("HibernateTestCaseDaoIT.should find on name.xml")
 	def "should find names in library starting with"(){
 		when:
 		def libraryId = 1L
@@ -492,4 +489,5 @@ class HibernateTestCaseDaoIT extends DbunitDaoSpecification {
 		result.any {((String) it) == "nameStart-cinq" }
 		result.any {((String) it) == "nameStart-six" }
 	}
+	
 }
