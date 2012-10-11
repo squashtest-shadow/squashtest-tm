@@ -1,3 +1,6 @@
+
+
+
 /**
  *     This file is part of the Squashtest platform.
  *     Copyright (C) 2010 - 2012 Henix, henix.fr
@@ -18,13 +21,8 @@
  *     You should have received a copy of the GNU Lesser General Public License
  *     along with this software.  If not, see <http://www.gnu.org/licenses/>.
  */
-package org.squashtest.csp.tm.web.internal.model.builder;
+package org.squashtest.csp.tm.web.internal.model.builder
 
-import static org.squashtest.csp.tm.web.internal.model.builder.DummyEnum.*
-
-import java.util.Locale
-
-import org.apache.poi.hssf.record.formula.functions.T
 import org.squashtest.csp.tm.web.internal.helper.LabelFormatter
 
 import spock.lang.Specification
@@ -73,7 +71,7 @@ class EnumJeditableComboDataBuilderTest extends Specification {
 		when:
 		def res = builder
 			.useLocale(locale)
-			.selectItem(TWO)
+			.selectItem(DummyEnum.TWO)
 			.buildMap()
 
 		then:
@@ -101,36 +99,26 @@ class EnumJeditableComboDataBuilderTest extends Specification {
 		when:
 		def res = builder
 			.useLocale(locale)
-			.selectItem(TWO)
+			.selectItem(DummyEnum.TWO)
 			.buildMarshalled()
 
 		then:
 		1 * formatter.useLocale(locale)
-		1 * formatter.formatLabel(TWO)
-		1 * formatter.formatLabel(ONE)
+		1 * formatter.formatLabel(DummyEnum.TWO)
+		1 * formatter.formatLabel(DummyEnum.ONE)
 	}
 
 
 }
 
-private enum DummyEnum {
-	TWO(2),
-	ONE(1);
 
-	final int order;
-
-	DummyEnum(int order) {
-		this.order = order
-	}
-}
-
-private class DummyEnumComparator implements Comparator {
-	public int compare(Object a,  Object b) {
+public class DummyEnumComparator implements Comparator<DummyEnum> {
+	public int compare(DummyEnum a,  DummyEnum b) {
 		return a.order.compareTo(b.order)
 	}
 }
 
-private class DummyLabelFormatter implements LabelFormatter {
+public class DummyLabelFormatter implements LabelFormatter<DummyEnum> {
 
 	@Override
 	public LabelFormatter useLocale(Locale locale) {
@@ -139,12 +127,24 @@ private class DummyLabelFormatter implements LabelFormatter {
 	}
 
 	@Override
-	public String formatLabel(Object toFormat) {
+	public String formatLabel(DummyEnum toFormat) {
 		switch (toFormat) {
-			case ONE : return "un"
-			case TWO : return "deux"
+			case DummyEnum.ONE : return "un"
+			case DummyEnum.TWO : return "deux"
 			default : return "default"
 		}		
 	}
 	
-} 
+}
+
+public enum DummyEnum {
+	TWO(2),
+	ONE(1);
+
+	final int order;
+
+	DummyEnum(int order) {
+		this.order = order
+	}
+	
+}

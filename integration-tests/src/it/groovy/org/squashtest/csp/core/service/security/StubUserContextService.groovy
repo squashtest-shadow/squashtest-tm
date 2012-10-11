@@ -24,9 +24,8 @@ import java.util.Collection;
 
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.GrantedAuthority;
-import org.squashtest.it.infrastructure.Stub 
 
-@Stub
+
 class StubUserContextService implements UserContextService {
 
 	@Override
@@ -45,7 +44,8 @@ class StubUserContextService implements UserContextService {
 	}
 }
 
-class StubAuthentication implements Authentication {
+
+ public class StubAuthentication implements Authentication {
 
 	@Override
 	public String getName() {

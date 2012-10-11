@@ -20,7 +20,7 @@
  */
 package org.squashtest.csp.tm.web.internal.controller.search;
 
-import org.spockframework.mock.MockController;
+
 import org.squashtest.csp.tm.domain.requirement.RequirementCriticality;
 import org.squashtest.csp.tm.domain.requirement.VerificationCriterion;
 
