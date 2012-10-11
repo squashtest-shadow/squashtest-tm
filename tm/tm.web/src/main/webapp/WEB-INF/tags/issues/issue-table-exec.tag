@@ -99,6 +99,52 @@
 	} 
 
 	
+	function bindDeleteButtons() {
+		
+		var conf = this.squashSettings.deleteButtons;
+		
+		var popconf = {
+				oklabel : "ok",
+				cancellabel : "cancel"
+			};
+
+		var self = this;
+
+		this.delegate('td.delete-button > a', 'click', function() {
+			var row = this.parentNode.parentNode; 
+			
+			var jqRow = $(row);
+			jqRow.addClass('ui-state-row-selected');
+			var id = self.getODataId(row);
+
+			oneShotConfirm(conf.tooltip || "", conf.popupmessage || "",
+					popconf.oklabel, popconf.cancellabel).done(
+					function() {
+						
+						var request;
+							
+						var id = $(row).find('td:eq(0)').text();
+							
+						request = $.ajax({
+							type : 'post',
+							url : conf.url,
+							dataType : 'text',
+							data : {entitytype : conf.data.entitytype,
+									entityid : conf.data.entityid,
+									issueid : id}
+						});
+						
+					if (conf.success)
+							request.done(conf.success);
+					if (conf.fail)
+							request.fail(conf.fail);
+
+				}).fail(function() {
+					jqRow.removeClass('ui-state-row-selected');
+				});
+		});
+	};
+	
 	/* ************************** datatable settings ********************* */
 
 
@@ -132,6 +178,7 @@
 			var squashSettings = {
 
 			};
+	
 			
 			squashSettings.enableDnD = false;
 	
@@ -139,7 +186,6 @@
 				url : '${bugTrackerUrl}detach',
 				popupmessage : '<f:message key="dialog.remove-testcase-association.message" />',
 				tooltip : '<f:message key="test-case.verified_requirement_item.remove.button.label" />',
-				operation : 'detach-issues',
 				data: {issueid : '', 
 					   entityid : '${entityId}',
 					   entitytype: 'execution'},
@@ -147,7 +193,9 @@
 					refreshTestPlan();
 				}					
 			};
-					
+			
+			squashSettings.bindDeleteButtons = bindDeleteButtons;
+			
 			$("#issue-table").squashTable(tableSettings, squashSettings);
 	});
 	

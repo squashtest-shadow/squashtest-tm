@@ -588,26 +588,11 @@ jquery.squashtm.oneshotdialog.js
 
 						var request;
 						
-						if(conf.operation == 'detach-issues'){
-							
-							var id = $(row).find('td:eq(0)').text();
-							
-							request = $.ajax({
-								type : 'post',
-								url : finalUrl,
-								dataType : 'text',
-								data : {entitytype : conf.data.entitytype,
-									    entityid : conf.data.entityid,
-									    issueid : id}
-							});
-						}
-						else{
-							request = $.ajax({
-								type : 'delete',
-								url : finalUrl,
-								dataType : 'text'
-							});
-						}
+						request = $.ajax({
+							type : 'delete',
+							url : finalUrl,
+							dataType : 'text'
+						});
 						
 						if (conf.success)
 							request.done(conf.success);
@@ -700,6 +685,14 @@ jquery.squashtm.oneshotdialog.js
 		this.addHLinkToCellText = _addHLinkToCellText;
 		this.selectRows = _selectRows;
 		this.deselectRows = _deselectRows;
+	
+		if(squashSettings.bindDeleteButtons != null){
+			this.bindDeleteButtons = squashSettings.bindDeleteButtons;
+		}
+		else{
+			this.bindDeleteButtons = _bindDeleteButtons;
+		}
+			
 		this.refresh = function() {
 			this.fnDraw(false);
 		}
@@ -757,7 +750,7 @@ jquery.squashtm.oneshotdialog.js
 		;
 
 		if (squashEffective.deleteButtons) {
-			_bindDeleteButtons.call(this);
+			this.bindDeleteButtons();
 		}
 		;
 

@@ -131,7 +131,7 @@ public final class BugtrackerControllerHelper {
 	 * <br/>
 	 * <em># Test Case : [Reference] test case name <br/>
 	 * # Execution : execution link <br/>
-	 * # Concerned Step : step n°/total step nb<br/>
+	 * # Concerned Step : step nï¿½/total step nb<br/>
 	 * <br/>
 	 * # Issue description :<br/></em>
 	 * 
@@ -318,7 +318,7 @@ public final class BugtrackerControllerHelper {
 					bugTrackersLocalService.getIssueUrl(issue.getId(), ownership.getOwner().getBugTracker())
 							.toExternalForm(), issue.getId(), issue.getSummary(), issue.getPriority().getName(),
 					issue.getStatus().getName(), issue.getAssignee().getName(),
-					nameBuilder.buildName(ownership.getOwner()) };
+					nameBuilder.buildName(ownership.getOwner()),"" };
 		}
 	}
 
@@ -345,7 +345,7 @@ public final class BugtrackerControllerHelper {
 			return new Object[] {
 					bugTrackersLocalService.getIssueUrl(ownership.getIssue().getId(),
 							ownership.getOwner().getBugTracker()).toExternalForm(), ownership.getIssue().getId(),
-					ownership.getIssue().getSummary(), ownership.getIssue().getPriority().getName() };
+					ownership.getIssue().getSummary(), ownership.getIssue().getPriority().getName(),"" };
 		}
 	}
 
