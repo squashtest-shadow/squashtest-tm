@@ -28,6 +28,7 @@ import javax.servlet.http.HttpServletRequest;
 import org.springframework.context.MessageSource;
 import org.squashtest.csp.core.bugtracker.domain.BTIssue;
 import org.squashtest.csp.core.web.utils.HTMLCleanupUtils;
+import org.squashtest.csp.tm.domain.bugtracker.BTIssueDecorator;
 import org.squashtest.csp.tm.domain.bugtracker.IssueDetector;
 import org.squashtest.csp.tm.domain.bugtracker.IssueOwnership;
 import org.squashtest.csp.tm.domain.campaign.Iteration;
@@ -224,7 +225,7 @@ public final class BugtrackerControllerHelper {
 	 * </ul>
 	 * </p>
 	 */
-	static final class IterationIssuesTableModel extends DataTableModelHelper<IssueOwnership<BTIssue>> {
+	static final class IterationIssuesTableModel extends DataTableModelHelper<IssueOwnership<BTIssueDecorator>> {
 
 		private IssueOwnershipNameBuilder nameBuilder = new IterationModelOwnershipNamebuilder();
 		private BugTrackersLocalService bugTrackersLocalService;
@@ -237,7 +238,7 @@ public final class BugtrackerControllerHelper {
 		}
 
 		@Override
-		public Object[] buildItemData(IssueOwnership<BTIssue> ownership) {
+		public Object[] buildItemData(IssueOwnership<BTIssueDecorator> ownership) {
 			return new Object[] {
 					bugTrackersLocalService.getIssueUrl(ownership.getIssue().getId(),
 							ownership.getOwner().getBugTracker()).toExternalForm(), ownership.getIssue().getId(),
@@ -261,7 +262,7 @@ public final class BugtrackerControllerHelper {
 	 * </ul>
 	 * </p>
 	 */
-	static final class TestCaseIssuesTableModel extends DataTableModelHelper<IssueOwnership<BTIssue>> {
+	static final class TestCaseIssuesTableModel extends DataTableModelHelper<IssueOwnership<BTIssueDecorator>> {
 
 		private IssueOwnershipNameBuilder nameBuilder = new TestCaseModelOwnershipNamebuilder();
 		private BugTrackersLocalService bugTrackersLocalService;
@@ -274,7 +275,7 @@ public final class BugtrackerControllerHelper {
 		}
 
 		@Override
-		public Object[] buildItemData(IssueOwnership<BTIssue> ownership) {
+		public Object[] buildItemData(IssueOwnership<BTIssueDecorator> ownership) {
 			BTIssue issue = ownership.getIssue();
 			return new Object[] {
 					bugTrackersLocalService.getIssueUrl(issue.getId(), ownership.getOwner().getBugTracker())
@@ -298,7 +299,7 @@ public final class BugtrackerControllerHelper {
 	 * </ul>
 	 * </p>
 	 */
-	static final class ExecutionIssuesTableModel extends DataTableModelHelper<IssueOwnership<BTIssue>> {
+	static final class ExecutionIssuesTableModel extends DataTableModelHelper<IssueOwnership<BTIssueDecorator>> {
 
 		private IssueOwnershipNameBuilder nameBuilder = new ExecutionModelOwnershipNamebuilder();
 		private BugTrackersLocalService bugTrackersLocalService;
@@ -311,14 +312,14 @@ public final class BugtrackerControllerHelper {
 		}
 
 		@Override
-		public Object[] buildItemData(IssueOwnership<BTIssue> ownership) {
-			BTIssue issue = ownership.getIssue();
+		public Object[] buildItemData(IssueOwnership<BTIssueDecorator> ownership) {
+			BTIssueDecorator issue = ownership.getIssue();
 
 			return new Object[] {
 					bugTrackersLocalService.getIssueUrl(issue.getId(), ownership.getOwner().getBugTracker())
 							.toExternalForm(), issue.getId(), issue.getSummary(), issue.getPriority().getName(),
 					issue.getStatus().getName(), issue.getAssignee().getName(),
-					nameBuilder.buildName(ownership.getOwner()),"" };
+					nameBuilder.buildName(ownership.getOwner()),"",issue.getIssueId()};
 		}
 	}
 
@@ -333,7 +334,7 @@ public final class BugtrackerControllerHelper {
 	 * </ul>
 	 * </p>
 	 */
-	static final class StepIssuesTableModel extends DataTableModelHelper<IssueOwnership<BTIssue>> {
+	static final class StepIssuesTableModel extends DataTableModelHelper<IssueOwnership<BTIssueDecorator>> {
 		private BugTrackersLocalService bugTrackersLocalService;
 
 		StepIssuesTableModel(BugTrackersLocalService bugTrackerLocalService) {
@@ -341,11 +342,11 @@ public final class BugtrackerControllerHelper {
 		}
 
 		@Override
-		public Object[] buildItemData(IssueOwnership<BTIssue> ownership) {
+		public Object[] buildItemData(IssueOwnership<BTIssueDecorator> ownership) {
 			return new Object[] {
 					bugTrackersLocalService.getIssueUrl(ownership.getIssue().getId(),
 							ownership.getOwner().getBugTracker()).toExternalForm(), ownership.getIssue().getId(),
-					ownership.getIssue().getSummary(), ownership.getIssue().getPriority().getName(),"" };
+					ownership.getIssue().getSummary(), ownership.getIssue().getPriority().getName(),"",ownership.getIssue().getIssueId() };
 		}
 	}
 

@@ -43,6 +43,7 @@ import org.squashtest.csp.core.bugtracker.service.BugTrackersService;
 import org.squashtest.csp.core.bugtracker.spi.BugTrackerInterfaceDescriptor;
 import org.squashtest.csp.core.domain.IdentifiedUtil;
 import org.squashtest.csp.tm.domain.IssueAlreadyBoundException;
+import org.squashtest.csp.tm.domain.bugtracker.BTIssueDecorator;
 import org.squashtest.csp.tm.domain.bugtracker.BugTrackerStatus;
 import org.squashtest.csp.tm.domain.bugtracker.Issue;
 import org.squashtest.csp.tm.domain.bugtracker.IssueDetector;
@@ -260,7 +261,7 @@ public class BugTrackersLocalServiceImpl implements BugTrackersLocalService {
 	/* ------------------------ExecutionStep--------------------------------------- */
 	@Override
 	@PreAuthorize("hasPermission(#stepId, 'org.squashtest.csp.tm.domain.execution.ExecutionStep', 'READ') or hasRole('ROLE_ADMIN')")
-	public FilteredCollectionHolder<List<IssueOwnership<BTIssue>>> findSortedIssueOwnerShipsForExecutionStep(
+	public FilteredCollectionHolder<List<IssueOwnership<BTIssueDecorator>>> findSortedIssueOwnerShipsForExecutionStep(
 			Long stepId, CollectionSorting sorter) {
 		// find the ExecutionStep's IssueList id
 		ExecutionStep executionStep = executionStepDao.findById(stepId);
@@ -272,20 +273,34 @@ public class BugTrackersLocalServiceImpl implements BugTrackersLocalService {
 				sorter, bugTracker.getId());
 		List<String> issuesRemoteIds = extractRemoteIds(sortedIssueListIdsAndIssueRemoteIds);
 
+		//Get association between remote and local ids
+		Map<String,Long> removeIdsLocalIdsMapping = new HashMap<String,Long>();
+		for(Object[] issueTuple : sortedIssueListIdsAndIssueRemoteIds) {
+			removeIdsLocalIdsMapping.put((String) issueTuple[1], (Long) issueTuple[2]);
+		}
+		
 		// find the BT issues out of the remote ids
 		List<BTIssue> btIssues = remoteBugTrackersService.getIssues(issuesRemoteIds, bugTracker);
 
+		//Build the final list
+		List<BTIssueDecorator> btIssueDecorators = new ArrayList(btIssues.size());
+		for(BTIssue issue : btIssues){
+			BTIssueDecorator issueDecorator = new BTIssueDecorator(issue);
+			issueDecorator.setIssueId(removeIdsLocalIdsMapping.get(issue.getId()));
+			btIssueDecorators.add(issueDecorator);
+		}
+		
 		// make a FiltredCollectionHolder of IssueOwnerShip
-		List<IssueOwnership<BTIssue>> ownerships = bindBTIssuesToExecutionStep(btIssues, executionStep);
+		List<IssueOwnership<BTIssueDecorator>> ownerships = bindBTIssuesToExecutionStep(btIssueDecorators, executionStep);
 		Integer totalIssues = issueDao.countIssuesfromIssueList(issueListId, bugTracker.getId());
-		return new FilteredCollectionHolder<List<IssueOwnership<BTIssue>>>(totalIssues, ownerships);
+		return new FilteredCollectionHolder<List<IssueOwnership<BTIssueDecorator>>>(totalIssues, ownerships);
 	}
 
-	private List<IssueOwnership<BTIssue>> bindBTIssuesToExecutionStep(List<BTIssue> btIssues,
+	private List<IssueOwnership<BTIssueDecorator>> bindBTIssuesToExecutionStep(List<BTIssueDecorator> btIssues,
 			ExecutionStep executionStep) {
-		List<IssueOwnership<BTIssue>> ownerships = new ArrayList<IssueOwnership<BTIssue>>(btIssues.size());
-		for (BTIssue btIssue : btIssues) {
-			IssueOwnership<BTIssue> ownership = new IssueOwnership<BTIssue>(btIssue, executionStep);
+		List<IssueOwnership<BTIssueDecorator>> ownerships = new ArrayList<IssueOwnership<BTIssueDecorator>>(btIssues.size());
+		for (BTIssueDecorator btIssue : btIssues) {
+			IssueOwnership<BTIssueDecorator> ownership = new IssueOwnership<BTIssueDecorator>(btIssue, executionStep);
 			ownerships.add(ownership);
 		}
 		return ownerships;
@@ -294,7 +309,7 @@ public class BugTrackersLocalServiceImpl implements BugTrackersLocalService {
 	/* ------------------------Execution--------------------------------------- */
 	@Override
 	@PreAuthorize("hasPermission(#execId, 'org.squashtest.csp.tm.domain.execution.Execution', 'READ') or hasRole('ROLE_ADMIN')")
-	public FilteredCollectionHolder<List<IssueOwnership<BTIssue>>> findSortedIssueOwnershipsforExecution(Long execId,
+	public FilteredCollectionHolder<List<IssueOwnership<BTIssueDecorator>>> findSortedIssueOwnershipsforExecution(Long execId,
 			CollectionSorting sorter) {
 		// find bug-tracker
 		Execution execution = executionDao.findById(execId);
@@ -311,7 +326,7 @@ public class BugTrackersLocalServiceImpl implements BugTrackersLocalService {
 
 	@Override
 	@PreAuthorize("hasPermission(#iterId, 'org.squashtest.csp.tm.domain.campaign.Iteration', 'READ') or hasRole('ROLE_ADMIN')")
-	public FilteredCollectionHolder<List<IssueOwnership<BTIssue>>> findSortedIssueOwnershipForIteration(Long iterId,
+	public FilteredCollectionHolder<List<IssueOwnership<BTIssueDecorator>>> findSortedIssueOwnershipForIteration(Long iterId,
 			CollectionSorting sorter) {
 		// find bug-tracker
 		Iteration iteration = iterationDao.findById(iterId);
@@ -328,7 +343,7 @@ public class BugTrackersLocalServiceImpl implements BugTrackersLocalService {
 	/* ------------------------Campaign--------------------------------------- */
 	@Override
 	@PreAuthorize("hasPermission(#campId, 'org.squashtest.csp.tm.domain.campaign.Campaign' ,'READ') or hasRole('ROLE_ADMIN')")
-	public FilteredCollectionHolder<List<IssueOwnership<BTIssue>>> findSortedIssueOwnershipsForCampaigns(Long campId,
+	public FilteredCollectionHolder<List<IssueOwnership<BTIssueDecorator>>> findSortedIssueOwnershipsForCampaigns(Long campId,
 			CollectionSorting sorter) {
 		// find bug-tracker
 		Campaign campaign = campaignDao.findById(campId);
@@ -345,7 +360,7 @@ public class BugTrackersLocalServiceImpl implements BugTrackersLocalService {
 	/* ------------------------TestSuite--------------------------------------- */
 	@Override
 	@PreAuthorize("hasPermission(#testSuiteId, 'org.squashtest.csp.tm.domain.campaign.TestSuite', 'READ') or hasRole('ROLE_ADMIN')")
-	public FilteredCollectionHolder<List<IssueOwnership<BTIssue>>> findSortedIssueOwnershipsForTestSuite(
+	public FilteredCollectionHolder<List<IssueOwnership<BTIssueDecorator>>> findSortedIssueOwnershipsForTestSuite(
 			Long testSuiteId, CollectionSorting sorter) {
 		// find bug-tracker
 		TestSuite testSuite = testSuiteDao.findById(testSuiteId);
@@ -363,7 +378,7 @@ public class BugTrackersLocalServiceImpl implements BugTrackersLocalService {
 
 	@Override
 	@PreAuthorize("hasPermission(#tcId, 'org.squashtest.csp.tm.domain.testcase.TestCase', 'READ') or hasRole('ROLE_ADMIN')")
-	public FilteredCollectionHolder<List<IssueOwnership<BTIssue>>> findSortedIssueOwnershipForTestCase(Long tcId,
+	public FilteredCollectionHolder<List<IssueOwnership<BTIssueDecorator>>> findSortedIssueOwnershipForTestCase(Long tcId,
 				CollectionSorting sorter) {
 
 		// Find all concerned IssueDetector
@@ -400,7 +415,7 @@ public class BugTrackersLocalServiceImpl implements BugTrackersLocalService {
 	 * @param bugTracker
 	 * @return the filtered collection holder of IssuesOwnerships
 	 */
-	private FilteredCollectionHolder<List<IssueOwnership<BTIssue>>> createOwnershipsCollection(
+	private FilteredCollectionHolder<List<IssueOwnership<BTIssueDecorator>>> createOwnershipsCollection(
 			CollectionSorting sorter, List<IssueDetector> issueDetectors, BugTracker bugTracker) {
 		// Collect all IssueList.id out of the IssueDetector list, but keep the information about the
 		// IssueDetector/IssueList association
@@ -415,15 +430,29 @@ public class BugTrackersLocalServiceImpl implements BugTrackersLocalService {
 				sorter, bugTracker.getId());
 		List<String> issuesRemoteIds = extractRemoteIds(sortedIssueListIdsAndIssueRemoteIds);
 
+		//Get association between remote and local ids
+		Map<String,Long> removeIdsLocalIdsMapping = new HashMap<String,Long>();
+		for(Object[] issueTuple : sortedIssueListIdsAndIssueRemoteIds) {
+			removeIdsLocalIdsMapping.put((String) issueTuple[1], (Long) issueTuple[2]);
+		}
+		
 		// Find the BT issues out of the remote ids
 		List<BTIssue> btIssues = remoteBugTrackersService.getIssues(issuesRemoteIds, bugTracker);
 
+		//Build the final list
+		List<BTIssueDecorator> btIssueDecorators = new ArrayList(btIssues.size());
+		for(BTIssue issue : btIssues){
+			BTIssueDecorator issueDecorator = new BTIssueDecorator(issue);
+			issueDecorator.setIssueId(removeIdsLocalIdsMapping.get(issue.getId()));
+			btIssueDecorators.add(issueDecorator);
+		}
+		
 		// Bind the BT issues to their owner with the kept informations
-		List<IssueOwnership<BTIssue>> ownerships = bindBTIssuesToOwner(btIssues, sortedIssueListIdsAndIssueRemoteIds,
+		List<IssueOwnership<BTIssueDecorator>> ownerships = bindBTIssuesToOwner(btIssueDecorators, sortedIssueListIdsAndIssueRemoteIds,
 				issueDetectorByListId);
 
 		Integer totalIssues = issueDao.countIssuesfromIssueList(issueListIdsList, bugTracker.getId());
-		return new FilteredCollectionHolder<List<IssueOwnership<BTIssue>>>(totalIssues, ownerships);
+		return new FilteredCollectionHolder<List<IssueOwnership<BTIssueDecorator>>>(totalIssues, ownerships);
 	}
 
 	/**
@@ -438,7 +467,7 @@ public class BugTrackersLocalServiceImpl implements BugTrackersLocalService {
 	 * @param issueDetectors
 	 * @return
 	 */
-	private FilteredCollectionHolder<List<IssueOwnership<BTIssue>>> createOwnershipsCollection(
+	private FilteredCollectionHolder<List<IssueOwnership<BTIssueDecorator>>> createOwnershipsCollection(
 			CollectionSorting sorter, List<Execution> executions, List<ExecutionStep> executionSteps) {
 		// Keep the information about the
 		// IssueDetector/IssueList association
@@ -454,16 +483,30 @@ public class BugTrackersLocalServiceImpl implements BugTrackersLocalService {
 		// IssueList/remoteId association
 		List<Object[]> sortedIssueListIdsAndIssueRemoteIds = issueDao.findSortedIssuesFromExecutionAndExecutionSteps(executionIds,
 				executionStepsIds, sorter);
+	
+		//Get association between remote and local ids
+		Map<String,Long> removeIdsLocalIdsMapping = new HashMap<String,Long>();
+		for(Object[] issueTuple : sortedIssueListIdsAndIssueRemoteIds) {
+			removeIdsLocalIdsMapping.put((String) issueTuple[1], (Long) issueTuple[2]);
+		}
 		
 		// Find the BT issues out of the remote ids
 		List<BTIssue> btIssues = findBTIssuesOutOfRemoteIdsAndBTIds(sortedIssueListIdsAndIssueRemoteIds);		
+	
+		//Build the final list
+		List<BTIssueDecorator> btIssueDecorators = new ArrayList(btIssues.size());
+		for(BTIssue issue : btIssues){
+			BTIssueDecorator issueDecorator = new BTIssueDecorator(issue);
+			issueDecorator.setIssueId(removeIdsLocalIdsMapping.get(issue.getId()));
+			btIssueDecorators.add(issueDecorator);
+		}
 		
 		// Bind the BT issues to their owner with the kept informations
-		List<IssueOwnership<BTIssue>> ownerships = bindBTIssuesToOwner(btIssues, sortedIssueListIdsAndIssueRemoteIds,
+		List<IssueOwnership<BTIssueDecorator>> ownerships = bindBTIssuesToOwner(btIssueDecorators, sortedIssueListIdsAndIssueRemoteIds,
 				issueDetectorByListId);
 		
 		Integer totalIssues = issueDao.countIssuesfromExecutionAndExecutionSteps(executionIds, executionStepsIds);
-		return new FilteredCollectionHolder<List<IssueOwnership<BTIssue>>>(totalIssues, ownerships);
+		return new FilteredCollectionHolder<List<IssueOwnership<BTIssueDecorator>>>(totalIssues, ownerships);
 		
 	}
 
@@ -517,14 +560,14 @@ public class BugTrackersLocalServiceImpl implements BugTrackersLocalService {
 		return issueDetectorByListId;
 	}
 
-	private List<IssueOwnership<BTIssue>> bindBTIssuesToOwner(List<BTIssue> btIssues,
+	private List<IssueOwnership<BTIssueDecorator>> bindBTIssuesToOwner(List<BTIssueDecorator> btIssues,
 			List<Object[]> sortedIssueListIdsAndIssueRemoteIds, Map<Long, IssueDetector> issueDetectorByListId) {
-		List<IssueOwnership<BTIssue>> ownerships = new ArrayList<IssueOwnership<BTIssue>>(btIssues.size());
+		List<IssueOwnership<BTIssueDecorator>> ownerships = new ArrayList<IssueOwnership<BTIssueDecorator>>(btIssues.size());
 		Map<String, Long> listIdByRemoteId = createMapOutOfList(sortedIssueListIdsAndIssueRemoteIds);
-		for (BTIssue btIssue : btIssues) {
+		for (BTIssueDecorator btIssue : btIssues) {
 			Long listId = listIdByRemoteId.get(btIssue.getId());
 			IssueDetector owner = issueDetectorByListId.get(listId);
-			IssueOwnership<BTIssue> ownership = new IssueOwnership<BTIssue>(btIssue, owner);
+			IssueOwnership<BTIssueDecorator> ownership = new IssueOwnership<BTIssueDecorator>(btIssue, owner);
 			ownerships.add(ownership);
 		}
 		return ownerships;

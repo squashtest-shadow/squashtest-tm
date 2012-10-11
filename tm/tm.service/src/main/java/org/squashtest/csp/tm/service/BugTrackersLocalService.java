@@ -31,6 +31,7 @@ import org.squashtest.csp.core.bugtracker.domain.BTProject;
 import org.squashtest.csp.core.bugtracker.domain.BugTracker;
 import org.squashtest.csp.core.bugtracker.domain.Priority;
 import org.squashtest.csp.core.bugtracker.spi.BugTrackerInterfaceDescriptor;
+import org.squashtest.csp.tm.domain.bugtracker.BTIssueDecorator;
 import org.squashtest.csp.tm.domain.bugtracker.BugTrackerStatus;
 import org.squashtest.csp.tm.domain.bugtracker.IssueDetector;
 import org.squashtest.csp.tm.domain.bugtracker.IssueOwnership;
@@ -90,7 +91,7 @@ public interface BugTrackersLocalService {
 	 * @return a FilteredCollectionHolder containing a non-null but possibly empty list of IssueOwnership<Issue>, sorted
 	 *         and filtered according to the CollectionSorting.
 	 */
-	FilteredCollectionHolder<List<IssueOwnership<BTIssue>>> findSortedIssueOwnerShipsForExecutionStep(Long stepId,
+	FilteredCollectionHolder<List<IssueOwnership<BTIssueDecorator>>> findSortedIssueOwnerShipsForExecutionStep(Long stepId,
 			CollectionSorting sorter);
 
 	/**
@@ -107,7 +108,7 @@ public interface BugTrackersLocalService {
 	 * @return a FilteredCollectionHolder containing a non-null but possibly empty list of IssueOwnership<Issue>, sorted
 	 *         and filtered according to the CollectionSorting.
 	 */
-	FilteredCollectionHolder<List<IssueOwnership<BTIssue>>> findSortedIssueOwnershipsforExecution(Long execId,
+	FilteredCollectionHolder<List<IssueOwnership<BTIssueDecorator>>> findSortedIssueOwnershipsforExecution(Long execId,
 			CollectionSorting sorter);
 
 	/**
@@ -124,7 +125,7 @@ public interface BugTrackersLocalService {
 	 * @return a FilteredCollectionHolder containing a non-null but possibly empty list of IssueOwnership<Issue>, sorted
 	 *         and filtered according to the CollectionSorting.
 	 */
-	FilteredCollectionHolder<List<IssueOwnership<BTIssue>>> findSortedIssueOwnershipForIteration(Long iterId,
+	FilteredCollectionHolder<List<IssueOwnership<BTIssueDecorator>>> findSortedIssueOwnershipForIteration(Long iterId,
 			CollectionSorting sorter);
 
 	/**
@@ -141,7 +142,7 @@ public interface BugTrackersLocalService {
 	 * @return a FilteredCollectionHolder containing a non-null but possibly empty list of IssueOwnership<Issue>, sorted
 	 *         and filtered according to the CollectionSorting.
 	 */
-	FilteredCollectionHolder<List<IssueOwnership<BTIssue>>> findSortedIssueOwnershipsForCampaigns(Long campId,
+	FilteredCollectionHolder<List<IssueOwnership<BTIssueDecorator>>> findSortedIssueOwnershipsForCampaigns(Long campId,
 			CollectionSorting sorter);
 
 	/**
@@ -158,7 +159,7 @@ public interface BugTrackersLocalService {
 	 * @return a FilteredCollectionHolder containing a non-null but possibly empty list of IssueOwnership<Issue>, sorted
 	 *         and filtered according to the CollectionSorting.
 	 */
-	FilteredCollectionHolder<List<IssueOwnership<BTIssue>>> findSortedIssueOwnershipsForTestSuite(Long testSuiteId,
+	FilteredCollectionHolder<List<IssueOwnership<BTIssueDecorator>>> findSortedIssueOwnershipsForTestSuite(Long testSuiteId,
 			CollectionSorting sorter);
 
 	/**
@@ -175,7 +176,7 @@ public interface BugTrackersLocalService {
 	 * @return a FilteredCollectionHolder containing a non-null but possibly empty list of IssueOwnership<Issue>, sorted
 	 *         and filtered according to the CollectionSorting.
 	 */
-	FilteredCollectionHolder<List<IssueOwnership<BTIssue>>> findSortedIssueOwnershipForTestCase(Long tcId,
+	FilteredCollectionHolder<List<IssueOwnership<BTIssueDecorator>>> findSortedIssueOwnershipForTestCase(Long tcId,
 			CollectionSorting sorter);
 
 	/* ****************** BugTracker - side methods ******************** */

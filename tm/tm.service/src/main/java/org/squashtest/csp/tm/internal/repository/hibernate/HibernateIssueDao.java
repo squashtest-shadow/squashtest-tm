@@ -124,7 +124,8 @@ public class HibernateIssueDao extends HibernateEntityDao<Issue> implements Issu
 					.createAlias("IssueList.issues", "Issue")
 					.setProjection(
 							Projections.projectionList().add(Projections.property("IssueList.id"), "issueListId")
-									.add(Projections.property("Issue.remoteIssueId"), "remoteId"))
+									.add(Projections.property("Issue.remoteIssueId"), "remoteId")
+									.add(Projections.property("Issue.id"), "localId"))
 					.add(Restrictions.in("IssueList.id", issueListIds))
 					.add(Restrictions.eq("Issue.bugtracker.id", bugtrackerId));
 			
