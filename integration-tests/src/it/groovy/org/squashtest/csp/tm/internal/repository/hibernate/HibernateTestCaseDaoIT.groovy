@@ -65,6 +65,7 @@ class HibernateTestCaseDaoIT extends DbunitDaoSpecification {
 		then:
 		steps.collect { it.id } == [200, 300]
 	}
+	
 	@DataSet("HibernateTestCaseDaoIT.should count calling test steps.xml")
 	def "should count calling test steps"() {
 		when:
@@ -73,6 +74,7 @@ class HibernateTestCaseDaoIT extends DbunitDaoSpecification {
 		then:
 		callers == 1
 	}
+	
 	@DataSet("HibernateTestCaseDaoIT.should count calling test steps.xml")
 	def "should count no calling test steps"() {
 		when:
@@ -81,6 +83,7 @@ class HibernateTestCaseDaoIT extends DbunitDaoSpecification {
 		then:
 		callers == 0
 	}
+	
 	@DataSet("HibernateTestCaseDaoIT.should find called test cases.xml")
 	def "should find called test cases"() {
 		when:
@@ -89,6 +92,7 @@ class HibernateTestCaseDaoIT extends DbunitDaoSpecification {
 		then:
 		calleds == [10L]
 	}
+	
 	@DataSet("HibernateTestCaseDaoIT.should find called test cases.xml")
 	def "should find no called test cases"() {
 		when:
@@ -367,6 +371,7 @@ class HibernateTestCaseDaoIT extends DbunitDaoSpecification {
 		res.size() == 3
 		res.containsSameIdentifiers([302L, 103L, 102L])
 	}
+	
 	@DataSet("HibernateTestCaseDaoIT.should find test cases by requirement categories.xml")
 	def "should find test cases by requirement categories"() {
 		given:
@@ -490,4 +495,30 @@ class HibernateTestCaseDaoIT extends DbunitDaoSpecification {
 		result.any {((String) it) == "nameStart-six" }
 	}
 	
+	@DataSet("HibernateTestCaseDaoIT.should find on name.xml")
+	def "should find all by name containing "(){
+		when:
+		def token = "token"
+		def groupedByProject = false
+		def result = testCaseDao.findAllByNameContaining(token, groupedByProject);
+		
+		then:
+		result.size() == 4
+		def name = result.collectNested {  it.name }
+		name.containsAll(["un-nameStart-token", "neuf-token","token douze", "dix token foo"])
+	}
+	
+	@DataSet("HibernateTestCaseDaoIT.should find on name.xml")
+	def "should find all by name containing grouped by project"(){
+		when:
+		def token = "token"
+		def groupedByProject = true
+		def result = testCaseDao.findAllByNameContaining(token, groupedByProject);
+		
+		then:
+		result.size() == 4
+		result.get(0).name == "un-nameStart-token"
+		def name = result.collectNested {  it.name }
+		name.containsAll(["un-nameStart-token", "neuf-token","token douze", "dix token foo"])
+	}
 }

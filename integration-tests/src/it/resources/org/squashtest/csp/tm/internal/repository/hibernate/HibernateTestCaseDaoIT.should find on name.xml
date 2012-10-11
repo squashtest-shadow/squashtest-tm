@@ -21,46 +21,91 @@
 
 -->
 <dataset>
-
+	
 	<!--  dummy attachment list, the same for everyone that need one. -->
 	<attachment_list attachment_list_id="1" />
+<!-- ************** -->
+<!-- 	PROJECT 1    -->
+<!-- **************  -->
 	<test_case_library tcl_id="1"/>
-	<project name="project" created_by="dbunit" created_on="2012-10-09" tcl_id="1"/>
-
+	<project project_id="1" name="project" created_by="dbunit" created_on="2012-10-09" tcl_id="1"/>
+	
 <!-- 	ROOT   -->
-	<test_case_library_node tcln_id="1" name="un-nameStart" created_by="dbunit" created_on="2012-10-09"/>
+	<test_case_library_node tcln_id="1" name="un-nameStart-token" created_by="dbunit" created_on="2012-10-09" project_id="1"/>
 	<test_case_folder tcln_id="1"/>
 	<test_case_library_content library_id="1" content_id="1"/>
 	
-	<test_case_library_node tcln_id="5" name="nameStart-cinq" created_by="dbunit" created_on="2012-10-09"/>
+	<test_case_library_node tcln_id="5" name="nameStart-cinq" created_by="dbunit" created_on="2012-10-09" project_id="1"/>
 	<test_case tcln_id="5" version="1" attachment_list_id="1" />
 	<test_case_library_content library_id="1" content_id="5"/>
 	
-	<test_case_library_node tcln_id="6" name="nameStart-six" created_by="dbunit" created_on="2012-10-09"/>
+	<test_case_library_node tcln_id="6" name="nameStart-six" created_by="dbunit" created_on="2012-10-09" project_id="1"/>
 	<test_case tcln_id="6" version="1" attachment_list_id="1" />
 	<test_case_library_content library_id="1" content_id="6"/>
 	
 <!-- 	FOLDER 1 CONTENT -->
-	<test_case_library_node tcln_id="2" name="nameStart-deux" created_by="dbunit" created_on="2012-10-09"/>
+	<test_case_library_node tcln_id="2" name="nameStart-deux" created_by="dbunit" created_on="2012-10-09" project_id="1"/>
 	<test_case tcln_id="2" version="1" attachment_list_id="1" />
 	<tcln_relationship ancestor_id="1" descendant_id="2"/>
 	
-	<test_case_library_node tcln_id="3" name="trois" created_by="dbunit" created_on="2012-10-09"/>
+	<test_case_library_node tcln_id="3" name="trois" created_by="dbunit" created_on="2012-10-09" project_id="1"/>
 	<test_case_folder tcln_id="3"/>
 	<tcln_relationship ancestor_id="1" descendant_id="3"/>
 	
-	<test_case_library_node tcln_id="4" name="nameStart-quatre" created_by="dbunit" created_on="2012-10-09"/>
+	<test_case_library_node tcln_id="4" name="nameStart-quatre" created_by="dbunit" created_on="2012-10-09" project_id="1"/>
 	<test_case_folder tcln_id="4"/>
 	<tcln_relationship ancestor_id="1" descendant_id="4"/>
 	
 	
 <!-- 	FOLDER 4 CONTENT -->
-	<test_case_library_node tcln_id="7" name="nameStartsept" created_by="dbunit" created_on="2012-10-09"/>
+	<test_case_library_node tcln_id="7" name="nameStartsept" created_by="dbunit" created_on="2012-10-09" project_id="1"/>
 	<test_case tcln_id="7" version="1" attachment_list_id="1" />
 	<tcln_relationship ancestor_id="4" descendant_id="7"/>
 	
-	<test_case_library_node tcln_id="8" name="huitnameStart" created_by="dbunit" created_on="2012-10-09"/>
+	<test_case_library_node tcln_id="8" name="huitnameStart" created_by="dbunit" created_on="2012-10-09" project_id="1"/>
 	<test_case_folder tcln_id="8"/>
 	<tcln_relationship ancestor_id="4" descendant_id="8"/>
 	
+	
+<!-- **************  -->
+<!-- 	PROJECT 2    -->
+<!--  **************   -->
+	<test_case_library tcl_id="2"/>
+	<project project_id="2" name="project" created_by="dbunit" created_on="2012-10-09" tcl_id="2"/>
+	
+<!-- 	ROOT   -->
+	<test_case_library_node tcln_id="9" name="neuf-token" created_by="dbunit" created_on="2012-10-09" project_id="2"/>
+	<test_case_folder tcln_id="9"/>
+	<test_case_library_content library_id="2" content_id="9"/>
+	
+	<test_case_library_node tcln_id="10" name="dix token foo" created_by="dbunit" created_on="2012-10-09" project_id="2"/>
+	<test_case tcln_id="10" version="1" attachment_list_id="1" />
+	<test_case_library_content library_id="2" content_id="10"/>
+	
+	<test_case_library_node tcln_id="11" name="onze" created_by="dbunit" created_on="2012-10-09" project_id="2"/>
+	<test_case tcln_id="11" version="1" attachment_list_id="1" />
+	<test_case_library_content library_id="2" content_id="11"/>
+	
+<!-- 	FOLDER 1 CONTENT -->
+	<test_case_library_node tcln_id="12" name="token douze" created_by="dbunit" created_on="2012-10-09" project_id="2"/>
+	<test_case tcln_id="12" version="1" attachment_list_id="1" />
+	<tcln_relationship ancestor_id="9" descendant_id="12"/>
+	
+	<test_case_library_node tcln_id="13" name="treize" created_by="dbunit" created_on="2012-10-09" project_id="2"/>
+	<test_case_folder tcln_id="13"/>
+	<tcln_relationship ancestor_id="9" descendant_id="13"/>
+	
+	<test_case_library_node tcln_id="14" name="quatorze" created_by="dbunit" created_on="2012-10-09" project_id="2"/>
+	<test_case_folder tcln_id="14"/>
+	<tcln_relationship ancestor_id="9" descendant_id="14"/>
+	
+	
+<!-- 	FOLDER 14 CONTENT -->
+	<test_case_library_node tcln_id="15" name="nameStart-quinze" created_by="dbunit" created_on="2012-10-09" project_id="2"/>
+	<test_case tcln_id="15" version="1" attachment_list_id="1" />
+	<tcln_relationship ancestor_id="14" descendant_id="15"/>
+	
+	<test_case_library_node tcln_id="16" name="huit" created_by="dbunit" created_on="2012-10-09" project_id="2"/>
+	<test_case_folder tcln_id="16"/>
+	<tcln_relationship ancestor_id="14" descendant_id="16"/>
 </dataset>
