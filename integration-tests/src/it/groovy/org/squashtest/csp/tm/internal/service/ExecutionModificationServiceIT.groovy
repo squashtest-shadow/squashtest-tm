@@ -349,7 +349,7 @@ class ExecutionModificationServiceIT extends HibernateServiceSpecification {
 		def execution = execList.get(execList.size()-1)
 
 		when :
-		ExecutionStatusReport report = new ExecutionStatusReport(1, 0, 0, 4, 0, 0);
+		ExecutionStatusReport report = new ExecutionStatusReport(3, 0, 0, 0, 0, 0);
 
 		procservice.setExecutionStatus(execution.id, report);
 
@@ -385,7 +385,7 @@ class ExecutionModificationServiceIT extends HibernateServiceSpecification {
 		def execution = execList.get(execList.size()-1)
 
 		when :
-		ExecutionStatusReport report = new ExecutionStatusReport(0, 0,1, 4, 0, 0);
+		ExecutionStatusReport report = new ExecutionStatusReport(1, 0,1, 4, 0, 0);
 
 		procservice.setExecutionStatus(execution.id, report);
 
@@ -403,7 +403,7 @@ class ExecutionModificationServiceIT extends HibernateServiceSpecification {
 		def execution = execList.get(execList.size()-1)
 
 		when :
-		ExecutionStatusReport report = new ExecutionStatusReport(0, 0, 0, 5, 0, 0);
+		ExecutionStatusReport report = new ExecutionStatusReport(1, 0, 0, 5, 0, 0);
 
 		procservice.setExecutionStatus(execution.id, report);
 
@@ -421,7 +421,7 @@ class ExecutionModificationServiceIT extends HibernateServiceSpecification {
 		def execution = execList.get(execList.size()-1)
 
 		when :
-		ExecutionStatusReport report = new ExecutionStatusReport(0, 0, 0, 1,3, 1);
+		ExecutionStatusReport report = new ExecutionStatusReport(1, 0, 0, 1,3, 1);
 
 		procservice.setExecutionStatus(execution.id, report);
 
@@ -439,7 +439,7 @@ class ExecutionModificationServiceIT extends HibernateServiceSpecification {
 		def execution = execList.get(execList.size()-1)
 
 		when :
-		ExecutionStatusReport report = new ExecutionStatusReport(0, 0, 0, 0, 0, 5);
+		ExecutionStatusReport report = new ExecutionStatusReport(1, 0, 0, 0, 0, 5);
 
 		procservice.setExecutionStatus(execution.id, report);
 

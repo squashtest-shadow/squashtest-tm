@@ -99,9 +99,9 @@ public class ExecutionStatusReport {
 
 	public boolean areAllUntestable(){
 		if (
-		    (! hasSuccess())			&&
+		    (! hasAggregatedSuccess())	&&
 			(! hasAggregatedBlocked())  && 
-			(! hasFailure()) 			&&	
+			(! hasFailure()) 			&&
 			(! hasRunning())			&&
 			(! hasReady())
 		){
