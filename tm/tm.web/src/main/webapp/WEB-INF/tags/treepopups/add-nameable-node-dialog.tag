@@ -104,9 +104,11 @@ $(function(){
 			<c:if test='${ resourceName == "iteration"}'>
 				<tr>
 					<td></td>
-					<td><label for="copy-test-plan"><f:message key="dialog.new-iteration.copy"/></label>
+					<td>
 					<input id="copy-test-plan-box" name="copy-test-plan-box" type="checkbox" onClick="setCopyTestPlan()"/>
-					<input type=hidden id="copy-test-plan" value="false"></input></td>
+					<input type=hidden id="copy-test-plan" value="false"></input>
+					<label class="afterDisabled" for="copy-test-plan-box"><f:message key="dialog.new-iteration.copy"/></label>
+					</td>
 				</tr>
 			</c:if>
 		</table>
@@ -157,7 +159,7 @@ $(function(){
 				name="#add-iteration-name" 
 				description="#add-iteration-description"
 				copyTestPlan="#copy-test-plan"/>;
-				$('#copy-test-plan-box').attr('checked', false);
+				cleanup();
 		</c:when>
 		<c:otherwise>
 			var params = <jq:params-bindings 
@@ -171,7 +173,8 @@ $(function(){
 	
 	function cleanup(){
 		<c:if test='${ resourceName eq "iteration" }'>
-			$('#copy-test-plan-box').attr('checked', false);
+			$('#copy-test-plan-box').attr('checked', true);
+			setCopyTestPlan();
 		</c:if>
 	}
 	
