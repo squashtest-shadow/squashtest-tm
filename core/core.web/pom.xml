@@ -19,6 +19,7 @@
     <project.stage>RELEASE</project.stage> <!--  overridable by activating the profile development -->
     <spring.version.range>[3,4)</spring.version.range>
     <springdm.version.range>[2,3)</springdm.version.range>
+    <thymeleaf.version>2.0.13-SNAPSHOT</thymeleaf.version>
   </properties>
 
   <dependencies>
@@ -219,7 +220,7 @@
     <dependency>
       <groupId>org.thymeleaf</groupId>
       <artifactId>org.squashtest.org.thymeleaf</artifactId>
-      <version>2.0.6</version>
+      <version>${thymeleaf.version}</version>
 		<exclusions>
 			<exclusion>
 				<groupId>org.slf4j</groupId>
@@ -230,7 +231,7 @@
     <dependency>
       <groupId>org.thymeleaf</groupId>
       <artifactId>org.squashtest.org.thymeleaf.spring3</artifactId>
-      <version>2.0.6</version>
+      <version>${thymeleaf.version}</version>
 		<exclusions>
 			<exclusion>
 				<groupId>org.slf4j</groupId>
