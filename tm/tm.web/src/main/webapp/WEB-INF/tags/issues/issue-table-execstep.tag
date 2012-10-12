@@ -64,8 +64,13 @@
 		return rowData[1];
 	}
 
+	function getIssueTableRowIssueId(rowData) {
+		return rowData[5];
+	}
+	
 	function issueTableRowCallback(row, data, displayIndex) {
 		addHLinkToIdRow(row,data);
+		addIdAttributeToIdRow(row,data);
 		return row;
 	}
 	
@@ -74,6 +79,12 @@
 		var td = $(row).find("td:eq(0)");
 		var url = getIssueTableRowUrl(data);
 		addHLinkToCellText(td, url, true);
+	}
+	
+	function addIdAttributeToIdRow(row,data){
+		var td = $(row).find("td:eq(0)");
+		var issueid = getIssueTableRowIssueId(data);
+		td.attr('issueid',issueid);
 	}
 
 	function bindDeleteButtons() {
@@ -100,15 +111,13 @@
 							
 							var request;
 								
-							var id = $(row).find('td:eq(0)').text();
+							var id = $(row).find('td:eq(0)').attr('issueid');
 								
 							request = $.ajax({
 								type : 'post',
 								url : conf.url,
 								dataType : 'text',
-								data : {entitytype : conf.data.entitytype,
-										entityid : conf.data.entityid,
-										issueid : id}
+								data : {issueid : id}
 							});
 							
 						if (conf.success)
@@ -144,7 +153,8 @@
 						{'bSortable': true, 'sClass': 'select-handle centered', 'aTargets': [1]},
 						{'bSortable': false, 'aTargets': [2]},
 						{'bSortable': false, 'aTargets': [3]},
-						{'bSortable': false, 'sWidth': '2em', 'aTargets': [4], 'sClass' : 'centered delete-button'}
+						{'bSortable': false, 'sWidth': '2em', 'aTargets': [4], 'sClass' : 'centered delete-button'},
+						{'bSortable': false, 'bVisible': false, 'aTargets': [5]}
 					]
 				};		
 			
@@ -158,9 +168,7 @@
 					url : '${bugTrackerUrl}detach',
 					popupmessage : '<f:message key="dialog.remove-testcase-association.message" />',
 					tooltip : '<f:message key="test-case.verified_requirement_item.remove.button.label" />',
-					data: {issueid : '', 
-						   entityid : '${entityId}',
-						   entitytype: 'execution-step'},
+					data: {issueid : ''},
 					success : function(data) {
 						refreshTestPlan();
 					}					

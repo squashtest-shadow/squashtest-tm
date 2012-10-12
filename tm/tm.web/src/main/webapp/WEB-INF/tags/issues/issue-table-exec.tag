@@ -66,9 +66,14 @@
 		return rowData[6];
 	}
 
+	function getIssueTableRowIssueId(rowData) {
+		return rowData[8];
+	}
+	
 	function issueTableRowCallback(row, data, displayIndex) {
 		addHLinkToIdRow(row,data);
 		checkEmptyValues(row, data);
+		addIdAttributeToIdRow(row,data);
 		return row;
 	}
 	
@@ -79,6 +84,15 @@
 		addHLinkToCellText(td, url, true);
 	}
 	
+	function addIdAttributeToIdRow(row,data){
+		var td = $(row).find("td:eq(0)");
+		var issueid = getIssueTableRowIssueId(data);
+		td.attr('issueid',issueid);
+	}
+	
+	function rowDataToTestCaseId(rowData){
+		return rowData['tc-id'];
+	}
 	
 	<%-- we check the assignee only (for now) --%>
 	function checkEmptyValues(row, data){
@@ -123,15 +137,13 @@
 						
 						var request;
 							
-						var id = $(row).find('td:eq(0)').text();
+						var id = $(row).find('td:eq(0)').attr('issueid');
 							
 						request = $.ajax({
 							type : 'post',
 							url : conf.url,
 							dataType : 'text',
-							data : {entitytype : conf.data.entitytype,
-									entityid : conf.data.entityid,
-									issueid : id}
+							data : {issueid : id}
 						});
 						
 					if (conf.success)
@@ -171,7 +183,8 @@
 					{'bSortable': false, 'aTargets': [4]},
 					{'bSortable': false, 'aTargets': [5]},
 					{'bSortable': false, 'aTargets': [6]},
-					{'bSortable': false, 'sWidth': '2em', 'aTargets': [7], 'sClass' : 'centered delete-button'}
+					{'bSortable': false, 'sWidth': '2em', 'aTargets': [7], 'sClass' : 'centered delete-button'},
+					{'bSortable': false, 'bVisible': false, 'aTargets': [8]}
 				]
 			};		
 		
@@ -186,9 +199,7 @@
 				url : '${bugTrackerUrl}detach',
 				popupmessage : '<f:message key="dialog.remove-testcase-association.message" />',
 				tooltip : '<f:message key="test-case.verified_requirement_item.remove.button.label" />',
-				data: {issueid : '', 
-					   entityid : '${entityId}',
-					   entitytype: 'execution'},
+				data: {issueid : ''},
 				success : function(data) {
 					refreshTestPlan();
 				}					

@@ -438,104 +438,38 @@ class BugTrackersLocalServiceIT_Disabled extends DbunitServiceSpecification  {
 		
 	}
 	
-	
 	def "should detach an issue from an execution"(){
-	
-		given :
 		
-			btService.setCredentials("administrator", "root")
-		
-		and :
-			Execution ex = findEntity(Execution.class, 1l)
+		given:
+			Execution ex = findEntity(Execution.class,1l)
 			
-			BTProject project = btService.findRemoteProject(ex.getProject().getName())
-			Version version = project.getVersions().get(0)
-			Category category = project.getCategories().get(0)
-			User assignee = project.getUsers().get(0)
-			Priority priority = btService.getRemotePriorities().get(0)
-			
-		and :
-			
-			BTIssue issue = new BTIssue()
-			issue.setProject(project)
-			issue.setAssignee(assignee)
-			issue.setVersion(version)
-			issue.setCategory(category)
-			issue.setPriority(priority)
-			issue.setSummary("test bug # 1")
-			issue.setDescription("issue description")
-			issue.setComment("this is a comment for test bug # 1")
-			
-		
-		when :
-			BTIssue reIssue = btService.createIssue(ex, issue)
-			
-			//we update the content of the step by refetching it
-			ex = findEntity(Execution.class, 1l)
-			
-			btService.detachIssue(ex, reIssue.getId())
-			
-			Issue toremove = null;
-			
-			for(Issue i : ex.getIssueList.getAllIssues()){
-				if(i.getRemoteIssueId().equals(reIssue.getId())){
-					toremove = i;
-					break;
-				}
-			}
+		when:
+			ex.getIssueList().findIssue(7l) != null
+			btService.detachIssue(7l)
+			def linkedIssue = ex.getIssueList().findIssue(7l)
+			def issue = findEntity(Issue.class, 7l)
 			
 		then:
-			toremove == null;
+			linkedIssue==null
+			issue!=null
 	}
 	
 	def "should detach an issue from an execution step"(){
 	
-		given :
+		given:
+			ExecutionStep estep = findEntity(Execution.class,1l)
 		
-			btService.setCredentials("administrator", "root")
+		when:
+			estep.getIssueList().findIssue(5l) != null
+			btService.detachIssue(5l)
+			def linkedIssue = estep.getIssueList().findIssue(5l)
+			def issue = findEntity(Issue.class, 5l)
 		
-		and :
-			ExecutionStep estep = findEntity(ExecutionStep.class, 1l)
-			
-			BTProject project = btService.findRemoteProject(estep.getProject().getName())
-			Version version = project.getVersions().get(0)
-			Category category = project.getCategories().get(0)
-			User assignee = project.getUsers().get(0)
-			Priority priority = btService.getRemotePriorities().get(0)
-			
-		and :
-			
-			BTIssue issue = new BTIssue()
-			issue.setProject(project)
-			issue.setAssignee(assignee)
-			issue.setVersion(version)
-			issue.setCategory(category)
-			issue.setPriority(priority)
-			issue.setSummary("test bug # 1")
-			issue.setDescription("issue description")
-			issue.setComment("this is a comment for test bug # 1")
-			
-		
-		when :
-			BTIssue reIssue = btService.createIssue(estep, issue)
-			
-			//we update the content of the step by refetching it
-			estep = findEntity(ExecutionStep.class, 1l)
-			
-			btService.detachIssue(estep, reIssue.getId())
-			
-			Issue toremove = null;
-			
-			for(Issue i : estep.getIssueList.getAllIssues()){
-				if(i.getRemoteIssueId().equals(reIssue.getId())){
-					toremove = i;
-					break;
-				}
-			}
-			
 		then:
-			toremove == null;
+			linkedIssue==null
+			issue!=null
 	}
+
 	
 	private Object findEntity(Class<?> entityClass, Long id){
 		return getSession().get(entityClass, id)

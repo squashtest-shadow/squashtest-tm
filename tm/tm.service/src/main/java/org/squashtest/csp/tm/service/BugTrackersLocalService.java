@@ -284,6 +284,6 @@ public interface BugTrackersLocalService {
 	 * @param issueId
 	 * 			: the id of the issue in Squash TM
 	 */
-	void detachIssue(IssueDetector bugged, String remoteIssueKey);
+	void detachIssue(Long id);
 
 }

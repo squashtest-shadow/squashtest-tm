@@ -149,9 +149,9 @@ class HibernateIssueDaoIT extends DbunitDaoSpecification {
 		then:
 		result.size() <= 7
 		result == [
-			[1000L, "22"],
-			[1011L, "33"],
-			[2010L, "66"]
+			[1000L, "22", 2L],
+			[1011L, "33", 3L],
+			[2010L, "66", 6L]
 		]
 	}
 	

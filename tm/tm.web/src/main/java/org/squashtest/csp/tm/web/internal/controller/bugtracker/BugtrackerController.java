@@ -597,21 +597,9 @@ public class BugtrackerController {
 	
 	@RequestMapping(value = "/detach", method = RequestMethod.POST)
 	public @ResponseBody 
-	void detachIssue(Long entityid, String entitytype, String issueid) {
+	void detachIssue(Long issueid) {
 		
-		IssueDetector issueDetector = null;
-				
-		if(entitytype.equals(EXECUTION_TYPE)) {
-			issueDetector = executionFinder.findById(entityid);
-		}
-		else {
-			issueDetector = executionFinder.findExecutionStepById(entityid);
-		}
-		
-		if(issueDetector != null) {
-			bugTrackersLocalService.detachIssue(issueDetector, issueid);
-		}
-		
+		bugTrackersLocalService.detachIssue(issueid);
 	}
 
 	/* ********* generates a json model for an issue ******* */

@@ -217,45 +217,10 @@ public class BugTrackersLocalServiceImpl implements BugTrackersLocalService {
 	
 	@Override
 	@PreAuthorize("hasPermission(#bugged, 'EXECUTE') or hasRole('ROLE_ADMIN')")
-	public void detachIssue(IssueDetector bugged, String remoteIssueKey){
+	public void detachIssue(Long id){
 		
-		IssueList issueList = bugged.getIssueList();
-		
-		// check that the issue exists
-		BTIssue test = getIssue(remoteIssueKey, bugged.getBugTracker());
-		
-		// at that point the service was supposed to fail if not found so we can move on
-		// but, in case of a wrong implementation of a connector here is a safety belt:
-		if (test == null) {
-			throw new BugTrackerNotFoundException("issue " + remoteIssueKey + " could not be found", null);
-		}
-		
-		Issue toremove = null;
-		
-		try{
-			Execution e = (Execution) bugged;
-			for(ExecutionStep step : e.getSteps()){
-				for(Issue issue : step.getIssueList().getAllIssues()){
-					if(issue.getRemoteIssueId().equals(remoteIssueKey)){
-						toremove = issue;
-						break;
-					}
-				}
-			}
-		}
-		catch(ClassCastException ex){
-			
-		}
-		
-		for(Issue issue : issueList.getAllIssues()){
-			if(issue.getRemoteIssueId().equals(remoteIssueKey)){
-				toremove = issue;
-				break;
-			}
-		}
-		
-		issueList.removeIssue(toremove);
-		issueDao.remove(toremove);
+		Issue issue = issueDao.findById(id);
+		issueDao.remove(issue);
 	}
 
 	/* ------------------------ExecutionStep--------------------------------------- */
