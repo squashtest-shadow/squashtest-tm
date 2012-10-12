@@ -20,6 +20,8 @@
  */
 package org.squashtest.csp.tm.web.internal.fileuploadutils;
 
+import java.util.Collections;
+import java.util.HashMap;
 import java.util.List;
 
 import javax.servlet.http.HttpServletRequest;
@@ -78,7 +80,7 @@ public class ProgressAwareMultipartResolver extends CommonsMultipartResolver {
 		MultipartParsingResult parsingResult = parseFileItems(fileItems, encoding);
 
 		return new DefaultMultipartHttpServletRequest(request, parsingResult.getMultipartFiles(), parsingResult
-				.getMultipartParameters());
+				.getMultipartParameters(), new HashMap<String, String>(0));
 	}
 
 

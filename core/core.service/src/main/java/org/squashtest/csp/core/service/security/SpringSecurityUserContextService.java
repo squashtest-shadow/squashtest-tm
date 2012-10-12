@@ -51,7 +51,7 @@ public class SpringSecurityUserContextService implements UserContextService {
 
 	@Override
 	public boolean hasRole(String role) {
-		Collection<GrantedAuthority> grantedAuths = getGrantedAuthorities();
+		Collection<? extends GrantedAuthority> grantedAuths = getGrantedAuthorities();
 
 		for (GrantedAuthority grantedAuth : grantedAuths) {
 			if (grantedAuth.getAuthority().equals(role)) {
@@ -62,10 +62,10 @@ public class SpringSecurityUserContextService implements UserContextService {
 		return false;
 	}
 
-	private Collection<GrantedAuthority> getGrantedAuthorities() {
+	private Collection<? extends GrantedAuthority> getGrantedAuthorities() {
 		Authentication principal = getPrincipal();
 
-		Collection<GrantedAuthority> grantedAuths;
+		Collection<? extends GrantedAuthority> grantedAuths;
 
 		if (principal == null) {
 			grantedAuths = Collections.emptyList();

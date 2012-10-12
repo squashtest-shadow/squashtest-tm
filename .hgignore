@@ -114,6 +114,8 @@ tm/tm\.testautomation\.api/META-INF$
 /\.idea$
 \.iml$
 plugins/plugin.testautomation.jenkins/META-INF
+tm/tm.web/scripts*
+tm/tm.web/images/*
 syntax: glob
 integration-tests/log/IT.log
 integration-tests/src/it/resources/log4j.properties

@@ -27,10 +27,13 @@
 	xmlns:context="http://www.springframework.org/schema/context"
 	xsi:schemaLocation="
 		http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans.xsd
-		http://www.springframework.org/schema/jdbc http://www.springframework.org/schema/jdbc/spring-jdbc-3.0.xsd
-		http://www.springframework.org/schema/context http://www.springframework.org/schema/context/spring-context-3.0.xsd
-		http://www.springframework.org/schema/security http://www.springframework.org/schema/security/spring-security-3.0.xsd">
-
+		http://www.springframework.org/schema/jdbc http://www.springframework.org/schema/jdbc/spring-jdbc-3.1.xsd
+		http://www.springframework.org/schema/context http://www.springframework.org/schema/context/spring-context-3.1.xsd
+		http://www.springframework.org/schema/security http://www.springframework.org/schema/security/spring-security-3.1.xsd">
+<!--  images and stuff dont need authentication -->
+<http pattern="/images/**" security="none"/>
+<http pattern="/styles/**" security="none"/>
+<http pattern="/scripts/**" security="none"/>
 	<http  auto-config="true" use-expressions="true" entry-point-ref="authenticationProcessingFilterEntryPoint"   >
 		<!-- Login page config -->
 		<intercept-url pattern="/login" access="permitAll" />
@@ -53,11 +56,7 @@
  		<intercept-url requires-channel="${authentication.application.securablechannels}" pattern="/administration/users" access="hasRole('ROLE_ADMIN')" />
 		<intercept-url requires-channel="${authentication.application.securablechannels}" pattern="/administration/users/**" access="hasRole('ROLE_ADMIN')" />
 		
-		<!--  images and stuff dont need authentication -->
-		<intercept-url pattern="/images/**" filters="none" />
-		<intercept-url pattern="/styles/**" filters="none" />
-		<intercept-url pattern="/scripts/**" filters="none"/>
-		
+			
 		<!-- One must log in to access the application -->
 		<intercept-url pattern="/**" access="isAuthenticated()" />
 		
@@ -82,7 +81,7 @@
 	</beans:bean>
 	
 	<beans:bean id="httpSessionRequestCache" class="org.squashtest.csp.core.web.controller.authentication.LoginFormDiscardingHttpSessionRequestCache">
-		<beans:property name="justUseSavedRequestOnGet" value="true"/>
+		<!-- <beans:property name="justUseSavedRequestOnGet" value="true"/>  -->
 		<beans:property name="loginFormUrl" value="/login.jsp" />
 	</beans:bean>
 
