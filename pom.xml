@@ -278,6 +278,7 @@
 						<exclude>**/scripts/jquery/**/*.*</exclude>
 						<exclude>**/scripts/jqgrid/**/*.*</exclude>
 						<exclude>**/scripts/thirdparties/**/*.*</exclude>
+                        <exclude>**/scripts/lib/**/*.*</exclude>
 						<exclude>**/styles/ckeditor/**/*.*</exclude>
 						<exclude>**/styles/datatables/**/*.*</exclude>
 						<exclude>**/styles/jquery/**/*.*</exclude>
