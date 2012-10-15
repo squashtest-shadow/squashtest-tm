@@ -21,8 +21,10 @@
 package org.squashtest.csp.tm.domain.testcase;
 
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.List;
 
+import org.squashtest.csp.tm.domain.audit.AuditableMixin;
 import org.squashtest.csp.tm.domain.library.ExportData;
 /**
  * Data support for jasper Test Case Export
@@ -37,6 +39,8 @@ public class ExportTestCaseData extends ExportData implements TestStepVisitor{
 	private String firstExpectedResult = "";
 	private List<ExportTestStepData> steps = new ArrayList<ExportTestStepData>();
 	private ExportTestStepData lastBuildStepData;
+	private String lastModifiedBy = "";
+	private Date lastModifiedOn ;
 	
 
 	public String getPrerequisite() {
@@ -96,6 +100,9 @@ public class ExportTestCaseData extends ExportData implements TestStepVisitor{
 		this.reference = testCase.getReference();
 		this.prerequisite = testCase.getPrerequisite();
 		this.weight = testCase.getImportance();
+		AuditableMixin audit = ((AuditableMixin) testCase);	
+		this.lastModifiedBy = audit.getLastModifiedBy();
+		this.lastModifiedOn = audit.getLastModifiedOn();
 		formatSteps(testCase);
 	}
 
@@ -141,5 +148,21 @@ public class ExportTestCaseData extends ExportData implements TestStepVisitor{
 		String result = "";
 		lastBuildStepData = new ExportTestStepData(action, result);
 		
+	}
+
+	public String getLastModifiedBy() {
+		return lastModifiedBy;
+	}
+
+	public void setLastModifiedBy(String lastModifiedBy) {
+		this.lastModifiedBy = lastModifiedBy;
+	}
+
+	public Date getLastModifiedOn() {
+		return lastModifiedOn;
+	}
+
+	public void setLastModifiedOn(Date lastModifiedOn) {
+		this.lastModifiedOn = lastModifiedOn;
 	}
 }

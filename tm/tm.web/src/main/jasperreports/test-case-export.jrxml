@@ -21,9 +21,9 @@
         along with this software.  If not, see <http://www.gnu.org/licenses/>.
 
 -->
-<jasperReport xmlns="http://jasperreports.sourceforge.net/jasperreports" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://jasperreports.sourceforge.net/jasperreports http://jasperreports.sourceforge.net/xsd/jasperreport.xsd" name="test-case-export" pageWidth="2000" pageHeight="40" orientation="Landscape" columnWidth="2000" leftMargin="0" rightMargin="0" topMargin="0" bottomMargin="0" resourceBundle="/WEB-INF/messages/tm/messages" whenResourceMissingType="Key">
+<jasperReport xmlns="http://jasperreports.sourceforge.net/jasperreports" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://jasperreports.sourceforge.net/jasperreports http://jasperreports.sourceforge.net/xsd/jasperreport.xsd" name="test-case-export" pageWidth="2340" pageHeight="40" orientation="Landscape" columnWidth="2340" leftMargin="0" rightMargin="0" topMargin="0" bottomMargin="0" resourceBundle="/WEB-INF/messages/tm/messages" whenResourceMissingType="Key">
 	<property name="ireport.zoom" value="1.0000000000000013"/>
-	<property name="ireport.x" value="702"/>
+	<property name="ireport.x" value="1059"/>
 	<property name="ireport.y" value="0"/>
 	<property name="net.sf.jasperreports.text.truncate.at.char" value="Boolean.FALSE"/>
 	<property name="net.sf.jasperreports.export.xls.white.page.background" value="false"/>
@@ -64,6 +64,12 @@
 	</field>
 	<field name="createdBy" class="java.lang.String">
 		<fieldDescription><![CDATA[createdBy]]></fieldDescription>
+	</field>
+	<field name="lastModifiedOn" class="java.util.Date">
+		<fieldDescription><![CDATA[lastModifiedOn]]></fieldDescription>
+	</field>
+	<field name="lastModifiedBy" class="java.lang.String">
+		<fieldDescription><![CDATA[lastModifiedBy]]></fieldDescription>
 	</field>
 	<field name="prerequisite" class="java.lang.String">
 		<fieldDescription><![CDATA[prerequisite]]></fieldDescription>
@@ -147,18 +153,32 @@
 				<textFieldExpression class="java.lang.String"><![CDATA["PRE_REQUISITE"]]></textFieldExpression>
 			</textField>
 			<textField isStretchWithOverflow="true">
-				<reportElement style="table_TH" stretchType="RelativeToBandHeight" mode="Opaque" x="1700" y="0" width="170" height="20"/>
+				<reportElement style="table_TH" stretchType="RelativeToBandHeight" mode="Opaque" x="2040" y="0" width="170" height="20"/>
 				<textElement textAlignment="Center" verticalAlignment="Middle">
 					<font isBold="true"/>
 				</textElement>
 				<textFieldExpression class="java.lang.String"><![CDATA["EXPECTED_RESULT"]]></textFieldExpression>
 			</textField>
 			<textField isStretchWithOverflow="true">
-				<reportElement style="table_TH" stretchType="RelativeToBandHeight" mode="Opaque" x="1530" y="0" width="170" height="20"/>
+				<reportElement style="table_TH" stretchType="RelativeToBandHeight" mode="Opaque" x="1870" y="0" width="170" height="20"/>
 				<textElement textAlignment="Center" verticalAlignment="Middle">
 					<font isBold="true"/>
 				</textElement>
 				<textFieldExpression class="java.lang.String"><![CDATA["ACTION"]]></textFieldExpression>
+			</textField>
+			<textField isStretchWithOverflow="true">
+				<reportElement style="table_TH" stretchType="RelativeToBandHeight" mode="Opaque" x="1700" y="0" width="170" height="20"/>
+				<textElement textAlignment="Center" verticalAlignment="Middle">
+					<font isBold="true"/>
+				</textElement>
+				<textFieldExpression class="java.lang.String"><![CDATA["LAST_MODIFIED_BY"]]></textFieldExpression>
+			</textField>
+			<textField isStretchWithOverflow="true">
+				<reportElement style="table_TH" stretchType="RelativeToBandHeight" mode="Opaque" x="1530" y="0" width="170" height="20"/>
+				<textElement textAlignment="Center" verticalAlignment="Middle">
+					<font isBold="true"/>
+				</textElement>
+				<textFieldExpression class="java.lang.String"><![CDATA["LAST_MODIFIED_ON"]]></textFieldExpression>
 			</textField>
 		</band>
 	</title>
@@ -237,7 +257,7 @@
 				<textFieldExpression class="java.lang.String"><![CDATA[$F{createdBy}]]></textFieldExpression>
 			</textField>
 			<textField>
-				<reportElement style="table_TD" stretchType="RelativeToBandHeight" mode="Transparent" x="1530" y="0" width="170" height="20">
+				<reportElement style="table_TD" stretchType="RelativeToBandHeight" mode="Transparent" x="1870" y="0" width="170" height="20">
 					<property name="net.sf.jasperreports.export.xls.ignore.cell.background" value="true"/>
 					<property name="net.sf.jasperreports.print.keep.full.text" value="true"/>
 				</reportElement>
@@ -245,17 +265,33 @@
 				<textFieldExpression class="java.lang.String"><![CDATA[$F{firstAction}]]></textFieldExpression>
 			</textField>
 			<textField>
-				<reportElement style="table_TD" stretchType="RelativeToBandHeight" mode="Transparent" x="1700" y="0" width="170" height="20">
+				<reportElement style="table_TD" stretchType="RelativeToBandHeight" mode="Transparent" x="2040" y="0" width="170" height="20">
 					<property name="net.sf.jasperreports.export.xls.ignore.cell.background" value="true"/>
 					<property name="net.sf.jasperreports.print.keep.full.text" value="true"/>
 				</reportElement>
 				<textElement verticalAlignment="Top" markup="none"/>
 				<textFieldExpression class="java.lang.String"><![CDATA[$F{firstExpectedResult}]]></textFieldExpression>
 			</textField>
+			<textField isBlankWhenNull="true">
+				<reportElement style="table_TD" stretchType="RelativeToBandHeight" mode="Transparent" x="1700" y="0" width="170" height="20">
+					<property name="net.sf.jasperreports.export.xls.ignore.cell.background" value="true"/>
+					<property name="net.sf.jasperreports.print.keep.full.text" value="true"/>
+				</reportElement>
+				<textElement verticalAlignment="Top" markup="none"/>
+				<textFieldExpression class="java.lang.String"><![CDATA[$F{lastModifiedBy}]]></textFieldExpression>
+			</textField>
+			<textField isBlankWhenNull="true">
+				<reportElement style="table_TD" stretchType="RelativeToBandHeight" mode="Transparent" x="1530" y="0" width="170" height="20">
+					<property name="net.sf.jasperreports.export.xls.ignore.cell.background" value="true"/>
+					<property name="net.sf.jasperreports.print.keep.full.text" value="true"/>
+				</reportElement>
+				<textElement verticalAlignment="Top" markup="none"/>
+				<textFieldExpression class="java.util.Date"><![CDATA[$F{lastModifiedOn}]]></textFieldExpression>
+			</textField>
 		</band>
 		<band height="20" splitType="Prevent">
 			<subreport>
-				<reportElement stretchType="RelativeToTallestObject" mode="Transparent" x="0" y="0" width="1190" height="20" isRemoveLineWhenBlank="true"/>
+				<reportElement stretchType="RelativeToTallestObject" mode="Transparent" x="0" y="0" width="2340" height="20" isRemoveLineWhenBlank="true"/>
 				<subreportParameter name="REPORT_RESOURCE_BUNDLE">
 					<subreportParameterExpression><![CDATA[$P{REPORT_RESOURCE_BUNDLE}]]></subreportParameterExpression>
 				</subreportParameter>

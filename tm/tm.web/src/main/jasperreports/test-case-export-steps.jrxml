@@ -21,9 +21,9 @@
         along with this software.  If not, see <http://www.gnu.org/licenses/>.
 
 -->
-<jasperReport xmlns="http://jasperreports.sourceforge.net/jasperreports" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://jasperreports.sourceforge.net/jasperreports http://jasperreports.sourceforge.net/xsd/jasperreport.xsd" name="requirement-coverage_requirements" pageWidth="2000" pageHeight="20" orientation="Landscape" columnWidth="2000" leftMargin="0" rightMargin="0" topMargin="0" bottomMargin="0" resourceBundle="/WEB-INF/messages/tm/messages" whenResourceMissingType="Key">
-	<property name="ireport.zoom" value="0.6830134553650705"/>
-	<property name="ireport.x" value="0"/>
+<jasperReport xmlns="http://jasperreports.sourceforge.net/jasperreports" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://jasperreports.sourceforge.net/jasperreports http://jasperreports.sourceforge.net/xsd/jasperreport.xsd" name="test_case_export_steps" pageWidth="2340" pageHeight="20" orientation="Landscape" columnWidth="2340" leftMargin="0" rightMargin="0" topMargin="0" bottomMargin="0" resourceBundle="/WEB-INF/messages/tm/messages" whenResourceMissingType="Key">
+	<property name="ireport.zoom" value="1.1"/>
+	<property name="ireport.x" value="1195"/>
 	<property name="ireport.y" value="0"/>
 	<style name="table_TD" mode="Transparent">
 		<box>
@@ -69,6 +69,12 @@
 	</field>
 	<field name="testCase.weight" class="java.lang.Enum">
 		<fieldDescription><![CDATA[testCase.weight]]></fieldDescription>
+	</field>
+	<field name="testCase.lastModifiedBy" class="java.lang.String">
+		<fieldDescription><![CDATA[testCase.lastModifiedBy]]></fieldDescription>
+	</field>
+	<field name="testCase.lastModifiedOn" class="java.util.Date">
+		<fieldDescription><![CDATA[testCase.lastModifiedOn]]></fieldDescription>
 	</field>
 	<detail>
 		<band height="20" splitType="Prevent">
@@ -161,7 +167,7 @@
 				<textFieldExpression class="java.lang.String"><![CDATA[$F{testCase.createdBy}]]></textFieldExpression>
 			</textField>
 			<textField isBlankWhenNull="true">
-				<reportElement style="table_TD" stretchType="RelativeToBandHeight" mode="Transparent" x="1530" y="0" width="170" height="20">
+				<reportElement style="table_TD" stretchType="RelativeToBandHeight" mode="Transparent" x="1870" y="0" width="170" height="20">
 					<property name="net.sf.jasperreports.export.xls.ignore.cell.background" value="true"/>
 					<property name="net.sf.jasperreports.print.keep.full.text" value="true"/>
 				</reportElement>
@@ -169,12 +175,28 @@
 				<textFieldExpression class="java.lang.String"><![CDATA[$F{action}]]></textFieldExpression>
 			</textField>
 			<textField isBlankWhenNull="true">
-				<reportElement style="table_TD" stretchType="RelativeToBandHeight" mode="Transparent" x="1700" y="0" width="170" height="20">
+				<reportElement style="table_TD" stretchType="RelativeToBandHeight" mode="Transparent" x="2040" y="0" width="170" height="20">
 					<property name="net.sf.jasperreports.export.xls.ignore.cell.background" value="true"/>
 					<property name="net.sf.jasperreports.print.keep.full.text" value="true"/>
 				</reportElement>
 				<textElement/>
 				<textFieldExpression class="java.lang.String"><![CDATA[$F{expectedResult}]]></textFieldExpression>
+			</textField>
+			<textField isBlankWhenNull="true">
+				<reportElement style="table_TD" stretchType="RelativeToBandHeight" mode="Transparent" x="1530" y="0" width="170" height="20">
+					<property name="net.sf.jasperreports.export.xls.ignore.cell.background" value="true"/>
+					<property name="net.sf.jasperreports.print.keep.full.text" value="true"/>
+				</reportElement>
+				<textElement/>
+				<textFieldExpression class="java.util.Date"><![CDATA[$F{testCase.lastModifiedOn}]]></textFieldExpression>
+			</textField>
+			<textField isBlankWhenNull="true">
+				<reportElement style="table_TD" stretchType="RelativeToBandHeight" mode="Transparent" x="1700" y="0" width="170" height="20">
+					<property name="net.sf.jasperreports.export.xls.ignore.cell.background" value="true"/>
+					<property name="net.sf.jasperreports.print.keep.full.text" value="true"/>
+				</reportElement>
+				<textElement/>
+				<textFieldExpression class="java.lang.String"><![CDATA[$F{testCase.lastModifiedBy}]]></textFieldExpression>
 			</textField>
 		</band>
 	</detail>
