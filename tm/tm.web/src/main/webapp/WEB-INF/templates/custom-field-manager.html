@@ -1,0 +1,155 @@
+<!--
+
+        This file is part of the Squashtest platform.
+        Copyright (C) 2010 - 2012 Henix, henix.fr
+
+        See the NOTICE file distributed with this work for additional
+        information regarding copyright ownership.
+
+        This is free software: you can redistribute it and/or modify
+        it under the terms of the GNU Lesser General Public License as published by
+        the Free Software Foundation, either version 3 of the License, or
+        (at your option) any later version.
+
+        this software is distributed in the hope that it will be useful,
+        but WITHOUT ANY WARRANTY; without even the implied warranty of
+        MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+        GNU Lesser General Public License for more details.
+
+        You should have received a copy of the GNU Lesser General Public License
+        along with this software.  If not, see <http://www.gnu.org/licenses/>.
+
+-->
+<!DOCTYPE html SYSTEM "http://www.thymeleaf.org/dtd/xhtml1-transitional-thymeleaf-spring3-3.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml" xmlns:th="http://www.thymeleaf.org">
+<head>
+  <title th:text="#{workspace.report.title}">Espace rapports</title>
+  <meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
+  <script type="text/javascript" th:inline="javascript">
+    /* <![CDATA[ */
+    var squashtm = squashtm || {};
+	squashtm.app = {
+    	contextRoot: /*[[ @{/} ]]*/ "http://localhost:8080/squash",
+    	cfTable: {
+    		languageUrl: /*[[ @{/datatables/messages} ]]*/ "http://localhost:8080/squash/datatables/messages", 
+    		displayLength: /*[[ ${customFieldsPageSize} ]]*/ 50, 
+    		ajaxSource: /*[[ @{/custom-fields} ]]*/ "http://localhost:8080/squash/custom-fields",
+    		deferLoading: /*[[ ${#lists.size(customFields)} ]]*/ 1
+    	}
+  	};
+    /* ]]> */
+  </script>
+  <script data-main="../../scripts/custom-field-manager.js" th:attr="data-main='@{/scripts/custom-field-manager.js}'" 
+    src="../../scripts/require.js" th:src="@{/scripts/require-min.js}">
+  </script>
+  <!-- common head -->
+  <link rel="stylesheet" type="text/css" media="all"
+    href="../../../../../../../core/core.web/src/main/webapp/styles/master.css" th:href="@{/styles/master.css}" />
+  <link rel="shortcut icon" type="image/x-icon" media="all"
+    href="../../../../../../../core/core.web/src/main/webapp/images/favicon.ico" th:href="@{/images/favicon.ico}" />
+  <!-- /common head -->
+  <!-- common script import -->
+  <link rel="stylesheet" type="text/css" media="all"
+    href="../../../../../../../core/core.web/src/main/webapp/styles/squashtm.fg.menu.css"
+    th:href="@{/styles/squashtm.fg.menu.css}" />
+  <!-- /common script import -->
+  <link rel="stylesheet" type="text/css" media="all"
+    href="../../../../../../../core/core.web/src/main/webapp/styles/master.blue.css" 
+    th:href="@{/styles/master.blue.css}" />
+  <!-- rich jeditable header -->
+  <link rel="stylesheet" type="text/css" media="all"
+    href="../../../../../../../core/core.web/src/main/webapp/styles/ckeditor.override.css"
+    th:href="@{/styles/ckeditor.override.css}" />
+</head>
+<body>
+<div class="fragment-body">
+  <div id="cf-table-pane">
+    <input id="add-cf" type="button" class="sq-button snap-right" value="Add a custom field" th:value="#{label.customField.add}" />
+    <div class="unsnap"></div>
+    <div>
+      <table id="cf-table">
+        <thead>
+          <tr>
+            <th class="not-displayed">Id</th>
+            <th th:text="#{label.name}">Name</th>
+            <th th:text="#{label.label}">Label</th>
+            <th class="not-displayed">Raw type</th>
+            <th th:text="#{label.customField.inputType}">Type</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr th:each="cf : ${customFields}" th:object="${cf}">
+            <td th:text="*{id}" class="not-displayed cf-id">1</td>
+            <td th:text="*{name}">Custom field XX</td>
+            <td th:text="*{label}">Label XX</td>
+            <td th:text="*{inputType}" class="not-displayed raw-input-type">PLAIN_TEXT</td>
+            <td th:text="#{*{inputType.i18nKey}}">Plain text</td>
+          </tr>
+          <tr th:remove="all">
+            <td class="not-displayed cf-id">2</td>
+            <td>Custom field YY</td>
+            <td>Label YY</td>
+            <td class="not-displayed raw-input-type">DROPDOWN_LIST</td>
+            <td>Dropdown list</td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+  </div>
+  <div id="new-cf-pane" class="not-displayed">
+    <h2 th:text="#{title.customField.new}">New Custom field</h2>
+    <div>
+      <label for="name" th:text="#{label.name}">Name</label><input name="name" class="strprop" value="" size="50" maxlength="255" type="text" /><span class="error">&nbsp;</span>
+    </div>
+    <div>
+      <label for="label" th:text="#{label.label}">Label</label><input name="label" class="strprop" value="" size="50" maxlength="255" type="text" /><span class="error">&nbsp;</span>
+    </div>
+    <div>
+      <label for="inputType" th:text="#{label.customField.inputType}">Type</label>
+      <select name="inputType" th:each="type: InputType.values()" th:remove="all-but-first">
+        <option value="PLAIN_TEXT" th:value="${type.name()}" th:text="#{type.i18n}">Plain Text</option>
+        <option value="CHECKBOX">Checkbox</option>
+        <option value="DROPDOWN_LIST">Dropdown list</option>
+      </select>
+      <span class="error">&nbsp;</span>
+    </div>
+    <div>
+      <label for="optional" th:text="#{label.optional}">Optional</label><input name="optional" value="optional" type="checkbox" /><span class="error">&nbsp;</span>
+    </div>
+    <div>
+      <label for="defaultValue" th:text="#{label.defaultValue}">Default value</label><input name="defaultValue" class="strprop" value="" size="50" maxlength="255" type="text" /><span class="error">&nbsp;</span>
+    </div>
+    <div>
+      <input class="confirm" type="button" value="OK" th:value="label.OK" />
+      <input class="cancel" type="button" value="Cancel" th:value="label.cancel" />
+    </div>
+    
+    <div id="cfoptions-pane" class="not-displayed">
+      <h2 th:text="#{title.customField.options}">Custom field options</h2>
+      <table>
+        <thead>
+          <tr>
+            <th th:text="#{label.order}">Order</th>
+            <th th:text="#{label.label}">Label</th>
+           </tr>
+          </thead>
+          <tbody>
+          </tbody>
+      </table>
+      <div>
+        <input type="button" value="Add option" />
+      </div>
+      <div id="cfoption-editor-pane" class="not-displayed">
+        <h3 th:text="#{title.customField.option.new}">New custom field option</h3>
+        <div>
+          <label for="option-label" th:text="#{label.label}">Label</label><input name="option-label" value="" /><span class="error">&nbsp;</span>
+        </div>
+        <div>
+          <input type="button" value="Proceed" th:value="#{label.ok}" />
+          <input type="button" value="Cancel" th:value="#{label.cancel}" />
+        </div>
+      </div>
+    </div>
+  </div>
+</body>
+</html>
