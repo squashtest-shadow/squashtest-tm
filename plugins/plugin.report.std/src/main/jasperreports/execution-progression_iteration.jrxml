@@ -61,18 +61,17 @@
 	</style>
 	<style name="table 1_TH" mode="Opaque" backcolor="#F0F8FF">
 		<pen lineColor="#FFFFFF"/>
+		<box>
+			<bottomPen lineStyle="Dashed" lineColor="#999999"/>
+		</box>
 	</style>
 	<style name="table 1_CH" mode="Opaque" backcolor="#BFE1FF">
 		<pen lineColor="#FFFFFF"/>
 	</style>
-	<style name="table 1_TD" mode="Opaque" backcolor="#FFFFFF">
+	<style name="table 1_TD" mode="Transparent" backcolor="#FFFFFF">
 		<pen lineColor="#FFFFFF"/>
 		<box>
-			<pen lineStyle="Dashed"/>
-			<topPen lineWidth="0.0" lineStyle="Dashed" lineColor="#999999"/>
-			<leftPen lineStyle="Dashed"/>
-			<bottomPen lineWidth="0.5" lineStyle="Dashed" lineColor="#BDBDBD"/>
-			<rightPen lineStyle="Dashed"/>
+			<bottomPen lineWidth="0.5" lineStyle="Dashed" lineColor="#999999"/>
 		</box>
 	</style>
 	<style name="styleIterSchedStart">
@@ -242,7 +241,7 @@
 	<detail>
 		<band height="20" splitType="Stretch">
 			<componentElement>
-				<reportElement key="table" style="table" stretchType="RelativeToBandHeight" x="0" y="0" width="736" height="20" isRemoveLineWhenBlank="true"/>
+				<reportElement key="table" style="table" stretchType="RelativeToBandHeight" mode="Opaque" x="0" y="0" width="736" height="20" isRemoveLineWhenBlank="true"/>
 				<jr:table xmlns:jr="http://jasperreports.sourceforge.net/jasperreports/components" xsi:schemaLocation="http://jasperreports.sourceforge.net/jasperreports/components http://jasperreports.sourceforge.net/xsd/components.xsd">
 					<datasetRun subDataset="IterationDataSet">
 						<datasetParameter name="iteration_name">
@@ -513,7 +512,7 @@
 		</band>
 		<band height="18" splitType="Stretch">
 			<componentElement>
-				<reportElement key="table" style="table 1" stretchType="RelativeToBandHeight" x="44" y="0" width="683" height="18" isRemoveLineWhenBlank="true">
+				<reportElement key="table" style="table 1" stretchType="RelativeToBandHeight" mode="Transparent" x="44" y="0" width="683" height="18" isRemoveLineWhenBlank="true">
 					<printWhenExpression><![CDATA[(($F{testSuites}!=null) &&($F{testSuites}.size()>0))]]></printWhenExpression>
 				</reportElement>
 				<jr:table xmlns:jr="http://jasperreports.sourceforge.net/jasperreports/components" xsi:schemaLocation="http://jasperreports.sourceforge.net/jasperreports/components http://jasperreports.sourceforge.net/xsd/components.xsd">
