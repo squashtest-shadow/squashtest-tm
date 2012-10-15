@@ -20,12 +20,22 @@
  */
 package org.squashtest.csp.tm.domain.customfield;
 
+import org.squashtest.tm.core.foundation.i18n.Internationalizable;
+
 /**
  * The type of the input shown when rendering a custom field.
  * @author Gregory Fouquet
  */
-public enum InputType {
+public enum InputType implements Internationalizable {
     PLAIN_TEXT,
     COMBOBOX,
-    DROPDOWN_LIST
+    DROPDOWN_LIST;
+
+	/**
+	 * @see org.squashtest.tm.core.foundation.i18n.Internationalizable#getI18nKey()
+	 */
+	@Override
+	public String getI18nKey() {
+		return "customField.inputType." + name();
+	}
 }
