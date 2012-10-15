@@ -1,0 +1,60 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+
+        This file is part of the Squashtest platform.
+        Copyright (C) 2010 - 2012 Henix, henix.fr
+
+        See the NOTICE file distributed with this work for additional
+        information regarding copyright ownership.
+
+        This is free software: you can redistribute it and/or modify
+        it under the terms of the GNU Lesser General Public License as published by
+        the Free Software Foundation, either version 3 of the License, or
+        (at your option) any later version.
+
+        this software is distributed in the hope that it will be useful,
+        but WITHOUT ANY WARRANTY; without even the implied warranty of
+        MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+        GNU Lesser General Public License for more details.
+
+        You should have received a copy of the GNU Lesser General Public License
+        along with this software.  If not, see <http://www.gnu.org/licenses/>.
+
+-->
+<dataset>
+  <attachment_list attachment_list_id="10"/>
+  <resource res_id="10" name="10" created_on="2012-01-02" created_by="dbu"/>
+  <requirement_version attachment_list_id="10" res_id="10"/>
+  <requirement_library_node created_by="dbu" rln_id="10" created_on="2010-02-01"/>
+  <requirement rln_id="10" current_version_id="10"/>
+
+  <attachment_list attachment_list_id="20"/>
+  <resource res_id="20" name="vingt" created_on="2012-01-02" created_by="dbu"/>
+  <requirement_version attachment_list_id="20" res_id="20"/>
+  <requirement_library_node created_by="dbu" rln_id="20" created_on="2010-02-01"/>
+  <requirement rln_id="20" current_version_id="20"/>
+
+  <attachment_list attachment_list_id="30"/>
+  <resource res_id="30" name="30" created_on="2012-01-02" created_by="dbu"/>
+  <requirement_version attachment_list_id="30" res_id="30"/>
+  <requirement_library_node created_by="dbu" rln_id="30" created_on="3010-02-01"/>
+  <requirement rln_id="30" current_version_id="30"/>
+
+  <attachment_list attachment_list_id="40"/>
+  <resource res_id="40" name="40" created_on="2012-01-02" created_by="dbu"/>
+  <requirement_version attachment_list_id="40" res_id="40"/>
+  <requirement_library_node created_by="dbu" rln_id="40" created_on="4010-02-01"/>
+  <requirement rln_id="40" current_version_id="40"/>
+
+  <attachment_list attachment_list_id="100"/>
+  <test_case_library_node created_by="dbu" tcln_id="100" created_on="2010-02-01" name=""/>
+  <test_case tcln_id="100" attachment_list_id="100" version="1"/>
+  <test_case_verified_requirement_version verifying_test_case_id="100" verified_req_version_id="10"/>
+  <test_case_verified_requirement_version verifying_test_case_id="100" verified_req_version_id="20"/>
+
+  <attachment_list attachment_list_id="200"/>
+  <test_case_library_node created_by="dbu" tcln_id="200" created_on="2010-02-01" name=""/>
+  <test_case tcln_id="200" attachment_list_id="200" version="1"/>
+  <test_case_verified_requirement_version verifying_test_case_id="200" verified_req_version_id="20"/>
+  <test_case_verified_requirement_version verifying_test_case_id="200" verified_req_version_id="30"/>
+</dataset>

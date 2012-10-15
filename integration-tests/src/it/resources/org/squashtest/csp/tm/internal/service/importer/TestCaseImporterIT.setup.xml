@@ -1,0 +1,76 @@
+<?xml version='1.0' encoding='UTF-8'?>
+<!--
+
+        This file is part of the Squashtest platform.
+        Copyright (C) 2010 - 2012 Henix, henix.fr
+
+        See the NOTICE file distributed with this work for additional
+        information regarding copyright ownership.
+
+        This is free software: you can redistribute it and/or modify
+        it under the terms of the GNU Lesser General Public License as published by
+        the Free Software Foundation, either version 3 of the License, or
+        (at your option) any later version.
+
+        this software is distributed in the hope that it will be useful,
+        but WITHOUT ANY WARRANTY; without even the implied warranty of
+        MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+        GNU Lesser General Public License for more details.
+
+        You should have received a copy of the GNU Lesser General Public License
+        along with this software.  If not, see <http://www.gnu.org/licenses/>.
+
+-->
+<dataset>
+	
+	<!--  project 1 is empty -->
+
+	<test_case_library tcl_id="1" />
+	<campaign_library cl_id="1" />
+	<requirement_library rl_id="1" />
+
+	<project project_id="1" name="project 1" active="true" created_by="groovy" created_on="2010-01-01" cl_id="1"
+		tcl_id="1" rl_id="1" />
+		
+		
+	<!--  project 2 is shipped with more stuffs than project 1 -->	
+		
+	<test_case_library tcl_id="2" />
+	<campaign_library cl_id="2" />
+	<requirement_library rl_id="2" />
+
+	<project project_id="2" name="project 2" active="true" created_by="groovy" created_on="2010-01-01" cl_id="2"
+		tcl_id="2" rl_id="2" />
+		
+	<!--  the following list will be added for all of our entities -->
+	<attachment_list attachment_list_id="10" />
+	
+	<test_case_library_node tcln_id="1" name="configuration pas de tir" created_by="dbu" created_on="2010-02-01" />
+	<test_case_folder tcln_id="1" />
+	
+	<test_case_library_node tcln_id="2" name="prerequis" created_by="dbu" created_on="2010-02-01" />
+	<test_case tcln_id="2" attachment_list_id="10" version="1"/>
+	
+	<test_case_library_content library_id="2" content_id="1" />
+	<test_case_library_content library_id="2" content_id="2" />
+	
+	<test_case_library_node tcln_id="11" name="approvisionnement fuel" created_by="dbu" created_on="2010-02-01" />
+	<test_case_folder tcln_id="11" />
+	
+	<test_case_library_node tcln_id="12" name="obtenir le go du technique" created_by="dbu" created_on="2010-02-01" />
+	<test_case tcln_id="12" attachment_list_id="10" version="1"/>
+	
+	<test_case_library_node tcln_id="13" name="connexion fusée - pas de tir" created_by="dbu" created_on="2010-02-01" />
+	<test_case tcln_id="13" attachment_list_id="10" version="1"/>
+	
+	<tcln_relationship ancestor_id="1" descendant_id="11"/>
+	<tcln_relationship ancestor_id="1" descendant_id="12"/>
+	<tcln_relationship ancestor_id="1" descendant_id="13"/>
+	
+	<test_case_library_node tcln_id="111" name="cas limite - fuite de carburant" created_by="dbu" created_on="2010-02-01" />
+	<test_case tcln_id="111" attachment_list_id="10" version="1"/>
+	
+	<tcln_relationship ancestor_id="11" descendant_id="111" />
+
+
+</dataset>

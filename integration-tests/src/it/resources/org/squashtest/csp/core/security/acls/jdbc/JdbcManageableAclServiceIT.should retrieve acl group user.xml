@@ -1,0 +1,45 @@
+<?xml version='1.0' encoding='UTF-8'?>
+<!--
+
+        This file is part of the Squashtest platform.
+        Copyright (C) 2010 - 2012 Henix, henix.fr
+
+        See the NOTICE file distributed with this work for additional
+        information regarding copyright ownership.
+
+        This is free software: you can redistribute it and/or modify
+        it under the terms of the GNU Lesser General Public License as published by
+        the Free Software Foundation, either version 3 of the License, or
+        (at your option) any later version.
+
+        this software is distributed in the hope that it will be useful,
+        but WITHOUT ANY WARRANTY; without even the implied warranty of
+        MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+        GNU Lesser General Public License for more details.
+
+        You should have received a copy of the GNU Lesser General Public License
+        along with this software.  If not, see <http://www.gnu.org/licenses/>.
+
+-->
+<dataset>
+	<core_user id="10" login="batman" last_name="batman" created_by="dbu" created_on="2011-03-19" />
+	
+	<core_group />
+	<core_group_authority />
+	<core_group_member />
+	
+	<acl_class id="1001" classname="batmobile" />
+	<acl_object_identity id="1" identity="101" class_id="1001" />
+		
+	<acl_object_identity id="2" identity="102" class_id="1001" />
+	
+	<acl_object_identity id="3" identity="103" class_id="1001" />
+	
+	<acl_group id="100" qualified_name="driver" />
+	<acl_group id="200" qualified_name="owner" />
+	
+	<acl_group_permission />
+
+	<acl_responsibility_scope_entry user_id="10" acl_group_id="100" object_identity_id="1" />
+	<acl_responsibility_scope_entry user_id="10" acl_group_id="200" object_identity_id="2" />
+</dataset>

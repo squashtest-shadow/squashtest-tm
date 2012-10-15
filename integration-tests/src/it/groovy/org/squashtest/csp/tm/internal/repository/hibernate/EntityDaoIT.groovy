@@ -1,0 +1,59 @@
+/**
+ *     This file is part of the Squashtest platform.
+ *     Copyright (C) 2010 - 2012 Henix, henix.fr
+ *
+ *     See the NOTICE file distributed with this work for additional
+ *     information regarding copyright ownership.
+ *
+ *     This is free software: you can redistribute it and/or modify
+ *     it under the terms of the GNU Lesser General Public License as published by
+ *     the Free Software Foundation, either version 3 of the License, or
+ *     (at your option) any later version.
+ *
+ *     this software is distributed in the hope that it will be useful,
+ *     but WITHOUT ANY WARRANTY; without even the implied warranty of
+ *     MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ *     GNU Lesser General Public License for more details.
+ *
+ *     You should have received a copy of the GNU Lesser General Public License
+ *     along with this software.  If not, see <http://www.gnu.org/licenses/>.
+ */
+package org.squashtest.csp.tm.internal.repository.hibernate
+
+import javax.inject.Inject 
+
+import org.squashtest.csp.tm.domain.project.Project;
+import org.squashtest.csp.tm.internal.repository.EntityDao 
+import org.squashtest.csp.tm.internal.repository.ProjectDao 
+import org.unitils.dbunit.annotation.DataSet;
+import spock.unitils.UnitilsSupport 
+
+@UnitilsSupport
+class EntityDaoIT extends DbunitDaoSpecification {
+
+	//EntityDao is a generic class. Let's use the Project as the specific implementation.
+	
+	@Inject
+	private ProjectDao projectDao;
+	
+	private EntityDao<Project> entityDao;
+	
+	def setup(){
+		entityDao = projectDao;		
+	} 
+	
+	
+	@DataSet("EntityDaoIT.should find a list of entity.xml")
+	def "should find a list of entity"(){
+	
+		when :
+			def res = entityDao.findAllByIds([ 1L, 3L, 4L, 6L ])
+		
+		then :
+			res.size() == 4
+			res.collect {it.id } == [1L, 3L, 4L, 6L]
+			res.collect {it.name } == ["proj1", "proj3", "proj4", "proj6"]
+	}
+	
+	
+}

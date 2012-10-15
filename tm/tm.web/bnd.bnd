@@ -1,0 +1,10 @@
+-include: pom.xml
+-nouses: true
+Fragment-Host: org.squashtest.tm.core.web
+Bundle-ClassPath: .,\
+	WEB-INF/classes,\
+	WEB-INF/reports
+Include-Resource: src/main/webapp,\
+	src/main/resources
+Import-Package: org.squashtest.csp.core.web.utils;version=${project.version},\
+	*

@@ -1,0 +1,80 @@
+<!--
+
+        This file is part of the Squashtest platform.
+        Copyright (C) 2010 - 2012 Henix, henix.fr
+
+        See the NOTICE file distributed with this work for additional
+        information regarding copyright ownership.
+
+        This is free software: you can redistribute it and/or modify
+        it under the terms of the GNU Lesser General Public License as published by
+        the Free Software Foundation, either version 3 of the License, or
+        (at your option) any later version.
+
+        this software is distributed in the hope that it will be useful,
+        but WITHOUT ANY WARRANTY; without even the implied warranty of
+        MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+        GNU Lesser General Public License for more details.
+
+        You should have received a copy of the GNU Lesser General Public License
+        along with this software.  If not, see <http://www.gnu.org/licenses/>.
+
+-->
+<!DOCTYPE html SYSTEM "http://www.thymeleaf.org/dtd/xhtml1-transitional-thymeleaf-spring3-3.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml" xmlns:th="http://www.thymeleaf.org">
+<head>
+	<!-- common head -->
+	<link rel="stylesheet" type="text/css" media="all" href="../../../../../../../core/core.web/src/main/webapp/styles/master.css" th:href="@{/styles/master.css}" />
+	<!-- /common head -->
+	<!-- common script import -->
+	<link rel="stylesheet" type="text/css" media="all" href="../../../../../../../core/core.web/src/main/webapp/styles/squashtm.fg.menu.css" th:href="@{/styles/squashtm.fg.menu.css}" />
+	<!-- /common script import -->
+	<link rel="stylesheet" type="text/css" media="all" href="../../../../../../../core/core.web/src/main/webapp/styles/master.blue.css" th:href="@{/styles/master.blue.css}" />
+</head>
+<body>
+	<div id="workspace" th:fragment="navbar">
+		<div id="test_mgt_nav">
+			<a id="home-link" class="nav_btn" href="home-workspace.html" th:href="@{/home-workspace}">
+				<img src="../../images/Button_Nav_Home_off.png" 
+					th:src="@{/images/Button_Nav_Home_off.png}" 
+					th:alt="#{workspace.home.button.label}" 
+					th:title="#{workspace.home.button.label}" 
+				/>
+			</a>
+			<a id="requirement-link" class="nav_btn" href="requirement-workspace.html" th:href="@{/requirement-workspace}">
+				<img src="../../images/Button_Nav_Requirement_off.png" 
+					th:src="@{/images/Button_Nav_Requirement_off.png}" 
+					th:alt="#{workspace.requirement.button.label}" 
+					th:title="#{workspace.requirement.button.label}" 
+				/>
+			</a>
+			<a id="test-case-link" class="nav_btn" href="test-case-workspace.html" th:href="@{/test-case-workspace}">
+				<img src="../../images/Button_Nav_TestCase_off.png" 
+					th:src="@{/images/Button_Nav_TestCase_off.png}" 
+					th:alt="#{workspace.test-case.button.label}" 
+					th:title="#{workspace.test-case.button.label}" 
+				/>
+			</a>
+			<a id="campaign-link" class="nav_btn" href="campaign-workspace.html" th:href="@{/campaign-workspace}">
+				<img src="../../images/Button_Nav_Campaign_off.png" 
+					th:src="@{/images/Button_Nav_Campaign_off.png}" 
+					th:alt="#{workspace.campaign.button.label}" 
+					th:title="#{workspace.campaign.button.label}" 
+				/>
+			</a>
+			<div id="bugtracker-div" ></div>
+			<a id="report-link" class="nav_btn" href="report-workspace.html" th:href="@{/report-workspace}">
+				<img src="../../images/Button_Nav_Reporting_off.png" 
+					th:src="@{/images/Button_Nav_Reporting_off.png}" 
+					th:alt="#{workspace.report.button.label}" 
+					th:title="#{workspace.report.button.label}" 
+				/>
+			</a>
+		</div>
+		
+		<div id="nav_logo" class="nav_btn">
+			<img src="../../../../../../../core/core.web/src/main/webapp/images/logo_squash30.png" th:src="@{/images/logo_squash30.png}" alt="Logo Squash" />
+		</div>
+	</div>
+</body>
+</html>

@@ -1,0 +1,114 @@
+<?xml version='1.0' encoding='UTF-8'?>
+<!--
+
+        This file is part of the Squashtest platform.
+        Copyright (C) 2010 - 2012 Henix, henix.fr
+
+        See the NOTICE file distributed with this work for additional
+        information regarding copyright ownership.
+
+        This is free software: you can redistribute it and/or modify
+        it under the terms of the GNU Lesser General Public License as published by
+        the Free Software Foundation, either version 3 of the License, or
+        (at your option) any later version.
+
+        this software is distributed in the hope that it will be useful,
+        but WITHOUT ANY WARRANTY; without even the implied warranty of
+        MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+        GNU Lesser General Public License for more details.
+
+        You should have received a copy of the GNU Lesser General Public License
+        along with this software.  If not, see <http://www.gnu.org/licenses/>.
+
+-->
+<dataset>
+  <test_case_library tcl_id="1"/>
+  <campaign_library cl_id="1"/>
+  <requirement_library rl_id="1"/>
+  <project created_by="groovy" rl_id="1" tcl_id="1" created_on="2010-01-01" project_id="1" name="project 1" active="true" cl_id="1"/>
+  <test_case_library tcl_id="2"/>
+  <campaign_library cl_id="2"/>
+  <requirement_library rl_id="2"/>
+  <project created_by="groovy" rl_id="2" tcl_id="2" created_on="2010-01-01" project_id="2" name="project 2" active="true" cl_id="2"/>
+  <attachment_list attachment_list_id="10"/>
+  <test_case_library_node created_by="dbu" tcln_id="1" created_on="2010-02-01" name="test case 1"/>
+  <test_case tcln_id="1" attachment_list_id="10" version="1"/>
+  <test_case_library_node created_by="dbu" tcln_id="2" created_on="2010-02-01" name="test case 2"/>
+  <attachment_list attachment_list_id="20"/>
+  <test_case tcln_id="2" attachment_list_id="20" version="1"/>
+  <test_case_library_node created_by="dbu" tcln_id="3" created_on="2010-02-01" name="test case 3"/>
+  <attachment_list attachment_list_id="30"/>
+  <test_case tcln_id="3" attachment_list_id="30" version="1"/>
+  <test_case_library_node created_by="dbu" tcln_id="4" created_on="2010-02-01" name="test case 4"/>
+  <attachment_list attachment_list_id="40"/>
+  <test_case tcln_id="4" attachment_list_id="40" version="1"/>
+  <attachment_list attachment_list_id="101"/>
+  <requirement_library_node created_by="dbu" rln_id="101" created_on="2010-02-01" name="101" project_id="1"/>
+  <requirement criticality="UNDEFINED" rln_id="101" attachment_list_id="101"/>
+  <attachment_list attachment_list_id="102"/>
+  <requirement_library_node created_by="dbu" rln_id="102" created_on="2010-02-01" name="102" project_id="1"/>
+  <requirement criticality="MINOR" rln_id="102" attachment_list_id="102"/>
+  <attachment_list attachment_list_id="103"/>
+  <requirement_library_node created_by="dbu" rln_id="103" created_on="2010-02-01" name="103" project_id="1"/>
+  <requirement criticality="UNDEFINED" rln_id="103" attachment_list_id="103"/>
+  <attachment_list attachment_list_id="104"/>
+  <requirement_library_node created_by="dbu" rln_id="104" created_on="2010-02-01" name="104" project_id="1"/>
+  <requirement criticality="CRITICAL" rln_id="104" attachment_list_id="104"/>
+  <attachment_list attachment_list_id="105"/>
+  <requirement_library_node created_by="dbu" rln_id="105" created_on="2010-02-01" name="105" project_id="1"/>
+  <requirement criticality="CRITICAL" rln_id="105" attachment_list_id="105"/>
+  <attachment_list attachment_list_id="106"/>
+  <requirement_library_node created_by="dbu" rln_id="106" created_on="2010-02-01" name="106" project_id="1"/>
+  <requirement criticality="MAJOR" rln_id="106" attachment_list_id="106"/>
+  <attachment_list attachment_list_id="201"/>
+  <requirement_library_node created_by="dbu" rln_id="201" created_on="2010-02-01" name="201" project_id="2"/>
+  <requirement criticality="MAJOR" rln_id="201" attachment_list_id="201"/>
+  <attachment_list attachment_list_id="202"/>
+  <requirement_library_node created_by="dbu" rln_id="202" created_on="2010-02-01" name="202" project_id="2"/>
+  <requirement criticality="UNDEFINED" rln_id="202" attachment_list_id="202"/>
+  <attachment_list attachment_list_id="203"/>
+  <requirement_library_node created_by="dbu" rln_id="203" created_on="2010-02-01" name="203" project_id="2"/>
+  <requirement criticality="MINOR" rln_id="203" attachment_list_id="203"/>
+  <attachment_list attachment_list_id="204"/>
+  <requirement_library_node created_by="dbu" rln_id="204" created_on="2010-02-01" name="204" project_id="2"/>
+  <requirement criticality="UNDEFINED" rln_id="204" attachment_list_id="204"/>
+  <attachment_list attachment_list_id="205"/>
+  <requirement_library_node created_by="dbu" rln_id="205" created_on="2010-02-01" name="205" project_id="2"/>
+  <requirement criticality="CRITICAL" rln_id="205" attachment_list_id="205"/>
+  <attachment_list attachment_list_id="206"/>
+  <requirement_library_node created_by="dbu" rln_id="206" created_on="2010-02-01" name="206" project_id="2"/>
+  <requirement criticality="MINOR" rln_id="206" attachment_list_id="206"/>
+  <attachment_list attachment_list_id="207"/>
+  <requirement_library_node created_by="dbu" rln_id="207" created_on="2010-02-01" name="207" project_id="2"/>
+  <requirement criticality="UNDEFINED" rln_id="207" attachment_list_id="207"/>
+
+  <resource created_by="dbu" created_on="2012-01-02" res_id="100" name="folder 100"/>
+  <simple_resource res_id="100"/>
+  <requirement_library_node created_by="dbu" rln_id="100" created_on="2010-02-01"/>
+  <requirement_folder rln_id="100" res_id="100"/>
+  <rln_relationship descendant_id="103" ancestor_id="100"/>
+
+  <resource created_by="dbu" created_on="2012-01-02" res_id="200" name="folder 200"/>
+  <simple_resource res_id="200"/>
+  <requirement_library_node created_by="dbu" rln_id="200" created_on="2010-02-01"/>
+  <requirement_folder rln_id="200" res_id="200"/>
+  <rln_relationship descendant_id="205" ancestor_id="200"/>
+  
+  <test_case_verified_requirement_version verifying_test_case_id="1" verified_req_version_id="101"/>
+  <test_case_verified_requirement_version verifying_test_case_id="2" verified_req_version_id="101"/>
+  <test_case_verified_requirement_version verifying_test_case_id="3" verified_req_version_id="103"/>
+  <test_case_verified_requirement_version verifying_test_case_id="1" verified_req_version_id="104"/>
+  <test_case_verified_requirement_version verifying_test_case_id="1" verified_req_version_id="106"/>
+  <test_case_verified_requirement_version verifying_test_case_id="1" verified_req_version_id="201"/>
+  <test_case_verified_requirement_version verifying_test_case_id="1" verified_req_version_id="203"/>
+  <test_case_verified_requirement_version verifying_test_case_id="1" verified_req_version_id="205"/>
+  
+  <test_step/>
+  <action_test_step/>
+  <call_test_step/>
+  <test_case_steps/>
+  <test_case_folder/>
+  <tcln_relationship/>
+  <attachment_content/>
+  <attachment/>
+</dataset>

@@ -1,0 +1,28 @@
+<!--
+
+        This file is part of the Squashtest platform.
+        Copyright (C) 2010 - 2012 Henix, henix.fr
+
+        See the NOTICE file distributed with this work for additional
+        information regarding copyright ownership.
+
+        This is free software: you can redistribute it and/or modify
+        it under the terms of the GNU Lesser General Public License as published by
+        the Free Software Foundation, either version 3 of the License, or
+        (at your option) any later version.
+
+        this software is distributed in the hope that it will be useful,
+        but WITHOUT ANY WARRANTY; without even the implied warranty of
+        MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+        GNU Lesser General Public License for more details.
+
+        You should have received a copy of the GNU Lesser General Public License
+        along with this software.  If not, see <http://www.gnu.org/licenses/>.
+
+-->
+<dataset>
+	<core_user login="daniel.bryan" first_name="daniel" last_name="bryan" email="yes@yes.org" active="1" created_by="dbu" created_on="2012-04-01" />
+	<core_user login="chris.jericho" first_name="chris" last_name="jericho" email="y2j@y2j.org" active="1" created_by="dbu" created_on="2012-04-01" />
+	<core_user login="shawn.michaels" first_name="shawn" last_name="michaels" email="hbk@hbk.org" active="0" created_by="dbu" created_on="2012-04-01" />
+	<core_group_member />
+</dataset>

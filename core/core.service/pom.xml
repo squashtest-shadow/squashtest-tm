@@ -1,0 +1,228 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+	<modelVersion>4.0.0</modelVersion>
+	<parent>
+		<artifactId>squashtest-csp-core</artifactId>
+		<groupId>org.squashtest.tm</groupId>
+		<version>1.4.0.IT41-SNAPSHOT</version>
+	</parent>
+	<artifactId>core.service</artifactId>
+	<name>${project.groupId}.${project.artifactId}</name>
+	<description>Squashtest CSP - Core module - Service component</description>
+	<packaging>bundle</packaging>
+	
+	<properties>
+		<bundle.name>${project.artifactId}</bundle.name>
+		<bundle.symbolicName>${project.artifactId}</bundle.symbolicName>
+		<bundle.namespace>org.squashtest.csp.core.service</bundle.namespace>
+	</properties>
+
+	<dependencies>
+		<!-- ====== DEPENDENCY POMS ====== -->
+		<dependency>
+			<groupId>org.squashtest.tm</groupId>
+			<artifactId>springdm-bundle-dependencies</artifactId>
+			<version>${project.version}</version>
+			<type>pom</type>
+		</dependency>
+		<dependency>
+			<groupId>org.squashtest.tm</groupId>
+			<artifactId>spock-test-dependencies</artifactId>
+			<version>${project.version}</version>
+			<type>pom</type>
+			<scope>test</scope>
+		</dependency>
+		<dependency>
+			<groupId>org.squashtest.tm</groupId>
+			<artifactId>hibernate-dependencies</artifactId>
+			<version>${project.version}</version>
+			<type>pom</type>
+		</dependency>
+		<!-- ====== /DEPENDENCY POMS ====== -->
+
+		<!--======= SQUASHTEST MODULES ======== -->
+		<dependency>
+			<groupId>org.squashtest.tm</groupId>
+			<artifactId>org.squashtest.csp.tools.unittest</artifactId>
+			<version>${project.version}</version>
+			<scope>test</scope>
+		</dependency>
+		<dependency>
+			<groupId>org.squashtest.tm</groupId>
+			<artifactId>core.bugtracker.api</artifactId>
+			<version>${project.version}</version>
+		</dependency>
+		<dependency>
+			<groupId>org.squashtest.tm</groupId>
+			<artifactId>core.api</artifactId>
+			<version>${project.version}</version>
+		</dependency>
+		<dependency>
+			<groupId>org.squashtest.tm</groupId>
+			<artifactId>core.foundation</artifactId>
+			<version>${project.version}</version>
+		</dependency>
+		<!--======= /SQUASHTEST MODULES ======== -->
+
+		<!-- ====== FOUNDATION ====== -->
+		<dependency>
+			<groupId>commons-lang</groupId>
+			<artifactId>commons-lang</artifactId>
+		</dependency>
+		<!-- ====== /FOUNDATION ====== -->
+
+		<!-- ====== JTA ====== -->
+		<dependency>
+			<groupId>javax.transaction</groupId>
+			<artifactId>com.springsource.javax.transaction</artifactId>
+		</dependency>
+		<!-- ====== JTA ====== -->
+
+		<!-- ====== SPRING FRAMEWORK ====== -->
+		<dependency>
+			<groupId>org.springframework</groupId>
+			<artifactId>org.springframework.transaction</artifactId>
+			<scope>compile</scope>
+		</dependency>
+		<dependency>
+			<groupId>org.springframework</groupId>
+			<artifactId>org.springframework.aop</artifactId>
+			<scope>compile</scope>
+		</dependency>
+		<dependency>
+			<groupId>org.aopalliance</groupId>
+			<artifactId>com.springsource.org.aopalliance</artifactId>
+		</dependency>
+		<dependency>
+			<groupId>org.springframework</groupId>
+			<artifactId>org.springframework.jdbc</artifactId>
+		</dependency>
+		<!-- ====== /SPRING FRAMEWORK ====== -->
+
+		<!-- ====== SPRING INTEGRATION TEST SUPPORT ====== -->
+		<dependency>
+			<groupId>org.springframework</groupId>
+			<artifactId>org.springframework.test</artifactId>
+		</dependency>
+		<!-- ====== /SPRING INTEGRATION TEST SUPPORT ====== -->
+
+		<!-- ====== CONNECTION POOL ====== -->
+		<dependency>
+			<groupId>commons-dbcp</groupId>
+			<artifactId>commons-dbcp</artifactId>
+		</dependency>
+		<!-- ====== /CONNECTION POOL ====== -->
+
+		<!-- ====== VALIDATION ====== -->
+		<dependency>
+			<groupId>javax.validation</groupId>
+			<artifactId>com.springsource.javax.validation</artifactId>
+		</dependency>
+		<dependency>
+			<groupId>org.hibernate</groupId>
+			<artifactId>com.springsource.org.hibernate.validator</artifactId>
+		</dependency>
+		<!-- ====== /VALIDATION ====== -->
+
+		<!-- ====== SOME DATABASE ====== -->
+		<dependency>
+			<groupId>com.h2database</groupId>
+			<artifactId>h2</artifactId>
+		</dependency>
+		<!-- ====== /SOME DATABASE ====== -->
+
+		<!-- ===== ASPECTJ ===== -->
+		<dependency>
+			<groupId>org.aspectj</groupId>
+			<artifactId>com.springsource.org.aspectj.runtime</artifactId>
+		</dependency>
+		<!-- ===== /ASPECTJ ===== -->
+
+		<!-- ====== SPRING SECURITY ====== -->
+		<dependency>
+			<groupId>org.springframework.security</groupId>
+			<artifactId>org.springframework.security.core</artifactId>
+		</dependency>
+		<dependency>
+			<groupId>org.springframework.security</groupId>
+			<artifactId>org.springframework.security.config</artifactId>
+		</dependency>
+		<dependency>
+			<groupId>org.springframework.security</groupId>
+			<artifactId>org.springframework.security.acls</artifactId>
+		</dependency>
+		<!-- ====== /SPRING SECURITY ====== -->
+
+		<!-- ====== EHCACHE ====== -->
+		<dependency>
+			<groupId>org.springframework</groupId>
+			<artifactId>org.springframework.context.support</artifactId>
+			<scope>compile</scope>
+		</dependency>
+		<dependency>
+			<groupId>net.sourceforge.ehcache</groupId>
+			<artifactId>com.springsource.net.sf.ehcache</artifactId>
+			<version>1.6.2</version>
+		</dependency>
+		<!-- ====== /EHCACHE ====== -->
+		
+		<dependency>
+			<groupId>org.apache.log4j</groupId>
+			<artifactId>com.springsource.org.apache.log4j</artifactId>
+			<scope>compile</scope>
+		</dependency>
+	</dependencies>
+
+	<build>
+		<resources>
+			<resource>
+				<directory>${project.basedir}/src/main/resources</directory>
+				<filtering>true</filtering>
+			</resource>
+		</resources>
+
+		<testResources>
+			<testResource>
+				<directory>${project.basedir}/src/test/resources</directory>
+				<filtering>true</filtering>
+			</testResource>
+		</testResources>
+
+		<testSourceDirectory>src/test/groovy</testSourceDirectory>
+
+		<plugins>
+			<plugin>
+				<groupId>org.apache.maven.plugins</groupId>
+				<artifactId>maven-compiler-plugin</artifactId>
+			</plugin>
+
+			<plugin>
+				<groupId>org.codehaus.mojo</groupId>
+				<artifactId>aspectj-maven-plugin</artifactId>
+				<configuration>
+					<showWeaveInfo>${verbose.compiler}</showWeaveInfo>
+					<source>${jdk.version}</source>
+					<target>${jdk.version}</target>
+					<compatibilityLevel>${jdk.version}</compatibilityLevel>
+				</configuration>
+			</plugin>
+
+			<plugin>
+				<groupId>org.apache.felix</groupId>
+				<artifactId>maven-bundle-plugin</artifactId>
+				<extensions>true</extensions>
+				<configuration>
+					<instructions>
+						<_include>bnd.bnd</_include>
+					</instructions>
+				</configuration>
+			</plugin>
+			<!-- ====== SPOCK TESTS ====== -->
+			<plugin>
+				<groupId>org.apache.maven.plugins</groupId>
+				<artifactId>maven-surefire-plugin</artifactId>
+			</plugin>
+			<!-- ====== /SPOCK TESTS ====== -->
+		</plugins>
+	</build>
+</project>

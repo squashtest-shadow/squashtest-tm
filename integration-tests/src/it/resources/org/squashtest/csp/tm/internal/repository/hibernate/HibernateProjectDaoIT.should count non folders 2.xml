@@ -1,0 +1,55 @@
+<?xml version='1.0' encoding='UTF-8'?>
+<!--
+
+        This file is part of the Squashtest platform.
+        Copyright (C) 2010 - 2012 Henix, henix.fr
+
+        See the NOTICE file distributed with this work for additional
+        information regarding copyright ownership.
+
+        This is free software: you can redistribute it and/or modify
+        it under the terms of the GNU Lesser General Public License as published by
+        the Free Software Foundation, either version 3 of the License, or
+        (at your option) any later version.
+
+        this software is distributed in the hope that it will be useful,
+        but WITHOUT ANY WARRANTY; without even the implied warranty of
+        MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+        GNU Lesser General Public License for more details.
+
+        You should have received a copy of the GNU Lesser General Public License
+        along with this software.  If not, see <http://www.gnu.org/licenses/>.
+
+-->
+<dataset>
+	<test_case_library tcl_id="1" />
+	<campaign_library cl_id="1" />
+	<requirement_library rl_id="1" />
+	<project project_id="1" tcl_id="1" cl_id="1" rl_id="1" name="foo" created_by="dbu" created_on="2010-02-01" />
+	
+	<attachment_list attachment_list_id="200"/>
+  	<test_case_library_node created_by="dbu" tcln_id="200" created_on="2010-02-01" name="" project_id="1"/>
+  	<test_case tcln_id="200" attachment_list_id="200" version="1"/>
+  
+	<ATTACHMENT_LIST ATTACHMENT_LIST_id="20"/>
+ 	 <resource res_id="20" name="" created_on="2012-01-02" created_by="dbu"/>
+ 	 <requirement_version attachment_list_id="20" res_id="20"/>
+ 	 <requirement_library_node created_by="dbu" rln_id="20" created_on="2010-02-01" project_id="1" />
+ 	 <requirement rln_id="20" current_version_id="20"/>
+  
+  	<ATTACHMENT_LIST ATTACHMENT_LIST_id="22" />
+	<campaign_library_node cln_id="20" name="bar" created_on="2010-02-01" created_by="dbu" project_id="1"/>
+	<campaign cln_id="20" actual_start_auto="true" actual_end_auto="true" ATTACHMENT_LIST_ID="22" />
+	
+	
+	
+	<test_case_library tcl_id="2" />
+	<campaign_library cl_id="2" />
+	<requirement_library rl_id="2" />
+	<project project_id="2" tcl_id="2" cl_id="2" rl_id="2" name="bar" created_by="dbu" created_on="2010-02-01" />
+
+	<test_case_library tcl_id="3" />
+	<campaign_library cl_id="3" />
+	<requirement_library rl_id="3" />
+	<project project_id="3" tcl_id="3" cl_id="3" rl_id="3" name="baz" created_by="dbu" created_on="2010-02-01" />
+</dataset>

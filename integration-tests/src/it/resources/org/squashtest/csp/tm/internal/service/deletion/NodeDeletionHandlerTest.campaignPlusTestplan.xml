@@ -1,0 +1,68 @@
+<?xml version='1.0' encoding='UTF-8'  ?>
+<!--
+
+        This file is part of the Squashtest platform.
+        Copyright (C) 2010 - 2012 Henix, henix.fr
+
+        See the NOTICE file distributed with this work for additional
+        information regarding copyright ownership.
+
+        This is free software: you can redistribute it and/or modify
+        it under the terms of the GNU Lesser General Public License as published by
+        the Free Software Foundation, either version 3 of the License, or
+        (at your option) any later version.
+
+        this software is distributed in the hope that it will be useful,
+        but WITHOUT ANY WARRANTY; without even the implied warranty of
+        MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+        GNU Lesser General Public License for more details.
+
+        You should have received a copy of the GNU Lesser General Public License
+        along with this software.  If not, see <http://www.gnu.org/licenses/>.
+
+-->
+<!DOCTYPE dataset SYSTEM "../../../../../../../dtd/squash-tm.1.3.0.dtd">
+
+
+<dataset>
+	
+	<ATTACHMENT_LIST ATTACHMENT_LIST_ID="100"/>
+	<ATTACHMENT_LIST ATTACHMENT_LIST_ID="101"/>
+	
+	<ATTACHMENT_LIST ATTACHMENT_LIST_ID="1"/>
+	<ATTACHMENT_LIST ATTACHMENT_LIST_ID="11"/>
+	<ATTACHMENT_LIST ATTACHMENT_LIST_ID="12"/>
+	
+	
+	<TEST_CASE_LIBRARY_NODE TCLN_ID="100" CREATED_ON="2011-08-23" CREATED_BY="IT" NAME="tc1"/>
+	<TEST_CASE TCLN_ID="100" VERSION="1" ATTACHMENT_LIST_ID="100"/>
+	
+	<TEST_CASE_LIBRARY_NODE TCLN_ID="101" CREATED_ON="2011-08-23" CREATED_BY="IT" NAME="tc2"/>
+	<TEST_CASE TCLN_ID="101" VERSION="1" ATTACHMENT_LIST_ID="101"/>
+
+	<CAMPAIGN_LIBRARY_NODE CREATED_ON="2001-08-23" CREATED_BY="IT" CLN_ID="1" NAME="cpg1" />
+	<CAMPAIGN CLN_ID="1" ACTUAL_END_AUTO="false" ACTUAL_START_AUTO="false" ATTACHMENT_LIST_ID="1"/>
+
+	<CAMPAIGN_TEST_PLAN_ITEM TEST_CASE_ID="100" CTPI_ID="50" CAMPAIGN_ID="1" TEST_PLAN_ORDER="0" />
+	<CAMPAIGN_TEST_PLAN_ITEM TEST_CASE_ID="101" CTPI_ID="51" CAMPAIGN_ID="1" TEST_PLAN_ORDER="1" />
+	
+	<ITERATION ACTUAL_START_AUTO="false" ATTACHMENT_LIST_ID="11" CREATED_ON="2011-08-23" CREATED_BY="IT" ACTUAL_END_AUTO="false" ITERATION_ID="11" NAME="it11"/>
+	<ITERATION ACTUAL_START_AUTO="false" ATTACHMENT_LIST_ID="12" CREATED_ON="2011-08-23" CREATED_BY="IT" ACTUAL_END_AUTO="false" ITERATION_ID="12" NAME="it12"/>
+
+	<CAMPAIGN_ITERATION CAMPAIGN_ID="1" ITERATION_ORDER="0" ITERATION_ID="11"/>
+	<CAMPAIGN_ITERATION CAMPAIGN_ID="1" ITERATION_ORDER="1" ITERATION_ID="12"/>
+	
+	
+	<!--  cleanup -->
+	
+	<test_step/>
+	<action_test_step/>
+	<call_test_step/>
+	<test_case_steps/>
+	
+	<test_case_folder/>
+	<tcln_relationship/>
+	<test_case_library_content/>
+	
+	
+</dataset>
