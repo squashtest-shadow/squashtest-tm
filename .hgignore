@@ -125,3 +125,6 @@ syntax : regexp
 core/core.service/META-INF$
 ^plugins/plugin\.testautomation\.jenkins/target$
 ^plugins/plugin\.testautomation\.jenkins/META-INF$
+^.*\\\.settings$
+syntax: regexp
+^plugins/plugin\.testautomation\.jenkins/META-INF$
