@@ -117,7 +117,7 @@
       <label for="optional" th:text="#{label.optional}">Optional</label><input name="optional" value="optional" type="checkbox" /><span class="error">&nbsp;</span>
     </div>
     <div>
-      <label for="defaultValue" th:text="#{label.defaultValue}">Default value</label><input name="defaultValue" class="strprop" value="" size="50" maxlength="255" type="text" /><span class="error">&nbsp;</span>
+      <label for="defaultValue" th:text="#{label.defaultValue}">Default value</label><span id="default-value-input"></span><span class="error">&nbsp;</span>
     </div>
     <div>
       <input class="confirm" type="button" value="OK" th:value="label.OK" />
@@ -150,6 +150,18 @@
         </div>
       </div>
     </div>
+    
+    <script id="PLAIN_TEXT-default-tpl" type="text/x-handlebars-template">
+		<input name="defaultValue" class="strprop" value="" size="50" maxlength="255" type="text" />		
+  </script>
+    <script id="CHECKBOX-default-tpl" type="text/x-handlebars-template">
+		<select name="defaultValue" class="optprop">
+			<option value="false" th:value="#{label.false}">False</option>
+			<option value="true" th:value="#{label.true}">True</option>
+		</select>
+  </script>
+    <script id="DROPDOWN_LIST-default-tpl" type="text/x-handlebars-template">
+  </script>
   </div>
 </body>
 </html>

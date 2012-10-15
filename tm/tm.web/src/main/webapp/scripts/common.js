@@ -24,6 +24,7 @@ requirejs.config({
 		"jqueryui" : "lib/jquery/jquery-ui-1.9.0.custom",
 		"datatables" : "datatables/jquery.dataTables",
 		"squashtm.datatables" : "squashtest/jquery.squashtm.datatables.v2",
+		"handlebars" : "lib/handlebars/handlebars-1.0.rc.1",
 		"underscore" : "lib/underscore/underscore-1.4.2",
 		"backbone" : "lib/backbone/backbone-0.9.2"
 	},
@@ -39,6 +40,10 @@ requirejs.config({
 		"squashtm.datatables": {
 			deps : [ "datatables", "squashtest/classes/KeyEventListener" ],
 			exports : "squashtmDatatables"
+		},
+		handlebars: {
+			deps: [ "jquery" ],
+			exports: "Handlebars"
 		},
 		backbone : {
 			deps : [ "underscore", "jquery" ],

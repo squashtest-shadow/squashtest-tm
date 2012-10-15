@@ -18,7 +18,7 @@
  *     You should have received a copy of the GNU Lesser General Public License
  *     along with this software.  If not, see <http://www.gnu.org/licenses/>.
  */
-define([ "jquery", "backbone" ], function($, Backbone) {
+define([ "jquery", "backbone", "handlebars" ], function($, Backbone, Handlebars) {
 	/*
 	 * Defines the controller for the new custom field panel
 	 */
@@ -30,16 +30,24 @@ define([ "jquery", "backbone" ], function($, Backbone) {
 			this.defaultValueField = this.$("input:text[name='defaultValue']"); 
 			
 			this.$("select[name='inputType']").val(model.get("inputType"));
-			this.$el.removeClass("not-displayed");
 			this.$("input:button").button();
-			this.defaultValueField.autocomplete({
-			    source: model.defaultValues()
-			});
+//			this.defaultValueField.autocomplete({
+//			    source: model.defaultValues()
+//			});
+			this.render();
+			this.$el.removeClass("not-displayed");
 		}, 
+		render: function() {
+			var source   = $("#" + this.model.get("inputType") + "-default-tpl").html();
+			var template = Handlebars.compile(source);
+			this.$("#default-value-input").html(template(this.model.toJSON()));
+			return this;
+		},
 		events: {
 			// textboxes with class .strprop are bound to the model prop which
 			// name matches the textbox name
 			"change input:text.strprop": "changeStrProp", 
+			"change select.optprop": "changeOptProp", 
 			"change select[name='inputType']": "changeInputType", 
 			"click input:checkbox[name='optional']": "changeOptional",
 			"click .cancel": "cancel",
@@ -50,14 +58,19 @@ define([ "jquery", "backbone" ], function($, Backbone) {
 			
 			this.model.set(textbox.name, textbox.value);
 		},
+		changeOptProp: function(event) {
+			var option = event.target;
+			
+			this.model.set(option.name, option.value);
+		},
 		changeInputType: function() {
 			var model = this.model;
 			
 			model.set("inputType", event.target.value);
+			model.resetDefaultValue()
 			
-			this.defaultValueField.autocomplete("destroy").autocomplete({
-			    source: model.defaultValues()
-			});
+			this.render();
+
 		},
 		changeOptional: function() {
 			this.model.set("optional", event.target.checked);

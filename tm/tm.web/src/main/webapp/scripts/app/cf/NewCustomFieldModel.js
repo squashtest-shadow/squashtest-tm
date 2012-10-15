@@ -19,34 +19,11 @@
  *     along with this software.  If not, see <http://www.gnu.org/licenses/>.
  */
 define([ "jquery", "backbone" ], function($, Backbone) {
-	var defaultValuesByInputType = {
-		PLAIN_TEXT : [],
-		CHECKBOX : [ "true", "false" ],
-		DROPDOWN_LIST : []
+	var defaultValueByInputType = {
+		PLAIN_TEXT : "",
+		CHECKBOX : "false",
+		DROPDOWN_LIST : ""
 	};
-	
-	var validatePlainText(attributes, errors) {
-		if (!attributes.optional) {
-			if (!attributes.defaultValue || /^\s*$/.test(attributes.defaultValue)) {
-				errors.defaultValue = { message: "message.notBlank" };
-			}
-		}
-	}
-	
-	var validateCheckbox(attributes, errors) {
-			if (!attributes.defaultValue || /^\s*$/.test(attributes.defaultValue)) {
-				if (!attributes.optional) {
-					errors.defaultValue = { message: "message.notBlank" };
-				}
-			} else {
-				
-			}
-		}
-	}
-
-	var validationByInputType = {
-			
-	}
 
 	/*
 	 * Defines the model for a new Custom Field
@@ -60,20 +37,20 @@ define([ "jquery", "backbone" ], function($, Backbone) {
 			optional : true,
 			defaultValue : ""
 		},
-		/**
-		 * returns an array of values which can be set as a default value.
-		 */
-		defaultValues : function() {
-			return defaultValuesByInputType[this.get("inputType")];
+		resetDefaultValue : function() {
+			this.set("defaultValue", defaultValueByInputType[this
+					.get("inputType")]);
 		},
-		validate(attributes) {
-			var errors = {};
-			
-			if (!attributes.name || /^\s*$/.test(attributes.name)) {
-				errors.name = "message.notBlank";
+		validate : function(attrs) {
+			if (!attrs.optional) {
+				var val = attrs.defaultValue;
+
+				if (!val || /^\s*$/.test(val)) {
+					return {
+						defaultValue : "message.required"
+					};
+				}
 			}
-			
-			if ()
 		}
 	});
 
