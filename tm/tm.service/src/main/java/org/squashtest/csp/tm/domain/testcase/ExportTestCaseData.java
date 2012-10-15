@@ -110,12 +110,14 @@ public class ExportTestCaseData extends ExportData implements TestStepVisitor{
 	private void formatOtherStepsInfos(List<TestStep> testSteps) {
 		for(int i=1; i<testSteps.size(); i ++){
 			ExportTestStepData otherStep = buildExportTestStepData(testSteps.get(i));
+			otherStep.setTestCase(this);
 			this.steps.add(otherStep);
 		}
 	}
 
 	private void formatFirstStepsInfos(List<TestStep> testSteps) {
 		ExportTestStepData firstStep = buildExportTestStepData(testSteps.get(0));
+		firstStep.setTestCase(this);
 		this.firstAction = firstStep.getAction();
 		this.firstExpectedResult = firstStep.getExpectedResult();
 	}

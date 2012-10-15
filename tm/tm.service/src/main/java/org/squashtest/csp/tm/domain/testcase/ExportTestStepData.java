@@ -23,6 +23,7 @@ package org.squashtest.csp.tm.domain.testcase;
 public class ExportTestStepData {
 	private String action;
 	private String expectedResult;
+	private ExportTestCaseData testCase;
 
 	public String getAction() {
 		return action;
@@ -48,6 +49,14 @@ public class ExportTestStepData {
 		if (expectedResult != null) {
 			this.expectedResult = expectedResult;
 		}
+	}
+
+	public ExportTestCaseData getTestCase() {
+		return testCase;
+	}
+
+	public void setTestCase(ExportTestCaseData testCase) {
+		this.testCase = testCase;
 	}
 
 }
