@@ -219,6 +219,14 @@
 		// Queries on AutomatedTest
 		@NamedQuery(name = "automatedTest.findAllByExtenderIds", query = "select distinct test from AutomatedExecutionExtender ext join ext.automatedTest test where ext.id in (:extenderIds)"),
 		@NamedQuery(name = "automatedTest.findAllByExtenders", query = "select distinct test from AutomatedExecutionExtender ext join ext.automatedTest test where ext in (:extenders)"),
+		
+		
+		//CustomFieldDao
+		@NamedQuery(name = "customField.findAll", query = "from CustomField"),
+		@NamedQuery(name = "customField.findById", query = "from CustomField where id = ?"),
+		
+		//CustomFieldBinding dao
+		@NamedQuery(name = "customFieldBinding.findAllForProject", query = "from CustomFieldBinding cfb join cfb.boundProject bp where bp.id = ? "),
 
 		/* ********************************************** batch deletion-related queries **************************************************** */
 

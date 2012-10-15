@@ -77,4 +77,39 @@ public class CustomFieldBinding {
 	public Set<RenderingLocation> getRenderingLocations() {
 		return renderingLocations;
 	}
+
+	public CustomField getCustomField() {
+		return customField;
+	}
+
+	public void setCustomField(CustomField customField) {
+		this.customField = customField;
+	}
+
+	public BindableEntity getBoundEntity() {
+		return boundEntity;
+	}
+
+	public void setBoundEntity(BindableEntity boundEntity) {
+		this.boundEntity = boundEntity;
+	}
+
+	public Project getBoundProject() {
+		return boundProject;
+	}
+
+	public void setBoundProject(Project boundProject) {
+		this.boundProject = boundProject;
+	}
+
+	public Long getId() {
+		return id;
+	}
+
+	public void setRenderingLocations(Set<RenderingLocation> renderingLocations) {
+		this.renderingLocations = renderingLocations;
+	}
+	
+	
+	
 }
