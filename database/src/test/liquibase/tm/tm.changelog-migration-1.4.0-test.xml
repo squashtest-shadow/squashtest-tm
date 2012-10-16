@@ -1,0 +1,74 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+
+        This file is part of the Squashtest platform.
+        Copyright (C) 2010 - 2012 Henix, henix.fr
+
+        See the NOTICE file distributed with this work for additional
+        information regarding copyright ownership.
+
+        This is free software: you can redistribute it and/or modify
+        it under the terms of the GNU Lesser General Public License as published by
+        the Free Software Foundation, either version 3 of the License, or
+        (at your option) any later version.
+
+        this software is distributed in the hope that it will be useful,
+        but WITHOUT ANY WARRANTY; without even the implied warranty of
+        MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+        GNU Lesser General Public License for more details.
+
+        You should have received a copy of the GNU Lesser General Public License
+        along with this software.  If not, see <http://www.gnu.org/licenses/>.
+
+-->
+<databaseChangeLog xmlns="http://www.liquibase.org/xml/ns/dbchangelog"
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog 
+     http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-2.0.xsd">
+    
+     <changeSet id="1.4.0.feat-1513-test-01" author="mpagnon">
+		<comment>We save data from ISSUE before it is migrated</comment>
+		<sql>
+			CREATE TEMPORARY TABLE `KEYVAL` (
+			`KEY` VARCHAR(25) NULL DEFAULT NULL,
+			`VALUE` BIGINT(20) NULL DEFAULT 0
+			);
+		</sql>
+		<sql>
+			insert into KEYVAL (KEY, VALUE)
+			select ('TCF'), count(*) from TEST_CASE_FOLDER;
+		</sql>
+		<sql>
+			insert into KEYVAL (KEY, VALUE)
+			select ('CF'), count(*) from CAMPAIGN_FOLDER;
+		</sql>
+		<sql>
+			insert into KEYVAL (KEY, VALUE)
+			select ('SR'), count(*) from SIMPLE_RESOURCE;
+		</sql>
+		<sql>
+			insert into KEYVAL (KEY, VALUE)
+			select ('ATTLIST'), count(*) from ATTACHMENT_LIST;
+		</sql>
+	</changeSet>
+<!-- =================================================================================================================== -->
+<!-- ___________________________________________________________INCLUDE CHANGELOG_______________________________________ -->
+		<include file="../../../main/liquibase/tm/tm.changelog-1.4.0.xml" relativeToChangelogFile="true" />
+<!-- =================================================================================================================== -->
+     
+	<changeSet id="1.4.0.feat-1513-test-02" author="mpagnon">
+		<preConditions>
+			<sqlCheck expectedResult="0">
+			select (count(actualAttlist.ATTACHMENT_LIST_ID) - prevAttlist.VALUE - sr.VALUE - cf.VALUE - tcf.VALUE)
+			from KEYVAL sr, KEYVAL cf, KEYVAL tcf, KEYVAL prevAttlist, ATTACHMENT_LIST actualAttlist
+			where prevAttlist.KEY = 'ATTLIST'
+			and sr.KEY = 'SR'
+			and cf.KEY = 'CF'
+			and tcf.KEY = 'TCF'
+			;
+			</sqlCheck>
+		</preConditions>
+		<comment>We check that each test case library node has an attachment list</comment>
+	</changeSet>
+
+</databaseChangeLog>

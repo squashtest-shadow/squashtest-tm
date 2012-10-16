@@ -1,0 +1,145 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+
+        This file is part of the Squashtest platform.
+        Copyright (C) 2010 - 2012 Henix, henix.fr
+
+        See the NOTICE file distributed with this work for additional
+        information regarding copyright ownership.
+
+        This is free software: you can redistribute it and/or modify
+        it under the terms of the GNU Lesser General Public License as published by
+        the Free Software Foundation, either version 3 of the License, or
+        (at your option) any later version.
+
+        this software is distributed in the hope that it will be useful,
+        but WITHOUT ANY WARRANTY; without even the implied warranty of
+        MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+        GNU Lesser General Public License for more details.
+
+        You should have received a copy of the GNU Lesser General Public License
+        along with this software.  If not, see <http://www.gnu.org/licenses/>.
+
+-->
+<databaseChangeLog xmlns="http://www.liquibase.org/xml/ns/dbchangelog"
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-2.0.xsd">
+
+	<changeSet id="tm-1.4.0.feat-1513.01" author="mpagnon">
+		<comment>Add property attachment list in library nodes</comment>
+		<addColumn tableName="TEST_CASE_LIBRARY_NODE">
+			<column name="ATTACHMENT_LIST_ID" type="BIGINT"
+				remarks="clé étrangère vers un ATTACHMENT_LIST, l'entité qui gère les pièces jointes.">
+				<constraints nullable="true"
+					references="ATTACHMENT_LIST(ATTACHMENT_LIST_ID)" foreignKeyName="fk_tcNode_attachment_list" />
+			</column>
+		</addColumn>
+		<addColumn tableName="CAMPAIGN_LIBRARY_NODE">
+			<column name="ATTACHMENT_LIST_ID" type="BIGINT"
+				remarks="clé étrangère vers un ATTACHMENT_LIST, l'entité qui gère les pièces jointes.">
+				<constraints nullable="true"
+					references="ATTACHMENT_LIST(ATTACHMENT_LIST_ID)" foreignKeyName="fk_campNode_attachment_list" />
+			</column>
+		</addColumn>
+		<addColumn tableName="RESOURCE">
+			<column name="ATTACHMENT_LIST_ID" type="BIGINT"
+				remarks="clé étrangère vers un ATTACHMENT_LIST, l'entité qui gère les pièces jointes.">
+				<constraints nullable="true"
+					references="ATTACHMENT_LIST(ATTACHMENT_LIST_ID)" foreignKeyName="fk_resource_attachment_list" />
+			</column>
+		</addColumn>
+	</changeSet>
+	<changeSet id="tm-1.4.0.feat-1513.02" author="mpagnon">
+		<comment>Migrate existing attachment lists</comment>
+		<sql>
+			update TEST_CASE_LIBRARY_NODE
+			set ATTACHMENT_LIST_ID = (select TEST_CASE.ATTACHMENT_LIST_ID from TEST_CASE where TEST_CASE.TCLN_ID = TEST_CASE_LIBRARY_NODE.TCLN_ID);
+		</sql>
+		<sql>
+			update CAMPAIGN_LIBRARY_NODE
+			set ATTACHMENT_LIST_ID = (select CAMPAIGN.ATTACHMENT_LIST_ID from CAMPAIGN where CAMPAIGN.CLN_ID = CAMPAIGN_LIBRARY_NODE.CLN_ID);
+		</sql>
+		<sql>
+			update RESOURCE
+			set ATTACHMENT_LIST_ID = (select REQUIREMENT_VERSION.ATTACHMENT_LIST_ID from REQUIREMENT_VERSION where REQUIREMENT_VERSION.RES_ID = RESOURCE.RES_ID);
+		</sql>
+	</changeSet>
+	<changeSet id="tm-1.4.0.feat-1513.03" author="mpagnon">
+		<comment>Add attachment lists to test_case_folders</comment>
+		<addColumn tableName="ATTACHMENT_LIST" >
+			<column name="TCLN_ID" type="BIGINT" remarks="colonne provisoire pour se rapeller de à qui était destinée la nouvelle attachment_list">
+				<constraints references="TEST_CASE_LIBRARY_NODE(TCLN_ID)" foreignKeyName="fk_tcln"/>
+			</column>
+		</addColumn>
+		<sql>
+			insert into ATTACHMENT_LIST (TCLN_ID)
+			select TEST_CASE_FOLDER.TCLN_ID from TEST_CASE_FOLDER;
+		</sql>
+		<sql>
+			update TEST_CASE_LIBRARY_NODE 
+			set ATTACHMENT_LIST_ID = (select ATTACHMENT_LIST.ATTACHMENT_LIST_ID from ATTACHMENT_LIST where ATTACHMENT_LIST.TCLN_ID = TEST_CASE_LIBRARY_NODE.TCLN_ID)
+			where ATTACHMENT_LIST_ID is null;
+		</sql>
+		<dropForeignKeyConstraint baseTableName="ATTACHMENT_LIST" constraintName="fk_tcln"/>
+		<dropColumn tableName="ATTACHMENT_LIST" columnName="TCLN_ID"/>
+	</changeSet>
+	<changeSet id="tm-1.4.0.feat-1513.04" author="mpagnon">
+		<comment>Add attachment lists to campaign_folders</comment>
+		<addColumn tableName="ATTACHMENT_LIST">
+			<column name="CLN_ID" type="BIGINT"
+				remarks="table provisoire pour se rapeller de à qui était destinée la nouvelle attachment_list">
+				<constraints nullable="true"
+					references="CAMPAIGN_LIBRARY_NODE(CLN_ID)" foreignKeyName="fk_cln"/>
+			</column>
+		</addColumn>
+		<sql>
+			insert into ATTACHMENT_LIST (CLN_ID)
+			select CAMPAIGN_FOLDER.CLN_ID from CAMPAIGN_FOLDER;
+		</sql>
+		<sql>
+			update CAMPAIGN_LIBRARY_NODE 
+			set ATTACHMENT_LIST_ID = (select ATTACHMENT_LIST.ATTACHMENT_LIST_ID from ATTACHMENT_LIST where ATTACHMENT_LIST.CLN_ID = CAMPAIGN_LIBRARY_NODE.CLN_ID)
+			where ATTACHMENT_LIST_ID is null;
+		</sql>
+		<dropForeignKeyConstraint baseTableName="ATTACHMENT_LIST" constraintName="fk_cln"/>
+		<dropColumn tableName="ATTACHMENT_LIST" columnName="CLN_ID"/>
+	</changeSet>
+	<changeSet id="tm-1.4.0.feat-1513.05" author="mpagnon">
+		<comment>Add attachment lists to requirement folders</comment>
+		<addColumn tableName="ATTACHMENT_LIST">
+			<column name="RES_ID" type="BIGINT"
+				remarks="table provisoire pour se rapeller de à qui était destinée la nouvelle attachment_list">
+				<constraints nullable="true"
+					references="RESOURCE(RES_ID)" foreignKeyName="fk_sr"/>
+			</column>
+		</addColumn>
+		<sql>
+			insert into ATTACHMENT_LIST (RES_ID)
+			select SIMPLE_RESOURCE.RES_ID from SIMPLE_RESOURCE;
+		</sql>
+		<sql>
+			update RESOURCE 
+			set ATTACHMENT_LIST_ID = (select ATTACHMENT_LIST.ATTACHMENT_LIST_ID from ATTACHMENT_LIST where ATTACHMENT_LIST.RES_ID = RESOURCE.RES_ID)
+			where ATTACHMENT_LIST_ID is null;
+		</sql>
+		<dropForeignKeyConstraint baseTableName="ATTACHMENT_LIST" constraintName="fk_sr"/>
+		<dropColumn tableName="ATTACHMENT_LIST" columnName="RES_ID"/>
+	</changeSet>
+	<changeSet id="tm-1.4.0.feat-1513.06" author="mpagnon">
+		<comment>Make attachment_list_ids new fks not nullable</comment>
+		<addNotNullConstraint tableName="TEST_CASE_LIBRARY_NODE" columnDataType="BIGINT" columnName="ATTACHMENT_LIST_ID"/>
+		<addNotNullConstraint tableName="CAMPAIGN_LIBRARY_NODE" columnDataType="BIGINT" columnName="ATTACHMENT_LIST_ID"/>
+		<addNotNullConstraint tableName="RESOURCE" columnDataType="BIGINT" columnName="ATTACHMENT_LIST_ID"/>
+	</changeSet>
+	<changeSet id="tm-1.4.0.feat-1513.07" author="mpagnon">
+		<comment>Drop previous attachment list ids</comment>
+		<dropForeignKeyConstraint baseTableName="TEST_CASE" constraintName="fk_test_case_attachment_list"/>
+		<dropForeignKeyConstraint baseTableName="CAMPAIGN" constraintName="fk_campaign_attachment_list"/>
+		<dropForeignKeyConstraint baseTableName="REQUIREMENT_VERSION" constraintName="fk_requirement_version_attachment_list"/>
+		
+		<dropColumn tableName="TEST_CASE" columnName="ATTACHMENT_LIST_ID"/>
+		<dropColumn tableName="CAMPAIGN" columnName="ATTACHMENT_LIST_ID"/>
+		<dropColumn tableName="REQUIREMENT_VERSION" columnName="ATTACHMENT_LIST_ID"/>
+	</changeSet>
+</databaseChangeLog>
+ 
