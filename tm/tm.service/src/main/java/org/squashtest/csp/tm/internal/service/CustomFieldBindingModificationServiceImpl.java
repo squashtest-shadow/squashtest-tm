@@ -27,6 +27,7 @@ import javax.inject.Inject;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+import org.squashtest.csp.tm.domain.customfield.BindableEntity;
 import org.squashtest.csp.tm.domain.customfield.CustomField;
 import org.squashtest.csp.tm.domain.customfield.CustomFieldBinding;
 import org.squashtest.csp.tm.domain.project.Project;
@@ -62,6 +63,11 @@ public class CustomFieldBindingModificationServiceImpl implements CustomFieldBin
 	}
 
 	@Override
+	public List<CustomFieldBinding> findCustomFieldsForProjectAndEntity(long projectId, BindableEntity entity) {
+		return customFieldBindingDao.findAllForProjectAndEntity(projectId, entity);
+	}
+	
+	@Override
 	@PreAuthorize("hasRole('ROLE_TM_PROJECT_MANAGER') or hasRole('ROLE_ADMIN')")		
 	public void addNewCustomFieldBinding(long projectId, long customFieldId,
 			CustomFieldBinding newBinding) {
@@ -76,6 +82,5 @@ public class CustomFieldBindingModificationServiceImpl implements CustomFieldBin
 		
 	}
 
-	
 	
 }
