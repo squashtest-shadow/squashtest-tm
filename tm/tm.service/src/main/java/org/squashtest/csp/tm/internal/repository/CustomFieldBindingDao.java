@@ -22,6 +22,7 @@ package org.squashtest.csp.tm.internal.repository;
 
 import java.util.List;
 
+import org.squashtest.csp.tm.domain.customfield.BindableEntity;
 import org.squashtest.csp.tm.domain.customfield.CustomFieldBinding;
 
 public interface CustomFieldBindingDao extends CustomCustomFieldBindingDao{
@@ -29,7 +30,8 @@ public interface CustomFieldBindingDao extends CustomCustomFieldBindingDao{
 
 	List<CustomFieldBinding> findAllForProject(long projectId);
 	
-	void persist(CustomFieldBinding binding);
+	List<CustomFieldBinding> findAllForProjectAndEntity(long projectId, BindableEntity boundEntity);
 	
+	void persist(CustomFieldBinding binding);
 	
 }

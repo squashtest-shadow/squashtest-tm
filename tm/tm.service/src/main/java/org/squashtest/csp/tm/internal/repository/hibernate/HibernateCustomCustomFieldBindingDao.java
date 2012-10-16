@@ -24,7 +24,7 @@ import org.springframework.stereotype.Repository;
 import org.squashtest.csp.tm.internal.repository.CustomCustomFieldBindingDao;
 
 
-@Repository("CustomCustomFieldDao")
+@Repository("CustomCustomFieldBindingDao")
 public class HibernateCustomCustomFieldBindingDao implements CustomCustomFieldBindingDao {
 	
 	

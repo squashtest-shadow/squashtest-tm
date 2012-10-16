@@ -32,7 +32,7 @@ class SingleSelectFieldTest extends Specification {
 	def "should add and remove options"() {
 		given: 
 		SingleSelectField field = new SingleSelectField()
-		field.inputType = InputType.DROPDOWN_LIST
+		//field.inputType = InputType.DROPDOWN_LIST
 		
 		when:
 		field.addOption("batman")

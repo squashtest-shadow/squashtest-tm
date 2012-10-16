@@ -227,6 +227,8 @@
 		
 		//CustomFieldBinding dao
 		@NamedQuery(name = "customFieldBinding.findAllForProject", query = "from CustomFieldBinding cfb join cfb.boundProject bp where bp.id = ? "),
+		@NamedQuery(name = "customFieldBinding.findAllForProjectAndEntity", query = "from CustomFieldBinding cfb join cfb.boundProject bp where bp.id = ? and cfb.boundEntity = ?"),
+		
 
 		/* ********************************************** batch deletion-related queries **************************************************** */
 

@@ -22,6 +22,7 @@ package org.squashtest.csp.tm.service;
 
 import java.util.List;
 
+import org.squashtest.csp.tm.domain.customfield.BindableEntity;
 import org.squashtest.csp.tm.domain.customfield.CustomField;
 import org.squashtest.csp.tm.domain.customfield.CustomFieldBinding;
 
@@ -47,13 +48,23 @@ public interface CustomFieldBindingFinderService {
 	
 	
 	/**
-	 * returns the custom field bindings associated to a project. 
+	 * returns all the custom field bindings associated to a project. 
 	 * 
 	 * 
 	 * @param projectId
 	 * @return
 	 */
 	List<CustomFieldBinding> findCustomFieldsForProject(long projectId);
+	
+	
+	/**
+	 * 
+	 * returns all the custom field bindings associated to a project for a given entity type
+	 * 
+	 * @param projectId
+	 * @return
+	 */
+	List<CustomFieldBinding> findCustomFieldsForProjectAndEntity(long projectId, BindableEntity entity);
 	
 	
 }
