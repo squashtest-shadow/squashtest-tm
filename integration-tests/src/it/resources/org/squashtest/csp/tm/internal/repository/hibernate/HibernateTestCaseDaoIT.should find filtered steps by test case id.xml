@@ -21,28 +21,29 @@
         along with this software.  If not, see <http://www.gnu.org/licenses/>.
 
 -->
+<!DOCTYPE dataset SYSTEM "../../../../../../../dtd/squash-tm.1.4.0.dtd">
 <dataset>
-	<attachment_list attachment_list_id="10" />
-	<test_case_library_node tcln_id="10" name="foo" created_on="2011-01-01" created_by="dbu" />
-	<test_case tcln_id="10" version="1" attachment_list_id="10" />
+	<ATTACHMENT_LIST ATTACHMENT_LIST_ID="10" />
+	<TEST_CASE_LIBRARY_NODE TCLN_ID="10" NAME="foo" CREATED_ON="2011-01-01" CREATED_BY="DBU" ATTACHMENT_LIST_ID="10" />
+	<TEST_CASE TCLN_ID="10" VERSION="1" />
 	
-	<attachment_list attachment_list_id="100" />
-	<test_step test_step_id="100" />
-	<action_test_step test_step_id="100" action="do stuff" attachment_list_id="100" />
-	<test_case_steps test_case_id="10" step_id="100" step_order="0" /> 
+	<ATTACHMENT_LIST ATTACHMENT_LIST_ID="100" />
+	<TEST_STEP TEST_STEP_ID="100" />
+	<ACTION_TEST_STEP TEST_STEP_ID="100" ACTION="do stuff" ATTACHMENT_LIST_ID="100" />
+	<TEST_CASE_STEPS TEST_CASE_ID="10" STEP_ID="100" STEP_ORDER="0" /> 
 
-	<attachment_list attachment_list_id="200" />
-	<test_step test_step_id="200" />
-	<action_test_step test_step_id="200" action="do stuff" attachment_list_id="200" />
-	<test_case_steps test_case_id="10" step_id="200" step_order="1" /> 
+	<ATTACHMENT_LIST ATTACHMENT_LIST_ID="200" />
+	<TEST_STEP TEST_STEP_ID="200" />
+	<ACTION_TEST_STEP TEST_STEP_ID="200" ACTION="do stuff" ATTACHMENT_LIST_ID="200" />
+	<TEST_CASE_STEPS TEST_CASE_ID="10" STEP_ID="200" STEP_ORDER="1" /> 
 
-	<attachment_list attachment_list_id="300" />
-	<test_step test_step_id="300" />
-	<action_test_step test_step_id="300" action="do stuff" attachment_list_id="300" />
-	<test_case_steps test_case_id="10" step_id="300" step_order="2" /> 
+	<ATTACHMENT_LIST ATTACHMENT_LIST_ID="300" />
+	<TEST_STEP TEST_STEP_ID="300" />
+	<ACTION_TEST_STEP TEST_STEP_ID="300" ACTION="do stuff" ATTACHMENT_LIST_ID="300" />
+	<TEST_CASE_STEPS TEST_CASE_ID="10" STEP_ID="300" STEP_ORDER="2" /> 
 
-	<attachment_list attachment_list_id="400" />
-	<test_step test_step_id="400" />
-	<action_test_step test_step_id="400" action="do stuff" attachment_list_id="400" />
-	<test_case_steps test_case_id="10" step_id="400" step_order="3" /> 
+	<ATTACHMENT_LIST ATTACHMENT_LIST_ID="400" />
+	<TEST_STEP TEST_STEP_ID="400" />
+	<ACTION_TEST_STEP TEST_STEP_ID="400" ACTION="do stuff" ATTACHMENT_LIST_ID="400" />
+	<TEST_CASE_STEPS TEST_CASE_ID="10" STEP_ID="400" STEP_ORDER="3" /> 
 </dataset>

@@ -21,66 +21,67 @@
         along with this software.  If not, see <http://www.gnu.org/licenses/>.
 
 -->
+<!DOCTYPE dataset SYSTEM "../../../../../../dtd/squash-tm.1.4.0.dtd">
 <dataset>
 	<!-- projects and libraries -->
-	<test_case_library tcl_id="1" />
-	<campaign_library cl_id="1" />
-	<requirement_library rl_id="1" />
+	<TEST_CASE_LIBRARY TCL_ID="1" />
+	<CAMPAIGN_LIBRARY CL_ID="1" />
+	<REQUIREMENT_LIBRARY RL_ID="1" />
 
-	<project project_id="1" name="project 1" active="true" created_by="groovy" created_on="2010-01-01" cl_id="1"
-		tcl_id="1" rl_id="1" />
-
-
-	<!-- test cases -->
-	<attachment_list attachment_list_id="10" />
-	<test_case_library_node tcln_id="1" name="test case 1" created_by="dbu" created_on="2010-02-01" />
-	<test_case tcln_id="1" version="1" attachment_list_id="10" />
-	<test_case_library_node tcln_id="2" name="test case 2" created_by="dbu" created_on="2010-02-01" />
-	<attachment_list attachment_list_id="20" />
-	<test_case tcln_id="2" version="1" attachment_list_id="20" />
-	<test_case_library_node tcln_id="3" name="test case 3" created_by="dbu" created_on="2010-02-01" />
-	<attachment_list attachment_list_id="30" />
-	<test_case tcln_id="3" version="1" attachment_list_id="30" />
+	<PROJECT PROJECT_ID="1" NAME="project 1" ACTIVE="TRUE" CREATED_BY="groovy" CREATED_ON="2010-01-01" CL_ID="1"
+		TCL_ID="1" RL_ID="1" />
 
 
-	<!-- one campaign -->
-	<attachment_list attachment_list_id="1010" />
-	<campaign_library_node cln_id="1" name="Pharos" created_on="2010-02-01" created_by="dbu"
-		project_id="1" />
-	<campaign cln_id="1" actual_end_auto="false" actual_start_auto="false" actual_start_date="2011-01-01"
-		actual_end_date="2011-01-02" scheduled_start_date="2011-01-01" scheduled_end_date="2011-01-02" attachment_list_id="1010" />
+	<!-- TEST CASES -->
+	<ATTACHMENT_LIST ATTACHMENT_LIST_ID="10" />
+	<TEST_CASE_LIBRARY_NODE TCLN_ID="1" NAME="test case 1" CREATED_BY="DBU" CREATED_ON="2010-02-01" ATTACHMENT_LIST_ID="10"/>
+	<TEST_CASE TCLN_ID="1" VERSION="1"  />
+	<TEST_CASE_LIBRARY_NODE TCLN_ID="2" NAME="test case 2" CREATED_BY="DBU" CREATED_ON="2010-02-01" ATTACHMENT_LIST_ID="20"/>
+	<ATTACHMENT_LIST ATTACHMENT_LIST_ID="20" />
+	<TEST_CASE TCLN_ID="2" VERSION="1"  />
+	<TEST_CASE_LIBRARY_NODE TCLN_ID="3" NAME="test case 3" CREATED_BY="DBU" CREATED_ON="2010-02-01" ATTACHMENT_LIST_ID="30"/>
+	<ATTACHMENT_LIST ATTACHMENT_LIST_ID="30" />
+	<TEST_CASE TCLN_ID="3" VERSION="1"  />
 
-	<!-- iteration 1 -->
-	<attachment_list attachment_list_id="101010" />
+
+	<!-- ONE CAMPAIGN -->
+	<ATTACHMENT_LIST ATTACHMENT_LIST_ID="1010" />
+	<CAMPAIGN_LIBRARY_NODE CLN_ID="1" NAME="Pharos" CREATED_ON="2010-02-01" CREATED_BY="DBU"
+		PROJECT_ID="1" ATTACHMENT_LIST_ID="1010"/>
+	<CAMPAIGN CLN_ID="1" ACTUAL_END_AUTO="FALSE" ACTUAL_START_AUTO="FALSE" ACTUAL_START_DATE="2011-01-01"
+		ACTUAL_END_DATE="2011-01-02" SCHEDULED_START_DATE="2011-01-01" SCHEDULED_END_DATE="2011-01-02"  />
+
+	<!-- ITERATION 1 -->
+	<ATTACHMENT_LIST ATTACHMENT_LIST_ID="101010" />
 	
-	<iteration name="iter - tc1" iteration_id="1" actual_end_auto="false" actual_start_auto="false"
-		actual_start_date="2011-01-01" actual_end_date="2011-01-02" scheduled_start_date="2011-01-01" scheduled_end_date="2011-01-02"
-		created_by="dbu" created_on="2010-02-01" attachment_list_id="101010" />
-	<campaign_iteration campaign_id="1" iteration_id="1" iteration_order="0" />
+	<ITERATION NAME="iter - tc1" ITERATION_ID="1" ACTUAL_END_AUTO="FALSE" ACTUAL_START_AUTO="FALSE"
+		ACTUAL_START_DATE="2011-01-01" ACTUAL_END_DATE="2011-01-02" SCHEDULED_START_DATE="2011-01-01" SCHEDULED_END_DATE="2011-01-02"
+		CREATED_BY="DBU" CREATED_ON="2010-02-01" ATTACHMENT_LIST_ID="101010" />
+	<CAMPAIGN_ITERATION CAMPAIGN_ID="1" ITERATION_ID="1" ITERATION_ORDER="0" />
 
-	<!-- test plans of iteration 1 -->
-	<iteration_test_plan_item item_test_plan_id="1" execution_status="READY" tcln_id="1" created_by="dbu" created_on="2010-02-01" />
-	<item_test_plan_list iteration_id="1" item_test_plan_id="1" item_test_plan_order="0"  />
-	<iteration_test_plan_item item_test_plan_id="2" execution_status="SUCCESS" tcln_id="2" created_by="dbu"
-		created_on="2010-02-01" />
-	<item_test_plan_list iteration_id="1" item_test_plan_id="2" item_test_plan_order="1" />
-	<iteration_test_plan_item item_test_plan_id="3" execution_status="BLOCKED" tcln_id="3" created_by="dbu"
-		created_on="2010-02-01" />
-	<item_test_plan_list iteration_id="1" item_test_plan_id="3" item_test_plan_order="2" />
+	<!-- TEST PLANS OF ITERATION 1 -->
+	<ITERATION_TEST_PLAN_ITEM ITEM_TEST_PLAN_ID="1" EXECUTION_STATUS="READY" TCLN_ID="1" CREATED_BY="DBU" CREATED_ON="2010-02-01" />
+	<ITEM_TEST_PLAN_LIST ITERATION_ID="1" ITEM_TEST_PLAN_ID="1" ITEM_TEST_PLAN_ORDER="0"  />
+	<ITERATION_TEST_PLAN_ITEM ITEM_TEST_PLAN_ID="2" EXECUTION_STATUS="SUCCESS" TCLN_ID="2" CREATED_BY="DBU"
+		CREATED_ON="2010-02-01" />
+	<ITEM_TEST_PLAN_LIST ITERATION_ID="1" ITEM_TEST_PLAN_ID="2" ITEM_TEST_PLAN_ORDER="1" />
+	<ITERATION_TEST_PLAN_ITEM ITEM_TEST_PLAN_ID="3" EXECUTION_STATUS="BLOCKED" TCLN_ID="3" CREATED_BY="DBU"
+		CREATED_ON="2010-02-01" />
+	<ITEM_TEST_PLAN_LIST ITERATION_ID="1" ITEM_TEST_PLAN_ID="3" ITEM_TEST_PLAN_ORDER="2" />
 
 	
 	
 	<!--  cleanup -->
 
 
-	<attachment_content/>
-	<attachment/>
-	<test_step/>
-	<action_test_step/>
-	<call_test_step/>
-	<test_case_steps/>
-	<test_case_folder/>
-	<tcln_relationship/>
+	<ATTACHMENT_CONTENT/>
+	<ATTACHMENT/>
+	<TEST_STEP/>
+	<ACTION_TEST_STEP/>
+	<CALL_TEST_STEP/>
+	<TEST_CASE_STEPS/>
+	<TEST_CASE_FOLDER/>
+	<TCLN_RELATIONSHIP/>
 	
 
 </dataset>

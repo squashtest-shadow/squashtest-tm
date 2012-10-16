@@ -21,23 +21,24 @@
         along with this software.  If not, see <http://www.gnu.org/licenses/>.
 
 -->
+<!DOCTYPE dataset SYSTEM "../../../../../../../dtd/squash-tm.1.4.0.dtd">
 <dataset>
 
-  <ATTACHMENT_LIST ATTACHMENT_LIST_id="10"/>
-  <resource res_id="10" name="bbbbb" created_on="2012-01-02" created_by="dbu"/>
-  <requirement_library_node created_by="dbu" rln_id="10" created_on="2010-02-01"/>
-  <requirement_version attachment_list_id="10" res_id="10"/>
-  <requirement rln_id="10" current_version_id="10"/>
+  <ATTACHMENT_LIST ATTACHMENT_LIST_ID="10"/>
+  <RESOURCE RES_ID="10" NAME="bbbbb" CREATED_ON="2012-01-02" CREATED_BY="DBU" ATTACHMENT_LIST_ID="10"/>
+  <REQUIREMENT_LIBRARY_NODE CREATED_BY="DBU" RLN_ID="10" CREATED_ON="2010-02-01"/>
+  <REQUIREMENT_VERSION  RES_ID="10"/>
+  <REQUIREMENT RLN_ID="10" CURRENT_VERSION_ID="10"/>
   
-  <ATTACHMENT_LIST ATTACHMENT_LIST_id="20"/>
-  <resource res_id="20" name="aaaaa" created_on="2011-01-02" created_by="dbu"/>
-  <requirement_version attachment_list_id="20" res_id="20"/>
-  <requirement_library_node created_by="dbu" rln_id="20" created_on="2010-02-01"/>
-  <requirement rln_id="20" current_version_id="20"/>
+  <ATTACHMENT_LIST ATTACHMENT_LIST_ID="20"/>
+  <RESOURCE RES_ID="20" NAME="aaaaa" CREATED_ON="2011-01-02" CREATED_BY="DBU" ATTACHMENT_LIST_ID="20"/>
+  <REQUIREMENT_VERSION  RES_ID="20"/>
+  <REQUIREMENT_LIBRARY_NODE CREATED_BY="DBU" RLN_ID="20" CREATED_ON="2010-02-01"/>
+  <REQUIREMENT RLN_ID="20" CURRENT_VERSION_ID="20"/>
   
-  <ATTACHMENT_LIST ATTACHMENT_LIST_id="100"/>
-  <test_case_library_node created_by="dbu" tcln_id="100" created_on="2011-01-01" name="tc 100"/>
-  <test_case tcln_id="100" attachment_list_id="100" version="1"/>
-  <test_case_verified_requirement_version verifying_test_case_id="100" verified_req_version_id="10"/>
-  <test_case_verified_requirement_version verifying_test_case_id="100" verified_req_version_id="20"/>
+  <ATTACHMENT_LIST ATTACHMENT_LIST_ID="100"/>
+  <TEST_CASE_LIBRARY_NODE CREATED_BY="DBU" TCLN_ID="100" CREATED_ON="2011-01-01" NAME="tc 100" ATTACHMENT_LIST_ID="100"/>
+  <TEST_CASE TCLN_ID="100"  VERSION="1"/>
+  <TEST_CASE_VERIFIED_REQUIREMENT_VERSION VERIFYING_TEST_CASE_ID="100" VERIFIED_REQ_VERSION_ID="10"/>
+  <TEST_CASE_VERIFIED_REQUIREMENT_VERSION VERIFYING_TEST_CASE_ID="100" VERIFIED_REQ_VERSION_ID="20"/>
 </dataset>

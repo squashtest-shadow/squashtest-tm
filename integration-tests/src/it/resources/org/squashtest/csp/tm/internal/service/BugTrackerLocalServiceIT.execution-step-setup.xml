@@ -21,124 +21,125 @@
         along with this software.  If not, see <http://www.gnu.org/licenses/>.
 
 -->
+<!DOCTYPE dataset SYSTEM "../../../../../../dtd/squash-tm.1.4.0.dtd">
 <dataset>
 
 	<!--  issue lists -->
-	<issue_list issue_list_id="1" />
-	<issue_list issue_list_id="2" />
-	<issue_list issue_list_id="3" />
-	<issue_list issue_list_id="4" />
-	<issue_list issue_list_id="5" />
-	<issue_list issue_list_id="6" />
-	<issue_list issue_list_id="7" />
-	<issue_list issue_list_id="8" />
-	<issue_list issue_list_id="9" />
-	<issue_list issue_list_id="10" />
+	<ISSUE_LIST ISSUE_LIST_ID="1" />
+	<ISSUE_LIST ISSUE_LIST_ID="2" />
+	<ISSUE_LIST ISSUE_LIST_ID="3" />
+	<ISSUE_LIST ISSUE_LIST_ID="4" />
+	<ISSUE_LIST ISSUE_LIST_ID="5" />
+	<ISSUE_LIST ISSUE_LIST_ID="6" />
+	<ISSUE_LIST ISSUE_LIST_ID="7" />
+	<ISSUE_LIST ISSUE_LIST_ID="8" />
+	<ISSUE_LIST ISSUE_LIST_ID="9" />
+	<ISSUE_LIST ISSUE_LIST_ID="10" />
 	
 
 
 	<!--  projects and libraries -->
-	<test_case_library tcl_id="1" />
-	<campaign_library cl_id="1" />
-	<requirement_library rl_id="1" />
-	
-	<project project_id="1" name="squashbt" active="true" created_by="groovy" created_on="2010-01-01" 
-				cl_id="1" tcl_id="1" rl_id="1"/>
+	<TEST_CASE_LIBRARY TCL_ID="1" />
+	<CAMPAIGN_LIBRARY CL_ID="1" />
+	<REQUIREMENT_LIBRARY RL_ID="1" />
+	<BUGTRACKER URL="" NAME="" BUGTRACKER_ID="1" KIND="mantis"/>
+	<PROJECT PROJECT_ID="1" NAME="squashbt" ACTIVE="TRUE" CREATED_BY="groovy" CREATED_ON="2010-01-01" 
+				CL_ID="1" TCL_ID="1" RL_ID="1"/>
 				
 
 	<!-- 2 test cases -->
-	<attachment_list attachment_list_id="1" />
+	<ATTACHMENT_LIST ATTACHMENT_LIST_ID="1" />
 	
-	<test_case_library_node tcln_id="1" name="test case 1" created_on="2010-02-01" created_by="dbu" project_id="1"/>
-	<test_case tcln_id="1"  version="1" attachment_list_id="1" />
+	<TEST_CASE_LIBRARY_NODE TCLN_ID="1" NAME="test case 1" CREATED_ON="2010-02-01" CREATED_BY="DBU" PROJECT_ID="1" ATTACHMENT_LIST_ID="1"/>
+	<TEST_CASE TCLN_ID="1"  VERSION="1"  />
+	<ATTACHMENT_LIST ATTACHMENT_LIST_ID="123"/>
+	<TEST_CASE_LIBRARY_NODE TCLN_ID="2" NAME="test case 2" CREATED_ON="2010-02-01" CREATED_BY="DBU" PROJECT_ID="1" ATTACHMENT_LIST_ID="132"/>
+	<TEST_CASE TCLN_ID="2"  VERSION="1" />
 	
-	<test_case_library_node tcln_id="2" name="test case 2" created_on="2010-02-01" created_by="dbu" project_id="1"/>
-	<test_case tcln_id="2"  version="1" attachment_list_id="1"/>
-	
-	<!--  one campaign -->
-	<attachment_list attachment_list_id="2" />
-	<campaign_library_node cln_id="1" name="Pharos" created_on="2010-02-01" created_by="dbu" project_id="1"/>
-	<campaign cln_id="1"  actual_end_auto="false" actual_start_auto="false" actual_start_date="2011-01-01" actual_end_date="2011-01-02" scheduled_start_date="2011-01-01" scheduled_end_date="2011-01-02"
-	attachment_list_id="2"	/>
+	<!--  ONE CAMPAIGN -->
+	<ATTACHMENT_LIST ATTACHMENT_LIST_ID="2" />
+	<CAMPAIGN_LIBRARY_NODE CLN_ID="1" NAME="Pharos" CREATED_ON="2010-02-01" CREATED_BY="DBU" PROJECT_ID="1" ATTACHMENT_LIST_ID="2"	/>
+	<CAMPAIGN CLN_ID="1"  ACTUAL_END_AUTO="FALSE" ACTUAL_START_AUTO="FALSE" ACTUAL_START_DATE="2011-01-01" ACTUAL_END_DATE="2011-01-02" SCHEDULED_START_DATE="2011-01-01" SCHEDULED_END_DATE="2011-01-02"
+	/>
 	
 	
 	<!-- iteration 1, target test case 1 and 2, belongs to campaign 1 -->	
-	<attachment_list attachment_list_id="3" />
+	<ATTACHMENT_LIST ATTACHMENT_LIST_ID="3" />
 	
 
 	
 	
-	<iteration name="iter - tc1" iteration_id="1" actual_end_auto="false" 
-	actual_start_auto="false" actual_start_date="2011-01-01" 
-	actual_end_date="2011-01-02" scheduled_start_date="2011-01-01" 
-	scheduled_end_date="2011-01-02" created_on="2010-01-01" created_by="dbu"
-	attachment_list_id="3"/>	
-	<campaign_iteration campaign_id="1" iteration_id="1" iteration_order="0"/>
+	<ITERATION NAME="ITER - TC1" ITERATION_ID="1" ACTUAL_END_AUTO="FALSE" 
+	ACTUAL_START_AUTO="FALSE" ACTUAL_START_DATE="2011-01-01" 
+	ACTUAL_END_DATE="2011-01-02" SCHEDULED_START_DATE="2011-01-01" 
+	SCHEDULED_END_DATE="2011-01-02" CREATED_ON="2010-01-01" CREATED_BY="DBU"
+	ATTACHMENT_LIST_ID="3"/>	
+	<CAMPAIGN_ITERATION CAMPAIGN_ID="1" ITERATION_ID="1" ITERATION_ORDER="0"/>
 
 
-	<iteration_test_plan_item item_test_plan_id="1" execution_status="SUCCESS" tcln_id="1" created_by="dbu" created_on="2010-02-01"/>
-	<item_test_plan_list iteration_id="1" item_test_plan_id="1" item_test_plan_order="0" />
+	<ITERATION_TEST_PLAN_ITEM ITEM_TEST_PLAN_ID="1" EXECUTION_STATUS="SUCCESS" TCLN_ID="1" CREATED_BY="DBU" CREATED_ON="2010-02-01"/>
+	<ITEM_TEST_PLAN_LIST ITERATION_ID="1" ITEM_TEST_PLAN_ID="1" ITEM_TEST_PLAN_ORDER="0" />
 	
-	<iteration_test_plan_item item_test_plan_id="2" execution_status="READY" tcln_id="2" created_by="dbu" created_on="2010-02-01"/>
-	<item_test_plan_list iteration_id="1" item_test_plan_id="2" item_test_plan_order="1" />		
+	<ITERATION_TEST_PLAN_ITEM ITEM_TEST_PLAN_ID="2" EXECUTION_STATUS="READY" TCLN_ID="2" CREATED_BY="DBU" CREATED_ON="2010-02-01"/>
+	<ITEM_TEST_PLAN_LIST ITERATION_ID="1" ITEM_TEST_PLAN_ID="2" ITEM_TEST_PLAN_ORDER="1" />		
 	
 	
 	
 	<!-- execution for the test plan 1 -->
-	<attachment_list attachment_list_id="4" />
+	<ATTACHMENT_LIST ATTACHMENT_LIST_ID="4" />
 	
-	<execution execution_id="1" name="test case 1" issue_list_id="1" created_by="dbu" created_on="2010-02-01" attachment_list_id="1"/>
+	<EXECUTION EXECUTION_ID="1" NAME="test case 1" ISSUE_LIST_ID="1" CREATED_BY="DBU" CREATED_ON="2010-02-01" ATTACHMENT_LIST_ID="1"/>
 	
-	<item_test_plan_execution item_test_plan_id="1" execution_id="1" execution_order="1"/>
+	<ITEM_TEST_PLAN_EXECUTION ITEM_TEST_PLAN_ID="1" EXECUTION_ID="1" EXECUTION_ORDER="1"/>
 	
 	
 	<!--  execution step for the  execution 1 -->
-	<attachment_list attachment_list_id="5" />
+	<ATTACHMENT_LIST ATTACHMENT_LIST_ID="5" />
 	
-	<execution_step execution_step_id="1" expected_result="should work" 
-					action="click"  execution_status="FAILURE" comment="it's bugged" 
-					created_on="2010-01-01" created_by="dbu" 
-					last_executed_by="tester" last_executed_on="2011-04-08 15:01:15.593" 
-					attachment_list_id="5" issue_list_id="2" />
+	<EXECUTION_STEP EXECUTION_STEP_ID="1" EXPECTED_RESULT="should work" 
+					ACTION="click"  EXECUTION_STATUS="FAILURE" COMMENT="it's bugged" 
+					CREATED_ON="2010-01-01" CREATED_BY="DBU" 
+					LAST_EXECUTED_BY="tester" LAST_EXECUTED_ON="2011-04-08 15:01:15.593" 
+					ATTACHMENT_LIST_ID="5" ISSUE_LIST_ID="2" />
 	
 	
-	<execution_execution_steps execution_id="1" execution_step_id="1" execution_step_order="0"/>
+	<EXECUTION_EXECUTION_STEPS EXECUTION_ID="1" EXECUTION_STEP_ID="1" EXECUTION_STEP_ORDER="0"/>
 	
 	
 	<!--  the bugs for execution step 1 of execution 1 now  -->
 	
 	
-	<issue issue_id="2" remote_issue_id="2" issue_list_id="2"/>
-	<issue issue_id="4" remote_issue_id="4" issue_list_id="2"/>
-	<issue issue_id="6" remote_issue_id="6" issue_list_id="2"/>
+	<ISSUE ISSUE_ID="2" REMOTE_ISSUE_ID="2" ISSUE_LIST_ID="2" BUGTRACKER_ID="1"/>
+	<ISSUE ISSUE_ID="4" REMOTE_ISSUE_ID="4" ISSUE_LIST_ID="2" BUGTRACKER_ID="1"/>
+	<ISSUE ISSUE_ID="6" REMOTE_ISSUE_ID="6" ISSUE_LIST_ID="2" BUGTRACKER_ID="1"/>
 	
 	
 	<!--  second execution step for the  execution 1 -->
 
 
-	<execution_step execution_step_id="2" expected_result="should fail" 
-					action="click"  execution_status="SUCCESS" comment="it's bugged as expected" 
-					last_executed_by="tester" last_executed_on="2011-04-08 15:01:15.593"
-					created_by="dbu" created_on="2010-01-01"
-					attachment_list_id="5"
-					issue_list_id="3"/>
+	<EXECUTION_STEP EXECUTION_STEP_ID="2" EXPECTED_RESULT="should fail" 
+					ACTION="click"  EXECUTION_STATUS="SUCCESS" COMMENT="it's bugged as expected" 
+					LAST_EXECUTED_BY="tester" LAST_EXECUTED_ON="2011-04-08 15:01:15.593"
+					CREATED_BY="dbu" CREATED_ON="2010-01-01"
+					ATTACHMENT_LIST_ID="5"
+					ISSUE_LIST_ID="3"/>
 					
-	<execution_execution_steps execution_id="1" execution_step_id="2" execution_step_order="1"/>
+	<EXECUTION_EXECUTION_STEPS EXECUTION_ID="1" EXECUTION_STEP_ID="2" EXECUTION_STEP_ORDER="1"/>
 		
 	
 	<!--  the bugs for step 2 of execution 1 now  -->
 	
 	
-	<issue issue_id="1" remote_issue_id="1" issue_list_id="3" />
-	<issue issue_id="3" remote_issue_id="3" issue_list_id="3" />
-	<issue issue_id="5" remote_issue_id="5" issue_list_id="3" />
+	<ISSUE ISSUE_ID="1" REMOTE_ISSUE_ID="1" ISSUE_LIST_ID="3" BUGTRACKER_ID="1"/>
+	<ISSUE ISSUE_ID="3" REMOTE_ISSUE_ID="3" ISSUE_LIST_ID="3" BUGTRACKER_ID="1"/>
+	<ISSUE ISSUE_ID="5" REMOTE_ISSUE_ID="5" ISSUE_LIST_ID="3" BUGTRACKER_ID="1"/>
 	
 	
 	
 	<!--  the bugs for the execution 1 itself -->
 	
-	<issue issue_id="7" remote_issue_id="7" issue_list_id="1"/>
-	<issue issue_id="8" remote_issue_id="8" issue_list_id="1"/>
+	<ISSUE ISSUE_ID="7" REMOTE_ISSUE_ID="7" ISSUE_LIST_ID="1" BUGTRACKER_ID="1"/>
+	<ISSUE ISSUE_ID="8" REMOTE_ISSUE_ID="8" ISSUE_LIST_ID="1" BUGTRACKER_ID="1"/>
 	
 	
 </dataset>

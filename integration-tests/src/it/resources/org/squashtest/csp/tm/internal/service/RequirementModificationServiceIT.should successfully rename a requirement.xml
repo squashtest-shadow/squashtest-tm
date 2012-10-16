@@ -21,28 +21,30 @@
         along with this software.  If not, see <http://www.gnu.org/licenses/>.
 
 -->
+<!DOCTYPE dataset SYSTEM "../../../../../../dtd/squash-tm.1.4.0.dtd">
 <dataset>
- <requirement_library_node created_by="dbu" rln_id="1" created_on="2010-02-01"/>
-  <resource created_by="dbu" created_on="2012-01-02" res_id="1" name="a folder"/>
-  <simple_resource res_id="1"/>
-  <requirement_folder rln_id="1" res_id="1"/>
+<ATTACHMENT_LIST ATTACHMENT_LIST_ID="123"/>
+ <REQUIREMENT_LIBRARY_NODE CREATED_BY="DBU" RLN_ID="1" CREATED_ON="2010-02-01"/>
+  <RESOURCE CREATED_BY="DBU" CREATED_ON="2012-01-02" RES_ID="1" NAME="a folder" ATTACHMENT_LIST_ID="123"/>
+  <SIMPLE_RESOURCE RES_ID="1"/>
+  <REQUIREMENT_FOLDER RLN_ID="1" RES_ID="1"/>
   
-  <attachment_list attachment_list_id="10"/>
-  <resource res_id="10" name="req 1" created_on="2012-01-02" created_by="dbu"/>
-  <requirement_version attachment_list_id="10" res_id="10"/>
-  <requirement_library_node created_by="dbu" rln_id="10" created_on="2010-02-01"/>
-  <requirement rln_id="10" current_version_id="10"/>
-  <rln_relationship descendant_id="10" ancestor_id="1"/>
+  <ATTACHMENT_LIST ATTACHMENT_LIST_ID="10"/>
+  <RESOURCE RES_ID="10" NAME="req 1" CREATED_ON="2012-01-02" CREATED_BY="DBU" ATTACHMENT_LIST_ID="10"/>
+  <REQUIREMENT_VERSION RES_ID="10"/>
+  <REQUIREMENT_LIBRARY_NODE CREATED_BY="DBU" RLN_ID="10" CREATED_ON="2010-02-01"/>
+  <REQUIREMENT RLN_ID="10" CURRENT_VERSION_ID="10"/>
+  <RLN_RELATIONSHIP DESCENDANT_ID="10" ANCESTOR_ID="1"/>
   
-  <test_case_library_node/>
-  <test_case_folder/>
-  <test_case/>
-  <tcln_relationship/>
-  <test_case_library_content/>
-  <test_step/>
-  <call_test_step/>
-  <action_test_step/>
-  <test_case_steps/>
-  <attachment_content/>
-  <attachment/>
+  <TEST_CASE_LIBRARY_NODE/>
+  <TEST_CASE_FOLDER/>
+  <TEST_CASE/>
+  <TCLN_RELATIONSHIP/>
+  <TEST_CASE_LIBRARY_CONTENT/>
+  <TEST_STEP/>
+  <CALL_TEST_STEP/>
+  <ACTION_TEST_STEP/>
+  <TEST_CASE_STEPS/>
+  <ATTACHMENT_CONTENT/>
+  <ATTACHMENT/>
 </dataset>

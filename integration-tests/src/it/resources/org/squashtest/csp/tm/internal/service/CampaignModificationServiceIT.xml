@@ -21,19 +21,21 @@
         along with this software.  If not, see <http://www.gnu.org/licenses/>.
 
 -->
+<!DOCTYPE dataset SYSTEM "../../../../../../dtd/squash-tm.1.4.0.dtd">
 <dataset>
 	<!-- parent folder -->
-	<campaign_library_node cln_id="1" name="a folder" created_on="2010-02-01" created_by="dbu" />
-	<campaign_folder cln_id="1" />
+	<ATTACHMENT_LIST ATTACHMENT_LIST_ID="1"/>
+	<CAMPAIGN_LIBRARY_NODE CLN_ID="1" NAME="a folder" CREATED_ON="2010-02-01" CREATED_BY="DBU" ATTACHMENT_LIST_ID="1"/>
+	<CAMPAIGN_FOLDER CLN_ID="1" />
 	
 	<!--  folder content -->
-	<ATTACHMENT_LIST ATTACHMENT_LIST_id="10" />
-	<campaign_library_node cln_id="10" name="foo" created_on="2010-02-01" created_by="dbu" />
-	<campaign cln_id="10" actual_start_auto="true" actual_end_auto="true" ATTACHMENT_LIST_ID="10" />
-	<cln_relationship ancestor_id="1" descendant_id="10" />
+	<ATTACHMENT_LIST ATTACHMENT_LIST_ID="10" />
+	<CAMPAIGN_LIBRARY_NODE CLN_ID="10" NAME="foo" CREATED_ON="2010-02-01" CREATED_BY="DBU" ATTACHMENT_LIST_ID="10"/>
+	<CAMPAIGN CLN_ID="10" ACTUAL_START_AUTO="TRUE" ACTUAL_END_AUTO="TRUE"  />
+	<CLN_RELATIONSHIP ANCESTOR_ID="1" DESCENDANT_ID="10" />
 
 	<!--  campaign library -->
-	<campaign_library cl_id="1" />
-	<campaign_library_content library_id="1" content_id="10" />
+	<CAMPAIGN_LIBRARY CL_ID="1" />
+	<CAMPAIGN_LIBRARY_CONTENT LIBRARY_ID="1" CONTENT_ID="10" />
 	
 </dataset>

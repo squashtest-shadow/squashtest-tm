@@ -21,42 +21,43 @@
         along with this software.  If not, see <http://www.gnu.org/licenses/>.
 
 -->
+<!DOCTYPE dataset SYSTEM "../../../../../../dtd/squash-tm.1.4.0.dtd">
 <dataset>
-	<attachment_list attachment_list_id="1" />
-	<attachment_list attachment_list_id="2" />
-	<attachment_list attachment_list_id="3" />
-	<attachment_list attachment_list_id="4" />
-	<attachment_list attachment_list_id="5" />
-	<attachment_list attachment_list_id="6" />
-	<attachment_list attachment_list_id="7" />
+	<ATTACHMENT_LIST ATTACHMENT_LIST_ID="1" />
+	<ATTACHMENT_LIST ATTACHMENT_LIST_ID="2" />
+	<ATTACHMENT_LIST ATTACHMENT_LIST_ID="3" />
+	<ATTACHMENT_LIST ATTACHMENT_LIST_ID="4" />
+	<ATTACHMENT_LIST ATTACHMENT_LIST_ID="5" />
+	<ATTACHMENT_LIST ATTACHMENT_LIST_ID="6" />
+	<ATTACHMENT_LIST ATTACHMENT_LIST_ID="7" />
 	
-  	<!-- iteration 1 -->
-	<iteration name="iter1" iteration_id="1" created_by="dbu" created_on="2012-02-01" actual_end_auto="0" ACTUAL_START_AUTO="0" attachment_list_id="1" />
+  	<!-- ITERATION 1 -->
+	<ITERATION NAME="iter1" ITERATION_ID="1" CREATED_BY="DBU" CREATED_ON="2012-02-01" ACTUAL_END_AUTO="0" ACTUAL_START_AUTO="0" ATTACHMENT_LIST_ID="1" />
 	
-	<project project_id="1" name="mon projet" description="ma description" created_on="2012-02-09" created_by="dbu" />
+	<PROJECT PROJECT_ID="1" NAME="mon projet" DESCRIPTION="ma description" CREATED_ON="2012-02-09" CREATED_BY="DBU" />
   
-  	<test_case_library_node tcln_id="1" description="ma description" name="tcln" created_on="2012-02-09" created_by="dbu" project_id="1"/>
-  	<test_case_library_node tcln_id="2" description="ma description" name="tcln" created_on="2012-02-09" created_by="dbu" project_id="1"/>
-  	<test_case_library_node tcln_id="3" description="ma description" name="tcln" created_on="2012-02-09" created_by="dbu" project_id="1"/>
-  	<test_case_library_node tcln_id="4" description="ma description" name="tcln" created_on="2012-02-09" created_by="dbu" project_id="1"/>
+  	<TEST_CASE_LIBRARY_NODE TCLN_ID="1" DESCRIPTION="ma description" NAME="TCLN" CREATED_ON="2012-02-09" CREATED_BY="DBU" PROJECT_ID="1" ATTACHMENT_LIST_ID="3"/>
+  	<TEST_CASE_LIBRARY_NODE TCLN_ID="2" DESCRIPTION="ma description" NAME="TCLN" CREATED_ON="2012-02-09" CREATED_BY="DBU" PROJECT_ID="1" ATTACHMENT_LIST_ID="4"/>
+  	<TEST_CASE_LIBRARY_NODE TCLN_ID="3" DESCRIPTION="ma description" NAME="TCLN" CREATED_ON="2012-02-09" CREATED_BY="DBU" PROJECT_ID="1" ATTACHMENT_LIST_ID="5"/>
+  	<TEST_CASE_LIBRARY_NODE TCLN_ID="4" DESCRIPTION="ma description" NAME="TCLN" CREATED_ON="2012-02-09" CREATED_BY="DBU" PROJECT_ID="1" ATTACHMENT_LIST_ID="6"/>
 	
-  	<test_case tcln_id="1" attachment_list_id="3" version="1"/>
-	<test_case tcln_id="2" attachment_list_id="4" version="1"/>
-    <test_case tcln_id="3" attachment_list_id="5" version="1"/>
-  	<test_case tcln_id="4" attachment_list_id="6" version="1"/>
+  	<TEST_CASE TCLN_ID="1" VERSION="1"/>
+	<TEST_CASE TCLN_ID="2" VERSION="1"/>
+    <TEST_CASE TCLN_ID="3" VERSION="1"/>
+  	<TEST_CASE TCLN_ID="4" VERSION="1"/>
   	
-  	<campaign_library_node cln_id="1" name="campagne" created_on="2012-02-09" created_by="dbu" project_id="1"/>
+  	<CAMPAIGN_LIBRARY_NODE CLN_ID="1" NAME="campagne" CREATED_ON="2012-02-09" CREATED_BY="DBU" PROJECT_ID="1" ATTACHMENT_LIST_ID="7"/>
   
-  	<campaign cln_id="1" attachment_list_id="7" ACTUAL_END_AUTO="0" ACTUAL_START_AUTO="0"/>
+  	<CAMPAIGN CLN_ID="1" ACTUAL_END_AUTO="0" ACTUAL_START_AUTO="0"/>
   
-  	<campaign_iteration campaign_id="1" iteration_id="1" iteration_order="0"/>
+  	<CAMPAIGN_ITERATION CAMPAIGN_ID="1" ITERATION_ID="1" ITERATION_ORDER="0"/>
 
-	<!-- test suite -->
-	<test_suite id="1" name="suite de test 1" description="ma test suite 1" attachment_list_id="2" created_on="2012-02-09" created_by="dbu" />
+	<!-- TEST SUITE -->
+	<TEST_SUITE ID="1" NAME="suite de test 1" DESCRIPTION="ma test suite 1" ATTACHMENT_LIST_ID="2" CREATED_ON="2012-02-09" CREATED_BY="DBU" />
 	
-	<iteration_test_suite iteration_id="1" test_suite_id="1" />
+	<ITERATION_TEST_SUITE ITERATION_ID="1" TEST_SUITE_ID="1" />
 	
-	<!-- test plan = none -->
-	<item_test_plan_list/>
-	<iteration_test_plan_item/>
+	<!-- TEST PLAN = NONE -->
+	<ITEM_TEST_PLAN_LIST/>
+	<ITERATION_TEST_PLAN_ITEM/>
 </dataset>

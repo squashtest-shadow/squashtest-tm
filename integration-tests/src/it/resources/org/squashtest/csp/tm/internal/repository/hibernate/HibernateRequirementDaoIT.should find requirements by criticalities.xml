@@ -21,22 +21,24 @@
         along with this software.  If not, see <http://www.gnu.org/licenses/>.
 
 -->
+<!DOCTYPE dataset SYSTEM "../../../../../../../dtd/squash-tm.1.4.0.dtd">
+
 <dataset>
-  <ATTACHMENT_LIST ATTACHMENT_LIST_id="10"/>
-  <resource res_id="10" name="req 10" created_on="2012-01-02" created_by="dbu"/>
-  <requirement_version criticality="UNDEFINED" res_id="10" ATTACHMENT_LIST_ID="10"/>
-  <requirement_library_node created_by="dbu" rln_id="10" created_on="2010-02-01"/>
-  <requirement rln_id="10" current_version_id="10"/>
+  <ATTACHMENT_LIST ATTACHMENT_LIST_ID="10"/>
+  <RESOURCE RES_ID="10" NAME="req 10" CREATED_ON="2012-01-02" CREATED_BY="DBU" ATTACHMENT_LIST_ID="10"/>
+  <REQUIREMENT_VERSION CRITICALITY="UNDEFINED" RES_ID="10" />
+  <REQUIREMENT_LIBRARY_NODE CREATED_BY="DBU" RLN_ID="10" CREATED_ON="2010-02-01"/>
+  <REQUIREMENT RLN_ID="10" CURRENT_VERSION_ID="10"/>
 
-  <ATTACHMENT_LIST ATTACHMENT_LIST_id="20"/>
-  <resource res_id="20" name="req 20" created_on="2012-01-02" created_by="dbu"/>
-  <requirement_version criticality="MINOR" res_id="20" ATTACHMENT_LIST_ID="20"/>
-  <requirement_library_node created_by="dbu" rln_id="20" created_on="2010-02-01"/>
-  <requirement rln_id="20" current_version_id="20"/>
+  <ATTACHMENT_LIST ATTACHMENT_LIST_ID="20"/>
+  <RESOURCE RES_ID="20" NAME="req 20" CREATED_ON="2012-01-02" CREATED_BY="DBU" ATTACHMENT_LIST_ID="20"/>
+  <REQUIREMENT_VERSION CRITICALITY="MINOR" RES_ID="20" />
+  <REQUIREMENT_LIBRARY_NODE CREATED_BY="DBU" RLN_ID="20" CREATED_ON="2010-02-01"/>
+  <REQUIREMENT RLN_ID="20" CURRENT_VERSION_ID="20"/>
 
-  <ATTACHMENT_LIST ATTACHMENT_LIST_id="30"/>
-  <resource res_id="30" name="req 30" created_on="2012-01-02" created_by="dbu"/>
-  <requirement_version criticality="MAJOR" res_id="30" ATTACHMENT_LIST_ID="30"/>
-  <requirement_library_node created_by="dbu" rln_id="30" created_on="2010-02-01"/>
-  <requirement rln_id="30" current_version_id="30"/>
+  <ATTACHMENT_LIST ATTACHMENT_LIST_ID="30"/>
+  <RESOURCE RES_ID="30" NAME="req 30" CREATED_ON="2012-01-02" CREATED_BY="DBU" ATTACHMENT_LIST_ID="30"/>
+  <REQUIREMENT_VERSION CRITICALITY="MAJOR" RES_ID="30" />
+  <REQUIREMENT_LIBRARY_NODE CREATED_BY="DBU" RLN_ID="30" CREATED_ON="2010-02-01"/>
+  <REQUIREMENT RLN_ID="30" CURRENT_VERSION_ID="30"/>
 </dataset>

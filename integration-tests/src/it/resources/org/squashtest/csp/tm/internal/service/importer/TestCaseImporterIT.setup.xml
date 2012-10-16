@@ -21,56 +21,57 @@
         along with this software.  If not, see <http://www.gnu.org/licenses/>.
 
 -->
+<!DOCTYPE dataset SYSTEM "../../../../../../../dtd/squash-tm.1.4.0.dtd">
 <dataset>
 	
 	<!--  project 1 is empty -->
 
-	<test_case_library tcl_id="1" />
-	<campaign_library cl_id="1" />
-	<requirement_library rl_id="1" />
+	<TEST_CASE_LIBRARY TCL_ID="1" />
+	<CAMPAIGN_LIBRARY CL_ID="1" />
+	<REQUIREMENT_LIBRARY RL_ID="1" />
 
-	<project project_id="1" name="project 1" active="true" created_by="groovy" created_on="2010-01-01" cl_id="1"
-		tcl_id="1" rl_id="1" />
+	<PROJECT PROJECT_ID="1" NAME="project 1" ACTIVE="TRUE" CREATED_BY="GROOVY" CREATED_ON="2010-01-01" CL_ID="1"
+		TCL_ID="1" RL_ID="1" />
 		
 		
 	<!--  project 2 is shipped with more stuffs than project 1 -->	
 		
-	<test_case_library tcl_id="2" />
-	<campaign_library cl_id="2" />
-	<requirement_library rl_id="2" />
+	<TEST_CASE_LIBRARY TCL_ID="2" />
+	<CAMPAIGN_LIBRARY CL_ID="2" />
+	<REQUIREMENT_LIBRARY RL_ID="2" />
 
-	<project project_id="2" name="project 2" active="true" created_by="groovy" created_on="2010-01-01" cl_id="2"
-		tcl_id="2" rl_id="2" />
+	<PROJECT PROJECT_ID="2" NAME="project 2" ACTIVE="TRUE" CREATED_BY="GROOVY" CREATED_ON="2010-01-01" CL_ID="2"
+		TCL_ID="2" RL_ID="2" />
 		
 	<!--  the following list will be added for all of our entities -->
-	<attachment_list attachment_list_id="10" />
+	<ATTACHMENT_LIST ATTACHMENT_LIST_ID="10" />
 	
-	<test_case_library_node tcln_id="1" name="configuration pas de tir" created_by="dbu" created_on="2010-02-01" />
-	<test_case_folder tcln_id="1" />
+	<TEST_CASE_LIBRARY_NODE TCLN_ID="1" NAME="configuration pas de tir" CREATED_BY="DBU" CREATED_ON="2010-02-01" ATTACHMENT_LIST_ID="10"/>
+	<TEST_CASE_FOLDER TCLN_ID="1" />
 	
-	<test_case_library_node tcln_id="2" name="prerequis" created_by="dbu" created_on="2010-02-01" />
-	<test_case tcln_id="2" attachment_list_id="10" version="1"/>
+	<TEST_CASE_LIBRARY_NODE TCLN_ID="2" NAME="prerequis" CREATED_BY="DBU" CREATED_ON="2010-02-01"  ATTACHMENT_LIST_ID="10"/>
+	<TEST_CASE TCLN_ID="2" VERSION="1"/>
 	
-	<test_case_library_content library_id="2" content_id="1" />
-	<test_case_library_content library_id="2" content_id="2" />
+	<TEST_CASE_LIBRARY_CONTENT LIBRARY_ID="2" CONTENT_ID="1" />
+	<TEST_CASE_LIBRARY_CONTENT LIBRARY_ID="2" CONTENT_ID="2" />
 	
-	<test_case_library_node tcln_id="11" name="approvisionnement fuel" created_by="dbu" created_on="2010-02-01" />
-	<test_case_folder tcln_id="11" />
+	<TEST_CASE_LIBRARY_NODE TCLN_ID="11" NAME="approvisionnement fuel" CREATED_BY="DBU" CREATED_ON="2010-02-01" ATTACHMENT_LIST_ID="10"/>
+	<TEST_CASE_FOLDER TCLN_ID="11" />
 	
-	<test_case_library_node tcln_id="12" name="obtenir le go du technique" created_by="dbu" created_on="2010-02-01" />
-	<test_case tcln_id="12" attachment_list_id="10" version="1"/>
+	<TEST_CASE_LIBRARY_NODE TCLN_ID="12" NAME="obtenir le go du technique" CREATED_BY="DBU" CREATED_ON="2010-02-01"  ATTACHMENT_LIST_ID="10"/>
+	<TEST_CASE TCLN_ID="12" VERSION="1"/>
 	
-	<test_case_library_node tcln_id="13" name="connexion fusée - pas de tir" created_by="dbu" created_on="2010-02-01" />
-	<test_case tcln_id="13" attachment_list_id="10" version="1"/>
+	<TEST_CASE_LIBRARY_NODE TCLN_ID="13" NAME="connexion fusée - pas de tir" CREATED_BY="DBU" CREATED_ON="2010-02-01"  ATTACHMENT_LIST_ID="10"/>
+	<TEST_CASE TCLN_ID="13" VERSION="1"/>
 	
-	<tcln_relationship ancestor_id="1" descendant_id="11"/>
-	<tcln_relationship ancestor_id="1" descendant_id="12"/>
-	<tcln_relationship ancestor_id="1" descendant_id="13"/>
+	<TCLN_RELATIONSHIP ANCESTOR_ID="1" DESCENDANT_ID="11"/>
+	<TCLN_RELATIONSHIP ANCESTOR_ID="1" DESCENDANT_ID="12"/>
+	<TCLN_RELATIONSHIP ANCESTOR_ID="1" DESCENDANT_ID="13"/>
 	
-	<test_case_library_node tcln_id="111" name="cas limite - fuite de carburant" created_by="dbu" created_on="2010-02-01" />
-	<test_case tcln_id="111" attachment_list_id="10" version="1"/>
+	<TEST_CASE_LIBRARY_NODE TCLN_ID="111" NAME="cas limite - fuite de carburant" CREATED_BY="DBU" CREATED_ON="2010-02-01"  ATTACHMENT_LIST_ID="10"/>
+	<TEST_CASE TCLN_ID="111" VERSION="1"/>
 	
-	<tcln_relationship ancestor_id="11" descendant_id="111" />
+	<TCLN_RELATIONSHIP ANCESTOR_ID="11" DESCENDANT_ID="111" />
 
 
 </dataset>

@@ -21,23 +21,25 @@
         along with this software.  If not, see <http://www.gnu.org/licenses/>.
 
 -->
+<!DOCTYPE dataset SYSTEM "../../../../../../../dtd/squash-tm.1.4.0.dtd">
 <dataset>
-  <resource res_id="1" name="a folder" created_on="2012-01-02" created_by="dbu"/>
-  <simple_resource res_id="1"/>
-  <requirement_library_node created_by="dbu" rln_id="1" created_on="2010-02-01"/>
-  <requirement_folder rln_id="1" res_id="1"/>
+  <ATTACHMENT_LIST ATTACHMENT_LIST_ID="30"/>
+  <RESOURCE RES_ID="1" NAME="a folder" CREATED_ON="2012-01-02" CREATED_BY="DBU" ATTACHMENT_LIST_ID="30"/>
+  <SIMPLE_RESOURCE RES_ID="1"/>
+  <REQUIREMENT_LIBRARY_NODE CREATED_BY="DBU" RLN_ID="1" CREATED_ON="2010-02-01"/>
+  <REQUIREMENT_FOLDER RLN_ID="1" RES_ID="1"/>
 
-  <ATTACHMENT_LIST ATTACHMENT_LIST_id="10"/>
-  <resource res_id="10" name="req 1" created_on="2012-01-02" created_by="dbu"/>
-  <requirement_version attachment_list_id="10" res_id="10" reference="before token after"/>
-  <requirement_library_node created_by="dbu" rln_id="10" created_on="2010-02-01"/>
-  <requirement rln_id="10" current_version_id="10"/>
-  <rln_relationship descendant_id="10" ancestor_id="1"/>
+  <ATTACHMENT_LIST ATTACHMENT_LIST_ID="10"/>
+  <RESOURCE RES_ID="10" NAME="req 1" CREATED_ON="2012-01-02" CREATED_BY="DBU" ATTACHMENT_LIST_ID="10"/>
+  <REQUIREMENT_VERSION  RES_ID="10" REFERENCE="before token after"/>
+  <REQUIREMENT_LIBRARY_NODE CREATED_BY="DBU" RLN_ID="10" CREATED_ON="2010-02-01"/>
+  <REQUIREMENT RLN_ID="10" CURRENT_VERSION_ID="10"/>
+  <RLN_RELATIONSHIP DESCENDANT_ID="10" ANCESTOR_ID="1"/>
 
-  <ATTACHMENT_LIST ATTACHMENT_LIST_id="20"/>
-  <resource res_id="20" name="req 2" created_on="2012-01-02" created_by="dbu"/>
-  <requirement_version attachment_list_id="20" res_id="20" reference="before token after"/>
-  <requirement_library_node created_by="dbu" rln_id="20" created_on="2010-02-01" deleted_on="2012-01-02"/>
-  <requirement rln_id="20" current_version_id="20"/>
-  <rln_relationship descendant_id="20" ancestor_id="1"/>
+  <ATTACHMENT_LIST ATTACHMENT_LIST_ID="20"/>
+  <RESOURCE RES_ID="20" NAME="req 2" CREATED_ON="2012-01-02" CREATED_BY="DBU" ATTACHMENT_LIST_ID="20"/>
+  <REQUIREMENT_VERSION  RES_ID="20" REFERENCE="before token after"/>
+  <REQUIREMENT_LIBRARY_NODE CREATED_BY="DBU" RLN_ID="20" CREATED_ON="2010-02-01" DELETED_ON="2012-01-02"/>
+  <REQUIREMENT RLN_ID="20" CURRENT_VERSION_ID="20"/>
+  <RLN_RELATIONSHIP DESCENDANT_ID="20" ANCESTOR_ID="1"/>
 </dataset>

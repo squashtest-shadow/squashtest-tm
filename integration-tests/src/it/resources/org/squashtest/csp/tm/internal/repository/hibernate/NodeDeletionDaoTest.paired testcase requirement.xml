@@ -21,53 +21,56 @@
         along with this software.  If not, see <http://www.gnu.org/licenses/>.
 
 -->
+<!DOCTYPE dataset SYSTEM "../../../../../../../dtd/squash-tm.1.4.0.dtd">
 <dataset>
-  <attachment_list attachment_list_id="22"/>
-  <attachment_list attachment_list_id="21"/>
-  <attachment_list attachment_list_id="11"/>
-  <attachment_list attachment_list_id="12"/>
+  <ATTACHMENT_LIST ATTACHMENT_LIST_ID="22"/>
+  <ATTACHMENT_LIST ATTACHMENT_LIST_ID="21"/>
+  <ATTACHMENT_LIST ATTACHMENT_LIST_ID="11"/>
+  <ATTACHMENT_LIST ATTACHMENT_LIST_ID="12"/>
+  <ATTACHMENT_LIST ATTACHMENT_LIST_ID="1"/>
+  <ATTACHMENT_LIST ATTACHMENT_LIST_ID="13"/>
+  <TEST_CASE_LIBRARY_NODE CREATED_BY="IT" TCLN_ID="1" CREATED_ON="2011-08-08" NAME="folder1" ATTACHMENT_LIST_ID="1"/>
+  <TEST_CASE_LIBRARY_NODE CREATED_BY="IT" TCLN_ID="11" CREATED_ON="2011-08-08" NAME="test case 1" ATTACHMENT_LIST_ID="11"/>
+  <TEST_CASE_LIBRARY_NODE CREATED_BY="IT" TCLN_ID="12" CREATED_ON="2011-08-08" NAME="test case 2" ATTACHMENT_LIST_ID="12"/>
+  <TEST_CASE_LIBRARY_NODE CREATED_BY="IT" TCLN_ID="13" CREATED_ON="2011-08-08" NAME="folder 2" ATTACHMENT_LIST_ID="13"/>
   
-  <test_case_library_node created_by="IT" tcln_id="1" created_on="2011-08-08" name="folder1"/>
-  <test_case_library_node created_by="IT" tcln_id="11" created_on="2011-08-08" name="test case 1"/>
-  <test_case_library_node created_by="IT" tcln_id="12" created_on="2011-08-08" name="test case 2"/>
-  <test_case_library_node created_by="IT" tcln_id="13" created_on="2011-08-08" name="folder 2"/>
+  <TEST_CASE_FOLDER TCLN_ID="1"/>
+  <TEST_CASE_FOLDER TCLN_ID="13"/>
   
-  <test_case_folder tcln_id="1"/>
-  <test_case_folder tcln_id="13"/>
+  <TEST_CASE TCLN_ID="11" VERSION="1"/>
+  <TEST_CASE TCLN_ID="12" VERSION="1"/>
   
-  <test_case tcln_id="11" attachment_list_id="11" version="1"/>
-  <test_case tcln_id="12" attachment_list_id="12" version="1"/>
+  <TEST_STEP/>
+  <ACTION_TEST_STEP/>
+  <CALL_TEST_STEP/>
+  <TEST_CASE_STEPS/>
   
-  <test_step/>
-  <action_test_step/>
-  <call_test_step/>
-  <test_case_steps/>
+  <TCLN_RELATIONSHIP DESCENDANT_ID="11" ANCESTOR_ID="1"/>
+  <TCLN_RELATIONSHIP DESCENDANT_ID="12" ANCESTOR_ID="1"/>
   
-  <tcln_relationship descendant_id="11" ancestor_id="1"/>
-  <tcln_relationship descendant_id="12" ancestor_id="1"/>
+  <TEST_CASE_LIBRARY_CONTENT/>
   
-  <test_case_library_content/>
+  <REQUIREMENT_LIBRARY_NODE CREATED_BY="IT" RLN_ID="2" CREATED_ON="2011-08-08"/>
+  <REQUIREMENT_LIBRARY_NODE CREATED_BY="IT" RLN_ID="21" CREATED_ON="2011-08-08"/>
+  <REQUIREMENT_LIBRARY_NODE CREATED_BY="IT" RLN_ID="22" CREATED_ON="2011-08-08"/>
   
-  <requirement_library_node created_by="IT" rln_id="2" created_on="2011-08-08"/>
-  <requirement_library_node created_by="IT" rln_id="21" created_on="2011-08-08"/>
-  <requirement_library_node created_by="IT" rln_id="22" created_on="2011-08-08"/>
+  <ATTACHMENT_LIST ATTACHMENT_LIST_ID="2"/>
+  <RESOURCE CREATED_BY="DBU" CREATED_ON="2012-01-02" RES_ID="2" NAME="requirement folder" ATTACHMENT_LIST_ID="2"/>
+  <SIMPLE_RESOURCE RES_ID="2"/>
+  <REQUIREMENT_FOLDER RLN_ID="2" RES_ID="2"/>
   
-  <resource created_by="dbu" created_on="2012-01-02" res_id="2" name="requirement folder"/>
-  <simple_resource res_id="2"/>
-  <requirement_folder rln_id="2" res_id="2"/>
+  <RESOURCE RES_ID="21" NAME="requirement 1" CREATED_ON="2012-01-02" CREATED_BY="DBU" ATTACHMENT_LIST_ID="21"/>
+  <REQUIREMENT_VERSION RES_ID="21" />
+  <REQUIREMENT RLN_ID="21" CURRENT_VERSION_ID="21"/>
   
-  <resource res_id="21" name="requirement 1" created_on="2012-01-02" created_by="dbu"/>
-  <requirement_version attachment_list_id="21" res_id="21" />
-  <requirement rln_id="21" current_version_id="21"/>
+  <RESOURCE RES_ID="22" NAME="requirement 2" CREATED_ON="2012-01-02" CREATED_BY="DBU" ATTACHMENT_LIST_ID="22"/>
+  <REQUIREMENT_VERSION RES_ID="22" />
+  <REQUIREMENT RLN_ID="22" CURRENT_VERSION_ID="22"/>
   
-  <resource res_id="22" name="requirement 2" created_on="2012-01-02" created_by="dbu"/>
-  <requirement_version attachment_list_id="22" res_id="22" />
-  <requirement rln_id="22" current_version_id="22"/>
+  <RLN_RELATIONSHIP DESCENDANT_ID="21" ANCESTOR_ID="2"/>
+  <RLN_RELATIONSHIP DESCENDANT_ID="22" ANCESTOR_ID="2"/>
   
-  <rln_relationship descendant_id="21" ancestor_id="2"/>
-  <rln_relationship descendant_id="22" ancestor_id="2"/>
-  
-  <test_case_verified_requirement_version verifying_test_case_id="11" verified_req_version_id="21"/>
-  <test_case_verified_requirement_version verifying_test_case_id="12" verified_req_version_id="21"/>
+  <TEST_CASE_VERIFIED_REQUIREMENT_VERSION VERIFYING_TEST_CASE_ID="11" VERIFIED_REQ_VERSION_ID="21"/>
+  <TEST_CASE_VERIFIED_REQUIREMENT_VERSION VERIFYING_TEST_CASE_ID="12" VERIFIED_REQ_VERSION_ID="21"/>
   
 </dataset>

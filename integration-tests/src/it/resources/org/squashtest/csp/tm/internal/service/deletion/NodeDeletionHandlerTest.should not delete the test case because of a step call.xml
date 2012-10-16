@@ -31,39 +31,40 @@
 
 -->
 
+<!DOCTYPE dataset SYSTEM "../../../../../../../dtd/squash-tm.1.4.0.dtd">
 <dataset>
 
 	<!-- =============================== attachment-lists =========================================== -->
 	
 	
-	<attachment_list attachment_list_id="11"  /> <!--  for test case 1 -->
-	<attachment_list attachment_list_id="12"  /> <!--  for test case 2 -->
+	<ATTACHMENT_LIST ATTACHMENT_LIST_ID="11"  /> <!--  FOR TEST CASE 1 -->
+	<ATTACHMENT_LIST ATTACHMENT_LIST_ID="12"  /> <!--  FOR TEST CASE 2 -->
 	
-	<test_case_library_node tcln_id="11" name="test case 1" created_by="IT" created_on="2011-08-08" />
-	<test_case_library_node tcln_id="12" name="test case 2" created_by="IT" created_on="2011-08-08" />  
+	<TEST_CASE_LIBRARY_NODE TCLN_ID="11" NAME="test case 1" CREATED_BY="IT" CREATED_ON="2011-08-08"  ATTACHMENT_LIST_ID="11"/>
+	<TEST_CASE_LIBRARY_NODE TCLN_ID="12" NAME="test case 2" CREATED_BY="IT" CREATED_ON="2011-08-08" ATTACHMENT_LIST_ID="12" />  
 	
 
-	<test_case tcln_id="11" version="1" attachment_list_id="11"/>
-	<test_case tcln_id="12" version="1" attachment_list_id="12"/>
+	<TEST_CASE TCLN_ID="11" VERSION="1"/>
+	<TEST_CASE TCLN_ID="12" VERSION="1"/>
 
-	<test_step test_step_id="112" /> <!-- test case 1 step 2  -->
+	<TEST_STEP TEST_STEP_ID="112" /> <!-- TEST CASE 1 STEP 2  -->
 	
 	
-	<call_test_step test_step_id="112" called_test_case_id="12" />
+	<CALL_TEST_STEP TEST_STEP_ID="112" CALLED_TEST_CASE_ID="12" />
 	
 	<!--  ============================ test case steps ================================================== -->
 	
-	<test_case_steps test_case_id="11" step_id="112" step_order="0" /> <!-- test case 1 step 2  -->
+	<TEST_CASE_STEPS TEST_CASE_ID="11" STEP_ID="112" STEP_ORDER="0" /> <!-- TEST CASE 1 STEP 2  -->
 	
 	
 	<!--  cleanup  -->
-	<attachment_content/>
-	<attachment/>
+	<ATTACHMENT_CONTENT/>
+	<ATTACHMENT/>
 	
-	<action_test_step/>
-	<test_case_folder/>
-	<tcln_relationship/>
-	<test_case_library_content/>
+	<ACTION_TEST_STEP/>
+	<TEST_CASE_FOLDER/>
+	<TCLN_RELATIONSHIP/>
+	<TEST_CASE_LIBRARY_CONTENT/>
 
 </dataset>
 

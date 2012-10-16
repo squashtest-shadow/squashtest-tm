@@ -21,6 +21,8 @@
         along with this software.  If not, see <http://www.gnu.org/licenses/>.
 
 -->
+<!DOCTYPE dataset SYSTEM "../../../../../../../dtd/squash-tm.1.4.0.dtd">
+
 <dataset>
-	<acl_object_identity class_id="100" identity="10" />
+	<ACL_OBJECT_IDENTITY CLASS_ID="100" IDENTITY="10" />
 </dataset>

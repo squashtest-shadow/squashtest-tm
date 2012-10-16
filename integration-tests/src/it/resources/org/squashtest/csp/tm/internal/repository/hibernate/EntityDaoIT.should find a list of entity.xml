@@ -20,7 +20,7 @@
         along with this software.  If not, see <http://www.gnu.org/licenses/>.
 
 -->
-<!DOCTYPE dataset SYSTEM "../../../../../../../dtd/squash-tm.1.3.0.dtd">
+<!DOCTYPE dataset SYSTEM "../../../../../../../dtd/squash-tm.1.4.0.dtd">
 
 <dataset>
 	<PROJECT PROJECT_ID="1" CREATED_ON="2011-10-17" CREATED_BY="it" NAME="proj1" ACTIVE="1"/>

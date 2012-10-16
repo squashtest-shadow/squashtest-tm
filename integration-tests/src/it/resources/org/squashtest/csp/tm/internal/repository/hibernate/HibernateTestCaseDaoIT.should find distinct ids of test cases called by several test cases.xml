@@ -21,29 +21,30 @@
         along with this software.  If not, see <http://www.gnu.org/licenses/>.
 
 -->
+<!DOCTYPE dataset SYSTEM "../../../../../../../dtd/squash-tm.1.4.0.dtd">
 <dataset>
-	<!-- callee -->
-	<attachment_list attachment_list_id="10" />
-	<test_case_library_node tcln_id="10" name="callee" created_on="2011-01-01" created_by="dbu" />
-	<test_case tcln_id="10" version="1" attachment_list_id="10" />
+	<!-- CALLEE -->
+	<ATTACHMENT_LIST ATTACHMENT_LIST_ID="10" />
+	<TEST_CASE_LIBRARY_NODE TCLN_ID="10" NAME="callee" CREATED_ON="2011-01-01" CREATED_BY="DBU" ATTACHMENT_LIST_ID="10" />
+	<TEST_CASE TCLN_ID="10" VERSION="1" />
 	 
-	<!-- first caller of TC 10-->
-	<attachment_list attachment_list_id="110" />
-	<test_case_library_node tcln_id="110" name="caller" created_on="2011-01-01" created_by="dbu" />
-	<test_case tcln_id="110" version="1" attachment_list_id="110" />
+	<!-- FIRST CALLER OF TC 10-->
+	<ATTACHMENT_LIST ATTACHMENT_LIST_ID="110" />
+	<TEST_CASE_LIBRARY_NODE TCLN_ID="110" NAME="caller" CREATED_ON="2011-01-01" CREATED_BY="DBU" ATTACHMENT_LIST_ID="110" />
+	<TEST_CASE TCLN_ID="110" VERSION="1" />
 	
-	<attachment_list attachment_list_id="1100" />
-	<test_step test_step_id="1100" />
-	<call_test_step test_step_id="1100" called_test_case_id="10" />
-	<test_case_steps test_case_id="110" step_id="1100" step_order="0" /> 
+	<ATTACHMENT_LIST ATTACHMENT_LIST_ID="1100" />
+	<TEST_STEP TEST_STEP_ID="1100" />
+	<CALL_TEST_STEP TEST_STEP_ID="1100" CALLED_TEST_CASE_ID="10" />
+	<TEST_CASE_STEPS TEST_CASE_ID="110" STEP_ID="1100" STEP_ORDER="0" /> 
 
-	<!-- second caller of TC 10 -->
-	<attachment_list attachment_list_id="120" />
-	<test_case_library_node tcln_id="120" name="caller" created_on="2011-01-01" created_by="dbu" />
-	<test_case tcln_id="120" version="1" attachment_list_id="120" />
+	<!-- SECOND CALLER OF TC 10 -->
+	<ATTACHMENT_LIST ATTACHMENT_LIST_ID="120" />
+	<TEST_CASE_LIBRARY_NODE TCLN_ID="120" NAME="caller" CREATED_ON="2011-01-01" CREATED_BY="DBU" ATTACHMENT_LIST_ID="120" />
+	<TEST_CASE TCLN_ID="120" VERSION="1" />
 	
-	<attachment_list attachment_list_id="1200" />
-	<test_step test_step_id="1200" />
-	<call_test_step test_step_id="1200" called_test_case_id="10" />
-	<test_case_steps test_case_id="120" step_id="1200" step_order="0" /> 
+	<ATTACHMENT_LIST ATTACHMENT_LIST_ID="1200" />
+	<TEST_STEP TEST_STEP_ID="1200" />
+	<CALL_TEST_STEP TEST_STEP_ID="1200" CALLED_TEST_CASE_ID="10" />
+	<TEST_CASE_STEPS TEST_CASE_ID="120" STEP_ID="1200" STEP_ORDER="0" /> 
 </dataset>

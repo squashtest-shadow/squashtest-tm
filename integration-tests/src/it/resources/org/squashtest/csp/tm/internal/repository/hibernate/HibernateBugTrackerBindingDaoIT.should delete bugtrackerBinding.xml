@@ -21,10 +21,9 @@
         along with this software.  If not, see <http://www.gnu.org/licenses/>.
 
 -->
+<!DOCTYPE dataset SYSTEM "../../../../../../../dtd/squash-tm.1.4.0.dtd">
 <dataset>
-	<project project_id="1" name="name" active="false" created_by="dbu" created_on="2012-08-30"/>
-	<bugtracker bugtracker_id="1" kind="kind" url="url" name="name" iframe_friendly="false" />
-	<bugtracker_binding bugtracker_binding_id="1" bugtracker_id="1" project_name="project_name" project_id="1"/>
-	
-	
+	<PROJECT PROJECT_ID="1" NAME="name" ACTIVE="FALSE" CREATED_BY="dbu" CREATED_ON="2012-08-30"/>
+	<BUGTRACKER BUGTRACKER_ID="1" KIND="kind" URL="url" NAME="name" IFRAME_FRIENDLY="FALSE" />
+	<BUGTRACKER_BINDING BUGTRACKER_BINDING_ID="1" BUGTRACKER_ID="1" PROJECT_NAME="project_name" PROJECT_ID="1"/>
 </dataset>

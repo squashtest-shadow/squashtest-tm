@@ -21,18 +21,20 @@
         along with this software.  If not, see <http://www.gnu.org/licenses/>.
 
 -->
+<!DOCTYPE dataset SYSTEM "../../../../../../../dtd/squash-tm.1.4.0.dtd">
+
 <dataset>
-	<core_user id="10" login="batman" last_name="batman" />
-	<core_user id="20" login="robin" last_name="robin" />
+	<CORE_USER ID="10" LOGIN="batman" LAST_NAME="batman" CREATED_BY="regis" CREATED_ON="2011-07-28 16:00:20.047"/>
+	<CORE_USER ID="20" LOGIN="robin" LAST_NAME="robin" CREATED_BY="regis" CREATED_ON="2011-07-28 16:00:20.047"/>
 	
-	<acl_class id="1000" classname="batmobile" />
-	<acl_object_identity id="1000" identity="1000" class_id="1000" />
+	<ACL_CLASS ID="1000" CLASSNAME="batmobile" />
+	<ACL_OBJECT_IDENTITY ID="1000" IDENTITY="1000" CLASS_ID="1000" />
 	
-	<acl_class id="2000" classname="regular car" />
-	<acl_object_identity id="2000" identity="2000" class_id="2000" />
+	<ACL_CLASS ID="2000" CLASSNAME="regular car" />
+	<ACL_OBJECT_IDENTITY ID="2000" IDENTITY="2000" CLASS_ID="2000" />
 
-	<acl_group id="100" qualified_name="driver" />
+	<ACL_GROUP ID="100" QUALIFIED_NAME="driver" />
 
-	<acl_responsibility_scope_entry user_id="10" acl_group_id="100" object_identity_id="1000" />
-	<acl_responsibility_scope_entry user_id="20" acl_group_id="100" object_identity_id="2000" />
+	<ACL_RESPONSIBILITY_SCOPE_ENTRY USER_ID="10" ACL_GROUP_ID="100" OBJECT_IDENTITY_ID="1000" />
+	<ACL_RESPONSIBILITY_SCOPE_ENTRY USER_ID="20" ACL_GROUP_ID="100" OBJECT_IDENTITY_ID="2000" />
 </dataset>

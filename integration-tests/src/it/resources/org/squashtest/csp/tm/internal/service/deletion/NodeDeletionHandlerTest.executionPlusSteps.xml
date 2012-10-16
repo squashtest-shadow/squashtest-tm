@@ -21,94 +21,95 @@
         along with this software.  If not, see <http://www.gnu.org/licenses/>.
 
 -->
+<!DOCTYPE dataset SYSTEM "../../../../../../../dtd/squash-tm.1.4.0.dtd">
 <dataset >
 
 	<!-- ========================= attachment lists ========================= -->
 
-	<attachment_list attachment_list_id="500" />
-	<attachment_list attachment_list_id="6001" />
-	<attachment_list attachment_list_id="6002" />
-	<attachment_list attachment_list_id="6003" />
+	<ATTACHMENT_LIST ATTACHMENT_LIST_ID="500" />
+	<ATTACHMENT_LIST ATTACHMENT_LIST_ID="6001" />
+	<ATTACHMENT_LIST ATTACHMENT_LIST_ID="6002" />
+	<ATTACHMENT_LIST ATTACHMENT_LIST_ID="6003" />
 	
 	<!-- ======================= the content of those lists ================= -->
 
-	<attachment_content attachment_content_id="5001" stream_content="aaaaa" />
-	<attachment_content attachment_content_id="5002" stream_content="aaaaa" />	
-	<attachment_content attachment_content_id="60011" stream_content="aaaaa" />
-	<attachment_content attachment_content_id="60012" stream_content="aaaaa" />
-	<attachment_content attachment_content_id="60021" stream_content="aaaaa" />
-	<attachment_content attachment_content_id="60022" stream_content="aaaaa" />
-	<attachment_content attachment_content_id="60031" stream_content="aaaaa" />
-	<attachment_content attachment_content_id="60032" stream_content="aaaaa" />
+	<ATTACHMENT_CONTENT ATTACHMENT_CONTENT_ID="5001" STREAM_CONTENT="aaaaa" />
+	<ATTACHMENT_CONTENT ATTACHMENT_CONTENT_ID="5002" STREAM_CONTENT="aaaaa" />	
+	<ATTACHMENT_CONTENT ATTACHMENT_CONTENT_ID="60011" STREAM_CONTENT="aaaaa" />
+	<ATTACHMENT_CONTENT ATTACHMENT_CONTENT_ID="60012" STREAM_CONTENT="aaaaa" />
+	<ATTACHMENT_CONTENT ATTACHMENT_CONTENT_ID="60021" STREAM_CONTENT="aaaaa" />
+	<ATTACHMENT_CONTENT ATTACHMENT_CONTENT_ID="60022" STREAM_CONTENT="aaaaa" />
+	<ATTACHMENT_CONTENT ATTACHMENT_CONTENT_ID="60031" STREAM_CONTENT="aaaaa" />
+	<ATTACHMENT_CONTENT ATTACHMENT_CONTENT_ID="60032" STREAM_CONTENT="aaaaa" />
 
-	<attachment attachment_id="5001" name="atta" type="txt" size="5" added_on="2011-08-23" content_id="5001" attachment_list_id="500"/>
-	<attachment attachment_id="5002" name="atta" type="txt" size="5" added_on="2011-08-23" content_id="5002" attachment_list_id="500"/>	
-	<attachment attachment_id="60011" name="atta" type="txt" size="5" added_on="2011-08-23" content_id="60011" attachment_list_id="6001"/>
-	<attachment attachment_id="60012" name="atta" type="txt" size="5" added_on="2011-08-23" content_id="60012" attachment_list_id="6001"/>
-	<attachment attachment_id="60021" name="atta" type="txt" size="5" added_on="2011-08-23" content_id="60021" attachment_list_id="6002"/>
-	<attachment attachment_id="60022" name="atta" type="txt" size="5" added_on="2011-08-23" content_id="60022" attachment_list_id="6002"/>
-	<attachment attachment_id="60031" name="atta" type="txt" size="5" added_on="2011-08-23" content_id="60031" attachment_list_id="6003"/>
-	<attachment attachment_id="60032" name="atta" type="txt" size="5" added_on="2011-08-23" content_id="60032" attachment_list_id="6003"/>
+	<ATTACHMENT ATTACHMENT_ID="5001" NAME="atta" TYPE="txt" SIZE="5" ADDED_ON="2011-08-23" CONTENT_ID="5001" ATTACHMENT_LIST_ID="500"/>
+	<ATTACHMENT ATTACHMENT_ID="5002" NAME="atta" TYPE="txt" SIZE="5" ADDED_ON="2011-08-23" CONTENT_ID="5002" ATTACHMENT_LIST_ID="500"/>	
+	<ATTACHMENT ATTACHMENT_ID="60011" NAME="atta" TYPE="txt" SIZE="5" ADDED_ON="2011-08-23" CONTENT_ID="60011" ATTACHMENT_LIST_ID="6001"/>
+	<ATTACHMENT ATTACHMENT_ID="60012" NAME="atta" TYPE="txt" SIZE="5" ADDED_ON="2011-08-23" CONTENT_ID="60012" ATTACHMENT_LIST_ID="6001"/>
+	<ATTACHMENT ATTACHMENT_ID="60021" NAME="atta" TYPE="txt" SIZE="5" ADDED_ON="2011-08-23" CONTENT_ID="60021" ATTACHMENT_LIST_ID="6002"/>
+	<ATTACHMENT ATTACHMENT_ID="60022" NAME="atta" TYPE="txt" SIZE="5" ADDED_ON="2011-08-23" CONTENT_ID="60022" ATTACHMENT_LIST_ID="6002"/>
+	<ATTACHMENT ATTACHMENT_ID="60031" NAME="atta" TYPE="txt" SIZE="5" ADDED_ON="2011-08-23" CONTENT_ID="60031" ATTACHMENT_LIST_ID="6003"/>
+	<ATTACHMENT ATTACHMENT_ID="60032" NAME="atta" TYPE="txt" SIZE="5" ADDED_ON="2011-08-23" CONTENT_ID="60032" ATTACHMENT_LIST_ID="6003"/>
 	
 
 	<!--  ============== the issue lists ============================= -->
 	
-	<issue_list issue_list_id="500" />
-	<issue_list issue_list_id="6001" />
-	<issue_list issue_list_id="6002" />
-	<issue_list issue_list_id="6003" />
+	<ISSUE_LIST ISSUE_LIST_ID="500" />
+	<ISSUE_LIST ISSUE_LIST_ID="6001" />
+	<ISSUE_LIST ISSUE_LIST_ID="6002" />
+	<ISSUE_LIST ISSUE_LIST_ID="6003" />
 	
 	<!--  =============== their content ================================ -->
 	
-	<bugtracker bugtracker_id="1" kind="mantis" name="mantis" url="http://localhost/mantisbt" iframe_friendly="false" />	
-	<issue issue_id="5001" remote_issue_id="5001" issue_list_id="500" 	  bugtracker_id="1"/>
-	<issue issue_id="5002" remote_issue_id="5002" issue_list_id="500"  	  bugtracker_id="1"/>
-	<issue issue_id="60011" remote_issue_id="60011" issue_list_id="6001"  bugtracker_id="1"/>
-	<issue issue_id="60012" remote_issue_id="60012" issue_list_id="6001"  bugtracker_id="1"/>
-	<issue issue_id="60021" remote_issue_id="60021" issue_list_id="6002"  bugtracker_id="1"/>
-	<issue issue_id="60022" remote_issue_id="60022" issue_list_id="6002"  bugtracker_id="1"/>
-	<issue issue_id="60031" remote_issue_id="60031" issue_list_id="6003"  bugtracker_id="1"/>
-	<issue issue_id="60032" remote_issue_id="60032" issue_list_id="6003"  bugtracker_id="1"/>
+	<BUGTRACKER BUGTRACKER_ID="1" KIND="mantis" NAME="mantis" URL="http://localhost/mantisbt" IFRAME_FRIENDLY="false" />	
+	<ISSUE ISSUE_ID="5001" REMOTE_ISSUE_ID="5001" ISSUE_LIST_ID="500" 	  BUGTRACKER_ID="1"/>
+	<ISSUE ISSUE_ID="5002" REMOTE_ISSUE_ID="5002" ISSUE_LIST_ID="500"  	  BUGTRACKER_ID="1"/>
+	<ISSUE ISSUE_ID="60011" REMOTE_ISSUE_ID="60011" ISSUE_LIST_ID="6001"  BUGTRACKER_ID="1"/>
+	<ISSUE ISSUE_ID="60012" REMOTE_ISSUE_ID="60012" ISSUE_LIST_ID="6001"  BUGTRACKER_ID="1"/>
+	<ISSUE ISSUE_ID="60021" REMOTE_ISSUE_ID="60021" ISSUE_LIST_ID="6002"  BUGTRACKER_ID="1"/>
+	<ISSUE ISSUE_ID="60022" REMOTE_ISSUE_ID="60022" ISSUE_LIST_ID="6002"  BUGTRACKER_ID="1"/>
+	<ISSUE ISSUE_ID="60031" REMOTE_ISSUE_ID="60031" ISSUE_LIST_ID="6003"  BUGTRACKER_ID="1"/>
+	<ISSUE ISSUE_ID="60032" REMOTE_ISSUE_ID="60032" ISSUE_LIST_ID="6003"  BUGTRACKER_ID="1"/>
 
 	
 	
 	
 	<!-- ================= item test plan ================================= -->
 	
-	<iteration_test_plan_item item_test_plan_id="9999" created_by="IT" created_on="2011-08-23" />
+	<ITERATION_TEST_PLAN_ITEM ITEM_TEST_PLAN_ID="9999" CREATED_BY="IT" CREATED_ON="2011-08-23" />
 	
 	
 	<!--  ================ execution + steps ============================== -->
 		
-	<execution execution_id="500" created_by="IT" created_on="2011-08-23" name="exec 1" 
-			attachment_list_id="500" issue_list_id="500"/>
+	<EXECUTION EXECUTION_ID="500" CREATED_BY="IT" CREATED_ON="2011-08-23" NAME="exec 1" 
+			ATTACHMENT_LIST_ID="500" ISSUE_LIST_ID="500"/>
 	
-	<execution_step execution_step_id="6001" action="step 1" created_by="IT" created_on="2011-08-03" 
-			attachment_list_id="6001" issue_list_id="6001"/>
-	<execution_step execution_step_id="6002" action="step 2" created_by="IT" created_on="2011-08-03" 
-			attachment_list_id="6002" issue_list_id="6002"/>
-	<execution_step execution_step_id="6003" action="step 3" created_by="IT" created_on="2011-08-03"
-			attachment_list_id="6003" issue_list_id="6003"/>
+	<EXECUTION_STEP EXECUTION_STEP_ID="6001" ACTION="step 1" CREATED_BY="IT" CREATED_ON="2011-08-03" 
+			ATTACHMENT_LIST_ID="6001" ISSUE_LIST_ID="6001"/>
+	<EXECUTION_STEP EXECUTION_STEP_ID="6002" ACTION="step 2" CREATED_BY="IT" CREATED_ON="2011-08-03" 
+			ATTACHMENT_LIST_ID="6002" ISSUE_LIST_ID="6002"/>
+	<EXECUTION_STEP EXECUTION_STEP_ID="6003" ACTION="step 3" CREATED_BY="IT" CREATED_ON="2011-08-03"
+			ATTACHMENT_LIST_ID="6003" ISSUE_LIST_ID="6003"/>
 			
-	<execution_execution_steps execution_id="500" execution_step_id="6001" execution_step_order="0" />
-	<execution_execution_steps execution_id="500" execution_step_id="6002" execution_step_order="1" />
-	<execution_execution_steps execution_id="500" execution_step_id="6003" execution_step_order="2" />
+	<EXECUTION_EXECUTION_STEPS EXECUTION_ID="500" EXECUTION_STEP_ID="6001" EXECUTION_STEP_ORDER="0" />
+	<EXECUTION_EXECUTION_STEPS EXECUTION_ID="500" EXECUTION_STEP_ID="6002" EXECUTION_STEP_ORDER="1" />
+	<EXECUTION_EXECUTION_STEPS EXECUTION_ID="500" EXECUTION_STEP_ID="6003" EXECUTION_STEP_ORDER="2" />
 	
-	<item_test_plan_execution item_test_plan_id="9999" execution_id="500" execution_order="0" />
+	<ITEM_TEST_PLAN_EXECUTION ITEM_TEST_PLAN_ID="9999" EXECUTION_ID="500" EXECUTION_ORDER="0" />
 	
 	
 	<!--  cleanup -->
 	
-	<test_case_library_node/>
-	<test_case/>
-	<test_case_folder/>
-	<tcln_relationship/>
-	<test_case_library_content/>
+	<TEST_CASE_LIBRARY_NODE/>
+	<TEST_CASE/>
+	<TEST_CASE_FOLDER/>
+	<TCLN_RELATIONSHIP/>
+	<TEST_CASE_LIBRARY_CONTENT/>
 	
-	<test_step/>
-	<action_test_step/>
-	<call_test_step/>
-	<test_case_steps/>
+	<TEST_STEP/>
+	<ACTION_TEST_STEP/>
+	<CALL_TEST_STEP/>
+	<TEST_CASE_STEPS/>
 	
 	
 </dataset>

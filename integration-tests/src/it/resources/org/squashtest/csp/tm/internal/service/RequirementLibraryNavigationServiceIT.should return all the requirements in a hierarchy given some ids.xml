@@ -21,56 +21,59 @@
         along with this software.  If not, see <http://www.gnu.org/licenses/>.
 
 -->
+<!DOCTYPE dataset SYSTEM "../../../../../../dtd/squash-tm.1.4.0.dtd">
 <dataset>
-  <requirement_library rl_id="20"/>
-  <project created_by="dbu" rl_id="20" created_on="2010-02-01" project_id="50" name="projet1" active="true"/>
+  <REQUIREMENT_LIBRARY RL_ID="20"/>
+  <PROJECT CREATED_BY="DBU" RL_ID="20" CREATED_ON="2010-02-01" PROJECT_ID="50" NAME="projet1" ACTIVE="TRUE"/>
   
-  <resource created_by="dbu" created_on="2012-01-02" res_id="1" name="folder"/>
-  <simple_resource res_id="1"/>
-  <requirement_library_node created_by="dbu" rln_id="1" created_on="2010-02-01"/>
-  <requirement_folder rln_id="1" res_id="1"/>
+  <ATTACHMENT_LIST ATTACHMENT_LIST_ID="123"/>
+  <RESOURCE CREATED_BY="DBU" CREATED_ON="2012-01-02" RES_ID="1" NAME="folder" ATTACHMENT_LIST_ID="123"/>
+  <SIMPLE_RESOURCE RES_ID="1"/>
+  <REQUIREMENT_LIBRARY_NODE CREATED_BY="DBU" RLN_ID="1" CREATED_ON="2010-02-01"/>
+  <REQUIREMENT_FOLDER RLN_ID="1" RES_ID="1"/>
 
-  <attachment_list attachment_list_id="10"/>
-  <attachment_list attachment_list_id="15"/>
-  <attachment_list attachment_list_id="11"/>
+  <ATTACHMENT_LIST ATTACHMENT_LIST_ID="10"/>
+  <ATTACHMENT_LIST ATTACHMENT_LIST_ID="15"/>
+  <ATTACHMENT_LIST ATTACHMENT_LIST_ID="11"/>
   
-  <resource res_id="10" name="1req" created_on="2012-01-02" created_by="dbu"/>
-  <requirement_version attachment_list_id="10" res_id="10"/>
-  <requirement_library_node created_by="dbu" rln_id="10" created_on="2010-02-01" project_id="50"/>
-  <requirement rln_id="10" current_version_id="10"/>
+  <RESOURCE RES_ID="10" NAME="1req" CREATED_ON="2012-01-02" CREATED_BY="DBU" ATTACHMENT_LIST_ID="10"/>
+  <REQUIREMENT_VERSION  RES_ID="10"/>
+  <REQUIREMENT_LIBRARY_NODE CREATED_BY="DBU" RLN_ID="10" CREATED_ON="2010-02-01" PROJECT_ID="50"/>
+  <REQUIREMENT RLN_ID="10" CURRENT_VERSION_ID="10"/>
 
-  <requirement_library_node created_by="dbu" rln_id="100" created_on="2010-02-01" project_id="50"/>
+  <REQUIREMENT_LIBRARY_NODE CREATED_BY="DBU" RLN_ID="100" CREATED_ON="2010-02-01" PROJECT_ID="50"/>
   
-  <resource res_id="200" name="req2" created_on="2012-01-02" created_by="dbu"/>
-  <requirement_version attachment_list_id="15" res_id="200"/>
-  <requirement_library_node created_by="dbu" rln_id="200" created_on="2010-02-01" project_id="50"/>
+  <RESOURCE RES_ID="200" NAME="req2" CREATED_ON="2012-01-02" CREATED_BY="DBU" ATTACHMENT_LIST_ID="15"/>
+  <REQUIREMENT_VERSION  RES_ID="200"/>
+  <REQUIREMENT_LIBRARY_NODE CREATED_BY="DBU" RLN_ID="200" CREATED_ON="2010-02-01" PROJECT_ID="50"/>
   
-  <resource created_by="dbu" created_on="2012-01-02" res_id="100" name="subfolder"/>
-  <simple_resource res_id="100"/>
-  <requirement_folder rln_id="100" res_id="100"/>
-  <requirement rln_id="200" current_version_id="200"/>
+  <ATTACHMENT_LIST ATTACHMENT_LIST_ID="1234"/>
+  <RESOURCE CREATED_BY="DBU" CREATED_ON="2012-01-02" RES_ID="100" NAME="subfolder" ATTACHMENT_LIST_ID="1234"/>
+  <SIMPLE_RESOURCE RES_ID="100"/>
+  <REQUIREMENT_FOLDER RLN_ID="100" RES_ID="100"/>
+  <REQUIREMENT RLN_ID="200" CURRENT_VERSION_ID="200"/>
 
-  <resource res_id="250" name="req3" created_on="2012-01-02" created_by="dbu"/>
-  <requirement_version attachment_list_id="11" res_id="250"/>
-  <requirement_library_node created_by="dbu" rln_id="250" created_on="2010-02-01" project_id="50"/>
-  <requirement rln_id="250" current_version_id="250"/>
+  <RESOURCE RES_ID="250" NAME="req3" CREATED_ON="2012-01-02" CREATED_BY="DBU" ATTACHMENT_LIST_ID="11"/>
+  <REQUIREMENT_VERSION  RES_ID="250"/>
+  <REQUIREMENT_LIBRARY_NODE CREATED_BY="DBU" RLN_ID="250" CREATED_ON="2010-02-01" PROJECT_ID="50"/>
+  <REQUIREMENT RLN_ID="250" CURRENT_VERSION_ID="250"/>
 
-  <rln_relationship descendant_id="10" ancestor_id="1"/>
-  <rln_relationship descendant_id="100" ancestor_id="1"/>
-  <rln_relationship descendant_id="200" ancestor_id="100"/>
+  <RLN_RELATIONSHIP DESCENDANT_ID="10" ANCESTOR_ID="1"/>
+  <RLN_RELATIONSHIP DESCENDANT_ID="100" ANCESTOR_ID="1"/>
+  <RLN_RELATIONSHIP DESCENDANT_ID="200" ANCESTOR_ID="100"/>
 
-  <requirement_library_content content_id="250" library_id="20"/>
-  <requirement_library_content content_id="1" library_id="20"/>
+  <REQUIREMENT_LIBRARY_CONTENT CONTENT_ID="250" LIBRARY_ID="20"/>
+  <REQUIREMENT_LIBRARY_CONTENT CONTENT_ID="1" LIBRARY_ID="20"/>
   
-  <test_case_library_node/>
-  <test_case/>
-  <test_case_folder/>
-  <tcln_relationship/>
-  <test_case_library_content/>
-  <test_step/>
-  <action_test_step/>
-  <call_test_step/>
-  <test_case_steps/>
-  <attachment_content/>
-  <attachment/>
+  <TEST_CASE_LIBRARY_NODE/>
+  <TEST_CASE/>
+  <TEST_CASE_FOLDER/>
+  <TCLN_RELATIONSHIP/>
+  <TEST_CASE_LIBRARY_CONTENT/>
+  <TEST_STEP/>
+  <ACTION_TEST_STEP/>
+  <CALL_TEST_STEP/>
+  <TEST_CASE_STEPS/>
+  <ATTACHMENT_CONTENT/>
+  <ATTACHMENT/>
 </dataset>

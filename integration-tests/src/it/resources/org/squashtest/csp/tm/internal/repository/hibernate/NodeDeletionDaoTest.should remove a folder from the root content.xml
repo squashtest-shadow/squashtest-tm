@@ -31,34 +31,36 @@
 
 -->
 
+<!DOCTYPE dataset SYSTEM "../../../../../../../dtd/squash-tm.1.4.0.dtd">
 <dataset>
 
 	<!-- =============================== three libraries ============================================ -->
 	
 	
 
-	<test_case_library tcl_id="1" />
-	<requirement_library rl_id="1" />
-	<campaign_library cl_id="1" />
+	<TEST_CASE_LIBRARY TCL_ID="1" />
+	<REQUIREMENT_LIBRARY RL_ID="1" />
+	<CAMPAIGN_LIBRARY CL_ID="1" />
 	
 	<!-- =============================== one project ================================================ -->
 	
-	<project project_id="1" name="base project" active="true" created_by="IT" created_on="2011-08-08" 
-			 cl_id="1" rl_id="1" tcl_id="1"/>
+	<PROJECT PROJECT_ID="1" NAME="base project" ACTIVE="TRUE" CREATED_BY="IT" CREATED_ON="2011-08-08" 
+			 CL_ID="1" RL_ID="1" TCL_ID="1"/>
 
+	<ATTACHMENT_LIST ATTACHMENT_LIST_ID="13"/>
+	<TEST_CASE_LIBRARY_NODE TCLN_ID="13" NAME="folder 2" CREATED_BY="IT" CREATED_ON="2011-08-08" ATTACHMENT_LIST_ID="13"/>  
+
+	<TEST_CASE_FOLDER TCLN_ID="13" />	
 	
-	<test_case_library_node tcln_id="13" name="folder 2" created_by="IT" created_on="2011-08-08" />  
+	<ATTACHMENT_LIST ATTACHMENT_LIST_ID="11"/>
+	<TEST_CASE_LIBRARY_NODE TCLN_ID="11" NAME="folder 1" CREATED_BY="IT" CREATED_ON="2011-08-08" ATTACHMENT_LIST_ID="11"/>  
 
-	<test_case_folder tcln_id="13" />	
-	
-	<test_case_library_node tcln_id="11" name="folder 1" created_by="IT" created_on="2011-08-08" />  
-
-	<test_case_folder tcln_id="11" />	
+	<TEST_CASE_FOLDER TCLN_ID="11" />	
 
 	
 	<!-- ============================ test case library content =======================================  -->
-	<test_case_library_content library_id="1" content_id="11" />  <!--  tc library 1 contains tcfolder 1 -->
-	<test_case_library_content library_id="1" content_id="13" />  <!--  tc library 1 contains tcfolder 1 -->
+	<TEST_CASE_LIBRARY_CONTENT LIBRARY_ID="1" CONTENT_ID="11" />  <!--  TC LIBRARY 1 CONTAINS TCFOLDER 1 -->
+	<TEST_CASE_LIBRARY_CONTENT LIBRARY_ID="1" CONTENT_ID="13" />  <!--  TC LIBRARY 1 CONTAINS TCFOLDER 1 -->
 	
 		
 

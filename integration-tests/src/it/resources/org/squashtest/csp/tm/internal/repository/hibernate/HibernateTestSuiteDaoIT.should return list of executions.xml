@@ -21,72 +21,70 @@
         along with this software.  If not, see <http://www.gnu.org/licenses/>.
 
 -->
+<!DOCTYPE dataset SYSTEM "../../../../../../../dtd/squash-tm.1.4.0.dtd">
 <dataset>
-
-	<ATTACHMENT_LIST ATTACHMENT_LIST_id="1" />
-	<campaign_library_node cln_id="1" name="campaign1" created_on="2010-02-01" created_by="dbu" />
-	<campaign cln_id="1" actual_start_auto="true" actual_end_auto="true" ATTACHMENT_LIST_ID="1" />
+	<ATTACHMENT_LIST ATTACHMENT_LIST_ID="1" />
+	<CAMPAIGN_LIBRARY_NODE CLN_ID="1" NAME="campaign1" CREATED_ON="2010-02-01" CREATED_BY="DBU" ATTACHMENT_LIST_ID="1"/>
+	<CAMPAIGN CLN_ID="1" ACTUAL_START_AUTO="TRUE" ACTUAL_END_AUTO="TRUE"  />
 	
-<!-- 	ITERATION 1 -->
-	<ATTACHMENT_LIST ATTACHMENT_LIST_id="11" />
-	<iteration iteration_id="1" name="iteration1" created_on="2010-02-01" created_by="dbu" actual_start_auto="true" actual_end_auto="true" ATTACHMENT_LIST_ID="11" />
-	<campaign_iteration campaign_id="1" iteration_id="1" iteration_order="0"/>
+	<!-- 	ITERATION 1 -->
+	<ATTACHMENT_LIST ATTACHMENT_LIST_ID="11" />
+	<ITERATION ITERATION_ID="1" NAME="iteration1" CREATED_ON="2010-02-01" CREATED_BY="DBU" ACTUAL_START_AUTO="TRUE" ACTUAL_END_AUTO="TRUE" ATTACHMENT_LIST_ID="11" />
+	<CAMPAIGN_ITERATION CAMPAIGN_ID="1" ITERATION_ID="1" ITERATION_ORDER="0"/>
 	
-<!-- 	TPI 10 -->
-	<iteration_test_plan_item item_test_plan_id="10" created_on="2010-02-01" created_by="dbu"/>
-	<item_test_plan_list iteration_id="1" item_test_plan_id="10" item_test_plan_order="0"/>
+	<!-- 	TPI 10 -->
+	<ITERATION_TEST_PLAN_ITEM ITEM_TEST_PLAN_ID="10" CREATED_ON="2010-02-01" CREATED_BY="DBU"/>
+	<ITEM_TEST_PLAN_LIST ITERATION_ID="1" ITEM_TEST_PLAN_ID="10" ITEM_TEST_PLAN_ORDER="0"/>
 	
-	<ATTACHMENT_LIST ATTACHMENT_LIST_id="12" />
-	<execution execution_id="100" created_on="2010-02-01" created_by="dbu" name="foo" prerequisite="" ATTACHMENT_LIST_ID="12" />
-	<item_test_plan_execution item_test_plan_id="10" execution_id="100" execution_order="0"/>
+	<ATTACHMENT_LIST ATTACHMENT_LIST_ID="12" />
+	<EXECUTION EXECUTION_ID="100" CREATED_ON="2010-02-01" CREATED_BY="DBU" NAME="foo" PREREQUISITE="" ATTACHMENT_LIST_ID="12" />
+	<ITEM_TEST_PLAN_EXECUTION ITEM_TEST_PLAN_ID="10" EXECUTION_ID="100" EXECUTION_ORDER="0"/>
 	
-	<ATTACHMENT_LIST ATTACHMENT_LIST_id="13" />
-	<execution execution_id="101" created_on="2010-02-01" created_by="dbu" name="bar" prerequisite="" ATTACHMENT_LIST_ID="13" />
-	<item_test_plan_execution item_test_plan_id="10" execution_id="101" execution_order="1"/>
+	<ATTACHMENT_LIST ATTACHMENT_LIST_ID="13" />
+	<EXECUTION EXECUTION_ID="101" CREATED_ON="2010-02-01" CREATED_BY="DBU" NAME="bar" PREREQUISITE="" ATTACHMENT_LIST_ID="13" />
+	<ITEM_TEST_PLAN_EXECUTION ITEM_TEST_PLAN_ID="10" EXECUTION_ID="101" EXECUTION_ORDER="1"/>
 	
-<!-- 	ITERATION 2 -->
-	<ATTACHMENT_LIST ATTACHMENT_LIST_id="16" />
-	<iteration iteration_id="2" name="foo" created_on="2010-02-01" created_by="dbu" actual_start_auto="true" actual_end_auto="true" ATTACHMENT_LIST_ID="16"/>
-	<campaign_iteration campaign_id="1" iteration_id="2" iteration_order="1"/>
+	<!-- 	ITERATION 2 -->
+	<ATTACHMENT_LIST ATTACHMENT_LIST_ID="16" />
+	<ITERATION ITERATION_ID="2" NAME="foo" CREATED_ON="2010-02-01" CREATED_BY="DBU" ACTUAL_START_AUTO="TRUE" ACTUAL_END_AUTO="TRUE" ATTACHMENT_LIST_ID="16"/>
+	<CAMPAIGN_ITERATION CAMPAIGN_ID="1" ITERATION_ID="2" ITERATION_ORDER="1"/>
 	
 	<!-- 	TESTSUITE -->
-	<ATTACHMENT_LIST ATTACHMENT_LIST_id="20" />
+	<ATTACHMENT_LIST ATTACHMENT_LIST_ID="20" />
 	
-	<test_suite id="2" name="foo" created_on="2010-02-01" created_by="dbu" ATTACHMENT_LIST_ID="20"/>
-	<iteration_test_suite iteration_id="2" test_suite_id="2"/>
+	<TEST_SUITE ID="2" NAME="foo" CREATED_ON="2010-02-01" CREATED_BY="DBU" ATTACHMENT_LIST_ID="20"/>
+	<ITERATION_TEST_SUITE ITERATION_ID="2" TEST_SUITE_ID="2"/>
 	
-<!-- 	TPI 20 -->
-	<iteration_test_plan_item item_test_plan_id="20" created_on="2010-02-01" created_by="dbu" test_suite="2"/>
-	<item_test_plan_list iteration_id="2" item_test_plan_id="20" item_test_plan_order="0"/>
+	<!-- 	TPI 20 -->
+	<ITERATION_TEST_PLAN_ITEM ITEM_TEST_PLAN_ID="20" CREATED_ON="2010-02-01" CREATED_BY="DBU" TEST_SUITE="2"/>
+	<ITEM_TEST_PLAN_LIST ITERATION_ID="2" ITEM_TEST_PLAN_ID="20" ITEM_TEST_PLAN_ORDER="0"/>
 	
-	<ATTACHMENT_LIST ATTACHMENT_LIST_id="14" />
-	<execution execution_id="200" created_on="2010-02-01" created_by="dbu" name="testSuite2-execution" prerequisite="" ATTACHMENT_LIST_ID="14" />
-	<item_test_plan_execution item_test_plan_id="20" execution_id="200" execution_order="0"/>
+	<ATTACHMENT_LIST ATTACHMENT_LIST_ID="14" />
+	<EXECUTION EXECUTION_ID="200" CREATED_ON="2010-02-01" CREATED_BY="DBU" NAME="testSuite2-execution" PREREQUISITE="" ATTACHMENT_LIST_ID="14" />
+	<ITEM_TEST_PLAN_EXECUTION ITEM_TEST_PLAN_ID="20" EXECUTION_ID="200" EXECUTION_ORDER="0"/>
 	
-	<ATTACHMENT_LIST ATTACHMENT_LIST_id="15" />
-	<execution execution_id="201" created_on="2010-02-01" created_by="dbu" name="testSuite2-execution" prerequisite="" ATTACHMENT_LIST_ID="15" />
-	<item_test_plan_execution item_test_plan_id="20" execution_id="201" execution_order="1"/>
+	<ATTACHMENT_LIST ATTACHMENT_LIST_ID="15" />
+	<EXECUTION EXECUTION_ID="201" CREATED_ON="2010-02-01" CREATED_BY="DBU" NAME="testSuite2-execution" PREREQUISITE="" ATTACHMENT_LIST_ID="15" />
+	<ITEM_TEST_PLAN_EXECUTION ITEM_TEST_PLAN_ID="20" EXECUTION_ID="201" EXECUTION_ORDER="1"/>
 	
 	<!-- 	TPI 21 -->
-	<iteration_test_plan_item item_test_plan_id="40" created_on="2010-02-01" created_by="dbu"/>
-	<item_test_plan_list iteration_id="2" item_test_plan_id="40" item_test_plan_order="1"/>
+	<ITERATION_TEST_PLAN_ITEM ITEM_TEST_PLAN_ID="40" CREATED_ON="2010-02-01" CREATED_BY="DBU"/>
+	<ITEM_TEST_PLAN_LIST ITERATION_ID="2" ITEM_TEST_PLAN_ID="40" ITEM_TEST_PLAN_ORDER="1"/>
 	
-	<ATTACHMENT_LIST ATTACHMENT_LIST_id="18" />
-	<execution execution_id="400" created_on="2010-02-01" created_by="dbu" name="foo" prerequisite="" ATTACHMENT_LIST_ID="18" />
-	<item_test_plan_execution item_test_plan_id="40" execution_id="400" execution_order="0"/>
+	<ATTACHMENT_LIST ATTACHMENT_LIST_ID="18" />
+	<EXECUTION EXECUTION_ID="400" CREATED_ON="2010-02-01" CREATED_BY="DBU" NAME="foo" PREREQUISITE="" ATTACHMENT_LIST_ID="18" />
+	<ITEM_TEST_PLAN_EXECUTION ITEM_TEST_PLAN_ID="40" EXECUTION_ID="400" EXECUTION_ORDER="0"/>
 	
 	<!-- 	TPI 22 -->
-	<iteration_test_plan_item item_test_plan_id="22" created_on="2010-02-01" created_by="dbu"/>
-	<item_test_plan_list iteration_id="2" item_test_plan_id="22" item_test_plan_order="2"/>
+	<ITERATION_TEST_PLAN_ITEM ITEM_TEST_PLAN_ID="22" CREATED_ON="2010-02-01" CREATED_BY="DBU"/>
+	<ITEM_TEST_PLAN_LIST ITERATION_ID="2" ITEM_TEST_PLAN_ID="22" ITEM_TEST_PLAN_ORDER="2"/>
 	
 	<!-- 	TPI 23 -->
-	<iteration_test_plan_item item_test_plan_id="23" created_on="2010-02-01" created_by="dbu" test_suite="2"/>
-	<item_test_plan_list iteration_id="2" item_test_plan_id="23" item_test_plan_order="3"/>
+	<ITERATION_TEST_PLAN_ITEM ITEM_TEST_PLAN_ID="23" CREATED_ON="2010-02-01" CREATED_BY="DBU" TEST_SUITE="2"/>
+	<ITEM_TEST_PLAN_LIST ITERATION_ID="2" ITEM_TEST_PLAN_ID="23" ITEM_TEST_PLAN_ORDER="3"/>
 	
-	<ATTACHMENT_LIST ATTACHMENT_LIST_id="19" />
-	<execution execution_id="230" created_on="2010-02-01" created_by="dbu" name="testSuite2-execution" prerequisite="" ATTACHMENT_LIST_ID="19" />
-	<item_test_plan_execution item_test_plan_id="23" execution_id="230" execution_order="0"/>
+	<ATTACHMENT_LIST ATTACHMENT_LIST_ID="19" />
+	<EXECUTION EXECUTION_ID="230" CREATED_ON="2010-02-01" CREATED_BY="DBU" NAME="testSuite2-execution" PREREQUISITE="" ATTACHMENT_LIST_ID="19" />
+	<ITEM_TEST_PLAN_EXECUTION ITEM_TEST_PLAN_ID="23" EXECUTION_ID="230" EXECUTION_ORDER="0"/>
 	
-	
-
 </dataset>

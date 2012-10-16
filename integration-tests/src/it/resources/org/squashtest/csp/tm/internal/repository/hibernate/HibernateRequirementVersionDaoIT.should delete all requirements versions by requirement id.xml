@@ -21,98 +21,100 @@
         along with this software.  If not, see <http://www.gnu.org/licenses/>.
 
 -->
+<!DOCTYPE dataset SYSTEM "../../../../../../../dtd/squash-tm.1.4.0.dtd">
+
 <dataset>
-  <attachment_list attachment_list_id="10"/>
-  <attachment_list attachment_list_id="11"/>
-  <attachment_list attachment_list_id="12"/>
-  <attachment_list attachment_list_id="13"/>
-  <attachment_list attachment_list_id="14"/>
-  <attachment_list attachment_list_id="15"/>
-  <resource res_id="10" name="10" created_on="2012-01-02" created_by="dbu"/>
-  <resource res_id="11" name="10" created_on="2012-01-02" created_by="dbu"/>
-  <resource res_id="12" name="10" created_on="2012-01-02" created_by="dbu"/>
-  <resource res_id="13" name="10" created_on="2012-01-02" created_by="dbu"/>
-  <resource res_id="14" name="10" created_on="2012-01-02" created_by="dbu"/>
-  <resource res_id="15" name="10" created_on="2012-01-02" created_by="dbu"/>
-  <requirement_library_node rln_id="10" created_on="2012-01-02" created_by="dbu"/>
-  <requirement rln_id="10"/>
-  <requirement_version attachment_list_id="10" res_id="10" requirement_id="10" version_number="1"/>
-  <requirement_version attachment_list_id="11" res_id="11" requirement_id="10" version_number="2"/>
-  <requirement_version attachment_list_id="12" res_id="12" requirement_id="10" version_number="3"/>
-  <requirement_version attachment_list_id="13" res_id="13" requirement_id="10" version_number="4"/>
-  <requirement_version attachment_list_id="14" res_id="14" requirement_id="10" version_number="5"/>
-  <requirement_version attachment_list_id="15" res_id="15" requirement_id="10" version_number="6"/>
-  <requirement_audit_event event_id="10" req_version_id="10" event_date="2012-01-02" author="dbu"/>
-  <requirement_audit_event event_id="11" req_version_id="11" event_date="2012-01-02" author="dbu"/>
-  <requirement_audit_event event_id="12" req_version_id="12" event_date="2012-01-02" author="dbu"/>
-  <requirement_audit_event event_id="13" req_version_id="13" event_date="2012-01-02" author="dbu"/>
-  <requirement_audit_event event_id="14" req_version_id="14" event_date="2012-01-02" author="dbu"/>
-  <requirement_audit_event event_id="15" req_version_id="15" event_date="2012-01-02" author="dbu"/>
-  <requirement_creation event_id="10"/>
-  <requirement_property_change event_id="12"/>
-  <requirement_property_change event_id="13"/>
-  <requirement_large_property_change event_id="11"/>
-  <requirement_large_property_change event_id="14"/>
-  <requirement_large_property_change event_id="15"/>
+  <ATTACHMENT_LIST ATTACHMENT_LIST_ID="10"/>
+  <ATTACHMENT_LIST ATTACHMENT_LIST_ID="11"/>
+  <ATTACHMENT_LIST ATTACHMENT_LIST_ID="12"/>
+  <ATTACHMENT_LIST ATTACHMENT_LIST_ID="13"/>
+  <ATTACHMENT_LIST ATTACHMENT_LIST_ID="14"/>
+  <ATTACHMENT_LIST ATTACHMENT_LIST_ID="15"/>
+  <RESOURCE RES_ID="10" NAME="10" CREATED_ON="2012-01-02" CREATED_BY="DBU"  ATTACHMENT_LIST_ID="10"/>
+  <RESOURCE RES_ID="11" NAME="10" CREATED_ON="2012-01-02" CREATED_BY="DBU" ATTACHMENT_LIST_ID="11"/>
+  <RESOURCE RES_ID="12" NAME="10" CREATED_ON="2012-01-02" CREATED_BY="DBU" ATTACHMENT_LIST_ID="12"/>
+  <RESOURCE RES_ID="13" NAME="10" CREATED_ON="2012-01-02" CREATED_BY="DBU" ATTACHMENT_LIST_ID="13"/>
+  <RESOURCE RES_ID="14" NAME="10" CREATED_ON="2012-01-02" CREATED_BY="DBU" ATTACHMENT_LIST_ID="14"/>
+  <RESOURCE RES_ID="15" NAME="10" CREATED_ON="2012-01-02" CREATED_BY="DBU" ATTACHMENT_LIST_ID="15"/>
+  <REQUIREMENT_LIBRARY_NODE RLN_ID="10" CREATED_ON="2012-01-02" CREATED_BY="DBU"/>
+  <REQUIREMENT RLN_ID="10"/>
+  <REQUIREMENT_VERSION RES_ID="10" REQUIREMENT_ID="10" VERSION_NUMBER="1"/>
+  <REQUIREMENT_VERSION RES_ID="11" REQUIREMENT_ID="10" VERSION_NUMBER="2"/>
+  <REQUIREMENT_VERSION RES_ID="12" REQUIREMENT_ID="10" VERSION_NUMBER="3"/>
+  <REQUIREMENT_VERSION RES_ID="13" REQUIREMENT_ID="10" VERSION_NUMBER="4"/>
+  <REQUIREMENT_VERSION RES_ID="14" REQUIREMENT_ID="10" VERSION_NUMBER="5"/>
+  <REQUIREMENT_VERSION RES_ID="15" REQUIREMENT_ID="10" VERSION_NUMBER="6"/>
+  <REQUIREMENT_AUDIT_EVENT EVENT_ID="10" REQ_VERSION_ID="10" EVENT_DATE="2012-01-02" AUTHOR="DBU"/>
+  <REQUIREMENT_AUDIT_EVENT EVENT_ID="11" REQ_VERSION_ID="11" EVENT_DATE="2012-01-02" AUTHOR="DBU"/>
+  <REQUIREMENT_AUDIT_EVENT EVENT_ID="12" REQ_VERSION_ID="12" EVENT_DATE="2012-01-02" AUTHOR="DBU"/>
+  <REQUIREMENT_AUDIT_EVENT EVENT_ID="13" REQ_VERSION_ID="13" EVENT_DATE="2012-01-02" AUTHOR="DBU"/>
+  <REQUIREMENT_AUDIT_EVENT EVENT_ID="14" REQ_VERSION_ID="14" EVENT_DATE="2012-01-02" AUTHOR="DBU"/>
+  <REQUIREMENT_AUDIT_EVENT EVENT_ID="15" REQ_VERSION_ID="15" EVENT_DATE="2012-01-02" AUTHOR="DBU"/>
+  <REQUIREMENT_CREATION EVENT_ID="10"/>
+  <REQUIREMENT_PROPERTY_CHANGE EVENT_ID="12"/>
+  <REQUIREMENT_PROPERTY_CHANGE EVENT_ID="13"/>
+  <REQUIREMENT_LARGE_PROPERTY_CHANGE EVENT_ID="11"/>
+  <REQUIREMENT_LARGE_PROPERTY_CHANGE EVENT_ID="14"/>
+  <REQUIREMENT_LARGE_PROPERTY_CHANGE EVENT_ID="15"/>
   
-  <attachment_list attachment_list_id="20"/>
-  <attachment_list attachment_list_id="21"/>
-  <attachment_list attachment_list_id="22"/>
-  <attachment_list attachment_list_id="23"/>
-  <attachment_list attachment_list_id="24"/>
-  <attachment_list attachment_list_id="25"/>
-  <resource res_id="20" name="20" created_on="2012-01-02" created_by="dbu"/>
-  <resource res_id="21" name="20" created_on="2012-01-02" created_by="dbu"/>
-  <resource res_id="22" name="20" created_on="2012-01-02" created_by="dbu"/>
-  <resource res_id="23" name="20" created_on="2012-01-02" created_by="dbu"/>
-  <resource res_id="24" name="20" created_on="2012-01-02" created_by="dbu"/>
-  <resource res_id="25" name="20" created_on="2012-01-02" created_by="dbu"/>
-  <requirement_library_node rln_id="20" created_on="2012-01-02" created_by="dbu"/>
-  <requirement rln_id="20"/>
-  <requirement_version attachment_list_id="20" res_id="20" requirement_id="20" version_number="1"/>
-  <requirement_version attachment_list_id="21" res_id="21" requirement_id="20" version_number="2"/>
-  <requirement_version attachment_list_id="22" res_id="22" requirement_id="20" version_number="3"/>
-  <requirement_version attachment_list_id="23" res_id="23" requirement_id="20" version_number="4"/>
-  <requirement_version attachment_list_id="24" res_id="24" requirement_id="20" version_number="5"/>
-  <requirement_version attachment_list_id="25" res_id="25" requirement_id="20" version_number="6"/>
-  <requirement_audit_event event_id="20" req_version_id="20" event_date="2012-01-02" author="dbu"/>
-  <requirement_audit_event event_id="21" req_version_id="21" event_date="2012-01-02" author="dbu"/>
-  <requirement_audit_event event_id="22" req_version_id="22" event_date="2012-01-02" author="dbu"/>
-  <requirement_audit_event event_id="23" req_version_id="23" event_date="2012-01-02" author="dbu"/>
-  <requirement_audit_event event_id="24" req_version_id="24" event_date="2012-01-02" author="dbu"/>
-  <requirement_audit_event event_id="25" req_version_id="25" event_date="2012-01-02" author="dbu"/>
-  <requirement_creation event_id="20"/>
-  <requirement_property_change event_id="21"/>
-  <requirement_property_change event_id="22"/>
-  <requirement_property_change event_id="23"/>
-  <requirement_large_property_change event_id="24"/>
-  <requirement_large_property_change event_id="25"/>
+  <ATTACHMENT_LIST ATTACHMENT_LIST_ID="20"/>
+  <ATTACHMENT_LIST ATTACHMENT_LIST_ID="21"/>
+  <ATTACHMENT_LIST ATTACHMENT_LIST_ID="22"/>
+  <ATTACHMENT_LIST ATTACHMENT_LIST_ID="23"/>
+  <ATTACHMENT_LIST ATTACHMENT_LIST_ID="24"/>
+  <ATTACHMENT_LIST ATTACHMENT_LIST_ID="25"/>
+  <RESOURCE RES_ID="20" NAME="20" CREATED_ON="2012-01-02" CREATED_BY="DBU" ATTACHMENT_LIST_ID="20"/>
+  <RESOURCE RES_ID="21" NAME="20" CREATED_ON="2012-01-02" CREATED_BY="DBU" ATTACHMENT_LIST_ID="21"/>
+  <RESOURCE RES_ID="22" NAME="20" CREATED_ON="2012-01-02" CREATED_BY="DBU" ATTACHMENT_LIST_ID="22"/>
+  <RESOURCE RES_ID="23" NAME="20" CREATED_ON="2012-01-02" CREATED_BY="DBU" ATTACHMENT_LIST_ID="23"/>
+  <RESOURCE RES_ID="24" NAME="20" CREATED_ON="2012-01-02" CREATED_BY="DBU" ATTACHMENT_LIST_ID="24"/>
+  <RESOURCE RES_ID="25" NAME="20" CREATED_ON="2012-01-02" CREATED_BY="DBU" ATTACHMENT_LIST_ID="25"/>
+  <REQUIREMENT_LIBRARY_NODE RLN_ID="20" CREATED_ON="2012-01-02" CREATED_BY="DBU"/>
+  <REQUIREMENT RLN_ID="20"/>
+  <REQUIREMENT_VERSION RES_ID="20" REQUIREMENT_ID="20" VERSION_NUMBER="1"/>
+  <REQUIREMENT_VERSION RES_ID="21" REQUIREMENT_ID="20" VERSION_NUMBER="2"/>
+  <REQUIREMENT_VERSION RES_ID="22" REQUIREMENT_ID="20" VERSION_NUMBER="3"/>
+  <REQUIREMENT_VERSION RES_ID="23" REQUIREMENT_ID="20" VERSION_NUMBER="4"/>
+  <REQUIREMENT_VERSION RES_ID="24" REQUIREMENT_ID="20" VERSION_NUMBER="5"/>
+  <REQUIREMENT_VERSION RES_ID="25" REQUIREMENT_ID="20" VERSION_NUMBER="6"/>
+  <REQUIREMENT_AUDIT_EVENT EVENT_ID="20" REQ_VERSION_ID="20" EVENT_DATE="2012-01-02" AUTHOR="DBU"/>
+  <REQUIREMENT_AUDIT_EVENT EVENT_ID="21" REQ_VERSION_ID="21" EVENT_DATE="2012-01-02" AUTHOR="DBU"/>
+  <REQUIREMENT_AUDIT_EVENT EVENT_ID="22" REQ_VERSION_ID="22" EVENT_DATE="2012-01-02" AUTHOR="DBU"/>
+  <REQUIREMENT_AUDIT_EVENT EVENT_ID="23" REQ_VERSION_ID="23" EVENT_DATE="2012-01-02" AUTHOR="DBU"/>
+  <REQUIREMENT_AUDIT_EVENT EVENT_ID="24" REQ_VERSION_ID="24" EVENT_DATE="2012-01-02" AUTHOR="DBU"/>
+  <REQUIREMENT_AUDIT_EVENT EVENT_ID="25" REQ_VERSION_ID="25" EVENT_DATE="2012-01-02" AUTHOR="DBU"/>
+  <REQUIREMENT_CREATION EVENT_ID="20"/>
+  <REQUIREMENT_PROPERTY_CHANGE EVENT_ID="21"/>
+  <REQUIREMENT_PROPERTY_CHANGE EVENT_ID="22"/>
+  <REQUIREMENT_PROPERTY_CHANGE EVENT_ID="23"/>
+  <REQUIREMENT_LARGE_PROPERTY_CHANGE EVENT_ID="24"/>
+  <REQUIREMENT_LARGE_PROPERTY_CHANGE EVENT_ID="25"/>
 
-  <attachment_list attachment_list_id="30"/>
-  <resource res_id="30" name="30" created_on="2012-01-02" created_by="dbu"/>
-  <requirement_library_node rln_id="30" created_on="2012-01-02" created_by="dbu"/>
-  <requirement rln_id="30"/>
-  <requirement_version attachment_list_id="30" res_id="30" requirement_id="30" version_number="1"/>
-  <requirement_audit_event event_id="30" req_version_id="30" event_date="2012-01-02" author="dbu"/>
-  <requirement_creation event_id="30"/>
+  <ATTACHMENT_LIST ATTACHMENT_LIST_ID="30"/>
+  <RESOURCE RES_ID="30" NAME="30" CREATED_ON="2012-01-02" CREATED_BY="DBU" ATTACHMENT_LIST_ID="30"/>
+  <REQUIREMENT_LIBRARY_NODE RLN_ID="30" CREATED_ON="2012-01-02" CREATED_BY="DBU"/>
+  <REQUIREMENT RLN_ID="30"/>
+  <REQUIREMENT_VERSION  RES_ID="30" REQUIREMENT_ID="30" VERSION_NUMBER="1"/>
+  <REQUIREMENT_AUDIT_EVENT EVENT_ID="30" REQ_VERSION_ID="30" EVENT_DATE="2012-01-02" AUTHOR="DBU"/>
+  <REQUIREMENT_CREATION EVENT_ID="30"/>
 
-  <attachment_list attachment_list_id="40"/>
-  <resource res_id="40" name="40" created_on="2012-01-02" created_by="dbu"/>
-  <requirement_library_node rln_id="40" created_on="2012-01-02" created_by="dbu"/>
-  <requirement rln_id="40"/>
-  <requirement_version attachment_list_id="40" res_id="40" requirement_id="40" version_number="1"/>
-  <requirement_audit_event event_id="40" req_version_id="40" event_date="2012-01-02" author="dbu"/>
-  <requirement_creation event_id="40"/>
+  <ATTACHMENT_LIST ATTACHMENT_LIST_ID="40"/>
+  <RESOURCE RES_ID="40" NAME="40" CREATED_ON="2012-01-02" CREATED_BY="DBU" ATTACHMENT_LIST_ID="40"/>
+  <REQUIREMENT_LIBRARY_NODE RLN_ID="40" CREATED_ON="2012-01-02" CREATED_BY="DBU"/>
+  <REQUIREMENT RLN_ID="40"/>
+  <REQUIREMENT_VERSION  RES_ID="40" REQUIREMENT_ID="40" VERSION_NUMBER="1"/>
+  <REQUIREMENT_AUDIT_EVENT EVENT_ID="40" REQ_VERSION_ID="40" EVENT_DATE="2012-01-02" AUTHOR="DBU"/>
+  <REQUIREMENT_CREATION EVENT_ID="40"/>
   
-  <attachment_list attachment_list_id="100"/>
-  <test_case_library_node created_by="dbu" tcln_id="100" created_on="2010-02-01" name=""/>
-  <test_case tcln_id="100" attachment_list_id="100" version="1"/>
-  <test_case_verified_requirement_version verifying_test_case_id="100" verified_req_version_id="15"/>
-  <test_case_verified_requirement_version verifying_test_case_id="100" verified_req_version_id="25"/>
+  <ATTACHMENT_LIST ATTACHMENT_LIST_ID="100"/>
+  <TEST_CASE_LIBRARY_NODE CREATED_BY="DBU" TCLN_ID="100" CREATED_ON="2010-02-01" NAME=""  ATTACHMENT_LIST_ID="100"/>
+  <TEST_CASE TCLN_ID="100" VERSION="1"/>
+  <TEST_CASE_VERIFIED_REQUIREMENT_VERSION VERIFYING_TEST_CASE_ID="100" VERIFIED_REQ_VERSION_ID="15"/>
+  <TEST_CASE_VERIFIED_REQUIREMENT_VERSION VERIFYING_TEST_CASE_ID="100" VERIFIED_REQ_VERSION_ID="25"/>
 
-  <attachment_list attachment_list_id="200"/>
-  <test_case_library_node created_by="dbu" tcln_id="200" created_on="2010-02-01" name=""/>
-  <test_case tcln_id="200" attachment_list_id="200" version="1"/>
-  <test_case_verified_requirement_version verifying_test_case_id="200" verified_req_version_id="30"/>
-  <test_case_verified_requirement_version verifying_test_case_id="200" verified_req_version_id="40"/>
+  <ATTACHMENT_LIST ATTACHMENT_LIST_ID="200"/>
+  <TEST_CASE_LIBRARY_NODE CREATED_BY="DBU" TCLN_ID="200" CREATED_ON="2010-02-01" NAME="" ATTACHMENT_LIST_ID="200"/>
+  <TEST_CASE TCLN_ID="200"  VERSION="1"/>
+  <TEST_CASE_VERIFIED_REQUIREMENT_VERSION VERIFYING_TEST_CASE_ID="200" VERIFIED_REQ_VERSION_ID="30"/>
+  <TEST_CASE_VERIFIED_REQUIREMENT_VERSION VERIFYING_TEST_CASE_ID="200" VERIFIED_REQ_VERSION_ID="40"/>
 </dataset>

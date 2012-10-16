@@ -21,25 +21,26 @@
         along with this software.  If not, see <http://www.gnu.org/licenses/>.
 
 -->
+<!DOCTYPE dataset SYSTEM "../../../../../../../dtd/squash-tm.1.4.0.dtd">
 <dataset>
-	<core_user id="10" login="batman" last_name="batman" created_by="dbu" created_on="2011-03-19" />
+	<CORE_USER ID="10" LOGIN="batman" LAST_NAME="batman" CREATED_BY="dbu" CREATED_ON="2011-03-19" />
 	
-	<core_group />
-	<core_group_authority />
-	<core_group_member />
+	<CORE_GROUP />
+	<CORE_GROUP_AUTHORITY />
+	<CORE_GROUP_MEMBER />
 	
-	<acl_class id="1001" classname="batmobile" />
-	<acl_object_identity id="1" identity="101" class_id="1001" />
+	<ACL_CLASS ID="1001" CLASSNAME="batmobile" />
+	<ACL_OBJECT_IDENTITY ID="1" IDENTITY="101" CLASS_ID="1001" />
 		
-	<acl_object_identity id="2" identity="102" class_id="1001" />
+	<ACL_OBJECT_IDENTITY ID="2" IDENTITY="102" CLASS_ID="1001" />
 	
-	<acl_object_identity id="3" identity="103" class_id="1001" />
+	<ACL_OBJECT_IDENTITY ID="3" IDENTITY="103" CLASS_ID="1001" />
 	
-	<acl_group id="100" qualified_name="driver" />
-	<acl_group id="200" qualified_name="owner" />
+	<ACL_GROUP ID="100" QUALIFIED_NAME="driver" />
+	<ACL_GROUP ID="200" QUALIFIED_NAME="owner" />
 	
-	<acl_group_permission />
+	<ACL_GROUP_PERMISSION />
 
-	<acl_responsibility_scope_entry user_id="10" acl_group_id="100" object_identity_id="1" />
-	<acl_responsibility_scope_entry user_id="10" acl_group_id="200" object_identity_id="2" />
+	<ACL_RESPONSIBILITY_SCOPE_ENTRY USER_ID="10" ACL_GROUP_ID="100" OBJECT_IDENTITY_ID="1" />
+	<ACL_RESPONSIBILITY_SCOPE_ENTRY USER_ID="10" ACL_GROUP_ID="200" OBJECT_IDENTITY_ID="2" />
 </dataset>

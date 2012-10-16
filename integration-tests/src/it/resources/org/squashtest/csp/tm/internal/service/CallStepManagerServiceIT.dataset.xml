@@ -50,96 +50,97 @@
 
 
  -->
+<!DOCTYPE dataset SYSTEM "../../../../../../dtd/squash-tm.1.4.0.dtd">
 <dataset>
 
 	<!--  dummy attachment list, the same for everyone that need one. -->
 	
-	<attachment_list attachment_list_id="1" />
+	<ATTACHMENT_LIST ATTACHMENT_LIST_ID="1" />
 
 
 	<!--  the test case library nodes -->
 
-	<test_case_library_node tcln_id="1" name="top test case" created_by="IT" created_on="2011-07-26" />
-	<test_case_library_node tcln_id="11" name="first level 1" created_by="IT" created_on="2011-07-26" />
-	<test_case_library_node tcln_id="21" name="second level 1" created_by="IT" created_on="2011-07-26" />
-	<test_case_library_node tcln_id="22" name="second level 2" created_by="IT" created_on="2011-07-26" />
-	<test_case_library_node tcln_id="31" name="third level 1" created_by="IT" created_on="2011-07-26" />
-	<test_case_library_node tcln_id="32" name="third level 2" created_by="IT" created_on="2011-07-26" />
+	<TEST_CASE_LIBRARY_NODE TCLN_ID="1" NAME="top test case" CREATED_BY="IT" CREATED_ON="2011-07-26" ATTACHMENT_LIST_ID="1"/>
+	<TEST_CASE_LIBRARY_NODE TCLN_ID="11" NAME="first level 1" CREATED_BY="IT" CREATED_ON="2011-07-26" ATTACHMENT_LIST_ID="1"/>
+	<TEST_CASE_LIBRARY_NODE TCLN_ID="21" NAME="second level 1" CREATED_BY="IT" CREATED_ON="2011-07-26" ATTACHMENT_LIST_ID="1"/>
+	<TEST_CASE_LIBRARY_NODE TCLN_ID="22" NAME="second level 2" CREATED_BY="IT" CREATED_ON="2011-07-26" ATTACHMENT_LIST_ID="1"/>
+	<TEST_CASE_LIBRARY_NODE TCLN_ID="31" NAME="third level 1" CREATED_BY="IT" CREATED_ON="2011-07-26" ATTACHMENT_LIST_ID="1"/>
+	<TEST_CASE_LIBRARY_NODE TCLN_ID="32" NAME="third level 2" CREATED_BY="IT" CREATED_ON="2011-07-26" ATTACHMENT_LIST_ID="1"/>
 	
-	<test_case_library_node tcln_id="10" name="guinea pig" created_by="IT" created_on="2011-07-26" />	
+	<TEST_CASE_LIBRARY_NODE TCLN_ID="10" NAME="guinea pig" CREATED_BY="IT" CREATED_ON="2011-07-26" ATTACHMENT_LIST_ID="1"/>	
 	
-	<test_case_library_node tcln_id="100" name="bottom test case" created_by="IT" created_on="2011-07-26" />	
-	<test_case_library_node tcln_id="101" name="first test case" created_by="IT" created_on="2011-07-26" />	
-	<test_case_library_node tcln_id="102" name="second test case" created_by="IT" created_on="2011-07-26" />		
-	<test_case_library_node tcln_id="103" name="third test case" created_by="IT" created_on="2011-07-26" />		
+	<TEST_CASE_LIBRARY_NODE TCLN_ID="100" NAME="bottom test case" CREATED_BY="IT" CREATED_ON="2011-07-26" ATTACHMENT_LIST_ID="1"/>	
+	<TEST_CASE_LIBRARY_NODE TCLN_ID="101" NAME="first test case" CREATED_BY="IT" CREATED_ON="2011-07-26" ATTACHMENT_LIST_ID="1"/>	
+	<TEST_CASE_LIBRARY_NODE TCLN_ID="102" NAME="second test case" CREATED_BY="IT" CREATED_ON="2011-07-26" ATTACHMENT_LIST_ID="1"/>		
+	<TEST_CASE_LIBRARY_NODE TCLN_ID="103" NAME="third test case" CREATED_BY="IT" CREATED_ON="2011-07-26" ATTACHMENT_LIST_ID="1"/>		
 	
 	<!--  the test cases now -->
 	
-	<test_case tcln_id="1"  version="1" 	attachment_list_id="1" />
-	<test_case tcln_id="11" version="1" 	attachment_list_id="1" />
-	<test_case tcln_id="21" version="1" 	attachment_list_id="1" />
-	<test_case tcln_id="22" version="1" 	attachment_list_id="1" />
-	<test_case tcln_id="31" version="1" 	attachment_list_id="1" />
-	<test_case tcln_id="32" version="1" 	attachment_list_id="1" />
+	<TEST_CASE TCLN_ID="1"  VERSION="1" />
+	<TEST_CASE TCLN_ID="11" VERSION="1" />
+	<TEST_CASE TCLN_ID="21" VERSION="1" />
+	<TEST_CASE TCLN_ID="22" VERSION="1" />
+	<TEST_CASE TCLN_ID="31" VERSION="1" />
+	<TEST_CASE TCLN_ID="32" VERSION="1" />
 	
-	<test_case tcln_id="10" version="1" 	attachment_list_id="1" />
+	<TEST_CASE TCLN_ID="10" VERSION="1" />
 	
-	<test_case tcln_id="100" version="1" 	attachment_list_id="1" />	
-	<test_case tcln_id="101" version="1" 	attachment_list_id="1" />
-	<test_case tcln_id="102" version="1" 	attachment_list_id="1" />
-	<test_case tcln_id="103" version="1" 	attachment_list_id="1" />
+	<TEST_CASE TCLN_ID="100" VERSION="1" />
+	<TEST_CASE TCLN_ID="101" VERSION="1" />
+	<TEST_CASE TCLN_ID="102" VERSION="1" />
+	<TEST_CASE TCLN_ID="103" VERSION="1" />
 	
 	<!--  the test steps -->
 	
-	<test_step test_step_id="11" />
-	<test_step test_step_id="21" />
-	<test_step test_step_id="22" />
-	<test_step test_step_id="31" />
-	<test_step test_step_id="32" />
+	<TEST_STEP TEST_STEP_ID="11" />
+	<TEST_STEP TEST_STEP_ID="21" />
+	<TEST_STEP TEST_STEP_ID="22" />
+	<TEST_STEP TEST_STEP_ID="31" />
+	<TEST_STEP TEST_STEP_ID="32" />
 	
-	<test_step test_step_id="101" />
-	<test_step test_step_id="102" />
-	<test_step test_step_id="103" />	
+	<TEST_STEP TEST_STEP_ID="101" />
+	<TEST_STEP TEST_STEP_ID="102" />
+	<TEST_STEP TEST_STEP_ID="103" />	
 	
-	<test_step test_step_id="1000" /> <!--  that one is an action test step, so that we can test Hibernate cast -->
+	<TEST_STEP TEST_STEP_ID="1000" /> <!--  that one is an action test step, so that we can test Hibernate cast -->
 	
 	
 	<!--  the call test steps -->
 	
-	<call_test_step test_step_id="11" called_test_case_id="11"/>
-	<call_test_step test_step_id="21" called_test_case_id="21"/>
-	<call_test_step test_step_id="22" called_test_case_id="22"/>
-	<call_test_step test_step_id="31" called_test_case_id="31"/>
-	<call_test_step test_step_id="32" called_test_case_id="32"/>
+	<CALL_TEST_STEP TEST_STEP_ID="11" CALLED_TEST_CASE_ID="11"/>
+	<CALL_TEST_STEP TEST_STEP_ID="21" CALLED_TEST_CASE_ID="21"/>
+	<CALL_TEST_STEP TEST_STEP_ID="22" CALLED_TEST_CASE_ID="22"/>
+	<CALL_TEST_STEP TEST_STEP_ID="31" CALLED_TEST_CASE_ID="31"/>
+	<CALL_TEST_STEP TEST_STEP_ID="32" CALLED_TEST_CASE_ID="32"/>
 	
-	<call_test_step test_step_id="101" called_test_case_id="100" />
-	<call_test_step test_step_id="102" called_test_case_id="100"/>
-	<call_test_step test_step_id="103" called_test_case_id="100"/>		
+	<CALL_TEST_STEP TEST_STEP_ID="101" CALLED_TEST_CASE_ID="100" />
+	<CALL_TEST_STEP TEST_STEP_ID="102" CALLED_TEST_CASE_ID="100"/>
+	<CALL_TEST_STEP TEST_STEP_ID="103" CALLED_TEST_CASE_ID="100"/>		
 	
 	<!--  the only one action test step -->
-	<action_test_step test_step_id="1000" action="the one and only action test step"/>
+	<ACTION_TEST_STEP TEST_STEP_ID="1000" ACTION="the one and only action test step"/>
 	
 	
 	<!--  associate them to the test cases -->
 	
-	<test_case_steps test_case_id="1" step_id="11" step_order="1"/>
-	<test_case_steps test_case_id="11" step_id="21" step_order="1"/>
-	<test_case_steps test_case_id="11" step_id="22" step_order="2"/>
-	<test_case_steps test_case_id="21" step_id="31" step_order="1"/>
-	<test_case_steps test_case_id="22" step_id="32" step_order="1"/>
+	<TEST_CASE_STEPS TEST_CASE_ID="1" STEP_ID="11" STEP_ORDER="1"/>
+	<TEST_CASE_STEPS TEST_CASE_ID="11" STEP_ID="21" STEP_ORDER="1"/>
+	<TEST_CASE_STEPS TEST_CASE_ID="11" STEP_ID="22" STEP_ORDER="2"/>
+	<TEST_CASE_STEPS TEST_CASE_ID="21" STEP_ID="31" STEP_ORDER="1"/>
+	<TEST_CASE_STEPS TEST_CASE_ID="22" STEP_ID="32" STEP_ORDER="1"/>
 	
-	<test_case_steps test_case_id="101" step_id="101" step_order="1"/>
-	<test_case_steps test_case_id="102" step_id="102" step_order="1"/>
-	<test_case_steps test_case_id="103" step_id="103" step_order="1"/>	
+	<TEST_CASE_STEPS TEST_CASE_ID="101" STEP_ID="101" STEP_ORDER="1"/>
+	<TEST_CASE_STEPS TEST_CASE_ID="102" STEP_ID="102" STEP_ORDER="1"/>
+	<TEST_CASE_STEPS TEST_CASE_ID="103" STEP_ID="103" STEP_ORDER="1"/>	
 	
-	<test_case_steps test_case_id="101" step_id="1000" step_order="2" />
+	<TEST_CASE_STEPS TEST_CASE_ID="101" STEP_ID="1000" STEP_ORDER="2" />
 	
 	
 	
 	<!--  cleanup of previously entered data -->
 	
-	<test_case_folder/>
-	<tcln_relationship/>
-	<test_case_library_content/>
+	<TEST_CASE_FOLDER/>
+	<TCLN_RELATIONSHIP/>
+	<TEST_CASE_LIBRARY_CONTENT/>
 
 </dataset>

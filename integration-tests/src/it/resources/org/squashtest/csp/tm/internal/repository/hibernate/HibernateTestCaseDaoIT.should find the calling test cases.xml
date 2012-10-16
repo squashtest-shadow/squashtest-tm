@@ -20,84 +20,85 @@
         along with this software.  If not, see <http://www.gnu.org/licenses/>.
 
 -->
+<!DOCTYPE dataset SYSTEM "../../../../../../../dtd/squash-tm.1.4.0.dtd">
 <dataset>
 
 	<!--  dummy attachment list, the same for everyone that need one. -->
 	
-	<attachment_list attachment_list_id="1" />
+	<ATTACHMENT_LIST ATTACHMENT_LIST_ID="1" />
 
 
 	<!--  test case library nodes ... -->
 
 
-	<test_case_library_node tcln_id="50" name="other bottom test case" created_by="IT" created_on="2011-07-26" />		
-	<test_case_library_node tcln_id="100" name="bottom test case" created_by="IT" created_on="2011-07-26" />	
-	<test_case_library_node tcln_id="101" name="first test case" created_by="IT" created_on="2011-07-26" />	
-	<test_case_library_node tcln_id="102" name="second test case" created_by="IT" created_on="2011-07-26" />		
-	<test_case_library_node tcln_id="103" name="third test case" created_by="IT" created_on="2011-07-26" />
+	<TEST_CASE_LIBRARY_NODE TCLN_ID="50" NAME="other bottom test case" CREATED_BY="IT" CREATED_ON="2011-07-26" ATTACHMENT_LIST_ID="1"/>		
+	<TEST_CASE_LIBRARY_NODE TCLN_ID="100" NAME="bottom test case" CREATED_BY="IT" CREATED_ON="2011-07-26" ATTACHMENT_LIST_ID="1"/>	
+	<TEST_CASE_LIBRARY_NODE TCLN_ID="101" NAME="first test case" CREATED_BY="IT" CREATED_ON="2011-07-26" ATTACHMENT_LIST_ID="1"/>	
+	<TEST_CASE_LIBRARY_NODE TCLN_ID="102" NAME="second test case" CREATED_BY="IT" CREATED_ON="2011-07-26" ATTACHMENT_LIST_ID="1"/>		
+	<TEST_CASE_LIBRARY_NODE TCLN_ID="103" NAME="third test case" CREATED_BY="IT" CREATED_ON="2011-07-26" ATTACHMENT_LIST_ID="1"/>
 	
 	
 	<!-- ... being all test cases -->
 
-	<test_case tcln_id="50" version="1" 	attachment_list_id="1" />		
-	<test_case tcln_id="100" version="1" 	attachment_list_id="1" />	
-	<test_case tcln_id="101" version="1" 	attachment_list_id="1" />
-	<test_case tcln_id="102" version="1" 	attachment_list_id="1" />
-	<test_case tcln_id="103" version="1" 	attachment_list_id="1" />
+	<TEST_CASE TCLN_ID="50" VERSION="1" />		
+	<TEST_CASE TCLN_ID="100" VERSION="1" />	
+	<TEST_CASE TCLN_ID="101" VERSION="1" />
+	<TEST_CASE TCLN_ID="102" VERSION="1" />
+	<TEST_CASE TCLN_ID="103" VERSION="1" />
 	
 	
 	<!--  test steps... -->
 		
-	<test_step test_step_id="101" />
-	<test_step test_step_id="102" />
-	<test_step test_step_id="103" />		
+	<TEST_STEP TEST_STEP_ID="101" />
+	<TEST_STEP TEST_STEP_ID="102" />
+	<TEST_STEP TEST_STEP_ID="103" />		
 		
-	<test_step test_step_id="1000" />
+	<TEST_STEP TEST_STEP_ID="1000" />
 	
 	
-	<test_step test_step_id="151" />
-	<test_step test_step_id="152" />
-	<test_step test_step_id="153" />
+	<TEST_STEP TEST_STEP_ID="151" />
+	<TEST_STEP TEST_STEP_ID="152" />
+	<TEST_STEP TEST_STEP_ID="153" />
 	
 	<!-- ... being all call steps -->
 	
-	<call_test_step test_step_id="101" called_test_case_id="100" />
-	<call_test_step test_step_id="102" called_test_case_id="100"/>
-	<call_test_step test_step_id="103" called_test_case_id="100"/>	
+	<CALL_TEST_STEP TEST_STEP_ID="101" CALLED_TEST_CASE_ID="100" />
+	<CALL_TEST_STEP TEST_STEP_ID="102" CALLED_TEST_CASE_ID="100"/>
+	<CALL_TEST_STEP TEST_STEP_ID="103" CALLED_TEST_CASE_ID="100"/>	
 	
-	<call_test_step test_step_id="151" called_test_case_id="50" />
-	<call_test_step test_step_id="152" called_test_case_id="50"/>
-	<call_test_step test_step_id="153" called_test_case_id="50"/>	
+	<CALL_TEST_STEP TEST_STEP_ID="151" CALLED_TEST_CASE_ID="50" />
+	<CALL_TEST_STEP TEST_STEP_ID="152" CALLED_TEST_CASE_ID="50"/>
+	<CALL_TEST_STEP TEST_STEP_ID="153" CALLED_TEST_CASE_ID="50"/>	
 	
 	<!--  those above are duplicated. The calling test cases will all call the called test case twice. -->
 		
-	<test_step test_step_id="1010" />
-	<test_step test_step_id="1020" />
-	<test_step test_step_id="1030" />	
+	<TEST_STEP TEST_STEP_ID="1010" />
+	<TEST_STEP TEST_STEP_ID="1020" />
+	<TEST_STEP TEST_STEP_ID="1030" />	
 	
-	<call_test_step test_step_id="1010" called_test_case_id="100" />
-	<call_test_step test_step_id="1020" called_test_case_id="100"/>
-	<call_test_step test_step_id="1030" called_test_case_id="100"/>	
+	<CALL_TEST_STEP TEST_STEP_ID="1010" CALLED_TEST_CASE_ID="100" />
+	<CALL_TEST_STEP TEST_STEP_ID="1020" CALLED_TEST_CASE_ID="100"/>
+	<CALL_TEST_STEP TEST_STEP_ID="1030" CALLED_TEST_CASE_ID="100"/>	
 	
 	
 	<!--  except for this one -->
-	<action_test_step test_step_id="1000" action="the one and only action test step"/>
+	<ACTION_TEST_STEP TEST_STEP_ID="1000" ACTION="the one and only action test step"/>
 	
 	
 	<!--  test case steps association -->
-	<test_case_steps test_case_id="101" step_id="101" step_order="1"/>
-	<test_case_steps test_case_id="102" step_id="102" step_order="1"/>
-	<test_case_steps test_case_id="103" step_id="103" step_order="1"/>	
+	<TEST_CASE_STEPS TEST_CASE_ID="101" STEP_ID="101" STEP_ORDER="1"/>
+	<TEST_CASE_STEPS TEST_CASE_ID="102" STEP_ID="102" STEP_ORDER="1"/>
+	<TEST_CASE_STEPS TEST_CASE_ID="103" STEP_ID="103" STEP_ORDER="1"/>	
 	
-	<test_case_steps test_case_id="101" step_id="1010" step_order="2"/>
-	<test_case_steps test_case_id="102" step_id="1020" step_order="2"/>
-	<test_case_steps test_case_id="103" step_id="1030" step_order="2"/>	
+	<TEST_CASE_STEPS TEST_CASE_ID="101" STEP_ID="1010" STEP_ORDER="2"/>
+	<TEST_CASE_STEPS TEST_CASE_ID="102" STEP_ID="1020" STEP_ORDER="2"/>
+	<TEST_CASE_STEPS TEST_CASE_ID="103" STEP_ID="1030" STEP_ORDER="2"/>	
 	
 	
-	<test_case_steps test_case_id="101" step_id="151" step_order="1"/>
-	<test_case_steps test_case_id="102" step_id="152" step_order="1"/>
-	<test_case_steps test_case_id="103" step_id="153" step_order="1"/>		
+	<TEST_CASE_STEPS TEST_CASE_ID="101" STEP_ID="151" STEP_ORDER="1"/>
+	<TEST_CASE_STEPS TEST_CASE_ID="102" STEP_ID="152" STEP_ORDER="1"/>
+	<TEST_CASE_STEPS TEST_CASE_ID="103" STEP_ID="153" STEP_ORDER="1"/>		
 		
-	<test_case_steps test_case_id="101" step_id="1000" step_order="3" />
+	<TEST_CASE_STEPS TEST_CASE_ID="101" STEP_ID="1000" STEP_ORDER="3" />
 	
 </dataset>

@@ -21,23 +21,24 @@
         along with this software.  If not, see <http://www.gnu.org/licenses/>.
 
 -->
+<!DOCTYPE dataset SYSTEM "../../../../../../../dtd/squash-tm.1.4.0.dtd">
 <dataset>
 
 	<!-- test automation servers  -->
 	
-	<test_automation_server server_id="1" base_url="http://www.roberto.com" login="roberto" password="passroberto" kind="jenkins"/>
-	<test_automation_server server_id="2" base_url="http://www.mike.com" login="mike" password="passmike" kind="something-else"/>
-	<test_automation_server server_id="3" base_url="http://www.roberto.com" login="roberto_user" password="passroberto_user" kind="jenkins"/>
+	<TEST_AUTOMATION_SERVER SERVER_ID="1" BASE_URL="http://www.roberto.com" LOGIN="roberto" PASSWORD="passroberto" KIND="jenkins"/>
+	<TEST_AUTOMATION_SERVER SERVER_ID="2" BASE_URL="http://www.mike.com" LOGIN="mike" PASSWORD="passmike" KIND="something-else"/>
+	<TEST_AUTOMATION_SERVER SERVER_ID="3" BASE_URL="http://www.roberto.com" LOGIN="roberto_user" PASSWORD="passroberto_user" KIND="jenkins"/>
 	
 	<!-- test automation projects -->
 	
-	<test_automation_project project_id="11" name="roberto1" server_id="1" />
-	<test_automation_project project_id="12" name="roberto2" server_id="1" />
-	<test_automation_project project_id="13" name="roberto3" server_id="1" />
+	<TEST_AUTOMATION_PROJECT PROJECT_ID="11" NAME="roberto1" SERVER_ID="1" />
+	<TEST_AUTOMATION_PROJECT PROJECT_ID="12" NAME="roberto2" SERVER_ID="1" />
+	<TEST_AUTOMATION_PROJECT PROJECT_ID="13" NAME="roberto3" SERVER_ID="1" />
 	
-	<test_automation_project project_id="21" name="mike1" server_id="2" />
-	<test_automation_project project_id="22" name="mike2" server_id="2" />
-	<test_automation_project project_id="23" name="roberto3" server_id="2" />
+	<TEST_AUTOMATION_PROJECT PROJECT_ID="21" NAME="mike1" SERVER_ID="2" />
+	<TEST_AUTOMATION_PROJECT PROJECT_ID="22" NAME="mike2" SERVER_ID="2" />
+	<TEST_AUTOMATION_PROJECT PROJECT_ID="23" NAME="roberto3" SERVER_ID="2" />
 	
 		
 	

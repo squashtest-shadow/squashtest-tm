@@ -26,9 +26,10 @@
 
  -->
 
+<!DOCTYPE dataset SYSTEM "../../../../../../../dtd/squash-tm.1.4.0.dtd">
 <dataset>
 
-	<test_case_verified_requirement_version verifying_test_case_id="11" verified_req_version_id="21" />
-	<test_case_verified_requirement_version verifying_test_case_id="12" verified_req_version_id="21" />	
+	<TEST_CASE_VERIFIED_REQUIREMENT_VERSION VERIFYING_TEST_CASE_ID="11" VERIFIED_REQ_VERSION_ID="21" />
+	<TEST_CASE_VERIFIED_REQUIREMENT_VERSION VERIFYING_TEST_CASE_ID="12" VERIFIED_REQ_VERSION_ID="21" />	
 	
 </dataset>

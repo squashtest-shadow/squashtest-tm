@@ -21,14 +21,15 @@
         along with this software.  If not, see <http://www.gnu.org/licenses/>.
 
 -->
+<!DOCTYPE dataset SYSTEM "../../../../../../../dtd/squash-tm.1.4.0.dtd">
 <dataset>
-	<attachment_list attachment_list_id="1"/>
-	<issue_list issue_list_id="1" />
+	<ATTACHMENT_LIST ATTACHMENT_LIST_ID="1"/>
+	<ISSUE_LIST ISSUE_LIST_ID="1" />
 	
-	<test_case_library_node tcln_id="1" name="test_case_1" created_by="IT" created_on="2011-08-03" />
-	<test_case tcln_id="1" attachment_list_id="1" version="1"/>
+	<TEST_CASE_LIBRARY_NODE TCLN_ID="1" NAME="TEST_CASE_1" CREATED_BY="IT" CREATED_ON="2011-08-03"  ATTACHMENT_LIST_ID="1"/>
+	<TEST_CASE TCLN_ID="1" VERSION="1"/>
 	
-	<execution execution_id="1" tcln_id="1" created_by="IT" created_on="2011-08-03" name="execution-tc1" issue_list_id="1"/>
+	<EXECUTION EXECUTION_ID="1" TCLN_ID="1" CREATED_BY="IT" CREATED_ON="2011-08-03" NAME="execution-tc1" ISSUE_LIST_ID="1"/>
 	
 	
 

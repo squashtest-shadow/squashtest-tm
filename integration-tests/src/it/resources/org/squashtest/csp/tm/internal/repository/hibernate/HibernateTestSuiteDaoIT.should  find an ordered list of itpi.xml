@@ -21,43 +21,44 @@
         along with this software.  If not, see <http://www.gnu.org/licenses/>.
 
 -->
+<!DOCTYPE dataset SYSTEM "../../../../../../../dtd/squash-tm.1.4.0.dtd">
 <dataset>
   
-  	<project project_id="1" name="project" description="ma description" created_on="2012-02-09" created_by="dbu" />
+  	<PROJECT PROJECT_ID="1" NAME="project" DESCRIPTION="ma description" CREATED_ON="2012-02-09" CREATED_BY="DBU" />
   
-	<attachment_list attachment_list_id="1" />
+	<ATTACHMENT_LIST ATTACHMENT_LIST_ID="1" />
 	
-	<test_case_library_node tcln_id="1" name="tc1" created_on="2012-02-15" created_by="dbu" project_id="1" />
-	<test_case_library_node tcln_id="2" name="tc2" created_on="2012-02-15" created_by="dbu" project_id="1" />
-	<test_case_library_node tcln_id="3" name="tc3" created_on="2012-02-15" created_by="dbu" project_id="1" />
-	<test_case_library_node tcln_id="4" name="tc4" created_on="2012-02-15" created_by="dbu" project_id="1" />
-	<test_case_library_node tcln_id="5" name="tc5" created_on="2012-02-15" created_by="dbu" project_id="1" />
-	<test_case_library_node tcln_id="6" name="tc6" created_on="2012-02-15" created_by="dbu" project_id="1" />
+	<TEST_CASE_LIBRARY_NODE TCLN_ID="1" NAME="TC1" CREATED_ON="2012-02-15" CREATED_BY="DBU" PROJECT_ID="1" ATTACHMENT_LIST_ID="1" />
+	<TEST_CASE_LIBRARY_NODE TCLN_ID="2" NAME="TC2" CREATED_ON="2012-02-15" CREATED_BY="DBU" PROJECT_ID="1" ATTACHMENT_LIST_ID="1" />
+	<TEST_CASE_LIBRARY_NODE TCLN_ID="3" NAME="TC3" CREATED_ON="2012-02-15" CREATED_BY="DBU" PROJECT_ID="1" ATTACHMENT_LIST_ID="1" />
+	<TEST_CASE_LIBRARY_NODE TCLN_ID="4" NAME="TC4" CREATED_ON="2012-02-15" CREATED_BY="DBU" PROJECT_ID="1" ATTACHMENT_LIST_ID="1" />
+	<TEST_CASE_LIBRARY_NODE TCLN_ID="5" NAME="TC5" CREATED_ON="2012-02-15" CREATED_BY="DBU" PROJECT_ID="1" ATTACHMENT_LIST_ID="1" />
+	<TEST_CASE_LIBRARY_NODE TCLN_ID="6" NAME="TC6" CREATED_ON="2012-02-15" CREATED_BY="DBU" PROJECT_ID="1" ATTACHMENT_LIST_ID="1" />
 						
-	<test_case tcln_id="1" attachment_list_id="1" version="1" />
-	<test_case tcln_id="2" attachment_list_id="1" version="1" />
-	<test_case tcln_id="3" attachment_list_id="1" version="1" />
-	<test_case tcln_id="4" attachment_list_id="1" version="1" />
-	<test_case tcln_id="5" attachment_list_id="1" version="1" />
-	<test_case tcln_id="6" attachment_list_id="1" version="1" />		
+	<TEST_CASE TCLN_ID="1" VERSION="1" />
+	<TEST_CASE TCLN_ID="2" VERSION="1" />
+	<TEST_CASE TCLN_ID="3" VERSION="1" />
+	<TEST_CASE TCLN_ID="4" VERSION="1" />
+	<TEST_CASE TCLN_ID="5" VERSION="1" />
+	<TEST_CASE TCLN_ID="6" VERSION="1" />		
 	
-	<iteration iteration_id="1" name="iteration"  created_on="2012-02-15" created_by="dbu" actual_start_auto="false" actual_end_auto="false" />	
-	<test_suite id="1" name="suite 1" attachment_list_id="1"  created_on="2012-02-15" created_by="dbu" />
-	<iteration_test_suite iteration_id="1" test_suite_id="1" />
+	<ITERATION ITERATION_ID="1" NAME="iteration"  CREATED_ON="2012-02-15" CREATED_BY="DBU" ACTUAL_START_AUTO="FALSE" ACTUAL_END_AUTO="FALSE" />	
+	<TEST_SUITE ID="1" NAME="SUITE 1" ATTACHMENT_LIST_ID="1"  CREATED_ON="2012-02-15" CREATED_BY="DBU" />
+	<ITERATION_TEST_SUITE ITERATION_ID="1" TEST_SUITE_ID="1" />
 	
 	
-	<iteration_test_plan_item item_test_plan_id="1" test_suite="1" tcln_id="1" created_on="2012-02-15" created_by="dbu" />
-	<iteration_test_plan_item item_test_plan_id="2" test_suite="1" tcln_id="2" created_on="2012-02-15" created_by="dbu" />
-	<iteration_test_plan_item item_test_plan_id="3" test_suite="1" tcln_id="3" created_on="2012-02-15" created_by="dbu" />
-	<iteration_test_plan_item item_test_plan_id="4" test_suite="1" tcln_id="4" created_on="2012-02-15" created_by="dbu" />
-	<iteration_test_plan_item item_test_plan_id="5" test_suite="1" tcln_id="5" created_on="2012-02-15" created_by="dbu" />
-	<iteration_test_plan_item item_test_plan_id="6" test_suite="1" tcln_id="6" created_on="2012-02-15" created_by="dbu" />
+	<ITERATION_TEST_PLAN_ITEM ITEM_TEST_PLAN_ID="1" TEST_SUITE="1" TCLN_ID="1" CREATED_ON="2012-02-15" CREATED_BY="DBU" />
+	<ITERATION_TEST_PLAN_ITEM ITEM_TEST_PLAN_ID="2" TEST_SUITE="1" TCLN_ID="2" CREATED_ON="2012-02-15" CREATED_BY="DBU" />
+	<ITERATION_TEST_PLAN_ITEM ITEM_TEST_PLAN_ID="3" TEST_SUITE="1" TCLN_ID="3" CREATED_ON="2012-02-15" CREATED_BY="DBU" />
+	<ITERATION_TEST_PLAN_ITEM ITEM_TEST_PLAN_ID="4" TEST_SUITE="1" TCLN_ID="4" CREATED_ON="2012-02-15" CREATED_BY="DBU" />
+	<ITERATION_TEST_PLAN_ITEM ITEM_TEST_PLAN_ID="5" TEST_SUITE="1" TCLN_ID="5" CREATED_ON="2012-02-15" CREATED_BY="DBU" />
+	<ITERATION_TEST_PLAN_ITEM ITEM_TEST_PLAN_ID="6" TEST_SUITE="1" TCLN_ID="6" CREATED_ON="2012-02-15" CREATED_BY="DBU" />
 
-	<item_test_plan_list iteration_id="1" item_test_plan_id="1" item_test_plan_order="0" />
-	<item_test_plan_list iteration_id="1" item_test_plan_id="2" item_test_plan_order="1" />
-	<item_test_plan_list iteration_id="1" item_test_plan_id="3" item_test_plan_order="4" />
-	<item_test_plan_list iteration_id="1" item_test_plan_id="4" item_test_plan_order="5" />
-	<item_test_plan_list iteration_id="1" item_test_plan_id="5" item_test_plan_order="2" />
-	<item_test_plan_list iteration_id="1" item_test_plan_id="6" item_test_plan_order="3" />
+	<ITEM_TEST_PLAN_LIST ITERATION_ID="1" ITEM_TEST_PLAN_ID="1" ITEM_TEST_PLAN_ORDER="0" />
+	<ITEM_TEST_PLAN_LIST ITERATION_ID="1" ITEM_TEST_PLAN_ID="2" ITEM_TEST_PLAN_ORDER="1" />
+	<ITEM_TEST_PLAN_LIST ITERATION_ID="1" ITEM_TEST_PLAN_ID="3" ITEM_TEST_PLAN_ORDER="4" />
+	<ITEM_TEST_PLAN_LIST ITERATION_ID="1" ITEM_TEST_PLAN_ID="4" ITEM_TEST_PLAN_ORDER="5" />
+	<ITEM_TEST_PLAN_LIST ITERATION_ID="1" ITEM_TEST_PLAN_ID="5" ITEM_TEST_PLAN_ORDER="2" />
+	<ITEM_TEST_PLAN_LIST ITERATION_ID="1" ITEM_TEST_PLAN_ID="6" ITEM_TEST_PLAN_ORDER="3" />
 
 </dataset>

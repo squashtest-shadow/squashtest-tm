@@ -21,40 +21,42 @@
         along with this software.  If not, see <http://www.gnu.org/licenses/>.
 
 -->
+<!DOCTYPE dataset SYSTEM "../../../../../../../dtd/squash-tm.1.4.0.dtd">
+
 <dataset>
-  <attachment_list attachment_list_id="10"/>
-  <resource res_id="10" name="10" created_on="2012-01-02" created_by="dbu"/>
-  <requirement_version attachment_list_id="10" res_id="10"/>
-  <requirement_library_node created_by="dbu" rln_id="10" created_on="2010-02-01"/>
-  <requirement rln_id="10" current_version_id="10"/>
+  <ATTACHMENT_LIST ATTACHMENT_LIST_ID="10"/>
+  <RESOURCE RES_ID="10" NAME="10" CREATED_ON="2012-01-02" CREATED_BY="DBU" ATTACHMENT_LIST_ID="10"/>
+  <REQUIREMENT_VERSION  RES_ID="10"/>
+  <REQUIREMENT_LIBRARY_NODE CREATED_BY="DBU" RLN_ID="10" CREATED_ON="2010-02-01"/>
+  <REQUIREMENT RLN_ID="10" CURRENT_VERSION_ID="10"/>
 
-  <attachment_list attachment_list_id="20"/>
-  <resource res_id="20" name="vingt" created_on="2012-01-02" created_by="dbu"/>
-  <requirement_version attachment_list_id="20" res_id="20"/>
-  <requirement_library_node created_by="dbu" rln_id="20" created_on="2010-02-01"/>
-  <requirement rln_id="20" current_version_id="20"/>
+  <ATTACHMENT_LIST ATTACHMENT_LIST_ID="20"/>
+  <RESOURCE RES_ID="20" NAME="vingt" CREATED_ON="2012-01-02" CREATED_BY="DBU" ATTACHMENT_LIST_ID="20"/>
+  <REQUIREMENT_VERSION  RES_ID="20"/>
+  <REQUIREMENT_LIBRARY_NODE CREATED_BY="DBU" RLN_ID="20" CREATED_ON="2010-02-01"/>
+  <REQUIREMENT RLN_ID="20" CURRENT_VERSION_ID="20"/>
 
-  <attachment_list attachment_list_id="30"/>
-  <resource res_id="30" name="30" created_on="2012-01-02" created_by="dbu"/>
-  <requirement_version attachment_list_id="30" res_id="30"/>
-  <requirement_library_node created_by="dbu" rln_id="30" created_on="3010-02-01"/>
-  <requirement rln_id="30" current_version_id="30"/>
+  <ATTACHMENT_LIST ATTACHMENT_LIST_ID="30"/>
+  <RESOURCE RES_ID="30" NAME="30" CREATED_ON="2012-01-02" CREATED_BY="DBU" ATTACHMENT_LIST_ID="30"/>
+  <REQUIREMENT_VERSION  RES_ID="30"/>
+  <REQUIREMENT_LIBRARY_NODE CREATED_BY="DBU" RLN_ID="30" CREATED_ON="3010-02-01"/>
+  <REQUIREMENT RLN_ID="30" CURRENT_VERSION_ID="30"/>
 
-  <attachment_list attachment_list_id="40"/>
-  <resource res_id="40" name="40" created_on="2012-01-02" created_by="dbu"/>
-  <requirement_version attachment_list_id="40" res_id="40"/>
-  <requirement_library_node created_by="dbu" rln_id="40" created_on="4010-02-01"/>
-  <requirement rln_id="40" current_version_id="40"/>
+  <ATTACHMENT_LIST ATTACHMENT_LIST_ID="40"/>
+  <RESOURCE RES_ID="40" NAME="40" CREATED_ON="2012-01-02" CREATED_BY="DBU" ATTACHMENT_LIST_ID="40"/>
+  <REQUIREMENT_VERSION  RES_ID="40"/>
+  <REQUIREMENT_LIBRARY_NODE CREATED_BY="DBU" RLN_ID="40" CREATED_ON="4010-02-01"/>
+  <REQUIREMENT RLN_ID="40" CURRENT_VERSION_ID="40"/>
 
-  <attachment_list attachment_list_id="100"/>
-  <test_case_library_node created_by="dbu" tcln_id="100" created_on="2010-02-01" name=""/>
-  <test_case tcln_id="100" attachment_list_id="100" version="1"/>
-  <test_case_verified_requirement_version verifying_test_case_id="100" verified_req_version_id="10"/>
-  <test_case_verified_requirement_version verifying_test_case_id="100" verified_req_version_id="20"/>
+  <ATTACHMENT_LIST ATTACHMENT_LIST_ID="100"/>
+  <TEST_CASE_LIBRARY_NODE CREATED_BY="DBU" TCLN_ID="100" CREATED_ON="2010-02-01" NAME="" ATTACHMENT_LIST_ID="100"/>
+  <TEST_CASE TCLN_ID="100"  VERSION="1"/>
+  <TEST_CASE_VERIFIED_REQUIREMENT_VERSION VERIFYING_TEST_CASE_ID="100" VERIFIED_REQ_VERSION_ID="10"/>
+  <TEST_CASE_VERIFIED_REQUIREMENT_VERSION VERIFYING_TEST_CASE_ID="100" VERIFIED_REQ_VERSION_ID="20"/>
 
-  <attachment_list attachment_list_id="200"/>
-  <test_case_library_node created_by="dbu" tcln_id="200" created_on="2010-02-01" name=""/>
-  <test_case tcln_id="200" attachment_list_id="200" version="1"/>
-  <test_case_verified_requirement_version verifying_test_case_id="200" verified_req_version_id="20"/>
-  <test_case_verified_requirement_version verifying_test_case_id="200" verified_req_version_id="30"/>
+  <ATTACHMENT_LIST ATTACHMENT_LIST_ID="200"/>
+  <TEST_CASE_LIBRARY_NODE CREATED_BY="DBU" TCLN_ID="200" CREATED_ON="2010-02-01" NAME="" ATTACHMENT_LIST_ID="200"/>
+  <TEST_CASE TCLN_ID="200"  VERSION="1"/>
+  <TEST_CASE_VERIFIED_REQUIREMENT_VERSION VERIFYING_TEST_CASE_ID="200" VERIFIED_REQ_VERSION_ID="20"/>
+  <TEST_CASE_VERIFIED_REQUIREMENT_VERSION VERIFYING_TEST_CASE_ID="200" VERIFIED_REQ_VERSION_ID="30"/>
 </dataset>

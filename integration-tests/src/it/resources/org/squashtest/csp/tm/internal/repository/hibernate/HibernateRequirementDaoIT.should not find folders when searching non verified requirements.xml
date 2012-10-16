@@ -21,9 +21,11 @@
         along with this software.  If not, see <http://www.gnu.org/licenses/>.
 
 -->
+<!DOCTYPE dataset SYSTEM "../../../../../../../dtd/squash-tm.1.4.0.dtd">
 <dataset>
-  <resource res_id="10" name="" created_on="2012-01-02" created_by="dbu"/>
-  <simple_resource res_id="10"/>
-  <requirement_library_node created_by="dbu" rln_id="10" created_on="2010-02-01"/>
-  <requirement_folder rln_id="10" res_id="10"/>
+  <ATTACHMENT_LIST ATTACHMENT_LIST_ID="1"/>
+  <RESOURCE RES_ID="10" NAME="" CREATED_ON="2012-01-02" CREATED_BY="DBU" ATTACHMENT_LIST_ID="1"/>
+  <SIMPLE_RESOURCE RES_ID="10"/>
+  <REQUIREMENT_LIBRARY_NODE CREATED_BY="DBU" RLN_ID="10" CREATED_ON="2010-02-01"/>
+  <REQUIREMENT_FOLDER RLN_ID="10" RES_ID="10"/>
 </dataset>

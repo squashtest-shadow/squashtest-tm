@@ -21,8 +21,9 @@
         along with this software.  If not, see <http://www.gnu.org/licenses/>.
 
 -->
+<!DOCTYPE dataset SYSTEM "../../../../../../../dtd/squash-tm.1.4.0.dtd">
 <dataset>
-	<attachment_list attachment_list_id="1" />
-	<resource res_id="1" name="requirement" created_on="2010-02-01" created_by="dbu"/>
-	<requirement_version res_id="1" attachment_list_id="1"/>
+	<ATTACHMENT_LIST ATTACHMENT_LIST_ID="1" />
+	<RESOURCE RES_ID="1" NAME="requirement" CREATED_ON="2010-02-01" CREATED_BY="DBU" ATTACHMENT_LIST_ID="1"/>
+	<REQUIREMENT_VERSION RES_ID="1" />
 </dataset>

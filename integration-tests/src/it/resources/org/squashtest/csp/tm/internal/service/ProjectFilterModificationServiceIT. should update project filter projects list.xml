@@ -21,22 +21,23 @@
         along with this software.  If not, see <http://www.gnu.org/licenses/>.
 
 -->
+<!DOCTYPE dataset SYSTEM "../../../../../../dtd/squash-tm.1.4.0.dtd">
 <dataset>
 	
 	<!--  projects and libraries -->
-	<test_case_library tcl_id="1" />
-	<campaign_library cl_id="1" />
-	<requirement_library rl_id="1" />
+	<TEST_CASE_LIBRARY TCL_ID="1" />
+	<CAMPAIGN_LIBRARY CL_ID="1" />
+	<REQUIREMENT_LIBRARY RL_ID="1" />
 	
-	<test_case_library tcl_id="2" />
-	<campaign_library cl_id="2" />
-	<requirement_library rl_id="2" />
+	<TEST_CASE_LIBRARY TCL_ID="2" />
+	<CAMPAIGN_LIBRARY CL_ID="2" />
+	<REQUIREMENT_LIBRARY RL_ID="2" />
 	
-	<test_case_library tcl_id="3" />
-	<campaign_library cl_id="3" />
-	<requirement_library rl_id="3" />
+	<TEST_CASE_LIBRARY TCL_ID="3" />
+	<CAMPAIGN_LIBRARY CL_ID="3" />
+	<REQUIREMENT_LIBRARY RL_ID="3" />
 
-	<project project_id="1" name="project 1" active="1" created_on="2011-05-01" created_by="dbu" cl_id="1" tcl_id="1" rl_id="1" />
-	<project project_id="2" name="project 2" active="1" created_on="2011-05-01" created_by="dbu" cl_id="2" tcl_id="2" rl_id="2" />
-	<project project_id="3" name="project 3" active="1" created_on="2011-05-01" created_by="dbu" cl_id="3" tcl_id="3" rl_id="3" />
+	<PROJECT PROJECT_ID="1" NAME="project 1" ACTIVE="1" CREATED_ON="2011-05-01" CREATED_BY="DBU" CL_ID="1" TCL_ID="1" RL_ID="1" />
+	<PROJECT PROJECT_ID="2" NAME="project 2" ACTIVE="1" CREATED_ON="2011-05-01" CREATED_BY="DBU" CL_ID="2" TCL_ID="2" RL_ID="2" />
+	<PROJECT PROJECT_ID="3" NAME="project 3" ACTIVE="1" CREATED_ON="2011-05-01" CREATED_BY="DBU" CL_ID="3" TCL_ID="3" RL_ID="3" />
 </dataset>

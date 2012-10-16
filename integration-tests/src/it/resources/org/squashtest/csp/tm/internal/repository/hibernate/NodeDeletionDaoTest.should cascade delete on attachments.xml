@@ -26,36 +26,37 @@
 
  -->
 
+<!DOCTYPE dataset SYSTEM "../../../../../../../dtd/squash-tm.1.4.0.dtd">
 <dataset>
 
 
 	<!--  ============================    attachment_content ======================================== -->
 
-	<attachment_content attachment_content_id="111" stream_content="abcde" /> 		<!--  for test case 1 -->
-	<attachment_content attachment_content_id="121" stream_content="abcde" /> 		<!--  for test case 2 -->
-	<attachment_content attachment_content_id="1111" stream_content="abcde" />		<!--  for test step 1 of test case 1 -->
-	<attachment_content attachment_content_id="1211" stream_content="abcde" />		<!--  for test step 1 of test case 2 -->
-	<attachment_content attachment_content_id="1212" stream_content="abcde" />		<!--  for test step 1 of test case 2 -->
+	<ATTACHMENT_CONTENT ATTACHMENT_CONTENT_ID="111" STREAM_CONTENT="abcde" /> 		<!--  for test case 1 -->
+	<ATTACHMENT_CONTENT ATTACHMENT_CONTENT_ID="121" STREAM_CONTENT="abcde" /> 		<!--  for test case 2 -->
+	<ATTACHMENT_CONTENT ATTACHMENT_CONTENT_ID="1111" STREAM_CONTENT="abcde" />		<!--  for test step 1 of test case 1 -->
+	<ATTACHMENT_CONTENT ATTACHMENT_CONTENT_ID="1211" STREAM_CONTENT="abcde" />		<!--  for test step 1 of test case 2 -->
+	<ATTACHMENT_CONTENT ATTACHMENT_CONTENT_ID="1212" STREAM_CONTENT="abcde" />		<!--  for test step 1 of test case 2 -->
 	
 
 	
 	<!--  ============================ attachment lists (unattached to anything) ===================== -->
 	
-	<attachment_list attachment_list_id="1" />
-	<attachment_list attachment_list_id="2" />
-	<attachment_list attachment_list_id="3" />
-	<attachment_list attachment_list_id="4" />
+	<ATTACHMENT_LIST ATTACHMENT_LIST_ID="1" />
+	<ATTACHMENT_LIST ATTACHMENT_LIST_ID="2" />
+	<ATTACHMENT_LIST ATTACHMENT_LIST_ID="3" />
+	<ATTACHMENT_LIST ATTACHMENT_LIST_ID="4" />
 	
 	
 	
 	<!--  ============================ attachments ==================================================== -->
 	
 	
-	<attachment attachment_id="111" name="test case 1 attach 1" type="txt" size="5" added_on="2011-08-08" content_id="111" attachment_list_id="1"/>
-	<attachment attachment_id="121" name="test case 2 attach 1" type="txt" size="5" added_on="2011-08-08" content_id="121" attachment_list_id="2"/>
-	<attachment attachment_id="1111" name="test case 1 test step 1 attach 1" type="txt" size="5" added_on="2011-08-08" content_id="1111" attachment_list_id="3"/>
-	<attachment attachment_id="1211" name="test case 2 test step 1 attach 1" type="txt" size="5" added_on="2011-08-08" content_id="1211" attachment_list_id="4"/>
-	<attachment attachment_id="1212" name="test case 2 test step 1 attach 2" type="txt" size="5" added_on="2011-08-08" content_id="1212" attachment_list_id="4"/>	
+	<ATTACHMENT ATTACHMENT_ID="111" NAME="test case 1 attach 1" TYPE="txt" SIZE="5" ADDED_ON="2011-08-08" CONTENT_ID="111" ATTACHMENT_LIST_ID="1"/>
+	<ATTACHMENT ATTACHMENT_ID="121" NAME="test case 2 attach 1" TYPE="txt" SIZE="5" ADDED_ON="2011-08-08" CONTENT_ID="121" ATTACHMENT_LIST_ID="2"/>
+	<ATTACHMENT ATTACHMENT_ID="1111" NAME="test case 1 test step 1 attach 1" TYPE="txt" SIZE="5" ADDED_ON="2011-08-08" CONTENT_ID="1111" ATTACHMENT_LIST_ID="3"/>
+	<ATTACHMENT ATTACHMENT_ID="1211" NAME="test case 2 test step 1 attach 1" TYPE="txt" SIZE="5" ADDED_ON="2011-08-08" CONTENT_ID="1211" ATTACHMENT_LIST_ID="4"/>
+	<ATTACHMENT ATTACHMENT_ID="1212" NAME="test case 2 test step 1 attach 2" TYPE="txt" SIZE="5" ADDED_ON="2011-08-08" CONTENT_ID="1212" ATTACHMENT_LIST_ID="4"/>	
 
 
 </dataset>

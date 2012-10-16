@@ -21,34 +21,35 @@
         along with this software.  If not, see <http://www.gnu.org/licenses/>.
 
 -->
+<!DOCTYPE dataset SYSTEM "../../../../../../dtd/squash-tm.1.4.0.dtd">
 <dataset>
 	<!--  given a campaign -->
-	<ATTACHMENT_LIST ATTACHMENT_LIST_id="10" />
-	<campaign_library_node cln_id="10" name="foo" created_on="2010-02-01" created_by="dbu" />
-	<campaign cln_id="10" actual_start_auto="true" actual_end_auto="true" ATTACHMENT_LIST_ID="10" />
+	<ATTACHMENT_LIST ATTACHMENT_LIST_ID="10" />
+	<CAMPAIGN_LIBRARY_NODE CLN_ID="10" NAME="foo" CREATED_ON="2010-02-01" CREATED_BY="DBU" ATTACHMENT_LIST_ID="10" />
+	<CAMPAIGN CLN_ID="10" ACTUAL_START_AUTO="TRUE" ACTUAL_END_AUTO="TRUE" />
 
-	<campaign_library cl_id="1" />
-	<campaign_library_content library_id="1" content_id="10" />
+	<CAMPAIGN_LIBRARY CL_ID="1" />
+	<CAMPAIGN_LIBRARY_CONTENT LIBRARY_ID="1" CONTENT_ID="10" />
 	
 	<!--  and a test case -->	
-		<attachment_list attachment_list_id="100" />
-<test_case_library_node tcln_id="100" name="test case 1" created_by="dbu" created_on="2010-02-01" />
-	<test_case tcln_id="100"  version="1" attachment_list_id="100" />
+		<ATTACHMENT_LIST ATTACHMENT_LIST_ID="100" />
+<TEST_CASE_LIBRARY_NODE TCLN_ID="100" NAME="test case 1" CREATED_BY="DBU" CREATED_ON="2010-02-01" ATTACHMENT_LIST_ID="100"/>
+	<TEST_CASE TCLN_ID="100"  VERSION="1"  />
 
-	<test_case_library tcl_id="1" />
-	<test_case_library_content library_id="1" content_id="100" />
+	<TEST_CASE_LIBRARY TCL_ID="1" />
+	<TEST_CASE_LIBRARY_CONTENT LIBRARY_ID="1" CONTENT_ID="100" />
 				
 	<!--  and the test case is in the campaign test plan -->
-	<campaign_test_plan_item campaign_id="10" test_case_id="100" test_plan_order="0" />
+	<CAMPAIGN_TEST_PLAN_ITEM CAMPAIGN_ID="10" TEST_CASE_ID="100" TEST_PLAN_ORDER="0" />
 	
 	
 	<!--  cleanup -->
-	<test_case_folder/>
-	<tcln_relationship/>
-	<project/>
+	<TEST_CASE_FOLDER/>
+	<TCLN_RELATIONSHIP/>
+	<PROJECT/>
 	
-	<test_step/>
-	<action_test_step/>
-	<call_test_step/>
-	<test_case_steps/>
+	<TEST_STEP/>
+	<ACTION_TEST_STEP/>
+	<CALL_TEST_STEP/>
+	<TEST_CASE_STEPS/>
 </dataset>

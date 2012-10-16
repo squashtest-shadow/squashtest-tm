@@ -21,25 +21,26 @@
         along with this software.  If not, see <http://www.gnu.org/licenses/>.
 
 -->
+<!DOCTYPE dataset SYSTEM "../../../../../../../dtd/squash-tm.1.4.0.dtd">
 <dataset>
 	
 	<!--  project 1 is empty -->
 
-	<test_case_library tcl_id="1" />
-	<campaign_library cl_id="1" />
-	<requirement_library rl_id="1" />
+	<TEST_CASE_LIBRARY TCL_ID="1" />
+	<CAMPAIGN_LIBRARY CL_ID="1" />
+	<REQUIREMENT_LIBRARY RL_ID="1" />
 
-	<project project_id="1" name="project 1" active="true" created_by="groovy" created_on="2010-01-01" cl_id="1"
-		tcl_id="1" rl_id="1" />
+	<PROJECT PROJECT_ID="1" NAME="project 1" ACTIVE="TRUE" CREATED_BY="groovy" CREATED_ON="2010-01-01" CL_ID="1"
+		TCL_ID="1" RL_ID="1" />
 		
 		
 	<!--  project 2 is shipped with more stuffs than project 1 -->	
 		
-	<test_case_library tcl_id="2" />
-	<campaign_library cl_id="2" />
-	<requirement_library rl_id="2" />
+	<TEST_CASE_LIBRARY TCL_ID="2" />
+	<CAMPAIGN_LIBRARY CL_ID="2" />
+	<REQUIREMENT_LIBRARY RL_ID="2" />
 
-	<project project_id="2" name="project 2" active="true" created_by="groovy" created_on="2010-01-01" cl_id="2"
-		tcl_id="2" rl_id="2" />
+	<PROJECT PROJECT_ID="2" NAME="project 2" ACTIVE="TRUE" CREATED_BY="GROOVY" CREATED_ON="2010-01-01" CL_ID="2"
+		TCL_ID="2" RL_ID="2" />
 			
 </dataset>

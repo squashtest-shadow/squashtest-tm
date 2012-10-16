@@ -20,9 +20,10 @@
         along with this software.  If not, see <http://www.gnu.org/licenses/>.
 
 -->
+<!DOCTYPE dataset SYSTEM "../../../../../dtd/squash-tm.1.4.0.dtd">
 <dataset>
-	<core_user login="daniel.bryan" first_name="daniel" last_name="bryan" email="yes@yes.org" active="1" created_by="dbu" created_on="2012-04-01" />
-	<core_user login="chris.jericho" first_name="chris" last_name="jericho" email="y2j@y2j.org" active="1" created_by="dbu" created_on="2012-04-01" />
-	<core_user login="shawn.michaels" first_name="shawn" last_name="michaels" email="hbk@hbk.org" active="0" created_by="dbu" created_on="2012-04-01" />
-	<core_group_member />
+	<CORE_USER LOGIN="daniel.bryan" FIRST_NAME="daniel" LAST_NAME="bryan" EMAIL="yes@yes.org" ACTIVE="1" CREATED_BY="dbu" CREATED_ON="2012-04-01" />
+	<CORE_USER LOGIN="chris.jericho" FIRST_NAME="chris" LAST_NAME="jericho" EMAIL="y2j@y2j.org" ACTIVE="1" CREATED_BY="dbu" CREATED_ON="2012-04-01" />
+	<CORE_USER LOGIN="shawn.michaels" FIRST_NAME="shawn" LAST_NAME="michaels" EMAIL="hbk@hbk.org" ACTIVE="0" CREATED_BY="dbu" CREATED_ON="2012-04-01" />
+	<CORE_GROUP_MEMBER />
 </dataset>

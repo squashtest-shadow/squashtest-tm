@@ -25,46 +25,46 @@
 	depends on NodeDeletionDao.general.dbsetup.xml
 
  -->
-
+<!DOCTYPE dataset SYSTEM "../../../../../../../dtd/squash-tm.1.4.0.dtd">
 <dataset>
 
 	<!--  ============================ attachment lists (unattached to anything) ===================== -->
 			
-	<attachment_list attachment_list_id="111" /> <!--  for reqVersion 111 of req 11-->
-	<attachment_list attachment_list_id="31" /> <!--  for tc 31 -->
+	<ATTACHMENT_LIST ATTACHMENT_LIST_ID="111" /> <!--  FOR REQVERSION 111 OF REQ 11-->
+	<ATTACHMENT_LIST ATTACHMENT_LIST_ID="31" /> <!--  FOR TC 31 -->
 	
 	
 	<!--  ============================ attachment_content ============================================ -->
 
-	<attachment_content attachment_content_id="111"  stream_content="abcde"  /> <!--  for reqVersion 111 of req 11-->
-	<attachment_content attachment_content_id="31" stream_content="abcde" /> <!--  for tc 31 -->
+	<ATTACHMENT_CONTENT ATTACHMENT_CONTENT_ID="111"  STREAM_CONTENT="abcde"  /> <!--  FOR REQVERSION 111 OF REQ 11-->
+	<ATTACHMENT_CONTENT ATTACHMENT_CONTENT_ID="31" STREAM_CONTENT="abcde" /> <!--  FOR TC 31 -->
 	
 	<!--  ============================ attachments =================================================== -->
 	
-	<attachment attachment_id="111"  name="reqV 111 attach"  type="txt" size="5" added_on="2011-08-08" content_id="111"  attachment_list_id="111"  />
-	<attachment attachment_id="31"  name="tc 31 attach"  type="txt" size="5" added_on="2011-08-08" content_id="31"  attachment_list_id="31"  />	
+	<ATTACHMENT ATTACHMENT_ID="111"  NAME="reqV 111 attach"  TYPE="txt" SIZE="5" ADDED_ON="2011-08-08" CONTENT_ID="111"  ATTACHMENT_LIST_ID="111"  />
+	<ATTACHMENT ATTACHMENT_ID="31"  NAME="tc 31 attach"  TYPE="txt" SIZE="5" ADDED_ON="2011-08-08" CONTENT_ID="31"  ATTACHMENT_LIST_ID="31"  />	
 	
 	<!-- =============================== one project ================================================ -->
-	<test_case_library tcl_id="1"/>
-	<requirement_library rl_id="1" />
-	<campaign_library cl_id="1" />
+	<TEST_CASE_LIBRARY TCL_ID="1"/>
+	<REQUIREMENT_LIBRARY RL_ID="1" />
+	<CAMPAIGN_LIBRARY CL_ID="1" />
 	
-	<project project_id="1" name="base project" active="true" created_by="IT" created_on="2011-08-08" 
-			 cl_id="1" rl_id="1" tcl_id="1"/>
+	<PROJECT PROJECT_ID="1" NAME="base project" ACTIVE="TRUE" CREATED_BY="IT" CREATED_ON="2011-08-08" 
+			 CL_ID="1" RL_ID="1" TCL_ID="1"/>
 	<!-- ============================ REQ======================================================== -->
-	<requirement_library_node rln_id="11" created_by="IT" created_on="2011-08-08" /> 
-	<requirement rln_id="11" />
-	<!-- ============================ req Versions======================================================== -->
-	<resource res_id="111" name="req V 111" created_on="2012-01-02" created_by="dbu"/>
-	<requirement_version res_id="111" requirement_id="11" version_number="1" criticality="CRITICAL" requirement_status="APPROVED" attachment_list_id="111"/>
-	<!-- ============================ req_audit_events ================================================ -->
-	<requirement_audit_event event_id="111" req_version_id="111" event_date="2012-01-02" author="dbu"/>
-	<requirement_creation event_id="111" />
+	<REQUIREMENT_LIBRARY_NODE RLN_ID="11" CREATED_BY="IT" CREATED_ON="2011-08-08" /> 
+	<REQUIREMENT RLN_ID="11" />
+	<!-- ============================ REQ VERSIONS======================================================== -->
+	<RESOURCE RES_ID="111" NAME="REQ V 111" CREATED_ON="2012-01-02" CREATED_BY="DBU" ATTACHMENT_LIST_ID="111"/>
+	<REQUIREMENT_VERSION RES_ID="111" REQUIREMENT_ID="11" VERSION_NUMBER="1" CRITICALITY="CRITICAL" REQUIREMENT_STATUS="APPROVED"/>
+	<!-- ============================ REQ_AUDIT_EVENTS ================================================ -->
+	<REQUIREMENT_AUDIT_EVENT EVENT_ID="111" REQ_VERSION_ID="111" EVENT_DATE="2012-01-02" AUTHOR="DBU"/>
+	<REQUIREMENT_CREATION EVENT_ID="111" />
 	
 	<!-- ============================ TC ================================================ -->
-	<test_case_library_node tcln_id="31" name="tc1" created_on="2012-01-02" created_by="dbu" project_id="1"/>
-	<test_case tcln_id="31" version="1" attachment_list_id="31" importance="HIGH" importance_auto="true"/>
-	<!-- ============================ TC / requirement================================================ -->
-	<test_case_verified_requirement_version verified_req_version_id="111" verifying_test_case_id="31"/>
+	<TEST_CASE_LIBRARY_NODE TCLN_ID="31" NAME="TC1" CREATED_ON="2012-01-02" CREATED_BY="DBU" PROJECT_ID="1" ATTACHMENT_LIST_ID="31"/>
+	<TEST_CASE TCLN_ID="31" VERSION="1" IMPORTANCE="HIGH" IMPORTANCE_AUTO="TRUE"/>
+	<!-- ============================ TC / REQUIREMENT================================================ -->
+	<TEST_CASE_VERIFIED_REQUIREMENT_VERSION VERIFIED_REQ_VERSION_ID="111" VERIFYING_TEST_CASE_ID="31"/>
 	
 </dataset>

@@ -21,71 +21,72 @@
         along with this software.  If not, see <http://www.gnu.org/licenses/>.
 
 -->
+<!DOCTYPE dataset SYSTEM "../../../../../../dtd/squash-tm.1.4.0.dtd">
 <dataset>
-	<attachment_list attachment_list_id="1010" />
-	<attachment_list attachment_list_id="1020" />
-	<attachment_list attachment_list_id="1030" />
-	<attachment_list attachment_list_id="100" />
-	<attachment_list attachment_list_id="200" />
-	<attachment_list attachment_list_id="300" />
-	<attachment_list attachment_list_id="400" />
+	<ATTACHMENT_LIST ATTACHMENT_LIST_ID="1010" />
+	<ATTACHMENT_LIST ATTACHMENT_LIST_ID="1020" />
+	<ATTACHMENT_LIST ATTACHMENT_LIST_ID="1030" />
+	<ATTACHMENT_LIST ATTACHMENT_LIST_ID="100" />
+	<ATTACHMENT_LIST ATTACHMENT_LIST_ID="200" />
+	<ATTACHMENT_LIST ATTACHMENT_LIST_ID="300" />
+	<ATTACHMENT_LIST ATTACHMENT_LIST_ID="400" />
 
 	<!-- projects and libraries -->
-	<test_case_library tcl_id="1" />
-	<campaign_library cl_id="1" />
-	<requirement_library rl_id="1" />
+	<TEST_CASE_LIBRARY TCL_ID="1" />
+	<CAMPAIGN_LIBRARY CL_ID="1" />
+	<REQUIREMENT_LIBRARY RL_ID="1" />
 
-	<project project_id="1" name="project 1" active="true" created_by="groovy" created_on="2010-01-01" cl_id="1"
-		tcl_id="1" rl_id="1" />
+	<PROJECT PROJECT_ID="1" NAME="project 1" ACTIVE="TRUE" CREATED_BY="groovy" CREATED_ON="2010-01-01" CL_ID="1"
+		TCL_ID="1" RL_ID="1" />
 
 
 	<!-- test cases -->
-	<test_case_library_node tcln_id="1" name="test case 1" created_on="2010-02-01"
-		created_by="dbu" />
-	<test_case tcln_id="1" version="1" attachment_list_id="1010" />
-	<test_case_library_node tcln_id="2" name="test case 2" created_on="2010-02-01" created_by="dbu" />
-	<test_case tcln_id="2" version="1" attachment_list_id="1020" />
-	<test_case_library_node tcln_id="3" name="test case 3" created_on="2010-02-01" created_by="dbu" />
-	<test_case tcln_id="3" version="1" attachment_list_id="1030" />
+	<TEST_CASE_LIBRARY_NODE TCLN_ID="1" NAME="test case 1" CREATED_ON="2010-02-01"
+		CREATED_BY="DBU" ATTACHMENT_LIST_ID="1010"/>
+	<TEST_CASE TCLN_ID="1" VERSION="1"  />
+	<TEST_CASE_LIBRARY_NODE TCLN_ID="2" NAME="test case 2" CREATED_ON="2010-02-01" CREATED_BY="DBU" ATTACHMENT_LIST_ID="1020"/>
+	<TEST_CASE TCLN_ID="2" VERSION="1"  />
+	<TEST_CASE_LIBRARY_NODE TCLN_ID="3" NAME="test case 3" CREATED_ON="2010-02-01" CREATED_BY="DBU" ATTACHMENT_LIST_ID="1030"/>
+	<TEST_CASE TCLN_ID="3" VERSION="1"  />
 
 
 	<!-- first campaign -->
-	<campaign_library_node cln_id="1" name="Pharos" created_on="2010-02-01" created_by="dbu"
-		project_id="1" />
-	<campaign cln_id="1" actual_end_auto="false" actual_start_auto="false" actual_start_date="2011-01-01"
-		actual_end_date="2011-01-02" scheduled_start_date="2011-01-01" scheduled_end_date="2011-01-02" attachment_list_id="100" />
+	<CAMPAIGN_LIBRARY_NODE CLN_ID="1" NAME="Pharos" CREATED_ON="2010-02-01" CREATED_BY="DBU"
+		PROJECT_ID="1" ATTACHMENT_LIST_ID="100"/>
+	<CAMPAIGN CLN_ID="1" ACTUAL_END_AUTO="FALSE" ACTUAL_START_AUTO="FALSE" ACTUAL_START_DATE="2011-01-01"
+		ACTUAL_END_DATE="2011-01-02" SCHEDULED_START_DATE="2011-01-01" SCHEDULED_END_DATE="2011-01-02"  />
 
-	<!-- second campaign -->
-	<campaign_library_node cln_id="2" name="Phobos" created_on="2010-02-01" created_by="dbu"
-		project_id="1" />
-	<campaign cln_id="2" actual_end_auto="false" actual_start_auto="false" actual_start_date="2011-01-01"
-		actual_end_date="2011-01-02" scheduled_start_date="2011-01-01" scheduled_end_date="2011-01-02" attachment_list_id="200" />
+	<!-- SECOND CAMPAIGN -->
+	<CAMPAIGN_LIBRARY_NODE CLN_ID="2" NAME="Phobos" CREATED_ON="2010-02-01" CREATED_BY="DBU"
+		PROJECT_ID="1" ATTACHMENT_LIST_ID="200"/>
+	<CAMPAIGN CLN_ID="2" ACTUAL_END_AUTO="FALSE" ACTUAL_START_AUTO="FALSE" ACTUAL_START_DATE="2011-01-01"
+		ACTUAL_END_DATE="2011-01-02" SCHEDULED_START_DATE="2011-01-01" SCHEDULED_END_DATE="2011-01-02"  />
 
-	<!-- third campaign -->
-	<campaign_library_node cln_id="3" name="Mars" created_on="2010-02-01" created_by="dbu"
-		project_id="1" />
-	<campaign cln_id="3" actual_end_auto="false" actual_start_auto="false" actual_start_date="2011-01-01"
-		actual_end_date="2011-01-02" scheduled_start_date="2011-01-01" scheduled_end_date="2011-01-02" attachment_list_id="300" />
+	<!-- THIRD CAMPAIGN -->
+	<CAMPAIGN_LIBRARY_NODE CLN_ID="3" NAME="Mars" CREATED_ON="2010-02-01" CREATED_BY="DBU"
+		PROJECT_ID="1" ATTACHMENT_LIST_ID="300"/>
+	<CAMPAIGN CLN_ID="3" ACTUAL_END_AUTO="FALSE" ACTUAL_START_AUTO="FALSE" ACTUAL_START_DATE="2011-01-01"
+		ACTUAL_END_DATE="2011-01-02" SCHEDULED_START_DATE="2011-01-01" SCHEDULED_END_DATE="2011-01-02"  />
 
-	<!-- fourth campaign -->
-	<campaign_library_node cln_id="4" name="Deimos" created_on="2010-02-01" created_by="dbu"
-		project_id="1" />
-	<campaign cln_id="4" actual_end_auto="false" actual_start_auto="false" actual_start_date="2011-01-01"
-		actual_end_date="2011-01-02" scheduled_start_date="2011-01-01" scheduled_end_date="2011-01-02" attachment_list_id="400" />
+	<!-- FOURTH CAMPAIGN -->
+	<CAMPAIGN_LIBRARY_NODE CLN_ID="4" NAME="Deimos" CREATED_ON="2010-02-01" CREATED_BY="DBU"
+		PROJECT_ID="1" ATTACHMENT_LIST_ID="400"/>
+	<CAMPAIGN CLN_ID="4" ACTUAL_END_AUTO="FALSE" ACTUAL_START_AUTO="FALSE" ACTUAL_START_DATE="2011-01-01"
+		ACTUAL_END_DATE="2011-01-02" SCHEDULED_START_DATE="2011-01-01" SCHEDULED_END_DATE="2011-01-02"  />
 
 	
 	<!--  cleanup -->
 	
-	<test_step/>
-	<action_test_step/>
-	<call_test_step/>
-	<test_case_steps/>
+	<TEST_STEP/>
+	<ACTION_TEST_STEP/>
+	<CALL_TEST_STEP/>
+	<TEST_CASE_STEPS/>
 	
-	<attachment_content/>
-	<attachment/>
+	<ATTACHMENT_CONTENT/>
+	<ATTACHMENT/>
 	
-	<test_case_folder/>
-	<tcln_relationship/>
+	<TEST_CASE_FOLDER/>
+	<TCLN_RELATIONSHIP/>
 
 
 </dataset>
