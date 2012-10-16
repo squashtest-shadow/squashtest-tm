@@ -181,20 +181,37 @@
 
 
 
-	<!-- yes : tm.web propose one service consumed by core.web -->
+	<!-- yes : tm.web propose one service consumed by core.web (intra-bundle injection won't work despite one being a fragment of the other)-->
 
 	<bean id="squashtest.tm.web.authSuccessCallback.btautoconnect"
 		class="org.squashtest.csp.tm.web.internal.handler.BugTrackerAutoconnectCallback">
-		<property name="bugTrackersLocalService"
-			ref="squashtest.tm.service.BugTrackersLocalService" />
-			<property name="projectFinder"
-			ref="squashtest.tm.service.ProjectModificationService" />
-			<property name="bugTrackerFinder"
-			ref="squashtest.tm.service.BugTrackerManagerService" />
+			<property name="bugTrackersLocalService" ref="squashtest.tm.service.BugTrackersLocalService" />
+			<property name="projectFinder" ref="squashtest.tm.service.ProjectModificationService" />
+			<property name="bugTrackerFinder" ref="squashtest.tm.service.BugTrackerManagerService" />
 			
 	</bean>
 
+
 	<osgi:service ref="squashtest.tm.web.authSuccessCallback.btautoconnect"
 		interface="org.squashtest.csp.core.web.servlet.handler.AuthenticationSuccessCallback" />
+		
+		
+	<!--  CUF services  -->
+	
+	<osgi:reference id="squashtest.tm.service.CustomFieldBindingFinder"
+		bean-name="squashtest.tm.service.CustomFieldBindingFinder" interface="org.squashtest.csp.tm.service.CustomFieldBindingFinderService"
+		availability="mandatory" />	
+	
+	<osgi:reference id="squashtest.tm.service.CustomFieldBindingModifier"
+		bean-name="squashtest.tm.service.CustomFieldBindingModifier" interface="org.squashtest.csp.tm.service.CustomFieldBindingModificationService"
+		availability="mandatory" />
+	
+	<osgi:service ref="squashtest.tm.service.CustomFieldBindingService">
+		<osgi:interfaces>
+			<value>org.squashtest.csp.tm.service.CustomFieldBindingFinderService</value>
+			<value>org.squashtest.csp.tm.service.CustomFieldBindingModificationService</value>
+		</osgi:interfaces>
+	</osgi:service>			
+		
 
 </beans>
