@@ -44,7 +44,7 @@ import org.squashtest.csp.tm.domain.testcase.TestCase;
 
 @Entity
 @PrimaryKeyJoinColumn(name = "CLN_ID")
-public class Campaign extends CampaignLibraryNode implements AttachmentHolder{
+public class Campaign extends CampaignLibraryNode {
 	@Embedded
 	private ScheduledTimePeriod scheduledPeriod = new ScheduledTimePeriod();
 	@Embedded
@@ -60,9 +60,7 @@ public class Campaign extends CampaignLibraryNode implements AttachmentHolder{
 	@JoinColumn(name = "CAMPAIGN_ID")
 	private final List<CampaignTestPlanItem> testPlan = new ArrayList<CampaignTestPlanItem>();
 
-	@OneToOne(cascade = { CascadeType.PERSIST, CascadeType.MERGE })
-	@JoinColumn(name = "ATTACHMENT_LIST_ID")
-	private final AttachmentList attachmentList = new AttachmentList();
+	
 
 	public Campaign() {
 		super();
@@ -217,10 +215,7 @@ public class Campaign extends CampaignLibraryNode implements AttachmentHolder{
 		return scheduledPeriod;
 	}
 
-	@Override
-	public AttachmentList getAttachmentList() {
-		return attachmentList;
-	}
+
 
 	@Override
 	public Campaign createPastableCopy() {

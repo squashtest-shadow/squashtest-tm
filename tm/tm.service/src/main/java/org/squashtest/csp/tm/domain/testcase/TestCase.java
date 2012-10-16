@@ -92,10 +92,6 @@ public class TestCase extends TestCaseLibraryNode implements AttachmentHolder {
 	@JoinTable(name = "TEST_CASE_VERIFIED_REQUIREMENT_VERSION", joinColumns = @JoinColumn(name = "VERIFYING_TEST_CASE_ID"), inverseJoinColumns = @JoinColumn(name = "VERIFIED_REQ_VERSION_ID"))
 	private final Set<RequirementVersion> verifiedRequirementVersions = new HashSet<RequirementVersion>();
 
-	@OneToOne(cascade = { CascadeType.PERSIST, CascadeType.MERGE })
-	@JoinColumn(name = "ATTACHMENT_LIST_ID")
-	private final AttachmentList attachmentList = new AttachmentList();
-
 	@Enumerated(EnumType.STRING)
 	@Basic(optional = false)
 	private TestCaseImportance importance = LOW;
@@ -269,15 +265,6 @@ public class TestCase extends TestCaseLibraryNode implements AttachmentHolder {
 	public void removeVerifiedRequirementVersion(@NotNull RequirementVersion requirement) {
 		requirement.notifyNoLongerVerifiedBy(this);
 		verifiedRequirementVersions.remove(requirement);
-	}
-
-	@Override
-	public AttachmentList getAttachmentList() {
-		return attachmentList;
-	}
-
-	public Set<Attachment> getAllAttachments() {
-		return attachmentList.getAllAttachments();
 	}
 
 	@Override

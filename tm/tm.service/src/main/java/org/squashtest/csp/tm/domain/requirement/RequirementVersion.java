@@ -56,7 +56,7 @@ import org.squashtest.csp.tm.domain.testcase.TestCase;
 @Entity
 @PrimaryKeyJoinColumn(name = "RES_ID")
 @InheritsAcls(constrainedClass = Requirement.class, collectionName = "versions")
-public class RequirementVersion extends Resource implements AttachmentHolder {
+public class RequirementVersion extends Resource {
 	/**
 	 * Collection of {@link Test Cases} verifying by this {@link Requirement}
 	 */
@@ -82,10 +82,7 @@ public class RequirementVersion extends Resource implements AttachmentHolder {
 	@Column(name = "REQUIREMENT_STATUS")
 	private RequirementStatus status = RequirementStatus.WORK_IN_PROGRESS;
 
-	@NotNull
-	@OneToOne(cascade = { CascadeType.ALL }, orphanRemoval = true)
-	@JoinColumn(name = "ATTACHMENT_LIST_ID")
-	private final AttachmentList attachmentList = new AttachmentList();
+	
 
 	@NotNull
 	@ManyToOne(cascade = { CascadeType.PERSIST, CascadeType.MERGE })
@@ -96,14 +93,6 @@ public class RequirementVersion extends Resource implements AttachmentHolder {
 
 	public RequirementVersion() {
 		super();
-	}
-
-	/**
-	 * @see org.squashtest.csp.tm.domain.attachment.AttachmentHolder#getAttachmentList()
-	 */
-	@Override
-	public AttachmentList getAttachmentList() {
-		return attachmentList;
 	}
 
 	@Override
@@ -298,8 +287,8 @@ public class RequirementVersion extends Resource implements AttachmentHolder {
 	}
 
 	private void attachCopiesOfAttachmentsTo(RequirementVersion copy) {
-		for (Attachment attachment : this.attachmentList.getAllAttachments()) {
-			copy.attachmentList.addAttachment(attachment.hardCopy());
+		for (Attachment attachment : this.getAttachmentList().getAllAttachments()) {
+			copy.getAttachmentList().addAttachment(attachment.hardCopy());
 		}
 	}
 

@@ -20,14 +20,19 @@
  */
 package org.squashtest.csp.tm.domain.campaign;
 
+import javax.persistence.CascadeType;
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
 import javax.persistence.Id;
 import javax.persistence.Inheritance;
 import javax.persistence.InheritanceType;
+import javax.persistence.JoinColumn;
+import javax.persistence.OneToOne;
 
 import org.squashtest.csp.core.security.annotation.AclConstrainedObject;
+import org.squashtest.csp.tm.domain.attachment.AttachmentHolder;
+import org.squashtest.csp.tm.domain.attachment.AttachmentList;
 import org.squashtest.csp.tm.domain.audit.Auditable;
 import org.squashtest.csp.tm.domain.library.GenericLibraryNode;
 import org.squashtest.csp.tm.domain.library.Library;
@@ -37,11 +42,21 @@ import org.squashtest.csp.tm.domain.softdelete.SoftDeletable;
 @Inheritance(strategy = InheritanceType.JOINED)
 @SoftDeletable
 @Auditable
-public abstract class CampaignLibraryNode extends GenericLibraryNode {
+public abstract class CampaignLibraryNode extends GenericLibraryNode implements AttachmentHolder {
 	@Id
 	@GeneratedValue
 	@Column(name = "CLN_ID")
 	private Long id;
+	
+	@OneToOne(cascade = { CascadeType.PERSIST, CascadeType.MERGE })
+	@JoinColumn(name = "ATTACHMENT_LIST_ID")
+	private final AttachmentList attachmentList = new AttachmentList();
+	
+	
+	@Override
+	public AttachmentList getAttachmentList() {
+		return attachmentList;
+	}
 
 	public CampaignLibraryNode() {
 		super();

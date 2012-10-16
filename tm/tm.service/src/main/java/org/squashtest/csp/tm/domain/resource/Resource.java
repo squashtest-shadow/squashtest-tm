@@ -20,15 +20,21 @@
  */
 package org.squashtest.csp.tm.domain.resource;
 
+import javax.persistence.CascadeType;
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
 import javax.persistence.Id;
 import javax.persistence.Inheritance;
 import javax.persistence.InheritanceType;
+import javax.persistence.JoinColumn;
 import javax.persistence.Lob;
+import javax.persistence.OneToOne;
+import javax.validation.constraints.NotNull;
 
 import org.hibernate.validator.constraints.NotBlank;
+import org.squashtest.csp.tm.domain.attachment.AttachmentHolder;
+import org.squashtest.csp.tm.domain.attachment.AttachmentList;
 import org.squashtest.csp.tm.domain.audit.Auditable;
 
 /**
@@ -40,7 +46,7 @@ import org.squashtest.csp.tm.domain.audit.Auditable;
 @Entity
 @Inheritance(strategy = InheritanceType.JOINED)
 @Auditable
-public abstract class Resource {
+public abstract class Resource implements AttachmentHolder {
 	@Id
 	@GeneratedValue
 	@Column(name = "RES_ID")
@@ -51,6 +57,11 @@ public abstract class Resource {
 
 	@Lob
 	private String description;
+	
+	@NotNull
+	@OneToOne(cascade = { CascadeType.ALL }, orphanRemoval = true)
+	@JoinColumn(name = "ATTACHMENT_LIST_ID")
+	private final AttachmentList attachmentList = new AttachmentList();
 
 	public Long getId() {
 		return id;
@@ -71,5 +82,15 @@ public abstract class Resource {
 	public void setDescription(String description) {
 		this.description = description;
 	}
+	/**
+	 * @see org.squashtest.csp.tm.domain.attachment.AttachmentHolder#getAttachmentList()
+	 */
+	@Override
+	public AttachmentList getAttachmentList() {
+		return attachmentList;
+	}
+	
+	
 
+	
 }
