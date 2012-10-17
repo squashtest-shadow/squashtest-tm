@@ -30,24 +30,24 @@
 		<comment>We save data from ISSUE before it is migrated</comment>
 		<sql>
 			CREATE TEMPORARY TABLE `KEYVAL` (
-			`KEY` VARCHAR(25) NULL DEFAULT NULL,
-			`VALUE` BIGINT(20) NULL DEFAULT 0
+			`NAME` VARCHAR(25) NULL DEFAULT NULL,
+			`TOT` BIGINT(20) NULL DEFAULT 0
 			);
 		</sql>
 		<sql>
-			insert into KEYVAL (KEY, VALUE)
+			insert into KEYVAL (`NAME`, `TOT`)
 			select ('TCF'), count(*) from TEST_CASE_FOLDER;
 		</sql>
 		<sql>
-			insert into KEYVAL (KEY, VALUE)
+			insert into KEYVAL (`NAME`, `TOT`)
 			select ('CF'), count(*) from CAMPAIGN_FOLDER;
 		</sql>
 		<sql>
-			insert into KEYVAL (KEY, VALUE)
+			insert into KEYVAL (`NAME`, `TOT`)
 			select ('SR'), count(*) from SIMPLE_RESOURCE;
 		</sql>
 		<sql>
-			insert into KEYVAL (KEY, VALUE)
+			insert into KEYVAL (`NAME`, `TOT`)
 			select ('ATTLIST'), count(*) from ATTACHMENT_LIST;
 		</sql>
 	</changeSet>
@@ -59,12 +59,12 @@
 	<changeSet id="1.4.0.feat-1513-test-02" author="mpagnon">
 		<preConditions>
 			<sqlCheck expectedResult="0">
-			select (count(actualAttlist.ATTACHMENT_LIST_ID) - prevAttlist.VALUE - sr.VALUE - cf.VALUE - tcf.VALUE)
-			from KEYVAL sr, KEYVAL cf, KEYVAL tcf, KEYVAL prevAttlist, ATTACHMENT_LIST actualAttlist
+			select (count(actualAttlist.ATTACHMENT_LIST_ID) - prevAttlist.TOT - sr.TOT - cf.TOT - tcf.TOT )
+			from KEYVAL sr, KEYVAL cf, KEYVAL tcf , KEYVAL prevAttlist, ATTACHMENT_LIST actualAttlist
 			where prevAttlist.KEY = 'ATTLIST'
-			and sr.KEY = 'SR'
-			and cf.KEY = 'CF'
-			and tcf.KEY = 'TCF'
+			and sr.NAME = 'SR'
+			and cf.NAME = 'CF'
+			and tcf.NAME = 'TCF'
 			;
 			</sqlCheck>
 		</preConditions>
