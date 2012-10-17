@@ -135,6 +135,10 @@ class DummyController extends LibraryNavigationController<DummyLibrary, DummyFol
 	protected String getShowLibraryViewName() {
 		return "libraryPage";
 	}
+	@Override
+	protected String getWorkspaceName() {
+		return "workspaceName";
+	}
 
 	@Override
 	JsTreeNode createTreeNodeFromLibraryNode(DummyNode resource) {
