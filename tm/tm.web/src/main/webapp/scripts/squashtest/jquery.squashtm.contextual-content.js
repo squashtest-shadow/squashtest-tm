@@ -31,10 +31,18 @@
 		}; // we initialize it with a mock.
 		this.onCleanContent = null;
 
+		
+		/* **************** super private ************* */
+		
+		var _cleanPopups = function(){
+			$(".ui-dialog-content.is-contextual").dialog("destroy").remove();			
+		}
+		
+		
 		/* ******************* private **************** */
 
-		var cleanContent = $.proxy(function () {
-			$('.is-contextual').dialog("destroy").remove();
+		var cleanContent = $.proxy(function () {			
+			_cleanPopups();
 			this.empty();
 			this.listeners = [];
 			if (this.onCleanContent != null) {

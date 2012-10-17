@@ -137,7 +137,7 @@ function dpa_initialize(){
 	//initialize the checkbox events
 	var me = this;
 	this.controls.checkbx.change(function(){
-		var isAuto = $(this).attr('checked');
+		var isAuto = $(this).is(':checked');
 		if (isAuto){
 			me.setAutoMode();
 			me.postState();
@@ -157,7 +157,7 @@ function dpa_initState(){
 	var checkbx = this.controls.checkbx;
 	var isAuto=this.params.isAuto;
 	
-	$(checkbx).attr('checked', isAuto);
+	checkbx.prop('checked', isAuto);
 	
 	if (isAuto){
 		this.setAutoMode();
@@ -173,7 +173,7 @@ function dpa_setAutoMode(){
 	var datelabel = this.controls.datelabel;
 	var checkbx = this.controls.checkbx;		
 	$(this.controls.datelabel).removeClass("editable");
-	$(checkbx).attr('checked',true);
+	checkbx.prop('checked',true);
 	$(datelabel).unbind();
 	
 }
@@ -189,7 +189,7 @@ function dpa_setManualMode(){
 	$(this.controls.datelabel).addClass("editable");
 	var me = this;
 	
-	$(checkbx).attr('checked',false);
+	checkbx.prop('checked',false);
 	$(datelabel).click(function(){
 		me.enterEditMode();
 	});		
@@ -209,7 +209,7 @@ function dpa_enterEditMode(){
 	var datelabel = this.controls.datelabel;	
 	var checkbx = this.controls.checkbx;
 	
-	this.formerState.wasAuto=$(checkbx).attr('checked');
+	this.formerState.wasAuto=checkbx.is(':checked');
 	this.formerState.formerDate=$(datepick).datepicker('getDate');
 	
 	
@@ -379,7 +379,7 @@ function dpa_postState(){
 	var modeParamName = this.params.modeParamName;
 	var url = this.params.url;
 	var callback = this.params.callback;
-	var isChecked=$(checkbx).attr('checked');
+	var isChecked=checkbx.is(':checked');
 	
 	var me = this;
 	
@@ -400,7 +400,7 @@ function dpa_postStateSuccess(strDate, callback){
 	var datelabel = this.controls.datelabel;
 	var checkbx = this.controls.checkbx;		
 	
-	var isChecked=$(checkbx).attr('checked');
+	var isChecked=checkbx.is(':checked');
 	
 	//if checked we must set the automatic date and leave (pretty much the only possible case
 	if (isChecked){
@@ -416,7 +416,7 @@ function dpa_postStateFailed(){
 }
 function dpa_refreshAutoDate(newDateToPut){
 	var checkbx = this.controls.checkbx;		
-	if($(checkbx).attr('checked')){
+	if(checkbx.is(':checked')){
 		var newDate;
 		
 		if (newDateToPut != null){

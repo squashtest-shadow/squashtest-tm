@@ -79,7 +79,8 @@
 			nPrevious.text("◀");
 			nNext.text("▶");
 			nLast.text("▶▶");
-			$('.paginate_button').button({
+			
+			$(nPaging).find('.paginate_button').button({
 				disabled : false,
 				text : true
 			});

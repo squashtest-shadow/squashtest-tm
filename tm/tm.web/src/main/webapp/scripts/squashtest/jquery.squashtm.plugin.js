@@ -93,6 +93,10 @@ var squashtm = squashtm || {};
 	};
 
 	$.fn.bindFirst = function (type, closure) {
+		/*
+		
+		//broken
+		
 		var saveHandlers = this.data('events')[type].slice(0);
 		this.data('events')[type] = [];		
 		closure();
@@ -100,6 +104,8 @@ var squashtm = squashtm || {};
 		for (var i=0; i<saveHandlers.length;i++) {
 			this.data('events')[type].push(saveHandlers[i]);
 		};
+		*/
+		closure();
 	};
 
 	/* defines functions in the jQuery namespace */
