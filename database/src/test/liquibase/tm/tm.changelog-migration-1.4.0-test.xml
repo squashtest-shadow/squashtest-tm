@@ -60,8 +60,8 @@
 		<preConditions>
 			<sqlCheck expectedResult="0">
 			select (count(actualAttlist.ATTACHMENT_LIST_ID) - prevAttlist.TOT - sr.TOT - cf.TOT - tcf.TOT )
-			from KEYVAL sr, KEYVAL cf, KEYVAL tcf , KEYVAL prevAttlist, ATTACHMENT_LIST actualAttlist
-			where prevAttlist.KEY = 'ATTLIST'
+			from KEYVAL sr, KEYVAL cf, KEYVAL tcf ,  KEYVAL prevAttlist, ATTACHMENT_LIST actualAttlist
+			where prevAttlist.NAME = 'ATTLIST'
 			and sr.NAME = 'SR'
 			and cf.NAME = 'CF'
 			and tcf.NAME = 'TCF'
