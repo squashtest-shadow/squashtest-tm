@@ -206,12 +206,5 @@
 		bean-name="squashtest.tm.service.CustomFieldBindingModifier" interface="org.squashtest.csp.tm.service.CustomFieldBindingModificationService"
 		availability="mandatory" />
 	
-	<osgi:service ref="squashtest.tm.service.CustomFieldBindingService">
-		<osgi:interfaces>
-			<value>org.squashtest.csp.tm.service.CustomFieldBindingFinderService</value>
-			<value>org.squashtest.csp.tm.service.CustomFieldBindingModificationService</value>
-		</osgi:interfaces>
-	</osgi:service>			
-		
 
 </beans>

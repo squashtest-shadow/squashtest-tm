@@ -99,32 +99,40 @@
 
 		</div>
 	
-		<div class="fragment-body">
-			<%------------------------------------------------ BODY -----------------------------------------------%>
-	
-			<div id="project-toolbar" classes="toolbar-class ui-corner-all">
-				<%---INFO + Toolbar ---------------------%>
-			<div>
-				<comp:general-information-panel
-						auditableEntity="${adminproject.project}"
-						entityUrl="${ projectUrl }" />
-			</div>
+
+		<%---INFO + Toolbar ---------------------%>
+			<div id="project-toolbar" class="toolbar-class ui-corner-all">
 				
-			<div class="toolbar-button-panel">
-				<sec:authorize access=" hasRole('ROLE_ADMIN')">
-				<f:message var="rename" key="project.button.rename.label" />
-				<input type="button" value="${ rename }" id="rename-project-button"
-							class="button" />
-					<f:message var="delete" key='project.button.delete.label' />
-					<input type="button" value="${ delete }" id="delete-project-button"
-							class="button" />
-					</sec:authorize>
-			</div>
+				<div>
+					<comp:general-information-panel
+							auditableEntity="${adminproject.project}"
+							entityUrl="${ projectUrl }" />
+				</div>
+				
+				<div class="toolbar-button-panel">
+					<sec:authorize access=" hasRole('ROLE_ADMIN')">
+					<f:message var="rename" key="project.button.rename.label" />
+					<input type="button" value="${ rename }" id="rename-project-button"
+								class="button" />
+						<f:message var="delete" key='project.button.delete.label' />
+						<input type="button" value="${ delete }" id="delete-project-button"
+								class="button" />
+						</sec:authorize>
+				</div>
 			</div>
 			<%-------------------------------------------------------------END INFO + Toolbar ---------------%>
+			
+			<%------------------------------------------------ BODY -----------------------------------------------%>
+		
+			<div class="fragment-tabs fragment-body">
+			<ul>
+				<li><a href="#main-informations"><f:message key="tabs.label.mainpanel"/></a></li>
+			
+			
+			</ul>
 		
 			<%----------------------------------- INFORMATION PANEL -----------------------------------------------%>
-			<br />
+			<div id="main-informations">
 			<comp:simple-jeditable targetUrl="${ projectUrl }" componentId="project-label" maxLength="255" />
 			<comp:rich-jeditable targetUrl="${ projectUrl }" componentId="project-description" />
 			
@@ -146,7 +154,7 @@
 							</label>
 							<div class="display-table-cell" id="project-description">${ adminproject.project.description }</div>
 						</div>
-<%-- 	Waiting for implementation of deactivation	<comp:project-active adminproject="${ adminproject }"/> --%>
+				<%-- 	Waiting for implementation of deactivation	<comp:project-active adminproject="${ adminproject }"/> --%>
 					</div>
 				</jsp:attribute>
 			</comp:toggle-panel>
@@ -246,8 +254,14 @@
 			/>
 			
 			<%----------------------------- /TEST AUTOMATION PROJECT -------------------------------------------%>					
-					
-			<%----------------------------------- add User Popup-----------------------------------------------%>
+			
+			</div> <%-- /div#main-informations --%>		
+				
+			</div>	<%-- /div#project-administration-content --%>
+
+		<%---------------------------------------------------------------END  BODY -----------------------------------------------%>
+		
+	<%----------------------------------- add User Popup-----------------------------------------------%>
 		<comp:popup id="add-permission-dialog"
 				titleKey="title.AddPermission" isContextual="true"
 				openedBy="add-permission-button">
@@ -274,9 +288,6 @@
 		</comp:popup>
 		<%----------------------------------- /add User Popup-----------------------------------------------%>
 
-		</div>
-		<%---------------------------------------------------------------END  BODY -----------------------------------------------%>
-	
 <comp:decorate-buttons />
 	</jsp:attribute>
 </layout:info-page-layout>
@@ -345,7 +356,6 @@
 				  }
 			});
 		});
-		
 		
 	});
 	
@@ -446,3 +456,5 @@
 	</comp:popup>
 </sec:authorize>
 <!-- ------------------------------------END RENAME POPUP------------------------------------------------------- -->
+
+<%--<comp:fragment-tabs />  --%> 

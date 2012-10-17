@@ -20,10 +20,77 @@
  */
 package org.squashtest.csp.tm.web.internal.controller.customfields;
 
+import java.util.LinkedList;
+import java.util.List;
+
+import javax.annotation.PostConstruct;
+import javax.inject.Inject;
+
+import org.springframework.osgi.extensions.annotation.ServiceReference;
 import org.springframework.stereotype.Controller;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestMethod;
+import org.springframework.web.bind.annotation.RequestParam;
+import org.squashtest.csp.tm.domain.customfield.BindableEntity;
+import org.squashtest.csp.tm.domain.customfield.CustomFieldBinding;
+import org.squashtest.csp.tm.service.CustomFieldBindingModificationService;
+import org.squashtest.csp.tm.web.internal.i18n.InternationalizationHelper;
+import org.squashtest.csp.tm.web.internal.model.customfields.CustomFieldBindingModel;
+import org.squashtest.csp.tm.web.internal.model.customfields.CustomFieldJsonConverter;
 
 
 @Controller
+@RequestMapping("/custom-fields-binding")
 public class CustomFieldBindingManagementController {
 
+	private CustomFieldBindingModificationService service;
+
+	private CustomFieldJsonConverter converter;
+	
+	@Inject
+	private InternationalizationHelper messageSource;
+	
+	
+	@ServiceReference
+	public void setCustomFieldBindingModificationService(CustomFieldBindingModificationService service){
+		this.service=service;
+	}
+
+	@PostConstruct
+	public void init(){
+		converter = new CustomFieldJsonConverter(messageSource);
+	}
+	
+	
+	
+	@RequestMapping(method= RequestMethod.GET, params = {"projectId"})
+	public List<CustomFieldBindingModel> findAllCustomFieldsForProject(@RequestParam("projectId") Long projectId){
+		
+		List<CustomFieldBinding> bindings = service.findCustomFieldsForProject(projectId);
+		
+		return toJson(bindings);
+		
+	}
+	
+	@RequestMapping(method= RequestMethod.GET, params = {"projectId", "bindableEntity"})
+	public List<CustomFieldBindingModel> findAllCustomFieldsForProject(@RequestParam("projectId") Long projectId, @RequestParam("bindableEntity") String bindableEntity){
+		
+		List<CustomFieldBinding> bindings = service.findCustomFieldsForProjectAndEntity(projectId, BindableEntity.valueOf(bindableEntity));
+		
+		return toJson(bindings);
+		
+	}
+	
+	
+	private List<CustomFieldBindingModel> toJson(List<CustomFieldBinding> bindings){
+		List<CustomFieldBindingModel> result = new LinkedList<CustomFieldBindingModel>();
+		
+		for (CustomFieldBinding binding : bindings){
+			CustomFieldBindingModel model = converter.toJson(binding);
+			result.add(model);
+		}
+		
+		return result;
+	}
+	
 }
