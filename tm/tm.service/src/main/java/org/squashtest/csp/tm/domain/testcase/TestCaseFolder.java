@@ -32,6 +32,7 @@ import javax.persistence.PrimaryKeyJoinColumn;
 import javax.persistence.Transient;
 
 import org.apache.commons.lang.NullArgumentException;
+import org.squashtest.csp.tm.domain.attachment.Attachment;
 import org.squashtest.csp.tm.domain.library.Folder;
 import org.squashtest.csp.tm.domain.library.FolderSupport;
 import org.squashtest.csp.tm.domain.project.Project;
@@ -79,12 +80,13 @@ public class TestCaseFolder extends TestCaseLibraryNode implements Folder<TestCa
 		content.remove(node);
 
 	}
-
+	//TODO Make generic for each folder
 	@Override
 	public TestCaseFolder createPastableCopy() {
 		TestCaseFolder newFolder = new TestCaseFolder();
 		newFolder.setName(getName());
 		newFolder.setDescription(getDescription());
+		newFolder.addCopiesOfAttachments(this);
 		for (TestCaseLibraryNode node : this.content) {
 			TestCaseLibraryNode newNode = node.createPastableCopy();
 			newFolder.addContent(newNode);
@@ -93,7 +95,13 @@ public class TestCaseFolder extends TestCaseLibraryNode implements Folder<TestCa
 		newFolder.notifyAssociatedWithProject(this.getProject());
 		return newFolder;
 	}
-
+	
+	private void addCopiesOfAttachments(TestCaseFolder source) {
+		for (Attachment tcAttach : source.getAttachmentList().getAllAttachments()) {
+			Attachment atCopy = tcAttach.hardCopy();
+			this.getAttachmentList().addAttachment(atCopy);
+		}
+	}
 	@Override
 	public void notifyAssociatedWithProject(Project project) {
 		Project former = getProject();

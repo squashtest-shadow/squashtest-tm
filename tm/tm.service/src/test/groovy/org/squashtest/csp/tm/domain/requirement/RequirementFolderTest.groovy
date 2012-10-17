@@ -23,6 +23,7 @@ package org.squashtest.csp.tm.domain.requirement
 import spock.lang.Specification;
 import org.apache.commons.lang.NullArgumentException;
 import org.squashtest.csp.tm.domain.DuplicateNameException;
+import org.squashtest.csp.tm.domain.attachment.Attachment;
 import org.squashtest.csp.tm.domain.library.GenericLibraryNode;
 import org.squashtest.csp.tm.domain.project.Project;
 import org.squashtest.csp.tm.domain.testcase.TestCaseFolder;
@@ -112,15 +113,21 @@ class RequirementFolderTest extends Specification {
 		given: 
 		RequirementFolder folder = new RequirementFolder(name: "foo", description: "bar")
 		
-		when:
-		def res = folder.createPastableCopy()
+		and:
+		Attachment attachment = new Attachment()
+		folder.attachmentList.addAttachment attachment
 		
+		when:
+		def res = folder.createPastableCopy()		
 
 		then:
 		res.name == folder.name
 		res.description == folder.description
 		res.resource != null
 		res.resource.name == folder.name
+		
+		res.attachmentList.allAttachments.size() == 1
+		!res.attachmentList.allAttachments.contains(attachment)
 	}
 
 }

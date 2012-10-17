@@ -34,9 +34,11 @@ import javax.persistence.Transient;
 import org.apache.commons.lang.NullArgumentException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.squashtest.csp.tm.domain.attachment.Attachment;
 import org.squashtest.csp.tm.domain.library.Folder;
 import org.squashtest.csp.tm.domain.library.FolderSupport;
 import org.squashtest.csp.tm.domain.project.Project;
+import org.squashtest.csp.tm.domain.testcase.TestCaseFolder;
 
 @Entity
 @PrimaryKeyJoinColumn(name = "CLN_ID")
@@ -79,7 +81,8 @@ public class CampaignFolder extends CampaignLibraryNode implements Folder<Campai
 	public boolean isContentNameAvailable(String name) {
 		return folderSupport.isContentNameAvailable(name);
 	}
-
+	
+	//TODO make generic 
 	@Override
 	public CampaignFolder createPastableCopy() {
 
@@ -87,9 +90,17 @@ public class CampaignFolder extends CampaignLibraryNode implements Folder<Campai
 		newFolder.setName(getName());
 		newFolder.setDescription(getDescription());
 		newFolder.notifyAssociatedWithProject(this.getProject());
+		newFolder.addCopiesOfAttachments(this);
 		return newFolder;
 	}
-
+	
+	private void addCopiesOfAttachments(CampaignFolder source) {
+		for (Attachment tcAttach : source.getAttachmentList().getAllAttachments()) {
+			Attachment atCopy = tcAttach.hardCopy();
+			this.getAttachmentList().addAttachment(atCopy);
+		}
+	}
+	
 	@Override
 	public void notifyAssociatedWithProject(Project project) {
 		Project former = getProject();

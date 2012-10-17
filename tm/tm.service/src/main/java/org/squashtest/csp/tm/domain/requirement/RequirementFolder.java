@@ -35,7 +35,9 @@ import javax.persistence.Transient;
 import javax.validation.constraints.NotNull;
 
 import org.apache.commons.lang.NullArgumentException;
+import org.squashtest.csp.tm.domain.attachment.Attachment;
 import org.squashtest.csp.tm.domain.audit.AuditableMixin;
+import org.squashtest.csp.tm.domain.campaign.CampaignFolder;
 import org.squashtest.csp.tm.domain.library.Folder;
 import org.squashtest.csp.tm.domain.library.FolderSupport;
 import org.squashtest.csp.tm.domain.project.Project;
@@ -97,13 +99,14 @@ public class RequirementFolder extends RequirementLibraryNode<SimpleResource> im
 	public boolean isContentNameAvailable(String name) {
 		return folderSupport.isContentNameAvailable(name);
 	}
-
+	
+	//TODO make generic
 	@Override
 	public RequirementFolder createPastableCopy() {
 		RequirementFolder newFolder = new RequirementFolder();
 		newFolder.setName(getName());
 		newFolder.setDescription(getDescription());
-
+		newFolder.addCopiesOfAttachments(this);
 		for (RequirementLibraryNode node : this.content) {
 			RequirementLibraryNode newNode = (RequirementLibraryNode) node.createPastableCopy();
 			newFolder.addContent(newNode);
@@ -112,7 +115,14 @@ public class RequirementFolder extends RequirementLibraryNode<SimpleResource> im
 		newFolder.notifyAssociatedWithProject(this.getProject());
 		return newFolder;
 	}
-
+	
+	private void addCopiesOfAttachments(RequirementFolder source) {
+		for (Attachment tcAttach : source.getAttachmentList().getAllAttachments()) {
+			Attachment atCopy = tcAttach.hardCopy();
+			this.getAttachmentList().addAttachment(atCopy);
+		}
+	}
+	
 	@Override
 	public void notifyAssociatedWithProject(Project project) {
 		Project former = getProject();
