@@ -42,11 +42,12 @@ public abstract class FolderModificationController<FOLDER extends Folder<?>> {
 		ModelAndView mav = new ModelAndView("fragment/generics/edit-folder");
 		mav.addObject("folder", folder);
 		mav.addObject("updateUrl", getUpdateUrl(request.getPathInfo()));
-
+		mav.addObject("workspaceName", getWorkspaceName());
 		return mav;
 	}
 
 	protected abstract FolderModificationService<FOLDER> getFolderModificationService();
+	protected abstract String getWorkspaceName();
 
 	@RequestMapping(method = RequestMethod.DELETE)
 	public @ResponseBody

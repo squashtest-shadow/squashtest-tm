@@ -138,11 +138,6 @@ LibraryNavigationController<CampaignLibrary, CampaignFolder, CampaignLibraryNode
 	}
 
 	@Override
-	protected String getEditFolderViewName() {
-		return "fragment/campaigns/edit-folder";
-	}
-
-	@Override
 	protected String getShowLibraryViewName() {
 		return "page/campaign-libraries/show-campaign-library";
 	}
@@ -345,9 +340,5 @@ LibraryNavigationController<CampaignLibrary, CampaignFolder, CampaignLibraryNode
 		}
 	}
 
-	@Override
-	protected String getWorkspaceName() {
-		return "campaign"; 
-	}
 
 }

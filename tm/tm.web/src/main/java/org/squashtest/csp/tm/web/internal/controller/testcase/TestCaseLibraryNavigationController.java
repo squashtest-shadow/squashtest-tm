@@ -85,10 +85,7 @@ public class TestCaseLibraryNavigationController extends
 		return testCaseLibraryNavigationService;
 	}
 
-	@Override
-	protected String getEditFolderViewName() {
-		return "fragment/generics/edit-folder";
-	}
+	
 
 	@Override
 	protected JsTreeNode createTreeNodeFromLibraryNode(TestCaseLibraryNode node) {
@@ -226,9 +223,6 @@ public class TestCaseLibraryNavigationController extends
 
 	}
 
-	@Override
-	protected String getWorkspaceName() {
-		return "test-case";
-	}
+	
 
 }

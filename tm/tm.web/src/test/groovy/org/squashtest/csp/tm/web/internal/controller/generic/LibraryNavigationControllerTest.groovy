@@ -98,18 +98,6 @@ class LibraryNavigationControllerTest extends Specification {
 	}
 
 
-	def "should return folder page fragment"() {
-		given:
-		DummyFolder f = Mock()
-		service.findFolder(15) >> f
-
-		when:
-		ModelAndView res = controller.showFolder(15)
-
-		then:
-		res.viewName == "folderview"
-		res.modelMap['folder'] == f
-	}
 }
 
 class DummyController extends LibraryNavigationController<DummyLibrary, DummyFolder, DummyNode> {
@@ -123,9 +111,7 @@ class DummyController extends LibraryNavigationController<DummyLibrary, DummyFol
 		new JsTreeNode()
 	}
 
-	String getEditFolderViewName() {
-		"folderview"
-	}
+	
 	@Override
 	protected JsTreeNode createJsTreeNode(DummyNode resource) {
 		return null ;
@@ -135,11 +121,7 @@ class DummyController extends LibraryNavigationController<DummyLibrary, DummyFol
 	protected String getShowLibraryViewName() {
 		return "libraryPage";
 	}
-	@Override
-	protected String getWorkspaceName() {
-		return "workspaceName";
-	}
-
+	
 	@Override
 	JsTreeNode createTreeNodeFromLibraryNode(DummyNode resource) {
 		null

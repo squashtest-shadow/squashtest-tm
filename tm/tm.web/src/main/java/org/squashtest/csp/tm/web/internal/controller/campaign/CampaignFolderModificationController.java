@@ -42,4 +42,9 @@ public class CampaignFolderModificationController extends FolderModificationCont
 		this.folderModificationService = folderModificationService;
 	}
 
+	@Override
+	protected String getWorkspaceName() {
+		return "campaign";
+	}
+
 }

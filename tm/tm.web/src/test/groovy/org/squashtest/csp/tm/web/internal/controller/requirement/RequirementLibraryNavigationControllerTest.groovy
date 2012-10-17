@@ -141,17 +141,5 @@ class RequirementLibraryNavigationControllerTest  extends Specification {
 		res.attr['rel'] == "folder"
 	}
 
-	def "should return folder page fragment"() {
-		given:
-		RequirementFolder f = Mock()
-		requirementLibraryNavigationService.findFolder(15) >> f
-
-		when:
-		ModelAndView res = controller.showFolder(15)
-
-		then:
-		res.viewName == "fragment/requirements/edit-folder"
-		res.modelMap['folder'] == f
-	}
-
+	
 }

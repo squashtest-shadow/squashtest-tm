@@ -42,4 +42,9 @@ public class RequirementFolderModificationController extends FolderModificationC
 		this.folderModificationService = folderModificationService;
 	}
 
+	@Override
+	protected String getWorkspaceName() {
+		return "requirement";
+	}
+
 }

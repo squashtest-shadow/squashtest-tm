@@ -135,11 +135,6 @@ public class RequirementLibraryNavigationController extends
 		return requirementLibraryTreeNodeBuilder.get().setNode(resource).build();
 	}
 
-	@Override
-	protected String getEditFolderViewName() {
-		return "fragment/requirements/edit-folder";
-	}
-
 	@Deprecated
 	@RequestMapping(method = RequestMethod.GET, params = "show-requirement")
 	public final ModelAndView showLibraryWithOpenRequirement(@PathVariable long libraryId,
@@ -219,11 +214,6 @@ public class RequirementLibraryNavigationController extends
 				driveNodeBuilder.get());
 
 		return listBuilder.setModel(linkableLibraries).build();
-	}
-
-	@Override
-	protected String getWorkspaceName() {
-		return "requirement";
 	}
 
 }

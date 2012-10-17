@@ -246,7 +246,10 @@
 			/>
 			
 			<%----------------------------- /TEST AUTOMATION PROJECT -------------------------------------------%>					
-					
+			<%----------------------------- ATTACHMENT -------------------------------------------%>
+			
+			<comp:attachment-bloc editable="${ true }" entity="${ adminproject.project }" workspaceName=""/>
+			<%----------------------------- /ATTACHMENT -------------------------------------------%>
 			<%----------------------------------- add User Popup-----------------------------------------------%>
 		<comp:popup id="add-permission-dialog"
 				titleKey="title.AddPermission" isContextual="true"

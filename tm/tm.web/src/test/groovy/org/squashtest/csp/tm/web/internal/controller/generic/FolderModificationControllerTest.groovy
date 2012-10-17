@@ -66,4 +66,10 @@ class DummyFolderModificationController extends FolderModificationController<Tes
 	protected FolderModificationService<TestCaseFolder> getFolderModificationService() {
 		return service;
 	}
+	
+	@Override
+	protected String getWorkspaceName() {
+		return "workspace";
+	}
+
 }

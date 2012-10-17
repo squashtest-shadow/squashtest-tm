@@ -149,26 +149,7 @@ public abstract class LibraryNavigationController<LIBRARY extends Library<? exte
 		return model;
 	}
 
-	@Deprecated
-	@RequestMapping(value = "/folders/{folderId}", method = RequestMethod.GET)
-	public final ModelAndView showFolder(@PathVariable long folderId) {
-		FOLDER folder = getLibraryNavigationService().findFolder(folderId);
-
-		ModelAndView mav = new ModelAndView(getEditFolderViewName());
-		mav.addObject("folder", folder);
-		mav.addObject("workspaceName", getWorkspaceName());
-		return mav;
-	}
-
-	/**
-	 * Returns the logical name of the fragment view which should be used to show / edit folders.
-	 */
-	protected abstract String getEditFolderViewName();
-	/**
-	 * Returns the logical name of the concerned workspace.
-	 */
-	protected abstract String getWorkspaceName();
-
+	
 	@ExceptionHandler(BindException.class)
 	public @ResponseBody
 	Serializable handleValidationException(BindException ex) {

@@ -140,19 +140,6 @@ class TestCaseLibraryNavigationControllerTest extends Specification {
 		res.attr['resId'] == "60"
 	}
 
-	def "should return folder page fragment"() {
-		given:
-		TestCaseFolder f = Mock()
-		testCaseLibraryNavigationService.findFolder(15) >> f
-
-		when:
-		ModelAndView res = controller.showFolder(15)
-
-		then:
-		res.viewName == "fragment/generics/edit-folder"
-		res.modelMap['folder'] == f
-	}
-
 	def "should create test case in folder and return test case model"() {
 		given:
 		TestCase tc = Mock()

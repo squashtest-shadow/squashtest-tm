@@ -42,4 +42,9 @@ public class TestCaseFolderModificationController extends FolderModificationCont
 		this.folderModificationService = folderModificationService;
 	}
 
+	@Override
+	protected String getWorkspaceName() {
+		return "test-case";
+	}
+
 }

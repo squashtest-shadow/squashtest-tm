@@ -34,7 +34,7 @@
 
 
  --%>
- 
+ <c:set var="workspaceColor" value="blue" />
  <c:choose>
  	<c:when test="${workspace =='test-case'}">
  		<c:set var="workspaceColor" value="green" />
