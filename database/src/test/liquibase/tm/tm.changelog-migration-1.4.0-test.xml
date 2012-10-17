@@ -29,7 +29,7 @@
      <changeSet id="1.4.0.feat-1513-test-01" author="mpagnon">
 		<comment>We save data from ISSUE before it is migrated</comment>
 		<sql>
-			CREATE TEMPORARY TABLE `KEYVAL` (
+			CREATE TABLE `KEYVAL` (
 			`NAME` VARCHAR(25) NULL DEFAULT NULL,
 			`TOT` BIGINT(20) NULL DEFAULT 0
 			);
@@ -48,6 +48,10 @@
 		</sql>
 		<sql>
 			insert into KEYVAL (`NAME`, `TOT`)
+			select ('PROJECT'), count(*) from PROJECT;
+		</sql>
+		<sql>
+			insert into KEYVAL (`NAME`, `TOT`)
 			select ('ATTLIST'), count(*) from ATTACHMENT_LIST;
 		</sql>
 	</changeSet>
@@ -59,16 +63,20 @@
 	<changeSet id="1.4.0.feat-1513-test-02" author="mpagnon">
 		<preConditions>
 			<sqlCheck expectedResult="0">
-			select (count(actualAttlist.ATTACHMENT_LIST_ID) - prevAttlist.TOT - sr.TOT - cf.TOT - tcf.TOT )
-			from KEYVAL sr, KEYVAL cf, KEYVAL tcf ,  KEYVAL prevAttlist, ATTACHMENT_LIST actualAttlist
+			select (count(actualAttlist.ATTACHMENT_LIST_ID) - prevAttlist.TOT - simpleResource.TOT - campaignFolder.TOT - testCaseFolder.TOT - project.TOT)
+			from KEYVAL simpleResource, KEYVAL campaignFolder, KEYVAL testCaseFolder , KEYVAL project, KEYVAL prevAttlist, ATTACHMENT_LIST actualAttlist
 			where prevAttlist.NAME = 'ATTLIST'
-			and sr.NAME = 'SR'
-			and cf.NAME = 'CF'
-			and tcf.NAME = 'TCF'
+			and simpleResource.NAME = 'SR'
+			and campaignFolder.NAME = 'CF'
+			and testCaseFolder.NAME = 'TCF'
+			and project.NAME = 'PROJECT'
 			;
 			</sqlCheck>
 		</preConditions>
 		<comment>We check that each test case library node has an attachment list</comment>
+		<sql>
+			drop table `KEYVAL`;
+		</sql>
 	</changeSet>
 
 </databaseChangeLog>

@@ -42,6 +42,8 @@ import org.hibernate.validator.constraints.NotBlank;
 import org.squashtest.csp.core.bugtracker.domain.BugTracker;
 import org.squashtest.csp.core.domain.Identified;
 import org.squashtest.csp.tm.domain.NoBugTrackerBindingException;
+import org.squashtest.csp.tm.domain.attachment.AttachmentHolder;
+import org.squashtest.csp.tm.domain.attachment.AttachmentList;
 import org.squashtest.csp.tm.domain.audit.Auditable;
 import org.squashtest.csp.tm.domain.bugtracker.BugTrackerBinding;
 import org.squashtest.csp.tm.domain.campaign.CampaignLibrary;
@@ -53,7 +55,7 @@ import org.squashtest.csp.tm.domain.testcase.TestCaseLibrary;
 
 @Auditable
 @Entity
-public class Project implements Identified {
+public class Project implements Identified , AttachmentHolder{
 	@Id
 	@GeneratedValue
 	@Column(name = "PROJECT_ID")
@@ -92,6 +94,10 @@ public class Project implements Identified {
 	
 	@Column(name="TEST_AUTOMATION_ENABLED")
 	private boolean testAutomationEnabled = false;
+	
+	@OneToOne(cascade = { CascadeType.PERSIST, CascadeType.MERGE })
+	@JoinColumn(name = "ATTACHMENT_LIST_ID")
+	private final AttachmentList attachmentList = new AttachmentList();
 	
 	public String getLabel() {
 		return label;
@@ -183,6 +189,10 @@ public class Project implements Identified {
 		}
 	}
 	
+	@Override
+	public AttachmentList getAttachmentList() {
+		return attachmentList;
+	}
 	
 	/* **************************** test automation project section **************************** */
 	

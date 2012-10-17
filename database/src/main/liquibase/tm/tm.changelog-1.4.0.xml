@@ -26,7 +26,7 @@
 	xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-2.0.xsd">
 
 	<changeSet id="tm-1.4.0.feat-1513.01" author="mpagnon">
-		<comment>Add property attachment list in library nodes</comment>
+		<comment>Add property attachment list in library nodes and projects</comment>
 		<addColumn tableName="TEST_CASE_LIBRARY_NODE">
 			<column name="ATTACHMENT_LIST_ID" type="BIGINT"
 				remarks="clé étrangère vers un ATTACHMENT_LIST, l'entité qui gère les pièces jointes.">
@@ -46,6 +46,13 @@
 				remarks="clé étrangère vers un ATTACHMENT_LIST, l'entité qui gère les pièces jointes.">
 				<constraints nullable="true"
 					references="ATTACHMENT_LIST(ATTACHMENT_LIST_ID)" foreignKeyName="fk_resource_attachment_list" />
+			</column>
+		</addColumn>
+		<addColumn tableName="PROJECT">
+			<column name="ATTACHMENT_LIST_ID" type="BIGINT"
+				remarks="clé étrangère vers un ATTACHMENT_LIST, l'entité qui gère les pièces jointes.">
+				<constraints nullable="true"
+					references="ATTACHMENT_LIST(ATTACHMENT_LIST_ID)" foreignKeyName="fk_project_attachment_list" />
 			</column>
 		</addColumn>
 	</changeSet>
@@ -126,12 +133,34 @@
 		<dropColumn tableName="ATTACHMENT_LIST" columnName="RES_ID"/>
 	</changeSet>
 	<changeSet id="tm-1.4.0.feat-1513.06" author="mpagnon">
+		<comment>Add attachment lists to projects</comment>
+		<addColumn tableName="ATTACHMENT_LIST">
+			<column name="PROJECT_ID" type="BIGINT"
+				remarks="table provisoire pour se rapeller de à qui était destinée la nouvelle attachment_list">
+				<constraints nullable="true"
+					references="PROJECT(PROJECT_ID)" foreignKeyName="fk_project"/>
+			</column>
+		</addColumn>
+		<sql>
+			insert into ATTACHMENT_LIST (PROJECT_ID)
+			select PROJECT.PROJECT_ID from PROJECT;
+		</sql>
+		<sql>
+			update PROJECT 
+			set ATTACHMENT_LIST_ID = (select ATTACHMENT_LIST.ATTACHMENT_LIST_ID from ATTACHMENT_LIST where ATTACHMENT_LIST.PROJECT_ID = PROJECT.PROJECT_ID)
+			where ATTACHMENT_LIST_ID is null;
+		</sql>
+		<dropForeignKeyConstraint baseTableName="ATTACHMENT_LIST" constraintName="fk_project"/>
+		<dropColumn tableName="ATTACHMENT_LIST" columnName="PROJECT_ID"/>
+	</changeSet>
+	<changeSet id="tm-1.4.0.feat-1513.07" author="mpagnon">
 		<comment>Make attachment_list_ids new fks not nullable</comment>
 		<addNotNullConstraint tableName="TEST_CASE_LIBRARY_NODE" columnDataType="BIGINT" columnName="ATTACHMENT_LIST_ID"/>
 		<addNotNullConstraint tableName="CAMPAIGN_LIBRARY_NODE" columnDataType="BIGINT" columnName="ATTACHMENT_LIST_ID"/>
 		<addNotNullConstraint tableName="RESOURCE" columnDataType="BIGINT" columnName="ATTACHMENT_LIST_ID"/>
+		<addNotNullConstraint tableName="PROJECT" columnDataType="BIGINT" columnName="ATTACHMENT_LIST_ID"/>
 	</changeSet>
-	<changeSet id="tm-1.4.0.feat-1513.07" author="mpagnon">
+	<changeSet id="tm-1.4.0.feat-1513.08" author="mpagnon">
 		<comment>Drop previous attachment list ids</comment>
 		<dropForeignKeyConstraint baseTableName="TEST_CASE" constraintName="fk_test_case_attachment_list"/>
 		<dropForeignKeyConstraint baseTableName="CAMPAIGN" constraintName="fk_campaign_attachment_list"/>

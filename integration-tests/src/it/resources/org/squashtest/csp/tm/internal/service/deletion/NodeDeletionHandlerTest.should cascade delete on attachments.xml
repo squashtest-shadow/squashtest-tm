@@ -61,9 +61,9 @@
 	<CAMPAIGN_LIBRARY CL_ID="1" />
 	
 	<!-- =============================== ONE PROJECT ================================================ -->
-	
+	<ATTACHMENT_LIST ATTACHMENT_LIST_ID="432"/>
 	<PROJECT PROJECT_ID="1" NAME="base project" ACTIVE="TRUE" CREATED_BY="IT" CREATED_ON="2011-08-08" 
-			 CL_ID="1" RL_ID="1" TCL_ID="1"/>
+			 CL_ID="1" RL_ID="1" TCL_ID="1" ATTACHMENT_LIST_ID="432"/>
 
 	
 	
