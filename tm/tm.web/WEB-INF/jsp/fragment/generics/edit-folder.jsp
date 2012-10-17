@@ -62,5 +62,6 @@
 			<div id="folder-description">${ folder.description }</div>
 		</jsp:attribute>
 	</comp:toggle-panel>
+	<comp:attachment-bloc editable="${ editable }" workspaceName="${ workspaceName }" entity="${ folder }"/>
 </div>
 

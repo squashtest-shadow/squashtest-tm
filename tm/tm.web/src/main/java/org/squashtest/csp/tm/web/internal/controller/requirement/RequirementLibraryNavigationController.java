@@ -221,4 +221,9 @@ public class RequirementLibraryNavigationController extends
 		return listBuilder.setModel(linkableLibraries).build();
 	}
 
+	@Override
+	protected String getWorkspaceName() {
+		return "requirement";
+	}
+
 }

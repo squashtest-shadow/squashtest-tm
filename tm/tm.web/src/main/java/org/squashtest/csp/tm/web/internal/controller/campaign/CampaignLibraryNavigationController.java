@@ -345,4 +345,9 @@ LibraryNavigationController<CampaignLibrary, CampaignFolder, CampaignLibraryNode
 		}
 	}
 
+	@Override
+	protected String getWorkspaceName() {
+		return "campaign"; 
+	}
+
 }

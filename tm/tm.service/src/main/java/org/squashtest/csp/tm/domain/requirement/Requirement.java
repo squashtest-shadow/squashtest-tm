@@ -53,7 +53,7 @@ import org.squashtest.csp.tm.domain.attachment.AttachmentList;
 
 @Entity
 @PrimaryKeyJoinColumn(name = "RLN_ID")
-public class Requirement extends RequirementLibraryNode<RequirementVersion> implements AttachmentHolder {
+public class Requirement extends RequirementLibraryNode<RequirementVersion> {
 	/**
 	 * The resource of this requirement is the latest version of the requirement.
 	 */
@@ -99,12 +99,7 @@ public class Requirement extends RequirementLibraryNode<RequirementVersion> impl
 		visitor.visit(this);
 	}
 
-	@Override
-	public AttachmentList getAttachmentList() {
-		return resource.getAttachmentList();
-	}
-
-	/***
+		/***
 	 * @return the reference of the requirement
 	 */
 	public String getReference() {

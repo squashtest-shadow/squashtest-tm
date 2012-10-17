@@ -64,7 +64,7 @@ import org.squashtest.csp.tm.web.internal.model.jstree.JsTreeNode;
 public class TestCaseLibraryNavigationController extends
 		LibraryNavigationController<TestCaseLibrary, TestCaseFolder, TestCaseLibraryNode> {
 	public static final Logger LOGGER = LoggerFactory.getLogger(TestCaseLibraryNavigationController.class);
-
+	
 	@Inject
 	private Provider<TestCaseLibraryTreeNodeBuilder> testCaseLibraryTreeNodeBuilder;
 
@@ -74,8 +74,7 @@ public class TestCaseLibraryNavigationController extends
 	private TestCaseLibraryNavigationService testCaseLibraryNavigationService;
 	
 	private static final String JASPER_EXPORT_FILE = "/WEB-INF/reports/test-case-export.jasper";
-
-
+	
 	@ServiceReference
 	public void setTestCaseLibraryNavigationService(TestCaseLibraryNavigationService testCaseLibraryNavigationService) {
 		this.testCaseLibraryNavigationService = testCaseLibraryNavigationService;
@@ -225,6 +224,11 @@ public class TestCaseLibraryNavigationController extends
 		escapePrerequisiteAndSteps(dataSource);
 		printExport(dataSource, filename,JASPER_EXPORT_FILE, response, locale, format);
 
+	}
+
+	@Override
+	protected String getWorkspaceName() {
+		return "test-case";
 	}
 
 }

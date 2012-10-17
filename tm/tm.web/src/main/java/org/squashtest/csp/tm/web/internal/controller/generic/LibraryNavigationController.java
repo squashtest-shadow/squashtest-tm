@@ -89,7 +89,7 @@ public abstract class LibraryNavigationController<LIBRARY extends Library<? exte
 	private JasperReportsServiceImpl jrServices;
 	
 	private static final int EOF = -1;
-	
+
 	protected MessageSource getMessageSource(){
 		return messageSource;
 	}
@@ -156,6 +156,7 @@ public abstract class LibraryNavigationController<LIBRARY extends Library<? exte
 
 		ModelAndView mav = new ModelAndView(getEditFolderViewName());
 		mav.addObject("folder", folder);
+		mav.addObject("workspaceName", getWorkspaceName());
 		return mav;
 	}
 
@@ -163,6 +164,10 @@ public abstract class LibraryNavigationController<LIBRARY extends Library<? exte
 	 * Returns the logical name of the fragment view which should be used to show / edit folders.
 	 */
 	protected abstract String getEditFolderViewName();
+	/**
+	 * Returns the logical name of the concerned workspace.
+	 */
+	protected abstract String getWorkspaceName();
 
 	@ExceptionHandler(BindException.class)
 	public @ResponseBody
