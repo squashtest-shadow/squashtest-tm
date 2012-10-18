@@ -74,7 +74,35 @@
 				
 				function userTableRowCallback(row, data, displayIndex) {
 					addHLinkToUserLogin(row, data);
+					var template = '<a href="javascript:void(0)">'+'</a>';
+					var cells = $('td.delete-button', row);
+					cells.html(template);
+					cells.find('a').button({
+						text : false,
+						icons : {
+							primary : "ui-icon-minus"
+						}
+					});
+					bindDeleteButton(row,data);
 					return row;
+				}
+				
+				function bindDeleteButton(row,data) {
+					
+					var button = $('td.delete-button > a', row);
+					var id = getUserTableRowId(data);
+					
+					button.click(function(){
+						$.ajax({
+							  type: 'POST',
+							  url: "${userDetailsBaseUrl}/"+id+"/remove",
+							  data : {userId : id},
+							  dataType: 'json',
+							  success: function(){
+								  refreshUsers();
+							  }
+						});
+					});
 				}
 
 				<f:message var="newPassError" key="user.account.newpass.error"/>
@@ -169,7 +197,8 @@
 						<dt:column-definition targets="0" visible="false" />
 						<dt:column-definition targets="1" sortable="false" cssClass="select-handle centered" width="2em"/>
 						<dt:column-definition targets="2, 3, 4, 5, 6, 7, 8, 9" sortable="true" />
-						<dt:column-definition targets="10" sortable="true" width="2em" lastDef="true"/>
+						<dt:column-definition targets="10" sortable="true" width="2em"/>
+						<dt:column-definition targets="11" sortable="true" width="2em" lastDef="true" cssClass="centered delete-button"/>
 					</jsp:attribute>
 				</comp:decorate-ajax-table>	
 				

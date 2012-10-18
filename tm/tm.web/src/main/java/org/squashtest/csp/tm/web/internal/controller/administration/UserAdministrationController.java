@@ -95,7 +95,7 @@ public class UserAdministrationController {
 					item.getFirstName(),
 					item.getLastName(), item.getEmail(), formatDate(newP.getCreatedOn(), locale),
 					formatString(newP.getCreatedBy(), locale), formatDate(newP.getLastModifiedOn(), locale),
-					formatString(newP.getLastModifiedBy(), locale) };
+					formatString(newP.getLastModifiedBy(), locale),""};
 		}
 	}
 
@@ -161,6 +161,12 @@ public class UserAdministrationController {
 		return new DataTableFilterSorter(params, mapper);
 	}
 
+	@RequestMapping(value = USER_URL+"/remove", method = RequestMethod.POST)
+	public @ResponseBody
+	void removeUser(@PathVariable long userId) {
+		adminService.deactivateUser(userId);
+	}
+	
 	@RequestMapping(value = USER_URL+"/info", method = RequestMethod.GET)
 	public ModelAndView getUserInfos(@PathVariable long userId) {
 		User user = adminService.findUserById(userId);

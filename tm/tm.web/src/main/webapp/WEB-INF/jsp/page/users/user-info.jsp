@@ -56,6 +56,11 @@
 	<s:param name="userId" value="${user.id}" />
 </s:url>
 
+<s:url var="removeUserUrl" value="/administration/users/{userId}/remove">
+	<s:param name="userId" value="${user.id}" />
+</s:url>
+
+
 <f:message key="message.AllProjectsAlreadyLinkedToUser" var="emptyMessage" />
 
 <layout:info-page-layout titleKey="workspace.user.info.title">
@@ -92,7 +97,15 @@
 				$("#add-permission-button").button();
 				
 				$('#delete-user-button').button().click(function(){
-					document.location.href= "${usersUrl}";
+					$.ajax({
+						  type: 'POST',
+						  url: "${removeUserUrl}",
+						  data : {},
+						  dataType: 'json',
+						  success: function(){
+							  document.location.href= "${usersUrl}";
+						  }
+					});
 				});
 				
 				$("#back").button().click(function(){
