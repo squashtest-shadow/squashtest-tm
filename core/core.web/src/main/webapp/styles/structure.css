@@ -100,11 +100,11 @@ div#tree-pane.requirement-tree-pane {
 
 div#tabbed-pane {
 	bottom: 0px;
-	float: left;
 	margin-right: 0.5em;
 	position: absolute;
 	top: 1.3cm;
-	width: 97%;
+	left:0px;
+	right:0px;
 }
 
 div#slider {
@@ -312,9 +312,7 @@ div#contextual-content {
 	position: absolute;
 	right: 0;
 	top: 0.6cm;
-	float: left;
-	border-left: 1px;
-	width: 937px;
+	left : 310px;
 	z-index: 0;
 }
 
@@ -529,6 +527,12 @@ div#tree-panel-left {
 	width: 300px;
 	border-right: 1px solid #CCCCCC;
 	z-index: 0;
+}
+
+div.position-layout-fix{
+	position:relative;
+	height:100%;
+	width:100%;
 }
 
 div#tree { /*top:0.8cm;*/

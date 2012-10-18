@@ -72,7 +72,7 @@ squashtm.menubar = (function ($, window) {
 
 		$.get(params.url, function (json) {
 			if (json.enabled) {
-				jqCkbox.attr('checked', 'checked');
+				jqCkbox.prop('checked', true);
 
 				var link = $(params.linkSelector);
 				link.text(params.enabledTxt);

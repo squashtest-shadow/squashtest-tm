@@ -27,6 +27,13 @@
 
 <%-- the declaration oder does matter --%>
 
+<script type="text/javascript">
+	var require = { 
+	    baseUrl: '${pageContext.servletContext.contextPath}/scripts/'
+	}; 
+</script>
+<script type="text/javascript" src="${pageContext.servletContext.contextPath}/scripts/require-min.js" ></script>
+
 <jq:jquery-header />
 <ck:ckeditor-header />
 

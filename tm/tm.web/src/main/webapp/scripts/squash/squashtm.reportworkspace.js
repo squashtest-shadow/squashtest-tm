@@ -52,8 +52,11 @@ squashtm.reportWorkspace = (function ($) {
 			return;
 		}
 
-		$('.is-contextual').each(function () {
-			$(this).dialog("destroy").remove();
+		contextualList.each(function () {
+			var jqThis = $(this);
+			if (jqThis.hasClass("ui-dialog-content")){
+				jqThis.dialog("destroy").remove();
+			}
 		});
 	}
 	

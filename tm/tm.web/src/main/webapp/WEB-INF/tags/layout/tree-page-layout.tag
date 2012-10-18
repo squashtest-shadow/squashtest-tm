@@ -78,6 +78,7 @@ it will insert sub-page-layout.tag between the top template and this one." %>
 <%@ taglib prefix="tree" tagdir="/WEB-INF/tags/jstree" %>
 <%@ taglib prefix="dt" tagdir="/WEB-INF/tags/datatables" %>
 
+<c:url var="path" value="${ pageContext.servletContext.contextPath }"/>
 
 
 <c:set var="tabbedPaneSCript" >
@@ -91,62 +92,28 @@ it will insert sub-page-layout.tag between the top template and this one." %>
 			--%>
 			//The selected pane number. Always the first one (0) by default
 			selectedTab = 0;
-	
-			$(function() {
+
+			$(function(){
 				$( "#tabbed-pane" ).tabs();
-				makePanelResizable();
-				resizeRightPanel();
-				refreshOnResize();
-				/*  */
+				
+				require( ["common"], function(){
+					require(["squash/squashtm.tree-page-resizer"], function(resizer){
+						
+						var conf = {
+							leftSelector : "#tree-panel-left",
+							rightSelector : "#contextual-content"
+						}
+						
+						resizer.init(conf);
+					});					
+				});
+				
 				$( "#tabbed-pane" ).bind( "tabsselect", function(event, ui) {
 					  //change the number of the selected pane 
 					 selectedTab =  ui.index;
-					});
+				});			
 			});
-			
 
-			function makePanelResizable(){
-				$("#tree-panel-left").resizable({
-					minWidth: 270,
-					helper: "ui-resizable-helper",
-					alsoResize: "#contextual-content",
-					start: function(){ 
-						$("#contextual-content").css('visibility','hidden');
-						$("#tree-panel-left").css('visibility','hidden');
-					},
-					stop: function(event, ui) {
-						$("#tree-panel-left").css('height', '');
-						$("#contextual-content").css('height', '');
-						$("#tree-panel-left").resize();
-						resizeRightPanel();
-					}
-				});
-
-				$("#contextual-content").resizable();
-			}
-			
-			
-			function refreshOnResize() {
-				$(parent.window).resize(function() {
-					$("#tree-panel-left").css('height', '');
-					$("#contextual-content").css('height', '');
-					$("#tree-panel-left").resize();
-					resizeRightPanel();
-				});
-			}
-			
-			
-			function resizeRightPanel() {
-				var body = document.getElementById("tree-panel-left").parentNode;
-				var bodyWidth = body.offsetWidth;
-				var marginLeft = 10;
-				var leftPanelSize = $("#tree-panel-left").width();
-				var rightPanelWidth = bodyWidth - (marginLeft + leftPanelSize);
-				$("#contextual-content").width(rightPanelWidth);
-				$("#contextual-content").css('visibility','visible');
-				$("#tree-panel-left").css('visibility','visible');
-			}
-		
 		</script>	
 
 </c:set>
@@ -156,8 +123,7 @@ it will insert sub-page-layout.tag between the top template and this one." %>
 <c:when test="${not empty isSubPaged and isSubPaged }">
 <layout:sub-page-layout highlightedWorkspace="${ highlightedWorkspace }" titleKey="${ titleKey }" >
 	<jsp:attribute name="head" >	
-		<jsp:invoke fragment="head"/>
-		
+	 	
 		<%-- tabed tree panel specific code --%>
 		${tabbedPaneSCript}
 	
@@ -189,38 +155,40 @@ it will insert sub-page-layout.tag between the top template and this one." %>
 	<%-- now the actual specifics for the tree-page-layout itself --%>
 	
 			<div id="tree-panel-left">
-				<div id="tabbed-pane">
-				
-					<ul>
-						<li class="tab" > <a href="#tree-pane"><f:message key="tabbed_panel.tree.pane.label"/></a></li>
-						<li class="tab"> <a href="#search-pane"><f:message key="tabbed_panel.search.pane.label"/></a></li>
-						<c:if test="${ isRequirementPaneSearchOn eq 'true'}">
-							<li class="tab"> <a href="#requirement-search-pane"><f:message key="tabbed_panel.requirement.pane.label"/></a></li>
-						</c:if>						
-					</ul>
+				<div class="position-layout-fix">
+					<div id="tabbed-pane">
 					
-					
-					<div id="tree-pane" <c:if test="${ highlightedWorkspace == 'requirement'}"> class="requirement-tree-pane"</c:if> >
-						<jsp:invoke fragment="tree" />
-					</div>
-					
-					<div id="search-pane">
-						<c:choose>
-						<c:when test="${not empty linkable}">
-						<layout:search-panel workspace="${ highlightedWorkspace }" linkable="${ linkable }" />
-						</c:when>
-						<c:otherwise>
-						<layout:search-panel workspace="${ highlightedWorkspace }"/>
-						</c:otherwise>
-						</c:choose>
-					</div>
-					<c:if test="${ isRequirementPaneSearchOn eq 'true'}">
-						<div id="requirement-search-pane">
-							<layout:search-panel-by-requirement />
+						<ul>
+							<li class="tab" > <a href="#tree-pane"><f:message key="tabbed_panel.tree.pane.label"/></a></li>
+							<li class="tab"> <a href="#search-pane"><f:message key="tabbed_panel.search.pane.label"/></a></li>
+							<c:if test="${ isRequirementPaneSearchOn eq 'true'}">
+								<li class="tab"> <a href="#requirement-search-pane"><f:message key="tabbed_panel.requirement.pane.label"/></a></li>
+							</c:if>						
+						</ul>
+						
+						
+						<div id="tree-pane" <c:if test="${ highlightedWorkspace == 'requirement'}"> class="requirement-tree-pane"</c:if> >
+							<jsp:invoke fragment="tree" />
 						</div>
-					</c:if>
-					
-
+						
+						<div id="search-pane">
+							<c:choose>
+							<c:when test="${not empty linkable}">
+							<layout:search-panel workspace="${ highlightedWorkspace }" linkable="${ linkable }" />
+							</c:when>
+							<c:otherwise>
+							<layout:search-panel workspace="${ highlightedWorkspace }"/>
+							</c:otherwise>
+							</c:choose>
+						</div>
+						<c:if test="${ isRequirementPaneSearchOn eq 'true'}">
+							<div id="requirement-search-pane">
+								<layout:search-panel-by-requirement />
+							</div>
+						</c:if>
+						
+	
+					</div>
 				</div>
 			</div>
 			
@@ -243,7 +211,7 @@ it will insert sub-page-layout.tag between the top template and this one." %>
 <layout:common-import-outer-frame-layout highlightedWorkspace="${ highlightedWorkspace }" titleKey="${ titleKey }" >
 	<jsp:attribute name="head" >	
 		<jsp:invoke fragment="head"/>
-		
+
 		${tabbedPaneSCript}
 		
 	</jsp:attribute>
@@ -265,36 +233,38 @@ it will insert sub-page-layout.tag between the top template and this one." %>
 	<%-- now the actual specifics for the tree-page-layout itself --%>
 	
 			<div id="tree-panel-left">
-				<div id="tabbed-pane">
-				
-					<ul>
-						<li class="tab" > <a href="#tree-pane"><f:message key="tabbed_panel.tree.pane.label"/></a></li>
-						<li class="tab"> <a href="#search-pane"><f:message key="tabbed_panel.search.pane.label"/></a></li>
-						<c:if test="${ isRequirementPaneSearchOn eq 'true'}">
-							<li class="tab"> <a href="#requirement-search-pane"><f:message key="tabbed_panel.requirement.pane.label"/></a></li>
-						</c:if>
-					</ul>
-
-					<div id="tree-pane" <c:if test="${ highlightedWorkspace == 'requirement'}"> class="requirement-tree-pane"</c:if> >
-						<jsp:invoke fragment="tree" />
-					</div>
+				<div class="position-layout-fix">
+					<div id="tabbed-pane">
 					
-					<div id="search-pane">
-						<c:choose>
-						<c:when test="${not empty linkable}">
-						<layout:search-panel workspace="${ highlightedWorkspace }" linkable="${ linkable }" />
-						</c:when>
-						<c:otherwise>
-						<layout:search-panel workspace="${ highlightedWorkspace }"/>
-						</c:otherwise>
-						</c:choose>
-					</div>
-					<c:if test="${ isRequirementPaneSearchOn eq 'true'}">
-						<div id="requirement-search-pane">
-							<layout:search-panel-by-requirement />
+						<ul>
+							<li class="tab" > <a href="#tree-pane"><f:message key="tabbed_panel.tree.pane.label"/></a></li>
+							<li class="tab"> <a href="#search-pane"><f:message key="tabbed_panel.search.pane.label"/></a></li>
+							<c:if test="${ isRequirementPaneSearchOn eq 'true'}">
+								<li class="tab"> <a href="#requirement-search-pane"><f:message key="tabbed_panel.requirement.pane.label"/></a></li>
+							</c:if>
+						</ul>
+	
+						<div id="tree-pane" <c:if test="${ highlightedWorkspace == 'requirement'}"> class="requirement-tree-pane"</c:if> >
+							<jsp:invoke fragment="tree" />
 						</div>
-					</c:if>
-								
+						
+						<div id="search-pane">
+							<c:choose>
+							<c:when test="${not empty linkable}">
+							<layout:search-panel workspace="${ highlightedWorkspace }" linkable="${ linkable }" />
+							</c:when>
+							<c:otherwise>
+							<layout:search-panel workspace="${ highlightedWorkspace }"/>
+							</c:otherwise>
+							</c:choose>
+						</div>
+						<c:if test="${ isRequirementPaneSearchOn eq 'true'}">
+							<div id="requirement-search-pane">
+								<layout:search-panel-by-requirement />
+							</div>
+						</c:if>
+									
+					</div>
 				</div>
 			</div>
 			
