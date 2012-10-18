@@ -106,6 +106,26 @@ public class UserAccountServiceImpl implements UserAccountService {
 		user.setEmail(newEmail);
 	}
 
+	@Override
+	public void deactivateUser(long userId){
+		// fetch
+		User user = userDao.findById(userId);
+		// check
+		checkPermissions(user);
+		// proceed
+		user.setActive(false);
+	}
+	
+	@Override
+	public void activateUser(long userId){
+		// fetch
+		User user = userDao.findById(userId);
+		// check
+		checkPermissions(user);
+		// proceed
+		user.setActive(true);
+	}
+	
 	/* ************ surprise : no security check is needed for the methods below ********** */
 
 	@Override

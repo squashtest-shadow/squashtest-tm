@@ -107,6 +107,15 @@ public class AdministrationServiceImpl implements AdministrationService {
 		userAccountService.modifyUserEmail(userId, newEmail);
 	}
 
+	@Override
+	public void deactivateUser(long userId) {
+		userAccountService.deactivateUser(userId);
+	}
+	
+	@Override
+	public void activateUser(long userId) {
+		userAccountService.activateUser(userId);
+	}
 	/* ********************** proper admin section ******************* */
 	private static final String HAS_ROLE_ADMIN = "hasRole('ROLE_ADMIN')";
 	@Override

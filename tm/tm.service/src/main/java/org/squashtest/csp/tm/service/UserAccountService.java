@@ -38,6 +38,10 @@ public interface UserAccountService {
 	
 	void modifyUserEmail(long userId, String newEmail);
 	
+	void deactivateUser(long userId);
+
+	void activateUser(long userId);
+	
 	/* ** services using no ID : the modified user is the calling user ** */
 
 	User findCurrentUser();

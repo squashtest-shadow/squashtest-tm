@@ -90,6 +90,11 @@
 				refreshTableAndPopup();
 				setActiveValue();
 				$("#add-permission-button").button();
+				
+				$('#delete-user-button').button().click(function(){
+					document.location.href= "${usersUrl}";
+				});
+				
 				$("#back").button().click(function(){
 					document.location.href= "${usersUrl}";
 				});
@@ -179,9 +184,7 @@
 				squashtm.notification.showInfo("${passSuccess}");
 			}
 		</script>
-		
-
-	
+				
 		<div id="user-login-div"
 			class="ui-widget-header ui-corner-all ui-state-default fragment-header">
 
@@ -212,6 +215,7 @@
 			<comp:general-information-panel auditableEntity="${user}" />
 			</div>
 			<div class="toolbar-button-panel">
+				<input type="button" value='<f:message key="user.delete.label" />' id="delete-user-button" class="button"/>
 			</div>
 			<div style="clear: both;"></div>
 		</div>

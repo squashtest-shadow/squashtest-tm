@@ -61,7 +61,11 @@ public interface AdministrationService {
 	void modifyUserLogin(long userId, String newLogin);
 
 	void modifyUserEmail(long userId, String newEmail);
-
+	
+	void deactivateUser(long userId);
+	
+	void activateUser(long userId);
+	
 	/* ** now its admin only ** */
 
 	User findUserById(long userId);

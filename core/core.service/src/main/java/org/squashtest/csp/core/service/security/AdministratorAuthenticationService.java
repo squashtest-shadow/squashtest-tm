@@ -44,7 +44,6 @@ public interface AdministratorAuthenticationService extends UserAuthenticationSe
 	
 	void resetUserPassword(String login, String plainTextPassword);
 
-
 	
-
+	void deactivateAccount(String login);
 }

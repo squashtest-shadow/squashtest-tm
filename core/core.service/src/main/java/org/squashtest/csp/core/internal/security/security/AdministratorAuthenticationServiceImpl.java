@@ -103,4 +103,10 @@ public class AdministratorAuthenticationServiceImpl implements AdministratorAuth
 
 	}
 
+	@Override
+	public void deactivateAccount(String login){
+		UserDetails user = userManager.loadUserByUsername(login);
+		LOGGER.debug("deactivate account for user "+login);
+		userManager.deleteUser(login);
+	}
 }

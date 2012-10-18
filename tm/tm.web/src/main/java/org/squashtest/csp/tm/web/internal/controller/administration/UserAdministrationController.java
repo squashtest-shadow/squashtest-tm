@@ -143,7 +143,7 @@ public class UserAdministrationController {
 	void addNewUser(@ModelAttribute("add-user") @Valid UserForm userForm) {
 		adminService.addUser(userForm.getUser(), userForm.getGroupId(), userForm.getPassword());
 	}
-
+	
 	@RequestMapping(value = "/table", params = "sEcho", method = RequestMethod.GET)
 	public @ResponseBody
 	DataTableModel getTable(final DataTableDrawParameters params, final Locale locale) {

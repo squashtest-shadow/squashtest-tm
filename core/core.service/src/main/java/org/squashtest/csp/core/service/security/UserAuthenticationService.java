@@ -28,4 +28,5 @@ public interface UserAuthenticationService {
 	void setUserPassword(String userLogin, String plainOldPassword, String plainNewPassword);
 	
 	void changeUserlogin(String newLogin, String oldLogin);
+
 }
