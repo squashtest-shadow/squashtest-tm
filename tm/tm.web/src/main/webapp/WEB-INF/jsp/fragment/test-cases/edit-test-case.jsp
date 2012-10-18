@@ -133,8 +133,6 @@
 
 <%-- ----------------------------------- Init ----------------------------------------------%>
 
-
-
 <script type="text/javascript">
 $(function() {
 	<%-- single step removal --%>
@@ -769,38 +767,22 @@ function addTestStepSuccessAnother(){
 											isAuto="${ testCase.importanceAuto }"
 											paramName="importanceAuto" />
 							</c:if>
-							
-							
 						</div>
 					</div>
-						<%-- ================================
-							Test Automation structure
-						================================== --%>
-			
+						<%-- Test Automation structure --%>
 					<c:if test="${testCase.project.testAutomationEnabled}">
 					<ta:testcase-script-elt-structure testCase="${testCase}" canModify="${writable}" testCaseUrl="${testCaseUrl}"/>
 					</c:if>
-					 
-						<%-- ================================
-							/Test Automation structure
-						================================== --%>
+					   <%--/Test Automation structure --%>
 				</div>
 	</jsp:attribute>
 		</comp:toggle-panel>
-		
-		<%-- ================================
-			Test Automation code
-		================================== --%>	
-		
+		<%-- Test Automation code --%>			
 		<c:if test="${testCase.project.testAutomationEnabled}">
 		<ta:testcase-script-elt-code testCase="${testCase}" canModify="${writable}" testCaseUrl="${testCaseUrl}"/>
 		</c:if>	
-		
-		<%-- ================================
-			/Test Automation code
-		================================== --%>				
-		
-		
+		<%-- /Test Automation code  --%>
+						
 		<script>
 	function refreshTCImportance(){
 		$.ajax({
@@ -920,15 +902,9 @@ function addTestStepSuccessAnother(){
 				<tr>
 					<th>Id(masked)</th>
 					<th>#</th>
-					<th><f:message
-									key="label.Project" />
-							</th>
-					<th><f:message
-									key="label.Name" />
-							</th>
-					<th><f:message
-									key="test-case.calling-test-cases.table.execmode.label" />
-							</th>				
+					<th><f:message key="label.Project" /></th>
+					<th><f:message key="label.Name" /></th>
+					<th><f:message key="test-case.calling-test-cases.table.execmode.label" /></th>				
 				</tr>
 			</thead>
 			<tbody>

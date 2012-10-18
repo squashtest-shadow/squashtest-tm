@@ -399,6 +399,10 @@ public class TestCase extends TestCaseLibraryNode implements AttachmentHolder {
 			throw new UnallowedTestAssociationException();
 		}
 	}
+	
+	public void removeAutomatedScript() {
+		this.automatedTest = null;
+	}
 
 	public boolean isAutomated() {
 		return (automatedTest != null && getProject().isTestAutomationEnabled());

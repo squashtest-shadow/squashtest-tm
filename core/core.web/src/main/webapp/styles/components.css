@@ -527,7 +527,7 @@ div.ta-projectsadd-listdiv .listdiv-item.selected{
 /*******************************
 	information panel / description panel
 ********************************/
-.ui-widget-content.information-panel a {
+.ui-widget-content.information-panel a, .ui-widget-content a.actionLink {
 	color: #555555;
 	font-size: 90%;
 	font-style: italic;

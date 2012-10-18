@@ -103,4 +103,10 @@ public interface CustomTestCaseModificationService extends TestCaseFinder {
 	
 	
 	AutomatedTest bindAutomatedTest(Long testCaseId, Long taProjectId, String testName);
+	
+	/**
+	 * Will delete the link 
+	 * @param testCaseId
+	 */
+	void removeAutomation(long testCaseId);
 }

@@ -354,4 +354,11 @@ public class CustomTestCaseModificationServiceImpl implements CustomTestCaseModi
 		
 		return persistedTest;
 	}
+
+	@Override
+	public void removeAutomation(long testCaseId) {
+		TestCase testCase = testCaseDao.findById(testCaseId);
+		testCase.removeAutomatedScript();
+		
+	}
 }

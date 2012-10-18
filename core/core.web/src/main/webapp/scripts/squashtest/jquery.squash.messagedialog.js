@@ -177,28 +177,3 @@
 	
 
 }(jQuery));	
-
-/*
-<div id="confirm-dialog" class="not-displayed popup-dialog" title="title">
-<strong>message</strong>
-<input:ok />
-<input:cancel />
-</div>
-<script>
-
-$(function(){
-var confirmHandler = function() {
-	actionAfterConfirm();
-};
-
-var dialog = $( "#confirm-dialog" );
-dialog.confirmDialog({confirm: confirmHandler});
-
-$('#button').click(function(){
-	dialog.confirmDialog( "open" );
-	return false;
-	
-});
-});
-</script>
-*/

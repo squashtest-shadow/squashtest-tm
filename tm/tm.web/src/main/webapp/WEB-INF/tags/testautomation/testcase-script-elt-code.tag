@@ -39,8 +39,6 @@
 <%@ taglib uri="http://java.sun.com/jsp/jstl/functions" prefix="fn" %>
 
 
-
-
 <c:if test="${canModify == true}">
 	<pop:popup id="ta-picker-popup" closeOnSuccess="false" openedBy="ta-picker-link"
 			   titleKey="test-case.testautomation.popup.title" 
@@ -81,24 +79,46 @@
 	</jsp:attribute>
 	
 	</pop:popup>
-		
+	
+<f:message var="deleteAutoTitle" key='title.confirmDeleteAutomatedTestLink'/>
+<div id="test-automation-removal-confirm-dialog" class="not-displayed popup-dialog" title="${ deleteAutoTitle }">
+<strong><f:message key='message.confirmDeleteAutomatedTestLink'/></strong>
+<input:ok />
+<input:confirm />
+</div>
+<script>
+
+
+</script>
 	<script type="text/javascript">
 
 		$(function(){
 
-		
-			var settings = {
+			var pickerSettings = {
 				selector : "#ta-picker-popup",
 				testAutomationURL : "${testCaseUrl}/test-automation/tests",
 				baseURL : "${pageContext.servletContext.contextPath}",
-				successCallback : function(newName){ $("#ta-picker-link").text(newName); },
+				successCallback : function(newName){ $("#ta-picker-link").text(newName); 
+				$("#remove-ta-link").show();},
 				messages : {
 					noTestSelected : '<f:message key="test-case.testautomation.popup.error.noselect"/>'
 				}
 			};
 			
-			new TestAutomationPicker(settings);
-
+			new TestAutomationPicker(pickerSettings);
+			
+			var removerSettings = {
+				linkSelector : "#remove-ta-link",
+				automatedTestRemovalUrl : "${testCaseUrl}/test-automation",
+				successCallback : function(newName){ $("#ta-picker-link").text("<f:message key='label.dot.pick'/>");
+				$("#remove-ta-link").hide();},
+				confirmPopupSelector : "#test-automation-removal-confirm-dialog"
+				
+			};
+			
+			new TestAutomationRemover(removerSettings);
+			
+			
 		});
 	</script>
 </c:if>

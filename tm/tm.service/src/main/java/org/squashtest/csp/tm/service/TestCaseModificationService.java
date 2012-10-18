@@ -43,4 +43,5 @@ public interface TestCaseModificationService extends CustomTestCaseModificationS
 	@PreAuthorize("hasPermission(#arg0, 'org.squashtest.csp.tm.domain.testcase.TestCase' , 'WRITE') or hasRole('ROLE_ADMIN')")
 	void changePrerequisite(long testCaseId, String newPrerequisite);
 
+
 }

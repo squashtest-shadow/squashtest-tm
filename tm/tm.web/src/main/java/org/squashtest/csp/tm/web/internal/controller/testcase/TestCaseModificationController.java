@@ -465,31 +465,6 @@ public class TestCaseModificationController {
 		}.buildDataModel(holder, filter.getFirstItemIndex() + 1, params.getsEcho());
 
 	}
-	
-	
-	//* ************************** test automation section **********************
-	
-
-	@RequestMapping(value="/test-automation/tests", method = RequestMethod.GET)
-	@ResponseBody
-	public Collection<TATestNode> findAssignableAutomatedTests(@PathVariable("testCaseId") Long testCaseId){
-		
-		Collection<TestAutomationProjectContent> projectContents = testCaseModificationService.findAssignableAutomationTests(testCaseId);
-		
-		return new TATestNodeListBuilder().build(projectContents);
-	}
-	
-	
-	@RequestMapping(value="/test-automation/tests", method = RequestMethod.POST, params = { "projectId", NAME_KEY})
-	@ResponseBody
-	public void bindAutomatedTest(@PathVariable("testCaseId") long testCaseId,@RequestParam("projectId") long projectId, @RequestParam(NAME_KEY) String testName){
-		
-		testCaseModificationService.bindAutomatedTest(testCaseId, projectId, testName);
-
-	}
-	
-	
-	//* ************************** / test automation section **********************
 
 	private CollectionSorting createPaging(final DataTableDrawParameters params, final DataTableMapper dtMapper) {
 		return new DataTableMapperCollectionSortingAdapter(params, dtMapper);

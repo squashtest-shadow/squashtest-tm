@@ -71,11 +71,11 @@
 <script type="text/javascript" src="${ pageContext.servletContext.contextPath }/scripts/squashtest/classes/ta-admin-panel.js"></script>
   
 <script type="text/javascript" src="${ pageContext.servletContext.contextPath }/scripts/squashtest/classes/ta-picker.js"></script>
+<script type="text/javascript" src="${ pageContext.servletContext.contextPath }/scripts/squashtest/classes/TestAutomationRemover.js"></script>
 
 
 <!--  =============================================== UNDER WORK =================================================================== -->
 <%-- nothing yet --%>
-
 <!--  ============================================== /UNDER WORK =================================================================== -->
 
 
