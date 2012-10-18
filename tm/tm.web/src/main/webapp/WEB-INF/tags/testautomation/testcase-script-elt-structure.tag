@@ -45,7 +45,7 @@
 	<c:choose >
 		<c:when test="${testCase.automatedTest != null}">
 			<a id="ta-picker-link" href="javascript:void(0);"><c:out value="${testCase.automatedTest.fullName}"/></a>
-			<c:if test="${ canModify }"><a id="remove-ta-link" href="javascript:void(0);">[<f:message key="label.Remove"/>]</a></c:if>
+			<c:if test="${ canModify }"><a id="remove-ta-link"  class="actionLink" href="javascript:void(0);">[<f:message key="label.Remove"/>]</a></c:if>
 		</c:when>
 		<c:otherwise>
 			<c:choose>

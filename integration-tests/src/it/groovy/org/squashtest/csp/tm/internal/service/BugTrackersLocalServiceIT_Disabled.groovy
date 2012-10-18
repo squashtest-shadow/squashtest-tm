@@ -470,9 +470,5 @@ class BugTrackersLocalServiceIT_Disabled extends DbunitServiceSpecification  {
 			issue!=null
 	}
 
-	
-	private Object findEntity(Class<?> entityClass, Long id){
-		return getSession().get(entityClass, id)
-	}
 
 }

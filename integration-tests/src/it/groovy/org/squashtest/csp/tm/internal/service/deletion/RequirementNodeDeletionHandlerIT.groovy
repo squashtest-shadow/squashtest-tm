@@ -129,30 +129,5 @@ public class RequirementNodeDeletionHandlerIT extends DbunitServiceSpecification
 		testCase.getImportance()== TestCaseImportance.LOW
 		
 	}
-	/*---------------------------------------------------UTILITIES----------------------------------------------------------------*/
-
-	private boolean found(String tableName, String idColumnName, Long id){
-		String sql = "select count(*) from "+tableName+" where "+idColumnName+" = :id";
-		Query query = getSession().createSQLQuery(sql)
-		query.setParameter("id", id)
-
-		def result = query.uniqueResult()
-		return (result != 0)
-	}
-
-	private boolean found(Class<?> entityClass, Long id){
-		return (getSession().get(entityClass, id) != null)
-	}
-
-	private boolean allDeleted(String className, List<Long> ids){
-		Query query = getSession().createQuery("from "+className+" where id in (:ids)")
-		query.setParameterList("ids", ids, new LongType())
-		List<?> result = query.list()
-
-		return result.isEmpty()
-	}
-
-	private Object findEntity(Class<?> entityClass, Long id){
-		return getSession().get(entityClass, id)
-	}
+	
 }

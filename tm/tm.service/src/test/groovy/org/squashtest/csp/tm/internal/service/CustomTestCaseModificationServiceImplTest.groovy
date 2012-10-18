@@ -260,4 +260,15 @@ class CustomTestCaseModificationServiceImplTest extends Specification {
 		then:
 		verifieds.totalNumberOfItems == 666
 	}
+	
+	def "should remove test case link to automated script"(){
+		given: "an automated test case"
+		TestCase testCase = Mock()
+		testCaseDao.findById(11L)>> testCase
+		
+		when:
+		service.removeAutomation(11L)
+		
+		then : 1 * testCase.removeAutomatedScript()
+	}
 }

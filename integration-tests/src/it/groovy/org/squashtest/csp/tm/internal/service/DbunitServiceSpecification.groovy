@@ -21,8 +21,12 @@
 package org.squashtest.csp.tm.internal.service
 
 
+import java.util.List;
+
 import javax.inject.Inject
 
+import org.hibernate.Query
+import org.hibernate.type.LongType
 import org.hibernate.Session
 import org.hibernate.SessionFactory
 import org.springframework.test.context.ContextConfiguration
@@ -45,5 +49,38 @@ abstract class DbunitServiceSpecification extends Specification {
 	protected Session getSession(){
 		return sessionFactory.getCurrentSession();
 	}
+	
+	/*-------------------------------------------Private stuff-----------------------------------*/
+	protected boolean found(String tableName, String idColumnName, Long id){
+		String sql = "select count(*) from "+tableName+" where "+idColumnName+" = :id";
+		Query query = getSession().createSQLQuery(sql);
+		query.setParameter("id", id);
 
+		def result = query.uniqueResult();
+		return (result != 0)
+	}
+
+	protected boolean found(Class<?> entityClass, Long id){
+		return (getSession().get(entityClass, id) != null)
+	}
+
+	protected boolean allDeleted(String className, List<Long> ids){
+		Query query = getSession().createQuery("from "+className+" where id in (:ids)")
+		query.setParameterList("ids", ids, new LongType())
+		List<?> result = query.list()
+
+		return result.isEmpty()
+	}
+
+	protected Object findEntity(Class<?> entityClass, Long id){
+		return getSession().get(entityClass, id);
+	}
+	
+	protected boolean allNotDeleted(String className, List<Long> ids){
+		Query query = getSession().createQuery("from "+className+" where id in (:ids)")
+		query.setParameterList("ids", ids, new LongType())
+		List<?> result = query.list()
+
+		return result.size() == ids.size()
+	}
 }

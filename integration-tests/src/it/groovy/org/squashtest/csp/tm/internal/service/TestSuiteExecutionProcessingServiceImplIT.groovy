@@ -101,20 +101,6 @@ class TestSuiteExecutionProcessingServiceImplIT extends DbunitServiceSpecificati
 		execution != null
 		execution.findFirstUnexecutedStep().getId() == 5
 	}
-	/* ************************** utilities ********************************* */
-
-	private boolean allDeleted(String className, List<Long> ids){
-		Query query = getSession().createQuery("from "+className+" where id in (:ids)")
-		query.setParameterList("ids", ids, new LongType())
-		List<?> result = query.list()
-
-		return result.isEmpty()
-	}
-	private boolean allNotDeleted(String className, List<Long> ids){
-		Query query = getSession().createQuery("from "+className+" where id in (:ids)")
-		query.setParameterList("ids", ids, new LongType())
-		List<?> result = query.list()
-
-		return result.size() == ids.size()
-	}
+	
+	
 }

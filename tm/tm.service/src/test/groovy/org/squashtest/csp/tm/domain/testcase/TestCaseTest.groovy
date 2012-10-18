@@ -26,9 +26,11 @@ import org.apache.commons.lang.NullArgumentException
 import org.squashtest.csp.tm.domain.RequirementAlreadyVerifiedException
 import org.squashtest.csp.tm.domain.RequirementVersionNotLinkableException
 import org.squashtest.csp.tm.domain.UnknownEntityException
+import org.squashtest.csp.tm.domain.project.Project;
 import org.squashtest.csp.tm.domain.requirement.Requirement
 import org.squashtest.csp.tm.domain.requirement.RequirementVersion
 import org.squashtest.csp.tm.domain.requirement.RequirementStatus
+import org.squashtest.csp.tm.domain.testautomation.AutomatedTest
 import org.squashtest.csp.tools.unittest.assertions.CollectionAssertions
 import org.squashtest.csp.tools.unittest.reflection.ReflectionCategory
 
@@ -356,5 +358,19 @@ class TestCaseTest extends Specification {
 
 		then:
 		testCase.verifiedRequirementVersions.containsExactly([verifiableVersion])
+	}
+	def "should remove automated script link"(){
+		given : 
+		TestCase automatedTestCase = new TestCase();
+		AutomatedTest automatedTest = new AutomatedTest();
+		use(ReflectionCategory){
+			TestCase.set field:"automatedTest", of:automatedTestCase, to: automatedTest
+		}
+		when :
+		automatedTestCase.removeAutomatedScript();
+		
+		then:
+		automatedTestCase.automatedTest == null;
+		
 	}
 }

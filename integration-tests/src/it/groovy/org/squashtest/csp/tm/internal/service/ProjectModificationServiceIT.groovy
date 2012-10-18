@@ -71,10 +71,5 @@ class ProjectModificationServiceIT extends DbunitServiceSpecification {
 			project.getBugtrackerBinding().getBugtracker().getId() == 2L
 		}
 		
-		private Object findEntity(Class<?> entityClass, Long id){
-			return getSession().get(entityClass, id);
-		}
-	
-
-
+		
 }

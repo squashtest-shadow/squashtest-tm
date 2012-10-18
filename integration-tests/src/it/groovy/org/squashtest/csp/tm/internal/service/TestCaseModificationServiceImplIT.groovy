@@ -20,13 +20,11 @@
  */
 package org.squashtest.csp.tm.internal.service
 
-
-
-
-
-
 import javax.inject.Inject;
 
+import org.junit.runner.RunWith;
+import org.spockframework.runtime.Sputnik;
+import org.springframework.transaction.annotation.Transactional;
 import org.squashtest.csp.tm.domain.DuplicateNameException;
 import org.squashtest.csp.tm.domain.testcase.TestCase;
 import org.squashtest.csp.tm.domain.testcase.TestCaseExecutionMode;
@@ -35,9 +33,14 @@ import org.squashtest.csp.tm.domain.testcase.ActionTestStep;
 import org.squashtest.csp.tm.service.TestCaseLibrariesCrudService;
 import org.squashtest.csp.tm.service.TestCaseLibraryNavigationService;
 import org.squashtest.csp.tm.service.TestCaseModificationService;
+import org.unitils.dbunit.annotation.DataSet;
 
+import spock.unitils.UnitilsSupport;
 
-class TestCaseModificationServiceImplIT extends HibernateServiceSpecification {
+@UnitilsSupport
+@RunWith(Sputnik)
+@Transactional
+class TestCaseModificationServiceImplIT extends DbunitServiceSpecification {
 
 	@Inject
 	private TestCaseModificationService service
@@ -365,25 +368,6 @@ class TestCaseModificationServiceImplIT extends HibernateServiceSpecification {
 
 
 
-	def "should allow to create a second test case having the same name than a previously removed test case"(){
-
-		given :
-		def tc = service.findById(testCaseId);
-
-		def tc2 = new TestCase();
-		tc2.name = tc.name;
-
-		navService.deleteNodes([Long.valueOf(testCaseId)])
-
-		when :
-		navService.addTestCaseToFolder(folderId, tc2);
-
-		then :
-		notThrown(DuplicateNameException)
-	}
-
-
-
 
 	def "should initialize a test case with his test steps"(){
 
@@ -443,4 +427,18 @@ class TestCaseModificationServiceImplIT extends HibernateServiceSpecification {
 		obj.size()==2
 		obj.collect {it.action } == ["action2", "action4"]
 	}
+	
+	@DataSet("TestCaseModificationServiceImplIT.should remove automated script link.xml")
+	def "should remove automated script link"(){
+		given :
+		def testCaseId = 11L
+		
+		when :
+		service.removeAutomation(testCaseId)
+		
+		then:
+		TestCase testCase = findEntity(TestCase.class, testCaseId)
+		testCase.getAutomatedTest() == null
+	}
+	
 }
