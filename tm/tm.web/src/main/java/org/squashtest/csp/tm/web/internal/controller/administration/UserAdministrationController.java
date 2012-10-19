@@ -151,7 +151,7 @@ public class UserAdministrationController {
 
 		CollectionSorting filter = createPaging(params, userMapper);
 
-		FilteredCollectionHolder<List<User>> holder = adminService.findAllUsersFiltered(filter);
+		FilteredCollectionHolder<List<User>> holder = adminService.findAllActiveUsersFiltered(filter);
 
 		return new UserDataTableModelBuilder(locale).buildDataModel(holder, filter.getFirstItemIndex() + 1,
 				params.getsEcho());

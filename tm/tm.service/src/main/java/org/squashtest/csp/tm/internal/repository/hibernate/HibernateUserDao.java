@@ -27,6 +27,7 @@ import org.hibernate.Criteria;
 import org.hibernate.Query;
 import org.hibernate.Session;
 import org.hibernate.criterion.Order;
+import org.hibernate.criterion.Restrictions;
 import org.springframework.stereotype.Repository;
 import org.squashtest.csp.tm.domain.LoginAlreadyExistsException;
 import org.squashtest.csp.tm.domain.users.User;
@@ -44,6 +45,39 @@ public class HibernateUserDao extends HibernateEntityDao<User> implements UserDa
 		return executeListNamedQuery("user.findAllUsers");
 	}
 
+	@Override
+	public List<User> findAllActiveUsersOrderedByLogin() {
+		return executeListNamedQuery("user.findAllActiveUsers");
+	}
+	
+	
+	@SuppressWarnings("unchecked")
+	@Override
+	public List<User> findAllActiveUsersFiltered(CollectionSorting filter) {
+		Session session = currentSession();
+		
+		String sortedAttribute = filter.getSortedAttribute();
+		String order = filter.getSortingOrder();
+		
+		Criteria crit = session.createCriteria(User.class, "User").add(Restrictions.eq("active", true));
+		
+		/* add ordering */
+		if (sortedAttribute != null) {
+			if (order.equals("asc")) {
+				crit.addOrder(Order.asc(sortedAttribute).ignoreCase());
+			} else {
+				crit.addOrder(Order.desc(sortedAttribute).ignoreCase());
+			}
+		}
+		
+		/* result range */
+		crit.setFirstResult(filter.getFirstItemIndex());
+		crit.setMaxResults(filter.getPageSize());
+
+		return crit.list();
+		
+	}
+	
 	@SuppressWarnings("unchecked")
 	@Override
 	public List<User> findAllUsersFiltered(CollectionSorting filter) {

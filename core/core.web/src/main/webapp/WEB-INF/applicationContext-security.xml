@@ -160,8 +160,7 @@
 		
 			<beans:property name="deleteUserSql">
 			<beans:value>
-				update from AUTH_USER
-				set ACTIVE = 0
+				delete from AUTH_USER
 				where LOGIN = ?
 			</beans:value>
 		</beans:property>

@@ -107,15 +107,7 @@ public class AdministrationServiceImpl implements AdministrationService {
 		userAccountService.modifyUserEmail(userId, newEmail);
 	}
 
-	@Override
-	public void deactivateUser(long userId) {
-		userAccountService.deactivateUser(userId);
-	}
-	
-	@Override
-	public void activateUser(long userId) {
-		userAccountService.activateUser(userId);
-	}
+
 	/* ********************** proper admin section ******************* */
 	private static final String HAS_ROLE_ADMIN = "hasRole('ROLE_ADMIN')";
 	@Override
@@ -132,8 +124,22 @@ public class AdministrationServiceImpl implements AdministrationService {
 
 	@Override
 	@PreAuthorize(HAS_ROLE_ADMIN)
+	public List<User> findAllActiveUsersOrderedByLogin() {
+		return  userDao.findAllActiveUsersOrderedByLogin();
+	}
+	
+	@Override
+	@PreAuthorize(HAS_ROLE_ADMIN)
 	public FilteredCollectionHolder<List<User>> findAllUsersFiltered(CollectionSorting filter) {
 		List<User> list = userDao.findAllUsersFiltered(filter);
+		long count = userDao.findAll().size();
+		return new FilteredCollectionHolder<List<User>>(count, list);
+	}
+	
+	@Override
+	@PreAuthorize(HAS_ROLE_ADMIN)
+	public FilteredCollectionHolder<List<User>> findAllActiveUsersFiltered(CollectionSorting filter) {
+		List<User> list = userDao.findAllActiveUsersFiltered(filter);
 		long count = userDao.findAll().size();
 		return new FilteredCollectionHolder<List<User>>(count, list);
 	}
@@ -175,6 +181,20 @@ public class AdministrationServiceImpl implements AdministrationService {
 		user.setGroup(group);
 	}
 
+	@Override
+	@PreAuthorize(HAS_ROLE_ADMIN)
+	public void deactivateUser(long userId) {
+		userAccountService.deactivateUser(userId);
+		User user = userDao.findById(userId);
+		adminService.deactivateAccount(user.getLogin());
+	}
+	
+	@Override
+	@PreAuthorize(HAS_ROLE_ADMIN)
+	public void activateUser(long userId) {
+		userAccountService.activateUser(userId);
+	}
+	
 	@Override
 	public List<Project> findAllProjects() {
 		return projectDao.findAll();

@@ -98,15 +98,15 @@ public class AdministratorAuthenticationServiceImpl implements AdministratorAuth
 		LOGGER.debug("change login for user "+oldLogin+" to "+newLogin);
 		userManager.deleteUser(oldLogin);
 		userManager.createUser(newUser);
-		
-		
-
 	}
 
 	@Override
 	public void deactivateAccount(String login){
-		UserDetails user = userManager.loadUserByUsername(login);
-		LOGGER.debug("deactivate account for user "+login);
+		UserDetails oldUser = userManager.loadUserByUsername(login);
 		userManager.deleteUser(login);
+		UserDetails newUser = new User(login, oldUser.getPassword(), false, oldUser.isAccountNonExpired(),
+				oldUser.isCredentialsNonExpired(), oldUser.isAccountNonLocked(), oldUser.getAuthorities());
+		LOGGER.debug("deactivate account for user "+login);
+		userManager.createUser(newUser);		
 	}
 }

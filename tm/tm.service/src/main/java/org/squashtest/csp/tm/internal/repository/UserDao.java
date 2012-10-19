@@ -30,8 +30,12 @@ public interface UserDao extends EntityDao<User> {
 
 	List<User> findAllUsersOrderedByLogin();
 
+	List<User> findAllActiveUsersOrderedByLogin();
+	
 	List<User> findAllUsersFiltered(CollectionSorting filter);
 
+	List<User> findAllActiveUsersFiltered(CollectionSorting filter);
+	
 	User findUserByLogin(String login);
 
 	List<User> findUsersByLoginList(List<String> idList);

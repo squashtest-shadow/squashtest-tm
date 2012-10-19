@@ -187,6 +187,7 @@
 
 		//Queries on User
 		@NamedQuery(name = "user.findAllUsers", query = "from User fetch all properties order by login"),
+		@NamedQuery(name = "user.findAllActiveUsers", query = "from User fetch all properties where active = true order by login"),
 		@NamedQuery(name = "user.findUsersByLoginList", query = "from User fetch all properties where login in (:userIds)"),
 		@NamedQuery(name = "user.findUserByLogin", query = "from User fetch all properties where login = :userLogin"),
 
@@ -239,6 +240,9 @@
 })
 package org.squashtest.csp.tm.internal.repository.hibernate;
 
+import java.util.List;
+
 import org.hibernate.annotations.NamedQueries;
 import org.hibernate.annotations.NamedQuery;
+import org.squashtest.csp.tm.domain.users.User;
 

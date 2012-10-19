@@ -61,18 +61,18 @@ public interface AdministrationService {
 	void modifyUserLogin(long userId, String newLogin);
 
 	void modifyUserEmail(long userId, String newEmail);
-	
-	void deactivateUser(long userId);
-	
-	void activateUser(long userId);
-	
+
 	/* ** now its admin only ** */
 
 	User findUserById(long userId);
 
 	List<User> findAllUsersOrderedByLogin();
 
+	List<User> findAllActiveUsersOrderedByLogin();
+	
 	FilteredCollectionHolder<List<User>> findAllUsersFiltered(CollectionSorting filter);
+
+	FilteredCollectionHolder<List<User>> findAllActiveUsersFiltered(CollectionSorting filter);
 
 	List<UsersGroup> findAllUsersGroupOrderedByQualifiedName();
 
@@ -91,4 +91,8 @@ public interface AdministrationService {
 	String findLoginMessage();
 
 	void resetUserPassword(long userId, String newPassword);
+
+	void deactivateUser(long userId);
+	
+	void activateUser(long userId);
 }
