@@ -83,14 +83,16 @@ public class IterationTestPlanManagerController {
 	}
 
 	private final DataTableMapper testPlanMapper = new DataTableMapper("unused", IterationTestPlanItem.class,
-			TestCase.class, Project.class, TestSuite.class).initMapping(10)
-			.mapAttribute(Project.class, 2, "name", String.class).mapAttribute(TestCase.class, 3, "name", String.class)
-			.mapAttribute(TestCase.class, 4, "importance", TestCaseImportance.class)
-			.mapAttribute(TestCase.class, 5, "executionMode", TestCaseExecutionMode.class)
-			.mapAttribute(IterationTestPlanItem.class, 6, "executionStatus", ExecutionStatus.class)
-			.mapAttribute(TestSuite.class, 7, "name", String.class)
-			.mapAttribute(IterationTestPlanItem.class, 8, "lastExecutedBy", String.class)
-			.mapAttribute(IterationTestPlanItem.class, 9, "lastExecutedOn", Date.class);
+			TestCase.class, Project.class, TestSuite.class).initMapping(11)
+			.mapAttribute(Project.class, 2, "name", String.class)
+			.mapAttribute(TestCase.class, 3, "reference", String.class)
+			.mapAttribute(TestCase.class, 4, "name", String.class)
+			.mapAttribute(TestCase.class, 5, "importance", TestCaseImportance.class)
+			.mapAttribute(TestCase.class, 6, "executionMode", TestCaseExecutionMode.class)
+			.mapAttribute(IterationTestPlanItem.class, 7, "executionStatus", ExecutionStatus.class)
+			.mapAttribute(TestSuite.class, 8, "name", String.class)
+			.mapAttribute(IterationTestPlanItem.class, 9, "lastExecutedBy", String.class)
+			.mapAttribute(IterationTestPlanItem.class, 10, "lastExecutedOn", Date.class);
 
 	@RequestMapping(value = "/iterations/{iterationId}/test-plan-manager", method = RequestMethod.GET)
 	public ModelAndView showManager(@PathVariable long iterationId) {
@@ -191,6 +193,7 @@ public class IterationTestPlanManagerController {
 			public Object[] buildItemData(IterationTestPlanItem item) {
 
 				String projectName;
+				String testCaseReference;
 				String testCaseName;
 				String testCaseExecutionMode;
 				String importance;
@@ -200,12 +203,14 @@ public class IterationTestPlanManagerController {
 
 				if (item.isTestCaseDeleted()) {
 					projectName = formatNoData(locale);
+					testCaseReference = formatNoData(locale);
 					testCaseName = formatDeleted(locale);
 					importance = formatNoData(locale);
 					testCaseExecutionMode = formatNoData(locale);
 					testCaseId = "";
 				} else {
 					projectName = item.getReferencedTestCase().getProject().getName();
+					testCaseReference = item.getReferencedTestCase().getReference();
 					testCaseName = item.getReferencedTestCase().getName();
 					importance = formatImportance(item.getReferencedTestCase().getImportance(), locale);
 					testCaseExecutionMode = formatExecutionMode(item.getReferencedTestCase().getExecutionMode(), locale);
@@ -214,8 +219,8 @@ public class IterationTestPlanManagerController {
 
 				testSuiteName = testSuiteName(item, locale);
 
-				return new Object[] { item.getId(), getCurrentIndex(), projectName, testCaseName, importance,
-						testCaseExecutionMode, testSuiteName, testCaseId, item.isTestCaseDeleted(), " "
+				return new Object[] { item.getId(), getCurrentIndex(), projectName, testCaseReference, testCaseName, 
+						importance, testCaseExecutionMode, testSuiteName, testCaseId, item.isTestCaseDeleted(), " "
 
 				};
 

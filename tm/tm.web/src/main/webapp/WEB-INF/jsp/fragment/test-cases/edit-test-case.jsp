@@ -884,14 +884,14 @@ function addTestStepSuccessAnother(){
 		<%--<jsp:attribute name="drawCallback">todo</jsp:attribute>--%>
 		<comp:decorate-ajax-table url="${ callingtestCasesTableUrl }"
 					tableId="calling-test-case-table" paginate="true">		
-			<jsp:attribute name="initialSort">[[3,'asc']]</jsp:attribute>
+			<jsp:attribute name="initialSort">[[4,'asc']]</jsp:attribute>
 			<jsp:attribute name="rowCallback">callingTestCasesTableRowCallback</jsp:attribute>
 			<jsp:attribute name="columnDefs">
 				<dt:column-definition targets="0" visible="false" sortable="false" />
 				<dt:column-definition targets="1" sortable="false"
 							cssClass="centered select-handle" width="2em" />
-				<dt:column-definition targets="2, 3" sortable="true" />
-				<dt:column-definition targets="4" sortable="true" visible="true"
+				<dt:column-definition targets="2, 3, 4" sortable="true" />
+				<dt:column-definition targets="5" sortable="true" visible="true"
 							lastDef="true" />
 			</jsp:attribute>
 		</comp:decorate-ajax-table>	
@@ -903,6 +903,7 @@ function addTestStepSuccessAnother(){
 					<th>Id(masked)</th>
 					<th>#</th>
 					<th><f:message key="label.Project" /></th>
+					<th><f:message key="test-case.reference.label" /></th>
 					<th><f:message key="label.Name" /></th>
 					<th><f:message key="test-case.calling-test-cases.table.execmode.label" /></th>				
 				</tr>

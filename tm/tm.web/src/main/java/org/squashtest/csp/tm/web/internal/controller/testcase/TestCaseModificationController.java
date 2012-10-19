@@ -106,9 +106,10 @@ public class TestCaseModificationController {
 			.mapAttribute(RequirementVersion.class, 7, "category", RequirementCategory.class);
 
 	private final DataTableMapper referencingTestCaseMapper = new DataTableMapper("referencing-test-cases",
-			TestCase.class, Project.class).initMapping(5).mapAttribute(Project.class, 2, NAME_KEY, String.class)
-			.mapAttribute(TestCase.class, 3, NAME_KEY, String.class)
-			.mapAttribute(TestCase.class, 4, "executionMode", TestCaseExecutionMode.class);
+			TestCase.class, Project.class).initMapping(6).mapAttribute(Project.class, 2, NAME_KEY, String.class)
+			.mapAttribute(TestCase.class, 3, "reference", String.class)
+			.mapAttribute(TestCase.class, 4, NAME_KEY, String.class)
+			.mapAttribute(TestCase.class, 5, "executionMode", TestCaseExecutionMode.class);
 
 	private final DataTableMapper execsTableMapper = new DataTableMapper("executions", Execution.class, Project.class, Campaign.class, Iteration.class, TestSuite.class)
 			.initMapping(11).mapAttribute(Project.class, 1, NAME_KEY, String.class)
@@ -459,8 +460,8 @@ public class TestCaseModificationController {
 		return new DataTableModelHelper<TestCase>() {
 			@Override
 			public Object[] buildItemData(TestCase item) {
-				return new Object[] { item.getId(), getCurrentIndex(), item.getProject().getName(), item.getName(),
-						internationalizationHelper.internationalize(item.getExecutionMode(), locale) };
+				return new Object[] { item.getId(), getCurrentIndex(), item.getProject().getName(), item.getReference(),
+						item.getName(), internationalizationHelper.internationalize(item.getExecutionMode(), locale) };
 			}
 		}.buildDataModel(holder, filter.getFirstItemIndex() + 1, params.getsEcho());
 

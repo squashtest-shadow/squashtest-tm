@@ -63,7 +63,17 @@ public class ExProgressTestPlanDto {
 	}
 
 	public ExProgressTestPlanDto fillBasicInfo(IterationTestPlanItem testPlan) {
-		this.testCaseName = (testPlan.isTestCaseDeleted()) ? null : testPlan.getReferencedTestCase().getName();
+		
+		if(testPlan.isTestCaseDeleted()){
+			this.testCaseName = null;
+		} else {
+			String reference = testPlan.getReferencedTestCase().getReference();
+			if(reference.equals("")){
+				this.testCaseName = (testPlan.isTestCaseDeleted()) ? null : testPlan.getReferencedTestCase().getName();
+			} else {
+				this.testCaseName = (testPlan.isTestCaseDeleted()) ? null : reference + " - " + testPlan.getReferencedTestCase().getName();
+			}
+		}
 		this.executionStatus = testPlan.getExecutionStatus();
 		return this;
 	}
