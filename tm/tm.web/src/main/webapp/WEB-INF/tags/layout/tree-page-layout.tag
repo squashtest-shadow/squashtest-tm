@@ -123,7 +123,7 @@ it will insert sub-page-layout.tag between the top template and this one." %>
 <c:when test="${not empty isSubPaged and isSubPaged }">
 <layout:sub-page-layout highlightedWorkspace="${ highlightedWorkspace }" titleKey="${ titleKey }" >
 	<jsp:attribute name="head" >	
-	 	
+	 	<jsp:invoke fragment="head"/>
 		<%-- tabed tree panel specific code --%>
 		${tabbedPaneSCript}
 	
