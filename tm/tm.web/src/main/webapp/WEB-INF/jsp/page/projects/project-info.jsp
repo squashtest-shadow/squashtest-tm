@@ -127,7 +127,7 @@
 			<div class="fragment-tabs fragment-body">
 			<ul>
 				<li><a href="#main-informations"><f:message key="tabs.label.mainpanel"/></a></li>
-			
+				<li><a href=""><f:message key="tabs.label.cufbinding"/></a></li>
 			
 			</ul>
 		
@@ -457,4 +457,4 @@
 </sec:authorize>
 <!-- ------------------------------------END RENAME POPUP------------------------------------------------------- -->
 
-<%--<comp:fragment-tabs />  --%> 
+<comp:fragment-tabs />  
