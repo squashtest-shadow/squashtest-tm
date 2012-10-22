@@ -28,7 +28,7 @@ import org.squashtest.tm.core.foundation.i18n.Internationalizable;
  */
 public enum InputType implements Internationalizable {
     PLAIN_TEXT,
-    COMBOBOX,
+    CHECKBOX,
     DROPDOWN_LIST;
 
 	/**
