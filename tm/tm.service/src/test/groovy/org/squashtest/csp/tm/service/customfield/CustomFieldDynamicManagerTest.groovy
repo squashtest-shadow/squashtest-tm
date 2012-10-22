@@ -24,7 +24,7 @@ package org.squashtest.csp.tm.service.customfield
 import java.util.List;
 
 import org.squashtest.csp.tm.domain.customfield.CustomField;
-import org.squashtest.csp.tm.service.DynamicManagerInterfaceSpecification
+import org.squashtest.csp.tm.service.DynamicManagerInterfaceSpecification;
 
 import spock.lang.Shared;
 

@@ -43,7 +43,6 @@ public class HibernateProjectDeletionDao extends HibernateDeletionDao implements
 	}
 	private static final String CLASS_NAME = "className";
 	public void removeProject(Object entity) {
-				
 		//Set Queries
 		Query removeARSE = getSession().createSQLQuery(
 				NativeQueries.aclResponsibilityScopeEntry_remove_all_concerning_class);
