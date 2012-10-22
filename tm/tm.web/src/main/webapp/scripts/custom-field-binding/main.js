@@ -1,4 +1,4 @@
-/**
+/*
  *     This file is part of the Squashtest platform.
  *     Copyright (C) 2010 - 2012 Henix, henix.fr
  *
@@ -18,25 +18,15 @@
  *     You should have received a copy of the GNU Lesser General Public License
  *     along with this software.  If not, see <http://www.gnu.org/licenses/>.
  */
-package org.squashtest.csp.tm.internal.repository;
 
-import java.util.List;
+require(["module", "jquery", "jqueryui"], function(module, $){
+	
+	$(function(){
 
-import org.squashtest.csp.tm.domain.customfield.BindableEntity;
-import org.squashtest.csp.tm.domain.customfield.CustomFieldBinding;
-import org.squashtest.tm.core.foundation.collection.Paging;
-
-public interface CustomFieldBindingDao extends CustomCustomFieldBindingDao{
+		tcSettings = module.config().tcSettings;		
+		$("#test-cases-binding").togglePanel(tcSettings);
+		
+	});
 	
-
-	List<CustomFieldBinding> findAllForProject(long projectId);
+});
 	
-	List<CustomFieldBinding> findAllForProjectAndEntity(long projectId, BindableEntity boundEntity);
-	
-	List<CustomFieldBinding> findAllForProjectAndEntity(long projectId, BindableEntity boundEntity, Paging paging);
-	
-	void persist(CustomFieldBinding binding);
-	
-	int countAllForProjectAndEntity(long projectId, BindableEntity boundEntity);
-	
-}

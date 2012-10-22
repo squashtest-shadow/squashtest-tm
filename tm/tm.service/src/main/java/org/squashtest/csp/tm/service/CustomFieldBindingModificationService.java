@@ -37,7 +37,7 @@ public interface CustomFieldBindingModificationService extends CustomFieldBindin
 	
 	/**
 	 * Will attach a {@link CustomField} to a {@link Project}. The details and conditions of that binding 
-	 * is described in the {@link CustomFieldBinding} newBinding. 
+	 * is described in the {@link CustomFieldBinding} newBinding. The new binding will be inserted last.
 	 * 
 	 * @param projectId
 	 * @param customFieldId

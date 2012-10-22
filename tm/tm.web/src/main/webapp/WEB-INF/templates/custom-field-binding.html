@@ -20,6 +20,72 @@
         along with this software.  If not, see <http://www.gnu.org/licenses/>.
 
 -->
-<!DOCTYPE html SYSTEM "http://www.thymeleaf.org/dtd/xhtml1-transitional-thymeleaf-spring3-3.dtd">
-<html xmlns="http://www.w3.org/1999/xhtml" xmlns:th="http://www.thymeleaf.org">
-<head>
+<div th:remove="all">
+	<!--  documentation : 
+			that template cannot be displayed natively.
+	 -->
+
+</div>
+
+
+<script type="text/javascript" th:inline="javascript">
+//<![CDATA[
+
+    $(function(){
+
+    	var config = {
+    		
+    		projectId : /* ${projectId}, */10,
+    			
+    		tableGeneral : {
+    			languageUrl: /*[[ @{/datatables/messages} ]]*/ "http://localhost:8080/squash/datatables/messages", 
+        		baseAjaxSource: /*[[ @{/custom-fields-binding} ]]*/ "http://localhost:8080/squash/custom-fields-binding",
+    		},
+    		
+    		tcSettings : {
+	    		panel : {
+	    			initiallyOpen : /*[[  (${testCaseBindings.isEmpty()}) ? 'false,' : 'true,'  ]]*/true,
+    				title : /*[[ #{project.cufbinding.test-cases.panel.title}  ]]*/"test case bindings"
+	    		},
+	    		table : {
+	    			entityType : /* ${org.squashtest.csp.tm.domain.customfield.BindableEntity.TEST_CASE.name} */"TEST_CASE"
+	    		}
+	    	}
+	    	
+    	}
+    	
+    	require(["http://localhost/scripts/main.js"], function(main){
+    		main.setConfig(config).init();
+    	});
+    		   	
+    });
+
+//]]>
+
+</script>
+
+<div class="toggle-panel">
+	<span class="not-displayed toggle-panel-buttons">
+		<input type="button" th:value="#{ label.CustomField.add }" value="ajouter"/>
+	</span>
+	<div id="test-cases-binding" class="toggle-panel-main">
+	
+		<table id="test-cases-binding-table">
+			<tr>
+				<td>id</td>
+				<td>#</td>
+				<td>name</td>
+				<td>entity type</td>
+				<td>project id</td>
+				<td>del</td>
+			</tr>
+			<tr>
+				
+			
+			</tr>
+		</table>
+	
+	</div>
+
+</div>
+

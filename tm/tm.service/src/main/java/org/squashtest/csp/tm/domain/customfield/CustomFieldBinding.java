@@ -70,6 +70,11 @@ public class CustomFieldBinding {
 	@JoinColumn(name = "BOUND_PROJECT_ID", updatable = false)
 	@NotNull
 	private Project boundProject;
+	
+	
+	@Column
+	private int position=0;
+	
 
 	/**
 	 * @return the renderingLocations
@@ -108,6 +113,14 @@ public class CustomFieldBinding {
 
 	public void setRenderingLocations(Set<RenderingLocation> renderingLocations) {
 		this.renderingLocations = renderingLocations;
+	}
+
+	public int getPosition() {
+		return position;
+	}
+
+	public void setPosition(int position) {
+		this.position = position;
 	}
 	
 	

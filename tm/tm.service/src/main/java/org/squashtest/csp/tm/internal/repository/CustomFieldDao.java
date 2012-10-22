@@ -21,6 +21,7 @@
 package org.squashtest.csp.tm.internal.repository;
 import java.util.List;
 
+import org.squashtest.csp.tm.domain.customfield.BindableEntity;
 import org.squashtest.csp.tm.domain.customfield.CustomField;
 import org.squashtest.csp.tm.infrastructure.filter.CollectionSorting;
 import org.squashtest.csp.tm.internal.repository.CustomCustomFieldDao;
@@ -30,8 +31,23 @@ public interface CustomFieldDao extends CustomCustomFieldDao{
 
 	List<CustomField> findAll();
 	
+	
+	/**
+	 * Will return the list of custom fields that can be bound to the given project and 
+	 * the given bindable entity (ie, those who aren't bound yet).
+	 * 
+	 * 
+	 * @param projectId
+	 * @param bindableEntity
+	 * @return
+	 */
+	List<CustomField> findBindableCustomFields(Long projectId, BindableEntity bindableEntity);
+	
+	
 	void persist(CustomField customField);
 	
+	
 	CustomField findById(long id);
+	
 	
 }

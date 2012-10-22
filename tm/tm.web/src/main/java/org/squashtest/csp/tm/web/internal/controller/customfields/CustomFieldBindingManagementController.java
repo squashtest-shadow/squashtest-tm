@@ -20,23 +20,36 @@
  */
 package org.squashtest.csp.tm.web.internal.controller.customfields;
 
+import java.util.HashMap;
 import java.util.LinkedList;
 import java.util.List;
+import java.util.Locale;
+import java.util.Map;
 
 import javax.annotation.PostConstruct;
 import javax.inject.Inject;
 
+import org.springframework.context.MessageSource;
 import org.springframework.osgi.extensions.annotation.ServiceReference;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.bind.annotation.ResponseBody;
+import org.springframework.web.servlet.ModelAndView;
 import org.squashtest.csp.tm.domain.customfield.BindableEntity;
 import org.squashtest.csp.tm.domain.customfield.CustomFieldBinding;
+import org.squashtest.csp.tm.domain.execution.ExecutionStep;
+import org.squashtest.csp.tm.infrastructure.filter.FilteredCollectionHolder;
 import org.squashtest.csp.tm.service.CustomFieldBindingModificationService;
 import org.squashtest.csp.tm.web.internal.i18n.InternationalizationHelper;
 import org.squashtest.csp.tm.web.internal.model.customfields.CustomFieldBindingModel;
 import org.squashtest.csp.tm.web.internal.model.customfields.CustomFieldJsonConverter;
+import org.squashtest.csp.tm.web.internal.model.datatable.DataTableDrawParameters;
+import org.squashtest.csp.tm.web.internal.model.datatable.DataTableDrawParametersPagingAdapter;
+import org.squashtest.csp.tm.web.internal.model.datatable.DataTableModel;
+import org.squashtest.csp.tm.web.internal.model.datatable.DataTableModelHelper;
+import org.squashtest.tm.core.foundation.collection.PagedCollectionHolder;
 
 
 @Controller
@@ -61,9 +74,29 @@ public class CustomFieldBindingManagementController {
 		converter = new CustomFieldJsonConverter(messageSource);
 	}
 	
+
+	
+	@RequestMapping(value="/manager", method = RequestMethod.GET, params = {"projectId"})
+	public ModelAndView getManager(@RequestParam("projectId") Long projectId){
+		
+		List<CustomFieldBinding> testCaseBindings = service.findCustomFieldsForProjectAndEntity(projectId, BindableEntity.TEST_CASE);
+		/*List<CustomFieldBinding> requirementBindings = service.findCustomFieldsForProjectAndEntity(projectId, BindableEntity.REQUIREMENT_VERSION);
+		List<CustomFieldBinding> campaignBindings = service.findCustomFieldsForProjectAndEntity(projectId, BindableEntity.CAMPAIGN);
+		List<CustomFieldBinding> iterationBindings = service.findCustomFieldsForProjectAndEntity(projectId, BindableEntity.ITERATION);
+		List<CustomFieldBinding> testSuiteBindings = service.findCustomFieldsForProjectAndEntity(projectId, BindableEntity.TEST_SUITE);*/
+		
+		ModelAndView mav = new ModelAndView("custom-field-binding.html");
+		mav.addObject("testCaseBindings", testCaseBindings);
+		mav.addObject("projectId", projectId);
+		
+		return mav;
+		
+	}
 	
 	
-	@RequestMapping(method= RequestMethod.GET, params = {"projectId"})
+	
+	@RequestMapping(method= RequestMethod.GET, params = {"projectId"}, headers="Accept=application/json")
+	@ResponseBody
 	public List<CustomFieldBindingModel> findAllCustomFieldsForProject(@RequestParam("projectId") Long projectId){
 		
 		List<CustomFieldBinding> bindings = service.findCustomFieldsForProject(projectId);
@@ -72,12 +105,33 @@ public class CustomFieldBindingManagementController {
 		
 	}
 	
-	@RequestMapping(method= RequestMethod.GET, params = {"projectId", "bindableEntity"})
+			
+	
+	@RequestMapping(method= RequestMethod.GET, params = {"projectId", "bindableEntity"}, headers="Accept=application/json")
+	@ResponseBody
 	public List<CustomFieldBindingModel> findAllCustomFieldsForProject(@RequestParam("projectId") Long projectId, @RequestParam("bindableEntity") String bindableEntity){
 		
 		List<CustomFieldBinding> bindings = service.findCustomFieldsForProjectAndEntity(projectId, BindableEntity.valueOf(bindableEntity));
 		
 		return toJson(bindings);
+		
+	}
+	
+	@RequestMapping(method= RequestMethod.GET, params = {"projectId", "bindableEntity", "sEcho", "params"})
+	@ResponseBody
+	public DataTableModel findAllCustomFieldsTableForProject
+			(@RequestParam("projectId") Long projectId, 
+			 @RequestParam("bindableEntity") String bindableEntity, 
+			 DataTableDrawParameters params,
+			 Locale locale){
+		
+		
+		DataTableDrawParametersPagingAdapter paging = new DataTableDrawParametersPagingAdapter(params);
+		
+		PagedCollectionHolder<List<CustomFieldBinding>> bindings = service.findCustomFieldsForProjectAndEntity(projectId, BindableEntity.valueOf(bindableEntity), paging);
+
+		CUFBindingDataTableModelHelper helper = new CUFBindingDataTableModelHelper(converter);
+		return helper.buildDataModel(bindings, params.getsEcho());
 		
 	}
 	
@@ -91,6 +145,20 @@ public class CustomFieldBindingManagementController {
 		}
 		
 		return result;
+	}
+
+	
+	private static class CUFBindingDataTableModelHelper extends DataTableModelHelper<CustomFieldBinding> {
+		private CustomFieldJsonConverter converter;
+
+		private CUFBindingDataTableModelHelper(CustomFieldJsonConverter converter) {
+			this.converter=converter;
+		}
+		
+		@Override
+		public Object buildItemData(CustomFieldBinding item) {
+			return converter.toJson(item);
+		}
 	}
 	
 }

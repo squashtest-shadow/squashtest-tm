@@ -62,6 +62,10 @@
 	<s:param name="projectId" value="${adminproject.project.id}" />
 </s:url>
 
+<s:url var="customFieldManagerURL" value="/custom-fields-binding/manager?projectId={projectId}">
+	<s:param name="projectId" value="${adminproject.project.id}"/>
+</s:url>
+
 <layout:info-page-layout titleKey="workspace.project.info.title">
 	<jsp:attribute name="head">	
 		<link rel="stylesheet" type="text/css"
@@ -103,7 +107,7 @@
 		<%---INFO + Toolbar ---------------------%>
 			<div id="project-toolbar" class="toolbar-class ui-corner-all">
 				
-				<div>
+				<div style="float:left">
 					<comp:general-information-panel
 							auditableEntity="${adminproject.project}"
 							entityUrl="${ projectUrl }" />
@@ -119,6 +123,7 @@
 								class="button" />
 						</sec:authorize>
 				</div>
+				<div style="clear:both"></div>
 			</div>
 			<%-------------------------------------------------------------END INFO + Toolbar ---------------%>
 			
@@ -127,7 +132,7 @@
 			<div class="fragment-tabs fragment-body">
 			<ul>
 				<li><a href="#main-informations"><f:message key="tabs.label.mainpanel"/></a></li>
-				<li><a href=""><f:message key="tabs.label.cufbinding"/></a></li>
+				<li><a href="${customFieldManagerURL}"><f:message key="tabs.label.cufbinding"/></a></li>
 			
 			</ul>
 		

@@ -31,10 +31,14 @@ import org.squashtest.csp.tm.domain.customfield.BindableEntity;
 import org.squashtest.csp.tm.domain.customfield.CustomField;
 import org.squashtest.csp.tm.domain.customfield.CustomFieldBinding;
 import org.squashtest.csp.tm.domain.project.Project;
+import org.squashtest.csp.tm.infrastructure.filter.FilteredCollectionHolder;
 import org.squashtest.csp.tm.internal.repository.CustomFieldBindingDao;
 import org.squashtest.csp.tm.internal.repository.CustomFieldDao;
 import org.squashtest.csp.tm.internal.repository.ProjectDao;
 import org.squashtest.csp.tm.service.CustomFieldBindingModificationService;
+import org.squashtest.tm.core.foundation.collection.PagedCollectionHolder;
+import org.squashtest.tm.core.foundation.collection.Paging;
+import org.squashtest.tm.core.foundation.collection.PagingBackedPagedCollectionHolder;
 
 @Transactional
 @Service("squashtest.tm.service.CustomFieldBindingService")
@@ -52,9 +56,13 @@ public class CustomFieldBindingModificationServiceImpl implements CustomFieldBin
 	
 	
 	@Override
-
 	public List<CustomField> findAvailableCustomFields() {
 		return customFieldDao.findAll();
+	}
+	
+	@Override
+	public List<CustomField> findAvailableCustomFields(long projectId,	BindableEntity entity) {
+		return customFieldDao.findBindableCustomFields(projectId, entity);
 	}
 
 	@Override
@@ -68,15 +76,27 @@ public class CustomFieldBindingModificationServiceImpl implements CustomFieldBin
 	}
 	
 	@Override
+	public PagedCollectionHolder<List<CustomFieldBinding>> findCustomFieldsForProjectAndEntity(
+			long projectId, BindableEntity entity, Paging paging) {
+		
+		List<CustomFieldBinding> bindings = customFieldBindingDao.findAllForProjectAndEntity(projectId, entity, paging);
+		int count = customFieldBindingDao.countAllForProjectAndEntity(projectId, entity);
+		
+		return new PagingBackedPagedCollectionHolder<List<CustomFieldBinding>>(paging, count, bindings);
+	}
+	
+	
+	@Override
 	@PreAuthorize("hasRole('ROLE_TM_PROJECT_MANAGER') or hasRole('ROLE_ADMIN')")		
-	public void addNewCustomFieldBinding(long projectId, long customFieldId,
-			CustomFieldBinding newBinding) {
+	public void addNewCustomFieldBinding(long projectId, long customFieldId, CustomFieldBinding newBinding) {
 		
 		Project project = projectDao.findById(projectId);
 		CustomField field = customFieldDao.findById(customFieldId);
+		int newIndex = customFieldBindingDao.countAllForProjectAndEntity(projectId, newBinding.getBoundEntity()) + 1;
 		
 		newBinding.setBoundProject(project);
 		newBinding.setCustomField(field);
+		newBinding.setPosition(newIndex);
 		
 		customFieldBindingDao.persist(newBinding);
 		

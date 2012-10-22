@@ -25,6 +25,9 @@ import java.util.List;
 import org.squashtest.csp.tm.domain.customfield.BindableEntity;
 import org.squashtest.csp.tm.domain.customfield.CustomField;
 import org.squashtest.csp.tm.domain.customfield.CustomFieldBinding;
+import org.squashtest.csp.tm.infrastructure.filter.FilteredCollectionHolder;
+import org.squashtest.tm.core.foundation.collection.PagedCollectionHolder;
+import org.squashtest.tm.core.foundation.collection.Paging;
 
 
 /**
@@ -48,6 +51,18 @@ public interface CustomFieldBindingFinderService {
 	
 	
 	/**
+	 * same as {@link #findAvailableCustomFields()}, restricted to the given
+	 * project and bindable entity. The only returned fields are those who
+	 * aren't already mapped for that project and entity.
+	 * 
+	 * @param projectId
+	 * @param entity
+	 * @return
+	 */
+	List<CustomField> findAvailableCustomFields(long projectId, BindableEntity entity);
+	
+	
+	/**
 	 * returns all the custom field bindings associated to a project. 
 	 * 
 	 * 
@@ -65,6 +80,16 @@ public interface CustomFieldBindingFinderService {
 	 * @return
 	 */
 	List<CustomFieldBinding> findCustomFieldsForProjectAndEntity(long projectId, BindableEntity entity);
+	
+
+	/**
+	 * 
+	 * returns all the custom field bindings associated to a project for a given entity type (paged version)
+	 * 
+	 * @param projectId
+	 * @return
+	 */
+	PagedCollectionHolder<List<CustomFieldBinding>> findCustomFieldsForProjectAndEntity(long projectId, BindableEntity entity, Paging paging);
 	
 	
 }
