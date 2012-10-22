@@ -18,15 +18,23 @@
  *     You should have received a copy of the GNU Lesser General Public License
  *     along with this software.  If not, see <http://www.gnu.org/licenses/>.
  */
-package org.squashtest.csp.tm.service;
 
-import org.springframework.security.access.prepost.PreAuthorize;
-import org.springframework.transaction.annotation.Transactional;
+package org.squashtest.csp.tm.service.customfield
 
-@Transactional
-public interface TestSuiteModificationService extends CustomTestSuiteModificationService {
+import java.util.List;
 
-	@PreAuthorize("hasPermission(#arg0, 'org.squashtest.csp.tm.domain.campaign.TestSuite', 'SMALL_EDIT') "
-			+ "or hasRole('ROLE_ADMIN')")
-	void changeDescription(long id, String newDescription);
+import org.squashtest.csp.tm.domain.customfield.CustomField;
+import org.squashtest.csp.tm.service.DynamicManagerInterfaceSpecification
+
+import spock.lang.Shared;
+
+/**
+ * @author Gregory Fouquet
+ *
+ */
+class CustomFieldDynamicManagerTest extends DynamicManagerInterfaceSpecification {
+	@Shared Class entityType = CustomField
+	@Shared Class managerType = CustomFieldManagerService
+	@Shared List changeServiceCalls = []
+
 }

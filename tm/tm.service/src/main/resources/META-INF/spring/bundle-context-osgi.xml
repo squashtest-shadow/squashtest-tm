@@ -225,6 +225,13 @@
 			<value>org.squashtest.csp.tm.service.CustomFieldBindingModificationService</value>
 		</osgi:interfaces>
 	</osgi:service>			
+
+    <osgi:service ref="squashtest.tm.service.CustomFieldManagerService">
+      <osgi:interfaces>
+<!--         <value>org.squashtest.csp.tm.service.customfield.CustomFieldFinderService</value>
+ -->        <value>org.squashtest.csp.tm.service.customfield.CustomFieldManagerService</value>
+      </osgi:interfaces>
+    </osgi:service>     
 		
 
 	<!-- ====== SERVICES CONSUMED BY THIS BUNDLE ====== -->

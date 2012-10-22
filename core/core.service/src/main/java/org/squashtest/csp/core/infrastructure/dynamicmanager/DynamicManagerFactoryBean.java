@@ -98,6 +98,7 @@ public class DynamicManagerFactoryBean<MANAGER, ENTITY> extends AbstractDynamicC
 	protected List<DynamicComponentInvocationHandler> createInvocationHandlers() {
 		List<DynamicComponentInvocationHandler> handlers =  new ArrayList<DynamicComponentInvocationHandler>(4);
 		
+		handlers.add(new PersistEntityHandler<ENTITY>(entityType, sessionFactory));
 		handlers.add(new EntityModifierHandler<ENTITY>(sessionFactory, entityType));
 		handlers.add(new FindByIdHandler(sessionFactory));
 		handlers.add(new FindAllByIdsHandler<ENTITY>(entityType, sessionFactory));

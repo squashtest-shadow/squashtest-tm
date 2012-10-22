@@ -18,15 +18,19 @@
  *     You should have received a copy of the GNU Lesser General Public License
  *     along with this software.  If not, see <http://www.gnu.org/licenses/>.
  */
-package org.squashtest.csp.tm.service;
+
+package org.squashtest.csp.tm.service.customfield;
 
 import org.springframework.security.access.prepost.PreAuthorize;
-import org.springframework.transaction.annotation.Transactional;
+import org.squashtest.csp.tm.domain.customfield.CustomField;
 
-@Transactional
-public interface TestSuiteModificationService extends CustomTestSuiteModificationService {
-
-	@PreAuthorize("hasPermission(#arg0, 'org.squashtest.csp.tm.domain.campaign.TestSuite', 'SMALL_EDIT') "
-			+ "or hasRole('ROLE_ADMIN')")
-	void changeDescription(long id, String newDescription);
+/**
+ * Facade service for custom fields management.
+ * 
+ * @author Gregory Fouquet
+ * 
+ */
+public interface CustomFieldManagerService {
+	@PreAuthorize("hasRole('ROLE_ADMIN')")
+	public void persist(CustomField newCustomField);
 }
