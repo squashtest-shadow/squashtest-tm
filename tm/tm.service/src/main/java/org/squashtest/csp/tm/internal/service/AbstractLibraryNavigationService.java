@@ -498,6 +498,7 @@ public abstract class AbstractLibraryNavigationService<LIBRARY extends Library<N
 			StringBuilder path = new StringBuilder();
 
 			// if the requirement is not directly located under
+			// FIXME Potential bug : use equals() instead of instance comparison
 			if (id != ExportData.NO_FOLDER) {
 				for (String name : getLibraryNodeDao().getParentsName(id)) {
 					path.append('/' + name);
