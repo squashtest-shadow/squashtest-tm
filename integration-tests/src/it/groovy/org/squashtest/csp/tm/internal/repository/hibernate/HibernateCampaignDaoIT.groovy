@@ -23,6 +23,8 @@ package org.squashtest.csp.tm.internal.repository.hibernate
 import javax.inject.Inject
 
 import org.squashtest.csp.tm.domain.campaign.Campaign
+import org.squashtest.csp.tm.domain.campaign.TestPlanStatistics;
+import org.squashtest.csp.tm.domain.campaign.TestPlanStatus;
 import org.squashtest.csp.tm.internal.repository.CampaignDao
 import org.unitils.dbunit.annotation.DataSet
 
@@ -50,7 +52,24 @@ class HibernateCampaignDaoIT extends DbunitDaoSpecification {
 		result.each {it.name == "campaign1-execution"}
 	}
 
-	
+	@DataSet("HibernateCampaignDaoIT.should find campaign statistics.xml")
+	def "should find campaign statistics READY"(){
+		when:
+		TestPlanStatistics result = campaignDao.findCampaignStatistics(1L);
+		
+		then:
+		result != null
+		result.nbBlocked == 0
+		result.nbSuccess == 0
+		result.nbReady == 3
+		result.nbDone == 0
+		result.nbRunning == 0
+		result.nbTestCases == 3
+		result.nbUntestable == 0
+		result.progression == 0
+		result.nbFailure == 0
+		result.status == TestPlanStatus.READY
+	}
 }	
 
 

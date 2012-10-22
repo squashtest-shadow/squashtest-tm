@@ -24,6 +24,7 @@ import java.util.List;
 
 import org.springframework.transaction.annotation.Transactional;
 import org.squashtest.csp.tm.domain.campaign.CampaignTestPlanItem;
+import org.squashtest.csp.tm.domain.campaign.TestPlanStatistics;
 import org.squashtest.csp.tm.infrastructure.filter.CollectionSorting;
 import org.squashtest.csp.tm.infrastructure.filter.FilteredCollectionHolder;
 
@@ -35,5 +36,12 @@ public interface CustomCampaignModificationService {
 
 	FilteredCollectionHolder<List<CampaignTestPlanItem>> findTestPlanByCampaignId(long campaignId,
 			CollectionSorting filter);
+	
+	/**
+	 * 
+	 * @param campaignId the id of the concerned campaign
+	 * @return the computed {@link TestPlanStatistics} out of each test-plan-item of each campaign's iteration
+	 */
+	TestPlanStatistics findCampaignStatistics(long campaignId);
 
 }

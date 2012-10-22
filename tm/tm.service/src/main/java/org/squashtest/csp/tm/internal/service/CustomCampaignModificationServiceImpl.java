@@ -32,6 +32,7 @@ import org.squashtest.csp.tm.domain.campaign.Campaign;
 import org.squashtest.csp.tm.domain.campaign.CampaignFolder;
 import org.squashtest.csp.tm.domain.campaign.CampaignLibraryNode;
 import org.squashtest.csp.tm.domain.campaign.CampaignTestPlanItem;
+import org.squashtest.csp.tm.domain.campaign.TestPlanStatistics;
 import org.squashtest.csp.tm.infrastructure.filter.CollectionSorting;
 import org.squashtest.csp.tm.infrastructure.filter.FilteredCollectionHolder;
 import org.squashtest.csp.tm.internal.repository.CampaignDao;
@@ -65,5 +66,10 @@ public class CustomCampaignModificationServiceImpl implements CustomCampaignModi
 		List<CampaignTestPlanItem> tcs = campaignDao.findAllTestPlanByIdFiltered(campaignId, filter);
 		long count = campaignDao.countTestPlanById(campaignId);
 		return new FilteredCollectionHolder<List<CampaignTestPlanItem>>(count, tcs);
+	}
+
+	@Override
+	public TestPlanStatistics findCampaignStatistics(long campaignId) {
+		return campaignDao.findCampaignStatistics(campaignId);
 	}
 }

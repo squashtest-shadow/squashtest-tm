@@ -43,6 +43,7 @@ import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.servlet.ModelAndView;
 import org.squashtest.csp.tm.domain.campaign.Campaign;
 import org.squashtest.csp.tm.domain.campaign.CampaignTestPlanItem;
+import org.squashtest.csp.tm.domain.campaign.TestPlanStatistics;
 import org.squashtest.csp.tm.domain.project.Project;
 import org.squashtest.csp.tm.domain.testcase.TestCase;
 import org.squashtest.csp.tm.domain.testcase.TestCaseExecutionMode;
@@ -100,11 +101,11 @@ public class CampaignModificationController {
 	public ModelAndView showCampaignInfo(@PathVariable long campaignId) {
 
 		Campaign campaign = campaignModService.findById(campaignId);
-
+		TestPlanStatistics statistics = campaignModService.findCampaignStatistics(campaignId);
 		ModelAndView mav = new ModelAndView("page/campaign-libraries/show-campaign");
 
 		mav.addObject("campaign", campaign);
-
+		mav.addObject("statistics", statistics);
 		return mav;
 	}
 
@@ -112,10 +113,10 @@ public class CampaignModificationController {
 	@RequestMapping(method = RequestMethod.GET)
 	public ModelAndView showCampaign(@PathVariable long campaignId) {
 		Campaign campaign = campaignModService.findById(campaignId);
-
+		TestPlanStatistics statistics = campaignModService.findCampaignStatistics(campaignId);
 		ModelAndView mav = new ModelAndView("fragment/campaigns/edit-campaign");
 		mav.addObject("campaign", campaign);
-
+		mav.addObject("statistics", statistics);
 		return mav;
 	}
 

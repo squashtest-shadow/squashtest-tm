@@ -316,8 +316,9 @@
 	</jsp:attribute>
 		</comp:toggle-panel>
 		<%--------------------------- /Planning section ------------------------------------%>
-
-
+<%-- ------------------ statistiques --------------------------- --%>
+		<comp:statistics-panel statisticsEntity="${ statistics }" />
+<%-- ------------------ /statistiques --------------------------- --%>
 	</div>
 	<div id="tabs-2" class="table-tab">
 

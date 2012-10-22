@@ -25,6 +25,7 @@ import java.util.List;
 import org.squashtest.csp.tm.domain.campaign.Campaign;
 import org.squashtest.csp.tm.domain.campaign.CampaignLibraryNode;
 import org.squashtest.csp.tm.domain.campaign.CampaignTestPlanItem;
+import org.squashtest.csp.tm.domain.campaign.TestPlanStatistics;
 import org.squashtest.csp.tm.domain.execution.Execution;
 import org.squashtest.csp.tm.infrastructure.filter.CollectionSorting;
 
@@ -33,7 +34,7 @@ public interface CampaignDao extends EntityDao<Campaign> {
 	Campaign findByIdWithInitializedIterations(long campaignId);
 
 	List<CampaignTestPlanItem> findAllTestPlanByIdFiltered(long campaignId, CollectionSorting filter);
-
+	
 	long countTestPlanById(long campaignId);
 
 	List<String> findNamesInFolderStartingWith(long folderId, String nameStart);
@@ -61,5 +62,11 @@ public interface CampaignDao extends EntityDao<Campaign> {
 	 * @return list of executions of all iterations
 	 */
 	List<Execution> findAllExecutionsByCampaignId(Long campaignId);
+	/**
+	 * 
+	 * @param campaignId the id of the concerned campaign
+	 * @return the computed {@link TestPlanStatistics} out of each test-plan-item of each campaign's iteration
+	 */
+	TestPlanStatistics findCampaignStatistics(long campaignId);
 
 }

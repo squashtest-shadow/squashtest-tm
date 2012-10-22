@@ -24,6 +24,7 @@ import java.util.Date;
 
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.transaction.annotation.Transactional;
+import org.squashtest.csp.tm.domain.campaign.TestPlanStatistics;
 
 @Transactional
 public interface CampaignModificationService extends CustomCampaignModificationService, CampaignFinder {
@@ -50,5 +51,6 @@ public interface CampaignModificationService extends CustomCampaignModificationS
 
 	@PreAuthorize(SMALL_EDIT_CAMAIGN_OR_ADMIN)
 	void changeActualEndAuto(long campaignId, boolean isAuto);
+
 	
 }
