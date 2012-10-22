@@ -24,6 +24,8 @@
  * @author Gregory Fouquet
  */
 
+var squashtm = squashtm || {};
+
 /*
  * squashtm datatable pagination plugin. Based on the ExtJS style plugin by Zach
  * Curtis (http://zachariahtimothy.wordpress.com/) and simplified according to
@@ -32,6 +34,7 @@
  * @author bsiri.
  * 
  */
+
 
 (function ($) {
 	$.fn.dataTableExt.oPagination.iFullNumbersShowPages = 1;
@@ -161,6 +164,23 @@
 			}
 		}
 	};
+
+	// defines datatable defaults settings and puts them in the squash namespace.
+	var datatableDefaults = {
+			"bJQueryUI" : true,
+			"bAutoWidth" : false,
+			"bFilter" : false,
+			"bPaginate" : true,
+			"sPaginationType" : "squash",
+			"iDisplayLength" : 50,
+			"bProcessing" : true,
+			"bServerSide" : true,
+			"bRetrieve" : true,
+			"sDom" : 't<"dataTables_footer"lirp>'
+		};
+		
+	squashtm.datatable = squashtm.datatable | {};
+	squashtm.datatable.defaults = datatableDefaults;	
 })(jQuery);
 
 /**

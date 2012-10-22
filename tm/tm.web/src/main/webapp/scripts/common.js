@@ -23,7 +23,8 @@ requirejs.config({
 		"jquery" : "lib/jquery/jquery-1.8.2",
 		"jqueryui" : "lib/jquery/jquery-ui-1.9.0.custom",
 		"datatables" : "datatables/jquery.dataTables",
-		"squashtm.datatables" : "squashtest/jquery.squashtm.datatables.v2",
+		"squashtm.datatables" : "squashtest/jquery.squashtm.datatables",
+		"squashtm.datatables.widget" : "squashtest/jquery.squashtm.datatables.v2",
 		"handlebars" : "lib/handlebars/handlebars-1.0.rc.1",
 		"underscore" : "lib/underscore/underscore-1.4.2",
 		"backbone" : "lib/backbone/backbone-0.9.2"
@@ -38,8 +39,12 @@ requirejs.config({
 			exports : "datatables"
 		},
 		"squashtm.datatables": {
-			deps : [ "datatables", "squashtest/classes/KeyEventListener" ],
+			deps : [ "datatables", "squashtest/jquery.squashtm.tableDnD.ext" ],
 			exports : "squashtmDatatables"
+		},
+		"squashtm.datatables.widget": {
+			deps : [ "datatables", "squashtm.datatables", "squashtest/classes/KeyEventListener" ],
+			exports : "squashtmDatatablesWidget"
 		},
 		handlebars: {
 			deps: [ "jquery" ],

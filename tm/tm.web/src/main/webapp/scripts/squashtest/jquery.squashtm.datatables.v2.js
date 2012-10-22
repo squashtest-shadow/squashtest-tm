@@ -28,13 +28,8 @@
  KeyEventListener
  statusFactory
  jquery.squashtm.oneshotdialog.js
+ jquery.squashtm.datatables
 
- */
-
-/**
- * This file contains functions used by squashtest dataTables-based components.
- * 
- * @author Gregory Fouquet
  */
 
 /*
@@ -603,21 +598,7 @@ squashtm.keyEventListener = squashtm.keyEventListener || new KeyEventListener();
 	 * 
 	 **************************************************************************/
 
-	var datatableDefaults = {
-		"bJQueryUI" : true,
-		"bAutoWidth" : false,
-		"bFilter" : false,
-		"bPaginate" : true,
-		"sPaginationType" : "squash",
-		"iDisplayLength" : 50,
-		"bProcessing" : true,
-		"bServerSide" : true,
-		"bRetrieve" : true,
-		"sDom" : 't<"dataTables_footer"lirp>'
-	};
-	
-	squashtm.datatable = squashtm.datatable | {};
-	squashtm.datatable.defaults = datatableDefaults;
+	var datatableDefaults = squashtm.datatable.defaults;
 
 	var squashDefaults = {
 		attachments : {

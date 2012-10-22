@@ -1,4 +1,4 @@
-/*
+/**
  *     This file is part of the Squashtest platform.
  *     Copyright (C) 2010 - 2012 Henix, henix.fr
  *
@@ -18,10 +18,25 @@
  *     You should have received a copy of the GNU Lesser General Public License
  *     along with this software.  If not, see <http://www.gnu.org/licenses/>.
  */
-require([ "common" ], function(common) {
-	require([ "jquery", "backbone", "app/cf/CustomFieldsTableView" ], function($, Backbone, CustomFieldsTableView) {
-		$(function() {			
-			var cfTable = new CustomFieldsTableView();
-		});
-	});
-});
+
+package org.squashtest.csp.tm.web.internal.controller.customfield;
+
+import org.squashtest.csp.tm.domain.customfield.CustomField;
+import org.squashtest.csp.tm.domain.customfield.InputType;
+
+/**
+ * @author Gregory Fouquet
+ *
+ */
+public class NewCustomField extends CustomField {
+	public NewCustomField() {
+		super(InputType.PLAIN_TEXT);
+	}
+
+	@Override
+	public void setInputType(InputType inputType) {
+		super.setInputType(inputType);
+	}
+	
+	
+}

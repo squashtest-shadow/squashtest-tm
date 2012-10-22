@@ -21,8 +21,16 @@
 
 package org.squashtest.csp.tm.web.internal.controller.customfield;
 
+import java.util.Map;
+
+import org.apache.commons.lang.builder.ToStringBuilder;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Controller;
+import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestMethod;
+import org.springframework.web.bind.annotation.ResponseBody;
 
 /**
  * Controller for the Custom Fields resources.
@@ -33,5 +41,11 @@ import org.springframework.web.bind.annotation.RequestMapping;
 @Controller
 @RequestMapping("/custom-fields")
 public class CustomFieldController {
-
+	private static final Logger LOGGER = LoggerFactory.getLogger(CustomFieldController.class);
+	
+	@RequestMapping(value = "/new", method = RequestMethod.POST)
+	@ResponseBody
+	public void createNew(@RequestBody NewCustomField field) {
+		LOGGER.info(ToStringBuilder.reflectionToString(field));
+	}
 }

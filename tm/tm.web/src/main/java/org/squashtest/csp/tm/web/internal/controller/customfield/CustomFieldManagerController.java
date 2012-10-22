@@ -21,12 +21,15 @@
 
 package org.squashtest.csp.tm.web.internal.controller.customfield;
 
+import java.util.Collections;
+
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
+import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
+import org.squashtest.csp.tm.domain.customfield.InputType;
 import org.squashtest.tm.core.foundation.collection.DefaultPaging;
-import org.squashtest.tm.core.foundation.collection.Paging;
 
 /**
  * Controller for the Custom Fields management pages.
@@ -35,8 +38,17 @@ import org.squashtest.tm.core.foundation.collection.Paging;
  * 
  */
 @Controller
-@RequestMapping("/admiunistration/custom-fields")
+@RequestMapping("/administration/custom-fields")
 public class CustomFieldManagerController {
+	@ModelAttribute("inputTypes")
+	public InputType[] populateInputTypes() {
+		return InputType.values();
+	}
+	@ModelAttribute("customFieldsPageSize")
+	public long populateCustomFieldsPageSize() {
+		return DefaultPaging.FIRST_PAGE.getPageSize();
+	}
+
 	/**
 	 * Shows the custom fields manager.
 	 * 
@@ -45,11 +57,9 @@ public class CustomFieldManagerController {
 	 */
 	@RequestMapping(method = RequestMethod.GET)
 	public String showManager(Model model) {
-		Paging paging = DefaultPaging.FIRST_PAGE;
-		
-		
-		model.addAttribute("customFieldsPageSize", paging.getPageSize());
-		
+
+		model.addAttribute("customFields", Collections.EMPTY_LIST);
+
 		return "custom-field-manager.html";
 	}
 }

@@ -31,9 +31,7 @@ define([ "jquery", "backbone", "handlebars" ], function($, Backbone, Handlebars)
 			
 			this.$("select[name='inputType']").val(model.get("inputType"));
 			this.$("input:button").button();
-//			this.defaultValueField.autocomplete({
-//			    source: model.defaultValues()
-//			});
+
 			this.render();
 			this.$el.removeClass("not-displayed");
 		}, 
@@ -67,7 +65,7 @@ define([ "jquery", "backbone", "handlebars" ], function($, Backbone, Handlebars)
 			var model = this.model;
 			
 			model.set("inputType", event.target.value);
-			model.resetDefaultValue()
+			model.resetDefaultValue();
 			
 			this.render();
 
