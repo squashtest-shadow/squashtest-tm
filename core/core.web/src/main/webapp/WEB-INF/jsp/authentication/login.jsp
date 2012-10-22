@@ -34,15 +34,44 @@
 	<head>
 		<title><f:message key="page.authentication.title"/></title>
 		<layout:common-head />		
-		<layout:_common-script-import />
+        <script type="text/javascript">
+        var require = require || {};
+        require.baseUrl = "${pageContext.servletContext.contextPath}/scripts";
+        	var squashtm = {};
+        	squashtm.app = {
+        		contextRoot : "${pageContext.servletContext.contextPath}",
+            	notificationConf: {
+          			infoTitle: "<f:message key='popup.title.info' />", 
+          			errorTitle: "<f:message key='popup.title.error' />"
+          		}
+        	};
+        </script>
+        <script src="<c:url value='/scripts/require-min.js' />"></script>
+        <script type="text/javascript">
+          require([ "common" ], function() {
+            require([ "jquery", "app/ws/squashtm.notification", "jqueryui", "jquery.squash.squashbutton" ], function($, WTF) {
+            	$(function() {
+              		WTF.init(squashtm.app.notificationConf);
+              		
+    				$('auth-error').fadeIn('slow');
+    				
+					$('body').keydown(function(event){
+						var e;
+						if (event.which !="") { e = event.which; }
+						else if (event.charCode != "") { e = event.charCode; }
+						else if (event.keyCode != "") { e = event.keyCode; }
+						
+						if (e==13){
+							$('#login-form-button-set input').click();
+						}
+					});
+					
+					$.squash.decorateButtons();
+            	});
+            });
+          });
+        </script>
 		<link rel="stylesheet" type="text/css" href="${ pageContext.servletContext.contextPath }/styles/master.blue.css" />
-		<comp:decorate-buttons />
-		<script type="text/javascript">
-			$(function() {
-				$('auth-error').fadeIn('slow');
-			});
-		</script>
-
 	</head>
 	<body class="nav-up-layout">
 		<div id="nav-bar" class="ui-helper-clearfix">
@@ -107,26 +136,6 @@
 					<p>${ welcomeMessage }</p>
 				</div>
 			</c:if>
-			
 		</div>		
-		
-		
-		<div id="footer">
-		
-			<script type="text/javascript">
-				$(function(){
-					$('body').keydown(function(event){
-						var e;
-						if (event.which !="") { e = event.which; }
-						else if (event.charCode != "") { e = event.charCode; }
-						else if (event.keyCode != "") { e = event.keyCode; }
-						
-						if (e==13){
-							$('#login-form-button-set input').click();
-						}
-					});
-				});
-			</script>		
-		</div>
 	</body>
 </html>

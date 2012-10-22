@@ -1,3 +1,4 @@
+
 <%--
 
         This file is part of the Squashtest platform.
@@ -64,7 +65,7 @@
 				<div style="display: inline-block;">
 					<layout:_ajax-notifications cssClass="snap-right" />
 				</div>
-				<div class="main-menubar">
+				<div class="main-menubar unstyled">
 					<layout:_menu-bar />
 				</div>
 

@@ -32,16 +32,3 @@
 <div id="generic-error-notification-area" class="ui-state-error ui-corner-all ${ cssClass } not-displayed ">
 	<span class="ui-icon ui-icon-alert icon"></span><span><f:message key="error.generic.label" />&nbsp;(<a href="#" id="show-generic-error-details"><f:message key="error.generic.button.details.label" /></a>)</span>
 </div>
-<%-- TODO : wtf is that tag file in core.web referencing a .js published by tm.web --%>
-<c:url var="libUrl" value="/scripts/squash/squashtm.notification.js" />
-<script type="text/javascript" src="${ libUrl }"></script>
-<script type="text/javascript">
-	$(function () {
-		squashtm.notification.init({
-			infoTitle : "<f:message key='popup.title.info' />", 
-			errorTitle: "<f:message key='popup.title.error' />"
-		});
-	});
-</script>
-
-

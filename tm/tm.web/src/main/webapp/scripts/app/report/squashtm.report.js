@@ -33,7 +33,7 @@ var squashtm = squashtm || {};
  * 
  * @author Gregory Fouquet
  */
-squashtm.report = (function ($) {
+define([ "jquery", "app/report/squashtm.reportworkspace", "jqueryui", "jeditable", "jeditable.datepicker", "jquery.squash", "jquery.squash.linkabletree", "jquery.squash.projectpicker"  ], function($, RWS) {
 	var config = {
 		contextPath: "",
 		dateFormat: "dd/mm/yy", 
@@ -92,7 +92,7 @@ squashtm.report = (function ($) {
 		var name = option.name;
 		var value = option.value;
 
-		var res = $(formState[name]).each(function () {
+		$(formState[name]).each(function () {
 			if (this.value === value) {
 				this.selected = option.checked;
 			} else {
@@ -224,7 +224,7 @@ squashtm.report = (function ($) {
 		// collapses the form
 		$("#report-criteria-panel").togglePanel("closeContent"); 
 		// collapses the sidebar
-		squashtm.reportWorkspace.setReportWorkspaceExpandState();
+		RWS.setReportWorkspaceExpandState();
 
 		var tabPanel = $("#view-tabed-panel");
 
@@ -417,7 +417,9 @@ squashtm.report = (function ($) {
 		$('#export').click(doExport);
 	}
 
-	return {
+	squashtm.report = {
 		init : init
 	};
-})(jQuery);
+	
+	return squashtm.report;
+});

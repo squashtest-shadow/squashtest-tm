@@ -23,46 +23,86 @@
 <!DOCTYPE html SYSTEM "http://www.thymeleaf.org/dtd/xhtml1-transitional-thymeleaf-spring3-3.dtd">
 <html xmlns="http://www.w3.org/1999/xhtml" xmlns:th="http://www.thymeleaf.org">
 <head>
-<title th:text="#{title.CustomFields}">Espace rapports</title>
-<meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
-<script type="text/javascript" th:inline="javascript">
-	/*         */
-	var squashtm = squashtm || {};
-	squashtm.app = {
-		contextRoot : /*[[ @{/} ]]*/"http://localhost:8080/squash",
-		cfTable : {
-			languageUrl : /*[[ @{/datatables/messages} ]]*/"http://localhost:8080/squash/datatables/messages",
-			displayLength : /*[[ ${customFieldsPageSize} ]]*/50,
-			ajaxSource : /*[[ @{/custom-fields} ]]*/"http://localhost:8080/squash/custom-fields",
-			deferLoading : /*[[ ${#lists.size(customFields)} ]]*/1,
-		}
-	};
-	/*   */
-</script>
-<script data-main="../../scripts/custom-field-manager.js" th:attr="data-main=@{/scripts/custom-field-manager.js}"
-  src="../../scripts/require.js" th:src="@{/scripts/require-min.js}">
-	
-</script>
-<!-- common head -->
-<link rel="stylesheet" type="text/css" media="all"
-  href="../../../../../../../core/core.web/src/main/webapp/styles/master.css" th:href="@{/styles/master.css}" />
-<link rel="shortcut icon" type="image/x-icon" media="all"
-  href="../../../../../../../core/core.web/src/main/webapp/images/favicon.ico" th:href="@{/images/favicon.ico}" />
-<!-- /common head -->
-<!-- common script import -->
-<link rel="stylesheet" type="text/css" media="all"
-  href="../../../../../../../core/core.web/src/main/webapp/styles/squashtm.fg.menu.css"
-  th:href="@{/styles/squashtm.fg.menu.css}" />
-<!-- /common script import -->
-<link rel="stylesheet" type="text/css" media="all"
-  href="../../../../../../../core/core.web/src/main/webapp/styles/master.blue.css" th:href="@{/styles/master.blue.css}" />
-<!-- rich jeditable header -->
-<link rel="stylesheet" type="text/css" media="all"
-  href="../../../../../../../core/core.web/src/main/webapp/styles/ckeditor.override.css"
-  th:href="@{/styles/ckeditor.override.css}" />
+  <title th:text="#{title.CustomFields}">Espace rapports</title>
+  <meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
+  <script th:remove="all" type="text/javascript" src="../../scripts/lib/jquery/jquery-1.8.2.js"></script>
+  <script th:remove="all" type="text/javascript" src="../../js/thymol.js"></script>
+  <script type="text/javascript" th:inline="javascript">
+  	var squashtm = {};
+  	squashtm.app = {
+  		contextRoot : /*[[ @{/} ]]*/"http://localhost:8080/squash",
+  		cfTable : {
+  			languageUrl : /*[[ @{/datatables/messages} ]]*/"http://localhost:8080/squash/datatables/messages",
+  			displayLength : /*[[ ${customFieldsPageSize} ]]*/50,
+  			ajaxSource : /*[[ @{/custom-fields} ]]*/"http://localhost:8080/squash/custom-fields",
+  			deferLoading : /*[[ ${#lists.size(customFields)} ]]*/1,
+  		},
+  		projectFilterConf: {
+			url: /*[[ @{/global-filter/filter} ]]*/ '/global-filter/filter',
+			title: /*[[ #{dialog.settings.filter.title} ]]*/ 'Filtre de projets',
+			confirmLabel: /*[[ #{label.Confirm} ]]*/ 'Confirmer',
+			cancelLabel: /*[[ #{label.Cancel} ]]*/ 'Annuler',
+		}, 
+		menuBarConf: {
+    		boxSelector: "#menu-toggle-filter-ckbox",
+    		url: /*[[ @{/global-filter/filter-status} ]]*/ '/global-filter/filter-status',
+    		linkSelector: "#menu-project-filter-link",
+    		enabledTxt: /*[[ #{workspace.menubar.filter.enabled.label} ]]*/ 'Actif',
+    		disabledTxt: /*[[ #{workspace.menubar.filter.disabled.label} ]]*/ 'Inactif',
+    		enabledCallbacks: [ function(){ $("div.tree-filter-reminder-div > span").removeClass("not-displayed");} ]
+    	}, 
+    	notificationConf: {
+  			infoTitle: /*[[ #{popup.title.info} ]]*/ 'Info', 
+  			errorTitle: /*[[ #{popup.title.error} ]]*/ 'Erreur'
+  		}
+  	};
+  </script>
+  <script data-main="../../scripts/custom-field-manager.js" th:attr="data-main=@{/scripts/custom-field-manager.js}"
+    src="../../scripts/require.js" th:src="@{/scripts/require-min.js}">
+  </script>
+  <!-- common head -->
+  <link rel="stylesheet" type="text/css" media="all"
+    href="../../../../../../../core/core.web/src/main/webapp/styles/master.css" th:href="@{/styles/master.css}" />
+  <link rel="shortcut icon" type="image/x-icon" media="all"
+    href="../../../../../../../core/core.web/src/main/webapp/images/favicon.ico" th:href="@{/images/favicon.ico}" />
+  <!-- /common head -->
+  <!-- common script import -->
+  <link rel="stylesheet" type="text/css" media="all"
+    href="../../../../../../../core/core.web/src/main/webapp/styles/squashtm.fg.menu.css"
+    th:href="@{/styles/squashtm.fg.menu.css}" />
+  <!-- /common script import -->
+  <link rel="stylesheet" type="text/css" media="all"
+    href="../../../../../../../core/core.web/src/main/webapp/styles/master.blue.css" th:href="@{/styles/master.blue.css}" />
+  <!-- rich jeditable header -->
+  <link rel="stylesheet" type="text/css" media="all"
+    href="../../../../../../../core/core.web/src/main/webapp/styles/ckeditor.override.css"
+    th:href="@{/styles/ckeditor.override.css}" />
 </head>
 <body>
-  <div class="fragment-body">
+  <div id="navigation" th:include="navbar.frag :: navbar">
+    NAVBAR
+  </div>
+  <div id="workspace">
+    <div id="workspace-title">
+      <div class="snap-left">
+        <h2 th:text="#{workspace.report.title}">Espace Rapport</h2> 
+      </div>
+      <div class="snap-right">
+        <div class="main-menubar" th:include="menubar.frag :: menubar">
+          MENUBAR
+        </div>
+        <div style="display:inline-block;">
+          <div id="ajax-processing-indicator" class="ui-corner-all snap-right" style="display:inline-block">
+            <img src="../../../../../../../core/core.web/src/main/webapp/images/ajax-loader.gif" width="19px" height="19px" alt="processing" th:alt="#{squashtm.processing}" th:src="@{/images/ajax-loader.gif}" /> 
+            <span th:text="#{squashtm.processing}">En cours...</span>
+          </div>
+          <div id="generic-error-notification-area" class="ui-state-error ui-corner-all snap-right not-displayed">
+            <span class="ui-icon ui-icon-alert icon"></span><span th:text="#{error.generic.label}">WTF ?!</span> &nbsp;(<a href="javascript:void(0)" id="show-generic-error-details" th:text="#{error.generic.button.details.label}">Details</a>)
+          </div>
+        </div>
+      </div>
+    </div>
+    <div class="fragment-body">
     <div id="cf-table-pane">
       <input id="add-cf" type="button" class="sq-button snap-right" value="Add a custom field"
         th:value="#{label.CustomField.add}" />
@@ -128,7 +168,7 @@
         <input class="confirm" type="button" value="OK" th:value="#{label.Ok}" /> <input class="cancel" type="button"
           value="Cancel" th:value="#{label.Cancel}" />
       </div>
-
+  
       <div id="cfoptions-pane" class="not-displayed">
         <h2 th:text="#{title.CustomField.options}">Custom field options</h2>
         <table>
@@ -156,7 +196,7 @@
           </div>
         </div>
       </div>
-
+  
       <script id="PLAIN_TEXT-default-tpl" type="text/x-handlebars-template">
         <input name="defaultValue" class="strprop" value="" size="50" maxlength="255" type="text" />		
       </script>
@@ -169,6 +209,7 @@
       <script id="DROPDOWN_LIST-default-tpl" type="text/x-handlebars-template">
       </script>
     </div>
+  </div>
   </div>
 </body>
 </html>

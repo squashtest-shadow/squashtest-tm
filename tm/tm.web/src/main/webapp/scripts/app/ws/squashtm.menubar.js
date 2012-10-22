@@ -35,8 +35,7 @@
  */
 var squashtm = squashtm || {};
 
-squashtm.menubar = (function ($, window) {
-
+define([ "jquery" ], function($) {
 	function enableProjectFilter(url, bEnabled) {
 		$.post(url, {
 			isEnabled : bEnabled
@@ -95,7 +94,10 @@ squashtm.menubar = (function ($, window) {
 	function initMainMenuBar(objFilter) {
 		initToggleFilterMenu(objFilter);
 	}
-	return {
+	
+	squashtm.menubar =  {
 		init : initMainMenuBar
 	};
-} (jQuery, window));
+	
+	return squashtm.menubar;
+});

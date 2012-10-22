@@ -34,12 +34,10 @@
 	<c:if test="${ not empty highlighted }">
 		<c:choose>
 			<c:when test="${ highlighted == 'bugtracker'}">
+
 				<c:set var="bugtrackerHighlighted" value="${ true }"/>
 			</c:when>
 			<c:otherwise>
-	$(function() {
-		squashtm.navbar.initHighlighted('${highlighted}');
-	});	
 			</c:otherwise>
 		</c:choose>
 	</c:if>
@@ -59,6 +57,7 @@
 		<img src="${ pageContext.servletContext.contextPath }/images/logo_squash30.png" alt="logo_squash" style="width:30px;"/>
 	</div>
 </div>
-
+<%--
 <c:url var="navbarScript" value="/scripts/squash/squashtm.navbar.js" />
 <script type="text/javascript" src="${ navbarScript }"></script>
+ --%>

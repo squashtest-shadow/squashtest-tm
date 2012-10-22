@@ -22,7 +22,7 @@ var squashtm = squashtm || {};
 /**
  * Controller for the report workspace page (report-workspace.html) Depends on : - jquery - jquery.squash.buttons.js
  */
-squashtm.reportWorkspace = (function ($) {
+define([ "jquery", "jquery.squash.squashbutton", "jquery.squash.togglepanel" ], function ($) {
 	var settings = {
 		expandSidebarLabel: ">>",
 		collapseSidebarLabel: "<<"
@@ -48,7 +48,7 @@ squashtm.reportWorkspace = (function ($) {
 	function cleanContextual() {
 		var contextualList = $(".is-contextual");
 
-		if (contextualList.length == 0) {
+		if (contextualList.length === 0) {
 			return;
 		}
 
@@ -113,7 +113,7 @@ squashtm.reportWorkspace = (function ($) {
 		$.squash.decorateButtons();
 	}
 
-	return {
+	squashtm.reportWorkspace = {
 		setReportWorkspaceNormalState : function () {
 			setCategoryFrameNormalState();
 			setEditReportNormalState();
@@ -127,4 +127,6 @@ squashtm.reportWorkspace = (function ($) {
 		loadContextualReport : loadContextualReport,
 		init : init
 	};
-})(jQuery);
+	
+	return squashtm.reportWorkspace;
+});

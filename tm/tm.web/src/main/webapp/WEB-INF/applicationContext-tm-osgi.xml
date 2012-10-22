@@ -191,7 +191,6 @@
 			
 	</bean>
 
-
 	<osgi:service ref="squashtest.tm.web.authSuccessCallback.btautoconnect"
 		interface="org.squashtest.csp.core.web.servlet.handler.AuthenticationSuccessCallback" />
 		
@@ -205,6 +204,9 @@
 	<osgi:reference id="squashtest.tm.service.CustomFieldBindingModifier"
 		bean-name="squashtest.tm.service.CustomFieldBindingModifier" interface="org.squashtest.csp.tm.service.CustomFieldBindingModificationService"
 		availability="mandatory" />
-	
+
+	<osgi:reference id="squashtest.tm.service.CustomFieldManagerService"
+		bean-name="squashtest.tm.service.CustomFieldManagerService" interface="org.squashtest.csp.tm.service.customfield.CustomFieldManagerService"
+		availability="mandatory" />	
 
 </beans>

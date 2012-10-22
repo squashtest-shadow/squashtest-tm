@@ -49,8 +49,7 @@
 			if (wrapper.length>0){
 				wrapper.addClass("ui-accordion ui-widget ui-helper-reset ui-accordion-icons");
 				var wCreate=false;
-			}
-			else{
+			} else {
 				var wrapper = $('<div/>', {'class': "toggle-panel ui-accordion ui-widget ui-helper-reset ui-accordion-icons"});
 				wCreate=true;
 			}

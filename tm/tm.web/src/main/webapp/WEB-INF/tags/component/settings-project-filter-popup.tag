@@ -66,6 +66,7 @@
 <%-- 
 	code managing the initialization of the popup
  --%>
+ <%--
 <c:url var="libUrl" value="/scripts/squash/squashtm.projectfilter.js" />
 <script type="text/javascript" src="${libUrl}"></script> 
 <script type="text/javascript">
@@ -78,4 +79,4 @@
 		
 	squashtm.projectfilter.init(projectFilterConf);
 </script>
-
+ --%>

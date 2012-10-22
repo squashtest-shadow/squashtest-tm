@@ -20,7 +20,7 @@
  */
 var squashtm = squashtm || {};
 
-squashtm.notification = (function ($) {
+define([ "jquery" ], function($) {
 	var _config = {};
 	
 	function handleJsonResponseError(request) {
@@ -61,7 +61,7 @@ squashtm.notification = (function ($) {
 			var popup = window .open('about:blank', 'error_details',
 					'resizable=yes, scrollbars=yes, status=no, menubar=no, toolbar=no, dialog=yes, location=no');
 			popup.document.write(request.responseText);
-		}
+		};
 		
 		$('#show-generic-error-details')
 				.unbind('click')
@@ -121,11 +121,13 @@ squashtm.notification = (function ($) {
 		}		
 	}
 
-	return {
+	squashtm.notification = {
 		init : init, 
 		showInfo : displayInformationNotification,
 		getErrorMessage : getErrorMessage, 
 		handleJsonResponseError : handleJsonResponseError
 		
 	};
-}(jQuery));
+	
+	return squashtm.notification;
+});

@@ -28,8 +28,10 @@
 <%@ taglib uri="http://java.sun.com/jsp/jstl/core" prefix="c"%>
 <%@ taglib uri="http://www.springframework.org/security/tags" prefix="sec"%>
  
+ <%-- 
 <script type="text/javascript" src="${ pageContext.servletContext.contextPath }/scripts/squash/jquery.squashtm.projectpicker.js"></script>
 <script type="text/javascript" src="${ pageContext.servletContext.contextPath }/scripts/squash/squashtm.menubar.js"></script>
+--%>
 
 <c:url var="projectFilterStatusUrl" value="/global-filter/filter-status"/>
 <c:url var="administrationUrl" value="/administration"/>
@@ -57,26 +59,3 @@
 
 
 <comp:settings-project-filter-popup divId="project-filter-popup" openedBy="menu-project-filter-link"/>
-	
-	
-<%-- 
-	more init code
---%>
-
-<script type="text/javascript">
-
-	$(function(){
-		
-		var menuBarConf = {
-			boxSelector : "#menu-toggle-filter-ckbox",
-			url : "${projectFilterStatusUrl}",
-			linkSelector : "#menu-project-filter-link",
-			enabledTxt : '<f:message key="workspace.menubar.filter.enabled.label"/>',
-			disabledTxt : '<f:message key="workspace.menubar.filter.disabled.label"/>',
-			enabledCallbacks : [ function(){ $("div.tree-filter-reminder-div > span").removeClass("not-displayed");} ]
-		}
-
-		squashtm.menubar.init(menuBarConf);
-	});
-
-</script>

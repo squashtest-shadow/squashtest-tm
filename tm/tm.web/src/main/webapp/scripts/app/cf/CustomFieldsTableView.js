@@ -18,7 +18,7 @@
  *     You should have received a copy of the GNU Lesser General Public License
  *     along with this software.  If not, see <http://www.gnu.org/licenses/>.
  */
-define([ "jquery", "backbone", "app/cf/NewCustomFieldPanelView", "app/cf/NewCustomFieldModel", "squashtm.datatables", "jqueryui" ], function($, Backbone, NewCustomFieldPanelView, NewCustomFieldModel) {
+define([ "jquery", "backbone", "app/cf/NewCustomFieldPanelView", "app/cf/NewCustomFieldModel", "squash.datatables", "jqueryui" ], function($, Backbone, NewCustomFieldPanelView, NewCustomFieldModel) {
 		var cfTable = squashtm.app.cfTable;
 		/*
 		 * Defines the controller for the custom fields table.

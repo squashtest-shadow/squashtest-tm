@@ -20,11 +20,7 @@
  */
 var squashtm = squashtm || {};
 
-var module = (function($) {
-	return {/*module*/}
-}(jQuery));
-
-squashtm.navbar = (function ($) {
+define([ "jquery" ], function($) {
 	var highlightedButton;
 
 	function navLinkOn(linkName) {
@@ -54,29 +50,29 @@ squashtm.navbar = (function ($) {
 		}
 	}
 
-	return {
+	squashtm.navbar = {
 		initHighlighted : initHighlighted,
-		highlightOn : function (linkName) {
-			if (linkName !== highlightedButton) {
+		highlightOn : function(linkName) {
+			if (linkName !== this.highlightedButton) {
 				navLinkOn(linkName);
 			}
 		},
-		highlightOff : function (linkName) {
-			if (linkName !== highlightedButton) {
+		highlightOff : function(linkName) {
+			if (linkName !== this.highlightedButton) {
 				navLinkOff(linkName);
 			}
 		}
 	};
-}(jQuery));
 
-$(function () {
-	$(".nav_btn").hover(function () {
-		var linkName = $(this).attr("id");
-		squashtm.navbar.highlightOn(linkName);
-	}, function () {
-		var linkName = $(this).attr("id");
-		squashtm.navbar.highlightOff(linkName);
-	}
+	$(function() {
+		$(".nav_btn").hover(function() {
+			var linkName = $(this).attr("id");
+			squashtm.navbar.highlightOn(linkName);
+		}, function() {
+			var linkName = $(this).attr("id");
+			squashtm.navbar.highlightOff(linkName);
+		});
+	});
 
-	);
+	return squashtm.navbar;
 });

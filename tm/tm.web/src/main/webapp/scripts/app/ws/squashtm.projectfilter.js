@@ -24,7 +24,7 @@
  */
 var squashtm = squashtm || {};
 
-squashtm.projectfilter = (function ($, window) {
+define([ "jquery", "jquery.squash.projectpicker" ], function ($) {
 	var popupSelector = "#project-filter-popup";
 	var popupOpener = "#menu-project-filter-link";
 	var projectFilterUrl;
@@ -86,7 +86,9 @@ squashtm.projectfilter = (function ($, window) {
 	/**
 	 * public module
 	 */
-	return {
+	squashtm.projectfilter = {
 		init : initPopup
 	};
-}(jQuery, window));
+	
+	return squashtm.projectfilter;
+});

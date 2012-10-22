@@ -36,7 +36,7 @@
 		
 		var _cleanPopups = function(){
 			$(".ui-dialog-content.is-contextual").dialog("destroy").remove();			
-		}
+		};
 		
 		
 		/* ******************* private **************** */
@@ -78,7 +78,7 @@
 			var self = this;
 
 			if (url == this.currentUrl) {
-				defer.reject;
+				defer.reject();
 				return defer.promise();
 			} else {
 				abortIfRunning();

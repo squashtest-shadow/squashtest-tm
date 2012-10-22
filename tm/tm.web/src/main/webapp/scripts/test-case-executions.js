@@ -18,11 +18,10 @@
  *     You should have received a copy of the GNU Lesser General Public License
  *     along with this software.  If not, see <http://www.gnu.org/licenses/>.
  */
-require([ "common" ], function(common) {
-	require([ "jquery", "backbone", "app/cf/CustomFieldsTableView", "app/ws/squashtm.workspace" ], function($, Backbone, CustomFieldsTableView, WS) {
-		$(function() {
-			WS.init("");
-			var cfTable = new CustomFieldsTableView();
+require([ "common" ], function() {
+	require([ "app/tc/ExecutionsTableController" ], function(ExecutionsTableController) {
+		$(function(){
+			ExecutionsTableController.init();
 		});
 	});
 });
