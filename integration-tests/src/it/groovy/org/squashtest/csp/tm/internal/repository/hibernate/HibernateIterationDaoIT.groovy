@@ -22,6 +22,9 @@ package org.squashtest.csp.tm.internal.repository.hibernate
 
 import javax.inject.Inject
 
+import org.apache.poi.hssf.record.formula.functions.T
+import org.squashtest.csp.tm.domain.campaign.TestPlanStatistics
+import org.squashtest.csp.tm.domain.campaign.TestPlanStatus
 import org.squashtest.csp.tm.internal.repository.IterationDao
 import org.unitils.dbunit.annotation.DataSet
 
@@ -40,4 +43,24 @@ class HibernateIterationDaoIT extends DbunitDaoSpecification {
 		result.size() == 3
 		result.each {it.name == "iteration2-execution"}
 	}
+	
+	@DataSet("HibernateIterationDaoIT.should find iteration statistics.xml")
+	def "should find test suite statistics READY"(){
+		when:
+		TestPlanStatistics result = iterationDao.getIterationStatistics(1L)
+		
+		then:
+		result != null
+		result.nbBlocked == 0
+		result.nbSuccess == 0
+		result.nbReady == 3
+		result.nbDone == 0
+		result.nbRunning == 0
+		result.nbTestCases == 3
+		result.nbUntestable == 0
+		result.progression == 0
+		result.nbFailure == 0
+		result.status == TestPlanStatus.READY
+	}
+	
 }	

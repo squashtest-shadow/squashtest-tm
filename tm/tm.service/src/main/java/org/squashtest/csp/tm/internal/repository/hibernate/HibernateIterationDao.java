@@ -20,8 +20,10 @@
  */
 package org.squashtest.csp.tm.internal.repository.hibernate;
 
+import java.util.HashMap;
 import java.util.List;
 import java.util.ListIterator;
+import java.util.Map;
 
 import org.hibernate.Hibernate;
 import org.hibernate.Query;
@@ -32,8 +34,10 @@ import org.springframework.stereotype.Repository;
 import org.squashtest.csp.tm.domain.campaign.Campaign;
 import org.squashtest.csp.tm.domain.campaign.Iteration;
 import org.squashtest.csp.tm.domain.campaign.IterationTestPlanItem;
+import org.squashtest.csp.tm.domain.campaign.TestPlanStatistics;
 import org.squashtest.csp.tm.domain.campaign.TestSuite;
 import org.squashtest.csp.tm.domain.execution.Execution;
+import org.squashtest.csp.tm.domain.execution.ExecutionStatus;
 import org.squashtest.csp.tm.infrastructure.filter.CollectionSorting;
 import org.squashtest.csp.tm.internal.repository.IterationDao;
 
@@ -195,4 +199,27 @@ public class HibernateIterationDao extends HibernateEntityDao<Iteration> impleme
 		return executeListNamedQuery("iteration.findAllExecutions", callback);
 	}
 
+	@Override
+	public TestPlanStatistics getIterationStatistics(long iterationId) {
+	
+		Map<String, Integer> statusMap = new HashMap<String, Integer>();
+
+		fillStatusMapWithQueryResult(iterationId, statusMap);
+
+		return new TestPlanStatistics(statusMap);
+	}
+
+	
+	private void fillStatusMapWithQueryResult(final long iterationId, Map<String, Integer> statusMap) {
+		//Add Total number of TestCases
+		Integer nbTestPlans = ((Long)countTestPlans(iterationId)).intValue();
+		statusMap.put(TestPlanStatistics.TOTAL_NUMBER_OF_TEST_CASE_KEY, nbTestPlans);
+		
+		//Add number of testCase for each ExecutionStatus
+		SetQueryParametersCallback newCallBack = idParameter(iterationId);
+		List<Object[]> result = executeListNamedQuery("iteration.countStatuses", newCallBack);
+		for (Object[] objTab : result) {
+			statusMap.put(((ExecutionStatus) objTab[0]).name(), ((Long) objTab[1]).intValue());
+		}
+	}
 }

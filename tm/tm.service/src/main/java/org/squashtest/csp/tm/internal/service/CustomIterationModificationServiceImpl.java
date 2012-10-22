@@ -466,8 +466,7 @@ public class CustomIterationModificationServiceImpl implements CustomIterationMo
 
 	@Override
 	public TestPlanStatistics getIterationStatistics(long iterationId) {
-		// TODO Auto-generated method stub
-		return null;
+		return iterationDao.getIterationStatistics(iterationId);
 	}
 
 

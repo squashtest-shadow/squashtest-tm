@@ -147,12 +147,14 @@ public class IterationModificationController {
 
 		if (iteration != null) {
 			mav.addObject(ITERATION_KEY, iteration);
+			TestPlanStatistics statistics = iterationModService.getIterationStatistics(iterationId);
+			mav.addObject("statistics", statistics);
 		} else {
 			iteration = new Iteration();
 			iteration.setName("Not found");
 			iteration.setDescription("This iteration either do not exists, or was removed");
 			mav.addObject(ITERATION_KEY, new Iteration());
-
+			mav.addObject("statistics", null);
 		}
 		return mav;
 	}

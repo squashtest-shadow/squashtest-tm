@@ -25,7 +25,7 @@
 <%@ taglib prefix="f" uri="http://java.sun.com/jsp/jstl/fmt" %>
 <%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core" %>
 <%@ taglib prefix="comp" tagdir="/WEB-INF/tags/component"%>
-
+<c:if test="${not empty statisticsEntity}">
 <comp:toggle-panel id="statistics-toggle-panel" titleKey="title.statistics" open="true" isContextual="true">
 	<jsp:attribute name="body">
 			<div id="statistics-panel">
@@ -62,3 +62,4 @@
 			</div>
 	</jsp:attribute>
 </comp:toggle-panel>
+</c:if>

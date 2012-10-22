@@ -314,8 +314,8 @@
 			classes="information-panel" titleKey="label.Description"
 			isContextual="true" open="true">
 			<jsp:attribute name="body">
-		<div id="iteration-description">${ iteration.description }</div>
-	</jsp:attribute>
+			<div id="iteration-description">${ iteration.description }</div>
+			</jsp:attribute>
 		</comp:toggle-panel>
 
 
@@ -323,10 +323,8 @@
 			titleKey="label.Planning" isContextual="true"
 			open="true">
 			<jsp:attribute name="body">
-	<div class="datepicker-panel">
-
-
-		<table class="datepicker-table">
+			<div class="datepicker-panel">
+			<table class="datepicker-table">
 			<tr>
 				<td class="datepicker-table-col">
 					<comp:datepicker
@@ -376,13 +374,13 @@
 					</comp:datepicker-auto>
 				</td>
 			</tr>
-		</table>
-		
-
-	
-	</div>
-</jsp:attribute>
+			</table>
+			</div>
+			</jsp:attribute>
 		</comp:toggle-panel>
+		
+		<%-- ------------------ statistiques --------------------------- --%>
+		<comp:statistics-panel statisticsEntity="${ statistics }" />
 	</div>
 	<div id="tabs-2" class="table-tab">
 
