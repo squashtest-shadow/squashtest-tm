@@ -310,8 +310,6 @@
 				submitCallback="refreshIterationInfos" />
 		</c:if>
 
-
-
 		<comp:toggle-panel id="iteration-description-panel"
 			classes="information-panel" titleKey="label.Description"
 			isContextual="true" open="true">

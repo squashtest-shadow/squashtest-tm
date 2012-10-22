@@ -20,19 +20,18 @@
  */
 package org.squashtest.csp.tm.internal.repository.hibernate
 
-import java.util.List
-
 import javax.inject.Inject
 
-import org.springframework.transaction.annotation.Transactional
-import org.squashtest.csp.tm.domain.testcase.TestCase;
-import org.squashtest.csp.tm.internal.repository.TestSuiteDao
-import org.unitils.dbunit.annotation.DataSet
+import org.apache.poi.hssf.record.formula.functions.T
 import org.hibernate.Query
-import org.squashtest.tm.core.foundation.collection.Paging
+import org.springframework.transaction.annotation.Transactional
 import org.squashtest.csp.tm.domain.campaign.IterationTestPlanItem
-import org.squashtest.csp.tm.domain.campaign.TestSuiteStatistics
-import org.squashtest.csp.tm.domain.execution.ExecutionStatus;
+import org.squashtest.csp.tm.domain.campaign.TestPlanStatistics
+import org.squashtest.csp.tm.domain.campaign.TestPlanStatus;
+import org.squashtest.csp.tm.domain.execution.ExecutionStatus
+import org.squashtest.csp.tm.internal.repository.TestSuiteDao
+import org.squashtest.tm.core.foundation.collection.Paging
+import org.unitils.dbunit.annotation.DataSet
 
 import spock.unitils.UnitilsSupport
 
@@ -69,41 +68,6 @@ class HibernateTestSuiteDaoIT extends DbunitDaoSpecification {
 		listTPI2.collect { it.id } == [3, 4, 7, 8, 10, 11]
 	}
 	
-	@DataSet("HibernateTestSuiteDaoIT.should find testplanitems given the test suite id.xml")
-	def "should retrieve the correct number of test plan items regarding their status and their test suite"(){
-
-		given :
-	//		we associate the last test case to the test suite via an iteration test plan item
-			String sql = "update iteration_test_plan_item set test_suite = :test_suite_id where item_test_plan_id = :test_plan_id";
-			Query query = getSession().createSQLQuery(sql);
-			query.setParameter("test_suite_id", 1);
-			query.setParameter("test_plan_id", 5);
-			query.executeUpdate();
-			getSession().flush();
-
-		when :
-			TestSuiteStatistics stats1 = testSuiteDao.getTestSuiteStatistics(1L)
-			TestSuiteStatistics stats2 = testSuiteDao.getTestSuiteStatistics(2L)
-
-		then :
-			stats1.getNbTestCases() == 4L
-			stats1.getNbBloqued() == 1
-			stats1.getNbDone() == 1
-			stats1.getNbFailure() == 0
-			stats1.getNbReady() == 1
-			stats1.getNbRunning() == 2
-			stats1.getNbSuccess() == 0
-			stats1.getStatus() == ExecutionStatus.RUNNING
-			
-			stats2.getNbTestCases() == 6L
-			stats2.getNbBloqued() == 1
-			stats2.getNbDone() == 5
-			stats2.getNbFailure() == 2
-			stats2.getNbReady() == 1
-			stats2.getNbRunning() == 0
-			stats2.getNbSuccess() == 2
-			stats2.getStatus() == ExecutionStatus.RUNNING
-	}
 	
 	@DataSet("HibernateTestSuiteDaoIT.should  find an ordered list of itpi.xml")
 	def "should fetch a test suite -> test plan ordered by the iteration test plan order"(){
@@ -126,5 +90,78 @@ class HibernateTestSuiteDaoIT extends DbunitDaoSpecification {
 		result.each {it.name == "testSuite2-execution"}
 	}
 	
+	@DataSet("HibernateTestSuiteDaoIT.should find test suite statistics.xml")
+	def "should find test suite statistics DONE"(){
+		when:
+		TestPlanStatistics result = testSuiteDao.getTestSuiteStatistics(1L)
+		
+		then:
+		result != null
+		result.nbBlocked == 1
+		result.nbSuccess == 2
+		result.nbReady == 0
+		result.nbDone == 4
+		result.nbRunning == 0
+		result.nbTestCases == 4
+		result.nbUntestable == 0
+		result.progression == 100
+		result.nbFailure == 1
+		result.status == TestPlanStatus.DONE
+	}
+	
+	@DataSet("HibernateTestSuiteDaoIT.should find test suite statistics.xml")
+	def "should find test suite statistics READY"(){
+		when:
+		TestPlanStatistics result = testSuiteDao.getTestSuiteStatistics(2L)
+		
+		then:
+		result != null
+		result.nbBlocked == 0
+		result.nbSuccess == 0
+		result.nbReady == 3
+		result.nbDone == 0
+		result.nbRunning == 0
+		result.nbTestCases == 3
+		result.nbUntestable == 0
+		result.progression == 0
+		result.nbFailure == 0
+		result.status == TestPlanStatus.READY
+	}
+	
+	@DataSet("HibernateTestSuiteDaoIT.should find testplanitems given the test suite id.xml")
+	def "should find test suite statistics RUNNING"(){
+
+		given :
+	//		we associate the last test case to the test suite via an iteration test plan item
+			String sql = "update iteration_test_plan_item set test_suite = :test_suite_id where item_test_plan_id = :test_plan_id";
+			Query query = getSession().createSQLQuery(sql);
+			query.setParameter("test_suite_id", 1);
+			query.setParameter("test_plan_id", 5);
+			query.executeUpdate();
+			getSession().flush();
+
+		when :
+			TestPlanStatistics stats1 = testSuiteDao.getTestSuiteStatistics(1L)
+			TestPlanStatistics stats2 = testSuiteDao.getTestSuiteStatistics(2L)
+
+		then :
+			stats1.getNbTestCases() == 4L
+			stats1.getNbBlocked() == 1
+			stats1.getNbDone() == 1
+			stats1.getNbFailure() == 0
+			stats1.getNbReady() == 1
+			stats1.getNbRunning() == 2
+			stats1.getNbSuccess() == 0
+			stats1.getStatus() == TestPlanStatus.RUNNING
+			
+			stats2.getNbTestCases() == 6L
+			stats2.getNbBlocked() == 1
+			stats2.getNbDone() == 5
+			stats2.getNbFailure() == 2
+			stats2.getNbReady() == 1
+			stats2.getNbRunning() == 0
+			stats2.getNbSuccess() == 2
+			stats2.getStatus() == TestPlanStatus.RUNNING
+	}
 	
 }

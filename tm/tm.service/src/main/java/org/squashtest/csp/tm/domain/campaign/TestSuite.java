@@ -50,7 +50,7 @@ import org.squashtest.csp.tm.domain.testcase.TestCase;
 @Auditable
 @Entity
 @InheritsAcls(constrainedClass = Iteration.class, collectionName = "testSuites")
-public class TestSuite implements Identified {
+public class TestSuite implements Identified{
 
 	public TestSuite() {
 		super();

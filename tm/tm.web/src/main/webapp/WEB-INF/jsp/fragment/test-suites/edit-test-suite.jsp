@@ -365,16 +365,8 @@
 		</comp:toggle-panel>
 
 		<%-- ------------------ statistiques --------------------------- --%>
-
-		<comp:toggle-panel id="test-suite-statistics-toggle-panel"
-			titleKey="test-suite.statistics.panel.title" open="true"
-			isContextual="true">
-			<jsp:attribute name="body">
-		<div id="test-suite-statistics-panel">
-			<comp:test-suite-statistics-panel statisticsEntity="${ statistics }" />
-		</div>
-	</jsp:attribute>
-		</comp:toggle-panel>
+		<comp:statistics-panel statisticsEntity="${ statistics }" />
+		
 	</div>
 	<div id="tabs-2" class="table-tab">
 		<%-- ------------------ test plan ------------------------------ --%>

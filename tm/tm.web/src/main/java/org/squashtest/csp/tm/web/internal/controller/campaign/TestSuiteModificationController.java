@@ -33,7 +33,6 @@ import javax.servlet.http.HttpServletResponse;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.springframework.context.MessageSource;
 import org.springframework.osgi.extensions.annotation.ServiceReference;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -45,8 +44,8 @@ import org.springframework.web.servlet.ModelAndView;
 import org.squashtest.csp.core.service.security.PermissionEvaluationService;
 import org.squashtest.csp.tm.domain.campaign.Iteration;
 import org.squashtest.csp.tm.domain.campaign.IterationTestPlanItem;
+import org.squashtest.csp.tm.domain.campaign.TestPlanStatistics;
 import org.squashtest.csp.tm.domain.campaign.TestSuite;
-import org.squashtest.csp.tm.domain.campaign.TestSuiteStatistics;
 import org.squashtest.csp.tm.domain.execution.Execution;
 import org.squashtest.csp.tm.domain.execution.ExecutionStatus;
 import org.squashtest.csp.tm.domain.project.Project;
@@ -132,7 +131,7 @@ public class TestSuiteModificationController {
 	@RequestMapping(method = RequestMethod.GET)
 	public ModelAndView showTestSuite(@PathVariable long id) {
 		TestSuite testSuite = service.findById(id);
-		TestSuiteStatistics testSuiteStats = service.findTestSuiteStatistics(id);
+		TestPlanStatistics testSuiteStats = service.findTestSuiteStatistics(id);
 		
 		ModelAndView mav = new ModelAndView("fragment/test-suites/edit-test-suite");
 		mav.addObject(TEST_SUITE, testSuite);
@@ -146,7 +145,7 @@ public class TestSuiteModificationController {
 
 		TestSuite testSuite = service.findById(id);
 
-		TestSuiteStatistics testSuiteStats = service.findTestSuiteStatistics(id);
+		TestPlanStatistics testSuiteStats = service.findTestSuiteStatistics(id);
 		
 		ModelAndView mav = new ModelAndView("page/campaign-libraries/show-test-suite");
 
@@ -179,7 +178,7 @@ public class TestSuiteModificationController {
 	@RequestMapping(value = "/stats", method = RequestMethod.GET)
 	public ModelAndView refreshStats(@PathVariable long id) {
 		
-		TestSuiteStatistics testSuiteStats = service.findTestSuiteStatistics(id);
+		TestPlanStatistics testSuiteStats = service.findTestSuiteStatistics(id);
 
 		ModelAndView mav = new ModelAndView("fragment/generics/test-suite-statistics-fragment");
 
@@ -191,7 +190,7 @@ public class TestSuiteModificationController {
 	@RequestMapping(value = "/exec-button", method = RequestMethod.GET)
 	public ModelAndView refreshExecButton(@PathVariable long id) {
 		
-		TestSuiteStatistics testSuiteStats = service.findTestSuiteStatistics(id);
+		TestPlanStatistics testSuiteStats = service.findTestSuiteStatistics(id);
 
 		ModelAndView mav = new ModelAndView("fragment/generics/test-suite-execution-button");
 

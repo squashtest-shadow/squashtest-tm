@@ -23,8 +23,8 @@ package org.squashtest.csp.tm.internal.repository;
 import java.util.List;
 
 import org.squashtest.csp.tm.domain.campaign.IterationTestPlanItem;
+import org.squashtest.csp.tm.domain.campaign.TestPlanStatistics;
 import org.squashtest.csp.tm.domain.campaign.TestSuite;
-import org.squashtest.csp.tm.domain.campaign.TestSuiteStatistics;
 import org.squashtest.csp.tm.domain.execution.Execution;
 
 public interface CustomTestSuiteDao {
@@ -42,7 +42,7 @@ public interface CustomTestSuiteDao {
 	 */
 	List<IterationTestPlanItem> findLaunchableTestPlan(long testSuiteId);
 
-	TestSuiteStatistics getTestSuiteStatistics(long testSuitId);
+	TestPlanStatistics getTestSuiteStatistics(long testSuitId);
 
 	List<IterationTestPlanItem> findTestPlanPartition(long testSuiteId,
 			List<Long> testPlanItemIds);

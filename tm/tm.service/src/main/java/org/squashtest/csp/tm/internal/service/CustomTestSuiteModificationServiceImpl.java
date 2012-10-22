@@ -29,8 +29,8 @@ import org.springframework.stereotype.Service;
 import org.squashtest.csp.tm.domain.DuplicateNameException;
 import org.squashtest.csp.tm.domain.TestPlanItemNotExecutableException;
 import org.squashtest.csp.tm.domain.campaign.IterationTestPlanItem;
+import org.squashtest.csp.tm.domain.campaign.TestPlanStatistics;
 import org.squashtest.csp.tm.domain.campaign.TestSuite;
-import org.squashtest.csp.tm.domain.campaign.TestSuiteStatistics;
 import org.squashtest.csp.tm.domain.execution.Execution;
 import org.squashtest.csp.tm.domain.testautomation.AutomatedSuite;
 import org.squashtest.csp.tm.internal.repository.AutomatedSuiteDao;
@@ -111,7 +111,7 @@ public class CustomTestSuiteModificationServiceImpl implements CustomTestSuiteMo
 
 	@Override
 	@PreAuthorize("hasPermission(#suiteId, 'org.squashtest.csp.tm.domain.campaign.TestSuite','READ') or hasRole('ROLE_ADMIN')")
-	public TestSuiteStatistics findTestSuiteStatistics(long suiteId) {
+	public TestPlanStatistics findTestSuiteStatistics(long suiteId) {
 		return testSuiteDao.getTestSuiteStatistics(suiteId);
 	}
 

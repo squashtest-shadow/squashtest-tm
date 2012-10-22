@@ -22,26 +22,25 @@ package org.squashtest.csp.tm.service;
 
 import java.util.List;
 
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.transaction.annotation.Transactional;
 import org.squashtest.csp.tm.domain.campaign.Iteration;
+import org.squashtest.csp.tm.domain.campaign.TestPlanStatistics;
 import org.squashtest.csp.tm.domain.execution.Execution;
 import org.squashtest.csp.tm.domain.testcase.TestCase;
 
-
+@Transactional(readOnly = true)
 public interface IterationFinder {
-	
-	@Transactional(readOnly = true)
+		
 	List<Iteration> findIterationsByCampaignId(long campaignId);
 
-	@Transactional(readOnly = true)
 	Iteration findById(long iterationId);
 
-	@Transactional(readOnly = true)
 	List<Execution> findAllExecutions(long iterationId);
 
-	@Transactional(readOnly = true)
 	List<Execution> findExecutionsByTestPlan(long iterationId, long testPlanId);
 
-	@Transactional(readOnly = true)
 	List<TestCase> findPlannedTestCases(long iterationId);
+	
+	TestPlanStatistics getIterationStatistics(long iterationId);
 }

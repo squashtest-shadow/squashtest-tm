@@ -48,6 +48,7 @@ import org.springframework.web.servlet.ModelAndView;
 import org.squashtest.csp.core.service.security.PermissionEvaluationService;
 import org.squashtest.csp.tm.domain.campaign.Iteration;
 import org.squashtest.csp.tm.domain.campaign.IterationTestPlanItem;
+import org.squashtest.csp.tm.domain.campaign.TestPlanStatistics;
 import org.squashtest.csp.tm.domain.campaign.TestSuite;
 import org.squashtest.csp.tm.domain.execution.Execution;
 import org.squashtest.csp.tm.domain.execution.ExecutionStatus;
@@ -128,10 +129,11 @@ public class IterationModificationController {
 	public ModelAndView showIteration(@PathVariable long iterationId) {
 
 		Iteration iteration = iterationModService.findById(iterationId);
-
+		TestPlanStatistics statistics = iterationModService.getIterationStatistics(iterationId);
+		
 		ModelAndView mav = new ModelAndView("fragment/iterations/edit-iteration");
 		mav.addObject(ITERATION_KEY, iteration);
-
+		mav.addObject("statistics", statistics);
 		return mav;
 	}
 

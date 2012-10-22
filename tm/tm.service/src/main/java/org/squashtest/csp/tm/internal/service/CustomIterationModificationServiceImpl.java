@@ -41,6 +41,7 @@ import org.squashtest.csp.tm.domain.campaign.Campaign;
 import org.squashtest.csp.tm.domain.campaign.CampaignTestPlanItem;
 import org.squashtest.csp.tm.domain.campaign.Iteration;
 import org.squashtest.csp.tm.domain.campaign.IterationTestPlanItem;
+import org.squashtest.csp.tm.domain.campaign.TestPlanStatistics;
 import org.squashtest.csp.tm.domain.campaign.TestSuite;
 import org.squashtest.csp.tm.domain.execution.Execution;
 import org.squashtest.csp.tm.domain.testautomation.AutomatedSuite;
@@ -461,6 +462,12 @@ public class CustomIterationModificationServiceImpl implements CustomIterationMo
 			checkPermission(new SecurityCheckableObject(testSuite, permission));
 		}
 
+	}
+
+	@Override
+	public TestPlanStatistics getIterationStatistics(long iterationId) {
+		// TODO Auto-generated method stub
+		return null;
 	}
 
 

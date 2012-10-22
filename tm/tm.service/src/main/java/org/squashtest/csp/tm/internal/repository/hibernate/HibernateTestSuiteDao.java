@@ -28,8 +28,8 @@ import org.hibernate.Query;
 import org.hibernate.type.LongType;
 import org.springframework.stereotype.Repository;
 import org.squashtest.csp.tm.domain.campaign.IterationTestPlanItem;
+import org.squashtest.csp.tm.domain.campaign.TestPlanStatistics;
 import org.squashtest.csp.tm.domain.campaign.TestSuite;
-import org.squashtest.csp.tm.domain.campaign.TestSuiteStatistics;
 import org.squashtest.csp.tm.domain.execution.Execution;
 import org.squashtest.csp.tm.domain.execution.ExecutionStatus;
 import org.squashtest.csp.tm.internal.repository.CustomTestSuiteDao;
@@ -85,52 +85,48 @@ public class HibernateTestSuiteDao extends HibernateEntityDao<TestSuite> impleme
 		return executeListNamedQuery("testSuite.findTestPlanPaged", callback);
 	}
 
-	private long countTestPlanItems(long testSuiteId) {
+	private Long countTestPlanItems(long testSuiteId) {
 		return (Long) executeEntityNamedQuery("TestSuite.countTestPlanItems", idParameter(testSuiteId));
 	}
 
 	@Override
-	public TestSuiteStatistics getTestSuiteStatistics(final long testSuiteId) {
+	public TestPlanStatistics getTestSuiteStatistics(final long testSuiteId) {
 
 		Map<String, Integer> statusMap = new HashMap<String, Integer>();
 
-		Long nbTestPlans = countTestPlanItems(testSuiteId);
+		fillStatusMapWithQueryResult(testSuiteId, statusMap);
 
-		for (ExecutionStatus status : ExecutionStatus.values()) {
-			final ExecutionStatus fStatus = status;
-
-			SetQueryParametersCallback newCallBack = new SetQueryParametersCallback() {
-
-				@Override
-				public void setQueryParameters(Query query) {
-					query.setLong("id", testSuiteId);
-					query.setLong("id2", testSuiteId);
-					query.setParameter("status", fStatus);
-				}
-			};
-
-			Long lResult = executeEntityNamedQuery("testSuite.countStatus", newCallBack);
-
-			Integer result = lResult.intValue();
-
-			statusMap.put(status.name(), result);
-		}
-
-		TestSuiteStatistics stats = new TestSuiteStatistics(nbTestPlans, 
-				statusMap.get(ExecutionStatus.UNTESTABLE.name()),
-				statusMap.get(ExecutionStatus.BLOCKED.name())+statusMap.get(ExecutionStatus.ERROR.name()),
-				statusMap.get(ExecutionStatus.FAILURE.name()), 
-				statusMap.get(ExecutionStatus.SUCCESS.name())+statusMap.get(ExecutionStatus.WARNING.name()),
-				statusMap.get(ExecutionStatus.RUNNING.name()), 
-				statusMap.get(ExecutionStatus.READY.name()));
-
-		return stats;
+		return new TestPlanStatistics(statusMap);
 	}
 
+	
+	private void fillStatusMapWithQueryResult(final long testSuiteId, Map<String, Integer> statusMap) {
+		//Add Total number of TestCases
+		Integer nbTestPlans = countTestPlanItems(testSuiteId).intValue();
+		statusMap.put(TestPlanStatistics.TOTAL_NUMBER_OF_TEST_CASE_KEY, nbTestPlans);
+		
+		//Add number of testCase for each ExecutionStatus
+		SetQueryParametersCallback newCallBack = new IdId2ParameterCallback(testSuiteId);
+		List<Object[]> result = executeListNamedQuery("testSuite.countStatuses", newCallBack);
+		for (Object[] objTab : result) {
+			statusMap.put(((ExecutionStatus) objTab[0]).name(), ((Long) objTab[1]).intValue());
+		}
+	}
+	
+	private static class IdId2ParameterCallback implements SetQueryParametersCallback {
+		private long id;
+		public IdId2ParameterCallback(long id) {
+			this.id = id;
+		}
+		@Override
+		public void setQueryParameters(Query query) {
+			query.setLong("id", id);
+			query.setLong("id2", id);
+		}
+	}
 
 	@Override
-	public List<IterationTestPlanItem> findTestPlanPartition(final long testSuiteId,
-			final List<Long> testPlanItemIds) {
+	public List<IterationTestPlanItem> findTestPlanPartition(final long testSuiteId, final List<Long> testPlanItemIds) {
 
 		SetQueryParametersCallback callback = new SetQueryParametersCallback() {
 
@@ -143,7 +139,6 @@ public class HibernateTestSuiteDao extends HibernateEntityDao<TestSuite> impleme
 
 		return executeListNamedQuery("testSuite.findTestPlanPartition", callback);
 	}
-
 
 	private SetQueryParametersCallback idParameter(final long id) {
 		SetQueryParametersCallback newCallBack = new SetQueryParametersCallback() {

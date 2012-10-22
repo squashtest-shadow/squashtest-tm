@@ -134,3 +134,7 @@ div.dataTables_wrapper td a.delete-execution-table-button[role="button"] {
 height:8px;
 
 }
+
+table.center {
+	text-align: center;
+}

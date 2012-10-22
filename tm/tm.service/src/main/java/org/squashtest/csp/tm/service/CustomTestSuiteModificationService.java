@@ -25,8 +25,8 @@ import java.util.List;
 import org.springframework.transaction.annotation.Transactional;
 import org.squashtest.csp.tm.domain.DuplicateNameException;
 import org.squashtest.csp.tm.domain.campaign.IterationTestPlanItem;
+import org.squashtest.csp.tm.domain.campaign.TestPlanStatistics;
 import org.squashtest.csp.tm.domain.campaign.TestSuite;
-import org.squashtest.csp.tm.domain.campaign.TestSuiteStatistics;
 import org.squashtest.csp.tm.domain.testautomation.AutomatedSuite;
 import org.squashtest.tm.core.foundation.collection.PagedCollectionHolder;
 import org.squashtest.tm.core.foundation.collection.Paging;
@@ -95,7 +95,7 @@ public interface CustomTestSuiteModificationService extends TestSuiteFinder{
 	 * 
 	 * @param suiteId
 	 */
-	TestSuiteStatistics findTestSuiteStatistics(long suiteId);
+	TestPlanStatistics findTestSuiteStatistics(long suiteId);
 	
 	
 	

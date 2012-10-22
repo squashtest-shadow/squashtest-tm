@@ -96,7 +96,8 @@
 		// Queries on TestSuite
 		@NamedQuery(name = "TestSuite.findAllTestPlanItemsPaged", query = "select tp from TestSuite ts join ts.iteration it join it.testPlans tp where ts.id = ? and tp.testSuite.id = ts.id order by index(tp)"),
 		@NamedQuery(name = "TestSuite.countTestPlanItems", query = "select count(tp) from TestSuite ts join ts.iteration it join it.testPlans tp where ts.id = ? and tp.testSuite.id = ts.id"),
-		@NamedQuery(name = "testSuite.countStatus", query = "select count(tp) from TestSuite ts join ts.iteration it join it.testPlans tp where ts.id = :id and tp.testSuite.id = :id2 and tp.executionStatus = :status"),
+		@NamedQuery(name = "testSuite.countStatuses", query = "select tp.executionStatus, count(tp) from TestSuite ts join ts.iteration it join it.testPlans tp where ts.id = :id and tp.testSuite.id = :id2 group by tp.executionStatus"),
+		
 		@NamedQuery(name = "testSuite.findTestPlanPartition", query = "select plan from TestSuite ts join ts.iteration iter join iter.testPlans plan where plan.id in (:itemIds) and ts.id = :suiteId order by index(plan)"),
 		@NamedQuery(name = "testSuite.findAllExecutions", query = "select itpi.executions from IterationTestPlanItem itpi join itpi.testSuite ts where ts.id = ? "),
 
