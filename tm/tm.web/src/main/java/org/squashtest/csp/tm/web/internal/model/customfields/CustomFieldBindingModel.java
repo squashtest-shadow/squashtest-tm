@@ -31,7 +31,7 @@ public class CustomFieldBindingModel {
 	
 	private CustomFieldModel customField;
 	
-	
+	private int position;
 
 	public long getId() {
 		return id;
@@ -66,5 +66,14 @@ public class CustomFieldBindingModel {
 		this.customField = customField;
 	}
 
+	public int getPosition() {
+		return position;
+	}
+
+	public void setPosition(int position) {
+		this.position = position;
+	}
+
+	
 	
 }

@@ -19,33 +19,22 @@
  *     along with this software.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-define(["jquery", "require", "./entity-manager.js"], function($, require){
 
+define (function(require){
 	
-	var EntityManager = require("./entity-manager.js");
+	var Panel = require("./panel.js");
 
-	function makeTCConf(conf){		
-		return $.extend({},conf.general, conf.tcSettings);
-	};
-
-	var manager = {
-		
-		setConfig : function(conf){
-			this.config = conf;
-			return this;
-		},
-		
-		init : function(){
-		
-			//test case
-			var tcConf = makeTCConf(this.config);
-			new EntityManager(tcConf);
-			
-			
-		}
+	function getPanelConf(settings){
+		return { 
+			'selector' : settings.panelSelector,
+			'initiallyOpen' : settings.panelInitiallyOpen, 
+			'title' : settings.panelTitle
+		};
 	}
 	
-	return manager;
-	
+	return function(settings){
+		var panelConf = getPanelConf(settings);
+		this.panel = new Panel(panelConf);
+	};
+
 });
-	

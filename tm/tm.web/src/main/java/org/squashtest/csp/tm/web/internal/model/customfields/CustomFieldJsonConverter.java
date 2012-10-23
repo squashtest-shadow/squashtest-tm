@@ -45,10 +45,11 @@ public class CustomFieldJsonConverter {
 		
 		CustomFieldModel fieldModel = toJson(binding.getCustomField());
 		
-		bindingModel.setId(bindingModel.getId());
+		bindingModel.setId(binding.getId());
 		bindingModel.setProjectId(binding.getBoundProject().getId());
 		bindingModel.setBoundEntity(entityModel);
 		bindingModel.setCustomField(fieldModel);
+		bindingModel.setPosition(binding.getPosition());
 		
 		return bindingModel;
 		

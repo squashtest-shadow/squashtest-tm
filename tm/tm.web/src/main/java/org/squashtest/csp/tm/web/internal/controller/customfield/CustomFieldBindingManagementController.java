@@ -18,7 +18,7 @@
  *     You should have received a copy of the GNU Lesser General Public License
  *     along with this software.  If not, see <http://www.gnu.org/licenses/>.
  */
-package org.squashtest.csp.tm.web.internal.controller.customfields;
+package org.squashtest.csp.tm.web.internal.controller.customfield;
 
 import java.util.LinkedList;
 import java.util.List;
@@ -76,8 +76,9 @@ public class CustomFieldBindingManagementController {
 	public ModelAndView getManager(@RequestParam("projectId") Long projectId){
 		
 		List<CustomFieldBinding> testCaseBindings = service.findCustomFieldsForProjectAndEntity
-													(projectId, BindableEntity.TEST_CASE, new DefaultPaging())
-													.getPagedItems();
+													(projectId, BindableEntity.TEST_CASE, new DefaultPaging()).getPagedItems();
+		
+		
 		/*List<CustomFieldBinding> requirementBindings = service.findCustomFieldsForProjectAndEntity(projectId, BindableEntity.REQUIREMENT_VERSION);
 		List<CustomFieldBinding> campaignBindings = service.findCustomFieldsForProjectAndEntity(projectId, BindableEntity.CAMPAIGN);
 		List<CustomFieldBinding> iterationBindings = service.findCustomFieldsForProjectAndEntity(projectId, BindableEntity.ITERATION);

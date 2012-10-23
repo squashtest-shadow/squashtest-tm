@@ -103,7 +103,7 @@ requirejs.config({
 			exports : "jquerySquashtm"
 		},
 		"jquery.squash.togglepanel": {
-			deps : [ "jquery", "jqueryui" ],
+			deps : [ "jquery", "jqueryui", "jquery.squash.squashbutton" ],
 			exports : "jquerySquashtmTogglepanel"
 		},
 		"jquery.squash.messagedialog": {

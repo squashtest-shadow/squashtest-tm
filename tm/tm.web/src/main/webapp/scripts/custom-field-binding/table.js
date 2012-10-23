@@ -19,33 +19,31 @@
  *     along with this software.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-define(["jquery", "require", "./entity-manager.js"], function($, require){
 
+define(["jquery", "jquery.squash.datatables"], function($){
 	
-	var EntityManager = require("./entity-manager.js");
-
-	function makeTCConf(conf){		
-		return $.extend({},conf.general, conf.tcSettings);
-	};
-
-	var manager = {
-		
-		setConfig : function(conf){
-			this.config = conf;
-			return this;
-		},
-		
-		init : function(){
-		
-			//test case
-			var tcConf = makeTCConf(this.config);
-			new EntityManager(tcConf);
-			
-			
-		}
+	
+	function buildURL = function(settings){
+		return settings.ajaxSource+"?projectId="+settings.projectId+"&bindableEntity="+settings.entityType;	
 	}
 	
-	return manager;
+	return function(settings){
+		
+		var tableConf = {
+			oLanguage :{
+				sUrl : settings.languageUrl
+			},
+			sAjaxSource : buildURL(settings),
+			iDeferLoading : settings.deferLoading,
+			aoColumnDefs :[
+				{'bSortable' : false, 'bVisible' : false, 'aTargets' : [0], 'mDataProp' : 'id'},
+				{'bSortable' : false, 'bVisible' : true,  'aTargets' : [1], 'mDataProp' : 'position', 'sWidth' : '2em', 'sClass' : 'centered ui-state-default drag-handle select-handle'},
+				{'bSortable' : false, 'bVisible' : true,  'aTargets' : [2], 'mDataProp' : 'customField.name'},
+				{'bSortable' : false, 'bVisible' : true,  'aTargets' : [3], 'mDataProp' : undefined, 'sWidth' : '2em', 'sClass' : 'delete-button centered'}			
+			]		
+		};
 	
-});
 	
+	}
+
+})

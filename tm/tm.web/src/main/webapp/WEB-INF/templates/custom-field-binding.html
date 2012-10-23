@@ -37,7 +37,14 @@
 <script type="text/javascript" src="../../scripts/lib/jquery/jquery-1.8.2.js"></script>
 <script type="text/javascript" src="../../js/thymol.js"></script>
 <script type="text/javascript" src="../../scripts/require.js"></script>
-<script th:include="js.includes.frag :: [body]"></script>
+<script type="text/javascript" src="../../scripts/common.js"></script>
+
+<link rel="stylesheet" type="text/css" media="all" href="../../../../../../../core/core.web/src/main/webapp/styles/master.css" th:href="@{/styles/master.css}" />
+<link rel="shortcut icon" type="image/x-icon" media="all" href="../../../../../../../core/core.web/src/main/webapp/images/favicon.ico" th:href="@{/images/favicon.ico}"/>
+<link rel="stylesheet" type="text/css" media="all" href="../../../../../../../core/core.web/src/main/webapp/styles/squashtm.fg.menu.css" th:href="@{/styles/squashtm.fg.menu.css}" />
+<link rel="stylesheet" type="text/css" media="all" href="../../../../../../../core/core.web/src/main/webapp/styles/master.blue.css" th:href="@{/styles/master.blue.css}" />
+<link rel="stylesheet" type="text/css" media="all" href="../../../../../../../core/core.web/src/main/webapp/styles/ckeditor.override.css" th:href="@{/styles/ckeditor.override.css}" />
+
 </div>
 
 <script type="text/javascript" th:inline="javascript">
@@ -47,25 +54,21 @@
 
     	var config = {
     		
-    		projectId : /* ${projectId}, */10,
-    			
-    		tableGeneral : {
-    			languageUrl: /*[[ @{/datatables/messages} ]]*/ "http://localhost:8080/squash/datatables/messages", 
-        		baseAjaxSource: /*[[ @{/custom-fields-binding} ]]*/ "http://localhost:8080/squash/custom-fields-binding",
+    		general : {
+	    		projectId : /* ${projectId}, */10,	    			
+	    		tableLanguageUrl: /*[[ @{/datatables/messages} ]]*/ "http://localhost:8080/squash/datatables/messages", 
+	        	tableBaseAjaxSource: /*[[ @{/custom-fields-binding} ]]*/ "http://localhost:8080/squash/custom-fields-binding"
     		},
     		
     		tcSettings : {
-	    		panel : {
-	    			initiallyOpen : /*[[  (${testCaseBindings.isEmpty()}) ? 'false,' : 'true,'  ]]*/true,
-    				title : /*[[ #{project.cufbinding.test-cases.panel.title}  ]]*/"test case bindings"
-	    		},
-	    		table : {
-	    			entityType : /* ${org.squashtest.csp.tm.domain.customfield.BindableEntity.TEST_CASE.name} */"TEST_CASE",
-	    			
-	    		}
+    			entityType : /* [[ ${org.squashtest.csp.tm.domain.customfield.BindableEntity.TEST_CASE.name} ]] */"TEST_CASE",
+    			panelSelector : '#test-cases-binding',
+    			panelInitiallyOpen : /*[[  (${testCaseBindings.isEmpty()}) ? 'false,' : 'true,'  ]]*/true,
+    			panelTitle : /*[[ #{project.cufbinding.test-cases.panel.title}  ]]*/"test case bindings",
+    			
 	    	}
 	    	
-    	}
+    	};
     	
     	require(["http://localhost/scripts/main.js"], function(main){
     		main.setConfig(config).init();
@@ -84,12 +87,14 @@
 	<div id="test-cases-binding" class="toggle-panel-main">
 	
 		<table id="test-cases-binding-table">
-			<tr>
-				<td>id</td>
-				<td>#</td>
-				<td>name</td>
-				<td>del</td>
-			</tr>
+			<thead>
+				<tr>
+					<th>id</th>
+					<th>#</th>
+					<th>name</th>
+					<th>del</th>
+				</tr>
+			</thead>
 			<tbody>
 				<tr th:each="binding : ${testCaseBindings}">
 					<td th:text="${binding.id}"></td>

@@ -19,33 +19,30 @@
  *     along with this software.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-define(["jquery", "require", "./entity-manager.js"], function($, require){
+define(["jquery", "jquery.squash.togglepanel"], function($){
 
+	return function(settings){
 	
-	var EntityManager = require("./entity-manager.js");
+		var instance = $(settings.selector);
+		var button = instance.prev().find('input');
+		
+		instance.togglePanel(settings);	
 
-	function makeTCConf(conf){		
-		return $.extend({},conf.general, conf.tcSettings);
-	};
-
-	var manager = {
 		
-		setConfig : function(conf){
-			this.config = conf;
-			return this;
-		},
+		// *********** decorate the attributes ******
 		
-		init : function(){
+		button.setPopup = function(popup){
+			button.click(function(){
+				popup.dialog("open");
+			});
+		};
 		
-			//test case
-			var tcConf = makeTCConf(this.config);
-			new EntityManager(tcConf);
-			
-			
+		instance.getButton = function(){
+			return button;
 		}
+		
+		
+		return instance;
 	}
-	
-	return manager;
-	
+
 });
-	
