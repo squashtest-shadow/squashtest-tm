@@ -116,14 +116,16 @@ public class IterationModificationController {
 	private InternationalizationHelper messageSource;
 
 	private final DataTableMapper testPlanMapper = new DataTableMapper("unused", IterationTestPlanItem.class,
-			TestCase.class, Project.class, TestSuite.class).initMapping(12)
-			.mapAttribute(Project.class, 3, NAME, String.class).mapAttribute(TestCase.class, 4, NAME, String.class)
-			.mapAttribute(TestCase.class, 5, "importance", TestCaseImportance.class)
-			.mapAttribute(TestCase.class, 6, "executionMode", TestCaseExecutionMode.class)
-			.mapAttribute(IterationTestPlanItem.class, 7, "executionStatus", ExecutionStatus.class)
-			.mapAttribute(TestSuite.class, 8, NAME, String.class)
-			.mapAttribute(IterationTestPlanItem.class, 9, "lastExecutedBy", String.class)
-			.mapAttribute(IterationTestPlanItem.class, 11, "lastExecutedOn", Date.class);
+			TestCase.class, Project.class, TestSuite.class).initMapping(13)
+			.mapAttribute(Project.class, 3, NAME, String.class)
+			.mapAttribute(TestCase.class, 4, "reference", String.class)
+			.mapAttribute(TestCase.class, 5, NAME, String.class)
+			.mapAttribute(TestCase.class, 6, "importance", TestCaseImportance.class)
+			.mapAttribute(TestCase.class, 7, "executionMode", TestCaseExecutionMode.class)
+			.mapAttribute(IterationTestPlanItem.class, 8, "executionStatus", ExecutionStatus.class)
+			.mapAttribute(TestSuite.class, 9, NAME, String.class)
+			.mapAttribute(IterationTestPlanItem.class, 10, "lastExecutedBy", String.class)
+			.mapAttribute(IterationTestPlanItem.class, 12, "lastExecutedOn", Date.class);
 
 	@RequestMapping(method = RequestMethod.GET)
 	public ModelAndView showIteration(@PathVariable long iterationId) {
@@ -424,6 +426,7 @@ public class IterationModificationController {
 			String projectName;
 			String testCaseName;
 			String importance;
+			String reference;
 			final String latestExecutionMode = messageSource.internationalize(item.getExecutionMode(), locale);
 			final String automationMode = item.isAutomated() ? "A" : "M";
 
@@ -434,9 +437,11 @@ public class IterationModificationController {
 				projectName = formatNoData(locale, messageSource);
 				testCaseName = formatDeleted(locale, messageSource);
 				importance = formatNoData(locale, messageSource);
+				reference = formatNoData(locale, messageSource); 
 			} else {
 				projectName = item.getReferencedTestCase().getProject().getName();
 				testCaseName = item.getReferencedTestCase().getName();
+				reference = item.getReferencedTestCase().getReference();
 				importance = messageSource.internationalize(item.getReferencedTestCase().getImportance(), locale);
 			}
 
@@ -449,6 +454,7 @@ public class IterationModificationController {
 			res.put(DataTableModelHelper.DEFAULT_ENTITY_ID_KEY, item.getId());
 			res.put(DataTableModelHelper.DEFAULT_ENTITY_INDEX_KEY, getCurrentIndex());
 			res.put("project-name", projectName);
+			res.put("reference", reference);
 			res.put("tc-name", testCaseName);
 			res.put("importance", importance);
 			res.put("type", latestExecutionMode);

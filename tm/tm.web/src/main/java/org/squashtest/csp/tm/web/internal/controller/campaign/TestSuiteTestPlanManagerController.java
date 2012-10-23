@@ -82,14 +82,15 @@ public class TestSuiteTestPlanManagerController {
 	private static final Logger LOGGER = LoggerFactory.getLogger(TestSuiteModificationController.class);
 	
 	private final DataTableMapper testPlanMapper = new DataTableMapper("unused", IterationTestPlanItem.class,
-			TestCase.class, Project.class, TestSuite.class).initMapping(10)
+			TestCase.class, Project.class, TestSuite.class).initMapping(11)
 			.mapAttribute(Project.class, 2, "name", String.class)
-			.mapAttribute(TestCase.class, 3, "name", String.class)
-			.mapAttribute(TestCase.class, 4, "importance", TestCaseImportance.class)
-			.mapAttribute(TestCase.class, 5, "executionMode", TestCaseExecutionMode.class)
-			.mapAttribute(IterationTestPlanItem.class, 6, "executionStatus", ExecutionStatus.class)
-			.mapAttribute(IterationTestPlanItem.class, 7, "lastExecutedBy", String.class)
-			.mapAttribute(IterationTestPlanItem.class, 8, "lastExecutedOn", Date.class);
+			.mapAttribute(TestCase.class, 3, "reference", String.class)
+			.mapAttribute(TestCase.class, 4, "name", String.class)
+			.mapAttribute(TestCase.class, 5, "importance", TestCaseImportance.class)
+			.mapAttribute(TestCase.class, 6, "executionMode", TestCaseExecutionMode.class)
+			.mapAttribute(IterationTestPlanItem.class, 7, "executionStatus", ExecutionStatus.class)
+			.mapAttribute(IterationTestPlanItem.class, 8, "lastExecutedBy", String.class)
+			.mapAttribute(IterationTestPlanItem.class, 9, "lastExecutedOn", Date.class);
 
 	@Inject
 	private MessageSource messageSource;
@@ -274,16 +275,19 @@ public class TestSuiteTestPlanManagerController {
 			String testCaseExecutionMode;
 			String importance;
 			String testCaseId;
+			String reference;
 
 			if (item.isTestCaseDeleted()) {
 				projectName = formatNoData(locale, messageSource);
 				testCaseName = formatDeleted(locale, messageSource);
 				importance = formatNoData(locale, messageSource);
+				reference = formatNoData(locale, messageSource);
 				testCaseExecutionMode = formatNoData(locale, messageSource);
 				testCaseId = "";
 			} else {
 				projectName = item.getReferencedTestCase().getProject().getName();
 				testCaseName = item.getReferencedTestCase().getName();
+				reference = item.getReferencedTestCase().getReference();
 				importance = formatImportance(item.getReferencedTestCase().getImportance(), locale, messageSource);
 				testCaseExecutionMode = formatExecutionMode(item.getReferencedTestCase().getExecutionMode(), locale, messageSource);
 				testCaseId = item.getReferencedTestCase().getId().toString();
@@ -292,6 +296,7 @@ public class TestSuiteTestPlanManagerController {
 			return new Object[] { item.getId(), 
 					getCurrentIndex(), 
 					projectName, 
+					reference,
 					testCaseName,
 					importance,
 					testCaseExecutionMode, 

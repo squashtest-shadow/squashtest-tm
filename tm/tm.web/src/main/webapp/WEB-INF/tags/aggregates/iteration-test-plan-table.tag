@@ -29,6 +29,7 @@
 			<th>#</th>
 			<th><f:message key="label.Project" /></th>
 			<th>&nbsp;</th><%-- exec mode icon --%>
+			<th><f:message key="requirement.reference.label"/></th>
 			<th><f:message key="iteration.executions.table.column-header.test-case.label" /></th>
 			<th><f:message key="iteration.executions.table.column-header.importance.label" /></th>
 			<th><f:message key="label.Mode" /></th>

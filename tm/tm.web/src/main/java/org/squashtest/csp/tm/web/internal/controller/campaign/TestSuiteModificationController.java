@@ -117,13 +117,15 @@ public class TestSuiteModificationController {
 	private InternationalizationHelper messageSource;
 
 	private final DataTableMapper testPlanMapper = new DataTableMapper("unused", IterationTestPlanItem.class,
-			TestCase.class, Project.class, TestSuite.class).initMapping(11)
+			TestCase.class, Project.class, TestSuite.class).initMapping(12)
 			.mapAttribute(Project.class, 2, NAME, String.class).mapAttribute(TestCase.class, 4, NAME, String.class)
-			.mapAttribute(TestCase.class, 5, "importance", TestCaseImportance.class)
-			.mapAttribute(TestCase.class, 6, "executionMode", TestCaseExecutionMode.class)
-			.mapAttribute(IterationTestPlanItem.class, 7, "executionStatus", ExecutionStatus.class)
-			.mapAttribute(IterationTestPlanItem.class, 8, "lastExecutedBy", String.class)
-			.mapAttribute(IterationTestPlanItem.class, 9, "lastExecutedOn", Date.class);
+			.mapAttribute(TestCase.class, 4, "reference", String.class)
+			.mapAttribute(TestCase.class, 5, NAME, String.class)
+			.mapAttribute(TestCase.class, 6, "importance", TestCaseImportance.class)			
+			.mapAttribute(TestCase.class, 7, "executionMode", TestCaseExecutionMode.class)
+			.mapAttribute(IterationTestPlanItem.class, 8, "executionStatus", ExecutionStatus.class)
+			.mapAttribute(IterationTestPlanItem.class, 9, "lastExecutedBy", String.class)
+			.mapAttribute(IterationTestPlanItem.class, 10, "lastExecutedOn", Date.class);
 
 	// will return the fragment only
 	@RequestMapping(method = RequestMethod.GET)
@@ -309,6 +311,7 @@ public class TestSuiteModificationController {
 
 			String projectName;
 			String testCaseName;
+			String reference;
 			final String testCaseExecutionMode = messageSource.internationalize(item.getExecutionMode(), locale);
 			String importance;
 			final String automationMode = item.isAutomated() ? "A" : "M";
@@ -317,14 +320,17 @@ public class TestSuiteModificationController {
 				projectName = formatNoData(locale, messageSource);
 				testCaseName = formatDeleted(locale, messageSource);
 				importance = formatNoData(locale, messageSource);
+				reference = formatNoData(locale, messageSource);
 			} else {
 				projectName = item.getReferencedTestCase().getProject().getName();
 				testCaseName = item.getReferencedTestCase().getName();
+				reference = item.getReferencedTestCase().getReference();
 				importance = messageSource.internationalize(item.getReferencedTestCase().getImportance(), locale);
 			}
 
 			return new Object[] { item.getId(), getCurrentIndex(), projectName, automationMode, testCaseName,
 					importance, testCaseExecutionMode,
+					reference,
 					messageSource.internationalize(item.getExecutionStatus(), locale),
 					formatString(item.getLastExecutedBy(), locale, messageSource),
 					messageSource.localizeDate(item.getLastExecutedOn(), locale), item.isTestCaseDeleted(), " " };

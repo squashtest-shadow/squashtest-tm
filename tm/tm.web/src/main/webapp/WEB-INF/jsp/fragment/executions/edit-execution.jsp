@@ -124,18 +124,9 @@
 	<div style="float: left; height: 100%; width: 90%;">
 		<h2>
 			<span><f:message key="execution.execute.header.title" />&nbsp;:&nbsp;</span>
-			<c:choose>
-				<c:when test="${execution.reference eq ''}">
 					<a id="execution-name" href="${ executionUrl }/info">&#35;<c:out
 						value="${executionRank} - ${ execution.name }" escapeXml="true" />
 					</a>
-				</c:when>
-				<c:when test="${!(execution.reference eq '')">
-					<a id="execution-name" href="${ executionUrl }/info">&#35;<c:out
-						value="${executionRank} - ${execution.reference} - ${ execution.name }" escapeXml="true" />
-					</a>
-				</c:when>
-			</c:choose>
 		</h2>
 	</div>
 

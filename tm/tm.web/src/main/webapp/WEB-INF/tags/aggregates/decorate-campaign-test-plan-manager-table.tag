@@ -79,7 +79,7 @@
 	}
 
 	function rowDataToTestCaseId(rowData) {
-		return rowData[7];	
+		return rowData[8];	
 	}
 
 	function addIdToTr(nRow, aData){
@@ -103,7 +103,7 @@
 	
 	function addHLinkToTestCaseName(row, data) {
 		var url= '${ testCaseDetailsBaseUrl }/' + rowDataToTestCaseId(data) + '/info';			
-		addHLinkToCellText($( 'td:eq(2)', row ), url);
+		addHLinkToCellText($( 'td:eq(3)', row ), url);
 	}	
 </script>
 
@@ -113,8 +113,8 @@
 	<jsp:attribute name="columnDefs">
 		<dt:column-definition targets="0" visible="false" />
 		<dt:column-definition targets="1" sortable="false" cssClass="select-handle centered" width="2em"/>
-		<dt:column-definition targets="2,3,4,5" sortable="false" />
-		<dt:column-definition targets="6" sortable="false" width="2em" cssClass="centered"/>
-		<dt:column-definition targets="7" visible="false" lastDef="true" />
+		<dt:column-definition targets="2,3,4,5,6" sortable="false" />
+		<dt:column-definition targets="7" sortable="false" width="2em" cssClass="centered"/>
+		<dt:column-definition targets="8" visible="false" lastDef="true" />
 	</jsp:attribute>
 </comp:decorate-ajax-table>

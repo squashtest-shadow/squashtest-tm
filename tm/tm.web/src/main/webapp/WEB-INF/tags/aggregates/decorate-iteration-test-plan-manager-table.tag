@@ -110,11 +110,11 @@
 	}
 	
 	function isTestCaseDeleted(rowData){
-		return (rowData[8]=="true");
+		return (rowData[9]=="true");
 	}
 	
 	function getTestCaseId(rowData){
-		return rowData[7];
+		return rowData[8];
 	}
 	
 	
@@ -154,7 +154,7 @@
 	function addHLinkToTestPlanName(row, data) {
 		if (! isTestCaseDeleted(data) ){
 			var url= '${ testPlanDetailsBaseUrl }/' + getTestCaseId(data) + '/info';		
-			addHLinkToCellText($( 'td:eq(2)', row ), url);
+			addHLinkToCellText($( 'td:eq(3)', row ), url);
 		}
 	}	
 
@@ -195,12 +195,12 @@
 <comp:decorate-ajax-table url="${ tableModelUrl }" tableId="test-plan-table" paginate="true">
 	<jsp:attribute name="drawCallback">testPlanTableDrawCallback</jsp:attribute>
 	<jsp:attribute name="rowCallback">testPlanTableRowCallback</jsp:attribute>
-		<jsp:attribute name="initialSort">[[2,'asc']]</jsp:attribute>
+		<jsp:attribute name="initialSort">[[3,'asc']]</jsp:attribute>
 		<jsp:attribute name="columnDefs">
 			<dt:column-definition targets="0" visible="false" />
 			<dt:column-definition targets="1" sortable="false" cssClass="centered ui-state-default drag-handle select-handle" />
-			<dt:column-definition targets="2, 3, 4, 5, 6" sortable="false" />
-			<dt:column-definition targets="7, 8" sortable="false" visible="false"/>
-			<dt:column-definition targets="9" sortable="false" width="2em" lastDef="true" cssClass="centered"/>
+			<dt:column-definition targets="2, 3, 4, 5, 6, 7" sortable="false" />
+			<dt:column-definition targets="8, 9" sortable="false" visible="false"/>
+			<dt:column-definition targets="10" sortable="false" width="2em" lastDef="true" cssClass="centered"/>
 		</jsp:attribute>
 </comp:decorate-ajax-table>

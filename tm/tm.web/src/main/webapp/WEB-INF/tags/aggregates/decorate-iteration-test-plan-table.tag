@@ -174,12 +174,12 @@
 	
 	function addHLinkToTestPlanName(row, data) {
 		var url = 'javascript:void(0)';
-		addHLinkToCellText($('td:eq(3)', row), url);
-		$('td:eq(3) a', row).addClass('test-case-name-hlink');
+		addHLinkToCellText($('td:eq(4)', row), url);
+		$('td:eq(4) a', row).addClass('test-case-name-hlink');
 	}
 
 	function addIconToTestPlanName(row, data) {
-		$('td:eq(3)', row)
+		$('td:eq(4)', row)
 			.prepend('<img src="${pageContext.servletContext.contextPath}/images/arrow_right.gif"/>');
 	}
 
@@ -361,16 +361,17 @@
 					{'bSortable': false, 'sClass': 'centered ui-state-default drag-handle select-handle', 'aTargets': [1], 'mDataProp' : 'entity-index'},
 					{'bSortable': false, 'aTargets': [2], 'mDataProp' : 'project-name'},
 					{'bSortable': false, 'aTargets': [3], 'mDataProp' : 'exec-mode', 'sWidth': '2em', 'sClass' : "exec-mode"},
-					{'bSortable': false, 'aTargets': [4], 'mDataProp' : 'tc-name'},
-					{'bSortable': false, 'aTargets': [5], 'mDataProp' : 'importance'},
-					{'bSortable': false, 'sWidth': '10%', 'aTargets': [6], 'mDataProp' : 'type'},
-					{'bSortable': false, 'sWidth': '10%', 'aTargets': [7], 'mDataProp' : 'suite'},
-					{'bSortable': false, 'sWidth': '10%', 'sClass': 'has-status', 'aTargets': [8], 'mDataProp' : 'status'},
-					{'bSortable': false, 'sWidth': '10%', 'sClass': 'assignable-combo', 'aTargets': [9], 'mDataProp' : 'last-exec-by'},
-					{'bSortable': false, 'bVisible' : false, 'sWidth': '10%', 'aTargets': [10], 'mDataProp' : 'assigned-to'},
-					{'bSortable': false, 'sWidth': '10%', 'aTargets': [11], 'mDataProp' : 'last-exec-on'},
-					{'bSortable': false, 'bVisible': false, 'aTargets': [12], 'mDataProp' : 'is-tc-deleted'},
-					{'bSortable': false, 'sWidth': '2em', 'sClass': 'centered delete-button', 'aTargets': [13], 'mDataProp' : 'empty-delete-holder'} 
+					{'bSortable': false, 'aTargets': [4], 'mDataProp' : 'reference'},
+					{'bSortable': false, 'aTargets': [5], 'mDataProp' : 'tc-name'},
+					{'bSortable': false, 'aTargets': [6], 'mDataProp' : 'importance'},
+					{'bSortable': false, 'sWidth': '10%', 'aTargets': [7], 'mDataProp' : 'type'},
+					{'bSortable': false, 'sWidth': '10%', 'aTargets': [8], 'mDataProp' : 'suite'},
+					{'bSortable': false, 'sWidth': '10%', 'sClass': 'has-status', 'aTargets': [9], 'mDataProp' : 'status'},
+					{'bSortable': false, 'sWidth': '10%', 'sClass': 'assignable-combo', 'aTargets': [10], 'mDataProp' : 'last-exec-by'},
+					{'bSortable': false, 'bVisible' : false, 'sWidth': '10%', 'aTargets': [11], 'mDataProp' : 'assigned-to'},
+					{'bSortable': false, 'sWidth': '10%', 'aTargets': [12], 'mDataProp' : 'last-exec-on'},
+					{'bSortable': false, 'bVisible': false, 'aTargets': [13], 'mDataProp' : 'is-tc-deleted'},
+					{'bSortable': false, 'sWidth': '2em', 'sClass': 'centered delete-button', 'aTargets': [14], 'mDataProp' : 'empty-delete-holder'} 
 				]
 			};		
 		

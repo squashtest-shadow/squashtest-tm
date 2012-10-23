@@ -890,7 +890,9 @@ function addTestStepSuccessAnother(){
 				<dt:column-definition targets="0" visible="false" sortable="false" />
 				<dt:column-definition targets="1" sortable="false"
 							cssClass="centered select-handle" width="2em" />
-				<dt:column-definition targets="2, 3, 4" sortable="true" />
+				<dt:column-definition targets="2" sortable="true" />
+				<dt:column-definition targets="3" sortable="true"  width="15em"/>
+				<dt:column-definition targets="4" sortable="true" />
 				<dt:column-definition targets="5" sortable="true" visible="true"
 							lastDef="true" />
 			</jsp:attribute>

@@ -149,7 +149,7 @@
 	
 	function addHLinkToTestCaseName(row, data) {
 		var url= '${ testCaseDetailsBaseUrl }/' + rowDataToTestCaseId(data) + '/info';			
-		addHLinkToCellText($( 'td:eq(2)', row ), url);
+		addHLinkToCellText($( 'td:eq(3)', row ), url);
 	}	
 	
 	
@@ -201,13 +201,14 @@
 				{'bSortable': false, 'bVisible': false, 'aTargets': [0], 'mDataProp' : 'entity-id'},
 				{'bSortable': false, 'sWidth' : '2em', 'sClass': 'centered ui-state-default drag-handle select-handle', 'aTargets': [1], 'mDataProp' : 'entity-index'},
 				{'bSortable': false, 'aTargets': [2], 'mDataProp' : 'project-name'},
-				{'bSortable': false, 'aTargets': [3], 'mDataProp' : 'tc-name'},
-				{'bSortable': false, 'aTargets': [4], 'sClass' : 'assignable-combo', 'mDataProp' : 'assigned-user'},
-				{'bSortable': false, 'bVisible' : false, 'sWidth': '10%', 'aTargets': [5], 'mDataProp' : 'assigned-to'},
-				{'bSortable': false, 'aTargets': [6], 'mDataProp' : 'importance'},
-				{'bSortable': false, 'aTargets': [7], 'mDataProp' : 'exec-mode'},
-				{'bSortable': false, 'sWidth': '2em', 'sClass': 'centered delete-button', 'aTargets': [8], 'mDataProp' : 'empty-delete-holder'},
-				{'bSortable': false, 'bVisible' : false, 'aTargets': [9], 'mDataProp' : 'tc-id'},
+				{'bSortable': false, 'aTargets': [3], 'mDataProp' : 'reference'},
+				{'bSortable': false, 'aTargets': [4], 'mDataProp' : 'tc-name'},
+				{'bSortable': false, 'aTargets': [5], 'sClass' : 'assignable-combo', 'mDataProp' : 'assigned-user'},
+				{'bSortable': false, 'bVisible' : false, 'sWidth': '10%', 'aTargets': [6], 'mDataProp' : 'assigned-to'},
+				{'bSortable': false, 'aTargets': [7], 'mDataProp' : 'importance'},
+				{'bSortable': false, 'aTargets': [8], 'mDataProp' : 'exec-mode'},
+				{'bSortable': false, 'sWidth': '2em', 'sClass': 'centered delete-button', 'aTargets': [9], 'mDataProp' : 'empty-delete-holder'},
+				{'bSortable': false, 'bVisible' : false, 'aTargets': [10], 'mDataProp' : 'tc-id'},
 			]
 		};		
 	

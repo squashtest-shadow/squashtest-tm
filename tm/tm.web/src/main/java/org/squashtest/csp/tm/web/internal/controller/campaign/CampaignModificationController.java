@@ -81,10 +81,12 @@ public class CampaignModificationController {
 	 * because their configuration and content are different !
 	 */
 	private final DataTableMapper testPlanMapper = new DataTableMapper("irrelevant", TestCase.class, Project.class)
-			.initMapping(7).mapAttribute(Project.class, 2, "name", String.class)
-			.mapAttribute(TestCase.class, 3, "name", String.class)
-			.mapAttribute(TestCase.class, 5, "importance", TestCaseImportance.class)
-			.mapAttribute(TestCase.class, 6, "executionMode", TestCaseExecutionMode.class);
+			.initMapping(8)
+			.mapAttribute(Project.class, 2, "name", String.class)
+			.mapAttribute(Project.class, 3, "name", String.class)
+			.mapAttribute(TestCase.class, 4, "name", String.class)
+			.mapAttribute(TestCase.class, 6, "importance", TestCaseImportance.class)
+			.mapAttribute(TestCase.class, 7, "executionMode", TestCaseExecutionMode.class);
 
 	@ServiceReference
 	public void setIterationModificationService(IterationModificationService iterationModificationService) {
@@ -311,6 +313,7 @@ public class CampaignModificationController {
 				result.put(DataTableModelHelper.DEFAULT_ENTITY_ID_KEY, item.getId());
 				result.put(DataTableModelHelper.DEFAULT_ENTITY_INDEX_KEY, getCurrentIndex());
 				result.put("project-name", testCase.getProject().getName());
+				result.put("reference", testCase.getReference());
 				result.put("tc-name", testCase.getName());
 				result.put("assigned-user", user);
 				result.put("assigned-to", assigneeId);
@@ -339,7 +342,7 @@ public class CampaignModificationController {
 			public Object[] buildItemData(CampaignTestPlanItem item) {
 				TestCase testCase = item.getReferencedTestCase();
 				return new Object[] { item.getId(), getCurrentIndex(), testCase.getProject().getName(),
-						testCase.getName(), formatImportance(testCase.getImportance(), locale),
+						testCase.getReference(), testCase.getName(), formatImportance(testCase.getImportance(), locale),
 						formatExecutionMode(testCase.getExecutionMode(), locale), "", testCase.getId() };
 			}
 		}.buildDataModel(holder, filter.getFirstItemIndex() + 1, params.getsEcho());
