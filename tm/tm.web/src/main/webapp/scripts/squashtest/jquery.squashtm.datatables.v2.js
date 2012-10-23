@@ -598,7 +598,7 @@ squashtm.keyEventListener = squashtm.keyEventListener || new KeyEventListener();
 	 * 
 	 **************************************************************************/
 
-	var datatableDefaults = squashtm.datatable.defaults;
+	var datatableDefaults = squashtm.datatable.defaults
 
 	var squashDefaults = {
 		attachments : {
@@ -703,6 +703,10 @@ squashtm.keyEventListener = squashtm.keyEventListener || new KeyEventListener();
 
 		datatableEffective["fnDrawCallback"] = customDrawCallback;
 
+		/* **************** store the new instance ***************** */
+
+		$.fn.squashTable.instances[this.get(0)] = this;
+
 		/* ************* now call the base plugin ***************** */
 
 		this.dataTable(datatableEffective);
@@ -722,11 +726,6 @@ squashtm.keyEventListener = squashtm.keyEventListener || new KeyEventListener();
 		;
 
 		this.addClass("is-contextual");
-
-		/* **************** store the new instance ***************** */
-
-		$.fn.squashTable.instances[this.get(0)] = this;
-
 	};
 
 	$.fn.squashTable.instances = existingInstances || {}; // end of the hack

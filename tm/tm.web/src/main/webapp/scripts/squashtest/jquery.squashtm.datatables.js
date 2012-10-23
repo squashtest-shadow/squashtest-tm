@@ -178,8 +178,8 @@ var squashtm = squashtm || {};
 			"bRetrieve" : true,
 			"sDom" : 't<"dataTables_footer"lirp>'
 		};
-		
-	squashtm.datatable = squashtm.datatable | {};
+
+	squashtm.datatable = squashtm.datatable || {};
 	squashtm.datatable.defaults = datatableDefaults;	
 })(jQuery);
 
