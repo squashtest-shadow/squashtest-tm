@@ -19,10 +19,12 @@
  *     along with this software.  If not, see <http://www.gnu.org/licenses/>.
  */
 require([ "common" ], function(common) {
-	require([ "jquery", "backbone", "app/cf/CustomFieldsTableView", "app/ws/squashtm.workspace" ], function($, Backbone, CustomFieldsTableView, WS) {
-		$(function() {
+	require([ "jquery", "app/cf/CustomFieldsTableView", "app/ws/squashtm.workspace", "domReady" ], function($, CustomFieldsTableView, WS, domReady) {
+		domReady(function() {
 			WS.init("");
 			var cfTable = new CustomFieldsTableView();
+			
+			$(".unstyled").fadeIn("fast", function() { $(this).removeClass("unstyled"); });
 		});
 	});
 });

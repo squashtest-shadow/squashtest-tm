@@ -83,7 +83,7 @@
 					<jsp:invoke fragment="titlePane"/>
 				</div>
 				<div class="snap-right">
-					<div style="display:inline-block;">
+					<div class="unstyled-notification-pane">
 						<layout:_ajax-notifications  cssClass="snap-right"/>					
 					<%-- 
 						note about the sticked </div><div> below : IT DOES MATTER
@@ -106,7 +106,7 @@
 	<jsp:invoke fragment="foot" />
     <script type="text/javascript">
     	$(function() {
-      		$(".unstyled").removeClass("unstyled");
+      		$(".unstyled").fadeIn("fast", function() { $(this).removeClass("unstyled"); });
     	});
     </script>
 </html>

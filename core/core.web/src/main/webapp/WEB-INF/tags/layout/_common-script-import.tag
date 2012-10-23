@@ -104,8 +104,10 @@ require.baseUrl = "${pageContext.servletContext.contextPath}/scripts";
 
 <script type="text/javascript">
   require([ "common" ], function() {
-    require([ "app/ws/squashtm.workspace" ], function(WS) {
-      WS.init("${ highlightedWorkspace }");
+    require([ "domReady", "app/ws/squashtm.workspace" ], function(domReady, WS) {
+    	domReady(function() {
+          WS.init("${ highlightedWorkspace }");
+    	});
     });
   });
 </script>

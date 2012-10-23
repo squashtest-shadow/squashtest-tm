@@ -25,7 +25,7 @@
 <%@ taglib prefix="f" uri="http://java.sun.com/jsp/jstl/fmt" %>
 <%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core" %>
 
-<div id="ajax-processing-indicator" class="ui-corner-all ${cssClass} " style="display:inline-block">
+<div id="ajax-processing-indicator" class="ui-corner-all ${cssClass} not-processing">
 	<img src="${ pageContext.servletContext.contextPath }/images/ajax-loader.gif" width="19px" height="19px"/>
 	<span><f:message key="squashtm.processing"/></span>
 </div>

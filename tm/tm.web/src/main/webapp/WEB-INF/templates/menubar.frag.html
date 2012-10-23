@@ -28,10 +28,11 @@
 	<!-- common script import -->
 	<link rel="stylesheet" type="text/css" media="all" href="../../../../../../../core/core.web/src/main/webapp/styles/squashtm.fg.menu.css" th:href="@{/styles/squashtm.fg.menu.css}" />
 	<!-- /common script import -->
-*	<link rel="stylesheet" type="text/css" media="all" href="../../../../../../../core/core.web/src/main/webapp/styles/master.blue.css" th:href="@{/styles/master.blue.css}" />
+	<link rel="stylesheet" type="text/css" media="all" href="../../../../../../../core/core.web/src/main/webapp/styles/master.blue.css" th:href="@{/styles/master.blue.css}" />
 </head>
 <body>
-	<div class="main-menubar unstyled" th:fragment="menubar">
+    <!-- MENUBAR FRAGMENT -->
+	<div class="main-menubar" th:fragment="menubar">
 		<div>
 			<input type="checkbox" id="menu-toggle-filter-ckbox"></input>
 			<a id="menu-project-filter-link" href="javascript:void(0)" >Inactif</a> 
@@ -78,9 +79,20 @@
 					<input type="checkbox" class="project-checkbox"/> <span class="project-name">Projet 2</span>
 				</div>
 				</div>
-				<div style="clear:both;display:hidden;"></div>
+				<div class="unsnap not-displayed"></div>
 			</div>
 		</div>
-	</div>
+      </div>
+      
+      <!-- NOTIFICATION AREA FRAGMENT -->
+      <div class="unstyled-notification-pane" th:fragment="notification">
+        <div id="ajax-processing-indicator" class="ui-corner-all snap-right not-processing">
+          <img src="../../../../../../../core/core.web/src/main/webapp/images/ajax-loader.gif" width="19px" height="19px" alt="processing" th:alt="#{squashtm.processing}" th:src="@{/images/ajax-loader.gif}" /> 
+          <span th:text="#{squashtm.processing}">En cours...</span>
+        </div>
+        <div id="generic-error-notification-area" class="ui-state-error ui-corner-all snap-right not-displayed">
+          <span class="ui-icon ui-icon-alert icon"></span><span th:text="#{error.generic.label}">WTF ?!</span> &nbsp;(<a href="javascript:void(0)" id="show-generic-error-details" th:text="#{error.generic.button.details.label}">Details</a>)
+        </div>
+      </div>
 </body>
 </html>

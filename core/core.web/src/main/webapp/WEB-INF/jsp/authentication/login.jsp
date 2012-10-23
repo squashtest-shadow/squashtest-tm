@@ -49,8 +49,8 @@
         <script src="<c:url value='/scripts/require-min.js' />"></script>
         <script type="text/javascript">
           require([ "common" ], function() {
-            require([ "jquery", "app/ws/squashtm.notification", "jqueryui", "jquery.squash.squashbutton" ], function($, WTF) {
-            	$(function() {
+            require([ "jquery", "app/ws/squashtm.notification", "domReady", "jqueryui", "jquery.squash.squashbutton" ], function($, WTF, domReady) {
+            	domReady(function() {
               		WTF.init(squashtm.app.notificationConf);
               		
     				$('auth-error').fadeIn('slow');
@@ -79,7 +79,7 @@
 				<span id="nav-up-version">Squash TM v${initParam["squashTMVersion"]} </span>			
 			</div>
 			<div class="snap-right">
-				<div style="display:inline-block;">
+				<div class="unstyled-notification-pane">
 							<layout:_ajax-notifications  cssClass="snap-right"/>
 				<img src="${ pageContext.servletContext.contextPath }/images/logo_squash30h.png" />
 				</div>
