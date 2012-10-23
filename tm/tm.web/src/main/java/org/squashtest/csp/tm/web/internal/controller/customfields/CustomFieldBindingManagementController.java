@@ -20,16 +20,13 @@
  */
 package org.squashtest.csp.tm.web.internal.controller.customfields;
 
-import java.util.HashMap;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Locale;
-import java.util.Map;
 
 import javax.annotation.PostConstruct;
 import javax.inject.Inject;
 
-import org.springframework.context.MessageSource;
 import org.springframework.osgi.extensions.annotation.ServiceReference;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -39,8 +36,6 @@ import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.servlet.ModelAndView;
 import org.squashtest.csp.tm.domain.customfield.BindableEntity;
 import org.squashtest.csp.tm.domain.customfield.CustomFieldBinding;
-import org.squashtest.csp.tm.domain.execution.ExecutionStep;
-import org.squashtest.csp.tm.infrastructure.filter.FilteredCollectionHolder;
 import org.squashtest.csp.tm.service.CustomFieldBindingModificationService;
 import org.squashtest.csp.tm.web.internal.i18n.InternationalizationHelper;
 import org.squashtest.csp.tm.web.internal.model.customfields.CustomFieldBindingModel;
@@ -50,6 +45,7 @@ import org.squashtest.csp.tm.web.internal.model.datatable.DataTableDrawParameter
 import org.squashtest.csp.tm.web.internal.model.datatable.DataTableModel;
 import org.squashtest.csp.tm.web.internal.model.datatable.DataTableModelHelper;
 import org.squashtest.tm.core.foundation.collection.PagedCollectionHolder;
+import org.squashtest.tm.core.foundation.collection.Paging;
 
 
 @Controller
@@ -79,7 +75,9 @@ public class CustomFieldBindingManagementController {
 	@RequestMapping(value="/manager", method = RequestMethod.GET, params = {"projectId"})
 	public ModelAndView getManager(@RequestParam("projectId") Long projectId){
 		
-		List<CustomFieldBinding> testCaseBindings = service.findCustomFieldsForProjectAndEntity(projectId, BindableEntity.TEST_CASE);
+		List<CustomFieldBinding> testCaseBindings = service.findCustomFieldsForProjectAndEntity
+													(projectId, BindableEntity.TEST_CASE, new DefaultPaging())
+													.getPagedItems();
 		/*List<CustomFieldBinding> requirementBindings = service.findCustomFieldsForProjectAndEntity(projectId, BindableEntity.REQUIREMENT_VERSION);
 		List<CustomFieldBinding> campaignBindings = service.findCustomFieldsForProjectAndEntity(projectId, BindableEntity.CAMPAIGN);
 		List<CustomFieldBinding> iterationBindings = service.findCustomFieldsForProjectAndEntity(projectId, BindableEntity.ITERATION);
@@ -148,6 +146,10 @@ public class CustomFieldBindingManagementController {
 	}
 
 	
+	// ************************* inner classes ****************************
+	
+	
+	
 	private static class CUFBindingDataTableModelHelper extends DataTableModelHelper<CustomFieldBinding> {
 		private CustomFieldJsonConverter converter;
 
@@ -159,6 +161,19 @@ public class CustomFieldBindingManagementController {
 		public Object buildItemData(CustomFieldBinding item) {
 			return converter.toJson(item);
 		}
+	}
+
+	private static class DefaultPaging implements Paging{
+		@Override
+		public int getFirstItemIndex() {
+			return 0;
+		}
+		
+		@Override
+		public int getPageSize() {
+			return 10;
+		}
+		
 	}
 	
 }

@@ -28,6 +28,18 @@
 </div>
 
 
+<div th:remove="all">
+<script type="text/javascript">
+	var require = { 
+	    baseUrl: '../../scripts/'
+	}; 
+</script>
+<script type="text/javascript" src="../../scripts/lib/jquery/jquery-1.8.2.js"></script>
+<script type="text/javascript" src="../../js/thymol.js"></script>
+<script type="text/javascript" src="../../scripts/require.js"></script>
+<script th:include="js.includes.frag :: [body]"></script>
+</div>
+
 <script type="text/javascript" th:inline="javascript">
 //<![CDATA[
 
@@ -48,7 +60,8 @@
     				title : /*[[ #{project.cufbinding.test-cases.panel.title}  ]]*/"test case bindings"
 	    		},
 	    		table : {
-	    			entityType : /* ${org.squashtest.csp.tm.domain.customfield.BindableEntity.TEST_CASE.name} */"TEST_CASE"
+	    			entityType : /* ${org.squashtest.csp.tm.domain.customfield.BindableEntity.TEST_CASE.name} */"TEST_CASE",
+	    			
 	    		}
 	    	}
 	    	
@@ -75,14 +88,16 @@
 				<td>id</td>
 				<td>#</td>
 				<td>name</td>
-				<td>entity type</td>
-				<td>project id</td>
 				<td>del</td>
 			</tr>
-			<tr>
-				
-			
-			</tr>
+			<tbody>
+				<tr th:each="binding : ${testCaseBindings}">
+					<td th:text="${binding.id}"></td>
+					<td th:text="${binding.position}"></td>
+					<td th:text="${binding.customField.name}"></td>
+					<td th:text=" "></td>				
+				</tr>
+			</tbody>
 		</table>
 	
 	</div>
