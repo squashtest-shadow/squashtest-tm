@@ -472,6 +472,17 @@
 							copyNode(newData, url)
 							.fail(function (){
 								data.inst.refresh();
+							}).done(function(){
+								//Begin [Feat 1299]
+								//this is to make the following cases work : 
+								// case 1 : one is viewing a campaign and copy-paste one of it's iterations with Ctrl + drag and drop
+								// => the statistics of the still displayed campaign have changed = > we need to refresh them
+								// case 2 :  one is viewing an iteration and copy-paste one of it's test-suite with Ctrl + drag and drop
+								//=> the statistics of the still displayed iteration have changed => we need to refresh them
+								if(typeof(refreshStatistics) == "function"){
+									refreshStatistics();
+								}
+								//End [Feat 1299]
 							});
 						}
 						else{
@@ -948,7 +959,7 @@ function copyNode(data, url){
 		})
 		.success(function (jsonData){
 			insertCopiedNodes(jsonData, newParent, tree);
-			tree.open_node( newParent, deferred.resolve);
+			tree.open_node( newParent, deferred.resolve);			
 		})
 		.error(deferred.reject);
 	});

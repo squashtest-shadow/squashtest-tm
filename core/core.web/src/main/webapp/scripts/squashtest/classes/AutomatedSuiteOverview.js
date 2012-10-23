@@ -37,7 +37,8 @@ function AutomatedSuiteOverviewDialog(settings){
 			executionAutoInfos.empty();
 			$("#execution-auto-progress-bar").progressbar("value", 0);
 			$("#execution-auto-progress-amount").text(0 + "/" + 0);
-			$('#test-plans-table').squashTable().refresh();
+			refreshTestPlans();
+			refreshStatistics();
 		});
 	}
 		

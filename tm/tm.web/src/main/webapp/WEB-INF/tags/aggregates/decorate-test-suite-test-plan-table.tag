@@ -32,8 +32,6 @@
 <%@ attribute name="assignableUsersUrl" required="true" description="URL to manipulate user of the test-plans" %>
 <%@ attribute name="testCaseSingleRemovalPopupId" required="true" description="html id of the single test-case removal popup" %>
 <%@ attribute name="testCaseMultipleRemovalPopupId" required="true" description="html id of the multiple test-case removal popup" %>
-<%@ attribute name="testSuiteStatisticsId" required="true" description="html id of the test suite statistics panel" %>
-<%@ attribute name="testSuiteStatisticsUrl" required="true" description="URL to manipulate and refresh the test suite statistics" %>
 <%@ attribute name="testSuiteExecButtonsId" required="true" description="html id of the test suite execution buttons panel" %>
 <%@ attribute name="testSuiteExecButtonsUrl" required="true" description="URL to refresh the labels on the execution buttons" %>
 
@@ -63,7 +61,9 @@
 	var nonBelongingTestPlansUrl = "${nonBelongingTestPlansUrl}";
 
 	$(function() {
+		<%--=========================--%>
 		<%-- single test-plan removal --%>
+		<%--=========================--%>
 		$('#test-suite-test-plans-table .delete-test-suite-test-plan-button').die('click');
 		
 		//single deletion buttons
@@ -87,7 +87,7 @@
 					success : function (data){
 						refreshTestPlans();
 						checkForbiddenDeletion(data);
-						refreshStats();
+						refreshStatistics();
 						refreshExecButtons();
 					}
 				});
@@ -101,7 +101,7 @@
 					success : function (data){
 						refreshTestPlans();
 						checkForbiddenDeletion(data);
-						refreshStats();
+						refreshStatistics();
 						refreshExecButtons();
 					}
 				});
@@ -115,7 +115,9 @@
 			}
 		}
 		
-		<%-- selected test-plan removal --%>
+		<%--=========================--%>
+		<%-- multiple test-plan removal --%>
+		<%--=========================--%>
 		//multiple deletion
 		$("#${ testCaseMultipleRemovalPopupId }").bind('dialogclose', function() {
 			var answer = $("#${ testCaseMultipleRemovalPopupId }").data("answer");
@@ -131,7 +133,7 @@
 					$.post(nonBelongingTestPlansUrl+'/delete', { testPlanIds: ids }, function(data){
 						refreshTestPlans();
 						checkForbiddenDeletion(data);
-						refreshStats();
+						refreshStatistics();
 						refreshExecButtons();
 						});
 				}
@@ -141,14 +143,20 @@
 					$.post(nonBelongingTestPlansUrl+'/detach', { testPlanIds: ids }, function(data){
 						refreshTestPlans();
 						checkForbiddenDeletion(data);
-						refreshStats();
+						refreshStatistics();
 						refreshExecButtons();
 						});
 				}
 			}
 		
 		});
-		
+	});
+
+
+	<%--=========================--%>
+	<%-- new execution Buttons --%>
+	<%--=========================--%>
+	$(function() {	
 		<%-- bind the new execution creation button to their event --%>
 		var newExecButtons = $('a.new-exec');
 		newExecButtons.die('click');
@@ -191,6 +199,9 @@
 	}
 		 
 
+	<%--=========================--%>
+	<%-- Drag and Drop --%>
+	<%--=========================--%>
 	//for drag and drop test case feature
 	//row : selected row
 	//dropPosition : the new position
@@ -200,16 +211,16 @@
 			refreshTestPlans();
 		});		
 	}
-	
+
+	<%--=========================--%>
+	<%-- Refresh methods --%>
+	<%--=========================--%>
 	function refreshTestPlans() {
 		var table = $('#test-suite-test-plans-table').dataTable();
 		saveTableSelection(table, getTestPlansTableRowId);
 		table.fnDraw(false);
 	}
 	
-	function refreshStats(){
-		$('#${ testSuiteStatisticsId }').load('${ testSuiteStatisticsUrl }');
-	}
 	
 	function refreshExecButtons(){
 		$('#${ testSuiteExecButtonsId }').load('${ testSuiteExecButtonsUrl }');
@@ -220,6 +231,10 @@
 		table.fnDraw(false);
 	}
 
+
+	<%--=========================--%>
+	<%-- Table methods  --%>
+	<%--=========================--%>
 	function testPlanTableDrawCallback() {
 		<c:if test="${ editable }">
 		enableTableDragAndDrop('test-suite-test-plans-table', getTestPlanTableRowIndex, testPlanDropHandler);

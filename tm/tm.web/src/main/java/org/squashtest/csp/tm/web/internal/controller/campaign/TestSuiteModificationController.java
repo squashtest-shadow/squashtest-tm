@@ -76,63 +76,61 @@ public class TestSuiteModificationController {
 	private static final String NAME = "name";
 
 	private TestSuiteModificationService service;
-	
 
-	//TODO : move to TestSuiteModificationService everything handled here bu the other services. In order to remove those 
-	//extra services.
-	
+	// TODO : move to TestSuiteModificationService everything handled here bu the other services. In order to remove
+	// those
+	// extra services.
+
 	private IterationModificationService iterationModService;
-	
+
 	private IterationTestPlanFinder iterationTestPlanFinder;
 
 	@Inject
 	private PermissionEvaluationService permissionService;
-	
+
 	private TestAutomationFinderService testAutomationService;
 
-	
 	private static final String TEST_SUITE = "testSuite";
 	private static final Logger LOGGER = LoggerFactory.getLogger(TestSuiteModificationController.class);
-	
+
 	@ServiceReference
-	public void setTestAutomationFinderService (TestAutomationFinderService testAutomationService){
+	public void setTestAutomationFinderService(TestAutomationFinderService testAutomationService) {
 		this.testAutomationService = testAutomationService;
 	}
-	
+
 	@ServiceReference
-	public void setIterationTestPlanFinder (IterationTestPlanFinder iterationTestPlanFinder){
+	public void setIterationTestPlanFinder(IterationTestPlanFinder iterationTestPlanFinder) {
 		this.iterationTestPlanFinder = iterationTestPlanFinder;
 	}
-	
+
 	@ServiceReference
-	public void setTestSuiteModificationService(TestSuiteModificationService service){
-		this.service=service;
+	public void setTestSuiteModificationService(TestSuiteModificationService service) {
+		this.service = service;
 	}
-	
+
 	@ServiceReference
-	public void setIterationModificationService(IterationModificationService iterationModService){
-		this.iterationModService=iterationModService;
+	public void setIterationModificationService(IterationModificationService iterationModService) {
+		this.iterationModService = iterationModService;
 	}
 
 	@Inject
 	private InternationalizationHelper messageSource;
-	
+
 	private final DataTableMapper testPlanMapper = new DataTableMapper("unused", IterationTestPlanItem.class,
 			TestCase.class, Project.class, TestSuite.class).initMapping(11)
-			.mapAttribute(Project.class, 2, NAME, String.class)
-			.mapAttribute(TestCase.class, 4, NAME, String.class)
-			.mapAttribute(TestCase.class, 5, "importance", TestCaseImportance.class)			
+			.mapAttribute(Project.class, 2, NAME, String.class).mapAttribute(TestCase.class, 4, NAME, String.class)
+			.mapAttribute(TestCase.class, 5, "importance", TestCaseImportance.class)
 			.mapAttribute(TestCase.class, 6, "executionMode", TestCaseExecutionMode.class)
 			.mapAttribute(IterationTestPlanItem.class, 7, "executionStatus", ExecutionStatus.class)
 			.mapAttribute(IterationTestPlanItem.class, 8, "lastExecutedBy", String.class)
 			.mapAttribute(IterationTestPlanItem.class, 9, "lastExecutedOn", Date.class);
-	
+
 	// will return the fragment only
 	@RequestMapping(method = RequestMethod.GET)
 	public ModelAndView showTestSuite(@PathVariable long id) {
 		TestSuite testSuite = service.findById(id);
 		TestPlanStatistics testSuiteStats = service.findTestSuiteStatistics(id);
-		
+
 		ModelAndView mav = new ModelAndView("fragment/test-suites/edit-test-suite");
 		mav.addObject(TEST_SUITE, testSuite);
 		mav.addObject("statistics", testSuiteStats);
@@ -146,7 +144,7 @@ public class TestSuiteModificationController {
 		TestSuite testSuite = service.findById(id);
 
 		TestPlanStatistics testSuiteStats = service.findTestSuiteStatistics(id);
-		
+
 		ModelAndView mav = new ModelAndView("page/campaign-libraries/show-test-suite");
 
 		if (testSuite != null) {
@@ -161,7 +159,7 @@ public class TestSuiteModificationController {
 		}
 		return mav;
 	}
-	
+
 	@RequestMapping(value = "/general", method = RequestMethod.GET)
 	public ModelAndView refreshGeneralInfos(@PathVariable long id) {
 
@@ -174,22 +172,21 @@ public class TestSuiteModificationController {
 
 		return mav;
 	}
-	
-	@RequestMapping(value = "/stats", method = RequestMethod.GET)
+
+	@RequestMapping(value = "/statistics", method = RequestMethod.GET)
 	public ModelAndView refreshStats(@PathVariable long id) {
-		
+
 		TestPlanStatistics testSuiteStats = service.findTestSuiteStatistics(id);
 
-		ModelAndView mav = new ModelAndView("fragment/generics/test-suite-statistics-fragment");
-
+		ModelAndView mav = new ModelAndView("fragment/generics/statistics-fragment");
 		mav.addObject("statisticsEntity", testSuiteStats);
-
+		
 		return mav;
 	}
-	
+
 	@RequestMapping(value = "/exec-button", method = RequestMethod.GET)
 	public ModelAndView refreshExecButton(@PathVariable long id) {
-		
+
 		TestPlanStatistics testSuiteStats = service.findTestSuiteStatistics(id);
 
 		ModelAndView mav = new ModelAndView("fragment/generics/test-suite-execution-button");
@@ -209,12 +206,10 @@ public class TestSuiteModificationController {
 		return newDescription;
 
 	}
-	
 
 	@RequestMapping(method = RequestMethod.POST, params = { "newName" })
 	@ResponseBody
-	public Object rename(HttpServletResponse response, @RequestParam("newName") String newName,
-			@PathVariable long id) {
+	public Object rename(HttpServletResponse response, @RequestParam("newName") String newName, @PathVariable long id) {
 
 		LOGGER.info("TestSuiteModificationController : renaming " + id + " as " + newName);
 		service.rename(id, newName);
@@ -222,29 +217,31 @@ public class TestSuiteModificationController {
 
 	}
 
-	//that method is useful too so don't remove it !
-	@RequestMapping(value="/rename", method=RequestMethod.POST, params=NAME )
-	public @ResponseBody Map<String, String> renameTestSuite(@PathVariable("id") Long id, @RequestParam(NAME) String name ){
+	// that method is useful too so don't remove it !
+	@RequestMapping(value = "/rename", method = RequestMethod.POST, params = NAME)
+	public @ResponseBody
+	Map<String, String> renameTestSuite(@PathVariable("id") Long id, @RequestParam(NAME) String name) {
 		service.rename(id, name);
 		Map<String, String> result = new HashMap<String, String>();
 		result.put("id", id.toString());
 		result.put(NAME, name);
 		return result;
 	}
-	
-	@RequestMapping(value="/test-cases", method=RequestMethod.POST, params="test-cases[]")
-	public @ResponseBody Map<String, String> bindTestPlan(@PathVariable("id") long suiteId, @RequestParam("test-cases[]") List<Long> itpIds){
+
+	@RequestMapping(value = "/test-cases", method = RequestMethod.POST, params = "test-cases[]")
+	public @ResponseBody
+	Map<String, String> bindTestPlan(@PathVariable("id") long suiteId, @RequestParam("test-cases[]") List<Long> itpIds) {
 		service.bindTestPlan(suiteId, itpIds);
 		Map<String, String> result = new HashMap<String, String>();
 		result.put("id", Long.toString(suiteId));
 		return result;
 	}
-	
+
 	/***
 	 * Method called when you drag a test case and change its position in the selected iteration
 	 * 
-	 * @param testPlanId : 
-	 * 				the iteration owning the moving test plan items
+	 * @param testPlanId
+	 *            : the iteration owning the moving test plan items
 	 * 
 	 * @param itemIds
 	 *            the ids of the items we are trying to move
@@ -254,20 +251,23 @@ public class TestSuiteModificationController {
 	 */
 	@RequestMapping(value = "/test-case/move", method = RequestMethod.POST, params = { "newIndex", "itemIds[]" })
 	@ResponseBody
-	public void changeTestPlanIndex(@PathVariable("id") long testSuiteId, @RequestParam int newIndex, @RequestParam("itemIds[]") List<Long> itemIds){
+	public void changeTestPlanIndex(@PathVariable("id") long testSuiteId, @RequestParam int newIndex,
+			@RequestParam("itemIds[]") List<Long> itemIds) {
 		service.changeTestPlanPosition(testSuiteId, newIndex, itemIds);
 		if (LOGGER.isTraceEnabled()) {
-			LOGGER.trace("test-suite " + testSuiteId+ ": moving "+itemIds.size()+" test plan items  to " + newIndex);
+			LOGGER.trace("test-suite " + testSuiteId + ": moving " + itemIds.size() + " test plan items  to "
+					+ newIndex);
 		}
 	}
-	
+
 	@RequestMapping(value = "{iterationId}/test-case-executions/{testPlanId}", method = RequestMethod.GET)
-	public ModelAndView getExecutionsForTestPlan(@PathVariable long id, @PathVariable long iterationId, @PathVariable long testPlanId) {
+	public ModelAndView getExecutionsForTestPlan(@PathVariable long id, @PathVariable long iterationId,
+			@PathVariable long testPlanId) {
 		TestSuite testSuite = service.findById(id);
 		List<Execution> executionList = iterationModService.findExecutionsByTestPlan(iterationId, testPlanId);
 		// get the iteraction to check access rights
 		Iteration iter = iterationModService.findById(iterationId);
-		IterationTestPlanItem  iterationTestPlanItem = iterationTestPlanFinder.findTestPlanItem(iterationId, testPlanId);
+		IterationTestPlanItem iterationTestPlanItem = iterationTestPlanFinder.findTestPlanItem(iterationId, testPlanId);
 		boolean editable = permissionService.hasRoleOrPermissionOnObject("ROLE_ADMIN", "WRITE", iter);
 
 		ModelAndView mav = new ModelAndView("fragment/test-suites/test-suite-test-plan-row");
@@ -277,33 +277,33 @@ public class TestSuiteModificationController {
 		mav.addObject("iterationId", iterationId);
 		mav.addObject("executions", executionList);
 		mav.addObject(TEST_SUITE, testSuite);
-		
+
 		return mav;
 
 	}
-	
+
 	@RequestMapping(value = "/test-plan/table", params = "sEcho")
 	public @ResponseBody
-	DataTableModel getTestPlanModel(@PathVariable long id, final DataTableDrawParameters params,
-			final Locale locale) {
+	DataTableModel getTestPlanModel(@PathVariable long id, final DataTableDrawParameters params, final Locale locale) {
 
 		Paging paging = new DataTableMapperPagingAndSortingAdapter(params, testPlanMapper);
-		
-		PagedCollectionHolder<List<IterationTestPlanItem>> holder = service.findTestSuiteTestPlan(
-				id, paging);
-		
-		return new IterationTestPlanItemDataTableModelHelper(messageSource, locale).buildDataModel(holder, params.getsEcho());
+
+		PagedCollectionHolder<List<IterationTestPlanItem>> holder = service.findTestSuiteTestPlan(id, paging);
+
+		return new IterationTestPlanItemDataTableModelHelper(messageSource, locale).buildDataModel(holder,
+				params.getsEcho());
 
 	}
-	
-	private static class IterationTestPlanItemDataTableModelHelper extends DataTableModelHelper<IterationTestPlanItem>{
+
+	private static class IterationTestPlanItemDataTableModelHelper extends DataTableModelHelper<IterationTestPlanItem> {
 		private InternationalizationHelper messageSource;
 		private Locale locale;
 
-		private IterationTestPlanItemDataTableModelHelper(InternationalizationHelper messageSource, Locale locale){
+		private IterationTestPlanItemDataTableModelHelper(InternationalizationHelper messageSource, Locale locale) {
 			this.messageSource = messageSource;
 			this.locale = locale;
 		}
+
 		@Override
 		public Object[] buildItemData(IterationTestPlanItem item) {
 
@@ -323,53 +323,48 @@ public class TestSuiteModificationController {
 				importance = messageSource.internationalize(item.getReferencedTestCase().getImportance(), locale);
 			}
 
-			return new Object[] { item.getId(), 
-					getCurrentIndex(),
-					projectName, 
-					automationMode,
-					testCaseName,
-					importance,
-					testCaseExecutionMode, 
+			return new Object[] { item.getId(), getCurrentIndex(), projectName, automationMode, testCaseName,
+					importance, testCaseExecutionMode,
 					messageSource.internationalize(item.getExecutionStatus(), locale),
-					formatString(item.getLastExecutedBy(), locale, messageSource), 
-					messageSource.localizeDate(item.getLastExecutedOn(), locale),
-					item.isTestCaseDeleted(), 
-					" "
-			};
+					formatString(item.getLastExecutedBy(), locale, messageSource),
+					messageSource.localizeDate(item.getLastExecutedOn(), locale), item.isTestCaseDeleted(), " " };
 		}
 	}
+
 	/* ************** execute auto *********************************** */
-	
-	@RequestMapping(method = RequestMethod.POST, params= {"id=execute-auto", "testPlanItemsIds[]"} )
-	public @ResponseBody AutomatedSuiteOverview  executeSelectionAuto(@PathVariable long id, @RequestParam("testPlanItemsIds[]") List<Long> ids , Locale locale){
+
+	@RequestMapping(method = RequestMethod.POST, params = { "id=execute-auto", "testPlanItemsIds[]" })
+	public @ResponseBody
+	AutomatedSuiteOverview executeSelectionAuto(@PathVariable long id,
+			@RequestParam("testPlanItemsIds[]") List<Long> ids, Locale locale) {
 
 		TestSuite suite = service.findById(id);
 		long iterationId = suite.getIteration().getId();
-		
-		AutomatedSuite autoSuite = iterationModService.createAutomatedSuite(iterationId, ids); 
+
+		AutomatedSuite autoSuite = iterationModService.createAutomatedSuite(iterationId, ids);
 		testAutomationService.startAutomatedSuite(autoSuite);
-		
-		
-		LOGGER.debug("Test-Suite #"+id+" : execute selected test plans");
-		
-		return 	AutomatedExecutionViewUtils.buildExecInfo(autoSuite, locale, messageSource);
-		
+
+		LOGGER.debug("Test-Suite #" + id + " : execute selected test plans");
+
+		return AutomatedExecutionViewUtils.buildExecInfo(autoSuite, locale, messageSource);
+
 	}
-	
-	@RequestMapping(method = RequestMethod.POST, params= {"id=execute-auto", "testPlanItemsIds"} )
-	public @ResponseBody AutomatedSuiteOverview executeAllAuto(@PathVariable long id, Locale locale ){
+
+	@RequestMapping(method = RequestMethod.POST, params = { "id=execute-auto", "testPlanItemsIds" })
+	public @ResponseBody
+	AutomatedSuiteOverview executeAllAuto(@PathVariable long id, Locale locale) {
 		AutomatedSuite suite = service.createAutomatedSuite(id);
 		testAutomationService.startAutomatedSuite(suite);
-		
-		LOGGER.debug("Test-Suite #"+id+" : execute all test plan auto");
-		
-		return 	AutomatedExecutionViewUtils.buildExecInfo(suite, locale, messageSource);
+
+		LOGGER.debug("Test-Suite #" + id + " : execute all test plan auto");
+
+		return AutomatedExecutionViewUtils.buildExecInfo(suite, locale, messageSource);
 
 	}
-	
-/* ************** /execute auto *********************************** */
 
-/* ***************** data formatter *************************** */
+	/* ************** /execute auto *********************************** */
+
+	/* ***************** data formatter *************************** */
 
 	private static String formatString(String arg, Locale locale, InternationalizationHelper messageSource) {
 		if (arg == null) {
@@ -380,10 +375,10 @@ public class TestSuiteModificationController {
 	}
 
 	private static String formatNoData(Locale locale, InternationalizationHelper messageSource) {
-		return messageSource.internationalize("squashtm.nodata",locale);
+		return messageSource.internationalize("squashtm.nodata", locale);
 	}
 
 	private static String formatDeleted(Locale locale, InternationalizationHelper messageSource) {
-		return messageSource.internationalize("squashtm.itemdeleted",locale);
+		return messageSource.internationalize("squashtm.itemdeleted", locale);
 	}
 }

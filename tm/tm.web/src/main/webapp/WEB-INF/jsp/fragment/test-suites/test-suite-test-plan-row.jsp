@@ -171,9 +171,9 @@
 			//or 
 			//3/ Because can't refresh only the status & last executed by yet
 			refreshTestPlans();
-
+			
 			refreshTestSuiteInfos();
-			refreshStats();
+			refreshStatistics();
 			refreshExecButtons();
 		}
 	</script>

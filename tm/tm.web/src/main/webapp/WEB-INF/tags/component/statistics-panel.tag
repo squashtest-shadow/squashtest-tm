@@ -22,44 +22,22 @@
 --%>
 <%@ tag description="general information panel for an auditable entity. Client can add more info in the body of this tag" body-content="scriptless" %>
 <%@ attribute name="statisticsEntity" required="true" type="java.lang.Object" description="The entity which general information we want to show" %>
+<%@ attribute name="statisticsUrl" required="true" description="the url where get fresh statistics infos" %>
 <%@ taglib prefix="f" uri="http://java.sun.com/jsp/jstl/fmt" %>
 <%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core" %>
 <%@ taglib prefix="comp" tagdir="/WEB-INF/tags/component"%>
+
 <c:if test="${not empty statisticsEntity}">
 <comp:toggle-panel id="statistics-toggle-panel" titleKey="title.statistics" open="true" isContextual="true">
 	<jsp:attribute name="body">
 			<div id="statistics-panel">
-				
-				<span ><f:message key="label.progress" />&nbsp;:&nbsp;<b>${ statisticsEntity.progression }</b>%&nbsp;(&nbsp;${ statisticsEntity.nbDone }&nbsp;/&nbsp;${ statisticsEntity.nbTestCases }&nbsp;)&nbsp;&nbsp;&nbsp;</span>
-				<span ><f:message key="label.Status" />&nbsp;:&nbsp;<b><f:message key="${ statisticsEntity.status.i18nKey }" /></b></span>	<br />
-				
-				
-				<br />
-				<div id="table-div" class="dataTables_wrapper">
-					<table id="stats-table" class="is-contextual center">
-						<thead>
-							<tr>
-								<th class="ui-state-default"><f:message key="label.numberOfTestCases" /></th>
-								<th class="ui-state-default"><f:message key="label.successful" /></th>
-								<th class="ui-state-default"><f:message key="label.plur.failed" /></th>
-								<th class="ui-state-default"><f:message key="label.running" /></th>
-								<th class="ui-state-default"><f:message key="label.plur.blocked" /></th>
-								<th class="ui-state-default"><f:message key="label.ready" /></th>
-							</tr>
-						</thead>
-						<tbody>
-							<tr id="stats:1" class="odd ui-state-highlight">
-								<td>${ statisticsEntity.nbTestCases }</td>
-								<td>${ statisticsEntity.nbSuccess }</td>
-								<td>${ statisticsEntity.nbFailure }</td>
-								<td>${ statisticsEntity.nbRunning }</td>
-								<td>${ statisticsEntity.nbBlocked }</td>
-								<td>${ statisticsEntity.nbReady }</td>
-							</tr>
-						</tbody>
-					</table>
-				</div>
+				<comp:statistics-panel-content statisticsEntity="${ statisticsEntity }"/>
 			</div>
 	</jsp:attribute>
 </comp:toggle-panel>
+<script>
+function refreshStatistics(){
+	$('#statistics-panel').load('${ statisticsUrl }');
+}
+</script>
 </c:if>

@@ -298,7 +298,9 @@
 		
 		/* ************************** various event handlers ******************* */
 
-		<%-- selected test-plan removal --%>
+		<%--=========================--%>
+		<%-- multiple test-plan removal --%>
+		<%--=========================--%>
 		//multiple deletion
 		$("#${ testCaseMultipleRemovalPopupId }").bind(
 				'dialogclose',
@@ -319,6 +321,7 @@
 						}, function(data) {
 							refreshTestPlans();
 							checkForbiddenDeletion(data);
+							refreshStatistics();
 						});
 					}
 
@@ -406,7 +409,8 @@
 				tooltip : '<f:message key="test-case.verified_requirement_item.remove.button.label" />',
 				success : function(data) {
 					refreshTestPlans();
-					checkForbiddenDeletion(data);					
+					checkForbiddenDeletion(data);	
+					refreshStatistics();				
 				}
 					
 			};

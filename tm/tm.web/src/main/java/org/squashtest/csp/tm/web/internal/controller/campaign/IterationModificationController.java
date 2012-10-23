@@ -158,7 +158,17 @@ public class IterationModificationController {
 		}
 		return mav;
 	}
+	
+	@RequestMapping(value = "/statistics", method = RequestMethod.GET)
+	public ModelAndView refreshStats(@PathVariable long iterationId) {
 
+		TestPlanStatistics iterationStatistics = iterationModService.getIterationStatistics(iterationId);
+
+		ModelAndView mav = new ModelAndView("fragment/generics/statistics-fragment");
+		mav.addObject("statisticsEntity", iterationStatistics);
+		
+		return mav;
+	}
 	@RequestMapping(method = RequestMethod.POST, params = { "id=iteration-description", VALUE })
 	@ResponseBody
 	public String updateDescription(@RequestParam(VALUE) String newDescription, @PathVariable long iterationId) {

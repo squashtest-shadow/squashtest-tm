@@ -56,6 +56,4 @@ public class AutomatedSuiteManagementController {
 		return AutomatedExecutionViewUtils.buildExecInfo(suite, locale, messageSource);
 	}
 	
-	
-
 }

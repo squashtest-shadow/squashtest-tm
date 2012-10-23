@@ -108,7 +108,18 @@ public class CampaignModificationController {
 		mav.addObject("statistics", statistics);
 		return mav;
 	}
+	
+	@RequestMapping(value = "/statistics", method = RequestMethod.GET)
+	public ModelAndView refreshStats(@PathVariable long campaignId) {
 
+		TestPlanStatistics campaignStatistics = campaignModService.findCampaignStatistics(campaignId);
+
+		ModelAndView mav = new ModelAndView("fragment/generics/statistics-fragment");
+		mav.addObject("statisticsEntity", campaignStatistics);
+		
+		return mav;
+	}
+	
 	// will return the fragment only
 	@RequestMapping(method = RequestMethod.GET)
 	public ModelAndView showCampaign(@PathVariable long campaignId) {

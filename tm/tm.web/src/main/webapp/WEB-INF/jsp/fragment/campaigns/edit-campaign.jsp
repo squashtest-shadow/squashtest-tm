@@ -23,9 +23,9 @@
 <?xml version="1.0" encoding="utf-8" ?>
 <%@ page language="java" contentType="text/html; charset=utf-8"
 	pageEncoding="utf-8"%>
-<%@ taglib uri="http://java.sun.com/jsp/jstl/core" prefix="c"%>
-<%@ taglib tagdir="/WEB-INF/tags/jquery" prefix="jq"%>
-<%@ taglib tagdir="/WEB-INF/tags/component" prefix="comp"%>
+<%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core"%>
+<%@ taglib prefix="jq" tagdir="/WEB-INF/tags/jquery"%>
+<%@ taglib prefix="comp" tagdir="/WEB-INF/tags/component"%>
 <%@ taglib prefix="s" uri="http://www.springframework.org/tags"%>
 <%@ taglib prefix="f" uri="http://java.sun.com/jsp/jstl/fmt"%>
 <%@ taglib prefix="aggr" tagdir="/WEB-INF/tags/aggregates"%>
@@ -50,7 +50,9 @@
 	value="/campaigns/{campId}/assignable-users">
 	<s:param name="campId" value="${campaign.id}" />
 </s:url>
-
+<s:url var="campaignStatisticsUrl" value="/campaigns/{campId}/statistics">
+	<s:param name="campId" value="${campaign.id }"/>
+</s:url>
 <s:url var="assignTestCasesUrl"
 	value="/campaigns/${ campaign.id }/batch-assign-user" />
 
@@ -66,28 +68,23 @@
 	<s:param name="id" value="${campaign.id}" />
 </s:url>
 <%-- ----------------------------------- Authorization ----------------------------------------------%>
-<authz:authorized hasRole="ROLE_ADMIN" hasPermission="ATTACH"
-	domainObject="${ campaign }">
+<authz:authorized hasRole="ROLE_ADMIN" hasPermission="ATTACH" domainObject="${ campaign }">
 	<c:set var="attachable" value="${ true }" />
 	<c:set var="moreThanReadOnly" value="${ true }" />
 </authz:authorized>
-<authz:authorized hasRole="ROLE_ADMIN" hasPermission="SMALL_EDIT"
-	domainObject="${ campaign }">
+<authz:authorized hasRole="ROLE_ADMIN" hasPermission="SMALL_EDIT" domainObject="${ campaign }">
 	<c:set var="smallEditable" value="${ true }" />
 	<c:set var="moreThanReadOnly" value="${ true }" />
 </authz:authorized>
-<authz:authorized hasRole="ROLE_ADMIN" hasPermission="DELETE"
-	domainObject="${ campaign }">
+<authz:authorized hasRole="ROLE_ADMIN" hasPermission="DELETE" domainObject="${ campaign }">
 	<c:set var="deletable" value="${true }" />
 	<c:set var="moreThanReadOnly" value="${ true }" />
 </authz:authorized>
-<authz:authorized hasRole="ROLE_ADMIN" hasPermission="CREATE"
-	domainObject="${ campaign }">
+<authz:authorized hasRole="ROLE_ADMIN" hasPermission="CREATE" domainObject="${ campaign }">
 	<c:set var="creatable" value="${true }" />
 	<c:set var="moreThanReadOnly" value="${ true }" />
 </authz:authorized>
-<authz:authorized hasRole="ROLE_ADMIN" hasPermission="LINK"
-	domainObject="${ campaign }">
+<authz:authorized hasRole="ROLE_ADMIN" hasPermission="LINK"	domainObject="${ campaign }">
 	<c:set var="linkable" value="${ true }" />
 	<c:set var="moreThanReadOnly" value="${ true }" />
 </authz:authorized>
@@ -316,9 +313,9 @@
 	</jsp:attribute>
 		</comp:toggle-panel>
 		<%--------------------------- /Planning section ------------------------------------%>
-<%-- ------------------ statistiques --------------------------- --%>
-		<comp:statistics-panel statisticsEntity="${ statistics }" />
-<%-- ------------------ /statistiques --------------------------- --%>
+		<%-- ------------------ statistiques --------------------------- --%>
+		<comp:statistics-panel statisticsEntity="${ statistics }" statisticsUrl="${ campaignStatisticsUrl }"/>
+		<%-- ------------------ /statistiques --------------------------- --%>
 	</div>
 	<div id="tabs-2" class="table-tab">
 

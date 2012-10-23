@@ -175,9 +175,10 @@
 		//console.log("execRow = " + execRow);
 		//$(execRow).detach();
 		//or 
-
 		refreshTestPlans();
+		
 		refreshIterationInfos();
+		refreshStatistics();
 		actualStart.refreshAutoDate(data.newStartDate);
 		actualEnd.refreshAutoDate(data.newEndDate);
 

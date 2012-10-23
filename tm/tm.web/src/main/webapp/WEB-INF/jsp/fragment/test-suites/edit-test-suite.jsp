@@ -56,7 +56,7 @@
 </s:url>
 
 <s:url var="testSuiteStatisticsUrl"
-	value="/test-suites/{testSuiteId}/stats">
+	value="/test-suites/{testSuiteId}/statistics">
 	<s:param name="testSuiteId" value="${testSuite.id}" />
 </s:url>
 
@@ -365,7 +365,7 @@
 		</comp:toggle-panel>
 
 		<%-- ------------------ statistiques --------------------------- --%>
-		<comp:statistics-panel statisticsEntity="${ statistics }" />
+		<comp:statistics-panel statisticsEntity="${ statistics }" statisticsUrl="${ testSuiteStatisticsUrl }"/>
 		
 	</div>
 	<div id="tabs-2" class="table-tab">
@@ -405,8 +405,6 @@
 				editable="${ linkable }"
 				testCaseMultipleRemovalPopupId="delete-test-suite-multiple-test-plan-dialog"
 				testCaseSingleRemovalPopupId="delete-test-suite-single-test-plan-dialog"
-				testSuiteStatisticsId="test-suite-statistics-panel"
-				testSuiteStatisticsUrl="${ testSuiteStatisticsUrl }"
 				testSuiteExecButtonsId="test-suite-execution-button"
 				testSuiteExecButtonsUrl="${ testSuiteExecButtonsUrl }" />
 			<aggr:test-suite-test-plan-table />
