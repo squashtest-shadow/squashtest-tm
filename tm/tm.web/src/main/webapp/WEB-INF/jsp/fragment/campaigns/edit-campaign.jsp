@@ -94,10 +94,14 @@
 
 
 <script type="text/javascript">
-	/* simple initialization for simple components */
-	$(function() {
-		$('#delete-campaign-button').button();
-		$('#rename-campaign-button').button();
+	require([ "common" ], function () {
+		require([ "jquery", "domReady", "jqueryui" ], function ($, domReady) {
+			/* simple initialization for simple components */
+			domReady(function() {
+				$('#delete-campaign-button').button();
+				$('#rename-campaign-button').button();
+			});
+		});
 	});
 
 	/* display the campaign name. Used for extern calls (like from the page who will include this fragment)
@@ -245,12 +249,17 @@
 		</c:if>
 
 		<script type="text/javascript">
-			$(function() {
-				$("#campaign-reset-description").button().click(function() {
-					$("#campaign-description").html('');
-					return false;
+		require([ "common" ], function () {
+			require([ "jquery", "domReady", "jqueryui" ], function ($, domReady) {
+				/* simple initialization for simple components */
+				domReady(function() {
+					$("#campaign-reset-description").button().click(function() {
+						$("#campaign-description").html('');
+						return false;
+					});
 				});
 			});
+		});
 		</script>
 
 		<comp:toggle-panel id="campaign-description-panel"
@@ -323,12 +332,17 @@
 
 		<%--------------------------- Test plan section ------------------------------------%>
 		<script type="text/javascript">
-			$(function() {
-				$("#test-case-button").button().click(function() {
-					document.location.href = "${testCaseManagerUrl}";
+		require([ "common" ], function () {
+			require([ "jquery", "domReady", "jqueryui" ], function ($, domReady) {
+				/* simple initialization for simple components */
+				domReady(function() {
+					$("#test-case-button").button().click(function() {
+						document.location.href = "${testCaseManagerUrl}";
+					});
+					$("#remove-test-case-button").button();
 				});
-				$("#remove-test-case-button").button();
 			});
+		});
 		</script>
 
 		<div class="toolbar">
