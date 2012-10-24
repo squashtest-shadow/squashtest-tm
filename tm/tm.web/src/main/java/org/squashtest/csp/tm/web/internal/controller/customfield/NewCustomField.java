@@ -21,22 +21,83 @@
 
 package org.squashtest.csp.tm.web.internal.controller.customfield;
 
+import java.util.List;
+
 import org.squashtest.csp.tm.domain.customfield.CustomField;
 import org.squashtest.csp.tm.domain.customfield.InputType;
+import org.squashtest.csp.tm.domain.customfield.SingleSelectField;
 
 /**
  * @author Gregory Fouquet
- *
+ * 
  */
 public class NewCustomField extends CustomField {
+	private InputType inputType;
+	private List<String> options;
+
 	public NewCustomField() {
 		super(InputType.PLAIN_TEXT);
 	}
 
-	@Override
-	public void setInputType(InputType inputType) {
-		super.setInputType(inputType);
+	public CustomField createTransientEntity() {
+		CustomField res;
+		switch (inputType) {
+		case DROPDOWN_LIST:
+			res = createSingleSelectField();
+			
+			break;
+		default:
+			res = new CustomField(inputType);
+		}
+		
+		res.setName(getLabel());
+		res.setName(getName());
+		res.setOptional(isOptional());
+		res.setDefaultValue(getDefaultValue());
+		
+		return res;
 	}
-	
-	
+
+	private CustomField createSingleSelectField() {
+		CustomField res;
+		SingleSelectField ssf = new SingleSelectField();
+		 
+		for(String option : options) {
+			ssf.addOption(option);
+		}
+		
+		res = ssf;
+		return res;
+	}
+
+	/**
+	 * @return the inputType
+	 */
+	@Override
+	public InputType getInputType() {
+		return inputType;
+	}
+
+	/**
+	 * @param inputType
+	 *            the inputType to set
+	 */
+	public void setInputType(InputType inputType) {
+		this.inputType = inputType;
+	}
+
+	/**
+	 * @return the options
+	 */
+	public List<String> getOptions() {
+		return options;
+	}
+
+	/**
+	 * @param options
+	 *            the options to set
+	 */
+	public void setOptions(List<String> options) {
+		this.options = options;
+	}
 }

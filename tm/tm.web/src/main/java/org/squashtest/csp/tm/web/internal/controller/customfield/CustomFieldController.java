@@ -54,6 +54,6 @@ public class CustomFieldController {
 	@ResponseBody
 	public void createNew(@RequestBody NewCustomField field) {
 		LOGGER.info(ToStringBuilder.reflectionToString(field));
-		customFieldManager.persist(field);
+		customFieldManager.persist(field.createTransientEntity());
 	}
 }

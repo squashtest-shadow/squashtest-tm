@@ -76,7 +76,7 @@ public class CustomField {
 
 	public CustomField(@NotNull InputType inputType) {
 		super();
-		this.setInputType(inputType);
+		this.inputType = inputType;
 	}
 
 	public String getName() {
@@ -118,20 +118,4 @@ public class CustomField {
 	public InputType getInputType() {
 		return inputType;
 	}
-
-	/**
-	 * Input type should not be changed when CustomField is persistent.
-	 * 
-	 * @param inputType
-	 *            the inputType to set
-	 * @throws IllegalStateException
-	 *             when this object is already persistent
-	 */
-	protected void setInputType(InputType inputType) throws IllegalStateException {
-		if (id != null) {
-			throw new IllegalStateException("Cannot change inputType of a persistent CustomField");
-		}
-		this.inputType = inputType;
-	}
-
 }

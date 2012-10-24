@@ -24,12 +24,13 @@ import org.squashtest.tm.core.foundation.i18n.Internationalizable;
 
 /**
  * The type of the input shown when rendering a custom field.
+ * 
  * @author Gregory Fouquet
  */
 public enum InputType implements Internationalizable {
-    PLAIN_TEXT,
-    CHECKBOX,
-    DROPDOWN_LIST;
+	PLAIN_TEXT, 
+	CHECKBOX, 
+	DROPDOWN_LIST;
 
 	/**
 	 * @see org.squashtest.tm.core.foundation.i18n.Internationalizable#getI18nKey()
