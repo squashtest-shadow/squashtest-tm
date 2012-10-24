@@ -73,7 +73,7 @@ public class CustomFieldBindingController {
 
 	
 	
-	@RequestMapping(method= RequestMethod.GET, params = {"projectId"}, headers="Accept=application/json")
+	@RequestMapping(method= RequestMethod.GET, params = {"projectId", "!bindableEntity"}, headers="Accept=application/json")
 	@ResponseBody
 	public List<CustomFieldBindingModel> findAllCustomFieldsForProject(@RequestParam("projectId") Long projectId){
 		
@@ -113,7 +113,7 @@ public class CustomFieldBindingController {
 	
 	
 
-	@RequestMapping(method = RequestMethod.GET, params = {"projectId", "bindableEntity"}, headers="Accept=application/json")
+	@RequestMapping(value="/available", method = RequestMethod.GET, params = {"projectId", "bindableEntity"}, headers="Accept=application/json")
 	@ResponseBody
 	public List<CustomFieldModel> findAllAvailableCustomFieldsForProjectAndEntity
 													(@RequestParam("projectId") Long projectId, 

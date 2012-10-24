@@ -25,6 +25,7 @@ define (function(require){
 	
 	var Panel = require("./panel.js");
 	var Table = require("./table.js");
+	var Popup = require("./popup.js");
 
 	function getPanelConf(settings){
 		return { 
@@ -34,8 +35,8 @@ define (function(require){
 		};
 	};
 	
-	function buildAjaxSource(settings){
-		var url = settings.tableBaseAjaxSource;
+	function buildTableAjaxSource(settings){
+		var url = settings.baseURL;
 		url = url+"?projectId="+settings.projectId;
 		url = url+"&bindableEntity="+settings.entityType;
 		return url;
@@ -45,12 +46,29 @@ define (function(require){
 		return {
 			selector : settings.tableSelector,
 			languageUrl : settings.tableLanguageUrl,
-			ajaxSource : buildAjaxSource(settings),
+			ajaxSource : buildTableAjaxSource(settings),
 			deferLoading : settings.tableDeferLoading,
 			oklabel : settings.oklabel,
 			cancellabel : settings.cancellabel
-		}
-	}
+		};
+	};
+	
+	function buildPopupAjaxSource(settings){
+		var url = settings.baseURL+"/available";
+		url = url+"?projectId="+settings.projectId;
+		url = url+"&bindableEntity="+settings.entityType;
+		return url;
+	};
+	
+	function getPopupConf(settings){
+		return {
+			selector : settings.popupSelector,
+			title : settings.popupTitle,
+			getURL : buildPopupAjaxSource(settings),
+			oklabel : settings.oklabel,
+			cancellabel : settings.cancellabel
+		};		
+	};
 	
 	return function(settings){
 		var panelConf = getPanelConf(settings);
@@ -58,6 +76,11 @@ define (function(require){
 		
 		var tableConf = getTableConf(settings);
 		this.table = new Table(tableConf);
+		
+		var popupConf = getPopupConf(settings);
+		this.popup = new Popup(popupConf);
+		
+		this.panel.getButton().setPopup(this.popup);
 
 	};
 

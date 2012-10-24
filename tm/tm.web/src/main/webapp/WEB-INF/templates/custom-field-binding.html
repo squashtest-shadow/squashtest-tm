@@ -46,17 +46,14 @@
 <link rel="stylesheet" type="text/css" media="all" href="../../../../../../../core/core.web/src/main/webapp/styles/master.blue.css" th:href="@{/styles/master.blue.css}" />
 <link rel="stylesheet" type="text/css" media="all" href="../../../../../../../core/core.web/src/main/webapp/styles/ckeditor.override.css" th:href="@{/styles/ckeditor.override.css}" />
 
-<link rel="stylesheet" type="text/css" media="all" href="http://localhost/css/binding.css"/>
 </div>
+<link rel="stylesheet" type="text/css" media="all" href="http://localhost/css/binding.css"/>
 
 
 <div id="cuf-binding-administration">
 
 
 <div id="test-cases-binding" th:include="custom-field-binding :: cuf-unit-binder" th:with="HTMLID='test-cases',collection=${testCaseBindings}">
-</div>
-
-<div id="requirements-binding" th:include="custom-field-binding :: cuf-unit-binder" th:with="HTMLID='requirements',collection=${requirementBindings}">
 </div>
 
 
@@ -70,18 +67,23 @@
     		general : {
 	    		projectId : /*[[${projectIdentifier}]]*/10,	    			
 	    		tableLanguageUrl: /*[[ @{/datatables/messages} ]]*/ "http://localhost:8080/squash/datatables/messages", 
-	        	tableBaseAjaxSource: /*[[ @{/custom-fields-binding} ]]*/ "http://localhost:8080/squash/custom-fields-binding",
+	        	baseURL: /*[[ @{/custom-fields-binding} ]]*/ "http://localhost:8080/squash/custom-fields-binding",
 	        	oklabel : /*[[ #{label.Yes} ]]*/ "ouaiche",
 	        	cancellabel : /*[[ #{label.Cancel} ]]*/ "nope"
     		},
     		
     		tcSettings : {
     			entityType : 'TEST_CASE', //should be @org.squashtest.csp.tm.domain.customfield.BindableEntity@TEST_CASE
+    			
     			panelSelector : '#test-cases-binding-panel',
     			panelInitiallyOpen : /*[[  (${testCaseBindings.isEmpty()}) ? 'false' : 'true'  ]]*/true,
     			panelTitle : /*[[ #{project.cufbinding.test-cases.panel.title}  ]]*/"test case bindings",
+    			
     			tableSelector : '#test-cases-binding-table',
-    			tableDeferLoading : /*[[ ${testCaseBindings.size()} ]]*/ 3
+    			tableDeferLoading : /*[[ ${testCaseBindings.size()} ]]*/ 3,
+
+       			popupSelector : '#test-cases-binding-popup',
+       			popupTitle : 'bind new custom fields',		
     			
 	    	}
 	    	
@@ -151,29 +153,44 @@
 
 
 <div id="popup" th:id="${HTMLID}+'-binding-popup'" class="popup-dialog cuf-binding-popup">
-
+	
 	<div class="component left-div">
 		<table>
 			<thead>
 				<tr>
-					<td></td>
-					<td>name</td>
-					<td>type</td>
-					<td>optional</td>
-					<td class="not-displayed">ID</td>
+					<td class="th-check"></td>
+					<td class="th-name">name</td>
+					<td class="th-type">type</td>
+					<td class="th-optional">optional</td>
+					<td class="th-id">ID</td>
 				</tr>
 			</thead>
 			<tbody>
 				<tr th:remove="all">
-					<td><input type="checkbox"/></td>
-					<td>text-field 3</td>
-					<td>text field</td>
-					<td>yes</td>
-					<td class="not-displayed">5</td>				
+					<td class="td-check"><input type="checkbox"/></td>
+					<td class="td-name">text-field 3</td>
+					<td class="td-type">text field</td>
+					<td class="td-optional">yes</td>
+					<td class="td-id">5</td>				
 				</tr>			
+			</tbody>
+			<tbody class="row-template-holder">
+				<tr>
+					<td class="td-check"><input type="checkbox"/></td>
+					<td class="td-name"></td>
+					<td class="td-type"></td>
+					<td class="td-optional"></td>
+					<td class="td-id"></td>				
+				</tr>				
 			</tbody>
 		</table>
 	</div>
+		
+	<!-- TODO : some day 
+	<div class="component right-div">
+	</div>
+	 -->
+
 	
 </div>
 
@@ -183,9 +200,9 @@
    require(["domReady", "require"],function(domReady, require){
 		
 	   settings = {
-    		projectId : 10,	    			
+    		projectId : 14,	    			
     		tableLanguageUrl:  "http://localhost:8080/squash/datatables/messages", 
-        	tableBaseAjaxSource: "http://localhost:8080/squash/custom-fields-binding",
+        	baseURL: "http://localhost:8080/squash/custom-fields-binding",
         	oklabel : "ouaiche",
         	cancellabel : "nope",
         	
@@ -199,9 +216,7 @@
    			tableDeferLoading : 3,
    			
    			popupSelector : '#popup',
-   			popupTitle : 'bind new custom fields',
-   			
-    			
+   			popupTitle : 'bind new custom fields',		
 		};
 				   
 		domReady(function(){
