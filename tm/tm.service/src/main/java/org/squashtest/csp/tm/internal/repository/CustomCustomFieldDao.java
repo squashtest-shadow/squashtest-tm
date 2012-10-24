@@ -20,6 +20,19 @@
  */
 package org.squashtest.csp.tm.internal.repository;
 
+import java.util.List;
+
+import org.squashtest.csp.tm.domain.customfield.CustomField;
+/**
+ * 
+ * Facade for Custom-Field access methods which cannot be dynamically generated. 
+ *
+ */
 public interface CustomCustomFieldDao {
 
+	/**
+	 * 
+	 * @return the list of all existing {@link CustomField} ordered by {@link CustomField#getName()}
+	 */
+	List<CustomField> finAllOrderedByName();
 }

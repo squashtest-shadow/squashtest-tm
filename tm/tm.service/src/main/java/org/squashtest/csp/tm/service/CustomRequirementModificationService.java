@@ -26,11 +26,14 @@ import org.springframework.transaction.annotation.Transactional;
 import org.squashtest.csp.tm.domain.requirement.RequirementCriticality;
 
 /**
+ * Requirement modification services which cannot be dynamically generated.
+ *
  * @author Gregory Fouquet
  * 
  */
 @Transactional
 public interface CustomRequirementModificationService {
+	
 	void rename(long reqId, @NotNull String newName);
 
 	/**

@@ -22,6 +22,7 @@
 package org.squashtest.csp.tm.service.customfield;
 
 import org.springframework.security.access.prepost.PreAuthorize;
+import org.springframework.transaction.annotation.Transactional;
 import org.squashtest.csp.tm.domain.customfield.CustomField;
 
 /**
@@ -30,7 +31,10 @@ import org.squashtest.csp.tm.domain.customfield.CustomField;
  * @author Gregory Fouquet
  * 
  */
-public interface CustomFieldManagerService {
+@Transactional
+public interface CustomFieldManagerService extends CustomCustomFieldManagerService {
+	
 	@PreAuthorize("hasRole('ROLE_ADMIN')")
 	public void persist(CustomField newCustomField);
+
 }

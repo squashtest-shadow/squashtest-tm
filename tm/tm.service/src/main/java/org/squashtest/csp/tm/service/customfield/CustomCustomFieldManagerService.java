@@ -18,20 +18,17 @@
  *     You should have received a copy of the GNU Lesser General Public License
  *     along with this software.  If not, see <http://www.gnu.org/licenses/>.
  */
-package org.squashtest.csp.tm.internal.repository.hibernate;
+package org.squashtest.csp.tm.service.customfield;
 
-import java.util.List;
+import org.springframework.transaction.annotation.Transactional;
 
-import org.springframework.stereotype.Repository;
-import org.squashtest.csp.tm.domain.customfield.CustomField;
-import org.squashtest.csp.tm.internal.repository.CustomCustomFieldDao;
-
-@Repository("CustomCustomFieldDao")
-public class HibernateCustomCustomFieldDao extends HibernateEntityDao<CustomField> implements CustomCustomFieldDao {
-
-	@Override
-	public List<CustomField> finAllOrderedByName() {
-		return executeListNamedQuery("customField.findAllOrderedByName");
-	}
+/**
+ * Custom-Field manager services which cannot be dynamically generated.
+ * 
+ * @author mpagnon
+ *
+ */
+@Transactional
+public interface CustomCustomFieldManagerService extends CustomFieldFinderService {
 
 }

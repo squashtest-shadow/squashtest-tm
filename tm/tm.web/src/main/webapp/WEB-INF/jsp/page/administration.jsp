@@ -34,7 +34,7 @@
 <c:url var="bugtrackerUrl" value="/administration/bugtrackers"/>
 <c:url var="loginUrl" value="/configuration/login-message"/>
 <c:url var="welcomeUrl" value="/configuration/welcome-message"/>
-
+<c:url var="customFieldsUrl" value="administration/custom-fields"/>
 
 <layout:info-page-layout titleKey="workspace.home.title">
 	<jsp:attribute  name="head">	
@@ -49,13 +49,14 @@
 		<div id="admin-link-pane">
 			<table>
 			<sec:authorize access=" hasRole('ROLE_ADMIN')">
-				<tr><td><a href="${ usersUrl }"><b><f:message key="label.capit.UserManagement" /></b></a></td></tr>
+				<tr><td><a href="${ usersUrl }"><b><f:message key="label.userManagement" /></b></a></td></tr>
 				</sec:authorize>
-				<tr><td><a href="${ projectsUrl }"><b><f:message key="label.capit.ProjectManagement" /></b></a></td></tr>
+				<tr><td><a href="${ projectsUrl }"><b><f:message key="label.projectManagement" /></b></a></td></tr>
 				<sec:authorize access=" hasRole('ROLE_ADMIN')">
-				<tr><td><a href="${ bugtrackerUrl }"><b><f:message key="label.capit.BugtrackerManagement" /></b></a></td></tr>
-				<tr><td><a href="${ loginUrl }"><b><f:message key="label.ConsultModifyLoginMessage" /></b></a></td></tr>
-				<tr><td><a href="${ welcomeUrl }"><b><f:message key="label.ConsultModifyWelcomeMessage" /></b></a></td></tr>
+				<tr><td><a href="${ bugtrackerUrl }"><b><f:message key="label.bugtrackerManagement" /></b></a></td></tr>
+				<tr><td><a href="${ customFieldsUrl }"><b><f:message key="label.customFieldsManagement" /></b></a></td></tr>
+				<tr><td><a href="${ loginUrl }"><b><f:message key="label.consultModifyLoginMessage" /></b></a></td></tr>
+				<tr><td><a href="${ welcomeUrl }"><b><f:message key="label.consultModifyWelcomeMessage" /></b></a></td></tr>
 				</sec:authorize>
 			</table>
 		</div>	

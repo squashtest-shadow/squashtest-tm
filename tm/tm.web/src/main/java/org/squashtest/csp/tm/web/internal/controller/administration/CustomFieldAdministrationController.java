@@ -19,16 +19,19 @@
  *     along with this software.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-package org.squashtest.csp.tm.web.internal.controller.customfield;
+package org.squashtest.csp.tm.web.internal.controller.administration;
 
-import java.util.Collections;
+import java.util.List;
 
+import org.springframework.osgi.extensions.annotation.ServiceReference;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
+import org.squashtest.csp.tm.domain.customfield.CustomField;
 import org.squashtest.csp.tm.domain.customfield.InputType;
+import org.squashtest.csp.tm.service.customfield.CustomFieldManagerService;
 import org.squashtest.tm.core.foundation.collection.DefaultPaging;
 
 /**
@@ -39,7 +42,15 @@ import org.squashtest.tm.core.foundation.collection.DefaultPaging;
  */
 @Controller
 @RequestMapping("/administration/custom-fields")
-public class CustomFieldManagerController {
+public class CustomFieldAdministrationController {
+	
+	private CustomFieldManagerService customFieldManagerService;
+	
+	@ServiceReference
+	public void setCustomFieldManagerService(CustomFieldManagerService customFieldManagerService){
+		this.customFieldManagerService = customFieldManagerService;
+	}
+	
 	@ModelAttribute("inputTypes")
 	public InputType[] populateInputTypes() {
 		return InputType.values();
@@ -57,8 +68,15 @@ public class CustomFieldManagerController {
 	 */
 	@RequestMapping(method = RequestMethod.GET)
 	public String showManager(Model model) {
-
-		model.addAttribute("customFields", Collections.EMPTY_LIST);
+		
+//		CustomField cuf1 = new CustomField(InputType.PLAIN_TEXT);
+//		cuf1.setDefaultValue("default value");
+//		cuf1.setLabel("label");
+//		cuf1.setName("name");
+//		cuf1.setOptional(true);
+//		List<CustomField> customFields = Arrays.asList(cuf1);
+		List<CustomField> customFields = customFieldManagerService.findAllOrderedByName();
+		model.addAttribute("customFields", customFields);
 
 		return "custom-field-manager.html";
 	}

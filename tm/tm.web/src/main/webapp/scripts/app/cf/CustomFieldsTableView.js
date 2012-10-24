@@ -18,7 +18,7 @@
  *     You should have received a copy of the GNU Lesser General Public License
  *     along with this software.  If not, see <http://www.gnu.org/licenses/>.
  */
-define([ "jquery", "backbone", "app/cf/NewCustomFieldPanelView", "app/cf/NewCustomFieldModel", "squash.datatables", "jqueryui" ], function($, Backbone, NewCustomFieldPanelView, NewCustomFieldModel) {
+define([ "jquery", "backbone", "app/cf/NewCustomFieldPanelView", "app/cf/NewCustomFieldModel", "jquery.squash.datatables", "jqueryui" ], function($, Backbone, NewCustomFieldPanelView, NewCustomFieldModel) {
 		var cfTable = squashtm.app.cfTable;
 		/*
 		 * Defines the controller for the custom fields table.
@@ -69,11 +69,32 @@ define([ "jquery", "backbone", "app/cf/NewCustomFieldPanelView", "app/cf/NewCust
 						"bSortable": true,
 						"aTargets": [ 4 ],
 						"mDataProp": "input-type"
-					} ]
+					}, {
+						'bSortable': false,
+						'sWidth': '2em', 
+						'sClass': 'delete-button',
+						'aTargets': [5],
+						'mDataProp' : 'empty-delete-holder'} ]
 				}, squashtm.datatable.defaults);
-
+				
+				var squashSettings = {
+						enableHover : true,
+						
+						confirmPopup : {
+							oklabel : cfTable.confirmLabel,
+							cancellabel : cfTable.cancelLabel,
+						},
+						
+						deleteButtons : {
+							url : cfTable.ajaxSource+"/{cf-id}",
+							popupmessage : cfTable.deleteConfirmMessage,
+							tooltip : cfTable.deleteTooltip,
+							success : function(data) { this.$("table").squashTable().refresh(); }
+						}
+					};
+					
 				this.table = this.$("table");
-				this.table.dataTable(config);
+				this.table.squashTable(config, squashSettings);
 				
 				this.$("input:button").button();
 			}, 

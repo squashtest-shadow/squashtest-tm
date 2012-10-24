@@ -30,7 +30,10 @@ import org.squashtest.csp.tm.domain.campaign.TestSuiteStatistics;
 import org.squashtest.csp.tm.domain.testautomation.AutomatedSuite;
 import org.squashtest.tm.core.foundation.collection.PagedCollectionHolder;
 import org.squashtest.tm.core.foundation.collection.Paging;
-
+/**
+ * Test-Suite modification services which cannot be dynamically generated.
+ *
+ */
 @Transactional
 public interface CustomTestSuiteModificationService extends TestSuiteFinder{
 	

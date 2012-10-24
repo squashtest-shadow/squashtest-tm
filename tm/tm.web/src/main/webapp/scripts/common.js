@@ -46,8 +46,8 @@ requirejs.config({
 		"jquery.squash": "squashtest/jquery.squashtm.plugin", 
 		"jquery.squash.togglepanel": "squashtest/jquery.squash.togglepanels", 
 		"jquery.squash.messagedialog": "squashtest/jquery.squash.messagedialog", 
-		"jquery.squash.confirmdialog": "squashtest/jquery.squash.confirmdialog.js",
-		"jquery.squash.oneshotdialog": "squashtest/jquery.squashtm.oneshotdialog.js",
+		"jquery.squash.confirmdialog": "squashtest/jquery.squash.confirmdialog",
+		"jquery.squash.oneshotdialog": "squashtest/jquery.squashtm.oneshotdialog",
 		"jquery.squash.contextual-content": "squashtest/jquery.squashtm.contextual-content", 
 		"jquery.squash.fg.menu": "squashtest/jquery.squashtm.fg.menu", 
 		"jquery.squash.squashbutton": "squashtest/jquery.squash.squashbutton", 
@@ -95,7 +95,7 @@ requirejs.config({
 			exports : "squashtmDatatables"
 		},
 		"jquery.squash.datatables": {
-			deps : [ "datatables", "squash.datatables", "squashtest/classes/KeyEventListener" ],
+			deps : [ "datatables", "squash.datatables", "squashtest/classes/KeyEventListener", "jquery.squash.oneshotdialog" ],
 			exports : "squashtmDatatablesWidget"
 		},
 		"jquery.squash": {

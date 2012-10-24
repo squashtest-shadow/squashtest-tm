@@ -31,6 +31,7 @@ import org.squashtest.csp.tm.testautomation.model.TestAutomationProjectContent;
 
 
 /**
+ * Test-Case modification services which cannot be dynamically generated.
  * @author Gregory Fouquet
  * 
  */

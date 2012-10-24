@@ -20,8 +20,6 @@
  */
 package org.squashtest.csp.tm.domain.customfield;
 
-import org.hibernate.validator.constraints.NotBlank;
-
 import javax.persistence.Column;
 import javax.persistence.DiscriminatorColumn;
 import javax.persistence.DiscriminatorType;
@@ -36,9 +34,17 @@ import javax.persistence.InheritanceType;
 import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Size;
 
+import org.hibernate.annotations.NamedQueries;
+import org.hibernate.annotations.NamedQuery;
+import org.hibernate.validator.constraints.NotBlank;
+
 /**
  * @author Gregory Fouquet
  */
+
+@NamedQueries({
+	@NamedQuery(name="customField.findAllOrderedByName", query="from CustomField cf order by cf.name")
+})
 @Entity
 @Inheritance(strategy = InheritanceType.SINGLE_TABLE)
 @DiscriminatorColumn(name = "FIELD_TYPE", discriminatorType = DiscriminatorType.STRING)

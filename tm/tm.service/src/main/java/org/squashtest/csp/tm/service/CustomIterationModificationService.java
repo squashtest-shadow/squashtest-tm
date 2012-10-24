@@ -31,6 +31,7 @@ import org.squashtest.csp.tm.domain.testautomation.AutomatedSuite;
 import org.squashtest.csp.tm.service.deletion.SuppressionPreviewReport;
 
 /**
+ * Iteration modification services which cannot be dynamically generated.
  * @author Gregory Fouquet
  * 
  */

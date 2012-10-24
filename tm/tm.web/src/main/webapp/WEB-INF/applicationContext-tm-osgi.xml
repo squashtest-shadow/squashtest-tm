@@ -122,11 +122,12 @@
 			<value>org.squashtest.csp.tm.service.BugTrackerFinderService</value>
 		</osgi:interfaces>
 	</osgi:reference>
-	
+
 	<osgi:reference id="squashtest.tm.service.BugTrackerModificationService"
-		bean-name="squashtest.tm.service.BugTrackerModificationService" interface="org.squashtest.csp.tm.service.BugTrackerModificationService"
+		bean-name="squashtest.tm.service.BugTrackerModificationService"
+		interface="org.squashtest.csp.tm.service.BugTrackerModificationService"
 		availability="mandatory" />
-	
+
 	<osgi:reference id="squashtest.tm.service.UserAccountService"
 		bean-name="squashtest.tm.service.UserAccountService" interface="org.squashtest.csp.tm.service.UserAccountService"
 		availability="mandatory" />
@@ -154,8 +155,7 @@
 		availability="mandatory" />
 
 	<osgi:reference id="squashtest.tm.service.TestAutomationService"
-		bean-name="squashtest.tm.service.TestAutomationService"
-		interface="org.squashtest.csp.tm.service.TestAutomationFinderService"
+		bean-name="squashtest.tm.service.TestAutomationService" interface="org.squashtest.csp.tm.service.TestAutomationFinderService"
 		availability="mandatory" />
 
 	<osgi:reference id="squashtest.tm.service.TestSuiteModificationService"
@@ -166,8 +166,9 @@
 			<value>org.squashtest.csp.tm.service.TestSuiteFinder</value>
 		</osgi:interfaces>
 	</osgi:reference>
-	
-	<osgi:reference id="squashtest.tm.service.testautomation.AutomatedExecutionManagerService"
+
+	<osgi:reference
+		id="squashtest.tm.service.testautomation.AutomatedExecutionManagerService"
 		bean-name="squashtest.tm.service.testautomation.AutomatedExecutionManagerService"
 		interface="org.squashtest.csp.tm.service.testautomation.AutomatedExecutionManagerService"
 		availability="mandatory" />
@@ -181,32 +182,43 @@
 
 
 
-	<!-- yes : tm.web propose one service consumed by core.web (intra-bundle injection won't work despite one being a fragment of the other)-->
+	<!-- yes : tm.web propose one service consumed by core.web (intra-bundle 
+		injection won't work despite one being a fragment of the other) -->
 
 	<bean id="squashtest.tm.web.authSuccessCallback.btautoconnect"
 		class="org.squashtest.csp.tm.web.internal.handler.BugTrackerAutoconnectCallback">
-			<property name="bugTrackersLocalService" ref="squashtest.tm.service.BugTrackersLocalService" />
-			<property name="projectFinder" ref="squashtest.tm.service.ProjectModificationService" />
-			<property name="bugTrackerFinder" ref="squashtest.tm.service.BugTrackerManagerService" />
-			
+		<property name="bugTrackersLocalService"
+			ref="squashtest.tm.service.BugTrackersLocalService" />
+		<property name="projectFinder"
+			ref="squashtest.tm.service.ProjectModificationService" />
+		<property name="bugTrackerFinder"
+			ref="squashtest.tm.service.BugTrackerManagerService" />
+
 	</bean>
 
 	<osgi:service ref="squashtest.tm.web.authSuccessCallback.btautoconnect"
 		interface="org.squashtest.csp.core.web.servlet.handler.AuthenticationSuccessCallback" />
-		
-		
-	<!--  CUF services  -->
-	
+
+
+	<!-- CUF services -->
+
 	<osgi:reference id="squashtest.tm.service.CustomFieldBindingFinder"
-		bean-name="squashtest.tm.service.CustomFieldBindingFinder" interface="org.squashtest.csp.tm.service.CustomFieldBindingFinderService"
-		availability="mandatory" />	
-	
+		bean-name="squashtest.tm.service.CustomFieldBindingFinder"
+		interface="org.squashtest.csp.tm.service.CustomFieldBindingFinderService"
+		availability="mandatory" />
+
 	<osgi:reference id="squashtest.tm.service.CustomFieldBindingModifier"
-		bean-name="squashtest.tm.service.CustomFieldBindingModifier" interface="org.squashtest.csp.tm.service.CustomFieldBindingModificationService"
+		bean-name="squashtest.tm.service.CustomFieldBindingModifier"
+		interface="org.squashtest.csp.tm.service.CustomFieldBindingModificationService"
 		availability="mandatory" />
 
 	<osgi:reference id="squashtest.tm.service.CustomFieldManagerService"
-		bean-name="squashtest.tm.service.CustomFieldManagerService" interface="org.squashtest.csp.tm.service.customfield.CustomFieldManagerService"
-		availability="mandatory" />	
+		bean-name="squashtest.tm.service.CustomFieldManagerService"
+		availability="mandatory">
+		<osgi:interfaces>
+			<value>org.squashtest.csp.tm.service.customfield.CustomFieldManagerService</value>
+			<value>org.squashtest.csp.tm.service.customfield.CustomFieldFinderService</value>
+		</osgi:interfaces>
+	</osgi:reference>
 
 </beans>

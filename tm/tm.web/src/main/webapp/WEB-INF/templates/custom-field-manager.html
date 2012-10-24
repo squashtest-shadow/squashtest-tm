@@ -36,6 +36,10 @@
   			displayLength : /*[[ ${customFieldsPageSize} ]]*/50,
   			ajaxSource : /*[[ @{/custom-fields} ]]*/"http://localhost:8080/squash/custom-fields",
   			deferLoading : /*[[ ${#lists.size(customFields)} ]]*/1,
+			confirmLabel: /*[[ #{label.Confirm} ]]*/ 'Confirmer',
+			cancelLabel: /*[[ #{label.Cancel} ]]*/ 'Annuler',
+			deleteTooltip: /*[[ #{label.Remove} ]]*/ 'Remove',
+			deleteConfirmMessage : /*[[ #{message.customField.remove} ]]*/ 'Remove',
   		},
   		projectFilterConf: {
 			url: /*[[ @{/global-filter/filter} ]]*/ '/global-filter/filter',
@@ -110,6 +114,7 @@
               <th th:text="#{label.Label}">Label</th>
               <th class="not-displayed">Raw type</th>
               <th th:text="#{label.CustomField.inputType}">Type</th>
+               <th></th>
             </tr>
           </thead>
           <tbody>
@@ -119,6 +124,7 @@
               <td th:text="*{label}">Label XX</td>
               <td th:text="*{inputType}" class="not-displayed raw-input-type">PLAIN_TEXT</td>
               <td th:text="#{*{inputType.i18nKey}}">Plain text</td>
+              <td class="delete-button"></td>
             </tr>
             <tr th:remove="all">
               <td class="not-displayed cf-id">2</td>
@@ -126,6 +132,7 @@
               <td>Label YY</td>
               <td class="not-displayed raw-input-type">DROPDOWN_LIST</td>
               <td>Dropdown list</td>
+              <td class="delete-button"></td>
             </tr>
           </tbody>
         </table>
