@@ -44,6 +44,7 @@ requirejs.config({
 		"jquery.generateId": "jquery/jquery.generateId",
 		"jquery.hotkeys": "jquery/jquery.hotkeys-0.8", 
 		"jquery.squash": "squashtest/jquery.squashtm.plugin", 
+		"jquery.squash.fragmenttabs" : "squash/squashtm.fragmenttabs",
 		"jquery.squash.togglepanel": "squashtest/jquery.squash.togglepanels", 
 		"jquery.squash.messagedialog": "squashtest/jquery.squash.messagedialog", 
 		"jquery.squash.confirmdialog": "squashtest/jquery.squash.confirmdialog",
@@ -101,6 +102,10 @@ requirejs.config({
 		"jquery.squash": {
 			deps : [ "jquery" ],
 			exports : "jquerySquashtm"
+		},
+		"jquery.squash.fragmenttabs":{
+			deps : [ "jquery", "jqueryui" ],
+			exports : "squashtmTabsWidget"
 		},
 		"jquery.squash.togglepanel": {
 			deps : [ "jquery", "jqueryui", "jquery.squash.squashbutton" ],

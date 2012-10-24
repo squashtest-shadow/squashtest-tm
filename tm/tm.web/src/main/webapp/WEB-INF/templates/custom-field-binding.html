@@ -20,6 +20,7 @@
         along with this software.  If not, see <http://www.gnu.org/licenses/>.
 
 -->
+
 <div th:remove="all">
 	<!--  documentation : 
 			that template cannot be displayed natively.
@@ -45,12 +46,24 @@
 <link rel="stylesheet" type="text/css" media="all" href="../../../../../../../core/core.web/src/main/webapp/styles/master.blue.css" th:href="@{/styles/master.blue.css}" />
 <link rel="stylesheet" type="text/css" media="all" href="../../../../../../../core/core.web/src/main/webapp/styles/ckeditor.override.css" th:href="@{/styles/ckeditor.override.css}" />
 
+<link rel="stylesheet" type="text/css" media="all" href="http://localhost/css/binding.css"/>
 </div>
+
+
+<div id="cuf-binding-administration">
+
+
+<div id="test-cases-binding" th:include="custom-field-binding :: cuf-unit-binder" th:with="HTMLID='test-cases',collection=${testCaseBindings}">
+</div>
+
+<div id="requirements-binding" th:include="custom-field-binding :: cuf-unit-binder" th:with="HTMLID='requirements',collection=${requirementBindings}">
+</div>
+
 
 <script type="text/javascript" th:inline="javascript">
 //<![CDATA[
 
-    $(function(){
+    require(["domReady", "require"],function(domReady, require){
 
     	var config = {
     		
@@ -63,8 +76,8 @@
     		},
     		
     		tcSettings : {
-    			entityType : /*[[ ${org.squashtest.csp.tm.domain.customfield.BindableEntity.TEST_CASE.name()} ]]*/"TEST_CASE",
-    			panelSelector : '#test-cases-binding',
+    			entityType : 'TEST_CASE', //should be @org.squashtest.csp.tm.domain.customfield.BindableEntity@TEST_CASE
+    			panelSelector : '#test-cases-binding-panel',
     			panelInitiallyOpen : /*[[  (${testCaseBindings.isEmpty()}) ? 'false' : 'true'  ]]*/true,
     			panelTitle : /*[[ #{project.cufbinding.test-cases.panel.title}  ]]*/"test case bindings",
     			tableSelector : '#test-cases-binding-table',
@@ -73,34 +86,46 @@
 	    	}
 	    	
     	};
-    	
-    	require(["http://localhost/scripts/main.js"], function(main){
-    		main.setConfig(config).init();
+
+    	domReady(function(){
+        	require(["http://localhost/scripts/custom-field-binding/main.js"], function(main){
+        		main.setConfig(config).init();
+        	});   		
     	});
-    		   	
+    
+    
     });
 
 //]]>
 
 </script>
+</div>
 
+
+
+<div th:remove="all">
+<!--  ========================================================================== 
+				TEMPLATE FRAGMENT DEFINITION + other stuffs removed at runtime
+============================================================================ -->
+
+<div th:fragment="cuf-unit-binder" >
 <div class="toggle-panel">
 	<span class="not-displayed toggle-panel-buttons">
 		<input type="button" th:value="#{ label.CustomField.add }" value="ajouter"/>
 	</span>
-	<div id="test-cases-binding" class="toggle-panel-main">
+	<div id="panel" th:id="${HTMLID}+'-binding-panel'" class="toggle-panel-main">
 	
-		<table id="test-cases-binding-table">
+		<table id="table" th:id="${HTMLID}+'-binding-table'">
 			<thead>
 				<tr>
 					<th>id</th>
 					<th>#</th>
 					<th th:text="#{project.cufbinding.table.name}">name</th>
-					<th > </th>
+					<th> </th>
 				</tr>
 			</thead>
 			<tbody>
-				<tr th:each="binding : ${testCaseBindings}">
+				<tr th:each="binding : ${collection}">
 					<td th:text="${binding.id}">10</td>
 					<td th:text="${binding.position}">1</td>
 					<td th:text="${binding.customField.name}">bob</td>
@@ -122,8 +147,73 @@
 		</table>
 	
 	</div>
-
 </div>
 
 
+<div id="popup" th:id="${HTMLID}+'-binding-popup'" class="popup-dialog cuf-binding-popup">
 
+	<div class="component left-div">
+		<table>
+			<thead>
+				<tr>
+					<td></td>
+					<td>name</td>
+					<td>type</td>
+					<td>optional</td>
+					<td class="not-displayed">ID</td>
+				</tr>
+			</thead>
+			<tbody>
+				<tr th:remove="all">
+					<td><input type="checkbox"/></td>
+					<td>text-field 3</td>
+					<td>text field</td>
+					<td>yes</td>
+					<td class="not-displayed">5</td>				
+				</tr>			
+			</tbody>
+		</table>
+	</div>
+	
+</div>
+
+<script type="text/javascript" th:inline="javascript">
+//<![CDATA[
+
+   require(["domReady", "require"],function(domReady, require){
+		
+	   settings = {
+    		projectId : 10,	    			
+    		tableLanguageUrl:  "http://localhost:8080/squash/datatables/messages", 
+        	tableBaseAjaxSource: "http://localhost:8080/squash/custom-fields-binding",
+        	oklabel : "ouaiche",
+        	cancellabel : "nope",
+        	
+    		entityType : 'TEST_CASE', 
+   			
+    		panelSelector : '#panel',
+   			panelInitiallyOpen : true,
+   			panelTitle : "test case workspace",
+   			
+   			tableSelector : '#table',
+   			tableDeferLoading : 3,
+   			
+   			popupSelector : '#popup',
+   			popupTitle : 'bind new custom fields',
+   			
+    			
+		};
+				   
+		domReady(function(){
+			require(["http://localhost/scripts/custom-field-binding/entity-manager.js"], function(EntityManager){
+        		new EntityManager(settings);
+        	});   				
+		});
+	   
+   });
+           
+//]]>
+</script>
+
+</div>
+</div>

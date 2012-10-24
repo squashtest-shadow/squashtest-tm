@@ -28,6 +28,10 @@ define(["jquery", "require", "./entity-manager.js"], function($, require){
 	function makeTCConf(conf){		
 		return $.extend({},conf.general, conf.tcSettings);
 	};
+	
+	function makeReqConf(conf){
+		return $.extend({},conf.general, conf.reqSettings);
+	};
 
 	var manager = {
 		
@@ -42,9 +46,12 @@ define(["jquery", "require", "./entity-manager.js"], function($, require){
 			var tcConf = makeTCConf(this.config);
 			new EntityManager(tcConf);
 			
+			//requirement
+			var reqConf = makeReqConf(this.config);
+			new EntityManager(reqConf);
 			
 		}
-	}
+	};
 	
 	return manager;
 	

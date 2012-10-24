@@ -20,10 +20,22 @@
  */
 
 
+/*
+ * settings (see the doc for jquery datatable for details about the native settings):
+ * 	{
+ * 		selector : the selector for the table,
+ * 		languageUrl : the url where to fetch the localization conf object,
+ * 		ajaxSource : the ajaxSource (native),
+ * 		deferLoading : the iDeferLoading (native),
+ * 		oklabel : text for the ok button,
+ * 		cancellabel : text for the cancel button
+ * }
+ */
+
 define(["jquery", "jquery.squash.datatables"], function($){
 	
+	
 	return function(settings){
-		
 		
 		var tableConf = {
 			oLanguage :{
@@ -53,7 +65,7 @@ define(["jquery", "jquery.squash.datatables"], function($){
 				cancellabel : settings.cancellabel
 			},
 			
-			enableDnD : true,
+			enableDnD : true
 		
 		};
 		

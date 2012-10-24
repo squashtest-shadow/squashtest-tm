@@ -62,7 +62,7 @@
 	<s:param name="projectId" value="${adminproject.project.id}" />
 </s:url>
 
-<s:url var="customFieldManagerURL" value="/custom-fields-binding/manager?projectId={projectId}">
+<s:url var="customFieldManagerURL" value="/administration/project/{projectId}/custom-fields-binding">
 	<s:param name="projectId" value="${adminproject.project.id}"/>
 </s:url>
 
@@ -461,5 +461,21 @@
 	</comp:popup>
 </sec:authorize>
 <!-- ------------------------------------END RENAME POPUP------------------------------------------------------- -->
+<script type="text/javascript">
 
-<comp:fragment-tabs />  
+	$(function(){
+		
+		require(["jquery.squash.fragmenttabs"], function(){
+			squashtm.fragmenttabs.init({
+				beforeLoad : function(event,ui){
+					if (document.getElementById("cuf-binding-administration")!==null){
+						event.preventDefault();
+						return false;
+					}
+				}
+			});				
+		});
+		
+	
+	});
+</script>

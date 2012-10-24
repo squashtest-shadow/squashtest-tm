@@ -33,26 +33,26 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
-import org.springframework.web.servlet.ModelAndView;
 import org.squashtest.csp.tm.domain.customfield.BindableEntity;
+import org.squashtest.csp.tm.domain.customfield.CustomField;
 import org.squashtest.csp.tm.domain.customfield.CustomFieldBinding;
-import org.squashtest.csp.tm.service.CustomFieldBindingModificationService;
+import org.squashtest.csp.tm.service.CustomFieldBindingFinderService;
 import org.squashtest.csp.tm.web.internal.i18n.InternationalizationHelper;
 import org.squashtest.csp.tm.web.internal.model.customfields.CustomFieldBindingModel;
 import org.squashtest.csp.tm.web.internal.model.customfields.CustomFieldJsonConverter;
+import org.squashtest.csp.tm.web.internal.model.customfields.CustomFieldModel;
 import org.squashtest.csp.tm.web.internal.model.datatable.DataTableDrawParameters;
 import org.squashtest.csp.tm.web.internal.model.datatable.DataTableDrawParametersPagingAdapter;
 import org.squashtest.csp.tm.web.internal.model.datatable.DataTableModel;
 import org.squashtest.csp.tm.web.internal.model.datatable.DataTableModelHelper;
 import org.squashtest.tm.core.foundation.collection.PagedCollectionHolder;
-import org.squashtest.tm.core.foundation.collection.Paging;
 
 
 @Controller
 @RequestMapping("/custom-fields-binding")
-public class CustomFieldBindingManagementController {
+public class CustomFieldBindingController {
 
-	private CustomFieldBindingModificationService service;
+	private CustomFieldBindingFinderService service;
 
 	private CustomFieldJsonConverter converter;
 	
@@ -61,7 +61,7 @@ public class CustomFieldBindingManagementController {
 	
 	
 	@ServiceReference
-	public void setCustomFieldBindingModificationService(CustomFieldBindingModificationService service){
+	public void setCustomFieldBindingFinderService(CustomFieldBindingFinderService service){
 		this.service=service;
 	}
 
@@ -72,27 +72,6 @@ public class CustomFieldBindingManagementController {
 	
 
 	
-	@RequestMapping(value="/manager", method = RequestMethod.GET, params = {"projectId"})
-	public ModelAndView getManager(@RequestParam("projectId") Long projectId){
-		
-		List<CustomFieldBinding> testCaseBindings = service.findCustomFieldsForProjectAndEntity
-													(projectId, BindableEntity.TEST_CASE, new DefaultPaging()).getPagedItems();
-		
-		
-		/*List<CustomFieldBinding> requirementBindings = service.findCustomFieldsForProjectAndEntity(projectId, BindableEntity.REQUIREMENT_VERSION);
-		List<CustomFieldBinding> campaignBindings = service.findCustomFieldsForProjectAndEntity(projectId, BindableEntity.CAMPAIGN);
-		List<CustomFieldBinding> iterationBindings = service.findCustomFieldsForProjectAndEntity(projectId, BindableEntity.ITERATION);
-		List<CustomFieldBinding> testSuiteBindings = service.findCustomFieldsForProjectAndEntity(projectId, BindableEntity.TEST_SUITE);*/
-		
-		ModelAndView mav = new ModelAndView("custom-field-binding.html");
-		mav.addObject("testCaseBindings", testCaseBindings);
-		mav.addObject("projectIdentifier", projectId);
-		
-		return mav;
-		
-	}
-	
-	
 	
 	@RequestMapping(method= RequestMethod.GET, params = {"projectId"}, headers="Accept=application/json")
 	@ResponseBody
@@ -100,19 +79,17 @@ public class CustomFieldBindingManagementController {
 		
 		List<CustomFieldBinding> bindings = service.findCustomFieldsForProject(projectId);
 		
-		return toJson(bindings);
+		return bindingToJson(bindings);
 		
 	}
 	
-			
-	
 	@RequestMapping(method= RequestMethod.GET, params = {"projectId", "bindableEntity"}, headers="Accept=application/json")
 	@ResponseBody
-	public List<CustomFieldBindingModel> findAllCustomFieldsForProject(@RequestParam("projectId") Long projectId, @RequestParam("bindableEntity") String bindableEntity){
+	public List<CustomFieldBindingModel> findAllCustomFieldsForProject(@RequestParam("projectId") Long projectId, @RequestParam("bindableEntity") BindableEntity bindableEntity){
 		
-		List<CustomFieldBinding> bindings = service.findCustomFieldsForProjectAndEntity(projectId, BindableEntity.valueOf(bindableEntity));
+		List<CustomFieldBinding> bindings = service.findCustomFieldsForProjectAndEntity(projectId, bindableEntity);
 		
-		return toJson(bindings);
+		return bindingToJson(bindings);
 		
 	}
 	
@@ -120,14 +97,14 @@ public class CustomFieldBindingManagementController {
 	@ResponseBody
 	public DataTableModel findAllCustomFieldsTableForProject
 			(@RequestParam("projectId") Long projectId, 
-			 @RequestParam("bindableEntity") String bindableEntity, 
+			 @RequestParam("bindableEntity") BindableEntity bindableEntity, 
 			 DataTableDrawParameters params,
 			 Locale locale){
 		
 		
 		DataTableDrawParametersPagingAdapter paging = new DataTableDrawParametersPagingAdapter(params);
 		
-		PagedCollectionHolder<List<CustomFieldBinding>> bindings = service.findCustomFieldsForProjectAndEntity(projectId, BindableEntity.valueOf(bindableEntity), paging);
+		PagedCollectionHolder<List<CustomFieldBinding>> bindings = service.findCustomFieldsForProjectAndEntity(projectId, bindableEntity, paging);
 
 		CUFBindingDataTableModelHelper helper = new CUFBindingDataTableModelHelper(converter);
 		return helper.buildDataModel(bindings, params.getsEcho());
@@ -135,7 +112,21 @@ public class CustomFieldBindingManagementController {
 	}
 	
 	
-	private List<CustomFieldBindingModel> toJson(List<CustomFieldBinding> bindings){
+
+	@RequestMapping(method = RequestMethod.GET, params = {"projectId", "bindableEntity"}, headers="Accept=application/json")
+	@ResponseBody
+	public List<CustomFieldModel> findAllAvailableCustomFieldsForProjectAndEntity
+													(@RequestParam("projectId") Long projectId, 
+													@RequestParam("bindableEntity") BindableEntity bindableEntity ){
+		
+		List<CustomField> fields = service.findAvailableCustomFields(projectId, bindableEntity);
+		return fieldToJson(fields);	
+		
+	}
+	
+	
+	
+	private List<CustomFieldBindingModel> bindingToJson(List<CustomFieldBinding> bindings){
 		List<CustomFieldBindingModel> result = new LinkedList<CustomFieldBindingModel>();
 		
 		for (CustomFieldBinding binding : bindings){
@@ -145,7 +136,18 @@ public class CustomFieldBindingManagementController {
 		
 		return result;
 	}
+	
 
+	private List<CustomFieldModel> fieldToJson(List<CustomField> fields){
+		List<CustomFieldModel> result = new LinkedList<CustomFieldModel>();
+		
+		for (CustomField field : fields){
+			CustomFieldModel model = converter.toJson(field);
+			result.add(model);
+		}
+		
+		return result;		
+	}
 	
 	// ************************* inner classes ****************************
 	
@@ -164,17 +166,5 @@ public class CustomFieldBindingManagementController {
 		}
 	}
 
-	private static class DefaultPaging implements Paging{
-		@Override
-		public int getFirstItemIndex() {
-			return 0;
-		}
-		
-		@Override
-		public int getPageSize() {
-			return 10;
-		}
-		
-	}
 	
 }
