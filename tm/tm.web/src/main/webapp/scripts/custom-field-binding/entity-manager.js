@@ -20,9 +20,11 @@
  */
 
 
+
 define (function(require){
 	
 	var Panel = require("./panel.js");
+	var Table = require("./table.js");
 
 	function getPanelConf(settings){
 		return { 
@@ -30,11 +32,33 @@ define (function(require){
 			'initiallyOpen' : settings.panelInitiallyOpen, 
 			'title' : settings.panelTitle
 		};
+	};
+	
+	function buildAjaxSource(settings){
+		var url = settings.tableBaseAjaxSource;
+		url = url+"?projectId="+settings.projectId;
+		url = url+"&bindableEntity="+settings.entityType;
+		return url;
+	};
+	
+	function getTableConf(settings){
+		return {
+			selector : settings.tableSelector,
+			languageUrl : settings.tableLanguageUrl,
+			ajaxSource : buildAjaxSource(settings),
+			deferLoading : settings.tableDeferLoading,
+			oklabel : settings.oklabel,
+			cancellabel : settings.cancellabel
+		}
 	}
 	
 	return function(settings){
 		var panelConf = getPanelConf(settings);
 		this.panel = new Panel(panelConf);
+		
+		var tableConf = getTableConf(settings);
+		this.table = new Table(tableConf);
+
 	};
 
 });

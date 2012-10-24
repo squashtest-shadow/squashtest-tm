@@ -86,7 +86,7 @@ public class CustomFieldBindingManagementController {
 		
 		ModelAndView mav = new ModelAndView("custom-field-binding.html");
 		mav.addObject("testCaseBindings", testCaseBindings);
-		mav.addObject("projectId", projectId);
+		mav.addObject("projectIdentifier", projectId);
 		
 		return mav;
 		

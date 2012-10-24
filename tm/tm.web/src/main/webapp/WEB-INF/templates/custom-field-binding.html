@@ -55,16 +55,20 @@
     	var config = {
     		
     		general : {
-	    		projectId : /* ${projectId}, */10,	    			
+	    		projectId : /*[[${projectIdentifier}]]*/10,	    			
 	    		tableLanguageUrl: /*[[ @{/datatables/messages} ]]*/ "http://localhost:8080/squash/datatables/messages", 
-	        	tableBaseAjaxSource: /*[[ @{/custom-fields-binding} ]]*/ "http://localhost:8080/squash/custom-fields-binding"
+	        	tableBaseAjaxSource: /*[[ @{/custom-fields-binding} ]]*/ "http://localhost:8080/squash/custom-fields-binding",
+	        	oklabel : /*[[ #{label.Yes} ]]*/ "ouaiche",
+	        	cancellabel : /*[[ #{label.Cancel} ]]*/ "nope"
     		},
     		
     		tcSettings : {
-    			entityType : /* [[ ${org.squashtest.csp.tm.domain.customfield.BindableEntity.TEST_CASE.name} ]] */"TEST_CASE",
+    			entityType : /*[[ ${org.squashtest.csp.tm.domain.customfield.BindableEntity.TEST_CASE.name()} ]]*/"TEST_CASE",
     			panelSelector : '#test-cases-binding',
-    			panelInitiallyOpen : /*[[  (${testCaseBindings.isEmpty()}) ? 'false,' : 'true,'  ]]*/true,
+    			panelInitiallyOpen : /*[[  (${testCaseBindings.isEmpty()}) ? 'false' : 'true'  ]]*/true,
     			panelTitle : /*[[ #{project.cufbinding.test-cases.panel.title}  ]]*/"test case bindings",
+    			tableSelector : '#test-cases-binding-table',
+    			tableDeferLoading : /*[[ ${testCaseBindings.size()} ]]*/ 3
     			
 	    	}
 	    	
@@ -91,16 +95,28 @@
 				<tr>
 					<th>id</th>
 					<th>#</th>
-					<th>name</th>
-					<th>del</th>
+					<th th:text="#{project.cufbinding.table.name}">name</th>
+					<th > </th>
 				</tr>
 			</thead>
 			<tbody>
 				<tr th:each="binding : ${testCaseBindings}">
-					<td th:text="${binding.id}"></td>
-					<td th:text="${binding.position}"></td>
-					<td th:text="${binding.customField.name}"></td>
-					<td th:text=" "></td>				
+					<td th:text="${binding.id}">10</td>
+					<td th:text="${binding.position}">1</td>
+					<td th:text="${binding.customField.name}">bob</td>
+					<td > </td>				
+				</tr>
+				<tr th:remove="all">
+					<td>20</td>
+					<td>2</td>
+					<td>robert</td>
+					<td> </td>		
+				</tr>
+				<tr th:remove="all">
+					<td>30</td>
+					<td>3</td>
+					<td>mike</td>
+					<td> </td>				
 				</tr>
 			</tbody>
 		</table>
@@ -108,4 +124,6 @@
 	</div>
 
 </div>
+
+
 

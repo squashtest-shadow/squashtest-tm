@@ -22,28 +22,46 @@
 
 define(["jquery", "jquery.squash.datatables"], function($){
 	
-	
-	function buildURL = function(settings){
-		return settings.ajaxSource+"?projectId="+settings.projectId+"&bindableEntity="+settings.entityType;	
-	}
-	
 	return function(settings){
+		
 		
 		var tableConf = {
 			oLanguage :{
 				sUrl : settings.languageUrl
 			},
-			sAjaxSource : buildURL(settings),
+			sAjaxSource : settings.ajaxSource,
 			iDeferLoading : settings.deferLoading,
 			aoColumnDefs :[
 				{'bSortable' : false, 'bVisible' : false, 'aTargets' : [0], 'mDataProp' : 'id'},
 				{'bSortable' : false, 'bVisible' : true,  'aTargets' : [1], 'mDataProp' : 'position', 'sWidth' : '2em', 'sClass' : 'centered ui-state-default drag-handle select-handle'},
-				{'bSortable' : false, 'bVisible' : true,  'aTargets' : [2], 'mDataProp' : 'customField.name'},
-				{'bSortable' : false, 'bVisible' : true,  'aTargets' : [3], 'mDataProp' : undefined, 'sWidth' : '2em', 'sClass' : 'delete-button centered'}			
+				{'bSortable' : false, 'bVisible' : true,  'aTargets' : [2], 'mDataProp' : 'customField["name"]'},
+				{'bSortable' : false, 'bVisible' : true,  'aTargets' : [3], 'mDataProp' : null, 'sWidth' : '2em', 'sClass' : 'delete-button centered'}			
 			]		
 		};
 	
+		var squashConf = {
+			
+			dataKeys : {
+				entityId : 'id',
+				entityIndex :'position'
+			},
+			
+			enableHover : true,
+			
+			confirmPopup : {
+				oklabel : settings.oklabel,
+				cancellabel : settings.cancellabel
+			},
+			
+			enableDnD : true,
+		
+		};
+		
+		$(settings.selector).squashTable(tableConf, squashConf);
+
 	
+		return $(settings.selector).squashTable();
+		
 	}
 
-})
+});

@@ -37,6 +37,6 @@ public interface CustomFieldBindingDao extends CustomCustomFieldBindingDao{
 	
 	void persist(CustomFieldBinding binding);
 	
-	int countAllForProjectAndEntity(long projectId, BindableEntity boundEntity);
+	Long countAllForProjectAndEntity(long projectId, BindableEntity boundEntity);
 	
 }

@@ -80,7 +80,7 @@ public class CustomFieldBindingModificationServiceImpl implements CustomFieldBin
 			long projectId, BindableEntity entity, Paging paging) {
 		
 		List<CustomFieldBinding> bindings = customFieldBindingDao.findAllForProjectAndEntity(projectId, entity, paging);
-		int count = customFieldBindingDao.countAllForProjectAndEntity(projectId, entity);
+		Long count = customFieldBindingDao.countAllForProjectAndEntity(projectId, entity);
 		
 		return new PagingBackedPagedCollectionHolder<List<CustomFieldBinding>>(paging, count, bindings);
 	}
@@ -92,11 +92,11 @@ public class CustomFieldBindingModificationServiceImpl implements CustomFieldBin
 		
 		Project project = projectDao.findById(projectId);
 		CustomField field = customFieldDao.findById(customFieldId);
-		int newIndex = customFieldBindingDao.countAllForProjectAndEntity(projectId, newBinding.getBoundEntity()) + 1;
+		Long newIndex = customFieldBindingDao.countAllForProjectAndEntity(projectId, newBinding.getBoundEntity()) + 1;
 		
 		newBinding.setBoundProject(project);
 		newBinding.setCustomField(field);
-		newBinding.setPosition(newIndex);
+		newBinding.setPosition(newIndex.intValue());
 		
 		customFieldBindingDao.persist(newBinding);
 		

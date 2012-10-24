@@ -227,8 +227,8 @@
 																			"where binding.boundProject.id = ? and binding.boundEntity = ?)"),
 		
 		//CustomFieldBinding dao
-		@NamedQuery(name = "CustomFieldBinding.findAllForProject", query = "from CustomFieldBinding cfb join cfb.boundProject bp where bp.id = ? group by cfb.boundEntity order by cfb.position asc"),
-		@NamedQuery(name = "CustomFieldBinding.findAllForProjectAndEntity", query = "from CustomFieldBinding cfb join cfb.boundProject bp where bp.id = ? and cfb.boundEntity = ? order by cfb.position asc"),
+		@NamedQuery(name = "CustomFieldBinding.findAllForProject", query = "select cfb from CustomFieldBinding cfb join cfb.boundProject bp where bp.id = ? group by cfb.boundEntity order by cfb.position asc"),
+		@NamedQuery(name = "CustomFieldBinding.findAllForProjectAndEntity", query = "select cfb from CustomFieldBinding cfb join cfb.boundProject bp where bp.id = ? and cfb.boundEntity = ? order by cfb.position asc"),
 		@NamedQuery(name = "CustomFieldBinding.countAllForProjectAndEntity", query = "select count(cfb) from CustomFieldBinding cfb where cfb.boundProject.id = ? and cfb.boundEntity = ?"),
 		
 

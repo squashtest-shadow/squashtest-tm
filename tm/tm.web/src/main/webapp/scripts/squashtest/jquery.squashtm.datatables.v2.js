@@ -39,9 +39,20 @@
  * keys used for data lookup -------------------------
  * 
  * That table uses mPropData for its columns. More explictly, it uses json data
- * as a map. Specifically, keys we are looking for are : 
+ * as a map. Specifically, the defaults keys used here are : 
  * - 'entity-id' : the entity id 
  * - 'entity-index' : the position of the entity when the list is sorted
+ * 
+ * Those keys may be redefined through configuration, using a field object 'dataKeys' :  
+ * 
+ * {
+ * 	...
+ * 	dataKeys : {
+ * 		entityId : default is 'entity-id' ,
+ * 		entityIndex : default is 'entity-index'
+ * 	} 
+ * 
+ * }
  * 
  * In some cases more keys might be required for the modules decscribed below,
  * refer to the documentation if need be.
@@ -52,7 +63,7 @@
  * When configuring a module sometimes you will see that a given string supports
  * placeholders. It means that anything between curly braces '{something}' are
  * placeholders that will be replaced by the corresponding value from
- * aoData["something"]. That's where the data keys are useful.
+ * aoData["something"]. That's where the data keys above are useful.
  * 
  * ========================================== Regular Datatable settings
  * ==========================================
@@ -190,7 +201,8 @@ squashtm.keyEventListener = squashtm.keyEventListener || new KeyEventListener();
 	 * aoData[0]; : the datatable expects the id to be first.
 	 */
 	function _getODataId(arg) {
-		var id = this.fnGetData(arg)["entity-id"];
+		var key = this.squashSettings.dataKeys.entityId;
+		var id = this.fnGetData(arg)[key];
 		if ((id != "") && (!isNaN(id))) {
 			return id;
 		} else {
@@ -223,7 +235,8 @@ squashtm.keyEventListener = squashtm.keyEventListener || new KeyEventListener();
 
 				rows.find('.drag-handle').addClass('ui-state-active');
 
-				var offset = self.fnGetData(0)['entity-index'] - 1;
+				var key = self.squashSettings.dataKeys.entityIndex;
+				var offset = self.fnGetData(0)[key] - 1;
 
 				var index = rows.get(0).rowIndex - 1;
 				self.data("previousRank", index);
@@ -634,6 +647,10 @@ squashtm.keyEventListener = squashtm.keyEventListener || new KeyEventListener();
 	var datatableDefaults = squashtm.datatable.defaults
 
 	var squashDefaults = {
+		dataKeys : {
+			entityId : 'entity-id' ,
+			entityIndex : 'entity-index'
+		}, 
 		attachments : {
 			cssMatcher : "has-attachment-cell",
 			aoDataNbAttach : "nb-attachments",
