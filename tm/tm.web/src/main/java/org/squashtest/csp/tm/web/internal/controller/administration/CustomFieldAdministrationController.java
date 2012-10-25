@@ -32,6 +32,7 @@ import org.springframework.osgi.extensions.annotation.ServiceReference;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.ModelAttribute;
+import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.ResponseBody;
@@ -72,6 +73,7 @@ public class CustomFieldAdministrationController {
 	public InputType[] populateInputTypes() {
 		return InputType.values();
 	}
+	
 	@ModelAttribute("customFieldsPageSize")
 	public long populateCustomFieldsPageSize() {
 		return DefaultPaging.FIRST_PAGE.getPageSize();
@@ -92,6 +94,11 @@ public class CustomFieldAdministrationController {
 		return "custom-field-manager.html";
 	}
 	
+	
+	/**
+	 * A Mapping for custom fields table sortable columns : maps the table column index to an entity property.
+	 * NB: column index is of all table's columns (displayed or not)
+	 */
 	private final DataTableMapper customFieldTableMapper = new DataTableMapper("unused", CustomField.class).initMapping(6)
 			.mapAttribute(CustomField.class, 2, "name", String.class)
 			.mapAttribute(CustomField.class, 3, "label", String.class)
@@ -114,6 +121,10 @@ public class CustomFieldAdministrationController {
 		return new CustomFieldDataTableModelHelper(locale).buildDataModel(holder, filter.getFirstItemIndex() + 1, params.getsEcho());
 	}
 	
+	/**
+	 * Will help to create the {@link DataTableModel} to fill the data-table of custom fields
+	 *
+	 */
 	private class CustomFieldDataTableModelHelper extends DataTableModelHelper<CustomField>{
 		private Locale locale;
 		
@@ -137,4 +148,10 @@ public class CustomFieldAdministrationController {
 		}
 	}
 	
+	
+	@RequestMapping(value = "/{customFieldId}", method = RequestMethod.DELETE)
+	@ResponseBody
+	public void deleteCustomField( @PathVariable Long customFieldId) {
+		customFieldManagerService.deleteCustomField(customFieldId);
+	}
 }

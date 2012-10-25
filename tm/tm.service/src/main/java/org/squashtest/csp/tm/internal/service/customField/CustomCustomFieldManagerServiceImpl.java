@@ -24,11 +24,13 @@ import java.util.List;
 
 import javax.inject.Inject;
 
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.stereotype.Service;
 import org.squashtest.csp.tm.domain.customfield.CustomField;
 import org.squashtest.csp.tm.infrastructure.filter.CollectionSorting;
 import org.squashtest.csp.tm.infrastructure.filter.FilteredCollectionHolder;
 import org.squashtest.csp.tm.internal.repository.CustomFieldDao;
+import org.squashtest.csp.tm.internal.repository.CustomFieldDeletionDao;
 import org.squashtest.csp.tm.service.customfield.CustomCustomFieldManagerService;
 /**
  * 
@@ -41,6 +43,9 @@ public class CustomCustomFieldManagerServiceImpl implements CustomCustomFieldMan
 	@Inject
 	private CustomFieldDao customFieldDao;
 	
+	@Inject
+	private CustomFieldDeletionDao	customFieldDeletionDao;
+	
 	@Override
 	public List<CustomField> findAllOrderedByName() {
 		return customFieldDao.finAllOrderedByName();
@@ -51,6 +56,13 @@ public class CustomCustomFieldManagerServiceImpl implements CustomCustomFieldMan
 		List<CustomField> customFields = customFieldDao.findSortedCustomFields(filter);
 		long count = customFieldDao.countCustomFields();
 		return new FilteredCollectionHolder<List<CustomField>>(count, customFields);
+	}
+
+	@Override
+	public void deleteCustomField(Long customFieldId) {
+		CustomField customField = customFieldDao.findById(customFieldId);
+		customFieldDeletionDao.removeCustomField(customField);
+		
 	}
 
 }

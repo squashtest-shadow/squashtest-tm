@@ -26,6 +26,7 @@ define([ "jquery", "backbone", "app/cf/NewCustomFieldPanelView", "app/cf/NewCust
 		var CustomFieldTableView = Backbone.View.extend({
 			el: "#cf-table-pane",
 			initialize: function() {
+				var self = this;
 				// this.el is decorated with an ajax sourced datatable
 				var config = $.extend({
 					"oLanguage": {
@@ -93,7 +94,7 @@ define([ "jquery", "backbone", "app/cf/NewCustomFieldPanelView", "app/cf/NewCust
 							url : cfTable.ajaxSource+"/{entity-id}",
 							popupmessage : cfTable.deleteConfirmMessage,
 							tooltip : cfTable.deleteTooltip,
-							success : function(data) { this.$("table").squashTable().refresh(); }
+							success : function(data){self.table.refresh();}
 						}
 					};
 					

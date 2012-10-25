@@ -20,6 +20,7 @@
  */
 package org.squashtest.csp.tm.service.customfield;
 
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.transaction.annotation.Transactional;
 
 /**
@@ -30,5 +31,11 @@ import org.springframework.transaction.annotation.Transactional;
  */
 @Transactional
 public interface CustomCustomFieldManagerService extends CustomFieldFinderService {
+	/**
+	 * Will delete the custom-field entity
+	 * @param customFieldId : the id of the custom field to delete
+	 */
+	@PreAuthorize("hasRole('ROLE_ADMIN')")
+	public void deleteCustomField(Long customFieldId);
 
 }

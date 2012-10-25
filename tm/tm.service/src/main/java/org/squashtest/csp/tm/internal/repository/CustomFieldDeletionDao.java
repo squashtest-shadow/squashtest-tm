@@ -18,23 +18,12 @@
  *     You should have received a copy of the GNU Lesser General Public License
  *     along with this software.  If not, see <http://www.gnu.org/licenses/>.
  */
+package org.squashtest.csp.tm.internal.repository;
 
-package org.squashtest.csp.tm.service.customfield;
-
-import org.springframework.security.access.prepost.PreAuthorize;
-import org.springframework.transaction.annotation.Transactional;
 import org.squashtest.csp.tm.domain.customfield.CustomField;
 
-/**
- * Facade service for custom fields management.
- * 
- * @author Gregory Fouquet
- * 
- */
-@Transactional
-public interface CustomFieldManagerService extends CustomCustomFieldManagerService {
-	
-	@PreAuthorize("hasRole('ROLE_ADMIN')")
-	public void persist(CustomField newCustomField);
+public interface CustomFieldDeletionDao extends DeletionDao {
+
+	void removeCustomField(CustomField  entity);
 
 }

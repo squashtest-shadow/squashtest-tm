@@ -18,23 +18,33 @@
  *     You should have received a copy of the GNU Lesser General Public License
  *     along with this software.  If not, see <http://www.gnu.org/licenses/>.
  */
+package org.squashtest.csp.tm.internal.repository.hibernate;
 
-package org.squashtest.csp.tm.service.customfield;
+import java.util.List;
 
-import org.springframework.security.access.prepost.PreAuthorize;
-import org.springframework.transaction.annotation.Transactional;
+import org.hibernate.Query;
+import org.hibernate.type.LongType;
+import org.hibernate.type.StringType;
+import org.springframework.stereotype.Repository;
+import org.squashtest.csp.tm.domain.campaign.CampaignLibrary;
 import org.squashtest.csp.tm.domain.customfield.CustomField;
+import org.squashtest.csp.tm.domain.project.Project;
+import org.squashtest.csp.tm.domain.requirement.RequirementLibrary;
+import org.squashtest.csp.tm.domain.testcase.TestCaseLibrary;
+import org.squashtest.csp.tm.internal.repository.CustomFieldDeletionDao;
 
-/**
- * Facade service for custom fields management.
- * 
- * @author Gregory Fouquet
- * 
- */
-@Transactional
-public interface CustomFieldManagerService extends CustomCustomFieldManagerService {
-	
-	@PreAuthorize("hasRole('ROLE_ADMIN')")
-	public void persist(CustomField newCustomField);
+@Repository
+public class HibernateCustomFieldDeletionDao extends HibernateDeletionDao implements CustomFieldDeletionDao {
+
+
+	@Override
+	public void removeEntities(List<Long> entityIds) {
+		// TODO Auto-generated method stub
+	}
+	@Override
+	public void removeCustomField(CustomField customField) {
+		removeEntity(customField);
+		
+	}
 
 }
