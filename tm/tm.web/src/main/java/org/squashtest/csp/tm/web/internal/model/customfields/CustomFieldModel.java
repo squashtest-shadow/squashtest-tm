@@ -30,6 +30,8 @@ public class CustomFieldModel {
 	
 	private boolean optional;
 	
+	private String friendlyOptional;
+	
 	private String defaultValue;
 	
 	private InputTypeModel inputType;
@@ -81,6 +83,16 @@ public class CustomFieldModel {
 	public void setInputType(InputTypeModel inputType) {
 		this.inputType = inputType;
 	}
+
+	public String getFriendlyOptional() {
+		return friendlyOptional;
+	}
+
+	public void setFriendlyOptional(String friendlyOptional) {
+		this.friendlyOptional = friendlyOptional;
+	}
+	
+	
 	
 }
 

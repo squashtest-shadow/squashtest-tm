@@ -88,19 +88,22 @@ public class CustomFieldBindingModificationServiceImpl implements CustomFieldBin
 	
 	@Override
 	@PreAuthorize("hasRole('ROLE_TM_PROJECT_MANAGER') or hasRole('ROLE_ADMIN')")		
-	public void addNewCustomFieldBinding(long projectId, long customFieldId, CustomFieldBinding newBinding) {
+	public void addNewCustomFieldBinding(long projectId, BindableEntity entity, long customFieldId, CustomFieldBinding newBinding) {
 		
 		Project project = projectDao.findById(projectId);
 		CustomField field = customFieldDao.findById(customFieldId);
-		Long newIndex = customFieldBindingDao.countAllForProjectAndEntity(projectId, newBinding.getBoundEntity()) + 1;
+		Long newIndex = customFieldBindingDao.countAllForProjectAndEntity(projectId, entity) + 1;
 		
 		newBinding.setBoundProject(project);
+		newBinding.setBoundEntity(entity);
 		newBinding.setCustomField(field);
 		newBinding.setPosition(newIndex.intValue());
 		
 		customFieldBindingDao.persist(newBinding);
 		
 	}
+	
+	
 
 	
 }

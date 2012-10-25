@@ -20,40 +20,24 @@
  */
 
 
-define(["jquery", "require", "./entity-manager.js"], function($, require){
+/*
+ * As our needs goes, anything related to modeling CustomFieldBindingModel, CustomFieldModel and such 
+ * should go there. 
+ */
 
+define(function(){
 	
-	var EntityManager = require("./entity-manager.js");
-
-	function makeTCConf(conf){		
-		return $.extend({},conf.general, conf.tcSettings);
-	};
-	
-	function makeReqConf(conf){
-		return $.extend({},conf.general, conf.reqSettings);
-	};
-
-	var manager = {
-		
-		setConfig : function(conf){
-			this.config = conf;
-			return this;
-		},
-		
-		init : function(){
-		
-			//test case
-			var tcConf = makeTCConf(this.config);
-			new EntityManager(tcConf);
-			
-			//requirement
-			/*var reqConf = makeReqConf(this.config);
-			new EntityManager(reqConf);*/
-			
+	return {
+		newBinding : function(projectId, fieldId, entityName ){
+			return {
+				projectId : projectId,
+				customField : {
+					id : fieldId
+				},
+				boundEntity : {
+					enumName : entityName
+				}
+			};			
 		}
 	};
-	
-	return manager;
-	
 });
-	

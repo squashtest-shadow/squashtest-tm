@@ -20,6 +20,7 @@
  */
 package org.squashtest.csp.tm.service;
 
+import org.squashtest.csp.tm.domain.customfield.BindableEntity;
 import org.squashtest.csp.tm.domain.customfield.CustomField;
 import org.squashtest.csp.tm.domain.customfield.CustomFieldBinding;
 import org.squashtest.csp.tm.domain.project.Project;
@@ -41,9 +42,10 @@ public interface CustomFieldBindingModificationService extends CustomFieldBindin
 	 * 
 	 * @param projectId
 	 * @param customFieldId
+	 * @param entity
 	 * @param newBinding
 	 */
-	void addNewCustomFieldBinding(long projectId, long customFieldId, CustomFieldBinding newBinding);
+	void addNewCustomFieldBinding(long projectId, BindableEntity entity, long customFieldId, CustomFieldBinding newBinding);
 	
 	
 	

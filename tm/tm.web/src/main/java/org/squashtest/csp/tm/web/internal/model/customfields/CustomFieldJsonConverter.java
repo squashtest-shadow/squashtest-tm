@@ -33,6 +33,7 @@ public class CustomFieldJsonConverter {
 
 	private MessageSource messageSource;
 	
+	
 	public CustomFieldJsonConverter(MessageSource messageSource){
 		this.messageSource=messageSource;
 	}
@@ -80,6 +81,7 @@ public class CustomFieldJsonConverter {
 		model.setOptional(field.isOptional());
 		model.setDefaultValue(field.getDefaultValue());
 		model.setInputType(typeModel);		
+		model.setFriendlyOptional(field.isOptional() ? getMessage("label.Yes") : getMessage("label.No"));
 		
 		return model;
 		

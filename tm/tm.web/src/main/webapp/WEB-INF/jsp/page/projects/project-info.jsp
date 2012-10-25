@@ -465,17 +465,17 @@
 
 	$(function(){
 		
-		require(["jquery.squash.fragmenttabs"], function(){
-			squashtm.fragmenttabs.init({
-				beforeLoad : function(event,ui){
-					if (document.getElementById("cuf-binding-administration")!==null){
-						event.preventDefault();
-						return false;
+		require(["common"], function(){
+			require(["jquery.squash.fragmenttabs"], function(){
+				squashtm.fragmenttabs.init({
+					beforeLoad : function(event,ui){
+						if (document.getElementById("cuf-binding-administration")!==null){
+							event.preventDefault();
+							return false;
+						}
 					}
-				}
-			});				
+				});				
+			});			
 		});
-		
-	
 	});
 </script>

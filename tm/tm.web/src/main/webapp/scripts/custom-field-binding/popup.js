@@ -19,8 +19,27 @@
  *     along with this software.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-define(["jquery.squash"], function(){
+
+/*
+ *conf : 
+ *	{
+ *		projectId : the projectId,
+ *		bindableEntity : the bindable entity type,
+ *		getURL : the URL from where the available custom fields are fetched,
+ *		postURL : the URL where to send the data
+ *		selector : the selector for the popup,
+ * 		title : title of that popup,
+ * 		oklabel : localized label for 'ok',
+ * 		cancellabel : localized label for 'cancel',
+ * 		
+ * 	}
+ * 
+ * 
+ */
+define(["require", "jquery.squash", "./models.js"], function(require){
 		
+	var Model = require("./models.js");
+	
 	return function(settings){
 		
 		var params = {
@@ -32,7 +51,7 @@ define(["jquery.squash"], function(){
 			    	'text' : settings.oklabel,
 			    	'class' : "button-ok",
 			    	'click' : function(){
-			    		post();
+			    		submit();
 			    	}
 			    },
 			    {
@@ -49,6 +68,9 @@ define(["jquery.squash"], function(){
 		
 		var popup = $(settings.selector);
 		
+		popup.postSuccessListeners = [];
+		
+		
 		// ************* private attributes /  methods ***********
 		
 		var lineTemplate = popup.find(".row-template-holder tr");
@@ -58,24 +80,29 @@ define(["jquery.squash"], function(){
 			table.find("tbody").empty();			
 		};
 		
-		var populate = $.proxy(function(json){
+		var populate = function(json){
 			var i=0;
-			var tbody = table.find("tbody").not(".row-template-holder");
+			var tbody = table.find("tbody.available-fields");
+			var rows = $();
 			
 			for (i=0;i<json.length;i++){
 				var data = json[i];
 				var newLine = lineTemplate.clone();
 				var tds = newLine.find("td");
 				
+				tds.eq(0).prop("id", data.id);
 				tds.eq(1).text(data.name);
 				tds.eq(2).text(data.inputType.friendlyName);
-				tds.eq(3).text(data.optional);
+				tds.eq(3).text(data.friendlyOptional);
 				tds.eq(4).text(data.id);
 				
-				tbody.append(newLine);
+				rows = rows.add(newLine);
 			}
-			
-		}, popup);
+
+			tbody.append(rows);
+		};
+		
+		
 		
 		var reload = function(){
 			
@@ -91,10 +118,44 @@ define(["jquery.squash"], function(){
 			
 		};
 		
-		var post = $.proxy(function(){
+		
+		var makePayload = function(){
+			var selectedIds = table.find("tbody.available-fields input:checked")
+									.parent("td")
+									.map(function(){
+										return this.id;
+									}).get();
+			
+			var bindings = [];
+			var i=0;
+			for (i=0;i<selectedIds.length;i++){
+				bindings.push(Model.newBinding(settings.projectId, selectedIds[i], settings.bindableEntity));
+			}
+			
+			return bindings;
 			
 			
-		}, popup);
+		};
+		
+		var submit = function(){
+			var payload = makePayload();
+			if (payload.length===0){
+				popup.dialog("close");
+				return;
+			}
+			$.ajax({
+				url : settings.postURL,
+				type : 'POST',
+				data : JSON.stringify(payload),
+				contentType: "application/json; charset=utf-8"
+			}).success(function(){
+				popup.dialog("close");
+				var i=0;
+				for (i=0;i<popup.postSuccessListeners.length;i++){
+					popup.postSuccessListeners[i].update();
+				}
+			});
+		};
 		
 		//popup events
 		
@@ -102,7 +163,9 @@ define(["jquery.squash"], function(){
 			reload();
 		});
 		
-
+		popup.addPostSuccessListener = function(listener){
+			popup.postSuccessListeners.push(listener);
+		};
 		
 		
 		return popup;

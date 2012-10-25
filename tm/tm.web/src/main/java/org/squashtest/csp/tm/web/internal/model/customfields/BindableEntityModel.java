@@ -20,6 +20,8 @@
  */
 package org.squashtest.csp.tm.web.internal.model.customfields;
 
+import org.squashtest.csp.tm.domain.customfield.BindableEntity;
+
 
 public class BindableEntityModel {
 
@@ -45,6 +47,8 @@ public class BindableEntityModel {
 		this.friendlyName = friendlyName;
 	}
 	
-	
+	public BindableEntity toDomain(){
+		return BindableEntity.valueOf(enumName);
+	}
 
 }

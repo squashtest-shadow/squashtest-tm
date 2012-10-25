@@ -76,7 +76,6 @@
     			entityType : 'TEST_CASE', //should be @org.squashtest.csp.tm.domain.customfield.BindableEntity@TEST_CASE
     			
     			panelSelector : '#test-cases-binding-panel',
-    			panelInitiallyOpen : /*[[  (${testCaseBindings.isEmpty()}) ? 'false' : 'true'  ]]*/true,
     			panelTitle : /*[[ #{project.cufbinding.test-cases.panel.title}  ]]*/"test case bindings",
     			
     			tableSelector : '#test-cases-binding-table',
@@ -110,92 +109,92 @@
 				TEMPLATE FRAGMENT DEFINITION + other stuffs removed at runtime
 ============================================================================ -->
 
-<div th:fragment="cuf-unit-binder" >
-<div class="toggle-panel">
-	<span class="not-displayed toggle-panel-buttons">
-		<input type="button" th:value="#{ label.CustomField.add }" value="ajouter"/>
-	</span>
-	<div id="panel" th:id="${HTMLID}+'-binding-panel'" class="toggle-panel-main">
+	<div th:fragment="cuf-unit-binder" >
+		<div class="toggle-panel">
+			<span class="not-displayed toggle-panel-buttons">
+				<input type="button" th:value="#{ label.CustomField.add }" value="ajouter"/>
+			</span>
+			<div id="panel" th:id="${HTMLID}+'-binding-panel'" class="toggle-panel-main">
+			
+				<table id="table" th:id="${HTMLID}+'-binding-table'">
+					<thead>
+						<tr>
+							<th>id</th>
+							<th>#</th>
+							<th th:text="#{project.cufbinding.table.name}">name</th>
+							<th> </th>
+						</tr>
+					</thead>
+					<tbody>
+						<tr th:each="binding : ${collection}">
+							<td th:text="${binding.id}">10</td>
+							<td th:text="${binding.position}">1</td>
+							<td th:text="${binding.customField.name}">bob</td>
+							<td > </td>				
+						</tr>
+						<tr th:remove="all">
+							<td>20</td>
+							<td>2</td>
+							<td>robert</td>
+							<td> </td>		
+						</tr>
+						<tr th:remove="all">
+							<td>30</td>
+							<td>3</td>
+							<td>mike</td>
+							<td> </td>				
+						</tr>
+					</tbody>
+				</table>
+			
+			</div>
+		</div>
 	
-		<table id="table" th:id="${HTMLID}+'-binding-table'">
-			<thead>
-				<tr>
-					<th>id</th>
-					<th>#</th>
-					<th th:text="#{project.cufbinding.table.name}">name</th>
-					<th> </th>
-				</tr>
-			</thead>
-			<tbody>
-				<tr th:each="binding : ${collection}">
-					<td th:text="${binding.id}">10</td>
-					<td th:text="${binding.position}">1</td>
-					<td th:text="${binding.customField.name}">bob</td>
-					<td > </td>				
-				</tr>
-				<tr th:remove="all">
-					<td>20</td>
-					<td>2</td>
-					<td>robert</td>
-					<td> </td>		
-				</tr>
-				<tr th:remove="all">
-					<td>30</td>
-					<td>3</td>
-					<td>mike</td>
-					<td> </td>				
-				</tr>
-			</tbody>
-		</table>
-	
-	</div>
-</div>
-
-
-<div id="popup" th:id="${HTMLID}+'-binding-popup'" class="popup-dialog cuf-binding-popup">
-	
-	<div class="component left-div">
-		<table>
-			<thead>
-				<tr>
-					<td class="th-check"></td>
-					<td class="th-name">name</td>
-					<td class="th-type">type</td>
-					<td class="th-optional">optional</td>
-					<td class="th-id">ID</td>
-				</tr>
-			</thead>
-			<tbody>
-				<tr th:remove="all">
-					<td class="td-check"><input type="checkbox"/></td>
-					<td class="td-name">text-field 3</td>
-					<td class="td-type">text field</td>
-					<td class="td-optional">yes</td>
-					<td class="td-id">5</td>				
-				</tr>			
-			</tbody>
-			<tbody class="row-template-holder">
-				<tr>
-					<td class="td-check"><input type="checkbox"/></td>
-					<td class="td-name"></td>
-					<td class="td-type"></td>
-					<td class="td-optional"></td>
-					<td class="td-id"></td>				
-				</tr>				
-			</tbody>
-		</table>
-	</div>
 		
-	<!-- TODO : some day 
-	<div class="component right-div">
-	</div>
-	 -->
+		<div id="popup" th:id="${HTMLID}+'-binding-popup'" class="popup-dialog cuf-binding-popup">
+			
+			<div class="component left-div">
+				<table>
+					<thead>
+						<tr>
+							<td class="th-check"></td>
+							<td class="th-name"  th:text="#{project.cufbinding.popup.table.name}">name</td>
+							<td class="th-type" th:text="#{project.cufbinding.popup.table.type}">type</td>
+							<td class="th-optional" th:text="#{project.cufbinding.popup.table.optional}">optional</td>
+						</tr>
+					</thead>
+					<tbody class="available-fields">
+						<tr th:remove="all">
+							<td class="td-check" data-id="5"><input type="checkbox"/></td>
+							<td class="td-name">text-field 5</td>
+							<td class="td-type">text field</td>
+							<td class="td-optional">yes</td>
+						</tr>			
+					</tbody>
+					<tbody class="row-template-holder">
+						<tr>
+							<td class="td-check"><input type="checkbox"/></td>
+							<td class="td-name"></td>
+							<td class="td-type"></td>
+							<td class="td-optional"></td>	
+						</tr>				
+					</tbody>
+				</table>
+			</div>
+				
+			<!-- TODO : some day 
+			<div class="component right-div">
+			</div>
+			 -->
+		</div>
+	
 
 	
+	</div>
 </div>
 
-<script type="text/javascript" th:inline="javascript">
-//<![CDATA[
+<script type="text/javascript" th:remove="all">
+	/* code , tests the fragment */
 
    require(["domReady", "require"],function(domReady, require){
 		
@@ -209,7 +208,6 @@
     		entityType : 'TEST_CASE', 
    			
     		panelSelector : '#panel',
-   			panelInitiallyOpen : true,
    			panelTitle : "test case workspace",
    			
    			tableSelector : '#table',
@@ -226,9 +224,5 @@
 		});
 	   
    });
-           
-//]]>
+         
 </script>
-
-</div>
-</div>

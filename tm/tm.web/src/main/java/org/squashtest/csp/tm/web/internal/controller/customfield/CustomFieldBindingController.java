@@ -27,8 +27,11 @@ import java.util.Locale;
 import javax.annotation.PostConstruct;
 import javax.inject.Inject;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.osgi.extensions.annotation.ServiceReference;
 import org.springframework.stereotype.Controller;
+import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
@@ -36,7 +39,7 @@ import org.springframework.web.bind.annotation.ResponseBody;
 import org.squashtest.csp.tm.domain.customfield.BindableEntity;
 import org.squashtest.csp.tm.domain.customfield.CustomField;
 import org.squashtest.csp.tm.domain.customfield.CustomFieldBinding;
-import org.squashtest.csp.tm.service.CustomFieldBindingFinderService;
+import org.squashtest.csp.tm.service.CustomFieldBindingModificationService;
 import org.squashtest.csp.tm.web.internal.i18n.InternationalizationHelper;
 import org.squashtest.csp.tm.web.internal.model.customfields.CustomFieldBindingModel;
 import org.squashtest.csp.tm.web.internal.model.customfields.CustomFieldJsonConverter;
@@ -52,7 +55,9 @@ import org.squashtest.tm.core.foundation.collection.PagedCollectionHolder;
 @RequestMapping("/custom-fields-binding")
 public class CustomFieldBindingController {
 
-	private CustomFieldBindingFinderService service;
+	private static final Logger LOGGER = LoggerFactory.getLogger(CustomFieldBindingController.class);
+	
+	private CustomFieldBindingModificationService service;
 
 	private CustomFieldJsonConverter converter;
 	
@@ -61,7 +66,7 @@ public class CustomFieldBindingController {
 	
 	
 	@ServiceReference
-	public void setCustomFieldBindingFinderService(CustomFieldBindingFinderService service){
+	public void setCustomFieldBindingModificationService(CustomFieldBindingModificationService service){
 		this.service=service;
 	}
 
@@ -83,7 +88,7 @@ public class CustomFieldBindingController {
 		
 	}
 	
-	@RequestMapping(method= RequestMethod.GET, params = {"projectId", "bindableEntity"}, headers="Accept=application/json")
+	@RequestMapping(method= RequestMethod.GET, params = {"projectId", "bindableEntity", "!sEcho"}, headers="Accept=application/json")
 	@ResponseBody
 	public List<CustomFieldBindingModel> findAllCustomFieldsForProject(@RequestParam("projectId") Long projectId, @RequestParam("bindableEntity") BindableEntity bindableEntity){
 		
@@ -93,7 +98,7 @@ public class CustomFieldBindingController {
 		
 	}
 	
-	@RequestMapping(method= RequestMethod.GET, params = {"projectId", "bindableEntity", "sEcho", "params"})
+	@RequestMapping(method= RequestMethod.GET, params = {"projectId", "bindableEntity", "sEcho"})
 	@ResponseBody
 	public DataTableModel findAllCustomFieldsTableForProject
 			(@RequestParam("projectId") Long projectId, 
@@ -125,6 +130,26 @@ public class CustomFieldBindingController {
 	}
 	
 	
+	
+	@RequestMapping(value="/new-batch", method = RequestMethod.POST)
+	@ResponseBody
+	public void createNewBinding(@RequestBody CustomFieldBindingModel[] bindingModels){
+	
+		for (CustomFieldBindingModel model : bindingModels){
+			
+			CustomFieldBinding newBinding = new CustomFieldBinding();
+			long projectId = model.getProjectId();
+			long fieldId = model.getCustomField().getId();
+			BindableEntity entity = model.getBoundEntity().toDomain();
+			
+			service.addNewCustomFieldBinding(projectId, entity, fieldId, newBinding);
+			
+		}
+	}
+	
+	
+	
+	// ********************** private stuffs *********************
 	
 	private List<CustomFieldBindingModel> bindingToJson(List<CustomFieldBinding> bindings){
 		List<CustomFieldBindingModel> result = new LinkedList<CustomFieldBindingModel>();

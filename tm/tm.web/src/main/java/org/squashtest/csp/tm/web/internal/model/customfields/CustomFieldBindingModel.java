@@ -20,6 +20,8 @@
  */
 package org.squashtest.csp.tm.web.internal.model.customfields;
 
+import org.squashtest.csp.tm.domain.customfield.CustomFieldBinding;
+
 
 public class CustomFieldBindingModel {
 
@@ -74,6 +76,4 @@ public class CustomFieldBindingModel {
 		this.position = position;
 	}
 
-	
-	
 }

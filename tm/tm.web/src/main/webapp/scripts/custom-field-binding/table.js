@@ -33,8 +33,51 @@
  */
 
 define(["jquery", "jquery.squash.datatables"], function($){
+//define(["jquery", function($){
+
+		
 	
 	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	/*
+	 * 
+	 * 
+	 * 
+	 * 
+	 * 
+	 * 
+	 * 
+	 * 
+	 * 
+	 * 
+	 * 
+	 * 
+	 * 
+	 * 
+	 * 
+	 * 
+	 * 
+	 * 
+	 * 
+	 * 
+	 * 
+	 * 
+	 * 
+	 * 
+	 * 
+	 * 
+	 */
 	return function(settings){
 		
 		var tableConf = {
@@ -46,7 +89,7 @@ define(["jquery", "jquery.squash.datatables"], function($){
 			aoColumnDefs :[
 				{'bSortable' : false, 'bVisible' : false, 'aTargets' : [0], 'mDataProp' : 'id'},
 				{'bSortable' : false, 'bVisible' : true,  'aTargets' : [1], 'mDataProp' : 'position', 'sWidth' : '2em', 'sClass' : 'centered ui-state-default drag-handle select-handle'},
-				{'bSortable' : false, 'bVisible' : true,  'aTargets' : [2], 'mDataProp' : 'customField["name"]'},
+				{'bSortable' : false, 'bVisible' : true,  'aTargets' : [2], 'mDataProp' : 'customField.name'},
 				{'bSortable' : false, 'bVisible' : true,  'aTargets' : [3], 'mDataProp' : null, 'sWidth' : '2em', 'sClass' : 'delete-button centered'}			
 			]		
 		};
@@ -74,6 +117,6 @@ define(["jquery", "jquery.squash.datatables"], function($){
 	
 		return $(settings.selector).squashTable();
 		
-	}
+	};
 
 });

@@ -20,17 +20,23 @@
  */
 package org.squashtest.csp.tm.web.internal.controller.customfield;
 
+import java.util.Collection;
 import java.util.List;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.osgi.extensions.annotation.ServiceReference;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
+import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.servlet.ModelAndView;
 import org.squashtest.csp.tm.domain.customfield.BindableEntity;
 import org.squashtest.csp.tm.domain.customfield.CustomFieldBinding;
 import org.squashtest.csp.tm.service.CustomFieldBindingModificationService;
+import org.squashtest.csp.tm.web.internal.model.customfields.CustomFieldBindingModel;
 import org.squashtest.tm.core.foundation.collection.Paging;
 
 
@@ -40,6 +46,8 @@ public class CustomFieldBindingManagerController {
 
 	private CustomFieldBindingModificationService service;
 	
+	//private static final Logger LOGGER = LoggerFactory.getLogger(CustomFieldBindingManagerController.class);
+	private static int DEFAULT_PAGE_SIZE = 10;
 	
 	@ServiceReference
 	public void setCustomFieldBindingModificationService(CustomFieldBindingModificationService service){
@@ -67,6 +75,7 @@ public class CustomFieldBindingManagerController {
 		
 	}
 
+
 	
 	// **************************** inner classes **************************
 
@@ -78,7 +87,7 @@ public class CustomFieldBindingManagerController {
 		
 		@Override
 		public int getPageSize() {
-			return 10;
+			return DEFAULT_PAGE_SIZE;
 		}
 		
 	}

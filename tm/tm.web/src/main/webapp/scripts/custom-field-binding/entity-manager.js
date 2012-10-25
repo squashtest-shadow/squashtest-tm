@@ -30,12 +30,12 @@ define (function(require){
 	function getPanelConf(settings){
 		return { 
 			'selector' : settings.panelSelector,
-			'initiallyOpen' : settings.panelInitiallyOpen, 
+			'initiallyOpen' : true, 
 			'title' : settings.panelTitle
 		};
 	};
 	
-	function buildTableAjaxSource(settings){
+	function getTableURL(settings){
 		var url = settings.baseURL;
 		url = url+"?projectId="+settings.projectId;
 		url = url+"&bindableEntity="+settings.entityType;
@@ -46,31 +46,41 @@ define (function(require){
 		return {
 			selector : settings.tableSelector,
 			languageUrl : settings.tableLanguageUrl,
-			ajaxSource : buildTableAjaxSource(settings),
+			ajaxSource : getTableURL(settings),
 			deferLoading : settings.tableDeferLoading,
 			oklabel : settings.oklabel,
 			cancellabel : settings.cancellabel
 		};
 	};
 	
-	function buildPopupAjaxSource(settings){
+	function getPopupGetURL(settings){
 		var url = settings.baseURL+"/available";
 		url = url+"?projectId="+settings.projectId;
 		url = url+"&bindableEntity="+settings.entityType;
 		return url;
 	};
 	
+	function getPopupPostURL(settings){
+		return settings.baseURL+"/new-batch";
+	};
+	
+	
 	function getPopupConf(settings){
 		return {
+			projectId : settings.projectId,
+			bindableEntity : settings.entityType, 
+			getURL : getPopupGetURL(settings),
+			postURL : getPopupPostURL(settings),
 			selector : settings.popupSelector,
 			title : settings.popupTitle,
-			getURL : buildPopupAjaxSource(settings),
 			oklabel : settings.oklabel,
 			cancellabel : settings.cancellabel
 		};		
 	};
 	
 	return function(settings){
+		var self=this;
+		
 		var panelConf = getPanelConf(settings);
 		this.panel = new Panel(panelConf);
 		
@@ -81,6 +91,11 @@ define (function(require){
 		this.popup = new Popup(popupConf);
 		
 		this.panel.getButton().setPopup(this.popup);
+		this.popup.addPostSuccessListener({
+			update : function(){
+				self.table.refresh();
+			}
+		});
 
 	};
 
