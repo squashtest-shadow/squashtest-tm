@@ -25,8 +25,9 @@ import java.util.List;
 import javax.inject.Inject;
 
 import org.springframework.stereotype.Service;
-import org.springframework.transaction.annotation.Transactional;
 import org.squashtest.csp.tm.domain.customfield.CustomField;
+import org.squashtest.csp.tm.infrastructure.filter.CollectionSorting;
+import org.squashtest.csp.tm.infrastructure.filter.FilteredCollectionHolder;
 import org.squashtest.csp.tm.internal.repository.CustomFieldDao;
 import org.squashtest.csp.tm.service.customfield.CustomCustomFieldManagerService;
 /**
@@ -43,6 +44,13 @@ public class CustomCustomFieldManagerServiceImpl implements CustomCustomFieldMan
 	@Override
 	public List<CustomField> findAllOrderedByName() {
 		return customFieldDao.finAllOrderedByName();
+	}
+
+	@Override
+	public FilteredCollectionHolder<List<CustomField>> findSortedCustomFields(CollectionSorting filter) {
+		List<CustomField> customFields = customFieldDao.findSortedCustomFields(filter);
+		long count = customFieldDao.countCustomFields();
+		return new FilteredCollectionHolder<List<CustomField>>(count, customFields);
 	}
 
 }

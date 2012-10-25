@@ -23,6 +23,7 @@ package org.squashtest.csp.tm.internal.repository;
 import java.util.List;
 
 import org.squashtest.csp.tm.domain.customfield.CustomField;
+import org.squashtest.csp.tm.infrastructure.filter.CollectionSorting;
 /**
  * 
  * Facade for Custom-Field access methods which cannot be dynamically generated. 
@@ -31,8 +32,25 @@ import org.squashtest.csp.tm.domain.customfield.CustomField;
 public interface CustomCustomFieldDao {
 
 	/**
+	 * Will find all custom fields and return them ordered by their name.
 	 * 
 	 * @return the list of all existing {@link CustomField} ordered by {@link CustomField#getName()}
 	 */
 	List<CustomField> finAllOrderedByName();
+	
+	/**
+	 * Will find all existing custom fields ordered according to the given {@link CollectionSorting} params.
+	 * 
+	 * @param filter the {@link CollectionSorting} param that holds order and paging requirements.
+	 * @return the list of all existing {@link CustomField} ordered according to the {@link CollectionSorting} param
+	 */
+	List<CustomField> findSortedCustomFields(CollectionSorting filter);
+	
+
+	/**
+	 * Will count all existing custom fields
+	 * 
+	 * @return the number of custom fields
+	 */
+	long countCustomFields();
 }

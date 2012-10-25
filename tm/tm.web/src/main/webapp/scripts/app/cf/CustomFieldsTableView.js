@@ -51,29 +51,33 @@ define([ "jquery", "backbone", "app/cf/NewCustomFieldPanelView", "app/cf/NewCust
 						"bVisible": false,
 						"aTargets": [ 0 ],
 						"sClass": "cf-id",
-						"mDataProp": "cf-id"
-					}, {
-						"bSortable": true,
-						"aTargets": [ 1 ],
-						"mDataProp": "cf-name"
-					}, {
+						"mDataProp": "entity-id"
+					},{'bSortable': false, 
+						'sClass': 'centered ui-state-default drag-handle select-handle', 
+						'aTargets': [ 1 ], 
+						'mDataProp' : 'entity-index'},
+					 {
 						"bSortable": true,
 						"aTargets": [ 2 ],
-						"mDataProp": "cf-label"
+						"mDataProp": "name"
+					}, {
+						"bSortable": true,
+						"aTargets": [ 3 ],
+						"mDataProp": "label"
 					}, {
 						"bVisible": false,
-						"aTargets": [ 3 ],
+						"aTargets": [4 ],
 						"sClass": "raw-input-type",
 						"mDataProp": "raw-input-type"
 					}, {
 						"bSortable": true,
-						"aTargets": [ 4 ],
+						"aTargets": [ 5 ],
 						"mDataProp": "input-type"
 					}, {
 						'bSortable': false,
 						'sWidth': '2em', 
 						'sClass': 'delete-button',
-						'aTargets': [5],
+						'aTargets': [6],
 						'mDataProp' : 'empty-delete-holder'} ]
 				}, squashtm.datatable.defaults);
 				
@@ -86,7 +90,7 @@ define([ "jquery", "backbone", "app/cf/NewCustomFieldPanelView", "app/cf/NewCust
 						},
 						
 						deleteButtons : {
-							url : cfTable.ajaxSource+"/{cf-id}",
+							url : cfTable.ajaxSource+"/{entity-id}",
 							popupmessage : cfTable.deleteConfirmMessage,
 							tooltip : cfTable.deleteTooltip,
 							success : function(data) { this.$("table").squashTable().refresh(); }

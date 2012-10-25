@@ -22,8 +22,14 @@ package org.squashtest.csp.tm.internal.repository.hibernate;
 
 import java.util.List;
 
+import org.hibernate.Criteria;
+import org.hibernate.Session;
+import org.hibernate.criterion.Order;
+import org.springframework.security.access.prepost.PostFilter;
 import org.springframework.stereotype.Repository;
 import org.squashtest.csp.tm.domain.customfield.CustomField;
+import org.squashtest.csp.tm.domain.project.Project;
+import org.squashtest.csp.tm.infrastructure.filter.CollectionSorting;
 import org.squashtest.csp.tm.internal.repository.CustomCustomFieldDao;
 
 @Repository("CustomCustomFieldDao")
@@ -32,6 +38,17 @@ public class HibernateCustomCustomFieldDao extends HibernateEntityDao<CustomFiel
 	@Override
 	public List<CustomField> finAllOrderedByName() {
 		return executeListNamedQuery("customField.findAllOrderedByName");
+	}
+
+	@Override
+	public List<CustomField> findSortedCustomFields(CollectionSorting filter) {
+		return findSorted(filter, CustomField.class, "CustomField");
+
+	}
+
+	@Override
+	public long countCustomFields() {
+		return executeEntityNamedQuery("customField.count");
 	}
 
 }

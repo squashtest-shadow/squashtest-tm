@@ -34,8 +34,8 @@
   		cfTable : {
   			languageUrl : /*[[ @{/datatables/messages} ]]*/"http://localhost:8080/squash/datatables/messages",
   			displayLength : /*[[ ${customFieldsPageSize} ]]*/50,
-  			ajaxSource : /*[[ @{/custom-fields} ]]*/"http://localhost:8080/squash/custom-fields",
-  			deferLoading : /*[[ ${#lists.size(customFields)} ]]*/1,
+  			ajaxSource : /*[[ @{/administration/custom-fields} ]]*/"http://localhost:8080/squash/administration/custom-fields",
+  			deferLoading : 0,
 			confirmLabel: /*[[ #{label.Confirm} ]]*/ 'Confirmer',
 			cancelLabel: /*[[ #{label.Cancel} ]]*/ 'Annuler',
 			deleteTooltip: /*[[ #{label.Remove} ]]*/ 'Remove',
@@ -110,6 +110,7 @@
           <thead>
             <tr>
               <th class="not-displayed">Id</th>
+              <th>#</th>
               <th th:text="#{label.Name}">Name</th>
               <th th:text="#{label.Label}">Label</th>
               <th class="not-displayed">Raw type</th>
@@ -118,8 +119,9 @@
             </tr>
           </thead>
           <tbody>
-            <tr th:each="cf : ${customFields}" th:object="${cf}">
+            <tr th:each="cf, iterStat : ${customFields}" th:object="${cf}">
               <td th:text="*{id}" class="not-displayed cf-id">1</td>
+              <td th:text="${iterStat.count}">1</td>
               <td th:text="*{name}">Custom field XX</td>
               <td th:text="*{label}">Label XX</td>
               <td th:text="*{inputType}" class="not-displayed raw-input-type">PLAIN_TEXT</td>
@@ -128,6 +130,7 @@
             </tr>
             <tr th:remove="all">
               <td class="not-displayed cf-id">2</td>
+              <td>2</td>
               <td>Custom field YY</td>
               <td>Label YY</td>
               <td class="not-displayed raw-input-type">DROPDOWN_LIST</td>

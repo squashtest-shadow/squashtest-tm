@@ -24,6 +24,8 @@ import java.util.List;
 
 import org.springframework.transaction.annotation.Transactional;
 import org.squashtest.csp.tm.domain.customfield.CustomField;
+import org.squashtest.csp.tm.infrastructure.filter.CollectionSorting;
+import org.squashtest.csp.tm.infrastructure.filter.FilteredCollectionHolder;
 
 /**
  *  Facade service for custom fields read only access methods
@@ -34,8 +36,18 @@ import org.squashtest.csp.tm.domain.customfield.CustomField;
 @Transactional(readOnly = true)
 public interface CustomFieldFinderService {
 	/**
+	 * Will find all custom fields available and return them into a list ordered by custom field's name.
 	 * 
 	 * @return the list of all existing {@link CustomField} ordered by {@link CustomField#getName()}
 	 */
 	public List<CustomField> findAllOrderedByName();
+	
+	/**
+	 * Will find all custom fields available and return them ordered according to the given parameters.
+	 * 
+	 * @param filter the {@link CollectionSorting} that holds order and paging params.
+	 * @return the filtered collection of all custom field available in squash
+	 */
+	public FilteredCollectionHolder<List<CustomField>> findSortedCustomFields(CollectionSorting filter);
+
 }

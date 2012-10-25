@@ -43,7 +43,8 @@ import org.hibernate.validator.constraints.NotBlank;
  */
 
 @NamedQueries({
-	@NamedQuery(name="customField.findAllOrderedByName", query="from CustomField cf order by cf.name")
+	@NamedQuery(name="customField.findAllOrderedByName", query="from CustomField cf order by cf.name"),
+	@NamedQuery(name="customField.count", query="select count(*) from CustomField")
 })
 @Entity
 @Inheritance(strategy = InheritanceType.SINGLE_TABLE)

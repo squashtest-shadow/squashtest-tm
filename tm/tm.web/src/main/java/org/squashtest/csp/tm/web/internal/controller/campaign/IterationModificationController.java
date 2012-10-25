@@ -389,58 +389,65 @@ public class IterationModificationController {
 
 		FilteredCollectionHolder<List<IterationTestPlanItem>> holder = testPlanFinder.findTestPlan(iterationId, filter);
 
-		return new DataTableModelHelper<IterationTestPlanItem>() {
-			@Override
-			public Map<String, Object> buildItemData(IterationTestPlanItem item) {
-
-				Map<String, Object> res = new HashMap<String, Object>();
-
-				String projectName;
-				String testCaseName;
-				String importance;
-				final String latestExecutionMode = messageSource.internationalize(item.getExecutionMode(), locale);
-				final String automationMode = item.isAutomated() ? "A" : "M";
-
-				String testSuiteName;
-				Long assignedId = (item.getUser() != null) ? item.getUser().getId() : User.NO_USER_ID;
-
-				if (item.isTestCaseDeleted()) {
-					projectName = formatNoData(locale);
-					testCaseName = formatDeleted(locale);
-					importance = formatNoData(locale);
-				} else {
-					projectName = item.getReferencedTestCase().getProject().getName();
-					testCaseName = item.getReferencedTestCase().getName();
-					importance = messageSource.internationalize(item.getReferencedTestCase().getImportance(), locale);
-				}
-
-				if (item.getTestSuite() == null) {
-					testSuiteName = formatNone(locale);
-				} else {
-					testSuiteName = item.getTestSuite().getName();
-				}
-
-				res.put(DataTableModelHelper.DEFAULT_ENTITY_ID_KEY, item.getId());
-				res.put(DataTableModelHelper.DEFAULT_ENTITY_INDEX_KEY, getCurrentIndex());
-				res.put("project-name", projectName);
-				res.put("tc-name", testCaseName);
-				res.put("importance", importance);
-				res.put("type", latestExecutionMode);
-				res.put("suite", testSuiteName);
-				res.put("status", messageSource.internationalize(item.getExecutionStatus(), locale));
-				res.put("last-exec-by", formatString(item.getLastExecutedBy(), locale));
-				res.put("assigned-to", assignedId);
-				res.put("last-exec-on", messageSource.localizeDate(item.getLastExecutedOn(), locale));
-				res.put("is-tc-deleted", item.isTestCaseDeleted());
-				res.put("empty-delete-holder", " ");
-				res.put("exec-mode", automationMode);
-
-				return res;
-			}
-		}.buildDataModel(holder, filter.getFirstItemIndex() + 1, params.getsEcho());
+		return new IterationTestPlanItemDataTableModelHelper(locale).buildDataModel(holder, filter.getFirstItemIndex() + 1, params.getsEcho());
 
 	}
+	
+	private class IterationTestPlanItemDataTableModelHelper extends DataTableModelHelper<IterationTestPlanItem>{
+		private Locale locale;
+		
+		private IterationTestPlanItemDataTableModelHelper(Locale locale){
+			this.locale = locale;
+		}
 
+		@Override
+		public Map<String, Object> buildItemData(IterationTestPlanItem item) {
+
+			Map<String, Object> res = new HashMap<String, Object>();
+
+			String projectName;
+			String testCaseName;
+			String importance;
+			final String latestExecutionMode = messageSource.internationalize(item.getExecutionMode(), locale);
+			final String automationMode = item.isAutomated() ? "A" : "M";
+
+			String testSuiteName;
+			Long assignedId = (item.getUser() != null) ? item.getUser().getId() : User.NO_USER_ID;
+
+			if (item.isTestCaseDeleted()) {
+				projectName = formatNoData(locale);
+				testCaseName = formatDeleted(locale);
+				importance = formatNoData(locale);
+			} else {
+				projectName = item.getReferencedTestCase().getProject().getName();
+				testCaseName = item.getReferencedTestCase().getName();
+				importance = messageSource.internationalize(item.getReferencedTestCase().getImportance(), locale);
+			}
+
+			if (item.getTestSuite() == null) {
+				testSuiteName = formatNone(locale);
+			} else {
+				testSuiteName = item.getTestSuite().getName();
+			}
+
+			res.put(DataTableModelHelper.DEFAULT_ENTITY_ID_KEY, item.getId());
+			res.put(DataTableModelHelper.DEFAULT_ENTITY_INDEX_KEY, getCurrentIndex());
+			res.put("project-name", projectName);
+			res.put("tc-name", testCaseName);
+			res.put("importance", importance);
+			res.put("type", latestExecutionMode);
+			res.put("suite", testSuiteName);
+			res.put("status", messageSource.internationalize(item.getExecutionStatus(), locale));
+			res.put("last-exec-by", formatString(item.getLastExecutedBy(), locale));
+			res.put("assigned-to", assignedId);
+			res.put("last-exec-on", messageSource.localizeDate(item.getLastExecutedOn(), locale));
+			res.put("is-tc-deleted", item.isTestCaseDeleted());
+			res.put("empty-delete-holder", " ");
+			res.put("exec-mode", automationMode);
+
+			return res;
+		}
+	}
 	/* ********************** test suites **************************** */
 
 	@RequestMapping(value = "/test-suites/new", params = NAME, method = RequestMethod.POST)

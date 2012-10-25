@@ -22,6 +22,7 @@ package org.squashtest.csp.tm.internal.repository;
 import java.util.List;
 
 import org.squashtest.csp.tm.domain.customfield.CustomField;
+import org.squashtest.csp.tm.infrastructure.filter.CollectionSorting;
 import org.squashtest.csp.tm.internal.repository.CustomCustomFieldDao;
 
 
@@ -32,6 +33,5 @@ public interface CustomFieldDao extends CustomCustomFieldDao{
 	void persist(CustomField customField);
 	
 	CustomField findById(long id);
-	
 	
 }
