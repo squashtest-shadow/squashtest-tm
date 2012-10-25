@@ -89,7 +89,16 @@ define(["jquery", "jquery.squash.datatables"], function($){
 			aoColumnDefs :[
 				{'bSortable' : false, 'bVisible' : false, 'aTargets' : [0], 'mDataProp' : 'id'},
 				{'bSortable' : false, 'bVisible' : true,  'aTargets' : [1], 'mDataProp' : 'position', 'sWidth' : '2em', 'sClass' : 'centered ui-state-default drag-handle select-handle'},
-				{'bSortable' : false, 'bVisible' : true,  'aTargets' : [2], 'mDataProp' : 'customField.name'},
+				{'bSortable' : false, 'bVisible' : true,  'aTargets' : [2], 'mDataProp' : function(data, operation, val){
+					if (operation==='set' && data.customField.name===undefined){
+						data.customField ={};
+						data.customField.name = val;
+					}
+					else{
+						return data.customField.name;
+					}
+					
+				}},
 				{'bSortable' : false, 'bVisible' : true,  'aTargets' : [3], 'mDataProp' : null, 'sWidth' : '2em', 'sClass' : 'delete-button centered'}			
 			]		
 		};
