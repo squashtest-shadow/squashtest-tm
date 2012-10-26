@@ -114,6 +114,7 @@ define([ "jquery", "backbone", "app/cf/NewCustomFieldPanelView", "app/cf/NewCust
 					self.newCfPanel.undelegateEvents();
 					self.newCfPanel = null;				
 					$(event.target).button("enable");
+					self.table.squashTable().fnDraw();
 				};
 				
 				$(event.target).button("disable");

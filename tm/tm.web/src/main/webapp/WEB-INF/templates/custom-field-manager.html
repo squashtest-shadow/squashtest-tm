@@ -114,7 +114,7 @@
               <th th:text="#{label.Name}">Name</th>
               <th th:text="#{label.Label}">Label</th>
               <th class="not-displayed">Raw type</th>
-              <th th:text="#{label.CustomField.inputType}">Type</th>
+              <th th:text="#{label.inputType}">Type</th>
                <th></th>
             </tr>
           </thead>
@@ -143,7 +143,7 @@
     </div>
     
     <div id="new-cf-pane" class="not-displayed">
-      <h2 th:text="#{title.CustomField.new}">New Custom field</h2>
+      <h2 th:text="#{title.newCustomField}">New Custom field</h2>
       <div>
         <label for="name" th:text="#{label.Name}">Name</label>
         <input name="name" class="strprop" value="" size="50" maxlength="255" type="text" />
@@ -155,7 +155,7 @@
         <span class="error">&nbsp;</span>
       </div>
       <div>
-        <label for="inputType" th:text="#{label.CustomField.inputType}">Type</label>
+        <label for="inputType" th:text="#{label.inputType}">Type</label>
         <select name="inputType" th:remove="all-but-first">
           <option th:each="type: ${T(org.squashtest.csp.tm.domain.customfield.InputType).values()}" value="PLAIN_TEXT"
             th:value="${type.name()}" th:text="#{${type.i18nKey}}">Plain Text</option>
@@ -175,40 +175,12 @@
           value="Cancel" th:value="#{label.Cancel}" />
       </div>
   
-      <div id="cfoptions-pane" class="not-displayed">
-        <h2 th:text="#{title.CustomField.options}">Custom field options</h2>
-        <table>
-          <thead>
-            <tr>
-              <th th:text="#{label.Order}">Order</th>
-              <th th:text="#{label.Label}">Label</th>
-            </tr>
-          </thead>
-          <tbody>
-          </tbody>
-        </table>
-        <div>
-          <input type="button" value="Add option" />
-        </div>
-        <div id="cfoption-editor-pane" class="not-displayed">
-          <h3 th:text="#{title.CustomField.option.new}">New custom field option</h3>
-          <div>
-            <label for="option-label" th:text="#{label.Label}">Label</label><input name="option-label" value="" /><span
-              class="error">&nbsp;</span>
-          </div>
-          <div>
-            <input type="button" value="Proceed" th:value="#{label.Ok}" /> <input type="button" value="Cancel"
-              th:value="#{label.Cancel}" />
-          </div>
-        </div>
-      </div>
-  
-      <script id="PLAIN_TEXT-default-tpl" type="text/x-handlebars-template">
+      <script id="PLAIN_TEXT-default-tpl" type="text/x-handlebars-template" th:inline="text">
         <label for="defaultValue" th:text="#{label.defaultValue}">Default value</label>
         <input name="defaultValue" class="strprop" value="" size="50" maxlength="255" type="text" />		
 				<span class="error">&nbsp;</span>
       </script>
-      <script id="CHECKBOX-default-tpl" type="text/x-handlebars-template">
+      <script id="CHECKBOX-default-tpl" type="text/x-handlebars-template" th:inline="text">
         <label for="defaultValue" th:text="#{label.defaultValue}">Default value</label>
         <select name="defaultValue" class="optprop">
           <option value="false" th:value="#{label.False}">False</option>
@@ -216,27 +188,27 @@
         </select>
 				<span class="error">&nbsp;</span>
       </script>
-      <script id="DROPDOWN_LIST-default-tpl" type="text/x-handlebars-template">
-        <h4 th:text="#{label.optionsDefinition}">Options definition</h4>
+      <script id="DROPDOWN_LIST-default-tpl" type="text/x-handlebars-template" th:inline="text">
+        <h3 th:text="#{title.optionsDefinition}">Options definition</h3>
 				<div>
           <label for="new-option" th:text="#{label.newOption}">New option</label><input name="new-option" type="text" value="" />
           <input class="add-option" type="button" th:value="#{label.addOption}" value="Add an option" />
 					<span id="new-option-error" class="error not-displayed" th:text="#{message.optionAlreadyDefined}">Option already defined</span>
 				</div>
-　　　　　　　<table id="options-table">
-		　　		<thead>
+        <table id="options-table">
+					<thead>
             <tr>
               <th th:text="#{label.option}">Option</th><th th:text="#{label.default}">Default</th><th>&nbsp;</th>
             </tr>
           </thead>
           <tbody>
           </tbody>
-　　　　　		</table>
+				</table>
       </script>
-      <script id="remove-cell-tpl" type="text/x-handlebars-template">
+      <script id="remove-cell-tpl" type="text/x-handlebars-template" th:inline="text">
 				<button value="{{option}}" th:text="#{label.Remove}">Remove</button>
 			</script>
-      <script id="default-cell-tpl" type="text/x-handlebars-template">
+      <script id="default-cell-tpl" type="text/x-handlebars-template" th:inline="text">
 				{{#if checked}}
 				<input type="checkbox" name="default" value="{{option}}" checked="checked" />
 				{{else}}
