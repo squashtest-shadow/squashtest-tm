@@ -224,6 +224,18 @@
 		// Queries on AutomatedTest
 		@NamedQuery(name = "automatedTest.findAllByExtenderIds", query = "select distinct test from AutomatedExecutionExtender ext join ext.automatedTest test where ext.id in (:extenderIds)"),
 		@NamedQuery(name = "automatedTest.findAllByExtenders", query = "select distinct test from AutomatedExecutionExtender ext join ext.automatedTest test where ext in (:extenders)"),
+		
+		
+		//CustomFieldDao
+		@NamedQuery(name = "CustomField.findAll", query = "from CustomField"),
+		@NamedQuery(name = "CustomField.findAllBindableCustomFields", query = "select cf from CustomField cf where cf not in (select cf2 from CustomFieldBinding binding join binding.customField cf2 "+
+																			"where binding.boundProject.id = ? and binding.boundEntity = ?)"),
+		
+		//CustomFieldBinding dao
+		@NamedQuery(name = "CustomFieldBinding.findAllForProject", query = "select cfb from CustomFieldBinding cfb join cfb.boundProject bp where bp.id = ? group by cfb.boundEntity order by cfb.position asc"),
+		@NamedQuery(name = "CustomFieldBinding.findAllForProjectAndEntity", query = "select cfb from CustomFieldBinding cfb join cfb.boundProject bp where bp.id = ? and cfb.boundEntity = ? order by cfb.position asc"),
+		@NamedQuery(name = "CustomFieldBinding.countAllForProjectAndEntity", query = "select count(cfb) from CustomFieldBinding cfb where cfb.boundProject.id = ? and cfb.boundEntity = ?"),
+		
 
 		/* ********************************************** batch deletion-related queries **************************************************** */
 

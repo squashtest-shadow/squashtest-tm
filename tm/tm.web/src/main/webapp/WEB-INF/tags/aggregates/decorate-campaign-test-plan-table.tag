@@ -95,56 +95,8 @@
 		});
 
 	}
-	
-	
-	$.fn.loginCombo = function(assignableList){
-		
-		if (this.length==0) return;
-		var squashTable=this.eq(0).parents("table").squashTable();
-		var assignableList = squashTable.data('assignable-list');
-		if (! assignableList) return;
-		
-		//create the template
-		var template=$('<select/>');
-		for (var i=0;i<assignableList.length;i++){
-			var opt = '<option value="'+assignableList[i].id+'">'+assignableList[i].login+'</option>';
-			template.append(opt);
-		}
-		
-		template.change(function(){
-			$.ajax({
-				type : 'POST',
-				url : this.getAttribute('data-assign-url'),
-				data : "userId=" + this.value,
-				dataType : 'json'
-			});
-		});
-			
-		this.each(function(){
-			
-			var cloneSelect = template.clone(true);
-			
-			var jqTd = $(this);
-			var row = this.parentNode;
-			
-			
-			//sets the change url
-			var tpId = squashTable.getODataId(row);
-			var dataUrl = "${campaignUrl}/test-plan/"+tpId+"/assign-user";
-			
-			cloneSelect.attr('data-assign-url', dataUrl);
-		
-			//selects the assigned user
-			var assignedTo = squashTable.fnGetData(row)['assigned-to'] || "0";
-			cloneSelect.val(assignedTo);
-			
-			
-			//append the content
-			jqTd.empty().append(cloneSelect);
-			
-		});	
-	}
 	</c:if>
+	
 
 	
 	function addHLinkToTestCaseName(row, data) {
@@ -152,9 +104,59 @@
 		addHLinkToCellText($( 'td:eq(3)', row ), url);
 	}	
 	
-	
-	
-	$(function() {
+    require([ "common" ], function () {
+    	  require([ "jquery", "domReady", "jqueryui", "jquery.squash.datatables" ], function ($, domReady) {
+    	    <c:if test="${ editable }">
+    	    $.fn.loginCombo = function(assignableList){
+    	    	
+    	    	if (this.length==0) return;
+    	    	var squashTable=this.eq(0).parents("table").squashTable();
+    	    	var assignableList = squashTable.data('assignable-list');
+    	    	if (! assignableList) return;
+    	    	
+    	    	//create the template
+    	    	var template=$('<select/>');
+    	    	for (var i=0;i<assignableList.length;i++){
+    	    		var opt = '<option value="'+assignableList[i].id+'">'+assignableList[i].login+'</option>';
+    	    		template.append(opt);
+    	    	}
+    	    	
+    	    	template.change(function(){
+    	    		$.ajax({
+    	    			type : 'POST',
+    	    			url : this.getAttribute('data-assign-url'),
+    	    			data : "userId=" + this.value,
+    	    			dataType : 'json'
+    	    		});
+    	    	});
+    	    		
+    	    	this.each(function(){
+    	    		
+    	    		var cloneSelect = template.clone(true);
+    	    		
+    	    		var jqTd = $(this);
+    	    		var row = this.parentNode;
+    	    		
+    	    		
+    	    		//sets the change url
+    	    		var tpId = squashTable.getODataId(row);
+    	    		var dataUrl = "${campaignUrl}/test-plan/"+tpId+"/assign-user";
+    	    		
+    	    		cloneSelect.attr('data-assign-url', dataUrl);
+    	    	
+    	    		//selects the assigned user
+    	    		var assignedTo = squashTable.fnGetData(row)['assigned-to'] || "0";
+    	    		cloneSelect.val(assignedTo);
+    	    		
+    	    		
+    	    		//append the content
+    	    		jqTd.empty().append(cloneSelect);
+    	    		
+    	    	});	
+    	    }
+    	    </c:if>
+    
+    	    domReady(function() {
 		//multiple deletion
 		$( '#${ testCaseMultipleRemovalPopupId }' ).bind('dialogclose', function() {
 			var answer = $("#${ testCaseMultipleRemovalPopupId }").data("answer");

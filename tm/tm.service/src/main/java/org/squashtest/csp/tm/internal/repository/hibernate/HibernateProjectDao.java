@@ -42,31 +42,10 @@ public class HibernateProjectDao extends HibernateEntityDao<Project> implements 
 	}
 
 	@Override
-	@SuppressWarnings("unchecked")
 	@PostFilter("hasPermission(filterObject, 'MANAGEMENT') or  hasRole('ROLE_ADMIN')")
 	// FIXME this posfilter breaks the paging
 	public List<Project> findSortedProjects(CollectionSorting filter) {
-		Session session = currentSession();
-
-		String sortedAttribute = filter.getSortedAttribute();
-		String order = filter.getSortingOrder();
-
-		Criteria crit = session.createCriteria(Project.class, "Project");
-
-		/* add ordering */
-		if (sortedAttribute != null) {
-			if (order.equals("asc")) {
-				crit.addOrder(Order.asc(sortedAttribute).ignoreCase());
-			} else {
-				crit.addOrder(Order.desc(sortedAttribute).ignoreCase());
-			}
-		}
-
-		/* result range */
-		crit.setFirstResult(filter.getFirstItemIndex());
-		crit.setMaxResults(filter.getPageSize());
-
-		return crit.list();
+		return findSorted(filter, Project.class, "Project");
 
 	}
 

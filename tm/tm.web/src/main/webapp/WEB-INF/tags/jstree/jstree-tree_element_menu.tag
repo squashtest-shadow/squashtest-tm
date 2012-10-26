@@ -77,7 +77,7 @@
 		squashtm.treemenu = {};
 		
 		var initButton = function(bSelector, cssIcon){
-			$(bSelector).button({
+			$(bSelector).squashButton({
 				disabled : false,
 				text : false,
 				icons : {

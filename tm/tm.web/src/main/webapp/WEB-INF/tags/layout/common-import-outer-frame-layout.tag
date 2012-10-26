@@ -83,22 +83,20 @@
 					<jsp:invoke fragment="titlePane"/>
 				</div>
 				<div class="snap-right">
-					<div style="display:inline-block;">
+					<div class="unstyled-notification-pane">
 						<layout:_ajax-notifications  cssClass="snap-right"/>					
 					<%-- 
 						note about the sticked </div><div> below : IT DOES MATTER
 						if you insert any separator character between them the rendering will be altered for Chrome.
 					 --%>
-					</div><div class="main-menubar">
+					</div><div class="main-menubar unstyled">
 						<layout:_menu-bar />
 					</div>
 				
 				</div>
 			</div>
 			
-			
 			<jsp:invoke fragment="content"/>
-					
 		</div>
 		<jsp:invoke fragment="footer" />	
 	</body>
@@ -106,4 +104,9 @@
 	<comp:decorate-buttons />
 	<layout:_init_workspace_variables />
 	<jsp:invoke fragment="foot" />
+    <script type="text/javascript">
+    	$(function() {
+      		$(".unstyled").fadeIn("fast", function() { $(this).removeClass("unstyled"); });
+    	});
+    </script>
 </html>

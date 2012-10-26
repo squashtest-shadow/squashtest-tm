@@ -37,7 +37,12 @@ public interface ProjectFinder {
 	Project findById(long projectId);
 
 	List<Project> findAllOrderedByName();
-
+	/**
+	 * Will find all Projects to which the user has management access to and return them ordered according to the given params.
+	 * 
+	 * @param filter the {@link CollectionSorting} that holds order and paging params
+	 * @return a {@link FilteredCollectionHolder} containing all projects the user has management access to, ordered according to the given params.
+	 */
 	FilteredCollectionHolder<List<Project>> findSortedProjects(CollectionSorting filter);
 
 	List<Project> findAllReadable();

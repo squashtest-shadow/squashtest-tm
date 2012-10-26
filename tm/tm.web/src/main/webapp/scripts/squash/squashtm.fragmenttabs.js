@@ -73,13 +73,19 @@ squashtm.fragmenttabs = (function ($, window) {
 			};
 			calculateTopPositionsOfTabs();
 			
-			$('.fragment-tabs').tabs({
+			var args = {
 				cookie: {
 					// store cookie for a day, without, it would be a session cookie
 					expires: 1
 				},
 				show : calculateTopTableWrap
-			});
+			};
+			
+			if (arguments.length>0){
+				args = $.extend(args,arguments[0]);
+			}
+			
+			$('.fragment-tabs').tabs(args);
 		}
 	};
 })(jQuery, window);

@@ -1,0 +1,222 @@
+<!--
+
+        This file is part of the Squashtest platform.
+        Copyright (C) 2010 - 2012 Henix, henix.fr
+
+        See the NOTICE file distributed with this work for additional
+        information regarding copyright ownership.
+
+        This is free software: you can redistribute it and/or modify
+        it under the terms of the GNU Lesser General Public License as published by
+        the Free Software Foundation, either version 3 of the License, or
+        (at your option) any later version.
+
+        this software is distributed in the hope that it will be useful,
+        but WITHOUT ANY WARRANTY; without even the implied warranty of
+        MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+        GNU Lesser General Public License for more details.
+
+        You should have received a copy of the GNU Lesser General Public License
+        along with this software.  If not, see <http://www.gnu.org/licenses/>.
+
+-->
+<!DOCTYPE html SYSTEM "http://www.thymeleaf.org/dtd/xhtml1-transitional-thymeleaf-spring3-3.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml" xmlns:th="http://www.thymeleaf.org">
+<head>
+  <title th:text="#{title.CustomFields}">Champs Personnalisé de tests</title>
+  <meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
+  <script th:remove="all" type="text/javascript" src="../../scripts/lib/jquery/jquery-1.8.2.js"></script>
+  <script th:remove="all" type="text/javascript" src="../../js/thymol.js"></script>
+  <script type="text/javascript" th:inline="javascript">
+  	var squashtm = {};
+  	squashtm.app = {
+  		contextRoot : /*[[ @{/} ]]*/"http://localhost:8080/squash",
+  		cfTable : {
+  			languageUrl : /*[[ @{/datatables/messages} ]]*/"http://localhost:8080/squash/datatables/messages",
+  			displayLength : /*[[ ${customFieldsPageSize} ]]*/50,
+  			ajaxSource : /*[[ @{/administration/custom-fields} ]]*/"http://localhost:8080/squash/administration/custom-fields",
+  			deferLoading : 0,
+			confirmLabel: /*[[ #{label.Confirm} ]]*/ 'Confirmer',
+			cancelLabel: /*[[ #{label.Cancel} ]]*/ 'Annuler',
+			deleteTooltip: /*[[ #{label.Remove} ]]*/ 'Remove',
+			deleteConfirmMessage : /*[[ #{message.customField.remove} ]]*/ 'Remove',
+  		},
+  		projectFilterConf: {
+			url: /*[[ @{/global-filter/filter} ]]*/ '/global-filter/filter',
+			title: /*[[ #{dialog.settings.filter.title} ]]*/ 'Filtre de projets',
+			confirmLabel: /*[[ #{label.Confirm} ]]*/ 'Confirmer',
+			cancelLabel: /*[[ #{label.Cancel} ]]*/ 'Annuler',
+		}, 
+		menuBarConf: {
+    		boxSelector: "#menu-toggle-filter-ckbox",
+    		url: /*[[ @{/global-filter/filter-status} ]]*/ '/global-filter/filter-status',
+    		linkSelector: "#menu-project-filter-link",
+    		enabledTxt: /*[[ #{workspace.menubar.filter.enabled.label} ]]*/ 'Actif',
+    		disabledTxt: /*[[ #{workspace.menubar.filter.disabled.label} ]]*/ 'Inactif',
+    		enabledCallbacks: [ function(){ $("div.tree-filter-reminder-div > span").removeClass("not-displayed");} ]
+    	}, 
+    	notificationConf: {
+  			infoTitle: /*[[ #{popup.title.info} ]]*/ 'Info', 
+  			errorTitle: /*[[ #{popup.title.error} ]]*/ 'Erreur'
+  		}
+  	};
+  </script>
+  <script data-main="../../scripts/custom-field-manager.js" th:attr="data-main=@{/scripts/custom-field-manager.js}"
+    src="../../scripts/require.js" th:src="@{/scripts/require-min.js}">
+  </script>
+  <!-- common head -->
+  <link rel="stylesheet" type="text/css" media="all"
+    href="../../../../../../../core/core.web/src/main/webapp/styles/master.css" th:href="@{/styles/master.css}" />
+  <link rel="shortcut icon" type="image/x-icon" media="all"
+    href="../../../../../../../core/core.web/src/main/webapp/images/favicon.ico" th:href="@{/images/favicon.ico}" />
+  <!-- /common head -->
+  <!-- common script import -->
+  <link rel="stylesheet" type="text/css" media="all"
+    href="../../../../../../../core/core.web/src/main/webapp/styles/squashtm.fg.menu.css"
+    th:href="@{/styles/squashtm.fg.menu.css}" />
+  <!-- /common script import -->
+  <link rel="stylesheet" type="text/css" media="all"
+    href="../../../../../../../core/core.web/src/main/webapp/styles/master.blue.css" th:href="@{/styles/master.blue.css}" />
+  <!-- rich jeditable header -->
+  <link rel="stylesheet" type="text/css" media="all"
+    href="../../../../../../../core/core.web/src/main/webapp/styles/ckeditor.override.css"
+    th:href="@{/styles/ckeditor.override.css}" />
+</head>
+<body>
+  <div id="navigation" th:include="navbar.frag :: navbar">
+    NAVBAR
+  </div>
+  <div id="workspace">
+    <div id="workspace-title">
+      <div class="snap-left">
+        <h2 th:text="#{title.CustomFields}">Champs Personnalisé de tests</h2> 
+      </div>
+      <div class="snap-right">
+        <div class="main-menubar unstyled" th:include="menubar.frag :: menubar">
+          MENUBAR
+        </div>
+        <div class="unstyled-notification-pane" th:include="menubar.frag :: notification">
+          NOTIFICATION
+        </div>
+      </div>
+    </div>
+    <div class="fragment-body unstyled">
+    <div id="cf-table-pane">
+      <input id="add-cf" type="button" class="sq-button snap-right" value="Add a custom field"
+        th:value="#{label.CustomField.add}" />
+      <div class="unsnap"></div>
+      <div>
+        <table id="cf-table">
+          <thead>
+            <tr>
+              <th class="not-displayed">Id</th>
+              <th>#</th>
+              <th th:text="#{label.Name}">Name</th>
+              <th th:text="#{label.Label}">Label</th>
+              <th class="not-displayed">Raw type</th>
+              <th th:text="#{label.inputType}">Type</th>
+               <th></th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr th:each="cf, iterStat : ${customFields}" th:object="${cf}">
+              <td th:text="*{id}" class="not-displayed cf-id">1</td>
+              <td th:text="${iterStat.count}">1</td>
+              <td th:text="*{name}">Custom field XX</td>
+              <td th:text="*{label}">Label XX</td>
+              <td th:text="*{inputType}" class="not-displayed raw-input-type">PLAIN_TEXT</td>
+              <td th:text="#{*{inputType.i18nKey}}">Plain text</td>
+              <td class="delete-button"></td>
+            </tr>
+            <tr th:remove="all">
+              <td class="not-displayed cf-id">2</td>
+              <td>2</td>
+              <td>Custom field YY</td>
+              <td>Label YY</td>
+              <td class="not-displayed raw-input-type">DROPDOWN_LIST</td>
+              <td>Dropdown list</td>
+              <td class="delete-button"></td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+    </div>
+    
+    <div id="new-cf-pane" class="not-displayed">
+      <h2 th:text="#{title.newCustomField}">New Custom field</h2>
+      <div>
+        <label for="name" th:text="#{label.Name}">Name</label>
+        <input name="name" class="strprop" value="" size="50" maxlength="255" type="text" />
+        <span class="error">&nbsp;</span>
+      </div>
+      <div>
+        <label for="label" th:text="#{label.Label}">Label</label>
+        <input name="label" class="strprop" value="" size="50" maxlength="255" type="text" />
+        <span class="error">&nbsp;</span>
+      </div>
+      <div>
+        <label for="inputType" th:text="#{label.inputType}">Type</label>
+        <select name="inputType" th:remove="all-but-first">
+          <option th:each="type: ${T(org.squashtest.csp.tm.domain.customfield.InputType).values()}" value="PLAIN_TEXT"
+            th:value="${type.name()}" th:text="#{${type.i18nKey}}">Plain Text</option>
+          <option value="CHECKBOX">Checkbox</option>
+          <option value="DROPDOWN_LIST">Dropdown list</option>
+        </select> <span class="error">&nbsp;</span>
+      </div>
+      <div>
+        <label for="optional" th:text="#{label.Optional}">Optional</label>
+        <input name="optional" value="optional" type="checkbox" />
+        <span class="error">&nbsp;</span>
+      </div>
+      <div id="default-value-pane">
+      </div>
+      <div>
+        <input class="confirm" type="button" value="OK" th:value="#{label.Ok}" /> <input class="cancel" type="button"
+          value="Cancel" th:value="#{label.Cancel}" />
+      </div>
+  
+      <script id="PLAIN_TEXT-default-tpl" type="text/x-handlebars-template" th:inline="text">
+        <label for="defaultValue" th:text="#{label.defaultValue}">Default value</label>
+        <input name="defaultValue" class="strprop" value="" size="50" maxlength="255" type="text" />		
+				<span class="error">&nbsp;</span>
+      </script>
+      <script id="CHECKBOX-default-tpl" type="text/x-handlebars-template" th:inline="text">
+        <label for="defaultValue" th:text="#{label.defaultValue}">Default value</label>
+        <select name="defaultValue" class="optprop">
+          <option value="false" th:value="#{label.False}">False</option>
+          <option value="true" th:value="#{label.True}">True</option>
+        </select>
+				<span class="error">&nbsp;</span>
+      </script>
+      <script id="DROPDOWN_LIST-default-tpl" type="text/x-handlebars-template" th:inline="text">
+        <h3 th:text="#{title.optionsDefinition}">Options definition</h3>
+				<div>
+          <label for="new-option" th:text="#{label.newOption}">New option</label><input name="new-option" type="text" value="" />
+          <input class="add-option" type="button" th:value="#{label.addOption}" value="Add an option" />
+					<span id="new-option-error" class="error not-displayed" th:text="#{message.optionAlreadyDefined}">Option already defined</span>
+				</div>
+        <table id="options-table">
+					<thead>
+            <tr>
+              <th th:text="#{label.option}">Option</th><th th:text="#{label.default}">Default</th><th>&nbsp;</th>
+            </tr>
+          </thead>
+          <tbody>
+          </tbody>
+				</table>
+      </script>
+      <script id="remove-cell-tpl" type="text/x-handlebars-template" th:inline="text">
+				<button value="{{option}}" th:text="#{label.Remove}">Remove</button>
+			</script>
+      <script id="default-cell-tpl" type="text/x-handlebars-template" th:inline="text">
+				{{#if checked}}
+				<input type="checkbox" name="default" value="{{option}}" checked="checked" />
+				{{else}}
+				<input type="checkbox" name="default" value="{{option}}" />
+				{{/if}}
+			</script>
+    </div>
+  </div>
+  </div>
+</body>
+</html>

@@ -29,8 +29,10 @@ import java.util.List;
 import org.hibernate.Criteria;
 import org.hibernate.Query;
 import org.hibernate.Session;
+import org.hibernate.criterion.Order;
 import org.hibernate.criterion.Restrictions;
 import org.hibernate.type.LongType;
+import org.squashtest.csp.tm.infrastructure.filter.CollectionSorting;
 import org.squashtest.csp.tm.internal.repository.EntityDao;
 
 public class HibernateEntityDao<ENTITY_TYPE> extends HibernateDao<ENTITY_TYPE> implements EntityDao<ENTITY_TYPE> {
@@ -159,6 +161,40 @@ public class HibernateEntityDao<ENTITY_TYPE> extends HibernateDao<ENTITY_TYPE> i
 
 		}
 
+	}
+	
+	
+	/**
+	 * Will find all Entities ordered according to the given params.
+	 * 
+	 * @param filter the {@link CollectionSorting} that holds the order and paging params.
+	 * @param classe the {@link Class} of the seeked entity
+	 * @param alias a String representing the alias of the entity in the builed query.
+	 * @return
+	 */
+	@SuppressWarnings("unchecked")
+	protected List<ENTITY_TYPE> findSorted(CollectionSorting filter, Class<ENTITY_TYPE> classe, String alias){
+		Session session = currentSession();
+
+		String sortedAttribute = filter.getSortedAttribute();
+		String order = filter.getSortingOrder();
+
+		Criteria crit = session.createCriteria(classe, alias);
+
+		/* add ordering */
+		if (sortedAttribute != null) {
+			if (order.equals("asc")) {
+				crit.addOrder(Order.asc(sortedAttribute).ignoreCase());
+			} else {
+				crit.addOrder(Order.desc(sortedAttribute).ignoreCase());
+			}
+		}
+
+		/* result range */
+		crit.setFirstResult(filter.getFirstItemIndex());
+		crit.setMaxResults(filter.getPageSize());
+
+		return crit.list();
 	}
 
 }

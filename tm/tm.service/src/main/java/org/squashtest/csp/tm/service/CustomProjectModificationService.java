@@ -29,7 +29,12 @@ import org.squashtest.csp.tm.domain.testautomation.TestAutomationServer;
 import org.squashtest.csp.tm.domain.users.User;
 import org.squashtest.csp.tm.domain.users.UserProjectPermissionsBean;
 
-
+/**
+ * Project modification services which cannot be dynamically generated.
+ * 
+ * @author mpagnon
+ *
+ */
 public interface CustomProjectModificationService extends ProjectFinder {
 	
 	void deleteProject(long projectId);

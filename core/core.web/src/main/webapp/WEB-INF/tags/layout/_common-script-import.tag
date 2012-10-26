@@ -24,8 +24,37 @@
 <%@ taglib prefix="ck" tagdir="/WEB-INF/tags/ckeditor" %>
 <%@ taglib prefix="dt" tagdir="/WEB-INF/tags/datatables" %>
 <%@ taglib prefix="f" uri="http://java.sun.com/jsp/jstl/fmt"%>
+<%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core" %>
 
 <%-- the declaration oder does matter --%>
+
+<script type="text/javascript">
+var require = require || {};
+require.baseUrl = "${pageContext.servletContext.contextPath}/scripts";
+	var squashtm = {};
+	squashtm.app = {
+		contextRoot : "${pageContext.servletContext.contextPath}",
+		projectFilterConf: {
+			url: "<c:url value='/global-filter/filter' />",
+			title: "<f:message key='dialog.settings.filter.title' />",
+			confirmLabel: "<f:message key='label.Confirm' />",
+			cancelLabel: "<f:message key='label.Cancel' />",
+		}, 
+		menuBarConf: {
+    		boxSelector: "#menu-toggle-filter-ckbox",
+    		url: "<c:url value='/global-filter/filter-status' />",
+    		linkSelector: "#menu-project-filter-link",
+    		enabledTxt: "<f:message key='workspace.menubar.filter.enabled.label' />",
+    		disabledTxt: "<f:message key='workspace.menubar.filter.disabled.label' />",
+    		enabledCallbacks: [ function(){ $("div.tree-filter-reminder-div > span").removeClass("not-displayed");} ]
+    	}, 
+    	notificationConf: {
+  			infoTitle: "<f:message key='popup.title.info' />", 
+  			errorTitle: "<f:message key='popup.title.error' />"
+  		}
+	};
+</script>
+<script src="<c:url value='/scripts/require-min.js' />"></script>
 
 <jq:jquery-header />
 <ck:ckeditor-header />
@@ -74,10 +103,15 @@
 <script type="text/javascript" src="${ pageContext.servletContext.contextPath }/scripts/squashtest/classes/TestAutomationRemover.js"></script>
 
 
-<!--  =============================================== UNDER WORK =================================================================== -->
-<%-- nothing yet --%>
-<!--  ============================================== /UNDER WORK =================================================================== -->
-
+<script type="text/javascript">
+  require([ "common" ], function() {
+    require([ "domReady", "app/ws/squashtm.workspace" ], function(domReady, WS) {
+    	domReady(function() {
+          WS.init("${ highlightedWorkspace }");
+    	});
+    });
+  });
+</script>
 
 <script type="text/javascript">
 	$(function() {

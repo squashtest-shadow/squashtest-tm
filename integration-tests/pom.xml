@@ -8,7 +8,7 @@
 	</parent>
 
 	<artifactId>squashtest-integration-tests</artifactId>
-	<packaging>pom</packaging>
+	<packaging>jar</packaging>
 	<name>Squashtest TM - Integration tests module</name>
 
 	<properties>
@@ -47,7 +47,7 @@
 				<artifactId>maven-compiler-plugin</artifactId>
 				<executions>
 					<execution>
-						<phase>pre-integration-test</phase>
+						<phase>test-compile</phase>
 						<goals>
 							<goal>testCompile</goal>
 						</goals>
@@ -60,7 +60,7 @@
 				<artifactId>maven-resources-plugin</artifactId>
 				<executions>
 					<execution>
-						<phase>pre-integration-test</phase>
+						<phase>process-test-resources</phase>
 						<goals>
 							<goal>testResources</goal>
 						</goals>
@@ -72,9 +72,10 @@
 				<groupId>org.codehaus.mojo</groupId>
 				<artifactId>build-helper-maven-plugin</artifactId>
 				<executions>
+					<!-- Adds more source directories to the pom -->
 					<execution>
 						<id>add-integration-test-source</id>
-						<phase>pre-integration-test</phase>
+						<phase>process-test-sources</phase>
 						<goals>
 							<goal>add-source</goal>
 						</goals>
@@ -102,6 +103,7 @@
 				<executions>
 					<execution>
 						<id>integration-tests</id>
+						<phase>test</phase>
 						<goals>
 							<goal>integration-test</goal>
 							<goal>verify</goal>
@@ -115,7 +117,6 @@
 						<groupId>org.squashtest.tm</groupId>
 						<version>${project.version}</version>
 					</dependency>
-				
 				</dependencies>
 			</plugin>
 
@@ -126,7 +127,7 @@
 				<executions>
 					<execution>
 						<id>create-dbunit-database</id>
-						<phase>pre-integration-test</phase>
+						<phase>generate-test-resources</phase>
 						<goals>
 							<goal>update</goal>
 						</goals>
@@ -143,7 +144,7 @@
 
 					<execution>
 						<id>create-non-dbunit-database</id>
-						<phase>pre-integration-test</phase>
+						<phase>generate-test-resources</phase>
 						<goals>
 							<goal>update</goal>
 						</goals>

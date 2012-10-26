@@ -35,6 +35,40 @@
 	<link rel="stylesheet" type="text/css" media="all" href="../../../../../../../core/core.web/src/main/webapp/styles/master.blue.css" th:href="@{/styles/master.blue.css}" />
 	<!-- rich jeditable header -->
 	<link rel="stylesheet" type="text/css" media="all" href="../../../../../../../core/core.web/src/main/webapp/styles/ckeditor.override.css" th:href="@{/styles/ckeditor.override.css}" />
+    <script th:remove="all" type="text/javascript" src="../../scripts/lib/jquery/jquery-1.8.2.js"></script>
+    <script th:remove="all" type="text/javascript" src="../../js/thymol.js"></script>
+    <script type="text/javascript" th:inline="javascript">
+    /* <![CDATA[ */
+    	var squashtm = {};
+    	squashtm.app = {
+    	  	contextRoot : /*[[ @{/} ]]*/"http://localhost:8080/squash",
+    		projectFilterConf: {
+				url: /*[[ @{/global-filter/filter} ]]*/ '/global-filter/filter',
+				title: /*[[ #{dialog.settings.filter.title} ]]*/ 'Filtre de projets',
+				confirmLabel: /*[[ #{label.Confirm} ]]*/ 'Confirmer',
+				cancelLabel: /*[[ #{label.Cancel} ]]*/ 'Annuler',
+			}, 
+			menuBarConf: {
+	    		boxSelector: "#menu-toggle-filter-ckbox",
+	    		url: /*[[ @{/global-filter/filter-status} ]]*/ '/global-filter/filter-status',
+	    		linkSelector: "#menu-project-filter-link",
+	    		enabledTxt: /*[[ #{workspace.menubar.filter.enabled.label} ]]*/ 'Actif',
+	    		disabledTxt: /*[[ #{workspace.menubar.filter.disabled.label} ]]*/ 'Inactif',
+	    		enabledCallbacks: [ function(){ $("div.tree-filter-reminder-div > span").removeClass("not-displayed");} ]
+	    	}, 
+	    	notificationConf: {
+    			infoTitle: /*[[ #{popup.title.info} ]]*/ 'Info', 
+    			errorTitle: /*[[ #{popup.title.error} ]]*/ 'Erreur'
+    		},
+			reportWorkspaceConf: {
+				expandSidebarLabel: /*[[ #{report.workspace.togglebutton.expand.label} ]]*/ '>>', 
+				collapseSidebarLabel: /*[[ #{report.workspace.togglebutton.normal.label} ]]*/ '<<'
+			}
+    	};
+    /* ]]> */
+    </script>
+    <script data-main="../../scripts/report-workspace.js" th:attr="data-main=@{/scripts/report-workspace.js}"
+      src="../../scripts/require.js" th:src="@{/scripts/require-min.js}"></script>      
 </head>
 <body>
 	<div id="navigation" th:include="navbar.frag :: navbar">
@@ -47,18 +81,12 @@
 				<h2 th:text="#{workspace.report.title}">Espace Rapport</h2>	
 			</div>
 			<div class="snap-right">
- 				<div class="main-menubar" th:include="menubar.frag :: menubar">
+ 				<div class="main-menubar unstyled" th:include="menubar.frag :: menubar">
  					MENUBAR
 				</div>
-				<div style="display:inline-block;">
-					<div id="ajax-processing-indicator" class="ui-corner-all snap-right" style="display:inline-block">
-						<img src="../../../../../../../core/core.web/src/main/webapp/images/ajax-loader.gif" width="19px" height="19px" alt="processing" th:alt="#{squashtm.processing}" th:src="@{/images/ajax-loader.gif}" /> 
-						<span th:text="#{squashtm.processing}">En cours...</span>
-					</div>
-					<div id="generic-error-notification-area" class="ui-state-error ui-corner-all snap-right not-displayed">
-						<span class="ui-icon ui-icon-alert icon"></span><span th:text="#{error.generic.label}">WTF ?!</span> &nbsp;(<a href="javascript:void(0)" id="show-generic-error-details" th:text="#{error.generic.button.details.label}">Details</a>)
-					</div>
- 				</div>
+                <div class="unstyled-notification-pane" th:include="menubar.frag :: notification">
+                  NOTIFICATION
+                </div>
 			</div>
 		</div>
 		<div id="category-pane">
@@ -86,62 +114,5 @@
 		<div id="contextual-content" class="no-resizable-contextual-content" th:remove="body">
 		</div>
 	</div>
-
-	<div class="not-visible" th:include="js.includes.frag :: jquery"></div>	
-	<div class="not-visible" th:include="js.includes.frag :: squash"></div>
-	<script th:remove="all" type="text/javascript" src="../../../../../../../core/core.web/src/main/webapp/scripts/jquery/jquery-1.5.2-dev.js"></script>
-	<script th:remove="all" type="text/javascript" src="../../js/thymol.js"></script>
-	<script type="text/javascript" src="../../scripts/squash/squashtm.reportworkspace.js" th:src="@{/scripts/squash/squashtm.reportworkspace.js}"></script>
-	<script type="text/javascript" src="../../scripts/squash/squashtm.report.js" th:src="@{/scripts/squash/squashtm.report.js}"></script>
-
-	<script type="text/javascript" th:inline="javascript">
-		/* <![CDATA[ */
-    	$(function() {
-			/* navigation tag */
-			squashtm.navbar.initHighlighted('report');
-			var workspaceUrl = document.location.protocol + '//' + document.location.host + "/squash/bugtracker/workspace-button";
-			$("#bugtracker-div").load(workspaceUrl,
-		 			function(){$("#bugtracker-link").hover(
-		 						function () {squashtm.navbar.highlightOn("bugtracker-link");}, 
-		 						function () {squashtm.navbar.highlightOff("bugtracker-link");}
-	 	 		);
-	 		});
-			
-			/* project filter */
-			var projectFilterConf = {
-					url: /*[[ @{/global-filter/filter} ]]*/ '/global-filter/filter',
-					title: /*[[ #{dialog.settings.filter.title} ]]*/ 'Filtre de projets',
-					confirmLabel: /*[[ #{label.Confirm} ]]*/ 'Confirmer',
-					cancelLabel: /*[[ #{label.Cancel} ]]*/ 'Annuler',
-			};
-				
-			squashtm.projectfilter.init(projectFilterConf);
-			
-			/* menubar */
-			var menuBarConf = {
-				boxSelector: "#menu-toggle-filter-ckbox",
-				url: /*[[@{/global-filter/filter-status}]]*/ '/global-filter/filter-status',
-				linkSelector: "#menu-project-filter-link",
-				enabledTxt: /*[[#{workspace.menubar.filter.enabled.label}]]*/ 'Actif',
-				disabledTxt: /*[[#{workspace.menubar.filter.disabled.label}]]*/ 'Inactif',
-				enabledCallbacks: [ function(){ $("div.tree-filter-reminder-div > span").removeClass("not-displayed");} ]
-			}
-	
-			squashtm.menubar.init(menuBarConf);
-			
-			/* wtf */
-			squashtm.notification.init({
-				infoTitle: /*[[#{popup.title.info}]]*/ 'Info', 
-				errorTitle: /*[[#{popup.title.error}]]*/ 'Erreur'
-			});
-			
-			/* this page */
-			squashtm.reportWorkspace.init({
-				expandSidebarLabel: /*[[ #{report.workspace.togglebutton.expand.label} ]]*/ '>>', 
-				collapseSidebarLabel: /*[[ #{report.workspace.togglebutton.normal.label} ]]*/ '<<'
-			});
-		});	
-    	/* ]]> */
-	</script>
 </body>
 </html>

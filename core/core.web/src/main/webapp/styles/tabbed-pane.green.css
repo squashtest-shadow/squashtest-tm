@@ -18,16 +18,13 @@
  *     You should have received a copy of the GNU Lesser General Public License
  *     along with this software.  If not, see <http://www.gnu.org/licenses/>.
  */
-ul.ui-tabs-nav li.ui-state-default.ui-corner-top.ui-tabs-selected.ui-state-active , ul.ui-tabs-nav li.ui-state-default.ui-corner-top.ui-tabs-selected.ui-state-active.ui-state-hover{
+
+ul.ui-tabs-nav li.ui-state-default.ui-tabs-active {
 	background: url("jquery/ui/images/ui-bg_glass_45_6eac2c_1x400.png") repeat-x scroll 50% 50% #6EAC2C;
     border-color: #ACDD4A;
 }
 
-/*
-div#tree-pane li[rel="drive"] > a{
-	border: 1px solid #2E2E2E;
+ul.ui-tabs-nav li.ui-state-default.ui-tabs-active.ui-state-hover{
+	background: url("jquery/ui/images/ui-bg_glass_45_6eac2c_1x400.png") repeat-x scroll 50% 50% #6EAC2C;
+    border-color: #ACDD4A;
 }
-
-div#tree-pane li[rel="drive"] > .jstree-clicked  {
- 	border: 1px solid #ACDD4A;
- }*/

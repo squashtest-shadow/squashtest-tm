@@ -166,6 +166,4 @@ public class HibernateCampaignDao extends HibernateEntityDao<Campaign> implement
 			return (Long) executeEntityNamedQuery("campaign.countIterationsTestPlanItems", callback);
 		}
 
-	
-
 }

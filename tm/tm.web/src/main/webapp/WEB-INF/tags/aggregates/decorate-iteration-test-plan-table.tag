@@ -91,7 +91,7 @@
 					data : {"mode":"manual"},
 					dataType : "json"
 				})
-				.success(function(id) {
+				.done(function(id) {
 					document.location.href = "${showExecutionUrl}/" + id;
 				});
 		return false; //return false to prevent navigation in page (# appears at the end of the URL)

@@ -217,6 +217,22 @@
 	<osgi:service
 		ref="squashtest.tm.service.testautomation.AutomatedExecutionManagerService"
 		interface="org.squashtest.csp.tm.service.testautomation.AutomatedExecutionManagerService" />
+			
+	<!--  CUF binding service -->	
+	<osgi:service ref="squashtest.tm.service.CustomFieldBindingService">
+		<osgi:interfaces>
+			<value>org.squashtest.csp.tm.service.CustomFieldBindingFinderService</value>
+			<value>org.squashtest.csp.tm.service.CustomFieldBindingModificationService</value>
+		</osgi:interfaces>
+	</osgi:service>			
+
+    <osgi:service ref="squashtest.tm.service.CustomFieldManagerService">
+      <osgi:interfaces>
+       <value>org.squashtest.csp.tm.service.customfield.CustomFieldFinderService</value> 
+        <value>org.squashtest.csp.tm.service.customfield.CustomFieldManagerService</value>
+      </osgi:interfaces>
+    </osgi:service>     
+		
 
 	<!-- ====== SERVICES CONSUMED BY THIS BUNDLE ====== -->
 	<!-- Jdbc Datasource -->
@@ -293,5 +309,7 @@
 	<osgi:reference id="javax.validation.ValidatorFactory"
 		bean-name="javax.validation.ValidatorFactory" interface="javax.validation.ValidatorFactory"
 		availability="mandatory" />		
+
+		
 
 </beans>

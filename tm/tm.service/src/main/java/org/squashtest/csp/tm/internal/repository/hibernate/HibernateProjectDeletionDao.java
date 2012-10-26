@@ -40,7 +40,6 @@ public class HibernateProjectDeletionDao extends HibernateDeletionDao implements
 		// TODO Auto-generated method stub
 
 	}
-
 	private static final String CLASS_NAME = "className";
 
 	public void removeProject(Object entity) {

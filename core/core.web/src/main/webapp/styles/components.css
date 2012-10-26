@@ -642,3 +642,19 @@ span.span-green {
 	background-color : #E0E0E0;
 	border-bottom : 3px solid white;
 }
+
+/********************* 
+ * NOTIFICATION PANEL
+ *********************/
+.notification-pane {
+	display: inline-block;
+}
+.unstyled-notification-pane {
+	display: none;
+}
+.processing {
+	display: inline-block;
+}
+.not-processing {
+	display: none;
+}
