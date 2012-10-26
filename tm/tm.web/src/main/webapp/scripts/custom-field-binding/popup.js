@@ -36,10 +36,8 @@
  * 
  * 
  */
-define(["require", "jquery.squash", "./models.js"], function(require){
-		
-	var Model = require("./models.js");
-	
+define(["require", "./models", "jquery.squash" ], function(require, Model){
+
 	return function(settings){
 		
 		var params = {

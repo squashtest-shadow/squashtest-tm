@@ -19,6 +19,8 @@
  *     along with this software.  If not, see <http://www.gnu.org/licenses/>.
  */
 requirejs.config({
+	
+	packages : ["custom-field-binding"],
 	/*
 	 * rules for paths naming : * third party lib : unversionned lib
 	 * name * non AMD squash lib : replace "squashtm" by "squash" in js
@@ -59,7 +61,6 @@ requirejs.config({
 		"jquery.squash.projectpicker": "squash/jquery.squashtm.projectpicker", 
 		"jquery.cookie": "jquery/jquery.cookie",
 		"squash.cssloader" : "squash/squash.cssloader",
-		"squash.cuf-binding-manager" : "custom-field-binding/main"
 	},
 	shim : {
 		"ckeditor": {

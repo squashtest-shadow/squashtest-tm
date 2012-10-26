@@ -21,15 +21,10 @@
 
 
 
-define (function(require){
+define (["require","squash.cssloader", "./panel", "./table", "./popup"],function(require, cssloader, Panel, Table, Popup){
 	
-	var cssloader = require("squash.cssloader");
 	var cssUrl = require.toUrl("./cuf-binding-styles.css");
 	cssloader.cssFromUrl(cssUrl);
-	
-	var Panel = require("./panel.js");
-	var Table = require("./table.js");
-	var Popup = require("./popup.js");
 
 	function getPanelConf(settings){
 		return { 

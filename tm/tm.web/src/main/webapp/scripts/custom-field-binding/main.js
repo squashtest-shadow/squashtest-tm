@@ -20,10 +20,7 @@
  */
 
 
-define(["jquery", "require", "./entity-manager.js"], function($, require){
-
-	
-	var EntityManager = require("./entity-manager.js");
+define(["jquery", "./entity-manager"], function(jquery, EntityManager){
 
 	function makeTCConf(conf){		
 		return $.extend({},conf.general, conf.tcSettings);

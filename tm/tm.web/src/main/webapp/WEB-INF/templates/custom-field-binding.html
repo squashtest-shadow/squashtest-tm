@@ -127,7 +127,7 @@
     	};
 
     	domReady(function(){
-        	require(["squash.cuf-binding-manager"], function(main){
+        	require(["custom-field-binding"], function(main){
         		main.setConfig(config).init();
         	});   		
     	});
@@ -253,7 +253,7 @@
 		};
 				   
 		domReady(function(){
-			require(["../../scripts/custom-field-binding/entity-manager.js"], function(EntityManager){
+			require(["custom-field-binding", "custom-field-binding/entity-manager"], function(main, EntityManager){
         		new EntityManager(settings);
         	});   				
 		});
