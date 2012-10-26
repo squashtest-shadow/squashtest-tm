@@ -108,7 +108,7 @@ define([ "jquery", "backbone", "app/cf/NewCustomFieldPanelView", "app/cf/NewCust
 			}, 
 			showNewCfPanel: function(event) {
 				var self = this;
-				 
+
 				var discard = function() {
 					self.newCfPanel.off("cancel confirm");
 					self.newCfPanel.undelegateEvents();

@@ -35,11 +35,30 @@ define([ "jquery", "backbone" ], function($, Backbone) {
 			label : "",
 			inputType : "PLAIN_TEXT",
 			optional : true,
-			defaultValue : ""
+			defaultValue : "",
+			options : []
 		},
 		resetDefaultValue : function() {
-			this.set("defaultValue", defaultValueByInputType[this
-					.get("inputType")]);
+			this.set("defaultValue", defaultValueByInputType[this.get("inputType")]);
+			this.set("options", []);
+		},
+		addOption : function(option) {
+			var options = this.attributes.options;
+
+			if ($.inArray(option, options) > -1) {
+				return false;
+			}
+
+			options.push(option);
+
+			return true;
+		},
+		removeOption : function(option) {
+			var options = this.attributes.options, pos = $.inArray(option, options);
+
+			if (pos > -1) {
+				options.splice(pos, 1);
+			}
 		},
 		validate : function(attrs) {
 			if (!attrs.optional) {
