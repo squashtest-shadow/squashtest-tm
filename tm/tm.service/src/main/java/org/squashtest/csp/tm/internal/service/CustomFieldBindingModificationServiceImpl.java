@@ -31,7 +31,6 @@ import org.squashtest.csp.tm.domain.customfield.BindableEntity;
 import org.squashtest.csp.tm.domain.customfield.CustomField;
 import org.squashtest.csp.tm.domain.customfield.CustomFieldBinding;
 import org.squashtest.csp.tm.domain.project.Project;
-import org.squashtest.csp.tm.infrastructure.filter.FilteredCollectionHolder;
 import org.squashtest.csp.tm.internal.repository.CustomFieldBindingDao;
 import org.squashtest.csp.tm.internal.repository.CustomFieldDao;
 import org.squashtest.csp.tm.internal.repository.ProjectDao;
@@ -104,6 +103,10 @@ public class CustomFieldBindingModificationServiceImpl implements CustomFieldBin
 	}
 	
 	
-
+	@Override
+	@PreAuthorize("hasRole('ROLE_TM_PROJECT_MANAGER') or hasRole('ROLE_ADMIN')")	
+	public void removeCustomFieldBindings(List<Long> bindingIds){
+		customFieldBindingDao.removeCustomFieldBindings(bindingIds);
+	}
 	
 }

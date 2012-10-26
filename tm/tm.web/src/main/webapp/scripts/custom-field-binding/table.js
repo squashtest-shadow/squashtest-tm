@@ -25,7 +25,8 @@
  * 	{
  * 		selector : the selector for the table,
  * 		languageUrl : the url where to fetch the localization conf object,
- * 		ajaxSource : the ajaxSource (native),
+ * 		getUrl : the ajaxSource (native),
+ * 		deleteUrl : the url where to send DELETE request,
  * 		deferLoading : the iDeferLoading (native),
  * 		oklabel : text for the ok button,
  * 		cancellabel : text for the cancel button
@@ -99,7 +100,7 @@ define(["jquery", "jquery.squash.datatables"], function($){
 			oLanguage :{
 				sUrl : settings.languageUrl
 			},
-			sAjaxSource : settings.ajaxSource,
+			sAjaxSource : settings.getUrl,
 			iDeferLoading : settings.deferLoading,
 			aoColumnDefs :[
 				{'bSortable' : false, 'bVisible' : false, 'aTargets' : [0], 'mDataProp' : 'id'},
@@ -132,14 +133,23 @@ define(["jquery", "jquery.squash.datatables"], function($){
 				cancellabel : settings.cancellabel
 			},
 			
+			deleteButtons : {
+				url : settings.deleteUrl+"/{id}",
+				popupmessage : 'you sure you wanna do this ?',
+				success : function(){
+					table.refresh();
+				}
+			},
+			
 			enableDnD : true
 		
 		};
 		
 		$(settings.selector).squashTable(tableConf, squashConf);
-
+		
+		var table=$(settings.selector).squashTable();
 	
-		return $(settings.selector).squashTable();
+		return table;
 		
 	};
 

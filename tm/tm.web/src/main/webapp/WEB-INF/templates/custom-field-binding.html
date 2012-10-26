@@ -52,11 +52,10 @@
 
 <div id="cuf-binding-administration">
 
-
-<div id="test-cases-binding-manager" th:include="custom-field-binding :: cuf-unit-binder" th:with="HTMLID='test-cases',collection=${testCaseBindings}">
+<div id="requirements-binding-manager" th:include="custom-field-binding :: cuf-unit-binder" th:with="HTMLID='requirements',collection=${requirementBindings}">
 </div>
 
-<div id="requirements-binding-manager" th:include="custom-field-binding :: cuf-unit-binder" th:with="HTMLID='requirements',collection=${requirementBindings}">
+<div id="test-cases-binding-manager" th:include="custom-field-binding :: cuf-unit-binder" th:with="HTMLID='test-cases',collection=${testCaseBindings}">
 </div>
 
 <div id="campaigns-binding-manager" th:include="custom-field-binding :: cuf-unit-binder" th:with="HTMLID='campaigns',collection=${campaignBindings}">

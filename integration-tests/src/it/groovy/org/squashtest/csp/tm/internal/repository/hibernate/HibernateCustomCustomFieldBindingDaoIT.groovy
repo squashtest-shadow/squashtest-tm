@@ -18,11 +18,32 @@
  *     You should have received a copy of the GNU Lesser General Public License
  *     along with this software.  If not, see <http://www.gnu.org/licenses/>.
  */
-package org.squashtest.csp.tm.internal.repository;
+package org.squashtest.csp.tm.internal.repository.hibernate
 
-import java.util.List;
+import javax.inject.Inject;
 
-public interface CustomCustomFieldBindingDao {
+import org.squashtest.csp.tm.internal.repository.hibernate.HibernateCustomCustomFieldBindingDao.NewBindingPosition;
+import org.unitils.dbunit.annotation.DataSet;
 
-	void removeCustomFieldBindings(List<Long> bindingIds);
+import spock.unitils.UnitilsSupport;
+
+
+@UnitilsSupport
+@DataSet
+class HibernateCustomCustomFieldBindingDaoIT extends DbunitDaoSpecification {
+
+	@Inject
+	HibernateCustomCustomFieldBindingDao dao
+	
+	
+	def "should get correct indexes from a messed up table"(){
+
+		when :
+			List<NewBindingPosition> newPositions = dao.recomputeBindingPositions();
+		
+		then :
+			newPositions.size() == 9
+		
+	}
+	
 }

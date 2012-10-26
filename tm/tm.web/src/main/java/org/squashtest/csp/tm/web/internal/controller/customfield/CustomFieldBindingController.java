@@ -31,6 +31,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.osgi.extensions.annotation.ServiceReference;
 import org.springframework.stereotype.Controller;
+import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
@@ -74,9 +75,7 @@ public class CustomFieldBindingController {
 	public void init(){
 		converter = new CustomFieldJsonConverter(messageSource);
 	}
-	
 
-	
 	
 	@RequestMapping(method= RequestMethod.GET, params = {"projectId", "!bindableEntity"}, headers="Accept=application/json")
 	@ResponseBody
@@ -116,7 +115,11 @@ public class CustomFieldBindingController {
 		
 	}
 	
-	
+	@RequestMapping(value="/{bindingIds}", method=RequestMethod.DELETE)
+	@ResponseBody
+	public void unbindCustomField(@PathVariable("bindingIds") List<Long> bindingIds){
+		service.removeCustomFieldBindings(bindingIds);
+	}
 
 	@RequestMapping(value="/available", method = RequestMethod.GET, params = {"projectId", "bindableEntity"}, headers="Accept=application/json")
 	@ResponseBody

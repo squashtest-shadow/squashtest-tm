@@ -34,18 +34,23 @@ define (["require","squash.cssloader", "./panel", "./table", "./popup"],function
 		};
 	};
 	
-	function getTableURL(settings){
+	function getTableGetURL(settings){
 		var url = settings.baseURL;
 		url = url+"?projectId="+settings.projectId;
 		url = url+"&bindableEntity="+settings.entityType;
 		return url;
 	};
 	
+	function getTableDeleteURL(settings){
+		return settings.baseURL;
+	};
+	
 	function getTableConf(settings){
 		return {
 			selector : settings.mainSelector+" .cuf-binding-table",
 			languageUrl : settings.tableLanguageUrl,
-			ajaxSource : getTableURL(settings),
+			getUrl : getTableGetURL(settings),
+			deleteUrl : getTableDeleteURL(settings),
 			deferLoading : settings.tableDeferLoading,
 			oklabel : settings.oklabel,
 			cancellabel : settings.cancellabel

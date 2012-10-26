@@ -151,6 +151,12 @@ public abstract class HibernateDao<ENTITY_TYPE> {
 		return (R) q.uniqueResult();
 	}
 
+	protected final void executeUpdateListQuery(String queryName, SetQueryParametersCallback params){
+		Query q = currentSession().getNamedQuery(queryName);
+		params.setQueryParameters(q);
+		q.executeUpdate();	
+	}
+	
 	protected final void removeEntity(ENTITY_TYPE entity) {
 		currentSession().delete(entity);
 	}

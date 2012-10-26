@@ -20,6 +20,8 @@
  */
 package org.squashtest.csp.tm.service;
 
+import java.util.List;
+
 import org.squashtest.csp.tm.domain.customfield.BindableEntity;
 import org.squashtest.csp.tm.domain.customfield.CustomField;
 import org.squashtest.csp.tm.domain.customfield.CustomFieldBinding;
@@ -48,5 +50,10 @@ public interface CustomFieldBindingModificationService extends CustomFieldBindin
 	void addNewCustomFieldBinding(long projectId, BindableEntity entity, long customFieldId, CustomFieldBinding newBinding);
 	
 	
+	/**
+	 * removes a batch of custom field bindings using their ids.
+	 * 
+	 */
+	void removeCustomFieldBindings(List<Long> bindingIds);
 	
 }

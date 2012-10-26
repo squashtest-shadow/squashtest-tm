@@ -20,14 +20,89 @@
  */
 package org.squashtest.csp.tm.internal.repository.hibernate;
 
+import java.util.List;
+
+import org.hibernate.Query;
+import org.hibernate.Session;
+import org.hibernate.transform.Transformers;
 import org.springframework.stereotype.Repository;
+import org.squashtest.csp.tm.domain.customfield.CustomField;
 import org.squashtest.csp.tm.internal.repository.CustomCustomFieldBindingDao;
 
 
 @Repository("CustomCustomFieldBindingDao")
-public class HibernateCustomCustomFieldBindingDao implements CustomCustomFieldBindingDao {
+public class HibernateCustomCustomFieldBindingDao extends HibernateEntityDao<CustomField> implements CustomCustomFieldBindingDao {
+	
+
+	
+	@Override
+	public void removeCustomFieldBindings(List<Long> bindingIds) {
+		if (!bindingIds.isEmpty()){
+			executeUpdateListQuery("CustomFieldBinding.removeCustomFieldBindings", new SetBindingIdsParameterCallback(bindingIds));
+		}
+	}
+	
+	@SuppressWarnings("unchecked")
+	protected List<NewBindingPosition> recomputeBindingPositions(){
+		Session session = currentSession();
+		Query q = session.getNamedQuery("CustomFieldBinding.recomputeBindingPositions");
+		q.setResultTransformer(Transformers.aliasToBean(NewBindingPosition.class));
+		List<NewBindingPosition> newPositions = q.list();
+		return newPositions;
+	}
 	
 	
+	private static class SetBindingIdsParameterCallback implements SetQueryParametersCallback{
+		
+		List<Long> ids;
+		
+		private SetBindingIdsParameterCallback(List<Long> ids) {
+			this.ids = ids;
+		}
+		
+		@Override
+		public void setQueryParameters(Query query) {
+			query.setParameterList("cfbIds", ids);
+		}
+	}
 	
+	
+	public static class NewBindingPosition {
+
+		private Long bindingId;
+		private int formerPosition;
+		private Long newPosition;
+		
+		public NewBindingPosition() {
+			// TODO Auto-generated constructor stub
+		}
+
+		public Long getBindingId() {
+			return bindingId;
+		}
+
+		public void setBindingId(Long bindingId) {
+			this.bindingId = bindingId;
+		}
+
+		public int getFormerPosition() {
+			return formerPosition;
+		}
+
+		public void setFormerPosition(int formerPosition) {
+			this.formerPosition = formerPosition;
+		}
+
+		public Long getNewPosition() {
+			return newPosition;
+		}
+
+		public void setNewPosition(Long newPosition) {
+			this.newPosition = newPosition;
+		}
+		
+		
+		
+	}
 
 }
