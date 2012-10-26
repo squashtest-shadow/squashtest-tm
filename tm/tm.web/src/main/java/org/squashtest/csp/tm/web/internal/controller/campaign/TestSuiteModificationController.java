@@ -328,9 +328,8 @@ public class TestSuiteModificationController {
 				importance = messageSource.internationalize(item.getReferencedTestCase().getImportance(), locale);
 			}
 
-			return new Object[] { item.getId(), getCurrentIndex(), projectName, automationMode, testCaseName,
-					importance, testCaseExecutionMode,
-					reference,
+			return new Object[] { item.getId(), getCurrentIndex(), projectName, automationMode, reference,
+					testCaseName, importance, testCaseExecutionMode,
 					messageSource.internationalize(item.getExecutionStatus(), locale),
 					formatString(item.getLastExecutedBy(), locale, messageSource),
 					messageSource.localizeDate(item.getLastExecutedOn(), locale), item.isTestCaseDeleted(), " " };
