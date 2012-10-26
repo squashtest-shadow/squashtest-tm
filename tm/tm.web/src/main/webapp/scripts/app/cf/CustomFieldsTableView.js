@@ -95,6 +95,10 @@ define([ "jquery", "backbone", "app/cf/NewCustomFieldPanelView", "app/cf/NewCust
 							popupmessage : cfTable.deleteConfirmMessage,
 							tooltip : cfTable.deleteTooltip,
 							success : function(data){self.table.refresh();}
+						},
+						
+						bindLinks : {
+							list : [{url: cfTable.ajaxSource+"/{entity-id}", target:2 , isOpenInTab:false}]
 						}
 					};
 					

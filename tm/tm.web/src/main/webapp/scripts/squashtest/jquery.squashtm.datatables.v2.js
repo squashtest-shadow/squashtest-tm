@@ -32,9 +32,8 @@
 
  */
 
-/*
- * ========================================== Intoduction
- * ==========================================
+/**
+ * ======================Intoduction===================================
  * 
  * keys used for data lookup -------------------------
  * 
@@ -65,8 +64,7 @@
  * placeholders that will be replaced by the corresponding value from
  * aoData["something"]. That's where the data keys above are useful.
  * 
- * ========================================== Regular Datatable settings
- * ==========================================
+ * =========== Regular Datatable settings=====================================
  * 
  * the inherited part of the datatable is configured using the first parameter :
  * 'datatableSettings'. Any regular datatable configuration is supported.
@@ -77,8 +75,7 @@
  * - "aoColumnDefs" (les colonnes)
  * 
  * 
- * ========================================== Squash additional settings
- * ==========================================
+ * ============= Squash additional settings=====================================
  * 
  * 
  * The squash specifics are configured using the second parameter :
@@ -163,6 +160,17 @@
  * 		tooltip : the tooltip displayed by the button 
  * 		success : a callback on the ajax call when successful 
  * 		fail : a callback on the ajax call when failed.
+ * 
+ * 
+ * 
+ * - add links to cell text : if the property 'bindLinks' is set then will look for cells
+ *  according to the parameters given and make their text a link to the wanted url.
+ *  Configuration as follow: 
+ *  	 list : a list of object to represent each td of a row to make as url
+ *  			Object params as follow : 
+ *  				-url : the url to wrap the text with (place holder will be set to row object id)
+ *  				-target : the td rank in the row (starts with 1)
+ *  				-isOpenInTab : boolean to set the target of the url to "_blank" or not.
  */
 var squashtm = squashtm || {};
 squashtm.keyEventListener = squashtm.keyEventListener || new KeyEventListener();
@@ -436,7 +444,7 @@ squashtm.keyEventListener = squashtm.keyEventListener || new KeyEventListener();
 
 		$(rows).each(function(index, row) {
 			if ($(row).hasClass('ui-state-row-selected')) {
-				var id = self.getODataId(row)
+				var id = self.getODataId(row);
 				if ((id != "") && (!isNaN(id))) {
 					ids.push(id);
 				}
@@ -561,7 +569,6 @@ squashtm.keyEventListener = squashtm.keyEventListener || new KeyEventListener();
 	function _configureExecutionStatus() {
 
 		var statusConf = this.squashSettings.executionStatus;
-		var self = this;
 
 		if (!statusConf)
 			return;
@@ -582,7 +589,6 @@ squashtm.keyEventListener = squashtm.keyEventListener || new KeyEventListener();
 		var deleteConf = this.squashSettings.deleteButtons;
 		if (!deleteConf)
 			return;
-		var self = this;
 
 		var template = '<a href="javascript:void(0)">' + deleteConf.tooltip
 				+ '</a>';
@@ -598,7 +604,7 @@ squashtm.keyEventListener = squashtm.keyEventListener || new KeyEventListener();
 
 	}
 	;
-
+	
 	function _bindDeleteButtons() {
 		var conf = this.squashSettings.deleteButtons;
 		var popconf = this.squashSettings.confirmPopup;
@@ -612,7 +618,7 @@ squashtm.keyEventListener = squashtm.keyEventListener || new KeyEventListener();
 			// 'tr' one
 			var jqRow = $(row);
 			jqRow.addClass('ui-state-row-selected');
-			var id = self.getODataId(row);
+		
 
 			oneShotConfirm(conf.tooltip || "", conf.popupmessage || "",
 					popconf.oklabel, popconf.cancellabel).done(
@@ -639,6 +645,42 @@ squashtm.keyEventListener = squashtm.keyEventListener || new KeyEventListener();
 		});
 	}
 	;
+	
+	/**
+	 * Wrap cell text with link tags according to the given settings : squashSettings.bindLinks
+	 * More info on top of the page on "Squash additional settings" doc.
+	 * 
+	 */
+	function _configureLinks() {
+		var linksConf = this.squashSettings.bindLinks;
+		if (!linksConf){return;}
+		
+		var self = this;
+		
+		for(var i=0; i< linksConf.list.length; i++){
+			var linkConf = linksConf.list[i];
+			//1. build link
+			var link = $('<a></a>');
+			if (linkConf.isOpenInTab) {
+				link.attr('target', '_blank');
+			}
+			//2. select required td and wrap their thext with the built link
+			var cells = $('td:nth-child('+linkConf.target+')', self);
+			cells.contents().filter(function () {
+				// IE doesn't define the constant Node so we'll use constant value
+				// instead of Node.TEXT_NODE
+				return this.nodeType == 3;
+			}).wrap(link);
+			//3. add id to cells
+			$.each(cells, function(index, cell){
+				var row = cell.parentNode; // should be the tr
+				var finalUrl = _resolvePlaceholders(linkConf.url, self.fnGetData(row));
+				var cellLink = $(cell).find("a");
+				cellLink.attr('href', finalUrl);
+			});
+		}
+	}
+	;
 
 	/***************************************************************************
 	 * 
@@ -646,7 +688,7 @@ squashtm.keyEventListener = squashtm.keyEventListener || new KeyEventListener();
 	 * 
 	 **************************************************************************/
 
-	var datatableDefaults = squashtm.datatable.defaults
+	var datatableDefaults = squashtm.datatable.defaults;
 
 	var squashDefaults = {
 		dataKeys : {
@@ -696,8 +738,7 @@ squashtm.keyEventListener = squashtm.keyEventListener || new KeyEventListener();
 
 		var datatableEffective = $.extend(true, {}, datatableDefaults,
 				datatableSettings);
-		var squashEffective = $
-				.extend(true, {}, squashDefaults, squashSettings);
+		var squashEffective = $.extend(true, {}, squashDefaults, squashSettings);
 
 		/* ************** squash init first *********************** */
 
@@ -722,7 +763,7 @@ squashtm.keyEventListener = squashtm.keyEventListener || new KeyEventListener();
 		
 		this.refresh = function() {
 			this.fnDraw(false);
-		}
+		};
 
 		// function overrides
 
@@ -736,13 +777,13 @@ squashtm.keyEventListener = squashtm.keyEventListener || new KeyEventListener();
 		 */
 
 		// pre draw callback
-		var userPreDrawCallback = datatableEffective["fnPreDrawCallback"]
+		var userPreDrawCallback = datatableEffective["fnPreDrawCallback"];
 
 		var customPreDrawCallback = function(oSettings) {
 			if (userPreDrawCallback)
 				userPreDrawCallback.call(this, oSettings);
 			_saveTableSelection.call(this);
-		}
+		};
 
 		datatableEffective["nfPreDrawCallback"] = customPreDrawCallback;
 
@@ -757,9 +798,10 @@ squashtm.keyEventListener = squashtm.keyEventListener || new KeyEventListener();
 			_configureRichEditables.call(this);
 			_configureExecutionStatus.call(this);
 			_configureDeleteButtons.call(this);
+			_configureLinks.call(this);
 			_enableTableDragAndDrop.call(this);
 			_restoreTableSelection.call(this);
-		}
+		};
 
 		datatableEffective["fnDrawCallback"] = customDrawCallback;
 
@@ -784,7 +826,7 @@ squashtm.keyEventListener = squashtm.keyEventListener || new KeyEventListener();
 			_bindDeleteButtons.call(this);
 		}
 		;
-
+		
 		this.addClass("is-contextual");
 	};
 

@@ -20,8 +20,12 @@
  */
 package org.squashtest.csp.tm.internal.service.customField
 
+import java.util.List;
+
+import org.springframework.osgi.blueprint.config.internal.support.InstanceEqualityRuntimeBeanReference;
 import org.squashtest.csp.tm.domain.customfield.CustomField;
 import org.squashtest.csp.tm.infrastructure.filter.CollectionSorting;
+import org.squashtest.csp.tm.infrastructure.filter.FilteredCollectionHolder;
 import org.squashtest.csp.tm.internal.repository.CustomFieldDao
 import org.squashtest.csp.tm.internal.repository.CustomFieldDeletionDao
 import org.squashtest.csp.tm.service.customfield.CustomCustomFieldManagerService
@@ -29,38 +33,52 @@ import org.squashtest.csp.tm.service.customfield.CustomCustomFieldManagerService
 import spock.lang.Specification
 
 class CustomCustomFieldManagerServiceImplTest extends Specification {
-	
+
 	CustomCustomFieldManagerServiceImpl service = new CustomCustomFieldManagerServiceImpl();
 	CustomFieldDao customFieldDao = Mock()
 	CustomFieldDeletionDao customFieldDeletionDao = Mock()
-	
+
 	def setup() {
 		service.customFieldDao = customFieldDao
 		service.customFieldDeletionDao = customFieldDeletionDao
 	}
-	
+
 	def "should delete custom field"(){
 		given:
 		CustomField cuf = Mock()
 		customFieldDao.findById(1L) >> cuf
+		
 		when :
 		service.deleteCustomField(1L);
+		
 		then:
 		1* customFieldDeletionDao.removeCustomField(cuf)
 	}
-	
+
 	def "should find all ordered by name"(){
 		when :
 		service.findAllOrderedByName()
+		
 		then :
 		1* customFieldDao.finAllOrderedByName()
 	}
+	
 	def "should find sorted "(){
-		given : 
+		given :
 		CollectionSorting cs = Mock()
+		List<CustomField> customFields = Mock()
+		customFieldDao.findSortedCustomFields(cs)>> customFields
+		
+		and:
+		def counted = 3
+		customFieldDao.countCustomFields()>> counted
+
 		when:
-		service.findSortedCustomFields()
+		FilteredCollectionHolder<Collection<CustomField>> result = service.findSortedCustomFields(cs)
+
 		then:
+		result != null
 		1* customFieldDao.findSortedCustomFields(cs)
+		1* customFieldDao.countCustomFields()
 	}
 }

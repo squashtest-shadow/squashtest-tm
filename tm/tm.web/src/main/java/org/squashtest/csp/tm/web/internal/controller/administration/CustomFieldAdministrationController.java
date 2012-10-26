@@ -147,7 +147,7 @@ public class CustomFieldAdministrationController {
 			res.put(NAME, item.getName());
 			res.put(LABEL, item.getLabel());
 			res.put("raw-input-type", item.getInputType().name());
-			res.put(INPUT_TYPE, messageSource.internationalize(item.getInputType().getI18nKey(), locale));
+			res.put("input-type", messageSource.internationalize(item.getInputType().getI18nKey(), locale));
 			res.put(DataTableModelHelper.DEFAULT_EMPTY_DELETE_HOLDER_KEY, " ");
 			return res;
 		}
