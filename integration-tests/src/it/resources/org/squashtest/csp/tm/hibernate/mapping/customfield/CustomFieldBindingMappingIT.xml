@@ -45,6 +45,6 @@
 	<!-- /custom field 20 -->
 
 	<!-- custom field binding 202 -->
-	<custom_field_binding cfb_id="202" cf_id="20" bound_project_id="2" bound_entity="TEST_CASE" />
+	<custom_field_binding cfb_id="202" cf_id="20" bound_project_id="2" bound_entity="TEST_CASE" position="1"/>
 	<!-- /custom field binding 202 -->
 </dataset>
