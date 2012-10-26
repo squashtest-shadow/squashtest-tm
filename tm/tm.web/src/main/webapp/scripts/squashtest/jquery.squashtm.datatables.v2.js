@@ -620,12 +620,14 @@ squashtm.keyEventListener = squashtm.keyEventListener || new KeyEventListener();
 						var finalUrl = _resolvePlaceholders.call(self,
 								conf.url, self.fnGetData(row));
 
-						var request = $.ajax({
+						var request;
+						
+						request = $.ajax({
 							type : 'delete',
 							url : finalUrl,
 							dataType : 'text'
 						});
-
+						
 						if (conf.success)
 							request.done(conf.success);
 						if (conf.fail)
@@ -710,6 +712,14 @@ squashtm.keyEventListener = squashtm.keyEventListener || new KeyEventListener();
 		this.addHLinkToCellText = _addHLinkToCellText;
 		this.selectRows = _selectRows;
 		this.deselectRows = _deselectRows;
+	
+		if(squashSettings.bindDeleteButtons != null){
+			this.bindDeleteButtons = squashSettings.bindDeleteButtons;
+		}
+		else{
+			this.bindDeleteButtons = _bindDeleteButtons;
+		}
+		
 		this.refresh = function() {
 			this.fnDraw(false);
 		}
