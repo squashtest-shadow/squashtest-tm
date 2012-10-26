@@ -18,9 +18,9 @@
  *     You should have received a copy of the GNU Lesser General Public License
  *     along with this software.  If not, see <http://www.gnu.org/licenses/>.
  */
-define([ "jquery", "backbone", "handlebars", "app/cf/OptionsTableView", "app/lnf/SquashDatatablesLnF" ], function($, Backbone, Handlebars, OptionsTableView, SD) {
+define([ "jquery", "backbone", "handlebars", "app/lnf/SquashDatatablesLnF" ], function($, Backbone, Handlebars, SD) {
 	/*
-	 * Defines the controller for the new custom field panel
+	 * Defines the controller for the new custom field panel.
 	 */
 	var NewCustomFieldPanelView = Backbone.View.extend({
 		el: "#new-cf-pane",
@@ -165,7 +165,7 @@ define([ "jquery", "backbone", "handlebars", "app/cf/OptionsTableView", "app/lnf
 			
 		},
 		/**
-		 * returns the function which should be used as a callback 
+		 * returns the function which should be used as a callback.
 		 */
 		decorateOptionRow: function(self) { 
 			return function(nRow, aData, iDisplayIndex, iDisplayIndexFull) {
