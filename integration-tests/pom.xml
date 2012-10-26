@@ -4,7 +4,7 @@
 	<parent>
 		<artifactId>squashtest-csp</artifactId>
 		<groupId>org.squashtest.tm</groupId>
-		<version>1.4.0.IT41-SNAPSHOT</version>
+		<version>1.4.0.IT42-SNAPSHOT</version>
 	</parent>
 
 	<artifactId>squashtest-integration-tests</artifactId>
