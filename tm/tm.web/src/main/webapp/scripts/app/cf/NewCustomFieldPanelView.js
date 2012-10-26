@@ -173,8 +173,8 @@ define([ "jquery", "backbone", "handlebars", "app/lnf/SquashDatatablesLnF" ], fu
 				defaultCell = row.find(".is-default"), 
 				removeCell = row.find(".remove-row"),
 				option = aData[0],
-				checked = option === self.model.get("defaultValue") ? 'checked="checked"' : "",
-						tplData = { option: option, checked: checked };
+				checked = option === self.model.get("defaultValue"),
+				tplData = { option: option, checked: checked };
 
 				var source   = $("#remove-cell-tpl").html();
 				var template = Handlebars.compile(source);
